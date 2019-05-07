@@ -12,7 +12,7 @@ public class SFXBullet : SFXBase {
     }
     private void FixedUpdate()
     {
-        transform.Translate((transform.forward * 50f + Vector3.down * 1.5f) * Time.deltaTime, Space.World);
+        transform.Translate((transform.forward *GameConst.I_BulletSpeedForward + Vector3.down * GameConst.I_BulletSpeedDownward) * Time.deltaTime, Space.World);
     }
     private void OnTriggerEnter(Collider other)
     {

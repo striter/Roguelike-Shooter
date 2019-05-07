@@ -3,10 +3,13 @@ using TExcel;
 #pragma warning disable 0649
 namespace GameSetting
 {
-    public static class GameConst
+    public static class GameConst          //For Designers Use
     {
-        public static readonly int I_BulletMaxLastTime = 5;
+        public static readonly int I_BulletMaxLastTime = 5; // No Collision Recycle Time
+        public static readonly float I_BulletSpeedForward = 50f;  //Meter Per Second
+        public static readonly float I_BulletSpeedDownward = 1.5f;  //Meter Per Second
     }
+
     public static class GameLayer
     {
         public static readonly int I_Static = LayerMask.NameToLayer("static");
