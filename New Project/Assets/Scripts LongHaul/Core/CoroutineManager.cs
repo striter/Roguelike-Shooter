@@ -212,7 +212,8 @@ public static class ISingleCoroutine_Extend
         foreach (int index in CoroutineManager.Dic_Coroutines.Keys)
         {
             if (index >= min && index <= max)
-                CoroutineManager.Instance.StopCoroutine(CoroutineManager.Dic_Coroutines[index]);
+                if (CoroutineManager.Dic_Coroutines.ContainsKey(index) && CoroutineManager.Dic_Coroutines[index] != null)
+                    CoroutineManager.Instance.StopCoroutine(CoroutineManager.Dic_Coroutines[index]);
         }
     }
 

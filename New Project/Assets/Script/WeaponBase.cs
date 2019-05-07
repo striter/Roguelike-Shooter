@@ -1,88 +1,104 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using GameSetting;
+using System;
 
-public class WeaponBase : MonoBehaviour {
-
-    public virtual enum_WeaponType E_WeaponType => enum_WeaponType.Invalid;
-    public virtual enum_AmmoType E_AmmoType => enum_AmmoType.Invalid;
-    public int F_Spread = 3;
-    public float F_PerBulletDamage = 10;
-    public float F_FireRate = .03f;
-    public int I_MagCapacity = 7;
-    public float F_ReloadTime = .6f;
-    public int I_AmmoLeft { get; protected set; }
+public class WeaponBase : MonoBehaviour,ISingleCoroutine {
+    protected SWeapon m_WeaponInfo;
+    public bool B_TriggerDown { get; private set; }
+    public bool B_Reloading { get; private set; }
+    public int I_AmmoLeft { get; private set; }
+    float f_actionCheck=0;
     protected Transform tf_Muzzle;
-    protected Transform tf_ShellThrow;
-    protected Action OnWeaponStatusChanged;
-    protected Action<bool> OnWeaponHitEnermy;
-    protected LivingBase m_attacher;
-    protected virtual void Awake()
+    Action OnAmmoInfoChanged;
+    Action<Vector2> OnRecoil;
+    public void Init(SWeapon weaponInfo)
     {
-
+        tf_Muzzle = transform.Find("Muzzle");
+        m_WeaponInfo = weaponInfo;
+        I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
     }
-    
-    RaycastHit rh_hitInfo;
-    protected void FireAt(Vector3 start,Vector3 direction, float spreadMultiParam=1)
+    protected virtual void Start()
     {
-        Vector2 spread = new Vector2(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)).normalized * UnityEngine.Random.Range(-F_Spread, F_Spread);       //Spread Circle 
-        spread *= spreadMultiParam;
-        Vector3 end = start +direction * GameSettings.CI_BulletMaxDistance;
-        end += tf_Muzzle.right * spread.x + tf_Muzzle.up * spread.y;
-        if (Physics.Raycast(start, end - start, out rh_hitInfo, GameSettings.CI_BulletMaxDistance, GameLayersPhysics.IL_WeaponHit))      //On Hit Items
+        if (m_WeaponInfo.m_Type == 0)
+            Debug.LogError("Please Init Entity Info!" + gameObject.name.ToString());
+    }
+    protected virtual void OnDisable()
+    {
+        this.StopAllSingleCoroutines();
+        B_Reloading = false;
+        B_TriggerDown = false;
+    }
+    bool b_actionAble => Time.time > f_actionCheck;
+    void SetActionPause(float pauseDuration)
+    {
+        f_actionCheck = Time.time + pauseDuration;
+    }
+    public void Attach(Transform attachTarget,Action _OnAmmoInfoChanged,Action<Vector2> _OnRecoil)
+    {
+        transform.SetParent(attachTarget);
+        transform.localPosition = Vector3.zero;
+        transform.localRotation = Quaternion.identity;
+        transform.localScale = Vector3.one;
+        OnAmmoInfoChanged = _OnAmmoInfoChanged;
+        OnRecoil = _OnRecoil;
+    }
+    public bool Trigger(bool down)
+    {
+        if (B_Reloading)
+            return false;
+        B_TriggerDown = down;
+        if (down)
+            this.StartSingleCoroutine(0, TriggerOn());
+        else
+            this.StopSingleCoroutine(0);
+        return true;
+    }
+
+    IEnumerator TriggerOn()
+    {
+        if (I_AmmoLeft <= 0)
+            yield break;
+
+        for (; ; )
         {
-            HitCheckBase hitCheck = rh_hitInfo.collider.GetComponent<HitCheckBase>();
-            enum_WeaponSFX impactEffect = enum_WeaponSFX.ImpactConcrete;     //Null Impact Effect
-            Transform impactAttach = null;
-
-            if (hitCheck != null)       //Dealt Damage Check If Need Attach To Object
-            {
-                if (hitCheck.E_Type == enum_checkObjectType.Living)     //BroadCast EnermyHit
-                {
-                    bool isAlreadyDead = (hitCheck as HitCheckLiving).m_Attacher.isDead;
-                    hitCheck.OnHitCheck(F_PerBulletDamage, enum_DamageType.Range, end - start, m_attacher);
-                    if (!isAlreadyDead)
-                        OnWeaponHitEnermy?.Invoke((hitCheck as HitCheckLiving).m_Attacher.isDead);
-                }
-                else
-                {
-                    hitCheck.OnHitCheck(F_PerBulletDamage, enum_DamageType.Range, end - start, m_attacher);
-                }
-
-                impactEffect = hitCheck.E_ImpactEffectType;
-                impactAttach = hitCheck.B_AttachImpactDecal ? hitCheck.transform : null;
-            }
-
-            SFXBase hitParticle = EntityManager.SpawnWeaponSFX<SFXBase>(impactEffect, impactAttach);       //Player Hit Particles
-            hitParticle.transform.position = rh_hitInfo.point;
-            hitParticle.transform.rotation = Quaternion.LookRotation(rh_hitInfo.normal);
-            (hitParticle as SFXParticlesImpact).Play(hitCheck ? hitCheck.B_ShowImpactDecal : false);
-            end = rh_hitInfo.point;
+            if (b_actionAble)
+                FireOnce();
+            if (I_AmmoLeft <= 0)
+                yield break;
+            yield return null;
         }
-
-        EntityManager.SpawnWeaponSFX<SFXBullet>(enum_WeaponSFX.Bullet, null).Play(tf_Muzzle.position, end, GameSettings.CI_BulletMaxDistance);       //Fly Bullets
+    }
+    void FireOnce()
+    {
+        I_AmmoLeft--;
+        (ObjectManager.SpawnSFX(enum_SFX.Bullet, tf_Muzzle) as SFXBullet).Play(m_WeaponInfo.m_Damage,tf_Muzzle.forward);
+        OnRecoil(new Vector2(m_WeaponInfo.m_RecoilHorizontal,m_WeaponInfo.m_RecoilVertical));
+        SetActionPause(m_WeaponInfo.m_FireRate);
+        OnAmmoInfoChanged();
     }
 
-    protected void SpawnShell()
-    {
-        EntityManager.SpawnWeaponSFX<SFXShell>(E_AmmoType.ToBulletShell(), tf_ShellThrow).Play();
-    }
-    protected void SpawnMuzzle()
-    {
-        EntityManager.SpawnWeaponSFX<SFXMuzzleFlash>(E_WeaponType.ToWeaponMuzzle(), tf_Muzzle).Play(); //Spawn Muzzle
-    }
 
-    protected void Attach(LivingBase _attacher, PickupInfoWeapon _info, Action _OnWeaponStatusChanged, Action<bool> _OnWeaponHitEnermy)
+    public bool TryReload()
     {
-        m_attacher = _attacher;
-        I_AmmoLeft = _info.I_ClipAmmo;
-        OnWeaponStatusChanged = _OnWeaponStatusChanged;
-        OnWeaponHitEnermy = _OnWeaponHitEnermy;
+        if (!b_actionAble)
+            return false;
+
+        StartReload();
+
+        return true;
     }
-    public virtual PickupInfoWeapon Detach()
+    void StartReload()
     {
-        EntityManager.RecycleWeaponBase(E_WeaponType, this);
-        return new PickupInfoWeapon(this);
+        B_Reloading = true;
+        SetActionPause(m_WeaponInfo.m_ReloadTime);
+        this.StartSingleCoroutine(1,TIEnumerators.PauseDel(m_WeaponInfo.m_ReloadTime,OnReloadFinished));
+    }
+    void OnReloadFinished()
+    {
+        B_Reloading = false;
+        I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
+        OnAmmoInfoChanged();
     }
 }

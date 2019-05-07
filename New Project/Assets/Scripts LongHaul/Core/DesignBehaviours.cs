@@ -32,17 +32,10 @@ public class SimpleMonoLifetime
 
 public class SimpleSingletonMono<T> : MonoBehaviour where T : MonoBehaviour
 {
-    protected static T instance;
-    public static T Instance
-    {
-        get
-        {
-            return instance;
-        }
-    }
+    public static T Instance { get; private set; }
     protected virtual void Awake()
     {
-        instance = this.GetComponent<T>();
+        Instance = this.GetComponent<T>();
     }
 }
 

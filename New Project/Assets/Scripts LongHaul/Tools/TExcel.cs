@@ -62,7 +62,7 @@ namespace TExcel
                 string temp = result.Tables[0].Rows[0][i].ToString();
                 if (!temp.Equals(fields[i].Name) && !temp.Equals(-1))
                 {
-                    Debug.LogError(type.ToString() + ":" + fields[i].Name + "|" + temp + "/Rows:" + i + " :Struct Or Excel Pos Not Equals");
+                    Debug.LogError(" Struct Or Excel Pos Not Equals:("+ "Row " + i + type.ToString() + "(" + fields[i].Name + "|" + temp + ")");
                 }
             }
 

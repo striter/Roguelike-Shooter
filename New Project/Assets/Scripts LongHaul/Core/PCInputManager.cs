@@ -238,7 +238,7 @@ public class PCInputManager : SingletonMono<PCInputManager>
         OnKeyBoardMovement?.Invoke(new Vector2(right - left, up - down));
         OnMouseRotate?.Invoke(new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")));
     }
-    public void AddMovementCheck(Action<Vector2> _OnMovement)
+    public void AddMovementDelta(Action<Vector2> _OnMovement)
     {
         OnKeyBoardMovement = _OnMovement;
     }
@@ -246,7 +246,7 @@ public class PCInputManager : SingletonMono<PCInputManager>
     {
         OnKeyBoardMovement = null;
     }
-    public void AddRotateCheck(Action<Vector2> _OnRotate)
+    public void AddMouseRotateDelta(Action<Vector2> _OnRotate)
     {
         OnMouseRotate = _OnRotate;
     }
