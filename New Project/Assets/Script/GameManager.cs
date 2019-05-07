@@ -2,9 +2,15 @@
 using UnityEngine;
 
 public class GameManager : SingletonMono<GameManager> {
+    public bool B_TestMode { get; private set; } = false;
     Transform TF_PlayerStart;
     protected override void Awake()
     {
+#if UNITY_EDITOR
+        B_TestMode = true;
+#else
+        B_TestMode=false;
+#endif
         base.Awake();
         TF_PlayerStart = transform.Find("PlayerStart");
         ObjectManager.Init();

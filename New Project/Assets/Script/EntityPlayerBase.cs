@@ -20,19 +20,22 @@ public class EntityPlayerBase : EntityBase {
         m_Pitch = 0;
         CameraController.Attach(this.transform);
 
-        //Test
+        if (GameManager.Instance.B_TestMode)
+        {
+            PCInputManager.Instance.AddMouseRotateDelta(OnRotateDelta);
+            PCInputManager.Instance.AddMovementDelta(OnMovementDelta);
+            PCInputManager.Instance.AddBinding<EntityPlayerBase>(enum_BindingsName.Fire, OnTriggerDown);
+            PCInputManager.Instance.AddBinding<EntityPlayerBase>(enum_BindingsName.Interact, OnSwitchWeapon);
+            PCInputManager.Instance.AddBinding<EntityPlayerBase>(enum_BindingsName.Reload, OnReload);
+        }
+        else
+        {
+            UIManager.OnFire = OnTriggerDown;
+            UIManager.OnReload = OnReload;
+            UIManager.OnSwitch = OnSwitchWeapon;
+            TouchDeltaManager.Instance.Bind(OnMovementDelta, OnRotateDelta);
 
-        //PCInputManager.Instance.AddMouseRotateDelta(OnRotateDelta);
-        //PCInputManager.Instance.AddMovementDelta(OnMovementDelta);
-        //PCInputManager.Instance.AddBinding<EntityPlayerBase>(enum_BindingsName.Fire, OnTriggerDown);
-        //PCInputManager.Instance.AddBinding<EntityPlayerBase>(enum_BindingsName.Interact, OnSwitchWeapon);
-        //PCInputManager.Instance.AddBinding<EntityPlayerBase>(enum_BindingsName.Reload, OnReload);
-
-        UIManager.OnFire = OnTriggerDown;
-        UIManager.OnReload = OnReload;
-        UIManager.OnSwitch = OnSwitchWeapon;
-        TouchDeltaManager.Instance.Bind(OnMovementDelta,OnRotateDelta) ;
-
+        }
         ObtainWeapon(ObjectManager.SpawnWeapon(enum_Weapon.Rifle, this));
         ObtainWeapon(ObjectManager.SpawnWeapon(enum_Weapon.SnipeRifle, this));
     }
@@ -76,7 +79,7 @@ public class EntityPlayerBase : EntityBase {
         m_WeaponCurrent.SetActivate(true);
         OnAmmoInfoChanged();
     }
-    #region PlayerMovement
+#region PlayerMovement
     void OnRotateDelta(Vector2 rotateDelta)
     {
         m_Pitch += (rotateDelta.y/Screen.height)*90f;
@@ -103,7 +106,7 @@ public class EntityPlayerBase : EntityBase {
         m_Pitch = Mathf.Clamp(m_Pitch, -45, 45);
         OnRotateDelta(new Vector2(Random.Range(-1f,1f)>0?1f:-1f *recoil.x,0));
     }
-    #endregion
+#endregion
 
 
     void OnAmmoInfoChanged()
