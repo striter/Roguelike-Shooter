@@ -4,15 +4,17 @@ using UnityEngine;
 using GameSetting;
 public class SFXBullet : SFXBase {
     float m_bulletDamage;
+    Vector3 m_simulateGravity;
     public void Play(float damage,Vector3 direction)
     {
         m_bulletDamage = damage;
-
+        m_simulateGravity = Vector3.zero;
         base.Play(GameConst.I_BulletMaxLastTime);
     }
     private void FixedUpdate()
     {
-        transform.Translate((transform.forward *GameConst.I_BulletSpeedForward + Vector3.down * GameConst.I_BulletSpeedDownward) * Time.deltaTime, Space.World);
+        m_simulateGravity += Time.fixedDeltaTime * GameConst.I_BulletSpeedDownward * Vector3.down;
+        transform.Translate((transform.forward *GameConst.I_BulletSpeedForward + m_simulateGravity) * Time.fixedDeltaTime, Space.World);
     }
     private void OnTriggerEnter(Collider other)
     {
