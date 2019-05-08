@@ -6,8 +6,6 @@ using GameSetting;
 using TExcel;
 
 public class UI_SporeManager : UIPageBase,ISingleCoroutine {
-
-
     Text txt_Coin, txt_CoinsPerSecond, txt_Blue;
     Text txt_MaxLevel, txt_TimePassed, txt_TimeScale;
     Button btn_BuyCoin, btn_BuyBlue;
@@ -68,10 +66,14 @@ public class UI_SporeManager : UIPageBase,ISingleCoroutine {
     void Update()
     {
         RefreshManagerInfo();
+        float deltaTime = Time.deltaTime * i_TimeScale;
+        m_ManagerInfo.d_timePassed += deltaTime;
         for (int i = 1; i <= gc_SporeContainers.I_Count; i++)       //Tick Every Container
-            gc_SporeContainers.GetItem(i).Tick(Time.deltaTime*i_TimeScale);
+        {
+            gc_SporeContainers.GetItem(i).Tick(deltaTime);
+        }
 
-        if(Time.time> f_autoSaveCheck)      //Auto Save Case Game Crush Or Force Quit
+        if (Time.time> f_autoSaveCheck)      //Auto Save Case Game Crush Or Force Quit
             TGameData<CSporeManagerSave>.Save(m_ManagerInfo);
     }
 
@@ -86,7 +88,7 @@ public class UI_SporeManager : UIPageBase,ISingleCoroutine {
         txt_Coin.text = "Coins:" + m_ManagerInfo.f_coin;
         txt_Blue.text = "Blues:" + GameManager.m_PlayerInfo.f_blue;
 
-        txt_TimePassed.text = "Time Passed" + m_ManagerInfo.i_timePassed;
+        txt_TimePassed.text =  "Time Passed:\n" + string.Format("{0:0.00}",m_ManagerInfo.d_timePassed);
         txt_TimeScale.text = "Time Scale:" + i_TimeScale;
     }
 

@@ -119,6 +119,10 @@ public class TXmlPhrase : SingleTon<TXmlPhrase>
     {
         dic_valueToXmlData.Add(typeof(int), (object target) => { return target.ToString(); });
         dic_xmlDataToValue.Add(typeof(int), (string xmlData) => { return int.Parse(xmlData); });
+        dic_valueToXmlData.Add(typeof(long), (object target) => { return target.ToString(); });
+        dic_xmlDataToValue.Add(typeof(long), (string xmlData) => { return long.Parse(xmlData); });
+        dic_valueToXmlData.Add(typeof(double), (object target) => { return target.ToString(); });
+        dic_xmlDataToValue.Add(typeof(double), (string xmlData) => { return double.Parse(xmlData); });
         dic_valueToXmlData.Add(typeof(float), (object target) => { return target.ToString(); });
         dic_xmlDataToValue.Add(typeof(float), (string xmlData) => { return float.Parse(xmlData); });
         dic_valueToXmlData.Add(typeof(string), (object target) => { return target as string; });
