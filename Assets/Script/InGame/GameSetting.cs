@@ -127,7 +127,7 @@ namespace GameSetting
     {
         public float f_coin;
         public int i_maxLevel;
-        public int i_timePassed;
+        public double d_timePassed;
         protected Dictionary<int, int> d_sporeContainerInfo;
         public int I_SlotCount => d_sporeContainerInfo.Count;
         public int this[int slotIndex]
@@ -182,7 +182,7 @@ namespace GameSetting
         {
             f_coin = 30;
             i_maxLevel = 1;
-            i_timePassed = 0;
+            d_timePassed = 0;
             d_sporeContainerInfo = new Dictionary<int, int>() { };
             for (int i = 1; i <= UIConst.I_SporeManagerContainersMaxAmount; i++)
                 d_sporeContainerInfo.Add(i, i <= UIConst.I_SporeManagerContainerStartFreeSlot ? 0 : -1);
