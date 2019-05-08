@@ -17,7 +17,7 @@ public static class TGameData<T> where T : class,ISave, new()
     {
         get
         {
-            return s_Directory + "/" + typeof(T).ToString() + ".xml";
+            return s_Directory + "/" + typeof(T).Name + ".xml";
         }
     }
     static XmlDocument xml_Doc = new XmlDocument();
@@ -55,7 +55,7 @@ public static class TGameData<T> where T : class,ISave, new()
                 throw new Exception("None Xml Data Found:"+s_FullPath);
 
             xml_Doc.Load(s_FullPath);
-            xml_TotalNode = xml_Doc.SelectSingleNode(typeof(T).ToString());
+            xml_TotalNode = xml_Doc.SelectSingleNode(typeof(T).Name);
             if (xml_TotalNode != null)
             {
                 for (int i = 0; i < fi_current.Length; i++)
@@ -97,7 +97,7 @@ public static class TGameData<T> where T : class,ISave, new()
             File.Delete(s_FullPath);
         xml_Doc = new XmlDocument();
         T temp = new T();
-        xml_Element = xml_Doc.CreateElement(typeof(T).ToString());
+        xml_Element = xml_Doc.CreateElement(typeof(T).Name);
         xml_TotalNode = xml_Doc.AppendChild(xml_Element);
 
         for (int i = 0; i < fi_current.Length; i++)
@@ -181,10 +181,11 @@ public class TXmlPhrase : SingleTon<TXmlPhrase>
                     Type listType = type.GetGenericArguments()[0];
                     IList iList_Target = (IList)Activator.CreateInstance(type);
                     string[] as_split = xmlData.Split(';');
-                    for (int i = 0; i < as_split.Length; i++)
-                    {
-                        iList_Target.Add(XmlDataToValue(listType, as_split[i]));
-                    }
+                    if (as_split.Length != 1 || as_split[0] != "")
+                        for (int i = 0; i < as_split.Length; i++)
+                        {
+                            iList_Target.Add(XmlDataToValue(listType, as_split[i]));
+                        }
                     obj_target = iList_Target;
                 }
                 else if (type.GetGenericTypeDefinition() == typeof(Dictionary<,>))
@@ -193,12 +194,13 @@ public class TXmlPhrase : SingleTon<TXmlPhrase>
                     Type valueType = type.GetGenericArguments()[1];
                     IDictionary iDic_Target = (IDictionary)Activator.CreateInstance(type);
                     string[] as_split = xmlData.Split(';');
-                    for (int i = 0; i < as_split.Length; i++)
-                    {
-                        string[] as_subSplit = as_split[i].Split(':');
-                        iDic_Target.Add(XmlDataToValue(keyType, as_subSplit[0])
-                            , XmlDataToValue(valueType, as_subSplit[1]));
-                    }
+                    if (as_split.Length != 1 || as_split[0] != "")
+                        for (int i = 0; i < as_split.Length; i++)
+                        {
+                            string[] as_subSplit = as_split[i].Split(':');
+                            iDic_Target.Add(XmlDataToValue(keyType, as_subSplit[0])
+                                , XmlDataToValue(valueType, as_subSplit[1]));
+                        }
                     obj_target = iDic_Target;
                 }
             }

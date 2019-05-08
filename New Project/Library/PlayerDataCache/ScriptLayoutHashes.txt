@@ -1,6 +1,6 @@
 Android
 PlayerPath?
-C:/Users/mayn/Desktop/Test11.apk
+C:/Users/mayn/Desktop/Test3.apk
 SceneListBegin?
 Assets/Scenes/Test.unity
 SceneListEnd?
@@ -18,6 +18,7 @@ ff05dcdf90651c3d98a9cad3df5e471e UnityEngine.Timeline.dll:UnityEngine.Timeline.C
 92d7a83ea3c7404e484f3b2eed421855 UnityEngine.Timeline.dll:UnityEngine.Timeline.PlayableTrack
 df374c01140c2d578bf70cbd60073d1d UnityEngine.Timeline.dll:UnityEngine.Timeline.TimelineAsset
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.CoroutineManager
+05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.UIGI_SporeContainer
 7cf134b1f38b55673869873fbcbd111d Assembly-CSharp.dll:.UIWorldBase
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.UIT_JoyStick
 a35dc9cca2faebc5f5f1aeb9e8e47bbe UnityEngine.UI.dll:UnityEngine.UI.AspectRatioFitter
@@ -179,6 +180,7 @@ c2275a8bfbb9f9942cad75ecdfded41d UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.Spa
 8367cb113184d2b642682a62a380eae3 Assembly-CSharp.dll:.SFXBase
 78123ef2f2607a958276e64f44495b5c Assembly-CSharp.dll:.UIT_Logo
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.WeaponBase
+05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.UI_SporeManager
 52de642274f95c2ff8d3eb983f970e06 Assembly-CSharp.dll:.CameraController
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.HitCheckBase
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.EntityBase

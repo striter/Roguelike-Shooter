@@ -1,7 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
+public static class TCommonUI
+{
+    public static void SetAlpha(this MaskableGraphic graphic, float alpha)
+    {
+        graphic.color = new Color(graphic.color.r, graphic.color.g, graphic.color.b, alpha);
+    }
+    public static void RaycastAll(Vector2 castPos)      //Bind UIT_EventTriggerListener To Items Need To Raycast By EventSystem
+    {
+        PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
+        eventDataCurrentPosition.position = castPos;
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
+        for (int i = 0; i < results.Count; i++)
+        {
+            UIT_EventTriggerListener listener = results[i].gameObject.GetComponent<UIT_EventTriggerListener>();
+            if (listener != null)
+                listener.OnRaycast();
+        }
+    }
+}
 public static class TCommon
 {
     public static void SetActivate(this MonoBehaviour behaviour, bool active)
@@ -241,10 +262,6 @@ public static class TCommon
         {
             childList[i].SetSiblingIndex(childIndexList.FindIndex(p => p == int.Parse(childList[i].name)));
         }
-    }
-    public static void SetAlpha(this MaskableGraphic graphic, float alpha)
-    {
-        graphic.color = new Color(graphic.color.r, graphic.color.g, graphic.color.b, alpha);
     }
 
     public static string ToLogText<T, Y>(this Dictionary<T, Y> dic)

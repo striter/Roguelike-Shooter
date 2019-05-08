@@ -15,7 +15,7 @@ public class UIPageBase : MonoBehaviour,ISingleCoroutine
             return null;
 
         t_curPage = typeof(T);
-        T tempBase=GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/UI/Pages/"+typeof(T).ToString()),parentTransform).GetComponent<T>();
+        T tempBase = TResources.Instantiate<T>("UI/Pages/" + typeof(T).ToString(), parentTransform);
         tempBase.Init(useAnim);
         return tempBase;
     }
@@ -55,8 +55,7 @@ public class UIPageBase : MonoBehaviour,ISingleCoroutine
     void OnHideFinished()
     {
         t_curPage = null;
-        if (OnInteractFinished != null)
-            OnInteractFinished(false);
+        OnInteractFinished?.Invoke(false);
         Destroy(this.gameObject);
     }
 

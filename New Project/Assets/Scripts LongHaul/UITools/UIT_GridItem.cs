@@ -8,6 +8,7 @@ public class UIT_GridItem : MonoBehaviour
     protected bool b_highLight; 
     protected Transform tf_Container;
     protected RectTransform rtf_RectTransform;
+    protected UIT_GridController gc_Parent;
     public RectTransform rectTransform
     {
         get
@@ -36,9 +37,10 @@ public class UIT_GridItem : MonoBehaviour
         rtf_RectTransform = transform.GetComponent<RectTransform>();
         tf_Container = transform.Find("Container");
     }
-    public void SetGridControlledItem(int _index, Action<int> _OnItemClick)
+    public void SetGridControlledItem(int _index, UIT_GridController parent, Action<int> _OnItemClick)
     {
         Init();
+        gc_Parent = parent;
         i_Index = _index;
         OnItemClick = _OnItemClick;
         SetHighLight(false);

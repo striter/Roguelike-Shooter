@@ -84,7 +84,7 @@ public class UIT_GridControllerMono<T>:UIT_GridController where T:UIT_GridItem
             return MonoItemDic.Count;
         }
     }
-    public UIT_GridControllerMono(Transform _transform, Action<int> _OnItemSelected,bool activeHighLight=true,bool doubleClickConfirm=false) : base(_transform)
+    public UIT_GridControllerMono(Transform _transform, Action<int> _OnItemSelected=null,bool activeHighLight=true,bool doubleClickConfirm=false) : base(_transform)
     {
         b_btnEnable = true;
         b_activeHighLight = activeHighLight;
@@ -95,7 +95,7 @@ public class UIT_GridControllerMono<T>:UIT_GridController where T:UIT_GridItem
     public new T AddItem(int identity) 
     {
         T item = base.AddItem(identity).GetComponent<T>();
-        item.SetGridControlledItem(identity, OnItemSelect);
+        item.SetGridControlledItem(identity,this, OnItemSelect);
         MonoItemDic.Add(identity,item);
         item.SetActivate(true);
         item.transform.SetSiblingIndex(identity); 
@@ -136,7 +136,7 @@ public class UIT_GridControllerMono<T>:UIT_GridController where T:UIT_GridItem
         {
             if (identity == i_currentSelecting)
             {
-                OnItemSelected(identity);
+                OnItemSelected?.Invoke(identity);
                 return;
             }
         }
@@ -146,8 +146,7 @@ public class UIT_GridControllerMono<T>:UIT_GridController where T:UIT_GridItem
             {
                 return;
             }
-            if (OnItemSelected != null)
-                OnItemSelected(identity);
+            OnItemSelected?.Invoke(identity);
         }
 
         if (b_activeHighLight && i_currentSelecting != -1)

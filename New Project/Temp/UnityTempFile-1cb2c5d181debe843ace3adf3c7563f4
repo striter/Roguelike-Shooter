@@ -1,0 +1,211 @@
+-debug
+-target:library
+-nowarn:0169
+-langversion:6
+-out:Temp/Assembly-CSharp.dll
+-unsafe
+-optimize
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.CoreModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.AccessibilityModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.ParticleSystemModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.PhysicsModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.VehiclesModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.ClothModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.AIModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.AnimationModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.TextRenderingModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.UIModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.TerrainPhysicsModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.IMGUIModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.UNETModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.DirectorModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.UnityAnalyticsModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.PerformanceReportingModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.UnityConnectModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.WebModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.ARModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.VRModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.UIElementsModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.StyleSheetsModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.AssetBundleModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.AudioModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.CrashReportingModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.GameCenterModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.GridModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.ImageConversionModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.InputModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.JSONSerializeModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.ParticlesLegacyModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.Physics2DModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.ScreenCaptureModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.SharedInternalsModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.SpriteMaskModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.SpriteShapeModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.TerrainModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.TilemapModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.UnityWebRequestModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.UnityWebRequestAudioModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.UnityWebRequestTextureModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.UnityWebRequestWWWModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.VideoModule.dll
+-r:S:\2017.4.26f1\Editor\Data\PlaybackEngines\AndroidPlayer/Variations/mono/Managed/UnityEngine.WindModule.dll
+-r:S:/2017.4.26f1/Editor/Data/UnityExtensions/Unity/GUISystem/Standalone/UnityEngine.UI.dll
+-r:S:/2017.4.26f1/Editor/Data/UnityExtensions/Unity/Timeline/Runtime/UnityEngine.Timeline.dll
+-r:S:/2017.4.26f1/Editor/Data/UnityExtensions/Unity/Networking/Standalone/UnityEngine.Networking.dll
+-r:S:/2017.4.26f1/Editor/Data/UnityExtensions/Unity/UnitySpatialTracking/Runtime/UnityEngine.SpatialTracking.dll
+-r:"Assets/Scripts LongHaul/PluginsToolPrefabs/Excel.dll"
+-r:"Assets/Scripts LongHaul/PluginsToolPrefabs/ICSharpCode.SharpZipLib.dll"
+-r:"Assets/Scripts LongHaul/PluginsToolPrefabs/System.Data.dll"
+-r:C:/Users/mayn/AppData/Local/Unity/cache/packages/packages.unity.com/com.unity.analytics@2.0.13/UnityEngine.Analytics.dll
+-r:C:/Users/mayn/AppData/Local/Unity/cache/packages/packages.unity.com/com.unity.standardevents@1.0.10/UnityEngine.StandardEvents.dll
+-define:UNITY_5_3_OR_NEWER
+-define:UNITY_5_4_OR_NEWER
+-define:UNITY_5_5_OR_NEWER
+-define:UNITY_5_6_OR_NEWER
+-define:UNITY_2017_1_OR_NEWER
+-define:UNITY_2017_2_OR_NEWER
+-define:UNITY_2017_3_OR_NEWER
+-define:UNITY_2017_4_OR_NEWER
+-define:UNITY_2017_4_26
+-define:UNITY_2017_4
+-define:UNITY_2017
+-define:UNITY_ANALYTICS
+-define:ENABLE_AUDIO
+-define:ENABLE_CACHING
+-define:ENABLE_CLOTH
+-define:ENABLE_GENERICS
+-define:ENABLE_PVR_GI
+-define:ENABLE_MICROPHONE
+-define:ENABLE_MULTIPLE_DISPLAYS
+-define:ENABLE_PHYSICS
+-define:ENABLE_SPRITERENDERER_FLIPPING
+-define:ENABLE_SPRITES
+-define:ENABLE_GRID
+-define:ENABLE_TILEMAP
+-define:ENABLE_TERRAIN
+-define:ENABLE_RAKNET
+-define:ENABLE_DIRECTOR
+-define:ENABLE_UNET
+-define:ENABLE_LZMA
+-define:ENABLE_UNITYEVENTS
+-define:ENABLE_WEBCAM
+-define:ENABLE_WWW
+-define:ENABLE_CLOUD_SERVICES_COLLAB
+-define:ENABLE_CLOUD_SERVICES_COLLAB_SOFTLOCKS
+-define:ENABLE_CLOUD_SERVICES_ADS
+-define:ENABLE_CLOUD_HUB
+-define:ENABLE_CLOUD_PROJECT_ID
+-define:ENABLE_CLOUD_SERVICES_USE_WEBREQUEST
+-define:ENABLE_CLOUD_SERVICES_UNET
+-define:ENABLE_CLOUD_SERVICES_BUILD
+-define:ENABLE_CLOUD_LICENSE
+-define:ENABLE_EDITOR_HUB
+-define:ENABLE_EDITOR_HUB_LICENSE
+-define:ENABLE_WEBSOCKET_CLIENT
+-define:ENABLE_DIRECTOR_AUDIO
+-define:ENABLE_DIRECTOR_TEXTURE
+-define:ENABLE_TIMELINE
+-define:ENABLE_EDITOR_METRICS
+-define:ENABLE_EDITOR_METRICS_CACHING
+-define:ENABLE_NATIVE_ARRAY
+-define:ENABLE_SPRITE_MASKING
+-define:INCLUDE_DYNAMIC_GI
+-define:INCLUDE_GI
+-define:ENABLE_MONO_BDWGC
+-define:PLATFORM_SUPPORTS_MONO
+-define:INCLUDE_PUBNUB
+-define:ENABLE_PLAYMODE_TESTS_RUNNER
+-define:ENABLE_VIDEO
+-define:ENABLE_RMGUI
+-define:ENABLE_PACKMAN
+-define:ENABLE_CUSTOM_RENDER_TEXTURE
+-define:ENABLE_STYLE_SHEETS
+-define:ENABLE_LOCALIZATION
+-define:PLATFORM_ANDROID
+-define:UNITY_ANDROID
+-define:UNITY_ANDROID_API
+-define:ENABLE_SUBSTANCE
+-define:ENABLE_EGL
+-define:ENABLE_NETWORK
+-define:ENABLE_RUNTIME_GI
+-define:ENABLE_CRUNCH_TEXTURE_COMPRESSION
+-define:ENABLE_UNITYWEBREQUEST
+-define:ENABLE_CLOUD_SERVICES
+-define:ENABLE_CLOUD_SERVICES_ANALYTICS
+-define:ENABLE_EVENT_QUEUE
+-define:ENABLE_CLOUD_SERVICES_PURCHASING
+-define:ENABLE_CLOUD_SERVICES_CRASH_REPORTING
+-define:ENABLE_CLOUD_SERVICES_NATIVE_CRASH_REPORTING
+-define:PLATFORM_SUPPORTS_ADS_ID
+-define:UNITY_CAN_SHOW_SPLASH_SCREEN
+-define:ENABLE_VR
+-define:ENABLE_AR
+-define:ENABLE_SPATIALTRACKING
+-define:ENABLE_UNITYADS_RUNTIME
+-define:UNITY_UNITYADS_API
+-define:ENABLE_MONO
+-define:NET_4_6
+-define:UNITY_HAS_GOOGLEVR
+-define:UNITY_HAS_TANGO
+Assets/Script/InGame/EntityBase.cs
+Assets/Script/InGame/EntityPlayerBase.cs
+Assets/Script/InGame/GameManager.cs
+Assets/Script/InGame/GameSetting.cs
+Assets/Script/InGame/HitCheckBase.cs
+Assets/Script/InGame/HitCheckEntity.cs
+Assets/Script/InGame/SFXBase.cs
+Assets/Script/InGame/SFXBullet.cs
+Assets/Script/InGame/SpawnerBase.cs
+Assets/Script/InGame/SpawnerEntity.cs
+Assets/Script/InGame/WeaponBase.cs
+Assets/Script/UI/UI_SporeManager.cs
+Assets/Script/UI/UIManager.cs
+"Assets/Scripts LongHaul/Core/BGMLoopManager.cs"
+"Assets/Scripts LongHaul/Core/BGMManager.cs"
+"Assets/Scripts LongHaul/Core/CameraController.cs"
+"Assets/Scripts LongHaul/Core/CoroutineManager.cs"
+"Assets/Scripts LongHaul/Core/DesignBehaviours.cs"
+"Assets/Scripts LongHaul/Core/FPSCameraController.cs"
+"Assets/Scripts LongHaul/Core/ObjectPoolManager.cs"
+"Assets/Scripts LongHaul/Core/PCInputManager.cs"
+"Assets/Scripts LongHaul/Core/RTSCameraController.cs"
+"Assets/Scripts LongHaul/Core/TouchDeltaManager.cs"
+"Assets/Scripts LongHaul/Core/TouchInputManager.cs"
+"Assets/Scripts LongHaul/Core/TPSCameraController.cs"
+"Assets/Scripts LongHaul/Core/UIPageBase.cs"
+"Assets/Scripts LongHaul/Core/UIWorldBase.cs"
+"Assets/Scripts LongHaul/Core/UIWorldPage.cs"
+"Assets/Scripts LongHaul/Shader/PostEffectBases.cs"
+"Assets/Scripts LongHaul/Shader/PostEffectManager.cs"
+"Assets/Scripts LongHaul/Tools/TBroadCast.cs"
+"Assets/Scripts LongHaul/Tools/TCommon.cs"
+"Assets/Scripts LongHaul/Tools/TExcel.cs"
+"Assets/Scripts LongHaul/Tools/TGameSave.cs"
+"Assets/Scripts LongHaul/Tools/TLocalization.cs"
+"Assets/Scripts LongHaul/Tools/TReflection.cs"
+"Assets/Scripts LongHaul/Tools/TResources.cs"
+"Assets/Scripts LongHaul/Tools/TSceneLoader.cs"
+"Assets/Scripts LongHaul/Tools/TSpecial.cs"
+"Assets/Scripts LongHaul/UITools/UIT_BGMTitle.cs"
+"Assets/Scripts LongHaul/UITools/UIT_EasyScreenLog.cs"
+"Assets/Scripts LongHaul/UITools/UIT_EventTriggerListener.cs"
+"Assets/Scripts LongHaul/UITools/UIT_FpsCounter.cs"
+"Assets/Scripts LongHaul/UITools/UIT_GridController.cs"
+"Assets/Scripts LongHaul/UITools/UIT_GridDefaultItem.cs"
+"Assets/Scripts LongHaul/UITools/UIT_GridItem.cs"
+"Assets/Scripts LongHaul/UITools/UIT_JoyStick.cs"
+"Assets/Scripts LongHaul/UITools/UIT_Loading.cs"
+"Assets/Scripts LongHaul/UITools/UIT_Localization.cs"
+"Assets/Scripts LongHaul/UITools/UIT_Logo.cs"
+"Assets/Scripts LongHaul/UITools/UIT_MessageBox.cs"
+"Assets/Scripts LongHaul/UITools/UIT_SimpleBehaviours.cs"
+"Assets/Scripts LongHaul/UITools/UIT_SubTitleItem.cs"
+"Assets/Scripts LongHaul/UITools/UIT_SystemInfoItem.cs"
+Assets/UIGI_SporeContainer.cs
+-r:S:\2017.4.26f1\Editor\Data\MonoBleedingEdge\lib\mono\4.5\System.Runtime.Serialization.dll
+-r:S:\2017.4.26f1\Editor\Data\MonoBleedingEdge\lib\mono\4.5\System.Xml.Linq.dll
+-r:S:\2017.4.26f1\Editor\Data\MonoBleedingEdge\lib\mono\4.5\UnityScript.dll
+-r:S:\2017.4.26f1\Editor\Data\MonoBleedingEdge\lib\mono\4.5\UnityScript.Lang.dll
+-r:S:\2017.4.26f1\Editor\Data\MonoBleedingEdge\lib\mono\4.5\Boo.Lang.dll
+-sdk:4.6

@@ -13,14 +13,9 @@ namespace TExcel
 
     class Properties<T> where T : struct,ISExcel
     {
-        static List<T> l_PropertyList;
-        public static int Count
-        {
-            get
-            {
-                return PropertiesList.Count;
-            }
-        }
+        static List<T> l_PropertyList=null;
+        public static bool B_Inited => l_PropertyList != null;
+        public static int Count => PropertiesList.Count;
         public static List<T> PropertiesList
         {
             get

@@ -265,15 +265,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Script\EntityBase.cs" />
-    <Compile Include="Assets\Script\EntityPlayerBase.cs" />
-    <Compile Include="Assets\Script\GameManager.cs" />
-    <Compile Include="Assets\Script\GameSetting.cs" />
-    <Compile Include="Assets\Script\HitCheckBase.cs" />
-    <Compile Include="Assets\Script\HitCheckEntity.cs" />
-    <Compile Include="Assets\Script\SpawnerBase.cs" />
-    <Compile Include="Assets\Script\SpawnerEntity.cs" />
-    <Compile Include="Assets\Script\WeaponBase.cs" />
+    <Compile Include="Assets\Script\InGame\EntityBase.cs" />
+    <Compile Include="Assets\Script\InGame\EntityPlayerBase.cs" />
+    <Compile Include="Assets\Script\InGame\GameManager.cs" />
+    <Compile Include="Assets\Script\InGame\GameSetting.cs" />
+    <Compile Include="Assets\Script\InGame\HitCheckBase.cs" />
+    <Compile Include="Assets\Script\InGame\HitCheckEntity.cs" />
+    <Compile Include="Assets\Script\InGame\SFXBase.cs" />
+    <Compile Include="Assets\Script\InGame\SFXBullet.cs" />
+    <Compile Include="Assets\Script\InGame\SpawnerBase.cs" />
+    <Compile Include="Assets\Script\InGame\SpawnerEntity.cs" />
+    <Compile Include="Assets\Script\InGame\WeaponBase.cs" />
+    <Compile Include="Assets\Script\UI\UI_SporeManager.cs" />
+    <Compile Include="Assets\Script\UI\UIManager.cs" />
     <Compile Include="Assets\Scripts LongHaul\Core\BGMLoopManager.cs" />
     <Compile Include="Assets\Scripts LongHaul\Core\BGMManager.cs" />
     <Compile Include="Assets\Scripts LongHaul\Core\CameraController.cs" />
@@ -307,6 +311,7 @@
     <Compile Include="Assets\Scripts LongHaul\UITools\UIT_GridController.cs" />
     <Compile Include="Assets\Scripts LongHaul\UITools\UIT_GridDefaultItem.cs" />
     <Compile Include="Assets\Scripts LongHaul\UITools\UIT_GridItem.cs" />
+    <Compile Include="Assets\Scripts LongHaul\UITools\UIT_JoyStick.cs" />
     <Compile Include="Assets\Scripts LongHaul\UITools\UIT_Loading.cs" />
     <Compile Include="Assets\Scripts LongHaul\UITools\UIT_Localization.cs" />
     <Compile Include="Assets\Scripts LongHaul\UITools\UIT_Logo.cs" />
@@ -314,10 +319,7 @@
     <Compile Include="Assets\Scripts LongHaul\UITools\UIT_SimpleBehaviours.cs" />
     <Compile Include="Assets\Scripts LongHaul\UITools\UIT_SubTitleItem.cs" />
     <Compile Include="Assets\Scripts LongHaul\UITools\UIT_SystemInfoItem.cs" />
-    <Compile Include="Assets\SFXBase.cs" />
-    <Compile Include="Assets\SFXBullet.cs" />
-    <Compile Include="Assets\UIManager.cs" />
-    <Compile Include="Assets\UIT_JoyStick.cs" />
+    <Compile Include="Assets\UIGI_SporeContainer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Shader\Common.shader" />
