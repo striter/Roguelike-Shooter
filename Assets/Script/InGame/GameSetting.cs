@@ -7,8 +7,8 @@ namespace GameSetting
     public static class GameConst          //For Designers Use
     {
         public static readonly int I_BulletMaxLastTime = 5; // No Collision Recycle Time
-        public static readonly float I_BulletSpeedForward = 50f;  //Meter Per Second
-        public static readonly float I_BulletSpeedDownward =5f;  //Meter Per Second
+        public static readonly float I_BulletSpeedForward = 30f;  //Meter Per Second
+        public static readonly float I_BulletSpeedDownward =30f;  //Meter Per Second
         
     }
 
