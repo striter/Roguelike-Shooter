@@ -221,42 +221,5 @@ public class UI_SporeManager : UIPageBase,ISingleCoroutine {
 
         m_ManagerInfo.f_coin += UIExpression.F_SporeManagerPorfitPerSecond(level) *UIConst.I_SporeManagerTickOffsetEach;
     }
-
-    public class SSporeLevelRate
-    {
-        SSporeLevel m_BaseInfo;
-        public float F_CoinChestPrice;
-        public float F_BlueChestPrice;
-        public int I_Level => m_BaseInfo.MaxLevel;
-        public bool B_AddSlot => m_BaseInfo.B_AddSlot;
-        public List<float> l_sporeRates;
-        public SSporeLevelRate(SSporeLevel rate)
-        {
-            m_BaseInfo = rate;
-            l_sporeRates = new List<float>() { m_BaseInfo.F_OffSet0, m_BaseInfo.F_OffSet1, m_BaseInfo.F_OffSet2, m_BaseInfo.F_OffSet3, m_BaseInfo.F_OffSet4, m_BaseInfo.F_OffSet5, m_BaseInfo.F_OffSet6, m_BaseInfo.F_OffSet7, m_BaseInfo.F_OffSet8, m_BaseInfo.F_OffSet9 };
-            float count = 0;
-            for (int i = 0; i < l_sporeRates.Count; i++)
-                count += l_sporeRates[i];
-            if (I_Level != -1 && count != 100)
-                Debug.LogError("Spore Rate Total Unmatch 100! Line:" + I_Level);
-            F_CoinChestPrice = 10 * Mathf.Pow(1.8f , (I_Level - 1));
-            F_BlueChestPrice = 100 * Mathf.Pow(1.05f , (I_Level - 1));
-        }
-        public int AcquireNewSpore()
-        {
-            int random = Random.Range(1, 101);
-            float count = 0;
-            int offset = 0;
-            for (int i = 0; i < l_sporeRates.Count; i++)
-            {
-                count += l_sporeRates[i];
-                if (random < count)
-                {
-                    offset = i;
-                    break;
-                }
-            }
-            return I_Level - offset;
-        }
-    }
+    
 }

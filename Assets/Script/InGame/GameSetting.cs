@@ -249,6 +249,7 @@ namespace GameSetting
                 count += l_sporeRates[i];
             if (I_Level != -1 && count != 100)
                 Debug.LogError("Spore Rate Total Unmatch 100! Line:" + I_Level);
+
             F_CoinChestPrice = UIExpression.F_SporeManagerChestCoinRequirement(I_Level);
             F_BlueChestPrice = UIExpression.F_SporeManagerChestBlueRequirement(I_Level);
         }
