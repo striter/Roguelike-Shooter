@@ -4,7 +4,8 @@ using System.Collections.Generic;
 #pragma warning disable 0649
 namespace GameSetting
 {
-    public static class GameConst          //For Designers Use
+    #region For Designers Use
+    public static class GameConst
     {
         public static readonly int I_BulletMaxLastTime = 5; // No Collision Recycle Time
         public static readonly float I_BulletSpeedForward = 40f;  //Meter Per Second
@@ -12,7 +13,13 @@ namespace GameSetting
         
     }
 
-    public class UIConst
+    public static class GameExpression
+    {
+
+    }
+
+
+    public static class UIConst
     {
         public static readonly int I_SporeManagerContainersMaxAmount = 9;  //Max Amount Of SporeManager Container
         public static readonly int I_SporeManagerContainerStartFreeSlot = 3;    //Free Slot For New Player
@@ -21,11 +28,14 @@ namespace GameSetting
         public static readonly int I_SporeManagerAutoSave = 5;      //Per Seconds Auto Save Case Game Crush
     }
 
-    public static class GameLayer
+    public static class UIExpression
     {
-        public static readonly int I_Static = LayerMask.NameToLayer("static");
-        public static readonly int I_Entity = LayerMask.NameToLayer("entity");
+        public static float F_SporeManagerPorfitPerSecond(int level) => level == 1 ? 1f : Mathf.Pow(1.5f, (level - 1));     //Coins Profit Per Second 
+        public static float F_SporeManagerChestCoinRequirement(int maxLevel) => 10 * Mathf.Pow(1.8f, (maxLevel - 1));       //Coin Requirement Per Chest
+        public static float F_SporeManagerChestBlueRequirement(int maxLevel) => 100 * Mathf.Pow(1.05f, (maxLevel - 1));       //Blue Requirement Per Chest
     }
+    #endregion
+    #region For Developers Use
     #region BroadCastEnum
     enum enum_BC_UIStatusChanged
     {
@@ -75,7 +85,13 @@ namespace GameSetting
         }
     }
     #endregion
-
+    #region GameLayer
+    public static class GameLayer
+    {
+        public static readonly int I_Static = LayerMask.NameToLayer("static");
+        public static readonly int I_Entity = LayerMask.NameToLayer("entity");
+    }
+    #endregion
     #region GameSave
     public class CPlayerSave : ISave
     {
@@ -121,8 +137,7 @@ namespace GameSetting
     }
 
     #endregion
-
-    #region UI    
+    #region For UI Usage     
     class CSporeManagerSave : ISave     //Locked=-1 Spare=1
     {
         public float f_coin;
@@ -234,13 +249,11 @@ namespace GameSetting
                 count += l_sporeRates[i];
             if (I_Level != -1 && count != 100)
                 Debug.LogError("Spore Rate Total Unmatch 100! Line:" + I_Level);
-            F_CoinChestPrice = 10 * Mathf.Pow(1.8f, (I_Level - 1));
-            F_BlueChestPrice = 100 * Mathf.Pow(1.05f, (I_Level - 1));
+
+            F_CoinChestPrice = UIExpression.F_SporeManagerChestCoinRequirement(I_Level);
+            F_BlueChestPrice = UIExpression.F_SporeManagerChestBlueRequirement(I_Level);
         }
-        public static float GetProfitPerTick(int level)
-        {
-            return level == 1 ? 1f : Mathf.Pow(1.5f, (level - 1)); ;
-        }
+
         public int AcquireNewSpore()
         {
             int random = Random.Range(1, 101);
@@ -258,5 +271,6 @@ namespace GameSetting
             return I_Level - offset;
         }
     }
+    #endregion
     #endregion
 }

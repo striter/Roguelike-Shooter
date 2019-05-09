@@ -48,7 +48,7 @@ public class UIGI_SporeContainer : UIT_GridItem {
     public void Tick(float deltaTime)
     {
         f_tickTime += deltaTime;
-        if (f_tickTime > f_tickCheck)
+        while (f_tickTime > f_tickCheck)
         {
             OnTickProfit(I_Index);
 
