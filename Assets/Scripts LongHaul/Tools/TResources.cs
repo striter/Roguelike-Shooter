@@ -11,7 +11,9 @@ public class TResources
     {
         GameObject obj = Resources.Load<GameObject>(path);
         if (obj == null)
-            Debug.LogError("Null Path Of :Resources/" + path.ToString());
+        {
+            throw new Exception("Null Path Of :Resources/" + path.ToString());
+        }
         return UnityEngine.Object.Instantiate(obj, toParent).GetComponent<T>() ;
     }
     public static T Load<T>(string path) where T:UnityEngine.Object
@@ -25,7 +27,7 @@ public class TResources
         if (request.isDone && request.asset != null)
             OnLoadFinished(request.asset as T);
         else
-            UnityEngine.Debug.LogError("Null Path Of: Resources/"+resourcePath);
+            Debug.LogError("Null Path Of: Resources/"+resourcePath);
     }
     #endregion
     public static T LoadResourceSync<T>(string bundlePath, string name) where T:UnityEngine.Object

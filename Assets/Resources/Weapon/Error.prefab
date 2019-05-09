@@ -69,7 +69,7 @@ GameObject:
   - component: {fileID: 4591243210605790}
   - component: {fileID: 114835260476001306}
   m_Layer: 0
-  m_Name: Rifle
+  m_Name: Error
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

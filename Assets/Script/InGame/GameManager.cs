@@ -1,4 +1,5 @@
 ﻿using GameSetting;
+using System;
 using UnityEngine;
 
 public class GameManager : SingletonMono<GameManager>
@@ -44,17 +45,11 @@ public static class ObjectManager
         {
             ObjectPoolManager<enum_Entity,EntityBase>.Register(type,TResources.Instantiate<EntityBase>("Entity/"+type.ToString()), enum_PoolSaveType.DynamicMaxAmount,1,null);
         });
-
-        TCommon.TraversalEnum((enum_Weapon type) =>
-        {
-            ObjectPoolManager<enum_Weapon, WeaponBase>.Register(type, TResources.Instantiate<WeaponBase>("Weapon/" + type.ToString()), enum_PoolSaveType.DynamicMaxAmount,1,null);
-        });
-
+        
         TCommon.TraversalEnum((enum_SFX type) =>
         {
             ObjectPoolManager<enum_SFX, SFXBase>.Register(type, TResources.Instantiate<SFXBase>("SFX/" + type.ToString()), enum_PoolSaveType.StaticMaxAmount, 100, null);
         });
-
     }
     public static EntityBase SpawnEntity(enum_Entity type,Transform toTrans=null)
     {
@@ -69,9 +64,24 @@ public static class ObjectManager
     }
     public static WeaponBase SpawnWeapon(enum_Weapon type, EntityPlayerBase toPlayer)
     {
-        WeaponBase weapon = ObjectPoolManager<enum_Weapon, WeaponBase>.Spawn(type, TF_Entity);
-        weapon.Init(TExcel.Properties<SWeapon>.PropertiesList.Find(p => p.m_Type == type));
-        return weapon;
+        try
+        {
+            if (!ObjectPoolManager<enum_Weapon, WeaponBase>.Registed(type))
+            {
+                WeaponBase preset = TResources.Instantiate<WeaponBase>("Weapon/" + type.ToString());
+                ObjectPoolManager<enum_Weapon, WeaponBase>.Register(type, preset, enum_PoolSaveType.DynamicMaxAmount, 1, null);
+            }
+
+            return ObjectPoolManager<enum_Weapon, WeaponBase>.Spawn(type, TF_Entity);
+        }
+        catch       //Error Check
+        {
+            Debug.LogError("Error Null Weapon Spawned:" + type);
+
+            WeaponBase target = TResources.Instantiate<WeaponBase>("Weapon/Error");
+            target.Init(TExcel.Properties<SWeapon>.PropertiesList.Find(p => p.m_Weapon == type));
+            return target;
+        }
     }
     public static SFXBase SpawnSFX(enum_SFX type, Transform toTrans)
     {

@@ -8,9 +8,8 @@ namespace GameSetting
     public static class GameConst
     {
         public static readonly int I_BulletMaxLastTime = 5; // No Collision Recycle Time
-        public static readonly float I_BulletSpeedForward = 40f;  //Meter Per Second
-        public static readonly float I_BulletSpeedDownward =20f;  //Meter Per Second
-        
+        public static readonly int I_BurstFirePelletsOnceTrigger = 3;       //Times While Burst Fire
+        public static readonly int I_BulletSpeadAtDistance = 100;       //Meter,  Bullet Spread In A Circle At End Of This Distance 
     }
 
     public static class GameExpression
@@ -45,6 +44,25 @@ namespace GameSetting
     }
     #endregion
     #region GameEnum
+
+    public enum enum_Entity     //Preset For Entities
+    {
+        Invalid = -1,
+        //Player
+        Player = 1,
+        //Enermy
+        Dummy = 2,
+    }
+
+    public enum enum_SFX        //Preset For SFX
+    {
+        Invalid = -1,
+        Bullet_Normal = 1,
+        Bullet_Laser = 2,
+        Bullet_Bolt = 3,
+        Bullet_Rocket = 4,
+    }
+
     public enum enum_HitCheck
     {
         Invalid=-1,
@@ -54,33 +72,67 @@ namespace GameSetting
     public enum enum_Weapon
     {
         Invalid=-1,
-        Rifle=1,
-        SnipeRifle=2,
+        //Laser
+        LaserPistol=1001,
+        LaserCannon=1002,
+        //Snipe Rifle
+        MK10=2001,
+        Kar98=2002,
+        //Submachine Gun
+        UZI=3001,
+        UMP45=3002,
+        //Assult Rifle
+        SCAR=4001,
+        M16A4=4002,
+        AKM=4003,
+        //Pistol
+        P92=5001,
+        DE=5002,
+        //Shotgun
+        XM1014=6001,
+        S686=6002,
+        //Heavy Weapon
+        Crossbow=7001,
+        RocketLauncher=7002,
     }
-    public enum enum_Entity
+    public enum enum_TriggerType
     {
         Invalid=-1,
-        Player=1,
-        Dummy=2,
+        Single=1,
+        Auto=2, 
+        Burst=3,
+        Pull=4,
+        Store=5,
     }
-    public enum enum_SFX
+    public enum enum_BulletType
     {
         Invalid=-1,
-        Bullet=1,
+        Normal=1,
+        Laser=2,
+        Bolt=3,
+        Rocket=4,
     }
+
     public static class GameEnum_Extend
     {
+        public static enum_SFX ToSFXType(this enum_BulletType type)
+        {
+            switch (type)
+            {
+                default:Debug.LogError("Insert More Convertions Here:"+type.ToString());return enum_SFX.Invalid;
+                case enum_BulletType.Normal:return enum_SFX.Bullet_Normal;
+                case enum_BulletType.Laser:return enum_SFX.Bullet_Laser;
+                case enum_BulletType.Bolt:return enum_SFX.Bullet_Bolt;
+                case enum_BulletType.Rocket:return enum_SFX.Bullet_Rocket;
+            }
+        }
         public static int ToLayer(this enum_HitCheck layerType)
         {
             switch (layerType)
             {
-                default:
-                    Debug.LogError("Null Layer Can Be Transferd From:" + layerType.ToString());
-                    return 0;
-                case enum_HitCheck.Entity:
-                    return GameLayer.I_Entity;
-                case enum_HitCheck.Static:
-                    return GameLayer.I_Static;
+                default:Debug.LogError("Null Layer Can Be Transferd From:" + layerType.ToString());return 0;
+                case enum_HitCheck.Entity:return GameLayer.I_Entity;
+                case enum_HitCheck.Static:return GameLayer.I_Static;
             }
         }
     }
@@ -101,7 +153,6 @@ namespace GameSetting
             f_blue = 100;
         }
     }
-
     #endregion
     #region GameStruct
     public struct SEntity : ISExcel
@@ -120,20 +171,37 @@ namespace GameSetting
     {
         int index;
         string s_name;
+        int i_triggerType;
+        int i_bulletType;
         float f_damage;
         float f_fireRate;
+        float f_specialRate;
+        float f_manaCost;
         int i_clipAmount;
+        float f_spread;
         float f_reloadTime;
+        int i_PelletsPerShot;
+        float f_stunAfterShot;
+        float f_speedHorizontal;
+        float f_speedVertical;
         float f_recoilHorizontal;
         float f_recoilVertical;
-        public enum_Weapon m_Type => (enum_Weapon)index;
+
+        public enum_Weapon m_Weapon => (enum_Weapon)index;
         public string m_Name => s_name;
+        public enum_TriggerType m_TriggerType=>(enum_TriggerType)i_triggerType;
+        public enum_BulletType m_BulletType => (enum_BulletType)i_bulletType;
         public float m_Damage => f_damage;
         public float m_FireRate => f_fireRate;
+        public float m_SpecialRate => f_specialRate;
+        public float m_ManaCost => f_manaCost;
         public int m_ClipAmount => i_clipAmount;
+        public float m_Spread => f_spread;
         public float m_ReloadTime => f_reloadTime;
-        public float m_RecoilHorizontal => f_recoilHorizontal;
-        public float m_RecoilVertical => f_recoilVertical;
+        public int m_PelletsPerShot => i_PelletsPerShot;
+        public float m_stunAfterShot => f_stunAfterShot;
+        public Vector2 m_BulletSpeed => new Vector2(f_speedHorizontal,f_speedVertical);
+        public Vector2 m_RecoilPerShot => new Vector2(f_recoilHorizontal, f_recoilVertical);
     }
 
     #endregion

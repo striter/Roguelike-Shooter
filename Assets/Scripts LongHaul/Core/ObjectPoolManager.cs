@@ -27,6 +27,10 @@ public class ObjectPoolManager<T,Y> where Y:MonoBehaviour {
     }
 
     static Dictionary<T, ItemPoolInfo> d_ItemInfos = new Dictionary<T, ItemPoolInfo>();
+    public static bool Registed(T identity)
+    {
+        return d_ItemInfos.ContainsKey(identity);
+    }
     public static void Register(T identity, Y registerItem,  enum_PoolSaveType savetype, int poolSaveAmount, Action<Y> OnItemInstantiate)
     {
         if (d_ItemInfos.ContainsKey(identity))

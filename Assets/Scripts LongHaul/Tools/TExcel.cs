@@ -65,7 +65,7 @@ namespace TExcel
             {
                 for (int j = 0; j < fields.Length; j++)
                 {
-                    //Debug.Log(fields[j].FieldType+" "+ result.Tables[0].Rows[i + 1][j].ToString());
+                    //Debug.Log(fields[j].Name+"/"+fields[j].FieldType+":"+ result.Tables[0].Rows[i + 1][j].ToString());
                     if (fields[j].FieldType == typeof(string))
                     {
                         fields[j].SetValue(obj, result.Tables[0].Rows[i + 1][j].ToString());
