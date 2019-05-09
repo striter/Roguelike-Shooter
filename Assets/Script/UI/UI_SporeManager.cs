@@ -42,7 +42,7 @@ public class UI_SporeManager : UIPageBase,ISingleCoroutine {
         btn_BuyCoin = tf_Container.Find("BuyCoin").GetComponent<Button>();
         btn_BuyCoin.onClick.AddListener(OnCoinAcquireChest);
         btn_BuyBlue = tf_Container.Find("BuyBlue").GetComponent<Button>();
-        btn_BuyBlue.onClick.AddListener(OnCoinAcquireChest);
+        btn_BuyBlue.onClick.AddListener(OnBlueAcquireChest);
         txt_BuyCoin = btn_BuyCoin.GetComponentInChildren<Text>();
         txt_BuyBlue = btn_BuyBlue.GetComponentInChildren<Text>();
 
@@ -104,7 +104,7 @@ public class UI_SporeManager : UIPageBase,ISingleCoroutine {
         for (int i = 1; i <= m_ManagerInfo.I_SlotCount; i++)
         {
             if (m_ManagerInfo[i] > 0)
-                totalCoinsPerSecond += SSporeLevelRate.GetProfitPerTick(m_ManagerInfo[i]);
+                totalCoinsPerSecond += UIExpression.F_SporeManagerPorfitPerSecond(m_ManagerInfo[i]);
         }
         txt_CoinsPerSecond.text = "CPS:" + totalCoinsPerSecond;
     }
@@ -212,13 +212,14 @@ public class UI_SporeManager : UIPageBase,ISingleCoroutine {
 
         RefreshContainerInfo();
     }
+
     void TickProfit(int slotIndex)
     {
         int level = m_ManagerInfo[slotIndex];
         if (level == -1 || level == 0)
             return;
 
-        m_ManagerInfo.f_coin += SSporeLevelRate.GetProfitPerTick(slotIndex)*UIConst.I_SporeManagerTickOffsetEach;
+        m_ManagerInfo.f_coin += UIExpression.F_SporeManagerPorfitPerSecond(level) *UIConst.I_SporeManagerTickOffsetEach;
     }
 
     public class SSporeLevelRate
@@ -240,10 +241,6 @@ public class UI_SporeManager : UIPageBase,ISingleCoroutine {
                 Debug.LogError("Spore Rate Total Unmatch 100! Line:" + I_Level);
             F_CoinChestPrice = 10 * Mathf.Pow(1.8f , (I_Level - 1));
             F_BlueChestPrice = 100 * Mathf.Pow(1.05f , (I_Level - 1));
-        }
-        public static float GetProfitPerTick(int level)
-        {
-            return level == 1 ? 1f : Mathf.Pow( 1.5f, (level - 1)); ;
         }
         public int AcquireNewSpore()
         {
