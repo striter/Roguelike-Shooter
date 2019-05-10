@@ -1,17 +1,17 @@
 ﻿using UnityEngine;
 using GameSetting;
 public class SFXBulletRocket : SFXBullet {
-    protected override void OnHitStatic()
+    protected override void OnHitStatic(HitCheckStatic hitStatic)
     {
         DoBlast();
     }
-    protected override void OnHitDynamic()
+    protected override void OnHitDynamic(HitCheckDynamic hitDynamic)
     {
         DoBlast();
     }
-    protected override void OnHitEntity(HitCheckEntity entity)
+    protected override void OnHitEntity(HitCheckEntity hitEntity)
     {
-        if (GameExpression.B_CanHitTarget(entity, I_SourceID))
+        if (GameExpression.B_CanHitTarget(hitEntity, I_SourceID))
             DoBlast();
     }
     protected override void OnHitError()

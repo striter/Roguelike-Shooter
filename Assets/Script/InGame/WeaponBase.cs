@@ -41,7 +41,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
     {
         B_Reloading = false;
         m_Trigger.OnDisable();
-        this.StopAllCoroutines();
+        this.StopAllSingleCoroutines();
     }
     protected void SetActionPause(float pauseDuration)
     {
@@ -108,6 +108,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
     }
     void OnReloadFinished()
     {
+        Debug.Log("Reload");
         B_Reloading = false;
         I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
         OnAmmoInfoChanged();

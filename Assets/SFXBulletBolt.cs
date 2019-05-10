@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class SFXBulletBolt : SFXBullet {
 
-    public override void Play(int sourceID, float damage, Vector3 direction, Vector2 bulletSpeed, float duration = GameConst.I_BulletMaxLastTime)
+    public override void Play(int sourceID, float damage, Vector3 direction, Vector2 bulletSpeed, float duration = GameConst.I_NormalBulletLastTime)
     {
         base.Play(sourceID, damage, direction, bulletSpeed, GameConst.I_BoltMaxLastTime);
     }

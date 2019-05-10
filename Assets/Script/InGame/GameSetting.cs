@@ -8,13 +8,15 @@ namespace GameSetting
     #region For Designers Use
     public static class GameConst
     {
-        public const int I_BulletMaxLastTime = 5; // No Collision Recycle Time
+        public const int I_NormalBulletLastTime = 5; // No Collision Recycle Time
+        public const int I_BoltMaxLastTime = 10;
+        public const int I_LaserMaxLastTime = 5;
+
         public const int I_BurstFirePelletsOnceTrigger = 3;       //Times While Burst Fire
         public const int I_BulletSpeadAtDistance = 100;       //Meter,  Bullet Spread In A Circle At End Of This Distance 
 
-        public const int I_BoltMaxLastTime = 10;
-
         public const int I_RocketBlastRadius = 5;        //Meter
+        public const float F_LaserRayStartPause = .5f;
     }
 
     public static class GameExpression
@@ -177,10 +179,11 @@ namespace GameSetting
     #region GameClass
     class HitCheckDetect
     {
+        Action<HitCheckStatic> OnHitCheckStatic;
+        Action<HitCheckDynamic> OnHitCheckDynamic;
         Action<HitCheckEntity> OnHitCheckEntity;
-        Action OnHitCheckDynamic, OnHitCheckStatic;      //TemporatySolution
         Action OnHitCheckError;
-        public HitCheckDetect(Action _OnHitCheckStatic, Action _OnHitCheckDynamic, Action<HitCheckEntity> _OnHitCheckEntity, Action _OnHitCheckError)
+        public HitCheckDetect(Action<HitCheckStatic> _OnHitCheckStatic, Action<HitCheckDynamic> _OnHitCheckDynamic, Action<HitCheckEntity> _OnHitCheckEntity, Action _OnHitCheckError)
         {
             OnHitCheckStatic = _OnHitCheckStatic;
             OnHitCheckDynamic = _OnHitCheckDynamic;
@@ -200,10 +203,10 @@ namespace GameSetting
             {
                 default: Debug.LogError("Add More Convertions Here:" + hitCheck.m_HitCheckType); break;
                 case enum_HitCheck.Static:
-                    OnHitCheckStatic();
+                    OnHitCheckStatic(hitCheck as HitCheckStatic);
                     break;
                 case enum_HitCheck.Dynamic:
-                    OnHitCheckDynamic();
+                    OnHitCheckDynamic(hitCheck as HitCheckDynamic);
                     break;
                 case enum_HitCheck.Entity:
                     OnHitCheckEntity(hitCheck as HitCheckEntity);

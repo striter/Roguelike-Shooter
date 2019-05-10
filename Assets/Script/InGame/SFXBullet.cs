@@ -18,7 +18,7 @@ public class SFXBullet : SFXBase {
         m_Detect = new HitCheckDetect(OnHitStatic,OnHitDynamic,OnHitEntity,OnHitError);
         m_Trail = GetComponent<TrailRenderer>();
     }
-    public virtual  void Play(int sourceID, float damage,Vector3 direction,Vector2 bulletSpeed,float duration= GameConst.I_BulletMaxLastTime)
+    public virtual  void Play(int sourceID, float damage,Vector3 direction,Vector2 bulletSpeed,float duration= -1)
     {
         m_bulletDamage = damage;
         m_simulateGravity = Vector3.zero;
@@ -26,7 +26,7 @@ public class SFXBullet : SFXBase {
         m_Direction = direction;
         B_SimulatePhysics = true;
         m_Trail.Clear();
-        base.Play(sourceID,duration);
+        base.Play(sourceID,duration==-1? GameConst.I_NormalBulletLastTime:duration);
     }
     private void FixedUpdate()
     {
@@ -44,19 +44,19 @@ public class SFXBullet : SFXBase {
         m_Detect.DoDetect(other);
     }
 
-    protected virtual void OnHitEntity(HitCheckEntity entity)
+    protected virtual void OnHitEntity(HitCheckEntity hitEntity)
     {
-        if (GameExpression.B_CanHitTarget(entity,I_SourceID))
+        if (GameExpression.B_CanHitTarget(hitEntity, I_SourceID))
         {
-            entity.TryHit(m_bulletDamage);
+            hitEntity.TryHit(m_bulletDamage);
             OnPlayFinished();
         }
     }
-    protected virtual void OnHitDynamic()
+    protected virtual void OnHitDynamic(HitCheckDynamic hitDynamic)
     {
-        OnPlayFinished();
+    //    OnPlayFinished();
     }
-    protected virtual void OnHitStatic()
+    protected virtual void OnHitStatic(HitCheckStatic hitStatic)
     {
         OnPlayFinished();
     }

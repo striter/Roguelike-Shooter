@@ -23,7 +23,7 @@ public class SFXBase : MonoBehaviour {
     {
         f_duration = duration;
         f_TimeCheck = Time.time + duration;
-        I_SourceID = I_SourceID;
+        I_SourceID = sourceID;
         OnSFXPlayFinished = _OnSFXPlayFinished;
     }
 
