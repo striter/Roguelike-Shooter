@@ -331,6 +331,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
                 {
                     OnTriggerSuccessful();
                     B_Storing = false;
+                    f_storeTime = 0f;
                 }
             }
         }
