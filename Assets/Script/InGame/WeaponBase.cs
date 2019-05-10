@@ -11,7 +11,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
     Action OnAmmoInfoChanged;
     Action<Vector2> OnRecoil;
     WeaponTrigger m_Trigger;
-    bool B_CanFire => m_WeaponInfo.m_ClipAmount == -1 || I_AmmoLeft > 0;
+    bool B_HaveAmmoLeft => m_WeaponInfo.m_ClipAmount == -1 || I_AmmoLeft > 0;
     public void Init(SWeapon weaponInfo)
     {
         tf_Muzzle = transform.Find("Muzzle");
@@ -19,12 +19,12 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
         switch (weaponInfo.m_TriggerType)
         {
-            default: Debug.LogError("Add More Convertions Here:" + weaponInfo.m_TriggerType.ToString()); m_Trigger = new TriggerSingle(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, CheckCanAction, SetActionPause); break;
-            case enum_TriggerType.Auto: m_Trigger = new TriggerAuto(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, CheckCanAction, SetActionPause);break;
-            case enum_TriggerType.Single:m_Trigger = new TriggerSingle(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, CheckCanAction, SetActionPause);break;
-            case enum_TriggerType.Burst:m_Trigger = new TriggerBurst(m_WeaponInfo.m_FireRate,m_WeaponInfo.m_SpecialRate, FireOnce, CheckCanAction,SetActionPause);break;
-            case enum_TriggerType.Pull: m_Trigger = new TriggerPull(()=> { Debug.Log("Pull"); },m_WeaponInfo.m_FireRate,m_WeaponInfo.m_SpecialRate, FireOnce, CheckCanAction, SetActionPause); break;
-            case enum_TriggerType.Store:m_Trigger = new TriggerStore(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, CheckCanAction, SetActionPause);break;
+            default: Debug.LogError("Add More Convertions Here:" + weaponInfo.m_TriggerType.ToString()); m_Trigger = new TriggerSingle(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, CheckCanAction, SetActionPause, CheckCanAutoReload); break;
+            case enum_TriggerType.Auto: m_Trigger = new TriggerAuto(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, CheckCanAction, SetActionPause,CheckCanAutoReload);break;
+            case enum_TriggerType.Single:m_Trigger = new TriggerSingle(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, CheckCanAction, SetActionPause, CheckCanAutoReload);break;
+            case enum_TriggerType.Burst:m_Trigger = new TriggerBurst(m_WeaponInfo.m_FireRate,m_WeaponInfo.m_SpecialRate, FireOnce, CheckCanAction,SetActionPause, CheckCanAutoReload);break;
+            case enum_TriggerType.Pull: m_Trigger = new TriggerPull(()=> { Debug.Log("Pull"); },m_WeaponInfo.m_FireRate,m_WeaponInfo.m_SpecialRate, FireOnce, CheckCanAction, SetActionPause, CheckCanAutoReload); break;
+            case enum_TriggerType.Store:m_Trigger = new TriggerStore(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, CheckCanAction, SetActionPause, CheckCanAutoReload);break;
         }
     }
     protected virtual void Start()
@@ -64,7 +64,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
     {
         if (B_Reloading)
             return false;
-        if (!B_CanFire)
+        if (!B_HaveAmmoLeft)
             return false;
 
         m_Trigger.OnSetTrigger(down);
@@ -74,7 +74,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
 
     protected virtual void FireOnce()
     {
-        if (!B_CanFire)
+        if (!B_HaveAmmoLeft)
             return;
 
         I_AmmoLeft--;
@@ -86,6 +86,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         OnRecoil(m_WeaponInfo.m_RecoilPerShot);
         OnAmmoInfoChanged();
     }
+
 
 
     public bool TryReload()
@@ -107,20 +108,29 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
         OnAmmoInfoChanged();
     }
+    void CheckCanAutoReload()
+    {
+        if (B_Reloading || B_HaveAmmoLeft)
+            return;
+
+        TryReload();
+    }
     #region TriggerType
-    internal class WeaponTrigger
+    internal class WeaponTrigger:ISingleCoroutine
     {
         public bool B_TriggerDown { get; private set; }
         protected float f_fireRate { get; private set; }
         protected Action OnTriggerSuccessful { get; private set; }
         protected Func<bool> OnTriggerActionable { get; private set; }
-        protected Action<float> OnSetActionPause { get; private set; }
-        public WeaponTrigger(float _fireRate,float _specialRate, Action _OnTriggerSuccessful,Func<bool> _OnTriggerActionable, Action<float> _OnSetActionPause)
+        private Action<float> OnSetActionPause;
+        private Action OnCheckAutoReload;
+        public WeaponTrigger(float _fireRate,float _specialRate, Action _OnTriggerSuccessful,Func<bool> _OnTriggerActionable, Action<float> _OnSetActionPause,Action _OnCheckAutoReload)
         {
             f_fireRate = _fireRate;
             OnTriggerSuccessful = _OnTriggerSuccessful;
             OnTriggerActionable = _OnTriggerActionable;
             OnSetActionPause = _OnSetActionPause;
+            OnCheckAutoReload = _OnCheckAutoReload;
         }
 
         public virtual void OnSetTrigger(bool down)
@@ -134,12 +144,23 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         public virtual void OnDisable()
         {
             B_TriggerDown = false;
+            this.StopSingleCoroutine(0);
+        }
+        protected void OnActionPause(float pauseDuration,bool autoReload,Action actionAfterPause=null)
+        {
+            OnSetActionPause(pauseDuration);
+            
+            if(autoReload)
+                this.StartSingleCoroutine(0, TIEnumerators.PauseDel(pauseDuration, OnCheckAutoReload));
+
+            if (actionAfterPause != null)
+                this.StartSingleCoroutine(0, TIEnumerators.PauseDel(pauseDuration, actionAfterPause));
         }
     }
 
     internal class TriggerSingle : WeaponTrigger
     {
-        public TriggerSingle(float _fireRate, float _specialRate, Action _OnTriggerSuccessful, Func<bool> _OnTriggerActionable, Action<float> _OnSetActionPause) : base(_fireRate,_specialRate, _OnTriggerSuccessful, _OnTriggerActionable,_OnSetActionPause)
+        public TriggerSingle(float _fireRate, float _specialRate, Action _OnTriggerSuccessful, Func<bool> _OnTriggerActionable, Action<float> _OnSetActionPause, Action OnCheckAutoReload) : base(_fireRate,_specialRate, _OnTriggerSuccessful, _OnTriggerActionable,_OnSetActionPause, OnCheckAutoReload)
         {
         }
         public override void OnSetTrigger(bool down)
@@ -148,14 +169,14 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
             if (B_TriggerDown && OnTriggerActionable())
             {
                 OnTriggerSuccessful();
-                OnSetActionPause(f_fireRate);
+                OnActionPause(f_fireRate,true);
             }
         }
     }
 
     internal class TriggerAuto : WeaponTrigger
     {
-        public TriggerAuto(float _fireRate, float _specialRate, Action _OnTriggerSuccessful, Func<bool> _OnTriggerActionable, Action<float> _OnSetActionPause) : base(_fireRate, _specialRate, _OnTriggerSuccessful, _OnTriggerActionable, _OnSetActionPause)
+        public TriggerAuto(float _fireRate, float _specialRate, Action _OnTriggerSuccessful, Func<bool> _OnTriggerActionable, Action<float> _OnSetActionPause, Action _OnCheckAutoReload) : base(_fireRate, _specialRate, _OnTriggerSuccessful, _OnTriggerActionable, _OnSetActionPause, _OnCheckAutoReload)
         {
         }
         public override void Tick(float deltaTime)
@@ -164,7 +185,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
             if (B_TriggerDown && OnTriggerActionable())
             {
                 OnTriggerSuccessful();
-                OnSetActionPause(f_fireRate);
+                OnActionPause(f_fireRate,true);
             }
         }
     }
@@ -175,7 +196,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         float f_burstRate;
         bool b_bursting;
         int i_burstIndex;
-        public TriggerBurst(float _fireRate, float _specialRate, Action _OnTriggerSuccessful, Func<bool> _OnTriggerActionable, Action<float> _OnSetActionPause) : base(_fireRate, _specialRate, _OnTriggerSuccessful, _OnTriggerActionable, _OnSetActionPause)
+        public TriggerBurst(float _fireRate, float _specialRate, Action _OnTriggerSuccessful, Func<bool> _OnTriggerActionable, Action<float> _OnSetActionPause, Action _OnCheckAutoReload) : base(_fireRate, _specialRate, _OnTriggerSuccessful, _OnTriggerActionable, _OnSetActionPause, _OnCheckAutoReload)
         {
             f_burstRate = _specialRate;
         }
@@ -189,7 +210,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
             base.OnSetTrigger(down);
             if (!b_bursting && B_TriggerDown && OnTriggerActionable())
             {
-                OnSetActionPause(f_fireRate);
+                OnActionPause(f_fireRate,true);
                 b_bursting = true;
                 i_burstIndex = 0;
                 f_burstTime = 0;
@@ -223,7 +244,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         public bool B_Pulling { get; private set; } = false;
         public bool B_NeedPull { get; private set; } = false;
         Action OnPull;
-        public TriggerPull(Action _OnPull, float _fireRate, float _specialRate, Action _OnTriggerSuccessful, Func<bool> _OnTriggerActionable, Action<float> _OnSetActionPause) : base(_fireRate, _specialRate, _OnTriggerSuccessful, _OnTriggerActionable, _OnSetActionPause)
+        public TriggerPull(Action _OnPull, float _fireRate, float _specialRate, Action _OnTriggerSuccessful, Func<bool> _OnTriggerActionable, Action<float> _OnSetActionPause, Action _OnCheckAutoReload) : base(_fireRate, _specialRate, _OnTriggerSuccessful, _OnTriggerActionable, _OnSetActionPause, _OnCheckAutoReload)
         {
             OnPull = _OnPull;
             f_pullDuration = _specialRate;
@@ -241,14 +262,14 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
                 if (B_NeedPull)
                 {
                     OnPull();
-                    OnSetActionPause(f_pullDuration);
+                    OnActionPause(f_pullDuration,true);
                     B_Pulling = true;
                     f_pullTime = 0;
                 }
                 else
                 {
                     OnTriggerSuccessful();
-                    OnSetActionPause(f_fireRate);
+                    OnActionPause(f_fireRate,false,()=> { OnSetTrigger(true); });
                     B_NeedPull = true;
                 }
             }
@@ -273,7 +294,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         float f_storeTime;
         float f_minStoreTime,f_maxStoreTime;
         public bool B_Storing { get; private set; }
-        public TriggerStore(float _fireRate, float _specialRate, Action _OnTriggerSuccessful, Func<bool> _OnTriggerActionable, Action<float> _OnSetActionPause) : base(_fireRate, _specialRate, _OnTriggerSuccessful, _OnTriggerActionable, _OnSetActionPause)
+        public TriggerStore(float _fireRate, float _specialRate, Action _OnTriggerSuccessful, Func<bool> _OnTriggerActionable, Action<float> _OnSetActionPause, Action _OnCheckAutoReload) : base(_fireRate, _specialRate, _OnTriggerSuccessful, _OnTriggerActionable, _OnSetActionPause, _OnCheckAutoReload)
         {
             f_minStoreTime = _fireRate;
             f_maxStoreTime = _specialRate;

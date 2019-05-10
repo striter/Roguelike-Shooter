@@ -58,9 +58,10 @@ namespace GameSetting
     {
         Invalid = -1,
         Bullet_Normal = 1,
-        Bullet_Laser = 2,
-        Bullet_Bolt = 3,
-        Bullet_Rocket = 4,
+        Bullet_LaserRay = 2,
+        Bullet_LaserBeam = 3,
+        Bullet_Bolt = 4,
+        Bullet_Rocket = 5,
     }
 
     public enum enum_HitCheck
@@ -108,9 +109,10 @@ namespace GameSetting
     {
         Invalid=-1,
         Normal=1,
-        Laser=2,
-        Bolt=3,
-        Rocket=4,
+        LaserRay=2,
+        LaserBeam=3,
+        Bolt=4,
+        Rocket=5,
     }
 
     public static class GameEnum_Extend
@@ -121,7 +123,8 @@ namespace GameSetting
             {
                 default:Debug.LogError("Insert More Convertions Here:"+type.ToString());return enum_SFX.Invalid;
                 case enum_BulletType.Normal:return enum_SFX.Bullet_Normal;
-                case enum_BulletType.Laser:return enum_SFX.Bullet_Laser;
+                case enum_BulletType.LaserRay:return enum_SFX.Bullet_LaserRay;
+                case enum_BulletType.LaserBeam: return enum_SFX.Bullet_LaserBeam;
                 case enum_BulletType.Bolt:return enum_SFX.Bullet_Bolt;
                 case enum_BulletType.Rocket:return enum_SFX.Bullet_Rocket;
             }

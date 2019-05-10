@@ -41,7 +41,7 @@ GameObject:
   - component: {fileID: 54443643211837214}
   - component: {fileID: 136140304364163246}
   m_Layer: 0
-  m_Name: Bullet_Laser
+  m_Name: Bullet_LaserRay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
