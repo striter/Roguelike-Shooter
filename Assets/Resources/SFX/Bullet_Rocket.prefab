@@ -36,8 +36,8 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4575391778993476}
+  - component: {fileID: 114875861630275768}
   - component: {fileID: 96407481213131222}
-  - component: {fileID: 114997182846747794}
   - component: {fileID: 54443643211837214}
   - component: {fileID: 136140304364163246}
   m_Layer: 0
@@ -223,7 +223,7 @@ TrailRenderer:
     generateLightingData: 0
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
---- !u!114 &114997182846747794
+--- !u!114 &114875861630275768
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -231,10 +231,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1714368252467336}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b8d0e07754fa9b4685464e140e598ea, type: 3}
+  m_Script: {fileID: 11500000, guid: 140ce9382ecb98f44b5a78a6247bf2f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  E_Type: -1
 --- !u!136 &136140304364163246
 CapsuleCollider:
   m_ObjectHideFlags: 1

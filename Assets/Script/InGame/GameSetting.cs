@@ -10,11 +10,15 @@ namespace GameSetting
         public static readonly int I_BulletMaxLastTime = 5; // No Collision Recycle Time
         public static readonly int I_BurstFirePelletsOnceTrigger = 3;       //Times While Burst Fire
         public static readonly int I_BulletSpeadAtDistance = 100;       //Meter,  Bullet Spread In A Circle At End Of This Distance 
+
+        public static readonly int I_RocketBlastRadius = 5;        //Meter
     }
 
     public static class GameExpression
     {
+        public static int I_EntityID(int index, bool isPlayer) => index + (isPlayer ? 10000 : 20000);
 
+        public static float F_RocketBlastDamage(float weaponDamage, float distance) => weaponDamage * (distance / GameConst.I_RocketBlastRadius);
     }
 
 
@@ -62,6 +66,7 @@ namespace GameSetting
         Bullet_LaserBeam = 3,
         Bullet_Bolt = 4,
         Bullet_Rocket = 5,
+        Blast_Rocket = 6,
     }
 
     public enum enum_HitCheck
@@ -145,6 +150,12 @@ namespace GameSetting
     {
         public static readonly int I_Static = LayerMask.NameToLayer("static");
         public static readonly int I_Entity = LayerMask.NameToLayer("entity");
+        public static readonly int I_Dynamic = LayerMask.NameToLayer("dynamic");
+        public static class Physics
+        {
+            public static readonly int I_All = 1 << I_Static | 1 << I_Entity | 1 << I_Dynamic;
+            public static readonly int I_EntityOnly = (1 << I_Entity);
+        }
     }
     #endregion
     #region GameSave

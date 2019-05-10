@@ -33,7 +33,7 @@ public class GameManager : SingletonMono<GameManager>
 public static class ObjectManager
 {
     static Transform TF_Entity;
-    
+    static int i_entityIndex=0;
     public static void Init()
     {
         TF_Entity = new GameObject("Entity").transform;
@@ -54,7 +54,7 @@ public static class ObjectManager
     public static EntityBase SpawnEntity(enum_Entity type,Transform toTrans=null)
     {
         EntityBase entity= ObjectPoolManager<enum_Entity, EntityBase>.Spawn(type, TF_Entity);
-        entity.Init(TExcel.Properties<SEntity>.PropertiesList.Find(p => p.m_Type == type));
+        entity.Init(GameExpression.I_EntityID(i_entityIndex++,type== enum_Entity.Player ), TExcel.Properties<SEntity>.PropertiesList.Find(p => p.m_Type == type));
         entity.transform.position = toTrans.position;
         return entity;
     }
@@ -76,7 +76,7 @@ public static class ObjectManager
         }
         catch       //Error Check
         {
-            Debug.LogError("Error Null Weapon Spawned:" + type);
+            Debug.LogWarning("Model Null Weapon Model Found:Resources/Weapon/" + type);
 
             WeaponBase target = TResources.Instantiate<WeaponBase>("Weapon/Error");
             target.Init(TExcel.Properties<SWeapon>.PropertiesList.Find(p => p.m_Weapon == type));

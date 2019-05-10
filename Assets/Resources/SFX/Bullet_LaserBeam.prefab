@@ -41,7 +41,7 @@ GameObject:
   - component: {fileID: 54443643211837214}
   - component: {fileID: 136140304364163246}
   m_Layer: 0
-  m_Name: Bullet_LaserRay
+  m_Name: Bullet_LaserBeam
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -234,7 +234,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b8d0e07754fa9b4685464e140e598ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  E_Type: -1
 --- !u!136 &136140304364163246
 CapsuleCollider:
   m_ObjectHideFlags: 1

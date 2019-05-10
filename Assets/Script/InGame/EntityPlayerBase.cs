@@ -12,9 +12,9 @@ public class EntityPlayerBase : EntityBase {
     protected Transform tf_WeaponHold;
     protected WeaponBase m_WeaponCurrent = null;
     protected List<WeaponBase> m_WeaponObtained=new List<WeaponBase>();
-    public override void Init(SEntity entityInfo)
+    public override void Init(int entityID,SEntity entityInfo)
     {
-        base.Init(entityInfo);
+        base.Init(entityID,entityInfo);
         m_CharacterController = GetComponent<CharacterController>();
         tf_WeaponHold = transform.Find("WeaponHold");
     }
@@ -45,7 +45,7 @@ public class EntityPlayerBase : EntityBase {
     void ObtainWeapon(WeaponBase weapon)
     {
         m_WeaponObtained.Add(weapon);
-        weapon.Attach(tf_WeaponHold, OnAmmoInfoChanged, AddRecoil);
+        weapon.Attach(I_EntityID,tf_WeaponHold, OnAmmoInfoChanged, AddRecoil);
         weapon.SetActivate(false);
         if (m_WeaponCurrent == null)
             OnSwitchWeapon();
