@@ -12,8 +12,10 @@ public class TouchInputManager : SingletonMono<TouchInputManager> {
             return Instance.v3_SingleTouchPos;
         }
     }
+#if !UNITY_EDITOR
     bool b_dualFinger;
     float f_dualFingerStartPos;
+#endif
     Gyroscope gs;
     public static Action<bool> OnSingleFingerPress;
     public static Action<float> OnDualFingerScale;

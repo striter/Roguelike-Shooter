@@ -1,18 +1,22 @@
 ﻿using UnityEngine;
 using GameSetting;
 public class SFXBulletRocket : SFXBullet {
-    protected override void OnTriggerEnter(Collider other)
+    protected override void OnHitStatic()
     {
-        if (other.gameObject.layer == GameLayer.I_Entity)
-        {
-            HitCheckEntity hitCheck = other.GetComponent<HitCheckEntity>();
-            if (hitCheck.I_AttacherID != I_SourceID)
-                DoBlast();
-        }
-        else if (other.gameObject.layer == GameLayer.I_Static)
-        {
+        DoBlast();
+    }
+    protected override void OnHitDynamic()
+    {
+        DoBlast();
+    }
+    protected override void OnHitEntity(HitCheckEntity entity)
+    {
+        if (GameExpression.B_CanHitTarget(entity, I_SourceID))
             DoBlast();
-        }
+    }
+    protected override void OnHitError()
+    {
+        DoBlast();
     }
     public void DoBlast()
     {

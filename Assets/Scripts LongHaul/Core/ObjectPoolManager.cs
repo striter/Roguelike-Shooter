@@ -74,11 +74,11 @@ public class ObjectPoolManager<T,Y> where Y:MonoBehaviour {
             info.OnItemInstantiate?.Invoke(item);
         }
         info.l_Active.Add(item);
-        item.SetActivate(true);
         item.transform.SetParent(toTrans==null? PoolParent.tf_PoolSpawn : toTrans);
         item.transform.localPosition = Vector3.zero;
         item.transform.localRotation = Quaternion.identity;
         item.transform.localScale = Vector3.one;
+        item.SetActivate(true);
         return item;
     }
     public static void Recycle(T identity,Y obj)

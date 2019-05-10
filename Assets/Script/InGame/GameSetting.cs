@@ -1,17 +1,20 @@
 ﻿using UnityEngine;
 using TExcel;
 using System.Collections.Generic;
+using System;
 #pragma warning disable 0649
 namespace GameSetting
 {
     #region For Designers Use
     public static class GameConst
     {
-        public static readonly int I_BulletMaxLastTime = 5; // No Collision Recycle Time
-        public static readonly int I_BurstFirePelletsOnceTrigger = 3;       //Times While Burst Fire
-        public static readonly int I_BulletSpeadAtDistance = 100;       //Meter,  Bullet Spread In A Circle At End Of This Distance 
+        public const int I_BulletMaxLastTime = 5; // No Collision Recycle Time
+        public const int I_BurstFirePelletsOnceTrigger = 3;       //Times While Burst Fire
+        public const int I_BulletSpeadAtDistance = 100;       //Meter,  Bullet Spread In A Circle At End Of This Distance 
 
-        public static readonly int I_RocketBlastRadius = 5;        //Meter
+        public const int I_BoltMaxLastTime = 10;
+
+        public const int I_RocketBlastRadius = 5;        //Meter
     }
 
     public static class GameExpression
@@ -19,6 +22,8 @@ namespace GameSetting
         public static int I_EntityID(int index, bool isPlayer) => index + (isPlayer ? 10000 : 20000);
 
         public static float F_RocketBlastDamage(float weaponDamage, float distance) => weaponDamage * (distance / GameConst.I_RocketBlastRadius);
+
+        public static bool B_CanHitTarget(HitCheckEntity hb, int sourceID) => hb.I_AttacherID != sourceID;
     }
 
 
@@ -71,53 +76,54 @@ namespace GameSetting
 
     public enum enum_HitCheck
     {
-        Invalid=-1,
-        Static=1,
-        Entity=2,
+        Invalid = -1,
+        Static = 1,
+        Entity = 2,
+        Dynamic = 3,
     }
     public enum enum_Weapon
     {
-        Invalid=-1,
+        Invalid = -1,
         //Laser
-        LaserPistol=1001,
-        LaserCannon=1002,
+        LaserPistol = 1001,
+        LaserCannon = 1002,
         //Snipe Rifle
-        MK10=2001,
-        Kar98=2002,
+        MK10 = 2001,
+        Kar98 = 2002,
         //Submachine Gun
-        UZI=3001,
-        UMP45=3002,
+        UZI = 3001,
+        UMP45 = 3002,
         //Assult Rifle
-        SCAR=4001,
-        M16A4=4002,
-        AKM=4003,
+        SCAR = 4001,
+        M16A4 = 4002,
+        AKM = 4003,
         //Pistol
-        P92=5001,
-        DE=5002,
+        P92 = 5001,
+        DE = 5002,
         //Shotgun
-        XM1014=6001,
-        S686=6002,
+        XM1014 = 6001,
+        S686 = 6002,
         //Heavy Weapon
-        Crossbow=7001,
-        RocketLauncher=7002,
+        Crossbow = 7001,
+        RocketLauncher = 7002,
     }
     public enum enum_TriggerType
     {
-        Invalid=-1,
-        Single=1,
-        Auto=2, 
-        Burst=3,
-        Pull=4,
-        Store=5,
+        Invalid = -1,
+        Single = 1,
+        Auto = 2,
+        Burst = 3,
+        Pull = 4,
+        Store = 5,
     }
     public enum enum_BulletType
     {
-        Invalid=-1,
-        Normal=1,
-        LaserRay=2,
-        LaserBeam=3,
-        Bolt=4,
-        Rocket=5,
+        Invalid = -1,
+        Normal = 1,
+        LaserRay = 2,
+        LaserBeam = 3,
+        Bolt = 4,
+        Rocket = 5,
     }
 
     public static class GameEnum_Extend
@@ -126,21 +132,21 @@ namespace GameSetting
         {
             switch (type)
             {
-                default:Debug.LogError("Insert More Convertions Here:"+type.ToString());return enum_SFX.Invalid;
-                case enum_BulletType.Normal:return enum_SFX.Bullet_Normal;
-                case enum_BulletType.LaserRay:return enum_SFX.Bullet_LaserRay;
+                default: Debug.LogError("Insert More Convertions Here:" + type.ToString()); return enum_SFX.Invalid;
+                case enum_BulletType.Normal: return enum_SFX.Bullet_Normal;
+                case enum_BulletType.LaserRay: return enum_SFX.Bullet_LaserRay;
                 case enum_BulletType.LaserBeam: return enum_SFX.Bullet_LaserBeam;
-                case enum_BulletType.Bolt:return enum_SFX.Bullet_Bolt;
-                case enum_BulletType.Rocket:return enum_SFX.Bullet_Rocket;
+                case enum_BulletType.Bolt: return enum_SFX.Bullet_Bolt;
+                case enum_BulletType.Rocket: return enum_SFX.Bullet_Rocket;
             }
         }
         public static int ToLayer(this enum_HitCheck layerType)
         {
             switch (layerType)
             {
-                default:Debug.LogError("Null Layer Can Be Transferd From:" + layerType.ToString());return 0;
-                case enum_HitCheck.Entity:return GameLayer.I_Entity;
-                case enum_HitCheck.Static:return GameLayer.I_Static;
+                default: Debug.LogError("Null Layer Can Be Transferd From:" + layerType.ToString()); return 0;
+                case enum_HitCheck.Entity: return GameLayer.I_Entity;
+                case enum_HitCheck.Static: return GameLayer.I_Static;
             }
         }
     }
@@ -165,6 +171,44 @@ namespace GameSetting
         public CPlayerSave()
         {
             f_blue = 100;
+        }
+    }
+    #endregion
+    #region GameClass
+    class HitCheckDetect
+    {
+        Action<HitCheckEntity> OnHitCheckEntity;
+        Action OnHitCheckDynamic, OnHitCheckStatic;      //TemporatySolution
+        Action OnHitCheckError;
+        public HitCheckDetect(Action _OnHitCheckStatic, Action _OnHitCheckDynamic, Action<HitCheckEntity> _OnHitCheckEntity, Action _OnHitCheckError)
+        {
+            OnHitCheckStatic = _OnHitCheckStatic;
+            OnHitCheckDynamic = _OnHitCheckDynamic;
+            OnHitCheckEntity = _OnHitCheckEntity;
+            OnHitCheckError = _OnHitCheckError;
+        }
+        public void DoDetect(Collider other)
+        {
+            HitCheckBase hitCheck = other.GetComponent<HitCheckBase>();
+            if (hitCheck == null)
+            {
+                Debug.LogWarning("Null Hit Check Attached:" + other.gameObject);
+                OnHitCheckError();
+                return;
+            }
+            switch (hitCheck.m_HitCheckType)
+            {
+                default: Debug.LogError("Add More Convertions Here:" + hitCheck.m_HitCheckType); break;
+                case enum_HitCheck.Static:
+                    OnHitCheckStatic();
+                    break;
+                case enum_HitCheck.Dynamic:
+                    OnHitCheckDynamic();
+                    break;
+                case enum_HitCheck.Entity:
+                    OnHitCheckEntity(hitCheck as HitCheckEntity);
+                    break;
+            }
         }
     }
     #endregion
@@ -338,7 +382,7 @@ namespace GameSetting
 
         public int AcquireNewSpore()
         {
-            int random = Random.Range(1, 101);
+            int random = UnityEngine.Random.Range(1, 101);
             float count = 0;
             int offset = 0;
             for (int i = 0; i < l_sporeRates.Count; i++)

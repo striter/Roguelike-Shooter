@@ -19,7 +19,11 @@ public class GameManager : SingletonMono<GameManager>
         TBroadCaster<enum_BC_UIStatusChanged>.Init();
         m_PlayerInfo = TGameData<CPlayerSave>.Read();
     }
-
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.BackQuote))
+            Time.timeScale = Time.timeScale== 1f ? .1f : 1f;
+    }
     private void Start()
     {
         ObjectManager.SpawnEntity(enum_Entity.Player, TF_PlayerStart);
@@ -48,7 +52,7 @@ public static class ObjectManager
         
         TCommon.TraversalEnum((enum_SFX type) =>
         {
-            ObjectPoolManager<enum_SFX, SFXBase>.Register(type, TResources.Instantiate<SFXBase>("SFX/" + type.ToString()), enum_PoolSaveType.StaticMaxAmount, 100, null);
+            ObjectPoolManager<enum_SFX, SFXBase>.Register(type, TResources.Instantiate<SFXBase>("SFX/" + type.ToString()), enum_PoolSaveType.DynamicMaxAmount, 5, null);
         });
     }
     public static EntityBase SpawnEntity(enum_Entity type,Transform toTrans=null)
