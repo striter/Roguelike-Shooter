@@ -1,0 +1,129 @@
+fileFormatVersion: 2
+guid: 9b7eba89b9cf5a24ebd27f7807225ea1
+timeCreated: 1464796534
+licenseType: Store
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: scp_we2_submachine_gun_06
+    100004: scp_we2_submachine_gun_06_cocking_lever
+    100006: scp_we2_submachine_gun_06_compensator
+    100008: scp_we2_submachine_gun_06_flashlight_laser
+    100010: scp_we2_submachine_gun_06_holo_sight
+    100012: scp_we2_submachine_gun_06_mag_01
+    100014: scp_we2_submachine_gun_06_mag_02
+    100016: scp_we2_submachine_gun_06_scope
+    100018: scp_we2_submachine_gun_06_silencer
+    100020: scp_we2_submachine_gun_06_top
+    100022: scp_we2_submachine_gun_06_trigger
+    400000: //RootNode
+    400002: scp_we2_submachine_gun_06
+    400004: scp_we2_submachine_gun_06_cocking_lever
+    400006: scp_we2_submachine_gun_06_compensator
+    400008: scp_we2_submachine_gun_06_flashlight_laser
+    400010: scp_we2_submachine_gun_06_holo_sight
+    400012: scp_we2_submachine_gun_06_mag_01
+    400014: scp_we2_submachine_gun_06_mag_02
+    400016: scp_we2_submachine_gun_06_scope
+    400018: scp_we2_submachine_gun_06_silencer
+    400020: scp_we2_submachine_gun_06_top
+    400022: scp_we2_submachine_gun_06_trigger
+    2300000: scp_we2_submachine_gun_06
+    2300002: scp_we2_submachine_gun_06_cocking_lever
+    2300004: scp_we2_submachine_gun_06_compensator
+    2300006: scp_we2_submachine_gun_06_flashlight_laser
+    2300008: scp_we2_submachine_gun_06_holo_sight
+    2300010: scp_we2_submachine_gun_06_mag_01
+    2300012: scp_we2_submachine_gun_06_mag_02
+    2300014: scp_we2_submachine_gun_06_scope
+    2300016: scp_we2_submachine_gun_06_silencer
+    2300018: scp_we2_submachine_gun_06_top
+    2300020: scp_we2_submachine_gun_06_trigger
+    3300000: scp_we2_submachine_gun_06
+    3300002: scp_we2_submachine_gun_06_cocking_lever
+    3300004: scp_we2_submachine_gun_06_compensator
+    3300006: scp_we2_submachine_gun_06_flashlight_laser
+    3300008: scp_we2_submachine_gun_06_holo_sight
+    3300010: scp_we2_submachine_gun_06_mag_01
+    3300012: scp_we2_submachine_gun_06_mag_02
+    3300014: scp_we2_submachine_gun_06_scope
+    3300016: scp_we2_submachine_gun_06_silencer
+    3300018: scp_we2_submachine_gun_06_top
+    3300020: scp_we2_submachine_gun_06_trigger
+    4300000: scp_we2_submachine_gun_06
+    4300002: scp_we2_submachine_gun_06_trigger
+    4300004: scp_we2_submachine_gun_06_mag_01
+    4300006: scp_we2_submachine_gun_06_flashlight_laser
+    4300008: scp_we2_submachine_gun_06_scope
+    4300010: scp_we2_submachine_gun_06_holo_sight
+    4300012: scp_we2_submachine_gun_06_silencer
+    4300014: scp_we2_submachine_gun_06_mag_02
+    4300016: scp_we2_submachine_gun_06_top
+    4300018: scp_we2_submachine_gun_06_cocking_lever
+    4300020: scp_we2_submachine_gun_06_compensator
+    9500000: //RootNode
+  materials:
+    importMaterials: 0
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleRotations: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

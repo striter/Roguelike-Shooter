@@ -10,7 +10,7 @@ public class HitCheckBase : MonoBehaviour {
     Func<float,bool> OnHitCheck;
     protected Collider m_Collider;
 
-    public void Attach(Func<float,bool> _OnHitCheck)
+    protected void Attach(Func<float,bool> _OnHitCheck)
     {
         m_Collider = GetComponent<Collider>();
         gameObject.layer = m_HitCheckType.ToLayer();

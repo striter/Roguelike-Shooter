@@ -3,25 +3,27 @@ using GameSetting;
 
 public class EntityBase : MonoBehaviour,ISingleCoroutine
 {
-    HitCheckBase[] m_HitChecks;
+    public int I_EntityID { get; private set; } = -1;
+    HitCheckEntity[] m_HitChecks;
     Renderer[] m_Renderers;
     protected Transform tf_Model;
     protected SEntity m_EntityInfo;
     public float m_CurrentHealth { get; private set; }
     public bool b_IsDead { get; private set; }
-    public virtual void Init(SEntity entityInfo)
+    public virtual void Init(int id,SEntity entityInfo)
     {
+        I_EntityID = id;
         tf_Model = transform.Find("Model");
         m_Renderers = tf_Model.GetComponentsInChildren<Renderer>();
-        m_HitChecks = GetComponentsInChildren<HitCheckBase>();
-        TCommon.TraversalArray(m_HitChecks, (HitCheckBase check) => { check.Attach(TryTakeDamage); });
+        m_HitChecks = GetComponentsInChildren<HitCheckEntity>();
+        TCommon.TraversalArray(m_HitChecks, (HitCheckEntity check) => { check.Attach(I_EntityID,TryTakeDamage); });
         m_EntityInfo = entityInfo;
         m_CurrentHealth = m_EntityInfo.m_MaxHealth;
         b_IsDead = false;
     }
     protected virtual void Start()
     {
-        if (m_EntityInfo.m_Type == 0)
+        if (I_EntityID == -1)
             Debug.LogError("Please Init Entity Info!" + gameObject.name.ToString());
     }
     protected virtual void OnEnable()

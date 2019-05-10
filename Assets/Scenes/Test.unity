@@ -400,7 +400,7 @@ GameObject:
   m_Component:
   - component: {fileID: 418242396}
   - component: {fileID: 418242397}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: EntitySpawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -442,7 +442,7 @@ GameObject:
   m_Component:
   - component: {fileID: 478246688}
   - component: {fileID: 478246689}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: EntitySpawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -600,7 +600,7 @@ GameObject:
   - component: {fileID: 650555205}
   - component: {fileID: 650555203}
   - component: {fileID: 650555204}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -806,7 +806,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 712124621}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Enviorment
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -981,7 +981,7 @@ GameObject:
   m_Component:
   - component: {fileID: 803612639}
   - component: {fileID: 803612640}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: EntitySpawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1551,7 +1551,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 1115166920}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Spawners
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1700,7 +1700,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1292860486}
   - component: {fileID: 1292860485}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Directional Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}

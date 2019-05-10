@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
 public class EntityPlayerBase : EntityBase {
+    public enum_Weapon TESTWEAPON1 = enum_Weapon.M16A4;
+    public enum_Weapon TESTWEAPON2 = enum_Weapon.MK10;
+
     Vector2 m_MoveDelta;
     float m_Pitch;
     CharacterController m_CharacterController;
     protected Transform tf_WeaponHold;
     protected WeaponBase m_WeaponCurrent = null;
     protected List<WeaponBase> m_WeaponObtained=new List<WeaponBase>();
-    public override void Init(SEntity entityInfo)
+    public override void Init(int entityID,SEntity entityInfo)
     {
-        base.Init(entityInfo);
+        base.Init(entityID,entityInfo);
         m_CharacterController = GetComponent<CharacterController>();
         tf_WeaponHold = transform.Find("WeaponHold");
     }
@@ -36,13 +39,13 @@ public class EntityPlayerBase : EntityBase {
             TouchDeltaManager.Instance.Bind(OnMovementDelta, OnRotateDelta);
 
         }
-        ObtainWeapon(ObjectManager.SpawnWeapon(enum_Weapon.Rifle, this));
-        ObtainWeapon(ObjectManager.SpawnWeapon(enum_Weapon.SnipeRifle, this));
+        ObtainWeapon(ObjectManager.SpawnWeapon(TESTWEAPON1, this));
+        ObtainWeapon(ObjectManager.SpawnWeapon(TESTWEAPON2, this));
     }
     void ObtainWeapon(WeaponBase weapon)
     {
         m_WeaponObtained.Add(weapon);
-        weapon.Attach(tf_WeaponHold, OnAmmoInfoChanged, AddRecoil);
+        weapon.Attach(I_EntityID,tf_WeaponHold, OnAmmoInfoChanged, AddRecoil);
         weapon.SetActivate(false);
         if (m_WeaponCurrent == null)
             OnSwitchWeapon();
@@ -79,6 +82,7 @@ public class EntityPlayerBase : EntityBase {
         m_WeaponCurrent.SetActivate(true);
         OnAmmoInfoChanged();
     }
+
 #region PlayerMovement
     void OnRotateDelta(Vector2 rotateDelta)
     {

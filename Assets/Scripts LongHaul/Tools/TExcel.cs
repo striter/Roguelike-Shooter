@@ -45,41 +45,55 @@ namespace TExcel
 
         static void SetUpList(byte[] bytes)
         {
-            l_PropertyList = new List<T>();
-            IExcelDataReader reader = ExcelReaderFactory.CreateBinaryReader(new MemoryStream(bytes));
-            DataSet result = reader.AsDataSet();
-
-            Type type = typeof(T);
-            object obj = Activator.CreateInstance(type, true);
-            FieldInfo[] fields = type.GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
-            for (int i = 0; i < fields.Length; i++)
+            try
             {
-                string temp = result.Tables[0].Rows[0][i].ToString();
-                if (!temp.Equals(fields[i].Name) && !temp.Equals(-1))
+
+                l_PropertyList = new List<T>();
+                IExcelDataReader reader = ExcelReaderFactory.CreateBinaryReader(new MemoryStream(bytes));
+                DataSet result = reader.AsDataSet();
+
+                Type type = typeof(T);
+                object obj = Activator.CreateInstance(type, true);
+                FieldInfo[] fields = type.GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+                for (int i = 0; i < fields.Length; i++)
                 {
-                    Debug.LogError(" Struct Or Excel Pos Not Equals:("+ "Row " + i + type.ToString() + "(" + fields[i].Name + "|" + temp + ")");
+                    string temp = result.Tables[0].Rows[0][i].ToString();
+                    if (!temp.Equals(fields[i].Name) && !temp.Equals(-1))
+                    {
+                        throw new Exception(" Struct Or Excel Pos Not Equals:(" + "Row " + i + type.ToString() + "(" + fields[i].Name + "|" + temp + ")");
+                    }
+                }
+
+                for (int i = 0; i < result.Tables[0].Rows.Count - 1; i++)
+                {
+                    for (int j = 0; j < fields.Length; j++)
+                    {
+                        try
+                        {
+                            if (fields[j].FieldType == typeof(string))
+                            {
+                                fields[j].SetValue(obj, result.Tables[0].Rows[i + 1][j].ToString());
+                            }
+                            else if (fields[j].FieldType == typeof(bool))
+                            {
+                                fields[j].SetValue(obj, int.Parse(result.Tables[0].Rows[i + 1][j].ToString()).ToBool10());
+                            }
+                            else
+                            {
+                                fields[j].SetValue(obj, Convert.ChangeType(result.Tables[0].Rows[i + 1][j].ToString(), fields[j].FieldType));
+                            }
+                        }
+                        catch
+                        {
+                            throw new Exception("Invalid Info:'"+ result.Tables[0].Rows[i + 1][j].ToString()+"'" + ",FieldType:" + fields[j].FieldType.ToString() + ", Rows/Column:" + (i+2).ToString() + "/" + (j+1).ToString());
+                        }
+                    }
+                    l_PropertyList.Add((T)obj);
                 }
             }
-
-            for (int i = 0; i < result.Tables[0].Rows.Count - 1; i++)
+            catch(Exception e)
             {
-                for (int j = 0; j < fields.Length; j++)
-                {
-                    //Debug.Log(fields[j].FieldType+" "+ result.Tables[0].Rows[i + 1][j].ToString());
-                    if (fields[j].FieldType == typeof(string))
-                    {
-                        fields[j].SetValue(obj, result.Tables[0].Rows[i + 1][j].ToString());
-                    }
-                    else if (fields[j].FieldType == typeof(bool))
-                    {
-                        fields[j].SetValue(obj,int.Parse( result.Tables[0].Rows[i+1][j].ToString()).ToBool10());
-                    }
-                    else
-                    {
-                        fields[j].SetValue(obj, Convert.ChangeType(result.Tables[0].Rows[i + 1][j].ToString(), fields[j].FieldType));
-                    }
-                }
-                l_PropertyList.Add((T)obj);
+                Debug.LogError("Excel Error:"+e.Message);
             }
         }
 

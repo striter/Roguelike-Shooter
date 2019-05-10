@@ -2,9 +2,9 @@
 using UnityEngine;
 using GameSetting;
 public class SFXBase : MonoBehaviour {
-    public enum_SFX E_Type = enum_SFX.Invalid;
+    public enum_SFX E_Type { get; private set; } = enum_SFX.Invalid;
 
-    public void Init(enum_SFX type)
+    public virtual void Init(enum_SFX type)
     {
         E_Type = type;
     }
@@ -14,15 +14,16 @@ public class SFXBase : MonoBehaviour {
         if (E_Type == enum_SFX.Invalid)
             Debug.LogError("Please Init Before Start!" + gameObject.name.ToString());
     }
-
+    public int I_SourceID { get; private set; }
     protected float f_duration;
     float f_TimeCheck;
     Action OnSFXPlayFinished;
 
-    protected virtual void Play(float duration,Action _OnSFXPlayFinished=null)
+    protected virtual void Play(int sourceID,float duration,Action _OnSFXPlayFinished=null)
     {
         f_duration = duration;
         f_TimeCheck = Time.time + duration;
+        I_SourceID = I_SourceID;
         OnSFXPlayFinished = _OnSFXPlayFinished;
     }
 

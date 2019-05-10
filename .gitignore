@@ -3,12 +3,12 @@
 # =============== #
 Temp/
 Library/
-.vs/
-
+*.meta
 # ===================================== #
 # Visual Studio / MonoDevelop generated #
 # ===================================== #
 ExportedObj/
+.vs/
 obj/
 *.svd
 *.userprefs
