@@ -30,8 +30,8 @@ namespace GameSetting
 
     public static class UIExpression
     {
-        public static float F_SporeManagerPorfitPerSecond(int level) => level == 1 ? 1f : Mathf.Pow(1.5f, (level - 1));     //Coins Profit Per Second 
-        public static float F_SporeManagerChestCoinRequirement(int maxLevel) => 10 * Mathf.Pow(1.8f, (maxLevel - 1));       //Coin Requirement Per Chest
+        public static float F_SporeManagerPorfitPerSecond(int level) => level == 1 ? 1f : 0.17f * Mathf.Pow(1.3f, (level - 1));     //Coins Profit Per Second 
+        public static float F_SporeManagerChestCoinRequirement(int maxLevel) => 200 * Mathf.Pow(1.4f, (maxLevel - 1));       //Coin Requirement Per Chest
         public static float F_SporeManagerChestBlueRequirement(int maxLevel) => 100 * Mathf.Pow(1.05f, (maxLevel - 1));       //Blue Requirement Per Chest
     }
     #endregion
