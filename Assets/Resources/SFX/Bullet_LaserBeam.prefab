@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4344407372796764}
   - component: {fileID: 33429720129350936}
   - component: {fileID: 23777446329296864}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40,7 +40,8 @@ GameObject:
   - component: {fileID: 114997182846747794}
   - component: {fileID: 54443643211837214}
   - component: {fileID: 136140304364163246}
-  m_Layer: 0
+  - component: {fileID: 114764317786454292}
+  m_Layer: 9
   m_Name: Bullet_LaserBeam
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -223,6 +224,17 @@ TrailRenderer:
     generateLightingData: 0
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
+--- !u!114 &114764317786454292
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1714368252467336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62d09be21441f524d850aaf663ec49a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114997182846747794
 MonoBehaviour:
   m_ObjectHideFlags: 1
