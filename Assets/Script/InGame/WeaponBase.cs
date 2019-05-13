@@ -83,7 +83,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         for (int i = 0; i < m_WeaponInfo.m_PelletsPerShot; i++)
         {
             Vector3 bulletDirection = Vector3.Normalize(tf_Muzzle.transform.forward*GameConst.I_BulletSpeadAtDistance+UnityEngine.Random.Range(-1f,1f)*tf_Muzzle.up*m_WeaponInfo.m_Spread+ UnityEngine.Random.Range(-1f, 1f) * tf_Muzzle.right * m_WeaponInfo.m_Spread);
-            (ObjectManager.SpawnSFX(m_WeaponInfo.m_BulletType.ToSFXType(), tf_Muzzle) as SFXBullet).Play(I_AttacherID,m_WeaponInfo.m_Damage, bulletDirection, m_WeaponInfo.m_BulletSpeed);
+            (ObjectManager.SpawnSFX(m_WeaponInfo.m_BulletType.ToSFXType(), tf_Muzzle) as SFXBullet).Play(I_AttacherID,m_WeaponInfo.m_Damage, bulletDirection, m_WeaponInfo.m_HorizontalSpeed,m_WeaponInfo.m_HorizontalDrag,m_WeaponInfo.m_VerticalAcceleration);
         }
         OnRecoil(m_WeaponInfo.m_RecoilPerShot);
         OnAmmoInfoChanged();

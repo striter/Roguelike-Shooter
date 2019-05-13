@@ -12,11 +12,11 @@ namespace GameSetting
         public const int I_BoltMaxLastTime = 10;
         public const int I_LaserMaxLastTime = 5;
 
-        public const int I_BurstFirePelletsOnceTrigger = 3;       //Times While Burst Fire
-        public const int I_BulletSpeadAtDistance = 100;       //Meter,  Bullet Spread In A Circle At End Of This Distance 
-
         public const int I_RocketBlastRadius = 5;        //Meter
-        public const float F_LaserRayStartPause = .5f;
+        public const float F_LaserRayStartPause = .5f;      //Laser Start Pause
+
+        public const int I_BurstFirePelletsOnceTrigger = 3;       //Times While Burst Fire
+        public const int I_BulletSpeadAtDistance = 100;       //Meter,  Bullet Spread In A Circle At End Of This Distance
     }
 
     public static class GameExpression
@@ -243,8 +243,9 @@ namespace GameSetting
         float f_reloadTime;
         int i_PelletsPerShot;
         float f_stunAfterShot;
-        float f_speedHorizontal;
-        float f_speedVertical;
+        float f_horizontalSpeed;
+        float f_horizontalDrag;
+        float f_verticalAcceleration;
         float f_recoilHorizontal;
         float f_recoilVertical;
 
@@ -261,7 +262,9 @@ namespace GameSetting
         public float m_ReloadTime => f_reloadTime;
         public int m_PelletsPerShot => i_PelletsPerShot;
         public float m_stunAfterShot => f_stunAfterShot;
-        public Vector2 m_BulletSpeed => new Vector2(f_speedHorizontal,f_speedVertical);
+        public float m_HorizontalSpeed => f_horizontalSpeed;
+        public float m_HorizontalDrag => f_horizontalDrag;
+        public float m_VerticalAcceleration => f_verticalAcceleration;
         public Vector2 m_RecoilPerShot => new Vector2(f_recoilHorizontal, f_recoilVertical);
     }
 

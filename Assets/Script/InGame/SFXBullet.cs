@@ -6,8 +6,10 @@ using System;
 
 public class SFXBullet : SFXBase {
     protected float m_bulletDamage;
-    Vector3 m_simulateGravity;
-    Vector2 m_BulletSpeed;
+    float m_horizontalSpeed;
+    float m_horizontalDrag;
+    float m_verticalSpeed;
+    float m_verticalAcceleration;
     Vector3 m_Direction;
     HitCheckDetect m_Detect;
     TrailRenderer m_Trail;
@@ -18,11 +20,13 @@ public class SFXBullet : SFXBase {
         m_Detect = new HitCheckDetect(OnHitStatic,OnHitDynamic,OnHitEntity,OnHitError);
         m_Trail = GetComponent<TrailRenderer>();
     }
-    public virtual  void Play(int sourceID, float damage,Vector3 direction,Vector2 bulletSpeed,float duration= -1)
+    public virtual  void Play(int sourceID, float damage,Vector3 direction,float horizontalSpeed,float horizontalDrag, float verticalAcceleration, float duration= -1)
     {
         m_bulletDamage = damage;
-        m_simulateGravity = Vector3.zero;
-        m_BulletSpeed = bulletSpeed;
+        m_horizontalSpeed = horizontalSpeed;
+        m_horizontalDrag = horizontalDrag;
+        m_verticalSpeed = 0f;      //Vertical Speed Starts At 0 Only Add With Acceleration
+        m_verticalAcceleration = verticalAcceleration;
         m_Direction = direction;
         B_SimulatePhysics = true;
         m_Trail.Clear();
@@ -32,10 +36,15 @@ public class SFXBullet : SFXBase {
     {
         if (B_SimulatePhysics)
         {
-            m_simulateGravity += Time.fixedDeltaTime * m_BulletSpeed.y * Vector3.down;
-            Vector3 simulateVector = m_Direction * m_BulletSpeed.x + m_simulateGravity;
+            Vector3 simulateVector = m_Direction * m_horizontalSpeed + Vector3.down*m_verticalSpeed;
             transform.rotation = Quaternion.LookRotation(simulateVector);
             transform.Translate(simulateVector * Time.fixedDeltaTime, Space.World);
+
+            m_verticalSpeed += m_verticalAcceleration*Time.fixedDeltaTime;
+            m_horizontalSpeed -= m_horizontalDrag * Time.fixedDeltaTime;
+
+            if (m_horizontalSpeed <= 0f)
+                m_horizontalSpeed = 0f;
         }
     }
 
