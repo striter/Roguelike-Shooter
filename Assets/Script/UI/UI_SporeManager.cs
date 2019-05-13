@@ -56,9 +56,10 @@ public class UI_SporeManager : UIPageBase,ISingleCoroutine {
     void CalculateOfflineProfit()
     {
         int offsetSeconds = TCommon.GetTimeStamp(DateTime.Now) - m_ManagerInfo.i_previousTimeStamp;
+        m_ManagerInfo.d_timePassed += offsetSeconds;
         if (offsetSeconds > UIConst.I_SporeManagerUnitTime)
         {
-            float profit = OnProfit(f_totalCoinsPerMinute * ((float)offsetSeconds / UIConst.I_SporeManagerUnitTime));
+            float profit = OnProfit(f_totalCoinsPerMinute * (offsetSeconds / UIConst.I_SporeManagerUnitTime));
             m_profitMessageBox.Show("Offline Profit:" + profit);
         }
     }
