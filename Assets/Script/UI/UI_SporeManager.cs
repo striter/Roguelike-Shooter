@@ -4,16 +4,19 @@ using UnityEngine;
 using UnityEngine.UI;
 using GameSetting;
 using TExcel;
+using System;
 
 public class UI_SporeManager : UIPageBase,ISingleCoroutine {
     Text txt_Coin, txt_CoinsPerSecond, txt_Blue;
-    Text txt_MaxLevel, txt_TimePassed, txt_TimeScale;
+    Text txt_MaxLevel;
     Button btn_BuyCoin, btn_BuyBlue;
     Text txt_BuyCoin, txt_BuyBlue;
     UIT_GridControllerMono<UIGI_SporeContainer> gc_SporeContainers;     //0 Spare //-1 Locked
+    MessageBox_OffsetProfit m_profitMessageBox;
     CSporeManagerSave m_ManagerInfo;
     SSporeLevelRate m_CurrentSporeRate;
-    int i_TimeScale = 5,i_draggingSlot=-1;
+    int i_TimeScale = 1,i_draggingSlot=-1;
+    float f_totalCoinsPerMinute;
     float f_autoSaveCheck;
     protected override void Init(bool useAnim)
     {
@@ -26,19 +29,7 @@ public class UI_SporeManager : UIPageBase,ISingleCoroutine {
         txt_CoinsPerSecond = tf_Container.Find("CoinsPerSecond").GetComponentInChildren<Text>();
         txt_Blue = tf_Container.Find("Blue").GetComponentInChildren<Text>();
         txt_MaxLevel = tf_Container.Find("MaxLevel").GetComponentInChildren<Text>();
-        txt_TimePassed = tf_Container.Find("TimePassed").GetComponentInChildren<Text>();
-        txt_TimeScale = tf_Container.Find("TimeScale").GetComponentInChildren<Text>();
-
-        InputField if_TimeScaleChanged = tf_Container.Find("TimeScaleChanger").GetComponent<InputField>();
-        if_TimeScaleChanged.text = "Change Time Scale";
-        if_TimeScaleChanged.onValueChanged.AddListener((string s)=> { if (s != "") i_TimeScale = int.Parse(s);RefreshManagerInfo(); });
-        InputField if_CoinChanger = tf_Container.Find("CoinChanger").GetComponent<InputField>();
-        if_CoinChanger.text = "Change Coin";
-        if_CoinChanger.onValueChanged.AddListener((string s) => {if(s!="") m_ManagerInfo.f_coin = int.Parse(s); RefreshManagerInfo();});
-        InputField if_BlueChanger = tf_Container.Find("BlueChanger").GetComponent<InputField>();
-        if_BlueChanger.text = "Change Blue?";
-        if_BlueChanger.onValueChanged.AddListener((string s) => { if (s != "") GameManager.m_PlayerInfo.f_blue = int.Parse(s); RefreshManagerInfo(); });
-
+        
         btn_BuyCoin = tf_Container.Find("BuyCoin").GetComponent<Button>();
         btn_BuyCoin.onClick.AddListener(OnCoinAcquireChest);
         btn_BuyBlue = tf_Container.Find("BuyBlue").GetComponent<Button>();
@@ -48,19 +39,28 @@ public class UI_SporeManager : UIPageBase,ISingleCoroutine {
 
         tf_Container.Find("TrashBox").GetComponent<UIT_EventTriggerListener>().D_OnRaycast = OnTrashBox;
 
+        m_profitMessageBox = new MessageBox_OffsetProfit(tf_Container.Find("OfflineProfit"));
+
         gc_SporeContainers = new UIT_GridControllerMono<UIGI_SporeContainer>(tf_Container.Find("SporeContainers"));
         for (int i = 1; i <= UIConst.I_SporeManagerContainersMaxAmount; i++)
-            gc_SporeContainers.AddItem(i).Init(OnDragSporeStatus,OnDragSpore,OnDropSpore, TickProfit);
+            gc_SporeContainers.AddItem(i).Init(OnDragSporeStatus,OnDragSpore,OnDropSpore, OnSlotTickProfit);
 
         f_autoSaveCheck = Time.time + UIConst.I_SporeManagerAutoSave;
 
         RefreshMaxLevel(false);
         RefreshManagerInfo();
         RefreshContainerInfo();
+
+        CalculateOfflineProfit();
     }
-    void OnChanged(string field)
+    void CalculateOfflineProfit()
     {
-        i_TimeScale = int.Parse(field);
+        int offsetSeconds = TCommon.GetTimeStamp(DateTime.Now) - m_ManagerInfo.i_previousTimeStamp;
+        if (offsetSeconds > UIConst.I_SporeManagerUnitTime)
+        {
+            float profit = OnProfit(f_totalCoinsPerMinute * ((float)offsetSeconds / UIConst.I_SporeManagerUnitTime));
+            m_profitMessageBox.Show("Offline Profit:" + profit);
+        }
     }
 
     void Update()
@@ -73,23 +73,20 @@ public class UI_SporeManager : UIPageBase,ISingleCoroutine {
             gc_SporeContainers.GetItem(i).Tick(deltaTime);
         }
 
-        if (Time.time> f_autoSaveCheck)      //Auto Save Case Game Crush Or Force Quit
-            TGameData<CSporeManagerSave>.Save(m_ManagerInfo);
+        if (Time.time > f_autoSaveCheck)      //Auto Save Case Game Crush Or Force Quit
+            OnSavePlayerData();
     }
 
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        TGameData<CSporeManagerSave>.Save(m_ManagerInfo);
+        OnSavePlayerData();
     }
 
     void RefreshManagerInfo()
     {
         txt_Coin.text = "Coins:" + m_ManagerInfo.f_coin;
         txt_Blue.text = "Blues:" + GameManager.m_PlayerInfo.f_blue;
-
-        txt_TimePassed.text =  "Time Passed:\n" + string.Format("{0:0.00}",m_ManagerInfo.d_timePassed);
-        txt_TimeScale.text = "Time Scale:" + i_TimeScale;
     }
 
     void RefreshContainerInfo()
@@ -100,13 +97,13 @@ public class UI_SporeManager : UIPageBase,ISingleCoroutine {
             item.SetContainerInfo(m_ManagerInfo[i]);
         }
 
-        float totalCoinsPerSecond = 0;
+        f_totalCoinsPerMinute = 0;
         for (int i = 1; i <= m_ManagerInfo.I_SlotCount; i++)
         {
             if (m_ManagerInfo[i] > 0)
-                totalCoinsPerSecond += UIExpression.F_SporeManagerPorfitPerSecond(m_ManagerInfo[i]);
+                f_totalCoinsPerMinute += UIExpression.F_SporeManagerProfitPerMinute(m_ManagerInfo[i]);
         }
-        txt_CoinsPerSecond.text = "CPS:" + totalCoinsPerSecond;
+        txt_CoinsPerSecond.text = "CPM:" + f_totalCoinsPerMinute;
     }
 
     void RefreshMaxLevel(bool reachHigherLevel)
@@ -145,6 +142,15 @@ public class UI_SporeManager : UIPageBase,ISingleCoroutine {
         }
     }
 
+    void OnSlotTickProfit(int slotIndex)
+    {
+        int level = m_ManagerInfo[slotIndex];
+        if (level == -1 || level == 0)
+            return;
+
+        OnProfit(UIExpression.F_SporeManagerProfitPerMinute(level) * ((float)UIConst.I_SporeManagerContainerTickTime / UIConst.I_SporeManagerUnitTime));
+    }
+
     void OnDragSpore(int slotIndex,Vector2 position)
     {
         if (i_draggingSlot != -1 && i_draggingSlot == slotIndex)
@@ -155,7 +161,7 @@ public class UI_SporeManager : UIPageBase,ISingleCoroutine {
         if (dropSlot == i_draggingSlot || i_draggingSlot == -1 || dropSlot == -1)
             return;
 
-        if (m_ManagerInfo[dropSlot] == m_ManagerInfo[i_draggingSlot])     //Hybrid
+        if (m_ManagerInfo[dropSlot] == m_ManagerInfo[i_draggingSlot]&&m_ManagerInfo[dropSlot]!=UIConst.I_SporeManagerHybridMaxLevel)     //Hybrid
         {
             m_ManagerInfo.AddSlotValue(dropSlot);
             if (m_ManagerInfo[dropSlot] > m_ManagerInfo.i_maxLevel)
@@ -213,13 +219,40 @@ public class UI_SporeManager : UIPageBase,ISingleCoroutine {
         RefreshContainerInfo();
     }
 
-    void TickProfit(int slotIndex)
+    float OnProfit(float coinsAmount)
     {
-        int level = m_ManagerInfo[slotIndex];
-        if (level == -1 || level == 0)
-            return;
+        float profit = 0f;
+        if (m_ManagerInfo.f_coin >= m_CurrentSporeRate.F_MaxCoinsAmount)
+            return profit;
 
-        m_ManagerInfo.f_coin += UIExpression.F_SporeManagerPorfitPerSecond(level) *UIConst.I_SporeManagerTickOffsetEach;
+        if (m_ManagerInfo.f_coin + coinsAmount > m_CurrentSporeRate.F_MaxCoinsAmount)
+            profit = m_CurrentSporeRate.F_MaxCoinsAmount - m_ManagerInfo.f_coin;
+        else
+            profit = coinsAmount;
+
+        m_ManagerInfo.f_coin += profit;
+        return profit;
     }
     
+    void OnSavePlayerData()
+    {
+        m_ManagerInfo.i_previousTimeStamp = TCommon.GetTimeStamp(DateTime.Now);
+        TGameData<CSporeManagerSave>.Save(m_ManagerInfo);
+    }
+
+    class MessageBox_OffsetProfit : UIT_SimpleBehaviours.UIT_MessageBox
+    {
+        Button btn_Confirm;
+        public MessageBox_OffsetProfit(Transform _transform) : base(_transform)
+        {
+            btn_Confirm = tf_Container.Find("BtnConfirm").GetComponent<Button>();
+            btn_Confirm.onClick.AddListener(()=> { SetShow(false); });
+            SetShow(false);
+        }
+        public void Show(string text)
+        {
+            txt_Title.text = text;
+            SetShow(true);
+        }
+    }
 }

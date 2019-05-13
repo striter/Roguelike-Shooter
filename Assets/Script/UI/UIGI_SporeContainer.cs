@@ -53,7 +53,7 @@ public class UIGI_SporeContainer : UIT_GridItem {
             OnTickProfit(I_Index);
 
             f_tickTime -= f_tickCheck;
-            f_tickCheck = UIConst.I_SporeManagerTickOffsetEach;
+            f_tickCheck = UIConst.I_SporeManagerContainerTickTime;
         }
     }
 

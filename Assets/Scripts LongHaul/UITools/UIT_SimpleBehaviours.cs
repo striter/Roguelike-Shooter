@@ -5,6 +5,31 @@ using System;
 
 namespace UIT_SimpleBehaviours
 {
+    class UIT_MessageBox:SimpleBehaviour
+    {
+        protected Transform tf_Container;
+        protected Text txt_Title;
+        Action<bool> OnBtnClick;
+
+        public UIT_MessageBox(Transform _transform):base(_transform)
+        {
+            transform = _transform;
+            tf_Container = transform.Find("Container");
+            txt_Title = tf_Container.Find("TxtTitle").GetComponent<Text>();
+        }
+
+        protected void StartMessage(string title, bool keepInstance)
+        {
+            txt_Title.text = title;
+            SetShow(true);
+        }
+
+       protected void SetShow(bool show)
+        {
+            tf_Container.SetActivate(show);
+        }
+    }
+
     class UIT_SelectAmountBase : SimpleBehaviour
     {
         Action<int> OnAmountSelect;
@@ -44,6 +69,7 @@ namespace UIT_SimpleBehaviours
             SetAmount(_amount);
         }
     }
+
     class UIT_InfoBar<T> : SimpleBehaviour where T:UIT_SystemInfoItem     //Normal InfoBar 0 Anims
     {
         protected class SubTitleInfo:ISingleCoroutine
@@ -150,6 +176,7 @@ namespace UIT_SimpleBehaviours
                 }, .4f, .0f, .5f));
         }
     }
+    
     class UIT_SubPageSelect<T> : SimpleBehaviour where T:struct
     {
         Action<int> OnPageSelected;
@@ -189,14 +216,14 @@ namespace UIT_SimpleBehaviours
             if (dic_Page.ContainsKey(i_curIndex))
                 dic_Page[i_curIndex].SetActivate(true);
 
-            if (OnPageSelected != null)
-                OnPageSelected(pageIndex);
+            OnPageSelected?.Invoke(pageIndex);
         }
         public Transform GetPage(int type)
         {
             return dic_Page[type];
         }
     }
+
     class UIT_InputFieldButton : SimpleBehaviour
     {
         protected InputField if_field;

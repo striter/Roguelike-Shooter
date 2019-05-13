@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -274,6 +276,31 @@ public static class TCommon
         return target;
     }
 
+    #region Time
+    public static int GetTimeStamp(DateTime dt)
+    {
+        DateTime dateStart = new DateTime(1970, 1, 1, 8, 0, 0);
+        int timeStamp = Convert.ToInt32((dt - dateStart).TotalSeconds);
+        return timeStamp;
+    }
+
+    public static DateTime GetDateTime(int timeStamp)
+    {
+        DateTime dtStart = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
+        long lTime = ((long)timeStamp * 10000000);
+        TimeSpan toNow = new TimeSpan(lTime);
+        DateTime targetDt = dtStart.Add(toNow);
+        return targetDt;
+    }
+
+    public static DateTime GetDateTime(string timeStamp)
+    {
+        DateTime dtStart = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
+        long lTime = long.Parse(timeStamp + "0000000");
+        TimeSpan toNow = new TimeSpan(lTime);
+        return dtStart.Add(toNow);
+    }
+    #endregion
     //public static void InitComponent<T>(this T initItem,Transform parentTransform)  //Test Try Init Item Within One Func
     //{
     //    initItem = parentTransform.Find(initItem.ToString()).GetComponent<T>();
@@ -282,51 +309,123 @@ public static class TCommon
     //}
 }
 
-public static class TXmlParse
-{
-    public static string ToXmlData(this Quaternion qt)
-    {
-        return qt.x.ToString() + "," + qt.y.ToString() + "," + qt.z.ToString() + "," + qt.w.ToString();
-    }
-    public static Quaternion XmlDataToQuaternion(this string data)
-    {
-        try
-        {
-            Quaternion qt = Quaternion.identity;
-            string[] split = data.Split(',');
-            qt = new Quaternion(float.Parse(split[0]), float.Parse(split[1]), float.Parse(split[2]), float.Parse(split[3]));
-            return qt;
-        }
-        catch
-        {
-            return Quaternion.identity;
-        }
-    }
-    public static string ToXmlData(this Vector3 v3)
-    {
-        return v3.x.ToString() + "," + v3.y.ToString() + "," + v3.z.ToString();
-    }
-    public static Vector3 XmlDataToVector3(this string data)
-    {
-        try
-        {
-            Vector3 v3 = Vector3.zero;
-            string[] split = data.Split(',');
-            v3 = new Vector3(float.Parse(split[0]), float.Parse(split[1]), float.Parse(split[2]));
-            return v3;
-        }
-        catch
-        {
-            return Vector3.zero;
-        }
-    }
 
-    public static int ToXmlData(this bool b)
+public class TXmlPhrase : SingleTon<TXmlPhrase>
+{
+    Dictionary<Type, Func<object, string>> dic_valueToXmlData = new Dictionary<Type, Func<object, string>>();
+    Dictionary<Type, Func<string, object>> dic_xmlDataToValue = new Dictionary<Type, Func<string, object>>();
+    public TXmlPhrase()
     {
-        return b ? 1 : 0;
+        dic_valueToXmlData.Add(typeof(int), (object target) => { return target.ToString(); });
+        dic_xmlDataToValue.Add(typeof(int), (string xmlData) => { return int.Parse(xmlData); });
+        dic_valueToXmlData.Add(typeof(long), (object target) => { return target.ToString(); });
+        dic_xmlDataToValue.Add(typeof(long), (string xmlData) => { return long.Parse(xmlData); });
+        dic_valueToXmlData.Add(typeof(double), (object target) => { return target.ToString(); });
+        dic_xmlDataToValue.Add(typeof(double), (string xmlData) => { return double.Parse(xmlData); });
+        dic_valueToXmlData.Add(typeof(float), (object target) => { return target.ToString(); });
+        dic_xmlDataToValue.Add(typeof(float), (string xmlData) => { return float.Parse(xmlData); });
+        dic_valueToXmlData.Add(typeof(string), (object target) => { return target as string; });
+        dic_xmlDataToValue.Add(typeof(string), (string xmlData) => { return xmlData; });
+        dic_valueToXmlData.Add(typeof(bool),(object data) => { return (((bool)data  ? 1 : 0)).ToString(); });
+        dic_xmlDataToValue.Add(typeof(bool), (string xmlData) => { return int.Parse(xmlData) == 1; });
     }
-    public static bool ToBool10(this int i)
+    public static TXmlPhrase Phrase
     {
-        return i == 1;
+        get
+        {
+            return Instance;
+        }
+    }
+    public string this[Type type, object value]
+    {
+        get
+        {
+            StringBuilder sb_xmlData = new StringBuilder();
+            if (type.IsGenericType)
+            {
+                if (type.GetGenericTypeDefinition() == typeof(List<>))
+                {
+                    Type listType = type.GetGenericArguments()[0];
+                    foreach (object obj in value as IEnumerable)
+                    {
+                        sb_xmlData.Append(ValueToXmlData(listType, obj));
+                        sb_xmlData.Append(";");
+                    }
+                    sb_xmlData.Remove(sb_xmlData.Length - 1, 1);
+                }
+                else if (type.GetGenericTypeDefinition() == typeof(Dictionary<,>))
+                {
+                    Type keyType = type.GetGenericArguments()[0];
+                    Type valueType = type.GetGenericArguments()[1];
+                    foreach (DictionaryEntry obj in (IDictionary)value)
+                    {
+                        sb_xmlData.Append(ValueToXmlData(keyType, obj.Key));
+                        sb_xmlData.Append(":");
+                        sb_xmlData.Append(ValueToXmlData(valueType, obj.Value));
+                        sb_xmlData.Append(";");
+                    }
+                    sb_xmlData.Remove(sb_xmlData.Length - 1, 1);
+                }
+            }
+            else
+            {
+                sb_xmlData.Append(ValueToXmlData(type, value));
+            }
+            return sb_xmlData.ToString();
+        }
+    }
+    public object this[Type type, string xmlData]
+    {
+        get
+        {
+            object obj_target = null;
+            if (type.IsGenericType)
+            {
+                if (type.GetGenericTypeDefinition() == typeof(List<>))
+                {
+                    Type listType = type.GetGenericArguments()[0];
+                    IList iList_Target = (IList)Activator.CreateInstance(type);
+                    string[] as_split = xmlData.Split(';');
+                    if (as_split.Length != 1 || as_split[0] != "")
+                        for (int i = 0; i < as_split.Length; i++)
+                        {
+                            iList_Target.Add(XmlDataToValue(listType, as_split[i]));
+                        }
+                    obj_target = iList_Target;
+                }
+                else if (type.GetGenericTypeDefinition() == typeof(Dictionary<,>))
+                {
+                    Type keyType = type.GetGenericArguments()[0];
+                    Type valueType = type.GetGenericArguments()[1];
+                    IDictionary iDic_Target = (IDictionary)Activator.CreateInstance(type);
+                    string[] as_split = xmlData.Split(';');
+                    if (as_split.Length != 1 || as_split[0] != "")
+                        for (int i = 0; i < as_split.Length; i++)
+                        {
+                            string[] as_subSplit = as_split[i].Split(':');
+                            iDic_Target.Add(XmlDataToValue(keyType, as_subSplit[0])
+                                , XmlDataToValue(valueType, as_subSplit[1]));
+                        }
+                    obj_target = iDic_Target;
+                }
+            }
+            else
+            {
+                obj_target = XmlDataToValue(type, xmlData);
+            }
+            return obj_target;
+        }
+    }
+    string ValueToXmlData(Type type, object value)
+    {
+        if (!dic_valueToXmlData.ContainsKey(type))
+            Debug.LogWarning("Xml Error Invlid Type:" + type.ToString() + " For Base Type To Phrase");
+        return dic_valueToXmlData[type](value);
+    }
+    object XmlDataToValue(Type type, string xmlData)
+    {
+        if (!dic_xmlDataToValue.ContainsKey(type))
+            Debug.LogWarning("Xml Error Invlid Type:" + type.ToString() + " For Xml Data To Phrase");
+        return dic_xmlDataToValue[type](xmlData);
     }
 }
