@@ -37,7 +37,10 @@ public class SFXBullet : SFXBase {
         if (B_SimulatePhysics)
         {
             Vector3 simulateVector = m_Direction * m_horizontalSpeed + Vector3.down*m_verticalSpeed;
-            transform.rotation = Quaternion.LookRotation(simulateVector);
+
+            if(simulateVector!=Vector3.zero)
+                 transform.rotation = Quaternion.LookRotation(simulateVector);
+
             transform.Translate(simulateVector * Time.fixedDeltaTime, Space.World);
 
             m_verticalSpeed += m_verticalAcceleration*Time.fixedDeltaTime;

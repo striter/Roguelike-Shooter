@@ -70,22 +70,11 @@ namespace TExcel
                     {
                         try
                         {
-                            if (fields[j].FieldType == typeof(string))
-                            {
-                                fields[j].SetValue(obj, result.Tables[0].Rows[i + 1][j].ToString());
-                            }
-                            else if (fields[j].FieldType == typeof(bool))
-                            {
-                                fields[j].SetValue(obj, int.Parse(result.Tables[0].Rows[i + 1][j].ToString()).ToBool10());
-                            }
-                            else
-                            {
-                                fields[j].SetValue(obj, Convert.ChangeType(result.Tables[0].Rows[i + 1][j].ToString(), fields[j].FieldType));
-                            }
+                            fields[j].SetValue(obj, TXmlPhrase.Phrase[fields[j].FieldType, result.Tables[0].Rows[i + 1][j].ToString()]);
                         }
-                        catch
+                        catch(Exception e)
                         {
-                            throw new Exception("Invalid Info:'"+ result.Tables[0].Rows[i + 1][j].ToString()+"'" + ",FieldType:" + fields[j].FieldType.ToString() + ", Rows/Column:" + (i+2).ToString() + "/" + (j+1).ToString());
+                            throw new Exception("Invalid Info:'"+ result.Tables[0].Rows[i + 1][j].ToString()+"'" + ",FieldType:" + fields[j].FieldType.ToString() + ", Rows/Column:" + (i+2).ToString() + "/" + (j+1).ToString()+"    Message:"+e.Message);
                         }
                     }
                     l_PropertyList.Add((T)obj);

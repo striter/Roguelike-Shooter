@@ -31,18 +31,22 @@ namespace GameSetting
 
     public static class UIConst
     {
-        public static readonly int I_SporeManagerContainersMaxAmount = 9;  //Max Amount Of SporeManager Container
-        public static readonly int I_SporeManagerContainerStartFreeSlot = 3;    //Free Slot For New Player
-        public static readonly int I_SporeManagerTickOffsetEach = 60;       //Seconds
-        public static readonly int I_SporeManagerContainerStartRandomEnd = 30;      // Start From 0 
-        public static readonly int I_SporeManagerAutoSave = 5;      //Per Seconds Auto Save Case Game Crush
+        public const int I_SporeManagerUnitTime = 60;//Seconds
+        public const int I_SporeManagerContainersMaxAmount = 9;  //Max Amount Of SporeManager Container
+        public const int I_SporeManagerContainerStartFreeSlot = 3;    //Free Slot For New Player
+        public const int I_SporeManagerContainerTickTime = 60;       //Seconds
+        public const int I_SporeManagerContainerStartRandomEnd = 30;      // Start From 0 
+        public const int I_SporeManagerAutoSave = 5;      //Per Seconds Auto Save Case Game Crush
+        public const int I_SporeManagerHybridMaxLevel = 40;      //Spore Level Equals Won't Hybrid
     }
 
     public static class UIExpression
     {
-        public static float F_SporeManagerPorfitPerSecond(int level) => level == 1 ? 1f : 0.17f * Mathf.Pow(1.3f, (level - 1));     //Coins Profit Per Second 
-        public static float F_SporeManagerChestCoinRequirement(int maxLevel) => 200 * Mathf.Pow(1.4f, (maxLevel - 1));       //Coin Requirement Per Chest
-        public static float F_SporeManagerChestBlueRequirement(int maxLevel) => 100 * Mathf.Pow(1.05f, (maxLevel - 1));       //Blue Requirement Per Chest
+        public static float F_SporeManagerProfitPerMinute(int level) => 10 *Mathf.Pow(1.3f,level-1);     //Coins Profit Per Unit Time
+        public static float F_SporeManagerCoinsMaxAmount(int level) => 100 * Mathf.Pow(10 * Mathf.Pow(1.3f , level - 1) , 1.03f) + 400 * Mathf.Pow(1.4f , level - 1) ;
+        //Coins Max Amount Each Level
+        public static float F_SporeManagerChestCoinRequirement(int maxLevel) => 200 * Mathf.Pow(1.4f, maxLevel - 1);       //Coin Requirement Per Chest
+        public static float F_SporeManagerChestBlueRequirement(int maxLevel) => 100 * Mathf.Pow(1.05f, maxLevel - 1);       //Blue Requirement Per Chest
     }
     #endregion
     #region For Developers Use
@@ -274,6 +278,7 @@ namespace GameSetting
     {
         public float f_coin;
         public int i_maxLevel;
+        public int i_previousTimeStamp;
         public double d_timePassed;
         protected Dictionary<int, int> d_sporeContainerInfo;
         public int I_SlotCount => d_sporeContainerInfo.Count;
@@ -327,9 +332,10 @@ namespace GameSetting
         }
         public CSporeManagerSave()
         {
-            f_coin = 30;
+            f_coin = 1000f;
             i_maxLevel = 1;
             d_timePassed = 0;
+            i_previousTimeStamp = TCommon.GetTimeStamp(DateTime.Now);
             d_sporeContainerInfo = new Dictionary<int, int>() { };
             for (int i = 1; i <= UIConst.I_SporeManagerContainersMaxAmount; i++)
                 d_sporeContainerInfo.Add(i, i <= UIConst.I_SporeManagerContainerStartFreeSlot ? 0 : -1);
@@ -367,8 +373,9 @@ namespace GameSetting
     public class SSporeLevelRate
     {
         SSporeLevel m_BaseInfo;
-        public float F_CoinChestPrice;
-        public float F_BlueChestPrice;
+        public float F_CoinChestPrice { get; private set; }
+        public float F_BlueChestPrice { get; private set; }
+        public float F_MaxCoinsAmount { get; private set; }
         public int I_Level => m_BaseInfo.MaxLevel;
         public bool B_AddSlot => m_BaseInfo.B_AddSlot;
         public List<float> l_sporeRates;
@@ -384,6 +391,7 @@ namespace GameSetting
 
             F_CoinChestPrice = UIExpression.F_SporeManagerChestCoinRequirement(I_Level);
             F_BlueChestPrice = UIExpression.F_SporeManagerChestBlueRequirement(I_Level);
+            F_MaxCoinsAmount = UIExpression.F_SporeManagerCoinsMaxAmount(I_Level);
         }
 
         public int AcquireNewSpore()
