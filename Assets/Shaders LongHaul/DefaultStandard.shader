@@ -129,6 +129,7 @@
 
 			Pass
 			{
+				NAME "SHADOWCASTER"
 				Tags{"LightMode" = "ShadowCaster"}
 				CGPROGRAM
 				#pragma vertex vertshadow
