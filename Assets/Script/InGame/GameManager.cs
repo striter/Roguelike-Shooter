@@ -16,6 +16,7 @@ public class GameManager : SingletonMono<GameManager>
         base.Awake();
         TF_PlayerStart = transform.Find("PlayerStart");
         ObjectManager.Init();
+        LevelManager.Init(transform.Find("LevelStart"));
         TBroadCaster<enum_BC_UIStatusChanged>.Init();
         m_PlayerInfo = TGameData<CPlayerSave>.Read();
     }
@@ -32,6 +33,15 @@ public class GameManager : SingletonMono<GameManager>
     private void OnDestroy()
     {
         TGameData<CPlayerSave>.Save(m_PlayerInfo);
+    }
+}
+public static class LevelManager
+{
+    static Transform tf_LevelStart;
+    public static void Init(Transform levelStart)
+    {
+        tf_LevelStart = levelStart;
+
     }
 }
 public static class ObjectManager

@@ -59,7 +59,11 @@ namespace GameSetting
     }
     #endregion
     #region GameEnum
-
+    public enum enum_Level
+    {
+        Invalid=-1,
+        Island=1,
+    }
     public enum enum_Entity     //Preset For Entities
     {
         Invalid = -1,
@@ -153,6 +157,7 @@ namespace GameSetting
                 default: Debug.LogError("Null Layer Can Be Transferd From:" + layerType.ToString()); return 0;
                 case enum_HitCheck.Entity: return GameLayer.I_Entity;
                 case enum_HitCheck.Static: return GameLayer.I_Static;
+                case enum_HitCheck.Dynamic:return GameLayer.I_Dynamic;
             }
         }
     }

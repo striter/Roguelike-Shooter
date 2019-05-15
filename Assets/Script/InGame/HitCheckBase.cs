@@ -9,11 +9,13 @@ public class HitCheckBase : MonoBehaviour {
     public virtual enum_HitCheck m_HitCheckType => GameSetting.enum_HitCheck.Invalid;
     Func<float,bool> OnHitCheck;
     protected Collider m_Collider;
-
+    protected void Awake()
+    {
+        gameObject.layer = m_HitCheckType.ToLayer();
+    }
     protected void Attach(Func<float,bool> _OnHitCheck)
     {
         m_Collider = GetComponent<Collider>();
-        gameObject.layer = m_HitCheckType.ToLayer();
         OnHitCheck = _OnHitCheck;
     }
     public virtual bool TryHit(float amount)
