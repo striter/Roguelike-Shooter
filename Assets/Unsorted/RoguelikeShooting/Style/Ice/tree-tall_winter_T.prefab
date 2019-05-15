@@ -9,45 +9,45 @@ Prefab:
     m_Modifications: []
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 1000011078951186}
+  m_RootGameObject: {fileID: 1000013899730080}
   m_IsPrefabParent: 1
---- !u!1 &1000011078951186
+--- !u!1 &1000013899730080
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 4000013518929708}
-  - component: {fileID: 33000013136486980}
-  - component: {fileID: 23000012967211776}
-  - component: {fileID: 136000013519526178}
+  - component: {fileID: 4000014113804040}
+  - component: {fileID: 33000012501576354}
+  - component: {fileID: 23000011029778946}
+  - component: {fileID: 136000013279073728}
   m_Layer: 0
-  m_Name: tree-lime_T
+  m_Name: tree-tall_winter_T
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4000013518929708
+--- !u!4 &4000014113804040
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000011078951186}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_GameObject: {fileID: 1000013899730080}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &23000012967211776
+--- !u!23 &23000011029778946
 MeshRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000011078951186}
+  m_GameObject: {fileID: 1000013899730080}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -76,23 +76,23 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!33 &33000013136486980
+--- !u!33 &33000012501576354
 MeshFilter:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000011078951186}
-  m_Mesh: {fileID: 4300000, guid: 1a6d3fcb400ba40649494f95dba66165, type: 3}
---- !u!136 &136000013519526178
+  m_GameObject: {fileID: 1000013899730080}
+  m_Mesh: {fileID: 4300000, guid: 0f3451dbec2144822b6ecac073be0d8e, type: 3}
+--- !u!136 &136000013279073728
 CapsuleCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000011078951186}
+  m_GameObject: {fileID: 1000013899730080}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.1880281
-  m_Height: 6.493396
+  m_Radius: 0.26
+  m_Height: 6.26
   m_Direction: 1
-  m_Center: {x: -0.04, y: 2.91, z: -0.17}
+  m_Center: {x: -0.02, y: 2.88, z: 0.04}
