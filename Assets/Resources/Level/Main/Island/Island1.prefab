@@ -804,7 +804,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   I_CellWidthCount: 64
   I_CellHeightCount: 64
-  V2_CellOffset: {x: 2, y: 2}
   B_IgnoreUnavailable: 1
   m_LevelType: 1
   b_showGizmos: 1
