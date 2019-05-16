@@ -64,7 +64,11 @@ namespace GameSetting
     public enum enum_LevelType
     {
         Invalid=-1,
-        Island=1,
+        Forest,
+        Desert,
+        Iceland,
+        Tribe,
+        Swamp,
     }
     public enum enum_GenerateOrder
     {

@@ -8,7 +8,7 @@ public class LevelBase : MonoBehaviour {
     public TileMapData data { get; private set; }
     public int I_CellWidthCount = 10, I_CellHeightCount = 10;
     public bool B_IgnoreUnavailable=true;
-    public enum_LevelType m_LevelType = enum_LevelType.Island;
+    public enum_LevelType m_LevelType = enum_LevelType.Forest;
     protected Transform tf_LevelStatic;
 
     public void Init(enum_LevelType level,TileMapData _data)
