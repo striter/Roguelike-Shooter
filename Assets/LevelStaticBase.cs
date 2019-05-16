@@ -5,7 +5,7 @@ using GameSetting;
 public class LevelStaticBase : MonoBehaviour {
     public int m_sizeXAxis = 1;
     public int m_sizeYAxis = 1;
-    public enum_GenerateOrder m_GenerateOrder = enum_GenerateOrder.Invalid;
+    public enum_LevelItemCollide m_GenerateOrder = enum_LevelItemCollide.Invalid;
     public void Init()
     {
 

@@ -8,7 +8,8 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: LPWaterPerformanceDemo
   m_Shader: {fileID: 4800000, guid: 8165be4dd0b12774d80426d906df9c38, type: 3}
-  m_ShaderKeywords: LPW_FOAM _DISTORT_ON _EDGEBLEND_ON _EMISSION _SHADING_FLAT _WAVES_LOWQUALITY
+  m_ShaderKeywords: LPW_FOAM _DISTORT_ON _EDGEBLEND_ON _EMISSION _SHADING_FLAT _USE_LOD
+    _WAVES_LOWQUALITY
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -42,7 +43,7 @@ Material:
     m_Floats:
     - _Absorption: 10
     - _BumpScale: 35
-    - _BumpScale_: 175
+    - _BumpScale_: 35
     - _BumpSpeed: 0.2
     - _Cull: 0
     - _Cull_: 2
@@ -58,38 +59,38 @@ Material:
     - _FresPower: 1.4
     - _HQFoam: 0
     - _Height: 0.3
-    - _Height_: 1.5
+    - _Height_: 0.3
     - _Length: 5
     - _LightAbs: 0
     - _NormalOffset: 1
     - _Opacity: 0.4
     - _PointLights: 0
     - _RHeight: 0.1
-    - _RHeight_: 0.5
+    - _RHeight_: 0.1
     - _RSpeed: 0.5
-    - _RSpeed_: 2.5
+    - _RSpeed_: 0.5
     - _Reflection: 1.2
     - _Refraction: 2
     - _Scale: 1
-    - _Scale_: 5
+    - _Scale_: 1
     - _Shading: 0
     - _Shadow: 0.6
     - _ShoreDistance: 0.3
     - _ShoreIntensity: 1
     - _Specular: 73
     - _Speed: 0.5
-    - _Speed_: 2.5
+    - _Speed_: 0.5
     - _Steepness: 0.2
     - _Stretch: 5
-    - _TexSize_: 320
+    - _TexSize_: 64
     - _Time_: 0
-    - _TransformScale_: 5
+    - _TransformScale_: 1
     - _Waves: 1
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 0, g: 0.6006591, b: 0.75735295, a: 1}
     - _DeepColor: {r: 0, g: 0.20955881, b: 0.41911763, a: 1}
-    - _Direction_: {r: -1, g: -0.00000008742278, b: -5, a: -0.0000004371139}
+    - _Direction_: {r: -1, g: -0.00000008742278, b: -1, a: -0.00000008742278}
     - _FresColor: {r: 0.36689016, g: 0.52222586, b: 0.5735294, a: 1}
     - _ShoreColor: {r: 0.8621323, g: 0.9649087, b: 0.9852941, a: 1}
     - _SpecColor: {r: 0.6764706, g: 0.6359274, b: 0.2785467, a: 1}

@@ -2,7 +2,8 @@
 {
 	Properties
 	{
-		_Color("_Diffuse Color",Color) = (1,1,1,1)
+		_MainTex("Lowpoly UV Color Board",2D) = "white"{}
+		_Color("Color Tint",Color) = (1,1,1,1)
 	}
 	SubShader
 	{
@@ -21,28 +22,30 @@
 			#pragma fragment frag
 			#pragma multi_compile_fwdbase
 			
-
 			struct appdata
 			{
 				float4 vertex : POSITION;
 				float3 normal:NORMAL;
+				float2 uv:TEXCOORD0;
 			};
 
 			struct v2f
 			{
 				float4 vertex : SV_POSITION;
-				float3 worldPos:TEXCOORD0;
-				float diffuse:TEXCOORD1;
-				SHADOW_COORDS(2)
+				float2 uv : TEXCOORD0;
+				float3 worldPos:TEXCOORD1;
+				float diffuse:TEXCOORD2;
+				SHADOW_COORDS(3)
 			};
 
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
 			float4 _Color;
-			
+
 			v2f vert (appdata v)
 			{
 				v2f o;
+				o.uv =  v.uv;
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.worldPos =mul(unity_ObjectToWorld,v.vertex);
 				fixed3 worldNormal = normalize(mul(v.normal, (float3x3)unity_WorldToObject)); //法线方向n
@@ -54,9 +57,10 @@
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
+				fixed3 albedo = tex2D(_MainTex,i.uv)*_Color;
 				UNITY_LIGHT_ATTENUATION(atten, i,i.worldPos)
-				fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz*_Color;
-				float3 diffuse = _LightColor0.rgb*_Color.rgb*i.diffuse*atten;
+				fixed3 ambient =  albedo* UNITY_LIGHTMODEL_AMBIENT.xyz;
+				float3 diffuse = _LightColor0.rgb*albedo*i.diffuse*atten;
 				return fixed4(ambient+diffuse,1);
 			}
 			ENDCG

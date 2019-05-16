@@ -21,11 +21,11 @@ public class LevelBase : MonoBehaviour {
 
     void GenerateStatics()
     {
-        Dictionary<enum_GenerateOrder, List<LevelStaticBase>> m_statics = new Dictionary<enum_GenerateOrder, List<LevelStaticBase>>();
+        Dictionary<enum_LevelItemCollide, List<LevelStaticBase>> m_statics = new Dictionary<enum_LevelItemCollide, List<LevelStaticBase>>();
         LevelStaticBase[] allStatics = TResources.LoadAll<LevelStaticBase>("Level/Static/"+m_LevelType);
         foreach (LevelStaticBase staticbase in allStatics)
         {
-            if (staticbase.m_GenerateOrder== enum_GenerateOrder.Invalid)
+            if (staticbase.m_GenerateOrder== enum_LevelItemCollide.Invalid)
                 Debug.LogError("Please Edit Static Item(Something invalid): Resources/Level/Static/"+ m_LevelType + "/"+staticbase.name);
 
             if (!m_statics.ContainsKey(staticbase.m_GenerateOrder))
@@ -46,8 +46,8 @@ public class LevelBase : MonoBehaviour {
         for (int i = 0; i < 5; i++)
         {
             int randomIndex = EnviormentManager.m_randomSeed.Next(tiles.Count);
-            int randomItem = EnviormentManager.m_randomSeed.Next(m_statics[enum_GenerateOrder.First].Count);
-            LevelStaticBase staticbase= Instantiate(m_statics[enum_GenerateOrder.First][randomItem],tf_LevelStatic);
+            int randomItem = EnviormentManager.m_randomSeed.Next(m_statics[enum_LevelItemCollide.NoCollide].Count);
+            LevelStaticBase staticbase= Instantiate(m_statics[enum_LevelItemCollide.NoCollide][randomItem],tf_LevelStatic);
             staticbase.transform.localPosition = tiles[randomIndex].m_Offset;
         }
         

@@ -70,11 +70,14 @@ namespace GameSetting
         Tribe,
         Swamp,
     }
-    public enum enum_GenerateOrder
+    public enum enum_LevelItemCollide
     {
        Invalid=-1,
-       First=1,
-       Second,
+       NoCollide=0,
+       Small,
+       Medium,
+       Large,
+       Huge,
     }
     public enum enum_Entity     //Preset For Entities
     {

@@ -7,37 +7,46 @@ public class EPostProcessor : AssetPostprocessor
 {
     public static void ExtractMaterial(GameObject go,ModelImporter importer)
     {
-        Shader shader = EMaterialImportSetting.Get();
-
-        Renderer[] renderers = go.GetComponentsInChildren<Renderer>();
-        for (int j = 0; j < renderers.Length; j++)
+        if (EMaterialImportSetting.shaderType == EMaterialImportSetting.enum_ShaderType.LowPoly_Diffuse)
         {
-            for (int k = 0; k < renderers[j].sharedMaterials.Length; k++)
-            {
-                Material mat = renderers[j].sharedMaterials[k];
-
-                string folderParent = "Assets/Material/" + EMaterialImportSetting.levelType.ToString();
-                string folderPath = folderParent + "/" + go.name;
-                string materialPath = folderPath + "/" + mat.name + ".mat";
-                if (!AssetDatabase.IsValidFolder("Assets/Material"))
-                    AssetDatabase.CreateFolder("Assets", "Material");
-
-                if (!AssetDatabase.IsValidFolder(folderParent))
-                    AssetDatabase.CreateFolder("Assets/Material", EMaterialImportSetting.levelType.ToString());
-
-                if (!AssetDatabase.IsValidFolder(folderPath))
-                    AssetDatabase.CreateFolder(folderParent, go.name);
-
-                if (AssetDatabase.LoadAssetAtPath(materialPath, typeof(Material)) == null)
-                    AssetDatabase.CreateAsset(new Material(mat), materialPath);
-
-                Material targetMaterial = (Material)AssetDatabase.LoadAssetAtPath(materialPath, typeof(Material));
-                targetMaterial.shader = shader;
-                renderers[j].sharedMaterials[k] = targetMaterial;
-            }
+            Material mat = AssetDatabase.LoadAssetAtPath<Material>("Assets/Material/LowPoly_Diffuse.mat");
+            importer.materialLocation = ModelImporterMaterialLocation.InPrefab;
+            importer.SearchAndRemapMaterials(ModelImporterMaterialName.BasedOnMaterialName, ModelImporterMaterialSearch.Everywhere);
         }
-        importer.materialLocation = ModelImporterMaterialLocation.InPrefab;
-        importer.SearchAndRemapMaterials(ModelImporterMaterialName.BasedOnMaterialName, ModelImporterMaterialSearch.Everywhere);
+        else
+        {
+            Shader shader = EMaterialImportSetting.Get();
+
+            Renderer[] renderers = go.GetComponentsInChildren<Renderer>();
+            for (int j = 0; j < renderers.Length; j++)
+            {
+                for (int k = 0; k < renderers[j].sharedMaterials.Length; k++)
+                {
+                    Material mat = renderers[j].sharedMaterials[k];
+
+                    string folderParent = "Assets/Material/" + EMaterialImportSetting.levelType.ToString();
+                    string folderPath = folderParent + "/" + go.name;
+                    string materialPath = folderPath + "/" + mat.name + ".mat";
+                    if (!AssetDatabase.IsValidFolder("Assets/Material"))
+                        AssetDatabase.CreateFolder("Assets", "Material");
+
+                    if (!AssetDatabase.IsValidFolder(folderParent))
+                        AssetDatabase.CreateFolder("Assets/Material", EMaterialImportSetting.levelType.ToString());
+
+                    if (!AssetDatabase.IsValidFolder(folderPath))
+                        AssetDatabase.CreateFolder(folderParent, go.name);
+
+                    if (AssetDatabase.LoadAssetAtPath(materialPath, typeof(Material)) == null)
+                        AssetDatabase.CreateAsset(new Material(mat), materialPath);
+
+                    Material targetMaterial = (Material)AssetDatabase.LoadAssetAtPath(materialPath, typeof(Material));
+                    targetMaterial.shader = shader;
+                    renderers[j].sharedMaterials[k] = targetMaterial;
+                }
+            }
+            importer.materialLocation = ModelImporterMaterialLocation.InPrefab;
+            importer.SearchAndRemapMaterials(ModelImporterMaterialName.BasedOnMaterialName, ModelImporterMaterialSearch.Everywhere);
+        }
     }
 }
 
