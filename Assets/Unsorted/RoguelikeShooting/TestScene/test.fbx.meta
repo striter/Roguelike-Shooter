@@ -1,14 +1,61 @@
 fileFormatVersion: 2
-guid: 27324d1593c2b764c9449ba5f836e47d
+guid: 90f9ec768e9c7e14eb52ea3acb926fee
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
-    100000: //RootNode
-    400000: //RootNode
-    2100000: LOWPOLY-COLORS
-    2300000: //RootNode
-    3300000: //RootNode
-    4300000: fire
+    100000: pasted__huoshan
+    100002: pDisc2
+    100004: pDisc3
+    100006: pDisc4
+    100008: pDisc5
+    100010: pDisc6
+    100012: pDisc7
+    100014: pDisc8
+    100016: //RootNode
+    400000: pasted__huoshan
+    400002: pDisc2
+    400004: pDisc3
+    400006: pDisc4
+    400008: pDisc5
+    400010: pDisc6
+    400012: pDisc7
+    400014: pDisc8
+    400016: //RootNode
+    2100000: lambert6
+    2100002: lambert10
+    2100004: lambert12
+    2100006: lambert14
+    2100008: lambert2
+    2100010: lambert11
+    2100012: lambert13
+    2100014: lambert15
+    2100016: pasted__lambert13
+    2100018: pasted__lambert14
+    2300000: pasted__huoshan
+    2300002: pDisc2
+    2300004: pDisc3
+    2300006: pDisc4
+    2300008: pDisc5
+    2300010: pDisc6
+    2300012: pDisc7
+    2300014: pDisc8
+    3300000: pasted__huoshan
+    3300002: pDisc2
+    3300004: pDisc3
+    3300006: pDisc4
+    3300008: pDisc5
+    3300010: pDisc6
+    3300012: pDisc7
+    3300014: pDisc8
+    4300000: pDisc2
+    4300002: pDisc3
+    4300004: pDisc4
+    4300006: pDisc5
+    4300008: pDisc6
+    4300010: pDisc7
+    4300012: pDisc8
+    4300014: pasted__huoshan
+    9500000: //RootNode
   externalObjects: {}
   materials:
     importMaterials: 1
@@ -83,7 +130,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 0
+  animationType: 2
   humanoidOversampling: 1
   additionalBone: 0
   userData: 
