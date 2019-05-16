@@ -59,10 +59,16 @@ namespace GameSetting
     }
     #endregion
     #region GameEnum
-    public enum enum_Level
+    public enum enum_LevelType
     {
         Invalid=-1,
         Island=1,
+    }
+    public enum enum_GenerateOrder
+    {
+       Invalid=-1,
+       First=1,
+       Second,
     }
     public enum enum_Entity     //Preset For Entities
     {
@@ -172,6 +178,7 @@ namespace GameSetting
         {
             public static readonly int I_All = 1 << I_Static | 1 << I_Entity | 1 << I_Dynamic;
             public static readonly int I_EntityOnly = (1 << I_Entity);
+            public static readonly int I_Static = (1 << I_Static);
         }
     }
     #endregion

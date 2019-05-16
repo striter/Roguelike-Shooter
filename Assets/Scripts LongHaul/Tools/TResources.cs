@@ -5,20 +5,28 @@ using UnityEngine;
 
 public class TResources
 {
-
     #region Only For Test Or Start Of The Project
     public static T Instantiate<T>(string path,Transform toParent=null) where T : UnityEngine.Object
     {
         GameObject obj = Resources.Load<GameObject>(path);
         if (obj == null)
-        {
             throw new Exception("Null Path Of :Resources/" + path.ToString());
-        }
         return UnityEngine.Object.Instantiate(obj, toParent).GetComponent<T>() ;
     }
     public static T Load<T>(string path) where T:UnityEngine.Object
     {
-        return Resources.Load<T>(path);
+        T prefab = Resources.Load<T>(path);
+        if (prefab == null)
+             Debug.LogWarning("No Prefab At:" + path);
+        return prefab;
+    }
+    public static T[] LoadAll<T>(string path) where T : UnityEngine.Object
+    {
+        T[] array = Resources.LoadAll<T>(path);
+
+        if (array.Length == 0)
+            Debug.LogWarning("No InnerItems At:" + path);
+        return array;
     }
     public static IEnumerator LoadAsync<T>(string resourcePath,Action<T> OnLoadFinished) where T:UnityEngine.Object
     {
