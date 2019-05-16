@@ -17,6 +17,8 @@ namespace GameSetting
 
         public const int I_BurstFirePelletsOnceTrigger = 3;       //Times While Burst Fire
         public const int I_BulletSpeadAtDistance = 100;       //Meter,  Bullet Spread In A Circle At End Of This Distance
+
+        public const float F_LevelTileSize = 2f;        //Cube Size For Level Tiles
     }
 
     public static class GameExpression
@@ -59,7 +61,17 @@ namespace GameSetting
     }
     #endregion
     #region GameEnum
-
+    public enum enum_LevelType
+    {
+        Invalid=-1,
+        Island=1,
+    }
+    public enum enum_GenerateOrder
+    {
+       Invalid=-1,
+       First=1,
+       Second,
+    }
     public enum enum_Entity     //Preset For Entities
     {
         Invalid = -1,
@@ -153,6 +165,7 @@ namespace GameSetting
                 default: Debug.LogError("Null Layer Can Be Transferd From:" + layerType.ToString()); return 0;
                 case enum_HitCheck.Entity: return GameLayer.I_Entity;
                 case enum_HitCheck.Static: return GameLayer.I_Static;
+                case enum_HitCheck.Dynamic:return GameLayer.I_Dynamic;
             }
         }
     }
@@ -167,6 +180,7 @@ namespace GameSetting
         {
             public static readonly int I_All = 1 << I_Static | 1 << I_Entity | 1 << I_Dynamic;
             public static readonly int I_EntityOnly = (1 << I_Entity);
+            public static readonly int I_Static = (1 << I_Static);
         }
     }
     #endregion

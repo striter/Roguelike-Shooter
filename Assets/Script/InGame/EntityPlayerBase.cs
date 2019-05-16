@@ -101,7 +101,7 @@ public class EntityPlayerBase : EntityBase {
         tf_WeaponHold.localRotation = Quaternion.Euler(-m_Pitch,0,0);
         OnPitchInfoChanged();
         transform.rotation = Quaternion.Lerp(transform.rotation,CameraController.CameraXZRotation,.1f);
-        Vector3 direction = (transform.right * m_MoveDelta.x + transform.forward * m_MoveDelta.y).normalized;
+        Vector3 direction = (transform.right * m_MoveDelta.x + transform.forward * m_MoveDelta.y).normalized +Vector3.down*.98f;
         m_CharacterController.Move(direction*Time.deltaTime*m_EntityInfo.m_moveSpeed);
     }
     public void AddRecoil(Vector2 recoil)

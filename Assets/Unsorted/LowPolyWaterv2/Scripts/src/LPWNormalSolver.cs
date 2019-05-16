@@ -25,12 +25,12 @@ namespace LPWAsset {
         List<LPWPointDataEntry> pointData;
         List<LPWPoint> points;
         Dictionary<LPWPosition, int> pointsDict;
-        Dictionary<int, int> toMerge;
+        //Dictionary<int, int> toMerge;
 
-        Dictionary<int, int> idxDict;
-        List<Vector3> newVerts, newNormals;
-        List<Color32> newColors;
-        List<int> newTris;
+        //Dictionary<int, int> idxDict;
+        //List<Vector3> newVerts, newNormals;
+        //List<Color32> newColors;
+        //List<int> newTris;
 
         public LPWNormalSolver() {
             triNormals = new List<Vector3>();

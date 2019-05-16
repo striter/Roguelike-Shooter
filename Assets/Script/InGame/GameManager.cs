@@ -6,7 +6,6 @@ public class GameManager : SingletonMono<GameManager>
 {
     public static CPlayerSave m_PlayerInfo { get; private set; }
     public bool B_TestMode { get; private set; } = false;
-    Transform TF_PlayerStart;
     protected override void Awake()
     {
 #if UNITY_EDITOR
@@ -14,7 +13,6 @@ public class GameManager : SingletonMono<GameManager>
 #endif
 
         base.Awake();
-        TF_PlayerStart = transform.Find("PlayerStart");
         ObjectManager.Init();
         TBroadCaster<enum_BC_UIStatusChanged>.Init();
         m_PlayerInfo = TGameData<CPlayerSave>.Read();
@@ -26,7 +24,8 @@ public class GameManager : SingletonMono<GameManager>
     }
     private void Start()
     {
-        ObjectManager.SpawnEntity(enum_Entity.Player, TF_PlayerStart);
+        EnviormentManager.Instance.StartLevel( enum_LevelType.Island);
+        ObjectManager.SpawnEntity(enum_Entity.Player, EnviormentManager.Instance.tf_PlayerStart);
     }
 
     private void OnDestroy()
@@ -34,6 +33,7 @@ public class GameManager : SingletonMono<GameManager>
         TGameData<CPlayerSave>.Save(m_PlayerInfo);
     }
 }
+
 public static class ObjectManager
 {
     static Transform TF_Entity;

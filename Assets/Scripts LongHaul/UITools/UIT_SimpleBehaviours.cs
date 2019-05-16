@@ -9,7 +9,6 @@ namespace UIT_SimpleBehaviours
     {
         protected Transform tf_Container;
         protected Text txt_Title;
-        Action<bool> OnBtnClick;
 
         public UIT_MessageBox(Transform _transform):base(_transform)
         {
