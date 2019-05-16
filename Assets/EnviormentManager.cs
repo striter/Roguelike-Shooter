@@ -11,7 +11,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
     {
         base.Awake();
         tf_PlayerStart = transform.Find("PlayerStart");
-        tf_LevelStart = transform.Find("LevelStart");\
+        tf_LevelStart = transform.Find("LevelStart");
     }
     public void StartLevel(enum_LevelType level,string seed="")
     {

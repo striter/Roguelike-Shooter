@@ -17,6 +17,8 @@ namespace GameSetting
 
         public const int I_BurstFirePelletsOnceTrigger = 3;       //Times While Burst Fire
         public const int I_BulletSpeadAtDistance = 100;       //Meter,  Bullet Spread In A Circle At End Of This Distance
+
+        public const float F_LevelTileSize = 2f;        //Cube Size For Level Tiles
     }
 
     public static class GameExpression

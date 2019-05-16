@@ -343,7 +343,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100002, guid: 9e42830bdb9db18409dbdebb80685578, type: 3}
+  - {fileID: 2100000, guid: 16055f7fc74c36f43933482bfa2f675f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -377,7 +377,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100010, guid: 9e42830bdb9db18409dbdebb80685578, type: 3}
+  - {fileID: 2100000, guid: b1eef51bca6842b4590e05651c72a653, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -411,7 +411,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100012, guid: 9e42830bdb9db18409dbdebb80685578, type: 3}
+  - {fileID: 2100000, guid: a745195677b95014d852aa31f4f6100c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -445,7 +445,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100008, guid: 9e42830bdb9db18409dbdebb80685578, type: 3}
+  - {fileID: 2100000, guid: f84d448f491598243829bec8a99dc2a0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -479,7 +479,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100006, guid: 9e42830bdb9db18409dbdebb80685578, type: 3}
+  - {fileID: 2100000, guid: 125871690a03aa241bf0506aaf20c482, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -513,7 +513,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100004, guid: 9e42830bdb9db18409dbdebb80685578, type: 3}
+  - {fileID: 2100000, guid: 04a781b4be6eb6e4db5d359c700a6c1d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -547,7 +547,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 9e42830bdb9db18409dbdebb80685578, type: 3}
+  - {fileID: 2100000, guid: 10b38d0062c463d4ea2a4e32e2b16331, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -802,9 +802,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a39b8c4939b375e46990bb514a48011f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CellWidthCount: 32
-  CellHeightCount: 32
-  CellOffset: {x: 4, y: 4}
-  b_bakeUnavailable: 0
+  I_CellWidthCount: 64
+  I_CellHeightCount: 64
+  V2_CellOffset: {x: 2, y: 2}
+  B_IgnoreUnavailable: 1
   m_LevelType: 1
   b_showGizmos: 1

@@ -4,7 +4,8 @@ using UnityEditor;
 using UnityEngine;
 using GameSetting;
 [CustomEditor(typeof(LevelBase))]
-public class LevelEditor : Editor {
+public class LevelEditor : Editor
+{
     string GetLevelDataFolder(enum_LevelType type,string name)
     {
         return "Resources/Level/Data/"+type.ToString()+"/" + name;
@@ -28,7 +29,7 @@ public class LevelEditor : Editor {
                     AssetDatabase.SaveAssets();
                 }
 
-                data.Bake(levelTarget.transform, levelTarget.CellWidthCount, levelTarget.CellHeightCount, levelTarget.CellOffset,levelTarget.b_bakeUnavailable);
+                data.Bake(levelTarget.transform, levelTarget.I_CellWidthCount, levelTarget.I_CellHeightCount,Vector2.one*GameSetting.GameConst.F_LevelTileSize,levelTarget.B_IgnoreUnavailable);
             }
         }
         else

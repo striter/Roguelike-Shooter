@@ -6,9 +6,8 @@ using System.Linq;
 public class LevelBase : MonoBehaviour {
     
     public TileMapData data { get; private set; }
-    public int CellWidthCount = 10, CellHeightCount = 10;
-    public Vector2 CellOffset = Vector2.one;
-    public bool b_bakeUnavailable=true;
+    public int I_CellWidthCount = 10, I_CellHeightCount = 10;
+    public bool B_IgnoreUnavailable=true;
     public enum_LevelType m_LevelType = enum_LevelType.Island;
     protected Transform tf_LevelStatic;
 
@@ -88,29 +87,28 @@ public class LevelBase : MonoBehaviour {
         if (data == null || data.m_MapData == null)
         {
             Gizmos.color = Color.white;
-            for (int i = 0; i < CellWidthCount; i++)
+            for (int i = 0; i < I_CellWidthCount; i++)
             {
-                for (int j = 0; j < CellHeightCount; j++)
+                for (int j = 0; j < I_CellHeightCount; j++)
                 {
                     Vector3 position = transform.position 
-                        + transform.forward* CellOffset.y * j
-                        +transform.right* CellOffset.x * i 
-                        -transform.right*(CellOffset.x * CellWidthCount / 2 - CellOffset.x / 2)
-                        -transform.forward*( CellOffset.y * CellHeightCount / 2 - CellOffset.y / 2);
-                    Gizmos.DrawCube(position, new Vector3(CellOffset.x / 2, 5f, CellOffset.y / 2));
+                        + transform.forward* GameConst.F_LevelTileSize * j
+                        +transform.right* GameConst.F_LevelTileSize * i 
+                        -transform.right*(GameConst.F_LevelTileSize * I_CellWidthCount / 2 - GameConst.F_LevelTileSize / 2)
+                        -transform.forward*(GameConst.F_LevelTileSize * I_CellHeightCount / 2 - GameConst.F_LevelTileSize / 2);
+                    Gizmos.DrawCube(position, new Vector3(GameConst.F_LevelTileSize / 2, 5f, GameConst.F_LevelTileSize / 2));
                 }
             }
         }
         else
         {
-            CellWidthCount = data.I_Width;
-            CellHeightCount = data.I_Height;
-            CellOffset = data.m_Offset;
+            I_CellWidthCount = data.I_Width;
+            I_CellHeightCount = data.I_Height;
             List<TileMapData.TileInfo> nodes = data.m_MapData;
             foreach (TileMapData.TileInfo node in nodes)
             {
                 Gizmos.color = node.m_Status == -1 ? Color.red : Color.green;
-                Gizmos.DrawCube(transform.position + transform.right*node.m_Offset.x+Vector3.up * (node.m_Offset.y + .5f)+ transform.forward * node.m_Offset.z, new Vector3(CellOffset.x / 2, 1f, CellOffset.y / 2));
+                Gizmos.DrawCube(transform.position + transform.right*node.m_Offset.x+Vector3.up * (node.m_Offset.y + .5f)+ transform.forward * node.m_Offset.z, new Vector3(GameConst.F_LevelTileSize / 2, 1f, GameConst.F_LevelTileSize / 2));
             }
         }
     }
