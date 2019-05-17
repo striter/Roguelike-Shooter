@@ -64,20 +64,13 @@ namespace GameSetting
     public enum enum_LevelType
     {
         Invalid=-1,
-        Forest,
-        Desert,
-        Iceland,
-        Tribe,
-        Swamp,
+        Island=1,
     }
-    public enum enum_LevelItemCollide
+    public enum enum_GenerateOrder
     {
        Invalid=-1,
-       NoCollide=0,
-       Small,
-       Medium,
-       Large,
-       Huge,
+       First=1,
+       Second,
     }
     public enum enum_Entity     //Preset For Entities
     {

@@ -24,7 +24,7 @@ public class GameManager : SingletonMono<GameManager>
     }
     private void Start()
     {
-        EnviormentManager.Instance.StartLevel( enum_LevelType.Forest);
+        EnviormentManager.Instance.StartLevel( enum_LevelType.Island);
         ObjectManager.SpawnEntity(enum_Entity.Player, EnviormentManager.Instance.tf_PlayerStart);
     }
 

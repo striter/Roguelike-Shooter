@@ -7,46 +7,37 @@ public class EPostProcessor : AssetPostprocessor
 {
     public static void ExtractMaterial(GameObject go,ModelImporter importer)
     {
-        if (EMaterialImportSetting.shaderType == EMaterialImportSetting.enum_ShaderType.LowPoly_Diffuse)
-        {
-            Material mat = AssetDatabase.LoadAssetAtPath<Material>("Assets/Material/LowPoly_Diffuse.mat");
-            importer.materialLocation = ModelImporterMaterialLocation.InPrefab;
-            importer.SearchAndRemapMaterials(ModelImporterMaterialName.BasedOnMaterialName, ModelImporterMaterialSearch.Everywhere);
-        }
-        else
-        {
-            Shader shader = EMaterialImportSetting.Get();
+        Shader shader = EMaterialImportSetting.Get();
 
-            Renderer[] renderers = go.GetComponentsInChildren<Renderer>();
-            for (int j = 0; j < renderers.Length; j++)
+        Renderer[] renderers = go.GetComponentsInChildren<Renderer>();
+        for (int j = 0; j < renderers.Length; j++)
+        {
+            for (int k = 0; k < renderers[j].sharedMaterials.Length; k++)
             {
-                for (int k = 0; k < renderers[j].sharedMaterials.Length; k++)
-                {
-                    Material mat = renderers[j].sharedMaterials[k];
+                Material mat = renderers[j].sharedMaterials[k];
 
-                    string folderParent = "Assets/Material/" + EMaterialImportSetting.levelType.ToString();
-                    string folderPath = folderParent + "/" + go.name;
-                    string materialPath = folderPath + "/" + mat.name + ".mat";
-                    if (!AssetDatabase.IsValidFolder("Assets/Material"))
-                        AssetDatabase.CreateFolder("Assets", "Material");
+                string folderParent = "Assets/Material/" + EMaterialImportSetting.levelType.ToString();
+                string folderPath = folderParent + "/" + go.name;
+                string materialPath = folderPath + "/" + mat.name + ".mat";
+                if (!AssetDatabase.IsValidFolder("Assets/Material"))
+                    AssetDatabase.CreateFolder("Assets", "Material");
 
-                    if (!AssetDatabase.IsValidFolder(folderParent))
-                        AssetDatabase.CreateFolder("Assets/Material", EMaterialImportSetting.levelType.ToString());
+                if (!AssetDatabase.IsValidFolder(folderParent))
+                    AssetDatabase.CreateFolder("Assets/Material", EMaterialImportSetting.levelType.ToString());
 
-                    if (!AssetDatabase.IsValidFolder(folderPath))
-                        AssetDatabase.CreateFolder(folderParent, go.name);
+                if (!AssetDatabase.IsValidFolder(folderPath))
+                    AssetDatabase.CreateFolder(folderParent, go.name);
 
-                    if (AssetDatabase.LoadAssetAtPath(materialPath, typeof(Material)) == null)
-                        AssetDatabase.CreateAsset(new Material(mat), materialPath);
+                if (AssetDatabase.LoadAssetAtPath(materialPath, typeof(Material)) == null)
+                    AssetDatabase.CreateAsset(new Material(mat), materialPath);
 
-                    Material targetMaterial = (Material)AssetDatabase.LoadAssetAtPath(materialPath, typeof(Material));
-                    targetMaterial.shader = shader;
-                    renderers[j].sharedMaterials[k] = targetMaterial;
-                }
+                Material targetMaterial = (Material)AssetDatabase.LoadAssetAtPath(materialPath, typeof(Material));
+                targetMaterial.shader = shader;
+                renderers[j].sharedMaterials[k] = targetMaterial;
             }
-            importer.materialLocation = ModelImporterMaterialLocation.InPrefab;
-            importer.SearchAndRemapMaterials(ModelImporterMaterialName.BasedOnMaterialName, ModelImporterMaterialSearch.Everywhere);
         }
+        importer.materialLocation = ModelImporterMaterialLocation.InPrefab;
+        importer.SearchAndRemapMaterials(ModelImporterMaterialName.BasedOnMaterialName, ModelImporterMaterialSearch.Everywhere);
     }
 }
 
