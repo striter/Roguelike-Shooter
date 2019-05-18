@@ -82,6 +82,10 @@ public static class TCommon
         float r = br / 255f; float g = bg / 255f; float b = bb / 255f; float a = cc / 255f;
         return new Color(r, g, b, a);
     }
+    public static Color ColorAlpha(Color origin, float alpha)
+    {
+        return new Color(origin.r, origin.g, origin.b, alpha);
+    }
     public static float GetAngle180(float angle)
     {
         if (angle > 180)
@@ -154,13 +158,13 @@ public static class TCommon
         }
         return indexes;
     }
-    public static T ListRandom<T>(this List<T> randomList)
+    public static T ListRandom<T>(this List<T> randomList,System.Random randomSeed=null)
     {
-        return randomList[UnityEngine.Random.Range(0, randomList.Count)];
+        return randomList[randomSeed!=null?randomSeed.Next(randomList.Count):UnityEngine.Random.Range(0, randomList.Count)];
     }
-    public static int ListRandomIndex<T>(this List<T> randomList)
+    public static int ListRandomIndex<T>(this List<T> randomList,System.Random randomSeed=null)
     {
-        return UnityEngine.Random.Range(0, randomList.Count);
+        return randomSeed!=null?randomSeed.Next(randomList.Count):UnityEngine.Random.Range(0, randomList.Count);
     }
     public static void TraversalList<T>(this List<T> list, Action<T> OnEachItem)
     {

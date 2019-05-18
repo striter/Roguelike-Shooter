@@ -15,7 +15,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
     }
     public void StartLevel(enum_LevelType level,string seed="")
     {
-        m_randomSeed = new System.Random(seed==""?Time.time.GetHashCode():seed.GetHashCode());
+        m_randomSeed = new System.Random(seed==""?System.DateTime.Now.GetHashCode():seed.GetHashCode());
         string levelName = level.ToString() + "1";
         m_currentLevel = TResources.Instantiate<LevelBase>("Level/Main/" + level.ToString()+"/"+levelName, tf_LevelStart);
         m_currentLevel.Init(level,GetLevelData(m_currentLevel.m_LevelType,levelName));
