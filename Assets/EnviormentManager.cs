@@ -19,6 +19,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         string levelName = level.ToString() + "1";
         m_currentLevel = TResources.Instantiate<LevelBase>("Level/Main/" + level.ToString()+"/"+levelName, tf_LevelStart);
         m_currentLevel.Init(GameExpression.S_GetLevelGenerateInfo(level),GetLevelData(m_currentLevel.m_LevelType,levelName));
+        m_currentLevel.transform.position = Vector3.one;
         m_currentLevel.transform.rotation = Quaternion.Euler(0,m_randomSeed.Next(360),0);
     }
     public static TileMapData GetLevelData(enum_LevelType level, string name) => TResources.Load<TileMapData>("Level/Data/" + level + "/" + name);

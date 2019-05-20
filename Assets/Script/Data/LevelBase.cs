@@ -153,14 +153,14 @@ public class LevelBase : MonoBehaviour {
     }
     #endregion
 #if UNITY_EDITOR
-    public bool b_showGizmos=true;
+    public bool b_showGizmos=true,b_showGameTiles=true;
     public TileMapData data;
     private void OnDrawGizmos()
     {
         if (!b_showGizmos)
             return;
 
-        if (UnityEditor.EditorApplication.isPlaying)            //Draw While Playing
+        if (b_showGameTiles&&UnityEditor.EditorApplication.isPlaying)            //Draw While Playing
         {
             for (int i = 0; i < m_AllTiles.Count; i++)
             {

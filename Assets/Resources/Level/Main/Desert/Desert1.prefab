@@ -627,8 +627,8 @@ MeshCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Convex: 1
-  m_CookingOptions: 14
+  m_Convex: 0
+  m_CookingOptions: 0
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300004, guid: 84243bf37bfb1ac42b0399eb8b3ef6dd, type: 3}
 --- !u!64 &64074792151244030
@@ -641,8 +641,8 @@ MeshCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Convex: 1
-  m_CookingOptions: 14
+  m_Convex: 0
+  m_CookingOptions: 0
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300012, guid: 84243bf37bfb1ac42b0399eb8b3ef6dd, type: 3}
 --- !u!64 &64421445966266442
@@ -655,8 +655,8 @@ MeshCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Convex: 1
-  m_CookingOptions: 14
+  m_Convex: 0
+  m_CookingOptions: 0
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300008, guid: 84243bf37bfb1ac42b0399eb8b3ef6dd, type: 3}
 --- !u!64 &64428002025940852
@@ -669,8 +669,8 @@ MeshCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Convex: 1
-  m_CookingOptions: 14
+  m_Convex: 0
+  m_CookingOptions: 0
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300014, guid: 84243bf37bfb1ac42b0399eb8b3ef6dd, type: 3}
 --- !u!64 &64633214546345158
@@ -683,8 +683,8 @@ MeshCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Convex: 1
-  m_CookingOptions: 14
+  m_Convex: 0
+  m_CookingOptions: 0
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300010, guid: 84243bf37bfb1ac42b0399eb8b3ef6dd, type: 3}
 --- !u!64 &64664852990681174
@@ -697,8 +697,8 @@ MeshCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Convex: 1
-  m_CookingOptions: 14
+  m_Convex: 0
+  m_CookingOptions: 0
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300006, guid: 84243bf37bfb1ac42b0399eb8b3ef6dd, type: 3}
 --- !u!64 &64935700821606286
@@ -711,9 +711,9 @@ MeshCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Convex: 1
-  m_CookingOptions: 14
-  m_SkinWidth: 0.01
+  m_Convex: 0
+  m_CookingOptions: 0
+  m_SkinWidth: 1.00000005e-20
   m_Mesh: {fileID: 4300002, guid: 84243bf37bfb1ac42b0399eb8b3ef6dd, type: 3}
 --- !u!95 &95274924071351016
 Animator:
@@ -814,7 +814,9 @@ MonoBehaviour:
   B_IgnoreUnavailable: 1
   F_HeightDetect: 0.3
   m_LevelType: 0
-  b_showGizmos: 1
+  b_showGizmos: 0
+  b_showGameTiles: 1
+  data: {fileID: 0}
 --- !u!114 &114958691918397338
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -1,5 +1,6 @@
 ﻿using GameSetting;
 using System;
+using UnityEditor.AI;
 using UnityEngine;
 
 public class GameManager : SingletonMono<GameManager>
@@ -26,6 +27,7 @@ public class GameManager : SingletonMono<GameManager>
     {
         EnviormentManager.Instance.StartLevel(enum_LevelType.Desert);
         ObjectManager.SpawnEntity(enum_Entity.Player, EnviormentManager.Instance.tf_PlayerStart);
+        NavMeshBuilder.BuildNavMesh();
     }
 
     private void OnDestroy()

@@ -15,7 +15,7 @@ public class LevelBaseEditor : Editor
     {
         levelTarget = target as LevelBase;
         base.OnInspectorGUI();
-        if (levelTarget.m_LevelType ==  enum_LevelType.Invalid)
+        if (levelTarget.m_LevelType ==  enum_LevelType.Invalid||EditorApplication.isPlaying)
             return;
 
         if (levelTarget.data == null )
