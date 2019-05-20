@@ -28,8 +28,23 @@ namespace GameSetting
         public static float F_RocketBlastDamage(float weaponDamage, float distance) => weaponDamage * (distance / GameConst.I_RocketBlastRadius);
 
         public static bool B_CanHitTarget(HitCheckEntity hb, int sourceID) => hb.I_AttacherID != sourceID;
-    }
 
+        public static SLevelGenerate S_GetLevelGenerateInfo(enum_LevelType type)
+        {
+            switch (type)
+            {
+                default:
+                    Debug.LogError("Add More Structs Here:" + type);
+                    return new SLevelGenerate();
+                case enum_LevelType.Desert: return new SLevelGenerate(type,new Dictionary<enum_LevelItemType, RangeInt>() {
+                        { enum_LevelItemType.Large, new RangeInt(0, 1) },
+                        { enum_LevelItemType.Medium,new RangeInt(10,5)},
+                        { enum_LevelItemType.Small,new RangeInt(20,10) },
+                        {enum_LevelItemType.Manmade,new RangeInt(5,10) },
+                        {enum_LevelItemType.NoCollision,new RangeInt(60,20)} });
+            }
+        }
+    }
 
     public static class UIConst
     {
@@ -292,6 +307,16 @@ namespace GameSetting
         public Vector2 m_RecoilPerShot => new Vector2(f_recoilHorizontal, f_recoilVertical);
     }
 
+    public struct SLevelGenerate
+    {
+        public enum_LevelType m_LevelType { get; private set; }
+        public Dictionary<enum_LevelItemType, RangeInt> m_ItemGenerate { get; private set; }
+        public SLevelGenerate(enum_LevelType _levelType, Dictionary<enum_LevelItemType, RangeInt> _ItemGenerate)
+        {
+            m_LevelType = _levelType;
+            m_ItemGenerate = _ItemGenerate;
+        }
+    }
     #endregion
     #region For UI Usage     
     class CSporeManagerSave : ISave     //Locked=-1 Spare=1

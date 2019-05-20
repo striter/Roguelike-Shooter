@@ -4,19 +4,17 @@ using UnityEngine;
 using GameSetting;
 public class LevelBase : MonoBehaviour {
     
-    public TileMapData data { get; private set; }
     public int I_CellWidthCount = 64, I_CellHeightCount = 64;
     public bool B_IgnoreUnavailable=true;
     public float F_HeightDetect = .5f;
     public enum_LevelType m_LevelType = enum_LevelType.Invalid;
     protected Transform tf_LevelItem;
-
-    public void Init(enum_LevelType level,TileMapData _data)
+   
+    public void Init(SLevelGenerate _itemData,TileMapData _data)
     {
         tf_LevelItem = transform.Find("Item");
-        m_LevelType = level;
-        data = _data;
-        GenerateTileItems();
+        m_LevelType = _itemData.m_LevelType;
+        GenerateTileItems(_itemData,_data);
     }
     #region TileMapInfos
     List<LevelTile> m_AllTiles=new List<LevelTile>();
@@ -24,7 +22,7 @@ public class LevelBase : MonoBehaviour {
     List<int> m_IndexMain=new List<int>();
     List<int> t_IndexTemp = new List<int>();
     Dictionary<enum_LevelItemType, List<LevelItemBase>> m_AllItems = new Dictionary<enum_LevelItemType, List<LevelItemBase>>();
-    void GenerateTileItems()
+    void GenerateTileItems(SLevelGenerate _itemData, TileMapData _data)
     {
         //Load All Level Item Info
         LevelItemBase[] allItems = TResources.LoadAll<LevelItemBase>("Level/Item/" + m_LevelType);
@@ -40,20 +38,19 @@ public class LevelBase : MonoBehaviour {
 
         //Select All Emptys And Create Data
         int index = 0;
-        for (int i = 0; i < data.m_MapData.Count; i++)
+        for (int i = 0; i < _data.m_MapData.Count; i++)
         {
-            if (data.m_MapData[i].m_Status != -1)
+            if (_data.m_MapData[i].m_Status != -1)
             {
-                m_AllTiles.Add(new LevelTile(data.m_MapData[i]));
+                m_AllTiles.Add(new LevelTile(_data.m_MapData[i]));
                 m_IndexEmpty.Add(index++);
             }
         }
 
-        GenerateRandomItem(enum_LevelItemType.Large, 1);
-        GenerateRandomItem(enum_LevelItemType.Medium, 15);
-        GenerateRandomItem(enum_LevelItemType.Small, 30);
-        GenerateRandomItem(enum_LevelItemType.Manmade, 12);
-        GenerateRandomItem(enum_LevelItemType.NoCollision, 70);
+        TCommon.TraversalDic(_itemData.m_ItemGenerate, (enum_LevelItemType type, RangeInt range) =>
+        {
+            GenerateRandomItem(type,EnviormentManager.m_randomSeed.Next(range.start,range.end+1));
+        });
         
         for (int i = 0; i < m_IndexMain.Count; i++)
         {
@@ -157,21 +154,13 @@ public class LevelBase : MonoBehaviour {
     #endregion
 #if UNITY_EDITOR
     public bool b_showGizmos=true;
+    public TileMapData data;
     private void OnDrawGizmos()
     {
-        if (data == null && m_LevelType != enum_LevelType.Invalid)
-            data = EnviormentManager.GetLevelData(m_LevelType, gameObject.name);
+        if (!b_showGizmos)
+            return;
 
-        if (data == null)
-            Debug.LogWarning("Please Bake This Level First");
-        if (b_showGizmos)
-        {
-            DrawGizmos();
-        }
-    }
-    void DrawGizmos()
-    {
-        if (UnityEditor.EditorApplication.isPlaying)
+        if (UnityEditor.EditorApplication.isPlaying)            //Draw While Playing
         {
             for (int i = 0; i < m_AllTiles.Count; i++)
             {
@@ -181,10 +170,10 @@ public class LevelBase : MonoBehaviour {
                 switch (m_AllTiles[i].E_TileType)
                 {
                     default:
-                        targetColor = Color.magenta;sizeParam = 1f;
+                        targetColor = Color.magenta; sizeParam = 1f;
                         break;
                     case enum_TileType.Empty:
-                        targetColor = TCommon.ColorAlpha(Color.green,.3f);
+                        targetColor = TCommon.ColorAlpha(Color.green, .3f);
                         break;
                     case enum_TileType.Main:
                         targetColor = TCommon.ColorAlpha(Color.red, .5f); sizeParam = 1f;
@@ -194,10 +183,18 @@ public class LevelBase : MonoBehaviour {
                         break;
                 }
                 Gizmos.color = targetColor;
-                Gizmos.DrawCube(positon, new Vector3(GameConst.F_LevelTileSize, 2f, GameConst.F_LevelTileSize)  *sizeParam);
+                Gizmos.DrawCube(positon, new Vector3(GameConst.F_LevelTileSize, 2f, GameConst.F_LevelTileSize) * sizeParam);
             }
+            return;
         }
-        else if (data == null || data.m_MapData == null)
+
+        if (data == null && m_LevelType != enum_LevelType.Invalid)
+            data = EnviormentManager.GetLevelData(m_LevelType, gameObject.name);
+
+        if (data == null)
+            Debug.LogWarning("Please Bake This Level First");
+
+        if (data == null || data.m_MapData == null)
         {
             Gizmos.color = Color.white;
             for (int i = 0; i < I_CellWidthCount; i++)
