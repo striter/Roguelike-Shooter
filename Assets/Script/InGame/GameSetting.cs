@@ -64,19 +64,13 @@ namespace GameSetting
     public enum enum_LevelType
     {
         Invalid=-1,
-        Desert,
+        Island=1,
     }
-    public enum enum_LevelItemType
+    public enum enum_GenerateOrder
     {
        Invalid=-1,
-       Large,
-       Medium,
-       Small,
-       Manmade,
-
-       NoCollision,
-
-       Reward,
+       First=1,
+       Second,
     }
     public enum enum_Entity     //Preset For Entities
     {

@@ -1,43 +1,50 @@
-﻿
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using GameSetting;
-using System.IO;
-
 public class EPostProcessor : AssetPostprocessor
 {
-    public static void CreatePrefab(GameObject go)
+    public static void ExtractMaterial(GameObject go,ModelImporter importer)
     {
-        string prefabParent = "Assets/GeneratedPrefab/" + EMaterialImportSetting.levelType.ToString();
-        string prefabPath = prefabParent + "/" + go.name + ".prefab";
-        if (!Directory.Exists(prefabParent))
-            Directory.CreateDirectory(prefabParent);
+        Shader shader = EMaterialImportSetting.Get();
 
-        if (AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath) != null)
-            AssetDatabase.DeleteAsset(prefabPath);
-
-        GameObject prefab = PrefabUtility.CreatePrefab(prefabPath,go);
-
-        Renderer[] renderers = prefab.GetComponentsInChildren<Renderer>();
-
-        for (int i = 0; i < renderers.Length; i++)
+        Renderer[] renderers = go.GetComponentsInChildren<Renderer>();
+        for (int j = 0; j < renderers.Length; j++)
         {
-            Material[] matList = new Material[renderers[i].sharedMaterials.Length];
-            for (int j = 0; j < renderers[i].sharedMaterials.Length; j++)
+            for (int k = 0; k < renderers[j].sharedMaterials.Length; k++)
             {
-                matList[j]=( EMaterialImportSetting.GetMaterial(go, renderers[i].sharedMaterials[j],"material"+i.ToString()+j.ToString()));
+                Material mat = renderers[j].sharedMaterials[k];
+
+                string folderParent = "Assets/Material/" + EMaterialImportSetting.levelType.ToString();
+                string folderPath = folderParent + "/" + go.name;
+                string materialPath = folderPath + "/" + mat.name + ".mat";
+                if (!AssetDatabase.IsValidFolder("Assets/Material"))
+                    AssetDatabase.CreateFolder("Assets", "Material");
+
+                if (!AssetDatabase.IsValidFolder(folderParent))
+                    AssetDatabase.CreateFolder("Assets/Material", EMaterialImportSetting.levelType.ToString());
+
+                if (!AssetDatabase.IsValidFolder(folderPath))
+                    AssetDatabase.CreateFolder(folderParent, go.name);
+
+                if (AssetDatabase.LoadAssetAtPath(materialPath, typeof(Material)) == null)
+                    AssetDatabase.CreateAsset(new Material(mat), materialPath);
+
+                Material targetMaterial = (Material)AssetDatabase.LoadAssetAtPath(materialPath, typeof(Material));
+                targetMaterial.shader = shader;
+                renderers[j].sharedMaterials[k] = targetMaterial;
             }
-            renderers[i].sharedMaterials = matList;
         }
-        Debug.Log("Prefab:" + prefabPath + " Generate Complete");   
+        importer.materialLocation = ModelImporterMaterialLocation.InPrefab;
+        importer.SearchAndRemapMaterials(ModelImporterMaterialName.BasedOnMaterialName, ModelImporterMaterialSearch.Everywhere);
     }
 }
 
 
 public class EMaterialImportSetting : EditorWindow
 {
-    [MenuItem("ImportSetting/GenerateModelShadedPrefab")]
+    [MenuItem("ImportSetting/ImportTypeShaderSetting")]
     public static void ChangeGameObjectShader()
     {
         // Get existing open window or if none, make a new one:
@@ -49,8 +56,7 @@ public class EMaterialImportSetting : EditorWindow
     public enum enum_ShaderType
     {
         Invalid = -1,
-        LowPoly_UVColorDiffuse = 1,
-        LowPoly_OnlyColorDiffuse=2,
+        LowPoly_Diffuse = 1,
     }
 
     private void OnGUI()
@@ -70,49 +76,22 @@ public class EMaterialImportSetting : EditorWindow
             }
 
             if (shaderType != enum_ShaderType.Invalid && levelType != enum_LevelType.Invalid)
-                if (EditorGUILayout.DropdownButton(new GUIContent("Create Shaded Prefab"), FocusType.Passive))
-                    CreatePrefabFromModel(assets);
+                if (EditorGUILayout.DropdownButton(new GUIContent("Extract Materials"), FocusType.Passive))
+                    ExtractMaterial(assets);
         }
 
         EditorGUILayout.EndVertical();
 
     }
-    void CreatePrefabFromModel(Object[] assets)
+    void ExtractMaterial(Object[] assets)
     {
         for (int i = 0; i < assets.Length; i++)
         {
-            EPostProcessor.CreatePrefab(assets[i] as GameObject);
+            EPostProcessor.ExtractMaterial(assets[i] as GameObject,(ModelImporter)AssetImporter.GetAtPath(AssetDatabase.GetAssetPath(assets[i])));
         }
     }
-    public static Material GetMaterial(GameObject go,Material sharedMaterial,string materialName)
-    {
-        switch (shaderType)
-        {
-            case enum_ShaderType.LowPoly_UVColorDiffuse:
-                return AssetDatabase.LoadAssetAtPath<Material>("Assets/Material/LowPoly_Diffuse.mat");
-            default:
-                {
-                    
 
-                    string folderParent = "Assets/Material/" + go.name;
-                    string folderPath = folderParent + "/" + materialName + ".mat";
-
-                    if (!Directory.Exists(folderParent))
-                        Directory.CreateDirectory(folderParent);
-
-                    if (AssetDatabase.LoadAssetAtPath<Material>(folderPath) != null)
-                        AssetDatabase.DeleteAsset(folderPath);
-
-                    Material target = new Material(sharedMaterial);
-                    target.shader = CurrentShader();
-                    AssetDatabase.CreateAsset(target, folderPath);
-
-                    return AssetDatabase.LoadAssetAtPath<Material>(folderPath) ;
-                }
-                
-        }
-    }
-    public static Shader CurrentShader()
+    public static Shader Get()
     {
         Shader shader;
         switch (shaderType)
@@ -120,12 +99,9 @@ public class EMaterialImportSetting : EditorWindow
             default:
                 shader = null;
                 break;
-            case enum_ShaderType.LowPoly_UVColorDiffuse:
-                shader = Shader.Find("Game/LowPoly_UVColor_Diffuse");
+            case enum_ShaderType.LowPoly_Diffuse:
+                shader = Shader.Find("Game/LowPoly_Diffuse");
                 break;
-            case enum_ShaderType.LowPoly_OnlyColorDiffuse:
-                shader = Shader.Find("Game/LowPoly_OnlyColor_Diffuse");
-                    break;
         }
         if (shader == null)
         {
