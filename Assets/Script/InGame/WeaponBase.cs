@@ -11,7 +11,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
     protected Transform tf_Muzzle;
     Action OnAmmoInfoChanged;
     Action<Vector2> OnRecoil;
-    WeaponTrigger m_Trigger;
+    WeaponTrigger m_Trigger=null;
     bool B_HaveAmmoLeft => m_WeaponInfo.m_ClipAmount == -1 || I_AmmoLeft > 0;
     public void Init(SWeapon weaponInfo)
     {
@@ -35,6 +35,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
     }
     protected void Update()
     {
+        if(m_Trigger!=null)
         m_Trigger.Tick(Time.deltaTime);
     }
     protected virtual void OnDisable()

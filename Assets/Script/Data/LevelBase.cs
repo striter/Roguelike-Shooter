@@ -71,8 +71,6 @@ public class LevelBase : MonoBehaviour {
         {
             int currentItemIndex = targetItems.ListRandomIndex(EnviormentManager.m_randomSeed);
             LevelItemBase currentItem = targetItems[currentItemIndex];
-            List<int> _areaSubIndexes = new List<int>();
-            
             int currentTileIndex = RandomAvailableTileIndex(currentItem.m_sizeXAxis,currentItem.m_sizeYAxis, ref t_IndexTemp);
             if (currentTileIndex != -1)
             {

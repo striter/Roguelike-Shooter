@@ -32,7 +32,7 @@
 
 			struct v2f
 			{
-				float4 vertex : SV_POSITION;
+				float4 pos : SV_POSITION;
 				float2 uv:TEXCOORD0;
 				float3 worldPos:TEXCOORD1;
 				float diffuse:TEXCOORD2;
@@ -47,7 +47,7 @@
 			{
 				v2f o;
 				o.uv  =v.uv;
-				o.vertex = UnityObjectToClipPos(v.vertex);
+				o.pos = UnityObjectToClipPos(v.vertex);
 				o.worldPos =mul(unity_ObjectToWorld,v.vertex);
 				fixed3 worldNormal = normalize(mul(v.normal, (float3x3)unity_WorldToObject)); //法线方向n
 				fixed3 worldLightDir = normalize(UnityWorldSpaceLightDir(o.worldPos));
