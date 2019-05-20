@@ -164,7 +164,7 @@ public class LevelBase : MonoBehaviour {
         {
             for (int i = 0; i < m_AllTiles.Count; i++)
             {
-                Vector3 positon = transform.position + m_AllTiles[i].m_Offset;
+                Vector3 positon = transform.position + transform.right* m_AllTiles[i].m_Offset.x + Vector3.up * m_AllTiles[i].m_Offset.y + transform.forward*m_AllTiles[i].m_Offset.z;
                 Color targetColor;
                 float sizeParam = .5f;
                 switch (m_AllTiles[i].E_TileType)
@@ -183,7 +183,7 @@ public class LevelBase : MonoBehaviour {
                         break;
                 }
                 Gizmos.color = targetColor;
-                Gizmos.DrawCube(positon, new Vector3(GameConst.F_LevelTileSize, 2f, GameConst.F_LevelTileSize) * sizeParam);
+                Gizmos.DrawSphere(positon,sizeParam*GameConst.F_LevelTileSize/2);
             }
             return;
         }

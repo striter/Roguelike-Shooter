@@ -88,9 +88,7 @@ namespace GameSetting
        Medium,
        Small,
        Manmade,
-
        NoCollision,
-
        Reward,
     }
     public enum enum_Entity     //Preset For Entities
