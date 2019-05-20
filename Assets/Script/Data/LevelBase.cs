@@ -1,164 +1,75 @@
-﻿
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
+using System.Linq;
 public class LevelBase : MonoBehaviour {
     
     public TileMapData data { get; private set; }
-    public int I_CellWidthCount = 64, I_CellHeightCount = 64;
+    public int I_CellWidthCount = 10, I_CellHeightCount = 10;
     public bool B_IgnoreUnavailable=true;
-    public float F_HeightDetect = .5f;
-    public enum_LevelType m_LevelType = enum_LevelType.Invalid;
-    protected Transform tf_LevelItem;
+    public enum_LevelType m_LevelType = enum_LevelType.Island;
+    protected Transform tf_LevelStatic;
 
     public void Init(enum_LevelType level,TileMapData _data)
     {
-        tf_LevelItem = transform.Find("Item");
+        tf_LevelStatic = transform.Find("LevelStatic");
         m_LevelType = level;
         data = _data;
-        GenerateTileItems();
+        GenerateStatics();
     }
-    #region TileMapInfos
-    List<LevelTile> m_AllTiles=new List<LevelTile>();
-    List<int> m_IndexEmpty=new List<int>();
-    List<int> m_IndexMain=new List<int>();
-    List<int> t_IndexTemp = new List<int>();
-    Dictionary<enum_LevelItemType, List<LevelItemBase>> m_AllItems = new Dictionary<enum_LevelItemType, List<LevelItemBase>>();
-    void GenerateTileItems()
-    {
-        //Load All Level Item Info
-        LevelItemBase[] allItems = TResources.LoadAll<LevelItemBase>("Level/Item/" + m_LevelType);
-        foreach (LevelItemBase levelItem in allItems)
-        {
-            if (levelItem.m_ItemType == enum_LevelItemType.Invalid)
-                Debug.LogError("Please Edit Static Item(Something invalid): Resources/Level/Item/" + m_LevelType + "/" + levelItem.name);
 
-            if (!m_AllItems.ContainsKey(levelItem.m_ItemType))
-                m_AllItems.Add(levelItem.m_ItemType, new List<LevelItemBase>());
-            m_AllItems[levelItem.m_ItemType].Add(levelItem);
+    void GenerateStatics()
+    {
+        Dictionary<enum_GenerateOrder, List<LevelStaticBase>> m_statics = new Dictionary<enum_GenerateOrder, List<LevelStaticBase>>();
+        LevelStaticBase[] allStatics = TResources.LoadAll<LevelStaticBase>("Level/Static/"+m_LevelType);
+        foreach (LevelStaticBase staticbase in allStatics)
+        {
+            if (staticbase.m_GenerateOrder== enum_GenerateOrder.Invalid)
+                Debug.LogError("Please Edit Static Item(Something invalid): Resources/Level/Static/"+ m_LevelType + "/"+staticbase.name);
+
+            if (!m_statics.ContainsKey(staticbase.m_GenerateOrder))
+                m_statics.Add(staticbase.m_GenerateOrder, new List<LevelStaticBase>());
+            m_statics[staticbase.m_GenerateOrder].Add(staticbase);
         }
 
         //Select All Emptys And Create Data
-        int index = 0;
+        List<LevelTile> tiles = new List<LevelTile>();
         for (int i = 0; i < data.m_MapData.Count; i++)
         {
             if (data.m_MapData[i].m_Status != -1)
             {
-                m_AllTiles.Add(new LevelTile(data.m_MapData[i]));
-                m_IndexEmpty.Add(index++);
+                tiles.Add(data.m_MapData[i] as LevelTile);
             }
         }
 
-        GenerateRandomItem(enum_LevelItemType.Large, 1);
-        GenerateRandomItem(enum_LevelItemType.Medium, 15);
-        GenerateRandomItem(enum_LevelItemType.Small, 30);
-        GenerateRandomItem(enum_LevelItemType.Manmade, 12);
-        GenerateRandomItem(enum_LevelItemType.NoCollision, 70);
+        for (int i = 0; i < 5; i++)
+        {
+            int randomIndex = EnviormentManager.m_randomSeed.Next(tiles.Count);
+            int randomItem = EnviormentManager.m_randomSeed.Next(m_statics[enum_GenerateOrder.First].Count);
+            LevelStaticBase staticbase= Instantiate(m_statics[enum_GenerateOrder.First][randomItem],tf_LevelStatic);
+            staticbase.transform.localPosition = tiles[randomIndex].m_Offset;
+        }
         
-        for (int i = 0; i < m_IndexMain.Count; i++)
-        {
-            LevelTileMain main = m_AllTiles[m_IndexMain[i]] as LevelTileMain;
-            LevelItemBase itemMain=   GameObject.Instantiate(m_AllItems[main.m_LevelItemType][main.m_LevelItemListIndex],tf_LevelItem);
-            itemMain.transform.localPosition = main.m_Offset;
-            itemMain.Init();
-        }
+        m_statics.Clear();
     }
 
-    void GenerateRandomItem(enum_LevelItemType type, int totalCount)
-    {
-        List<LevelItemBase> targetItems = m_AllItems[type];
-        for (int i = 0; i < totalCount; i++)
-        {
-            int currentItemIndex = targetItems.ListRandomIndex(EnviormentManager.m_randomSeed);
-            LevelItemBase currentItem = targetItems[currentItemIndex];
-            List<int> _areaSubIndexes = new List<int>();
-            
-            int currentTileIndex = RandomAvailableTileIndex(currentItem.m_sizeXAxis,currentItem.m_sizeYAxis, ref t_IndexTemp);
-            if (currentTileIndex != -1)
-            {
-                m_AllTiles[currentTileIndex] = new LevelTileMain(m_AllTiles[currentTileIndex],currentItemIndex,currentItem.m_ItemType, t_IndexTemp);
-                m_IndexMain.Add(currentTileIndex);
-                m_IndexEmpty.Remove(currentTileIndex);
-                foreach (int subTileIndex in t_IndexTemp)
-                {
-                    m_AllTiles[subTileIndex] = new LevelTileSub(m_AllTiles[subTileIndex],currentTileIndex);
-                    m_IndexEmpty.Remove(subTileIndex);
-                }
-            }
-        }
-    }
-    int RandomAvailableTileIndex(int XCount,int YCount,ref List<int> areaIndexes)
-    {
-        int checkCount = XCount * YCount + 1;
-        for (int i = 0; i < checkCount; i++)
-        {
-            int randomTileIndex =    m_IndexEmpty.ListRandom(EnviormentManager.m_randomSeed);
-            if (CheckIndexTileAreaAvailable(randomTileIndex, XCount, YCount, ref areaIndexes))
-                return randomTileIndex;
-        }
-        return -1;
-    }
-    bool CheckIndexTileAreaAvailable(int tileIndex, int XCount, int YCount, ref List<int> areaIndexes)
-    {
-        areaIndexes.Clear();
-        LevelTile origin = m_AllTiles[tileIndex];
-        for (int i = 0; i < XCount; i++)
-        {
-            for (int j = 0; j < YCount; j++)
-            {
-                if (i == 0 && j == 0)
-                    continue;
-
-                int index = m_AllTiles.FindIndex(p => p.i_axisX == origin.i_axisX + i && p.i_axisY == origin.i_axisY+j&&p.E_TileType== enum_TileType.Empty);
-                if (index == -1)
-                    return false;
-
-                areaIndexes.Add(index);
-            }
-        }
-        return true;
-    }
-    #endregion
-    #region TileMapClass
-    enum enum_TileType
+    enum enum_NodeStatus
     {
         Invaid=-1,
         Empty=0,
-        Main,
-        Sub,
-    }
-    class LevelTileSub : LevelTile
-    {
-        public override enum_TileType E_TileType => enum_TileType.Sub;
-        public int m_ParentMainIndex { get; private set; }
-        public LevelTileSub(TileMapData.TileInfo current, int _parentMainIndex) : base(current)
-        {
-            m_ParentMainIndex = _parentMainIndex;
-        }
-    }
-    class LevelTileMain : LevelTile
-    {
-        public override enum_TileType E_TileType => enum_TileType.Main;
-        public int m_LevelItemListIndex { get; private set; }
-        public enum_LevelItemType m_LevelItemType { get; private set; }
-        public List<int> m_AreaTiles { get; private set; }
-        public LevelTileMain(TileMapData.TileInfo current,int levelItemListIndex,enum_LevelItemType levelItemType, List<int> _AreaTiles) : base(current)
-        {
-            m_LevelItemListIndex = levelItemListIndex;
-            m_LevelItemType = levelItemType;
-            m_AreaTiles = _AreaTiles;
-        }
+        Occupied=1,
     }
     class LevelTile : TileMapData.TileInfo
     {
-        public virtual enum_TileType E_TileType => enum_TileType.Empty;
-        public LevelTile(TileMapData.TileInfo current):base(current.i_axisX,current.i_axisY,current.m_Offset,current.m_Status)
+        public enum_NodeStatus E_NodeStatus => (enum_NodeStatus)m_Status;
+        public LevelTile(TileMapData.TileInfo main):base(main.i_axisX,main.i_axisY,main.m_Offset,main.m_Status)
         {
         }
     }
-    #endregion
+
 #if UNITY_EDITOR
-    public bool b_showGizmos=true;
+    public bool b_showGizmos;
     private void OnDrawGizmos()
     {
         if (data == null && m_LevelType != enum_LevelType.Invalid)
@@ -173,44 +84,18 @@ public class LevelBase : MonoBehaviour {
     }
     void DrawGizmos()
     {
-        if (UnityEditor.EditorApplication.isPlaying)
-        {
-            for (int i = 0; i < m_AllTiles.Count; i++)
-            {
-                Vector3 positon = transform.position + m_AllTiles[i].m_Offset;
-                Color targetColor;
-                float sizeParam = .5f;
-                switch (m_AllTiles[i].E_TileType)
-                {
-                    default:
-                        targetColor = Color.magenta;sizeParam = 1f;
-                        break;
-                    case enum_TileType.Empty:
-                        targetColor = TCommon.ColorAlpha(Color.green,.3f);
-                        break;
-                    case enum_TileType.Main:
-                        targetColor = TCommon.ColorAlpha(Color.red, .5f); sizeParam = 1f;
-                        break;
-                    case enum_TileType.Sub:
-                        targetColor = TCommon.ColorAlpha(Color.blue, .5f); sizeParam = 1f;
-                        break;
-                }
-                Gizmos.color = targetColor;
-                Gizmos.DrawCube(positon, new Vector3(GameConst.F_LevelTileSize, 2f, GameConst.F_LevelTileSize)  *sizeParam);
-            }
-        }
-        else if (data == null || data.m_MapData == null)
+        if (data == null || data.m_MapData == null)
         {
             Gizmos.color = Color.white;
             for (int i = 0; i < I_CellWidthCount; i++)
             {
                 for (int j = 0; j < I_CellHeightCount; j++)
                 {
-                    Vector3 position = transform.position
-                        + transform.forward * GameConst.F_LevelTileSize * j
-                        + transform.right * GameConst.F_LevelTileSize * i
-                        - transform.right * (GameConst.F_LevelTileSize * I_CellWidthCount / 2 - GameConst.F_LevelTileSize / 2)
-                        - transform.forward * (GameConst.F_LevelTileSize * I_CellHeightCount / 2 - GameConst.F_LevelTileSize / 2);
+                    Vector3 position = transform.position 
+                        + transform.forward* GameConst.F_LevelTileSize * j
+                        +transform.right* GameConst.F_LevelTileSize * i 
+                        -transform.right*(GameConst.F_LevelTileSize * I_CellWidthCount / 2 - GameConst.F_LevelTileSize / 2)
+                        -transform.forward*(GameConst.F_LevelTileSize * I_CellHeightCount / 2 - GameConst.F_LevelTileSize / 2);
                     Gizmos.DrawCube(position, new Vector3(GameConst.F_LevelTileSize / 2, 5f, GameConst.F_LevelTileSize / 2));
                 }
             }
@@ -223,7 +108,7 @@ public class LevelBase : MonoBehaviour {
             foreach (TileMapData.TileInfo node in nodes)
             {
                 Gizmos.color = node.m_Status == -1 ? Color.red : Color.green;
-                Gizmos.DrawCube(transform.position + transform.right * node.m_Offset.x + Vector3.up * (node.m_Offset.y + .5f) + transform.forward * node.m_Offset.z, new Vector3(GameConst.F_LevelTileSize / 2, 1f, GameConst.F_LevelTileSize / 2));
+                Gizmos.DrawCube(transform.position + transform.right*node.m_Offset.x+Vector3.up * (node.m_Offset.y + .5f)+ transform.forward * node.m_Offset.z, new Vector3(GameConst.F_LevelTileSize / 2, 1f, GameConst.F_LevelTileSize / 2));
             }
         }
     }
