@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
 public class LevelItemBase : MonoBehaviour {
+    public LevelBase m_LevelParent { get; private set; }
     public int m_sizeXAxis = 1;
     public int m_sizeYAxis = 1;
     public enum_LevelItemType m_ItemType = enum_LevelItemType.Invalid;
     Transform tf_Model;
-    public void Init()
+    public void Init(LevelBase levelParent)
     {
-        tf_Model = transform.Find("Model");
-        tf_Model.localRotation = Quaternion.Euler(0,EnviormentManager.m_randomSeed.Next(360),0);
+        m_LevelParent = levelParent;
+         tf_Model = transform.Find("Model");
+        tf_Model.localRotation = Quaternion.Euler(0, levelParent.m_seed.Next(360),0);
         transform.SetActivate(true);
     }
 
@@ -25,7 +27,7 @@ public class LevelItemBase : MonoBehaviour {
         baseTarget = GetComponentInParent<LevelBase>();
         if (baseTarget!=null)
         {
-            TileMapData data = EnviormentManager.GetLevelData(baseTarget.m_LevelType, baseTarget.name);
+            TileMapData data = EnviormentManager.GetLevelData(baseTarget.m_levelStyle, baseTarget.name);
             if (data == null)
                 return;
             transform.localPosition = data.m_MapData[0].m_Offset;

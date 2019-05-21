@@ -4,17 +4,18 @@ using UnityEngine;
 using GameSetting;
 public class LevelBase : MonoBehaviour {
     
-    public int I_CellWidthCount = 64, I_CellHeightCount = 64;
-    public bool B_IgnoreUnavailable=true;
-    public float F_HeightDetect = .5f;
-    public enum_LevelType m_LevelType = enum_LevelType.Invalid;
+    public enum_LevelStyle m_levelStyle = enum_LevelStyle.Invalid;
+    public enum_LevelType m_levelType = enum_LevelType.Invalid;
     protected Transform tf_LevelItem;
-   
-    public void Init(SLevelGenerate _itemData,TileMapData _data)
+    public System.Random m_seed { get; private set; }
+    public void Init(string levelName,System.Random _seed)
     {
         tf_LevelItem = transform.Find("Item");
-        m_LevelType = _itemData.m_LevelType;
-        GenerateTileItems(_itemData,_data);
+        m_seed = _seed;
+        transform.position = Vector3.one;
+        transform.rotation = Quaternion.Euler(0, m_seed.Next(360), 0);
+
+        GenerateTileItems(GameExpression.S_GetLevelGenerateInfo(m_levelStyle, m_levelType),EnviormentManager.GetLevelData(m_levelStyle, levelName));
     }
     #region TileMapInfos
     List<LevelTile> m_AllTiles=new List<LevelTile>();
@@ -25,11 +26,11 @@ public class LevelBase : MonoBehaviour {
     void GenerateTileItems(SLevelGenerate _itemData, TileMapData _data)
     {
         //Load All Level Item Info
-        LevelItemBase[] allItems = TResources.LoadAll<LevelItemBase>("Level/Item/" + m_LevelType);
+        LevelItemBase[] allItems = TResources.LoadAll<LevelItemBase>("Level/Item/" + m_levelStyle);
         foreach (LevelItemBase levelItem in allItems)
         {
             if (levelItem.m_ItemType == enum_LevelItemType.Invalid)
-                Debug.LogError("Please Edit Static Item(Something invalid): Resources/Level/Item/" + m_LevelType + "/" + levelItem.name);
+                Debug.LogError("Please Edit Static Item(Something invalid): Resources/Level/Item/" + m_levelStyle + "/" + levelItem.name);
 
             if (!m_AllItems.ContainsKey(levelItem.m_ItemType))
                 m_AllItems.Add(levelItem.m_ItemType, new List<LevelItemBase>());
@@ -47,9 +48,9 @@ public class LevelBase : MonoBehaviour {
             }
         }
 
-        TCommon.TraversalDic(_itemData.m_ItemGenerate, (enum_LevelItemType type, RangeInt range) =>
+        TCommon.TraversalUnchange(_itemData.m_ItemGenerate, (enum_LevelItemType type, RangeInt range) =>
         {
-            GenerateRandomItem(type,EnviormentManager.m_randomSeed.Next(range.start,range.end+1));
+            GenerateRandomItem(type, m_seed.Next(range.start,range.end+1));
         });
         
         for (int i = 0; i < m_IndexMain.Count; i++)
@@ -57,7 +58,7 @@ public class LevelBase : MonoBehaviour {
             LevelTileMain main = m_AllTiles[m_IndexMain[i]] as LevelTileMain;
             LevelItemBase itemMain=   GameObject.Instantiate(m_AllItems[main.m_LevelItemType][main.m_LevelItemListIndex],tf_LevelItem);
             itemMain.transform.localPosition = main.m_Offset;
-            itemMain.Init();
+            itemMain.Init(this);
         }
     }
 
@@ -66,7 +67,7 @@ public class LevelBase : MonoBehaviour {
         List<LevelItemBase> targetItems = m_AllItems[type];
         for (int i = 0; i < totalCount; i++)
         {
-            int currentItemIndex = targetItems.ListRandomIndex(EnviormentManager.m_randomSeed);
+            int currentItemIndex = targetItems.ListRandomIndex(m_seed);
             LevelItemBase currentItem = targetItems[currentItemIndex];
             int currentTileIndex = RandomAvailableTileIndex(currentItem.m_sizeXAxis,currentItem.m_sizeYAxis, ref t_IndexTemp);
             if (currentTileIndex != -1)
@@ -87,7 +88,7 @@ public class LevelBase : MonoBehaviour {
         int checkCount = XCount * YCount + 1;
         for (int i = 0; i < checkCount; i++)
         {
-            int randomTileIndex =    m_IndexEmpty.ListRandom(EnviormentManager.m_randomSeed);
+            int randomTileIndex =    m_IndexEmpty.ListRandom(m_seed);
             if (CheckIndexTileAreaAvailable(randomTileIndex, XCount, YCount, ref areaIndexes))
                 return randomTileIndex;
         }
@@ -153,6 +154,10 @@ public class LevelBase : MonoBehaviour {
     }
     #endregion
 #if UNITY_EDITOR
+    public bool b_BakeCircle = true;
+    public int I_DiamCellCount = 64;
+    public bool B_IgnoreUnavailable = true;
+    public float F_HeightDetect = .5f;
     public bool b_showGizmos=true,b_showGameTiles=true;
     public TileMapData data;
     private void OnDrawGizmos()
@@ -188,8 +193,8 @@ public class LevelBase : MonoBehaviour {
             return;
         }
 
-        if (data == null && m_LevelType != enum_LevelType.Invalid)
-            data = EnviormentManager.GetLevelData(m_LevelType, gameObject.name);
+        if (data == null && m_levelStyle != enum_LevelStyle.Invalid)
+            data = EnviormentManager.GetLevelData(m_levelStyle, gameObject.name);
 
         if (data == null)
             Debug.LogWarning("Please Bake This Level First");
@@ -197,23 +202,25 @@ public class LevelBase : MonoBehaviour {
         if (data == null || data.m_MapData == null)
         {
             Gizmos.color = Color.white;
-            for (int i = 0; i < I_CellWidthCount; i++)
+            for (int i = 0; i < I_DiamCellCount; i++)
             {
-                for (int j = 0; j < I_CellHeightCount; j++)
+                for (int j = 0; j < I_DiamCellCount; j++)
                 {
+                    float f = Mathf.Sqrt(Vector2.SqrMagnitude(new Vector2(i - I_DiamCellCount / 2, j - I_DiamCellCount / 2)));
+                    if (b_BakeCircle && Vector2.SqrMagnitude(new Vector2(i - I_DiamCellCount / 2, j - I_DiamCellCount / 2)) >Mathf.Pow(I_DiamCellCount/2 * GameConst.F_LevelTileSize / 2 ,2))
+                        continue;
                     Vector3 position = transform.position
                         + transform.forward * GameConst.F_LevelTileSize * j
                         + transform.right * GameConst.F_LevelTileSize * i
-                        - transform.right * (GameConst.F_LevelTileSize * I_CellWidthCount / 2 - GameConst.F_LevelTileSize / 2)
-                        - transform.forward * (GameConst.F_LevelTileSize * I_CellHeightCount / 2 - GameConst.F_LevelTileSize / 2);
+                        - transform.right * (GameConst.F_LevelTileSize * I_DiamCellCount / 2 - GameConst.F_LevelTileSize / 2)
+                        - transform.forward * (GameConst.F_LevelTileSize * I_DiamCellCount / 2 - GameConst.F_LevelTileSize / 2);
                     Gizmos.DrawCube(position, new Vector3(GameConst.F_LevelTileSize / 2, 5f, GameConst.F_LevelTileSize / 2));
                 }
             }
         }
         else
         {
-            I_CellWidthCount = data.I_Width;
-            I_CellHeightCount = data.I_Height;
+            I_DiamCellCount = data.I_Width;
             List<TileMapData.TileInfo> nodes = data.m_MapData;
             foreach (TileMapData.TileInfo node in nodes)
             {

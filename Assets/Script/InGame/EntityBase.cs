@@ -19,7 +19,7 @@ public class EntityBase : MonoBehaviour,ISingleCoroutine
         tf_Model = transform.Find("Model");
         m_Renderers = tf_Model.GetComponentsInChildren<Renderer>();
         m_HitChecks = GetComponentsInChildren<HitCheckEntity>();
-        TCommon.TraversalArray(m_HitChecks, (HitCheckEntity check) => { check.Attach(I_EntityID,TryTakeDamage); });
+        TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.Attach(I_EntityID,TryTakeDamage); });
         m_EntityInfo = entityInfo;
         m_CurrentHealth = m_EntityInfo.m_MaxHealth;
         m_CurrentArmor = m_EntityInfo.m_MaxArmor;
@@ -89,7 +89,7 @@ public class EntityBase : MonoBehaviour,ISingleCoroutine
     {
         this.StartSingleCoroutine(0,TIEnumerators.ChangeValueTo((float value)=> {
             Color targetColor = Color.Lerp(isDamage?(armorDamage ? Color.yellow:Color.red): Color.green, Color.white, value);
-            TCommon.TraversalArray(m_Renderers, (Renderer renderer) => {
+            TCommon.Traversal(m_Renderers, (Renderer renderer) => {
                 renderer.material.SetColor("_Color",targetColor); });
           },0,1,.5f));
     }

@@ -18,7 +18,7 @@ public class SFXBlast : SFXBase {
         base.Play(sourceID,3);      //Temporaty Test
         f_damage = damage;
         transform.localScale = Vector3.one * (radius*2);
-        TCommon.TraversalArray(m_Particles, (ParticleSystem particle) => { particle.Play(); });
+        TCommon.Traversal(m_Particles, (ParticleSystem particle) => { particle.Play(); });
         Collider[] collider = Physics.OverlapSphere(transform.position,radius,GameLayer.Physics.I_EntityOnly);
         for (int i = 0; i < collider.Length; i++)
         {

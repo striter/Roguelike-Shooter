@@ -25,7 +25,7 @@ public class GameManager : SingletonMono<GameManager>
     }
     private void Start()
     {
-        EnviormentManager.Instance.StartLevel(enum_LevelType.Desert);
+        EnviormentManager.Instance.StartLevel(enum_LevelStyle.Desert);
 
         NavMeshBuilder.ClearAllNavMeshes();
         NavMeshBuilder.BuildNavMesh();

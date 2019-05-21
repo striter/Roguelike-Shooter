@@ -28,24 +28,27 @@ public class TileMapData : ScriptableObject
     public Vector2 m_Offset;
     [SerializeField]
     public List<TileInfo> m_MapData;
-    public void Bake(Transform target,int _width,int _height,Vector2 offset,float heightDetect,bool bakeUnavailable=true)
+    public void Bake(Transform target,int _widthOrRaidus,int _height,Vector2 offset,float heightDetect,bool bakeUnavailable,bool bakeInCircle)
     {
-        if (_width >= 100 || _height >= 100)
+        if (_widthOrRaidus >= 100 || _height >= 100)
         {
             Debug.LogError("Shouldnt Contains That Many Nodes Thas Above" + 100);
             return;
         }
 
         m_Offset = offset;
-        I_Width = _width;
+        I_Width = _widthOrRaidus;
         I_Height = _height;
         m_MapData = new List<TileInfo>();
         Vector3 origin = target.position;
-        for (int i = 0; i < _width; i++)
+        for (int i = 0; i < _widthOrRaidus; i++)
         {
             for (int j = 0; j < _height; j++)
             {
-                Vector3 cellOffset = new Vector3(offset.x * (-_width / 2 + i), 0f, offset.y * (-_height / 2 + j));
+                if (bakeInCircle && Vector2.SqrMagnitude(new Vector2(i - I_Width / 2, j - I_Width / 2)) > Mathf.Pow( I_Width / 2 * offset.x / 2,2))
+                        continue;
+
+                Vector3 cellOffset = new Vector3(offset.x * (-_widthOrRaidus / 2 + i), 0f, offset.y * (-_height / 2 + j));
                 Vector3 tileCenter = origin + cellOffset;
                 bool available = TopDownRayHit(tileCenter, ref cellOffset.y) && cellOffset.y < 3;
                 if (available&& heightDetect > 0f)

@@ -45,7 +45,7 @@ public class EMaterialImportSetting : EditorWindow
         window.Show();
     }
     public static enum_ShaderType shaderType { get; private set; } = enum_ShaderType.Invalid;
-    public static enum_LevelType levelType { get; private set; } = enum_LevelType.Invalid;
+    public static enum_LevelStyle levelType { get; private set; } = enum_LevelStyle.Invalid;
     public enum enum_ShaderType
     {
         Invalid = -1,
@@ -58,7 +58,7 @@ public class EMaterialImportSetting : EditorWindow
         EditorGUILayout.BeginVertical();
         EditorGUILayout.TextArea("Editing Shader Type");
         shaderType = (enum_ShaderType)EditorGUILayout.EnumPopup("Shader Type", shaderType);
-        levelType = (enum_LevelType)EditorGUILayout.EnumPopup("Level Type", levelType);
+        levelType = (enum_LevelStyle)EditorGUILayout.EnumPopup("Level Type", levelType);
 
         Object[] assets = Selection.GetFiltered(typeof(GameObject), SelectionMode.Assets);
         if (assets.Length > 0)
@@ -69,7 +69,7 @@ public class EMaterialImportSetting : EditorWindow
                 EditorGUILayout.TextArea(Selection.objects[i].name);
             }
 
-            if (shaderType != enum_ShaderType.Invalid && levelType != enum_LevelType.Invalid)
+            if (shaderType != enum_ShaderType.Invalid && levelType != enum_LevelStyle.Invalid)
                 if (EditorGUILayout.DropdownButton(new GUIContent("Create Shaded Prefab"), FocusType.Passive))
                     CreatePrefabFromModel(assets);
         }

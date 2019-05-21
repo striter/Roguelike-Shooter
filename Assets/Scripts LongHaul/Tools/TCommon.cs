@@ -166,39 +166,45 @@ public static class TCommon
     {
         return randomSeed!=null?randomSeed.Next(randomList.Count):UnityEngine.Random.Range(0, randomList.Count);
     }
-    public static void TraversalList<T>(this List<T> list, Action<T> OnEachItem)
+    public static void Traversal<T>(this List<T> list, Action<T> OnEachItem) where T : class
     {
         for (int i = 0; i < list.Count; i++)
         {
             OnEachItem(list[i]);
         }
     }
-    public static void TraversalList<T>(this List<T> list, Action<int, T> OnEachItem)
+    public static void Traversal<T>(this List<T> list, Action<int, T> OnEachItem) where T : class
     {
         for (int i = 0; i < list.Count; i++)
             OnEachItem(i, list[i]);
     }
-    public static void TraversalDicKeys<T, Y>(this Dictionary<T, Y> dic, Action<T> OnEachKey)
+    public static void Traversal<T, Y>(this Dictionary<T, Y> dic, Action<T> OnEachKey) where T : class where Y : class
     {
         foreach (T temp in dic.Keys)
             OnEachKey(temp);
     }
-    public static void TraversalDicValues<T, Y>(this Dictionary<T, Y> dic, Action<Y> OnEachValue)
+    public static void TraversalUnchange<T, Y>(this Dictionary<T, Y> dic, Action<Y> OnEachValue) where T : class  where Y : class
     {
         foreach (Y temp in dic.Values)
             OnEachValue(temp);
     }
-    public static void TraversalDic<T, Y>(this Dictionary<T, Y> dic, Action<T, Y> OnEachPair)
+    public static void TraversalUnchange<T, Y>(this Dictionary<T, Y> dic, Action<T, Y> OnEachPair) 
     {
         foreach (T temp in dic.Keys)
             OnEachPair(temp, dic[temp]);
     }
-    public static void TraversalArray<T>(this T[] array, Action<T> OnEachItem)
+    public static void Traversal<T>(this T[] array, Action<T> OnEachItem) where T : class
     {
         for (int i = 0; i < array.Length; i++)
             OnEachItem(array[i]);
     }
-    public static void TraversalArray<T>(this T[] array, Action<T, int> OnEachItem)
+    public static void Traversal<T>(this T[,] array, Action<T> OnEachItem) where T:class
+    {
+        for (int i = 0; i < array.GetLength(0); i++)
+            for (int j = 0; j < array.GetLength(1); j++)
+                OnEachItem(array[i, j]);
+    }
+    public static void Traversal<T>(this T[] array, Action<T, int> OnEachItem) where T : class
     {
         for (int i = 0; i < array.Length; i++)
             OnEachItem(array[i], i);

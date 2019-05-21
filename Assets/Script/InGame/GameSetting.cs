@@ -29,20 +29,14 @@ namespace GameSetting
 
         public static bool B_CanHitTarget(HitCheckEntity hb, int sourceID) => hb.I_AttacherID != sourceID;
 
-        public static SLevelGenerate S_GetLevelGenerateInfo(enum_LevelType type)
+        public static SLevelGenerate S_GetLevelGenerateInfo(enum_LevelStyle type,enum_LevelType levelType)
         {
-            switch (type)
-            {
-                default:
-                    Debug.LogError("Add More Structs Here:" + type);
-                    return new SLevelGenerate();
-                case enum_LevelType.Desert: return new SLevelGenerate(type,new Dictionary<enum_LevelItemType, RangeInt>() {
+            return new SLevelGenerate(type, new Dictionary<enum_LevelItemType, RangeInt>() {
                         { enum_LevelItemType.Large, new RangeInt(0, 1) },
-                        { enum_LevelItemType.Medium,new RangeInt(5,5)},
+                        { enum_LevelItemType.Medium,new RangeInt(5,5) },
                         { enum_LevelItemType.Small,new RangeInt(40,20) },
                         { enum_LevelItemType.Manmade,new RangeInt(5,10) },
                         { enum_LevelItemType.NoCollision,new RangeInt(60,20)} });
-            }
         }
     }
 
@@ -76,7 +70,8 @@ namespace GameSetting
     #endregion
     #region GameEnum
     public enum enum_HitCheck { Invalid = -1, Static = 1, Entity = 2, Dynamic = 3, }
-    public enum enum_LevelType {Invalid=-1, Desert,}
+    public enum enum_LevelStyle {Invalid=-1, Desert,}
+    public enum enum_LevelType { Invalid=-1,Start,Battle,Reward,BattleEnd,HardBattleEnd,}
     public enum enum_LevelItemType
     {
        Invalid=-1,
@@ -304,9 +299,9 @@ namespace GameSetting
 
     public struct SLevelGenerate
     {
-        public enum_LevelType m_LevelType { get; private set; }
+        public enum_LevelStyle m_LevelType { get; private set; }
         public Dictionary<enum_LevelItemType, RangeInt> m_ItemGenerate { get; private set; }
-        public SLevelGenerate(enum_LevelType _levelType, Dictionary<enum_LevelItemType, RangeInt> _ItemGenerate)
+        public SLevelGenerate(enum_LevelStyle _levelType, Dictionary<enum_LevelItemType, RangeInt> _ItemGenerate)
         {
             m_LevelType = _levelType;
             m_ItemGenerate = _ItemGenerate;

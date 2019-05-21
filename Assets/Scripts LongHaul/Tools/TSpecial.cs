@@ -27,7 +27,7 @@ namespace TSpecial          //Put Some Common Shits Into Specifical Classes, Tig
         public RagdollAnimationTransition(Animator animator, Rigidbody[] rigidbodys, Transform transitionCenter)
         {
             m_Animator = animator;
-            TCommon.TraversalArray(rigidbodys, (Rigidbody rb) => {
+            TCommon.Traversal(rigidbodys, (Rigidbody rb) => {
                 BodyPart part = new BodyPart(rb);
                 m_BodyParts.Add(part);
                 if (rb.transform == transitionCenter)
@@ -42,7 +42,7 @@ namespace TSpecial          //Put Some Common Shits Into Specifical Classes, Tig
             {
                 SetAnimActivate(false);
                 SetKinematic(true);
-                TCommon.TraversalList(m_BodyParts, (BodyPart part) =>
+                TCommon.Traversal(m_BodyParts, (BodyPart part) =>
                 {
                     part.m_rigidBody.transform.localPosition = part.m_startPos;
                     part.m_rigidBody.transform.localRotation = part.m_startRot;
@@ -66,7 +66,7 @@ namespace TSpecial          //Put Some Common Shits Into Specifical Classes, Tig
                 m_Animator.transform.position += offset;
                 this.StartSingleCoroutine(1, TIEnumerators.ChangeValueTo((float value) =>
                 {
-                    TCommon.TraversalList(m_BodyParts, (BodyPart part) => {
+                    TCommon.Traversal(m_BodyParts, (BodyPart part) => {
                         part.m_rigidBody.transform.localPosition = Vector3.Lerp(part.m_rigidBody.transform.localPosition, part.m_startPos, value);
                         part.m_rigidBody.transform.localRotation = Quaternion.Lerp(part.m_rigidBody.transform.localRotation, part.m_startRot, value);
                     });
@@ -89,7 +89,7 @@ namespace TSpecial          //Put Some Common Shits Into Specifical Classes, Tig
         }
         void SetKinematic(bool active)
         {
-            TCommon.TraversalList(m_BodyParts, (BodyPart part) =>
+            TCommon.Traversal(m_BodyParts, (BodyPart part) =>
             {
                 part.m_rigidBody.isKinematic = active;
             });

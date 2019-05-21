@@ -813,7 +813,7 @@ MonoBehaviour:
   I_CellHeightCount: 64
   B_IgnoreUnavailable: 1
   F_HeightDetect: 0.3
-  m_LevelType: 0
+  m_levelStyle: 0
   b_showGizmos: 0
   b_showGameTiles: 1
   data: {fileID: 0}
