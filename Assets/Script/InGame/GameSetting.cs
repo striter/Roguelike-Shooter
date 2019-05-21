@@ -38,8 +38,8 @@ namespace GameSetting
                     return new SLevelGenerate();
                 case enum_LevelType.Desert: return new SLevelGenerate(type,new Dictionary<enum_LevelItemType, RangeInt>() {
                         { enum_LevelItemType.Large, new RangeInt(0, 1) },
-                        { enum_LevelItemType.Medium,new RangeInt(10,5)},
-                        { enum_LevelItemType.Small,new RangeInt(20,10) },
+                        { enum_LevelItemType.Medium,new RangeInt(5,5)},
+                        { enum_LevelItemType.Small,new RangeInt(40,20) },
                         { enum_LevelItemType.Manmade,new RangeInt(5,10) },
                         { enum_LevelItemType.NoCollision,new RangeInt(60,20)} });
             }
