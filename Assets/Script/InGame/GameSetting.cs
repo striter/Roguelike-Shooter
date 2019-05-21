@@ -40,8 +40,8 @@ namespace GameSetting
                         { enum_LevelItemType.Large, new RangeInt(0, 1) },
                         { enum_LevelItemType.Medium,new RangeInt(10,5)},
                         { enum_LevelItemType.Small,new RangeInt(20,10) },
-                        {enum_LevelItemType.Manmade,new RangeInt(5,10) },
-                        {enum_LevelItemType.NoCollision,new RangeInt(60,20)} });
+                        { enum_LevelItemType.Manmade,new RangeInt(5,10) },
+                        { enum_LevelItemType.NoCollision,new RangeInt(60,20)} });
             }
         }
     }
@@ -71,16 +71,12 @@ namespace GameSetting
     enum enum_BC_UIStatusChanged
     {
         Invalid = -1,
-        AmmoLeftChanged,
-        PitchChanged,
+        PlayerInfoChanged,
     }
     #endregion
     #region GameEnum
-    public enum enum_LevelType
-    {
-        Invalid=-1,
-        Desert,
-    }
+    public enum enum_HitCheck { Invalid = -1, Static = 1, Entity = 2, Dynamic = 3, }
+    public enum enum_LevelType {Invalid=-1, Desert,}
     public enum enum_LevelItemType
     {
        Invalid=-1,
@@ -111,13 +107,6 @@ namespace GameSetting
         Blast_Rocket = 6,
     }
 
-    public enum enum_HitCheck
-    {
-        Invalid = -1,
-        Static = 1,
-        Entity = 2,
-        Dynamic = 3,
-    }
     public enum enum_Weapon
     {
         Invalid = -1,
@@ -204,7 +193,7 @@ namespace GameSetting
     }
     #endregion
     #region GameSave
-    public class CPlayerSave : ISave
+    public class CPlayerSave : ISave        //Save Outta Game
     {
         public float f_blue;
         public CPlayerSave()
@@ -257,11 +246,19 @@ namespace GameSetting
     {
         int index;
         string s_name;
-        int i_maxHealth;
+        float f_maxHealth;
+        float f_maxArmor;
+        float f_maxMana;
+        float f_armorRegenSpeed;
+        float f_armorRegenDuration;
         float f_moveSpeed;
         public enum_Entity m_Type =>(enum_Entity) index;
         public string m_Name => s_name;
-        public int m_MaxHealth => i_maxHealth;
+        public float m_MaxHealth => f_maxHealth;
+        public float m_MaxArmor => f_maxArmor;
+        public float m_MaxMana => f_maxMana;
+        public float m_ArmorRegenSpeed => f_armorRegenSpeed;
+        public float m_ArmorRegenDuration => f_armorRegenDuration;
         public float m_moveSpeed => f_moveSpeed;
     }
 

@@ -4,12 +4,12 @@ using System;
 
 public class WeaponBase : MonoBehaviour,ISingleCoroutine {
     public int I_AttacherID { get; private set; }
-    protected SWeapon m_WeaponInfo;
+    public SWeapon m_WeaponInfo { get; private set; }
     public bool B_Reloading { get; private set; }
     public int I_AmmoLeft { get; private set; }
     float f_actionCheck=0;
     protected Transform tf_Muzzle;
-    Action OnAmmoInfoChanged;
+    Action<float> OnAmmoChangeCostMana;
     Action<Vector2> OnRecoil;
     WeaponTrigger m_Trigger=null;
     bool B_HaveAmmoLeft => m_WeaponInfo.m_ClipAmount == -1 || I_AmmoLeft > 0;
@@ -53,14 +53,14 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         return Time.time > f_actionCheck;
     }
 
-    public void Attach(int _attacherID,Transform attachTarget,Action _OnAmmoInfoChanged,Action<Vector2> _OnRecoil)
+    public void Attach(int _attacherID,Transform attachTarget,Action<float> _OnAmmoChangeCostMana,Action<Vector2> _OnRecoil)
     {
         I_AttacherID = _attacherID;
         transform.SetParent(attachTarget);
         transform.localPosition = Vector3.zero;
         transform.localRotation = Quaternion.identity;
         transform.localScale = Vector3.one;
-        OnAmmoInfoChanged = _OnAmmoInfoChanged;
+        OnAmmoChangeCostMana = _OnAmmoChangeCostMana;
         OnRecoil = _OnRecoil;
     }
     public bool Trigger(bool down)
@@ -86,8 +86,8 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
             Vector3 bulletDirection = Vector3.Normalize(tf_Muzzle.transform.forward*GameConst.I_BulletSpeadAtDistance+UnityEngine.Random.Range(-1f,1f)*tf_Muzzle.up*m_WeaponInfo.m_Spread+ UnityEngine.Random.Range(-1f, 1f) * tf_Muzzle.right * m_WeaponInfo.m_Spread);
             (ObjectManager.SpawnSFX(m_WeaponInfo.m_BulletType.ToSFXType(), tf_Muzzle) as SFXBullet).Play(I_AttacherID,m_WeaponInfo.m_Damage, bulletDirection, m_WeaponInfo.m_HorizontalSpeed,m_WeaponInfo.m_HorizontalDrag,m_WeaponInfo.m_VerticalAcceleration);
         }
-        OnRecoil(m_WeaponInfo.m_RecoilPerShot);
-        OnAmmoInfoChanged();
+        OnRecoil?.Invoke(m_WeaponInfo.m_RecoilPerShot);
+        OnAmmoChangeCostMana?.Invoke(m_WeaponInfo.m_ManaCost);
 
         return true;
     }
@@ -112,7 +112,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         Debug.Log("Reload");
         B_Reloading = false;
         I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
-        OnAmmoInfoChanged();
+        OnAmmoChangeCostMana?.Invoke(0f);
     }
     void CheckCanAutoReload()
     {

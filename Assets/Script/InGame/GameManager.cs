@@ -26,8 +26,10 @@ public class GameManager : SingletonMono<GameManager>
     private void Start()
     {
         EnviormentManager.Instance.StartLevel(enum_LevelType.Desert);
-        ObjectManager.SpawnEntity(enum_Entity.Player, EnviormentManager.Instance.tf_PlayerStart);
+
+        NavMeshBuilder.ClearAllNavMeshes();
         NavMeshBuilder.BuildNavMesh();
+        ObjectManager.SpawnEntity(enum_Entity.Player, EnviormentManager.Instance.tf_PlayerStart); 
     }
 
     private void OnDestroy()

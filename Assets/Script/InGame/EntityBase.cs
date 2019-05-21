@@ -7,9 +7,12 @@ public class EntityBase : MonoBehaviour,ISingleCoroutine
     HitCheckEntity[] m_HitChecks;
     Renderer[] m_Renderers;
     protected Transform tf_Model;
-    protected SEntity m_EntityInfo;
+    public SEntity m_EntityInfo { get; private set; }
     public float m_CurrentHealth { get; private set; }
-    public bool b_IsDead { get; private set; }
+    public float m_CurrentArmor { get; private set; }
+    public float m_CurrentMana { get; private set; }
+    public bool b_IsDead => m_CurrentHealth <= 0;
+    private float f_ArmorRegenCheck;
     public virtual void Init(int id,SEntity entityInfo)
     {
         I_EntityID = id;
@@ -19,7 +22,8 @@ public class EntityBase : MonoBehaviour,ISingleCoroutine
         TCommon.TraversalArray(m_HitChecks, (HitCheckEntity check) => { check.Attach(I_EntityID,TryTakeDamage); });
         m_EntityInfo = entityInfo;
         m_CurrentHealth = m_EntityInfo.m_MaxHealth;
-        b_IsDead = false;
+        m_CurrentArmor = m_EntityInfo.m_MaxArmor;
+        m_CurrentMana = m_EntityInfo.m_MaxMana;
     }
     protected virtual void Start()
     {
@@ -29,41 +33,62 @@ public class EntityBase : MonoBehaviour,ISingleCoroutine
     protected virtual void OnEnable()
     {
         m_CurrentHealth = m_EntityInfo.m_MaxHealth;
-        b_IsDead = false;
     }
     protected virtual void OnDisable()
     {
         this.StopSingleCoroutine(0);
     }
-    void Update()
+    protected virtual void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-            TryTakeDamage(1f);
+        f_ArmorRegenCheck -= Time.deltaTime;
+        if (f_ArmorRegenCheck < 0 && m_CurrentArmor != m_EntityInfo.m_MaxArmor)
+        {
+            TryTakeDamage(-1*m_EntityInfo.m_ArmorRegenSpeed * Time.deltaTime);
+        }
     }
-    protected bool TryTakeDamage(float damageAmount)
+    protected bool TryTakeDamage(float amount)
     {
         if (b_IsDead)
             return false;
-        
-        OnTakeDamage(damageAmount);
 
-        m_CurrentHealth -= damageAmount;
-        if (m_CurrentHealth <= 0)
+        m_CurrentArmor -= amount;
+        if (amount > 0)
         {
-            b_IsDead = true;
-            OnDead();
+            if (m_CurrentArmor < 0)
+            {
+                m_CurrentHealth += m_CurrentArmor;
+                m_CurrentArmor = 0;
+            }
+
+            f_ArmorRegenCheck = m_EntityInfo.m_ArmorRegenDuration;
+
+            OnHealthEffect(true, m_CurrentArmor > 0);
+            if (b_IsDead)
+                OnDead();
+        }
+        else
+        {
+            if (m_CurrentArmor > m_EntityInfo.m_MaxArmor)
+                m_CurrentArmor = m_EntityInfo.m_MaxArmor;
+            OnHealthEffect(false);
         }
 
         return true;
     }
+
+    protected virtual void OnCostMana(float manaCost)
+    {
+        m_CurrentMana -= manaCost;
+    }
+
     protected virtual void OnDead()
     {
         ObjectManager.RecycleEntity(m_EntityInfo.m_Type, this);
     }
-    protected virtual void OnTakeDamage(float damageAmount)
+    protected virtual void OnHealthEffect(bool isDamage,bool armorDamage=true)
     {
         this.StartSingleCoroutine(0,TIEnumerators.ChangeValueTo((float value)=> {
-            Color targetColor = Color.Lerp(Color.red, Color.white, value);
+            Color targetColor = Color.Lerp(isDamage?(armorDamage ? Color.yellow:Color.red): Color.green, Color.white, value);
             TCommon.TraversalArray(m_Renderers, (Renderer renderer) => {
                 renderer.material.SetColor("_Color",targetColor); });
           },0,1,.5f));

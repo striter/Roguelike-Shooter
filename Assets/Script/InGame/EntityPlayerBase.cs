@@ -5,12 +5,13 @@ using GameSetting;
 public class EntityPlayerBase : EntityBase {
     public enum_Weapon TESTWEAPON1 = enum_Weapon.M16A4;
     public enum_Weapon TESTWEAPON2 = enum_Weapon.MK10;
+    public float m_Coins { get; private set; } = 0;
+    public float m_Pitch { get; private set; } = 0;
 
     Vector2 m_MoveDelta;
-    float m_Pitch;
     CharacterController m_CharacterController;
     protected Transform tf_WeaponHold;
-    protected WeaponBase m_WeaponCurrent = null;
+    public WeaponBase m_WeaponCurrent { get; private set; } = null;
     protected List<WeaponBase> m_WeaponObtained=new List<WeaponBase>();
     public override void Init(int entityID,SEntity entityInfo)
     {
@@ -42,10 +43,25 @@ public class EntityPlayerBase : EntityBase {
         ObtainWeapon(ObjectManager.SpawnWeapon(TESTWEAPON1, this));
         ObtainWeapon(ObjectManager.SpawnWeapon(TESTWEAPON2, this));
     }
+    protected override void OnCostMana(float manaCost)
+    {
+        float manaMinus = m_CurrentMana - manaCost;
+        if (manaMinus <= 0)
+        {
+            m_Coins += manaMinus;
+            manaMinus = m_CurrentMana;
+        }
+        else
+        {
+            manaMinus = manaCost;
+        }
+        base.OnCostMana(manaMinus);
+    }
+    #region WeaponControll
     void ObtainWeapon(WeaponBase weapon)
     {
         m_WeaponObtained.Add(weapon);
-        weapon.Attach(I_EntityID,tf_WeaponHold, OnAmmoInfoChanged, AddRecoil);
+        weapon.Attach(I_EntityID,tf_WeaponHold, OnCostMana, AddRecoil);
         weapon.SetActivate(false);
         if (m_WeaponCurrent == null)
             OnSwitchWeapon();
@@ -80,10 +96,9 @@ public class EntityPlayerBase : EntityBase {
             m_WeaponCurrent = m_WeaponObtained[index];
         }
         m_WeaponCurrent.SetActivate(true);
-        OnAmmoInfoChanged();
     }
-
-#region PlayerMovement
+    #endregion
+    #region PlayerMovement
     void OnRotateDelta(Vector2 rotateDelta)
     {
         m_Pitch += (rotateDelta.y/Screen.height)*90f;
@@ -96,13 +111,21 @@ public class EntityPlayerBase : EntityBase {
     {
         m_MoveDelta = moveDelta*.1f;
     }
-    private void Update()
+    protected override void Update()
     {
+        base.Update();
         tf_WeaponHold.localRotation = Quaternion.Euler(-m_Pitch,0,0);
-        OnPitchInfoChanged();
         transform.rotation = Quaternion.Lerp(transform.rotation,CameraController.CameraXZRotation,.1f);
         Vector3 direction = (transform.right * m_MoveDelta.x + transform.forward * m_MoveDelta.y).normalized +Vector3.down*.98f;
         m_CharacterController.Move(direction*Time.deltaTime*m_EntityInfo.m_moveSpeed);
+
+        TBroadCaster<enum_BC_UIStatusChanged>.Trigger(enum_BC_UIStatusChanged.PlayerInfoChanged, this);
+
+
+        if (GameManager.Instance.B_TestMode&&Input.GetKeyDown(KeyCode.Space))
+        {
+            TryTakeDamage(10);
+        }
     }
     public void AddRecoil(Vector2 recoil)
     {
@@ -111,14 +134,4 @@ public class EntityPlayerBase : EntityBase {
         OnRotateDelta(new Vector2(Random.Range(-1f,1f)>0?1f:-1f *recoil.x,0));
     }
 #endregion
-
-
-    void OnAmmoInfoChanged()
-    {
-        TBroadCaster<enum_BC_UIStatusChanged>.Trigger(enum_BC_UIStatusChanged.AmmoLeftChanged,m_WeaponCurrent==null?-1:m_WeaponCurrent.I_AmmoLeft);
-    }
-    void OnPitchInfoChanged()
-    {
-        TBroadCaster<enum_BC_UIStatusChanged>.Trigger(enum_BC_UIStatusChanged.PitchChanged, m_Pitch);
-    }
 }
