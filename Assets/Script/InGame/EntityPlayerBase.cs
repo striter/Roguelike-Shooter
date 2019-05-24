@@ -2,17 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
+
 public class EntityPlayerBase : EntityBase {
     public enum_Weapon TESTWEAPON1 = enum_Weapon.M16A4;
     public enum_Weapon TESTWEAPON2 = enum_Weapon.MK10;
     public float m_Coins { get; private set; } = 0;
     public float m_Pitch { get; private set; } = 0;
 
-    Vector2 m_MoveDelta;
-    CharacterController m_CharacterController;
+    protected CharacterController m_CharacterController;
     protected Transform tf_WeaponHold;
-    public WeaponBase m_WeaponCurrent { get; private set; } = null;
     protected List<WeaponBase> m_WeaponObtained=new List<WeaponBase>();
+
+    public WeaponBase m_WeaponCurrent { get; private set; } = null;
+
+    public bool b_Interacting = false;
+    public InteractBase m_InteractTarget { get; private set; }
+
     public override void Init(int entityID,SEntity entityInfo)
     {
         base.Init(entityID,entityInfo);
@@ -34,7 +39,7 @@ public class EntityPlayerBase : EntityBase {
         }
         else
         {
-            UIManager.OnFire = OnTriggerDown;
+            UIManager.OnMainDown = OnMainButtonDown;
             UIManager.OnReload = OnReload;
             UIManager.OnSwitch = OnSwitchWeapon;
             TouchDeltaManager.Instance.Bind(OnMovementDelta, OnRotateDelta);
@@ -56,6 +61,13 @@ public class EntityPlayerBase : EntityBase {
             manaMinus = manaCost;
         }
         base.OnCostMana(manaMinus);
+    }
+    void OnMainButtonDown(bool down)
+    {
+        if (m_InteractTarget != null)
+            OnInteract(down);
+        else
+            OnTriggerDown(down);
     }
     #region WeaponControll
     void ObtainWeapon(WeaponBase weapon)
@@ -98,7 +110,8 @@ public class EntityPlayerBase : EntityBase {
         m_WeaponCurrent.SetActivate(true);
     }
     #endregion
-    #region PlayerMovement
+    #region PlayerControll
+    Vector2 m_MoveDelta;
     void OnRotateDelta(Vector2 rotateDelta)
     {
         m_Pitch += (rotateDelta.y/Screen.height)*90f;
@@ -120,12 +133,6 @@ public class EntityPlayerBase : EntityBase {
         m_CharacterController.Move(direction*Time.deltaTime*m_EntityInfo.m_moveSpeed);
 
         TBroadCaster<enum_BC_UIStatusChanged>.Trigger(enum_BC_UIStatusChanged.PlayerInfoChanged, this);
-
-
-        if (GameManager.Instance.B_TestMode&&Input.GetKeyDown(KeyCode.Space))
-        {
-            TryTakeDamage(10);
-        }
     }
     public void AddRecoil(Vector2 recoil)
     {
@@ -133,5 +140,26 @@ public class EntityPlayerBase : EntityBase {
         m_Pitch = Mathf.Clamp(m_Pitch, -45, 45);
         OnRotateDelta(new Vector2(Random.Range(-1f,1f)>0?1f:-1f *recoil.x,0));
     }
-#endregion
+    #endregion
+    #region PlayerInteract
+    public void OnInteract(bool down)
+    {
+        if (m_InteractTarget == null)
+        {
+            Debug.LogError("Can't Interact With Null Target!");
+            return;
+        }
+
+        if(down)
+        m_InteractTarget.TryInteract();
+    }
+
+    public void OnCheckInteractor(InteractBase interactTarget, bool isEnter)
+    {
+        if (isEnter)
+            m_InteractTarget = interactTarget;
+        else if (m_InteractTarget = interactTarget)
+            interactTarget = null;
+    }
+    #endregion
 }

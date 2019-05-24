@@ -1,20 +1,17 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-
-
+using TTiles;
 public class TileMapData : ScriptableObject
 {
     [System.Serializable]
     public class TileInfo
     {
-        public int i_axisX;
-        public int i_axisY;
+        public TileAxis m_TileAxis;
         public int m_Status;
         public Vector3 m_Offset;     //offset from origin
-        public TileInfo(int _axisX, int _axisY, Vector3 _offset, int _status)
+        public TileInfo(TileAxis _TileAxis, Vector3 _offset, int _status)
         {
-            i_axisX = _axisX;
-            i_axisY = _axisY;
+            m_TileAxis = _TileAxis;
             m_Offset = _offset;
             m_Status = _status;
         }
@@ -50,7 +47,7 @@ public class TileMapData : ScriptableObject
 
                 Vector3 cellOffset = new Vector3(offset.x * (-_widthOrRaidus / 2 + i), 0f, offset.y * (-_height / 2 + j));
                 Vector3 tileCenter = origin + cellOffset;
-                bool available = TopDownRayHit(tileCenter, ref cellOffset.y) && cellOffset.y < 3;
+                bool available = TopDownRayHit(tileCenter, ref cellOffset.y) && cellOffset.y < 3&&cellOffset.y>0;
                 if (available&& heightDetect > 0f)
                 {
                     float offsetTopLeft = -1f, offsetTopRight = -1f, offsetBottomLeft = -1f, offsetBottomRight = -1f;
@@ -66,7 +63,7 @@ public class TileMapData : ScriptableObject
                 }
 
                 if(!bakeUnavailable||available)
-                    m_MapData.Add( new TileInfo(i,j,cellOffset, available ? 0 : -1));
+                    m_MapData.Add( new TileInfo(new TileAxis( i,j),cellOffset, available ? 0 : -1));
             }
         }
     }

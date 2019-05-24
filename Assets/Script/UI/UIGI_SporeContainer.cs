@@ -34,15 +34,15 @@ public class UIGI_SporeContainer : UIT_GridItem {
 
     void DragStatus(bool begin, Vector2 position)
     {
-        OnDragStatus(i_Index, begin, position);
+        OnDragStatus(I_Index, begin, position);
     }
     void Drag(Vector2 position)
     {
-        OnDrag(i_Index, position);
+        OnDrag(I_Index, position);
     }
     void Raycast()
     {
-        OnRaycast(i_Index);
+        OnRaycast(I_Index);
     }
 
     public void Tick(float deltaTime)

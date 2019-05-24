@@ -1,9 +1,9 @@
 fileFormatVersion: 2
-guid: 9aae5c90545dce34f864973b3c0b691b
+guid: 045c80e05a04d224dafbe29d81b5e1c7
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
-    100000: pasted__huoshan
+    100000: //RootNode
     100002: pDisc2
     100004: pDisc3
     100006: pDisc4
@@ -11,9 +11,7 @@ ModelImporter:
     100010: pDisc6
     100012: pDisc7
     100014: pDisc8
-    100016: people
-    100018: //RootNode
-    400000: pasted__huoshan
+    400000: //RootNode
     400002: pDisc2
     400004: pDisc3
     400006: pDisc4
@@ -21,43 +19,28 @@ ModelImporter:
     400010: pDisc6
     400012: pDisc7
     400014: pDisc8
-    400016: people
-    400018: //RootNode
-    2100000: pasted__pasted__lambert12
-    2100002: lambert6
-    2100004: lambert10
-    2100006: lambert2
-    2100008: lambert11
-    2100010: pasted__lambert13
-    2100012: pasted__lambert14
-    2300000: pasted__huoshan
-    2300002: pDisc2
-    2300004: pDisc3
-    2300006: pDisc4
-    2300008: pDisc5
-    2300010: pDisc6
-    2300012: pDisc7
-    2300014: pDisc8
-    2300016: people
-    3300000: pasted__huoshan
-    3300002: pDisc2
-    3300004: pDisc3
-    3300006: pDisc4
-    3300008: pDisc5
-    3300010: pDisc6
-    3300012: pDisc7
-    3300014: pDisc8
-    3300016: people
-    4300000: people
-    4300002: pDisc2
-    4300004: pDisc3
-    4300006: pDisc4
-    4300008: pDisc5
-    4300010: pDisc6
-    4300012: pDisc7
-    4300014: pDisc8
-    4300016: pasted__huoshan
-    9500000: //RootNode
+    2100000: AA
+    2300000: pDisc2
+    2300002: pDisc3
+    2300004: pDisc4
+    2300006: pDisc5
+    2300008: pDisc6
+    2300010: pDisc7
+    2300012: pDisc8
+    3300000: pDisc2
+    3300002: pDisc3
+    3300004: pDisc4
+    3300006: pDisc5
+    3300008: pDisc6
+    3300010: pDisc7
+    3300012: pDisc8
+    4300000: pDisc2
+    4300002: pDisc3
+    4300004: pDisc4
+    4300006: pDisc5
+    4300008: pDisc6
+    4300010: pDisc7
+    4300012: pDisc8
   externalObjects: {}
   materials:
     importMaterials: 1
@@ -132,7 +115,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 0
   humanoidOversampling: 1
   additionalBone: 0
   userData: 

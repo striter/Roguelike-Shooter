@@ -137,7 +137,7 @@ public class TBroadCaster<TEnum>  {      //Message Center  Add / Remove / Trigge
     {
         dic_delegates[type].Add(new LocalMessage<T,Y>(Listener));
     }
-    public void Remove<T,Y>(TEnum type, Action<T,Y> Listener)
+    public static void Remove<T,Y>(TEnum type, Action<T,Y> Listener)
     {
         LocalMessage<T,Y> removeTarget = null;
         foreach (LocalMessage mb in dic_delegates[type])

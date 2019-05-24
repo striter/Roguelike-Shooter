@@ -18,7 +18,7 @@ public class LevelBaseEditor : Editor
         if (levelTarget.m_levelStyle ==  enum_LevelStyle.Invalid||EditorApplication.isPlaying)
             return;
 
-        if (levelTarget.data == null )
+        if (levelTarget.gizmosMapData == null )
         {
             if (GUILayout.Button("Bake"))
             {

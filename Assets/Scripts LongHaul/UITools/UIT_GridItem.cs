@@ -4,32 +4,12 @@ using UnityEngine.UI;
 public class UIT_GridItem : MonoBehaviour
 {
     Action<int> OnItemClick;
-    protected int i_Index;
-    protected bool b_highLight; 
     protected Transform tf_Container;
     protected RectTransform rtf_RectTransform;
     protected UIT_GridController gc_Parent;
-    public RectTransform rectTransform
-    {
-        get
-        {
-            return rtf_RectTransform;
-        }
-    }
-    public int I_Index
-    {
-        get
-        {
-            return i_Index;
-        }
-    }
-    public bool B_HighLight
-    {
-        get
-        {
-            return b_highLight;
-        }
-    }
+    public RectTransform rectTransform => rtf_RectTransform;
+    public int I_Index { get; protected set; }
+    public bool B_HighLight { get; protected set; }
     protected virtual void Init()
     {
         if (rtf_RectTransform != null)
@@ -37,17 +17,17 @@ public class UIT_GridItem : MonoBehaviour
         rtf_RectTransform = transform.GetComponent<RectTransform>();
         tf_Container = transform.Find("Container");
     }
-    public void SetGridControlledItem(int _index, UIT_GridController parent, Action<int> _OnItemClick)
+    public void SetGridControlledItem(int _index, UIT_GridController parent, Action<int> _OnItemTrigger)
     {
         Init();
         gc_Parent = parent;
-        i_Index = _index;
-        OnItemClick = _OnItemClick;
+        I_Index = _index;
+        OnItemClick = _OnItemTrigger;
         SetHighLight(false);
     }
     public virtual void SetHighLight(bool highLight)
     {
-        b_highLight = highLight;
+        B_HighLight = highLight;
     }
     public virtual void Reset()
     {
@@ -55,6 +35,6 @@ public class UIT_GridItem : MonoBehaviour
     }
     protected void OnItemTrigger()
     {
-        OnItemClick?.Invoke(i_Index);
+        OnItemClick?.Invoke(I_Index);
     }
 }

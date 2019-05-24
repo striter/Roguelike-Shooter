@@ -1,10 +1,13 @@
 ﻿using GameSetting;
 using System;
-using UnityEditor.AI;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class GameManager : SingletonMono<GameManager>
 {
+    public Dictionary<int, EntityBase> m_Entities { get; private set; } = new Dictionary<int, EntityBase>();
+    public EntityBase m_LocalPlayer { get; private set; } = null;
     public static CPlayerSave m_PlayerInfo { get; private set; }
     public bool B_TestMode { get; private set; } = false;
     protected override void Awake()
@@ -16,32 +19,61 @@ public class GameManager : SingletonMono<GameManager>
         base.Awake();
         ObjectManager.Init();
         TBroadCaster<enum_BC_UIStatusChanged>.Init();
+        TBroadCaster<enum_BC_GameStatusChanged>.Init();
         m_PlayerInfo = TGameData<CPlayerSave>.Read();
-    }
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.BackQuote))
-            Time.timeScale = Time.timeScale== 1f ? .1f : 1f;
-    }
-    private void Start()
-    {
-        EnviormentManager.Instance.StartLevel(enum_LevelStyle.Desert);
 
-        NavMeshBuilder.ClearAllNavMeshes();
-        NavMeshBuilder.BuildNavMesh();
-        ObjectManager.SpawnEntity(enum_Entity.Player, EnviormentManager.Instance.tf_PlayerStart); 
+        TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnSpawnEntity, OnSpawnEntity);
+        TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnRecycleEntity, OnRecycleEntity);
+        TBroadCaster<enum_BC_GameStatusChanged>.Add<HitCheckEntity>(enum_BC_GameStatusChanged.OnEntityFall, OnEntityFall);
     }
 
     private void OnDestroy()
     {
         TGameData<CPlayerSave>.Save(m_PlayerInfo);
+
+        TBroadCaster<enum_BC_GameStatusChanged>.Remove<EntityBase>(enum_BC_GameStatusChanged.OnSpawnEntity, OnSpawnEntity);
+        TBroadCaster<enum_BC_GameStatusChanged>.Remove<EntityBase>(enum_BC_GameStatusChanged.OnRecycleEntity, OnRecycleEntity);
+        TBroadCaster<enum_BC_GameStatusChanged>.Remove<HitCheckEntity>(enum_BC_GameStatusChanged.OnEntityFall, OnEntityFall);
+    }
+
+    private void Start()
+    {
+        EnviormentManager.Instance.StartLevel(enum_LevelStyle.Desert);
+
+        m_LocalPlayer=ObjectManager.SpawnEntity(enum_Entity.Player);
+    }
+    void OnPlayerLevelStart(Vector3 startPos)
+    {
+        m_LocalPlayer.transform.position = startPos;
+    }
+
+    void OnSpawnEntity(EntityBase entity)
+    {
+        m_Entities.Add(entity.I_EntityID, entity);
+    }
+    void OnRecycleEntity(EntityBase entity)
+    {
+        m_Entities.Remove(entity.I_EntityID);
+    }
+
+    public void OnEntityFall(HitCheckEntity hitcheck)      //On Player Falls To Ocean ETC
+    {
+        hitcheck.TryHit(hitcheck.m_Attacher.B_IsPlayer ? GameConst.F_DamageWhenPlayerFall : hitcheck.m_Attacher.F_TotalHealth);
+
+        if (hitcheck.m_Attacher.B_IsPlayer)
+        {
+            NavMeshHit edgeHit;
+            if (NavMesh.SamplePosition(hitcheck.m_Attacher.transform.position, out edgeHit,5,-1))
+                hitcheck.m_Attacher.transform.position = edgeHit.position;
+            else
+                hitcheck.m_Attacher.transform.position = Vector3.zero;
+        }
     }
 }
 
 public static class ObjectManager
 {
     static Transform TF_Entity;
-    static int i_entityIndex=0;
     public static void Init()
     {
         TF_Entity = new GameObject("Entity").transform;
@@ -58,18 +90,28 @@ public static class ObjectManager
         {
             ObjectPoolManager<enum_SFX, SFXBase>.Register(type, TResources.Instantiate<SFXBase>("SFX/" + type.ToString()), enum_PoolSaveType.DynamicMaxAmount, 5, null);
         });
+
+        TCommon.TraversalEnum((enum_Interact type) =>
+        {
+            ObjectPoolManager<enum_Interact, InteractBase>.Register(type, TResources.Instantiate<InteractBase>("Interact/" + type.ToString()), enum_PoolSaveType.DynamicMaxAmount, 1, null);
+        });
     }
+
+    static int i_entityIndex = 0;
     public static EntityBase SpawnEntity(enum_Entity type,Transform toTrans=null)
     {
         EntityBase entity= ObjectPoolManager<enum_Entity, EntityBase>.Spawn(type, TF_Entity);
         entity.Init(GameExpression.I_EntityID(i_entityIndex++,type== enum_Entity.Player ), TExcel.Properties<SEntity>.PropertiesList.Find(p => p.m_Type == type));
-        entity.transform.position = toTrans.position;
+        if(toTrans!=null) entity.transform.position = toTrans.position;
+        TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnSpawnEntity, entity);
         return entity;
     }
     public static void RecycleEntity(enum_Entity type, EntityBase target)
     {
         ObjectPoolManager<enum_Entity, EntityBase>.Recycle(type, target);
+        TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnRecycleEntity, target);
     }
+
     public static WeaponBase SpawnWeapon(enum_Weapon type, EntityPlayerBase toPlayer)
     {
         try
@@ -102,5 +144,20 @@ public static class ObjectManager
     public static void RecycleSFX(enum_SFX type, SFXBase sfx)
     {
         ObjectPoolManager<enum_SFX, SFXBase>.Recycle(type, sfx);
+    }
+
+    public static InteractBase SpawnInteract(enum_Interact type, Vector3 toPos)
+    {
+        InteractBase sfx = ObjectPoolManager<enum_Interact, InteractBase>.Spawn(type, TF_Entity);
+        sfx.transform.position = toPos;
+        return sfx;
+    }
+    public static void RecycleAllInteract(enum_Interact type)
+    {
+        ObjectPoolManager<enum_Interact, InteractBase>.RecycleAll(type);
+    }
+    public static void RecycleInteract(enum_Interact type, InteractBase target)
+    {
+        ObjectPoolManager<enum_Interact, InteractBase>.Recycle(type, target);
     }
 }

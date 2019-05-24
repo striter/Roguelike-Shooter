@@ -5,7 +5,6 @@ using UnityEngine.UI;
 using GameSetting;
 using TExcel;
 using System;
-
 public class UI_SporeManager : UIPageBase,ISingleCoroutine {
     Text txt_Coin, txt_CoinsPerSecond, txt_Blue;
     Text txt_MaxLevel;
@@ -55,7 +54,7 @@ public class UI_SporeManager : UIPageBase,ISingleCoroutine {
     }
     void CalculateOfflineProfit()
     {
-        int offsetSeconds = TCommon.GetTimeStamp(DateTime.Now) - m_ManagerInfo.i_previousTimeStamp;
+        int offsetSeconds = TTime.TTime.GetTimeStamp(DateTime.Now) - m_ManagerInfo.i_previousTimeStamp;
         m_ManagerInfo.d_timePassed += offsetSeconds;
         if (offsetSeconds > UIConst.I_SporeManagerUnitTime)
         {
@@ -237,7 +236,7 @@ public class UI_SporeManager : UIPageBase,ISingleCoroutine {
     
     void OnSavePlayerData()
     {
-        m_ManagerInfo.i_previousTimeStamp = TCommon.GetTimeStamp(DateTime.Now);
+        m_ManagerInfo.i_previousTimeStamp = TTime.TTime.GetTimeStamp(DateTime.Now);
         TGameData<CSporeManagerSave>.Save(m_ManagerInfo);
     }
 

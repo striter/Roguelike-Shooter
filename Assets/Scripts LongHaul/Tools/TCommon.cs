@@ -158,13 +158,29 @@ public static class TCommon
         }
         return indexes;
     }
-    public static T ListRandom<T>(this List<T> randomList,System.Random randomSeed=null)
+    public static T Find<T>(this T[,] array,Predicate<T> predicate) 
+    {
+        for (int i = 0; i < array.GetLength(0); i++)
+            for (int j = 0; j < array.GetLength(1); j++)
+                if (predicate(array[i, j])) return array[i, j];
+            return default(T);
+    }
+
+    public static T RandomItem<T>(this List<T> randomList,System.Random randomSeed=null)
     {
         return randomList[randomSeed!=null?randomSeed.Next(randomList.Count):UnityEngine.Random.Range(0, randomList.Count)];
     }
-    public static int ListRandomIndex<T>(this List<T> randomList,System.Random randomSeed=null)
+    public static int RandomIndex<T>(this List<T> randomList,System.Random randomSeed=null)
     {
         return randomSeed!=null?randomSeed.Next(randomList.Count):UnityEngine.Random.Range(0, randomList.Count);
+    }
+    public static T RandomItem<T>(this T[] array, System.Random randomSeed = null)
+    {
+        return randomSeed != null ? array[randomSeed.Next(array.Length)] :array[UnityEngine.Random.Range(0, array.Length)];
+    }
+    public static T RandomItem<T>(this T[,] array, System.Random randomSeed = null)
+    {
+        return randomSeed != null ? array[randomSeed.Next(array.GetLength(0)),randomSeed.Next(array.GetLength(1))] : array[UnityEngine.Random.Range(0, array.GetLength(0)), UnityEngine.Random.Range(0, array.GetLength(1))];
     }
     public static void Traversal<T>(this List<T> list, Action<T> OnEachItem) where T : class
     {
@@ -285,32 +301,7 @@ public static class TCommon
         }
         return target;
     }
-
-    #region Time
-    public static int GetTimeStamp(DateTime dt)
-    {
-        DateTime dateStart = new DateTime(1970, 1, 1, 8, 0, 0);
-        int timeStamp = Convert.ToInt32((dt - dateStart).TotalSeconds);
-        return timeStamp;
-    }
-
-    public static DateTime GetDateTime(int timeStamp)
-    {
-        DateTime dtStart = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
-        long lTime = ((long)timeStamp * 10000000);
-        TimeSpan toNow = new TimeSpan(lTime);
-        DateTime targetDt = dtStart.Add(toNow);
-        return targetDt;
-    }
-
-    public static DateTime GetDateTime(string timeStamp)
-    {
-        DateTime dtStart = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
-        long lTime = long.Parse(timeStamp + "0000000");
-        TimeSpan toNow = new TimeSpan(lTime);
-        return dtStart.Add(toNow);
-    }
-    #endregion
+    
     //public static void InitComponent<T>(this T initItem,Transform parentTransform)  //Test Try Init Item Within One Func
     //{
     //    initItem = parentTransform.Find(initItem.ToString()).GetComponent<T>();

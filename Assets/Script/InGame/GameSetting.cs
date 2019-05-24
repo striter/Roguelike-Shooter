@@ -2,6 +2,8 @@
 using TExcel;
 using System.Collections.Generic;
 using System;
+using TTiles;
+using System.Linq;
 #pragma warning disable 0649
 namespace GameSetting
 {
@@ -19,6 +21,10 @@ namespace GameSetting
         public const int I_BulletSpeadAtDistance = 100;       //Meter,  Bullet Spread In A Circle At End Of This Distance
 
         public const float F_LevelTileSize = 2f;        //Cube Size For Level Tiles
+
+        public const float F_DamageWhenPlayerFall = 10f;
+
+        public const int I_TileMapPortalMinusOffset = 3;        //The Minimum Tile Offset Away From Origin Portal Will Generate
     }
 
     public static class GameExpression
@@ -29,7 +35,7 @@ namespace GameSetting
 
         public static bool B_CanHitTarget(HitCheckEntity hb, int sourceID) => hb.I_AttacherID != sourceID;
 
-        public static SLevelGenerate S_GetLevelGenerateInfo(enum_LevelStyle type,enum_LevelType levelType)
+        public static SLevelGenerate S_GetLevelGenerateInfo(enum_LevelStyle type,enum_BigmapTileType levelType)
         {
             return new SLevelGenerate(type, new Dictionary<enum_LevelItemType, RangeInt>() {
                         { enum_LevelItemType.Large, new RangeInt(0, 1) },
@@ -66,12 +72,20 @@ namespace GameSetting
     {
         Invalid = -1,
         PlayerInfoChanged,
+        PlayerLevelStatusChanged,
+    }
+    enum enum_BC_GameStatusChanged
+    {
+        Invalid=-1,
+        OnSpawnEntity,
+        OnRecycleEntity,
+        OnEntityFall,
     }
     #endregion
     #region GameEnum
     public enum enum_HitCheck { Invalid = -1, Static = 1, Entity = 2, Dynamic = 3, }
     public enum enum_LevelStyle {Invalid=-1, Desert,}
-    public enum enum_LevelType { Invalid=-1,Start,Battle,Reward,BattleEnd,HardBattleEnd,}
+    public enum enum_BigmapTileType { Invalid=-1,Start,Battle,Reward,BattleEnd,}
     public enum enum_LevelItemType
     {
        Invalid=-1,
@@ -100,6 +114,12 @@ namespace GameSetting
         Bullet_Bolt = 4,
         Bullet_Rocket = 5,
         Blast_Rocket = 6,
+    }
+
+    public enum enum_Interact
+    {
+        Invalid=-1,
+        Interact_Portal,
     }
 
     public enum enum_Weapon
@@ -179,6 +199,7 @@ namespace GameSetting
         public static readonly int I_Static = LayerMask.NameToLayer("static");
         public static readonly int I_Entity = LayerMask.NameToLayer("entity");
         public static readonly int I_Dynamic = LayerMask.NameToLayer("dynamic");
+        public static readonly int I_EntityDetect = LayerMask.NameToLayer("entityDetect");
         public static class Physics
         {
             public static readonly int I_All = 1 << I_Static | 1 << I_Entity | 1 << I_Dynamic;
@@ -217,22 +238,64 @@ namespace GameSetting
             if (hitCheck == null)
             {
                 Debug.LogWarning("Null Hit Check Attached:" + other.gameObject);
-                OnHitCheckError();
+                OnHitCheckError?.Invoke();
                 return;
             }
             switch (hitCheck.m_HitCheckType)
             {
                 default: Debug.LogError("Add More Convertions Here:" + hitCheck.m_HitCheckType); break;
                 case enum_HitCheck.Static:
-                    OnHitCheckStatic(hitCheck as HitCheckStatic);
+                    OnHitCheckStatic?.Invoke(hitCheck as HitCheckStatic);
                     break;
                 case enum_HitCheck.Dynamic:
-                    OnHitCheckDynamic(hitCheck as HitCheckDynamic);
+                    OnHitCheckDynamic?.Invoke(hitCheck as HitCheckDynamic);
                     break;
                 case enum_HitCheck.Entity:
-                    OnHitCheckEntity(hitCheck as HitCheckEntity);
+                    OnHitCheckEntity?.Invoke(hitCheck as HitCheckEntity);
                     break;
             }
+        }
+    }
+
+    public class SBigmapTileInfo : ITileAxis
+    {
+        public TileAxis m_TileAxis => m_Tile;
+        protected TileAxis m_Tile { get; private set; }
+        public enum_BigmapTileType m_TileType { get; private set; } = enum_BigmapTileType.Invalid;
+        public enum_LevelStyle m_TileStyle { get; private set; } = enum_LevelStyle.Invalid;
+        public Dictionary<enum_TileDirection, SBigmapTileInfo> m_Connections { get; protected set; } = new Dictionary<enum_TileDirection, SBigmapTileInfo>();
+
+        public SBigmapTileInfo(TileAxis _tileAxis, enum_BigmapTileType _tileType, enum_LevelStyle _tileStyle)
+        {
+            m_Tile = _tileAxis;
+            m_TileType = _tileType;
+            m_TileStyle = _tileStyle;
+        }
+        public void ResetTileType(enum_BigmapTileType _tileType)
+        {
+            m_TileType = _tileType;
+        }
+    }
+
+    public class SBigmapLevelInfo : SBigmapTileInfo
+    {
+        protected Transform m_LevelParent;
+        public System.Random m_LevelSeed { get; private set; } = null;
+        public LevelBase m_Level { get; private set; } = null;
+        public SBigmapLevelInfo(SBigmapTileInfo tile) : base(tile.m_TileAxis, tile.m_TileType, tile.m_TileStyle)
+        {
+            m_Connections = tile.m_Connections;
+        }
+        public void GenerateMap(Transform _levelParent, LevelBase _levelPrefab, LevelItemBase[] _levelItemPrefabs, string _levelSeed,System.Random mainSeed)
+        {
+            m_LevelParent = _levelParent;
+            m_LevelSeed = new System.Random(_levelSeed.GetHashCode());
+
+            m_Level = GameObject.Instantiate(_levelPrefab, _levelParent);
+            m_Level.Init(TResources.GetLevelData(_levelPrefab.m_levelStyle, _levelPrefab.name), GameExpression.S_GetLevelGenerateInfo(_levelPrefab.m_levelStyle, _levelPrefab.m_levelType), _levelItemPrefabs, m_LevelSeed,m_Connections.Keys.ToList());
+            m_Level.transform.localRotation = Quaternion.Euler(0, mainSeed.Next(360), 0);
+            m_Level.transform.localPosition = Vector3.zero;
+            m_Level.transform.localScale = Vector3.one;
         }
     }
     #endregion
@@ -370,7 +433,7 @@ namespace GameSetting
             f_coin = 1000f;
             i_maxLevel = 1;
             d_timePassed = 0;
-            i_previousTimeStamp = TCommon.GetTimeStamp(DateTime.Now);
+            i_previousTimeStamp = TTime.TTime.GetTimeStamp(DateTime.Now);
             d_sporeContainerInfo = new Dictionary<int, int>() { };
             for (int i = 1; i <= UIConst.I_SporeManagerContainersMaxAmount; i++)
                 d_sporeContainerInfo.Add(i, i <= UIConst.I_SporeManagerContainerStartFreeSlot ? 0 : -1);

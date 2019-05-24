@@ -16,7 +16,7 @@ public class UIT_SystemInfoItem:UIT_GridItem {
     }
     public void SetItem(int itemIndex, string text)
     {
-        i_Index = itemIndex;
+        I_Index = itemIndex;
         txt_chatInfo.text = text;
     }
 }

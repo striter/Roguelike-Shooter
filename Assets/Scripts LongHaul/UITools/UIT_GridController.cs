@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
+
 public class UIT_GridController
 {
     public Transform transform;
@@ -62,71 +65,37 @@ public class UIT_GridController
         return ActiveItemDic.ContainsKey(identity);
     }
 }
-public class UIT_GridControllerMono<T>:UIT_GridController where T:UIT_GridItem
+public class UIT_GridControllerDefaultMono<T> : UIT_GridControllerMono<T> where T : UIT_GridDefaultItem
 {
     bool b_btnEnable;
     bool b_doubleClickConfirm;
     bool b_activeHighLight;
     Action<int> OnItemSelected;
-    Dictionary<int, T> MonoItemDic = new Dictionary<int, T>();
-    int i_currentSelecting;
-    public int I_CurrentSelecting
-    {
-        get
-        {
-            return i_currentSelecting;
-        }
-    }
-    public int I_Count
-    {
-        get
-        {
-            return MonoItemDic.Count;
-        }
-    }
-    public UIT_GridControllerMono(Transform _transform, Action<int> _OnItemSelected=null,bool activeHighLight=true,bool doubleClickConfirm=false) : base(_transform)
+    public int I_CurrentSelecting { get; private set; }
+    public UIT_GridControllerDefaultMono(Transform _transform, Action<int> _OnItemSelected = null, bool activeHighLight = true, bool doubleClickConfirm = false) : base(_transform)
     {
         b_btnEnable = true;
         b_activeHighLight = activeHighLight;
         b_doubleClickConfirm = doubleClickConfirm;
         OnItemSelected = _OnItemSelected;
-        i_currentSelecting = -1;
+        I_CurrentSelecting = -1;
     }
-    public new T AddItem(int identity) 
-    {
-        T item = base.AddItem(identity).GetComponent<T>();
-        item.SetGridControlledItem(identity,this, OnItemSelect);
-        MonoItemDic.Add(identity,item);
-        item.SetActivate(true);
-        item.transform.SetSiblingIndex(identity); 
-        return item;
-    }
-    public new T GetItem(int identity)
-    {
-        return Contains(identity)?MonoItemDic[identity]:null;
-    }
-    public new void ClearGrid()
+    public override void ClearGrid()
     {
         base.ClearGrid();
-        i_currentSelecting = -1;
-        MonoItemDic.Clear();
+        I_CurrentSelecting = -1;
     }
-    public void DeHighlightAll()
+    public override void DeHighlightAll()
     {
-        foreach (T template in MonoItemDic.Values)
-        {
-            if(template.B_HighLight)
-            template.SetHighLight(false);
-        }
-        i_currentSelecting = -1;
+        base.DeHighlightAll();
+        I_CurrentSelecting = -1;
     }
-    public new void RemoveItem(int identity)
+    public override void RemoveItem(int identity)
     {
         base.RemoveItem(identity);
-        MonoItemDic[identity].Reset();
-        MonoItemDic.Remove(identity);
-        if (identity == i_currentSelecting)
-            i_currentSelecting = -1;
+
+        if (identity == I_CurrentSelecting)
+            I_CurrentSelecting = -1;
     }
     public void OnItemSelect(int identity)
     {
@@ -134,7 +103,7 @@ public class UIT_GridControllerMono<T>:UIT_GridController where T:UIT_GridItem
             return;
         if (b_doubleClickConfirm)
         {
-            if (identity == i_currentSelecting)
+            if (identity == I_CurrentSelecting)
             {
                 OnItemSelected?.Invoke(identity);
                 return;
@@ -142,23 +111,79 @@ public class UIT_GridControllerMono<T>:UIT_GridController where T:UIT_GridItem
         }
         else
         {
-            if (b_activeHighLight&&identity == i_currentSelecting)
+            if (b_activeHighLight && identity == I_CurrentSelecting)
             {
                 return;
             }
             OnItemSelected?.Invoke(identity);
         }
 
-        if (b_activeHighLight && i_currentSelecting != -1)
-            GetItem(i_currentSelecting).SetHighLight(false);
+        if (b_activeHighLight && I_CurrentSelecting != -1)
+            GetItem(I_CurrentSelecting).SetHighLight(false);
 
-        i_currentSelecting = identity;
+        I_CurrentSelecting = identity;
 
         if (b_activeHighLight)
-            GetItem(i_currentSelecting).SetHighLight(true);
+            GetItem(I_CurrentSelecting).SetHighLight(true);
     }
     public void SetBtnsEnable(bool active)
     {
         b_btnEnable = active;
+    }
+}
+public class UIT_GridControllerMono<T>:UIT_GridController where T:UIT_GridItem
+{
+    Dictionary<int, T> MonoItemDic = new Dictionary<int, T>();
+    public int I_Count=> MonoItemDic.Count;
+    public GridLayoutGroup m_GridLayout { get; private set; }
+    public UIT_GridControllerMono(Transform _transform) : base(_transform)
+    {
+        m_GridLayout = _transform.GetComponent<GridLayoutGroup>();
+    }
+    public new T AddItem(int identity) 
+    {
+        T item = base.AddItem(identity).GetComponent<T>();
+        item.SetGridControlledItem(identity,this, null);
+        MonoItemDic.Add(identity,item);
+        item.SetActivate(true);
+        item.transform.SetSiblingIndex(identity); 
+        return item;
+    }
+    public void SortChildrenSibling()
+    {
+        List<int> keyCollections = MonoItemDic.Keys.ToList();
+        keyCollections.Sort((a,b)=> {return a > b?1:-1; });
+        for (int i = 0; i < keyCollections.Count; i++)
+            MonoItemDic[keyCollections[i]].transform.SetAsLastSibling();
+    }
+    public new T GetItem(int identity)
+    {
+        return Contains(identity)?MonoItemDic[identity]:null;
+    }
+    public override void ClearGrid()
+    {
+        base.ClearGrid();
+        MonoItemDic.Clear();
+    }
+    public virtual void DeHighlightAll()
+    {
+        foreach (T template in MonoItemDic.Values)
+        {
+            if(template.B_HighLight)
+            template.SetHighLight(false);
+        }
+    }
+    public override void RemoveItem(int identity)
+    {
+        base.RemoveItem(identity);
+        MonoItemDic[identity].Reset();
+        MonoItemDic.Remove(identity);
+    }
+    public void TraversalItem(Action<int, T> onEach)
+    {
+        foreach (int i in ActiveItemDic.Keys)
+        {
+            onEach(i, MonoItemDic[i]);
+        }
     }
 }

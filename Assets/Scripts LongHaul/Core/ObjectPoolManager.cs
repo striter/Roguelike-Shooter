@@ -111,4 +111,12 @@ public class ObjectPoolManager<T,Y> where Y:MonoBehaviour {
             }
         }
     }
+
+    public static void RecycleAll(T identity)
+    {
+        foreach (Y tempTarget in d_ItemInfos[identity].l_Active)
+        {
+            Recycle(identity, tempTarget);
+        }
+    }
 }

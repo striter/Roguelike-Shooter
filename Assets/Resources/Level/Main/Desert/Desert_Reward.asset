@@ -1,0 +1,642 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecf8f1a646961dd45acc452512ec383b, type: 3}
+  m_Name: Desert_Reward
+  m_EditorClassIdentifier: 
+  I_Width: 18
+  I_Height: 18
+  m_Offset: {x: 2, y: 2}
+  m_MapData:
+  - m_TileAxis:
+      m_AxisX: 1
+      m_AxisY: 6
+    m_Status: 0
+    m_Offset: {x: -16, y: 1.0000024, z: -6}
+  - m_TileAxis:
+      m_AxisX: 1
+      m_AxisY: 7
+    m_Status: 0
+    m_Offset: {x: -16, y: 1.0000025, z: -4}
+  - m_TileAxis:
+      m_AxisX: 1
+      m_AxisY: 8
+    m_Status: 0
+    m_Offset: {x: -16, y: 1.0000026, z: -2}
+  - m_TileAxis:
+      m_AxisX: 1
+      m_AxisY: 9
+    m_Status: 0
+    m_Offset: {x: -16, y: 1.0000025, z: 0}
+  - m_TileAxis:
+      m_AxisX: 1
+      m_AxisY: 10
+    m_Status: 0
+    m_Offset: {x: -16, y: 1.0000024, z: 2}
+  - m_TileAxis:
+      m_AxisX: 2
+      m_AxisY: 5
+    m_Status: 0
+    m_Offset: {x: -14, y: 1.0000017, z: -8}
+  - m_TileAxis:
+      m_AxisX: 2
+      m_AxisY: 6
+    m_Status: 0
+    m_Offset: {x: -14, y: 1.000002, z: -6}
+  - m_TileAxis:
+      m_AxisX: 2
+      m_AxisY: 7
+    m_Status: 0
+    m_Offset: {x: -14, y: 1.000002, z: -4}
+  - m_TileAxis:
+      m_AxisX: 2
+      m_AxisY: 8
+    m_Status: 0
+    m_Offset: {x: -14, y: 1.0000019, z: -2}
+  - m_TileAxis:
+      m_AxisX: 2
+      m_AxisY: 9
+    m_Status: 0
+    m_Offset: {x: -14, y: 1.0000018, z: 0}
+  - m_TileAxis:
+      m_AxisX: 2
+      m_AxisY: 10
+    m_Status: 0
+    m_Offset: {x: -14, y: 1.0000018, z: 2}
+  - m_TileAxis:
+      m_AxisX: 2
+      m_AxisY: 11
+    m_Status: 0
+    m_Offset: {x: -14, y: 1.0000021, z: 4}
+  - m_TileAxis:
+      m_AxisX: 2
+      m_AxisY: 12
+    m_Status: 0
+    m_Offset: {x: -14, y: 1.0000023, z: 6}
+  - m_TileAxis:
+      m_AxisX: 3
+      m_AxisY: 4
+    m_Status: 0
+    m_Offset: {x: -12, y: 1.0000011, z: -10}
+  - m_TileAxis:
+      m_AxisX: 3
+      m_AxisY: 5
+    m_Status: 0
+    m_Offset: {x: -12, y: 1.0000013, z: -8}
+  - m_TileAxis:
+      m_AxisX: 3
+      m_AxisY: 6
+    m_Status: 0
+    m_Offset: {x: -12, y: 1.0000013, z: -6}
+  - m_TileAxis:
+      m_AxisX: 3
+      m_AxisY: 7
+    m_Status: 0
+    m_Offset: {x: -12, y: 1.0000013, z: -4}
+  - m_TileAxis:
+      m_AxisX: 3
+      m_AxisY: 8
+    m_Status: 0
+    m_Offset: {x: -12, y: 1.000001, z: -2}
+  - m_TileAxis:
+      m_AxisX: 3
+      m_AxisY: 9
+    m_Status: 0
+    m_Offset: {x: -12, y: 1.0000008, z: 0}
+  - m_TileAxis:
+      m_AxisX: 3
+      m_AxisY: 10
+    m_Status: 0
+    m_Offset: {x: -12, y: 1.000001, z: 2}
+  - m_TileAxis:
+      m_AxisX: 3
+      m_AxisY: 11
+    m_Status: 0
+    m_Offset: {x: -12, y: 1.0000013, z: 4}
+  - m_TileAxis:
+      m_AxisX: 3
+      m_AxisY: 12
+    m_Status: 0
+    m_Offset: {x: -12, y: 1.0000017, z: 6}
+  - m_TileAxis:
+      m_AxisX: 3
+      m_AxisY: 13
+    m_Status: 0
+    m_Offset: {x: -12, y: 1.0000018, z: 8}
+  - m_TileAxis:
+      m_AxisX: 4
+      m_AxisY: 4
+    m_Status: 0
+    m_Offset: {x: -10, y: 1.0000013, z: -10}
+  - m_TileAxis:
+      m_AxisX: 4
+      m_AxisY: 5
+    m_Status: 0
+    m_Offset: {x: -10, y: 1.000001, z: -8}
+  - m_TileAxis:
+      m_AxisX: 4
+      m_AxisY: 6
+    m_Status: 0
+    m_Offset: {x: -10, y: 1.0000007, z: -6}
+  - m_TileAxis:
+      m_AxisX: 4
+      m_AxisY: 7
+    m_Status: 0
+    m_Offset: {x: -10, y: 1.0000006, z: -4}
+  - m_TileAxis:
+      m_AxisX: 4
+      m_AxisY: 8
+    m_Status: 0
+    m_Offset: {x: -10, y: 1.0000002, z: -2}
+  - m_TileAxis:
+      m_AxisX: 5
+      m_AxisY: 6
+    m_Status: 0
+    m_Offset: {x: -8, y: 1.0000004, z: -6}
+  - m_TileAxis:
+      m_AxisX: 5
+      m_AxisY: 7
+    m_Status: 0
+    m_Offset: {x: -8, y: 1, z: -4}
+  - m_TileAxis:
+      m_AxisX: 5
+      m_AxisY: 8
+    m_Status: 0
+    m_Offset: {x: -8, y: 0.99999994, z: -2}
+  - m_TileAxis:
+      m_AxisX: 5
+      m_AxisY: 10
+    m_Status: 0
+    m_Offset: {x: -8, y: 1.5443387, z: 2}
+  - m_TileAxis:
+      m_AxisX: 5
+      m_AxisY: 11
+    m_Status: 0
+    m_Offset: {x: -8, y: 1.5442128, z: 4}
+  - m_TileAxis:
+      m_AxisX: 5
+      m_AxisY: 12
+    m_Status: 0
+    m_Offset: {x: -8, y: 1.5441016, z: 6}
+  - m_TileAxis:
+      m_AxisX: 5
+      m_AxisY: 13
+    m_Status: 0
+    m_Offset: {x: -8, y: 1.5441047, z: 8}
+  - m_TileAxis:
+      m_AxisX: 5
+      m_AxisY: 14
+    m_Status: 0
+    m_Offset: {x: -8, y: 1.5441133, z: 10}
+  - m_TileAxis:
+      m_AxisX: 5
+      m_AxisY: 15
+    m_Status: 0
+    m_Offset: {x: -8, y: 1.5442617, z: 12}
+  - m_TileAxis:
+      m_AxisX: 6
+      m_AxisY: 4
+    m_Status: 0
+    m_Offset: {x: -6, y: 1.5933487, z: -10}
+  - m_TileAxis:
+      m_AxisX: 6
+      m_AxisY: 6
+    m_Status: 0
+    m_Offset: {x: -6, y: 1.0000002, z: -6}
+  - m_TileAxis:
+      m_AxisX: 6
+      m_AxisY: 7
+    m_Status: 0
+    m_Offset: {x: -6, y: 0.99999994, z: -4}
+  - m_TileAxis:
+      m_AxisX: 6
+      m_AxisY: 8
+    m_Status: 0
+    m_Offset: {x: -6, y: 0.9999998, z: -2}
+  - m_TileAxis:
+      m_AxisX: 6
+      m_AxisY: 12
+    m_Status: 0
+    m_Offset: {x: -6, y: 1.5440924, z: 6}
+  - m_TileAxis:
+      m_AxisX: 6
+      m_AxisY: 13
+    m_Status: 0
+    m_Offset: {x: -6, y: 1.5439328, z: 8}
+  - m_TileAxis:
+      m_AxisX: 6
+      m_AxisY: 14
+    m_Status: 0
+    m_Offset: {x: -6, y: 1.54394, z: 10}
+  - m_TileAxis:
+      m_AxisX: 6
+      m_AxisY: 15
+    m_Status: 0
+    m_Offset: {x: -6, y: 1.5440297, z: 12}
+  - m_TileAxis:
+      m_AxisX: 6
+      m_AxisY: 16
+    m_Status: 0
+    m_Offset: {x: -6, y: 1.5441338, z: 14}
+  - m_TileAxis:
+      m_AxisX: 7
+      m_AxisY: 2
+    m_Status: 0
+    m_Offset: {x: -4, y: 1.0000025, z: -14}
+  - m_TileAxis:
+      m_AxisX: 7
+      m_AxisY: 6
+    m_Status: 0
+    m_Offset: {x: -4, y: 1.0000002, z: -6}
+  - m_TileAxis:
+      m_AxisX: 7
+      m_AxisY: 7
+    m_Status: 0
+    m_Offset: {x: -4, y: 0.99999994, z: -4}
+  - m_TileAxis:
+      m_AxisX: 7
+      m_AxisY: 8
+    m_Status: 0
+    m_Offset: {x: -4, y: 0.9999998, z: -2}
+  - m_TileAxis:
+      m_AxisX: 7
+      m_AxisY: 9
+    m_Status: 0
+    m_Offset: {x: -4, y: 0.9999998, z: 0}
+  - m_TileAxis:
+      m_AxisX: 7
+      m_AxisY: 10
+    m_Status: 0
+    m_Offset: {x: -4, y: 0.9999998, z: 2}
+  - m_TileAxis:
+      m_AxisX: 7
+      m_AxisY: 13
+    m_Status: 0
+    m_Offset: {x: -4, y: 1.5440766, z: 8}
+  - m_TileAxis:
+      m_AxisX: 7
+      m_AxisY: 14
+    m_Status: 0
+    m_Offset: {x: -4, y: 1.5439616, z: 10}
+  - m_TileAxis:
+      m_AxisX: 7
+      m_AxisY: 15
+    m_Status: 0
+    m_Offset: {x: -4, y: 1.5439745, z: 12}
+  - m_TileAxis:
+      m_AxisX: 7
+      m_AxisY: 16
+    m_Status: 0
+    m_Offset: {x: -4, y: 1.5440842, z: 14}
+  - m_TileAxis:
+      m_AxisX: 8
+      m_AxisY: 2
+    m_Status: 0
+    m_Offset: {x: -2, y: 1.0000023, z: -14}
+  - m_TileAxis:
+      m_AxisX: 8
+      m_AxisY: 4
+    m_Status: 0
+    m_Offset: {x: -2, y: 2.001349, z: -10}
+  - m_TileAxis:
+      m_AxisX: 8
+      m_AxisY: 6
+    m_Status: 0
+    m_Offset: {x: -2, y: 1, z: -6}
+  - m_TileAxis:
+      m_AxisX: 8
+      m_AxisY: 7
+    m_Status: 0
+    m_Offset: {x: -2, y: 0.9999998, z: -4}
+  - m_TileAxis:
+      m_AxisX: 8
+      m_AxisY: 8
+    m_Status: 0
+    m_Offset: {x: -2, y: 0.9999998, z: -2}
+  - m_TileAxis:
+      m_AxisX: 8
+      m_AxisY: 9
+    m_Status: 0
+    m_Offset: {x: -2, y: 0.9999998, z: 0}
+  - m_TileAxis:
+      m_AxisX: 8
+      m_AxisY: 10
+    m_Status: 0
+    m_Offset: {x: -2, y: 0.9999998, z: 2}
+  - m_TileAxis:
+      m_AxisX: 8
+      m_AxisY: 11
+    m_Status: 0
+    m_Offset: {x: -2, y: 0.9999998, z: 4}
+  - m_TileAxis:
+      m_AxisX: 8
+      m_AxisY: 13
+    m_Status: 0
+    m_Offset: {x: -2, y: 1.5443182, z: 8}
+  - m_TileAxis:
+      m_AxisX: 8
+      m_AxisY: 14
+    m_Status: 0
+    m_Offset: {x: -2, y: 1.5441121, z: 10}
+  - m_TileAxis:
+      m_AxisX: 8
+      m_AxisY: 15
+    m_Status: 0
+    m_Offset: {x: -2, y: 1.544065, z: 12}
+  - m_TileAxis:
+      m_AxisX: 8
+      m_AxisY: 16
+    m_Status: 0
+    m_Offset: {x: -2, y: 1.5440656, z: 14}
+  - m_TileAxis:
+      m_AxisX: 9
+      m_AxisY: 1
+    m_Status: 0
+    m_Offset: {x: 0, y: 1.000002, z: -16}
+  - m_TileAxis:
+      m_AxisX: 9
+      m_AxisY: 2
+    m_Status: 0
+    m_Offset: {x: 0, y: 1.000002, z: -14}
+  - m_TileAxis:
+      m_AxisX: 9
+      m_AxisY: 6
+    m_Status: 0
+    m_Offset: {x: 0, y: 0.9999998, z: -6}
+  - m_TileAxis:
+      m_AxisX: 9
+      m_AxisY: 7
+    m_Status: 0
+    m_Offset: {x: 0, y: 0.9999998, z: -4}
+  - m_TileAxis:
+      m_AxisX: 9
+      m_AxisY: 8
+    m_Status: 0
+    m_Offset: {x: 0, y: 0.9999998, z: -2}
+  - m_TileAxis:
+      m_AxisX: 9
+      m_AxisY: 9
+    m_Status: 0
+    m_Offset: {x: 0, y: 0.9999998, z: 0}
+  - m_TileAxis:
+      m_AxisX: 9
+      m_AxisY: 10
+    m_Status: 0
+    m_Offset: {x: 0, y: 0.9999998, z: 2}
+  - m_TileAxis:
+      m_AxisX: 9
+      m_AxisY: 11
+    m_Status: 0
+    m_Offset: {x: 0, y: 0.9999998, z: 4}
+  - m_TileAxis:
+      m_AxisX: 9
+      m_AxisY: 13
+    m_Status: 0
+    m_Offset: {x: 0, y: 1.5440824, z: 8}
+  - m_TileAxis:
+      m_AxisX: 9
+      m_AxisY: 14
+    m_Status: 0
+    m_Offset: {x: 0, y: 1.5440402, z: 10}
+  - m_TileAxis:
+      m_AxisX: 9
+      m_AxisY: 15
+    m_Status: 0
+    m_Offset: {x: 0, y: 1.5182402, z: 12}
+  - m_TileAxis:
+      m_AxisX: 9
+      m_AxisY: 16
+    m_Status: 0
+    m_Offset: {x: 0, y: 1.4611335, z: 14}
+  - m_TileAxis:
+      m_AxisX: 10
+      m_AxisY: 1
+    m_Status: 0
+    m_Offset: {x: 2, y: 1.0000018, z: -16}
+  - m_TileAxis:
+      m_AxisX: 10
+      m_AxisY: 2
+    m_Status: 0
+    m_Offset: {x: 2, y: 1.0000015, z: -14}
+  - m_TileAxis:
+      m_AxisX: 10
+      m_AxisY: 6
+    m_Status: 0
+    m_Offset: {x: 2, y: 0.9999998, z: -6}
+  - m_TileAxis:
+      m_AxisX: 10
+      m_AxisY: 7
+    m_Status: 0
+    m_Offset: {x: 2, y: 0.9999998, z: -4}
+  - m_TileAxis:
+      m_AxisX: 10
+      m_AxisY: 8
+    m_Status: 0
+    m_Offset: {x: 2, y: 0.9999998, z: -2}
+  - m_TileAxis:
+      m_AxisX: 10
+      m_AxisY: 9
+    m_Status: 0
+    m_Offset: {x: 2, y: 0.9999998, z: 0}
+  - m_TileAxis:
+      m_AxisX: 10
+      m_AxisY: 10
+    m_Status: 0
+    m_Offset: {x: 2, y: 0.9999998, z: 2}
+  - m_TileAxis:
+      m_AxisX: 10
+      m_AxisY: 11
+    m_Status: 0
+    m_Offset: {x: 2, y: 0.9999998, z: 4}
+  - m_TileAxis:
+      m_AxisX: 10
+      m_AxisY: 15
+    m_Status: 0
+    m_Offset: {x: 2, y: 1.4687154, z: 12}
+  - m_TileAxis:
+      m_AxisX: 11
+      m_AxisY: 1
+    m_Status: 0
+    m_Offset: {x: 4, y: 1.0000013, z: -16}
+  - m_TileAxis:
+      m_AxisX: 11
+      m_AxisY: 2
+    m_Status: 0
+    m_Offset: {x: 4, y: 1.0000014, z: -14}
+  - m_TileAxis:
+      m_AxisX: 11
+      m_AxisY: 3
+    m_Status: 0
+    m_Offset: {x: 4, y: 1.0000011, z: -12}
+  - m_TileAxis:
+      m_AxisX: 11
+      m_AxisY: 4
+    m_Status: 0
+    m_Offset: {x: 4, y: 1.0000006, z: -10}
+  - m_TileAxis:
+      m_AxisX: 11
+      m_AxisY: 5
+    m_Status: 0
+    m_Offset: {x: 4, y: 1.0000001, z: -8}
+  - m_TileAxis:
+      m_AxisX: 11
+      m_AxisY: 6
+    m_Status: 0
+    m_Offset: {x: 4, y: 0.99999994, z: -6}
+  - m_TileAxis:
+      m_AxisX: 11
+      m_AxisY: 7
+    m_Status: 0
+    m_Offset: {x: 4, y: 0.99999994, z: -4}
+  - m_TileAxis:
+      m_AxisX: 11
+      m_AxisY: 8
+    m_Status: 0
+    m_Offset: {x: 4, y: 0.9999998, z: -2}
+  - m_TileAxis:
+      m_AxisX: 11
+      m_AxisY: 9
+    m_Status: 0
+    m_Offset: {x: 4, y: 0.9999998, z: 0}
+  - m_TileAxis:
+      m_AxisX: 11
+      m_AxisY: 10
+    m_Status: 0
+    m_Offset: {x: 4, y: 0.9999998, z: 2}
+  - m_TileAxis:
+      m_AxisX: 11
+      m_AxisY: 11
+    m_Status: 0
+    m_Offset: {x: 4, y: 0.9999998, z: 4}
+  - m_TileAxis:
+      m_AxisX: 11
+      m_AxisY: 12
+    m_Status: 0
+    m_Offset: {x: 4, y: 0.9999998, z: 6}
+  - m_TileAxis:
+      m_AxisX: 11
+      m_AxisY: 13
+    m_Status: 0
+    m_Offset: {x: 4, y: 1.0000001, z: 8}
+  - m_TileAxis:
+      m_AxisX: 12
+      m_AxisY: 2
+    m_Status: 0
+    m_Offset: {x: 6, y: 1.0000012, z: -14}
+  - m_TileAxis:
+      m_AxisX: 12
+      m_AxisY: 3
+    m_Status: 0
+    m_Offset: {x: 6, y: 1.0000013, z: -12}
+  - m_TileAxis:
+      m_AxisX: 12
+      m_AxisY: 4
+    m_Status: 0
+    m_Offset: {x: 6, y: 1.0000012, z: -10}
+  - m_TileAxis:
+      m_AxisX: 12
+      m_AxisY: 5
+    m_Status: 0
+    m_Offset: {x: 6, y: 1.0000007, z: -8}
+  - m_TileAxis:
+      m_AxisX: 12
+      m_AxisY: 6
+    m_Status: 0
+    m_Offset: {x: 6, y: 1.0000006, z: -6}
+  - m_TileAxis:
+      m_AxisX: 12
+      m_AxisY: 14
+    m_Status: 0
+    m_Offset: {x: 6, y: 1.0000013, z: 10}
+  - m_TileAxis:
+      m_AxisX: 12
+      m_AxisY: 15
+    m_Status: 0
+    m_Offset: {x: 6, y: 1.0000025, z: 12}
+  - m_TileAxis:
+      m_AxisX: 12
+      m_AxisY: 16
+    m_Status: 0
+    m_Offset: {x: 6, y: 1.0000032, z: 14}
+  - m_TileAxis:
+      m_AxisX: 13
+      m_AxisY: 3
+    m_Status: 0
+    m_Offset: {x: 8, y: 1.0000019, z: -12}
+  - m_TileAxis:
+      m_AxisX: 13
+      m_AxisY: 4
+    m_Status: 0
+    m_Offset: {x: 8, y: 1.0000019, z: -10}
+  - m_TileAxis:
+      m_AxisX: 13
+      m_AxisY: 5
+    m_Status: 0
+    m_Offset: {x: 8, y: 1.0000015, z: -8}
+  - m_TileAxis:
+      m_AxisX: 13
+      m_AxisY: 8
+    m_Status: 0
+    m_Offset: {x: 8, y: 1.5426302, z: -2}
+  - m_TileAxis:
+      m_AxisX: 14
+      m_AxisY: 4
+    m_Status: 0
+    m_Offset: {x: 10, y: 1.0000024, z: -10}
+  - m_TileAxis:
+      m_AxisX: 14
+      m_AxisY: 5
+    m_Status: 0
+    m_Offset: {x: 10, y: 1.0000019, z: -8}
+  - m_TileAxis:
+      m_AxisX: 14
+      m_AxisY: 7
+    m_Status: 0
+    m_Offset: {x: 10, y: 1.5425568, z: -4}
+  - m_TileAxis:
+      m_AxisX: 14
+      m_AxisY: 8
+    m_Status: 0
+    m_Offset: {x: 10, y: 1.5425682, z: -2}
+  - m_TileAxis:
+      m_AxisX: 14
+      m_AxisY: 9
+    m_Status: 0
+    m_Offset: {x: 10, y: 1.5424742, z: 0}
+  - m_TileAxis:
+      m_AxisX: 14
+      m_AxisY: 12
+    m_Status: 0
+    m_Offset: {x: 10, y: 2.004385, z: 6}
+  - m_TileAxis:
+      m_AxisX: 15
+      m_AxisY: 5
+    m_Status: 0
+    m_Offset: {x: 12, y: 1.000002, z: -8}
+  - m_TileAxis:
+      m_AxisX: 15
+      m_AxisY: 7
+    m_Status: 0
+    m_Offset: {x: 12, y: 1.5425926, z: -4}
+  - m_TileAxis:
+      m_AxisX: 15
+      m_AxisY: 8
+    m_Status: 0
+    m_Offset: {x: 12, y: 1.5425231, z: -2}
+  - m_TileAxis:
+      m_AxisX: 15
+      m_AxisY: 9
+    m_Status: 0
+    m_Offset: {x: 12, y: 1.5424535, z: 0}
+  - m_TileAxis:
+      m_AxisX: 15
+      m_AxisY: 12
+    m_Status: 0
+    m_Offset: {x: 12, y: 2.0020816, z: 6}

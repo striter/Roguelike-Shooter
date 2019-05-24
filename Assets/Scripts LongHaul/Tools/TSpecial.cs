@@ -3,8 +3,264 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+namespace TTiles
+{
+    public enum enum_TileDirection
+    {
+        Invalid = -1,
+        Top,
+        Right,
+        Bottom,
+        Left,
+    }
 
-namespace TSpecial          //Put Some Common Shits Into Specifical Classes, Tightly Attached To CoroutineManager Cause Not Using Monobehaviour
+    public interface ITileAxis
+    {
+        TileAxis m_TileAxis { get; }
+    }
+
+    [Serializable]
+    public struct TileAxis
+    {
+        public int m_AxisX;
+        public int m_AxisY;
+        public TileAxis(int _axisX, int _axisY)
+        {
+            m_AxisX = _axisX;
+            m_AxisY = _axisY;
+        }
+
+        public TileAxis[] nearbyFourTiles => new TileAxis[4] { new TileAxis(m_AxisX - 1, m_AxisY), new TileAxis(m_AxisX + 1, m_AxisY), new TileAxis(m_AxisX, m_AxisY + 1), new TileAxis(m_AxisX, m_AxisY - 1) };
+        public static bool operator ==(TileAxis a, TileAxis b) => a.m_AxisX == b.m_AxisX && a.m_AxisY == b.m_AxisY;
+        public static bool operator !=(TileAxis a, TileAxis b) => a.m_AxisX != b.m_AxisX || a.m_AxisY != b.m_AxisY;
+        public static TileAxis operator -(TileAxis a, TileAxis b) => new TileAxis(a.m_AxisX - b.m_AxisX, a.m_AxisY - b.m_AxisY);
+        public static TileAxis operator +(TileAxis a, TileAxis b) => new TileAxis(a.m_AxisX + b.m_AxisX, a.m_AxisY + b.m_AxisY);
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+    }
+
+    public static class TTiles
+    {
+        public static T Get<T>(this T[,] tileArray, TileAxis axis) where T : class, ITileAxis
+        {
+            return axis.InRange(tileArray) ? tileArray[axis.m_AxisX, axis.m_AxisY] : null;
+        }
+
+        public static bool InRange<T>(this TileAxis tileAxis, T[,] range) where T : class, ITileAxis
+        {
+            return tileAxis.m_AxisX >= 0 && tileAxis.m_AxisX < range.GetLength(0) && tileAxis.m_AxisY >= 0 && tileAxis.m_AxisY < range.GetLength(1);
+        }
+
+        public static float SqrMagnitude(this TileAxis sourceAxis, TileAxis targetAxis)
+        {
+            return Vector2.SqrMagnitude(new Vector2(sourceAxis.m_AxisX, sourceAxis.m_AxisY) - new Vector2(targetAxis.m_AxisX, targetAxis.m_AxisY));
+        }
+
+        public static int AxisOffset(this TileAxis sourceAxis, TileAxis targetAxis)
+        {
+            return Mathf.Abs(sourceAxis.m_AxisX - targetAxis.m_AxisX) + Mathf.Abs(sourceAxis.m_AxisY - targetAxis.m_AxisY);
+        }
+
+        public static enum_TileDirection Inverse(this enum_TileDirection direction)
+        {
+            switch (direction)
+            {
+                case enum_TileDirection.Top:
+                    return enum_TileDirection.Bottom;
+                case enum_TileDirection.Bottom:
+                    return enum_TileDirection.Top;
+                case enum_TileDirection.Right:
+                    return enum_TileDirection.Left;
+                case enum_TileDirection.Left:
+                    return enum_TileDirection.Right;
+                default:
+                    Debug.LogError("Error Direction Here");
+                    return enum_TileDirection.Invalid;
+            }
+        }
+
+        public static enum_TileDirection OffsetDirection(this TileAxis sourceAxis, TileAxis targetAxis)
+        {
+            TileAxis offset = targetAxis - sourceAxis;
+            if (offset.m_AxisX < 0 && offset.m_AxisY == 0)
+                return enum_TileDirection.Left;
+            if (offset.m_AxisX > 0 && offset.m_AxisY == 0)
+                return enum_TileDirection.Right;
+            if (offset.m_AxisX == 0 && offset.m_AxisY > 0)
+                return enum_TileDirection.Top;
+            if (offset.m_AxisX == 0 && offset.m_AxisY < 0)
+                return enum_TileDirection.Bottom;
+
+            return enum_TileDirection.Invalid;
+        }
+
+        //Top 135-225    Right 45 - 135  Bottom 135 - -135 Right -135 - -45
+        public static enum_TileDirection OffsetDirection(this Vector3 worldOffset)
+        {
+            float angle = TCommon.GetAngle(worldOffset, Vector3.forward, Vector3.up);       //0-360
+            if (angle <= 45 && angle > -45)
+                return enum_TileDirection.Top;
+            if (angle <= 135 && angle > 45)
+                return enum_TileDirection.Left;
+            if (angle <= -135 || angle > 135)
+                return enum_TileDirection.Bottom;
+            if (angle <= -45 && angle > -135)
+                return enum_TileDirection.Right ;
+
+            return enum_TileDirection.Invalid;
+        }
+
+        static List<enum_TileDirection> allDirections;
+        public static List<enum_TileDirection> m_AllDirections { get {
+                if (allDirections == null)
+                    allDirections = new List<enum_TileDirection>() { enum_TileDirection.Top, enum_TileDirection.Bottom,
+                        enum_TileDirection.Left, enum_TileDirection.Right };
+                return allDirections;
+            } }
+        public static void PathFindForClosestApproch<T>(this T[,] tileArray, T t1, T t2, List<T> tilePathsAdd,Action<T> OnEachTilePath=null, Predicate<T> stopPredicate=null, Predicate<T> invalidPredicate=null) where T:class,ITileAxis
+        {
+            if (!t1.m_TileAxis.InRange(tileArray) || !t2.m_TileAxis.InRange(tileArray))
+                Debug.LogError("Error Tile Not Included In Array");
+
+
+            tilePathsAdd.Add(t1);
+            TileAxis startTile=t1.m_TileAxis;
+            for (; ; )
+            {
+                TileAxis nextTile=startTile;
+                float minDistance = startTile.SqrMagnitude(t2.m_TileAxis);
+                float offsetDistance;
+                TileAxis offsetTile;
+                TileAxis[] nearbyFourTiles = startTile.nearbyFourTiles;
+                for (int i = 0; i < nearbyFourTiles.Length; i++)
+                {
+                    offsetTile = nearbyFourTiles[i];
+                    offsetDistance = offsetTile.SqrMagnitude(t2.m_TileAxis);
+                    if (offsetTile.InRange(tileArray) && offsetDistance < minDistance)
+                    {
+                        nextTile = offsetTile;
+                        minDistance = offsetDistance;
+                    }
+                }
+
+                if (nextTile == t2.m_TileAxis||(stopPredicate!=null&&stopPredicate(tileArray.Get(nextTile))))
+                {
+                    tilePathsAdd.Add(tileArray.Get(nextTile));
+                    break;
+                }
+
+                if (invalidPredicate != null && invalidPredicate(tileArray.Get(nextTile)))
+                {
+                    tilePathsAdd.Clear();
+                    break;
+                }
+                startTile = nextTile;
+                T tilePath = tileArray.Get(startTile);
+                OnEachTilePath?.Invoke(tilePath);
+                tilePathsAdd.Add(tilePath);
+
+                if (tilePathsAdd.Count > tileArray.Length) {
+                    Debug.LogError("Error Path Found Failed");
+                    break;
+                }
+            }
+        }
+
+        public static T TileRandomEdge<T>(this T[,] tileArray ,  System.Random randomSeed=null, Predicate<T> predicate=null, List<enum_TileDirection> edgeOutcluded = null, int predicateTryCount=-1) where T : class, ITileAxis
+        {
+            if (edgeOutcluded != null && edgeOutcluded.Count > 3)
+                Debug.LogError("Can't Outclude All Edges!");
+
+            if (predicateTryCount == -1) predicateTryCount = int.MaxValue;
+
+            List<enum_TileDirection> edgesRandom = new List<enum_TileDirection>(m_AllDirections) { };
+            if (edgeOutcluded!=null) edgesRandom.RemoveAll(p=>edgeOutcluded.Contains(p));
+            
+            int axisX=-1,axisY=-1;
+            int tileWidth = tileArray.GetLength(0), tileHeight = tileArray.GetLength(1);
+            T targetTile = null;
+            for (int i = 0; i < predicateTryCount; i++)
+            {
+                enum_TileDirection randomDirection = edgesRandom.RandomItem(randomSeed);
+                switch (randomDirection)
+                {
+                    case enum_TileDirection.Bottom:
+                        axisX = randomSeed.Next(tileWidth-1)+1;
+                        axisY = 0;
+                        break;
+                    case enum_TileDirection.Top:
+                        axisX = randomSeed.Next(tileWidth-1);
+                        axisY = tileHeight - 1;
+                        break;
+                    case enum_TileDirection.Left:
+                        axisX = 0;
+                        axisY = randomSeed.Next(tileHeight-1);
+                        break;
+                    case enum_TileDirection.Right:
+                        axisX = tileWidth - 1;
+                        axisY = randomSeed.Next(tileHeight-1)+1;
+                        break;
+                }
+                targetTile = tileArray[axisX, axisY];
+                if (predicate == null || predicate(targetTile))
+                {
+                    if(edgeOutcluded!=null) edgeOutcluded.Add(randomDirection);
+                    break;
+                }
+            }
+            return targetTile;
+        }
+
+        public static bool ArrayNearbyContains<T>(this T[,] tileArray, TileAxis origin, Predicate<T> predicate) where T : class,ITileAxis
+        {
+            TileAxis[] nearbyTiles = origin.nearbyFourTiles;
+            for (int i = 0; i < nearbyTiles.Length; i++)
+            {
+                if (origin.InRange(tileArray)&&!predicate(tileArray.Get(nearbyTiles[i])))
+                    return false;
+            }
+            return true;
+        }
+    }
+}
+
+namespace TTime
+{
+    public static class TTime
+    {
+        public static int GetTimeStamp(DateTime dt)
+        {
+            DateTime dateStart = new DateTime(1970, 1, 1, 8, 0, 0);
+            int timeStamp = Convert.ToInt32((dt - dateStart).TotalSeconds);
+            return timeStamp;
+        }
+
+        public static DateTime GetDateTime(int timeStamp)
+        {
+            DateTime dtStart = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
+            long lTime = ((long)timeStamp * 10000000);
+            TimeSpan toNow = new TimeSpan(lTime);
+            DateTime targetDt = dtStart.Add(toNow);
+            return targetDt;
+        }
+
+        public static DateTime GetDateTime(string timeStamp)
+        {
+            DateTime dtStart = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
+            long lTime = long.Parse(timeStamp + "0000000");
+            TimeSpan toNow = new TimeSpan(lTime);
+            return dtStart.Add(toNow);
+        }
+    }
+}
+
+namespace TSpecialClasses          //Put Some Common Shits Into Specifical Classes, Tightly Attached To CoroutineManager Cause Not Using Monobehaviour
 {
     //Translate Ragdoll To Animation Or Animatoion To Ragdoll
     public class RagdollAnimationTransition : ISingleCoroutine
