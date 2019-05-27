@@ -267,6 +267,20 @@ public static class TCommon
         }
         return target;
     }
+
+    public static void TraversalRandom<T>(this List<T> list, System.Random seed=null, Func<T, bool> OnRandomItemStop=null)
+    {
+        int index = list.RandomIndex(seed);
+        for (int i = 0; i < list.Count; i++)
+        {
+            if (OnRandomItemStop!=null&&OnRandomItemStop(list[index]))
+                break;
+
+            index++;
+            if (index == list.Count)
+                index = 0;
+        }
+    }
     #endregion
     public static T GetComponentNullable<T>(this Transform parent) where T : MonoBehaviour
     {

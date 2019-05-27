@@ -41,7 +41,7 @@ public class LevelBase : MonoBehaviour {
         {
             if (_data.m_MapData[i].m_Status != -1)
             {
-                m_AllTiles.Add(new LevelTile(_data.m_MapData[i], transform.TransformDirection(_data.m_MapData[i].m_Offset).OffsetDirection()));
+                m_AllTiles.Add(new LevelTile(_data.m_MapData[i], transform.TransformDirection(_data.m_MapData[i].m_Offset).WorldOffsetDirection()));
                 m_IndexEmpty.Add(index++);
             }
         }

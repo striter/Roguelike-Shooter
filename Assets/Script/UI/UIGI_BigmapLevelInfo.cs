@@ -21,6 +21,6 @@ public class UIGI_BigmapLevelInfo : UIT_GridItem {
         txt_Player.SetActivate(playerHere);
         img_Level.color = EnviormentManager.BigmapTileColor(levelInfo.m_TileType);
         foreach (enum_TileDirection direction in TTiles.TTiles.m_AllDirections)
-            dic_TileConnections[direction].SetActivate(levelInfo.m_Connections.ContainsKey(direction));
+            dic_TileConnections[direction].SetActivate(levelInfo.m_Connections.ContainsKey(direction)&&levelInfo.m_Connections[direction]!=null);
     }
 }

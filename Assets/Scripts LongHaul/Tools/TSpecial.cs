@@ -67,7 +67,7 @@ namespace TTiles
             return Mathf.Abs(sourceAxis.m_AxisX - targetAxis.m_AxisX) + Mathf.Abs(sourceAxis.m_AxisY - targetAxis.m_AxisY);
         }
 
-        public static enum_TileDirection Inverse(this enum_TileDirection direction)
+        public static enum_TileDirection DirectionInverse(this enum_TileDirection direction)
         {
             switch (direction)
             {
@@ -100,8 +100,25 @@ namespace TTiles
             return enum_TileDirection.Invalid;
         }
 
+        public static TileAxis DirectionAxis(this TileAxis sourceAxis,enum_TileDirection direction)
+        {
+            switch (direction)
+            {
+                case enum_TileDirection.Bottom:
+                    return sourceAxis + new TileAxis(0,-1);
+                case enum_TileDirection.Top:
+                    return sourceAxis + new TileAxis(0, 1);
+                case enum_TileDirection.Left:
+                    return sourceAxis + new TileAxis(-1, 0);
+                case enum_TileDirection.Right:
+                    return sourceAxis + new TileAxis(1, 0);
+            }
+            Debug.LogError("Invlaid Direction Detected");
+            return new TileAxis(0,0);
+        }
+
         //Top 135-225    Right 45 - 135  Bottom 135 - -135 Right -135 - -45
-        public static enum_TileDirection OffsetDirection(this Vector3 worldOffset)
+        public static enum_TileDirection WorldOffsetDirection(this Vector3 worldOffset)
         {
             float angle = TCommon.GetAngle(worldOffset, Vector3.forward, Vector3.up);       //0-360
             if (angle <= 45 && angle > -45)
@@ -123,6 +140,7 @@ namespace TTiles
                         enum_TileDirection.Left, enum_TileDirection.Right };
                 return allDirections;
             } }
+
         public static void PathFindForClosestApproch<T>(this T[,] tileArray, T t1, T t2, List<T> tilePathsAdd,Action<T> OnEachTilePath=null, Predicate<T> stopPredicate=null, Predicate<T> invalidPredicate=null) where T:class,ITileAxis
         {
             if (!t1.m_TileAxis.InRange(tileArray) || !t2.m_TileAxis.InRange(tileArray))
@@ -172,7 +190,7 @@ namespace TTiles
             }
         }
 
-        public static T TileRandomEdge<T>(this T[,] tileArray ,  System.Random randomSeed=null, Predicate<T> predicate=null, List<enum_TileDirection> edgeOutcluded = null, int predicateTryCount=-1) where T : class, ITileAxis
+        public static T TileEdgeRandom<T>(this T[,] tileArray ,  System.Random randomSeed=null, Predicate<T> predicate=null, List<enum_TileDirection> edgeOutcluded = null, int predicateTryCount=-1) where T : class, ITileAxis        //Target Edges Random Tile
         {
             if (edgeOutcluded != null && edgeOutcluded.Count > 3)
                 Debug.LogError("Can't Outclude All Edges!");
@@ -226,6 +244,33 @@ namespace TTiles
                     return false;
             }
             return true;
+        }
+
+        public static List<T> TileRandomFill<T>(this T[,] tileArray,System.Random seed,TileAxis originAxis,Action<T> OnEachFill,Predicate<T> availableAxis,int fillCount) where T:class,ITileAxis
+        {
+            List<T> targetList = new List<T>();
+            T targetAdd = tileArray.Get(originAxis);
+            OnEachFill(targetAdd);
+            targetList.Add(targetAdd);
+            for (int i = 0; i < fillCount; i++)
+            {
+                T temp = targetList[i];
+                m_AllDirections.TraversalRandom(seed,(enum_TileDirection randomDirection) => {
+                    TileAxis axis = temp.m_TileAxis.DirectionAxis(randomDirection);
+                    if (axis.InRange(tileArray))
+                    {
+                        targetAdd= tileArray.Get(axis);
+                        if (availableAxis(targetAdd))
+                        {
+                            OnEachFill(targetAdd);
+                            targetList.Add(targetAdd);
+                            return true;
+                        }
+                    }
+                    return false;
+                });
+            }
+            return targetList;
         }
     }
 }
