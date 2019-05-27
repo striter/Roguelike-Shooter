@@ -16,28 +16,42 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         base.Awake();
         tf_LevelParent = transform.Find("LevelParent");
     }
-
-    public void StartLevel(enum_LevelStyle _LevelStyle,string seed="")
+    protected void Start()
+    {
+        TBroadCaster<enum_BC_GameStatusChanged>.Add(enum_BC_GameStatusChanged.OnGameStart, OnGameStart);
+        TBroadCaster<enum_BC_GameStatusChanged>.Add(enum_BC_GameStatusChanged.OnLevelFinish, OnLevelFinished);
+    }
+    protected void OnDestroy()
+    {
+        TBroadCaster<enum_BC_GameStatusChanged>.Remove(enum_BC_GameStatusChanged.OnGameStart, OnGameStart);
+        TBroadCaster<enum_BC_GameStatusChanged>.Remove(enum_BC_GameStatusChanged.OnLevelFinish, OnLevelFinished);
+    }
+    public void GenerateEnviorment(enum_LevelStyle _LevelStyle,string seed="")
     {
         m_StyleCurrent = _LevelStyle;
         m_MapLevelInfo= GenerateBigmapLevels(m_StyleCurrent,seed,tf_LevelParent,5,4);
-
-        m_currentLevel = m_MapLevelInfo.Find(p => p.m_TileType == enum_BigmapTileType.Start);
-        SetupCurrentLevel();
-        TBroadCaster<enum_BC_UIStatusChanged>.Trigger(enum_BC_UIStatusChanged.PlayerLevelStatusChanged,m_MapLevelInfo,m_currentLevel.m_TileAxis);
     }
-    
-    void ChangeLevel()
+    #region Level
+    void OnGameStart()
+    {
+        m_currentLevel = m_MapLevelInfo.Find(p => p.m_TileType == enum_BigmapTileType.Start);
+        TBroadCaster<enum_BC_UIStatusChanged>.Trigger(enum_BC_UIStatusChanged.PlayerLevelStatusChanged, m_MapLevelInfo, m_currentLevel.m_TileAxis);
+        OnLevelStart();
+
+        foreach (enum_TileDirection direction in m_currentLevel.m_Connections.Keys)     //Player Start For Start Level
+        {
+            if (m_currentLevel.m_Connections[direction] == null)
+            {
+                Vector3 playerStartPos = m_currentLevel.m_Level.m_Portals.Find(p => p.E_Direction == direction).m_worldPos;
+                TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnLevelStart, playerStartPos);
+                break;
+            }
+        }
+    }
+
+    void OnLevelStart()     //Make Current Level Available (AI Bake)
     {
         ObjectManager.RecycleAllInteract(enum_Interact.Interact_Portal);
-        m_currentLevel.m_Level.SetActivate(false);
-        
-        //To Be Continued
-        SetupCurrentLevel();
-    }
-
-    void SetupCurrentLevel()
-    {
         m_currentLevel.m_Level.SetActivate(true);
         NavMeshBuildSettings setting = NavMesh.CreateSettings();
         List<NavMeshBuildSource> sources = new List<NavMeshBuildSource>();
@@ -45,9 +59,33 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         Bounds bound = new Bounds(Vector3.zero, new Vector3(100, 20, 100));
         m_NavMeshData = NavMeshBuilder.BuildNavMeshData(setting, sources, bound, Vector3.zero, Quaternion.identity);
         NavMesh.AddNavMeshData(m_NavMeshData);
-        //Test
     }
 
+    void OnLevelFinished()
+    {
+        List<LevelTilePortal> portalPositions = m_currentLevel.m_Level.m_Portals;
+        foreach (LevelTilePortal portal in portalPositions)
+        {
+            if (m_currentLevel.m_Connections[portal.E_Direction] != null)
+            {
+                SBigmapTileInfo tile = m_currentLevel.m_Connections[portal.E_Direction];
+                ObjectManager.SpawnInteract<InteractPortal>(enum_Interact.Interact_Portal, portal.m_worldPos).InitPortal(portal.E_Direction,tile.m_TileType,OnPortalEntered);
+            }
+        }
+    }
+
+    void OnPortalEntered(enum_TileDirection toDirection)
+    {
+        m_currentLevel.m_Level.SetActivate(false);
+        m_currentLevel = (m_MapLevelInfo.Get( m_currentLevel.m_Connections[toDirection].m_TileAxis));
+        TBroadCaster<enum_BC_UIStatusChanged>.Trigger(enum_BC_UIStatusChanged.PlayerLevelStatusChanged, m_MapLevelInfo, m_currentLevel.m_TileAxis);
+        OnLevelStart();
+
+        Vector3 playerStartPos = m_currentLevel.m_Level.m_Portals.Find(p => p.E_Direction == toDirection.Inverse()).m_worldPos;
+        TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnLevelStart, playerStartPos);
+    }
+
+    #endregion
     #region BigMap
     public static SBigmapLevelInfo[,] GenerateBigmapLevels(enum_LevelStyle _levelStyle,string bigMapSeed,Transform _generateParent,int _bigmapWidth, int _bigmapHeight)
     {
@@ -118,6 +156,25 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
                 _paths[i].m_Connections.Add(directionConnection.Inverse(),null);
             if (_paths[i + 1].m_TileType == enum_BigmapTileType.BattleEnd)
                 _paths[i + 1].m_Connections.Add(directionConnection,null);
+        }
+    }
+    #endregion
+
+    #region Test
+    public static Color BigmapTileColor(enum_BigmapTileType type)
+    {
+        switch (type)
+        {
+            default:
+                return TCommon.ColorAlpha(Color.blue, .5f);
+            case enum_BigmapTileType.Battle:
+                return TCommon.ColorAlpha(Color.yellow, .5f);
+            case enum_BigmapTileType.Reward:
+                return TCommon.ColorAlpha(Color.green, .5f);
+            case enum_BigmapTileType.Start:
+                return TCommon.ColorAlpha(Color.grey, .5f);
+            case enum_BigmapTileType.BattleEnd:
+                return TCommon.ColorAlpha(Color.black, .5f);
         }
     }
     #endregion

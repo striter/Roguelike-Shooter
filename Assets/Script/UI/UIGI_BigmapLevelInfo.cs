@@ -19,24 +19,8 @@ public class UIGI_BigmapLevelInfo : UIT_GridItem {
     public void SetBigmapLevelInfo(SBigmapLevelInfo levelInfo,bool playerHere)
     {
         txt_Player.SetActivate(playerHere);
-        img_Level.color = GetBigmapColor(levelInfo.m_TileType);
+        img_Level.color = EnviormentManager.BigmapTileColor(levelInfo.m_TileType);
         foreach (enum_TileDirection direction in TTiles.TTiles.m_AllDirections)
             dic_TileConnections[direction].SetActivate(levelInfo.m_Connections.ContainsKey(direction));
-    }
-    Color GetBigmapColor(enum_BigmapTileType type)
-    {
-        switch (type)
-        {
-            default:
-                return TCommon.ColorAlpha(Color.blue,.5f);
-            case enum_BigmapTileType.Battle:
-                return TCommon.ColorAlpha(Color.yellow, .5f);
-            case enum_BigmapTileType.Reward:
-                return TCommon.ColorAlpha(Color.green, .5f);
-            case enum_BigmapTileType.Start:
-                return TCommon.ColorAlpha(Color.grey, .5f);
-            case enum_BigmapTileType.BattleEnd:
-                return TCommon.ColorAlpha(Color.black, .5f);
-        }
     }
 }

@@ -17,10 +17,10 @@ public class LevelBase : MonoBehaviour {
         GenerateTileItems(_levelGenerate,_levelItems, levelData, _connectedDireciton);
     }
     #region TileMapInfos
+    public List<LevelTilePortal> m_Portals { get; private set; } = new List<LevelTilePortal>();
     List<LevelTile> m_AllTiles=new List<LevelTile>();
     List<int> m_IndexEmpty=new List<int>();
     List<int> m_IndexMain=new List<int>();
-    List<int> m_IndexPortal = new List<int>();
     List<int> t_IndexTemp = new List<int>();
     Dictionary<enum_LevelItemType, List<LevelItemBase>> m_AllItems = new Dictionary<enum_LevelItemType, List<LevelItemBase>>();
     void GenerateTileItems(SLevelGenerate _itemData,LevelItemBase[] allItemPrefabs, TileMapData _data,List<enum_TileDirection> _connectedDireciton)
@@ -108,8 +108,9 @@ public class LevelBase : MonoBehaviour {
                 }
             }
             int index = m_AllTiles.IndexOf(closestTile);
-            m_AllTiles[index] = new LevelTilePortal(m_AllTiles[index],portalDirection[i]);
-            m_IndexPortal.Add(index);
+            LevelTilePortal portal= new LevelTilePortal(m_AllTiles[index], portalDirection[i], transform.TransformPoint(m_AllTiles[index].m_Offset));
+            m_AllTiles[index] = portal;
+            m_Portals.Add(portal);
         }
     }
     int RandomAvailableTileIndex(int XCount,int YCount,ref List<int> areaIndexes)
@@ -149,60 +150,6 @@ public class LevelBase : MonoBehaviour {
             }
         }
         return true;
-    }
-    #endregion
-    #region TileMapClass
-    enum enum_TileType
-    {
-        Invaid=-1,
-        Empty=0,
-        Main,
-        Item,
-        Portal,
-    }
-    class LevelTilePortal : LevelTile
-    {
-        public override enum_TileType E_TileType => enum_TileType.Portal;
-        public enum_TileDirection E_PortalDirection { get; private set; }
-        public LevelTilePortal(LevelTile current, enum_TileDirection _direction) : base(current)
-        {
-            E_PortalDirection = _direction;
-        }
-    }
-    class LevelTileItemSub : LevelTile
-    {
-        public override enum_TileType E_TileType => enum_TileType.Item;
-        public int m_ParentMainIndex { get; private set; }
-        public LevelTileItemSub(LevelTile current, int _parentMainIndex) : base(current)
-        {
-            m_ParentMainIndex = _parentMainIndex;
-        }
-    }
-    class LevelTileItemMain : LevelTile
-    {
-        public override enum_TileType E_TileType => enum_TileType.Main;
-        public int m_LevelItemListIndex { get; private set; }
-        public enum_LevelItemType m_LevelItemType { get; private set; }
-        public List<int> m_AreaTiles { get; private set; }
-        public LevelTileItemMain(LevelTile current,int levelItemListIndex,enum_LevelItemType levelItemType, List<int> _AreaTiles) : base(current)
-        {
-            m_LevelItemListIndex = levelItemListIndex;
-            m_LevelItemType = levelItemType;
-            m_AreaTiles = _AreaTiles;
-        }
-    }
-    class LevelTile : TileMapData.TileInfo
-    {
-        public virtual enum_TileType E_TileType => enum_TileType.Empty;
-        public enum_TileDirection E_Direction { get; private set; } = enum_TileDirection.Invalid;
-        public LevelTile(TileMapData.TileInfo current,enum_TileDirection _direction):base(current.m_TileAxis,current.m_Offset,current.m_Status)
-        {
-            E_Direction = _direction;
-        }
-        public LevelTile(LevelTile tile) : base(tile.m_TileAxis, tile.m_Offset, tile.m_Status)
-        {
-            E_Direction = tile.E_Direction;
-        }
     }
     #endregion
     #region Gizmos For Test

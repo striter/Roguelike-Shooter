@@ -15,7 +15,7 @@ public class EntityPlayerBase : EntityBase {
 
     public WeaponBase m_WeaponCurrent { get; private set; } = null;
 
-    public bool b_Interacting = false;
+    public bool b_Interacting => m_InteractTarget != null;
     public InteractBase m_InteractTarget { get; private set; }
 
     public override void Init(int entityID,SEntity entityInfo)
@@ -23,6 +23,7 @@ public class EntityPlayerBase : EntityBase {
         base.Init(entityID,entityInfo);
         m_CharacterController = GetComponent<CharacterController>();
         tf_WeaponHold = transform.Find("WeaponHold");
+        transform.Find("InteractDetector").GetComponent<InteractDetector>().Init(OnInteractCheck);
     }
     protected override void Start()
     {
@@ -33,7 +34,7 @@ public class EntityPlayerBase : EntityBase {
         {
             PCInputManager.Instance.AddMouseRotateDelta(OnRotateDelta);
             PCInputManager.Instance.AddMovementDelta(OnMovementDelta);
-            PCInputManager.Instance.AddBinding<EntityPlayerBase>(enum_BindingsName.Fire, OnTriggerDown);
+            PCInputManager.Instance.AddBinding<EntityPlayerBase>(enum_BindingsName.Fire, OnMainButtonDown);
             PCInputManager.Instance.AddBinding<EntityPlayerBase>(enum_BindingsName.Interact, OnSwitchWeapon);
             PCInputManager.Instance.AddBinding<EntityPlayerBase>(enum_BindingsName.Reload, OnReload);
         }
@@ -64,10 +65,19 @@ public class EntityPlayerBase : EntityBase {
     }
     void OnMainButtonDown(bool down)
     {
-        if (m_InteractTarget != null)
-            OnInteract(down);
+        if (down)
+        {
+            if (m_InteractTarget != null)
+                OnInteract(down);
+            else
+                OnTriggerDown(down);
+        }
         else
+        {
+            if (m_InteractTarget != null)
+                OnInteract(down);
             OnTriggerDown(down);
+        }
     }
     #region WeaponControll
     void ObtainWeapon(WeaponBase weapon)
@@ -150,16 +160,16 @@ public class EntityPlayerBase : EntityBase {
             return;
         }
 
-        if(down)
-        m_InteractTarget.TryInteract();
+        if (down && m_InteractTarget.TryInteract())
+            m_InteractTarget = null;
     }
 
-    public void OnCheckInteractor(InteractBase interactTarget, bool isEnter)
+    public void OnInteractCheck(InteractBase interactTarget, bool isEnter)
     {
         if (isEnter)
             m_InteractTarget = interactTarget;
         else if (m_InteractTarget = interactTarget)
-            interactTarget = null;
+            m_InteractTarget = null;
     }
     #endregion
 }

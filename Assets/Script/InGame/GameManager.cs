@@ -25,6 +25,7 @@ public class GameManager : SingletonMono<GameManager>
         TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnSpawnEntity, OnSpawnEntity);
         TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnRecycleEntity, OnRecycleEntity);
         TBroadCaster<enum_BC_GameStatusChanged>.Add<HitCheckEntity>(enum_BC_GameStatusChanged.OnEntityFall, OnEntityFall);
+        TBroadCaster<enum_BC_GameStatusChanged>.Add<Vector3>(enum_BC_GameStatusChanged.OnLevelStart, OnLevelStart);
     }
 
     private void OnDestroy()
@@ -34,19 +35,35 @@ public class GameManager : SingletonMono<GameManager>
         TBroadCaster<enum_BC_GameStatusChanged>.Remove<EntityBase>(enum_BC_GameStatusChanged.OnSpawnEntity, OnSpawnEntity);
         TBroadCaster<enum_BC_GameStatusChanged>.Remove<EntityBase>(enum_BC_GameStatusChanged.OnRecycleEntity, OnRecycleEntity);
         TBroadCaster<enum_BC_GameStatusChanged>.Remove<HitCheckEntity>(enum_BC_GameStatusChanged.OnEntityFall, OnEntityFall);
+        TBroadCaster<enum_BC_GameStatusChanged>.Remove<Vector3>(enum_BC_GameStatusChanged.OnLevelStart, OnLevelStart);
     }
 
-    private void Start()
+    private void Start()        //Entrance Of Whole Game
     {
-        EnviormentManager.Instance.StartLevel(enum_LevelStyle.Desert);
-
-        m_LocalPlayer=ObjectManager.SpawnEntity(enum_Entity.Player);
+        PreInit();
+        TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnGameStart);
     }
-    void OnPlayerLevelStart(Vector3 startPos)
+    void PreInit()      //PreInit Bigmap , Levels LocalPlayer Before  Start The game
     {
-        m_LocalPlayer.transform.position = startPos;
+        EnviormentManager.Instance.GenerateEnviorment(enum_LevelStyle.Desert);
+        m_LocalPlayer = ObjectManager.SpawnEntity(enum_Entity.Player);
     }
 
+    //Call Enviorment Manager To Prepare And Start Generate All Enermy
+    void OnLevelStart(Vector3 levelStartPos)
+    {
+        m_LocalPlayer.transform.position = levelStartPos;
+        //Generate All Enermy To Be Continued,
+        TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnLevelFinish);       //Test
+    }
+    //Call Enviorment Manager To Generate Portals , Then Go Back To OnLevelChange From Enviorment Manager
+    void OnLevelFinished()
+    {
+        TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnLevelFinish);
+
+    }
+
+    //Entity Management
     void OnSpawnEntity(EntityBase entity)
     {
         m_Entities.Add(entity.I_EntityID, entity);
@@ -146,18 +163,18 @@ public static class ObjectManager
         ObjectPoolManager<enum_SFX, SFXBase>.Recycle(type, sfx);
     }
 
-    public static InteractBase SpawnInteract(enum_Interact type, Vector3 toPos)
+    public static T SpawnInteract<T>(enum_Interact type, Vector3 toPos) where T:InteractBase
     {
         InteractBase sfx = ObjectPoolManager<enum_Interact, InteractBase>.Spawn(type, TF_Entity);
         sfx.transform.position = toPos;
-        return sfx;
-    }
-    public static void RecycleAllInteract(enum_Interact type)
-    {
-        ObjectPoolManager<enum_Interact, InteractBase>.RecycleAll(type);
+        return sfx as T;
     }
     public static void RecycleInteract(enum_Interact type, InteractBase target)
     {
         ObjectPoolManager<enum_Interact, InteractBase>.Recycle(type, target);
+    }
+    public static void RecycleAllInteract(enum_Interact type)
+    {
+        ObjectPoolManager<enum_Interact, InteractBase>.RecycleAll(type);
     }
 }

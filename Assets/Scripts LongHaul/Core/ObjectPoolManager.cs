@@ -50,6 +50,7 @@ public class ObjectPoolManager<T,Y> where Y:MonoBehaviour {
         for (int i = 0; i < info.i_poolSaveAmount; i++)
         {
             spawnItem = GameObject.Instantiate(info.m_spawnItem, PoolParent.tf_PoolSpawn).GetComponent<Y>();
+            spawnItem.name = info.m_spawnItem.name + (info.l_Deactive.Count + info.l_Active.Count).ToString();
             info.OnItemInstantiate?.Invoke(spawnItem);
             info.l_Deactive.Add(spawnItem);
         }
@@ -71,6 +72,7 @@ public class ObjectPoolManager<T,Y> where Y:MonoBehaviour {
         else
         {
             item = GameObject.Instantiate(info.m_spawnItem, PoolParent.tf_PoolSpawn);
+            item.name = info.m_spawnItem.name+(info.l_Deactive.Count + info.l_Active.Count).ToString();
             info.OnItemInstantiate?.Invoke(item);
         }
         info.l_Active.Add(item);
@@ -114,9 +116,12 @@ public class ObjectPoolManager<T,Y> where Y:MonoBehaviour {
 
     public static void RecycleAll(T identity)
     {
-        foreach (Y tempTarget in d_ItemInfos[identity].l_Active)
+        ItemPoolInfo info = d_ItemInfos[identity];
+        List<Y> ltemp = new List<Y>();
+        ltemp.AddRange(info.l_Active);
+        for (int i = 0; i < ltemp.Count; i++)
         {
-            Recycle(identity, tempTarget);
+            Recycle(identity, ltemp[i]);
         }
     }
 }

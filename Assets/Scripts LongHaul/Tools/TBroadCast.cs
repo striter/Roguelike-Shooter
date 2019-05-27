@@ -62,6 +62,9 @@ public class TBroadCaster<TEnum>  {      //Message Center  Add / Remove / Trigge
 
     public static void Add(TEnum type, Action Listener)
     {
+        if (dic_delegates.Count == 0)
+            UnityEngine.Debug.LogError("Please Init Broadcaster Before Add");
+
         dic_delegates[type].Add(new LocalMessage(Listener));
     }
     public static void Remove(TEnum type, Action Listener)
@@ -95,6 +98,9 @@ public class TBroadCaster<TEnum>  {      //Message Center  Add / Remove / Trigge
 
     public static void Add<T>(TEnum type, Action<T> Listener)
     {
+        if (dic_delegates.Count == 0)
+            UnityEngine.Debug.LogError("Please Init Broadcaster Before Add");
+
         dic_delegates[type].Add(new LocalMessage<T>(Listener));
     }
     public static void Remove<T>(TEnum type, Action<T> Listener)
@@ -135,6 +141,9 @@ public class TBroadCaster<TEnum>  {      //Message Center  Add / Remove / Trigge
 
     public static void Add<T,Y>(TEnum type, Action<T, Y> Listener)
     {
+        if (dic_delegates.Count == 0)
+            UnityEngine.Debug.LogError("Please Init Broadcaster Before Add");
+
         dic_delegates[type].Add(new LocalMessage<T,Y>(Listener));
     }
     public static void Remove<T,Y>(TEnum type, Action<T,Y> Listener)

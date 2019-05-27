@@ -80,6 +80,10 @@ namespace GameSetting
         OnSpawnEntity,
         OnRecycleEntity,
         OnEntityFall,
+
+        OnGameStart,
+        OnLevelStart,
+        OnLevelFinish,        //All Opposing Entity Dead
     }
     #endregion
     #region GameEnum
@@ -122,6 +126,14 @@ namespace GameSetting
         Interact_Portal,
     }
 
+    public enum enum_TileType
+    {
+        Invaid = -1,
+        Empty = 0,
+        Main,
+        Item,
+        Portal,
+    }
     public enum enum_Weapon
     {
         Invalid = -1,
@@ -199,6 +211,7 @@ namespace GameSetting
         public static readonly int I_Static = LayerMask.NameToLayer("static");
         public static readonly int I_Entity = LayerMask.NameToLayer("entity");
         public static readonly int I_Dynamic = LayerMask.NameToLayer("dynamic");
+        public static readonly int I_DynamicDetect = LayerMask.NameToLayer("dynamicDetect");
         public static readonly int I_EntityDetect = LayerMask.NameToLayer("entityDetect");
         public static class Physics
         {
@@ -234,6 +247,9 @@ namespace GameSetting
         }
         public void DoDetect(Collider other)
         {
+            if (other.gameObject.layer == GameLayer.I_DynamicDetect || other.gameObject.layer == GameLayer.I_EntityDetect)      //Detector Outcluded
+                return;
+
             HitCheckBase hitCheck = other.GetComponent<HitCheckBase>();
             if (hitCheck == null)
             {
@@ -256,7 +272,7 @@ namespace GameSetting
             }
         }
     }
-
+    #region BigmapTile
     public class SBigmapTileInfo : ITileAxis
     {
         public TileAxis m_TileAxis => m_Tile;
@@ -292,12 +308,61 @@ namespace GameSetting
             m_LevelSeed = new System.Random(_levelSeed.GetHashCode());
 
             m_Level = GameObject.Instantiate(_levelPrefab, _levelParent);
-            m_Level.Init(TResources.GetLevelData(_levelPrefab.m_levelStyle, _levelPrefab.name), GameExpression.S_GetLevelGenerateInfo(_levelPrefab.m_levelStyle, _levelPrefab.m_levelType), _levelItemPrefabs, m_LevelSeed,m_Connections.Keys.ToList());
             m_Level.transform.localRotation = Quaternion.Euler(0, mainSeed.Next(360), 0);
             m_Level.transform.localPosition = Vector3.zero;
             m_Level.transform.localScale = Vector3.one;
+            m_Level.Init(TResources.GetLevelData(_levelPrefab.m_levelStyle, _levelPrefab.name), GameExpression.S_GetLevelGenerateInfo(_levelPrefab.m_levelStyle, _levelPrefab.m_levelType), _levelItemPrefabs, m_LevelSeed, m_Connections.Keys.ToList());
         }
     }
+    #endregion
+    #region LevelTile
+    public class LevelTile : TileMapData.TileInfo
+    {
+        public virtual enum_TileType E_TileType => enum_TileType.Empty;
+        public enum_TileDirection E_Direction { get; private set; } = enum_TileDirection.Invalid;
+        public LevelTile(TileMapData.TileInfo current, enum_TileDirection _direction) : base(current.m_TileAxis, current.m_Offset, current.m_Status)
+        {
+            E_Direction = _direction;
+        }
+        public LevelTile(LevelTile tile) : base(tile.m_TileAxis, tile.m_Offset, tile.m_Status)
+        {
+            E_Direction = tile.E_Direction;
+        }
+    }
+    public class LevelTilePortal : LevelTile
+    {
+        public override enum_TileType E_TileType => enum_TileType.Portal;
+        public enum_TileDirection E_PortalDirection { get; private set; }
+        public Vector3 m_worldPos;
+        public LevelTilePortal(LevelTile current, enum_TileDirection _direction,Vector3 _worldPos) : base(current)
+        {
+            E_PortalDirection = _direction;
+            m_worldPos = _worldPos;
+        }
+    }
+    class LevelTileItemSub : LevelTile
+    {
+        public override enum_TileType E_TileType => enum_TileType.Item;
+        public int m_ParentMainIndex { get; private set; }
+        public LevelTileItemSub(LevelTile current, int _parentMainIndex) : base(current)
+        {
+            m_ParentMainIndex = _parentMainIndex;
+        }
+    }
+    class LevelTileItemMain : LevelTile
+    {
+        public override enum_TileType E_TileType => enum_TileType.Main;
+        public int m_LevelItemListIndex { get; private set; }
+        public enum_LevelItemType m_LevelItemType { get; private set; }
+        public List<int> m_AreaTiles { get; private set; }
+        public LevelTileItemMain(LevelTile current, int levelItemListIndex, enum_LevelItemType levelItemType, List<int> _AreaTiles) : base(current)
+        {
+            m_LevelItemListIndex = levelItemListIndex;
+            m_LevelItemType = levelItemType;
+            m_AreaTiles = _AreaTiles;
+        }
+    }
+    #endregion
     #endregion
     #region GameStruct
     public struct SEntity : ISExcel
