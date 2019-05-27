@@ -160,7 +160,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
                 }
                 return false; });
         }
-        battleTiles.RemoveAll(p => p.m_TileType != enum_BigmapTileType.Reward);
+        battleTiles.RemoveAll(p => p.m_TileType == enum_BigmapTileType.Reward);
 
         //Create Sub Battle Tile
         SBigmapTileInfo subBattleTile = null;
@@ -171,17 +171,40 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
                 if (targetSubBattleTile!=null&& targetSubBattleTile.m_TileType== enum_BigmapTileType.Invalid)
                 {
                     subBattleTile = targetSubBattleTile;
-                    return true;
+                    subBattleTile.ResetTileType(enum_BigmapTileType.Battle);
+                    battleTiles.Add(subBattleTile);
                 }
-                return false;
+                return subBattleTile!=null;
             });
-            return subBattleTile==null;
+            return subBattleTile!=null;
         });
         //Connect Sub Battle Tile To All Tiles Nearby
+        if(subBattleTile!=null)
         TTiles.TTiles.m_AllDirections.TraversalRandom(mainSeed, (enum_TileDirection direction) => {
-            
+            SBigmapTileInfo nearbyTile = bigmapTiles.Get(subBattleTile.m_TileAxis.DirectionAxis(direction));
+            if (nearbyTile != null && (nearbyTile.m_TileType== enum_BigmapTileType.Reward|| nearbyTile.m_TileType == enum_BigmapTileType.Battle))
+                ConnectTile(subBattleTile,nearbyTile);
             return false; });
-        //Create Last Reward Tile
+
+        //Generate Last Reward Tile
+        SBigmapTileInfo subRewardTile = null;
+        battleTiles.TraversalRandom(mainSeed, (SBigmapTileInfo tile) =>
+        {
+            TTiles.TTiles.m_AllDirections.TraversalRandom(mainSeed, (enum_TileDirection direction) =>
+            {
+                SBigmapTileInfo targetSubrewardTile = bigmapTiles.Get(tile.m_TileAxis.DirectionAxis(direction));
+                if (targetSubrewardTile != null && targetSubrewardTile.m_TileType == enum_BigmapTileType.Invalid)
+                {
+                    Debug.Log("?");
+                    subRewardTile = targetSubrewardTile;
+                    subRewardTile.ResetTileType(enum_BigmapTileType.Reward);
+                    rewardTiles.Add(subRewardTile);
+                    ConnectTile(subRewardTile, tile);
+                }
+                return subRewardTile!=null;
+            });
+            return subRewardTile != null;
+        });
 
 
         //Load All map Levels
