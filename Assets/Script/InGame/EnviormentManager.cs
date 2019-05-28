@@ -29,7 +29,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
     public void GenerateEnviorment(enum_LevelStyle _LevelStyle,string seed="")
     {
         m_StyleCurrent = _LevelStyle;
-        m_MapLevelInfo= GenerateBigmapLevels(m_StyleCurrent,seed,tf_LevelParent,5,4,new TileAxis(2,2));
+        m_MapLevelInfo= GenerateBigmapLevels(m_StyleCurrent,seed,tf_LevelParent,6,5,new TileAxis(2,2));
     }
     #region Level
     void OnGameStart()
