@@ -6,8 +6,8 @@ using System;
 using TTiles;
 public class LevelBase : MonoBehaviour {
     
-    public enum_LevelStyle m_levelStyle = enum_LevelStyle.Invalid;
-    public enum_BigmapTileType m_levelType = enum_BigmapTileType.Invalid;
+    public enum_LevelStyle m_levelStyle { get; private set; }
+    public enum_BigmapTileType m_levelType { get; private set; }
     protected Transform tf_LevelItem;
     public System.Random m_seed { get; private set; }
     public void Init(TileMapData levelData,SLevelGenerate _levelGenerate, LevelItemBase[] _levelItems, System.Random _seed, List<enum_TileDirection> _connectedDireciton)
@@ -226,7 +226,7 @@ public class LevelBase : MonoBehaviour {
         }
 
         if (m_levelStyle != enum_LevelStyle.Invalid)
-            gizmosMapData = TResources.GetLevelData(m_levelStyle, gameObject.name);
+            gizmosMapData = TResources.GetLevelData(gameObject.name);
 
         if (gizmosMapData == null)
             Debug.LogWarning("Please Bake This Level First");

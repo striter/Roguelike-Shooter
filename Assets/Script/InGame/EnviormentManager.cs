@@ -191,7 +191,6 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
                 SBigmapTileInfo targetSubrewardTile = bigmapTiles.Get(tile.m_TileAxis.DirectionAxis(direction));
                 if (targetSubrewardTile != null && targetSubrewardTile.m_TileType == enum_BigmapTileType.Invalid)
                 {
-                    Debug.Log("?");
                     subRewardTile = targetSubrewardTile;
                     subRewardTile.ResetTileType(enum_BigmapTileType.Reward);
                     ConnectTile(subRewardTile, tile);

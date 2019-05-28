@@ -7,7 +7,7 @@ using UnityEngine;
 public class TResources
 {
     #region Only For Test Or Start Of The Project
-    public static TileMapData GetLevelData(enum_LevelStyle style, string name) => Load<TileMapData>("Level/Main/" + style + "/" + name);
+    public static TileMapData GetLevelData(string name) => Load<TileMapData>("Level/Main/" + name);
 
     public static T Instantiate<T>(string path,Transform toParent=null) where T : UnityEngine.Object
     {

@@ -27,7 +27,7 @@ public class LevelItemBase : MonoBehaviour {
         baseTarget = GetComponentInParent<LevelBase>();
         if (baseTarget!=null)
         {
-            TileMapData data = TResources.GetLevelData(baseTarget.m_levelStyle, baseTarget.name);
+            TileMapData data = TResources.GetLevelData(baseTarget.name);
             if (data == null)
                 return;
             transform.localPosition = data.m_MapData[0].m_Offset;

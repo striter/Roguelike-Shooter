@@ -100,8 +100,9 @@ namespace GameSetting
     #endregion
     #region GameEnum
     public enum enum_HitCheck { Invalid = -1, Static = 1, Entity = 2, Dynamic = 3, }
-    public enum enum_LevelStyle {Invalid=-1, Desert,}
-    public enum enum_BigmapTileType { Invalid=-1,Start,Battle,Reward,BattleEnd,}
+    public enum enum_LevelStyle {Invalid=-1, Desert=1,Forest=2,Undead=3,}
+    public enum enum_BigmapTileType { Invalid=-1,Start,Battle,Reward,BattleEnd, }
+    public enum enum_LevelPrefabType { Invalid = -1, Big = 1, Small = 2, }
     public enum enum_LevelItemType
     {
        Invalid=-1,
@@ -323,7 +324,7 @@ namespace GameSetting
             m_Level.transform.localRotation = Quaternion.Euler(0, mainSeed.Next(360), 0);
             m_Level.transform.localPosition = Vector3.zero;
             m_Level.transform.localScale = Vector3.one;
-            m_Level.Init(TResources.GetLevelData(_levelPrefab.m_levelStyle, _levelPrefab.name), GameExpression.S_GetLevelGenerateInfo(_levelPrefab.m_levelStyle, _levelPrefab.m_levelType), _levelItemPrefabs, m_LevelSeed, m_Connections.Keys.ToList());
+            m_Level.Init(TResources.GetLevelData(_levelPrefab.name), GameExpression.S_GetLevelGenerateInfo(_levelPrefab.m_levelStyle, _levelPrefab.m_levelType), _levelItemPrefabs, m_LevelSeed, m_Connections.Keys.ToList());
         }
     }
     #endregion
