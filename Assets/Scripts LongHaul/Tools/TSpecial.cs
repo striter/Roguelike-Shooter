@@ -116,23 +116,7 @@ namespace TTiles
             Debug.LogError("Invlaid Direction Detected");
             return new TileAxis(0,0);
         }
-
-        //Top 135-225    Right 45 - 135  Bottom 135 - -135 Right -135 - -45
-        public static enum_TileDirection WorldOffsetDirection(this Vector3 worldOffset)
-        {
-            float angle = TCommon.GetAngle(worldOffset, Vector3.forward, Vector3.up);       //0-360
-            if (angle <= 45 && angle > -45)
-                return enum_TileDirection.Top;
-            if (angle <= 135 && angle > 45)
-                return enum_TileDirection.Left;
-            if (angle <= -135 || angle > 135)
-                return enum_TileDirection.Bottom;
-            if (angle <= -45 && angle > -135)
-                return enum_TileDirection.Right ;
-
-            return enum_TileDirection.Invalid;
-        }
-
+        
         static List<enum_TileDirection> allDirections;
         public static List<enum_TileDirection> m_AllDirections { get {
                 if (allDirections == null)

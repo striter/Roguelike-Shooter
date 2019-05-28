@@ -11,8 +11,8 @@ namespace GameSetting
     public static class GameConst
     {
         public const int I_NormalBulletLastTime = 5; // No Collision Recycle Time
-        public const int I_BoltMaxLastTime = 10;
-        public const int I_LaserMaxLastTime = 5;
+        public const int I_BoltMaxLastTime = 10;    //Last Time Of Ammo/Bolt
+        public const int I_LaserMaxLastTime = 5;    //Longest Last Time Of Ammo/Laser
 
         public const int I_RocketBlastRadius = 5;        //Meter
         public const float F_LaserRayStartPause = .5f;      //Laser Start Pause
@@ -22,20 +22,33 @@ namespace GameSetting
 
         public const float F_LevelTileSize = 2f;        //Cube Size For Level Tiles
 
-        public const float F_DamageWhenPlayerFall = 10f;
+        public const float F_DamagePlayerFallInOcean = 10f;        //Player Ocean Fall Damage
 
         public const int I_TileMapPortalMinusOffset = 3;        //The Minimum Tile Offset Away From Origin Portal Will Generate
     }
 
     public static class GameExpression
     {
-        public static int I_EntityID(int index, bool isPlayer) => index + (isPlayer ? 10000 : 20000);
+        public static int I_EntityID(int index, bool isPlayer) => index + (isPlayer ? 10000 : 20000);       //Used For Identification Management
+        public static bool B_CanHitTarget(HitCheckEntity hb, int sourceID) => hb.I_AttacherID != sourceID;      //If Match Target Hit Succeed
+        public static float F_BigmapYaw(Vector3 direction) => TCommon.GetAngle(direction, Vector3.forward, Vector3.up);         //Used For Bigmap Direction
+        public static enum_TileDirection E_BigmapDirection(Vector3 direction)  //Top 135-225    Right 45 - 135  Bottom 135 - -135 Right -135 - -45
+        {
+            float angle = F_BigmapYaw(direction);       //0-360
+            if (angle <= 45 && angle > -45)
+                return enum_TileDirection.Top;
+            if (angle <= 135 && angle > 45)
+                return enum_TileDirection.Left;
+            if (angle <= -135 || angle > 135)
+                return enum_TileDirection.Bottom;
+            if (angle <= -45 && angle > -135)
+                return enum_TileDirection.Right;
+            Debug.LogError("GameSetting.WorldOffsetDirection Error? Invalid angle of:"+angle);
+            return enum_TileDirection.Invalid;
+        }
 
-        public static float F_RocketBlastDamage(float weaponDamage, float distance) => weaponDamage * (distance / GameConst.I_RocketBlastRadius);
-
-        public static bool B_CanHitTarget(HitCheckEntity hb, int sourceID) => hb.I_AttacherID != sourceID;
-
-        public static SLevelGenerate S_GetLevelGenerateInfo(enum_LevelStyle type,enum_BigmapTileType levelType)
+        public static float F_RocketBlastDamage(float weaponDamage, float distance) => weaponDamage * (distance / GameConst.I_RocketBlastRadius);       //Rocket Blast Damage
+        public static SLevelGenerate S_GetLevelGenerateInfo(enum_LevelStyle type,enum_BigmapTileType levelType)     //Test  Will Moved To Excel In The Future Developing
         {
             return new SLevelGenerate(type, new Dictionary<enum_LevelItemType, RangeInt>() {
                         { enum_LevelItemType.Large, new RangeInt(0, 1) },
@@ -79,7 +92,6 @@ namespace GameSetting
         Invalid=-1,
         OnSpawnEntity,
         OnRecycleEntity,
-        OnEntityFall,
 
         OnGameStart,
         OnLevelStart,

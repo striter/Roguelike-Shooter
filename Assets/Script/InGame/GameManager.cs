@@ -24,7 +24,6 @@ public class GameManager : SingletonMono<GameManager>
 
         TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnSpawnEntity, OnSpawnEntity);
         TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnRecycleEntity, OnRecycleEntity);
-        TBroadCaster<enum_BC_GameStatusChanged>.Add<HitCheckEntity>(enum_BC_GameStatusChanged.OnEntityFall, OnEntityFall);
         TBroadCaster<enum_BC_GameStatusChanged>.Add<Vector3>(enum_BC_GameStatusChanged.OnLevelStart, OnLevelStart);
     }
 
@@ -34,7 +33,6 @@ public class GameManager : SingletonMono<GameManager>
 
         TBroadCaster<enum_BC_GameStatusChanged>.Remove<EntityBase>(enum_BC_GameStatusChanged.OnSpawnEntity, OnSpawnEntity);
         TBroadCaster<enum_BC_GameStatusChanged>.Remove<EntityBase>(enum_BC_GameStatusChanged.OnRecycleEntity, OnRecycleEntity);
-        TBroadCaster<enum_BC_GameStatusChanged>.Remove<HitCheckEntity>(enum_BC_GameStatusChanged.OnEntityFall, OnEntityFall);
         TBroadCaster<enum_BC_GameStatusChanged>.Remove<Vector3>(enum_BC_GameStatusChanged.OnLevelStart, OnLevelStart);
     }
 
@@ -76,7 +74,7 @@ public class GameManager : SingletonMono<GameManager>
 
     public void OnEntityFall(HitCheckEntity hitcheck)      //On Player Falls To Ocean ETC
     {
-        hitcheck.TryHit(hitcheck.m_Attacher.B_IsPlayer ? GameConst.F_DamageWhenPlayerFall : hitcheck.m_Attacher.F_TotalHealth);
+        hitcheck.TryHit(hitcheck.m_Attacher.B_IsPlayer ? GameConst.F_DamagePlayerFallInOcean : hitcheck.m_Attacher.F_TotalHealth);
 
         if (hitcheck.m_Attacher.B_IsPlayer)
         {

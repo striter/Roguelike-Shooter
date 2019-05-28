@@ -11,6 +11,7 @@ public class UIManager : SingletonMono<UIManager> {
     RectTransform rtf_Pitch;
     Text txt_Pitch;
     UIT_GridControllerMono<UIGI_BigmapLevelInfo> gc_BigMapController;
+    RectTransform rtf_BigmapPlayer;
     public static Action OnSwitch, OnReload;
     public static Action<bool> OnMainDown;
     protected override void Awake()
@@ -54,6 +55,9 @@ public class UIManager : SingletonMono<UIManager> {
         rtf_Pitch.anchoredPosition = new Vector2(0, (player.m_Pitch / 45f) * 900);
          
         txt_Main.text = player.b_Interacting ? "Interact" : "Fire";
+
+        if (rtf_BigmapPlayer != null)
+            rtf_BigmapPlayer.localRotation = Quaternion.Euler(0, 0, GameExpression.F_BigmapYaw(player.transform.forward));
     }
 
     void OnLevelStatusChanged(SBigmapLevelInfo[,] bigMap, TileAxis playerAxis)
@@ -62,11 +66,21 @@ public class UIManager : SingletonMono<UIManager> {
         {
             gc_BigMapController = new UIT_GridControllerMono<UIGI_BigmapLevelInfo>(transform.Find("Bigmap"));
             gc_BigMapController.m_GridLayout.constraintCount = bigMap.GetLength(0);
-            bigMap.Traversal((SBigmapLevelInfo levelInfo)=> { gc_BigMapController.AddItem(UIBigmapTileIndex(levelInfo.m_TileAxis, bigMap.GetLength(0), bigMap.GetLength(1)));  });
+            bigMap.Traversal((SBigmapLevelInfo levelInfo)=> { gc_BigMapController.AddItem(UIBigmapTileIndex(levelInfo.m_TileAxis, bigMap.GetLength(0), bigMap.GetLength(1)));});
             gc_BigMapController.SortChildrenSibling();
+            rtf_BigmapPlayer = gc_BigMapController.transform.Find("BigmapPlayer").GetComponent<RectTransform>();
+            rtf_BigmapPlayer.transform.SetAsLastSibling();
         }
 
-        bigMap.Traversal((SBigmapLevelInfo levelInfo)=> { gc_BigMapController.GetItem(UIBigmapTileIndex(levelInfo.m_TileAxis,bigMap.GetLength(0), bigMap.GetLength(1))).SetBigmapLevelInfo(levelInfo,levelInfo.m_TileAxis==playerAxis); });
+        bigMap.Traversal((SBigmapLevelInfo levelInfo)=> {
+            UIGI_BigmapLevelInfo infoUI = gc_BigMapController.GetItem(UIBigmapTileIndex(levelInfo.m_TileAxis, bigMap.GetLength(0), bigMap.GetLength(1)));
+            infoUI.SetBigmapLevelInfo(levelInfo);
+            if (levelInfo.m_TileAxis == playerAxis)
+            {
+                rtf_BigmapPlayer.SetParent(infoUI.transform);
+                rtf_BigmapPlayer.anchoredPosition = Vector2.zero;
+            }
+        });
     }
     int UIBigmapTileIndex(TileAxis axis,int width,int height)
     {
