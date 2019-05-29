@@ -51,11 +51,11 @@ namespace GameSetting
         public static SLevelGenerate S_GetLevelGenerateInfo(enum_LevelStyle type,enum_LevelType levelType)     //Test  Will Moved To Excel In The Future Developing
         {
             return new SLevelGenerate(type, new Dictionary<enum_LevelItemType, RangeInt>() {
-                        { enum_LevelItemType.Order1BigNormal, new RangeInt(0, 1) },
-                        { enum_LevelItemType.Order3MediumNormal,new RangeInt(5,5) },
-                        { enum_LevelItemType.Order5SmallNormal,new RangeInt(40,20) },
-                        { enum_LevelItemType.Order7ManmadeNormal,new RangeInt(5,10) },
-                        { enum_LevelItemType.NoCollision,new RangeInt(60,20)} });
+                        { enum_LevelItemType.Order1BigNormal, new RangeInt(0, 2) },
+                        { enum_LevelItemType.Order3MediumNormal,new RangeInt(10,5) },
+                        { enum_LevelItemType.Order5SmallNormal,new RangeInt(10,10) },
+                        { enum_LevelItemType.Order7ManmadeNormal,new RangeInt(2,4) },
+                        { enum_LevelItemType.NoCollision,new RangeInt(10,20)} });
         }
     }
 
