@@ -28,7 +28,7 @@ public class EModelWorkFlow : EditorWindow
             Renderer[] renderers = levelItem.GetComponentsInChildren<Renderer>();
             for (int j = 0; j < renderers.Length; j++)
             {
-                if (levelItem.m_ItemType == enum_LevelItemType.NoCollision)
+                if (levelItem.m_ItemType == enum_LevelItemType.NoCollisionMore)
                 {
                     if (renderers[j].GetComponent<HitCheckStatic>() == null)
                         Destroy( renderers[j].GetComponent<HitCheckStatic>());

@@ -48,15 +48,6 @@ namespace GameSetting
         }
 
         public static float F_RocketBlastDamage(float weaponDamage, float distance) => weaponDamage * (distance / GameConst.I_RocketBlastRadius);       //Rocket Blast Damage
-        public static SLevelGenerate S_GetLevelGenerateInfo(enum_LevelStyle type,enum_LevelType levelType)     //Test  Will Moved To Excel In The Future Developing
-        {
-            return new SLevelGenerate(type, new Dictionary<enum_LevelItemType, RangeInt>() {
-                        { enum_LevelItemType.Order1BigNormal, new RangeInt(0, 2) },
-                        { enum_LevelItemType.Order3MediumNormal,new RangeInt(10,5) },
-                        { enum_LevelItemType.Order5SmallNormal,new RangeInt(10,10) },
-                        { enum_LevelItemType.Order7ManmadeNormal,new RangeInt(2,4) },
-                        { enum_LevelItemType.NoCollision,new RangeInt(10,20)} });
-        }
     }
 
     public static class UIConst
@@ -139,21 +130,21 @@ namespace GameSetting
     #endregion
     #region GameEnum
     public enum enum_HitCheck { Invalid = -1, Static = 1, Entity = 2, Dynamic = 3, }
-    public enum enum_LevelStyle {Invalid=-1, Desert=1,Forest=2,Undead=3,}
+    public enum enum_LevelStyle {Invalid=-1, Forest=1,Desert=2,Iceland=3,Horde=4,Undead=5,}
     public enum enum_LevelType { Invalid=-1,Start=1,Battle=2,Reward=3,BattleEnd=4, }
     public enum enum_LevelPrefabType { Invalid = -1, Big = 1, Small = 2, }
     public enum enum_LevelItemType{
        Invalid=-1,
-       Order1BigNormal,
-       Order2BigMinus,
-       Order3MediumNormal,
-       Order4MediumMinus,
-       Order5SmallNormal,
-       Order6SmallMinus,
-       Order7ManmadeNormal,
-       Order8ManmadeMinus,
-       NoCollision,
-       Reward,
+       LargeMore,
+       LargeLess,
+       MediumMore,
+       MediumLess,
+       SmallMore,
+       SmallLess,
+       ManmadeMore,
+       ManmadeLess,
+       NoCollisionMore,
+       NoCollisionLess,
     }
     public enum enum_Entity     //Preset For Entities
     {
@@ -341,7 +332,7 @@ namespace GameSetting
             m_Level.transform.localRotation = Quaternion.Euler(0, mainSeed.Next(360), 0);
             m_Level.transform.localPosition = Vector3.zero;
             m_Level.transform.localScale = Vector3.one;
-            m_Level.Init(TResources.GetLevelData(_levelPrefab.name), GameExpression.S_GetLevelGenerateInfo(m_TileStyle, _levelPrefab.m_levelType), _levelItemPrefabs, m_TileType, m_LevelSeed, m_Connections.Keys.ToList());
+            m_Level.Init(TResources.GetLevelData(_levelPrefab.name),ExcelManager.GetLevelGenerateProperties(m_TileStyle,_levelPrefab.E_PrefabType), _levelItemPrefabs, m_TileType, m_LevelSeed, m_Connections.Keys.ToList());
             m_Level.SetActivate(false);
         }
     }
@@ -414,6 +405,10 @@ namespace GameSetting
         public float m_ArmorRegenSpeed => f_armorRegenSpeed;
         public float m_ArmorRegenDuration => f_armorRegenDuration;
         public float m_moveSpeed => f_moveSpeed;
+
+        public void InitOnValueSet()
+        {
+        }
     }
 
     public struct SWeapon : ISExcel
@@ -454,16 +449,42 @@ namespace GameSetting
         public float m_HorizontalDrag => f_horizontalDrag;
         public float m_VerticalAcceleration => f_verticalAcceleration;
         public Vector2 m_RecoilPerShot => new Vector2(f_recoilHorizontal, f_recoilVertical);
-    }
 
-    public struct SLevelGenerate
-    {
-        public enum_LevelStyle m_LevelType { get; private set; }
-        public Dictionary<enum_LevelItemType, RangeInt> m_ItemGenerate { get; private set; }
-        public SLevelGenerate(enum_LevelStyle _levelType, Dictionary<enum_LevelItemType, RangeInt> _ItemGenerate)
+        public void InitOnValueSet()
         {
-            m_LevelType = _levelType;
-            m_ItemGenerate = _ItemGenerate;
+        }
+    }
+    public struct SLevelGenerate : ISExcel
+    {
+        int index;
+        RangeInt ir_SmallLess;
+        RangeInt ir_SmallMore;
+        RangeInt ir_MediumLess;
+        RangeInt ir_MediumMore;
+        RangeInt ir_LargeLess;
+        RangeInt ir_LargeMore;
+        RangeInt ir_ManmadeLess;
+        RangeInt ir_ManmadeMore;
+        RangeInt ir_NoCollisionLess;
+        RangeInt ir_NoCollisionMore;
+        public enum_LevelStyle m_LevelStyle;
+        public enum_LevelPrefabType m_LevelPrefabType;
+        public Dictionary<enum_LevelItemType, RangeInt> m_ItemGenerate;
+        public void InitOnValueSet()
+        {
+            m_LevelStyle = (enum_LevelStyle)(index / 10);
+            m_LevelPrefabType = (enum_LevelPrefabType)(index % 10);
+            m_ItemGenerate = new Dictionary<enum_LevelItemType, RangeInt>();
+            m_ItemGenerate.Add(enum_LevelItemType.SmallLess,ir_SmallLess);
+            m_ItemGenerate.Add(enum_LevelItemType.SmallMore, ir_SmallMore);
+            m_ItemGenerate.Add(enum_LevelItemType.MediumLess, ir_MediumLess);
+            m_ItemGenerate.Add(enum_LevelItemType.MediumMore, ir_MediumMore);
+            m_ItemGenerate.Add(enum_LevelItemType.LargeLess, ir_LargeLess);
+            m_ItemGenerate.Add(enum_LevelItemType.LargeMore, ir_LargeMore);
+            m_ItemGenerate.Add(enum_LevelItemType.ManmadeLess, ir_ManmadeLess);
+            m_ItemGenerate.Add(enum_LevelItemType.ManmadeMore, ir_ManmadeMore);
+            m_ItemGenerate.Add(enum_LevelItemType.NoCollisionLess, ir_NoCollisionLess);
+            m_ItemGenerate.Add(enum_LevelItemType.NoCollisionMore, ir_NoCollisionMore);
         }
     }
     #endregion
@@ -562,6 +583,10 @@ namespace GameSetting
         public float F_OffSet8 => offset8;
         public float F_OffSet9 => offset9;
         public bool B_AddSlot => addSlot;
+        public void InitOnValueSet()
+        {
+
+        }
     }
 
     public class SSporeLevelRate

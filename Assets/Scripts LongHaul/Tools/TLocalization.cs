@@ -20,6 +20,9 @@ struct SLocaliztaion:TExcel.ISExcel     //for excel Uses Only
             return value;
         }
     }
+    public void InitOnValueSet()
+    {
+    }
 }
 public enum enum_LanguageRegion
 {

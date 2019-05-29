@@ -343,6 +343,8 @@ public class TXmlPhrase : SingleTon<TXmlPhrase>
         dic_xmlDataToValue.Add(typeof(string), (string xmlData) => { return xmlData; });
         dic_valueToXmlData.Add(typeof(bool),(object data) => { return (((bool)data  ? 1 : 0)).ToString(); });
         dic_xmlDataToValue.Add(typeof(bool), (string xmlData) => { return int.Parse(xmlData) == 1; });
+        dic_valueToXmlData.Add(typeof(RangeInt), (object data) => { return ((RangeInt)data).start.ToString() + "," + ((RangeInt)data).length.ToString(); });
+        dic_xmlDataToValue.Add(typeof(RangeInt), (string xmlData) => { string[] split = xmlData.Split(','); return new RangeInt(int.Parse(split[0]),int.Parse(split[1])); });
     }
     public static TXmlPhrase Phrase
     {

@@ -9,6 +9,7 @@ namespace TExcel
 {
     public interface ISExcel
     {
+        void InitOnValueSet();
     }
 
     class Properties<T> where T : struct,ISExcel
@@ -77,7 +78,9 @@ namespace TExcel
                             throw new Exception("Invalid Info:'"+ result.Tables[0].Rows[i + 1][j].ToString()+"'" + ",FieldType:" + fields[j].FieldType.ToString() + ", Rows/Column:" + (i+2).ToString() + "/" + (j+1).ToString()+"    Message:"+e.Message);
                         }
                     }
-                    l_PropertyList.Add((T)obj);
+                    T temp = (T)obj;
+                    temp.InitOnValueSet();
+                    l_PropertyList.Add(temp);
                 }
             }
             catch(Exception e)

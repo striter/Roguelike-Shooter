@@ -1,6 +1,7 @@
 ﻿using GameSetting;
 using System;
 using System.Collections.Generic;
+using TExcel;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -16,11 +17,12 @@ public class GameManager : SingletonMono<GameManager>
 #if UNITY_EDITOR
         B_TestMode = true;
 #endif
-
         base.Awake();
+        ExcelManager.Init();
         ObjectManager.Init();
         TBroadCaster<enum_BC_UIStatusChanged>.Init();
         TBroadCaster<enum_BC_GameStatusChanged>.Init();
+
         m_PlayerInfo = TGameData<CPlayerSave>.Read();
 
         TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnSpawnEntity, OnSpawnEntity);
@@ -87,16 +89,37 @@ public class GameManager : SingletonMono<GameManager>
         }
     }
 }
+public static class ExcelManager
+{
+    public static void Init()
+    {
+        Properties<SLevelGenerate>.Init();
+        Properties<SEntity>.Init();
+        Properties<SWeapon>.Init();
+    }
+    public static SLevelGenerate GetLevelGenerateProperties(enum_LevelStyle style,enum_LevelPrefabType prefabType)
+    {
+        SLevelGenerate generate = Properties<SLevelGenerate>.PropertiesList.Find(p => p.m_LevelStyle == style && p.m_LevelPrefabType == prefabType);
+        if (generate.m_LevelStyle == 0 || generate.m_LevelPrefabType == 0||generate.m_ItemGenerate==null)
+            Debug.LogError("Error Properties Found Of Index:" + ((int)style*10+ (int)prefabType).ToString());
 
+         return generate;
+    }
+    public static SEntity GetEntityGenerateProperties(enum_Entity type)
+    {
+       return Properties<SEntity>.PropertiesList.Find(p => p.m_Type == type);
+    }
+    public static SWeapon GetWeaponProperties(enum_Weapon type)
+    {
+        return Properties<SWeapon>.PropertiesList.Find(p => p.m_Weapon == type);
+    }
+}
 public static class ObjectManager
 {
     static Transform TF_Entity;
     public static void Init()
     {
         TF_Entity = new GameObject("Entity").transform;
-
-        TExcel.Properties<SEntity>.Init();
-        TExcel.Properties<SWeapon>.Init();
 
         TCommon.TraversalEnum((enum_Entity type) => 
         {
@@ -118,7 +141,7 @@ public static class ObjectManager
     public static EntityBase SpawnEntity(enum_Entity type,Transform toTrans=null)
     {
         EntityBase entity= ObjectPoolManager<enum_Entity, EntityBase>.Spawn(type, TF_Entity);
-        entity.Init(GameExpression.I_EntityID(i_entityIndex++,type== enum_Entity.Player ), TExcel.Properties<SEntity>.PropertiesList.Find(p => p.m_Type == type));
+        entity.Init(GameExpression.I_EntityID(i_entityIndex++,type== enum_Entity.Player ), ExcelManager.GetEntityGenerateProperties(type));
         if(toTrans!=null) entity.transform.position = toTrans.position;
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnSpawnEntity, entity);
         return entity;
@@ -146,7 +169,7 @@ public static class ObjectManager
             Debug.LogWarning("Model Null Weapon Model Found:Resources/Weapon/" + type);
 
             WeaponBase target = TResources.Instantiate<WeaponBase>("Weapon/Error");
-            target.Init(TExcel.Properties<SWeapon>.PropertiesList.Find(p => p.m_Weapon == type));
+            target.Init(ExcelManager.GetWeaponProperties(type));
             return target;
         }
     }
