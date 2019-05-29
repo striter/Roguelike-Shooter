@@ -36,6 +36,7 @@ public class EModelWorkdFlow : EditorWindow
                     renderers[j].gameObject.AddComponent<HitCheckStatic>();
             }
         }
+        AssetDatabase.SaveAssets();
     }
     [MenuItem("WorkFlow/CreateShadedPrefabFromModel")]
     public static void CreateShadedPrefab()
