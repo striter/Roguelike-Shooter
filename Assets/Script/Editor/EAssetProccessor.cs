@@ -10,7 +10,7 @@ public class EPostProcessor : AssetPostprocessor
 }
 
 
-public class EModelWorkdFlow : EditorWindow
+public class EModelWorkFlow : EditorWindow
 {
     [MenuItem("WorkFlow/LevelItemAddCollision")]
     public static void AddGameObjectCollision()
@@ -24,16 +24,24 @@ public class EModelWorkdFlow : EditorWindow
                 Debug.LogError("This Work Flow Only Work With Componented And Setted LevelItem!"+levelItem.gameObject);
                 break;
             }
-            if (levelItem.m_ItemType == enum_LevelItemType.NoCollision)
-                continue;
 
             Renderer[] renderers = levelItem.GetComponentsInChildren<Renderer>();
             for (int j = 0; j < renderers.Length; j++)
             {
-                if(renderers[j].GetComponent<MeshCollider>()==null)
-                    renderers[j].gameObject.AddComponent<MeshCollider>();
-                if (renderers[j].GetComponent<HitCheckStatic>() == null)
-                    renderers[j].gameObject.AddComponent<HitCheckStatic>();
+                if (levelItem.m_ItemType == enum_LevelItemType.NoCollision)
+                {
+                    if (renderers[j].GetComponent<HitCheckStatic>() == null)
+                        Destroy( renderers[j].GetComponent<HitCheckStatic>());
+                    if (renderers[j].GetComponent<MeshCollider>() == null)
+                        Destroy(renderers[j].GetComponent<MeshCollider>());
+                }
+                else
+                {
+                    if (renderers[j].GetComponent<MeshCollider>() == null)
+                        renderers[j].gameObject.AddComponent<MeshCollider>();
+                    if (renderers[j].GetComponent<HitCheckStatic>() == null)
+                        renderers[j].gameObject.AddComponent<HitCheckStatic>();
+                }
             }
         }
         AssetDatabase.SaveAssets();
@@ -42,7 +50,7 @@ public class EModelWorkdFlow : EditorWindow
     public static void CreateShadedPrefab()
     {
         // Get existing open window or if none, make a new one:
-        EModelWorkdFlow window = GetWindow(typeof(EModelWorkdFlow)) as EModelWorkdFlow;
+        EModelWorkFlow window = GetWindow(typeof(EModelWorkFlow)) as EModelWorkFlow;
         window.Show();
     }
     public static enum_LevelStyle levelStyle { get; private set; } = enum_LevelStyle.Invalid;
