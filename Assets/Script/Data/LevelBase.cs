@@ -65,6 +65,8 @@ public class LevelBase : MonoBehaviour {
 
     void GenerateRandomItemTile(enum_LevelItemType type, int totalCount)
     {
+        if (totalCount == 0)
+            return;
         if (!m_AllItems.ContainsKey(type))
         {
             Debug.LogWarning("Current Level Does Not Contains Item That Type:" + type.ToString());
