@@ -48,13 +48,13 @@ namespace GameSetting
         }
 
         public static float F_RocketBlastDamage(float weaponDamage, float distance) => weaponDamage * (distance / GameConst.I_RocketBlastRadius);       //Rocket Blast Damage
-        public static SLevelGenerate S_GetLevelGenerateInfo(enum_LevelStyle type,enum_BigmapTileType levelType)     //Test  Will Moved To Excel In The Future Developing
+        public static SLevelGenerate S_GetLevelGenerateInfo(enum_LevelStyle type,enum_LevelType levelType)     //Test  Will Moved To Excel In The Future Developing
         {
             return new SLevelGenerate(type, new Dictionary<enum_LevelItemType, RangeInt>() {
-                        { enum_LevelItemType.Large, new RangeInt(0, 1) },
-                        { enum_LevelItemType.Medium,new RangeInt(5,5) },
-                        { enum_LevelItemType.Small,new RangeInt(40,20) },
-                        { enum_LevelItemType.Manmade,new RangeInt(5,10) },
+                        { enum_LevelItemType.Order1BigNormal, new RangeInt(0, 1) },
+                        { enum_LevelItemType.Order3MediumNormal,new RangeInt(5,5) },
+                        { enum_LevelItemType.Order5SmallNormal,new RangeInt(40,20) },
+                        { enum_LevelItemType.Order7ManmadeNormal,new RangeInt(5,10) },
                         { enum_LevelItemType.NoCollision,new RangeInt(60,20)} });
         }
     }
@@ -77,6 +77,45 @@ namespace GameSetting
         //Coins Max Amount Each Level
         public static float F_SporeManagerChestCoinRequirement(int maxLevel) => 200 * Mathf.Pow(1.4f, maxLevel - 1);       //Coin Requirement Per Chest
         public static float F_SporeManagerChestBlueRequirement(int maxLevel) => 100 * Mathf.Pow(1.05f, maxLevel - 1);       //Blue Requirement Per Chest
+    }
+
+    public static class Enum_Relative
+    {
+        public static enum_LevelPrefabType ToPrefabType(this enum_LevelType type)
+        {
+            switch (type)
+            {
+                default:Debug.LogError("Please Edit This Please:" + type.ToString());return enum_LevelPrefabType.Invalid;
+                case enum_LevelType.Battle:
+                case enum_LevelType.BattleEnd:
+                    return enum_LevelPrefabType.Big;
+                case enum_LevelType.Reward:
+                case enum_LevelType.Start:
+                    return enum_LevelPrefabType.Small;
+            }
+        }
+        public static enum_SFX ToSFXType(this enum_BulletType type)
+        {
+            switch (type)
+            {
+                default: Debug.LogError("Insert More Convertions Here:" + type.ToString()); return enum_SFX.Invalid;
+                case enum_BulletType.Normal: return enum_SFX.Bullet_Normal;
+                case enum_BulletType.LaserRay: return enum_SFX.Bullet_LaserRay;
+                case enum_BulletType.LaserBeam: return enum_SFX.Bullet_LaserBeam;
+                case enum_BulletType.Bolt: return enum_SFX.Bullet_Bolt;
+                case enum_BulletType.Rocket: return enum_SFX.Bullet_Rocket;
+            }
+        }
+        public static int ToLayer(this enum_HitCheck layerType)
+        {
+            switch (layerType)
+            {
+                default: Debug.LogError("Null Layer Can Be Transferd From:" + layerType.ToString()); return 0;
+                case enum_HitCheck.Entity: return GameLayer.I_Entity;
+                case enum_HitCheck.Static: return GameLayer.I_Static;
+                case enum_HitCheck.Dynamic: return GameLayer.I_Dynamic;
+            }
+        }
     }
     #endregion
     #region For Developers Use
@@ -101,15 +140,18 @@ namespace GameSetting
     #region GameEnum
     public enum enum_HitCheck { Invalid = -1, Static = 1, Entity = 2, Dynamic = 3, }
     public enum enum_LevelStyle {Invalid=-1, Desert=1,Forest=2,Undead=3,}
-    public enum enum_BigmapTileType { Invalid=-1,Start,Battle,Reward,BattleEnd, }
+    public enum enum_LevelType { Invalid=-1,Start=1,Battle=2,Reward=3,BattleEnd=4, }
     public enum enum_LevelPrefabType { Invalid = -1, Big = 1, Small = 2, }
-    public enum enum_LevelItemType
-    {
+    public enum enum_LevelItemType{
        Invalid=-1,
-       Large,
-       Medium,
-       Small,
-       Manmade,
+       Order1BigNormal,
+       Order2BigMinus,
+       Order3MediumNormal,
+       Order4MediumMinus,
+       Order5SmallNormal,
+       Order6SmallMinus,
+       Order7ManmadeNormal,
+       Order8ManmadeMinus,
        NoCollision,
        Reward,
     }
@@ -192,31 +234,6 @@ namespace GameSetting
         Rocket = 5,
     }
 
-    public static class GameEnum_Extend
-    {
-        public static enum_SFX ToSFXType(this enum_BulletType type)
-        {
-            switch (type)
-            {
-                default: Debug.LogError("Insert More Convertions Here:" + type.ToString()); return enum_SFX.Invalid;
-                case enum_BulletType.Normal: return enum_SFX.Bullet_Normal;
-                case enum_BulletType.LaserRay: return enum_SFX.Bullet_LaserRay;
-                case enum_BulletType.LaserBeam: return enum_SFX.Bullet_LaserBeam;
-                case enum_BulletType.Bolt: return enum_SFX.Bullet_Bolt;
-                case enum_BulletType.Rocket: return enum_SFX.Bullet_Rocket;
-            }
-        }
-        public static int ToLayer(this enum_HitCheck layerType)
-        {
-            switch (layerType)
-            {
-                default: Debug.LogError("Null Layer Can Be Transferd From:" + layerType.ToString()); return 0;
-                case enum_HitCheck.Entity: return GameLayer.I_Entity;
-                case enum_HitCheck.Static: return GameLayer.I_Static;
-                case enum_HitCheck.Dynamic:return GameLayer.I_Dynamic;
-            }
-        }
-    }
     #endregion
     #region GameLayer
     public static class GameLayer
@@ -290,17 +307,17 @@ namespace GameSetting
     {
         public TileAxis m_TileAxis => m_Tile;
         protected TileAxis m_Tile { get; private set; }
-        public enum_BigmapTileType m_TileType { get; private set; } = enum_BigmapTileType.Invalid;
+        public enum_LevelType m_TileType { get; private set; } = enum_LevelType.Invalid;
         public enum_LevelStyle m_TileStyle { get; private set; } = enum_LevelStyle.Invalid;
         public Dictionary<enum_TileDirection, SBigmapTileInfo> m_Connections { get; protected set; } = new Dictionary<enum_TileDirection, SBigmapTileInfo>();
 
-        public SBigmapTileInfo(TileAxis _tileAxis, enum_BigmapTileType _tileType, enum_LevelStyle _tileStyle)
+        public SBigmapTileInfo(TileAxis _tileAxis, enum_LevelType _tileType, enum_LevelStyle _tileStyle)
         {
             m_Tile = _tileAxis;
             m_TileType = _tileType;
             m_TileStyle = _tileStyle;
         }
-        public void ResetTileType(enum_BigmapTileType _tileType)
+        public void ResetTileType(enum_LevelType _tileType)
         {
             m_TileType = _tileType;
         }
@@ -324,7 +341,8 @@ namespace GameSetting
             m_Level.transform.localRotation = Quaternion.Euler(0, mainSeed.Next(360), 0);
             m_Level.transform.localPosition = Vector3.zero;
             m_Level.transform.localScale = Vector3.one;
-            m_Level.Init(TResources.GetLevelData(_levelPrefab.name), GameExpression.S_GetLevelGenerateInfo(_levelPrefab.m_levelStyle, _levelPrefab.m_levelType), _levelItemPrefabs, m_LevelSeed, m_Connections.Keys.ToList());
+            m_Level.Init(TResources.GetLevelData(_levelPrefab.name), GameExpression.S_GetLevelGenerateInfo(m_TileStyle, _levelPrefab.m_levelType), _levelItemPrefabs, m_TileType, m_LevelSeed, m_Connections.Keys.ToList());
+            m_Level.SetActivate(false);
         }
     }
     #endregion

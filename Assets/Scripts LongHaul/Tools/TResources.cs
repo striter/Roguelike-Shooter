@@ -7,20 +7,25 @@ using UnityEngine;
 public class TResources
 {
     #region Only For Test Or Start Of The Project
-    public static TileMapData GetLevelData(string name) => Load<TileMapData>("Level/Main/" + name);
-
-    public static T Instantiate<T>(string path,Transform toParent=null) where T : UnityEngine.Object
+    public class ConstPath
+    {
+        public const string S_LevelMain = "Level/Main";
+        public const string S_LevelData = "Level/Main/Data";
+        public const string S_LeveLItem = "Level/Item";
+        public const string S_LevelTexture = "Level/Texture";
+    }
+    public static T Instantiate<T>(string path, Transform toParent = null) where T : UnityEngine.Object
     {
         GameObject obj = Resources.Load<GameObject>(path);
         if (obj == null)
             throw new Exception("Null Path Of :Resources/" + path.ToString());
-        return UnityEngine.Object.Instantiate(obj, toParent).GetComponent<T>() ;
+        return UnityEngine.Object.Instantiate(obj, toParent).GetComponent<T>();
     }
-    public static T Load<T>(string path) where T:UnityEngine.Object
+    public static T Load<T>(string path) where T : UnityEngine.Object
     {
         T prefab = Resources.Load<T>(path);
         if (prefab == null)
-             Debug.LogWarning("No Prefab At:" + path);
+            Debug.LogWarning("No Prefab At:" + path);
         return prefab;
     }
     public static T[] LoadAll<T>(string path) where T : UnityEngine.Object
@@ -31,14 +36,42 @@ public class TResources
             Debug.LogWarning("No InnerItems At:" + path);
         return array;
     }
-    public static IEnumerator LoadAsync<T>(string resourcePath,Action<T> OnLoadFinished) where T:UnityEngine.Object
+    public static TileMapData GetLevelData(string name) => Load<TileMapData>(ConstPath.S_LevelData+"/" + name);
+    public static IEnumerator LoadAsync<T>(string resourcePath, Action<T> OnLoadFinished) where T : UnityEngine.Object
     {
         ResourceRequest request = Resources.LoadAsync<T>(resourcePath);
         yield return request;
         if (request.isDone && request.asset != null)
             OnLoadFinished(request.asset as T);
         else
-            Debug.LogError("Null Path Of: Resources/"+resourcePath);
+            Debug.LogError("Null Path Of: Resources/" + resourcePath);
+    }
+
+    public static LevelItemBase[] GetAllLevelItems(enum_LevelStyle _levelStyle)
+    {
+        LevelItemBase[] levelItemPrefabs = TResources.LoadAll<LevelItemBase>(ConstPath.S_LeveLItem+"/" + _levelStyle);
+        foreach (LevelItemBase levelItem in levelItemPrefabs)
+        {
+            if (levelItem.m_ItemType == enum_LevelItemType.Invalid)
+                Debug.LogError("Please Edit Level Item(Something invalid): Resources/"+ ConstPath.S_LeveLItem + _levelStyle + "/" + levelItem.name);
+        }
+        return levelItemPrefabs;
+    }
+    public static Dictionary<enum_LevelPrefabType, List<LevelBase>> GetAllStyledLevels(enum_LevelStyle levelStyle)
+    {
+        Dictionary<enum_LevelPrefabType, List<LevelBase>> levelPrefabDic = new Dictionary<enum_LevelPrefabType, List<LevelBase>>();
+        LevelBase[] levels = TResources.LoadAll<LevelBase>(ConstPath.S_LevelMain);
+        Renderer matRenderer = levels[0].GetComponentInChildren<Renderer>();
+        matRenderer.sharedMaterial.SetTexture("_MainTex",Load<Texture>(ConstPath.S_LevelTexture+"/"+levelStyle));
+        levels.Traversal((LevelBase level) => {
+            if (level.E_PrefabType == enum_LevelPrefabType.Invalid)
+                Debug.LogError("Please Edit Level(Something Invalid):Resources/"+ ConstPath.S_LevelMain + level.name);
+
+            if (!levelPrefabDic.ContainsKey(level.E_PrefabType))
+                levelPrefabDic.Add(level.E_PrefabType, new List<LevelBase>());
+            levelPrefabDic[level.E_PrefabType].Add(level);
+        });
+        return levelPrefabDic;
     }
     #endregion
     public static T LoadResourceSync<T>(string bundlePath, string name) where T:UnityEngine.Object

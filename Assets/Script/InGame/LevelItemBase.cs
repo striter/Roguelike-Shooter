@@ -19,6 +19,7 @@ public class LevelItemBase : MonoBehaviour {
 #if UNITY_EDITOR
     LevelBase baseTarget;
     public bool b_showGizmos = true;
+    public bool b_AutoCenter = true;
     public void OnDrawGizmos()
     {
         if (UnityEditor.EditorApplication.isPlaying||!b_showGizmos)
@@ -31,13 +32,19 @@ public class LevelItemBase : MonoBehaviour {
             if (data == null)
                 return;
             transform.localPosition = data.m_MapData[0].m_Offset;
-            Gizmos.color = TCommon.ColorAlpha(Color.blue,.3f);
-            
-            for (int i = 0; i < m_sizeXAxis; i++)
-                for (int j = 0; j < m_sizeYAxis; j++)
-                    Gizmos.DrawCube(transform.position+new Vector3(i*data.m_Offset.x,1f,j*data.m_Offset.y),new Vector3(data.m_Offset.x,2f,data.m_Offset.y));
-            
         }
+
+        if (UnityEditor.EditorApplication.isPlaying)
+            return;
+
+        Gizmos.color = TCommon.ColorAlpha(Color.blue,.3f);
+
+        for (int i = 0; i < m_sizeXAxis; i++)
+            for (int j = 0; j < m_sizeYAxis; j++)
+                Gizmos.DrawCube(transform.position + new Vector3(i * GameConst.F_LevelTileSize, .5f, j * GameConst.F_LevelTileSize), new Vector3(GameConst.F_LevelTileSize, 1f, GameConst.F_LevelTileSize));
+
+        if(b_AutoCenter)
+        transform.GetChild(0).localPosition = new Vector3((m_sizeXAxis-1) * GameConst.F_LevelTileSize, 0f, (m_sizeYAxis-1) * GameConst.F_LevelTileSize) / 2;
     }
 #endif
 }

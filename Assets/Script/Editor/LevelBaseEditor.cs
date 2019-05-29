@@ -3,26 +3,36 @@ using UnityEngine;
 using GameSetting;
 using System.IO;
 
-[CustomEditor(typeof(LevelBase))]
+[CustomEditor(typeof(LevelBase)),CanEditMultipleObjects]
 public class LevelBaseEditor : Editor
 {
-    string GetDataPath(string name)
+
+    LevelBase levelTarget = null;
+    private SerializedProperty m_LevelPrefabType;
+
+    private void OnEnable()
     {
-        return "Resources/Level/Main/" + name;
+        m_LevelPrefabType = serializedObject.FindProperty("E_PrefabType");
     }
-    LevelBase levelTarget=null;
+
+    static string GetDataPath(string name)
+    {
+        return "Resources/" + TResources.ConstPath.S_LevelData+"/" + name;
+    }
     public override void OnInspectorGUI()
     {
+        serializedObject.Update();
+
         levelTarget = target as LevelBase;
         base.OnInspectorGUI();
-        if (EditorApplication.isPlaying)
+        if (EditorApplication.isPlaying||AssetDatabase.IsNativeAsset(target))
             return;
 
         if (levelTarget.gizmosMapData == null )
         {
             if (GUILayout.Button("Bake"))
             {
-                BakeData();
+                BakeData(levelTarget);
             }
         }
         else
@@ -30,7 +40,7 @@ public class LevelBaseEditor : Editor
             if (GUILayout.Button("Rebake"))
             {
                 DeleteData();
-                BakeData();
+                BakeData(levelTarget);
             }
             if (GUILayout.Button("Clear"))
             {
@@ -38,15 +48,15 @@ public class LevelBaseEditor : Editor
             }
         }
     }
-    void BakeData()
+   public static  void BakeData(LevelBase levelTarget)
     {
         
         TileMapData data = TResources.Load<TileMapData>(GetDataPath(levelTarget.name));
         if (data == null)
         {
             data = CreateInstance<TileMapData>();
-            if (!Directory.Exists("Assets/Resources/Level/Main"))
-                Directory.CreateDirectory("Assets/Resources/Level/Main");
+            if (!Directory.Exists("Assets/Resources/"+TResources.ConstPath.S_LevelData))
+                Directory.CreateDirectory("Assets/Resources/" + TResources.ConstPath.S_LevelData);
 
             AssetDatabase.CreateAsset(data, "Assets/" + GetDataPath( levelTarget.name) + ".asset");
         }

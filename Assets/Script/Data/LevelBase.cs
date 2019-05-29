@@ -5,15 +5,15 @@ using GameSetting;
 using System;
 using TTiles;
 public class LevelBase : MonoBehaviour {
-    
-    public enum_LevelStyle m_levelStyle { get; private set; }
-    public enum_BigmapTileType m_levelType { get; private set; }
+    public enum_LevelPrefabType E_PrefabType = enum_LevelPrefabType.Invalid;
+    public enum_LevelType m_levelType { get; private set; }
     protected Transform tf_LevelItem;
     public System.Random m_seed { get; private set; }
-    public void Init(TileMapData levelData,SLevelGenerate _levelGenerate, LevelItemBase[] _levelItems, System.Random _seed, List<enum_TileDirection> _connectedDireciton)
+    public void Init(TileMapData levelData,SLevelGenerate _levelGenerate, LevelItemBase[] _levelItems,enum_LevelType _levelType, System.Random _seed, List<enum_TileDirection> _connectedDireciton)
     {
         tf_LevelItem = transform.Find("Item");
         m_seed = _seed;
+        m_levelType = _levelType;
         GenerateTileItems(_levelGenerate,_levelItems, levelData, _connectedDireciton);
     }
     #region TileMapInfos
@@ -27,9 +27,6 @@ public class LevelBase : MonoBehaviour {
     {
         foreach (LevelItemBase levelItem in allItemPrefabs)
         {
-            if (levelItem.m_ItemType == enum_LevelItemType.Invalid)
-                Debug.LogError("Please Edit Static Item(Something invalid): Resources/Level/Item/" + m_levelStyle + "/" + levelItem.name);
-
             if (!m_AllItems.ContainsKey(levelItem.m_ItemType))
                 m_AllItems.Add(levelItem.m_ItemType, new List<LevelItemBase>());
             m_AllItems[levelItem.m_ItemType].Add(levelItem);
@@ -224,9 +221,8 @@ public class LevelBase : MonoBehaviour {
             }
             return;
         }
-
-        if (m_levelStyle != enum_LevelStyle.Invalid)
-            gizmosMapData = TResources.GetLevelData(gameObject.name);
+        
+        gizmosMapData = TResources.GetLevelData(gameObject.name);
 
         if (gizmosMapData == null)
             Debug.LogWarning("Please Bake This Level First");

@@ -7,29 +7,6 @@ using System.IO;
 
 public class EPostProcessor : AssetPostprocessor
 {
-    public static void CreatePrefab( GameObject go, enum_LevelStyle levelStyle, bool isLevel)
-    {
-        string prefabParent = "Assets/GeneratedPrefab/" +(isLevel?"Level":EMaterialImportSetting.levelStyle.ToString());
-        string prefabPath = prefabParent + "/"+  (isLevel?"Level":"Item") + go.name + ".prefab";
-        if (!Directory.Exists(prefabParent))
-            Directory.CreateDirectory(prefabParent);
-
-        if (AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath) != null)
-            AssetDatabase.DeleteAsset(prefabPath);
-
-        GameObject prefab = PrefabUtility.CreatePrefab(prefabPath,go);
-
-        Renderer[] renderers = prefab.GetComponentsInChildren<Renderer>();
-
-        for (int i = 0; i < renderers.Length; i++)
-        {
-            Material[] matList = new Material[renderers[i].sharedMaterials.Length];
-            for (int j = 0; j < renderers[i].sharedMaterials.Length; j++)
-                matList[j]=( EMaterialImportSetting.CreateMaterial(levelStyle, isLevel, renderers[i].sharedMaterials[j]));
-            renderers[i].sharedMaterials = matList;
-        }
-        Debug.Log("Prefab:" + prefabPath + " Generate Complete");   
-    }
 }
 
 
@@ -80,8 +57,58 @@ public class EMaterialImportSetting : EditorWindow
 
         for (int i = 0; i < assets.Length; i++)
         {
-            EPostProcessor.CreatePrefab(assets[i] as GameObject, levelStyle, isLevel);
+            GameObject model = assets[i] as GameObject;
+            string prefabFolder = PrefabPath(isLevel,levelStyle);
+            string prefabPath = prefabFolder + "/"+ model.name + ".prefab";
+            if (!Directory.Exists(prefabFolder))
+                Directory.CreateDirectory(prefabFolder);
+
+            if (AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath) != null)
+                AssetDatabase.DeleteAsset(prefabPath);
+
+            GameObject instantiatePrefab = new GameObject(model.name);
+            GameObject instantiateModel = GameObject.Instantiate(model, instantiatePrefab.transform);
+            instantiateModel.name = "Model";
+            if (isLevel)
+            {
+                GameObject itemPath = new GameObject("Item");
+                itemPath.transform.SetParent(instantiatePrefab.transform);
+            }
+        
+            Renderer[] renderers = instantiatePrefab.GetComponentsInChildren<Renderer>();
+
+            for (int j = 0; j < renderers.Length; j++)
+            {
+                Material[] matList = new Material[renderers[j].sharedMaterials.Length];
+                for (int k = 0; k < renderers[j].sharedMaterials.Length; k++)
+                    matList[k] = (CreateMaterial(levelStyle, isLevel, renderers[j].sharedMaterials[k]));
+                renderers[j].sharedMaterials = matList;
+
+                if (isLevel)
+                {
+                    renderers[j].gameObject.AddComponent<MeshCollider>();
+                    renderers[j].gameObject.AddComponent<HitCheckStatic>();
+                }
+            }
+
+            if (isLevel)
+                LevelBaseEditor.BakeData(instantiatePrefab.AddComponent<LevelBase>());
+            else
+                instantiatePrefab.AddComponent<LevelItemBase>();
+
+            PrefabUtility.CreatePrefab(prefabPath, instantiatePrefab);
+            DestroyImmediate(instantiatePrefab);
+            Debug.Log("Prefab:" + prefabPath + " Generate Complete");
         }
+
+        AssetDatabase.SaveAssets();
+    }
+    static string PrefabPath(bool isLevel,enum_LevelStyle style)
+    {
+        if (isLevel)
+            return "Assets/Resources/"+TResources.ConstPath.S_LevelMain;
+        else
+            return "Assets/Resources/"+ TResources.ConstPath.S_LeveLItem+"/" + style.ToString();
     }
     public static void DeleteMaterial(enum_LevelStyle levelStype,bool islevel)
     {
@@ -111,7 +138,7 @@ public class EMaterialImportSetting : EditorWindow
     {
         if (isLevel)
             return "Assets/Material/Level.mat";
-        return "Assets/Material" + (isLevel ? "Item_" : "Level_") + matStyle.ToString() + ".mat";
+        return "Assets/Material/Item_"  + matStyle.ToString() + ".mat";
     }
     public static Shader GetShader(enum_ShaderType sType)
     {

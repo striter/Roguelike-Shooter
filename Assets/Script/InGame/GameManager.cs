@@ -43,7 +43,7 @@ public class GameManager : SingletonMono<GameManager>
     }
     void PreInit()      //PreInit Bigmap , Levels LocalPlayer Before  Start The game
     {
-        EnviormentManager.Instance.GenerateEnviorment(enum_LevelStyle.Desert);
+        EnviormentManager.Instance.GenerateEnviorment(enum_LevelStyle.Forest);
         GC.Collect();
         m_LocalPlayer = ObjectManager.SpawnEntity(enum_Entity.Player);
     }

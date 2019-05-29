@@ -14,7 +14,7 @@ public class InteractPortal : InteractBase {
         m_Renderer=transform.GetComponentInChildren<Renderer>();
     }
 
-    public void InitPortal(enum_TileDirection _portalDirection,enum_BigmapTileType _targetLevelType, Action<enum_TileDirection> _OnPortalInteract)
+    public void InitPortal(enum_TileDirection _portalDirection,enum_LevelType _targetLevelType, Action<enum_TileDirection> _OnPortalInteract)
     {
         Init();
         OnPortalInteract = _OnPortalInteract;
