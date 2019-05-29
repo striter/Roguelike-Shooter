@@ -8,12 +8,6 @@ public class LevelBaseEditor : Editor
 {
 
     LevelBase levelTarget = null;
-    private SerializedProperty m_LevelPrefabType;
-
-    private void OnEnable()
-    {
-        m_LevelPrefabType = serializedObject.FindProperty("E_PrefabType");
-    }
 
     static string GetDataPath(string name)
     {

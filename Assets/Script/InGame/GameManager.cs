@@ -10,6 +10,7 @@ public class GameManager : SingletonMono<GameManager>
     public EntityBase m_LocalPlayer { get; private set; } = null;
     public static CPlayerSave m_PlayerInfo { get; private set; }
     public bool B_TestMode { get; private set; } = false;
+    public enum_LevelStyle E_TESTSTYLE = enum_LevelStyle.Desert;
     protected override void Awake()
     {
 #if UNITY_EDITOR
@@ -43,7 +44,7 @@ public class GameManager : SingletonMono<GameManager>
     }
     void PreInit()      //PreInit Bigmap , Levels LocalPlayer Before  Start The game
     {
-        EnviormentManager.Instance.GenerateEnviorment(enum_LevelStyle.Forest);
+        EnviormentManager.Instance.GenerateEnviorment(E_TESTSTYLE);
         GC.Collect();
         m_LocalPlayer = ObjectManager.SpawnEntity(enum_Entity.Player);
     }

@@ -10,13 +10,38 @@ public class EPostProcessor : AssetPostprocessor
 }
 
 
-public class EMaterialImportSetting : EditorWindow
+public class EModelWorkdFlow : EditorWindow
 {
-    [MenuItem("ImportSetting/GenerateModelShadedPrefab")]
-    public static void ChangeGameObjectShader()
+    [MenuItem("WorkFlow/LevelItemAddCollision")]
+    public static void AddGameObjectCollision()
+    {
+        Object[] assets = Selection.GetFiltered(typeof(GameObject), SelectionMode.Assets);
+        for (int i = 0; i < assets.Length; i++)
+        {
+            LevelItemBase levelItem=(assets[i] as GameObject).GetComponent<LevelItemBase>() ;
+            if (levelItem == null||levelItem.m_ItemType== enum_LevelItemType.Invalid)
+            {
+                Debug.LogError("This Work Flow Only Work With Componented And Setted LevelItem!"+levelItem.gameObject);
+                break;
+            }
+            if (levelItem.m_ItemType == enum_LevelItemType.NoCollision)
+                continue;
+
+            Renderer[] renderers = levelItem.GetComponentsInChildren<Renderer>();
+            for (int j = 0; j < renderers.Length; j++)
+            {
+                if(renderers[j].GetComponent<MeshCollider>()==null)
+                    renderers[j].gameObject.AddComponent<MeshCollider>();
+                if (renderers[j].GetComponent<HitCheckStatic>() == null)
+                    renderers[j].gameObject.AddComponent<HitCheckStatic>();
+            }
+        }
+    }
+    [MenuItem("WorkFlow/CreateShadedPrefabFromModel")]
+    public static void CreateShadedPrefab()
     {
         // Get existing open window or if none, make a new one:
-        EMaterialImportSetting window = GetWindow(typeof(EMaterialImportSetting)) as EMaterialImportSetting;
+        EModelWorkdFlow window = GetWindow(typeof(EModelWorkdFlow)) as EModelWorkdFlow;
         window.Show();
     }
     public static enum_LevelStyle levelStyle { get; private set; } = enum_LevelStyle.Invalid;

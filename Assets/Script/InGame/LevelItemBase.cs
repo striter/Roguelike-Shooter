@@ -12,7 +12,8 @@ public class LevelItemBase : MonoBehaviour {
     {
         m_LevelParent = levelParent;
          tf_Model = transform.Find("Model");
-        tf_Model.localRotation = Quaternion.Euler(0, levelParent.m_seed.Next(360),0);
+        if(m_sizeXAxis==m_sizeYAxis)
+         tf_Model.localRotation = Quaternion.Euler(0, levelParent.m_seed.Next(360),0);
         transform.SetActivate(true);
     }
 

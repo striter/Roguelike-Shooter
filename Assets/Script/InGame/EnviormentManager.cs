@@ -243,7 +243,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
             default:
                 return TCommon.ColorAlpha(Color.blue, .5f);
             case enum_LevelType.Battle:
-                return TCommon.ColorAlpha(Color.yellow, .5f);
+                return TCommon.ColorAlpha(Color.red, .5f);
             case enum_LevelType.Reward:
                 return TCommon.ColorAlpha(Color.green, .5f);
             case enum_LevelType.Start:
