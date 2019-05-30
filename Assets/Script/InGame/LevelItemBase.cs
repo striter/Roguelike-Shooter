@@ -44,8 +44,12 @@ public class LevelItemBase : MonoBehaviour {
             for (int j = 0; j < m_sizeYAxis; j++)
                 Gizmos.DrawCube(transform.position + new Vector3(i * GameConst.F_LevelTileSize, .5f, j * GameConst.F_LevelTileSize), new Vector3(GameConst.F_LevelTileSize, 1f, GameConst.F_LevelTileSize));
 
-        if(b_AutoCenter)
-        transform.GetChild(0).localPosition = new Vector3((m_sizeXAxis-1) * GameConst.F_LevelTileSize, 0f, (m_sizeYAxis-1) * GameConst.F_LevelTileSize) / 2;
+        if (b_AutoCenter)
+            EditorRecenter();
+    }
+    public void EditorRecenter()
+    {
+        transform.GetChild(0).localPosition = new Vector3((m_sizeXAxis - 1) * GameConst.F_LevelTileSize, 0f, (m_sizeYAxis - 1) * GameConst.F_LevelTileSize) / 2;
     }
 #endif
 }
