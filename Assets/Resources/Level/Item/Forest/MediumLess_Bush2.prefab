@@ -141,7 +141,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_sizeXAxis: 2
   m_sizeYAxis: 2
-  m_ItemType: 2
+  m_ItemType: 3
   b_showGizmos: 1
   b_AutoCenter: 1
 --- !u!114 &114967792735836750
