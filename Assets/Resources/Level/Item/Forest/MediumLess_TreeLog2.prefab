@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4201748570643460}
   - component: {fileID: 114617515579346160}
   m_Layer: 0
-  m_Name: MediumMore_TreeLog2
+  m_Name: MediumLess_TreeLog2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
