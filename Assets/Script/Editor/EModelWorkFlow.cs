@@ -127,7 +127,7 @@ public class EModelWorkFlow : EditorWindow
                 levelItem.m_sizeXAxis = (int)(collider.bounds.extents.x * 2 / GameConst.F_LevelTileSize) + 1;
                 levelItem.m_sizeYAxis = (int)(collider.bounds.extents.z * 2 / GameConst.F_LevelTileSize) + 1;
             }
-            levelItem.EditorRecenter();
+            levelItem.ItemRecenter();
         }
     }
     static string PrefabPath(bool isLevel,enum_LevelStyle style)

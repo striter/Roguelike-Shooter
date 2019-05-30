@@ -58,8 +58,8 @@ public class LevelBase : MonoBehaviour {
             LevelTileItemMain main = m_AllTiles[m_IndexMain[i]] as LevelTileItemMain;
 
             LevelItemBase itemMain = GameObject.Instantiate(m_AllItems[main.m_LevelItemType][main.m_LevelItemListIndex], tf_LevelItem);
+            itemMain.Init(this,main.m_ItemDirection);
             itemMain.transform.localPosition = main.m_Offset;
-            itemMain.Init(this);
         }
     }
 
@@ -80,11 +80,11 @@ public class LevelBase : MonoBehaviour {
             LevelItemBase currentItem = targetItems[currentItemIndex];
             if (m_IndexEmpty.Count < currentItem.m_sizeXAxis * currentItem.m_sizeYAxis)
                 continue;
-
-            int currentTileIndex = RandomAvailableTileIndex(currentItem.m_sizeXAxis,currentItem.m_sizeYAxis, ref t_IndexTemp);
+            enum_TileDirection itemAngleDirection = TTiles.TTiles.m_AllDirections.RandomItem(m_seed);
+            int currentTileIndex = RandomAvailableTileIndex(currentItem.m_sizeXAxis,currentItem.m_sizeYAxis, itemAngleDirection== enum_TileDirection.Left||itemAngleDirection== enum_TileDirection.Right, ref t_IndexTemp);
             if (currentTileIndex != -1)
             {
-                m_AllTiles[currentTileIndex] = new LevelTileItemMain(m_AllTiles[currentTileIndex],currentItemIndex,currentItem.m_ItemType, t_IndexTemp);
+                m_AllTiles[currentTileIndex] = new LevelTileItemMain(m_AllTiles[currentTileIndex],currentItemIndex, currentItem.m_ItemType, itemAngleDirection, t_IndexTemp);
                 m_IndexMain.Add(currentTileIndex);
                 m_IndexEmpty.Remove(currentTileIndex);
                 foreach (int subTileIndex in t_IndexTemp)
@@ -115,7 +115,7 @@ public class LevelBase : MonoBehaviour {
             m_AllTiles[index] = portal;
         m_Portal = portal;
     }
-    int RandomAvailableTileIndex(int XCount,int YCount,ref List<int> areaIndexes)
+    int RandomAvailableTileIndex(int XCount,int YCount,bool angleRotated,ref List<int> areaIndexes)
     {
         if (XCount * YCount > m_IndexEmpty.Count)
             return -1;
@@ -124,7 +124,7 @@ public class LevelBase : MonoBehaviour {
         for (int i = 0; i < checkCount; i++)
         {
             int randomTileIndex =    m_IndexEmpty.RandomItem(m_seed);
-            if (CheckIndexTileAreaAvailable(randomTileIndex, XCount, YCount, ref areaIndexes))
+            if (CheckIndexTileAreaAvailable(randomTileIndex, angleRotated ? YCount:XCount, angleRotated ? XCount: YCount, ref areaIndexes))
                     return randomTileIndex;
         }
         return -1;

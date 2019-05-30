@@ -404,12 +404,15 @@ namespace GameSetting
         public override enum_TileType E_TileType => enum_TileType.Main;
         public int m_LevelItemListIndex { get; private set; }
         public enum_LevelItemType m_LevelItemType { get; private set; }
+        public enum_TileDirection m_ItemDirection { get; private set; }
         public List<int> m_AreaTiles { get; private set; }
-        public LevelTileItemMain(LevelTile current, int levelItemListIndex, enum_LevelItemType levelItemType, List<int> _AreaTiles) : base(current)
+        
+        public LevelTileItemMain(LevelTile current, int levelItemListIndex, enum_LevelItemType levelItemType,enum_TileDirection _ItemDirection, List<int> _AreaTiles) : base(current)
         {
             m_LevelItemListIndex = levelItemListIndex;
             m_LevelItemType = levelItemType;
             m_AreaTiles = _AreaTiles;
+            m_ItemDirection = _ItemDirection;
         }
     }
     #endregion
