@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4373671591456332}
   - component: {fileID: 114015278307995794}
   m_Layer: 0
-  m_Name: MediumMore_Tree1
+  m_Name: SmallMore_Tree11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -141,8 +141,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_sizeXAxis: 3
   m_sizeYAxis: 2
-  m_ItemType: 2
-  b_showGizmos: 1
+  m_ItemType: 4
+  b_showGizmos: 0
   b_AutoCenter: 0
 --- !u!114 &114743273219056898
 MonoBehaviour:
