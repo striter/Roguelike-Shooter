@@ -12,47 +12,6 @@ public class EPostProcessor : AssetPostprocessor
 
 public class EModelWorkFlow : EditorWindow
 {
-    [MenuItem("WorkFlow/LevelItemAddCollision")]
-    public static void AddGameObjectCollision()
-    {
-        Object[] assets = Selection.GetFiltered(typeof(GameObject), SelectionMode.Assets);
-        for (int i = 0; i < assets.Length; i++)
-        {
-            LevelItemBase levelItem=(assets[i] as GameObject).GetComponent<LevelItemBase>() ;
-            if (levelItem == null||levelItem.m_ItemType== enum_LevelItemType.Invalid)
-            {
-                Debug.LogError("This Work Flow Only Work With Componented And Setted LevelItem!"+levelItem.gameObject);
-                break;
-            }
-
-            Renderer[] renderers = levelItem.GetComponentsInChildren<Renderer>();
-            for (int j = 0; j < renderers.Length; j++)
-            {
-                if (levelItem.m_ItemType == enum_LevelItemType.NoCollisionMore)
-                {
-                    if (renderers[j].GetComponent<HitCheckStatic>() == null)
-                        Destroy( renderers[j].GetComponent<HitCheckStatic>());
-                    if (renderers[j].GetComponent<MeshCollider>() == null)
-                        Destroy(renderers[j].GetComponent<MeshCollider>());
-
-                    levelItem.m_sizeXAxis = 1;
-                    levelItem.m_sizeYAxis = 1;
-                }
-                else
-                {
-                    MeshCollider collider = renderers[j].GetComponent<MeshCollider>();
-                    if (collider)
-                        collider=renderers[j].gameObject.AddComponent<MeshCollider>();
-                    if (renderers[j].GetComponent<HitCheckStatic>() == null)
-                        renderers[j].gameObject.AddComponent<HitCheckStatic>();
-
-                    levelItem.m_sizeXAxis = (int)(collider.bounds.extents.x * 2 / GameConst.F_LevelTileSize)+1;
-                    levelItem.m_sizeYAxis = (int)(collider.bounds.extents.y * 2 / GameConst.F_LevelTileSize) + 1;
-                }
-            }
-        }
-        AssetDatabase.SaveAssets();
-    }
     [MenuItem("WorkFlow/CreateShadedPrefabFromModel")]
     public static void CreateShadedPrefab()
     {
@@ -94,8 +53,6 @@ public class EModelWorkFlow : EditorWindow
     }
     void CreatePrefabFromModel(Object[] assets,enum_LevelStyle levelStyle,bool isLevel)
     {
-        DeleteMaterial(levelStyle, isLevel);
-
         for (int i = 0; i < assets.Length; i++)
         {
             GameObject model = assets[i] as GameObject;
@@ -111,38 +68,67 @@ public class EModelWorkFlow : EditorWindow
             GameObject instantiateModel = GameObject.Instantiate(model, instantiatePrefab.transform);
             instantiateModel.name = "Model";
             if (isLevel)
-            {
-                GameObject itemPath = new GameObject("Item");
-                itemPath.transform.SetParent(instantiatePrefab.transform);
-            }
-        
-            Renderer[] renderers = instantiatePrefab.GetComponentsInChildren<Renderer>();
-
-            for (int j = 0; j < renderers.Length; j++)
-            {
-                Material[] matList = new Material[renderers[j].sharedMaterials.Length];
-                for (int k = 0; k < renderers[j].sharedMaterials.Length; k++)
-                    matList[k] = (CreateMaterial(levelStyle, isLevel, renderers[j].sharedMaterials[k]));
-                renderers[j].sharedMaterials = matList;
-
-                if (isLevel)
-                {
-                    renderers[j].gameObject.AddComponent<MeshCollider>();
-                    renderers[j].gameObject.AddComponent<HitCheckStatic>();
-                }
-            }
-
-            if (isLevel)
-                LevelBaseEditor.BakeData(instantiatePrefab.AddComponent<LevelBase>());
+                ProcessLevelModel(instantiatePrefab);
             else
-                instantiatePrefab.AddComponent<LevelItemBase>();
-
-            PrefabUtility.CreatePrefab(prefabPath, instantiatePrefab);
+                ProcessItemModel(instantiatePrefab, levelStyle);
+            GameObject prefab= PrefabUtility.CreatePrefab(prefabPath, instantiatePrefab);
             DestroyImmediate(instantiatePrefab);
-            Debug.Log("Prefab:" + prefabPath + " Generate Complete");
+
+            Debug.Log(isLevel?"Level":"Item"+ " Prefab:" + prefabPath + " Generate Complete");
         }
 
         AssetDatabase.SaveAssets();
+    }
+
+    void ProcessLevelModel(GameObject prefab)
+    {
+        GameObject itemPath = new GameObject("Item");
+        itemPath.transform.SetParent(prefab.transform);
+        Renderer[] renderers = prefab.GetComponentsInChildren<Renderer>();
+        for (int j = 0; j < renderers.Length; j++)
+        {
+            Material[] matList = new Material[renderers[j].sharedMaterials.Length];
+            for (int k = 0; k < renderers[j].sharedMaterials.Length; k++)
+                matList[k] = (CreateMaterial(levelStyle, isLevel, renderers[j].sharedMaterials[k]));
+            renderers[j].sharedMaterials = matList;
+
+            renderers[j].gameObject.AddComponent<MeshCollider>();
+            renderers[j].gameObject.AddComponent<HitCheckStatic>();
+        }
+        LevelBase level = prefab.AddComponent<LevelBase>();
+        level.E_PrefabType = (enum_LevelPrefabType)System.Enum.Parse(typeof(enum_LevelPrefabType), prefab.name.Split('_')[0]); 
+        LevelBaseEditor.BakeData(level);
+    }
+    void ProcessItemModel(GameObject prefab, enum_LevelStyle levelStyle)
+    {
+        enum_LevelItemType type= (enum_LevelItemType)System.Enum.Parse(typeof(enum_LevelItemType), prefab.name.Split('_')[0]);
+        
+        LevelItemBase levelItem=  prefab.AddComponent<LevelItemBase>();
+        levelItem.m_ItemType = type;
+        Renderer[] renderers = prefab.GetComponentsInChildren<Renderer>();
+
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            Material[] matList = new Material[renderers[i].sharedMaterials.Length];
+            for (int j = 0; j < renderers[i].sharedMaterials.Length; j++)
+                matList[j] = (CreateMaterial(levelStyle, isLevel, renderers[i].sharedMaterials[j]));
+            renderers[i].sharedMaterials = matList;
+
+            if (levelItem.m_ItemType == enum_LevelItemType.NoCollisionMore||levelItem.m_ItemType== enum_LevelItemType.NoCollisionLess)
+            {
+                levelItem.m_sizeXAxis = 1;
+                levelItem.m_sizeYAxis = 1;
+            }
+            else
+            {
+                MeshCollider collider = renderers[i].gameObject.AddComponent<MeshCollider>();
+                renderers[i].gameObject.AddComponent<HitCheckStatic>();
+
+                levelItem.m_sizeXAxis = (int)(collider.bounds.extents.x * 2 / GameConst.F_LevelTileSize) + 1;
+                levelItem.m_sizeYAxis = (int)(collider.bounds.extents.z * 2 / GameConst.F_LevelTileSize) + 1;
+            }
+            levelItem.EditorRecenter();
+        }
     }
     static string PrefabPath(bool isLevel,enum_LevelStyle style)
     {
@@ -150,12 +136,6 @@ public class EModelWorkFlow : EditorWindow
             return "Assets/Resources/"+TResources.ConstPath.S_LevelMain;
         else
             return "Assets/Resources/"+ TResources.ConstPath.S_LeveLItem+"/" + style.ToString();
-    }
-    public static void DeleteMaterial(enum_LevelStyle levelStype,bool islevel)
-    {
-        string path = GetMaterialPath(levelStype, islevel);
-        if (AssetDatabase.LoadAssetAtPath<Material>(path) != null)
-             AssetDatabase.DeleteAsset(path);
     }
     public static Material CreateMaterial(enum_LevelStyle lsType,bool isLevel,Material sharedMaterial=null)
     {
