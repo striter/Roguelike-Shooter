@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4075818921419574}
   - component: {fileID: 114364958921280480}
   m_Layer: 0
-  m_Name: Manmade_LogCargo
+  m_Name: ManmadeLess_LogCargo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

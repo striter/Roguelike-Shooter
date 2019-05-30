@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4654012018817094}
   - component: {fileID: 114960778976852176}
   m_Layer: 0
-  m_Name: Large_Mountain2
+  m_Name: LargeLess_Mountain2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

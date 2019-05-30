@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 4643057012876862}
   - component: {fileID: 114135706853645896}
   m_Layer: 0
-  m_Name: Medium_Bush1
+  m_Name: MediumLess_Bush1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

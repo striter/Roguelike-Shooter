@@ -38,7 +38,7 @@ GameObject:
   - component: {fileID: 4874483708454050}
   - component: {fileID: 114625433143620664}
   m_Layer: 0
-  m_Name: Nocollision_Mushroom1
+  m_Name: NocollisionLess_Mushroom1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 4205452821923174}
   - component: {fileID: 114716313677910128}
   m_Layer: 0
-  m_Name: Small_Stone6
+  m_Name: SmallMore_Stone6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

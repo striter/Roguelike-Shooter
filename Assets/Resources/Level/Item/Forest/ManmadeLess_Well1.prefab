@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4292867121954190}
   - component: {fileID: 114531004289837492}
   m_Layer: 0
-  m_Name: Manmade_Well1
+  m_Name: ManmadeLess_Well1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

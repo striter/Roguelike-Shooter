@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 4199014559825350}
   - component: {fileID: 114299705298728418}
   m_Layer: 0
-  m_Name: Medium_Tree2
+  m_Name: MediumMore_Tree2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

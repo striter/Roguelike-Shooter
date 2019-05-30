@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4443707281405722}
   - component: {fileID: 114069836867148320}
   m_Layer: 0
-  m_Name: Small_Bush1
+  m_Name: SmallLess_Bush1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

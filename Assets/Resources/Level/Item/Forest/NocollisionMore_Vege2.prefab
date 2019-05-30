@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4792713070150852}
   - component: {fileID: 114488079383479766}
   m_Layer: 0
-  m_Name: Nocollision_Vege2
+  m_Name: NocollisionMore_Vege2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

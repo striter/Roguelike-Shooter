@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 4726186338163400}
   - component: {fileID: 114618725694671988}
   m_Layer: 0
-  m_Name: Manmade_House1
+  m_Name: ManmadeLess_House1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

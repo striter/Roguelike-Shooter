@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 4575600571707864}
   - component: {fileID: 114344135325230634}
   m_Layer: 0
-  m_Name: Manmade_Cargo
+  m_Name: ManmadeLess_Cargo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

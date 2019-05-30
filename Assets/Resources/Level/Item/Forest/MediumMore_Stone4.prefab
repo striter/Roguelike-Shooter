@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4315614348441342}
   - component: {fileID: 114849218660997268}
   m_Layer: 0
-  m_Name: Medium_Stone4
+  m_Name: MediumMore_Stone4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

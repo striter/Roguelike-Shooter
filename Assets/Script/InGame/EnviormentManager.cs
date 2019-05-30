@@ -74,7 +74,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         foreach (enum_TileDirection direction in m_currentLevel.m_Connections.Keys)     //Set Connected Island Unlockable
         {
             if (m_MapLevelInfo.Get(m_currentLevel.m_Connections[direction])!=null)
-                m_MapLevelInfo.Get(m_currentLevel.m_Connections[direction]).SetTileLocking(enum_LevelLocking.Unlockable);
+                m_MapLevelInfo.Get(m_currentLevel.m_Connections[direction]).SetTileLocking(enum_LevelLocking.Unlocked);
         }
 
         if (m_currentLevel.m_TileType == enum_LevelType.End)        //Generate Portals For End IsLand

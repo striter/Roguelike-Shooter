@@ -38,7 +38,7 @@ GameObject:
   - component: {fileID: 4060350906882150}
   - component: {fileID: 114545075947297666}
   m_Layer: 0
-  m_Name: Nocollision_Grass3
+  m_Name: NocollisionMore_Grass3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

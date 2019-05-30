@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4145332472546224}
   - component: {fileID: 114347270071255044}
   m_Layer: 0
-  m_Name: Manmade_Stand2
+  m_Name: ManmadeMore_Stand2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
