@@ -12,6 +12,7 @@ public class GameManager : SingletonMono<GameManager>
     public static CPlayerSave m_PlayerInfo { get; private set; }
     public bool B_TestMode { get; private set; } = false;
     public enum_LevelStyle E_TESTSTYLE = enum_LevelStyle.Desert;
+    public bool B_Battling { get; private set; } = false;
     protected override void Awake()
     {
 #if UNITY_EDITOR
@@ -43,6 +44,7 @@ public class GameManager : SingletonMono<GameManager>
     {
         PreInit();
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnGameStart);
+        TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnStageStart);
     }
     void PreInit()      //PreInit Bigmap , Levels LocalPlayer Before  Start The game
     {
@@ -54,15 +56,16 @@ public class GameManager : SingletonMono<GameManager>
     //Call Enviorment Manager To Prepare And Start Generate All Enermy
     void OnLevelStart(Vector3 levelStartPos)
     {
+        B_Battling = true;
         m_LocalPlayer.transform.position = levelStartPos;
         //Generate All Enermy To Be Continued,
-        TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnLevelFinish);       //Test
+        OnLevelFinished();        //Test
     }
-    //Call Enviorment Manager To Generate Portals , Then Go Back To OnLevelChange From Enviorment Manager
+    //Call Enviorment Manager To Generate Portals Or Show Bigmaps, Then Go Back To OnLevelChange From Enviorment Manager
     void OnLevelFinished()
     {
+        B_Battling = false;
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnLevelFinish);
-
     }
 
     //Entity Management

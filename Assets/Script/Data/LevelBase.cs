@@ -9,7 +9,7 @@ public class LevelBase : MonoBehaviour {
     public enum_LevelType m_levelType { get; private set; }
     protected Transform tf_LevelItem;
     public System.Random m_seed { get; private set; }
-    public void Init(TileMapData levelData,SLevelGenerate _levelGenerate, LevelItemBase[] _levelItems,enum_LevelType _levelType, System.Random _seed, List<enum_TileDirection> _connectedDireciton)
+    public void Init(TileMapData levelData,SLevelGenerate _levelGenerate, LevelItemBase[] _levelItems,enum_LevelType _levelType, System.Random _seed, enum_TileDirection _connectedDireciton)
     {
         tf_LevelItem = transform.Find("Item");
         m_seed = _seed;
@@ -17,13 +17,13 @@ public class LevelBase : MonoBehaviour {
         GenerateTileItems(_levelGenerate,_levelItems, levelData, _connectedDireciton);
     }
     #region TileMapInfos
-    public List<LevelTilePortal> m_Portals { get; private set; } = new List<LevelTilePortal>();
+    public LevelTilePortal m_Portal;
     List<LevelTile> m_AllTiles=new List<LevelTile>();
     List<int> m_IndexEmpty=new List<int>();
     List<int> m_IndexMain=new List<int>();
     List<int> t_IndexTemp = new List<int>();
     Dictionary<enum_LevelItemType, List<LevelItemBase>> m_AllItems = new Dictionary<enum_LevelItemType, List<LevelItemBase>>();
-    void GenerateTileItems(SLevelGenerate _itemData,LevelItemBase[] allItemPrefabs, TileMapData _data,List<enum_TileDirection> _connectedDireciton)
+    void GenerateTileItems(SLevelGenerate _itemData,LevelItemBase[] allItemPrefabs, TileMapData _data,enum_TileDirection _PortalDirection)
     {
         foreach (LevelItemBase levelItem in allItemPrefabs)
         {
@@ -45,7 +45,7 @@ public class LevelBase : MonoBehaviour {
 
         //Generate Portal Pos
         TileAxis origin = new TileAxis(_data.I_Width/2, _data.I_Height/2);
-        GenerateRangePortalTile(origin,_connectedDireciton,GameConst.I_TileMapPortalMinusOffset);
+        GenerateRangePortalTile(origin,_PortalDirection,GameConst.I_TileMapPortalMinusOffset);
 
         //Generate All Items
         TCommon.TraversalUnchange(_itemData.m_ItemGenerate, (enum_LevelItemType type, RangeInt range) =>
@@ -96,11 +96,9 @@ public class LevelBase : MonoBehaviour {
         }
     }
 
-    void GenerateRangePortalTile(TileAxis origin, List<enum_TileDirection> portalDirection,int minusRange)
+    void GenerateRangePortalTile(TileAxis origin, enum_TileDirection portalDirection,int minusRange)
     {
-        for (int i = 0; i < portalDirection.Count; i++)
-        {
-            List<LevelTile> tileAvailable = m_AllTiles.FindAll(p => p.E_Direction == portalDirection[i]&&p.E_TileType== enum_TileType.Empty);
+            List<LevelTile> tileAvailable = m_AllTiles.FindAll(p => p.E_Direction == portalDirection && p.E_TileType== enum_TileType.Empty);
             LevelTile closestTile = tileAvailable[0];
             int closestOffset = int.MaxValue;
             for (int j = 0; j < tileAvailable.Count; j++)
@@ -113,10 +111,9 @@ public class LevelBase : MonoBehaviour {
                 }
             }
             int index = m_AllTiles.IndexOf(closestTile);
-            LevelTilePortal portal= new LevelTilePortal(m_AllTiles[index], portalDirection[i], transform.TransformPoint(m_AllTiles[index].m_Offset));
+            LevelTilePortal portal= new LevelTilePortal(m_AllTiles[index], portalDirection, transform.TransformPoint(m_AllTiles[index].m_Offset));
             m_AllTiles[index] = portal;
-            m_Portals.Add(portal);
-        }
+        m_Portal = portal;
     }
     int RandomAvailableTileIndex(int XCount,int YCount,ref List<int> areaIndexes)
     {
@@ -156,6 +153,11 @@ public class LevelBase : MonoBehaviour {
         }
         return true;
     }
+
+    public Vector3 RandomEmptyTilePosition(System.Random seed)
+    {
+        return m_AllTiles[m_IndexEmpty.RandomItem(seed)].m_Offset + transform.position;
+    }
     #endregion
     #region Gizmos For Test
 #if UNITY_EDITOR
@@ -163,7 +165,7 @@ public class LevelBase : MonoBehaviour {
     public int I_DiamCellCount = 64;
     public bool B_IgnoreUnavailable = true;
     public float F_HeightDetect = .5f;
-    public bool b_showGizmos=true,b_showGameTiles=true,b_showDirection=true;
+    public bool b_showGizmos=true,b_showGameTiles=true,b_b_showWorldDirection=false;
     public TileMapData gizmosMapData;
     private void OnDrawGizmos()
     {
@@ -177,7 +179,7 @@ public class LevelBase : MonoBehaviour {
                 Color targetColor=Color.black;
                 Vector3 positon = transform.position + transform.right * m_AllTiles[i].m_Offset.x + Vector3.up * m_AllTiles[i].m_Offset.y + transform.forward * m_AllTiles[i].m_Offset.z;
                 float sizeParam = .5f;
-                if (b_showDirection)
+                if (b_b_showWorldDirection)
                 {
                     sizeParam = .5f;
                     switch (m_AllTiles[i].E_Direction)

@@ -14,7 +14,7 @@ public class UIT_GridController
     public UIT_GridController(Transform _transform)
     {
         transform = _transform;
-        GridItem = transform.GetChild(0).gameObject;
+        GridItem = transform.Find("GridItem").gameObject;
         GridItem.gameObject.SetActive(false);
         InactiveItemList.Add(GridItem.transform);
     }

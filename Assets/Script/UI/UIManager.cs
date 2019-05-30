@@ -10,8 +10,6 @@ public class UIManager : SingletonMono<UIManager> {
     Text txt_Ammo,txt_Mana,txt_Health,txt_Armor,txt_Coin,txt_Main;
     RectTransform rtf_Pitch;
     Text txt_Pitch;
-    UIT_GridControllerMono<UIGI_BigmapLevelInfo> gc_BigMapController;
-    RectTransform rtf_BigmapPlayer;
     public static Action OnSwitch, OnReload;
     public static Action<bool> OnMainDown;
     protected override void Awake()
@@ -25,23 +23,22 @@ public class UIManager : SingletonMono<UIManager> {
 
         rtf_Pitch = transform.Find("Pitch/Pitch").GetComponent<RectTransform>();
         txt_Pitch = rtf_Pitch.Find("Pitch").GetComponent<Text>();
-
         transform.Find("Switch").GetComponent<Button>().onClick.AddListener(()=> { OnSwitch?.Invoke(); });
         transform.Find("Reload").GetComponent<Button>().onClick.AddListener(() => { OnReload?.Invoke(); });
         transform.Find("Main").GetComponent<UIT_EventTriggerListener>().D_OnPress+=(bool down,Vector2 pos) => { OnMainDown?.Invoke(down); };
-        transform.Find("SporeManager").GetComponent<Button>().onClick.AddListener(() => { UIPageBase.ShowPage<UI_SporeManager>(transform,true); });
+        transform.Find("SporeBtn").GetComponent<Button>().onClick.AddListener(() => { UIPageBase.ShowPage<UI_SporeManager>(transform,true); });
 
         txt_Main = transform.Find("Main/Text").GetComponent<Text>();
+
     }
     private void Start()
     {
+        UIPageBase.ShowPage<UI_BigmapControl>(transform, false);
         TBroadCaster<enum_BC_UIStatusChanged>.Add<EntityPlayerBase>(enum_BC_UIStatusChanged.PlayerInfoChanged, OnPlayerStatusChanegd);
-        TBroadCaster<enum_BC_UIStatusChanged>.Add<SBigmapLevelInfo[,], TileAxis>(enum_BC_UIStatusChanged.PlayerLevelStatusChanged, OnLevelStatusChanged);
     }
     private void OnDisable()
     {
         TBroadCaster<enum_BC_UIStatusChanged>.Remove<EntityPlayerBase>(enum_BC_UIStatusChanged.PlayerInfoChanged, OnPlayerStatusChanegd);
-        TBroadCaster<enum_BC_UIStatusChanged>.Remove<SBigmapLevelInfo[,], TileAxis>(enum_BC_UIStatusChanged.PlayerLevelStatusChanged, OnLevelStatusChanged);
     }
     void OnPlayerStatusChanegd(EntityPlayerBase player)
     {
@@ -55,35 +52,6 @@ public class UIManager : SingletonMono<UIManager> {
         rtf_Pitch.anchoredPosition = new Vector2(0, (player.m_Pitch / 45f) * 900);
          
         txt_Main.text = player.b_Interacting ? "Interact" : "Fire";
-
-        if (rtf_BigmapPlayer != null)
-            rtf_BigmapPlayer.localRotation = Quaternion.Euler(0, 0, GameExpression.F_BigmapYaw(player.transform.forward));
     }
 
-    void OnLevelStatusChanged(SBigmapLevelInfo[,] bigMap, TileAxis playerAxis)
-    {
-        if (gc_BigMapController == null)
-        {
-            gc_BigMapController = new UIT_GridControllerMono<UIGI_BigmapLevelInfo>(transform.Find("Bigmap"));
-            gc_BigMapController.m_GridLayout.constraintCount = bigMap.GetLength(0);
-            bigMap.Traversal((SBigmapLevelInfo levelInfo)=> { gc_BigMapController.AddItem(UIBigmapTileIndex(levelInfo.m_TileAxis, bigMap.GetLength(0), bigMap.GetLength(1)));});
-            gc_BigMapController.SortChildrenSibling();
-            rtf_BigmapPlayer = gc_BigMapController.transform.Find("BigmapPlayer").GetComponent<RectTransform>();
-            rtf_BigmapPlayer.transform.SetAsLastSibling();
-        }
-
-        bigMap.Traversal((SBigmapLevelInfo levelInfo)=> {
-            UIGI_BigmapLevelInfo infoUI = gc_BigMapController.GetItem(UIBigmapTileIndex(levelInfo.m_TileAxis, bigMap.GetLength(0), bigMap.GetLength(1)));
-            infoUI.SetBigmapLevelInfo(levelInfo);
-            if (levelInfo.m_TileAxis == playerAxis)
-            {
-                rtf_BigmapPlayer.SetParent(infoUI.transform);
-                rtf_BigmapPlayer.anchoredPosition = Vector2.zero;
-            }
-        });
-    }
-    int UIBigmapTileIndex(TileAxis axis,int width,int height)
-    {
-        return axis.m_AxisX  + axis.m_AxisY* height*1000;
-    }
 }

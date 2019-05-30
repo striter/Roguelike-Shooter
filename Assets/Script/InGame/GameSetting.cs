@@ -68,6 +68,24 @@ namespace GameSetting
         //Coins Max Amount Each Level
         public static float F_SporeManagerChestCoinRequirement(int maxLevel) => 200 * Mathf.Pow(1.4f, maxLevel - 1);       //Coin Requirement Per Chest
         public static float F_SporeManagerChestBlueRequirement(int maxLevel) => 100 * Mathf.Pow(1.05f, maxLevel - 1);       //Blue Requirement Per Chest
+
+        public static Color BigmapTileColor(enum_LevelLocking levelLocking, enum_LevelType levelType)
+        {
+            Color color;
+            switch (levelType)
+            {
+                default: color = TCommon.ColorAlpha(Color.blue, .5f); break;
+                case enum_LevelType.Battle: color = TCommon.ColorAlpha(Color.red, .5f); break;
+                case enum_LevelType.Reward: color = TCommon.ColorAlpha(Color.green, .5f); break;
+                case enum_LevelType.Start: color = TCommon.ColorAlpha(Color.blue, .5f); break;
+                case enum_LevelType.End: color = TCommon.ColorAlpha(Color.black, .5f); break;
+            }
+            switch(levelLocking)
+            {
+                case enum_LevelLocking.Unlockable:color = TCommon.ColorAlpha(Color.black,.8f); break;
+            }
+            return color;
+        }
     }
 
     public static class Enum_Relative
@@ -78,7 +96,7 @@ namespace GameSetting
             {
                 default:Debug.LogError("Please Edit This Please:" + type.ToString());return enum_LevelPrefabType.Invalid;
                 case enum_LevelType.Battle:
-                case enum_LevelType.BattleEnd:
+                case enum_LevelType.End:
                     return enum_LevelPrefabType.Big;
                 case enum_LevelType.Reward:
                 case enum_LevelType.Start:
@@ -124,14 +142,17 @@ namespace GameSetting
         OnRecycleEntity,
 
         OnGameStart,
+        OnStageStart,
         OnLevelStart,
         OnLevelFinish,        //All Opposing Entity Dead
+        OnStageFinish,
     }
     #endregion
     #region GameEnum
     public enum enum_HitCheck { Invalid = -1, Static = 1, Entity = 2, Dynamic = 3, }
+    public enum enum_LevelLocking { Invalid=-1,Locked=0,Unlockable=1,Unlocked=2,}
     public enum enum_LevelStyle {Invalid=-1, Forest=1,Desert=2,Iceland=3,Horde=4,Undead=5,}
-    public enum enum_LevelType { Invalid=-1,Start=1,Battle=2,Reward=3,BattleEnd=4, }
+    public enum enum_LevelType { Invalid=-1,Start=1,Battle=2,Reward=3,End=4, }
     public enum enum_LevelPrefabType { Invalid = -1, Big = 1, Small = 2, }
     public enum enum_LevelItemType{
        Invalid=-1,
@@ -300,17 +321,24 @@ namespace GameSetting
         protected TileAxis m_Tile { get; private set; }
         public enum_LevelType m_TileType { get; private set; } = enum_LevelType.Invalid;
         public enum_LevelStyle m_TileStyle { get; private set; } = enum_LevelStyle.Invalid;
-        public Dictionary<enum_TileDirection, SBigmapTileInfo> m_Connections { get; protected set; } = new Dictionary<enum_TileDirection, SBigmapTileInfo>();
+        public enum_LevelLocking m_TileLocking { get; private set; } = enum_LevelLocking.Invalid;
+        public Dictionary<enum_TileDirection, TileAxis> m_Connections { get; protected set; } = new Dictionary<enum_TileDirection, TileAxis>();
 
-        public SBigmapTileInfo(TileAxis _tileAxis, enum_LevelType _tileType, enum_LevelStyle _tileStyle)
+        public SBigmapTileInfo(TileAxis _tileAxis, enum_LevelType _tileType, enum_LevelStyle _tileStyle, enum_LevelLocking _tileLocking)
         {
             m_Tile = _tileAxis;
             m_TileType = _tileType;
             m_TileStyle = _tileStyle;
+            m_TileLocking = _tileLocking;
         }
         public void ResetTileType(enum_LevelType _tileType)
         {
             m_TileType = _tileType;
+        }
+        public void SetTileLocking(enum_LevelLocking _lockType)
+        {
+            if(m_TileLocking!= enum_LevelLocking.Unlocked)
+               m_TileLocking = _lockType;
         }
     }
 
@@ -319,7 +347,7 @@ namespace GameSetting
         protected Transform m_LevelParent;
         public System.Random m_LevelSeed { get; private set; } = null;
         public LevelBase m_Level { get; private set; } = null;
-        public SBigmapLevelInfo(SBigmapTileInfo tile) : base(tile.m_TileAxis, tile.m_TileType, tile.m_TileStyle)
+        public SBigmapLevelInfo(SBigmapTileInfo tile) : base(tile.m_TileAxis, tile.m_TileType, tile.m_TileStyle,tile.m_TileLocking)
         {
             m_Connections = tile.m_Connections;
         }
@@ -332,7 +360,7 @@ namespace GameSetting
             m_Level.transform.localRotation = Quaternion.Euler(0, mainSeed.Next(360), 0);
             m_Level.transform.localPosition = Vector3.zero;
             m_Level.transform.localScale = Vector3.one;
-            m_Level.Init(TResources.GetLevelData(_levelPrefab.name),ExcelManager.GetLevelGenerateProperties(m_TileStyle,_levelPrefab.E_PrefabType), _levelItemPrefabs, m_TileType, m_LevelSeed, m_Connections.Keys.ToList());
+            m_Level.Init(TResources.GetLevelData(_levelPrefab.name),ExcelManager.GetLevelGenerateProperties(m_TileStyle,_levelPrefab.E_PrefabType), _levelItemPrefabs, m_TileType, m_LevelSeed, m_Connections.Keys.ToList().Find(p=>m_Connections[p]==new TileAxis(-1,-1)));        //Add Portal For Level End
             m_Level.SetActivate(false);
         }
     }

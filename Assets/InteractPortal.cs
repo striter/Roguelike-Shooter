@@ -14,12 +14,12 @@ public class InteractPortal : InteractBase {
         m_Renderer=transform.GetComponentInChildren<Renderer>();
     }
 
-    public void InitPortal(enum_TileDirection _portalDirection,enum_LevelType _targetLevelType, Action<enum_TileDirection> _OnPortalInteract)
+    public void InitPortal(enum_TileDirection _portalDirection, Action<enum_TileDirection> _OnPortalInteract)
     {
         Init();
         OnPortalInteract = _OnPortalInteract;
         m_PortalDirection = _portalDirection;
-        m_Renderer.material.SetColor("_Color",EnviormentManager.BigmapTileColor(_targetLevelType));
+        m_Renderer.material.SetColor("_Color",Color.green);
     }
     public override bool TryInteract()
     {
