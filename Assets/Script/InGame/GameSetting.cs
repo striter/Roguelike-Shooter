@@ -82,7 +82,7 @@ namespace GameSetting
             }
             switch(levelLocking)
             {
-                case enum_LevelLocking.Unlockable:color = TCommon.ColorAlpha(Color.black,.8f); break;
+                case enum_LevelLocking.Unlockable:color=TCommon.ColorAlpha( color ,.2f); break;
             }
             return color;
         }

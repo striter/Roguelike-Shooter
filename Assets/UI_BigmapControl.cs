@@ -54,6 +54,11 @@ public class UI_BigmapControl : UIPageBase {        //This Page Won't Hide(One P
     }
     void OnMapTileClick(TileAxis axis)
     {
+        if (!B_IsBigmapMode)
+        {
+            SwitchMapmode(true);
+            return;
+        }
         EnviormentManager.Instance.OnChangeLevel(axis);
     }
 

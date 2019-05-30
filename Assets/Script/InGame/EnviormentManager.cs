@@ -64,6 +64,9 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
 
     public void OnChangeLevel(TileAxis targetAxis)
     {
+        if (m_currentLevel.m_TileAxis == targetAxis)
+            return;
+
         m_currentLevel.m_Level.SetActivate(false);
         m_currentLevel = (m_MapLevelInfo.Get(targetAxis));
         OnLevelStart();
@@ -74,7 +77,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         foreach (enum_TileDirection direction in m_currentLevel.m_Connections.Keys)     //Set Connected Island Unlockable
         {
             if (m_MapLevelInfo.Get(m_currentLevel.m_Connections[direction])!=null)
-                m_MapLevelInfo.Get(m_currentLevel.m_Connections[direction]).SetTileLocking(enum_LevelLocking.Unlocked);
+                m_MapLevelInfo.Get(m_currentLevel.m_Connections[direction]).SetTileLocking(enum_LevelLocking.Unlockable);
         }
 
         if (m_currentLevel.m_TileType == enum_LevelType.End)        //Generate Portals For End IsLand

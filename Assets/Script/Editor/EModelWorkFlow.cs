@@ -34,13 +34,20 @@ public class EModelWorkFlow : EditorWindow
                         Destroy( renderers[j].GetComponent<HitCheckStatic>());
                     if (renderers[j].GetComponent<MeshCollider>() == null)
                         Destroy(renderers[j].GetComponent<MeshCollider>());
+
+                    levelItem.m_sizeXAxis = 1;
+                    levelItem.m_sizeYAxis = 1;
                 }
                 else
                 {
-                    if (renderers[j].GetComponent<MeshCollider>() == null)
-                        renderers[j].gameObject.AddComponent<MeshCollider>();
+                    MeshCollider collider = renderers[j].GetComponent<MeshCollider>();
+                    if (collider)
+                        collider=renderers[j].gameObject.AddComponent<MeshCollider>();
                     if (renderers[j].GetComponent<HitCheckStatic>() == null)
                         renderers[j].gameObject.AddComponent<HitCheckStatic>();
+
+                    levelItem.m_sizeXAxis = (int)(collider.bounds.extents.x * 2 / GameConst.F_LevelTileSize)+1;
+                    levelItem.m_sizeYAxis = (int)(collider.bounds.extents.y * 2 / GameConst.F_LevelTileSize) + 1;
                 }
             }
         }
