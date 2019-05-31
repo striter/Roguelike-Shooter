@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecf8f1a646961dd45acc452512ec383b, type: 3}
+  m_Name: Small_fulidao0002
+  m_EditorClassIdentifier: 
+  I_Width: 64
+  I_Height: 64
+  m_Offset: {x: 2, y: 2}
+  m_MapData:
+  - m_TileAxis:
+      m_AxisX: 31
+      m_AxisY: 39
+    m_Status: 0
+    m_Offset: {x: -2, y: 2.0006623, z: 14}
