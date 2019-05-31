@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4071528475948472}
   - component: {fileID: 114452456547967630}
   m_Layer: 0
-  m_Name: SmallMore_shamo_shitouA3
+  m_Name: SmallLess_shamo_shitouA3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -141,9 +141,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_sizeXAxis: 1
   m_sizeYAxis: 1
-  m_ItemType: 4
+  m_ItemType: 5
   b_showGizmos: 1
   b_AutoCenter: 1
+  b_AutoRotation: 1
 --- !u!114 &114535055630870122
 MonoBehaviour:
   m_ObjectHideFlags: 1

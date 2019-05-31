@@ -143,7 +143,7 @@ MonoBehaviour:
   m_sizeYAxis: 4
   m_ItemType: 3
   b_showGizmos: 1
-  b_AutoCenter: 0
+  b_AutoCenter: 1
   b_AutoRotation: 1
 --- !u!114 &114683951339578884
 MonoBehaviour:

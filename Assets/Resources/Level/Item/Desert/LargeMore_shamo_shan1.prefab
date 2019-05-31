@@ -150,8 +150,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8dcb65fa127261f4f814d3436a08313d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sizeXAxis: 8
+  m_sizeXAxis: 7
   m_sizeYAxis: 6
   m_ItemType: 0
   b_showGizmos: 1
   b_AutoCenter: 1
+  b_AutoRotation: 1
