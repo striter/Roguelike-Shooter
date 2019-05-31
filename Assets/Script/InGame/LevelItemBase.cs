@@ -8,30 +8,21 @@ public class LevelItemBase : MonoBehaviour {
     public LevelBase m_LevelParent { get; private set; }
     public int m_sizeXAxis = 1;
     public int m_sizeYAxis = 1;
-    public bool B_AngledRotation => m_sizeXAxis != m_sizeYAxis;
     public enum_LevelItemType m_ItemType = enum_LevelItemType.Invalid;
     Transform tf_Model;
     public void Init(LevelBase levelParent,enum_TileDirection direction)
     {
         m_LevelParent = levelParent;
         tf_Model = transform.Find("Model");
-        if (B_AngledRotation)       //0 90 180 270 
+        if (direction == enum_TileDirection.Right || direction == enum_TileDirection.Left)
         {
-            if (direction == enum_TileDirection.Right || direction == enum_TileDirection.Left)
-            {
-                int xTemp = m_sizeXAxis;
-                m_sizeXAxis = m_sizeYAxis;
-                m_sizeYAxis = xTemp;
-            }
+            int xTemp = m_sizeXAxis;
+            m_sizeXAxis = m_sizeYAxis;
+            m_sizeYAxis = xTemp;
+        }
 
-            tf_Model.localRotation = Quaternion.Euler(0,(int)direction*90, 0);
-            ItemRecenter();
-        }
-        else     //0-360
-        {
-            transform.localRotation = Quaternion.identity;
-            tf_Model.localRotation = Quaternion.Euler(0, levelParent.m_seed.Next(360), 0);
-        }
+        tf_Model.localRotation = Quaternion.Euler(0, (int)direction * 90, 0);
+        ItemRecenter();
         transform.SetActivate(true);
     }
 

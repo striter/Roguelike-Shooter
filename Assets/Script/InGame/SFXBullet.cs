@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
-using System;
+using TPhysics;
 
 public class SFXBullet : SFXBase {
     protected float m_bulletDamage;
