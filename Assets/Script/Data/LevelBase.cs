@@ -120,7 +120,7 @@ public class LevelBase : MonoBehaviour {
         if (XCount * YCount > m_IndexEmpty.Count)
             return -1;
 
-        int checkCount = XCount * YCount + 1;
+        int checkCount = XCount * YCount*2;
         for (int i = 0; i < checkCount; i++)
         {
             int randomTileIndex =    m_IndexEmpty.RandomItem(m_seed);

@@ -71,7 +71,7 @@ public class EModelWorkFlow : EditorWindow
                 ProcessLevelModel(instantiatePrefab);
             else
                 ProcessItemModel(instantiatePrefab, levelStyle);
-            GameObject prefab= PrefabUtility.CreatePrefab(prefabPath, instantiatePrefab);
+
             DestroyImmediate(instantiatePrefab);
 
             Debug.Log(isLevel?"Level":"Item"+ " Prefab:" + prefabPath + " Generate Complete");

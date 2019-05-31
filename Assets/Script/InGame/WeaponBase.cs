@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using GameSetting;
 using System;
+using System.Collections.Generic;
 
 public class WeaponBase : MonoBehaviour,ISingleCoroutine {
     public int I_AttacherID { get; private set; }
@@ -12,12 +13,14 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
     Action<float> OnAmmoChangeCostMana;
     Action<Vector2> OnRecoil;
     WeaponTrigger m_Trigger=null;
+    WeaponAimAssist m_Assist = null;
     bool B_HaveAmmoLeft => m_WeaponInfo.m_ClipAmount == -1 || I_AmmoLeft > 0;
     public void Init(SWeapon weaponInfo)
     {
         tf_Muzzle = transform.Find("Muzzle");
         m_WeaponInfo = weaponInfo;
         I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
+        m_Assist = new WeaponAimAssist(tf_Muzzle,32,GameConst.I_NormalBulletLastTime,weaponInfo);
         switch (weaponInfo.m_TriggerType)
         {
             default: Debug.LogError("Add More Convertions Here:" + weaponInfo.m_TriggerType.ToString()); m_Trigger = new TriggerSingle(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, CheckCanAction, SetActionPause, CheckCanAutoReload); break;
@@ -37,6 +40,8 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
     {
         if(m_Trigger!=null)
         m_Trigger.Tick(Time.deltaTime);
+
+        m_Assist.Simulate();
     }
     protected virtual void OnDisable()
     {
@@ -122,6 +127,50 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         StartReload();
     }
     #region TriggerType
+    class WeaponAimAssist
+    {
+        Transform transform;
+        Transform tf_Dot;
+        LineRenderer m_lineRenderer;
+        AccelerationSimulator m_Simulator;
+        int m_CurveCount;
+        List<Vector3> m_CurvePoints = new List<Vector3>();
+        float simulateDelta;
+        public WeaponAimAssist(Transform muzzle, int _curveCount,float duration,SWeapon weaponInfo)
+        {
+            transform = muzzle;
+            tf_Dot = transform.Find("Dot");
+            m_lineRenderer = muzzle.GetComponent<LineRenderer>();
+            m_lineRenderer.positionCount = _curveCount;
+            m_CurveCount = _curveCount;
+            m_Simulator = new AccelerationSimulator(muzzle.position, muzzle.forward, Vector3.down, weaponInfo.m_HorizontalSpeed, -weaponInfo.m_HorizontalDrag, 0, weaponInfo.m_VerticalAcceleration, false);
+            simulateDelta = duration / _curveCount;
+        }
+        public void Simulate()
+        {
+            m_Simulator.WeaponAssistReset(transform.position,transform.forward);
+            m_CurvePoints.Clear();
+            m_CurvePoints.Add(transform.position);
+            tf_Dot.SetActivate(false);
+            for (int i = 0; i < m_CurveCount; i++)
+            {
+                Vector3 lookDirection;float offset;
+                Vector3 currentPosition = m_Simulator.Simulate(simulateDelta, out lookDirection, out offset);
+                m_CurvePoints.Add(currentPosition);
+                RaycastHit hit;
+                if (Physics.Raycast(currentPosition, lookDirection, out hit, offset,GameLayer.Physics.I_Static))
+                {
+                    m_CurvePoints.Remove(currentPosition);
+                    m_CurvePoints.Add(hit.point);
+                    tf_Dot.SetActivate(true);
+                    tf_Dot.position = hit.point-lookDirection*.2f;
+                    break;
+                }
+            }
+            m_lineRenderer.positionCount = m_CurvePoints.Count;
+            m_lineRenderer.SetPositions(m_CurvePoints.ToArray());
+        }
+    }
     internal class WeaponTrigger:ISingleCoroutine
     {
         public bool B_TriggerDown { get; protected set; }

@@ -3,6 +3,7 @@ using TExcel;
 using System.Collections.Generic;
 using System;
 using TTiles;
+using TPhysics;
 using System.Linq;
 #pragma warning disable 0649
 namespace GameSetting
@@ -13,6 +14,8 @@ namespace GameSetting
         public const int I_NormalBulletLastTime = 5; // No Collision Recycle Time
         public const int I_BoltMaxLastTime = 10;    //Last Time Of Ammo/Bolt
         public const int I_LaserMaxLastTime = 5;    //Longest Last Time Of Ammo/Laser
+
+        public const int I_AimAssistCurveCount = 128;        //Aim Assits Curve Cost   More = Better Visual Performance But Costs  64 is Suggested
 
         public const int I_RocketBlastRadius = 5;        //Meter
         public const float F_LaserRayStartPause = .5f;      //Laser Start Pause
@@ -254,12 +257,12 @@ namespace GameSetting
         public static readonly int I_Entity = LayerMask.NameToLayer("entity");
         public static readonly int I_Dynamic = LayerMask.NameToLayer("dynamic");
         public static readonly int I_DynamicDetect = LayerMask.NameToLayer("dynamicDetect");
-        public static readonly int I_EntityDetect = LayerMask.NameToLayer("entityDetect");
         public static class Physics
         {
-            public static readonly int I_All = 1 << I_Static | 1 << I_Entity | 1 << I_Dynamic;
+            public static readonly int I_All = 1 << GameLayer.I_Static | 1 << GameLayer.I_Entity | 1 << GameLayer.I_Dynamic;
+            public static readonly int I_AimAssist = 1 << GameLayer.I_Static | 1 << GameLayer.I_Entity;
             public static readonly int I_EntityOnly = (1 << I_Entity);
-            public static readonly int I_Static = (1 << I_Static);
+            public static readonly int I_Static = (1 << GameLayer.I_Static);
         }
     }
     #endregion
@@ -289,7 +292,7 @@ namespace GameSetting
         }
         public void DoDetect(Collider other)
         {
-            if (other.gameObject.layer == GameLayer.I_DynamicDetect || other.gameObject.layer == GameLayer.I_EntityDetect)      //Detector Outcluded
+            if (other.gameObject.layer == GameLayer.I_DynamicDetect)
                 return;
 
             HitCheckBase hitCheck = other.GetComponent<HitCheckBase>();
@@ -312,6 +315,73 @@ namespace GameSetting
                     OnHitCheckEntity?.Invoke(hitCheck as HitCheckEntity);
                     break;
             }
+        }
+    }
+
+    class AccelerationSimulator
+    {
+        float m_simulateTime;
+        Vector3 m_startPos, m_LastPos;
+        float m_horizontalSpeed;
+        float m_horizontalAcceleration;
+        float m_verticalSpeed;
+        float m_verticalAcceleration;
+        Vector3 m_HorizontalDirection, m_VerticalDirection;
+        bool b_speedBelowZero;
+        public AccelerationSimulator(Vector3 startPos, Vector3 horizontalDirection, Vector3 verticalDirection, float horizontalSpeed, float horizontalAcceleration, float verticalSpeed, float verticalAcceleration,bool speedBelowZero=true)
+        {
+            m_simulateTime = 0f;
+            m_startPos = startPos;
+            m_LastPos = startPos;
+            m_HorizontalDirection = horizontalDirection;
+            m_VerticalDirection = verticalDirection;
+            m_horizontalSpeed = horizontalSpeed;
+            m_horizontalAcceleration = horizontalAcceleration;
+            m_verticalSpeed = verticalSpeed;
+            m_verticalAcceleration = verticalAcceleration;
+            b_speedBelowZero = speedBelowZero;
+        }
+        public void WeaponAssistReset(Vector3 startPos ,Vector3 horizontalDirection)
+        {
+            m_startPos = startPos;
+            m_LastPos = startPos;
+            m_HorizontalDirection = horizontalDirection;
+            m_simulateTime = 0f;
+        }
+        public Vector3 Simulate(float fixedDeltaTime, out Vector3 lookDirection)
+        {
+            Vector3 simulatedPosition = GetSimulatedPosition(m_startPos, m_HorizontalDirection, m_VerticalDirection, m_simulateTime, m_horizontalSpeed, m_horizontalAcceleration, m_verticalSpeed, m_verticalAcceleration, b_speedBelowZero);
+            lookDirection = m_LastPos == simulatedPosition ? m_HorizontalDirection :m_LastPos - simulatedPosition;
+            m_LastPos = simulatedPosition;
+            m_simulateTime += fixedDeltaTime;
+            return simulatedPosition;
+        }
+        public Vector3 Simulate(float fixedDeltaTime, out Vector3 lookDirection, out float offsetPrevious)
+        {
+            Vector3 simulatedPosition = GetSimulatedPosition(m_startPos, m_HorizontalDirection, m_VerticalDirection, m_simulateTime, m_horizontalSpeed, m_horizontalAcceleration, m_verticalSpeed, m_verticalAcceleration, b_speedBelowZero);
+            offsetPrevious = m_LastPos == simulatedPosition ? m_horizontalSpeed * fixedDeltaTime :Vector3.Distance(m_LastPos,simulatedPosition);
+            lookDirection = m_LastPos == simulatedPosition ? m_HorizontalDirection : m_LastPos - simulatedPosition;
+            m_LastPos = simulatedPosition;
+            m_simulateTime += fixedDeltaTime;
+            return simulatedPosition;
+        }
+        public static Vector3 GetSimulatedPosition(Vector3 startPos, Vector3 horizontalDirection,Vector3 verticalDirection, float elapsedTime, float horizontalSpeed, float horizontalAcceleration, float verticalSpeed, float verticalAcceleration,bool canHorizontalSpeedBelowZero=true)      
+        {
+            Vector3 horizontalShift = Vector3.zero;
+            Vector3 verticalShift = verticalDirection * Expressions.AccelerationShift(verticalSpeed, verticalAcceleration, elapsedTime);
+            if (canHorizontalSpeedBelowZero)
+            {
+                horizontalShift += horizontalDirection * Expressions.AccelerationShift(horizontalSpeed, horizontalAcceleration, elapsedTime);
+            }
+            else if(!canHorizontalSpeedBelowZero&&horizontalSpeed>0&&horizontalAcceleration<0)
+            {
+                float aboveZeroTime = horizontalSpeed / Mathf.Abs(horizontalAcceleration);
+                
+                horizontalShift += horizontalDirection * Expressions.AccelerationShift(horizontalSpeed, horizontalAcceleration, elapsedTime> aboveZeroTime? aboveZeroTime:elapsedTime);
+            }
+
+            Vector3 targetPos = startPos + horizontalShift + verticalShift;
+            return targetPos;
         }
     }
     #region BigmapTile

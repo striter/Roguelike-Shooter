@@ -8,7 +8,6 @@ public class DangerZoneBase : MonoBehaviour {
     protected bool b_IsTriggerEnter { get; private set; } = true;
     protected virtual void Awake()
     {
-        gameObject.layer = GameLayer.I_EntityDetect;
         m_Detect = new HitCheckDetect(null, null,OnHitCheckEntity,null);
     }
     protected virtual void OnHitCheckEntity(HitCheckEntity entity)
