@@ -351,7 +351,7 @@ namespace GameSetting
         public Vector3 Simulate(float fixedDeltaTime, out Vector3 lookDirection)
         {
             Vector3 simulatedPosition = GetSimulatedPosition(m_startPos, m_HorizontalDirection, m_VerticalDirection, m_simulateTime, m_horizontalSpeed, m_horizontalAcceleration, m_verticalSpeed, m_verticalAcceleration, b_speedBelowZero);
-            lookDirection = m_LastPos == simulatedPosition ? m_HorizontalDirection :m_LastPos - simulatedPosition;
+            lookDirection = m_LastPos == simulatedPosition ? m_HorizontalDirection : simulatedPosition - m_LastPos;
             m_LastPos = simulatedPosition;
             m_simulateTime += fixedDeltaTime;
             return simulatedPosition;
@@ -360,7 +360,7 @@ namespace GameSetting
         {
             Vector3 simulatedPosition = GetSimulatedPosition(m_startPos, m_HorizontalDirection, m_VerticalDirection, m_simulateTime, m_horizontalSpeed, m_horizontalAcceleration, m_verticalSpeed, m_verticalAcceleration, b_speedBelowZero);
             offsetPrevious = m_LastPos == simulatedPosition ? m_horizontalSpeed * fixedDeltaTime :Vector3.Distance(m_LastPos,simulatedPosition);
-            lookDirection = m_LastPos == simulatedPosition ? m_HorizontalDirection : m_LastPos - simulatedPosition;
+            lookDirection = m_LastPos == simulatedPosition ? m_HorizontalDirection : simulatedPosition - m_LastPos;
             m_LastPos = simulatedPosition;
             m_simulateTime += fixedDeltaTime;
             return simulatedPosition;

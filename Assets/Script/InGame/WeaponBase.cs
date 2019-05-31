@@ -20,7 +20,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         tf_Muzzle = transform.Find("Muzzle");
         m_WeaponInfo = weaponInfo;
         I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
-        m_Assist = new WeaponAimAssist(tf_Muzzle,32,GameConst.I_NormalBulletLastTime,weaponInfo);
+        m_Assist = new WeaponAimAssist(tf_Muzzle,GameConst.I_AimAssistCurveCount,GameConst.I_NormalBulletLastTime,weaponInfo);
         switch (weaponInfo.m_TriggerType)
         {
             default: Debug.LogError("Add More Convertions Here:" + weaponInfo.m_TriggerType.ToString()); m_Trigger = new TriggerSingle(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, CheckCanAction, SetActionPause, CheckCanAutoReload); break;
@@ -156,16 +156,15 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
             {
                 Vector3 lookDirection;float offset;
                 Vector3 currentPosition = m_Simulator.Simulate(simulateDelta, out lookDirection, out offset);
-                m_CurvePoints.Add(currentPosition);
                 RaycastHit hit;
                 if (Physics.Raycast(currentPosition, lookDirection, out hit, offset,GameLayer.Physics.I_Static))
                 {
-                    m_CurvePoints.Remove(currentPosition);
                     m_CurvePoints.Add(hit.point);
                     tf_Dot.SetActivate(true);
-                    tf_Dot.position = hit.point-lookDirection*.2f;
+                    tf_Dot.position = hit.point;
                     break;
                 }
+                m_CurvePoints.Add(currentPosition);
             }
             m_lineRenderer.positionCount = m_CurvePoints.Count;
             m_lineRenderer.SetPositions(m_CurvePoints.ToArray());
