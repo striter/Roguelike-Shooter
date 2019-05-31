@@ -156,7 +156,7 @@ public class LevelBase : MonoBehaviour {
 
     public Vector3 RandomEmptyTilePosition(System.Random seed)
     {
-        return m_AllTiles[m_IndexEmpty.RandomItem(seed)].m_Offset + transform.position;
+        return transform.TransformPoint(m_AllTiles[m_IndexEmpty.RandomItem(seed)].m_Offset );
     }
     #endregion
     #region Gizmos For Test
