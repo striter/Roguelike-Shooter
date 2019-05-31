@@ -15,7 +15,7 @@ namespace GameSetting
         public const int I_BoltMaxLastTime = 10;    //Last Time Of Ammo/Bolt
         public const int I_LaserMaxLastTime = 5;    //Longest Last Time Of Ammo/Laser
 
-        public const int I_AimAssistCurveCount = 128;        //Aim Assits Curve Cost   More = Better Visual Performance But Costs  64 is Suggested
+        public const int I_AimAssistCurveCount = 64;        //Aim Assits Curve Cost   More = Better Visual Performance But Costs  64 is Suggested
 
         public const int I_RocketBlastRadius = 5;        //Meter
         public const float F_LaserRayStartPause = .5f;      //Laser Start Pause
@@ -320,13 +320,13 @@ namespace GameSetting
 
     class AccelerationSimulator
     {
-        float m_simulateTime;
-        Vector3 m_startPos, m_LastPos;
+        protected float m_simulateTime;
+        protected Vector3 m_startPos, m_LastPos;
+        protected Vector3 m_HorizontalDirection, m_VerticalDirection;
         float m_horizontalSpeed;
         float m_horizontalAcceleration;
         float m_verticalSpeed;
         float m_verticalAcceleration;
-        Vector3 m_HorizontalDirection, m_VerticalDirection;
         bool b_speedBelowZero;
         public AccelerationSimulator(Vector3 startPos, Vector3 horizontalDirection, Vector3 verticalDirection, float horizontalSpeed, float horizontalAcceleration, float verticalSpeed, float verticalAcceleration,bool speedBelowZero=true)
         {
@@ -341,28 +341,17 @@ namespace GameSetting
             m_verticalAcceleration = verticalAcceleration;
             b_speedBelowZero = speedBelowZero;
         }
-        public void WeaponAssistReset(Vector3 startPos ,Vector3 horizontalDirection)
+        public Vector3 Simulate(float timeElapsed)
         {
-            m_startPos = startPos;
-            m_LastPos = startPos;
-            m_HorizontalDirection = horizontalDirection;
-            m_simulateTime = 0f;
-        }
-        public Vector3 Simulate(float fixedDeltaTime, out Vector3 lookDirection)
-        {
-            Vector3 simulatedPosition = GetSimulatedPosition(m_startPos, m_HorizontalDirection, m_VerticalDirection, m_simulateTime, m_horizontalSpeed, m_horizontalAcceleration, m_verticalSpeed, m_verticalAcceleration, b_speedBelowZero);
-            lookDirection = m_LastPos == simulatedPosition ? m_HorizontalDirection : simulatedPosition - m_LastPos;
-            m_LastPos = simulatedPosition;
-            m_simulateTime += fixedDeltaTime;
+            Vector3 simulatedPosition = GetSimulatedPosition(m_startPos, m_HorizontalDirection, m_VerticalDirection, timeElapsed, m_horizontalSpeed, m_horizontalAcceleration, m_verticalSpeed, m_verticalAcceleration, b_speedBelowZero);
             return simulatedPosition;
         }
-        public Vector3 Simulate(float fixedDeltaTime, out Vector3 lookDirection, out float offsetPrevious)
+        public Vector3 Simulate(float fixedTime, out Vector3 lookDirection)
         {
             Vector3 simulatedPosition = GetSimulatedPosition(m_startPos, m_HorizontalDirection, m_VerticalDirection, m_simulateTime, m_horizontalSpeed, m_horizontalAcceleration, m_verticalSpeed, m_verticalAcceleration, b_speedBelowZero);
-            offsetPrevious = m_LastPos == simulatedPosition ? m_horizontalSpeed * fixedDeltaTime :Vector3.Distance(m_LastPos,simulatedPosition);
             lookDirection = m_LastPos == simulatedPosition ? m_HorizontalDirection : simulatedPosition - m_LastPos;
             m_LastPos = simulatedPosition;
-            m_simulateTime += fixedDeltaTime;
+            m_simulateTime += fixedTime;
             return simulatedPosition;
         }
         public static Vector3 GetSimulatedPosition(Vector3 startPos, Vector3 horizontalDirection,Vector3 verticalDirection, float elapsedTime, float horizontalSpeed, float horizontalAcceleration, float verticalSpeed, float verticalAcceleration,bool canHorizontalSpeedBelowZero=true)      
@@ -382,6 +371,31 @@ namespace GameSetting
 
             Vector3 targetPos = startPos + horizontalShift + verticalShift;
             return targetPos;
+        }
+    }
+
+    class AimAssistSimulator : AccelerationSimulator
+    {
+        float m_simulateDelta;
+        public AimAssistSimulator(float _simulateDelta,Vector3 startPos, Vector3 horizontalDirection, Vector3 verticalDirection, float horizontalSpeed, float horizontalAcceleration, float verticalSpeed, float verticalAcceleration, bool speedBelowZero = true):base(startPos,horizontalDirection,verticalDirection,horizontalSpeed,horizontalAcceleration,verticalSpeed,verticalAcceleration,speedBelowZero)
+        {
+            m_simulateDelta = _simulateDelta;
+        }
+        public void ResetSimulator(Vector3 startPos, Vector3 horizontalDirection)
+        {
+            m_startPos = startPos;
+            m_LastPos = startPos;
+            m_HorizontalDirection = horizontalDirection;
+            m_simulateTime = 0f;
+        }
+        public Vector3 Next(out Vector3 directionNext,out float offsetNext)
+        {
+            Vector3 curPos = Simulate(m_simulateTime);
+            Vector3 nextPos = Simulate(m_simulateTime+m_simulateDelta);
+            directionNext =  nextPos- curPos;
+            offsetNext = Vector3.Distance( curPos,nextPos);
+            m_simulateTime += m_simulateDelta;
+            return curPos;
         }
     }
     #region BigmapTile

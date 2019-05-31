@@ -132,10 +132,9 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         Transform transform;
         Transform tf_Dot;
         LineRenderer m_lineRenderer;
-        AccelerationSimulator m_Simulator;
+        AimAssistSimulator m_Simulator;
         int m_CurveCount;
         List<Vector3> m_CurvePoints = new List<Vector3>();
-        float simulateDelta;
         public WeaponAimAssist(Transform muzzle, int _curveCount,float duration,SWeapon weaponInfo)
         {
             transform = muzzle;
@@ -143,19 +142,19 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
             m_lineRenderer = muzzle.GetComponent<LineRenderer>();
             m_lineRenderer.positionCount = _curveCount;
             m_CurveCount = _curveCount;
-            m_Simulator = new AccelerationSimulator(muzzle.position, muzzle.forward, Vector3.down, weaponInfo.m_HorizontalSpeed, -weaponInfo.m_HorizontalDrag, 0, weaponInfo.m_VerticalAcceleration, false);
-            simulateDelta = duration / _curveCount;
+            m_Simulator = new AimAssistSimulator(duration / _curveCount,muzzle.position, muzzle.forward, Vector3.down, weaponInfo.m_HorizontalSpeed, -weaponInfo.m_HorizontalDrag, 0, weaponInfo.m_VerticalAcceleration, false);
+            ;
         }
         public void Simulate()
         {
-            m_Simulator.WeaponAssistReset(transform.position,transform.forward);
+            m_Simulator.ResetSimulator(transform.position,transform.forward);
             m_CurvePoints.Clear();
             m_CurvePoints.Add(transform.position);
             tf_Dot.SetActivate(false);
             for (int i = 0; i < m_CurveCount; i++)
             {
                 Vector3 lookDirection;float offset;
-                Vector3 currentPosition = m_Simulator.Simulate(simulateDelta, out lookDirection, out offset);
+                Vector3 currentPosition = m_Simulator.Next(out lookDirection, out offset);
                 RaycastHit hit;
                 if (Physics.Raycast(currentPosition, lookDirection, out hit, offset,GameLayer.Physics.I_Static))
                 {
