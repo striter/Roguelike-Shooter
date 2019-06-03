@@ -11,6 +11,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
     public static SBigmapLevelInfo m_currentLevel { get; private set; }
     public SBigmapLevelInfo[,] m_MapLevelInfo { get; private set; }
     protected NavMeshDataInstance m_NavMeshData;
+    public System.Random m_mainSeed;
     protected override void Awake()
     {
         base.Awake();
@@ -26,7 +27,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         TBroadCaster<enum_BC_GameStatusChanged>.Remove(enum_BC_GameStatusChanged.OnStageStart, OnStageStart);
         TBroadCaster<enum_BC_GameStatusChanged>.Remove(enum_BC_GameStatusChanged.OnLevelFinish, OnLevelFinished);
     }
-    public void GenerateEnviorment(enum_LevelStyle _LevelStyle,string seed="")
+    public void GenerateAllEnviorment(enum_LevelStyle _LevelStyle,string seed="")
     {
         m_StyleCurrent = _LevelStyle;
         m_MapLevelInfo= GenerateBigmapLevels(m_StyleCurrent,seed,tf_LevelParent,6,5,new TileAxis(2,2));
@@ -89,7 +90,10 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         TBroadCaster<enum_BC_UIStatusChanged>.Trigger(enum_BC_UIStatusChanged.PlayerLevelStatusChanged, m_MapLevelInfo, m_currentLevel.m_TileAxis);
     }
 
-
+    public Vector3 RandomEmptyAxis()
+    {
+        return m_currentLevel.m_Level.RandomEmptyTilePosition(m_mainSeed);
+    }
     #endregion
     #region BigMap
     public static SBigmapLevelInfo[,] GenerateBigmapLevels(enum_LevelStyle _levelStyle,string bigMapSeed,Transform _generateParent,int _bigmapWidth, int _bigmapHeight,TileAxis startAxis)

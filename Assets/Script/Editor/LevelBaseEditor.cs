@@ -15,7 +15,6 @@ public class LevelBaseEditor : Editor
     }
     public override void OnInspectorGUI()
     {
-        serializedObject.Update();
 
         levelTarget = target as LevelBase;
         base.OnInspectorGUI();

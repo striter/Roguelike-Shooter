@@ -48,7 +48,7 @@ public class GameManager : SingletonMono<GameManager>
     }
     void PreInit()      //PreInit Bigmap , Levels LocalPlayer Before  Start The game
     {
-        EnviormentManager.Instance.GenerateEnviorment(E_TESTSTYLE);
+        EnviormentManager.Instance.GenerateAllEnviorment(E_TESTSTYLE);
         GC.Collect();
         m_LocalPlayer = ObjectManager.SpawnEntity(enum_Entity.Player);
     }
@@ -59,8 +59,9 @@ public class GameManager : SingletonMono<GameManager>
         B_Battling = true;
         m_LocalPlayer.transform.position = levelStartPos;
         //Generate All Enermy To Be Continued,
-        OnLevelFinished();        //Test
+       // OnLevelFinished();        //Test
     }
+
     //Call Enviorment Manager To Generate Portals Or Show Bigmaps, Then Go Back To OnLevelChange From Enviorment Manager
     void OnLevelFinished()
     {

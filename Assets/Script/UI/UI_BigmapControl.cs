@@ -25,14 +25,27 @@ public class UI_BigmapControl : UIPageBase {        //This Page Won't Hide(One P
         rtf_MinimapTrans = tf_Container.Find("MinimapTrans").GetComponent<RectTransform>();
         rtf_BigmapTrans = tf_Container.Find("BigmapTrans").GetComponent<RectTransform>();
         SwitchMapmode(false,false);
+        TBroadCaster<enum_BC_GameStatusChanged>.Add(enum_BC_GameStatusChanged.OnLevelStart, OnLevelStart);
+        TBroadCaster<enum_BC_GameStatusChanged>.Add(enum_BC_GameStatusChanged.OnLevelFinish, OnLevelFinish);
         TBroadCaster<enum_BC_UIStatusChanged>.Add<SBigmapLevelInfo[,], TileAxis>(enum_BC_UIStatusChanged.PlayerLevelStatusChanged, OnLevelStatusChanged);
     }
 
     protected override void OnDestroy()
     {
         base.OnDestroy();
+        TBroadCaster<enum_BC_GameStatusChanged>.Remove(enum_BC_GameStatusChanged.OnLevelStart, OnLevelStart);
+        TBroadCaster<enum_BC_GameStatusChanged>.Remove(enum_BC_GameStatusChanged.OnLevelFinish, OnLevelFinish);
         TBroadCaster<enum_BC_UIStatusChanged>.Remove<SBigmapLevelInfo[,], TileAxis>(enum_BC_UIStatusChanged.PlayerLevelStatusChanged, OnLevelStatusChanged);
     }
+    void OnLevelStart()
+    {
+        this.SetActivate(false);
+    }
+    void OnLevelFinish()
+    {
+        this.SetActivate(true);
+    }
+
     protected void OnBigmapBtnClick()
     {
         SwitchMapmode(true);
