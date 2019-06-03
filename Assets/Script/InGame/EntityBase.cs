@@ -15,6 +15,7 @@ public class EntityBase : MonoBehaviour,ISingleCoroutine
     public bool B_IsPlayer => m_EntityInfo.m_Type == enum_Entity.Player;
     public float F_TotalHealth => m_EntityInfo.m_MaxArmor + m_EntityInfo.m_MaxHealth;
     private float f_ArmorRegenCheck;
+    protected EntityBase m_Target;
     public virtual void Init(int id,SEntity entityInfo)
     {
         I_EntityID = id;
@@ -79,6 +80,11 @@ public class EntityBase : MonoBehaviour,ISingleCoroutine
         }
 
         return true;
+    }
+
+    public void SetTarget(EntityBase target)
+    {
+        m_Target = target;
     }
 
     protected virtual void OnCostMana(float manaCost)

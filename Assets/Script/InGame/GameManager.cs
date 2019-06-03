@@ -169,7 +169,7 @@ public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
         int curSpawnCount = 0;
         for (; ; )
         {
-            ObjectManager.SpawnEntity(type,EnviormentManager.m_currentLevel.m_Level.RandomEmptyTilePosition(m_GameSeed));
+            ObjectManager.SpawnEntity(type,EnviormentManager.m_currentLevel.m_Level.RandomEmptyTilePosition(m_GameSeed)).SetTarget(m_LocalPlayer);
             m_WaveCurrentEntity++;
             curSpawnCount++;
             if (curSpawnCount >= totalCount)
@@ -243,7 +243,7 @@ public static class ObjectManager
     {
         EntityBase entity= ObjectPoolManager<enum_Entity, EntityBase>.Spawn(type, TF_Entity);
         entity.Init(GameExpression.I_EntityID(i_entityIndex++,type== enum_Entity.Player ), ExcelManager.GetEntityGenerateProperties(type));
-         entity.transform.position = toPosition;
+        entity.transform.position = toPosition;
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnSpawnEntity, entity);
         return entity;
     }
