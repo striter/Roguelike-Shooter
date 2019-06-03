@@ -21,7 +21,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         tf_Muzzle = transform.Find("Muzzle");
         m_WeaponInfo = weaponInfo;
         I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
-        m_Assist = new WeaponAimAssist(tf_Muzzle,GameConst.I_AimAssistCurveCount,GameConst.I_NormalBulletLastTime,weaponInfo);
+        m_Assist = new WeaponAimAssist(transform, GameConst.I_AimAssistCurveCount,GameConst.I_NormalBulletLastTime,weaponInfo);
         switch (weaponInfo.m_TriggerType)
         {
             default: Debug.LogError("Add More Convertions Here:" + weaponInfo.m_TriggerType.ToString()); m_Trigger = new TriggerSingle(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, CheckCanAction, SetActionPause, CheckCanAutoReload); break;
@@ -95,8 +95,8 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         I_AmmoLeft--;
         for (int i = 0; i < m_WeaponInfo.m_PelletsPerShot; i++)
         {
-            Vector3 bulletDirection = Vector3.Normalize(tf_Muzzle.transform.forward*GameConst.I_BulletSpeadAtDistance+UnityEngine.Random.Range(-1f,1f)*tf_Muzzle.up*m_WeaponInfo.m_Spread+ UnityEngine.Random.Range(-1f, 1f) * tf_Muzzle.right * m_WeaponInfo.m_Spread);
-            (ObjectManager.SpawnSFX(m_WeaponInfo.m_BulletType.ToSFXType(), tf_Muzzle) as SFXBullet).Play(I_AttacherID,m_WeaponInfo.m_Damage, bulletDirection, m_WeaponInfo.m_HorizontalSpeed,m_WeaponInfo.m_HorizontalDrag,m_WeaponInfo.m_VerticalAcceleration);
+            Vector3 bulletDirection = Vector3.Normalize(transform.forward*GameConst.I_BulletSpeadAtDistance+UnityEngine.Random.Range(-1f,1f)* transform.up*m_WeaponInfo.m_Spread+ UnityEngine.Random.Range(-1f, 1f) * transform.right * m_WeaponInfo.m_Spread);
+            (ObjectManager.SpawnSFX(m_WeaponInfo.m_BulletType.ToSFXType(), transform) as SFXBullet).Play(I_AttacherID,m_WeaponInfo.m_Damage, bulletDirection, m_WeaponInfo.m_HorizontalSpeed,m_WeaponInfo.m_HorizontalDrag,m_WeaponInfo.m_VerticalAcceleration);
         }
         OnRecoil?.Invoke(m_WeaponInfo.m_RecoilPerShot);
         OnAmmoChangeCostMana?.Invoke(m_WeaponInfo.m_ManaCost);
