@@ -143,12 +143,15 @@ namespace GameSetting
         Invalid=-1,
         OnSpawnEntity,
         OnRecycleEntity,
-
-        OnGameStart,
-        OnStageStart,
-        OnLevelStart,
-        OnLevelFinish,        //All Opposing Entity Dead
+        
+        OnStageStart,       //Total Stage Start
         OnStageFinish,
+        OnLevelStart,       //Change Between Each Level
+        OnLevelFinish,
+        OnBattleStart,      //Battle Against Entity
+        OnBattleFinish,        
+        OnWaveStart,     //Battle Wave
+        OnWaveFinish,
     }
     #endregion
     #region GameEnum
@@ -177,6 +180,7 @@ namespace GameSetting
         Player = 1,
         //Enermy
         Dummy = 2,
+        DummyJumping=3,
     }
 
     public enum enum_SFX        //Preset For SFX
@@ -374,22 +378,19 @@ namespace GameSetting
     public class SBigmapLevelInfo : SBigmapTileInfo
     {
         protected Transform m_LevelParent;
-        public System.Random m_LevelSeed { get; private set; } = null;
         public LevelBase m_Level { get; private set; } = null;
         public SBigmapLevelInfo(SBigmapTileInfo tile) : base(tile.m_TileAxis, tile.m_TileType, tile.m_TileStyle,tile.m_TileLocking)
         {
             m_Connections = tile.m_Connections;
         }
-        public void GenerateMap(Transform _levelParent, LevelBase _levelPrefab, LevelItemBase[] _levelItemPrefabs, string _levelSeed,System.Random mainSeed)
+        public void GenerateMap(Transform _levelParent, LevelBase _levelPrefab, LevelItemBase[] _levelItemPrefabs,System.Random seed)
         {
             m_LevelParent = _levelParent;
-            m_LevelSeed = new System.Random(_levelSeed.GetHashCode());
-
             m_Level = GameObject.Instantiate(_levelPrefab, _levelParent);
-            m_Level.transform.localRotation = Quaternion.Euler(0, mainSeed.Next(360), 0);
+            m_Level.transform.localRotation = Quaternion.Euler(0, seed.Next(360), 0);
             m_Level.transform.localPosition = Vector3.zero;
             m_Level.transform.localScale = Vector3.one;
-            m_Level.Init(TResources.GetLevelData(_levelPrefab.name),ExcelManager.GetLevelGenerateProperties(m_TileStyle,_levelPrefab.E_PrefabType), _levelItemPrefabs, m_TileType, m_LevelSeed, m_Connections.Keys.ToList().Find(p=>m_Connections[p]==new TileAxis(-1,-1)));        //Add Portal For Level End
+            m_Level.Init(TResources.GetLevelData(_levelPrefab.name),ExcelManager.GetLevelGenerateProperties(m_TileStyle,_levelPrefab.E_PrefabType), _levelItemPrefabs, m_TileType, seed, m_Connections.Keys.ToList().Find(p=>m_Connections[p]==new TileAxis(-1,-1)));        //Add Portal For Level End
             m_Level.SetActivate(false);
         }
     }

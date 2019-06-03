@@ -25,23 +25,24 @@ public class UI_BigmapControl : UIPageBase {        //This Page Won't Hide(One P
         rtf_MinimapTrans = tf_Container.Find("MinimapTrans").GetComponent<RectTransform>();
         rtf_BigmapTrans = tf_Container.Find("BigmapTrans").GetComponent<RectTransform>();
         SwitchMapmode(false,false);
-        TBroadCaster<enum_BC_GameStatusChanged>.Add(enum_BC_GameStatusChanged.OnLevelStart, OnLevelStart);
-        TBroadCaster<enum_BC_GameStatusChanged>.Add(enum_BC_GameStatusChanged.OnLevelFinish, OnLevelFinish);
+        TBroadCaster<enum_BC_GameStatusChanged>.Add(enum_BC_GameStatusChanged.OnBattleStart, OnBattleStart);
+        TBroadCaster<enum_BC_GameStatusChanged>.Add(enum_BC_GameStatusChanged.OnBattleFinish, OnBattleFinish);
         TBroadCaster<enum_BC_UIStatusChanged>.Add<SBigmapLevelInfo[,], TileAxis>(enum_BC_UIStatusChanged.PlayerLevelStatusChanged, OnLevelStatusChanged);
     }
 
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        TBroadCaster<enum_BC_GameStatusChanged>.Remove(enum_BC_GameStatusChanged.OnLevelStart, OnLevelStart);
-        TBroadCaster<enum_BC_GameStatusChanged>.Remove(enum_BC_GameStatusChanged.OnLevelFinish, OnLevelFinish);
+        TBroadCaster<enum_BC_GameStatusChanged>.Remove(enum_BC_GameStatusChanged.OnBattleStart, OnBattleStart);
+        TBroadCaster<enum_BC_GameStatusChanged>.Remove(enum_BC_GameStatusChanged.OnBattleFinish, OnBattleFinish);
         TBroadCaster<enum_BC_UIStatusChanged>.Remove<SBigmapLevelInfo[,], TileAxis>(enum_BC_UIStatusChanged.PlayerLevelStatusChanged, OnLevelStatusChanged);
     }
-    void OnLevelStart()
+    void OnBattleStart()
     {
+        SwitchMapmode(false);
         this.SetActivate(false);
     }
-    void OnLevelFinish()
+    void OnBattleFinish()
     {
         this.SetActivate(true);
     }
@@ -54,7 +55,7 @@ public class UI_BigmapControl : UIPageBase {        //This Page Won't Hide(One P
     {
         SwitchMapmode(false);
     }
-    void SwitchMapmode(bool isBigmapMode,bool useAnim=true)
+    void SwitchMapmode(bool isBigmapMode,bool useAnim=true)     //useAnim To Be Continued
     {
         B_IsBigmapMode = isBigmapMode;
         img_BigmapRaycast.raycastTarget = !B_IsBigmapMode;

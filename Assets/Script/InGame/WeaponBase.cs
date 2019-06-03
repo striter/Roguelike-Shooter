@@ -114,7 +114,6 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
     }
     void OnReloadFinished()
     {
-        Debug.Log("Reload");
         B_Reloading = false;
         I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
         OnAmmoChangeCostMana?.Invoke(0f);
@@ -156,7 +155,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
                 Vector3 lookDirection;float offset;
                 Vector3 currentPosition = m_Simulator.Next(out lookDirection, out offset);
                 RaycastHit hit;
-                if (Physics.Raycast(currentPosition, lookDirection, out hit, offset,GameLayer.Physics.I_Static))
+                if (Physics.Raycast(currentPosition, lookDirection, out hit, offset,GameLayer.Physics.I_AimAssist))
                 {
                     m_CurvePoints.Add(hit.point);
                     tf_Dot.SetActivate(true);

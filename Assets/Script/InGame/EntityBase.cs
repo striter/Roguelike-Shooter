@@ -26,6 +26,9 @@ public class EntityBase : MonoBehaviour,ISingleCoroutine
         m_CurrentHealth = m_EntityInfo.m_MaxHealth;
         m_CurrentArmor = m_EntityInfo.m_MaxArmor;
         m_CurrentMana = m_EntityInfo.m_MaxMana;
+        TCommon.Traversal(m_Renderers, (Renderer renderer) => {
+            renderer.material.SetColor("_Color", Color.white);
+        });
     }
     protected virtual void Start()
     {

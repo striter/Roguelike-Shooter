@@ -13,6 +13,6 @@ public class SpawnerEntity : SpawnerBase {
             return;
         }
 
-        ObjectManager.SpawnEntity(E_SpawnType,transform);
+        ObjectManager.SpawnEntity(E_SpawnType,transform.position);
     }
 }
