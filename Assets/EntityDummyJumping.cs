@@ -9,6 +9,7 @@ public class EntityDummyJumping : EntityBase {
     {
         base.Init(id, entityInfo);
         rb_current = GetComponent<Rigidbody>();
+        rb_current.velocity = Vector3.zero;
     }
     float jumpCheck;
     protected override void Update()
