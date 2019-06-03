@@ -32,10 +32,10 @@ namespace TPhysics
             Vector3 simulatedPosition = GetSimulatedPosition(m_startPos, m_HorizontalDirection, m_VerticalDirection, timeElapsed, m_horizontalSpeed, m_horizontalAcceleration, m_verticalSpeed, m_verticalAcceleration, b_speedBelowZero);
             return simulatedPosition;
         }
-        public Vector3 Simulate(float fixedTime, out Vector3 lookDirection)
+        public Vector3 Simulate(float fixedTime, out Vector3 lastPosition)
         {
             Vector3 simulatedPosition = GetSimulatedPosition(m_startPos, m_HorizontalDirection, m_VerticalDirection, m_simulateTime, m_horizontalSpeed, m_horizontalAcceleration, m_verticalSpeed, m_verticalAcceleration, b_speedBelowZero);
-            lookDirection = m_LastPos == simulatedPosition ? m_HorizontalDirection : simulatedPosition - m_LastPos;
+            lastPosition = m_LastPos;
             m_LastPos = simulatedPosition;
             m_simulateTime += fixedTime;
             return simulatedPosition;
