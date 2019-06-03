@@ -51,7 +51,7 @@ public class UIManager : SingletonMono<UIManager> {
         txt_Pitch.text = ((int)player.m_Pitch).ToString();
         rtf_Pitch.anchoredPosition = new Vector2(0, (player.m_Pitch / 45f) * 900);
          
-        txt_Main.text = player.b_Interacting ? "Interact" : "Fire";
+        txt_Main.text = player.B_Interacting ? "Interact" : "Fire";
     }
 
 }

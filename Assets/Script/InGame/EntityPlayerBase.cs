@@ -15,7 +15,7 @@ public class EntityPlayerBase : EntityBase {
 
     public WeaponBase m_WeaponCurrent { get; private set; } = null;
 
-    public bool b_Interacting => m_InteractTarget != null;
+    public bool B_Interacting => m_InteractTarget != null;
     public InteractBase m_InteractTarget { get; private set; }
 
     public override void Init(int entityID,SEntity entityInfo)

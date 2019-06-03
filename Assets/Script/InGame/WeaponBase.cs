@@ -6,6 +6,7 @@ using System.Collections.Generic;
 public class WeaponBase : MonoBehaviour,ISingleCoroutine {
     public int I_AttacherID { get; private set; }
     public SWeapon m_WeaponInfo { get; private set; }
+    public bool B_CanFire { get; private set; } = false;
     public bool B_Reloading { get; private set; }
     public int I_AmmoLeft { get; private set; }
     float f_actionCheck=0;
@@ -39,9 +40,18 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
     protected void Update()
     {
         if(m_Trigger!=null)
-        m_Trigger.Tick(Time.deltaTime);
+            m_Trigger.Tick(Time.deltaTime);
 
-        m_Assist.Simulate();
+        CheckCanFire();
+
+        m_Assist.Simulate(B_CanFire);
+    }
+    void CheckCanFire()
+    {
+
+        B_CanFire = !Physics.Raycast(transform.position, transform.forward, 1f, GameLayer.Physics.I_Static);
+        if (m_Trigger!=null&&!B_CanFire)
+            m_Trigger.OnSetTrigger(false);
     }
     protected virtual void OnDisable()
     {
@@ -70,7 +80,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
     }
     public bool Trigger(bool down)
     {
-        if (B_Reloading)
+        if (B_Reloading||!B_CanFire)
             return false;
         if (!B_HaveAmmoLeft)
             return false;
@@ -144,8 +154,12 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
             m_Simulator = new AimAssistSimulator(duration / _curveCount,muzzle.position, muzzle.forward, Vector3.down, weaponInfo.m_HorizontalSpeed, -weaponInfo.m_HorizontalDrag, 0, weaponInfo.m_VerticalAcceleration, false);
             ;
         }
-        public void Simulate()
+        public void Simulate(bool activate)
         {
+            m_lineRenderer.enabled = activate;
+            tf_Dot.SetActivate(activate);
+            if (!activate)
+                return;
             m_Simulator.ResetSimulator(transform.position,transform.forward);
             m_CurvePoints.Clear();
             m_CurvePoints.Add(transform.position);
