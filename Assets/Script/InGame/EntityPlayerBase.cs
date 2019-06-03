@@ -125,7 +125,7 @@ public class EntityPlayerBase : EntityBase {
     void OnRotateDelta(Vector2 rotateDelta)
     {
         m_Pitch += (rotateDelta.y/Screen.height)*90f;
-        m_Pitch = Mathf.Clamp(m_Pitch, 25, 25);
+        m_Pitch = Mathf.Clamp(m_Pitch, 0, 0);
         rotateDelta.y = 0;
         rotateDelta.x = (rotateDelta.x / Screen.width) * 180f;
         CameraController.Instance.RotateCamera(rotateDelta);
@@ -147,7 +147,7 @@ public class EntityPlayerBase : EntityBase {
     public void AddRecoil(Vector2 recoil)
     {
         m_Pitch += recoil.y;
-        m_Pitch = Mathf.Clamp(m_Pitch, 25, 25);
+        m_Pitch = Mathf.Clamp(m_Pitch, 0, 0);
         OnRotateDelta(new Vector2(Random.Range(-1f,1f)>0?1f:-1f *recoil.x,0));
     }
     #endregion
