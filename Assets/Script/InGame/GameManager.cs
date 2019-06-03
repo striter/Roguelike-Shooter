@@ -147,14 +147,16 @@ public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
     }
     void OnWaveEntityDead(EntityBase entity)
     {
-        if (!B_Battling||B_WaveEntityGenerating)
+        if (!B_Battling)
             return;
         if (!entity.B_IsPlayer)
-        {
             m_WaveCurrentEntity--;
-            if (m_WaveCurrentEntity<=0||(m_CurrentWave <= m_WaveCount && m_WaveCurrentEntity < 2))
-                WaveFinished();
-        }
+
+        if (B_WaveEntityGenerating)
+            return;
+
+        if (m_WaveCurrentEntity <= 0 || (m_CurrentWave < m_WaveCount && m_WaveCurrentEntity <= 2))
+            WaveFinished();
     }
     void OnBattleFinished()
     {
