@@ -41,17 +41,8 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
     {
         if(m_Trigger!=null)
             m_Trigger.Tick(Time.deltaTime);
-
-        CheckCanFire();
-
+        
         m_Assist.Simulate(B_CanFire);
-    }
-    void CheckCanFire()
-    {
-
-        B_CanFire = !Physics.Raycast(transform.position, transform.forward, 1f, GameLayer.Physics.I_Static);
-        if (m_Trigger!=null&&!B_CanFire)
-            m_Trigger.OnSetTrigger(false);
     }
     protected virtual void OnDisable()
     {
@@ -90,6 +81,12 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         return true;
     }
 
+    public void SetCanFire(bool _canFire)
+    {
+        B_CanFire = _canFire;
+        if (m_Trigger != null && !B_CanFire)
+            m_Trigger.OnSetTrigger(false);
+    }
     protected virtual bool FireOnce()
     {
         if (!B_HaveAmmoLeft)

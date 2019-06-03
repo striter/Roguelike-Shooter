@@ -9,6 +9,8 @@ public class EntityPlayerBase : EntityBase {
     public float m_Coins { get; private set; } = 0;
     public float m_Pitch { get; private set; } = 0;
 
+    public bool B_CanFire { get; private set; } = false;
+
     protected CharacterController m_CharacterController;
     protected Transform tf_WeaponHold;
     protected List<WeaponBase> m_WeaponObtained=new List<WeaponBase>();
@@ -137,6 +139,7 @@ public class EntityPlayerBase : EntityBase {
     protected override void Update()
     {
         base.Update();
+        m_WeaponCurrent.SetCanFire(!Physics.SphereCast(new Ray(tf_WeaponHold.position, tf_WeaponHold.forward), .3f,1f   , GameLayer.Physics.I_Static));
         tf_WeaponHold.localRotation = Quaternion.Euler(-m_Pitch,0,0);
         transform.rotation = Quaternion.Lerp(transform.rotation,CameraController.CameraXZRotation,.1f);
         Vector3 direction = (transform.right * m_MoveDelta.x + transform.forward * m_MoveDelta.y).normalized +Vector3.down*.98f;

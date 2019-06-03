@@ -38,8 +38,8 @@ GameObject:
   - component: {fileID: 4225418196160076}
   - component: {fileID: 135745297425531104}
   - component: {fileID: 114177019751987718}
-  - component: {fileID: 114483758984181742}
   - component: {fileID: 54009933032381536}
+  - component: {fileID: 114952088847005054}
   m_Layer: 0
   m_Name: DummyJumping
   m_TagString: Untagged
@@ -170,7 +170,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2091396369435d24bad4838db15bbe09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114483758984181742
+--- !u!114 &114952088847005054
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -178,7 +178,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1559746859530924}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc726c8fe05b11e4baf1ddc63265b7d7, type: 3}
+  m_Script: {fileID: 11500000, guid: f4e1f8a8673d9574bb88f3dd8cdbc479, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!135 &135745297425531104
