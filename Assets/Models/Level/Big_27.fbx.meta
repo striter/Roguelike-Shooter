@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: c79e478905ed9e5428b866b483fb32b2
+guid: b154b1ee4900ae14bb853c6ede6c73e5
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
@@ -27,8 +27,7 @@ ModelImporter:
     400018: polySurface24
     400020: polySurface25
     400022: polySurface26
-    2100000: AA
-    2100002: AA32
+    2100000: AA51
     2300000: pDisc40
     2300002: pDisc41
     2300004: pDisc42
