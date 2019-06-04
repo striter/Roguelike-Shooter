@@ -53,8 +53,9 @@ public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
     void PreInit(string _GameSeed="")      //PreInit Bigmap , Levels LocalPlayer Before  Start The game
     {
         if (_GameSeed == "")
-            _GameSeed = DateTime.Now.ToShortDateString();
-            m_GameSeed = new System.Random(_GameSeed.GetHashCode());
+            _GameSeed = DateTime.Now.ToShortTimeString();
+
+        m_GameSeed = new System.Random(_GameSeed.GetHashCode());
         EnviormentManager.Instance.GenerateAllEnviorment(E_TESTSTYLE, m_GameSeed,OnLevelStart);
         GC.Collect();
         m_LocalPlayer = ObjectManager.SpawnEntity(enum_Entity.Player,Vector3.zero);
