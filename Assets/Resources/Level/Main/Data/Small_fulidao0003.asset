@@ -19,534 +19,454 @@ MonoBehaviour:
       m_AxisX: 23
       m_AxisY: 32
     m_Status: 0
-    m_Offset: {x: -18, y: 1, z: 0}
+    m_Offset: {x: -18, y: 2, z: 0}
   - m_TileAxis:
       m_AxisX: 23
       m_AxisY: 33
     m_Status: 0
-    m_Offset: {x: -18, y: 1, z: 2}
+    m_Offset: {x: -18, y: 2, z: 2}
   - m_TileAxis:
       m_AxisX: 24
       m_AxisY: 27
     m_Status: 0
-    m_Offset: {x: -16, y: 0.5, z: -10}
-  - m_TileAxis:
-      m_AxisX: 24
-      m_AxisY: 38
-    m_Status: 0
-    m_Offset: {x: -16, y: 0.5, z: 12}
+    m_Offset: {x: -16, y: 1, z: -10}
   - m_TileAxis:
       m_AxisX: 25
       m_AxisY: 26
     m_Status: 0
-    m_Offset: {x: -14, y: 0.5, z: -12}
-  - m_TileAxis:
-      m_AxisX: 25
-      m_AxisY: 31
-    m_Status: 0
-    m_Offset: {x: -14, y: 1.5, z: -2}
-  - m_TileAxis:
-      m_AxisX: 25
-      m_AxisY: 34
-    m_Status: 0
-    m_Offset: {x: -14, y: 1.5, z: 4}
-  - m_TileAxis:
-      m_AxisX: 25
-      m_AxisY: 35
-    m_Status: 0
-    m_Offset: {x: -14, y: 1.5, z: 6}
-  - m_TileAxis:
-      m_AxisX: 26
-      m_AxisY: 24
-    m_Status: 0
-    m_Offset: {x: -12, y: 0.5, z: -16}
+    m_Offset: {x: -14, y: 1, z: -12}
   - m_TileAxis:
       m_AxisX: 26
       m_AxisY: 29
     m_Status: 0
-    m_Offset: {x: -12, y: 1.5, z: -6}
+    m_Offset: {x: -12, y: 2.9999998, z: -6}
   - m_TileAxis:
       m_AxisX: 27
       m_AxisY: 31
     m_Status: 0
-    m_Offset: {x: -10, y: 1, z: -2}
+    m_Offset: {x: -10, y: 2, z: -2}
   - m_TileAxis:
       m_AxisX: 27
       m_AxisY: 32
     m_Status: 0
-    m_Offset: {x: -10, y: 1, z: 0}
+    m_Offset: {x: -10, y: 2, z: 0}
   - m_TileAxis:
       m_AxisX: 27
       m_AxisY: 33
     m_Status: 0
-    m_Offset: {x: -10, y: 1, z: 2}
+    m_Offset: {x: -10, y: 2, z: 2}
   - m_TileAxis:
       m_AxisX: 27
       m_AxisY: 34
     m_Status: 0
-    m_Offset: {x: -10, y: 1, z: 4}
+    m_Offset: {x: -10, y: 2, z: 4}
   - m_TileAxis:
       m_AxisX: 27
       m_AxisY: 35
     m_Status: 0
-    m_Offset: {x: -10, y: 1, z: 6}
+    m_Offset: {x: -10, y: 2, z: 6}
   - m_TileAxis:
       m_AxisX: 27
       m_AxisY: 38
     m_Status: 0
-    m_Offset: {x: -10, y: 1, z: 12}
+    m_Offset: {x: -10, y: 2.0000002, z: 12}
   - m_TileAxis:
       m_AxisX: 28
       m_AxisY: 30
     m_Status: 0
-    m_Offset: {x: -8, y: 1, z: -4}
+    m_Offset: {x: -8, y: 2, z: -4}
   - m_TileAxis:
       m_AxisX: 28
       m_AxisY: 31
     m_Status: 0
-    m_Offset: {x: -8, y: 1, z: -2}
+    m_Offset: {x: -8, y: 2, z: -2}
   - m_TileAxis:
       m_AxisX: 28
       m_AxisY: 32
     m_Status: 0
-    m_Offset: {x: -8, y: 1, z: 0}
+    m_Offset: {x: -8, y: 2, z: 0}
   - m_TileAxis:
       m_AxisX: 28
       m_AxisY: 33
     m_Status: 0
-    m_Offset: {x: -8, y: 1, z: 2}
+    m_Offset: {x: -8, y: 2, z: 2}
   - m_TileAxis:
       m_AxisX: 28
       m_AxisY: 34
     m_Status: 0
-    m_Offset: {x: -8, y: 1, z: 4}
+    m_Offset: {x: -8, y: 2, z: 4}
   - m_TileAxis:
       m_AxisX: 28
       m_AxisY: 35
     m_Status: 0
-    m_Offset: {x: -8, y: 1, z: 6}
-  - m_TileAxis:
-      m_AxisX: 29
-      m_AxisY: 25
-    m_Status: 0
-    m_Offset: {x: -6, y: 1.5, z: -14}
+    m_Offset: {x: -8, y: 2, z: 6}
   - m_TileAxis:
       m_AxisX: 29
       m_AxisY: 27
     m_Status: 0
-    m_Offset: {x: -6, y: 0.99999994, z: -10}
+    m_Offset: {x: -6, y: 2, z: -10}
   - m_TileAxis:
       m_AxisX: 29
       m_AxisY: 28
     m_Status: 0
-    m_Offset: {x: -6, y: 1, z: -8}
+    m_Offset: {x: -6, y: 2, z: -8}
   - m_TileAxis:
       m_AxisX: 29
       m_AxisY: 29
     m_Status: 0
-    m_Offset: {x: -6, y: 1, z: -6}
+    m_Offset: {x: -6, y: 2, z: -6}
   - m_TileAxis:
       m_AxisX: 29
       m_AxisY: 30
     m_Status: 0
-    m_Offset: {x: -6, y: 1, z: -4}
+    m_Offset: {x: -6, y: 2, z: -4}
   - m_TileAxis:
       m_AxisX: 29
       m_AxisY: 31
     m_Status: 0
-    m_Offset: {x: -6, y: 1, z: -2}
+    m_Offset: {x: -6, y: 2, z: -2}
   - m_TileAxis:
       m_AxisX: 29
       m_AxisY: 32
     m_Status: 0
-    m_Offset: {x: -6, y: 1, z: 0}
+    m_Offset: {x: -6, y: 2, z: 0}
   - m_TileAxis:
       m_AxisX: 29
       m_AxisY: 33
     m_Status: 0
-    m_Offset: {x: -6, y: 1, z: 2}
+    m_Offset: {x: -6, y: 2, z: 2}
   - m_TileAxis:
       m_AxisX: 29
       m_AxisY: 34
     m_Status: 0
-    m_Offset: {x: -6, y: 1, z: 4}
+    m_Offset: {x: -6, y: 2, z: 4}
   - m_TileAxis:
       m_AxisX: 29
       m_AxisY: 35
     m_Status: 0
-    m_Offset: {x: -6, y: 0.99999994, z: 6}
-  - m_TileAxis:
-      m_AxisX: 30
-      m_AxisY: 25
-    m_Status: 0
-    m_Offset: {x: -4, y: 1.5, z: -14}
+    m_Offset: {x: -6, y: 2, z: 6}
   - m_TileAxis:
       m_AxisX: 30
       m_AxisY: 27
     m_Status: 0
-    m_Offset: {x: -4, y: 1, z: -10}
+    m_Offset: {x: -4, y: 2, z: -10}
   - m_TileAxis:
       m_AxisX: 30
       m_AxisY: 28
     m_Status: 0
-    m_Offset: {x: -4, y: 1, z: -8}
+    m_Offset: {x: -4, y: 2, z: -8}
   - m_TileAxis:
       m_AxisX: 30
       m_AxisY: 29
     m_Status: 0
-    m_Offset: {x: -4, y: 0.99999994, z: -6}
+    m_Offset: {x: -4, y: 2, z: -6}
   - m_TileAxis:
       m_AxisX: 30
       m_AxisY: 30
     m_Status: 0
-    m_Offset: {x: -4, y: 1, z: -4}
+    m_Offset: {x: -4, y: 2, z: -4}
   - m_TileAxis:
       m_AxisX: 30
       m_AxisY: 31
     m_Status: 0
-    m_Offset: {x: -4, y: 1, z: -2}
+    m_Offset: {x: -4, y: 2, z: -2}
   - m_TileAxis:
       m_AxisX: 30
       m_AxisY: 32
     m_Status: 0
-    m_Offset: {x: -4, y: 1, z: 0}
+    m_Offset: {x: -4, y: 2, z: 0}
   - m_TileAxis:
       m_AxisX: 30
       m_AxisY: 33
     m_Status: 0
-    m_Offset: {x: -4, y: 1, z: 2}
+    m_Offset: {x: -4, y: 2, z: 2}
   - m_TileAxis:
       m_AxisX: 30
       m_AxisY: 34
     m_Status: 0
-    m_Offset: {x: -4, y: 1, z: 4}
+    m_Offset: {x: -4, y: 2, z: 4}
   - m_TileAxis:
       m_AxisX: 30
       m_AxisY: 35
     m_Status: 0
-    m_Offset: {x: -4, y: 1, z: 6}
+    m_Offset: {x: -4, y: 2, z: 6}
   - m_TileAxis:
       m_AxisX: 30
       m_AxisY: 36
     m_Status: 0
-    m_Offset: {x: -4, y: 1, z: 8}
+    m_Offset: {x: -4, y: 2, z: 8}
   - m_TileAxis:
       m_AxisX: 30
       m_AxisY: 37
     m_Status: 0
-    m_Offset: {x: -4, y: 1, z: 10}
-  - m_TileAxis:
-      m_AxisX: 30
-      m_AxisY: 39
-    m_Status: 0
-    m_Offset: {x: -4, y: 1.5, z: 14}
-  - m_TileAxis:
-      m_AxisX: 31
-      m_AxisY: 25
-    m_Status: 0
-    m_Offset: {x: -2, y: 1.5, z: -14}
+    m_Offset: {x: -4, y: 2, z: 10}
   - m_TileAxis:
       m_AxisX: 31
       m_AxisY: 27
     m_Status: 0
-    m_Offset: {x: -2, y: 1, z: -10}
+    m_Offset: {x: -2, y: 2, z: -10}
   - m_TileAxis:
       m_AxisX: 31
       m_AxisY: 28
     m_Status: 0
-    m_Offset: {x: -2, y: 1, z: -8}
+    m_Offset: {x: -2, y: 2, z: -8}
   - m_TileAxis:
       m_AxisX: 31
       m_AxisY: 29
     m_Status: 0
-    m_Offset: {x: -2, y: 0.99999994, z: -6}
+    m_Offset: {x: -2, y: 2, z: -6}
   - m_TileAxis:
       m_AxisX: 31
       m_AxisY: 30
     m_Status: 0
-    m_Offset: {x: -2, y: 1, z: -4}
+    m_Offset: {x: -2, y: 2, z: -4}
   - m_TileAxis:
       m_AxisX: 31
       m_AxisY: 31
     m_Status: 0
-    m_Offset: {x: -2, y: 1, z: -2}
+    m_Offset: {x: -2, y: 2, z: -2}
   - m_TileAxis:
       m_AxisX: 31
       m_AxisY: 32
     m_Status: 0
-    m_Offset: {x: -2, y: 1, z: 0}
+    m_Offset: {x: -2, y: 2, z: 0}
   - m_TileAxis:
       m_AxisX: 31
       m_AxisY: 33
     m_Status: 0
-    m_Offset: {x: -2, y: 1, z: 2}
+    m_Offset: {x: -2, y: 2, z: 2}
   - m_TileAxis:
       m_AxisX: 31
       m_AxisY: 34
     m_Status: 0
-    m_Offset: {x: -2, y: 1, z: 4}
+    m_Offset: {x: -2, y: 2, z: 4}
   - m_TileAxis:
       m_AxisX: 31
       m_AxisY: 35
     m_Status: 0
-    m_Offset: {x: -2, y: 1, z: 6}
+    m_Offset: {x: -2, y: 2, z: 6}
   - m_TileAxis:
       m_AxisX: 31
       m_AxisY: 36
     m_Status: 0
-    m_Offset: {x: -2, y: 1, z: 8}
+    m_Offset: {x: -2, y: 2, z: 8}
   - m_TileAxis:
       m_AxisX: 31
       m_AxisY: 37
     m_Status: 0
-    m_Offset: {x: -2, y: 1, z: 10}
-  - m_TileAxis:
-      m_AxisX: 31
-      m_AxisY: 39
-    m_Status: 0
-    m_Offset: {x: -2, y: 1.5, z: 14}
-  - m_TileAxis:
-      m_AxisX: 32
-      m_AxisY: 25
-    m_Status: 0
-    m_Offset: {x: 0, y: 1.5, z: -14}
+    m_Offset: {x: -2, y: 1.9999999, z: 10}
   - m_TileAxis:
       m_AxisX: 32
       m_AxisY: 27
     m_Status: 0
-    m_Offset: {x: 0, y: 1, z: -10}
+    m_Offset: {x: 0, y: 2, z: -10}
   - m_TileAxis:
       m_AxisX: 32
       m_AxisY: 28
     m_Status: 0
-    m_Offset: {x: 0, y: 1, z: -8}
+    m_Offset: {x: 0, y: 2, z: -8}
   - m_TileAxis:
       m_AxisX: 32
       m_AxisY: 29
     m_Status: 0
-    m_Offset: {x: 0, y: 1, z: -6}
+    m_Offset: {x: 0, y: 2, z: -6}
   - m_TileAxis:
       m_AxisX: 32
       m_AxisY: 30
     m_Status: 0
-    m_Offset: {x: 0, y: 1, z: -4}
+    m_Offset: {x: 0, y: 2, z: -4}
   - m_TileAxis:
       m_AxisX: 32
       m_AxisY: 31
     m_Status: 0
-    m_Offset: {x: 0, y: 0.99999994, z: -2}
+    m_Offset: {x: 0, y: 2, z: -2}
   - m_TileAxis:
       m_AxisX: 32
       m_AxisY: 32
     m_Status: 0
-    m_Offset: {x: 0, y: 1, z: 0}
+    m_Offset: {x: 0, y: 2, z: 0}
   - m_TileAxis:
       m_AxisX: 32
       m_AxisY: 33
     m_Status: 0
-    m_Offset: {x: 0, y: 1, z: 2}
+    m_Offset: {x: 0, y: 2, z: 2}
   - m_TileAxis:
       m_AxisX: 32
       m_AxisY: 34
     m_Status: 0
-    m_Offset: {x: 0, y: 1, z: 4}
+    m_Offset: {x: 0, y: 2, z: 4}
   - m_TileAxis:
       m_AxisX: 32
       m_AxisY: 35
     m_Status: 0
-    m_Offset: {x: 0, y: 1, z: 6}
+    m_Offset: {x: 0, y: 2, z: 6}
   - m_TileAxis:
       m_AxisX: 32
       m_AxisY: 36
     m_Status: 0
-    m_Offset: {x: 0, y: 0.99999994, z: 8}
-  - m_TileAxis:
-      m_AxisX: 33
-      m_AxisY: 25
-    m_Status: 0
-    m_Offset: {x: 2, y: 1.5, z: -14}
+    m_Offset: {x: 0, y: 2, z: 8}
   - m_TileAxis:
       m_AxisX: 33
       m_AxisY: 27
     m_Status: 0
-    m_Offset: {x: 2, y: 1, z: -10}
+    m_Offset: {x: 2, y: 2, z: -10}
   - m_TileAxis:
       m_AxisX: 33
       m_AxisY: 28
     m_Status: 0
-    m_Offset: {x: 2, y: 1, z: -8}
+    m_Offset: {x: 2, y: 2, z: -8}
   - m_TileAxis:
       m_AxisX: 33
       m_AxisY: 29
     m_Status: 0
-    m_Offset: {x: 2, y: 1, z: -6}
+    m_Offset: {x: 2, y: 2, z: -6}
   - m_TileAxis:
       m_AxisX: 33
       m_AxisY: 30
     m_Status: 0
-    m_Offset: {x: 2, y: 1, z: -4}
+    m_Offset: {x: 2, y: 2, z: -4}
   - m_TileAxis:
       m_AxisX: 33
       m_AxisY: 31
     m_Status: 0
-    m_Offset: {x: 2, y: 1, z: -2}
+    m_Offset: {x: 2, y: 2, z: -2}
   - m_TileAxis:
       m_AxisX: 33
       m_AxisY: 32
     m_Status: 0
-    m_Offset: {x: 2, y: 1, z: 0}
+    m_Offset: {x: 2, y: 2, z: 0}
   - m_TileAxis:
       m_AxisX: 33
       m_AxisY: 33
     m_Status: 0
-    m_Offset: {x: 2, y: 0.99999994, z: 2}
+    m_Offset: {x: 2, y: 2, z: 2}
   - m_TileAxis:
       m_AxisX: 33
       m_AxisY: 34
     m_Status: 0
-    m_Offset: {x: 2, y: 1, z: 4}
+    m_Offset: {x: 2, y: 2, z: 4}
   - m_TileAxis:
       m_AxisX: 33
       m_AxisY: 35
     m_Status: 0
-    m_Offset: {x: 2, y: 1, z: 6}
+    m_Offset: {x: 2, y: 2, z: 6}
   - m_TileAxis:
       m_AxisX: 33
       m_AxisY: 36
     m_Status: 0
-    m_Offset: {x: 2, y: 1, z: 8}
-  - m_TileAxis:
-      m_AxisX: 33
-      m_AxisY: 38
-    m_Status: 0
-    m_Offset: {x: 2, y: 1.5, z: 12}
+    m_Offset: {x: 2, y: 2, z: 8}
   - m_TileAxis:
       m_AxisX: 34
       m_AxisY: 28
     m_Status: 0
-    m_Offset: {x: 4, y: 1, z: -8}
+    m_Offset: {x: 4, y: 2, z: -8}
   - m_TileAxis:
       m_AxisX: 34
       m_AxisY: 29
     m_Status: 0
-    m_Offset: {x: 4, y: 1, z: -6}
+    m_Offset: {x: 4, y: 2, z: -6}
   - m_TileAxis:
       m_AxisX: 34
       m_AxisY: 30
     m_Status: 0
-    m_Offset: {x: 4, y: 1, z: -4}
+    m_Offset: {x: 4, y: 2, z: -4}
   - m_TileAxis:
       m_AxisX: 34
       m_AxisY: 31
     m_Status: 0
-    m_Offset: {x: 4, y: 1, z: -2}
+    m_Offset: {x: 4, y: 2, z: -2}
   - m_TileAxis:
       m_AxisX: 34
       m_AxisY: 32
     m_Status: 0
-    m_Offset: {x: 4, y: 1, z: 0}
+    m_Offset: {x: 4, y: 2, z: 0}
   - m_TileAxis:
       m_AxisX: 34
       m_AxisY: 33
     m_Status: 0
-    m_Offset: {x: 4, y: 1, z: 2}
+    m_Offset: {x: 4, y: 2, z: 2}
   - m_TileAxis:
       m_AxisX: 34
       m_AxisY: 34
     m_Status: 0
-    m_Offset: {x: 4, y: 1, z: 4}
+    m_Offset: {x: 4, y: 2, z: 4}
   - m_TileAxis:
       m_AxisX: 34
       m_AxisY: 35
     m_Status: 0
-    m_Offset: {x: 4, y: 1, z: 6}
+    m_Offset: {x: 4, y: 2, z: 6}
   - m_TileAxis:
       m_AxisX: 34
       m_AxisY: 36
     m_Status: 0
-    m_Offset: {x: 4, y: 1, z: 8}
+    m_Offset: {x: 4, y: 2, z: 8}
   - m_TileAxis:
       m_AxisX: 34
       m_AxisY: 38
     m_Status: 0
-    m_Offset: {x: 4, y: 1.5, z: 12}
+    m_Offset: {x: 4, y: 2.9999998, z: 12}
   - m_TileAxis:
       m_AxisX: 35
       m_AxisY: 24
     m_Status: 0
-    m_Offset: {x: 6, y: 1, z: -16}
-  - m_TileAxis:
-      m_AxisX: 35
-      m_AxisY: 26
-    m_Status: 0
-    m_Offset: {x: 6, y: 1.5, z: -12}
+    m_Offset: {x: 6, y: 2, z: -16}
   - m_TileAxis:
       m_AxisX: 35
       m_AxisY: 28
     m_Status: 0
-    m_Offset: {x: 6, y: 1, z: -8}
+    m_Offset: {x: 6, y: 2, z: -8}
   - m_TileAxis:
       m_AxisX: 35
       m_AxisY: 29
     m_Status: 0
-    m_Offset: {x: 6, y: 1, z: -6}
+    m_Offset: {x: 6, y: 2, z: -6}
   - m_TileAxis:
       m_AxisX: 35
       m_AxisY: 30
     m_Status: 0
-    m_Offset: {x: 6, y: 1, z: -4}
+    m_Offset: {x: 6, y: 2, z: -4}
   - m_TileAxis:
       m_AxisX: 35
       m_AxisY: 31
     m_Status: 0
-    m_Offset: {x: 6, y: 1, z: -2}
+    m_Offset: {x: 6, y: 2, z: -2}
   - m_TileAxis:
       m_AxisX: 35
       m_AxisY: 32
     m_Status: 0
-    m_Offset: {x: 6, y: 1, z: 0}
+    m_Offset: {x: 6, y: 2, z: 0}
   - m_TileAxis:
       m_AxisX: 35
       m_AxisY: 33
     m_Status: 0
-    m_Offset: {x: 6, y: 1, z: 2}
+    m_Offset: {x: 6, y: 2, z: 2}
   - m_TileAxis:
       m_AxisX: 35
       m_AxisY: 34
     m_Status: 0
-    m_Offset: {x: 6, y: 1, z: 4}
+    m_Offset: {x: 6, y: 2, z: 4}
   - m_TileAxis:
       m_AxisX: 35
       m_AxisY: 35
     m_Status: 0
-    m_Offset: {x: 6, y: 1, z: 6}
+    m_Offset: {x: 6, y: 2, z: 6}
   - m_TileAxis:
       m_AxisX: 36
       m_AxisY: 31
     m_Status: 0
-    m_Offset: {x: 8, y: 1, z: -2}
+    m_Offset: {x: 8, y: 2, z: -2}
   - m_TileAxis:
       m_AxisX: 36
       m_AxisY: 32
     m_Status: 0
-    m_Offset: {x: 8, y: 1, z: 0}
+    m_Offset: {x: 8, y: 2, z: 0}
   - m_TileAxis:
       m_AxisX: 36
       m_AxisY: 33
     m_Status: 0
-    m_Offset: {x: 8, y: 1, z: 2}
+    m_Offset: {x: 8, y: 2, z: 2}
   - m_TileAxis:
       m_AxisX: 36
       m_AxisY: 34
     m_Status: 0
-    m_Offset: {x: 8, y: 1, z: 4}
-  - m_TileAxis:
-      m_AxisX: 38
-      m_AxisY: 33
-    m_Status: 0
-    m_Offset: {x: 12, y: 1.5, z: 2}
-  - m_TileAxis:
-      m_AxisX: 38
-      m_AxisY: 34
-    m_Status: 0
-    m_Offset: {x: 12, y: 1.5, z: 4}
+    m_Offset: {x: 8, y: 1.9999999, z: 4}
