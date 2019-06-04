@@ -15,8 +15,6 @@ namespace GameSetting
         public const int I_BoltMaxLastTime = 10;    //Last Time Of Ammo/Bolt
         public const int I_LaserMaxLastTime = 5;    //Longest Last Time Of Ammo/Laser
 
-//        public const int I_AimAssistCurveCount = 64;        //Aim Assits Curve Cost   More = Better Visual Performance But Costs  64 is Suggested
-
         public const int I_RocketBlastRadius = 5;        //Meter
         public const float F_LaserRayStartPause = .5f;      //Laser Start Pause
 
