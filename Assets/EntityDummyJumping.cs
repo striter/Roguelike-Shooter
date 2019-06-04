@@ -12,15 +12,21 @@ public class EntityDummyJumping : EntityBase {
         rb_current.velocity = Vector3.zero;
     }
     float jumpCheck;
+    bool tik_tok = false;
     protected override void Update()
     {
         base.Update();
         if (m_Target != null && Time.time > jumpCheck)
         {
             jumpCheck = Time.time + .5f;
-            Vector3 jumpDirection = m_Target.transform.position - transform.position + Vector3.up * 20;
+            tik_tok = !tik_tok;
+            Vector3 jumpDirection;
+            if (tik_tok)
+                jumpDirection = m_Target.transform.position - transform.position + Vector3.up * 20;
+            else
+                jumpDirection = Vector3.down;
             jumpDirection.Normalize();
-            rb_current.AddForce(jumpDirection*3, ForceMode.Impulse);
+            rb_current.AddForce(jumpDirection*7, ForceMode.Impulse);
         }
     }
     
