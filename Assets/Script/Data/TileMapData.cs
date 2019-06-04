@@ -47,7 +47,7 @@ public class TileMapData : ScriptableObject
 
                 Vector3 cellOffset = new Vector3(offset.x * (-_widthOrRaidus / 2 + i), 0f, offset.y * (-_height / 2 + j));
                 Vector3 tileCenter = origin + cellOffset;
-                bool available = TopDownRayHit(tileCenter, ref cellOffset.y) && cellOffset.y < 3&&cellOffset.y>0;
+                bool available = TopDownRayHit(tileCenter, ref cellOffset.y) && cellOffset.y>0;
                 if (available&& heightDetect > 0f)
                 {
                     float offsetTopLeft = -1f, offsetTopRight = -1f, offsetBottomLeft = -1f, offsetBottomRight = -1f;
