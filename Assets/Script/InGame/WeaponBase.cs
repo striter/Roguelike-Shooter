@@ -14,14 +14,14 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
     Action<float> OnAmmoChangeCostMana;
     Action<Vector2> OnRecoil;
     WeaponTrigger m_Trigger=null;
-    WeaponAimAssist m_Assist = null;
+    WeaponAimAssistStraight m_Assist = null;
     bool B_HaveAmmoLeft => m_WeaponInfo.m_ClipAmount == -1 || I_AmmoLeft > 0;
     public void Init(SWeapon weaponInfo)
     {
         tf_Muzzle = transform.Find("Muzzle");
         m_WeaponInfo = weaponInfo;
         I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
-        m_Assist = new WeaponAimAssist(transform, GameConst.I_AimAssistCurveCount,GameConst.I_NormalBulletLastTime,weaponInfo);
+        m_Assist = new WeaponAimAssistStraight(transform ,weaponInfo);
         switch (weaponInfo.m_TriggerType)
         {
             default: Debug.LogError("Add More Convertions Here:" + weaponInfo.m_TriggerType.ToString()); m_Trigger = new TriggerSingle(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, CheckCanAction, SetActionPause, CheckCanAutoReload); break;
@@ -96,7 +96,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         for (int i = 0; i < m_WeaponInfo.m_PelletsPerShot; i++)
         {
             Vector3 bulletDirection = Vector3.Normalize(transform.forward*GameConst.I_BulletSpeadAtDistance+UnityEngine.Random.Range(-1f,1f)* transform.up*m_WeaponInfo.m_Spread+ UnityEngine.Random.Range(-1f, 1f) * transform.right * m_WeaponInfo.m_Spread);
-            (ObjectManager.SpawnSFX(m_WeaponInfo.m_BulletType.ToSFXType(), transform) as SFXBullet).Play(I_AttacherID,m_WeaponInfo.m_Damage, bulletDirection, m_WeaponInfo.m_HorizontalSpeed,m_WeaponInfo.m_HorizontalDrag,m_WeaponInfo.m_VerticalAcceleration);
+            (ObjectManager.SpawnSFX(m_WeaponInfo.m_BulletType.ToSFXType(), transform) as SFXBullet).Play(I_AttacherID, bulletDirection,m_WeaponInfo);
         }
         OnRecoil?.Invoke(m_WeaponInfo.m_RecoilPerShot);
         OnAmmoChangeCostMana?.Invoke(m_WeaponInfo.m_ManaCost);
@@ -133,51 +133,42 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         StartReload();
     }
     #region TriggerType
-    class WeaponAimAssist
+    class WeaponAimAssistStraight
     {
         Transform transform;
         Transform tf_Dot;
         LineRenderer m_lineRenderer;
-        AimAssistSimulator m_Simulator;
-        int m_CurveCount;
-        List<Vector3> m_CurvePoints = new List<Vector3>();
-        public WeaponAimAssist(Transform muzzle, int _curveCount,float duration,SWeapon weaponInfo)
+        float f_distance;
+        public WeaponAimAssistStraight(Transform muzzle, SWeapon weaponInfo)
         {
             transform = muzzle;
             tf_Dot = transform.Find("Dot");
             m_lineRenderer = muzzle.GetComponent<LineRenderer>();
-            m_lineRenderer.positionCount = _curveCount;
-            m_CurveCount = _curveCount;
-            m_Simulator = new AimAssistSimulator(duration / _curveCount,muzzle.position, muzzle.forward, Vector3.down, weaponInfo.m_HorizontalSpeed, -weaponInfo.m_HorizontalDrag, 0, weaponInfo.m_VerticalAcceleration, false);
-            ;
+            m_lineRenderer.positionCount = 2;
+            f_distance = weaponInfo.m_HorizontalDistance;
         }
+
         public void Simulate(bool activate)
         {
             m_lineRenderer.enabled = activate;
             tf_Dot.SetActivate(activate);
             if (!activate)
                 return;
-            m_Simulator.ResetSimulator(transform.position,transform.forward);
-            m_CurvePoints.Clear();
-            m_CurvePoints.Add(transform.position);
             tf_Dot.SetActivate(false);
-            for (int i = 0; i < m_CurveCount; i++)
+            m_lineRenderer.SetPosition(0, transform.position);
+            Vector3 target;
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, transform.forward,out hit, f_distance, GameLayer.Physics.I_AimAssist))
             {
-                Vector3 lookDirection;float offset;
-                Vector3 currentPosition = m_Simulator.Next(out lookDirection, out offset);
-                RaycastHit hit;
-                if (Physics.Raycast(currentPosition, lookDirection, out hit, offset,GameLayer.Physics.I_AimAssist)&&
-                    (hit.collider.gameObject.layer != GameLayer.I_Entity || !hit.collider.GetComponent<HitCheckEntity>().m_Attacher.B_IsPlayer))
-                {
-                    m_CurvePoints.Add(hit.point);
-                    tf_Dot.SetActivate(true);
-                    tf_Dot.position = hit.point;
-                    break;
-                }
-                m_CurvePoints.Add(currentPosition);
+                target = hit.point;
+                tf_Dot.position = hit.point;
+                tf_Dot.SetActivate(true);
             }
-            m_lineRenderer.positionCount = m_CurvePoints.Count;
-            m_lineRenderer.SetPositions(m_CurvePoints.ToArray());
+            else
+            {
+                target = transform.position + transform.forward * f_distance;
+            }
+            m_lineRenderer.SetPosition(1,target);
         }
     }
     internal class WeaponTrigger:ISingleCoroutine
