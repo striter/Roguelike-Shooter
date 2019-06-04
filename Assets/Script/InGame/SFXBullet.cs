@@ -9,15 +9,15 @@ public class SFXBullet : SFXBase {
     AccelerationSimulator m_Simulator;
     HitCheckDetect m_Detect;
     TrailRenderer m_Trail;
-    CapsuleCollider m_Collider;
     Vector3 m_Direction;
+    float f_sphereWidth;
     public bool B_SimulatePhysics { get; protected set; }
     public override void Init(enum_SFX type)
     {
         base.Init(type);
         m_Detect = new HitCheckDetect(OnHitStatic,OnHitDynamic,OnHitEntity,OnHitError);
         m_Trail = GetComponent<TrailRenderer>();
-        m_Collider = GetComponent<CapsuleCollider>();
+        f_sphereWidth = m_Trail.startWidth / 2;
     }
     public virtual  void Play(int sourceID, float damage,Vector3 direction,float horizontalSpeed,float horizontalDrag, float verticalAcceleration, float duration= -1)
     {
@@ -28,30 +28,26 @@ public class SFXBullet : SFXBase {
         m_Trail.Clear();
         base.Play(sourceID,duration==-1? GameConst.I_NormalBulletLastTime:duration);
     }
-    private void FixedUpdate()
+    protected override void Update()
     {
         if (B_SimulatePhysics)
         {
             Vector3 prePosition;
-            Vector3 curPosition = m_Simulator.Simulate(Time.fixedDeltaTime, out prePosition);
+            Vector3 curPosition = m_Simulator.Simulate(Time.deltaTime, out prePosition);
 
             Vector3 castDirection = prePosition == curPosition ? m_Direction : curPosition - prePosition;
             transform.rotation = Quaternion.LookRotation(castDirection);
             RaycastHit rh_info;
-            if (Physics.SphereCast(new Ray(prePosition, castDirection), m_Collider.radius, out rh_info, Vector3.Distance(prePosition, curPosition), GameLayer.Physics.I_All))
+            if (Physics.SphereCast(new Ray(prePosition, castDirection), f_sphereWidth, out rh_info, Vector3.Distance(prePosition, curPosition), GameLayer.Physics.I_All))
             {
                 transform.position = rh_info.point;
-                OnTriggerEnter(rh_info.collider);
+                m_Detect.DoDetect(rh_info.collider);
             }
             else
             {
                 transform.position = curPosition;
             }
         }
-    }
-    protected void OnTriggerEnter(Collider other)
-    {
-        m_Detect.DoDetect(other);
     }
 
     protected virtual void OnHitEntity(HitCheckEntity hitEntity)
