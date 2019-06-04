@@ -322,7 +322,6 @@ namespace GameSetting
 
     class BulletPhysicsSimulator : PhysicsSimulator
     {
-
         protected Vector3 m_HorizontalDirection, m_VerticalDirection;
         float m_horizontalSpeed;
         float m_horizontalDistance;
