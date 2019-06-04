@@ -30,6 +30,7 @@ public class SFXBullet : SFXBase {
     }
     protected override void Update()
     {
+        base.Update();
         if (B_SimulatePhysics)
         {
             Vector3 prePosition;
