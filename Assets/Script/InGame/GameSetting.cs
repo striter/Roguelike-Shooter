@@ -15,7 +15,7 @@ namespace GameSetting
         public const int I_BoltMaxLastTime = 10;    //Last Time Of Ammo/Bolt
         public const int I_LaserMaxLastTime = 5;    //Longest Last Time Of Ammo/Laser
 
-        public const int I_AimAssistCurveCount = 64;        //Aim Assits Curve Cost   More = Better Visual Performance But Costs  64 is Suggested
+//        public const int I_AimAssistCurveCount = 64;        //Aim Assits Curve Cost   More = Better Visual Performance But Costs  64 is Suggested
 
         public const int I_RocketBlastRadius = 5;        //Meter
         public const float F_LaserRayStartPause = .5f;      //Laser Start Pause
@@ -322,31 +322,46 @@ namespace GameSetting
         }
     }
 
-
-    class AimAssistSimulator : AccelerationSimulator
+    class BulletPhysicsSimulator : PhysicsSimulator
     {
-        float m_simulateDelta;
-        public AimAssistSimulator(float _simulateDelta,Vector3 startPos, Vector3 horizontalDirection, Vector3 verticalDirection, float horizontalSpeed, float horizontalAcceleration, float verticalSpeed, float verticalAcceleration, bool speedBelowZero = true):base(startPos,horizontalDirection,verticalDirection,horizontalSpeed,horizontalAcceleration,verticalSpeed,verticalAcceleration,speedBelowZero)
+
+        protected Vector3 m_HorizontalDirection, m_VerticalDirection;
+        float m_horizontalSpeed;
+        float m_horizontalDistance;
+        float m_verticalSpeed;
+        float m_verticalAcceleration;
+        public BulletPhysicsSimulator(Vector3 _startPos, Vector3 _horizontalDirection, Vector3 _verticalDirection, float _horizontalSpeed, float _horizontalDistance, float _verticalSpeed, float _verticalAcceleration)
         {
-            m_simulateDelta = _simulateDelta;
-        }
-        public void ResetSimulator(Vector3 startPos, Vector3 horizontalDirection)
-        {
-            m_startPos = startPos;
-            m_LastPos = startPos;
-            m_HorizontalDirection = horizontalDirection;
             m_simulateTime = 0f;
+            m_startPos = _startPos;
+            m_LastPos = _startPos;
+            m_HorizontalDirection = _horizontalDirection;
+            m_VerticalDirection = _verticalDirection;
+            m_horizontalSpeed = _horizontalSpeed;
+            m_horizontalDistance = _horizontalDistance;
+            m_verticalSpeed = _verticalSpeed;
+            m_verticalAcceleration = _verticalAcceleration;
+
         }
-        public Vector3 Next(out Vector3 directionNext,out float offsetNext)
+        public Vector3 Simulate(float deltaTime,out Vector3 prePosition)
         {
-            Vector3 curPos = Simulate(m_simulateTime);
-            Vector3 nextPos = Simulate(m_simulateTime+m_simulateDelta);
-            directionNext =  nextPos- curPos;
-            offsetNext = Vector3.Distance( curPos,nextPos);
-            m_simulateTime += m_simulateDelta;
-            return curPos;
+            m_simulateTime += deltaTime;
+            Vector3 currentPos= GetSimulatedPosition(m_startPos,m_HorizontalDirection,m_VerticalDirection,m_simulateTime,m_horizontalSpeed,m_horizontalDistance,m_verticalSpeed,m_verticalAcceleration);
+            prePosition = m_LastPos;
+            m_LastPos = currentPos;
+            return currentPos;
+        }
+        public static Vector3 GetSimulatedPosition(Vector3 startPos, Vector3 horizontalDirection, Vector3 verticalDirection, float elapsedTime, float horizontalSpeed, float horizontalDistance, float verticalSpeed, float verticalAcceleration)
+        {
+            float f_verticalTime = elapsedTime- horizontalDistance / horizontalSpeed;
+            f_verticalTime = f_verticalTime > 0 ? f_verticalTime : 0;
+            Vector3 horizontalShift = horizontalDirection * Expressions.SpeedShift(horizontalSpeed, elapsedTime);
+            Vector3 verticalShift = verticalDirection * Expressions.AccelerationSpeedShift(verticalSpeed, verticalAcceleration, f_verticalTime);
+            Vector3 targetPos = startPos + horizontalShift + verticalShift;
+            return targetPos;
         }
     }
+
     #region BigmapTile
     public class SBigmapTileInfo : ITileAxis
     {
@@ -487,8 +502,8 @@ namespace GameSetting
         float f_reloadTime;
         int i_PelletsPerShot;
         float f_stunAfterShot;
+        float f_horizontalDistance;
         float f_horizontalSpeed;
-        float f_horizontalDrag;
         float f_verticalAcceleration;
         float f_recoilHorizontal;
         float f_recoilVertical;
@@ -507,7 +522,7 @@ namespace GameSetting
         public int m_PelletsPerShot => i_PelletsPerShot;
         public float m_stunAfterShot => f_stunAfterShot;
         public float m_HorizontalSpeed => f_horizontalSpeed;
-        public float m_HorizontalDrag => f_horizontalDrag;
+        public float m_HorizontalDistance => f_horizontalDistance;
         public float m_VerticalAcceleration => f_verticalAcceleration;
         public Vector2 m_RecoilPerShot => new Vector2(f_recoilHorizontal, f_recoilVertical);
 
@@ -689,6 +704,80 @@ namespace GameSetting
                 }
             }
             return I_Level - offset;
+        }
+    }
+    #endregion
+    #region Abandoned
+    class Abandoned_WeaponAimAssistAccelerationCurve
+    {
+        Transform transform;
+        Transform tf_Dot;
+        LineRenderer m_lineRenderer;
+        Abandoned_AimAssistSimulator m_Simulator;
+        int m_CurveCount;
+        List<Vector3> m_CurvePoints = new List<Vector3>();
+        public Abandoned_WeaponAimAssistAccelerationCurve(Transform muzzle, int _curveCount, float duration, SWeapon weaponInfo)
+        {
+            transform = muzzle;
+            tf_Dot = transform.Find("Dot");
+            m_lineRenderer = muzzle.GetComponent<LineRenderer>();
+            m_lineRenderer.positionCount = _curveCount;
+            m_CurveCount = _curveCount;
+            m_Simulator = new Abandoned_AimAssistSimulator(duration / _curveCount, muzzle.position, muzzle.forward, Vector3.down, weaponInfo.m_HorizontalSpeed,0, 0, weaponInfo.m_VerticalAcceleration, false);
+            ;
+        }
+        public void Simulate(bool activate)
+        {
+            m_lineRenderer.enabled = activate;
+            tf_Dot.SetActivate(activate);
+            if (!activate)
+                return;
+            m_Simulator.ResetSimulator(transform.position, transform.forward);
+            m_CurvePoints.Clear();
+            m_CurvePoints.Add(transform.position);
+            tf_Dot.SetActivate(false);
+            for (int i = 0; i < m_CurveCount; i++)
+            {
+                Vector3 lookDirection; float offset;
+                Vector3 currentPosition = m_Simulator.Next(out lookDirection, out offset);
+                RaycastHit hit;
+                if (Physics.Raycast(currentPosition, lookDirection, out hit, offset, GameLayer.Physics.I_AimAssist) &&
+                    (hit.collider.gameObject.layer != GameLayer.I_Entity || !hit.collider.GetComponent<HitCheckEntity>().m_Attacher.B_IsPlayer))
+                {
+                    m_CurvePoints.Add(hit.point);
+                    tf_Dot.SetActivate(true);
+                    tf_Dot.position = hit.point;
+                    break;
+                }
+                m_CurvePoints.Add(currentPosition);
+            }
+            m_lineRenderer.positionCount = m_CurvePoints.Count;
+            m_lineRenderer.SetPositions(m_CurvePoints.ToArray());
+        }
+    }
+
+    class Abandoned_AimAssistSimulator : AccelerationSimulator
+    {
+        float m_simulateDelta;
+        public Abandoned_AimAssistSimulator(float _simulateDelta, Vector3 startPos, Vector3 horizontalDirection, Vector3 verticalDirection, float horizontalSpeed, float horizontalAcceleration, float verticalSpeed, float verticalAcceleration, bool speedBelowZero = true) : base(startPos, horizontalDirection, verticalDirection, horizontalSpeed, horizontalAcceleration, verticalSpeed, verticalAcceleration, speedBelowZero)
+        {
+            m_simulateDelta = _simulateDelta;
+        }
+        public void ResetSimulator(Vector3 startPos, Vector3 horizontalDirection)
+        {
+            m_startPos = startPos;
+            m_LastPos = startPos;
+            m_HorizontalDirection = horizontalDirection;
+            m_simulateTime = 0f;
+        }
+        public Vector3 Next(out Vector3 directionNext, out float offsetNext)
+        {
+            Vector3 curPos = Simulate(m_simulateTime);
+            Vector3 nextPos = Simulate(m_simulateTime + m_simulateDelta);
+            directionNext = nextPos - curPos;
+            offsetNext = Vector3.Distance(curPos, nextPos);
+            m_simulateTime += m_simulateDelta;
+            return curPos;
         }
     }
     #endregion

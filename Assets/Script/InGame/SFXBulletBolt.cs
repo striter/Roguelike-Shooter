@@ -3,9 +3,9 @@ using UnityEngine;
 
 public class SFXBulletBolt : SFXBullet {
 
-    public override void Play(int sourceID, float damage, Vector3 direction, float horizontalSpeed, float horizontalDrag, float verticalAcceleration, float duration = -1)
+    public override void Play(int sourceID, Vector3 direction, SWeapon weaponInfo, float duration = -1)
     {
-        base.Play(sourceID, damage, direction, horizontalSpeed,horizontalDrag, verticalAcceleration, GameConst.I_BoltMaxLastTime);
+        base.Play(sourceID, direction, weaponInfo, GameConst.I_BoltMaxLastTime);
     }
     protected override void OnHitStatic(HitCheckStatic hitStatic)
     {

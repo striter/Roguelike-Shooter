@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
-using TPhysics;
 
 public class SFXBullet : SFXBase {
     protected float m_bulletDamage;
-    AccelerationSimulator m_Simulator;
+    BulletPhysicsSimulator m_Simulator;
     HitCheckDetect m_Detect;
     TrailRenderer m_Trail;
     Vector3 m_Direction;
@@ -19,11 +18,11 @@ public class SFXBullet : SFXBase {
         m_Trail = GetComponent<TrailRenderer>();
         f_sphereWidth = m_Trail.startWidth / 2;
     }
-    public virtual  void Play(int sourceID, float damage,Vector3 direction,float horizontalSpeed,float horizontalDrag, float verticalAcceleration, float duration= -1)
+    public virtual void Play(int sourceID,Vector3 direction,SWeapon weaponInfo, float duration= -1)
     {
-        m_bulletDamage = damage;
+        m_bulletDamage = weaponInfo.m_Damage;
         m_Direction = direction;
-        m_Simulator = new AccelerationSimulator(transform.position, m_Direction, Vector3.down, horizontalSpeed, -horizontalDrag, 0, verticalAcceleration,false);
+        m_Simulator = new BulletPhysicsSimulator(transform.position, m_Direction, Vector3.down, weaponInfo.m_HorizontalSpeed, weaponInfo.m_HorizontalDistance, 0, weaponInfo.m_VerticalAcceleration);
         B_SimulatePhysics = true;
         m_Trail.Clear();
         base.Play(sourceID,duration==-1? GameConst.I_NormalBulletLastTime:duration);

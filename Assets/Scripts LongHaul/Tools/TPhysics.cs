@@ -4,10 +4,14 @@ using UnityEngine;
 
 namespace TPhysics
 {
-    public class AccelerationSimulator
+    public abstract class PhysicsSimulator
     {
-        protected float m_simulateTime;
-        protected Vector3 m_startPos, m_LastPos;
+        protected Vector3 m_startPos;
+        protected Vector3 m_LastPos;
+        public float m_simulateTime { get; protected set; }
+    }
+    public class AccelerationSimulator:PhysicsSimulator
+    {
         protected Vector3 m_HorizontalDirection, m_VerticalDirection;
         float m_horizontalSpeed;
         float m_horizontalAcceleration;
@@ -43,16 +47,16 @@ namespace TPhysics
         public static Vector3 GetSimulatedPosition(Vector3 startPos, Vector3 horizontalDirection, Vector3 verticalDirection, float elapsedTime, float horizontalSpeed, float horizontalAcceleration, float verticalSpeed, float verticalAcceleration, bool canHorizontalSpeedBelowZero = true)
         {
             Vector3 horizontalShift = Vector3.zero;
-            Vector3 verticalShift = verticalDirection * Expressions.AccelerationShift(verticalSpeed, verticalAcceleration, elapsedTime);
+            Vector3 verticalShift = verticalDirection * Expressions.AccelerationSpeedShift(verticalSpeed, verticalAcceleration, elapsedTime);
             if (canHorizontalSpeedBelowZero)
             {
-                horizontalShift += horizontalDirection * Expressions.AccelerationShift(horizontalSpeed, horizontalAcceleration, elapsedTime);
+                horizontalShift += horizontalDirection * Expressions.AccelerationSpeedShift(horizontalSpeed, horizontalAcceleration, elapsedTime);
             }
             else if (!canHorizontalSpeedBelowZero && horizontalSpeed > 0 && horizontalAcceleration < 0)
             {
                 float aboveZeroTime = horizontalSpeed / Mathf.Abs(horizontalAcceleration);
 
-                horizontalShift += horizontalDirection * Expressions.AccelerationShift(horizontalSpeed, horizontalAcceleration, elapsedTime > aboveZeroTime ? aboveZeroTime : elapsedTime);
+                horizontalShift += horizontalDirection * Expressions.AccelerationSpeedShift(horizontalSpeed, horizontalAcceleration, elapsedTime > aboveZeroTime ? aboveZeroTime : elapsedTime);
             }
 
             Vector3 targetPos = startPos + horizontalShift + verticalShift;
@@ -61,9 +65,13 @@ namespace TPhysics
     }
     public static class Expressions
     {
-        public static float AccelerationShift(float speed, float acceleration, float elapsedTime)        //All M/S  s=vt+a*t^2/2?
+        public static float AccelerationSpeedShift(float speed, float acceleration, float elapsedTime)        //All M/S  s=vt+a*t^2/2?
         {
-            return speed * elapsedTime + acceleration* Mathf.Pow(elapsedTime , 2)/2;
+            return SpeedShift(speed,elapsedTime) + acceleration* Mathf.Pow(elapsedTime , 2)/2;
+        }
+        public static float SpeedShift(float speed, float elapsedTime)      //M/s s=vt
+        {
+            return speed * elapsedTime;
         }
     }
 }
