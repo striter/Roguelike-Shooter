@@ -47,9 +47,19 @@ MonoBehaviour:
     m_Offset: {x: -12, y: 2, z: 0}
   - m_TileAxis:
       m_AxisX: 27
+      m_AxisY: 29
+    m_Status: 0
+    m_Offset: {x: -10, y: 4, z: -6}
+  - m_TileAxis:
+      m_AxisX: 27
       m_AxisY: 32
     m_Status: 0
     m_Offset: {x: -10, y: 2, z: 0}
+  - m_TileAxis:
+      m_AxisX: 27
+      m_AxisY: 35
+    m_Status: 0
+    m_Offset: {x: -10, y: 4, z: 6}
   - m_TileAxis:
       m_AxisX: 27
       m_AxisY: 38
@@ -207,6 +217,11 @@ MonoBehaviour:
     m_Offset: {x: -2, y: 2, z: 8}
   - m_TileAxis:
       m_AxisX: 32
+      m_AxisY: 26
+    m_Status: 0
+    m_Offset: {x: 0, y: 4, z: -12}
+  - m_TileAxis:
+      m_AxisX: 32
       m_AxisY: 29
     m_Status: 0
     m_Offset: {x: 0, y: 2, z: -6}
@@ -275,6 +290,11 @@ MonoBehaviour:
       m_AxisY: 35
     m_Status: 0
     m_Offset: {x: 2, y: 2, z: 6}
+  - m_TileAxis:
+      m_AxisX: 33
+      m_AxisY: 38
+    m_Status: 0
+    m_Offset: {x: 2, y: 4, z: 12}
   - m_TileAxis:
       m_AxisX: 34
       m_AxisY: 28
@@ -377,6 +397,11 @@ MonoBehaviour:
     m_Offset: {x: 8, y: 2, z: 12}
   - m_TileAxis:
       m_AxisX: 37
+      m_AxisY: 28
+    m_Status: 0
+    m_Offset: {x: 10, y: 4, z: -8}
+  - m_TileAxis:
+      m_AxisX: 37
       m_AxisY: 31
     m_Status: 0
     m_Offset: {x: 10, y: 2, z: -2}
@@ -395,6 +420,11 @@ MonoBehaviour:
       m_AxisY: 31
     m_Status: 0
     m_Offset: {x: 12, y: 2, z: -2}
+  - m_TileAxis:
+      m_AxisX: 38
+      m_AxisY: 34
+    m_Status: 0
+    m_Offset: {x: 12, y: 4, z: 4}
   - m_TileAxis:
       m_AxisX: 38
       m_AxisY: 37
