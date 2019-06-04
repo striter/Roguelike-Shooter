@@ -166,7 +166,8 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
                 Vector3 lookDirection;float offset;
                 Vector3 currentPosition = m_Simulator.Next(out lookDirection, out offset);
                 RaycastHit hit;
-                if (Physics.Raycast(currentPosition, lookDirection, out hit, offset,GameLayer.Physics.I_AimAssist))
+                if (Physics.Raycast(currentPosition, lookDirection, out hit, offset,GameLayer.Physics.I_AimAssist)&&
+                    (hit.collider.gameObject.layer != GameLayer.I_Entity || !hit.collider.GetComponent<HitCheckEntity>().m_Attacher.B_IsPlayer))
                 {
                     m_CurvePoints.Add(hit.point);
                     tf_Dot.SetActivate(true);
