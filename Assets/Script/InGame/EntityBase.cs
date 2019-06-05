@@ -7,6 +7,7 @@ public class EntityBase : MonoBehaviour,ISingleCoroutine
     HitCheckEntity[] m_HitChecks;
     Renderer[] m_Renderers;
     protected Transform tf_Model;
+    public Transform tf_Head { get; private set; }
     public SEntity m_EntityInfo { get; private set; }
     public float m_CurrentHealth { get; private set; }
     public float m_CurrentArmor { get; private set; }
@@ -20,6 +21,7 @@ public class EntityBase : MonoBehaviour,ISingleCoroutine
     {
         I_EntityID = id;
         tf_Model = transform.Find("Model");
+        tf_Head = transform.Find("Head");
         m_Renderers = tf_Model.GetComponentsInChildren<Renderer>();
         m_HitChecks = GetComponentsInChildren<HitCheckEntity>();
         TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.Attach(this,TryTakeDamage); });
