@@ -90,7 +90,7 @@ public class EntityEnermyBase : EntityBase {
         bool b_TargetVisible {
             get
             {
-                m_Raycasts= Physics.RaycastAll(m_EntityControlling.tf_Head.position, m_Target.tf_Head.position - m_EntityControlling.tf_Head.position, GameLayer.Physics.I_StaticEntity);
+                m_Raycasts= Physics.RaycastAll(m_EntityControlling.tf_Head.position, m_Target.tf_Head.position - m_EntityControlling.tf_Head.position,Vector3.Distance(m_EntityControlling.tf_Head.position, m_Target.tf_Head.position), GameLayer.Physics.I_StaticEntity);
                 for (int i = 0; i < m_Raycasts.Length; i++)
                 {
                     if (m_Raycasts[i].collider.gameObject.layer == GameLayer.I_Static)
@@ -106,18 +106,19 @@ public class EntityEnermyBase : EntityBase {
             }
         } 
         bool b_AgentReachDestination => m_Agent.destination==Vector3.zero||TCommon.GetXZDistance(m_EntityControlling.transform.position, m_Agent.destination) < 5f;
+        bool b_idled = false;
         IEnumerator TrackTarget()
         {
             for (; ; )
             {
-                if (b_AgentReachDestination&&b_TargetVisible && Random.Range(0, 2) > 0)
+                if (b_idled&&b_AgentReachDestination && b_TargetVisible && Random.Range(0, 2) > 0)
                 {
-                    Debug.Log("Pause");
+                    b_idled = true;
                     B_AgentEnabled = false;
                     yield return new WaitForSeconds(Random.Range(2f, 3f));
                     continue;
                 }
-
+                b_idled = false;
                 B_AgentEnabled = true;
                 if (AgentStucked())
                     m_Agent.SetDestination(GetUnstuckPosition());
