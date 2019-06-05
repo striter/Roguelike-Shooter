@@ -77,7 +77,7 @@ public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
             }
 
         if(battle)
-            OnBattleStart(enum_Entity.DummyJumping, 3, 8);
+            OnBattleStart(enum_Entity.EnermyAITest, 3, 8);
         else
             OnLevelFinished();
     }
@@ -172,6 +172,7 @@ public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
         int curSpawnCount = 0;
         for (; ; )
         {
+            yield return new WaitForSeconds(_offset);
             ObjectManager.SpawnEntity(type,EnviormentManager.m_currentLevel.m_Level.RandomEmptyTilePosition(m_GameSeed)).SetTarget(m_LocalPlayer);
             m_WaveCurrentEntity++;
             curSpawnCount++;
@@ -180,8 +181,6 @@ public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
                 B_WaveEntityGenerating = false;
                 yield break;
             }
-            else
-                yield return new WaitForSeconds(_offset);
         }
     }
     #endregion
@@ -245,6 +244,9 @@ public static class ObjectManager
     public static EntityBase SpawnEntity(enum_Entity type,Vector3 toPosition)
     {
         EntityBase entity= ObjectPoolManager<enum_Entity, EntityBase>.Spawn(type, TF_Entity);
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(toPosition, out hit, 5, -1))
+            toPosition = hit.position;
         entity.Init(GameExpression.I_EntityID(i_entityIndex++,type== enum_Entity.Player ), ExcelManager.GetEntityGenerateProperties(type));
         entity.transform.position = toPosition;
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnSpawnEntity, entity);

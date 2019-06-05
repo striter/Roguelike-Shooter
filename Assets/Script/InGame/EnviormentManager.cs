@@ -47,10 +47,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
     {
         ObjectManager.RecycleAllInteract(enum_Interact.Interact_Portal);
         m_currentLevel.m_Level.SetActivate(true);
-        NavMeshBuildSettings setting = NavMesh.CreateSettings();
-        setting.agentRadius = .5f;
-        setting.agentClimb = .8f;
-        setting.agentHeight = 2f;
+        NavMeshBuildSettings setting = NavMesh.GetSettingsByID(0);
         List<NavMeshBuildSource> sources = new List<NavMeshBuildSource>();
         NavMeshBuilder.CollectSources(m_currentLevel.m_Level.transform, -1, NavMeshCollectGeometry.PhysicsColliders, 0, new List<NavMeshBuildMarkup>() { }, sources);
         Bounds bound = new Bounds(Vector3.zero, new Vector3(100, 20, 100));

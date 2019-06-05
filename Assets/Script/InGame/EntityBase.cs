@@ -82,7 +82,7 @@ public class EntityBase : MonoBehaviour,ISingleCoroutine
         return true;
     }
 
-    public void SetTarget(EntityBase target)
+    public virtual void SetTarget(EntityBase target)
     {
         m_Target = target;
     }

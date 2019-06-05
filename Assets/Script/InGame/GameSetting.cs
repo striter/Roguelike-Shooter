@@ -179,6 +179,8 @@ namespace GameSetting
         //Enermy
         Dummy = 2,
         DummyJumping=3,
+
+        EnermyAITest=4,
     }
 
     public enum enum_SFX        //Preset For SFX
