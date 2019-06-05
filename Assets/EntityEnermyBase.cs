@@ -12,7 +12,7 @@ public class EntityEnermyBase : EntityBase {
     {
         base.Init(id, entityInfo);
         if(m_AI==null)
-            m_AI = new EnermyAIControllerBasic(transform,entityInfo);
+            m_AI = new EnermyAIControllerBasic(this,entityInfo);
     }
     public override void SetTarget(EntityBase target)
     {
@@ -35,6 +35,7 @@ public class EntityEnermyBase : EntityBase {
 
     class EnermyAIControllerBasic:ISingleCoroutine
     {
+        protected EntityEnermyBase m_EntityControlling;
         protected NavMeshAgent m_Agent;
         protected NavMeshObstacle m_Obstacle;
         protected Transform transform;
@@ -68,9 +69,10 @@ public class EntityEnermyBase : EntityBase {
             }
         }
 
-        public EnermyAIControllerBasic(Transform _transform,SEntity _entityInfo)
+        public EnermyAIControllerBasic(EntityEnermyBase _entityControlling, SEntity _entityInfo)
         {
-            transform = _transform;
+            m_EntityControlling = _entityControlling;
+            transform = m_EntityControlling.transform;
             f_AttackRange = _entityInfo.m_AIAttackRange;
             m_Obstacle = transform.GetComponent<NavMeshObstacle>();
             m_Agent = transform.GetComponent<NavMeshAgent>();
@@ -85,25 +87,43 @@ public class EntityEnermyBase : EntityBase {
         }
 
         EntityBase m_Target;
+        RaycastHit[] m_Raycasts;
         bool b_NeedTracking => TCommon.GetXZDistance(transform.position, m_Target.transform.position) < f_AttackRange;
-        bool b_TargetVisible => !Physics.Raycast(transform.position, m_Target.transform.position- transform.position, GameLayer.Physics.I_StaticEntity);
+        bool b_TargetVisible {
+            get
+            {
+                m_Raycasts= Physics.RaycastAll(transform.position, m_Target.transform.position - transform.position, GameLayer.Physics.I_StaticEntity);
+                for (int i = 0; i < m_Raycasts.Length; i++)
+                {
+                    if (m_Raycasts[i].collider.gameObject.layer == GameLayer.I_Static)
+                        return false;
+                    else if (m_Raycasts[i].collider.gameObject.layer == GameLayer.I_Entity)
+                    {
+                        HitCheckEntity entity = m_Raycasts[i].collider.GetComponent<HitCheckEntity>();
+                        if (!entity.m_Attacher.B_IsPlayer && entity.m_Attacher.I_EntityID != m_EntityControlling.I_EntityID)
+                            return false;
+                    }
+                }
+                return true;
+            }
+        } 
         bool b_AgentReachDestination => m_Agent.destination==Vector3.zero||TCommon.GetXZDistance(transform.position, m_Agent.destination) < 5f;
         IEnumerator TrackTarget()
         {
             for (; ; )
             {
-                if (b_TargetVisible&&Random.Range(0,2)>0)
+                if (B_AgentEnabled &&!b_AgentReachDestination&&b_TargetVisible && Random.Range(0, 2) > 0)
                 {
                     B_AgentEnabled = false;
-                    yield return new WaitForSeconds(Random.Range(2f,3f));
+                    yield return new WaitForSeconds(Random.Range(2f, 3f));
                     continue;
                 }
 
                 B_AgentEnabled = true;
-                if (b_AgentReachDestination)
-                    m_Agent.SetDestination(GetSamplePosition());
-                else if (AgentStucked())
+                if (AgentStucked())
                     m_Agent.SetDestination(GetUnstuckPosition());
+                else if (b_AgentReachDestination)
+                    m_Agent.SetDestination(GetSamplePosition());
                 yield return new WaitForSeconds(GameConst.F_EnermyAICheckTime);
             }
         }
