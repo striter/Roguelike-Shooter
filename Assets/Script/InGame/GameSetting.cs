@@ -26,6 +26,8 @@ namespace GameSetting
         public const float F_DamagePlayerFallInOcean = 10f;        //Player Ocean Fall Damage
 
         public const int I_TileMapPortalMinusOffset = 3;        //The Minimum Tile Offset Away From Origin Portal Will Generate
+
+        public const float F_EnermyAICheckTime = .3f;       //AI Check Offset Time, 0.3 is suggested;
     }
 
     public static class GameExpression
@@ -264,7 +266,7 @@ namespace GameSetting
         public static class Physics
         {
             public static readonly int I_All = 1 << GameLayer.I_Static | 1 << GameLayer.I_Entity | 1 << GameLayer.I_Dynamic;
-            public static readonly int I_AimAssist = 1 << GameLayer.I_Static | 1 << GameLayer.I_Entity;
+            public static readonly int I_StaticEntity = 1 << GameLayer.I_Static | 1 << GameLayer.I_Entity;
             public static readonly int I_EntityOnly = (1 << I_Entity);
             public static readonly int I_Static = (1 << GameLayer.I_Static);
         }
@@ -472,6 +474,7 @@ namespace GameSetting
         float f_armorRegenSpeed;
         float f_armorRegenDuration;
         float f_moveSpeed;
+        float f_attackRange;
         public enum_Entity m_Type =>(enum_Entity) index;
         public string m_Name => s_name;
         public float m_MaxHealth => f_maxHealth;
@@ -480,7 +483,7 @@ namespace GameSetting
         public float m_ArmorRegenSpeed => f_armorRegenSpeed;
         public float m_ArmorRegenDuration => f_armorRegenDuration;
         public float m_moveSpeed => f_moveSpeed;
-
+        public float m_AIAttackRange => f_attackRange;
         public void InitOnValueSet()
         {
         }
@@ -740,7 +743,7 @@ namespace GameSetting
                 Vector3 lookDirection; float offset;
                 Vector3 currentPosition = m_Simulator.Next(out lookDirection, out offset);
                 RaycastHit hit;
-                if (Physics.Raycast(currentPosition, lookDirection, out hit, offset, GameLayer.Physics.I_AimAssist) &&
+                if (Physics.Raycast(currentPosition, lookDirection, out hit, offset, GameLayer.Physics.I_StaticEntity) &&
                     (hit.collider.gameObject.layer != GameLayer.I_Entity || !hit.collider.GetComponent<HitCheckEntity>().m_Attacher.B_IsPlayer))
                 {
                     m_CurvePoints.Add(hit.point);

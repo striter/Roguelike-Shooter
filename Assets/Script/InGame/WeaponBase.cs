@@ -158,7 +158,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
             m_lineRenderer.SetPosition(0, transform.position);
             Vector3 target;
             RaycastHit hit;
-            if (Physics.Raycast(transform.position, transform.forward,out hit, f_distance, GameLayer.Physics.I_AimAssist)&&(hit.collider.gameObject.layer != GameLayer.I_Entity || !hit.collider.GetComponent<HitCheckEntity>().m_Attacher.B_IsPlayer))
+            if (Physics.Raycast(transform.position, transform.forward,out hit, f_distance, GameLayer.Physics.I_StaticEntity)&&(hit.collider.gameObject.layer != GameLayer.I_Entity || !hit.collider.GetComponent<HitCheckEntity>().m_Attacher.B_IsPlayer))
             {
                 target = hit.point;
                 tf_Dot.position = hit.point;
