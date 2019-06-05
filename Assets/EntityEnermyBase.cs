@@ -47,6 +47,9 @@ public class EntityEnermyBase : EntityBase {
             }
             set
             {
+                if (value == m_Agent.enabled)
+                    return;
+
                 if (value)
                 {
                     m_Obstacle.enabled = false;
@@ -84,8 +87,7 @@ public class EntityEnermyBase : EntityBase {
         EntityBase m_Target;
         bool b_NeedTracking => TCommon.GetXZDistance(transform.position, m_Target.transform.position) < f_AttackRange;
         bool b_TargetVisible => !Physics.Raycast(transform.position, m_Target.transform.position- transform.position, GameLayer.Physics.I_StaticEntity);
-        bool b_AgentReachDestination => m_Agent.destination==Vector3.zero||TCommon.GetXZDistance(transform.position, m_Agent.destination) < 2f;
-
+        bool b_AgentReachDestination => m_Agent.destination==Vector3.zero||TCommon.GetXZDistance(transform.position, m_Agent.destination) < 5f;
         IEnumerator TrackTarget()
         {
             for (; ; )
@@ -97,27 +99,39 @@ public class EntityEnermyBase : EntityBase {
                     continue;
                 }
 
+                B_AgentEnabled = true;
                 if (b_AgentReachDestination)
-                {
-                    B_AgentEnabled = true;
                     m_Agent.SetDestination(GetSamplePosition());
-                }
-
+                else if (AgentStucked())
+                    m_Agent.SetDestination(GetUnstuckPosition());
                 yield return new WaitForSeconds(GameConst.F_EnermyAICheckTime);
             }
         }
+        int stuckCount = 0;
+        Vector3 previousPos=Vector3.zero;
+        bool AgentStucked()
+        {
+            stuckCount = (previousPos != Vector3.zero && Vector3.Distance(previousPos, transform.position) < .5f) ? stuckCount + 1 : 0;
+            previousPos = transform.position;
+            return stuckCount>3;
+        }
+        Vector3 GetUnstuckPosition()
+        {
+            Debug.Log("Unstuck");
+            return NavMesh.SamplePosition(transform.position + new Vector3(Random.Range(-5f, 5f), 0, Random.Range(-5f, 5f)), out sampleHit, 50, -1) ? sampleHit.position : Vector3.zero;
+        }
+
         NavMeshHit sampleHit;
         Vector3 GetSamplePosition()
         {
             Vector3 targetPosition= m_Target.transform.position;
             Vector3 direction = transform.position - m_Target.transform.position;
             Vector3 m_SamplePosition= transform.position+ (b_NeedTracking?direction:-direction).normalized*10;
-            if (NavMesh.SamplePosition(m_SamplePosition, out sampleHit, 10, -1))
-            {
-                m_SamplePosition = m_SamplePosition + new Vector3(Random.Range(-15f, 15f), 0, Random.Range(-15f, 15f));
-                if (NavMesh.SamplePosition(m_SamplePosition, out sampleHit, 10, -1))
-                    targetPosition = sampleHit.position;
-            }
+            m_SamplePosition = m_SamplePosition + new Vector3(Random.Range(-15f, 15f), 0, Random.Range(-15f, 15f));
+            if (NavMesh.SamplePosition(m_SamplePosition, out sampleHit, 50, -1))
+                targetPosition = sampleHit.position;
+            else if (NavMesh.SamplePosition(m_Target.transform.position, out sampleHit, 20, -1))
+                targetPosition = sampleHit.position;
             return targetPosition;
         }
         public void OnDestroy()
