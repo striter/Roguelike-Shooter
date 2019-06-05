@@ -81,11 +81,10 @@ public class EntityEnermyBase : EntityBase {
             this.StartSingleCoroutine(0, TrackTarget());
         }
 
-        Vector3 v3_targetPosition=Vector3.zero;
         EntityBase m_Target;
         bool b_NeedTracking => TCommon.GetXZDistance(transform.position, m_Target.transform.position) < f_AttackRange;
-        bool b_TargetVisible => !Physics.Raycast(transform.position,transform.position- m_Target.transform.position, GameLayer.Physics.I_StaticEntity);
-        bool b_AgentReachDestination => v3_targetPosition==Vector3.zero||TCommon.GetXZDistance(transform.position, v3_targetPosition) < 2f;
+        bool b_TargetVisible => !Physics.Raycast(transform.position, m_Target.transform.position- transform.position, GameLayer.Physics.I_StaticEntity);
+        bool b_AgentReachDestination => m_Agent.destination==Vector3.zero||TCommon.GetXZDistance(transform.position, m_Agent.destination) < 2f;
 
         IEnumerator TrackTarget()
         {
@@ -93,16 +92,15 @@ public class EntityEnermyBase : EntityBase {
             {
                 if (b_TargetVisible&&Random.Range(0,2)>0)
                 {
-                    Debug.Log("?");
+                    B_AgentEnabled = false;
                     yield return new WaitForSeconds(Random.Range(2f,3f));
                     continue;
                 }
 
                 if (b_AgentReachDestination)
                 {
-                    v3_targetPosition = GetSamplePosition();
                     B_AgentEnabled = true;
-                    m_Agent.SetDestination(v3_targetPosition);
+                    m_Agent.SetDestination(GetSamplePosition());
                 }
 
                 yield return new WaitForSeconds(GameConst.F_EnermyAICheckTime);
