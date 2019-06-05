@@ -199,12 +199,12 @@ public static class TCommon
         foreach (T temp in dic.Keys)
             OnEachKey(temp);
     }
-    public static void TraversalUnchange<T, Y>(this Dictionary<T, Y> dic, Action<Y> OnEachValue) where T : class  where Y : class
+    public static void Traversal<T, Y>(this Dictionary<T, Y> dic, Action<Y> OnEachValue) where T : class  where Y : class
     {
         foreach (Y temp in dic.Values)
             OnEachValue(temp);
     }
-    public static void TraversalUnchange<T, Y>(this Dictionary<T, Y> dic, Action<T, Y> OnEachPair) 
+    public static void Traversal<T, Y>(this Dictionary<T, Y> dic, Action<T, Y> OnEachPair) 
     {
         foreach (T temp in dic.Keys)
             OnEachPair(temp, dic[temp]);

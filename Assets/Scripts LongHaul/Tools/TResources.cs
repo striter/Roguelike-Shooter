@@ -47,15 +47,18 @@ public class TResources
             Debug.LogError("Null Path Of: Resources/" + resourcePath);
     }
 
-    public static LevelItemBase[] GetAllLevelItems(enum_LevelStyle _levelStyle)
+    public static LevelItemBase[] GetAllLevelItems(enum_LevelStyle _levelStyle,Transform parent)
     {
         LevelItemBase[] levelItemPrefabs = TResources.LoadAll<LevelItemBase>(ConstPath.S_LeveLItem+"/" + _levelStyle);
         foreach (LevelItemBase levelItem in levelItemPrefabs)
         {
             if (levelItem.m_ItemType == enum_LevelItemType.Invalid)
-                Debug.LogError("Please Edit Level Item(Something invalid): Resources/"+ ConstPath.S_LeveLItem + _levelStyle + "/" + levelItem.name);
+                Debug.LogError("Please Edit Level Item(Something invalid): Resources/" + ConstPath.S_LeveLItem + _levelStyle + "/" + levelItem.name);
         }
-        return levelItemPrefabs;
+        LevelItemBase[] instantiatedLevelItem = new LevelItemBase[levelItemPrefabs.Length];
+        for (int i = 0; i < levelItemPrefabs.Length; i++)
+            instantiatedLevelItem[i] = GameObject.Instantiate(levelItemPrefabs[i], parent);
+        return instantiatedLevelItem;
     }
     public static Dictionary<enum_LevelPrefabType, List<LevelBase>> GetAllStyledLevels(enum_LevelStyle levelStyle)
     {

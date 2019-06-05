@@ -46,7 +46,8 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
     void OnLevelStart()     //Make Current Level Available (AI Bake)
     {
         ObjectManager.RecycleAllInteract(enum_Interact.Interact_Portal);
-        m_currentLevel.m_Level.SetActivate(true);
+        ObjectManager.RecycleAllLevelItem();
+        m_currentLevel.StartLevel();
         NavMeshBuildSettings setting = NavMesh.GetSettingsByID(0);
         List<NavMeshBuildSource> sources = new List<NavMeshBuildSource>();
         NavMeshBuilder.CollectSources(m_currentLevel.m_Level.transform, -1, NavMeshCollectGeometry.PhysicsColliders, 0, new List<NavMeshBuildMarkup>() { }, sources);
@@ -201,8 +202,10 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         //Load All map Levels
         Dictionary<enum_LevelPrefabType, List<LevelBase>> levelPrefabDic = TResources.GetAllStyledLevels(_levelStyle);
 
-        LevelItemBase[] levelItemPrefabs = TResources.GetAllLevelItems(_levelStyle);
-        SBigmapLevelInfo[,] m_MapLevelInfo = new SBigmapLevelInfo[bigmapTiles.GetLength(0), bigmapTiles.GetLength(1)];
+        LevelItemBase[] levelItemPrefabs = TResources.GetAllLevelItems(_levelStyle,null);
+        Dictionary<LevelItemBase, int> maxItemCountDic = new Dictionary<LevelItemBase, int>();
+
+        SBigmapLevelInfo[,] m_MapLevelInfo = new SBigmapLevelInfo[bigmapTiles.GetLength(0), bigmapTiles.GetLength(1)];      //Generate Bigmap Info
         for (int i = 0; i < _bigmapWidth; i++)
             for (int j = 0; j < _bigmapHeight; j++)
             {
@@ -214,9 +217,21 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
                     if(levelPrefabDic[prefabType].Count>1)
                        levelPrefabDic[prefabType].Remove(level);
 
-                    m_MapLevelInfo[i, j].GenerateMap(_generateParent, level, levelItemPrefabs, bigMapSeed);
+                    Dictionary<LevelItemBase,int> itemCountDic=m_MapLevelInfo[i, j].GenerateMap(_generateParent, level, levelItemPrefabs, bigMapSeed);
+                    itemCountDic.Traversal((LevelItemBase item, int count) => {
+                        if (!maxItemCountDic.ContainsKey(item))
+                            maxItemCountDic.Add( item, 0);
+                        if (maxItemCountDic[item] < count)
+                            maxItemCountDic[item] = count;
+                    });
                 }
             }
+        for (int i = 0; i < levelItemPrefabs.Length; i++)
+        {
+            if (!maxItemCountDic.ContainsKey(levelItemPrefabs[i]))
+                GameObject.Destroy(levelItemPrefabs[i].gameObject);
+        }
+        ObjectManager.RegisterLevelItem(maxItemCountDic);
         return m_MapLevelInfo;
     }
     static void ConnectTile(SBigmapTileInfo tileStart,SBigmapTileInfo tileEnd)

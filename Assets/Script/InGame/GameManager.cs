@@ -219,11 +219,12 @@ public static class ExcelManager
 }
 public static class ObjectManager
 {
-    static Transform TF_Entity;
+    public static Transform TF_Entity;
+    public static Transform TF_LevelItem;
     public static void Init()
     {
         TF_Entity = new GameObject("Entity").transform;
-
+        TF_LevelItem = new GameObject("LevelItem").transform;
         TCommon.TraversalEnum((enum_Entity type) => 
         {
             ObjectPoolManager<enum_Entity,EntityBase>.Register(type,TResources.Instantiate<EntityBase>("Entity/"+type.ToString()), enum_PoolSaveType.DynamicMaxAmount,1,null);
@@ -305,6 +306,21 @@ public static class ObjectManager
     public static void RecycleAllInteract(enum_Interact type)
     {
         ObjectPoolManager<enum_Interact, InteractBase>.RecycleAll(type);
+    }
+
+    public static void RegisterLevelItem(Dictionary<LevelItemBase,int> registerDic)
+    {
+        registerDic.Traversal((LevelItemBase item,int count)=> { ObjectPoolManager<LevelItemBase, LevelItemBase>.Register(item, item, enum_PoolSaveType.StaticMaxAmount, count,null); });
+    }
+    public static LevelItemBase SpawnLevelItem(LevelItemBase itemObject,Transform itemParent,Vector3 localPosition)
+    {
+        LevelItemBase spawnedItem = ObjectPoolManager<LevelItemBase, LevelItemBase>.Spawn(itemObject, itemParent);
+        spawnedItem.transform.localPosition = localPosition;
+        return spawnedItem;
+    }
+    public static void RecycleAllLevelItem()
+    {
+        ObjectPoolManager<LevelItemBase, LevelItemBase>.RecycleAllManagedItems();
     }
 }
 #endregion

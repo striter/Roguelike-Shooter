@@ -106,17 +106,17 @@ public class EntityEnermyBase : EntityBase {
                 yield return new WaitForSeconds(GameConst.F_EnermyAICheckTime);
             }
         }
+        NavMeshHit sampleHit;
         Vector3 GetSamplePosition()
         {
             Vector3 targetPosition= m_Target.transform.position;
             Vector3 direction = transform.position - m_Target.transform.position;
             Vector3 m_SamplePosition= transform.position+ (b_NeedTracking?direction:-direction).normalized*10;
-            NavMeshHit hit;
-            if (NavMesh.SamplePosition(m_SamplePosition, out hit, 10, -1))
+            if (NavMesh.SamplePosition(m_SamplePosition, out sampleHit, 10, -1))
             {
                 m_SamplePosition = m_SamplePosition + new Vector3(Random.Range(-15f, 15f), 0, Random.Range(-15f, 15f));
-                if (NavMesh.SamplePosition(m_SamplePosition, out hit, 10, -1))
-                    targetPosition = hit.position;
+                if (NavMesh.SamplePosition(m_SamplePosition, out sampleHit, 10, -1))
+                    targetPosition = sampleHit.position;
             }
             return targetPosition;
         }

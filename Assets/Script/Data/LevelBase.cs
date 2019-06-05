@@ -9,12 +9,12 @@ public class LevelBase : MonoBehaviour {
     public enum_LevelType m_levelType { get; private set; }
     protected Transform tf_LevelItem;
     public System.Random m_seed { get; private set; }
-    public void Init(TileMapData levelData,SLevelGenerate _levelGenerate, LevelItemBase[] _levelItems,enum_LevelType _levelType, System.Random _seed, enum_TileDirection _connectedDireciton)
+    public Dictionary<LevelItemBase, int> Init(TileMapData levelData,SLevelGenerate _levelGenerate, LevelItemBase[] _levelItems,enum_LevelType _levelType, System.Random _seed, enum_TileDirection _connectedDireciton)
     {
         tf_LevelItem = transform.Find("Item");
         m_seed = _seed;
         m_levelType = _levelType;
-        GenerateTileItems(_levelGenerate,_levelItems, levelData, _connectedDireciton);
+        return GenerateTileItems(_levelGenerate,_levelItems, levelData, _connectedDireciton);
     }
     #region TileMapInfos
     public LevelTilePortal m_Portal;
@@ -23,7 +23,7 @@ public class LevelBase : MonoBehaviour {
     List<int> m_IndexMain=new List<int>();
     List<int> t_IndexTemp = new List<int>();
     Dictionary<enum_LevelItemType, List<LevelItemBase>> m_AllItems = new Dictionary<enum_LevelItemType, List<LevelItemBase>>();
-    void GenerateTileItems(SLevelGenerate _itemData,LevelItemBase[] allItemPrefabs, TileMapData _data,enum_TileDirection _PortalDirection)
+    Dictionary<LevelItemBase,int> GenerateTileItems(SLevelGenerate _itemData,LevelItemBase[] allItemPrefabs, TileMapData _data,enum_TileDirection _PortalDirection)
     {
         foreach (LevelItemBase levelItem in allItemPrefabs)
         {
@@ -48,21 +48,31 @@ public class LevelBase : MonoBehaviour {
         GenerateRangePortalTile(origin,_PortalDirection,GameConst.I_TileMapPortalMinusOffset);
 
         //Generate All Items
-        TCommon.TraversalUnchange(_itemData.m_ItemGenerate, (enum_LevelItemType type, RangeInt range) =>
+        TCommon.Traversal(_itemData.m_ItemGenerate, (enum_LevelItemType type, RangeInt range) =>
         {
             GenerateRandomItemTile(type, m_seed.Next(range.start,range.end+1));
         });
-        
+
+        Dictionary<LevelItemBase, int> itemCountDic = new Dictionary<LevelItemBase, int>();
         for (int i = 0; i < m_IndexMain.Count; i++)
         {
             LevelTileItemMain main = m_AllTiles[m_IndexMain[i]] as LevelTileItemMain;
-
-            LevelItemBase itemMain = GameObject.Instantiate(m_AllItems[main.m_LevelItemType][main.m_LevelItemListIndex], tf_LevelItem);
-            itemMain.Init(this,main.m_ItemDirection);
-            itemMain.transform.localPosition = main.m_Offset;
+            LevelItemBase item = m_AllItems[main.m_LevelItemType][main.m_LevelItemListIndex];
+            if (!itemCountDic.ContainsKey(item))
+                itemCountDic.Add(item,0);
+            itemCountDic[item]++;
+        }
+        return itemCountDic;
+    }
+    public void ShowAllItems()
+    {
+        for (int i = 0; i < m_IndexMain.Count; i++)
+        {
+            LevelTileItemMain main = m_AllTiles[m_IndexMain[i]] as LevelTileItemMain;
+            LevelItemBase itemMain = ObjectManager.SpawnLevelItem (m_AllItems[main.m_LevelItemType][main.m_LevelItemListIndex], tf_LevelItem, main.m_Offset);
+            itemMain.Init(this, main.m_ItemDirection);
         }
     }
-
     void GenerateRandomItemTile(enum_LevelItemType type, int totalCount)
     {
         if (totalCount == 0)

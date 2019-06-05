@@ -399,15 +399,20 @@ namespace GameSetting
         {
             m_Connections = tile.m_Connections;
         }
-        public void GenerateMap(Transform _levelParent, LevelBase _levelPrefab, LevelItemBase[] _levelItemPrefabs,System.Random seed)
+        public Dictionary<LevelItemBase, int> GenerateMap(Transform _levelParent, LevelBase _levelPrefab, LevelItemBase[] _levelItemPrefabs,System.Random seed)
         {
             m_LevelParent = _levelParent;
             m_Level = GameObject.Instantiate(_levelPrefab, _levelParent);
             m_Level.transform.localRotation = Quaternion.Euler(0, seed.Next(360), 0);
             m_Level.transform.localPosition = Vector3.zero;
             m_Level.transform.localScale = Vector3.one;
-            m_Level.Init(TResources.GetLevelData(_levelPrefab.name),ExcelManager.GetLevelGenerateProperties(m_TileStyle,_levelPrefab.E_PrefabType), _levelItemPrefabs, m_TileType, seed, m_Connections.Keys.ToList().Find(p=>m_Connections[p]==new TileAxis(-1,-1)));        //Add Portal For Level End
             m_Level.SetActivate(false);
+            return m_Level.Init(TResources.GetLevelData(_levelPrefab.name), ExcelManager.GetLevelGenerateProperties(m_TileStyle, _levelPrefab.E_PrefabType), _levelItemPrefabs, m_TileType, seed, m_Connections.Keys.ToList().Find(p => m_Connections[p] == new TileAxis(-1, -1)));        //Add Portal For Level End
+        }
+        public void StartLevel()
+        {
+            m_Level.ShowAllItems();
+            m_Level.SetActivate(true);
         }
     }
     #endregion
