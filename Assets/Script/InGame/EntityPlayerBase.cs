@@ -17,7 +17,7 @@ public class EntityPlayerBase : EntityBase {
 
     public bool B_Interacting => m_InteractTarget != null;
     public InteractBase m_InteractTarget { get; private set; }
-
+    
     public override void Init(int entityID,SEntity entityInfo)
     {
         base.Init(entityID,entityInfo);
