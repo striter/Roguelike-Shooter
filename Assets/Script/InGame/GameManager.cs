@@ -220,11 +220,9 @@ public static class ExcelManager
 public static class ObjectManager
 {
     public static Transform TF_Entity;
-    public static Transform TF_LevelItem;
     public static void Init()
     {
         TF_Entity = new GameObject("Entity").transform;
-        TF_LevelItem = new GameObject("LevelItem").transform;
         TCommon.TraversalEnum((enum_Entity type) => 
         {
             ObjectPoolManager<enum_Entity,EntityBase>.Register(type,TResources.Instantiate<EntityBase>("Entity/"+type.ToString()), enum_PoolSaveType.DynamicMaxAmount,1,null);
