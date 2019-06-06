@@ -111,7 +111,7 @@ public class EntityEnermyBase : EntityBase {
         {
             for (; ; )
             {
-                if (b_idled&&b_AgentReachDestination && b_TargetVisible && Random.Range(0, 2) > 0)
+                if (!b_idled&&b_AgentReachDestination && b_TargetVisible && Random.Range(0, 2) > 0)
                 {
                     b_idled = true;
                     B_AgentEnabled = false;
