@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 5925024d7affca04fa629c88e0eac184
+guid: 28c727dc34670d14e96d9f66ee36d4c8
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
@@ -8,7 +8,7 @@ ModelImporter:
     2100000: xueshan_zhiwucaizhi
     2300000: //RootNode
     3300000: //RootNode
-    4300000: xueshan_fangwu2
+    4300000: xueshan_xuesong4
   externalObjects: {}
   materials:
     importMaterials: 1
