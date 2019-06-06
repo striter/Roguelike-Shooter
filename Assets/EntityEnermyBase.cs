@@ -99,41 +99,74 @@ public class EntityEnermyBase : EntityBase {
         }
         EntityBase m_Target;
         RaycastHit[] m_Raycasts;
+        float f_aiSimulatedTime;
+        float f_movementCheck,f_battleStatusCheck;
+        Vector3 v3_TargetDirection;
         bool b_TargetInRange;
-        bool b_TargetVisible;
         bool b_AgentReachDestination;
+        bool b_atBattleStatus = false;
         bool b_idled = false;
         IEnumerator TrackTarget()
         {
             for (; ; )
             {
+                f_aiSimulatedTime += GameConst.F_EnermyAICheckTime;
                 CalculateAllParams();
-
-
-                if (!b_idled&&b_AgentReachDestination && b_TargetVisible && Random.Range(0, 2) > 0)
-                {
-                    b_idled = true;
-                    B_AgentEnabled = false;
-                    yield return new WaitForSeconds(Random.Range(2f, 3f));
-                    continue;
-                }
-                b_idled = false;
-                B_AgentEnabled = true;
-                if (AgentStucked())
-                    m_Agent.SetDestination(GetUnstuckPosition());
-                else if (b_AgentReachDestination)
-                    m_Agent.SetDestination(GetSamplePosition());
-                
+                CheckBattle();
+                CheckMovement();
                 yield return new WaitForSeconds(GameConst.F_EnermyAICheckTime);
             }
         }
         void CalculateAllParams()
         {
-            b_TargetInRange = TCommon.GetXZDistance(m_EntityControlling.transform.position, m_Target.transform.position) < f_AttackRange;
-            b_TargetVisible = TargetVisible;
+            v3_TargetDirection = (m_Target.tf_Head.position - m_EntityControlling.tf_Head.position).normalized;
+            b_TargetInRange = TCommon.GetXZDistance(m_EntityControlling.transform.position, m_Target.transform.position) < f_AttackRange&& TargetVisible;
             b_AgentReachDestination = m_Agent.destination == Vector3.zero || TCommon.GetXZDistance(m_EntityControlling.transform.position, m_Agent.destination) < 5f;
         }
+        void CheckMovement()
+        {
+            if (f_aiSimulatedTime < f_movementCheck)
+                return;
 
+            if (!b_idled && b_AgentReachDestination && b_TargetInRange && Random.Range(0, 2) > 0)
+            {
+                b_idled = true;
+                B_AgentEnabled = false;
+                f_movementCheck= f_aiSimulatedTime+Random.Range(2f, 3f);
+                return;
+            }
+
+            b_idled = false;
+            B_AgentEnabled = true;
+
+            if (AgentStucked())
+                m_Agent.SetDestination(GetUnstuckPosition());
+            else if (b_AgentReachDestination)
+                m_Agent.SetDestination(GetSamplePosition());
+        }
+        int fireCount;
+        void CheckBattle()
+        {
+            if (f_aiSimulatedTime < f_battleStatusCheck)
+                return;
+            if (!b_atBattleStatus)
+            {
+                b_atBattleStatus = b_TargetInRange;
+                fireCount = 0;
+            }
+            else
+            {
+                Vector3 fireDirection = (v3_TargetDirection*100 + m_Target.transform.up*Random.Range(-1f*20,1f*20)+m_Target.transform.right*Random.Range(-1f*20,1f*20)).normalized;
+                (ObjectManager.SpawnSFX(enum_SFX.Bullet_Normal, m_EntityControlling.tf_Head) as SFXBullet).TestPlay(m_EntityControlling.I_EntityID, fireDirection, 5);
+                f_battleStatusCheck = f_aiSimulatedTime + .15f;
+                fireCount++;
+                if (fireCount > 3)
+                {
+                    b_atBattleStatus = false;
+                    f_battleStatusCheck = f_aiSimulatedTime + Random.Range(2f, 5f);
+                }
+            }
+        }
         int stuckCount = 0;
         Vector3 previousPos=Vector3.zero;
         bool AgentStucked()
@@ -164,7 +197,7 @@ public class EntityEnermyBase : EntityBase {
         {
             get
             {
-                m_Raycasts = Physics.RaycastAll(m_EntityControlling.tf_Head.position, m_Target.tf_Head.position - m_EntityControlling.tf_Head.position, Vector3.Distance(m_EntityControlling.tf_Head.position, m_Target.tf_Head.position), GameLayer.Physics.I_StaticEntity);
+                m_Raycasts = Physics.RaycastAll(m_EntityControlling.tf_Head.position, v3_TargetDirection, Vector3.Distance(m_EntityControlling.tf_Head.position, m_Target.tf_Head.position), GameLayer.Physics.I_StaticEntity);
                 for (int i = 0; i < m_Raycasts.Length; i++)
                 {
                     if (m_Raycasts[i].collider.gameObject.layer == GameLayer.I_Static)

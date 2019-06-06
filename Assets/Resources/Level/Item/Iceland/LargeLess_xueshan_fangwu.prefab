@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4501369961929246}
   - component: {fileID: 114475098270241614}
   m_Layer: 0
-  m_Name: ManmadeLess_xueshan_fangwu
+  m_Name: LargeLess_xueshan_fangwu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

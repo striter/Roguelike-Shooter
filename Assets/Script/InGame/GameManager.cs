@@ -14,7 +14,8 @@ public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
     public bool B_TestMode { get; private set; } = false;
     public enum_LevelStyle E_TESTSTYLE = enum_LevelStyle.Desert;
     public System.Random m_GameSeed { get; private set; } = null;
-
+    public string m_SeedString { get; private set; } = null;
+    public string M_TESTSEED = "";
     protected override void Awake()
     {
 #if UNITY_EDITOR
@@ -34,15 +35,21 @@ public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
     }
     void Update()
     {
+        if (!B_TestMode)
+            return;
         if (Input.GetKeyDown(KeyCode.Alpha0))
         {
             List<EntityBase> entities = m_Entities.Values.ToList();
-            entities.Traversal(( EntityBase entity) => {
+            entities.Traversal((EntityBase entity) => {
                 if (!entity.B_IsPlayer)
                     entity.BroadcastMessage("TryTakeDamage", entity.m_EntityInfo.m_MaxHealth + entity.m_EntityInfo.m_MaxArmor);
             });
-          
-                        }
+        }
+        if (Input.GetKeyDown(KeyCode.BackQuote))
+        {
+            Time.timeScale = Time.timeScale == 1f ? .1f : 1f;
+        }
+        UIManager.instance.transform.Find("SeedTest").GetComponent<UnityEngine.UI.Text>().text = m_SeedString;
     }
     private void OnDestroy()
     {
@@ -58,16 +65,17 @@ public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
 
     private void Start()        //Entrance Of Whole Game
     {
-        PreInit();
+        PreInit(M_TESTSEED);
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnStageStart);
     }
     #region Bigmap/Level Management
     void PreInit(string _GameSeed="")      //PreInit Bigmap , Levels LocalPlayer Before  Start The game
     {
         if (_GameSeed == "")
-            _GameSeed = DateTime.Now.ToShortTimeString();
+            _GameSeed = DateTime.Now.ToLongTimeString();
 
-        m_GameSeed = new System.Random(_GameSeed.GetHashCode());
+        m_SeedString = _GameSeed;
+        m_GameSeed = new System.Random(m_SeedString.GetHashCode());
         EnviormentManager.Instance.GenerateAllEnviorment(E_TESTSTYLE, m_GameSeed,OnLevelStart);
         GC.Collect();
         m_LocalPlayer = ObjectManager.SpawnEntity(enum_Entity.Player,Vector3.zero);

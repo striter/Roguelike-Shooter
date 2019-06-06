@@ -58,8 +58,8 @@ Material:
     - _FoamSpread: 1
     - _FresPower: 0.41
     - _HQFoam: 0
-    - _Height: 2
-    - _Height_: 4
+    - _Height: 1
+    - _Height_: 2
     - _Length: 5
     - _LightAbs: 0
     - _NormalOffset: 1

@@ -35,6 +35,7 @@ public class UIManager : SingletonMono<UIManager> {
     {
         UIPageBase.ShowPage<UI_BigmapControl>(transform, false);
         TBroadCaster<enum_BC_UIStatusChanged>.Add<EntityPlayerBase>(enum_BC_UIStatusChanged.PlayerInfoChanged, OnPlayerStatusChanegd);
+
     }
     private void OnDisable()
     {

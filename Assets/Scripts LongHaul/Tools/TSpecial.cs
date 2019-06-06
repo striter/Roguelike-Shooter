@@ -116,14 +116,8 @@ namespace TTiles
             Debug.LogError("Invlaid Direction Detected");
             return new TileAxis(0,0);
         }
-        
-        static List<enum_TileDirection> allDirections;
-        public static List<enum_TileDirection> m_AllDirections { get {
-                if (allDirections == null)
-                    allDirections = new List<enum_TileDirection>() { enum_TileDirection.Top, enum_TileDirection.Bottom,
-                        enum_TileDirection.Left, enum_TileDirection.Right };
-                return allDirections;
-            } }
+
+        public static readonly List<enum_TileDirection> m_AllDirections = new List<enum_TileDirection>() { enum_TileDirection.Top, enum_TileDirection.Right,enum_TileDirection.Bottom, enum_TileDirection.Left};
 
         public static void PathFindForClosestApproch<T>(this T[,] tileArray, T t1, T t2, List<T> tilePathsAdd,Action<T> OnEachTilePath=null, Predicate<T> stopPredicate=null, Predicate<T> invalidPredicate=null) where T:class,ITileAxis
         {

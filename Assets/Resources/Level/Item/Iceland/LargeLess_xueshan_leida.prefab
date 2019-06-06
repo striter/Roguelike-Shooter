@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4248039036680272}
   - component: {fileID: 114274395834814584}
   m_Layer: 0
-  m_Name: MediumLess_xueshan_leida
+  m_Name: LargeLess_xueshan_leida
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

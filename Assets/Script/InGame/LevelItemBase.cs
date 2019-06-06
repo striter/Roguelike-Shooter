@@ -14,21 +14,14 @@ public class LevelItemBase : MonoBehaviour {
     {
         m_LevelParent = levelParent;
         tf_Model = transform.Find("Model");
-        if (direction == enum_TileDirection.Right || direction == enum_TileDirection.Left)
-        {
-            int xTemp = m_sizeXAxis;
-            m_sizeXAxis = m_sizeYAxis;
-            m_sizeYAxis = xTemp;
-        }
-
+        ItemRecenter(direction == enum_TileDirection.Right || direction == enum_TileDirection.Left);
         tf_Model.localRotation = Quaternion.Euler(0, (int)direction * 90, 0);
-        ItemRecenter();
         transform.SetActivate(true);
     }
 
-    public void ItemRecenter()
+    public void ItemRecenter(bool inverse=false)
     {
-        transform.GetChild(0).localPosition = new Vector3((m_sizeXAxis - 1) * GameConst.F_LevelTileSize, 0f, (m_sizeYAxis - 1) * GameConst.F_LevelTileSize) / 2;
+        transform.GetChild(0).localPosition = new Vector3(((inverse?m_sizeYAxis:m_sizeXAxis) - 1) * GameConst.F_LevelTileSize, 0f, ((inverse ? m_sizeXAxis:m_sizeYAxis) - 1) * GameConst.F_LevelTileSize) / 2;
     }
 #if UNITY_EDITOR
     LevelBase baseTarget;

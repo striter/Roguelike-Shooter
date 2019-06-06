@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 4072250082257464}
   - component: {fileID: 114598537235653332}
   m_Layer: 0
-  m_Name: MediumLess_xueshan_leidaA
+  m_Name: LargeLess_xueshan_leidaA
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
