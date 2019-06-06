@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4501369961929246}
   - component: {fileID: 114475098270241614}
   m_Layer: 0
-  m_Name: ManmadeLess_xueshan_fangwu
+  m_Name: LargeLess_xueshan_fangwu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -141,7 +141,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_sizeXAxis: 5
   m_sizeYAxis: 5
-  m_ItemType: 7
+  m_ItemType: 1
   b_showGizmos: 1
   b_AutoCenter: 1
   b_AutoRotation: 1
