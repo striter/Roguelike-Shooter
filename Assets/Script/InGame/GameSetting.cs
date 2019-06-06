@@ -26,7 +26,7 @@ namespace GameSetting
         public const float F_DamagePlayerFallInOcean = 10f;        //Player Ocean Fall Damage
 
         public const float F_PlayerCameraSmoothParam = 1f;     //Camera Smooth Param For Player .2 is suggested
-        public const float F_PlayerFallSpeed=.98f       //Player Fall Speed(Not Acceleration)
+        public const float F_PlayerFallSpeed = .98f;       //Player Fall Speed(Not Acceleration)
 
         public const int I_TileMapPortalMinusOffset = 3;        //The Minimum Tile Offset Away From Origin Portal Will Generate
 
