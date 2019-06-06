@@ -17,7 +17,7 @@ public class EntityPlayerBase : EntityBase {
 
     public bool B_Interacting => m_InteractTarget != null;
     public InteractBase m_InteractTarget { get; private set; }
-
+    
     public override void Init(int entityID,SEntity entityInfo)
     {
         base.Init(entityID,entityInfo);
@@ -139,8 +139,8 @@ public class EntityPlayerBase : EntityBase {
         base.Update();
         m_WeaponCurrent.SetCanFire(!Physics.SphereCast(new Ray(tf_WeaponHold.position, tf_WeaponHold.forward), .1f,1f   , GameLayer.Physics.I_Static));
         tf_WeaponHold.localRotation = Quaternion.Euler(-m_Pitch,0,0);
-        transform.rotation = Quaternion.Lerp(transform.rotation,CameraController.CameraXZRotation,.1f);
-        Vector3 direction = (transform.right * m_MoveDelta.x + transform.forward * m_MoveDelta.y).normalized +Vector3.down*.98f;
+        transform.rotation = Quaternion.Lerp(transform.rotation,CameraController.CameraXZRotation,GameConst.F_PlayerCameraSmoothParam);
+        Vector3 direction = (transform.right * m_MoveDelta.x + transform.forward * m_MoveDelta.y).normalized +Vector3.down*GameConst.F_PlayerFallSpeed;
         m_CharacterController.Move(direction*Time.deltaTime*m_EntityInfo.m_moveSpeed);
 
         TBroadCaster<enum_BC_UIStatusChanged>.Trigger(enum_BC_UIStatusChanged.PlayerInfoChanged, this);

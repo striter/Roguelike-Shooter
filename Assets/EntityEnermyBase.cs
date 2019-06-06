@@ -32,6 +32,10 @@ public class EntityEnermyBase : EntityBase {
         m_AI.OnDead();
         base.OnDead();
     }
+    protected void OnDestroy()
+    {
+        m_AI.OnDestroy();
+    }
 
     class EnermyAIControllerBasic:ISingleCoroutine
     {
@@ -84,33 +88,28 @@ public class EntityEnermyBase : EntityBase {
             this.StartSingleCoroutine(0, TrackTarget());
         }
 
+        public void OnDestroy()
+        {
+            this.StopAllSingleCoroutines();
+        }
+        public void OnDead()
+        {
+            OnDestroy();
+            B_AgentEnabled = false;
+        }
         EntityBase m_Target;
         RaycastHit[] m_Raycasts;
-        bool b_NeedTracking => TCommon.GetXZDistance(m_EntityControlling.transform.position, m_Target.transform.position) < f_AttackRange;
-        bool b_TargetVisible {
-            get
-            {
-                m_Raycasts= Physics.RaycastAll(m_EntityControlling.tf_Head.position, m_Target.tf_Head.position - m_EntityControlling.tf_Head.position,Vector3.Distance(m_EntityControlling.tf_Head.position, m_Target.tf_Head.position), GameLayer.Physics.I_StaticEntity);
-                for (int i = 0; i < m_Raycasts.Length; i++)
-                {
-                    if (m_Raycasts[i].collider.gameObject.layer == GameLayer.I_Static)
-                        return false;
-                    else if (m_Raycasts[i].collider.gameObject.layer == GameLayer.I_Entity)
-                    {   
-                        HitCheckEntity entity = m_Raycasts[i].collider.GetComponent<HitCheckEntity>();
-                        if (entity.m_Attacher.I_EntityID!=m_Target.I_EntityID&& entity.m_Attacher.I_EntityID != m_EntityControlling.I_EntityID)
-                            return false;
-                    }
-                }
-                return true;
-            }
-        } 
-        bool b_AgentReachDestination => m_Agent.destination==Vector3.zero||TCommon.GetXZDistance(m_EntityControlling.transform.position, m_Agent.destination) < 5f;
+        bool b_TargetInRange;
+        bool b_TargetVisible;
+        bool b_AgentReachDestination;
         bool b_idled = false;
         IEnumerator TrackTarget()
         {
             for (; ; )
             {
+                CalculateAllParams();
+
+
                 if (!b_idled&&b_AgentReachDestination && b_TargetVisible && Random.Range(0, 2) > 0)
                 {
                     b_idled = true;
@@ -124,9 +123,17 @@ public class EntityEnermyBase : EntityBase {
                     m_Agent.SetDestination(GetUnstuckPosition());
                 else if (b_AgentReachDestination)
                     m_Agent.SetDestination(GetSamplePosition());
+                
                 yield return new WaitForSeconds(GameConst.F_EnermyAICheckTime);
             }
         }
+        void CalculateAllParams()
+        {
+            b_TargetInRange = TCommon.GetXZDistance(m_EntityControlling.transform.position, m_Target.transform.position) < f_AttackRange;
+            b_TargetVisible = TargetVisible;
+            b_AgentReachDestination = m_Agent.destination == Vector3.zero || TCommon.GetXZDistance(m_EntityControlling.transform.position, m_Agent.destination) < 5f;
+        }
+
         int stuckCount = 0;
         Vector3 previousPos=Vector3.zero;
         bool AgentStucked()
@@ -145,7 +152,7 @@ public class EntityEnermyBase : EntityBase {
         {
             Vector3 targetPosition= m_Target.transform.position;
             Vector3 direction = m_EntityControlling.transform.position - m_Target.transform.position;
-            Vector3 m_SamplePosition= m_EntityControlling.transform.position+ (b_NeedTracking?direction:-direction).normalized*10;
+            Vector3 m_SamplePosition= m_EntityControlling.transform.position+ (b_TargetInRange?direction:-direction).normalized*10;
             m_SamplePosition = m_SamplePosition + new Vector3(Random.Range(-15f, 15f), 0, Random.Range(-15f, 15f));
             if (NavMesh.SamplePosition(m_SamplePosition, out sampleHit, 50, -1))
                 targetPosition = sampleHit.position;
@@ -153,14 +160,24 @@ public class EntityEnermyBase : EntityBase {
                 targetPosition = sampleHit.position;
             return targetPosition;
         }
-        public void OnDestroy()
+        bool TargetVisible
         {
-            this.StopAllSingleCoroutines();
-        }
-        public void OnDead()
-        {
-            OnDestroy();
-            B_AgentEnabled = false;
+            get
+            {
+                m_Raycasts = Physics.RaycastAll(m_EntityControlling.tf_Head.position, m_Target.tf_Head.position - m_EntityControlling.tf_Head.position, Vector3.Distance(m_EntityControlling.tf_Head.position, m_Target.tf_Head.position), GameLayer.Physics.I_StaticEntity);
+                for (int i = 0; i < m_Raycasts.Length; i++)
+                {
+                    if (m_Raycasts[i].collider.gameObject.layer == GameLayer.I_Static)
+                        return false;
+                    else if (m_Raycasts[i].collider.gameObject.layer == GameLayer.I_Entity)
+                    {
+                        HitCheckEntity entity = m_Raycasts[i].collider.GetComponent<HitCheckEntity>();
+                        if (entity.m_Attacher.I_EntityID != m_Target.I_EntityID && entity.m_Attacher.I_EntityID != m_EntityControlling.I_EntityID)
+                            return false;
+                    }
+                }
+                return true;
+            }
         }
     }
 }
