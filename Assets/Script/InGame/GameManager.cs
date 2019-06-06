@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TExcel;
 using UnityEngine;
 using UnityEngine.AI;
@@ -31,7 +32,18 @@ public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
         TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnRecycleEntity, OnRecycleEntity);
         TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnRecycleEntity, OnWaveEntityDead);
     }
-
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            List<EntityBase> entities = m_Entities.Values.ToList();
+            entities.Traversal(( EntityBase entity) => {
+                if (!entity.B_IsPlayer)
+                    entity.BroadcastMessage("TryTakeDamage", entity.m_EntityInfo.m_MaxHealth + entity.m_EntityInfo.m_MaxArmor);
+            });
+          
+                        }
+    }
     private void OnDestroy()
     {
         this.StopAllSingleCoroutines();
