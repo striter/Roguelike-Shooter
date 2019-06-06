@@ -156,8 +156,8 @@ public class EntityEnermyBase : EntityBase {
             }
             else
             {
-                Vector3 fireDirection = (v3_TargetDirection*100 + m_Target.transform.up*Random.Range(-1f*20,1f*20)+m_Target.transform.right*Random.Range(-1f*20,1f*20)).normalized;
-                (ObjectManager.SpawnSFX(enum_SFX.Bullet_Normal, m_EntityControlling.tf_Head) as SFXBullet).TestPlay(m_EntityControlling.I_EntityID, fireDirection, 5);
+                Vector3 fireDirection = (v3_TargetDirection*100 + m_Target.transform.up*Random.Range(-1f*5,1f*5)+m_Target.transform.right*Random.Range(-1f*5,1f*5)).normalized;
+                (ObjectManager.SpawnSFX(enum_SFX.Bullet_Normal, m_EntityControlling.tf_Head) as SFXBullet).TestPlay(m_EntityControlling.I_EntityID, fireDirection, 10,30);
                 f_battleStatusCheck = f_aiSimulatedTime + .15f;
                 fireCount++;
                 if (fireCount > 3)

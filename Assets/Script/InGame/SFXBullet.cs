@@ -27,11 +27,11 @@ public class SFXBullet : SFXBase {
         m_Trail.Clear();
         base.Play(sourceID,duration==-1? GameConst.I_NormalBulletLastTime:duration);
     }
-    public void TestPlay(int sourceID, Vector3 direction, float damage,float duration =-1)
+    public void TestPlay(int sourceID, Vector3 direction, float damage,float speed,float duration =-1)
     {
         m_bulletDamage = damage;
         m_Direction = direction;
-        m_Simulator = new BulletPhysicsSimulator(transform.position, m_Direction, Vector3.down,30, 200, 0,0);
+        m_Simulator = new BulletPhysicsSimulator(transform.position, m_Direction, Vector3.down,speed, 200, 0,0);
         B_SimulatePhysics = true;
         m_Trail.Clear();
         base.Play(sourceID, duration == -1 ? GameConst.I_NormalBulletLastTime : duration);
