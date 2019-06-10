@@ -1,23 +1,19 @@
-﻿using System.Collections;
+﻿using LPWAsset;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class StyleColorData : ScriptableObject
 {
-    [SerializeField]
     public Color c_directionnal;
-    [SerializeField]
     public Vector3 v3_eulerAngle;
-    [SerializeField]
     public float f_directionalIntensity;
-    [SerializeField]
     public Color c_ambientSky;
-    [SerializeField]
     public Color c_ambientEquator;
-    [SerializeField]
     public Color c_ambientGround;
-    [SerializeField]
     public Color c_ocean;
+    public bool b_oceanReflection;
+
     public static StyleColorData Default()
     {
         StyleColorData defaultData = CreateInstance<StyleColorData>();
@@ -28,10 +24,11 @@ public class StyleColorData : ScriptableObject
         defaultData.c_ambientEquator = Color.black;
         defaultData.c_ambientGround = Color.black;
         defaultData.c_ocean = Color.blue;
+        defaultData.b_oceanReflection = true;
         return defaultData;
     }
 
-    public void DataInit(Light directionalLight, Material oceanMat)
+    public void DataInit(Light directionalLight, LowPolyWaterScript oceanScript)
     {
         directionalLight.color = c_directionnal;
         directionalLight.intensity = f_directionalIntensity;
@@ -39,15 +36,18 @@ public class StyleColorData : ScriptableObject
         RenderSettings.ambientSkyColor = c_ambientSky;
         RenderSettings.ambientEquatorColor = c_ambientEquator;
         RenderSettings.ambientGroundColor = c_ambientGround;
+        oceanScript.material.color = c_ocean;
+        oceanScript.enableReflection = b_oceanReflection;
     }
 
 #if UNITY_EDITOR
-    public void SaveData(Light directional, Material ocean)
+    public void SaveData(Light directional, LowPolyWaterScript ocean)
     {
         c_directionnal = directional.color;
         f_directionalIntensity = directional.intensity;
         v3_eulerAngle = directional.transform.eulerAngles;
-        c_ocean = ocean.GetColor("_Color");
+        c_ocean = ocean.material.GetColor("_Color");
+        b_oceanReflection = ocean.enableReflection;
         c_ambientSky = RenderSettings.ambientSkyColor;
         c_ambientEquator = RenderSettings.ambientEquatorColor;
         c_ambientGround = RenderSettings.ambientGroundColor;
