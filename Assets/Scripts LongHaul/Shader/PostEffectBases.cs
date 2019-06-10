@@ -136,16 +136,18 @@ public class PE_GaussianBlur : PostEffectBase       //Gassuain Blur
 }
 public class PE_Bloom : PostEffectBase
 {
-    public int I_Iterations = 5;
-    public float F_BlurSpread = .2f;
-    public int I_DownSample = 4;
-    public float F_LuminanceThreshold = .4f;
+    public int I_Iterations = 3;
+    public float F_BlurSpread = 2f;
+    public int I_DownSample = 3;
+    public float F_LuminanceThreshold = .85f;
+    public float F_LuminanceMultiple = 10;
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
         base.OnRenderImage(source, destination);
         if (I_DownSample == 0)
             I_DownSample = 1;
         Mat_Cur.SetFloat("_LuminanceThreshold", F_LuminanceThreshold);
+        Mat_Cur.SetFloat("_LuminanceMultiple", F_LuminanceMultiple);
         int rtW = source.width / I_DownSample;
         int rtH = source.height / I_DownSample;
 

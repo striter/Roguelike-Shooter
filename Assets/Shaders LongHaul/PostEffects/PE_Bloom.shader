@@ -3,8 +3,9 @@
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
-	_Bloom("Bloom",2D)="white"{}
-	_LuminanceThreshold("Luminance Threshold",Range(0,4))=.5
+		_Bloom("Bloom",2D)="white"{}
+		_LuminanceThreshold("Luminance Threshold",Range(0,1)) = .5
+		_LuminanceMultiple("Luminance Multiple",Range(1,20)) = 10
 		_BlurSize("BlurSize",Float)=1
 	}
 	SubShader
@@ -24,6 +25,7 @@
 	half4 _MainTex_TexelSize;
 	sampler2D _Bloom;
 	half _BlurSize;
+	half _LuminanceMultiple;
 	half _LuminanceThreshold;
 
 			struct v2f
@@ -43,7 +45,7 @@
 			fixed4  fragExtractBright(v2f i):SV_TARGET
 			{
 				fixed4 c = tex2D(_MainTex,i.uv);
-				fixed val = clamp(luminance(c) - _LuminanceThreshold, 0, 1);
+				fixed val = clamp((luminance(c) - _LuminanceThreshold)*_LuminanceMultiple, 0, 1);
 				return c * val;
 			}
 
@@ -82,7 +84,7 @@
 		}
 
 			UsePass "PostEffect/PE_GaussianBlur/GAUSSIAN_BLUR_VERTICAL"
-				UsePass "PostEffect/PE_GaussianBlur/GAUSSIAN_BLUR_HORIZONTAL"
+			UsePass "PostEffect/PE_GaussianBlur/GAUSSIAN_BLUR_HORIZONTAL"
 
 
 			Pass

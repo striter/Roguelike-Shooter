@@ -2,26 +2,30 @@
 
 [RequireComponent(typeof(Camera))]
 public class PostEffectManager : SingletonMono<PostEffectManager> {
-    #region Test
-    //public float F_Test1;
-    //public float F_Test2;
-    //public float F_Test3;
-    //public float F_Test4;
-    //public Color C_Test1;
-    //public Color C_Test2;
-    //public Texture Tx_Test1;
-    //protected void Update()
-    //{
-    //    if (peb_curEffect as PE_Bloom != null)
-    //    {
-    //        (peb_curEffect as PE_Bloom).I_DownSample = (int)F_Test1;
-    //        (peb_curEffect as PE_Bloom).I_Iterations = (int)F_Test2;
-    //        (peb_curEffect as PE_Bloom).F_BlurSpread = F_Test3;
-    //        (peb_curEffect as PE_Bloom).F_LuminanceThreshold = F_Test4;
-
-    //    }
-    //}
-    #endregion
+#if UNITY_EDITOR
+    public bool b_testMode=true;
+    public float F_Test1;
+    public float F_Test2;
+    public float F_Test3;
+    public float F_Test4;
+    public float F_Test5;
+    public Color C_Test1;
+    public Color C_Test2;
+    public Texture Tx_Test1;
+    protected void Update()
+    {
+        if (!b_testMode)
+            return;
+        if (peb_curEffect as PE_Bloom != null)
+        {
+            (peb_curEffect as PE_Bloom).I_DownSample = (int)F_Test1;
+            (peb_curEffect as PE_Bloom).I_Iterations = (int)F_Test2;
+            (peb_curEffect as PE_Bloom).F_BlurSpread = F_Test3;
+            (peb_curEffect as PE_Bloom).F_LuminanceThreshold = F_Test4;
+            (peb_curEffect as PE_Bloom).F_LuminanceMultiple = F_Test5;
+        }
+    }
+#endif
 
     public T SetPostEffect<T>() where T:PostEffectBase,new()
     {
