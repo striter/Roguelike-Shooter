@@ -5,6 +5,11 @@ using UnityEditor;
 using UnityEngine;
 namespace EToolsEditor
 {
+    public static class TEditor
+    {
+        public const string S_AssetDataBaseResources = "Assets/Resources/";
+    }
+
     public class EAudio
     {
         static AudioClip curClip;

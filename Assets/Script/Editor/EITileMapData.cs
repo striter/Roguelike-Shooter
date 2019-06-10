@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(TileMapData))]
-public class TileMapEditor : Editor {
+public class EITileMapData : Editor {
     public override void OnInspectorGUI()
     {
         TileMapData data = target as TileMapData;
