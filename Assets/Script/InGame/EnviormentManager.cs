@@ -12,8 +12,8 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
     public enum_LevelStyle m_StyleCurrent { get; private set; } = enum_LevelStyle.Invalid;
     public static SBigmapLevelInfo m_currentLevel { get; private set; }
     public SBigmapLevelInfo[,] m_MapLevelInfo { get; private set; }
-    protected Light m_DirectionalLight;
-    protected Material m_OceanMat;
+    public Light m_DirectionalLight { get; protected set; }
+    public Material m_OceanMat { get; protected set; }
     protected NavMeshDataInstance m_NavMeshData;
     public System.Random m_mainSeed;
     public Action<SBigmapLevelInfo> OnLevelPrepared;

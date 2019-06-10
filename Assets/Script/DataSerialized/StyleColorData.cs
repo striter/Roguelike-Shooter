@@ -2,15 +2,33 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StyleColorData : ScriptableObject {
-    public Color c_directionnal=Color.white;
-    public Vector3 v3_eulerAngle = new Vector3(45, 60, 0);
-    public float f_directionalIntensity=.8f;
-    public Color c_ambientSky=Color.grey,c_ambientEquator=Color.black,c_ambientGround=Color.black;
-    public Color c_ocean=Color.blue;
+public class StyleColorData : ScriptableObject
+{
+    [SerializeField]
+    public Color c_directionnal;
+    [SerializeField]
+    public Vector3 v3_eulerAngle;
+    [SerializeField]
+    public float f_directionalIntensity;
+    [SerializeField]
+    public Color c_ambientSky;
+    [SerializeField]
+    public Color c_ambientEquator;
+    [SerializeField]
+    public Color c_ambientGround;
+    [SerializeField]
+    public Color c_ocean;
     public static StyleColorData Default()
     {
-        return CreateInstance<StyleColorData>();
+        StyleColorData defaultData = CreateInstance<StyleColorData>();
+        defaultData.c_directionnal = Color.white;
+        defaultData.v3_eulerAngle = new Vector3(45, 60, 0);
+        defaultData.f_directionalIntensity = .8f;
+        defaultData.c_ambientSky = Color.grey;
+        defaultData.c_ambientEquator = Color.black;
+        defaultData.c_ambientGround = Color.black;
+        defaultData.c_ocean = Color.blue;
+        return defaultData;
     }
 
     public void DataInit(Light directionalLight, Material oceanMat)

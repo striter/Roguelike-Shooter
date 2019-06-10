@@ -24,8 +24,7 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
         EWorkFlow_StyleColorCustomization window= GetWindow(typeof(EWorkFlow_StyleColorCustomization)) as EWorkFlow_StyleColorCustomization;
         selectingStyleType = enum_LevelStyle.Invalid;
         previousData = StyleColorData.Default();
-        directionalLight = GameObject.Find("Enviorment/Directional Light").GetComponent<Light>();
-        oceanMat = AssetDatabase.LoadAssetAtPath<Material>("Assets/Material/Ocean.mat");
+        InitAllMat();
         previousData.SaveData(directionalLight, oceanMat);
         window.Show();
     }
@@ -35,18 +34,40 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
     static Material oceanMat;
     static StyleColorData previousData;
     string extraName="Please Edit This";
+    static void InitAllMat()
+    {
+
+        if (EditorApplication.isPlaying)
+        {
+            directionalLight = EnviormentManager.Instance.m_DirectionalLight;
+            oceanMat = EnviormentManager.Instance.m_OceanMat;
+        }
+        else
+        {
+            directionalLight = GameObject.Find("Enviorment/Directional Light").GetComponent<Light>();
+            oceanMat = AssetDatabase.LoadAssetAtPath<Material>("Assets/Material/Ocean.mat");
+        }
+    }
     private void OnGUI()
     {
 
         GUILayout.BeginVertical();
+        if (EditorApplication.isPlaying)
+            selectingStyleType = GameManager.Instance.E_TESTSTYLE;
+        InitAllMat();
+
         if (selectingStyleType == enum_LevelStyle.Invalid)
             TCommon.TraversalEnum((enum_LevelStyle style) =>
             {
                 GUILayout.BeginHorizontal();
                 StyleColorData[] customizations = TResources.GetAllStyleCustomization(style);
                 GUILayout.TextArea(style.ToString() + ":" + customizations.Length.ToString() + " Customizations");
-                if (customizations.Length>0&&GUILayout.Button("Show Random"))
-                    customizations.RandomItem().DataInit(directionalLight,oceanMat);
+                if (customizations.Length > 0 && GUILayout.Button("Show Random"))
+                {
+                    StyleColorData data = customizations.RandomItem();
+                    data.DataInit(directionalLight, oceanMat);
+                    EditorGUIUtility.PingObject(data);
+                }
                 if (GUILayout.Button("Select " + style))
                     selectingStyleType = style;
                 GUILayout.EndHorizontal();
@@ -62,7 +83,10 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
                     GUILayout.BeginHorizontal();
                     GUILayout.TextArea(data.name);
                     if (GUILayout.Button("Show"))
+                    {
                         data.DataInit(directionalLight, oceanMat);
+                        EditorGUIUtility.PingObject(data);
+                    }
                     if (GUILayout.Button("Delete"))
                         AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(data));
                     GUILayout.EndHorizontal();
@@ -73,7 +97,7 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
                     newStyleData = true;
                 if (GUILayout.Button("Reset"))
                     previousData.DataInit(directionalLight, oceanMat);
-                if (GUILayout.Button("Return"))
+                if (!EditorApplication.isPlaying&&GUILayout.Button("Return"))
                     selectingStyleType = enum_LevelStyle.Invalid;
                 GUILayout.EndHorizontal();
             }
@@ -144,6 +168,10 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
             AssetDatabase.CreateAsset(data, TEditor.S_AssetDataBaseResources + dataPath);
         }
         data.SaveData(directional,ocean);
+
+        EditorUtility.SetDirty(data);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
     }
 }
 
