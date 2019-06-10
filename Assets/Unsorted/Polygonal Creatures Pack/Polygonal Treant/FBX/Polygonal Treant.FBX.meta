@@ -1,0 +1,180 @@
+fileFormatVersion: 2
+guid: 014a29dcf32899248a35e1af0de48366
+timeCreated: 1523345066
+licenseType: Store
+ModelImporter:
+  serializedVersion: 21
+  fileIDToRecycleName:
+    100000: Object002
+    100002: //RootNode
+    100004: Polygonal Treant
+    100006: Rig
+    100008: RigHead
+    100010: RigHeadGizmo
+    100012: RigLArm1
+    100014: RigLArm1Gizmo
+    100016: RigLArm2
+    100018: RigLArm2Gizmo
+    100020: RigLLegBack1
+    100022: RigLLegBack2
+    100024: RigLLegBackAnkle
+    100026: RigLLegBackPlatform
+    100028: RigLLegFront1
+    100030: RigLLegFront2
+    100032: RigLLegFrontAnkle
+    100034: RigLLegFrontPlatform
+    100036: RigPelvis
+    100038: RigPelvisGizmo
+    100040: RigRArm1
+    100042: RigRArm1Gizmo
+    100044: RigRArm2
+    100046: RigRArm2Gizmo
+    100048: RigRLegBack1
+    100050: RigRLegBack2
+    100052: RigRLegBackAnkle
+    100054: RigRLegBackPlatform
+    100056: RigRLegFront1
+    100058: RigRLegFront2
+    100060: RigRLegFrontAnkle
+    100062: RigRLegFrontPlatform
+    100064: RigSpine
+    100066: Object003
+    100068: Box001
+    100070: Cylinder001
+    100072: Object001
+    100074: RigJaw
+    100076: RigJawGizmo
+    400000: Object002
+    400002: //RootNode
+    400004: Polygonal Treant
+    400006: Rig
+    400008: RigHead
+    400010: RigHeadGizmo
+    400012: RigLArm1
+    400014: RigLArm1Gizmo
+    400016: RigLArm2
+    400018: RigLArm2Gizmo
+    400020: RigLLegBack1
+    400022: RigLLegBack2
+    400024: RigLLegBackAnkle
+    400026: RigLLegBackPlatform
+    400028: RigLLegFront1
+    400030: RigLLegFront2
+    400032: RigLLegFrontAnkle
+    400034: RigLLegFrontPlatform
+    400036: RigPelvis
+    400038: RigPelvisGizmo
+    400040: RigRArm1
+    400042: RigRArm1Gizmo
+    400044: RigRArm2
+    400046: RigRArm2Gizmo
+    400048: RigRLegBack1
+    400050: RigRLegBack2
+    400052: RigRLegBackAnkle
+    400054: RigRLegBackPlatform
+    400056: RigRLegFront1
+    400058: RigRLegFront2
+    400060: RigRLegFrontAnkle
+    400062: RigRLegFrontPlatform
+    400064: RigSpine
+    400066: Object003
+    400068: Box001
+    400070: Cylinder001
+    400072: Object001
+    400074: RigJaw
+    400076: RigJawGizmo
+    2300000: Object002
+    2300002: Polygonal Treant
+    2300004: Object003
+    2300006: Box001
+    2300008: Cylinder001
+    2300010: Object001
+    3300000: Object002
+    3300002: Polygonal Treant
+    3300004: Object003
+    3300006: Box001
+    3300008: Cylinder001
+    3300010: Object001
+    4300000: Polygonal Treant
+    4300002: Object002
+    4300004: Object003
+    4300006: Box001
+    4300008: Cylinder001
+    4300010: Object001
+    9500000: //RootNode
+    13700000: Polygonal Treant
+  materials:
+    importMaterials: 0
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

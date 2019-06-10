@@ -1,0 +1,155 @@
+fileFormatVersion: 2
+guid: 1db1eb7ed93af2a4491fe89f2d07d91c
+timeCreated: 1522483542
+licenseType: Store
+ModelImporter:
+  serializedVersion: 21
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: Rig
+    100004: RigBottom
+    100006: RigBottomGizmo
+    100008: RigCover
+    100010: RigCoverGizmo
+    100012: RigLHandle
+    100014: RigLHandleGizmo
+    100016: RigRHandle
+    100018: RigRHandleGizmo
+    100020: RigSpine
+    100022: RigTongue1
+    100024: RigTongue1Gizmo
+    100026: RigTongue2
+    100028: RigTongue2Gizmo
+    100030: RigTongue3
+    100032: RigTongue3Gizmo
+    100034: RigTongue4
+    100036: RigTongue4Gizmo
+    100038: RigTongue5
+    100040: RigTongue5Gizmo
+    100042: RigTop
+    100044: RigTopGizmo
+    100046: Treasure Chest Monster
+    100048: Box001
+    100050: Treasure Chest
+    100052: Object001
+    100054: RigBase
+    100056: RigBaseGizmo
+    400000: //RootNode
+    400002: Rig
+    400004: RigBottom
+    400006: RigBottomGizmo
+    400008: RigCover
+    400010: RigCoverGizmo
+    400012: RigLHandle
+    400014: RigLHandleGizmo
+    400016: RigRHandle
+    400018: RigRHandleGizmo
+    400020: RigSpine
+    400022: RigTongue1
+    400024: RigTongue1Gizmo
+    400026: RigTongue2
+    400028: RigTongue2Gizmo
+    400030: RigTongue3
+    400032: RigTongue3Gizmo
+    400034: RigTongue4
+    400036: RigTongue4Gizmo
+    400038: RigTongue5
+    400040: RigTongue5Gizmo
+    400042: RigTop
+    400044: RigTopGizmo
+    400046: Treasure Chest Monster
+    400048: Box001
+    400050: Treasure Chest
+    400052: Object001
+    400054: RigBase
+    400056: RigBaseGizmo
+    2300000: Box001
+    2300002: Treasure Chest
+    2300004: Object001
+    2300006: //RootNode
+    3300000: Box001
+    3300002: Treasure Chest
+    3300004: Object001
+    3300006: //RootNode
+    4300000: Treasure Chest Monster
+    4300002: Treasure Chest
+    4300004: Box001
+    4300006: Object001
+    9500000: //RootNode
+    13700000: Treasure Chest Monster
+    13700002: Treasure Chest
+  materials:
+    importMaterials: 0
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
