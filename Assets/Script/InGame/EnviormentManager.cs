@@ -5,12 +5,15 @@ using GameSetting;
 using TTiles;
 using UnityEngine.AI;
 using System;
+using LPWAsset;
 
 public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
     public Transform tf_LevelParent { get; private set; }
     public enum_LevelStyle m_StyleCurrent { get; private set; } = enum_LevelStyle.Invalid;
     public static SBigmapLevelInfo m_currentLevel { get; private set; }
     public SBigmapLevelInfo[,] m_MapLevelInfo { get; private set; }
+    protected Light m_DirectionalLight;
+    protected Material m_OceanMat;
     protected NavMeshDataInstance m_NavMeshData;
     public System.Random m_mainSeed;
     public Action<SBigmapLevelInfo> OnLevelPrepared;
@@ -18,6 +21,8 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
     {
         base.Awake();
         tf_LevelParent = transform.Find("LevelParent");
+        m_DirectionalLight = transform.Find("Directional Light").GetComponent<Light>();
+        m_OceanMat = transform.Find("Ocean").GetComponent<LowPolyWaterScript>().material;
     }
     protected void Start()
     {
@@ -35,6 +40,9 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         m_mainSeed = seed;
         m_StyleCurrent = _LevelStyle;
         m_MapLevelInfo= GenerateBigmapLevels(m_StyleCurrent, m_mainSeed, tf_LevelParent,6,5,new TileAxis(2,2));
+        StyleColorData[] customizations = TResources.GetAllStyleCustomization(_LevelStyle);
+        StyleColorData randomData= customizations.Length == 0? StyleColorData.Default():customizations.RandomItem(m_mainSeed);
+        randomData.DataInit(m_DirectionalLight, m_OceanMat);
     }
     #region Level
     void OnStageStart()

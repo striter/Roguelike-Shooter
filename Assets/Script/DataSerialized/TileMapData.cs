@@ -17,13 +17,9 @@ public class TileMapData : ScriptableObject
         }
     }
 
-    [SerializeField]
     public int I_Width;
-    [SerializeField]
     public int I_Height;
-    [SerializeField]
     public Vector2 m_Offset;
-    [SerializeField]
     public List<TileInfo> m_MapData;
     public void Bake(Transform target,int _widthOrRaidus,int _height,Vector2 offset,float heightDetect,bool bakeUnavailable,bool bakeInCircle)
     {
