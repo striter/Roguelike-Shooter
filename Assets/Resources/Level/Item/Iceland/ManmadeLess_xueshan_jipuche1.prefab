@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 4142684122501322}
   - component: {fileID: 114119179412564408}
   m_Layer: 0
-  m_Name: ManmadeMore_xueshan_jipuche1
+  m_Name: ManmadeLess_xueshan_jipuche1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -141,7 +141,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_sizeXAxis: 3
   m_sizeYAxis: 2
-  m_ItemType: 6
+  m_ItemType: 7
   b_showGizmos: 1
   b_AutoCenter: 1
   b_AutoRotation: 1
