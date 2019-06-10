@@ -65,6 +65,11 @@ public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
 
     private void Start()        //Entrance Of Whole Game
     {
+        PE_Bloom bloom= PostEffectManager.Instance.SetPostEffect<PE_Bloom>();
+        bloom.F_BlurSpread = 1f;
+        bloom.I_DownSample = 5;
+        bloom.I_Iterations = 3;
+        bloom.F_LuminanceThreshold = .6f;
         PreInit(M_TESTSEED);
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnStageStart);
     }

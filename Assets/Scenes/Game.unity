@@ -21,9 +21,9 @@ RenderSettings:
   m_FogDensity: 0.01
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 0, g: 0, b: 0, a: 0}
-  m_AmbientEquatorColor: {r: 0, g: 0, b: 0, a: 0}
-  m_AmbientGroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_AmbientSkyColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_AmbientEquatorColor: {r: 0, g: 0, b: 0, a: 1}
+  m_AmbientGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_AmbientIntensity: 1
   m_AmbientMode: 1
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
@@ -1221,6 +1221,7 @@ GameObject:
   - component: {fileID: 884918081}
   - component: {fileID: 884918080}
   - component: {fileID: 884918079}
+  - component: {fileID: 884918083}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1291,6 +1292,17 @@ Transform:
   m_Father: {fileID: 1434031919}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &884918083
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 884918078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3edb4d7545332d43a7feb0ddbee14df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &961341477
 GameObject:
   m_ObjectHideFlags: 0
@@ -1703,7 +1715,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c088e7b318d292458e08155aef1723d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  E_TESTSTYLE: 3
+  E_TESTSTYLE: 2
   M_TESTSEED: 
 --- !u!4 &1133817278
 Transform:
@@ -1743,8 +1755,8 @@ Light:
   m_Enabled: 1
   serializedVersion: 8
   m_Type: 1
-  m_Color: {r: 0, g: 0, b: 0, a: 0}
-  m_Intensity: 0
+  m_Color: {r: 0.5579585, g: 0.6675815, b: 0.88235295, a: 1}
+  m_Intensity: 0.6
   m_Range: 10
   m_SpotAngle: 30
   m_CookieSize: 10
@@ -1776,7 +1788,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1292860484}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0.2241439, y: 0.4829629, z: -0.12940955, w: 0.83651626}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -2085,7 +2097,7 @@ MonoBehaviour:
   sizeX: 20
   sizeZ: 20
   noise: 0.6
-  enableReflection: 0
+  enableReflection: 1
   enableRefraction: 0
   reflection:
     disablePixelLights: 1
