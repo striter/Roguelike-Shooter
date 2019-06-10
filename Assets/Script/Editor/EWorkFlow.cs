@@ -83,9 +83,11 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
                 {
                     GUILayout.BeginHorizontal();
                     GUILayout.TextArea(data.name);
-                    if (GUILayout.Button("Show"))
+                    if (GUILayout.Button("Edit"))
                     {
                         data.DataInit(directionalLight, oceanScript);
+                        newStyleData = true;
+                        extraName = data.name.Split('_')[1];
                         EditorGUIUtility.PingObject(data);
                     }
                     if (GUILayout.Button("Delete"))
@@ -107,8 +109,10 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
                 GUILayout.BeginHorizontal();
                 EditorGUILayout.TextArea("Directional Light:");
                 directionalLight.color=EditorGUILayout.ColorField(directionalLight.color);
-                EditorGUILayout.TextArea("Ocean:");
+                EditorGUILayout.TextArea("Ocean:Color:");
                 oceanScript.material.SetColor("_Color",EditorGUILayout.ColorField(oceanScript.material.GetColor("_Color")));
+                EditorGUILayout.TextArea("Reflection:");
+                oceanScript.enableReflection = EditorGUILayout.Toggle(oceanScript.enableReflection);
                 GUILayout.EndHorizontal();
                 GUILayout.BeginHorizontal();
                 EditorGUILayout.TextArea("Intensity:");
