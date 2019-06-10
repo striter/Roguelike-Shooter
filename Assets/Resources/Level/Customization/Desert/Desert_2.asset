@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e349d199acb4d80499b840c85dd3f665, type: 3}
+  m_Name: Desert_2
+  m_EditorClassIdentifier: 
+  c_directionnal: {r: 0.95686275, g: 0.8352941, b: 0.8352941, a: 1}
+  v3_eulerAngle: {x: 45.000004, y: 60.000004, z: 0}
+  f_directionalIntensity: 0.6
+  c_ambientSky: {r: 0.6117647, g: 0.5372549, b: 0.5568628, a: 1}
+  c_ambientEquator: {r: 0.32156864, g: 0.25882354, b: 0.14117648, a: 1}
+  c_ambientGround: {r: 0.5568628, g: 0.43137255, b: 0.18039216, a: 1}
+  c_ocean: {r: 0.80784315, g: 0.8, b: 0.5529412, a: 1}
+  b_oceanReflection: 0
