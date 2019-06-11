@@ -11,7 +11,7 @@ public class SFXBulletRocket : SFXBullet {
     }
     protected override void OnHitEntity(HitCheckEntity hitEntity)
     {
-        if (GameExpression.B_CanHitTarget(hitEntity, I_SourceID))
+        if (GameManager.B_CanHitTarget(hitEntity, I_SourceID))
             DoBlast();
     }
     protected override void OnHitError()

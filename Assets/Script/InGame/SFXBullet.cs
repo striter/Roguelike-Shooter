@@ -61,7 +61,7 @@ public class SFXBullet : SFXBase {
 
     protected virtual void OnHitEntity(HitCheckEntity hitEntity)
     {
-        if (GameExpression.B_CanHitTarget(hitEntity, I_SourceID))
+        if (GameManager.B_CanHitTarget(hitEntity, I_SourceID))
         {
             hitEntity.TryHit(m_bulletDamage);
             OnPlayFinished();

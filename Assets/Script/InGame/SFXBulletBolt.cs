@@ -17,7 +17,7 @@ public class SFXBulletBolt : SFXBullet {
     {
         B_SimulatePhysics = false;
         transform.SetParent(entity.transform);
-        if (GameExpression.B_CanHitTarget(entity, I_SourceID))
+        if (GameManager.B_CanHitTarget(entity, I_SourceID))
             entity.TryHit(m_bulletDamage);
     }
 }

@@ -108,6 +108,8 @@ public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
     }
     #endregion
     #region Entity Management
+    public static int I_EntityID(int index, bool isPlayer) => index + (isPlayer ? 10000 : 20000);       //Used For Identification Management
+    public static bool B_CanHitTarget(HitCheckEntity hb, int sourceID) => hb.I_AttacherID != sourceID && hb.m_Attacher.B_IsPlayer != Instance.m_Entities[sourceID].B_IsPlayer;      //If Match Target Hit Succeed
     public Dictionary<int, EntityBase> m_Entities { get; private set; } = new Dictionary<int, EntityBase>();
     void OnSpawnEntity(EntityBase entity)
     {
@@ -266,7 +268,7 @@ public static class ObjectManager
         NavMeshHit hit;
         if (NavMesh.SamplePosition(toPosition, out hit, 5, -1))
             toPosition = hit.position;
-        entity.Init(GameExpression.I_EntityID(i_entityIndex++,type== enum_Entity.Player ), ExcelManager.GetEntityGenerateProperties(type));
+        entity.Init(GameManager.I_EntityID(i_entityIndex++,type== enum_Entity.Player ), ExcelManager.GetEntityGenerateProperties(type));
         entity.transform.position = toPosition;
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnSpawnEntity, entity);
         return entity;
