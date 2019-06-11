@@ -2,8 +2,39 @@
 
 [RequireComponent(typeof(Camera))]
 public class PostEffectManager : SingletonMono<PostEffectManager> {
+    public static T SetPostEffect<T>() where T:PostEffectBase,new()
+    {
+        if (instance.peb_curEffect != null)
+            instance.peb_curEffect.OnDestroy();
+
+        T effetBase = new T();
+        instance.peb_curEffect = effetBase;
+        instance.peb_curEffect.OnSetCamera(instance.cam_cur);
+        return effetBase;
+    }
+    PostEffectBase peb_curEffect;
+    Camera cam_cur;
+    protected override void Awake()
+    {
+        instance = this;
+        cam_cur = GetComponent<Camera>();
+    }
+    public virtual void LateUpdate()
+    {
+        if(peb_curEffect!=null&&peb_curEffect.B_Supported)
+            peb_curEffect.LateUpdate();
+    }
+    protected void OnRenderImage(RenderTexture source, RenderTexture destination)
+    {
+        if (peb_curEffect != null && peb_curEffect.B_Supported)
+            peb_curEffect.OnRenderImage(source, destination);
+        else
+            Graphics.Blit(source, destination);
+    }
+
+    #region Test
 #if UNITY_EDITOR
-    public bool b_testMode=true;
+    public bool b_testMode = true;
     public float F_Test1;
     public float F_Test2;
     public float F_Test3;
@@ -26,30 +57,5 @@ public class PostEffectManager : SingletonMono<PostEffectManager> {
         }
     }
 #endif
-
-    public T SetPostEffect<T>() where T:PostEffectBase,new()
-    {
-
-        if (peb_curEffect != null)
-            peb_curEffect.OnDestroy();
-
-        T effetBase = new T();
-        peb_curEffect = effetBase;
-        peb_curEffect.OnSetCamera(cam_cur);
-        return effetBase;
-    }
-    PostEffectBase peb_curEffect;
-    Camera cam_cur;
-    protected override void Awake()
-    {
-        instance = this;
-        cam_cur = GetComponent<Camera>();
-    }
-    protected void OnRenderImage(RenderTexture source, RenderTexture destination)
-    {
-        if (peb_curEffect != null && peb_curEffect.B_Supported)
-            peb_curEffect.OnRenderImage(source, destination);
-        else
-            Graphics.Blit(source, destination);
-    }
+    #endregion
 }

@@ -65,6 +65,7 @@ public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
 
     private void Start()        //Entrance Of Whole Game
     {
+        PostEffectManager.SetPostEffect<PE_BloomSpecific>();
         PreInit(M_TESTSEED);
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnStageStart);
     }

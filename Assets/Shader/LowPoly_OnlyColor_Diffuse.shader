@@ -7,13 +7,12 @@
 	SubShader
 	{
 		Tags { "RenderType"="Opaque"  "LightMode"="ForwardBase"}
-				Cull Back
-
-			CGINCLUDE
-			#include "UnityCG.cginc"
-			#include "Lighting.cginc"
-			#include "AutoLight.cginc"
-			ENDCG
+		Cull Back
+		CGINCLUDE
+		#include "UnityCG.cginc"
+		#include "Lighting.cginc"
+		#include "AutoLight.cginc"
+		ENDCG
 		Pass		//Base Pass
 		{
 			CGPROGRAM
@@ -21,7 +20,6 @@
 			#pragma fragment frag
 			#pragma multi_compile_fwdbase
 			
-
 			struct appdata
 			{
 				float4 vertex : POSITION;

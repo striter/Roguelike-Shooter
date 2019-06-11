@@ -25,9 +25,12 @@ public class PostEffectBase {
         mat_Cur = new Material(sd_Cur);
         mat_Cur.hideFlags = HideFlags.DontSave;
     }
+    public virtual void LateUpdate()
+    {
+    }
     public virtual void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-
+        Graphics.Blit(source, destination);
     }
     public virtual void OnSetCamera(Camera cam)
     {
@@ -75,7 +78,6 @@ public class PE_BSC : PostEffectBase {      //Brightness Saturation Contrast
     public float F_Contrast = 1f;
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        base.OnRenderImage(source, destination);
         Mat_Cur.SetFloat("_Brightness", F_Brightness);
         Mat_Cur.SetFloat("_Saturation", F_Saturation);
         Mat_Cur.SetFloat("_Contrast", F_Contrast);
@@ -89,7 +91,6 @@ public class PE_EdgeDetection : PostEffectBase  //Edge Detection Easiest
     public Color C_EdgeColor = Color.green;
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        base.OnRenderImage(source, destination);
         Mat_Cur.SetColor("_EdgeColor", C_EdgeColor);
         Mat_Cur.SetFloat("_ShowEdge", F_ShowEdge);
         Graphics.Blit(source,destination,Mat_Cur);
@@ -97,12 +98,17 @@ public class PE_EdgeDetection : PostEffectBase  //Edge Detection Easiest
 }
 public class PE_GaussianBlur : PostEffectBase       //Gassuain Blur
 {
+    public PE_GaussianBlur(float _blurSpread,int _iterations,int _downSample):base()
+    {
+        F_BlurSpread = _blurSpread;
+        I_Iterations = _iterations;
+        I_DownSample = _downSample;
+    }
     public float F_BlurSpread = 2f;
     public int I_Iterations = 5;
     public int I_DownSample = 4;
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        base.OnRenderImage(source, destination);
         if (I_DownSample == 0)
             I_DownSample = 1;
 
@@ -129,7 +135,7 @@ public class PE_GaussianBlur : PostEffectBase       //Gassuain Blur
             RenderTexture.ReleaseTemporary(buffer0);
             buffer0 = buffer1;
         }
-
+        destination.MarkRestoreExpected();
         Graphics.Blit(buffer0, destination);
         RenderTexture.ReleaseTemporary(buffer0);
     }
@@ -143,7 +149,6 @@ public class PE_Bloom : PostEffectBase
     public float F_LuminanceMultiple = 10;
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        base.OnRenderImage(source, destination);
         if (I_DownSample == 0)
             I_DownSample = 1;
         Mat_Cur.SetFloat("_LuminanceThreshold", F_LuminanceThreshold);
@@ -180,7 +185,6 @@ public class PE_MotionBlur : PostEffectBase     //Camera Motion Blur ,Easiest
     private RenderTexture rt_Accumulation;
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        base.OnRenderImage(source, destination);
         if (rt_Accumulation == null || rt_Accumulation.width != source.width || rt_Accumulation.height != source.height)
         {
             GameObject.Destroy(rt_Accumulation);
@@ -211,7 +215,6 @@ public class PE_ViewNormal : PostEffectBase {
     }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        base.OnRenderImage(source, destination);
         Graphics.Blit(source, destination, Mat_Cur);
     }
 }
@@ -223,7 +226,6 @@ public class PE_ViewDepth : PostEffectBase{
     }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        base.OnRenderImage(source, destination);
         Graphics.Blit(source,destination,Mat_Cur);
     }
 }
@@ -232,7 +234,6 @@ public class PE_MotionBlurDepth:PE_MotionBlur
     private Matrix4x4 mt_CurVP;
     public override void OnSetCamera(Camera cam)
     {
-        base.OnSetCamera(cam);
         cam.depthTextureMode = DepthTextureMode.Depth;
         mt_CurVP = Cam_Cur.projectionMatrix * Cam_Cur.worldToCameraMatrix;
     }
@@ -262,8 +263,6 @@ public class PE_FogDepth : PostEffectBase
 
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        base.OnRenderImage(source, destination);
-
         float fov = Cam_Cur.fieldOfView;
         float near = Cam_Cur.nearClipPlane;
         float far = Cam_Cur.farClipPlane;
@@ -316,7 +315,6 @@ public class PE_EdgeDetectionDepth:PE_EdgeDetection
     }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-
         Mat_Cur.SetFloat("_SampleDistance", F_SampleDistance);
         Mat_Cur.SetFloat("_SensitivityDepth", F_SensitivityDepth);
         Mat_Cur.SetFloat("_SensitivityNormals", F_SensitivityNormals);
@@ -336,5 +334,44 @@ public class PE_FogDepthNoise : PE_FogDepth
         Mat_Cur.SetFloat("_FogSpeedY", F_FogSpeedY);
         Mat_Cur.SetFloat("_NoiseAmount", F_NoiseAmount);
         base.OnRenderImage(source, destination);
+    }
+}
+//Need To Bind Shader To Specific Items
+public class PE_BloomSpecific : PostEffectBase
+{
+    Camera m_RenderCamera;
+    RenderTexture m_RenderTexture;
+    Shader m_RenderShader;
+    PE_GaussianBlur m_GaussianBlur;
+    public override void OnSetCamera(Camera cam)
+    {
+        base.OnSetCamera(cam);
+        m_GaussianBlur = new PE_GaussianBlur(1,20,3);
+
+        m_RenderShader = Shader.Find("PostEffect/PE_BloomSpecific_Render");
+        GameObject temp = new GameObject();
+        temp.transform.SetParent(Cam_Cur.transform);
+        temp.transform.localPosition = Vector3.zero;
+        m_RenderCamera = temp.AddComponent<Camera>();
+        m_RenderCamera.clearFlags = CameraClearFlags.SolidColor;
+        m_RenderCamera.backgroundColor = Color.black;
+        m_RenderCamera.orthographic = Cam_Cur.orthographic;
+        m_RenderCamera.orthographicSize = Cam_Cur.orthographicSize;
+        m_RenderCamera.nearClipPlane = Cam_Cur.nearClipPlane;
+        m_RenderCamera.farClipPlane = Cam_Cur.farClipPlane;
+        m_RenderCamera.fieldOfView = Cam_Cur.fieldOfView;
+        m_RenderCamera.enabled = false;
+        m_RenderTexture = new RenderTexture(Screen.width, Screen.height, 1);
+        m_RenderCamera.targetTexture = m_RenderTexture;
+    }
+    public override void LateUpdate()
+    {
+        m_RenderCamera.RenderWithShader(m_RenderShader,"RenderType");
+    }
+    public override void OnRenderImage(RenderTexture source, RenderTexture destination)
+    {
+        m_GaussianBlur.OnRenderImage(m_RenderTexture, m_RenderTexture);     //Blur
+        Mat_Cur.SetTexture("_RenderTex", m_RenderTexture);
+        Graphics.Blit(source, destination, Mat_Cur, 1);        //Mix
     }
 }
