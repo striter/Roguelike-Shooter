@@ -110,7 +110,13 @@ public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
     #endregion
     #region Entity Management
     public static int I_EntityID(int index, bool isPlayer) => index + (isPlayer ? 10000 : 20000);       //Used For Identification Management
-    public static bool B_CanHitTarget(HitCheckEntity hb, int sourceID) => hb.I_AttacherID != sourceID && hb.m_Attacher.B_IsPlayer != Instance.m_Entities[sourceID].B_IsPlayer;      //If Match Target Hit Succeed
+    public static bool B_CanHitTarget(HitCheckEntity hb, int sourceID)   //If Match Target Hit Succeed
+    {
+        if (hb.I_AttacherID == sourceID)
+            return false;
+
+        return Instance.m_Entities.ContainsKey(sourceID) && hb.m_Attacher.B_IsPlayer != Instance.m_Entities[sourceID].B_IsPlayer;
+    }
     public Dictionary<int, EntityBase> m_Entities { get; private set; } = new Dictionary<int, EntityBase>();
     void OnSpawnEntity(EntityBase entity)
     {
