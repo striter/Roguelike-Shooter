@@ -753,7 +753,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1464263392
+  randomSeed: -1697837385
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -7517,7 +7517,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1182518258
+  randomSeed: 744419301
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -14173,7 +14173,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1523538988
+  randomSeed: -399702641
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -24319,7 +24319,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 456197154
+  randomSeed: 417489830
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -24408,8 +24408,8 @@ ParticleSystem:
     startColor:
       serializedVersion: 2
       minMaxState: 2
-      minColor: {r: 1, g: 0.48235288, b: 0.14705884, a: 1}
-      maxColor: {r: 1, g: 0.62352943, b: 0.14705884, a: 1}
+      minColor: {r: 1, g: 0.9764706, b: 0.14705884, a: 1}
+      maxColor: {r: 1, g: 0.9058824, b: 0.14705884, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -31109,8 +31109,8 @@ ParticleSystem:
     startColor:
       serializedVersion: 2
       minMaxState: 2
-      minColor: {r: 1, g: 0.75333285, b: 0.1544118, a: 1}
-      maxColor: {r: 1, g: 0.87170386, b: 0.1544118, a: 1}
+      minColor: {r: 0.27205884, g: 0.26388916, b: 0.24405278, a: 1}
+      maxColor: {r: 0.3455882, g: 0.32168445, b: 0.18804064, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -41166,7 +41166,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1424829166
+  randomSeed: 559104947
   InitialModule:
     serializedVersion: 3
     enabled: 1
