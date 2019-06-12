@@ -12,7 +12,6 @@ public class StyleColorData : ScriptableObject
     public Color c_ambientEquator;
     public Color c_ambientGround;
     public Color c_ocean;
-    public bool b_oceanReflection;
 
     public static StyleColorData Default()
     {
@@ -24,7 +23,6 @@ public class StyleColorData : ScriptableObject
         defaultData.c_ambientEquator = Color.black;
         defaultData.c_ambientGround = Color.black;
         defaultData.c_ocean = Color.blue;
-        defaultData.b_oceanReflection = true;
         return defaultData;
     }
 
@@ -37,7 +35,6 @@ public class StyleColorData : ScriptableObject
         RenderSettings.ambientEquatorColor = c_ambientEquator;
         RenderSettings.ambientGroundColor = c_ambientGround;
         oceanScript.material.color = c_ocean;
-        oceanScript.enableReflection = b_oceanReflection;
     }
 
 #if UNITY_EDITOR
@@ -47,7 +44,6 @@ public class StyleColorData : ScriptableObject
         f_directionalIntensity = directional.intensity;
         v3_eulerAngle = directional.transform.eulerAngles;
         c_ocean = ocean.material.GetColor("_Color");
-        b_oceanReflection = ocean.enableReflection;
         c_ambientSky = RenderSettings.ambientSkyColor;
         c_ambientEquator = RenderSettings.ambientEquatorColor;
         c_ambientGround = RenderSettings.ambientGroundColor;

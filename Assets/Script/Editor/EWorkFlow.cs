@@ -111,8 +111,6 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
                 directionalLight.color=EditorGUILayout.ColorField(directionalLight.color);
                 EditorGUILayout.TextArea("Ocean:Color:");
                 oceanScript.material.SetColor("_Color",EditorGUILayout.ColorField(oceanScript.material.GetColor("_Color")));
-                EditorGUILayout.TextArea("Reflection:");
-                oceanScript.enableReflection = EditorGUILayout.Toggle(oceanScript.enableReflection);
                 GUILayout.EndHorizontal();
                 GUILayout.BeginHorizontal();
                 EditorGUILayout.TextArea("Intensity:");

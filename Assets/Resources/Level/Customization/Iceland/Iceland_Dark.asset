@@ -18,4 +18,4 @@ MonoBehaviour:
   c_ambientEquator: {r: 0, g: 0, b: 0, a: 1}
   c_ambientGround: {r: 0, g: 0, b: 0, a: 1}
   c_ocean: {r: 0.53676474, g: 0.53676474, b: 0.53676474, a: 1}
-  b_oceanReflection: 1
+  b_oceanReflection: 0
