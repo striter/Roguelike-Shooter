@@ -360,12 +360,9 @@ public class PE_BloomSpecific : PostEffectBase
         m_RenderTexture = new RenderTexture(Screen.width, Screen.height, 1);
         m_RenderCamera.targetTexture = m_RenderTexture;
     }
-    public override void LateUpdate()
-    {
-        m_RenderCamera.RenderWithShader(m_RenderShader,"RenderType");
-    }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
+        m_RenderCamera.RenderWithShader(m_RenderShader, "RenderType");
         m_GaussianBlur.OnRenderImage(m_RenderTexture, m_RenderTexture);     //Blur
         Mat_Cur.SetTexture("_RenderTex", m_RenderTexture);
         Graphics.Blit(source, destination, Mat_Cur, 1);        //Mix
