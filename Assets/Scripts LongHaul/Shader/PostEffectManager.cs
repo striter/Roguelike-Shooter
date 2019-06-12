@@ -47,13 +47,11 @@ public class PostEffectManager : SingletonMono<PostEffectManager> {
     {
         if (!b_testMode)
             return;
-        if (peb_curEffect as PE_Bloom != null)
+        if (peb_curEffect as PE_BloomSpecific != null)
         {
-            (peb_curEffect as PE_Bloom).I_DownSample = (int)F_Test1;
-            (peb_curEffect as PE_Bloom).I_Iterations = (int)F_Test2;
-            (peb_curEffect as PE_Bloom).F_BlurSpread = F_Test3;
-            (peb_curEffect as PE_Bloom).F_LuminanceThreshold = F_Test4;
-            (peb_curEffect as PE_Bloom).F_LuminanceMultiple = F_Test5;
+            (peb_curEffect as PE_BloomSpecific).m_GaussianBlur.I_DownSample = (int)F_Test1;
+            (peb_curEffect as PE_BloomSpecific).m_GaussianBlur.I_Iterations = (int)F_Test2;
+            (peb_curEffect as PE_BloomSpecific).m_GaussianBlur.F_BlurSpread = F_Test3;
         }
     }
 #endif
