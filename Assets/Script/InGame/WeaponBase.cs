@@ -21,7 +21,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         tf_Muzzle = transform.Find("Muzzle");
         m_WeaponInfo = weaponInfo;
         I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
-        m_Assist = new WeaponAimAssistStraight(transform ,weaponInfo);
+        m_Assist = new WeaponAimAssistStraight(tf_Muzzle ,weaponInfo);
         switch (weaponInfo.m_TriggerType)
         {
             default: Debug.LogError("Add More Convertions Here:" + weaponInfo.m_TriggerType.ToString()); m_Trigger = new TriggerSingle(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, CheckCanAction, SetActionPause, CheckCanAutoReload); break;
@@ -96,7 +96,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         for (int i = 0; i < m_WeaponInfo.m_PelletsPerShot; i++)
         {
             Vector3 bulletDirection = Vector3.Normalize(transform.forward*GameConst.I_BulletSpeadAtDistance+UnityEngine.Random.Range(-1f,1f)* transform.up*m_WeaponInfo.m_Spread+ UnityEngine.Random.Range(-1f, 1f) * transform.right * m_WeaponInfo.m_Spread);
-            (ObjectManager.SpawnSFX(m_WeaponInfo.m_BulletType.ToSFXType(), transform) as SFXBullet).Play(I_AttacherID, bulletDirection,m_WeaponInfo);
+            (ObjectManager.SpawnSFX(m_WeaponInfo.m_BulletType.ToSFXType(), tf_Muzzle) as SFXBullet).Play(I_AttacherID, bulletDirection,m_WeaponInfo);
         }
         OnRecoil?.Invoke(m_WeaponInfo.m_RecoilPerShot);
         OnAmmoChangeCostMana?.Invoke(m_WeaponInfo.m_ManaCost);

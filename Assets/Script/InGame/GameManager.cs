@@ -259,7 +259,9 @@ public static class ObjectManager
         
         TCommon.TraversalEnum((enum_SFX type) =>
         {
-            ObjectPoolManager<enum_SFX, SFXBase>.Register(type, TResources.Instantiate<SFXBase>("SFX/" + type.ToString()), enum_PoolSaveType.DynamicMaxAmount, 5, null);
+            ObjectPoolManager<enum_SFX, SFXBase>.Register(type, TResources.Instantiate<SFXBase>("SFX/" + type.ToString()), enum_PoolSaveType.DynamicMaxAmount, 5, (SFXBase sfx)=> {
+                sfx.Init(type);
+            });
         });
 
         TCommon.TraversalEnum((enum_Interact type) =>
@@ -311,8 +313,6 @@ public static class ObjectManager
     {
         SFXBase sfx = ObjectPoolManager<enum_SFX, SFXBase>.Spawn(type, toTrans);
         sfx.transform.SetParent(TF_Entity);
-
-        sfx.Init(type);
         return sfx;
     }
     public static void RecycleSFX(enum_SFX type, SFXBase sfx)

@@ -16,7 +16,7 @@ public class SFXBase : MonoBehaviour {
     }
     public int I_SourceID { get; private set; }
     protected float f_duration;
-    float f_TimeCheck;
+    protected float f_TimeCheck;
     Action OnSFXPlayFinished;
 
     protected virtual void Play(int sourceID,float duration,Action _OnSFXPlayFinished=null)
@@ -32,7 +32,7 @@ public class SFXBase : MonoBehaviour {
         if ( Time.time > f_TimeCheck)
             OnPlayFinished();
     }
-    protected void OnPlayFinished()
+    protected  virtual void OnPlayFinished()
     {
         OnSFXPlayFinished?.Invoke();
         ObjectManager.RecycleSFX(E_Type, this);

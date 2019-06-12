@@ -113,10 +113,10 @@ namespace GameSetting
             {
                 default: Debug.LogError("Insert More Convertions Here:" + type.ToString()); return enum_SFX.Invalid;
                 case enum_BulletType.Normal: return enum_SFX.Bullet_Normal;
-                case enum_BulletType.LaserRay: return enum_SFX.Bullet_LaserRay;
-                case enum_BulletType.LaserBeam: return enum_SFX.Bullet_LaserBeam;
-                case enum_BulletType.Bolt: return enum_SFX.Bullet_Bolt;
-                case enum_BulletType.Rocket: return enum_SFX.Bullet_Rocket;
+                //case enum_BulletType.LaserRay: return enum_SFX.Bullet_LaserRay;
+                //case enum_BulletType.LaserBeam: return enum_SFX.Bullet_LaserBeam;
+                //case enum_BulletType.Bolt: return enum_SFX.Bullet_Bolt;
+                //case enum_BulletType.Rocket: return enum_SFX.Bullet_Rocket;
             }
         }
         public static int ToLayer(this enum_HitCheck layerType)
@@ -190,10 +190,10 @@ namespace GameSetting
     {
         Invalid = -1,
         Bullet_Normal = 1,
-        Bullet_LaserRay = 2,
-        Bullet_LaserBeam = 3,
-        Bullet_Bolt = 4,
-        Bullet_Rocket = 5,
+        //Bullet_LaserRay = 2,
+        //Bullet_LaserBeam = 3,
+        //Bullet_Bolt = 4,
+        //Bullet_Rocket = 5,
         Blast_Rocket = 6,
     }
 
