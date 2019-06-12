@@ -129,18 +129,13 @@ public class LevelBase : MonoBehaviour {
     {
         if (XCount * YCount > m_IndexEmpty.Count)
             return -1;
-
-        int startIndex = m_IndexEmpty.RandomIndex(m_seed);
-        for (int i = 0; i < m_IndexEmpty.Count; i++)
+        int checkCount =  XCount * YCount*2;
+        for (int i = 0; i < checkCount; i++)
         {
-            int tileIndex = m_IndexEmpty[startIndex];
-            if (CheckIndexTileAreaAvailable(tileIndex, angleRotated ? YCount : XCount, angleRotated ? XCount : YCount, ref areaIndexes))
-                return tileIndex;
-            startIndex++;
-            if (startIndex == m_IndexEmpty.Count)
-                startIndex = 0;
+            int randomTileIndex =    m_IndexEmpty.RandomItem(m_seed);
+            if (CheckIndexTileAreaAvailable(randomTileIndex, angleRotated ? YCount:XCount, angleRotated ? XCount: YCount, ref areaIndexes))
+                    return randomTileIndex;
         }
-
         return -1;
     }
     bool CheckIndexTileAreaAvailable(int tileIndex, int XCount, int YCount, ref List<int> areaIndexes)
