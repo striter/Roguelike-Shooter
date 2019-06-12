@@ -98,12 +98,6 @@ public class PE_EdgeDetection : PostEffectBase  //Edge Detection Easiest
 }
 public class PE_GaussianBlur : PostEffectBase       //Gassuain Blur
 {
-    public PE_GaussianBlur(float _blurSpread,int _iterations,int _downSample):base()
-    {
-        F_BlurSpread = _blurSpread;
-        I_Iterations = _iterations;
-        I_DownSample = _downSample;
-    }
     public float F_BlurSpread = 2f;
     public int I_Iterations = 5;
     public int I_DownSample = 4;
@@ -342,14 +336,16 @@ public class PE_BloomSpecific : PostEffectBase
     Camera m_RenderCamera;
     RenderTexture m_RenderTexture;
     Shader m_RenderShader;
-    PE_GaussianBlur m_GaussianBlur;
+    public PE_GaussianBlur m_GaussianBlur { get; private set; }
     public override void OnSetCamera(Camera cam)
     {
         base.OnSetCamera(cam);
-        m_GaussianBlur = new PE_GaussianBlur(1,20,3);
-
+        m_GaussianBlur = new PE_GaussianBlur();
+        m_GaussianBlur.F_BlurSpread = 1;
+        m_GaussianBlur.I_DownSample = 4;
+        m_GaussianBlur.I_Iterations = 20;
         m_RenderShader = Shader.Find("PostEffect/PE_BloomSpecific_Render");
-        GameObject temp = new GameObject();
+        GameObject temp = new GameObject("Render Camera");
         temp.transform.SetParent(Cam_Cur.transform);
         temp.transform.localPosition = Vector3.zero;
         m_RenderCamera = temp.AddComponent<Camera>();
