@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4562361624903562}
   - component: {fileID: 114683903242067502}
   m_Layer: 0
-  m_Name: NoCollisionMore_xueshan_xiaoshizi
+  m_Name: SmallMore_xueshan_xiaoshizi
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
