@@ -23,6 +23,7 @@ public class EntityPlayerBase : EntityBase {
     {
         base.Init(entityID,entityInfo);
         m_CharacterController = GetComponent<CharacterController>();
+        m_CharacterController.detectCollisions = false;
         tf_WeaponHold = transform.Find("WeaponHold");
         m_Animator = new PlayerAnimator(tf_Model.GetComponent<Animator>(),null);
         transform.Find("InteractDetector").GetComponent<InteractDetector>().Init(OnInteractCheck);

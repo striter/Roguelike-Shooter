@@ -264,6 +264,7 @@ namespace GameSetting
         public static readonly int I_Entity = LayerMask.NameToLayer("entity");
         public static readonly int I_Dynamic = LayerMask.NameToLayer("dynamic");
         public static readonly int I_DynamicDetect = LayerMask.NameToLayer("dynamicDetect");
+        public static readonly int I_MovementDetect = LayerMask.NameToLayer("movementDetect");
         public static class Physics
         {
             public static readonly int I_All = 1 << GameLayer.I_Static | 1 << GameLayer.I_Entity | 1 << GameLayer.I_Dynamic;
