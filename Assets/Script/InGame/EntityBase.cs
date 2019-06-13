@@ -113,6 +113,6 @@ public class EntityBase : MonoBehaviour,ISingleCoroutine
             Color targetColor = Color.Lerp(isDamage?(armorDamage ? Color.yellow:Color.red): Color.green, Color.white, value);
             TCommon.Traversal(m_Renderers, (Renderer renderer) => {
                 renderer.material.SetColor("_Color",targetColor); });
-          },0,1,.5f));
+          },0,1,1f));
     }
 }
