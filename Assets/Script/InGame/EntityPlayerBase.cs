@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
-
+using TSpecialClasses;
 public class EntityPlayerBase : EntityBase {
     public enum_Weapon TESTWEAPON1 = enum_Weapon.M16A4;
     public enum_Weapon TESTWEAPON2 = enum_Weapon.MK10;
@@ -10,6 +10,7 @@ public class EntityPlayerBase : EntityBase {
     public float m_Pitch { get; private set; } = 0;
 
     protected CharacterController m_CharacterController;
+    protected PlayerAnimator m_Animator;
     protected Transform tf_WeaponHold;
     protected List<WeaponBase> m_WeaponObtained=new List<WeaponBase>();
 
@@ -23,6 +24,7 @@ public class EntityPlayerBase : EntityBase {
         base.Init(entityID,entityInfo);
         m_CharacterController = GetComponent<CharacterController>();
         tf_WeaponHold = transform.Find("WeaponHold");
+        m_Animator = new PlayerAnimator(tf_Model.GetComponent<Animator>(),null);
         transform.Find("InteractDetector").GetComponent<InteractDetector>().Init(OnInteractCheck);
     }
     public override void Activate()
@@ -134,6 +136,7 @@ public class EntityPlayerBase : EntityBase {
     void OnMovementDelta(Vector2 moveDelta)
     {
         m_MoveDelta = moveDelta*.1f;
+        m_Animator.SetRun(moveDelta.magnitude > .2f);
     }
     protected override void Update()
     {
@@ -174,4 +177,17 @@ public class EntityPlayerBase : EntityBase {
             m_InteractTarget = null;
     }
     #endregion
+
+    protected class PlayerAnimator : AnimatorClippingTime
+    {
+        static readonly int HS_B_Run = Animator.StringToHash("b_run");
+        public PlayerAnimator(Animator _animator, List<SAnimatorParam> _params) : base(_animator, _params)
+        {
+
+        }
+        public void SetRun(bool run)
+        {
+            m_Animator.SetBool(HS_B_Run,run);
+        }
+    }
 }

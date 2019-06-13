@@ -392,11 +392,11 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
 
     public class AnimatorClippingTime
     {
-        protected Animator am_current;
+        protected Animator m_Animator;
         List<SAnimatorParam> l_animatorParams;
         public AnimatorClippingTime(Animator _animator, List<SAnimatorParam> _animatorParams=null)
         {
-            am_current = _animator;
+            m_Animator = _animator;
             l_animatorParams = _animatorParams;
             Reset();
         }
@@ -404,7 +404,7 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
         {
             if (l_animatorParams == null)
                 return;
-            AnimationClip[] clips = am_current.runtimeAnimatorController.animationClips;
+            AnimationClip[] clips = m_Animator.runtimeAnimatorController.animationClips;
             for (int i = 0; i < clips.Length; i++)
             {
                 foreach (SAnimatorParam param in l_animatorParams)
@@ -416,7 +416,7 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
                             Debug.LogError("Play Time Zero Detected!");
                             return;
                         }
-                        am_current.SetFloat(param.i_hashParam, clips[i].length / param.f_playTime); ;
+                        m_Animator.SetFloat(param.i_hashParam, clips[i].length / param.f_playTime); ;
                     }
                 }
             }

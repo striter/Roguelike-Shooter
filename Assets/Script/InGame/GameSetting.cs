@@ -324,7 +324,6 @@ namespace GameSetting
             }
         }
     }
-
     class BulletPhysicsSimulator : PhysicsSimulator
     {
         protected Vector3 m_HorizontalDirection, m_VerticalDirection;
@@ -363,7 +362,6 @@ namespace GameSetting
             return targetPos;
         }
     }
-
     #region BigmapTile
     public class SBigmapTileInfo : ITileAxis
     {
