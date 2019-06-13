@@ -91,8 +91,10 @@ public class SFXBullet : SFXBase {
                 m_subSFXs[enum_SubSFXType.Projectile].SetPlay(false);
                 m_subSFXs[enum_SubSFXType.Impact].transform.position = rh_info.point;
                 m_subSFXs[enum_SubSFXType.Impact].transform.rotation = Quaternion.LookRotation(rh_info.normal);
+                m_subSFXs[enum_SubSFXType.Impact].transform.SetParent(rh_info.collider.transform);
                 m_subSFXs[enum_SubSFXType.Impact].SetPlay(true);
                 f_TimeCheck += 10f;
+
                 m_Detect.DoDetect(rh_info.collider);
             }
             else
@@ -117,5 +119,10 @@ public class SFXBullet : SFXBase {
     }
     protected virtual void OnHitError()
     {
+    }
+    protected override void OnPlayFinished()
+    {
+        m_subSFXs[enum_SubSFXType.Impact].transform.SetParent(transform);
+        base.OnPlayFinished();
     }
 }

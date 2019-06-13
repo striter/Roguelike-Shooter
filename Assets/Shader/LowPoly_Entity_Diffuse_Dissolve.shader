@@ -1,14 +1,20 @@
-﻿Shader "Game/LowPoly_TexColor_Diffuse"
+﻿Shader "Game/LowPoly_Entity_Diffuse_Dissolve"
 {
 	Properties
 	{
 		_MainTex("Main Tex",2D) = "white"{}
 		_Color("Color",Color) = (1,1,1,1)
+
+
+		_SubTex1("Dissolve Map",2D) = "white"{}
+		_Amount1("_Dissolve Progress",Range(0,1)) = 1
+		_Amount2("_Dissolve Width",float) = .1
+		_Color1("_Dissolve Color",Color) = (1,1,1,1)
 	}
 	SubShader
 	{
-		Tags { "RenderType"="Opaque"  "LightMode"="ForwardBase"}
-				Cull Back
+		Tags { "RenderType"="BloomDissolve"  "LightMode"="ForwardBase""IgnoreProjector" = "True" "Queue" = "Transparent" }
+		Blend SrcAlpha OneMinusSrcAlpha
 
 			CGINCLUDE
 			#include "UnityCG.cginc"
@@ -34,7 +40,7 @@
 			struct v2f
 			{
 				float4 pos : SV_POSITION;
-				float2 uv:TEXCOORD0;
+				float4 uv:TEXCOORD0;
 				float3 worldPos:TEXCOORD1;
 				float diffuse:TEXCOORD2;
 				SHADOW_COORDS(3)
@@ -43,10 +49,16 @@
 			float4 _Color;
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
+			sampler2D _SubTex1;
+			float4 _SubTex1_ST;
+			float _Amount1;
+			float _Amount2;
+			float4 _Color1;
 			v2f vert (appdata v)
 			{
 				v2f o;
-				o.uv = TRANSFORM_TEX( v.uv, _MainTex);
+				o.uv.xy = TRANSFORM_TEX( v.uv, _MainTex);
+				o.uv.zw = TRANSFORM_TEX(v.uv, _SubTex1);
 				o.pos = UnityObjectToClipPos(v.vertex);
 				o.worldPos =mul(unity_ObjectToWorld,v.vertex);
 				fixed3 worldNormal = normalize(mul(v.normal, (float3x3)unity_WorldToObject)); //法线方向n
@@ -58,6 +70,11 @@
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
+				fixed dissolve = tex2D(_SubTex1,i.uv.zw).r - _Amount1;
+				clip(dissolve);
+				if (dissolve < _Amount2)
+					return _Color1;
+
 				float3 albedo = tex2D(_MainTex,i.uv)* _Color;
 				UNITY_LIGHT_ATTENUATION(atten, i,i.worldPos)
 				fixed3 ambient = albedo*UNITY_LIGHTMODEL_AMBIENT.xyz;

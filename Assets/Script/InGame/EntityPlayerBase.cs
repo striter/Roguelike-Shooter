@@ -25,8 +25,9 @@ public class EntityPlayerBase : EntityBase {
         tf_WeaponHold = transform.Find("WeaponHold");
         transform.Find("InteractDetector").GetComponent<InteractDetector>().Init(OnInteractCheck);
     }
-    protected override void Start()
+    public override void Activate()
     {
+        base.Activate();
         m_Pitch = 0;
         CameraController.Attach(this.transform);
 

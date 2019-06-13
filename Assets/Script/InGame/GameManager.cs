@@ -202,7 +202,8 @@ public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
         for (; ; )
         {
             yield return new WaitForSeconds(_offset);
-            ObjectManager.SpawnEntity(type,EnviormentManager.m_currentLevel.m_Level.RandomEmptyTilePosition(m_GameSeed)).SetTarget(m_LocalPlayer);
+            ObjectManager.SpawnEntity(type, EnviormentManager.m_currentLevel.m_Level.RandomEmptyTilePosition(m_GameSeed)).SetTarget(m_LocalPlayer);
+
             m_WaveCurrentEntity++;
             curSpawnCount++;
             if (curSpawnCount >= totalCount)
@@ -257,16 +258,15 @@ public static class ObjectManager
             ObjectPoolManager<enum_Entity,EntityBase>.Register(type,TResources.Instantiate<EntityBase>("Entity/"+type.ToString()), enum_PoolSaveType.DynamicMaxAmount,1,null);
         });
         
-        TCommon.TraversalEnum((enum_SFX type) =>
-        {
-            ObjectPoolManager<enum_SFX, SFXBase>.Register(type, TResources.Instantiate<SFXBase>("SFX/" + type.ToString()), enum_PoolSaveType.DynamicMaxAmount, 5, (SFXBase sfx)=> {
-                sfx.Init(type);
-            });
+        TCommon.TraversalEnum((enum_SFX type) =>{
+            ObjectPoolManager<enum_SFX, SFXBase>.Register(type, TResources.Instantiate<SFXBase>("SFX/" + type.ToString()),
+            enum_PoolSaveType.DynamicMaxAmount, 5,
+            (SFXBase sfx)=> {sfx.Init(type);});
         });
 
-        TCommon.TraversalEnum((enum_Interact type) =>
-        {
-            ObjectPoolManager<enum_Interact, InteractBase>.Register(type, TResources.Instantiate<InteractBase>("Interact/" + type.ToString()), enum_PoolSaveType.DynamicMaxAmount, 1, null);
+        TCommon.TraversalEnum((enum_Interact type) =>{
+            ObjectPoolManager<enum_Interact, InteractBase>.Register(type, TResources.Instantiate<InteractBase>("Interact/" + type.ToString()),
+            enum_PoolSaveType.DynamicMaxAmount, 1, null);
         });
     }
 
@@ -278,6 +278,7 @@ public static class ObjectManager
         if (NavMesh.SamplePosition(toPosition, out hit, 5, -1))
             toPosition = hit.position;
         entity.Init(GameManager.I_EntityID(i_entityIndex++,type== enum_Entity.Player ), ExcelManager.GetEntityGenerateProperties(type));
+        entity.Activate();
         entity.transform.position = toPosition;
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnSpawnEntity, entity);
         return entity;

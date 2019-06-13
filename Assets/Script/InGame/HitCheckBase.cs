@@ -25,4 +25,8 @@ public class HitCheckBase : MonoBehaviour {
 
         return OnHitCheck(amount);
     }
+    public void SetEnable(bool enable)
+    {
+        m_Collider.enabled = enable;
+    }
 }

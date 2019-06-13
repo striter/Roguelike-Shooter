@@ -26,17 +26,20 @@ public class EntityBase : MonoBehaviour,ISingleCoroutine
         m_HitChecks = GetComponentsInChildren<HitCheckEntity>();
         TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.Attach(this,TryTakeDamage); });
         m_EntityInfo = entityInfo;
-        m_CurrentHealth = m_EntityInfo.m_MaxHealth;
-        m_CurrentArmor = m_EntityInfo.m_MaxArmor;
-        m_CurrentMana = m_EntityInfo.m_MaxMana;
-        TCommon.Traversal(m_Renderers, (Renderer renderer) => {
-            renderer.material.SetColor("_Color", Color.white);
-        });
     }
-    protected virtual void Start()
+    public virtual void Activate()
     {
         if (I_EntityID == -1)
             Debug.LogError("Please Init Entity Info!" + gameObject.name.ToString());
+
+        m_CurrentHealth = m_EntityInfo.m_MaxHealth;
+        m_CurrentArmor = m_EntityInfo.m_MaxArmor;
+        m_CurrentMana = m_EntityInfo.m_MaxMana;
+        TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.SetEnable(true); });
+        TCommon.Traversal(m_Renderers, (Renderer renderer) => {
+            renderer.material.SetColor("_Color", Color.white);
+            renderer.material.SetFloat("_Amount1", 0);
+        });
     }
     protected virtual void OnEnable()
     {
@@ -96,7 +99,13 @@ public class EntityBase : MonoBehaviour,ISingleCoroutine
 
     protected virtual void OnDead()
     {
-        ObjectManager.RecycleEntity(m_EntityInfo.m_Type, this);
+        TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.SetEnable(false); });
+        this.StartSingleCoroutine(1, TIEnumerators.ChangeValueTo((float value) => {
+            TCommon.Traversal(m_Renderers, (Renderer renderer) => {renderer.material.SetFloat("_Amount1", value);
+            });
+        }, 0, 1, 1f, () => {
+            ObjectManager.RecycleEntity(m_EntityInfo.m_Type, this);
+        }));
     }
     protected virtual void OnHealthEffect(bool isDamage,bool armorDamage=true)
     {
