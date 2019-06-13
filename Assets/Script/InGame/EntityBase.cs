@@ -99,7 +99,7 @@ public class EntityBase : MonoBehaviour,ISingleCoroutine
 
     protected virtual void OnDead()
     {
-        TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.SetEnable(false); });
+        TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.HideAllAttaches(); check.SetEnable(false); });
         this.StartSingleCoroutine(1, TIEnumerators.ChangeValueTo((float value) => {
             TCommon.Traversal(m_Renderers, (Renderer renderer) => {renderer.material.SetFloat("_Amount1", value);
             });

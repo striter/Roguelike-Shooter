@@ -13,7 +13,7 @@
 	}
 	SubShader
 	{
-		Tags { "RenderType"="BloomDissolve"  "LightMode"="ForwardBase""IgnoreProjector" = "True" "Queue" = "Transparent" }
+		Tags { "RenderType"="BloomDissolve"  "LightMode"="ForwardBase""IgnoreProjector" = "True" "Queue" = "Geometry" }
 		Blend SrcAlpha OneMinusSrcAlpha
 
 			CGINCLUDE
