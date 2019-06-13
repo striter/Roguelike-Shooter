@@ -13,21 +13,25 @@
 	}
 	SubShader
 	{
-		Tags { "RenderType"="BloomDissolve"  "LightMode"="ForwardBase""IgnoreProjector" = "True" "Queue" = "Geometry" }
+		Tags { "RenderType"="BloomDissolve"  "IgnoreProjector" = "True" "Queue" = "Transparent" }
 		Blend SrcAlpha OneMinusSrcAlpha
 
 			CGINCLUDE
-			#include "UnityCG.cginc"
-			#include "Lighting.cginc"
-			#include "AutoLight.cginc"
+		#include "UnityCG.cginc"
+		#include "AutoLight.cginc"
+		#include "Lighting.cginc"
+
+			sampler2D _SubTex1;
+			float4 _SubTex1_ST;
+			float _Amount1;
 			ENDCG
 		Pass		//Base Pass
 		{
+				Tags{"LightMode" = "ForwardBase"}
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma multi_compile_fwdbase
-			
 
 			struct appdata
 			{
@@ -49,9 +53,6 @@
 			float4 _Color;
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
-			sampler2D _SubTex1;
-			float4 _SubTex1_ST;
-			float _Amount1;
 			float _Amount2;
 			float4 _Color1;
 			v2f vert (appdata v)
@@ -75,7 +76,7 @@
 				if (dissolve < _Amount2)
 					return _Color1;
 
-				float3 albedo = tex2D(_MainTex,i.uv)* _Color;
+				float3 albedo = tex2D(_MainTex,i.uv.xy)* _Color;
 				UNITY_LIGHT_ATTENUATION(atten, i,i.worldPos)
 				fixed3 ambient = albedo*UNITY_LIGHTMODEL_AMBIENT.xyz;
 				float3 diffuse = albedo* _LightColor0.rgb*i.diffuse*atten;
@@ -84,6 +85,34 @@
 			ENDCG
 		}
 
-		USEPASS "Common/DefaultStandard/SHADOWCASTER"
+		Pass
+		{
+			Cull Off
+			Tags{"LightMode" = "ShadowCaster"}
+			CGPROGRAM
+			#pragma vertex vertshadow
+			#pragma fragment fragshadow
+
+			struct v2fs
+			{
+				V2F_SHADOW_CASTER;
+				float2 uv:TEXCOORD0;
+			};
+			v2fs vertshadow(appdata_base v)
+			{
+				v2fs o;
+				TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
+				o.uv = TRANSFORM_TEX(v.texcoord, _SubTex1);
+				return o;
+			}
+
+			fixed4 fragshadow(v2fs i) :SV_TARGET
+			{
+				fixed dissolve = tex2D(_SubTex1,i.uv).r - _Amount1;
+				clip(dissolve);
+				SHADOW_CASTER_FRAGMENT(i);
+			}
+				ENDCG
+			}
 	}
 }

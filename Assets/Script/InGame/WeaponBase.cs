@@ -21,7 +21,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         tf_Muzzle = transform.Find("Muzzle");
         m_WeaponInfo = weaponInfo;
         I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
-        m_Assist = new WeaponAimAssistStraight(tf_Muzzle ,weaponInfo);
+        m_Assist = new WeaponAimAssistStraight(transform.Find("AimAssist") ,weaponInfo);
         switch (weaponInfo.m_TriggerType)
         {
             default: Debug.LogError("Add More Convertions Here:" + weaponInfo.m_TriggerType.ToString()); m_Trigger = new TriggerSingle(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, CheckCanAction, SetActionPause, CheckCanAutoReload); break;
