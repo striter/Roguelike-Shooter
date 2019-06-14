@@ -17,11 +17,6 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
     [MenuItem("WorkFlow/Style_ColorSerialization(Direction,Ocean,Ambient)")]
     public static void StyleColorSerialization()
     {
-        if (EditorSceneManager.GetActiveScene().name != "Game")
-        {
-            Debug.LogError("This Work Flow Can Only Activated At Scene: Game");
-            return;
-        }
         EWorkFlow_StyleColorCustomization window= GetWindow(typeof(EWorkFlow_StyleColorCustomization)) as EWorkFlow_StyleColorCustomization;
         selectingStyleType = enum_LevelStyle.Invalid;
         previousData = StyleColorData.Default();
@@ -53,6 +48,12 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
     {
 
         GUILayout.BeginVertical();
+        if (EditorSceneManager.GetActiveScene().name != "Game")
+        {
+            GUILayout.TextArea("This Work Flow Can Only Activated At Scene: Game");
+            GUILayout.EndVertical();
+            return;
+        }
         if (EditorApplication.isPlaying)
             selectingStyleType = GameManager.Instance.E_TESTSTYLE;
         InitAllMat();
