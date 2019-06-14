@@ -14,7 +14,7 @@ MonoBehaviour:
   c_directionnal: {r: 0.9411765, g: 0.8442907, b: 0.8442907, a: 1}
   v3_eulerAngle: {x: 45.000004, y: 60.000004, z: 0}
   f_directionalIntensity: 0.8
-  c_ambientSky: {r: 0.5514706, g: 0.25546065, b: 0.25546065, a: 1}
+  c_ambientSky: {r: 0.7205882, g: 0.5828287, b: 0.5828287, a: 1}
   c_ambientEquator: {r: 1, g: 0.27058825, b: 0, a: 1}
   c_ambientGround: {r: 1, g: 0.27058825, b: 0, a: 1}
-  c_ocean: {r: 0.83823526, g: 0.15608531, b: 0, a: 1}
+  c_ocean: {r: 0.8602941, g: 0.2580011, b: 0.12018816, a: 1}
