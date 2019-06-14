@@ -18,4 +18,5 @@ MonoBehaviour:
   c_ambientEquator: {r: 0.37254903, g: 0.38039216, b: 0.5803922, a: 1}
   c_ambientGround: {r: 0.31764707, g: 0.52156866, b: 0.5882353, a: 1}
   c_ocean: {r: 0.17906575, g: 0.2186374, b: 0.2647059, a: 1}
-  b_oceanReflection: 1
+  c_oceanSun: {r: 0.6745098, g: 0.63529414, b: 0.2784314, a: 1}
+  c_oceanFresnel: {r: 0.36862746, g: 0.52156866, b: 0.57254905, a: 1}
