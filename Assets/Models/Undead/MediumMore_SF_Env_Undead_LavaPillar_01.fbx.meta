@@ -1,11 +1,12 @@
 fileFormatVersion: 2
-guid: 14bd327d247b2b449b9c3c9b5387149b
+guid: 90b5982aeb8181e4cb628b97ed80177b
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
     100000: //RootNode
     400000: //RootNode
     2100000: pasted__pasted__lambert15
+    2100002: lambert19
     2300000: //RootNode
     3300000: //RootNode
     4300000: SF_Env_Undead_LavaPillar_01

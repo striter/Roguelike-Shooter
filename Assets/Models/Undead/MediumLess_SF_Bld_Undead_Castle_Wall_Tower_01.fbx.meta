@@ -1,11 +1,12 @@
 fileFormatVersion: 2
-guid: 64ac46f7b1718924eb98b012d2b6b74e
+guid: b5941a72ebc0e7e4b9bccead8b487c39
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
     100000: //RootNode
     400000: //RootNode
     2100000: pasted__pasted__lambert15
+    2100002: lambert19
     2300000: //RootNode
     3300000: //RootNode
     4300000: SF_Bld_Undead_Castle_Wall_Tower_01

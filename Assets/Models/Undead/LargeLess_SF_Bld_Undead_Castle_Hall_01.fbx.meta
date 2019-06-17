@@ -1,11 +1,12 @@
 fileFormatVersion: 2
-guid: 9bc64a4208950994a9687b0b4809fd31
+guid: 9cb36ca3ab3498b4ebf2c5bb496a0483
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
     100000: //RootNode
     400000: //RootNode
-    2100000: pasted__pasted__lambert15
+    2100000: lambert19
+    2100002: pasted__pasted__lambert15
     2300000: //RootNode
     3300000: //RootNode
     4300000: SF_Bld_Undead_Castle_Hall_01
