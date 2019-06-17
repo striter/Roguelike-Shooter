@@ -1724,7 +1724,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c088e7b318d292458e08155aef1723d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  E_TESTSTYLE: 3
+  E_TESTSTYLE: 5
   M_TESTSEED: 
 --- !u!4 &1133817278
 Transform:
