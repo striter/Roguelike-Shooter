@@ -18,7 +18,8 @@ public class EntityPlayerBase : EntityBase {
 
     public bool B_Interacting => m_InteractTarget != null;
     public InteractBase m_InteractTarget { get; private set; }
-    
+
+    public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized* m_EntityInfo.m_moveSpeed * time;
     public override void Init(int entityID,SEntity entityInfo)
     {
         base.Init(entityID,entityInfo);
@@ -126,7 +127,7 @@ public class EntityPlayerBase : EntityBase {
     }
     #endregion
     #region PlayerControll
-    Vector2 m_MoveDelta;
+    Vector2 m_MoveAxisInput;
     void OnRotateDelta(Vector2 rotateDelta)
     {
         m_Pitch += (rotateDelta.y/Screen.height)*90f;
@@ -137,7 +138,7 @@ public class EntityPlayerBase : EntityBase {
     }
     void OnMovementDelta(Vector2 moveDelta)
     {
-        m_MoveDelta = moveDelta*.1f;
+        m_MoveAxisInput = moveDelta;
         m_Animator.SetRun(moveDelta.magnitude > .2f);
     }
     protected override void Update()
@@ -146,9 +147,8 @@ public class EntityPlayerBase : EntityBase {
         m_WeaponCurrent.SetCanFire(!Physics.SphereCast(new Ray(tf_WeaponHold.position, tf_WeaponHold.forward), .1f,1f   , GameLayer.Physics.I_Static));
         tf_WeaponHold.localRotation = Quaternion.Euler(-m_Pitch,0,0);
         transform.rotation = Quaternion.Lerp(transform.rotation,CameraController.CameraXZRotation,GameConst.F_PlayerCameraSmoothParam);
-        Vector3 direction = (transform.right * m_MoveDelta.x + transform.forward * m_MoveDelta.y).normalized +Vector3.down*GameConst.F_PlayerFallSpeed;
-        m_CharacterController.Move(direction*Time.deltaTime*m_EntityInfo.m_moveSpeed);
-
+        Vector3 direction = (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized;
+        m_CharacterController.Move(direction*m_EntityInfo.m_moveSpeed * Time.deltaTime + Vector3.down * GameConst.F_PlayerFallSpeed*Time.deltaTime);
         TBroadCaster<enum_BC_UIStatusChanged>.Trigger(enum_BC_UIStatusChanged.PlayerInfoChanged, this);
     }
     public void AddRecoil(Vector2 recoil)

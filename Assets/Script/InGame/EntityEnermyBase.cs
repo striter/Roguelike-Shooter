@@ -40,6 +40,7 @@ public class EntityEnermyBase : EntityBase {
     class EnermyAIControllerBasic:ISingleCoroutine
     {
         protected EntityEnermyBase m_EntityControlling;
+        protected Transform transform => m_EntityControlling.tf_Head;
         protected NavMeshAgent m_Agent;
         protected NavMeshObstacle m_Obstacle;
         protected float f_AttackRange;
@@ -98,6 +99,7 @@ public class EntityEnermyBase : EntityBase {
             B_AgentEnabled = false;
         }
         EntityBase m_Target;
+        protected Transform targetTransform => m_Target.tf_Head;
         RaycastHit[] m_Raycasts;
         float f_aiSimulatedTime;
         float f_movementCheck,f_battleStatusCheck;
@@ -119,9 +121,9 @@ public class EntityEnermyBase : EntityBase {
         }
         void CalculateAllParams()
         {
-            v3_TargetDirection = (m_Target.tf_Head.position - m_EntityControlling.tf_Head.position).normalized;
-            b_TargetInRange = TCommon.GetXZDistance(m_EntityControlling.transform.position, m_Target.transform.position) < f_AttackRange&& TargetVisible;
-            b_AgentReachDestination = m_Agent.destination == Vector3.zero || TCommon.GetXZDistance(m_EntityControlling.transform.position, m_Agent.destination) < 5f;
+            v3_TargetDirection = (targetTransform.position -transform.position).normalized;
+            b_TargetInRange = TCommon.GetXZDistance(targetTransform.position, transform.position) < f_AttackRange && TargetVisible;
+            b_AgentReachDestination = m_Agent.destination == Vector3.zero || TCommon.GetXZDistance(transform.position, m_Agent.destination) < 5f;
         }
         void CheckMovement()
         {
@@ -156,8 +158,7 @@ public class EntityEnermyBase : EntityBase {
             }
             else
             {
-                Vector3 fireDirection = (v3_TargetDirection*100 + m_Target.transform.up*Random.Range(-1f*5,1f*5)+m_Target.transform.right*Random.Range(-1f*5,1f*5)).normalized;
-                (ObjectManager.SpawnSFX(enum_SFX.Bullet_Normal, m_EntityControlling.tf_Head) as SFXBullet).TestPlay(m_EntityControlling.I_EntityID, fireDirection, 10,30);
+                FireOnce();
                 f_battleStatusCheck = f_aiSimulatedTime + .15f;
                 fireCount++;
                 if (fireCount > 3)
@@ -167,6 +168,15 @@ public class EntityEnermyBase : EntityBase {
                 }
             }
         }
+        void FireOnce()
+        {
+            float speed = 30f;
+            float time = Vector3.Distance(targetTransform.position, transform.position) / speed;
+            Vector3 targetDirection = (m_Target.m_PrecalculatedTargetPos(time) -transform.position).normalized;
+            Vector3 fireDirection = (targetDirection*100+targetTransform.up*Random.Range(-5f,5f)+targetTransform.right*Random.Range(-5f,5f)).normalized;
+            (ObjectManager.SpawnSFX(enum_SFX.Bullet_Normal, transform) as SFXBullet).TestPlay(m_EntityControlling.I_EntityID, fireDirection, 10, speed);
+        }
+
         int stuckCount = 0;
         Vector3 previousPos=Vector3.zero;
         bool AgentStucked()

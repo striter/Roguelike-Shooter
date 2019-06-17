@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using GameSetting;
 
-public class EntityBase : MonoBehaviour,ISingleCoroutine
+public class EntityBase : MonoBehaviour, ISingleCoroutine
 {
     public int I_EntityID { get; private set; } = -1;
     HitCheckEntity[] m_HitChecks;
@@ -17,6 +17,7 @@ public class EntityBase : MonoBehaviour,ISingleCoroutine
     public float F_TotalHealth => m_EntityInfo.m_MaxArmor + m_EntityInfo.m_MaxHealth;
     private float f_ArmorRegenCheck;
     protected EntityBase m_Target;
+    public virtual Vector3 m_PrecalculatedTargetPos(float time) { Debug.LogError("Override This Please");return Vector2.zero; }
     public virtual void Init(int id,SEntity entityInfo)
     {
         I_EntityID = id;
