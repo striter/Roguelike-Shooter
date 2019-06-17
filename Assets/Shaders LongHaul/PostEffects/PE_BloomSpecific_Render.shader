@@ -98,7 +98,7 @@
 				fixed dissolve = tex2D(_SubTex1,i.uv).r - _Amount1;
 				clip(dissolve);
 				dissolve = step(dissolve,_Amount2);
-				fixed4 col = _Color1 * dissolve;
+				fixed4 col =  _Color1 * dissolve+float4(0,0,0,1)*(1-dissolve);
 				return col;
 			}
 			ENDCG

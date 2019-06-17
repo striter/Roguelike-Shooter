@@ -342,7 +342,7 @@ public class PE_BloomSpecific : PostEffectBase
         base.OnSetCamera(cam);
         m_GaussianBlur = new PE_GaussianBlur();
         m_GaussianBlur.F_BlurSpread = 1;
-        m_GaussianBlur.I_DownSample = 4;
+        m_GaussianBlur.I_DownSample = 2;
         m_GaussianBlur.I_Iterations = 20;
         m_RenderShader = Shader.Find("PostEffect/PE_BloomSpecific_Render");
         GameObject temp = new GameObject("Render Camera");
