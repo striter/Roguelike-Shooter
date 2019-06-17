@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e349d199acb4d80499b840c85dd3f665, type: 3}
+  m_Name: Undead_1
+  m_EditorClassIdentifier: 
+  c_directionnal: {r: 0.62030935, g: 0.875, b: 0.61121327, a: 1}
+  v3_eulerAngle: {x: 45.000004, y: 60.000004, z: 0}
+  f_directionalIntensity: 0.8
+  c_ambientSky: {r: 0.71734434, g: 0.78676474, b: 0.7264408, a: 1}
+  c_ambientEquator: {r: 0.5980529, g: 0.78676474, b: 0.5380082, a: 1}
+  c_ambientGround: {r: 0.36559257, g: 0.50735295, b: 0.3665702, a: 1}
+  c_ocean: {r: 0.07577262, g: 0.38235295, b: 0.05060554, a: 1}
+  c_oceanSun: {r: 0.6745098, g: 0.63529414, b: 0.2784314, a: 1}
+  c_oceanFresnel: {r: 0.28322917, g: 0.3602941, b: 0.066230536, a: 1}
