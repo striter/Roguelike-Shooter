@@ -170,7 +170,7 @@ public class EntityEnermyBase : EntityBase {
         }
         void FireOnce()
         {
-            float speed = 30f;
+            float speed = 15f;
             float time = Vector3.Distance(targetTransform.position, transform.position) / speed;
             Vector3 targetDirection = (m_Target.m_PrecalculatedTargetPos(time) -transform.position).normalized;
             Vector3 fireDirection = (targetDirection*100+targetTransform.up*Random.Range(-5f,5f)+targetTransform.right*Random.Range(-5f,5f)).normalized;
