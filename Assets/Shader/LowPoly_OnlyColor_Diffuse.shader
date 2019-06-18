@@ -6,7 +6,7 @@
 	}
 	SubShader
 	{
-		Tags { "RenderType"="Opaque"  "LightMode"="ForwardBase"}
+		Tags { "RenderType"="Opaque"  "LightMode"="ForwardBase" "RenderQueue"="Geometry"}
 		Cull Back
 		CGINCLUDE
 		#include "UnityCG.cginc"
