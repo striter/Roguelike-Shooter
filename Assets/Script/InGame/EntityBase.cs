@@ -38,8 +38,9 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
         m_CurrentMana = m_EntityInfo.m_MaxMana;
         TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.SetEnable(true); });
         TCommon.Traversal(m_Renderers, (Renderer renderer) => {
-            renderer.material.SetColor("_Color", Color.white);
-            renderer.material.SetFloat("_Amount1", 0);
+            renderer.materials.Traversal((Material mat)=> {
+                mat.SetFloat("_Amount1", 0);
+            });
         });
     }
     protected virtual void OnEnable()
@@ -102,7 +103,10 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
     {
         TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.HideAllAttaches(); check.SetEnable(false); });
         this.StartSingleCoroutine(1, TIEnumerators.ChangeValueTo((float value) => {
-            TCommon.Traversal(m_Renderers, (Renderer renderer) => {renderer.material.SetFloat("_Amount1", value);
+            TCommon.Traversal(m_Renderers, (Renderer renderer) => {
+                renderer.materials.Traversal((Material mat) => {
+                    mat.SetFloat("_Amount1", value);
+                });
             });
         }, 0, 1, 1f, () => {
             ObjectManager.RecycleEntity(m_EntityInfo.m_Type, this);

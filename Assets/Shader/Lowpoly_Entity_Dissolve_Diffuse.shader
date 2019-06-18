@@ -1,4 +1,4 @@
-﻿Shader "Game/LowPoly_Entity_Diffuse_Dissolve"
+﻿Shader "Game/Effect/Entity_Dissolve_Diffuse"
 {
 	Properties
 	{
@@ -9,14 +9,10 @@
 		_SubTex1("Dissolve Map",2D) = "white"{}
 		_Amount1("_Dissolve Progress",Range(0,1)) = 1
 		_Amount2("_Dissolve Width",float) = .1
-		_Color1("_Dissolve Color",Color) = (1,1,1,1)
 	}
 	SubShader
 	{
-		Tags { "RenderType"="BloomDissolve"  "IgnoreProjector" = "True" "Queue" = "Transparent" }
 		Blend SrcAlpha OneMinusSrcAlpha
-			ZWrite On
-			ZTest On
 			CGINCLUDE
 		#include "UnityCG.cginc"
 		#include "AutoLight.cginc"
@@ -28,7 +24,7 @@
 			ENDCG
 		Pass		//Base Pass
 		{
-				Tags{"LightMode" = "ForwardBase"}
+			Tags{"RenderType" = "Opaque" "LightMode" = "ForwardBase" "Queue" = "Transparent"}
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
@@ -55,7 +51,6 @@
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
 			float _Amount2;
-			float4 _Color1;
 			v2f vert (appdata v)
 			{
 				v2f o;
@@ -72,10 +67,8 @@
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-				fixed dissolve = tex2D(_SubTex1,i.uv.zw).r - _Amount1;
+				fixed dissolve = tex2D(_SubTex1,i.uv.zw).r - _Amount1-_Amount2;
 				clip(dissolve);
-				if (dissolve < _Amount2)
-					return _Color1;
 
 				float3 albedo = tex2D(_MainTex,i.uv.xy)* _Color;
 				UNITY_LIGHT_ATTENUATION(atten, i,i.worldPos)

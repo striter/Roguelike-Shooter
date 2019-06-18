@@ -48,6 +48,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
     {
         B_Reloading = false;
         m_Trigger.OnDisable();
+        m_Assist.OnDisable();
         this.StopAllSingleCoroutines();
     }
     protected void SetActionPause(float pauseDuration)
@@ -169,6 +170,10 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
                 target = transform.position + transform.forward * f_distance;
             }
             m_lineRenderer.SetPosition(1,target);
+        }
+        public virtual void OnDisable()
+        {
+            m_lineRenderer.enabled = false;
         }
     }
     internal class WeaponTrigger:ISingleCoroutine

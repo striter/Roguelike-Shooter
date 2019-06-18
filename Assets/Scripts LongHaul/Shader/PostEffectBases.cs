@@ -25,9 +25,6 @@ public class PostEffectBase {
         mat_Cur = new Material(sd_Cur);
         mat_Cur.hideFlags = HideFlags.DontSave;
     }
-    public virtual void LateUpdate()
-    {
-    }
     public virtual void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
         Graphics.Blit(source, destination);

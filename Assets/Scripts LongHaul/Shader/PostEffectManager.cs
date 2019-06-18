@@ -1,59 +1,45 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 [RequireComponent(typeof(Camera))]
 public class PostEffectManager : SingletonMono<PostEffectManager> {
-    public static T SetPostEffect<T>() where T:PostEffectBase,new()
+    public static T AddPostEffect<T>() where T:PostEffectBase,new()
     {
-        if (instance.peb_curEffect != null)
-            instance.peb_curEffect.OnDestroy();
-
         T effetBase = new T();
-        instance.peb_curEffect = effetBase;
-        instance.peb_curEffect.OnSetCamera(instance.cam_cur);
+        effetBase.OnSetCamera(instance.cam_cur);
+        instance.m_PostEffects.Add( effetBase);
         return effetBase;
     }
-    public PostEffectBase peb_curEffect { get; private set; }
+    public static void RemoveAllPostEffect()
+    {
+        instance.m_PostEffects.Traversal((PostEffectBase effect)=> { effect.OnDestroy(); });
+        instance.m_PostEffects.Clear();
+    }
+
+    List<PostEffectBase> m_PostEffects=new List<PostEffectBase>();
     Camera cam_cur;
     protected override void Awake()
     {
         instance = this;
         cam_cur = GetComponent<Camera>();
     }
-    public virtual void LateUpdate()
-    {
-        if(peb_curEffect!=null&&peb_curEffect.B_Supported)
-            peb_curEffect.LateUpdate();
-    }
+    RenderTexture tempTexture1, tempTexture2;
     protected void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        if (peb_curEffect != null && peb_curEffect.B_Supported)
-            peb_curEffect.OnRenderImage(source, destination);
-        else
-            Graphics.Blit(source, destination);
-    }
-
-    #region Test
-#if UNITY_EDITOR
-    public bool b_testMode = true;
-    public float F_Test1;
-    public float F_Test2;
-    public float F_Test3;
-    public float F_Test4;
-    public float F_Test5;
-    public Color C_Test1;
-    public Color C_Test2;
-    public Texture Tx_Test1;
-    protected void Update()
-    {
-        if (!b_testMode)
-            return;
-        if (peb_curEffect as PE_BloomSpecific != null)
+        tempTexture1 = RenderTexture.GetTemporary(Screen.width, Screen.height, 0);
+        Graphics.Blit(source, tempTexture1);
+        for (int i = 0; i < m_PostEffects.Count; i++)
         {
-            (peb_curEffect as PE_BloomSpecific).m_GaussianBlur.I_DownSample = (int)F_Test1;
-            (peb_curEffect as PE_BloomSpecific).m_GaussianBlur.I_Iterations = (int)F_Test2;
-            (peb_curEffect as PE_BloomSpecific).m_GaussianBlur.F_BlurSpread = F_Test3;
+            tempTexture2 = RenderTexture.GetTemporary(Screen.width, Screen.height, 0);
+            m_PostEffects[i].OnRenderImage(tempTexture1,tempTexture2);
+
+            Graphics.Blit(tempTexture2, tempTexture1);
+            RenderTexture.ReleaseTemporary(tempTexture2);
         }
+        Graphics.Blit(tempTexture1,destination);
+        RenderTexture.ReleaseTemporary(tempTexture1);
     }
-#endif
-    #endregion
+    private void OnDestroy()
+    {
+    }
 }

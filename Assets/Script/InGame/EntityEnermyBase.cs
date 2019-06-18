@@ -171,8 +171,7 @@ public class EntityEnermyBase : EntityBase {
         void FireOnce()
         {
             float speed = 15f;
-            float time = Vector3.Distance(targetTransform.position, transform.position) / speed;
-            Vector3 targetDirection = (m_Target.m_PrecalculatedTargetPos(time) -transform.position).normalized;
+            Vector3 targetDirection = Vector3.Normalize( (Random.Range(0,2)>0? (m_Target.m_PrecalculatedTargetPos(Vector3.Distance(targetTransform.position, transform.position) / speed)):targetTransform.position)-transform.position);
             Vector3 fireDirection = (targetDirection*100+targetTransform.up*Random.Range(-5f,5f)+targetTransform.right*Random.Range(-5f,5f)).normalized;
             (ObjectManager.SpawnSFX(enum_SFX.Bullet_Normal, transform) as SFXBullet).TestPlay(m_EntityControlling.I_EntityID, fireDirection, 10, speed);
         }
