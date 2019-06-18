@@ -5,7 +5,7 @@ using UnityEngine;
 public class PostEffectBase {
     const string S_ParentPath = "PostEffect/";
     Camera cam_Cur;
-    Material mat_Cur;
+    public Material mat_Cur { get; private set; }
     Shader sd_Cur;
     bool b_supported;
     public PostEffectBase()
@@ -244,15 +244,19 @@ public class PE_MotionBlurDepth:PE_MotionBlur
 public class PE_FogDepth : PostEffectBase
 {
     Transform tra_Cam;
-    public float F_FogDensity = 1f;
-    public Color C_FogColor = Color.white;
+    public float F_FogDensity = .5f;
+    public Color C_FogColor =TCommon.ColorAlpha(  Color.white,.5f);
     public float F_FogStart = 0f;
-    public float F_FogEnd = 2f;
+    public float F_FogEnd = 4f;
     public override void OnSetCamera(Camera cam)
     {
         base.OnSetCamera(cam);
         cam.depthTextureMode = DepthTextureMode.Depth;
         tra_Cam = Cam_Cur.transform;
+        Mat_Cur.SetFloat("_FogDensity", F_FogDensity);
+        Mat_Cur.SetColor("_FogColor", C_FogColor);
+        Mat_Cur.SetFloat("_FogStart", F_FogStart);
+        Mat_Cur.SetFloat("_FogEnd", F_FogEnd);
     }
 
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
@@ -290,10 +294,6 @@ public class PE_FogDepth : PostEffectBase
 
         Mat_Cur.SetMatrix("_FrustumCornersRay", frustumCornersRay);
         Mat_Cur.SetMatrix("_VPMatrixInverse", (Cam_Cur.projectionMatrix * Cam_Cur.worldToCameraMatrix).inverse);
-        Mat_Cur.SetFloat("_FogDensity", F_FogDensity);
-        Mat_Cur.SetColor("_FogColor", C_FogColor);
-        Mat_Cur.SetFloat("_FogStart", F_FogStart);
-        Mat_Cur.SetFloat("_FogEnd", F_FogEnd);
         Graphics.Blit(source,destination,Mat_Cur);
     }
 }
@@ -321,12 +321,16 @@ public class PE_FogDepthNoise : PE_FogDepth
     public float F_FogSpeedX=.1f;
     public float F_FogSpeedY=.1f;
     public float F_NoiseAmount=1;
-    public override void OnRenderImage(RenderTexture source, RenderTexture destination)
+    public override void OnSetCamera(Camera cam)
     {
+        base.OnSetCamera(cam);
         Mat_Cur.SetTexture("_NoiseTex", TX_Noise);
         Mat_Cur.SetFloat("_FogSpeedX", F_FogSpeedX);
         Mat_Cur.SetFloat("_FogSpeedY", F_FogSpeedY);
         Mat_Cur.SetFloat("_NoiseAmount", F_NoiseAmount);
+    }
+    public override void OnRenderImage(RenderTexture source, RenderTexture destination)
+    {
         base.OnRenderImage(source, destination);
     }
 }
@@ -341,8 +345,8 @@ public class PE_BloomSpecific : PostEffectBase
     {
         base.OnSetCamera(cam);
         m_GaussianBlur = new PE_GaussianBlur();
-        m_GaussianBlur.F_BlurSpread = 1;
-        m_GaussianBlur.I_DownSample = 2;
+        m_GaussianBlur.F_BlurSpread = 2;
+        m_GaussianBlur.I_DownSample = 4;
         m_GaussianBlur.I_Iterations = 20;
         m_RenderShader = Shader.Find("PostEffect/PE_BloomSpecific_Render");
         GameObject temp = new GameObject("Render Camera");
