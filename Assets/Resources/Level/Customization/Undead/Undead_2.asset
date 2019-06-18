@@ -9,14 +9,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e349d199acb4d80499b840c85dd3f665, type: 3}
-  m_Name: Undead_1
+  m_Name: Undead_2
   m_EditorClassIdentifier: 
-  c_directionnal: {r: 0.62030935, g: 0.875, b: 0.61121327, a: 1}
+  c_directionnal: {r: 0.5364403, g: 0.6996734, b: 0.8897059, a: 1}
   v3_eulerAngle: {x: 45.000004, y: 60.000004, z: 0}
   f_directionalIntensity: 0.8
-  c_ambientSky: {r: 0.71734434, g: 0.78676474, b: 0.7264408, a: 1}
-  c_ambientEquator: {r: 0.5980529, g: 0.78676474, b: 0.5380082, a: 1}
-  c_ambientGround: {r: 0.36559257, g: 0.50735295, b: 0.3665702, a: 1}
-  c_ocean: {r: 0.07577262, g: 0.38235295, b: 0.05060554, a: 1}
+  c_ambientSky: {r: 0.54092777, g: 0.7195218, b: 0.8455882, a: 1}
+  c_ambientEquator: {r: 0.4376081, g: 0.7719245, b: 0.83823526, a: 1}
+  c_ambientGround: {r: 0.43793252, g: 0.61725336, b: 0.7941176, a: 1}
+  c_ocean: {r: 0.05060554, g: 0.34117052, b: 0.38235295, a: 1}
   c_oceanSun: {r: 0.6745098, g: 0.63529414, b: 0.2784314, a: 1}
-  c_oceanFresnel: {r: 0.28322917, g: 0.3602941, b: 0.066230536, a: 1}
+  c_oceanFresnel: {r: 0.14807451, g: 0.19117647, b: 0.02670848, a: 1}
