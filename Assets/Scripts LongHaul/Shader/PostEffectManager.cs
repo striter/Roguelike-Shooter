@@ -12,7 +12,7 @@ public class PostEffectManager : SingletonMono<PostEffectManager> {
         instance.peb_curEffect.OnSetCamera(instance.cam_cur);
         return effetBase;
     }
-    PostEffectBase peb_curEffect;
+    public PostEffectBase peb_curEffect { get; private set; }
     Camera cam_cur;
     protected override void Awake()
     {
