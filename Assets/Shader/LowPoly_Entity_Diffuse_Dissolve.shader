@@ -15,7 +15,8 @@
 	{
 		Tags { "RenderType"="BloomDissolve"  "IgnoreProjector" = "True" "Queue" = "Transparent" }
 		Blend SrcAlpha OneMinusSrcAlpha
-
+			ZWrite On
+			ZTest On
 			CGINCLUDE
 		#include "UnityCG.cginc"
 		#include "AutoLight.cginc"

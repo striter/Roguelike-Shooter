@@ -244,10 +244,10 @@ public class PE_MotionBlurDepth:PE_MotionBlur
 public class PE_FogDepth : PostEffectBase
 {
     Transform tra_Cam;
-    public float F_FogDensity = .5f;
+    public float F_FogDensity = .6f;
     public Color C_FogColor =TCommon.ColorAlpha(  Color.white,.5f);
-    public float F_FogStart = 0f;
-    public float F_FogEnd = 4f;
+    public float F_FogStart = -1f;
+    public float F_FogEnd = 5f;
     public override void OnSetCamera(Camera cam)
     {
         base.OnSetCamera(cam);
@@ -318,9 +318,9 @@ public class PE_EdgeDetectionDepth:PE_EdgeDetection
 public class PE_FogDepthNoise : PE_FogDepth
 {
     public Texture TX_Noise;
-    public float F_FogSpeedX=.1f;
-    public float F_FogSpeedY=.1f;
-    public float F_NoiseAmount=1;
+    public float F_FogSpeedX=.02f;
+    public float F_FogSpeedY=.02f;
+    public float F_NoiseAmount=.8f;
     public override void OnSetCamera(Camera cam)
     {
         base.OnSetCamera(cam);
