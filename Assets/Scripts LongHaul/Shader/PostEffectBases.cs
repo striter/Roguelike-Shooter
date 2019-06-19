@@ -22,14 +22,27 @@ public class PostEffectBase  {
             Debug.LogError("Shader:" + S_ParentPath + this.GetType().ToString() + " Is Not Supported");
             b_supported = false;
         }
-        mat_Cur = new Material(sd_Cur);
-        mat_Cur.hideFlags = HideFlags.DontSave;
+        mat_Cur = new Material(sd_Cur)
+        {
+            hideFlags = HideFlags.DontSave
+        };
+    }
+    protected bool RenderDefaultImage(RenderTexture source, RenderTexture destination)
+    {
+        if (!B_Supported)
+        {
+            Graphics.Blit(source, destination);
+            return true;
+        }
+        return false;
     }
     public virtual void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        Graphics.Blit(source, destination);
+        if (RenderDefaultImage(source, destination)) 
+            return;
+        Graphics.Blit(source, destination, Mat_Cur);
     }
-    public virtual void OnSetCamera(Camera cam)
+    public virtual void OnSetEffect(Camera cam)
     {
         cam_Cur = cam;
     }
@@ -69,38 +82,46 @@ public class PostEffectBase  {
     #endregion
 }
 
-public class PE_BSC : PostEffectBase {      //Brightness Saturation Contrast
-    public float F_Brightness = 1f;
-    public float F_Saturation = 1f;
-    public float F_Contrast = 1f;
-    public override void OnRenderImage(RenderTexture source, RenderTexture destination)
+public class PE_ViewNormal : PostEffectBase
+{
+    public override void OnSetEffect(Camera cam)
     {
-        if (!B_Supported)
-        {
-            base.OnRenderImage(source, destination);
-            return;
-        }
-        Mat_Cur.SetFloat("_Brightness", F_Brightness);
-        Mat_Cur.SetFloat("_Saturation", F_Saturation);
-        Mat_Cur.SetFloat("_Contrast", F_Contrast);
-
-        Graphics.Blit(source, destination, Mat_Cur);
+        base.OnSetEffect(cam);
+        cam.depthTextureMode = DepthTextureMode.DepthNormals;
+    }
+}
+public class PE_ViewDepth : PostEffectBase
+{
+    public override void OnSetEffect(Camera cam)
+    {
+        base.OnSetEffect(cam);
+        cam.depthTextureMode = DepthTextureMode.Depth;
+    }
+}
+public class PE_BSC : PostEffectBase {      //Brightness Saturation Contrast
+    public override void OnSetEffect(Camera _cam)
+    {
+        base.OnSetEffect(_cam);
+        SetEffect();
+    }
+    public void SetEffect(float _brightness = 1f, float _saturation = 1f, float _contrast = 1f)
+    {
+        Mat_Cur.SetFloat("_Brightness", _brightness);
+        Mat_Cur.SetFloat("_Saturation", _saturation);
+        Mat_Cur.SetFloat("_Contrast", _contrast);
     }
 }
 public class PE_EdgeDetection : PostEffectBase  //Edge Detection Easiest
 {
-    public float F_ShowEdge = 1;
-    public Color C_EdgeColor = Color.green;
-    public override void OnRenderImage(RenderTexture source, RenderTexture destination)
+    public void SetCamera(Camera _cam)
     {
-        if (!B_Supported)
-        {
-            base.OnRenderImage(source, destination);
-            return;
-        }
-        Mat_Cur.SetColor("_EdgeColor", C_EdgeColor);
-        Mat_Cur.SetFloat("_ShowEdge", F_ShowEdge);
-        Graphics.Blit(source,destination,Mat_Cur);
+        base.OnSetEffect(_cam);
+        SetEffect(Color.green);
+    }
+    public void SetEffect(Color _edgeColor,float _showEdge = 1f )
+    {
+        Mat_Cur.SetColor("_EdgeColor", _edgeColor);
+        Mat_Cur.SetFloat("_ShowEdge", _showEdge);
     }
 }
 public class PE_GaussianBlur : PostEffectBase       //Gassuain Blur
@@ -110,11 +131,10 @@ public class PE_GaussianBlur : PostEffectBase       //Gassuain Blur
     public int I_DownSample = 4;
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        if (!B_Supported)
-        {
-            base.OnRenderImage(source, destination);
+        if (RenderDefaultImage(source,destination))
             return;
-        }
+
+
         if (I_DownSample == 0)
             I_DownSample = 1;
 
@@ -147,18 +167,29 @@ public class PE_GaussianBlur : PostEffectBase       //Gassuain Blur
 }
 public class PE_Bloom : PostEffectBase
 {
-    public int I_Iterations = 3;
-    public float F_BlurSpread = 2f;
-    public int I_DownSample = 3;
-    public float F_LuminanceThreshold = .85f;
-    public float F_LuminanceMultiple = 10;
+    float F_BlurSpread = 2f;
+    int I_Iterations = 3;
+    int I_DownSample = 3;
+    float F_LuminanceThreshold = .85f;
+    float F_LuminanceMultiple = 10;
+    public override void OnSetEffect(Camera cam)
+    {
+        base.OnSetEffect(cam);
+        SetEffect();
+    }
+    public void SetEffect(float _blurSpread = 2f, int _iterations = 5, int _downSample = 4,float _luminanceThreshold=.85f,float _luminanceMultiple=10)
+    {
+        F_BlurSpread = _blurSpread;
+        I_Iterations = _iterations;
+        I_DownSample = _downSample;
+        F_LuminanceThreshold = _luminanceThreshold;
+        F_LuminanceMultiple = _luminanceMultiple;
+    }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        if (!B_Supported)
-        {
-            base.OnRenderImage(source, destination);
+        if (RenderDefaultImage(source, destination))
             return;
-        }
+
         if (I_DownSample == 0)
             I_DownSample = 1;
         Mat_Cur.SetFloat("_LuminanceThreshold", F_LuminanceThreshold);
@@ -191,15 +222,18 @@ public class PE_Bloom : PostEffectBase
 }
 public class PE_MotionBlur : PostEffectBase     //Camera Motion Blur ,Easiest
 {
-    public float F_BlurSize=.5f;
     private RenderTexture rt_Accumulation;
+    public override void OnSetEffect(Camera cam)
+    {
+        base.OnSetEffect(cam);
+        SetEffect();
+    }
+    public void SetEffect(float _BlurSize=1f)
+    {
+        Mat_Cur.SetFloat("_BlurAmount", 1 - _BlurSize);
+    }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        if (!B_Supported)
-        {
-            base.OnRenderImage(source, destination);
-            return;
-        }
         if (rt_Accumulation == null || rt_Accumulation.width != source.width || rt_Accumulation.height != source.height)
         {
             GameObject.Destroy(rt_Accumulation);
@@ -209,7 +243,6 @@ public class PE_MotionBlur : PostEffectBase     //Camera Motion Blur ,Easiest
        }
 
         rt_Accumulation.MarkRestoreExpected();
-        Mat_Cur.SetFloat("_BlurAmount", 1 -F_BlurSize);
 
         Graphics.Blit(source, rt_Accumulation, Mat_Cur);
         Graphics.Blit(rt_Accumulation, destination);
@@ -222,45 +255,18 @@ public class PE_MotionBlur : PostEffectBase     //Camera Motion Blur ,Easiest
     }
 }
 
-public class PE_ViewNormal : PostEffectBase {
-    public override void OnSetCamera(Camera cam)
-    {
-        base.OnSetCamera(cam);
-        cam.depthTextureMode = DepthTextureMode.DepthNormals;
-    }
-    public override void OnRenderImage(RenderTexture source, RenderTexture destination)
-    {
-        if (!B_Supported)
-        {
-            base.OnRenderImage(source, destination);
-            return;
-        }
-        Graphics.Blit(source, destination, Mat_Cur);
-    }
-}
-public class PE_ViewDepth : PostEffectBase{
-    public override void OnSetCamera(Camera cam)
-    {
-        base.OnSetCamera(cam);
-        cam.depthTextureMode = DepthTextureMode.Depth;
-    }
-    public override void OnRenderImage(RenderTexture source, RenderTexture destination)
-    {
-        Graphics.Blit(source,destination,Mat_Cur);
-    }
-}
 public class PE_MotionBlurDepth:PE_MotionBlur
 {
     private Matrix4x4 mt_CurVP;
-    public override void OnSetCamera(Camera cam)
+    public override void OnSetEffect(Camera cam)
     {
+        base.OnSetEffect(cam);
         cam.depthTextureMode = DepthTextureMode.Depth;
         mt_CurVP = Cam_Cur.projectionMatrix * Cam_Cur.worldToCameraMatrix;
     }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
         base.OnRenderImage(source, destination);
-        Mat_Cur.SetFloat("_BlurSize", F_BlurSize);
         Mat_Cur.SetMatrix("_PreviousVPMatrix", mt_CurVP);
         mt_CurVP = Cam_Cur.projectionMatrix * Cam_Cur.worldToCameraMatrix;
         Mat_Cur.SetMatrix("_CurrentVPMatrixInverse", mt_CurVP.inverse);
@@ -270,28 +276,29 @@ public class PE_MotionBlurDepth:PE_MotionBlur
 public class PE_FogDepth : PostEffectBase
 {
     Transform tra_Cam;
-    public float F_FogDensity = .5f;
-    public Color C_FogColor = new Color(.8f, .8f, .8f, .5f);
-    public float F_FogStart = -1f;
-    public float F_FogEnd = 5f;
-    public override void OnSetCamera(Camera cam)
+    public override void OnSetEffect(Camera cam)
     {
-        base.OnSetCamera(cam);
+        base.OnSetEffect(cam);
         cam.depthTextureMode = DepthTextureMode.Depth;
         tra_Cam = Cam_Cur.transform;
-        Mat_Cur.SetFloat("_FogDensity", F_FogDensity);
-        Mat_Cur.SetColor("_FogColor", C_FogColor);
-        Mat_Cur.SetFloat("_FogStart", F_FogStart);
-        Mat_Cur.SetFloat("_FogEnd", F_FogEnd);
+        SetEffect(TCommon.ColorAlpha( Color.white,.5f));
     }
-
+    public PE_FogDepth SetEffect(Color _fogColor,  float _fogDensity = .5f, float _fogYStart = -1f, float _fogYEnd = 5f)
+    {
+        Mat_Cur.SetFloat("_FogDensity", _fogDensity);
+        Mat_Cur.SetColor("_FogColor", _fogColor);
+        Mat_Cur.SetFloat("_FogStart", _fogYStart);
+        Mat_Cur.SetFloat("_FogEnd", _fogYEnd);
+        return this;
+    }
+    public void SetTexture(Texture noise)
+    {
+        Mat_Cur.SetTexture("_NoiseTex", noise);
+    }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        if (!B_Supported)
-        {
-            base.OnRenderImage(source, destination);
+        if (RenderDefaultImage(source,destination))
             return;
-        }
 
         float fov = Cam_Cur.fieldOfView;
         float near = Cam_Cur.nearClipPlane;
@@ -331,20 +338,17 @@ public class PE_FogDepth : PostEffectBase
 }
 public class PE_EdgeDetectionDepth:PE_EdgeDetection
 {
-    public float F_SampleDistance = 1f;
-    public float F_SensitivityDepth = 1f;
-    public float F_SensitivityNormals = 1f;
-    public override void OnSetCamera(Camera cam)
+    public override void OnSetEffect(Camera cam)
     {
-        base.OnSetCamera(cam);
+        base.OnSetEffect(cam);
         cam.depthTextureMode = DepthTextureMode.DepthNormals;
-        Mat_Cur.SetFloat("_SampleDistance", F_SampleDistance);
-        Mat_Cur.SetFloat("_SensitivityDepth", F_SensitivityDepth);
-        Mat_Cur.SetFloat("_SensitivityNormals", F_SensitivityNormals);
+        SetEffect();
     }
-    public override void OnRenderImage(RenderTexture source, RenderTexture destination)
+    public void SetEffect(float _sampleDistance = 1f, float _sensitivityDepth = 1f, float _sensitivityNormal = 1f)
     {
-        base.OnRenderImage(source, destination);
+        Mat_Cur.SetFloat("_SampleDistance", _sampleDistance);
+        Mat_Cur.SetFloat("_SensitivityDepth", _sensitivityDepth);
+        Mat_Cur.SetFloat("_SensitivityNormals", _sensitivityNormal);
     }
 }
 public class PE_FogDepthNoise : PE_FogDepth
@@ -353,9 +357,9 @@ public class PE_FogDepthNoise : PE_FogDepth
     public float F_FogSpeedX=.02f;
     public float F_FogSpeedY=.02f;
     public float F_NoiseAmount=.8f;
-    public override void OnSetCamera(Camera cam)
+    public override void OnSetEffect(Camera cam)
     {
-        base.OnSetCamera(cam);
+        base.OnSetEffect(cam);
         Mat_Cur.SetTexture("_NoiseTex", TX_Noise);
         Mat_Cur.SetFloat("_FogSpeedX", F_FogSpeedX);
         Mat_Cur.SetFloat("_FogSpeedY", F_FogSpeedY);
@@ -373,14 +377,11 @@ public class PE_BloomSpecific : PostEffectBase
     RenderTexture m_RenderTexture;
     Shader m_RenderShader;
     public PE_GaussianBlur m_GaussianBlur { get; private set; }
-    public override void OnSetCamera(Camera cam)
+    public override void OnSetEffect(Camera cam)
     {
-        base.OnSetCamera(cam);
-        m_GaussianBlur = new PE_GaussianBlur();
-        m_GaussianBlur.F_BlurSpread = 2;
-        m_GaussianBlur.I_DownSample = 4;
-        m_GaussianBlur.I_Iterations = 20;
+        base.OnSetEffect(cam);
         m_RenderShader = Shader.Find("PostEffect/PE_BloomSpecific_Render");
+        m_GaussianBlur = new PE_GaussianBlur();
         GameObject temp = new GameObject("Render Camera");
         temp.transform.SetParent(Cam_Cur.transform);
         temp.transform.localPosition = Vector3.zero;
@@ -395,14 +396,16 @@ public class PE_BloomSpecific : PostEffectBase
         m_RenderCamera.enabled = false;
         m_RenderTexture = new RenderTexture(Screen.width, Screen.height, 1);
         m_RenderCamera.targetTexture = m_RenderTexture;
+        SetEffect();
+    }
+    public void SetEffect(float _blueSpread=2f, int _iterations = 20, int _downSample=4)
+    {
+        m_GaussianBlur.SetEffect(_blueSpread, _iterations, _downSample);
     }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        if (!B_Supported)
-        {
-            base.OnRenderImage(source, destination);
+        if (RenderDefaultImage(source, destination))
             return;
-        }
         m_RenderCamera.RenderWithShader(m_RenderShader, "RenderType");
         m_GaussianBlur.OnRenderImage(m_RenderTexture, m_RenderTexture);     //Blur
         Mat_Cur.SetTexture("_RenderTex", m_RenderTexture);

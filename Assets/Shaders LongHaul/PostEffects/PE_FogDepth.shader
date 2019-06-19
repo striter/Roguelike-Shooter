@@ -61,9 +61,11 @@
 			{
 				float linearDepth = LinearEyeDepth(SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture,i.uv_depth));
 				
-			float3 worldPos = _WorldSpaceCameraPos+ i.interpolatedRay.xyz*linearDepth;
-			float fogDensity = saturate( (_FogEnd - worldPos.y)*_FogDensity / (_FogEnd - _FogStart));
+				float3 worldPos = _WorldSpaceCameraPos+ i.interpolatedRay.xyz*linearDepth;
+				float fogDensity = saturate( (_FogEnd - worldPos.y)*_FogDensity / (_FogEnd - _FogStart));
 				fixed3 col = tex2D(_MainTex, i.uv).rgb;
+
+				fogDensity = fogDensity == 1 ? _FogColor.a : fogDensity;
 
 				col.rgb = lerp(col.rgb, _FogColor.rgb, fogDensity);
 

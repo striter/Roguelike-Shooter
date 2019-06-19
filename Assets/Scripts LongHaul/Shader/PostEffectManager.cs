@@ -6,7 +6,7 @@ public class PostEffectManager : SingletonMono<PostEffectManager> {
     public static T AddPostEffect<T>() where T:PostEffectBase,new()
     {
         T effetBase = new T();
-        effetBase.OnSetCamera(instance.cam_cur);
+        effetBase.OnSetEffect(instance.cam_cur);
         instance.m_PostEffects.Add( effetBase);
         return effetBase;
     }

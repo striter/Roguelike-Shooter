@@ -43,6 +43,21 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         StyleColorData[] customizations = TResources.GetAllStyleCustomization(_LevelStyle);
         StyleColorData randomData= customizations.Length == 0? StyleColorData.Default():customizations.RandomItem(m_mainSeed);
         randomData.DataInit(m_DirectionalLight, m_OceanScript);
+        SetPostEffects(_LevelStyle);
+    }
+    public void SetPostEffects(enum_LevelStyle _levelStyle)
+    {
+        PostEffectManager.RemoveAllPostEffect();
+        PostEffectManager.AddPostEffect<PE_BloomSpecific>();
+        switch (_levelStyle)
+        {
+            case enum_LevelStyle.Undead:
+                PostEffectManager.AddPostEffect<PE_FogDepthNoise>().SetEffect(Color.white).SetTexture( TResources.Load<Texture>("Texture/Noise1"));
+                break;
+            case enum_LevelStyle.Iceland:
+                PostEffectManager.AddPostEffect<PE_FogDepth>();
+                break;
+        }
     }
     #region Level
     void OnStageStart()
