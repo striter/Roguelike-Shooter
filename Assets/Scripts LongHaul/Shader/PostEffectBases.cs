@@ -126,9 +126,20 @@ public class PE_EdgeDetection : PostEffectBase  //Edge Detection Easiest
 }
 public class PE_GaussianBlur : PostEffectBase       //Gassuain Blur
 {
-    public float F_BlurSpread = 2f;
-    public int I_Iterations = 5;
-    public int I_DownSample = 4;
+    float F_BlurSpread = 2f;
+    int I_Iterations = 5;
+    int I_DownSample = 4;
+    public override void OnSetEffect(Camera cam)
+    {
+        base.OnSetEffect(cam);
+        SetEffect();
+    }
+    public void SetEffect(float _blurSpread=2f, int _iterations=5, int _downSample = 4)
+    {
+        F_BlurSpread = _blurSpread;
+        I_Iterations = _iterations;
+        I_DownSample = _downSample;
+    }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
         if (RenderDefaultImage(source,destination))
