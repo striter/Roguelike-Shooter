@@ -24,6 +24,7 @@ public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
         base.Awake();
         ExcelManager.Init();
         ObjectManager.Init();
+        Application.targetFrameRate = 60;
         TBroadCaster<enum_BC_UIStatusChanged>.Init();
         TBroadCaster<enum_BC_GameStatusChanged>.Init();
 

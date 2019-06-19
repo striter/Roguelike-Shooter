@@ -1,4 +1,4 @@
-﻿Shader "Game/LowPoly_UVColor_Diffuse"
+﻿Shader "Game/UVColor_Diffuse"
 {
 	Properties
 	{

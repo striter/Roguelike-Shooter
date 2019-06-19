@@ -176,7 +176,7 @@ public class LevelBase : MonoBehaviour {
     public float F_HeightDetect = .5f;
     public bool b_showGizmos=true,b_showGameTiles=true,b_b_showWorldDirection=false;
     public TileMapData gizmosMapData;
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
         if (!b_showGizmos)
             return;

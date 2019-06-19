@@ -14,7 +14,6 @@
 	}
 		SubShader
 		{
-			// No culling or depth
 			Cull Off ZWrite Off ZTest Always
 
 			Pass
@@ -25,18 +24,18 @@
 
 				#include "UnityCG.cginc"
 
-			float4x4 _FrustumCornersRay;
-			sampler2D _MainTex;
-			half4 _MainTex_TexelSize;
-			sampler2D _CameraDepthTexture;
-			half _FogDensity;
-			fixed4 _FogColor;
-			float _FogStart;
-			float _FogEnd;
-			sampler2D _NoiseTex;
-			half _FogSpeedX;
-			half _FogSpeedY;
-			half _NoiseAmount;
+				float4x4 _FrustumCornersRay;
+				sampler2D _MainTex;
+				half4 _MainTex_TexelSize;
+				sampler2D _CameraDepthTexture;
+				half _FogDensity;
+				fixed4 _FogColor;
+				float _FogStart;
+				float _FogEnd;
+				sampler2D _NoiseTex;
+				half _FogSpeedX;
+				half _FogSpeedY;
+				half _NoiseAmount;
 
 			struct v2f
 			{

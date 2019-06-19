@@ -75,6 +75,11 @@ public class PE_BSC : PostEffectBase {      //Brightness Saturation Contrast
     public float F_Contrast = 1f;
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
+        if (!B_Supported)
+        {
+            base.OnRenderImage(source, destination);
+            return;
+        }
         Mat_Cur.SetFloat("_Brightness", F_Brightness);
         Mat_Cur.SetFloat("_Saturation", F_Saturation);
         Mat_Cur.SetFloat("_Contrast", F_Contrast);
@@ -88,6 +93,11 @@ public class PE_EdgeDetection : PostEffectBase  //Edge Detection Easiest
     public Color C_EdgeColor = Color.green;
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
+        if (!B_Supported)
+        {
+            base.OnRenderImage(source, destination);
+            return;
+        }
         Mat_Cur.SetColor("_EdgeColor", C_EdgeColor);
         Mat_Cur.SetFloat("_ShowEdge", F_ShowEdge);
         Graphics.Blit(source,destination,Mat_Cur);
@@ -100,6 +110,11 @@ public class PE_GaussianBlur : PostEffectBase       //Gassuain Blur
     public int I_DownSample = 4;
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
+        if (!B_Supported)
+        {
+            base.OnRenderImage(source, destination);
+            return;
+        }
         if (I_DownSample == 0)
             I_DownSample = 1;
 
@@ -126,7 +141,6 @@ public class PE_GaussianBlur : PostEffectBase       //Gassuain Blur
             RenderTexture.ReleaseTemporary(buffer0);
             buffer0 = buffer1;
         }
-        destination.MarkRestoreExpected();
         Graphics.Blit(buffer0, destination);
         RenderTexture.ReleaseTemporary(buffer0);
     }
@@ -140,6 +154,11 @@ public class PE_Bloom : PostEffectBase
     public float F_LuminanceMultiple = 10;
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
+        if (!B_Supported)
+        {
+            base.OnRenderImage(source, destination);
+            return;
+        }
         if (I_DownSample == 0)
             I_DownSample = 1;
         Mat_Cur.SetFloat("_LuminanceThreshold", F_LuminanceThreshold);
@@ -166,8 +185,8 @@ public class PE_Bloom : PostEffectBase
         }
 
         Mat_Cur.SetTexture("_Bloom", buffer0);
-        Graphics.Blit(source, destination, Mat_Cur, 3);
         RenderTexture.ReleaseTemporary(buffer0);
+        Graphics.Blit(source, destination, Mat_Cur, 3);
     }
 }
 public class PE_MotionBlur : PostEffectBase     //Camera Motion Blur ,Easiest
@@ -176,6 +195,11 @@ public class PE_MotionBlur : PostEffectBase     //Camera Motion Blur ,Easiest
     private RenderTexture rt_Accumulation;
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
+        if (!B_Supported)
+        {
+            base.OnRenderImage(source, destination);
+            return;
+        }
         if (rt_Accumulation == null || rt_Accumulation.width != source.width || rt_Accumulation.height != source.height)
         {
             GameObject.Destroy(rt_Accumulation);
@@ -206,6 +230,11 @@ public class PE_ViewNormal : PostEffectBase {
     }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
+        if (!B_Supported)
+        {
+            base.OnRenderImage(source, destination);
+            return;
+        }
         Graphics.Blit(source, destination, Mat_Cur);
     }
 }
@@ -241,8 +270,8 @@ public class PE_MotionBlurDepth:PE_MotionBlur
 public class PE_FogDepth : PostEffectBase
 {
     Transform tra_Cam;
-    public float F_FogDensity = .6f;
-    public Color C_FogColor =TCommon.ColorAlpha(  Color.white,.5f);
+    public float F_FogDensity = .5f;
+    public Color C_FogColor = new Color(.8f, .8f, .8f, .5f);
     public float F_FogStart = -1f;
     public float F_FogEnd = 5f;
     public override void OnSetCamera(Camera cam)
@@ -258,6 +287,12 @@ public class PE_FogDepth : PostEffectBase
 
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
+        if (!B_Supported)
+        {
+            base.OnRenderImage(source, destination);
+            return;
+        }
+
         float fov = Cam_Cur.fieldOfView;
         float near = Cam_Cur.nearClipPlane;
         float far = Cam_Cur.farClipPlane;
@@ -303,12 +338,12 @@ public class PE_EdgeDetectionDepth:PE_EdgeDetection
     {
         base.OnSetCamera(cam);
         cam.depthTextureMode = DepthTextureMode.DepthNormals;
-    }
-    public override void OnRenderImage(RenderTexture source, RenderTexture destination)
-    {
         Mat_Cur.SetFloat("_SampleDistance", F_SampleDistance);
         Mat_Cur.SetFloat("_SensitivityDepth", F_SensitivityDepth);
         Mat_Cur.SetFloat("_SensitivityNormals", F_SensitivityNormals);
+    }
+    public override void OnRenderImage(RenderTexture source, RenderTexture destination)
+    {
         base.OnRenderImage(source, destination);
     }
 }
@@ -363,6 +398,11 @@ public class PE_BloomSpecific : PostEffectBase
     }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
+        if (!B_Supported)
+        {
+            base.OnRenderImage(source, destination);
+            return;
+        }
         m_RenderCamera.RenderWithShader(m_RenderShader, "RenderType");
         m_GaussianBlur.OnRenderImage(m_RenderTexture, m_RenderTexture);     //Blur
         Mat_Cur.SetTexture("_RenderTex", m_RenderTexture);

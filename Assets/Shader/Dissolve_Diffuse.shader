@@ -1,4 +1,4 @@
-﻿Shader "Game/Effect/Entity_Dissolve_Diffuse"
+﻿Shader "Game/Effect/Dissolve_Diffuse"
 {
 	Properties
 	{
