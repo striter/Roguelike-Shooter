@@ -43,7 +43,7 @@ public class EntityEnermyBase : EntityBase {
         protected Transform transform => m_EntityControlling.tf_Head;
         protected NavMeshAgent m_Agent;
         protected NavMeshObstacle m_Obstacle;
-        protected float f_AttackRange;
+        protected float f_AttackRange,f_ChaseRange;
         public bool B_AgentEnabled
         {
             get
@@ -77,6 +77,7 @@ public class EntityEnermyBase : EntityBase {
         {
             m_EntityControlling = _entityControlling;
             f_AttackRange = _entityInfo.m_AIAttackRange;
+            f_ChaseRange = _entityInfo.m_AIChaseRange;
             m_Obstacle = m_EntityControlling.GetComponent<NavMeshObstacle>();
             m_Agent = m_EntityControlling.GetComponent<NavMeshAgent>();
             m_Agent.speed = _entityInfo.m_moveSpeed;
@@ -104,7 +105,8 @@ public class EntityEnermyBase : EntityBase {
         float f_aiSimulatedTime;
         float f_movementCheck,f_battleStatusCheck;
         Vector3 v3_TargetDirection;
-        bool b_TargetInRange;
+        bool b_ChasedTarget;
+        bool b_CanAttackTarget;
         bool b_AgentReachDestination;
         bool b_atBattleStatus = false;
         bool b_idled = false;
@@ -122,7 +124,8 @@ public class EntityEnermyBase : EntityBase {
         void CalculateAllParams()
         {
             v3_TargetDirection = (targetTransform.position -transform.position).normalized;
-            b_TargetInRange = TCommon.GetXZDistance(targetTransform.position, transform.position) < f_AttackRange && TargetVisible;
+            b_ChasedTarget = TCommon.GetXZDistance(targetTransform.position, transform.position) < f_ChaseRange && TargetVisible;
+            b_CanAttackTarget = TCommon.GetXZDistance(targetTransform.position, transform.position) < f_AttackRange && TargetVisible;
             b_AgentReachDestination = m_Agent.destination == Vector3.zero || TCommon.GetXZDistance(transform.position, m_Agent.destination) < 5f;
         }
         void CheckMovement()
@@ -130,7 +133,7 @@ public class EntityEnermyBase : EntityBase {
             if (f_aiSimulatedTime < f_movementCheck)
                 return;
 
-            if (!b_idled && b_AgentReachDestination && b_TargetInRange && Random.Range(0, 2) > 0)
+            if (!b_idled && b_AgentReachDestination && b_ChasedTarget && Random.Range(0, 2) > 0)
             {
                 b_idled = true;
                 B_AgentEnabled = false;
@@ -153,7 +156,7 @@ public class EntityEnermyBase : EntityBase {
                 return;
             if (!b_atBattleStatus)
             {
-                b_atBattleStatus = b_TargetInRange;
+                b_atBattleStatus = b_CanAttackTarget;
                 fireCount = 0;
             }
             else
@@ -194,7 +197,7 @@ public class EntityEnermyBase : EntityBase {
         {
             Vector3 targetPosition= m_Target.transform.position;
             Vector3 direction = m_EntityControlling.transform.position - m_Target.transform.position;
-            Vector3 m_SamplePosition= m_EntityControlling.transform.position+ (b_TargetInRange?direction:-direction).normalized*10;
+            Vector3 m_SamplePosition= m_EntityControlling.transform.position+ (b_ChasedTarget?direction:-direction).normalized*10;
             m_SamplePosition = m_SamplePosition + new Vector3(Random.Range(-15f, 15f), 0, Random.Range(-15f, 15f));
             if (NavMesh.SamplePosition(m_SamplePosition, out sampleHit, 50, -1))
                 targetPosition = sampleHit.position;

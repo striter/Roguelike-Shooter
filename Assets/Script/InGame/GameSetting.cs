@@ -479,6 +479,7 @@ namespace GameSetting
         float f_armorRegenSpeed;
         float f_armorRegenDuration;
         float f_moveSpeed;
+        float f_chaseRange;
         float f_attackRange;
         public enum_Entity m_Type =>(enum_Entity) index;
         public string m_Name => s_name;
@@ -488,6 +489,7 @@ namespace GameSetting
         public float m_ArmorRegenSpeed => f_armorRegenSpeed;
         public float m_ArmorRegenDuration => f_armorRegenDuration;
         public float m_moveSpeed => f_moveSpeed;
+        public float m_AIChaseRange => f_chaseRange;
         public float m_AIAttackRange => f_attackRange;
         public void InitOnValueSet()
         {
