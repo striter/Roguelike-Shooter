@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PostEffectBase {
+public class PostEffectBase  {
     const string S_ParentPath = "PostEffect/";
     Camera cam_Cur;
     public Material mat_Cur { get; private set; }

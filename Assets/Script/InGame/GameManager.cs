@@ -67,7 +67,7 @@ public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
     private void Start()        //Entrance Of Whole Game
     {
         PostEffectManager.AddPostEffect<PE_BloomSpecific>();
-        PostEffectManager.AddPostEffect<PE_FogDepthNoise>().mat_Cur.SetTexture("_NoiseTex", TResources.Load<Texture>("Texture/Noise1"));
+//        PostEffectManager.AddPostEffect<PE_FogDepthNoise>().mat_Cur.SetTexture("_NoiseTex", TResources.Load<Texture>("Texture/Noise1"));
         PreInit(M_TESTSEED);
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnStageStart);
     }
