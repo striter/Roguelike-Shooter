@@ -10,6 +10,10 @@ public class PostEffectManager : SingletonMono<PostEffectManager> {
         instance.m_PostEffects.Add( effetBase);
         return effetBase;
     }
+    public static T GetPostEffect<T>() where T : PostEffectBase, new()
+    {
+        return instance.m_PostEffects.Find(p => p.GetType() ==typeof(T)) as T;
+    }
     public static void RemoveAllPostEffect()
     {
         instance.m_PostEffects.Traversal((PostEffectBase effect)=> { effect.OnDestroy(); });

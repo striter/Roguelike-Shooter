@@ -21,7 +21,7 @@ public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
 #if UNITY_EDITOR
         B_TestMode = true;
 #endif
-        base.Awake();
+        instance = this;
         ExcelManager.Init();
         ObjectManager.Init();
         Application.targetFrameRate = 60;
@@ -50,8 +50,12 @@ public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
         {
             Time.timeScale = Time.timeScale == 1f ? .1f : 1f;
         }
+        PostEffectManager.GetPostEffect<PE_FogDepthNoise>().mat_Cur.SetFloat("_FogDensity", m_density);
+        PostEffectManager.GetPostEffect<PE_FogDepthNoise>().mat_Cur.SetColor("_FogColor", m_FogColor);
         UIManager.instance.transform.Find("SeedTest").GetComponent<UnityEngine.UI.Text>().text = m_SeedString;
     }
+    public Color m_FogColor=TCommon.ColorAlpha(Color.white,.5f);
+    public float m_density = .5f;
     private void OnDestroy()
     {
         this.StopAllSingleCoroutines();
@@ -67,7 +71,7 @@ public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
     private void Start()        //Entrance Of Whole Game
     {
         PostEffectManager.AddPostEffect<PE_BloomSpecific>();
-//        PostEffectManager.AddPostEffect<PE_FogDepthNoise>().mat_Cur.SetTexture("_NoiseTex", TResources.Load<Texture>("Texture/Noise1"));
+        PostEffectManager.AddPostEffect<PE_FogDepthNoise>().mat_Cur.SetTexture("_NoiseTex", TResources.Load<Texture>("Texture/Noise1"));
         PreInit(M_TESTSEED);
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnStageStart);
     }
