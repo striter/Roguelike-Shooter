@@ -318,11 +318,11 @@ public static class TCommon
 
     public static int Random(this RangeInt ir,System.Random seed = null)
     {
-        return ir.start + (seed != null ? seed.Next(ir.start, ir.end + 1) : UnityEngine.Random.Range(ir.start, ir.end + 1));
+        return ir.start + (seed != null ? seed.Next(ir.start, ir.end + 1) : UnityEngine.Random.Range(0, ir.length + 1));
     }
     public static float Random(this RangeFloat ir, System.Random seed = null)
     {
-        return ir.start + (seed != null ? seed.Next((int)(ir.start*1000), (int)(ir.end*1000))/100 : UnityEngine.Random.Range(ir.start, ir.end ));
+        return ir.start + (seed != null ? seed.Next((int)(ir.start*1000), (int)(ir.end*1000))/100 : UnityEngine.Random.Range(0, ir.length ));
     }
 }
 #region Extra Structs
