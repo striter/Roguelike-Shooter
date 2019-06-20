@@ -10,7 +10,7 @@ using System;
 public class EntityEnermyBase : EntityBase {
     EnermyAIControllerBasic m_AI;
     BarrageBase m_Barrage;
-    float OnAttackTarget(EntityBase target) => m_Barrage.Play(this, target)+m_EntityInfo.m_BarrageDuration;
+    float OnAttackTarget(EntityBase target) => m_Barrage.Play(this, target)+m_EntityInfo.m_BarrageDuration.Random();
     bool OnCheckTarget(EntityBase target) => target.B_IsPlayer!=B_IsPlayer && !target.b_IsDead;
     public override void Init(int id, SEntity entityInfo)
     {
@@ -232,9 +232,8 @@ public class EntityEnermyBase : EntityBase {
             m_Target = _target;
             b_preAim = UnityEngine.Random.Range(0, 2) > 0;
             int count = m_Info.m_BulletCount.Random();
-            float fireRate = m_Info.m_Firerate.Random();
-            this.StartSingleCoroutine(0, TIEnumerators.TickCount(BarrageWave,count,fireRate));
-            return count * fireRate;
+            this.StartSingleCoroutine(0, TIEnumerators.TickCount(BarrageWave,count, m_Info.m_Firerate));
+            return count * m_Info.m_Firerate;
         }
 
         protected Vector3 targetDirection=> Vector3.Normalize((b_preAim ? (m_Target.m_PrecalculatedTargetPos(Vector3.Distance(targetTransform.position, transform.position) / m_Info.m_BulletSpeed)) : targetTransform.position) - transform.position);

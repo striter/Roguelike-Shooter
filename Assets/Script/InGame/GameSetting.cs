@@ -481,7 +481,7 @@ namespace GameSetting
         int i_index;
         int i_barrageType;
         int i_bulletType;
-        RangeFloat fr_firerate;
+        float f_firerate;
         RangeInt ir_bulletCount; 
         float i_bulletDamage;
         float i_bulletSpeed;
@@ -490,7 +490,7 @@ namespace GameSetting
         public int m_Index => i_index;
         public enum_BarrageType m_BarrageType => (enum_BarrageType)i_barrageType;
         public enum_BulletType m_BulletType => (enum_BulletType)i_bulletType;
-        public RangeFloat m_Firerate => fr_firerate;
+        public float m_Firerate => f_firerate;
         public RangeInt m_BulletCount => ir_bulletCount;
         public float m_BulletDamage => i_bulletDamage;
         public float m_BulletSpeed => i_bulletSpeed;
@@ -513,7 +513,7 @@ namespace GameSetting
         float f_chaseRange;
         float f_attackRange;
         int i_barrageIndex;
-        float f_barrageDuration;
+        RangeFloat fr_barrageDuration;
         public enum_Entity m_Type =>(enum_Entity) index;
         public string m_Name => s_name;
         public float m_MaxHealth => f_maxHealth;
@@ -525,7 +525,7 @@ namespace GameSetting
         public float m_AIChaseRange => f_chaseRange;
         public float m_AIAttackRange => f_attackRange;
         public int m_BarrageIndex => i_barrageIndex;
-        public float m_BarrageDuration => f_barrageDuration;
+        public RangeFloat m_BarrageDuration => fr_barrageDuration;
         public void InitOnValueSet()
         {
         }
