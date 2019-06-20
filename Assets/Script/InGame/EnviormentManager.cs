@@ -54,9 +54,6 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
             case enum_LevelStyle.Undead:
                 PostEffectManager.AddPostEffect<PE_FogDepthNoise>().SetEffect(Color.white).SetTexture( TResources.Load<Texture>("Texture/Noise1"));
                 break;
-            case enum_LevelStyle.Iceland:
-                PostEffectManager.AddPostEffect<PE_FogDepth>();
-                break;
         }
     }
     #region Level
