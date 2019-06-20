@@ -40,6 +40,7 @@ public class ObjectPoolManager<T,Y> where Y:MonoBehaviour {
         }
         d_ItemInfos.Add(identity, new ItemPoolInfo());
         registerItem.transform.SetParent(PoolParent.tf_PoolRegist);
+        OnItemInstantiate?.Invoke(registerItem);
         registerItem.SetActivate(false);
         ItemPoolInfo info = d_ItemInfos[identity];
         info.m_spawnItem = registerItem;

@@ -14,6 +14,7 @@ namespace GameSetting
         public const int I_NormalBulletLastTime = 5; // No Collision Recycle Time
         public const int I_BoltMaxLastTime = 10;    //Last Time Of Ammo/Bolt
         public const int I_LaserMaxLastTime = 5;    //Longest Last Time Of Ammo/Laser
+        public const int I_BarrageBulletMaxLastTime = 5;
 
         public const int I_RocketBlastRadius = 5;        //Meter
         public const float F_LaserRayStartPause = .5f;      //Laser Start Pause
@@ -52,6 +53,7 @@ namespace GameSetting
         }
 
         public static float F_RocketBlastDamage(float weaponDamage, float distance) => weaponDamage * (distance / GameConst.I_RocketBlastRadius);       //Rocket Blast Damage
+        public static Vector3 V3_FireDirectionSpread(Vector3 aimDirection, float spread,Vector3 up,Vector3 right) => (aimDirection*GameConst.I_BulletSpeadAtDistance + up* UnityEngine.Random.Range(-spread, spread) + right * UnityEngine.Random.Range(-spread, spread)).normalized;
     }
 
     public static class UIConst
@@ -469,6 +471,28 @@ namespace GameSetting
     #endregion
     #endregion
     #region GameStruct
+    public struct SBarrage:ISExcel
+    {
+        int i_index;
+        int i_bulletType;
+        float f_firerate;
+        int i_bulletCount;
+        float i_bulletDamage;
+        float i_bulletSpeed;
+        int i_horizontalSpread;
+        float i_bulletSpread;
+        public int m_Index => i_index;
+        public enum_BulletType m_BarrageType => (enum_BulletType)i_bulletType;
+        public float m_Firerate => f_firerate;
+        public int m_BulletCount => i_bulletCount;
+        public float m_BulletDamage => i_bulletDamage;
+        public float m_BulletSpeed => i_bulletSpeed;
+        public int m_HorizontalSpread => i_horizontalSpread;
+        public float m_BulletSpread => i_bulletSpread;
+        public void InitOnValueSet()
+        {
+        }   
+    }
     public struct SEntity : ISExcel
     {
         int index;
@@ -481,6 +505,8 @@ namespace GameSetting
         float f_moveSpeed;
         float f_chaseRange;
         float f_attackRange;
+        int i_barrageIndex;
+        float f_barrageDuration;
         public enum_Entity m_Type =>(enum_Entity) index;
         public string m_Name => s_name;
         public float m_MaxHealth => f_maxHealth;
@@ -491,6 +517,8 @@ namespace GameSetting
         public float m_moveSpeed => f_moveSpeed;
         public float m_AIChaseRange => f_chaseRange;
         public float m_AIAttackRange => f_attackRange;
+        public int m_BarrageIndex => i_barrageIndex;
+        public float m_BarrageDuration => f_barrageDuration;
         public void InitOnValueSet()
         {
         }

@@ -38,6 +38,20 @@ public static class TIEnumerators
             OnTick();
         }
     }
+    public static IEnumerator TickCount(Action OnTick, int totalTicks, float duration = -1)
+    {
+        WaitForSeconds seconds = duration == -1 ? null : new WaitForSeconds(duration);
+        int count = 1;
+        OnTick();
+        for (; ; )
+        {
+            yield return seconds;
+            OnTick();
+            count++;
+            if (count >= totalTicks)
+                yield break;
+        }
+    }
     public static IEnumerator TickDelta(Action<float> OnTickDelta, float duration = -1)
     {
         float preTime = Time.time;

@@ -45,32 +45,27 @@ public class SFXBullet : SFXBase {
         m_Trail = m_subSFXDic[ enum_SubSFXType.Projectile].transform.GetComponentInChildren<TrailRenderer>();
         f_sphereWidth = m_Trail.startWidth / 2;
     }
-    public virtual void Play(int sourceID,Vector3 direction,SWeapon weaponInfo, float duration= -1)
+    public virtual void PlayWeapon(int sourceID,Vector3 direction,SWeapon weaponInfo, float duration= -1)
     {
-        TCommon.TraversalEnum((enum_SubSFXType sfx) => { m_subSFXDic[sfx].transform.localPosition = Vector3.zero; m_subSFXDic[sfx].SetPlay(false); });
-        m_subSFXDic[enum_SubSFXType.Projectile].SetPlay(true);
-        m_subSFXDic[enum_SubSFXType.Muzzle].SetPlay(true);
-        m_Trail.Clear();
-        m_bulletDamage = weaponInfo.m_Damage;
-        m_Direction = direction;
-        m_Simulator = new BulletPhysicsSimulator(m_subSFXDic[enum_SubSFXType.Projectile].transform.position, m_Direction, Vector3.down, weaponInfo.m_HorizontalSpeed, weaponInfo.m_HorizontalDistance, 0, weaponInfo.m_VerticalAcceleration);
-        B_SimulatePhysics = true;
-        base.Play(sourceID,duration==-1? GameConst.I_NormalBulletLastTime:duration);
+        Play(sourceID,direction,weaponInfo.m_Damage,weaponInfo.m_HorizontalSpeed,weaponInfo.m_HorizontalDistance,0,weaponInfo.m_VerticalAcceleration, duration == -1 ? GameConst.I_NormalBulletLastTime : duration);
     }
-    public void TestPlay(int sourceID, Vector3 direction, float damage,float speed,float duration =-1)
+    public void PlayBarrage(int sourceID, Vector3 direction,SBarrage barrageInfo,float duration =-1)
     {
+        Play(sourceID,direction, barrageInfo.m_BulletDamage, barrageInfo.m_BulletSpeed,200,0,0, duration == -1 ? GameConst.I_BarrageBulletMaxLastTime : duration);
+    }
+    protected void Play(int sourceID, Vector3 direction, float damage, float horiSpeed,float horiDistance,float vertiSpeed,float vertiAcceleration, float duration)
+    {
+        B_SimulatePhysics = true;
         TCommon.TraversalEnum((enum_SubSFXType sfx) => { m_subSFXDic[sfx].transform.localPosition = Vector3.zero; m_subSFXDic[sfx].SetPlay(false); });
         m_subSFXDic[enum_SubSFXType.Projectile].SetPlay(true);
         m_subSFXDic[enum_SubSFXType.Muzzle].SetPlay(true);
         m_Trail.Clear();
         m_subSFXDic[enum_SubSFXType.Projectile].transform.localPosition = Vector3.zero;
         m_subSFXDic[enum_SubSFXType.Muzzle].transform.localPosition = Vector3.zero;
-        m_Trail.Clear();
         m_bulletDamage = damage;
         m_Direction = direction;
-        m_Simulator = new BulletPhysicsSimulator(m_subSFXDic[enum_SubSFXType.Projectile].transform.position, m_Direction, Vector3.down,speed, 200, 0,0);
-        B_SimulatePhysics = true;
-        base.Play(sourceID, duration == -1 ? GameConst.I_NormalBulletLastTime : duration);
+        m_Simulator = new BulletPhysicsSimulator(m_subSFXDic[enum_SubSFXType.Projectile].transform.position, m_Direction, Vector3.down, horiSpeed, horiDistance,vertiSpeed, vertiAcceleration);
+        base.Play(sourceID, duration);
     }
     protected override void Update()
     {

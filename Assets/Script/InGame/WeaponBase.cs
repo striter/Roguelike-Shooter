@@ -96,8 +96,8 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         I_AmmoLeft--;
         for (int i = 0; i < m_WeaponInfo.m_PelletsPerShot; i++)
         {
-            Vector3 bulletDirection = Vector3.Normalize(transform.forward*GameConst.I_BulletSpeadAtDistance+UnityEngine.Random.Range(-1f,1f)* transform.up*m_WeaponInfo.m_Spread+ UnityEngine.Random.Range(-1f, 1f) * transform.right * m_WeaponInfo.m_Spread);
-            (ObjectManager.SpawnSFX(m_WeaponInfo.m_BulletType.ToSFXType(), tf_Muzzle) as SFXBullet).Play(I_AttacherID, bulletDirection,m_WeaponInfo);
+            Vector3 bulletDirection = GameExpression.V3_FireDirectionSpread(transform.forward, m_WeaponInfo.m_Spread, transform.up, transform.right); 
+            (ObjectManager.SpawnSFX(m_WeaponInfo.m_BulletType.ToSFXType(), tf_Muzzle) as SFXBullet).PlayWeapon(I_AttacherID, bulletDirection,m_WeaponInfo);
         }
         OnRecoil?.Invoke(m_WeaponInfo.m_RecoilPerShot);
         OnAmmoChangeCostMana?.Invoke(m_WeaponInfo.m_ManaCost);

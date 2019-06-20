@@ -229,6 +229,7 @@ public static class ExcelManager
         Properties<SLevelGenerate>.Init();
         Properties<SEntity>.Init();
         Properties<SWeapon>.Init();
+        Properties<SBarrage>.Init();
     }
     public static SLevelGenerate GetLevelGenerateProperties(enum_LevelStyle style,enum_LevelPrefabType prefabType)
     {
@@ -252,6 +253,13 @@ public static class ExcelManager
             Debug.LogError("Error Properties Found Of Index:" +type.ToString()+"|"+((int)type));
         return weapon;
     }
+    public static SBarrage GetBarrageProperties(int barrageIndex)
+    {
+        SBarrage barrage = Properties<SBarrage>.PropertiesList.Find(p => p.m_Index == barrageIndex);
+        if (barrageIndex == 0)
+            Debug.LogError("Error Properties Found Of Index:" + barrageIndex.ToString() + "|" + barrageIndex);
+        return barrage;
+    }
 }
 public static class ObjectManager
 {
@@ -261,7 +269,9 @@ public static class ObjectManager
         TF_Entity = new GameObject("Entity").transform;
         TCommon.TraversalEnum((enum_Entity type) => 
         {
-            ObjectPoolManager<enum_Entity,EntityBase>.Register(type,TResources.Instantiate<EntityBase>("Entity/"+type.ToString()), enum_PoolSaveType.DynamicMaxAmount,1,null);
+            ObjectPoolManager<enum_Entity,EntityBase>.Register(type,TResources.Instantiate<EntityBase>("Entity/"+type.ToString()), enum_PoolSaveType.DynamicMaxAmount,1,(EntityBase entity)=> {
+                entity.Init(GameManager.I_EntityID(i_entityIndex++, type == enum_Entity.Player), ExcelManager.GetEntityGenerateProperties(type));
+            });
         });
         
         TCommon.TraversalEnum((enum_SFX type) =>{
@@ -283,8 +293,7 @@ public static class ObjectManager
         NavMeshHit hit;
         if (NavMesh.SamplePosition(toPosition, out hit, 5, -1))
             toPosition = hit.position;
-        entity.Init(GameManager.I_EntityID(i_entityIndex++,type== enum_Entity.Player ), ExcelManager.GetEntityGenerateProperties(type));
-        entity.Activate();
+        entity.OnActivate();
         entity.transform.position = toPosition;
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnSpawnEntity, entity);
         return entity;

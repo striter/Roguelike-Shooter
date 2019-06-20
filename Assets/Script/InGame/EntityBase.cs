@@ -28,7 +28,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
         TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.Attach(this,TryTakeDamage); });
         m_EntityInfo = entityInfo;
     }
-    public virtual void Activate()
+    public virtual void OnActivate()
     {
         if (I_EntityID == -1)
             Debug.LogError("Please Init Entity Info!" + gameObject.name.ToString());

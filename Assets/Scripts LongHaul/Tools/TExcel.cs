@@ -85,7 +85,7 @@ namespace TExcel
             }
             catch(Exception e)
             {
-                Debug.LogError("Excel Error:"+e.Message);
+                Debug.LogError("Excel|"+typeof(T).Name.ToString()+" Error:"+e.Message);
             }
         }
 

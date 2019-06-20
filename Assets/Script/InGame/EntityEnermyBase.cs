@@ -4,45 +4,48 @@ using UnityEngine;
 using UnityEngine.AI;
 using TSpecialClasses;
 using GameSetting;
+using System;
 
 [RequireComponent(typeof(NavMeshAgent),typeof(NavMeshObstacle))]
 public class EntityEnermyBase : EntityBase {
     EnermyAIControllerBasic m_AI;
+    BarrageBase m_Barrage;
+    float OnAttackTarget(EntityBase target) => m_Barrage.Play(this, target)+m_EntityInfo.m_BarrageDuration;
+    bool OnCheckTarget(EntityBase target) => target.B_IsPlayer!=B_IsPlayer && !target.b_IsDead;
     public override void Init(int id, SEntity entityInfo)
     {
         base.Init(id, entityInfo);
-        if(m_AI==null)
-            m_AI = new EnermyAIControllerBasic(this,entityInfo);
+        m_AI = new EnermyAIControllerBasic(this, entityInfo, OnAttackTarget,OnCheckTarget);
+        m_Barrage = new BarrageBase(ExcelManager.GetBarrageProperties(entityInfo.m_BarrageIndex));
     }
+
     public override void SetTarget(EntityBase target)
     {
         base.SetTarget(target);
         m_AI.SetTarget(target);
     }
-    bool OnCheckTarget(EntityBase target,bool isAlly)
-    {
-        return target.B_IsPlayer&&!target.b_IsDead;
-    }
-    float OnAttackTarget(EntityBase target)
-    {
-        return .5f;
-    }
     protected override void OnDead()
     {
-        m_AI.OnDead();
+        m_AI.Deactivate();
+        m_Barrage.Deactivate();
         base.OnDead();
     }
-    protected void OnDestroy()
+    protected override void OnDisable()
     {
-        m_AI.OnDestroy();
+        m_AI.Deactivate();
+        m_Barrage.Deactivate();
+        base.OnDisable();
     }
-
     class EnermyAIControllerBasic:ISingleCoroutine
     {
         protected EntityEnermyBase m_EntityControlling;
+        protected EntityBase m_Target;
         protected Transform transform => m_EntityControlling.tf_Head;
+        protected Transform targetTransform => m_Target.tf_Head;
         protected NavMeshAgent m_Agent;
         protected NavMeshObstacle m_Obstacle;
+        protected Func<EntityBase,float> OnAttackTarget;
+        protected Func<EntityBase, bool> OnCheckTarget;
         protected float f_AttackRange,f_ChaseRange;
         public bool B_AgentEnabled
         {
@@ -73,7 +76,7 @@ public class EntityEnermyBase : EntityBase {
             }
         }
 
-        public EnermyAIControllerBasic(EntityEnermyBase _entityControlling, SEntity _entityInfo)
+        public EnermyAIControllerBasic(EntityEnermyBase _entityControlling, SEntity _entityInfo, Func<EntityBase, float> _onAttack, Func<EntityBase, bool> _onCheck)
         {
             m_EntityControlling = _entityControlling;
             f_AttackRange = _entityInfo.m_AIAttackRange;
@@ -81,6 +84,8 @@ public class EntityEnermyBase : EntityBase {
             m_Obstacle = m_EntityControlling.GetComponent<NavMeshObstacle>();
             m_Agent = m_EntityControlling.GetComponent<NavMeshAgent>();
             m_Agent.speed = _entityInfo.m_moveSpeed;
+            OnAttackTarget = _onAttack;
+            OnCheckTarget = _onCheck;
             B_AgentEnabled = false;
         }
         public void SetTarget(EntityBase entity)
@@ -90,17 +95,11 @@ public class EntityEnermyBase : EntityBase {
             this.StartSingleCoroutine(0, TrackTarget());
         }
 
-        public void OnDestroy()
+        public void Deactivate()
         {
+            B_AgentEnabled = false;
             this.StopAllSingleCoroutines();
         }
-        public void OnDead()
-        {
-            OnDestroy();
-            B_AgentEnabled = false;
-        }
-        EntityBase m_Target;
-        protected Transform targetTransform => m_Target.tf_Head;
         RaycastHit[] m_Raycasts;
         float f_aiSimulatedTime;
         float f_movementCheck,f_battleStatusCheck;
@@ -108,7 +107,6 @@ public class EntityEnermyBase : EntityBase {
         bool b_ChasedTarget;
         bool b_CanAttackTarget;
         bool b_AgentReachDestination;
-        bool b_atBattleStatus = false;
         bool b_idled = false;
         IEnumerator TrackTarget()
         {
@@ -133,11 +131,11 @@ public class EntityEnermyBase : EntityBase {
             if (f_aiSimulatedTime < f_movementCheck)
                 return;
 
-            if (!b_idled && b_AgentReachDestination && b_ChasedTarget && Random.Range(0, 2) > 0)
+            if (!b_idled && b_AgentReachDestination && b_ChasedTarget && UnityEngine.Random.Range(0, 2) > 0)
             {
                 b_idled = true;
                 B_AgentEnabled = false;
-                f_movementCheck= f_aiSimulatedTime+Random.Range(2f, 3f);
+                f_movementCheck= f_aiSimulatedTime+ UnityEngine.Random.Range(2f, 3f);
                 return;
             }
 
@@ -149,34 +147,16 @@ public class EntityEnermyBase : EntityBase {
             else if (b_AgentReachDestination)
                 m_Agent.SetDestination(GetSamplePosition());
         }
-        int fireCount;
         void CheckBattle()
         {
             if (f_aiSimulatedTime < f_battleStatusCheck)
                 return;
-            if (!b_atBattleStatus)
+
+            if (b_CanAttackTarget)
             {
-                b_atBattleStatus = b_CanAttackTarget;
-                fireCount = 0;
+                float barrageDuration = OnAttackTarget(m_Target);
+                f_battleStatusCheck = f_aiSimulatedTime + barrageDuration;
             }
-            else
-            {
-                FireOnce();
-                f_battleStatusCheck = f_aiSimulatedTime + .15f;
-                fireCount++;
-                if (fireCount > 3)
-                {
-                    b_atBattleStatus = false;
-                    f_battleStatusCheck = f_aiSimulatedTime + Random.Range(2f, 5f);
-                }
-            }
-        }
-        void FireOnce()
-        {
-            float speed = 15f;
-            Vector3 targetDirection = Vector3.Normalize( (Random.Range(0,2)>0? (m_Target.m_PrecalculatedTargetPos(Vector3.Distance(targetTransform.position, transform.position) / speed)):targetTransform.position)-transform.position);
-            Vector3 fireDirection = (targetDirection*100+targetTransform.up*Random.Range(-5f,5f)+targetTransform.right*Random.Range(-5f,5f)).normalized;
-            (ObjectManager.SpawnSFX(enum_SFX.Bullet_Normal, transform) as SFXBullet).TestPlay(m_EntityControlling.I_EntityID, fireDirection, 10, speed);
         }
 
         int stuckCount = 0;
@@ -189,7 +169,7 @@ public class EntityEnermyBase : EntityBase {
         }
         Vector3 GetUnstuckPosition()
         {
-            return NavMesh.SamplePosition(m_EntityControlling.transform.position + new Vector3(Random.Range(-5f, 5f), 0, Random.Range(-5f, 5f)), out sampleHit, 50, -1) ? sampleHit.position : Vector3.zero;
+            return NavMesh.SamplePosition(m_EntityControlling.transform.position + new Vector3(UnityEngine.Random.Range(-5f, 5f), 0, UnityEngine.Random.Range(-5f, 5f)), out sampleHit, 50, -1) ? sampleHit.position : Vector3.zero;
         }
 
         NavMeshHit sampleHit;
@@ -198,7 +178,7 @@ public class EntityEnermyBase : EntityBase {
             Vector3 targetPosition= m_Target.transform.position;
             Vector3 direction = m_EntityControlling.transform.position - m_Target.transform.position;
             Vector3 m_SamplePosition= m_EntityControlling.transform.position+ (b_ChasedTarget?direction:-direction).normalized*10;
-            m_SamplePosition = m_SamplePosition + new Vector3(Random.Range(-15f, 15f), 0, Random.Range(-15f, 15f));
+            m_SamplePosition = m_SamplePosition + new Vector3(UnityEngine.Random.Range(-15f, 15f), 0, UnityEngine.Random.Range(-15f, 15f));
             if (NavMesh.SamplePosition(m_SamplePosition, out sampleHit, 50, -1))
                 targetPosition = sampleHit.position;
             else if (NavMesh.SamplePosition(m_Target.transform.position, out sampleHit, 20, -1))
@@ -223,6 +203,36 @@ public class EntityEnermyBase : EntityBase {
                 }
                 return true;
             }
+        }
+    }
+    class BarrageBase : ISingleCoroutine
+    {
+        SBarrage m_Info;
+        EntityBase m_EntityControlling;
+        EntityBase m_Target;
+        protected Transform transform => m_EntityControlling.tf_Head;
+        protected Transform targetTransform => m_Target.tf_Head;
+        public BarrageBase(SBarrage barrageInfo)
+        {
+            m_Info = barrageInfo;
+        }
+        public float Play(EntityBase _controller, EntityBase _target)
+        {
+            m_EntityControlling = _controller;
+            m_Target = _target;
+            this.StartSingleCoroutine(0, TIEnumerators.TickCount(BarrageBulletOnce,m_Info.m_BulletCount,m_Info.m_Firerate));
+            return m_Info.m_Firerate*m_Info.m_BulletCount;
+        }
+        void BarrageBulletOnce()
+        {
+            Vector3 targetDirection = Vector3.Normalize((UnityEngine.Random.Range(0, 2) > 0 ? (m_Target.m_PrecalculatedTargetPos(Vector3.Distance(targetTransform.position, transform.position) / m_Info.m_BulletSpeed)) : targetTransform.position) - transform.position);
+            Vector3 horizontalOffsetDirection = GameExpression.V3_FireDirectionSpread(targetDirection,m_Info.m_HorizontalSpread,Vector3.zero,targetTransform.right);
+            Vector3 spreadDirection = GameExpression.V3_FireDirectionSpread(targetDirection, m_Info.m_BulletSpread, targetTransform.up, targetTransform.right);
+            (ObjectManager.SpawnSFX(enum_SFX.Bullet_Normal, transform) as SFXBullet).PlayBarrage(m_EntityControlling.I_EntityID, spreadDirection,m_Info);
+        }
+        public void Deactivate()
+        {
+            this.StopAllSingleCoroutines();
         }
     }
 }

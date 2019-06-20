@@ -30,9 +30,9 @@ public class EntityPlayerBase : EntityBase {
         m_Animator = new PlayerAnimator(tf_Model.GetComponent<Animator>(),null);
         transform.Find("InteractDetector").GetComponent<InteractDetector>().Init(OnInteractCheck);
     }
-    public override void Activate()
+    public override void OnActivate()
     {
-        base.Activate();
+        base.OnActivate();
         m_Pitch = 0;
         CameraController.Attach(this.transform);
 
