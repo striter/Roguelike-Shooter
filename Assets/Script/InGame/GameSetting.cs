@@ -257,7 +257,12 @@ namespace GameSetting
         Bolt = 4,
         Rocket = 5,
     }
-
+    public enum enum_BarrageType
+    {
+        Invalid=-1,
+        Single=1,
+        Triple=2,
+    }
     #endregion
     #region GameLayer
     public static class GameLayer
@@ -474,6 +479,7 @@ namespace GameSetting
     public struct SBarrage:ISExcel
     {
         int i_index;
+        int i_barrageType;
         int i_bulletType;
         float f_firerate;
         int i_bulletCount;
@@ -482,7 +488,8 @@ namespace GameSetting
         int i_horizontalSpread;
         float i_bulletSpread;
         public int m_Index => i_index;
-        public enum_BulletType m_BarrageType => (enum_BulletType)i_bulletType;
+        public enum_BarrageType m_BarrageType => (enum_BarrageType)i_barrageType;
+        public enum_BulletType m_BulletType => (enum_BulletType)i_bulletType;
         public float m_Firerate => f_firerate;
         public int m_BulletCount => i_bulletCount;
         public float m_BulletDamage => i_bulletDamage;

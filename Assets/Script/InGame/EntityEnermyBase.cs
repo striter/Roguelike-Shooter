@@ -16,7 +16,14 @@ public class EntityEnermyBase : EntityBase {
     {
         base.Init(id, entityInfo);
         m_AI = new EnermyAIControllerBasic(this, entityInfo, OnAttackTarget,OnCheckTarget);
-        m_Barrage = new BarrageBase(ExcelManager.GetBarrageProperties(entityInfo.m_BarrageIndex));
+
+        SBarrage barrageInfo = ExcelManager.GetBarrageProperties(entityInfo.m_BarrageIndex);
+        switch (barrageInfo.m_BarrageType)
+        {
+            default: Debug.LogError("Invalid Barrage Type:" + barrageInfo.m_BarrageType); break;
+            case enum_BarrageType.Single: m_Barrage = new BarrageBase(barrageInfo);break;
+            case enum_BarrageType.Triple: m_Barrage = new BarrageTriple(barrageInfo); break;
+        }
     }
 
     public override void SetTarget(EntityBase target)
@@ -207,11 +214,12 @@ public class EntityEnermyBase : EntityBase {
     }
     class BarrageBase : ISingleCoroutine
     {
-        SBarrage m_Info;
-        EntityBase m_EntityControlling;
-        EntityBase m_Target;
+        protected SBarrage m_Info;
+        protected EntityBase m_EntityControlling;
+        protected EntityBase m_Target;
         protected Transform transform => m_EntityControlling.tf_Head;
         protected Transform targetTransform => m_Target.tf_Head;
+        protected bool b_preAim;
         public BarrageBase(SBarrage barrageInfo)
         {
             m_Info = barrageInfo;
@@ -220,19 +228,44 @@ public class EntityEnermyBase : EntityBase {
         {
             m_EntityControlling = _controller;
             m_Target = _target;
-            this.StartSingleCoroutine(0, TIEnumerators.TickCount(BarrageBulletOnce,m_Info.m_BulletCount,m_Info.m_Firerate));
+            b_preAim = UnityEngine.Random.Range(0, 2) > 0;
+            this.StartSingleCoroutine(0, TIEnumerators.TickCount(BarrageWave,m_Info.m_BulletCount,m_Info.m_Firerate));
             return m_Info.m_Firerate*m_Info.m_BulletCount;
         }
-        void BarrageBulletOnce()
+        protected Vector3 targetDirection=> Vector3.Normalize((b_preAim ? (m_Target.m_PrecalculatedTargetPos(Vector3.Distance(targetTransform.position, transform.position) / m_Info.m_BulletSpeed)) : targetTransform.position) - transform.position);
+        protected virtual void BarrageWave()
         {
-            Vector3 targetDirection = Vector3.Normalize((UnityEngine.Random.Range(0, 2) > 0 ? (m_Target.m_PrecalculatedTargetPos(Vector3.Distance(targetTransform.position, transform.position) / m_Info.m_BulletSpeed)) : targetTransform.position) - transform.position);
             Vector3 horizontalOffsetDirection = GameExpression.V3_FireDirectionSpread(targetDirection,m_Info.m_HorizontalSpread,Vector3.zero,targetTransform.right);
-            Vector3 spreadDirection = GameExpression.V3_FireDirectionSpread(targetDirection, m_Info.m_BulletSpread, targetTransform.up, targetTransform.right);
-            (ObjectManager.SpawnSFX(enum_SFX.Bullet_Normal, transform) as SFXBullet).PlayBarrage(m_EntityControlling.I_EntityID, spreadDirection,m_Info);
+            Vector3 spreadDirection = GameExpression.V3_FireDirectionSpread(horizontalOffsetDirection, m_Info.m_BulletSpread, targetTransform.up, targetTransform.right);
+            FireBullet(spreadDirection);
+        }
+        protected void FireBullet(Vector3 direction)
+        {
+            (ObjectManager.SpawnSFX(m_Info.m_BulletType.ToSFXType(), transform) as SFXBullet).PlayBarrage(m_EntityControlling.I_EntityID, direction, m_Info);
         }
         public void Deactivate()
         {
             this.StopAllSingleCoroutines();
+        }
+    }
+    class BarrageTriple : BarrageBase
+    {
+        public BarrageTriple(SBarrage barrageInfo) : base(barrageInfo)
+        {
+        }
+        protected override void BarrageWave()
+        {
+            Vector3 horizontalOffsetDirection = GameExpression.V3_FireDirectionSpread(targetDirection, m_Info.m_HorizontalSpread, Vector3.zero, targetTransform.right);
+            Vector3 spreadDirection = GameExpression.V3_FireDirectionSpread(horizontalOffsetDirection, m_Info.m_BulletSpread, targetTransform.up, targetTransform.right);
+            FireBullet(spreadDirection);
+
+            Vector3 rightDirection = Vector3.Normalize(horizontalOffsetDirection*100+targetTransform.right*30).normalized;
+            spreadDirection = GameExpression.V3_FireDirectionSpread(rightDirection, m_Info.m_BulletSpread, targetTransform.up, targetTransform.right);
+            FireBullet(spreadDirection);
+
+            Vector3 leftDirection = Vector3.Normalize(horizontalOffsetDirection * 100 - targetTransform.right * 30).normalized;
+            spreadDirection = GameExpression.V3_FireDirectionSpread(leftDirection, m_Info.m_BulletSpread, targetTransform.up, targetTransform.right);
+            FireBullet(spreadDirection);
         }
     }
 }
