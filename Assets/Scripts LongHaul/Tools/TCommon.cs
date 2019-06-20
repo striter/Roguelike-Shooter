@@ -315,16 +315,29 @@ public static class TCommon
         }
         return target;
     }
-    
-    //public static void InitComponent<T>(this T initItem,Transform parentTransform)  //Test Try Init Item Within One Func
-    //{
-    //    initItem = parentTransform.Find(initItem.ToString()).GetComponent<T>();
-    //    if (initItem == null)
-    //        Debug.LogError("Null Path Of "+parentTransform.name+"/" +"");
-    //}
+
+    public static int Random(this RangeInt ir,System.Random seed = null)
+    {
+        return ir.start + (seed != null ? seed.Next(ir.start, ir.end + 1) : UnityEngine.Random.Range(ir.start, ir.end + 1));
+    }
+    public static float Random(this RangeFloat ir, System.Random seed = null)
+    {
+        return ir.start + (seed != null ? seed.Next((int)(ir.start*1000), (int)(ir.end*1000))/100 : UnityEngine.Random.Range(ir.start, ir.end ));
+    }
 }
-
-
+#region Extra Structs
+public struct RangeFloat
+{
+    public float start;
+    public float length;
+    public float end => start + length;
+    public RangeFloat(float _start, float _length)
+    {
+        start = _start;
+        length = _length;
+    }
+}
+#endregion
 public class TXmlPhrase : SingleTon<TXmlPhrase>
 {
     Dictionary<Type, Func<object, string>> dic_valueToXmlData = new Dictionary<Type, Func<object, string>>();
@@ -345,6 +358,8 @@ public class TXmlPhrase : SingleTon<TXmlPhrase>
         dic_xmlDataToValue.Add(typeof(bool), (string xmlData) => { return int.Parse(xmlData) == 1; });
         dic_valueToXmlData.Add(typeof(RangeInt), (object data) => { return ((RangeInt)data).start.ToString() + "," + ((RangeInt)data).length.ToString(); });
         dic_xmlDataToValue.Add(typeof(RangeInt), (string xmlData) => { string[] split = xmlData.Split(','); return new RangeInt(int.Parse(split[0]),int.Parse(split[1])); });
+        dic_valueToXmlData.Add(typeof(RangeFloat), (object data) => { return ((RangeFloat)data).start.ToString() + "," + ((RangeFloat)data).length.ToString(); });
+        dic_xmlDataToValue.Add(typeof(RangeFloat), (string xmlData) => { string[] split = xmlData.Split(','); return new RangeFloat(float.Parse(split[0]), float.Parse(split[1])); });
     }
     public static TXmlPhrase Phrase
     {

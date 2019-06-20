@@ -481,8 +481,8 @@ namespace GameSetting
         int i_index;
         int i_barrageType;
         int i_bulletType;
-        float f_firerate;
-        int i_bulletCount;
+        RangeFloat fr_firerate;
+        RangeInt ir_bulletCount; 
         float i_bulletDamage;
         float i_bulletSpeed;
         int i_horizontalSpread;
@@ -490,8 +490,8 @@ namespace GameSetting
         public int m_Index => i_index;
         public enum_BarrageType m_BarrageType => (enum_BarrageType)i_barrageType;
         public enum_BulletType m_BulletType => (enum_BulletType)i_bulletType;
-        public float m_Firerate => f_firerate;
-        public int m_BulletCount => i_bulletCount;
+        public RangeFloat m_Firerate => fr_firerate;
+        public RangeInt m_BulletCount => ir_bulletCount;
         public float m_BulletDamage => i_bulletDamage;
         public float m_BulletSpeed => i_bulletSpeed;
         public int m_HorizontalSpread => i_horizontalSpread;

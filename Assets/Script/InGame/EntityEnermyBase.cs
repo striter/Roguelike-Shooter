@@ -220,18 +220,23 @@ public class EntityEnermyBase : EntityBase {
         protected Transform transform => m_EntityControlling.tf_Head;
         protected Transform targetTransform => m_Target.tf_Head;
         protected bool b_preAim;
+
         public BarrageBase(SBarrage barrageInfo)
         {
             m_Info = barrageInfo;
         }
+
         public float Play(EntityBase _controller, EntityBase _target)
         {
             m_EntityControlling = _controller;
             m_Target = _target;
             b_preAim = UnityEngine.Random.Range(0, 2) > 0;
-            this.StartSingleCoroutine(0, TIEnumerators.TickCount(BarrageWave,m_Info.m_BulletCount,m_Info.m_Firerate));
-            return m_Info.m_Firerate*m_Info.m_BulletCount;
+            int count = m_Info.m_BulletCount.Random();
+            float fireRate = m_Info.m_Firerate.Random();
+            this.StartSingleCoroutine(0, TIEnumerators.TickCount(BarrageWave,count,fireRate));
+            return count * fireRate;
         }
+
         protected Vector3 targetDirection=> Vector3.Normalize((b_preAim ? (m_Target.m_PrecalculatedTargetPos(Vector3.Distance(targetTransform.position, transform.position) / m_Info.m_BulletSpeed)) : targetTransform.position) - transform.position);
         protected virtual void BarrageWave()
         {

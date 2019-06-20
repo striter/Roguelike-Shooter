@@ -50,7 +50,7 @@ public class LevelBase : MonoBehaviour {
         //Generate All Items
         TCommon.Traversal(_itemData.m_ItemGenerate, (enum_LevelItemType type, RangeInt range) =>
         {
-            GenerateRandomItemTile(type, m_seed.Next(range.start,range.end+1));
+            GenerateRandomItemTile(type, range.Random(m_seed));
         });
 
         Dictionary<LevelItemBase, int> itemCountDic = new Dictionary<LevelItemBase, int>();
