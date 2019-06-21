@@ -114,34 +114,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &61911910
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 61911911}
-  m_Layer: 0
-  m_Name: PlayerStart
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &61911911
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 61911910}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -39.35, y: 2.04, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 712124621}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &86103925
 GameObject:
   m_ObjectHideFlags: 0
@@ -971,7 +943,6 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 61911911}
   - {fileID: 1292860486}
   - {fileID: 1724091711}
   - {fileID: 777765213}
@@ -1158,7 +1129,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 712124621}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &806466962
 GameObject:
@@ -1802,7 +1773,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c088e7b318d292458e08155aef1723d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  E_TESTSTYLE: 3
+  E_TESTSTYLE: 5
   M_TESTSEED: 
   m_FogColor: {r: 1, g: 1, b: 1, a: 0.5}
   m_density: 0.5
@@ -1882,7 +1853,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 712124621}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 25.55, y: 0, z: 0}
 --- !u!1 &1336928249
 GameObject:
@@ -2214,7 +2185,7 @@ Transform:
   m_LocalScale: {x: 2, y: 1, z: 2}
   m_Children: []
   m_Father: {fileID: 712124621}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1724091712
 MonoBehaviour:

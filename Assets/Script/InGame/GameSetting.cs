@@ -595,12 +595,12 @@ namespace GameSetting
             m_LevelStyle = (enum_LevelStyle)(index / 10);
             m_LevelPrefabType = (enum_LevelPrefabType)(index % 10);
             m_ItemGenerate = new Dictionary<enum_LevelItemType, RangeInt>();
-            m_ItemGenerate.Add(enum_LevelItemType.SmallLess,ir_SmallLess);
-            m_ItemGenerate.Add(enum_LevelItemType.SmallMore, ir_SmallMore);
-            m_ItemGenerate.Add(enum_LevelItemType.MediumLess, ir_MediumLess);
-            m_ItemGenerate.Add(enum_LevelItemType.MediumMore, ir_MediumMore);
             m_ItemGenerate.Add(enum_LevelItemType.LargeLess, ir_LargeLess);
             m_ItemGenerate.Add(enum_LevelItemType.LargeMore, ir_LargeMore);
+            m_ItemGenerate.Add(enum_LevelItemType.MediumLess, ir_MediumLess);
+            m_ItemGenerate.Add(enum_LevelItemType.MediumMore, ir_MediumMore);
+            m_ItemGenerate.Add(enum_LevelItemType.SmallLess,ir_SmallLess);
+            m_ItemGenerate.Add(enum_LevelItemType.SmallMore, ir_SmallMore);
             m_ItemGenerate.Add(enum_LevelItemType.ManmadeLess, ir_ManmadeLess);
             m_ItemGenerate.Add(enum_LevelItemType.ManmadeMore, ir_ManmadeMore);
             m_ItemGenerate.Add(enum_LevelItemType.NoCollisionLess, ir_NoCollisionLess);

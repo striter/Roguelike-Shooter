@@ -49,15 +49,8 @@ public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
         {
             Time.timeScale = Time.timeScale == 1f ? .1f : 1f;
         }
-        if (PostEffectManager.GetPostEffect<PE_FogDepthNoise>() != null)
-        {
-            PostEffectManager.GetPostEffect<PE_FogDepthNoise>().SetEffect(m_FogColor, m_density);
-        }
         UIManager.instance.transform.Find("SeedTest").GetComponent<UnityEngine.UI.Text>().text = m_SeedString;
     }
-    public Color m_FogColor=TCommon.ColorAlpha(Color.white,.5f);
-    [Range(0,1f)]
-    public float m_density = .5f;
     private void OnDestroy()
     {
         this.StopAllSingleCoroutines();
