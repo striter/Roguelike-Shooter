@@ -54,6 +54,7 @@ public class EntityEnermyBase : EntityBase {
         protected Func<EntityBase,float> OnAttackTarget;
         protected Func<EntityBase, bool> OnCheckTarget;
         protected float f_AttackRange,f_ChaseRange;
+        protected bool b_RayCheckObstacle;
         public bool B_AgentEnabled
         {
             get
@@ -88,6 +89,7 @@ public class EntityEnermyBase : EntityBase {
             m_EntityControlling = _entityControlling;
             f_AttackRange = _entityInfo.m_AIAttackRange;
             f_ChaseRange = _entityInfo.m_AIChaseRange;
+            b_RayCheckObstacle = _entityInfo.m_CheckObstacle;
             m_Obstacle = m_EntityControlling.GetComponent<NavMeshObstacle>();
             m_Agent = m_EntityControlling.GetComponent<NavMeshAgent>();
             m_Agent.speed = _entityInfo.m_moveSpeed;
@@ -130,7 +132,7 @@ public class EntityEnermyBase : EntityBase {
         {
             v3_TargetDirection = (targetTransform.position -transform.position).normalized;
             b_ChasedTarget = TCommon.GetXZDistance(targetTransform.position, transform.position) < f_ChaseRange && TargetVisible;
-            b_CanAttackTarget = TCommon.GetXZDistance(targetTransform.position, transform.position) < f_AttackRange && TargetVisible;
+            b_CanAttackTarget = !b_RayCheckObstacle|| TCommon.GetXZDistance(targetTransform.position, transform.position) < f_AttackRange && TargetVisible;
             b_AgentReachDestination = m_Agent.destination == Vector3.zero || TCommon.GetXZDistance(transform.position, m_Agent.destination) < 5f;
         }
         void CheckMovement()

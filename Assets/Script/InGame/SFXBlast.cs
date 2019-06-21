@@ -27,7 +27,7 @@ public class SFXBlast : SFXBase {
     }
     protected virtual void OnBlastEntity(HitCheckEntity hitEntity)
     {
-        if (hitEntity.I_AttacherID != I_SourceID)
+        if (GameManager.B_CanHitTarget(hitEntity,I_SourceID))
             hitEntity.TryHit(GameExpression.F_RocketBlastDamage(f_damage, Vector3.Distance(transform.position, hitEntity.transform.position)));
     }
     protected virtual void OnBlastStatic(HitCheckStatic hitStatic)
