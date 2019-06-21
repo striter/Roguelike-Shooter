@@ -235,7 +235,7 @@ GameObject:
   - component: {fileID: 208954831077526132}
   - component: {fileID: 135249086244225942}
   m_Layer: 0
-  m_Name: EnermyAITest 1
+  m_Name: EnermyAIRanger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
