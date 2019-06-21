@@ -97,7 +97,16 @@ public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
             }
 
         if(battle)
-            OnBattleStart(enum_Entity.EnermyAITest, 3, 8);
+            OnBattleStart(new List<EntityEnermyBase>() {
+            ObjectPoolManager<enum_Entity,EntityBase>.GetRegistedSpawnItem( enum_Entity.EnermyAIMillita) as EntityEnermyBase,
+            ObjectPoolManager<enum_Entity,EntityBase>.GetRegistedSpawnItem( enum_Entity.EnermyAIMillita) as EntityEnermyBase,
+            ObjectPoolManager<enum_Entity,EntityBase>.GetRegistedSpawnItem( enum_Entity.EnermyAIMillita) as EntityEnermyBase,
+            ObjectPoolManager<enum_Entity,EntityBase>.GetRegistedSpawnItem( enum_Entity.EnermyAIMillita) as EntityEnermyBase,
+            ObjectPoolManager<enum_Entity,EntityBase>.GetRegistedSpawnItem( enum_Entity.EnermyAIVeteran) as EntityEnermyBase,
+            ObjectPoolManager<enum_Entity,EntityBase>.GetRegistedSpawnItem( enum_Entity.EnermyAIVeteran) as EntityEnermyBase,
+            ObjectPoolManager<enum_Entity,EntityBase>.GetRegistedSpawnItem( enum_Entity.EnermyAIRanger) as EntityEnermyBase,
+            ObjectPoolManager<enum_Entity,EntityBase>.GetRegistedSpawnItem( enum_Entity.EnermyAIRanger) as EntityEnermyBase,
+            }, 3);          //Quite A Testing
         else
             OnLevelFinished();
     }
@@ -145,25 +154,23 @@ public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
     public bool B_WaveEntityGenerating { get; private set; } = false;
     public int m_WaveCount { get; private set; } = -1;
     public int m_CurrentWave { get; private set; } = -1;
-    public int m_WaveEntityEach { get; private set; } = -1;
     public int m_WaveCurrentEntity { get; private set; } = -1;
-    public enum_Entity m_WaveEntityType { get; private set; } = enum_Entity.Invalid;
-    void OnBattleStart(enum_Entity enermyType,int _waveCount,int _waveSpawnCount)
+    public List<EntityEnermyBase> m_WaveEnermyGenerate { get; private set; }
+    void OnBattleStart(List<EntityEnermyBase> enermyType,int _waveCount)
     {
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnBattleStart);
         B_Battling = true;
         m_WaveCount = _waveCount;
-        m_WaveEntityEach = _waveSpawnCount;
         m_WaveCurrentEntity = 0;
         m_CurrentWave = 1;
-        m_WaveEntityType = enermyType;
+        m_WaveEnermyGenerate = enermyType;
         WaveStart();
     }
 
     void WaveStart()
     {
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnWaveStart);
-        this.StartSingleCoroutine(0, IE_GenerateEnermy(m_WaveEntityType,m_WaveEntityEach,.1f));
+        this.StartSingleCoroutine(0, IE_GenerateEnermy(m_WaveEnermyGenerate,.1f));
     }
     void WaveFinished()
     {
@@ -194,18 +201,18 @@ public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
         OnLevelFinished();
     }
 
-    IEnumerator IE_GenerateEnermy(enum_Entity type,int totalCount, float _offset)
+    IEnumerator IE_GenerateEnermy(List<EntityEnermyBase> waveGenerate, float _offset)
     {
         B_WaveEntityGenerating = true;
         int curSpawnCount = 0;
         for (; ; )
         {
             yield return new WaitForSeconds(_offset);
-            ObjectManager.SpawnEntity(type, EnviormentManager.m_currentLevel.m_Level.RandomEmptyTilePosition(m_GameSeed)).SetTarget(m_LocalPlayer);
+            ObjectManager.SpawnEntity(waveGenerate[curSpawnCount].m_EntityInfo.m_Type, EnviormentManager.m_currentLevel.m_Level.RandomEmptyTilePosition(m_GameSeed)).SetTarget(m_LocalPlayer);
 
             m_WaveCurrentEntity++;
             curSpawnCount++;
-            if (curSpawnCount >= totalCount)
+            if (curSpawnCount >= waveGenerate.Count)
             {
                 B_WaveEntityGenerating = false;
                 yield break;

@@ -31,6 +31,10 @@ public class ObjectPoolManager<T,Y> where Y:MonoBehaviour {
     {
         return d_ItemInfos.ContainsKey(identity);
     }
+    public static Y GetRegistedSpawnItem(T identity)
+    {
+        return d_ItemInfos[identity].m_spawnItem;
+    }
     public static void Register(T identity, Y registerItem,  enum_PoolSaveType savetype, int poolSaveAmount, Action<Y> OnItemInstantiate)
     {
         if (d_ItemInfos.ContainsKey(identity))
