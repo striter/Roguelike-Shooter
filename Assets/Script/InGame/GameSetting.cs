@@ -52,7 +52,7 @@ namespace GameSetting
             return enum_TileDirection.Invalid;
         }
 
-        public static float F_RocketBlastDamage(float weaponDamage, float distance) => weaponDamage * (distance / GameConst.I_RocketBlastRadius);       //Rocket Blast Damage
+        public static float F_RocketBlastDamage(float weaponDamage, float distance) => weaponDamage * (1-(distance / GameConst.I_RocketBlastRadius));       //Rocket Blast Damage
         public static Vector3 V3_FireDirectionSpread(Vector3 aimDirection, float spread,Vector3 up,Vector3 right) => (aimDirection*GameConst.I_ProjectileSpreadAtDistance + up* UnityEngine.Random.Range(-spread, spread) + right * UnityEngine.Random.Range(-spread, spread)).normalized;
     }
 
