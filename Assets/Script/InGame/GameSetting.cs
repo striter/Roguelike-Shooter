@@ -11,16 +11,16 @@ namespace GameSetting
     #region For Designers Use
     public static class GameConst
     {
-        public const int I_NormalBulletLastTime = 5; // No Collision Recycle Time
+        public const int I_NormalProjectileLastTime = 5; // No Collision Recycle Time
         public const int I_BoltMaxLastTime = 10;    //Last Time Of Ammo/Bolt
         public const int I_LaserMaxLastTime = 5;    //Longest Last Time Of Ammo/Laser
-        public const int I_BarrageBulletMaxLastTime = 5;
+        public const int I_BarrageProjectileMaxLastTime = 5;
 
         public const int I_RocketBlastRadius = 5;        //Meter
         public const float F_LaserRayStartPause = .5f;      //Laser Start Pause
 
         public const int I_BurstFirePelletsOnceTrigger = 3;       //Times While Burst Fire
-        public const int I_BulletSpeadAtDistance = 100;       //Meter,  Bullet Spread In A Circle At End Of This Distance
+        public const int I_ProjectileSpreadAtDistance = 100;       //Meter,  Bullet Spread In A Circle At End Of This Distance
 
         public const float F_LevelTileSize = 2f;        //Cube Size For Level Tiles
 
@@ -53,7 +53,7 @@ namespace GameSetting
         }
 
         public static float F_RocketBlastDamage(float weaponDamage, float distance) => weaponDamage * (distance / GameConst.I_RocketBlastRadius);       //Rocket Blast Damage
-        public static Vector3 V3_FireDirectionSpread(Vector3 aimDirection, float spread,Vector3 up,Vector3 right) => (aimDirection*GameConst.I_BulletSpeadAtDistance + up* UnityEngine.Random.Range(-spread, spread) + right * UnityEngine.Random.Range(-spread, spread)).normalized;
+        public static Vector3 V3_FireDirectionSpread(Vector3 aimDirection, float spread,Vector3 up,Vector3 right) => (aimDirection*GameConst.I_ProjectileSpreadAtDistance + up* UnityEngine.Random.Range(-spread, spread) + right * UnityEngine.Random.Range(-spread, spread)).normalized;
     }
 
     public static class UIConst
@@ -107,18 +107,6 @@ namespace GameSetting
                 case enum_LevelType.Reward:
                 case enum_LevelType.Start:
                     return enum_LevelPrefabType.Small;
-            }
-        }
-        public static enum_SFX ToSFXType(this enum_BulletType type)
-        {
-            switch (type)
-            {
-                default: Debug.LogError("Insert More Convertions Here:" + type.ToString()); return enum_SFX.Invalid;
-                case enum_BulletType.Normal: return enum_SFX.Bullet_Normal;
-                //case enum_BulletType.LaserRay: return enum_SFX.Bullet_LaserRay;
-                //case enum_BulletType.LaserBeam: return enum_SFX.Bullet_LaserBeam;
-                //case enum_BulletType.Bolt: return enum_SFX.Bullet_Bolt;
-                //case enum_BulletType.Rocket: return enum_SFX.Bullet_Rocket;
             }
         }
         public static int ToLayer(this enum_HitCheck layerType)
@@ -191,12 +179,13 @@ namespace GameSetting
     public enum enum_SFX        //Preset For SFX
     {
         Invalid = -1,
-        Bullet_Normal = 1,
-        //Bullet_LaserRay = 2,
-        //Bullet_LaserBeam = 3,
-        //Bullet_Bolt = 4,
-        //Bullet_Rocket = 5,
-        Blast_Rocket = 6,
+        Projectile_Normal = 1,
+        Projectile_LaserRay = 2,
+        Projectile_LaserBeam = 3,
+        Projectile_Bolt = 4,
+        Projectile_Rocket = 5,
+        Projectile_Meteor=6,
+        Blast_Rocket = 101,
     }
 
     public enum enum_Interact
@@ -248,7 +237,7 @@ namespace GameSetting
         Pull = 4,
         Store = 5,
     }
-    public enum enum_BulletType
+    public enum enum_ProjectileType
     {
         Invalid = -1,
         Normal = 1,
@@ -261,7 +250,7 @@ namespace GameSetting
     {
         Invalid=-1,
         Single=1,
-        Triple=2,
+        Multiple=2,
     }
     #endregion
     #region GameLayer
@@ -332,14 +321,15 @@ namespace GameSetting
             }
         }
     }
-    class BulletPhysicsSimulator : PhysicsSimulator
+    public class ProjectilePhysicsSimulator : PhysicsSimulator
     {
-        protected Vector3 m_HorizontalDirection, m_VerticalDirection;
+        public Vector3 m_HorizontalDirection { get; private set; }
+        public Vector3 m_VerticalDirection { get; private set; }
         float m_horizontalSpeed;
         float m_horizontalDistance;
         float m_verticalSpeed;
         float m_verticalAcceleration;
-        public BulletPhysicsSimulator(Vector3 _startPos, Vector3 _horizontalDirection, Vector3 _verticalDirection, float _horizontalSpeed, float _horizontalDistance, float _verticalSpeed, float _verticalAcceleration)
+        public ProjectilePhysicsSimulator(Vector3 _startPos, Vector3 _horizontalDirection, Vector3 _verticalDirection, float _horizontalSpeed, float _horizontalDistance, float _verticalSpeed, float _verticalAcceleration)
         {
             m_simulateTime = 0f;
             m_startPos = _startPos;
@@ -480,22 +470,26 @@ namespace GameSetting
     {
         int i_index;
         int i_barrageType;
-        int i_bulletType;
+        int i_projectileType;
         float f_firerate;
-        RangeInt ir_bulletCount; 
-        float i_bulletDamage;
-        float i_bulletSpeed;
+        RangeInt i_projectileCount; 
+        float i_projectileDamage;
+        float i_projectileSpeed;
         int i_horizontalSpread;
-        float i_bulletSpread;
+        float i_projectileSpread;
+        RangeInt ir_rangeExtension;
+        float f_offsetExtension;
         public int m_Index => i_index;
         public enum_BarrageType m_BarrageType => (enum_BarrageType)i_barrageType;
-        public enum_BulletType m_BulletType => (enum_BulletType)i_bulletType;
+        public enum_SFX m_ProjectileType => (enum_SFX)i_projectileType;
         public float m_Firerate => f_firerate;
-        public RangeInt m_BulletCount => ir_bulletCount;
-        public float m_BulletDamage => i_bulletDamage;
-        public float m_BulletSpeed => i_bulletSpeed;
+        public RangeInt m_ProjectileCount => i_projectileCount;
+        public float m_ProjectileDamage => i_projectileDamage;
+        public float m_ProjectileSpeed => i_projectileSpeed;
         public int m_HorizontalSpread => i_horizontalSpread;
-        public float m_BulletSpread => i_bulletSpread;
+        public float m_ProjectileSpread => i_projectileSpread;
+        public RangeInt m_RangeExtension => ir_rangeExtension;
+        public float m_OffsetExtension => f_offsetExtension;
         public void InitOnValueSet()
         {
         }   
@@ -536,7 +530,7 @@ namespace GameSetting
         int index;
         string s_name;
         int i_triggerType;
-        int i_bulletType;
+        int i_projectileType;
         float f_damage;
         float f_fireRate;
         float f_specialRate;
@@ -555,7 +549,7 @@ namespace GameSetting
         public enum_Weapon m_Weapon => (enum_Weapon)index;
         public string m_Name => s_name;
         public enum_TriggerType m_TriggerType=>(enum_TriggerType)i_triggerType;
-        public enum_BulletType m_BulletType => (enum_BulletType)i_bulletType;
+        public enum_SFX m_ProjectileType => (enum_SFX)i_projectileType;
         public float m_Damage => f_damage;
         public float m_FireRate => f_fireRate;
         public float m_SpecialRate => f_specialRate;

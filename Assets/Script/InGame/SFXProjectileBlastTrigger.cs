@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using GameSetting;
-public class SFXBulletRocket : SFXBullet {
+public class SFXProjectileBlastTrigger : SFXProjectile {
     protected override void OnHitStatic(HitCheckStatic hitStatic)
     {
         DoBlast();
@@ -20,9 +20,9 @@ public class SFXBulletRocket : SFXBullet {
     }
     public void DoBlast()
     {
-        SFXBlast sfx= ObjectManager.SpawnSFX(enum_SFX.Blast_Rocket, transform) as SFXBlast;
+        SFXBlast sfx= ObjectManager.SpawnSFX(enum_SFX.Blast_Rocket, m_subSFXDic[enum_SubSFXType.Projectile].transform) as SFXBlast;
         sfx.transform.rotation = Quaternion.LookRotation(Vector3.up);
-        sfx.Play(I_SourceID,m_bulletDamage,GameConst.I_RocketBlastRadius);
+        sfx.Play(I_SourceID,m_Damage,GameConst.I_RocketBlastRadius);
         OnPlayFinished();
     }
 }

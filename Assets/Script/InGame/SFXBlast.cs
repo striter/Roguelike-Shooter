@@ -15,7 +15,7 @@ public class SFXBlast : SFXBase {
     }
     public void Play(int sourceID, float damage, float radius)
     {
-        base.Play(sourceID,3);      //Temporaty Test
+        Play(sourceID,3);      //Temporaty Test
         f_damage = damage;
         transform.localScale = Vector3.one * (radius*2);
         TCommon.Traversal(m_Particles, (ParticleSystem particle) => { particle.Play(); });

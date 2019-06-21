@@ -22,7 +22,7 @@ public class EntityEnermyBase : EntityBase {
         {
             default: Debug.LogError("Invalid Barrage Type:" + barrageInfo.m_BarrageType); break;
             case enum_BarrageType.Single: m_Barrage = new BarrageBase(barrageInfo);break;
-            case enum_BarrageType.Triple: m_Barrage = new BarrageTriple(barrageInfo); break;
+            case enum_BarrageType.Multiple: m_Barrage = new BarrageMultiple(barrageInfo); break;
         }
     }
 
@@ -231,45 +231,43 @@ public class EntityEnermyBase : EntityBase {
             m_EntityControlling = _controller;
             m_Target = _target;
             b_preAim = UnityEngine.Random.Range(0, 2) > 0;
-            int count = m_Info.m_BulletCount.Random();
+            int count = m_Info.m_ProjectileCount.Random();
             this.StartSingleCoroutine(0, TIEnumerators.TickCount(BarrageWave,count, m_Info.m_Firerate));
             return count * m_Info.m_Firerate;
         }
 
-        protected Vector3 targetDirection=> Vector3.Normalize((b_preAim ? (m_Target.m_PrecalculatedTargetPos(Vector3.Distance(targetTransform.position, transform.position) / m_Info.m_BulletSpeed)) : targetTransform.position) - transform.position);
+        protected Vector3 targetDirection=> Vector3.Normalize((b_preAim ? (m_Target.m_PrecalculatedTargetPos(Vector3.Distance(targetTransform.position, transform.position) / m_Info.m_ProjectileSpeed)) : targetTransform.position) - transform.position);
         protected virtual void BarrageWave()
         {
             Vector3 horizontalOffsetDirection = GameExpression.V3_FireDirectionSpread(targetDirection,m_Info.m_HorizontalSpread,Vector3.zero,targetTransform.right);
-            Vector3 spreadDirection = GameExpression.V3_FireDirectionSpread(horizontalOffsetDirection, m_Info.m_BulletSpread, targetTransform.up, targetTransform.right);
+            Vector3 spreadDirection = GameExpression.V3_FireDirectionSpread(horizontalOffsetDirection, m_Info.m_ProjectileSpread, targetTransform.up, targetTransform.right);
             FireBullet(spreadDirection);
         }
         protected void FireBullet(Vector3 direction)
         {
-            (ObjectManager.SpawnSFX(m_Info.m_BulletType.ToSFXType(), transform) as SFXBullet).PlayBarrage(m_EntityControlling.I_EntityID, direction, m_Info);
+            (ObjectManager.SpawnSFX(m_Info.m_ProjectileType, transform) as SFXProjectile).PlayBarrage(m_EntityControlling.I_EntityID, direction,targetTransform.position, m_Info);
         }
         public void Deactivate()
         {
             this.StopAllSingleCoroutines();
         }
     }
-    class BarrageTriple : BarrageBase
+    class BarrageMultiple : BarrageBase
     {
-        public BarrageTriple(SBarrage barrageInfo) : base(barrageInfo)
+        public BarrageMultiple(SBarrage barrageInfo) : base(barrageInfo)
         {
         }
         protected override void BarrageWave()
         {
+            int waveCount = m_Info.m_RangeExtension.Random();
             Vector3 horizontalOffsetDirection = GameExpression.V3_FireDirectionSpread(targetDirection, m_Info.m_HorizontalSpread, Vector3.zero, targetTransform.right);
-            Vector3 spreadDirection = GameExpression.V3_FireDirectionSpread(horizontalOffsetDirection, m_Info.m_BulletSpread, targetTransform.up, targetTransform.right);
-            FireBullet(spreadDirection);
-
-            Vector3 rightDirection = Vector3.Normalize(horizontalOffsetDirection*100+targetTransform.right*30).normalized;
-            spreadDirection = GameExpression.V3_FireDirectionSpread(rightDirection, m_Info.m_BulletSpread, targetTransform.up, targetTransform.right);
-            FireBullet(spreadDirection);
-
-            Vector3 leftDirection = Vector3.Normalize(horizontalOffsetDirection * 100 - targetTransform.right * 30).normalized;
-            spreadDirection = GameExpression.V3_FireDirectionSpread(leftDirection, m_Info.m_BulletSpread, targetTransform.up, targetTransform.right);
-            FireBullet(spreadDirection);
+            horizontalOffsetDirection = Vector3.Normalize(horizontalOffsetDirection * 100 - targetTransform.right * m_Info.m_OffsetExtension * (waveCount-1)/2f).normalized;
+            for (int i = 0; i < waveCount; i++)
+            {
+                Vector3 offsetDirection = Vector3.Normalize(horizontalOffsetDirection * 100 + targetTransform.right * m_Info.m_OffsetExtension*i).normalized;
+                Vector3 spreadDirection = GameExpression.V3_FireDirectionSpread(offsetDirection, m_Info.m_ProjectileSpread, targetTransform.up, targetTransform.right);
+                FireBullet(spreadDirection);
+            }
         }
     }
 }

@@ -95,10 +95,8 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
 
         I_AmmoLeft--;
         for (int i = 0; i < m_WeaponInfo.m_PelletsPerShot; i++)
-        {
-            Vector3 bulletDirection = GameExpression.V3_FireDirectionSpread(transform.forward, m_WeaponInfo.m_Spread, transform.up, transform.right); 
-            (ObjectManager.SpawnSFX(m_WeaponInfo.m_BulletType.ToSFXType(), tf_Muzzle) as SFXBullet).PlayWeapon(I_AttacherID, bulletDirection,m_WeaponInfo);
-        }
+            (ObjectManager.SpawnSFX(m_WeaponInfo.m_ProjectileType, tf_Muzzle) as SFXProjectile).PlayWeapon(I_AttacherID, GameExpression.V3_FireDirectionSpread(transform.forward, m_WeaponInfo.m_Spread, transform.up, transform.right), m_Assist.m_assistTarget,m_WeaponInfo);
+
         OnRecoil?.Invoke(m_WeaponInfo.m_RecoilPerShot);
         OnAmmoChangeCostMana?.Invoke(m_WeaponInfo.m_ManaCost);
 
@@ -140,6 +138,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         Transform tf_Dot;
         LineRenderer m_lineRenderer;
         float f_distance;
+        public Vector3 m_assistTarget { get; private set; } = Vector3.zero;
         public WeaponAimAssistStraight(Transform muzzle, SWeapon weaponInfo)
         {
             transform = muzzle;
@@ -157,19 +156,18 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
                 return;
             tf_Dot.SetActivate(false);
             m_lineRenderer.SetPosition(0, transform.position);
-            Vector3 target;
             RaycastHit hit;
             if (Physics.Raycast(transform.position, transform.forward,out hit, f_distance, GameLayer.Physics.I_StaticEntity)&&(hit.collider.gameObject.layer != GameLayer.I_Entity || !hit.collider.GetComponent<HitCheckEntity>().m_Attacher.B_IsPlayer))
             {
-                target = hit.point;
+                m_assistTarget = hit.point;
                 tf_Dot.position = hit.point;
                 tf_Dot.SetActivate(true);
             }
             else
             {
-                target = transform.position + transform.forward * f_distance;
+                m_assistTarget = transform.position + transform.forward * f_distance;
             }
-            m_lineRenderer.SetPosition(1,target);
+            m_lineRenderer.SetPosition(1,m_assistTarget);
         }
         public virtual void OnDisable()
         {

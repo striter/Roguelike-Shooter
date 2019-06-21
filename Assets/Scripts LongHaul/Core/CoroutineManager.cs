@@ -45,11 +45,11 @@ public static class TIEnumerators
         OnTick();
         for (; ; )
         {
+            if (count >= totalTicks)
+                yield break;
             yield return seconds;
             OnTick();
             count++;
-            if (count >= totalTicks)
-                yield break;
         }
     }
     public static IEnumerator TickDelta(Action<float> OnTickDelta, float duration = -1)
