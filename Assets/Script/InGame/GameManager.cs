@@ -98,13 +98,11 @@ public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
 
         if(battle)
             OnBattleStart(new List<EntityEnermyBase>() {
-            ObjectPoolManager<enum_Entity,EntityBase>.GetRegistedSpawnItem( enum_Entity.EnermyAIMillita) as EntityEnermyBase,
-            ObjectPoolManager<enum_Entity,EntityBase>.GetRegistedSpawnItem( enum_Entity.EnermyAIMillita) as EntityEnermyBase,
-            ObjectPoolManager<enum_Entity,EntityBase>.GetRegistedSpawnItem( enum_Entity.EnermyAIMillita) as EntityEnermyBase,
-            ObjectPoolManager<enum_Entity,EntityBase>.GetRegistedSpawnItem( enum_Entity.EnermyAIMillita) as EntityEnermyBase,
-            ObjectPoolManager<enum_Entity,EntityBase>.GetRegistedSpawnItem( enum_Entity.EnermyAIVeteran) as EntityEnermyBase,
-            ObjectPoolManager<enum_Entity,EntityBase>.GetRegistedSpawnItem( enum_Entity.EnermyAIVeteran) as EntityEnermyBase,
-            ObjectPoolManager<enum_Entity,EntityBase>.GetRegistedSpawnItem( enum_Entity.EnermyAIRanger) as EntityEnermyBase,
+            //ObjectPoolManager<enum_Entity,EntityBase>.GetRegistedSpawnItem( enum_Entity.EnermyAIMillita) as EntityEnermyBase,
+            //ObjectPoolManager<enum_Entity,EntityBase>.GetRegistedSpawnItem( enum_Entity.EnermyAIMillita) as EntityEnermyBase,
+            //ObjectPoolManager<enum_Entity,EntityBase>.GetRegistedSpawnItem( enum_Entity.EnermyAIMillita) as EntityEnermyBase,
+            //ObjectPoolManager<enum_Entity,EntityBase>.GetRegistedSpawnItem( enum_Entity.EnermyAIVeteran) as EntityEnermyBase,
+            //ObjectPoolManager<enum_Entity,EntityBase>.GetRegistedSpawnItem( enum_Entity.EnermyAIVeteran) as EntityEnermyBase,
             ObjectPoolManager<enum_Entity,EntityBase>.GetRegistedSpawnItem( enum_Entity.EnermyAIRanger) as EntityEnermyBase,
             }, 3);          //Quite A Testing
         else

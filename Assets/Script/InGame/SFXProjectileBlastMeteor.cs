@@ -9,8 +9,10 @@ public class SFXProjectileBlastMeteor : SFXProjectileBlastTrigger {
         OnPlayPreset(damage);
         B_SimulatePhysics = true;
         m_Damage = damage;
-        Vector3 startPos = transform.position + Vector3.up*20;
+        float radius = Vector3.Distance(transform.position, destination);
+        Vector3 startPos = destination+ Vector3.up*20+new Vector3(Random.Range(-1f,1f),0,Random.Range(-1f,1f))*radius;
         m_Simulator = new ProjectilePhysicsSimulator(startPos, destination-startPos, Vector3.down, horiSpeed, horiDistance, vertiSpeed, vertiAcceleration);
+        m_subSFXDic[enum_SubSFXType.Projectile].transform.position = startPos;
         Play(sourceID, duration);
     }
 }

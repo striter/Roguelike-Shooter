@@ -508,7 +508,8 @@ namespace GameSetting
         float f_moveSpeed;
         float f_chaseRange;
         float f_attackRange;
-        bool b_checkObstacle;
+        bool b_movementObstacleCheck;
+        bool b_battleObstacleCheck;
         int i_barrageIndex;
         RangeFloat fr_barrageDuration;
         public enum_Entity m_Type =>(enum_Entity) index;
@@ -521,7 +522,8 @@ namespace GameSetting
         public float m_moveSpeed => f_moveSpeed;
         public float m_AIChaseRange => f_chaseRange;
         public float m_AIAttackRange => f_attackRange;
-        public bool m_CheckObstacle => b_checkObstacle;
+        public bool m_MovementCheckObstacle => b_movementObstacleCheck;
+        public bool m_BattleCheckObsatacle => b_battleObstacleCheck;
         public int m_BarrageIndex => i_barrageIndex;
         public RangeFloat m_BarrageDuration => fr_barrageDuration;
         public void InitOnValueSet()

@@ -54,7 +54,7 @@ public class EntityEnermyBase : EntityBase {
         protected Func<EntityBase,float> OnAttackTarget;
         protected Func<EntityBase, bool> OnCheckTarget;
         protected float f_AttackRange,f_ChaseRange;
-        protected bool b_RayCheckObstacle;
+        protected bool b_battleCheckObstacle,b_movementCheckObstacle;
         public bool B_AgentEnabled
         {
             get
@@ -89,7 +89,8 @@ public class EntityEnermyBase : EntityBase {
             m_EntityControlling = _entityControlling;
             f_AttackRange = _entityInfo.m_AIAttackRange;
             f_ChaseRange = _entityInfo.m_AIChaseRange;
-            b_RayCheckObstacle = _entityInfo.m_CheckObstacle;
+            b_battleCheckObstacle = _entityInfo.m_BattleCheckObsatacle;
+            b_movementCheckObstacle = _entityInfo.m_MovementCheckObstacle;
             m_Obstacle = m_EntityControlling.GetComponent<NavMeshObstacle>();
             m_Agent = m_EntityControlling.GetComponent<NavMeshAgent>();
             m_Agent.speed = _entityInfo.m_moveSpeed;
@@ -97,6 +98,7 @@ public class EntityEnermyBase : EntityBase {
             OnCheckTarget = _onCheck;
             B_AgentEnabled = false;
         }
+
         public void SetTarget(EntityBase entity)
         {
             m_Target = entity;
@@ -117,6 +119,7 @@ public class EntityEnermyBase : EntityBase {
         bool b_CanAttackTarget;
         bool b_AgentReachDestination;
         bool b_idled = false;
+        bool b_targetVisible;
         IEnumerator TrackTarget()
         {
             for (; ; )
@@ -131,8 +134,9 @@ public class EntityEnermyBase : EntityBase {
         void CalculateAllParams()
         {
             v3_TargetDirection = (targetTransform.position -transform.position).normalized;
-            b_ChasedTarget = TCommon.GetXZDistance(targetTransform.position, transform.position) < f_ChaseRange && TargetVisible;
-            b_CanAttackTarget = !b_RayCheckObstacle|| TCommon.GetXZDistance(targetTransform.position, transform.position) < f_AttackRange && TargetVisible;
+            b_targetVisible = CheckTargetVisible();
+            b_ChasedTarget = (!b_movementCheckObstacle || b_targetVisible) && TCommon.GetXZDistance(targetTransform.position, transform.position) < f_ChaseRange;
+            b_CanAttackTarget = (!b_battleCheckObstacle || b_targetVisible) && TCommon.GetXZDistance(targetTransform.position, transform.position) < f_AttackRange;
             b_AgentReachDestination = m_Agent.destination == Vector3.zero || TCommon.GetXZDistance(transform.position, m_Agent.destination) < 5f;
         }
         void CheckMovement()
@@ -194,10 +198,8 @@ public class EntityEnermyBase : EntityBase {
                 targetPosition = sampleHit.position;
             return targetPosition;
         }
-        bool TargetVisible
+        bool CheckTargetVisible()
         {
-            get
-            {
                 m_Raycasts = Physics.RaycastAll(m_EntityControlling.tf_Head.position, v3_TargetDirection, Vector3.Distance(m_EntityControlling.tf_Head.position, m_Target.tf_Head.position), GameLayer.Physics.I_StaticEntity);
                 for (int i = 0; i < m_Raycasts.Length; i++)
                 {
@@ -211,7 +213,6 @@ public class EntityEnermyBase : EntityBase {
                     }
                 }
                 return true;
-            }
         }
     }
     class BarrageBase : ISingleCoroutine

@@ -1774,7 +1774,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   E_TESTSTYLE: 5
-  M_TESTSEED: 
+  M_TESTSEED: 9:33:29
 --- !u!4 &1133817278
 Transform:
   m_ObjectHideFlags: 0
