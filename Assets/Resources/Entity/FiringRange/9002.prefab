@@ -56,7 +56,7 @@ GameObject:
   - component: {fileID: 54009933032381536}
   - component: {fileID: 114952088847005054}
   m_Layer: 0
-  m_Name: DummyJumping
+  m_Name: 9002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

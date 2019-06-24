@@ -75,20 +75,20 @@ namespace GameSetting
         public static float F_SporeManagerChestCoinRequirement(int maxLevel) => 200 * Mathf.Pow(1.4f, maxLevel - 1);       //Coin Requirement Per Chest
         public static float F_SporeManagerChestBlueRequirement(int maxLevel) => 100 * Mathf.Pow(1.05f, maxLevel - 1);       //Blue Requirement Per Chest
 
-        public static Color BigmapTileColor(enum_LevelLocking levelLocking, enum_LevelType levelType)
+        public static Color BigmapTileColor(enum_TileLocking levelLocking, enum_TileType levelType)
         {
             Color color;
             switch (levelType)
             {
                 default: color = TCommon.ColorAlpha(Color.blue, .5f); break;
-                case enum_LevelType.Battle: color = TCommon.ColorAlpha(Color.red, .5f); break;
-                case enum_LevelType.Reward: color = TCommon.ColorAlpha(Color.green, .5f); break;
-                case enum_LevelType.Start: color = TCommon.ColorAlpha(Color.blue, .5f); break;
-                case enum_LevelType.End: color = TCommon.ColorAlpha(Color.black, .5f); break;
+                case enum_TileType.Battle: color = TCommon.ColorAlpha(Color.red, .5f); break;
+                case enum_TileType.Reward: color = TCommon.ColorAlpha(Color.green, .5f); break;
+                case enum_TileType.Start: color = TCommon.ColorAlpha(Color.blue, .5f); break;
+                case enum_TileType.End: color = TCommon.ColorAlpha(Color.black, .5f); break;
             }
             switch(levelLocking)
             {
-                case enum_LevelLocking.Unlockable:color=TCommon.ColorAlpha( color ,.2f); break;
+                case enum_TileLocking.Unlockable:color=TCommon.ColorAlpha( color ,.2f); break;
             }
             return color;
         }
@@ -96,17 +96,17 @@ namespace GameSetting
 
     public static class Enum_Relative
     {
-        public static enum_LevelPrefabType ToPrefabType(this enum_LevelType type)
+        public static enum_TilePrefabDefinition ToPrefabType(this enum_TileType type)
         {
             switch (type)
             {
-                default:Debug.LogError("Please Edit This Please:" + type.ToString());return enum_LevelPrefabType.Invalid;
-                case enum_LevelType.Battle:
-                case enum_LevelType.End:
-                    return enum_LevelPrefabType.Big;
-                case enum_LevelType.Reward:
-                case enum_LevelType.Start:
-                    return enum_LevelPrefabType.Small;
+                default:Debug.LogError("Please Edit This Please:" + type.ToString());return enum_TilePrefabDefinition.Invalid;
+                case enum_TileType.Battle:
+                case enum_TileType.End:
+                    return enum_TilePrefabDefinition.Big;
+                case enum_TileType.Reward:
+                case enum_TileType.Start:
+                    return enum_TilePrefabDefinition.Small;
             }
         }
         public static int ToLayer(this enum_HitCheck layerType)
@@ -147,37 +147,15 @@ namespace GameSetting
     #endregion
     #region GameEnum
     public enum enum_HitCheck { Invalid = -1, Static = 1, Entity = 2, Dynamic = 3, }
-    public enum enum_LevelLocking { Invalid=-1,Locked=0,Unlockable=1,Unlocked=2,}
-    public enum enum_LevelStyle {Invalid=-1, Forest=1,Desert=2,Iceland=3,Horde=4,Undead=5,}
-    public enum enum_LevelType { Invalid=-1,Start=1,Battle=2,Reward=3,End=4, }
-    public enum enum_LevelPrefabType { Invalid = -1, Big = 1, Small = 2, }
-    public enum enum_LevelItemType{
-       Invalid=-1,
-       LargeMore,
-       LargeLess,
-       MediumMore,
-       MediumLess,
-       SmallMore,
-       SmallLess,
-       ManmadeMore,
-       ManmadeLess,
-       NoCollisionMore,
-       NoCollisionLess,
-    }
-    public enum enum_Entity     //Preset For Entities
-    {
-        Invalid = -1,
-        //Player
-        Player = 1,
-        //Enermy
-        Dummy = 2,
-        DummyJumping=3,
-
-        EnermyAIMillita=4,
-        EnermyAIVeteran=5,
-        EnermyAIRanger=6,
-    }
-
+    public enum enum_BattleDifficulty { Invalid = -1, Default = 0, Eazy = 1, Normal = 2, Hard = 3 }
+    public enum enum_TilePrefabDefinition { Invalid = -1, Big = 1, Small = 2, }
+    public enum enum_TileLocking { Invalid = -1, Locked = 0, Unlockable = 1, Unlocked = 2, }
+    public enum enum_TileStyle { Invalid = -1, Forest = 1, Desert = 2, Iceland = 3, Horde = 4, Undead = 5, }
+    public enum enum_TileType { Invalid = -1, Start =0, Battle = 1, End = 2, Reward = 3,}
+    public enum enum_LevelItemType{ Invalid=-1, LargeMore, LargeLess, MediumMore, MediumLess, SmallMore, SmallLess, ManmadeMore, ManmadeLess, NoCollisionMore, NoCollisionLess,}
+    public enum enum_LevelTileType { Invaid = -1, Empty , Main, Item, Portal, }
+    public enum enum_EntityLevel { Invalid = -1, Default=0 ,Militia=1 , Veteran=2, Ranger=3 }
+    public enum enum_EntityStyle { Invalid=-1, Test=1,}
     public enum enum_SFX        //Preset For SFX
     {
         Invalid = -1,
@@ -196,14 +174,6 @@ namespace GameSetting
         Interact_Portal,
     }
 
-    public enum enum_TileType
-    {
-        Invaid = -1,
-        Empty = 0,
-        Main,
-        Item,
-        Portal,
-    }
     public enum enum_Weapon
     {
         Invalid = -1,
@@ -367,25 +337,25 @@ namespace GameSetting
     {
         public TileAxis m_TileAxis => m_Tile;
         protected TileAxis m_Tile { get; private set; }
-        public enum_LevelType m_TileType { get; private set; } = enum_LevelType.Invalid;
-        public enum_LevelStyle m_TileStyle { get; private set; } = enum_LevelStyle.Invalid;
-        public enum_LevelLocking m_TileLocking { get; private set; } = enum_LevelLocking.Invalid;
+        public enum_TileType m_TileType { get; private set; } = enum_TileType.Invalid;
+        public enum_TileStyle m_TileStyle { get; private set; } = enum_TileStyle.Invalid;
+        public enum_TileLocking m_TileLocking { get; private set; } = enum_TileLocking.Invalid;
         public Dictionary<enum_TileDirection, TileAxis> m_Connections { get; protected set; } = new Dictionary<enum_TileDirection, TileAxis>();
 
-        public SBigmapTileInfo(TileAxis _tileAxis, enum_LevelType _tileType, enum_LevelStyle _tileStyle, enum_LevelLocking _tileLocking)
+        public SBigmapTileInfo(TileAxis _tileAxis, enum_TileType _tileType, enum_TileStyle _tileStyle, enum_TileLocking _tileLocking)
         {
             m_Tile = _tileAxis;
             m_TileType = _tileType;
             m_TileStyle = _tileStyle;
             m_TileLocking = _tileLocking;
         }
-        public void ResetTileType(enum_LevelType _tileType)
+        public void ResetTileType(enum_TileType _tileType)
         {
             m_TileType = _tileType;
         }
-        public void SetTileLocking(enum_LevelLocking _lockType)
+        public void SetTileLocking(enum_TileLocking _lockType)
         {
-            if(m_TileLocking!= enum_LevelLocking.Unlocked)
+            if(m_TileLocking!= enum_TileLocking.Unlocked)
                m_TileLocking = _lockType;
         }
     }
@@ -406,7 +376,7 @@ namespace GameSetting
             m_Level.transform.localPosition = Vector3.zero;
             m_Level.transform.localScale = Vector3.one;
             m_Level.SetActivate(false);
-            return m_Level.Init(TResources.GetLevelData(_levelPrefab.name), ExcelManager.GetLevelGenerateProperties(m_TileStyle, _levelPrefab.E_PrefabType), _levelItemPrefabs, m_TileType, seed, m_Connections.Keys.ToList().Find(p => m_Connections[p] == new TileAxis(-1, -1)));        //Add Portal For Level End
+            return m_Level.Init(TResources.GetLevelData(_levelPrefab.name), ExcelManager.GetItemGenerateProperties(m_TileStyle, _levelPrefab.E_PrefabType), _levelItemPrefabs, m_TileType, seed, m_Connections.Keys.ToList().Find(p => m_Connections[p] == new TileAxis(-1, -1)));        //Add Portal For Level End
         }
         public void StartLevel()
         {
@@ -418,7 +388,7 @@ namespace GameSetting
     #region LevelTile
     public class LevelTile : TileMapData.TileInfo
     {
-        public virtual enum_TileType E_TileType => enum_TileType.Empty;
+        public virtual enum_LevelTileType E_TileType => enum_LevelTileType.Empty;
         public enum_TileDirection E_Direction { get; private set; } = enum_TileDirection.Invalid;
         public LevelTile(TileMapData.TileInfo current, enum_TileDirection _direction) : base(current.m_TileAxis, current.m_Offset, current.m_Status)
         {
@@ -431,7 +401,7 @@ namespace GameSetting
     }
     public class LevelTilePortal : LevelTile
     {
-        public override enum_TileType E_TileType => enum_TileType.Portal;
+        public override enum_LevelTileType E_TileType => enum_LevelTileType.Portal;
         public enum_TileDirection E_PortalDirection { get; private set; }
         public Vector3 m_worldPos;
         public LevelTilePortal(LevelTile current, enum_TileDirection _direction,Vector3 _worldPos) : base(current)
@@ -442,7 +412,7 @@ namespace GameSetting
     }
     class LevelTileItemSub : LevelTile
     {
-        public override enum_TileType E_TileType => enum_TileType.Item;
+        public override enum_LevelTileType E_TileType => enum_LevelTileType.Item;
         public int m_ParentMainIndex { get; private set; }
         public LevelTileItemSub(LevelTile current, int _parentMainIndex) : base(current)
         {
@@ -451,7 +421,7 @@ namespace GameSetting
     }
     class LevelTileItemMain : LevelTile
     {
-        public override enum_TileType E_TileType => enum_TileType.Main;
+        public override enum_LevelTileType E_TileType => enum_LevelTileType.Main;
         public int m_LevelItemListIndex { get; private set; }
         public enum_LevelItemType m_LevelItemType { get; private set; }
         public enum_TileDirection m_ItemDirection { get; private set; }
@@ -468,38 +438,11 @@ namespace GameSetting
     #endregion
     #endregion
     #region GameStruct
-    public struct SBarrage:ISExcel
-    {
-        int i_index;
-        int i_barrageType;
-        int i_projectileType;
-        float f_firerate;
-        RangeInt i_projectileCount; 
-        float i_projectileDamage;
-        float i_projectileSpeed;
-        int i_horizontalSpread;
-        float i_projectileSpread;
-        RangeInt ir_rangeExtension;
-        float f_offsetExtension;
-        public int m_Index => i_index;
-        public enum_BarrageType m_BarrageType => (enum_BarrageType)i_barrageType;
-        public enum_SFX m_ProjectileType => (enum_SFX)i_projectileType;
-        public float m_Firerate => f_firerate;
-        public RangeInt m_ProjectileCount => i_projectileCount;
-        public float m_ProjectileDamage => i_projectileDamage;
-        public float m_ProjectileSpeed => i_projectileSpeed;
-        public int m_HorizontalSpread => i_horizontalSpread;
-        public float m_ProjectileSpread => i_projectileSpread;
-        public RangeInt m_RangeExtension => ir_rangeExtension;
-        public float m_OffsetExtension => f_offsetExtension;
-        public void InitOnValueSet()
-        {
-        }   
-    }
     public struct SEntity : ISExcel
     {
-        int index;
+        int i_index;
         string s_name;
+        int e_type;
         float f_maxHealth;
         float f_maxArmor;
         float f_maxMana;
@@ -512,8 +455,9 @@ namespace GameSetting
         bool b_battleObstacleCheck;
         int i_barrageIndex;
         RangeFloat fr_barrageDuration;
-        public enum_Entity m_Type =>(enum_Entity) index;
-        public string m_Name => s_name;
+        public int m_Index=>i_index;
+        public string m_Name=>s_name;
+        public enum_EntityLevel m_Type => (enum_EntityLevel)e_type;
         public float m_MaxHealth => f_maxHealth;
         public float m_MaxArmor => f_maxArmor;
         public float m_MaxMana => f_maxMana;
@@ -530,7 +474,6 @@ namespace GameSetting
         {
         }
     }
-
     public struct SWeapon : ISExcel
     {
         int index;
@@ -574,37 +517,90 @@ namespace GameSetting
         {
         }
     }
-    public struct SLevelGenerate : ISExcel
+    public struct SBarrage : ISExcel
     {
-        int index;
-        RangeInt ir_SmallLess;
-        RangeInt ir_SmallMore;
-        RangeInt ir_MediumLess;
-        RangeInt ir_MediumMore;
-        RangeInt ir_LargeLess;
-        RangeInt ir_LargeMore;
-        RangeInt ir_ManmadeLess;
-        RangeInt ir_ManmadeMore;
-        RangeInt ir_NoCollisionLess;
-        RangeInt ir_NoCollisionMore;
-        public enum_LevelStyle m_LevelStyle;
-        public enum_LevelPrefabType m_LevelPrefabType;
+        int i_index;
+        int i_barrageType;
+        int i_projectileType;
+        float f_firerate;
+        RangeInt i_projectileCount;
+        float i_projectileDamage;
+        float i_projectileSpeed;
+        int i_horizontalSpread;
+        float i_projectileSpread;
+        RangeInt ir_rangeExtension;
+        float f_offsetExtension;
+        public int m_Index => i_index;
+        public enum_BarrageType m_BarrageType => (enum_BarrageType)i_barrageType;
+        public enum_SFX m_ProjectileType => (enum_SFX)i_projectileType;
+        public float m_Firerate => f_firerate;
+        public RangeInt m_ProjectileCount => i_projectileCount;
+        public float m_ProjectileDamage => i_projectileDamage;
+        public float m_ProjectileSpeed => i_projectileSpeed;
+        public int m_HorizontalSpread => i_horizontalSpread;
+        public float m_ProjectileSpread => i_projectileSpread;
+        public RangeInt m_RangeExtension => ir_rangeExtension;
+        public float m_OffsetExtension => f_offsetExtension;
+        public void InitOnValueSet()
+        {
+        }
+    }
+    public struct SGenerateItem : ISExcel
+    {
+        int ec_index;
+        RangeInt ir_smallLess;
+        RangeInt ir_smallMore;
+        RangeInt ir_mediumLess;
+        RangeInt ir_mediumMore;
+        RangeInt ir_largeLess;
+        RangeInt ir_largeMore;
+        RangeInt ir_manmadeLess;
+        RangeInt ir_manmadeMore;
+        RangeInt ir_noCollisionLess;
+        RangeInt ir_noCollisionMore;
+        public enum_TileStyle m_LevelStyle;
+        public enum_TilePrefabDefinition m_LevelPrefabType;
         public Dictionary<enum_LevelItemType, RangeInt> m_ItemGenerate;
         public void InitOnValueSet()
         {
-            m_LevelStyle = (enum_LevelStyle)(index / 10);
-            m_LevelPrefabType = (enum_LevelPrefabType)(index % 10);
-            m_ItemGenerate = new Dictionary<enum_LevelItemType, RangeInt>();
-            m_ItemGenerate.Add(enum_LevelItemType.LargeLess, ir_LargeLess);
-            m_ItemGenerate.Add(enum_LevelItemType.LargeMore, ir_LargeMore);
-            m_ItemGenerate.Add(enum_LevelItemType.MediumLess, ir_MediumLess);
-            m_ItemGenerate.Add(enum_LevelItemType.MediumMore, ir_MediumMore);
-            m_ItemGenerate.Add(enum_LevelItemType.SmallLess,ir_SmallLess);
-            m_ItemGenerate.Add(enum_LevelItemType.SmallMore, ir_SmallMore);
-            m_ItemGenerate.Add(enum_LevelItemType.ManmadeLess, ir_ManmadeLess);
-            m_ItemGenerate.Add(enum_LevelItemType.ManmadeMore, ir_ManmadeMore);
-            m_ItemGenerate.Add(enum_LevelItemType.NoCollisionLess, ir_NoCollisionLess);
-            m_ItemGenerate.Add(enum_LevelItemType.NoCollisionMore, ir_NoCollisionMore);
+            m_LevelStyle = (enum_TileStyle)(ec_index / 10);
+            m_LevelPrefabType = (enum_TilePrefabDefinition)(ec_index % 10);
+            m_ItemGenerate = new Dictionary<enum_LevelItemType, RangeInt>(); 
+            m_ItemGenerate.Add(enum_LevelItemType.LargeLess, ir_largeLess);
+            m_ItemGenerate.Add(enum_LevelItemType.LargeMore, ir_largeMore);
+            m_ItemGenerate.Add(enum_LevelItemType.MediumLess, ir_mediumLess);
+            m_ItemGenerate.Add(enum_LevelItemType.MediumMore, ir_mediumMore);
+            m_ItemGenerate.Add(enum_LevelItemType.SmallLess,ir_smallLess);
+            m_ItemGenerate.Add(enum_LevelItemType.SmallMore, ir_smallMore);
+            m_ItemGenerate.Add(enum_LevelItemType.ManmadeLess, ir_manmadeLess);
+            m_ItemGenerate.Add(enum_LevelItemType.ManmadeMore, ir_manmadeMore);
+            m_ItemGenerate.Add(enum_LevelItemType.NoCollisionLess, ir_noCollisionLess);
+            m_ItemGenerate.Add(enum_LevelItemType.NoCollisionMore, ir_noCollisionMore);
+        }
+    }
+    public struct SGenerateEntity:ISExcel
+    {
+        int ec_index;
+        int i_waveCount;
+        float f_eliteChance;
+        RangeInt ir_militia;
+        RangeInt ir_veteran;
+        RangeInt ir_ranger;
+        public int m_stageIndex;
+        public enum_TileType m_TileType;
+        public enum_BattleDifficulty m_Difficulty;
+        public int m_WaveCount => i_waveCount;
+        public float m_EliteChance => f_eliteChance;
+        public Dictionary<enum_EntityLevel, RangeInt> m_EntityGenerate;
+        public void InitOnValueSet()
+        {
+            m_stageIndex = (ec_index / 100);
+            m_TileType = (enum_TileType)((ec_index-m_stageIndex*100) / 10);
+            m_Difficulty = (enum_BattleDifficulty)(ec_index % 10);
+            m_EntityGenerate = new Dictionary<enum_EntityLevel, RangeInt>();
+            m_EntityGenerate.Add( enum_EntityLevel.Militia,ir_militia);
+            m_EntityGenerate.Add(enum_EntityLevel.Veteran, ir_veteran);
+            m_EntityGenerate.Add(enum_EntityLevel.Ranger, ir_ranger);
         }
     }
     #endregion

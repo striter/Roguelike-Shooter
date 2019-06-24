@@ -1361,6 +1361,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3edb4d7545332d43a7feb0ddbee14df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  B_TestMode: 0
 --- !u!1 &961341477
 GameObject:
   m_ObjectHideFlags: 0
@@ -1773,8 +1774,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c088e7b318d292458e08155aef1723d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  E_TESTSTYLE: 5
-  M_TESTSEED: 9:33:29
+  Test_TileStyle: 2
+  Test_EntityStyle: 1
+  M_TESTSEED: 
+  m_BattleEntityStyle: 1
 --- !u!4 &1133817278
 Transform:
   m_ObjectHideFlags: 0

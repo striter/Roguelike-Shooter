@@ -1,4 +1,4 @@
-﻿Shader "Hidden/PE_ScreenSpaceAmbientOcculusion"
+﻿Shader "PostEffect/PE_ScreenSpaceAmbientOcculusion"
 {
 	Properties
 	{

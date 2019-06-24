@@ -422,7 +422,6 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
 }
 public class PE_ScreenSpaceAmbientOcculusion:PostEffectBase
 {
-    protected Vector4[] m_samplePositions;
     protected int i_downSample;
     public override void OnSetEffect(Camera cam)
     {
@@ -430,19 +429,24 @@ public class PE_ScreenSpaceAmbientOcculusion:PostEffectBase
         Cam_Cur.depthTextureMode |= DepthTextureMode.Depth;
         SetEffect();
     }
-    public void SetEffect(int _sampleCount=32,int _downSample=1)
+    public void SetEffect(int _sampleCount=32,int _downSample=1,float _sampleKernalRadius=1f,float _aoStrength=1f,float _depthBiasValue=0.002f)
     {
-        GenerateSampleKernals(_sampleCount);
         i_downSample = _downSample;
+        mat_Cur.SetVectorArray("_SampleKernalArray",GenerateSampleKernals(_sampleCount));
+        mat_Cur.SetInt("_SampleKernalCount", _sampleCount);
+        mat_Cur.SetFloat("_SampleKernalRaidus", _sampleKernalRadius);
+        mat_Cur.SetFloat("_AOStrength", _aoStrength);
+        mat_Cur.SetFloat("_DepthBiasValue", _depthBiasValue);
     }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
         base.OnRenderImage(source, destination);
-        RenderTexture aoTex = RenderTexture.GetTemporary(source.width>>i_downSample,source.height>>i_downSample,0);
+        mat_Cur.SetMatrix("_InverseProjectionMatrix", Cam_Cur.projectionMatrix.inverse);
+        Graphics.Blit(source,destination,mat_Cur);
     }
-    protected void GenerateSampleKernals(int sampleCount)
+    protected Vector4[] GenerateSampleKernals(int sampleCount)
     {
-        m_samplePositions = new Vector4[sampleCount];
+        Vector4[] samplePositions = new Vector4[sampleCount];
         for (int i = 0; i < sampleCount; i++)
         {
             Vector4 position = new Vector4(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f));
@@ -450,7 +454,8 @@ public class PE_ScreenSpaceAmbientOcculusion:PostEffectBase
             float scale = (float)i / sampleCount;
             scale = Mathf.Lerp(0.01f, 1.0f, scale * scale);
             position *= scale;
-            m_samplePositions[i] = position;
+            samplePositions[i] = position;
         }
+        return samplePositions;
     }
 }

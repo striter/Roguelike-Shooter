@@ -12,9 +12,9 @@ public class EntityEnermyBase : EntityBase {
     BarrageBase m_Barrage;
     float OnAttackTarget(EntityBase target) => m_Barrage.Play(this, target)+m_EntityInfo.m_BarrageDuration.Random();
     bool OnCheckTarget(EntityBase target) => target.B_IsPlayer!=B_IsPlayer && !target.b_IsDead;
-    public override void Init(int id, SEntity entityInfo)
+    public override void Init(SEntity entityInfo)
     {
-        base.Init(id, entityInfo);
+        Init(entityInfo, false);
         m_AI = new EnermyAIControllerBasic(this, entityInfo, OnAttackTarget,OnCheckTarget);
 
         SBarrage barrageInfo = ExcelManager.GetBarrageProperties(entityInfo.m_BarrageIndex);

@@ -235,12 +235,12 @@ GameObject:
   - component: {fileID: 208954831077526132}
   - component: {fileID: 135249086244225942}
   m_Layer: 0
-  m_Name: EnermyAIRanger
+  m_Name: 1002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1860558408647164
 GameObject:
   m_ObjectHideFlags: 1
@@ -581,7 +581,7 @@ NavMeshAgent:
   m_Enabled: 0
   m_AgentTypeID: 0
   m_Radius: 1.2
-  m_Speed: 3.5
+  m_Speed: 2.5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120

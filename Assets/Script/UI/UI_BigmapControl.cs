@@ -93,7 +93,7 @@ public class UI_BigmapControl : UIPageBase {        //This Page Won't Hide(One P
             {
                 connectionActivate.Add(direction, levelInfo.m_Connections.ContainsKey(direction)
                     && levelInfo.m_Connections[direction].m_AxisX != -1
-                    && bigMap.Get(levelInfo.m_Connections[direction]).m_TileLocking != enum_LevelLocking.Locked);
+                    && bigMap.Get(levelInfo.m_Connections[direction]).m_TileLocking != enum_TileLocking.Locked);
             }
             infoUI.SetBigmapLevelInfo(levelInfo, connectionActivate);
             if (levelInfo.m_TileAxis == playerAxis)
