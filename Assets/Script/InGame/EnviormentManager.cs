@@ -48,7 +48,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
     public void SetPostEffects(enum_LevelStyle _levelStyle)
     {
         PostEffectManager.RemoveAllPostEffect();
-        PostEffectManager.AddPostEffect<PE_BloomSpecific>();
+        PostEffectManager.AddPostEffect<PE_BloomSpecific>().SetEffect(2,10,2);
         switch (_levelStyle)
         {
             case enum_LevelStyle.Undead:
