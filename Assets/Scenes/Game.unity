@@ -1777,7 +1777,6 @@ MonoBehaviour:
   Test_TileStyle: 2
   Test_EntityStyle: 1
   M_TESTSEED: 
-  m_BattleEntityStyle: 1
 --- !u!4 &1133817278
 Transform:
   m_ObjectHideFlags: 0

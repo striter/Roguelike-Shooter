@@ -10,20 +10,30 @@ using System;
 public class EntityEnermyBase : EntityBase {
     EnermyAIControllerBasic m_AI;
     BarrageBase m_Barrage;
+    EnermyAnimator m_Animator;
     float OnAttackTarget(EntityBase target) => m_Barrage.Play(this, target)+m_EntityInfo.m_BarrageDuration.Random();
     bool OnCheckTarget(EntityBase target) => target.B_IsPlayer!=B_IsPlayer && !target.b_IsDead;
     public override void Init(SEntity entityInfo)
     {
         Init(entityInfo, false);
         m_AI = new EnermyAIControllerBasic(this, entityInfo, OnAttackTarget,OnCheckTarget);
-
         SBarrage barrageInfo = ExcelManager.GetBarrageProperties(entityInfo.m_BarrageIndex);
         switch (barrageInfo.m_BarrageType)
         {
             default: Debug.LogError("Invalid Barrage Type:" + barrageInfo.m_BarrageType); break;
-            case enum_BarrageType.Single: m_Barrage = new BarrageBase(barrageInfo);break;
+            case enum_BarrageType.Single: m_Barrage = new BarrageBase(barrageInfo); break;
             case enum_BarrageType.Multiple: m_Barrage = new BarrageMultiple(barrageInfo); break;
         }
+    }
+    public override void OnActivate(int id)
+    {
+        base.OnActivate(id);
+        m_Animator = new EnermyAnimator(tf_Model.GetComponent<Animator>(), new List<SAnimatorParam>() { new SAnimatorParam("Death_01", Animator.StringToHash("fp_dead"), 1f) });
+
+    }
+    protected override void Update()
+    {
+        m_Animator.SetRun(m_AI.B_AgentEnabled);
     }
 
     public override void SetTarget(EntityBase target)
@@ -35,6 +45,7 @@ public class EntityEnermyBase : EntityBase {
     {
         m_AI.Deactivate();
         m_Barrage.Deactivate();
+        m_Animator.OnDead();
         base.OnDead();
     }
     protected override void OnDisable()
@@ -43,6 +54,26 @@ public class EntityEnermyBase : EntityBase {
         m_Barrage.Deactivate();
         base.OnDisable();
     }
+
+
+    protected class EnermyAnimator : AnimatorClippingTime
+    {
+        static readonly int HS_B_Run = Animator.StringToHash("b_run");
+        static readonly int HS_T_Dead = Animator.StringToHash("t_dead");
+        public EnermyAnimator(Animator _animator, List<SAnimatorParam> _params) : base(_animator, _params)
+        {
+
+        }
+        public void SetRun(bool run)
+        {
+            m_Animator.SetBool(HS_B_Run, run);
+        }
+        public void OnDead()
+        {
+            m_Animator.SetTrigger(HS_T_Dead);
+        }
+    }
+
     class EnermyAIControllerBasic:ISingleCoroutine
     {
         protected EntityEnermyBase m_EntityControlling;
@@ -215,6 +246,8 @@ public class EntityEnermyBase : EntityBase {
                 return true;
         }
     }
+
+
     class BarrageBase : ISingleCoroutine
     {
         protected SBarrage m_Info;

@@ -337,8 +337,8 @@ public class EWorkFlow_ModelAutoPrefabPackaging : EditorWindow
     static string GetMaterialPath( enum_TileStyle matStyle, bool isLevel)
     {
         if (isLevel)
-            return "Assets/Material/Level.mat";
-        return "Assets/Material/Item_"  + matStyle.ToString() + ".mat";
+            return "Assets/Material/Level/Level.mat";
+        return "Assets/Material/Level/Item_"  + matStyle.ToString() + ".mat";
     }
     public static Shader GetShader(enum_ShaderType sType)
     {

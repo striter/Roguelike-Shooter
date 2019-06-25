@@ -48,14 +48,14 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
     public void SetPostEffects(enum_TileStyle _levelStyle)
     {
         PostEffectManager.RemoveAllPostEffect();
-        PostEffectManager.AddPostEffect<PE_BloomSpecific>().SetEffect(2, 10, 2);
         PostEffectManager.AddPostEffect<PE_ScreenSpaceAmbientOcculusion>().SetEffect(32, 1);
-        switch (_levelStyle)
-        {
-            case enum_TileStyle.Undead:
-                PostEffectManager.AddPostEffect<PE_FogDepthNoise>().SetEffect(Color.white).SetEffect(TCommon.ColorAlpha(Color.white,.5f),.5f,-1f,5f).SetTexture(TResources.Load<Texture>("Texture/Noise1"));
-                break;
-        }
+        //PostEffectManager.AddPostEffect<PE_BloomSpecific>().SetEffect(2, 10, 2);
+        //switch (_levelStyle)
+        //{
+        //    case enum_TileStyle.Undead:
+        //        PostEffectManager.AddPostEffect<PE_FogDepthNoise>().SetEffect(Color.white).SetEffect(TCommon.ColorAlpha(Color.white,.5f),.5f,-1f,5f).SetTexture(TResources.Load<Texture>("Texture/Noise1"));
+        //        break;
+        //}
     }
     #region Level
     void OnStageStart()
