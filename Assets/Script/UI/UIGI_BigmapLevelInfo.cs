@@ -27,7 +27,7 @@ public class UIGI_BigmapLevelInfo : UIT_GridItem {
     public void SetBigmapLevelInfo(SBigmapLevelInfo levelInfo,Dictionary<enum_TileDirection,bool> connectionActivate)
     {
         m_CurrentAxis = levelInfo.m_TileAxis;
-        tf_Container.localScale = levelInfo.m_TileLocking == enum_LevelLocking.Locked ? Vector3.zero : Vector3.one;
+        tf_Container.localScale = levelInfo.m_TileLocking == enum_TileLocking.Locked ? Vector3.zero : Vector3.one;
         img_Level.color = UIExpression.BigmapTileColor(levelInfo.m_TileLocking,levelInfo.m_TileType);
         foreach (enum_TileDirection direction in TTiles.TTiles.m_AllDirections)
             dic_TileConnections[direction].SetActivate(connectionActivate[direction]);

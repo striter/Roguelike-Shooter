@@ -81,13 +81,12 @@ public class PostEffectBase  {
     }
     #endregion
 }
-
 public class PE_ViewNormal : PostEffectBase
 {
     public override void OnSetEffect(Camera cam)
     {
         base.OnSetEffect(cam);
-        cam.depthTextureMode = DepthTextureMode.DepthNormals;
+        cam.depthTextureMode |= DepthTextureMode.DepthNormals;
     }
 }
 public class PE_ViewDepth : PostEffectBase
@@ -95,7 +94,7 @@ public class PE_ViewDepth : PostEffectBase
     public override void OnSetEffect(Camera cam)
     {
         base.OnSetEffect(cam);
-        cam.depthTextureMode = DepthTextureMode.Depth;
+        cam.depthTextureMode |= DepthTextureMode.Depth;
     }
 }
 public class PE_BSC : PostEffectBase {      //Brightness Saturation Contrast
@@ -149,8 +148,8 @@ public class PE_GaussianBlur : PostEffectBase       //Gassuain Blur
         if (I_DownSample == 0)
             I_DownSample = 1;
 
-        int rtW = source.width / I_DownSample;
-        int rtH = source.height / I_DownSample;
+        int rtW = source.width >> I_DownSample;
+        int rtH = source.height >> I_DownSample;
 
         RenderTexture buffer0 = RenderTexture.GetTemporary(rtW, rtH, 0);
         buffer0.filterMode = FilterMode.Bilinear;
@@ -205,8 +204,8 @@ public class PE_Bloom : PostEffectBase
             I_DownSample = 1;
         Mat_Cur.SetFloat("_LuminanceThreshold", F_LuminanceThreshold);
         Mat_Cur.SetFloat("_LuminanceMultiple", F_LuminanceMultiple);
-        int rtW = source.width / I_DownSample;
-        int rtH = source.height / I_DownSample;
+        int rtW = source.width >> I_DownSample;
+        int rtH = source.height >> I_DownSample;
 
         RenderTexture buffer0 = RenderTexture.GetTemporary(rtW, rtH, 0);
         buffer0.filterMode = FilterMode.Bilinear;
@@ -265,14 +264,13 @@ public class PE_MotionBlur : PostEffectBase     //Camera Motion Blur ,Easiest
         GameObject.Destroy(rt_Accumulation);
     }
 }
-
 public class PE_MotionBlurDepth:PE_MotionBlur
 {
     private Matrix4x4 mt_CurVP;
     public override void OnSetEffect(Camera cam)
     {
         base.OnSetEffect(cam);
-        cam.depthTextureMode = DepthTextureMode.Depth;
+        cam.depthTextureMode |= DepthTextureMode.Depth;
         mt_CurVP = Cam_Cur.projectionMatrix * Cam_Cur.worldToCameraMatrix;
     }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
@@ -290,7 +288,7 @@ public class PE_FogDepth : PostEffectBase
     public override void OnSetEffect(Camera cam)
     {
         base.OnSetEffect(cam);
-        cam.depthTextureMode = DepthTextureMode.Depth;
+        cam.depthTextureMode |= DepthTextureMode.Depth;
         tra_Cam = Cam_Cur.transform;
         SetEffect(TCommon.ColorAlpha( Color.white,.5f));
     }
@@ -352,7 +350,7 @@ public class PE_EdgeDetectionDepth:PE_EdgeDetection
     public override void OnSetEffect(Camera cam)
     {
         base.OnSetEffect(cam);
-        cam.depthTextureMode = DepthTextureMode.DepthNormals;
+        cam.depthTextureMode |= DepthTextureMode.DepthNormals;
         SetEffect();
     }
     public void SetEffect(float _sampleDistance = 1f, float _sensitivityDepth = 1f, float _sensitivityNormal = 1f)
@@ -381,8 +379,7 @@ public class PE_FogDepthNoise : PE_FogDepth
         base.OnRenderImage(source, destination);
     }
 }
-//Need To Bind Shader To Specific Items
-public class PE_BloomSpecific : PostEffectBase
+public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific Items
 {
     Camera m_RenderCamera;
     RenderTexture m_RenderTexture;
@@ -409,7 +406,7 @@ public class PE_BloomSpecific : PostEffectBase
         m_RenderCamera.targetTexture = m_RenderTexture;
         SetEffect();
     }
-    public void SetEffect(float _blueSpread=2f, int _iterations = 20, int _downSample=4)
+    public void SetEffect(float _blueSpread=1f, int _iterations = 10, int _downSample=2)
     {
         m_GaussianBlur.SetEffect(_blueSpread, _iterations, _downSample);
     }
@@ -421,5 +418,44 @@ public class PE_BloomSpecific : PostEffectBase
         m_GaussianBlur.OnRenderImage(m_RenderTexture, m_RenderTexture);     //Blur
         Mat_Cur.SetTexture("_RenderTex", m_RenderTexture);
         Graphics.Blit(source, destination, Mat_Cur, 1);        //Mix
+    }
+}
+public class PE_ScreenSpaceAmbientOcculusion:PostEffectBase
+{
+    protected int i_downSample;
+    public override void OnSetEffect(Camera cam)
+    {
+        base.OnSetEffect(cam);
+        Cam_Cur.depthTextureMode |= DepthTextureMode.Depth;
+        SetEffect();
+    }
+    public void SetEffect(int _sampleCount=32,int _downSample=1,float _sampleKernalRadius=1f,float _aoStrength=1f,float _depthBiasValue=0.002f)
+    {
+        i_downSample = _downSample;
+        mat_Cur.SetVectorArray("_SampleKernalArray",GenerateSampleKernals(_sampleCount));
+        mat_Cur.SetInt("_SampleKernalCount", _sampleCount);
+        mat_Cur.SetFloat("_SampleKernalRaidus", _sampleKernalRadius);
+        mat_Cur.SetFloat("_AOStrength", _aoStrength);
+        mat_Cur.SetFloat("_DepthBiasValue", _depthBiasValue);
+    }
+    public override void OnRenderImage(RenderTexture source, RenderTexture destination)
+    {
+        base.OnRenderImage(source, destination);
+        mat_Cur.SetMatrix("_InverseProjectionMatrix", Cam_Cur.projectionMatrix.inverse);
+        Graphics.Blit(source,destination,mat_Cur);
+    }
+    protected Vector4[] GenerateSampleKernals(int sampleCount)
+    {
+        Vector4[] samplePositions = new Vector4[sampleCount];
+        for (int i = 0; i < sampleCount; i++)
+        {
+            Vector4 position = new Vector4(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f));
+            position.Normalize();
+            float scale = (float)i / sampleCount;
+            scale = Mathf.Lerp(0.01f, 1.0f, scale * scale);
+            position *= scale;
+            samplePositions[i] = position;
+        }
+        return samplePositions;
     }
 }

@@ -13,23 +13,28 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
     public float m_CurrentArmor { get; private set; }
     public float m_CurrentMana { get; private set; }
     public bool b_IsDead => m_CurrentHealth <= 0;
-    public bool B_IsPlayer => m_EntityInfo.m_Type == enum_Entity.Player;
+    public bool B_IsPlayer { get; private set; }
     public float F_TotalHealth => m_EntityInfo.m_MaxArmor + m_EntityInfo.m_MaxHealth;
     private float f_ArmorRegenCheck;
     protected EntityBase m_Target;
     public virtual Vector3 m_PrecalculatedTargetPos(float time) { Debug.LogError("Override This Please");return Vector2.zero; }
-    public virtual void Init(int id,SEntity entityInfo)
+    public virtual void Init(SEntity entityInfo)
     {
-        I_EntityID = id;
+        Debug.LogError("Override This Please!");
+    }
+    protected void Init( SEntity entityInfo,bool isPlayer)
+    {
         tf_Model = transform.Find("Model");
         tf_Head = transform.Find("Head");
+        B_IsPlayer = isPlayer;
         m_Renderers = tf_Model.GetComponentsInChildren<Renderer>();
         m_HitChecks = GetComponentsInChildren<HitCheckEntity>();
-        TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.Attach(this,TryTakeDamage); });
+        TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.Attach(this, TryTakeDamage); });
         m_EntityInfo = entityInfo;
     }
-    public virtual void OnActivate()
+    public virtual void OnActivate(int id)
     {
+        I_EntityID = id;
         if (I_EntityID == -1)
             Debug.LogError("Please Init Entity Info!" + gameObject.name.ToString());
 
@@ -109,7 +114,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
                 });
             });
         }, 0, 1, 1f, () => {
-            ObjectManager.RecycleEntity(m_EntityInfo.m_Type, this);
+            ObjectManager.RecycleEntity(m_EntityInfo.m_Index, this);
         }));
     }
     protected virtual void OnHealthEffect(bool isDamage,bool armorDamage=true)

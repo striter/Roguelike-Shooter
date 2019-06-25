@@ -12,12 +12,13 @@ public class TResources
         public const string S_LevelData = "Level/Main/Data";
         public const string S_LeveLItem = "Level/Item";
         public const string S_LevelTexture = "Level/Texture";
+        public const string S_Entity = "Entity";
         public const string S_StyleCustomization = "Level/Customization";
     }
 
     public static TileMapData GetLevelData(string name) => Load<TileMapData>(ConstPath.S_LevelData + "/" + name);
-    public static StyleColorData[] GetAllStyleCustomization(enum_LevelStyle levelStype) => LoadAll<StyleColorData>(ConstPath.S_StyleCustomization + "/" + levelStype);
-    public static LevelItemBase[] GetAllLevelItems(enum_LevelStyle _levelStyle, Transform parent)
+    public static StyleColorData[] GetAllStyleCustomization(enum_TileStyle levelStype) => LoadAll<StyleColorData>(ConstPath.S_StyleCustomization + "/" + levelStype);
+    public static LevelItemBase[] GetAllLevelItems(enum_TileStyle _levelStyle, Transform parent)
     {
         LevelItemBase[] levelItemPrefabs = LoadAll<LevelItemBase>(ConstPath.S_LeveLItem + "/" + _levelStyle);
         foreach (LevelItemBase levelItem in levelItemPrefabs)
@@ -30,14 +31,14 @@ public class TResources
             instantiatedLevelItem[i] = GameObject.Instantiate(levelItemPrefabs[i], parent);
         return instantiatedLevelItem;
     }
-    public static Dictionary<enum_LevelPrefabType, List<LevelBase>> GetAllStyledLevels(enum_LevelStyle levelStyle)
+    public static Dictionary<enum_TilePrefabDefinition, List<LevelBase>> GetAllStyledLevels(enum_TileStyle levelStyle)
     {
-        Dictionary<enum_LevelPrefabType, List<LevelBase>> levelPrefabDic = new Dictionary<enum_LevelPrefabType, List<LevelBase>>();
+        Dictionary<enum_TilePrefabDefinition, List<LevelBase>> levelPrefabDic = new Dictionary<enum_TilePrefabDefinition, List<LevelBase>>();
         LevelBase[] levels = LoadAll<LevelBase>(ConstPath.S_LevelMain);
         Renderer matRenderer = levels[0].GetComponentInChildren<Renderer>();
         matRenderer.sharedMaterial.SetTexture("_MainTex", Load<Texture>(ConstPath.S_LevelTexture + "/" + levelStyle));
         levels.Traversal((LevelBase level) => {
-            if (level.E_PrefabType == enum_LevelPrefabType.Invalid)
+            if (level.E_PrefabType == enum_TilePrefabDefinition.Invalid)
                 Debug.LogError("Please Edit Level(Something Invalid):Resources/" + ConstPath.S_LevelMain + level.name);
 
             if (!levelPrefabDic.ContainsKey(level.E_PrefabType))
@@ -45,6 +46,18 @@ public class TResources
             levelPrefabDic[level.E_PrefabType].Add(level);
         });
         return levelPrefabDic;
+    }
+
+    public static Dictionary<int, EntityBase> GetAllStyledEntities(enum_EntityStyle entityStyle)
+    {
+        Dictionary<int, EntityBase> entitisDic = new Dictionary<int, EntityBase>();
+        entitisDic.Add(0,Instantiate<EntityBase>(ConstPath.S_Entity +"/Player"));
+        EntityBase[] entities = LoadAll<EntityBase>(ConstPath.S_Entity + "/" + entityStyle.ToString());
+        entities.Traversal<EntityBase>((EntityBase entity) => {
+            int index = int.Parse(entity.name);
+            entitisDic.Add(index, GameObject.Instantiate<EntityBase>(entity));
+        });
+        return entitisDic;
     }
     #region Will Be Replaced By AssetBundle If Needed
     public static T Instantiate<T>(string path, Transform toParent = null) where T : UnityEngine.Object

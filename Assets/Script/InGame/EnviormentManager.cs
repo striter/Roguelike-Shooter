@@ -9,7 +9,7 @@ using LPWAsset;
 
 public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
     public Transform tf_LevelParent { get; private set; }
-    public enum_LevelStyle m_StyleCurrent { get; private set; } = enum_LevelStyle.Invalid;
+    public enum_TileStyle m_StyleCurrent { get; private set; } = enum_TileStyle.Invalid;
     public static SBigmapLevelInfo m_currentLevel { get; private set; }
     public SBigmapLevelInfo[,] m_MapLevelInfo { get; private set; }
     public Light m_DirectionalLight { get; protected set; }
@@ -34,7 +34,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         TBroadCaster<enum_BC_GameStatusChanged>.Remove(enum_BC_GameStatusChanged.OnStageStart, OnStageStart);
         TBroadCaster<enum_BC_GameStatusChanged>.Remove(enum_BC_GameStatusChanged.OnLevelFinish, OnLevelFinished);
     }
-    public void GenerateAllEnviorment(enum_LevelStyle _LevelStyle,System.Random seed,Action<SBigmapLevelInfo> _OnLevelPrepared)
+    public void GenerateAllEnviorment(enum_TileStyle _LevelStyle,System.Random seed,Action<SBigmapLevelInfo> _OnLevelPrepared)
     {
         OnLevelPrepared = _OnLevelPrepared;
         m_mainSeed = seed;
@@ -45,13 +45,14 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         randomData.DataInit(m_DirectionalLight, m_OceanScript);
         SetPostEffects(_LevelStyle);
     }
-    public void SetPostEffects(enum_LevelStyle _levelStyle)
+    public void SetPostEffects(enum_TileStyle _levelStyle)
     {
         PostEffectManager.RemoveAllPostEffect();
-        PostEffectManager.AddPostEffect<PE_BloomSpecific>();
+        PostEffectManager.AddPostEffect<PE_BloomSpecific>().SetEffect(2, 10, 2);
+        PostEffectManager.AddPostEffect<PE_ScreenSpaceAmbientOcculusion>().SetEffect(32, 1);
         switch (_levelStyle)
         {
-            case enum_LevelStyle.Undead:
+            case enum_TileStyle.Undead:
                 PostEffectManager.AddPostEffect<PE_FogDepthNoise>().SetEffect(Color.white).SetEffect(TCommon.ColorAlpha(Color.white,.5f),.5f,-1f,5f).SetTexture(TResources.Load<Texture>("Texture/Noise1"));
                 break;
         }
@@ -59,7 +60,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
     #region Level
     void OnStageStart()
     {
-        m_currentLevel = m_MapLevelInfo.Find(p => p.m_TileType == enum_LevelType.Start);
+        m_currentLevel = m_MapLevelInfo.Find(p => p.m_TileType == enum_TileType.Start);
         OnLevelStart();
     }
 
@@ -76,7 +77,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         NavMesh.RemoveNavMeshData(m_NavMeshData);
         m_NavMeshData= NavMesh.AddNavMeshData(data);
         OnLevelPrepared(m_currentLevel);
-        m_currentLevel.SetTileLocking(enum_LevelLocking.Unlocked);
+        m_currentLevel.SetTileLocking(enum_TileLocking.Unlocked);
         TBroadCaster<enum_BC_UIStatusChanged>.Trigger(enum_BC_UIStatusChanged.PlayerLevelStatusChanged, m_MapLevelInfo, m_currentLevel.m_TileAxis);
     }
 
@@ -100,10 +101,10 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         foreach (enum_TileDirection direction in m_currentLevel.m_Connections.Keys)     //Set Connected Island Unlockable
         {
             if (m_MapLevelInfo.Get(m_currentLevel.m_Connections[direction])!=null)
-                m_MapLevelInfo.Get(m_currentLevel.m_Connections[direction]).SetTileLocking(enum_LevelLocking.Unlockable);
+                m_MapLevelInfo.Get(m_currentLevel.m_Connections[direction]).SetTileLocking(enum_TileLocking.Unlockable);
         }
 
-        if (m_currentLevel.m_TileType == enum_LevelType.End)        //Generate Portals For End IsLand
+        if (m_currentLevel.m_TileType == enum_TileType.End)        //Generate Portals For End IsLand
         {
             LevelTilePortal portal = m_currentLevel.m_Level.m_Portal;
             ObjectManager.SpawnInteract<InteractPortal>(enum_Interact.Interact_Portal, portal.m_worldPos).InitPortal(portal.E_Direction, OnPortalEntered);
@@ -113,13 +114,13 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
     }
     #endregion
     #region BigMap
-    public static SBigmapLevelInfo[,] GenerateBigmapLevels(enum_LevelStyle _levelStyle,System.Random bigMapSeed,Transform _generateParent,int _bigmapWidth, int _bigmapHeight,TileAxis startAxis)
+    public static SBigmapLevelInfo[,] GenerateBigmapLevels(enum_TileStyle _levelStyle,System.Random bigMapSeed,Transform _generateParent,int _bigmapWidth, int _bigmapHeight,TileAxis startAxis)
     {
         //Generate Big Map All Tiles
         SBigmapTileInfo[,] bigmapTiles = new SBigmapTileInfo[_bigmapWidth, _bigmapHeight];
         for (int i = 0; i < _bigmapWidth; i++)
             for (int j = 0; j < _bigmapHeight; j++)
-                bigmapTiles[i, j] = new  SBigmapTileInfo(new TileAxis(i, j), enum_LevelType.Invalid,_levelStyle, enum_LevelLocking.Locked);
+                bigmapTiles[i, j] = new  SBigmapTileInfo(new TileAxis(i, j), enum_TileType.Invalid,_levelStyle, enum_TileLocking.Locked);
 
         #region elderVersion
         ////Calculate Main Path And Connect
@@ -150,9 +151,9 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         List<SBigmapTileInfo> subGenerateTiles = new List<SBigmapTileInfo>();
         //Calculate Main Path
         int mainPathCount = bigMapSeed.Next(2) == 1 ? 5 : 6;
-        mainRoadTiles =  bigmapTiles.TileRandomFill(bigMapSeed, startAxis,(SBigmapTileInfo tile)=> { tile.ResetTileType(enum_LevelType.Battle); },p=>p.m_TileType== enum_LevelType.Invalid, mainPathCount);
-        mainRoadTiles[0].ResetTileType(enum_LevelType.Start);
-        mainRoadTiles[mainRoadTiles.Count-1].ResetTileType(enum_LevelType.End);
+        mainRoadTiles =  bigmapTiles.TileRandomFill(bigMapSeed, startAxis,(SBigmapTileInfo tile)=> { tile.ResetTileType(enum_TileType.Battle); },p=>p.m_TileType== enum_TileType.Invalid, mainPathCount);
+        mainRoadTiles[0].ResetTileType(enum_TileType.Start);
+        mainRoadTiles[mainRoadTiles.Count-1].ResetTileType(enum_TileType.End);
         //Connect Main Path Tiles
         for (int i = 0; i < mainRoadTiles.Count - 1; i++)
             ConnectTile(mainRoadTiles[i], mainRoadTiles[i + 1]);
@@ -161,8 +162,8 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         subGenerateTiles.AddRange(mainRoadTiles.GetRange(2, mainRoadTiles.Count - 3));
         if (subGenerateTiles.Count == 3)
         {
-            subGenerateTiles[0].ResetTileType(enum_LevelType.Reward);
-            subGenerateTiles[2].ResetTileType(enum_LevelType.Reward);
+            subGenerateTiles[0].ResetTileType(enum_TileType.Reward);
+            subGenerateTiles[2].ResetTileType(enum_TileType.Reward);
         }
         else
         {
@@ -170,7 +171,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
             subGenerateTiles.TraversalRandom(bigMapSeed, (SBigmapTileInfo tile) => {
                 rewardIndex++;
                 if (rewardIndex % 2 == 0)
-                    tile.ResetTileType(enum_LevelType.Reward);
+                    tile.ResetTileType(enum_TileType.Reward);
                 return false; });
         }
 
@@ -180,10 +181,10 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
             TTiles.TTiles.m_AllDirections.TraversalRandom(bigMapSeed, (enum_TileDirection direction) =>
             {
                 SBigmapTileInfo targetSubBattleTile = bigmapTiles.Get(tile.m_TileAxis.DirectionAxis(direction));
-                if (targetSubBattleTile!=null&& targetSubBattleTile.m_TileType== enum_LevelType.Invalid)
+                if (targetSubBattleTile!=null&& targetSubBattleTile.m_TileType== enum_TileType.Invalid)
                 {
                     subBattleTile = targetSubBattleTile;
-                    subBattleTile.ResetTileType(enum_LevelType.Battle);
+                    subBattleTile.ResetTileType(enum_TileType.Battle);
                     subGenerateTiles.Add(subBattleTile);
                 }
                 return subBattleTile!=null;
@@ -195,23 +196,23 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         if (subBattleTile!=null)
         TTiles.TTiles.m_AllDirections.TraversalRandom(bigMapSeed, (enum_TileDirection direction) => {
             SBigmapTileInfo nearbyTile = bigmapTiles.Get(subBattleTile.m_TileAxis.DirectionAxis(direction));
-            if (nearbyTile != null && (nearbyTile.m_TileType== enum_LevelType.Reward|| nearbyTile.m_TileType == enum_LevelType.Battle))
+            if (nearbyTile != null && (nearbyTile.m_TileType== enum_TileType.Reward|| nearbyTile.m_TileType == enum_TileType.Battle))
                 ConnectTile(subBattleTile,nearbyTile);
             return false; });
 
 
         //Generate Last Reward Tile
-        subGenerateTiles.RemoveAll(p => p.m_TileType == enum_LevelType.Reward);
+        subGenerateTiles.RemoveAll(p => p.m_TileType == enum_TileType.Reward);
         SBigmapTileInfo subRewardTile = null;
         subGenerateTiles.TraversalRandom(bigMapSeed, (SBigmapTileInfo tile) =>
         {
             TTiles.TTiles.m_AllDirections.TraversalRandom(bigMapSeed, (enum_TileDirection direction) =>
             {
                 SBigmapTileInfo targetSubrewardTile = bigmapTiles.Get(tile.m_TileAxis.DirectionAxis(direction));
-                if (targetSubrewardTile != null && targetSubrewardTile.m_TileType == enum_LevelType.Invalid)
+                if (targetSubrewardTile != null && targetSubrewardTile.m_TileType == enum_TileType.Invalid)
                 {
                     subRewardTile = targetSubrewardTile;
-                    subRewardTile.ResetTileType(enum_LevelType.Reward);
+                    subRewardTile.ResetTileType(enum_TileType.Reward);
                     ConnectTile(subRewardTile, tile);
                 }
                 return subRewardTile!=null;
@@ -220,7 +221,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         });
 
         //Load All map Levels
-        Dictionary<enum_LevelPrefabType, List<LevelBase>> levelPrefabDic = TResources.GetAllStyledLevels(_levelStyle);
+        Dictionary<enum_TilePrefabDefinition, List<LevelBase>> levelPrefabDic = TResources.GetAllStyledLevels(_levelStyle);
 
         LevelItemBase[] levelItemPrefabs = TResources.GetAllLevelItems(_levelStyle,null);
         Dictionary<LevelItemBase, int> maxItemCountDic = new Dictionary<LevelItemBase, int>();
@@ -230,9 +231,9 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
             for (int j = 0; j < _bigmapHeight; j++)
             {
                 m_MapLevelInfo[i, j] = new SBigmapLevelInfo(bigmapTiles[i, j]);
-                if (m_MapLevelInfo[i, j].m_TileType != enum_LevelType.Invalid)
+                if (m_MapLevelInfo[i, j].m_TileType != enum_TileType.Invalid)
                 {
-                    enum_LevelPrefabType prefabType = m_MapLevelInfo[i, j].m_TileType.ToPrefabType();   //Select Random Level From Dic
+                    enum_TilePrefabDefinition prefabType = m_MapLevelInfo[i, j].m_TileType.ToPrefabType();   //Select Random Level From Dic
                     LevelBase level = levelPrefabDic[prefabType].RandomItem(bigMapSeed);
                     if(levelPrefabDic[prefabType].Count>1)
                        levelPrefabDic[prefabType].Remove(level);
@@ -260,7 +261,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         tileStart.m_Connections.Add(directionConnection, tileEnd.m_TileAxis);
         tileEnd.m_Connections.Add(directionConnection.DirectionInverse(), tileStart.m_TileAxis);
         
-        if (tileEnd.m_TileType == enum_LevelType.End)       //Add Special Place For Portal To Generate
+        if (tileEnd.m_TileType == enum_TileType.End)       //Add Special Place For Portal To Generate
             tileEnd.m_Connections.Add(directionConnection, new TileAxis(-1,-1));
     }
     #endregion

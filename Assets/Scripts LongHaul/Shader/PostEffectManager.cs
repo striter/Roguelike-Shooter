@@ -3,6 +3,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(Camera))]
 public class PostEffectManager : SingletonMono<PostEffectManager> {
+    public bool B_TestMode=false;
     public static T AddPostEffect<T>() where T:PostEffectBase,new()
     {
         T effetBase = new T();
@@ -34,16 +35,18 @@ public class PostEffectManager : SingletonMono<PostEffectManager> {
         Graphics.Blit(source, tempTexture1);
         for (int i = 0; i < m_PostEffects.Count; i++)
         {
+            if (B_TestMode)
+            {   
+                m_PostEffects[i].OnRenderImage(tempTexture1, tempTexture1);
+                continue;
+            }
+
             tempTexture2 = RenderTexture.GetTemporary(Screen.width, Screen.height, 0);
             m_PostEffects[i].OnRenderImage(tempTexture1,tempTexture2);
-
             Graphics.Blit(tempTexture2, tempTexture1);
             RenderTexture.ReleaseTemporary(tempTexture2);
         }
         Graphics.Blit(tempTexture1,destination);
         RenderTexture.ReleaseTemporary(tempTexture1);
-    }
-    private void OnDestroy()
-    {
     }
 }

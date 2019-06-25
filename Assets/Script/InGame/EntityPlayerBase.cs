@@ -20,9 +20,9 @@ public class EntityPlayerBase : EntityBase {
     public InteractBase m_InteractTarget { get; private set; }
 
     public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized* m_EntityInfo.m_moveSpeed * time;
-    public override void Init(int entityID,SEntity entityInfo)
+    public override void Init(SEntity entityInfo)
     {
-        base.Init(entityID,entityInfo);
+        Init( entityInfo, true);
         m_CharacterController = GetComponent<CharacterController>();
         m_CharacterController.detectCollisions = false;
         gameObject.layer = GameLayer.I_MovementDetect;
@@ -30,9 +30,9 @@ public class EntityPlayerBase : EntityBase {
         m_Animator = new PlayerAnimator(tf_Model.GetComponent<Animator>(),null);
         transform.Find("InteractDetector").GetComponent<InteractDetector>().Init(OnInteractCheck);
     }
-    public override void OnActivate()
+    public override void OnActivate(int id)
     {
-        base.OnActivate();
+        base.OnActivate(id);
         m_Pitch = 0;
         CameraController.Attach(this.transform);
 

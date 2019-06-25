@@ -5,11 +5,11 @@ using GameSetting;
 using System;
 using TTiles;
 public class LevelBase : MonoBehaviour {
-    public enum_LevelPrefabType E_PrefabType = enum_LevelPrefabType.Invalid;
-    public enum_LevelType m_levelType { get; private set; }
+    public enum_TilePrefabDefinition E_PrefabType = enum_TilePrefabDefinition.Invalid;
+    public enum_TileType m_levelType { get; private set; }
     protected Transform tf_LevelItem;
     public System.Random m_seed { get; private set; }
-    public Dictionary<LevelItemBase, int> Init(TileMapData levelData,SLevelGenerate _levelGenerate, LevelItemBase[] _levelItems,enum_LevelType _levelType, System.Random _seed, enum_TileDirection _connectedDireciton)
+    public Dictionary<LevelItemBase, int> Init(TileMapData levelData,SGenerateItem _levelGenerate, LevelItemBase[] _levelItems,enum_TileType _levelType, System.Random _seed, enum_TileDirection _connectedDireciton)
     {
         tf_LevelItem = transform.Find("Item");
         m_seed = _seed;
@@ -23,7 +23,7 @@ public class LevelBase : MonoBehaviour {
     List<int> m_IndexMain=new List<int>();
     List<int> t_IndexTemp = new List<int>();
     Dictionary<enum_LevelItemType, List<LevelItemBase>> m_AllItems = new Dictionary<enum_LevelItemType, List<LevelItemBase>>();
-    Dictionary<LevelItemBase,int> GenerateTileItems(SLevelGenerate _itemData,LevelItemBase[] allItemPrefabs, TileMapData _data,enum_TileDirection _PortalDirection)
+    Dictionary<LevelItemBase,int> GenerateTileItems(SGenerateItem _itemData,LevelItemBase[] allItemPrefabs, TileMapData _data,enum_TileDirection _PortalDirection)
     {
         foreach (LevelItemBase levelItem in allItemPrefabs)
         {
@@ -108,7 +108,7 @@ public class LevelBase : MonoBehaviour {
 
     void GenerateRangePortalTile(TileAxis origin, enum_TileDirection portalDirection,int minusRange)
     {
-            List<LevelTile> tileAvailable = m_AllTiles.FindAll(p => p.E_Direction == portalDirection && p.E_TileType== enum_TileType.Empty);
+            List<LevelTile> tileAvailable = m_AllTiles.FindAll(p => p.E_Direction == portalDirection && p.E_TileType== enum_LevelTileType.Empty);
             LevelTile closestTile = tileAvailable[0];
             int closestOffset = int.MaxValue;
             for (int j = 0; j < tileAvailable.Count; j++)
@@ -143,7 +143,7 @@ public class LevelBase : MonoBehaviour {
         areaIndexes.Clear();
         LevelTile origin = m_AllTiles[tileIndex];
 
-        if (origin.E_TileType != enum_TileType.Empty)
+        if (origin.E_TileType != enum_LevelTileType.Empty)
             return false;
 
         for (int i = 0; i < XCount; i++)
@@ -153,7 +153,7 @@ public class LevelBase : MonoBehaviour {
                 if (i == 0 && j == 0)
                     continue;
 
-                int index = m_AllTiles.FindIndex(p => p.m_TileAxis==origin.m_TileAxis+new TileAxis(i,j)&&p.E_TileType== enum_TileType.Empty);
+                int index = m_AllTiles.FindIndex(p => p.m_TileAxis==origin.m_TileAxis+new TileAxis(i,j)&&p.E_TileType== enum_LevelTileType.Empty);
                 if (index == -1)
                     return false;
 
@@ -209,7 +209,7 @@ public class LevelBase : MonoBehaviour {
                             targetColor = TCommon.ColorAlpha(Color.yellow, .5f); 
                             break;
                     }
-                    if (m_AllTiles[i].E_TileType == enum_TileType.Portal)
+                    if (m_AllTiles[i].E_TileType == enum_LevelTileType.Portal)
                     {
                          sizeParam = 1.5f;
                     }
@@ -221,16 +221,16 @@ public class LevelBase : MonoBehaviour {
                         default:
                             targetColor = Color.magenta; sizeParam = 1f;
                             break;
-                        case enum_TileType.Empty:
+                        case enum_LevelTileType.Empty:
                             targetColor = TCommon.ColorAlpha(Color.green, .3f);
                             break;
-                        case enum_TileType.Main:
+                        case enum_LevelTileType.Main:
                             targetColor = TCommon.ColorAlpha(Color.red, .5f); sizeParam = 1f;
                             break;
-                        case enum_TileType.Item:
+                        case enum_LevelTileType.Item:
                             targetColor = TCommon.ColorAlpha(Color.blue, .5f); sizeParam = 1f;
                             break;
-                        case enum_TileType.Portal:
+                        case enum_LevelTileType.Portal:
                             targetColor = TCommon.ColorAlpha(Color.white, .5f);sizeParam = 1f;
                             break;
                     }

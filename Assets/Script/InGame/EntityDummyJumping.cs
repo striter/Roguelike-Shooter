@@ -5,11 +5,11 @@ using UnityEngine;
 
 public class EntityDummyJumping : EntityBase {
     Rigidbody rb_current;
-    public override void Init(int id, SEntity entityInfo)
+    public override void Init( SEntity entityInfo)
     {
-        base.Init(id, entityInfo);
         rb_current = GetComponent<Rigidbody>();
         rb_current.velocity = Vector3.zero;
+        Init(entityInfo, false);
     }
     float jumpCheck;
     bool tik_tok = false;

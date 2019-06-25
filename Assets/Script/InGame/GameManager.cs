@@ -7,15 +7,17 @@ using TExcel;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
+public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
 {
+    public enum_TileStyle Test_TileStyle = enum_TileStyle.Desert;
+    public enum_EntityStyle Test_EntityStyle = enum_EntityStyle.Test;
+    public string M_TESTSEED = "";
+
     public EntityBase m_LocalPlayer { get; private set; } = null;
     public static CPlayerSave m_PlayerInfo { get; private set; }
     public bool B_TestMode { get; private set; } = false;
-    public enum_LevelStyle E_TESTSTYLE = enum_LevelStyle.Desert;
     public System.Random m_GameSeed { get; private set; } = null;
     public string m_SeedString { get; private set; } = null;
-    public string M_TESTSEED = "";
     protected override void Awake()
     {
 #if UNITY_EDITOR
@@ -76,9 +78,14 @@ public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
 
         m_SeedString = _GameSeed;
         m_GameSeed = new System.Random(m_SeedString.GetHashCode());
-        EnviormentManager.Instance.GenerateAllEnviorment(E_TESTSTYLE, m_GameSeed,OnLevelStart);
+        m_BattleDifficulty = enum_BattleDifficulty.Default;
+        m_BattleEntityStyle = Test_EntityStyle;
+
+        EnviormentManager.Instance.GenerateAllEnviorment(Test_TileStyle, m_GameSeed,OnLevelStart);
+        m_StyledEnermyEntities=ObjectManager.RegisterAdditionalEntities(TResources.GetAllStyledEntities(m_BattleEntityStyle));
         GC.Collect();
-        m_LocalPlayer = ObjectManager.SpawnEntity(enum_Entity.Player,Vector3.zero);
+
+        m_LocalPlayer = ObjectManager.SpawnEntity(0,Vector3.zero);
     }
 
     //Call When Level Changed
@@ -87,24 +94,26 @@ public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnLevelStart);
         m_LocalPlayer.transform.position = levelInfo.m_Level.RandomEmptyTilePosition(m_GameSeed);
         bool battle = false;
-        if (levelInfo.m_TileLocking == enum_LevelLocking.Unlockable)
+        enum_BattleDifficulty difficulty= enum_BattleDifficulty.Default;
+        if (levelInfo.m_TileLocking == enum_TileLocking.Unlockable)
             switch (levelInfo.m_Level.m_levelType)
             {
-                case enum_LevelType.Battle:        //Generate All Enermy To Be Continued
-                case enum_LevelType.End:
+                case enum_TileType.Battle:        //Generate All Enermy To Be Continued
+                    {
+                        battle = true;
+                        if (m_BattleDifficulty < enum_BattleDifficulty.Hard)
+                            m_BattleDifficulty++;
+                        difficulty = m_BattleDifficulty;
+                    }
+                    break;
+                case enum_TileType.End:
                     battle = true;
                     break;
             }
 
+
         if(battle)
-            OnBattleStart(new List<EntityEnermyBase>() {
-            ObjectPoolManager<enum_Entity,EntityBase>.GetRegistedSpawnItem( enum_Entity.EnermyAIMillita) as EntityEnermyBase,
-            ObjectPoolManager<enum_Entity,EntityBase>.GetRegistedSpawnItem( enum_Entity.EnermyAIMillita) as EntityEnermyBase,
-            ObjectPoolManager<enum_Entity,EntityBase>.GetRegistedSpawnItem( enum_Entity.EnermyAIMillita) as EntityEnermyBase,
-            ObjectPoolManager<enum_Entity,EntityBase>.GetRegistedSpawnItem( enum_Entity.EnermyAIVeteran) as EntityEnermyBase,
-            ObjectPoolManager<enum_Entity,EntityBase>.GetRegistedSpawnItem( enum_Entity.EnermyAIVeteran) as EntityEnermyBase,
-            ObjectPoolManager<enum_Entity,EntityBase>.GetRegistedSpawnItem( enum_Entity.EnermyAIRanger) as EntityEnermyBase,
-            }, 3);          //Quite A Testing
+            OnBattleStart(ExcelManager.GetEntityGenerateProperties(1,levelInfo.m_TileType, difficulty) , 3);
         else
             OnLevelFinished();
     }
@@ -148,17 +157,19 @@ public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
     }
     #endregion
     #region Battle Management
+    public enum_EntityStyle m_BattleEntityStyle { get; private set; }
+    public enum_BattleDifficulty m_BattleDifficulty { get; private set; }
     public bool B_Battling { get; private set; } = false;
     public bool B_WaveEntityGenerating { get; private set; } = false;
-    public int m_WaveCount { get; private set; } = -1;
     public int m_CurrentWave { get; private set; } = -1;
     public int m_WaveCurrentEntity { get; private set; } = -1;
-    public List<EntityEnermyBase> m_WaveEnermyGenerate { get; private set; }
-    void OnBattleStart(List<EntityEnermyBase> enermyType,int _waveCount)
+    public SGenerateEntity m_WaveEnermyGenerate { get; private set; }
+    public List<int> m_EntityGenerating { get; private set; } = new List<int>();
+    public Dictionary<enum_EntityLevel, List<int>> m_StyledEnermyEntities;
+    void OnBattleStart(SGenerateEntity enermyType,int _waveCount)
     {
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnBattleStart);
         B_Battling = true;
-        m_WaveCount = _waveCount;
         m_WaveCurrentEntity = 0;
         m_CurrentWave = 1;
         m_WaveEnermyGenerate = enermyType;
@@ -168,13 +179,20 @@ public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
     void WaveStart()
     {
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnWaveStart);
-        this.StartSingleCoroutine(0, IE_GenerateEnermy(m_WaveEnermyGenerate,.1f));
+        m_EntityGenerating.Clear();
+        m_WaveEnermyGenerate.m_EntityGenerate.Traversal((enum_EntityLevel level, RangeInt range) =>
+        {
+            int spawnCount = range.Random();
+            for (int i = 0; i < spawnCount; i++)
+                m_EntityGenerating.Add(m_StyledEnermyEntities[level].RandomItem());
+        });
+        this.StartSingleCoroutine(0, IE_GenerateEnermy(m_EntityGenerating, .1f));
     }
     void WaveFinished()
     {
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnWaveFinish);
         m_CurrentWave++;
-        if (m_CurrentWave > m_WaveCount)
+        if (m_CurrentWave > m_WaveEnermyGenerate.m_WaveCount)
             OnBattleFinished();
         else
             WaveStart();
@@ -189,7 +207,7 @@ public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
         if (B_WaveEntityGenerating)
             return;
 
-        if (m_WaveCurrentEntity <= 0 || (m_CurrentWave < m_WaveCount && m_WaveCurrentEntity <= 2))
+        if (m_WaveCurrentEntity <= 0 || (m_CurrentWave < m_WaveEnermyGenerate.m_WaveCount && m_WaveCurrentEntity <= 2))
             WaveFinished();
     }
     void OnBattleFinished()
@@ -199,14 +217,14 @@ public class GameManager : SingletonMono<GameManager>,ISingleCoroutine
         OnLevelFinished();
     }
 
-    IEnumerator IE_GenerateEnermy(List<EntityEnermyBase> waveGenerate, float _offset)
+    IEnumerator IE_GenerateEnermy(List<int> waveGenerate, float _offset)
     {
         B_WaveEntityGenerating = true;
         int curSpawnCount = 0;
         for (; ; )
         {
             yield return new WaitForSeconds(_offset);
-            ObjectManager.SpawnEntity(waveGenerate[curSpawnCount].m_EntityInfo.m_Type, EnviormentManager.m_currentLevel.m_Level.RandomEmptyTilePosition(m_GameSeed)).SetTarget(m_LocalPlayer);
+            ObjectManager.SpawnEntity(waveGenerate[curSpawnCount], EnviormentManager.m_currentLevel.m_Level.RandomEmptyTilePosition(m_GameSeed)).SetTarget(m_LocalPlayer);
 
             m_WaveCurrentEntity++;
             curSpawnCount++;
@@ -224,24 +242,33 @@ public static class ExcelManager
 {
     public static void Init()
     {
-        Properties<SLevelGenerate>.Init();
         Properties<SEntity>.Init();
         Properties<SWeapon>.Init();
         Properties<SBarrage>.Init();
+        Properties<SGenerateItem>.Init();
+        Properties<SGenerateEntity>.Init();
     }
-    public static SLevelGenerate GetLevelGenerateProperties(enum_LevelStyle style,enum_LevelPrefabType prefabType)
+    public static SGenerateItem GetItemGenerateProperties(enum_TileStyle style,enum_TilePrefabDefinition prefabType)
     {
-        SLevelGenerate generate = Properties<SLevelGenerate>.PropertiesList.Find(p => p.m_LevelStyle == style && p.m_LevelPrefabType == prefabType);
+        SGenerateItem generate = Properties<SGenerateItem>.PropertiesList.Find(p => p.m_LevelStyle == style && p.m_LevelPrefabType == prefabType);
         if (generate.m_LevelStyle == 0 || generate.m_LevelPrefabType == 0||generate.m_ItemGenerate==null)
             Debug.LogError("Error Properties Found Of Index:" + ((int)style*10+ (int)prefabType).ToString());
 
          return generate;
     }
-    public static SEntity GetEntityGenerateProperties(enum_Entity type)
+    public static SGenerateEntity GetEntityGenerateProperties(int stageIndex,enum_TileType type,enum_BattleDifficulty battleDifficulty)
     {
-        SEntity entity= Properties<SEntity>.PropertiesList.Find(p => p.m_Type == type);
-        if (entity.m_Type == 0)
-            Debug.LogError("Error Properties Found Of Index:" + type.ToString() + "|" + ((int)type));
+        SGenerateEntity generate = Properties<SGenerateEntity>.PropertiesList.Find(p => p.m_stageIndex == stageIndex && p.m_TileType == type&&p.m_Difficulty==battleDifficulty);
+        if (generate.m_stageIndex == 0 || generate.m_TileType == 0 || generate.m_Difficulty == 0)
+            Debug.LogError("Error Properties Found Of Index:" + (stageIndex*100+ (int)type * 10 + (int)battleDifficulty).ToString());
+
+        return generate;
+    }
+    public static SEntity GetEntityProperties(int index)
+    {
+        SEntity entity= Properties<SEntity>.PropertiesList.Find(p => p.m_Index == index);
+        if (entity.m_MaxHealth == 0)
+            Debug.LogError("Error Properties Found Of Name Index:" + index);
         return entity;
     }
     public static SWeapon GetWeaponProperties(enum_Weapon type)
@@ -265,13 +292,6 @@ public static class ObjectManager
     public static void Init()
     {
         TF_Entity = new GameObject("Entity").transform;
-        TCommon.TraversalEnum((enum_Entity type) => 
-        {
-            ObjectPoolManager<enum_Entity,EntityBase>.Register(type,TResources.Instantiate<EntityBase>("Entity/"+type.ToString()), enum_PoolSaveType.DynamicMaxAmount,1,(EntityBase entity)=> {
-                entity.Init(GameManager.I_EntityID(i_entityIndex++, type == enum_Entity.Player), ExcelManager.GetEntityGenerateProperties(type));
-            });
-        });
-        
         TCommon.TraversalEnum((enum_SFX type) =>{
             ObjectPoolManager<enum_SFX, SFXBase>.Register(type, TResources.Instantiate<SFXBase>("SFX/" + type.ToString()),
             enum_PoolSaveType.DynamicMaxAmount, 1,
@@ -285,20 +305,20 @@ public static class ObjectManager
     }
 
     static int i_entityIndex = 0;
-    public static EntityBase SpawnEntity(enum_Entity type,Vector3 toPosition)
+    public static EntityBase SpawnEntity(int index,Vector3 toPosition)
     {
-        EntityBase entity= ObjectPoolManager<enum_Entity, EntityBase>.Spawn(type, TF_Entity);
+        EntityBase entity= ObjectPoolManager<int, EntityBase>.Spawn(index, TF_Entity);
         NavMeshHit hit;
         if (NavMesh.SamplePosition(toPosition, out hit, 5, -1))
             toPosition = hit.position;
-        entity.OnActivate();
+        entity.OnActivate(GameManager.I_EntityID(i_entityIndex++,entity.B_IsPlayer));
         entity.transform.position = toPosition;
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnSpawnEntity, entity);
         return entity;
     }
-    public static void RecycleEntity(enum_Entity type, EntityBase target)
+    public static void RecycleEntity(int index, EntityBase target)
     {
-        ObjectPoolManager<enum_Entity, EntityBase>.Recycle(type, target);
+        ObjectPoolManager<int, EntityBase>.Recycle(index, target);
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnRecycleEntity, target);
     }
 
@@ -362,6 +382,24 @@ public static class ObjectManager
     public static void RecycleAllLevelItem()
     {
         ObjectPoolManager<LevelItemBase, LevelItemBase>.RecycleAllManagedItems();
+    }
+
+    public static Dictionary<enum_EntityLevel, List<int>> RegisterAdditionalEntities(Dictionary<int,EntityBase> registerDic)
+    {
+        Dictionary<enum_EntityLevel, List<int>> enermyDic = new Dictionary<enum_EntityLevel, List<int>>();
+        registerDic.Traversal((int index, EntityBase entity) => {
+            ObjectPoolManager<int, EntityBase>.Register(index, entity, enum_PoolSaveType.DynamicMaxAmount, 1, 
+                (EntityBase entityInstantiate) => { entityInstantiate.Init(ExcelManager.GetEntityProperties(index)); });
+
+            if (!entity.B_IsPlayer)
+            {
+                if (!enermyDic.ContainsKey(entity.m_EntityInfo.m_Type))
+                    enermyDic.Add(entity.m_EntityInfo.m_Type, new List<int>());
+                enermyDic[entity.m_EntityInfo.m_Type].Add(index);
+            }
+
+        });
+        return enermyDic;
     }
 }
 #endregion
