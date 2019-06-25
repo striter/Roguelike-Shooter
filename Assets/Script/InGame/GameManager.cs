@@ -94,12 +94,14 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnLevelStart);
         m_LocalPlayer.transform.position = levelInfo.m_Level.RandomEmptyTilePosition(m_GameSeed);
         bool battle = false;
+        enum_BattleDifficulty difficulty= enum_BattleDifficulty.Default;
         if (levelInfo.m_TileLocking == enum_TileLocking.Unlockable)
             switch (levelInfo.m_Level.m_levelType)
             {
                 case enum_TileType.Battle:        //Generate All Enermy To Be Continued
                     {
                         battle = true;
+                        difficulty = m_BattleDifficulty;
                         if (m_BattleDifficulty < enum_BattleDifficulty.Hard)
                             m_BattleDifficulty++;
                     }
@@ -111,7 +113,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
 
 
         if(battle)
-            OnBattleStart(ExcelManager.GetEntityGenerateProperties(1,levelInfo.m_TileType,m_BattleDifficulty) , 3);
+            OnBattleStart(ExcelManager.GetEntityGenerateProperties(1,levelInfo.m_TileType, difficulty) , 3);
         else
             OnLevelFinished();
     }
