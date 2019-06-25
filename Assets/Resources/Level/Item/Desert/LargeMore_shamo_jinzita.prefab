@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 4929834929424282}
   - component: {fileID: 114423572659362460}
   m_Layer: 0
-  m_Name: LargeLess_shamo_jinzita
+  m_Name: LargeMore_shamo_jinzita
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
