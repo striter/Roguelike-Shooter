@@ -1,4 +1,4 @@
-﻿Shader "PostEffect/PE_MotionBlurDepth"
+﻿Shader "Hidden/PostEffect/PE_MotionBlurDepth"
 {
 	Properties
 	{

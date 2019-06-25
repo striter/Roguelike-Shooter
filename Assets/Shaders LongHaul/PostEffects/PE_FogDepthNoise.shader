@@ -1,4 +1,4 @@
-﻿Shader "PostEffect/PE_FogDepthNoise"
+﻿Shader "Hidden/PostEffect/PE_FogDepthNoise"
 {
 	Properties
 	{

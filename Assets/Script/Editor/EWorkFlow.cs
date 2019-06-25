@@ -318,7 +318,7 @@ public class EWorkFlow_ModelAutoPrefabPackaging : EditorWindow
     }
     public static Material CreateMaterial(enum_TileStyle lsType,bool isLevel,Material sharedMaterial=null)
     {
-        string folderParent = "Assets/Material/";
+        string folderParent = "Assets/Material/Static/";
         string folderPath = GetMaterialPath(lsType,isLevel);
 
         if (!Directory.Exists(folderParent))
@@ -337,8 +337,8 @@ public class EWorkFlow_ModelAutoPrefabPackaging : EditorWindow
     static string GetMaterialPath( enum_TileStyle matStyle, bool isLevel)
     {
         if (isLevel)
-            return "Assets/Material/Level/Level.mat";
-        return "Assets/Material/Level/Item_"  + matStyle.ToString() + ".mat";
+            return "Assets/Material/Static/Level.mat";
+        return "Assets/Material/Static/Item_" + matStyle.ToString() + ".mat";
     }
     public static Shader GetShader(enum_ShaderType sType)
     {
@@ -349,7 +349,7 @@ public class EWorkFlow_ModelAutoPrefabPackaging : EditorWindow
                 shader = null;
                 break;
             case enum_ShaderType.LowPoly_UVColorDiffuse:
-                shader = Shader.Find("Game/LowPoly_UVColor_Diffuse");
+                shader = Shader.Find("Game/Realistic/Diffuse_Texture");
                 break;
         }
         if (shader == null)

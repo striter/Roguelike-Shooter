@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PostEffectBase  {
-    const string S_ParentPath = "PostEffect/";
+    const string S_ParentPath = "Hidden/PostEffect/";
     Camera cam_Cur;
     public Material mat_Cur { get; private set; }
     Shader sd_Cur;
@@ -388,7 +388,9 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
     public override void OnSetEffect(Camera cam)
     {
         base.OnSetEffect(cam);
-        m_RenderShader = Shader.Find("PostEffect/PE_BloomSpecific_Render");
+        m_RenderShader = Shader.Find("Hidden/PostEffect/PE_BloomSpecific_Render");
+        if (m_RenderShader == null)
+            Debug.LogError("Null Shader Found!");
         m_GaussianBlur = new PE_GaussianBlur();
         GameObject temp = new GameObject("Render Camera");
         temp.transform.SetParent(Cam_Cur.transform);
@@ -418,44 +420,5 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
         m_GaussianBlur.OnRenderImage(m_RenderTexture, m_RenderTexture);     //Blur
         Mat_Cur.SetTexture("_RenderTex", m_RenderTexture);
         Graphics.Blit(source, destination, Mat_Cur, 1);        //Mix
-    }
-}
-public class PE_ScreenSpaceAmbientOcculusion:PostEffectBase
-{
-    protected int i_downSample;
-    public override void OnSetEffect(Camera cam)
-    {
-        base.OnSetEffect(cam);
-        Cam_Cur.depthTextureMode |= DepthTextureMode.Depth;
-        SetEffect();
-    }
-    public void SetEffect(int _sampleCount=32,int _downSample=1,float _sampleKernalRadius=1f,float _aoStrength=1f,float _depthBiasValue=0.002f)
-    {
-        i_downSample = _downSample;
-        mat_Cur.SetVectorArray("_SampleKernalArray",GenerateSampleKernals(_sampleCount));
-        mat_Cur.SetInt("_SampleKernalCount", _sampleCount);
-        mat_Cur.SetFloat("_SampleKernalRaidus", _sampleKernalRadius);
-        mat_Cur.SetFloat("_AOStrength", _aoStrength);
-        mat_Cur.SetFloat("_DepthBiasValue", _depthBiasValue);
-    }
-    public override void OnRenderImage(RenderTexture source, RenderTexture destination)
-    {
-        base.OnRenderImage(source, destination);
-        mat_Cur.SetMatrix("_InverseProjectionMatrix", Cam_Cur.projectionMatrix.inverse);
-        Graphics.Blit(source,destination,mat_Cur);
-    }
-    protected Vector4[] GenerateSampleKernals(int sampleCount)
-    {
-        Vector4[] samplePositions = new Vector4[sampleCount];
-        for (int i = 0; i < sampleCount; i++)
-        {
-            Vector4 position = new Vector4(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f));
-            position.Normalize();
-            float scale = (float)i / sampleCount;
-            scale = Mathf.Lerp(0.01f, 1.0f, scale * scale);
-            position *= scale;
-            samplePositions[i] = position;
-        }
-        return samplePositions;
     }
 }

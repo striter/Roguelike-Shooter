@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 4257212434597456}
   - component: {fileID: 114558369457484966}
   m_Layer: 0
-  m_Name: LargeLess_shamo_shishenrenmianxiang
+  m_Name: LargeMore_shamo_shishenrenmianxiang
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -155,3 +155,4 @@ MonoBehaviour:
   m_ItemType: 1
   b_showGizmos: 1
   b_AutoCenter: 1
+  b_AutoRotation: 1

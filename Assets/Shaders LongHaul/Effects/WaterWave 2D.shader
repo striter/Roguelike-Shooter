@@ -1,4 +1,4 @@
-﻿Shader "Effect/WaterWave 2D"
+﻿Shader "Game/Effect/WaterWave 2D"
 {
 	Properties
 	{

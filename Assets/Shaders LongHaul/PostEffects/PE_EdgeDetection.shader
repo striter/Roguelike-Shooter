@@ -1,4 +1,4 @@
-﻿Shader "PostEffect/PE_EdgeDetection"
+﻿Shader "Hidden/PostEffect/PE_EdgeDetection"
 {
 	Properties
 	{

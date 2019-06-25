@@ -1,4 +1,4 @@
-﻿Shader "PostEffect/PE_ViewDepth"
+﻿Shader "Hidden/PostEffect/PE_ViewDepth"
 {
 	Properties
 	{

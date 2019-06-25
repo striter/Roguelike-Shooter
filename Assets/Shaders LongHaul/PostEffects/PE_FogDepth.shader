@@ -1,4 +1,4 @@
-﻿Shader "PostEffect/PE_FogDepth"
+﻿Shader "Hidden/PostEffect/PE_FogDepth"
 {
 	Properties
 	{

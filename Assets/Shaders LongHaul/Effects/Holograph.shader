@@ -1,4 +1,4 @@
-﻿Shader "Effect/Holograph"
+﻿Shader "Game/Effect/Holograph"
 {
 	Properties
 	{
