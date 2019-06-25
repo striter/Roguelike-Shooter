@@ -101,9 +101,9 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
                 case enum_TileType.Battle:        //Generate All Enermy To Be Continued
                     {
                         battle = true;
-                        difficulty = m_BattleDifficulty;
                         if (m_BattleDifficulty < enum_BattleDifficulty.Hard)
                             m_BattleDifficulty++;
+                        difficulty = m_BattleDifficulty;
                     }
                     break;
                 case enum_TileType.End:
