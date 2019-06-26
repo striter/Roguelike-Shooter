@@ -89,7 +89,7 @@ GameObject:
   - component: {fileID: 4585963332106004}
   - component: {fileID: 114519478308468746}
   m_Layer: 9
-  m_Name: 20001_Muzzle_Normal
+  m_Name: 10001_Muzzle_Normal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -51,6 +51,10 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         {
             Time.timeScale = Time.timeScale == 1f ? .1f : 1f;
         }
+        RaycastHit hit = new RaycastHit();
+        if (Input.GetKeyDown(KeyCode.Z) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
+            ObjectManager.SpawnSFX<SFXBlast>(30002, hit.point, Vector3.forward).Play(1000,10);
+
         UIManager.instance.transform.Find("SeedTest").GetComponent<UnityEngine.UI.Text>().text = m_SeedString;
     }
     private void OnDestroy()
@@ -129,7 +133,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     {
         if (hb.I_AttacherID == sourceID)
             return false;
-
+        
         return Instance.m_Entities.ContainsKey(sourceID) && hb.m_Attacher.B_IsPlayer != Instance.m_Entities[sourceID].B_IsPlayer;
     }
     public Dictionary<int, EntityBase> m_Entities { get; private set; } = new Dictionary<int, EntityBase>();
@@ -298,8 +302,8 @@ public static class ObjectManager
             (SFXBase sfx) => { sfx.Init(index); });
         });
 
-        TCommon.TraversalEnum((enum_Interact type) =>{
-            ObjectPoolManager<enum_Interact, InteractBase>.Register(type, TResources.Instantiate<InteractBase>("Interact/" + type.ToString()),
+        TCommon.TraversalEnum((enum_Interaction type) =>{
+            ObjectPoolManager<enum_Interaction, InteractBase>.Register(type, TResources.Instantiate<InteractBase>("Interact/" + type.ToString()),
             enum_PoolSaveType.DynamicMaxAmount, 1, null);
         });
     }
@@ -357,19 +361,19 @@ public static class ObjectManager
         ObjectPoolManager<int, SFXBase>.Recycle(index, sfx);
     }
 
-    public static T SpawnInteract<T>(enum_Interact type, Vector3 toPos) where T:InteractBase
+    public static T SpawnInteract<T>(enum_Interaction type, Vector3 toPos) where T:InteractBase
     {
-        InteractBase sfx = ObjectPoolManager<enum_Interact, InteractBase>.Spawn(type, TF_Entity);
+        InteractBase sfx = ObjectPoolManager<enum_Interaction, InteractBase>.Spawn(type, TF_Entity);
         sfx.transform.position = toPos;
         return sfx as T;
     }
-    public static void RecycleInteract(enum_Interact type, InteractBase target)
+    public static void RecycleInteract(enum_Interaction type, InteractBase target)
     {
-        ObjectPoolManager<enum_Interact, InteractBase>.Recycle(type, target);
+        ObjectPoolManager<enum_Interaction, InteractBase>.Recycle(type, target);
     }
-    public static void RecycleAllInteract(enum_Interact type)
+    public static void RecycleAllInteract(enum_Interaction type)
     {
-        ObjectPoolManager<enum_Interact, InteractBase>.RecycleAll(type);
+        ObjectPoolManager<enum_Interaction, InteractBase>.RecycleAll(type);
     }
 
     public static void RegisterLevelItem(Dictionary<LevelItemBase,int> registerDic)

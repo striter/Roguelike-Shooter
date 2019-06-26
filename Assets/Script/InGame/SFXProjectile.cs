@@ -9,7 +9,8 @@ public class SFXProjectile : SFXBase {
     HitCheckDetect m_Detect;
     TrailRenderer m_Trail;
     float f_sphereWidth;
-    protected int i_impactSFXIndex;
+    protected int i_impactSFXIndex,i_blastSFXIndex;
+    protected HitCheckEntity m_hitEntity;
     public bool B_SimulatePhysics { get; protected set; }
     public override void Init(int sfxIndex)
     {
@@ -18,26 +19,28 @@ public class SFXProjectile : SFXBase {
         m_Trail = transform.GetComponentInChildren<TrailRenderer>();
         f_sphereWidth = m_Trail.startWidth / 2;
     }
-    public void PlayWeapon(int sourceID, int impactSFXIndex, Vector3 direction,Vector3 targetPosition,SWeapon weaponInfo, float duration= -1)
+    public void PlayWeapon(int sourceID, Vector3 direction,Vector3 targetPosition,SWeapon weaponInfo, float duration= -1)
     {
-        Play(sourceID, impactSFXIndex, direction,targetPosition,weaponInfo.m_Damage,weaponInfo.m_HorizontalSpeed,weaponInfo.m_HorizontalDistance,0,weaponInfo.m_VerticalAcceleration, duration == -1 ? GameConst.I_NormalProjectileLastTime : duration);
+        Play(sourceID, weaponInfo.m_ImpactSFXIndex,weaponInfo.m_BlastSFXIndex, direction,targetPosition,weaponInfo.m_Damage,weaponInfo.m_HorizontalSpeed,weaponInfo.m_HorizontalDistance,0,weaponInfo.m_VerticalAcceleration, duration == -1 ? GameConst.I_NormalProjectileLastTime : duration);
     }
-    public void PlayBarrage(int sourceID, int impactSFXIndex, Vector3 direction, Vector3 targetPosition, SBarrage barrageInfo,float duration =-1)
+    public void PlayBarrage(int sourceID, Vector3 direction, Vector3 targetPosition, SBarrage barrageInfo,float duration =-1)
     {
-        Play(sourceID, impactSFXIndex, direction, targetPosition, barrageInfo.m_ProjectileDamage, barrageInfo.m_ProjectileSpeed,200,0,0, duration == -1 ? GameConst.I_BarrageProjectileMaxLastTime : duration);
+        Play(sourceID, barrageInfo.m_ImpactSFXIndex,barrageInfo.m_BlastSFXIndex, direction, targetPosition, barrageInfo.m_ProjectileDamage, barrageInfo.m_ProjectileSpeed,200,0,0, duration == -1 ? GameConst.I_BarrageProjectileMaxLastTime : duration);
     }
-    protected virtual void Play(int sourceID,int impactSFXIndex, Vector3 direction, Vector3 destination, float damage, float horiSpeed,float horiDistance,float vertiSpeed,float vertiAcceleration, float duration)
+    protected virtual void Play(int sourceID,int impactSFXIndex,int blastSFXIndex, Vector3 direction, Vector3 destination, float damage, float horiSpeed,float horiDistance,float vertiSpeed,float vertiAcceleration, float duration)
     {
-        OnPlayPreset(damage, impactSFXIndex);
+        OnPlayPreset(damage, impactSFXIndex,blastSFXIndex);
         m_Simulator = new ProjectilePhysicsSimulator(transform.position, direction, Vector3.down, horiSpeed, horiDistance,vertiSpeed, vertiAcceleration);
         Play(sourceID, duration);
     }
-    protected void OnPlayPreset(float damage,int impactSFXIndex)
+    protected void OnPlayPreset(float damage,int impactSFXIndex,int _blastSFXIndex)
     {
         m_Damage = damage;
         i_impactSFXIndex = impactSFXIndex;
+        i_blastSFXIndex = _blastSFXIndex;
         B_SimulatePhysics = true;
         m_Trail.Clear();
+        m_hitEntity = null;
     }
     protected override void Update()
     {
@@ -60,29 +63,32 @@ public class SFXProjectile : SFXBase {
     protected virtual void OnHitTarget(RaycastHit hitInfo)
     {
         B_SimulatePhysics = false;
-        if(i_impactSFXIndex!=-1)
-            ObjectManager.SpawnSFX<SFXParticles>(i_impactSFXIndex, hitInfo.point,hitInfo.normal,hitInfo.transform).Play(I_SourceID);
         m_Detect.DoDetect(hitInfo.collider);
+        if (i_impactSFXIndex != -1)
+        {
+            SFXParticles impact= ObjectManager.SpawnSFX<SFXParticles>(i_impactSFXIndex, hitInfo.point, hitInfo.normal, hitInfo.transform);
+            impact.Play(I_SourceID);
+            if (m_hitEntity != null)
+                m_hitEntity.AttachTransform(impact);
+        }
+
+        if (m_hitEntity!=null&&GameManager.B_CanHitTarget(m_hitEntity, I_SourceID))
+            m_hitEntity.TryHit(m_Damage);
+
+        OnPlayFinished();
     }
 
     protected virtual void OnHitEntity(HitCheckEntity hitEntity)
     {
-        if (GameManager.B_CanHitTarget(hitEntity, I_SourceID))
-        {
-            hitEntity.TryHit(m_Damage);
-        }
-        OnPlayFinished();
+        m_hitEntity = hitEntity;
     }
     protected virtual void OnHitDynamic(HitCheckDynamic hitDynamic)
     {
-        OnPlayFinished();
     }
     protected virtual void OnHitStatic(HitCheckStatic hitStatic)
     {
-        OnPlayFinished();
     }
     protected virtual void OnHitError()
     {
-        OnPlayFinished();
     }
 }

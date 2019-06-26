@@ -53,7 +53,7 @@ namespace GameSetting
         }
 
         public static float F_RocketBlastDamage(float weaponDamage, float distance) => weaponDamage * (1-(distance / GameConst.I_RocketBlastRadius));       //Rocket Blast Damage
-        public static Vector3 V3_FireDirectionSpread(Vector3 aimDirection, float spread,Vector3 up,Vector3 right) => (aimDirection*GameConst.I_ProjectileSpreadAtDistance + up* UnityEngine.Random.Range(-spread, spread) + right * UnityEngine.Random.Range(-spread, spread)).normalized;
+        public static Vector3 V3_RangeSpreadDirection(Vector3 aimDirection, float spread,Vector3 up,Vector3 right) => (aimDirection*GameConst.I_ProjectileSpreadAtDistance + up* UnityEngine.Random.Range(-spread, spread) + right * UnityEngine.Random.Range(-spread, spread)).normalized;
     }
 
     public static class UIConst
@@ -156,12 +156,9 @@ namespace GameSetting
     public enum enum_LevelTileType { Invaid = -1, Empty , Main, Item, Portal, }
     public enum enum_EntityLevel { Invalid = -1, Default=0 ,Militia=1 , Veteran=2, Ranger=3 }
     public enum enum_EntityStyle { Invalid=-1, Test=1,}
-
-    public enum enum_Interact
-    {
-        Invalid=-1,
-        Interact_Portal,
-    }
+    public enum enum_Interaction { Invalid = -1, Interact_Portal, }
+    public enum enum_TriggerType { Invalid = -1, Single = 1, Auto = 2, Burst = 3, Pull = 4, Store = 5, }
+    public enum enum_BarrageType { Invalid = -1, Single = 1, Multiple = 2, Melee = 3, }
 
     public enum enum_Weapon
     {
@@ -188,21 +185,6 @@ namespace GameSetting
         //Heavy Weapon
         Crossbow = 7001,
         RocketLauncher = 7002,
-    }
-    public enum enum_TriggerType
-    {
-        Invalid = -1,
-        Single = 1,
-        Auto = 2,
-        Burst = 3,
-        Pull = 4,
-        Store = 5,
-    }
-    public enum enum_BarrageType
-    {
-        Invalid=-1,
-        Single=1,
-        Multiple=2,
     }
     #endregion
     #region GameLayer
@@ -461,6 +443,7 @@ namespace GameSetting
         int i_triggerType;
         int i_muzzleIndex;
         int i_projectileIndex;
+        int i_blastIndex;
         int i_impactIndex;
         float f_damage;
         float f_fireRate;
@@ -482,8 +465,8 @@ namespace GameSetting
         public enum_TriggerType m_TriggerType=>(enum_TriggerType)i_triggerType;
         public int m_MuzzleSFXIndex => i_muzzleIndex;
         public int m_ProjectileSFXIndex => i_projectileIndex;
+        public int m_BlastSFXIndex => i_blastIndex;
         public int m_ImpactSFXIndex => i_impactIndex;
-        
         public float m_Damage => f_damage;
         public float m_FireRate => f_fireRate;
         public float m_SpecialRate => f_specialRate;
@@ -508,6 +491,7 @@ namespace GameSetting
         int i_barrageType;
         int i_muzzleIndex;
         int i_projectileIndex;
+        int i_blastIndex;
         int i_impactIndex;
         float f_firerate;
         RangeInt i_projectileCount;
@@ -521,6 +505,7 @@ namespace GameSetting
         public enum_BarrageType m_BarrageType => (enum_BarrageType)i_barrageType;
         public int m_MuzzleSFXIndex => i_muzzleIndex;
         public int m_ProjectileSFXIndex => i_projectileIndex;
+        public int m_BlastSFXIndex => i_blastIndex;
         public int m_ImpactSFXIndex => i_impactIndex;
         public float m_Firerate => f_firerate;
         public RangeInt m_ProjectileCount => i_projectileCount;

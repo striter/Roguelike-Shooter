@@ -2,9 +2,9 @@
 using UnityEngine;
 
 public class SFXProjectileBlastMeteor : SFXProjectileBlastTrigger {
-    protected override void Play(int sourceID, int impactSFXIndex, Vector3 direction, Vector3 destination, float damage, float horiSpeed, float horiDistance, float vertiSpeed, float vertiAcceleration, float duration)
+    protected override void Play(int sourceID, int impactSFXIndex,int blastIndex, Vector3 direction, Vector3 destination, float damage, float horiSpeed, float horiDistance, float vertiSpeed, float vertiAcceleration, float duration)
     {
-        OnPlayPreset(damage, impactSFXIndex);
+        OnPlayPreset(damage, impactSFXIndex,blastIndex);
         B_SimulatePhysics = true;
         m_Damage = damage;
         float radius = Vector3.Distance(transform.position, destination);
