@@ -94,7 +94,7 @@ Shader "Game/Effect/PlantsWaving_Vertex"
 
 				struct v2fs
 				{
-					float4 pos:SV_POSITION;
+				V2F_SHADOW_CASTER;
 				};
 
 			v2fs vertshadow(appdata_base v)
