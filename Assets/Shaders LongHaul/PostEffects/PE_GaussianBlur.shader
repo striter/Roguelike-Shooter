@@ -1,4 +1,4 @@
-﻿Shader "PostEffect/PE_GaussianBlur"
+﻿Shader "Hidden/PostEffect/PE_GaussianBlur"
 {
 	Properties
 	{

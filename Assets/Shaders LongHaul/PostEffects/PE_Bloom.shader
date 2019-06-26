@@ -1,4 +1,4 @@
-﻿Shader "PostEffect/PE_Bloom"
+﻿Shader "Hidden/PostEffect/PE_Bloom"
 {
 	Properties
 	{
@@ -82,8 +82,8 @@
 			ENDCG
 		}
 
-			UsePass "PostEffect/PE_GaussianBlur/GAUSSIAN_BLUR_VERTICAL"
-			UsePass "PostEffect/PE_GaussianBlur/GAUSSIAN_BLUR_HORIZONTAL"
+			UsePass "Hidden/PostEffect/PE_GaussianBlur/GAUSSIAN_BLUR_VERTICAL"
+			UsePass "Hidden/PostEffect/PE_GaussianBlur/GAUSSIAN_BLUR_HORIZONTAL"
 
 
 			Pass

@@ -1,4 +1,4 @@
-﻿Shader "PostEffect/PE_ViewNormal"
+﻿Shader "Hidden/PostEffect/PE_ViewNormal"
 {
 	Properties
 	{

@@ -1,4 +1,4 @@
-﻿Shader "PostEffect/PE_BSC"
+﻿Shader "Hidden/PostEffect/PE_BSC"
 {
 	Properties
 	{

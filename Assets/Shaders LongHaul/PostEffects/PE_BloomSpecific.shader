@@ -1,4 +1,4 @@
-﻿Shader "PostEffect/PE_BloomSpecific"
+﻿Shader "Hidden/PostEffect/PE_BloomSpecific"
 {
 	Properties
 	{
