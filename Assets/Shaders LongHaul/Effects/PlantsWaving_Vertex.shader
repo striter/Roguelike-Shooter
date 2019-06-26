@@ -6,9 +6,10 @@ Shader "Game/Effect/PlantsWaving_Vertex"
 	{
 		_MainTex("Color UV TEX",2D) = "white"{}
 		_Color("Color Tint",Color) = (1,1,1,1)
-		_VerticalWaveParam("Vertical Wave Edge",Range(-1,1))=.05
-		_HorizontalWaveParam("Vertical Wave Edge",Range(-1,1))=.05
-			_WaveSpeed("Wave Speed",Range(0,5))=1
+		_WaveDirection("Wind Direction",Vector)=(.1,0,.1,0)
+		_WaveSpeed("Wind Speed",Range(0,5))=1
+		_YStart("Wind Y Start",Range(0,5))=1
+		_YMultiple("Model Y Multiple",Range(0,5))=1
 	}
 		SubShader
 		{
@@ -19,6 +20,15 @@ Shader "Game/Effect/PlantsWaving_Vertex"
 				#include "UnityCG.cginc"
 				#include "Lighting.cginc"
 				#include "AutoLight.cginc"
+				float4 _WaveDirection;
+				float _WaveSpeed;
+				float _YMultiple;
+				float _YStart;
+		float3 waveAdd(float vertexY,float3 worldPos)
+		{
+			float wave =_YStart>worldPos.y?0:vertexY* _YMultiple *sin(_Time.y*_WaveSpeed + worldPos*_WaveDirection.w / normalize(_WaveDirection.xyz) );
+			return  _WaveDirection.xyz*wave/ 100;
+		}
 				ENDCG
 
 			Pass		//Base Pass
@@ -48,9 +58,6 @@ Shader "Game/Effect/PlantsWaving_Vertex"
 				sampler2D _MainTex;
 				float4 _MainTex_ST;
 				float4 _Color;
-				float _VerticalWaveParam;
-				float _HorizontalWaveParam;
-				float _WaveSpeed;
 				v2f vert(appdata v)
 				{
 					v2f o;
@@ -59,10 +66,8 @@ Shader "Game/Effect/PlantsWaving_Vertex"
 					fixed3 worldNormal = normalize(mul(v.normal, (float3x3)unity_WorldToObject)); //法线方向n
 					fixed3 worldLightDir = normalize(UnityWorldSpaceLightDir(o.worldPos));
 					o.diffuse = saturate(dot(worldLightDir,worldNormal));
-					float wave = v.vertex.y*sin(_Time.y*_WaveSpeed);
-					o.worldPos +=float3(wave*_HorizontalWaveParam, 0, wave*_VerticalWaveParam) / 100;
+					o.worldPos += waveAdd(v.vertex.y,o.worldPos); 
 					o.pos = UnityWorldToClipPos(o.worldPos);
-					
 					TRANSFER_SHADOW(o);
 					return o;
 				}
@@ -92,16 +97,12 @@ Shader "Game/Effect/PlantsWaving_Vertex"
 					float4 pos:SV_POSITION;
 				};
 
-				float _VerticalWaveParam;
-				float _HorizontalWaveParam;
-				float _WaveSpeed;
 			v2fs vertshadow(appdata_base v)
 			{
 				v2fs o;
 				float3 worldPos = mul(unity_ObjectToWorld, v.vertex);
-				float wave = v.vertex.y*sin(_Time.y*_WaveSpeed);
-				 worldPos += float3(wave*_HorizontalWaveParam, 0, wave*_VerticalWaveParam) / 100;
-				 o.pos = UnityWorldToClipPos(worldPos);
+				worldPos += waveAdd(v.vertex.y,worldPos);
+			 o.pos = UnityWorldToClipPos(worldPos);
 				return o;
 			}
 
