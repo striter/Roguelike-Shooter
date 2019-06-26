@@ -357,7 +357,7 @@ GameObject:
   - component: {fileID: 208776447134930666}
   - component: {fileID: 136515044948846542}
   m_Layer: 0
-  m_Name: 1003
+  m_Name: 1003_Test_Ranger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

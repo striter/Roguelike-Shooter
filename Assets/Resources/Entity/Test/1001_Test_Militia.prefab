@@ -207,7 +207,7 @@ GameObject:
   - component: {fileID: 208740406546377236}
   - component: {fileID: 136987456108486068}
   m_Layer: 0
-  m_Name: 1001
+  m_Name: 1001_Test_Militia
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
