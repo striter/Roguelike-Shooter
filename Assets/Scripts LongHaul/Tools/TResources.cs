@@ -14,6 +14,8 @@ public class TResources
         public const string S_LevelTexture = "Level/Texture";
         public const string S_Entity = "Entity";
         public const string S_StyleCustomization = "Level/Customization";
+
+        public const string S_SFX = "SFX";
     }
 
     public static TileMapData GetLevelData(string name) => Load<TileMapData>(ConstPath.S_LevelData + "/" + name);
@@ -53,11 +55,19 @@ public class TResources
         Dictionary<int, EntityBase> entitisDic = new Dictionary<int, EntityBase>();
         entitisDic.Add(0,Instantiate<EntityBase>(ConstPath.S_Entity +"/Player"));
         EntityBase[] entities = LoadAll<EntityBase>(ConstPath.S_Entity + "/" + entityStyle.ToString());
-        entities.Traversal<EntityBase>((EntityBase entity) => {
-            int index = int.Parse(entity.name);
+        entities.Traversal((EntityBase entity) => {
+            int index = int.Parse(entity.name.Split('_')[0]);
             entitisDic.Add(index, GameObject.Instantiate<EntityBase>(entity));
         });
         return entitisDic;
+    }
+    public static Dictionary<int, SFXBase> GetAllGameSFXs()
+    {
+        Dictionary<int, SFXBase> sfxsDic = new Dictionary<int, SFXBase>();
+        LoadAll<SFXBase>(ConstPath.S_SFX).Traversal((SFXBase sfx) => {
+            sfxsDic.Add(int.Parse(sfx.name.Split('_')[0]),GameObject.Instantiate<SFXBase>(sfx));
+        });
+        return sfxsDic;
     }
     #region Will Be Replaced By AssetBundle If Needed
     public static T Instantiate<T>(string path, Transform toParent = null) where T : UnityEngine.Object
@@ -119,6 +129,7 @@ public class TResources
         return obj;
     }
 }
+
 namespace ResourceLoader
 {
     public class ResourcesLoader
@@ -179,33 +190,6 @@ namespace ResourceLoader
                 yield break;
             }
     }
-
-
-        //only useable in pc???
-        //static FileInfo[] GetAllFilesAtDirectory(string resourcePath)
-        //{
-        //    FileInfo[] files = new FileInfo[0];
-        //    try
-        //    {
-        //        string path = resourcePath;
-        //        string fullPath = Application.streamingAssetsPath + path;
-        //        if (!Directory.Exists(fullPath))
-        //        {
-        //            throw (new Exception("No path of " + fullPath + " found"));
-        //        }
-        //        DirectoryInfo direction = new DirectoryInfo(fullPath);
-        //        files = direction.GetFiles("*", SearchOption.AllDirectories);
-        //        if (files.Length == 0)
-        //        {
-        //            throw (new Exception("No files exists at path " + fullPath));
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Debug.LogError(e.Message);
-        //    };
-        //    return files;
-        //}
     }
 
 }

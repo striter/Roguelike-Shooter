@@ -281,11 +281,19 @@ public class EntityEnermyBase : EntityBase {
         }
         protected void FireBullet(Vector3 direction)
         {
-            (ObjectManager.SpawnSFX(m_Info.m_ProjectileType, transform) as SFXProjectile).PlayBarrage(m_EntityControlling.I_EntityID, direction,targetTransform.position, m_Info);
+            if(m_Info.m_MuzzleSFXIndex!=-1)
+                ObjectManager.SpawnSFX<SFXParticles>(m_Info.m_MuzzleSFXIndex, transform.position,transform.forward).Play(m_EntityControlling.I_EntityID);
+            ObjectManager.SpawnSFX<SFXProjectile>(m_Info.m_ProjectileSFXIndex, transform.position,transform.forward).PlayBarrage(m_EntityControlling.I_EntityID,m_Info.m_ImpactSFXIndex, direction,targetTransform.position, m_Info);
         }
         public void Deactivate()
         {
             this.StopAllSingleCoroutines();
+        }
+    }
+    class BarrageRangeSingle : BarrageBase
+    {
+        public BarrageRangeSingle(SBarrage barrageInfo) : base(barrageInfo)
+        {
         }
     }
     class BarrageMultiple : BarrageBase

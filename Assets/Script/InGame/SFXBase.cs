@@ -2,16 +2,16 @@
 using UnityEngine;
 using GameSetting;
 public class SFXBase : MonoBehaviour {
-    public enum_SFX E_Type { get; private set; } = enum_SFX.Invalid;
+    public int I_SFXIndex { get; private set; } = -1;
 
-    public virtual void Init(enum_SFX type)
+    public virtual void Init(int _sfxIndex)
     {
-        E_Type = type;
+        I_SFXIndex = _sfxIndex;
     }
 
     public void Start()
     {
-        if (E_Type == enum_SFX.Invalid)
+        if (I_SFXIndex == -1)
             Debug.LogError("Please Init Before Start!" + gameObject.name.ToString());
     }
     public int I_SourceID { get; private set; }
@@ -35,6 +35,6 @@ public class SFXBase : MonoBehaviour {
     protected  virtual void OnPlayFinished()
     {
         OnSFXPlayFinished?.Invoke();
-        ObjectManager.RecycleSFX(E_Type, this);
+        ObjectManager.RecycleSFX(I_SFXIndex, this);
     }
 }

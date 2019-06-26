@@ -156,17 +156,6 @@ namespace GameSetting
     public enum enum_LevelTileType { Invaid = -1, Empty , Main, Item, Portal, }
     public enum enum_EntityLevel { Invalid = -1, Default=0 ,Militia=1 , Veteran=2, Ranger=3 }
     public enum enum_EntityStyle { Invalid=-1, Test=1,}
-    public enum enum_SFX        //Preset For SFX
-    {
-        Invalid = -1,
-        Projectile_Normal = 1,
-        Projectile_LaserRay = 2,
-        Projectile_LaserBeam = 3,
-        Projectile_Bolt = 4,
-        Projectile_Rocket = 5,
-        Projectile_Meteor=6,
-        Blast_Rocket = 101,
-    }
 
     public enum enum_Interact
     {
@@ -208,15 +197,6 @@ namespace GameSetting
         Burst = 3,
         Pull = 4,
         Store = 5,
-    }
-    public enum enum_ProjectileType
-    {
-        Invalid = -1,
-        Normal = 1,
-        LaserRay = 2,
-        LaserBeam = 3,
-        Bolt = 4,
-        Rocket = 5,
     }
     public enum enum_BarrageType
     {
@@ -479,7 +459,9 @@ namespace GameSetting
         int index;
         string s_name;
         int i_triggerType;
-        int i_projectileType;
+        int i_muzzleIndex;
+        int i_projectileIndex;
+        int i_impactIndex;
         float f_damage;
         float f_fireRate;
         float f_specialRate;
@@ -498,7 +480,10 @@ namespace GameSetting
         public enum_Weapon m_Weapon => (enum_Weapon)index;
         public string m_Name => s_name;
         public enum_TriggerType m_TriggerType=>(enum_TriggerType)i_triggerType;
-        public enum_SFX m_ProjectileType => (enum_SFX)i_projectileType;
+        public int m_MuzzleSFXIndex => i_muzzleIndex;
+        public int m_ProjectileSFXIndex => i_projectileIndex;
+        public int m_ImpactSFXIndex => i_impactIndex;
+        
         public float m_Damage => f_damage;
         public float m_FireRate => f_fireRate;
         public float m_SpecialRate => f_specialRate;
@@ -521,7 +506,9 @@ namespace GameSetting
     {
         int i_index;
         int i_barrageType;
-        int i_projectileType;
+        int i_muzzleIndex;
+        int i_projectileIndex;
+        int i_impactIndex;
         float f_firerate;
         RangeInt i_projectileCount;
         float i_projectileDamage;
@@ -532,7 +519,9 @@ namespace GameSetting
         float f_offsetExtension;
         public int m_Index => i_index;
         public enum_BarrageType m_BarrageType => (enum_BarrageType)i_barrageType;
-        public enum_SFX m_ProjectileType => (enum_SFX)i_projectileType;
+        public int m_MuzzleSFXIndex => i_muzzleIndex;
+        public int m_ProjectileSFXIndex => i_projectileIndex;
+        public int m_ImpactSFXIndex => i_impactIndex;
         public float m_Firerate => f_firerate;
         public RangeInt m_ProjectileCount => i_projectileCount;
         public float m_ProjectileDamage => i_projectileDamage;

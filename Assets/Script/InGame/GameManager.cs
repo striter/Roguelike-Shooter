@@ -292,10 +292,10 @@ public static class ObjectManager
     public static void Init()
     {
         TF_Entity = new GameObject("Entity").transform;
-        TCommon.TraversalEnum((enum_SFX type) =>{
-            ObjectPoolManager<enum_SFX, SFXBase>.Register(type, TResources.Instantiate<SFXBase>("SFX/" + type.ToString()),
+        TResources.GetAllGameSFXs().Traversal((int index,SFXBase target)=>{
+            ObjectPoolManager<int, SFXBase>.Register(index, target,
             enum_PoolSaveType.DynamicMaxAmount, 1,
-            (SFXBase sfx)=> {sfx.Init(type);});
+            (SFXBase sfx) => { sfx.Init(index); });
         });
 
         TCommon.TraversalEnum((enum_Interact type) =>{
@@ -343,15 +343,18 @@ public static class ObjectManager
             return target;
         }
     }
-    public static SFXBase SpawnSFX(enum_SFX type, Transform toTrans)
+    public static T SpawnSFX<T>(int index, Vector3 position,Vector3 normal,Transform attachTo=null) where T:SFXBase
     {
-        SFXBase sfx = ObjectPoolManager<enum_SFX, SFXBase>.Spawn(type, toTrans);
-        sfx.transform.SetParent(TF_Entity);
+        T sfx = ObjectPoolManager<int, SFXBase>.Spawn(index, attachTo) as T;
+        if (sfx == null)
+            Debug.LogError("SFX Spawn Error! Invalid Type:"+typeof(T).ToString()+"|Index:"+index);
+        sfx.transform.position = position;
+        sfx.transform.rotation = Quaternion.LookRotation(normal);
         return sfx;
     }
-    public static void RecycleSFX(enum_SFX type, SFXBase sfx)
+    public static void RecycleSFX(int index, SFXBase sfx)
     {
-        ObjectPoolManager<enum_SFX, SFXBase>.Recycle(type, sfx);
+        ObjectPoolManager<int, SFXBase>.Recycle(index, sfx);
     }
 
     public static T SpawnInteract<T>(enum_Interact type, Vector3 toPos) where T:InteractBase

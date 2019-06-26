@@ -7,9 +7,9 @@ public class SFXBlast : SFXBase {
     ParticleSystem[] m_Particles;
     HitCheckDetect m_Detect;
     float f_damage;
-    public override void Init(enum_SFX type)
+    public override void Init(int _sfxIndex)
     {
-        base.Init(type);
+        base.Init(_sfxIndex);
         m_Particles = GetComponentsInChildren<ParticleSystem>();
         m_Detect = new HitCheckDetect(OnBlastStatic,OnBlastDynamic,OnBlastEntity,OnBlastError);
     }
