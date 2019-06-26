@@ -60,7 +60,8 @@ public class SFXProjectile : SFXBase {
     protected virtual void OnHitTarget(RaycastHit hitInfo)
     {
         B_SimulatePhysics = false;
-        ObjectManager.SpawnSFX<SFXParticles>(i_impactSFXIndex, hitInfo.point,hitInfo.normal,hitInfo.transform).Play(I_SourceID);
+        if(i_impactSFXIndex!=-1)
+            ObjectManager.SpawnSFX<SFXParticles>(i_impactSFXIndex, hitInfo.point,hitInfo.normal,hitInfo.transform).Play(I_SourceID);
         m_Detect.DoDetect(hitInfo.collider);
     }
 
