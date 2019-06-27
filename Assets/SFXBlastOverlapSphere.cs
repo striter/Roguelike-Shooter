@@ -9,13 +9,12 @@ public class SFXBlastOverlapSphere : SFXBlast {
         m_Collider = GetComponent<SphereCollider>();
         m_Collider.enabled = false;
     }
-    protected override Collider[] BlastCheck()
+    protected override Collider[] OnBlastCheck()
     {
         return Physics.OverlapSphere(transform.position, m_Collider.radius/2, GameLayer.Physics.I_EntityOnly);
     }
-    protected override void OnBlastEntity(HitCheckEntity hitEntity)
+    protected override void OnDamageEntity(HitCheckEntity hitEntity)
     {
-        if (GameManager.B_CanHitTarget(hitEntity, I_SourceID))
-            hitEntity.TryHit(GameExpression.F_RocketBlastDamage(f_damage, Vector3.Distance(transform.position, hitEntity.transform.position)));
+        hitEntity.TryHit(GameExpression.F_RocketBlastDamage(f_damage,Vector3.Distance(transform.position,hitEntity.m_Attacher.transform.position)));
     }
 }

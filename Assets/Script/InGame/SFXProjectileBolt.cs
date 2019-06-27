@@ -2,20 +2,27 @@
 using UnityEngine;
 
 public class SFXProjectileBolt : SFXProjectile {
-    protected override void Play(int sourceID, int impactSFXIndex,int blastIndex, Vector3 direction, Vector3 destination, float damage, float horiSpeed, float horiDistance, float vertiSpeed, float vertiAcceleration, float duration)
-    {
-        base.Play(sourceID, impactSFXIndex, blastIndex, direction, destination, damage, horiSpeed, horiDistance, vertiSpeed, vertiAcceleration, GameConst.I_BoltMaxLastTime);
-    }
-
+    protected override bool B_RecycleOnHit => false;
     protected override void OnHitStatic(HitCheckStatic hitStatic)
     {
         transform.SetParent(hitStatic.transform);
+        f_TimeCheck = Time.time + GameConst.I_BoltLastTimeAfterHit;
     }
 
     protected override void OnHitEntity(HitCheckEntity entity)
     {
+        f_TimeCheck = Time.time + GameConst.I_BoltLastTimeAfterHit;
         entity.AttachTransform(this);
         if (GameManager.B_CanHitTarget(entity, I_SourceID))
             entity.TryHit(m_Damage);
+    }
+    protected override void OnHitDynamic(HitCheckDynamic hitDynamic)
+    {
+        OnPlayFinished();
+    }
+
+    protected override void OnHitError()
+    {
+        OnPlayFinished();
     }
 }

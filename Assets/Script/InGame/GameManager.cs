@@ -53,7 +53,10 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         }
         RaycastHit hit = new RaycastHit();
         if (Input.GetKeyDown(KeyCode.Z) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
-            ObjectManager.SpawnSFX<SFXBlast>(30002, hit.point, Vector3.forward).Play(1000,10);
+            ObjectManager.SpawnSFX<SFXBlast>(30001, hit.point, Vector3.forward).Play(1000,10);
+
+        if (Input.GetKeyDown(KeyCode.X) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
+            ObjectManager.SpawnSFX<SFXBlast>(30003, hit.point, Vector3.forward).Play(1000, 10);
 
         UIManager.instance.transform.Find("SeedTest").GetComponent<UnityEngine.UI.Text>().text = m_SeedString;
     }

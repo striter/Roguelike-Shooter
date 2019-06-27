@@ -19,7 +19,7 @@ public class SFXBase : MonoBehaviour {
     protected float f_TimeCheck;
     Action OnSFXPlayFinished;
 
-    protected void Play(int sourceID,float duration,Action _OnSFXPlayFinished=null)
+    protected void PlaySFX(int sourceID,float duration,Action _OnSFXPlayFinished=null)
     {
         f_duration = duration;
         f_TimeCheck = Time.time + duration;

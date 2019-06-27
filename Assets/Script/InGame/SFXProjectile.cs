@@ -12,6 +12,7 @@ public class SFXProjectile : SFXBase {
     protected int i_impactSFXIndex,i_blastSFXIndex;
     protected HitCheckEntity m_hitEntity;
     public bool B_SimulatePhysics { get; protected set; }
+    protected virtual bool B_RecycleOnHit => true;
     public override void Init(int sfxIndex)
     {
         base.Init(sfxIndex);
@@ -19,19 +20,19 @@ public class SFXProjectile : SFXBase {
         m_Trail = transform.GetComponentInChildren<TrailRenderer>();
         f_sphereWidth = m_Trail.startWidth / 2;
     }
-    public void PlayWeapon(int sourceID, Vector3 direction,Vector3 targetPosition,SWeapon weaponInfo, float duration= -1)
+    public void PlayWeapon(int sourceID, Vector3 direction,Vector3 targetPosition,SWeapon weaponInfo)
     {
-        Play(sourceID, weaponInfo.m_ImpactSFXIndex,weaponInfo.m_BlastSFXIndex, direction,targetPosition,weaponInfo.m_Damage,weaponInfo.m_HorizontalSpeed,weaponInfo.m_HorizontalDistance,0,weaponInfo.m_VerticalAcceleration, duration == -1 ? GameConst.I_NormalProjectileLastTime : duration);
+        Play(sourceID, weaponInfo.m_ImpactSFXIndex,weaponInfo.m_BlastSFXIndex, direction,targetPosition,weaponInfo.m_Damage,weaponInfo.m_HorizontalSpeed,weaponInfo.m_HorizontalDistance,0,weaponInfo.m_VerticalAcceleration,  GameConst.I_WeaponProjectileMaxDistance / weaponInfo.m_HorizontalSpeed );
     }
     public void PlayBarrage(int sourceID, Vector3 direction, Vector3 targetPosition, SBarrage barrageInfo,float duration =-1)
     {
-        Play(sourceID, barrageInfo.m_ImpactSFXIndex,barrageInfo.m_BlastSFXIndex, direction, targetPosition, barrageInfo.m_ProjectileDamage, barrageInfo.m_ProjectileSpeed,200,0,0, duration == -1 ? GameConst.I_BarrageProjectileMaxLastTime : duration);
+        Play(sourceID, barrageInfo.m_ImpactSFXIndex,barrageInfo.m_BlastSFXIndex, direction, targetPosition, barrageInfo.m_ProjectileDamage, barrageInfo.m_ProjectileSpeed,200,0,0,  GameConst.I_BarrageProjectileMaxDistance / barrageInfo.m_ProjectileSpeed );
     }
     protected virtual void Play(int sourceID,int impactSFXIndex,int blastSFXIndex, Vector3 direction, Vector3 destination, float damage, float horiSpeed,float horiDistance,float vertiSpeed,float vertiAcceleration, float duration)
     {
         OnPlayPreset(damage, impactSFXIndex,blastSFXIndex);
         m_Simulator = new ProjectilePhysicsSimulator(transform.position, direction, Vector3.down, horiSpeed, horiDistance,vertiSpeed, vertiAcceleration);
-        Play(sourceID, duration);
+        PlaySFX(sourceID, duration);
     }
     protected void OnPlayPreset(float damage,int impactSFXIndex,int _blastSFXIndex)
     {
@@ -64,6 +65,7 @@ public class SFXProjectile : SFXBase {
     {
         B_SimulatePhysics = false;
         m_Detect.DoDetect(hitInfo.collider);
+
         if (i_impactSFXIndex != -1)
         {
             SFXParticles impact= ObjectManager.SpawnSFX<SFXParticles>(i_impactSFXIndex, hitInfo.point, hitInfo.normal, hitInfo.transform);

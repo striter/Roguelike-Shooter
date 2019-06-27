@@ -11,6 +11,6 @@ public class SFXProjectileBlastMeteor : SFXProjectileBlastTrigger {
         Vector3 startPos = destination + Vector3.up * 20 + new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f)) * radius;
         m_Simulator = new ProjectilePhysicsSimulator(startPos, destination - startPos, Vector3.down, horiSpeed, horiDistance, vertiSpeed, vertiAcceleration);
         transform.position = startPos;
-        Play(sourceID, duration);
+        PlaySFX(sourceID, duration);
     }
 }

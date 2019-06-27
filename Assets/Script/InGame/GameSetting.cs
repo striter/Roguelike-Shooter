@@ -11,10 +11,10 @@ namespace GameSetting
     #region For Designers Use
     public static class GameConst
     {
-        public const int I_NormalProjectileLastTime = 5; // No Collision Recycle Time
-        public const int I_BoltMaxLastTime = 10;    //Last Time Of Ammo/Bolt
-        public const int I_LaserMaxLastTime = 5;    //Longest Last Time Of Ammo/Laser
-        public const int I_BarrageProjectileMaxLastTime = 5;
+        public const int I_WeaponProjectileMaxDistance = 100;
+        public const int I_BarrageProjectileMaxDistance = 100;
+
+        public const short I_BoltLastTimeAfterHit = 5;
 
         public const int I_RocketBlastRadius = 5;        //Meter
         public const float F_LaserRayStartPause = .5f;      //Laser Start Pause

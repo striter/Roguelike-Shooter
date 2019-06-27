@@ -19,7 +19,7 @@ public class SFXParticles : SFXBase
     }
     public void Play(int sourceID)
     {
-        Play(sourceID,m_Duration);
+        PlaySFX(sourceID,m_Duration);
         m_Particles.Traversal((ParticleSystem particle) => { particle.Play(); });
     }
 }
