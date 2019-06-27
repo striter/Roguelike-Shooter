@@ -36,6 +36,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4836308289568534}
   - component: {fileID: 114154887035112584}
+  - component: {fileID: 135085953354528852}
   m_Layer: 9
   m_Name: 20006_Projectile_Meteor
   m_TagString: Untagged
@@ -246,3 +247,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ab0cf0a49ae34143b34005f26110fa2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!135 &135085953354528852
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1209190051586098}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.75
+  m_Center: {x: 0, y: 0, z: 0}

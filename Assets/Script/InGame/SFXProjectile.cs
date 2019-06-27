@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
-
+[RequireComponent(typeof(SphereCollider))]
 public class SFXProjectile : SFXBase {
     protected float m_Damage;
     protected ProjectilePhysicsSimulator m_Simulator;
     HitCheckDetect m_Detect;
+    SphereCollider m_Collider;
     TrailRenderer m_Trail;
-    float f_sphereWidth;
     protected int i_impactSFXIndex,i_blastSFXIndex;
     protected HitCheckEntity m_hitEntity;
     public bool B_SimulatePhysics { get; protected set; }
@@ -18,7 +18,8 @@ public class SFXProjectile : SFXBase {
         base.Init(sfxIndex);
         m_Detect = new HitCheckDetect(OnHitStatic,OnHitDynamic,OnHitEntity,OnHitError);
         m_Trail = transform.GetComponentInChildren<TrailRenderer>();
-        f_sphereWidth = m_Trail.startWidth / 2;
+        m_Collider = GetComponent<SphereCollider>();
+        m_Collider.enabled = false;
     }
     public void PlayWeapon(int sourceID, Vector3 direction,Vector3 targetPosition,SWeapon weaponInfo)
     {
@@ -54,7 +55,7 @@ public class SFXProjectile : SFXBase {
             Vector3 castDirection = prePosition == curPosition ? m_Simulator.m_HorizontalDirection : curPosition - prePosition;
            transform.rotation = Quaternion.LookRotation(castDirection);
             RaycastHit rh_info;
-            if (Physics.SphereCast(new Ray(prePosition, castDirection), f_sphereWidth, out rh_info, Vector3.Distance(prePosition, curPosition), GameLayer.Physics.I_All))
+            if (Physics.SphereCast(new Ray(prePosition, castDirection), m_Collider.radius, out rh_info, Vector3.Distance(prePosition, curPosition), GameLayer.Physics.I_All))
                 OnHitTarget(rh_info);
             else
                 transform.position = curPosition;
@@ -66,7 +67,7 @@ public class SFXProjectile : SFXBase {
         B_SimulatePhysics = false;
         m_Detect.DoDetect(hitInfo.collider);
 
-        if (i_impactSFXIndex != -1)
+        if (i_impactSFXIndex > 0)
         {
             SFXParticles impact= ObjectManager.SpawnSFX<SFXParticles>(i_impactSFXIndex, hitInfo.point, hitInfo.normal, hitInfo.transform);
             impact.Play(I_SourceID);
@@ -77,7 +78,8 @@ public class SFXProjectile : SFXBase {
         if (m_hitEntity!=null&&GameManager.B_CanHitTarget(m_hitEntity, I_SourceID))
             m_hitEntity.TryHit(m_Damage);
 
-        OnPlayFinished();
+        if(B_RecycleOnHit)
+           OnPlayFinished();
     }
 
     protected virtual void OnHitEntity(HitCheckEntity hitEntity)

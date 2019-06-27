@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4550938155433920}
   - component: {fileID: 114579307329279138}
+  - component: {fileID: 135520324654912856}
   m_Layer: 9
   m_Name: 20001_Projectile_Normal
   m_TagString: Untagged
@@ -236,6 +237,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b8d0e07754fa9b4685464e140e598ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!135 &135520324654912856
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1032428382501042}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!198 &198123984824233828
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -3678,7 +3691,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 504129779
+  randomSeed: 419131777
   InitialModule:
     serializedVersion: 3
     enabled: 1
