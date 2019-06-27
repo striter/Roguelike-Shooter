@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4160728802150648}
   - component: {fileID: 114918708047531280}
-  - component: {fileID: 135588521308822224}
+  - component: {fileID: 136286490906130340}
   m_Layer: 9
   m_Name: 20002_Projectile_LaserBeam
   m_TagString: Untagged
@@ -83,7 +83,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1459651918530988}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4160728802150648}
@@ -96,7 +96,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1343340162544876}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0.5}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 4160728802150648}
@@ -241,8 +241,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b8d0e07754fa9b4685464e140e598ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!135 &135588521308822224
-SphereCollider:
+--- !u!136 &136286490906130340
+CapsuleCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -250,6 +250,7 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
   m_Radius: 0.25
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Height: 1
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: 0.5}
