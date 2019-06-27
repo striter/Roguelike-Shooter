@@ -1,4 +1,4 @@
-﻿Shader "Game/Effect/BloomSpecific/Dissolve_Outline"
+﻿Shader "Game/Effect/BloomSpecific/Dissolve_BloomLine"
 {
 	Properties
 	{

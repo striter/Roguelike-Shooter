@@ -12,19 +12,22 @@
 	}
 	SubShader
 	{
-		Blend SrcAlpha OneMinusSrcAlpha
-			CGINCLUDE
+		CGINCLUDE
 		#include "UnityCG.cginc"
 		#include "AutoLight.cginc"
 		#include "Lighting.cginc"
 
-			sampler2D _SubTex1;
-			float4 _SubTex1_ST;
-			float _Amount1;
-			ENDCG
+		sampler2D _SubTex1;
+		float4 _SubTex1_ST;
+		float _Amount1;
+		float _Amount2;
+		ENDCG
+
 		Pass		//Base Pass
 		{
 			Tags{"RenderType" = "Opaque" "LightMode" = "ForwardBase" "Queue" = "Transparent"}
+			Blend SrcAlpha OneMinusSrcAlpha
+			ZWrite On
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
@@ -50,7 +53,6 @@
 			float4 _Color;
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
-			float _Amount2;
 			v2f vert (appdata v)
 			{
 				v2f o;
@@ -102,11 +104,13 @@
 
 			fixed4 fragshadow(v2fs i) :SV_TARGET
 			{
-				fixed dissolve = tex2D(_SubTex1,i.uv).r - _Amount1;
+				fixed dissolve = tex2D(_SubTex1,i.uv).r - _Amount1-_Amount2;
 				clip(dissolve);
 				SHADOW_CASTER_FRAGMENT(i);
 			}
-				ENDCG
-			}
+			ENDCG
 		}
+
+
+	}
 }

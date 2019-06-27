@@ -1,4 +1,4 @@
-﻿Shader "Game/Effect/Dissolve"
+﻿Shader "Game/Effect/Dissolve_Diffuse_Full"
 {
 	Properties
 	{

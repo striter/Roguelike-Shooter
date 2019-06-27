@@ -1,4 +1,4 @@
-﻿Shader "Game/Effect/DissolveDiffuse"
+﻿Shader "Game/Effect/Dissolve_Diffuse_Base"
 {
 	Properties
 	{
@@ -95,7 +95,7 @@
 
 			ENDCG
 		}
-		UsePass "Game/Effect/Dissolve/SHADOWCASTER"
+		UsePass "Game/Effect/Dissolve_Diffuse_Full/SHADOWCASTER"
 	}
 
 }
