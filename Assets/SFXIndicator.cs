@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SFXIndicator : SFXBase,ISingleCoroutine {
+public class SFXIndicator : SFXBase {
     Projector m_Indicator;
     public override void Init(int _sfxIndex)
     {
@@ -30,18 +30,12 @@ public class SFXIndicator : SFXBase,ISingleCoroutine {
             m_Indicator.transform.position = hit.point + hit.normal * radius/2;
             m_Indicator.transform.rotation = Quaternion.LookRotation(direction);
             m_Indicator.farClipPlane = radius;
-            this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) =>{
-                m_Indicator.orthographicSize = radius * value;
-            }, 0, 1, duration));
+            m_Indicator.orthographicSize = radius ;
             base.PlaySFX(sourceID, duration);
         }
         else
         {
             OnPlayFinished();
         }
-    }
-    protected void OnDisable()
-    {
-        this.StopSingleCoroutine(0);
     }
 }
