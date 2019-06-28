@@ -70,12 +70,6 @@ Shader "Special/Projector" {
 				tex = tex2D(_MainTex, saturate(i.texcoord.xy));
 
 				fixed4 res = lerp(0, tex * _TintColor * _ColorStrength, projCoord.x<1&&projCoord.x>0?1:0);
-				//#if UNITY_VERSION >= 500
-				//res.rgb *= _LightColor0.rgb * _LightColor0.w;
-				//#else 
-				//res.rgb *= _LightColor0.rgb * _LightColor0.w * 4;
-				//#endif
-				res.a = saturate(res.a);
 				return res;
 			}
 		ENDCG

@@ -1,12 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using GameSetting;
 using System;
 
 [RequireComponent(typeof(Collider))]
 public class HitCheckBase : MonoBehaviour {
-    public virtual enum_HitCheck m_HitCheckType => GameSetting.enum_HitCheck.Invalid;
+    public virtual enum_HitCheck m_HitCheckType => enum_HitCheck.Invalid;
     Func<float,bool> OnHitCheck;
     protected Collider m_Collider;
     protected void Awake()

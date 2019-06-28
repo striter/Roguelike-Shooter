@@ -7,7 +7,7 @@ public class SFXProjectile : SFXBase {
     protected float m_Damage;
     protected ProjectilePhysicsSimulator m_Simulator;
     HitCheckDetect m_Detect;
-    CapsuleCollider m_Collider;
+    protected CapsuleCollider m_Collider;
     TrailRenderer m_Trail;
     protected int i_impactSFXIndex,i_blastSFXIndex;
     protected HitCheckEntity m_hitEntity;
