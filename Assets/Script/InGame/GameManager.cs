@@ -53,7 +53,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         }
         RaycastHit hit = new RaycastHit();
         if (Input.GetKeyDown(KeyCode.Z) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
-            ObjectManager.SpawnSFX<SFXBlast>(30001, hit.point, Vector3.forward).Play(1000,10);
+            ObjectManager.SpawnSFX<SFXProjectile>(20006, hit.point, Vector3.forward).PlayBarrage(1000, transform.forward, hit.point + transform.forward * 5, Properties<SBarrage>.PropertiesList.Find(p => p.m_Index == 6));
 
         if (Input.GetKeyDown(KeyCode.X) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
             ObjectManager.SpawnSFX<SFXBlast>(30003, hit.point, Vector3.forward).Play(1000, 10);
@@ -359,6 +359,13 @@ public static class ObjectManager
             Debug.LogError("SFX Spawn Error! Invalid Type:"+typeof(T).ToString()+"|Index:"+index);
         sfx.transform.position = position;
         sfx.transform.rotation = Quaternion.LookRotation(normal);
+        return sfx;
+    }
+    public static T GetSFX<T>(int index) where T : SFXBase
+    {
+        T sfx = ObjectPoolManager<int, SFXBase>.GetRegistedSpawnItem(index) as T;
+        if (sfx == null)
+            Debug.LogError("SFX Get Error! Invalid Type:" + typeof(T).ToString() + "|Index:" + index);
         return sfx;
     }
     public static void RecycleSFX(int index, SFXBase sfx)

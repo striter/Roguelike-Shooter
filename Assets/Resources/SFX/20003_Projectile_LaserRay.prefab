@@ -54,6 +54,7 @@ GameObject:
   - component: {fileID: 4459449586092150}
   - component: {fileID: 114214519544428268}
   - component: {fileID: 136765563355148656}
+  - component: {fileID: 114351373117165092}
   m_Layer: 9
   m_Name: 20003_Projectile_LaserRay
   m_TagString: Untagged
@@ -239,6 +240,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c84f596ad323c8841b0acdec2cc3772c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114351373117165092
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1844234320046942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62d09be21441f524d850aaf663ec49a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!136 &136765563355148656

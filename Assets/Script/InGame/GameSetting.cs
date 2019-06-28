@@ -268,8 +268,8 @@ namespace GameSetting
             m_simulateTime = 0f;
             m_startPos = _startPos;
             m_LastPos = _startPos;
-            m_HorizontalDirection = _horizontalDirection;
-            m_VerticalDirection = _verticalDirection;
+            m_HorizontalDirection = _horizontalDirection.normalized;
+            m_VerticalDirection = _verticalDirection.normalized;
             m_horizontalSpeed = _horizontalSpeed;
             m_horizontalDistance = _horizontalDistance;
             m_verticalSpeed = _verticalSpeed;
