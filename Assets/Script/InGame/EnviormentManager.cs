@@ -9,7 +9,7 @@ using LPWAsset;
 
 public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
     public Transform tf_LevelParent { get; private set; }
-    public enum_TileStyle m_StyleCurrent { get; private set; } = enum_TileStyle.Invalid;
+    public enum_Style m_StyleCurrent { get; private set; } = enum_Style.Invalid;
     public static SBigmapLevelInfo m_currentLevel { get; private set; }
     public SBigmapLevelInfo[,] m_MapLevelInfo { get; private set; }
     public Light m_DirectionalLight { get; protected set; }
@@ -34,7 +34,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         TBroadCaster<enum_BC_GameStatusChanged>.Remove(enum_BC_GameStatusChanged.OnStageStart, OnStageStart);
         TBroadCaster<enum_BC_GameStatusChanged>.Remove(enum_BC_GameStatusChanged.OnLevelFinish, OnLevelFinished);
     }
-    public void GenerateAllEnviorment(enum_TileStyle _LevelStyle,System.Random seed,Action<SBigmapLevelInfo> _OnLevelPrepared)
+    public void GenerateAllEnviorment(enum_Style _LevelStyle,System.Random seed,Action<SBigmapLevelInfo> _OnLevelPrepared)
     {
         OnLevelPrepared = _OnLevelPrepared;
         m_mainSeed = seed;
@@ -45,13 +45,13 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         randomData.DataInit(m_DirectionalLight, m_OceanScript);
         SetPostEffects(_LevelStyle);
     }
-    public void SetPostEffects(enum_TileStyle _levelStyle)
+    public void SetPostEffects(enum_Style _levelStyle)
     {
         PostEffectManager.RemoveAllPostEffect();
         PostEffectManager.AddPostEffect<PE_BloomSpecific>().SetEffect(2, 10, 2);
         switch (_levelStyle)
         {
-            case enum_TileStyle.Undead:
+            case enum_Style.Undead:
                 PostEffectManager.AddPostEffect<PE_FogDepthNoise>().SetEffect(Color.white).SetEffect(TCommon.ColorAlpha(Color.white, .5f), .5f, -1f, 5f).SetTexture(TResources.Load<Texture>("Texture/Noise1"));
                 break;
         }
@@ -113,7 +113,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
     }
     #endregion
     #region BigMap
-    public static SBigmapLevelInfo[,] GenerateBigmapLevels(enum_TileStyle _levelStyle,System.Random bigMapSeed,Transform _generateParent,int _bigmapWidth, int _bigmapHeight,TileAxis startAxis)
+    public static SBigmapLevelInfo[,] GenerateBigmapLevels(enum_Style _levelStyle,System.Random bigMapSeed,Transform _generateParent,int _bigmapWidth, int _bigmapHeight,TileAxis startAxis)
     {
         //Generate Big Map All Tiles
         SBigmapTileInfo[,] bigmapTiles = new SBigmapTileInfo[_bigmapWidth, _bigmapHeight];

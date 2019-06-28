@@ -25,7 +25,7 @@ public class SFXProjectile : SFXBase {
     {
         Play(sourceID, weaponInfo.m_ImpactSFXIndex,weaponInfo.m_BlastSFXIndex, direction,targetPosition,weaponInfo.m_Damage,weaponInfo.m_HorizontalSpeed,weaponInfo.m_HorizontalDistance,0,weaponInfo.m_VerticalAcceleration,  GameConst.I_WeaponProjectileMaxDistance / weaponInfo.m_HorizontalSpeed );
     }
-    public void PlayBarrage(int sourceID, Vector3 direction, Vector3 targetPosition, SBarrage barrageInfo,float duration =-1)
+    public void PlayBarrage(int sourceID, Vector3 direction, Vector3 targetPosition, SEntity barrageInfo,float duration =-1)
     {
         Play(sourceID, barrageInfo.m_ImpactSFXIndex,barrageInfo.m_BlastSFXIndex, direction, targetPosition, barrageInfo.m_ProjectileDamage, barrageInfo.m_ProjectileSpeed,200,0,0,  GameConst.I_BarrageProjectileMaxDistance / barrageInfo.m_ProjectileSpeed );
     }

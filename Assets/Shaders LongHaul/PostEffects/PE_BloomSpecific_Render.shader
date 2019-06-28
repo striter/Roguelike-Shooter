@@ -16,7 +16,7 @@
 		Blend SrcAlpha OneMinusSrcAlpha
 		Pass
 		{
-			name "BLOOM_COMMON"
+			name "BLOOM_COLOR"
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
@@ -55,7 +55,6 @@
 			ENDCG
 		}
 	}
-
 
 	SubShader
 	{

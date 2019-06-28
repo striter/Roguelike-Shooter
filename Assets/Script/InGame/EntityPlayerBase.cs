@@ -4,8 +4,8 @@ using UnityEngine;
 using GameSetting;
 using TSpecialClasses;
 public class EntityPlayerBase : EntityBase {
-    public enum_Weapon TESTWEAPON1 = enum_Weapon.M16A4;
-    public enum_Weapon TESTWEAPON2 = enum_Weapon.MK10;
+    public enum_PlayerWeapon TESTWEAPON1 = enum_PlayerWeapon.M16A4;
+    public enum_PlayerWeapon TESTWEAPON2 = enum_PlayerWeapon.MK10;
     public float m_Coins { get; private set; } = 0;
     public float m_Pitch { get; private set; } = 0;
 

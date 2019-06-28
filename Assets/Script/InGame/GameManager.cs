@@ -9,8 +9,8 @@ using UnityEngine.AI;
 
 public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
 {
-    public enum_TileStyle Test_TileStyle = enum_TileStyle.Desert;
-    public enum_EntityStyle Test_EntityStyle = enum_EntityStyle.Test;
+    public enum_Style Test_TileStyle = enum_Style.Desert;
+    public enum_Style Test_EntityStyle = enum_Style.Invalid;
     public string M_TESTSEED = "";
 
     public EntityBase m_LocalPlayer { get; private set; } = null;
@@ -53,13 +53,12 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         }
         RaycastHit hit = new RaycastHit();
         if (Input.GetKeyDown(KeyCode.Z) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
-            ObjectManager.SpawnSFX<SFXProjectile>(20006, hit.point, Vector3.forward).PlayBarrage(1000, transform.forward, hit.point + transform.forward * 5, Properties<SBarrage>.PropertiesList.Find(p => p.m_Index == 6));
-
+            ObjectManager.SpawnSFX<SFXProjectile>(20006, hit.point, Vector3.forward).PlayBarrage(1000, transform.forward, hit.point + transform.forward * 5, Properties<SEntity>.PropertiesList.Find(p => p.m_Index == 5));
         if (Input.GetKeyDown(KeyCode.X) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
-            ObjectManager.SpawnSFX<SFXBlast>(30003, hit.point, Vector3.forward).Play(1000, 10);
-
+            ObjectManager.SpawnSFX<SFXCast>(30003, hit.point, Vector3.forward).Play(1000, 10);
         if (Input.GetKeyDown(KeyCode.C) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
             ObjectManager.SpawnSFX<SFXProjectile>(20004, hit.point+Vector3.up*1, Vector3.forward).PlayWeapon(1000,Vector3.forward,hit.point+Vector3.forward*100,Properties<SWeapon>.PropertiesList.Find(p=>(int)p.m_Weapon==-1));
+
         UIManager.instance.transform.Find("SeedTest").GetComponent<UnityEngine.UI.Text>().text = m_SeedString;
     }
     private void OnDestroy()
@@ -166,7 +165,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     }
     #endregion
     #region Battle Management
-    public enum_EntityStyle m_BattleEntityStyle { get; private set; }
+    public enum_Style m_BattleEntityStyle { get; private set; }
     public enum_BattleDifficulty m_BattleDifficulty { get; private set; }
     public bool B_Battling { get; private set; } = false;
     public bool B_WaveEntityGenerating { get; private set; } = false;
@@ -253,11 +252,10 @@ public static class ExcelManager
     {
         Properties<SEntity>.Init();
         Properties<SWeapon>.Init();
-        Properties<SBarrage>.Init();
         Properties<SGenerateItem>.Init();
         Properties<SGenerateEntity>.Init();
     }
-    public static SGenerateItem GetItemGenerateProperties(enum_TileStyle style,enum_TilePrefabDefinition prefabType)
+    public static SGenerateItem GetItemGenerateProperties(enum_Style style,enum_TilePrefabDefinition prefabType)
     {
         SGenerateItem generate = Properties<SGenerateItem>.PropertiesList.Find(p => p.m_LevelStyle == style && p.m_LevelPrefabType == prefabType);
         if (generate.m_LevelStyle == 0 || generate.m_LevelPrefabType == 0||generate.m_ItemGenerate==null)
@@ -280,19 +278,12 @@ public static class ExcelManager
             Debug.LogError("Error Properties Found Of Name Index:" + index);
         return entity;
     }
-    public static SWeapon GetWeaponProperties(enum_Weapon type)
+    public static SWeapon GetWeaponProperties(enum_PlayerWeapon type)
     {
         SWeapon weapon= Properties<SWeapon>.PropertiesList.Find(p => p.m_Weapon == type);
         if(weapon.m_Weapon==0)
             Debug.LogError("Error Properties Found Of Index:" +type.ToString()+"|"+((int)type));
         return weapon;
-    }
-    public static SBarrage GetBarrageProperties(int barrageIndex)
-    {
-        SBarrage barrage = Properties<SBarrage>.PropertiesList.Find(p => p.m_Index == barrageIndex);
-        if (barrageIndex == 0)
-            Debug.LogError("Error Properties Found Of Index:" + barrageIndex.ToString() + "|" + barrageIndex);
-        return barrage;
     }
 }
 public static class ObjectManager
@@ -331,17 +322,17 @@ public static class ObjectManager
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnRecycleEntity, target);
     }
 
-    public static WeaponBase SpawnWeapon(enum_Weapon type, EntityPlayerBase toPlayer)
+    public static WeaponBase SpawnWeapon(enum_PlayerWeapon type, EntityPlayerBase toPlayer)
     {
         try
         {
-            if (!ObjectPoolManager<enum_Weapon, WeaponBase>.Registed(type))
+            if (!ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Registed(type))
             {
                 WeaponBase preset = TResources.Instantiate<WeaponBase>("Weapon/" + type.ToString());
-                ObjectPoolManager<enum_Weapon, WeaponBase>.Register(type, preset, enum_PoolSaveType.DynamicMaxAmount, 1, null);
+                ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Register(type, preset, enum_PoolSaveType.DynamicMaxAmount, 1, null);
             }
 
-            return ObjectPoolManager<enum_Weapon, WeaponBase>.Spawn(type, TF_Entity);
+            return ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Spawn(type, TF_Entity);
         }
         catch       //Error Check
         {

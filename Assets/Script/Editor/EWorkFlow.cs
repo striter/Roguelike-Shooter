@@ -18,13 +18,13 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
     public static void StyleColorSerialization()
     {
         EWorkFlow_StyleColorCustomization window= GetWindow(typeof(EWorkFlow_StyleColorCustomization)) as EWorkFlow_StyleColorCustomization;
-        selectingStyleType = enum_TileStyle.Invalid;
+        selectingStyleType = enum_Style.Invalid;
         previousData = StyleColorData.Default();
         InitAllMat();
         previousData.SaveData(directionalLight, oceanScript);
         window.Show();
     }
-    static enum_TileStyle selectingStyleType = enum_TileStyle.Invalid;
+    static enum_Style selectingStyleType = enum_Style.Invalid;
     static bool newStyleData = false;
     static Light directionalLight;
     static LowPolyWaterScript oceanScript;
@@ -58,8 +58,8 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
             selectingStyleType = GameManager.Instance.Test_TileStyle;
         InitAllMat();
 
-        if (selectingStyleType == enum_TileStyle.Invalid)
-            TCommon.TraversalEnum((enum_TileStyle style) =>
+        if (selectingStyleType == enum_Style.Invalid)
+            TCommon.TraversalEnum((enum_Style style) =>
             {
                 GUILayout.BeginHorizontal();
                 StyleColorData[] customizations = TResources.GetAllStyleCustomization(style);
@@ -102,7 +102,7 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
                 if (previousData && GUILayout.Button("Reset"))
                     previousData.DataInit(directionalLight, oceanScript);
                 if (!EditorApplication.isPlaying&&GUILayout.Button("Return"))
-                    selectingStyleType = enum_TileStyle.Invalid;
+                    selectingStyleType = enum_Style.Invalid;
                 GUILayout.EndHorizontal();
             }
             else
@@ -192,7 +192,7 @@ public class EWorkFlow_ModelAutoPrefabPackaging : EditorWindow
         EWorkFlow_ModelAutoPrefabPackaging window = GetWindow(typeof(EWorkFlow_ModelAutoPrefabPackaging)) as EWorkFlow_ModelAutoPrefabPackaging;
         window.Show();
     }
-    public static enum_TileStyle levelStyle { get; private set; } = enum_TileStyle.Invalid;
+    public static enum_Style levelStyle { get; private set; } = enum_Style.Invalid;
     public static bool isLevel { get; private set; } = false;
     public enum enum_ShaderType
     {
@@ -212,7 +212,7 @@ public class EWorkFlow_ModelAutoPrefabPackaging : EditorWindow
 
         isLevel = EditorGUILayout.Toggle("IsLevel", isLevel);
         if (!isLevel)
-            levelStyle = (enum_TileStyle)EditorGUILayout.EnumPopup("Level Type", levelStyle);
+            levelStyle = (enum_Style)EditorGUILayout.EnumPopup("Level Type", levelStyle);
 
         if (assets.Count > 0)
         {
@@ -220,7 +220,7 @@ public class EWorkFlow_ModelAutoPrefabPackaging : EditorWindow
             for (int i = 0; i < assets.Count; i++)
                 EditorGUILayout.TextArea(assets[i].name);
 
-            if (isLevel||levelStyle != enum_TileStyle.Invalid)
+            if (isLevel||levelStyle != enum_Style.Invalid)
                 if (EditorGUILayout.DropdownButton(new GUIContent("Create Shaded Prefab"), FocusType.Passive))
                     CreatePrefabFromModel(assets, levelStyle, isLevel);
         }
@@ -228,7 +228,7 @@ public class EWorkFlow_ModelAutoPrefabPackaging : EditorWindow
         EditorGUILayout.EndVertical();
 
     }
-    void CreatePrefabFromModel(List<Object> assets,enum_TileStyle levelStyle,bool isLevel)
+    void CreatePrefabFromModel(List<Object> assets,enum_Style levelStyle,bool isLevel)
     {
         for (int i = 0; i < assets.Count; i++)
         {
@@ -278,7 +278,7 @@ public class EWorkFlow_ModelAutoPrefabPackaging : EditorWindow
         level.E_PrefabType = (enum_TilePrefabDefinition)System.Enum.Parse(typeof(enum_TilePrefabDefinition), prefab.name.Split('_')[0]); 
         EWorkFlow_LevelDataGenerating.BakeData(level);
     }
-    void ProcessItemModel(GameObject prefab, enum_TileStyle levelStyle)
+    void ProcessItemModel(GameObject prefab, enum_Style levelStyle)
     {
         enum_LevelItemType type= (enum_LevelItemType)System.Enum.Parse(typeof(enum_LevelItemType), prefab.name.Split('_')[0]);
         
@@ -309,14 +309,14 @@ public class EWorkFlow_ModelAutoPrefabPackaging : EditorWindow
             levelItem.ItemRecenter();
         }
     }
-    static string PrefabPath(bool isLevel,enum_TileStyle style)
+    static string PrefabPath(bool isLevel,enum_Style style)
     {
         if (isLevel)
             return TEditor.S_AssetDataBaseResources + TResources.ConstPath.S_LevelMain;
         else
             return TEditor.S_AssetDataBaseResources + TResources.ConstPath.S_LeveLItem+"/" + style.ToString();
     }
-    public static Material CreateMaterial(enum_TileStyle lsType,bool isLevel,Material sharedMaterial=null)
+    public static Material CreateMaterial(enum_Style lsType,bool isLevel,Material sharedMaterial=null)
     {
         string folderParent = "Assets/Material/Static/";
         string folderPath = GetMaterialPath(lsType,isLevel);
@@ -334,7 +334,7 @@ public class EWorkFlow_ModelAutoPrefabPackaging : EditorWindow
 
         return AssetDatabase.LoadAssetAtPath<Material>(folderPath);
     }
-    static string GetMaterialPath( enum_TileStyle matStyle, bool isLevel)
+    static string GetMaterialPath( enum_Style matStyle, bool isLevel)
     {
         if (isLevel)
             return "Assets/Material/Static/Level.mat";

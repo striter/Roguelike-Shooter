@@ -8,7 +8,7 @@ public class SFXProjectileBlastTrigger : SFXProjectile {
         if (i_blastSFXIndex == -1)
             Debug.LogError("Error!Should Set Blast Index While Using This SFXProjectile:" + I_SFXIndex);
 
-        ObjectManager.SpawnSFX<SFXBlast>(i_blastSFXIndex, transform.position, Vector3.up).Play(I_SourceID, m_Damage);
+        ObjectManager.SpawnSFX<SFXCast>(i_blastSFXIndex, transform.position, Vector3.up).Play(I_SourceID, m_Damage);
         OnPlayFinished();
     }
 }

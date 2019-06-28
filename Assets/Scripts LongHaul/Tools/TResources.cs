@@ -19,8 +19,8 @@ public class TResources
     }
 
     public static TileMapData GetLevelData(string name) => Load<TileMapData>(ConstPath.S_LevelData + "/" + name);
-    public static StyleColorData[] GetAllStyleCustomization(enum_TileStyle levelStype) => LoadAll<StyleColorData>(ConstPath.S_StyleCustomization + "/" + levelStype);
-    public static LevelItemBase[] GetAllLevelItems(enum_TileStyle _levelStyle, Transform parent)
+    public static StyleColorData[] GetAllStyleCustomization(enum_Style levelStype) => LoadAll<StyleColorData>(ConstPath.S_StyleCustomization + "/" + levelStype);
+    public static LevelItemBase[] GetAllLevelItems(enum_Style _levelStyle, Transform parent)
     {
         LevelItemBase[] levelItemPrefabs = LoadAll<LevelItemBase>(ConstPath.S_LeveLItem + "/" + _levelStyle);
         foreach (LevelItemBase levelItem in levelItemPrefabs)
@@ -33,7 +33,7 @@ public class TResources
             instantiatedLevelItem[i] = GameObject.Instantiate(levelItemPrefabs[i], parent);
         return instantiatedLevelItem;
     }
-    public static Dictionary<enum_TilePrefabDefinition, List<LevelBase>> GetAllStyledLevels(enum_TileStyle levelStyle)
+    public static Dictionary<enum_TilePrefabDefinition, List<LevelBase>> GetAllStyledLevels(enum_Style levelStyle)
     {
         Dictionary<enum_TilePrefabDefinition, List<LevelBase>> levelPrefabDic = new Dictionary<enum_TilePrefabDefinition, List<LevelBase>>();
         LevelBase[] levels = LoadAll<LevelBase>(ConstPath.S_LevelMain);
@@ -50,7 +50,7 @@ public class TResources
         return levelPrefabDic;
     }
 
-    public static Dictionary<int, EntityBase> GetAllStyledEntities(enum_EntityStyle entityStyle)
+    public static Dictionary<int, EntityBase> GetAllStyledEntities(enum_Style entityStyle)
     {
         Dictionary<int, EntityBase> entitisDic = new Dictionary<int, EntityBase>();
         entitisDic.Add(0,Instantiate<EntityBase>(ConstPath.S_Entity +"/Player"));

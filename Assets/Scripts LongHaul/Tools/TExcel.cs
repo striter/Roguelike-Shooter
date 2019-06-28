@@ -69,13 +69,21 @@ namespace TExcel
                 {
                     for (int j = 0; j < fields.Length; j++)
                     {
+                        Type phraseType = fields[j].FieldType;
+                        object value=null;
+                        string phraseValue = result.Tables[0].Rows[i + 1][j].ToString();
                         try
                         {
-                            fields[j].SetValue(obj, TXmlPhrase.Phrase[fields[j].FieldType, result.Tables[0].Rows[i + 1][j].ToString()]);
+                            if (phraseValue.Length == 0)
+                                value = TXmlPhrase.Phrase.GetDefault(phraseType);
+                            else
+                                value = TXmlPhrase.Phrase[phraseType, phraseValue];
+
+                            fields[j].SetValue(obj,value);
                         }
                         catch(Exception e)
                         {
-                            throw new Exception("Invalid Info:'"+ result.Tables[0].Rows[i + 1][j].ToString()+"'" + ",FieldType:" + fields[j].FieldType.ToString() + ", Rows/Column:" + (i+2).ToString() + "/" + (j+1).ToString()+"    Message:"+e.Message);
+                            throw new Exception("Info:Origin|"+ result.Tables[0].Rows[i + 1][j].ToString()+"|Phrased|"+phraseValue+"|,Field:"+fields[j].Name+"|"+ fields[j].FieldType.ToString() + ", Rows/Column:" + (i+2).ToString() + "/" + (j+1).ToString()+"    Message:"+e.Message);
                         }
                     }
                     T temp = (T)obj;

@@ -9,8 +9,9 @@
 	SubShader
 	{ 
 		Tags {"RenderType" = "BloomCommon" "IgnoreProjector" = "True" "Queue" = "Transparent" }
-		Blend SrcAlpha OneMinusSrcAlpha
-		ZWrite On
-		USEPASS "Hidden/PostEffect/PE_BloomSpecific_Render/BLOOM_COMMON"
+	Cull Off Lighting Off ZWrite Off Fog { Color(0,0,0,0) }
+
+		Cull Back
+		USEPASS "Hidden/PostEffect/PE_BloomSpecific_Render/BLOOM_COLOR"
 	}
 }

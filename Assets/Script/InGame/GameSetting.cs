@@ -150,17 +150,16 @@ namespace GameSetting
     public enum enum_BattleDifficulty { Invalid = -1, Default = 0, Eazy = 1, Normal = 2, Hard = 3 }
     public enum enum_TilePrefabDefinition { Invalid = -1, Big = 1, Small = 2, }
     public enum enum_TileLocking { Invalid = -1, Locked = 0, Unlockable = 1, Unlocked = 2, }
-    public enum enum_TileStyle { Invalid = -1, Forest = 1, Desert = 2, Iceland = 3, Horde = 4, Undead = 5, }
+    public enum enum_Style { Invalid = -1, Forest = 1, Desert = 2, Iceland = 3, Horde = 4, Undead = 5, }
     public enum enum_TileType { Invalid = -1, Start =0, Battle = 1, End = 2, Reward = 3,}
     public enum enum_LevelItemType{ Invalid=-1, LargeMore, LargeLess, MediumMore, MediumLess, SmallMore, SmallLess, ManmadeMore, ManmadeLess, NoCollisionMore, NoCollisionLess,}
     public enum enum_LevelTileType { Invaid = -1, Empty , Main, Item, Portal, }
     public enum enum_EntityLevel { Invalid = -1, Default=0 ,Militia=1 , Veteran=2, Ranger=3 }
-    public enum enum_EntityStyle { Invalid=-1, Test=1,}
     public enum enum_Interaction { Invalid = -1, Interact_Portal, }
     public enum enum_TriggerType { Invalid = -1, Single = 1, Auto = 2, Burst = 3, Pull = 4, Store = 5, }
-    public enum enum_BarrageType { Invalid = -1, Single = 1, Multiple = 2, Melee = 3, }
+    public enum enum_EnermyWeaponType { Invalid = -1, Single = 1, Multiple = 2, Melee = 3, }
 
-    public enum enum_Weapon
+    public enum enum_PlayerWeapon
     {
         Invalid = -1,
         //Laser
@@ -300,11 +299,11 @@ namespace GameSetting
         public TileAxis m_TileAxis => m_Tile;
         protected TileAxis m_Tile { get; private set; }
         public enum_TileType m_TileType { get; private set; } = enum_TileType.Invalid;
-        public enum_TileStyle m_TileStyle { get; private set; } = enum_TileStyle.Invalid;
+        public enum_Style m_TileStyle { get; private set; } = enum_Style.Invalid;
         public enum_TileLocking m_TileLocking { get; private set; } = enum_TileLocking.Invalid;
         public Dictionary<enum_TileDirection, TileAxis> m_Connections { get; protected set; } = new Dictionary<enum_TileDirection, TileAxis>();
 
-        public SBigmapTileInfo(TileAxis _tileAxis, enum_TileType _tileType, enum_TileStyle _tileStyle, enum_TileLocking _tileLocking)
+        public SBigmapTileInfo(TileAxis _tileAxis, enum_TileType _tileType, enum_Style _tileStyle, enum_TileLocking _tileLocking)
         {
             m_Tile = _tileAxis;
             m_TileType = _tileType;
@@ -403,7 +402,6 @@ namespace GameSetting
     public struct SEntity : ISExcel
     {
         int i_index;
-        string s_name;
         int e_type;
         float f_maxHealth;
         float f_maxArmor;
@@ -415,10 +413,22 @@ namespace GameSetting
         float f_attackRange;
         bool b_movementObstacleCheck;
         bool b_battleObstacleCheck;
-        int i_barrageIndex;
-        RangeFloat fr_barrageDuration;
+        int i_weaponType;
+        int i_weaponAnim;
+        RangeFloat fr_duration;
+        int i_muzzleIndex;
+        int i_projectileIndex;
+        int i_blastIndex;
+        int i_impactIndex;
+        float f_firerate;
+        RangeInt ir_count;
+        float f_damage;
+        float i_speed;
+        int i_horiSpread;
+        int i_detailSpread;
+        RangeInt ir_rangeExtension;
+        float f_offsetExtension;
         public int m_Index=>i_index;
-        public string m_Name=>s_name;
         public enum_EntityLevel m_Type => (enum_EntityLevel)e_type;
         public float m_MaxHealth => f_maxHealth;
         public float m_MaxArmor => f_maxArmor;
@@ -430,8 +440,22 @@ namespace GameSetting
         public float m_AIAttackRange => f_attackRange;
         public bool m_MovementCheckObstacle => b_movementObstacleCheck;
         public bool m_BattleCheckObsatacle => b_battleObstacleCheck;
-        public int m_BarrageIndex => i_barrageIndex;
-        public RangeFloat m_BarrageDuration => fr_barrageDuration;
+
+        public enum_EnermyWeaponType m_WeaponType => (enum_EnermyWeaponType)i_weaponType;
+        public int m_WeaponAnim => i_weaponAnim;
+        public RangeFloat m_BarrageDuration => fr_duration;
+        public int m_MuzzleSFXIndex => i_muzzleIndex;
+        public int m_ProjectileSFXIndex => i_projectileIndex;
+        public int m_BlastSFXIndex => i_blastIndex;
+        public int m_ImpactSFXIndex => i_impactIndex;
+        public float m_Firerate => f_firerate;
+        public RangeInt m_ProjectileCount => ir_count;
+        public float m_ProjectileDamage => f_damage;
+        public float m_ProjectileSpeed => i_speed;
+        public int m_HorizontalSpread => i_horiSpread;
+        public int m_DetailSpread => i_detailSpread;
+        public RangeInt m_RangeExtension => ir_rangeExtension;
+        public float m_OffsetExtension => f_offsetExtension;
         public void InitOnValueSet()
         {
         }
@@ -460,7 +484,7 @@ namespace GameSetting
         float f_recoilHorizontal;
         float f_recoilVertical;
 
-        public enum_Weapon m_Weapon => (enum_Weapon)index;
+        public enum_PlayerWeapon m_Weapon => (enum_PlayerWeapon)index;
         public string m_Name => s_name;
         public enum_TriggerType m_TriggerType=>(enum_TriggerType)i_triggerType;
         public int m_MuzzleSFXIndex => i_muzzleIndex;
@@ -485,40 +509,6 @@ namespace GameSetting
         {
         }
     }
-    public struct SBarrage : ISExcel
-    {
-        int i_index;
-        int i_barrageType;
-        int i_muzzleIndex;
-        int i_projectileIndex;
-        int i_blastIndex;
-        int i_impactIndex;
-        float f_firerate;
-        RangeInt i_projectileCount;
-        float i_projectileDamage;
-        float i_projectileSpeed;
-        int i_horizontalSpread;
-        float i_projectileSpread;
-        RangeInt ir_rangeExtension;
-        float f_offsetExtension;
-        public int m_Index => i_index;
-        public enum_BarrageType m_BarrageType => (enum_BarrageType)i_barrageType;
-        public int m_MuzzleSFXIndex => i_muzzleIndex;
-        public int m_ProjectileSFXIndex => i_projectileIndex;
-        public int m_BlastSFXIndex => i_blastIndex;
-        public int m_ImpactSFXIndex => i_impactIndex;
-        public float m_Firerate => f_firerate;
-        public RangeInt m_ProjectileCount => i_projectileCount;
-        public float m_ProjectileDamage => i_projectileDamage;
-        public float m_ProjectileSpeed => i_projectileSpeed;
-        public int m_HorizontalSpread => i_horizontalSpread;
-        public float m_ProjectileSpread => i_projectileSpread;
-        public RangeInt m_RangeExtension => ir_rangeExtension;
-        public float m_OffsetExtension => f_offsetExtension;
-        public void InitOnValueSet()
-        {
-        }
-    }
     public struct SGenerateItem : ISExcel
     {
         int ec_index;
@@ -532,12 +522,12 @@ namespace GameSetting
         RangeInt ir_manmadeMore;
         RangeInt ir_noCollisionLess;
         RangeInt ir_noCollisionMore;
-        public enum_TileStyle m_LevelStyle;
+        public enum_Style m_LevelStyle;
         public enum_TilePrefabDefinition m_LevelPrefabType;
         public Dictionary<enum_LevelItemType, RangeInt> m_ItemGenerate;
         public void InitOnValueSet()
         {
-            m_LevelStyle = (enum_TileStyle)(ec_index / 10);
+            m_LevelStyle = (enum_Style)(ec_index / 10);
             m_LevelPrefabType = (enum_TilePrefabDefinition)(ec_index % 10);
             m_ItemGenerate = new Dictionary<enum_LevelItemType, RangeInt>(); 
             m_ItemGenerate.Add(enum_LevelItemType.LargeLess, ir_largeLess);

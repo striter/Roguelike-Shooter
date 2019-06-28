@@ -9,7 +9,7 @@ using System;
 [RequireComponent(typeof(NavMeshAgent),typeof(NavMeshObstacle))]
 public class EntityEnermyBase : EntityBase {
     EnermyAIControllerBasic m_AI;
-    BarrageBase m_Barrage;
+    EnermyWeaponBase m_Barrage;
     EnermyAnimator m_Animator;
     float OnAttackTarget(EntityBase target) => m_Barrage.Play(this, target)+m_EntityInfo.m_BarrageDuration.Random();
     bool OnCheckTarget(EntityBase target) => target.B_IsPlayer!=B_IsPlayer && !target.b_IsDead;
@@ -17,13 +17,12 @@ public class EntityEnermyBase : EntityBase {
     {
         Init(entityInfo, false);
         m_AI = new EnermyAIControllerBasic(this, entityInfo, OnAttackTarget,OnCheckTarget);
-        SBarrage barrageInfo = ExcelManager.GetBarrageProperties(entityInfo.m_BarrageIndex);
-        switch (barrageInfo.m_BarrageType)
+        switch (entityInfo.m_WeaponType)
         {
-            default: Debug.LogError("Invalid Barrage Type:" + barrageInfo.m_BarrageType); break;
-            case enum_BarrageType.Single: m_Barrage = new BarrageRange(barrageInfo); break;
-            case enum_BarrageType.Multiple: m_Barrage = new BarrageMultiple(barrageInfo); break;
-            case enum_BarrageType.Melee: m_Barrage = new BarrageMelee(barrageInfo); break;
+            default: Debug.LogError("Invalid Barrage Type:" + entityInfo.m_WeaponType); break;
+            case enum_EnermyWeaponType.Single: m_Barrage = new BarrageRange(); break;
+            case enum_EnermyWeaponType.Multiple: m_Barrage = new BarrageMultiple(); break;
+            case enum_EnermyWeaponType.Melee: m_Barrage = new EnermyMelee(); break;
         }
     }
     public override void OnActivate(int id)
@@ -62,7 +61,7 @@ public class EntityEnermyBase : EntityBase {
         static readonly int HS_T_Dead = Animator.StringToHash("t_dead");
         public EnermyAnimator(Animator _animator, List<SAnimatorParam> _params) : base(_animator, _params)
         {
-
+            m_Animator.fireEvents = false;
         }
         public void SetRun(bool run)
         {
@@ -247,19 +246,23 @@ public class EntityEnermyBase : EntityBase {
         }
     }
     
-    class BarrageBase : ISingleCoroutine
+    class EnermyWeaponBase : ISingleCoroutine
     {
-        protected SBarrage m_Info;
-        protected EntityBase m_EntityControlling;
+        protected EntityEnermyBase m_EntityControlling;
         protected EntityBase m_Target;
         protected Transform transform => m_EntityControlling.tf_Head;
         protected Transform targetTransform => m_Target.tf_Head;
 
-        public BarrageBase(SBarrage barrageInfo)
+        protected SEntity m_Info
         {
-            m_Info = barrageInfo;
+            get
+            {
+                if (m_EntityControlling == null)
+                    Debug.LogError("Null Entity Controlling?");
+                return m_EntityControlling.m_EntityInfo;
+            }
         }
-        public virtual float Play(EntityBase _controller, EntityBase _target)
+        public virtual float Play(EntityEnermyBase _controller, EntityBase _target)
         {
             m_EntityControlling = _controller;
             m_Target = _target;
@@ -270,13 +273,9 @@ public class EntityEnermyBase : EntityBase {
             this.StopAllSingleCoroutines();
         }
     }
-    class BarrageMelee : BarrageBase
+    class EnermyMelee : EnermyWeaponBase
     {
-        public BarrageMelee(SBarrage barrageInfo) : base(barrageInfo)
-        {
-
-        }
-        public override float Play(EntityBase _controller, EntityBase _target)
+        public override float Play(EntityEnermyBase _controller, EntityBase _target)
         {
             base.Play(_controller,_target);
             this.StartSingleCoroutine(0,TIEnumerators.PauseDel(m_Info.m_Firerate,OnMelee));
@@ -289,17 +288,14 @@ public class EntityEnermyBase : EntityBase {
 
             Vector3 meleeDirection =(  targetTransform.position - transform.position).normalized;
 
-            ObjectManager.SpawnSFX<SFXBlast>(m_Info.m_BlastSFXIndex, transform.position, meleeDirection).Play(m_EntityControlling.I_EntityID, m_Info.m_ProjectileDamage);
+            ObjectManager.SpawnSFX<SFXCast>(m_Info.m_BlastSFXIndex, transform.position, meleeDirection).Play(m_EntityControlling.I_EntityID, m_Info.m_ProjectileDamage);
 
         }
     }
-    class BarrageRange : BarrageBase
+    class BarrageRange : EnermyWeaponBase
     {
         protected bool b_preAim;
-        public BarrageRange(SBarrage barrageInfo) : base(barrageInfo)
-        {
-        }
-        public override float Play(EntityBase _controller, EntityBase _target)
+        public override float Play(EntityEnermyBase _controller, EntityBase _target)
         {
             base.Play(_controller, _target);
             b_preAim = UnityEngine.Random.Range(0, 2) > 0;
@@ -312,7 +308,7 @@ public class EntityEnermyBase : EntityBase {
         protected virtual void BarrageWave()
         {
             Vector3 horizontalOffsetDirection = GameExpression.V3_RangeSpreadDirection(targetDirection, m_Info.m_HorizontalSpread, Vector3.zero, targetTransform.right);
-            Vector3 spreadDirection = GameExpression.V3_RangeSpreadDirection(horizontalOffsetDirection, m_Info.m_ProjectileSpread, targetTransform.up, targetTransform.right);
+            Vector3 spreadDirection = GameExpression.V3_RangeSpreadDirection(horizontalOffsetDirection, m_Info.m_DetailSpread, targetTransform.up, targetTransform.right);
             FireBullet(spreadDirection);
         }
         protected void FireBullet(Vector3 direction)
@@ -324,9 +320,6 @@ public class EntityEnermyBase : EntityBase {
     }
     class BarrageMultiple : BarrageRange
     {
-        public BarrageMultiple(SBarrage barrageInfo) : base(barrageInfo)
-        {
-        }
         protected override void BarrageWave()
         {
             int waveCount = m_Info.m_RangeExtension.Random();
@@ -335,7 +328,7 @@ public class EntityEnermyBase : EntityBase {
             for (int i = 0; i < waveCount; i++)
             {
                 Vector3 offsetDirection = Vector3.Normalize(horizontalOffsetDirection * 100 + targetTransform.right * m_Info.m_OffsetExtension*i).normalized;
-                Vector3 spreadDirection = GameExpression.V3_RangeSpreadDirection(offsetDirection, m_Info.m_ProjectileSpread, targetTransform.up, targetTransform.right);
+                Vector3 spreadDirection = GameExpression.V3_RangeSpreadDirection(offsetDirection, m_Info.m_DetailSpread, targetTransform.up, targetTransform.right);
                 FireBullet(spreadDirection);
             }
         }
