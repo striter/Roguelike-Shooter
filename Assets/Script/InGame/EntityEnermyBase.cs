@@ -221,8 +221,8 @@ public class EntityEnermyBase : EntityBase {
         {
             Vector3 targetPosition= m_Target.transform.position;
             Vector3 direction = m_EntityControlling.transform.position - m_Target.transform.position;
-            Vector3 m_SamplePosition= m_EntityControlling.transform.position+ (b_ChasedTarget?direction:-direction).normalized*10;
-            m_SamplePosition = m_SamplePosition + new Vector3(UnityEngine.Random.Range(-15f, 15f), 0, UnityEngine.Random.Range(-15f, 15f));
+            Vector3 m_SamplePosition= m_EntityControlling.transform.position+ (b_ChasedTarget?direction:-direction).normalized*5;
+            m_SamplePosition = m_SamplePosition + new Vector3(UnityEngine.Random.Range(-5f, 5f), 0, UnityEngine.Random.Range(-5f, 5f));
             if (NavMesh.SamplePosition(m_SamplePosition, out sampleHit, 50, -1))
                 targetPosition = sampleHit.position;
             else if (NavMesh.SamplePosition(m_Target.transform.position, out sampleHit, 20, -1))
