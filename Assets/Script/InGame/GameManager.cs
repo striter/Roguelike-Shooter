@@ -15,16 +15,16 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
 
     public EntityBase m_LocalPlayer { get; private set; } = null;
     public static CPlayerSave m_PlayerInfo { get; private set; }
-    public bool B_TestMode { get; private set; } = false;
+    public bool B_EditorTestMode { get; private set; } = false;
     public System.Random m_GameSeed { get; private set; } = null;
     public string m_SeedString { get; private set; } = null;
     protected override void Awake()
     {
 #if UNITY_EDITOR
-        B_TestMode = true;
+        B_EditorTestMode = true;
 #endif
         instance = this;
-        ExcelManager.Init();
+        DataManager.Init();
         ObjectManager.Init();
         TBroadCaster<enum_BC_UIStatusChanged>.Init();
         TBroadCaster<enum_BC_GameStatusChanged>.Init();
@@ -34,10 +34,17 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnSpawnEntity, OnSpawnEntity);
         TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnRecycleEntity, OnRecycleEntity);
         TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnRecycleEntity, OnWaveEntityDead);
-    }
+
+        TouchInputManager.Instance.OnSingleFingerPress = (bool down) =>
+        {
+            RaycastHit hit = new RaycastHit();
+            if (down && CameraController.Instance.InputRayCheck(TouchInputManager.SingleTouchPos, GameLayer.Physics.I_Static, ref hit))
+                ObjectManager.SpawnSFX<SFXProjectile>(20006, hit.point, Vector3.forward).PlayBarrage(1000, transform.forward, hit.point, DataManager.GetEntityProperties(531));
+        };
+        }
     void Update()
     {
-        if (!B_TestMode)
+        if (!B_EditorTestMode)
             return;
         if (Input.GetKeyDown(KeyCode.Alpha0))
         {
@@ -48,16 +55,17 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
             });
         }
         if (Input.GetKeyDown(KeyCode.BackQuote))
-        {
             Time.timeScale = Time.timeScale == 1f ? .1f : 1f;
-        }
+
         RaycastHit hit = new RaycastHit();
         if (Input.GetKeyDown(KeyCode.Z) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
-            ObjectManager.SpawnSFX<SFXProjectile>(20006, hit.point, Vector3.forward).PlayBarrage(1000, transform.forward, hit.point + transform.forward * 5, Properties<SEntity>.PropertiesList.Find(p => p.m_Index == 5));
+            ObjectManager.SpawnSFX<SFXProjectile>(20006, hit.point, Vector3.forward).PlayBarrage(1000, transform.forward, hit.point + transform.forward * 5, DataManager.GetEntityProperties(531));
         if (Input.GetKeyDown(KeyCode.X) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
             ObjectManager.SpawnSFX<SFXCast>(30003, hit.point, Vector3.forward).Play(1000, 10);
         if (Input.GetKeyDown(KeyCode.C) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
-            ObjectManager.SpawnSFX<SFXProjectile>(20004, hit.point+Vector3.up*1, Vector3.forward).PlayWeapon(1000,Vector3.forward,hit.point+Vector3.forward*100,Properties<SWeapon>.PropertiesList.Find(p=>(int)p.m_Weapon==-1));
+            ObjectManager.SpawnSFX<SFXProjectile>(20004, hit.point+Vector3.up*1, Vector3.forward).PlayWeapon(1000,Vector3.forward,hit.point
++Vector3.forward*100,Properties<SWeapon>.PropertiesList.Find(p=>(int)p.m_Weapon==-1));
+
 
         UIManager.instance.transform.Find("SeedTest").GetComponent<UnityEngine.UI.Text>().text = m_SeedString;
     }
@@ -121,7 +129,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
 
 
         if(battle)
-            OnBattleStart(ExcelManager.GetEntityGenerateProperties(1,levelInfo.m_TileType, difficulty) , 3);
+            OnBattleStart(DataManager.GetEntityGenerateProperties(1,levelInfo.m_TileType, difficulty) , 3);
         else
             OnLevelFinished();
     }
@@ -246,14 +254,14 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     #endregion
 }
 #region External Tools Packaging Class
-public static class ExcelManager
+public static class DataManager
 {
     public static void Init()
     {
-        Properties<SEntity>.Init();
-        Properties<SWeapon>.Init();
         Properties<SGenerateItem>.Init();
         Properties<SGenerateEntity>.Init();
+        Properties<SWeapon>.Init();
+        Properties<SEntity>.Init();
     }
     public static SGenerateItem GetItemGenerateProperties(enum_Style style,enum_TilePrefabDefinition prefabType)
     {
@@ -339,7 +347,7 @@ public static class ObjectManager
             Debug.LogWarning("Model Null Weapon Model Found:Resources/Weapon/" + type);
 
             WeaponBase target = TResources.Instantiate<WeaponBase>("Weapon/Error");
-            target.Init(ExcelManager.GetWeaponProperties(type));
+            target.Init(DataManager.GetWeaponProperties(type));
             return target;
         }
     }
@@ -399,7 +407,7 @@ public static class ObjectManager
         Dictionary<enum_EntityLevel, List<int>> enermyDic = new Dictionary<enum_EntityLevel, List<int>>();
         registerDic.Traversal((int index, EntityBase entity) => {
             ObjectPoolManager<int, EntityBase>.Register(index, entity, enum_PoolSaveType.DynamicMaxAmount, 1, 
-                (EntityBase entityInstantiate) => { entityInstantiate.Init(ExcelManager.GetEntityProperties(index)); });
+                (EntityBase entityInstantiate) => { entityInstantiate.Init(DataManager.GetEntityProperties(index)); });
 
             if (!entity.B_IsPlayer)
             {

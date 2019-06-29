@@ -51,49 +51,63 @@ namespace TExcel
 
                 l_PropertyList = new List<T>();
                 IExcelDataReader reader = ExcelReaderFactory.CreateBinaryReader(new MemoryStream(bytes));
-                DataSet result = reader.AsDataSet();
-
+                List<string[]> result = new List<string[]>();
+                //do            //Unlock Need To Read Extra Sheets
+                //{
+                    while (reader.Read())
+                    {
+                        string[] row = new string[reader.FieldCount];
+                        for (int i = 0; i < row.Length; i++)
+                        {
+                            string data = reader.GetString(i);
+                            row[i] = data == null ? "" : data;
+                        }
+                        result.Add(row);
+                    }
+                //} while (reader.NextResult());
+                
+                
                 Type type = typeof(T);
                 object obj = Activator.CreateInstance(type, true);
                 FieldInfo[] fields = type.GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
                 for (int i = 0; i < fields.Length; i++)
                 {
-                    string temp = result.Tables[0].Rows[0][i].ToString();
+                    string temp = result[0][i].ToString();
                     if (!temp.Equals(fields[i].Name) && !temp.Equals(-1))
                     {
                         throw new Exception(" Struct Or Excel Pos Not Equals:(" + type.ToString() + "Struct Property:(Column:"+i+"|" + fields[i].Name + ") Excel Property:(Row:"+  i +"|" + temp + ")");
                     }
                 }
-
-                for (int i = 0; i < result.Tables[0].Rows.Count - 1; i++)
+                for (int i = 0; i < result.Count - 1; i++)
                 {
                     for (int j = 0; j < fields.Length; j++)
                     {
-                        Type phraseType = fields[j].FieldType;
-                        object value=null;
-                        string phraseValue = result.Tables[0].Rows[i + 1][j].ToString();
                         try
                         {
+                            Type phraseType = fields[j].FieldType;
+                            object value = null;
+                            string phraseValue = result[i + 1][j].ToString();
                             if (phraseValue.Length == 0)
                                 value = TXmlPhrase.Phrase.GetDefault(phraseType);
                             else
                                 value = TXmlPhrase.Phrase[phraseType, phraseValue];
 
-                            fields[j].SetValue(obj,value);
+                            fields[j].SetValue(obj, value);
                         }
-                        catch(Exception e)
+                        catch (Exception e)
                         {
-                            throw new Exception("Info:Origin|"+ result.Tables[0].Rows[i + 1][j].ToString()+"|Phrased|"+phraseValue+"|,Field:"+fields[j].Name+"|"+ fields[j].FieldType.ToString() + ", Rows/Column:" + (i+2).ToString() + "/" + (j+1).ToString()+"    Message:"+e.Message);
+                            throw new Exception("Inner Info:|" + result[i + 1][j].ToString() + "|,Field:" + fields[j].Name + "|" + fields[j].FieldType.ToString() + ", Rows/Column:" + (i + 2).ToString() + "/" + (j + 1).ToString() + "    Message:" + e.Message);
                         }
                     }
                     T temp = (T)obj;
                     temp.InitOnValueSet();
                     l_PropertyList.Add(temp);
+
                 }
             }
             catch(Exception e)
             {
-                Debug.LogError("Excel|"+typeof(T).Name.ToString()+" Error:"+e.Message);
+                Debug.LogError("Excel|"+typeof(T).Name.ToString()+" Error:"+e.Message+e.StackTrace);
             }
         }
 

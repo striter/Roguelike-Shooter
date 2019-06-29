@@ -42,6 +42,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         m_MapLevelInfo= GenerateBigmapLevels(m_StyleCurrent, m_mainSeed, tf_LevelParent,6,5,new TileAxis(2,2));
         StyleColorData[] customizations = TResources.GetAllStyleCustomization(_LevelStyle);
         StyleColorData randomData= customizations.Length == 0? StyleColorData.Default():customizations.RandomItem(m_mainSeed);
+        m_OceanScript.SetActivate(true);
         randomData.DataInit(m_DirectionalLight, m_OceanScript);
         SetPostEffects(_LevelStyle);
     }

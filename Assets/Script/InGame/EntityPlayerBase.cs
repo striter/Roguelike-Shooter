@@ -36,7 +36,7 @@ public class EntityPlayerBase : EntityBase {
         m_Pitch = 0;
         CameraController.Attach(this.transform);
 
-        if (GameManager.Instance.B_TestMode)
+        if (GameManager.Instance.B_EditorTestMode)
         {
             PCInputManager.Instance.AddMouseRotateDelta(OnRotateDelta);
             PCInputManager.Instance.AddMovementDelta(OnMovementDelta);

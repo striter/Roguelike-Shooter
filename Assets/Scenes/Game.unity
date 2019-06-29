@@ -1775,7 +1775,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Test_TileStyle: 5
-  Test_EntityStyle: 1
+  Test_EntityStyle: 5
   M_TESTSEED: 
 --- !u!4 &1133817278
 Transform:
@@ -2137,7 +2137,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1724091710
 MonoBehaviour:
   m_ObjectHideFlags: 0

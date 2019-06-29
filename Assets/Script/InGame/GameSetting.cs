@@ -337,7 +337,7 @@ namespace GameSetting
             m_Level.transform.localPosition = Vector3.zero;
             m_Level.transform.localScale = Vector3.one;
             m_Level.SetActivate(false);
-            return m_Level.Init(TResources.GetLevelData(_levelPrefab.name), ExcelManager.GetItemGenerateProperties(m_TileStyle, _levelPrefab.E_PrefabType), _levelItemPrefabs, m_TileType, seed, m_Connections.Keys.ToList().Find(p => m_Connections[p] == new TileAxis(-1, -1)));        //Add Portal For Level End
+            return m_Level.Init(TResources.GetLevelData(_levelPrefab.name), DataManager.GetItemGenerateProperties(m_TileStyle, _levelPrefab.E_PrefabType), _levelItemPrefabs, m_TileType, seed, m_Connections.Keys.ToList().Find(p => m_Connections[p] == new TileAxis(-1, -1)));        //Add Portal For Level End
         }
         public void StartLevel()
         {

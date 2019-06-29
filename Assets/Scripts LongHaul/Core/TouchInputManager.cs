@@ -17,11 +17,11 @@ public class TouchInputManager : SingletonMono<TouchInputManager> {
     float f_dualFingerStartPos;
 #endif
     Gyroscope gs;
-    public static Action<bool> OnSingleFingerPress;
-    public static Action<float> OnDualFingerScale;
-    public static Action<Vector3> OnGyroscope;
-    public static Action OnBackdown;
-    public static Action<bool> OnSingleTouch;
+    public Action<bool> OnSingleFingerPress;
+    public Action<float> OnDualFingerScale;
+    public Action<Vector3> OnGyroscope;
+    public Action OnBackdown;
+    public Action<bool> OnSingleTouch;
     protected override void Awake()
     {
         base.Awake();

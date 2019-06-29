@@ -10,7 +10,7 @@ public class SFXProjectileBlastMeteor : SFXProjectileBlastTrigger {
         Vector3 spreadDirection = (destination - startPos).normalized;
         m_Simulator = new ProjectilePhysicsSimulator(startPos, spreadDirection, Vector3.down, horiSpeed, horiDistance, vertiSpeed, vertiAcceleration);
         transform.position = startPos;
-        ObjectManager.SpawnSFX<SFXIndicator>(50001, startPos, spreadDirection).Play(sourceID,startPos,destination,horiSpeed,5);
+        ObjectManager.SpawnSFX<SFXIndicator>(50001, startPos, spreadDirection).Play(sourceID,startPos, spreadDirection, horiSpeed,1.5f);
         PlaySFX(sourceID, duration);
     }
 }
