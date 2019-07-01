@@ -8,6 +8,7 @@ using System;
 
 [RequireComponent(typeof(NavMeshAgent),typeof(NavMeshObstacle))]
 public class EntityEnermyBase : EntityBase {
+    public EnermyAnimator.enum_AnimIndex E_AnimatorIndex= EnermyAnimator.enum_AnimIndex.Invalid;
     EnermyAIControllerBasic m_AI;
     EnermyWeaponBase m_Barrage;
     EnermyAnimator m_Animator;
@@ -28,7 +29,7 @@ public class EntityEnermyBase : EntityBase {
     public override void OnActivate(int id)
     {
         base.OnActivate(id);
-        m_Animator = new EnermyAnimator(tf_Model.GetComponent<Animator>(), new List<SAnimatorParam>() { new SAnimatorParam("Death_01", Animator.StringToHash("fp_dead"), 1f) });
+        m_Animator = new EnermyAnimator(tf_Model.GetComponent<Animator>(), new List<SAnimatorParam>() { new SAnimatorParam("Death_01", Animator.StringToHash("fp_dead"), 1f) }, E_AnimatorIndex);
 
     }
     protected override void Update()
@@ -55,7 +56,7 @@ public class EntityEnermyBase : EntityBase {
     }
 
 
-    protected class EnermyAnimator : AnimatorClippingTime
+    public class EnermyAnimator : AnimatorClippingTime
     {
         public enum enum_AnimIndex
         {
