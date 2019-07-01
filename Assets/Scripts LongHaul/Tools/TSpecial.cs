@@ -375,51 +375,13 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
         }
     }
 
-
-    //Adjust Runtime Animator Controller Parameter(Float) Parameters To Match Clip With Intended Duration 
-    public struct SAnimatorParam
-    {
-        public string s_clipname { get; private set; }
-        public int i_hashParam { get; private set; }
-        public float f_playTime { get; private set; }
-        public SAnimatorParam(string _clipName, int _hashParam, float _playTime)
-        {
-            i_hashParam = _hashParam;
-            s_clipname = _clipName;
-            f_playTime = _playTime;
-        }
-    }
-
+    
     public class AnimatorClippingTime
     {
         protected Animator m_Animator;
-        List<SAnimatorParam> l_animatorParams;
-        public AnimatorClippingTime(Animator _animator, List<SAnimatorParam> _animatorParams=null)
+        public AnimatorClippingTime(Animator _animator)
         {
             m_Animator = _animator;
-            l_animatorParams = _animatorParams;
-            Reset();
-        }
-        public virtual void Reset()
-        {
-            if (l_animatorParams == null)
-                return;
-            AnimationClip[] clips = m_Animator.runtimeAnimatorController.animationClips;
-            for (int i = 0; i < clips.Length; i++)
-            {
-                foreach (SAnimatorParam param in l_animatorParams)
-                {
-                    if (clips[i].name == param.s_clipname)
-                    {
-                        if(param.f_playTime==0)
-                        {
-                            Debug.LogError("Play Time Zero Detected!");
-                            return;
-                        }
-                        m_Animator.SetFloat(param.i_hashParam, clips[i].length / param.f_playTime); ;
-                    }
-                }
-            }
         }
 
     }

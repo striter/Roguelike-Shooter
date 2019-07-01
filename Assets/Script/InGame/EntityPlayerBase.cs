@@ -27,7 +27,7 @@ public class EntityPlayerBase : EntityBase {
         m_CharacterController.detectCollisions = false;
         gameObject.layer = GameLayer.I_MovementDetect;
         tf_WeaponHold = transform.Find("WeaponHold");
-        m_Animator = new PlayerAnimator(tf_Model.GetComponent<Animator>(),null);
+        m_Animator = new PlayerAnimator(tf_Model.GetComponent<Animator>());
         transform.Find("InteractDetector").GetComponent<InteractDetector>().Init(OnInteractCheck);
     }
     public override void OnActivate(int id)
@@ -183,7 +183,7 @@ public class EntityPlayerBase : EntityBase {
     protected class PlayerAnimator : AnimatorClippingTime
     {
         static readonly int HS_B_Run = Animator.StringToHash("b_run");
-        public PlayerAnimator(Animator _animator, List<SAnimatorParam> _params) : base(_animator, _params)
+        public PlayerAnimator(Animator _animator) : base(_animator)
         {
 
         }

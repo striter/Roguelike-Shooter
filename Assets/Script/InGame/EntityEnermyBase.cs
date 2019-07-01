@@ -12,7 +12,6 @@ public class EntityEnermyBase : EntityBase {
     EnermyAIControllerBasic m_AI;
     EnermyWeaponBase m_Barrage;
     EnermyAnimator m_Animator;
-    float OnAttackTarget(EntityBase target) => m_Barrage.Play(this, target)+m_EntityInfo.m_BarrageDuration.Random();
     bool OnCheckTarget(EntityBase target) => target.B_IsPlayer!=B_IsPlayer && !target.b_IsDead;
     public override void Init(SEntity entityInfo)
     {
@@ -29,12 +28,16 @@ public class EntityEnermyBase : EntityBase {
     public override void OnActivate(int id)
     {
         base.OnActivate(id);
-        m_Animator = new EnermyAnimator(tf_Model.GetComponent<Animator>(), new List<SAnimatorParam>() { new SAnimatorParam("Death_01", Animator.StringToHash("fp_dead"), 1f) }, E_AnimatorIndex);
-
+        m_Animator = new EnermyAnimator(tf_Model.GetComponent<Animator>(), E_AnimatorIndex);
     }
     protected override void Update()
     {
-        m_Animator.SetRun(m_AI.B_AgentEnabled);
+        m_Animator.SetRun(0,m_AI.B_AgentEnabled?1:0);
+    }
+    float OnAttackTarget(EntityBase target)
+    {
+        m_Animator.OnAttack();
+        return m_Barrage.Play(this, target) + m_EntityInfo.m_BarrageDuration.Random();
     }
     public override void SetTarget(EntityBase target)
     {
@@ -64,19 +67,27 @@ public class EntityEnermyBase : EntityBase {
             Axe=0,
             Spear=1,
         }
-        static readonly int HS_B_Run = Animator.StringToHash("b_run");
         static readonly int HS_T_Dead = Animator.StringToHash("t_dead");
         static readonly int HS_I_AnimIndex = Animator.StringToHash("i_weaponType");
         static readonly int HS_T_Activate = Animator.StringToHash("t_activate");
         static readonly int HS_T_Attack = Animator.StringToHash("t_attack");
+        static readonly int HS_F_Strafe = Animator.StringToHash("f_strafe");
+        static readonly int HS_F_Forward = Animator.StringToHash("f_forward");
 
-        public EnermyAnimator(Animator _animator, List<SAnimatorParam> _params, enum_AnimIndex _animIndex) : base(_animator, _params)
+        public EnermyAnimator(Animator _animator, enum_AnimIndex _animIndex) : base(_animator)
         {
             m_Animator.fireEvents = false;
+            m_Animator.SetInteger(HS_I_AnimIndex,(int)_animIndex);
+            m_Animator.SetTrigger(HS_T_Activate);
         }
-        public void SetRun(bool run)
+        public void SetRun(float strafe,float forward)
         {
-            m_Animator.SetBool(HS_B_Run, run);
+            m_Animator.SetFloat(HS_F_Strafe, strafe);
+            m_Animator.SetFloat(HS_F_Forward, forward);
+        }
+        public void OnAttack()
+        {
+            m_Animator.SetTrigger(HS_T_Attack);
         }
         public void OnDead()
         {

@@ -414,7 +414,6 @@ namespace GameSetting
         bool b_movementObstacleCheck;
         bool b_battleObstacleCheck;
         int i_weaponType;
-        int i_weaponAnim;
         RangeFloat fr_duration;
         int i_muzzleIndex;
         int i_projectileIndex;
@@ -442,7 +441,6 @@ namespace GameSetting
         public bool m_BattleCheckObsatacle => b_battleObstacleCheck;
 
         public enum_EnermyWeaponType m_WeaponType => (enum_EnermyWeaponType)i_weaponType;
-        public int m_WeaponAnim => i_weaponAnim;
         public RangeFloat m_BarrageDuration => fr_duration;
         public int m_MuzzleSFXIndex => i_muzzleIndex;
         public int m_ProjectileSFXIndex => i_projectileIndex;
