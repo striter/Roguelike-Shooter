@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4793797766846336}
   - component: {fileID: 114856237878211162}
   m_Layer: 0
-  m_Name: MediumLess_SF_Bld_House_Burntdown_01
+  m_Name: LargeLess_SF_Bld_House_Burntdown_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -141,7 +141,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_sizeXAxis: 8
   m_sizeYAxis: 8
-  m_ItemType: 3
+  m_ItemType: 1
   b_showGizmos: 1
   b_AutoCenter: 1
   b_AutoRotation: 1
