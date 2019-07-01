@@ -24,8 +24,6 @@ public class EntityEnermyBase : EntityBase {
             case enum_EnermyWeaponType.Multiple: m_Barrage = new BarrageMultiple(); break;
             case enum_EnermyWeaponType.Melee: m_Barrage = new EnermyMelee(); break;
         }
-        if (E_AnimatorIndex == EnermyAnimator.enum_AnimIndex.Invalid)
-            Debug.LogError("Please Set Prefab AnimIndex!");
     }
     public override void OnActivate(int id)
     {
@@ -66,12 +64,8 @@ public class EntityEnermyBase : EntityBase {
         public enum enum_AnimIndex
         {
             Invalid=-1,
-            Axe=1,
-            Spear=2,
-            Bow=3,
-            CastL=4,
-            CastR=5,
-            Sword=6,
+            Axe=0,
+            Spear=1,
         }
         static readonly int HS_T_Dead = Animator.StringToHash("t_dead");
         static readonly int HS_I_AnimIndex = Animator.StringToHash("i_weaponType");
