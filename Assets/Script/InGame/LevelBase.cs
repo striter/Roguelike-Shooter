@@ -82,7 +82,6 @@ public class LevelBase : MonoBehaviour {
             Debug.LogWarning("Current Level Does Not Contains Item That Type:" + type.ToString());
             return;
         }
-
         List<LevelItemBase> targetItems = m_AllItems[type];
         for (int i = 0; i < totalCount; i++)
         {

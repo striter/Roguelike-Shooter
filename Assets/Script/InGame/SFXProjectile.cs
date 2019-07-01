@@ -53,20 +53,26 @@ public class SFXProjectile : SFXBase {
             Vector3 curPosition = m_Simulator.Simulate(Time.deltaTime, out prePosition);
 
             Vector3 castDirection = prePosition == curPosition ? m_Simulator.m_HorizontalDirection : curPosition - prePosition;
-           transform.rotation = Quaternion.LookRotation(castDirection);
-            RaycastHit rh_info;
+            transform.rotation = Quaternion.LookRotation(castDirection);
             float distance = Vector3.Distance(prePosition, curPosition);
             distance = distance > m_Collider.height ? distance : m_Collider.height;
-            if (Physics.SphereCast(new Ray(prePosition, castDirection), m_Collider.radius, out rh_info, distance, GameLayer.Physics.I_All))
-                OnHitTarget(rh_info);
-            else
-                transform.position = curPosition;
+            transform.position = curPosition;
+            RaycastHit[] hitTargets = Physics.SphereCastAll(new Ray(prePosition, castDirection), m_Collider.radius, distance, GameLayer.Physics.I_All);
+            for (int i = 0; i < hitTargets.Length; i++)
+                if (OnHitTarget(hitTargets[i]))
+                {
+                    if(B_RecycleOnHit)
+                        OnPlayFinished();
+                    break;
+                }
         }
     }
 
-    protected virtual void OnHitTarget(RaycastHit hitInfo)
+    protected virtual bool OnHitTarget(RaycastHit hitInfo)
     {
-        B_SimulatePhysics = false;
+        if (hitInfo.collider == m_Collider)
+            return false;
+
         m_Detect.DoDetect(hitInfo.collider);
 
         if (i_impactSFXIndex > 0)
@@ -80,8 +86,7 @@ public class SFXProjectile : SFXBase {
         if (m_hitEntity!=null&&GameManager.B_CanHitTarget(m_hitEntity, I_SourceID))
             m_hitEntity.TryHit(m_Damage);
 
-        if(B_RecycleOnHit)
-           OnPlayFinished();
+        return true;
     }
 
     protected virtual void OnHitEntity(HitCheckEntity hitEntity)
