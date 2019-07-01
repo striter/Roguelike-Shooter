@@ -57,9 +57,19 @@ public class EntityEnermyBase : EntityBase {
 
     protected class EnermyAnimator : AnimatorClippingTime
     {
+        public enum enum_AnimIndex
+        {
+            Invalid=-1,
+            Axe=0,
+            Spear=1,
+        }
         static readonly int HS_B_Run = Animator.StringToHash("b_run");
         static readonly int HS_T_Dead = Animator.StringToHash("t_dead");
-        public EnermyAnimator(Animator _animator, List<SAnimatorParam> _params) : base(_animator, _params)
+        static readonly int HS_I_AnimIndex = Animator.StringToHash("i_weaponType");
+        static readonly int HS_T_Activate = Animator.StringToHash("t_activate");
+        static readonly int HS_T_Attack = Animator.StringToHash("t_attack");
+
+        public EnermyAnimator(Animator _animator, List<SAnimatorParam> _params, enum_AnimIndex _animIndex) : base(_animator, _params)
         {
             m_Animator.fireEvents = false;
         }
