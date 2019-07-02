@@ -214,6 +214,17 @@ namespace GameSetting
     }
     #endregion
     #region GameClass
+    public static class HitCheckDetect_Extend
+    {
+        public static HitCheckBase Detect(this Collider other)
+        {
+            HitCheckBase hitCheck = other.GetComponent<HitCheckBase>();
+            if (hitCheck == null)
+                Debug.LogWarning("Null Hit Check Attached:" + other.gameObject);
+
+            return hitCheck;
+        }
+    }
     class HitCheckDetect
     {
         Action<HitCheckStatic> OnHitCheckStatic;
@@ -232,10 +243,9 @@ namespace GameSetting
             if (other.gameObject.layer == GameLayer.I_DynamicDetect)
                 return;
 
-            HitCheckBase hitCheck = other.GetComponent<HitCheckBase>();
+            HitCheckBase hitCheck = other.Detect();
             if (hitCheck == null)
             {
-                Debug.LogWarning("Null Hit Check Attached:" + other.gameObject);
                 OnHitCheckError?.Invoke();
                 return;
             }

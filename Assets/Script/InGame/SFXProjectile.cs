@@ -6,17 +6,18 @@ using GameSetting;
 public class SFXProjectile : SFXBase {
     protected float m_Damage;
     protected ProjectilePhysicsSimulator m_Simulator;
-    HitCheckDetect m_Detect;
     protected CapsuleCollider m_Collider;
-    TrailRenderer m_Trail;
-    protected int i_impactSFXIndex,i_blastSFXIndex;
-    protected HitCheckEntity m_hitEntity;
+    protected TrailRenderer m_Trail;
+    protected int i_impactSFXIndex,i_castSFXIndex;
+    List<HitCheckBase> m_TargetHitted = new List<HitCheckBase>();
     public bool B_SimulatePhysics { get; protected set; }
     protected virtual bool B_RecycleOnHit => true;
+    protected virtual bool B_DisablePhysicsOnHit => true;
+    protected virtual bool B_HitMultiple => true;
+    protected virtual bool B_CanHitDynamicStatic => true;
     public override void Init(int sfxIndex)
     {
         base.Init(sfxIndex);
-        m_Detect = new HitCheckDetect(OnHitStatic,OnHitDynamic,OnHitEntity,OnHitError);
         m_Trail = transform.GetComponentInChildren<TrailRenderer>();
         m_Collider = GetComponent<CapsuleCollider>();
         m_Collider.enabled = false;
@@ -29,20 +30,21 @@ public class SFXProjectile : SFXBase {
     {
         Play(sourceID, barrageInfo.m_ImpactSFXIndex,barrageInfo.m_BlastSFXIndex, direction, targetPosition, barrageInfo.m_ProjectileDamage, barrageInfo.m_ProjectileSpeed,200,0,0,  GameConst.I_BarrageProjectileMaxDistance / barrageInfo.m_ProjectileSpeed );
     }
-    protected virtual void Play(int sourceID,int impactSFXIndex,int blastSFXIndex, Vector3 direction, Vector3 destination, float damage, float horiSpeed,float horiDistance,float vertiSpeed,float vertiAcceleration, float duration)
+    protected virtual void Play(int sourceID,int impactSFXIndex,int castSFXIndex, Vector3 direction, Vector3 destination, float damage, float horiSpeed,float horiDistance,float vertiSpeed,float vertiAcceleration, float duration)
     {
-        OnPlayPreset(damage, impactSFXIndex,blastSFXIndex);
+        OnPlayPreset(damage, impactSFXIndex,castSFXIndex);
         m_Simulator = new ProjectilePhysicsSimulator(transform.position, direction, Vector3.down, horiSpeed, horiDistance,vertiSpeed, vertiAcceleration);
         PlaySFX(sourceID, duration);
     }
-    protected void OnPlayPreset(float damage,int impactSFXIndex,int _blastSFXIndex)
+    protected void OnPlayPreset(float damage,int impactSFXIndex,int castSFXIndex)
     {
         m_Damage = damage;
         i_impactSFXIndex = impactSFXIndex;
-        i_blastSFXIndex = _blastSFXIndex;
+        i_castSFXIndex = castSFXIndex;
         B_SimulatePhysics = true;
+        m_Trail.enabled = true;
         m_Trail.Clear();
-        m_hitEntity = null;
+        m_TargetHitted.Clear();
     }
     protected override void Update()
     {
@@ -59,47 +61,59 @@ public class SFXProjectile : SFXBase {
             transform.position = curPosition;
             RaycastHit[] hitTargets = Physics.SphereCastAll(new Ray(prePosition, castDirection), m_Collider.radius, distance, GameLayer.Physics.I_All);
             for (int i = 0; i < hitTargets.Length; i++)
-                if (OnHitTarget(hitTargets[i]))
+            {
+                HitCheckBase hitCheck = hitTargets[i].collider.Detect();
+                if (CanHitTarget(hitCheck))
                 {
-                    if(B_RecycleOnHit)
+                    OnHitTarget(hitTargets[i], hitCheck);
+                    SpawnImpact(hitTargets[i], hitCheck);
+                    OnDamageEntity(hitCheck as HitCheckEntity);
+                    if (B_DisablePhysicsOnHit)
+                        B_SimulatePhysics = false;
+                    if (B_RecycleOnHit)
                         OnPlayFinished();
-                    break;
+                    if (!B_HitMultiple)
+                        break;
                 }
+            }
         }
     }
-
-    protected virtual bool OnHitTarget(RaycastHit hitInfo)
+    protected bool CanHitTarget(HitCheckBase hitCheck)
     {
-        if (hitInfo.collider == m_Collider)
-            return false;
-
-        m_Detect.DoDetect(hitInfo.collider);
-
+        switch (hitCheck.m_HitCheckType)
+        {
+            case enum_HitCheck.Entity:
+                {
+                    HitCheckEntity entity = hitCheck as HitCheckEntity;
+                    return !m_TargetHitted.Contains(entity) && GameManager.B_CanHitEntity(entity, I_SourceID);
+                }
+            case enum_HitCheck.Dynamic:
+            case enum_HitCheck.Static:
+                return B_CanHitDynamicStatic;
+        }
+        return false;
+    }
+    protected virtual void OnHitTarget(RaycastHit hit,HitCheckBase hitCheck)
+    {
+    }
+    protected virtual void OnDamageEntity(HitCheckEntity entity)
+    {
+        if (entity!=null&&!m_TargetHitted.Contains(entity) && GameManager.B_CanDamageEntity(entity, I_SourceID))
+        {
+            entity.TryHit(m_Damage);
+            m_TargetHitted.Add(entity);
+        }
+    }
+    protected void SpawnImpact(RaycastHit hitInfo, HitCheckBase hitParent)
+    {
         if (i_impactSFXIndex > 0)
         {
-            SFXParticles impact= ObjectManager.SpawnSFX<SFXParticles>(i_impactSFXIndex, hitInfo.point, hitInfo.normal, hitInfo.transform);
+            SFXParticles impact = ObjectManager.SpawnSFX<SFXParticles>(i_impactSFXIndex, hitInfo.point, hitInfo.normal, null);
+            if (hitParent != null && hitParent.m_HitCheckType == enum_HitCheck.Entity)
+                (hitParent as HitCheckEntity).AttachTransform(impact);
+            else
+                impact.transform.SetParent(hitInfo.transform);
             impact.Play(I_SourceID);
-            if (m_hitEntity != null)
-                m_hitEntity.AttachTransform(impact);
         }
-
-        if (m_hitEntity!=null&&GameManager.B_CanHitTarget(m_hitEntity, I_SourceID))
-            m_hitEntity.TryHit(m_Damage);
-
-        return true;
-    }
-
-    protected virtual void OnHitEntity(HitCheckEntity hitEntity)
-    {
-        m_hitEntity = hitEntity;
-    }
-    protected virtual void OnHitDynamic(HitCheckDynamic hitDynamic)
-    {
-    }
-    protected virtual void OnHitStatic(HitCheckStatic hitStatic)
-    {
-    }
-    protected virtual void OnHitError()
-    {
     }
 }

@@ -3,26 +3,13 @@ using UnityEngine;
 
 public class SFXProjectileBolt : SFXProjectile {
     protected override bool B_RecycleOnHit => false;
-    protected override void OnHitStatic(HitCheckStatic hitStatic)
+    protected override void OnHitTarget(RaycastHit hit,HitCheckBase entity)
     {
-        transform.SetParent(hitStatic.transform);
+        base.OnHitTarget(hit,entity);
+        transform.SetParent(hit.collider.transform);
+        m_Trail.enabled = false;
         f_TimeCheck = Time.time + GameConst.I_BoltLastTimeAfterHit;
-    }
-
-    protected override void OnHitEntity(HitCheckEntity entity)
-    {
-        f_TimeCheck = Time.time + GameConst.I_BoltLastTimeAfterHit;
-        entity.AttachTransform(this);
-        if (GameManager.B_CanHitTarget(entity, I_SourceID))
-            entity.TryHit(m_Damage);
-    }
-    protected override void OnHitDynamic(HitCheckDynamic hitDynamic)
-    {
-        OnPlayFinished();
-    }
-
-    protected override void OnHitError()
-    {
-        OnPlayFinished();
+        if(entity!=null&&entity.m_HitCheckType== enum_HitCheck.Entity)
+            (entity as HitCheckEntity).AttachTransform(this);
     }
 }

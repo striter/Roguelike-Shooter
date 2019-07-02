@@ -43,7 +43,7 @@ public class SFXCast : SFXBase {
     }
     protected void OnBlastEntity(HitCheckEntity hitEntity)
     {
-        if (GameManager.B_CanHitTarget(hitEntity, I_SourceID))
+        if (GameManager.B_CanDamageEntity(hitEntity, I_SourceID))
             OnDamageEntity(hitEntity);
     }
     protected virtual void OnDamageEntity(HitCheckEntity hitEntity)

@@ -34,14 +34,8 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnSpawnEntity, OnSpawnEntity);
         TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnRecycleEntity, OnRecycleEntity);
         TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnRecycleEntity, OnWaveEntityDead);
-
-        TouchInputManager.Instance.OnSingleFingerPress = (bool down) =>
-        {
-            RaycastHit hit = new RaycastHit();
-            if (down && CameraController.Instance.InputRayCheck(TouchInputManager.SingleTouchPos, GameLayer.Physics.I_Static, ref hit))
-                ObjectManager.SpawnSFX<SFXProjectile>(20006, hit.point, Vector3.forward).PlayBarrage(1000, transform.forward, hit.point, DataManager.GetEntityProperties(531));
-        };
-        }
+        
+    }
     void Update()
     {
         if (!B_EditorTestMode)
@@ -141,11 +135,17 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     #endregion
     #region Entity Management
     public static int I_EntityID(int index, bool isPlayer) => index + (isPlayer ? 10000 : 20000);       //Used For Identification Management
-    public static bool B_CanHitTarget(HitCheckEntity hb, int sourceID)   //If Match Target Hit Succeed
+    public static bool B_CanHitEntity(HitCheckEntity hb, int sourceID)  //If Match Will Hit Target,Player Particles ETC
     {
         if (hb.I_AttacherID == sourceID)
             return false;
-        
+        return Instance.m_Entities.ContainsKey(sourceID) && hb.m_Attacher.B_IsPlayer != Instance.m_Entities[sourceID].B_IsPlayer;
+    }
+    public static bool B_CanDamageEntity(HitCheckEntity hb, int sourceID)   //After Hit,If Match Target Hit Succeed
+    {
+        if (hb.I_AttacherID == sourceID)
+            return false;
+
         return Instance.m_Entities.ContainsKey(sourceID) && hb.m_Attacher.B_IsPlayer != Instance.m_Entities[sourceID].B_IsPlayer;
     }
     public Dictionary<int, EntityBase> m_Entities { get; private set; } = new Dictionary<int, EntityBase>();
