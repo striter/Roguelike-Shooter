@@ -519,7 +519,7 @@ namespace GameSetting
     }
     public struct SGenerateItem : ISExcel
     {
-        int ec_index;
+        string em_defines;
         RangeInt ir_smallLess;
         RangeInt ir_smallMore;
         RangeInt ir_mediumLess;
@@ -535,8 +535,9 @@ namespace GameSetting
         public Dictionary<enum_LevelItemType, RangeInt> m_ItemGenerate;
         public void InitOnValueSet()
         {
-            m_LevelStyle = (enum_Style)(ec_index / 10);
-            m_LevelPrefabType = (enum_TilePrefabDefinition)(ec_index % 10);
+            string[] defineSplit = em_defines.Split('_');
+            m_LevelStyle = (enum_Style)(int.Parse(defineSplit[0]));
+            m_LevelPrefabType = (enum_TilePrefabDefinition)(int.Parse(defineSplit[1]));
             m_ItemGenerate = new Dictionary<enum_LevelItemType, RangeInt>(); 
             m_ItemGenerate.Add(enum_LevelItemType.LargeLess, ir_largeLess);
             m_ItemGenerate.Add(enum_LevelItemType.LargeMore, ir_largeMore);
@@ -552,7 +553,7 @@ namespace GameSetting
     }
     public struct SGenerateEntity:ISExcel
     {
-        int ec_index;
+        string em_defines;
         int i_waveCount;
         float f_eliteChance;
         RangeInt ir_militia;
@@ -566,9 +567,10 @@ namespace GameSetting
         public Dictionary<enum_EntityLevel, RangeInt> m_EntityGenerate;
         public void InitOnValueSet()
         {
-            m_stageIndex = (ec_index / 100);
-            m_TileType = (enum_TileType)((ec_index-m_stageIndex*100) / 10);
-            m_Difficulty = (enum_BattleDifficulty)(ec_index % 10);
+            string[] defineSplit = em_defines.Split('_');
+            m_stageIndex = int.Parse(defineSplit[0]);
+            m_TileType = (enum_TileType)(int.Parse(defineSplit[1]));
+            m_Difficulty = (enum_BattleDifficulty)(int.Parse(defineSplit[2]));
             m_EntityGenerate = new Dictionary<enum_EntityLevel, RangeInt>();
             m_EntityGenerate.Add( enum_EntityLevel.Militia,ir_militia);
             m_EntityGenerate.Add(enum_EntityLevel.Veteran, ir_veteran);
