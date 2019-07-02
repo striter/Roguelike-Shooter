@@ -157,7 +157,7 @@ namespace GameSetting
     public enum enum_EntityLevel { Invalid = -1, Default=0 ,Militia=1 , Veteran=2, Ranger=3 }
     public enum enum_Interaction { Invalid = -1, Interact_Portal, }
     public enum enum_TriggerType { Invalid = -1, Single = 1, Auto = 2, Burst = 3, Pull = 4, Store = 5, }
-    public enum enum_EnermyWeaponType { Invalid = -1, Single = 1, Multiple = 2, Melee = 3, }
+    public enum enum_EnermyWeaponType { Invalid = -1, Melee = 01, Single = 101, MultipleFan = 102,MultipleLine=103,  }
 
     public enum enum_PlayerWeapon
     {
@@ -224,44 +224,14 @@ namespace GameSetting
 
             return hitCheck;
         }
-    }
-    class HitCheckDetect
-    {
-        Action<HitCheckStatic> OnHitCheckStatic;
-        Action<HitCheckDynamic> OnHitCheckDynamic;
-        Action<HitCheckEntity> OnHitCheckEntity;
-        Action OnHitCheckError;
-        public HitCheckDetect(Action<HitCheckStatic> _OnHitCheckStatic, Action<HitCheckDynamic> _OnHitCheckDynamic, Action<HitCheckEntity> _OnHitCheckEntity, Action _OnHitCheckError)
+        public static HitCheckEntity DetectEntity(this Collider other)
         {
-            OnHitCheckStatic = _OnHitCheckStatic;
-            OnHitCheckDynamic = _OnHitCheckDynamic;
-            OnHitCheckEntity = _OnHitCheckEntity;
-            OnHitCheckError = _OnHitCheckError;
-        }
-        public void DoDetect(Collider other)
-        {
-            if (other.gameObject.layer == GameLayer.I_DynamicDetect)
-                return;
-
-            HitCheckBase hitCheck = other.Detect();
+            HitCheckBase hitCheck = other.GetComponent<HitCheckBase>();
             if (hitCheck == null)
-            {
-                OnHitCheckError?.Invoke();
-                return;
-            }
-            switch (hitCheck.m_HitCheckType)
-            {
-                default: Debug.LogError("Add More Convertions Here:" + hitCheck.m_HitCheckType); break;
-                case enum_HitCheck.Static:
-                    OnHitCheckStatic?.Invoke(hitCheck as HitCheckStatic);
-                    break;
-                case enum_HitCheck.Dynamic:
-                    OnHitCheckDynamic?.Invoke(hitCheck as HitCheckDynamic);
-                    break;
-                case enum_HitCheck.Entity:
-                    OnHitCheckEntity?.Invoke(hitCheck as HitCheckEntity);
-                    break;
-            }
+                Debug.LogWarning("Null Hit Check Attached:" + other.gameObject);
+            if (hitCheck.m_HitCheckType == enum_HitCheck.Entity)
+                return hitCheck as HitCheckEntity;
+            return null;
         }
     }
     public class ProjectilePhysicsSimulator : PhysicsSimulator

@@ -6,7 +6,6 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class SFXCast : SFXBase {
     ParticleSystem[] m_Particles;
-    HitCheckDetect m_Detect;
     protected float f_damage;
     protected float f_blastTime;
     public override void Init(int _sfxIndex)
@@ -19,7 +18,6 @@ public class SFXCast : SFXBase {
             if (particle.main.duration > f_blastTime)
                 f_blastTime = particle.main.duration;
         });
-        m_Detect = new HitCheckDetect(OnBlastStatic,OnBlastDynamic,OnBlastEntity,OnBlastError);
     }
     public virtual void Play(int sourceID, float damage)
     {
@@ -31,35 +29,24 @@ public class SFXCast : SFXBase {
     {
         TCommon.Traversal(m_Particles, (ParticleSystem particle) => { particle.Play(); });
         Collider[] collider = OnBlastCheck();
+        List<int> targetHitted = new List<int>();
         for (int i = 0; i < collider.Length; i++)
         {
-            m_Detect.DoDetect(collider[i]);
+            HitCheckEntity entity = collider[i].DetectEntity();
+            if (entity!=null&&!targetHitted.Contains(entity.I_AttacherID)&&GameManager.B_CanDamageEntity(entity, I_SourceID))
+            {
+                targetHitted.Add(entity.I_AttacherID);
+                OnDamageEntity(entity);
+            }
         }
     }
     protected virtual Collider[] OnBlastCheck()
     {
         Debug.LogError("Override This Please");
         return null;
-    }
-    protected void OnBlastEntity(HitCheckEntity hitEntity)
-    {
-        if (GameManager.B_CanDamageEntity(hitEntity, I_SourceID))
-            OnDamageEntity(hitEntity);
-    }
+    }   
     protected virtual void OnDamageEntity(HitCheckEntity hitEntity)
     {
         hitEntity.TryHit(f_damage);
-    }
-    protected virtual void OnBlastStatic(HitCheckStatic hitStatic)
-    {
-
-    }
-    protected virtual void OnBlastDynamic(HitCheckDynamic hitDynamic)
-    {
-
-    }
-    protected virtual void OnBlastError()
-    {
-
     }
 }

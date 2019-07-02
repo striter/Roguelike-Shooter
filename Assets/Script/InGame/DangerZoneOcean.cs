@@ -5,10 +5,10 @@ using GameSetting;
 
 [RequireComponent(typeof(Collider))]
 public class DangerZoneOcean : DangerZoneBase {
-    protected override void OnHitCheckEntity(HitCheckEntity entity)
+    protected override void OnHitCheckEntity(HitCheckEntity entity,bool enter)
     {
-        base.OnHitCheckEntity(entity);
-        if(b_IsTriggerEnter)
+        base.OnHitCheckEntity(entity,enter);
+        if(enter)
         GameManager.Instance.OnEntityFall(entity);
     }
 }

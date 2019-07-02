@@ -9,19 +9,20 @@ using System;
 [RequireComponent(typeof(NavMeshAgent),typeof(NavMeshObstacle))]
 public class EntityEnermyBase : EntityBase {
     public EnermyAnimator.enum_AnimIndex E_AnimatorIndex= EnermyAnimator.enum_AnimIndex.Invalid;
-    EnermyAIControllerBasic m_AI;
+    EnermyAIControllerBase m_AI;
     EnermyWeaponBase m_Barrage;
     EnermyAnimator m_Animator;
     bool OnCheckTarget(EntityBase target) => target.B_IsPlayer!=B_IsPlayer && !target.b_IsDead;
     public override void Init(SEntity entityInfo)
     {
         Init(entityInfo, false);
-        m_AI = new EnermyAIControllerBasic(this, entityInfo, OnAttackTarget,OnCheckTarget);
+        m_AI = new EnermyAIControllerBase(this, entityInfo, OnAttackTarget,OnCheckTarget);
         switch (entityInfo.m_WeaponType)
         {
             default: Debug.LogError("Invalid Barrage Type:" + entityInfo.m_WeaponType); break;
             case enum_EnermyWeaponType.Single: m_Barrage = new BarrageRange(); break;
-            case enum_EnermyWeaponType.Multiple: m_Barrage = new BarrageMultiple(); break;
+            case enum_EnermyWeaponType.MultipleFan: m_Barrage = new BarrageMultipleFan(); break;
+            case enum_EnermyWeaponType.MultipleLine:m_Barrage = new BarrageMultipleLine();break;
             case enum_EnermyWeaponType.Melee: m_Barrage = new EnermyMelee(); break;
         }
         if (E_AnimatorIndex == EnermyAnimator.enum_AnimIndex.Invalid)
@@ -100,13 +101,14 @@ public class EntityEnermyBase : EntityBase {
             m_Animator.SetTrigger(HS_T_Dead);
         }
     }
-
-    class EnermyAIControllerBasic:ISingleCoroutine
+    #region AI
+    class EnermyAIControllerBase :ISingleCoroutine
     {
         protected EntityEnermyBase m_EntityControlling;
         protected EntityBase m_Target;
-        protected Transform transform => m_EntityControlling.tf_Head;
-        protected Transform targetTransform => m_Target.tf_Head;
+        protected Transform transform => m_Agent.transform;
+        protected Transform headTransform => m_EntityControlling.tf_Head;
+        protected Transform targetHeadTransform => m_Target.tf_Head;
         protected NavMeshAgent m_Agent;
         protected NavMeshObstacle m_Obstacle;
         protected Func<EntityBase,float> OnAttackTarget;
@@ -142,7 +144,7 @@ public class EntityEnermyBase : EntityBase {
             }
         }
 
-        public EnermyAIControllerBasic(EntityEnermyBase _entityControlling, SEntity _entityInfo, Func<EntityBase, float> _onAttack, Func<EntityBase, bool> _onCheck)
+        public EnermyAIControllerBase(EntityEnermyBase _entityControlling, SEntity _entityInfo, Func<EntityBase, float> _onAttack, Func<EntityBase, bool> _onCheck)
         {
             m_EntityControlling = _entityControlling;
             f_AttackRange = _entityInfo.m_AIAttackRange;
@@ -162,6 +164,7 @@ public class EntityEnermyBase : EntityBase {
             m_Target = entity;
             B_AgentEnabled = true;
             this.StartSingleCoroutine(0, TrackTarget());
+            this.StartSingleCoroutine(1, Tick());
         }
 
         public void Deactivate()
@@ -189,13 +192,23 @@ public class EntityEnermyBase : EntityBase {
                 yield return new WaitForSeconds(GameConst.F_EnermyAICheckTime);
             }
         }
+        IEnumerator Tick()
+        {
+            for (; ; )
+            {
+                v3_TargetDirection = TCommon.GetXZLookDirection(headTransform.position, targetHeadTransform.position);
+                m_Agent.updateRotation = !b_CanAttackTarget;
+                if (!m_Agent.updateRotation)
+                    transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(v3_TargetDirection, Vector3.up), .2f);
+                yield return null;
+            }
+        }
         void CalculateAllParams()
         {
-            v3_TargetDirection = (targetTransform.position -transform.position).normalized;
             b_targetVisible = CheckTargetVisible();
-            b_ChasedTarget = (!b_movementCheckObstacle || b_targetVisible) && TCommon.GetXZDistance(targetTransform.position, transform.position) < f_ChaseRange;
-            b_CanAttackTarget = (!b_battleCheckObstacle || b_targetVisible) && TCommon.GetXZDistance(targetTransform.position, transform.position) < f_AttackRange;
-            b_AgentReachDestination = m_Agent.destination == Vector3.zero || TCommon.GetXZDistance(transform.position, m_Agent.destination) < 5f;
+            b_ChasedTarget = (!b_movementCheckObstacle || b_targetVisible) && TCommon.GetXZDistance(targetHeadTransform.position, headTransform.position) < f_ChaseRange;
+            b_CanAttackTarget = (!b_battleCheckObstacle || b_targetVisible) && TCommon.GetXZDistance(targetHeadTransform.position, headTransform.position) < f_AttackRange;
+            b_AgentReachDestination = m_Agent.destination == Vector3.zero || TCommon.GetXZDistance(headTransform.position, m_Agent.destination) < 5f;
         }
         void CheckMovement()
         {
@@ -250,9 +263,9 @@ public class EntityEnermyBase : EntityBase {
             Vector3 direction = m_EntityControlling.transform.position - m_Target.transform.position;
             Vector3 m_SamplePosition= m_EntityControlling.transform.position+ (b_ChasedTarget?direction:-direction).normalized*5;
             m_SamplePosition = m_SamplePosition + new Vector3(UnityEngine.Random.Range(-5f, 5f), 0, UnityEngine.Random.Range(-5f, 5f));
-            if (NavMesh.SamplePosition(m_SamplePosition, out sampleHit, 50, -1))
+            if (NavMesh.SamplePosition(m_SamplePosition, out sampleHit, 100, -1))
                 targetPosition = sampleHit.position;
-            else if (NavMesh.SamplePosition(m_Target.transform.position, out sampleHit, 20, -1))
+            else if (NavMesh.SamplePosition(m_Target.transform.position, out sampleHit, 100, -1))
                 targetPosition = sampleHit.position;
             return targetPosition;
         }
@@ -273,7 +286,8 @@ public class EntityEnermyBase : EntityBase {
                 return true;
         }
     }
-    
+    #endregion
+    #region EnermyWeapon
     class EnermyWeaponBase : ISingleCoroutine
     {
         protected EntityEnermyBase m_EntityControlling;
@@ -332,33 +346,52 @@ public class EntityEnermyBase : EntityBase {
             return count * m_Info.m_Firerate;
         }
 
-        protected Vector3 targetDirection => Vector3.Normalize((b_preAim ? (m_Target.m_PrecalculatedTargetPos(Vector3.Distance(targetTransform.position, transform.position) / m_Info.m_ProjectileSpeed)) : targetTransform.position) - transform.position);
+        protected Vector3 GetHorizontalDirection()
+        {
+            Vector3 targetDirection= Vector3.Normalize((b_preAim ? (m_Target.m_PrecalculatedTargetPos(Vector3.Distance(targetTransform.position, transform.position) / m_Info.m_ProjectileSpeed)) : targetTransform.position) - transform.position);
+            targetDirection.y = 0;
+            return targetDirection.normalized;
+        }
         protected virtual void BarrageWave()
         {
-            Vector3 horizontalOffsetDirection = GameExpression.V3_RangeSpreadDirection(targetDirection, m_Info.m_HorizontalSpread, Vector3.zero, targetTransform.right);
+            Vector3 horizontalOffsetDirection = GameExpression.V3_RangeSpreadDirection(GetHorizontalDirection(), m_Info.m_HorizontalSpread, Vector3.zero, targetTransform.right);
             Vector3 spreadDirection = GameExpression.V3_RangeSpreadDirection(horizontalOffsetDirection, m_Info.m_DetailSpread, targetTransform.up, targetTransform.right);
-            FireBullet(spreadDirection);
+            FireBullet(transform.position,spreadDirection);
         }
-        protected void FireBullet(Vector3 direction)
+        protected void FireBullet(Vector3 startPosition,Vector3 direction)
         {
             if (m_Info.m_MuzzleSFXIndex != -1)
-                ObjectManager.SpawnSFX<SFXParticles>(m_Info.m_MuzzleSFXIndex, transform.position, transform.forward).Play(m_EntityControlling.I_EntityID);
-            ObjectManager.SpawnSFX<SFXProjectile>(m_Info.m_ProjectileSFXIndex, transform.position, transform.forward).PlayBarrage(m_EntityControlling.I_EntityID, direction, targetTransform.position, m_Info);
+                ObjectManager.SpawnSFX<SFXParticles>(m_Info.m_MuzzleSFXIndex, startPosition, direction).Play(m_EntityControlling.I_EntityID);
+            ObjectManager.SpawnSFX<SFXProjectile>(m_Info.m_ProjectileSFXIndex, startPosition, direction).PlayBarrage(m_EntityControlling.I_EntityID, direction, targetTransform.position, m_Info);
         }
     }
-    class BarrageMultiple : BarrageRange
+    class BarrageMultipleLine : BarrageRange
+    {
+        protected override void BarrageWave()
+        {
+            base.BarrageWave();
+            int waveCount = m_Info.m_RangeExtension.Random();
+            Vector3 startDirection = GetHorizontalDirection();
+            Vector3 startPosition = transform.position;
+            for (int i = 0; i < waveCount; i++)
+                FireBullet(startPosition+targetTransform.right*m_Info.m_OffsetExtension*i, startDirection);
+        }
+    }
+    class BarrageMultipleFan : BarrageRange
     {
         protected override void BarrageWave()
         {
             int waveCount = m_Info.m_RangeExtension.Random();
-            Vector3 horizontalOffsetDirection = GameExpression.V3_RangeSpreadDirection(targetDirection, m_Info.m_HorizontalSpread, Vector3.zero, targetTransform.right);
+            Vector3 startDirection = GetHorizontalDirection();
+            Vector3 horizontalOffsetDirection = GameExpression.V3_RangeSpreadDirection(startDirection, m_Info.m_HorizontalSpread, Vector3.zero, targetTransform.right);
             horizontalOffsetDirection = Vector3.Normalize(horizontalOffsetDirection * 100 - targetTransform.right * m_Info.m_OffsetExtension * (waveCount-1)/2f).normalized;
             for (int i = 0; i < waveCount; i++)
             {
                 Vector3 offsetDirection = Vector3.Normalize(horizontalOffsetDirection * 100 + targetTransform.right * m_Info.m_OffsetExtension*i).normalized;
                 Vector3 spreadDirection = GameExpression.V3_RangeSpreadDirection(offsetDirection, m_Info.m_DetailSpread, targetTransform.up, targetTransform.right);
-                FireBullet(spreadDirection);
+                FireBullet(transform.position,spreadDirection);
             }
         }
     }
+    #endregion
 }

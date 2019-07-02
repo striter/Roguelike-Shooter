@@ -9,7 +9,7 @@ public class SFXProjectile : SFXBase {
     protected CapsuleCollider m_Collider;
     protected TrailRenderer m_Trail;
     protected int i_impactSFXIndex,i_castSFXIndex;
-    List<HitCheckBase> m_TargetHitted = new List<HitCheckBase>();
+    List<int> m_TargetHitted = new List<int>();
     public bool B_SimulatePhysics { get; protected set; }
     protected virtual bool B_RecycleOnHit => true;
     protected virtual bool B_DisablePhysicsOnHit => true;
@@ -84,7 +84,7 @@ public class SFXProjectile : SFXBase {
             case enum_HitCheck.Entity:
                 {
                     HitCheckEntity entity = hitCheck as HitCheckEntity;
-                    return !m_TargetHitted.Contains(entity) && GameManager.B_CanHitEntity(entity, I_SourceID);
+                    return !m_TargetHitted.Contains(entity.I_AttacherID) && GameManager.B_CanHitEntity(entity, I_SourceID);
                 }
             case enum_HitCheck.Dynamic:
             case enum_HitCheck.Static:
@@ -97,10 +97,10 @@ public class SFXProjectile : SFXBase {
     }
     protected virtual void OnDamageEntity(HitCheckEntity entity)
     {
-        if (entity!=null&&!m_TargetHitted.Contains(entity) && GameManager.B_CanDamageEntity(entity, I_SourceID))
+        if (entity!=null&&!m_TargetHitted.Contains(entity.I_AttacherID) && GameManager.B_CanDamageEntity(entity, I_SourceID))
         {
             entity.TryHit(m_Damage);
-            m_TargetHitted.Add(entity);
+            m_TargetHitted.Add(entity.I_AttacherID);
         }
     }
     protected void SpawnImpact(RaycastHit hitInfo, HitCheckBase hitParent)

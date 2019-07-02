@@ -10,8 +10,19 @@ public class SFXProjectileBeam : SFXProjectile {
     {
         base.Play(sourceID, impactSFXIndex, blastSFXIndex, direction, destination, damage, horiSpeed, horiDistance, vertiSpeed, vertiAcceleration, I_BeamLength/horiSpeed);
     }
+    protected override void OnHitTarget(RaycastHit hit, HitCheckBase hitCheck)
+    {
+        base.OnHitTarget(hit, hitCheck);
+        switch(hitCheck.m_HitCheckType)
+        {
+            case GameSetting.enum_HitCheck.Static:
+            case GameSetting.enum_HitCheck.Dynamic:
+                OnPlayFinished();
+                break;
+        }
+    }
 
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
     private void OnDrawGizmos()
     {
         Gizmos.DrawLine(transform.position,transform.position+transform.forward* I_BeamLength);

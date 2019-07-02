@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4162360231497434}
   - component: {fileID: 114823133862522166}
   m_Layer: 0
-  m_Name: ManmadeMore_shamo_shizhu
+  m_Name: MediumLess_shamo_shizhu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -144,6 +144,7 @@ MonoBehaviour:
   m_ItemType: 6
   b_showGizmos: 1
   b_AutoCenter: 1
+  b_AutoRotation: 1
 --- !u!114 &114875866609610870
 MonoBehaviour:
   m_ObjectHideFlags: 1
