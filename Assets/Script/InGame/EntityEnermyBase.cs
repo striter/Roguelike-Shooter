@@ -95,6 +95,7 @@ public class EntityEnermyBase : EntityBase {
         public void OnAttack()
         {
             m_Animator.SetTrigger(HS_T_Attack);
+            Debug.Log(m_Animator.GetCurrentAnimatorClipInfoCount(1));
         }
         public void OnDead()
         {
@@ -355,8 +356,7 @@ public class EntityEnermyBase : EntityBase {
         protected virtual void BarrageWave()
         {
             Vector3 horizontalOffsetDirection = GameExpression.V3_RangeSpreadDirection(GetHorizontalDirection(), m_Info.m_HorizontalSpread, Vector3.zero, targetTransform.right);
-            Vector3 spreadDirection = GameExpression.V3_RangeSpreadDirection(horizontalOffsetDirection, m_Info.m_DetailSpread, targetTransform.up, targetTransform.right);
-            FireBullet(transform.position,spreadDirection);
+            FireBullet(transform.position, horizontalOffsetDirection);
         }
         protected void FireBullet(Vector3 startPosition,Vector3 direction)
         {
@@ -372,9 +372,9 @@ public class EntityEnermyBase : EntityBase {
             base.BarrageWave();
             int waveCount = m_Info.m_RangeExtension.Random();
             Vector3 startDirection = GetHorizontalDirection();
-            Vector3 startPosition = transform.position-targetTransform.right*m_Info.m_OffsetExtension*((waveCount-1)/2f);
+            Vector3 startPosition = transform.position- transform.right*m_Info.m_OffsetExtension*((waveCount-1)/2f);
             for (int i = 0; i < waveCount; i++)
-                FireBullet(startPosition+targetTransform.right*m_Info.m_OffsetExtension*i, startDirection);
+                FireBullet(startPosition+ transform.right*m_Info.m_OffsetExtension*i, startDirection);
         }
     }
     class BarrageMultipleFan : BarrageRange
@@ -383,13 +383,12 @@ public class EntityEnermyBase : EntityBase {
         {
             int waveCount = m_Info.m_RangeExtension.Random();
             Vector3 startDirection = GetHorizontalDirection();
-            Vector3 horizontalOffsetDirection = GameExpression.V3_RangeSpreadDirection(startDirection, m_Info.m_HorizontalSpread, Vector3.zero, targetTransform.right);
-            horizontalOffsetDirection = Vector3.Normalize(horizontalOffsetDirection * 100 - targetTransform.right * m_Info.m_OffsetExtension * (waveCount-1)/2f).normalized;
+            Vector3 horizontalOffsetDirection = GameExpression.V3_RangeSpreadDirection(startDirection, m_Info.m_HorizontalSpread, Vector3.zero, transform.right);
+            Vector3 startFanDirection  = (horizontalOffsetDirection * 100 - transform.right * m_Info.m_OffsetExtension * (waveCount-1)/2f).normalized;
             for (int i = 0; i < waveCount; i++)
             {
-                Vector3 offsetDirection = Vector3.Normalize(horizontalOffsetDirection * 100 + targetTransform.right * m_Info.m_OffsetExtension*i).normalized;
-                Vector3 spreadDirection = GameExpression.V3_RangeSpreadDirection(offsetDirection, m_Info.m_DetailSpread, targetTransform.up, targetTransform.right);
-                FireBullet(transform.position,spreadDirection);
+                Vector3 fanDirection = (startFanDirection * 100 + transform.right * m_Info.m_OffsetExtension*i).normalized;
+                FireBullet(transform.position, fanDirection);
             }
         }
     }

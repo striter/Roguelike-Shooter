@@ -404,7 +404,6 @@ namespace GameSetting
         float f_damage;
         float i_speed;
         int i_horiSpread;
-        int i_detailSpread;
         RangeInt ir_rangeExtension;
         float f_offsetExtension;
         public int m_Index=>i_index;
@@ -431,7 +430,6 @@ namespace GameSetting
         public float m_ProjectileDamage => f_damage;
         public float m_ProjectileSpeed => i_speed;
         public int m_HorizontalSpread => i_horiSpread;
-        public int m_DetailSpread => i_detailSpread;
         public RangeInt m_RangeExtension => ir_rangeExtension;
         public float m_OffsetExtension => f_offsetExtension;
         public void InitOnValueSet()
