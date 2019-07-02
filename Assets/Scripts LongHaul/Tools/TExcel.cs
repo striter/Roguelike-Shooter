@@ -54,19 +54,19 @@ namespace TExcel
                 List<string[]> result = new List<string[]>();
                 //do            //Unlock Need To Read Extra Sheets
                 //{
-                    while (reader.Read())
+                while (reader.Read())
+                {
+                    string[] row = new string[reader.FieldCount];
+                    for (int i = 0; i < row.Length; i++)
                     {
-                        string[] row = new string[reader.FieldCount];
-                        for (int i = 0; i < row.Length; i++)
-                        {
-                            string data = reader.GetString(i);
-                            row[i] = data == null ? "" : data;
-                        }
-                        result.Add(row);
+                        string data = reader.GetString(i);
+                        row[i] = data == null ? "" : data;
                     }
+                    result.Add(row);
+                }
                 //} while (reader.NextResult());
-                
-                
+
+
                 Type type = typeof(T);
                 object obj = Activator.CreateInstance(type, true);
                 FieldInfo[] fields = type.GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
@@ -78,15 +78,18 @@ namespace TExcel
                         throw new Exception(" Struct Or Excel Pos Not Equals:(" + type.ToString() + "Struct Property:(Column:"+i+"|" + fields[i].Name + ") Excel Property:(Row:"+  i +"|" + temp + ")");
                     }
                 }
-                for (int i = 0; i < result.Count - 1; i++)
+                for (int i = 0; i < result.Count; i++)
                 {
+                    if (i < 1)     //Ignore Row 0 and 1
+                        continue;
+
                     for (int j = 0; j < fields.Length; j++)
                     {
                         try
                         {
                             Type phraseType = fields[j].FieldType;
                             object value = null;
-                            string phraseValue = result[i + 1][j].ToString();
+                            string phraseValue = result[i][j].ToString();
                             if (phraseValue.Length == 0)
                                 value = TXmlPhrase.Phrase.GetDefault(phraseType);
                             else
@@ -96,9 +99,10 @@ namespace TExcel
                         }
                         catch (Exception e)
                         {
-                            throw new Exception("Inner Info:|" + result[i + 1][j].ToString() + "|,Field:" + fields[j].Name + "|" + fields[j].FieldType.ToString() + ", Rows/Column:" + (i + 2).ToString() + "/" + (j + 1).ToString() + "    Message:" + e.Message);
+                            throw new Exception("Inner Info:|" + result[i + 1][j].ToString() + "|,Field:" + fields[j].Name + "|" + fields[j].FieldType.ToString() + ", Rows/Column:" + (i + 1).ToString() + "/" + (j + 1).ToString() + "    Message:" + e.Message);
                         }
                     }
+
                     T temp = (T)obj;
                     temp.InitOnValueSet();
                     l_PropertyList.Add(temp);
