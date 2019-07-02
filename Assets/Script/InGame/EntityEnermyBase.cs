@@ -372,7 +372,7 @@ public class EntityEnermyBase : EntityBase {
             base.BarrageWave();
             int waveCount = m_Info.m_RangeExtension.Random();
             Vector3 startDirection = GetHorizontalDirection();
-            Vector3 startPosition = transform.position;
+            Vector3 startPosition = transform.position-targetTransform.right*m_Info.m_OffsetExtension*((waveCount-1)/2f);
             for (int i = 0; i < waveCount; i++)
                 FireBullet(startPosition+targetTransform.right*m_Info.m_OffsetExtension*i, startDirection);
         }
