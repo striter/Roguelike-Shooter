@@ -5,7 +5,6 @@ using UnityEngine;
 public class SFXProjectileBeam : SFXProjectile {
     protected override bool B_RecycleOnHit => false;
     protected override bool B_DisablePhysicsOnHit => false;
-    protected override bool B_CanHitDynamicStatic => false;
     public int I_BeamLength = 10;
     protected override void Play(int sourceID, int impactSFXIndex, int blastSFXIndex, Vector3 direction, Vector3 destination, float damage, float horiSpeed, float horiDistance, float vertiSpeed, float vertiAcceleration, float duration)
     {

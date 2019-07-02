@@ -14,7 +14,6 @@ public class SFXProjectile : SFXBase {
     protected virtual bool B_RecycleOnHit => true;
     protected virtual bool B_DisablePhysicsOnHit => true;
     protected virtual bool B_HitMultiple => true;
-    protected virtual bool B_CanHitDynamicStatic => true;
     public override void Init(int sfxIndex)
     {
         base.Init(sfxIndex);
@@ -89,7 +88,7 @@ public class SFXProjectile : SFXBase {
                 }
             case enum_HitCheck.Dynamic:
             case enum_HitCheck.Static:
-                return B_CanHitDynamicStatic;
+                return true;
         }
         return false;
     }
