@@ -10,7 +10,7 @@ using System;
 public class EntityEnermyBase : EntityBase {
     public EnermyAnimator.enum_AnimIndex E_AnimatorIndex= EnermyAnimator.enum_AnimIndex.Invalid;
     EnermyAIControllerBase m_AI;
-    EnermyWeaponBase m_Barrage;
+    EnermyWeaponBase m_Weapon;
     EnermyAnimator m_Animator;
     bool OnCheckTarget(EntityBase target) => target.B_IsPlayer!=B_IsPlayer && !target.b_IsDead;
     public override void Init(SEntity entityInfo)
@@ -21,10 +21,10 @@ public class EntityEnermyBase : EntityBase {
         switch (entityInfo.m_WeaponType)
         {
             default: Debug.LogError("Invalid Barrage Type:" + entityInfo.m_WeaponType); break;
-            case enum_EnermyWeaponType.Single: m_Barrage = new BarrageRange(this,tf_Barrel); break;
-            case enum_EnermyWeaponType.MultipleFan: m_Barrage = new BarrageMultipleFan(this,tf_Barrel); break;
-            case enum_EnermyWeaponType.MultipleLine:m_Barrage = new BarrageMultipleLine(this,tf_Barrel);break;
-            case enum_EnermyWeaponType.Melee: m_Barrage = new EnermyMelee(this,tf_Barrel); break;
+            case enum_EnermyWeaponType.Single: m_Weapon = new BarrageRange(this,tf_Barrel); break;
+            case enum_EnermyWeaponType.MultipleFan: m_Weapon = new BarrageMultipleFan(this,tf_Barrel); break;
+            case enum_EnermyWeaponType.MultipleLine:m_Weapon = new BarrageMultipleLine(this,tf_Barrel);break;
+            case enum_EnermyWeaponType.Melee: m_Weapon = new EnermyMelee(this,tf_Barrel); break;
         }
         if (E_AnimatorIndex == EnermyAnimator.enum_AnimIndex.Invalid)
             Debug.LogError("Please Set Prefab AnimIndex!");
@@ -32,7 +32,7 @@ public class EntityEnermyBase : EntityBase {
     public override void OnActivate(int id)
     {
         base.OnActivate(id);
-        m_Animator = new EnermyAnimator(tf_Model.GetComponent<Animator>(), E_AnimatorIndex);
+        m_Animator = new EnermyAnimator(tf_Model.GetComponent<Animator>(), E_AnimatorIndex,OnAnimKeyEvent);
     }
     protected override void Update()
     {
@@ -40,8 +40,19 @@ public class EntityEnermyBase : EntityBase {
     }
     float OnAttackTarget(EntityBase target)
     {
-        m_Animator.OnAttack();
-        return m_Barrage.Play( target) + m_EntityInfo.m_BarrageDuration.Random();
+        m_Animator.PlayAttack();
+        return m_Weapon.Preplay( target) + m_EntityInfo.m_BarrageDuration.Random();
+    }
+    protected void OnAnimKeyEvent(EnermyAnimator.enum_AnimEvent animEvent)
+    {
+        switch (animEvent)
+        {
+            case EnermyAnimator.enum_AnimEvent.Death:
+                break;
+            case EnermyAnimator.enum_AnimEvent.Fire:
+                m_Weapon.Play();
+                break;
+        }
     }
     public override void SetTarget(EntityBase target)
     {
@@ -51,18 +62,18 @@ public class EntityEnermyBase : EntityBase {
     protected override void OnDead()
     {
         m_AI.Deactivate();
-        m_Barrage.Deactivate();
+        m_Weapon.Deactivate();
         m_Animator.OnDead();
         base.OnDead();
     }
+
     protected override void OnDisable()
     {
         m_AI.Deactivate();
-        m_Barrage.Deactivate();
+        m_Weapon.Deactivate();
         base.OnDisable();
     }
-
-
+    
     public class EnermyAnimator : AnimatorClippingTime
     {
         public enum enum_AnimIndex
@@ -75,32 +86,46 @@ public class EntityEnermyBase : EntityBase {
             CastR=5,
             Sword=6,
         }
+        public enum enum_AnimEvent
+        {
+            Invalid=-1,
+            Fire,
+            FootL,
+            FootR,
+            Death,
+        }
+        Action<enum_AnimEvent> OnAnimEvent;
         static readonly int HS_T_Dead = Animator.StringToHash("t_dead");
         static readonly int HS_I_AnimIndex = Animator.StringToHash("i_weaponType");
         static readonly int HS_T_Activate = Animator.StringToHash("t_activate");
         static readonly int HS_T_Attack = Animator.StringToHash("t_attack");
         static readonly int HS_F_Strafe = Animator.StringToHash("f_strafe");
         static readonly int HS_F_Forward = Animator.StringToHash("f_forward");
-
-        public EnermyAnimator(Animator _animator, enum_AnimIndex _animIndex) : base(_animator)
+        public EnermyAnimator(Animator _animator, enum_AnimIndex _animIndex,Action<enum_AnimEvent> _OnAnimEvent) : base(_animator)
         {
-            m_Animator.fireEvents = false;
+            m_Animator.fireEvents = true;
+            OnAnimEvent = _OnAnimEvent;
             m_Animator.SetInteger(HS_I_AnimIndex,(int)_animIndex);
             m_Animator.SetTrigger(HS_T_Activate);
+            m_Animator.GetComponent<TAnimatorEvent>().Attach(OnEvent);
         }
         public void SetRun(float strafe,float forward)
         {
             m_Animator.SetFloat(HS_F_Strafe, strafe);
             m_Animator.SetFloat(HS_F_Forward, forward);
         }
-        public void OnAttack()
+        public void PlayAttack()
         {
             m_Animator.SetTrigger(HS_T_Attack);
-            Debug.Log(m_Animator.GetCurrentAnimatorClipInfoCount(1));
         }
         public void OnDead()
         {
             m_Animator.SetTrigger(HS_T_Dead);
+        }
+
+        public void OnEvent(string eventName)
+        {
+            OnAnimEvent((enum_AnimEvent)Enum.Parse(typeof(enum_AnimEvent), eventName));
         }
     }
     #region AI
@@ -311,10 +336,14 @@ public class EntityEnermyBase : EntityBase {
             m_EntityControlling = _controller;
             transform = _transform;
         }
-        public virtual float Play( EntityBase _target)
+        public virtual float Preplay(EntityBase _target)
         {
             m_Target = _target;
             return int.MaxValue;
+        }
+        public virtual void Play()
+        {
+            Debug.LogError("Override This Please");
         }
         public void Deactivate()
         {
@@ -326,13 +355,12 @@ public class EntityEnermyBase : EntityBase {
         public EnermyMelee(EntityEnermyBase _controller, Transform _transform) : base(_controller, _transform)
         {
         }
-        public override float Play( EntityBase _target)
+        public override float Preplay( EntityBase _target)
         {
-            base.Play(_target);
-            this.StartSingleCoroutine(0,TIEnumerators.PauseDel(m_Info.m_Firerate,OnMelee));
+            base.Preplay(_target);
             return m_Info.m_Firerate;
         }
-        void OnMelee()
+        public override void Play()
         {
             if (m_Info.m_MuzzleSFXIndex != -1)
                 ObjectManager.SpawnSFX<SFXParticles>(m_Info.m_MuzzleSFXIndex,attacherTransform.position,attacherTransform.forward);
@@ -349,25 +377,29 @@ public class EntityEnermyBase : EntityBase {
         public BarrageRange(EntityEnermyBase _controller, Transform _transform) : base(_controller, _transform)
         {
         }
-        public override float Play(EntityBase _target)
+        protected int rangeCount;
+        public override float Preplay(EntityBase _target)
         {
-            base.Play(_target);
+            base.Preplay(_target);
             b_preAim = UnityEngine.Random.Range(0, 2) > 0;
-            int count = m_Info.m_ProjectileCount.Random();
-            this.StartSingleCoroutine(0, TIEnumerators.TickCount(BarrageWave, count, m_Info.m_Firerate));
-            return count * m_Info.m_Firerate;
+            rangeCount = m_Info.m_ProjectileCount.Random();
+            return rangeCount * m_Info.m_Firerate;
+        }
+        public override void Play()
+        {
+            this.StartSingleCoroutine(0, TIEnumerators.TickCount(BarrageWave, rangeCount, m_Info.m_Firerate));
         }
 
+        protected virtual void BarrageWave()
+        {
+            Vector3 horizontalOffsetDirection = GameExpression.V3_RangeSpreadDirection(GetHorizontalDirection(), m_Info.m_HorizontalSpread, Vector3.zero, targetTransform.right);
+            FireBullet(transform.position, horizontalOffsetDirection);
+        }
         protected Vector3 GetHorizontalDirection()
         {
             Vector3 targetDirection= Vector3.Normalize((b_preAim ? (m_Target.m_PrecalculatedTargetPos(Vector3.Distance(targetTransform.position, attacherTransform.position) / m_Info.m_ProjectileSpeed)) : targetTransform.position) - attacherTransform.position);
             targetDirection.y = 0;
             return targetDirection.normalized;
-        }
-        protected virtual void BarrageWave()
-        {
-            Vector3 horizontalOffsetDirection = GameExpression.V3_RangeSpreadDirection(GetHorizontalDirection(), m_Info.m_HorizontalSpread, Vector3.zero, targetTransform.right);
-            FireBullet(transform.position, horizontalOffsetDirection);
         }
         protected void FireBullet(Vector3 startPosition,Vector3 direction)
         {
@@ -383,11 +415,10 @@ public class EntityEnermyBase : EntityBase {
         }
         protected override void BarrageWave()
         {
-            base.BarrageWave();
-            int waveCount = m_Info.m_RangeExtension.Random();
+            int projectileCount = m_Info.m_RangeExtension.Random();
             Vector3 startDirection = GetHorizontalDirection();
-            Vector3 startPosition = transform.position - attacherTransform.right*m_Info.m_OffsetExtension*((waveCount-1)/2f);
-            for (int i = 0; i < waveCount; i++)
+            Vector3 startPosition = transform.position - attacherTransform.right*m_Info.m_OffsetExtension*((projectileCount-1)/2f);
+            for (int i = 0; i < projectileCount; i++)
                 FireBullet(startPosition+ attacherTransform.right*m_Info.m_OffsetExtension*i, startDirection);
         }
     }
@@ -398,11 +429,11 @@ public class EntityEnermyBase : EntityBase {
         }
         protected override void BarrageWave()
         {
-            int waveCount = m_Info.m_RangeExtension.Random();
+            int projectileCount = m_Info.m_RangeExtension.Random();
             Vector3 startDirection = GetHorizontalDirection();
             Vector3 horizontalOffsetDirection = GameExpression.V3_RangeSpreadDirection(startDirection, m_Info.m_HorizontalSpread, Vector3.zero, attacherTransform.right);
-            Vector3 startFanDirection  = (horizontalOffsetDirection * 100 - attacherTransform.right * m_Info.m_OffsetExtension * (waveCount-1)/2f).normalized;
-            for (int i = 0; i < waveCount; i++)
+            Vector3 startFanDirection  = (horizontalOffsetDirection * 100 - attacherTransform.right * m_Info.m_OffsetExtension * (projectileCount-1)/2f).normalized;
+            for (int i = 0; i < projectileCount; i++)
             {
                 Vector3 fanDirection = (startFanDirection * 100 + attacherTransform.right * m_Info.m_OffsetExtension*i).normalized;
                 FireBullet(transform.position, fanDirection);

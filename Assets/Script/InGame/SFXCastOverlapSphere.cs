@@ -15,6 +15,6 @@ public class SFXCastOverlapSphere : SFXCast {
     }
     protected override void OnDamageEntity(HitCheckEntity hitEntity)
     {
-        hitEntity.TryHit(GameExpression.F_RocketBlastDamage(f_damage,Vector3.Distance(transform.position,hitEntity.m_Attacher.transform.position)));
+        hitEntity.TryHit(GameExpression.F_RocketBlastDamage(f_damage,TCommon.GetXZDistance(transform.position,hitEntity.m_Attacher.transform.position)));
     }
 }
