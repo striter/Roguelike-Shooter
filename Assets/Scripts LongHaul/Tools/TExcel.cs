@@ -80,7 +80,7 @@ namespace TExcel
                 }
                 for (int i = 0; i < result.Count; i++)
                 {
-                    if (i < 1)     //Ignore Row 0 and 1
+                    if (i <= 1)     //Ignore Row 0 and 1
                         continue;
 
                     for (int j = 0; j < fields.Length; j++)
