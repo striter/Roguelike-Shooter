@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
+﻿using UnityEngine;
+using GameSetting;
 public class SFXProjectileBeam : SFXProjectile {
     protected override bool B_RecycleOnHit => false;
     protected override bool B_DisablePhysicsOnHit => false;
@@ -15,8 +13,8 @@ public class SFXProjectileBeam : SFXProjectile {
         base.OnHitTarget(hit, hitCheck);
         switch(hitCheck.m_HitCheckType)
         {
-            case GameSetting.enum_HitCheck.Static:
-            case GameSetting.enum_HitCheck.Dynamic:
+            case enum_HitCheck.Static:
+            case enum_HitCheck.Dynamic:
                 OnPlayFinished();
                 break;
         }
