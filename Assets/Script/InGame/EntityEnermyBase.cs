@@ -321,7 +321,7 @@ public class EntityEnermyBase : EntityBase {
         protected Transform attacherTransform => m_EntityControlling.tf_Head;
         protected Transform targetTransform => m_Target.tf_Head;
         protected Transform transform;
-        public virtual bool B_ActivateLockRotation => true;
+        public virtual bool B_ActivateLockRotation => false;
         protected SEntity m_Info
         {
             get
@@ -352,6 +352,7 @@ public class EntityEnermyBase : EntityBase {
     }
     class EnermyMelee : EnermyWeaponBase
     {
+        public override bool B_ActivateLockRotation => true;
         public EnermyMelee(EntityEnermyBase _controller, Transform _transform) : base(_controller, _transform)
         {
         }
