@@ -350,6 +350,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1809563643070296
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4559750196520394}
+  m_Layer: 0
+  m_Name: Barrel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1809606242218844
 GameObject:
   m_ObjectHideFlags: 1
@@ -631,7 +646,8 @@ Transform:
   m_LocalRotation: {x: -0.4246217, y: -0.4947978, z: -0.5708473, w: -0.49900398}
   m_LocalPosition: {x: 0.11599281, y: -0.047748458, z: 0.13685253}
   m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
-  m_Children: []
+  m_Children:
+  - {fileID: 4559750196520394}
   m_Father: {fileID: 4525165923872530}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -8.113, y: 81.3, z: 90.714005}
@@ -675,6 +691,19 @@ Transform:
   m_Children:
   - {fileID: 4908739405863430}
   m_Father: {fileID: 4252494340933772}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4559750196520394
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1809563643070296}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.098, z: -0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4503091167717416}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4630997522338020

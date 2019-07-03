@@ -17,13 +17,14 @@ public class EntityEnermyBase : EntityBase {
     {
         Init(entityInfo, false);
         m_AI = new EnermyAIControllerBase(this, entityInfo, OnAttackTarget,OnCheckTarget);
+        Transform tf_Barrel = transform.FindInAllChild("Barrel");
         switch (entityInfo.m_WeaponType)
         {
             default: Debug.LogError("Invalid Barrage Type:" + entityInfo.m_WeaponType); break;
-            case enum_EnermyWeaponType.Single: m_Barrage = new BarrageRange(); break;
-            case enum_EnermyWeaponType.MultipleFan: m_Barrage = new BarrageMultipleFan(); break;
-            case enum_EnermyWeaponType.MultipleLine:m_Barrage = new BarrageMultipleLine();break;
-            case enum_EnermyWeaponType.Melee: m_Barrage = new EnermyMelee(); break;
+            case enum_EnermyWeaponType.Single: m_Barrage = new BarrageRange(this,tf_Barrel); break;
+            case enum_EnermyWeaponType.MultipleFan: m_Barrage = new BarrageMultipleFan(this,tf_Barrel); break;
+            case enum_EnermyWeaponType.MultipleLine:m_Barrage = new BarrageMultipleLine(this,tf_Barrel);break;
+            case enum_EnermyWeaponType.Melee: m_Barrage = new EnermyMelee(this,tf_Barrel); break;
         }
         if (E_AnimatorIndex == EnermyAnimator.enum_AnimIndex.Invalid)
             Debug.LogError("Please Set Prefab AnimIndex!");
@@ -40,7 +41,7 @@ public class EntityEnermyBase : EntityBase {
     float OnAttackTarget(EntityBase target)
     {
         m_Animator.OnAttack();
-        return m_Barrage.Play(this, target) + m_EntityInfo.m_BarrageDuration.Random();
+        return m_Barrage.Play( target) + m_EntityInfo.m_BarrageDuration.Random();
     }
     public override void SetTarget(EntityBase target)
     {
@@ -293,9 +294,9 @@ public class EntityEnermyBase : EntityBase {
     {
         protected EntityEnermyBase m_EntityControlling;
         protected EntityBase m_Target;
-        protected Transform transform => m_EntityControlling.tf_Head;
+        protected Transform attacherTransform => m_EntityControlling.tf_Head;
         protected Transform targetTransform => m_Target.tf_Head;
-
+        protected Transform transform;
         protected SEntity m_Info
         {
             get
@@ -305,9 +306,13 @@ public class EntityEnermyBase : EntityBase {
                 return m_EntityControlling.m_EntityInfo;
             }
         }
-        public virtual float Play(EntityEnermyBase _controller, EntityBase _target)
+        public EnermyWeaponBase(EntityEnermyBase _controller,Transform _transform)
         {
             m_EntityControlling = _controller;
+            transform = _transform;
+        }
+        public virtual float Play( EntityBase _target)
+        {
             m_Target = _target;
             return int.MaxValue;
         }
@@ -318,29 +323,35 @@ public class EntityEnermyBase : EntityBase {
     }
     class EnermyMelee : EnermyWeaponBase
     {
-        public override float Play(EntityEnermyBase _controller, EntityBase _target)
+        public EnermyMelee(EntityEnermyBase _controller, Transform _transform) : base(_controller, _transform)
         {
-            base.Play(_controller,_target);
+        }
+        public override float Play( EntityBase _target)
+        {
+            base.Play(_target);
             this.StartSingleCoroutine(0,TIEnumerators.PauseDel(m_Info.m_Firerate,OnMelee));
             return m_Info.m_Firerate;
         }
         void OnMelee()
         {
             if (m_Info.m_MuzzleSFXIndex != -1)
-                ObjectManager.SpawnSFX<SFXParticles>(m_Info.m_MuzzleSFXIndex,transform.position,transform.forward);
+                ObjectManager.SpawnSFX<SFXParticles>(m_Info.m_MuzzleSFXIndex,attacherTransform.position,attacherTransform.forward);
 
-            Vector3 meleeDirection =(  targetTransform.position - transform.position).normalized;
+            Vector3 meleeDirection =(  targetTransform.position - attacherTransform.position).normalized;
 
-            ObjectManager.SpawnSFX<SFXCast>(m_Info.m_BlastSFXIndex, transform.position, meleeDirection).Play(m_EntityControlling.I_EntityID, m_Info.m_ProjectileDamage);
+            ObjectManager.SpawnSFX<SFXCast>(m_Info.m_BlastSFXIndex, attacherTransform.position, meleeDirection).Play(m_EntityControlling.I_EntityID, m_Info.m_ProjectileDamage);
 
         }
     }
     class BarrageRange : EnermyWeaponBase
     {
         protected bool b_preAim;
-        public override float Play(EntityEnermyBase _controller, EntityBase _target)
+        public BarrageRange(EntityEnermyBase _controller, Transform _transform) : base(_controller, _transform)
         {
-            base.Play(_controller, _target);
+        }
+        public override float Play(EntityBase _target)
+        {
+            base.Play(_target);
             b_preAim = UnityEngine.Random.Range(0, 2) > 0;
             int count = m_Info.m_ProjectileCount.Random();
             this.StartSingleCoroutine(0, TIEnumerators.TickCount(BarrageWave, count, m_Info.m_Firerate));
@@ -349,7 +360,7 @@ public class EntityEnermyBase : EntityBase {
 
         protected Vector3 GetHorizontalDirection()
         {
-            Vector3 targetDirection= Vector3.Normalize((b_preAim ? (m_Target.m_PrecalculatedTargetPos(Vector3.Distance(targetTransform.position, transform.position) / m_Info.m_ProjectileSpeed)) : targetTransform.position) - transform.position);
+            Vector3 targetDirection= Vector3.Normalize((b_preAim ? (m_Target.m_PrecalculatedTargetPos(Vector3.Distance(targetTransform.position, attacherTransform.position) / m_Info.m_ProjectileSpeed)) : targetTransform.position) - attacherTransform.position);
             targetDirection.y = 0;
             return targetDirection.normalized;
         }
@@ -367,27 +378,33 @@ public class EntityEnermyBase : EntityBase {
     }
     class BarrageMultipleLine : BarrageRange
     {
+        public BarrageMultipleLine(EntityEnermyBase _controller, Transform _transform) : base(_controller, _transform)
+        {
+        }
         protected override void BarrageWave()
         {
             base.BarrageWave();
             int waveCount = m_Info.m_RangeExtension.Random();
             Vector3 startDirection = GetHorizontalDirection();
-            Vector3 startPosition = transform.position- transform.right*m_Info.m_OffsetExtension*((waveCount-1)/2f);
+            Vector3 startPosition = transform.position - attacherTransform.right*m_Info.m_OffsetExtension*((waveCount-1)/2f);
             for (int i = 0; i < waveCount; i++)
-                FireBullet(startPosition+ transform.right*m_Info.m_OffsetExtension*i, startDirection);
+                FireBullet(startPosition+ attacherTransform.right*m_Info.m_OffsetExtension*i, startDirection);
         }
     }
     class BarrageMultipleFan : BarrageRange
     {
+        public BarrageMultipleFan(EntityEnermyBase _controller, Transform _transform) : base(_controller, _transform)
+        {
+        }
         protected override void BarrageWave()
         {
             int waveCount = m_Info.m_RangeExtension.Random();
             Vector3 startDirection = GetHorizontalDirection();
-            Vector3 horizontalOffsetDirection = GameExpression.V3_RangeSpreadDirection(startDirection, m_Info.m_HorizontalSpread, Vector3.zero, transform.right);
-            Vector3 startFanDirection  = (horizontalOffsetDirection * 100 - transform.right * m_Info.m_OffsetExtension * (waveCount-1)/2f).normalized;
+            Vector3 horizontalOffsetDirection = GameExpression.V3_RangeSpreadDirection(startDirection, m_Info.m_HorizontalSpread, Vector3.zero, attacherTransform.right);
+            Vector3 startFanDirection  = (horizontalOffsetDirection * 100 - attacherTransform.right * m_Info.m_OffsetExtension * (waveCount-1)/2f).normalized;
             for (int i = 0; i < waveCount; i++)
             {
-                Vector3 fanDirection = (startFanDirection * 100 + transform.right * m_Info.m_OffsetExtension*i).normalized;
+                Vector3 fanDirection = (startFanDirection * 100 + attacherTransform.right * m_Info.m_OffsetExtension*i).normalized;
                 FireBullet(transform.position, fanDirection);
             }
         }

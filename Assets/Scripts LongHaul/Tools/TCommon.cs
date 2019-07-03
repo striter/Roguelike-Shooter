@@ -54,9 +54,14 @@ public static class TCommon
     public static void SetChildLayer(this Transform trans, int layer)
     {
         foreach (Transform temp in trans.gameObject.GetComponentsInChildren<Transform>(true))
-        {
             temp.gameObject.layer = layer;
-        }
+    }
+    public static Transform FindInAllChild(this Transform trans, string name)
+    {
+        foreach (Transform temp in trans.gameObject.GetComponentsInChildren<Transform>(true))
+            if (temp.name == name) return temp;
+        Debug.LogWarning("Null Child Name:" + name + ",Find Of Parent:" + trans.name);
+        return null;
     }
     public static void SetTransformShow(Transform tra, bool active)
     {
