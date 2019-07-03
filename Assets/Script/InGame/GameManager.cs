@@ -181,7 +181,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     public int m_WaveCurrentEntity { get; private set; } = -1;
     public SGenerateEntity m_WaveEnermyGenerate { get; private set; }
     public List<int> m_EntityGenerating { get; private set; } = new List<int>();
-    public Dictionary<enum_EntityLevel, List<int>> m_StyledEnermyEntities;
+    public Dictionary<enum_EntityType, List<int>> m_StyledEnermyEntities;
     void OnBattleStart(SGenerateEntity enermyType,int _waveCount)
     {
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnBattleStart);
@@ -196,7 +196,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     {
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnWaveStart);
         m_EntityGenerating.Clear();
-        m_WaveEnermyGenerate.m_EntityGenerate.Traversal((enum_EntityLevel level, RangeInt range) =>
+        m_WaveEnermyGenerate.m_EntityGenerate.Traversal((enum_EntityType level, RangeInt range) =>
         {
             int spawnCount = range.Random();
             for (int i = 0; i < spawnCount; i++)
@@ -223,7 +223,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         if (B_WaveEntityGenerating)
             return;
 
-        if (m_WaveCurrentEntity <= 0 || (m_CurrentWave < m_WaveEnermyGenerate.m_WaveCount && m_WaveCurrentEntity <= 2))
+        if (m_WaveCurrentEntity <= 0 || (m_CurrentWave < m_WaveEnermyGenerate.m_WaveCount && m_WaveCurrentEntity <= GameConst.I_EnermyCountWaveFinish))
             WaveFinished();
     }
     void OnBattleFinished()
@@ -402,9 +402,9 @@ public static class ObjectManager
         ObjectPoolManager<LevelItemBase, LevelItemBase>.RecycleAllManagedItems();
     }
 
-    public static Dictionary<enum_EntityLevel, List<int>> RegisterAdditionalEntities(Dictionary<int,EntityBase> registerDic)
+    public static Dictionary<enum_EntityType, List<int>> RegisterAdditionalEntities(Dictionary<int,EntityBase> registerDic)
     {
-        Dictionary<enum_EntityLevel, List<int>> enermyDic = new Dictionary<enum_EntityLevel, List<int>>();
+        Dictionary<enum_EntityType, List<int>> enermyDic = new Dictionary<enum_EntityType, List<int>>();
         registerDic.Traversal((int index, EntityBase entity) => {
             ObjectPoolManager<int, EntityBase>.Register(index, entity, enum_PoolSaveType.DynamicMaxAmount, 1, 
                 (EntityBase entityInstantiate) => { entityInstantiate.Init(DataManager.GetEntityProperties(index)); });

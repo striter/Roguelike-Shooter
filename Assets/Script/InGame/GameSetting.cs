@@ -32,6 +32,8 @@ namespace GameSetting
         public const int I_TileMapPortalMinusOffset = 3;        //The Minimum Tile Offset Away From Origin Portal Will Generate
 
         public const float F_EnermyAICheckTime = .3f;       //AI Check Offset Time, 0.3 is suggested;
+
+        public const int I_EnermyCountWaveFinish = 0;       //When Total Enermy Count Reaches This Amount,Wave Finish
     }
 
     public static class GameExpression
@@ -154,7 +156,7 @@ namespace GameSetting
     public enum enum_TileType { Invalid = -1, Start =0, Battle = 1, End = 2, Reward = 3,}
     public enum enum_LevelItemType{ Invalid=-1, LargeMore, LargeLess, MediumMore, MediumLess, SmallMore, SmallLess, ManmadeMore, ManmadeLess, NoCollisionMore, NoCollisionLess,}
     public enum enum_LevelTileType { Invaid = -1, Empty , Main, Item, Portal, }
-    public enum enum_EntityLevel { Invalid = -1, Default=0 ,Militia=1 , Veteran=2, Ranger=3 }
+    public enum enum_EntityType { Invalid = -1,Fighter=1 ,Shooter=2, AOECaster=3,Elite=4 }
     public enum enum_Interaction { Invalid = -1, Interact_Portal, }
     public enum enum_TriggerType { Invalid = -1, Single = 1, Auto = 2, Burst = 3, Pull = 4, Store = 5, }
     public enum enum_EnermyWeaponType { Invalid = -1, Melee = 01, Single = 101, MultipleFan = 102,MultipleLine=103,  }
@@ -407,7 +409,7 @@ namespace GameSetting
         RangeInt ir_rangeExtension;
         float f_offsetExtension;
         public int m_Index=>i_index;
-        public enum_EntityLevel m_Type => (enum_EntityLevel)e_type;
+        public enum_EntityType m_Type => (enum_EntityType)e_type;
         public float m_MaxHealth => f_maxHealth;
         public float m_MaxArmor => f_maxArmor;
         public float m_MaxMana => f_maxMana;
@@ -524,25 +526,27 @@ namespace GameSetting
         string em_defines;
         int i_waveCount;
         float f_eliteChance;
-        RangeInt ir_militia;
-        RangeInt ir_veteran;
-        RangeInt ir_ranger;
+        RangeInt ir_fighter;
+        RangeInt ir_shooter;
+        RangeInt ir_aoeCaster;
+        RangeInt ir_elite;
         public int m_stageIndex;
         public enum_TileType m_TileType;
         public enum_BattleDifficulty m_Difficulty;
         public int m_WaveCount => i_waveCount;
         public float m_EliteChance => f_eliteChance;
-        public Dictionary<enum_EntityLevel, RangeInt> m_EntityGenerate;
+        public Dictionary<enum_EntityType, RangeInt> m_EntityGenerate;
         public void InitOnValueSet()
         {
             string[] defineSplit = em_defines.Split('_');
             m_stageIndex = int.Parse(defineSplit[0]);
             m_TileType = (enum_TileType)(int.Parse(defineSplit[1]));
             m_Difficulty = (enum_BattleDifficulty)(int.Parse(defineSplit[2]));
-            m_EntityGenerate = new Dictionary<enum_EntityLevel, RangeInt>();
-            m_EntityGenerate.Add( enum_EntityLevel.Militia,ir_militia);
-            m_EntityGenerate.Add(enum_EntityLevel.Veteran, ir_veteran);
-            m_EntityGenerate.Add(enum_EntityLevel.Ranger, ir_ranger);
+            m_EntityGenerate = new Dictionary<enum_EntityType, RangeInt>();
+            m_EntityGenerate.Add( enum_EntityType.Fighter,ir_fighter);
+            m_EntityGenerate.Add(enum_EntityType.Shooter, ir_shooter);
+            m_EntityGenerate.Add(enum_EntityType.AOECaster, ir_aoeCaster);
+            m_EntityGenerate.Add(enum_EntityType.Elite, ir_elite);
         }
     }
     #endregion
