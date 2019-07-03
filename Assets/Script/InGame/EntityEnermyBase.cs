@@ -10,22 +10,22 @@ using System;
 public class EntityEnermyBase : EntityBase {
     public EnermyAnimator.enum_AnimIndex E_AnimatorIndex= EnermyAnimator.enum_AnimIndex.Invalid;
     EnermyAIControllerBase m_AI;
-    EnermyWeaponBase m_Barrage;
     EnermyAnimator m_Animator;
     bool OnCheckTarget(EntityBase target) => target.B_IsPlayer!=B_IsPlayer && !target.b_IsDead;
     public override void Init(SEntity entityInfo)
     {
         Init(entityInfo, false);
-        m_AI = new EnermyAIControllerBase(this, entityInfo, OnAttackTarget,OnCheckTarget);
         Transform tf_Barrel = transform.FindInAllChild("Barrel");
+        EnermyWeaponBase weapon=null;
         switch (entityInfo.m_WeaponType)
         {
             default: Debug.LogError("Invalid Barrage Type:" + entityInfo.m_WeaponType); break;
-            case enum_EnermyWeaponType.Single: m_Barrage = new BarrageRange(this,tf_Barrel); break;
-            case enum_EnermyWeaponType.MultipleFan: m_Barrage = new BarrageMultipleFan(this,tf_Barrel); break;
-            case enum_EnermyWeaponType.MultipleLine:m_Barrage = new BarrageMultipleLine(this,tf_Barrel);break;
-            case enum_EnermyWeaponType.Melee: m_Barrage = new EnermyMelee(this,tf_Barrel); break;
+            case enum_EnermyWeaponType.Single: weapon = new BarrageRange(this,tf_Barrel); break;
+            case enum_EnermyWeaponType.MultipleFan: weapon = new BarrageMultipleFan(this,tf_Barrel); break;
+            case enum_EnermyWeaponType.MultipleLine: weapon = new BarrageMultipleLine(this,tf_Barrel);break;
+            case enum_EnermyWeaponType.Melee: weapon = new EnermyMelee(this,tf_Barrel); break;
         }
+        m_AI = new EnermyAIControllerBase(this,weapon, entityInfo, OnFireAnim, OnCheckTarget);
         if (E_AnimatorIndex == EnermyAnimator.enum_AnimIndex.Invalid)
             Debug.LogError("Please Set Prefab AnimIndex!");
     }
@@ -38,17 +38,16 @@ public class EntityEnermyBase : EntityBase {
     {
         m_Animator.SetRun(0,m_AI.B_AgentEnabled?1:0);
     }
-    float OnAttackTarget(EntityBase target)
+    void OnFireAnim(EntityBase target)
     {
         m_Animator.OnAttack();
-        return m_Barrage.Preplay( target) + m_EntityInfo.m_BarrageDuration.Random();
     }
     protected void OnAnimKeyEvent(EnermyAnimator.enum_AnimEvent animEvent)
     {
         switch (animEvent)
         {
             case EnermyAnimator.enum_AnimEvent.Fire:
-                m_Barrage.Play();
+                m_AI.OnFireTrigger();
                 break;
         }
     }
@@ -60,14 +59,12 @@ public class EntityEnermyBase : EntityBase {
     protected override void OnDead()
     {
         m_AI.Deactivate();
-        m_Barrage.Deactivate();
         m_Animator.OnDead();
         base.OnDead();
     }
     protected override void OnDisable()
     {
         m_AI.Deactivate();
-        m_Barrage.Deactivate();
         base.OnDisable();
     }
 
@@ -133,10 +130,10 @@ public class EntityEnermyBase : EntityBase {
         protected Transform targetHeadTransform => m_Target.tf_Head;
         protected NavMeshAgent m_Agent;
         protected NavMeshObstacle m_Obstacle;
-        protected Func<EntityBase,float> OnAttackTarget;
+        protected Action<EntityBase> OnFireAnim;
         protected Func<EntityBase, bool> OnCheckTarget;
-        protected float f_AttackRange,f_ChaseRange;
-        protected bool b_battleCheckObstacle,b_movementCheckObstacle;
+        protected SEntity m_EntityInfo;
+        protected EnermyWeaponBase m_Weapon;
         public bool B_AgentEnabled
         {
             get
@@ -166,17 +163,15 @@ public class EntityEnermyBase : EntityBase {
             }
         }
 
-        public EnermyAIControllerBase(EntityEnermyBase _entityControlling, SEntity _entityInfo, Func<EntityBase, float> _onAttack, Func<EntityBase, bool> _onCheck)
+        public EnermyAIControllerBase(EntityEnermyBase _entityControlling,EnermyWeaponBase _weapon, SEntity _entityInfo, Action<EntityBase> _onAttack, Func<EntityBase, bool> _onCheck)
         {
             m_EntityControlling = _entityControlling;
-            f_AttackRange = _entityInfo.m_AIAttackRange;
-            f_ChaseRange = _entityInfo.m_AIChaseRange;
-            b_battleCheckObstacle = _entityInfo.m_BattleCheckObsatacle;
-            b_movementCheckObstacle = _entityInfo.m_MovementCheckObstacle;
+            m_EntityInfo = _entityInfo;
+            m_Weapon = _weapon;
             m_Obstacle = m_EntityControlling.GetComponent<NavMeshObstacle>();
             m_Agent = m_EntityControlling.GetComponent<NavMeshAgent>();
             m_Agent.speed = _entityInfo.m_moveSpeed;
-            OnAttackTarget = _onAttack;
+            OnFireAnim = _onAttack;
             OnCheckTarget = _onCheck;
             B_AgentEnabled = false;
         }
@@ -192,6 +187,7 @@ public class EntityEnermyBase : EntityBase {
         public void Deactivate()
         {
             B_AgentEnabled = false;
+            m_Weapon.Deactivate();
             this.StopAllSingleCoroutines();
         }
         RaycastHit[] m_Raycasts;
@@ -203,6 +199,7 @@ public class EntityEnermyBase : EntityBase {
         bool b_AgentReachDestination;
         bool b_idled = false;
         bool b_targetVisible;
+        bool b_lockRotation=false;
         IEnumerator TrackTarget()
         {
             for (; ; )
@@ -220,7 +217,7 @@ public class EntityEnermyBase : EntityBase {
             {
                 v3_TargetDirection = TCommon.GetXZLookDirection(headTransform.position, targetHeadTransform.position);
                 m_Agent.updateRotation = !b_CanAttackTarget;
-                if (!m_Agent.updateRotation)
+                if (!b_lockRotation&&!m_Agent.updateRotation)
                     transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(v3_TargetDirection, Vector3.up), .2f);
                 yield return null;
             }
@@ -228,10 +225,29 @@ public class EntityEnermyBase : EntityBase {
         void CalculateAllParams()
         {
             b_targetVisible = CheckTargetVisible();
-            b_ChasedTarget = (!b_movementCheckObstacle || b_targetVisible) && TCommon.GetXZDistance(targetHeadTransform.position, headTransform.position) < f_ChaseRange;
-            b_CanAttackTarget = (!b_battleCheckObstacle || b_targetVisible) && TCommon.GetXZDistance(targetHeadTransform.position, headTransform.position) < f_AttackRange;
+            b_ChasedTarget = (!m_EntityInfo.m_MovementCheckObstacle || b_targetVisible) && TCommon.GetXZDistance(targetHeadTransform.position, headTransform.position) < m_EntityInfo.m_AIChaseRange;
+            b_CanAttackTarget = (!m_EntityInfo.m_BattleCheckObsatacle || b_targetVisible) && TCommon.GetXZDistance(targetHeadTransform.position, headTransform.position) < m_EntityInfo.m_AIAttackRange;
             b_AgentReachDestination = m_Agent.destination == Vector3.zero || TCommon.GetXZDistance(headTransform.position, m_Agent.destination) < 5f;
         }
+        void CheckBattle()
+        {
+            if (f_aiSimulatedTime < f_battleStatusCheck)
+                return;
+
+            if (b_CanAttackTarget)
+            {
+                float barrageDuration = m_Weapon.Preplay(m_Target) + m_EntityInfo.m_BarrageDuration.Random();
+                b_lockRotation = m_Weapon.B_ActivateLockRotation;
+                f_battleStatusCheck = f_aiSimulatedTime + barrageDuration;
+                OnFireAnim(m_Target);
+            }
+        }
+        public void OnFireTrigger()
+        {
+            m_Weapon.Play();
+            b_lockRotation = false;
+        }
+
         void CheckMovement()
         {
             if (f_aiSimulatedTime < f_movementCheck)
@@ -241,7 +257,7 @@ public class EntityEnermyBase : EntityBase {
             {
                 b_idled = true;
                 B_AgentEnabled = false;
-                f_movementCheck= f_aiSimulatedTime+ UnityEngine.Random.Range(2f, 3f);
+                f_movementCheck = f_aiSimulatedTime + UnityEngine.Random.Range(2f, 3f);
                 return;
             }
 
@@ -252,17 +268,6 @@ public class EntityEnermyBase : EntityBase {
                 m_Agent.SetDestination(GetUnstuckPosition());
             else if (b_AgentReachDestination)
                 m_Agent.SetDestination(GetSamplePosition());
-        }
-        void CheckBattle()
-        {
-            if (f_aiSimulatedTime < f_battleStatusCheck)
-                return;
-
-            if (b_CanAttackTarget)
-            {
-                float barrageDuration = OnAttackTarget(m_Target);
-                f_battleStatusCheck = f_aiSimulatedTime + barrageDuration;
-            }
         }
 
         int stuckCount = 0;
@@ -317,6 +322,7 @@ public class EntityEnermyBase : EntityBase {
         protected Transform attacherTransform => m_EntityControlling.tf_Head;
         protected Transform targetTransform => m_Target.tf_Head;
         protected Transform transform;
+        public virtual bool B_ActivateLockRotation => true;
         protected SEntity m_Info
         {
             get
@@ -360,7 +366,7 @@ public class EntityEnermyBase : EntityBase {
             if (m_Info.m_MuzzleSFXIndex != -1)
                 ObjectManager.SpawnSFX<SFXParticles>(m_Info.m_MuzzleSFXIndex,attacherTransform.position,attacherTransform.forward);
 
-            Vector3 meleeDirection =(  targetTransform.position - attacherTransform.position).normalized;
+            Vector3 meleeDirection = attacherTransform.forward;
 
             ObjectManager.SpawnSFX<SFXCast>(m_Info.m_BlastSFXIndex, attacherTransform.position, meleeDirection).Play(m_EntityControlling.I_EntityID, m_Info.m_ProjectileDamage);
 
