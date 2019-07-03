@@ -233,7 +233,6 @@ public class EntityEnermyBase : EntityBase {
         {
             if (f_aiSimulatedTime < f_battleStatusCheck)
                 return;
-            b_lockRotation=false;
             if (b_CanAttackTarget)
             {
                 float barrageDuration = m_Weapon.Preplay(m_Target) + m_EntityInfo.m_BarrageDuration.Random();
@@ -245,6 +244,7 @@ public class EntityEnermyBase : EntityBase {
         public void OnFireTrigger()
         {
             m_Weapon.Play();
+            b_lockRotation = false;
         }
 
         void CheckMovement()
