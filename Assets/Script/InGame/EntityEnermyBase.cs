@@ -194,7 +194,9 @@ public class EntityEnermyBase : EntityBase {
         float f_aiSimulatedTime;
         float f_movementCheck, f_battleStatusCheck;
         Vector3 v3_TargetDirection;
+        float f_targetDistance;
         bool b_targetOutChaseRange;
+        bool b_targetOutAttackRange;
         bool b_MoveTowardsTarget;
         bool b_CanAttackTarget;
         bool b_AgentReachDestination;
@@ -202,6 +204,7 @@ public class EntityEnermyBase : EntityBase {
         bool b_targetVisible;
         bool b_lockRotation = false;
         int i_targetUnvisibleCount;
+        float f_targetAngle;
         bool b_targetHideBehindWall => i_targetUnvisibleCount == 40;
         IEnumerator TrackTarget()
         {
@@ -219,7 +222,8 @@ public class EntityEnermyBase : EntityBase {
             for (; ; )
             {
                 v3_TargetDirection = TCommon.GetXZLookDirection(headTransform.position, targetHeadTransform.position);
-                m_Agent.updateRotation = !b_CanAttackTarget;
+                f_targetAngle = TCommon.GetAngle(v3_TargetDirection,transform.forward,Vector3.up);
+                m_Agent.updateRotation = b_targetOutAttackRange;
                 if (!b_lockRotation && !m_Agent.updateRotation)
                     transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(v3_TargetDirection, Vector3.up), .2f);
                 yield return null;
@@ -232,10 +236,11 @@ public class EntityEnermyBase : EntityBase {
                 i_targetUnvisibleCount=i_targetUnvisibleCount+1>40?40:i_targetUnvisibleCount+1;
             else
                 i_targetUnvisibleCount= i_targetUnvisibleCount-1<=0?0:i_targetUnvisibleCount-1;
-
-            b_targetOutChaseRange = TCommon.GetXZDistance(targetHeadTransform.position, headTransform.position) > m_EntityInfo.m_AIChaseRange;
+            f_targetDistance = TCommon.GetXZDistance(targetHeadTransform.position, headTransform.position);
+            b_targetOutChaseRange = f_targetDistance > m_EntityInfo.m_AIChaseRange;
+            b_targetOutAttackRange = f_targetDistance > m_EntityInfo.m_AIAttackRange;
             b_MoveTowardsTarget = b_targetHideBehindWall || b_targetOutChaseRange;
-            b_CanAttackTarget = (!m_EntityInfo.m_BattleCheckObsatacle || b_targetVisible) && TCommon.GetXZDistance(targetHeadTransform.position, headTransform.position) < m_EntityInfo.m_AIAttackRange;
+            b_CanAttackTarget =  !b_targetOutAttackRange&&(!m_EntityInfo.m_BattleCheckObsatacle || b_targetVisible) && Mathf.Abs(f_targetAngle)<15 ;
             b_AgentReachDestination = m_Agent.destination == Vector3.zero || TCommon.GetXZDistance(headTransform.position, m_Agent.destination) < 1f;
         }
         void CheckBattle()
