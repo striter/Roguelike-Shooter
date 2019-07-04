@@ -392,8 +392,7 @@ namespace GameSetting
         float f_armorRegenDuration;
         float f_moveSpeed;
         float f_chaseRange;
-        float f_attackRange;
-        bool b_movementObstacleCheck;
+        float f_attackRange;    
         bool b_battleObstacleCheck;
         int i_weaponType;
         RangeFloat fr_duration;
@@ -418,7 +417,6 @@ namespace GameSetting
         public float m_moveSpeed => f_moveSpeed;
         public float m_AIChaseRange => f_chaseRange;
         public float m_AIAttackRange => f_attackRange;
-        public bool m_MovementCheckObstacle => b_movementObstacleCheck;
         public bool m_BattleCheckObsatacle => b_battleObstacleCheck;
 
         public enum_EnermyWeaponType m_WeaponType => (enum_EnermyWeaponType)i_weaponType;

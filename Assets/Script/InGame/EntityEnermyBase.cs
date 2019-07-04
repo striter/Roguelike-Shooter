@@ -121,7 +121,7 @@ public class EntityEnermyBase : EntityBase {
         }
     }
     #region AI
-    class EnermyAIControllerBase :ISingleCoroutine
+    class EnermyAIControllerBase : ISingleCoroutine
     {
         protected EntityEnermyBase m_EntityControlling;
         protected EntityBase m_Target;
@@ -163,7 +163,7 @@ public class EntityEnermyBase : EntityBase {
             }
         }
 
-        public EnermyAIControllerBase(EntityEnermyBase _entityControlling,EnermyWeaponBase _weapon, SEntity _entityInfo, Action<EntityBase> _onAttack, Func<EntityBase, bool> _onCheck)
+        public EnermyAIControllerBase(EntityEnermyBase _entityControlling, EnermyWeaponBase _weapon, SEntity _entityInfo, Action<EntityBase> _onAttack, Func<EntityBase, bool> _onCheck)
         {
             m_EntityControlling = _entityControlling;
             m_EntityInfo = _entityInfo;
@@ -192,14 +192,17 @@ public class EntityEnermyBase : EntityBase {
         }
         RaycastHit[] m_Raycasts;
         float f_aiSimulatedTime;
-        float f_movementCheck,f_battleStatusCheck;
+        float f_movementCheck, f_battleStatusCheck;
         Vector3 v3_TargetDirection;
-        bool b_ChasedTarget;
+        bool b_targetOutChaseRange;
+        bool b_MoveTowardsTarget;
         bool b_CanAttackTarget;
         bool b_AgentReachDestination;
         bool b_idled = false;
         bool b_targetVisible;
-        bool b_lockRotation=false;
+        bool b_lockRotation = false;
+        int i_targetUnvisibleCount;
+        bool b_targetHideBehindWall => i_targetUnvisibleCount > 5;
         IEnumerator TrackTarget()
         {
             for (; ; )
@@ -217,7 +220,7 @@ public class EntityEnermyBase : EntityBase {
             {
                 v3_TargetDirection = TCommon.GetXZLookDirection(headTransform.position, targetHeadTransform.position);
                 m_Agent.updateRotation = !b_CanAttackTarget;
-                if (!b_lockRotation&&!m_Agent.updateRotation)
+                if (!b_lockRotation && !m_Agent.updateRotation)
                     transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(v3_TargetDirection, Vector3.up), .2f);
                 yield return null;
             }
@@ -225,9 +228,15 @@ public class EntityEnermyBase : EntityBase {
         void CalculateAllParams()
         {
             b_targetVisible = CheckTargetVisible();
-            b_ChasedTarget = (!m_EntityInfo.m_MovementCheckObstacle || b_targetVisible) && TCommon.GetXZDistance(targetHeadTransform.position, headTransform.position) < m_EntityInfo.m_AIChaseRange;
+            if (!b_targetVisible)
+                i_targetUnvisibleCount=i_targetUnvisibleCount+1>10?5:i_targetUnvisibleCount+1;
+            else
+                i_targetUnvisibleCount= i_targetUnvisibleCount-1<0?0:i_targetUnvisibleCount-1;
+
+            b_targetOutChaseRange = TCommon.GetXZDistance(targetHeadTransform.position, headTransform.position) > m_EntityInfo.m_AIChaseRange;
+            b_MoveTowardsTarget = b_targetHideBehindWall || b_targetOutChaseRange;
             b_CanAttackTarget = (!m_EntityInfo.m_BattleCheckObsatacle || b_targetVisible) && TCommon.GetXZDistance(targetHeadTransform.position, headTransform.position) < m_EntityInfo.m_AIAttackRange;
-            b_AgentReachDestination = m_Agent.destination == Vector3.zero || TCommon.GetXZDistance(headTransform.position, m_Agent.destination) < 5f;
+            b_AgentReachDestination = m_Agent.destination == Vector3.zero || TCommon.GetXZDistance(headTransform.position, m_Agent.destination) < 1f;
         }
         void CheckBattle()
         {
@@ -252,7 +261,7 @@ public class EntityEnermyBase : EntityBase {
             if (f_aiSimulatedTime < f_movementCheck)
                 return;
 
-            if (!b_idled && b_AgentReachDestination && b_ChasedTarget && UnityEngine.Random.Range(0, 2) > 0)
+            if (!b_idled && b_AgentReachDestination && !b_targetOutChaseRange && UnityEngine.Random.Range(0, 2) > 0)
             {
                 b_idled = true;
                 B_AgentEnabled = false;
@@ -279,15 +288,14 @@ public class EntityEnermyBase : EntityBase {
         }
         Vector3 GetUnstuckPosition()
         {
-            return NavMesh.SamplePosition(m_EntityControlling.transform.position + new Vector3(UnityEngine.Random.Range(-5f, 5f), 0, UnityEngine.Random.Range(-5f, 5f)), out sampleHit, 50, -1) ? sampleHit.position : Vector3.zero;
+            return NavMesh.SamplePosition(m_EntityControlling.transform.position + new Vector3( UnityEngine.Random.Range(-10f, 10f), 0, 0), out sampleHit, 50, -1) ? sampleHit.position : Vector3.zero;
         }
 
         NavMeshHit sampleHit;
         Vector3 GetSamplePosition()
         {
-            Vector3 targetPosition= m_Target.transform.position;
-            Vector3 direction = m_EntityControlling.transform.position - m_Target.transform.position;
-            Vector3 m_SamplePosition= m_EntityControlling.transform.position+ (b_ChasedTarget?direction:-direction).normalized*5;
+            Vector3 targetPosition = targetHeadTransform.position;
+            Vector3 m_SamplePosition= m_EntityControlling.transform.position+ (b_MoveTowardsTarget? v3_TargetDirection : -v3_TargetDirection).normalized*10;
             m_SamplePosition = m_SamplePosition + new Vector3(UnityEngine.Random.Range(-5f, 5f), 0, UnityEngine.Random.Range(-5f, 5f));
             if (NavMesh.SamplePosition(m_SamplePosition, out sampleHit, 100, -1))
                 targetPosition = sampleHit.position;
