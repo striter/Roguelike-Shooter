@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Material_Iceland_Soldier5
-  m_Shader: {fileID: 4800000, guid: 46f30f903f3e0864b9ccd16f1e0521e0, type: 3}
+  m_Shader: {fileID: 4800000, guid: 8b79258151bf74048a2de4d6c5f49c94, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -39,7 +39,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: e8b4d3016a0622e429b44c1df027b3e5, type: 3}
+        m_Texture: {fileID: 2800000, guid: 4d98b2340a4b4244c9549214b0adec1f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MaskTex:
+        m_Texture: {fileID: 2800000, guid: bb16aea1b0710d04b88a0704c0bc4bbf, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
