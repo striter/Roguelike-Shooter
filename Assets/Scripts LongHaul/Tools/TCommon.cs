@@ -132,7 +132,7 @@ public static class TCommon
         }
         return angle;
     }
-    public static Vector3 RotateDirection(this Vector3 Direction, Vector3 center, Vector3 axis, float angle,bool clockWise=true) =>(clockWise?1:-1)*( Quaternion.AngleAxis(angle, axis) * (Direction - center)).normalized;
+    public static Vector3 RotateDirection(this Vector3 Direction, Vector3 axis, float angle,bool clockWise=true) =>(clockWise?1:-1)*( Quaternion.AngleAxis(angle, axis) * Direction).normalized;
 
     public static Quaternion RandomRotation()
     {

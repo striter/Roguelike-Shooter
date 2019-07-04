@@ -440,11 +440,10 @@ public class EntityEnermyBase : EntityBase {
         {
             int waveCount = m_Info.m_RangeExtension.Random();
             Vector3 startDirection = GetHorizontalDirection();
-            Vector3 horizontalOffsetDirection = GameExpression.V3_RangeSpreadDirection(startDirection, m_Info.m_HorizontalSpread, Vector3.zero, attacherTransform.right);
-            Vector3 startFanDirection  = (horizontalOffsetDirection * 100 - attacherTransform.right * m_Info.m_OffsetExtension * (waveCount-1)/2f).normalized;
+            float startFanAngle= -m_Info.m_OffsetExtension*(waveCount-1)/2f;
             for (int i = 0; i < waveCount; i++)
             {
-                Vector3 fanDirection = (startFanDirection * 100 + attacherTransform.right * m_Info.m_OffsetExtension*i).normalized;
+                Vector3 fanDirection = startDirection.RotateDirection(Vector3.up, startFanAngle + i * m_Info.m_OffsetExtension);
                 FireBullet(transform.position, fanDirection);
             }
         }

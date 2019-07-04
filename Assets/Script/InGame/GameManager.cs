@@ -61,7 +61,13 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         if (Input.GetKeyDown(KeyCode.V) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
         {
             Debug.DrawLine(hit.point,hit.point+transform.forward*5,Color.red,5);
-            Debug.DrawLine(hit.point,hit.point+Vector3.forward.RotateDirection(hit.point,Vector3.up,-90),Color.green,5);
+            Debug.DrawLine(hit.point, hit.point + Vector3.forward.RotateDirection(hit.point,  45)*5, Color.green, 5);
+            Debug.DrawLine(hit.point,hit.point+Vector3.forward.RotateDirection(hit.point,90)*5,Color.green,5);
+            Debug.DrawLine(hit.point, hit.point + Vector3.forward.RotateDirection(hit.point, 135) * 5, Color.green, 5);
+            Debug.DrawLine(hit.point, hit.point + Vector3.forward.RotateDirection(hit.point,  180) * 5, Color.green, 5);
+            Debug.DrawLine(hit.point, hit.point + Vector3.forward.RotateDirection(hit.point,  225) * 5, Color.green, 5);
+            Debug.DrawLine(hit.point, hit.point + Vector3.forward.RotateDirection(hit.point,  270) * 5, Color.green, 5);
+            Debug.DrawLine(hit.point, hit.point + Vector3.forward.RotateDirection(hit.point,  315) * 5, Color.green, 5);
         }
 
 
