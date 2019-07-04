@@ -34,6 +34,7 @@ namespace GameSetting
         public const float F_EnermyAICheckTime = .3f;       //AI Check Offset Time, 0.3 is suggested;
 
         public const int I_EnermyCountWaveFinish = 0;       //When Total Enermy Count Reaches This Amount,Wave Finish
+        public const int I_EnermySpawnDelay = 2;        //Enermy Spawn Delay Time 
     }
 
     public static class GameExpression
