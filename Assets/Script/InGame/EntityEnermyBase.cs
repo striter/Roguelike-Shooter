@@ -229,7 +229,7 @@ public class EntityEnermyBase : EntityBase {
         {
             b_targetVisible = CheckTargetVisible();
             if (!b_targetVisible)
-                i_targetUnvisibleCount=i_targetUnvisibleCount+1>20?5:i_targetUnvisibleCount+1;
+                i_targetUnvisibleCount=i_targetUnvisibleCount+1>30?5:i_targetUnvisibleCount+1;
             else
                 i_targetUnvisibleCount= i_targetUnvisibleCount-1<0?0:i_targetUnvisibleCount-1;
 
