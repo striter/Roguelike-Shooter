@@ -231,7 +231,7 @@ public class EntityEnermyBase : EntityBase {
             if (!b_targetVisible)
                 i_targetUnvisibleCount=i_targetUnvisibleCount+1>40?40:i_targetUnvisibleCount+1;
             else
-                i_targetUnvisibleCount= i_targetUnvisibleCount-5<=0?0:i_targetUnvisibleCount-5;
+                i_targetUnvisibleCount= i_targetUnvisibleCount-1<=0?0:i_targetUnvisibleCount-1;
 
             b_targetOutChaseRange = TCommon.GetXZDistance(targetHeadTransform.position, headTransform.position) > m_EntityInfo.m_AIChaseRange;
             b_MoveTowardsTarget = b_targetHideBehindWall || b_targetOutChaseRange;
