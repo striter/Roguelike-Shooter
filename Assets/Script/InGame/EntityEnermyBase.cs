@@ -202,7 +202,7 @@ public class EntityEnermyBase : EntityBase {
         bool b_targetVisible;
         bool b_lockRotation = false;
         int i_targetUnvisibleCount;
-        bool b_targetHideBehindWall => i_targetUnvisibleCount > 5;
+        bool b_targetHideBehindWall => i_targetUnvisibleCount == 40;
         IEnumerator TrackTarget()
         {
             for (; ; )
@@ -229,9 +229,9 @@ public class EntityEnermyBase : EntityBase {
         {
             b_targetVisible = CheckTargetVisible();
             if (!b_targetVisible)
-                i_targetUnvisibleCount=i_targetUnvisibleCount+1>40?5:i_targetUnvisibleCount+1;
+                i_targetUnvisibleCount=i_targetUnvisibleCount+1>40?40:i_targetUnvisibleCount+1;
             else
-                i_targetUnvisibleCount= i_targetUnvisibleCount-1<0?0:i_targetUnvisibleCount-0;
+                i_targetUnvisibleCount= i_targetUnvisibleCount-5<=0?0:i_targetUnvisibleCount-5;
 
             b_targetOutChaseRange = TCommon.GetXZDistance(targetHeadTransform.position, headTransform.position) > m_EntityInfo.m_AIChaseRange;
             b_MoveTowardsTarget = b_targetHideBehindWall || b_targetOutChaseRange;
@@ -295,7 +295,7 @@ public class EntityEnermyBase : EntityBase {
         Vector3 GetSamplePosition()
         {
             Vector3 targetPosition = targetHeadTransform.position;
-            Vector3 m_SamplePosition= m_EntityControlling.transform.position+ (b_MoveTowardsTarget? v3_TargetDirection : -v3_TargetDirection).normalized*10;
+            Vector3 m_SamplePosition= m_EntityControlling.transform.position+ (b_MoveTowardsTarget? v3_TargetDirection : -v3_TargetDirection).normalized*5;
             m_SamplePosition = m_SamplePosition + new Vector3(UnityEngine.Random.Range(-5f, 5f), 0, UnityEngine.Random.Range(-5f, 5f));
             if (NavMesh.SamplePosition(m_SamplePosition, out sampleHit, 100, -1))
                 targetPosition = sampleHit.position;
