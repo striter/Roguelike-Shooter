@@ -29,9 +29,9 @@ public class EntityEnermyBase : EntityBase {
         if (E_AnimatorIndex == EnermyAnimator.enum_AnimIndex.Invalid)
             Debug.LogError("Please Set Prefab AnimIndex!");
     }
-    public override void OnActivate(int id)
+    public override void OnSpawn(int id)
     {
-        base.OnActivate(id);
+        base.OnSpawn(id);
         m_Animator = new EnermyAnimator(tf_Model.GetComponent<Animator>(), E_AnimatorIndex, OnAnimKeyEvent);
     }
     protected override void Update()

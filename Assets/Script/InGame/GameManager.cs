@@ -250,8 +250,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         for (; ; )
         {
             yield return new WaitForSeconds(_offset);
-            ObjectManager.SpawnEntity(waveGenerate[curSpawnCount], EnviormentManager.m_currentLevel.m_Level.RandomEmptyTilePosition(m_GameSeed)).SetTarget(m_LocalPlayer);
-
+            SpawnEntity(waveGenerate[curSpawnCount], curSpawnCount, EnviormentManager.m_currentLevel.m_Level.RandomEmptyTilePosition(m_GameSeed));
             m_WaveCurrentEntity++;
             curSpawnCount++;
             if (curSpawnCount >= waveGenerate.Count)
@@ -260,6 +259,13 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
                 yield break;
             }
         }
+    }
+    void SpawnEntity(int entityIndex, int spawnIndex,Vector3 position)
+    {
+        ObjectManager.SpawnSFX<SFXIndicator>(50001, position, Vector3.up).Play(entityIndex,GameConst.I_EnermySpawnDelay);
+        this.StartSingleCoroutine(100 + spawnIndex, TIEnumerators.PauseDel(GameConst.I_EnermySpawnDelay, () => {
+            ObjectManager.SpawnEntity(entityIndex,position ).SetTarget(m_LocalPlayer);
+        }));
     }
     #endregion
 }
@@ -329,7 +335,7 @@ public static class ObjectManager
         NavMeshHit hit;
         if (NavMesh.SamplePosition(toPosition, out hit, 5, -1))
             toPosition = hit.position;
-        entity.OnActivate(GameManager.I_EntityID(i_entityIndex++,entity.B_IsPlayer));
+        entity.OnSpawn(GameManager.I_EntityID(i_entityIndex++,entity.B_IsPlayer));
         entity.transform.position = toPosition;
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnSpawnEntity, entity);
         return entity;

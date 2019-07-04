@@ -32,7 +32,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
         TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.Attach(this, TryTakeDamage); });
         m_EntityInfo = entityInfo;
     }
-    public virtual void OnActivate(int id)
+    public virtual void OnSpawn(int id)
     {
         I_EntityID = id;
         if (I_EntityID == -1)
@@ -48,6 +48,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
             });
         });
     }
+
     protected virtual void OnEnable()
     {
         m_CurrentHealth = m_EntityInfo.m_MaxHealth;
