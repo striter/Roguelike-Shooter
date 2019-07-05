@@ -1,7 +1,15 @@
 ﻿using GameSetting;
 using UnityEngine;
 
-public class SFXProjectileCastMeteor : SFXProjectileCastTrigger {
+public class SFXProjectileCastMeteor : SFXProjectileCastTrigger
+{
+    public int I_IndicatorIndex;
+    protected override void OnPlayPreset()
+    {
+        base.OnPlayPreset();
+        if (I_IndicatorIndex <= 0)
+            Debug.LogError("Indicator Index Less Or Equals 0");
+    }
     public override void Play(int sourceID, Vector3 direction, Vector3 targetPosition, float duration)
     {
         OnPlayPreset();

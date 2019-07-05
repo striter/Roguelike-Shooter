@@ -2,7 +2,6 @@
 using UnityEngine;
 public class SFXProjectileCastTrigger : SFXProjectile {
     public int I_CastIndex;
-    public int I_IndicatorIndex;
     public override void Play(int sourceID, Vector3 direction, Vector3 targetPosition, float duration)
     {
         base.Play(sourceID, direction, targetPosition, Vector3.Distance(transform.position, targetPosition) / F_Speed);
@@ -13,8 +12,6 @@ public class SFXProjectileCastTrigger : SFXProjectile {
         base.OnPlayPreset();
         if (I_CastIndex <= 0)
             Debug.LogError("Cast Index Less Or Equals 0");
-        if (I_IndicatorIndex <= 0)
-            Debug.LogError("Indicator Index Less Or Equals 0");
     }
     protected override void OnPlayFinished()
     {
