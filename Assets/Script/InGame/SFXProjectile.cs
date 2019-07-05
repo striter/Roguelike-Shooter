@@ -12,7 +12,9 @@ public class SFXProjectile : SFXBase {
     protected virtual bool B_RecycleOnHit => true;
     protected virtual bool B_DisablePhysicsOnHit => true;
     protected virtual bool B_HitMultiple => true;
-    protected SProjectileInfo m_ProjectileInfo;
+    public float F_Damage;
+    public float F_Speed;
+    public int I_ImpactIndex;
     public override void Init(int sfxIndex)
     {
         base.Init(sfxIndex);
@@ -21,20 +23,26 @@ public class SFXProjectile : SFXBase {
         m_Collider.enabled = false;
     }
 
-    public virtual void Play(int sourceID,Vector3 direction,Vector3 targetPosition,SProjectileInfo projectileInfo,float duration=-1)
+    public virtual void Play(int sourceID,Vector3 direction,Vector3 targetPosition,float duration=-1)
     {
-        OnPlayPreset(projectileInfo);
-        m_Simulator = new ProjectilePhysicsSimulator(transform.position, direction, Vector3.down, projectileInfo.m_HorizontalSpeed,  projectileInfo.m_HorizontalDistance, projectileInfo.m_VerticalSpeed, projectileInfo.m_VerticalAcceleration);
-        PlaySFX(sourceID, duration==-1?GameConst.I_ProjectileMaxDistance/projectileInfo.m_HorizontalSpeed:duration);
+        OnPlayPreset();
+        m_Simulator = new ProjectilePhysicsSimulator(transform.position, direction, Vector3.down, F_Speed);
+        PlaySFX(sourceID, duration==-1?GameConst.I_ProjectileMaxDistance/ F_Speed : duration);
     }
 
-    protected void OnPlayPreset(SProjectileInfo _projectileInfo)
+    protected virtual void OnPlayPreset()
     {
-        m_ProjectileInfo = _projectileInfo;
         B_SimulatePhysics = true;
         m_Trail.enabled = true;
         m_Trail.Clear();
         m_TargetHitted.Clear();
+
+        if (F_Damage <= 0)
+            Debug.LogError("Error Damage Less Or Equals 0");
+        if (F_Speed <= 0)
+            Debug.LogError("Error Speed Less Or Equals 0");
+        if (I_ImpactIndex <= 0)
+            Debug.LogError("Error Impact Index Less Or Equals 0");
     }
     protected override void Update()
     {
@@ -90,15 +98,15 @@ public class SFXProjectile : SFXBase {
     {
         if (entity!=null&&!m_TargetHitted.Contains(entity.I_AttacherID) && GameManager.B_CanDamageEntity(entity, I_SourceID))
         {
-            entity.TryHit(m_ProjectileInfo.m_damage);
+            entity.TryHit(F_Damage);
             m_TargetHitted.Add(entity.I_AttacherID);
         }
     }
     protected void SpawnImpact(RaycastHit hitInfo, HitCheckBase hitParent)
     {
-        if (m_ProjectileInfo.m_impactSFX > 0)
+        if (I_ImpactIndex > 0)
         {
-            SFXParticles impact = ObjectManager.SpawnSFX<SFXParticles>(m_ProjectileInfo.m_impactSFX, hitInfo.point, hitInfo.normal, null);
+            SFXParticles impact = ObjectManager.SpawnSFX<SFXParticles>(I_ImpactIndex, hitInfo.point, hitInfo.normal, null);
             if (hitParent != null && hitParent.m_HitCheckType == enum_HitCheck.Entity)
                 (hitParent as HitCheckEntity).AttachTransform(impact);
             else

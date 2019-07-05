@@ -6,7 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class SFXCast : SFXBase {
     ParticleSystem[] m_Particles;
-    protected float f_damage;
+    public float F_Damage;
     protected float f_blastTime;
     public override void Init(int _sfxIndex)
     {
@@ -19,10 +19,9 @@ public class SFXCast : SFXBase {
                 f_blastTime = particle.main.duration;
         });
     }
-    public virtual void Play(int sourceID, float damage)
+    public virtual void Play(int sourceID)
     {
         PlaySFX(sourceID,f_blastTime); 
-        f_damage = damage;
         OnBlast();
     }
     protected virtual void OnBlast()
@@ -47,6 +46,6 @@ public class SFXCast : SFXBase {
     }   
     protected virtual void OnDamageEntity(HitCheckEntity hitEntity)
     {
-        hitEntity.TryHit(f_damage);
+        hitEntity.TryHit(F_Damage);
     }
 }

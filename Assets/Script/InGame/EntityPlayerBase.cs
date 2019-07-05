@@ -50,7 +50,6 @@ public class EntityPlayerBase : EntityBase {
             UIManager.OnReload = OnReload;
             UIManager.OnSwitch = OnSwitchWeapon;
             TouchDeltaManager.Instance.Bind(OnMovementDelta, OnRotateDelta);
-
         }
         ObtainWeapon(ObjectManager.SpawnWeapon(TESTWEAPON1, this));
         ObtainWeapon(ObjectManager.SpawnWeapon(TESTWEAPON2, this));

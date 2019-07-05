@@ -8,9 +8,9 @@ public class SFXProjectileBeam : SFXProjectile {
     protected override bool B_DisablePhysicsOnHit => false;
     public int I_BeamLength = 10;
 
-    public override void Play(int sourceID, Vector3 direction, Vector3 targetPosition, SProjectileInfo projectileInfo, float duration)
+    public override void Play(int sourceID, Vector3 direction, Vector3 targetPosition, float duration)
     {
-        base.Play(sourceID, direction, targetPosition, projectileInfo, I_BeamLength/projectileInfo.m_HorizontalSpeed);
+        base.Play(sourceID, direction, targetPosition, I_BeamLength/F_Speed);
     }
 
     protected override void OnHitTarget(RaycastHit hit, HitCheckBase hitCheck)

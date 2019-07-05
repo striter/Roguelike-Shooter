@@ -241,10 +241,7 @@ namespace GameSetting
         public Vector3 m_HorizontalDirection { get; private set; }
         public Vector3 m_VerticalDirection { get; private set; }
         float m_horizontalSpeed;
-        float m_horizontalDistance;
-        float m_verticalSpeed;
-        float m_verticalAcceleration;
-        public ProjectilePhysicsSimulator(Vector3 _startPos, Vector3 _horizontalDirection, Vector3 _verticalDirection, float _horizontalSpeed, float _horizontalDistance, float _verticalSpeed, float _verticalAcceleration)
+        public ProjectilePhysicsSimulator(Vector3 _startPos, Vector3 _horizontalDirection, Vector3 _verticalDirection, float _horizontalSpeed)
         {
             m_simulateTime = 0f;
             m_startPos = _startPos;
@@ -252,28 +249,16 @@ namespace GameSetting
             m_HorizontalDirection = _horizontalDirection.normalized;
             m_VerticalDirection = _verticalDirection.normalized;
             m_horizontalSpeed = _horizontalSpeed;
-            m_horizontalDistance = _horizontalDistance;
-            m_verticalSpeed = _verticalSpeed;
-            m_verticalAcceleration = _verticalAcceleration;
-
         }
         public Vector3 Simulate(float deltaTime,out Vector3 prePosition)
         {
             m_simulateTime += deltaTime;
-            Vector3 currentPos= GetSimulatedPosition(m_startPos,m_HorizontalDirection,m_VerticalDirection,m_simulateTime,m_horizontalSpeed,m_horizontalDistance,m_verticalSpeed,m_verticalAcceleration);
+            Vector3 currentPos= GetSimulatedPosition(m_startPos,m_HorizontalDirection,m_VerticalDirection,m_simulateTime,m_horizontalSpeed);
             prePosition = m_LastPos;
             m_LastPos = currentPos;
             return currentPos;
         }
-        public static Vector3 GetSimulatedPosition(Vector3 startPos, Vector3 horizontalDirection, Vector3 verticalDirection, float elapsedTime, float horizontalSpeed, float horizontalDistance, float verticalSpeed, float verticalAcceleration)
-        {
-            float f_verticalTime = elapsedTime- horizontalDistance / horizontalSpeed;
-            f_verticalTime = f_verticalTime > 0 ? f_verticalTime : 0;
-            Vector3 horizontalShift = horizontalDirection * Expressions.SpeedShift(horizontalSpeed, elapsedTime);
-            Vector3 verticalShift = verticalDirection * Expressions.AccelerationSpeedShift(verticalSpeed, verticalAcceleration, f_verticalTime);
-            Vector3 targetPos = startPos + horizontalShift + verticalShift;
-            return targetPos;
-        }
+        public static Vector3 GetSimulatedPosition(Vector3 startPos, Vector3 horizontalDirection, Vector3 verticalDirection, float elapsedTime, float horizontalSpeed)=> startPos + horizontalDirection * Expressions.SpeedShift(horizontalSpeed, elapsedTime); 
     }
     #region BigmapTile
     public class SBigmapTileInfo : ITileAxis
@@ -381,42 +366,6 @@ namespace GameSetting
     #endregion
     #endregion
     #region GameStruct
-    public struct SProjectileInfo
-    {
-        public int m_SFXIndex { get; private set; }
-        public float m_damage { get; private set; }
-        public int m_MuzzleSFX { get; private set; }
-        public int m_impactSFX { get; private set; }
-        public int m_relativeSFX1 { get; private set; }
-        public int m_relativeSFX2 { get; private set; }
-        public float m_HorizontalSpeed { get; private set; }
-        public float m_HorizontalDistance { get; private set; }
-        public float m_VerticalSpeed { get; private set; }
-        public float m_VerticalAcceleration { get; private set; }
-        public SProjectileInfo(int _sfxIndex, float _damage, int _muzzleSFX, int _impactSFX, int _relativeSFX1, int _relativeSFX2, float _horiSpeed, float _horiDistance,float _verticalSpeed, float _vertiAcceleration)
-        {
-            m_SFXIndex = _sfxIndex;
-            m_MuzzleSFX = _muzzleSFX;
-            m_damage = _damage;
-            m_MuzzleSFX = _muzzleSFX;
-            m_impactSFX = _impactSFX;
-            m_relativeSFX1 = _relativeSFX1;
-            m_relativeSFX2 = _relativeSFX2;
-            m_HorizontalSpeed = _horiSpeed;
-            m_HorizontalDistance = _horiDistance;
-            m_VerticalSpeed = _verticalSpeed;
-            m_VerticalAcceleration = _vertiAcceleration;
-        }
-        public SProjectileInfo GetSplitInfo()
-        {
-            SProjectileInfo info = new SProjectileInfo();
-            info.m_SFXIndex = m_relativeSFX1;
-            info.m_damage = m_damage;
-            info.m_impactSFX = m_impactSFX;
-            info.m_HorizontalSpeed = m_HorizontalSpeed;
-            return info;
-        }
-    }
     public struct SEntity :ISExcel
     {
         int i_index;
@@ -434,13 +383,8 @@ namespace GameSetting
         RangeFloat fr_duration;
         int i_muzzleIndex;
         int i_projectileIndex;
-        int i_impactIndex;
-        int i_relativeIndex1;
-        int i_relativeIndex2;
         float f_firerate;
         RangeInt ir_count;
-        float f_damage;
-        float f_speed;
         int i_horiSpread;
         RangeInt ir_rangeExtension;
         float f_offsetExtension;
@@ -456,10 +400,10 @@ namespace GameSetting
         public float m_AIChaseRange => f_chaseRange;
         public float m_AIAttackRange => f_attackRange;
         public bool m_BattleCheckObsatacle => b_battleObstacleCheck;
-
+        public int m_ProjectileSFX => i_projectileIndex;
+        public int m_MuzzleSFX => i_muzzleIndex;
         public enum_EnermyWeaponType m_WeaponType => (enum_EnermyWeaponType)i_weaponType;
         public RangeFloat m_BarrageDuration => fr_duration;
-        public SProjectileInfo m_ProjectileInfo;
         internal float m_Firerate => f_firerate;
         public RangeInt m_ProjectileCount => ir_count;
         public int m_HorizontalSpread => i_horiSpread;
@@ -467,7 +411,6 @@ namespace GameSetting
         public float m_OffsetExtension => f_offsetExtension;
         public void InitOnValueSet()
         {
-            m_ProjectileInfo = new SProjectileInfo(i_projectileIndex,f_damage,i_muzzleIndex, i_impactIndex, i_relativeIndex1,i_relativeIndex2,f_speed, GameConst.I_ProjectileMaxDistance,0,10);
         }
     }
     public struct SWeapon : ISExcel
@@ -477,10 +420,6 @@ namespace GameSetting
         int i_triggerType;
         int i_muzzleIndex;
         int i_projectileIndex;
-        int i_impactIndex;
-        int i_relativeIndex1;
-        int i_relativeIndex2;
-        float f_damage;
         float f_fireRate;
         float f_specialRate;
         float f_manaCost;
@@ -489,14 +428,12 @@ namespace GameSetting
         float f_reloadTime;
         int i_PelletsPerShot;
         float f_stunAfterShot;
-        float f_horizontalDistance;
-        float f_horizontalSpeed;
-        float f_verticalAcceleration;
         float f_recoilHorizontal;
         float f_recoilVertical;
-        public SProjectileInfo m_ProjectileInfo;
         public enum_PlayerWeapon m_Weapon => (enum_PlayerWeapon)index;
         public string m_Name => s_name;
+        public int m_ProjectileSFX => i_projectileIndex;
+        public int m_MuzzleSFX => i_muzzleIndex;
         public enum_TriggerType m_TriggerType=>(enum_TriggerType)i_triggerType;
         public float m_FireRate => f_fireRate;
         public float m_SpecialRate => f_specialRate;
@@ -509,7 +446,6 @@ namespace GameSetting
         public Vector2 m_RecoilPerShot => new Vector2(f_recoilHorizontal, f_recoilVertical);
         public void InitOnValueSet()
         {
-            m_ProjectileInfo = new SProjectileInfo(i_projectileIndex,f_damage,i_muzzleIndex,i_impactIndex,i_relativeIndex1,i_relativeIndex2,f_horizontalSpeed,f_horizontalDistance,0,f_verticalAcceleration);
         }
     }
     public struct SGenerateItem : ISExcel
@@ -728,14 +664,14 @@ namespace GameSetting
         Abandoned_AimAssistSimulator m_Simulator;
         int m_CurveCount;
         List<Vector3> m_CurvePoints = new List<Vector3>();
-        public Abandoned_WeaponAimAssistAccelerationCurve(Transform muzzle, int _curveCount, float duration, SWeapon weaponInfo)
+        public Abandoned_WeaponAimAssistAccelerationCurve(Transform muzzle, int _curveCount, float duration, SFXProjectile projectile)
         {
             transform = muzzle;
             tf_Dot = transform.Find("Dot");
             m_lineRenderer = muzzle.GetComponent<LineRenderer>();
             m_lineRenderer.positionCount = _curveCount;
             m_CurveCount = _curveCount;
-            m_Simulator = new Abandoned_AimAssistSimulator(duration / _curveCount, muzzle.position, muzzle.forward, Vector3.down, weaponInfo.m_ProjectileInfo.m_HorizontalDistance,0, 0, weaponInfo.m_ProjectileInfo.m_VerticalAcceleration, false);
+            m_Simulator = new Abandoned_AimAssistSimulator(duration / _curveCount, muzzle.position, muzzle.forward, Vector3.down, projectile.F_Speed,projectile.F_Speed,  false);
             ;
         }
         public void Simulate(bool activate)
@@ -771,7 +707,7 @@ namespace GameSetting
     class Abandoned_AimAssistSimulator : AccelerationSimulator
     {
         float m_simulateDelta;
-        public Abandoned_AimAssistSimulator(float _simulateDelta, Vector3 startPos, Vector3 horizontalDirection, Vector3 verticalDirection, float horizontalSpeed, float horizontalAcceleration, float verticalSpeed, float verticalAcceleration, bool speedBelowZero = true) : base(startPos, horizontalDirection, verticalDirection, horizontalSpeed, horizontalAcceleration, verticalSpeed, verticalAcceleration, speedBelowZero)
+        public Abandoned_AimAssistSimulator(float _simulateDelta, Vector3 startPos, Vector3 horizontalDirection, Vector3 verticalDirection, float horizontalSpeed, float horizontalAcceleration,bool speedBelowZero = true) : base(startPos, horizontalDirection, verticalDirection, horizontalSpeed, horizontalAcceleration, speedBelowZero)
         {
             m_simulateDelta = _simulateDelta;
         }

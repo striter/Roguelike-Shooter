@@ -17,12 +17,13 @@ public class EntityEnermyBase : EntityBase {
         Init(entityInfo, false);
         Transform tf_Barrel = transform.FindInAllChild("Barrel");
         EnermyWeaponBase weapon=null;
+        float projectileSpeed = m_EntityInfo.m_ProjectileSFX==-1?0:ObjectManager.GetSFX<SFXProjectile>(m_EntityInfo.m_ProjectileSFX).F_Speed;
         switch (entityInfo.m_WeaponType)
         {
             default: Debug.LogError("Invalid Barrage Type:" + entityInfo.m_WeaponType); break;
-            case enum_EnermyWeaponType.Single: weapon = new BarrageRange(this,tf_Barrel); break;
-            case enum_EnermyWeaponType.MultipleFan: weapon = new BarrageMultipleFan(this,tf_Barrel); break;
-            case enum_EnermyWeaponType.MultipleLine: weapon = new BarrageMultipleLine(this,tf_Barrel);break;
+            case enum_EnermyWeaponType.Single: weapon = new BarrageRange(this,tf_Barrel,projectileSpeed); break;
+            case enum_EnermyWeaponType.MultipleFan: weapon = new BarrageMultipleFan(this,tf_Barrel, projectileSpeed); break;
+            case enum_EnermyWeaponType.MultipleLine: weapon = new BarrageMultipleLine(this,tf_Barrel, projectileSpeed);break;
             case enum_EnermyWeaponType.Melee: weapon = new EnermyMelee(this,tf_Barrel); break;
         }
         m_AI = new EnermyAIControllerBase(this,weapon, entityInfo, OnFireAnim, OnCheckTarget);
@@ -377,18 +378,20 @@ public class EntityEnermyBase : EntityBase {
         }
         public override void Play()
         {
-            if (m_Info.m_ProjectileInfo.m_MuzzleSFX != -1)
-                ObjectManager.SpawnSFX<SFXParticles>(m_Info.m_ProjectileInfo.m_MuzzleSFX, attacherTransform.position,attacherTransform.forward);
+            if (m_Info.m_MuzzleSFX != -1)
+                ObjectManager.SpawnSFX<SFXParticles>(m_Info.m_MuzzleSFX, attacherTransform.position,attacherTransform.forward);
             Vector3 meleeDirection = attacherTransform.forward;
-            ObjectManager.SpawnSFX<SFXCast>(m_Info.m_ProjectileInfo.m_relativeSFX1, attacherTransform.position, meleeDirection).Play(m_EntityControlling.I_EntityID, m_Info.m_ProjectileInfo.m_damage);
+            ObjectManager.SpawnSFX<SFXCast>(m_Info.m_ProjectileSFX, attacherTransform.position, meleeDirection).Play(m_EntityControlling.I_EntityID);
         }
     }
     class BarrageRange : EnermyWeaponBase
     {
         protected bool b_preAim;
         protected int i_projectileCount;
-        public BarrageRange(EntityEnermyBase _controller, Transform _transform) : base(_controller, _transform)
+        protected float f_projectileSpeed;
+        public BarrageRange(EntityEnermyBase _controller, Transform _transform,float _projectileSpeed) : base(_controller, _transform)
         {
+            f_projectileSpeed = _projectileSpeed;
         }
         public override float Preplay(EntityBase _target)
         {
@@ -404,7 +407,7 @@ public class EntityEnermyBase : EntityBase {
 
         protected Vector3 GetHorizontalDirection()
         {
-            Vector3 targetDirection= Vector3.Normalize((b_preAim ? (m_Target.m_PrecalculatedTargetPos(Vector3.Distance(targetTransform.position, attacherTransform.position) / m_Info.m_ProjectileInfo.m_HorizontalSpeed)) : targetTransform.position) - attacherTransform.position);
+            Vector3 targetDirection= Vector3.Normalize((b_preAim ? (m_Target.m_PrecalculatedTargetPos(Vector3.Distance(targetTransform.position, attacherTransform.position) /f_projectileSpeed)) : targetTransform.position) - attacherTransform.position);
             targetDirection.y = 0;
             return targetDirection.normalized;
         }
@@ -415,14 +418,14 @@ public class EntityEnermyBase : EntityBase {
         }
         protected void FireBullet(Vector3 startPosition,Vector3 direction)
         {
-            if (m_Info.m_ProjectileInfo.m_MuzzleSFX != -1)
-                ObjectManager.SpawnSFX<SFXParticles>(m_Info.m_ProjectileInfo.m_MuzzleSFX, startPosition, direction).Play(m_EntityControlling.I_EntityID);
-            ObjectManager.SpawnSFX<SFXProjectile>(m_Info.m_ProjectileInfo.m_SFXIndex, startPosition, direction).Play(m_EntityControlling.I_EntityID, direction, targetTransform.position, m_Info.m_ProjectileInfo);
+            if (m_Info.m_MuzzleSFX != -1)
+                ObjectManager.SpawnSFX<SFXParticles>(m_Info.m_MuzzleSFX, startPosition, direction).Play(m_EntityControlling.I_EntityID);
+            ObjectManager.SpawnSFX<SFXProjectile>(m_Info.m_ProjectileSFX, startPosition, direction).Play(m_EntityControlling.I_EntityID, direction, targetTransform.position);
         }
     }
     class BarrageMultipleLine : BarrageRange
     {
-        public BarrageMultipleLine(EntityEnermyBase _controller, Transform _transform) : base(_controller, _transform)
+        public BarrageMultipleLine(EntityEnermyBase _controller, Transform _transform,float _projectileSpeed) : base(_controller, _transform, _projectileSpeed)
         {
         }
         protected override void BarrageWave()
@@ -437,7 +440,7 @@ public class EntityEnermyBase : EntityBase {
     }
     class BarrageMultipleFan : BarrageRange
     {
-        public BarrageMultipleFan(EntityEnermyBase _controller, Transform _transform) : base(_controller, _transform)
+        public BarrageMultipleFan(EntityEnermyBase _controller, Transform _transform,float _projectileSpeed) : base(_controller, _transform, _projectileSpeed)
         {
         }
         protected override void BarrageWave()

@@ -21,7 +21,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         tf_Muzzle = transform.Find("Muzzle");
         m_WeaponInfo = weaponInfo;
         I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
-        m_Assist = new WeaponAimAssistStraight(transform.Find("AimAssist") ,weaponInfo);
+        m_Assist = new WeaponAimAssistStraight(transform.Find("AimAssist") );
         switch (weaponInfo.m_TriggerType)
         {
             default: Debug.LogError("Add More Convertions Here:" + weaponInfo.m_TriggerType.ToString()); m_Trigger = new TriggerSingle(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, CheckCanAction, SetActionPause, CheckCanAutoReload); break;
@@ -94,10 +94,10 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
             return false;
 
         I_AmmoLeft--;
-        if(m_WeaponInfo.m_ProjectileInfo.m_MuzzleSFX!=-1)
-            ObjectManager.SpawnSFX<SFXParticles>(m_WeaponInfo.m_ProjectileInfo.m_MuzzleSFX, tf_Muzzle.position, tf_Muzzle.forward).Play(I_AttacherID);
+        if(m_WeaponInfo.m_MuzzleSFX!=-1)
+            ObjectManager.SpawnSFX<SFXParticles>(m_WeaponInfo.m_MuzzleSFX, tf_Muzzle.position, tf_Muzzle.forward).Play(I_AttacherID);
         for (int i = 0; i < m_WeaponInfo.m_PelletsPerShot; i++)
-            ObjectManager.SpawnSFX<SFXProjectile>(m_WeaponInfo.m_ProjectileInfo.m_SFXIndex, tf_Muzzle.position,tf_Muzzle.forward).Play(I_AttacherID, GameExpression.V3_RangeSpreadDirection(transform.forward, m_WeaponInfo.m_Spread, transform.up, transform.right), m_Assist.m_assistTarget,m_WeaponInfo.m_ProjectileInfo);
+            ObjectManager.SpawnSFX<SFXProjectile>(m_WeaponInfo.m_ProjectileSFX, tf_Muzzle.position,tf_Muzzle.forward).Play(I_AttacherID, GameExpression.V3_RangeSpreadDirection(transform.forward, m_WeaponInfo.m_Spread, transform.up, transform.right), m_Assist.m_assistTarget);
 
         OnRecoil?.Invoke(m_WeaponInfo.m_RecoilPerShot);
         OnAmmoChangeCostMana?.Invoke(m_WeaponInfo.m_ManaCost);
@@ -139,15 +139,13 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         Transform transform;
         Transform tf_Dot;
         LineRenderer m_lineRenderer;
-        float f_distance;
         public Vector3 m_assistTarget { get; private set; } = Vector3.zero;
-        public WeaponAimAssistStraight(Transform muzzle, SWeapon weaponInfo)
+        public WeaponAimAssistStraight(Transform muzzle)
         {
             transform = muzzle;
             tf_Dot = transform.Find("Dot");
             m_lineRenderer = muzzle.GetComponent<LineRenderer>();
             m_lineRenderer.positionCount = 2;
-            f_distance = weaponInfo.m_ProjectileInfo.m_HorizontalSpeed;
         }
 
         public void Simulate(bool activate)
@@ -159,7 +157,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
             tf_Dot.SetActivate(false);
             m_lineRenderer.SetPosition(0, transform.position);
             RaycastHit hit;
-            if (Physics.Raycast(transform.position, transform.forward,out hit, f_distance, GameLayer.Physics.I_StaticEntity)&&(hit.collider.gameObject.layer != GameLayer.I_Entity || !hit.collider.GetComponent<HitCheckEntity>().m_Attacher.B_IsPlayer))
+            if (Physics.Raycast(transform.position, transform.forward,out hit, GameConst.I_ProjectileMaxDistance, GameLayer.Physics.I_StaticEntity)&&(hit.collider.gameObject.layer != GameLayer.I_Entity || !hit.collider.GetComponent<HitCheckEntity>().m_Attacher.B_IsPlayer))
             {
                 m_assistTarget = hit.point;
                 tf_Dot.position = hit.point;
@@ -167,7 +165,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
             }
             else
             {
-                m_assistTarget = transform.position + transform.forward * f_distance;
+                m_assistTarget = transform.position + transform.forward * GameConst.I_ProjectileMaxDistance;
             }
             m_lineRenderer.SetPosition(1,m_assistTarget);
         }

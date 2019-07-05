@@ -2,9 +2,8 @@
 [RequireComponent(typeof(SphereCollider))]
 public class SFXCastDangerzoneSphere : SFXCastOverlapSphere,ISingleCoroutine {
     int i_tickTime;
-    public override void Play(int sourceID, float damage)
+    public override void Play(int sourceID)
     {
-        f_damage = damage;
         i_tickTime = 10;
         this.StartSingleCoroutine(0,TIEnumerators.TickCount(OnBlast,i_tickTime,.5f));
         PlaySFX(sourceID,i_tickTime*.5f);

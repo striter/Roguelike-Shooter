@@ -33,6 +33,8 @@ public class ObjectPoolManager<T,Y> where Y:MonoBehaviour {
     }
     public static Y GetRegistedSpawnItem(T identity)
     {
+        if (!Registed(identity))
+            Debug.LogError("Identity:"+identity +"Unregisted");
         return d_ItemInfos[identity].m_spawnItem;
     }
     public static void Register(T identity, Y registerItem,  enum_PoolSaveType savetype, int poolSaveAmount, Action<Y> OnItemInstantiate)
