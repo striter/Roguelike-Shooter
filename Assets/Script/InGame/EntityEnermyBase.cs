@@ -47,7 +47,7 @@ public class EntityEnermyBase : EntityBase {
         switch (animEvent)
         {
             case EnermyAnimator.enum_AnimEvent.Fire:
-                m_AI.OnFireTrigger();
+                m_AI.OnFireAnimTriggered();
                 break;
         }
     }
@@ -131,7 +131,7 @@ public class EntityEnermyBase : EntityBase {
         protected Transform targetHeadTransform => m_Target.tf_Head;
         protected NavMeshAgent m_Agent;
         protected NavMeshObstacle m_Obstacle;
-        protected Action<EntityBase> OnFireAnim;
+        protected Action<EntityBase> OnFireAnimStart;
         protected Func<EntityBase, bool> OnCheckTarget;
         protected SEntity m_EntityInfo;
         protected EnermyWeaponBase m_Weapon;
@@ -172,7 +172,7 @@ public class EntityEnermyBase : EntityBase {
             m_Obstacle = m_EntityControlling.GetComponent<NavMeshObstacle>();
             m_Agent = m_EntityControlling.GetComponent<NavMeshAgent>();
             m_Agent.speed = _entityInfo.m_moveSpeed;
-            OnFireAnim = _onAttack;
+            OnFireAnimStart = _onAttack;
             OnCheckTarget = _onCheck;
             B_AgentEnabled = false;
         }
@@ -202,11 +202,12 @@ public class EntityEnermyBase : EntityBase {
         bool b_CanAttackTarget;
         bool b_AgentReachDestination;
         bool b_idled = false;
+        float f_rotateParam=1f;
         bool b_targetVisible;
-        bool b_lockRotation = false;
         int i_targetUnvisibleCount;
         float f_targetAngle;
         bool b_targetHideBehindWall => i_targetUnvisibleCount == 40;
+
         IEnumerator TrackTarget()
         {
             for (; ; )
@@ -218,6 +219,7 @@ public class EntityEnermyBase : EntityBase {
                 yield return new WaitForSeconds(GameConst.F_EnermyAICheckTime);
             }
         }
+
         IEnumerator Tick()
         {
             for (; ; )
@@ -225,11 +227,12 @@ public class EntityEnermyBase : EntityBase {
                 v3_TargetDirection = TCommon.GetXZLookDirection(headTransform.position, targetHeadTransform.position);
                 f_targetAngle = TCommon.GetAngle(v3_TargetDirection,transform.forward,Vector3.up);
                 m_Agent.updateRotation = b_targetOutAttackRange;
-                if (!b_lockRotation && !m_Agent.updateRotation)
-                    transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(v3_TargetDirection, Vector3.up), .2f);
+                if (!m_Agent.updateRotation)
+                    transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(v3_TargetDirection, Vector3.up), .2f* f_rotateParam);
                 yield return null;
             }
         }
+
         void CalculateAllParams()
         {
             b_targetVisible = CheckTargetVisible();
@@ -244,6 +247,7 @@ public class EntityEnermyBase : EntityBase {
             b_CanAttackTarget =  !b_targetOutAttackRange&&(!m_EntityInfo.m_BattleCheckObsatacle || b_targetVisible) && Mathf.Abs(f_targetAngle)<15 ;
             b_AgentReachDestination = m_Agent.destination == Vector3.zero || TCommon.GetXZDistance(headTransform.position, m_Agent.destination) < 1f;
         }
+
         void CheckBattle()
         {
             if (f_aiSimulatedTime < f_battleStatusCheck)
@@ -251,15 +255,14 @@ public class EntityEnermyBase : EntityBase {
             if (b_CanAttackTarget)
             {
                 float barrageDuration = m_Weapon.Preplay(m_Target) + m_EntityInfo.m_BarrageDuration.Random();
-                b_lockRotation = m_Weapon.B_ActivateLockRotation;
                 f_battleStatusCheck = f_aiSimulatedTime + barrageDuration;
-                OnFireAnim(m_Target);
+                OnFireAnimStart(m_Target);
             }
         }
-        public void OnFireTrigger()
+
+        public void OnFireAnimTriggered()
         {
             m_Weapon.Play();
-            b_lockRotation = false;
         }
 
         void CheckMovement()
@@ -286,12 +289,14 @@ public class EntityEnermyBase : EntityBase {
 
         int stuckCount = 0;
         Vector3 previousPos=Vector3.zero;
+
         bool AgentStucked()
         {
             stuckCount = (previousPos != Vector3.zero && Vector3.Distance(previousPos, m_EntityControlling.transform.position) < .5f) ? stuckCount + 1 : 0;
             previousPos = m_EntityControlling.transform.position;
             return stuckCount>3;
         }
+
         Vector3 GetUnstuckPosition()
         {
             return NavMesh.SamplePosition(m_EntityControlling.transform.position + new Vector3( UnityEngine.Random.Range(-10f, 10f), 0, 0), out sampleHit, 50, -1) ? sampleHit.position : Vector3.zero;
@@ -323,7 +328,7 @@ public class EntityEnermyBase : EntityBase {
                             return false;
                     }
                 }
-                return true;
+                return true;    
         }
     }
     #endregion
