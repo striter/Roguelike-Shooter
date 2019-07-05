@@ -404,7 +404,7 @@ public class EntityEnermyBase : EntityBase {
         {
             if (m_Info.m_MuzzleSFX > 0)
                 ObjectManager.SpawnSFX<SFXParticles>(m_Info.m_MuzzleSFX, attacherTransform.position,attacherTransform.forward);
-            ObjectManager.SpawnSFX<SFXCast>(m_Info.m_ProjectileSFX, transform.position, attacherTransform.forward).Play(m_EntityControlling.I_EntityID);
+            ObjectManager.SpawnSFX<SFXCast>(m_Info.m_ProjectileSFX, attacherTransform.position, attacherTransform.forward).Play(m_EntityControlling.I_EntityID);
         }
     }
     class EnermyCaster : EnermyWeaponBase

@@ -953,6 +953,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   E_AnimatorIndex: 2
+  F_AttackRotateParam: 0.2
+  B_AttackMove: 1
 --- !u!136 &136579854769574090
 CapsuleCollider:
   m_ObjectHideFlags: 1

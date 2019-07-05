@@ -244,9 +244,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   F_Damage: 40
   F_Speed: 8
-  I_ImpactIndex: 1
+  I_ImpactIndex: 10001
   I_CastIndex: 30001
-  I_IndicatorIndex: 0
 --- !u!114 &114587120391841818
 MonoBehaviour:
   m_ObjectHideFlags: 1
