@@ -401,6 +401,7 @@ namespace GameSetting
         int i_projectileIndex;
         int i_blastIndex;
         int i_impactIndex;
+        int i_relativeIndex;
         float f_firerate;
         RangeInt ir_count;
         float f_damage;
@@ -426,6 +427,7 @@ namespace GameSetting
         public int m_ProjectileSFXIndex => i_projectileIndex;
         public int m_BlastSFXIndex => i_blastIndex;
         public int m_ImpactSFXIndex => i_impactIndex;
+        public int m_RelativeSFXIndex => i_relativeIndex;
         public float m_Firerate => f_firerate;
         public RangeInt m_ProjectileCount => ir_count;
         public float m_ProjectileDamage => f_damage;
@@ -446,6 +448,7 @@ namespace GameSetting
         int i_projectileIndex;
         int i_blastIndex;
         int i_impactIndex;
+        int i_relativeIndex;
         float f_damage;
         float f_fireRate;
         float f_specialRate;
@@ -468,6 +471,7 @@ namespace GameSetting
         public int m_ProjectileSFXIndex => i_projectileIndex;
         public int m_BlastSFXIndex => i_blastIndex;
         public int m_ImpactSFXIndex => i_impactIndex;
+        public int m_RelativeSFXIndex => i_relativeIndex;
         public float m_Damage => f_damage;
         public float m_FireRate => f_fireRate;
         public float m_SpecialRate => f_specialRate;

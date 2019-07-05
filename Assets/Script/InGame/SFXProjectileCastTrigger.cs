@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 public class SFXProjectileCastTrigger : SFXProjectile {
-    protected override void Play(int sourceID, int impactSFXIndex, int blastSFXIndex, Vector3 direction, Vector3 destination, float damage, float horiSpeed, float horiDistance, float vertiSpeed, float vertiAcceleration, float duration)
+    protected override void Play(int sourceID, int impactSFXIndex, int blastSFXIndex, int relativeIndex, Vector3 direction, Vector3 destination, float damage, float horiSpeed, float horiDistance, float vertiSpeed, float vertiAcceleration, float duration)
     {
-        base.Play(sourceID, impactSFXIndex, blastSFXIndex, direction, destination, damage, horiSpeed, horiDistance, vertiSpeed, vertiAcceleration, Vector3.Distance(transform.position, destination) / horiSpeed);
+        base.Play(sourceID, impactSFXIndex, blastSFXIndex,relativeIndex, direction, destination, damage, horiSpeed, horiDistance, vertiSpeed, vertiAcceleration, Vector3.Distance(transform.position, destination) / horiSpeed);
     }
 
     protected override void OnPlayFinished()

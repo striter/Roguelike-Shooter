@@ -80,6 +80,7 @@ public class EntityEnermyBase : EntityBase {
             CastL=4,
             CastR=5,
             Sword=6,
+            Pistol_L=7
         }
         public enum enum_AnimEvent
         {

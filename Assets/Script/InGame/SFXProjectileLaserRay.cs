@@ -3,9 +3,9 @@ using UnityEngine;
 
 public class SFXProjectileLaserRay : SFXProjectile {
     float f_rayCheck;
-    protected override void Play(int sourceID, int impactSFXIndex,int blastSFXIndex, Vector3 direction, Vector3 destination, float damage, float horiSpeed, float horiDistance, float vertiSpeed, float vertiAcceleration, float duration)
+    protected override void Play(int sourceID, int impactSFXIndex,int blastSFXIndex, int relativeIndex, Vector3 direction, Vector3 destination, float damage, float horiSpeed, float horiDistance, float vertiSpeed, float vertiAcceleration, float duration)
     {
-        base.Play(sourceID, impactSFXIndex,blastSFXIndex, direction, destination, damage, horiSpeed, horiDistance, vertiSpeed, vertiAcceleration, duration);
+        base.Play(sourceID, impactSFXIndex,blastSFXIndex,relativeIndex, direction, destination, damage, horiSpeed, horiDistance, vertiSpeed, vertiAcceleration, duration);
         B_SimulatePhysics = false;
         f_rayCheck = 0f;
     }
