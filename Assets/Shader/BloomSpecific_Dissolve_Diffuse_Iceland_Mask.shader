@@ -6,7 +6,7 @@
 		_Color("Color",Color) = (1,1,1,1)
 
 		_MaskTex("Color Special Mask",2D)="black"{}
-
+		_BlinkSpeed("Color Blink Speed",Range(0,10))=2
 
 		_SubTex1("Dissolve Map",2D) = "white"{}
 		_Amount1("_Dissolve Progress",Range(0,1)) = 1
@@ -23,6 +23,7 @@
 		float4 _SubTex1_ST;
 		float _Amount1;
 		float _Amount2;
+		float _BlinkSpeed;
 		ENDCG
 
 		Pass		//Base Pass
@@ -80,7 +81,7 @@
 				float3 albedo = tex2D(_MainTex,i.uv.xy)* _Color;
 				float4 colorMask = tex2D(_MaskTex, i.uvMask);
 				if (colorMask.r == 1)
-					return fixed4(albedo* abs(sin(_Time.y)), 1);
+					return fixed4(albedo* abs(sin(_Time.y*_BlinkSpeed)), 1);
 				else if (colorMask.r > 0)
 					return fixed4(albedo, 1);
 

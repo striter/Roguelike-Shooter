@@ -65,6 +65,7 @@ Material:
     m_Floats:
     - _Amount1: 0
     - _Amount2: 0.1
+    - _BlinkSpeed: 10
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1

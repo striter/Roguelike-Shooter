@@ -431,8 +431,8 @@ public static class ObjectManager
                     enermyDic.Add(entity.m_EntityInfo.m_Type, new List<int>());
                 enermyDic[entity.m_EntityInfo.m_Type].Add(index);
             }
-
         });
+
         return enermyDic;
     }
 }

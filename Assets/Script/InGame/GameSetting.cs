@@ -546,6 +546,7 @@ namespace GameSetting
             m_EntityGenerate.Add(enum_EntityType.Shooter, ir_shooter);
             m_EntityGenerate.Add(enum_EntityType.AOECaster, ir_aoeCaster);
             m_EntityGenerate.Add(enum_EntityType.Elite, ir_elite);
+
         }
     }
     #endregion
