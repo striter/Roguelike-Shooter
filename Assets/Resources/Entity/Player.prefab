@@ -732,13 +732,13 @@ CharacterController:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Height: 2
-  m_Radius: 0.5
+  m_Height: 3
+  m_Radius: 0.6
   m_SlopeLimit: 45
   m_StepOffset: 1
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 1, z: 0}
+  m_Center: {x: 0, y: 1.5, z: 0}
 --- !u!208 &208830824021756728
 NavMeshObstacle:
   m_ObjectHideFlags: 1
@@ -748,9 +748,9 @@ NavMeshObstacle:
   m_Enabled: 1
   serializedVersion: 3
   m_Shape: 0
-  m_Extents: {x: 0.5, y: 1, z: 0.5}
+  m_Extents: {x: 0.6, y: 1.5, z: 0.6}
   m_MoveThreshold: 0.1
   m_Carve: 0
   m_CarveOnlyStationary: 1
-  m_Center: {x: 0, y: 1, z: 0}
+  m_Center: {x: 0, y: 1.5, z: 0}
   m_TimeToStationary: 0.5

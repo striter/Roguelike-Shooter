@@ -37,7 +37,7 @@ public class SFXBase : MonoBehaviour {
         OnSFXPlayFinished?.Invoke();
         ObjectManager.RecycleSFX(I_SFXIndex, this);
     }
-    public void OnAttacherDead()
+    public void Stop()
     {
         OnPlayFinished();
     }

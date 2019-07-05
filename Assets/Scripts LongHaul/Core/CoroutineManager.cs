@@ -38,16 +38,19 @@ public static class TIEnumerators
             OnTick();
         }
     }
-    public static IEnumerator TickCount(Action OnTick, int totalTicks, float duration = -1)
+    public static IEnumerator TickCount(Action OnTick, int totalTicks, float duration = -1, Action OnFinished = null,bool tickOnStart=true)
     {
         WaitForSeconds seconds = duration == -1 ? null : new WaitForSeconds(duration);
         int count = 1;
         OnTick();
         for (; ; )
         {
-            if (count >= totalTicks)
-                yield break;
             yield return seconds;
+            if (count >= totalTicks)
+            {
+                OnFinished?.Invoke();
+                yield break;
+            }
             OnTick();
             count++;
         }

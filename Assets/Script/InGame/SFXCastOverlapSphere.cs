@@ -2,6 +2,7 @@
 using UnityEngine;
 [RequireComponent(typeof(SphereCollider))]
 public class SFXCastOverlapSphere : SFXCast {
+    public bool B_DamageDistanceReduction = true;
     SphereCollider m_Collider;
     public override void Init(int _sfxIndex)
     {
@@ -15,6 +16,6 @@ public class SFXCastOverlapSphere : SFXCast {
     }
     protected override void OnDamageEntity(HitCheckEntity hitEntity)
     {
-        hitEntity.TryHit(GameExpression.F_RocketBlastDamage(F_Damage,Vector3.Distance(transform.position,hitEntity.m_Attacher.transform.position)));
+        hitEntity.TryHit(B_DamageDistanceReduction? GameExpression.F_SphereCastDamageReduction(F_Damage,Vector3.Distance(transform.position,hitEntity.m_Attacher.transform.position)):F_Damage);
     }
 }

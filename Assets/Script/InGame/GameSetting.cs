@@ -54,7 +54,7 @@ namespace GameSetting
             return enum_TileDirection.Invalid;
         }
 
-        public static float F_RocketBlastDamage(float weaponDamage, float distance) => weaponDamage * (1-(distance / GameConst.I_RocketBlastRadius));       //Rocket Blast Damage
+        public static float F_SphereCastDamageReduction(float weaponDamage, float distance) => weaponDamage * (1-(distance / GameConst.I_RocketBlastRadius));       //Rocket Blast Damage
         public static Vector3 V3_RangeSpreadDirection(Vector3 aimDirection, float spread,Vector3 up,Vector3 right) => (aimDirection*GameConst.I_ProjectileSpreadAtDistance + up* UnityEngine.Random.Range(-spread, spread) + right * UnityEngine.Random.Range(-spread, spread)).normalized;
     }
 
@@ -159,7 +159,7 @@ namespace GameSetting
     public enum enum_EntityType { Invalid = -1,Fighter=1 ,Shooter=2, AOECaster=3,Elite=4 }
     public enum enum_Interaction { Invalid = -1, Interact_Portal, }
     public enum enum_TriggerType { Invalid = -1, Single = 1, Auto = 2, Burst = 3, Pull = 4, Store = 5, }
-    public enum enum_EnermyWeaponType { Invalid = -1, Melee = 01, Single = 101, MultipleFan = 102,MultipleLine=103,  }
+    public enum enum_EnermyWeaponType { Invalid = -1, Melee = 01,Caster=02, Single = 101, MultipleFan = 102,MultipleLine=103,  }
 
     public enum enum_PlayerWeapon
     {

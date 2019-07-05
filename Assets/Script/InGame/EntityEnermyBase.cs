@@ -11,6 +11,9 @@ public class EntityEnermyBase : EntityBase {
     public EnermyAnimator.enum_AnimIndex E_AnimatorIndex= EnermyAnimator.enum_AnimIndex.Invalid;
     EnermyAIControllerBase m_AI;
     EnermyAnimator m_Animator;
+    [Range(0,3)]
+    public float F_AttackRotateParam=1f;
+    public bool B_AttackMove = true;
     bool OnCheckTarget(EntityBase target) => target.B_IsPlayer!=B_IsPlayer && !target.b_IsDead;
     public override void Init(SEntity entityInfo)
     {
@@ -24,8 +27,9 @@ public class EntityEnermyBase : EntityBase {
             case enum_EnermyWeaponType.MultipleFan: weapon = new BarrageMultipleFan(this,tf_Barrel, m_EntityInfo.m_ProjectileSFX); break;
             case enum_EnermyWeaponType.MultipleLine: weapon = new BarrageMultipleLine(this,tf_Barrel, m_EntityInfo.m_ProjectileSFX);break;
             case enum_EnermyWeaponType.Melee: weapon = new EnermyMelee(this,tf_Barrel); break;
+            case enum_EnermyWeaponType.Caster: weapon = new EnermyCaster(this,tf_Barrel);break;
         }
-        m_AI = new EnermyAIControllerBase(this,weapon, entityInfo, OnFireAnim, OnCheckTarget);
+        m_AI = new EnermyAIControllerBase(this,weapon, entityInfo, OnAttackAnim, OnCheckTarget);
         if (E_AnimatorIndex == EnermyAnimator.enum_AnimIndex.Invalid)
             Debug.LogError("Please Set Prefab AnimIndex!");
     }
@@ -38,16 +42,16 @@ public class EntityEnermyBase : EntityBase {
     {
         m_Animator.SetRun(0,m_AI.B_AgentEnabled?1:0);
     }
-    void OnFireAnim(EntityBase target)
+    void OnAttackAnim(EntityBase target,bool startAttack)
     {
-        m_Animator.OnAttack();
+        m_Animator.OnAttack(startAttack);
     }
     protected void OnAnimKeyEvent(EnermyAnimator.enum_AnimEvent animEvent)
     {
         switch (animEvent)
         {
             case EnermyAnimator.enum_AnimEvent.Fire:
-                m_AI.OnFireAnimTriggered();
+                m_AI.OnAttackTriggerd();
                 break;
         }
     }
@@ -80,7 +84,8 @@ public class EntityEnermyBase : EntityBase {
             CastL=4,
             CastR=5,
             Sword=6,
-            Pistol_L=7
+            Pistol_L=7,
+            CastRLoop=8,
         }
         public enum enum_AnimEvent
         {
@@ -96,6 +101,7 @@ public class EntityEnermyBase : EntityBase {
         static readonly int HS_T_Attack = Animator.StringToHash("t_attack");
         static readonly int HS_F_Strafe = Animator.StringToHash("f_strafe");
         static readonly int HS_F_Forward = Animator.StringToHash("f_forward");
+        static readonly int HS_B_Attack = Animator.StringToHash("b_attack");
         Action<enum_AnimEvent> OnAnimEvent;
         public EnermyAnimator(Animator _animator, enum_AnimIndex _animIndex,Action<enum_AnimEvent> _OnAnimEvent) : base(_animator)
         {
@@ -112,9 +118,11 @@ public class EntityEnermyBase : EntityBase {
             m_Animator.SetFloat(HS_F_Strafe, strafe);
             m_Animator.SetFloat(HS_F_Forward, forward);
         }
-        public void OnAttack()
+        public void OnAttack(bool attack)
         {
+            if(attack)
             m_Animator.SetTrigger(HS_T_Attack);
+            m_Animator.SetBool(HS_B_Attack,attack);
         }
         public void OnDead()
         {
@@ -131,7 +139,7 @@ public class EntityEnermyBase : EntityBase {
         protected Transform targetHeadTransform => m_Target.tf_Head;
         protected NavMeshAgent m_Agent;
         protected NavMeshObstacle m_Obstacle;
-        protected Action<EntityBase> OnFireAnimStart;
+        protected Action<EntityBase,bool> OnAttack;
         protected Func<EntityBase, bool> OnCheckTarget;
         protected SEntity m_EntityInfo;
         protected EnermyWeaponBase m_Weapon;
@@ -164,7 +172,7 @@ public class EntityEnermyBase : EntityBase {
             }
         }
 
-        public EnermyAIControllerBase(EntityEnermyBase _entityControlling, EnermyWeaponBase _weapon, SEntity _entityInfo, Action<EntityBase> _onAttack, Func<EntityBase, bool> _onCheck)
+        public EnermyAIControllerBase(EntityEnermyBase _entityControlling, EnermyWeaponBase _weapon, SEntity _entityInfo, Action<EntityBase,bool> _onAttack, Func<EntityBase, bool> _onCheck)
         {
             m_EntityControlling = _entityControlling;
             m_EntityInfo = _entityInfo;
@@ -172,7 +180,7 @@ public class EntityEnermyBase : EntityBase {
             m_Obstacle = m_EntityControlling.GetComponent<NavMeshObstacle>();
             m_Agent = m_EntityControlling.GetComponent<NavMeshAgent>();
             m_Agent.speed = _entityInfo.m_moveSpeed;
-            OnFireAnimStart = _onAttack;
+            OnAttack = _onAttack;
             OnCheckTarget = _onCheck;
             B_AgentEnabled = false;
         }
@@ -181,6 +189,8 @@ public class EntityEnermyBase : EntityBase {
         {
             m_Target = entity;
             B_AgentEnabled = true;
+            b_attacking = false;
+
             this.StartSingleCoroutine(0, TrackTarget());
             this.StartSingleCoroutine(1, Tick());
         }
@@ -188,7 +198,6 @@ public class EntityEnermyBase : EntityBase {
         public void Deactivate()
         {
             B_AgentEnabled = false;
-            m_Weapon.Deactivate();
             this.StopAllSingleCoroutines();
         }
         RaycastHit[] m_Raycasts;
@@ -202,7 +211,6 @@ public class EntityEnermyBase : EntityBase {
         bool b_CanAttackTarget;
         bool b_AgentReachDestination;
         bool b_idled = false;
-        float f_rotateParam=1f;
         bool b_targetVisible;
         int i_targetUnvisibleCount;
         float f_targetAngle;
@@ -220,18 +228,6 @@ public class EntityEnermyBase : EntityBase {
             }
         }
 
-        IEnumerator Tick()
-        {
-            for (; ; )
-            {
-                v3_TargetDirection = TCommon.GetXZLookDirection(headTransform.position, targetHeadTransform.position);
-                f_targetAngle = TCommon.GetAngle(v3_TargetDirection,transform.forward,Vector3.up);
-                m_Agent.updateRotation = b_targetOutAttackRange;
-                if (!m_Agent.updateRotation)
-                    transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(v3_TargetDirection, Vector3.up), .2f* f_rotateParam);
-                yield return null;
-            }
-        }
 
         void CalculateAllParams()
         {
@@ -247,26 +243,64 @@ public class EntityEnermyBase : EntityBase {
             b_CanAttackTarget =  !b_targetOutAttackRange&&(!m_EntityInfo.m_BattleCheckObsatacle || b_targetVisible) && Mathf.Abs(f_targetAngle)<15 ;
             b_AgentReachDestination = m_Agent.destination == Vector3.zero || TCommon.GetXZDistance(headTransform.position, m_Agent.destination) < 1f;
         }
-
+        #region Attack
+        int i_playCount;
+        bool b_preAim;
+        bool b_attacking;
         void CheckBattle()
         {
             if (f_aiSimulatedTime < f_battleStatusCheck)
                 return;
             if (b_CanAttackTarget)
-            {
-                float barrageDuration = m_Weapon.Preplay(m_Target) + m_EntityInfo.m_BarrageDuration.Random();
-                f_battleStatusCheck = f_aiSimulatedTime + barrageDuration;
-                OnFireAnimStart(m_Target);
-            }
+                f_battleStatusCheck = f_aiSimulatedTime + OnStartAttacking();
         }
-
-        public void OnFireAnimTriggered()
+        float OnStartAttacking()
         {
-            m_Weapon.Play();
+            b_preAim = TCommon.RandomBool();
+            i_playCount = m_EntityInfo.m_ProjectileCount.Random();
+            i_playCount = i_playCount <= 0 ? 1 : i_playCount;       //Make Sure Play Once At Least
+            b_attacking = true;
+            m_Weapon.OnPlay(b_attacking);
+            this.StartSingleCoroutine(2, TIEnumerators.TickCount(()=> {
+                OnAttack(m_Target, b_attacking);
+            }, i_playCount, m_EntityInfo.m_Firerate,
+            () => {
+                b_attacking = false;
+                m_Weapon.OnPlay(b_attacking);
+                OnAttack(m_Target, b_attacking);
+            })
+            );
+            return m_EntityInfo.m_Firerate * i_playCount + m_EntityInfo.m_BarrageDuration.Random(); ;
+        }
+        public void OnAttackTriggerd()
+        {
+            m_Weapon.Play(b_preAim,m_Target);
+        }
+        #endregion
+        #region Movement
+
+        IEnumerator Tick()
+        {
+            for (; ; )
+            {
+                v3_TargetDirection = TCommon.GetXZLookDirection(headTransform.position, targetHeadTransform.position);
+                f_targetAngle = TCommon.GetAngle(v3_TargetDirection, transform.forward, Vector3.up);
+                m_Agent.updateRotation = b_targetOutAttackRange;
+                if (!m_Agent.updateRotation)
+                    transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(v3_TargetDirection, Vector3.up), 
+                        Time.deltaTime*5*(b_attacking? m_EntityControlling.F_AttackRotateParam:1));
+                yield return null;
+            }
         }
 
         void CheckMovement()
         {
+            if ((b_attacking && !m_EntityControlling.B_AttackMove))
+            {
+                B_AgentEnabled = false;
+                return;
+            }
+
             if (f_aiSimulatedTime < f_movementCheck)
                 return;
 
@@ -330,17 +364,15 @@ public class EntityEnermyBase : EntityBase {
                 }
                 return true;    
         }
+        #endregion
     }
     #endregion
     #region EnermyWeapon
-    class EnermyWeaponBase : ISingleCoroutine
+    class EnermyWeaponBase 
     {
         protected EntityEnermyBase m_EntityControlling;
-        protected EntityBase m_Target;
         protected Transform attacherTransform => m_EntityControlling.tf_Head;
-        protected Transform targetTransform => m_Target.tf_Head;
         protected Transform transform;
-        public virtual bool B_ActivateLockRotation => false;
         protected SEntity m_Info
         {
             get
@@ -355,77 +387,72 @@ public class EntityEnermyBase : EntityBase {
             m_EntityControlling = _controller;
             transform = _transform;
         }
-        public virtual float Preplay( EntityBase _target)
+        public virtual void Play(bool preAim,EntityBase _target)
         {
-            m_Target = _target;
-            return int.MaxValue;
         }
-        public virtual void Play()
+        public virtual void OnPlay(bool play)
         {
-            Debug.LogError("Override This Please");
-        }
-        public void Deactivate()
-        {
-            this.StopAllSingleCoroutines();
+
         }
     }
     class EnermyMelee : EnermyWeaponBase
     {
-        public override bool B_ActivateLockRotation => true;
         public EnermyMelee(EntityEnermyBase _controller, Transform _transform) : base(_controller, _transform)
         {
         }
-        public override float Preplay( EntityBase _target)
+        public override void Play(bool preAim,EntityBase _target)
         {
-            base.Preplay(_target);
-            return m_Info.m_Firerate;
-        }
-        public override void Play()
-        {
-            if (m_Info.m_MuzzleSFX != -1)
+            if (m_Info.m_MuzzleSFX > 0)
                 ObjectManager.SpawnSFX<SFXParticles>(m_Info.m_MuzzleSFX, attacherTransform.position,attacherTransform.forward);
-            Vector3 meleeDirection = attacherTransform.forward;
-            ObjectManager.SpawnSFX<SFXCast>(m_Info.m_ProjectileSFX, attacherTransform.position, meleeDirection).Play(m_EntityControlling.I_EntityID);
+            ObjectManager.SpawnSFX<SFXCast>(m_Info.m_ProjectileSFX, transform.position, attacherTransform.forward).Play(m_EntityControlling.I_EntityID);
+        }
+    }
+    class EnermyCaster : EnermyWeaponBase
+    {
+        SFXCast m_Cast;
+        public EnermyCaster(EntityEnermyBase _controller, Transform _transform) : base(_controller, _transform)
+        {
+        }
+        public override void Play(bool preAim, EntityBase _target)
+        {
+            base.Play(preAim, _target);
+            if (m_Cast)
+                m_Cast.Stop();
+
+            m_Cast = ObjectManager.SpawnSFX<SFXCast>(m_Info.m_ProjectileSFX, transform.position, transform.forward, transform);
+            m_Cast.Play(m_EntityControlling.I_EntityID);
+        }
+
+        public override void OnPlay(bool play)
+        {
+            if(!play&&m_Cast)
+                m_Cast.Stop();
         }
     }
     class BarrageRange : EnermyWeaponBase
     {
-        protected bool b_preAim;
-        protected int i_projectileCount;
         protected float f_projectileSpeed;
         public BarrageRange(EntityEnermyBase _controller, Transform _transform,int _projectileIndex) : base(_controller, _transform)
         {
-            
             f_projectileSpeed = _projectileIndex == -1 ? 0 : ObjectManager.GetSFX<SFXProjectile>(_projectileIndex).F_Speed; ;
         }
-        public override float Preplay(EntityBase _target)
+        public override void Play(bool preAim, EntityBase _target)
         {
-            base.Preplay(_target);
-            b_preAim = UnityEngine.Random.Range(0, 2) > 0;
-            i_projectileCount = m_Info.m_ProjectileCount.Random();
-            return i_projectileCount * m_Info.m_Firerate;
-        }
-        public override void Play()
-        {
-            this.StartSingleCoroutine(0, TIEnumerators.TickCount(BarrageWave, i_projectileCount, m_Info.m_Firerate));
+            Vector3 horizontalOffsetDirection = GameExpression.V3_RangeSpreadDirection(GetHorizontalDirection(preAim,_target), m_Info.m_HorizontalSpread, Vector3.zero, transform.right);
+            FireBullet(transform.position, horizontalOffsetDirection,_target.tf_Head.position);
         }
 
-        protected Vector3 GetHorizontalDirection()
+        protected Vector3 GetHorizontalDirection(bool preAim,EntityBase _target)
         {
-            Vector3 targetDirection= Vector3.Normalize((b_preAim ? (m_Target.m_PrecalculatedTargetPos(Vector3.Distance(targetTransform.position, attacherTransform.position) /f_projectileSpeed)) : targetTransform.position) - attacherTransform.position);
+            Vector3 targetDirection= Vector3.Normalize((preAim ? (_target.m_PrecalculatedTargetPos(Vector3.Distance(_target.tf_Head.position, attacherTransform.position) /f_projectileSpeed)) : _target.tf_Head.position) - attacherTransform.position);
             targetDirection.y = 0;
             return targetDirection.normalized;
         }
-        protected virtual void BarrageWave()
+        protected void FireBullet(Vector3 startPosition,Vector3 direction,Vector3 targetPosition)
         {
-            Vector3 horizontalOffsetDirection = GameExpression.V3_RangeSpreadDirection(GetHorizontalDirection(), m_Info.m_HorizontalSpread, Vector3.zero, targetTransform.right);
-            FireBullet(transform.position, horizontalOffsetDirection);
-        }
-        protected void FireBullet(Vector3 startPosition,Vector3 direction)
-        {
-            if (m_Info.m_MuzzleSFX != -1)
+            if (m_Info.m_MuzzleSFX > 0)
                 ObjectManager.SpawnSFX<SFXParticles>(m_Info.m_MuzzleSFX, startPosition, direction).Play(m_EntityControlling.I_EntityID);
-            ObjectManager.SpawnSFX<SFXProjectile>(m_Info.m_ProjectileSFX, startPosition, direction).Play(m_EntityControlling.I_EntityID, direction, targetTransform.position);
+            ObjectManager.SpawnSFX<SFXProjectile>(m_Info.m_ProjectileSFX, startPosition, direction).Play(m_EntityControlling.I_EntityID, direction, targetPosition);
         }
     }
     class BarrageMultipleLine : BarrageRange
@@ -433,14 +460,13 @@ public class EntityEnermyBase : EntityBase {
         public BarrageMultipleLine(EntityEnermyBase _controller, Transform _transform, int _projectileIndex) : base(_controller, _transform, _projectileIndex)
         {
         }
-        protected override void BarrageWave()
+        public override void Play(bool preAim,EntityBase _target)
         {
-            base.BarrageWave();
             int waveCount = m_Info.m_RangeExtension.Random();
-            Vector3 startDirection = GetHorizontalDirection();
+            Vector3 startDirection = GetHorizontalDirection(preAim, _target);
             Vector3 startPosition = transform.position - attacherTransform.right*m_Info.m_OffsetExtension*((waveCount-1)/2f);
             for (int i = 0; i < waveCount; i++)
-                FireBullet(startPosition+ attacherTransform.right*m_Info.m_OffsetExtension*i, startDirection);
+                FireBullet(startPosition+ attacherTransform.right*m_Info.m_OffsetExtension*i, startDirection, transform.position + startDirection * 10);
         }
     }
     class BarrageMultipleFan : BarrageRange
@@ -448,17 +474,17 @@ public class EntityEnermyBase : EntityBase {
         public BarrageMultipleFan(EntityEnermyBase _controller, Transform _transform, int _projectileIndex) : base(_controller, _transform, _projectileIndex)
         {
         }
-        protected override void BarrageWave()
+        public override void Play(bool preAim,EntityBase _target)
         {
             int waveCount = m_Info.m_RangeExtension.Random();
-            Vector3 startDirection = GetHorizontalDirection();
+            Vector3 startDirection = GetHorizontalDirection(preAim, _target);
             float startFanAngle= -m_Info.m_OffsetExtension*(waveCount-1)/2f;
             for (int i = 0; i < waveCount; i++)
             {
                 Vector3 fanDirection = startDirection.RotateDirection(Vector3.up, startFanAngle + i * m_Info.m_OffsetExtension);
-                FireBullet(transform.position, fanDirection);
+                FireBullet(transform.position, fanDirection,transform.position+fanDirection*10);
             }
-        }
+        } 
     }
     #endregion
 }

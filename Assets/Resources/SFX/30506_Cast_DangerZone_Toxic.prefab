@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4847867912695626}
   - component: {fileID: 135555557315418114}
-  - component: {fileID: 114422253934869248}
+  - component: {fileID: 114270020028275864}
   m_Layer: 9
   m_Name: 30506_Cast_DangerZone_Toxic
   m_TagString: Untagged
@@ -113,7 +113,7 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1645777138591320}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &114422253934869248
+--- !u!114 &114270020028275864
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -121,10 +121,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1480526431946986}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1ad04032d41969349a411e5b1ed2f47f, type: 3}
+  m_Script: {fileID: 11500000, guid: 7e3dbf17d97ab664cb72d9213471fed7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   F_Damage: 10
+  I_TickCount: 10
+  F_Tick: 0.5
+  B_DamageDistanceReduction: 0
 --- !u!135 &135555557315418114
 SphereCollider:
   m_ObjectHideFlags: 1

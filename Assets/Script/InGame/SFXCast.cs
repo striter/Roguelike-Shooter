@@ -4,25 +4,27 @@ using GameSetting;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
-public class SFXCast : SFXBase {
+public class SFXCast : SFXBase,ISingleCoroutine {
     ParticleSystem[] m_Particles;
     public float F_Damage;
-    protected float f_blastTime;
+    public int I_TickCount=1;
+    public float F_Tick = .5f;
     public override void Init(int _sfxIndex)
     {
         base.Init(_sfxIndex);
         m_Particles = GetComponentsInChildren<ParticleSystem>();
-        f_blastTime = .5f;      //Test  Change To 0 If Needed
         m_Particles.Traversal((ParticleSystem particle)=> {
             particle.Stop();
-            if (particle.main.duration > f_blastTime)
-                f_blastTime = particle.main.duration;
         });
     }
     public virtual void Play(int sourceID)
     {
-        PlaySFX(sourceID,f_blastTime); 
-        OnBlast();
+        this.StartSingleCoroutine(0, TIEnumerators.TickCount(OnBlast, I_TickCount, F_Tick));
+        PlaySFX(sourceID, I_TickCount*F_Tick);
+    }
+    protected void OnDisable()
+    {
+        this.StopAllCoroutines();
     }
     protected virtual void OnBlast()
     {
