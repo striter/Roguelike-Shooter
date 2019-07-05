@@ -210,7 +210,14 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         {
             int spawnCount = range.Random();
             for (int i = 0; i < spawnCount; i++)
+            {
+                if (!m_StyledEnermyEntities.ContainsKey(level))
+                {
+                    Debug.LogWarning("Current Enermy Style:" + m_BattleEntityStyle + " Not Contains Type:" + level);
+                    continue;
+                }
                 m_EntityGenerating.Add(m_StyledEnermyEntities[level].RandomItem());
+            }
         });
         this.StartSingleCoroutine(0, IE_GenerateEnermy(m_EntityGenerating, .1f));
     }

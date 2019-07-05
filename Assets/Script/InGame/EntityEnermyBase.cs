@@ -17,13 +17,12 @@ public class EntityEnermyBase : EntityBase {
         Init(entityInfo, false);
         Transform tf_Barrel = transform.FindInAllChild("Barrel");
         EnermyWeaponBase weapon=null;
-        float projectileSpeed = m_EntityInfo.m_ProjectileSFX==-1?0:ObjectManager.GetSFX<SFXProjectile>(m_EntityInfo.m_ProjectileSFX).F_Speed;
         switch (entityInfo.m_WeaponType)
         {
             default: Debug.LogError("Invalid Barrage Type:" + entityInfo.m_WeaponType); break;
-            case enum_EnermyWeaponType.Single: weapon = new BarrageRange(this,tf_Barrel,projectileSpeed); break;
-            case enum_EnermyWeaponType.MultipleFan: weapon = new BarrageMultipleFan(this,tf_Barrel, projectileSpeed); break;
-            case enum_EnermyWeaponType.MultipleLine: weapon = new BarrageMultipleLine(this,tf_Barrel, projectileSpeed);break;
+            case enum_EnermyWeaponType.Single: weapon = new BarrageRange(this,tf_Barrel, m_EntityInfo.m_ProjectileSFX); break;
+            case enum_EnermyWeaponType.MultipleFan: weapon = new BarrageMultipleFan(this,tf_Barrel, m_EntityInfo.m_ProjectileSFX); break;
+            case enum_EnermyWeaponType.MultipleLine: weapon = new BarrageMultipleLine(this,tf_Barrel, m_EntityInfo.m_ProjectileSFX);break;
             case enum_EnermyWeaponType.Melee: weapon = new EnermyMelee(this,tf_Barrel); break;
         }
         m_AI = new EnermyAIControllerBase(this,weapon, entityInfo, OnFireAnim, OnCheckTarget);
@@ -389,9 +388,10 @@ public class EntityEnermyBase : EntityBase {
         protected bool b_preAim;
         protected int i_projectileCount;
         protected float f_projectileSpeed;
-        public BarrageRange(EntityEnermyBase _controller, Transform _transform,float _projectileSpeed) : base(_controller, _transform)
+        public BarrageRange(EntityEnermyBase _controller, Transform _transform,int _projectileIndex) : base(_controller, _transform)
         {
-            f_projectileSpeed = _projectileSpeed;
+            
+            f_projectileSpeed = _projectileIndex == -1 ? 0 : ObjectManager.GetSFX<SFXProjectile>(_projectileIndex).F_Speed; ;
         }
         public override float Preplay(EntityBase _target)
         {
@@ -425,7 +425,7 @@ public class EntityEnermyBase : EntityBase {
     }
     class BarrageMultipleLine : BarrageRange
     {
-        public BarrageMultipleLine(EntityEnermyBase _controller, Transform _transform,float _projectileSpeed) : base(_controller, _transform, _projectileSpeed)
+        public BarrageMultipleLine(EntityEnermyBase _controller, Transform _transform, int _projectileIndex) : base(_controller, _transform, _projectileIndex)
         {
         }
         protected override void BarrageWave()
@@ -440,7 +440,7 @@ public class EntityEnermyBase : EntityBase {
     }
     class BarrageMultipleFan : BarrageRange
     {
-        public BarrageMultipleFan(EntityEnermyBase _controller, Transform _transform,float _projectileSpeed) : base(_controller, _transform, _projectileSpeed)
+        public BarrageMultipleFan(EntityEnermyBase _controller, Transform _transform, int _projectileIndex) : base(_controller, _transform, _projectileIndex)
         {
         }
         protected override void BarrageWave()

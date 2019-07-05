@@ -93,7 +93,7 @@ public class SFXProjectile : SFXBase {
     }
     protected virtual void OnHitTarget(RaycastHit hit,HitCheckBase hitCheck)
     {
-        Debug.Log("Hit Target");
+
     }
     protected virtual void OnDamageEntity(HitCheckEntity entity)
     {
