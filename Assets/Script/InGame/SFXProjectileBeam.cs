@@ -1,15 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using GameSetting;
 using UnityEngine;
 
 public class SFXProjectileBeam : SFXProjectile {
     protected override bool B_RecycleOnHit => false;
     protected override bool B_DisablePhysicsOnHit => false;
     public int I_BeamLength = 10;
-    protected override void Play(int sourceID, int impactSFXIndex, int blastSFXIndex, int relativeIndex, Vector3 direction, Vector3 destination, float damage, float horiSpeed, float horiDistance, float vertiSpeed, float vertiAcceleration, float duration)
+
+    public override void Play(int sourceID, Vector3 direction, Vector3 targetPosition, SProjectileInfo projectileInfo, float duration)
     {
-        base.Play(sourceID, impactSFXIndex, blastSFXIndex,relativeIndex, direction, destination, damage, horiSpeed, horiDistance, vertiSpeed, vertiAcceleration, I_BeamLength/horiSpeed);
+        base.Play(sourceID, direction, targetPosition, projectileInfo, I_BeamLength/projectileInfo.m_HorizontalSpeed);
     }
+
     protected override void OnHitTarget(RaycastHit hit, HitCheckBase hitCheck)
     {
         base.OnHitTarget(hit, hitCheck);

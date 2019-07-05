@@ -17,7 +17,7 @@ public class SFXIndicator : SFXParticles {
     {
         RaycastHit hit;
         Debug.DrawRay(origin, direction, Color.red, 5);
-        if (Physics.SphereCast(origin, radius, direction, out hit,GameConst.I_BarrageProjectileMaxDistance, GameLayer.Physics.I_Static))
+        if (Physics.SphereCast(origin, radius, direction, out hit,GameConst.I_ProjectileMaxDistance, GameLayer.Physics.I_Static))
         {
             transform.position = hit.point;
             transform.rotation = Quaternion.LookRotation(hit.normal);

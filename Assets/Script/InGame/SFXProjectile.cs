@@ -4,16 +4,15 @@ using UnityEngine;
 using GameSetting;
 [RequireComponent(typeof(CapsuleCollider))]
 public class SFXProjectile : SFXBase {
-    protected float m_Damage;
     protected ProjectilePhysicsSimulator m_Simulator;
     protected CapsuleCollider m_Collider;
     protected TrailRenderer m_Trail;
-    protected int i_impactSFXIndex,i_castSFXIndex;
     List<int> m_TargetHitted = new List<int>();
     public bool B_SimulatePhysics { get; protected set; }
     protected virtual bool B_RecycleOnHit => true;
     protected virtual bool B_DisablePhysicsOnHit => true;
     protected virtual bool B_HitMultiple => true;
+    protected SProjectileInfo m_ProjectileInfo;
     public override void Init(int sfxIndex)
     {
         base.Init(sfxIndex);
@@ -21,25 +20,17 @@ public class SFXProjectile : SFXBase {
         m_Collider = GetComponent<CapsuleCollider>();
         m_Collider.enabled = false;
     }
-    public void PlayWeapon(int sourceID, Vector3 direction,Vector3 targetPosition,SWeapon weaponInfo)
+
+    public virtual void Play(int sourceID,Vector3 direction,Vector3 targetPosition,SProjectileInfo projectileInfo,float duration=-1)
     {
-        Play(sourceID, weaponInfo.m_ImpactSFXIndex,weaponInfo.m_BlastSFXIndex,weaponInfo.m_RelativeSFXIndex, direction,targetPosition,weaponInfo.m_Damage,weaponInfo.m_HorizontalSpeed,weaponInfo.m_HorizontalDistance,0,weaponInfo.m_VerticalAcceleration,  GameConst.I_WeaponProjectileMaxDistance / weaponInfo.m_HorizontalSpeed );
+        OnPlayPreset(projectileInfo);
+        m_Simulator = new ProjectilePhysicsSimulator(transform.position, direction, Vector3.down, projectileInfo.m_HorizontalSpeed,  projectileInfo.m_HorizontalDistance, projectileInfo.m_VerticalSpeed, projectileInfo.m_VerticalAcceleration);
+        PlaySFX(sourceID, duration==-1?GameConst.I_ProjectileMaxDistance/projectileInfo.m_HorizontalSpeed:duration);
     }
-    public void PlayBarrage(int sourceID, Vector3 direction, Vector3 targetPosition, SEntity barrageInfo,float duration =-1)
+
+    protected void OnPlayPreset(SProjectileInfo _projectileInfo)
     {
-        Play(sourceID, barrageInfo.m_ImpactSFXIndex,barrageInfo.m_BlastSFXIndex,barrageInfo.m_RelativeSFXIndex, direction, targetPosition, barrageInfo.m_ProjectileDamage, barrageInfo.m_ProjectileSpeed,200,0,0,  GameConst.I_BarrageProjectileMaxDistance / barrageInfo.m_ProjectileSpeed );
-    }
-    protected virtual void Play(int sourceID,int impactSFXIndex,int castSFXIndex, int relativeIndex, Vector3 direction, Vector3 destination, float damage, float horiSpeed,float horiDistance,float vertiSpeed,float vertiAcceleration, float duration)
-    {
-        OnPlayPreset(damage, impactSFXIndex,castSFXIndex);
-        m_Simulator = new ProjectilePhysicsSimulator(transform.position, direction, Vector3.down, horiSpeed, horiDistance,vertiSpeed, vertiAcceleration);
-        PlaySFX(sourceID, duration);
-    }
-    protected void OnPlayPreset(float damage,int impactSFXIndex,int castSFXIndex)
-    {
-        m_Damage = damage;
-        i_impactSFXIndex = impactSFXIndex;
-        i_castSFXIndex = castSFXIndex;
+        m_ProjectileInfo = _projectileInfo;
         B_SimulatePhysics = true;
         m_Trail.enabled = true;
         m_Trail.Clear();
@@ -99,15 +90,15 @@ public class SFXProjectile : SFXBase {
     {
         if (entity!=null&&!m_TargetHitted.Contains(entity.I_AttacherID) && GameManager.B_CanDamageEntity(entity, I_SourceID))
         {
-            entity.TryHit(m_Damage);
+            entity.TryHit(m_ProjectileInfo.m_damage);
             m_TargetHitted.Add(entity.I_AttacherID);
         }
     }
     protected void SpawnImpact(RaycastHit hitInfo, HitCheckBase hitParent)
     {
-        if (i_impactSFXIndex > 0)
+        if (m_ProjectileInfo.m_impactSFX > 0)
         {
-            SFXParticles impact = ObjectManager.SpawnSFX<SFXParticles>(i_impactSFXIndex, hitInfo.point, hitInfo.normal, null);
+            SFXParticles impact = ObjectManager.SpawnSFX<SFXParticles>(m_ProjectileInfo.m_impactSFX, hitInfo.point, hitInfo.normal, null);
             if (hitParent != null && hitParent.m_HitCheckType == enum_HitCheck.Entity)
                 (hitParent as HitCheckEntity).AttachTransform(impact);
             else

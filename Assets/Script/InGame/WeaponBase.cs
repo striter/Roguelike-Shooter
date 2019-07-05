@@ -94,10 +94,10 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
             return false;
 
         I_AmmoLeft--;
-        if(m_WeaponInfo.m_MuzzleSFXIndex!=-1)
-            ObjectManager.SpawnSFX<SFXParticles>(m_WeaponInfo.m_MuzzleSFXIndex, tf_Muzzle.position, tf_Muzzle.forward).Play(I_AttacherID);
+        if(m_WeaponInfo.m_ProjectileInfo.m_MuzzleSFX!=-1)
+            ObjectManager.SpawnSFX<SFXParticles>(m_WeaponInfo.m_ProjectileInfo.m_MuzzleSFX, tf_Muzzle.position, tf_Muzzle.forward).Play(I_AttacherID);
         for (int i = 0; i < m_WeaponInfo.m_PelletsPerShot; i++)
-            ObjectManager.SpawnSFX<SFXProjectile>(m_WeaponInfo.m_ProjectileSFXIndex, tf_Muzzle.position,tf_Muzzle.forward).PlayWeapon(I_AttacherID, GameExpression.V3_RangeSpreadDirection(transform.forward, m_WeaponInfo.m_Spread, transform.up, transform.right), m_Assist.m_assistTarget,m_WeaponInfo);
+            ObjectManager.SpawnSFX<SFXProjectile>(m_WeaponInfo.m_ProjectileInfo.m_SFXIndex, tf_Muzzle.position,tf_Muzzle.forward).Play(I_AttacherID, GameExpression.V3_RangeSpreadDirection(transform.forward, m_WeaponInfo.m_Spread, transform.up, transform.right), m_Assist.m_assistTarget,m_WeaponInfo.m_ProjectileInfo);
 
         OnRecoil?.Invoke(m_WeaponInfo.m_RecoilPerShot);
         OnAmmoChangeCostMana?.Invoke(m_WeaponInfo.m_ManaCost);
@@ -147,7 +147,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
             tf_Dot = transform.Find("Dot");
             m_lineRenderer = muzzle.GetComponent<LineRenderer>();
             m_lineRenderer.positionCount = 2;
-            f_distance = weaponInfo.m_HorizontalDistance;
+            f_distance = weaponInfo.m_ProjectileInfo.m_HorizontalSpeed;
         }
 
         public void Simulate(bool activate)

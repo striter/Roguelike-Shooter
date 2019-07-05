@@ -1,17 +1,18 @@
-﻿using UnityEngine;
+﻿using GameSetting;
+using UnityEngine;
 public class SFXProjectileCastTrigger : SFXProjectile {
-    protected override void Play(int sourceID, int impactSFXIndex, int blastSFXIndex, int relativeIndex, Vector3 direction, Vector3 destination, float damage, float horiSpeed, float horiDistance, float vertiSpeed, float vertiAcceleration, float duration)
+    public override void Play(int sourceID, Vector3 direction, Vector3 targetPosition, SProjectileInfo projectileInfo, float duration)
     {
-        base.Play(sourceID, impactSFXIndex, blastSFXIndex,relativeIndex, direction, destination, damage, horiSpeed, horiDistance, vertiSpeed, vertiAcceleration, Vector3.Distance(transform.position, destination) / horiSpeed);
+        base.Play(sourceID, direction, targetPosition, projectileInfo, Vector3.Distance(transform.position, targetPosition) / projectileInfo.m_HorizontalSpeed);
     }
 
     protected override void OnPlayFinished()
     {
         base.OnPlayFinished();
 
-        if (i_castSFXIndex == -1)
+        if (m_ProjectileInfo.m_relativeSFX1 == -1)
             Debug.LogError("Error!Should Set Blast Index While Using This SFXProjectile:" + I_SFXIndex);
 
-        ObjectManager.SpawnSFX<SFXCast>(i_castSFXIndex, transform.position, Vector3.up).Play(I_SourceID, m_Damage);
+        ObjectManager.SpawnSFX<SFXCast>(m_ProjectileInfo.m_relativeSFX1, transform.position, Vector3.up).Play(I_SourceID, m_ProjectileInfo.m_damage);
     }
 }

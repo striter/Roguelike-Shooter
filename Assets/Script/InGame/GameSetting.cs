@@ -11,8 +11,7 @@ namespace GameSetting
     #region For Designers Use
     public static class GameConst
     {
-        public const int I_WeaponProjectileMaxDistance = 100;
-        public const int I_BarrageProjectileMaxDistance = 100;
+        public const int I_ProjectileMaxDistance = 100;
 
         public const short I_BoltLastTimeAfterHit = 5;
 
@@ -382,7 +381,43 @@ namespace GameSetting
     #endregion
     #endregion
     #region GameStruct
-    public struct SEntity : ISExcel
+    public struct SProjectileInfo
+    {
+        public int m_SFXIndex { get; private set; }
+        public float m_damage { get; private set; }
+        public int m_MuzzleSFX { get; private set; }
+        public int m_impactSFX { get; private set; }
+        public int m_relativeSFX1 { get; private set; }
+        public int m_relativeSFX2 { get; private set; }
+        public float m_HorizontalSpeed { get; private set; }
+        public float m_HorizontalDistance { get; private set; }
+        public float m_VerticalSpeed { get; private set; }
+        public float m_VerticalAcceleration { get; private set; }
+        public SProjectileInfo(int _sfxIndex, float _damage, int _muzzleSFX, int _impactSFX, int _relativeSFX1, int _relativeSFX2, float _horiSpeed, float _horiDistance,float _verticalSpeed, float _vertiAcceleration)
+        {
+            m_SFXIndex = _sfxIndex;
+            m_MuzzleSFX = _muzzleSFX;
+            m_damage = _damage;
+            m_MuzzleSFX = _muzzleSFX;
+            m_impactSFX = _impactSFX;
+            m_relativeSFX1 = _relativeSFX1;
+            m_relativeSFX2 = _relativeSFX2;
+            m_HorizontalSpeed = _horiSpeed;
+            m_HorizontalDistance = _horiDistance;
+            m_VerticalSpeed = _verticalSpeed;
+            m_VerticalAcceleration = _vertiAcceleration;
+        }
+        public SProjectileInfo GetSplitInfo()
+        {
+            SProjectileInfo info = new SProjectileInfo();
+            info.m_SFXIndex = m_relativeSFX1;
+            info.m_damage = m_damage;
+            info.m_impactSFX = m_impactSFX;
+            info.m_HorizontalSpeed = m_HorizontalSpeed;
+            return info;
+        }
+    }
+    public struct SEntity :ISExcel
     {
         int i_index;
         int e_type;
@@ -399,16 +434,17 @@ namespace GameSetting
         RangeFloat fr_duration;
         int i_muzzleIndex;
         int i_projectileIndex;
-        int i_blastIndex;
         int i_impactIndex;
-        int i_relativeIndex;
+        int i_relativeIndex1;
+        int i_relativeIndex2;
         float f_firerate;
         RangeInt ir_count;
         float f_damage;
-        float i_speed;
+        float f_speed;
         int i_horiSpread;
         RangeInt ir_rangeExtension;
         float f_offsetExtension;
+        
         public int m_Index=>i_index;
         public enum_EntityType m_Type => (enum_EntityType)e_type;
         public float m_MaxHealth => f_maxHealth;
@@ -423,20 +459,15 @@ namespace GameSetting
 
         public enum_EnermyWeaponType m_WeaponType => (enum_EnermyWeaponType)i_weaponType;
         public RangeFloat m_BarrageDuration => fr_duration;
-        public int m_MuzzleSFXIndex => i_muzzleIndex;
-        public int m_ProjectileSFXIndex => i_projectileIndex;
-        public int m_BlastSFXIndex => i_blastIndex;
-        public int m_ImpactSFXIndex => i_impactIndex;
-        public int m_RelativeSFXIndex => i_relativeIndex;
-        public float m_Firerate => f_firerate;
+        public SProjectileInfo m_ProjectileInfo;
+        internal float m_Firerate => f_firerate;
         public RangeInt m_ProjectileCount => ir_count;
-        public float m_ProjectileDamage => f_damage;
-        public float m_ProjectileSpeed => i_speed;
         public int m_HorizontalSpread => i_horiSpread;
         public RangeInt m_RangeExtension => ir_rangeExtension;
         public float m_OffsetExtension => f_offsetExtension;
         public void InitOnValueSet()
         {
+            m_ProjectileInfo = new SProjectileInfo(i_projectileIndex,f_damage,i_muzzleIndex, i_impactIndex, i_relativeIndex1,i_relativeIndex2,f_speed, GameConst.I_ProjectileMaxDistance,0,10);
         }
     }
     public struct SWeapon : ISExcel
@@ -446,9 +477,9 @@ namespace GameSetting
         int i_triggerType;
         int i_muzzleIndex;
         int i_projectileIndex;
-        int i_blastIndex;
         int i_impactIndex;
-        int i_relativeIndex;
+        int i_relativeIndex1;
+        int i_relativeIndex2;
         float f_damage;
         float f_fireRate;
         float f_specialRate;
@@ -463,16 +494,10 @@ namespace GameSetting
         float f_verticalAcceleration;
         float f_recoilHorizontal;
         float f_recoilVertical;
-
+        public SProjectileInfo m_ProjectileInfo;
         public enum_PlayerWeapon m_Weapon => (enum_PlayerWeapon)index;
         public string m_Name => s_name;
         public enum_TriggerType m_TriggerType=>(enum_TriggerType)i_triggerType;
-        public int m_MuzzleSFXIndex => i_muzzleIndex;
-        public int m_ProjectileSFXIndex => i_projectileIndex;
-        public int m_BlastSFXIndex => i_blastIndex;
-        public int m_ImpactSFXIndex => i_impactIndex;
-        public int m_RelativeSFXIndex => i_relativeIndex;
-        public float m_Damage => f_damage;
         public float m_FireRate => f_fireRate;
         public float m_SpecialRate => f_specialRate;
         public float m_ManaCost => f_manaCost;
@@ -481,13 +506,10 @@ namespace GameSetting
         public float m_ReloadTime => f_reloadTime;
         public int m_PelletsPerShot => i_PelletsPerShot;
         public float m_stunAfterShot => f_stunAfterShot;
-        public float m_HorizontalSpeed => f_horizontalSpeed;
-        public float m_HorizontalDistance => f_horizontalDistance;
-        public float m_VerticalAcceleration => f_verticalAcceleration;
         public Vector2 m_RecoilPerShot => new Vector2(f_recoilHorizontal, f_recoilVertical);
-
         public void InitOnValueSet()
         {
+            m_ProjectileInfo = new SProjectileInfo(i_projectileIndex,f_damage,i_muzzleIndex,i_impactIndex,i_relativeIndex1,i_relativeIndex2,f_horizontalSpeed,f_horizontalDistance,0,f_verticalAcceleration);
         }
     }
     public struct SGenerateItem : ISExcel
@@ -713,7 +735,7 @@ namespace GameSetting
             m_lineRenderer = muzzle.GetComponent<LineRenderer>();
             m_lineRenderer.positionCount = _curveCount;
             m_CurveCount = _curveCount;
-            m_Simulator = new Abandoned_AimAssistSimulator(duration / _curveCount, muzzle.position, muzzle.forward, Vector3.down, weaponInfo.m_HorizontalSpeed,0, 0, weaponInfo.m_VerticalAcceleration, false);
+            m_Simulator = new Abandoned_AimAssistSimulator(duration / _curveCount, muzzle.position, muzzle.forward, Vector3.down, weaponInfo.m_ProjectileInfo.m_HorizontalDistance,0, 0, weaponInfo.m_ProjectileInfo.m_VerticalAcceleration, false);
             ;
         }
         public void Simulate(bool activate)

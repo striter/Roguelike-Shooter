@@ -377,12 +377,10 @@ public class EntityEnermyBase : EntityBase {
         }
         public override void Play()
         {
-            if (m_Info.m_MuzzleSFXIndex != -1)
-                ObjectManager.SpawnSFX<SFXParticles>(m_Info.m_MuzzleSFXIndex,attacherTransform.position,attacherTransform.forward);
-
+            if (m_Info.m_ProjectileInfo.m_MuzzleSFX != -1)
+                ObjectManager.SpawnSFX<SFXParticles>(m_Info.m_ProjectileInfo.m_MuzzleSFX, attacherTransform.position,attacherTransform.forward);
             Vector3 meleeDirection = attacherTransform.forward;
-
-            ObjectManager.SpawnSFX<SFXCast>(m_Info.m_BlastSFXIndex, attacherTransform.position, meleeDirection).Play(m_EntityControlling.I_EntityID, m_Info.m_ProjectileDamage);
+            ObjectManager.SpawnSFX<SFXCast>(m_Info.m_ProjectileInfo.m_relativeSFX1, attacherTransform.position, meleeDirection).Play(m_EntityControlling.I_EntityID, m_Info.m_ProjectileInfo.m_damage);
         }
     }
     class BarrageRange : EnermyWeaponBase
@@ -406,7 +404,7 @@ public class EntityEnermyBase : EntityBase {
 
         protected Vector3 GetHorizontalDirection()
         {
-            Vector3 targetDirection= Vector3.Normalize((b_preAim ? (m_Target.m_PrecalculatedTargetPos(Vector3.Distance(targetTransform.position, attacherTransform.position) / m_Info.m_ProjectileSpeed)) : targetTransform.position) - attacherTransform.position);
+            Vector3 targetDirection= Vector3.Normalize((b_preAim ? (m_Target.m_PrecalculatedTargetPos(Vector3.Distance(targetTransform.position, attacherTransform.position) / m_Info.m_ProjectileInfo.m_HorizontalSpeed)) : targetTransform.position) - attacherTransform.position);
             targetDirection.y = 0;
             return targetDirection.normalized;
         }
@@ -417,9 +415,9 @@ public class EntityEnermyBase : EntityBase {
         }
         protected void FireBullet(Vector3 startPosition,Vector3 direction)
         {
-            if (m_Info.m_MuzzleSFXIndex != -1)
-                ObjectManager.SpawnSFX<SFXParticles>(m_Info.m_MuzzleSFXIndex, startPosition, direction).Play(m_EntityControlling.I_EntityID);
-            ObjectManager.SpawnSFX<SFXProjectile>(m_Info.m_ProjectileSFXIndex, startPosition, direction).PlayBarrage(m_EntityControlling.I_EntityID, direction, targetTransform.position, m_Info);
+            if (m_Info.m_ProjectileInfo.m_MuzzleSFX != -1)
+                ObjectManager.SpawnSFX<SFXParticles>(m_Info.m_ProjectileInfo.m_MuzzleSFX, startPosition, direction).Play(m_EntityControlling.I_EntityID);
+            ObjectManager.SpawnSFX<SFXProjectile>(m_Info.m_ProjectileInfo.m_SFXIndex, startPosition, direction).Play(m_EntityControlling.I_EntityID, direction, targetTransform.position, m_Info.m_ProjectileInfo);
         }
     }
     class BarrageMultipleLine : BarrageRange
