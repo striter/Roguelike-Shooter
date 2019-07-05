@@ -41,8 +41,8 @@ public class SFXProjectile : SFXBase {
             Debug.LogError("Error Damage Less Or Equals 0");
         if (F_Speed <= 0)
             Debug.LogError("Error Speed Less Or Equals 0");
-        if (I_ImpactIndex <= 0)
-            Debug.LogError("Error Impact Index Less Or Equals 0");
+        if (I_ImpactIndex < 0)
+            Debug.LogError("Error Impact Index Less 0");
     }
     protected override void Update()
     {
@@ -93,6 +93,7 @@ public class SFXProjectile : SFXBase {
     }
     protected virtual void OnHitTarget(RaycastHit hit,HitCheckBase hitCheck)
     {
+        Debug.Log("Hit Target");
     }
     protected virtual void OnDamageEntity(HitCheckEntity entity)
     {
