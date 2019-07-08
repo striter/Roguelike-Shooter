@@ -22,6 +22,18 @@ public class SFXCast : SFXBase,ISingleCoroutine {
         this.StartSingleCoroutine(0, TIEnumerators.TickCount(OnBlast, I_TickCount, F_Tick));
         PlaySFX(sourceID, I_TickCount*F_Tick);
     }
+    public virtual void PlayControlled(int sourceID,bool play)
+    {
+        if (play)
+        {
+            this.StartSingleCoroutine(0, TIEnumerators.Tick(OnBlast, F_Tick));
+            PlaySFX(sourceID, int.MaxValue);
+        }
+        else
+        {
+            OnPlayFinished();
+        }
+    }
     protected void OnDisable()
     {
         this.StopAllCoroutines();

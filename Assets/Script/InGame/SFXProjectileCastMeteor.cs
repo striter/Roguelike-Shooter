@@ -19,7 +19,7 @@ public class SFXProjectileCastMeteor : SFXProjectileCastTrigger
         Vector3 spreadDirection = (targetPosition - startPos).normalized;
         m_Simulator = new ProjectilePhysicsSimulator(startPos, spreadDirection, Vector3.down, F_Speed);
         transform.position = startPos;
-        ObjectManager.SpawnSFX<SFXIndicator>(I_IndicatorIndex, startPos, spreadDirection).Play(sourceID, startPos, spreadDirection, F_Speed,m_Collider.radius);
+        ObjectManager.SpawnSFX<SFXIndicator>(I_IndicatorIndex, startPos, spreadDirection).PlayLandMark(sourceID, startPos, spreadDirection, F_Speed,m_Collider.radius);
         PlaySFX(sourceID, Vector3.Distance(startPos,targetPosition)/F_Speed);
     }
 }

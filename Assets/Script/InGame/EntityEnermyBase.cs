@@ -198,6 +198,7 @@ public class EntityEnermyBase : EntityBase {
         public void Deactivate()
         {
             B_AgentEnabled = false;
+            m_Weapon.OnPlay(false);
             this.StopAllSingleCoroutines();
         }
         RaycastHit[] m_Raycasts;
@@ -415,18 +416,17 @@ public class EntityEnermyBase : EntityBase {
         }
         public override void Play(bool preAim, EntityBase _target)
         {
-            base.Play(preAim, _target);
             if (m_Cast)
-                m_Cast.Stop();
+                m_Cast.PlayControlled(m_EntityControlling.I_EntityID,false);
 
             m_Cast = ObjectManager.SpawnSFX<SFXCast>(m_Info.m_ProjectileSFX, transform.position, transform.forward, transform);
-            m_Cast.Play(m_EntityControlling.I_EntityID);
+            m_Cast.PlayControlled(m_EntityControlling.I_EntityID, true);
         }
 
         public override void OnPlay(bool play)
         {
-            if(!play&&m_Cast)
-                m_Cast.Stop();
+            if (!play && m_Cast)
+                m_Cast.PlayControlled(m_EntityControlling.I_EntityID, false);
         }
     }
     class BarrageRange : EnermyWeaponBase

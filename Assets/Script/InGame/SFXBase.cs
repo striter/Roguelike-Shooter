@@ -3,7 +3,7 @@ using UnityEngine;
 using GameSetting;
 public class SFXBase : MonoBehaviour {
     public int I_SFXIndex { get; private set; } = -1;
-
+    public bool b_Playing { get; private set; }
     public virtual void Init(int _sfxIndex)
     {
         I_SFXIndex = _sfxIndex;
@@ -25,6 +25,7 @@ public class SFXBase : MonoBehaviour {
         f_TimeCheck = Time.time + duration;
         I_SourceID = sourceID;
         OnSFXPlayFinished = _OnSFXPlayFinished;
+        b_Playing = true;
     }
 
     protected virtual void Update()
@@ -34,10 +35,11 @@ public class SFXBase : MonoBehaviour {
     }
     protected  virtual void OnPlayFinished()
     {
-        OnSFXPlayFinished?.Invoke();
+        b_Playing = false;
+           OnSFXPlayFinished?.Invoke();
         ObjectManager.RecycleSFX(I_SFXIndex, this);
     }
-    public void Stop()
+    public void ForceStop()
     {
         OnPlayFinished();
     }
