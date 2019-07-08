@@ -251,7 +251,7 @@ MonoBehaviour:
   F_Damage: 40
   F_Speed: 30
   I_ImpactIndex: 0
-  I_CastIndex: 30001
+  I_CastIndex: 30003
   I_IndicatorIndex: 50001
   F_SpreadRadius: 0
   F_StartHeight: 40

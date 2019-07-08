@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 135555557315418114}
   - component: {fileID: 114973347317709960}
   m_Layer: 9
-  m_Name: 30002_Blast_IcelandSphereOverlapse
+  m_Name: 30003_Blast_Iceland2SphereOverlapse
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
