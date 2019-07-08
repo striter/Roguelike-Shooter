@@ -87,6 +87,7 @@ public class EntityEnermyBase : EntityBase {
             Staff_Dual_Cast=111,
             Staff_R_Cast_Loop=112,
             Pistol_L_Shoot=120,
+            Pistol_Dual_Shoot=121,
             Bow_Shoot=130,
             Rifle_Shoot=140,
             Throwable_Hips=150,
