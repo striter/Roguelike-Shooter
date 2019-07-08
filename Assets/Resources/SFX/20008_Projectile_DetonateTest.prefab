@@ -259,12 +259,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdff42fe7265fd247ba038242ad54685, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  F_Damage: 0
-  F_Speed: 0
+  F_Damage: 60
+  F_Speed: 1
   I_ImpactIndex: 0
-  I_CastIndex: 0
-  I_IndicatorIndex: 0
-  F_DetonateDuration: 5
+  I_CastIndex: 30001
+  I_IndicatorIndex: 50001
+  F_DetonateDuration: 4
 --- !u!136 &136401941533324408
 CapsuleCollider:
   m_ObjectHideFlags: 1

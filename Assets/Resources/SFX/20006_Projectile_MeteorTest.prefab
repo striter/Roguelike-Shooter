@@ -253,6 +253,8 @@ MonoBehaviour:
   I_ImpactIndex: 0
   I_CastIndex: 30506
   I_IndicatorIndex: 50001
+  F_SpreadRadius: 20
+  F_StartHeight: 20
 --- !u!114 &114338212377767134
 MonoBehaviour:
   m_ObjectHideFlags: 1
