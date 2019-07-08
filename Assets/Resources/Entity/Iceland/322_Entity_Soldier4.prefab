@@ -931,6 +931,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   E_AnimatorIndex: 1
+  F_AttackRotateParam: 1
+  B_AttackMove: 1
 --- !u!114 &114524409849586294
 MonoBehaviour:
   m_ObjectHideFlags: 1
