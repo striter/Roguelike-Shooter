@@ -18,6 +18,7 @@ public class EntityEnermyBase : EntityBase {
     public override void Init(SEntity entityInfo)
     {
         Init(entityInfo, false);
+        tf_Model.transform.rotation = Quaternion.Euler(-15, 0, 0);
         Transform tf_Barrel = transform.FindInAllChild("Barrel");
         EnermyWeaponBase weapon=null;
         switch (entityInfo.m_WeaponType)
@@ -78,14 +79,17 @@ public class EntityEnermyBase : EntityBase {
         public enum enum_AnimIndex
         {
             Invalid=-1,
-            Axe=1,
-            Spear=2,
-            Bow=3,
-            CastL=4,
-            CastR=5,
-            Sword=6,
-            Pistol_L=7,
-            CastRLoop=8,
+            Axe_Dual_Pound=10,
+            Spear_R_Stick=20,
+            Sword_R_Swipe = 31,
+            Sword_R_Slash=32,
+            Staff_L_Cast=110,
+            Staff_Dual_Cast=111,
+            Staff_R_Cast_Loop=112,
+            Pistol_L_Shoot=120,
+            Bow_Shoot=130,
+            Rifle_Shoot=140,
+            Throwable_Hips=150,
         }
         public enum enum_AnimEvent
         {

@@ -12,6 +12,7 @@ public class SFXProjectile : SFXBase {
     protected virtual bool B_RecycleOnHit => true;
     protected virtual bool B_DisablePhysicsOnHit => true;
     protected virtual bool B_HitMultiple => true;
+    protected virtual bool B_DealDamage => true;
     public float F_Damage;
     public float F_Speed;
     public int I_ImpactIndex;
@@ -97,7 +98,7 @@ public class SFXProjectile : SFXBase {
     }
     protected virtual void OnDamageEntity(HitCheckEntity entity)
     {
-        if (entity!=null&&!m_TargetHitted.Contains(entity.I_AttacherID) && GameManager.B_CanDamageEntity(entity, I_SourceID))
+        if (B_DealDamage&&entity!=null&&!m_TargetHitted.Contains(entity.I_AttacherID) && GameManager.B_CanDamageEntity(entity, I_SourceID))
         {
             entity.TryHit(F_Damage);
             m_TargetHitted.Add(entity.I_AttacherID);
