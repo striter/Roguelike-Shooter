@@ -8,7 +8,7 @@ using System;
 
 [RequireComponent(typeof(NavMeshAgent),typeof(NavMeshObstacle))]
 public class EntityEnermyBase : EntityBase {
-    public EnermyAnimator.enum_AnimIndex E_AnimatorIndex= EnermyAnimator.enum_AnimIndex.Invalid;
+    public enum_EnermyAnim E_AnimatorIndex= enum_EnermyAnim.Invalid;
     EnermyAIControllerBase m_AI;
     EnermyAnimator m_Animator;
     [Range(0,3)]
@@ -31,7 +31,7 @@ public class EntityEnermyBase : EntityBase {
             case enum_EnermyWeaponType.Caster: weapon = new EnermyCaster(this,tf_Barrel);break;
         }
         m_AI = new EnermyAIControllerBase(this,weapon, entityInfo, OnAttackAnim, OnCheckTarget);
-        if (E_AnimatorIndex == EnermyAnimator.enum_AnimIndex.Invalid)
+        if (E_AnimatorIndex == enum_EnermyAnim.Invalid)
             Debug.LogError("Please Set Prefab AnimIndex!");
     }
     public override void OnSpawn(int id)
@@ -69,6 +69,7 @@ public class EntityEnermyBase : EntityBase {
     }
     protected override void OnDisable()
     {
+        if (m_AI!=null) 
         m_AI.Deactivate();
         base.OnDisable();
     }
@@ -76,22 +77,6 @@ public class EntityEnermyBase : EntityBase {
 
     public class EnermyAnimator : AnimatorClippingTime
     {
-        public enum enum_AnimIndex
-        {
-            Invalid=-1,
-            Axe_Dual_Pound=10,
-            Spear_R_Stick=20,
-            Sword_R_Swipe = 30,
-            Sword_R_Slash=31,
-            Staff_L_Cast=110,
-            Staff_Dual_Cast=111,
-            Staff_R_Cast_Loop=112,
-            Pistol_L_Shoot=120,
-            Pistol_Dual_Shoot=121,
-            Bow_Shoot=130,
-            Rifle_Shoot=140,
-            Throwable_Hips=150,
-        }
         public enum enum_AnimEvent
         {
             Invalid=-1,
@@ -108,7 +93,7 @@ public class EntityEnermyBase : EntityBase {
         static readonly int HS_F_Forward = Animator.StringToHash("f_forward");
         static readonly int HS_B_Attack = Animator.StringToHash("b_attack");
         Action<enum_AnimEvent> OnAnimEvent;
-        public EnermyAnimator(Animator _animator, enum_AnimIndex _animIndex,Action<enum_AnimEvent> _OnAnimEvent) : base(_animator)
+        public EnermyAnimator(Animator _animator, enum_EnermyAnim _animIndex,Action<enum_AnimEvent> _OnAnimEvent) : base(_animator)
         {
             m_Animator.fireEvents = true;
             m_Animator.SetInteger(HS_I_AnimIndex,(int)_animIndex);
