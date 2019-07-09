@@ -21,6 +21,7 @@ public class EEntity : Editor {
         if (HasPreviewGUI())
         {
             m_Preview = new PreviewRenderUtility();
+            m_Preview.camera.clearFlags = CameraClearFlags.Skybox;
             m_Preview.camera.fieldOfView = 30.0f;
             m_Preview.camera.nearClipPlane = 0.3f;
             m_Preview.camera.farClipPlane = 1000;
@@ -31,8 +32,6 @@ public class EEntity : Editor {
             m_PreviewAnimator.updateMode = AnimatorUpdateMode.Normal;
             m_PreviewAnimator.fireEvents = false;
             v3_center = m_PreviewObject.GetComponentInChildren<MeshRenderer>().bounds.center;
-            m_Preview.camera.transform.position = v3_center + new Vector3(0,8,6);
-            m_Preview.camera.transform.LookAt(m_PreviewObject.transform);
         }
     }
     private void OnDisable()
@@ -52,10 +51,21 @@ public class EEntity : Editor {
         Repaint();
         m_PreviewAnimator.Update(Time.deltaTime);
     }
+    Vector2 dragDelta;
+    float scroll=5;
     public override void OnPreviewGUI(Rect r, GUIStyle background)
     {
         if (Event.current != null && Event.current.type == EventType.MouseDrag)
-            m_PreviewObject.transform.Rotate(new Vector3(0,Event.current.delta.x,0) );
+            dragDelta += Event.current.delta;
+        if (Event.current != null && Event.current.type == EventType.ScrollWheel)
+        {
+            scroll += Event.current.delta.y;
+            scroll = Mathf.Clamp(scroll, 5, 20);
+        }
+
+        m_PreviewObject.transform.rotation = Quaternion.Euler(0, dragDelta.x, 0);
+        m_Preview.camera.transform.position = v3_center + TCommon.RotateDirection(Vector3.up, Vector3.right, dragDelta.y) *scroll;
+        m_Preview.camera.transform.LookAt(m_PreviewObject.transform);
         m_Preview.BeginStaticPreview(r);
         m_Preview.camera.Render();
         if (m_PreviewAnimator.GetInteger(hs_weaponType) != (int)m_EnermyBase.E_AnimatorIndex)
