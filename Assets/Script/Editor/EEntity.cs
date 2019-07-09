@@ -31,7 +31,11 @@ public class EEntity : Editor {
             m_PreviewAnimator = m_PreviewObject.GetComponentInChildren<Animator>();
             m_PreviewAnimator.updateMode = AnimatorUpdateMode.Normal;
             m_PreviewAnimator.fireEvents = false;
+            m_PreviewObject.transform.SetChildLayer(5);
+            m_Preview.camera.cullingMask = 1 << 5;
+            DestroyImmediate(m_PreviewObject.GetComponent<EntityEnermyBase>());
             v3_center = m_PreviewObject.GetComponentInChildren<MeshRenderer>().bounds.center;
+            
         }
     }
     private void OnDisable()

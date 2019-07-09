@@ -187,6 +187,24 @@ namespace GameSetting
         Crossbow = 7001,
         RocketLauncher = 7002,
     }
+
+    public enum enum_EnermyAnim
+    {
+        Invalid = -1,
+        Axe_Dual_Pound = 10,
+        Spear_R_Stick = 20,
+        Sword_R_Swipe = 30,
+        Sword_R_Slash = 31,
+        Staff_L_Cast = 110,
+        Staff_Dual_Cast = 111,
+        Staff_R_Cast_Loop = 112,
+        Staff_R_Cast=113,
+        Pistol_L_Shoot = 120,
+        Pistol_Dual_Shoot = 121,
+        Bow_Shoot = 130,
+        Rifle_Shoot = 140,
+        Throwable_Hips = 150,
+    }
     #endregion
     #region GameLayer
     public static class GameLayer
