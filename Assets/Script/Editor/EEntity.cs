@@ -45,11 +45,13 @@ public class EEntity : Editor {
             m_PreviewAnimator = null;
         }
     }
-    Vector2 rotateDelta;
     void Update()
     {
-        Repaint();
-        m_PreviewAnimator.Update(Time.deltaTime);
+        if (HasPreviewGUI())
+        {
+            Repaint();
+            m_PreviewAnimator.Update(Time.deltaTime);
+        }
     }
     Vector2 dragDelta;
     float scroll=5;
