@@ -16,7 +16,7 @@ public class SFXProjectileCastDetonate : SFXProjectileCastTrigger {
         base.OnHitTarget(hit, hitCheck);
         transform.position = hit.point;
         transform.rotation = Quaternion.LookRotation(hit.normal);
-        transform.SetParent(hit.transform);
+        transform.SetParent(hit.collider.transform);
         m_Trail.enabled = false;
         f_TimeCheck = Time.time + F_DetonateDuration;
         if (I_IndicatorIndex > 0)
