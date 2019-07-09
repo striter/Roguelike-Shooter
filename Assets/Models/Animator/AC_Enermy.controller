@@ -1379,7 +1379,7 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: 7400000, guid: e09064ae1e1e96f489df2505990de15f, type: 3}
   m_Tag: 
-  m_SpeedParameter: 
+  m_SpeedParameter: f_forward
   m_MirrorParameter: 
   m_CycleOffsetParameter: fp_attack
   m_TimeParameter: fp_attack
@@ -1583,7 +1583,7 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: 7400002, guid: dafa7e8bcf1bfa24a8c53ec17164800e, type: 3}
   m_Tag: 
-  m_SpeedParameter: 
+  m_SpeedParameter: f_forward
   m_MirrorParameter: 
   m_CycleOffsetParameter: fp_attack
   m_TimeParameter: fp_attack
@@ -1634,7 +1634,7 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: 7400002, guid: fd2eda3550a6f1344866db46a225eea7, type: 3}
   m_Tag: 
-  m_SpeedParameter: 
+  m_SpeedParameter: f_forward
   m_MirrorParameter: 
   m_CycleOffsetParameter: fp_attack
   m_TimeParameter: fp_attack
@@ -1736,7 +1736,7 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: 7400000, guid: baed4ed07c0b8b34c9dadd6dda823631, type: 3}
   m_Tag: 
-  m_SpeedParameter: 
+  m_SpeedParameter: f_forward
   m_MirrorParameter: 
   m_CycleOffsetParameter: fp_attack
   m_TimeParameter: fp_attack
@@ -1889,7 +1889,7 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: 7400000, guid: 9e5d42c64f4181e4e92729d62fa2d0fd, type: 3}
   m_Tag: 
-  m_SpeedParameter: 
+  m_SpeedParameter: f_forward
   m_MirrorParameter: 
   m_CycleOffsetParameter: fp_attack
   m_TimeParameter: fp_attack
@@ -1991,7 +1991,7 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: 7400000, guid: fcc82476d966e864da60dc606a6adcb0, type: 3}
   m_Tag: 
-  m_SpeedParameter: 
+  m_SpeedParameter: f_forward
   m_MirrorParameter: 
   m_CycleOffsetParameter: fp_attack
   m_TimeParameter: fp_attack
@@ -2068,7 +2068,7 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: 7400000, guid: f94c62a8b96f5a7469ce0da8ccac09b3, type: 3}
   m_Tag: 
-  m_SpeedParameter: 
+  m_SpeedParameter: f_forward
   m_MirrorParameter: 
   m_CycleOffsetParameter: fp_attack
   m_TimeParameter: fp_attack
