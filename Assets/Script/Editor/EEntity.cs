@@ -99,6 +99,6 @@ public class EEntity : Editor {
     }
     public override bool HasPreviewGUI()
     {
-        return AssetDatabase.IsNativeAsset(target);
+        return target!=null&&AssetDatabase.IsNativeAsset(target);
     }
 }

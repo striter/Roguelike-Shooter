@@ -199,8 +199,6 @@ namespace GameSetting
         Staff_Dual_Cast_111 = 111,
         Staff_R_Cast_Loop_112 = 112,
         Staff_R_Cast_113=113,
-        Pistol_L_Shoot_120 = 120,
-        Pistol_Dual_Shoot_121 = 121,
         Bow_Shoot_130 = 130,
         Rifle_HipShot_140 = 140,
         Rifle_AimShot_141=141,
