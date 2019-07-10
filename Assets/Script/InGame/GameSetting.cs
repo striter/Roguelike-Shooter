@@ -202,8 +202,10 @@ namespace GameSetting
         Pistol_L_Shoot = 120,
         Pistol_Dual_Shoot = 121,
         Bow_Shoot = 130,
-        Rifle_Shoot = 140,
+        Rifle_HipShot = 140,
+        Rifle_AimShot=141,
         Throwable_Hips = 150,
+        Throwable_R_Throw=151,
     }
     #endregion
     #region GameLayer
