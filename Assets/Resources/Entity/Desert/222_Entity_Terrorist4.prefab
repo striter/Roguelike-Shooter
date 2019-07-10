@@ -941,7 +941,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 275d93242000a1d47972944c1cd255ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  E_AnimatorIndex: 112
+  E_AnimatorIndex: 151
   F_AttackRotateParam: 0.2
   B_AttackMove: 0
 --- !u!114 &114887607674141196
