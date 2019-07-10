@@ -18,6 +18,7 @@ public class SFXProjectile : SFXBase {
     public float F_Speed;
     public int I_ImpactIndex;
     protected virtual PhysicsSimulator GetSimulator(Vector3 direction, Vector3 targetPosition) => new ProjectilePhysicsSimulator(transform.position, direction, Vector3.down, F_Speed);
+    protected virtual Quaternion GetRotation(Vector3 direction) => Quaternion.LookRotation(direction);
     public override void Init(int sfxIndex)
     {
         base.Init(sfxIndex);
@@ -56,7 +57,7 @@ public class SFXProjectile : SFXBase {
             Vector3 curPosition = m_Simulator.Simulate(Time.deltaTime, out prePosition);
 
             Vector3 castDirection = prePosition == curPosition ? m_Simulator.m_Direction : curPosition - prePosition;
-            transform.rotation = Quaternion.LookRotation(castDirection);
+            transform.rotation = GetRotation(castDirection);
             float distance = Vector3.Distance(prePosition, curPosition);
             distance = distance > m_Collider.height ? distance : m_Collider.height;
             transform.position = curPosition;

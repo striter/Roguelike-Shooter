@@ -6,6 +6,7 @@ public class SFXProjectileCastMeteor : SFXProjectileCastTrigger
     public int I_IndicatorIndex;
     public float F_SpreadRadius=5;
     public float F_StartHeight = 20;
+
     protected override void OnPlayPreset()
     {
         base.OnPlayPreset();
@@ -14,12 +15,10 @@ public class SFXProjectileCastMeteor : SFXProjectileCastTrigger
     }
     public override void Play(int sourceID, Vector3 direction, Vector3 targetPosition, float duration)
     {
-        OnPlayPreset();
         Vector3 startPos = targetPosition + Vector3.up * F_StartHeight + new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f))*F_SpreadRadius;
         Vector3 spreadDirection = (targetPosition - startPos).normalized;
-        m_Simulator = new ProjectilePhysicsSimulator(startPos, spreadDirection, Vector3.down, F_Speed);
         transform.position = startPos;
         ObjectManager.SpawnSFX<SFXIndicator>(I_IndicatorIndex, startPos, spreadDirection).PlayLandMark(sourceID, startPos, spreadDirection, F_Speed,m_Collider.radius);
-        PlaySFX(sourceID, Vector3.Distance(startPos,targetPosition)/F_Speed);
+        base.Play(sourceID,spreadDirection,targetPosition, Vector3.Distance(startPos, targetPosition) / F_Speed);
     }
 }

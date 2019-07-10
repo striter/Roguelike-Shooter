@@ -63,6 +63,10 @@ namespace TPhysics
         {
             return SpeedShift(speed,elapsedTime) + acceleration* Mathf.Pow(elapsedTime , 2)/2;
         }
+        public static float GetAcceleration(float startSpeed, float distance,float duration)
+        {
+            return (distance - SpeedShift(startSpeed, duration)) / Mathf.Pow(duration, 2);
+        }
         public static float SpeedShift(float speed, float elapsedTime)      //M/s s=vt
         {
             return speed * elapsedTime;
