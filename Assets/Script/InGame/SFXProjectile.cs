@@ -18,7 +18,7 @@ public class SFXProjectile : SFXBase {
     public float F_Speed;
     public int I_ImpactIndex;
     protected virtual PhysicsSimulator GetSimulator(Vector3 direction, Vector3 targetPosition) => new ProjectilePhysicsSimulator(transform.position, direction, Vector3.down, F_Speed);
-    protected virtual Quaternion GetRotation(Vector3 direction) => Quaternion.LookRotation(direction);
+    protected virtual Quaternion GetRotation(Vector3 direction) => Quaternion.Euler(direction);
     public override void Init(int sfxIndex)
     {
         base.Init(sfxIndex);
