@@ -204,7 +204,7 @@ namespace GameSetting
         Rifle_AimShot_141=141,
         Throwable_Hips_150 = 150,
         Throwable_R_Throw_151=151,
-        Heavy_HipShot=161,
+        Heavy_HipShot_161=161,
     }
     #endregion
     #region GameLayer
