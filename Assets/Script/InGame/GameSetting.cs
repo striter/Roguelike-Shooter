@@ -268,16 +268,26 @@ namespace GameSetting
             m_VerticalDirection = _verticalDirection.normalized;
             m_horizontalSpeed = _horizontalSpeed;
         }
-        public Vector3 Simulate(float deltaTime,out Vector3 prePosition)
+        public override Vector3 Simulate(float deltaTime)
         {
             m_simulateTime += deltaTime;
-            Vector3 currentPos= GetSimulatedPosition(m_startPos,m_HorizontalDirection,m_VerticalDirection,m_simulateTime,m_horizontalSpeed);
-            prePosition = m_LastPos;
+            Vector3 currentPos = GetSimulatedPosition(m_simulateTime);
             m_LastPos = currentPos;
             return currentPos;
         }
-        public static Vector3 GetSimulatedPosition(Vector3 startPos, Vector3 horizontalDirection, Vector3 verticalDirection, float elapsedTime, float horizontalSpeed)=> startPos + horizontalDirection * Expressions.SpeedShift(horizontalSpeed, elapsedTime); 
+
+        public Vector3 Simulate(float deltaTime,out Vector3 prePosition)
+        {
+            prePosition = m_LastPos;
+            m_LastPos = Simulate(deltaTime);
+            return m_LastPos;
+        }
+        public override Vector3 GetSimulatedPosition(float elapsedTime)=> m_startPos + m_HorizontalDirection * Expressions.SpeedShift(m_horizontalSpeed, elapsedTime); 
     }
+    //public class ThrowablePhysicsSimulator : PhysicsSimulator
+    //{
+            
+    //}
     #region BigmapTile
     public class SBigmapTileInfo : ITileAxis
     {

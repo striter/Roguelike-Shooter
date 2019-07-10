@@ -9,6 +9,8 @@ namespace TPhysics
         protected Vector3 m_startPos;
         protected Vector3 m_LastPos;
         public float m_simulateTime { get; protected set; }
+        public abstract Vector3 Simulate(float deltaTime);
+        public abstract Vector3 GetSimulatedPosition(float elapsedTime);
     }
     public class AccelerationSimulator:PhysicsSimulator
     {
@@ -27,34 +29,30 @@ namespace TPhysics
             m_horizontalAcceleration = horizontalAcceleration;
             b_speedBelowZero = speedBelowZero;
         }
-        public Vector3 Simulate(float timeElapsed)
+        public override Vector3 Simulate(float timeElapsed)
         {
-            Vector3 simulatedPosition = GetSimulatedPosition(m_startPos, m_HorizontalDirection, m_VerticalDirection, timeElapsed, m_horizontalSpeed, m_horizontalAcceleration, b_speedBelowZero);
+            Vector3 simulatedPosition = GetSimulatedPosition( timeElapsed);
             return simulatedPosition;
         }
         public Vector3 Simulate(float fixedTime, out Vector3 lastPosition)
         {
-            Vector3 simulatedPosition = GetSimulatedPosition(m_startPos, m_HorizontalDirection, m_VerticalDirection, m_simulateTime, m_horizontalSpeed, m_horizontalAcceleration, b_speedBelowZero);
+            Vector3 simulatedPosition = GetSimulatedPosition(m_simulateTime);
             lastPosition = m_LastPos;
             m_LastPos = simulatedPosition;
             m_simulateTime += fixedTime;
             return simulatedPosition;
         }
-        public static Vector3 GetSimulatedPosition(Vector3 startPos, Vector3 horizontalDirection, Vector3 verticalDirection, float elapsedTime, float horizontalSpeed, float horizontalAcceleration, bool canHorizontalSpeedBelowZero = true)
+        public override Vector3 GetSimulatedPosition(float elapsedTime)
         {
             Vector3 horizontalShift = Vector3.zero;
-            if (canHorizontalSpeedBelowZero)
+            if (!(m_horizontalSpeed > 0 && m_horizontalAcceleration < 0))
             {
-                horizontalShift += horizontalDirection * Expressions.AccelerationSpeedShift(horizontalSpeed, horizontalAcceleration, elapsedTime);
-            }
-            else if (!canHorizontalSpeedBelowZero && horizontalSpeed > 0 && horizontalAcceleration < 0)
-            {
-                float aboveZeroTime = horizontalSpeed / Mathf.Abs(horizontalAcceleration);
+                float aboveZeroTime = m_horizontalSpeed / Mathf.Abs(m_horizontalAcceleration);
 
-                horizontalShift += horizontalDirection * Expressions.AccelerationSpeedShift(horizontalSpeed, horizontalAcceleration, elapsedTime > aboveZeroTime ? aboveZeroTime : elapsedTime);
+                horizontalShift += m_HorizontalDirection * Expressions.AccelerationSpeedShift(m_horizontalSpeed, m_horizontalAcceleration, elapsedTime > aboveZeroTime ? aboveZeroTime : elapsedTime);
             }
 
-            Vector3 targetPos = startPos + horizontalShift ;
+            Vector3 targetPos = m_startPos + horizontalShift ;
             return targetPos;
         }
     }
