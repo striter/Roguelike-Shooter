@@ -256,7 +256,6 @@ namespace GameSetting
     }
     public class ProjectilePhysicsSimulator : PhysicsSimulator
     {
-        public Vector3 m_HorizontalDirection { get; private set; }
         public Vector3 m_VerticalDirection { get; private set; }
         float m_horizontalSpeed;
         public ProjectilePhysicsSimulator(Vector3 _startPos, Vector3 _horizontalDirection, Vector3 _verticalDirection, float _horizontalSpeed)
@@ -264,7 +263,7 @@ namespace GameSetting
             m_simulateTime = 0f;
             m_startPos = _startPos;
             m_LastPos = _startPos;
-            m_HorizontalDirection = _horizontalDirection.normalized;
+            m_Direction = _horizontalDirection.normalized;
             m_VerticalDirection = _verticalDirection.normalized;
             m_horizontalSpeed = _horizontalSpeed;
         }
@@ -276,13 +275,13 @@ namespace GameSetting
             return currentPos;
         }
 
-        public Vector3 Simulate(float deltaTime,out Vector3 prePosition)
+        public override Vector3 Simulate(float deltaTime,out Vector3 prePosition)
         {
             prePosition = m_LastPos;
             m_LastPos = Simulate(deltaTime);
             return m_LastPos;
         }
-        public override Vector3 GetSimulatedPosition(float elapsedTime)=> m_startPos + m_HorizontalDirection * Expressions.SpeedShift(m_horizontalSpeed, elapsedTime); 
+        public override Vector3 GetSimulatedPosition(float elapsedTime)=> m_startPos + m_Direction * Expressions.SpeedShift(m_horizontalSpeed, elapsedTime); 
     }
     //public class ThrowablePhysicsSimulator : PhysicsSimulator
     //{
@@ -735,7 +734,7 @@ namespace GameSetting
     class Abandoned_AimAssistSimulator : AccelerationSimulator
     {
         float m_simulateDelta;
-        public Abandoned_AimAssistSimulator(float _simulateDelta, Vector3 startPos, Vector3 horizontalDirection, Vector3 verticalDirection, float horizontalSpeed, float horizontalAcceleration,bool speedBelowZero = true) : base(startPos, horizontalDirection, verticalDirection, horizontalSpeed, horizontalAcceleration, speedBelowZero)
+        public Abandoned_AimAssistSimulator(float _simulateDelta, Vector3 startPos, Vector3 horizontalDirection, Vector3 verticalDirection, float horizontalSpeed, float horizontalAcceleration,bool speedBelowZero = true) : base(startPos, horizontalDirection, verticalDirection, horizontalSpeed, horizontalAcceleration)
         {
             m_simulateDelta = _simulateDelta;
         }

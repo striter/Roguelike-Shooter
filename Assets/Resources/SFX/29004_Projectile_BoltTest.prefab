@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 136758242179525810}
   - component: {fileID: 114253019014827722}
   m_Layer: 9
-  m_Name: 20004_Projectile_BoltTest
+  m_Name: 29004_Projectile_BoltTest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

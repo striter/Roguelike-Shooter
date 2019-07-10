@@ -39,7 +39,7 @@ GameObject:
   - component: {fileID: 136434725357752970}
   - component: {fileID: 114338212377767134}
   m_Layer: 9
-  m_Name: 20006_Projectile_MeteorTest
+  m_Name: 29006_Projectile_MeteorTest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -253,6 +253,8 @@ MonoBehaviour:
   I_ImpactIndex: 0
   I_CastIndex: 30506
   I_IndicatorIndex: 50001
+  F_SpreadRadius: 5
+  F_StartHeight: 20
 --- !u!114 &114338212377767134
 MonoBehaviour:
   m_ObjectHideFlags: 1

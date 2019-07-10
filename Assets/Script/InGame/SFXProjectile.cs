@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
+using TPhysics;
 [RequireComponent(typeof(CapsuleCollider))]
 public class SFXProjectile : SFXBase {
-    protected ProjectilePhysicsSimulator m_Simulator;
+    protected PhysicsSimulator m_Simulator;
     protected CapsuleCollider m_Collider;
     protected TrailRenderer m_Trail;
     List<int> m_TargetHitted = new List<int>();
@@ -16,6 +17,7 @@ public class SFXProjectile : SFXBase {
     public float F_Damage;
     public float F_Speed;
     public int I_ImpactIndex;
+    protected virtual PhysicsSimulator GetSimulator(Vector3 direction, Vector3 targetPosition) => new ProjectilePhysicsSimulator(transform.position, direction, Vector3.down, F_Speed);
     public override void Init(int sfxIndex)
     {
         base.Init(sfxIndex);
@@ -27,7 +29,7 @@ public class SFXProjectile : SFXBase {
     public virtual void Play(int sourceID,Vector3 direction,Vector3 targetPosition,float duration=-1)
     {
         OnPlayPreset();
-        m_Simulator = new ProjectilePhysicsSimulator(transform.position, direction, Vector3.down, F_Speed);
+        m_Simulator = GetSimulator(direction,targetPosition);
         PlaySFX(sourceID, duration==-1?GameConst.I_ProjectileMaxDistance/ F_Speed : duration);
     }
 
@@ -53,7 +55,7 @@ public class SFXProjectile : SFXBase {
             Vector3 prePosition;
             Vector3 curPosition = m_Simulator.Simulate(Time.deltaTime, out prePosition);
 
-            Vector3 castDirection = prePosition == curPosition ? m_Simulator.m_HorizontalDirection : curPosition - prePosition;
+            Vector3 castDirection = prePosition == curPosition ? m_Simulator.m_Direction : curPosition - prePosition;
             transform.rotation = Quaternion.LookRotation(castDirection);
             float distance = Vector3.Distance(prePosition, curPosition);
             distance = distance > m_Collider.height ? distance : m_Collider.height;

@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 136286490906130340}
   - component: {fileID: 114219761385189382}
   m_Layer: 9
-  m_Name: 20002_Projectile_LaserBeamTest
+  m_Name: 29002_Projectile_LaserBeamTest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

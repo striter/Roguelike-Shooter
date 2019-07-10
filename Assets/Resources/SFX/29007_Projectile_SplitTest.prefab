@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 114271186370953052}
   - component: {fileID: 136701334087488100}
   m_Layer: 9
-  m_Name: 20007_Projectile_SplitTest
+  m_Name: 29007_Projectile_SplitTest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

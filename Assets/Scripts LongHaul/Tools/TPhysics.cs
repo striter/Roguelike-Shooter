@@ -8,33 +8,34 @@ namespace TPhysics
     {
         protected Vector3 m_startPos;
         protected Vector3 m_LastPos;
+        public Vector3 m_Direction { get; protected set; }
         public float m_simulateTime { get; protected set; }
         public abstract Vector3 Simulate(float deltaTime);
         public abstract Vector3 GetSimulatedPosition(float elapsedTime);
+        public abstract Vector3 Simulate(float fixedTime, out Vector3 lastPosition) ;
     }
     public class AccelerationSimulator:PhysicsSimulator
     {
         protected Vector3 m_HorizontalDirection, m_VerticalDirection;
         float m_horizontalSpeed;
         float m_horizontalAcceleration;
-        bool b_speedBelowZero;
-        public AccelerationSimulator(Vector3 startPos, Vector3 horizontalDirection, Vector3 verticalDirection, float horizontalSpeed, float horizontalAcceleration, bool speedBelowZero = true)
+        public AccelerationSimulator(Vector3 startPos, Vector3 horizontalDirection, Vector3 verticalDirection, float horizontalSpeed, float horizontalAcceleration)
         {
             m_simulateTime = 0f;
             m_startPos = startPos;
             m_LastPos = startPos;
-            m_HorizontalDirection = horizontalDirection;
+            m_Direction = horizontalDirection;
             m_VerticalDirection = verticalDirection;
             m_horizontalSpeed = horizontalSpeed;
             m_horizontalAcceleration = horizontalAcceleration;
-            b_speedBelowZero = speedBelowZero;
         }
         public override Vector3 Simulate(float timeElapsed)
         {
             Vector3 simulatedPosition = GetSimulatedPosition( timeElapsed);
+            m_LastPos = simulatedPosition;
             return simulatedPosition;
         }
-        public Vector3 Simulate(float fixedTime, out Vector3 lastPosition)
+        public override Vector3 Simulate(float fixedTime, out Vector3 lastPosition)
         {
             Vector3 simulatedPosition = GetSimulatedPosition(m_simulateTime);
             lastPosition = m_LastPos;

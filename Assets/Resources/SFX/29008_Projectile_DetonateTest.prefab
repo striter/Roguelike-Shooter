@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 136401941533324408}
   - component: {fileID: 114491430960406568}
   m_Layer: 9
-  m_Name: 20008_Projectile_DetonateTest
+  m_Name: 29008_Projectile_DetonateTest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
