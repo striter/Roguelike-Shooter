@@ -260,10 +260,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   F_Damage: 10
-  F_Speed: 6
+  F_Speed: 5
   I_ImpactIndex: 40001
   I_SplitProjectileIndex: 20010
-  F_SplitRange: 180
+  F_SplitRange: 120
   I_SplitCount: 12
 --- !u!136 &136701334087488100
 CapsuleCollider:

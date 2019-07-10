@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 136701334087488100}
   - component: {fileID: 114271186370953052}
   m_Layer: 9
-  m_Name: 20010_Projectile_IcelandNormalSplit
+  m_Name: 20014_Projectile_Desert4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -218,8 +218,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b8d0e07754fa9b4685464e140e598ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  F_Damage: 20
-  F_Speed: 10
+  F_Damage: 40
+  F_Speed: 14
   I_ImpactIndex: 40001
 --- !u!136 &136701334087488100
 CapsuleCollider:
