@@ -53,7 +53,7 @@ public class SFXProjectile : SFXBase {
         base.Update();
         if (B_SimulatePhysics)
         {
-            Vector3 prePosition;
+            Vector3 prePosition = m_Simulator.m_LastPos;
             Vector3 curPosition = m_Simulator.Simulate(Time.deltaTime, out prePosition);
 
             Vector3 castDirection = prePosition == curPosition ? m_Simulator.m_Direction : curPosition - prePosition;

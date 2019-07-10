@@ -7,7 +7,7 @@ namespace TPhysics
     public abstract class PhysicsSimulator
     {
         protected Vector3 m_startPos;
-        protected Vector3 m_LastPos;
+        public Vector3 m_LastPos { get; protected set; }
         public Vector3 m_Direction { get; protected set; }
         public float m_simulateTime { get; protected set; }
         public abstract Vector3 Simulate(float deltaTime);

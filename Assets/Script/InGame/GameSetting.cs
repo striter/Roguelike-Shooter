@@ -279,9 +279,9 @@ namespace GameSetting
         public override Vector3 Simulate(float deltaTime,out Vector3 prePosition)
         {
             prePosition = m_LastPos;
-            m_LastPos = Simulate(deltaTime);
-            return m_LastPos;
+            return Simulate(deltaTime);
         }
+
         public override Vector3 GetSimulatedPosition(float elapsedTime)=> m_startPos + m_Direction * Expressions.SpeedShift(m_horizontalSpeed, elapsedTime); 
     }
     public class ThrowablePhysicsSimulator : PhysicsSimulator
