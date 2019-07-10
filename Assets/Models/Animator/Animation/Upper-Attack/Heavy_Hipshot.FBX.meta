@@ -296,7 +296,7 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.106406525
+      - time: 0.57902896
         functionName: OnEvent
         data: Fire
         objectReferenceParameter: {instanceID: 0}
