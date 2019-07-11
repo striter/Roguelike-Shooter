@@ -56,7 +56,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         if (Input.GetKeyDown(KeyCode.X) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
             ObjectManager.SpawnSFX<SFXCast>(30003, hit.point, Vector3.forward).Play(1000);
         if (Input.GetKeyDown(KeyCode.C) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
-            ObjectManager.SpawnSFX<SFXProjectile>(29009, hit.point + Vector3.up , Vector3.forward).Play(1000, Vector3.forward, hit.point+Vector3.forward*100);
+            ObjectManager.SpawnSFX<SFXProjectile>(20015, hit.point + Vector3.up , Vector3.forward).Play(1000, Vector3.forward, hit.point+Vector3.forward*10);
         if (Input.GetKeyDown(KeyCode.V) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
         {
             Debug.DrawLine(hit.point,hit.point+transform.forward*5,Color.red,5);

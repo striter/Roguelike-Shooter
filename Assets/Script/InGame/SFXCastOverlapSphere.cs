@@ -12,7 +12,7 @@ public class SFXCastOverlapSphere : SFXCast {
     }
     protected override Collider[] OnBlastCheck()
     {
-        return Physics.OverlapSphere(transform.position, m_Collider.radius/2, GameLayer.Physics.I_EntityOnly);
+        return Physics.OverlapSphere(transform.position, m_Collider.radius, GameLayer.Physics.I_EntityOnly);
     }
     protected override void OnDamageEntity(HitCheckEntity hitEntity)
     {

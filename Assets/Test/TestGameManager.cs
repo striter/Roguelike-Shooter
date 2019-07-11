@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Test : MonoBehaviour {
+public class TestGameManager : MonoBehaviour {
     
 	// Update is called once per frame
 	void Update () {

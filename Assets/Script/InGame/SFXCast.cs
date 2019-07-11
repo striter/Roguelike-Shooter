@@ -9,21 +9,24 @@ public class SFXCast : SFXBase,ISingleCoroutine {
     public float F_Damage;
     public int I_TickCount=1;
     public float F_Tick = .5f;
+    public bool b_casting;
     public override void Init(int _sfxIndex)
     {
         base.Init(_sfxIndex);
         m_Particles = GetComponentsInChildren<ParticleSystem>();
-        m_Particles.Traversal((ParticleSystem particle)=> {
-            particle.Stop();
-        });
+        m_Particles.Traversal((ParticleSystem particle)=> {particle.Stop();});
     }
     public virtual void Play(int sourceID)
     {
-        this.StartSingleCoroutine(0, TIEnumerators.TickCount(OnBlast, I_TickCount, F_Tick));
-        PlaySFX(sourceID, I_TickCount*F_Tick);
+        this.StartSingleCoroutine(0, TIEnumerators.TickCount(OnBlast, I_TickCount, F_Tick,()=> {
+            m_Particles.Traversal((ParticleSystem particle) => { particle.Stop(); });
+        }));
+        PlaySFX(sourceID, I_TickCount*F_Tick+5f);
+        b_casting = true;
     }
     public virtual void PlayControlled(int sourceID,bool play)
     {
+        b_casting = play;
         if (play)
         {
             this.StartSingleCoroutine(0, TIEnumerators.Tick(OnBlast, F_Tick));
@@ -31,7 +34,9 @@ public class SFXCast : SFXBase,ISingleCoroutine {
         }
         else
         {
-            OnPlayFinished();
+            this.StopSingleCoroutine(0);
+            f_TimeCheck = Time.time + 5f;
+            m_Particles.Traversal((ParticleSystem particle) => { particle.Stop(); });
         }
     }
     protected void OnDisable()
