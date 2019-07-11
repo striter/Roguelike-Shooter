@@ -1774,8 +1774,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c088e7b318d292458e08155aef1723d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Test_TileStyle: 5
-  Test_EntityStyle: 5
+  Test_TileStyle: 2
+  Test_EntityStyle: 2
   M_TESTSEED: 
 --- !u!4 &1133817278
 Transform:
@@ -1826,7 +1826,7 @@ Light:
     m_CustomResolution: -1
     m_Strength: 1
     m_Bias: 0.05
-    m_NormalBias: 0.4
+    m_NormalBias: 0
     m_NearPlane: 0.2
   m_Cookie: {fileID: 0}
   m_DrawHalo: 0
