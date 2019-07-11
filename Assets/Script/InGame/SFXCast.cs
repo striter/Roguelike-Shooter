@@ -18,11 +18,11 @@ public class SFXCast : SFXBase,ISingleCoroutine {
     }
     public virtual void Play(int sourceID)
     {
-        this.StartSingleCoroutine(0, TIEnumerators.TickCount(OnBlast, I_TickCount, F_Tick,()=> {
-            m_Particles.Traversal((ParticleSystem particle) => { particle.Stop(); });
-        }));
         PlaySFX(sourceID, I_TickCount*F_Tick+5f);
         b_casting = true;
+        this.StartSingleCoroutine(0, TIEnumerators.TickCount(OnBlast, I_TickCount, F_Tick, () => {
+            m_Particles.Traversal((ParticleSystem particle) => { particle.Stop(); });
+        }));
     }
     public virtual void PlayControlled(int sourceID,bool play)
     {
