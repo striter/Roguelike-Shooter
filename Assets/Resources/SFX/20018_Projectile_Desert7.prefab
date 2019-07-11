@@ -219,7 +219,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   F_Damage: 30
-  F_Speed: 11
+  F_Speed: 10
   I_ImpactIndex: 40001
 --- !u!136 &136701334087488100
 CapsuleCollider:
