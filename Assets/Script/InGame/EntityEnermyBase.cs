@@ -455,8 +455,9 @@ public class EntityEnermyBase : EntityBase {
             int waveCount = m_Info.m_RangeExtension.Random();
             Vector3 startDirection = GetHorizontalDirection(preAim, _target);
             Vector3 startPosition = transform.position - attacherTransform.right*m_Info.m_OffsetExtension*((waveCount-1)/2f);
+            float distance = TCommon.GetXZDistance(transform.position, _target.transform.position);
             for (int i = 0; i < waveCount; i++)
-                FireBullet(startPosition+ attacherTransform.right*m_Info.m_OffsetExtension*i, startDirection, transform.position + startDirection * 10);
+                FireBullet(startPosition+ attacherTransform.right*m_Info.m_OffsetExtension*i, startDirection, transform.position + startDirection * distance);
         }
     }
     class BarrageMultipleFan : BarrageRange
@@ -469,10 +470,11 @@ public class EntityEnermyBase : EntityBase {
             int waveCount = m_Info.m_RangeExtension.Random();
             Vector3 startDirection = GetHorizontalDirection(preAim, _target);
             float startFanAngle= -m_Info.m_OffsetExtension*(waveCount-1)/2f;
+            float distance = TCommon.GetXZDistance(transform.position, _target.transform.position);
             for (int i = 0; i < waveCount; i++)
             {
                 Vector3 fanDirection = startDirection.RotateDirection(Vector3.up, startFanAngle + i * m_Info.m_OffsetExtension);
-                FireBullet(transform.position, fanDirection,transform.position+fanDirection*10);
+                FireBullet(transform.position, fanDirection,transform.position+fanDirection* distance);
             }
         } 
     }
