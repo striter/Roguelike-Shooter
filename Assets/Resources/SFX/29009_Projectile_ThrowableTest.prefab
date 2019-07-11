@@ -289,7 +289,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   F_Damage: 10
-  F_Speed: 5
+  F_Speed: 8
   I_ImpactIndex: 0
   I_CastIndex: 30001
   F_DirectionPitchAngle: 45
