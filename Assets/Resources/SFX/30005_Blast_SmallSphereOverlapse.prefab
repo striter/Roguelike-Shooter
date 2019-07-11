@@ -124,6 +124,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e3dbf17d97ab664cb72d9213471fed7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  F_Damage: 0
+  I_TickCount: 1
+  F_Tick: 0.5
+  B_DamageDistanceReduction: 1
 --- !u!135 &135555557315418114
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -134,5 +138,5 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 6
+  m_Radius: 3
   m_Center: {x: 0, y: 0, z: 0}

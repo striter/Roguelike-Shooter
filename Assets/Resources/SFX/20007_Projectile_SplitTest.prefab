@@ -263,7 +263,7 @@ MonoBehaviour:
   F_Speed: 5
   I_ImpactIndex: 40001
   I_SplitProjectileIndex: 20010
-  F_SplitRange: 120
+  F_SplitRange: 90
   I_SplitCount: 12
 --- !u!136 &136701334087488100
 CapsuleCollider:

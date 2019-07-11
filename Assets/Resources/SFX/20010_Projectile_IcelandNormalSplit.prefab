@@ -219,7 +219,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   F_Damage: 20
-  F_Speed: 10
+  F_Speed: 8
   I_ImpactIndex: 40001
 --- !u!136 &136701334087488100
 CapsuleCollider:
@@ -294,7 +294,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1864839757
+  randomSeed: 1957010906
   InitialModule:
     serializedVersion: 3
     enabled: 1
