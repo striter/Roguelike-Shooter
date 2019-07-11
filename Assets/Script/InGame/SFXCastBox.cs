@@ -14,7 +14,7 @@ public class SFXCastBox : SFXCast {
     }
     protected override Collider[] OnBlastCheck()
     {
-        RaycastHit[] casts = Physics.BoxCastAll(transform.position,new Vector3(m_Collider.size.x/2, m_Collider.size.y/2, .01f) ,transform.forward,Quaternion.LookRotation(transform.forward,transform.up),f_castLength,GameLayer.Physics.I_EntityOnly);
+        RaycastHit[] casts = Physics.BoxCastAll(transform.position+transform.forward*0.5f,new Vector3(m_Collider.size.x/2, m_Collider.size.y/2, 1f) ,transform.forward,Quaternion.LookRotation(transform.forward,transform.up),f_castLength-1.5f,GameLayer.Physics.I_EntityOnly);
         Collider[] hits = new Collider[casts.Length];
         for (int i = 0; i < casts.Length; i++)
             hits[i] = casts[i].collider;
@@ -23,7 +23,7 @@ public class SFXCastBox : SFXCast {
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        Debug.DrawRay(transform.position,Vector3.forward*3,Color.red);
+        Debug.DrawRay(transform.position, transform.forward*3,Color.red);
     }
 #endif
 }
