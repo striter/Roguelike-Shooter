@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 114491430960406568}
   - component: {fileID: 114849450265349912}
   m_Layer: 9
-  m_Name: 20015_Projectile_ThrowableTest 1
+  m_Name: 20015_Projectile_Desert4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
