@@ -255,66 +255,65 @@ namespace GameSetting
             return null;
         }
     }
-    public class ProjectilePhysicsSimulator : PhysicsSimulator
+    public class ProjectilePhysicsSimulator : PhysicsSimulatorCapsule
     {
-        public Vector3 m_VerticalDirection { get; private set; }
+        protected Vector3 m_VerticalDirection;
         float m_horizontalSpeed;
-        public ProjectilePhysicsSimulator(Vector3 _startPos, Vector3 _horizontalDirection, Vector3 _verticalDirection, float _horizontalSpeed)
+        public ProjectilePhysicsSimulator(Vector3 _startPos, Vector3 _horizontalDirection, Vector3 _verticalDirection, float _horizontalSpeed, CapsuleCollider _collider, int _hitLayer, Action<RaycastHit[]> _onTargetHit):base(_startPos,_horizontalDirection,_collider,_hitLayer,_onTargetHit)
         {
-            m_simulateTime = 0f;
-            m_startPos = _startPos;
-            m_LastPos = _startPos;
-            m_Direction = _horizontalDirection.normalized;
             m_VerticalDirection = _verticalDirection.normalized;
             m_horizontalSpeed = _horizontalSpeed;
         }
-        public override Vector3 Simulate(float deltaTime)
-        {
-            m_simulateTime += deltaTime;
-            Vector3 currentPos = GetSimulatedPosition(m_simulateTime);
-            m_LastPos = currentPos;
-            return currentPos;
-        }
-
-        public override Vector3 Simulate(float deltaTime,out Vector3 prePosition)
-        {
-            prePosition = m_LastPos;
-            return Simulate(deltaTime);
-        }
-
         public override Vector3 GetSimulatedPosition(float elapsedTime)=> m_startPos + m_Direction * Expressions.SpeedShift(m_horizontalSpeed, elapsedTime); 
     }
-    public class ThrowablePhysicsSimulator : PhysicsSimulator
+    public class ThrowablePhysicsSimulator : PhysicsSimulatorCapsule
     {
         float f_speed;
         float f_vertiAcceleration;
-        public ThrowablePhysicsSimulator(Vector3 _startPos, Vector3 _horiDirection, Vector3 _right, Vector3 _endPos, float angle, float _horiSpeed)
+        int m_bounceLayer;
+        protected Vector3 v3_RotateEuler;
+        protected Vector3 v3_RotateDirection;
+        public ThrowablePhysicsSimulator(Vector3 _startPos, Vector3 _horiDirection, Vector3 _right, Vector3 _endPos, float _angle, float _horiSpeed, CapsuleCollider _collider, int _hitLayer,int _bounceLayer, Action<RaycastHit[]> _onTargetHit):base(_startPos,_horiDirection.RotateDirection(_right,-_angle),_collider,_hitLayer,_onTargetHit)
         {
-            m_simulateTime = 0f;
-            m_startPos = _startPos;
-            m_LastPos = _startPos;
-            m_Direction = _horiDirection.RotateDirection(_right, -angle);
-            f_speed =  _horiSpeed/Mathf.Cos(angle*Mathf.Deg2Rad);
-
+            f_speed =  _horiSpeed/Mathf.Cos(_angle*Mathf.Deg2Rad);
             float horiDistance = Vector3.Distance(_startPos, _endPos);
             float duration = horiDistance / _horiSpeed;
-            float vertiDistance = Mathf.Tan(angle * Mathf.Deg2Rad) * horiDistance;
+            float vertiDistance = Mathf.Tan(_angle * Mathf.Deg2Rad) * horiDistance;
             f_vertiAcceleration = Expressions.GetAcceleration(0, vertiDistance, duration);
+            m_bounceLayer = _bounceLayer;
+            v3_RotateEuler = Quaternion.LookRotation(_horiDirection).eulerAngles;
+            v3_RotateDirection = new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f));
+        }
+        public override void Simulate(float deltaTime)
+        {
+            base.Simulate(deltaTime);
+            v3_RotateEuler += v3_RotateDirection * deltaTime * 100f;
+            m_Rotation = Quaternion.LookRotation(v3_RotateEuler);
+        }
+        public override void OnTargetHitted(RaycastHit[] hitTargets)
+        {
+            if (hitTargets.Length > 0)
+            {
+                for (int i = 0; i < hitTargets.Length; i++)
+                {
+                    if (hitTargets[i].collider.gameObject.layer == m_bounceLayer)
+                    {
+                        if (TCommon.GetAngle(hitTargets[i].normal, Vector3.up, Vector3.right) < 30)
+                            break;
+
+                        m_startPos = m_Position;
+                        m_Direction = hitTargets[i].normal;
+                        m_simulateTime = 0;
+                        return;
+                    }
+                }
+            }
+
+            base.OnTargetHitted(hitTargets);
         }
 
-        public override Vector3 GetSimulatedPosition(float elapsedTime) => m_startPos + m_Direction * f_speed * elapsedTime +Vector3.down*f_vertiAcceleration*elapsedTime*elapsedTime;
-
-        public override Vector3 Simulate(float deltaTime)
-        {
-            m_simulateTime += deltaTime;
-            m_LastPos = GetSimulatedPosition(m_simulateTime);
-            return m_LastPos;
-        }
-
-        public override Vector3 Simulate(float deltaTime, out Vector3 lastPosition)
-        {
-            lastPosition = m_LastPos;
-            return Simulate(deltaTime);
+        public override Vector3 GetSimulatedPosition(float elapsedTime) {
+            return m_startPos + m_Direction * f_speed * elapsedTime + Vector3.down * f_vertiAcceleration * elapsedTime * elapsedTime;
         }
     }
     #region BigmapTile
@@ -709,80 +708,6 @@ namespace GameSetting
                 }
             }
             return I_Level - offset;
-        }
-    }
-    #endregion
-    #region Abandoned
-    class Abandoned_WeaponAimAssistAccelerationCurve
-    {
-        Transform transform;
-        Transform tf_Dot;
-        LineRenderer m_lineRenderer;
-        Abandoned_AimAssistSimulator m_Simulator;
-        int m_CurveCount;
-        List<Vector3> m_CurvePoints = new List<Vector3>();
-        public Abandoned_WeaponAimAssistAccelerationCurve(Transform muzzle, int _curveCount, float duration, SFXProjectile projectile)
-        {
-            transform = muzzle;
-            tf_Dot = transform.Find("Dot");
-            m_lineRenderer = muzzle.GetComponent<LineRenderer>();
-            m_lineRenderer.positionCount = _curveCount;
-            m_CurveCount = _curveCount;
-            m_Simulator = new Abandoned_AimAssistSimulator(duration / _curveCount, muzzle.position, muzzle.forward, Vector3.down, projectile.F_Speed,projectile.F_Speed,  false);
-            ;
-        }
-        public void Simulate(bool activate)
-        {
-            m_lineRenderer.enabled = activate;
-            tf_Dot.SetActivate(activate);
-            if (!activate)
-                return;
-            m_Simulator.ResetSimulator(transform.position, transform.forward);
-            m_CurvePoints.Clear();
-            m_CurvePoints.Add(transform.position);
-            tf_Dot.SetActivate(false);
-            for (int i = 0; i < m_CurveCount; i++)
-            {
-                Vector3 lookDirection; float offset;
-                Vector3 currentPosition = m_Simulator.Next(out lookDirection, out offset);
-                RaycastHit hit;
-                if (Physics.Raycast(currentPosition, lookDirection, out hit, offset, GameLayer.Physics.I_StaticEntity) &&
-                    (hit.collider.gameObject.layer != GameLayer.I_Entity || !hit.collider.GetComponent<HitCheckEntity>().m_Attacher.B_IsPlayer))
-                {
-                    m_CurvePoints.Add(hit.point);
-                    tf_Dot.SetActivate(true);
-                    tf_Dot.position = hit.point;
-                    break;
-                }
-                m_CurvePoints.Add(currentPosition);
-            }
-            m_lineRenderer.positionCount = m_CurvePoints.Count;
-            m_lineRenderer.SetPositions(m_CurvePoints.ToArray());
-        }
-    }
-
-    class Abandoned_AimAssistSimulator : AccelerationSimulator
-    {
-        float m_simulateDelta;
-        public Abandoned_AimAssistSimulator(float _simulateDelta, Vector3 startPos, Vector3 horizontalDirection, Vector3 verticalDirection, float horizontalSpeed, float horizontalAcceleration,bool speedBelowZero = true) : base(startPos, horizontalDirection, verticalDirection, horizontalSpeed, horizontalAcceleration )
-        {
-            m_simulateDelta = _simulateDelta;
-        }
-        public void ResetSimulator(Vector3 startPos, Vector3 horizontalDirection)
-        {
-            m_startPos = startPos;
-            m_LastPos = startPos;
-            m_HorizontalDirection = horizontalDirection;
-            m_simulateTime = 0f;
-        }
-        public Vector3 Next(out Vector3 directionNext, out float offsetNext)
-        {
-            Vector3 curPos = Simulate(m_simulateTime);
-            Vector3 nextPos = Simulate(m_simulateTime + m_simulateDelta);
-            directionNext = nextPos - curPos;
-            offsetNext = Vector3.Distance(curPos, nextPos);
-            m_simulateTime += m_simulateDelta;
-            return curPos;
         }
     }
     #endregion

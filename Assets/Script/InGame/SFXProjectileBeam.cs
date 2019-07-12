@@ -7,19 +7,15 @@ public class SFXProjectileBeam : SFXProjectile {
     protected override bool B_RecycleOnHit => false;
     protected override bool B_DisablePhysicsOnHit => false;
     public int I_BeamLength = 10;
-
-    public override void Play(int sourceID, Vector3 direction, Vector3 targetPosition, float duration)
-    {
-        base.Play(sourceID, direction, targetPosition, I_BeamLength/F_Speed);
-    }
+    protected override float F_Duration(Vector3 startPos, Vector3 endPos) => I_BeamLength / F_Speed;
 
     protected override void OnHitTarget(RaycastHit hit, HitCheckBase hitCheck)
     {
         base.OnHitTarget(hit, hitCheck);
         switch(hitCheck.m_HitCheckType)
         {
-            case GameSetting.enum_HitCheck.Static:
-            case GameSetting.enum_HitCheck.Dynamic:
+            case enum_HitCheck.Static:
+            case enum_HitCheck.Dynamic:
                 OnPlayFinished();
                 break;
         }

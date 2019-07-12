@@ -1774,9 +1774,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c088e7b318d292458e08155aef1723d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Test_TileStyle: 2
-  Test_EntityStyle: 2
+  Test_TileStyle: 3
+  Test_EntityStyle: 3
   M_TESTSEED: 
+  Z_TestEntityIndex: 221
+  X_TestCastIndex: 30003
+  C_TestProjectileIndex: 29009
+  V_TestIndicatorIndex: 50002
 --- !u!4 &1133817278
 Transform:
   m_ObjectHideFlags: 0

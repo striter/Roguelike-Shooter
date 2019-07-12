@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,41 +8,59 @@ namespace TPhysics
     public abstract class PhysicsSimulator
     {
         protected Vector3 m_startPos;
-        public Vector3 m_LastPos { get; protected set; }
-        public Vector3 m_Direction { get; protected set; }
+        public Vector3 m_Position { get; protected set; }
+        public Quaternion m_Rotation { get; protected set; }
+        protected Vector3 m_Direction;
         public float m_simulateTime { get; protected set; }
-        public abstract Vector3 Simulate(float deltaTime);
+        public abstract void Simulate(float deltaTime);
         public abstract Vector3 GetSimulatedPosition(float elapsedTime);
-        public abstract Vector3 Simulate(float fixedTime, out Vector3 lastPosition) ;
     }
-    public class AccelerationSimulator:PhysicsSimulator
+    public class PhysicsSimulatorCapsule : PhysicsSimulator
     {
-        protected Vector3 m_HorizontalDirection, m_VerticalDirection;
-        float m_horizontalSpeed;
-        float m_horizontalAcceleration;
-        public AccelerationSimulator(Vector3 startPos, Vector3 horizontalDirection, Vector3 verticalDirection, float horizontalSpeed, float horizontalAcceleration)
+        protected float m_castHeight, m_castRadius;
+        protected int m_hitLayer;
+        protected Action<RaycastHit[]> OnTargetHit;
+        public PhysicsSimulatorCapsule(Vector3 _startPos,Vector3 _direction,  CapsuleCollider _collider, int _hitLayer, Action<RaycastHit[]> _onTargetHit)
         {
             m_simulateTime = 0f;
-            m_startPos = startPos;
-            m_LastPos = startPos;
-            m_Direction = horizontalDirection;
-            m_VerticalDirection = verticalDirection;
-            m_horizontalSpeed = horizontalSpeed;
-            m_horizontalAcceleration = horizontalAcceleration;
+            m_startPos = _startPos;
+            m_Position = _startPos;
+            m_Direction = _direction;
+            m_castHeight = _collider.height;
+            m_castRadius = _collider.radius;
+            m_hitLayer = _hitLayer;
+            OnTargetHit = _onTargetHit;
         }
-        public override Vector3 Simulate(float timeElapsed)
+        public override void Simulate(float deltaTime)
         {
-            Vector3 simulatedPosition = GetSimulatedPosition( timeElapsed);
-            m_LastPos = simulatedPosition;
-            return simulatedPosition;
-        }
-        public override Vector3 Simulate(float fixedTime, out Vector3 lastPosition)
-        {
+            m_simulateTime += deltaTime;
             Vector3 simulatedPosition = GetSimulatedPosition(m_simulateTime);
-            lastPosition = m_LastPos;
-            m_LastPos = simulatedPosition;
-            m_simulateTime += fixedTime;
-            return simulatedPosition;
+            m_Rotation = Quaternion.LookRotation (simulatedPosition - m_Position);
+            float distance = Vector3.Distance(m_Position, simulatedPosition);
+            distance = distance > m_castHeight ? distance : m_castHeight;
+            OnTargetHitted(Physics.SphereCastAll(new Ray(m_Position, m_Direction), m_castRadius, distance, m_hitLayer));
+            m_Position = simulatedPosition;
+        }
+        public override Vector3 GetSimulatedPosition(float elapsedTime)
+        {
+            Debug.Log("Override This Please");
+            return Vector3.zero;
+        }
+        public virtual void OnTargetHitted(RaycastHit[] hitTargets)
+        {
+            if (hitTargets.Length > 0) OnTargetHit(hitTargets);
+        }
+    }
+    public class AccelerationSimulator: PhysicsSimulatorCapsule
+    {
+        protected Vector3 m_HorizontalDirection, m_VerticalDirection;
+        protected float m_horizontalSpeed, m_horizontalAcceleration;
+        public AccelerationSimulator(Vector3 _startPos, Vector3 _horizontalDirection, Vector3 _verticalDirection, float _horizontalSpeed, float _horizontalAcceleration, CapsuleCollider _collider, int _hitLayer, Action<RaycastHit[]> _onTargetHit) : base(_startPos, _horizontalDirection, _collider,_hitLayer,_onTargetHit)
+        {
+            m_HorizontalDirection = _horizontalDirection;
+            m_VerticalDirection = _verticalDirection;
+            m_horizontalSpeed = _horizontalSpeed;
+            m_horizontalAcceleration = _horizontalAcceleration;
         }
         public override Vector3 GetSimulatedPosition(float elapsedTime)
         {

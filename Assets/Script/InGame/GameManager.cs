@@ -35,6 +35,10 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnRecycleEntity, OnRecycleEntity);
         TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnRecycleEntity, OnWaveEntityDead);
     }
+    public int Z_TestEntityIndex = 221;
+    public int X_TestCastIndex = 30003;
+    public int C_TestProjectileIndex = 29001;
+    public int V_TestIndicatorIndex = 50002;
     void Update()
     {
         if (!B_EditorTestMode)
@@ -52,13 +56,13 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
 
         RaycastHit hit = new RaycastHit();
         if (Input.GetKeyDown(KeyCode.Z) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
-            ObjectManager.SpawnEntity(222, hit.point).SetTarget(m_LocalPlayer);
+            ObjectManager.SpawnEntity(Z_TestEntityIndex, hit.point).SetTarget(m_LocalPlayer);
         if (Input.GetKeyDown(KeyCode.X) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
-            ObjectManager.SpawnSFX<SFXCast>(30003, hit.point, Vector3.forward).Play(1000);
+            ObjectManager.SpawnSFX<SFXCast>(X_TestCastIndex, hit.point, Vector3.forward).Play(1000);
         if (Input.GetKeyDown(KeyCode.C) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
-            ObjectManager.SpawnSFX<SFXProjectile>(20015, hit.point + Vector3.up , Vector3.forward).Play(1000, Vector3.forward, hit.point+Vector3.forward*10);
+            ObjectManager.SpawnSFX<SFXProjectile>(C_TestProjectileIndex, hit.point + Vector3.up , Vector3.forward).Play(1000, Vector3.forward, hit.point+Vector3.forward*10);
         if (Input.GetKeyDown(KeyCode.V) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
-            ObjectManager.SpawnSFX<SFXIndicator>(50002, hit.point + Vector3.up, Vector3.forward).PlayDuration(1000,hit.point+Vector3.up*.2f,Vector3.up,5);
+            ObjectManager.SpawnSFX<SFXIndicator>(V_TestIndicatorIndex, hit.point + Vector3.up, Vector3.up).Play(1000);
 
 
         UIManager.instance.transform.Find("SeedTest").GetComponent<UnityEngine.UI.Text>().text = m_SeedString;

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using GameSetting;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,10 +8,7 @@ public class SFXProjectileSplit : SFXProjectile {
     [Range(0,360)]
     public float F_SplitRange;
     public int I_SplitCount;
-    public override void Play(int sourceID, Vector3 direction, Vector3 targetPosition, float duration = -1)
-    {
-        base.Play(sourceID, direction, targetPosition, Vector3.Distance(transform.position,targetPosition)/F_Speed);
-    }
+    protected override float F_Duration(Vector3 startPos, Vector3 endPos) => Vector3.Distance(transform.position, endPos) / F_Speed;
     protected override void OnPlayPreset()
     {
         base.OnPlayPreset();
@@ -22,7 +20,8 @@ public class SFXProjectileSplit : SFXProjectile {
     protected override void OnPlayFinished()
     {
         base.OnPlayFinished();
-        OnSplit();
+        if(Physics.OverlapSphere(transform.position,.5f,GameLayer.Physics.I_Static).Length==0)
+            OnSplit();
     }
     void OnSplit()
     {

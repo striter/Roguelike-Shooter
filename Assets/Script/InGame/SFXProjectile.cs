@@ -10,6 +10,7 @@ public class SFXProjectile : SFXBase {
     protected TrailRenderer m_Trail;
     List<int> m_TargetHitted = new List<int>();
     public bool B_SimulatePhysics { get; protected set; }
+    protected virtual float F_Duration(Vector3 startPos, Vector3 endPos) => GameConst.I_ProjectileMaxDistance / F_Speed;
     protected virtual bool B_RecycleOnHit => true;
     protected virtual bool B_DisablePhysicsOnHit => true;
     protected virtual bool B_HitMultiple => true;
@@ -17,8 +18,7 @@ public class SFXProjectile : SFXBase {
     public float F_Damage;
     public float F_Speed;
     public int I_ImpactIndex;
-    protected virtual PhysicsSimulator GetSimulator(Vector3 direction, Vector3 targetPosition) => new ProjectilePhysicsSimulator(transform.position, direction, Vector3.down, F_Speed);
-    protected virtual Quaternion GetRotation(Vector3 direction) => Quaternion.LookRotation(direction);
+    protected virtual PhysicsSimulator GetSimulator(Vector3 direction, Vector3 targetPosition) => new ProjectilePhysicsSimulator(transform.position, direction, Vector3.down, F_Speed,m_Collider,GameLayer.Physics.I_All,OnPhysicsCasted);
     public override void Init(int sfxIndex)
     {
         base.Init(sfxIndex);
@@ -27,11 +27,11 @@ public class SFXProjectile : SFXBase {
         m_Collider.enabled = false;
     }
 
-    public virtual void Play(int sourceID,Vector3 direction,Vector3 targetPosition,float duration=-1)
+    public virtual void Play(int sourceID,Vector3 direction,Vector3 targetPosition)
     {
         OnPlayPreset();
         m_Simulator = GetSimulator(direction,targetPosition);
-        PlaySFX(sourceID, duration==-1?GameConst.I_ProjectileMaxDistance/ F_Speed : duration);
+        PlaySFX(sourceID, F_Duration(transform.position,targetPosition));
     }
 
     protected virtual void OnPlayPreset()
@@ -53,30 +53,27 @@ public class SFXProjectile : SFXBase {
         base.Update();
         if (B_SimulatePhysics)
         {
-            Vector3 prePosition = m_Simulator.m_LastPos;
-            Vector3 curPosition = m_Simulator.Simulate(Time.deltaTime, out prePosition);
-
-            Vector3 castDirection = prePosition == curPosition ? m_Simulator.m_Direction : curPosition - prePosition;
-            transform.rotation = GetRotation(castDirection);
-            float distance = Vector3.Distance(prePosition, curPosition);
-            distance = distance > m_Collider.height ? distance : m_Collider.height;
-            transform.position = curPosition;
-            RaycastHit[] hitTargets = Physics.SphereCastAll(new Ray(prePosition, castDirection), m_Collider.radius, distance, GameLayer.Physics.I_All);
-            for (int i = 0; i < hitTargets.Length; i++)
+            m_Simulator.Simulate(Time.deltaTime);
+            transform.position = m_Simulator.m_Position;
+            transform.rotation = m_Simulator.m_Rotation;
+        }
+    }
+    protected void OnPhysicsCasted(RaycastHit[] hitTargets)
+    {
+        for (int i = 0; i < hitTargets.Length; i++)
+        {
+            HitCheckBase hitCheck = hitTargets[i].collider.Detect();
+            if (CanHitTarget(hitCheck))
             {
-                HitCheckBase hitCheck = hitTargets[i].collider.Detect();
-                if (CanHitTarget(hitCheck))
-                {
-                    OnHitTarget(hitTargets[i], hitCheck);
-                    SpawnImpact(hitTargets[i], hitCheck);
-                    OnDamageEntity(hitCheck as HitCheckEntity);
-                    if (B_DisablePhysicsOnHit)
-                        B_SimulatePhysics = false;
-                    if (B_RecycleOnHit)
-                        OnPlayFinished();
-                    if (!B_HitMultiple)
-                        break;
-                }
+                OnHitTarget(hitTargets[i], hitCheck);
+                SpawnImpact(hitTargets[i], hitCheck);
+                OnDamageEntity(hitCheck as HitCheckEntity);
+                if (B_DisablePhysicsOnHit)
+                    B_SimulatePhysics = false;
+                if (B_RecycleOnHit)
+                    OnPlayFinished();
+                if (!B_HitMultiple)
+                    break;
             }
         }
     }

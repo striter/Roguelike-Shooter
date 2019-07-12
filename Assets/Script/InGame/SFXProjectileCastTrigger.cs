@@ -3,10 +3,7 @@ using UnityEngine;
 public class SFXProjectileCastTrigger : SFXProjectile {
     public int I_CastIndex;
     protected override bool B_DealDamage => false;
-    public override void Play(int sourceID, Vector3 direction, Vector3 targetPosition, float duration)
-    {
-        base.Play(sourceID, direction, targetPosition, Vector3.Distance(transform.position, targetPosition) / F_Speed);
-    }
+    protected override float F_Duration(Vector3 startPos, Vector3 endPos) => Vector3.Distance(startPos, endPos) / F_Speed;
 
     protected override void OnPlayPreset()
     {
