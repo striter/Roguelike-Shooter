@@ -298,7 +298,7 @@ namespace GameSetting
                 {
                     if (hitTargets[i].collider.gameObject.layer == m_bounceLayer)
                     {
-                        if (TCommon.GetAngle(hitTargets[i].normal, Vector3.up, Vector3.right) < 30)
+                        if(TCommon.GetAngle(hitTargets[i].normal,Vector3.up,Vector3.right)<30)
                             break;
 
                         m_startPos = m_Position;
