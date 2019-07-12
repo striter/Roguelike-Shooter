@@ -8,7 +8,7 @@
 
 	SubShader
 	{ 
-		Tags {"RenderType" = "BloomCommon" "IgnoreProjector" = "True" "Queue" = "Transparent" }
+		Tags {"RenderType" = "BloomUnlit" "IgnoreProjector" = "True" "Queue" = "Transparent" }
 	Cull Off Lighting Off ZWrite Off Fog { Color(0,0,0,0) }
 
 		Cull Back
