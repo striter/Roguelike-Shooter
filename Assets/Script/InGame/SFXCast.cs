@@ -25,11 +25,12 @@ public class SFXCast : SFXBase,ISingleCoroutine {
             m_Particles.Traversal((ParticleSystem particle) => { particle.Stop(); });
         }));
     }
-    public virtual void PlayControlled(int sourceID,bool play)
+    public virtual void PlayControlled(int sourceID, Transform attachTo, bool play)
     {
         b_casting = play;
         if (play)
         {
+            transform.SetParent(attachTo);
             this.StartSingleCoroutine(0, TIEnumerators.Tick(OnBlast, F_Tick));
             PlaySFX(sourceID, int.MaxValue);
         }

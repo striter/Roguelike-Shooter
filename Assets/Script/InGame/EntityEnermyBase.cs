@@ -407,16 +407,16 @@ public class EntityEnermyBase : EntityBase {
         public override void Play(bool preAim, EntityBase _target)
         {
             if (m_Cast)
-                m_Cast.PlayControlled(m_EntityControlling.I_EntityID,false);
+                m_Cast.PlayControlled(m_EntityControlling.I_EntityID, transform,false);
 
-            m_Cast = ObjectManager.SpawnSFX<SFXCast>(m_Info.m_ProjectileSFX, transform.position, transform.forward, transform);
-            m_Cast.PlayControlled(m_EntityControlling.I_EntityID, true);
+            m_Cast = ObjectManager.SpawnSFX<SFXCast>(m_Info.m_ProjectileSFX, transform.position, transform.forward);
+            m_Cast.PlayControlled(m_EntityControlling.I_EntityID, transform, true);
         }
 
         public override void OnPlayAnim(bool play)
         {
             if ( m_Cast)
-                m_Cast.PlayControlled(m_EntityControlling.I_EntityID, play);
+                m_Cast.PlayControlled(m_EntityControlling.I_EntityID, transform,play);
         }
     }
     class BarrageRange : EnermyWeaponBase
