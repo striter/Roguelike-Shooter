@@ -489,48 +489,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 275332536}
---- !u!1001 &293163058
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4847867912695626, guid: e485df006cf87f84cab871c5b3e79cf5, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4847867912695626, guid: e485df006cf87f84cab871c5b3e79cf5, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4847867912695626, guid: e485df006cf87f84cab871c5b3e79cf5, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4847867912695626, guid: e485df006cf87f84cab871c5b3e79cf5, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4847867912695626, guid: e485df006cf87f84cab871c5b3e79cf5, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4847867912695626, guid: e485df006cf87f84cab871c5b3e79cf5, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4847867912695626, guid: e485df006cf87f84cab871c5b3e79cf5, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4847867912695626, guid: e485df006cf87f84cab871c5b3e79cf5, type: 2}
-      propertyPath: m_RootOrder
-      value: 5
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: e485df006cf87f84cab871c5b3e79cf5, type: 2}
-  m_IsPrefabParent: 0
 --- !u!1 &387648758
 GameObject:
   m_ObjectHideFlags: 0
@@ -1821,7 +1779,7 @@ MonoBehaviour:
   M_TESTSEED: 
   Z_TestEntityIndex: 221
   X_TestCastIndex: 30002
-  C_TestProjectileIndex: 29009
+  C_TestProjectileIndex: 29008
   V_TestIndicatorIndex: 50002
 --- !u!4 &1133817278
 Transform:
