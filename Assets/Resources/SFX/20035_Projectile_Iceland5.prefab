@@ -11,23 +11,6 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 1165261032841046}
   m_IsPrefabParent: 1
---- !u!1 &1091173488736010
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 4565212680962402}
-  - component: {fileID: 33074682480872892}
-  - component: {fileID: 23217159280738968}
-  m_Layer: 0
-  m_Name: Model
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &1165261032841046
 GameObject:
   m_ObjectHideFlags: 0
@@ -36,11 +19,28 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4675475368102452}
+  - component: {fileID: 114655350290850800}
   - component: {fileID: 136401941533324408}
   - component: {fileID: 114491430960406568}
-  - component: {fileID: 114849450265349912}
   m_Layer: 9
-  m_Name: 20015_Projectile_ThrowableTest 1
+  m_Name: 20035_Projectile_Iceland5
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1366213022653080
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4878139894693998}
+  - component: {fileID: 33058841491056400}
+  - component: {fileID: 23300661402704830}
+  m_Layer: 0
+  m_Name: SF_Character_kejibudui4_zhadan1 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -62,35 +62,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &1811731653440342
-GameObject:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 4957205504355638}
-  m_Layer: 0
-  m_Name: Barrel
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &4565212680962402
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1091173488736010}
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: -0, z: 0.371}
-  m_LocalScale: {x: 0.0070000165, y: 0.007000002, z: 0.0070000156}
-  m_Children:
-  - {fileID: 4957205504355638}
-  m_Father: {fileID: 4675475368102452}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!4 &4675475368102452
 Transform:
   m_ObjectHideFlags: 1
@@ -101,7 +72,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 4565212680962402}
+  - {fileID: 4878139894693998}
   - {fileID: 4733089974683640}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -113,31 +84,31 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1406003313940952}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.205, y: 0, z: 0.694}
+  m_LocalPosition: {x: 0, y: 0, z: 0.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4675475368102452}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4957205504355638
+--- !u!4 &4878139894693998
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1811731653440342}
+  m_GameObject: {fileID: 1366213022653080}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.252}
+  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_Children: []
-  m_Father: {fileID: 4565212680962402}
+  m_Father: {fileID: 4675475368102452}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &23217159280738968
+--- !u!23 &23300661402704830
 MeshRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1091173488736010}
+  m_GameObject: {fileID: 1366213022653080}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -146,7 +117,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 493d454d3a7ff6a45919ebbd1f369e1c, type: 2}
+  - {fileID: 2100000, guid: 82a3a7b0045e9c84b8e9417abe8d6ffe, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -166,13 +137,13 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!33 &33074682480872892
+--- !u!33 &33058841491056400
 MeshFilter:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1091173488736010}
-  m_Mesh: {fileID: 4300002, guid: e31c4b20ce655e1499b5db8123168f27, type: 3}
+  m_GameObject: {fileID: 1366213022653080}
+  m_Mesh: {fileID: 4300004, guid: e1dff840feaf73e4785a102bbcc5ac8f, type: 3}
 --- !u!96 &96207844558955790
 TrailRenderer:
   serializedVersion: 2
@@ -208,10 +179,10 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 1
+  m_Time: 0.3
   m_Parameters:
     serializedVersion: 2
-    widthMultiplier: 0.05
+    widthMultiplier: 1
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -277,7 +248,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62d09be21441f524d850aaf663ec49a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114849450265349912
+--- !u!114 &114655350290850800
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -285,14 +256,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1165261032841046}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5d83f0e5c561fe4fa5e265313ef8721, type: 3}
+  m_Script: {fileID: 11500000, guid: fdff42fe7265fd247ba038242ad54685, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  F_Damage: 10
-  F_Speed: 8
-  I_ImpactIndex: 0
-  I_CastIndex: 30505
-  F_DirectionPitchAngle: 45
+  F_Damage: 80
+  F_Speed: 100
+  I_ImpactIndex: 40001
+  I_CastIndex: 30002
+  I_IndicatorIndex: 50001
+  F_DetonateDuration: 2.5
 --- !u!136 &136401941533324408
 CapsuleCollider:
   m_ObjectHideFlags: 1
@@ -303,6 +275,6 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.5
-  m_Height: 1
+  m_Height: 0.2
   m_Direction: 2
   m_Center: {x: 0, y: 0, z: 0.5}
