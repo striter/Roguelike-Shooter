@@ -10,6 +10,7 @@ public class SFXCast : SFXBase,ISingleCoroutine {
     public int I_TickCount=1;
     public float F_Tick = .5f;
     public bool b_casting;
+    protected virtual float F_ParticleDuration => 5f;
     public override void Init(int _sfxIndex)
     {
         base.Init(_sfxIndex);
@@ -35,7 +36,7 @@ public class SFXCast : SFXBase,ISingleCoroutine {
         else
         {
             this.StopSingleCoroutine(0);
-            f_TimeCheck = Time.time + 5f;
+            f_TimeCheck = Time.time + F_ParticleDuration;
             m_Particles.Traversal((ParticleSystem particle) => { particle.Stop(); });
         }
     }

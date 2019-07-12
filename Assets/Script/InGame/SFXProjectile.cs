@@ -13,7 +13,7 @@ public class SFXProjectile : SFXBase {
     protected virtual float F_Duration(Vector3 startPos, Vector3 endPos) => GameConst.I_ProjectileMaxDistance / F_Speed;
     protected virtual bool B_RecycleOnHit => true;
     protected virtual bool B_DisablePhysicsOnHit => true;
-    protected virtual bool B_HitMultiple => true;
+    protected virtual bool B_HitMultiple => false;
     protected virtual bool B_DealDamage => true;
     public float F_Damage;
     public float F_Speed;

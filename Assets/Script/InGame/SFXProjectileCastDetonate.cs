@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class SFXProjectileCastDetonate : SFXProjectileCastTrigger {
     protected override bool B_RecycleOnHit => false;
+    protected override bool B_DisablePhysicsOnHit => true;
     public int I_IndicatorIndex;
     public float F_DetonateDuration = 5f;
     protected override PhysicsSimulator GetSimulator(Vector3 direction, Vector3 targetPosition)=>new ProjectilePhysicsSimulator(transform.position, Vector3.down, Vector3.down, F_Speed,m_Collider,GameLayer.Physics.I_All,OnPhysicsCasted);

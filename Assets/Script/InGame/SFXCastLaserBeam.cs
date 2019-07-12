@@ -5,6 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(LineRenderer),typeof(BoxCollider))]
 public class SFXCastLaserBeam : SFXCastBox {
     LineRenderer m_Beam;
+    protected override float F_ParticleDuration => 0f;
     public override void Init(int _sfxIndex)
     {
         base.Init(_sfxIndex);

@@ -129,7 +129,7 @@ public class EntityEnermyBase : EntityBase {
         protected Transform targetHeadTransform => m_Target.tf_Head;
         protected NavMeshAgent m_Agent;
         protected NavMeshObstacle m_Obstacle;
-        protected Action<EntityBase,bool> OnAttack;
+        protected Action<EntityBase,bool> OnAttackAnim;
         protected Func<EntityBase, bool> OnCheckTarget;
         protected SEntity m_EntityInfo;
         protected EnermyWeaponBase m_Weapon;
@@ -170,7 +170,7 @@ public class EntityEnermyBase : EntityBase {
             m_Obstacle = m_EntityControlling.GetComponent<NavMeshObstacle>();
             m_Agent = m_EntityControlling.GetComponent<NavMeshAgent>();
             m_Agent.speed = _entityInfo.m_moveSpeed;
-            OnAttack = _onAttack;
+            OnAttackAnim = _onAttack;
             OnCheckTarget = _onCheck;
             B_AgentEnabled = false;
         }
@@ -188,7 +188,7 @@ public class EntityEnermyBase : EntityBase {
         public void Deactivate()
         {
             B_AgentEnabled = false;
-            m_Weapon.OnPlay(false);
+            m_Weapon.OnPlayAnim(false);
             this.StopAllSingleCoroutines();
         }
         RaycastHit[] m_Raycasts;
@@ -251,14 +251,14 @@ public class EntityEnermyBase : EntityBase {
             i_playCount = m_EntityInfo.m_ProjectileCount.Random();
             i_playCount = i_playCount <= 0 ? 1 : i_playCount;       //Make Sure Play Once At Least
             b_attacking = true;
-            m_Weapon.OnPlay(b_attacking);
+            m_Weapon.OnPlayAnim(b_attacking);
             this.StartSingleCoroutine(2, TIEnumerators.TickCount(()=> {
-                OnAttack(m_Target, b_attacking);
+                OnAttackAnim(m_Target, b_attacking);
             }, i_playCount, m_EntityInfo.m_Firerate,
             () => {
                 b_attacking = false;
-                m_Weapon.OnPlay(b_attacking);
-                OnAttack(m_Target, b_attacking);
+                m_Weapon.OnPlayAnim(b_attacking);
+                OnAttackAnim(m_Target, b_attacking);
             })
             );
             return m_EntityInfo.m_Firerate * i_playCount + m_EntityInfo.m_BarrageDuration.Random(); ;
@@ -381,7 +381,7 @@ public class EntityEnermyBase : EntityBase {
         public virtual void Play(bool preAim,EntityBase _target)
         {
         }
-        public virtual void OnPlay(bool play)
+        public virtual void OnPlayAnim(bool play)
         {
 
         }
@@ -413,10 +413,10 @@ public class EntityEnermyBase : EntityBase {
             m_Cast.PlayControlled(m_EntityControlling.I_EntityID, true);
         }
 
-        public override void OnPlay(bool play)
+        public override void OnPlayAnim(bool play)
         {
-            if (!play && m_Cast)
-                m_Cast.PlayControlled(m_EntityControlling.I_EntityID, false);
+            if ( m_Cast)
+                m_Cast.PlayControlled(m_EntityControlling.I_EntityID, play);
         }
     }
     class BarrageRange : EnermyWeaponBase
