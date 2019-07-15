@@ -231,7 +231,7 @@ public class EntityEnermyBase : EntityBase {
             b_targetOutChaseRange = f_targetDistance > m_EntityInfo.m_AIChaseRange;
             b_targetOutAttackRange = f_targetDistance > m_EntityInfo.m_AIAttackRange;
             b_MoveTowardsTarget = b_targetHideBehindWall || b_targetOutChaseRange;
-            b_CanAttackTarget =  !b_targetOutAttackRange&&(!m_EntityInfo.m_BattleCheckObsatacle || b_targetVisible) && Mathf.Abs(f_targetAngle)<15 ;
+            b_CanAttackTarget =  !b_targetOutAttackRange&&(!m_EntityInfo.m_BattleCheckObsatacle || b_targetVisible) && Mathf.Abs(f_targetAngle)<15&&!Physics.SphereCast(new Ray( headTransform.position,headTransform.forward),1f,2,GameLayer.Physics.I_Static) ;
             b_AgentReachDestination = m_Agent.destination == Vector3.zero || TCommon.GetXZDistance(headTransform.position, m_Agent.destination) < 1f;
         }
         #region Attack
