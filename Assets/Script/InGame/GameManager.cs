@@ -48,7 +48,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
             List<EntityBase> entities = m_Entities.Values.ToList();
             entities.Traversal((EntityBase entity) => {
                 if (!entity.B_IsPlayer)
-                    entity.BroadcastMessage("TryTakeDamage", entity.m_EntityInfo.m_MaxHealth + entity.m_EntityInfo.m_MaxArmor);
+                    entity.BroadcastMessage("OnReceiveDamage", entity.m_EntityInfo.m_MaxHealth + entity.m_EntityInfo.m_MaxArmor);
             });
         }
         if (Input.GetKeyDown(KeyCode.BackQuote))
