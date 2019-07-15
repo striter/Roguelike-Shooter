@@ -205,6 +205,7 @@ namespace GameSetting
         Throwable_Hips_150 = 150,
         Throwable_R_Throw_151=151,
         Heavy_HipShot_161=161,
+        Heavy_Mortal=162,
     }
     #endregion
     #region GameLayer
@@ -316,6 +317,35 @@ namespace GameSetting
             return m_startPos + m_Direction * f_speed * elapsedTime + Vector3.down * f_vertiAcceleration * elapsedTime * elapsedTime;
         }
     }
+    #region EntityBuffClass
+    public class EntityBuffManager
+    {
+
+        EntityBase m_Entity;
+        List<EntityBuffBase> m_BuffList=new List<EntityBuffBase>();
+        Action<float> OnReceiveDamage;
+        public float F_DamageAttackMultiply { get; private set; } = 1;
+        public float F_DamageReceiveReduce { get; private set; } = 1;
+        
+        public EntityBuffManager(EntityBase _attacher,Action<float> _OnReceiveDamage)
+        {
+            m_Entity = _attacher;
+            OnReceiveDamage = _OnReceiveDamage;
+        }
+        public void Tick(float deltaTime)
+        {
+
+        }
+        public void OnBuffChanged()
+        {
+
+        }
+    }
+    public class EntityBuffBase
+    {
+
+    }
+    #endregion
     #region BigmapTile
     public class SBigmapTileInfo : ITileAxis
     {

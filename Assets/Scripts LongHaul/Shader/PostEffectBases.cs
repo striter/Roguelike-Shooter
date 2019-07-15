@@ -422,3 +422,8 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
         Graphics.Blit(source, destination, Mat_Cur, 1);        //Mix
     }
 }
+public class PE_ScreenSpaceAmbientOcclusion : PostEffectBase
+{
+
+ 
+}

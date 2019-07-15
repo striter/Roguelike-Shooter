@@ -6,6 +6,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
     public int I_EntityID { get; private set; } = -1;
     HitCheckEntity[] m_HitChecks;
     Renderer[] m_Renderers;
+    EntityBuffManager m_BuffManager;
     protected Transform tf_Model;
     public Transform tf_Head { get; private set; }
     public SEntity m_EntityInfo { get; private set; }
@@ -29,7 +30,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
         B_IsPlayer = isPlayer;
         m_Renderers = tf_Model.GetComponentsInChildren<Renderer>();
         m_HitChecks = GetComponentsInChildren<HitCheckEntity>();
-        TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.Attach(this, TryTakeDamage); });
+        TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.Attach(this, OnReceiveDamage); });
         m_EntityInfo = entityInfo;
     }
     public virtual void OnSpawn(int id)
@@ -62,10 +63,10 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
         f_ArmorRegenCheck -= Time.deltaTime;
         if (f_ArmorRegenCheck < 0 && m_CurrentArmor != m_EntityInfo.m_MaxArmor)
         {
-            TryTakeDamage(-1*m_EntityInfo.m_ArmorRegenSpeed * Time.deltaTime);
+            OnReceiveDamage(-1*m_EntityInfo.m_ArmorRegenSpeed * Time.deltaTime);
         }
     }
-    protected bool TryTakeDamage(float amount)
+    protected bool OnReceiveDamage(float amount)
     {
         if (b_IsDead)
             return false;
