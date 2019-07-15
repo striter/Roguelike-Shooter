@@ -18,7 +18,7 @@ public class SFXIndicator : SFXParticles {
         if (Physics.SphereCast(origin, radius, direction, out hit,GameConst.I_ProjectileMaxDistance, GameLayer.Physics.I_Static))
         {
             transform.position = hit.point;
-            transform.rotation = Quaternion.LookRotation(hit.normal);
+            transform.rotation = Quaternion.LookRotation(Vector3.up);
             float distance = Vector3.Distance(hit.point,origin);
             float duration = distance / speed;
             Vector3 endPos = hit.point;

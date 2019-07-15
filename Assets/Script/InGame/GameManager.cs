@@ -279,6 +279,7 @@ public static class DataManager
         Properties<SGenerateEntity>.Init();
         Properties<SWeapon>.Init();
         Properties<SEntity>.Init();
+        Properties<SBuff>.Init();
     }
     public static SGenerateItem GetItemGenerateProperties(enum_Style style,enum_TilePrefabDefinition prefabType)
     {
@@ -309,6 +310,13 @@ public static class DataManager
         if(weapon.m_Weapon==0)
             Debug.LogError("Error Properties Found Of Index:" +type.ToString()+"|"+((int)type));
         return weapon;
+    }
+    public static SBuff GetEntityBuffProperties(int index)
+    {
+        SBuff buff = Properties<SBuff>.PropertiesList.Find(p => p.m_Index == index);
+        if (buff.m_Index == 0)
+            Debug.LogError("Error Properties Found Of Index:" + index);
+        return buff;
     }
 }
 public static class ObjectManager

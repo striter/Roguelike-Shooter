@@ -123,7 +123,9 @@ namespace GameSetting
         }
     }
     #endregion
+
     #region For Developers Use
+
     #region BroadCastEnum
     enum enum_BC_UIStatusChanged
     {
@@ -147,6 +149,7 @@ namespace GameSetting
         OnWaveFinish,
     }
     #endregion
+
     #region GameEnum
     public enum enum_HitCheck { Invalid = -1, Static = 1, Entity = 2, Dynamic = 3, }
     public enum enum_BattleDifficulty { Invalid = -1, Default = 0, Eazy = 1, Normal = 2, Hard = 3 }
@@ -160,7 +163,6 @@ namespace GameSetting
     public enum enum_Interaction { Invalid = -1, Interact_Portal, }
     public enum enum_TriggerType { Invalid = -1, Single = 1, Auto = 2, Burst = 3, Pull = 4, Store = 5, }
     public enum enum_EnermyWeaponType { Invalid = -1, Melee = 01,Caster=02, Single = 101, MultipleFan = 102,MultipleLine=103,  }
-
     public enum enum_PlayerWeapon
     {
         Invalid = -1,
@@ -208,6 +210,7 @@ namespace GameSetting
         Heavy_Mortal=162,
     }
     #endregion
+
     #region GameLayer
     public static class GameLayer
     {
@@ -225,6 +228,7 @@ namespace GameSetting
         }
     }
     #endregion
+
     #region GameSave
     public class CPlayerSave : ISave        //Save Outta Game
     {
@@ -235,7 +239,9 @@ namespace GameSetting
         }
     }
     #endregion
-    #region GameClass
+
+    #region GameClass/Structs
+    #region Physics
     public static class HitCheckDetect_Extend
     {
         public static HitCheckBase Detect(this Collider other)
@@ -317,33 +323,114 @@ namespace GameSetting
             return m_startPos + m_Direction * f_speed * elapsedTime + Vector3.down * f_vertiAcceleration * elapsedTime * elapsedTime;
         }
     }
-    #region EntityBuffClass
+    #endregion
+    #region BuffClass
     public class EntityBuffManager
     {
-
-        EntityBase m_Entity;
-        List<EntityBuffBase> m_BuffList=new List<EntityBuffBase>();
-        Action<float> OnReceiveDamage;
-        public float F_DamageAttackMultiply { get; private set; } = 1;
-        public float F_DamageReceiveReduce { get; private set; } = 1;
-        
-        public EntityBuffManager(EntityBase _attacher,Action<float> _OnReceiveDamage)
+        public EntityBuff m_EntityBuffProperty { get; private set; }
+        public ProjectileBuff m_ProjectileBuffProperty { get; private set; }
+        public List<BuffBase> m_BuffList { get; private set; } = new List<BuffBase>();
+        Action<float> OnDamageEntity;
+        public EntityBuffManager(Action<float> _OnDamageEntity)
         {
-            m_Entity = _attacher;
-            OnReceiveDamage = _OnReceiveDamage;
+            OnDamageEntity = _OnDamageEntity;
+            m_EntityBuffProperty = EntityBuff.Create(1f);
+            m_ProjectileBuffProperty = ProjectileBuff.Create(1f);
         }
-        public void Tick(float deltaTime)
+        public void Tick(float deltaTime)=>m_BuffList.Traversal((BuffBase buff) => { buff.OnTick(deltaTime); });
+        public void Deactivate()=> m_BuffList.Clear();
+        public void AddBuff(int buffIndex)
         {
-
+            m_BuffList.Add(GetBuff(buffIndex));
+            OnBuffChanged();
+        } 
+        public void OnBuffExpired(BuffBase buff)
+        {
+            m_BuffList.Remove(buff);
+            OnBuffChanged();
         }
+        public BuffBase GetBuff(int buffIndex) => new BuffBase(DataManager.GetEntityBuffProperties(buffIndex), OnBuffExpired, OnDamageEntity);
         public void OnBuffChanged()
         {
-
+            float entityDamageReduce = 1f;
+            float projectileDamageEnhance = 1f;
+            m_BuffList.Traversal((BuffBase buff) => {
+                entityDamageReduce -= buff.m_buffInfo.m_DamageReduction;
+                projectileDamageEnhance += buff.m_buffInfo.m_DamageMultiply;
+            });
+            entityDamageReduce = entityDamageReduce < 0 ? 0 : entityDamageReduce;
+            m_EntityBuffProperty.Reset(entityDamageReduce);
+            m_ProjectileBuffProperty.Reset(projectileDamageEnhance);
         }
     }
-    public class EntityBuffBase
+    public class BuffBase
     {
+        public SBuff m_buffInfo { get; private set; }
+        float f_expireCheck,f_dotCheck;
+        Action<BuffBase> OnBuffExpired;
+        Action<float> OnDOTDamage;
+        public BuffBase(SBuff _buffInfo, Action<BuffBase> _OnBuffExpired, Action<float> _OnDOTDamage)
+        {
+            m_buffInfo = _buffInfo;
+            OnBuffExpired = _OnBuffExpired;
+            OnDOTDamage = _OnDOTDamage;
+            f_expireCheck = 0;
+        }
+        public void OnTick(float deltaTime)
+        {
+            DotCheck(deltaTime);
+            ExpireCheck(deltaTime);
+        }
+        public void DotCheck(float deltaTime)
+        {
+            if (m_buffInfo.m_DamageTickTime <= 0)
+                return;
 
+            f_dotCheck += deltaTime;
+            if (f_dotCheck > m_buffInfo.m_DamageTickTime)
+            {
+                f_dotCheck -= m_buffInfo.m_DamageTickTime;
+                OnDOTDamage(m_buffInfo.m_DamagePerTick);
+            }
+        }
+
+        public void ExpireCheck(float deltaTime)
+        {
+            if (m_buffInfo.m_ExpireDuration <= 0)
+                return;
+
+            f_expireCheck += deltaTime;
+            if (f_expireCheck > m_buffInfo.m_ExpireDuration)
+                OnBuffExpired(this);
+        }
+    }
+    public struct EntityBuff
+    {
+        public float F_DamageReduceMultiply { get; private set; }
+        public static EntityBuff Create(float _damageReduceMultiply)
+        {
+            EntityBuff buff = new EntityBuff();
+            buff.F_DamageReduceMultiply = _damageReduceMultiply;
+            return buff;
+        }
+        public void Reset(float _damageReduceMultiply)
+        {
+            F_DamageReduceMultiply = _damageReduceMultiply;
+        }
+    }
+    public struct ProjectileBuff
+    {
+        public float F_DamageEnhanceMultiply { get; private set; }
+        public void Reset(float _damageEnhanceMultiply)
+        {
+            F_DamageEnhanceMultiply = _damageEnhanceMultiply;
+        }
+        public static ProjectileBuff Create(float _damageMultiply)
+        {
+            ProjectileBuff buff = new ProjectileBuff();
+            buff.F_DamageEnhanceMultiply = _damageMultiply;
+            return buff;
+        }
     }
     #endregion
     #region BigmapTile
@@ -450,8 +537,7 @@ namespace GameSetting
         }
     }
     #endregion
-    #endregion
-    #region GameStruct
+    #region ExcelStruct
     public struct SEntity :ISExcel
     {
         int i_index;
@@ -597,7 +683,29 @@ namespace GameSetting
 
         }
     }
+    public struct SBuff : ISExcel
+    {
+        int index;
+        float f_expireDuration;
+        int i_effect;
+        float f_damageMultiply;
+        float f_damageReduce;
+        float f_damageTickTime;
+        float f_damagePerTick;
+        public int m_Index => index;
+        public float m_ExpireDuration => f_expireDuration;
+        public int m_EffectIndex => i_effect;
+        public float m_DamageMultiply => f_damageMultiply;
+        public float m_DamageReduction => f_damageReduce;
+        public float m_DamageTickTime => f_damageTickTime;
+        public float m_DamagePerTick => f_damagePerTick;
+        public void InitOnValueSet()
+        {
+        }
+    }
     #endregion
+    #endregion
+
     #region For UI Usage     
     class CSporeManagerSave : ISave     //Locked=-1 Spare=1
     {
@@ -741,5 +849,6 @@ namespace GameSetting
         }
     }
     #endregion
+
     #endregion
 }
