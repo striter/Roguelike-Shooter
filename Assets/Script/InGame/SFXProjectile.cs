@@ -4,7 +4,12 @@ using UnityEngine;
 using GameSetting;
 using TPhysics;
 [RequireComponent(typeof(CapsuleCollider))]
-public class SFXProjectile : SFXBase {
+public class SFXProjectile : SFXBase
+{
+    public float F_Damage;
+    public float F_Speed;
+    public int I_ImpactIndex;
+    public int I_BufFApplyOnHit;
     protected PhysicsSimulator m_Simulator;
     protected CapsuleCollider m_Collider;
     protected TrailRenderer m_Trail;
@@ -15,9 +20,7 @@ public class SFXProjectile : SFXBase {
     protected virtual bool B_DisablePhysicsOnHit => true;
     protected virtual bool B_HitMultiple => false;
     protected virtual bool B_DealDamage => true;
-    public float F_Damage;
-    public float F_Speed;
-    public int I_ImpactIndex;
+    protected DamageInfo m_DamageInfo;
     protected virtual PhysicsSimulator GetSimulator(Vector3 direction, Vector3 targetPosition) => new ProjectilePhysicsSimulator(transform.position, direction, Vector3.down, F_Speed,m_Collider,GameLayer.Physics.I_All,OnPhysicsCasted);
     public override void Init(int sfxIndex)
     {
@@ -25,11 +28,15 @@ public class SFXProjectile : SFXBase {
         m_Trail = transform.GetComponentInChildren<TrailRenderer>();
         m_Collider = GetComponent<CapsuleCollider>();
         m_Collider.enabled = false;
+        m_DamageInfo = new DamageInfo(F_Damage, enum_DamageType.Projectile);
     }
 
-    public virtual void Play(int sourceID,Vector3 direction,Vector3 targetPosition)
+    public virtual void Play(int sourceID,Vector3 direction,Vector3 targetPosition,DamageBuffInfo buffInfo)
     {
         OnPlayPreset();
+        if(I_BufFApplyOnHit>0)
+            buffInfo.m_BuffAplly.Add(I_BufFApplyOnHit);
+        m_DamageInfo.ResetBuff(buffInfo);
         m_Simulator = GetSimulator(direction,targetPosition);
         PlaySFX(sourceID, F_Duration(transform.position,targetPosition));
     }
@@ -100,7 +107,7 @@ public class SFXProjectile : SFXBase {
     {
         if (B_DealDamage&&entity!=null&&!m_TargetHitted.Contains(entity.I_AttacherID) && GameManager.B_CanDamageEntity(entity, I_SourceID))
         {
-            entity.TryHit(F_Damage);
+            entity.TryHit(m_DamageInfo);
             m_TargetHitted.Add(entity.I_AttacherID);
         }
     }

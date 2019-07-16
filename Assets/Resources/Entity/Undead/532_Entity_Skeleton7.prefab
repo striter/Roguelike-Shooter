@@ -146,7 +146,7 @@ GameObject:
   - component: {fileID: 4270323974640326}
   - component: {fileID: 137939093898011868}
   m_Layer: 0
-  m_Name: SF_Character_Undead_Heavy
+  m_Name: Skin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -480,6 +480,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 4270323974640326}
   - {fileID: 4736130862835142}
   m_Father: {fileID: 4258292535296140}
   m_RootOrder: 0
@@ -587,12 +588,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1249374731918032}
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 4736130862835142}
-  m_RootOrder: 1
+  m_Father: {fileID: 4118090182473500}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4285394912722720
 Transform:
@@ -773,9 +774,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4312440749176926}
-  - {fileID: 4270323974640326}
   m_Father: {fileID: 4118090182473500}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4890710828259790
 Transform:

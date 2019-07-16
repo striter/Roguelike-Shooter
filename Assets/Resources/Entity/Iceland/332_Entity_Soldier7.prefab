@@ -409,7 +409,7 @@ GameObject:
   - component: {fileID: 4328715071174942}
   - component: {fileID: 137593003997828672}
   m_Layer: 0
-  m_Name: SF_Character_kejibudui6 1
+  m_Name: Skin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -538,13 +538,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1064198224150568}
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 177.06488, z: -83.23439}
+  m_LocalRotation: {x: 2.3241591e-17, y: -6.1109556e-18, z: 0.7071068, w: 0.7071068}
+  m_LocalPosition: {x: -3.6287155, y: -0, z: -83.23439}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4078710767679838}
-  m_Father: {fileID: 4265365316651114}
-  m_RootOrder: 1
+  m_Father: {fileID: 4569115304966850}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4136424523306062
 Transform:
@@ -565,13 +565,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1055252018848412}
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 176.82285, z: 65.03857}
-  m_LocalScale: {x: 0.6863221, y: 0.6863221, z: 0.6863221}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 25.9, y: -0, z: -1.8}
+  m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
   m_Children: []
-  m_Father: {fileID: 4265365316651114}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Father: {fileID: 4821853199057948}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!4 &4194349243886552
 Transform:
   m_ObjectHideFlags: 1
@@ -597,10 +597,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4670176547305478}
-  - {fileID: 4110130748167560}
-  - {fileID: 4187875546242080}
   m_Father: {fileID: 4329167816690058}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4267178611491826
 Transform:
@@ -613,7 +611,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4569115304966850}
-  - {fileID: 4328715071174942}
   m_Father: {fileID: 4290679239683290}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -680,12 +677,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1854538288901482}
-  m_LocalRotation: {x: 2.3241591e-17, y: -6.1109556e-18, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 140.0109, y: 0.000015258789, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.000022888184, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 4267178611491826}
-  m_RootOrder: 1
+  m_Father: {fileID: 4329167816690058}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4329167816690058
 Transform:
@@ -697,6 +694,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_Children:
+  - {fileID: 4328715071174942}
   - {fileID: 4265365316651114}
   m_Father: {fileID: 4291105168673380}
   m_RootOrder: 1
@@ -783,6 +781,7 @@ Transform:
   - {fileID: 4359618430738588}
   - {fileID: 4096349531214336}
   - {fileID: 4194349243886552}
+  - {fileID: 4110130748167560}
   m_Father: {fileID: 4267178611491826}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -865,7 +864,8 @@ Transform:
   m_LocalRotation: {x: 1.4461227e-13, y: 1, z: -1.1714554e-15, w: 1.746155e-15}
   m_LocalPosition: {x: -44.03, y: -8.81073e-13, z: 4.7946414e-15}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 4187875546242080}
   m_Father: {fileID: 4989059127092828}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1128,6 +1128,7 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: 462bc17e740de3349b8e7188c0bf0219, type: 2}
+  - {fileID: 2100000, guid: a8d1906e68fa00a43b3e0033ee355b5c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

@@ -253,7 +253,7 @@ GameObject:
   - component: {fileID: 4000278045532488}
   - component: {fileID: 137331610196107008}
   m_Layer: 0
-  m_Name: SF_Character_kejibudui 2
+  m_Name: Skin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -462,12 +462,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1438676511320654}
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 4410439763057868}
-  m_RootOrder: 1
+  m_Father: {fileID: 4300939096806096}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4066277969901756
 Transform:
@@ -633,6 +633,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_Children:
+  - {fileID: 4000278045532488}
   - {fileID: 4410439763057868}
   m_Father: {fileID: 4834278347999502}
   m_RootOrder: 0
@@ -717,9 +718,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4229271940255796}
-  - {fileID: 4000278045532488}
   m_Father: {fileID: 4300939096806096}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4490062017620566
 Transform:

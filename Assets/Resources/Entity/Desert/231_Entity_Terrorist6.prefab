@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4667143916272028}
   - component: {fileID: 137836325538915974}
   m_Layer: 0
-  m_Name: SF_Character_kongbufenzi6 1
+  m_Name: Skin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -633,12 +633,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1103741037419944}
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 161.82558, z: -61.636497}
+  m_LocalRotation: {x: 2.3241591e-17, y: -6.1109556e-18, z: 0.7071068, w: 0.7071068}
+  m_LocalPosition: {x: 11.610569, y: -0, z: -61.636497}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 4892925407886480}
-  m_RootOrder: 2
+  m_Father: {fileID: 4884971302369464}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4383302430703570
 Transform:
@@ -742,12 +742,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1026709943294768}
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 4892925407886480}
-  m_RootOrder: 1
+  m_Father: {fileID: 4772432397639556}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4676061063409406
 Transform:
@@ -786,6 +786,7 @@ Transform:
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_Children:
+  - {fileID: 4667143916272028}
   - {fileID: 4892925407886480}
   m_Father: {fileID: 4942058336564430}
   m_RootOrder: 1
@@ -817,6 +818,7 @@ Transform:
   - {fileID: 4300664134767726}
   - {fileID: 4619733844702702}
   - {fileID: 4092086975843920}
+  - {fileID: 4356963774660986}
   m_Father: {fileID: 4892926035622754}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -831,10 +833,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4096549376499592}
-  - {fileID: 4667143916272028}
-  - {fileID: 4356963774660986}
   m_Father: {fileID: 4772432397639556}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4892926035622754
 Transform:
@@ -1055,6 +1055,7 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: 2985d2c17ea000741ba9996e268447fa, type: 2}
+  - {fileID: 2100000, guid: a8d1906e68fa00a43b3e0033ee355b5c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

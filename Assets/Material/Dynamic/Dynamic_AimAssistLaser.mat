@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Dynamic_LaserBeam
+  m_Name: Dynamic_AimAssistLaser
   m_Shader: {fileID: 4800000, guid: 6d0c23188333f48488e04c52bcc40f45, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -68,8 +68,8 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - PixelSnap: 0
-    - _Amount1: 5
-    - _Amount2: 0.5
+    - _Amount1: 2
+    - _Amount2: 0
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1

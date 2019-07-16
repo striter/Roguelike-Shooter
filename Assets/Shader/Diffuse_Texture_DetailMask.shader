@@ -68,8 +68,8 @@
 				float2 worldUV = float2(i.worldPos.x + i.worldPos.y,i.worldPos.z+i.worldPos.y)*_DetailScale;
 				float detailMask = pow(tex2D(_DetailMask, worldUV).r, 6);
 			
-				float3 detail = tex2D(_DetailTex, worldUV)*detailMask;
-				albedo =lerp( albedo , detail,detailMask);
+				float4 detailAlbedo = tex2D(_DetailTex, worldUV);
+				albedo = lerp(albedo, detailAlbedo.rgb,detailAlbedo.a);
 				UNITY_LIGHT_ATTENUATION(atten, i,i.worldPos)
 				fixed3 ambient = albedo*UNITY_LIGHTMODEL_AMBIENT.xyz;
 				atten = atten * _Lambert + (1- _Lambert);

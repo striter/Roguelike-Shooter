@@ -6,21 +6,29 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class SFXCast : SFXBase,ISingleCoroutine {
     ParticleSystem[] m_Particles;
+    protected DamageInfo m_DamageInfo;
     public float F_Damage;
     public int I_TickCount=1;
     public float F_Tick = .5f;
     public bool b_casting;
+    public int I_BuffApplyOnCast;
     protected virtual float F_ParticleDuration => 5f;
     public override void Init(int _sfxIndex)
     {
         base.Init(_sfxIndex);
         m_Particles = GetComponentsInChildren<ParticleSystem>();
         m_Particles.Traversal((ParticleSystem particle)=> {particle.Stop();});
+        m_DamageInfo = new DamageInfo(F_Damage, enum_DamageType.Area);
     }
-    public virtual void Play(int sourceID)
+    public virtual void Play(int sourceID,DamageBuffInfo buffInfo)
     {
         PlaySFX(sourceID, I_TickCount*F_Tick+5f);
         b_casting = true;
+
+        if(I_BuffApplyOnCast>0)
+            buffInfo.m_BuffAplly.Add(I_BuffApplyOnCast);
+        m_DamageInfo.ResetBuff(buffInfo);
+
         this.StartSingleCoroutine(0, TIEnumerators.TickCount(OnBlast, I_TickCount, F_Tick, () => {
             m_Particles.Traversal((ParticleSystem particle) => { particle.Stop(); });
         }));
@@ -67,6 +75,6 @@ public class SFXCast : SFXBase,ISingleCoroutine {
     }   
     protected virtual void OnDamageEntity(HitCheckEntity hitEntity)
     {
-        hitEntity.TryHit(F_Damage);
+        hitEntity.TryHit(m_DamageInfo);
     }
 }

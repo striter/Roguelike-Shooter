@@ -14,6 +14,6 @@ public class SFXProjectileCastTrigger : SFXProjectile {
     protected override void OnPlayFinished()
     {
         base.OnPlayFinished();
-        ObjectManager.SpawnSFX<SFXCast>(I_CastIndex, transform.position, Vector3.up).Play(I_SourceID);
+        ObjectManager.SpawnSFX<SFXCast>(I_CastIndex, transform.position, Vector3.up).Play(I_SourceID,m_DamageInfo.m_BuffApply);
     }
 }

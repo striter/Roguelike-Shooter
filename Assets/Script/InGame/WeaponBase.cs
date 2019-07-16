@@ -13,6 +13,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
     protected Transform tf_Muzzle;
     Action<float> OnAmmoChangeCostMana;
     Action<Vector2> OnRecoil;
+    Func<DamageBuffInfo> OnFireBuffInfo;
     WeaponTrigger m_Trigger=null;
     WeaponAimAssistStraight m_Assist = null;
     bool B_HaveAmmoLeft => m_WeaponInfo.m_ClipAmount == -1 || I_AmmoLeft > 0;
@@ -60,7 +61,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         return Time.time > f_actionCheck;
     }
 
-    public void Attach(int _attacherID,Transform attachTarget,Action<float> _OnAmmoChangeCostMana,Action<Vector2> _OnRecoil)
+    public void Attach(int _attacherID,Transform attachTarget,Action<float> _OnAmmoChangeCostMana,Action<Vector2> _OnRecoil,Func<DamageBuffInfo> _OnFireBuffInfo)
     {
         I_AttacherID = _attacherID;
         transform.SetParent(attachTarget);
@@ -69,6 +70,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         transform.localScale = Vector3.one;
         OnAmmoChangeCostMana = _OnAmmoChangeCostMana;
         OnRecoil = _OnRecoil;
+        OnFireBuffInfo = _OnFireBuffInfo;
     }
     public bool Trigger(bool down)
     {
@@ -97,7 +99,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         if(m_WeaponInfo.m_MuzzleSFX!=-1)
             ObjectManager.SpawnSFX<SFXParticles>(m_WeaponInfo.m_MuzzleSFX, tf_Muzzle.position, tf_Muzzle.forward).Play(I_AttacherID);
         for (int i = 0; i < m_WeaponInfo.m_PelletsPerShot; i++)
-            ObjectManager.SpawnSFX<SFXProjectile>(m_WeaponInfo.m_ProjectileSFX, tf_Muzzle.position,tf_Muzzle.forward).Play(I_AttacherID, GameExpression.V3_RangeSpreadDirection(transform.forward, m_WeaponInfo.m_Spread, transform.up, transform.right), m_Assist.m_assistTarget);
+            ObjectManager.SpawnSFX<SFXProjectile>(m_WeaponInfo.m_ProjectileSFX, tf_Muzzle.position,tf_Muzzle.forward).Play(I_AttacherID, GameExpression.V3_RangeSpreadDirection(transform.forward, m_WeaponInfo.m_Spread, transform.up, transform.right), m_Assist.m_assistTarget, OnFireBuffInfo());
 
         OnRecoil?.Invoke(m_WeaponInfo.m_RecoilPerShot);
         OnAmmoChangeCostMana?.Invoke(m_WeaponInfo.m_ManaCost);

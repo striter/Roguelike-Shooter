@@ -155,23 +155,6 @@ public static class TCommon
         return toTrans;
     }
     #region List/Array/Enum Traversal
-    public static List<int> SplitIndexComma(this string toSplit)
-    {
-        List<int> indexes = new List<int>();
-        string[] splitIndexes = toSplit.Split(',');
-        for (int i = 0; i < splitIndexes.Length; i++)
-        {
-            indexes.Add(int.Parse(splitIndexes[i]));
-        }
-        return indexes;
-    }
-    public static T Find<T>(this T[,] array,Predicate<T> predicate) 
-    {
-        for (int i = 0; i < array.GetLength(0); i++)
-            for (int j = 0; j < array.GetLength(1); j++)
-                if (predicate(array[i, j])) return array[i, j];
-            return default(T);
-    }
 
     public static T RandomItem<T>(this List<T> randomList,System.Random randomSeed=null)
     {
@@ -189,24 +172,22 @@ public static class TCommon
     {
         return randomSeed != null ? array[randomSeed.Next(array.GetLength(0)),randomSeed.Next(array.GetLength(1))] : array[UnityEngine.Random.Range(0, array.GetLength(0)), UnityEngine.Random.Range(0, array.GetLength(1))];
     }
-    public static void Traversal<T>(this List<T> list, Action<T> OnEachItem) where T : class
+    public static void Traversal<T>(this List<T> list, Action<T> OnEachItem) 
     {
         for (int i = 0; i < list.Count; i++)
-        {
             OnEachItem(list[i]);
-        }
     }
-    public static void Traversal<T>(this List<T> list, Action<int, T> OnEachItem) where T : class
+    public static void Traversal<T>(this List<T> list, Action<int, T> OnEachItem)
     {
         for (int i = 0; i < list.Count; i++)
             OnEachItem(i, list[i]);
     }
-    public static void Traversal<T, Y>(this Dictionary<T, Y> dic, Action<T> OnEachKey) where T : class where Y : class
+    public static void Traversal<T, Y>(this Dictionary<T, Y> dic, Action<T> OnEachKey)
     {
         foreach (T temp in dic.Keys)
             OnEachKey(temp);
     }
-    public static void Traversal<T, Y>(this Dictionary<T, Y> dic, Action<Y> OnEachValue) where T : class  where Y : class
+    public static void Traversal<T, Y>(this Dictionary<T, Y> dic, Action<Y> OnEachValue) 
     {
         foreach (Y temp in dic.Values)
             OnEachValue(temp);
@@ -216,18 +197,18 @@ public static class TCommon
         foreach (T temp in dic.Keys)
             OnEachPair(temp, dic[temp]);
     }
-    public static void Traversal<T>(this T[] array, Action<T> OnEachItem) where T : class
+    public static void Traversal<T>(this T[] array, Action<T> OnEachItem)
     {
         for (int i = 0; i < array.Length; i++)
             OnEachItem(array[i]);
     }
-    public static void Traversal<T>(this T[,] array, Action<T> OnEachItem) where T:class
+    public static void Traversal<T>(this T[,] array, Action<T> OnEachItem)
     {
         for (int i = 0; i < array.GetLength(0); i++)
             for (int j = 0; j < array.GetLength(1); j++)
                 OnEachItem(array[i, j]);
     }
-    public static void Traversal<T>(this T[] array, Action<T, int> OnEachItem) where T : class
+    public static void Traversal<T>(this T[] array, Action<T, int> OnEachItem)
     {
         for (int i = 0; i < array.Length; i++)
             OnEachItem(array[i], i);
@@ -247,7 +228,6 @@ public static class TCommon
             enumAction((T)temp, (int)temp);
         }
     }
-
     public static void TraversalEnum<T>(Action<T> enumAction)    //Can't Constraint T to System.Enum?
     {
         if (!typeof(T).IsSubclassOf(typeof(Enum)))
@@ -263,7 +243,37 @@ public static class TCommon
             enumAction((T)temp);
         }
     }
+    public static void TraversalRandom<T>(this List<T> list, System.Random seed = null, Func<T, bool> OnRandomItemStop = null)
+    {
+        int index = list.RandomIndex(seed);
+        for (int i = 0; i < list.Count; i++)
+        {
+            if (OnRandomItemStop != null && OnRandomItemStop(list[index]))
+                break;
 
+            index++;
+            if (index == list.Count)
+                index = 0;
+        }
+    }
+    #endregion
+    public static List<int> SplitIndexComma(this string toSplit)
+    {
+        List<int> indexes = new List<int>();
+        string[] splitIndexes = toSplit.Split(',');
+        for (int i = 0; i < splitIndexes.Length; i++)
+        {
+            indexes.Add(int.Parse(splitIndexes[i]));
+        }
+        return indexes;
+    }
+    public static T Find<T>(this T[,] array, Predicate<T> predicate)
+    {
+        for (int i = 0; i < array.GetLength(0); i++)
+            for (int j = 0; j < array.GetLength(1); j++)
+                if (predicate(array[i, j])) return array[i, j];
+        return default(T);
+    }
     public static string ToStringLog<T>(this List<T> tempList)
     {
         string target = "";
@@ -274,21 +284,6 @@ public static class TCommon
         }
         return target;
     }
-
-    public static void TraversalRandom<T>(this List<T> list, System.Random seed=null, Func<T, bool> OnRandomItemStop=null)
-    {
-        int index = list.RandomIndex(seed);
-        for (int i = 0; i < list.Count; i++)
-        {
-            if (OnRandomItemStop!=null&&OnRandomItemStop(list[index]))
-                break;
-
-            index++;
-            if (index == list.Count)
-                index = 0;
-        }
-    }
-    #endregion
     public static T GetComponentNullable<T>(this Transform parent) where T : MonoBehaviour
     {
         if (parent == null)

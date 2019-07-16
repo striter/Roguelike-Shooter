@@ -211,6 +211,7 @@ MonoBehaviour:
   I_TickCount: 10
   F_Tick: 0.5
   b_casting: 0
+  I_BuffApplyOnCast: 1
   B_DamageDistanceReduction: 0
 --- !u!135 &135555557315418114
 SphereCollider:
@@ -284,7 +285,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1895394645
+  randomSeed: -384964521
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3645,7 +3646,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 961580343
+  randomSeed: -1850150113
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -6910,7 +6911,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -2131816177
+  randomSeed: -272517517
   InitialModule:
     serializedVersion: 3
     enabled: 1

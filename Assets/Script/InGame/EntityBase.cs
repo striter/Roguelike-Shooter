@@ -5,9 +5,9 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
 {
     public int I_EntityID { get; private set; } = -1;
     HitCheckEntity[] m_HitChecks;
-    Renderer[] m_Renderers;
-    EntityBuffManager m_BuffManager;
+    Renderer[] m_SkinRenderers;
     protected Transform tf_Model;
+    public EntityBuffManager m_BuffManager { get; private set; }
     public Transform tf_Head { get; private set; }
     public SEntity m_EntityInfo { get; private set; }
     public float m_CurrentHealth { get; private set; }
@@ -18,6 +18,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
     public float F_TotalHealth => m_EntityInfo.m_MaxArmor + m_EntityInfo.m_MaxHealth;
     private float f_ArmorRegenCheck;
     protected EntityBase m_Target;
+    protected DamageBuffInfo GetDamageBuffInfo() => m_BuffManager.m_DamageBuffProperty;
     public virtual Vector3 m_PrecalculatedTargetPos(float time) { Debug.LogError("Override This Please");return Vector2.zero; }
     public virtual void Init(SEntity entityInfo)
     {
@@ -28,8 +29,9 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
         tf_Model = transform.Find("Model");
         tf_Head = transform.Find("Head");
         B_IsPlayer = isPlayer;
-        m_Renderers = tf_Model.GetComponentsInChildren<Renderer>();
+        m_SkinRenderers = tf_Model.Find("Skin").GetComponentsInChildren<Renderer>();
         m_HitChecks = GetComponentsInChildren<HitCheckEntity>();
+        m_BuffManager = new EntityBuffManager(OnReceiveDamage);
         TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.Attach(this, OnReceiveDamage); });
         m_EntityInfo = entityInfo;
     }
@@ -43,11 +45,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
         m_CurrentArmor = m_EntityInfo.m_MaxArmor;
         m_CurrentMana = m_EntityInfo.m_MaxMana;
         TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.SetEnable(true); });
-        TCommon.Traversal(m_Renderers, (Renderer renderer) => {
-            renderer.materials.Traversal((Material mat)=> {
-                mat.SetFloat("_Amount1", 0);
-            });
-        });
+        TCommon.Traversal(m_SkinRenderers, (Renderer renderer) => {renderer.materials.Traversal((Material mat)=> {mat.SetFloat("_Amount1", 0);}); });
     }
 
     protected virtual void OnEnable()
@@ -56,24 +54,27 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
     }
     protected virtual void OnDisable()
     {
+        m_BuffManager.OnDeactivate();
         this.StopSingleCoroutine(0);
     }
     protected virtual void Update()
     {
         f_ArmorRegenCheck -= Time.deltaTime;
         if (f_ArmorRegenCheck < 0 && m_CurrentArmor != m_EntityInfo.m_MaxArmor)
-        {
-            OnReceiveDamage(-1*m_EntityInfo.m_ArmorRegenSpeed * Time.deltaTime);
-        }
+            OnReceiveDamage(new DamageInfo( -1*m_EntityInfo.m_ArmorRegenSpeed * Time.deltaTime, enum_DamageType.Regen));
+        m_BuffManager.Tick(Time.deltaTime);
     }
-    protected bool OnReceiveDamage(float amount)
+    public void OnReceiveBuff(int buffIndex) => m_BuffManager.AddBuff(buffIndex);
+    protected bool OnReceiveDamage(DamageInfo damageInfo)
     {
         if (b_IsDead)
             return false;
 
-        m_CurrentArmor -= amount;
-        if (amount > 0)
+        damageInfo.m_BuffApply.m_BuffAplly.Traversal((int buffIndex) => {OnReceiveBuff(buffIndex); });
+
+        if (damageInfo.m_AmountApply > 0)    //Damage
         {
+            m_CurrentArmor -= damageInfo.m_AmountApply * m_BuffManager.m_EntityBuffProperty.F_DamageReduceMultiply;
             if (m_CurrentArmor < 0)
             {
                 m_CurrentHealth += m_CurrentArmor;
@@ -86,8 +87,9 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
             if (b_IsDead)
                 OnDead();
         }
-        else
+        else if(damageInfo.m_AmountApply<0)    //Healing
         {
+            m_CurrentArmor -= damageInfo.m_AmountApply ;
             if (m_CurrentArmor > m_EntityInfo.m_MaxArmor)
                 m_CurrentArmor = m_EntityInfo.m_MaxArmor;
             OnHealthEffect(false);
@@ -95,7 +97,6 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
 
         return true;
     }
-
     public virtual void SetTarget(EntityBase target)
     {
         m_Target = target;
@@ -108,9 +109,10 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
 
     protected virtual void OnDead()
     {
+        m_BuffManager.OnDeactivate();
         TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.HideAllAttaches(); check.SetEnable(false); });
         this.StartSingleCoroutine(1, TIEnumerators.ChangeValueTo((float value) => {
-            TCommon.Traversal(m_Renderers, (Renderer renderer) => {
+            TCommon.Traversal(m_SkinRenderers, (Renderer renderer) => {
                 renderer.materials.Traversal((Material mat) => {
                     mat.SetFloat("_Amount1", value);
                 });
@@ -123,7 +125,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
     {
         this.StartSingleCoroutine(0,TIEnumerators.ChangeValueTo((float value)=> {
             Color targetColor = Color.Lerp(isDamage?(armorDamage ? Color.yellow:Color.red): Color.green, Color.white, value);
-            TCommon.Traversal(m_Renderers, (Renderer renderer) => {
+            TCommon.Traversal(m_SkinRenderers, (Renderer renderer) => {
                 renderer.material.SetColor("_Color",targetColor); });
           },0,1,1f));
     }

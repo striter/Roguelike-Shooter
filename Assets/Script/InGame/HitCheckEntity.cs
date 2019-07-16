@@ -9,7 +9,7 @@ public class HitCheckEntity : HitCheckBase {
     public int I_AttacherID => m_Attacher.I_EntityID;
     public override enum_HitCheck m_HitCheckType => enum_HitCheck.Entity;
     List<SFXBase> m_Attaches = new List<SFXBase>();
-    public void Attach(EntityBase _attacher, Func<float, bool> _OnHitCheck)
+    public void Attach(EntityBase _attacher, Func<DamageInfo, bool> _OnHitCheck)
     {
         base.Attach(_OnHitCheck);
         m_Attacher = _attacher;

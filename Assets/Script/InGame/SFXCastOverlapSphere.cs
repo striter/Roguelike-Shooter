@@ -16,6 +16,7 @@ public class SFXCastOverlapSphere : SFXCast {
     }
     protected override void OnDamageEntity(HitCheckEntity hitEntity)
     {
-        hitEntity.TryHit(B_DamageDistanceReduction? GameExpression.F_SphereCastDamageReduction(F_Damage,Vector3.Distance(transform.position,hitEntity.m_Attacher.transform.position)):F_Damage);
+        m_DamageInfo.ResetDamage(B_DamageDistanceReduction ? GameExpression.F_SphereCastDamageReduction(F_Damage, Vector3.Distance(transform.position, hitEntity.m_Attacher.transform.position)) : F_Damage);
+        base.OnDamageEntity(hitEntity);
     }
 }

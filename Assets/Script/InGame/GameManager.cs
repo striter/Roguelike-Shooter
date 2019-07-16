@@ -39,6 +39,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     public int X_TestCastIndex = 30003;
     public int C_TestProjectileIndex = 29001;
     public int V_TestIndicatorIndex = 50002;
+    public int B_TestBuffIndex = 1;
     void Update()
     {
         if (!B_EditorTestMode)
@@ -58,11 +59,13 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         if (Input.GetKeyDown(KeyCode.Z) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
             ObjectManager.SpawnEntity(Z_TestEntityIndex, hit.point).SetTarget(m_LocalPlayer);
         if (Input.GetKeyDown(KeyCode.X) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
-            ObjectManager.SpawnSFX<SFXCast>(X_TestCastIndex, hit.point, Vector3.up).Play(1000);
+            ObjectManager.SpawnSFX<SFXCast>(X_TestCastIndex, hit.point, Vector3.up).Play(1000,new DamageBuffInfo());
         if (Input.GetKeyDown(KeyCode.C) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
-            ObjectManager.SpawnSFX<SFXProjectile>(C_TestProjectileIndex, hit.point + Vector3.up , Vector3.forward).Play(1000, Vector3.forward, hit.point+Vector3.forward*10);
+            ObjectManager.SpawnSFX<SFXProjectile>(C_TestProjectileIndex, hit.point + Vector3.up , Vector3.forward).Play(m_LocalPlayer.I_EntityID, Vector3.forward, hit.point+Vector3.forward*10,DamageBuffInfo.Create());
         if (Input.GetKeyDown(KeyCode.V) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
             ObjectManager.SpawnSFX<SFXIndicator>(V_TestIndicatorIndex, hit.point + Vector3.up, Vector3.up).Play(1000);
+        if (Input.GetKeyDown(KeyCode.B) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
+            m_LocalPlayer.OnReceiveBuff(B_TestBuffIndex);
 
 
         UIManager.instance.transform.Find("SeedTest").GetComponent<UnityEngine.UI.Text>().text = m_SeedString;
@@ -164,7 +167,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
 
     public void OnEntityFall(HitCheckEntity hitcheck)      //On Player Falls To Ocean ETC
     {
-        hitcheck.TryHit(hitcheck.m_Attacher.B_IsPlayer ? GameConst.F_DamagePlayerFallInOcean : hitcheck.m_Attacher.F_TotalHealth);
+        hitcheck.TryHit(new DamageInfo( hitcheck.m_Attacher.B_IsPlayer ? GameConst.F_DamagePlayerFallInOcean : hitcheck.m_Attacher.F_TotalHealth, enum_DamageType.Fall));
 
         if (hitcheck.m_Attacher.B_IsPlayer)
         {

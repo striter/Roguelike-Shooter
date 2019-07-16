@@ -19,6 +19,7 @@ public class EntityPlayerBase : EntityBase {
     public bool B_Interacting => m_InteractTarget != null;
     public InteractBase m_InteractTarget { get; private set; }
 
+
     public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized* m_EntityInfo.m_moveSpeed * time;
     public override void Init(SEntity entityInfo)
     {
@@ -88,7 +89,7 @@ public class EntityPlayerBase : EntityBase {
     void ObtainWeapon(WeaponBase weapon)
     {
         m_WeaponObtained.Add(weapon);
-        weapon.Attach(I_EntityID,tf_WeaponHold, OnCostMana, AddRecoil);
+        weapon.Attach(I_EntityID,tf_WeaponHold, OnCostMana, AddRecoil, GetDamageBuffInfo);
         weapon.SetActivate(false);
         if (m_WeaponCurrent == null)
             OnSwitchWeapon();

@@ -24,11 +24,11 @@ public class EntityEnermyBase : EntityBase {
         switch (entityInfo.m_WeaponType)
         {
             default: Debug.LogError("Invalid Barrage Type:" + entityInfo.m_WeaponType); break;
-            case enum_EnermyWeaponType.Single: weapon = new BarrageRange(this,tf_Barrel, m_EntityInfo.m_ProjectileSFX); break;
-            case enum_EnermyWeaponType.MultipleFan: weapon = new BarrageMultipleFan(this,tf_Barrel, m_EntityInfo.m_ProjectileSFX); break;
-            case enum_EnermyWeaponType.MultipleLine: weapon = new BarrageMultipleLine(this,tf_Barrel, m_EntityInfo.m_ProjectileSFX);break;
-            case enum_EnermyWeaponType.Melee: weapon = new EnermyMelee(this,tf_Barrel); break;
-            case enum_EnermyWeaponType.Caster: weapon = new EnermyCaster(this,tf_Barrel);break;
+            case enum_EnermyWeaponType.Single: weapon = new BarrageRange(this,tf_Barrel, m_EntityInfo.m_ProjectileSFX,GetDamageBuffInfo); break;
+            case enum_EnermyWeaponType.MultipleFan: weapon = new BarrageMultipleFan(this,tf_Barrel, m_EntityInfo.m_ProjectileSFX, GetDamageBuffInfo); break;
+            case enum_EnermyWeaponType.MultipleLine: weapon = new BarrageMultipleLine(this,tf_Barrel, m_EntityInfo.m_ProjectileSFX, GetDamageBuffInfo);break;
+            case enum_EnermyWeaponType.Melee: weapon = new EnermyMelee(this,tf_Barrel, GetDamageBuffInfo); break;
+            case enum_EnermyWeaponType.Caster: weapon = new EnermyCaster(this,tf_Barrel, GetDamageBuffInfo);break;
         }
         m_AI = new EnermyAIControllerBase(this,weapon, entityInfo, OnAttackAnim, OnCheckTarget);
         if (E_AnimatorIndex == enum_EnermyAnim.Invalid)
@@ -364,6 +364,7 @@ public class EntityEnermyBase : EntityBase {
         protected EntityEnermyBase m_EntityControlling;
         protected Transform attacherTransform => m_EntityControlling.tf_Head;
         protected Transform transform;
+        protected Func<DamageBuffInfo> GetBuffInfo;
         protected SEntity m_Info
         {
             get
@@ -373,10 +374,11 @@ public class EntityEnermyBase : EntityBase {
                 return m_EntityControlling.m_EntityInfo;
             }
         }
-        public EnermyWeaponBase(EntityEnermyBase _controller,Transform _transform)
+        public EnermyWeaponBase(EntityEnermyBase _controller,Transform _transform,Func<DamageBuffInfo> _GetBuffInfo )
         {
             m_EntityControlling = _controller;
             transform = _transform;
+            GetBuffInfo = _GetBuffInfo;
         }
         public virtual void Play(bool preAim,EntityBase _target)
         {
@@ -388,20 +390,20 @@ public class EntityEnermyBase : EntityBase {
     }
     class EnermyMelee : EnermyWeaponBase
     {
-        public EnermyMelee(EntityEnermyBase _controller, Transform _transform) : base(_controller, _transform)
+        public EnermyMelee(EntityEnermyBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo) : base(_controller, _transform,_GetBuffInfo)
         {
         }
         public override void Play(bool preAim,EntityBase _target)
         {
             if (m_Info.m_MuzzleSFX > 0)
                 ObjectManager.SpawnSFX<SFXParticles>(m_Info.m_MuzzleSFX, attacherTransform.position,attacherTransform.forward);
-            ObjectManager.SpawnSFX<SFXCast>(m_Info.m_ProjectileSFX, attacherTransform.position, attacherTransform.forward).Play(m_EntityControlling.I_EntityID);
+            ObjectManager.SpawnSFX<SFXCast>(m_Info.m_ProjectileSFX, attacherTransform.position, attacherTransform.forward).Play(m_EntityControlling.I_EntityID,GetBuffInfo());
         }
     }
     class EnermyCaster : EnermyWeaponBase
     {
         SFXCast m_Cast;
-        public EnermyCaster(EntityEnermyBase _controller, Transform _transform) : base(_controller, _transform)
+        public EnermyCaster(EntityEnermyBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo) : base(_controller, _transform,_GetBuffInfo)
         {
         }
         public override void Play(bool preAim, EntityBase _target)
@@ -422,7 +424,7 @@ public class EntityEnermyBase : EntityBase {
     class BarrageRange : EnermyWeaponBase
     {
         protected float f_projectileSpeed;
-        public BarrageRange(EntityEnermyBase _controller, Transform _transform,int _projectileIndex) : base(_controller, _transform)
+        public BarrageRange(EntityEnermyBase _controller, Transform _transform,int _projectileIndex, Func<DamageBuffInfo> _GetBuffInfo) : base(_controller, _transform,_GetBuffInfo)
         {
             f_projectileSpeed = _projectileIndex == -1 ? 0 : ObjectManager.GetSFX<SFXProjectile>(_projectileIndex).F_Speed; ;
         }
@@ -442,12 +444,12 @@ public class EntityEnermyBase : EntityBase {
         {
             if (m_Info.m_MuzzleSFX > 0)
                 ObjectManager.SpawnSFX<SFXParticles>(m_Info.m_MuzzleSFX, startPosition, direction).Play(m_EntityControlling.I_EntityID);
-            ObjectManager.SpawnSFX<SFXProjectile>(m_Info.m_ProjectileSFX, startPosition, direction).Play(m_EntityControlling.I_EntityID, direction, targetPosition);
+            ObjectManager.SpawnSFX<SFXProjectile>(m_Info.m_ProjectileSFX, startPosition, direction).Play(m_EntityControlling.I_EntityID, direction, targetPosition,GetBuffInfo());
         }
     }
     class BarrageMultipleLine : BarrageRange
     {
-        public BarrageMultipleLine(EntityEnermyBase _controller, Transform _transform, int _projectileIndex) : base(_controller, _transform, _projectileIndex)
+        public BarrageMultipleLine(EntityEnermyBase _controller, Transform _transform, int _projectileIndex, Func<DamageBuffInfo> _GetBuffInfo) : base(_controller, _transform, _projectileIndex,_GetBuffInfo)
         {
         }
         public override void Play(bool preAim,EntityBase _target)
@@ -462,7 +464,7 @@ public class EntityEnermyBase : EntityBase {
     }
     class BarrageMultipleFan : BarrageRange
     {
-        public BarrageMultipleFan(EntityEnermyBase _controller, Transform _transform, int _projectileIndex) : base(_controller, _transform, _projectileIndex)
+        public BarrageMultipleFan(EntityEnermyBase _controller, Transform _transform, int _projectileIndex, Func<DamageBuffInfo> _GetBuffInfo) : base(_controller, _transform, _projectileIndex,_GetBuffInfo)
         {
         }
         public override void Play(bool preAim,EntityBase _target)
