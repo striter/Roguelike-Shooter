@@ -28,8 +28,8 @@ public class SFXCastLaserBeam : SFXCastBox {
     protected override void Update()
     {
         base.Update();
-        m_Beam.enabled = b_casting;
-        if (!b_casting)
+        m_Beam.enabled = B_Casting;
+        if (!B_Casting)
             return;
         f_castLength = m_Collider.size.z;
         RaycastHit hit;
