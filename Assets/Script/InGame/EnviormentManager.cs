@@ -13,7 +13,6 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
     public static SBigmapLevelInfo m_currentLevel { get; private set; }
     public SBigmapLevelInfo[,] m_MapLevelInfo { get; private set; }
     public Light m_DirectionalLight { get; protected set; }
-    public LowPolyWaterScript m_OceanScript { get; protected set; }
     protected NavMeshDataInstance m_NavMeshData;
     public System.Random m_mainSeed;
     public Action<SBigmapLevelInfo> OnLevelPrepared;
@@ -22,7 +21,6 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         base.Awake();
         tf_LevelParent = transform.Find("LevelParent");
         m_DirectionalLight = transform.Find("Directional Light").GetComponent<Light>();
-        m_OceanScript = transform.Find("Ocean").GetComponent<LowPolyWaterScript>();
     }
     protected void Start()
     {
@@ -42,8 +40,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         m_MapLevelInfo= GenerateBigmapLevels(m_StyleCurrent, m_mainSeed, tf_LevelParent,6,5,new TileAxis(2,2));
         StyleColorData[] customizations = TResources.GetAllStyleCustomization(_LevelStyle);
         StyleColorData randomData= customizations.Length == 0? StyleColorData.Default():customizations.RandomItem(m_mainSeed);
-        m_OceanScript.SetActivate(true);
-        randomData.DataInit(m_DirectionalLight, m_OceanScript);
+        randomData.DataInit(m_DirectionalLight);
         SetPostEffects(_LevelStyle);
     }
     public void SetPostEffects(enum_Style _levelStyle)
@@ -122,31 +119,6 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
             for (int j = 0; j < _bigmapHeight; j++)
                 bigmapTiles[i, j] = new  SBigmapTileInfo(new TileAxis(i, j), enum_TileType.Invalid,_levelStyle, enum_TileLocking.Locked);
 
-        #region elderVersion
-        ////Calculate Main Path And Connect
-        //List<SBigmapTileInfo> tilePath = new List<SBigmapTileInfo>();
-        //List<enum_TileDirection> directionOutcluded = new List<enum_TileDirection>();
-
-        //SBigmapTileInfo startTile = bigmapTiles.TileEdgeRandom(mainSeed, p => p.m_TileType == enum_BigmapTileType.Invalid, directionOutcluded);
-        //startTile.ResetTileType(enum_BigmapTileType.Start);
-        //SBigmapTileInfo endTile = bigmapTiles.TileEdgeRandom(mainSeed, p => p.m_TileType == enum_BigmapTileType.Invalid && p.m_TileAxis.AxisOffset(startTile.m_TileAxis) > 4, directionOutcluded);
-        //endTile.ResetTileType(enum_BigmapTileType.BattleEnd);
-
-        //bigmapTiles.PathFindForClosestApproch(startTile, endTile, tilePath, (SBigmapTileInfo info) => { info.ResetTileType(enum_BigmapTileType.Battle); });    //Match The Path For Main Road
-        //ConnectPaths(tilePath);
-
-        ////Calculate Sub Path And Connect
-        //tilePath = tilePath.FindAll(p => p.m_TileType == enum_BigmapTileType.Battle);  //Select Only Battle Island
-        //SBigmapTileInfo mainPathReward = tilePath.RandomItem(mainSeed);
-        //mainPathReward.ResetTileType(enum_BigmapTileType.Reward);
-        //SBigmapTileInfo subPathReward = bigmapTiles.TileEdgeRandom(mainSeed, p => p.m_TileType == enum_BigmapTileType.Invalid && p.m_TileAxis.AxisOffset(mainPathReward.m_TileAxis) > 1, directionOutcluded);
-        //subPathReward.ResetTileType(enum_BigmapTileType.Reward);
-        //tilePath.Clear();
-
-        //bigmapTiles.PathFindForClosestApproch(subPathReward, mainPathReward, tilePath, (SBigmapTileInfo tile) => { tile.ResetTileType(enum_BigmapTileType.Battle); }, p => p.m_TileType == enum_BigmapTileType.Battle, p => p.m_TileType != enum_BigmapTileType.Invalid && p.m_TileType != enum_BigmapTileType.Battle);
-        //ConnectPaths(tilePath);
-        #endregion
-
         List<SBigmapTileInfo> mainRoadTiles = new List<SBigmapTileInfo>();
         List<SBigmapTileInfo> subGenerateTiles = new List<SBigmapTileInfo>();
         //Calculate Main Path
@@ -220,8 +192,8 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
             return subRewardTile != null;
         });
 
-        //Load All map Levels
-        Dictionary<enum_TilePrefabDefinition, List<LevelBase>> levelPrefabDic = TResources.GetAllStyledLevels(_levelStyle);
+        //Load All map Levels And Set Material
+        Dictionary<enum_TilePrefabDefinition, List<LevelBase>> levelPrefabDic = TResources.GetStyledLevelSetMaterial(_levelStyle);
 
         LevelItemBase[] levelItemPrefabs = TResources.GetAllLevelItems(_levelStyle,null);
         Dictionary<LevelItemBase, int> maxItemCountDic = new Dictionary<LevelItemBase, int>();

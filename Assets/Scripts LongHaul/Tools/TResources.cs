@@ -11,9 +11,12 @@ public class TResources
         public const string S_LevelMain = "Level/Main";
         public const string S_LevelData = "Level/Main/Data";
         public const string S_LeveLItem = "Level/Item";
-        public const string S_LevelTexture = "Level/Texture";
         public const string S_Entity = "Entity";
         public const string S_StyleCustomization = "Level/Customization";
+
+        public const string S_Texture_LevelBase = "Texture/Level/Base/Texture_Base_";
+        public const string S_Texture_LevelDetail = "Texture/Level/Detail/Texture_Detail_";
+        public const string S_Texture_LevelDetailMask = "Texture/Level/Mask/";
 
         public const string S_SFX = "SFX";
     }
@@ -33,12 +36,14 @@ public class TResources
             instantiatedLevelItem[i] = GameObject.Instantiate(levelItemPrefabs[i], parent);
         return instantiatedLevelItem;
     }
-    public static Dictionary<enum_TilePrefabDefinition, List<LevelBase>> GetAllStyledLevels(enum_Style levelStyle)
+    public static Dictionary<enum_TilePrefabDefinition, List<LevelBase>> GetStyledLevelSetMaterial(enum_Style levelStyle)
     {
         Dictionary<enum_TilePrefabDefinition, List<LevelBase>> levelPrefabDic = new Dictionary<enum_TilePrefabDefinition, List<LevelBase>>();
         LevelBase[] levels = LoadAll<LevelBase>(ConstPath.S_LevelMain);
         Renderer matRenderer = levels[0].GetComponentInChildren<Renderer>();
-        matRenderer.sharedMaterial.SetTexture("_MainTex", Load<Texture>(ConstPath.S_LevelTexture + "/" + levelStyle));
+        matRenderer.sharedMaterial.SetTexture("_MainTex", Load<Texture>(ConstPath.S_Texture_LevelBase + levelStyle));
+        matRenderer.sharedMaterial.SetTexture("_DetailTex", Load<Texture>(ConstPath.S_Texture_LevelDetail  + levelStyle));
+        matRenderer.sharedMaterial.SetTexture("_DetailMask", LoadAll<Texture>(ConstPath.S_Texture_LevelDetailMask).RandomItem());
         levels.Traversal((LevelBase level) => {
             if (level.E_PrefabType == enum_TilePrefabDefinition.Invalid)
                 Debug.LogError("Please Edit Level(Something Invalid):Resources/" + ConstPath.S_LevelMain + level.name);

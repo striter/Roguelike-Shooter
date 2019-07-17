@@ -21,13 +21,12 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
         selectingStyleType = enum_Style.Invalid;
         previousData = StyleColorData.Default();
         InitAllMat();
-        previousData.SaveData(directionalLight, oceanScript);
+        previousData.SaveData(directionalLight);
         window.Show();
     }
     static enum_Style selectingStyleType = enum_Style.Invalid;
     static bool newStyleData = false;
     static Light directionalLight;
-    static LowPolyWaterScript oceanScript;
     static StyleColorData previousData;
     string extraName="Please Edit This";
     static void InitAllMat()
@@ -36,12 +35,10 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
         if (EditorApplication.isPlaying)
         {
             directionalLight = EnviormentManager.Instance.m_DirectionalLight;
-            oceanScript = EnviormentManager.Instance.m_OceanScript;
         }
         else
         {
             directionalLight = GameObject.Find("Enviorment/Directional Light").GetComponent<Light>();
-            oceanScript = GameObject.Find("Enviorment/Ocean").GetComponent<LowPolyWaterScript>();
         }
     }
     private void OnGUI()
@@ -67,7 +64,7 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
                 if (customizations.Length > 0 && GUILayout.Button("Show Random"))
                 {
                     StyleColorData data = customizations.RandomItem();
-                    data.DataInit(directionalLight, oceanScript);
+                    data.DataInit(directionalLight);
                     EditorGUIUtility.PingObject(data);
                 }
                 if (GUILayout.Button("Select " + style))
@@ -86,7 +83,7 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
                     GUILayout.TextArea(data.name);
                     if (GUILayout.Button("Edit"))
                     {
-                        data.DataInit(directionalLight, oceanScript);
+                        data.DataInit(directionalLight);
                         newStyleData = true;
                         extraName = data.name.Split('_')[1];
                         EditorGUIUtility.PingObject(data);
@@ -100,7 +97,7 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
                 if (GUILayout.Button("New"))
                     newStyleData = true;
                 if (previousData && GUILayout.Button("Reset"))
-                    previousData.DataInit(directionalLight, oceanScript);
+                    previousData.DataInit(directionalLight);
                 if (!EditorApplication.isPlaying&&GUILayout.Button("Return"))
                     selectingStyleType = enum_Style.Invalid;
                 GUILayout.EndHorizontal();
@@ -117,14 +114,6 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
                 EditorGUILayout.TextArea("Yaw:");
                 float yaw = EditorGUILayout.FloatField(directionalLight.transform.eulerAngles.y);
                 directionalLight.transform.rotation = Quaternion.Euler(new Vector3(pitch, yaw, 0));
-                GUILayout.EndHorizontal();
-                GUILayout.BeginHorizontal();
-                EditorGUILayout.TextArea("Ocean:Color:");
-                oceanScript.material.SetColor("_Color", EditorGUILayout.ColorField(oceanScript.material.GetColor("_Color")));
-                EditorGUILayout.TextArea("Specular:");
-                oceanScript.material.SetColor("_SpecColor", EditorGUILayout.ColorField(oceanScript.material.GetColor("_SpecColor")));
-                EditorGUILayout.TextArea("Fresnel:");
-                oceanScript.material.SetColor("_FresColor", EditorGUILayout.ColorField(oceanScript.material.GetColor("_FresColor")));
                 GUILayout.EndHorizontal();
                 GUILayout.BeginHorizontal();
                 EditorGUILayout.TextArea("Ambient:Sky");
@@ -149,11 +138,11 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
                 }
                 if (GUILayout.Button(od?"Override":"Save"))
                 {
-                    SaveCustomization(directionalLight, oceanScript, extraName);
+                    SaveCustomization(directionalLight, extraName);
                     newStyleData = false;
                 }
                 if (previousData&&GUILayout.Button("Reset"))
-                    previousData.DataInit(directionalLight, oceanScript);
+                    previousData.DataInit(directionalLight);
                 if (GUILayout.Button("Cancel"))
                     newStyleData = false;
                 GUILayout.EndHorizontal();
@@ -162,7 +151,7 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
         GUILayout.EndVertical();
     }
 
-    static void SaveCustomization(Light directional,LowPolyWaterScript ocean,string extraName)
+    static void SaveCustomization(Light directional,string extraName)
     {
         string dataFolder = TResources.ConstPath.S_StyleCustomization + "/" + selectingStyleType;
         string dataPath = dataFolder + "/" +selectingStyleType+"_"+ extraName + ".asset";
@@ -175,7 +164,7 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
 
             AssetDatabase.CreateAsset(data, TEditor.S_AssetDataBaseResources + dataPath);
         }
-        data.SaveData(directional,ocean);
+        data.SaveData(directional);
 
         EditorUtility.SetDirty(data);
         AssetDatabase.SaveAssets();

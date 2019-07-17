@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
-using System;
 using TTiles;
 public class LevelBase : MonoBehaviour {
     public enum_TilePrefabDefinition E_PrefabType = enum_TilePrefabDefinition.Invalid;
