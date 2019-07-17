@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: a305f6cf8a47126449589a69a90f2ff8
+guid: 8de54fd695454564b88b9a11190cf34b
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
@@ -20,16 +20,17 @@ ModelImporter:
     100028: Neck_jnt
     100030: SF_Character_kongbufenzi6
     100032: SF_Character_kongbufenzi6 1
-    100034: SF_Character_kongbufenzi6_penhuoqi
-    100036: SF_Character_kongbufenzi6_penhuoxiang
-    100038: Shoulder_Left_jnt
-    100040: Shoulder_Right_jnt
-    100042: Spine_jnt
-    100044: Spine_jnt 1
-    100046: Toe_Left_jnt
-    100048: Toe_Right_jnt
-    100050: UpperLeg_Left_jnt
-    100052: UpperLeg_Right_jnt
+    100034: SF_Character_kongbufenzi6_danyaobao
+    100036: SF_Character_kongbufenzi6_huojianpao
+    100038: SF_Character_kongbufenzi6_huojiantong
+    100040: Shoulder_Left_jnt
+    100042: Shoulder_Right_jnt
+    100044: Spine_jnt
+    100046: Spine_jnt 1
+    100048: Toe_Left_jnt
+    100050: Toe_Right_jnt
+    100052: UpperLeg_Left_jnt
+    100054: UpperLeg_Right_jnt
     400000: Arm_Left_jnt
     400002: Arm_Right_jnt
     400004: Chest_jnt
@@ -47,38 +48,31 @@ ModelImporter:
     400028: Neck_jnt
     400030: SF_Character_kongbufenzi6
     400032: SF_Character_kongbufenzi6 1
-    400034: SF_Character_kongbufenzi6_penhuoqi
-    400036: SF_Character_kongbufenzi6_penhuoxiang
-    400038: Shoulder_Left_jnt
-    400040: Shoulder_Right_jnt
-    400042: Spine_jnt
-    400044: Spine_jnt 1
-    400046: Toe_Left_jnt
-    400048: Toe_Right_jnt
-    400050: UpperLeg_Left_jnt
-    400052: UpperLeg_Right_jnt
+    400034: SF_Character_kongbufenzi6_danyaobao
+    400036: SF_Character_kongbufenzi6_huojianpao
+    400038: SF_Character_kongbufenzi6_huojiantong
+    400040: Shoulder_Left_jnt
+    400042: Shoulder_Right_jnt
+    400044: Spine_jnt
+    400046: Spine_jnt 1
+    400048: Toe_Left_jnt
+    400050: Toe_Right_jnt
+    400052: UpperLeg_Left_jnt
+    400054: UpperLeg_Right_jnt
     2100000: lambert71
-    2100002: lambert324
-    2300000: SF_Character_kongbufenzi6_penhuoqi
-    2300002: SF_Character_kongbufenzi6_penhuoxiang
-    3300000: SF_Character_kongbufenzi6_penhuoqi
-    3300002: SF_Character_kongbufenzi6_penhuoxiang
-    4300000: SF_Character_kongbufenzi6
-    4300002: SF_Character_kongbufenzi6_penhuoxiang
-    4300004: SF_Character_kongbufenzi6_penhuoqi
+    2300000: SF_Character_kongbufenzi6_danyaobao
+    2300002: SF_Character_kongbufenzi6_huojianpao
+    2300004: SF_Character_kongbufenzi6_huojiantong
+    3300000: SF_Character_kongbufenzi6_danyaobao
+    3300002: SF_Character_kongbufenzi6_huojianpao
+    3300004: SF_Character_kongbufenzi6_huojiantong
+    4300000: SF_Character_kongbufenzi6_danyaobao
+    4300002: SF_Character_kongbufenzi6_huojiantong
+    4300004: SF_Character_kongbufenzi6_huojianpao
+    4300006: SF_Character_kongbufenzi6
     9500000: //RootNode
     13700000: SF_Character_kongbufenzi6 1
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: lambert324
-    second: {fileID: 2100000, guid: 2985d2c17ea000741ba9996e268447fa, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: lambert71
-    second: {fileID: 2100000, guid: 2985d2c17ea000741ba9996e268447fa, type: 2}
+  externalObjects: {}
   materials:
     importMaterials: 1
     materialName: 0
@@ -290,14 +284,19 @@ ModelImporter:
       position: {x: -0, y: 0, z: 0}
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
-    - name: SF_Character_kongbufenzi6_penhuoqi
+    - name: SF_Character_kongbufenzi6_danyaobao
       parentName: SF_Character_kongbufenzi6
-      position: {x: -0, y: 27.528769, z: 37.525112}
+      position: {x: -0, y: 126.17867, z: -45.901478}
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
-    - name: SF_Character_kongbufenzi6_penhuoxiang
+    - name: SF_Character_kongbufenzi6_huojianpao
       parentName: SF_Character_kongbufenzi6
-      position: {x: -0, y: 161.82558, z: -61.636497}
+      position: {x: -172.24367, y: 111.48496, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: SF_Character_kongbufenzi6_huojiantong
+      parentName: SF_Character_kongbufenzi6
+      position: {x: -172.24368, y: 95.50471, z: 0}
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: Hips_jnt

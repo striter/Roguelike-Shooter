@@ -13,6 +13,9 @@ public class SFXCast : SFXBase,ISingleCoroutine {
     public int I_BuffApplyOnCast;
     protected virtual float F_ParticleDuration => 5f;
     public bool B_Casting { get; private set; } = false;
+    public int F_DelayDuration;
+    public int I_DelayIndicatorIndex;
+    
     public override void Init(int _sfxIndex)
     {
         base.Init(_sfxIndex);
@@ -20,11 +23,21 @@ public class SFXCast : SFXBase,ISingleCoroutine {
         m_Particles.Traversal((ParticleSystem particle)=> {particle.Stop();});
         m_DamageInfo = new DamageInfo(F_Damage, enum_DamageType.Area);
     }
-    public virtual void Play(int sourceID,DamageBuffInfo buffInfo)
+    public void Play(int sourceID,DamageBuffInfo buffInfo)
     {
-        PlaySFX(sourceID, I_TickCount*F_Tick+5f);
+        if (F_DelayDuration <= 0)
+        {
+            PlayDelayed(sourceID,buffInfo);
+            return;
+        }
+        ObjectManager.SpawnSFX<SFXIndicator>(I_DelayIndicatorIndex, transform.position, Vector3.up).PlayDuration(sourceID, transform.position, Vector3.up, F_DelayDuration);
+        this.StartSingleCoroutine(1, TIEnumerators.PauseDel(F_DelayDuration, () => { PlayDelayed(sourceID, buffInfo); }));
+    }
+    public virtual void PlayDelayed(int sourceID, DamageBuffInfo buffInfo)
+    {
+        PlaySFX(sourceID, I_TickCount * F_Tick + 5f);
         B_Casting = true;
-        if (I_BuffApplyOnCast>0)
+        if (I_BuffApplyOnCast > 0)
             buffInfo.m_BuffAplly.Add(I_BuffApplyOnCast);
         m_DamageInfo.ResetBuff(buffInfo);
 
@@ -33,6 +46,7 @@ public class SFXCast : SFXBase,ISingleCoroutine {
             B_Casting = false;
         }));
     }
+
     public virtual void PlayControlled(int sourceID, Transform attachTo, bool play)
     {
         B_Casting = play;

@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: e31c4b20ce655e1499b5db8123168f27
+guid: de86d9045ccb4004fa74c8b55a95fee6
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
@@ -56,24 +56,13 @@ ModelImporter:
     400048: UpperLeg_Left_jnt
     400050: UpperLeg_Right_jnt
     2100000: lambert67
-    2100002: lambert320
     2300000: SF_Character_kongbufenzi2_ranshaoping
     3300000: SF_Character_kongbufenzi2_ranshaoping
-    4300000: SF_Character_kongbufenzi2
-    4300002: SF_Character_kongbufenzi2_ranshaoping
+    4300000: SF_Character_kongbufenzi2_ranshaoping
+    4300002: SF_Character_kongbufenzi2
     9500000: //RootNode
     13700000: SF_Character_kongbufenzi2 1
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: lambert320
-    second: {fileID: 2100000, guid: 493d454d3a7ff6a45919ebbd1f369e1c, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: lambert67
-    second: {fileID: 2100000, guid: 493d454d3a7ff6a45919ebbd1f369e1c, type: 2}
+  externalObjects: {}
   materials:
     importMaterials: 1
     materialName: 0
@@ -287,7 +276,7 @@ ModelImporter:
       scale: {x: 1, y: 1, z: 1}
     - name: SF_Character_kongbufenzi2_ranshaoping
       parentName: SF_Character_kongbufenzi2
-      position: {x: -0, y: 195.03592, z: 0}
+      position: {x: -177.00902, y: 196.20096, z: 0.71809286}
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: Hips_jnt
@@ -393,7 +382,7 @@ ModelImporter:
     - name: Neck_jnt
       parentName: Chest_jnt
       position: {x: -22.89519, y: 4.2216864e-14, z: 5.6672844e-17}
-      rotation: {x: 0, y: 0, z: -1.7763568e-15, w: 1}
+      rotation: {x: 0, y: 0, z: -1.8873791e-15, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: Head_jnt
       parentName: Neck_jnt

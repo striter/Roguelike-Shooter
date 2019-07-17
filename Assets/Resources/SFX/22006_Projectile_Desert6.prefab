@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 114491430960406568}
   - component: {fileID: 114849450265349912}
   m_Layer: 9
-  m_Name: 20017_Projectile_Desert6
+  m_Name: 22006_Projectile_Desert6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -84,7 +84,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1091173488736010}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: -0, z: 0.371}
+  m_LocalPosition: {x: 0, y: -0, z: 0.75}
   m_LocalScale: {x: 0.0070000165, y: 0.007000002, z: 0.0070000156}
   m_Children:
   - {fileID: 4957205504355638}
@@ -113,7 +113,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1406003313940952}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.205, y: 0, z: 0.694}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4675475368102452}
@@ -172,7 +172,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1091173488736010}
-  m_Mesh: {fileID: 4300002, guid: e31c4b20ce655e1499b5db8123168f27, type: 3}
+  m_Mesh: {fileID: 4300004, guid: 8de54fd695454564b88b9a11190cf34b, type: 3}
 --- !u!96 &96207844558955790
 TrailRenderer:
   serializedVersion: 2
@@ -291,6 +291,7 @@ MonoBehaviour:
   F_Damage: 10
   F_Speed: 5
   I_ImpactIndex: 0
+  I_BufFApplyOnHit: 0
   I_CastIndex: 30001
   F_DirectionPitchAngle: 80
 --- !u!136 &136401941533324408
@@ -302,7 +303,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 1
+  m_Radius: 0.15
+  m_Height: 1.4
   m_Direction: 2
-  m_Center: {x: 0, y: 0, z: 0.5}
+  m_Center: {x: 0, y: 0, z: 0.7}

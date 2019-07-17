@@ -205,7 +205,7 @@ public class EntityEnermyBase : EntityBase {
         bool b_idled = false;
         bool b_targetVisible;
         int i_targetUnvisibleCount;
-        float f_targetAngle;
+        float f_targetAngle=180;
         bool b_targetHideBehindWall => i_targetUnvisibleCount == 40;
 
         IEnumerator TrackTarget()
@@ -364,7 +364,7 @@ public class EntityEnermyBase : EntityBase {
     {
         protected EntityEnermyBase m_EntityControlling;
         protected Transform attacherTransform => m_EntityControlling.tf_Head;
-        protected Transform transform;
+        protected Transform transformBarrel;
         protected Func<DamageBuffInfo> GetBuffInfo;
         protected SEntity m_Info
         {
@@ -378,7 +378,9 @@ public class EntityEnermyBase : EntityBase {
         public EnermyWeaponBase(EntityEnermyBase _controller,Transform _transform,Func<DamageBuffInfo> _GetBuffInfo )
         {
             m_EntityControlling = _controller;
-            transform = _transform;
+            transformBarrel = _transform;
+            if (_transform == null)
+                Debug.LogError("Null Weapon Barrel Found!");
             GetBuffInfo = _GetBuffInfo;
         }
         public virtual void Play(bool preAim,EntityBase _target)
@@ -410,16 +412,16 @@ public class EntityEnermyBase : EntityBase {
         public override void Play(bool preAim, EntityBase _target)
         {
             if (m_Cast)
-                m_Cast.PlayControlled(m_EntityControlling.I_EntityID, transform,false);
+                m_Cast.PlayControlled(m_EntityControlling.I_EntityID, transformBarrel,false);
 
-            m_Cast = ObjectManager.SpawnSFX<SFXCast>(m_Info.m_ProjectileSFX, transform.position, transform.forward);
-            m_Cast.PlayControlled(m_EntityControlling.I_EntityID, transform, true);
+            m_Cast = ObjectManager.SpawnSFX<SFXCast>(m_Info.m_ProjectileSFX, transformBarrel.position, transformBarrel.forward);
+            m_Cast.PlayControlled(m_EntityControlling.I_EntityID, transformBarrel, true);
         }
 
         public override void OnPlayAnim(bool play)
         {
             if ( m_Cast)
-                m_Cast.PlayControlled(m_EntityControlling.I_EntityID, transform,play);
+                m_Cast.PlayControlled(m_EntityControlling.I_EntityID, transformBarrel,play);
         }
     }
     class EnermyCasterTarget : EnermyWeaponBase
@@ -429,7 +431,7 @@ public class EntityEnermyBase : EntityBase {
         }
         public override void Play(bool preAim, EntityBase _target)
         {
-             ObjectManager.SpawnSFX<SFXCast>(m_Info.m_ProjectileSFX, transform.position, transform.forward).Play(m_EntityControlling.I_EntityID,GetBuffInfo());
+             ObjectManager.SpawnSFX<SFXCast>(m_Info.m_ProjectileSFX, transformBarrel.position, transformBarrel.forward).Play(m_EntityControlling.I_EntityID,GetBuffInfo());
         }
 
     }
@@ -442,8 +444,8 @@ public class EntityEnermyBase : EntityBase {
         }
         public override void Play(bool preAim, EntityBase _target)
         {
-            Vector3 horizontalOffsetDirection = GameExpression.V3_RangeSpreadDirection(GetHorizontalDirection(preAim,_target), m_Info.m_HorizontalSpread, Vector3.zero, transform.right);
-            FireBullet(transform.position, horizontalOffsetDirection,_target.tf_Head.position);
+            Vector3 horizontalOffsetDirection = GameExpression.V3_RangeSpreadDirection(GetHorizontalDirection(preAim,_target), m_Info.m_HorizontalSpread, Vector3.zero, transformBarrel.right);
+            FireBullet(transformBarrel.position, horizontalOffsetDirection,_target.tf_Head.position);
         }
 
         protected Vector3 GetHorizontalDirection(bool preAim,EntityBase _target)
@@ -468,10 +470,10 @@ public class EntityEnermyBase : EntityBase {
         {
             int waveCount = m_Info.m_RangeExtension.Random();
             Vector3 startDirection = GetHorizontalDirection(preAim, _target);
-            Vector3 startPosition = transform.position - attacherTransform.right*m_Info.m_OffsetExtension*((waveCount-1)/2f);
-            float distance = TCommon.GetXZDistance(transform.position, _target.transform.position);
+            Vector3 startPosition = transformBarrel.position - attacherTransform.right*m_Info.m_OffsetExtension*((waveCount-1)/2f);
+            float distance = TCommon.GetXZDistance(transformBarrel.position, _target.transform.position);
             for (int i = 0; i < waveCount; i++)
-                FireBullet(startPosition+ attacherTransform.right*m_Info.m_OffsetExtension*i, startDirection, transform.position + startDirection * distance);
+                FireBullet(startPosition+ attacherTransform.right*m_Info.m_OffsetExtension*i, startDirection, transformBarrel.position + startDirection * distance);
         }
     }
     class BarrageMultipleFan : BarrageRange
@@ -484,11 +486,11 @@ public class EntityEnermyBase : EntityBase {
             int waveCount = m_Info.m_RangeExtension.Random();
             Vector3 startDirection = GetHorizontalDirection(preAim, _target);
             float startFanAngle= -m_Info.m_OffsetExtension*(waveCount-1)/2f;
-            float distance = TCommon.GetXZDistance(transform.position, _target.transform.position);
+            float distance = TCommon.GetXZDistance(transformBarrel.position, _target.transform.position);
             for (int i = 0; i < waveCount; i++)
             {
                 Vector3 fanDirection = startDirection.RotateDirection(Vector3.up, startFanAngle + i * m_Info.m_OffsetExtension);
-                FireBullet(transform.position, fanDirection,transform.position+fanDirection* distance);
+                FireBullet(transformBarrel.position, fanDirection,transformBarrel.position+fanDirection* distance);
             }
         } 
     }

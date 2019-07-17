@@ -18,7 +18,7 @@ public class SFXCastLaserBeam : SFXCastBox {
         m_Muzzles.Traversal((ParticleSystem particle) => { particle.Stop(); });
         m_Impacts.Traversal((ParticleSystem particle) => { particle.Stop(); });
     }
-    public override void Play(int sourceID,DamageBuffInfo buffInfo)
+    public override void PlayDelayed(int sourceID,DamageBuffInfo buffInfo)
     {
         base.Play(sourceID, buffInfo);
         m_Muzzles.Traversal((ParticleSystem particle) => { particle.Play(); });

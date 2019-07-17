@@ -306,9 +306,10 @@ namespace GameSetting
         float f_speed;
         float f_vertiAcceleration;
         int m_bounceLayer;
+        bool b_randomRotation;
         protected Vector3 v3_RotateEuler;
         protected Vector3 v3_RotateDirection;
-        public ThrowablePhysicsSimulator(Vector3 _startPos, Vector3 _horiDirection, Vector3 _right, Vector3 _endPos, float _angle, float _horiSpeed, CapsuleCollider _collider, int _hitLayer,int _bounceLayer, Action<RaycastHit[]> _onTargetHit):base(_startPos,_horiDirection.RotateDirection(_right,-_angle),_collider,_hitLayer,_onTargetHit)
+        public ThrowablePhysicsSimulator(Vector3 _startPos, Vector3 _horiDirection, Vector3 _right, Vector3 _endPos, float _angle, float _horiSpeed, CapsuleCollider _collider,bool randomRotation, int _hitLayer,int _bounceLayer, Action<RaycastHit[]> _onTargetHit):base(_startPos,_horiDirection.RotateDirection(_right,-_angle),_collider,_hitLayer,_onTargetHit)
         {
             f_speed =  _horiSpeed/Mathf.Cos(_angle*Mathf.Deg2Rad);
             float horiDistance = Vector3.Distance(_startPos, _endPos);
@@ -316,14 +317,19 @@ namespace GameSetting
             float vertiDistance = Mathf.Tan(_angle * Mathf.Deg2Rad) * horiDistance;
             f_vertiAcceleration = Expressions.GetAcceleration(0, vertiDistance, duration);
             m_bounceLayer = _bounceLayer;
+            b_randomRotation = randomRotation;
             v3_RotateEuler = Quaternion.LookRotation(_horiDirection).eulerAngles;
             v3_RotateDirection = new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f));
         }
         public override void Simulate(float deltaTime)
         {
             base.Simulate(deltaTime);
-            v3_RotateEuler += v3_RotateDirection * deltaTime * 100f;
-            m_Rotation = Quaternion.LookRotation(v3_RotateEuler);
+
+            if (b_randomRotation)
+            {
+                v3_RotateEuler += v3_RotateDirection * deltaTime * 100f;
+                m_Rotation = Quaternion.LookRotation(v3_RotateEuler);
+            }
         }
         public override void OnTargetHitted(RaycastHit[] hitTargets)
         {
