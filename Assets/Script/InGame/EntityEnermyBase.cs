@@ -27,8 +27,9 @@ public class EntityEnermyBase : EntityBase {
             case enum_EnermyWeaponType.Single: weapon = new BarrageRange(this,tf_Barrel, m_EntityInfo.m_ProjectileSFX,GetDamageBuffInfo); break;
             case enum_EnermyWeaponType.MultipleFan: weapon = new BarrageMultipleFan(this,tf_Barrel, m_EntityInfo.m_ProjectileSFX, GetDamageBuffInfo); break;
             case enum_EnermyWeaponType.MultipleLine: weapon = new BarrageMultipleLine(this,tf_Barrel, m_EntityInfo.m_ProjectileSFX, GetDamageBuffInfo);break;
-            case enum_EnermyWeaponType.Melee: weapon = new EnermyMelee(this,tf_Barrel, GetDamageBuffInfo); break;
-            case enum_EnermyWeaponType.Caster: weapon = new EnermyCaster(this,tf_Barrel, GetDamageBuffInfo);break;
+            case enum_EnermyWeaponType.CasterOrigin: weapon = new EnermyCasterOrigin(this,tf_Barrel, GetDamageBuffInfo); break;
+            case enum_EnermyWeaponType.CasterControlled: weapon = new EnermyCasterControlled(this,tf_Barrel, GetDamageBuffInfo);break;
+            case enum_EnermyWeaponType.CasterTarget:weapon = new EnermyCasterTarget(this, tf_Barrel, GetDamageBuffInfo);break;
         }
         m_AI = new EnermyAIControllerBase(this,weapon, entityInfo, OnAttackAnim, OnCheckTarget);
         if (E_AnimatorIndex == enum_EnermyAnim.Invalid)
@@ -388,9 +389,9 @@ public class EntityEnermyBase : EntityBase {
 
         }
     }
-    class EnermyMelee : EnermyWeaponBase
+    class EnermyCasterOrigin : EnermyWeaponBase
     {
-        public EnermyMelee(EntityEnermyBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo) : base(_controller, _transform,_GetBuffInfo)
+        public EnermyCasterOrigin(EntityEnermyBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo) : base(_controller, _transform,_GetBuffInfo)
         {
         }
         public override void Play(bool preAim,EntityBase _target)
@@ -400,10 +401,10 @@ public class EntityEnermyBase : EntityBase {
             ObjectManager.SpawnSFX<SFXCast>(m_Info.m_ProjectileSFX, attacherTransform.position, attacherTransform.forward).Play(m_EntityControlling.I_EntityID,GetBuffInfo());
         }
     }
-    class EnermyCaster : EnermyWeaponBase
+    class EnermyCasterControlled : EnermyWeaponBase
     {
         SFXCast m_Cast;
-        public EnermyCaster(EntityEnermyBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo) : base(_controller, _transform,_GetBuffInfo)
+        public EnermyCasterControlled(EntityEnermyBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo) : base(_controller, _transform,_GetBuffInfo)
         {
         }
         public override void Play(bool preAim, EntityBase _target)
@@ -420,6 +421,17 @@ public class EntityEnermyBase : EntityBase {
             if ( m_Cast)
                 m_Cast.PlayControlled(m_EntityControlling.I_EntityID, transform,play);
         }
+    }
+    class EnermyCasterTarget : EnermyWeaponBase
+    {
+        public EnermyCasterTarget(EntityEnermyBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo) : base(_controller, _transform,_GetBuffInfo)
+        {
+        }
+        public override void Play(bool preAim, EntityBase _target)
+        {
+             ObjectManager.SpawnSFX<SFXCast>(m_Info.m_ProjectileSFX, transform.position, transform.forward).Play(m_EntityControlling.I_EntityID,GetBuffInfo());
+        }
+
     }
     class BarrageRange : EnermyWeaponBase
     {

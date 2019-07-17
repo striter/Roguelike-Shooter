@@ -30,7 +30,7 @@ public class SFXBase : MonoBehaviour {
 
     protected virtual void Update()
     {
-        if ( Time.time > f_TimeCheck)
+        if (b_Playing&&Time.time > f_TimeCheck)
             OnPlayFinished();
     }
     protected  virtual void OnPlayFinished()
