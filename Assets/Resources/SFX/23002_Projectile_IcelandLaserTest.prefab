@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 136701334087488100}
   - component: {fileID: 114271186370953052}
   m_Layer: 9
-  m_Name: 20011_Projectile_IcelandLaserTest
+  m_Name: 23004_Projectile_IcelandLaserTest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -221,6 +221,7 @@ MonoBehaviour:
   F_Damage: 20
   F_Speed: 20
   I_ImpactIndex: 40001
+  I_BufFApplyOnHit: 0
 --- !u!136 &136701334087488100
 CapsuleCollider:
   m_ObjectHideFlags: 1
