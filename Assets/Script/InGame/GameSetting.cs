@@ -307,9 +307,10 @@ namespace GameSetting
         float f_vertiAcceleration;
         int m_bounceLayer;
         bool b_randomRotation;
+        bool b_bounce;
         protected Vector3 v3_RotateEuler;
         protected Vector3 v3_RotateDirection;
-        public ThrowablePhysicsSimulator(Vector3 _startPos, Vector3 _horiDirection, Vector3 _right, Vector3 _endPos, float _angle, float _horiSpeed, CapsuleCollider _collider,bool randomRotation, int _hitLayer,int _bounceLayer, Action<RaycastHit[]> _onTargetHit):base(_startPos,_horiDirection.RotateDirection(_right,-_angle),_collider,_hitLayer,_onTargetHit)
+        public ThrowablePhysicsSimulator(Vector3 _startPos, Vector3 _horiDirection, Vector3 _right, Vector3 _endPos, float _angle, float _horiSpeed, CapsuleCollider _collider,bool randomRotation, int _hitLayer,bool bounce,int _bounceLayer, Action<RaycastHit[]> _onTargetHit):base(_startPos,_horiDirection.RotateDirection(_right,-_angle),_collider,_hitLayer,_onTargetHit)
         {
             f_speed =  _horiSpeed/Mathf.Cos(_angle*Mathf.Deg2Rad);
             float horiDistance = Vector3.Distance(_startPos, _endPos);
@@ -318,6 +319,7 @@ namespace GameSetting
             f_vertiAcceleration = Expressions.GetAcceleration(0, vertiDistance, duration);
             m_bounceLayer = _bounceLayer;
             b_randomRotation = randomRotation;
+            b_bounce = bounce;
             v3_RotateEuler = Quaternion.LookRotation(_horiDirection).eulerAngles;
             v3_RotateDirection = new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f));
         }
@@ -333,7 +335,7 @@ namespace GameSetting
         }
         public override void OnTargetHitted(RaycastHit[] hitTargets)
         {
-            if (hitTargets.Length > 0)
+            if (b_bounce&&hitTargets.Length > 0)
             {
                 for (int i = 0; i < hitTargets.Length; i++)
                 {

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PostEffectBase  {
     const string S_ParentPath = "Hidden/PostEffect/";
-    Camera cam_Cur;
+    Camera m_Camera;
     public Material mat_Cur { get; private set; }
     Shader sd_Cur;
     bool b_supported;
@@ -44,11 +44,48 @@ public class PostEffectBase  {
     }
     public virtual void OnSetEffect(Camera cam)
     {
-        cam_Cur = cam;
+        m_Camera = cam;
     }
     public virtual void OnDestroy()
     {
         GameObject.Destroy(mat_Cur);
+    }
+    protected Matrix4x4 ViewProjectionMatrixInverse => (Cam_Cur.projectionMatrix * Cam_Cur.worldToCameraMatrix).inverse;
+    protected Matrix4x4 FrustumCornorsRay()
+    {
+        float fov = Cam_Cur.fieldOfView;
+        float near = Cam_Cur.nearClipPlane;
+        float far = Cam_Cur.farClipPlane;
+        float aspect = Cam_Cur.aspect;
+
+        Transform cameraTrans = m_Camera.transform;
+        float halfHeight = near * Mathf.Tan(fov * .5f * Mathf.Deg2Rad);
+        Vector3 toRight = cameraTrans.right * halfHeight * aspect;
+        Vector3 toTop = cameraTrans.up * halfHeight;
+
+        Vector3 topLeft = cameraTrans.forward * near + toTop - toRight;
+        float scale = topLeft.magnitude / near;
+        topLeft.Normalize();
+        topLeft *= scale;
+
+        Vector3 topRight = cameraTrans.forward * near + toTop + toRight;
+        topRight.Normalize();
+        topRight *= scale;
+
+        Vector3 bottomLeft = cameraTrans.forward * near - toTop - toRight;
+        bottomLeft.Normalize();
+        bottomLeft *= scale;
+        Vector3 bottomRight = cameraTrans.forward * near - toTop + toRight;
+        bottomRight.Normalize();
+        bottomRight *= scale;
+
+        Matrix4x4 frustumCornersRay = Matrix4x4.identity;
+        frustumCornersRay.SetRow(0, bottomLeft);
+        frustumCornersRay.SetRow(1, bottomRight);
+        frustumCornersRay.SetRow(2, topLeft);
+        frustumCornersRay.SetRow(3, topRight);
+
+        return frustumCornersRay;
     }
     #region Get
     protected Material Mat_Cur
@@ -76,7 +113,7 @@ public class PostEffectBase  {
     {
         get
         {
-            return cam_Cur;
+            return m_Camera;
         }
     }
     #endregion
@@ -284,12 +321,10 @@ public class PE_MotionBlurDepth:PE_MotionBlur
 }
 public class PE_FogDepth : PostEffectBase
 {
-    Transform tra_Cam;
     public override void OnSetEffect(Camera cam)
     {
         base.OnSetEffect(cam);
         cam.depthTextureMode |= DepthTextureMode.Depth;
-        tra_Cam = Cam_Cur.transform;
         SetEffect(TCommon.ColorAlpha( Color.white,.5f));
     }
     public PE_FogDepth SetEffect(Color _fogColor,  float _fogDensity = .5f, float _fogYStart = -1f, float _fogYEnd = 5f)
@@ -308,40 +343,9 @@ public class PE_FogDepth : PostEffectBase
     {
         if (RenderDefaultImage(source,destination))
             return;
-
-        float fov = Cam_Cur.fieldOfView;
-        float near = Cam_Cur.nearClipPlane;
-        float far = Cam_Cur.farClipPlane;
-        float aspect = Cam_Cur.aspect;
-
-        float halfHeight = near * Mathf.Tan(fov * .5f * Mathf.Deg2Rad) ;
-        Vector3 toRight = tra_Cam.right * halfHeight * aspect;
-        Vector3 toTop = tra_Cam.up * halfHeight ;
-
-        Vector3 topLeft = tra_Cam.forward * near + toTop - toRight;
-        float scale = topLeft.magnitude / near;
-        topLeft.Normalize();
-        topLeft *= scale;
-
-        Vector3 topRight = tra_Cam.forward * near + toTop + toRight;
-        topRight.Normalize();
-        topRight *= scale;
-
-        Vector3 bottomLeft = tra_Cam.forward * near - toTop - toRight;
-        bottomLeft.Normalize();
-        bottomLeft *= scale;
-        Vector3 bottomRight = tra_Cam.forward * near - toTop + toRight;
-        bottomRight.Normalize();
-        bottomRight *= scale;
-
-        Matrix4x4 frustumCornersRay = Matrix4x4.identity;
-        frustumCornersRay.SetRow(0, bottomLeft);
-        frustumCornersRay.SetRow(1, bottomRight);
-        frustumCornersRay.SetRow(2, topLeft);
-        frustumCornersRay.SetRow(3, topRight);
-
-        Mat_Cur.SetMatrix("_FrustumCornersRay", frustumCornersRay);
-        Mat_Cur.SetMatrix("_VPMatrixInverse", (Cam_Cur.projectionMatrix * Cam_Cur.worldToCameraMatrix).inverse);
+        
+        Mat_Cur.SetMatrix("_FrustumCornersRay", FrustumCornorsRay());
+        Mat_Cur.SetMatrix("_VPMatrixInverse",ViewProjectionMatrixInverse);
         Graphics.Blit(source,destination,Mat_Cur);
     }
 }
@@ -421,9 +425,4 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
         Mat_Cur.SetTexture("_RenderTex", m_RenderTexture);
         Graphics.Blit(source, destination, Mat_Cur, 1);        //Mix
     }
-}
-public class PE_ScreenSpaceAmbientOcclusion : PostEffectBase
-{
-
- 
 }

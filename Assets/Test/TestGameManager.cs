@@ -6,7 +6,6 @@ public class TestGameManager : MonoBehaviour {
 
     private void Start()
     {
-        PostEffectManager.AddPostEffect<PE_ScreenSpaceAmbientOcclusion>();
     }
     // Update is called once per frame
     void Update () {
