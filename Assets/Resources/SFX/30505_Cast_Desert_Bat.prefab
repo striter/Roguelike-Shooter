@@ -56,7 +56,7 @@ GameObject:
   - component: {fileID: 135555557315418114}
   - component: {fileID: 114270020028275864}
   m_Layer: 9
-  m_Name: 30505_Cast_DangerZone_Desert1
+  m_Name: 30505_Cast_Desert_Bat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -210,7 +210,6 @@ MonoBehaviour:
   F_Damage: 10
   I_TickCount: 10
   F_Tick: 0.5
-  b_casting: 0
   I_BuffApplyOnCast: 1
   B_DamageDistanceReduction: 0
 --- !u!135 &135555557315418114
