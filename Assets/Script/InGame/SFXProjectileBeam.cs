@@ -25,6 +25,8 @@ public class SFXProjectileBeam : SFXProjectile {
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
+        if (UnityEditor.EditorApplication.isPlaying && !GameManager.Instance.B_GizmosInGame)
+            return;
         Gizmos.DrawLine(transform.position,transform.position+transform.forward* I_BeamLength);
     }
     #endif

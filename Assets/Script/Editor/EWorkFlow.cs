@@ -7,7 +7,6 @@ using System.IO;
 using System.Linq;
 using UnityEditor.SceneManagement;
 using EToolsEditor;
-using LPWAsset;
 
 public class EPostProcessor : AssetPostprocessor
 {

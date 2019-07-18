@@ -36,8 +36,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4675475368102452}
-  - component: {fileID: 136401941533324408}
-  - component: {fileID: 114491430960406568}
   - component: {fileID: 114849450265349912}
   m_Layer: 9
   m_Name: 29009_Projectile_ThrowableTest
@@ -266,17 +264,6 @@ TrailRenderer:
     generateLightingData: 0
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
---- !u!114 &114491430960406568
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1165261032841046}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62d09be21441f524d850aaf663ec49a2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114849450265349912
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -291,18 +278,10 @@ MonoBehaviour:
   F_Damage: 10
   F_Speed: 2
   I_ImpactIndex: 0
+  I_BufFApplyOnHit: 0
+  F_Radius: 0.5
+  F_Height: 1
   I_CastIndex: 30001
   F_DirectionPitchAngle: 80
---- !u!136 &136401941533324408
-CapsuleCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1165261032841046}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 1
-  m_Direction: 2
-  m_Center: {x: 0, y: 0, z: 0.5}
+  B_RandomRotation: 0
+  B_Bounce: 0

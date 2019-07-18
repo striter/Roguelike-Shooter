@@ -37,7 +37,7 @@ public class EntityPlayerBase : EntityBase {
         m_Pitch = 0;
         CameraController.Attach(this.transform);
 
-        if (GameManager.Instance.B_EditorTestMode)
+        if (GameManager.Instance.B_TestMode)
         {
             PCInputManager.Instance.AddMouseRotateDelta(OnRotateDelta);
             PCInputManager.Instance.AddMovementDelta(OnMovementDelta);
@@ -192,4 +192,17 @@ public class EntityPlayerBase : EntityBase {
             m_Animator.SetBool(HS_B_Run,run);
         }
     }
+#if UNITY_EDITOR
+    CapsuleCollider hitBox;
+    private void OnDrawGizmos()
+    {
+        if (UnityEditor.EditorApplication.isPlaying && !GameManager.Instance.B_GizmosInGame)
+            return;
+
+        if (!hitBox)
+            hitBox = transform.Find("Model").GetComponent<CapsuleCollider>();
+        Gizmos.color = Color.green;
+        Gizmos_Extend.DrawWireCapsule(transform.position+transform.up*hitBox.height/2*hitBox.transform.localScale.y,Quaternion.LookRotation(transform.forward,transform.up), hitBox.transform.localScale, hitBox.radius,hitBox.height);
+    }
+#endif
 }

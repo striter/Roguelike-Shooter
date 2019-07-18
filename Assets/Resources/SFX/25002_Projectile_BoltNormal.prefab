@@ -20,8 +20,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4853727591666664}
   - component: {fileID: 114328358534971362}
-  - component: {fileID: 136758242179525810}
-  - component: {fileID: 114253019014827722}
   m_Layer: 9
   m_Name: 25002_Projectile_BoltNormal
   m_TagString: Untagged
@@ -231,17 +229,6 @@ TrailRenderer:
     generateLightingData: 0
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
---- !u!114 &114253019014827722
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1321366802644644}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62d09be21441f524d850aaf663ec49a2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114328358534971362
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -257,16 +244,5 @@ MonoBehaviour:
   F_Speed: 12
   I_ImpactIndex: 40001
   I_BufFApplyOnHit: 0
---- !u!136 &136758242179525810
-CapsuleCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1321366802644644}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.04
-  m_Height: 1.1
-  m_Direction: 2
-  m_Center: {x: 0, y: 0, z: 0.55}
+  F_Radius: 0.04
+  F_Height: 1.1

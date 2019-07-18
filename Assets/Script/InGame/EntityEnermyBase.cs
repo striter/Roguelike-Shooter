@@ -495,4 +495,18 @@ public class EntityEnermyBase : EntityBase {
         } 
     }
     #endregion
+
+#if UNITY_EDITOR
+    CapsuleCollider hitbox;
+    private void OnDrawGizmos()
+    {
+        if (UnityEditor.EditorApplication.isPlaying && !GameManager.Instance.B_GizmosInGame)
+            return;
+
+        if(!hitbox)
+        hitbox = GetComponent<CapsuleCollider>();
+        Gizmos.color = Color.red;
+        Gizmos_Extend.DrawWireCapsule(transform.position+Vector3.up*hitbox.height/2,Quaternion.LookRotation(transform.forward,transform.up),hitbox.transform.localScale,hitbox.radius,hitbox.height);
+    }
+#endif
 }

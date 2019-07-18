@@ -23,7 +23,9 @@ public class SFXCastOverlapSphere : SFXCast
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.yellow;
+        if (UnityEditor.EditorApplication.isPlaying && !GameManager.Instance.B_GizmosInGame)
+            return;
+        Gizmos.color = GetGizmosColor();
         Gizmos.DrawWireSphere(transform.position,F_Radius);  
     }
 #endif

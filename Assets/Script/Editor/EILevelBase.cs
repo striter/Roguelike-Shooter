@@ -2,7 +2,6 @@
 using UnityEngine;
 using GameSetting;
 using System.IO;
-using EToolsEditor;
 
 [CustomEditor(typeof(LevelBase)),CanEditMultipleObjects]
 public class EILevelBase : Editor
