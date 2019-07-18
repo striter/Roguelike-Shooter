@@ -90,4 +90,15 @@ public class SFXCast : SFXBase,ISingleCoroutine {
     {
         hitEntity.TryHit(m_DamageInfo);
     }
+#if UNITY_EDITOR
+    protected Color GetGizmosColor()
+    {
+        Color color = Color.green;
+        if (B_Casting)
+            color = Color.red;
+        if (!UnityEditor.EditorApplication.isPlaying)
+            color = Color.yellow;
+        return color;
+    }
+#endif
 }

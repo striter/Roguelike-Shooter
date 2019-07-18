@@ -101,7 +101,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4427933090057842}
   - component: {fileID: 114413680526417114}
-  - component: {fileID: 65322455076309146}
   - component: {fileID: 120559922318303934}
   m_Layer: 9
   m_Name: 30306_Cast_Iceland_LaserBeam
@@ -286,18 +285,6 @@ Transform:
   m_Father: {fileID: 4427933090057842}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &65322455076309146
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1477696099701478}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.6, y: 0.5, z: 20}
-  m_Center: {x: 0, y: 0, z: 10}
 --- !u!114 &114413680526417114
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -313,6 +300,9 @@ MonoBehaviour:
   I_TickCount: 40
   F_Tick: 0.25
   I_BuffApplyOnCast: 0
+  F_DelayDuration: 0
+  I_DelayIndicatorIndex: 0
+  V3_BoxSize: {x: 0.6, y: 0.5, z: 20}
 --- !u!120 &120559922318303934
 LineRenderer:
   m_ObjectHideFlags: 1

@@ -9,6 +9,6 @@ public class SFXProjectileCastThrowable : SFXProjectileCastTrigger {
     public bool B_Bounce = false;
     protected override PhysicsSimulator GetSimulator(Vector3 direction, Vector3 targetPosition)
     {
-        return new ThrowablePhysicsSimulator(transform.position,direction,transform.right,targetPosition, F_DirectionPitchAngle, F_Speed,m_Collider,B_RandomRotation, GameLayer.Physics.I_All, B_Bounce, GameLayer.I_Static, OnPhysicsCasted);
+        return new ThrowablePhysicsSimulator(transform,transform.position,direction,transform.right,targetPosition, F_DirectionPitchAngle, F_Speed,F_Height,F_Radius,B_RandomRotation, GameLayer.Physics.I_All, B_Bounce, GameLayer.I_Static, OnPhysicsCasted);
     }
 }

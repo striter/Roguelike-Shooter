@@ -293,7 +293,7 @@ namespace GameSetting
     {
         protected Vector3 m_VerticalDirection;
         float m_horizontalSpeed;
-        public ProjectilePhysicsSimulator(Vector3 _startPos, Vector3 _horizontalDirection, Vector3 _verticalDirection, float _horizontalSpeed, CapsuleCollider _collider, int _hitLayer, Action<RaycastHit[]> _onTargetHit):base(_startPos,_horizontalDirection,_collider,_hitLayer,_onTargetHit)
+        public ProjectilePhysicsSimulator(Transform _transform, Vector3 _startPos, Vector3 _horizontalDirection, Vector3 _verticalDirection, float _horizontalSpeed, float _height, float _radius, int _hitLayer, Action<RaycastHit[]> _onTargetHit):base(_transform,_startPos, _horizontalDirection,_height,_radius,_hitLayer,_onTargetHit)
         {
             m_VerticalDirection = _verticalDirection.normalized;
             m_horizontalSpeed = _horizontalSpeed;
@@ -309,7 +309,7 @@ namespace GameSetting
         bool b_bounce;
         protected Vector3 v3_RotateEuler;
         protected Vector3 v3_RotateDirection;
-        public ThrowablePhysicsSimulator(Vector3 _startPos, Vector3 _horiDirection, Vector3 _right, Vector3 _endPos, float _angle, float _horiSpeed, CapsuleCollider _collider,bool randomRotation, int _hitLayer,bool bounce,int _bounceLayer, Action<RaycastHit[]> _onTargetHit):base(_startPos,_horiDirection.RotateDirection(_right,-_angle),_collider,_hitLayer,_onTargetHit)
+        public ThrowablePhysicsSimulator(Transform _transform, Vector3 _startPos, Vector3 _horiDirection, Vector3 _right, Vector3 _endPos, float _angle, float _horiSpeed, float _height, float _radius, bool randomRotation, int _hitLayer,bool bounce,int _bounceLayer, Action<RaycastHit[]> _onTargetHit):base(_transform,_startPos,_horiDirection.RotateDirection(_right,-_angle),_height,_radius,_hitLayer,_onTargetHit)
         {
             f_speed =  _horiSpeed/Mathf.Cos(_angle*Mathf.Deg2Rad);
             float horiDistance = Vector3.Distance(_startPos, _endPos);
@@ -329,7 +329,7 @@ namespace GameSetting
             if (b_randomRotation)
             {
                 v3_RotateEuler += v3_RotateDirection * deltaTime * 100f;
-                m_Rotation = Quaternion.LookRotation(v3_RotateEuler);
+                transform.rotation = Quaternion.LookRotation(v3_RotateEuler);
             }
         }
         public override void OnTargetHitted(RaycastHit[] hitTargets)
@@ -343,7 +343,7 @@ namespace GameSetting
                         if(TCommon.GetAngle(hitTargets[i].normal,Vector3.up,Vector3.right)<15)
                             break;
 
-                        m_startPos = m_Position;
+                        m_startPos = transform.position;
                         m_Direction = hitTargets[i].normal;
                         m_simulateTime = 0;
                         return;

@@ -172,11 +172,11 @@ public class LevelBase : MonoBehaviour {
     public int I_DiamCellCount = 64;
     public bool B_IgnoreUnavailable = true;
     public float F_HeightDetect = .5f;
-    public bool b_showGizmos=true,b_showGameTiles=true,b_b_showWorldDirection=false;
+    public bool b_showGameTiles=true,b_b_showWorldDirection=false;
     public TileMapData gizmosMapData;
     private void OnDrawGizmosSelected()
     {
-        if (!b_showGizmos)
+        if (UnityEditor.EditorApplication.isPlaying && !GameManager.Instance.B_GizmosInGame)
             return;
 
         if (b_showGameTiles&&UnityEditor.EditorApplication.isPlaying)            //Draw While Playing

@@ -8,8 +8,6 @@ namespace TPhysics
     public abstract class PhysicsSimulator
     {
         protected Vector3 m_startPos;
-        public Vector3 m_Position { get; protected set; }
-        public Quaternion m_Rotation { get; protected set; }
         protected Vector3 m_Direction;
         public float m_simulateTime { get; protected set; }
         public abstract void Simulate(float deltaTime);
@@ -17,29 +15,31 @@ namespace TPhysics
     }
     public class PhysicsSimulatorCapsule : PhysicsSimulator
     {
+        protected Transform transform;
         protected float m_castHeight, m_castRadius;
         protected int m_hitLayer;
         protected Action<RaycastHit[]> OnTargetHit;
-        public PhysicsSimulatorCapsule(Vector3 _startPos,Vector3 _direction,  CapsuleCollider _collider, int _hitLayer, Action<RaycastHit[]> _onTargetHit)
+        public PhysicsSimulatorCapsule(Transform _transform, Vector3 _startPos,Vector3 _direction, float _height,float _radius, int _hitLayer, Action<RaycastHit[]> _onTargetHit)
         {
+            transform = _transform;
             m_simulateTime = 0f;
             m_startPos = _startPos;
-            m_Position = _startPos;
+            transform.position = _startPos;
             m_Direction = _direction;
-            m_castHeight = _collider.height;
-            m_castRadius = _collider.radius;
+            m_castHeight = _height;
+            m_castRadius = _radius;
             m_hitLayer = _hitLayer;
             OnTargetHit = _onTargetHit;
         }
         public override void Simulate(float deltaTime)
         {
             m_simulateTime += deltaTime;
-            Vector3 simulatedPosition = GetSimulatedPosition(m_simulateTime);
-            m_Rotation = Quaternion.LookRotation (simulatedPosition - m_Position);
-            float distance = Vector3.Distance(m_Position, simulatedPosition);
+            Vector3 previousPosition = transform.position;
+            transform.position = GetSimulatedPosition(m_simulateTime);
+            transform.rotation = Quaternion.LookRotation(transform.position - previousPosition);
+            float distance = Vector3.Distance(previousPosition, transform.position);
             distance = distance > m_castHeight ? distance : m_castHeight;
-            OnTargetHitted(Physics.SphereCastAll(new Ray(m_Position, m_Direction), m_castRadius, distance, m_hitLayer));
-            m_Position = simulatedPosition;
+            OnTargetHitted(Physics.SphereCastAll(new Ray(previousPosition, m_Direction), m_castRadius, distance, m_hitLayer));
         }
         public override Vector3 GetSimulatedPosition(float elapsedTime)
         {
@@ -55,7 +55,7 @@ namespace TPhysics
     {
         protected Vector3 m_HorizontalDirection, m_VerticalDirection;
         protected float m_horizontalSpeed, m_horizontalAcceleration;
-        public AccelerationSimulator(Vector3 _startPos, Vector3 _horizontalDirection, Vector3 _verticalDirection, float _horizontalSpeed, float _horizontalAcceleration, CapsuleCollider _collider, int _hitLayer, Action<RaycastHit[]> _onTargetHit) : base(_startPos, _horizontalDirection, _collider,_hitLayer,_onTargetHit)
+        public AccelerationSimulator(Transform _transform, Vector3 _startPos, Vector3 _horizontalDirection, Vector3 _verticalDirection, float _horizontalSpeed, float _horizontalAcceleration, float _height, float _radius, int _hitLayer, Action<RaycastHit[]> _onTargetHit) : base(_transform,_startPos, _horizontalDirection, _height,_radius,_hitLayer,_onTargetHit)
         {
             m_HorizontalDirection = _horizontalDirection;
             m_VerticalDirection = _verticalDirection;

@@ -20,8 +20,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4675475368102452}
   - component: {fileID: 114655350290850800}
-  - component: {fileID: 136401941533324408}
-  - component: {fileID: 114491430960406568}
   m_Layer: 9
   m_Name: 23005_Projectile_Iceland5
   m_TagString: Untagged
@@ -84,7 +82,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1406003313940952}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.75}
+  m_LocalPosition: {x: 0, y: 0, z: 0.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4675475368102452}
@@ -237,17 +235,6 @@ TrailRenderer:
     generateLightingData: 0
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
---- !u!114 &114491430960406568
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1165261032841046}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62d09be21441f524d850aaf663ec49a2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114655350290850800
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -263,19 +250,6 @@ MonoBehaviour:
   F_Speed: 100
   I_ImpactIndex: 40001
   I_BufFApplyOnHit: 0
+  F_Radius: 0.5
+  F_Height: 0
   I_CastIndex: 30002
-  I_IndicatorIndex: 50001
-  F_DetonateDuration: 2.5
---- !u!136 &136401941533324408
-CapsuleCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1165261032841046}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 0.2
-  m_Direction: 2
-  m_Center: {x: 0, y: 0, z: 0.5}

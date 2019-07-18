@@ -12,16 +12,17 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     public enum_Style Test_TileStyle = enum_Style.Desert;
     public enum_Style Test_EntityStyle = enum_Style.Invalid;
     public string M_TESTSEED = "";
+    public bool B_TestMode { get; private set; }
+    public bool B_GizmosInGame = true;
 
     public EntityBase m_LocalPlayer { get; private set; } = null;
     public static CPlayerSave m_PlayerInfo { get; private set; }
-    public bool B_EditorTestMode { get; private set; } = false;
     public System.Random m_GameSeed { get; private set; } = null;
     public string m_SeedString { get; private set; } = null;
     protected override void Awake()
     {
 #if UNITY_EDITOR
-        B_EditorTestMode = true;
+        B_TestMode = true;
 #endif
         instance = this;
         DataManager.Init();
@@ -42,7 +43,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     public int B_TestBuffIndex = 1;
     void Update()
     {
-        if (!B_EditorTestMode)
+        if (!B_TestMode)
             return;
         if (Input.GetKeyDown(KeyCode.Alpha0))
         {

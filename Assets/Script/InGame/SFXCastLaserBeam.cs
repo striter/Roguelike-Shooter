@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-[RequireComponent(typeof(LineRenderer),typeof(BoxCollider))]
+[RequireComponent(typeof(LineRenderer))]
 public class SFXCastLaserBeam : SFXCastBox {
     LineRenderer m_Beam;
     Transform m_Muzzle, m_Impact;
@@ -31,16 +31,16 @@ public class SFXCastLaserBeam : SFXCastBox {
         m_Beam.enabled = B_Casting;
         if (!B_Casting)
             return;
-        f_castLength = m_Collider.size.z;
+        float castLength = V3_BoxSize.z;
         RaycastHit hit;
         bool hitted = false ;
-        if (Physics.BoxCast(transform.position, new Vector3(m_Collider.size.x / 2, m_Collider.size.y / 2, .01f), transform.forward, out hit, Quaternion.LookRotation(transform.forward, transform.up), f_castLength, GameLayer.Physics.I_StaticEntity))
+        if (Physics.BoxCast(transform.position, new Vector3(V3_BoxSize.x / 2, V3_BoxSize.y / 2, .01f), transform.forward, out hit, Quaternion.LookRotation(transform.forward, transform.up), castLength, GameLayer.Physics.I_StaticEntity))
         {
-            f_castLength = TCommon.GetXZDistance(transform.position, hit.point)+.2f;
+            castLength = TCommon.GetXZDistance(transform.position, hit.point)+.2f;
             hitted = true; 
         }
 
-        Vector3 targetPoint = transform.position + transform.forward * f_castLength;
+        Vector3 targetPoint = transform.position + transform.forward * castLength;
         m_Impact.SetActivate(hitted);
         m_Impact.transform.position = targetPoint;
         m_Beam.SetPosition(0, transform.position);
