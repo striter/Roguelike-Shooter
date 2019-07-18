@@ -14,9 +14,9 @@ public class TResources
         public const string S_Entity = "Entity";
         public const string S_StyleCustomization = "Level/Customization";
 
-        public const string S_Texture_LevelBase = "Texture/Level/Base/Texture_Base_";
-        public const string S_Texture_LevelDetail = "Texture/Level/Detail/Texture_Detail_";
-        public const string S_Texture_LevelDetailMask = "Texture/Level/Mask/";
+        public const string S_Texture_LevelBase = "Texture/Level/Texture_Base_";
+        public const string S_Texture_LevelDetail = "Texture/Level/Texture_Detail_";
+        public const string S_Texture_LevelDetailMask = "Texture/Level/Texture_Mask_";
 
         public const string S_SFX = "SFX";
     }
@@ -43,7 +43,7 @@ public class TResources
         Renderer matRenderer = levels[0].GetComponentInChildren<Renderer>();
         matRenderer.sharedMaterial.SetTexture("_MainTex", Load<Texture>(ConstPath.S_Texture_LevelBase + levelStyle));
         matRenderer.sharedMaterial.SetTexture("_DetailTex", Load<Texture>(ConstPath.S_Texture_LevelDetail  + levelStyle));
-        matRenderer.sharedMaterial.SetTexture("_DetailMask", LoadAll<Texture>(ConstPath.S_Texture_LevelDetailMask).RandomItem());
+        matRenderer.sharedMaterial.SetTexture("_DetailMask", Load<Texture>(ConstPath.S_Texture_LevelDetailMask + levelStyle));
         levels.Traversal((LevelBase level) => {
             if (level.E_PrefabType == enum_TilePrefabDefinition.Invalid)
                 Debug.LogError("Please Edit Level(Something Invalid):Resources/" + ConstPath.S_LevelMain + level.name);
