@@ -53,7 +53,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4847867912695626}
-  - component: {fileID: 135555557315418114}
   - component: {fileID: 114270020028275864}
   m_Layer: 9
   m_Name: 30505_Cast_Desert_Bat
@@ -211,19 +210,10 @@ MonoBehaviour:
   I_TickCount: 10
   F_Tick: 0.5
   I_BuffApplyOnCast: 1
+  F_DelayDuration: 0
+  I_DelayIndicatorIndex: 0
+  F_Radius: 4
   B_DamageDistanceReduction: 0
---- !u!135 &135555557315418114
-SphereCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1480526431946986}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 4
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!198 &198132401665749170
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -284,7 +274,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -384964521
+  randomSeed: 1204824923
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3645,7 +3635,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1850150113
+  randomSeed: 690002675
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -6910,7 +6900,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -272517517
+  randomSeed: -1689553669
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -13464,7 +13454,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1918694884
+  randomSeed: 788234826
   InitialModule:
     serializedVersion: 3
     enabled: 1

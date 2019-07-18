@@ -14,8 +14,7 @@ namespace GameSetting
         public const int I_ProjectileMaxDistance = 100;
 
         public const short I_BoltLastTimeAfterHit = 5;
-
-        public const int I_RocketBlastRadius = 5;        //Meter
+        
         public const float F_LaserRayStartPause = .5f;      //Laser Start Pause
 
         public const int I_BurstFirePelletsOnceTrigger = 3;       //Times While Burst Fire
@@ -54,7 +53,7 @@ namespace GameSetting
             return enum_TileDirection.Invalid;
         }
 
-        public static float F_SphereCastDamageReduction(float weaponDamage, float distance) => weaponDamage * (1-(distance / GameConst.I_RocketBlastRadius));       //Rocket Blast Damage
+        public static float F_SphereCastDamageReduction(float weaponDamage, float distance,float radius) => weaponDamage * (1-(distance / radius));       //Rocket Blast Damage
         public static Vector3 V3_RangeSpreadDirection(Vector3 aimDirection, float spread,Vector3 up,Vector3 right) => (aimDirection*GameConst.I_ProjectileSpreadAtDistance + up* UnityEngine.Random.Range(-spread, spread) + right * UnityEngine.Random.Range(-spread, spread)).normalized;
     }
 

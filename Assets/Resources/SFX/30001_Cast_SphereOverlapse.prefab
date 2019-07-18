@@ -19,7 +19,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4847867912695626}
-  - component: {fileID: 135555557315418114}
   - component: {fileID: 114973347317709960}
   m_Layer: 9
   m_Name: 30001_Cast_SphereOverlapse
@@ -128,16 +127,7 @@ MonoBehaviour:
   I_TickCount: 1
   F_Tick: 0.5
   I_BuffApplyOnCast: 0
+  F_DelayDuration: 0
+  I_DelayIndicatorIndex: 0
+  F_Radius: 5
   B_DamageDistanceReduction: 1
---- !u!135 &135555557315418114
-SphereCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1480526431946986}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 5
-  m_Center: {x: 0, y: 0, z: 0}
