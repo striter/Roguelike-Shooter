@@ -1,0 +1,2 @@
+Base和Detail是固定命名
+Mask会随机任何在里面的mask文件。
