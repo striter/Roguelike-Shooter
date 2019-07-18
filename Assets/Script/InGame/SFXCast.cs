@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-[RequireComponent(typeof(Collider))]
 public class SFXCast : SFXBase,ISingleCoroutine {
     ParticleSystem[] m_Particles;
     protected DamageInfo m_DamageInfo;

@@ -121,7 +121,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4847867912695626}
-  - component: {fileID: 135555557315418114}
   - component: {fileID: 114973347317709960}
   m_Layer: 9
   m_Name: 30002_Cast_Iceland_Blast1
@@ -306,19 +305,8 @@ MonoBehaviour:
   I_BuffApplyOnCast: 0
   F_DelayDuration: 5
   I_DelayIndicatorIndex: 50001
+  F_Radius: 9
   B_DamageDistanceReduction: 1
---- !u!135 &135555557315418114
-SphereCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1480526431946986}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 9
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!198 &198035278044419372
 ParticleSystem:
   m_ObjectHideFlags: 1
