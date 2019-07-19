@@ -431,7 +431,7 @@ public class EntityEnermyBase : EntityBase {
         }
         public override void Play(bool preAim, EntityBase _target)
         {
-             ObjectManager.SpawnSFX<SFXCast>(m_Info.m_ProjectileSFX, transformBarrel.position, transformBarrel.forward).Play(m_EntityControlling.I_EntityID,GetBuffInfo());
+             ObjectManager.SpawnSFX<SFXCast>(m_Info.m_ProjectileSFX,_target.transform.position, _target.transform.up).Play(m_EntityControlling.I_EntityID,GetBuffInfo());
         }
 
     }
