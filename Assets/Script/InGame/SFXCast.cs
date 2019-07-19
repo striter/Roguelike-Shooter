@@ -109,10 +109,10 @@ public class SFXCast : SFXBase,ISingleCoroutine {
                 break;
             case enum_CastAreaType.ForwardCapsule:
                 {
-                    float castLength = V3_CastSize.z - V3_CastSize.x / 2;
-                    castLength = castLength > 0 ? castLength : 0f;
                     float radius = V3_CastSize.x;
-                    hits = Physics.SphereCastAll(transform.position+transform.forward * radius / 2f, radius, transform.forward, castLength, GameLayer.Physics.I_EntityOnly);
+                    float castLength = V3_CastSize.z - radius*2;
+                    castLength = castLength > 0 ? castLength : 0f;
+                    hits = Physics.SphereCastAll(transform.position+transform.forward * radius, radius, transform.forward, castLength, GameLayer.Physics.I_EntityOnly);
                 }
                 break;
             case enum_CastAreaType.ForwardBox:
