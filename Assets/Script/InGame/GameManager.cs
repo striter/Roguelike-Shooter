@@ -151,7 +151,6 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     }
     public static bool B_CanDamageEntity(HitCheckEntity hb, int sourceID)   //After Hit,If Match Target Hit Succeed
     {
-        return true;
         if (hb.I_AttacherID == sourceID)
             return false;
 
