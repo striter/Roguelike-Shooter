@@ -53,4 +53,17 @@ public class SFXProjectileTargetRangeDrop : SFXProjectile {
     {
         B_SimulatePhysics = false;
     }
+
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        if (UnityEditor.EditorApplication.isPlaying && !GameManager.Instance.B_GizmosInGame)
+            return;
+        if (B_SimulatePhysics)
+            return;
+
+        Gizmos.color = Color.red;
+        Gizmos_Extend.DrawCylinder(transform.position,Quaternion.LookRotation(Vector3.down),F_DropRange,F_DropStartHeight);
+    }
+#endif
 }

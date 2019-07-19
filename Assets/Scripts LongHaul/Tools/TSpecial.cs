@@ -811,6 +811,21 @@ public static class Gizmos_Extend
             UnityEditor.Handles.DrawLine(capBottom +- Vector3.right * capBottomSize, capTop);
         }
     }
+    public static void DrawCylinder(Vector3 _pos, Quaternion _rot, float _radius, float _height)
+    {
+        using (new UnityEditor.Handles.DrawingScope(Gizmos.color, Matrix4x4.TRS(_pos, _rot, UnityEditor.Handles.matrix.lossyScale)))
+        {
+            Vector3 top = Vector3.forward * _height;
+
+            UnityEditor.Handles.DrawWireDisc(Vector3.zero, Vector3.forward, _radius);
+            UnityEditor.Handles.DrawWireDisc(top, Vector3.forward, _radius);
+
+            UnityEditor.Handles.DrawLine(Vector3.right*_radius,top+Vector3.right*_radius);
+            UnityEditor.Handles.DrawLine(-Vector3.right * _radius, top - Vector3.right * _radius);
+            UnityEditor.Handles.DrawLine(Vector3.up * _radius, top + Vector3.up * _radius);
+            UnityEditor.Handles.DrawLine(-Vector3.up * _radius, top - Vector3.up * _radius);
+        }
+    }
 }
 #endif
 #endregion
