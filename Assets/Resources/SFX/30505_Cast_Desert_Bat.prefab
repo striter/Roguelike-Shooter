@@ -210,9 +210,10 @@ MonoBehaviour:
   I_TickCount: 10
   F_Tick: 0.5
   I_BuffApplyOnCast: 1
+  E_CastType: 1
+  V3_CastSize: {x: 8, y: 0, z: 0}
   F_DelayDuration: 0
   I_DelayIndicatorIndex: 0
-  F_Radius: 4
   B_DamageDistanceReduction: 0
 --- !u!198 &198132401665749170
 ParticleSystem:

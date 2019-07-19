@@ -51,11 +51,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f804ed0400d000a47a90bacb24f1a776, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  F_Damage: 0
+  F_Damage: 30
   I_TickCount: 1
   F_Tick: 0.5
   I_BuffApplyOnCast: 0
-  E_CastType: -1
-  V3_CastSize: {x: 0, y: 0, z: 0}
+  E_CastType: 2
+  V3_CastSize: {x: 3.6, y: 1, z: 2}
   F_DelayDuration: 0
   I_DelayIndicatorIndex: 0
