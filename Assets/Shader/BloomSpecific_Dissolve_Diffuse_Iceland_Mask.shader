@@ -5,8 +5,8 @@
 		_MainTex("Main Tex",2D) = "white"{}
 		_Color("Color",Color) = (1,1,1,1)
 
-		_MaskTex("Color Special Mask",2D)="black"{}
-		_BlinkSpeed("Color Blink Speed",Range(0,10))=2
+		_SubTex2("Color Special Mask",2D)="black"{}
+		_Amount3("Color Blink Speed",Range(0,10))=2
 
 		_SubTex1("Dissolve Map",2D) = "white"{}
 		_Amount1("_Dissolve Progress",Range(0,1)) = 1
@@ -14,6 +14,7 @@
 	}
 	SubShader
 	{
+			Tags{"RenderType" = "BloomMask" }
 		CGINCLUDE
 		#include "UnityCG.cginc"
 		#include "AutoLight.cginc"
@@ -23,12 +24,12 @@
 		float4 _SubTex1_ST;
 		float _Amount1;
 		float _Amount2;
-		float _BlinkSpeed;
+		float _Amount3;
 		ENDCG
 
 		Pass		//Base Pass
 		{
-			Tags{"RenderType" = "Opaque" "LightMode" = "ForwardBase" "Queue" = "Transparent"}
+			Tags{"RenderType"="Opaque" "LightMode" = "ForwardBase" "Queue" = "Transparent"}
 			Blend SrcAlpha OneMinusSrcAlpha
 			ZWrite On
 			CGPROGRAM
@@ -56,14 +57,14 @@
 			float4 _Color;
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
-			sampler2D _MaskTex;
-			float4 _MaskTex_ST;
+			sampler2D _SubTex2;
+			float4 _SubTex2_ST;
 			v2f vert (appdata v)
 			{
 				v2f o;
 				o.uv.xy = TRANSFORM_TEX( v.uv, _MainTex);
 				o.uv.zw = TRANSFORM_TEX(v.uv, _SubTex1);
-				o.uvMask = TRANSFORM_TEX(v.uv, _MaskTex);
+				o.uvMask = TRANSFORM_TEX(v.uv, _SubTex2);
 				o.pos = UnityObjectToClipPos(v.vertex);
 				o.worldPos =mul(unity_ObjectToWorld,v.vertex);
 				fixed3 worldNormal = normalize(mul(v.normal, (float3x3)unity_WorldToObject)); //法线方向n
@@ -79,9 +80,9 @@
 				clip(dissolve);
 
 				float3 albedo = tex2D(_MainTex,i.uv.xy)* _Color;
-				float4 colorMask = tex2D(_MaskTex, i.uvMask);
+				float4 colorMask = tex2D(_SubTex2, i.uvMask);
 				if (colorMask.r == 1)
-					return fixed4(albedo* abs(sin(_Time.y*_BlinkSpeed)), 1);
+					return fixed4(albedo* abs(sin(_Time.y*_Amount3)), 1);
 				else if (colorMask.r > 0)
 					return fixed4(albedo, 1);
 

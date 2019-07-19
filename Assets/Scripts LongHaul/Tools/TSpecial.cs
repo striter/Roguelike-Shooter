@@ -787,9 +787,43 @@ public static class Gizmos_Extend
             UnityEditor.Handles.DrawLine(new Vector3(-halfWidth, halfHeight, halfLength), new Vector3(-halfWidth, halfHeight, -halfLength));
             UnityEditor.Handles.DrawLine(new Vector3(halfWidth, -halfHeight, halfLength), new Vector3(halfWidth, -halfHeight, -halfLength));
             UnityEditor.Handles.DrawLine(new Vector3(-halfWidth, -halfHeight, halfLength), new Vector3(-halfWidth, -halfHeight, -halfLength));
+        }
+    }
+    public static void DrawArrow(Vector3 _pos, Quaternion _rot, Vector3 _arrowSize)
+    {
+        using (new UnityEditor.Handles.DrawingScope(Gizmos.color, Matrix4x4.TRS(_pos, _rot, UnityEditor.Handles.matrix.lossyScale)))
+        {
+            Vector3 capBottom = Vector3.forward * _arrowSize.z/2;
+            Vector3 capTop = Vector3.forward * _arrowSize.z;
+            float rootRadius = _arrowSize.x / 4;
+            float capBottomSize = _arrowSize.x/2;
+            UnityEditor.Handles.DrawWireDisc(Vector3.zero, Vector3.forward, rootRadius);
+            UnityEditor.Handles.DrawWireDisc(capBottom, Vector3.forward, rootRadius);
+            UnityEditor.Handles.DrawLine(Vector3.up*rootRadius,capBottom+Vector3.up*rootRadius);
+            UnityEditor.Handles.DrawLine(-Vector3.up * rootRadius, capBottom - Vector3.up * rootRadius);
+            UnityEditor.Handles.DrawLine(Vector3.right * rootRadius, capBottom + Vector3.right * rootRadius);
+            UnityEditor.Handles.DrawLine(-Vector3.right * rootRadius, capBottom - Vector3.right * rootRadius);
 
+            UnityEditor.Handles.DrawWireDisc(capBottom, Vector3.forward, capBottomSize);
+            UnityEditor.Handles.DrawLine(capBottom+Vector3.up * capBottomSize, capTop);
+            UnityEditor.Handles.DrawLine(capBottom - Vector3.up * capBottomSize, capTop);
+            UnityEditor.Handles.DrawLine(capBottom+Vector3.right * capBottomSize, capTop);
+            UnityEditor.Handles.DrawLine(capBottom +- Vector3.right * capBottomSize, capTop);
+        }
+    }
+    public static void DrawCylinder(Vector3 _pos, Quaternion _rot, float _radius, float _height)
+    {
+        using (new UnityEditor.Handles.DrawingScope(Gizmos.color, Matrix4x4.TRS(_pos, _rot, UnityEditor.Handles.matrix.lossyScale)))
+        {
+            Vector3 top = Vector3.forward * _height;
 
+            UnityEditor.Handles.DrawWireDisc(Vector3.zero, Vector3.forward, _radius);
+            UnityEditor.Handles.DrawWireDisc(top, Vector3.forward, _radius);
 
+            UnityEditor.Handles.DrawLine(Vector3.right*_radius,top+Vector3.right*_radius);
+            UnityEditor.Handles.DrawLine(-Vector3.right * _radius, top - Vector3.right * _radius);
+            UnityEditor.Handles.DrawLine(Vector3.up * _radius, top + Vector3.up * _radius);
+            UnityEditor.Handles.DrawLine(-Vector3.up * _radius, top - Vector3.up * _radius);
         }
     }
 }

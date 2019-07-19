@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4847867912695626}
-  - component: {fileID: 114828465805877126}
+  - component: {fileID: 114326547265599346}
   m_Layer: 9
   m_Name: 23001_Cast_Iceland1
   m_TagString: Untagged
@@ -40,7 +40,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114828465805877126
+--- !u!114 &114326547265599346
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -48,13 +48,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1480526431946986}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0975943d7eeda19448225f68efa82120, type: 3}
+  m_Script: {fileID: 11500000, guid: f804ed0400d000a47a90bacb24f1a776, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   F_Damage: 30
   I_TickCount: 1
   F_Tick: 0.5
   I_BuffApplyOnCast: 0
+  E_CastType: 2
+  V3_CastSize: {x: 1.6, y: 2, z: 3.6}
   F_DelayDuration: 0
   I_DelayIndicatorIndex: 0
-  V3_BoxSize: {x: 1.6, y: 2, z: 3.6}

@@ -176,7 +176,7 @@ public class LevelBase : MonoBehaviour {
     public TileMapData gizmosMapData;
     private void OnDrawGizmosSelected()
     {
-        if (UnityEditor.EditorApplication.isPlaying && !GameManager.Instance.B_GizmosInGame)
+        if (UnityEditor.EditorApplication.isPlaying && !GameManager.Instance.B_GameDebugGizmos)
             return;
 
         if (b_showGameTiles&&UnityEditor.EditorApplication.isPlaying)            //Draw While Playing

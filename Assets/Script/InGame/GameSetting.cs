@@ -162,6 +162,7 @@ namespace GameSetting
     public enum enum_Interaction { Invalid = -1, Interact_Portal, }
     public enum enum_TriggerType { Invalid = -1, Single = 1, Auto = 2, Burst = 3, Pull = 4, Store = 5, }
     public enum enum_EnermyWeaponType { Invalid = -1, CasterOrigin = 01,CasterControlled=02,CasterTarget=03,Single = 101, MultipleFan = 102,MultipleLine=103,  }
+    public enum enum_CastAreaType { Invalid=-1,OverlapSphere=1,ForwardBox=2,ForwardCapsule=3,}
     public enum enum_DamageType { Invalid=-1,Projectile=1,Area=2,DOT=3,Fall=4,Regen=5}
     public enum enum_BuffAddType { Invalid=-1, AddUp = 1,Refresh =2}
     public enum enum_PlayerWeapon
@@ -299,6 +300,30 @@ namespace GameSetting
             m_horizontalSpeed = _horizontalSpeed;
         }
         public override Vector3 GetSimulatedPosition(float elapsedTime)=> m_startPos + m_Direction * Expressions.SpeedShift(m_horizontalSpeed, elapsedTime); 
+    }
+    public class ProjectilePhysicsLerpSimulator : PhysicsSimulatorCapsule
+    {
+        bool b_lerpFinished;
+        Action OnLerpFinished;
+        Vector3 m_endPos;
+        float f_totalTime;
+        public ProjectilePhysicsLerpSimulator(Transform _transform, Vector3 _startPos,Vector3 _endPos,Action _OnLerpFinished, float _speed, float _height, float _radius, int _hitLayer, Action<RaycastHit[]> _onTargetHit) : base(_transform, _startPos,_endPos-_startPos , _height, _radius, _hitLayer, _onTargetHit)
+        {
+            m_endPos = _endPos;
+            OnLerpFinished = _OnLerpFinished;
+            f_totalTime=Vector3.Distance(m_endPos,m_startPos)/_speed;
+            b_lerpFinished = false;
+        }
+        public override void Simulate(float deltaTime)
+        {
+            base.Simulate(deltaTime);
+            if (!b_lerpFinished && m_simulateTime > f_totalTime)
+            {
+                OnLerpFinished();
+                b_lerpFinished = true;
+            }
+         }
+        public override Vector3 GetSimulatedPosition(float elapsedTime) =>b_lerpFinished?m_endPos:Vector3.Lerp(m_startPos, m_endPos, elapsedTime / f_totalTime);
     }
     public class ThrowablePhysicsSimulator : PhysicsSimulatorCapsule
     {
