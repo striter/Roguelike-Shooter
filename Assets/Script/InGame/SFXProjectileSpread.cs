@@ -27,12 +27,6 @@ public class SFXProjectileSpread : SFXProjectile {
         base.Update();
         if (!B_SimulatePhysics)
             return;
-
-        if (i_spreadCountCheck >= I_SpreadCount)
-        {
-            OnPlayFinished();
-            return;
-        }
         
         f_spreadCheck += Time.deltaTime;
         if (f_spreadCheck < F_SpreadDuration)
@@ -44,5 +38,10 @@ public class SFXProjectileSpread : SFXProjectile {
         ObjectManager.SpawnSFX<SFXProjectile>(I_ProjectileSpread, transform.position, Vector3.up).Play(I_SourceID, splitDirection, transform.position + splitDirection * 10, m_DamageInfo.m_BuffApply);
 
         i_spreadCountCheck++;
+        if (i_spreadCountCheck >= I_SpreadCount)
+        {
+            OnPlayFinished();
+            return;
+        }
     }
 }

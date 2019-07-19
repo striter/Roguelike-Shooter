@@ -1779,7 +1779,7 @@ MonoBehaviour:
   B_GizmosInGame: 1
   Z_TestEntityIndex: 331
   X_TestCastIndex: 39001
-  C_TestProjectileIndex: 29010
+  C_TestProjectileIndex: 29011
   V_TestIndicatorIndex: 50002
   B_TestBuffIndex: 1
 --- !u!4 &1133817278
