@@ -60,7 +60,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         if (Input.GetKeyDown(KeyCode.Z) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
             ObjectManager.SpawnEntity(Z_TestEntityIndex, hit.point).SetTarget(m_LocalPlayer);
         if (Input.GetKeyDown(KeyCode.X) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
-            ObjectManager.SpawnSFX<SFXCast>(X_TestCastIndex, hit.point, Vector3.up).Play(1000,DamageBuffInfo.Create());
+            ObjectManager.SpawnSFX<SFXCast>(X_TestCastIndex, hit.point, Vector3.forward).Play(1000,DamageBuffInfo.Create());
         if (Input.GetKeyDown(KeyCode.C) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
             ObjectManager.SpawnSFX<SFXProjectile>(C_TestProjectileIndex, hit.point + Vector3.up , Vector3.forward).Play(m_LocalPlayer.I_EntityID, Vector3.forward, hit.point+Vector3.forward*10,DamageBuffInfo.Create());
         if (Input.GetKeyDown(KeyCode.V) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
@@ -151,6 +151,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     }
     public static bool B_CanDamageEntity(HitCheckEntity hb, int sourceID)   //After Hit,If Match Target Hit Succeed
     {
+        return true;
         if (hb.I_AttacherID == sourceID)
             return false;
 

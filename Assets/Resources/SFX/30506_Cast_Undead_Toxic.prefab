@@ -51,11 +51,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e3dbf17d97ab664cb72d9213471fed7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  F_Damage: 0
+  F_Damage: 3
   I_TickCount: 1
   F_Tick: 0.5
   I_BuffApplyOnCast: 0
+  E_CastType: 1
+  V3_CastSize: {x: 3, y: 0, z: 0}
   F_DelayDuration: 0
   I_DelayIndicatorIndex: 0
-  F_Radius: 7.5
   B_DamageDistanceReduction: 1

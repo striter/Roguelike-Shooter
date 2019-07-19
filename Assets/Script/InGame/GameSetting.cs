@@ -162,6 +162,7 @@ namespace GameSetting
     public enum enum_Interaction { Invalid = -1, Interact_Portal, }
     public enum enum_TriggerType { Invalid = -1, Single = 1, Auto = 2, Burst = 3, Pull = 4, Store = 5, }
     public enum enum_EnermyWeaponType { Invalid = -1, CasterOrigin = 01,CasterControlled=02,CasterTarget=03,Single = 101, MultipleFan = 102,MultipleLine=103,  }
+    public enum enum_CastAreaType { Invalid=-1,OverlapSphere=1,ForwardBox=2,ForwardCapsule=3,}
     public enum enum_DamageType { Invalid=-1,Projectile=1,Area=2,DOT=3,Fall=4,Regen=5}
     public enum enum_BuffAddType { Invalid=-1, AddUp = 1,Refresh =2}
     public enum enum_PlayerWeapon
