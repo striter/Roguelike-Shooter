@@ -62,7 +62,12 @@ ModelImporter:
     4300002: SF_Character_buluo5
     9500000: //RootNode
     13700000: SF_Character_buluo5 1
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lambert668
+    second: {fileID: 2100000, guid: f95efcd6c8a876043ad067d14dc783a4, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
