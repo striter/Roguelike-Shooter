@@ -306,7 +306,7 @@ MonoBehaviour:
   F_DelayDuration: 5
   I_DelayIndicatorIndex: 50001
   F_Radius: 9
-  B_DamageDistanceReduction: 1
+  B_DamageDistanceReduction: 0
 --- !u!198 &198035278044419372
 ParticleSystem:
   m_ObjectHideFlags: 1

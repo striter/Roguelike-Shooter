@@ -58,4 +58,4 @@ MonoBehaviour:
   F_DelayDuration: 0
   I_DelayIndicatorIndex: 0
   F_Radius: 4
-  B_DamageDistanceReduction: 1
+  B_DamageDistanceReduction: 0

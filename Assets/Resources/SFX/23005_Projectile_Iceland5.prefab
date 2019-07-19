@@ -250,6 +250,6 @@ MonoBehaviour:
   F_Speed: 100
   I_ImpactIndex: 40001
   I_BufFApplyOnHit: 0
-  F_Radius: 0.5
-  F_Height: 0
+  F_Radius: 6
+  F_Height: 6
   I_CastIndex: 30002
