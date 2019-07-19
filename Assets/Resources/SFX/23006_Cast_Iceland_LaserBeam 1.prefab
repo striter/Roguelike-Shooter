@@ -300,9 +300,10 @@ MonoBehaviour:
   I_TickCount: 40
   F_Tick: 0.25
   I_BuffApplyOnCast: 0
+  E_CastType: 3
+  V3_CastSize: {x: 0.2, y: 0, z: 10}
   F_DelayDuration: 0
   I_DelayIndicatorIndex: 0
-  V3_BoxSize: {x: 0.6, y: 0.5, z: 20}
 --- !u!120 &120559922318303934
 LineRenderer:
   m_ObjectHideFlags: 1
