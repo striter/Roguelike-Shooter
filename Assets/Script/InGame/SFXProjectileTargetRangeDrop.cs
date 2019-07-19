@@ -57,7 +57,7 @@ public class SFXProjectileTargetRangeDrop : SFXProjectile {
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        if (UnityEditor.EditorApplication.isPlaying && !GameManager.Instance.B_GizmosInGame)
+        if (UnityEditor.EditorApplication.isPlaying && !GameManager.Instance.B_GameDebugGizmos)
             return;
         if (B_SimulatePhysics)
             return;

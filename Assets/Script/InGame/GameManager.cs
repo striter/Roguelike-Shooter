@@ -13,7 +13,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     public enum_Style Test_EntityStyle = enum_Style.Invalid;
     public string M_TESTSEED = "";
     public bool B_TestMode { get; private set; }
-    public bool B_GizmosInGame = true;
+    public bool B_GameDebugGizmos = true;
 
     public EntityBase m_LocalPlayer { get; private set; } = null;
     public static CPlayerSave m_PlayerInfo { get; private set; }

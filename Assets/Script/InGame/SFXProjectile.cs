@@ -120,7 +120,7 @@ public class SFXProjectile : SFXBase
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        if (UnityEditor.EditorApplication.isPlaying && !GameManager.Instance.B_GizmosInGame)
+        if (UnityEditor.EditorApplication.isPlaying && !GameManager.Instance.B_GameDebugGizmos)
             return;
         Gizmos.color = Color.yellow;
         Gizmos_Extend.DrawWireCapsule(F_Height>F_Radius*2? transform.position+transform.forward*F_Height/2:transform.position+transform.forward*F_Radius,Quaternion.LookRotation( transform.up,transform.forward), Vector3.one, F_Radius,F_Height);
