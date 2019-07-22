@@ -362,6 +362,11 @@ Prefab:
       propertyPath: m_RootOrder
       value: 24
       objectReference: {fileID: 0}
+    - target: {fileID: 95891727233248992, guid: faf8056b14860a146884fa341b0e0958,
+        type: 2}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 9370d9b282cbdc94ea491435708f0b0d, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: faf8056b14860a146884fa341b0e0958, type: 2}
   m_IsPrefabParent: 0
@@ -650,7 +655,7 @@ GameObject:
   - component: {fileID: 679180543}
   - component: {fileID: 679180544}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: TestGameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

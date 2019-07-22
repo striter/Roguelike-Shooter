@@ -204,10 +204,12 @@ namespace GameSetting
         Staff_R_Cast_Loop_112 = 112,
         Staff_R_Cast_113=113,
         Bow_Shoot_130 = 130,
+        CrossBow_Shoot_131=131,
         Rifle_HipShot_140 = 140,
         Rifle_AimShot_141=141,
         Throwable_Hips_150 = 150,
-        Throwable_R_Throw_151=151,
+        Throwable_R_ThrowHip_151=151,
+        Throwable_R_ThrowBack_152=152,
         Heavy_HipShot_161=161,
         Heavy_Mortal=162,
     }
