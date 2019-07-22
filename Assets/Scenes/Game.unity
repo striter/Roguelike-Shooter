@@ -1777,7 +1777,7 @@ MonoBehaviour:
   Test_EntityStyle: 4
   M_TESTSEED: 
   B_GameDebugGizmos: 1
-  Z_TestEntityIndex: 331
+  Z_TestEntityIndex: 132
   X_TestCastIndex: 30506
   C_TestProjectileIndex: 29008
   V_TestIndicatorIndex: 50002
