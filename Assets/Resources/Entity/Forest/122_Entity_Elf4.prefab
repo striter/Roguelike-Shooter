@@ -606,7 +606,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1265457227043168}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0, y: 96.8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4929831745376712}
@@ -734,7 +734,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4304512068042692}
-  - {fileID: 4929831745376712}
   m_Father: {fileID: 4717649076438730}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -830,7 +829,8 @@ Transform:
   m_LocalRotation: {x: -0.0000038093015, y: 0.0022615753, z: 0.001684351, w: 0.99999607}
   m_LocalPosition: {x: -0.47657126, y: -44.02742, z: -7.232077e-15}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 4929831745376712}
   m_Father: {fileID: 4244783824407862}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -853,14 +853,14 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1835600667346712}
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 161.0231, y: 182.62251, z: -12.130726}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: 0.24598415, y: 0.29315254, z: 0.5938583, w: 0.70773286}
+  m_LocalPosition: {x: -17.200043, y: -4.1000314, z: 14.199977}
+  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_Children:
   - {fileID: 4443171846108078}
-  m_Father: {fileID: 4696996902319822}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Father: {fileID: 4878035643512768}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 45, z: 80}
 --- !u!23 &23301094481902800
 MeshRenderer:
   m_ObjectHideFlags: 1
@@ -931,7 +931,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 275d93242000a1d47972944c1cd255ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  E_AnimatorIndex: 31
+  E_AnimatorIndex: 110
   F_AttackRotateParam: 1
   B_AttackMove: 1
 --- !u!114 &114663443530046542

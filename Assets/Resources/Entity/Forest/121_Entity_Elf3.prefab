@@ -492,7 +492,8 @@ Transform:
   m_LocalRotation: {x: 1.4461227e-13, y: 1, z: -1.1714554e-15, w: 1.746155e-15}
   m_LocalPosition: {x: -44.03, y: -8.81073e-13, z: 4.7946414e-15}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 4369289829346836}
   m_Father: {fileID: 4006018812529860}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -582,7 +583,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4122853715254770}
-  - {fileID: 4369289829346836}
   m_Father: {fileID: 4286807491893582}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -592,14 +592,14 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1781751749681780}
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 163.96458, y: 198.74388, z: -3.5527137e-15}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0.015909374, y: 0.21426676, z: 0.83565104, w: -0.5054938}
+  m_LocalPosition: {x: 28, y: -6, z: -0.1}
+  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_Children:
   - {fileID: 4998767686569742}
-  m_Father: {fileID: 4305946464241850}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Father: {fileID: 4009896685194648}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: -20, y: -15, z: 245}
 --- !u!4 &4423097130071792
 Transform:
   m_ObjectHideFlags: 1
@@ -855,7 +855,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1666798390183144}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 102.2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4369289829346836}
@@ -942,7 +942,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 275d93242000a1d47972944c1cd255ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  E_AnimatorIndex: 140
+  E_AnimatorIndex: 30
   F_AttackRotateParam: 1
   B_AttackMove: 1
 --- !u!114 &114172474372172832
