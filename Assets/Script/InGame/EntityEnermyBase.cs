@@ -412,16 +412,16 @@ public class EntityEnermyBase : EntityBase {
         public override void Play(bool preAim, EntityBase _target)
         {
             if (m_Cast)
-                m_Cast.PlayControlled(m_EntityControlling.I_EntityID, transformBarrel,false);
+                m_Cast.PlayControlled(m_EntityControlling.I_EntityID, transformBarrel,attacherTransform,false);
 
             m_Cast = ObjectManager.SpawnSFX<SFXCast>(m_Info.m_ProjectileSFX, transformBarrel.position, transformBarrel.forward);
-            m_Cast.PlayControlled(m_EntityControlling.I_EntityID, transformBarrel, true);
+            m_Cast.PlayControlled(m_EntityControlling.I_EntityID, transformBarrel, attacherTransform, true);
         }
 
         public override void OnPlayAnim(bool play)
         {
             if ( m_Cast)
-                m_Cast.PlayControlled(m_EntityControlling.I_EntityID, transformBarrel,play);
+                m_Cast.PlayControlled(m_EntityControlling.I_EntityID, transformBarrel, attacherTransform, play);
         }
     }
     class EnermyCasterTarget : EnermyWeaponBase
