@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4853727591666664}
   - component: {fileID: 114328358534971362}
   m_Layer: 9
-  m_Name: 21002_Projectile_Forest2
+  m_Name: 21007_Projectile_Forest7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
