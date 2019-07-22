@@ -12,12 +12,14 @@ public class SFXCast : SFXBase,ISingleCoroutine {
     public Vector3 V3_CastSize;
     public int F_DelayDuration;
     public int I_DelayIndicatorIndex;
-
     ParticleSystem[] m_Particles;
     protected DamageInfo m_DamageInfo;
     protected virtual float F_ParticleDuration => 5f;
     protected virtual float F_CastLength => V3_CastSize.z;
     public bool B_Casting { get; private set; } = false;
+
+    protected Transform CastTransform => tf_ControlledCast ? tf_ControlledCast : transform;
+    Transform tf_ControlledAttach,tf_ControlledCast;
     public override void Init(int _sfxIndex)
     {
         base.Init(_sfxIndex);
@@ -62,20 +64,32 @@ public class SFXCast : SFXBase,ISingleCoroutine {
         }));
     }
 
-    public virtual void PlayControlled(int sourceID, Transform attachTo, bool play)
+    public virtual void PlayControlled(int sourceID, Transform attachTrans,Transform directionTrans, bool play)
     {
         B_Casting = play;
         if (play)
         {
-            transform.SetParent(attachTo);
+            tf_ControlledAttach = attachTrans;
+            tf_ControlledCast = directionTrans;
             this.StartSingleCoroutine(0, TIEnumerators.Tick(OnBlast, F_Tick));
             PlaySFX(sourceID, int.MaxValue);
         }
         else
         {
+            tf_ControlledAttach = null;
+            tf_ControlledCast = null;
             this.StopSingleCoroutine(0);
             f_TimeCheck = Time.time + F_ParticleDuration;
             m_Particles.Traversal((ParticleSystem particle) => { particle.Stop(); });
+        }
+    }
+    protected override void Update()
+    {
+        base.Update();
+        if (tf_ControlledAttach != null)
+        {
+            transform.position = tf_ControlledAttach.position;
+            transform.rotation = tf_ControlledAttach.rotation;
         }
     }
     protected void OnDisable()
@@ -105,7 +119,7 @@ public class SFXCast : SFXBase,ISingleCoroutine {
             case enum_CastAreaType.OverlapSphere:
                 {
                     float radius = V3_CastSize.x;
-                  hits= Physics.SphereCastAll(transform.position, radius,transform.forward,0f, GameLayer.Physics.I_EntityOnly);
+                    hits= Physics.SphereCastAll(CastTransform.position, radius, CastTransform.forward,0f, GameLayer.Physics.I_EntityOnly);
                 }
                 break;
             case enum_CastAreaType.ForwardCapsule:
@@ -113,12 +127,12 @@ public class SFXCast : SFXBase,ISingleCoroutine {
                     float radius = V3_CastSize.x;
                     float castLength = F_CastLength - radius*2;
                     castLength = castLength > 0 ? castLength : 0f;
-                    hits = Physics.SphereCastAll(transform.position+transform.forward * radius, radius, transform.forward, castLength, GameLayer.Physics.I_EntityOnly);
+                    hits = Physics.SphereCastAll(CastTransform.position+ CastTransform.forward * radius, radius, CastTransform.forward, castLength, GameLayer.Physics.I_EntityOnly);
                 }
                 break;
             case enum_CastAreaType.ForwardBox:
                 {
-                   hits = Physics.BoxCastAll(transform.position + transform.forward*1f /2f, new Vector3(V3_CastSize.x / 2, V3_CastSize.y / 2, .5f), transform.forward, Quaternion.LookRotation(transform.forward, transform.up), F_CastLength - 1f, GameLayer.Physics.I_EntityOnly);
+                   hits = Physics.BoxCastAll(CastTransform.position + CastTransform.forward*1f /2f, new Vector3(V3_CastSize.x / 2, V3_CastSize.y / 2, .5f), CastTransform.forward, Quaternion.LookRotation(CastTransform.forward, CastTransform.up), F_CastLength - 1f, GameLayer.Physics.I_EntityOnly);
                 }
                 break;
         }
@@ -134,17 +148,17 @@ public class SFXCast : SFXBase,ISingleCoroutine {
         if (UnityEditor.EditorApplication.isPlaying && !GameManager.Instance.B_GameDebugGizmos)
             return;
         Gizmos.color = GetGizmosColor();
-        Gizmos_Extend.DrawArrow(transform.position,Quaternion.LookRotation(transform.forward),new Vector3(V3_CastSize.x/10,V3_CastSize.y/10,F_CastLength / 4));
+        Gizmos_Extend.DrawArrow(CastTransform.position,Quaternion.LookRotation(CastTransform.forward),new Vector3(V3_CastSize.x/10,V3_CastSize.y/10,F_CastLength / 4));
         switch (E_CastType)
         {
             case enum_CastAreaType.OverlapSphere:
-                    Gizmos.DrawWireSphere(transform.position, V3_CastSize.x);
+                    Gizmos.DrawWireSphere(CastTransform.position, V3_CastSize.x);
                 break;
             case enum_CastAreaType.ForwardBox:
-                    Gizmos_Extend.DrawWireCube(transform.position + transform.forward * F_CastLength / 2, Quaternion.LookRotation(transform.forward), V3_CastSize);
+                    Gizmos_Extend.DrawWireCube(CastTransform.position + CastTransform.forward * F_CastLength / 2, Quaternion.LookRotation(CastTransform.forward), new Vector3(V3_CastSize.x,V3_CastSize.y,F_CastLength));
                 break;
             case enum_CastAreaType.ForwardCapsule:
-                Gizmos_Extend.DrawWireCapsule(transform.position+transform.forward* F_CastLength / 2,Quaternion.LookRotation(transform.up,transform.forward),Vector3.one,V3_CastSize.x, F_CastLength);
+                Gizmos_Extend.DrawWireCapsule(CastTransform.position+transform.forward* F_CastLength / 2,Quaternion.LookRotation(CastTransform.up, CastTransform.forward),Vector3.one,V3_CastSize.x, F_CastLength);
                 break;
         }
     }
