@@ -62,7 +62,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         if (Input.GetKeyDown(KeyCode.X) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
             ObjectManager.SpawnDamageSource<SFXCast>(X_TestCastIndex, hit.point, Vector3.forward).Play(1000,DamageBuffInfo.Create());
         if (Input.GetKeyDown(KeyCode.C) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
-            ObjectManager.SpawnDamageSource<SFXProjectile>(C_TestProjectileIndex, hit.point + Vector3.up , Vector3.forward).Play(m_LocalPlayer.I_EntityID, Vector3.forward, hit.point+Vector3.forward*10,DamageBuffInfo.Create());
+            ObjectManager.SpawnDamageSource<SFXProjectile>(C_TestProjectileIndex, hit.point + Vector3.up , Vector3.forward).Play(0, Vector3.forward, hit.point+Vector3.forward*10,DamageBuffInfo.Create());
         if (Input.GetKeyDown(KeyCode.V) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
             ObjectManager.SpawnCommonIndicator(V_TestIndicatorIndex, hit.point + Vector3.up, Vector3.up).Play(1000);
         if (Input.GetKeyDown(KeyCode.B) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
@@ -370,9 +370,9 @@ public static class ObjectManager
             return ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Spawn(type, TF_Entity);
 
     }
-    public static SFXParticles SpawnCommonParticles(int index, Vector3 position, Vector3 normal, Transform attachTo = null)
+    public static T SpawnCommonParticles<T>(int index, Vector3 position, Vector3 normal, Transform attachTo = null) where T:SFXParticles
     {
-        SFXParticles sfx = ObjectPoolManager<int, SFXBase>.Spawn(index, attachTo) as SFXParticles;
+        T sfx = ObjectPoolManager<int, SFXBase>.Spawn(index, attachTo) as T;
         if (sfx == null)
             Debug.LogError("SFX Spawn Error! Invalid Common Particles,Index:" + index);
         sfx.transform.position = position;
@@ -390,6 +390,8 @@ public static class ObjectManager
     }
     public static T SpawnDamageSource<T>(int weaponIndex,Vector3 position,Vector3 normal, Transform attachTo=null) where T:SFXBase
     {
+        if (!ObjectPoolManager<int, SFXBase>.Registed(weaponIndex))
+            ObjectPoolManager<int, SFXBase>.Register(weaponIndex, TResources.GetEnermyWeaponSFX(weaponIndex), enum_PoolSaveType.DynamicMaxAmount, 1, (SFXBase sfx) => { sfx.Init(weaponIndex); });
 
         T template = ObjectPoolManager<int, SFXBase>.Spawn(weaponIndex, attachTo) as T;
         if (template == null)

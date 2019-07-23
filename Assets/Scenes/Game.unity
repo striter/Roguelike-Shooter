@@ -1774,12 +1774,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Test_TileStyle: 4
-  Test_EntityStyle: 1
+  Test_EntityStyle: 4
   M_TESTSEED: 
   B_GameDebugGizmos: 1
   Z_TestEntityIndex: 132
   X_TestCastIndex: 30506
-  C_TestProjectileIndex: 29008
+  C_TestProjectileIndex: 10300
   V_TestIndicatorIndex: 50002
   B_TestBuffIndex: 1
 --- !u!4 &1133817278

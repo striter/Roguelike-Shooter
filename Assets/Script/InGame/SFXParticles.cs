@@ -17,7 +17,7 @@ public class SFXParticles : SFXBase
             particle.Stop();
                 });
     }
-    public void Play(int sourceID,float duration=-1)
+    public virtual void Play(int sourceID,float duration=-1)
     {
         PlaySFX(sourceID, duration==-1?m_ParticleDuration: duration);
         m_Particles.Traversal((ParticleSystem particle) => { particle.Play(); });

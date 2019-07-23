@@ -79,18 +79,18 @@ public class SFXProjectile : SFXBase
             }
         }
     }
-    protected bool CanHitTarget(HitCheckBase hitCheck)
+    protected virtual bool CanHitTarget(HitCheckBase hitCheck)
     {
         switch (hitCheck.m_HitCheckType)
         {
+            case enum_HitCheck.Dynamic:
+            case enum_HitCheck.Static:
+                return hitCheck.I_AttacherID != I_SourceID;
             case enum_HitCheck.Entity:
                 {
                     HitCheckEntity entity = hitCheck as HitCheckEntity;
                     return !m_TargetHitted.Contains(entity.I_AttacherID) && GameManager.B_CanHitEntity(entity, I_SourceID);
                 }
-            case enum_HitCheck.Dynamic:
-            case enum_HitCheck.Static:
-                return true;
         }
         return false;
     }
@@ -119,11 +119,18 @@ public class SFXProjectile : SFXBase
     {
         if (I_ImpactIndex > 0)
         {
-            SFXParticles impact = ObjectManager.SpawnCommonParticles(I_ImpactIndex, hitInfo.point, hitInfo.normal, null);
-            if (hitParent != null && hitParent.m_HitCheckType == enum_HitCheck.Entity)
-                (hitParent as HitCheckEntity).AttachTransform(impact);
-            else
-                impact.transform.SetParent(hitInfo.transform);
+            SFXParticlesImpact impact = ObjectManager.SpawnCommonParticles<SFXParticlesImpact>(I_ImpactIndex, hitInfo.point, hitInfo.normal, null);
+            bool showhitMark = true;
+            switch (hitParent.m_HitCheckType)
+            {
+                case enum_HitCheck.Entity:
+                    (hitParent as HitCheckEntity).AttachTransform(impact);
+                    break;
+                case enum_HitCheck.Dynamic:
+                    showhitMark = false;
+                    break;
+            }
+            impact.SetHitMarkShow(showhitMark);
             impact.Play(I_SourceID);
         }
     }

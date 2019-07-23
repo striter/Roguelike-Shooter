@@ -296,7 +296,7 @@ namespace GameSetting
                 return false;
 
             m_CurrentHealth -= damageInfo.m_AmountApply * damageReduction;
-            OnHealthChanged( enum_HealthMessageType.DamageHealth);
+            OnHealthChanged?.Invoke( enum_HealthMessageType.DamageHealth);
 
             if (b_IsDead)
                 OnDead();

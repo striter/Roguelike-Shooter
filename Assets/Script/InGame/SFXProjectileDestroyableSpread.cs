@@ -1,19 +1,21 @@
 ﻿using GameSetting;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class SFXProjectileSpread : SFXProjectile {
+public class SFXProjectileDestroyableSpread : SFXProjectileDestroyable {
+    
     [Range(0, 90)]
     public int I_SpreadAngleEach = 30;
     public float F_SpreadDuration = .5f;
     public int I_SpreadCount = 10;
     int i_spreadCountCheck = 0;
     float f_spreadCheck = 0;
+    protected override bool B_RecycleOnHit => false;
+    protected override bool B_DisablePhysicsOnHit => false;
+    protected override bool B_DealDamage => false;
     protected override void OnPlayPreset()
     {
         base.OnPlayPreset();
-        if (F_SpreadDuration<=0)
+        if (F_SpreadDuration <= 0)
             Debug.LogError("Spread Duration Less Or Equals 0!");
         if (I_SpreadCount <= 0)
             Debug.LogError("Spread Count Less Or Equals 0!");
@@ -25,7 +27,7 @@ public class SFXProjectileSpread : SFXProjectile {
         base.Update();
         if (!B_SimulatePhysics)
             return;
-        
+
         f_spreadCheck += Time.deltaTime;
         if (f_spreadCheck < F_SpreadDuration)
             return;
