@@ -175,7 +175,7 @@ GameObject:
   - component: {fileID: 208240289230129402}
   - component: {fileID: 136467516171721786}
   m_Layer: 10
-  m_Name: 321_Entity_Soldier3
+  m_Name: 303_Entity_Soldier3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -15,14 +15,14 @@ public class EntityEnermyBase : EntityBase {
     public float F_AttackRotateParam=1f;
     public bool B_AttackMove = true;
     bool OnCheckTarget(EntityBase target) => target.B_IsPlayer!=B_IsPlayer && !target.m_HealthManager.b_IsDead;
-    public override void Init(enum_Style entityStyle,SEntity entityInfo)
+    public override void Init(SEntity entityInfo)
     {
         Init(entityInfo, false);
         tf_Model.transform.rotation = Quaternion.Euler(-15, 0, 0);
         Transform tf_Barrel = transform.FindInAllChild("Barrel");
         EnermyWeaponBase weapon=null;
-        int weaponIndex = GameExpression.GetEnermyWeaponIndex(entityStyle, entityInfo.m_Index, 0);
-        SFXBase weaponInfo = ObjectManager.GetEnermyWeaponInfo<SFXBase>(weaponIndex);
+        int weaponIndex = GameExpression.GetEnermyWeaponIndex( entityInfo.m_Index, 0);
+        SFXBase weaponInfo = ObjectManager.EnermyDamageSourceInfo<SFXBase>(weaponIndex);
         SFXProjectile projectile = weaponInfo as SFXProjectile;
         if (projectile)
         {
@@ -39,9 +39,9 @@ public class EntityEnermyBase : EntityBase {
         {
             switch (cast.E_CastType)
             {
-                case  enum_EnermyWeaponCast.CasterOrigin: weapon = new EnermyCaster(cast,this, tf_Barrel, GetDamageBuffInfo); break;
-                case enum_EnermyWeaponCast.CasterControlled: weapon = new EnermyCasterControlled(cast,this, tf_Barrel, GetDamageBuffInfo); break;
-                case enum_EnermyWeaponCast.CasterTarget: weapon = new EnermyCasterTarget(cast,this, tf_Barrel, GetDamageBuffInfo); break;
+                case  enum_CastControllType.CastFromOrigin: weapon = new EnermyCaster(cast,this, tf_Barrel, GetDamageBuffInfo); break;
+                case enum_CastControllType.CastControlledForward: weapon = new EnermyCasterControlled(cast,this, tf_Barrel, GetDamageBuffInfo); break;
+                case enum_CastControllType.CastAtTarget: weapon = new EnermyCasterTarget(cast,this, tf_Barrel, GetDamageBuffInfo); break;
             }
         }
         m_AI = new EnermyAIControllerBase(this,weapon, entityInfo, OnAttackAnim, OnCheckTarget);

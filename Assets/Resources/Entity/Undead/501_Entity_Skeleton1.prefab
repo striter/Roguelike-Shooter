@@ -207,7 +207,7 @@ GameObject:
   - component: {fileID: 208341332195435310}
   - component: {fileID: 136579854769574090}
   m_Layer: 10
-  m_Name: 511_Entity_Skeleton1
+  m_Name: 501_Entity_Skeleton1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

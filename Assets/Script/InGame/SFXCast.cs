@@ -4,7 +4,7 @@ using GameSetting;
 using UnityEngine;
 
 public class SFXCast : SFXBase,ISingleCoroutine {
-    public enum_EnermyWeaponCast E_CastType = enum_EnermyWeaponCast.Invalid;
+    public enum_CastControllType E_CastType = enum_CastControllType.Invalid;
     public float F_Damage;
     public int I_TickCount=1;
     public float F_Tick = .5f;
@@ -27,7 +27,7 @@ public class SFXCast : SFXBase,ISingleCoroutine {
         m_Particles = GetComponentsInChildren<ParticleSystem>();
         m_Particles.Traversal((ParticleSystem particle)=> {particle.Stop();});
         m_DamageInfo = new DamageInfo(F_Damage, enum_DamageType.Area);
-        if (E_CastType == enum_EnermyWeaponCast.Invalid)
+        if (E_CastType == enum_CastControllType.Invalid)
             Debug.LogError("Weapon Type Invalid Detected+"+gameObject.name);
         if (E_AreaType == enum_CastAreaType.Invalid)
             Debug.LogError("Cast Type Invalid Detected:"+gameObject.name);

@@ -56,7 +56,7 @@ namespace GameSetting
         public static float F_SphereCastDamageReduction(float weaponDamage, float distance,float radius) => weaponDamage * (1-(distance / radius));       //Rocket Blast Damage
         public static Vector3 V3_RangeSpreadDirection(Vector3 aimDirection, float spread,Vector3 up,Vector3 right) => (aimDirection*GameConst.I_ProjectileSpreadAtDistance + up* UnityEngine.Random.Range(-spread, spread) + right * UnityEngine.Random.Range(-spread, spread)).normalized;
 
-        public static int GetEnermyWeaponIndex(enum_Style enermyStyle, int enermyIndex, int weaponIndex = 0, int subWeaponIndex = 0) => (int)enermyStyle * 10000 + enermyIndex * 100 + weaponIndex * 10 + subWeaponIndex;
+        public static int GetEnermyWeaponIndex( int enermyIndex, int weaponIndex = 0, int subWeaponIndex = 0) =>  enermyIndex * 100 + weaponIndex * 10 + subWeaponIndex;
         public static int GetEnermyWeaponSubIndex(int weaponIndex) => weaponIndex + 1;
     }
 
@@ -177,7 +177,7 @@ namespace GameSetting
 
     public enum enum_EnermyWeaponProjectile { Invalid=-1, Single = 1, MultipleFan = 2, MultipleLine = 3, };
 
-    public enum enum_EnermyWeaponCast { Invalid = -1, CasterOrigin = 1, CasterControlled = 2, CasterTarget = 3, }
+    public enum enum_CastControllType { Invalid = -1, CastFromOrigin = 1, CastControlledForward = 2, CastAtTarget = 3, }
 
     public enum enum_CastAreaType { Invalid = -1, OverlapSphere = 1, ForwardBox = 2, ForwardCapsule = 3, }
 

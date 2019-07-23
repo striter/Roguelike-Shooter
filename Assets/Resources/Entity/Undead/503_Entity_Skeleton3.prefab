@@ -345,7 +345,7 @@ GameObject:
   - component: {fileID: 208254099132695876}
   - component: {fileID: 136073061686999546}
   m_Layer: 10
-  m_Name: 521_Entity_Skeleton3
+  m_Name: 503_Entity_Skeleton3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

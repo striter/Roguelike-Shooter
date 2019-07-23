@@ -55,7 +55,7 @@ GameObject:
   - component: {fileID: 208099549513426244}
   - component: {fileID: 136499021870262704}
   m_Layer: 10
-  m_Name: 112_Entity_Elf2
+  m_Name: 102_Entity_Elf2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

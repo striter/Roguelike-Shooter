@@ -192,7 +192,7 @@ GameObject:
   - component: {fileID: 208910738964548152}
   - component: {fileID: 136688143483107442}
   m_Layer: 10
-  m_Name: 422_Entity_Savage4
+  m_Name: 404_Entity_Savage4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

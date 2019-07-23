@@ -330,7 +330,7 @@ GameObject:
   - component: {fileID: 208531216325905428}
   - component: {fileID: 136726746124722054}
   m_Layer: 10
-  m_Name: 231_Entity_Terrorist6
+  m_Name: 206_Entity_Terrorist6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

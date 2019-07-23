@@ -16,7 +16,7 @@ public class TResources
         public const string S_Texture_LevelBase = "Texture/Level/Texture_Base_";
         public const string S_Texture_LevelDetail = "Texture/Level/Texture_Detail_";
         public const string S_Texture_LevelDetailMask = "Texture/Level/Texture_Mask_";
-
+        public const string S_PlayerWeapon = "PlayerWeapon/";
         public const string S_Entity = "Entity/";
         public const string S_SFXCommon = "SFX_Common/";
         public const string S_SFXEnermyWeapon = "SFX_EnermyWeapon/";
@@ -67,10 +67,23 @@ public class TResources
         });
         return entitisDic;
     }
-    public static SFXBase GetEnermyWeaponSFX(int index)
+    public static SFXBase GetEnermyWeaponSFX(int index)=> Instantiate<SFXBase>(ConstPath.S_SFXEnermyWeapon+index.ToString());
+    public static WeaponBase GetPlayerWeapon(enum_PlayerWeapon weapon)
     {
-        return Load<SFXBase>(ConstPath.S_SFXEnermyWeapon+index.ToString());
-    }
+        WeaponBase target;
+        try
+        {
+            target= Instantiate<WeaponBase>(ConstPath.S_PlayerWeapon + weapon.ToString());
+        }
+        catch       //Error Check
+        {
+            Debug.LogWarning("Model Null Weapon Model Found:Resources/PlayerWeapon/" + weapon);
+
+            target = TResources.Instantiate<WeaponBase>(ConstPath.S_PlayerWeapon+"Error");
+        }
+        return target;
+    } 
+
     public static Dictionary<int, SFXBase> GetAllCommonSFXs()
     {
         Dictionary<int, SFXBase> sfxsDic = new Dictionary<int, SFXBase>();

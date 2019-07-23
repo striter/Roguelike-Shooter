@@ -316,7 +316,7 @@ GameObject:
   - component: {fileID: 208651010292234202}
   - component: {fileID: 136776985104891248}
   m_Layer: 10
-  m_Name: 132_Entity_Elf7
+  m_Name: 107_Entity_Elf7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

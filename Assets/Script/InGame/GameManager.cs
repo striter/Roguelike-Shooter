@@ -100,7 +100,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         m_BattleEntityStyle = Test_EntityStyle;
 
         EnviormentManager.Instance.GenerateAllEnviorment(Test_TileStyle, m_GameSeed,OnLevelStart);
-        m_StyledEnermyEntities=ObjectManager.RegisterAdditionalEntities(m_BattleEntityStyle,TResources.GetAllStyledEntities(m_BattleEntityStyle));
+        m_StyledEnermyEntities=ObjectManager.RegisterAdditionalEntities(TResources.GetAllStyledEntities(m_BattleEntityStyle));
         GC.Collect();
 
         m_LocalPlayer = ObjectManager.SpawnEntity(0,Vector3.zero);
@@ -361,24 +361,14 @@ public static class ObjectManager
 
     public static WeaponBase SpawnWeapon(enum_PlayerWeapon type, EntityPlayerBase toPlayer)
     {
-        try
-        {
             if (!ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Registed(type))
             {
-                WeaponBase preset = TResources.Instantiate<WeaponBase>("Weapon/" + type.ToString());
-                ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Register(type, preset, enum_PoolSaveType.DynamicMaxAmount, 1, null);
+                WeaponBase preset = TResources.GetPlayerWeapon(type);
+                ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Register(type, preset, enum_PoolSaveType.DynamicMaxAmount, 1, (WeaponBase weapon)=> {weapon.Init(DataManager.GetWeaponProperties(type));});
             }
 
             return ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Spawn(type, TF_Entity);
-        }
-        catch       //Error Check
-        {
-            Debug.LogWarning("Model Null Weapon Model Found:Resources/Weapon/" + type);
 
-            WeaponBase target = TResources.Instantiate<WeaponBase>("Weapon/Error");
-            target.Init(DataManager.GetWeaponProperties(type));
-            return target;
-        }
     }
     public static SFXParticles SpawnCommonParticles(int index, Vector3 position, Vector3 normal, Transform attachTo = null)
     {
@@ -400,8 +390,6 @@ public static class ObjectManager
     }
     public static T SpawnDamageSource<T>(int weaponIndex,Vector3 position,Vector3 normal, Transform attachTo=null) where T:SFXBase
     {
-        if (ObjectPoolManager<int, SFXBase>.Registed(weaponIndex))
-            ObjectPoolManager<int, SFXBase>.Register(weaponIndex, TResources.GetEnermyWeaponSFX(weaponIndex), enum_PoolSaveType.DynamicMaxAmount, 1, (SFXBase sfx) => { sfx.Init(weaponIndex); });
 
         T template = ObjectPoolManager<int, SFXBase>.Spawn(weaponIndex, attachTo) as T;
         if (template == null)
@@ -410,18 +398,20 @@ public static class ObjectManager
         template.transform.rotation = Quaternion.LookRotation(normal);
         return template;
     }
+    public static T EnermyDamageSourceInfo<T>(int weaponIndex) where T : SFXBase
+    {
+        if (!ObjectPoolManager<int, SFXBase>.Registed(weaponIndex))
+            ObjectPoolManager<int, SFXBase>.Register(weaponIndex, TResources.GetEnermyWeaponSFX(weaponIndex), enum_PoolSaveType.DynamicMaxAmount, 1, (SFXBase sfx) => { sfx.Init(weaponIndex); });
+
+        T damageSourceInfo = ObjectPoolManager<int, SFXBase>.GetRegistedSpawnItem(weaponIndex) as T;
+        if (damageSourceInfo == null)
+            Debug.LogError("SFX Get Error! Invalid Type:" + typeof(T).ToString() + "|Index:" + weaponIndex);
+        return damageSourceInfo;
+    }
     public static void RecycleSFX(int index, SFXBase sfx)
     {
         ObjectPoolManager<int, SFXBase>.Recycle(index, sfx);
     }
-    public static T GetEnermyWeaponInfo<T>(int index) where T : SFXBase
-    {
-        T sfx = ObjectPoolManager<int, SFXBase>.GetRegistedSpawnItem(index) as T;
-        if (sfx == null)
-            Debug.LogError("SFX Get Error! Invalid Type:" + typeof(T).ToString() + "|Index:" + index);
-        return sfx;
-    }
-
     public static T SpawnInteract<T>(enum_Interaction type, Vector3 toPos) where T:InteractBase
     {
         InteractBase sfx = ObjectPoolManager<enum_Interaction, InteractBase>.Spawn(type, TF_Entity);
@@ -452,12 +442,12 @@ public static class ObjectManager
         ObjectPoolManager<LevelItemBase, LevelItemBase>.RecycleAllManagedItems();
     }
 
-    public static Dictionary<enum_EntityType, List<int>> RegisterAdditionalEntities(enum_Style enermyStyle,Dictionary<int,EntityBase> registerDic)
+    public static Dictionary<enum_EntityType, List<int>> RegisterAdditionalEntities(Dictionary<int,EntityBase> registerDic)
     {
         Dictionary<enum_EntityType, List<int>> enermyDic = new Dictionary<enum_EntityType, List<int>>();
         registerDic.Traversal((int index, EntityBase entity) => {
             ObjectPoolManager<int, EntityBase>.Register(index, entity, enum_PoolSaveType.DynamicMaxAmount, 1, 
-                (EntityBase entityInstantiate) => { entityInstantiate.Init(enermyStyle,DataManager.GetEntityProperties(index)); });
+                (EntityBase entityInstantiate) => { entityInstantiate.Init(DataManager.GetEntityProperties(index)); });
 
             if (!entity.B_IsPlayer)
             {

@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 208068889300382280}
   - component: {fileID: 136649963028503372}
   m_Layer: 10
-  m_Name: 423_Entity_Savage5
+  m_Name: 405_Entity_Savage5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

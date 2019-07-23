@@ -300,7 +300,7 @@ GameObject:
   - component: {fileID: 208879857761255788}
   - component: {fileID: 136347361652885448}
   m_Layer: 10
-  m_Name: 523_Entity_Skeleton5
+  m_Name: 505_Entity_Skeleton5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

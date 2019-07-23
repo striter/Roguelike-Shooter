@@ -240,7 +240,7 @@ GameObject:
   - component: {fileID: 208795715003801264}
   - component: {fileID: 136026193721199286}
   m_Layer: 10
-  m_Name: 531_Entity_Skeleton6
+  m_Name: 506_Entity_Skeleton6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
