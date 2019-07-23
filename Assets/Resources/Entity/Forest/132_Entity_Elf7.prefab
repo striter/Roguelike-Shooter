@@ -424,6 +424,8 @@ GameObject:
   - component: {fileID: 4892870011215742}
   - component: {fileID: 33471291204412402}
   - component: {fileID: 23969827213235836}
+  - component: {fileID: 65554750088182864}
+  - component: {fileID: 114169009282139846}
   m_Layer: 0
   m_Name: SF_Character_jingling_7_dun
   m_TagString: Untagged
@@ -608,8 +610,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4522888615412816}
-  - {fileID: 4753901606356072}
-  - {fileID: 4892870011215742}
   m_Father: {fileID: 4096549940839324}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -690,7 +690,8 @@ Transform:
   m_LocalRotation: {x: -0.0000038093015, y: 0.0022615753, z: 0.001684351, w: 0.99999607}
   m_LocalPosition: {x: -0.47657126, y: -44.02742, z: -7.232077e-15}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 4892870011215742}
   m_Father: {fileID: 4069528017428598}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -811,7 +812,8 @@ Transform:
   m_LocalRotation: {x: 1.4461227e-13, y: 1, z: -1.1714554e-15, w: 1.746155e-15}
   m_LocalPosition: {x: -44.03, y: -8.81073e-13, z: 4.7946414e-15}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 4753901606356072}
   m_Father: {fileID: 4307994512409412}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -893,18 +895,18 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1456588692077186}
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 180.66908, y: 176.63776, z: -12.783461}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0.76524425, y: -0.6291808, z: 0.12811884, w: -0.04602568}
+  m_LocalPosition: {x: -4, y: 11, z: 17}
+  m_LocalScale: {x: 0.7000001, y: 0.7000001, z: 0.7000001}
   m_Children:
   - {fileID: 4197627979169344}
   - {fileID: 4985972839276798}
   - {fileID: 4348672073897496}
   - {fileID: 4997744567775664}
   - {fileID: 4945125677611020}
-  m_Father: {fileID: 4130167004658258}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Father: {fileID: 4497137820572768}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 13.395, y: 188.165, z: 102.107}
 --- !u!4 &4844743836598628
 Transform:
   m_ObjectHideFlags: 1
@@ -940,13 +942,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1755207597066384}
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -160.36928, y: 187.42816, z: 24.393375}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: 0.44170913, y: -0.5704735, z: 0.117204525, w: 0.6824341}
+  m_LocalPosition: {x: -14.85244, y: -20.646269, z: 1.4236641}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
   m_Children: []
-  m_Father: {fileID: 4130167004658258}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Father: {fileID: 4244822085613412}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 47.442, y: -93.483, z: -30.572}
 --- !u!4 &4924820504369748
 Transform:
   m_ObjectHideFlags: 1
@@ -1262,6 +1264,18 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1117336368901300}
   m_Mesh: {fileID: 4300006, guid: c71716feb1150144598e197fbd98ff22, type: 3}
+--- !u!65 &65554750088182864
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1755207597066384}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 168.68802, y: 234.14409, z: 52.254257}
+  m_Center: {x: 0.000010240397, y: -18.701622, z: 1.8375295}
 --- !u!95 &95541287480449702
 Animator:
   serializedVersion: 3
@@ -1279,6 +1293,17 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114169009282139846
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1755207597066384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f62cdd659d216734e828ce07e4431bf6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114679542760397622
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1301,7 +1326,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 275d93242000a1d47972944c1cd255ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  E_AnimatorIndex: 161
+  E_AnimatorIndex: 163
   F_AttackRotateParam: 1
   B_AttackMove: 1
 --- !u!114 &114850124102981534
