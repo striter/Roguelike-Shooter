@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4550938155433920}
   - component: {fileID: 135521237136520624}
   - component: {fileID: 114929671006142830}
-  - component: {fileID: 114141759412684802}
+  - component: {fileID: 114862977652077998}
   m_Layer: 9
   m_Name: 10300
   m_TagString: Untagged
@@ -237,7 +237,7 @@ TrailRenderer:
     generateLightingData: 0
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
---- !u!114 &114141759412684802
+--- !u!114 &114862977652077998
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -245,21 +245,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 1032428382501042}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee468ac43f22b0e499e0a563e6d92364, type: 3}
+  m_Script: {fileID: 11500000, guid: 6cb79f17b45e4bf45b374bad802cc903, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  E_ProjectileType: 1
-  F_Damage: 20
-  F_Speed: 3
+  E_ProjectileType: -1
+  F_Damage: 0
+  F_Speed: 0
   I_MuzzleIndex: 0
   I_ImpactIndex: 0
   I_BufFApplyOnHit: 0
   F_Radius: 0.5
   F_Height: 1
-  I_MaxHealth: 100
+  I_MaxHealth: 0
   I_SpreadAngleEach: 30
   F_SpreadDuration: 0.5
   I_SpreadCount: 10
+  F_DelayDuration: 2
+  I_DelayIndicator: 50001
 --- !u!114 &114929671006142830
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -271,6 +273,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62d09be21441f524d850aaf663ec49a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  I_AttacherID: 0
 --- !u!135 &135521237136520624
 SphereCollider:
   m_ObjectHideFlags: 1

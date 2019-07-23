@@ -44,6 +44,9 @@ public class EntityEnermyBase : EntityBase {
                 case enum_CastControllType.CastAtTarget: weapon = new EnermyCasterTarget(cast,this, tf_Barrel, GetDamageBuffInfo); break;
             }
         }
+        SFXBuffApply buffApply = weaponInfo as SFXBuffApply;
+        if (buffApply)
+            weapon = new BuffApply(buffApply,this,tf_Barrel,GetDamageBuffInfo);
         m_AI = new EnermyAIControllerBase(this,weapon, entityInfo, OnAttackAnim, OnCheckTarget);
         if (E_AnimatorIndex == enum_EnermyAnim.Invalid)
             Debug.LogError("Please Set Prefab AnimIndex!");
@@ -509,6 +512,20 @@ public class EntityEnermyBase : EntityBase {
                 FireBullet(transformBarrel.position, fanDirection,transformBarrel.position+fanDirection* distance);
             }
         } 
+    }
+    class BuffApply : EnermyWeaponBase
+    {
+        SBuff m_buffInfo;
+        int i_buffApplyIndex;
+        public BuffApply(SFXBuffApply buffApplyinfo, EntityEnermyBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo) : base(_controller, _transform, _GetBuffInfo)
+        {
+            i_buffApplyIndex = buffApplyinfo.I_SFXIndex;
+            m_buffInfo = DataManager.GetEntityBuffProperties(i_buffApplyIndex);
+        }
+        public override void Play(bool preAim, EntityBase _target)
+        {
+            ObjectManager.SpawnDamageSource<SFXBuffApply>(i_buffApplyIndex,transformBarrel.position,Vector3.up).Play(m_EntityControlling.I_EntityID,m_buffInfo,transformBarrel,_target);
+        }
     }
     #endregion
 
