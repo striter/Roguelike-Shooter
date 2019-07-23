@@ -45,8 +45,8 @@ public class UIManager : SingletonMono<UIManager> {
     {
         txt_Ammo.text = player.m_WeaponCurrent.I_AmmoLeft.ToString()+"/"+player.m_WeaponCurrent.m_WeaponInfo.m_ClipAmount.ToString();
         txt_Mana.text = ((int)player.m_CurrentMana).ToString() + "/" + ((int)player.m_EntityInfo.m_MaxMana).ToString();
-        txt_Health.text = ((int)player.m_CurrentHealth).ToString() + "/" + ((int)player.m_EntityInfo.m_MaxHealth).ToString();
-        txt_Armor.text =((int)player.m_CurrentArmor).ToString() + "/" + ((int)player.m_EntityInfo.m_MaxArmor).ToString();
+        txt_Health.text = ((int)player.m_HealthManager.m_CurrentHealth).ToString() + "/" + ((int)player.m_HealthManager.m_MaxHealth).ToString();
+        txt_Armor.text =((int)player.m_HealthManager.m_CurrentArmor).ToString() + "/" + ((int)player.m_HealthManager.m_MaxArmor).ToString();
         txt_Coin.text = player.m_Coins.ToString();
 
         txt_Pitch.text = ((int)player.m_Pitch).ToString();

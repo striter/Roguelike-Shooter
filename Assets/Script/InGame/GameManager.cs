@@ -168,7 +168,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
 
     public void OnEntityFall(HitCheckEntity hitcheck)      //On Player Falls To Ocean ETC
     {
-        hitcheck.TryHit(new DamageInfo( hitcheck.m_Attacher.B_IsPlayer ? GameConst.F_DamagePlayerFallInOcean : hitcheck.m_Attacher.F_TotalHealth, enum_DamageType.Fall));
+        hitcheck.TryHit(new DamageInfo( hitcheck.m_Attacher.B_IsPlayer ? GameConst.F_DamagePlayerFallInOcean : hitcheck.m_Attacher.m_HealthManager.F_TotalHealth, enum_DamageType.Fall));
 
         if (hitcheck.m_Attacher.B_IsPlayer)
         {

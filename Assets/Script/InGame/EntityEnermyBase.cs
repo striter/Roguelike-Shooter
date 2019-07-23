@@ -14,7 +14,7 @@ public class EntityEnermyBase : EntityBase {
     [Range(0,3)]
     public float F_AttackRotateParam=1f;
     public bool B_AttackMove = true;
-    bool OnCheckTarget(EntityBase target) => target.B_IsPlayer!=B_IsPlayer && !target.b_IsDead;
+    bool OnCheckTarget(EntityBase target) => target.B_IsPlayer!=B_IsPlayer && !target.m_HealthManager.b_IsDead;
     public override void Init(SEntity entityInfo)
     {
         Init(entityInfo, false);

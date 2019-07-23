@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class TestGameManager : GameManager {
-    private void Awake()
+    private new void Awake()
     {
         instance = this;
     }

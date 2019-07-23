@@ -7,18 +7,15 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
     HitCheckEntity[] m_HitChecks;
     Renderer[] m_SkinRenderers;
     protected Transform tf_Model;
-    public EntityBuffManager m_BuffManager { get; private set; }
     public Transform tf_Head { get; private set; }
     public SEntity m_EntityInfo { get; private set; }
-    public float m_CurrentHealth { get; private set; }
-    public float m_CurrentArmor { get; private set; }
     public float m_CurrentMana { get; private set; }
-    public bool b_IsDead => m_CurrentHealth <= 0;
     public bool B_IsPlayer { get; private set; }
-    public float F_TotalHealth => m_EntityInfo.m_MaxArmor + m_EntityInfo.m_MaxHealth;
-    private float f_ArmorRegenCheck;
+    
     protected EntityBase m_Target;
     protected DamageBuffInfo GetDamageBuffInfo() => m_BuffManager.m_DamageBuffProperty;
+    public EntityBuffManager m_BuffManager { get; private set; }
+    public EntityHealth m_HealthManager { get; private set; }
     public virtual Vector3 m_PrecalculatedTargetPos(float time) { Debug.LogError("Override This Please");return Vector2.zero; }
     public virtual void Init(SEntity entityInfo)
     {
@@ -32,6 +29,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
         m_SkinRenderers = tf_Model.Find("Skin").GetComponentsInChildren<Renderer>();
         m_HitChecks = GetComponentsInChildren<HitCheckEntity>();
         m_BuffManager = new EntityBuffManager(OnReceiveDamage);
+        m_HealthManager = new EntityHealth(entityInfo,OnHealthEffect,OnDead);
         TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.Attach(this, OnReceiveDamage); });
         m_EntityInfo = entityInfo;
     }
@@ -40,9 +38,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
         I_EntityID = id;
         if (I_EntityID == -1)
             Debug.LogError("Please Init Entity Info!" + gameObject.name.ToString());
-
-        m_CurrentHealth = m_EntityInfo.m_MaxHealth;
-        m_CurrentArmor = m_EntityInfo.m_MaxArmor;
+        m_HealthManager.OnActivate();
         m_CurrentMana = m_EntityInfo.m_MaxMana;
         TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.SetEnable(true); });
         TCommon.Traversal(m_SkinRenderers, (Renderer renderer) => {renderer.materials.Traversal((Material mat)=> {mat.SetFloat("_Amount1", 0);}); });
@@ -50,7 +46,6 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
 
     protected virtual void OnEnable()
     {
-        m_CurrentHealth = m_EntityInfo.m_MaxHealth;
     }
     protected virtual void OnDisable()
     {
@@ -59,43 +54,18 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
     }
     protected virtual void Update()
     {
-        f_ArmorRegenCheck -= Time.deltaTime;
-        if (f_ArmorRegenCheck < 0 && m_CurrentArmor != m_EntityInfo.m_MaxArmor)
-            OnReceiveDamage(new DamageInfo( -1*m_EntityInfo.m_ArmorRegenSpeed * Time.deltaTime, enum_DamageType.Regen));
+        m_HealthManager.Tick(Time.deltaTime);
         m_BuffManager.Tick(Time.deltaTime);
     }
     public void OnReceiveBuff(int buffIndex) => m_BuffManager.AddBuff(buffIndex);
     protected bool OnReceiveDamage(DamageInfo damageInfo)
     {
-        if (b_IsDead)
+        if (m_HealthManager.b_IsDead)
             return false;
 
         damageInfo.m_BuffApply.m_BuffAplly.Traversal((int buffIndex) => {OnReceiveBuff(buffIndex); });
-
-        if (damageInfo.m_AmountApply > 0)    //Damage
-        {
-            m_CurrentArmor -= damageInfo.m_AmountApply * m_BuffManager.m_EntityBuffProperty.F_DamageReduceMultiply;
-            if (m_CurrentArmor < 0)
-            {
-                m_CurrentHealth += m_CurrentArmor;
-                m_CurrentArmor = 0;
-            }
-
-            f_ArmorRegenCheck = m_EntityInfo.m_ArmorRegenDuration;
-
-            OnHealthEffect(true, m_CurrentArmor > 0);
-            if (b_IsDead)
-                OnDead();
-        }
-        else if(damageInfo.m_AmountApply<0)    //Healing
-        {
-            m_CurrentArmor -= damageInfo.m_AmountApply ;
-            if (m_CurrentArmor > m_EntityInfo.m_MaxArmor)
-                m_CurrentArmor = m_EntityInfo.m_MaxArmor;
-            OnHealthEffect(false);
-        }
-
-        return true;
+        
+        return m_HealthManager.OnReceiveDamage(damageInfo, m_BuffManager.m_EntityBuffProperty.F_DamageReduceMultiply);
     }
     public virtual void SetTarget(EntityBase target)
     {
@@ -121,12 +91,27 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
             ObjectManager.RecycleEntity(m_EntityInfo.m_Index, this);
         }));
     }
-    protected virtual void OnHealthEffect(bool isDamage,bool armorDamage=true)
+    protected virtual void OnHealthEffect(enum_HealthMessageType type)
     {
+        Color targetColor = Color.white;
+        switch (type)
+        {
+            case enum_HealthMessageType.DamageArmor:
+                targetColor = Color.yellow;
+                break;
+            case enum_HealthMessageType.DamageHealth:
+                targetColor = Color.red;
+                break;
+            case enum_HealthMessageType.ReceiveArmor:
+                targetColor = Color.blue;
+                break;
+            case enum_HealthMessageType.ReceiveHealth:
+                targetColor = Color.green;
+                break;
+        }
         this.StartSingleCoroutine(0,TIEnumerators.ChangeValueTo((float value)=> {
-            Color targetColor = Color.Lerp(isDamage?(armorDamage ? Color.yellow:Color.red): Color.green, Color.white, value);
             TCommon.Traversal(m_SkinRenderers, (Renderer renderer) => {
-                renderer.material.SetColor("_Color",targetColor); });
+                renderer.material.SetColor("_Color",Color.Lerp(targetColor, Color.white, value)); });
           },0,1,1f));
     }
 }

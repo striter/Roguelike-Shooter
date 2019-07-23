@@ -67,7 +67,6 @@ public class SFXProjectile : SFXBase
             {
                 OnHitTarget(hitTargets[i], hitCheck);
                 SpawnImpact(hitTargets[i], hitCheck);
-                OnDamageEntity(hitCheck as HitCheckEntity);
                 if (B_DisablePhysicsOnHit)
                     B_SimulatePhysics = false;
                 if (B_RecycleOnHit)
@@ -94,16 +93,25 @@ public class SFXProjectile : SFXBase
     }
     protected virtual void OnHitTarget(RaycastHit hit, HitCheckBase hitCheck)
     {
-
-    }
-    protected virtual void OnDamageEntity(HitCheckEntity entity)
-    {
-        if (B_DealDamage && entity != null && !m_TargetHitted.Contains(entity.I_AttacherID) && GameManager.B_CanDamageEntity(entity, I_SourceID))
+        switch (hitCheck.m_HitCheckType)
         {
-            entity.TryHit(m_DamageInfo);
-            m_TargetHitted.Add(entity.I_AttacherID);
+            case enum_HitCheck.Dynamic:
+            case enum_HitCheck.Static:
+                hitCheck.TryHit(m_DamageInfo);
+                break;
+            case enum_HitCheck.Entity:
+                {
+                    HitCheckEntity entity = hitCheck as HitCheckEntity;
+                    if (B_DealDamage && !m_TargetHitted.Contains(entity.I_AttacherID) && GameManager.B_CanDamageEntity(entity, I_SourceID))
+                    {
+                        entity.TryHit(m_DamageInfo);
+                        m_TargetHitted.Add(entity.I_AttacherID);
+                    }
+                }
+                break;
         }
     }
+
     protected void SpawnImpact(RaycastHit hitInfo, HitCheckBase hitParent)
     {
         if (I_ImpactIndex > 0)
