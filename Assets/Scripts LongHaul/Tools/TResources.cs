@@ -11,14 +11,15 @@ public class TResources
         public const string S_LevelMain = "Level/Main";
         public const string S_LevelData = "Level/Main/Data";
         public const string S_LeveLItem = "Level/Item";
-        public const string S_Entity = "Entity";
         public const string S_StyleCustomization = "Level/Customization";
 
         public const string S_Texture_LevelBase = "Texture/Level/Texture_Base_";
         public const string S_Texture_LevelDetail = "Texture/Level/Texture_Detail_";
         public const string S_Texture_LevelDetailMask = "Texture/Level/Texture_Mask_";
 
-        public const string S_SFX = "SFX";
+        public const string S_Entity = "Entity/";
+        public const string S_SFXCommon = "SFX_Common/";
+        public const string S_SFXEnermyWeapon = "SFX_EnermyWeapon/";
     }
 
     public static TileMapData GetLevelData(string name) => Load<TileMapData>(ConstPath.S_LevelData + "/" + name);
@@ -58,18 +59,22 @@ public class TResources
     public static Dictionary<int, EntityBase> GetAllStyledEntities(enum_Style entityStyle)
     {
         Dictionary<int, EntityBase> entitisDic = new Dictionary<int, EntityBase>();
-        entitisDic.Add(0,Instantiate<EntityBase>(ConstPath.S_Entity +"/Player"));
-        EntityBase[] entities = LoadAll<EntityBase>(ConstPath.S_Entity + "/" + entityStyle.ToString());
+        entitisDic.Add(0,Instantiate<EntityBase>(ConstPath.S_Entity +"Player"));
+        EntityBase[] entities = LoadAll<EntityBase>(ConstPath.S_Entity +  entityStyle.ToString());
         entities.Traversal((EntityBase entity) => {
             int index = int.Parse(entity.name.Split('_')[0]);
             entitisDic.Add(index, GameObject.Instantiate<EntityBase>(entity));
         });
         return entitisDic;
     }
-    public static Dictionary<int, SFXBase> GetAllGameSFXs()
+    public static SFXBase GetEnermyWeaponSFX(int index)
+    {
+        return Load<SFXBase>(ConstPath.S_SFXEnermyWeapon+index.ToString());
+    }
+    public static Dictionary<int, SFXBase> GetAllCommonSFXs()
     {
         Dictionary<int, SFXBase> sfxsDic = new Dictionary<int, SFXBase>();
-        LoadAll<SFXBase>(ConstPath.S_SFX).Traversal((SFXBase sfx) => {
+        LoadAll<SFXBase>(ConstPath.S_SFXCommon).Traversal((SFXBase sfx) => {
             sfxsDic.Add(int.Parse(sfx.name.Split('_')[0]),GameObject.Instantiate<SFXBase>(sfx));
         });
         return sfxsDic;

@@ -21,7 +21,7 @@ public class SFXProjectileCastTrigger : SFXProjectile {
     {
         if (b_trigger)
             return;
-        ObjectManager.SpawnSFX<SFXCast>(I_CastIndex, transform.position, Vector3.up).Play(I_SourceID, m_DamageInfo.m_BuffApply);
+        ObjectManager.SpawnCommonSFX<SFXCast>(I_CastIndex, transform.position, Vector3.up).Play(I_SourceID, m_DamageInfo.m_BuffApply);
         b_trigger = true;
     }
 }

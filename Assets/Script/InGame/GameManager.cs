@@ -60,11 +60,11 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         if (Input.GetKeyDown(KeyCode.Z) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
             ObjectManager.SpawnEntity(Z_TestEntityIndex, hit.point).SetTarget(m_LocalPlayer);
         if (Input.GetKeyDown(KeyCode.X) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
-            ObjectManager.SpawnSFX<SFXCast>(X_TestCastIndex, hit.point, Vector3.forward).Play(1000,DamageBuffInfo.Create());
+            ObjectManager.SpawnEnermyWeapon<SFXCast>(X_TestCastIndex, hit.point, Vector3.forward).Play(1000,DamageBuffInfo.Create());
         if (Input.GetKeyDown(KeyCode.C) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
-            ObjectManager.SpawnSFX<SFXProjectile>(C_TestProjectileIndex, hit.point + Vector3.up , Vector3.forward).Play(m_LocalPlayer.I_EntityID, Vector3.forward, hit.point+Vector3.forward*10,DamageBuffInfo.Create());
+            ObjectManager.SpawnEnermyWeapon<SFXProjectile>(C_TestProjectileIndex, hit.point + Vector3.up , Vector3.forward).Play(m_LocalPlayer.I_EntityID, Vector3.forward, hit.point+Vector3.forward*10,DamageBuffInfo.Create());
         if (Input.GetKeyDown(KeyCode.V) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
-            ObjectManager.SpawnSFX<SFXIndicator>(V_TestIndicatorIndex, hit.point + Vector3.up, Vector3.up).Play(1000);
+            ObjectManager.SpawnCommonIndicator(V_TestIndicatorIndex, hit.point + Vector3.up, Vector3.up).Play(1000);
         if (Input.GetKeyDown(KeyCode.B) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
             m_LocalPlayer.OnReceiveBuff(B_TestBuffIndex);
 
@@ -100,7 +100,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         m_BattleEntityStyle = Test_EntityStyle;
 
         EnviormentManager.Instance.GenerateAllEnviorment(Test_TileStyle, m_GameSeed,OnLevelStart);
-        m_StyledEnermyEntities=ObjectManager.RegisterAdditionalEntities(TResources.GetAllStyledEntities(m_BattleEntityStyle));
+        m_StyledEnermyEntities=ObjectManager.RegisterAdditionalEntities(m_BattleEntityStyle,TResources.GetAllStyledEntities(m_BattleEntityStyle));
         GC.Collect();
 
         m_LocalPlayer = ObjectManager.SpawnEntity(0,Vector3.zero);
@@ -267,7 +267,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     }
     void SpawnEntity(int entityIndex, int spawnIndex,Vector3 position)
     {
-        ObjectManager.SpawnSFX<SFXIndicator>(50001, position, Vector3.up).Play(entityIndex,GameConst.I_EnermySpawnDelay);
+        ObjectManager.SpawnCommonIndicator(50001, position, Vector3.up).Play(entityIndex,GameConst.I_EnermySpawnDelay);
         this.StartSingleCoroutine(100 + spawnIndex, TIEnumerators.PauseDel(GameConst.I_EnermySpawnDelay, () => {
             ObjectManager.SpawnEntity(entityIndex,position ).SetTarget(m_LocalPlayer);
         }));
@@ -329,7 +329,7 @@ public static class ObjectManager
     public static void Init()
     {
         TF_Entity = new GameObject("Entity").transform;
-        TResources.GetAllGameSFXs().Traversal((int index,SFXBase target)=>{
+        TResources.GetAllCommonSFXs().Traversal((int index,SFXBase target)=>{
             ObjectPoolManager<int, SFXBase>.Register(index, target,
             enum_PoolSaveType.DynamicMaxAmount, 1,
             (SFXBase sfx) => { sfx.Init(index); });
@@ -380,25 +380,46 @@ public static class ObjectManager
             return target;
         }
     }
-    public static T SpawnSFX<T>(int index, Vector3 position,Vector3 normal,Transform attachTo=null) where T:SFXBase
+    public static SFXParticles SpawnCommonParticles(int index, Vector3 position, Vector3 normal, Transform attachTo = null)
     {
-        T sfx = ObjectPoolManager<int, SFXBase>.Spawn(index, attachTo) as T;
+        SFXParticles sfx = ObjectPoolManager<int, SFXBase>.Spawn(index, attachTo) as SFXParticles;
         if (sfx == null)
-            Debug.LogError("SFX Spawn Error! Invalid Type:"+typeof(T).ToString()+"|Index:"+index);
+            Debug.LogError("SFX Spawn Error! Invalid Common Particles,Index:" + index);
         sfx.transform.position = position;
         sfx.transform.rotation = Quaternion.LookRotation(normal);
         return sfx;
     }
-    public static T GetSFX<T>(int index) where T : SFXBase
+    public static SFXIndicator SpawnCommonIndicator(int index, Vector3 position, Vector3 normal, Transform attachTo = null)
+    {
+        SFXIndicator sfx = ObjectPoolManager<int, SFXBase>.Spawn(index, attachTo) as SFXIndicator;
+        if (sfx == null)
+            Debug.LogError("SFX Spawn Error! Invalid Common Indicator,Index:" + index);
+        sfx.transform.position = position;
+        sfx.transform.rotation = Quaternion.LookRotation(normal);
+        return sfx;
+    }
+    public static T SpawnEnermyWeapon<T>(int weaponIndex,Vector3 position,Vector3 normal, Transform attachTo=null) where T:SFXBase
+    {
+        if (ObjectPoolManager<int, SFXBase>.Registed(weaponIndex))
+            ObjectPoolManager<int, SFXBase>.Register(weaponIndex, TResources.GetEnermyWeaponSFX(weaponIndex), enum_PoolSaveType.DynamicMaxAmount, 1, (SFXBase sfx) => { sfx.Init(weaponIndex); });
+
+        T template = ObjectPoolManager<int, SFXBase>.Spawn(weaponIndex, attachTo) as T;
+        if (template == null)
+            Debug.LogError("Enermy Weapon Error! Invalid Type:" + typeof(T).ToString() + "|Index:" + weaponIndex);
+        template.transform.position = position;
+        template.transform.rotation = Quaternion.LookRotation(normal);
+        return template;
+    }
+    public static void RecycleSFX(int index, SFXBase sfx)
+    {
+        ObjectPoolManager<int, SFXBase>.Recycle(index, sfx);
+    }
+    public static T GetEnermyWeaponInfo<T>(int index) where T : SFXBase
     {
         T sfx = ObjectPoolManager<int, SFXBase>.GetRegistedSpawnItem(index) as T;
         if (sfx == null)
             Debug.LogError("SFX Get Error! Invalid Type:" + typeof(T).ToString() + "|Index:" + index);
         return sfx;
-    }
-    public static void RecycleSFX(int index, SFXBase sfx)
-    {
-        ObjectPoolManager<int, SFXBase>.Recycle(index, sfx);
     }
 
     public static T SpawnInteract<T>(enum_Interaction type, Vector3 toPos) where T:InteractBase
@@ -431,7 +452,7 @@ public static class ObjectManager
         ObjectPoolManager<LevelItemBase, LevelItemBase>.RecycleAllManagedItems();
     }
 
-    public static Dictionary<enum_EntityType, List<int>> RegisterAdditionalEntities(Dictionary<int,EntityBase> registerDic)
+    public static Dictionary<enum_EntityType, List<int>> RegisterAdditionalEntities(enum_Style enermyStyle,Dictionary<int,EntityBase> registerDic)
     {
         Dictionary<enum_EntityType, List<int>> enermyDic = new Dictionary<enum_EntityType, List<int>>();
         registerDic.Traversal((int index, EntityBase entity) => {

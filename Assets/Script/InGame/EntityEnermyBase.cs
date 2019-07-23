@@ -15,7 +15,7 @@ public class EntityEnermyBase : EntityBase {
     public float F_AttackRotateParam=1f;
     public bool B_AttackMove = true;
     bool OnCheckTarget(EntityBase target) => target.B_IsPlayer!=B_IsPlayer && !target.m_HealthManager.b_IsDead;
-    public override void Init(SEntity entityInfo)
+    public override void Init(enum_Style entityStyle,SEntity entityInfo)
     {
         Init(entityInfo, false);
         tf_Model.transform.rotation = Quaternion.Euler(-15, 0, 0);
@@ -24,7 +24,7 @@ public class EntityEnermyBase : EntityBase {
         switch (entityInfo.m_WeaponType)
         {
             default: Debug.LogError("Invalid Barrage Type:" + entityInfo.m_WeaponType); break;
-            case enum_EnermyWeaponType.Single: weapon = new BarrageRange(this,tf_Barrel, m_EntityInfo.m_ProjectileSFX,GetDamageBuffInfo); break;
+            case enum_EnermyWeaponType.Single: weapon = new BarrageRange(this,tf_Barrel,ObjectManager.GetEnermyWeaponIndex() ,GetDamageBuffInfo); break;
             case enum_EnermyWeaponType.MultipleFan: weapon = new BarrageMultipleFan(this,tf_Barrel, m_EntityInfo.m_ProjectileSFX, GetDamageBuffInfo); break;
             case enum_EnermyWeaponType.MultipleLine: weapon = new BarrageMultipleLine(this,tf_Barrel, m_EntityInfo.m_ProjectileSFX, GetDamageBuffInfo);break;
             case enum_EnermyWeaponType.CasterOrigin: weapon = new EnermyCasterOrigin(this,tf_Barrel, GetDamageBuffInfo); break;
@@ -399,8 +399,8 @@ public class EntityEnermyBase : EntityBase {
         public override void Play(bool preAim,EntityBase _target)
         {
             if (m_Info.m_MuzzleSFX > 0)
-                ObjectManager.SpawnSFX<SFXParticles>(m_Info.m_MuzzleSFX, attacherTransform.position,attacherTransform.forward);
-            ObjectManager.SpawnSFX<SFXCast>(m_Info.m_ProjectileSFX, attacherTransform.position, attacherTransform.forward).Play(m_EntityControlling.I_EntityID,GetBuffInfo());
+                ObjectManager.SpawnCommonParticles(m_Info.m_MuzzleSFX, attacherTransform.position,attacherTransform.forward);
+            ObjectManager.SpawnEnermyWeapon<SFXCast>(m_Info.m_ProjectileSFX, attacherTransform.position, attacherTransform.forward).Play(m_EntityControlling.I_EntityID,GetBuffInfo());
         }
     }
     class EnermyCasterControlled : EnermyWeaponBase
@@ -414,7 +414,7 @@ public class EntityEnermyBase : EntityBase {
             if (m_Cast)
                 m_Cast.PlayControlled(m_EntityControlling.I_EntityID, transformBarrel,attacherTransform,false);
 
-            m_Cast = ObjectManager.SpawnSFX<SFXCast>(m_Info.m_ProjectileSFX, transformBarrel.position, transformBarrel.forward);
+            m_Cast = ObjectManager.SpawnCommonSFX<SFXCast>(m_Info.m_ProjectileSFX, transformBarrel.position, transformBarrel.forward);
             m_Cast.PlayControlled(m_EntityControlling.I_EntityID, transformBarrel, attacherTransform, true);
         }
 
@@ -431,7 +431,7 @@ public class EntityEnermyBase : EntityBase {
         }
         public override void Play(bool preAim, EntityBase _target)
         {
-             ObjectManager.SpawnSFX<SFXCast>(m_Info.m_ProjectileSFX,_target.transform.position, _target.transform.up).Play(m_EntityControlling.I_EntityID,GetBuffInfo());
+             ObjectManager.SpawnCommonSFX<SFXCast>(m_Info.m_ProjectileSFX,_target.transform.position, _target.transform.up).Play(m_EntityControlling.I_EntityID,GetBuffInfo());
         }
 
     }
@@ -457,8 +457,8 @@ public class EntityEnermyBase : EntityBase {
         protected void FireBullet(Vector3 startPosition,Vector3 direction,Vector3 targetPosition)
         {
             if (m_Info.m_MuzzleSFX > 0)
-                ObjectManager.SpawnSFX<SFXParticles>(m_Info.m_MuzzleSFX, startPosition, direction).Play(m_EntityControlling.I_EntityID);
-            ObjectManager.SpawnSFX<SFXProjectile>(m_Info.m_ProjectileSFX, startPosition, direction).Play(m_EntityControlling.I_EntityID, direction, targetPosition,GetBuffInfo());
+                ObjectManager.SpawnCommonSFX<SFXParticles>(m_Info.m_MuzzleSFX, startPosition, direction).Play(m_EntityControlling.I_EntityID);
+            ObjectManager.SpawnCommonSFX<SFXProjectile>(m_Info.m_ProjectileSFX, startPosition, direction).Play(m_EntityControlling.I_EntityID, direction, targetPosition,GetBuffInfo());
         }
     }
     class BarrageMultipleLine : BarrageRange

@@ -5,6 +5,7 @@ using GameSetting;
 using TPhysics;
 public class SFXProjectile : SFXBase
 {
+    public enum_EnermyWeaponProjectile E_ProjectileType= enum_EnermyWeaponProjectile.Invalid;
     public float F_Damage;
     public float F_Speed;
     public int I_ImpactIndex;
@@ -44,7 +45,8 @@ public class SFXProjectile : SFXBase
         m_Trail.enabled = true;
         m_Trail.Clear();
         m_TargetHitted.Clear();
-
+        if (E_ProjectileType == enum_EnermyWeaponProjectile.Invalid)
+            Debug.LogError("Error Projectile Type Invalid");
         if (F_Damage <= 0)
             Debug.LogError("Error Damage Less Or Equals 0");
         if (F_Speed <= 0)
@@ -116,7 +118,7 @@ public class SFXProjectile : SFXBase
     {
         if (I_ImpactIndex > 0)
         {
-            SFXParticles impact = ObjectManager.SpawnSFX<SFXParticles>(I_ImpactIndex, hitInfo.point, hitInfo.normal, null);
+            SFXParticles impact = ObjectManager.SpawnCommonSFX<SFXParticles>(I_ImpactIndex, hitInfo.point, hitInfo.normal, null);
             if (hitParent != null && hitParent.m_HitCheckType == enum_HitCheck.Entity)
                 (hitParent as HitCheckEntity).AttachTransform(impact);
             else

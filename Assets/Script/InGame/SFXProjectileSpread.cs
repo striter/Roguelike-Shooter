@@ -35,7 +35,7 @@ public class SFXProjectileSpread : SFXProjectile {
         f_spreadCheck -= F_SpreadDuration;
 
         Vector3 splitDirection = transform.forward.RotateDirection(Vector3.up, i_spreadCountCheck * I_SpreadAngleEach);
-        ObjectManager.SpawnSFX<SFXProjectile>(I_ProjectileSpread, transform.position, Vector3.up).Play(I_SourceID, splitDirection, transform.position + splitDirection * 10, m_DamageInfo.m_BuffApply);
+        ObjectManager.SpawnCommonSFX<SFXProjectile>(I_ProjectileSpread, transform.position, Vector3.up).Play(I_SourceID, splitDirection, transform.position + splitDirection * 10, m_DamageInfo.m_BuffApply);
 
         i_spreadCountCheck++;
         if (i_spreadCountCheck >= I_SpreadCount)

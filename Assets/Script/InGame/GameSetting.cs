@@ -55,6 +55,9 @@ namespace GameSetting
 
         public static float F_SphereCastDamageReduction(float weaponDamage, float distance,float radius) => weaponDamage * (1-(distance / radius));       //Rocket Blast Damage
         public static Vector3 V3_RangeSpreadDirection(Vector3 aimDirection, float spread,Vector3 up,Vector3 right) => (aimDirection*GameConst.I_ProjectileSpreadAtDistance + up* UnityEngine.Random.Range(-spread, spread) + right * UnityEngine.Random.Range(-spread, spread)).normalized;
+
+        public static int GetEnermyWeaponIndex(enum_Style enermyStyle, int enermyIndex, int weaponIndex = 0, int subWeaponIndex = 0) => (int)enermyStyle * 10000 + enermyIndex * 100 + weaponIndex * 10 + subWeaponIndex;
+        public static int GetEnermyWeaponSubIndex(int weaponIndex) => weaponIndex + 1;
     }
 
     public static class UIConst
@@ -172,7 +175,9 @@ namespace GameSetting
 
     public enum enum_TriggerType { Invalid = -1, Single = 1, Auto = 2, Burst = 3, Pull = 4, Store = 5, }
 
-    public enum enum_EnermyWeaponType { Invalid = -1, CasterOrigin = 01, CasterControlled = 02, CasterTarget = 03, Single = 101, MultipleFan = 102, MultipleLine = 103, }
+    public enum enum_EnermyWeaponProjectile { Invalid=-1, Single = 1, MultipleFan = 2, MultipleLine = 3, };
+
+    public enum enum_EnermyWeaponCast { Invalid = -1, CasterOrigin = 1, CasterControlled = 2, CasterTarget = 3, }
 
     public enum enum_CastAreaType { Invalid = -1, OverlapSphere = 1, ForwardBox = 2, ForwardCapsule = 3, }
 
@@ -776,10 +781,7 @@ namespace GameSetting
         float f_chaseRange;
         float f_attackRange;    
         bool b_battleObstacleCheck;
-        int i_weaponType;
         RangeFloat fr_duration;
-        int i_muzzleIndex;
-        int i_projectileIndex;
         float f_firerate;
         RangeInt ir_count;
         int i_horiSpread;
@@ -797,9 +799,6 @@ namespace GameSetting
         public float m_AIChaseRange => f_chaseRange;
         public float m_AIAttackRange => f_attackRange;
         public bool m_BattleCheckObsatacle => b_battleObstacleCheck;
-        public int m_ProjectileSFX => i_projectileIndex;
-        public int m_MuzzleSFX => i_muzzleIndex;
-        public enum_EnermyWeaponType m_WeaponType => (enum_EnermyWeaponType)i_weaponType;
         public RangeFloat m_BarrageDuration => fr_duration;
         internal float m_Firerate => f_firerate;
         public RangeInt m_ProjectileCount => ir_count;

@@ -21,7 +21,7 @@ public class EntityPlayerBase : EntityBase {
 
 
     public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized* m_EntityInfo.m_moveSpeed * time;
-    public override void Init(SEntity entityInfo)
+    public override void Init(enum_Style entityStyle, SEntity entityInfo)
     {
         Init( entityInfo, true);
         m_CharacterController = GetComponent<CharacterController>();
