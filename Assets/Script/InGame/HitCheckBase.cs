@@ -5,7 +5,7 @@ using System;
 [RequireComponent(typeof(Collider))]
 public class HitCheckBase : MonoBehaviour {
     public virtual enum_HitCheck m_HitCheckType => enum_HitCheck.Invalid;
-    public int I_AttacherID = 0;
+    public int I_AttacherID = -1;
     Func<DamageInfo, bool> OnHitCheck;
     protected Collider m_Collider;
     protected void Awake()
