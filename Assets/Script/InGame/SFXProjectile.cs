@@ -58,7 +58,7 @@ public class SFXProjectile : SFXBase
     protected override void Update()
     {
         base.Update();
-        if (B_SimulatePhysics)
+        if (m_Simulator!=null&&B_SimulatePhysics)
             m_Simulator.Simulate(Time.deltaTime);
     }
     protected void OnPhysicsCasted(RaycastHit[] hitTargets)

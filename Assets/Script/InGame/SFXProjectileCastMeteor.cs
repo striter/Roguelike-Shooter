@@ -19,8 +19,8 @@ public class SFXProjectileCastMeteor : SFXProjectileCastTrigger
         Vector3 startPos = targetPosition + Vector3.up * F_StartHeight + new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f)) * F_SpreadRadius;
         Vector3 spreadDirection = (targetPosition - startPos).normalized;
         transform.position = startPos;
-        m_CastIndicator = ObjectManager.SpawnCommonIndicator(I_IndicatorIndex, startPos, spreadDirection);
-        m_CastIndicator.PlayDuration(sourceID, targetPosition, Vector3.up, F_Duration(transform.position, targetPosition));
+        m_CastIndicator = ObjectManager.SpawnCommonIndicator(I_IndicatorIndex, targetPosition, Vector3.up);
+        m_CastIndicator.Play(sourceID, F_Duration(transform.position, targetPosition));
         base.Play(sourceID, spreadDirection, targetPosition,buffInfo);
     }
     protected override void OnPlayFinished()

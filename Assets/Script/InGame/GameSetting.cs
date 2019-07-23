@@ -583,11 +583,11 @@ namespace GameSetting
         Action OnLerpFinished;
         Vector3 m_endPos;
         float f_totalTime;
-        public ProjectilePhysicsLerpSimulator(Transform _transform, Vector3 _startPos,Vector3 _endPos,Action _OnLerpFinished, float _speed, float _height, float _radius, int _hitLayer, Action<RaycastHit[]> _onTargetHit) : base(_transform, _startPos,_endPos-_startPos , _height, _radius, _hitLayer, _onTargetHit)
+        public ProjectilePhysicsLerpSimulator(Transform _transform, Vector3 _startPos,Vector3 _endPos,Action _OnLerpFinished, float _duration, float _height, float _radius, int _hitLayer, Action<RaycastHit[]> _onTargetHit) : base(_transform, _startPos,_endPos-_startPos , _height, _radius, _hitLayer, _onTargetHit)
         {
             m_endPos = _endPos;
             OnLerpFinished = _OnLerpFinished;
-            f_totalTime=Vector3.Distance(m_endPos,m_startPos)/_speed;
+            f_totalTime= _duration;
             b_lerpFinished = false;
         }
         public override void Simulate(float deltaTime)
@@ -595,7 +595,7 @@ namespace GameSetting
             base.Simulate(deltaTime);
             if (!b_lerpFinished && m_simulateTime > f_totalTime)
             {
-                OnLerpFinished();
+                OnLerpFinished?.Invoke();
                 b_lerpFinished = true;
             }
          }
