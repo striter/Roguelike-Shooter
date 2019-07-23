@@ -316,4 +316,5 @@ public static class TCommon
     public static int Random(this RangeInt ir,System.Random seed = null)=> seed != null ? seed.Next(ir.start, ir.end + 1) : UnityEngine.Random.Range(ir.start, ir.end + 1);
     public static float Random(this RangeFloat ir, System.Random seed = null)=> seed != null ? seed.Next((int)(ir.start * 1000), (int)(ir.end * 1000)) / 100 : UnityEngine.Random.Range(ir.start, ir.end + 1);
     public static bool RandomBool(System.Random seed = null) => seed != null ? seed.Next(0, 2) > 0 : UnityEngine.Random.Range(0, 2) > 0;
+    public static int RandomPercentage(System.Random seed=null)=> seed != null ? seed.Next(0, 101)  : UnityEngine.Random.Range(0, 101);
 }

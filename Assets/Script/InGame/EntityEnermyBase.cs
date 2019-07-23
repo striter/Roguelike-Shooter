@@ -13,6 +13,8 @@ public class EntityEnermyBase : EntityBase {
     EnermyAnimator m_Animator;
     [Range(0,3)]
     public float F_AttackRotateParam=1f;
+    [Range(0, 100)]
+    public int I_AttackPreAimPercentage = 50;
     public bool B_AttackMove = true;
     bool OnCheckTarget(EntityBase target) => target.B_IsPlayer!=B_IsPlayer && !target.m_HealthManager.b_IsDead;
     public override void Init(SEntity entityInfo)
@@ -264,7 +266,7 @@ public class EntityEnermyBase : EntityBase {
         }
         float OnStartAttacking()
         {
-            b_preAim = TCommon.RandomBool();
+            b_preAim = TCommon.RandomPercentage() >= m_EntityControlling.I_AttackPreAimPercentage;
             i_playCount = m_EntityInfo.m_ProjectileCount.Random();
             i_playCount = i_playCount <= 0 ? 1 : i_playCount;       //Make Sure Play Once At Least
             b_attacking = true;
