@@ -56,7 +56,7 @@ MonoBehaviour:
   I_TickCount: 1
   F_Tick: 0.5
   I_BuffApplyOnCast: 0
-  E_AreaType: -1
+  E_AreaType: 1
   V3_CastSize: {x: 6, y: 0, z: 0}
   F_DelayDuration: 0
   I_DelayIndicatorIndex: 0
