@@ -240,11 +240,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 140ce9382ecb98f44b5a78a6247bf2f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  E_ProjectileType: -1
+  E_ProjectileType: 1
   F_Damage: 40
   F_Speed: 8
-  I_MuzzleIndex: 0
-  I_ImpactIndex: 10001
+  I_MuzzleIndex: 10001
+  I_ImpactIndex: 40001
   I_BufFApplyOnHit: 0
   F_Radius: 0.25
   F_Height: 1
