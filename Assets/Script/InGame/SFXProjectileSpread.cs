@@ -1,9 +1,9 @@
-﻿using System.Collections;
+﻿using GameSetting;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class SFXProjectileSpread : SFXProjectile {
-    public int I_ProjectileSpread;
     [Range(0, 90)]
     public int I_SpreadAngleEach = 30;
     public float F_SpreadDuration = .5f;
@@ -13,8 +13,6 @@ public class SFXProjectileSpread : SFXProjectile {
     protected override void OnPlayPreset()
     {
         base.OnPlayPreset();
-        if (I_ProjectileSpread <= 0)
-            Debug.LogError("Spread Projectile Index Less Or Equals 0!");
         if (F_SpreadDuration<=0)
             Debug.LogError("Spread Duration Less Or Equals 0!");
         if (I_SpreadCount <= 0)
@@ -35,7 +33,7 @@ public class SFXProjectileSpread : SFXProjectile {
         f_spreadCheck -= F_SpreadDuration;
 
         Vector3 splitDirection = transform.forward.RotateDirection(Vector3.up, i_spreadCountCheck * I_SpreadAngleEach);
-        ObjectManager.SpawnCommonSFX<SFXProjectile>(I_ProjectileSpread, transform.position, Vector3.up).Play(I_SourceID, splitDirection, transform.position + splitDirection * 10, m_DamageInfo.m_BuffApply);
+        ObjectManager.SpawnDamageSource<SFXProjectile>(GameExpression.GetEnermyWeaponSubIndex(I_SFXIndex), transform.position, Vector3.up).Play(I_SourceID, splitDirection, transform.position + splitDirection * 10, m_DamageInfo.m_BuffApply);
 
         i_spreadCountCheck++;
         if (i_spreadCountCheck >= I_SpreadCount)

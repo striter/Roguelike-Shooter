@@ -8,6 +8,7 @@ public class SFXProjectile : SFXBase
     public enum_EnermyWeaponProjectile E_ProjectileType= enum_EnermyWeaponProjectile.Invalid;
     public float F_Damage;
     public float F_Speed;
+    public int I_MuzzleIndex;
     public int I_ImpactIndex;
     public int I_BufFApplyOnHit;
     public float F_Radius = .5f, F_Height = 1f;
@@ -118,7 +119,7 @@ public class SFXProjectile : SFXBase
     {
         if (I_ImpactIndex > 0)
         {
-            SFXParticles impact = ObjectManager.SpawnCommonSFX<SFXParticles>(I_ImpactIndex, hitInfo.point, hitInfo.normal, null);
+            SFXParticles impact = ObjectManager.SpawnCommonParticles(I_ImpactIndex, hitInfo.point, hitInfo.normal, null);
             if (hitParent != null && hitParent.m_HitCheckType == enum_HitCheck.Entity)
                 (hitParent as HitCheckEntity).AttachTransform(impact);
             else

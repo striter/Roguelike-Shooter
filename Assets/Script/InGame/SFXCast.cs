@@ -4,11 +4,12 @@ using GameSetting;
 using UnityEngine;
 
 public class SFXCast : SFXBase,ISingleCoroutine {
+    public enum_EnermyWeaponCast E_CastType = enum_EnermyWeaponCast.Invalid;
     public float F_Damage;
     public int I_TickCount=1;
     public float F_Tick = .5f;
     public int I_BuffApplyOnCast;
-    public enum_CastAreaType E_CastType = enum_CastAreaType.Invalid;
+    public enum_CastAreaType E_AreaType = enum_CastAreaType.Invalid;
     public Vector3 V3_CastSize;
     public int F_DelayDuration;
     public int I_DelayIndicatorIndex;
@@ -26,8 +27,9 @@ public class SFXCast : SFXBase,ISingleCoroutine {
         m_Particles = GetComponentsInChildren<ParticleSystem>();
         m_Particles.Traversal((ParticleSystem particle)=> {particle.Stop();});
         m_DamageInfo = new DamageInfo(F_Damage, enum_DamageType.Area);
-
-        if (E_CastType == enum_CastAreaType.Invalid)
+        if (E_CastType == enum_EnermyWeaponCast.Invalid)
+            Debug.LogError("Weapon Type Invalid Detected+"+gameObject.name);
+        if (E_AreaType == enum_CastAreaType.Invalid)
             Debug.LogError("Cast Type Invalid Detected:"+gameObject.name);
         if (V3_CastSize == Vector3.zero)
             Debug.LogError("Cast Size Zero Detected:" + gameObject.name);
@@ -47,7 +49,7 @@ public class SFXCast : SFXBase,ISingleCoroutine {
             PlayDelayed(sourceID,buffInfo);
             return;
         }
-        ObjectManager.SpawnCommonSFX<SFXIndicator>(I_DelayIndicatorIndex, transform.position, Vector3.up).PlayDuration(sourceID, transform.position, Vector3.up, F_DelayDuration);
+        ObjectManager.SpawnCommonIndicator(I_DelayIndicatorIndex, transform.position, Vector3.up).PlayDuration(sourceID, transform.position, Vector3.up, F_DelayDuration);
         this.StartSingleCoroutine(1, TIEnumerators.PauseDel(F_DelayDuration, () => { PlayDelayed(sourceID, buffInfo); }));
     }
     public virtual void PlayDelayed(int sourceID, DamageBuffInfo buffInfo)
@@ -114,7 +116,7 @@ public class SFXCast : SFXBase,ISingleCoroutine {
     protected RaycastHit[] OnCastCheck()
     {
         RaycastHit[] hits=null;
-        switch (E_CastType)
+        switch (E_AreaType)
         {
             case enum_CastAreaType.OverlapSphere:
                 {
@@ -149,7 +151,7 @@ public class SFXCast : SFXBase,ISingleCoroutine {
             return;
         Gizmos.color = GetGizmosColor();
         Gizmos_Extend.DrawArrow(CastTransform.position,Quaternion.LookRotation(CastTransform.forward),new Vector3(V3_CastSize.x/10,V3_CastSize.y/10,F_CastLength / 4));
-        switch (E_CastType)
+        switch (E_AreaType)
         {
             case enum_CastAreaType.OverlapSphere:
                     Gizmos.DrawWireSphere(CastTransform.position, V3_CastSize.x);

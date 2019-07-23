@@ -5,7 +5,6 @@ using TPhysics;
 using UnityEngine;
 
 public class SFXProjectileTargetRangeDrop : SFXProjectile {
-    public int I_ProjectileDrop;
     public float F_DropDuration = .5f;
     public int I_DropCount = 10;
     public float F_DropStartHeight = 10f;
@@ -19,8 +18,6 @@ public class SFXProjectileTargetRangeDrop : SFXProjectile {
     protected override void OnPlayPreset()
     {
         base.OnPlayPreset();
-        if (I_ProjectileDrop <= 0)
-            Debug.LogError("Spread Projectile Index Less Or Equals 0!");
         if (F_DropDuration<=0)
             Debug.LogError("Spread Duration Less Or Equals 0!");
         if (I_DropCount <= 0)
@@ -40,7 +37,7 @@ public class SFXProjectileTargetRangeDrop : SFXProjectile {
         f_dropCheck -= F_DropDuration;
 
         Vector3 startPos = transform.position + Vector3.forward * Random.Range(F_DropRange, -F_DropRange) + Vector3.right * Random.Range(F_DropRange, -F_DropRange);
-        ObjectManager.SpawnCommonSFX<SFXProjectile>(I_ProjectileDrop, startPos, Vector3.down).Play(I_SourceID,Vector3.down,startPos+Vector3.down*F_DropStartHeight,m_DamageInfo.m_BuffApply);
+        ObjectManager.SpawnDamageSource<SFXProjectile>(GameExpression.GetEnermyWeaponSubIndex(I_SFXIndex), startPos, Vector3.down).Play(I_SourceID,Vector3.down,startPos+Vector3.down*F_DropStartHeight,m_DamageInfo.m_BuffApply);
 
         i_dropCountCheck++;
         if (i_dropCountCheck >= I_DropCount)

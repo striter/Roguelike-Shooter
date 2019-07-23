@@ -30,7 +30,7 @@ public class SFXProjectileSplit : SFXProjectile {
         for (int i = 0; i < I_SplitCount; i++)
         {
             Vector3 splitDirection = transform.forward.RotateDirection(Vector3.up, startAngle + i * angleEach);
-            ObjectManager.SpawnCommonSFX<SFXProjectile>(I_SplitProjectileIndex,transform.position, Vector3.up).Play(I_SourceID, splitDirection, transform.position + splitDirection * 10,m_DamageInfo.m_BuffApply);
+            ObjectManager.SpawnDamageSource<SFXProjectile>(I_SplitProjectileIndex,transform.position, Vector3.up).Play(I_SourceID, splitDirection, transform.position + splitDirection * 10,m_DamageInfo.m_BuffApply);
         }
     }
 }
