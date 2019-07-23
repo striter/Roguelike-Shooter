@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TestGameManager : MonoBehaviour {
-
+public class TestGameManager : GameManager {
+    private void Awake()
+    {
+        instance = this;
+    }
     private void Start()
     {
 //        PostEffectManager.AddPostEffect<PE_ViewDepth>();
