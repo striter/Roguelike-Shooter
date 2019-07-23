@@ -1774,7 +1774,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Test_TileStyle: 4
-  Test_EntityStyle: 4
+  Test_EntityStyle: 1
   M_TESTSEED: 
   B_GameDebugGizmos: 1
   Z_TestEntityIndex: 132
