@@ -129,6 +129,7 @@ GameObject:
   - component: {fileID: 33566743581821484}
   - component: {fileID: 23295916408510408}
   - component: {fileID: 65437084715830814}
+  - component: {fileID: 114635135160847424}
   m_Layer: 0
   m_Name: WeaponModel
   m_TagString: Untagged
@@ -1005,6 +1006,17 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114635135160847424
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1243606179835760}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f62cdd659d216734e828ce07e4431bf6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114679542760397622
 MonoBehaviour:
   m_ObjectHideFlags: 1
