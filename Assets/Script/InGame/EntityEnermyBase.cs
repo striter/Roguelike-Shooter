@@ -360,13 +360,13 @@ public class EntityEnermyBase : EntityBase {
 
         Vector3 GetUnstuckPosition()
         {
-            return EnviormentManager.RandomNavMeshPosition(m_EntityControlling.transform.position, 10f, 50);
+            return EnviormentManager.RandomNavMeshPosition(m_EntityControlling.transform.position+TCommon.RandomSpherePosition(10f,0,10f), 50);
         }
 
         Vector3 GetSamplePosition()
         {
             Vector3 m_SamplePosition= m_EntityControlling.transform.position+ (b_MoveTowardsTarget? v3_TargetDirection : -v3_TargetDirection).normalized*5;
-            return EnviormentManager.RandomNavMeshPosition(m_SamplePosition, 5, 100 );
+            return EnviormentManager.RandomNavMeshPosition(m_SamplePosition+TCommon.RandomSpherePosition(5f,0,5f), 100);
         }
 
         bool CheckTargetVisible()
@@ -494,7 +494,7 @@ public class EntityEnermyBase : EntityBase {
         {
             if (i_muzzleIndex > 0)
                 ObjectManager.SpawnCommonParticles<SFXParticles>(i_muzzleIndex, startPosition, direction).Play(m_EntityControlling.I_EntityID);
-            ObjectManager.SpawnDamageSource<SFXProjectile>(i_projectileIndex, startPosition, direction).Play(m_EntityControlling.I_EntityID, direction, EnviormentManager.RandomNavMeshPosition(targetPosition, m_Info.m_HorizontalSpread),GetBuffInfo());
+            ObjectManager.SpawnDamageSource<SFXProjectile>(i_projectileIndex, startPosition, direction).Play(m_EntityControlling.I_EntityID, direction, targetPosition+TCommon.RandomSpherePosition( m_Info.m_HorizontalSpread,0, m_Info.m_HorizontalSpread)),GetBuffInfo());
         }
     }
     class BarrageMultipleLine : BarrageRange
