@@ -257,9 +257,9 @@ MonoBehaviour:
   F_Radius: 0.5
   F_Height: 1
   I_MaxHealth: 100
-  I_SpreadAngleEach: 30
-  F_SpreadDuration: 0.5
-  I_SpreadCount: 10
+  I_SpreadAngleEach: 20
+  F_SpreadDuration: 0.3
+  I_SpreadCount: 36
 --- !u!114 &114929671006142830
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -271,6 +271,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62d09be21441f524d850aaf663ec49a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  I_AttacherID: -1
 --- !u!135 &135521237136520624
 SphereCollider:
   m_ObjectHideFlags: 1

@@ -253,4 +253,4 @@ MonoBehaviour:
   I_ImpactIndex: 40001
   I_BufFApplyOnHit: 0
   F_Radius: 0.5
-  F_Height: 0
+  F_Height: 2
