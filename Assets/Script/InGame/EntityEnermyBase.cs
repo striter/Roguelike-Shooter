@@ -360,13 +360,13 @@ public class EntityEnermyBase : EntityBase {
 
         Vector3 GetUnstuckPosition()
         {
-            return EnviormentManager.NavMeshPosition(m_EntityControlling.transform.position+TCommon.RandomXZSphere(10f), 50);
+            return EnviormentManager.NavMeshPosition(m_EntityControlling.transform.position+TCommon.RandomXZSphere(10f));
         }
 
         Vector3 GetSamplePosition()
         {
             Vector3 m_SamplePosition= m_EntityControlling.transform.position+ (b_MoveTowardsTarget? v3_TargetDirection : -v3_TargetDirection).normalized*5;
-            return EnviormentManager.NavMeshPosition(m_SamplePosition+TCommon.RandomXZSphere(5f), 100);
+            return EnviormentManager.NavMeshPosition(m_SamplePosition+TCommon.RandomXZSphere(5f));
         }
 
         bool CheckTargetVisible()
