@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 78e44f9e2b04e57459e84da7dbee5618
+guid: 9e4509f9fbd44714cbf5dd09d3a16e8e
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
@@ -56,7 +56,7 @@ ModelImporter:
     400048: UpperLeg_Left_jnt
     400050: UpperLeg_Right_jnt
     2100000: lambert57
-    2100002: lambert702
+    2100002: aiStandardSurface7
     2300000: SF_Character_jingling_3_fazhang
     3300000: SF_Character_jingling_3_fazhang
     4300000: SF_Character_jingling_3
@@ -67,12 +67,12 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: lambert57
+      name: aiStandardSurface7
     second: {fileID: 2100000, guid: bb30779412a948548b9bc9a711d3c9a1, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: lambert702
+      name: lambert57
     second: {fileID: 2100000, guid: bb30779412a948548b9bc9a711d3c9a1, type: 2}
   materials:
     importMaterials: 1
@@ -377,7 +377,7 @@ ModelImporter:
     - name: Neck_jnt
       parentName: Chest_jnt
       position: {x: -22.89519, y: 4.2216864e-14, z: 5.6672844e-17}
-      rotation: {x: 0, y: 0, z: -1.7763568e-15, w: 1}
+      rotation: {x: 0, y: 0, z: -1.8873791e-15, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: Head_jnt
       parentName: Neck_jnt

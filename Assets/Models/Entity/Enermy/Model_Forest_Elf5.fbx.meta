@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 6d70a4ca99a0cf44cabfb86168afcf99
+guid: 662cf9deae228f74f84890ca1b6ec7a0
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
@@ -20,15 +20,16 @@ ModelImporter:
     100028: SF_Character_jingling_5
     100030: //RootNode
     100032: SF_Character_jingling_5 1
-    100034: SF_Character_jingling_5_fazhang
-    100036: Shoulder_Left_jnt
-    100038: Shoulder_Right_jnt
-    100040: Spine_jnt
-    100042: Spine_jnt 1
-    100044: Toe_Left_jnt
-    100046: Toe_Right_jnt
-    100048: UpperLeg_Left_jnt
-    100050: UpperLeg_Right_jnt
+    100034: SF_Character_jingling_5_gong
+    100036: SF_Character_jingling_5_jian
+    100038: Shoulder_Left_jnt
+    100040: Shoulder_Right_jnt
+    100042: Spine_jnt
+    100044: Spine_jnt 1
+    100046: Toe_Left_jnt
+    100048: Toe_Right_jnt
+    100050: UpperLeg_Left_jnt
+    100052: UpperLeg_Right_jnt
     400000: Arm_Left_jnt
     400002: Arm_Right_jnt
     400004: Chest_jnt
@@ -46,21 +47,25 @@ ModelImporter:
     400028: SF_Character_jingling_5
     400030: //RootNode
     400032: SF_Character_jingling_5 1
-    400034: SF_Character_jingling_5_fazhang
-    400036: Shoulder_Left_jnt
-    400038: Shoulder_Right_jnt
-    400040: Spine_jnt
-    400042: Spine_jnt 1
-    400044: Toe_Left_jnt
-    400046: Toe_Right_jnt
-    400048: UpperLeg_Left_jnt
-    400050: UpperLeg_Right_jnt
+    400034: SF_Character_jingling_5_gong
+    400036: SF_Character_jingling_5_jian
+    400038: Shoulder_Left_jnt
+    400040: Shoulder_Right_jnt
+    400042: Spine_jnt
+    400044: Spine_jnt 1
+    400046: Toe_Left_jnt
+    400048: Toe_Right_jnt
+    400050: UpperLeg_Left_jnt
+    400052: UpperLeg_Right_jnt
     2100000: lambert261
     2100002: aiStandardSurface1
-    2300000: SF_Character_jingling_5_fazhang
-    3300000: SF_Character_jingling_5_fazhang
+    2300000: SF_Character_jingling_5_gong
+    2300002: SF_Character_jingling_5_jian
+    3300000: SF_Character_jingling_5_gong
+    3300002: SF_Character_jingling_5_jian
     4300000: SF_Character_jingling_5
-    4300002: SF_Character_jingling_5_fazhang
+    4300002: SF_Character_jingling_5_jian
+    4300004: SF_Character_jingling_5_gong
     9500000: //RootNode
     13700000: SF_Character_jingling_5 1
   externalObjects:
@@ -269,9 +274,14 @@ ModelImporter:
       position: {x: -0, y: 0, z: 0}
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
-    - name: SF_Character_jingling_5_fazhang
+    - name: SF_Character_jingling_5_gong
       parentName: SF_Character_jingling_5
-      position: {x: 172.9417, y: 184.75398, z: 0}
+      position: {x: 159.95255, y: 247.56125, z: -21.521793}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: SF_Character_jingling_5_jian
+      parentName: SF_Character_jingling_5
+      position: {x: 159.95255, y: 247.56125, z: -31.738998}
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: Hips_jnt

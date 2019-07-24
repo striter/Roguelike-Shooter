@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 3a5730887f7daca48860f83d1579f11b
+guid: 7835dc6c5e5485346bc709256e92558d
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
@@ -17,20 +17,18 @@ ModelImporter:
     100022: LowerLeg_Left_jnt
     100024: LowerLeg_Right_jnt
     100026: Neck_jnt
-    100028: //RootNode
-    100030: SF_Character_jingling_6
+    100028: SF_Character_jingling_6
+    100030: //RootNode
     100032: SF_Character_jingling_6 1
-    100034: SF_Character_jingling_6_gong
-    100036: SF_Character_jingling_6_jian
-    100038: SF_Character_jingling_6_zhuanzi
-    100040: Shoulder_Left_jnt
-    100042: Shoulder_Right_jnt
-    100044: Spine_jnt
-    100046: Spine_jnt 1
-    100048: Toe_Left_jnt
-    100050: Toe_Right_jnt
-    100052: UpperLeg_Left_jnt
-    100054: UpperLeg_Right_jnt
+    100034: SF_Character_jingling_6_fazhang
+    100036: Shoulder_Left_jnt
+    100038: Shoulder_Right_jnt
+    100040: Spine_jnt
+    100042: Spine_jnt 1
+    100044: Toe_Left_jnt
+    100046: Toe_Right_jnt
+    100048: UpperLeg_Left_jnt
+    100050: UpperLeg_Right_jnt
     400000: Arm_Left_jnt
     400002: Arm_Right_jnt
     400004: Chest_jnt
@@ -45,39 +43,31 @@ ModelImporter:
     400022: LowerLeg_Left_jnt
     400024: LowerLeg_Right_jnt
     400026: Neck_jnt
-    400028: //RootNode
-    400030: SF_Character_jingling_6
+    400028: SF_Character_jingling_6
+    400030: //RootNode
     400032: SF_Character_jingling_6 1
-    400034: SF_Character_jingling_6_gong
-    400036: SF_Character_jingling_6_jian
-    400038: SF_Character_jingling_6_zhuanzi
-    400040: Shoulder_Left_jnt
-    400042: Shoulder_Right_jnt
-    400044: Spine_jnt
-    400046: Spine_jnt 1
-    400048: Toe_Left_jnt
-    400050: Toe_Right_jnt
-    400052: UpperLeg_Left_jnt
-    400054: UpperLeg_Right_jnt
+    400034: SF_Character_jingling_6_fazhang
+    400036: Shoulder_Left_jnt
+    400038: Shoulder_Right_jnt
+    400040: Spine_jnt
+    400042: Spine_jnt 1
+    400044: Toe_Left_jnt
+    400046: Toe_Right_jnt
+    400048: UpperLeg_Left_jnt
+    400050: UpperLeg_Right_jnt
     2100000: lambert46
-    2100002: aiStandardSurface2
-    2300000: SF_Character_jingling_6_gong
-    2300002: SF_Character_jingling_6_jian
-    2300004: SF_Character_jingling_6_zhuanzi
-    3300000: SF_Character_jingling_6_gong
-    3300002: SF_Character_jingling_6_jian
-    3300004: SF_Character_jingling_6_zhuanzi
-    4300000: SF_Character_jingling_6
-    4300002: SF_Character_jingling_6_jian
-    4300004: SF_Character_jingling_6_gong
-    4300006: SF_Character_jingling_6_zhuanzi
+    2100002: aiStandardSurface3
+    2300000: SF_Character_jingling_6_fazhang
+    3300000: SF_Character_jingling_6_fazhang
+    4300000: SF_Character_jingling_6_fazhang
+    4300002: SF_Character_jingling_6
     9500000: //RootNode
     13700000: SF_Character_jingling_6 1
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: aiStandardSurface2
+      name: aiStandardSurface3
     second: {fileID: 2100000, guid: c78fe111950fdde4db24a48f1663be87, type: 2}
   - first:
       type: UnityEngine:Material
@@ -279,19 +269,9 @@ ModelImporter:
       position: {x: -0, y: 0, z: 0}
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
-    - name: SF_Character_jingling_6_gong
+    - name: SF_Character_jingling_6_fazhang
       parentName: SF_Character_jingling_6
-      position: {x: 135.46666, y: 239.6591, z: -54.810646}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: SF_Character_jingling_6_zhuanzi
-      parentName: SF_Character_jingling_6_gong
-      position: {x: -0.000005516917, y: -0.0000054365937, z: 144.89432}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: SF_Character_jingling_6_jian
-      parentName: SF_Character_jingling_6
-      position: {x: 135.46666, y: 239.6591, z: -65.02785}
+      position: {x: 161.0231, y: 182.62251, z: -12.130726}
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: Hips_jnt

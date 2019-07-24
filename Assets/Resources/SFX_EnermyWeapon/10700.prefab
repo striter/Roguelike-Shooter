@@ -27,6 +27,23 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1524083097734534
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4786339418982014}
+  - component: {fileID: 33915281325636400}
+  - component: {fileID: 23109708665746216}
+  m_Layer: 0
+  m_Name: Model
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1663224457212594
 GameObject:
   m_ObjectHideFlags: 0
@@ -43,23 +60,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &1710865137301520
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 4959070699957654}
-  - component: {fileID: 33609365229937132}
-  - component: {fileID: 23797305491187240}
-  m_Layer: 0
-  m_Name: Model
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!4 &4033790627955202
 Transform:
   m_ObjectHideFlags: 1
@@ -69,6 +69,19 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4853727591666664}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4786339418982014
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1524083097734534}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.656}
+  m_LocalScale: {x: 0.007, y: 0.007000001, z: 0.006999999}
   m_Children: []
   m_Father: {fileID: 4853727591666664}
   m_RootOrder: 0
@@ -83,30 +96,17 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 4786339418982014}
   - {fileID: 4033790627955202}
-  - {fileID: 4959070699957654}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4959070699957654
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1710865137301520}
-  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0.45}
-  m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
-  m_Children: []
-  m_Father: {fileID: 4853727591666664}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
---- !u!23 &23797305491187240
+--- !u!23 &23109708665746216
 MeshRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1710865137301520}
+  m_GameObject: {fileID: 1524083097734534}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -115,7 +115,8 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 1dd235e967768684da0120f777b58f01, type: 2}
+  - {fileID: 2100000, guid: 0d67c10b45ccf564e93e32dc0637436d, type: 2}
+  - {fileID: 2100000, guid: 0d67c10b45ccf564e93e32dc0637436d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -135,13 +136,13 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!33 &33609365229937132
+--- !u!33 &33915281325636400
 MeshFilter:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1710865137301520}
-  m_Mesh: {fileID: 4300002, guid: 2c5eeb7325a240b439f96b375cd0722f, type: 3}
+  m_GameObject: {fileID: 1524083097734534}
+  m_Mesh: {fileID: 4300004, guid: b022a92ae4819224e8ee0c92026972f7, type: 3}
 --- !u!96 &96656760400481398
 TrailRenderer:
   serializedVersion: 2
@@ -246,6 +247,6 @@ MonoBehaviour:
   I_MuzzleIndex: 10001
   I_ImpactIndex: 40001
   I_BufFApplyOnHit: 0
-  F_Radius: 0.5
-  F_Height: 1
+  F_Radius: 0.2
+  F_Height: 3.2
   F_DelayDuration: 1
