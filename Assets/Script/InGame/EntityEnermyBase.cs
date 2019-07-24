@@ -494,7 +494,7 @@ public class EntityEnermyBase : EntityBase {
         {
             if (i_muzzleIndex > 0)
                 ObjectManager.SpawnCommonParticles<SFXParticles>(i_muzzleIndex, startPosition, direction).Play(m_EntityControlling.I_EntityID);
-            ObjectManager.SpawnDamageSource<SFXProjectile>(i_projectileIndex, startPosition, direction).Play(m_EntityControlling.I_EntityID, direction, targetPosition+TCommon.RandomSpherePosition( m_Info.m_HorizontalSpread,0, m_Info.m_HorizontalSpread)),GetBuffInfo());
+            ObjectManager.SpawnDamageSource<SFXProjectile>(i_projectileIndex, startPosition, direction).Play(m_EntityControlling.I_EntityID, direction, targetPosition+TCommon.RandomSpherePosition( m_Info.m_HorizontalSpread,0, m_Info.m_HorizontalSpread),GetBuffInfo());
         }
     }
     class BarrageMultipleLine : BarrageRange
