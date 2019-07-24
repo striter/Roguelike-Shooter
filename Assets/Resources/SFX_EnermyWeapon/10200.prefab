@@ -245,6 +245,6 @@ MonoBehaviour:
   F_Speed: 12
   I_MuzzleIndex: 10001
   I_ImpactIndex: 40001
-  I_BufFApplyOnHit: 1
+  I_BufFApplyOnHit: 0
   F_Radius: 0.04
   F_Height: 1.1
