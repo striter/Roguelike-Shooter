@@ -398,7 +398,7 @@ public static class ObjectManager
     {
         SFXIndicator sfx = ObjectPoolManager<int, SFXBase>.Spawn(index, attachTo) as SFXIndicator;
         if (sfx == null)
-            Debug.LogError("SFX Spawn Error! Invalid Common Indicator,Index:" + index);
+            Debug.LogError("SFX Spawn Error! Invalid Indicator,Index:" + index);
         sfx.transform.position = position;
         sfx.transform.rotation = Quaternion.LookRotation(normal);
         return sfx;
