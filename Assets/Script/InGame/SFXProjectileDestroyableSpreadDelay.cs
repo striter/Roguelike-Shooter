@@ -9,12 +9,13 @@ public class SFXProjectileDestroyableSpreadDelay : SFXProjectileDestroyableSprea
     public override void Play(int sourceID, Vector3 direction, Vector3 targetPosition, DamageBuffInfo buffInfo)
     {
         base.Play(sourceID, direction, targetPosition, buffInfo);
+        targetPosition = EnviormentManager.NavMeshPosition(targetPosition) + Vector3.up * .5f;
         transform.localScale = Vector3.zero;
         B_SimulatePhysics = false;
         ObjectManager.SpawnCommonIndicator(I_DelayIndicator, targetPosition, Vector3.up).Play(sourceID, F_DelayDuration);
         this.StartSingleCoroutine(1, TIEnumerators.PauseDel(F_DelayDuration, () => {
             transform.localScale = Vector3.one;
-            transform.position =EnviormentManager.NavMeshPosition( targetPosition)+Vector3.up*.5f;
+            transform.position = targetPosition;
             transform.rotation = Quaternion.LookRotation(Vector3.forward);
             B_SimulatePhysics = true;
         }));
