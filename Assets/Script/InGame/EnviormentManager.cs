@@ -110,7 +110,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         TBroadCaster<enum_BC_UIStatusChanged>.Trigger(enum_BC_UIStatusChanged.PlayerLevelStatusChanged, m_MapLevelInfo, m_currentLevel.m_TileAxis);
     }
     static NavMeshHit sampleHit;
-    public static Vector3 RandomNavMeshPosition(Vector3 samplePosition, float distance = 100)
+    public static Vector3 NavMeshPosition(Vector3 samplePosition, float distance = 100)
     {
         if (NavMesh.SamplePosition(samplePosition, out sampleHit, distance, -1))
             return sampleHit.position;

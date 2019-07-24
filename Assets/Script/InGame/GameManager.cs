@@ -189,7 +189,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         hitcheck.TryHit(new DamageInfo( hitcheck.m_Attacher.B_IsPlayer ? GameConst.F_DamagePlayerFallInOcean : hitcheck.m_Attacher.m_HealthManager.F_TotalHealth, enum_DamageType.Fall));
 
         if (hitcheck.m_Attacher.B_IsPlayer)
-            hitcheck.m_Attacher.transform.position = EnviormentManager.RandomNavMeshPosition(hitcheck.m_Attacher.transform.position);
+            hitcheck.m_Attacher.transform.position = EnviormentManager.NavMeshPosition(hitcheck.m_Attacher.transform.position);
     }
     #endregion
     #region Battle Management
@@ -357,7 +357,7 @@ public static class ObjectManager
     public static EntityBase SpawnEntity(int index,Vector3 toPosition)
     {
         EntityBase entity= ObjectPoolManager<int, EntityBase>.Spawn(index, TF_Entity);
-        toPosition = EnviormentManager.RandomNavMeshPosition(toPosition);
+        toPosition = EnviormentManager.NavMeshPosition(toPosition);
         entity.transform.position = toPosition;
         entity.OnSpawn(GameManager.I_EntityID(i_entityIndex++, entity.B_IsPlayer));
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnSpawnEntity, entity);

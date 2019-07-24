@@ -360,13 +360,13 @@ public class EntityEnermyBase : EntityBase {
 
         Vector3 GetUnstuckPosition()
         {
-            return EnviormentManager.RandomNavMeshPosition(m_EntityControlling.transform.position+TCommon.RandomSpherePosition(10f,0,10f), 50);
+            return EnviormentManager.NavMeshPosition(m_EntityControlling.transform.position+TCommon.RandomSpherePosition(10f,0,10f), 50);
         }
 
         Vector3 GetSamplePosition()
         {
             Vector3 m_SamplePosition= m_EntityControlling.transform.position+ (b_MoveTowardsTarget? v3_TargetDirection : -v3_TargetDirection).normalized*5;
-            return EnviormentManager.RandomNavMeshPosition(m_SamplePosition+TCommon.RandomSpherePosition(5f,0,5f), 100);
+            return EnviormentManager.NavMeshPosition(m_SamplePosition+TCommon.RandomSpherePosition(5f,0,5f), 100);
         }
 
         bool CheckTargetVisible()
@@ -461,7 +461,7 @@ public class EntityEnermyBase : EntityBase {
         }
         public override void Play(bool preAim, EntityBase _target)
         {
-             ObjectManager.SpawnDamageSource<SFXCast>(i_castIndex, EnviormentManager.RandomNavMeshPosition(_target.transform.position,m_Info.m_HorizontalSpread), _target.transform.up).Play(m_EntityControlling.I_EntityID,GetBuffInfo());
+             ObjectManager.SpawnDamageSource<SFXCast>(i_castIndex, EnviormentManager.NavMeshPosition(_target.transform.position,m_Info.m_HorizontalSpread), _target.transform.up).Play(m_EntityControlling.I_EntityID,GetBuffInfo());
         }
 
     }
