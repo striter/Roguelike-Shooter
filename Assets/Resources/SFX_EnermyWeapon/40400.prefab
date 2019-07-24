@@ -52,12 +52,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   E_CastType: 3
-  F_Damage: 10
+  F_Damage: 20
   I_TickCount: 1
   F_Tick: 0.5
   I_BuffApplyOnCast: 0
   E_AreaType: 1
-  V3_CastSize: {x: 5, y: 0, z: 0}
+  V3_CastSize: {x: 3, y: 0, z: 0}
   F_DelayDuration: 2
-  I_DelayIndicatorIndex: 50002
+  I_DelayIndicatorIndex: 50001
   B_DamageDistanceReduction: 0
