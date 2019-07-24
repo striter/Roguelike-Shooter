@@ -240,7 +240,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5311f8113741b1f46bc5966d96ce3c65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  E_ProjectileType: 3
+  E_ProjectileType: 1
   F_Damage: 20
   F_Speed: 10
   I_MuzzleIndex: 10001
