@@ -360,13 +360,13 @@ public class EntityEnermyBase : EntityBase {
 
         Vector3 GetUnstuckPosition()
         {
-            return EnviormentManager.NavMeshPosition(m_EntityControlling.transform.position+TCommon.RandomSpherePosition(10f,0,10f), 50);
+            return EnviormentManager.NavMeshPosition(m_EntityControlling.transform.position+TCommon.RandomXZSphere(10f), 50);
         }
 
         Vector3 GetSamplePosition()
         {
             Vector3 m_SamplePosition= m_EntityControlling.transform.position+ (b_MoveTowardsTarget? v3_TargetDirection : -v3_TargetDirection).normalized*5;
-            return EnviormentManager.NavMeshPosition(m_SamplePosition+TCommon.RandomSpherePosition(5f,0,5f), 100);
+            return EnviormentManager.NavMeshPosition(m_SamplePosition+TCommon.RandomXZSphere(5f), 100);
         }
 
         bool CheckTargetVisible()
@@ -461,7 +461,7 @@ public class EntityEnermyBase : EntityBase {
         }
         public override void Play(bool preAim, EntityBase _target)
         {
-             ObjectManager.SpawnDamageSource<SFXCast>(i_castIndex, EnviormentManager.NavMeshPosition(_target.transform.position,m_Info.m_HorizontalSpread), _target.transform.up).Play(m_EntityControlling.I_EntityID,GetBuffInfo());
+             ObjectManager.SpawnDamageSource<SFXCast>(i_castIndex, EnviormentManager.NavMeshPosition(_target.transform.position+TCommon.RandomXZSphere(m_Info.m_HorizontalSpread)), _target.transform.up).Play(m_EntityControlling.I_EntityID,GetBuffInfo());
         }
 
     }
@@ -494,7 +494,7 @@ public class EntityEnermyBase : EntityBase {
         {
             if (i_muzzleIndex > 0)
                 ObjectManager.SpawnCommonParticles<SFXParticles>(i_muzzleIndex, startPosition, direction).Play(m_EntityControlling.I_EntityID);
-            ObjectManager.SpawnDamageSource<SFXProjectile>(i_projectileIndex, startPosition, direction).Play(m_EntityControlling.I_EntityID, direction, targetPosition+TCommon.RandomSpherePosition( m_Info.m_HorizontalSpread,0, m_Info.m_HorizontalSpread),GetBuffInfo());
+            ObjectManager.SpawnDamageSource<SFXProjectile>(i_projectileIndex, startPosition, direction).Play(m_EntityControlling.I_EntityID, direction, targetPosition+TCommon.RandomXZSphere( m_Info.m_HorizontalSpread),GetBuffInfo());
         }
     }
     class BarrageMultipleLine : BarrageRange
