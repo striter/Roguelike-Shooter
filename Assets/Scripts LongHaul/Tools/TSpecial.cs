@@ -232,7 +232,7 @@ namespace TTiles
             for (int i = 0; i < fillCount; i++)
             {
                 T temp = targetList[i];
-                m_AllDirections.TraversalRandom(seed,(enum_TileDirection randomDirection) => {
+                m_AllDirections.TraversalRandom((enum_TileDirection randomDirection) => {
                     TileAxis axis = temp.m_TileAxis.DirectionAxis(randomDirection);
                     if (axis.InRange(tileArray))
                     {
@@ -245,7 +245,7 @@ namespace TTiles
                         }
                     }
                     return false;
-                });
+                }, seed);
             }
             return targetList;
         }

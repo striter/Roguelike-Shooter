@@ -58,7 +58,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
 
         RaycastHit hit = new RaycastHit();
         if (Input.GetKeyDown(KeyCode.Z) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
-            ObjectManager.SpawnEntity(Z_TestEntityIndex, hit.point).SetTarget(m_LocalPlayer);
+            ObjectManager.SpawnEntity(Z_TestEntityIndex, hit.point).OnActivate();
         if (Input.GetKeyDown(KeyCode.X) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
             ObjectManager.SpawnDamageSource<SFXCast>(X_TestCastIndex, hit.point, Vector3.forward).Play(1000,DamageBuffInfo.Create());
         if (Input.GetKeyDown(KeyCode.C) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
@@ -156,6 +156,22 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
 
         return Instance.m_Entities.ContainsKey(sourceID) && hb.m_Attacher.B_IsPlayer != Instance.m_Entities[sourceID].B_IsPlayer;
     }
+
+    public EntityBase GetEntity(int sourceIndex,bool isPlayer,Predicate<EntityBase> predict)
+    {
+        EntityBase target=null;
+        m_Entities.TraversalRandom((int index, EntityBase entity) =>
+        {
+            if (entity.B_IsPlayer == isPlayer &&entity.I_EntityID!=sourceIndex&& (predict == null || predict(entity)))
+            {
+                target = entity;
+                return true;
+            }
+            return false;
+        });
+        return target;
+    }
+
     public Dictionary<int, EntityBase> m_Entities { get; private set; } = new Dictionary<int, EntityBase>();
     void OnSpawnEntity(EntityBase entity)
     {
@@ -165,7 +181,6 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     {
         m_Entities.Remove(entity.I_EntityID);
     }
-
     public void OnEntityFall(HitCheckEntity hitcheck)      //On Player Falls To Ocean ETC
     {
         hitcheck.TryHit(new DamageInfo( hitcheck.m_Attacher.B_IsPlayer ? GameConst.F_DamagePlayerFallInOcean : hitcheck.m_Attacher.m_HealthManager.F_TotalHealth, enum_DamageType.Fall));
@@ -206,7 +221,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         m_EntityGenerating.Clear();
         m_WaveEnermyGenerate.m_EntityGenerate.Traversal((enum_EntityType level, RangeInt range) =>
         {
-            int spawnCount = range.Random();
+            int spawnCount = range.RandomRangeInt();
             for (int i = 0; i < spawnCount; i++)
             {
                 if (!m_StyledEnermyEntities.ContainsKey(level))
@@ -269,7 +284,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     {
         ObjectManager.SpawnCommonIndicator(50001, position, Vector3.up).Play(entityIndex,GameConst.I_EnermySpawnDelay);
         this.StartSingleCoroutine(100 + spawnIndex, TIEnumerators.PauseDel(GameConst.I_EnermySpawnDelay, () => {
-            ObjectManager.SpawnEntity(entityIndex,position ).SetTarget(m_LocalPlayer);
+            ObjectManager.SpawnEntity(entityIndex,position ).OnActivate();
         }));
     }
     #endregion

@@ -49,6 +49,7 @@ public class EntityEnermyBase : EntityBase {
         SFXBuffApply buffApply = weaponInfo as SFXBuffApply;
         if (buffApply)
             weapon = new BuffApply(buffApply,this,tf_Barrel,GetDamageBuffInfo);
+
         m_AI = new EnermyAIControllerBase(this,weapon, entityInfo, OnAttackAnim, OnCheckTarget);
         if (E_AnimatorIndex == enum_EnermyAnim.Invalid)
             Debug.LogError("Please Set Prefab AnimIndex!");
@@ -58,9 +59,26 @@ public class EntityEnermyBase : EntityBase {
         base.OnSpawn(id);
         m_Animator = new EnermyAnimator(tf_Model.GetComponent<Animator>(), E_AnimatorIndex, OnAnimKeyEvent);
     }
+    public override void OnActivate()
+    {
+        base.OnActivate();
+        m_AI.OnActivate();
+    }
     protected override void Update()
     {
-        m_Animator.SetRun(0,m_AI.B_AgentEnabled?1:0);
+        m_Animator.SetRun(0, m_AI.B_AgentEnabled ? 1 : 0);
+    }
+    protected override void OnDead()
+    {
+        m_AI.Deactivate();
+        m_Animator.OnDead();
+        base.OnDead();
+    }
+    protected override void OnDisable()
+    {
+        if (m_AI != null)
+            m_AI.Deactivate();
+        base.OnDisable();
     }
     void OnAttackAnim(EntityBase target,bool startAttack)
     {
@@ -74,23 +92,6 @@ public class EntityEnermyBase : EntityBase {
                 m_AI.OnAttackTriggerd();
                 break;
         }
-    }
-    public override void SetTarget(EntityBase target)
-    {
-        base.SetTarget(target);
-        m_AI.SetTarget(target);
-    }
-    protected override void OnDead()
-    {
-        m_AI.Deactivate();
-        m_Animator.OnDead();
-        base.OnDead();
-    }
-    protected override void OnDisable()
-    {
-        if (m_AI!=null) 
-        m_AI.Deactivate();
-        base.OnDisable();
     }
 
 
@@ -148,7 +149,7 @@ public class EntityEnermyBase : EntityBase {
         protected Transform targetHeadTransform => m_Target.tf_Head;
         protected NavMeshAgent m_Agent;
         protected NavMeshObstacle m_Obstacle;
-        protected Action<EntityBase,bool> OnAttackAnim;
+        protected Action<EntityBase, bool> OnAttackAnim;
         protected Func<EntityBase, bool> OnCheckTarget;
         protected SEntity m_EntityInfo;
         protected EnermyWeaponBase m_Weapon;
@@ -181,7 +182,7 @@ public class EntityEnermyBase : EntityBase {
             }
         }
 
-        public EnermyAIControllerBase(EntityEnermyBase _entityControlling, EnermyWeaponBase _weapon, SEntity _entityInfo, Action<EntityBase,bool> _onAttack, Func<EntityBase, bool> _onCheck)
+        public EnermyAIControllerBase(EntityEnermyBase _entityControlling, EnermyWeaponBase _weapon, SEntity _entityInfo, Action<EntityBase, bool> _onAttack, Func<EntityBase, bool> _onCheck)
         {
             m_EntityControlling = _entityControlling;
             m_EntityInfo = _entityInfo;
@@ -194,14 +195,13 @@ public class EntityEnermyBase : EntityBase {
             B_AgentEnabled = false;
         }
 
-        public void SetTarget(EntityBase entity)
+        public void OnActivate()
         {
-            m_Target = entity;
             B_AgentEnabled = true;
             b_attacking = false;
 
-            this.StartSingleCoroutine(0, TrackTarget());
-            this.StartSingleCoroutine(1, Tick());
+            this.StartSingleCoroutine(0, AICalculationTick());
+            this.StartSingleCoroutine(1, TargetTrackTick());
         }
 
         public void Deactivate()
@@ -223,34 +223,47 @@ public class EntityEnermyBase : EntityBase {
         bool b_idled = false;
         bool b_targetVisible;
         int i_targetUnvisibleCount;
-        float f_targetAngle=180;
+        float f_targetAngle = 180;
         bool b_targetHideBehindWall => i_targetUnvisibleCount == 40;
+        bool b_targetAvailable => m_Target != null && !m_Target.m_HealthManager.b_IsDead;
 
-        IEnumerator TrackTarget()
+        IEnumerator AICalculationTick()
         {
             for (; ; )
             {
                 f_aiSimulatedTime += GameConst.F_EnermyAICheckTime;
-                CalculateAllParams();
+                CheckTarget();
+                CheckTargetParams();
                 CheckBattle();
                 CheckMovement();
                 yield return new WaitForSeconds(GameConst.F_EnermyAICheckTime);
             }
         }
-
-
-        void CalculateAllParams()
+        void CheckTarget()
         {
+            if (!b_targetAvailable)
+            {
+                EntityBase target = GameManager.Instance.GetEntity(m_EntityControlling.I_EntityID,!m_Weapon.B_TargetAlly, null);
+                if (target)
+                    m_Target = target;
+            }
+        }
+
+        void CheckTargetParams()
+        {
+            if (!b_targetAvailable)
+                return;
+
             b_targetVisible = CheckTargetVisible();
             if (!b_targetVisible)
-                i_targetUnvisibleCount=i_targetUnvisibleCount+1>40?40:i_targetUnvisibleCount+1;
+                i_targetUnvisibleCount = i_targetUnvisibleCount + 1 > 40 ? 40 : i_targetUnvisibleCount + 1;
             else
-                i_targetUnvisibleCount= i_targetUnvisibleCount-1<=0?0:i_targetUnvisibleCount-1;
+                i_targetUnvisibleCount = i_targetUnvisibleCount - 1 <= 0 ? 0 : i_targetUnvisibleCount - 1;
             f_targetDistance = TCommon.GetXZDistance(targetHeadTransform.position, headTransform.position);
             b_targetOutChaseRange = f_targetDistance > m_EntityInfo.m_AIChaseRange;
             b_targetOutAttackRange = f_targetDistance > m_EntityInfo.m_AIAttackRange;
             b_MoveTowardsTarget = b_targetHideBehindWall || b_targetOutChaseRange;
-            b_CanAttackTarget =  !b_targetOutAttackRange&&(!m_EntityInfo.m_BattleCheckObsatacle || b_targetVisible) && Mathf.Abs(f_targetAngle)<15&&!Physics.SphereCast(new Ray( headTransform.position,headTransform.forward),1f,2,GameLayer.Physics.I_Static) ;
+            b_CanAttackTarget = !b_targetOutAttackRange && (!m_EntityInfo.m_BattleCheckObsatacle || b_targetVisible) && Mathf.Abs(f_targetAngle) < 15 && !Physics.SphereCast(new Ray(headTransform.position, headTransform.forward), 1f, 2, GameLayer.Physics.I_Static);
             b_AgentReachDestination = m_Agent.destination == Vector3.zero || TCommon.GetXZDistance(headTransform.position, m_Agent.destination) < 1f;
         }
         #region Attack
@@ -259,7 +272,7 @@ public class EntityEnermyBase : EntityBase {
         bool b_attacking;
         void CheckBattle()
         {
-            if (f_aiSimulatedTime < f_battleStatusCheck)
+            if (!b_targetAvailable||f_aiSimulatedTime < f_battleStatusCheck)
                 return;
             if (b_CanAttackTarget)
                 f_battleStatusCheck = f_aiSimulatedTime + OnStartAttacking();
@@ -267,7 +280,7 @@ public class EntityEnermyBase : EntityBase {
         float OnStartAttacking()
         {
             b_preAim = TCommon.RandomPercentage() >= m_EntityControlling.I_AttackPreAimPercentage;
-            i_playCount = m_EntityInfo.m_ProjectileCount.Random();
+            i_playCount = m_EntityInfo.m_ProjectileCount.RandomRangeInt();
             i_playCount = i_playCount <= 0 ? 1 : i_playCount;       //Make Sure Play Once At Least
             b_attacking = true;
             m_Weapon.OnPlayAnim(b_attacking);
@@ -280,7 +293,7 @@ public class EntityEnermyBase : EntityBase {
                 OnAttackAnim(m_Target, b_attacking);
             })
             );
-            return m_EntityInfo.m_Firerate * i_playCount + m_EntityInfo.m_BarrageDuration.Random(); ;
+            return m_EntityInfo.m_Firerate * i_playCount + m_EntityInfo.m_BarrageDuration.RandomRangeFloat(); ;
         }
         public void OnAttackTriggerd()
         {
@@ -289,19 +302,22 @@ public class EntityEnermyBase : EntityBase {
         #endregion
         #region Movement
 
-        IEnumerator Tick()
+        IEnumerator TargetTrackTick()
         {
             for (; ; )
             {
+                if (!b_targetAvailable)
+                    yield return null;
+
                 v3_TargetDirection = TCommon.GetXZLookDirection(headTransform.position, targetHeadTransform.position);
                 f_targetAngle = TCommon.GetAngle(v3_TargetDirection, transform.forward, Vector3.up);
                 m_Agent.updateRotation = b_targetOutAttackRange;
                 if (!m_Agent.updateRotation)
-                    transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(v3_TargetDirection, Vector3.up), 
-                        Time.deltaTime*5*(b_attacking? m_EntityControlling.F_AttackRotateParam:1));
+                    transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(v3_TargetDirection, Vector3.up), Time.deltaTime*5*(b_attacking? m_EntityControlling.F_AttackRotateParam:1));
                 yield return null;
             }
         }
+
 
         void CheckMovement()
         {
@@ -358,21 +374,22 @@ public class EntityEnermyBase : EntityBase {
                 targetPosition = sampleHit.position;
             return targetPosition;
         }
+
         bool CheckTargetVisible()
         {
-                m_Raycasts = Physics.RaycastAll(m_EntityControlling.tf_Head.position, v3_TargetDirection, Vector3.Distance(m_EntityControlling.tf_Head.position, m_Target.tf_Head.position), GameLayer.Physics.I_StaticEntity);
-                for (int i = 0; i < m_Raycasts.Length; i++)
+            m_Raycasts = Physics.RaycastAll(m_EntityControlling.tf_Head.position, v3_TargetDirection, Vector3.Distance(m_EntityControlling.tf_Head.position, m_Target.tf_Head.position), GameLayer.Physics.I_StaticEntity);
+            for (int i = 0; i < m_Raycasts.Length; i++)
+            {
+                if (m_Raycasts[i].collider.gameObject.layer == GameLayer.I_Static)
+                    return false;
+                else if (m_Raycasts[i].collider.gameObject.layer == GameLayer.I_Entity)
                 {
-                    if (m_Raycasts[i].collider.gameObject.layer == GameLayer.I_Static)
+                    HitCheckEntity entity = m_Raycasts[i].collider.GetComponent<HitCheckEntity>();
+                    if (entity.m_Attacher.I_EntityID != m_Target.I_EntityID && entity.m_Attacher.I_EntityID != m_EntityControlling.I_EntityID)
                         return false;
-                    else if (m_Raycasts[i].collider.gameObject.layer == GameLayer.I_Entity)
-                    {
-                        HitCheckEntity entity = m_Raycasts[i].collider.GetComponent<HitCheckEntity>();
-                        if (entity.m_Attacher.I_EntityID != m_Target.I_EntityID && entity.m_Attacher.I_EntityID != m_EntityControlling.I_EntityID)
-                            return false;
-                    }
                 }
-                return true;    
+            }
+            return true;
         }
         #endregion
     }
@@ -380,6 +397,7 @@ public class EntityEnermyBase : EntityBase {
     #region EnermyWeapon
     class EnermyWeaponBase 
     {
+        public virtual bool B_TargetAlly=>false;
         protected EntityEnermyBase m_EntityControlling;
         protected Transform attacherTransform => m_EntityControlling.tf_Head;
         protected Transform transformBarrel;
@@ -489,7 +507,7 @@ public class EntityEnermyBase : EntityBase {
         }
         public override void Play(bool preAim,EntityBase _target)
         {
-            int waveCount = m_Info.m_RangeExtension.Random();
+            int waveCount = m_Info.m_RangeExtension.RandomRangeInt();
             Vector3 startDirection = GetHorizontalDirection(preAim, _target);
             Vector3 startPosition = transformBarrel.position - attacherTransform.right*m_Info.m_OffsetExtension*((waveCount-1)/2f);
             float distance = TCommon.GetXZDistance(transformBarrel.position, _target.transform.position);
@@ -504,7 +522,7 @@ public class EntityEnermyBase : EntityBase {
         }
         public override void Play(bool preAim,EntityBase _target)
         {
-            int waveCount = m_Info.m_RangeExtension.Random();
+            int waveCount = m_Info.m_RangeExtension.RandomRangeInt();
             Vector3 startDirection = GetHorizontalDirection(preAim, _target);
             float startFanAngle= -m_Info.m_OffsetExtension*(waveCount-1)/2f;
             float distance = TCommon.GetXZDistance(transformBarrel.position, _target.transform.position);
@@ -517,12 +535,13 @@ public class EntityEnermyBase : EntityBase {
     }
     class BuffApply : EnermyWeaponBase
     {
+        public override bool B_TargetAlly => true;
         SBuff m_buffInfo;
         int i_buffApplyIndex;
         public BuffApply(SFXBuffApply buffApplyinfo, EntityEnermyBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo) : base(_controller, _transform, _GetBuffInfo)
         {
             i_buffApplyIndex = buffApplyinfo.I_SFXIndex;
-            m_buffInfo = DataManager.GetEntityBuffProperties(i_buffApplyIndex);
+            m_buffInfo = DataManager.GetEntityBuffProperties(buffApplyinfo.I_BuffIndex);
         }
         public override void Play(bool preAim, EntityBase _target)
         {

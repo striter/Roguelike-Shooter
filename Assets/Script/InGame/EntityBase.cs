@@ -12,7 +12,6 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
     public float m_CurrentMana { get; private set; }
     public bool B_IsPlayer { get; private set; }
     
-    protected EntityBase m_Target;
     protected DamageBuffInfo GetDamageBuffInfo() => m_BuffManager.m_DamageBuffProperty;
     public EntityBuffManager m_BuffManager { get; private set; }
     public EntityHealth m_HealthManager { get; private set; }
@@ -67,9 +66,8 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
         
         return m_HealthManager.OnReceiveDamage(damageInfo, m_BuffManager.m_EntityBuffProperty.F_DamageReduceMultiply);
     }
-    public virtual void SetTarget(EntityBase target)
+    public virtual void OnActivate()
     {
-        m_Target = target;
     }
 
     protected virtual void OnCostMana(float manaCost)

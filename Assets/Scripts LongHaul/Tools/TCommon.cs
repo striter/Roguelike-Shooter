@@ -240,8 +240,11 @@ public static class TCommon
             enumAction((T)temp);
         }
     }
-    public static void TraversalRandom<T>(this List<T> list, System.Random seed = null, Func<T, bool> OnRandomItemStop = null)
+    public static void TraversalRandom<T>(this List<T> list, Func<T, bool> OnRandomItemStop = null, System.Random seed = null)
     {
+        if (list.Count == 0)
+            return;
+
         int index = list.RandomIndex(seed);
         for (int i = 0; i < list.Count; i++)
         {
@@ -250,6 +253,22 @@ public static class TCommon
 
             index++;
             if (index == list.Count)
+                index = 0;
+        }
+    }
+    public static void TraversalRandom<T,Y>(this Dictionary<T,Y> dictionary, Func<T,Y, bool> OnRandomItemStop = null, System.Random seed = null)
+    {
+        if (dictionary.Count == 0)
+            return;
+
+        int index = UnityEngine.Random.Range(0, dictionary.Count);
+        foreach (T keys in dictionary.Keys)
+        {
+            if (OnRandomItemStop != null && OnRandomItemStop(keys,dictionary[keys]))
+                break;
+
+            index++;
+            if (index == dictionary.Count)
                 index = 0;
         }
     }
@@ -304,17 +323,8 @@ public static class TCommon
             childList[i].SetSiblingIndex(childIndexList.FindIndex(p => p == int.Parse(childList[i].name)));
         }
     }
-    public static string ToLogText<T, Y>(this Dictionary<T, Y> dic)
-    {
-        string target = "";
-        foreach (T temp in dic.Keys)
-        {
-            target += temp.ToString() + "|" + dic[temp].ToString() + " ";
-        }
-        return target;
-    }
-    public static int Random(this RangeInt ir,System.Random seed = null)=> seed != null ? seed.Next(ir.start, ir.end + 1) : UnityEngine.Random.Range(ir.start, ir.end + 1);
-    public static float Random(this RangeFloat ir, System.Random seed = null)=> seed != null ? seed.Next((int)(ir.start * 1000), (int)(ir.end * 1000)) / 100 : UnityEngine.Random.Range(ir.start, ir.end + 1);
+    public static int RandomRangeInt(this RangeInt ir,System.Random seed = null)=> seed != null ? seed.Next(ir.start, ir.end + 1) : UnityEngine.Random.Range(ir.start, ir.end + 1);
+    public static float RandomRangeFloat(this RangeFloat ir, System.Random seed = null)=> seed != null ? seed.Next((int)(ir.start * 1000), (int)(ir.end * 1000)) / 100 : UnityEngine.Random.Range(ir.start, ir.end + 1);
     public static bool RandomBool(System.Random seed = null) => seed != null ? seed.Next(0, 2) > 0 : UnityEngine.Random.Range(0, 2) > 0;
     public static int RandomPercentage(System.Random seed=null)=> seed != null ? seed.Next(0, 101)  : UnityEngine.Random.Range(0, 101);
 }

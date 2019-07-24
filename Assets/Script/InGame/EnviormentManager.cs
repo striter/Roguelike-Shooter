@@ -140,17 +140,17 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         else
         {
             int rewardIndex = 0;
-            subGenerateTiles.TraversalRandom(bigMapSeed, (SBigmapTileInfo tile) => {
+            subGenerateTiles.TraversalRandom( (SBigmapTileInfo tile) => {
                 rewardIndex++;
                 if (rewardIndex % 2 == 0)
                     tile.ResetTileType(enum_TileType.Reward);
-                return false; });
+                return false; }, bigMapSeed);
         }
 
         //Create Sub Battle Tile
         SBigmapTileInfo subBattleTile = null;
-        subGenerateTiles.TraversalRandom(bigMapSeed, (SBigmapTileInfo tile)=> {
-            TTiles.TTiles.m_AllDirections.TraversalRandom(bigMapSeed, (enum_TileDirection direction) =>
+        subGenerateTiles.TraversalRandom( (SBigmapTileInfo tile)=> {
+            TTiles.TTiles.m_AllDirections.TraversalRandom( (enum_TileDirection direction) =>
             {
                 SBigmapTileInfo targetSubBattleTile = bigmapTiles.Get(tile.m_TileAxis.DirectionAxis(direction));
                 if (targetSubBattleTile!=null&& targetSubBattleTile.m_TileType== enum_TileType.Invalid)
@@ -160,25 +160,25 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
                     subGenerateTiles.Add(subBattleTile);
                 }
                 return subBattleTile!=null;
-            });
+            }, bigMapSeed);
             return subBattleTile!=null;
-        });
+        }, bigMapSeed);
 
         //Connect Sub Battle Tile To All Tiles Nearby
         if (subBattleTile!=null)
-        TTiles.TTiles.m_AllDirections.TraversalRandom(bigMapSeed, (enum_TileDirection direction) => {
+        TTiles.TTiles.m_AllDirections.TraversalRandom( (enum_TileDirection direction) => {
             SBigmapTileInfo nearbyTile = bigmapTiles.Get(subBattleTile.m_TileAxis.DirectionAxis(direction));
             if (nearbyTile != null && (nearbyTile.m_TileType== enum_TileType.Reward|| nearbyTile.m_TileType == enum_TileType.Battle))
                 ConnectTile(subBattleTile,nearbyTile);
-            return false; });
+            return false; }, bigMapSeed);
 
 
         //Generate Last Reward Tile
         subGenerateTiles.RemoveAll(p => p.m_TileType == enum_TileType.Reward);
         SBigmapTileInfo subRewardTile = null;
-        subGenerateTiles.TraversalRandom(bigMapSeed, (SBigmapTileInfo tile) =>
+        subGenerateTiles.TraversalRandom( (SBigmapTileInfo tile) =>
         {
-            TTiles.TTiles.m_AllDirections.TraversalRandom(bigMapSeed, (enum_TileDirection direction) =>
+            TTiles.TTiles.m_AllDirections.TraversalRandom( (enum_TileDirection direction) =>
             {
                 SBigmapTileInfo targetSubrewardTile = bigmapTiles.Get(tile.m_TileAxis.DirectionAxis(direction));
                 if (targetSubrewardTile != null && targetSubrewardTile.m_TileType == enum_TileType.Invalid)
@@ -188,9 +188,9 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
                     ConnectTile(subRewardTile, tile);
                 }
                 return subRewardTile!=null;
-            });
+            }, bigMapSeed);
             return subRewardTile != null;
-        });
+        }, bigMapSeed);
 
         //Load All map Levels And Set Material
         Dictionary<enum_TilePrefabDefinition, List<LevelBase>> levelPrefabDic = TResources.GetStyledLevelSetMaterial(_levelStyle);
