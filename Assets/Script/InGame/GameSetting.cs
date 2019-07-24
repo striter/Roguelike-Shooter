@@ -478,7 +478,6 @@ namespace GameSetting
         {
             if (m_buffInfo.m_DamageTickTime <= 0)
                 return;
-
             f_dotCheck += deltaTime;
             if (f_dotCheck > m_buffInfo.m_DamageTickTime)
             {

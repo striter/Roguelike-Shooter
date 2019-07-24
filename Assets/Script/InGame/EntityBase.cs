@@ -61,7 +61,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
     {
         if (m_HealthManager.b_IsDead)
             return false;
-
+        
         damageInfo.m_BuffApply.m_BuffAplly.Traversal((int buffIndex) => {OnReceiveBuff(buffIndex); });
         
         return m_HealthManager.OnReceiveDamage(damageInfo, m_BuffManager.m_EntityBuffProperty.F_DamageReduceMultiply);

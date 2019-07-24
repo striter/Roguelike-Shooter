@@ -66,6 +66,7 @@ public class EntityEnermyBase : EntityBase {
     }
     protected override void Update()
     {
+        base.Update();
         m_Animator.SetRun(0, m_AI.B_AgentEnabled ? 1 : 0);
     }
     protected override void OnDead()
@@ -306,14 +307,14 @@ public class EntityEnermyBase : EntityBase {
         {
             for (; ; )
             {
-                if (!b_targetAvailable)
-                    yield return null;
-
-                v3_TargetDirection = TCommon.GetXZLookDirection(headTransform.position, targetHeadTransform.position);
-                f_targetAngle = TCommon.GetAngle(v3_TargetDirection, transform.forward, Vector3.up);
-                m_Agent.updateRotation = b_targetOutAttackRange;
-                if (!m_Agent.updateRotation)
-                    transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(v3_TargetDirection, Vector3.up), Time.deltaTime*5*(b_attacking? m_EntityControlling.F_AttackRotateParam:1));
+                if (b_targetAvailable)
+                {
+                    v3_TargetDirection = TCommon.GetXZLookDirection(headTransform.position, targetHeadTransform.position);
+                    f_targetAngle = TCommon.GetAngle(v3_TargetDirection, transform.forward, Vector3.up);
+                    m_Agent.updateRotation = b_targetOutAttackRange;
+                    if (!m_Agent.updateRotation)
+                        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(v3_TargetDirection, Vector3.up), Time.deltaTime * 5 * (b_attacking ? m_EntityControlling.F_AttackRotateParam : 1));
+                }
                 yield return null;
             }
         }
