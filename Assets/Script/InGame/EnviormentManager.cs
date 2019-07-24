@@ -109,6 +109,15 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
 
         TBroadCaster<enum_BC_UIStatusChanged>.Trigger(enum_BC_UIStatusChanged.PlayerLevelStatusChanged, m_MapLevelInfo, m_currentLevel.m_TileAxis);
     }
+    static NavMeshHit sampleHit;
+    public static Vector3 RandomNavMeshPosition(Vector3 samplePosition, float randomRadius=0, float distance = 100)
+    {
+        if(randomRadius!=0)
+            samplePosition = samplePosition + new Vector3(UnityEngine.Random.Range(-randomRadius, randomRadius), 0, UnityEngine.Random.Range(-randomRadius, randomRadius));
+        if (NavMesh.SamplePosition(samplePosition, out sampleHit, distance, -1))
+            return sampleHit.position;
+        return samplePosition;
+    }
     #endregion
     #region BigMap
     public static SBigmapLevelInfo[,] GenerateBigmapLevels(enum_Style _levelStyle,System.Random bigMapSeed,Transform _generateParent,int _bigmapWidth, int _bigmapHeight,TileAxis startAxis)

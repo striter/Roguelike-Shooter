@@ -189,13 +189,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         hitcheck.TryHit(new DamageInfo( hitcheck.m_Attacher.B_IsPlayer ? GameConst.F_DamagePlayerFallInOcean : hitcheck.m_Attacher.m_HealthManager.F_TotalHealth, enum_DamageType.Fall));
 
         if (hitcheck.m_Attacher.B_IsPlayer)
-        {
-            NavMeshHit edgeHit;
-            if (NavMesh.SamplePosition(hitcheck.m_Attacher.transform.position, out edgeHit, 5, -1))
-                hitcheck.m_Attacher.transform.position = edgeHit.position;
-            else
-                hitcheck.m_Attacher.transform.position = Vector3.zero;
-        }
+            hitcheck.m_Attacher.transform.position = EnviormentManager.RandomNavMeshPosition(hitcheck.m_Attacher.transform.position);
     }
     #endregion
     #region Battle Management
@@ -363,11 +357,9 @@ public static class ObjectManager
     public static EntityBase SpawnEntity(int index,Vector3 toPosition)
     {
         EntityBase entity= ObjectPoolManager<int, EntityBase>.Spawn(index, TF_Entity);
-        NavMeshHit hit;
-        if (NavMesh.SamplePosition(toPosition, out hit, 5, -1))
-            toPosition = hit.position;
-        entity.OnSpawn(GameManager.I_EntityID(i_entityIndex++,entity.B_IsPlayer));
+        toPosition = EnviormentManager.RandomNavMeshPosition(toPosition);
         entity.transform.position = toPosition;
+        entity.OnSpawn(GameManager.I_EntityID(i_entityIndex++, entity.B_IsPlayer));
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnSpawnEntity, entity);
         return entity;
     }

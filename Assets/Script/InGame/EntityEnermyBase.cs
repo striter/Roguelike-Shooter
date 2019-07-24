@@ -360,20 +360,13 @@ public class EntityEnermyBase : EntityBase {
 
         Vector3 GetUnstuckPosition()
         {
-            return NavMesh.SamplePosition(m_EntityControlling.transform.position + new Vector3( UnityEngine.Random.Range(-10f, 10f), 0, 0), out sampleHit, 50, -1) ? sampleHit.position : Vector3.zero;
+            return EnviormentManager.RandomNavMeshPosition(m_EntityControlling.transform.position, 10f, 50);
         }
 
-        NavMeshHit sampleHit;
         Vector3 GetSamplePosition()
         {
-            Vector3 targetPosition = targetHeadTransform.position;
             Vector3 m_SamplePosition= m_EntityControlling.transform.position+ (b_MoveTowardsTarget? v3_TargetDirection : -v3_TargetDirection).normalized*5;
-            m_SamplePosition = m_SamplePosition + new Vector3(UnityEngine.Random.Range(-5f, 5f), 0, UnityEngine.Random.Range(-5f, 5f));
-            if (NavMesh.SamplePosition(m_SamplePosition, out sampleHit, 100, -1))
-                targetPosition = sampleHit.position;
-            else if (NavMesh.SamplePosition(m_Target.transform.position, out sampleHit, 100, -1))
-                targetPosition = sampleHit.position;
-            return targetPosition;
+            return EnviormentManager.RandomNavMeshPosition(m_SamplePosition, 5, 100 );
         }
 
         bool CheckTargetVisible()
@@ -468,7 +461,7 @@ public class EntityEnermyBase : EntityBase {
         }
         public override void Play(bool preAim, EntityBase _target)
         {
-             ObjectManager.SpawnDamageSource<SFXCast>(i_castIndex, _target.transform.position, _target.transform.up).Play(m_EntityControlling.I_EntityID,GetBuffInfo());
+             ObjectManager.SpawnDamageSource<SFXCast>(i_castIndex, EnviormentManager.RandomNavMeshPosition(_target.transform.position,m_Info.m_HorizontalSpread), _target.transform.up).Play(m_EntityControlling.I_EntityID,GetBuffInfo());
         }
 
     }
@@ -476,12 +469,14 @@ public class EntityEnermyBase : EntityBase {
     {
         protected float f_projectileSpeed;
         protected int i_projectileIndex, i_muzzleIndex;
+
         public BarrageRange(SFXProjectile projectileInfo, EntityEnermyBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo) : base(_controller, _transform,_GetBuffInfo)
         {
             i_projectileIndex = projectileInfo.I_SFXIndex;
             i_muzzleIndex = projectileInfo.I_MuzzleIndex;
             f_projectileSpeed = projectileInfo.F_Speed;
         }
+
         public override void Play(bool preAim, EntityBase _target)
         {
             Vector3 horizontalOffsetDirection = GameExpression.V3_RangeSpreadDirection(GetHorizontalDirection(preAim,_target), m_Info.m_HorizontalSpread, Vector3.zero, transformBarrel.right);
@@ -494,11 +489,12 @@ public class EntityEnermyBase : EntityBase {
             targetDirection.y = 0;
             return targetDirection.normalized;
         }
+
         protected void FireBullet(Vector3 startPosition,Vector3 direction,Vector3 targetPosition)
         {
             if (i_muzzleIndex > 0)
                 ObjectManager.SpawnCommonParticles<SFXParticles>(i_muzzleIndex, startPosition, direction).Play(m_EntityControlling.I_EntityID);
-            ObjectManager.SpawnDamageSource<SFXProjectile>(i_projectileIndex, startPosition, direction).Play(m_EntityControlling.I_EntityID, direction, targetPosition,GetBuffInfo());
+            ObjectManager.SpawnDamageSource<SFXProjectile>(i_projectileIndex, startPosition, direction).Play(m_EntityControlling.I_EntityID, direction, EnviormentManager.RandomNavMeshPosition(targetPosition, m_Info.m_HorizontalSpread),GetBuffInfo());
         }
     }
     class BarrageMultipleLine : BarrageRange

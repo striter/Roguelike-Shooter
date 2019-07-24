@@ -304,6 +304,7 @@ namespace GameSetting
             return true;
         }
     }
+
     public class EntityHealth:HealthBase
     {
         public float m_CurrentArmor { get; protected set; }
@@ -488,6 +489,7 @@ namespace GameSetting
             m_DamageBuffProperty = DamageBuffInfo.Create(damageApplyEnhance, new List<int>());
         }
     }
+
     public class BuffBase
     {
         public SBuff m_buffInfo { get; private set; }
@@ -531,6 +533,7 @@ namespace GameSetting
                 OnBuffExpired(this);
         }
     }
+
     public struct EntityBuffInfo
     {
         public float F_DamageReduceMultiply { get; private set; }
