@@ -45,14 +45,6 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     {
         if (!B_TestMode)
             return;
-        if (Input.GetKeyDown(KeyCode.Alpha0))
-        {
-            List<EntityBase> entities = m_Entities.Values.ToList();
-            entities.Traversal((EntityBase entity) => {
-                if (!entity.B_IsPlayer)
-                    entity.BroadcastMessage("OnReceiveDamage", entity.m_EntityInfo.m_MaxHealth + entity.m_EntityInfo.m_MaxArmor);
-            });
-        }
         if (Input.GetKeyDown(KeyCode.BackQuote))
             Time.timeScale = Time.timeScale == 1f ? .1f : 1f;
 
@@ -67,7 +59,18 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
             ObjectManager.SpawnCommonIndicator(V_TestIndicatorIndex, hit.point + Vector3.up, Vector3.up).Play(1000);
         if (Input.GetKeyDown(KeyCode.B) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
             m_LocalPlayer.OnReceiveBuff(B_TestBuffIndex);
-
+        if(Input.GetKeyDown(KeyCode.N))
+            m_LocalPlayer.BroadcastMessage("OnReceiveDamage",new DamageInfo(  20, enum_DamageType.Projectile));
+        if (Input.GetKeyDown(KeyCode.M))
+            m_LocalPlayer.BroadcastMessage("OnReceiveDamage", new DamageInfo(-50, enum_DamageType.Projectile));
+        if (Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            List<EntityBase> entities = m_Entities.Values.ToList();
+            entities.Traversal((EntityBase entity) => {
+                if (!entity.B_IsPlayer)
+                    entity.BroadcastMessage("OnReceiveDamage",new DamageInfo(  entity.m_EntityInfo.m_MaxHealth + entity.m_EntityInfo.m_MaxArmor, enum_DamageType.DOT));
+            });
+        }
 
         UIManager.instance.transform.Find("SeedTest").GetComponent<UnityEngine.UI.Text>().text = m_SeedString;
     }
@@ -376,14 +379,13 @@ public static class ObjectManager
 
     public static WeaponBase SpawnWeapon(enum_PlayerWeapon type, EntityPlayerBase toPlayer)
     {
-            if (!ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Registed(type))
-            {
-                WeaponBase preset = TResources.GetPlayerWeapon(type);
-                ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Register(type, preset, enum_PoolSaveType.DynamicMaxAmount, 1, (WeaponBase weapon)=> {weapon.Init(DataManager.GetWeaponProperties(type));});
-            }
+        if (!ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Registed(type))
+        {
+            WeaponBase preset = TResources.GetPlayerWeapon(type);
+            ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Register(type, preset, enum_PoolSaveType.DynamicMaxAmount, 1, (WeaponBase weapon) => { weapon.Init(DataManager.GetWeaponProperties(type)); });
+        }
 
-            return ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Spawn(type, TF_Entity);
-
+        return ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Spawn(type, TF_Entity);
     }
     public static T SpawnCommonParticles<T>(int index, Vector3 position, Vector3 normal, Transform attachTo = null) where T:SFXParticles
     {

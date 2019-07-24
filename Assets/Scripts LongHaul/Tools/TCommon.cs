@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -130,14 +131,14 @@ public static class TCommon
         }
         return angle;
     }
-    public static Vector3 RotateDirection(this Vector3 Direction, Vector3 axis, float angle) =>(Quaternion.AngleAxis(angle, axis) * Direction).normalized;
+    public static Vector3 RotateDirection(this Vector3 Direction, Vector3 axis, float angle) => (Quaternion.AngleAxis(angle, axis) * Direction).normalized;
     public static Quaternion RandomRotation()
     {
-        return Quaternion.Euler(UnityEngine.Random.Range(0,360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360));
+        return Quaternion.Euler(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360));
     }
     public static Vector3 RandomPositon(Vector3 startPosition, float offset = .2f)
     {
-        return startPosition + new Vector3(UnityEngine.Random.Range(-offset,offset), UnityEngine.Random.Range(-offset, offset), UnityEngine.Random.Range(-offset, offset));
+        return startPosition + new Vector3(UnityEngine.Random.Range(-offset, offset), UnityEngine.Random.Range(-offset, offset), UnityEngine.Random.Range(-offset, offset));
     }
     public static Transform FindOrCreateNewTransform(this Transform parentTrans, string name)
     {
@@ -153,23 +154,23 @@ public static class TCommon
     }
     #region List/Array/Enum Traversal
 
-    public static T RandomItem<T>(this List<T> randomList,System.Random randomSeed=null)
+    public static T RandomItem<T>(this List<T> randomList, System.Random randomSeed = null)
     {
-        return randomList[randomSeed!=null?randomSeed.Next(randomList.Count):UnityEngine.Random.Range(0, randomList.Count)];
+        return randomList[randomSeed != null ? randomSeed.Next(randomList.Count) : UnityEngine.Random.Range(0, randomList.Count)];
     }
-    public static int RandomIndex<T>(this List<T> randomList,System.Random randomSeed=null)
+    public static int RandomIndex<T>(this List<T> randomList, System.Random randomSeed = null)
     {
-        return randomSeed!=null?randomSeed.Next(randomList.Count):UnityEngine.Random.Range(0, randomList.Count);
+        return randomSeed != null ? randomSeed.Next(randomList.Count) : UnityEngine.Random.Range(0, randomList.Count);
     }
     public static T RandomItem<T>(this T[] array, System.Random randomSeed = null)
     {
-        return randomSeed != null ? array[randomSeed.Next(array.Length)] :array[UnityEngine.Random.Range(0, array.Length)];
+        return randomSeed != null ? array[randomSeed.Next(array.Length)] : array[UnityEngine.Random.Range(0, array.Length)];
     }
     public static T RandomItem<T>(this T[,] array, System.Random randomSeed = null)
     {
-        return randomSeed != null ? array[randomSeed.Next(array.GetLength(0)),randomSeed.Next(array.GetLength(1))] : array[UnityEngine.Random.Range(0, array.GetLength(0)), UnityEngine.Random.Range(0, array.GetLength(1))];
+        return randomSeed != null ? array[randomSeed.Next(array.GetLength(0)), randomSeed.Next(array.GetLength(1))] : array[UnityEngine.Random.Range(0, array.GetLength(0)), UnityEngine.Random.Range(0, array.GetLength(1))];
     }
-    public static void Traversal<T>(this List<T> list, Action<T> OnEachItem) 
+    public static void Traversal<T>(this List<T> list, Action<T> OnEachItem)
     {
         for (int i = 0; i < list.Count; i++)
             OnEachItem(list[i]);
@@ -184,12 +185,12 @@ public static class TCommon
         foreach (T temp in dic.Keys)
             OnEachKey(temp);
     }
-    public static void Traversal<T, Y>(this Dictionary<T, Y> dic, Action<Y> OnEachValue) 
+    public static void Traversal<T, Y>(this Dictionary<T, Y> dic, Action<Y> OnEachValue)
     {
         foreach (Y temp in dic.Values)
             OnEachValue(temp);
     }
-    public static void Traversal<T, Y>(this Dictionary<T, Y> dic, Action<T, Y> OnEachPair) 
+    public static void Traversal<T, Y>(this Dictionary<T, Y> dic, Action<T, Y> OnEachPair)
     {
         foreach (T temp in dic.Keys)
             OnEachPair(temp, dic[temp]);
@@ -256,15 +257,16 @@ public static class TCommon
                 index = 0;
         }
     }
-    public static void TraversalRandom<T,Y>(this Dictionary<T,Y> dictionary, Func<T,Y, bool> OnRandomItemStop = null, System.Random seed = null)
+    public static void TraversalRandom<T, Y>(this Dictionary<T, Y> dictionary, Func<T, Y, bool> OnRandomItemStop = null, System.Random seed = null)
     {
         if (dictionary.Count == 0)
             return;
 
         int index = UnityEngine.Random.Range(0, dictionary.Count);
-        foreach (T keys in dictionary.Keys)
+        for (int i = 0; i < dictionary.Count; i++)
         {
-            if (OnRandomItemStop != null && OnRandomItemStop(keys,dictionary[keys]))
+            KeyValuePair<T, Y> element = dictionary.ElementAt(index);
+            if (OnRandomItemStop != null && OnRandomItemStop(element.Key,element.Value))
                 break;
 
             index++;
