@@ -2,12 +2,12 @@
 {
 	Properties
 	{
-		_MainTex("Base Tex",2D) = "white"{}
-		_DetailTex("Detail World UV Tex",2D) = "white"{}
+		_BaseColor("Base Color",Color)=(1,1,1,1)
+		_SubColor("Sub Color",Color) = (1,1,1,1)
+		_ColorMask(" Mask Tex",2D) = "white"{}
+		_DetailTex("Detail Tex",2D) = "white"{}
 		_TexScale("Texture Scale",float) = 8
-		_DetailMask("Detail Mask Tex",2D) = "white"{}
 		_MaskScale("Mask Scale",float) = 8
-		_Color("Color Tint",Color) = (1,1,1,1)
 		_Lambert("Lambert Param",Range(0,1))=.5
 	}
 	SubShader
@@ -43,11 +43,10 @@
 				SHADOW_COORDS(3)
 			};
 
-			sampler2D _MainTex;
-			float4 _MainTex_ST;
+			float4 _BaseColor;
+			float4 _SubColor;
+			sampler2D _ColorMask;
 			sampler2D _DetailTex;
-			sampler2D _DetailMask;
-			float4 _Color;
 			float _Lambert;
 			float _TexScale;
 			float _MaskScale;
@@ -68,11 +67,10 @@
 			{
 				float2 worldUV = float2(i.worldPos.x + i.worldPos.y,i.worldPos.z+i.worldPos.y);
 				float2 texUV = worldUV / _TexScale;
-				float3 baseAlbedo = tex2D(_MainTex, texUV).rgb*_Color;
-				float3 detailAlbedo = tex2D(_DetailTex, texUV).rgb;
-				float detailMask = pow(tex2D(_DetailMask, worldUV / _MaskScale).r, 1);
-			
-				float3 albedo= lerp(baseAlbedo, detailAlbedo.rgb, detailMask);
+				float3 baseAlbedo = _BaseColor;
+				float3 subAlbedo = _SubColor;
+				float albedoMask = pow(tex2D(_ColorMask, worldUV / _MaskScale).r, 1);
+				float3 albedo= lerp(baseAlbedo, subAlbedo, albedoMask)+ tex2D(_DetailTex,texUV).rgb;
 				UNITY_LIGHT_ATTENUATION(atten, i,i.worldPos)
 				fixed3 ambient = albedo*UNITY_LIGHTMODEL_AMBIENT.xyz;
 				atten = atten * _Lambert + (1- _Lambert);
