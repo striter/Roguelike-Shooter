@@ -644,8 +644,12 @@ namespace GameSetting
         bool b_bounce;
         protected Vector3 v3_RotateEuler;
         protected Vector3 v3_RotateDirection;
-        public ThrowablePhysicsSimulator(Transform _transform, Vector3 _startPos, Vector3 _horiDirection, Vector3 _right, Vector3 _endPos, float _angle, float _horiSpeed, float _height, float _radius, bool randomRotation, int _hitLayer,bool bounce,int _bounceLayer, Action<RaycastHit[]> _onTargetHit):base(_transform,_startPos,_horiDirection.RotateDirection(_right,-_angle),_height,_radius,_hitLayer,_onTargetHit)
+        public ThrowablePhysicsSimulator(Transform _transform, Vector3 _startPos, Vector3 _endPos, float _angle, float _horiSpeed, float _height, float _radius, bool randomRotation, int _hitLayer,bool bounce,int _bounceLayer, Action<RaycastHit[]> _onTargetHit):base(_transform,_startPos,Vector3.zero,_height,_radius,_hitLayer,_onTargetHit)
         {
+            Vector3 targetDirection = TCommon.GetXZLookDirection(_startPos, _endPos);
+            Vector3 targetRight = targetDirection.RotateDirection(Vector3.up,90);
+            m_Direction = targetDirection.RotateDirection(targetRight,-_angle);
+
             f_speed =  _horiSpeed/Mathf.Cos(_angle*Mathf.Deg2Rad);
             float horiDistance = Vector3.Distance(_startPos, _endPos);
             float duration = horiDistance / _horiSpeed;
@@ -654,7 +658,7 @@ namespace GameSetting
             m_bounceLayer = _bounceLayer;
             b_randomRotation = randomRotation;
             b_bounce = bounce;
-            v3_RotateEuler = Quaternion.LookRotation(_horiDirection).eulerAngles;
+            v3_RotateEuler = Quaternion.LookRotation(m_Direction).eulerAngles;
             v3_RotateDirection = new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f));
         }
         public override void Simulate(float deltaTime)
