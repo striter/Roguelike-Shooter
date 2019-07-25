@@ -285,4 +285,4 @@ MonoBehaviour:
   F_Height: 0.6
   F_DirectionPitchAngle: 45
   B_RandomRotation: 1
-  B_Bounce: 0
+  B_Bounce: 1

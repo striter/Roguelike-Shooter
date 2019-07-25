@@ -256,7 +256,7 @@ MonoBehaviour:
   I_BufFApplyOnHit: 0
   F_Radius: 0.5
   F_Height: 1
-  I_MaxHealth: 0
+  I_MaxHealth: 200
   I_SpreadAngleEach: 20
   F_SpreadDuration: 0.3
   I_SpreadCount: 36
@@ -273,7 +273,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62d09be21441f524d850aaf663ec49a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  I_AttacherID: 0
 --- !u!135 &135521237136520624
 SphereCollider:
   m_ObjectHideFlags: 1
