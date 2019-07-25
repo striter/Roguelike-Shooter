@@ -479,16 +479,12 @@ public class EntityEnermyBase : EntityBase {
 
         public override void Play(bool preAim, EntityBase _target)
         {
-            Vector3 horizontalOffsetDirection = GameExpression.V3_RangeSpreadDirection(GetHorizontalDirection(preAim,_target), m_Info.m_HorizontalSpread, Vector3.zero, transformBarrel.right);
+            Vector3 horizontalOffsetDirection = GameExpression.V3_RangeSpreadDirection( GetHorizontalDirection(preAim,_target), m_Info.m_HorizontalSpread, Vector3.zero, transformBarrel.right);
             FireBullet(transformBarrel.position, horizontalOffsetDirection,_target.tf_Head.position);
         }
 
-        protected Vector3 GetHorizontalDirection(bool preAim,EntityBase _target)
-        {
-            Vector3 targetDirection= Vector3.Normalize((preAim ? (_target.m_PrecalculatedTargetPos(Vector3.Distance(_target.tf_Head.position, attacherTransform.position) /f_projectileSpeed)) : _target.tf_Head.position) - attacherTransform.position);
-            targetDirection.y = 0;
-            return targetDirection.normalized;
-        }
+        protected Vector3 GetHorizontalDirection(bool preAim, EntityBase _target) => TCommon.GetXZLookDirection(transformBarrel.position,
+            preAim? (_target.m_PrecalculatedTargetPos(Vector3.Distance(_target.tf_Head.position, attacherTransform.position) / f_projectileSpeed))  : _target.tf_Head.position);
 
         protected void FireBullet(Vector3 startPosition,Vector3 direction,Vector3 targetPosition)
         {
