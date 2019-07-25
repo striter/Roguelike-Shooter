@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 73914daf965e5f54d94ba7cca8a51537
+guid: 9121a376f4a7fe74ebedc7109f819bd6
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
@@ -107,10 +107,8 @@ ModelImporter:
     100202: B_Spine2
     100204: Motion
     100206: RPG-Character-Mesh
-    100208: Box001
-    100210: Spear
-    100212: 2Hand-Sword
-    100214: Exporter
+    100208: Bow
+    100210: Exporter
     400000: //RootNode
     400002: B_Prop1
     400004: B_L_Hand
@@ -215,26 +213,20 @@ ModelImporter:
     400202: B_Spine2
     400204: Motion
     400206: RPG-Character-Mesh
-    400208: Box001
-    400210: Spear
-    400212: 2Hand-Sword
-    400214: Exporter
+    400208: Bow
+    400210: Exporter
     2300000: Mesh_Soldier_A
     2300002: AK47
     2300004: Chaingun
     2300006: MissileLauncher
     2300008: USP
-    2300010: Box001
-    2300012: Spear
-    2300014: 2Hand-Sword
+    2300010: Bow
     3300000: Mesh_Soldier_A
     3300002: AK47
     3300004: Chaingun
     3300006: MissileLauncher
     3300008: USP
-    3300010: Box001
-    3300012: Spear
-    3300014: 2Hand-Sword
+    3300010: Bow
     4300000: Mesh_Soldier_A
     4300002: AK47
     4300004: MissileLauncher
@@ -242,10 +234,8 @@ ModelImporter:
     4300008: Chaingun
     4300010: Soldier_Mesh
     4300012: RPG-Character-Mesh
-    4300014: Box001
-    4300016: Spear
-    4300018: 2Hand-Sword
-    7400000: 2Hand-Sword-Block-Break
+    4300014: Bow
+    7400000: 2Hand-Bow-Block-Break
     9500000: //RootNode
     11100000: //RootNode
     13700000: Soldier_Mesh
@@ -266,9 +256,8 @@ ModelImporter:
     rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: "\nClip 'Take 001' has import animation warnings that
-      might lower retargeting quality:\n\t'B_Spine2' has translation animation that
-      will be discarded.\n\t'B_Spine2' is inbetween humanoid transforms and has rotation
-      animation that will be discarded.\n"
+      might lower retargeting quality:\n\t'B_Spine2' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
@@ -281,7 +270,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: 2Hand-Sword-Block-Break
+      name: 2Hand-Bow-Block-Break
       takeName: Take 001
       firstFrame: 0
       lastFrame: 30
@@ -304,7 +293,7 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.047299344
+      - time: 0.004608292
         functionName: OnEvent
         data: Fire
         objectReferenceParameter: {instanceID: 0}
