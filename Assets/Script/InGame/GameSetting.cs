@@ -639,63 +639,72 @@ namespace GameSetting
     {
         float f_speed;
         float f_vertiAcceleration;
-        int m_bounceLayer;
+        float f_bounceHitMaxAnlge;
         bool b_randomRotation;
-        bool b_bounce;
+        bool b_bounceOnHit;
+        float f_bounceSpeedMultiply;
+        bool B_SpeedOff => f_speed <= 0;
         protected Vector3 v3_RotateEuler;
         protected Vector3 v3_RotateDirection;
-        public ThrowablePhysicsSimulator(Transform _transform, Vector3 _startPos, Vector3 _endPos, float _angle, float _horiSpeed, float _height, float _radius, bool randomRotation, int _hitLayer,bool bounce,int _bounceLayer, Action<RaycastHit[]> _onTargetHit):base(_transform,_startPos,Vector3.zero,_height,_radius,_hitLayer,_onTargetHit)
+        public ThrowablePhysicsSimulator(Transform _transform, Vector3 _startPos, Vector3 _endPos, float _angle, float _horiSpeed, float _height, float _radius, bool randomRotation, int _hitLayer,bool bounce,float _bounceHitAngle,float _bounceSpeedMultiply, Action<RaycastHit[]> _onBounceHit):base(_transform,_startPos,Vector3.zero,_height,_radius,_hitLayer,_onBounceHit)
         {
-            Vector3 targetDirection = TCommon.GetXZLookDirection(_startPos, _endPos);
-            Vector3 targetRight = targetDirection.RotateDirection(Vector3.up,90);
-            m_Direction = targetDirection.RotateDirection(targetRight,-_angle);
-
+            Vector3 horiDirection = TCommon.GetXZLookDirection(_startPos, _endPos);
+            Vector3 horiRight = horiDirection.RotateDirection(Vector3.up,90);
+            m_Direction = horiDirection.RotateDirection(horiRight,-_angle);
             f_speed =  _horiSpeed/Mathf.Cos(_angle*Mathf.Deg2Rad);
             float horiDistance = Vector3.Distance(_startPos, _endPos);
             float duration = horiDistance / _horiSpeed;
             float vertiDistance = Mathf.Tan(_angle * Mathf.Deg2Rad) * horiDistance;
             f_vertiAcceleration = Expressions.GetAcceleration(0, vertiDistance, duration);
-            m_bounceLayer = _bounceLayer;
             b_randomRotation = randomRotation;
-            b_bounce = bounce;
+            b_bounceOnHit = bounce;
+            f_bounceHitMaxAnlge = _bounceHitAngle;
+            f_bounceSpeedMultiply = _bounceSpeedMultiply;
             v3_RotateEuler = Quaternion.LookRotation(m_Direction).eulerAngles;
             v3_RotateDirection = new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f));
         }
         public override void Simulate(float deltaTime)
         {
+            if (B_SpeedOff)
+                return; 
+
             base.Simulate(deltaTime);
 
             if (b_randomRotation)
             {
-                v3_RotateEuler += v3_RotateDirection * deltaTime * 100f;
-                transform.rotation = Quaternion.LookRotation(v3_RotateEuler);
+                v3_RotateEuler += v3_RotateDirection * deltaTime * 300f;
+                transform.rotation = Quaternion.Euler(v3_RotateEuler);
             }
         }
         public override void OnTargetHitted(RaycastHit[] hitTargets)
         {
-            if (b_bounce&&hitTargets.Length > 0)
+            if (hitTargets.Length > 0)
             {
-                for (int i = 0; i < hitTargets.Length; i++)
+                if (!b_bounceOnHit)
                 {
-                    if (hitTargets[i].collider.gameObject.layer == m_bounceLayer)
-                    {
-                        if(TCommon.GetAngle(hitTargets[i].normal,Vector3.up,Vector3.right)<15)
-                            break;
-
-                        m_startPos = transform.position;
-                        m_Direction = hitTargets[i].normal;
-                        m_simulateTime = 0;
-                        return;
-                    }
+                    base.OnTargetHit(hitTargets);
+                    return;
                 }
+
+                Vector3 bounceDirection = hitTargets[0].point == Vector3.zero ? Vector3.up : hitTargets[0].normal;
+                float bounceAngle = TCommon.GetAngle(bounceDirection, Vector3.up, Vector3.up);
+                if (bounceAngle > 15)
+                    m_Direction = bounceDirection;
+                m_startPos = transform.position;
+                m_simulateTime = 0;
+
+                f_speed -= .1f;
+                f_speed *= f_bounceSpeedMultiply;
+                if (f_speed < 0)
+                    f_speed = 0;
+
+                if (f_bounceHitMaxAnlge != 0 && bounceAngle < f_bounceHitMaxAnlge)      //OnBounceHitTarget
+                    base.OnTargetHit(hitTargets);
+                return;
             }
-
-            base.OnTargetHitted(hitTargets);
         }
 
-        public override Vector3 GetSimulatedPosition(float elapsedTime) {
-            return m_startPos + m_Direction * f_speed * elapsedTime + Vector3.down * f_vertiAcceleration * elapsedTime * elapsedTime;
-        }
+        public override Vector3 GetSimulatedPosition(float elapsedTime)=>  m_startPos + m_Direction * f_speed * elapsedTime + Vector3.down * f_vertiAcceleration * elapsedTime * elapsedTime;
     }
     #endregion
 

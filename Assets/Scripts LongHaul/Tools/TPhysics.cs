@@ -36,10 +36,11 @@ namespace TPhysics
             m_simulateTime += deltaTime;
             Vector3 previousPosition = transform.position;
             transform.position = GetSimulatedPosition(m_simulateTime);
-            transform.rotation = Quaternion.LookRotation(transform.position - previousPosition);
+            Vector3 castDirection =(transform.position-previousPosition).normalized;
+            transform.rotation = Quaternion.LookRotation(castDirection);
             float distance = Vector3.Distance(previousPosition, transform.position);
             distance = distance > m_castHeight ? distance : m_castHeight;
-            OnTargetHitted(Physics.SphereCastAll(new Ray(previousPosition, m_Direction), m_castRadius, distance, m_hitLayer));
+            OnTargetHitted(Physics.SphereCastAll(new Ray(previousPosition, castDirection), m_castRadius, distance, m_hitLayer));
         }
         public override Vector3 GetSimulatedPosition(float elapsedTime)
         {
