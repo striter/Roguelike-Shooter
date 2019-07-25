@@ -10,10 +10,12 @@ public class SFXProjectile : SFXBase
     public float F_Speed;
     public int I_MuzzleIndex;
     public int I_ImpactIndex;
+    public int I_IndicatorIndex;
     public int I_BufFApplyOnHit;
     public float F_Radius = .5f, F_Height = 1f;
     protected PhysicsSimulator m_Simulator;
     protected TrailRenderer m_Trail;
+    protected SFXIndicator m_Indicator;
     List<int> m_TargetHitted = new List<int>();
     public bool B_SimulatePhysics { get; protected set; }
     protected virtual float F_Duration(Vector3 startPos, Vector3 endPos) => GameConst.I_ProjectileMaxDistance / F_Speed;
@@ -23,6 +25,7 @@ public class SFXProjectile : SFXBase
     protected virtual bool B_DealDamage => true;
     protected DamageInfo m_DamageInfo;
     protected virtual PhysicsSimulator GetSimulator(Vector3 direction, Vector3 targetPosition) => new ProjectilePhysicsSimulator(transform,transform.position, direction, Vector3.down, F_Speed, F_Height,F_Radius, GameLayer.Physics.I_All, OnPhysicsCasted);
+    protected virtual void PlayIndicator(float duration) => m_Indicator.Play(I_SourceID,duration);
     public override void Init(int sfxIndex)
     {
         base.Init(sfxIndex);
@@ -36,7 +39,11 @@ public class SFXProjectile : SFXBase
         if (I_BufFApplyOnHit > 0)
             buffInfo.m_BuffAplly.Add(I_BufFApplyOnHit);
         m_DamageInfo.ResetBuff(buffInfo);
+
         m_Simulator = GetSimulator(direction, targetPosition);
+        if (I_IndicatorIndex > 0)
+            SpawnIndicator(targetPosition,Vector3.up, F_Duration(transform.position, targetPosition));
+
         PlaySFX(sourceID, F_Duration(transform.position, targetPosition));
     }
 
@@ -55,12 +62,22 @@ public class SFXProjectile : SFXBase
         if (I_ImpactIndex < 0)
             Debug.LogError("Error Impact Index Less 0");
     }
+    protected override void OnPlayFinished()
+    {
+        base.OnPlayFinished();
+        if (m_Indicator)
+        {
+            m_Indicator.ForceStop();
+            m_Indicator = null;
+        }
+    }
     protected override void Update()
     {
         base.Update();
         if (m_Simulator!=null&&B_SimulatePhysics)
             m_Simulator.Simulate(Time.deltaTime);
     }
+    #region Physics
     protected void OnPhysicsCasted(RaycastHit[] hitTargets)
     {
         for (int i = 0; i < hitTargets.Length; i++)
@@ -114,7 +131,12 @@ public class SFXProjectile : SFXBase
                 break;
         }
     }
-
+    #endregion
+    protected virtual void SpawnIndicator(Vector3 position,Vector3 direction,float duration)
+    {
+        m_Indicator = ObjectManager.SpawnCommonIndicator(I_IndicatorIndex, position, direction);
+        m_Indicator.Play(I_SourceID, duration );
+    }
     protected void SpawnImpact(RaycastHit hitInfo, HitCheckBase hitParent)
     {
         if (I_ImpactIndex > 0)
