@@ -932,7 +932,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   E_AnimatorIndex: 152
   F_AttackRotateParam: 1
-  I_AttackPreAimPercentage: 100
+  I_AttackPreAimPercentage: 50
   B_AttackMove: 1
 --- !u!114 &114628770406168814
 MonoBehaviour:
