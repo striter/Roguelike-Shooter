@@ -344,6 +344,8 @@ GameObject:
   - component: {fileID: 4251348083791010}
   - component: {fileID: 33338299136851578}
   - component: {fileID: 23563146400205696}
+  - component: {fileID: 136035652891831548}
+  - component: {fileID: 114051459078321558}
   m_Layer: 0
   m_Name: WeaponModel
   m_TagString: Untagged
@@ -919,6 +921,17 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114051459078321558
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1700540924393362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2091396369435d24bad4838db15bbe09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114059069811359954
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -943,6 +956,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   E_AnimatorIndex: 161
   F_AttackRotateParam: 1
+  I_AttackPreAimPercentage: 50
   B_AttackMove: 1
 --- !u!114 &114980152134444448
 MonoBehaviour:
@@ -955,6 +969,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2091396369435d24bad4838db15bbe09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!136 &136035652891831548
+CapsuleCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1700540924393362}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 30
+  m_Height: 220
+  m_Direction: 2
+  m_Center: {x: -0.00000076722824, y: 0.000044579072, z: 51.008183}
 --- !u!136 &136129317454053278
 CapsuleCollider:
   m_ObjectHideFlags: 1

@@ -434,6 +434,8 @@ GameObject:
   - component: {fileID: 4835758751977196}
   - component: {fileID: 33099254207739970}
   - component: {fileID: 23976887194545104}
+  - component: {fileID: 136988556431077098}
+  - component: {fileID: 114759364180817616}
   m_Layer: 0
   m_Name: SF_Character_kejibudui5_jiguangpao
   m_TagString: Untagged
@@ -1015,7 +1017,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   E_AnimatorIndex: 112
   F_AttackRotateParam: 0.2
+  I_AttackPreAimPercentage: 50
   B_AttackMove: 0
+--- !u!114 &114759364180817616
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1921111391907660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2091396369435d24bad4838db15bbe09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114947585475733890
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1040,6 +1054,19 @@ CapsuleCollider:
   m_Height: 3
   m_Direction: 1
   m_Center: {x: 0, y: 1.5, z: 0}
+--- !u!136 &136988556431077098
+CapsuleCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1921111391907660}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 60
+  m_Height: 240
+  m_Direction: 0
+  m_Center: {x: -82.69499, y: 28.72471, z: -15.017727}
 --- !u!137 &137570042811407278
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
