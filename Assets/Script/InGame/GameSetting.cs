@@ -831,7 +831,7 @@ namespace GameSetting
         RangeFloat fr_duration;
         float f_firerate;
         RangeInt ir_count;
-        int i_horiSpread;
+        int i_spread;
         RangeInt ir_rangeExtension;
         float f_offsetExtension;
         
@@ -849,7 +849,7 @@ namespace GameSetting
         public RangeFloat m_BarrageDuration => fr_duration;
         internal float m_Firerate => f_firerate;
         public RangeInt m_ProjectileCount => ir_count;
-        public int m_HorizontalSpread => i_horiSpread>0? i_horiSpread:0;
+        public int m_Spread => i_spread>0? i_spread:0;
         public RangeInt m_RangeExtension => ir_rangeExtension;
         public float m_OffsetExtension => f_offsetExtension;
         public void InitOnValueSet()

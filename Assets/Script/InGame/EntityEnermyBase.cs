@@ -461,7 +461,7 @@ public class EntityEnermyBase : EntityBase {
         }
         public override void Play(bool preAim, EntityBase _target)
         {
-             ObjectManager.SpawnDamageSource<SFXCast>(i_castIndex, EnviormentManager.NavMeshPosition(_target.transform.position+TCommon.RandomXZSphere(m_Info.m_HorizontalSpread)), _target.transform.up).Play(m_EntityControlling.I_EntityID,GetBuffInfo());
+             ObjectManager.SpawnDamageSource<SFXCast>(i_castIndex, EnviormentManager.NavMeshPosition(_target.transform.position+TCommon.RandomXZSphere(m_Info.m_Spread)), _target.transform.up).Play(m_EntityControlling.I_EntityID,GetBuffInfo());
         }
 
     }
@@ -479,18 +479,29 @@ public class EntityEnermyBase : EntityBase {
 
         public override void Play(bool preAim, EntityBase _target)
         {
-            Vector3 horizontalOffsetDirection = GameExpression.V3_RangeSpreadDirection( GetHorizontalDirection(preAim,_target), m_Info.m_HorizontalSpread, Vector3.zero, transformBarrel.right);
-            FireBullet(transformBarrel.position, horizontalOffsetDirection,_target.tf_Head.position);
+            Vector3 targetPosition = GetSpreadPosition(preAim,_target);
+            Vector3 startPosition = transformBarrel.position;
+            Vector3 direction = TCommon.GetXZLookDirection(startPosition, targetPosition);
+            FireBullet(startPosition, direction,targetPosition);
         }
 
-        protected Vector3 GetHorizontalDirection(bool preAim, EntityBase _target) => TCommon.GetXZLookDirection(transformBarrel.position,
-            preAim? (_target.m_PrecalculatedTargetPos(Vector3.Distance(_target.tf_Head.position, attacherTransform.position) / f_projectileSpeed))  : _target.tf_Head.position);
+        protected Vector3 GetSpreadPosition(bool preAim, EntityBase _target) {
+            float startDistance = TCommon.GetXZDistance(transformBarrel.position, _target.tf_Head.position);
+            Vector3 targetPosition= preAim  ? _target.m_PrecalculatedTargetPos(startDistance / f_projectileSpeed) : _target.tf_Head.position;
+
+            if(preAim&&Mathf.Abs(TCommon.GetAngle(transformBarrel.forward,TCommon.GetXZLookDirection(transformBarrel.position,targetPosition) ,Vector3.up))>90)    //Target Positioned Back, Return Target
+                targetPosition=_target.tf_Head.position;
+
+            if (TCommon.GetXZDistance(transformBarrel.position, targetPosition) > m_Info.m_Spread)      //Target Outside Spread Sphere,Add Spread
+                targetPosition+= TCommon.RandomXZSphere(m_Info.m_Spread);
+            return targetPosition;
+        } 
 
         protected void FireBullet(Vector3 startPosition,Vector3 direction,Vector3 targetPosition)
         {
             if (i_muzzleIndex > 0)
                 ObjectManager.SpawnCommonParticles<SFXParticles>(i_muzzleIndex, startPosition, direction).Play(m_EntityControlling.I_EntityID);
-            ObjectManager.SpawnDamageSource<SFXProjectile>(i_projectileIndex, startPosition, direction).Play(m_EntityControlling.I_EntityID, direction, targetPosition+TCommon.RandomXZSphere( m_Info.m_HorizontalSpread),GetBuffInfo());
+            ObjectManager.SpawnDamageSource<SFXProjectile>(i_projectileIndex, startPosition, direction).Play(m_EntityControlling.I_EntityID, direction, targetPosition,GetBuffInfo());
         }
     }
     class BarrageMultipleLine : BarrageRange
@@ -500,12 +511,14 @@ public class EntityEnermyBase : EntityBase {
         }
         public override void Play(bool preAim,EntityBase _target)
         {
+            Vector3 startPosition = transformBarrel.position;
+            Vector3 targetPosition = GetSpreadPosition(preAim, _target);
+            Vector3 direction = TCommon.GetXZLookDirection(startPosition,targetPosition);
             int waveCount = m_Info.m_RangeExtension.RandomRangeInt();
-            Vector3 startDirection = GetHorizontalDirection(preAim, _target);
-            Vector3 startPosition = transformBarrel.position - attacherTransform.right*m_Info.m_OffsetExtension*((waveCount-1)/2f);
-            float distance = TCommon.GetXZDistance(transformBarrel.position, _target.transform.position);
+            float distance = TCommon.GetXZDistance(startPosition, targetPosition);
+            Vector3 lineBeginPosition = startPosition - attacherTransform.right * m_Info.m_OffsetExtension * ((waveCount - 1) / 2f);
             for (int i = 0; i < waveCount; i++)
-                FireBullet(startPosition+ attacherTransform.right*m_Info.m_OffsetExtension*i, startDirection, transformBarrel.position + startDirection * distance);
+                FireBullet(lineBeginPosition+ attacherTransform.right*m_Info.m_OffsetExtension*i, direction, transformBarrel.position + direction * distance);
         }
     }
     class BarrageMultipleFan : BarrageRange
@@ -515,13 +528,15 @@ public class EntityEnermyBase : EntityBase {
         }
         public override void Play(bool preAim,EntityBase _target)
         {
+            Vector3 targetPosition = GetSpreadPosition(preAim, _target);
+            Vector3 startPosition = transformBarrel.position;
+            Vector3 direction = TCommon.GetXZLookDirection(startPosition, targetPosition);
             int waveCount = m_Info.m_RangeExtension.RandomRangeInt();
-            Vector3 startDirection = GetHorizontalDirection(preAim, _target);
-            float startFanAngle= -m_Info.m_OffsetExtension*(waveCount-1)/2f;
+            float beginAnle= -m_Info.m_OffsetExtension*(waveCount-1)/2f;
             float distance = TCommon.GetXZDistance(transformBarrel.position, _target.transform.position);
             for (int i = 0; i < waveCount; i++)
             {
-                Vector3 fanDirection = startDirection.RotateDirection(Vector3.up, startFanAngle + i * m_Info.m_OffsetExtension);
+                Vector3 fanDirection = direction.RotateDirection(Vector3.up, beginAnle + i * m_Info.m_OffsetExtension);
                 FireBullet(transformBarrel.position, fanDirection,transformBarrel.position+fanDirection* distance);
             }
         } 
