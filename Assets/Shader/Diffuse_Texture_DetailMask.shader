@@ -5,9 +5,9 @@
 		_BaseColor("Base Color",Color)=(1,1,1,1)
 		_SubColor("Sub Color",Color) = (1,1,1,1)
 		_ColorMask(" Mask Tex",2D) = "white"{}
-		_DetailTex("Detail Tex",2D) = "white"{}
-		_TexScale("Texture Scale",float) = 8
 		_MaskScale("Mask Scale",float) = 8
+		_DetailTex("Detail Tex",2D) = "white"{}
+		_TexScale("Detail Scale",float) = 8
 		_Lambert("Lambert Param",Range(0,1))=.5
 	}
 	SubShader
@@ -66,11 +66,10 @@
 			fixed4 frag (v2f i) : SV_Target
 			{
 				float2 worldUV = float2(i.worldPos.x + i.worldPos.y,i.worldPos.z+i.worldPos.y);
-				float2 texUV = worldUV / _TexScale;
 				float3 baseAlbedo = _BaseColor;
 				float3 subAlbedo = _SubColor;
 				float albedoMask = pow(tex2D(_ColorMask, worldUV / _MaskScale).r, 1);
-				float3 albedo= lerp(baseAlbedo, subAlbedo, albedoMask)* tex2D(_DetailTex,texUV).rgb;
+				float3 albedo= lerp(baseAlbedo, subAlbedo, albedoMask)* tex2D(_DetailTex, worldUV / _TexScale).rgb;
 				UNITY_LIGHT_ATTENUATION(atten, i,i.worldPos)
 				fixed3 ambient = albedo*UNITY_LIGHTMODEL_AMBIENT.xyz;
 				atten = atten * _Lambert + (1- _Lambert);
