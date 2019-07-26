@@ -12,6 +12,7 @@
 	}
 	SubShader
 	{
+			Tags{"RenderType" = "Opaque"}
 		CGINCLUDE
 		#include "UnityCG.cginc"
 		#include "AutoLight.cginc"
@@ -25,7 +26,7 @@
 
 		Pass		//Base Pass
 		{
-			Tags{"RenderType" = "Opaque" "LightMode" = "ForwardBase" "Queue" = "Transparent"}
+			Tags{ "LightMode" = "ForwardBase" "Queue" = "Transparent"}
 			Blend SrcAlpha OneMinusSrcAlpha
 			ZWrite On
 			CGPROGRAM
