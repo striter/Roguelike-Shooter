@@ -52,7 +52,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         if (Input.GetKeyDown(KeyCode.Z) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
             ObjectManager.SpawnEntity(Z_TestEntityIndex, hit.point).OnActivate();
         if (Input.GetKeyDown(KeyCode.X) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
-            ObjectManager.SpawnDamageSource<SFXCast>(X_TestCastIndex, hit.point, Vector3.forward).Play(1000,DamageBuffInfo.Create());
+            ObjectManager.SpawnDamageSource<SFXCast>(X_TestCastIndex, hit.point, Vector3.up).Play(1000,DamageBuffInfo.Create());
         if (Input.GetKeyDown(KeyCode.C) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
             ObjectManager.SpawnDamageSource<SFXProjectile>(C_TestProjectileIndex, hit.point + Vector3.up , m_LocalPlayer.transform.forward).Play(0, m_LocalPlayer.transform.forward, hit.point+m_LocalPlayer.transform.forward*10,DamageBuffInfo.Create());
         if (Input.GetKeyDown(KeyCode.V) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))

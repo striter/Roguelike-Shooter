@@ -12,7 +12,7 @@
 	}
 	SubShader
 	{
-			Tags{"RenderType" = "Opaque"}
+		Tags{"RenderType" = "Opaque"}
 		CGINCLUDE
 		#include "UnityCG.cginc"
 		#include "AutoLight.cginc"

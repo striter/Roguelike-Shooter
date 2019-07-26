@@ -1,4 +1,4 @@
-﻿Shader "Game/Realistic/Diffuse_Texture_Normalmap"
+﻿Shader "Game/Common/Diffuse_Texture_Normalmap"
 {
 	Properties
 	{
