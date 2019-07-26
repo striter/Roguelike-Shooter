@@ -70,7 +70,7 @@
 				float3 baseAlbedo = _BaseColor;
 				float3 subAlbedo = _SubColor;
 				float albedoMask = pow(tex2D(_ColorMask, worldUV / _MaskScale).r, 1);
-				float3 albedo= lerp(baseAlbedo, subAlbedo, albedoMask)+ tex2D(_DetailTex,texUV).rgb;
+				float3 albedo= lerp(baseAlbedo, subAlbedo, albedoMask)* tex2D(_DetailTex,texUV).rgb;
 				UNITY_LIGHT_ATTENUATION(atten, i,i.worldPos)
 				fixed3 ambient = albedo*UNITY_LIGHTMODEL_AMBIENT.xyz;
 				atten = atten * _Lambert + (1- _Lambert);

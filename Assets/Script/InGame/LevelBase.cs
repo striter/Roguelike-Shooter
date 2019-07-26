@@ -174,12 +174,14 @@ public class LevelBase : MonoBehaviour {
     public float F_HeightDetect = .5f;
     public bool b_showGameTiles=true,b_b_showWorldDirection=false;
     public TileMapData gizmosMapData;
-    private void OnDrawGizmosSelected()
+    private void OnDrawGizmos()
     {
         if (UnityEditor.EditorApplication.isPlaying && !GameManager.Instance.B_GameDebugGizmos)
             return;
+        if (!b_showGameTiles)
+            return;
 
-        if (b_showGameTiles&&UnityEditor.EditorApplication.isPlaying)            //Draw While Playing
+        if (UnityEditor.EditorApplication.isPlaying)            //Draw While Playing
         {
             for (int i = 0; i < m_AllTiles.Count; i++)
             {
