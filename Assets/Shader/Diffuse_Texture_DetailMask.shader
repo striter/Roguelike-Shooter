@@ -2,12 +2,8 @@
 {
 	Properties
 	{
-		_BaseColor("Base Color",Color)=(1,1,1,1)
-		_SubColor("Sub Color",Color) = (1,1,1,1)
-		_MainMask(" Mask Tex",2D) = "white"{}
-		_MainScale("Mask Scale",float) = 8
-		_SubMaskTex("Detail Tex",2D) = "white"{}
-		_SubScale("Detail Scale",float) = 8
+		_MainTex(" Mask Tex",2D) = "white"{}
+		_TexScale("Mask Scale",float) = 8
 		_SubMultiply("Detail Multiply",Range(0,1))=.5
 		_Lambert("Lambert Param",Range(0,1))=.5
 	}
@@ -44,14 +40,9 @@
 				SHADOW_COORDS(3)
 			};
 
-			float4 _BaseColor;
-			float4 _SubColor;
-			sampler2D _MainMask;
-			sampler2D _SubMaskTex;
+			sampler2D _MainTex;
+			float _TexScale;
 			float _Lambert;
-			float _SubScale;
-			float _MainScale;
-			float _SubMultiply;
 			v2f vert (appdata v)
 			{
 				v2f o;
@@ -67,13 +58,8 @@
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-				float2 worldUV = float2(i.worldPos.x + i.worldPos.y,i.worldPos.z+i.worldPos.y);
-				float3 baseAlbedo = _BaseColor;
-				float3 subAlbedo = _SubColor;
-				float mainMask = tex2D(_MainMask, worldUV / _MainScale).r;
-				float3 subMask= tex2D(_SubMaskTex, worldUV / _SubScale).r;
-				float finalMask = subMask>.8?mainMask:lerp(mainMask, subMask,_SubMultiply);
-				float3 albedo = lerp(baseAlbedo, subAlbedo, finalMask);
+				float2 worldUV = float2(i.worldPos.x + i.worldPos.y,i.worldPos.z+i.worldPos.y)/ _TexScale;
+				float3 albedo = tex2D(_MainTex, worldUV);
 				UNITY_LIGHT_ATTENUATION(atten, i,i.worldPos)
 				fixed3 ambient = albedo*UNITY_LIGHTMODEL_AMBIENT.xyz;
 				atten = atten * _Lambert + (1- _Lambert);
