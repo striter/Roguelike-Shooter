@@ -8,9 +8,9 @@
 
 	SubShader
 	{ 
-		Tags {"RenderType" = "BloomColor" "IgnoreProjector" = "True" "Queue" = "Transparent" }
+		Tags {"RenderType" = "BloomColor" "IgnoreProjector" = "True" "Queue" = "Geometry" }
 		Cull Back Lighting Off ZWrite Off Fog { Color(0,0,0,0) }
-		Blend SrcAlpha OneMinusSrcAlpha
+		Blend SrcAlpha One
 
 		Cull Back
 		USEPASS "Hidden/PostEffect/PE_BloomSpecific_Render/BLOOM_COLOR"

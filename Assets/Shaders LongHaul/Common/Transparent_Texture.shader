@@ -1,4 +1,4 @@
-﻿Shader "Game/Realistic/Transparent_Texture"
+﻿Shader "Game/Common/Transparent_Texture"
 {
 	Properties
 	{
