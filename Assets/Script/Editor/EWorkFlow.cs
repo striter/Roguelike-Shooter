@@ -181,7 +181,6 @@ public class EWorkFlow_ModelAutoPrefabPackaging : EditorWindow
         window.Show();
     }
     public static enum_Style levelStyle { get; private set; } = enum_Style.Invalid;
-    public static bool isLevel { get; private set; } = false;
     public enum enum_ShaderType
     {
         Invalid = -1,
@@ -197,31 +196,27 @@ public class EWorkFlow_ModelAutoPrefabPackaging : EditorWindow
         selected.Traversal((Object item) => { if (!AssetDatabase.IsMainAsset(item)||Path.GetExtension(AssetDatabase.GetAssetPath(item))!=".fbx") assets.Remove(item); });
         if(assets.Count!=selected.Length)
             EditorGUILayout.TextArea("Should Not Select Items That Aren't .fbx:");
-
-        isLevel = EditorGUILayout.Toggle("IsLevel", isLevel);
-        if (!isLevel)
-            levelStyle = (enum_Style)EditorGUILayout.EnumPopup("Level Type", levelStyle);
-
+        
         if (assets.Count > 0)
         {
             EditorGUILayout.TextArea("Currnet Available Assets:");
             for (int i = 0; i < assets.Count; i++)
                 EditorGUILayout.TextArea(assets[i].name);
 
-            if (isLevel||levelStyle != enum_Style.Invalid)
+            if (levelStyle != enum_Style.Invalid)
                 if (EditorGUILayout.DropdownButton(new GUIContent("Create Shaded Prefab"), FocusType.Passive))
-                    CreatePrefabFromModel(assets, levelStyle, isLevel);
+                    CreatePrefabFromModel(assets, levelStyle);
         }
 
         EditorGUILayout.EndVertical();
 
     }
-    void CreatePrefabFromModel(List<Object> assets,enum_Style levelStyle,bool isLevel)
+    void CreatePrefabFromModel(List<Object> assets,enum_Style levelStyle)
     {
         for (int i = 0; i < assets.Count; i++)
         {
             GameObject model = assets[i] as GameObject;
-            string prefabFolder = PrefabPath(isLevel,levelStyle);
+            string prefabFolder = PrefabPath(levelStyle);
             string prefabPath = prefabFolder + "/"+ model.name + ".prefab";
             if (!Directory.Exists(prefabFolder))
                 Directory.CreateDirectory(prefabFolder);
@@ -232,40 +227,18 @@ public class EWorkFlow_ModelAutoPrefabPackaging : EditorWindow
             GameObject instantiatePrefab = new GameObject(model.name);
             GameObject instantiateModel = GameObject.Instantiate(model, instantiatePrefab.transform);
             instantiateModel.name = "Model";
-            if (isLevel)
-                ProcessLevelModel(instantiatePrefab);
-            else
                 ProcessItemModel(instantiatePrefab, levelStyle);
 
             PrefabUtility.CreatePrefab(prefabPath,instantiatePrefab);
 
             DestroyImmediate(instantiatePrefab);
 
-            Debug.Log(isLevel?"Level":"Item"+ " Prefab:" + prefabPath + " Generate Complete");
+            Debug.Log("Item Prefab:" + prefabPath + " Generate Complete");
         }
 
         AssetDatabase.SaveAssets();
     }
-
-    void ProcessLevelModel(GameObject prefab)
-    {
-        GameObject itemPath = new GameObject("Item");
-        itemPath.transform.SetParent(prefab.transform);
-        Renderer[] renderers = prefab.GetComponentsInChildren<Renderer>();
-        for (int j = 0; j < renderers.Length; j++)
-        {
-            Material[] matList = new Material[renderers[j].sharedMaterials.Length];
-            for (int k = 0; k < renderers[j].sharedMaterials.Length; k++)
-                matList[k] = (CreateMaterial(levelStyle, isLevel, renderers[j].sharedMaterials[k]));
-            renderers[j].sharedMaterials = matList;
-
-            renderers[j].gameObject.AddComponent<MeshCollider>();
-            renderers[j].gameObject.AddComponent<HitCheckStatic>();
-        }
-        LevelBase level = prefab.AddComponent<LevelBase>();
-        level.E_PrefabType = (enum_TilePrefabDefinition)System.Enum.Parse(typeof(enum_TilePrefabDefinition), prefab.name.Split('_')[0]); 
-        EWorkFlow_LevelDataGenerating.BakeData(level);
-    }
+    
     void ProcessItemModel(GameObject prefab, enum_Style levelStyle)
     {
         enum_LevelItemType type= (enum_LevelItemType)System.Enum.Parse(typeof(enum_LevelItemType), prefab.name.Split('_')[0]);
@@ -278,7 +251,7 @@ public class EWorkFlow_ModelAutoPrefabPackaging : EditorWindow
         {
             Material[] matList = new Material[renderers[i].sharedMaterials.Length];
             for (int j = 0; j < renderers[i].sharedMaterials.Length; j++)
-                matList[j] = (CreateMaterial(levelStyle, isLevel, renderers[i].sharedMaterials[j]));
+                matList[j] = (CreateMaterial(levelStyle, renderers[i].sharedMaterials[j]));
             renderers[i].sharedMaterials = matList;
 
             if (levelItem.m_ItemType == enum_LevelItemType.NoCollisionMore||levelItem.m_ItemType== enum_LevelItemType.NoCollisionLess)
@@ -297,17 +270,14 @@ public class EWorkFlow_ModelAutoPrefabPackaging : EditorWindow
             levelItem.ItemRecenter();
         }
     }
-    static string PrefabPath(bool isLevel,enum_Style style)
+    static string PrefabPath(enum_Style style)
     {
-        if (isLevel)
-            return TEditor.S_AssetDataBaseResources + TResources.ConstPath.S_LevelMain;
-        else
             return TEditor.S_AssetDataBaseResources + TResources.ConstPath.S_LeveLItem+"/" + style.ToString();
     }
-    public static Material CreateMaterial(enum_Style lsType,bool isLevel,Material sharedMaterial=null)
+    public static Material CreateMaterial(enum_Style lsType,Material sharedMaterial=null)
     {
         string folderParent = "Assets/Material/Static/";
-        string folderPath = GetMaterialPath(lsType,isLevel);
+        string folderPath = GetMaterialPath(lsType);
 
         if (!Directory.Exists(folderParent))
             Directory.CreateDirectory(folderParent);
@@ -322,10 +292,8 @@ public class EWorkFlow_ModelAutoPrefabPackaging : EditorWindow
 
         return AssetDatabase.LoadAssetAtPath<Material>(folderPath);
     }
-    static string GetMaterialPath( enum_Style matStyle, bool isLevel)
+    static string GetMaterialPath( enum_Style matStyle)
     {
-        if (isLevel)
-            return "Assets/Material/Static/Level.mat";
         return "Assets/Material/Static/Item_" + matStyle.ToString() + ".mat";
     }
     public static Shader GetShader(enum_ShaderType sType)
@@ -345,35 +313,5 @@ public class EWorkFlow_ModelAutoPrefabPackaging : EditorWindow
             Debug.LogWarning("Null Shader Found:" + sType.ToString());
         }
         return shader;
-    }
-}
-
-public class EWorkFlow_LevelDataGenerating:Editor
-{
-    static string GetDataPath(string name)
-    {
-        return TResources.ConstPath.S_LevelData + "/" + name;
-    }
-    public static void BakeData(LevelBase levelTarget)
-    {
-        TileMapData data = TResources.Load<TileMapData>(GetDataPath(levelTarget.name));
-        if (data == null)
-        {
-            data = CreateInstance<TileMapData>();
-            if (!Directory.Exists(TEditor.S_AssetDataBaseResources + TResources.ConstPath.S_LevelData))
-                Directory.CreateDirectory(TEditor.S_AssetDataBaseResources + TResources.ConstPath.S_LevelData);
-
-            AssetDatabase.CreateAsset(data, TEditor.S_AssetDataBaseResources + GetDataPath(levelTarget.name) + ".asset");
-        }
-
-        data.Bake(levelTarget.transform, levelTarget.I_DiamCellCount, levelTarget.I_DiamCellCount, Vector2.one * GameConst.F_LevelTileSize, levelTarget.F_HeightDetect, levelTarget.B_IgnoreUnavailable, levelTarget.b_BakeCircle);
-
-        EditorUtility.SetDirty(data);
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-    }
-    public static void DeleteData(LevelBase levelTarget)
-    {
-        AssetDatabase.DeleteAsset(TEditor.S_AssetDataBaseResources + GetDataPath(levelTarget.name) + ".asset");
     }
 }

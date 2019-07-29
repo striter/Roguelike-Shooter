@@ -200,11 +200,9 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         }, bigMapSeed);
 
         //Load All map Levels And Set Material
-        Dictionary<enum_TilePrefabDefinition, List<LevelBase>> levelPrefabDic = TResources.GetStyledLevelSetMaterial(_levelStyle);
-
         LevelItemBase[] levelItemPrefabs = TResources.GetAllLevelItems(_levelStyle,null);
         Dictionary<LevelItemBase, int> maxItemCountDic = new Dictionary<LevelItemBase, int>();
-
+        LevelBase levelPrefab = TResources.GetLevelPrefab();
         SBigmapLevelInfo[,] m_MapLevelInfo = new SBigmapLevelInfo[bigmapTiles.GetLength(0), bigmapTiles.GetLength(1)];      //Generate Bigmap Info
         for (int i = 0; i < _bigmapWidth; i++)
             for (int j = 0; j < _bigmapHeight; j++)
@@ -212,12 +210,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
                 m_MapLevelInfo[i, j] = new SBigmapLevelInfo(bigmapTiles[i, j]);
                 if (m_MapLevelInfo[i, j].m_TileType != enum_TileType.Invalid)
                 {
-                    enum_TilePrefabDefinition prefabType = m_MapLevelInfo[i, j].m_TileType.ToPrefabType();   //Select Random Level From Dic
-                    LevelBase level = levelPrefabDic[prefabType].RandomItem(bigMapSeed);
-                    if(levelPrefabDic[prefabType].Count>1)
-                       levelPrefabDic[prefabType].Remove(level);
-
-                    Dictionary<LevelItemBase,int> itemCountDic=m_MapLevelInfo[i, j].GenerateMap(_generateParent, level, levelItemPrefabs, bigMapSeed);
+                    Dictionary<LevelItemBase,int> itemCountDic=m_MapLevelInfo[i, j].GenerateMap(_generateParent, 10,10,levelPrefab, DataManager.GetItemGenerateProperties(m_MapLevelInfo[i,j].m_LevelStyle,m_MapLevelInfo[i,j].m_TileType.ToPrefabType()), levelItemPrefabs, bigMapSeed);
                     itemCountDic.Traversal((LevelItemBase item, int count) => {
                         if (!maxItemCountDic.ContainsKey(item))
                             maxItemCountDic.Add( item, 0);

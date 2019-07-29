@@ -303,7 +303,7 @@ public static class DataManager
         Properties<SEntity>.Init();
         Properties<SBuff>.Init();
     }
-    public static SGenerateItem GetItemGenerateProperties(enum_Style style,enum_TilePrefabDefinition prefabType)
+    public static SGenerateItem GetItemGenerateProperties(enum_Style style,enum_LevelType prefabType)
     {
         SGenerateItem generate = Properties<SGenerateItem>.PropertiesList.Find(p => p.m_LevelStyle == style && p.m_LevelPrefabType == prefabType);
         if (generate.m_LevelStyle == 0 || generate.m_LevelPrefabType == 0||generate.m_ItemGenerate==null)

@@ -55,7 +55,7 @@ GameObject:
   - component: {fileID: 4606209312785214}
   - component: {fileID: 114148229069932402}
   m_Layer: 0
-  m_Name: Big_Test
+  m_Name: Prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -196,14 +196,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   E_PrefabType: 1
-  b_BakeCircle: 1
-  I_DiamCellCount: 43
-  B_IgnoreUnavailable: 1
-  F_HeightDetect: 2
-  b_showGizmos: 1
-  b_showGameTiles: 1
-  b_b_showWorldDirection: 0
-  gizmosMapData: {fileID: 11400000, guid: cab9faebf2e4717408e0cf4052ac159d, type: 2}
+  b_showWorldDirection: 0
 --- !u!114 &114250153966380678
 MonoBehaviour:
   m_ObjectHideFlags: 1

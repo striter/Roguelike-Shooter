@@ -32,15 +32,8 @@ public class LevelItemBase : MonoBehaviour {
     {
         if (UnityEditor.EditorApplication.isPlaying||!b_showGizmos)
             return;
-
-        baseTarget = GetComponentInParent<LevelBase>();
-        if (baseTarget!=null)
-        {
-            TileMapData data = TResources.GetLevelData(baseTarget.name);
-            if (data == null)
-                return;
-            transform.localPosition = data.m_MapData[0].m_Offset;
-        }
+        
+        transform.localPosition = Vector3.zero;
 
         if (UnityEditor.EditorApplication.isPlaying)
             return;

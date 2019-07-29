@@ -14,7 +14,7 @@ namespace GameSetting
         public const int I_ProjectileMaxDistance = 100;
 
         public const short I_BoltLastTimeAfterHit = 5;
-        
+
         public const float F_LaserRayStartPause = .5f;      //Laser Start Pause
 
         public const int I_BurstFirePelletsOnceTrigger = 3;       //Times While Burst Fire
@@ -37,6 +37,7 @@ namespace GameSetting
 
     public static class GameExpression
     {
+        public static Vector3 V3_TileWorldOffset(TileAxis axis) => new Vector3(axis.X * GameConst.F_LevelTileSize, 0, axis.Y * GameConst.F_LevelTileSize);
         public static float F_BigmapYaw(Vector3 direction) => TCommon.GetAngle(direction, Vector3.forward, Vector3.up);         //Used For Bigmap Direction
         public static enum_TileDirection E_BigmapDirection(Vector3 direction)  //Top 135-225    Right 45 - 135  Bottom 135 - -135 Right -135 - -45
         {
@@ -49,14 +50,14 @@ namespace GameSetting
                 return enum_TileDirection.Bottom;
             if (angle <= -45 && angle > -135)
                 return enum_TileDirection.Right;
-            Debug.LogError("GameSetting.WorldOffsetDirection Error? Invalid angle of:"+angle);
+            Debug.LogError("GameSetting.WorldOffsetDirection Error? Invalid angle of:" + angle);
             return enum_TileDirection.Invalid;
         }
 
-        public static float F_SphereCastDamageReduction(float weaponDamage, float distance,float radius) => weaponDamage * (1-(distance / radius));       //Rocket Blast Damage
-        public static Vector3 V3_RangeSpreadDirection(Vector3 aimDirection, float spread,Vector3 up,Vector3 right) => (aimDirection*GameConst.I_ProjectileSpreadAtDistance + up* UnityEngine.Random.Range(-spread, spread) + right * UnityEngine.Random.Range(-spread, spread)).normalized;
+        public static float F_SphereCastDamageReduction(float weaponDamage, float distance, float radius) => weaponDamage * (1 - (distance / radius));       //Rocket Blast Damage
+        public static Vector3 V3_RangeSpreadDirection(Vector3 aimDirection, float spread, Vector3 up, Vector3 right) => (aimDirection * GameConst.I_ProjectileSpreadAtDistance + up * UnityEngine.Random.Range(-spread, spread) + right * UnityEngine.Random.Range(-spread, spread)).normalized;
 
-        public static int GetEnermyWeaponIndex( int enermyIndex, int weaponIndex = 0, int subWeaponIndex = 0) =>  enermyIndex * 100 + weaponIndex * 10 + subWeaponIndex;
+        public static int GetEnermyWeaponIndex(int enermyIndex, int weaponIndex = 0, int subWeaponIndex = 0) => enermyIndex * 100 + weaponIndex * 10 + subWeaponIndex;
         public static int GetEnermyWeaponSubIndex(int weaponIndex) => weaponIndex + 1;
     }
 
@@ -73,8 +74,8 @@ namespace GameSetting
 
     public static class UIExpression
     {
-        public static float F_SporeManagerProfitPerMinute(int level) => 10 *Mathf.Pow(1.3f,level-1);     //Coins Profit Per Unit Time
-        public static float F_SporeManagerCoinsMaxAmount(int level) => 100 * Mathf.Pow(10 * Mathf.Pow(1.3f , level - 1) , 1.03f) + 400 * Mathf.Pow(1.4f , level - 1) ;
+        public static float F_SporeManagerProfitPerMinute(int level) => 10 * Mathf.Pow(1.3f, level - 1);     //Coins Profit Per Unit Time
+        public static float F_SporeManagerCoinsMaxAmount(int level) => 100 * Mathf.Pow(10 * Mathf.Pow(1.3f, level - 1), 1.03f) + 400 * Mathf.Pow(1.4f, level - 1);
         //Coins Max Amount Each Level
         public static float F_SporeManagerChestCoinRequirement(int maxLevel) => 200 * Mathf.Pow(1.4f, maxLevel - 1);       //Coin Requirement Per Chest
         public static float F_SporeManagerChestBlueRequirement(int maxLevel) => 100 * Mathf.Pow(1.05f, maxLevel - 1);       //Blue Requirement Per Chest
@@ -90,9 +91,9 @@ namespace GameSetting
                 case enum_TileType.Start: color = TCommon.ColorAlpha(Color.blue, .5f); break;
                 case enum_TileType.End: color = TCommon.ColorAlpha(Color.black, .5f); break;
             }
-            switch(levelLocking)
+            switch (levelLocking)
             {
-                case enum_TileLocking.Unlockable:color=TCommon.ColorAlpha( color ,.2f); break;
+                case enum_TileLocking.Unlockable: color = TCommon.ColorAlpha(color, .2f); break;
             }
             return color;
         }
@@ -100,17 +101,17 @@ namespace GameSetting
 
     public static class Enum_Relative
     {
-        public static enum_TilePrefabDefinition ToPrefabType(this enum_TileType type)
+        public static enum_LevelType ToPrefabType(this enum_TileType type)
         {
             switch (type)
             {
-                default:Debug.LogError("Please Edit This Please:" + type.ToString());return enum_TilePrefabDefinition.Invalid;
+                default: Debug.LogError("Please Edit This Please:" + type.ToString()); return enum_LevelType.Invalid;
                 case enum_TileType.Battle:
                 case enum_TileType.End:
-                    return enum_TilePrefabDefinition.Big;
+                    return enum_LevelType.Big;
                 case enum_TileType.Reward:
                 case enum_TileType.Start:
-                    return enum_TilePrefabDefinition.Small;
+                    return enum_LevelType.Small;
             }
         }
         public static int ToLayer(this enum_HitCheck layerType)
@@ -137,16 +138,16 @@ namespace GameSetting
     }
     enum enum_BC_GameStatusChanged
     {
-        Invalid=-1,
+        Invalid = -1,
         OnSpawnEntity,
         OnRecycleEntity,
-        
+
         OnStageStart,       //Total Stage Start
         OnStageFinish,
         OnLevelStart,       //Change Between Each Level
         OnLevelFinish,
         OnBattleStart,      //Battle Against Entity
-        OnBattleFinish,        
+        OnBattleFinish,
         OnWaveStart,     //Battle Wave
         OnWaveFinish,
     }
@@ -157,8 +158,6 @@ namespace GameSetting
 
     public enum enum_BattleDifficulty { Invalid = -1, Default = 0, Eazy = 1, Normal = 2, Hard = 3 }
 
-    public enum enum_TilePrefabDefinition { Invalid = -1, Big = 1, Small = 2, }
-
     public enum enum_TileLocking { Invalid = -1, Locked = 0, Unlockable = 1, Unlocked = 2, }
 
     public enum enum_Style { Invalid = -1, Forest = 1, Desert = 2, Iceland = 3, Horde = 4, Undead = 5, }
@@ -167,7 +166,9 @@ namespace GameSetting
 
     public enum enum_LevelItemType { Invalid = -1, LargeMore, LargeLess, MediumMore, MediumLess, SmallMore, SmallLess, ManmadeMore, ManmadeLess, NoCollisionMore, NoCollisionLess, }
 
-    public enum enum_LevelTileType { Invaid = -1, Empty , Main, Item, Portal, }
+    public enum enum_LevelTileType { Invaid = -1, Empty, Main, Item, Portal, }
+
+    public enum enum_LevelType {Invalid=-1,Big=1,Small=2}
 
     public enum enum_EntityType { Invalid = -1, Fighter = 1, Shooter = 2, AOECaster = 3, Elite = 4 }
 
@@ -736,7 +737,7 @@ namespace GameSetting
         public TileAxis m_TileAxis => m_Tile;
         protected TileAxis m_Tile { get; private set; }
         public enum_TileType m_TileType { get; private set; } = enum_TileType.Invalid;
-        public enum_Style m_TileStyle { get; private set; } = enum_Style.Invalid;
+        public enum_Style m_LevelStyle { get; private set; } = enum_Style.Invalid;
         public enum_TileLocking m_TileLocking { get; private set; } = enum_TileLocking.Invalid;
         public Dictionary<enum_TileDirection, TileAxis> m_Connections { get; protected set; } = new Dictionary<enum_TileDirection, TileAxis>();
 
@@ -744,7 +745,7 @@ namespace GameSetting
         {
             m_Tile = _tileAxis;
             m_TileType = _tileType;
-            m_TileStyle = _tileStyle;
+            m_LevelStyle = _tileStyle;
             m_TileLocking = _tileLocking;
         }
         public void ResetTileType(enum_TileType _tileType)
@@ -762,19 +763,19 @@ namespace GameSetting
     {
         protected Transform m_LevelParent;
         public LevelBase m_Level { get; private set; } = null;
-        public SBigmapLevelInfo(SBigmapTileInfo tile) : base(tile.m_TileAxis, tile.m_TileType, tile.m_TileStyle,tile.m_TileLocking)
+        public SBigmapLevelInfo(SBigmapTileInfo tile) : base(tile.m_TileAxis, tile.m_TileType, tile.m_LevelStyle,tile.m_TileLocking)
         {
             m_Connections = tile.m_Connections;
         }
-        public Dictionary<LevelItemBase, int> GenerateMap(Transform _levelParent, LevelBase _levelPrefab, LevelItemBase[] _levelItemPrefabs,System.Random seed)
+        public Dictionary<LevelItemBase, int> GenerateMap(Transform _levelParent,int innerLength,int outerLength,LevelBase prefab,SGenerateItem generate, LevelItemBase[] _levelItemPrefabs,System.Random seed)
         {
             m_LevelParent = _levelParent;
-            m_Level = GameObject.Instantiate(_levelPrefab, _levelParent);
+            m_Level =  GameObject.Instantiate(prefab, _levelParent);
             m_Level.transform.localRotation = Quaternion.Euler(0, seed.Next(360), 0);
             m_Level.transform.localPosition = Vector3.zero;
             m_Level.transform.localScale = Vector3.one;
             m_Level.SetActivate(false);
-            return m_Level.Init(TResources.GetLevelData(_levelPrefab.name), DataManager.GetItemGenerateProperties(m_TileStyle, _levelPrefab.E_PrefabType), _levelItemPrefabs, m_TileType, seed, m_Connections.Keys.ToList().Find(p => m_Connections[p] == new TileAxis(-1, -1)));        //Add Portal For Level End
+            return m_Level.Init(innerLength,outerLength, generate, _levelItemPrefabs, m_TileType, seed, m_Connections.Keys.ToList().Find(p => m_Connections[p] == new TileAxis(-1, -1)));        //Add Portal For Level End
         }
         public void StartLevel()
         {
@@ -785,16 +786,20 @@ namespace GameSetting
     #endregion
 
     #region LevelTile
-    public class LevelTile : TileMapData.TileInfo
+    public class LevelTile 
     {
+        public TileAxis m_TileAxis;
+        public Vector3 m_Offset => GameExpression.V3_TileWorldOffset(m_TileAxis);
         public virtual enum_LevelTileType E_TileType => enum_LevelTileType.Empty;
         public enum_TileDirection E_Direction { get; private set; } = enum_TileDirection.Invalid;
-        public LevelTile(TileMapData.TileInfo current, enum_TileDirection _direction) : base(current.m_TileAxis, current.m_Offset, current.m_Status)
+        public LevelTile(TileAxis _axis ,enum_TileDirection _direction) 
         {
             E_Direction = _direction;
+            m_TileAxis = _axis;
         }
-        public LevelTile(LevelTile tile) : base(tile.m_TileAxis, tile.m_Offset, tile.m_Status)
+        public LevelTile(LevelTile tile)
         {
+            m_TileAxis = tile.m_TileAxis;
             E_Direction = tile.E_Direction;
         }
     }
@@ -927,13 +932,13 @@ namespace GameSetting
         RangeInt ir_noCollisionLess;
         RangeInt ir_noCollisionMore;
         public enum_Style m_LevelStyle;
-        public enum_TilePrefabDefinition m_LevelPrefabType;
         public Dictionary<enum_LevelItemType, RangeInt> m_ItemGenerate;
+        public enum_LevelType m_LevelPrefabType;
         public void InitOnValueSet()
         {
             string[] defineSplit = em_defines.Split('_');
             m_LevelStyle = (enum_Style)(int.Parse(defineSplit[0]));
-            m_LevelPrefabType = (enum_TilePrefabDefinition)(int.Parse(defineSplit[1]));
+            m_LevelPrefabType = (enum_LevelType)(int.Parse(defineSplit[1]));
             m_ItemGenerate = new Dictionary<enum_LevelItemType, RangeInt>(); 
             m_ItemGenerate.Add(enum_LevelItemType.LargeLess, ir_largeLess);
             m_ItemGenerate.Add(enum_LevelItemType.LargeMore, ir_largeMore);

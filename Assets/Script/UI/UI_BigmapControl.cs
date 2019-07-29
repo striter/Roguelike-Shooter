@@ -92,7 +92,7 @@ public class UI_BigmapControl : UIPageBase {        //This Page Won't Hide(One P
             foreach (enum_TileDirection direction in TTiles.TTiles.m_AllDirections)
             {
                 connectionActivate.Add(direction, levelInfo.m_Connections.ContainsKey(direction)
-                    && levelInfo.m_Connections[direction].m_AxisX != -1
+                    && levelInfo.m_Connections[direction].X != -1
                     && bigMap.Get(levelInfo.m_Connections[direction]).m_TileLocking != enum_TileLocking.Locked);
             }
             infoUI.SetBigmapLevelInfo(levelInfo, connectionActivate);
@@ -105,6 +105,6 @@ public class UI_BigmapControl : UIPageBase {        //This Page Won't Hide(One P
     }
     int UIBigmapTileIndex(TileAxis axis, int width, int height)
     {
-        return axis.m_AxisX + axis.m_AxisY * height * 1000;
+        return axis.X + axis.Y * height * 1000;
     }
 }

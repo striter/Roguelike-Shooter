@@ -18,22 +18,21 @@ namespace TTiles
     {
         TileAxis m_TileAxis { get; }
     }
-    [Serializable]
     public struct TileAxis
     {
-        public int m_AxisX;
-        public int m_AxisY;
+        public int X { get; private set; }
+        public int Y { get; private set; }
         public TileAxis(int _axisX, int _axisY)
         {
-            m_AxisX = _axisX;
-            m_AxisY = _axisY;
+            X = _axisX;
+            Y = _axisY;
         }
 
-        public TileAxis[] nearbyFourTiles => new TileAxis[4] { new TileAxis(m_AxisX - 1, m_AxisY), new TileAxis(m_AxisX + 1, m_AxisY), new TileAxis(m_AxisX, m_AxisY + 1), new TileAxis(m_AxisX, m_AxisY - 1) };
-        public static bool operator ==(TileAxis a, TileAxis b) => a.m_AxisX == b.m_AxisX && a.m_AxisY == b.m_AxisY;
-        public static bool operator !=(TileAxis a, TileAxis b) => a.m_AxisX != b.m_AxisX || a.m_AxisY != b.m_AxisY;
-        public static TileAxis operator -(TileAxis a, TileAxis b) => new TileAxis(a.m_AxisX - b.m_AxisX, a.m_AxisY - b.m_AxisY);
-        public static TileAxis operator +(TileAxis a, TileAxis b) => new TileAxis(a.m_AxisX + b.m_AxisX, a.m_AxisY + b.m_AxisY);
+        public TileAxis[] nearbyFourTiles => new TileAxis[4] { new TileAxis(X - 1, Y), new TileAxis(X + 1, Y), new TileAxis(X, Y + 1), new TileAxis(X, Y - 1) };
+        public static bool operator ==(TileAxis a, TileAxis b) => a.X == b.X && a.Y == b.Y;
+        public static bool operator !=(TileAxis a, TileAxis b) => a.X != b.X || a.Y != b.Y;
+        public static TileAxis operator -(TileAxis a, TileAxis b) => new TileAxis(a.X - b.X, a.Y - b.Y);
+        public static TileAxis operator +(TileAxis a, TileAxis b) => new TileAxis(a.X + b.X, a.Y + b.Y);
         public override bool Equals(object obj)
         {
             return base.Equals(obj);
@@ -48,22 +47,22 @@ namespace TTiles
     {
         public static T Get<T>(this T[,] tileArray, TileAxis axis) where T : class, ITileAxis
         {
-            return axis.InRange(tileArray) ? tileArray[axis.m_AxisX, axis.m_AxisY] : null;
+            return axis.InRange(tileArray) ? tileArray[axis.X, axis.Y] : null;
         }
 
         public static bool InRange<T>(this TileAxis tileAxis, T[,] range) where T : class, ITileAxis
         {
-            return tileAxis.m_AxisX >= 0 && tileAxis.m_AxisX < range.GetLength(0) && tileAxis.m_AxisY >= 0 && tileAxis.m_AxisY < range.GetLength(1);
+            return tileAxis.X >= 0 && tileAxis.X < range.GetLength(0) && tileAxis.Y >= 0 && tileAxis.Y < range.GetLength(1);
         }
 
         public static float SqrMagnitude(this TileAxis sourceAxis, TileAxis targetAxis)
         {
-            return Vector2.SqrMagnitude(new Vector2(sourceAxis.m_AxisX, sourceAxis.m_AxisY) - new Vector2(targetAxis.m_AxisX, targetAxis.m_AxisY));
+            return Vector2.SqrMagnitude(new Vector2(sourceAxis.X, sourceAxis.Y) - new Vector2(targetAxis.X, targetAxis.Y));
         }
 
         public static int AxisOffset(this TileAxis sourceAxis, TileAxis targetAxis)
         {
-            return Mathf.Abs(sourceAxis.m_AxisX - targetAxis.m_AxisX) + Mathf.Abs(sourceAxis.m_AxisY - targetAxis.m_AxisY);
+            return Mathf.Abs(sourceAxis.X - targetAxis.X) + Mathf.Abs(sourceAxis.Y - targetAxis.Y);
         }
 
         public static enum_TileDirection DirectionInverse(this enum_TileDirection direction)
@@ -87,13 +86,13 @@ namespace TTiles
         public static enum_TileDirection OffsetDirection(this TileAxis sourceAxis, TileAxis targetAxis)
         {
             TileAxis offset = targetAxis - sourceAxis;
-            if (offset.m_AxisX < 0 && offset.m_AxisY == 0)
+            if (offset.X < 0 && offset.Y == 0)
                 return enum_TileDirection.Left;
-            if (offset.m_AxisX > 0 && offset.m_AxisY == 0)
+            if (offset.X > 0 && offset.Y == 0)
                 return enum_TileDirection.Right;
-            if (offset.m_AxisX == 0 && offset.m_AxisY > 0)
+            if (offset.X == 0 && offset.Y > 0)
                 return enum_TileDirection.Top;
-            if (offset.m_AxisX == 0 && offset.m_AxisY < 0)
+            if (offset.X == 0 && offset.Y < 0)
                 return enum_TileDirection.Bottom;
 
             return enum_TileDirection.Invalid;

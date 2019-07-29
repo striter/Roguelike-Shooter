@@ -4,17 +4,19 @@ using UnityEngine;
 using GameSetting;
 using TTiles;
 public class LevelBase : MonoBehaviour {
-    public enum_TilePrefabDefinition E_PrefabType = enum_TilePrefabDefinition.Invalid;
+    public enum_LevelType E_PrefabType = enum_LevelType.Invalid;
+    public List<LevelTile> m_MapData;
     public enum_TileType m_levelType { get; private set; }
     protected Transform tf_LevelItem;
     public System.Random m_seed { get; private set; }
-    public Dictionary<LevelItemBase, int> Init(TileMapData levelData,SGenerateItem _levelGenerate, LevelItemBase[] _levelItems,enum_TileType _levelType, System.Random _seed, enum_TileDirection _connectedDireciton)
+    public Dictionary<LevelItemBase, int> Init(int innerLength,int outerLength,SGenerateItem _levelGenerate, LevelItemBase[] _levelItems,enum_TileType _levelType, System.Random _seed, enum_TileDirection _connectedDireciton)
     {
         tf_LevelItem = transform.Find("Item");
         m_seed = _seed;
         m_levelType = _levelType;
-        return GenerateTileItems(_levelGenerate,_levelItems, levelData, _connectedDireciton);
+        return GenerateTileItems(_levelGenerate,_levelItems, innerLength,outerLength, _connectedDireciton);
     }
+
     #region TileMapInfos
     public LevelTilePortal m_Portal;
     List<LevelTile> m_AllTiles=new List<LevelTile>();
@@ -22,7 +24,7 @@ public class LevelBase : MonoBehaviour {
     List<int> m_IndexMain=new List<int>();
     List<int> t_IndexTemp = new List<int>();
     Dictionary<enum_LevelItemType, List<LevelItemBase>> m_AllItems = new Dictionary<enum_LevelItemType, List<LevelItemBase>>();
-    Dictionary<LevelItemBase,int> GenerateTileItems(SGenerateItem _itemData,LevelItemBase[] allItemPrefabs, TileMapData _data,enum_TileDirection _PortalDirection)
+    Dictionary<LevelItemBase,int> GenerateTileItems(SGenerateItem _itemData,LevelItemBase[] allItemPrefabs, int innerLength,int outerLength,enum_TileDirection _PortalDirection)
     {
         foreach (LevelItemBase levelItem in allItemPrefabs)
         {
@@ -33,17 +35,18 @@ public class LevelBase : MonoBehaviour {
 
         //Select All Emptys And Create Data
         int index = 0;
-        for (int i = 0; i < _data.m_MapData.Count; i++)
+        TileAxis origin = new TileAxis(-innerLength / 2, -innerLength / 2);
+        for (int i = 0; i < innerLength; i++)
         {
-            if (_data.m_MapData[i].m_Status != -1)
+            for (int j = 0; j < innerLength; j++)
             {
-                m_AllTiles.Add(new LevelTile(_data.m_MapData[i], GameExpression.E_BigmapDirection(transform.TransformDirection(_data.m_MapData[i].m_Offset))));
+                TileAxis curTile = origin+new TileAxis(i, j);
+                m_AllTiles.Add(new LevelTile(curTile, GameExpression.E_BigmapDirection(transform.TransformDirection(GameExpression.V3_TileWorldOffset(curTile)))));
                 m_IndexEmpty.Add(index++);
             }
         }
 
         //Generate Portal Pos
-        TileAxis origin = new TileAxis(_data.I_Width/2, _data.I_Height/2);
         GenerateRangePortalTile(origin,_PortalDirection,GameConst.I_TileMapPortalMinusOffset);
 
         //Generate All Items
@@ -166,114 +169,72 @@ public class LevelBase : MonoBehaviour {
         return transform.TransformPoint(m_AllTiles[m_IndexEmpty.RandomItem(seed)].m_Offset );
     }
     #endregion
+
     #region Gizmos For Test
 #if UNITY_EDITOR
-    public bool b_BakeCircle = true;
-    public int I_DiamCellCount = 64;
-    public bool B_IgnoreUnavailable = true;
-    public float F_HeightDetect = .5f;
-    public bool b_showGameTiles=true,b_b_showWorldDirection=false;
-    public TileMapData gizmosMapData;
+    public bool b_showWorldDirection=false;
     private void OnDrawGizmos()
     {
         if (UnityEditor.EditorApplication.isPlaying && !GameManager.Instance.B_GameDebugGizmos)
             return;
-        if (!b_showGameTiles)
-            return;
 
-        if (UnityEditor.EditorApplication.isPlaying)            //Draw While Playing
+        for (int i = 0; i < m_AllTiles.Count; i++)
         {
-            for (int i = 0; i < m_AllTiles.Count; i++)
+            Color targetColor = Color.black;
+            Vector3 positon = transform.position + transform.right * m_AllTiles[i].m_Offset.x + Vector3.up * m_AllTiles[i].m_Offset.y + transform.forward * m_AllTiles[i].m_Offset.z;
+            float sizeParam = .5f;
+            if (b_showWorldDirection)
             {
-                Color targetColor=Color.black;
-                Vector3 positon = transform.position + transform.right * m_AllTiles[i].m_Offset.x + Vector3.up * m_AllTiles[i].m_Offset.y + transform.forward * m_AllTiles[i].m_Offset.z;
-                float sizeParam = .5f;
-                if (b_b_showWorldDirection)
+                sizeParam = .5f;
+                switch (m_AllTiles[i].E_Direction)
                 {
-                    sizeParam = .5f;
-                    switch (m_AllTiles[i].E_Direction)
-                    {
-                        default:
-                            targetColor = Color.magenta; sizeParam = 1f;
-                            break;
-                        case enum_TileDirection.Top:
-                            targetColor = TCommon.ColorAlpha(Color.green, .5f);
-                            break;
-                        case enum_TileDirection.Bottom:
-                            targetColor = TCommon.ColorAlpha(Color.red, .5f);
-                            break;
-                        case enum_TileDirection.Left:
-                            targetColor = TCommon.ColorAlpha(Color.blue, .5f);
-                            break;
-                        case enum_TileDirection.Right:
-                            targetColor = TCommon.ColorAlpha(Color.yellow, .5f); 
-                            break;
-                    }
-                    if (m_AllTiles[i].E_TileType == enum_LevelTileType.Portal)
-                    {
-                         sizeParam = 1.5f;
-                    }
+                    default:
+                        targetColor = Color.magenta; sizeParam = 1f;
+                        break;
+                    case enum_TileDirection.Top:
+                        targetColor = TCommon.ColorAlpha(Color.green, .5f);
+                        break;
+                    case enum_TileDirection.Bottom:
+                        targetColor = TCommon.ColorAlpha(Color.red, .5f);
+                        break;
+                    case enum_TileDirection.Left:
+                        targetColor = TCommon.ColorAlpha(Color.blue, .5f);
+                        break;
+                    case enum_TileDirection.Right:
+                        targetColor = TCommon.ColorAlpha(Color.yellow, .5f);
+                        break;
                 }
-                else
+                if (m_AllTiles[i].E_TileType == enum_LevelTileType.Portal)
                 {
-                    switch (m_AllTiles[i].E_TileType)
-                    {
-                        default:
-                            targetColor = Color.magenta; sizeParam = 1f;
-                            break;
-                        case enum_LevelTileType.Empty:
-                            targetColor = TCommon.ColorAlpha(Color.green, .3f);
-                            break;
-                        case enum_LevelTileType.Main:
-                            targetColor = TCommon.ColorAlpha(Color.red, .5f); sizeParam = 1f;
-                            break;
-                        case enum_LevelTileType.Item:
-                            targetColor = TCommon.ColorAlpha(Color.blue, .5f); sizeParam = 1f;
-                            break;
-                        case enum_LevelTileType.Portal:
-                            targetColor = TCommon.ColorAlpha(Color.white, .5f);sizeParam = 1f;
-                            break;
-                    }
-                }
-                Gizmos.color = targetColor;
-                Gizmos.DrawSphere(positon, sizeParam * GameConst.F_LevelTileSize / 2);
-            }
-            return;
-        }
-        
-        gizmosMapData = TResources.GetLevelData(gameObject.name);
-
-        if (gizmosMapData == null)
-            Debug.LogWarning("Please Bake This Level First");
-
-        if (gizmosMapData == null || gizmosMapData.m_MapData == null)
-        {
-            Gizmos.color = Color.white;
-            for (int i = 0; i < I_DiamCellCount; i++)
-            {
-                for (int j = 0; j < I_DiamCellCount; j++)
-                {
-                    if (b_BakeCircle && Vector2.SqrMagnitude(new Vector2(i - I_DiamCellCount / 2, j - I_DiamCellCount / 2)) >Mathf.Pow(I_DiamCellCount/2 * GameConst.F_LevelTileSize / 2 ,2))
-                        continue;
-                    Vector3 position = transform.position
-                        + transform.forward * GameConst.F_LevelTileSize * j
-                        + transform.right * GameConst.F_LevelTileSize * i
-                        - transform.right * (GameConst.F_LevelTileSize * I_DiamCellCount / 2 - GameConst.F_LevelTileSize / 2)
-                        - transform.forward * (GameConst.F_LevelTileSize * I_DiamCellCount / 2 - GameConst.F_LevelTileSize / 2);
-                    Gizmos.DrawCube(position, new Vector3(GameConst.F_LevelTileSize / 2, 5f, GameConst.F_LevelTileSize / 2));
+                    sizeParam = 1.5f;
                 }
             }
-        }
-        else
-        {
-            I_DiamCellCount = gizmosMapData.I_Width;
-            List<TileMapData.TileInfo> nodes = gizmosMapData.m_MapData;
-            foreach (TileMapData.TileInfo node in nodes)
+            else
             {
-                Gizmos.color = node.m_Status == -1 ? Color.red : Color.green;
-                Gizmos.DrawCube(transform.position + transform.right * node.m_Offset.x + Vector3.up * (node.m_Offset.y + .5f) + transform.forward * node.m_Offset.z, new Vector3(GameConst.F_LevelTileSize / 2, 1f, GameConst.F_LevelTileSize / 2));
+                switch (m_AllTiles[i].E_TileType)
+                {
+                    default:
+                        targetColor = Color.magenta; sizeParam = 1f;
+                        break;
+                    case enum_LevelTileType.Empty:
+                        targetColor = TCommon.ColorAlpha(Color.green, .3f);
+                        break;
+                    case enum_LevelTileType.Main:
+                        targetColor = TCommon.ColorAlpha(Color.red, .5f); sizeParam = 1f;
+                        break;
+                    case enum_LevelTileType.Item:
+                        targetColor = TCommon.ColorAlpha(Color.blue, .5f); sizeParam = 1f;
+                        break;
+                    case enum_LevelTileType.Portal:
+                        targetColor = TCommon.ColorAlpha(Color.white, .5f); sizeParam = 1f;
+                        break;
+                }
             }
+            Gizmos.color = targetColor;
+            Gizmos.DrawSphere(positon, sizeParam * GameConst.F_LevelTileSize / 2);
         }
+
+
     }
 #endif
     #endregion
