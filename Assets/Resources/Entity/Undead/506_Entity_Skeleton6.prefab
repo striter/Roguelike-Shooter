@@ -953,8 +953,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 275d93242000a1d47972944c1cd255ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  E_AnimatorIndex: 111
+  E_AnimatorIndex: 113
   F_AttackRotateParam: 0.2
+  I_AttackPreAimPercentage: 50
   B_AttackMove: 1
 --- !u!136 &136026193721199286
 CapsuleCollider:
