@@ -34,15 +34,25 @@ public class SFXCastLaserBeam : SFXCast {
         if (!B_Casting)
             return;
         f_castLength = V3_CastSize.z;
-        RaycastHit hit;
         Vector3 hitPoint = Vector3.zero;
-        if (Physics.BoxCast(CastTransform.position, new Vector3(V3_CastSize.x / 2, V3_CastSize.y / 2, .01f), CastTransform.forward, out hit, Quaternion.LookRotation(CastTransform.forward, CastTransform.up), f_castLength, GameLayer.Physics.I_StaticEntity))
+        RaycastHit[] hits = Physics.BoxCastAll(CastTransform.position, new Vector3(V3_CastSize.x / 2, V3_CastSize.y / 2, .01f), CastTransform.forward, Quaternion.LookRotation(CastTransform.forward, CastTransform.up), f_castLength, GameLayer.Physics.I_StaticEntity);
+        bool hitted = false;
+        for (int i = 0; i < hits.Length; i++)
         {
-            f_castLength = TCommon.GetXZDistance(CastTransform.position, hit.point) + .2f;
-            hitPoint = hit.point;
+            RaycastHit hit = hits[i];
+            HitCheckBase hitCheck = hit.collider.Detect();
+            hitted = true;
+            if (hitCheck.m_HitCheckType == enum_HitCheck.Entity)
+                hitted = GameManager.B_CanHitEntity((hitCheck as HitCheckEntity),I_SourceID);
+
+            if (hitted)
+            {
+                f_castLength = TCommon.GetXZDistance(CastTransform.position, hit.point) + .2f;
+                hitPoint = hit.point;
+                break;
+            }
         }
 
-        bool hitted = hitPoint != Vector3.zero;
         m_Impact.SetActivate(hitted);
         m_Impact.transform.position = hitPoint;
         m_Beam.SetPosition(0, transform.position);

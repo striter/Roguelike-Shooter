@@ -5,8 +5,12 @@ using UnityEngine;
 
 [CustomEditor(typeof(PostEffectManager))]
 public class EPostEffectManager : Editor {
-    PostEffectManager m_target=null;
-
+    PostEffectManager m_target = null;
+    public enum enum_PostEffect
+    {
+        BloomSpecific=1,
+        FogDepthNoise=2,
+    }
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
@@ -27,19 +31,6 @@ public class EPostEffectManager : Editor {
 
         if (!m_target)
             return;
-
-
-        if (PostEffectManager.GetPostEffect<PE_BloomSpecific>() != null)
-        {
-            if (GUILayout.Button("Remove Effect"))
-                PostEffectManager.RemoveAllPostEffect();
-        }
-        else
-        {
-
-            if (GUILayout.Button("Add Effect"))
-                PostEffectManager.AddPostEffect<PE_BloomSpecific>();
-        }
     }
     private void OnDisable()
     {

@@ -2,30 +2,41 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Camera)),ExecuteInEditMode]
-public class PostEffectManager : SingletonMono<PostEffectManager> {
+public class PostEffectManager : SimpleSingletonMono<PostEffectManager> {
     public bool B_TestMode=false;
     public static T AddPostEffect<T>() where T:PostEffectBase,new()
     {
+        if (GetPostEffect<T>() != null)
+        {
+            Debug.LogError("Effect Already Exist");
+            return null;
+        }
         T effetBase = new T();
-        effetBase.OnSetEffect(instance.cam_cur);
-        instance.m_PostEffects.Add( effetBase);
+        effetBase.OnSetEffect(Instance.cam_cur);
+        Instance.m_PostEffects.Add( effetBase);
         return effetBase;
     }
     public static T GetPostEffect<T>() where T : PostEffectBase, new()
     {
-        return instance.m_PostEffects.Find(p => p.GetType() ==typeof(T)) as T;
+        return Instance.m_PostEffects.Find(p => p.GetType() ==typeof(T)) as T;
+    }
+    public static void RemovePostEffect<T>() where T : PostEffectBase, new()
+    {
+        T effect = GetPostEffect<T>();
+        if (effect != null)
+            Instance.m_PostEffects.Remove(effect);
     }
     public static void RemoveAllPostEffect()
     {
-        instance.m_PostEffects.Traversal((PostEffectBase effect)=> { effect.OnDestroy(); });
-        instance.m_PostEffects.Clear();
+        Instance.m_PostEffects.Traversal((PostEffectBase effect)=> { effect.OnDestroy(); });
+        Instance.m_PostEffects.Clear();
     }
-
+    
     List<PostEffectBase> m_PostEffects=new List<PostEffectBase>();
     Camera cam_cur;
     protected override void Awake()
     {
-        instance = this;
+        base.Awake();
         cam_cur = GetComponent<Camera>();
     }
     RenderTexture tempTexture1, tempTexture2;

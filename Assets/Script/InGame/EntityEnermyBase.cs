@@ -290,22 +290,21 @@ public class EntityEnermyBase : EntityBase {
             b_preAim = TCommon.RandomPercentage() >= m_EntityControlling.I_AttackPreAimPercentage;
             i_playCount = m_Info.m_InfoData.m_ProjectileCount.RandomRangeInt();
             i_playCount = i_playCount <= 0 ? 1 : i_playCount;       //Make Sure Play Once At Least
-            b_attacking = true;
-            m_Weapon.OnPlayAnim(b_attacking);
             this.StartSingleCoroutine(2, Attack(i_playCount, m_Info.m_InfoData.m_Firerate));
-            return m_Info.m_InfoData.m_Firerate * (i_playCount-1) + m_Info.m_InfoData.m_BarrageDuration.RandomRangeFloat();
+            return m_Info.m_InfoData.m_Firerate * i_playCount + m_Info.m_InfoData.m_BarrageDuration.RandomRangeFloat();
         }
         IEnumerator Attack(int count,float fireRate)
         {
-            float m_attackSimulate= fireRate;
+            float m_attackSimulate= 0;
             b_attacking = true;
+            m_Weapon.OnPlayAnim(true);
+            m_attackSimulate -= fireRate;
+            OnAttackAnim(m_Target, true);
             for (; ; )
             {
                 m_attackSimulate += m_Info.F_FireRateTick(Time.deltaTime);
                 if (m_attackSimulate >= fireRate)
                 {
-                    m_attackSimulate -= fireRate;
-                    OnAttackAnim(m_Target, true);
                     count--;
                     if (count <= 0)
                     {
@@ -314,6 +313,8 @@ public class EntityEnermyBase : EntityBase {
                         OnAttackAnim(m_Target, false);
                         yield break;
                     }
+                    m_attackSimulate -= fireRate;
+                    OnAttackAnim(m_Target, true);
                 }
                 yield return null;
             }
