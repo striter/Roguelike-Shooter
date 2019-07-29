@@ -50,7 +50,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         switch (_levelStyle)
         {
             case enum_Style.Undead:
-                PostEffectManager.AddPostEffect<PE_FogDepthNoise>().SetEffect(Color.white).SetEffect(TCommon.ColorAlpha(Color.white, .3f), .4f, -1f, 2f).SetTexture(TResources.Load<Texture>("Texture/Noise_Fog"));
+               // PostEffectManager.AddPostEffect<PE_FogDepthNoise>().SetEffect(Color.white).SetEffect(TCommon.ColorAlpha(Color.white, .3f), .4f, -1f, 2f).SetTexture(TResources.Load<Texture>("Texture/Noise_Fog"));
                 break;
         }
     }

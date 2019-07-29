@@ -14,23 +14,25 @@ public class EPostEffectManager : Editor {
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
+        if (Application.isPlaying)
+            return;
+
+        if(!m_target)
+            m_target = SceneView.lastActiveSceneView.camera.gameObject.AddComponent<PostEffectManager>();
         GUILayout.BeginVertical();
-        if (m_target)
+
+        if (PostEffectManager.GetPostEffect<PE_BloomSpecific>() != null)
         {
-            if (GUILayout.Button("Remove Scene Post Effect"))
-                DestroyImmediate(m_target);
+            if (GUILayout.Button("BloomSpecific_Unview"))
+                PostEffectManager.RemovePostEffect<PE_BloomSpecific>();
         }
         else
         {
-            if (GUILayout.Button("Add Scene Post Effect"))
-            {
-                m_target = SceneView.lastActiveSceneView.camera.gameObject.AddComponent<PostEffectManager>();
-            }
+            if (GUILayout.Button("BloomSpecifc_Preview"))
+                PostEffectManager.AddPostEffect<PE_BloomSpecific>();
         }
         GUILayout.EndVertical();
-
-        if (!m_target)
-            return;
+        SceneView.lastActiveSceneView.Repaint();
     }
     private void OnDisable()
     {
