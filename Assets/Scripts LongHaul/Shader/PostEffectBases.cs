@@ -123,7 +123,7 @@ public class PE_ViewNormal : PostEffectBase
     public override void OnSetEffect(Camera cam)
     {
         base.OnSetEffect(cam);
-        cam.depthTextureMode |= DepthTextureMode.DepthNormals;
+        cam.depthTextureMode = DepthTextureMode.DepthNormals;
     }
 }
 public class PE_ViewDepth : PostEffectBase
@@ -399,6 +399,7 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
         GameObject temp = new GameObject("Render Camera");
         temp.transform.SetParent(Cam_Cur.transform);
         temp.transform.localPosition = Vector3.zero;
+        temp.transform.localRotation = Quaternion.identity;
         m_RenderCamera = temp.AddComponent<Camera>();
         m_RenderCamera.clearFlags = CameraClearFlags.SolidColor;
         m_RenderCamera.backgroundColor = Color.black;

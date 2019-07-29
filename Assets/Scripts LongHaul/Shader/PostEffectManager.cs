@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Camera))]
+[RequireComponent(typeof(Camera)),ExecuteInEditMode]
 public class PostEffectManager : SingletonMono<PostEffectManager> {
     public bool B_TestMode=false;
     public static T AddPostEffect<T>() where T:PostEffectBase,new()

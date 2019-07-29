@@ -238,6 +238,7 @@ namespace GameSetting
         Heavy_HipShot_161=161,
         Heavy_Mortal_162=162,
         Heavy_Shield_Spear_163=163,
+        Heavy_Remote_164=164,
     }
     #endregion
 

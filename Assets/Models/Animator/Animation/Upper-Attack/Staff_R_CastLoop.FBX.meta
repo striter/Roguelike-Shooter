@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 73914daf965e5f54d94ba7cca8a51537
+guid: d9e5df618e9dd894d86eceae470a263f
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
@@ -107,10 +107,11 @@ ModelImporter:
     100202: B_Spine2
     100204: Motion
     100206: RPG-Character-Mesh
-    100208: Box001
-    100210: Spear
-    100212: 2Hand-Sword
-    100214: Exporter
+    100208: Shield
+    100210: WeaponL
+    100212: WeaponR
+    100214: Staff
+    100216: Exporter
     400000: //RootNode
     400002: B_Prop1
     400004: B_L_Hand
@@ -215,26 +216,29 @@ ModelImporter:
     400202: B_Spine2
     400204: Motion
     400206: RPG-Character-Mesh
-    400208: Box001
-    400210: Spear
-    400212: 2Hand-Sword
-    400214: Exporter
+    400208: Shield
+    400210: WeaponL
+    400212: WeaponR
+    400214: Staff
+    400216: Exporter
     2300000: Mesh_Soldier_A
     2300002: AK47
     2300004: Chaingun
     2300006: MissileLauncher
     2300008: USP
-    2300010: Box001
-    2300012: Spear
-    2300014: 2Hand-Sword
+    2300010: Shield
+    2300012: WeaponL
+    2300014: WeaponR
+    2300016: Staff
     3300000: Mesh_Soldier_A
     3300002: AK47
     3300004: Chaingun
     3300006: MissileLauncher
     3300008: USP
-    3300010: Box001
-    3300012: Spear
-    3300014: 2Hand-Sword
+    3300010: Shield
+    3300012: WeaponL
+    3300014: WeaponR
+    3300016: Staff
     4300000: Mesh_Soldier_A
     4300002: AK47
     4300004: MissileLauncher
@@ -242,10 +246,13 @@ ModelImporter:
     4300008: Chaingun
     4300010: Soldier_Mesh
     4300012: RPG-Character-Mesh
-    4300014: Box001
-    4300016: Spear
-    4300018: 2Hand-Sword
-    7400000: 2Hand-Sword-Block-Break
+    4300014: Shield
+    4300016: WeaponR
+    4300018: WeaponL
+    4300020: Staff
+    7400000: Staff_R_CastLoop_Start
+    7400002: Staff_R_CastLoop_Loop
+    7400004: Staff_R_CastLoop_End
     9500000: //RootNode
     11100000: //RootNode
     13700000: Soldier_Mesh
@@ -281,9 +288,72 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: 2Hand-Sword-Block-Break
+      name: Staff_R_CastLoop_Start
       takeName: Take 001
       firstFrame: 0
+      lastFrame: 14
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events:
+      - time: 1
+        functionName: OnEvent
+        data: Fire
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      transformMask: []
+      maskType: 3
+      maskSource: {fileID: 101100000, guid: 4ebc95c8618479f4d8251c7dafa10029, type: 2}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Staff_R_CastLoop_Loop
+      takeName: Take 001
+      firstFrame: 14
+      lastFrame: 22
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 1
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 0
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 1
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {fileID: 101100000, guid: 4ebc95c8618479f4d8251c7dafa10029, type: 2}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Staff_R_CastLoop_End
+      takeName: Take 001
+      firstFrame: 22
       lastFrame: 30
       wrapMode: 0
       orientationOffsetY: 0
@@ -295,7 +365,7 @@ ModelImporter:
       loopBlend: 0
       loopBlendOrientation: 1
       loopBlendPositionY: 1
-      loopBlendPositionXZ: 0
+      loopBlendPositionXZ: 1
       keepOriginalOrientation: 1
       keepOriginalPositionY: 1
       keepOriginalPositionXZ: 1
@@ -303,14 +373,7 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events:
-      - time: 0.047299344
-        functionName: OnEvent
-        data: Fire
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
+      events: []
       transformMask: []
       maskType: 3
       maskSource: {fileID: 101100000, guid: 4ebc95c8618479f4d8251c7dafa10029, type: 2}

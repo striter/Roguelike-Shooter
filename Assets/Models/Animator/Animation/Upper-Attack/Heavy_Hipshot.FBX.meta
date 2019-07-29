@@ -240,7 +240,7 @@ ModelImporter:
     4300012: RPG-Character-Mesh
     4300014: Rifle
     4300016: Pistol
-    7400000: Shooting-Fire-Rifle2
+    7400000: Heavy_Hipshot
     9500000: //RootNode
     11100000: //RootNode
     13700000: Soldier_Mesh
@@ -273,7 +273,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Shooting-Fire-Rifle2
+      name: Heavy_Hipshot
       takeName: Take 001
       firstFrame: 3.2
       lastFrame: 6.2

@@ -116,7 +116,7 @@ ModelImporter:
     400108: //RootNode
     400110: Exporter
     4300000: RPG-Character-Mesh
-    7400000: Drink1
+    7400000: Blowpipe_Shoot
     9500000: //RootNode
     13700000: RPG-Character-Mesh
   externalObjects: {}
@@ -134,9 +134,7 @@ ModelImporter:
     rigImportErrors: 
     rigImportWarnings: 
     animationImportErrors: 
-    animationImportWarnings: "\nClip 'Take 001' has import animation warnings that
-      might lower retargeting quality:\n\t'B_Spine2' is inbetween humanoid transforms
-      and has rotation animation that will be discarded.\n"
+    animationImportWarnings: 
     animationRetargetingWarnings: "\nRetargeting quality report for clip 'Take 001':\n\tRetargeting
       quality is good. No significant differences with original animation were found.\n"
     animationDoRetargetingWarnings: 1
@@ -150,7 +148,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Drink1
+      name: Blowpipe_Shoot
       takeName: Take 001
       firstFrame: 0
       lastFrame: 7

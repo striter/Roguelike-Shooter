@@ -230,7 +230,7 @@ ModelImporter:
     4300008: Chaingun
     4300010: Soldier_Mesh
     4300012: RPG-Character-Mesh
-    7400000: Item-Attack-R4
+    7400000: Throwable_R_Hip
     9500000: //RootNode
     11100000: //RootNode
     13700000: Soldier_Mesh
@@ -265,7 +265,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Item-Attack-R4
+      name: Throwable_R_Hip
       takeName: Take 001
       firstFrame: 0
       lastFrame: 30

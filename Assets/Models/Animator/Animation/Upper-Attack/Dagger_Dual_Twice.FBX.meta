@@ -243,7 +243,7 @@ ModelImporter:
     4300014: Staff
     4300016: Shield
     4300018: Weapon
-    7400000: Armed-Attack-Dual1
+    7400000: Dagger_Dual_Twice
     9500000: //RootNode
     11100000: //RootNode
     13700000: Mesh_Soldier_A
@@ -279,7 +279,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Armed-Attack-Dual1
+      name: Dagger_Dual_Twice
       takeName: Take 001
       firstFrame: 5
       lastFrame: 30

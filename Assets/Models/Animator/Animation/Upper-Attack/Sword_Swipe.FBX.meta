@@ -230,7 +230,7 @@ ModelImporter:
     4300008: Chaingun
     4300010: Soldier_Mesh
     4300012: RPG-Character-Mesh
-    7400000: Mace-Attack-R3
+    7400000: Sword_Swipe
     9500000: //RootNode
     11100000: //RootNode
     13700000: Soldier_Mesh
@@ -266,7 +266,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Mace-Attack-R3
+      name: Sword_Swipe
       takeName: Take 001
       firstFrame: 0
       lastFrame: 24
