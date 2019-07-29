@@ -228,7 +228,6 @@ namespace GameSetting
         Staff_R_Cast_113=113,
         Bow_Shoot_130 = 130,
         CrossBow_Shoot_131=131,
-        Blowpipe_Shoot_132=132,
         Bow_UpShoot_133=133,
         Rifle_HipShot_140 = 140,
         Rifle_AimShot_141=141,
