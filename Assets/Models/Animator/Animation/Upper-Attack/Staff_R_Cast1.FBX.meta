@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: d9e5df618e9dd894d86eceae470a263f
+guid: 71123672df0e0d548abab353823a7fcb
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
@@ -250,9 +250,9 @@ ModelImporter:
     4300016: WeaponR
     4300018: WeaponL
     4300020: Staff
-    7400000: Staff_R_CastLoop_Start
-    7400002: Staff_R_CastLoop_Loop
-    7400004: Staff_R_CastLoop_End
+    7400000: Staff_R_Cast
+    7400002: Armed-Cast-R-Attack1_loop
+    7400004: Armed-Cast-R-Attack1_end
     9500000: //RootNode
     11100000: //RootNode
     13700000: Soldier_Mesh
@@ -273,9 +273,8 @@ ModelImporter:
     rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: "\nClip 'Take 001' has import animation warnings that
-      might lower retargeting quality:\n\t'B_Spine2' has translation animation that
-      will be discarded.\n\t'B_Spine2' is inbetween humanoid transforms and has rotation
-      animation that will be discarded.\n"
+      might lower retargeting quality:\n\t'B_Spine2' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
@@ -288,10 +287,10 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Staff_R_CastLoop_Start
+      name: Staff_R_Cast
       takeName: Take 001
-      firstFrame: 0
-      lastFrame: 14
+      firstFrame: 0.2
+      lastFrame: 30
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -312,68 +311,19 @@ ModelImporter:
       curves: []
       events:
       - time: 1
+        functionName: Shoot
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.23949634
         functionName: OnEvent
         data: Fire
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      transformMask: []
-      maskType: 3
-      maskSource: {fileID: 101100000, guid: 4ebc95c8618479f4d8251c7dafa10029, type: 2}
-      additiveReferencePoseFrame: 0
-    - serializedVersion: 16
-      name: Staff_R_CastLoop_Loop
-      takeName: Take 001
-      firstFrame: 14
-      lastFrame: 22
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 1
-      loopBlend: 1
-      loopBlendOrientation: 1
-      loopBlendPositionY: 1
-      loopBlendPositionXZ: 1
-      keepOriginalOrientation: 1
-      keepOriginalPositionY: 0
-      keepOriginalPositionXZ: 1
-      heightFromFeet: 1
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask: []
-      maskType: 3
-      maskSource: {fileID: 101100000, guid: 4ebc95c8618479f4d8251c7dafa10029, type: 2}
-      additiveReferencePoseFrame: 0
-    - serializedVersion: 16
-      name: Staff_R_CastLoop_End
-      takeName: Take 001
-      firstFrame: 22
-      lastFrame: 30
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
-      loopBlendOrientation: 1
-      loopBlendPositionY: 1
-      loopBlendPositionXZ: 1
-      keepOriginalOrientation: 1
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 1
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
       transformMask: []
       maskType: 3
       maskSource: {fileID: 101100000, guid: 4ebc95c8618479f4d8251c7dafa10029, type: 2}

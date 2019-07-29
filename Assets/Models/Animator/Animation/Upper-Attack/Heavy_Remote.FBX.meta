@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 1d560a4bb04e49543866526067ba1d35
+guid: d9e5df618e9dd894d86eceae470a263f
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
@@ -250,9 +250,9 @@ ModelImporter:
     4300016: WeaponR
     4300018: WeaponL
     4300020: Staff
-    7400000: Staff_R_Cast
-    7400002: Armed-Cast-R-Attack1_loop
-    7400004: Armed-Cast-R-Attack1_end
+    7400000: Heavy_Remote
+    7400002: Staff_R_CastLoop_Loop
+    7400004: Staff_R_CastLoop_End
     9500000: //RootNode
     11100000: //RootNode
     13700000: Soldier_Mesh
@@ -273,8 +273,9 @@ ModelImporter:
     rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: "\nClip 'Take 001' has import animation warnings that
-      might lower retargeting quality:\n\t'B_Spine2' is inbetween humanoid transforms
-      and has rotation animation that will be discarded.\n"
+      might lower retargeting quality:\n\t'B_Spine2' has translation animation that
+      will be discarded.\n\t'B_Spine2' is inbetween humanoid transforms and has rotation
+      animation that will be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
@@ -287,7 +288,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Staff_R_Cast
+      name: Heavy_Remote
       takeName: Take 001
       firstFrame: 0
       lastFrame: 30
@@ -311,13 +312,6 @@ ModelImporter:
       curves: []
       events:
       - time: 1
-        functionName: Shoot
-        data: 
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
-      - time: 0.23949634
         functionName: OnEvent
         data: Fire
         objectReferenceParameter: {instanceID: 0}
