@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 518e4c297e8adbc4da7ac5d4537a6397
+guid: 3c57e48c654b6764ba4c3743dbed41a2
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
@@ -17,11 +17,11 @@ ModelImporter:
     100022: LowerLeg_Left_jnt
     100024: LowerLeg_Right_jnt
     100026: Neck_jnt
-    100028: //RootNode
+    100028: pCube97
     100030: SF_Character_buluo2
     100032: SF_Character_buluo2 1
-    100034: SF_Character_buluo2_jian
-    100036: SF_Character_buluo2_jiantong
+    100034: //RootNode
+    100036: SF_Character_buluo2_jiantong1
     100038: Shoulder_Left_jnt
     100040: Shoulder_Right_jnt
     100042: Spine_jnt
@@ -44,11 +44,11 @@ ModelImporter:
     400022: LowerLeg_Left_jnt
     400024: LowerLeg_Right_jnt
     400026: Neck_jnt
-    400028: SF_Character_buluo2
-    400030: //RootNode
+    400028: pCube97
+    400030: SF_Character_buluo2
     400032: SF_Character_buluo2 1
-    400034: SF_Character_buluo2_jian
-    400036: SF_Character_buluo2_jiantong
+    400034: //RootNode
+    400036: SF_Character_buluo2_jiantong1
     400038: Shoulder_Left_jnt
     400040: Shoulder_Right_jnt
     400042: Spine_jnt
@@ -58,13 +58,13 @@ ModelImporter:
     400050: UpperLeg_Left_jnt
     400052: UpperLeg_Right_jnt
     2100000: lambert65
-    2300000: SF_Character_buluo2_jian
-    2300002: SF_Character_buluo2_jiantong
-    3300000: SF_Character_buluo2_jian
-    3300002: SF_Character_buluo2_jiantong
-    4300000: SF_Character_buluo2
-    4300002: SF_Character_buluo2_jian
-    4300004: SF_Character_buluo2_jiantong
+    2300000: pCube97
+    2300002: SF_Character_buluo2_jiantong1
+    3300000: pCube97
+    3300002: SF_Character_buluo2_jiantong1
+    4300000: SF_Character_buluo2_jiantong1
+    4300002: SF_Character_buluo2
+    4300004: pCube97
     9500000: //RootNode
     13700000: SF_Character_buluo2 1
   externalObjects:
@@ -196,6 +196,14 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
+    - boneName: pCube97
+      humanName: Head
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
     - boneName: Arm_Left_jnt
       humanName: LeftUpperArm
       limit:
@@ -244,14 +252,6 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: Head_jnt
-      humanName: Head
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
     skeleton:
     - name: Model_Horde_Savage2(Clone)
       parentName: 
@@ -268,14 +268,9 @@ ModelImporter:
       position: {x: -0, y: 0, z: 0}
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
-    - name: SF_Character_buluo2_jian
+    - name: SF_Character_buluo2_jiantong1
       parentName: SF_Character_buluo2
-      position: {x: 164.84915, y: 195.11119, z: 36.88302}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: SF_Character_buluo2_jiantong
-      parentName: SF_Character_buluo2
-      position: {x: 164.84915, y: 195.1112, z: 16.349056}
+      position: {x: 163.99733, y: 144.0914, z: 0}
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: Hips_jnt
@@ -383,6 +378,11 @@ ModelImporter:
       position: {x: -22.89519, y: 4.2216864e-14, z: 5.6672844e-17}
       rotation: {x: 0, y: 0, z: -1.8873791e-15, w: 1}
       scale: {x: 1, y: 1, z: 1}
+    - name: pCube97
+      parentName: Neck_jnt
+      position: {x: -75.90042, y: -1.0847392, z: 34.0516}
+      rotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+      scale: {x: 1.1136651, y: 1.1136651, z: 1.1136651}
     - name: Head_jnt
       parentName: Neck_jnt
       position: {x: -8.167418, y: -5.980225e-14, z: -5.6672844e-17}
