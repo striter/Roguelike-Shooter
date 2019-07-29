@@ -37,6 +37,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnRecycleEntity, OnWaveEntityDead);
     }
     public int Z_TestEntityIndex = 221;
+    public int TestEntityBuffApplyOnSpawn = 1;
     public int X_TestCastIndex = 30003;
     public int C_TestProjectileIndex = 29001;
     public int V_TestIndicatorIndex = 50002;
@@ -53,7 +54,8 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         {
            EntityBase enermy= ObjectManager.SpawnEntity(Z_TestEntityIndex, hit.point);
             enermy.OnActivate();
-            enermy.OnReceiveBuff(6);
+            if(TestEntityBuffApplyOnSpawn>0)
+            enermy.OnReceiveBuff(TestEntityBuffApplyOnSpawn);
         }
         if (Input.GetKeyDown(KeyCode.X) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
             ObjectManager.SpawnDamageSource<SFXCast>(X_TestCastIndex, hit.point, Vector3.up).Play(1000,DamageBuffInfo.Create());
