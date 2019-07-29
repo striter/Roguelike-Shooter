@@ -298,14 +298,17 @@ public class EntityEnermyBase : EntityBase {
             float m_attackSimulate= 0;
             b_attacking = true;
             m_Weapon.OnPlayAnim(true);
-            m_attackSimulate -= fireRate;
             OnAttackAnim(m_Target, true);
+            count--;
             for (; ; )
             {
                 m_attackSimulate += m_Info.F_FireRateTick(Time.deltaTime);
                 if (m_attackSimulate >= fireRate)
                 {
+                    m_attackSimulate -= fireRate;
+                    OnAttackAnim(m_Target, true);
                     count--;
+
                     if (count <= 0)
                     {
                         b_attacking = false;
@@ -313,8 +316,6 @@ public class EntityEnermyBase : EntityBase {
                         OnAttackAnim(m_Target, false);
                         yield break;
                     }
-                    m_attackSimulate -= fireRate;
-                    OnAttackAnim(m_Target, true);
                 }
                 yield return null;
             }
