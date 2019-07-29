@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 8de54fd695454564b88b9a11190cf34b
+guid: faf6ddd4045654b469c7c18d34ba8fb6
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
@@ -12,25 +12,24 @@ ModelImporter:
     100012: Forearm_Right_jnt
     100014: Hand_Left_jnt
     100016: Hand_Right_jnt
-    100018: //RootNode
-    100020: Head_jnt
-    100022: Hips_jnt
-    100024: LowerLeg_Left_jnt
-    100026: LowerLeg_Right_jnt
-    100028: Neck_jnt
+    100018: Head_jnt
+    100020: Hips_jnt
+    100022: LowerLeg_Left_jnt
+    100024: LowerLeg_Right_jnt
+    100026: Neck_jnt
+    100028: //RootNode
     100030: SF_Character_kongbufenzi6
     100032: SF_Character_kongbufenzi6 1
     100034: SF_Character_kongbufenzi6_danyaobao
     100036: SF_Character_kongbufenzi6_huojianpao
-    100038: SF_Character_kongbufenzi6_huojiantong
-    100040: Shoulder_Left_jnt
-    100042: Shoulder_Right_jnt
-    100044: Spine_jnt
-    100046: Spine_jnt 1
-    100048: Toe_Left_jnt
-    100050: Toe_Right_jnt
-    100052: UpperLeg_Left_jnt
-    100054: UpperLeg_Right_jnt
+    100038: Shoulder_Left_jnt
+    100040: Shoulder_Right_jnt
+    100042: Spine_jnt
+    100044: Spine_jnt 1
+    100046: Toe_Left_jnt
+    100048: Toe_Right_jnt
+    100050: UpperLeg_Left_jnt
+    100052: UpperLeg_Right_jnt
     400000: Arm_Left_jnt
     400002: Arm_Right_jnt
     400004: Chest_jnt
@@ -40,39 +39,40 @@ ModelImporter:
     400012: Forearm_Right_jnt
     400014: Hand_Left_jnt
     400016: Hand_Right_jnt
-    400018: //RootNode
-    400020: Head_jnt
-    400022: Hips_jnt
-    400024: LowerLeg_Left_jnt
-    400026: LowerLeg_Right_jnt
-    400028: Neck_jnt
-    400030: SF_Character_kongbufenzi6
+    400018: Head_jnt
+    400020: Hips_jnt
+    400022: LowerLeg_Left_jnt
+    400024: LowerLeg_Right_jnt
+    400026: Neck_jnt
+    400028: SF_Character_kongbufenzi6
+    400030: //RootNode
     400032: SF_Character_kongbufenzi6 1
     400034: SF_Character_kongbufenzi6_danyaobao
     400036: SF_Character_kongbufenzi6_huojianpao
-    400038: SF_Character_kongbufenzi6_huojiantong
-    400040: Shoulder_Left_jnt
-    400042: Shoulder_Right_jnt
-    400044: Spine_jnt
-    400046: Spine_jnt 1
-    400048: Toe_Left_jnt
-    400050: Toe_Right_jnt
-    400052: UpperLeg_Left_jnt
-    400054: UpperLeg_Right_jnt
+    400038: Shoulder_Left_jnt
+    400040: Shoulder_Right_jnt
+    400042: Spine_jnt
+    400044: Spine_jnt 1
+    400046: Toe_Left_jnt
+    400048: Toe_Right_jnt
+    400050: UpperLeg_Left_jnt
+    400052: UpperLeg_Right_jnt
     2100000: lambert71
     2300000: SF_Character_kongbufenzi6_danyaobao
     2300002: SF_Character_kongbufenzi6_huojianpao
-    2300004: SF_Character_kongbufenzi6_huojiantong
     3300000: SF_Character_kongbufenzi6_danyaobao
     3300002: SF_Character_kongbufenzi6_huojianpao
-    3300004: SF_Character_kongbufenzi6_huojiantong
-    4300000: SF_Character_kongbufenzi6_danyaobao
-    4300002: SF_Character_kongbufenzi6_huojiantong
-    4300004: SF_Character_kongbufenzi6_huojianpao
-    4300006: SF_Character_kongbufenzi6
+    4300000: SF_Character_kongbufenzi6_huojianpao
+    4300002: SF_Character_kongbufenzi6
+    4300004: SF_Character_kongbufenzi6_danyaobao
     9500000: //RootNode
     13700000: SF_Character_kongbufenzi6 1
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lambert71
+    second: {fileID: 2100000, guid: 2985d2c17ea000741ba9996e268447fa, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
@@ -286,19 +286,14 @@ ModelImporter:
       scale: {x: 1, y: 1, z: 1}
     - name: SF_Character_kongbufenzi6_danyaobao
       parentName: SF_Character_kongbufenzi6
-      position: {x: -0, y: 126.17867, z: -45.901478}
+      position: {x: -0, y: 158.1455, z: -72.561295}
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: SF_Character_kongbufenzi6_huojianpao
       parentName: SF_Character_kongbufenzi6
-      position: {x: -172.24367, y: 111.48496, z: 0}
+      position: {x: -0, y: 158.1455, z: -86.170975}
       rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: SF_Character_kongbufenzi6_huojiantong
-      parentName: SF_Character_kongbufenzi6
-      position: {x: -172.24368, y: 95.50471, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
+      scale: {x: 1.1653135, y: 1.1653135, z: 1.1653135}
     - name: Hips_jnt
       parentName: SF_Character_kongbufenzi6
       position: {x: 3.6272007e-14, y: 104.498764, z: -6.2692085e-16}
@@ -402,7 +397,7 @@ ModelImporter:
     - name: Neck_jnt
       parentName: Chest_jnt
       position: {x: -22.89519, y: 4.2216864e-14, z: 5.6672844e-17}
-      rotation: {x: 0, y: 0, z: -1.7763568e-15, w: 1}
+      rotation: {x: 0, y: 0, z: -1.8873791e-15, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: Head_jnt
       parentName: Neck_jnt

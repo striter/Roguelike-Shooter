@@ -55,7 +55,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
            EntityBase enermy= ObjectManager.SpawnEntity(Z_TestEntityIndex, hit.point);
             enermy.OnActivate();
             if(TestEntityBuffApplyOnSpawn>0)
-            enermy.OnReceiveBuff(TestEntityBuffApplyOnSpawn);
+                enermy.OnReceiveBuff(TestEntityBuffApplyOnSpawn);
         }
         if (Input.GetKeyDown(KeyCode.X) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
             ObjectManager.SpawnDamageSource<SFXCast>(X_TestCastIndex, hit.point, Vector3.up).Play(1000,DamageBuffInfo.Create());

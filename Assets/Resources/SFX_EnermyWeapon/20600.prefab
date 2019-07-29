@@ -170,7 +170,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1091173488736010}
-  m_Mesh: {fileID: 4300004, guid: 8de54fd695454564b88b9a11190cf34b, type: 3}
+  m_Mesh: {fileID: 4300000, guid: faf6ddd4045654b469c7c18d34ba8fb6, type: 3}
 --- !u!96 &96207844558955790
 TrailRenderer:
   serializedVersion: 2
@@ -283,7 +283,10 @@ MonoBehaviour:
   I_IndicatorIndex: 50002
   I_BufFApplyOnHit: 0
   F_Radius: 0.15
-  F_Height: 1.4
+  F_Height: 1.5
   F_DirectionPitchAngle: 80
   B_RandomRotation: 0
   B_Bounce: 0
+  F_BounceHitAngleMax: 0
+  F_BounceSpeedMultiply: 1
+  F_AdditionalLasetTimeAfterHit: 10
