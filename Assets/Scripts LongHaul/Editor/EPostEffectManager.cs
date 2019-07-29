@@ -21,7 +21,6 @@ public class EPostEffectManager : Editor {
             if (GUILayout.Button("Add Scene Post Effect"))
             {
                 m_target = SceneView.lastActiveSceneView.camera.gameObject.AddComponent<PostEffectManager>();
-                m_target.B_TestMode = true;
             }
         }
         GUILayout.EndVertical();
@@ -29,8 +28,18 @@ public class EPostEffectManager : Editor {
         if (!m_target)
             return;
 
-        if (GUILayout.Button("Add Effect"))
-            PostEffectManager.AddPostEffect<PE_BloomSpecific>();
+
+        if (PostEffectManager.GetPostEffect<PE_BloomSpecific>() != null)
+        {
+            if (GUILayout.Button("Remove Effect"))
+                PostEffectManager.RemoveAllPostEffect();
+        }
+        else
+        {
+
+            if (GUILayout.Button("Add Effect"))
+                PostEffectManager.AddPostEffect<PE_BloomSpecific>();
+        }
     }
     private void OnDisable()
     {

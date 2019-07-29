@@ -400,6 +400,7 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
         temp.transform.SetParent(Cam_Cur.transform);
         temp.transform.localPosition = Vector3.zero;
         temp.transform.localRotation = Quaternion.identity;
+        temp.transform.localScale = Vector3.one;
         m_RenderCamera = temp.AddComponent<Camera>();
         m_RenderCamera.clearFlags = CameraClearFlags.SolidColor;
         m_RenderCamera.backgroundColor = Color.black;
@@ -409,7 +410,7 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
         m_RenderCamera.farClipPlane = Cam_Cur.farClipPlane;
         m_RenderCamera.fieldOfView = Cam_Cur.fieldOfView;
         m_RenderCamera.enabled = false;
-        m_RenderTexture = new RenderTexture(Screen.width, Screen.height, 1);
+        m_RenderTexture = new RenderTexture(Cam_Cur.scaledPixelWidth, Cam_Cur.scaledPixelHeight, 1);
         m_RenderCamera.targetTexture = m_RenderTexture;
         SetEffect();
     }
