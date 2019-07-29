@@ -8,12 +8,11 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
     Renderer[] m_SkinRenderers;
     protected Transform tf_Model;
     public Transform tf_Head { get; private set; }
-    public SEntity m_EntityInfo { get; private set; }
     public float m_CurrentMana { get; private set; }
     public bool B_IsPlayer { get; private set; }
     
-    protected DamageBuffInfo GetDamageBuffInfo() => m_BuffManager.m_DamageBuffProperty;
-    public EntityBuffManager m_BuffManager { get; private set; }
+    protected DamageBuffInfo GetDamageBuffInfo() => m_EntityInfo.m_DamageBuffProperty;
+    public EntityInfoManager m_EntityInfo { get; private set; }
     public EntityHealth m_HealthManager { get; private set; }
     public virtual Vector3 m_PrecalculatedTargetPos(float time) { Debug.LogError("Override This Please");return Vector2.zero; }
     public virtual void Init(SEntity entityInfo)
@@ -27,10 +26,9 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
         B_IsPlayer = isPlayer;
         m_SkinRenderers = tf_Model.Find("Skin").GetComponentsInChildren<Renderer>();
         m_HitChecks = GetComponentsInChildren<HitCheckEntity>();
-        m_BuffManager = new EntityBuffManager(OnReceiveDamage);
+        m_EntityInfo = new EntityInfoManager(entityInfo,OnReceiveDamage, OnInfoChange);
         m_HealthManager = new EntityHealth(entityInfo,OnHealthEffect,OnDead);
         TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.Attach(this, OnReceiveDamage); });
-        m_EntityInfo = entityInfo;
     }
     public virtual void OnSpawn(int id)
     {
@@ -38,25 +36,28 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
         if (I_EntityID == -1)
             Debug.LogError("Please Init Entity Info!" + gameObject.name.ToString());
         m_HealthManager.OnActivate();
-        m_CurrentMana = m_EntityInfo.m_MaxMana;
+        m_CurrentMana = m_EntityInfo.F_MaxMana;
         TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.SetEnable(true); });
         TCommon.Traversal(m_SkinRenderers, (Renderer renderer) => {renderer.materials.Traversal((Material mat)=> {mat.SetFloat("_Amount1", 0);}); });
     }
+    protected virtual void OnInfoChange()
+    {
 
+    }
     protected virtual void OnEnable()
     {
     }
     protected virtual void OnDisable()
     {
-        m_BuffManager.OnDeactivate();
+        m_EntityInfo.OnDeactivate();
         this.StopSingleCoroutine(0);
     }
     protected virtual void Update()
     {
         m_HealthManager.Tick(Time.deltaTime);
-        m_BuffManager.Tick(Time.deltaTime);
+        m_EntityInfo.Tick(Time.deltaTime);
     }
-    public void OnReceiveBuff(int buffIndex) => m_BuffManager.AddBuff(buffIndex);
+    public void OnReceiveBuff(int buffIndex) => m_EntityInfo.AddBuff(buffIndex);
     protected bool OnReceiveDamage(DamageInfo damageInfo)
     {
         if (m_HealthManager.b_IsDead)
@@ -64,7 +65,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
         
         damageInfo.m_BuffApply.m_BuffAplly.Traversal((int buffIndex) => {OnReceiveBuff(buffIndex); });
         
-        return m_HealthManager.OnReceiveDamage(damageInfo, m_BuffManager.m_EntityBuffProperty.F_DamageReduceMultiply);
+        return m_HealthManager.OnReceiveDamage(damageInfo, m_EntityInfo.m_EntityBuffProperty.F_DamageReceiveMultiply);
     }
     public virtual void OnActivate()
     {
@@ -77,7 +78,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
 
     protected virtual void OnDead()
     {
-        m_BuffManager.OnDeactivate();
+        m_EntityInfo.OnDeactivate();
         TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.HideAllAttaches(); check.SetEnable(false); });
         this.StartSingleCoroutine(1, TIEnumerators.ChangeValueTo((float value) => {
             TCommon.Traversal(m_SkinRenderers, (Renderer renderer) => {
@@ -86,7 +87,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
                 });
             });
         }, 0, 1, 1f, () => {
-            ObjectManager.RecycleEntity(m_EntityInfo.m_Index, this);
+            ObjectManager.RecycleEntity(m_EntityInfo.I_ObjectPoolIndex, this);
         }));
     }
     protected virtual void OnHealthEffect(enum_HealthMessageType type)

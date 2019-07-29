@@ -50,14 +50,18 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
 
         RaycastHit hit = new RaycastHit();
         if (Input.GetKeyDown(KeyCode.Z) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
-            ObjectManager.SpawnEntity(Z_TestEntityIndex, hit.point).OnActivate();
+        {
+           EntityBase enermy= ObjectManager.SpawnEntity(Z_TestEntityIndex, hit.point);
+            enermy.OnActivate();
+            enermy.OnReceiveBuff(6);
+        }
         if (Input.GetKeyDown(KeyCode.X) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
             ObjectManager.SpawnDamageSource<SFXCast>(X_TestCastIndex, hit.point, Vector3.up).Play(1000,DamageBuffInfo.Create());
         if (Input.GetKeyDown(KeyCode.C) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
             ObjectManager.SpawnDamageSource<SFXProjectile>(C_TestProjectileIndex, hit.point + Vector3.up , m_LocalPlayer.transform.forward).Play(0, m_LocalPlayer.transform.forward, hit.point+m_LocalPlayer.transform.forward*10,DamageBuffInfo.Create());
         if (Input.GetKeyDown(KeyCode.V) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
             ObjectManager.SpawnCommonIndicator(V_TestIndicatorIndex, hit.point + Vector3.up, Vector3.up).Play(1000);
-        if (Input.GetKeyDown(KeyCode.B) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
+        if (Input.GetKeyDown(KeyCode.B))
             m_LocalPlayer.OnReceiveBuff(B_TestBuffIndex);
         if(Input.GetKeyDown(KeyCode.N))
             m_LocalPlayer.BroadcastMessage("OnReceiveDamage",new DamageInfo(  20, enum_DamageType.Projectile));
@@ -68,7 +72,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
             List<EntityBase> entities = m_Entities.Values.ToList();
             entities.Traversal((EntityBase entity) => {
                 if (!entity.B_IsPlayer)
-                    entity.BroadcastMessage("OnReceiveDamage",new DamageInfo(  entity.m_EntityInfo.m_MaxHealth + entity.m_EntityInfo.m_MaxArmor, enum_DamageType.DOT));
+                    entity.BroadcastMessage("OnReceiveDamage",new DamageInfo(  entity.m_EntityInfo.F_MaxHealth + entity.m_EntityInfo.F_MaxArmor, enum_DamageType.DOT));
             });
         }
 
@@ -462,9 +466,9 @@ public static class ObjectManager
 
             if (!entity.B_IsPlayer)
             {
-                if (!enermyDic.ContainsKey(entity.m_EntityInfo.m_Type))
-                    enermyDic.Add(entity.m_EntityInfo.m_Type, new List<int>());
-                enermyDic[entity.m_EntityInfo.m_Type].Add(index);
+                if (!enermyDic.ContainsKey(entity.m_EntityInfo.m_InfoData.m_Type))
+                    enermyDic.Add(entity.m_EntityInfo.m_InfoData.m_Type, new List<int>());
+                enermyDic[entity.m_EntityInfo.m_InfoData.m_Type].Add(index);
             }
         });
 

@@ -17,6 +17,8 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
     WeaponTrigger m_Trigger=null;
     WeaponAimAssistStraight m_Assist = null;
     bool B_HaveAmmoLeft => m_WeaponInfo.m_ClipAmount == -1 || I_AmmoLeft > 0;
+    Func<float,float> OnWeaponTickDelta;
+    float f_actionPause;
     public void Init(SWeapon weaponInfo)
     {
         tf_Muzzle = transform.Find("Muzzle");
@@ -41,8 +43,11 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
     protected void Update()
     {
         if(m_Trigger!=null)
-            m_Trigger.Tick(Time.deltaTime);
-        
+            m_Trigger.Tick(OnWeaponTickDelta(Time.deltaTime));
+
+        if (f_actionCheck > 0)
+            f_actionCheck -= OnWeaponTickDelta(Time.deltaTime);
+
         m_Assist.Simulate(B_CanFire);
     }
     protected virtual void OnDisable()
@@ -54,14 +59,14 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
     }
     protected void SetActionPause(float pauseDuration)
     {
-        f_actionCheck = Time.time + pauseDuration;
+        f_actionCheck =  pauseDuration;
     }
     protected bool CheckCanAction()
     {
-        return Time.time > f_actionCheck;
+        return f_actionCheck<=0;
     }
 
-    public void Attach(int _attacherID,Transform attachTarget,Action<float> _OnAmmoChangeCostMana,Action<Vector2> _OnRecoil,Func<DamageBuffInfo> _OnFireBuffInfo)
+    public void Attach(int _attacherID,Transform attachTarget,Action<float> _OnAmmoChangeCostMana,Action<Vector2> _OnRecoil,Func<DamageBuffInfo> _OnFireBuffInfo, Func<float,float> _OnWeaponTickDelta)
     {
         I_AttacherID = _attacherID;
         transform.SetParent(attachTarget);
@@ -71,6 +76,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         OnAmmoChangeCostMana = _OnAmmoChangeCostMana;
         OnRecoil = _OnRecoil;
         OnFireBuffInfo = _OnFireBuffInfo;
+        OnWeaponTickDelta = _OnWeaponTickDelta;
     }
     public bool Trigger(bool down)
     {

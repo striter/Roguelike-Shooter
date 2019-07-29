@@ -330,14 +330,14 @@ namespace GameSetting
             base.OnActivate();
             m_CurrentArmor = m_MaxArmor;
         }
-        public override bool OnReceiveDamage(DamageInfo damageInfo,float damageReduction=1)
+        public override bool OnReceiveDamage(DamageInfo damageInfo,float damageMultiply=1)
         {
             if (b_IsDead)
                 return false;
             
             if (damageInfo.m_AmountApply > 0)    //Damage
             {
-                m_CurrentArmor -= damageInfo.m_AmountApply *damageReduction;
+                m_CurrentArmor -= damageInfo.m_AmountApply *damageMultiply;
                 if (m_CurrentArmor < 0)
                 {
                     m_CurrentHealth += m_CurrentArmor;
@@ -430,15 +430,26 @@ namespace GameSetting
     #endregion
 
     #region BuffClass
-    public class EntityBuffManager
+    public class EntityInfoManager
     {
         public EntityBuffInfo m_EntityBuffProperty { get; private set; }
         public DamageBuffInfo m_DamageBuffProperty { get; private set; }
         public List<BuffBase> m_BuffList { get; private set; } = new List<BuffBase>();
+        public SEntity m_InfoData { get; private set; }
+        public int I_ObjectPoolIndex => m_InfoData.m_Index;
+        public float F_MaxMana => m_InfoData.m_MaxMana;
+        public float F_MaxHealth => m_InfoData.m_MaxHealth;
+        public float F_MaxArmor => m_InfoData.m_MaxArmor;
+        public float F_MovementSpeed => m_InfoData.m_MoveSpeed*m_EntityBuffProperty.F_MovementSpeedMultiply;
+        public float F_Spread => m_InfoData.m_Spread;
+        public float F_FireRateTick(float deltaTime) => deltaTime* m_EntityBuffProperty.F_FireRateMultiply;
         Func<DamageInfo, bool> OnDamageEntity;
-        public EntityBuffManager(Func<DamageInfo, bool> _OnDamageEntity)
+        Action OnInfoChange;
+        public EntityInfoManager(SEntity _entityInfo,Func<DamageInfo, bool> _OnDamageEntity,Action _OnInfoChange)
         {
             OnDamageEntity = _OnDamageEntity;
+            OnInfoChange = _OnInfoChange;
+            m_InfoData = _entityInfo;
             m_EntityBuffProperty = EntityBuffInfo.Create();
             m_DamageBuffProperty = DamageBuffInfo.Create();
         }
@@ -480,13 +491,18 @@ namespace GameSetting
         {
             float entityDamageReduce = 1f;
             float damageApplyEnhance = 1f;
+            float movementEnhance = 1f;
+            float firerateEnhance = 1f;
             m_BuffList.Traversal((BuffBase buff) => {
                 entityDamageReduce -= buff.m_buffInfo.m_DamageReductionPercentage > 0 ? buff.m_buffInfo.m_DamageReductionPercentage / 100f : 0;
                 damageApplyEnhance += buff.m_buffInfo.m_DamageMultiplyPercentage > 0 ? buff.m_buffInfo.m_DamageMultiplyPercentage / 100f : 0;
+                movementEnhance += buff.m_buffInfo.m_MovementSpeedMultiplyPercentage > 0 ? buff.m_buffInfo.m_MovementSpeedMultiplyPercentage / 100f : 0;
+                firerateEnhance += buff.m_buffInfo.m_FireRateMultiplyPercentage > 0 ? buff.m_buffInfo.m_FireRateMultiplyPercentage / 100f : 0;
             });
             entityDamageReduce = entityDamageReduce < 0 ? 0 : entityDamageReduce;
-            m_EntityBuffProperty = EntityBuffInfo.Create(entityDamageReduce);
+            m_EntityBuffProperty = EntityBuffInfo.Create(entityDamageReduce,movementEnhance,firerateEnhance);
             m_DamageBuffProperty = DamageBuffInfo.Create(damageApplyEnhance, new List<int>());
+            OnInfoChange();
         }
     }
 
@@ -536,20 +552,26 @@ namespace GameSetting
 
     public struct EntityBuffInfo
     {
-        public float F_DamageReduceMultiply { get; private set; }
+        public float F_DamageReceiveMultiply { get; private set; }
+        public float F_MovementSpeedMultiply { get; private set; }
+        public float F_FireRateMultiply { get; private set; }
         public static EntityBuffInfo Create()
         {
             EntityBuffInfo buff = new EntityBuffInfo
             {
-                F_DamageReduceMultiply = 1f
+                F_DamageReceiveMultiply = 1f,
+                F_MovementSpeedMultiply = 1f,
+                F_FireRateMultiply=1f,
             };
             return buff;
         }
-        public static EntityBuffInfo Create(float _damageReduceMultiply)
+        public static EntityBuffInfo Create(float _damageReduceMultiply,float _movementSpeedMultiply,float _firerateMultiply)
         {
             EntityBuffInfo buff = new EntityBuffInfo
             {
-                F_DamageReduceMultiply = _damageReduceMultiply
+                F_DamageReceiveMultiply = _damageReduceMultiply,
+                F_MovementSpeedMultiply = _movementSpeedMultiply,
+                F_FireRateMultiply = _firerateMultiply,
             };
             return buff;
         }
@@ -842,7 +864,7 @@ namespace GameSetting
         public float m_MaxMana => f_maxMana;
         public float m_ArmorRegenSpeed => f_armorRegenSpeed;
         public float m_ArmorRegenDuration => f_armorRegenDuration;
-        public float m_moveSpeed => f_moveSpeed;
+        public float m_MoveSpeed => f_moveSpeed;
         public float m_AIChaseRange => f_chaseRange;
         public float m_AIAttackRange => f_attackRange;
         public bool m_BattleCheckObsatacle => b_battleObstacleCheck;
@@ -960,6 +982,8 @@ namespace GameSetting
         int i_addType;
         float f_expireDuration;
         int i_effect;
+        float f_movementSpeedMultiply;
+        float f_fireRateMultiply;
         float f_damageMultiply;
         float f_damageReduce;
         float f_damageTickTime;
@@ -968,8 +992,10 @@ namespace GameSetting
         public enum_BuffAddType m_AddType => (enum_BuffAddType)i_addType;
         public float m_ExpireDuration => f_expireDuration;
         public int m_EffectIndex => i_effect;
-        public float m_DamageMultiplyPercentage =>  f_damageMultiply;
-        public float m_DamageReductionPercentage => f_damageReduce;
+        public float m_MovementSpeedMultiplyPercentage => f_movementSpeedMultiply > 0 ? f_movementSpeedMultiply : 0;
+        public float m_FireRateMultiplyPercentage => f_fireRateMultiply > 0 ? f_fireRateMultiply : 0;
+        public float m_DamageMultiplyPercentage => f_damageMultiply > 0 ? f_damageMultiply : 0;
+        public float m_DamageReductionPercentage => f_damageReduce > 0 ? f_damageReduce : 0;
         public float m_DamageTickTime => f_damageTickTime;
         public float m_DamagePerTick => f_damagePerTick;
         public void InitOnValueSet()

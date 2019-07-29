@@ -20,7 +20,7 @@ public class EntityPlayerBase : EntityBase {
     public InteractBase m_InteractTarget { get; private set; }
 
 
-    public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized* m_EntityInfo.m_moveSpeed * time;
+    public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized* m_EntityInfo.F_MovementSpeed * time;
     public override void Init(SEntity entityInfo)
     {
         Init( entityInfo, true);
@@ -89,7 +89,7 @@ public class EntityPlayerBase : EntityBase {
     void ObtainWeapon(WeaponBase weapon)
     {
         m_WeaponObtained.Add(weapon);
-        weapon.Attach(I_EntityID,tf_WeaponHold, OnCostMana, AddRecoil, GetDamageBuffInfo);
+        weapon.Attach(I_EntityID,tf_WeaponHold, OnCostMana, AddRecoil, GetDamageBuffInfo,m_EntityInfo.F_FireRateTick);
         weapon.SetActivate(false);
         if (m_WeaponCurrent == null)
             OnSwitchWeapon();
@@ -148,7 +148,7 @@ public class EntityPlayerBase : EntityBase {
         tf_WeaponHold.localRotation = Quaternion.Euler(-m_Pitch,0,0);
         transform.rotation = Quaternion.Lerp(transform.rotation,CameraController.CameraXZRotation,GameConst.F_PlayerCameraSmoothParam);
         Vector3 direction = (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized;
-        m_CharacterController.Move(direction*m_EntityInfo.m_moveSpeed * Time.deltaTime + Vector3.down * GameConst.F_PlayerFallSpeed*Time.deltaTime);
+        m_CharacterController.Move(direction*m_EntityInfo.F_MovementSpeed * Time.deltaTime + Vector3.down * GameConst.F_PlayerFallSpeed*Time.deltaTime);
         TBroadCaster<enum_BC_UIStatusChanged>.Trigger(enum_BC_UIStatusChanged.PlayerInfoChanged, this);
     }
     public void AddRecoil(Vector2 recoil)

@@ -1773,15 +1773,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c088e7b318d292458e08155aef1723d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Test_TileStyle: 1
-  Test_EntityStyle: 3
+  Test_TileStyle: 2
+  Test_EntityStyle: 2
   M_TESTSEED: 
   B_GameDebugGizmos: 0
-  Z_TestEntityIndex: 303
+  Z_TestEntityIndex: 202
   X_TestCastIndex: 30506
   C_TestProjectileIndex: 10300
   V_TestIndicatorIndex: 50002
-  B_TestBuffIndex: 1
+  B_TestBuffIndex: 5
 --- !u!4 &1133817278
 Transform:
   m_ObjectHideFlags: 0

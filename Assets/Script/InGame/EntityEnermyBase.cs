@@ -50,7 +50,7 @@ public class EntityEnermyBase : EntityBase {
         if (buffApply)
             weapon = new BuffApply(buffApply,this,tf_Barrel,GetDamageBuffInfo);
 
-        m_AI = new EnermyAIControllerBase(this,weapon, entityInfo, OnAttackAnim, OnCheckTarget);
+        m_AI = new EnermyAIControllerBase(this,weapon, OnAttackAnim, OnCheckTarget);
         if (E_AnimatorIndex == enum_EnermyAnim.Invalid)
             Debug.LogError("Please Set Prefab AnimIndex!");
     }
@@ -58,6 +58,11 @@ public class EntityEnermyBase : EntityBase {
     {
         base.OnSpawn(id);
         m_Animator = new EnermyAnimator(tf_Model.GetComponent<Animator>(), E_AnimatorIndex, OnAnimKeyEvent);
+    }
+    protected override void OnInfoChange()
+    {
+        base.OnInfoChange();
+        m_AI.OnInfoChange();
     }
     public override void OnActivate()
     {
@@ -152,8 +157,8 @@ public class EntityEnermyBase : EntityBase {
         protected NavMeshObstacle m_Obstacle;
         protected Action<EntityBase, bool> OnAttackAnim;
         protected Func<EntityBase, bool> OnCheckTarget;
-        protected SEntity m_EntityInfo;
         protected EnermyWeaponBase m_Weapon;
+        protected EntityInfoManager m_Info => m_EntityControlling.m_EntityInfo;
         public bool B_AgentEnabled
         {
             get
@@ -183,14 +188,12 @@ public class EntityEnermyBase : EntityBase {
             }
         }
 
-        public EnermyAIControllerBase(EntityEnermyBase _entityControlling, EnermyWeaponBase _weapon, SEntity _entityInfo, Action<EntityBase, bool> _onAttack, Func<EntityBase, bool> _onCheck)
+        public EnermyAIControllerBase(EntityEnermyBase _entityControlling, EnermyWeaponBase _weapon, Action<EntityBase, bool> _onAttack, Func<EntityBase, bool> _onCheck)
         {
             m_EntityControlling = _entityControlling;
-            m_EntityInfo = _entityInfo;
             m_Weapon = _weapon;
             m_Obstacle = m_EntityControlling.GetComponent<NavMeshObstacle>();
             m_Agent = m_EntityControlling.GetComponent<NavMeshAgent>();
-            m_Agent.speed = _entityInfo.m_moveSpeed;
             OnAttackAnim = _onAttack;
             OnCheckTarget = _onCheck;
             B_AgentEnabled = false;
@@ -204,7 +207,10 @@ public class EntityEnermyBase : EntityBase {
             this.StartSingleCoroutine(0, AICalculationTick());
             this.StartSingleCoroutine(1, TargetTrackTick());
         }
-
+        public void OnInfoChange()
+        {
+            m_Agent.speed = m_Info.F_MovementSpeed;
+        }
         public void Deactivate()
         {
             B_AgentEnabled = false;
@@ -212,7 +218,7 @@ public class EntityEnermyBase : EntityBase {
             this.StopAllSingleCoroutines();
         }
         RaycastHit[] m_Raycasts;
-        float f_aiSimulatedTime;
+        float f_movementSimulate,f_battleSimulate;
         float f_movementCheck, f_battleStatusCheck;
         Vector3 v3_TargetDirection;
         float f_targetDistance;
@@ -232,7 +238,8 @@ public class EntityEnermyBase : EntityBase {
         {
             for (; ; )
             {
-                f_aiSimulatedTime += GameConst.F_EnermyAICheckTime;
+                f_movementSimulate += GameConst.F_EnermyAICheckTime*m_Info.F_MovementSpeed;
+                f_battleSimulate += m_Info.F_FireRateTick( GameConst.F_EnermyAICheckTime);
                 CheckTarget();
                 CheckTargetParams();
                 CheckBattle();
@@ -261,10 +268,10 @@ public class EntityEnermyBase : EntityBase {
             else
                 i_targetUnvisibleCount = i_targetUnvisibleCount - 1 <= 0 ? 0 : i_targetUnvisibleCount - 1;
             f_targetDistance = TCommon.GetXZDistance(targetHeadTransform.position, headTransform.position);
-            b_targetOutChaseRange = f_targetDistance > m_EntityInfo.m_AIChaseRange;
-            b_targetOutAttackRange = f_targetDistance > m_EntityInfo.m_AIAttackRange;
+            b_targetOutChaseRange = f_targetDistance > m_EntityControlling.m_EntityInfo.m_InfoData.m_AIChaseRange;
+            b_targetOutAttackRange = f_targetDistance > m_Info.m_InfoData.m_AIAttackRange;
             b_MoveTowardsTarget = b_targetHideBehindWall || b_targetOutChaseRange;
-            b_CanAttackTarget = !b_targetOutAttackRange && (!m_EntityInfo.m_BattleCheckObsatacle || b_targetVisible) && Mathf.Abs(f_targetAngle) < 15 && !Physics.SphereCast(new Ray(headTransform.position, headTransform.forward), 1f, 2, GameLayer.Physics.I_Static);
+            b_CanAttackTarget = !b_targetOutAttackRange && (!m_Info.m_InfoData.m_BattleCheckObsatacle || b_targetVisible) && Mathf.Abs(f_targetAngle) < 15 && !Physics.SphereCast(new Ray(headTransform.position, headTransform.forward), 1f, 2, GameLayer.Physics.I_Static);
             b_AgentReachDestination = m_Agent.destination == Vector3.zero || TCommon.GetXZDistance(headTransform.position, m_Agent.destination) < 1f;
         }
         #region Attack
@@ -273,28 +280,43 @@ public class EntityEnermyBase : EntityBase {
         bool b_attacking;
         void CheckBattle()
         {
-            if (!b_targetAvailable||f_aiSimulatedTime < f_battleStatusCheck)
+            if (!b_targetAvailable|| f_battleSimulate < f_battleStatusCheck)
                 return;
             if (b_CanAttackTarget)
-                f_battleStatusCheck = f_aiSimulatedTime + OnStartAttacking();
+                f_battleStatusCheck = f_battleSimulate + OnStartAttacking();
         }
         float OnStartAttacking()
         {
             b_preAim = TCommon.RandomPercentage() >= m_EntityControlling.I_AttackPreAimPercentage;
-            i_playCount = m_EntityInfo.m_ProjectileCount.RandomRangeInt();
+            i_playCount = m_Info.m_InfoData.m_ProjectileCount.RandomRangeInt();
             i_playCount = i_playCount <= 0 ? 1 : i_playCount;       //Make Sure Play Once At Least
             b_attacking = true;
             m_Weapon.OnPlayAnim(b_attacking);
-            this.StartSingleCoroutine(2, TIEnumerators.TickCount(()=> {
-                OnAttackAnim(m_Target, b_attacking);
-            }, i_playCount, m_EntityInfo.m_Firerate,
-            () => {
-                b_attacking = false;
-                m_Weapon.OnPlayAnim(b_attacking);
-                OnAttackAnim(m_Target, b_attacking);
-            })
-            );
-            return m_EntityInfo.m_Firerate * i_playCount + m_EntityInfo.m_BarrageDuration.RandomRangeFloat(); ;
+            this.StartSingleCoroutine(2, Attack(i_playCount, m_Info.m_InfoData.m_Firerate));
+            return m_Info.m_InfoData.m_Firerate * (i_playCount-1) + m_Info.m_InfoData.m_BarrageDuration.RandomRangeFloat();
+        }
+        IEnumerator Attack(int count,float fireRate)
+        {
+            float m_attackSimulate= fireRate;
+            b_attacking = true;
+            for (; ; )
+            {
+                m_attackSimulate += m_Info.F_FireRateTick(Time.deltaTime);
+                if (m_attackSimulate >= fireRate)
+                {
+                    m_attackSimulate -= fireRate;
+                    OnAttackAnim(m_Target, true);
+                    count--;
+                    if (count <= 0)
+                    {
+                        b_attacking = false;
+                        m_Weapon.OnPlayAnim(false);
+                        OnAttackAnim(m_Target, false);
+                        yield break;
+                    }
+                }
+                yield return null;
+            }
         }
         public void OnAttackTriggerd()
         {
@@ -328,14 +350,14 @@ public class EntityEnermyBase : EntityBase {
                 return;
             }
 
-            if (f_aiSimulatedTime < f_movementCheck)
+            if (f_movementSimulate < f_movementCheck)
                 return;
 
             if (!b_idled && b_AgentReachDestination && !b_targetOutChaseRange && UnityEngine.Random.Range(0, 2) > 0)
             {
                 b_idled = true;
                 B_AgentEnabled = false;
-                f_movementCheck = f_aiSimulatedTime + UnityEngine.Random.Range(2f, 3f);
+                f_movementCheck = f_movementSimulate + UnityEngine.Random.Range(2f, 3f);
                 return;
             }
 
@@ -396,7 +418,7 @@ public class EntityEnermyBase : EntityBase {
         protected Transform attacherTransform => m_EntityControlling.tf_Head;
         protected Transform transformBarrel;
         protected Func<DamageBuffInfo> GetBuffInfo;
-        protected SEntity m_Info
+        protected EntityInfoManager m_Info
         {
             get
             {
@@ -461,7 +483,7 @@ public class EntityEnermyBase : EntityBase {
         }
         public override void Play(bool preAim, EntityBase _target)
         {
-             ObjectManager.SpawnDamageSource<SFXCast>(i_castIndex, EnviormentManager.NavMeshPosition(_target.transform.position+TCommon.RandomXZSphere(m_Info.m_Spread)), _target.transform.up).Play(m_EntityControlling.I_EntityID,GetBuffInfo());
+             ObjectManager.SpawnDamageSource<SFXCast>(i_castIndex, EnviormentManager.NavMeshPosition(_target.transform.position+TCommon.RandomXZSphere(m_Info.F_Spread)), _target.transform.up).Play(m_EntityControlling.I_EntityID,GetBuffInfo());
         }
 
     }
@@ -492,8 +514,8 @@ public class EntityEnermyBase : EntityBase {
             if(preAim&&Mathf.Abs(TCommon.GetAngle(transformBarrel.forward,TCommon.GetXZLookDirection(transformBarrel.position,targetPosition) ,Vector3.up))>90)    //Target Positioned Back, Return Target
                 targetPosition=_target.tf_Head.position;
 
-            if (TCommon.GetXZDistance(transformBarrel.position, targetPosition) > m_Info.m_Spread)      //Target Outside Spread Sphere,Add Spread
-                targetPosition+= TCommon.RandomXZSphere(m_Info.m_Spread);
+            if (TCommon.GetXZDistance(transformBarrel.position, targetPosition) > m_Info.F_Spread)      //Target Outside Spread Sphere,Add Spread
+                targetPosition+= TCommon.RandomXZSphere(m_Info.F_Spread);
             return targetPosition;
         } 
 
@@ -514,11 +536,11 @@ public class EntityEnermyBase : EntityBase {
             Vector3 startPosition = transformBarrel.position;
             Vector3 targetPosition = GetSpreadPosition(preAim, _target);
             Vector3 direction = TCommon.GetXZLookDirection(startPosition,targetPosition);
-            int waveCount = m_Info.m_RangeExtension.RandomRangeInt();
+            int waveCount = m_Info.m_InfoData.m_RangeExtension.RandomRangeInt();
             float distance = TCommon.GetXZDistance(startPosition, targetPosition);
-            Vector3 lineBeginPosition = startPosition - attacherTransform.right * m_Info.m_OffsetExtension * ((waveCount - 1) / 2f);
+            Vector3 lineBeginPosition = startPosition - attacherTransform.right * m_Info.m_InfoData.m_OffsetExtension * ((waveCount - 1) / 2f);
             for (int i = 0; i < waveCount; i++)
-                FireBullet(lineBeginPosition+ attacherTransform.right*m_Info.m_OffsetExtension*i, direction, transformBarrel.position + direction * distance);
+                FireBullet(lineBeginPosition+ attacherTransform.right*m_Info.m_InfoData.m_OffsetExtension*i, direction, transformBarrel.position + direction * distance);
         }
     }
     class BarrageMultipleFan : BarrageRange
@@ -531,12 +553,12 @@ public class EntityEnermyBase : EntityBase {
             Vector3 targetPosition = GetSpreadPosition(preAim, _target);
             Vector3 startPosition = transformBarrel.position;
             Vector3 direction = TCommon.GetXZLookDirection(startPosition, targetPosition);
-            int waveCount = m_Info.m_RangeExtension.RandomRangeInt();
-            float beginAnle= -m_Info.m_OffsetExtension*(waveCount-1)/2f;
+            int waveCount = m_Info.m_InfoData.m_RangeExtension.RandomRangeInt();
+            float beginAnle= -m_Info.m_InfoData.m_OffsetExtension*(waveCount-1)/2f;
             float distance = TCommon.GetXZDistance(transformBarrel.position, _target.transform.position);
             for (int i = 0; i < waveCount; i++)
             {
-                Vector3 fanDirection = direction.RotateDirection(Vector3.up, beginAnle + i * m_Info.m_OffsetExtension);
+                Vector3 fanDirection = direction.RotateDirection(Vector3.up, beginAnle + i * m_Info.m_InfoData.m_OffsetExtension);
                 FireBullet(transformBarrel.position, fanDirection,transformBarrel.position+fanDirection* distance);
             }
         } 
