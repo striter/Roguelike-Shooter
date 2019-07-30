@@ -202,7 +202,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         //Load All map Levels And Set Material
         LevelItemBase[] levelItemPrefabs = TResources.GetAllLevelItems(_levelStyle,null);
         Dictionary<LevelItemBase, int> maxItemCountDic = new Dictionary<LevelItemBase, int>();
-        LevelBase levelPrefab = TResources.GetLevelPrefab();
+        LevelBase levelPrefab = TResources.GetLevelPrefab(_levelStyle);
         SBigmapLevelInfo[,] m_MapLevelInfo = new SBigmapLevelInfo[bigmapTiles.GetLength(0), bigmapTiles.GetLength(1)];      //Generate Bigmap Info
         for (int i = 0; i < _bigmapWidth; i++)
             for (int j = 0; j < _bigmapHeight; j++)

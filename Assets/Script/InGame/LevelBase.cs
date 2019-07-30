@@ -105,9 +105,9 @@ public class LevelBase : MonoBehaviour {
 
     void GenerateBorderTile(List<int> borderTiles)
     {
-        borderTiles.Traversal((int tileIndex) => {
+        borderTiles.Traversal((System.Action<int>)((int tileIndex) => {
             LevelTile borderTile = m_AllTiles[tileIndex];
-            List<TileAxis> nearbyTiles=new List<TileAxis>();
+            List<TileAxis> nearbyTiles = new List<TileAxis>();
             borderTiles.Traversal((int nearbyIndex)=> {
                 if (nearbyIndex == tileIndex)
                     return;
@@ -118,13 +118,14 @@ public class LevelBase : MonoBehaviour {
 
             if (nearbyTiles.Count == 2)
             {
-                enum_TileDirection direction1 = nearbyTiles[0].OffsetDirection(nearbyTiles[1]);
-                enum_TileDirection direction2 = TileAxis.Zero.OffsetDirection(borderTile.m_TileAxis);
-                m_AllTiles[tileIndex] = new LevelTileBorder(m_AllTiles[tileIndex], 0, enum_LevelItemType.BorderBlock,TTiles.TTiles.m_FourDirections.Contains(direction1)?direction1:direction2);
+                enum_TileDirection linearDirection = nearbyTiles[0].OffsetDirection(nearbyTiles[1]);
+                enum_TileDirection obliqueDirection = TileAxis.Zero.OffsetDirection(borderTile.m_TileAxis);
+                bool isOblique = !TTiles.TTiles.m_FourDirections.Contains(linearDirection);
+                m_AllTiles[tileIndex] = new LevelTileBorder(m_AllTiles[tileIndex], 0, isOblique ? enum_LevelItemType.BorderOblique : enum_LevelItemType.BorderLinear, isOblique ? obliqueDirection : linearDirection);
             }
             else
                 borderTiles.Remove(tileIndex);
-        });
+        }));
     }
 
     void GenerateRangePortalTile(TileAxis origin, enum_TileDirection portalDirection, int minusRange)

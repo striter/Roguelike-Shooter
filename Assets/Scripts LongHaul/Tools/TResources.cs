@@ -11,7 +11,9 @@ public class TResources
         public const string S_LevelPrefab = "Level/Main/LevelPrefab";
         public const string S_LeveLItem = "Level/Item";
         public const string S_StyleCustomization = "Level/Customization";
-        
+
+        public const string S_Texture_LevelBase = "Texture/Level/Texture_Base_";
+
         public const string S_PlayerWeapon = "PlayerWeapon/";
         public const string S_Entity = "Entity/";
         public const string S_SFXCommon = "SFX_Common/";
@@ -33,9 +35,12 @@ public class TResources
             instantiatedLevelItem[i] = GameObject.Instantiate(levelItemPrefabs[i], parent);
         return instantiatedLevelItem;
     }
-    public static LevelBase GetLevelPrefab()
+    public static LevelBase GetLevelPrefab(enum_Style levelStyle)
     {
-        return Load<GameObject>(ConstPath.S_LevelPrefab).GetComponent<LevelBase>();
+        LevelBase level= Load<GameObject>(ConstPath.S_LevelPrefab).GetComponent<LevelBase>();
+        Renderer matRenderer = level.GetComponentInChildren<Renderer>();
+        matRenderer.sharedMaterial.SetTexture("_MainTex", Load<Texture>(ConstPath.S_Texture_LevelBase + levelStyle));
+        return level;
     }
 
     public static Dictionary<int, EntityBase> GetAllStyledEntities(enum_Style entityStyle)
