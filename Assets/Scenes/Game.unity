@@ -1776,7 +1776,7 @@ MonoBehaviour:
   Test_TileStyle: 3
   Test_EntityStyle: 3
   M_TESTSEED: 
-  B_GameDebugGizmos: 0
+  B_GameDebugGizmos: 1
   Z_TestEntityIndex: 306
   TestEntityBuffApplyOnSpawn: 0
   X_TestCastIndex: 30506

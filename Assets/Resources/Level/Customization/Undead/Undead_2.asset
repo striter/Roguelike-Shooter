@@ -11,12 +11,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e349d199acb4d80499b840c85dd3f665, type: 3}
   m_Name: Undead_2
   m_EditorClassIdentifier: 
-  c_directionnal: {r: 0.38452527, g: 0.44852942, b: 0.3792712, a: 1}
+  c_directionnal: {r: 0.4688059, g: 0.4852941, b: 0.4674524, a: 1}
   v3_eulerAngle: {x: 45.000004, y: 60.000004, z: 0}
   f_directionalIntensity: 1
   c_ambientSky: {r: 0.127664, g: 0.15799999, b: 0.13666019, a: 1}
   c_ambientEquator: {r: 0, g: 0.82221085, b: 0.9852941, a: 1}
   c_ambientGround: {r: 0.19896193, g: 0.24686792, b: 0.29411763, a: 1}
-  c_ocean: {r: 0.12759514, g: 0.29411763, b: 0.14941531, a: 1}
-  c_oceanSun: {r: 0.375, g: 0.375, b: 0.375, a: 1}
-  c_oceanFresnel: {r: 0.13738105, g: 0.24264705, b: 0.18602121, a: 1}
