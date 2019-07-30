@@ -37,23 +37,20 @@ public class EntityPlayerBase : EntityBase {
         m_Pitch = 0;
         CameraController.Attach(this.transform);
 
-        if (GameManager.Instance.B_TestMode)
-        {
-            PCInputManager.Instance.AddMouseRotateDelta(OnRotateDelta);
-            PCInputManager.Instance.AddMovementDelta(OnMovementDelta);
-            PCInputManager.Instance.AddBinding<EntityPlayerBase>(enum_BindingsName.Fire, OnMainButtonDown);
-            PCInputManager.Instance.AddBinding<EntityPlayerBase>(enum_BindingsName.Interact, OnSwitchWeapon);
-            PCInputManager.Instance.AddBinding<EntityPlayerBase>(enum_BindingsName.Reload, OnReload);
-        }
-        else
-        {
-            UIManager.OnMainDown = OnMainButtonDown;
-            UIManager.OnReload = OnReload;
-            UIManager.OnSwitch = OnSwitchWeapon;
-            TouchDeltaManager.Instance.Bind(OnMovementDelta, OnRotateDelta);
-        }
         ObtainWeapon(ObjectManager.SpawnWeapon(TESTWEAPON1, this));
         ObtainWeapon(ObjectManager.SpawnWeapon(TESTWEAPON2, this));
+#if UNITY_EDITOR
+        PCInputManager.Instance.AddMouseRotateDelta(OnRotateDelta);
+        PCInputManager.Instance.AddMovementDelta(OnMovementDelta);
+        PCInputManager.Instance.AddBinding<EntityPlayerBase>(enum_BindingsName.Fire, OnMainButtonDown);
+        PCInputManager.Instance.AddBinding<EntityPlayerBase>(enum_BindingsName.Interact, OnSwitchWeapon);
+        PCInputManager.Instance.AddBinding<EntityPlayerBase>(enum_BindingsName.Reload, OnReload);
+#else
+        UIManager.OnMainDown = OnMainButtonDown;
+        UIManager.OnReload = OnReload;
+        UIManager.OnSwitch = OnSwitchWeapon;
+        TouchDeltaManager.Instance.Bind(OnMovementDelta, OnRotateDelta);
+#endif
     }
     protected override void OnCostMana(float manaCost)
     {
@@ -85,7 +82,7 @@ public class EntityPlayerBase : EntityBase {
             OnTriggerDown(down);
         }
     }
-    #region WeaponControll
+#region WeaponControll
     void ObtainWeapon(WeaponBase weapon)
     {
         m_WeaponObtained.Add(weapon);
@@ -125,8 +122,8 @@ public class EntityPlayerBase : EntityBase {
         }
         m_WeaponCurrent.SetActivate(true);
     }
-    #endregion
-    #region PlayerControll
+#endregion
+#region PlayerControll
     Vector2 m_MoveAxisInput;
     void OnRotateDelta(Vector2 rotateDelta)
     {
@@ -157,8 +154,8 @@ public class EntityPlayerBase : EntityBase {
         m_Pitch = Mathf.Clamp(m_Pitch, 0, 0);
         OnRotateDelta(new Vector2(Random.Range(-1f,1f)>0?1f:-1f *recoil.x,0));
     }
-    #endregion
-    #region PlayerInteract
+#endregion
+#region PlayerInteract
     public void OnInteract(bool down)
     {
         if (m_InteractTarget == null)
@@ -178,7 +175,7 @@ public class EntityPlayerBase : EntityBase {
         else if (m_InteractTarget = interactTarget)
             m_InteractTarget = null;
     }
-    #endregion
+#endregion
 
     protected class PlayerAnimator : AnimatorClippingTime
     {

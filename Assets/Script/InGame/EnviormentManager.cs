@@ -104,7 +104,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         if (m_currentLevel.m_TileType == enum_TileType.End)        //Generate Portals For End IsLand
         {
             LevelTilePortal portal = m_currentLevel.m_Level.m_Portal;
-            ObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Interact_Portal, portal.m_worldPos).InitPortal(portal.E_Direction, OnPortalEntered);
+            ObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Interact_Portal, portal.m_worldPos).InitPortal(portal.E_WorldDireciton, OnPortalEntered);
         }
 
         TBroadCaster<enum_BC_UIStatusChanged>.Trigger(enum_BC_UIStatusChanged.PlayerLevelStatusChanged, m_MapLevelInfo, m_currentLevel.m_TileAxis);
@@ -124,7 +124,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         SBigmapTileInfo[,] bigmapTiles = new SBigmapTileInfo[_bigmapWidth, _bigmapHeight];
         for (int i = 0; i < _bigmapWidth; i++)
             for (int j = 0; j < _bigmapHeight; j++)
-                bigmapTiles[i, j] = new  SBigmapTileInfo(new TileAxis(i, j), enum_TileType.Invalid,_levelStyle, enum_TileLocking.Locked);
+                bigmapTiles[i, j] = new  SBigmapTileInfo(new TileAxis(i, j), enum_TileType.Invalid, enum_TileLocking.Locked);
 
         List<SBigmapTileInfo> mainRoadTiles = new List<SBigmapTileInfo>();
         List<SBigmapTileInfo> subGenerateTiles = new List<SBigmapTileInfo>();
@@ -210,7 +210,11 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
                 m_MapLevelInfo[i, j] = new SBigmapLevelInfo(bigmapTiles[i, j]);
                 if (m_MapLevelInfo[i, j].m_TileType != enum_TileType.Invalid)
                 {
-                    Dictionary<LevelItemBase,int> itemCountDic=m_MapLevelInfo[i, j].GenerateMap(_generateParent, 10,10,levelPrefab, DataManager.GetItemGenerateProperties(m_MapLevelInfo[i,j].m_LevelStyle,m_MapLevelInfo[i,j].m_TileType.ToPrefabType()), levelItemPrefabs, bigMapSeed);
+                    enum_LevelGenerateType generateType = m_MapLevelInfo[i, j].m_TileType.ToPrefabType();
+                    SLevelGenerate innerData = DataManager.GetItemGenerateProperties(_levelStyle, generateType, true);
+                    SLevelGenerate outerData = DataManager.GetItemGenerateProperties(_levelStyle, generateType, false);
+
+                    Dictionary<LevelItemBase,int> itemCountDic=m_MapLevelInfo[i, j].GenerateMap(_generateParent,levelPrefab,innerData,outerData,levelItemPrefabs,bigMapSeed);
                     itemCountDic.Traversal((LevelItemBase item, int count) => {
                         if (!maxItemCountDic.ContainsKey(item))
                             maxItemCountDic.Add( item, 0);

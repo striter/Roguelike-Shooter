@@ -24,7 +24,6 @@ public class LevelItemBase : MonoBehaviour {
         transform.GetChild(0).localPosition = new Vector3(((inverse?m_sizeYAxis:m_sizeXAxis) - 1) * GameConst.F_LevelTileSize, 0f, ((inverse ? m_sizeXAxis:m_sizeYAxis) - 1) * GameConst.F_LevelTileSize) / 2;
     }
 #if UNITY_EDITOR
-    LevelBase baseTarget;
     public bool b_showGizmos = true;
     public bool b_AutoCenter = true;
     public bool b_AutoRotation = true;

@@ -41,6 +41,8 @@ namespace TTiles
         {
             return base.GetHashCode();
         }
+        public static readonly TileAxis Zero = new TileAxis(0, 0);
+            
     }
 
     public static class TTiles
