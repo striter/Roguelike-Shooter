@@ -54,6 +54,7 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
             selectingStyleType = GameManager.Instance.Test_TileStyle;
         InitAllMat();
 
+
         if (selectingStyleType == enum_Style.Invalid)
             TCommon.TraversalEnum((enum_Style style) =>
             {
@@ -202,6 +203,8 @@ public class EWorkFlow_ModelAutoPrefabPackaging : EditorWindow
             EditorGUILayout.TextArea("Currnet Available Assets:");
             for (int i = 0; i < assets.Count; i++)
                 EditorGUILayout.TextArea(assets[i].name);
+
+            levelStyle =(enum_Style) EditorGUILayout.EnumPopup("Item Style", levelStyle);
 
             if (levelStyle != enum_Style.Invalid)
                 if (EditorGUILayout.DropdownButton(new GUIContent("Create Shaded Prefab"), FocusType.Passive))

@@ -306,8 +306,6 @@ public class EntityEnermyBase : EntityBase {
                 if (m_attackSimulate >= fireRate)
                 {
                     m_attackSimulate -= fireRate;
-                    OnAttackAnim(m_Target, true);
-                    count--;
 
                     if (count <= 0)
                     {
@@ -316,6 +314,8 @@ public class EntityEnermyBase : EntityBase {
                         OnAttackAnim(m_Target, false);
                         yield break;
                     }
+                    OnAttackAnim(m_Target, true);
+                    count--;
                 }
                 yield return null;
             }
