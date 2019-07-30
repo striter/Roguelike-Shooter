@@ -22,7 +22,7 @@ public class TResources
     }
     
     public static StyleColorData[] GetAllStyleCustomization(enum_Style levelStype) => LoadAll<StyleColorData>(ConstPath.S_StyleCustomization + "/" + levelStype);
-    public static LevelItemBase[] GetAllLevelItems(enum_Style _levelStyle, Transform parent)
+    public static Dictionary<enum_LevelItemType,List<LevelItemBase>>  GetAllLevelItems(enum_Style _levelStyle, Transform parent)
     {
         LevelItemBase[] levelItemPrefabs = LoadAll<LevelItemBase>(ConstPath.S_LeveLItem + "/" + _levelStyle);
         foreach (LevelItemBase levelItem in levelItemPrefabs)
@@ -33,7 +33,20 @@ public class TResources
         LevelItemBase[] instantiatedLevelItem = new LevelItemBase[levelItemPrefabs.Length];
         for (int i = 0; i < levelItemPrefabs.Length; i++)
             instantiatedLevelItem[i] = GameObject.Instantiate(levelItemPrefabs[i], parent);
-        return instantiatedLevelItem;
+
+        Dictionary<enum_LevelItemType, List<LevelItemBase>> itemPrefabDic = new Dictionary<enum_LevelItemType, List<LevelItemBase>>();
+        foreach (LevelItemBase levelItem in instantiatedLevelItem)
+        {
+            if (!itemPrefabDic.ContainsKey(levelItem.m_ItemType))
+                itemPrefabDic.Add(levelItem.m_ItemType, new List<LevelItemBase>());
+            itemPrefabDic[levelItem.m_ItemType].Add(levelItem);
+        }
+        if (!itemPrefabDic.ContainsKey(enum_LevelItemType.BorderLinear))
+            Debug.LogError("Level Style Item Not Contains LinaerBorder Type!");
+        else if(!itemPrefabDic.ContainsKey( enum_LevelItemType.BorderOblique))
+            Debug.LogError("Level Style Item Not Contains ObliqueBorder Type!");
+
+        return itemPrefabDic;
     }
     public static LevelBase GetLevelPrefab(enum_Style levelStyle)
     {

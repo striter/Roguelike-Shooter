@@ -8,13 +8,13 @@ public class LevelBase : MonoBehaviour {
     public enum_TileType m_levelType { get; private set; }
     protected Transform tf_LevelItem,tf_Model;
     public System.Random m_seed { get; private set; }
-    public Dictionary<LevelItemBase, int> Init(SLevelGenerate _innerData,SLevelGenerate _outerData, LevelItemBase[] _levelItems,enum_TileType _levelType, System.Random _seed, enum_TileDirection _connectedDireciton)
+    public Dictionary<LevelItemBase, int> Init(SLevelGenerate _innerData,SLevelGenerate _outerData, Dictionary<enum_LevelItemType, List<LevelItemBase>> _allItemPrefabs,enum_TileType _levelType, System.Random _seed, enum_TileDirection _connectedDireciton)
     {
         tf_LevelItem = transform.Find("Item");
         tf_Model = transform.Find("Model");
         m_seed = _seed;
         m_levelType = _levelType;
-        return GenerateTileItems(_innerData,_outerData,_levelItems, _connectedDireciton);
+        return GenerateTileItems(_innerData,_outerData,_allItemPrefabs, _connectedDireciton);
     }
 
     #region TileMapInfos
@@ -25,16 +25,10 @@ public class LevelBase : MonoBehaviour {
     List<int> m_IndexBorder = new List<int>();
     List<int> m_IndexItemMain=new List<int>();
     List<int> t_IndexTemp = new List<int>();
-    Dictionary<enum_LevelItemType, List<LevelItemBase>> m_AllItems = new Dictionary<enum_LevelItemType, List<LevelItemBase>>();
-    Dictionary<LevelItemBase,int> GenerateTileItems(SLevelGenerate _innerData,SLevelGenerate _outerData,LevelItemBase[] allItemPrefabs,enum_TileDirection _PortalDirection)
+    Dictionary<enum_LevelItemType, List<LevelItemBase>> m_AllItemPrefabs = new Dictionary<enum_LevelItemType, List<LevelItemBase>>();
+    Dictionary<LevelItemBase,int> GenerateTileItems(SLevelGenerate _innerData,SLevelGenerate _outerData, Dictionary<enum_LevelItemType, List<LevelItemBase>> allItemPrefabs, enum_TileDirection _PortalDirection)
     {
-
-        foreach (LevelItemBase levelItem in allItemPrefabs)
-        {
-            if (!m_AllItems.ContainsKey(levelItem.m_ItemType))
-                m_AllItems.Add(levelItem.m_ItemType, new List<LevelItemBase>());
-            m_AllItems[levelItem.m_ItemType].Add(levelItem);
-        }
+        m_AllItemPrefabs = allItemPrefabs;
 
         int innerLength = _innerData.m_Length.RandomRangeInt(m_seed);
         int outerLength = _outerData.m_Length.RandomRangeInt(m_seed);
@@ -86,7 +80,7 @@ public class LevelBase : MonoBehaviour {
         for (int i = 0; i < m_IndexItemMain.Count; i++)
         {
             LevelTileItemMain main = m_AllTiles[m_IndexItemMain[i]] as LevelTileItemMain;
-            LevelItemBase item = m_AllItems[main.m_LevelItemType][main.m_LevelItemListIndex];
+            LevelItemBase item = m_AllItemPrefabs[main.m_LevelItemType][main.m_LevelItemListIndex];
             if (!itemCountDic.ContainsKey(item))
                 itemCountDic.Add(item,0);
             itemCountDic[item]++;
@@ -98,7 +92,7 @@ public class LevelBase : MonoBehaviour {
         for (int i = 0; i < m_IndexItemMain.Count; i++)
         {
             LevelTileItemMain main = m_AllTiles[m_IndexItemMain[i]] as LevelTileItemMain;
-            LevelItemBase itemMain = ObjectManager.SpawnLevelItem (m_AllItems[main.m_LevelItemType][main.m_LevelItemListIndex], tf_LevelItem, main.m_Offset);
+            LevelItemBase itemMain = ObjectManager.SpawnLevelItem (m_AllItemPrefabs[main.m_LevelItemType][main.m_LevelItemListIndex], tf_LevelItem, main.m_Offset);
             itemMain.Init(this, main.m_ItemDirection);
         }
     }
@@ -156,12 +150,13 @@ public class LevelBase : MonoBehaviour {
             if (totalCount == 0)
                 return;
 
-            if (!m_AllItems.ContainsKey(type))
+            if (!m_AllItemPrefabs.ContainsKey(type))
             {
-                Debug.LogWarning("Current Level Does Not Contains Item That Type:" + type.ToString());
+                Debug.LogError("Current Level Does Not Contains Item With Type:" + type.ToString()+",But Excel Has Values!");
                 return;
             }
-            List<LevelItemBase> targetItems = m_AllItems[type];
+
+            List<LevelItemBase> targetItems = m_AllItemPrefabs[type];
             for (int i = 0; i < totalCount; i++)
             {
                 int currentItemIndex = targetItems.RandomIndex(m_seed);
