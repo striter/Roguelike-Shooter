@@ -228,9 +228,11 @@ public class EWorkFlow_ModelAutoPrefabPackaging : EditorWindow
                 AssetDatabase.DeleteAsset(prefabPath);
 
             GameObject instantiatePrefab = new GameObject(model.name);
-            GameObject instantiateModel = GameObject.Instantiate(model, instantiatePrefab.transform);
-            instantiateModel.name = "Model";
-                ProcessItemModel(instantiatePrefab, levelStyle);
+            GameObject modelParent = new GameObject("Model");
+            modelParent.transform.SetParent(instantiatePrefab.transform);
+            GameObject instantiateModel = GameObject.Instantiate(model, modelParent.transform);
+            instantiateModel.name = instantiatePrefab.name;
+            ProcessItemModel(instantiatePrefab, levelStyle);
 
             PrefabUtility.CreatePrefab(prefabPath,instantiatePrefab);
 
