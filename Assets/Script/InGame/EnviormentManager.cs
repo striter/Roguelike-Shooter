@@ -157,7 +157,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         //Create Sub Battle Tile
         SBigmapTileInfo subBattleTile = null;
         subGenerateTiles.TraversalRandom( (SBigmapTileInfo tile)=> {
-            TTiles.TTiles.m_AllDirections.TraversalRandom( (enum_TileDirection direction) =>
+            TTiles.TTiles.m_FourDirections.TraversalRandom( (enum_TileDirection direction) =>
             {
                 SBigmapTileInfo targetSubBattleTile = bigmapTiles.Get(tile.m_TileAxis.DirectionAxis(direction));
                 if (targetSubBattleTile!=null&& targetSubBattleTile.m_TileType== enum_TileType.Invalid)
@@ -173,7 +173,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
 
         //Connect Sub Battle Tile To All Tiles Nearby
         if (subBattleTile!=null)
-        TTiles.TTiles.m_AllDirections.TraversalRandom( (enum_TileDirection direction) => {
+        TTiles.TTiles.m_FourDirections.TraversalRandom( (enum_TileDirection direction) => {
             SBigmapTileInfo nearbyTile = bigmapTiles.Get(subBattleTile.m_TileAxis.DirectionAxis(direction));
             if (nearbyTile != null && (nearbyTile.m_TileType== enum_TileType.Reward|| nearbyTile.m_TileType == enum_TileType.Battle))
                 ConnectTile(subBattleTile,nearbyTile);
@@ -185,7 +185,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         SBigmapTileInfo subRewardTile = null;
         subGenerateTiles.TraversalRandom( (SBigmapTileInfo tile) =>
         {
-            TTiles.TTiles.m_AllDirections.TraversalRandom( (enum_TileDirection direction) =>
+            TTiles.TTiles.m_FourDirections.TraversalRandom( (enum_TileDirection direction) =>
             {
                 SBigmapTileInfo targetSubrewardTile = bigmapTiles.Get(tile.m_TileAxis.DirectionAxis(direction));
                 if (targetSubrewardTile != null && targetSubrewardTile.m_TileType == enum_TileType.Invalid)

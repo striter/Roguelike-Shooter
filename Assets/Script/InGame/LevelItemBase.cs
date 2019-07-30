@@ -15,7 +15,7 @@ public class LevelItemBase : MonoBehaviour {
         m_LevelParent = levelParent;
         tf_Model = transform.Find("Model");
         ItemRecenter(direction == enum_TileDirection.Right || direction == enum_TileDirection.Left);
-        tf_Model.localRotation = Quaternion.Euler(0, (int)direction * 90, 0);
+        tf_Model.localRotation = Quaternion.Euler(0, (int)direction * 45, 0);
         transform.SetActivate(true);
     }
 

@@ -60,7 +60,7 @@ public class LevelBase : MonoBehaviour {
                 else
                     occupation = enum_LevelTileOccupy.Border;
 
-                m_AllTiles.Add(new LevelTile(curTile, GameExpression.E_BigmapDirection(transform.TransformDirection(GameExpression.V3_TileAxisOffset(curTile))),occupation));
+                m_AllTiles.Add(new LevelTile(curTile, GameExpression.E_BigMapFourDirection(transform.TransformDirection(GameExpression.V3_TileAxisOffset(curTile))),occupation));
                 switch (occupation)
                 {
                     case enum_LevelTileOccupy.Inner:
@@ -117,7 +117,11 @@ public class LevelBase : MonoBehaviour {
             });
 
             if (nearbyTiles.Count == 2)
-                m_AllTiles[tileIndex] = new LevelTileBorder(m_AllTiles[tileIndex], 0, enum_LevelItemType.BorderBlock, nearbyTiles[0].OffsetDirection(nearbyTiles[1]));
+            {
+                enum_TileDirection direction1 = nearbyTiles[0].OffsetDirection(nearbyTiles[1]);
+                enum_TileDirection direction2 = TileAxis.Zero.OffsetDirection(borderTile.m_TileAxis);
+                m_AllTiles[tileIndex] = new LevelTileBorder(m_AllTiles[tileIndex], 0, enum_LevelItemType.BorderBlock,TTiles.TTiles.m_FourDirections.Contains(direction1)?direction1:direction2);
+            }
             else
                 borderTiles.Remove(tileIndex);
         });
@@ -163,7 +167,7 @@ public class LevelBase : MonoBehaviour {
                 LevelItemBase currentItem = targetItems[currentItemIndex];
                 if (emptyTile.Count < currentItem.m_sizeXAxis * currentItem.m_sizeYAxis)
                     continue;
-                enum_TileDirection itemAngleDirection = TTiles.TTiles.m_AllDirections.RandomItem(m_seed);
+                enum_TileDirection itemAngleDirection = TTiles.TTiles.m_FourDirections.RandomItem(m_seed);
                 int currentTileIndex = RandomAvailableTileIndex(currentItem.m_sizeXAxis, currentItem.m_sizeYAxis,  itemAngleDirection == enum_TileDirection.Left || itemAngleDirection == enum_TileDirection.Right, emptyTile, ref t_IndexTemp);
                 if (currentTileIndex != -1)
                 {
@@ -224,17 +228,9 @@ public class LevelBase : MonoBehaviour {
 
 #if UNITY_EDITOR
 #region Gizmos For Test
-    public enum enumDebug_LevelDrawMode
-    {
-        DrawTypes,
-        DrawWorldDirection,
-        DrawOccupation,
-        DrawItemDirection,
-    }
-    public enumDebug_LevelDrawMode LevelDebug = enumDebug_LevelDrawMode.DrawTypes;
     private void OnDrawGizmos()
     {
-        if (UnityEditor.EditorApplication.isPlaying && !GameManager.Instance.B_GameDebugGizmos)
+        if (UnityEditor.EditorApplication.isPlaying && !GameManager.Instance.B_LevelDebugGizmos)
             return;
 
         for (int i = 0; i < m_AllTiles.Count; i++)
@@ -242,9 +238,9 @@ public class LevelBase : MonoBehaviour {
             Color targetColor = Color.magenta;
             Vector3 positon = transform.position + transform.right * m_AllTiles[i].m_Offset.x + Vector3.up * m_AllTiles[i].m_Offset.y + transform.forward * m_AllTiles[i].m_Offset.z;
             float sizeParam = 1f;
-            switch (LevelDebug)
+            switch (GameManager.Instance.E_LevelDebug)
             {
-                case enumDebug_LevelDrawMode.DrawWorldDirection:
+                case GameManager.enumDebug_LevelDrawMode.DrawWorldDirection:
                     {
                         sizeParam = .5f;
                         switch (m_AllTiles[i].E_WorldDireciton)
@@ -268,7 +264,7 @@ public class LevelBase : MonoBehaviour {
                         }
                     }
                     break;
-                case enumDebug_LevelDrawMode.DrawItemDirection:
+                case GameManager.enumDebug_LevelDrawMode.DrawItemDirection:
                     {
                         sizeParam = 0f;
                         if (m_AllTiles[i].E_TileType == enum_LevelTileType.Main||m_AllTiles[i].E_TileType== enum_LevelTileType.Border)
@@ -288,11 +284,23 @@ public class LevelBase : MonoBehaviour {
                                 case enum_TileDirection.Right:
                                     targetColor = TCommon.ColorAlpha(Color.yellow, .5f);
                                     break;
+                                case enum_TileDirection.TopLeft:
+                                    targetColor = TCommon.ColorAlpha(Color.blue, 1f);
+                                    break;
+                                case enum_TileDirection.TopRight:
+                                    targetColor = TCommon.ColorAlpha(Color.yellow, 1f);
+                                    break;
+                                case enum_TileDirection.BottomLeft:
+                                    targetColor = TCommon.ColorAlpha(Color.red, 1f);
+                                    break;
+                                case enum_TileDirection.BottomRight:
+                                    targetColor = TCommon.ColorAlpha(Color.green, 1f);
+                                    break;
                             }
                         }
                     }
                     break;
-                case enumDebug_LevelDrawMode.DrawTypes:
+                case GameManager.enumDebug_LevelDrawMode.DrawTypes:
                     {
                         switch (m_AllTiles[i].E_TileType)
                         {
@@ -314,7 +322,7 @@ public class LevelBase : MonoBehaviour {
                         }
                     }
                     break;
-                case enumDebug_LevelDrawMode.DrawOccupation:
+                case GameManager.enumDebug_LevelDrawMode.DrawOccupation:
                     {
                         switch (m_AllTiles[i].E_Occupation)
                         {
