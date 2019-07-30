@@ -200,7 +200,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         }, bigMapSeed);
 
         //Load All map Levels And Set Material
-        LevelItemBase[] levelItemPrefabs = TResources.GetAllLevelItems(_levelStyle,null);
+        Dictionary<enum_LevelItemType,List<LevelItemBase>> levelItemPrefabs = TResources.GetAllLevelItems(_levelStyle,null);
         Dictionary<LevelItemBase, int> maxItemCountDic = new Dictionary<LevelItemBase, int>();
         LevelBase levelPrefab = TResources.GetLevelPrefab(_levelStyle);
         SBigmapLevelInfo[,] m_MapLevelInfo = new SBigmapLevelInfo[bigmapTiles.GetLength(0), bigmapTiles.GetLength(1)];      //Generate Bigmap Info
@@ -223,11 +223,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
                     });
                 }
             }
-        for (int i = 0; i < levelItemPrefabs.Length; i++)
-        {
-            if (!maxItemCountDic.ContainsKey(levelItemPrefabs[i]))
-                GameObject.Destroy(levelItemPrefabs[i].gameObject);
-        }
+
         ObjectManager.RegisterLevelItem(maxItemCountDic);
         return m_MapLevelInfo;
     }

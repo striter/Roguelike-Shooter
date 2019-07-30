@@ -767,7 +767,7 @@ namespace GameSetting
         {
             m_Connections = tile.m_Connections;
         }
-        public Dictionary<LevelItemBase, int> GenerateMap(Transform _levelParent,LevelBase prefab,SLevelGenerate innerData,SLevelGenerate outerData, LevelItemBase[] _levelItemPrefabs,System.Random seed)
+        public Dictionary<LevelItemBase, int> GenerateMap(Transform _levelParent,LevelBase prefab,SLevelGenerate innerData,SLevelGenerate outerData, Dictionary<enum_LevelItemType,List<LevelItemBase>> _levelItemPrefabs,System.Random seed)
         {
             m_LevelParent = _levelParent;
             m_Level =  GameObject.Instantiate(prefab, _levelParent);
