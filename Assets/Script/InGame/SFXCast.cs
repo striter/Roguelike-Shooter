@@ -147,7 +147,7 @@ public class SFXCast : SFXBase,ISingleCoroutine {
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        if (UnityEditor.EditorApplication.isPlaying && !GameManager.Instance.B_GameDebugGizmos)
+        if (UnityEditor.EditorApplication.isPlaying && !GameManager.Instance.B_PhysicsDebugGizmos)
             return;
         Gizmos.color = GetGizmosColor();
         Gizmos_Extend.DrawArrow(CastTransform.position,Quaternion.LookRotation(CastTransform.forward),new Vector3(V3_CastSize.x/10,V3_CastSize.y/10,F_CastLength / 4));

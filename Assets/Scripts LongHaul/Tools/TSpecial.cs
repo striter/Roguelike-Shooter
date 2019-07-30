@@ -10,9 +10,13 @@ namespace TTiles
     {
         Invalid = -1,
         Top=0,
-        Right=1,
-        Bottom=2,
-        Left=3,
+        TopRight = 1,
+        Right =2,
+        BottomRight = 3,
+        Bottom =4,
+        BottomLeft = 5,
+        Left =6,
+        TopLeft = 7,
     }
     public interface ITileAxis
     {
@@ -41,6 +45,8 @@ namespace TTiles
         {
             return base.GetHashCode();
         }
+        public static readonly TileAxis Zero = new TileAxis(0, 0);
+            
     }
 
     public static class TTiles
@@ -55,15 +61,11 @@ namespace TTiles
             return tileAxis.X >= 0 && tileAxis.X < range.GetLength(0) && tileAxis.Y >= 0 && tileAxis.Y < range.GetLength(1);
         }
 
-        public static float SqrMagnitude(this TileAxis sourceAxis, TileAxis targetAxis)
-        {
-            return Vector2.SqrMagnitude(new Vector2(sourceAxis.X, sourceAxis.Y) - new Vector2(targetAxis.X, targetAxis.Y));
-        }
+        public static float SqrMagnitude(this TileAxis sourceAxis, TileAxis targetAxis)=> Vector2.SqrMagnitude(new Vector2(sourceAxis.X, sourceAxis.Y) - new Vector2(targetAxis.X, targetAxis.Y));
 
-        public static int AxisOffset(this TileAxis sourceAxis, TileAxis targetAxis)
-        {
-            return Mathf.Abs(sourceAxis.X - targetAxis.X) + Mathf.Abs(sourceAxis.Y - targetAxis.Y);
-        }
+        public static int AxisOffset(this TileAxis sourceAxis, TileAxis targetAxis)=>Mathf.Abs(sourceAxis.X - targetAxis.X) + Mathf.Abs(sourceAxis.Y - targetAxis.Y);
+
+        public static int AddUp(this TileAxis sourceAxis) => sourceAxis.X + sourceAxis.Y;
 
         public static enum_TileDirection DirectionInverse(this enum_TileDirection direction)
         {
@@ -77,6 +79,14 @@ namespace TTiles
                     return enum_TileDirection.Left;
                 case enum_TileDirection.Left:
                     return enum_TileDirection.Right;
+                case enum_TileDirection.TopLeft:
+                    return enum_TileDirection.BottomRight;
+                case enum_TileDirection.TopRight:
+                    return enum_TileDirection.BottomLeft;
+                case enum_TileDirection.BottomLeft:
+                    return enum_TileDirection.TopRight;
+                case enum_TileDirection.BottomRight:
+                    return enum_TileDirection.TopLeft;
                 default:
                     Debug.LogError("Error Direction Here");
                     return enum_TileDirection.Invalid;
@@ -86,15 +96,12 @@ namespace TTiles
         public static enum_TileDirection OffsetDirection(this TileAxis sourceAxis, TileAxis targetAxis)
         {
             TileAxis offset = targetAxis - sourceAxis;
-            if (offset.X < 0 && offset.Y == 0)
-                return enum_TileDirection.Left;
-            if (offset.X > 0 && offset.Y == 0)
-                return enum_TileDirection.Right;
-            if (offset.X == 0 && offset.Y > 0)
-                return enum_TileDirection.Top;
-            if (offset.X == 0 && offset.Y < 0)
-                return enum_TileDirection.Bottom;
-
+            if (offset.X < 0)
+                return offset.Y == 0 ? enum_TileDirection.Left : offset.Y > 0 ? enum_TileDirection.TopLeft : enum_TileDirection.BottomLeft;
+            if (offset.X > 0)
+                return offset.Y == 0 ? enum_TileDirection.Right : offset.Y > 0 ? enum_TileDirection.TopRight : enum_TileDirection.BottomRight;
+            if (offset.X == 0)
+                return offset.Y == 0 ? enum_TileDirection.Invalid : offset.Y > 0 ? enum_TileDirection.Top : enum_TileDirection.Bottom;
             return enum_TileDirection.Invalid;
         }
 
@@ -111,11 +118,13 @@ namespace TTiles
                 case enum_TileDirection.Right:
                     return sourceAxis + new TileAxis(1, 0);
             }
-            Debug.LogError("Invlaid Direction Detected");
+            Debug.LogError("Invlaid Direction Detected:"+direction);
             return new TileAxis(0,0);
         }
 
-        public static readonly List<enum_TileDirection> m_AllDirections = new List<enum_TileDirection>() { enum_TileDirection.Top, enum_TileDirection.Right,enum_TileDirection.Bottom, enum_TileDirection.Left};
+        public static readonly List<enum_TileDirection> m_FourDirections = new List<enum_TileDirection>() { enum_TileDirection.Top, enum_TileDirection.Right,enum_TileDirection.Bottom, enum_TileDirection.Left};
+
+        public static readonly List<enum_TileDirection> m_EightDirecitons = new List<enum_TileDirection>() { enum_TileDirection.Top, enum_TileDirection.Right, enum_TileDirection.Bottom, enum_TileDirection.Left, enum_TileDirection.TopLeft, enum_TileDirection.TopRight, enum_TileDirection.BottomLeft, enum_TileDirection.BottomRight };
 
         public static void PathFindForClosestApproch<T>(this T[,] tileArray, T t1, T t2, List<T> tilePathsAdd,Action<T> OnEachTilePath=null, Predicate<T> stopPredicate=null, Predicate<T> invalidPredicate=null) where T:class,ITileAxis
         {
@@ -173,7 +182,7 @@ namespace TTiles
 
             if (predicateTryCount == -1) predicateTryCount = int.MaxValue;
 
-            List<enum_TileDirection> edgesRandom = new List<enum_TileDirection>(m_AllDirections) { };
+            List<enum_TileDirection> edgesRandom = new List<enum_TileDirection>(m_FourDirections) { };
             if (edgeOutcluded!=null) edgesRandom.RemoveAll(p=>edgeOutcluded.Contains(p));
             
             int axisX=-1,axisY=-1;
@@ -231,7 +240,7 @@ namespace TTiles
             for (int i = 0; i < fillCount; i++)
             {
                 T temp = targetList[i];
-                m_AllDirections.TraversalRandom((enum_TileDirection randomDirection) => {
+                m_FourDirections.TraversalRandom((enum_TileDirection randomDirection) => {
                     TileAxis axis = temp.m_TileAxis.DirectionAxis(randomDirection);
                     if (axis.InRange(tileArray))
                     {

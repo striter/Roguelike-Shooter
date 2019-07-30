@@ -18,7 +18,6 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
     WeaponAimAssistStraight m_Assist = null;
     bool B_HaveAmmoLeft => m_WeaponInfo.m_ClipAmount == -1 || I_AmmoLeft > 0;
     Func<float,float> OnWeaponTickDelta;
-    float f_actionPause;
     public void Init(SWeapon weaponInfo)
     {
         tf_Muzzle = transform.Find("Muzzle");

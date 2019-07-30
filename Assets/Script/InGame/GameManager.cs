@@ -9,11 +9,65 @@ using UnityEngine.AI;
 
 public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
 {
+#if UNITY_EDITOR
+    #region Test
+    public enum enumDebug_LevelDrawMode
+    {
+        DrawTypes,
+        DrawWorldDirection,
+        DrawOccupation,
+        DrawItemDirection,
+    }
+    public bool B_PhysicsDebugGizmos = true;
+    public bool B_LevelDebugGizmos = true;
+    public enumDebug_LevelDrawMode E_LevelDebug = enumDebug_LevelDrawMode.DrawTypes;
     public enum_Style Test_TileStyle = enum_Style.Desert;
     public enum_Style Test_EntityStyle = enum_Style.Invalid;
     public string M_TESTSEED = "";
-    public bool B_TestMode { get; private set; }
-    public bool B_GameDebugGizmos = true;
+    public int Z_TestEntityIndex = 221;
+    public int TestEntityBuffApplyOnSpawn = 1;
+    public int X_TestCastIndex = 30003;
+    public int C_TestProjectileIndex = 29001;
+    public int V_TestIndicatorIndex = 50002;
+    public int B_TestBuffIndex = 1;
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.BackQuote))
+            Time.timeScale = Time.timeScale == 1f ? .1f : 1f;
+
+        RaycastHit hit = new RaycastHit();
+        if (Input.GetKeyDown(KeyCode.Z) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
+        {
+            EntityBase enermy = ObjectManager.SpawnEntity(Z_TestEntityIndex, hit.point);
+            enermy.OnActivate();
+            if (TestEntityBuffApplyOnSpawn > 0)
+                enermy.OnReceiveBuff(TestEntityBuffApplyOnSpawn);
+        }
+        if (Input.GetKeyDown(KeyCode.X) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
+            ObjectManager.SpawnDamageSource<SFXCast>(X_TestCastIndex, hit.point, Vector3.up).Play(1000, DamageBuffInfo.Create());
+        if (Input.GetKeyDown(KeyCode.C) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
+            ObjectManager.SpawnDamageSource<SFXProjectile>(C_TestProjectileIndex, hit.point + Vector3.up, m_LocalPlayer.transform.forward).Play(0, m_LocalPlayer.transform.forward, hit.point + m_LocalPlayer.transform.forward * 10, DamageBuffInfo.Create());
+        if (Input.GetKeyDown(KeyCode.V) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
+            ObjectManager.SpawnCommonIndicator(V_TestIndicatorIndex, hit.point + Vector3.up, Vector3.up).Play(1000);
+        if (Input.GetKeyDown(KeyCode.B))
+            m_LocalPlayer.OnReceiveBuff(B_TestBuffIndex);
+        if (Input.GetKeyDown(KeyCode.N))
+            m_LocalPlayer.BroadcastMessage("OnReceiveDamage", new DamageInfo(20, enum_DamageType.Projectile));
+        if (Input.GetKeyDown(KeyCode.M))
+            m_LocalPlayer.BroadcastMessage("OnReceiveDamage", new DamageInfo(-50, enum_DamageType.Projectile));
+        if (Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            List<EntityBase> entities = m_Entities.Values.ToList();
+            entities.Traversal((EntityBase entity) => {
+                if (!entity.B_IsPlayer)
+                    entity.BroadcastMessage("OnReceiveDamage", new DamageInfo(entity.m_EntityInfo.F_MaxHealth + entity.m_EntityInfo.F_MaxArmor, enum_DamageType.DOT));
+            });
+        }
+
+        UIManager.instance.transform.Find("SeedTest").GetComponent<UnityEngine.UI.Text>().text = m_SeedString;
+    }
+#endregion
+#endif
 
     public EntityBase m_LocalPlayer { get; private set; } = null;
     public static CPlayerSave m_PlayerInfo { get; private set; }
@@ -21,9 +75,6 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     public string m_SeedString { get; private set; } = null;
     protected override void Awake()
     {
-#if UNITY_EDITOR
-        B_TestMode = true;
-#endif
         instance = this;
         DataManager.Init();
         ObjectManager.Init();
@@ -35,50 +86,6 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnSpawnEntity, OnSpawnEntity);
         TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnRecycleEntity, OnRecycleEntity);
         TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnRecycleEntity, OnWaveEntityDead);
-    }
-    public int Z_TestEntityIndex = 221;
-    public int TestEntityBuffApplyOnSpawn = 1;
-    public int X_TestCastIndex = 30003;
-    public int C_TestProjectileIndex = 29001;
-    public int V_TestIndicatorIndex = 50002;
-    public int B_TestBuffIndex = 1;
-    void Update()
-    {
-        if (!B_TestMode)
-            return;
-        if (Input.GetKeyDown(KeyCode.BackQuote))
-            Time.timeScale = Time.timeScale == 1f ? .1f : 1f;
-
-        RaycastHit hit = new RaycastHit();
-        if (Input.GetKeyDown(KeyCode.Z) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
-        {
-           EntityBase enermy= ObjectManager.SpawnEntity(Z_TestEntityIndex, hit.point);
-            enermy.OnActivate();
-            if(TestEntityBuffApplyOnSpawn>0)
-                enermy.OnReceiveBuff(TestEntityBuffApplyOnSpawn);
-        }
-        if (Input.GetKeyDown(KeyCode.X) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
-            ObjectManager.SpawnDamageSource<SFXCast>(X_TestCastIndex, hit.point, Vector3.up).Play(1000,DamageBuffInfo.Create());
-        if (Input.GetKeyDown(KeyCode.C) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
-            ObjectManager.SpawnDamageSource<SFXProjectile>(C_TestProjectileIndex, hit.point + Vector3.up , m_LocalPlayer.transform.forward).Play(0, m_LocalPlayer.transform.forward, hit.point+m_LocalPlayer.transform.forward*10,DamageBuffInfo.Create());
-        if (Input.GetKeyDown(KeyCode.V) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
-            ObjectManager.SpawnCommonIndicator(V_TestIndicatorIndex, hit.point + Vector3.up, Vector3.up).Play(1000);
-        if (Input.GetKeyDown(KeyCode.B))
-            m_LocalPlayer.OnReceiveBuff(B_TestBuffIndex);
-        if(Input.GetKeyDown(KeyCode.N))
-            m_LocalPlayer.BroadcastMessage("OnReceiveDamage",new DamageInfo(  20, enum_DamageType.Projectile));
-        if (Input.GetKeyDown(KeyCode.M))
-            m_LocalPlayer.BroadcastMessage("OnReceiveDamage", new DamageInfo(-50, enum_DamageType.Projectile));
-        if (Input.GetKeyDown(KeyCode.Alpha0))
-        {
-            List<EntityBase> entities = m_Entities.Values.ToList();
-            entities.Traversal((EntityBase entity) => {
-                if (!entity.B_IsPlayer)
-                    entity.BroadcastMessage("OnReceiveDamage",new DamageInfo(  entity.m_EntityInfo.F_MaxHealth + entity.m_EntityInfo.F_MaxArmor, enum_DamageType.DOT));
-            });
-        }
-
-        UIManager.instance.transform.Find("SeedTest").GetComponent<UnityEngine.UI.Text>().text = m_SeedString;
     }
     private void OnDestroy()
     {
@@ -297,17 +304,17 @@ public static class DataManager
 {
     public static void Init()
     {
-        Properties<SGenerateItem>.Init();
+        Properties<SLevelGenerate>.Init();
         Properties<SGenerateEntity>.Init();
         Properties<SWeapon>.Init();
         Properties<SEntity>.Init();
         Properties<SBuff>.Init();
     }
-    public static SGenerateItem GetItemGenerateProperties(enum_Style style,enum_LevelType prefabType)
+    public static SLevelGenerate GetItemGenerateProperties(enum_Style style,enum_LevelGenerateType prefabType,bool isInner)
     {
-        SGenerateItem generate = Properties<SGenerateItem>.PropertiesList.Find(p => p.m_LevelStyle == style && p.m_LevelPrefabType == prefabType);
+        SLevelGenerate generate = Properties<SLevelGenerate>.PropertiesList.Find(p => p.m_LevelStyle == style && p.m_LevelPrefabType == prefabType&&p.m_IsInner==isInner);
         if (generate.m_LevelStyle == 0 || generate.m_LevelPrefabType == 0||generate.m_ItemGenerate==null)
-            Debug.LogError("Error Properties Found Of Index:" + ((int)style*10+ (int)prefabType).ToString());
+            Debug.LogError("Error Properties Found Of Index:" + ((int)style*100+ (int)prefabType*10+(isInner?0:1)).ToString());
 
          return generate;
     }

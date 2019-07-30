@@ -15,7 +15,7 @@ public class LevelItemBase : MonoBehaviour {
         m_LevelParent = levelParent;
         tf_Model = transform.Find("Model");
         ItemRecenter(direction == enum_TileDirection.Right || direction == enum_TileDirection.Left);
-        tf_Model.localRotation = Quaternion.Euler(0, (int)direction * 90, 0);
+        tf_Model.localRotation = Quaternion.Euler(0, (int)direction * 45, 0);
         transform.SetActivate(true);
     }
 
@@ -24,7 +24,6 @@ public class LevelItemBase : MonoBehaviour {
         transform.GetChild(0).localPosition = new Vector3(((inverse?m_sizeYAxis:m_sizeXAxis) - 1) * GameConst.F_LevelTileSize, 0f, ((inverse ? m_sizeXAxis:m_sizeYAxis) - 1) * GameConst.F_LevelTileSize) / 2;
     }
 #if UNITY_EDITOR
-    LevelBase baseTarget;
     public bool b_showGizmos = true;
     public bool b_AutoCenter = true;
     public bool b_AutoRotation = true;

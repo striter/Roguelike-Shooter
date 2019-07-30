@@ -89,7 +89,7 @@ public class UI_BigmapControl : UIPageBase {        //This Page Won't Hide(One P
         bigMap.Traversal((SBigmapLevelInfo levelInfo) => {
             UIGI_BigmapLevelInfo infoUI = gc_BigMapController.GetItem(UIBigmapTileIndex(levelInfo.m_TileAxis, bigMap.GetLength(0), bigMap.GetLength(1)));
             Dictionary<enum_TileDirection, bool> connectionActivate = new Dictionary<enum_TileDirection, bool>();
-            foreach (enum_TileDirection direction in TTiles.TTiles.m_AllDirections)
+            foreach (enum_TileDirection direction in TTiles.TTiles.m_FourDirections)
             {
                 connectionActivate.Add(direction, levelInfo.m_Connections.ContainsKey(direction)
                     && levelInfo.m_Connections[direction].X != -1

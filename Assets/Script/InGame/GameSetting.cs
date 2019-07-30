@@ -37,9 +37,9 @@ namespace GameSetting
 
     public static class GameExpression
     {
-        public static Vector3 V3_TileWorldOffset(TileAxis axis) => new Vector3(axis.X * GameConst.F_LevelTileSize, 0, axis.Y * GameConst.F_LevelTileSize);
+        public static Vector3 V3_TileAxisOffset(TileAxis axis) => new Vector3(axis.X * GameConst.F_LevelTileSize, 0, axis.Y * GameConst.F_LevelTileSize);
         public static float F_BigmapYaw(Vector3 direction) => TCommon.GetAngle(direction, Vector3.forward, Vector3.up);         //Used For Bigmap Direction
-        public static enum_TileDirection E_BigmapDirection(Vector3 direction)  //Top 135-225    Right 45 - 135  Bottom 135 - -135 Right -135 - -45
+        public static enum_TileDirection E_BigMapFourDirection(Vector3 direction)  //Top 135-225    Right 45 - 135  Bottom 135 - -135 Right -135 - -45
         {
             float angle = F_BigmapYaw(direction);       //0-360
             if (angle <= 45 && angle > -45)
@@ -101,17 +101,17 @@ namespace GameSetting
 
     public static class Enum_Relative
     {
-        public static enum_LevelType ToPrefabType(this enum_TileType type)
+        public static enum_LevelGenerateType ToPrefabType(this enum_TileType type)
         {
             switch (type)
             {
-                default: Debug.LogError("Please Edit This Please:" + type.ToString()); return enum_LevelType.Invalid;
+                default: Debug.LogError("Please Edit This Please:" + type.ToString()); return enum_LevelGenerateType.Invalid;
                 case enum_TileType.Battle:
                 case enum_TileType.End:
-                    return enum_LevelType.Big;
+                    return enum_LevelGenerateType.Big;
                 case enum_TileType.Reward:
                 case enum_TileType.Start:
-                    return enum_LevelType.Small;
+                    return enum_LevelGenerateType.Small;
             }
         }
         public static int ToLayer(this enum_HitCheck layerType)
@@ -164,11 +164,13 @@ namespace GameSetting
 
     public enum enum_TileType { Invalid = -1, Start = 0, Battle = 1, End = 2, Reward = 3, }
 
-    public enum enum_LevelItemType { Invalid = -1, LargeMore, LargeLess, MediumMore, MediumLess, SmallMore, SmallLess, ManmadeMore, ManmadeLess, NoCollisionMore, NoCollisionLess, }
+    public enum enum_LevelItemType { Invalid = -1, LargeMore, LargeLess, MediumMore, MediumLess, SmallMore, SmallLess, ManmadeMore, ManmadeLess, NoCollisionMore, NoCollisionLess,BorderBlock, }
 
-    public enum enum_LevelTileType { Invaid = -1, Empty, Main, Item, Portal, }
+    public enum enum_LevelTileType { Invaid = -1, Empty, Main,Border, Item, Portal, }
 
-    public enum enum_LevelType {Invalid=-1,Big=1,Small=2}
+    public enum enum_LevelTileOccupy { Invalid = -1, Inner, Outer, Border, }
+
+    public enum enum_LevelGenerateType { Invalid = -1, Big = 1, Small = 2 }
 
     public enum enum_EntityType { Invalid = -1, Fighter = 1, Shooter = 2, AOECaster = 3, Elite = 4 }
 
@@ -737,15 +739,13 @@ namespace GameSetting
         public TileAxis m_TileAxis => m_Tile;
         protected TileAxis m_Tile { get; private set; }
         public enum_TileType m_TileType { get; private set; } = enum_TileType.Invalid;
-        public enum_Style m_LevelStyle { get; private set; } = enum_Style.Invalid;
         public enum_TileLocking m_TileLocking { get; private set; } = enum_TileLocking.Invalid;
         public Dictionary<enum_TileDirection, TileAxis> m_Connections { get; protected set; } = new Dictionary<enum_TileDirection, TileAxis>();
 
-        public SBigmapTileInfo(TileAxis _tileAxis, enum_TileType _tileType, enum_Style _tileStyle, enum_TileLocking _tileLocking)
+        public SBigmapTileInfo(TileAxis _tileAxis, enum_TileType _tileType, enum_TileLocking _tileLocking)
         {
             m_Tile = _tileAxis;
             m_TileType = _tileType;
-            m_LevelStyle = _tileStyle;
             m_TileLocking = _tileLocking;
         }
         public void ResetTileType(enum_TileType _tileType)
@@ -763,11 +763,11 @@ namespace GameSetting
     {
         protected Transform m_LevelParent;
         public LevelBase m_Level { get; private set; } = null;
-        public SBigmapLevelInfo(SBigmapTileInfo tile) : base(tile.m_TileAxis, tile.m_TileType, tile.m_LevelStyle,tile.m_TileLocking)
+        public SBigmapLevelInfo(SBigmapTileInfo tile) : base(tile.m_TileAxis, tile.m_TileType,tile.m_TileLocking)
         {
             m_Connections = tile.m_Connections;
         }
-        public Dictionary<LevelItemBase, int> GenerateMap(Transform _levelParent,int innerLength,int outerLength,LevelBase prefab,SGenerateItem generate, LevelItemBase[] _levelItemPrefabs,System.Random seed)
+        public Dictionary<LevelItemBase, int> GenerateMap(Transform _levelParent,LevelBase prefab,SLevelGenerate innerData,SLevelGenerate outerData, LevelItemBase[] _levelItemPrefabs,System.Random seed)
         {
             m_LevelParent = _levelParent;
             m_Level =  GameObject.Instantiate(prefab, _levelParent);
@@ -775,7 +775,7 @@ namespace GameSetting
             m_Level.transform.localPosition = Vector3.zero;
             m_Level.transform.localScale = Vector3.one;
             m_Level.SetActivate(false);
-            return m_Level.Init(innerLength,outerLength, generate, _levelItemPrefabs, m_TileType, seed, m_Connections.Keys.ToList().Find(p => m_Connections[p] == new TileAxis(-1, -1)));        //Add Portal For Level End
+            return m_Level.Init( innerData,outerData, _levelItemPrefabs, m_TileType, seed, m_Connections.Keys.ToList().Find(p => m_Connections[p] == new TileAxis(-1, -1)));        //Add Portal For Level End
         }
         public void StartLevel()
         {
@@ -789,18 +789,21 @@ namespace GameSetting
     public class LevelTile 
     {
         public TileAxis m_TileAxis;
-        public Vector3 m_Offset => GameExpression.V3_TileWorldOffset(m_TileAxis);
+        public Vector3 m_Offset => GameExpression.V3_TileAxisOffset(m_TileAxis);
         public virtual enum_LevelTileType E_TileType => enum_LevelTileType.Empty;
-        public enum_TileDirection E_Direction { get; private set; } = enum_TileDirection.Invalid;
-        public LevelTile(TileAxis _axis ,enum_TileDirection _direction) 
+        public enum_TileDirection E_WorldDireciton { get; private set; } = enum_TileDirection.Invalid;
+        public enum_LevelTileOccupy E_Occupation { get; private set; } = enum_LevelTileOccupy.Invalid;
+        public LevelTile(TileAxis _axis ,enum_TileDirection _direction,enum_LevelTileOccupy _occupy) 
         {
-            E_Direction = _direction;
+            E_WorldDireciton = _direction;
             m_TileAxis = _axis;
+            E_Occupation = _occupy;
         }
         public LevelTile(LevelTile tile)
         {
             m_TileAxis = tile.m_TileAxis;
-            E_Direction = tile.E_Direction;
+            E_WorldDireciton = tile.E_WorldDireciton;
+            E_Occupation = tile.E_Occupation;
         }
     }
     public class LevelTilePortal : LevelTile
@@ -837,6 +840,13 @@ namespace GameSetting
             m_LevelItemType = levelItemType;
             m_AreaTiles = _AreaTiles;
             m_ItemDirection = _ItemDirection;
+        }
+    }
+    class LevelTileBorder : LevelTileItemMain
+    {
+        public override enum_LevelTileType E_TileType => enum_LevelTileType.Border;
+        public LevelTileBorder(LevelTile current, int levelItemListIndex, enum_LevelItemType levelItemType, enum_TileDirection _ItemDirection) : base(current,levelItemListIndex,levelItemType,_ItemDirection,null)
+        {
         }
     }
     #endregion
@@ -918,9 +928,10 @@ namespace GameSetting
         {
         }
     }
-    public struct SGenerateItem : ISExcel
+    public struct SLevelGenerate : ISExcel
     {
         string em_defines;
+        RangeInt ir_length;
         RangeInt ir_smallLess;
         RangeInt ir_smallMore;
         RangeInt ir_mediumLess;
@@ -931,14 +942,19 @@ namespace GameSetting
         RangeInt ir_manmadeMore;
         RangeInt ir_noCollisionLess;
         RangeInt ir_noCollisionMore;
+        public bool m_IsInner;
         public enum_Style m_LevelStyle;
+        public enum_LevelGenerateType m_LevelPrefabType;
         public Dictionary<enum_LevelItemType, RangeInt> m_ItemGenerate;
-        public enum_LevelType m_LevelPrefabType;
+        public RangeInt m_Length => ir_length;
         public void InitOnValueSet()
         {
             string[] defineSplit = em_defines.Split('_');
+            if (defineSplit.Length != 3)
+                Debug.LogError("Please Corret Format Of DefineSplit:" +em_defines   );
             m_LevelStyle = (enum_Style)(int.Parse(defineSplit[0]));
-            m_LevelPrefabType = (enum_LevelType)(int.Parse(defineSplit[1]));
+            m_LevelPrefabType = (enum_LevelGenerateType)(int.Parse(defineSplit[1]));
+            m_IsInner = int.Parse(defineSplit[2]) == 1;
             m_ItemGenerate = new Dictionary<enum_LevelItemType, RangeInt>(); 
             m_ItemGenerate.Add(enum_LevelItemType.LargeLess, ir_largeLess);
             m_ItemGenerate.Add(enum_LevelItemType.LargeMore, ir_largeMore);

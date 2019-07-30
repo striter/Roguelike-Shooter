@@ -17,8 +17,8 @@ public class UIGI_BigmapLevelInfo : UIT_GridItem {
         img_Level = tf_Container.Find("Level").GetComponent<Image>();
         btn_ChangeLevel = tf_Container.Find("ChangeLevel").GetComponent<Button>();
         btn_ChangeLevel.onClick.AddListener(OnChangeLevelBtnClick);
-        for (int i = 0; i < TTiles.TTiles.m_AllDirections.Count; i++)
-            dic_TileConnections.Add(TTiles.TTiles.m_AllDirections[i],tf_Container.Find(TTiles.TTiles.m_AllDirections[i].ToString()).GetComponent<Image>());
+        for (int i = 0; i < TTiles.TTiles.m_FourDirections.Count; i++)
+            dic_TileConnections.Add(TTiles.TTiles.m_FourDirections[i],tf_Container.Find(TTiles.TTiles.m_FourDirections[i].ToString()).GetComponent<Image>());
     }
     public void Init(Action<TileAxis> _OnChangeLevelClick)
     {
@@ -29,7 +29,7 @@ public class UIGI_BigmapLevelInfo : UIT_GridItem {
         m_CurrentAxis = levelInfo.m_TileAxis;
         tf_Container.localScale = levelInfo.m_TileLocking == enum_TileLocking.Locked ? Vector3.zero : Vector3.one;
         img_Level.color = UIExpression.BigmapTileColor(levelInfo.m_TileLocking,levelInfo.m_TileType);
-        foreach (enum_TileDirection direction in TTiles.TTiles.m_AllDirections)
+        foreach (enum_TileDirection direction in TTiles.TTiles.m_FourDirections)
             dic_TileConnections[direction].SetActivate(connectionActivate[direction]);
     }
 
