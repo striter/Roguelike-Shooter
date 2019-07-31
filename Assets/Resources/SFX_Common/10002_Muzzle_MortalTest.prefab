@@ -370,8 +370,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cef150d9d320d5f4d9d84b7c1484b47b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  F_Speed: 10
-  F_PlayTime: 5
+  F_Speed: 20
+  F_PlayTime: 4
 --- !u!198 &198153468665486492
 ParticleSystem:
   m_ObjectHideFlags: 1
