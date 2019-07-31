@@ -277,13 +277,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   E_ProjectileType: 1
   F_Damage: 10
-  F_Speed: 8
+  F_Speed: 4
   I_MuzzleIndex: 10001
   I_ImpactIndex: 0
   I_IndicatorIndex: 50002
   I_BufFApplyOnHit: 0
   F_Radius: 0.15
   F_Height: 1.5
+  B_TargetReachBlink: 0
   F_DirectionPitchAngle: 80
   B_RandomRotation: 0
   B_Bounce: 0
