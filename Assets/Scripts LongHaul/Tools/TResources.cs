@@ -18,7 +18,6 @@ public class TResources
         public const string S_Entity = "Entity/";
         public const string S_SFXCommon = "SFX_Common/";
         public const string S_SFXEnermyWeapon = "SFX_EnermyWeapon/";
-
     }
     
     public static StyleColorData[] GetAllStyleCustomization(enum_Style levelStype) => LoadAll<StyleColorData>(ConstPath.S_StyleCustomization + "/" + levelStype);
@@ -32,7 +31,10 @@ public class TResources
         }
         LevelItemBase[] instantiatedLevelItem = new LevelItemBase[levelItemPrefabs.Length];
         for (int i = 0; i < levelItemPrefabs.Length; i++)
+        {
             instantiatedLevelItem[i] = GameObject.Instantiate(levelItemPrefabs[i], parent);
+            instantiatedLevelItem[i].SetActivate(false);
+        }
 
         Dictionary<enum_LevelItemType, List<LevelItemBase>> itemPrefabDic = new Dictionary<enum_LevelItemType, List<LevelItemBase>>();
         foreach (LevelItemBase levelItem in instantiatedLevelItem)

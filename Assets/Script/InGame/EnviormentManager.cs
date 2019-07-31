@@ -214,16 +214,16 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
                     SLevelGenerate innerData = DataManager.GetItemGenerateProperties(_levelStyle, generateType, true);
                     SLevelGenerate outerData = DataManager.GetItemGenerateProperties(_levelStyle, generateType, false);
 
-                    Dictionary<LevelItemBase,int> itemCountDic=m_MapLevelInfo[i, j].GenerateMap(_generateParent,levelPrefab,innerData,outerData,levelItemPrefabs,bigMapSeed);
+                    Dictionary<LevelItemBase, int> itemCountDic = m_MapLevelInfo[i, j].GenerateMap(_generateParent, levelPrefab, innerData, outerData, levelItemPrefabs, bigMapSeed);
                     itemCountDic.Traversal((LevelItemBase item, int count) => {
                         if (!maxItemCountDic.ContainsKey(item))
-                            maxItemCountDic.Add( item, 0);
+                            maxItemCountDic.Add(item, 0);
                         if (maxItemCountDic[item] < count)
                             maxItemCountDic[item] = count;
                     });
                 }
             }
-
+        
         ObjectManager.RegisterLevelItem(maxItemCountDic);
         return m_MapLevelInfo;
     }

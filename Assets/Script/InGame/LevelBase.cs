@@ -99,27 +99,38 @@ public class LevelBase : MonoBehaviour {
 
     void GenerateBorderTile(List<int> borderTiles)
     {
-        borderTiles.Traversal((System.Action<int>)((int tileIndex) => {
-            LevelTile borderTile = m_AllTiles[tileIndex];
-            List<TileAxis> nearbyTiles = new List<TileAxis>();
-            borderTiles.Traversal((int nearbyIndex)=> {
-                if (nearbyIndex == tileIndex)
-                    return;
-                LevelTile nearbyTile = m_AllTiles[nearbyIndex];
-                if (nearbyTile.m_TileAxis.AxisOffset(borderTile.m_TileAxis) == 1)
-                    nearbyTiles.Add(nearbyTile.m_TileAxis);
-            });
-
-            if (nearbyTiles.Count == 2)
+        List<int> sortedBorder = new List<int>();
+        //Selected The First Direction
+        sortedBorder.Add(borderTiles[0]);
+        for (int i = 1; i < borderTiles.Count; i++)
+        {
+            if (m_AllTiles[borderTiles[i]].m_TileAxis.AxisOffset(m_AllTiles[ sortedBorder[0]].m_TileAxis) == 1)
             {
-                enum_TileDirection linearDirection = nearbyTiles[0].OffsetDirection(nearbyTiles[1]);
-                enum_TileDirection obliqueDirection = TileAxis.Zero.OffsetDirection(borderTile.m_TileAxis);
-                bool isOblique = !TTiles.TTiles.m_FourDirections.Contains(linearDirection);
-                m_AllTiles[tileIndex] = new LevelTileBorder(m_AllTiles[tileIndex], 0, isOblique ? enum_LevelItemType.BorderOblique : enum_LevelItemType.BorderLinear, isOblique ? obliqueDirection : linearDirection);
+                sortedBorder.Add(borderTiles[i]);
+                break;
             }
-            else
-                borderTiles.Remove(tileIndex);
-        }));
+        }
+        if (sortedBorder.Count != 2)
+            Debug.LogError("Error Border Sort!");
+
+        for (int i = 1; i < borderTiles.Count-1; i++)
+        {
+            borderTiles.Traversal((int tileIndex) => {
+                if (sortedBorder.Contains(tileIndex))
+                    return;
+
+                if (m_AllTiles[sortedBorder[i]].m_TileAxis.AxisOffset(m_AllTiles[tileIndex].m_TileAxis) == 1)
+                    sortedBorder.Add(tileIndex);
+            });
+        }
+
+        for (int i = 0; i < sortedBorder.Count; i++)
+        {
+            LevelTile tile1 = m_AllTiles[ sortedBorder[(sortedBorder.Count+ i-1)%sortedBorder.Count]];
+            LevelTile tile2 = m_AllTiles[sortedBorder[(i + 1) % sortedBorder.Count]];
+            enum_TileDirection direction = tile1.m_TileAxis.OffsetDirection(tile2.m_TileAxis);
+            m_AllTiles[sortedBorder[i]] = new LevelTileBorder(m_AllTiles[sortedBorder[i]], 0, TTiles.TTiles.m_FourDirections.Contains(direction) ? enum_LevelItemType.BorderLinear : enum_LevelItemType.BorderOblique ,direction);
+        }
     }
 
     void GenerateRangePortalTile(TileAxis origin, enum_TileDirection portalDirection, int minusRange)
@@ -284,13 +295,13 @@ public class LevelBase : MonoBehaviour {
                                     targetColor = TCommon.ColorAlpha(Color.blue, 1f);
                                     break;
                                 case enum_TileDirection.TopRight:
-                                    targetColor = TCommon.ColorAlpha(Color.yellow, 1f);
+                                    targetColor = TCommon.ColorAlpha(Color.green, 1f);
                                     break;
                                 case enum_TileDirection.BottomLeft:
                                     targetColor = TCommon.ColorAlpha(Color.red, 1f);
                                     break;
                                 case enum_TileDirection.BottomRight:
-                                    targetColor = TCommon.ColorAlpha(Color.green, 1f);
+                                    targetColor = TCommon.ColorAlpha(Color.yellow, 1f);
                                     break;
                             }
                         }

@@ -231,6 +231,8 @@ public class EWorkFlow_ModelAutoPrefabPackaging : EditorWindow
             GameObject modelParent = new GameObject("Model");
             modelParent.transform.SetParent(instantiatePrefab.transform);
             GameObject instantiateModel = GameObject.Instantiate(model, modelParent.transform);
+            if (instantiateModel.GetComponent<Animator>() != null)
+                DestroyImmediate(instantiateModel.GetComponent<Animator>());
             instantiateModel.name = instantiatePrefab.name;
             ProcessItemModel(instantiatePrefab, levelStyle);
 

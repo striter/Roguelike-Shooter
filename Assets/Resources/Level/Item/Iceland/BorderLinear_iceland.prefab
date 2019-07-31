@@ -52,7 +52,6 @@ GameObject:
   - component: {fileID: 4582637814997592}
   - component: {fileID: 33191857620873532}
   - component: {fileID: 23376837506209634}
-  - component: {fileID: 95073464397899152}
   - component: {fileID: 64444703472292684}
   - component: {fileID: 114359268944939214}
   m_Layer: 0
@@ -83,7 +82,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1095392256334822}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4582637814997592}
@@ -97,7 +96,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1781999842770658}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 1.2898021, z: 0.079942115}
+  m_LocalPosition: {x: -0, y: 0, z: 0.079942115}
   m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_Children: []
   m_Father: {fileID: 4279015184242766}
@@ -143,7 +142,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1781999842770658}
-  m_Mesh: {fileID: 4300000, guid: 4f2cb543ef406b74886e6c3dd0ab8bce, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 2b3491062675e5046bf6cb0ca82c3855, type: 3}
 --- !u!64 &64444703472292684
 MeshCollider:
   m_ObjectHideFlags: 1
@@ -157,24 +156,7 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 14
   m_SkinWidth: 0.01
-  m_Mesh: {fileID: 4300000, guid: 4f2cb543ef406b74886e6c3dd0ab8bce, type: 3}
---- !u!95 &95073464397899152
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1781999842770658}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 4f2cb543ef406b74886e6c3dd0ab8bce, type: 3}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
+  m_Mesh: {fileID: 4300000, guid: 2b3491062675e5046bf6cb0ca82c3855, type: 3}
 --- !u!114 &114359268944939214
 MonoBehaviour:
   m_ObjectHideFlags: 1

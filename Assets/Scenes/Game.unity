@@ -1774,10 +1774,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   B_PhysicsDebugGizmos: 0
-  B_LevelDebugGizmos: 0
-  E_LevelDebug: 0
-  Test_TileStyle: 2
-  Test_EntityStyle: 2
+  B_LevelDebugGizmos: 1
+  E_LevelDebug: 3
+  Test_TileStyle: 5
+  Test_EntityStyle: 5
   M_TESTSEED: 
   Z_TestEntityIndex: 306
   TestEntityBuffApplyOnSpawn: 0
