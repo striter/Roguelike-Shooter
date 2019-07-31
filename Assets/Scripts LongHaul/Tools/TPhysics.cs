@@ -89,8 +89,10 @@ namespace TPhysics
         bool B_SpeedOff => f_speed <= 0;
         protected Vector3 v3_RotateEuler;
         protected Vector3 v3_RotateDirection;
-        public ParacurveSimulator(Transform _transform, Vector3 _startPos, Vector3 _endPos, float _angle, float _horiSpeed, float _height, float _radius, bool randomRotation, int _hitLayer, bool bounce, float _bounceHitAngle, float _bounceSpeedMultiply, Action<RaycastHit[]> _onBounceHit) : base(_transform, _startPos, Vector3.zero, _height, _radius, _hitLayer, _onBounceHit)
+        Predicate<Collider> OnBounceCheck;
+        public ParacurveSimulator(Transform _transform, Vector3 _startPos, Vector3 _endPos, float _angle, float _horiSpeed, float _height, float _radius, bool randomRotation, int _hitLayer, bool bounce, float _bounceHitAngle, float _bounceSpeedMultiply, Action<RaycastHit[]> _onBounceHit, Predicate<Collider> _OnBounceCheck) : base(_transform, _startPos, Vector3.zero, _height, _radius, _hitLayer, _onBounceHit)
         {
+            OnBounceCheck = _OnBounceCheck;
             Vector3 horiDirection = TCommon.GetXZLookDirection(_startPos, _endPos);
             Vector3 horiRight = horiDirection.RotateDirection(Vector3.up, 90);
             m_Direction = horiDirection.RotateDirection(horiRight, -_angle);
@@ -129,7 +131,8 @@ namespace TPhysics
                     base.OnTargetHit(hitTargets);
                     return;
                 }
-
+                if (!OnBounceCheck(hitTargets[0].collider))
+                    return;
                 Vector3 bounceDirection = hitTargets[0].point == Vector3.zero ? Vector3.up : hitTargets[0].normal;
                 float bounceAngle = TCommon.GetAngle(bounceDirection, Vector3.up, Vector3.up);
                 if (bounceAngle > 15)
