@@ -38,7 +38,7 @@ GameObject:
   - component: {fileID: 33058841491056400}
   - component: {fileID: 23300661402704830}
   m_Layer: 0
-  m_Name: SF_Character_kejibudui4_zhadan1 (1)
+  m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -116,6 +116,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: 82a3a7b0045e9c84b8e9417abe8d6ffe, type: 2}
+  - {fileID: 2100000, guid: b831d20a270dccf4eaf1339a90b881fa, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -251,6 +252,8 @@ MonoBehaviour:
   F_Speed: 10
   I_MuzzleIndex: 0
   I_ImpactIndex: 40001
+  I_IndicatorIndex: 0
   I_BufFApplyOnHit: 0
   F_Radius: 0.5
-  F_Height: 2
+  F_Height: 0
+  B_TargetReachBlink: 1

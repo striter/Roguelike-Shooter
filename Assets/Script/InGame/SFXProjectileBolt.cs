@@ -8,7 +8,7 @@ public class SFXProjectileBolt : SFXProjectile {
         base.OnHitTarget(hit,entity);
         transform.SetParent(hit.collider.transform);
         m_Trail.enabled = false;
-        f_TimeCheck = Time.time + GameConst.I_BoltLastTimeAfterHit;
+        f_TimeCheck = Time.time + GameConst.I_BoltLastTimeAfterHit; 
         if(entity!=null&&entity.m_HitCheckType== enum_HitCheck.Entity)
             (entity as HitCheckEntity).AttachTransform(this);
     }

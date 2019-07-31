@@ -13,6 +13,7 @@ public class SFXProjectile : SFXBase
     public int I_IndicatorIndex;
     public int I_BufFApplyOnHit;
     public float F_Radius = .5f, F_Height = 1f;
+    public bool B_TargetReachBlink = false;
     protected PhysicsSimulator m_Simulator;
     protected TrailRenderer m_Trail;
     protected SFXIndicator m_Indicator;
@@ -23,6 +24,7 @@ public class SFXProjectile : SFXBase
     protected virtual bool B_DisablePhysicsOnHit => true;
     protected virtual bool B_HitMultiple => false;
     protected virtual bool B_DealDamage => true;
+    protected ProjectileBlink m_Blink;
     protected DamageInfo m_DamageInfo;
     protected virtual PhysicsSimulator GetSimulator(Vector3 direction, Vector3 targetPosition) => new ProjectilePhysicsSimulator(transform,transform.position, direction, Vector3.down, F_Speed, F_Height,F_Radius, GameLayer.Physics.I_All, OnPhysicsCasted);
     protected virtual void PlayIndicator(float duration) => m_Indicator.Play(I_SourceID,duration);
@@ -31,6 +33,18 @@ public class SFXProjectile : SFXBase
         base.Init(sfxIndex);
         m_Trail = transform.GetComponentInChildren<TrailRenderer>();
         m_DamageInfo = new DamageInfo(F_Damage, enum_DamageType.Projectile);
+        if (B_TargetReachBlink)
+        {
+            try
+            {
+                m_Blink = new ProjectileBlink(transform.Find("Model").GetComponent<Renderer>().materials[1], .25f, .25f);
+            }
+            catch
+            {
+                Debug.LogError("Error! Blink Model Init, Extra Material/Model Folder Required!" + gameObject.name);
+                m_Blink = null;
+            }
+        }
     }
 
     public virtual void Play(int sourceID, Vector3 direction, Vector3 targetPosition, DamageBuffInfo buffInfo)
@@ -53,6 +67,7 @@ public class SFXProjectile : SFXBase
         m_Trail.enabled = true;
         m_Trail.Clear();
         m_TargetHitted.Clear();
+
         if (E_ProjectileType == enum_EnermyWeaponProjectile.Invalid)
             Debug.LogError("Error Projectile Type Invalid");
         if (F_Damage <= 0)
@@ -70,12 +85,24 @@ public class SFXProjectile : SFXBase
             m_Indicator.ForceStop();
             m_Indicator = null;
         }
+        if (m_Blink!=null)
+            m_Blink.OnReset();
     }
     protected override void Update()
     {
         base.Update();
         if (m_Simulator!=null&&B_SimulatePhysics)
             m_Simulator.Simulate(Time.deltaTime);
+
+        if (m_Blink != null)
+        {
+            float timeLeft = f_TimeCheck - Time.time;
+            if (timeLeft < GameConst.I_ProjectileBlinkWhenTimeLeftLessThan)
+            {
+                float timeMultiply =2f*(1-timeLeft / GameConst.I_ProjectileBlinkWhenTimeLeftLessThan);
+                m_Blink.Tick(Time.deltaTime*timeMultiply);
+            }
+        }
     }
     #region Physics
     protected void OnPhysicsCasted(RaycastHit[] hitTargets)

@@ -145,7 +145,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: 0d67c10b45ccf564e93e32dc0637436d, type: 2}
-  - {fileID: 2100000, guid: 0d67c10b45ccf564e93e32dc0637436d, type: 2}
+  - {fileID: 2100000, guid: b831d20a270dccf4eaf1339a90b881fa, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -279,4 +279,5 @@ MonoBehaviour:
   I_BufFApplyOnHit: 0
   F_Radius: 0.2
   F_Height: 3.2
+  B_TargetReachBlink: 1
   F_DelayDuration: 1

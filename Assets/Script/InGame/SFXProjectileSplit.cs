@@ -20,8 +20,7 @@ public class SFXProjectileSplit : SFXProjectile {
     protected override void OnPlayFinished()
     {
         base.OnPlayFinished();
-        if(Physics.OverlapSphere(transform.position,.5f,GameLayer.Physics.I_Static).Length==0)
-            OnSplit();
+        OnSplit();
     }
     void OnSplit()
     {

@@ -1,6 +1,7 @@
 ﻿using GameSetting;
 using UnityEngine;
-public class SFXProjectileCastTrigger : SFXProjectile {
+public class SFXProjectileCastTrigger : SFXProjectile
+{
     protected override bool B_DealDamage => false;
     protected override float F_Duration(Vector3 startPos, Vector3 endPos) => Vector3.Distance(startPos, endPos) / F_Speed;
     protected bool b_trigger = false;
@@ -18,7 +19,7 @@ public class SFXProjectileCastTrigger : SFXProjectile {
     {
         if (b_trigger)
             return;
-        ObjectManager.SpawnDamageSource<SFXCast>(GameExpression.GetEnermyWeaponSubIndex(I_SFXIndex), transform.position, Vector3.up).Play(I_SourceID, m_DamageInfo.m_BuffApply);
+        ObjectManager.SpawnDamageSource<SFXCast>(GameExpression.GetEnermyWeaponSubIndex(I_SFXIndex), transform.position+transform.forward*F_Height, Vector3.up).Play(I_SourceID, m_DamageInfo.m_BuffApply);
         b_trigger = true;
     }
 }

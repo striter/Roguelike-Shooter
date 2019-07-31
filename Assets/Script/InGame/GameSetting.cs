@@ -12,6 +12,7 @@ namespace GameSetting
     public static class GameConst
     {
         public const int I_ProjectileMaxDistance = 100;
+        public const int I_ProjectileBlinkWhenTimeLeftLessThan = 3;
 
         public const short I_BoltLastTimeAfterHit = 5;
 
@@ -660,76 +661,37 @@ namespace GameSetting
          }
         public override Vector3 GetSimulatedPosition(float elapsedTime) =>b_lerpFinished?m_endPos:Vector3.Lerp(m_startPos, m_endPos, elapsedTime / f_totalTime);
     }
-    public class ThrowablePhysicsSimulator : PhysicsSimulatorCapsule
+    #endregion
+
+    #region GameEffects
+    public class ProjectileBlink:ISingleCoroutine
     {
-        float f_speed;
-        float f_vertiAcceleration;
-        float f_bounceHitMaxAnlge;
-        bool b_randomRotation;
-        bool b_bounceOnHit;
-        float f_bounceSpeedMultiply;
-        bool B_SpeedOff => f_speed <= 0;
-        protected Vector3 v3_RotateEuler;
-        protected Vector3 v3_RotateDirection;
-        public ThrowablePhysicsSimulator(Transform _transform, Vector3 _startPos, Vector3 _endPos, float _angle, float _horiSpeed, float _height, float _radius, bool randomRotation, int _hitLayer,bool bounce,float _bounceHitAngle,float _bounceSpeedMultiply, Action<RaycastHit[]> _onBounceHit):base(_transform,_startPos,Vector3.zero,_height,_radius,_hitLayer,_onBounceHit)
+        Material m_material;
+        float f_simulate;
+        float f_blinkRate;
+        float f_blinkTime;
+        public ProjectileBlink(Material _blinkMat, float _blinkRate,float _blinkTime)
         {
-            Vector3 horiDirection = TCommon.GetXZLookDirection(_startPos, _endPos);
-            Vector3 horiRight = horiDirection.RotateDirection(Vector3.up,90);
-            m_Direction = horiDirection.RotateDirection(horiRight,-_angle);
-            f_speed =  _horiSpeed/Mathf.Cos(_angle*Mathf.Deg2Rad);
-            float horiDistance = Vector3.Distance(_startPos, _endPos);
-            float duration = horiDistance / _horiSpeed;
-            float vertiDistance = Mathf.Tan(_angle * Mathf.Deg2Rad) * horiDistance;
-            f_vertiAcceleration = Expressions.GetAcceleration(0, vertiDistance, duration);
-            b_randomRotation = randomRotation;
-            b_bounceOnHit = bounce;
-            f_bounceHitMaxAnlge = _bounceHitAngle;
-            f_bounceSpeedMultiply = _bounceSpeedMultiply;
-            v3_RotateEuler = Quaternion.LookRotation(m_Direction).eulerAngles;
-            v3_RotateDirection = new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f));
+            m_material = _blinkMat;
+            f_blinkRate = _blinkRate;
+            f_blinkTime = _blinkTime;
+            f_simulate = 0f;
         }
-        public override void Simulate(float deltaTime)
+        public void OnReset()
         {
-            if (B_SpeedOff)
-                return; 
-
-            base.Simulate(deltaTime);
-
-            if (b_randomRotation)
+            f_simulate = 0f;
+            this.StopSingleCoroutine(0);
+            m_material.SetColor("_Color",TCommon.ColorAlpha(Color.red,0f));
+        }
+        public void Tick(float deltaTime)
+        {
+            f_simulate += deltaTime;
+            if (f_simulate > f_blinkRate)
             {
-                v3_RotateEuler += v3_RotateDirection * deltaTime * 300f;
-                transform.rotation = Quaternion.Euler(v3_RotateEuler);
+                this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => {m_material.SetColor("_Color", TCommon.ColorAlpha(Color.red, value));}, 1, 0, f_blinkTime));
+                f_simulate -= f_blinkRate;
             }
         }
-        public override void OnTargetHitted(RaycastHit[] hitTargets)
-        {
-            if (hitTargets.Length > 0)
-            {
-                if (!b_bounceOnHit)
-                {
-                    base.OnTargetHit(hitTargets);
-                    return;
-                }
-
-                Vector3 bounceDirection = hitTargets[0].point == Vector3.zero ? Vector3.up : hitTargets[0].normal;
-                float bounceAngle = TCommon.GetAngle(bounceDirection, Vector3.up, Vector3.up);
-                if (bounceAngle > 15)
-                    m_Direction = bounceDirection;
-                m_startPos = transform.position;
-                m_simulateTime = 0;
-
-                f_speed -= .1f;
-                f_speed *= f_bounceSpeedMultiply;
-                if (f_speed < 0)
-                    f_speed = 0;
-
-                if (f_bounceHitMaxAnlge != 0 && bounceAngle < f_bounceHitMaxAnlge)      //OnBounceHitTarget
-                    base.OnTargetHit(hitTargets);
-                return;
-            }
-        }
-
-        public override Vector3 GetSimulatedPosition(float elapsedTime)=>  m_startPos + m_Direction * f_speed * elapsedTime + Vector3.down * f_vertiAcceleration * elapsedTime * elapsedTime;
     }
     #endregion
 

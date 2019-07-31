@@ -14,7 +14,7 @@
 	}
 	SubShader
 	{
-		Tags { "RenderType" = "BloomColor" "IgnoreProjector" = "True" "Queue" = "Geometry" }
+		Tags { "RenderType" = "BloomColor" "IgnoreProjector" = "True" "Queue" = "Transparent" }
 		Blend SrcAlpha OneMinusSrcAlpha
 		Pass
 		{
