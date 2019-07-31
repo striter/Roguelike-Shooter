@@ -262,4 +262,4 @@ MonoBehaviour:
   B_Bounce: 1
   F_BounceHitAngleMax: 0
   F_BounceSpeedMultiply: 0.6
-  F_AdditionalLasetTimeAfterHit: 3
+  F_AdditionalLasetTimeAfterHit: 5
