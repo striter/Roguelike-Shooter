@@ -250,18 +250,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   E_ProjectileType: 1
   F_Damage: 60
-  F_Speed: 0
+  F_Speed: 1
   I_MuzzleIndex: 0
   I_ImpactIndex: 0
+  I_IndicatorIndex: 0
   I_BufFApplyOnHit: 0
   F_Radius: 0.5
   F_Height: 1
+  B_TargetReachBlink: 0
   I_MaxHealth: 200
   I_SpreadAngleEach: 20
   F_SpreadDuration: 0.3
   I_SpreadCount: 36
   F_DelayDuration: 2
-  I_DelayIndicator: 50001
 --- !u!114 &114929671006142830
 MonoBehaviour:
   m_ObjectHideFlags: 1
