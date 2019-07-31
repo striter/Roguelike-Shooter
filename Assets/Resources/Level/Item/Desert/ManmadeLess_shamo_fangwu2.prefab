@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 4218029508861496}
   - component: {fileID: 114316848597495142}
   m_Layer: 0
-  m_Name: MediumLess_shamo_fangwu2
+  m_Name: ManmadeLess_shamo_fangwu2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

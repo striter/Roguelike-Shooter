@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4680721921264380}
   - component: {fileID: 114929157414781604}
   m_Layer: 0
-  m_Name: SmallMore_xueshan_shitou4
+  m_Name: SmallLess_xueshan_shitou4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

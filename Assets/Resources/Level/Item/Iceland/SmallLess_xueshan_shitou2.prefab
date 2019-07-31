@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 4834499656181118}
   - component: {fileID: 114787525850779530}
   m_Layer: 0
-  m_Name: SmallMore_xueshan_shitou2
+  m_Name: SmallLess_xueshan_shitou2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

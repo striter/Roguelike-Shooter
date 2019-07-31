@@ -1782,7 +1782,7 @@ MonoBehaviour:
   Z_TestEntityIndex: 306
   TestEntityBuffApplyOnSpawn: 0
   X_TestCastIndex: 10700
-  C_TestProjectileIndex: 30300
+  C_TestProjectileIndex: 20400
   V_TestIndicatorIndex: 50002
   B_TestBuffIndex: 5
 --- !u!4 &1133817278

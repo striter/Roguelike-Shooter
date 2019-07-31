@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4428135990901090}
   - component: {fileID: 114679240963819146}
   m_Layer: 0
-  m_Name: SmallMore_xueshan_suishi2
+  m_Name: SmallLess_xueshan_suishi2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
