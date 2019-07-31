@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 4101831365336520}
   - component: {fileID: 114801461450388252}
   m_Layer: 0
-  m_Name: SmallMore_xueshan_shitou1
+  m_Name: SmallLess_xueshan_shitou1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -141,7 +141,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_sizeXAxis: 2
   m_sizeYAxis: 2
-  m_ItemType: 4
+  m_ItemType: 5
   b_showGizmos: 1
   b_AutoCenter: 1
   b_AutoRotation: 1
