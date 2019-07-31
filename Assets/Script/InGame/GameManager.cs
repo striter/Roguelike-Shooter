@@ -9,6 +9,9 @@ using UnityEngine.AI;
 
 public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
 {
+    public enum_Style Test_TileStyle = enum_Style.Desert;
+    public enum_Style Test_EntityStyle = enum_Style.Invalid;
+    public string M_TESTSEED = "";
 #if UNITY_EDITOR
     #region Test
     public enum enumDebug_LevelDrawMode
@@ -21,9 +24,6 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     public bool B_PhysicsDebugGizmos = true;
     public bool B_LevelDebugGizmos = true;
     public enumDebug_LevelDrawMode E_LevelDebug = enumDebug_LevelDrawMode.DrawTypes;
-    public enum_Style Test_TileStyle = enum_Style.Desert;
-    public enum_Style Test_EntityStyle = enum_Style.Invalid;
-    public string M_TESTSEED = "";
     public int Z_TestEntityIndex = 221;
     public int TestEntityBuffApplyOnSpawn = 1;
     public int X_TestCastIndex = 30003;
