@@ -11,6 +11,5 @@ public class SFXProjectileCastThrowable : SFXProjectileCastTrigger {
     public float F_BounceSpeedMultiply = 1;
     public float F_AdditionalLasetTimeAfterHit = 10f;
     protected override float F_Duration(Vector3 startPos, Vector3 endPos) => base.F_Duration(startPos,endPos)+ F_AdditionalLasetTimeAfterHit;
-
-    protected override PhysicsSimulator GetSimulator(Vector3 direction, Vector3 targetPosition)=>new ThrowablePhysicsSimulator(transform,transform.position,targetPosition, F_DirectionPitchAngle, F_Speed,F_Height,F_Radius,B_RandomRotation, GameLayer.Physics.I_All, B_Bounce,  F_BounceHitAngleMax, F_BounceSpeedMultiply, OnPhysicsCasted);
+    protected override PhysicsSimulator GetSimulator(Vector3 direction, Vector3 targetPosition)=>new ParacurveSimulator(transform,transform.position,targetPosition, F_DirectionPitchAngle, F_Speed,F_Height,F_Radius,B_RandomRotation, GameLayer.Physics.I_All, B_Bounce,  F_BounceHitAngleMax, F_BounceSpeedMultiply, OnPhysicsCasted);
 }

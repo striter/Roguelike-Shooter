@@ -4,14 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class SFXProjectileBoltDelayCast : SFXProjectileBolt {
-    Transform tf_CastPoint;
     public float F_DelayDuration;
-    float f_castCheck;
-    public override void Init(int sfxIndex)
-    {
-        base.Init(sfxIndex);
-        tf_CastPoint = transform.Find("CastPoint");
-    }
     protected override void OnPlayPreset()
     {
         base.OnPlayPreset();
@@ -21,18 +14,11 @@ public class SFXProjectileBoltDelayCast : SFXProjectileBolt {
     protected override void OnHitTarget(RaycastHit hit, HitCheckBase entity)
     {
         base.OnHitTarget(hit, entity);
-        f_castCheck =  F_DelayDuration;
+        f_TimeCheck = Time.time+ F_DelayDuration;
     }
-    protected override void Update()
+    protected override void OnPlayFinished()
     {
-        base.Update();
-        if (B_SimulatePhysics)
-            return;
-        f_castCheck -= Time.deltaTime;
-        if(f_castCheck<=0)
-        {
-            ObjectManager.SpawnDamageSource<SFXCast>(GameExpression.GetEnermyWeaponSubIndex(I_SFXIndex), tf_CastPoint.position, Vector3.up).Play(I_SourceID, m_DamageInfo.m_BuffApply);
-            OnPlayFinished();
-        }
+        base.OnPlayFinished();
+        ObjectManager.SpawnDamageSource<SFXCast>(GameExpression.GetEnermyWeaponSubIndex(I_SFXIndex), transform.position+F_Height*transform.forward, Vector3.up).Play(I_SourceID, m_DamageInfo.m_BuffApply);
     }
 }

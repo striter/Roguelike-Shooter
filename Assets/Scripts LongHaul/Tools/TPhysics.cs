@@ -77,6 +77,79 @@ namespace TPhysics
             return targetPos;
         }
     }
+
+    public class ParacurveSimulator : PhysicsSimulatorCapsule
+    {
+        float f_speed;
+        float f_vertiAcceleration;
+        float f_bounceHitMaxAnlge;
+        bool b_randomRotation;
+        bool b_bounceOnHit;
+        float f_bounceSpeedMultiply;
+        bool B_SpeedOff => f_speed <= 0;
+        protected Vector3 v3_RotateEuler;
+        protected Vector3 v3_RotateDirection;
+        public ParacurveSimulator(Transform _transform, Vector3 _startPos, Vector3 _endPos, float _angle, float _horiSpeed, float _height, float _radius, bool randomRotation, int _hitLayer, bool bounce, float _bounceHitAngle, float _bounceSpeedMultiply, Action<RaycastHit[]> _onBounceHit) : base(_transform, _startPos, Vector3.zero, _height, _radius, _hitLayer, _onBounceHit)
+        {
+            Vector3 horiDirection = TCommon.GetXZLookDirection(_startPos, _endPos);
+            Vector3 horiRight = horiDirection.RotateDirection(Vector3.up, 90);
+            m_Direction = horiDirection.RotateDirection(horiRight, -_angle);
+            f_speed = _horiSpeed / Mathf.Cos(_angle * Mathf.Deg2Rad);
+            float horiDistance = Vector3.Distance(_startPos, _endPos);
+            float duration = horiDistance / _horiSpeed;
+            float vertiDistance = Mathf.Tan(_angle * Mathf.Deg2Rad) * horiDistance;
+            f_vertiAcceleration = Expressions.GetAcceleration(0, vertiDistance, duration);
+            b_randomRotation = randomRotation;
+            b_bounceOnHit = bounce;
+            f_bounceHitMaxAnlge = _bounceHitAngle;
+            f_bounceSpeedMultiply = _bounceSpeedMultiply;
+            v3_RotateEuler = Quaternion.LookRotation(m_Direction).eulerAngles;
+            v3_RotateDirection = new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f));
+        }
+
+        public override void Simulate(float deltaTime)
+        {
+            if (B_SpeedOff)
+                return;
+
+            base.Simulate(deltaTime);
+
+            if (b_randomRotation)
+            {
+                v3_RotateEuler += v3_RotateDirection * deltaTime * 300f;
+                transform.rotation = Quaternion.Euler(v3_RotateEuler);
+            }
+        }
+        public override void OnTargetHitted(RaycastHit[] hitTargets)
+        {
+            if (hitTargets.Length > 0)
+            {
+                if (!b_bounceOnHit)
+                {
+                    base.OnTargetHit(hitTargets);
+                    return;
+                }
+
+                Vector3 bounceDirection = hitTargets[0].point == Vector3.zero ? Vector3.up : hitTargets[0].normal;
+                float bounceAngle = TCommon.GetAngle(bounceDirection, Vector3.up, Vector3.up);
+                if (bounceAngle > 15)
+                    m_Direction = bounceDirection;
+                m_startPos = transform.position;
+                m_simulateTime = 0;
+
+                f_speed -= .1f;
+                f_speed *= f_bounceSpeedMultiply;
+                if (f_speed < 0)
+                    f_speed = 0;
+
+                if (f_bounceHitMaxAnlge != 0 && bounceAngle < f_bounceHitMaxAnlge)      //OnBounceHitTarget
+                    base.OnTargetHit(hitTargets);
+                return;
+            }
+        }
+
+        public override Vector3 GetSimulatedPosition(float elapsedTime) => m_startPos + m_Direction * f_speed * elapsedTime + Vector3.down * f_vertiAcceleration * elapsedTime * elapsedTime;
+    }
     public static class Expressions
     {
         public static float AccelerationSpeedShift(float speed, float acceleration, float elapsedTime)        //All M/S  s=vt+a*t^2/2?
