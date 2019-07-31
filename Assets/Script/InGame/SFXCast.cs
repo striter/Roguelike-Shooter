@@ -39,8 +39,8 @@ public class SFXCast : SFXBase,ISingleCoroutine {
             Debug.LogError("Tick Count Less Or Equals Zero:" + gameObject.name);
         if (I_TickCount > 1 && F_Tick <= 0)
             Debug.LogError("Tick Duration Less Or Equals Zero:" + gameObject.name);
-        if (F_DelayDuration > 0 && I_DelayIndicatorIndex <= 0)
-            Debug.LogError("Delay Indicator Less Or Equals Zero:" + gameObject.name);
+        if (F_DelayDuration > 0 && I_DelayIndicatorIndex < 0)
+            Debug.LogError("Delay Indicator Less Than Zero:" + gameObject.name);
     }
     public void Play(int sourceID,DamageBuffInfo buffInfo)
     {

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SFXProjectileDestroyableSpreadDelay : SFXProjectileDestroyableSpread,ISingleCoroutine {
     public float F_DelayDuration;
-    protected override PhysicsSimulator GetSimulator(Vector3 direction, Vector3 targetPosition) => null;
+    protected override PhysicsSimulator<HitCheckBase> GetSimulator(Vector3 direction, Vector3 targetPosition) => null;
     public override void Play(int sourceID, Vector3 direction, Vector3 targetPosition, DamageBuffInfo buffInfo)
     {
         targetPosition = EnviormentManager.NavMeshPosition(targetPosition) + Vector3.up * .5f;

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace TPhysics
 {
-    public abstract class PhysicsSimulator
+    public abstract class PhysicsSimulator<T> where T:MonoBehaviour
     {
         protected Vector3 m_startPos;
         protected Vector3 m_Direction;
@@ -13,23 +13,25 @@ namespace TPhysics
         public abstract void Simulate(float deltaTime);
         public abstract Vector3 GetSimulatedPosition(float elapsedTime);
     }
-    public class PhysicsSimulatorCapsule : PhysicsSimulator
+    public class PhysicsSimulatorCapsule<T> : PhysicsSimulator<T> where T:MonoBehaviour
     {
         protected Transform transform;
         protected float m_castHeight, m_castRadius;
         protected int m_hitLayer;
-        protected Action<RaycastHit[]> OnTargetHit;
-        public PhysicsSimulatorCapsule(Transform _transform, Vector3 _startPos,Vector3 _direction, float _height,float _radius, int _hitLayer, Action<RaycastHit[]> _onTargetHit)
+        protected Func<RaycastHit, T,bool> OnTargetHitBreak;
+        protected Predicate<T> CanHitTarget;
+        public PhysicsSimulatorCapsule(Transform _transform, Vector3 _startPos,Vector3 _direction, float _height,float _radius, int _hitLayer, Func<RaycastHit, T,bool> _onTargetHit,Predicate<T> _CanHitTarget)
         {
-            transform = _transform;
             m_simulateTime = 0f;
+            transform = _transform;
             m_startPos = _startPos;
             transform.position = _startPos;
             m_Direction = _direction;
             m_castHeight = _height;
             m_castRadius = _radius;
             m_hitLayer = _hitLayer;
-            OnTargetHit = _onTargetHit;
+            OnTargetHitBreak = _onTargetHit;
+            CanHitTarget = _CanHitTarget;
         }
         public override void Simulate(float deltaTime)
         {
@@ -40,23 +42,33 @@ namespace TPhysics
             transform.rotation = Quaternion.LookRotation(castDirection);
             float distance = Vector3.Distance(previousPosition, transform.position);
             distance = distance > m_castHeight ? distance : m_castHeight;
-            OnTargetHitted(Physics.SphereCastAll(new Ray(previousPosition, castDirection), m_castRadius, distance, m_hitLayer));
+            OnTargetsHit(Physics.SphereCastAll(new Ray(previousPosition, castDirection), m_castRadius, distance, m_hitLayer));
         }
         public override Vector3 GetSimulatedPosition(float elapsedTime)
         {
             Debug.Log("Override This Please");
             return Vector3.zero;
         }
-        public virtual void OnTargetHitted(RaycastHit[] hitTargets)
+        public void OnTargetsHit(RaycastHit[] castHits)
         {
-            if (hitTargets.Length > 0) OnTargetHit(hitTargets);
+            for (int i = 0; i < castHits.Length; i++)
+            {
+                T temp = castHits[i].collider.GetComponent<T>();
+                if (CanHitTarget(temp))
+                    if (OnTargetHit(castHits[i],temp))
+                        break;
+            }
+        }
+        public virtual bool OnTargetHit(RaycastHit hit, T template)
+        {
+            return OnTargetHitBreak(hit,template);
         }
     }
-    public class AccelerationSimulator: PhysicsSimulatorCapsule
+    public class AccelerationSimulator<T>: PhysicsSimulatorCapsule<T> where T:MonoBehaviour
     {
         protected Vector3 m_HorizontalDirection, m_VerticalDirection;
         protected float m_horizontalSpeed, m_horizontalAcceleration;
-        public AccelerationSimulator(Transform _transform, Vector3 _startPos, Vector3 _horizontalDirection, Vector3 _verticalDirection, float _horizontalSpeed, float _horizontalAcceleration, float _height, float _radius, int _hitLayer, Action<RaycastHit[]> _onTargetHit) : base(_transform,_startPos, _horizontalDirection, _height,_radius,_hitLayer,_onTargetHit)
+        public AccelerationSimulator(Transform _transform, Vector3 _startPos, Vector3 _horizontalDirection, Vector3 _verticalDirection, float _horizontalSpeed, float _horizontalAcceleration, float _height, float _radius, int _hitLayer, Func<RaycastHit, T, bool> _onTargetHit, Predicate<T> _CanHitTarget) : base(_transform,_startPos, _horizontalDirection, _height,_radius,_hitLayer,_onTargetHit,_CanHitTarget)
         {
             m_HorizontalDirection = _horizontalDirection;
             m_VerticalDirection = _verticalDirection;
@@ -78,7 +90,7 @@ namespace TPhysics
         }
     }
 
-    public class ParacurveSimulator : PhysicsSimulatorCapsule
+    public class ParacurveSimulator<T> : PhysicsSimulatorCapsule<T> where T:MonoBehaviour
     {
         float f_speed;
         float f_vertiAcceleration;
@@ -89,10 +101,8 @@ namespace TPhysics
         bool B_SpeedOff => f_speed <= 0;
         protected Vector3 v3_RotateEuler;
         protected Vector3 v3_RotateDirection;
-        Predicate<Collider> OnBounceCheck;
-        public ParacurveSimulator(Transform _transform, Vector3 _startPos, Vector3 _endPos, float _angle, float _horiSpeed, float _height, float _radius, bool randomRotation, int _hitLayer, bool bounce, float _bounceHitAngle, float _bounceSpeedMultiply, Action<RaycastHit[]> _onBounceHit, Predicate<Collider> _OnBounceCheck) : base(_transform, _startPos, Vector3.zero, _height, _radius, _hitLayer, _onBounceHit)
+        public ParacurveSimulator(Transform _transform, Vector3 _startPos, Vector3 _endPos, float _angle, float _horiSpeed, float _height, float _radius, bool randomRotation, int _hitLayer, bool bounce, float _bounceHitAngle, float _bounceSpeedMultiply, Func<RaycastHit, T,bool> _onBounceHit, Predicate<T> _OnBounceCheck) : base(_transform, _startPos, Vector3.zero, _height, _radius, _hitLayer, _onBounceHit, _OnBounceCheck)
         {
-            OnBounceCheck = _OnBounceCheck;
             Vector3 horiDirection = TCommon.GetXZLookDirection(_startPos, _endPos);
             Vector3 horiRight = horiDirection.RotateDirection(Vector3.up, 90);
             m_Direction = horiDirection.RotateDirection(horiRight, -_angle);
@@ -122,33 +132,27 @@ namespace TPhysics
                 transform.rotation = Quaternion.Euler(v3_RotateEuler);
             }
         }
-        public override void OnTargetHitted(RaycastHit[] hitTargets)
+        public override bool OnTargetHit(RaycastHit hit,T template)
         {
-            if (hitTargets.Length > 0)
-            {
-                if (!b_bounceOnHit)
-                {
-                    base.OnTargetHit(hitTargets);
-                    return;
-                }
-                if (!OnBounceCheck(hitTargets[0].collider))
-                    return;
-                Vector3 bounceDirection = hitTargets[0].point == Vector3.zero ? Vector3.up : hitTargets[0].normal;
-                float bounceAngle = TCommon.GetAngle(bounceDirection, Vector3.up, Vector3.up);
-                if (bounceAngle > 15)
-                    m_Direction = bounceDirection;
-                m_startPos = transform.position;
-                m_simulateTime = 0;
+            if(!b_bounceOnHit)
+                return base.OnTargetHit(hit, template);
 
-                f_speed -= .1f;
-                f_speed *= f_bounceSpeedMultiply;
-                if (f_speed < 0)
-                    f_speed = 0;
+            Vector3 bounceDirection = hit.point == Vector3.zero ? Vector3.up : hit.normal;
+            float bounceAngle = TCommon.GetAngle(bounceDirection, Vector3.up, Vector3.up);
+            if (bounceAngle > 15)
+                m_Direction = bounceDirection;
+            m_startPos = transform.position;
+            m_simulateTime = 0;
 
-                if (f_bounceHitMaxAnlge != 0 && bounceAngle < f_bounceHitMaxAnlge)      //OnBounceHitTarget
-                    base.OnTargetHit(hitTargets);
-                return;
-            }
+            f_speed -= .1f;
+            f_speed *= f_bounceSpeedMultiply;
+            if (f_speed < 0)
+                f_speed = 0;
+
+            if (f_bounceHitMaxAnlge != 0 && bounceAngle < f_bounceHitMaxAnlge)      //OnBounceHitTarget
+               return base.OnTargetHit(hit,template);
+
+            return true;
         }
 
         public override Vector3 GetSimulatedPosition(float elapsedTime) => m_startPos + m_Direction * f_speed * elapsedTime + Vector3.down * f_vertiAcceleration * elapsedTime * elapsedTime;

@@ -14,7 +14,7 @@ public class SFXProjectile : SFXBase
     public int I_BufFApplyOnHit;
     public float F_Radius = .5f, F_Height = 1f;
     public bool B_TargetReachBlink = false;
-    protected PhysicsSimulator m_Simulator;
+    protected PhysicsSimulator<HitCheckBase> m_Simulator;
     protected TrailRenderer m_Trail;
     protected SFXIndicator m_Indicator;
     List<int> m_TargetHitted = new List<int>();
@@ -26,7 +26,7 @@ public class SFXProjectile : SFXBase
     protected virtual bool B_DealDamage => true;
     protected ProjectileBlink m_Blink;
     protected DamageInfo m_DamageInfo;
-    protected virtual PhysicsSimulator GetSimulator(Vector3 direction, Vector3 targetPosition) => new ProjectilePhysicsSimulator(transform,transform.position, direction, Vector3.down, F_Speed, F_Height,F_Radius, GameLayer.Physics.I_All, OnPhysicsCasted);
+    protected virtual PhysicsSimulator<HitCheckBase> GetSimulator(Vector3 direction, Vector3 targetPosition) => new ProjectilePhysicsSimulator(transform,transform.position, direction, Vector3.down, F_Speed, F_Height,F_Radius, GameLayer.Physics.I_All, OnHitTargetBreak,CanHitTarget);
     protected virtual void PlayIndicator(float duration) => m_Indicator.Play(I_SourceID,duration);
     public override void Init(int sfxIndex)
     {
@@ -105,23 +105,16 @@ public class SFXProjectile : SFXBase
         }
     }
     #region Physics
-    protected void OnPhysicsCasted(RaycastHit[] hitTargets)
+    protected bool OnHitTargetBreak(RaycastHit hit, HitCheckBase hitCheck)
     {
-        for (int i = 0; i < hitTargets.Length; i++)
-        {
-            HitCheckBase hitCheck = hitTargets[i].collider.Detect();
-            if (CanHitTarget(hitCheck))
-            {
-                OnHitTarget(hitTargets[i], hitCheck);
-                SpawnImpact(hitTargets[i], hitCheck);
-                if (B_DisablePhysicsOnHit)
-                    B_SimulatePhysics = false;
-                if (B_RecycleOnHit)
-                    OnPlayFinished();
-                if (!B_HitMultiple)
-                    break;
-            }
-        }
+        OnHitTarget(hit, hitCheck);
+        SpawnImpact(hit, hitCheck);
+        if (B_DisablePhysicsOnHit)
+            B_SimulatePhysics = false;
+        if (B_RecycleOnHit)
+            OnPlayFinished();
+
+        return !B_HitMultiple;
     }
     protected virtual bool CanHitTarget(HitCheckBase hitCheck)
     {
