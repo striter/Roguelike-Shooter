@@ -36,7 +36,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4675475368102452}
-  - component: {fileID: 114849450265349912}
+  - component: {fileID: 114731566210608386}
   m_Layer: 9
   m_Name: 20600
   m_TagString: Untagged
@@ -264,7 +264,7 @@ TrailRenderer:
     generateLightingData: 0
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
---- !u!114 &114849450265349912
+--- !u!114 &114731566210608386
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -272,22 +272,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 1165261032841046}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5d83f0e5c561fe4fa5e265313ef8721, type: 3}
+  m_Script: {fileID: 11500000, guid: 6ab0cf0a49ae34143b34005f26110fa2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   E_ProjectileType: 1
-  F_Damage: 10
-  F_Speed: 4
-  I_MuzzleIndex: 10001
+  F_Damage: 0
+  F_Speed: 5
+  I_MuzzleIndex: 0
   I_ImpactIndex: 0
-  I_IndicatorIndex: 50002
+  I_IndicatorIndex: 0
   I_BufFApplyOnHit: 0
   F_Radius: 0.15
   F_Height: 1.5
   B_TargetReachBlink: 0
-  F_DirectionPitchAngle: 80
-  B_RandomRotation: 0
-  B_Bounce: 0
-  F_BounceHitAngleMax: 0
-  F_BounceSpeedMultiply: 1
-  F_AdditionalLasetTimeAfterHit: 10
+  F_SpreadRadius: 5
+  F_StartHeight: 20
