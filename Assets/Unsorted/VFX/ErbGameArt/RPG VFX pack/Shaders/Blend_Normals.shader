@@ -1,4 +1,4 @@
-Shader "EGA/Particles/Blend_Normals"
+Shader "ERB/Particles/Blend_Normals"
 {
 	Properties
 	{
