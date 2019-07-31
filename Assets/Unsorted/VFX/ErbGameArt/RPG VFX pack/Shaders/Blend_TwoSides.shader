@@ -1,4 +1,4 @@
-Shader "EGA/Particles/Blend_TwoSides"
+Shader "ERB/Particles/Blend_TwoSides"
 {
 	Properties
 	{

@@ -1,4 +1,4 @@
-Shader "EGA/Particles/Lit_CenterGlow"
+Shader "ERB/Particles/Lit_CenterGlow"
 {
 	Properties
 	{
