@@ -1,4 +1,4 @@
-Shader "EGA/Particles/Distortion"
+Shader "ERB/Particles/Distortion"
 {
 	Properties
 	{
