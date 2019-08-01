@@ -241,7 +241,10 @@ public class EntityEnermyBase : EntityBase {
             {
                 f_movementSimulate += GameConst.F_EnermyAICheckTime*m_Info.F_MovementSpeed;
                 f_battleSimulate += m_Info.F_FireRateTick( GameConst.F_EnermyAICheckTime);
-                
+
+                if (!b_targetAvailable)
+                    RecheckTarget();
+
                 CheckTargetParams();
                 CheckBattle();
                 CheckMovement();
@@ -320,7 +323,7 @@ public class EntityEnermyBase : EntityBase {
             m_Weapon.OnPlayAnim(false);
             OnAttackAnim(m_Target, false);
 
-            if (!b_targetAvailable||m_EntityControlling.B_SwitchTarget)
+            if (m_EntityControlling.B_SwitchTarget)
                 RecheckTarget();
         }
 
