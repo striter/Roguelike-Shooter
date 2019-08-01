@@ -292,7 +292,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     }
     void SpawnEntity(int entityIndex, int spawnIndex,Vector3 position)
     {
-        ObjectManager.SpawnIndicator(50001, position, Vector3.up).Play(entityIndex,GameConst.I_EnermySpawnDelay);
+        ObjectManager.SpawnIndicator(30001, position, Vector3.up).Play(entityIndex,GameConst.I_EnermySpawnDelay);
         this.StartSingleCoroutine(100 + spawnIndex, TIEnumerators.PauseDel(GameConst.I_EnermySpawnDelay, () => {
             ObjectManager.SpawnEntity(entityIndex,position ).OnActivate();
         }));
