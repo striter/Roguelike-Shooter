@@ -29,6 +29,7 @@ public class SFXProjectile : SFXBase
     protected DamageInfo m_DamageInfo;
     protected virtual PhysicsSimulator<HitCheckBase> GetSimulator(Vector3 direction, Vector3 targetPosition) => new ProjectilePhysicsSimulator(transform,transform.position, direction, Vector3.down, F_Speed, F_Height,F_Radius, GameLayer.Physics.I_All, OnHitTargetBreak,CanHitTarget);
     protected virtual void PlayIndicator(float duration) => m_Indicator.Play(I_SourceID,duration);
+    protected Vector3 m_CenterPos => F_Height > F_Radius * 2 ? transform.position + transform.forward * F_Height / 2 : transform.position + transform.forward * F_Radius;
     public override void Init(int sfxIndex)
     {
         base.Init(sfxIndex);
@@ -58,6 +59,8 @@ public class SFXProjectile : SFXBase
         m_Simulator = GetSimulator(direction, targetPosition);
         if (I_IndicatorIndex > 0)
             SpawnIndicator(targetPosition,Vector3.up, F_Duration(transform.position, targetPosition));
+
+        m_Particles.Traversal((ParticleSystem particle) => { particle.Play(); });
 
         PlaySFX(sourceID, F_Duration(transform.position, targetPosition));
     }
@@ -186,7 +189,7 @@ public class SFXProjectile : SFXBase
         if (UnityEditor.EditorApplication.isPlaying && !GameManager.Instance.B_PhysicsDebugGizmos)
             return;
         Gizmos.color = Color.yellow;
-        Gizmos_Extend.DrawWireCapsule(F_Height>F_Radius*2? transform.position+transform.forward*F_Height/2:transform.position+transform.forward*F_Radius,Quaternion.LookRotation( transform.up,transform.forward), Vector3.one, F_Radius,F_Height);
+        Gizmos_Extend.DrawWireCapsule(m_CenterPos,Quaternion.LookRotation( transform.up,transform.forward), Vector3.one, F_Radius,F_Height);
     }
 #endif
 }
