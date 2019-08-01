@@ -519,7 +519,10 @@ namespace GameSetting
             {
                 BuffBase effectBuff = m_BuffList.Find(p => p.m_buffInfo.m_Index == effectsList[i]);
                 if (effectBuff == null)
+                {
+                    m_BuffEffects[effectsList[i]].Stop();
                     m_BuffEffects.Remove(effectsList[i]);
+                }
             }
             for (int i = 0; i < m_BuffList.Count; i++)
             {

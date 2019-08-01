@@ -412,7 +412,7 @@ public static class ObjectManager
     }
     public static SFXBuffEffect SpawnBuffEffect(int index, EntityBase attachTo)
     {
-        SFXBuffEffect sfx = ObjectPoolManager<int, SFXBase>.Spawn(index, attachTo.tf_Head) as SFXBuffEffect;
+        SFXBuffEffect sfx = ObjectPoolManager<int, SFXBase>.Spawn(index, attachTo.transform) as SFXBuffEffect;
         if (sfx == null)
             Debug.LogError("SFX Spawn Error! Invalid BuffEffect,Index:" + index);
         sfx.transform.localPosition = Vector3.zero;

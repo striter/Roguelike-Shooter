@@ -11,7 +11,6 @@ public class SFXBuffEffect : SFXParticles {
         base.Play(sourceID, duration);
         f_buffRefresh = duration;
     }
-
     public void Refresh()
     {
         f_TimeCheck = Time.time + f_buffRefresh;
