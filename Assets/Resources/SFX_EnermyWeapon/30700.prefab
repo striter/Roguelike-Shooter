@@ -251,9 +251,10 @@ MonoBehaviour:
   F_Speed: 30
   I_MuzzleIndex: 0
   I_ImpactIndex: 0
+  I_IndicatorIndex: 30001
   I_BufFApplyOnHit: 0
   F_Radius: 0.75
   F_Height: 0
-  I_IndicatorIndex: 50001
+  B_TargetReachBlink: 0
   F_SpreadRadius: 0
   F_StartHeight: 40

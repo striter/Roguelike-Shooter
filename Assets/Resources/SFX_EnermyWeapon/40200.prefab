@@ -244,9 +244,10 @@ MonoBehaviour:
   F_Damage: 30
   F_Speed: 8
   I_MuzzleIndex: 10001
-  I_ImpactIndex: 40001
+  I_ImpactIndex: 20001
   I_IndicatorIndex: 0
   I_BufFApplyOnHit: 0
   F_Radius: 0.5
   F_Height: 1
+  B_TargetReachBlink: 0
   I_BeamLength: 30

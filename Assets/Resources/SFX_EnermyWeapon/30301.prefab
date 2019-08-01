@@ -208,7 +208,7 @@ MonoBehaviour:
   F_Damage: 20
   F_Speed: 8
   I_MuzzleIndex: 0
-  I_ImpactIndex: 40001
+  I_ImpactIndex: 20001
   I_IndicatorIndex: 0
   I_BufFApplyOnHit: 0
   F_Radius: 0.3
