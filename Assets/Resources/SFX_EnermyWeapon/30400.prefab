@@ -204,9 +204,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1706479a5854bad47a3f4c9d8840aeac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  E_ProjectileType: 2
+  E_ProjectileType: 1
   F_Damage: 30
-  F_Speed: 6
+  F_Speed: 2
   I_MuzzleIndex: 10001
   I_ImpactIndex: 40001
   I_IndicatorIndex: 0
