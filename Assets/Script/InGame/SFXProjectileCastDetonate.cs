@@ -12,8 +12,9 @@ public class SFXProjectileCastDetonate : SFXProjectileCastTrigger {
         transform.position = hit.point==Vector3.zero?transform.position:hit.point;
         transform.rotation = Quaternion.LookRotation(hit.normal);
         transform.SetParent(hitCheck.transform);
-        m_Trail.enabled = false;
+        if(m_Trail)
+            m_Trail.enabled = false;
         f_TimeCheck = Time.time + ObjectManager.EnermyDamageSourceInfo<SFXCast>(GameExpression.GetEnermyWeaponSubIndex(I_SFXIndex)).F_DelayDuration;
-        OnCastTrigger();
+        OnCastTrigger(hit.point);
     }
 }

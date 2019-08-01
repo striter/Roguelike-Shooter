@@ -64,18 +64,22 @@ public class SFXProjectile : SFXBase
     protected virtual void OnPlayPreset()
     {
         B_SimulatePhysics = true;
-        m_Trail.enabled = true;
-        m_Trail.Clear();
         m_TargetHitted.Clear();
 
+        if (m_Trail)
+        {
+            m_Trail.enabled = true;
+            m_Trail.Clear();
+        }
+
         if (E_ProjectileType == enum_EnermyWeaponProjectile.Invalid)
-            Debug.LogError("Error Projectile Type Invalid");
+            Debug.LogError("Error Projectile Type Invalid:" + gameObject.name);
         if (F_Damage <= 0)
-            Debug.LogError("Error Damage Less Or Equals 0");
+            Debug.LogError("Error Damage Less Or Equals 0:"+gameObject.name);
         if (F_Speed <= 0)
-            Debug.LogError("Error Speed Less Or Equals 0");
+            Debug.LogError("Error Speed Less Or Equals 0:" + gameObject.name);
         if (I_ImpactIndex < 0)
-            Debug.LogError("Error Impact Index Less 0");
+            Debug.LogError("Error Impact Index Less 0:" + gameObject.name);
     }
     protected override void OnPlayFinished()
     {
