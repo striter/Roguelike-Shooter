@@ -255,11 +255,8 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4869854469307764}
-  - component: {fileID: 114503211713363366}
   - component: {fileID: 199890450084090172}
   - component: {fileID: 198793480854408620}
-  - component: {fileID: 114160486566030954}
-  - component: {fileID: 114120481265925982}
   m_Layer: 0
   m_Name: Classic_Heavy_Explosion
   m_TagString: Untagged
@@ -507,494 +504,6 @@ Transform:
   m_Father: {fileID: 4178211966627250}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114120481265925982
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1865185532811072}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6437ea5fd3459a4428d0c7ef53fa5fb0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ProjectileShakeDuration: 1
-  ProjectileShakeAmount: 0.55
---- !u!114 &114160486566030954
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1865185532811072}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a895231490da6545890b1e1794f8704, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  deathtimer: 8
---- !u!114 &114503211713363366
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1865185532811072}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 14fe9984834882c43b827e4197192a74, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Speed_custom: 1
-  colorChangeList:
-  - Name: SmokeSide
-    colored_ParticleSystem:
-    - {fileID: 198816276524192250}
-    Gradient_custom:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 0.81967545, b: 0.066176474, a: 1}
-      key2: {r: 1, g: 0.43448272, b: 0, a: 0}
-      key3: {r: 0.60524786, g: 0.12628782, b: 0.034831084, a: 0}
-      key4: {r: 0.5, g: 0.04411766, b: 0.04411766, a: 0}
-      key5: {r: 0.1819929, g: 0.1819929, b: 0.1819929, a: 0}
-      key6: {r: 0.1102941, g: 0.1102941, b: 0.1102941, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 2460
-      ctime2: 4217
-      ctime3: 7204
-      ctime4: 14231
-      ctime5: 32328
-      ctime6: 65535
-      ctime7: 0
-      atime0: 0
-      atime1: 35139
-      atime2: 65535
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 7
-      m_NumAlphaKeys: 3
-  - Name: SmokeUpward
-    colored_ParticleSystem:
-    - {fileID: 198226949399191954}
-    Gradient_custom:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 0.81967545, b: 0.066176474, a: 1}
-      key2: {r: 1, g: 0.43448272, b: 0, a: 0}
-      key3: {r: 0.68612003, g: 0.070693664, b: 0.070693664, a: 0}
-      key4: {r: 0.18382353, g: 0.18382353, b: 0.18382353, a: 0}
-      key5: {r: 0.1102941, g: 0.1102941, b: 0.1102941, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 3338
-      ctime2: 4744
-      ctime3: 9839
-      ctime4: 30044
-      ctime5: 65535
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 35139
-      atime2: 65535
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 6
-      m_NumAlphaKeys: 3
-  - Name: SmokeDebris
-    colored_ParticleSystem:
-    - {fileID: 198448881097730684}
-    Gradient_custom:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 0.81967545, b: 0.066176474, a: 1}
-      key2: {r: 0.6083666, g: 0.0882057, b: 0.0882057, a: 0}
-      key3: {r: 0.18382353, g: 0.18382353, b: 0.18382353, a: 0}
-      key4: {r: 0.1102941, g: 0.1102941, b: 0.1102941, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 1581
-      ctime2: 11772
-      ctime3: 32855
-      ctime4: 65535
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 35139
-      atime2: 65535
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 5
-      m_NumAlphaKeys: 3
-  - Name: Decal
-    colored_ParticleSystem:
-    - {fileID: 198548136748515840}
-    Gradient_custom:
-      serializedVersion: 2
-      key0: {r: 0, g: 0, b: 0, a: 0.35686275}
-      key1: {r: 0, g: 0, b: 0, a: 0}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 34261
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-  - Name: DecalHeatPoint
-    colored_ParticleSystem:
-    - {fileID: 198403506115023774}
-    Gradient_custom:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 0.72413796, b: 0, a: 1}
-      key2: {r: 1, g: 0.5586207, b: 0, a: 0}
-      key3: {r: 1, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 15110
-      ctime2: 33207
-      ctime3: 61143
-      ctime4: 65535
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 36545
-      atime2: 65535
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 5
-      m_NumAlphaKeys: 3
-  - Name: DecalLight
-    colored_ParticleSystem:
-    - {fileID: 198645262705090252}
-    Gradient_custom:
-      serializedVersion: 2
-      key0: {r: 1, g: 0, b: 0, a: 1}
-      key1: {r: 1, g: 0, b: 0, a: 1}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 36545
-      atime2: 65535
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 3
-  - Name: gradientCircle
-    colored_ParticleSystem:
-    - {fileID: 198705079795539790}
-    Gradient_custom:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 0.6, b: 0, a: 0.61960787}
-      key2: {r: 0.3455882, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 13704
-      ctime2: 28814
-      ctime3: 65535
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 43573
-      atime2: 65535
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 4
-      m_NumAlphaKeys: 3
-  - Name: thinCircle
-    colored_ParticleSystem:
-    - {fileID: 198296635944162804}
-    Gradient_custom:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 0.6, b: 0, a: 0.61960787}
-      key2: {r: 0.3455882, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 22841
-      ctime2: 40586
-      ctime3: 65535
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 43573
-      atime2: 65535
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 4
-      m_NumAlphaKeys: 3
-  - Name: sphere
-    colored_ParticleSystem:
-    - {fileID: 198283748707062800}
-    Gradient_custom:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 0.6263635, b: 0.06590879, a: 0.9313869}
-      key2: {r: 1, g: 0.26896554, b: 0, a: 0.3882353}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 31977
-      ctime2: 53061
-      ctime3: 65535
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 351
-      atime1: 35139
-      atime2: 56750
-      atime3: 65535
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 4
-      m_NumAlphaKeys: 4
-  - Name: firefloaters
-    colored_ParticleSystem:
-    - {fileID: 198425237495399046}
-    Gradient_custom:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 0.7655173, b: 0, a: 1}
-      key2: {r: 1, g: 0.43448275, b: 0, a: 0}
-      key3: {r: 1, g: 0.14482757, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 10542
-      ctime2: 32328
-      ctime3: 47614
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 38653
-      atime2: 65535
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 4
-      m_NumAlphaKeys: 3
-  - Name: LightFlash
-    colored_ParticleSystem:
-    - {fileID: 198775865794173772}
-    Gradient_custom:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 0.6, b: 0, a: 0.61960787}
-      key2: {r: 1, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 10718
-      ctime2: 44978
-      ctime3: 65535
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 43573
-      atime2: 65535
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 4
-      m_NumAlphaKeys: 3
-  - Name: Light
-    colored_ParticleSystem:
-    - {fileID: 198376234068153770}
-    Gradient_custom:
-      serializedVersion: 2
-      key0: {r: 0.3455882, g: 0, b: 0, a: 1}
-      key1: {r: 0, g: 0, b: 0, a: 0.61960787}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 5974
-      ctime1: 65359
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 43573
-      atime2: 65535
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 3
-  - Name: FlashSpike
-    colored_ParticleSystem:
-    - {fileID: 198471814163329570}
-    Gradient_custom:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 0.85943204, b: 0.27205884, a: 1}
-      key2: {r: 0.83823526, g: 0.049307954, b: 0.049307954, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 16867
-      ctime2: 52709
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 24246
-      atime2: 65535
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 3
-      m_NumAlphaKeys: 3
-  - Name: Debris
-    colored_ParticleSystem:
-    - {fileID: 198600710520618054}
-    Gradient_custom:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 0.6647059, b: 0.3602941, a: 1}
-      key2: {r: 1, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 34964
-      ctime2: 65535
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 3
-      m_NumAlphaKeys: 2
-  applyChanges: 0
-  Keep_applyChanges: 0
 --- !u!198 &198226949399191954
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -1055,7 +564,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -17966035
+  randomSeed: -640243882
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -4443,7 +3952,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 921489644
+  randomSeed: 959466648
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -7831,7 +7340,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 1614285847
+  randomSeed: 888947895
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -11219,7 +10728,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 581367824
+  randomSeed: 1889500296
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -14607,7 +14116,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 2024724690
+  randomSeed: -595970177
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -17989,7 +17498,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 21240337
+  randomSeed: 1594970960
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -24738,7 +24247,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 1130107918
+  randomSeed: -881808753
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -28126,7 +27635,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 1648930275
+  randomSeed: 70199052
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -31508,7 +31017,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -496288140
+  randomSeed: 429654313
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -34896,7 +34405,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -399347874
+  randomSeed: -1325738063
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -38278,7 +37787,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 1393652914
+  randomSeed: 1234574798
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -41666,7 +41175,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 779451472
+  randomSeed: -1500492527
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -45054,7 +44563,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 575267257
+  randomSeed: -1900911715
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -48436,7 +47945,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -2121044483
+  randomSeed: -291060373
   InitialModule:
     serializedVersion: 3
     enabled: 1
