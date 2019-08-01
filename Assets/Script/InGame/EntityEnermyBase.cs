@@ -16,6 +16,7 @@ public class EntityEnermyBase : EntityBase {
     [Range(0, 100)]
     public int I_AttackPreAimPercentage = 50;
     public bool B_AttackMove = true;
+    public bool B_SwitchTarget = false;
     bool OnCheckTarget(EntityBase target) => target.B_IsPlayer!=B_IsPlayer && !target.m_HealthManager.b_IsDead;
     public override void Init(SEntity entityInfo)
     {
@@ -240,21 +241,19 @@ public class EntityEnermyBase : EntityBase {
             {
                 f_movementSimulate += GameConst.F_EnermyAICheckTime*m_Info.F_MovementSpeed;
                 f_battleSimulate += m_Info.F_FireRateTick( GameConst.F_EnermyAICheckTime);
-                CheckTarget();
+
+                if (!b_targetAvailable)
+                    RecheckTarget();
+
                 CheckTargetParams();
                 CheckBattle();
                 CheckMovement();
                 yield return new WaitForSeconds(GameConst.F_EnermyAICheckTime);
             }
         }
-        void CheckTarget()
+        void RecheckTarget()
         {
-            if (!b_targetAvailable)
-            {
-                EntityBase target = GameManager.Instance.GetEntity(m_EntityControlling.I_EntityID,!m_Weapon.B_TargetAlly, null);
-                if (target)
-                    m_Target = target;
-            }
+            m_Target = GameManager.Instance.GetRandomEntity(m_EntityControlling.I_EntityID, !m_Weapon.B_TargetAlly, null);
         }
 
         void CheckTargetParams()
@@ -309,9 +308,7 @@ public class EntityEnermyBase : EntityBase {
 
                     if (count <= 0)
                     {
-                        b_attacking = false;
-                        m_Weapon.OnPlayAnim(false);
-                        OnAttackAnim(m_Target, false);
+                        OnAttackFinished();
                         yield break;
                     }
                     OnAttackAnim(m_Target, true);
@@ -320,9 +317,19 @@ public class EntityEnermyBase : EntityBase {
                 yield return null;
             }
         }
+        void OnAttackFinished()
+        {
+            b_attacking = false;
+            m_Weapon.OnPlayAnim(false);
+            OnAttackAnim(m_Target, false);
+
+            if (m_EntityControlling.B_SwitchTarget)
+                RecheckTarget();
+        }
+
         public void OnAttackTriggerd()
         {
-            m_Weapon.Play(b_preAim,m_Target);
+            m_Weapon.Play(b_preAim, m_Target);
         }
         #endregion
         #region Movement

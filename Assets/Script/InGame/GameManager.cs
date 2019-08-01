@@ -173,7 +173,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         return Instance.m_Entities.ContainsKey(sourceID) && hb.m_Attacher.B_IsPlayer != Instance.m_Entities[sourceID].B_IsPlayer;
     }
 
-    public EntityBase GetEntity(int sourceIndex,bool isPlayer,Predicate<EntityBase> predict)
+    public EntityBase GetRandomEntity(int sourceIndex,bool isPlayer,Predicate<EntityBase> predict)
     {
         EntityBase target=null;
         m_Entities.TraversalRandom((int index, EntityBase entity) =>
