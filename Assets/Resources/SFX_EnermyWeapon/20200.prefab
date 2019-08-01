@@ -211,6 +211,7 @@ MonoBehaviour:
   I_MuzzleIndex: 10001
   I_ImpactIndex: 20001
   I_IndicatorIndex: 0
+  I_HitMarkIndex: 50001
   I_BufFApplyOnHit: 0
   F_Radius: 0.1
   F_Height: 0.5

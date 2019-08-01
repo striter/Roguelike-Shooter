@@ -524,7 +524,7 @@ public class EntityEnermyBase : EntityBase {
         protected void FireBullet(Vector3 startPosition,Vector3 direction,Vector3 targetPosition)
         {
             if (i_muzzleIndex > 0)
-                ObjectManager.SpawnCommonParticles<SFXParticles>(i_muzzleIndex, startPosition, direction).Play(m_EntityControlling.I_EntityID);
+                ObjectManager.SpawnParticles<SFXMuzzle>(i_muzzleIndex, startPosition, direction).Play(m_EntityControlling.I_EntityID);
             ObjectManager.SpawnDamageSource<SFXProjectile>(i_projectileIndex, startPosition, direction).Play(m_EntityControlling.I_EntityID, direction, targetPosition,GetBuffInfo());
         }
     }

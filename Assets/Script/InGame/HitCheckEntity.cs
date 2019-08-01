@@ -13,7 +13,7 @@ public class HitCheckEntity : HitCheckBase {
         m_Attacher = _attacher;
     }
     List<SFXBase> m_Attaches = new List<SFXBase>();
-    public void AttachTransform(SFXBase attachment)
+    public void AttachHitMark(SFXBase attachment)
     {
         attachment.transform.SetParent(this.transform);
         m_Attaches.Add(attachment);

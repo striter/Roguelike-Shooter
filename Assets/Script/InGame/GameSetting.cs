@@ -54,7 +54,7 @@ namespace GameSetting
             Debug.LogError("GameSetting.WorldOffsetDirection Error? Invalid angle of:" + angle);
             return enum_TileDirection.Invalid;
         }
-
+        public static bool B_ShowHitMark(enum_HitCheck check) => check!= enum_HitCheck.Invalid;
         public static float F_SphereCastDamageReduction(float weaponDamage, float distance, float radius) => weaponDamage * (1 - (distance / radius));       //Rocket Blast Damage
         public static Vector3 V3_RangeSpreadDirection(Vector3 aimDirection, float spread, Vector3 up, Vector3 right) => (aimDirection * GameConst.I_ProjectileSpreadAtDistance + up * UnityEngine.Random.Range(-spread, spread) + right * UnityEngine.Random.Range(-spread, spread)).normalized;
 

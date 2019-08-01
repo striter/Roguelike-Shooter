@@ -11,6 +11,6 @@ public class SFXProjectileBolt : SFXProjectile {
         m_Trail.enabled = false;
         f_TimeCheck = Time.time + GameConst.I_BoltLastTimeAfterHit; 
         if(entity!=null&&entity.m_HitCheckType== enum_HitCheck.Entity)
-            (entity as HitCheckEntity).AttachTransform(this);
+            (entity as HitCheckEntity).AttachHitMark(this);
     }
 }

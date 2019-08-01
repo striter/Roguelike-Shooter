@@ -11,6 +11,7 @@ public class SFXProjectile : SFXBase
     public int I_MuzzleIndex;
     public int I_ImpactIndex;
     public int I_IndicatorIndex;
+    public int I_HitMarkIndex;
     public int I_BufFApplyOnHit;
     public float F_Radius = .5f, F_Height = 1f;
     public bool B_TargetReachBlink = false;
@@ -164,20 +165,18 @@ public class SFXProjectile : SFXBase
     protected void SpawnImpact(RaycastHit hitInfo, HitCheckBase hitParent)
     {
         if (I_ImpactIndex > 0)
+             ObjectManager.SpawnParticles<SFXImpact>(I_ImpactIndex, hitInfo.point, hitInfo.normal, null).Play(I_SourceID);
+
+        if (I_HitMarkIndex > 0)
         {
-            SFXParticlesImpact impact = ObjectManager.SpawnCommonParticles<SFXParticlesImpact>(I_ImpactIndex, hitInfo.point, hitInfo.normal, null);
-            bool showhitMark = true;
-            switch (hitParent.m_HitCheckType)
+            bool showhitMark = GameExpression.B_ShowHitMark(hitParent.m_HitCheckType);
+            if (showhitMark)
             {
-                case enum_HitCheck.Entity:
-                    (hitParent as HitCheckEntity).AttachTransform(impact);
-                    break;
-                case enum_HitCheck.Dynamic:
-                    showhitMark = false;
-                    break;
+                SFXHitMark hitMark= ObjectManager.SpawnParticles<SFXHitMark>(I_HitMarkIndex, hitInfo.point, hitInfo.normal, hitParent.transform);
+                hitMark.Play(I_SourceID);
+                if (hitParent.m_HitCheckType == enum_HitCheck.Entity)
+                    (hitParent as HitCheckEntity).AttachHitMark(hitMark);
             }
-            impact.SetHitMarkShow(showhitMark);
-            impact.Play(I_SourceID);
         }
     }
 

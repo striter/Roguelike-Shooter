@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class SFXParticlesMortal : SFXParticles
+public class SFXMuzzleMortal : SFXMuzzle
 {
     public float F_Speed = 10;
     public float F_PlayTime = 5f;

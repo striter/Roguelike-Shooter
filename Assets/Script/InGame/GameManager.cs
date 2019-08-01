@@ -392,11 +392,11 @@ public static class ObjectManager
 
         return ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Spawn(type, TF_Entity);
     }
-    public static T SpawnCommonParticles<T>(int index, Vector3 position, Vector3 normal, Transform attachTo = null) where T:SFXParticles
+    public static T SpawnParticles<T>(int index, Vector3 position, Vector3 normal, Transform attachTo = null) where T:SFXParticles
     {
         T sfx = ObjectPoolManager<int, SFXBase>.Spawn(index, attachTo) as T;
         if (sfx == null)
-            Debug.LogError("SFX Spawn Error! Invalid Common Particles,Index:" + index);
+            Debug.LogError("SFX Spawn Error! Invalid Particles Type:"+typeof(T) +",Index:" + index);
         sfx.transform.position = position;
         sfx.transform.rotation = Quaternion.LookRotation(normal);
         return sfx;
