@@ -60,8 +60,6 @@ public class SFXProjectile : SFXBase
         if (I_IndicatorIndex > 0)
             SpawnIndicator(targetPosition,Vector3.up, F_Duration(transform.position, targetPosition));
 
-        m_Particles.Traversal((ParticleSystem particle) => { particle.Play(); });
-
         PlaySFX(sourceID, F_Duration(transform.position, targetPosition));
     }
 
