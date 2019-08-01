@@ -22,4 +22,10 @@ public class SFXParticles : SFXBase
         PlaySFX(sourceID, duration==-1?m_ParticleDuration: duration);
         m_Particles.Traversal((ParticleSystem particle) => { particle.Play(); });
     }
+    public void Stop()
+    {
+        transform.SetParent(null);
+        f_TimeCheck = Time.time + 2f;
+        m_Particles.Traversal((ParticleSystem particle) => { particle.Stop(); });
+    }
 }
