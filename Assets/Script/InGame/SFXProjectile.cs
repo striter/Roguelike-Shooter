@@ -158,7 +158,7 @@ public class SFXProjectile : SFXBase
     #endregion
     protected virtual void SpawnIndicator(Vector3 position,Vector3 direction,float duration)
     {
-        m_Indicator = ObjectManager.SpawnCommonIndicator(I_IndicatorIndex, position, direction);
+        m_Indicator = ObjectManager.SpawnIndicator(I_IndicatorIndex, position, direction);
         m_Indicator.Play(I_SourceID, duration );
     }
     protected void SpawnImpact(RaycastHit hitInfo, HitCheckBase hitParent)

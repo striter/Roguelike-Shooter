@@ -26,7 +26,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
         B_IsPlayer = isPlayer;
         m_SkinRenderers = tf_Model.Find("Skin").GetComponentsInChildren<Renderer>();
         m_HitChecks = GetComponentsInChildren<HitCheckEntity>();
-        m_EntityInfo = new EntityInfoManager(entityInfo,OnReceiveDamage, OnInfoChange);
+        m_EntityInfo = new EntityInfoManager(entityInfo,this,OnReceiveDamage, OnInfoChange);
         m_HealthManager = new EntityHealth(entityInfo,OnHealthEffect,OnDead);
         TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.Attach(this, OnReceiveDamage); });
     }

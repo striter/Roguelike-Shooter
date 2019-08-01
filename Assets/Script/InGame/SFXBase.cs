@@ -33,12 +33,14 @@ public class SFXBase : MonoBehaviour {
         if (b_Playing&&Time.time > f_TimeCheck)
             OnPlayFinished();
     }
+
     protected  virtual void OnPlayFinished()
     {
         b_Playing = false;
            OnSFXPlayFinished?.Invoke();
         ObjectManager.RecycleSFX(I_SFXIndex, this);
     }
+
     public void ForceStop()
     {
         OnPlayFinished();

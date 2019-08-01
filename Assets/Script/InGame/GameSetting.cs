@@ -439,6 +439,8 @@ namespace GameSetting
         public EntityBuffInfo m_EntityBuffProperty { get; private set; }
         public DamageBuffInfo m_DamageBuffProperty { get; private set; }
         public List<BuffBase> m_BuffList { get; private set; } = new List<BuffBase>();
+        Dictionary<int, SFXBuffEffect> m_BuffEffects = new Dictionary<int, SFXBuffEffect>();
+        EntityBase m_Entity;
         public SEntity m_InfoData { get; private set; }
         public int I_ObjectPoolIndex => m_InfoData.m_Index;
         public float F_MaxMana => m_InfoData.m_MaxMana;
@@ -449,9 +451,10 @@ namespace GameSetting
         public float F_FireRateTick(float deltaTime) => deltaTime* m_EntityBuffProperty.F_FireRateMultiply;
         Func<DamageInfo, bool> OnDamageEntity;
         Action OnInfoChange;
-        public EntityInfoManager(SEntity _entityInfo,Func<DamageInfo, bool> _OnDamageEntity,Action _OnInfoChange)
+        public EntityInfoManager(SEntity _entityInfo,EntityBase _attacher,Func<DamageInfo, bool> _OnDamageEntity,Action _OnInfoChange)
         {
-            OnDamageEntity = _OnDamageEntity;
+            m_Entity = _attacher;
+               OnDamageEntity = _OnDamageEntity;
             OnInfoChange = _OnInfoChange;
             m_InfoData = _entityInfo;
             m_EntityBuffProperty = EntityBuffInfo.Create();
@@ -493,6 +496,7 @@ namespace GameSetting
         public BuffBase GetBuff(int buffIndex) => new BuffBase(DataManager.GetEntityBuffProperties(buffIndex), OnBuffExpired, OnDamageEntity);
         public void OnBuffChanged()
         {
+            //Calculate All Buff Infos
             float entityDamageReduce = 1f;
             float damageApplyEnhance = 1f;
             float movementEnhance = 1f;
@@ -503,9 +507,31 @@ namespace GameSetting
                 movementEnhance += buff.m_buffInfo.m_MovementSpeedMultiplyPercentage > 0 ? buff.m_buffInfo.m_MovementSpeedMultiplyPercentage / 100f : 0;
                 firerateEnhance += buff.m_buffInfo.m_FireRateMultiplyPercentage > 0 ? buff.m_buffInfo.m_FireRateMultiplyPercentage / 100f : 0;
             });
+
             entityDamageReduce = entityDamageReduce < 0 ? 0 : entityDamageReduce;
             m_EntityBuffProperty = EntityBuffInfo.Create(entityDamageReduce,movementEnhance,firerateEnhance);
             m_DamageBuffProperty = DamageBuffInfo.Create(damageApplyEnhance, new List<int>());
+
+            //Calculate All Buff Effects
+            //Do Removal Check
+            List<int> effectsList = m_BuffEffects.Keys.ToList();
+            for (int i = 0; i < effectsList.Count; i++)
+            {
+                BuffBase effectBuff = m_BuffList.Find(p => p.m_buffInfo.m_Index == effectsList[i]);
+                if (effectBuff == null)
+                    m_BuffEffects.Remove(effectsList[i]);
+            }
+            for (int i = 0; i < m_BuffList.Count; i++)
+            {
+                if (m_BuffEffects.ContainsKey(m_BuffList[i].m_buffInfo.m_Index))
+                    m_BuffEffects[m_BuffList[i].m_buffInfo.m_Index].Refresh();
+                else
+                {
+                    m_BuffEffects.Add(m_BuffList[i].m_buffInfo.m_Index, ObjectManager.SpawnBuffEffect(m_BuffList[i].m_buffInfo.m_EffectIndex, m_Entity));
+                    m_BuffEffects[m_BuffList[i].m_buffInfo.m_Index].Play(m_Entity.I_EntityID,m_BuffList[i].m_buffInfo.m_ExpireDuration);
+                }
+            }
+
             OnInfoChange();
         }
     }

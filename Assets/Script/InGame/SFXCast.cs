@@ -50,7 +50,7 @@ public class SFXCast : SFXBase,ISingleCoroutine {
             return;
         }
         if(I_DelayIndicatorIndex>0)
-            ObjectManager.SpawnCommonIndicator(I_DelayIndicatorIndex, transform.position, Vector3.up).Play(sourceID,  F_DelayDuration);
+            ObjectManager.SpawnIndicator(I_DelayIndicatorIndex, transform.position, Vector3.up).Play(sourceID,  F_DelayDuration);
         this.StartSingleCoroutine(1, TIEnumerators.PauseDel(F_DelayDuration, () => { PlayDelayed(sourceID, buffInfo); }));
     }
     public virtual void PlayDelayed(int sourceID, DamageBuffInfo buffInfo)

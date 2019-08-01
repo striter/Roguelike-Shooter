@@ -1773,18 +1773,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c088e7b318d292458e08155aef1723d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Test_TileStyle: 3
-  Test_EntityStyle: 3
+  Test_TileStyle: 1
+  Test_EntityStyle: 1
   M_TESTSEED: 
   B_PhysicsDebugGizmos: 0
   B_LevelDebugGizmos: 0
   E_LevelDebug: 3
-  Z_TestEntityIndex: 303
+  Z_TestEntityIndex: 206
   TestEntityBuffApplyOnSpawn: 0
   X_TestCastIndex: 0
-  C_TestProjectileIndex: 30200
+  C_TestProjectileIndex: 30400
   V_TestIndicatorIndex: 50002
-  B_TestBuffIndex: 3
+  B_TestBuffIndex: 4
 --- !u!4 &1133817278
 Transform:
   m_ObjectHideFlags: 0

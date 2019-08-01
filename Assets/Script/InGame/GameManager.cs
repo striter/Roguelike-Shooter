@@ -48,7 +48,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         if (Input.GetKeyDown(KeyCode.C) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
             ObjectManager.SpawnDamageSource<SFXProjectile>(C_TestProjectileIndex, hit.point + Vector3.up, m_LocalPlayer.transform.forward).Play(0, m_LocalPlayer.transform.forward, hit.point + m_LocalPlayer.transform.forward * 10, DamageBuffInfo.Create());
         if (Input.GetKeyDown(KeyCode.V) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
-            ObjectManager.SpawnCommonIndicator(V_TestIndicatorIndex, hit.point + Vector3.up, Vector3.up).Play(1000);
+            ObjectManager.SpawnIndicator(V_TestIndicatorIndex, hit.point + Vector3.up, Vector3.up).Play(1000);
         if (Input.GetKeyDown(KeyCode.B))
             m_LocalPlayer.OnReceiveBuff(B_TestBuffIndex);
         if (Input.GetKeyDown(KeyCode.N))
@@ -292,7 +292,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     }
     void SpawnEntity(int entityIndex, int spawnIndex,Vector3 position)
     {
-        ObjectManager.SpawnCommonIndicator(50001, position, Vector3.up).Play(entityIndex,GameConst.I_EnermySpawnDelay);
+        ObjectManager.SpawnIndicator(50001, position, Vector3.up).Play(entityIndex,GameConst.I_EnermySpawnDelay);
         this.StartSingleCoroutine(100 + spawnIndex, TIEnumerators.PauseDel(GameConst.I_EnermySpawnDelay, () => {
             ObjectManager.SpawnEntity(entityIndex,position ).OnActivate();
         }));
@@ -401,13 +401,22 @@ public static class ObjectManager
         sfx.transform.rotation = Quaternion.LookRotation(normal);
         return sfx;
     }
-    public static SFXIndicator SpawnCommonIndicator(int index, Vector3 position, Vector3 normal, Transform attachTo = null)
+    public static SFXIndicator SpawnIndicator(int index, Vector3 position, Vector3 normal, Transform attachTo = null)
     {
         SFXIndicator sfx = ObjectPoolManager<int, SFXBase>.Spawn(index, attachTo) as SFXIndicator;
         if (sfx == null)
             Debug.LogError("SFX Spawn Error! Invalid Indicator,Index:" + index);
         sfx.transform.position = position;
         sfx.transform.rotation = Quaternion.LookRotation(normal);
+        return sfx;
+    }
+    public static SFXBuffEffect SpawnBuffEffect(int index, EntityBase attachTo)
+    {
+        SFXBuffEffect sfx = ObjectPoolManager<int, SFXBase>.Spawn(index, attachTo.tf_Head) as SFXBuffEffect;
+        if (sfx == null)
+            Debug.LogError("SFX Spawn Error! Invalid BuffEffect,Index:" + index);
+        sfx.transform.localPosition = Vector3.zero;
+        sfx.transform.localRotation = Quaternion.identity;
         return sfx;
     }
     public static T SpawnDamageSource<T>(int weaponIndex,Vector3 position,Vector3 normal, Transform attachTo=null) where T:SFXBase
