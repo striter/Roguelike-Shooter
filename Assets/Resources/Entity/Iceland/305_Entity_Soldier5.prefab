@@ -1004,6 +1004,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   E_AnimatorIndex: 150
   F_AttackRotateParam: 1
+  I_AttackPreAimPercentage: 50
   B_AttackMove: 1
 --- !u!114 &114524149443998718
 MonoBehaviour:
@@ -1036,7 +1037,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.8
+  m_Radius: 0.7
   m_Height: 3
   m_Direction: 1
   m_Center: {x: 0, y: 1.5, z: 0}

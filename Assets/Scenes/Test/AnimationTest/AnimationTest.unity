@@ -550,18 +550,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 30
       objectReference: {fileID: 0}
-    - target: {fileID: 4673326909289022, guid: 9104a7b96dc5803478f056b9e58b8053, type: 2}
-      propertyPath: m_LocalScale.x
-      value: 0.7
-      objectReference: {fileID: 0}
-    - target: {fileID: 4673326909289022, guid: 9104a7b96dc5803478f056b9e58b8053, type: 2}
-      propertyPath: m_LocalScale.y
-      value: 0.7
-      objectReference: {fileID: 0}
-    - target: {fileID: 4673326909289022, guid: 9104a7b96dc5803478f056b9e58b8053, type: 2}
-      propertyPath: m_LocalScale.z
-      value: 0.7
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 9104a7b96dc5803478f056b9e58b8053, type: 2}
   m_IsPrefabParent: 0
@@ -769,7 +757,9 @@ MonoBehaviour:
   Test_TileStyle: 2
   Test_EntityStyle: -1
   M_TESTSEED: 
-  B_GameDebugGizmos: 1
+  B_PhysicsDebugGizmos: 1
+  B_LevelDebugGizmos: 1
+  E_LevelDebug: 0
   Z_TestEntityIndex: 221
   TestEntityBuffApplyOnSpawn: 1
   X_TestCastIndex: 30003
