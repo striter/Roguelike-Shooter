@@ -695,29 +695,31 @@ namespace GameSetting
     #region GameEffects
     public class ProjectileBlink:ISingleCoroutine
     {
-        Material m_material;
+        Material[] m_materials;
         float f_simulate;
         float f_blinkRate;
         float f_blinkTime;
-        public ProjectileBlink(Material _blinkMat, float _blinkRate,float _blinkTime)
+        public ProjectileBlink(Material[] _blinkMat, float _blinkRate,float _blinkTime)
         {
-            m_material = _blinkMat;
+            m_materials = _blinkMat;
             f_blinkRate = _blinkRate;
             f_blinkTime = _blinkTime;
             f_simulate = 0f;
+            OnReset();
         }
         public void OnReset()
         {
             f_simulate = 0f;
             this.StopSingleCoroutine(0);
-            m_material.SetColor("_Color",TCommon.ColorAlpha(Color.red,0f));
+            m_materials.Traversal((Material material) => { material.SetColor("_Color", TCommon.ColorAlpha(Color.red, 0)); }); 
         }
         public void Tick(float deltaTime)
         {
             f_simulate += deltaTime;
             if (f_simulate > f_blinkRate)
             {
-                this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => {m_material.SetColor("_Color", TCommon.ColorAlpha(Color.red, value));}, 1, 0, f_blinkTime));
+                this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => {
+                    m_materials.Traversal((Material material) => { material.SetColor("_Color", TCommon.ColorAlpha(Color.red, value)); }); }, 1, 0, f_blinkTime));
                 f_simulate -= f_blinkRate;
             }
         }

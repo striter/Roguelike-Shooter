@@ -39,11 +39,11 @@ public class SFXProjectile : SFXBase
         {
             try
             {
-                m_Blink = new ProjectileBlink(transform.Find("Model").GetComponent<Renderer>().materials[1], .25f, .25f);
+                m_Blink = new ProjectileBlink(transform.Find("BlinkModel").GetComponent<Renderer>().materials, .25f, .25f);
             }
             catch
             {
-                Debug.LogError("Error! Blink Model Init, Extra Material/Model Folder Required!" + gameObject.name);
+                Debug.LogError("Error! Blink Model Init, BlinkModel Folder Required!" + gameObject.name);
                 m_Blink = null;
             }
         }

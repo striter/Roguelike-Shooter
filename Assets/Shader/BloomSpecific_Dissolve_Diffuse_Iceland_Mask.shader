@@ -14,6 +14,7 @@
 	}
 	SubShader
 	{
+		name "MAIN"
 		Tags{"RenderType" = "BloomMask" }
 		CGINCLUDE
 		#include "UnityCG.cginc"

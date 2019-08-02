@@ -7,7 +7,7 @@
 	}
 	SubShader
 	{ 
-		Tags{ "RenderType" = "BloomParticles""IgnoreProjector" = "True" "Queue" = "Transparent" "PreviewType" ="Plane"}
+		Tags{ "RenderType" = "BloomParticlesAdditive""IgnoreProjector" = "True" "Queue" = "Transparent" "PreviewType" ="Plane"}
 		Blend SrcAlpha One
 		Cull Off Lighting Off ZWrite Off Fog { Color(0,0,0,0) }
 			UsePass "Game/Particle/Additive/MAIN"
