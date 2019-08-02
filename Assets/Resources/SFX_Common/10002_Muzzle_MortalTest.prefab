@@ -325,7 +325,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1963822414579482}
-  m_Mesh: {fileID: 4300000, guid: faf6ddd4045654b469c7c18d34ba8fb6, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 19051dd19ce846e47807b88c63f1fe39, type: 3}
 --- !u!96 &96233184656128318
 TrailRenderer:
   serializedVersion: 2
@@ -492,7 +492,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 927967702
+  randomSeed: 1229719247
   InitialModule:
     serializedVersion: 3
     enabled: 1

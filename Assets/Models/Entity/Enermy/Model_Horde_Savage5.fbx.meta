@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: a5a501f42cc2fb44ba39de5c348c398c
+guid: 579327864c311424dbcda828702a0de0
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
@@ -18,8 +18,8 @@ ModelImporter:
     100024: LowerLeg_Right_jnt
     100026: Neck_jnt
     100028: SF_Character_buluo5
-    100030: //RootNode
-    100032: SF_Character_buluo5 1
+    100030: SF_Character_buluo5 1
+    100032: //RootNode
     100034: SF_Character_buluo5_huozhang
     100036: Shoulder_Left_jnt
     100038: Shoulder_Right_jnt
@@ -44,8 +44,8 @@ ModelImporter:
     400024: LowerLeg_Right_jnt
     400026: Neck_jnt
     400028: SF_Character_buluo5
-    400030: //RootNode
-    400032: SF_Character_buluo5 1
+    400030: SF_Character_buluo5 1
+    400032: //RootNode
     400034: SF_Character_buluo5_huozhang
     400036: Shoulder_Left_jnt
     400038: Shoulder_Right_jnt
@@ -56,6 +56,7 @@ ModelImporter:
     400048: UpperLeg_Left_jnt
     400050: UpperLeg_Right_jnt
     2100000: lambert668
+    2100002: aiStandardSurface8
     2300000: SF_Character_buluo5_huozhang
     3300000: SF_Character_buluo5_huozhang
     4300000: SF_Character_buluo5_huozhang
@@ -63,6 +64,11 @@ ModelImporter:
     9500000: //RootNode
     13700000: SF_Character_buluo5 1
   externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: aiStandardSurface8
+    second: {fileID: 2100000, guid: 20f18c76bd32c3346bb7229c611dd639, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
@@ -265,7 +271,7 @@ ModelImporter:
       scale: {x: 1, y: 1, z: 1}
     - name: SF_Character_buluo5_huozhang
       parentName: SF_Character_buluo5
-      position: {x: 180.60687, y: 163.24207, z: 0.57008356}
+      position: {x: 180.60687, y: 192.67542, z: 0.5700836}
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: Hips_jnt
@@ -371,7 +377,7 @@ ModelImporter:
     - name: Neck_jnt
       parentName: Chest_jnt
       position: {x: -22.89519, y: 4.2216864e-14, z: 5.6672844e-17}
-      rotation: {x: 0, y: 0, z: -1.7763568e-15, w: 1}
+      rotation: {x: 0, y: 0, z: -1.8873791e-15, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: Head_jnt
       parentName: Neck_jnt
