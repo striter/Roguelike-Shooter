@@ -9,7 +9,7 @@ public class SFXBuffApply : SFXParticles {
         base.Play(I_SourceID,buffInfo.m_ExpireDuration);
         transform.SetParent(attachTo);
         transform.position = attachTo.position;
-        transform.rotation = Quaternion.LookRotation(Vector3.up);
+        transform.localRotation = Quaternion.identity;
         applyTarget.OnReceiveBuff(I_BuffIndex);
     }
     protected override void OnPlayFinished()
