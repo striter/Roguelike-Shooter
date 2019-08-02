@@ -45,5 +45,5 @@ Material:
     - _Vnoisespeed: 0.24
     m_Colors:
     - _Color: {r: 0.037704524, g: 0.45588237, b: 0, a: 1}
-    - _SpeedUVPowZEmissionW: {r: 0.05, g: 0.05, b: 1, a: 2}
+    - _SpeedUVPowZEmissionW: {r: 0.1, g: 0.1, b: 1, a: 2}
     - _TintColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}

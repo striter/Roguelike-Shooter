@@ -1,18 +1,5 @@
-﻿	Shader "Hidden/PostEffect/PE_BloomSpecific_Render"
+﻿Shader "Hidden/PostEffect/PE_BloomSpecific_Render"
 {
-	Properties
-	{
-		_MainTex("_MainTex", 2D) = "white" {}
-		_Color("_Color",Color) = (1,1,1,1)
-		
-		_SubTex1("Dissolve Map",2D) = "white"{}
-		_SubTex2("Sub Tex 2",2D) = "white"{}
-		_Amount1("_Amount1",Range(0,1))=0
-		_Amount2("_Amount2",float)=0
-		_Amount3("_Amount3",float)=0
-		_Color1("_Color1",Color)=(1,1,1,1)
-	}
-
 	SubShader
 	{
 		Tags { "RenderType" = "BloomColor" "IgnoreProjector" = "True" "Queue" = "Transparent" }
@@ -36,6 +23,13 @@
 
 	SubShader
 	{
+		Tags { "RenderType" = "BloomParticlesAdditiveNoiseFlow" "IgnoreProjector" = "True" "Queue" = "Transparent" }
+		Cull Off Lighting Off ZWrite Off Fog { Color(0,0,0,0) }
+		UsePass "Game/Particle/Additive_NoiseFlow/MAIN"
+	}
+
+	SubShader
+	{
 		Tags { "RenderType" = "BloomDissolveEdge" "IgnoreProjector" = "True" "Queue" = "Transparent" }
 		Cull Off Lighting Off ZWrite Off Fog { Color(0,0,0,0) }
 		UsePass "Game/Effect/BloomSpecific/Bloom_DissolveEdge/MAIN"
@@ -47,6 +41,7 @@
 		Cull Off Lighting Off ZWrite Off Fog { Color(0,0,0,0) }
 		UsePass "Game/Effect/BloomSpecific/Color_ViewDirDraw/MAIN"
 	}
+
 	SubShader
 	{
 		Tags { "RenderType" = "Opaque" "Queue"="Geometry"}

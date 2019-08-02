@@ -1781,8 +1781,8 @@ MonoBehaviour:
   E_LevelDebug: 3
   Z_TestEntityIndex: 0
   TestEntityBuffApplyOnSpawn: 0
-  X_TestCastIndex: 0
-  C_TestProjectileIndex: 20400
+  X_TestCastIndex: 40400
+  C_TestProjectileIndex: 40200
   V_TestIndicatorIndex: 30004
   B_TestBuffIndex: 4
 --- !u!4 &1133817278
