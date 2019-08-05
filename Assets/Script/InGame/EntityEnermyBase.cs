@@ -565,6 +565,7 @@ public class EntityEnermyBase : EntityBase {
             int waveCount = m_Info.m_InfoData.m_RangeExtension.RandomRangeInt();
             float beginAnle= -m_Info.m_InfoData.m_OffsetExtension*(waveCount-1)/2f;
             float distance = TCommon.GetXZDistance(transformBarrel.position, _target.transform.position);
+            Debug.Log(waveCount);
             for (int i = 0; i < waveCount; i++)
             {
                 Vector3 fanDirection = direction.RotateDirection(Vector3.up, beginAnle + i * m_Info.m_InfoData.m_OffsetExtension);

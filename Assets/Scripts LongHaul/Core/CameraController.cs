@@ -14,7 +14,7 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
 
     public bool B_DrawDebugLine = false;
 
-    protected Vector3 v3_Offset;
+    protected Vector3 v3_localOffset;
     protected int I_YawAngleMin = 0;
     protected int I_YawAngleMax = 30;
     Ray ray_temp;
@@ -48,7 +48,7 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
 
     protected void SetCameraOffset(Vector3 offset)
     {
-        v3_Offset = offset;
+        v3_localOffset = offset;
         f_CameraDistance = tf_CameraPos.localPosition.magnitude;
     }
     protected void SetCameraYawClamp(int minRotationClamp = -1, int maxRotationClamp = -1)
@@ -86,6 +86,7 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
         tf_CameraLookAt = lookAtTrans;
     }
     protected virtual Quaternion QT_PitchYawRotation=> Quaternion.Euler(f_Pitch, f_Yaw, f_Roll);
+    protected virtual Vector3 V3_LocalPositionOffset => v3_localOffset;
     protected virtual void LateUpdate()
     {
         if (tf_AttachTo != null)
@@ -98,14 +99,14 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
             tf_CameraTrans.position = tf_AttachTo.position;
             tf_CameraTrans.rotation = Quaternion.Euler(0, f_Yaw, 0);
 
-            if (B_CameraOffsetWallClip&&v3_Offset!=Vector3.zero)
+            tf_CameraPos.localPosition = V3_LocalPositionOffset;
+
+            if (B_CameraOffsetWallClip&&v3_localOffset!=Vector3.zero)
             {
                 v3_temp = Vector3.Normalize(tf_CameraPos.position - tf_AttachTo.position);
                 ray_temp = new Ray(tf_AttachTo.position, v3_temp);
                 if (Physics.Raycast(ray_temp, out rh_temp, f_CameraDistance))
                     tf_CameraPos.position = rh_temp.point + v3_temp * .2f;
-                else
-                    tf_CameraPos.localPosition = v3_Offset;
 
                 if (B_DrawDebugLine)
                     Debug.DrawRay(ray_temp.origin, ray_temp.direction);
