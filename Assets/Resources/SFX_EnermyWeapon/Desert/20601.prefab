@@ -523,6 +523,8 @@ MonoBehaviour:
   V3_CastSize: {x: 5, y: 0, z: 0}
   F_DelayDuration: 0
   I_DelayIndicatorIndex: 0
+  B_CameraShake: 1
+  I_ShakeAmount: 5
   B_DamageDistanceReduction: 0
 --- !u!198 &198113532783734832
 ParticleSystem:

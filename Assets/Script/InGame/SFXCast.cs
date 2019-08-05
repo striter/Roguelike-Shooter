@@ -13,6 +13,8 @@ public class SFXCast : SFXBase,ISingleCoroutine {
     public Vector3 V3_CastSize;
     public int F_DelayDuration;
     public int I_DelayIndicatorIndex;
+    public bool B_CameraShake = false;
+    public int I_ShakeAmount = 0;
     ParticleSystem[] m_Particles;
     protected DamageInfo m_DamageInfo;
     protected virtual float F_ParticleDuration => 5f;
@@ -60,6 +62,8 @@ public class SFXCast : SFXBase,ISingleCoroutine {
         if (I_BuffApplyOnCast > 0)
             buffInfo.m_BuffAplly.Add(I_BuffApplyOnCast);
         m_DamageInfo.ResetBuff(buffInfo);
+        if (B_CameraShake)
+            TPSCameraController.Instance.AddShake(I_ShakeAmount);
 
         this.StartSingleCoroutine(0, TIEnumerators.TickCount(OnBlast, I_TickCount, F_Tick, () => {
             m_Particles.Traversal((ParticleSystem particle) => { particle.Stop(); });

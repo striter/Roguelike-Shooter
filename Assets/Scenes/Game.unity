@@ -1773,16 +1773,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c088e7b318d292458e08155aef1723d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Test_TileStyle: 1
-  Test_EntityStyle: 1
+  Test_TileStyle: 2
+  Test_EntityStyle: 2
   M_TESTSEED: 
   B_PhysicsDebugGizmos: 0
   B_LevelDebugGizmos: 0
   E_LevelDebug: 3
-  Z_TestEntityIndex: 0
-  TestEntityBuffApplyOnSpawn: 0
-  X_TestCastIndex: 40400
-  C_TestProjectileIndex: 40200
+  Z_TestEntityIndex: 505
+  TestEntityBuffApplyOnSpawn: 20601
+  X_TestCastIndex: 20401
+  CastForward: 0
+  C_TestProjectileIndex: 10700
   V_TestIndicatorIndex: 30004
   B_TestBuffIndex: 4
 --- !u!4 &1133817278
@@ -1976,6 +1977,8 @@ MonoBehaviour:
   TPSOffset: {x: 0, y: 20, z: -3}
   I_YawMin: 60
   I_YawMax: 60
+  I_ShakeParam: 6
+  F_ReverseCheck: 0.1
 --- !u!4 &1434031919
 Transform:
   m_ObjectHideFlags: 0

@@ -296,9 +296,9 @@ GameObject:
   - component: {fileID: 4454887064478624}
   - component: {fileID: 114123288749950030}
   - component: {fileID: 114933906533636644}
+  - component: {fileID: 136347361652885448}
   - component: {fileID: 195434108325889442}
   - component: {fileID: 208879857761255788}
-  - component: {fileID: 136347361652885448}
   m_Layer: 10
   m_Name: 505_Entity_Skeleton5
   m_TagString: Untagged

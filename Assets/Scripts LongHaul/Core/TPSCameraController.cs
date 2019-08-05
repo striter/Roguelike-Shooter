@@ -8,12 +8,25 @@ public class TPSCameraController : CameraController
     public static new TPSCameraController Instance => ninstance;
     public Vector3 TPSOffset=new Vector3(6,3,1);
     public int I_YawMin = -90, I_YawMax = 90;
-    Vector3 f_shake;
+    public int I_ShakeParam;
+    public float F_ReverseCheck;
+    Vector3 v3_Shake;
+    float inverseCheck = 0;
+    bool b_reverse;
     protected override Vector3 V3_LocalPositionOffset
     {
         get
         {
-            return v3_localOffset + f_shake;
+
+            inverseCheck += Time.deltaTime;
+            if (inverseCheck > F_ReverseCheck)
+            {
+                b_reverse = !b_reverse;
+                inverseCheck -= F_ReverseCheck;
+            }
+
+            v3_Shake = Vector3.Lerp(v3_Shake, Vector3.zero, I_ShakeParam * Time.deltaTime);
+            return v3_localOffset +(b_reverse?1:-1)* v3_Shake;
         }
     }
     protected override void Awake()
@@ -28,6 +41,6 @@ public class TPSCameraController : CameraController
     }
     public void AddShake(float shakeAmount)
     {
-
+        v3_Shake += TCommon.RandomVector(shakeAmount);
     }
 }

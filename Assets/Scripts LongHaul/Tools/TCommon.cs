@@ -136,9 +136,9 @@ public static class TCommon
     {
         return Quaternion.Euler(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360));
     }
-    public static Vector3 RandomPositon(Vector3 startPosition, float offset = .2f)
+    public static Vector3 RandomVector(float offset)
     {
-        return startPosition + new Vector3(UnityEngine.Random.Range(-offset, offset), UnityEngine.Random.Range(-offset, offset), UnityEngine.Random.Range(-offset, offset));
+        return  new Vector3(UnityEngine.Random.Range(-offset, offset), UnityEngine.Random.Range(-offset, offset), UnityEngine.Random.Range(-offset, offset));
     }
     public static Transform FindOrCreateNewTransform(this Transform parentTrans, string name)
     {
