@@ -130,6 +130,7 @@ GameObject:
   - component: {fileID: 4078710767679838}
   - component: {fileID: 33241116067872110}
   - component: {fileID: 23232508993594674}
+  - component: {fileID: 114634920923650000}
   m_Layer: 0
   m_Name: SF_Character_kejibudui6_leidian
   m_TagString: Untagged
@@ -538,13 +539,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1064198224150568}
-  m_LocalRotation: {x: 2.3241591e-17, y: -6.1109556e-18, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: -3.6287155, y: -0, z: -83.23439}
+  m_LocalRotation: {x: 2.3241588e-17, y: -6.110954e-18, z: 0.7071068, w: 0.7071068}
+  m_LocalPosition: {x: -70.66124, y: -0, z: -83.23439}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4078710767679838}
-  m_Father: {fileID: 4569115304966850}
-  m_RootOrder: 3
+  m_Father: {fileID: 4290679239683290}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4136424523306062
 Transform:
@@ -625,6 +626,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4267178611491826}
+  - {fileID: 4110130748167560}
   m_Father: {fileID: 4670176547305478}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -781,7 +783,6 @@ Transform:
   - {fileID: 4359618430738588}
   - {fileID: 4096349531214336}
   - {fileID: 4194349243886552}
-  - {fileID: 4110130748167560}
   m_Father: {fileID: 4267178611491826}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1090,6 +1091,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2091396369435d24bad4838db15bbe09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114634920923650000
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1336919124051974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62ff7ae0926d6e44ea8a932b8454f520, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  F_RotateSpeed: 50
 --- !u!114 &114976349185268542
 MonoBehaviour:
   m_ObjectHideFlags: 1

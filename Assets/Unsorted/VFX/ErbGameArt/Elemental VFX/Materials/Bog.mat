@@ -37,7 +37,7 @@ Material:
     m_Floats:
     - _AlphaPow: 5
     - _Alphapow: 5
-    - _Cutoff: 0.132
+    - _Cutoff: 0.1
     - _InvFade: 1
     - _Maskpower: 1
     - _Masppower: 1

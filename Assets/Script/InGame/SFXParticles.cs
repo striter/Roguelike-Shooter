@@ -7,25 +7,54 @@ public class SFXParticles : SFXBase
 {
     protected ParticleSystem[] m_Particles { get; private set; }
     protected float m_ParticleDuration { get; private set; }
+    protected SFXRelativeBase[] m_relativeSFXs;
+    protected virtual bool B_PlayOnAwake => true;
+    const float F_ParticlesMaxStopTime = 4f;
+    protected bool B_ParticlesPlaying;
+    float f_playDuration;
     public override void Init(int _sfxIndex)
     {
         base.Init(_sfxIndex);
+        m_relativeSFXs = GetComponentsInChildren<SFXRelativeBase>();
+        m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.Init(); });
         m_Particles = transform.GetComponentsInChildren<ParticleSystem>();
         m_Particles.Traversal((ParticleSystem particle) => {
             if (particle.main.duration > m_ParticleDuration)
                 m_ParticleDuration = particle.main.duration;
             particle.Stop();
-                });
+        });
     }
-    public virtual void Play(int sourceID,float duration=-1)
+    public virtual void Play(int sourceID,float duration=0)
     {
-        PlaySFX(sourceID, duration==-1?m_ParticleDuration: duration);
+        duration = duration == 0 ? m_ParticleDuration : duration + m_ParticleDuration;
+        duration +=  F_ParticlesMaxStopTime;
+        PlaySFX(sourceID,duration);
+        if (B_PlayOnAwake)
+            PlayParticles();
+    }
+    public void PlayParticles()
+    {
+        B_ParticlesPlaying = true;
+        m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.Play(); });
         m_Particles.Traversal((ParticleSystem particle) => { particle.Play(); });
     }
-    public void Stop()
+    protected override void Update()
+    {
+        base.Update();
+        if (B_PlayOnAwake&&B_ParticlesPlaying&&f_timeLeft < F_ParticlesMaxStopTime)
+            StopParticles();
+    }
+    protected override void OnRecycle()
+    {
+        base.OnRecycle();
+        m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.OnRecycle(); });
+    }
+    public void StopParticles()
     {
         transform.SetParent(null);
-        f_TimeCheck = Time.time + 2f;
+        f_TimeCheck = Time.time + F_ParticlesMaxStopTime;
+        B_ParticlesPlaying = false;
+        m_relativeSFXs.Traversal((SFXRelativeBase sfxRelative) => { sfxRelative.Stop(); });
         m_Particles.Traversal((ParticleSystem particle) => { particle.Stop(); });
     }
 }

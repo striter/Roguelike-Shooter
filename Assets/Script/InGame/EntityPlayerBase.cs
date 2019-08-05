@@ -186,7 +186,7 @@ public class EntityPlayerBase : EntityBase {
         }
         public void SetRun(bool run)
         {
-            m_Animator.SetBool(HS_B_Run,run);
+            //m_Animator.SetBool(HS_B_Run,run);
         }
     }
 #if UNITY_EDITOR

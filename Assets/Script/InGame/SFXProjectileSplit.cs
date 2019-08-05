@@ -17,9 +17,9 @@ public class SFXProjectileSplit : SFXProjectile {
         if (I_SplitCount <= 0)
             Debug.LogError("Fan Count Less Of Equals 0");
     }
-    protected override void OnPlayFinished()
+    protected override void OnRecycle()
     {
-        base.OnPlayFinished();
+        base.OnRecycle();
         OnSplit();
     }
     void OnSplit()

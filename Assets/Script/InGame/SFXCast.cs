@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class SFXCast : SFXBase,ISingleCoroutine {
+public class SFXCast : SFXParticles,ISingleCoroutine {
     public enum_CastControllType E_CastType = enum_CastControllType.Invalid;
     public float F_Damage;
     public int I_TickCount=1;
@@ -15,19 +15,16 @@ public class SFXCast : SFXBase,ISingleCoroutine {
     public int I_DelayIndicatorIndex;
     public bool B_CameraShake = false;
     public int I_ShakeAmount = 0;
-    ParticleSystem[] m_Particles;
     protected DamageInfo m_DamageInfo;
     protected virtual float F_ParticleDuration => 5f;
     protected virtual float F_CastLength => V3_CastSize.z;
     public bool B_Casting { get; private set; } = false;
-
+    protected override bool B_PlayOnAwake => false;
     protected Transform CastTransform => tf_ControlledCast ? tf_ControlledCast : transform;
     Transform tf_ControlledAttach,tf_ControlledCast;
     public override void Init(int _sfxIndex)
     {
         base.Init(_sfxIndex);
-        m_Particles = GetComponentsInChildren<ParticleSystem>();
-        m_Particles.Traversal((ParticleSystem particle)=> {particle.Stop();});
         m_DamageInfo = new DamageInfo(F_Damage, enum_DamageType.Area);
         if (E_CastType == enum_CastControllType.Invalid)
             Debug.LogError("Weapon Type Invalid Detected+"+gameObject.name);
@@ -65,8 +62,9 @@ public class SFXCast : SFXBase,ISingleCoroutine {
         if (B_CameraShake)
             TPSCameraController.Instance.AddShake(I_ShakeAmount);
 
+        PlayParticles();
         this.StartSingleCoroutine(0, TIEnumerators.TickCount(OnBlast, I_TickCount, F_Tick, () => {
-            m_Particles.Traversal((ParticleSystem particle) => { particle.Stop(); });
+            StopParticles();
             B_Casting = false;
         }));
     }
@@ -76,6 +74,7 @@ public class SFXCast : SFXBase,ISingleCoroutine {
         B_Casting = play;
         if (play)
         {
+            PlayParticles();
             tf_ControlledAttach = attachTrans;
             tf_ControlledCast = directionTrans;
             this.StartSingleCoroutine(0, TIEnumerators.Tick(OnBlast, F_Tick));
@@ -83,11 +82,10 @@ public class SFXCast : SFXBase,ISingleCoroutine {
         }
         else
         {
+            StopParticles();
             tf_ControlledAttach = null;
             tf_ControlledCast = null;
             this.StopSingleCoroutine(0);
-            f_TimeCheck = Time.time + F_ParticleDuration;
-            m_Particles.Traversal((ParticleSystem particle) => { particle.Stop(); });
         }
     }
     protected override void Update()
@@ -105,7 +103,6 @@ public class SFXCast : SFXBase,ISingleCoroutine {
     }
     protected virtual void OnBlast()
     {
-        TCommon.Traversal(m_Particles, (ParticleSystem particle) => { particle.Play(); });
         RaycastHit[] hits = OnCastCheck();
         List<int> targetHitted = new List<int>();
         for (int i = 0; i < hits.Length; i++)

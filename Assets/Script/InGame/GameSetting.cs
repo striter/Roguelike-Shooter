@@ -333,6 +333,7 @@ namespace GameSetting
         {
             base.OnActivate();
             m_CurrentArmor = m_MaxArmor;
+            Debug.Log("Activate");
         }
         public override bool OnReceiveDamage(DamageInfo damageInfo,float damageMultiply=1)
         {
@@ -520,7 +521,7 @@ namespace GameSetting
                 BuffBase effectBuff = m_BuffList.Find(p => p.m_buffInfo.m_Index == effectsList[i]);
                 if (effectBuff == null)
                 {
-                    m_BuffEffects[effectsList[i]].Stop();
+                    m_BuffEffects[effectsList[i]].StopParticles();
                     m_BuffEffects.Remove(effectsList[i]);
                 }
             }

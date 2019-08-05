@@ -12,9 +12,9 @@ public class SFXBuffApply : SFXParticles {
         transform.localRotation = Quaternion.identity;
         applyTarget.OnReceiveBuff(I_BuffIndex);
     }
-    protected override void OnPlayFinished()
+    protected override void OnRecycle()
     {
         transform.SetParent(null);
-        base.OnPlayFinished();
+        base.OnRecycle();
     }
 }

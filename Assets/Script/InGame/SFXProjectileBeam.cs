@@ -18,8 +18,7 @@ public class SFXProjectileBeam : SFXProjectile {
             case enum_HitCheck.Static:
             case enum_HitCheck.Dynamic:
                 {
-                    Debug.Log("Beam Hit");
-                    OnPlayFinished();
+                    OnRecycle();
                 }
                 break;
         }

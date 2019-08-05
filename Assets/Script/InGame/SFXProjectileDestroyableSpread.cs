@@ -40,7 +40,7 @@ public class SFXProjectileDestroyableSpread : SFXProjectileDestroyable {
         i_spreadCountCheck++;
         if (i_spreadCountCheck >= I_SpreadCount)
         {
-            OnPlayFinished();
+            OnRecycle();
             return;
         }
     }

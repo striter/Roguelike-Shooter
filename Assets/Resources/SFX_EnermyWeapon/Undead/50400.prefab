@@ -152,7 +152,7 @@ MonoBehaviour:
   I_BufFApplyOnHit: 0
   F_Radius: 0.25
   F_Height: 1
-  B_TargetReachBlink: 1
+  B_TargetReachBlink: 0
 --- !u!198 &198654164805557404
 ParticleSystem:
   m_ObjectHideFlags: 1

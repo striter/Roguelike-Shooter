@@ -83,12 +83,12 @@ public class SFXProjectile : SFXBase
         if (I_ImpactIndex < 0)
             Debug.LogError("Error Impact Index Less 0:" + gameObject.name);
     }
-    protected override void OnPlayFinished()
+    protected override void OnRecycle()
     {
-        base.OnPlayFinished();
+        base.OnRecycle();
         if (m_Indicator)
         {
-            m_Indicator.ForceStop();
+            m_Indicator.StopParticles();
             m_Indicator = null;
         }
         if (m_Blink!=null)
@@ -102,10 +102,9 @@ public class SFXProjectile : SFXBase
 
         if (m_Blink != null)
         {
-            float timeLeft = f_TimeCheck - Time.time;
-            if (timeLeft < GameConst.I_ProjectileBlinkWhenTimeLeftLessThan)
+            if (f_timeLeft < GameConst.I_ProjectileBlinkWhenTimeLeftLessThan)
             {
-                float timeMultiply =2f*(1-timeLeft / GameConst.I_ProjectileBlinkWhenTimeLeftLessThan);
+                float timeMultiply =2f*(1- f_timeLeft / GameConst.I_ProjectileBlinkWhenTimeLeftLessThan);
                 m_Blink.Tick(Time.deltaTime*timeMultiply);
             }
         }
@@ -118,7 +117,7 @@ public class SFXProjectile : SFXBase
         if (B_DisablePhysicsOnHit)
             B_SimulatePhysics = false;
         if (B_RecycleOnHit)
-            OnPlayFinished();
+            OnRecycle();
 
         return !B_HitMultiple;
     }

@@ -10,9 +10,9 @@ public class SFXProjectileCastTrigger : SFXProjectile
         base.OnPlayPreset();
         b_trigger = false;
     }
-    protected override void OnPlayFinished()
+    protected override void OnRecycle()
     {
-        base.OnPlayFinished();
+        base.OnRecycle();
         OnCastTrigger(v3_castPoint);
     }
     protected override void OnHitTarget(RaycastHit hit, HitCheckBase hitCheck)

@@ -42,7 +42,7 @@ public class SFXProjectileTargetRangeDrop : SFXProjectile {
         i_dropCountCheck++;
         if (i_dropCountCheck >= I_DropCount)
         {
-            OnPlayFinished();
+            OnRecycle();
             return;
         }
     }

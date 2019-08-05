@@ -32,6 +32,6 @@ public class SFXProjectileDestroyable : SFXProjectile {
     }
     protected virtual void OnDestroyed()
     {
-        OnPlayFinished();
+        OnRecycle();
     }
 }

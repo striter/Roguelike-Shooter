@@ -16,9 +16,9 @@ public class SFXProjectileBoltDelayCast : SFXProjectileBolt {
         base.OnHitTarget(hit, entity);
         f_TimeCheck = Time.time+ F_DelayDuration;
     }
-    protected override void OnPlayFinished()
+    protected override void OnRecycle()
     {
-        base.OnPlayFinished();
+        base.OnRecycle();
         ObjectManager.SpawnDamageSource<SFXCast>(GameExpression.GetEnermyWeaponSubIndex(I_SFXIndex), transform.position+F_Height*transform.forward, Vector3.up).Play(I_SourceID, m_DamageInfo.m_BuffApply);
     }
 }
