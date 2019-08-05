@@ -146,7 +146,7 @@ namespace TPhysics
 
             f_speed -= .1f;
             f_speed *= f_bounceSpeedMultiply;
-            if (f_speed < 0)
+            if (f_speed < m_castRadius)
                 f_speed = 0;
 
             if (f_bounceHitMaxAnlge != 0 && bounceAngle < f_bounceHitMaxAnlge)      //OnBounceHitTarget
