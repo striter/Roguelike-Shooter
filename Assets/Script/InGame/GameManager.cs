@@ -117,7 +117,9 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         m_BattleEntityStyle = Test_EntityStyle;
 
         EnviormentManager.Instance.GenerateAllEnviorment(Test_TileStyle, m_GameSeed,OnLevelStart);
-        m_StyledEnermyEntities=ObjectManager.RegisterAdditionalEntities(TResources.GetAllStyledEntities(m_BattleEntityStyle));
+        ObjectManager.RegisterEnermyDamageSource(TResources.GetAllDamageSources(Test_TileStyle));
+        m_StyledEnermyEntities =ObjectManager.RegisterAdditionalEntities(TResources.GetAllStyledEntities(m_BattleEntityStyle));
+
         GC.Collect();
 
         m_LocalPlayer = ObjectManager.SpawnEntity(0,Vector3.zero);
@@ -420,11 +422,15 @@ public static class ObjectManager
         sfx.transform.localRotation = Quaternion.identity;
         return sfx;
     }
+    public static void RegisterEnermyDamageSource(Dictionary<int, SFXBase> damageSources)
+    {
+        damageSources.Traversal((int weaponIndex, SFXBase damageSFX) => {
+            ObjectPoolManager<int, SFXBase>.Register(weaponIndex, damageSFX, enum_PoolSaveType.DynamicMaxAmount, 1, (SFXBase sfx) => { sfx.Init(weaponIndex); });
+            }) ;
+    }
+
     public static T SpawnDamageSource<T>(int weaponIndex,Vector3 position,Vector3 normal, Transform attachTo=null) where T:SFXBase
     {
-        if (!ObjectPoolManager<int, SFXBase>.Registed(weaponIndex))
-            ObjectPoolManager<int, SFXBase>.Register(weaponIndex, TResources.GetEnermyWeaponSFX(weaponIndex), enum_PoolSaveType.DynamicMaxAmount, 1, (SFXBase sfx) => { sfx.Init(weaponIndex); });
-
         T template = ObjectPoolManager<int, SFXBase>.Spawn(weaponIndex, attachTo) as T;
         if (template == null)
             Debug.LogError("Enermy Weapon Error! Invalid Type:" + typeof(T).ToString() + "|Index:" + weaponIndex);
@@ -432,11 +438,8 @@ public static class ObjectManager
         template.transform.rotation = Quaternion.LookRotation(normal);
         return template;
     }
-    public static T EnermyDamageSourceInfo<T>(int weaponIndex) where T : SFXBase
+    public static T GetDamageSource<T>(int weaponIndex) where T : SFXBase
     {
-        if (!ObjectPoolManager<int, SFXBase>.Registed(weaponIndex))
-            ObjectPoolManager<int, SFXBase>.Register(weaponIndex, TResources.GetEnermyWeaponSFX(weaponIndex), enum_PoolSaveType.DynamicMaxAmount, 1, (SFXBase sfx) => { sfx.Init(weaponIndex); });
-
         T damageSourceInfo = ObjectPoolManager<int, SFXBase>.GetRegistedSpawnItem(weaponIndex) as T;
         if (damageSourceInfo == null)
             Debug.LogError("SFX Get Error! Invalid Type:" + typeof(T).ToString() + "|Index:" + weaponIndex);

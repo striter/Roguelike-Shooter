@@ -9,18 +9,18 @@ Prefab:
     m_Modifications: []
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 1165261032841046}
+  m_RootGameObject: {fileID: 1321366802644644}
   m_IsPrefabParent: 1
---- !u!1 &1091173488736010
+--- !u!1 &1238216366854698
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 4565212680962402}
-  - component: {fileID: 33074682480872892}
-  - component: {fileID: 23217159280738968}
+  - component: {fileID: 4590355985360798}
+  - component: {fileID: 33425525830505308}
+  - component: {fileID: 23549922198012750}
   m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
@@ -28,31 +28,31 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &1165261032841046
+--- !u!1 &1321366802644644
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 4675475368102452}
-  - component: {fileID: 114731566210608386}
+  - component: {fileID: 4853727591666664}
+  - component: {fileID: 114328358534971362}
   m_Layer: 9
-  m_Name: 20600
+  m_Name: 40600
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &1406003313940952
+--- !u!1 &1663224457212594
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 4733089974683640}
-  - component: {fileID: 96207844558955790}
+  - component: {fileID: 4033790627955202}
+  - component: {fileID: 96656760400481398}
   m_Layer: 9
   m_Name: Trail
   m_TagString: Untagged
@@ -60,53 +60,53 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4565212680962402
+--- !u!4 &4033790627955202
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1091173488736010}
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: -0, z: 0.75}
-  m_LocalScale: {x: 0.0070000165, y: 0.007000002, z: 0.0070000156}
+  m_GameObject: {fileID: 1663224457212594}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 4675475368102452}
+  m_Father: {fileID: 4853727591666664}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
---- !u!4 &4675475368102452
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4590355985360798
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1165261032841046}
+  m_GameObject: {fileID: 1238216366854698}
+  m_LocalRotation: {x: 0.7087314, y: -0, z: -0, w: 0.7054785}
+  m_LocalPosition: {x: 0, y: 0.026, z: 0.537}
+  m_LocalScale: {x: 0.007000001, y: 0.007, z: 0.007000001}
+  m_Children: []
+  m_Father: {fileID: 4853727591666664}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 90.26199, y: -0.000015258789, z: -0.000015258789}
+--- !u!4 &4853727591666664
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1321366802644644}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 4565212680962402}
-  - {fileID: 4733089974683640}
+  - {fileID: 4033790627955202}
+  - {fileID: 4590355985360798}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4733089974683640
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1406003313940952}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 4675475368102452}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &23217159280738968
+--- !u!23 &23549922198012750
 MeshRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1091173488736010}
+  m_GameObject: {fileID: 1238216366854698}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -115,7 +115,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 493d454d3a7ff6a45919ebbd1f369e1c, type: 2}
+  - {fileID: 2100000, guid: ed9d25338b376ea4189b98cf19e89c1b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -135,20 +135,20 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!33 &33074682480872892
+--- !u!33 &33425525830505308
 MeshFilter:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1091173488736010}
-  m_Mesh: {fileID: 4300000, guid: 19051dd19ce846e47807b88c63f1fe39, type: 3}
---- !u!96 &96207844558955790
+  m_GameObject: {fileID: 1238216366854698}
+  m_Mesh: {fileID: 4300002, guid: c6c00be586ae8a641a2ff0528137837c, type: 3}
+--- !u!96 &96656760400481398
 TrailRenderer:
   serializedVersion: 2
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1406003313940952}
+  m_GameObject: {fileID: 1663224457212594}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -157,7 +157,7 @@ TrailRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 2100000, guid: fbb1c14edefaef547b45423fe7414079, type: 2}
+  - {fileID: 2100000, guid: 6dacfc1cba54f8d4fb98520b74b4a094, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -177,10 +177,10 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 1
+  m_Time: 0.1
   m_Parameters:
     serializedVersion: 2
-    widthMultiplier: 0.05
+    widthMultiplier: 0.1
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -190,19 +190,13 @@ TrailRenderer:
         inSlope: 0
         outSlope: 0
         tangentMode: 0
-      - serializedVersion: 2
-        time: 1
-        value: 0.5
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
-      m_RotationOrder: 0
+      m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 1, g: 0.8482759, b: 0, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 0.5019608}
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
@@ -218,7 +212,7 @@ TrailRenderer:
       ctime6: 0
       ctime7: 0
       atime0: 0
-      atime1: 65342
+      atime1: 65535
       atime2: 0
       atime3: 0
       atime4: 0
@@ -235,27 +229,25 @@ TrailRenderer:
     generateLightingData: 0
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
---- !u!114 &114731566210608386
+--- !u!114 &114328358534971362
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1165261032841046}
+  m_GameObject: {fileID: 1321366802644644}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ab0cf0a49ae34143b34005f26110fa2, type: 3}
+  m_Script: {fileID: 11500000, guid: 5311f8113741b1f46bc5966d96ce3c65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   E_ProjectileType: 1
-  F_Damage: 1
-  F_Speed: 40
-  I_MuzzleIndex: 10002
-  I_ImpactIndex: 0
-  I_IndicatorIndex: 30003
+  F_Damage: 40
+  F_Speed: 15
+  I_MuzzleIndex: 10001
+  I_ImpactIndex: 20001
+  I_IndicatorIndex: 0
   I_HitMarkIndex: 0
   I_BufFApplyOnHit: 0
-  F_Radius: 0.15
+  F_Radius: 0.4
   F_Height: 1.5
   B_TargetReachBlink: 0
-  F_SpreadRadius: 5
-  F_StartHeight: 100

@@ -103,6 +103,7 @@ public class SFXProjectile : SFXBase
         if (m_Blink != null)
         {
             float timeLeft = f_TimeCheck - Time.time;
+            Debug.Log(timeLeft);
             if (timeLeft < GameConst.I_ProjectileBlinkWhenTimeLeftLessThan)
             {
                 float timeMultiply =2f*(1-timeLeft / GameConst.I_ProjectileBlinkWhenTimeLeftLessThan);

@@ -58,6 +58,17 @@ public class TResources
         return level;
     }
 
+    public static Dictionary<int, SFXBase> GetAllDamageSources(enum_Style style)
+    {
+        Dictionary<int, SFXBase> sourceDic = new Dictionary<int, SFXBase>();
+        SFXBase[] sfxs = LoadAll<SFXBase>(ConstPath.S_SFXEnermyWeapon+style.ToString());
+        sfxs.Traversal((SFXBase sfx)=> {
+            int index =int.Parse( sfx.name.Split('_')[0]);
+            sourceDic.Add(index,GameObject.Instantiate(sfx));
+        });
+        return sourceDic;
+    }
+
     public static Dictionary<int, EntityBase> GetAllStyledEntities(enum_Style entityStyle)
     {
         Dictionary<int, EntityBase> entitisDic = new Dictionary<int, EntityBase>();
@@ -69,7 +80,6 @@ public class TResources
         });
         return entitisDic;
     }
-    public static SFXBase GetEnermyWeaponSFX(int index)=> Instantiate<SFXBase>(ConstPath.S_SFXEnermyWeapon+index.ToString());
     public static WeaponBase GetPlayerWeapon(enum_PlayerWeapon weapon)
     {
         WeaponBase target;

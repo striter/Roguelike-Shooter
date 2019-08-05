@@ -25,7 +25,7 @@ public class EntityEnermyBase : EntityBase {
         Transform tf_Barrel = transform.FindInAllChild("Barrel");
         EnermyWeaponBase weapon=null;
         int weaponIndex = GameExpression.GetEnermyWeaponIndex( entityInfo.m_Index, 0);
-        SFXBase weaponInfo = ObjectManager.EnermyDamageSourceInfo<SFXBase>(weaponIndex);
+        SFXBase weaponInfo = ObjectManager.GetDamageSource<SFXBase>(weaponIndex);
         SFXProjectile projectile = weaponInfo as SFXProjectile;
         if (projectile)
         {
