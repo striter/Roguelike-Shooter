@@ -577,6 +577,7 @@ public class EntityEnermyBase : EntityBase {
         public override bool B_TargetAlly => true;
         SBuff m_buffInfo;
         int i_buffApplyIndex;
+        SFXBuffApply m_Effect;
         public BuffApply(SFXBuffApply buffApplyinfo, EntityEnermyBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo) : base(_controller, _transform, _GetBuffInfo)
         {
             i_buffApplyIndex = buffApplyinfo.I_SFXIndex;
@@ -584,7 +585,10 @@ public class EntityEnermyBase : EntityBase {
         }
         public override void Play(bool preAim, EntityBase _target)
         {
-            ObjectManager.SpawnDamageSource<SFXBuffApply>(i_buffApplyIndex,transformBarrel.position,Vector3.up).Play(m_EntityControlling.I_EntityID,m_buffInfo,transformBarrel,_target);
+            if(!m_Effect||!m_Effect.b_Playing)
+                m_Effect = ObjectManager.SpawnDamageSource<SFXBuffApply>(i_buffApplyIndex, transformBarrel.position, Vector3.up);
+            
+            m_Effect.Play(m_EntityControlling.I_EntityID,m_buffInfo,transformBarrel,_target);
         }
     }
     #endregion

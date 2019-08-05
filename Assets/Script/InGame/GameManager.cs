@@ -27,6 +27,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     public int Z_TestEntityIndex = 221;
     public int TestEntityBuffApplyOnSpawn = 1;
     public int X_TestCastIndex = 30003;
+    public bool CastForward = true;
     public int C_TestProjectileIndex = 29001;
     public int V_TestIndicatorIndex = 50002;
     public int B_TestBuffIndex = 1;
@@ -44,7 +45,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
                 enermy.OnReceiveBuff(TestEntityBuffApplyOnSpawn);
         }
         if (Input.GetKeyDown(KeyCode.X) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
-            ObjectManager.SpawnDamageSource<SFXCast>(X_TestCastIndex, hit.point, Vector3.up).Play(1000, DamageBuffInfo.Create());
+            ObjectManager.SpawnDamageSource<SFXCast>(X_TestCastIndex, hit.point, CastForward?m_LocalPlayer.transform.forward: Vector3.up).Play(1000, DamageBuffInfo.Create());
         if (Input.GetKeyDown(KeyCode.C) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
             ObjectManager.SpawnDamageSource<SFXProjectile>(C_TestProjectileIndex, hit.point + Vector3.up, m_LocalPlayer.transform.forward).Play(0, m_LocalPlayer.transform.forward, hit.point + m_LocalPlayer.transform.forward * 10, DamageBuffInfo.Create());
         if (Input.GetKeyDown(KeyCode.V) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))

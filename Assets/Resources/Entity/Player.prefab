@@ -101,6 +101,23 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1144568446642610
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4259561799114222}
+  - component: {fileID: 136622149296104314}
+  - component: {fileID: 114158670332917712}
+  m_Layer: 14
+  m_Name: Collider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1152599296861072
 GameObject:
   m_ObjectHideFlags: 1
@@ -550,7 +567,20 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4991228344696976}
-  m_RootOrder: 2
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4259561799114222
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1144568446642610}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4991228344696976}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4271551705590200
 Transform:
@@ -704,7 +734,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4991228344696976}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4786976956395626
 Transform:
@@ -771,7 +801,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4991228344696976}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4905198761687966
 Transform:
@@ -837,6 +867,7 @@ Transform:
   m_LocalPosition: {x: 13.38, y: 0, z: 20.53}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 4259561799114222}
   - {fileID: 4994426156464372}
   - {fileID: 4883817484617258}
   - {fileID: 4254651639930644}
@@ -851,13 +882,13 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1615095339196038}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 1, z: -0.3}
-  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
+  m_LocalPosition: {x: -0, y: 0.6, z: -0.3}
+  m_LocalScale: {x: 0.006, y: 0.006, z: 0.006}
   m_Children:
   - {fileID: 4815632172590628}
   - {fileID: 4610956432446594}
   m_Father: {fileID: 4991228344696976}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &54940042453459756
 Rigidbody:
@@ -904,6 +935,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TESTWEAPON1: 3002
   TESTWEAPON2: 6001
+--- !u!114 &114158670332917712
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1144568446642610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2091396369435d24bad4838db15bbe09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114336263026090444
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -925,8 +967,21 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.5
-  m_Center: {x: 0, y: 1.5, z: 0}
+  m_Radius: 1.2
+  m_Center: {x: 0, y: 1.2, z: 0}
+--- !u!136 &136622149296104314
+CapsuleCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1144568446642610}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 2.4
+  m_Direction: 1
+  m_Center: {x: 0, y: 1.2, z: 0}
 --- !u!137 &137061920710423686
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -1006,13 +1061,13 @@ CharacterController:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Height: 2
-  m_Radius: 0.6
+  m_Height: 2.4
+  m_Radius: 0.5
   m_SlopeLimit: 1
   m_StepOffset: 0.05
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 1, z: 0}
+  m_Center: {x: 0, y: 1.2, z: 0}
 --- !u!208 &208563366567023318
 NavMeshObstacle:
   m_ObjectHideFlags: 1
@@ -1022,9 +1077,9 @@ NavMeshObstacle:
   m_Enabled: 1
   serializedVersion: 3
   m_Shape: 0
-  m_Extents: {x: 0.7, y: 1.5, z: 0.7}
+  m_Extents: {x: 0.5, y: 1.2, z: 0.5}
   m_MoveThreshold: 0.1
   m_Carve: 0
   m_CarveOnlyStationary: 1
-  m_Center: {x: 0, y: 1.5, z: 0}
+  m_Center: {x: 0, y: 1.2, z: 0}
   m_TimeToStationary: 0.5

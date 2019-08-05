@@ -1057,6 +1057,7 @@ MonoBehaviour:
   F_AttackRotateParam: 0.2
   I_AttackPreAimPercentage: 50
   B_AttackMove: 0
+  B_SwitchTarget: 0
 --- !u!136 &136256659414752280
 CapsuleCollider:
   m_ObjectHideFlags: 1

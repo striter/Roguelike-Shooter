@@ -270,6 +270,48 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 932ef6601d079ac4b9874e89280f1c03, type: 2}
   m_IsPrefabParent: 0
+--- !u!1001 &91397149
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4991228344696976, guid: 06da24f2ee875384cbffc7651d8c68a3, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 13.38
+      objectReference: {fileID: 0}
+    - target: {fileID: 4991228344696976, guid: 06da24f2ee875384cbffc7651d8c68a3, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4991228344696976, guid: 06da24f2ee875384cbffc7651d8c68a3, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 20.53
+      objectReference: {fileID: 0}
+    - target: {fileID: 4991228344696976, guid: 06da24f2ee875384cbffc7651d8c68a3, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4991228344696976, guid: 06da24f2ee875384cbffc7651d8c68a3, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4991228344696976, guid: 06da24f2ee875384cbffc7651d8c68a3, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4991228344696976, guid: 06da24f2ee875384cbffc7651d8c68a3, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4991228344696976, guid: 06da24f2ee875384cbffc7651d8c68a3, type: 2}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 06da24f2ee875384cbffc7651d8c68a3, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1001 &161665770
 Prefab:
   m_ObjectHideFlags: 0
@@ -861,52 +903,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 589891170}
   m_Mesh: {fileID: 4300004, guid: b022a92ae4819224e8ee0c92026972f7, type: 3}
---- !u!1001 &606221734
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4991228344696976, guid: 06da24f2ee875384cbffc7651d8c68a3, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 13.38
-      objectReference: {fileID: 0}
-    - target: {fileID: 4991228344696976, guid: 06da24f2ee875384cbffc7651d8c68a3, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4991228344696976, guid: 06da24f2ee875384cbffc7651d8c68a3, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: 20.53
-      objectReference: {fileID: 0}
-    - target: {fileID: 4991228344696976, guid: 06da24f2ee875384cbffc7651d8c68a3, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4991228344696976, guid: 06da24f2ee875384cbffc7651d8c68a3, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4991228344696976, guid: 06da24f2ee875384cbffc7651d8c68a3, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4991228344696976, guid: 06da24f2ee875384cbffc7651d8c68a3, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4991228344696976, guid: 06da24f2ee875384cbffc7651d8c68a3, type: 2}
-      propertyPath: m_RootOrder
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 4994426156464372, guid: 06da24f2ee875384cbffc7651d8c68a3, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: 06da24f2ee875384cbffc7651d8c68a3, type: 2}
-  m_IsPrefabParent: 0
 --- !u!1 &679180542
 GameObject:
   m_ObjectHideFlags: 0
@@ -956,6 +952,7 @@ MonoBehaviour:
   Z_TestEntityIndex: 221
   TestEntityBuffApplyOnSpawn: 1
   X_TestCastIndex: 30003
+  CastForward: 1
   C_TestProjectileIndex: 29001
   V_TestIndicatorIndex: 50002
   B_TestBuffIndex: 1
