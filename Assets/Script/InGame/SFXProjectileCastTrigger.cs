@@ -4,6 +4,7 @@ public class SFXProjectileCastTrigger : SFXProjectile
 {
     protected override bool B_DealDamage => false;
     protected bool b_trigger = false;
+    protected virtual Vector3 v3_castPoint=> transform.position + transform.forward * F_Height;
     protected override void OnPlayPreset()
     {
         base.OnPlayPreset();
@@ -12,7 +13,7 @@ public class SFXProjectileCastTrigger : SFXProjectile
     protected override void OnPlayFinished()
     {
         base.OnPlayFinished();
-        OnCastTrigger(transform.position + transform.forward * F_Height);
+        OnCastTrigger(v3_castPoint);
     }
     protected override void OnHitTarget(RaycastHit hit, HitCheckBase hitCheck)
     {
