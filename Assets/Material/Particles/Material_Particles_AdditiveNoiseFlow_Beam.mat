@@ -85,7 +85,7 @@ Material:
     - _Distortionpower: 4
     - _DstBlend: 0
     - _Emission: 0.5
-    - _Emmission: 2.33
+    - _Emmission: 1.18
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
