@@ -117,7 +117,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         m_BattleEntityStyle = Test_EntityStyle;
 
         EnviormentManager.Instance.GenerateAllEnviorment(Test_TileStyle, m_GameSeed,OnLevelStart);
-        ObjectManager.RegisterEnermyDamageSource(TResources.GetAllDamageSources(Test_TileStyle));
+        ObjectManager.RegisterEnermyDamageSource(TResources.GetAllDamageSources(Test_EntityStyle));
         m_StyledEnermyEntities =ObjectManager.RegisterAdditionalEntities(TResources.GetAllStyledEntities(m_BattleEntityStyle));
 
         GC.Collect();
