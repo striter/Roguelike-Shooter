@@ -302,9 +302,11 @@ MonoBehaviour:
   F_Tick: 0.25
   I_BuffApplyOnCast: 0
   E_AreaType: 2
-  V3_CastSize: {x: 0.6, y: 0.5, z: 25}
+  V4_CastInfo: {x: 0.6, y: 0.5, z: 25, w: 0}
   F_DelayDuration: 0
   I_DelayIndicatorIndex: 0
+  B_CameraShake: 0
+  I_ShakeAmount: 0
 --- !u!120 &120559922318303934
 LineRenderer:
   m_ObjectHideFlags: 1
