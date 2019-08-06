@@ -37,18 +37,18 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
             Time.timeScale = Time.timeScale == 1f ? .1f : 1f;
 
         RaycastHit hit = new RaycastHit();
-        if (Input.GetKeyDown(KeyCode.Z) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
+        if (Input.GetKeyDown(KeyCode.Z) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
         {
             EntityBase enermy = ObjectManager.SpawnEntity(Z_TestEntityIndex, hit.point);
             enermy.OnActivate();
             if (TestEntityBuffApplyOnSpawn > 0)
                 enermy.OnReceiveBuff(TestEntityBuffApplyOnSpawn);
         }
-        if (Input.GetKeyDown(KeyCode.X) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
+        if (Input.GetKeyDown(KeyCode.X) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
             ObjectManager.SpawnDamageSource<SFXCast>(X_TestCastIndex, hit.point, CastForward?m_LocalPlayer.transform.forward: Vector3.up).Play(1000, DamageBuffInfo.Create());
-        if (Input.GetKeyDown(KeyCode.C) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
+        if (Input.GetKeyDown(KeyCode.C) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
             ObjectManager.SpawnDamageSource<SFXProjectile>(C_TestProjectileIndex, hit.point + Vector3.up, m_LocalPlayer.transform.forward).Play(0, m_LocalPlayer.transform.forward, hit.point + m_LocalPlayer.transform.forward * 10, DamageBuffInfo.Create());
-        if (Input.GetKeyDown(KeyCode.V) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Physics.I_Static, ref hit))
+        if (Input.GetKeyDown(KeyCode.V) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
             ObjectManager.SpawnIndicator(V_TestIndicatorIndex, hit.point + Vector3.up, Vector3.up).Play(1000,3f);
         if (Input.GetKeyDown(KeyCode.B))
             m_LocalPlayer.OnReceiveBuff(B_TestBuffIndex);

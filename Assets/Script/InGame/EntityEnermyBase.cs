@@ -285,7 +285,7 @@ public class EntityEnermyBase : EntityBase {
             b_targetOutChaseRange = f_targetDistance > m_EntityControlling.m_EntityInfo.m_InfoData.m_AIChaseRange;
             b_targetOutAttackRange = f_targetDistance > m_Info.m_InfoData.m_AIAttackRange;
             b_MoveTowardsTarget = b_targetHideBehindWall || b_targetOutChaseRange;
-            b_CanAttackTarget = !b_targetOutAttackRange && (!m_Info.m_InfoData.m_BattleCheckObsatacle || b_targetVisible) && Mathf.Abs(f_targetAngle) < 15 && !Physics.SphereCast(new Ray(headTransform.position, headTransform.forward), 1f, 2, GameLayer.Physics.I_Static);
+            b_CanAttackTarget = !b_targetOutAttackRange && (!m_Info.m_InfoData.m_BattleCheckObsatacle || b_targetVisible) && Mathf.Abs(f_targetAngle) < 15 && !Physics.SphereCast(new Ray(headTransform.position, headTransform.forward), 1f, 2, GameLayer.Mask.I_Static);
             b_AgentReachDestination = m_Agent.destination == Vector3.zero || TCommon.GetXZDistance(headTransform.position, m_Agent.destination) < 1f;
         }
         #region Attack
@@ -417,7 +417,7 @@ public class EntityEnermyBase : EntityBase {
 
         bool CheckTargetVisible()
         {
-            m_Raycasts = Physics.RaycastAll(m_EntityControlling.tf_Head.position, v3_TargetDirection, Vector3.Distance(m_EntityControlling.tf_Head.position, m_Target.tf_Head.position), GameLayer.Physics.I_StaticEntity);
+            m_Raycasts = Physics.RaycastAll(m_EntityControlling.tf_Head.position, v3_TargetDirection, Vector3.Distance(m_EntityControlling.tf_Head.position, m_Target.tf_Head.position), GameLayer.Mask.I_StaticEntity);
             for (int i = 0; i < m_Raycasts.Length; i++)
             {
                 if (m_Raycasts[i].collider.gameObject.layer == GameLayer.I_Static)

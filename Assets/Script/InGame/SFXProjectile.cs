@@ -27,7 +27,7 @@ public class SFXProjectile : SFXBase
     protected virtual bool B_DealDamage => true;
     protected ModelBlink m_Blink;
     protected DamageInfo m_DamageInfo;
-    protected virtual PhysicsSimulator<HitCheckBase> GetSimulator(Vector3 direction, Vector3 targetPosition) => new ProjectilePhysicsSimulator(transform,transform.position, direction, Vector3.down, F_Speed, F_Height,F_Radius, GameLayer.Physics.I_All, OnHitTargetBreak,CanHitTarget);
+    protected virtual PhysicsSimulator<HitCheckBase> GetSimulator(Vector3 direction, Vector3 targetPosition) => new ProjectilePhysicsSimulator(transform,transform.position, direction, Vector3.down, F_Speed, F_Height,F_Radius, GameLayer.Mask.I_All, OnHitTargetBreak,CanHitTarget);
     protected virtual void PlayIndicator(float duration) => m_Indicator.Play(I_SourceID,duration);
     protected Vector3 m_CenterPos => F_Height > F_Radius * 2 ? transform.position + transform.forward * F_Height / 2 : transform.position + transform.forward * F_Radius;
     public override void Init(int sfxIndex)

@@ -14,7 +14,7 @@ public class SFXProjectileTargetRangeDrop : SFXProjectile {
     float f_dropCheck = 0;
     protected override bool B_DealDamage => true;
     protected override float F_Duration(Vector3 startPos, Vector3 endPos) => Vector3.Distance(startPos,endPos)/F_Speed+(I_DropCount+2)*F_DropDuration;
-    protected override PhysicsSimulator<HitCheckBase> GetSimulator(Vector3 direction, Vector3 targetPosition) => new ProjectilePhysicsLerpSimulator(transform, transform.position, targetPosition+Vector3.up*F_DropStartHeight, OnAnimFinished, Vector3.Distance(transform.position, targetPosition) / F_Speed, F_Height, F_Radius, GameLayer.Physics.I_All, OnHitTargetBreak,CanHitTarget);
+    protected override PhysicsSimulator<HitCheckBase> GetSimulator(Vector3 direction, Vector3 targetPosition) => new ProjectilePhysicsLerpSimulator(transform, transform.position, targetPosition+Vector3.up*F_DropStartHeight, OnAnimFinished, Vector3.Distance(transform.position, targetPosition) / F_Speed, F_Height, F_Radius, GameLayer.Mask.I_All, OnHitTargetBreak,CanHitTarget);
     protected override void OnPlayPreset()
     {
         base.OnPlayPreset();

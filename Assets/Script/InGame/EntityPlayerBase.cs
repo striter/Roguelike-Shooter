@@ -141,7 +141,7 @@ public class EntityPlayerBase : EntityBase {
     protected override void Update()
     {
         base.Update();
-        m_WeaponCurrent.SetCanFire(!Physics.SphereCast(new Ray(tf_WeaponHold.position, tf_WeaponHold.forward), .1f,1f   , GameLayer.Physics.I_Static));
+        m_WeaponCurrent.SetCanFire(!Physics.SphereCast(new Ray(tf_WeaponHold.position, tf_WeaponHold.forward), .1f,1f   , GameLayer.Mask.I_Static));
         tf_WeaponHold.localRotation = Quaternion.Euler(-m_Pitch,0,0);
         transform.rotation = Quaternion.Lerp(transform.rotation,CameraController.CameraXZRotation,GameConst.F_PlayerCameraSmoothParam);
         Vector3 direction = (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized;

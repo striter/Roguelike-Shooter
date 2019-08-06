@@ -103,10 +103,6 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
     }
     protected virtual void DoBlastCheck()
     {
-        this.StartSingleCoroutine(1,TIEnumerators.TickCount(()=> {
-            Debug.Log("???");
-        },(int)V4_CastInfo.w,F_Tick/V4_CastInfo.w));
-
         RaycastHit[] hits = OnCastCheck();
         List<int> targetHitted = new List<int>();
         for (int i = 0; i < hits.Length; i++)
@@ -127,7 +123,7 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
             case enum_CastAreaType.OverlapSphere:
                 {
                     float radius = V4_CastInfo.x;
-                    hits= Physics.SphereCastAll(CastTransform.position, radius, CastTransform.forward,0f, GameLayer.Physics.I_EntityOnly);
+                    hits= Physics.SphereCastAll(CastTransform.position, radius, CastTransform.forward,0f, GameLayer.Mask.I_EntityOnly);
                 }
                 break;
             case enum_CastAreaType.ForwardCapsule:
@@ -135,12 +131,18 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
                     float radius = V4_CastInfo.x;
                     float castLength = F_CastLength - radius*2;
                     castLength = castLength > 0 ? castLength : 0f;
-                    hits = Physics.SphereCastAll(CastTransform.position+ CastTransform.forward * radius, radius, CastTransform.forward, castLength, GameLayer.Physics.I_EntityOnly);
+                    hits = Physics.SphereCastAll(CastTransform.position+ CastTransform.forward * radius, radius, CastTransform.forward, castLength, GameLayer.Mask.I_EntityOnly);
                 }
                 break;
             case enum_CastAreaType.ForwardBox:
                 {
-                   hits = Physics.BoxCastAll(CastTransform.position + CastTransform.forward*1f /2f, new Vector3(V4_CastInfo.x / 2, V4_CastInfo.y / 2, .5f), CastTransform.forward, Quaternion.LookRotation(CastTransform.forward, CastTransform.up), F_CastLength - 1f, GameLayer.Physics.I_EntityOnly);
+                    hits = Physics_Extend.BoxCastAll(CastTransform.position, CastTransform.forward,CastTransform.up, V4_CastInfo, GameLayer.Mask.I_EntityOnly);
+                }
+                break;
+            case enum_CastAreaType.ForwardTrapezium:
+                {
+                    hits = Physics_Extend.TrapeziumCastAll(CastTransform.position,CastTransform.forward,CastTransform.up,V4_CastInfo,GameLayer.Mask.I_EntityOnly);
+                    Debug.Log(hits.Length);
                 }
                 break;
         }
@@ -167,6 +169,9 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
                 break;
             case enum_CastAreaType.ForwardCapsule:
                 Gizmos_Extend.DrawWireCapsule(CastTransform.position+transform.forward* F_CastLength / 2,Quaternion.LookRotation(CastTransform.up, CastTransform.forward),Vector3.one,V4_CastInfo.x, F_CastLength);
+                break;
+            case enum_CastAreaType.ForwardTrapezium:
+                Gizmos_Extend.DrawTrapezium(CastTransform.position+transform.forward*F_CastLength/2,Quaternion.LookRotation(CastTransform.up,CastTransform.forward),V4_CastInfo);
                 break;
         }
     }

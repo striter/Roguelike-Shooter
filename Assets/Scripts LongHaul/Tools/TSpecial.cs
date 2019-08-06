@@ -738,9 +738,45 @@ public class TXmlPhrase : SingleTon<TXmlPhrase>
         return dic_xmlDataToValue[type](xmlData);
     }
 }
+public static class Physics_Extend
+{
+    public static RaycastHit[] BoxCastAll(Vector3 position,Vector3 forward,Vector3 up,Vector3 boxBounds,int layerMask=-1)
+    {
+        float castBoxLength = boxBounds.z / 2f;
+        return Physics.BoxCastAll(position + forward* castBoxLength / 2f, new Vector3(boxBounds.x / 2, boxBounds.y / 2, castBoxLength/2), forward, Quaternion.LookRotation(forward, up), boxBounds.z - castBoxLength, layerMask);
+    }
+
+    public static RaycastHit[] TrapeziumCastAll(Vector3 position, Vector3 forward,Vector3 up,Vector4 trapeziumInfo,int layerMask=-1,int castCount=8)
+    {
+        List<RaycastHit> hitsList = new List<RaycastHit>();
+        float castLength = trapeziumInfo.z / castCount;
+        for (int i = 0; i < castCount; i++)
+        {
+            Vector3 boxPos = position + forward * castLength * i;
+            Vector3 boxInfo = new Vector3(trapeziumInfo.x+(trapeziumInfo.w-trapeziumInfo.x)*i/castCount,trapeziumInfo.y,castLength);
+            Debug.DrawLine(boxPos,boxPos+forward*castLength,Color.red,5f);
+            RaycastHit[] hits = BoxCastAll(boxPos,forward,up,boxInfo,layerMask);
+            for (int j = 0; j < hits.Length; j++)
+            {
+                bool b_continue=false;
+
+                for (int k = 0; k < hitsList.Count; k++)
+                    if (hitsList[k].collider == hits[j].collider)
+                        b_continue = true;
+
+                if (b_continue)
+                    continue;
+
+                hitsList.Add(hits[j]);
+            }
+        }
+        return hitsList.ToArray();
+    }
+}
 #endregion
-#region Editor Class
 #if UNITY_EDITOR
+#region Editor Class
+
 public static class Gizmos_Extend
 {
     public static void DrawWireCapsule(Vector3 _pos, Quaternion _rot, Vector3 _scale, float _radius, float _height)
@@ -834,6 +870,36 @@ public static class Gizmos_Extend
             UnityEditor.Handles.DrawLine(-Vector3.up * _radius, top - Vector3.up * _radius);
         }
     }
+    public static void DrawTrapezium(Vector3 _pos, Quaternion _rot, Vector4 trapeziumInfo)
+    {
+        using (new UnityEditor.Handles.DrawingScope(Gizmos.color, Matrix4x4.TRS(_pos, _rot,UnityEditor.Handles.matrix.lossyScale)))
+        {
+                Vector3 backLeftUp = -Vector3.right * trapeziumInfo.x / 2 + Vector3.forward * trapeziumInfo.y / 2 - Vector3.up * trapeziumInfo.z / 2;
+                Vector3 backLeftDown = -Vector3.right * trapeziumInfo.x / 2 - Vector3.forward * trapeziumInfo.y / 2 - Vector3.up * trapeziumInfo.z / 2;
+                Vector3 backRightUp = Vector3.right * trapeziumInfo.x / 2 + Vector3.forward * trapeziumInfo.y / 2 - Vector3.up * trapeziumInfo.z / 2;
+                Vector3 backRightDown = Vector3.right * trapeziumInfo.x / 2 - Vector3.forward * trapeziumInfo.y / 2 - Vector3.up * trapeziumInfo.z / 2;
+
+                Vector3 forwardLeftUp = -Vector3.right * trapeziumInfo.w / 2 + Vector3.forward * trapeziumInfo.y / 2 + Vector3.up * trapeziumInfo.z / 2;
+                Vector3 forwardLeftDown = -Vector3.right * trapeziumInfo.w / 2 - Vector3.forward * trapeziumInfo.y / 2 + Vector3.up * trapeziumInfo.z / 2;
+                Vector3 forwardRightUp = Vector3.right * trapeziumInfo.w / 2 + Vector3.forward * trapeziumInfo.y / 2 + Vector3.up * trapeziumInfo.z / 2;
+                Vector3 forwardRightDown = Vector3.right * trapeziumInfo.w / 2 - Vector3.forward * trapeziumInfo.y / 2 + Vector3.up * trapeziumInfo.z / 2;
+
+                UnityEditor.Handles.DrawLine(backLeftUp, backLeftDown);
+                UnityEditor.Handles.DrawLine(backLeftDown, backRightDown);
+                UnityEditor.Handles.DrawLine(backRightDown, backRightUp);
+                UnityEditor.Handles.DrawLine(backRightUp, backLeftUp);
+
+                UnityEditor.Handles.DrawLine(forwardLeftUp, forwardLeftDown);
+                UnityEditor.Handles.DrawLine(forwardLeftDown, forwardRightDown);
+                UnityEditor.Handles.DrawLine(forwardRightDown, forwardRightUp);
+                UnityEditor.Handles.DrawLine(forwardRightUp, forwardLeftUp);
+
+                UnityEditor.Handles.DrawLine(backLeftUp, forwardLeftUp);
+                UnityEditor.Handles.DrawLine(backLeftDown, forwardLeftDown);
+                UnityEditor.Handles.DrawLine(backRightUp, forwardRightUp);
+                UnityEditor.Handles.DrawLine(backRightDown, forwardRightDown);
+        }
+    }
 }
-#endif
 #endregion
+#endif

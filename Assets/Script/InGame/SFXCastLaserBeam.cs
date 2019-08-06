@@ -35,7 +35,7 @@ public class SFXCastLaserBeam : SFXCast {
             return;
         f_castLength = V4_CastInfo.z;
         Vector3 hitPoint = Vector3.zero;
-        RaycastHit[] hits = Physics.BoxCastAll(CastTransform.position, new Vector3(V4_CastInfo.x / 2, V4_CastInfo.y / 2, .01f), CastTransform.forward, Quaternion.LookRotation(CastTransform.forward, CastTransform.up), f_castLength, GameLayer.Physics.I_StaticEntity);
+        RaycastHit[] hits = Physics.BoxCastAll(CastTransform.position, new Vector3(V4_CastInfo.x / 2, V4_CastInfo.y / 2, .01f), CastTransform.forward, Quaternion.LookRotation(CastTransform.forward, CastTransform.up), f_castLength, GameLayer.Mask.I_StaticEntity);
         bool hitted = false;
         for (int i = 0; i < hits.Length; i++)
         {

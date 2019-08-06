@@ -183,7 +183,7 @@ namespace GameSetting
 
     public enum enum_CastControllType { Invalid = -1, CastFromOrigin = 1, CastControlledForward = 2, CastAtTarget = 3, CastSelfDetonate=4,}
 
-    public enum enum_CastAreaType { Invalid = -1, OverlapSphere = 1, ForwardBox = 2, ForwardCapsule = 3, }
+    public enum enum_CastAreaType { Invalid = -1, OverlapSphere = 1, ForwardBox = 2, ForwardCapsule = 3, ForwardTrapezium = 4, }
 
     public enum enum_BuffAddType { Invalid=-1, AddUp = 1,Refresh =2}
 
@@ -253,7 +253,7 @@ namespace GameSetting
         public static readonly int I_Dynamic = LayerMask.NameToLayer("dynamic");
         public static readonly int I_DynamicDetect = LayerMask.NameToLayer("dynamicDetect");
         public static readonly int I_MovementDetect = LayerMask.NameToLayer("movementDetect");
-        public static class Physics
+        public static class Mask
         {
             public static readonly int I_All = 1 << GameLayer.I_Static | 1 << GameLayer.I_Entity | 1 << GameLayer.I_Dynamic;
             public static readonly int I_StaticEntity = 1 << GameLayer.I_Static | 1 << GameLayer.I_Entity;

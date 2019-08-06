@@ -5,7 +5,7 @@ using UnityEngine;
 public class SFXProjectileCastDetonate : SFXProjectileCastTrigger {
     protected override bool B_RecycleOnHit => false;
     protected override bool B_DisablePhysicsOnHit => true;
-    protected override PhysicsSimulator<HitCheckBase> GetSimulator(Vector3 direction, Vector3 targetPosition)=>new ProjectilePhysicsSimulator(transform,transform.position, Vector3.down, Vector3.down, F_Speed,F_Height,F_Radius,GameLayer.Physics.I_All,OnHitTargetBreak,CanHitTarget);
+    protected override PhysicsSimulator<HitCheckBase> GetSimulator(Vector3 direction, Vector3 targetPosition)=>new ProjectilePhysicsSimulator(transform,transform.position, Vector3.down, Vector3.down, F_Speed,F_Height,F_Radius,GameLayer.Mask.I_All,OnHitTargetBreak,CanHitTarget);
     protected override void OnHitTarget(RaycastHit hit, HitCheckBase hitCheck)
     {
         base.OnHitTarget(hit, hitCheck);
