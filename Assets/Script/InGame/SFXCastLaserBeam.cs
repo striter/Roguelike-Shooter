@@ -8,7 +8,7 @@ public class SFXCastLaserBeam : SFXCast {
     Transform m_Muzzle, m_Impact;
     ParticleSystem[] m_Muzzles, m_Impacts;
     float f_castLength=0;
-    protected override float F_CastLength => f_castLength <= 0 ? V3_CastSize.z : f_castLength;
+    protected override float F_CastLength => f_castLength <= 0 ? V4_CastInfo.z : f_castLength;
     public override void Init(int _sfxIndex)
     {
         base.Init(_sfxIndex);
@@ -33,9 +33,9 @@ public class SFXCastLaserBeam : SFXCast {
         m_Beam.enabled = B_Casting;
         if (!B_Casting)
             return;
-        f_castLength = V3_CastSize.z;
+        f_castLength = V4_CastInfo.z;
         Vector3 hitPoint = Vector3.zero;
-        RaycastHit[] hits = Physics.BoxCastAll(CastTransform.position, new Vector3(V3_CastSize.x / 2, V3_CastSize.y / 2, .01f), CastTransform.forward, Quaternion.LookRotation(CastTransform.forward, CastTransform.up), f_castLength, GameLayer.Physics.I_StaticEntity);
+        RaycastHit[] hits = Physics.BoxCastAll(CastTransform.position, new Vector3(V4_CastInfo.x / 2, V4_CastInfo.y / 2, .01f), CastTransform.forward, Quaternion.LookRotation(CastTransform.forward, CastTransform.up), f_castLength, GameLayer.Physics.I_StaticEntity);
         bool hitted = false;
         for (int i = 0; i < hits.Length; i++)
         {
