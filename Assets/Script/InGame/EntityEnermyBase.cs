@@ -22,43 +22,56 @@ public class EntityEnermyBase : EntityBase {
     {
         Init(entityInfo, false);
         tf_Model.transform.rotation = Quaternion.Euler(-15, 0, 0);
+        m_AI = new EnermyAIControllerBase(this, InitWeapon(GameExpression.GetEnermyWeaponIndex(entityInfo.m_Index, 0)), OnAttackAnim, OnCheckTarget);
+    }
+
+    protected virtual EnermyWeaponBase InitWeapon(int weaponIndex)
+    {
         Transform tf_Barrel = transform.FindInAllChild("Barrel");
-        EnermyWeaponBase weapon=null;
-        int weaponIndex = GameExpression.GetEnermyWeaponIndex( entityInfo.m_Index, 0);
+        EnermyWeaponBase weapon = null;
         SFXBase weaponInfo = ObjectManager.GetDamageSource<SFXBase>(weaponIndex);
+
         SFXProjectile projectile = weaponInfo as SFXProjectile;
         if (projectile)
         {
             switch (projectile.E_ProjectileType)
             {
                 default: Debug.LogError("Invalid Barrage Type:" + projectile.E_ProjectileType); break;
-                case  enum_EnermyWeaponProjectile.Single: weapon = new BarrageRange(projectile,this, tf_Barrel, GetDamageBuffInfo); break;
-                case enum_EnermyWeaponProjectile.MultipleFan: weapon = new BarrageMultipleFan(projectile,this, tf_Barrel , GetDamageBuffInfo); break;
-                case enum_EnermyWeaponProjectile.MultipleLine: weapon = new BarrageMultipleLine(projectile,this, tf_Barrel, GetDamageBuffInfo); break;
+                case enum_EnermyWeaponProjectile.Single: weapon = new BarrageRange(projectile, this, tf_Barrel, GetDamageBuffInfo); break;
+                case enum_EnermyWeaponProjectile.MultipleFan: weapon = new BarrageMultipleFan(projectile, this, tf_Barrel, GetDamageBuffInfo); break;
+                case enum_EnermyWeaponProjectile.MultipleLine: weapon = new BarrageMultipleLine(projectile, this, tf_Barrel, GetDamageBuffInfo); break;
             }
         }
+
         SFXCast cast = weaponInfo as SFXCast;
         if (cast)
         {
             switch (cast.E_CastType)
             {
-                case  enum_CastControllType.CastFromOrigin: weapon = new EnermyCaster(cast,this, tf_Barrel, GetDamageBuffInfo); break;
-                case enum_CastControllType.CastControlledForward: weapon = new EnermyCasterControlled(cast,this, tf_Barrel, GetDamageBuffInfo); break;
-                case enum_CastControllType.CastAtTarget: weapon = new EnermyCasterTarget(cast,this, tf_Barrel, GetDamageBuffInfo); break;
+                case enum_CastControllType.CastFromOrigin: weapon = new EnermyCaster(cast, this, tf_Barrel, GetDamageBuffInfo); break;
+                case enum_CastControllType.CastSelfDetonate: weapon = new EnermyCasterSelfDetonateAnimLess(cast,this,tf_Barrel,GetDamageBuffInfo,()=> { OnAnimKeyEvent( EnermyAnimator.enum_AnimEvent.Fire); },OnDead,tf_Model.Find("BlinkModel"));break;
+                case enum_CastControllType.CastControlledForward: weapon = new EnermyCasterControlled(cast, this, tf_Barrel, GetDamageBuffInfo); break;
+                case enum_CastControllType.CastAtTarget: weapon = new EnermyCasterTarget(cast, this, tf_Barrel, GetDamageBuffInfo); break;
             }
         }
+
         SFXBuffApply buffApply = weaponInfo as SFXBuffApply;
         if (buffApply)
-            weapon = new BuffApply(buffApply,this,tf_Barrel,GetDamageBuffInfo);
+            weapon = new BuffApply(buffApply, this, tf_Barrel, GetDamageBuffInfo);
 
-        m_AI = new EnermyAIControllerBase(this,weapon, OnAttackAnim, OnCheckTarget);
-        if (E_AnimatorIndex == enum_EnermyAnim.Invalid)
-            Debug.LogError("Please Set Prefab AnimIndex!");
+        SFXEntitySpawner entitySpawner = weaponInfo as SFXEntitySpawner;
+        if (entitySpawner)
+            weapon = new WeaponEntitySpawner(entitySpawner,this,tf_Barrel,GetDamageBuffInfo);
+
+        return weapon;
     }
+
     public override void OnSpawn(int id)
     {
         base.OnSpawn(id);
-        m_Animator = new EnermyAnimator(tf_Model.GetComponent<Animator>(), E_AnimatorIndex, OnAnimKeyEvent);
+        Animator animator = tf_Model.GetComponent<Animator>();
+        if (animator)
+            m_Animator = new EnermyAnimator(animator, E_AnimatorIndex, OnAnimKeyEvent);
     }
     protected override void OnInfoChange()
     {
@@ -73,23 +86,25 @@ public class EntityEnermyBase : EntityBase {
     protected override void Update()
     {
         base.Update();
-        m_Animator.SetRun(0, m_AI.B_AgentEnabled ? 1 : 0);
+        if (m_Animator != null)
+            m_Animator.SetRun(0, m_AI.B_AgentEnabled ? 1 : 0);
     }
     protected override void OnDead()
     {
         m_AI.Deactivate();
-        m_Animator.OnDead();
+        if(m_Animator!=null)
+            m_Animator.OnDead();
         base.OnDead();
     }
     protected override void OnDisable()
     {
-        if (m_AI != null)
-            m_AI.Deactivate();
+        m_AI.Deactivate();
         base.OnDisable();
     }
     void OnAttackAnim(EntityBase target,bool startAttack)
     {
-        m_Animator.OnAttack(startAttack);
+        if(m_Animator!=null)
+             m_Animator.OnAttack(startAttack);
     }
     protected void OnAnimKeyEvent(EnermyAnimator.enum_AnimEvent animEvent)
     {
@@ -215,7 +230,7 @@ public class EntityEnermyBase : EntityBase {
         public void Deactivate()
         {
             B_AgentEnabled = false;
-            m_Weapon.OnPlayAnim(false);
+            m_Weapon.OnDeactivate();
             this.StopAllSingleCoroutines();
         }
         RaycastHit[] m_Raycasts;
@@ -420,9 +435,10 @@ public class EntityEnermyBase : EntityBase {
     }
     #endregion
     #region EnermyWeapon
-    class EnermyWeaponBase 
+     protected class EnermyWeaponBase 
     {
         public virtual bool B_TargetAlly=>false;
+        protected int i_weaponIndex;
         protected EntityEnermyBase m_EntityControlling;
         protected Transform attacherTransform => m_EntityControlling.tf_Head;
         protected Transform transformBarrel;
@@ -436,8 +452,9 @@ public class EntityEnermyBase : EntityBase {
                 return m_EntityControlling.m_EntityInfo;
             }
         }
-        public EnermyWeaponBase(EntityEnermyBase _controller,Transform _transform,Func<DamageBuffInfo> _GetBuffInfo )
+        public EnermyWeaponBase(SFXBase weaponBase,EntityEnermyBase _controller,Transform _transform,Func<DamageBuffInfo> _GetBuffInfo )
         {
+            i_weaponIndex = weaponBase.I_SFXIndex;
             m_EntityControlling = _controller;
             transformBarrel = _transform;
             if (_transform == null)
@@ -451,17 +468,63 @@ public class EntityEnermyBase : EntityBase {
         {
 
         }
+        public virtual void OnDeactivate()
+        {
+
+        }
     }
     class EnermyCaster : EnermyWeaponBase
     {
-        protected int i_castIndex;
-        public EnermyCaster(SFXCast _castInfo, EntityEnermyBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo) : base(_controller, _transform,_GetBuffInfo)
+        public EnermyCaster(SFXCast _castInfo, EntityEnermyBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo) : base(_castInfo, _controller, _transform,_GetBuffInfo)
         {
-            i_castIndex = _castInfo.I_SFXIndex;
         }
         public override void Play(bool preAim,EntityBase _target)
         {
-            ObjectManager.SpawnDamageSource<SFXCast>(i_castIndex, attacherTransform.position, attacherTransform.forward).Play(m_EntityControlling.I_EntityID,GetBuffInfo());
+            ObjectManager.SpawnDamageSource<SFXCast>(i_weaponIndex, attacherTransform.position, attacherTransform.forward).Play(m_EntityControlling.I_EntityID,GetBuffInfo());
+        }
+    }
+    class EnermyCasterSelfDetonateAnimLess : EnermyCaster,ISingleCoroutine
+    {
+        ModelBlink m_Blink;
+        Action OnSelfDetonate,OnDead;
+        float timeElapsed;
+        float detonateTime;
+        public EnermyCasterSelfDetonateAnimLess(SFXCast _castInfo, EntityEnermyBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo, Action _OnSelfDetonate,Action _OnDead,Transform _blinkModels) : base(_castInfo, _controller, _transform, _GetBuffInfo)
+        {
+            OnSelfDetonate = _OnSelfDetonate;
+            OnDead = _OnDead;
+            m_Blink = new ModelBlink(_blinkModels,.25f,.25f);
+            timeElapsed = 0;
+        }
+        public override void OnPlayAnim(bool play)
+        {
+            base.OnPlayAnim(play);
+            if (play)
+            {
+                timeElapsed = 0;
+                this.StartSingleCoroutine(0, TIEnumerators.Tick(Tick));
+            }
+        }
+        void Tick()
+        {
+            timeElapsed += Time.deltaTime;
+            float timeMultiply = 2f * (timeElapsed / 2f);
+            m_Blink.Tick(Time.deltaTime*timeMultiply);
+            if (timeElapsed > 2f)
+            {
+                OnSelfDetonate();
+                this.StopSingleCoroutine(0);
+            }
+        }
+        public override void Play(bool preAim, EntityBase _target)
+        {
+            base.Play(preAim, _target);
+            OnDead();
+        }
+        public override void OnDeactivate()
+        {
+            base.OnDeactivate();
+            this.StopSingleCoroutine(0);
         }
     }
     class EnermyCasterControlled : EnermyCaster
@@ -472,10 +535,8 @@ public class EntityEnermyBase : EntityBase {
         }
         public override void Play(bool preAim, EntityBase _target)
         {
-            if (m_Cast)
-                m_Cast.PlayControlled(m_EntityControlling.I_EntityID, transformBarrel,attacherTransform,false);
-
-            m_Cast = ObjectManager.SpawnDamageSource<SFXCast>(i_castIndex, transformBarrel.position, transformBarrel.forward);
+            OnPlayAnim(false);
+            m_Cast = ObjectManager.SpawnDamageSource<SFXCast>(i_weaponIndex, transformBarrel.position, transformBarrel.forward);
             m_Cast.PlayControlled(m_EntityControlling.I_EntityID, transformBarrel, attacherTransform, true);
         }
 
@@ -484,7 +545,13 @@ public class EntityEnermyBase : EntityBase {
             if ( m_Cast)
                 m_Cast.PlayControlled(m_EntityControlling.I_EntityID, transformBarrel, attacherTransform, play);
         }
+        public override void OnDeactivate()
+        {
+            base.OnDeactivate();
+            OnPlayAnim(false);
+        }
     }
+
     class EnermyCasterTarget : EnermyCaster
     {
         public EnermyCasterTarget(SFXCast _castInfo, EntityEnermyBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo) : base(_castInfo, _controller, _transform,_GetBuffInfo)
@@ -492,18 +559,17 @@ public class EntityEnermyBase : EntityBase {
         }
         public override void Play(bool preAim, EntityBase _target)
         {
-             ObjectManager.SpawnDamageSource<SFXCast>(i_castIndex, EnviormentManager.NavMeshPosition(_target.transform.position+TCommon.RandomXZSphere(m_Info.F_Spread)), _target.transform.up).Play(m_EntityControlling.I_EntityID,GetBuffInfo());
+             ObjectManager.SpawnDamageSource<SFXCast>(i_weaponIndex, EnviormentManager.NavMeshPosition(_target.transform.position+TCommon.RandomXZSphere(m_Info.F_Spread)), _target.transform.up).Play(m_EntityControlling.I_EntityID,GetBuffInfo());
         }
 
     }
     class BarrageRange : EnermyWeaponBase
     {
         protected float f_projectileSpeed;
-        protected int i_projectileIndex, i_muzzleIndex;
+        protected int  i_muzzleIndex;
 
-        public BarrageRange(SFXProjectile projectileInfo, EntityEnermyBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo) : base(_controller, _transform,_GetBuffInfo)
+        public BarrageRange(SFXProjectile projectileInfo, EntityEnermyBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo) : base(projectileInfo,_controller, _transform,_GetBuffInfo)
         {
-            i_projectileIndex = projectileInfo.I_SFXIndex;
             i_muzzleIndex = projectileInfo.I_MuzzleIndex;
             f_projectileSpeed = projectileInfo.F_Speed;
         }
@@ -532,7 +598,7 @@ public class EntityEnermyBase : EntityBase {
         {
             if (i_muzzleIndex > 0)
                 ObjectManager.SpawnParticles<SFXMuzzle>(i_muzzleIndex, startPosition, direction).Play(m_EntityControlling.I_EntityID);
-            ObjectManager.SpawnDamageSource<SFXProjectile>(i_projectileIndex, startPosition, direction).Play(m_EntityControlling.I_EntityID, direction, targetPosition,GetBuffInfo());
+            ObjectManager.SpawnDamageSource<SFXProjectile>(i_weaponIndex, startPosition, direction).Play(m_EntityControlling.I_EntityID, direction, targetPosition,GetBuffInfo());
         }
     }
     class BarrageMultipleLine : BarrageRange
@@ -576,19 +642,28 @@ public class EntityEnermyBase : EntityBase {
     {
         public override bool B_TargetAlly => true;
         SBuff m_buffInfo;
-        int i_buffApplyIndex;
         SFXBuffApply m_Effect;
-        public BuffApply(SFXBuffApply buffApplyinfo, EntityEnermyBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo) : base(_controller, _transform, _GetBuffInfo)
+        public BuffApply(SFXBuffApply buffApplyinfo, EntityEnermyBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo) : base(buffApplyinfo, _controller, _transform, _GetBuffInfo)
         {
-            i_buffApplyIndex = buffApplyinfo.I_SFXIndex;
             m_buffInfo = DataManager.GetEntityBuffProperties(buffApplyinfo.I_BuffIndex);
         }
         public override void Play(bool preAim, EntityBase _target)
         {
             if(!m_Effect||!m_Effect.b_Playing)
-                m_Effect = ObjectManager.SpawnDamageSource<SFXBuffApply>(i_buffApplyIndex, transformBarrel.position, Vector3.up);
+                m_Effect = ObjectManager.SpawnDamageSource<SFXBuffApply>(i_weaponIndex, transformBarrel.position, Vector3.up);
             
             m_Effect.Play(m_EntityControlling.I_EntityID,m_buffInfo,transformBarrel,_target);
+        }
+    }
+
+    class WeaponEntitySpawner : EnermyWeaponBase
+    {
+        public WeaponEntitySpawner(SFXEntitySpawner spawner, EntityEnermyBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo) : base(spawner,_controller, _transform, _GetBuffInfo)
+        {
+        }
+        public override void Play(bool preAim, EntityBase _target)
+        {
+            ObjectManager.SpawnDamageSource<SFXEntitySpawner>(i_weaponIndex,transformBarrel.position,Vector3.up).Play(m_EntityControlling.I_EntityID);
         }
     }
     #endregion

@@ -86,9 +86,11 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
                     mat.SetFloat("_Amount1", value);
                 });
             });
-        }, 0, 1, 1f, () => {
-            ObjectManager.RecycleEntity(m_EntityInfo.I_ObjectPoolIndex, this);
-        }));
+        }, 0, 1, 1f, OnRecycle));
+    }
+    protected virtual void OnRecycle()
+    {
+        ObjectManager.RecycleEntity(m_EntityInfo.I_ObjectPoolIndex, this);
     }
     protected virtual void OnHealthEffect(enum_HealthMessageType type)
     {

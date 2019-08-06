@@ -181,7 +181,7 @@ namespace GameSetting
 
     public enum enum_EnermyWeaponProjectile { Invalid=-1, Single = 1, MultipleFan = 2, MultipleLine = 3, };
 
-    public enum enum_CastControllType { Invalid = -1, CastFromOrigin = 1, CastControlledForward = 2, CastAtTarget = 3, }
+    public enum enum_CastControllType { Invalid = -1, CastFromOrigin = 1, CastControlledForward = 2, CastAtTarget = 3, CastSelfDetonate=4,}
 
     public enum enum_CastAreaType { Invalid = -1, OverlapSphere = 1, ForwardBox = 2, ForwardCapsule = 3, }
 
@@ -333,7 +333,6 @@ namespace GameSetting
         {
             base.OnActivate();
             m_CurrentArmor = m_MaxArmor;
-            Debug.Log("Activate");
         }
         public override bool OnReceiveDamage(DamageInfo damageInfo,float damageMultiply=1)
         {
@@ -694,15 +693,21 @@ namespace GameSetting
     #endregion
 
     #region GameEffects
-    public class ProjectileBlink:ISingleCoroutine
+    public class ModelBlink:ISingleCoroutine
     {
         Material[] m_materials;
         float f_simulate;
         float f_blinkRate;
         float f_blinkTime;
-        public ProjectileBlink(Material[] _blinkMat, float _blinkRate,float _blinkTime)
+        public ModelBlink(Transform BlinkModel, float _blinkRate, float _blinkTime)
         {
-            m_materials = _blinkMat;
+            if (BlinkModel == null)
+                Debug.LogError("Error! Blink Model Init, BlinkModel Folder Required!");
+
+            Renderer[] renderers=BlinkModel.GetComponentsInChildren<Renderer>();
+            m_materials = new Material[renderers.Length];
+            for (int i = 0; i < renderers.Length; i++)
+                m_materials[i] = renderers[i].material;
             f_blinkRate = _blinkRate;
             f_blinkTime = _blinkTime;
             f_simulate = 0f;

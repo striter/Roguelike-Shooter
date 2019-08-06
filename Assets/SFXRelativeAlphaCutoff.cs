@@ -8,12 +8,17 @@ public class SFXRelativeAlphaCutoff : SFXRelativeBase,ISingleCoroutine {
     public float F_EndCutoff;
     public float F_Time;
     float timeCheck;
-    int HS_Cutoff = Shader.PropertyToID("_Cutoff");
+    int HS_Cutoff = Shader.PropertyToID("_CutOff");
     public override void Init()
     {
         base.Init();
         m_Material = GetComponent<MeshRenderer>().material;
         m_Material.SetFloat(HS_Cutoff, F_StartCutoff);
+    }
+    public override void OnReset()
+    {
+        base.OnReset();
+        m_Material.SetFloat(HS_Cutoff,F_StartCutoff);
     }
     public override void Play()
     {

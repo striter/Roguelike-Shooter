@@ -29,8 +29,11 @@ public class EEntity : Editor {
             m_PreviewObject.SetActive(true);
             m_PreviewObject.transform.position = Vector3.zero;
             m_PreviewAnimator = m_PreviewObject.GetComponentInChildren<Animator>();
-            m_PreviewAnimator.updateMode = AnimatorUpdateMode.Normal;
-            m_PreviewAnimator.fireEvents = false;
+            if (m_PreviewAnimator)
+            {
+                m_PreviewAnimator.updateMode = AnimatorUpdateMode.Normal;
+                m_PreviewAnimator.fireEvents = false;
+            }
             m_PreviewObject.transform.SetChildLayer(5);
             m_Preview.camera.cullingMask = 1 << 5;
             DestroyImmediate(m_PreviewObject.GetComponent<EntityEnermyBase>());
@@ -54,6 +57,7 @@ public class EEntity : Editor {
         if (HasPreviewGUI())
         {
             Repaint();
+            if(m_PreviewAnimator!=null)
             m_PreviewAnimator.Update(Time.deltaTime);
         }
     }

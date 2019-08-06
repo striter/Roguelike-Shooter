@@ -215,8 +215,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26aca2838f3dcb64493e9493e948b9fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  F_StartCutoff: 1
-  F_EndCutoff: 0.1
+  F_StartCutoff: 0
+  F_EndCutoff: 0.9
   F_Time: 1
 --- !u!114 &114746944053698006
 MonoBehaviour:
@@ -301,7 +301,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -441062494
+  randomSeed: -1464778593
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3707,7 +3707,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -1616484459
+  randomSeed: -1275299151
   InitialModule:
     serializedVersion: 3
     enabled: 1

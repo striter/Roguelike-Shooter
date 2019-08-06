@@ -354,9 +354,11 @@ public static class DataManager
 public static class ObjectManager
 {
     public static Transform TF_Entity;
+    public static Transform TF_WaitForRecycle;
     public static void Init()
     {
         TF_Entity = new GameObject("Entity").transform;
+        TF_WaitForRecycle = new GameObject("WaitForRecycle").transform;
         TResources.GetAllCommonSFXs().Traversal((int index,SFXBase target)=>{
             ObjectPoolManager<int, SFXBase>.Register(index, target,
             enum_PoolSaveType.DynamicMaxAmount, 1,

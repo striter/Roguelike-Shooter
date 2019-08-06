@@ -35,7 +35,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4836308289568534}
-  - component: {fileID: 114154887035112584}
+  - component: {fileID: 114423009466531790}
   m_Layer: 9
   m_Name: 30800
   m_TagString: Untagged
@@ -235,7 +235,7 @@ TrailRenderer:
     generateLightingData: 0
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
---- !u!114 &114154887035112584
+--- !u!114 &114423009466531790
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -243,19 +243,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1209190051586098}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ab0cf0a49ae34143b34005f26110fa2, type: 3}
+  m_Script: {fileID: 11500000, guid: 74e3f015a8b4c54418dcd0ebb9d47856, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  E_ProjectileType: 1
-  F_Damage: 10
-  F_Speed: 30
-  I_MuzzleIndex: 0
-  I_ImpactIndex: 0
-  I_IndicatorIndex: 30001
-  I_HitMarkIndex: 0
-  I_BufFApplyOnHit: 0
-  F_Radius: 0.75
-  F_Height: 0
-  B_TargetReachBlink: 0
-  F_SpreadRadius: 0
-  F_StartHeight: 40
+  I_EntitySpawnID: 358

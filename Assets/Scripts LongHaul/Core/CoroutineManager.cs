@@ -211,8 +211,6 @@ public static class ISingleCoroutine_Extend
         {
             CoroutineManager.Dic_Coroutines.Add(targetIndex, null);
         }
-
-
         CoroutineManager.Dic_Coroutines[targetIndex] = CoroutineManager.Instance.StartCoroutine(numerator);
     }
     public static void StopSingleCoroutine(this ISingleCoroutine target, int index = 0)

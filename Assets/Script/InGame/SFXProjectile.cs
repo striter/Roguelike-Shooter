@@ -25,7 +25,7 @@ public class SFXProjectile : SFXBase
     protected virtual bool B_DisablePhysicsOnHit => true;
     protected virtual bool B_HitMultiple => false;
     protected virtual bool B_DealDamage => true;
-    protected ProjectileBlink m_Blink;
+    protected ModelBlink m_Blink;
     protected DamageInfo m_DamageInfo;
     protected virtual PhysicsSimulator<HitCheckBase> GetSimulator(Vector3 direction, Vector3 targetPosition) => new ProjectilePhysicsSimulator(transform,transform.position, direction, Vector3.down, F_Speed, F_Height,F_Radius, GameLayer.Physics.I_All, OnHitTargetBreak,CanHitTarget);
     protected virtual void PlayIndicator(float duration) => m_Indicator.Play(I_SourceID,duration);
@@ -36,17 +36,7 @@ public class SFXProjectile : SFXBase
         m_Trail = transform.GetComponentInChildren<TrailRenderer>();
         m_DamageInfo = new DamageInfo(F_Damage, enum_DamageType.Projectile);
         if (B_TargetReachBlink)
-        {
-            try
-            {
-                m_Blink = new ProjectileBlink(transform.Find("BlinkModel").GetComponent<Renderer>().materials, .25f, .25f);
-            }
-            catch
-            {
-                Debug.LogError("Error! Blink Model Init, BlinkModel Folder Required!" + gameObject.name);
-                m_Blink = null;
-            }
-        }
+                m_Blink = new ModelBlink(transform.Find("BlinkModel"), .25f, .25f);
     }
 
     public virtual void Play(int sourceID, Vector3 direction, Vector3 targetPosition, DamageBuffInfo buffInfo)
