@@ -210,9 +210,11 @@ MonoBehaviour:
   F_Tick: 0.5
   I_BuffApplyOnCast: 0
   E_AreaType: 1
-  V3_CastSize: {x: 2, y: 0, z: 0}
+  V4_CastInfo: {x: 2, y: 0, z: 0, w: 0}
   F_DelayDuration: 2
   I_DelayIndicatorIndex: 30005
+  B_CameraShake: 1
+  I_ShakeAmount: 1
   B_DamageDistanceReduction: 0
 --- !u!198 &198384239114443562
 ParticleSystem:

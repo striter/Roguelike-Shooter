@@ -235,7 +235,7 @@ MonoBehaviour:
   F_Tick: 0.2
   I_BuffApplyOnCast: 2
   E_AreaType: 1
-  V3_CastSize: {x: 6, y: 0, z: 0}
+  V4_CastInfo: {x: 6, y: 0, z: 0, w: 0}
   F_DelayDuration: 1
   I_DelayIndicatorIndex: 30006
   B_CameraShake: 0
