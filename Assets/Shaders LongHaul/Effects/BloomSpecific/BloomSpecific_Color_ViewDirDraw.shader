@@ -42,7 +42,7 @@
 			{
 				v2f o;
 				float3 viewDir = normalize(ObjSpaceViewDir(v.vertex));
-				o.vertex = UnityObjectToClipPos(v.vertex+viewDir*10*_Amount1);
+				o.vertex = UnityObjectToClipPos(v.vertex+viewDir*_Amount1);
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 				o.color = v.color;
 				return o;
