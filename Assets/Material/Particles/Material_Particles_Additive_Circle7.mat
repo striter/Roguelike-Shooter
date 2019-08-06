@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: ArcaneGlow
-  m_Shader: {fileID: 200, guid: 0000000000000000f000000000000000, type: 0}
+  m_Name: Material_Particles_Additive_Circle7
+  m_Shader: {fileID: 4800000, guid: 84c76c36dd1e7514db1e4f73c6b145c0, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
@@ -19,11 +19,11 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 63f4792c6c50b4e49bec66a8bad914c5, type: 3}
+        m_Texture: {fileID: 2800000, guid: 2dd400ab29834834cb5fa454e5b6b3c1, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _InvFade: 3
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _TintColor: {r: 1, g: 1, b: 1, a: 0.5019608}
+    - _TintColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}

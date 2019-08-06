@@ -173,7 +173,7 @@ namespace GameSetting
 
     public enum enum_LevelGenerateType { Invalid = -1, Big = 1, Small = 2 }
 
-    public enum enum_EntityType { Invalid = -1, Fighter = 1, Shooter = 2, AOECaster = 3, Elite = 4 }
+    public enum enum_EntityType { Invalid = -1,Hidden=0, Fighter = 1, Shooter = 2, AOECaster = 3, Elite = 4 }
 
     public enum enum_Interaction { Invalid = -1, Interact_Portal, }
 

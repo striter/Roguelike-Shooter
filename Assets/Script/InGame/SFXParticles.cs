@@ -26,7 +26,7 @@ public class SFXParticles : SFXBase
     }
     public virtual void Play(int sourceID,float duration=0)
     {
-        duration = duration == 0 ? m_ParticleDuration : duration + m_ParticleDuration;
+        duration = duration == 0 ? m_ParticleDuration : duration;
         duration +=  F_ParticlesMaxStopTime;
         PlaySFX(sourceID,duration);
         ResetParticles();
@@ -47,7 +47,7 @@ public class SFXParticles : SFXBase
     protected override void Update()
     {
         base.Update();
-        if (B_PlayOnAwake&&B_ParticlesPlaying&&f_timeLeft < F_ParticlesMaxStopTime)
+        if (B_PlayOnAwake && B_ParticlesPlaying && f_timeLeft < F_ParticlesMaxStopTime)
             StopParticles();
     }
     protected override void OnRecycle()
@@ -55,7 +55,7 @@ public class SFXParticles : SFXBase
         base.OnRecycle();
         m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.OnRecycle(); });
     }
-    public void StopParticles()
+    public virtual void StopParticles()
     {
         transform.SetParent(ObjectManager.TF_WaitForRecycle);
         f_TimeCheck = Time.time + F_ParticlesMaxStopTime;

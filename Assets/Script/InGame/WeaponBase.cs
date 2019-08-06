@@ -106,6 +106,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         for (int i = 0; i < m_WeaponInfo.m_PelletsPerShot; i++)
             ObjectManager.SpawnDamageSource<SFXProjectile>(m_WeaponInfo.m_ProjectileSFX, tf_Muzzle.position,tf_Muzzle.forward).Play(I_AttacherID, GameExpression.V3_RangeSpreadDirection(transform.forward, m_WeaponInfo.m_Spread, transform.up, transform.right), m_Assist.m_assistTarget, OnFireBuffInfo());
 
+
         OnRecoil?.Invoke(m_WeaponInfo.m_RecoilPerShot);
         OnAmmoChangeCostMana?.Invoke(m_WeaponInfo.m_ManaCost);
 

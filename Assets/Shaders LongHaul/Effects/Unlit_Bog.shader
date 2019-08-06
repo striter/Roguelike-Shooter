@@ -1,4 +1,4 @@
-Shader "Effect/Bog"
+Shader "Game/Effect/Bog"
 {
 	Properties
 	{
