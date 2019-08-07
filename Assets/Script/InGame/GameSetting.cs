@@ -198,7 +198,7 @@ namespace GameSetting
         LaserPistol = 1001,
         LaserCannon = 1002,
         //Snipe Rifle
-        MK10 = 2001,
+        M82A1 = 2001,
         Kar98 = 2002,
         //Submachine Gun
         UZI = 3001,

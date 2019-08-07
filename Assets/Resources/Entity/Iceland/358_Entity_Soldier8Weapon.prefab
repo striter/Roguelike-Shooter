@@ -678,7 +678,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   V3_RotateDireciton: {x: 0, y: 1, z: 0}
-  F_RotateSpeed: 40
+  F_RotateSpeed: 25
 --- !u!136 &136969556414685698
 CapsuleCollider:
   m_ObjectHideFlags: 1

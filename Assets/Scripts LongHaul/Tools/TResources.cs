@@ -87,9 +87,9 @@ public class TResources
         {
             target= Instantiate<WeaponBase>(ConstPath.S_PlayerWeapon + weapon.ToString());
         }
-        catch       //Error Check
+        catch(Exception e)       //Error Check
         {
-            Debug.LogWarning("Model Null Weapon Model Found:Resources/PlayerWeapon/" + weapon);
+            Debug.LogWarning("Model Null Weapon Model Found:Resources/PlayerWeapon/" + weapon+","+e.Message);
 
             target = TResources.Instantiate<WeaponBase>(ConstPath.S_PlayerWeapon+"Error");
         }

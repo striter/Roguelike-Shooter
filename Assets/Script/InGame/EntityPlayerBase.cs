@@ -5,7 +5,7 @@ using GameSetting;
 using TSpecialClasses;
 public class EntityPlayerBase : EntityBase {
     public enum_PlayerWeapon TESTWEAPON1 = enum_PlayerWeapon.M16A4;
-    public enum_PlayerWeapon TESTWEAPON2 = enum_PlayerWeapon.MK10;
+    public enum_PlayerWeapon TESTWEAPON2 = enum_PlayerWeapon.M82A1;
     public float m_Coins { get; private set; } = 0;
 
     protected CharacterController m_CharacterController;
@@ -46,6 +46,12 @@ public class EntityPlayerBase : EntityBase {
         UIManager.OnSwitch = OnSwitchWeapon;
         TouchDeltaManager.Instance.Bind(OnMovementDelta, OnRotateDelta);
 #endif
+    }
+    protected override void OnDead()
+    {
+        base.OnDead();
+        if (m_Assist)
+            m_Assist.ForceRecycle();
     }
     protected override void OnCostMana(float manaCost)
     {

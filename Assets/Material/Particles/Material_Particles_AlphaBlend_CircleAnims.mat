@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Dust2cg
-  m_Shader: {fileID: 4800000, guid: bd6af5d577c618947b73aa60db554e51, type: 3}
+  m_Name: Material_Particles_AlphaBlend_CircleAnims
+  m_Shader: {fileID: 4800000, guid: ad61477901681d84ea82fb9824a76f8a, type: 3}
   m_ShaderKeywords: _USEDEPTH_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -43,7 +43,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: ed88f036f462da241899fa39a14637ac, type: 3}
+        m_Texture: {fileID: 2800000, guid: fc35468a059a2dd40b17ea632c32be4c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Mask:
@@ -72,6 +72,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _BumpScale: 1
+    - _CullMode: 0
     - _Cutoff: 0.5
     - _Depthpower: 0.15
     - _DetailNormalMapScale: 1
@@ -83,6 +84,7 @@ Material:
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
+    - _Opacity: 1
     - _Parallax: 0.02
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
