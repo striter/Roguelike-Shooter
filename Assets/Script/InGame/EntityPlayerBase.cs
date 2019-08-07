@@ -184,7 +184,7 @@ public class EntityPlayerBase : EntityBase {
         static readonly int HS_T_Fire = Animator.StringToHash("t_attack");
         public PlayerAnimator(Animator _animator) : base(_animator)
         {
-
+            _animator.fireEvents = true;
         }
         public void SetRun(Vector2 movement)
         {

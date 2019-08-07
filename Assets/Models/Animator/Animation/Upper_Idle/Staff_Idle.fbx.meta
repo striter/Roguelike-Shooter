@@ -1,7 +1,7 @@
 fileFormatVersion: 2
 guid: b320c1eda692a2649b10f2d8dbb19bb1
 ModelImporter:
-  serializedVersion: 19
+  serializedVersion: 22
   fileIDToRecycleName:
     100000: B_L_Calf
     100002: B_L_Thigh
@@ -244,16 +244,17 @@ ModelImporter:
     4300012: Rifle_Mesh
     4300014: RPG-Character-Mesh
     4300016: Staff
-    7400000: Staff-Idle
+    7400000: Staff_Idle
     9500000: //RootNode
     11100000: //RootNode
     13700000: Soldier_Mesh
     13700002: RPG-Character-Mesh
-    2186277476908879412: ImportLogs
+  externalObjects: {}
   materials:
     importMaterials: 0
     materialName: 0
     materialSearch: 1
+    materialLocation: 0
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
@@ -268,6 +269,7 @@ ModelImporter:
       and has rotation animation that will be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
     animationCompression: 0
     animationRotationError: 0.5
     animationPositionError: 0.5
@@ -275,9 +277,10 @@ ModelImporter:
     animationWrapMode: 0
     extraExposedTransformPaths:
     - PositionLocator/B_Pelvis/B_Spine/B_Spine1/B_R_Clavicle/B_R_UpperArm/B_R_Forearm/B_R_Hand/B_Prop1
+    extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Staff-Idle
+      name: Staff_Idle
       takeName: Take 001
       firstFrame: 0
       lastFrame: 60
@@ -310,13 +313,18 @@ ModelImporter:
     globalScale: 0.01
     meshCompression: 0
     addColliders: 0
+    importVisibility: 0
     importBlendShapes: 0
+    importCameras: 0
+    importLights: 0
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
     optimizeMeshForGPU: 0
     keepQuads: 0
     weldVertices: 0
+    preserveHierarchy: 0
+    indexFormat: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
@@ -326,6 +334,7 @@ ModelImporter:
     normalSmoothAngle: 60
     normalImportMode: 2
     tangentImportMode: 2
+    normalCalculationMode: 0
   importAnimation: 1
   copyAvatar: 1
   humanDescription:
