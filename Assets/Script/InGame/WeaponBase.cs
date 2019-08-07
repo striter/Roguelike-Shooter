@@ -11,7 +11,6 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
     public int I_AmmoLeft { get; private set; }
     public Transform m_Muzzle { get; private set; }
     float f_actionCheck=0;
-    protected Transform tf_Muzzle;
     Action<float> OnAmmoChangeCostMana;
     Action<Vector2> OnFireRecoil;
     Func<DamageBuffInfo> OnFireBuffInfo;
@@ -21,10 +20,9 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
     Func<float,float> OnWeaponTickDelta;
     public void Init(SWeapon weaponInfo)
     {
-        tf_Muzzle = transform.Find("Muzzle");
+        m_Muzzle = transform.FindInAllChild("Muzzle");
         m_WeaponInfo = weaponInfo;
         I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
-        m_Muzzle = transform.Find("Muzzle");
         switch (weaponInfo.m_TriggerType)
         {
             default: Debug.LogError("Add More Convertions Here:" + weaponInfo.m_TriggerType.ToString()); m_Trigger = new TriggerSingle(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, CheckCanAction, SetActionPause, CheckCanAutoReload); break;
@@ -105,13 +103,13 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
             Vector3 endPosition = m_Attacher.tf_Head.position + spreadDirection * GameConst.I_ProjectileMaxDistance;
             if (Physics.Raycast(m_Attacher.tf_Head.position, spreadDirection, out hit, GameConst.I_ProjectileMaxDistance, GameLayer.Mask.I_All) &&  GameManager.B_DoHitCheck(hit.collider.Detect(),m_Attacher.I_EntityID))
                 endPosition = hit.point;
-            spreadDirection = (endPosition - tf_Muzzle.position).normalized;
+            spreadDirection = (endPosition - m_Muzzle.position).normalized;
 
-            ObjectManager.SpawnDamageSource<SFXProjectile>(m_WeaponInfo.m_ProjectileSFX, tf_Muzzle.position, spreadDirection).Play(I_AttacherID, spreadDirection, endPosition, OnFireBuffInfo());
+            ObjectManager.SpawnDamageSource<SFXProjectile>(m_WeaponInfo.m_ProjectileSFX, m_Muzzle.position, spreadDirection).Play(I_AttacherID, spreadDirection, endPosition, OnFireBuffInfo());
         }
 
         if (m_WeaponInfo.m_MuzzleSFX != -1)
-            ObjectManager.SpawnParticles<SFXMuzzle>(m_WeaponInfo.m_MuzzleSFX, tf_Muzzle.position, tf_Muzzle.forward).Play(I_AttacherID);
+            ObjectManager.SpawnParticles<SFXMuzzle>(m_WeaponInfo.m_MuzzleSFX, m_Muzzle.position, m_Muzzle.forward).Play(I_AttacherID);
 
         I_AmmoLeft--;
         OnFireRecoil?.Invoke(m_WeaponInfo.m_RecoilPerShot);
