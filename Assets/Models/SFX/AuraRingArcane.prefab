@@ -44,6 +44,7 @@ GameObject:
   - component: {fileID: 499570}
   - component: {fileID: 19843284}
   - component: {fileID: 19973056}
+  - component: {fileID: 11439304}
   m_Layer: 0
   m_Name: SpinningParticles
   m_TagString: Untagged
@@ -92,6 +93,19 @@ Transform:
   m_Father: {fileID: 482672}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &11439304
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 186454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a84c9fd6072e17c46b93dd9cf28a0904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotateVector: {x: 0, y: 0, z: 10}
+  rotateSpace: 0
 --- !u!198 &19802456
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -414,7 +428,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startRotationX:
       serializedVersion: 2
-      minMaxState: 3
+      minMaxState: 0
       scalar: 0
       minScalar: 0
       maxCurve:
@@ -455,7 +469,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startRotationY:
       serializedVersion: 2
-      minMaxState: 3
+      minMaxState: 0
       scalar: 0
       minScalar: 0
       maxCurve:
@@ -3453,7 +3467,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 870519185
+  randomSeed: 0
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -6814,7 +6828,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -1196915813
+  randomSeed: 0
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -7076,7 +7090,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startRotationX:
       serializedVersion: 2
-      minMaxState: 3
+      minMaxState: 0
       scalar: 1
       minScalar: 0
       maxCurve:
@@ -7117,7 +7131,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startRotationY:
       serializedVersion: 2
-      minMaxState: 3
+      minMaxState: 0
       scalar: 1
       minScalar: 0
       maxCurve:
