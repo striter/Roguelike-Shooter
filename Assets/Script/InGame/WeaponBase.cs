@@ -12,7 +12,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
     float f_actionCheck=0;
     protected Transform tf_Muzzle;
     Action<float> OnAmmoChangeCostMana;
-    Action<Vector2> OnRecoil;
+    Action<Vector2> OnFireRecoil;
     Func<DamageBuffInfo> OnFireBuffInfo;
     WeaponTrigger m_Trigger=null;
     WeaponAimAssistStraight m_Assist = null;
@@ -65,7 +65,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         return f_actionCheck<=0;
     }
 
-    public void Attach(int _attacherID,Transform attachTarget,Action<float> _OnAmmoChangeCostMana,Action<Vector2> _OnRecoil,Func<DamageBuffInfo> _OnFireBuffInfo, Func<float,float> _OnWeaponTickDelta)
+    public void Attach(int _attacherID,Transform attachTarget,Action<float> _OnAmmoChangeCostMana,Action<Vector2> _OnFireRecoil,Func<DamageBuffInfo> _OnFireBuffInfo, Func<float,float> _OnWeaponTickDelta)
     {
         I_AttacherID = _attacherID;
         transform.SetParent(attachTarget);
@@ -73,7 +73,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         transform.localRotation = Quaternion.identity;
         transform.localScale = Vector3.one;
         OnAmmoChangeCostMana = _OnAmmoChangeCostMana;
-        OnRecoil = _OnRecoil;
+        OnFireRecoil = _OnFireRecoil;
         OnFireBuffInfo = _OnFireBuffInfo;
         OnWeaponTickDelta = _OnWeaponTickDelta;
     }
@@ -107,7 +107,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
             ObjectManager.SpawnDamageSource<SFXProjectile>(m_WeaponInfo.m_ProjectileSFX, tf_Muzzle.position,tf_Muzzle.forward).Play(I_AttacherID, GameExpression.V3_RangeSpreadDirection(transform.forward, m_WeaponInfo.m_Spread, transform.up, transform.right), m_Assist.m_assistTarget, OnFireBuffInfo());
 
 
-        OnRecoil?.Invoke(m_WeaponInfo.m_RecoilPerShot);
+        OnFireRecoil?.Invoke(m_WeaponInfo.m_RecoilPerShot);
         OnAmmoChangeCostMana?.Invoke(m_WeaponInfo.m_ManaCost);
 
         return true;

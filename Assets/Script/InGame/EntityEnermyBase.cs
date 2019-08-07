@@ -49,7 +49,7 @@ public class EntityEnermyBase : EntityBase {
             switch (cast.E_CastType)
             {
                 case enum_CastControllType.CastFromOrigin: weapon = new EnermyCaster(cast, this, tf_Barrel, GetDamageBuffInfo); break;
-                case enum_CastControllType.CastSelfDetonate: weapon = new EnermyCasterSelfDetonateAnimLess(cast,this,tf_Barrel,GetDamageBuffInfo,()=> { OnAnimKeyEvent( EnermyAnimator.enum_AnimEvent.Fire); },OnDead,tf_Model.Find("BlinkModel"));break;
+                case enum_CastControllType.CastSelfDetonate: weapon = new EnermyCasterSelfDetonateAnimLess(cast,this,tf_Barrel,GetDamageBuffInfo,()=> { OnAnimKeyEvent( TAnimatorEvent.enum_AnimEvent.Fire); },OnDead,tf_Model.Find("BlinkModel"));break;
                 case enum_CastControllType.CastControlledForward: weapon = new EnermyCasterControlled(cast, this, tf_Barrel, GetDamageBuffInfo); break;
                 case enum_CastControllType.CastAtTarget: weapon = new EnermyCasterTarget(cast, this, tf_Barrel, GetDamageBuffInfo); break;
             }
@@ -106,11 +106,11 @@ public class EntityEnermyBase : EntityBase {
         if(m_Animator!=null)
              m_Animator.OnAttack(startAttack);
     }
-    protected void OnAnimKeyEvent(EnermyAnimator.enum_AnimEvent animEvent)
+    protected void OnAnimKeyEvent(TAnimatorEvent.enum_AnimEvent animEvent)
     {
         switch (animEvent)
         {
-            case EnermyAnimator.enum_AnimEvent.Fire:
+            case TAnimatorEvent.enum_AnimEvent.Fire:
                 m_AI.OnAttackTriggerd();
                 break;
         }
@@ -119,14 +119,6 @@ public class EntityEnermyBase : EntityBase {
 
     public class EnermyAnimator : AnimatorClippingTime
     {
-        public enum enum_AnimEvent
-        {
-            Invalid=-1,
-            Fire=1,
-            FootL,
-            FootR,
-            Death,
-        }
         static readonly int HS_T_Dead = Animator.StringToHash("t_dead");
         static readonly int HS_I_AnimIndex = Animator.StringToHash("i_weaponType");
         static readonly int HS_T_Activate = Animator.StringToHash("t_activate");
@@ -134,16 +126,14 @@ public class EntityEnermyBase : EntityBase {
         static readonly int HS_F_Strafe = Animator.StringToHash("f_strafe");
         static readonly int HS_F_Forward = Animator.StringToHash("f_forward");
         static readonly int HS_B_Attack = Animator.StringToHash("b_attack");
-        Action<enum_AnimEvent> OnAnimEvent;
-        public EnermyAnimator(Animator _animator, enum_EnermyAnim _animIndex,Action<enum_AnimEvent> _OnAnimEvent) : base(_animator)
+        Action<TAnimatorEvent.enum_AnimEvent> OnAnimEvent;
+        public EnermyAnimator(Animator _animator, enum_EnermyAnim _animIndex,Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) : base(_animator)
         {
             m_Animator.fireEvents = true;
             m_Animator.SetInteger(HS_I_AnimIndex,(int)_animIndex);
             m_Animator.SetTrigger(HS_T_Activate);
             OnAnimEvent = _OnAnimEvent;
-            m_Animator.GetComponent<TAnimatorEvent>().Attach((string eventName)=> {
-                OnAnimEvent((enum_AnimEvent)Enum.Parse(typeof(enum_AnimEvent), eventName));
-            });
+            m_Animator.GetComponent<TAnimatorEvent>().Attach(OnAnimEvent);
         }
         public void SetRun(float strafe,float forward)
         {

@@ -1,36 +1,36 @@
 fileFormatVersion: 2
-guid: 36b7c3aada657af4ab2e05f079d7e464
+guid: e6e3b2a3b2ee7f442877c6001601058b
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
-    100000: //RootNode
-    100002: B_Prop1
-    100004: B_L_Hand
-    100006: B_L_Forearm
-    100008: B_L_UpperArm
-    100010: B_Head
-    100012: B_L_Finger11
-    100014: B_L_Finger1
-    100016: B_L_Finger01
-    100018: B_L_Finger0
-    100020: B_R_Foot
-    100022: B_R_Hand
-    100024: B_R_Forearm
-    100026: B_R_UpperArm
-    100028: B_R_Calf
-    100030: B_R_Finger11
-    100032: B_R_Finger1
-    100034: B_R_Finger01
-    100036: B_R_Finger0
-    100038: B_R_Thigh
-    100040: B_L_Foot
-    100042: B_Spine1
-    100044: B_Spine
-    100046: B_Pelvis
-    100048: PositionLocator
-    100050: Mesh_Soldier_A
-    100052: B_L_Calf
-    100054: B_L_Thigh
+    100000: B_L_Hand
+    100002: B_L_Forearm
+    100004: B_L_UpperArm
+    100006: B_Spine1
+    100008: B_R_Foot
+    100010: B_Prop1
+    100012: PositionLocator
+    100014: Mesh_Soldier_A
+    100016: //RootNode
+    100018: B_R_Hand
+    100020: B_R_Forearm
+    100022: B_R_UpperArm
+    100024: B_Head
+    100026: B_L_Thigh
+    100028: B_L_Calf
+    100030: B_L_Finger1
+    100032: B_L_Foot
+    100034: B_R_Calf
+    100036: B_Spine
+    100038: B_Pelvis
+    100040: B_L_Finger11
+    100042: B_L_Finger01
+    100044: B_L_Finger0
+    100046: B_R_Finger0
+    100048: B_R_Finger1
+    100050: B_R_Finger01
+    100052: B_R_Finger11
+    100054: B_R_Thigh
     100056: AK47
     100058: B_L_Clavicle
     100060: B_L_Toe
@@ -110,34 +110,34 @@ ModelImporter:
     100208: Pistol
     100210: Rifle
     100212: Exporter
-    400000: //RootNode
-    400002: B_Prop1
-    400004: B_L_Hand
-    400006: B_L_Forearm
-    400008: B_L_UpperArm
-    400010: B_Head
-    400012: B_L_Finger11
-    400014: B_L_Finger1
-    400016: B_L_Finger01
-    400018: B_L_Finger0
-    400020: B_R_Foot
-    400022: B_R_Hand
-    400024: B_R_Forearm
-    400026: B_R_UpperArm
-    400028: B_R_Calf
-    400030: B_R_Finger11
-    400032: B_R_Finger1
-    400034: B_R_Finger01
-    400036: B_R_Finger0
-    400038: B_R_Thigh
-    400040: B_L_Foot
-    400042: B_Spine1
-    400044: B_Spine
-    400046: B_Pelvis
-    400048: PositionLocator
-    400050: Mesh_Soldier_A
-    400052: B_L_Calf
-    400054: B_L_Thigh
+    400000: B_L_Hand
+    400002: B_L_Forearm
+    400004: B_L_UpperArm
+    400006: B_Spine1
+    400008: B_R_Foot
+    400010: B_Prop1
+    400012: PositionLocator
+    400014: Mesh_Soldier_A
+    400016: //RootNode
+    400018: B_R_Hand
+    400020: B_R_Forearm
+    400022: B_R_UpperArm
+    400024: B_Head
+    400026: B_L_Thigh
+    400028: B_L_Calf
+    400030: B_L_Finger1
+    400032: B_L_Foot
+    400034: B_R_Calf
+    400036: B_Spine
+    400038: B_Pelvis
+    400040: B_L_Finger11
+    400042: B_L_Finger01
+    400044: B_L_Finger0
+    400046: B_R_Finger0
+    400048: B_R_Finger1
+    400050: B_R_Finger01
+    400052: B_R_Finger11
+    400054: B_R_Thigh
     400056: AK47
     400058: B_L_Clavicle
     400060: B_L_Toe
@@ -240,7 +240,7 @@ ModelImporter:
     4300012: RPG-Character-Mesh
     4300014: Rifle
     4300016: Pistol
-    7400000: Shooting-Fire-Rifle1
+    7400000: Player_Backward
     9500000: //RootNode
     11100000: //RootNode
     13700000: Soldier_Mesh
@@ -256,15 +256,18 @@ ModelImporter:
     bakeSimulation: 0
     resampleCurves: 1
     optimizeGameObjects: 0
-    motionNodeName: 
+    motionNodeName: Motion
     rigImportErrors: 
     rigImportWarnings: 
     animationImportErrors: 
-    animationImportWarnings: 
-    animationRetargetingWarnings: 
-    animationDoRetargetingWarnings: 0
+    animationImportWarnings: "\nClip 'Take 001' has import animation warnings that
+      might lower retargeting quality:\n\t'B_Spine2' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n"
+    animationRetargetingWarnings: "\nRetargeting quality report for clip 'Take 001':\n\tRetargeting
+      quality is good. No significant differences with original animation were found.\n"
+    animationDoRetargetingWarnings: 1
     importAnimatedCustomProperties: 0
-    animationCompression: 0
+    animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
@@ -273,18 +276,18 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Shooting-Fire-Rifle1
+      name: Player_Backward
       takeName: Take 001
       firstFrame: 0
-      lastFrame: 10.1
+      lastFrame: 24
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
+      loopTime: 1
+      loopBlend: 1
       loopBlendOrientation: 1
       loopBlendPositionY: 1
       loopBlendPositionXZ: 0
@@ -293,129 +296,26 @@ ModelImporter:
       keepOriginalPositionXZ: 1
       heightFromFeet: 0
       mirror: 0
-      bodyMask: 00000000010000000100000000000000000000000100000001000000010000000100000000000000000000000100000001000000
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.106406525
+      - time: 0.24240509
         functionName: OnEvent
-        data: Fire
+        data: FootR
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      transformMask:
-      - path: 
-        weight: 1
-      - path: Motion
-        weight: 0
-      - path: Motion/B_Pelvis
-        weight: 0
-      - path: Motion/B_Pelvis/B_L_Thigh
-        weight: 0
-      - path: Motion/B_Pelvis/B_L_Thigh/B_L_Calf
-        weight: 0
-      - path: Motion/B_Pelvis/B_L_Thigh/B_L_Calf/B_L_Foot
-        weight: 0
-      - path: Motion/B_Pelvis/B_L_Thigh/B_L_Calf/B_L_Foot/B_L_Toe0
-        weight: 0
-      - path: Motion/B_Pelvis/B_R_Thigh
-        weight: 0
-      - path: Motion/B_Pelvis/B_R_Thigh/B_R_Calf
-        weight: 0
-      - path: Motion/B_Pelvis/B_R_Thigh/B_R_Calf/B_R_Foot
-        weight: 0
-      - path: Motion/B_Pelvis/B_R_Thigh/B_R_Calf/B_R_Foot/B_R_Toe0
-        weight: 0
-      - path: Motion/B_Pelvis/B_Spine
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_L_Clavicle
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_L_Clavicle/B_L_UpperArm
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_L_Clavicle/B_L_UpperArm/B_L_Forearm
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_L_Clavicle/B_L_UpperArm/B_L_Forearm/B_L_Hand
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_L_Clavicle/B_L_UpperArm/B_L_Forearm/B_L_Hand/B_L_Finger0
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_L_Clavicle/B_L_UpperArm/B_L_Forearm/B_L_Hand/B_L_Finger0/B_L_Finger01
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_L_Clavicle/B_L_UpperArm/B_L_Forearm/B_L_Hand/B_L_Finger0/B_L_Finger01/B_L_Finger02
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_L_Clavicle/B_L_UpperArm/B_L_Forearm/B_L_Hand/B_L_Finger1
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_L_Clavicle/B_L_UpperArm/B_L_Forearm/B_L_Hand/B_L_Finger1/B_L_Finger11
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_L_Clavicle/B_L_UpperArm/B_L_Forearm/B_L_Hand/B_L_Finger1/B_L_Finger11/B_L_Finger12
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_L_Clavicle/B_L_UpperArm/B_L_Forearm/B_L_Hand/B_L_Finger2
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_L_Clavicle/B_L_UpperArm/B_L_Forearm/B_L_Hand/B_L_Finger2/B_L_Finger21
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_L_Clavicle/B_L_UpperArm/B_L_Forearm/B_L_Hand/B_L_Finger2/B_L_Finger21/B_L_Finger22
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_L_Clavicle/B_L_UpperArm/B_L_Forearm/B_L_Hand/B_L_Finger3
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_L_Clavicle/B_L_UpperArm/B_L_Forearm/B_L_Hand/B_L_Finger3/B_L_Finger31
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_L_Clavicle/B_L_UpperArm/B_L_Forearm/B_L_Hand/B_L_Finger3/B_L_Finger31/B_L_Finger32
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_L_Clavicle/B_L_UpperArm/B_L_Forearm/B_L_Hand/B_L_Finger4
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_L_Clavicle/B_L_UpperArm/B_L_Forearm/B_L_Hand/B_L_Finger4/B_L_Finger41
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_L_Clavicle/B_L_UpperArm/B_L_Forearm/B_L_Hand/B_L_Finger4/B_L_Finger41/B_L_Finger42
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_Neck
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_Neck/B_Head
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_R_Clavicle
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_R_Clavicle/B_R_UpperArm
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_R_Clavicle/B_R_UpperArm/B_R_Forearm
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_R_Clavicle/B_R_UpperArm/B_R_Forearm/B_R_Hand
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_R_Clavicle/B_R_UpperArm/B_R_Forearm/B_R_Hand/B_R_Finger0
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_R_Clavicle/B_R_UpperArm/B_R_Forearm/B_R_Hand/B_R_Finger0/B_R_Finger01
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_R_Clavicle/B_R_UpperArm/B_R_Forearm/B_R_Hand/B_R_Finger0/B_R_Finger01/B_R_Finger02
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_R_Clavicle/B_R_UpperArm/B_R_Forearm/B_R_Hand/B_R_Finger1
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_R_Clavicle/B_R_UpperArm/B_R_Forearm/B_R_Hand/B_R_Finger1/B_R_Finger11
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_R_Clavicle/B_R_UpperArm/B_R_Forearm/B_R_Hand/B_R_Finger1/B_R_Finger11/B_R_Finger12
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_R_Clavicle/B_R_UpperArm/B_R_Forearm/B_R_Hand/B_R_Finger2
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_R_Clavicle/B_R_UpperArm/B_R_Forearm/B_R_Hand/B_R_Finger2/B_R_Finger21
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_R_Clavicle/B_R_UpperArm/B_R_Forearm/B_R_Hand/B_R_Finger2/B_R_Finger21/B_R_Finger22
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_R_Clavicle/B_R_UpperArm/B_R_Forearm/B_R_Hand/B_R_Finger3
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_R_Clavicle/B_R_UpperArm/B_R_Forearm/B_R_Hand/B_R_Finger3/B_R_Finger31
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_R_Clavicle/B_R_UpperArm/B_R_Forearm/B_R_Hand/B_R_Finger3/B_R_Finger31/B_R_Finger32
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_R_Clavicle/B_R_UpperArm/B_R_Forearm/B_R_Hand/B_R_Finger4
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_R_Clavicle/B_R_UpperArm/B_R_Forearm/B_R_Hand/B_R_Finger4/B_R_Finger41
-        weight: 1
-      - path: Motion/B_Pelvis/B_Spine/B_Spine1/B_Spine2/B_R_Clavicle/B_R_UpperArm/B_R_Forearm/B_R_Hand/B_R_Finger4/B_R_Finger41/B_R_Finger42
-        weight: 1
-      - path: RPG-Character-Mesh
-        weight: 1
-      maskType: 1
-      maskSource: {fileID: 101100000, guid: 87216dbdf7dd8a047817768e0beb23b2, type: 2}
+      - time: 0.82637185
+        functionName: OnEvent
+        data: FootL
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      transformMask: []
+      maskType: 3
+      maskSource: {fileID: 101100000, guid: 4ebc95c8618479f4d8251c7dafa10029, type: 2}
       additiveReferencePoseFrame: 0
     isReadable: 1
   meshes:

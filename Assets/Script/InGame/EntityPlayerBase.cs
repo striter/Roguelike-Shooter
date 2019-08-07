@@ -13,13 +13,9 @@ public class EntityPlayerBase : EntityBase {
     protected PlayerAnimator m_Animator;
     protected Transform tf_WeaponHold;
     protected List<WeaponBase> m_WeaponObtained=new List<WeaponBase>();
-
     public WeaponBase m_WeaponCurrent { get; private set; } = null;
-
     public bool B_Interacting => m_InteractTarget != null;
     public InteractBase m_InteractTarget { get; private set; }
-
-
     public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized* m_EntityInfo.F_MovementSpeed * time;
     public override void Init(SEntity entityInfo)
     {
@@ -86,7 +82,7 @@ public class EntityPlayerBase : EntityBase {
     void ObtainWeapon(WeaponBase weapon)
     {
         m_WeaponObtained.Add(weapon);
-        weapon.Attach(I_EntityID,tf_WeaponHold, OnCostMana, AddRecoil, GetDamageBuffInfo,m_EntityInfo.F_FireRateTick);
+        weapon.Attach(I_EntityID,tf_WeaponHold, OnCostMana, OnFireAddRecoil, GetDamageBuffInfo,m_EntityInfo.F_FireRateTick);
         weapon.SetActivate(false);
         if (m_WeaponCurrent == null)
             OnSwitchWeapon();
@@ -121,6 +117,7 @@ public class EntityPlayerBase : EntityBase {
             m_WeaponCurrent = m_WeaponObtained[index];
         }
         m_WeaponCurrent.SetActivate(true);
+        m_Animator.SwitchAnim(m_WeaponCurrent.m_WeaponInfo.m_Anim);
     }
 #endregion
 #region PlayerControll
@@ -136,7 +133,7 @@ public class EntityPlayerBase : EntityBase {
     void OnMovementDelta(Vector2 moveDelta)
     {
         m_MoveAxisInput = moveDelta;
-        m_Animator.SetRun(moveDelta.magnitude > .2f);
+        m_Animator.SetRun(m_MoveAxisInput);
     }
     protected override void Update()
     {
@@ -148,11 +145,12 @@ public class EntityPlayerBase : EntityBase {
         m_CharacterController.Move(direction*m_EntityInfo.F_MovementSpeed * Time.deltaTime + Vector3.down * GameConst.F_PlayerFallSpeed*Time.deltaTime);
         TBroadCaster<enum_BC_UIStatusChanged>.Trigger(enum_BC_UIStatusChanged.PlayerInfoChanged, this);
     }
-    public void AddRecoil(Vector2 recoil)
+    public void OnFireAddRecoil(Vector2 recoil)
     {
         m_Pitch += recoil.y;
         m_Pitch = Mathf.Clamp(m_Pitch, 0, 0);
         OnRotateDelta(new Vector2(Random.Range(-1f,1f)>0?1f:-1f *recoil.x,0));
+        m_Animator.Fire();
     }
 #endregion
 #region PlayerInteract
@@ -179,14 +177,28 @@ public class EntityPlayerBase : EntityBase {
 
     protected class PlayerAnimator : AnimatorClippingTime
     {
-        static readonly int HS_B_Run = Animator.StringToHash("b_run");
+        static readonly int HS_F_Forward = Animator.StringToHash("f_forward");
+        static readonly int HS_F_Strafe = Animator.StringToHash("f_strafe");
+        static readonly int HS_I_WeaponType = Animator.StringToHash("i_weaponType");
+        static readonly int HS_T_Activate = Animator.StringToHash("t_activate");
+        static readonly int HS_T_Fire = Animator.StringToHash("t_attack");
         public PlayerAnimator(Animator _animator) : base(_animator)
         {
 
         }
-        public void SetRun(bool run)
+        public void SetRun(Vector2 movement)
         {
-            //m_Animator.SetBool(HS_B_Run,run);
+            m_Animator.SetFloat(HS_F_Forward, movement.y);
+            m_Animator.SetFloat(HS_F_Strafe, movement.x);
+        }
+        public void SwitchAnim(enum_PlayerAnim animIndex)
+        {
+            m_Animator.SetInteger(HS_I_WeaponType, (int)animIndex);
+            m_Animator.SetTrigger(HS_T_Activate);
+        }
+        public void Fire()
+        {
+            m_Animator.SetTrigger(HS_T_Fire);
         }
     }
 #if UNITY_EDITOR

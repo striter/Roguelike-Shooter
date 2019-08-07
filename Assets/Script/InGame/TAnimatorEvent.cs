@@ -1,14 +1,23 @@
 ﻿using System;
 using UnityEngine;
 
-public class TAnimatorEvent : MonoBehaviour {
-    Action<string> OnEventTrigger;
-    public void Attach(Action<string> _OnEventTrigger)
+public class TAnimatorEvent : MonoBehaviour
+{
+    public enum enum_AnimEvent
+    {
+        Invalid = -1,
+        Fire = 1,
+        FootL,
+        FootR,
+        Death,
+    }
+    Action<enum_AnimEvent> OnEventTrigger;
+    public void Attach(Action<enum_AnimEvent> _OnEventTrigger)
     {
         OnEventTrigger = _OnEventTrigger;
     }
     protected void OnEvent(string eventName)
     {
-        OnEventTrigger(eventName);
+        OnEventTrigger?.Invoke((enum_AnimEvent)Enum.Parse(typeof(enum_AnimEvent),eventName));
     }
 }

@@ -218,6 +218,15 @@ namespace GameSetting
         RocketLauncher = 7002,
     }
 
+    public enum enum_PlayerAnim
+    {
+        Invalid=-1,
+        Rifle_1001=1001,
+        Pistol_R_1002=1002,
+        Crossbow_1003=1003,
+        Heavy_1004=1004,
+    }
+
     public enum enum_EnermyAnim
     {
         Invalid = -1,
@@ -897,6 +906,7 @@ namespace GameSetting
         int index;
         string s_name;
         int i_triggerType;
+        int i_weaponAnim;
         int i_muzzleIndex;
         int i_projectileIndex;
         float f_fireRate;
@@ -910,6 +920,7 @@ namespace GameSetting
         float f_recoilHorizontal;
         float f_recoilVertical;
         public enum_PlayerWeapon m_Weapon => (enum_PlayerWeapon)index;
+        public enum_PlayerAnim m_Anim => (enum_PlayerAnim)i_weaponAnim;
         public string m_Name => s_name;
         public int m_ProjectileSFX => i_projectileIndex;
         public int m_MuzzleSFX => i_muzzleIndex;

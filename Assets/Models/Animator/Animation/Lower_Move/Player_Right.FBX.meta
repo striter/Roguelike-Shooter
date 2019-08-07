@@ -1,36 +1,36 @@
 fileFormatVersion: 2
-guid: 6572be1761d2cc342951ebf49aae8242
+guid: 632337656b7d55a4da91a8d21a4c34ca
 ModelImporter:
-  serializedVersion: 19
+  serializedVersion: 22
   fileIDToRecycleName:
-    100000: //RootNode
-    100002: B_Prop1
-    100004: B_L_Hand
-    100006: B_L_Forearm
-    100008: B_L_UpperArm
-    100010: B_Head
-    100012: B_L_Finger11
-    100014: B_L_Finger1
-    100016: B_L_Finger01
-    100018: B_L_Finger0
-    100020: B_R_Foot
-    100022: B_R_Hand
-    100024: B_R_Forearm
-    100026: B_R_UpperArm
-    100028: B_R_Calf
-    100030: B_R_Finger11
-    100032: B_R_Finger1
-    100034: B_R_Finger01
-    100036: B_R_Finger0
-    100038: B_R_Thigh
-    100040: B_L_Foot
-    100042: B_Spine1
-    100044: B_Spine
-    100046: B_Pelvis
-    100048: PositionLocator
-    100050: Mesh_Soldier_A
-    100052: B_L_Calf
-    100054: B_L_Thigh
+    100000: B_L_Hand
+    100002: B_L_Forearm
+    100004: B_L_UpperArm
+    100006: B_Spine1
+    100008: B_R_Foot
+    100010: B_Prop1
+    100012: PositionLocator
+    100014: Mesh_Soldier_A
+    100016: //RootNode
+    100018: B_R_Hand
+    100020: B_R_Forearm
+    100022: B_R_UpperArm
+    100024: B_Head
+    100026: B_L_Thigh
+    100028: B_L_Calf
+    100030: B_L_Finger1
+    100032: B_L_Foot
+    100034: B_R_Calf
+    100036: B_Spine
+    100038: B_Pelvis
+    100040: B_L_Finger11
+    100042: B_L_Finger01
+    100044: B_L_Finger0
+    100046: B_R_Finger0
+    100048: B_R_Finger1
+    100050: B_R_Finger01
+    100052: B_R_Finger11
+    100054: B_R_Thigh
     100056: AK47
     100058: B_L_Clavicle
     100060: B_L_Toe
@@ -107,36 +107,37 @@ ModelImporter:
     100202: B_Spine2
     100204: Motion
     100206: RPG-Character-Mesh
-    100208: Crossbow
-    100210: Exporter
-    400000: //RootNode
-    400002: B_Prop1
-    400004: B_L_Hand
-    400006: B_L_Forearm
-    400008: B_L_UpperArm
-    400010: B_Head
-    400012: B_L_Finger11
-    400014: B_L_Finger1
-    400016: B_L_Finger01
-    400018: B_L_Finger0
-    400020: B_R_Foot
-    400022: B_R_Hand
-    400024: B_R_Forearm
-    400026: B_R_UpperArm
-    400028: B_R_Calf
-    400030: B_R_Finger11
-    400032: B_R_Finger1
-    400034: B_R_Finger01
-    400036: B_R_Finger0
-    400038: B_R_Thigh
-    400040: B_L_Foot
-    400042: B_Spine1
-    400044: B_Spine
-    400046: B_Pelvis
-    400048: PositionLocator
-    400050: Mesh_Soldier_A
-    400052: B_L_Calf
-    400054: B_L_Thigh
+    100208: Pistol
+    100210: Rifle
+    100212: Exporter
+    400000: B_L_Hand
+    400002: B_L_Forearm
+    400004: B_L_UpperArm
+    400006: B_Spine1
+    400008: B_R_Foot
+    400010: B_Prop1
+    400012: PositionLocator
+    400014: Mesh_Soldier_A
+    400016: //RootNode
+    400018: B_R_Hand
+    400020: B_R_Forearm
+    400022: B_R_UpperArm
+    400024: B_Head
+    400026: B_L_Thigh
+    400028: B_L_Calf
+    400030: B_L_Finger1
+    400032: B_L_Foot
+    400034: B_R_Calf
+    400036: B_Spine
+    400038: B_Pelvis
+    400040: B_L_Finger11
+    400042: B_L_Finger01
+    400044: B_L_Finger0
+    400046: B_R_Finger0
+    400048: B_R_Finger1
+    400050: B_R_Finger01
+    400052: B_R_Finger11
+    400054: B_R_Thigh
     400056: AK47
     400058: B_L_Clavicle
     400060: B_L_Toe
@@ -213,20 +214,23 @@ ModelImporter:
     400202: B_Spine2
     400204: Motion
     400206: RPG-Character-Mesh
-    400208: Crossbow
-    400210: Exporter
+    400208: Pistol
+    400210: Rifle
+    400212: Exporter
     2300000: Mesh_Soldier_A
     2300002: AK47
     2300004: Chaingun
     2300006: MissileLauncher
     2300008: USP
-    2300010: Crossbow
+    2300010: Pistol
+    2300012: Rifle
     3300000: Mesh_Soldier_A
     3300002: AK47
     3300004: Chaingun
     3300006: MissileLauncher
     3300008: USP
-    3300010: Crossbow
+    3300010: Pistol
+    3300012: Rifle
     4300000: Mesh_Soldier_A
     4300002: AK47
     4300004: MissileLauncher
@@ -234,17 +238,19 @@ ModelImporter:
     4300008: Chaingun
     4300010: Soldier_Mesh
     4300012: RPG-Character-Mesh
-    4300014: Crossbow
-    7400000: 2Hand-Crossbow-Attack1
+    4300014: Rifle
+    4300016: Pistol
+    7400000: Player_Right
     9500000: //RootNode
     11100000: //RootNode
     13700000: Soldier_Mesh
     13700002: RPG-Character-Mesh
-    2186277476908879412: ImportLogs
+  externalObjects: {}
   materials:
     importMaterials: 0
     materialName: 0
     materialSearch: 1
+    materialLocation: 0
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
@@ -257,28 +263,31 @@ ModelImporter:
     animationImportWarnings: "\nClip 'Take 001' has import animation warnings that
       might lower retargeting quality:\n\t'B_Spine2' is inbetween humanoid transforms
       and has rotation animation that will be discarded.\n"
-    animationRetargetingWarnings: 
-    animationDoRetargetingWarnings: 0
-    animationCompression: 0
+    animationRetargetingWarnings: "\nRetargeting quality report for clip 'Take 001':\n\tRetargeting
+      quality is good. No significant differences with original animation were found.\n"
+    animationDoRetargetingWarnings: 1
+    importAnimatedCustomProperties: 0
+    animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
+    extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: 2Hand-Crossbow-Attack1
+      name: Player_Right
       takeName: Take 001
       firstFrame: 0
-      lastFrame: 30
+      lastFrame: 24
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
+      loopTime: 1
+      loopBlend: 1
       loopBlendOrientation: 1
       loopBlendPositionY: 1
       loopBlendPositionXZ: 0
@@ -290,9 +299,16 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.54911584
-        functionName: Shoot
-        data: 
+      - time: 0.39469808
+        functionName: OnEvent
+        data: FootL
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.87135506
+        functionName: OnEvent
+        data: FootR
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
@@ -307,13 +323,18 @@ ModelImporter:
     globalScale: 0.01
     meshCompression: 0
     addColliders: 0
+    importVisibility: 0
     importBlendShapes: 0
+    importCameras: 0
+    importLights: 0
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
     optimizeMeshForGPU: 0
     keepQuads: 0
     weldVertices: 0
+    preserveHierarchy: 0
+    indexFormat: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
@@ -323,6 +344,7 @@ ModelImporter:
     normalSmoothAngle: 60
     normalImportMode: 2
     tangentImportMode: 2
+    normalCalculationMode: 0
   importAnimation: 1
   copyAvatar: 1
   humanDescription:
