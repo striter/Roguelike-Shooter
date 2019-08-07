@@ -111,7 +111,7 @@ public class SFXProjectile : SFXBase
 
         return !B_HitMultiple;
     }
-    protected virtual bool CanHitTarget(HitCheckBase hitCheck)=> !m_EntityHitted.Contains(hitCheck.I_AttacherID) && GameManager.B_CanHitCheck(hitCheck,I_SourceID);
+    protected virtual bool CanHitTarget(HitCheckBase hitCheck)=> !m_EntityHitted.Contains(hitCheck.I_AttacherID) && GameManager.B_DoHitCheck(hitCheck,I_SourceID);
     
     protected virtual void OnHitTarget(RaycastHit hit, HitCheckBase hitCheck)
     {
