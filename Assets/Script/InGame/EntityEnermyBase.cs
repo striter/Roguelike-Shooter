@@ -87,7 +87,7 @@ public class EntityEnermyBase : EntityBase {
     {
         base.Update();
         if (m_Animator != null)
-            m_Animator.SetRun(0, m_AI.B_AgentEnabled ? 1 : 0);
+            m_Animator.SetRun( m_AI.B_AgentEnabled ? 1 : 0);
     }
     protected override void OnDead()
     {
@@ -123,7 +123,6 @@ public class EntityEnermyBase : EntityBase {
         static readonly int HS_I_AnimIndex = Animator.StringToHash("i_weaponType");
         static readonly int HS_T_Activate = Animator.StringToHash("t_activate");
         static readonly int HS_T_Attack = Animator.StringToHash("t_attack");
-        static readonly int HS_F_Strafe = Animator.StringToHash("f_strafe");
         static readonly int HS_F_Forward = Animator.StringToHash("f_forward");
         static readonly int HS_B_Attack = Animator.StringToHash("b_attack");
         Action<TAnimatorEvent.enum_AnimEvent> OnAnimEvent;
@@ -135,9 +134,8 @@ public class EntityEnermyBase : EntityBase {
             OnAnimEvent = _OnAnimEvent;
             m_Animator.GetComponent<TAnimatorEvent>().Attach(OnAnimEvent);
         }
-        public void SetRun(float strafe,float forward)
+        public void SetRun(float forward)
         {
-            m_Animator.SetFloat(HS_F_Strafe, strafe);
             m_Animator.SetFloat(HS_F_Forward, forward);
         }
         public void OnAttack(bool attack)

@@ -18,7 +18,7 @@ public class SFXProjectile : SFXBase
     protected PhysicsSimulator<HitCheckBase> m_Simulator;
     protected TrailRenderer m_Trail;
     protected SFXIndicator m_Indicator;
-    List<int> m_TargetHitted = new List<int>();
+    List<int> m_EntityHitted = new List<int>();
     public bool B_SimulatePhysics { get; protected set; }
     protected virtual float F_Duration(Vector3 startPos, Vector3 endPos) => GameConst.I_ProjectileMaxDistance / F_Speed;
     protected virtual bool B_RecycleOnHit => true;
@@ -56,7 +56,7 @@ public class SFXProjectile : SFXBase
     protected virtual void OnPlayPreset()
     {
         B_SimulatePhysics = true;
-        m_TargetHitted.Clear();
+        m_EntityHitted.Clear();
 
         if (m_Trail)
         {
@@ -111,21 +111,8 @@ public class SFXProjectile : SFXBase
 
         return !B_HitMultiple;
     }
-    protected virtual bool CanHitTarget(HitCheckBase hitCheck)
-    {
-        switch (hitCheck.m_HitCheckType)
-        {
-            case enum_HitCheck.Dynamic:
-            case enum_HitCheck.Static:
-                return hitCheck.I_AttacherID != I_SourceID;
-            case enum_HitCheck.Entity:
-                {
-                    HitCheckEntity entity = hitCheck as HitCheckEntity;
-                    return !m_TargetHitted.Contains(entity.I_AttacherID) && GameManager.B_CanHitEntity(entity, I_SourceID);
-                }
-        }
-        return false;
-    }
+    protected virtual bool CanHitTarget(HitCheckBase hitCheck)=> !m_EntityHitted.Contains(hitCheck.I_AttacherID) && GameManager.B_CanHitCheck(hitCheck,I_SourceID);
+    
     protected virtual void OnHitTarget(RaycastHit hit, HitCheckBase hitCheck)
     {
         switch (hitCheck.m_HitCheckType)
@@ -137,10 +124,10 @@ public class SFXProjectile : SFXBase
             case enum_HitCheck.Entity:
                 {
                     HitCheckEntity entity = hitCheck as HitCheckEntity;
-                    if (B_DealDamage && !m_TargetHitted.Contains(entity.I_AttacherID) && GameManager.B_CanDamageEntity(entity, I_SourceID))
+                    if (B_DealDamage && !m_EntityHitted.Contains(entity.I_AttacherID) && GameManager.B_CanDamageEntity(entity, I_SourceID))
                     {
                         entity.TryHit(m_DamageInfo);
-                        m_TargetHitted.Add(entity.I_AttacherID);
+                        m_EntityHitted.Add(entity.I_AttacherID);
                     }
                 }
                 break;

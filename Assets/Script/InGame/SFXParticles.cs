@@ -11,7 +11,6 @@ public class SFXParticles : SFXBase
     protected virtual bool B_PlayOnAwake => true;
     const float F_ParticlesMaxStopTime = 4f;
     protected bool B_ParticlesPlaying;
-    float f_playDuration;
     public override void Init(int _sfxIndex)
     {
         base.Init(_sfxIndex);

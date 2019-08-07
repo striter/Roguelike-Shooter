@@ -7,12 +7,12 @@ public class EntityPlayerBase : EntityBase {
     public enum_PlayerWeapon TESTWEAPON1 = enum_PlayerWeapon.M16A4;
     public enum_PlayerWeapon TESTWEAPON2 = enum_PlayerWeapon.MK10;
     public float m_Coins { get; private set; } = 0;
-    public float m_Pitch { get; private set; } = 0;
 
     protected CharacterController m_CharacterController;
     protected PlayerAnimator m_Animator;
     protected Transform tf_WeaponHold;
     protected List<WeaponBase> m_WeaponObtained=new List<WeaponBase>();
+    protected WeaponAimAssistStraight m_Assist = null;
     public WeaponBase m_WeaponCurrent { get; private set; } = null;
     public bool B_Interacting => m_InteractTarget != null;
     public InteractBase m_InteractTarget { get; private set; }
@@ -23,14 +23,14 @@ public class EntityPlayerBase : EntityBase {
         m_CharacterController = GetComponent<CharacterController>();
         m_CharacterController.detectCollisions = false;
         gameObject.layer = GameLayer.I_MovementDetect;
-        tf_WeaponHold = transform.Find("WeaponHold");
+        tf_WeaponHold = transform.FindInAllChild("WeaponHold");
         m_Animator = new PlayerAnimator(tf_Model.GetComponent<Animator>());
         transform.Find("InteractDetector").GetComponent<InteractDetector>().Init(OnInteractCheck);
+        m_Assist = new WeaponAimAssistStraight(transform.Find("AimAssist"), GameConst.F_AimAssistDistance, GameLayer.Mask.I_All,(Collider collider) => { return GameManager.B_CanHitCheck(collider.Detect(), I_EntityID); });
     }
     public override void OnSpawn(int id)
     {
         base.OnSpawn(id);
-        m_Pitch = 0;
         CameraController.Attach(this.transform);
 
         ObtainWeapon(ObjectManager.SpawnWeapon(TESTWEAPON1, this));
@@ -82,7 +82,7 @@ public class EntityPlayerBase : EntityBase {
     void ObtainWeapon(WeaponBase weapon)
     {
         m_WeaponObtained.Add(weapon);
-        weapon.Attach(I_EntityID,tf_WeaponHold, OnCostMana, OnFireAddRecoil, GetDamageBuffInfo,m_EntityInfo.F_FireRateTick);
+        weapon.Attach(I_EntityID,this,tf_WeaponHold, OnCostMana, OnFireAddRecoil, GetDamageBuffInfo,m_EntityInfo.F_FireRateTick);
         weapon.SetActivate(false);
         if (m_WeaponCurrent == null)
             OnSwitchWeapon();
@@ -124,8 +124,6 @@ public class EntityPlayerBase : EntityBase {
     Vector2 m_MoveAxisInput;
     void OnRotateDelta(Vector2 rotateDelta)
     {
-        m_Pitch += (rotateDelta.y/Screen.height)*90f;
-        m_Pitch = Mathf.Clamp(m_Pitch, 0, 0);
         rotateDelta.y = 0;
         rotateDelta.x = (rotateDelta.x / Screen.width) * 180f;
         CameraController.Instance.RotateCamera(rotateDelta);
@@ -138,8 +136,9 @@ public class EntityPlayerBase : EntityBase {
     protected override void Update()
     {
         base.Update();
-        m_WeaponCurrent.SetCanFire(!Physics.SphereCast(new Ray(tf_WeaponHold.position, tf_WeaponHold.forward), .1f,1f   , GameLayer.Mask.I_Static));
-        tf_WeaponHold.localRotation = Quaternion.Euler(-m_Pitch,0,0);
+        bool canFire = !Physics.SphereCast(new Ray(tf_WeaponHold.position, tf_WeaponHold.forward), .1f, 1f, GameLayer.Mask.I_Static);
+        m_WeaponCurrent.SetCanFire(canFire);
+        m_Assist.Simulate(canFire,tf_WeaponHold,tf_Head);
         transform.rotation = Quaternion.Lerp(transform.rotation,CameraController.CameraXZRotation,GameConst.F_PlayerCameraSmoothParam);
         Vector3 direction = (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized;
         m_CharacterController.Move(direction*m_EntityInfo.F_MovementSpeed * Time.deltaTime + Vector3.down * GameConst.F_PlayerFallSpeed*Time.deltaTime);
@@ -147,8 +146,6 @@ public class EntityPlayerBase : EntityBase {
     }
     public void OnFireAddRecoil(Vector2 recoil)
     {
-        m_Pitch += recoil.y;
-        m_Pitch = Mathf.Clamp(m_Pitch, 0, 0);
         OnRotateDelta(new Vector2(Random.Range(-1f,1f)>0?1f:-1f *recoil.x,0));
         m_Animator.Fire();
     }

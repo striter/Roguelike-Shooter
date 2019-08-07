@@ -8,8 +8,6 @@ using TTiles;
 public class UIManager : SingletonMono<UIManager> {
 
     Text txt_Ammo,txt_Mana,txt_Health,txt_Armor,txt_Coin,txt_Main;
-    RectTransform rtf_Pitch;
-    Text txt_Pitch;
     public static Action OnSwitch, OnReload;
     public static Action<bool> OnMainDown;
     protected override void Awake()
@@ -21,8 +19,6 @@ public class UIManager : SingletonMono<UIManager> {
         txt_Armor = transform.Find("Armor").GetComponent<Text>();
         txt_Coin = transform.Find("Coin").GetComponent<Text>();
 
-        rtf_Pitch = transform.Find("Pitch/Pitch").GetComponent<RectTransform>();
-        txt_Pitch = rtf_Pitch.Find("Pitch").GetComponent<Text>();
         transform.Find("Switch").GetComponent<Button>().onClick.AddListener(()=> { OnSwitch?.Invoke(); });
         transform.Find("Reload").GetComponent<Button>().onClick.AddListener(() => { OnReload?.Invoke(); });
         transform.Find("Main").GetComponent<UIT_EventTriggerListener>().D_OnPress+=(bool down,Vector2 pos) => { OnMainDown?.Invoke(down); };
@@ -49,9 +45,6 @@ public class UIManager : SingletonMono<UIManager> {
         txt_Armor.text =((int)player.m_HealthManager.m_CurrentArmor).ToString() + "/" + ((int)player.m_HealthManager.m_MaxArmor).ToString();
         txt_Coin.text = player.m_Coins.ToString();
 
-        txt_Pitch.text = ((int)player.m_Pitch).ToString();
-        rtf_Pitch.anchoredPosition = new Vector2(0, (player.m_Pitch / 45f) * 900);
-         
         txt_Main.text = player.B_Interacting ? "Interact" : "Fire";
     }
 

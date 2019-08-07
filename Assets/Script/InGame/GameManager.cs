@@ -160,13 +160,13 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnLevelFinish);
     }
     #endregion
-    #region Entity Management
+    #region Battle Management
     public static int I_EntityID(int index, bool isPlayer) => index + (isPlayer ? 10000 : 20000);       //Used For Identification Management
-    public static bool B_CanHitEntity(HitCheckEntity hb, int sourceID)  //If Match Will Hit Target,Player Particles ETC
+    public static bool B_CanHitEntity(HitCheckEntity targetHitCheck, int sourceEntityID)  //If Match Will Hit Target,Player Particles ETC
     {
-        if (hb.I_AttacherID == sourceID)
+        if (targetHitCheck.I_AttacherID == sourceEntityID)
             return false;
-        return Instance.m_Entities.ContainsKey(sourceID) && hb.m_Attacher.B_IsPlayer != Instance.m_Entities[sourceID].B_IsPlayer;
+        return Instance.m_Entities.ContainsKey(sourceEntityID) && targetHitCheck.m_Attacher.B_IsPlayer != Instance.m_Entities[sourceEntityID].B_IsPlayer;
     }
     public static bool B_CanDamageEntity(HitCheckEntity hb, int sourceID)   //After Hit,If Match Target Hit Succeed
     {
@@ -174,6 +174,14 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
             return false;
 
         return Instance.m_Entities.ContainsKey(sourceID) && hb.m_Attacher.B_IsPlayer != Instance.m_Entities[sourceID].B_IsPlayer;
+    }
+
+    public static bool B_CanHitCheck(HitCheckBase hitCheck,int sourceID)
+    {
+        bool canHit = true;
+        if (hitCheck.m_HitCheckType == enum_HitCheck.Entity)
+            return B_CanHitEntity(hitCheck as HitCheckEntity, sourceID);
+        return canHit;
     }
 
     public EntityBase GetRandomEntity(int sourceIndex,bool isPlayer,Predicate<EntityBase> predict)
@@ -430,7 +438,6 @@ public static class ObjectManager
             ObjectPoolManager<int, SFXBase>.Register(weaponIndex, damageSFX, enum_PoolSaveType.DynamicMaxAmount, 1, (SFXBase sfx) => { sfx.Init(weaponIndex); });
             }) ;
     }
-
     public static T SpawnDamageSource<T>(int weaponIndex,Vector3 position,Vector3 normal, Transform attachTo=null) where T:SFXBase
     {
         T template = ObjectPoolManager<int, SFXBase>.Spawn(weaponIndex, attachTo) as T;

@@ -9,13 +9,14 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
     public bool B_CanFire { get; private set; } = false;
     public bool B_Reloading { get; private set; }
     public int I_AmmoLeft { get; private set; }
+    public Transform m_Muzzle { get; private set; }
     float f_actionCheck=0;
     protected Transform tf_Muzzle;
     Action<float> OnAmmoChangeCostMana;
     Action<Vector2> OnFireRecoil;
     Func<DamageBuffInfo> OnFireBuffInfo;
     WeaponTrigger m_Trigger=null;
-    WeaponAimAssistStraight m_Assist = null;
+    EntityBase m_Attacher;
     bool B_HaveAmmoLeft => m_WeaponInfo.m_ClipAmount == -1 || I_AmmoLeft > 0;
     Func<float,float> OnWeaponTickDelta;
     public void Init(SWeapon weaponInfo)
@@ -23,7 +24,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         tf_Muzzle = transform.Find("Muzzle");
         m_WeaponInfo = weaponInfo;
         I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
-        m_Assist = new WeaponAimAssistStraight(transform.Find("AimAssist") );
+        m_Muzzle = transform.Find("Muzzle");
         switch (weaponInfo.m_TriggerType)
         {
             default: Debug.LogError("Add More Convertions Here:" + weaponInfo.m_TriggerType.ToString()); m_Trigger = new TriggerSingle(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, CheckCanAction, SetActionPause, CheckCanAutoReload); break;
@@ -47,13 +48,11 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         if (f_actionCheck > 0)
             f_actionCheck -= OnWeaponTickDelta(Time.deltaTime);
 
-        m_Assist.Simulate(B_CanFire);
     }
     protected virtual void OnDisable()
     {
         B_Reloading = false;
         m_Trigger.OnDisable();
-        m_Assist.OnDisable();
         this.StopAllSingleCoroutines();
     }
     protected void SetActionPause(float pauseDuration)
@@ -65,10 +64,11 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         return f_actionCheck<=0;
     }
 
-    public void Attach(int _attacherID,Transform attachTarget,Action<float> _OnAmmoChangeCostMana,Action<Vector2> _OnFireRecoil,Func<DamageBuffInfo> _OnFireBuffInfo, Func<float,float> _OnWeaponTickDelta)
+    public void Attach(int _attacherID,EntityBase _attacher,Transform _attachTo,Action<float> _OnAmmoChangeCostMana,Action<Vector2> _OnFireRecoil,Func<DamageBuffInfo> _OnFireBuffInfo, Func<float,float> _OnWeaponTickDelta)
     {
         I_AttacherID = _attacherID;
-        transform.SetParent(attachTarget);
+        m_Attacher = _attacher;
+        transform.SetParent(_attachTo);
         transform.localPosition = Vector3.zero;
         transform.localRotation = Quaternion.identity;
         transform.localScale = Vector3.one;
@@ -85,7 +85,6 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
             return false;
 
         m_Trigger.OnSetTrigger(down);
-
         return true;
     }
 
@@ -95,18 +94,26 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         if (m_Trigger != null && !B_CanFire)
             m_Trigger.OnSetTrigger(false);
     }
+    RaycastHit hit;
     protected virtual bool FireOnce()
     {
         if (!B_HaveAmmoLeft)
             return false;
+        for (int i = 0; i < m_WeaponInfo.m_PelletsPerShot; i++)
+        {
+            Vector3 spreadDirection = GameExpression.V3_RangeSpreadDirection(m_Attacher.tf_Head.forward, m_WeaponInfo.m_Spread, m_Attacher.tf_Head.up, m_Attacher.tf_Head.right);
+            Vector3 endPosition = m_Attacher.tf_Head.position + spreadDirection * GameConst.I_ProjectileMaxDistance;
+            if (Physics.Raycast(m_Attacher.tf_Head.position, spreadDirection, out hit, GameConst.I_ProjectileMaxDistance, GameLayer.Mask.I_All) &&  GameManager.B_CanHitCheck(hit.collider.Detect(),m_Attacher.I_EntityID))
+                endPosition = hit.point;
+            spreadDirection = (endPosition - tf_Muzzle.position).normalized;
+
+            ObjectManager.SpawnDamageSource<SFXProjectile>(m_WeaponInfo.m_ProjectileSFX, tf_Muzzle.position, spreadDirection).Play(I_AttacherID, spreadDirection, endPosition, OnFireBuffInfo());
+        }
+
+        if (m_WeaponInfo.m_MuzzleSFX != -1)
+            ObjectManager.SpawnParticles<SFXMuzzle>(m_WeaponInfo.m_MuzzleSFX, tf_Muzzle.position, tf_Muzzle.forward).Play(I_AttacherID);
 
         I_AmmoLeft--;
-        if(m_WeaponInfo.m_MuzzleSFX!=-1)
-            ObjectManager.SpawnParticles<SFXMuzzle>(m_WeaponInfo.m_MuzzleSFX, tf_Muzzle.position, tf_Muzzle.forward).Play(I_AttacherID);
-        for (int i = 0; i < m_WeaponInfo.m_PelletsPerShot; i++)
-            ObjectManager.SpawnDamageSource<SFXProjectile>(m_WeaponInfo.m_ProjectileSFX, tf_Muzzle.position,tf_Muzzle.forward).Play(I_AttacherID, GameExpression.V3_RangeSpreadDirection(transform.forward, m_WeaponInfo.m_Spread, transform.up, transform.right), m_Assist.m_assistTarget, OnFireBuffInfo());
-
-
         OnFireRecoil?.Invoke(m_WeaponInfo.m_RecoilPerShot);
         OnAmmoChangeCostMana?.Invoke(m_WeaponInfo.m_ManaCost);
 
@@ -142,46 +149,6 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         StartReload();
     }
     #region TriggerType
-    class WeaponAimAssistStraight
-    {
-        Transform transform;
-        Transform tf_Dot;
-        LineRenderer m_lineRenderer;
-        public Vector3 m_assistTarget { get; private set; } = Vector3.zero;
-        public WeaponAimAssistStraight(Transform muzzle)
-        {
-            transform = muzzle;
-            tf_Dot = transform.Find("Dot");
-            m_lineRenderer = muzzle.GetComponent<LineRenderer>();
-            m_lineRenderer.positionCount = 2;
-        }
-
-        public void Simulate(bool activate)
-        {
-            m_lineRenderer.enabled = activate;
-            tf_Dot.SetActivate(activate);
-            if (!activate)
-                return;
-            tf_Dot.SetActivate(false);
-            m_lineRenderer.SetPosition(0, transform.position);
-            RaycastHit hit;
-            if (Physics.Raycast(transform.position, transform.forward,out hit, GameConst.I_ProjectileMaxDistance, GameLayer.Mask.I_StaticEntity)&&(hit.collider.gameObject.layer != GameLayer.I_Entity || !hit.collider.GetComponent<HitCheckEntity>().m_Attacher.B_IsPlayer))
-            {
-                m_assistTarget = hit.point;
-                tf_Dot.position = hit.point;
-                tf_Dot.SetActivate(true);
-            }
-            else
-            {
-                m_assistTarget = transform.position + transform.forward * GameConst.I_ProjectileMaxDistance;
-            }
-            m_lineRenderer.SetPosition(1,m_assistTarget);
-        }
-        public virtual void OnDisable()
-        {
-            m_lineRenderer.enabled = false;
-        }
-    }
     internal class WeaponTrigger:ISingleCoroutine
     {
         public bool B_TriggerDown { get; protected set; }
