@@ -1774,16 +1774,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Test_TileStyle: 1
-  Test_EntityStyle: 5
+  Test_EntityStyle: 1
   M_TESTSEED: 
   B_PhysicsDebugGizmos: 1
   B_LevelDebugGizmos: 0
   E_LevelDebug: 3
-  Z_TestEntityIndex: 505
+  Z_TestEntityIndex: 107
   TestEntityBuffApplyOnSpawn: -1
   X_TestCastIndex: 50
   CastForward: 0
-  C_TestProjectileIndex: 10400
+  C_TestProjectileIndex: 10700
   V_TestIndicatorIndex: 30003
   B_TestBuffIndex: 4
 --- !u!4 &1133817278
