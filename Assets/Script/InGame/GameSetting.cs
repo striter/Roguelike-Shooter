@@ -739,50 +739,7 @@ namespace GameSetting
             }
         }
     }
-
-    public class WeaponAimAssistStraight
-    {
-        public Transform transform { get; private set; }
-        Transform tf_Dot;
-        LineRenderer m_lineRenderer;
-        public Vector3 m_assistTarget { get; private set; } = Vector3.zero;
-        float m_assistDistance;
-        int m_castMask;
-        Func<Collider, bool> CanHitCollider;
-        public WeaponAimAssistStraight(Transform _transform, float distance, int mask, Func<Collider, bool> _CanHitCollider)
-        {
-            transform = _transform;
-            tf_Dot = transform.Find("Dot");
-            m_lineRenderer = transform.GetComponent<LineRenderer>();
-            m_lineRenderer.positionCount = 2;
-            m_assistDistance = distance;
-            m_castMask = mask;
-            CanHitCollider = _CanHitCollider;
-        }
-
-        public void Simulate(bool activate, Transform muzzle,Transform check)
-        {
-            m_lineRenderer.enabled = activate;
-            tf_Dot.SetActivate(activate);
-            if (!activate)
-                return;
-            tf_Dot.SetActivate(false);
-            m_lineRenderer.SetPosition(0, muzzle.position);
-            RaycastHit hit;
-            m_assistTarget = check.position + check.forward * m_assistDistance;
-            if (Physics.Raycast(check.position, check.forward, out hit, m_assistDistance, m_castMask) && CanHitCollider(hit.collider))
-            {
-                m_assistTarget = hit.point;
-                tf_Dot.position = hit.point;
-                tf_Dot.SetActivate(true);
-            }
-            m_lineRenderer.SetPosition(1, m_assistTarget);
-        }
-        public virtual void OnDisable()
-        {
-            m_lineRenderer.enabled = false;
-        }
-    }
+    
     #endregion
 
     #region BigmapTile

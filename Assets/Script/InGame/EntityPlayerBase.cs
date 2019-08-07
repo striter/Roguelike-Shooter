@@ -12,7 +12,7 @@ public class EntityPlayerBase : EntityBase {
     protected PlayerAnimator m_Animator;
     protected Transform tf_WeaponHold;
     protected List<WeaponBase> m_WeaponObtained=new List<WeaponBase>();
-    protected WeaponAimAssistStraight m_Assist = null;
+    protected SFXAimAssist m_Assist = null;
     public WeaponBase m_WeaponCurrent { get; private set; } = null;
     public bool B_Interacting => m_InteractTarget != null;
     public InteractBase m_InteractTarget { get; private set; }
@@ -26,7 +26,6 @@ public class EntityPlayerBase : EntityBase {
         tf_WeaponHold = transform.FindInAllChild("WeaponHold");
         m_Animator = new PlayerAnimator(tf_Model.GetComponent<Animator>());
         transform.Find("InteractDetector").GetComponent<InteractDetector>().Init(OnInteractCheck);
-        m_Assist = new WeaponAimAssistStraight(transform.Find("AimAssist"), GameConst.F_AimAssistDistance, GameLayer.Mask.I_All,(Collider collider) => { return GameManager.B_CanHitCheck(collider.Detect(), I_EntityID); });
     }
     public override void OnSpawn(int id)
     {
@@ -117,6 +116,13 @@ public class EntityPlayerBase : EntityBase {
             m_WeaponCurrent = m_WeaponObtained[index];
         }
         m_WeaponCurrent.SetActivate(true);
+
+        if (m_Assist)
+            m_Assist.ForceRecycle();
+
+        m_Assist = ObjectManager.SpawnSFX<SFXAimAssist>(01);
+        m_Assist.Play(I_EntityID,m_WeaponCurrent.m_Muzzle,tf_Head,GameConst.F_AimAssistDistance,GameLayer.Mask.I_All,(Collider collider)=> {return GameManager.B_DoHitCheck(collider.Detect(),I_EntityID); });
+
         m_Animator.SwitchAnim(m_WeaponCurrent.m_WeaponInfo.m_Anim);
     }
 #endregion
@@ -138,7 +144,7 @@ public class EntityPlayerBase : EntityBase {
         base.Update();
         bool canFire = !Physics.SphereCast(new Ray(tf_WeaponHold.position, tf_WeaponHold.forward), .1f, 1f, GameLayer.Mask.I_Static);
         m_WeaponCurrent.SetCanFire(canFire);
-        m_Assist.Simulate(canFire,tf_WeaponHold,tf_Head);
+        m_Assist.SetEnable(canFire);
         transform.rotation = Quaternion.Lerp(transform.rotation,CameraController.CameraXZRotation,GameConst.F_PlayerCameraSmoothParam);
         Vector3 direction = (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized;
         m_CharacterController.Move(direction*m_EntityInfo.F_MovementSpeed * Time.deltaTime + Vector3.down * GameConst.F_PlayerFallSpeed*Time.deltaTime);

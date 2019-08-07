@@ -176,11 +176,11 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         return Instance.m_Entities.ContainsKey(sourceID) && hb.m_Attacher.B_IsPlayer != Instance.m_Entities[sourceID].B_IsPlayer;
     }
 
-    public static bool B_CanHitCheck(HitCheckBase hitCheck,int sourceID)
+    public static bool B_DoHitCheck(HitCheckBase hitCheck,int sourceID)
     {
-        bool canHit = true;
+        bool canHit = hitCheck.I_AttacherID!=sourceID;
         if (hitCheck.m_HitCheckType == enum_HitCheck.Entity)
-            return B_CanHitEntity(hitCheck as HitCheckEntity, sourceID);
+            return canHit&&B_CanHitEntity(hitCheck as HitCheckEntity, sourceID);
         return canHit;
     }
 
@@ -362,11 +362,13 @@ public static class DataManager
 public static class ObjectManager
 {
     public static Transform TF_Entity;
-    public static Transform TF_WaitForRecycle;
+    public static Transform TF_SFXWaitForRecycle;
+    public static Transform TF_SFXPlaying;
     public static void Init()
     {
         TF_Entity = new GameObject("Entity").transform;
-        TF_WaitForRecycle = new GameObject("WaitForRecycle").transform;
+        TF_SFXWaitForRecycle = new GameObject("SFX_WaitForRecycle").transform;
+        TF_SFXPlaying = new GameObject("SFX_Playing").transform;
         TResources.GetAllCommonSFXs().Traversal((int index,SFXBase target)=>{
             ObjectPoolManager<int, SFXBase>.Register(index, target,
             enum_PoolSaveType.DynamicMaxAmount, 1,
@@ -389,6 +391,7 @@ public static class ObjectManager
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnSpawnEntity, entity);
         return entity;
     }
+
     public static void RecycleEntity(int index, EntityBase target)
     {
         ObjectPoolManager<int, EntityBase>.Recycle(index, target);
@@ -405,33 +408,24 @@ public static class ObjectManager
 
         return ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Spawn(type, TF_Entity);
     }
+    public static T SpawnSFX<T>(int index,Transform attachTo=null) where T:SFXBase
+    {
+        T sfx = ObjectPoolManager<int, SFXBase>.Spawn(index, attachTo?TF_SFXPlaying:attachTo) as T;
+        if (sfx == null)
+            Debug.LogError("SFX Spawn Error! Invalid SFX Type:" + typeof(T) + ",Index:" + index);
+        return sfx;
+    }
+
     public static T SpawnParticles<T>(int index, Vector3 position, Vector3 normal, Transform attachTo = null) where T:SFXParticles
     {
-        T sfx = ObjectPoolManager<int, SFXBase>.Spawn(index, attachTo) as T;
-        if (sfx == null)
-            Debug.LogError("SFX Spawn Error! Invalid Particles Type:"+typeof(T) +",Index:" + index);
+        T sfx = SpawnSFX<T>(index,attachTo);
         sfx.transform.position = position;
         sfx.transform.rotation = Quaternion.LookRotation(normal);
         return sfx;
     }
-    public static SFXIndicator SpawnIndicator(int index, Vector3 position, Vector3 normal, Transform attachTo = null)
-    {
-        SFXIndicator sfx = ObjectPoolManager<int, SFXBase>.Spawn(index, attachTo) as SFXIndicator;
-        if (sfx == null)
-            Debug.LogError("SFX Spawn Error! Invalid Indicator,Index:" + index);
-        sfx.transform.position = position;
-        sfx.transform.rotation = Quaternion.LookRotation(normal);
-        return sfx;
-    }
-    public static SFXBuffEffect SpawnBuffEffect(int index, EntityBase attachTo)
-    {
-        SFXBuffEffect sfx = ObjectPoolManager<int, SFXBase>.Spawn(index, attachTo.transform) as SFXBuffEffect;
-        if (sfx == null)
-            Debug.LogError("SFX Spawn Error! Invalid BuffEffect,Index:" + index);
-        sfx.transform.localPosition = Vector3.zero;
-        sfx.transform.localRotation = Quaternion.identity;
-        return sfx;
-    }
+    public static SFXIndicator SpawnIndicator(int index, Vector3 position, Vector3 normal, Transform attachTo = null)=> SpawnParticles<SFXIndicator>(index, position, normal, attachTo);
+    public static SFXBuffEffect SpawnBuffEffect(int index, EntityBase attachTo) => SpawnParticles<SFXBuffEffect>(index, attachTo.transform.position, Vector3.up, attachTo.transform);
+
     public static void RegisterEnermyDamageSource(Dictionary<int, SFXBase> damageSources)
     {
         damageSources.Traversal((int weaponIndex, SFXBase damageSFX) => {
