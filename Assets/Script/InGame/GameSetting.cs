@@ -18,6 +18,8 @@ namespace GameSetting
 
         public const float F_LaserRayStartPause = .5f;      //Laser Start Pause
 
+        public const float F_ParticlesMaxStopTime = 4f;
+
         public const int I_BurstFirePelletsOnceTrigger = 3;       //Times While Burst Fire
         public const int I_ProjectileSpreadAtDistance = 100;       //Meter,  Bullet Spread In A Circle At End Of This Distance
 
@@ -536,7 +538,9 @@ namespace GameSetting
             for (int i = 0; i < m_BuffList.Count; i++)
             {
                 if (m_BuffEffects.ContainsKey(m_BuffList[i].m_buffInfo.m_Index))
-                    m_BuffEffects[m_BuffList[i].m_buffInfo.m_Index].Refresh();
+                {
+                    m_BuffEffects[m_BuffList[i].m_buffInfo.m_Index].Refresh(m_BuffList[i].m_buffInfo.m_ExpireDuration);
+                }
                 else
                 {
                     m_BuffEffects.Add(m_BuffList[i].m_buffInfo.m_Index, ObjectManager.SpawnBuffEffect(m_BuffList[i].m_buffInfo.m_EffectIndex, m_Entity));
