@@ -328,6 +328,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b95bf8cd0c887424eba18d0aa1f44dc6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  E_Trigger: -1
-  E_Anim: -1
-  B_AttachLeft: 0
+  E_Trigger: 1
+  E_Anim: 1002
+  B_AttachLeft: 1
