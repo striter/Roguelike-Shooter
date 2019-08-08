@@ -128,7 +128,7 @@ public class EntityPlayerBase : EntityBase {
             m_Assist.ForceRecycle();
 
         m_Assist = ObjectManager.SpawnSFX<SFXAimAssist>(01);
-        m_Assist.Play(I_EntityID,m_WeaponCurrent.m_Muzzle, m_WeaponCurrent.m_Muzzle, GameConst.F_AimAssistDistance,GameLayer.Mask.I_All,(Collider collider)=> {return GameManager.B_DoHitCheck(collider.Detect(),I_EntityID); });
+        m_Assist.Play(I_EntityID,tf_Head, tf_Head, GameConst.F_AimAssistDistance,GameLayer.Mask.I_All,(Collider collider)=> {return GameManager.B_DoHitCheck(collider.Detect(),I_EntityID); });
 
         m_Animator.SwitchAnim(m_WeaponCurrent.E_Anim);
     }
