@@ -523,18 +523,17 @@ namespace GameSetting
             m_EntityBuffProperty = EntityBuffInfo.Create(entityDamageReduce,movementEnhance,firerateEnhance);
             m_DamageBuffProperty = DamageBuffInfo.Create(damageApplyEnhance, new List<int>());
 
-            //Calculate All Buff Effects
-            //Do Removal Check
+            //Do Effect Removal Check
             List<int> effectsList = m_BuffEffects.Keys.ToList();
             for (int i = 0; i < effectsList.Count; i++)
             {
-                BuffBase effectBuff = m_BuffList.Find(p => p.m_buffInfo.m_Index == effectsList[i]);
-                if (effectBuff == null)
+                if (m_BuffList.Find(p => p.m_buffInfo.m_Index == effectsList[i]) == null)
                 {
                     m_BuffEffects[effectsList[i]].StopParticles();
                     m_BuffEffects.Remove(effectsList[i]);
                 }
             }
+            //Refresh Or Add Effects
             for (int i = 0; i < m_BuffList.Count; i++)
             {
                 if (m_BuffEffects.ContainsKey(m_BuffList[i].m_buffInfo.m_Index))
