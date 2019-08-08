@@ -13,7 +13,7 @@ namespace GameSetting
     {
         public const int I_ProjectileMaxDistance = 100;
         public const int I_ProjectileBlinkWhenTimeLeftLessThan = 3;
-        public const float F_AimAssistDistance = 10f;
+        public const float F_AimAssistDistance = 100f;
         public const short I_BoltLastTimeAfterHit = 5;
 
         public const float F_LaserRayStartPause = .5f;      //Laser Start Pause
