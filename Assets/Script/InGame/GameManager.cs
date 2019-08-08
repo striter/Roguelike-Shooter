@@ -411,7 +411,7 @@ public static class ObjectManager
     }
     public static T SpawnSFX<T>(int index,Transform attachTo=null) where T:SFXBase
     {
-        T sfx = ObjectPoolManager<int, SFXBase>.Spawn(index, attachTo?TF_SFXPlaying:attachTo) as T;
+        T sfx = ObjectPoolManager<int, SFXBase>.Spawn(index, attachTo?attachTo: TF_SFXPlaying) as T;
         if (sfx == null)
             Debug.LogError("SFX Spawn Error! Invalid SFX Type:" + typeof(T) + ",Index:" + index);
         return sfx;
@@ -425,7 +425,7 @@ public static class ObjectManager
         return sfx;
     }
     public static SFXIndicator SpawnIndicator(int index, Vector3 position, Vector3 normal, Transform attachTo = null)=> SpawnParticles<SFXIndicator>(index, position, normal, attachTo);
-    public static SFXBuffEffect SpawnBuffEffect(int index, EntityBase attachTo) => SpawnParticles<SFXBuffEffect>(index, attachTo.transform.position, Vector3.up, attachTo.transform);
+    public static SFXBuffEffect SpawnBuffEffect(int index, EntityBase attachTo) => SpawnParticles<SFXBuffEffect>(index, attachTo.transform.position, attachTo.transform.forward, attachTo.transform);
 
     public static void RegisterEnermyDamageSource(Dictionary<int, SFXBase> damageSources)
     {

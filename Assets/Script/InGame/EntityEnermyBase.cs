@@ -304,7 +304,7 @@ public class EntityEnermyBase : EntityBase {
             count--;
             for (; ; )
             {
-                m_attackSimulate += m_Info.F_FireRateTick(Time.deltaTime);
+                m_attackSimulate +=Time.deltaTime;
                 if (m_attackSimulate >= fireRate)
                 {
                     m_attackSimulate -= fireRate;
