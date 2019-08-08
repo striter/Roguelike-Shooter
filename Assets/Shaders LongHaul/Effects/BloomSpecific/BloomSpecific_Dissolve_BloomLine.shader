@@ -45,7 +45,7 @@
 			{
 				v2f o;
 				o.uv = TRANSFORM_TEX(v.uv, _SubTex1);
-				o.pos = UnityObjectToClipPos(v.vertex+v.normal*.1f);
+				o.pos = UnityObjectToClipPos(v.vertex);
 				return o;
 			}
 			
