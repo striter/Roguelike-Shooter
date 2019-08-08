@@ -289,7 +289,7 @@ ModelImporter:
     - serializedVersion: 16
       name: Player_Pistol_L_Shot
       takeName: Take 001
-      firstFrame: 15
+      firstFrame: 12
       lastFrame: 24.4
       wrapMode: 0
       orientationOffsetY: 0
