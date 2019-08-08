@@ -4,6 +4,9 @@ using System;
 using System.Collections.Generic;
 
 public class WeaponBase : MonoBehaviour,ISingleCoroutine {
+    public enum_TriggerType E_Trigger = enum_TriggerType.Invalid;
+    public enum_PlayerAnim E_Anim= enum_PlayerAnim.Invalid;
+    public bool B_AttachLeft=false;
     public int I_AttacherID { get; private set; }
     public SWeapon m_WeaponInfo { get; private set; }
     public bool B_CanFire { get; private set; } = false;
@@ -23,9 +26,9 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         m_Muzzle = transform.FindInAllChild("Muzzle");
         m_WeaponInfo = weaponInfo;
         I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
-        switch (weaponInfo.m_TriggerType)
+        switch (E_Trigger)
         {
-            default: Debug.LogError("Add More Convertions Here:" + weaponInfo.m_TriggerType.ToString()); m_Trigger = new TriggerSingle(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, CheckCanAction, SetActionPause, CheckCanAutoReload); break;
+            default: Debug.LogError("Add More Convertions Here:" + E_Trigger); m_Trigger = new TriggerSingle(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, CheckCanAction, SetActionPause, CheckCanAutoReload); break;
             case enum_TriggerType.Auto: m_Trigger = new TriggerAuto(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, CheckCanAction, SetActionPause,CheckCanAutoReload);break;
             case enum_TriggerType.Single:m_Trigger = new TriggerSingle(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, CheckCanAction, SetActionPause, CheckCanAutoReload);break;
             case enum_TriggerType.Burst:m_Trigger = new TriggerBurst(m_WeaponInfo.m_FireRate,m_WeaponInfo.m_SpecialRate, FireOnce, CheckCanAction,SetActionPause, CheckCanAutoReload);break;

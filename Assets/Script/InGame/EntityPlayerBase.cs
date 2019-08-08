@@ -10,7 +10,7 @@ public class EntityPlayerBase : EntityBase {
 
     protected CharacterController m_CharacterController;
     protected PlayerAnimator m_Animator;
-    protected Transform tf_WeaponHold;
+    protected Transform tf_WeaponHoldRight,tf_WeaponHoldLeft;
     protected List<WeaponBase> m_WeaponObtained=new List<WeaponBase>();
     protected SFXAimAssist m_Assist = null;
     public WeaponBase m_WeaponCurrent { get; private set; } = null;
@@ -23,7 +23,8 @@ public class EntityPlayerBase : EntityBase {
         m_CharacterController = GetComponent<CharacterController>();
         m_CharacterController.detectCollisions = false;
         gameObject.layer = GameLayer.I_MovementDetect;
-        tf_WeaponHold = transform.FindInAllChild("WeaponHold");
+        tf_WeaponHoldRight = transform.FindInAllChild("WeaponHold_R");
+        tf_WeaponHoldLeft = transform.FindInAllChild("WeaponHold_L");
         m_Animator = new PlayerAnimator(tf_Model.GetComponent<Animator>());
         transform.Find("InteractDetector").GetComponent<InteractDetector>().Init(OnInteractCheck);
     }
@@ -87,7 +88,7 @@ public class EntityPlayerBase : EntityBase {
     void ObtainWeapon(WeaponBase weapon)
     {
         m_WeaponObtained.Add(weapon);
-        weapon.Attach(I_EntityID,this,tf_WeaponHold, OnCostMana, OnFireAddRecoil, GetDamageBuffInfo,m_EntityInfo.F_FireRateTick);
+        weapon.Attach(I_EntityID,this,weapon.B_AttachLeft?tf_WeaponHoldLeft:tf_WeaponHoldRight, OnCostMana, OnFireAddRecoil, GetDamageBuffInfo,m_EntityInfo.F_FireRateTick);
         weapon.SetActivate(false);
         if (m_WeaponCurrent == null)
             OnSwitchWeapon();
@@ -129,7 +130,7 @@ public class EntityPlayerBase : EntityBase {
         m_Assist = ObjectManager.SpawnSFX<SFXAimAssist>(01);
         m_Assist.Play(I_EntityID,m_WeaponCurrent.m_Muzzle,tf_Head,GameConst.F_AimAssistDistance,GameLayer.Mask.I_All,(Collider collider)=> {return GameManager.B_DoHitCheck(collider.Detect(),I_EntityID); });
 
-        m_Animator.SwitchAnim(m_WeaponCurrent.m_WeaponInfo.m_Anim);
+        m_Animator.SwitchAnim(m_WeaponCurrent.E_Anim);
     }
 #endregion
 #region PlayerControll
@@ -148,7 +149,7 @@ public class EntityPlayerBase : EntityBase {
     protected override void Update()
     {
         base.Update();
-        bool canFire = !Physics.SphereCast(new Ray(tf_WeaponHold.position, tf_WeaponHold.forward), .1f, 1f, GameLayer.Mask.I_Static);
+        bool canFire = !Physics.SphereCast(new Ray(tf_WeaponHoldRight.position, tf_WeaponHoldRight.forward), .1f, 1f, GameLayer.Mask.I_Static);
         m_WeaponCurrent.SetCanFire(canFire);
         m_Assist.SetEnable(canFire);
         transform.rotation = Quaternion.Lerp(transform.rotation,CameraController.CameraXZRotation,GameConst.F_PlayerCameraSmoothParam);

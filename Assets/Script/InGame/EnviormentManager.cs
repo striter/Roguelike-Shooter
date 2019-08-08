@@ -52,6 +52,9 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
             case enum_Style.Undead:
                // PostEffectManager.AddPostEffect<PE_FogDepthNoise>().SetEffect(Color.white).SetEffect(TCommon.ColorAlpha(Color.white, .3f), .4f, -1f, 2f).SetTexture(TResources.Load<Texture>("Texture/Noise_Fog"));
                 break;
+            case enum_Style.Iceland:
+                PostEffectManager.AddPostEffect<PE_FogDepth>().SetEffect(Color.white,.6f,-1,5);
+                break;
         }
     }
     #region Level
