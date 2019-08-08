@@ -34,7 +34,7 @@ public class SFXAimAssist : SFXBase {
             return;
 
         tf_Dot.SetActivate(false);
-        m_lineRenderer.SetPosition(0, tf_muzzle.position);
+        m_lineRenderer.SetPosition(1, tf_muzzle.position);
         RaycastHit hit;
         m_assistTarget = tf_check.position + tf_check.forward * m_assistDistance;
         if (Physics.Raycast(tf_check.position, tf_check.forward, out hit, m_assistDistance, m_castMask) && CanHitCollider(hit.collider))
@@ -43,7 +43,7 @@ public class SFXAimAssist : SFXBase {
             tf_Dot.position = hit.point;
             tf_Dot.SetActivate(true);
         }
-        m_lineRenderer.SetPosition(1, m_assistTarget);
+        m_lineRenderer.SetPosition(0, m_assistTarget);
     }
     public void SetEnable(bool activate)
     {
