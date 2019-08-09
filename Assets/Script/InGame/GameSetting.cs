@@ -191,7 +191,7 @@ namespace GameSetting
 
     public enum enum_HealthMessageType { Invalid = -1, DamageHealth = 1, ReceiveHealth = 2, DamageArmor = 3, ReceiveArmor = 4 }
 
-    public enum enum_DamageType { Invalid = -1, Projectile = 1, Area = 2, DOT = 3, Fall = 4, ArmorOnly = 5 }
+    public enum enum_DamageType { Invalid = -1, Common = 1, ArmorOnly = 2,HealthOnly = 3, }
 
     public enum enum_PlayerWeapon
     {
@@ -289,9 +289,18 @@ namespace GameSetting
     #region GameBase
     public class HealthBase
     {
-        public float m_CurrentHealth { get; protected set; }
+        public float m_CurrentHealth { get; private set; }
         public float m_MaxHealth { get; private set; }
+        
         public bool b_IsDead => m_CurrentHealth <= 0;
+        protected void DamageHealth(float health)
+        {
+            m_CurrentHealth -= health;
+            if (m_CurrentHealth < 0)
+                m_CurrentHealth = 0;
+            else if (m_CurrentHealth > m_MaxHealth)
+                m_CurrentHealth = m_MaxHealth;
+        }
 
         protected Action<enum_HealthMessageType> OnHealthChanged;
         protected Action OnDead;
@@ -322,17 +331,25 @@ namespace GameSetting
 
     public class EntityHealth:HealthBase
     {
-        public float m_CurrentArmor { get; protected set; }
-
+        public float m_CurrentArmor { get; private set; }
         public float m_MaxArmor { get; private set; }
         
         public float m_ArmorRegenSpeed { get; private set; }
         public float m_ArmorRegenDuration { get; private set; }
         public float F_TotalHealth => m_MaxHealth + m_MaxArmor;
-        public bool B_HealthFull => m_CurrentHealth >= m_MaxHealth;
-        public bool B_ArmorFull => m_CurrentArmor >= m_MaxArmor;
+        public float F_HealthScale =>Mathf.Clamp01( m_CurrentHealth/m_MaxHealth);
+        public float F_ArmorScale => Mathf.Clamp01(m_CurrentArmor/ m_MaxArmor);
         
         protected float f_ArmorRegenCheck;
+        protected void DamageArmor(float amount)
+        {
+            m_CurrentArmor -= amount;
+            if (m_CurrentArmor < 0)
+                m_CurrentArmor = 0;
+            else if (m_CurrentArmor > m_MaxArmor)
+                m_CurrentArmor = m_MaxArmor;
+        }
+
         public EntityHealth(SEntity entityInfo, Action<enum_HealthMessageType> _OnHealthChanged, Action _OnDead) :base(entityInfo.m_MaxHealth,_OnHealthChanged,_OnDead)
         {
             m_MaxArmor = entityInfo.m_MaxArmor;
@@ -349,61 +366,83 @@ namespace GameSetting
         {
             if (b_IsDead)
                 return false;
-            
+
             if (damageInfo.m_AmountApply > 0)    //Damage
             {
-                m_CurrentArmor -= damageInfo.m_AmountApply *damageMultiply;
-                if (m_CurrentArmor < 0)
+                float damageReceive = damageInfo.m_AmountApply*damageMultiply;
+
+                switch (damageInfo.m_damageType)
                 {
-                    m_CurrentHealth += m_CurrentArmor;
-                    m_CurrentArmor = 0;
+                    case enum_DamageType.ArmorOnly:
+                        {
+                            if (F_ArmorScale == 0)
+                                return false;
+                            DamageArmor(damageReceive);
+                            OnHealthChanged(enum_HealthMessageType.DamageArmor);
+                        }
+                        break;
+                    case enum_DamageType.HealthOnly:
+                        {
+                            DamageHealth(damageReceive);
+                            OnHealthChanged(enum_HealthMessageType.DamageHealth);
+                        }
+                        break;
+                    case enum_DamageType.Common:
+                        {
+                            float healthDamage = damageReceive-m_CurrentArmor ;
+                            DamageArmor(damageReceive);
+                            if (healthDamage > 0)
+                                DamageHealth(healthDamage);
+                            OnHealthChanged(healthDamage >= 0 ? enum_HealthMessageType.DamageHealth : enum_HealthMessageType.DamageArmor);
+                        }
+                        break;
                 }
-
                 f_ArmorRegenCheck = m_ArmorRegenDuration;
-
-                OnHealthChanged( m_CurrentArmor > 0? enum_HealthMessageType.DamageArmor: enum_HealthMessageType.DamageHealth);
                 if (b_IsDead)
                     OnDead();
             }
             else if (damageInfo.m_AmountApply < 0)    //Healing
             {
-                if (damageInfo.m_damageType == enum_DamageType.ArmorOnly)       //Heal Armor
+                float amountHeal = damageInfo.m_AmountApply;
+                switch (damageInfo.m_damageType)
                 {
-                    if (B_ArmorFull)
-                        return false;
-
-                    m_CurrentArmor -= damageInfo.m_AmountApply;
-                    if (m_CurrentArmor > m_MaxArmor)
-                        m_CurrentArmor = m_MaxArmor;
-
-                    OnHealthChanged(enum_HealthMessageType.ReceiveArmor);
-                }
-                else    //Heal Health Then Armor
-                {
-                    m_CurrentHealth -= damageInfo.m_AmountApply;
-                    if (!B_HealthFull)
-                    {
-                        OnHealthChanged(enum_HealthMessageType.ReceiveHealth);
-                        return true;
-                    }
-
-                    float armorReceive = m_CurrentHealth - m_MaxHealth;
-                    if (m_CurrentHealth > m_MaxHealth)
-                        m_CurrentHealth = m_MaxHealth;
-
-                    if (B_ArmorFull)
-                        return false;
-
-                    m_CurrentArmor += armorReceive;
-                    if (m_CurrentArmor > m_MaxArmor)
-                        m_CurrentArmor = m_MaxArmor;
-
-                    OnHealthChanged(enum_HealthMessageType.ReceiveArmor);
+                    case enum_DamageType.ArmorOnly:
+                        {
+                            if (F_ArmorScale==1)
+                                return false;
+                            DamageArmor(amountHeal);
+                            OnHealthChanged(enum_HealthMessageType.ReceiveArmor);
+                        }
+                        break;
+                    case enum_DamageType.HealthOnly:
+                        {
+                            if (F_HealthScale==1)
+                                return false;
+                            DamageHealth(amountHeal);
+                            OnHealthChanged( enum_HealthMessageType.ReceiveHealth);
+                        }
+                        break;
+                    case enum_DamageType.Common:
+                        {
+                            float armorReceive = amountHeal  - m_CurrentHealth+m_MaxHealth;
+                            DamageHealth(amountHeal);
+                            if (armorReceive>0)
+                            {
+                                OnHealthChanged(enum_HealthMessageType.ReceiveHealth);
+                                return true;
+                            }
+                            
+                            if (F_ArmorScale>=1)
+                                return false;
+                            DamageArmor(armorReceive);
+                            OnHealthChanged(enum_HealthMessageType.ReceiveArmor);
+                        }
+                        break;
                 }
             }
-
             return true;
         }
+
         public void Tick(float deltaTime)
         {
             if (m_ArmorRegenSpeed == 0)
@@ -542,6 +581,9 @@ namespace GameSetting
             //Refresh Or Add Effects
             for (int i = 0; i < m_BuffList.Count; i++)
             {
+                if (m_BuffList[i].m_buffInfo.m_EffectIndex <= 0)
+                    return;
+
                 if (m_BuffEffects.ContainsKey(m_BuffList[i].m_buffInfo.m_Index))
                 {
                     m_BuffEffects[m_BuffList[i].m_buffInfo.m_Index].Refresh(m_BuffList[i].m_buffInfo.m_ExpireDuration);
@@ -583,7 +625,7 @@ namespace GameSetting
             if (f_dotCheck > m_buffInfo.m_DamageTickTime)
             {
                 f_dotCheck -= m_buffInfo.m_DamageTickTime;
-                OnDOTDamage(new DamageInfo(m_buffInfo.m_DamagePerTick, enum_DamageType.DOT));
+                OnDOTDamage(new DamageInfo(m_buffInfo.m_DamagePerTick,m_buffInfo.m_DamageType));
             }
         }
         public void ExpireRefresh()
@@ -999,6 +1041,7 @@ namespace GameSetting
         float f_damageReduce;
         float f_damageTickTime;
         float f_damagePerTick;
+        int i_damageType;
         public int m_Index => index;
         public enum_BuffAddType m_AddType => (enum_BuffAddType)i_addType;
         public float m_ExpireDuration => f_expireDuration;
@@ -1010,6 +1053,7 @@ namespace GameSetting
         public float m_DamageReduction => f_damageReduce ;
         public float m_DamageTickTime => f_damageTickTime;
         public float m_DamagePerTick => f_damagePerTick;
+        public enum_DamageType m_DamageType =>(enum_DamageType)i_damageType;
         public void InitOnValueSet()
         {
             f_movementSpeedMultiply = f_movementSpeedMultiply > 0 ? f_movementSpeedMultiply/100f : 0;

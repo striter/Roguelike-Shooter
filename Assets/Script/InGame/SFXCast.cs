@@ -25,7 +25,7 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
     public override void Init(int _sfxIndex)
     {
         base.Init(_sfxIndex);
-        m_DamageInfo = new DamageInfo(F_Damage, enum_DamageType.Area);
+        m_DamageInfo = new DamageInfo(F_Damage, enum_DamageType.Common);
         if (E_CastType == enum_CastControllType.Invalid)
             Debug.LogError("Weapon Type Invalid Detected+"+gameObject.name);
         if (E_AreaType == enum_CastAreaType.Invalid)

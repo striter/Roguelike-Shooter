@@ -34,7 +34,7 @@ public class SFXProjectile : SFXBase
     {
         base.Init(sfxIndex);
         m_Trail = transform.GetComponentInChildren<TrailRenderer>();
-        m_DamageInfo = new DamageInfo(F_Damage, enum_DamageType.Projectile);
+        m_DamageInfo = new DamageInfo(F_Damage, enum_DamageType.Common);
         if (B_TargetReachBlink)
                 m_Blink = new ModelBlink(transform.Find("BlinkModel"), .25f, .25f);
     }

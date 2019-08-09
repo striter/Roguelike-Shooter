@@ -53,15 +53,15 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         if (Input.GetKeyDown(KeyCode.B))
             m_LocalPlayer.OnReceiveBuff(B_TestBuffIndex);
         if (Input.GetKeyDown(KeyCode.N))
-            m_LocalPlayer.BroadcastMessage("OnReceiveDamage", new DamageInfo(20, enum_DamageType.Projectile));
+            m_LocalPlayer.BroadcastMessage("OnReceiveDamage", new DamageInfo(20, enum_DamageType.ArmorOnly));
         if (Input.GetKeyDown(KeyCode.M))
-            m_LocalPlayer.BroadcastMessage("OnReceiveDamage", new DamageInfo(-50, enum_DamageType.Projectile));
+            m_LocalPlayer.BroadcastMessage("OnReceiveDamage", new DamageInfo(-50, enum_DamageType.Common));
         if (Input.GetKeyDown(KeyCode.Alpha0))
         {
             List<EntityBase> entities = m_Entities.Values.ToList();
             entities.Traversal((EntityBase entity) => {
                 if (!entity.B_IsPlayer)
-                    entity.BroadcastMessage("OnReceiveDamage", new DamageInfo(entity.m_EntityInfo.F_MaxHealth + entity.m_EntityInfo.F_MaxArmor, enum_DamageType.DOT));
+                    entity.BroadcastMessage("OnReceiveDamage", new DamageInfo(entity.m_EntityInfo.F_MaxHealth + entity.m_EntityInfo.F_MaxArmor, enum_DamageType.Common));
             });
         }
 
@@ -211,7 +211,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     }
     public void OnEntityFall(HitCheckEntity hitcheck)      //On Player Falls To Ocean ETC
     {
-        hitcheck.TryHit(new DamageInfo( hitcheck.m_Attacher.B_IsPlayer ? GameConst.F_DamagePlayerFallInOcean : hitcheck.m_Attacher.m_HealthManager.F_TotalHealth, enum_DamageType.Fall));
+        hitcheck.TryHit(new DamageInfo( hitcheck.m_Attacher.B_IsPlayer ? GameConst.F_DamagePlayerFallInOcean : hitcheck.m_Attacher.m_HealthManager.F_TotalHealth, enum_DamageType.Common));
 
         if (hitcheck.m_Attacher.B_IsPlayer)
             hitcheck.m_Attacher.transform.position = EnviormentManager.NavMeshPosition(hitcheck.m_Attacher.transform.position);
@@ -281,6 +281,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     void OnBattleFinished()
     {
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnBattleFinish);
+        m_LocalPlayer.OnReceiveBuff(1001);
         B_Battling = false;
         OnLevelFinished();
     }

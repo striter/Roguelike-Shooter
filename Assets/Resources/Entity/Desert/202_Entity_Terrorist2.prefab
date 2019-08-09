@@ -283,6 +283,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4935629276272500}
   - component: {fileID: 95972774188901272}
+  - component: {fileID: 114748231392212368}
   m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
@@ -934,6 +935,17 @@ MonoBehaviour:
   I_AttackPreAimPercentage: 50
   B_AttackMove: 1
   B_SwitchTarget: 0
+--- !u!114 &114748231392212368
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1655053246059660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3356421ce9f15c24abe075638be6ff4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114780382096492462
 MonoBehaviour:
   m_ObjectHideFlags: 1
