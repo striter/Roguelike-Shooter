@@ -135,7 +135,7 @@ public class LevelBase : MonoBehaviour {
 
     void GenerateRangePortalTile(TileAxis origin, enum_TileDirection portalDirection, int minusRange)
     {
-        List<LevelTile> tileAvailable = m_AllTiles.FindAll(p => p.E_WorldDireciton == portalDirection && p.E_TileType == enum_LevelTileType.Empty);
+        List<LevelTile> tileAvailable = m_AllTiles.FindAll(p => p.E_WorldDireciton == portalDirection && p.E_TileType == enum_LevelTileType.Empty&&p.E_Occupation== enum_LevelTileOccupy.Inner);
         LevelTile closestTile = tileAvailable[0];
         int closestOffset = int.MaxValue;
         for (int j = 0; j < tileAvailable.Count; j++)
