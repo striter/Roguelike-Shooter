@@ -172,7 +172,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     {
         if (targetHitCheck.I_AttacherID == sourceEntityID)
             return false;
-        return Instance.m_Entities.ContainsKey(sourceEntityID) && targetHitCheck.m_Attacher.B_IsPlayer != Instance.m_Entities[sourceEntityID].B_IsPlayer;
+        return !Instance.m_Entities.ContainsKey(sourceEntityID) || targetHitCheck.m_Attacher.B_IsPlayer != Instance.m_Entities[sourceEntityID].B_IsPlayer;
     }
     public static bool B_CanDamageEntity(HitCheckEntity hb, int sourceID)   //After Hit,If Match Target Hit Succeed
     {
