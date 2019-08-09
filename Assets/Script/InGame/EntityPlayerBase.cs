@@ -88,7 +88,7 @@ public class EntityPlayerBase : EntityBase {
     void ObtainWeapon(WeaponBase weapon)
     {
         m_WeaponObtained.Add(weapon);
-        weapon.Attach(I_EntityID,this,weapon.B_AttachLeft?tf_WeaponHoldLeft:tf_WeaponHoldRight, OnCostMana, OnFireAddRecoil,m_Animator.Reload, GetDamageBuffInfo,m_EntityInfo.F_FireRateTick);
+        weapon.Attach(I_EntityID,this,weapon.B_AttachLeft?tf_WeaponHoldLeft:tf_WeaponHoldRight, OnCostMana, OnFireAddRecoil,m_Animator.Reload, GetDamageBuffInfo,m_EntityInfo.F_FireRateTick,m_EntityInfo.F_ReloadRateTick);
         weapon.SetActivate(false);
         if (m_WeaponCurrent == null)
             OnSwitchWeapon();

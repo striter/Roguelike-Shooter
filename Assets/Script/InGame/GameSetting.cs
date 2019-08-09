@@ -447,7 +447,6 @@ namespace GameSetting
     #region BuffClass
     public class EntityInfoManager
     {
-        public EntityBuffInfo m_EntityBuffProperty { get; private set; }
         public DamageBuffInfo m_DamageBuffProperty { get; private set; }
         public List<BuffBase> m_BuffList { get; private set; } = new List<BuffBase>();
         Dictionary<int, SFXBuffEffect> m_BuffEffects = new Dictionary<int, SFXBuffEffect>();
@@ -457,9 +456,16 @@ namespace GameSetting
         public float F_MaxMana => m_InfoData.m_MaxMana;
         public float F_MaxHealth => m_InfoData.m_MaxHealth;
         public float F_MaxArmor => m_InfoData.m_MaxArmor;
-        public float F_MovementSpeed => m_InfoData.m_MoveSpeed*m_EntityBuffProperty.F_MovementSpeedMultiply;
         public float F_Spread => m_InfoData.m_Spread;
-        public float F_FireRateTick(float deltaTime) => deltaTime* m_EntityBuffProperty.F_FireRateMultiply;
+
+        public float F_DamageReceiveMultiply { get; private set; } = 1f;
+        public float F_MovementSpeedMultiply { get; private set; } = 1f;
+        protected float F_FireRateMultiply { get; private set; } = 1f;
+        protected float F_ReloadRateMultiply { get; private set; } = 1f;
+
+        public float F_FireRateTick(float deltaTime) => deltaTime * F_FireRateMultiply;
+        public float F_ReloadRateTick(float deltaTime) => deltaTime * F_ReloadRateMultiply;
+        public float F_MovementSpeed => m_InfoData.m_MoveSpeed * F_MovementSpeedMultiply;
         Func<DamageInfo, bool> OnDamageEntity;
         Action OnInfoChange;
         public EntityInfoManager(SEntity _entityInfo,EntityBase _attacher,Func<DamageInfo, bool> _OnDamageEntity,Action _OnInfoChange)
@@ -468,7 +474,6 @@ namespace GameSetting
                OnDamageEntity = _OnDamageEntity;
             OnInfoChange = _OnInfoChange;
             m_InfoData = _entityInfo;
-            m_EntityBuffProperty = EntityBuffInfo.Create();
             m_DamageBuffProperty = DamageBuffInfo.Create();
         }
         public void Tick(float deltaTime) => m_BuffList.Traversal((BuffBase buff) => { buff.OnTick(deltaTime); });
@@ -508,19 +513,20 @@ namespace GameSetting
         public void OnBuffChanged()
         {
             //Calculate All Buff Infos
-            float entityDamageReduce = 1f;
             float damageApplyEnhance = 1f;
-            float movementEnhance = 1f;
-            float firerateEnhance = 1f;
+            F_DamageReceiveMultiply = 1f;
+            F_MovementSpeedMultiply = 1f;
+            F_FireRateMultiply = 1f;
+            F_ReloadRateMultiply = 1f;
             m_BuffList.Traversal((BuffBase buff) => {
-                entityDamageReduce -= buff.m_buffInfo.m_DamageReductionPercentage > 0 ? buff.m_buffInfo.m_DamageReductionPercentage / 100f : 0;
-                damageApplyEnhance += buff.m_buffInfo.m_DamageMultiplyPercentage > 0 ? buff.m_buffInfo.m_DamageMultiplyPercentage / 100f : 0;
-                movementEnhance += buff.m_buffInfo.m_MovementSpeedMultiplyPercentage > 0 ? buff.m_buffInfo.m_MovementSpeedMultiplyPercentage / 100f : 0;
-                firerateEnhance += buff.m_buffInfo.m_FireRateMultiplyPercentage > 0 ? buff.m_buffInfo.m_FireRateMultiplyPercentage / 100f : 0;
+                damageApplyEnhance += buff.m_buffInfo.m_DamageMultiply;
+                F_DamageReceiveMultiply -= buff.m_buffInfo.m_DamageReduction;
+                F_MovementSpeedMultiply += buff.m_buffInfo.m_MovementSpeedMultiply ;
+                F_FireRateMultiply += buff.m_buffInfo.m_FireRateMultiply;
+                F_ReloadRateMultiply += buff.m_buffInfo.m_ReloadRateMultiply;
             });
 
-            entityDamageReduce = entityDamageReduce < 0 ? 0 : entityDamageReduce;
-            m_EntityBuffProperty = EntityBuffInfo.Create(entityDamageReduce,movementEnhance,firerateEnhance);
+            F_DamageReceiveMultiply = F_DamageReceiveMultiply < 0 ? 0 : F_DamageReceiveMultiply;
             m_DamageBuffProperty = DamageBuffInfo.Create(damageApplyEnhance, new List<int>());
 
             //Do Effect Removal Check
@@ -594,33 +600,7 @@ namespace GameSetting
                 OnBuffExpired(this);
         }
     }
-
-    public struct EntityBuffInfo
-    {
-        public float F_DamageReceiveMultiply { get; private set; }
-        public float F_MovementSpeedMultiply { get; private set; }
-        public float F_FireRateMultiply { get; private set; }
-        public static EntityBuffInfo Create()
-        {
-            EntityBuffInfo buff = new EntityBuffInfo
-            {
-                F_DamageReceiveMultiply = 1f,
-                F_MovementSpeedMultiply = 1f,
-                F_FireRateMultiply=1f,
-            };
-            return buff;
-        }
-        public static EntityBuffInfo Create(float _damageReduceMultiply,float _movementSpeedMultiply,float _firerateMultiply)
-        {
-            EntityBuffInfo buff = new EntityBuffInfo
-            {
-                F_DamageReceiveMultiply = _damageReduceMultiply,
-                F_MovementSpeedMultiply = _movementSpeedMultiply,
-                F_FireRateMultiply = _firerateMultiply,
-            };
-            return buff;
-        }
-    }
+    
     public struct DamageBuffInfo
     {
         public float F_DamageEnhanceMultiply { get; private set; }
@@ -1004,7 +984,6 @@ namespace GameSetting
             m_EntityGenerate.Add(enum_EntityType.Shooter, ir_shooter);
             m_EntityGenerate.Add(enum_EntityType.AOECaster, ir_aoeCaster);
             m_EntityGenerate.Add(enum_EntityType.Elite, ir_elite);
-
         }
     }
     public struct SBuff : ISExcel
@@ -1015,6 +994,7 @@ namespace GameSetting
         int i_effect;
         float f_movementSpeedMultiply;
         float f_fireRateMultiply;
+        float f_reloadRateMultiply;
         float f_damageMultiply;
         float f_damageReduce;
         float f_damageTickTime;
@@ -1023,14 +1003,20 @@ namespace GameSetting
         public enum_BuffAddType m_AddType => (enum_BuffAddType)i_addType;
         public float m_ExpireDuration => f_expireDuration;
         public int m_EffectIndex => i_effect;
-        public float m_MovementSpeedMultiplyPercentage => f_movementSpeedMultiply > 0 ? f_movementSpeedMultiply : 0;
-        public float m_FireRateMultiplyPercentage => f_fireRateMultiply > 0 ? f_fireRateMultiply : 0;
-        public float m_DamageMultiplyPercentage => f_damageMultiply > 0 ? f_damageMultiply : 0;
-        public float m_DamageReductionPercentage => f_damageReduce > 0 ? f_damageReduce : 0;
+        public float m_MovementSpeedMultiply => f_movementSpeedMultiply ;
+        public float m_FireRateMultiply => f_fireRateMultiply;
+        public float m_ReloadRateMultiply => f_reloadRateMultiply;
+        public float m_DamageMultiply => f_damageMultiply;
+        public float m_DamageReduction => f_damageReduce ;
         public float m_DamageTickTime => f_damageTickTime;
         public float m_DamagePerTick => f_damagePerTick;
         public void InitOnValueSet()
         {
+            f_movementSpeedMultiply = f_movementSpeedMultiply > 0 ? f_movementSpeedMultiply/100f : 0;
+            f_fireRateMultiply = f_fireRateMultiply > 0 ? f_fireRateMultiply / 100f : 0;
+            f_reloadRateMultiply = f_reloadRateMultiply > 0 ? f_reloadRateMultiply / 100f : 0;
+            f_damageMultiply = f_damageMultiply > 0 ? f_damageMultiply / 100f : 0;
+            f_damageReduce = f_damageReduce > 0 ? f_damageReduce / 100f : 0;
         }
     }
     #endregion

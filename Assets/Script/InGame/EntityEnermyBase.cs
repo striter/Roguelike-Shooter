@@ -223,7 +223,6 @@ public class EntityEnermyBase : EntityBase {
         }
         RaycastHit[] m_Raycasts;
         float f_movementSimulate,f_battleSimulate;
-        float f_movementCheck, f_battleStatusCheck;
         Vector3 v3_TargetDirection;
         float f_targetDistance;
         bool b_targetOutChaseRange;
@@ -242,8 +241,10 @@ public class EntityEnermyBase : EntityBase {
         {
             for (; ; )
             {
-                f_movementSimulate += GameConst.F_EnermyAICheckTime*m_Info.F_MovementSpeed;
-                f_battleSimulate += m_Info.F_FireRateTick( GameConst.F_EnermyAICheckTime);
+                if(f_movementSimulate>0)
+                f_movementSimulate -= GameConst.F_EnermyAICheckTime*m_Info.F_MovementSpeedMultiply;
+                if(f_battleSimulate>0)
+                f_battleSimulate -= m_Info.F_ReloadRateTick( GameConst.F_EnermyAICheckTime);
 
                 if (!b_targetAvailable)
                     RecheckTarget();
@@ -282,10 +283,10 @@ public class EntityEnermyBase : EntityBase {
         bool b_attacking;
         void CheckBattle()
         {
-            if (!b_targetAvailable|| f_battleSimulate < f_battleStatusCheck)
+            if (!b_targetAvailable|| f_battleSimulate >0)
                 return;
             if (b_CanAttackTarget)
-                f_battleStatusCheck = f_battleSimulate + OnStartAttacking();
+                f_battleSimulate =  OnStartAttacking();
         }
         float OnStartAttacking()
         {
@@ -304,7 +305,7 @@ public class EntityEnermyBase : EntityBase {
             count--;
             for (; ; )
             {
-                m_attackSimulate +=Time.deltaTime;
+                m_attackSimulate +=m_EntityControlling.m_EntityInfo.F_FireRateTick(Time.deltaTime);
                 if (m_attackSimulate >= fireRate)
                 {
                     m_attackSimulate -= fireRate;
@@ -362,14 +363,14 @@ public class EntityEnermyBase : EntityBase {
                 return;
             }
 
-            if (f_movementSimulate < f_movementCheck)
+            if (f_movementSimulate >0)
                 return;
 
             if (!b_idled && b_AgentReachDestination && !b_targetOutChaseRange && UnityEngine.Random.Range(0, 2) > 0)
             {
                 b_idled = true;
                 B_AgentEnabled = false;
-                f_movementCheck = f_movementSimulate + UnityEngine.Random.Range(2f, 3f);
+                f_movementSimulate =  UnityEngine.Random.Range(2f, 3f);
                 return;
             }
 

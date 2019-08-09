@@ -65,7 +65,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
         
         damageInfo.m_BuffApply.m_BuffAplly.Traversal((int buffIndex) => {OnReceiveBuff(buffIndex); });
         
-        return m_HealthManager.OnReceiveDamage(damageInfo, m_EntityInfo.m_EntityBuffProperty.F_DamageReceiveMultiply);
+        return m_HealthManager.OnReceiveDamage(damageInfo, m_EntityInfo.F_DamageReceiveMultiply);
     }
     public virtual void OnActivate()
     {

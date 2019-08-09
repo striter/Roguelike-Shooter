@@ -15,18 +15,22 @@ public class WeaponBase : MonoBehaviour {
     public Transform m_Muzzle { get; private set; }
     Action<float> OnAmmoChangeCostMana;
     Action<float> OnReloadStart;
+    Func<float, float> OnFireTickDelta, OnReloadTickDelta;
     Action<Vector2> OnFireRecoil;
     Func<DamageBuffInfo> OnFireBuffInfo;
+
     WeaponTrigger m_Trigger=null;
     EntityBase m_Attacher;
     bool B_HaveAmmoLeft => m_WeaponInfo.m_ClipAmount == -1 || I_AmmoLeft > 0;
     bool B_AmmoFull => m_WeaponInfo.m_ClipAmount == -1||m_WeaponInfo.m_ClipAmount == I_AmmoLeft;
-    Func<float,float> OnWeaponTickDelta;
-
     float f_reloadCheck;
     public float F_ReloadStatus => B_Reloading ? f_reloadCheck / m_WeaponInfo.m_ReloadTime : 1;
-    float f_actionCheck = 0;
-    public bool B_CanDoAction() => f_actionCheck <= 0;
+    float f_fireCheck = 0;
+    public bool B_Actionable() => B_CanFire&&!B_Reloading&& f_fireCheck <= 0;
+    protected void OnFireCheck(float pauseDuration)
+    {
+        f_fireCheck = pauseDuration;
+    }
 
     public void Init(SWeapon weaponInfo)
     {
@@ -35,12 +39,12 @@ public class WeaponBase : MonoBehaviour {
         I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
         switch (E_Trigger)
         {
-            default: Debug.LogError("Add More Convertions Here:" + E_Trigger); m_Trigger = new TriggerSingle(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, B_CanDoAction, SetActionPause, CheckCanAutoReload); break;
-            case enum_TriggerType.Auto: m_Trigger = new TriggerAuto(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, B_CanDoAction, SetActionPause,CheckCanAutoReload);break;
-            case enum_TriggerType.Single:m_Trigger = new TriggerSingle(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, B_CanDoAction, SetActionPause, CheckCanAutoReload);break;
-            case enum_TriggerType.Burst:m_Trigger = new TriggerBurst(m_WeaponInfo.m_FireRate,m_WeaponInfo.m_SpecialRate, FireOnce, B_CanDoAction,SetActionPause, CheckCanAutoReload);break;
-            case enum_TriggerType.Pull: m_Trigger = new TriggerPull(()=> { Debug.Log("Pull"); },m_WeaponInfo.m_FireRate,m_WeaponInfo.m_SpecialRate, FireOnce, B_CanDoAction, SetActionPause, CheckCanAutoReload); break;
-            case enum_TriggerType.Store:m_Trigger = new TriggerStore(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, B_CanDoAction, SetActionPause, CheckCanAutoReload);break;
+            default: Debug.LogError("Add More Convertions Here:" + E_Trigger); m_Trigger = new TriggerSingle(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, B_Actionable, OnFireCheck, CheckCanAutoReload); break;
+            case enum_TriggerType.Auto: m_Trigger = new TriggerAuto(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, B_Actionable, OnFireCheck,CheckCanAutoReload);break;
+            case enum_TriggerType.Single:m_Trigger = new TriggerSingle(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, B_Actionable, OnFireCheck, CheckCanAutoReload);break;
+            case enum_TriggerType.Burst:m_Trigger = new TriggerBurst(m_WeaponInfo.m_FireRate,m_WeaponInfo.m_SpecialRate, FireOnce, B_Actionable,OnFireCheck, CheckCanAutoReload);break;
+            case enum_TriggerType.Pull: m_Trigger = new TriggerPull(()=> { Debug.Log("Pull"); },m_WeaponInfo.m_FireRate,m_WeaponInfo.m_SpecialRate, FireOnce, B_Actionable, OnFireCheck, CheckCanAutoReload); break;
+            case enum_TriggerType.Store:m_Trigger = new TriggerStore(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, B_Actionable, OnFireCheck, CheckCanAutoReload);break;
         }
     }
     protected virtual void Start()
@@ -51,27 +55,21 @@ public class WeaponBase : MonoBehaviour {
     protected void Update()
     {
         if (m_Trigger != null)
-            m_Trigger.Tick(OnWeaponTickDelta(Time.deltaTime));
+            m_Trigger.Tick(OnFireTickDelta(Time.deltaTime));
 
-        if (f_actionCheck > 0)
-            f_actionCheck -= OnWeaponTickDelta(Time.deltaTime);
+        if (f_fireCheck > 0)
+            f_fireCheck -= OnFireTickDelta(Time.deltaTime);
 
         ReloadTick(Time.deltaTime);
     }
     protected virtual void OnDisable()
-    {
-        if (B_Reloading)
-            SetActionPause(0);
-
+    {;
         B_Reloading = false;
         f_reloadCheck = 0;
+        f_fireCheck = 0;
         m_Trigger.OnDisable();
     }
-    protected void SetActionPause(float pauseDuration)
-    {
-        f_actionCheck =  pauseDuration;
-    }
-    public void Attach(int _attacherID,EntityBase _attacher,Transform _attachTo,Action<float> _OnAmmoChangeCostMana,Action<Vector2> _OnFireRecoil,Action<float> _OnReloadStart,Func<DamageBuffInfo> _OnFireBuffInfo, Func<float,float> _OnWeaponTickDelta)
+    public void Attach(int _attacherID,EntityBase _attacher,Transform _attachTo,Action<float> _OnAmmoChangeCostMana,Action<Vector2> _OnFireRecoil,Action<float> _OnReloadStart,Func<DamageBuffInfo> _OnFireBuffInfo, Func<float,float> _OnFireTickDelta,Func<float,float> _OnReloadTickDelta)
     {
         I_AttacherID = _attacherID;
         m_Attacher = _attacher;
@@ -82,16 +80,12 @@ public class WeaponBase : MonoBehaviour {
         OnAmmoChangeCostMana = _OnAmmoChangeCostMana;
         OnFireRecoil = _OnFireRecoil;
         OnFireBuffInfo = _OnFireBuffInfo;
-        OnWeaponTickDelta = _OnWeaponTickDelta;
+        OnFireTickDelta = _OnFireTickDelta;
+        OnReloadTickDelta = _OnReloadTickDelta;
         OnReloadStart = _OnReloadStart;
     }
     public bool Trigger(bool down)
     {
-        if (B_Reloading||!B_CanFire)
-            return false;
-        if (!B_HaveAmmoLeft)
-            return false;
-
         m_Trigger.OnSetTrigger(down);
         return true;
     }
@@ -99,8 +93,6 @@ public class WeaponBase : MonoBehaviour {
     public void SetCanFire(bool _canFire)
     {
         B_CanFire = _canFire;
-        if (m_Trigger != null && !B_CanFire)
-            m_Trigger.OnSetTrigger(false);
     }
     RaycastHit hit;
     protected virtual bool FireOnce()
@@ -137,7 +129,7 @@ public class WeaponBase : MonoBehaviour {
     }
     public bool TryReload()
     {
-        if (!B_CanDoAction()||B_AmmoFull)
+        if (!B_Actionable()||B_AmmoFull)
             return false;
         StartReload();
         return true;
@@ -146,14 +138,13 @@ public class WeaponBase : MonoBehaviour {
     {
         B_Reloading = true;
         f_reloadCheck = 0;
-        SetActionPause(m_WeaponInfo.m_ReloadTime);
-        OnReloadStart?.Invoke(m_WeaponInfo.m_ReloadTime);
+        OnReloadStart?.Invoke(m_WeaponInfo.m_ReloadTime  / OnReloadTickDelta(1));
     }
     void ReloadTick(float deltaTime)
     {
         if (B_Reloading)
         {
-            f_reloadCheck += deltaTime;
+            f_reloadCheck += OnReloadTickDelta(deltaTime);
             if (f_reloadCheck > m_WeaponInfo.m_ReloadTime)
             {
                 I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
