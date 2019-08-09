@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: c3133e412f724d74ab7812c424dc1c0a
+guid: 8af99283297a1f3469c54759ef1d583e
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
@@ -107,9 +107,8 @@ ModelImporter:
     100202: B_Spine2
     100204: Motion
     100206: RPG-Character-Mesh
-    100208: Pistol
-    100210: Rifle
-    100212: Exporter
+    100208: Crossbow
+    100210: Exporter
     400000: //RootNode
     400002: B_Prop1
     400004: B_L_Hand
@@ -214,23 +213,20 @@ ModelImporter:
     400202: B_Spine2
     400204: Motion
     400206: RPG-Character-Mesh
-    400208: Pistol
-    400210: Rifle
-    400212: Exporter
+    400208: Crossbow
+    400210: Exporter
     2300000: Mesh_Soldier_A
     2300002: AK47
     2300004: Chaingun
     2300006: MissileLauncher
     2300008: USP
-    2300010: Pistol
-    2300012: Rifle
+    2300010: Crossbow
     3300000: Mesh_Soldier_A
     3300002: AK47
     3300004: Chaingun
     3300006: MissileLauncher
     3300008: USP
-    3300010: Pistol
-    3300012: Rifle
+    3300010: Crossbow
     4300000: Mesh_Soldier_A
     4300002: AK47
     4300004: MissileLauncher
@@ -238,9 +234,8 @@ ModelImporter:
     4300008: Chaingun
     4300010: Soldier_Mesh
     4300012: RPG-Character-Mesh
-    4300014: Rifle
-    4300016: Pistol
-    7400000: Player_Reload
+    4300014: Crossbow
+    7400000: Player_Crossbow_Reload
     9500000: //RootNode
     11100000: //RootNode
     13700000: Soldier_Mesh
@@ -275,10 +270,10 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Player_Reload
+      name: Player_Crossbow_Reload
       takeName: Take 001
       firstFrame: 0
-      lastFrame: 60
+      lastFrame: 30
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -289,7 +284,7 @@ ModelImporter:
       loopBlend: 0
       loopBlendOrientation: 1
       loopBlendPositionY: 1
-      loopBlendPositionXZ: 0
+      loopBlendPositionXZ: 1
       keepOriginalOrientation: 1
       keepOriginalPositionY: 1
       keepOriginalPositionXZ: 1
