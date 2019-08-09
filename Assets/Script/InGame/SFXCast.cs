@@ -136,7 +136,7 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
                 break;
             case enum_CastAreaType.ForwardBox:
                 {
-                    hits = Physics_Extend.BoxCastAll(CastTransform.position, CastTransform.forward,CastTransform.up, V4_CastInfo, GameLayer.Mask.I_EntityOnly);
+                    hits = Physics_Extend.BoxCastAll(CastTransform.position, CastTransform.forward,CastTransform.up, new Vector3(V4_CastInfo.x,V4_CastInfo.y,F_CastLength), GameLayer.Mask.I_EntityOnly);
                 }
                 break;
             case enum_CastAreaType.ForwardTrapezium:
