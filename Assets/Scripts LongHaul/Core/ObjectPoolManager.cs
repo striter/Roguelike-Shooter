@@ -137,4 +137,16 @@ public class ObjectPoolManager<T,Y> where Y:MonoBehaviour {
             RecycleAll(temp);
         });
     }
+    public static void ClearAll()
+    {
+        d_ItemInfos.Traversal((T temp, ItemPoolInfo info) => {
+            GameObject.Destroy(info.m_spawnItem.gameObject);
+
+            for (int i = 0; i < info.l_Deactive.Count; i++)
+                GameObject.Destroy(info.l_Deactive[i].gameObject);
+            for (int i = 0; i < info.l_Active.Count; i++)
+                GameObject.Destroy(info.l_Active[i].gameObject);
+        });
+        d_ItemInfos.Clear();
+    }
 }

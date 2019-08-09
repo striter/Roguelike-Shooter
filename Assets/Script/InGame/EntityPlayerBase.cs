@@ -48,6 +48,13 @@ public class EntityPlayerBase : EntityBase {
         TouchDeltaManager.Instance.Bind(OnMovementDelta, OnRotateDelta);
 #endif
     }
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+        PCInputManager.Instance.DoBindingRemoval<EntityPlayerBase>();
+        PCInputManager.Instance.RemoveMovementCheck();
+        PCInputManager.Instance.RemoveRotateCheck();
+    }
     protected override void OnDead()
     {
         base.OnDead();

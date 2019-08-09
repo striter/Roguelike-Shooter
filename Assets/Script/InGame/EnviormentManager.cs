@@ -16,6 +16,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
     protected NavMeshDataInstance m_NavMeshData;
     public System.Random m_mainSeed;
     public Action<SBigmapLevelInfo> OnLevelPrepared;
+    public Action OnStageFinished;
     protected override void Awake()
     {
         base.Awake();
@@ -32,9 +33,10 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         TBroadCaster<enum_BC_GameStatusChanged>.Remove(enum_BC_GameStatusChanged.OnStageStart, OnStageStart);
         TBroadCaster<enum_BC_GameStatusChanged>.Remove(enum_BC_GameStatusChanged.OnLevelFinish, OnLevelFinished);
     }
-    public void GenerateAllEnviorment(enum_Style _LevelStyle,System.Random seed,Action<SBigmapLevelInfo> _OnLevelPrepared)
+    public void GenerateAllEnviorment(enum_Style _LevelStyle,System.Random seed,Action<SBigmapLevelInfo> _OnLevelPrepared,Action _OnStageFinished)
     {
         OnLevelPrepared = _OnLevelPrepared;
+        OnStageFinished = _OnStageFinished;
         m_mainSeed = seed;
         m_StyleCurrent = _LevelStyle;
         m_MapLevelInfo= GenerateBigmapLevels(m_StyleCurrent, m_mainSeed, tf_LevelParent,6,5,new TileAxis(2,2));
@@ -81,9 +83,9 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         TBroadCaster<enum_BC_UIStatusChanged>.Trigger(enum_BC_UIStatusChanged.PlayerLevelStatusChanged, m_MapLevelInfo, m_currentLevel.m_TileAxis);
     }
 
-    void OnPortalEntered(enum_TileDirection toDirection)
+    void OnPortalInteracted(enum_TileDirection toDirection)
     {
-        Debug.Log("Stage End");
+        OnStageFinished();
     }
 
     public void OnChangeLevel(TileAxis targetAxis)
@@ -107,7 +109,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         if (m_currentLevel.m_TileType == enum_TileType.End)        //Generate Portals For End IsLand
         {
             LevelTilePortal portal = m_currentLevel.m_Level.m_Portal;
-            ObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Interact_Portal, portal.m_worldPos).InitPortal(portal.E_WorldDireciton, OnPortalEntered);
+            ObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Interact_Portal, portal.m_worldPos).InitPortal(portal.E_WorldDireciton, OnPortalInteracted);
         }
 
         TBroadCaster<enum_BC_UIStatusChanged>.Trigger(enum_BC_UIStatusChanged.PlayerLevelStatusChanged, m_MapLevelInfo, m_currentLevel.m_TileAxis);
@@ -205,7 +207,6 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         //Load All map Levels And Set Material
         Dictionary<enum_LevelItemType,List<LevelItemBase>> levelItemPrefabs = TResources.GetAllLevelItems(_levelStyle,null);
         Dictionary<LevelItemBase, int> maxItemCountDic = new Dictionary<LevelItemBase, int>();
-        LevelBase levelPrefab = TResources.GetLevelPrefab(_levelStyle);
         SBigmapLevelInfo[,] m_MapLevelInfo = new SBigmapLevelInfo[bigmapTiles.GetLength(0), bigmapTiles.GetLength(1)];      //Generate Bigmap Info
         for (int i = 0; i < _bigmapWidth; i++)
             for (int j = 0; j < _bigmapHeight; j++)
@@ -217,7 +218,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
                     SLevelGenerate innerData = DataManager.GetItemGenerateProperties(_levelStyle, generateType, true);
                     SLevelGenerate outerData = DataManager.GetItemGenerateProperties(_levelStyle, generateType, false);
 
-                    Dictionary<LevelItemBase, int> itemCountDic = m_MapLevelInfo[i, j].GenerateMap(_generateParent, levelPrefab, innerData, outerData, levelItemPrefabs, bigMapSeed);
+                    Dictionary<LevelItemBase, int> itemCountDic = m_MapLevelInfo[i, j].GenerateMap(ObjectManager.SpawnLevelPrefab(_generateParent), innerData, outerData, levelItemPrefabs, bigMapSeed);
                     itemCountDic.Traversal((LevelItemBase item, int count) => {
                         if (!maxItemCountDic.ContainsKey(item))
                             maxItemCountDic.Add(item, 0);

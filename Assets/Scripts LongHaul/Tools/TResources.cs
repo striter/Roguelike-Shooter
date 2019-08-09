@@ -50,9 +50,9 @@ public class TResources
 
         return itemPrefabDic;
     }
-    public static LevelBase GetLevelPrefab(enum_Style levelStyle)
+    public static LevelBase GetLevelBase(enum_Style levelStyle)
     {
-        LevelBase level= Load<GameObject>(ConstPath.S_LevelPrefab).GetComponent<LevelBase>();
+        LevelBase level = Instantiate<LevelBase>(ConstPath.S_LevelPrefab);
         Renderer matRenderer = level.GetComponentInChildren<Renderer>();
         matRenderer.sharedMaterial.SetTexture("_MainTex", Load<Texture>(ConstPath.S_Texture_LevelBase + levelStyle));
         return level;

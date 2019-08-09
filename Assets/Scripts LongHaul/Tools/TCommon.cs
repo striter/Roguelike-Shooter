@@ -330,4 +330,24 @@ public static class TCommon
     public static bool RandomBool(System.Random seed = null) => seed != null ? seed.Next(0, 2) > 0 : UnityEngine.Random.Range(0, 2) > 0;
     public static int RandomPercentage(System.Random seed=null)=> seed != null ? seed.Next(0, 101)  : UnityEngine.Random.Range(0, 101);
     public static Vector3 RandomXZSphere(float radius) => Vector3.forward.RotateDirection(Vector3.up, UnityEngine.Random.Range(0, 360)) * UnityEngine.Random.Range(0, radius);
+
+    public static T RandomEnumValues<T>()        //Can't Constraint T to System.Enum
+    {
+        if (!typeof(T).IsSubclassOf(typeof(Enum)))
+        {
+            Debug.LogError("Can't Traversal EnEnum Class!");
+            return default(T);
+        }
+        Array allEnums = Enum.GetValues(typeof(T));
+        int randomIndex =UnityEngine.Random.Range(1,allEnums.Length);
+        int count=0;
+        foreach (object temp in allEnums)
+        {
+            count++;
+            if (temp.ToString() == "Invalid"||count!=randomIndex)
+                continue;
+            return (T)temp;
+        }
+        return default(T);
+    }
 }

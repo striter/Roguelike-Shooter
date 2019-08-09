@@ -1785,7 +1785,7 @@ MonoBehaviour:
   CastForward: 0
   C_TestProjectileIndex: 50500
   V_TestIndicatorIndex: 30003
-  B_TestBuffIndex: 7
+  B_TestBuffIndex: 1001
 --- !u!4 &1133817278
 Transform:
   m_ObjectHideFlags: 0

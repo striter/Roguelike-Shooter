@@ -795,16 +795,14 @@ namespace GameSetting
 
     public class SBigmapLevelInfo : SBigmapTileInfo
     {
-        protected Transform m_LevelParent;
         public LevelBase m_Level { get; private set; } = null;
         public SBigmapLevelInfo(SBigmapTileInfo tile) : base(tile.m_TileAxis, tile.m_TileType,tile.m_TileLocking)
         {
             m_Connections = tile.m_Connections;
         }
-        public Dictionary<LevelItemBase, int> GenerateMap(Transform _levelParent,LevelBase prefab,SLevelGenerate innerData,SLevelGenerate outerData, Dictionary<enum_LevelItemType,List<LevelItemBase>> _levelItemPrefabs,System.Random seed)
+        public Dictionary<LevelItemBase, int> GenerateMap(LevelBase levelSpawned,SLevelGenerate innerData,SLevelGenerate outerData, Dictionary<enum_LevelItemType,List<LevelItemBase>> _levelItemPrefabs,System.Random seed)
         {
-            m_LevelParent = _levelParent;
-            m_Level =  GameObject.Instantiate(prefab, _levelParent);
+            m_Level = levelSpawned;
             m_Level.transform.localRotation = Quaternion.Euler(0, seed.Next(360), 0);
             m_Level.transform.localPosition = Vector3.zero;
             m_Level.transform.localScale = Vector3.one;
