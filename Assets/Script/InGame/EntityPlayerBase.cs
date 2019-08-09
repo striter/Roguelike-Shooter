@@ -193,6 +193,7 @@ public class EntityPlayerBase : EntityBase {
         static readonly int HS_T_Activate = Animator.StringToHash("t_activate");
         static readonly int HS_T_Fire = Animator.StringToHash("t_attack");
         static readonly int HS_T_Reload = Animator.StringToHash("t_reload");
+        static readonly int HS_FM_Reload = Animator.StringToHash("fm_reload");
         public PlayerAnimator(Animator _animator) : base(_animator)
         {
             _animator.fireEvents = true;
@@ -211,9 +212,10 @@ public class EntityPlayerBase : EntityBase {
         {
             m_Animator.SetTrigger(HS_T_Fire);
         }
-        public void Reload()
+        public void Reload(float reloadTime)
         {
             m_Animator.SetTrigger(HS_T_Reload);
+            m_Animator.SetFloat(HS_FM_Reload, 1 / reloadTime);
         }
     }
 #if UNITY_EDITOR
