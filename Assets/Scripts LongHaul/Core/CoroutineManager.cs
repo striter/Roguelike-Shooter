@@ -55,15 +55,17 @@ public static class TIEnumerators
             count++;
         }
     }
-    public static IEnumerator TickDelta(Action<float> OnTickDelta, float duration = -1)
+    public static IEnumerator TickDelta(Func<float,bool> OnTickDeltaBreak, float duration = -1)
     {
         float preTime = Time.time;
         WaitForSeconds seconds = duration == -1 ? null : new WaitForSeconds(duration);
-        OnTickDelta(Time.time - preTime);
+        if (OnTickDeltaBreak(Time.time - preTime))
+            yield break;
         for (; ; )
         {
             yield return seconds;
-            OnTickDelta(Time.time - preTime);
+            if (OnTickDeltaBreak(Time.time - preTime))
+                yield break;
             preTime = Time.time;
         }
     }

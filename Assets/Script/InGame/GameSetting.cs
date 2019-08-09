@@ -198,7 +198,7 @@ namespace GameSetting
         Invalid = -1,
         //Laser
         LaserPistol = 1001,
-        LaserCannon = 1002,
+        Railgun = 1002,
         //Snipe Rifle
         M82A1 = 2001,
         Kar98 = 2002,

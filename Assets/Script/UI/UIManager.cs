@@ -8,6 +8,7 @@ using TTiles;
 public class UIManager : SingletonMono<UIManager> {
 
     Text txt_Ammo,txt_Mana,txt_Health,txt_Armor,txt_Coin,txt_Main;
+    Image img_Reload;
     public static Action OnSwitch, OnReload;
     public static Action<bool> OnMainDown;
     protected override void Awake()
@@ -23,7 +24,7 @@ public class UIManager : SingletonMono<UIManager> {
         transform.Find("Reload").GetComponent<Button>().onClick.AddListener(() => { OnReload?.Invoke(); });
         transform.Find("Main").GetComponent<UIT_EventTriggerListener>().D_OnPress+=(bool down,Vector2 pos) => { OnMainDown?.Invoke(down); };
         transform.Find("SporeBtn").GetComponent<Button>().onClick.AddListener(() => { UIPageBase.ShowPage<UI_SporeManager>(transform,true); });
-
+        img_Reload = transform.Find("Reload").GetComponent<Image>();
         txt_Main = transform.Find("Main/Text").GetComponent<Text>();
 
     }
@@ -44,7 +45,7 @@ public class UIManager : SingletonMono<UIManager> {
         txt_Health.text = ((int)player.m_HealthManager.m_CurrentHealth).ToString() + "/" + ((int)player.m_HealthManager.m_MaxHealth).ToString();
         txt_Armor.text =((int)player.m_HealthManager.m_CurrentArmor).ToString() + "/" + ((int)player.m_HealthManager.m_MaxArmor).ToString();
         txt_Coin.text = player.m_Coins.ToString();
-
+        img_Reload.fillAmount = player.m_WeaponCurrent != null ? player.m_WeaponCurrent.F_ReloadStatus : 1;
         txt_Main.text = player.B_Interacting ? "Interact" : "Fire";
     }
 

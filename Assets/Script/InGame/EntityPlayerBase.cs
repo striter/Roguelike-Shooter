@@ -40,7 +40,7 @@ public class EntityPlayerBase : EntityBase {
         PCInputManager.Instance.AddMovementDelta(OnMovementDelta);
         PCInputManager.Instance.AddBinding<EntityPlayerBase>(enum_BindingsName.Fire, OnMainButtonDown);
         PCInputManager.Instance.AddBinding<EntityPlayerBase>(enum_BindingsName.Interact, OnSwitchWeapon);
-        PCInputManager.Instance.AddBinding<EntityPlayerBase>(enum_BindingsName.Reload, OnReload);
+        PCInputManager.Instance.AddBinding<EntityPlayerBase>(enum_BindingsName.Reload, OnReloadDown);
 #else
         UIManager.OnMainDown = OnMainButtonDown;
         UIManager.OnReload = OnReload;
@@ -99,7 +99,7 @@ public class EntityPlayerBase : EntityBase {
             return;
         m_WeaponCurrent.Trigger(down);
     }
-    void OnReload()
+    void OnReloadDown()
     {
         if (m_WeaponCurrent == null)
             return;
