@@ -153,7 +153,7 @@ public class WeaponBase : MonoBehaviour {
     {
         if (B_Reloading)
         {
-            f_reloadCheck += OnWeaponTickDelta(deltaTime);
+            f_reloadCheck += deltaTime;
             if (f_reloadCheck > m_WeaponInfo.m_ReloadTime)
             {
                 I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
