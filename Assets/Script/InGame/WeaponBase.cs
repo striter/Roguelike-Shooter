@@ -3,7 +3,7 @@ using GameSetting;
 using System;
 using System.Collections.Generic;
 
-public class WeaponBase : MonoBehaviour,ISingleCoroutine {
+public class WeaponBase : MonoBehaviour {
     public enum_TriggerType E_Trigger = enum_TriggerType.Invalid;
     public enum_PlayerAnim E_Anim= enum_PlayerAnim.Invalid;
     public bool B_AttachLeft=false;
@@ -50,12 +50,13 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
     }
     protected void Update()
     {
-        if(m_Trigger!=null)
+        if (m_Trigger != null)
             m_Trigger.Tick(OnWeaponTickDelta(Time.deltaTime));
 
         if (f_actionCheck > 0)
             f_actionCheck -= OnWeaponTickDelta(Time.deltaTime);
 
+        ReloadTick(Time.deltaTime);
     }
     protected virtual void OnDisable()
     {
@@ -65,7 +66,6 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         B_Reloading = false;
         f_reloadCheck = 0;
         m_Trigger.OnDisable();
-        this.StopAllSingleCoroutines();
     }
     protected void SetActionPause(float pauseDuration)
     {
@@ -128,8 +128,13 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         return true;
     }
 
+    void CheckCanAutoReload()
+    {
+        if (B_Reloading || B_HaveAmmoLeft)
+            return;
 
-
+        StartReload();
+    }
     public bool TryReload()
     {
         if (!B_CanDoAction()||B_AmmoFull)
@@ -140,31 +145,22 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
     void StartReload()
     {
         B_Reloading = true;
+        f_reloadCheck = 0;
         SetActionPause(m_WeaponInfo.m_ReloadTime);
         OnReloadStart?.Invoke(m_WeaponInfo.m_ReloadTime);
-        f_reloadCheck = 0;
-        this.StartSingleCoroutine(1,TIEnumerators.TickDelta((float delta)=>{
-            f_reloadCheck += OnWeaponTickDelta(Time.deltaTime);
+    }
+    void ReloadTick(float deltaTime)
+    {
+        if (B_Reloading)
+        {
+            f_reloadCheck += OnWeaponTickDelta(deltaTime);
             if (f_reloadCheck > m_WeaponInfo.m_ReloadTime)
             {
-                OnReloadFinished();
-                return true;
-            } 
-            return false;
-        }));
-    }
-    void OnReloadFinished()
-    {
-        B_Reloading = false;
-        I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
-        OnAmmoChangeCostMana?.Invoke(0f);
-    }
-    void CheckCanAutoReload()
-    {
-        if (B_Reloading || B_HaveAmmoLeft)
-            return;
-
-        StartReload();
+                I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
+                OnAmmoChangeCostMana?.Invoke(0f);
+                B_Reloading = false;
+            }
+        }
     }
     #region TriggerType
     internal class WeaponTrigger:ISingleCoroutine
