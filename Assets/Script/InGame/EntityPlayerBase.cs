@@ -88,7 +88,7 @@ public class EntityPlayerBase : EntityBase {
     void ObtainWeapon(WeaponBase weapon)
     {
         m_WeaponObtained.Add(weapon);
-        weapon.Attach(I_EntityID,this,weapon.B_AttachLeft?tf_WeaponHoldLeft:tf_WeaponHoldRight, OnCostMana, OnFireAddRecoil, GetDamageBuffInfo,m_EntityInfo.F_FireRateTick);
+        weapon.Attach(I_EntityID,this,weapon.B_AttachLeft?tf_WeaponHoldLeft:tf_WeaponHoldRight, OnCostMana, OnFireAddRecoil,m_Animator.Reload, GetDamageBuffInfo,m_EntityInfo.F_FireRateTick);
         weapon.SetActivate(false);
         if (m_WeaponCurrent == null)
             OnSwitchWeapon();
@@ -192,6 +192,7 @@ public class EntityPlayerBase : EntityBase {
         static readonly int HS_I_WeaponType = Animator.StringToHash("i_weaponType");
         static readonly int HS_T_Activate = Animator.StringToHash("t_activate");
         static readonly int HS_T_Fire = Animator.StringToHash("t_attack");
+        static readonly int HS_T_Reload = Animator.StringToHash("t_reload");
         public PlayerAnimator(Animator _animator) : base(_animator)
         {
             _animator.fireEvents = true;
@@ -209,6 +210,10 @@ public class EntityPlayerBase : EntityBase {
         public void Fire()
         {
             m_Animator.SetTrigger(HS_T_Fire);
+        }
+        public void Reload()
+        {
+            m_Animator.SetTrigger(HS_T_Reload);
         }
     }
 #if UNITY_EDITOR

@@ -15,6 +15,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
     public Transform m_Muzzle { get; private set; }
     float f_actionCheck=0;
     Action<float> OnAmmoChangeCostMana;
+    Action OnReloadStart;
     Action<Vector2> OnFireRecoil;
     Func<DamageBuffInfo> OnFireBuffInfo;
     WeaponTrigger m_Trigger=null;
@@ -65,7 +66,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         return f_actionCheck<=0;
     }
 
-    public void Attach(int _attacherID,EntityBase _attacher,Transform _attachTo,Action<float> _OnAmmoChangeCostMana,Action<Vector2> _OnFireRecoil,Func<DamageBuffInfo> _OnFireBuffInfo, Func<float,float> _OnWeaponTickDelta)
+    public void Attach(int _attacherID,EntityBase _attacher,Transform _attachTo,Action<float> _OnAmmoChangeCostMana,Action<Vector2> _OnFireRecoil,Action _OnReloadStart,Func<DamageBuffInfo> _OnFireBuffInfo, Func<float,float> _OnWeaponTickDelta)
     {
         I_AttacherID = _attacherID;
         m_Attacher = _attacher;
@@ -77,6 +78,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
         OnFireRecoil = _OnFireRecoil;
         OnFireBuffInfo = _OnFireBuffInfo;
         OnWeaponTickDelta = _OnWeaponTickDelta;
+        OnReloadStart = _OnReloadStart;
     }
     public bool Trigger(bool down)
     {
@@ -134,6 +136,7 @@ public class WeaponBase : MonoBehaviour,ISingleCoroutine {
     {
         B_Reloading = true;
         SetActionPause(m_WeaponInfo.m_ReloadTime);
+        OnReloadStart();
         this.StartSingleCoroutine(1,TIEnumerators.PauseDel(m_WeaponInfo.m_ReloadTime,OnReloadFinished));
     }
     void OnReloadFinished()
