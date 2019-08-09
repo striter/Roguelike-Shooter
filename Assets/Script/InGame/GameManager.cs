@@ -150,7 +150,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
             }
 
         if(battle)
-            OnBattleStart(DataManager.GetEntityGenerateProperties(1,levelInfo.m_TileType, difficulty) , 3);
+            OnBattleStart(DataManager.GetEntityGenerateProperties(1,levelInfo.m_TileType, difficulty));
         else
             OnLevelFinished();
     }
@@ -232,7 +232,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     public SGenerateEntity m_WaveEnermyGenerate { get; private set; }
     public List<int> m_EntityGenerating { get; private set; } = new List<int>();
     public Dictionary<enum_EntityType, List<int>> m_StyledEnermyEntities;
-    void OnBattleStart(SGenerateEntity enermyType,int _waveCount)
+    void OnBattleStart(SGenerateEntity enermyType)
     {
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnBattleStart);
         B_Battling = true;
@@ -339,7 +339,7 @@ public static class DataManager
     public static SGenerateEntity GetEntityGenerateProperties(int stageIndex,enum_TileType type,enum_BattleDifficulty battleDifficulty)
     {
         SGenerateEntity generate = Properties<SGenerateEntity>.PropertiesList.Find(p => p.m_stageIndex == stageIndex && p.m_TileType == type&&p.m_Difficulty==battleDifficulty);
-        if (generate.m_stageIndex == 0 || generate.m_TileType == 0 || generate.m_Difficulty == 0)
+        if (generate.m_stageIndex == 0 || generate.m_TileType == 0 )
             Debug.LogError("Error Properties Found Of Index:" + (stageIndex*100+ (int)type * 10 + (int)battleDifficulty).ToString());
 
         return generate;
