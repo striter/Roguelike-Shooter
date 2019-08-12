@@ -368,7 +368,21 @@ public static class DataManager
 
          return generate;
     }
-    public static List<SGenerateEntity> GetEntityGenerateProperties(enum_BattleDifficulty battleDifficulty)=> Properties<SGenerateEntity>.PropertiesList.FindAll(p => p.m_Difficulty == battleDifficulty);
+    public static List<SGenerateEntity> GetEntityGenerateProperties(enum_BattleDifficulty battleDifficulty)
+    {
+        List<SGenerateEntity> entityList = new List<SGenerateEntity>();
+        int waveCount = 1;
+        for (int i = 0; i < 10; i++)
+        {
+            List<SGenerateEntity> randomItems = Properties<SGenerateEntity>.PropertiesList.FindAll(p => p.m_Difficulty == battleDifficulty&&p.m_waveCount==waveCount);
+            if (randomItems == null || randomItems.Count == 0)
+                break;
+            entityList.Add(randomItems.RandomItem());
+            waveCount++;
+        }
+        return entityList;
+       
+    } 
     public static SEntity GetEntityProperties(int index)
     {
         SEntity entity= Properties<SEntity>.PropertiesList.Find(p => p.m_Index == index);
