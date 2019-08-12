@@ -496,7 +496,8 @@ public static class ObjectManager
     public static void RegisterEnermyDamageSource(Dictionary<int, SFXBase> damageSources)
     {
         damageSources.Traversal((int weaponIndex, SFXBase damageSFX) => {
-            ObjectPoolManager<int, SFXBase>.Register(weaponIndex, damageSFX, enum_PoolSaveType.DynamicMaxAmount, 1, (SFXBase sfx) => { sfx.Init(weaponIndex); });
+            ObjectPoolManager<int, SFXBase>.Register(weaponIndex, damageSFX, enum_PoolSaveType.DynamicMaxAmount, 1, (SFXBase sfx) => {
+                sfx.Init(weaponIndex); });
             }) ;
     }
     public static T SpawnDamageSource<T>(int weaponIndex,Vector3 position,Vector3 normal, Transform attachTo=null) where T:SFXBase
