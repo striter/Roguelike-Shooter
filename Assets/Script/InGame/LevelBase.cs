@@ -155,7 +155,6 @@ public class LevelBase : MonoBehaviour {
         LevelItemBase portalItem = m_AllItemPrefabs[enum_LevelItemType.Portal][styledPrefabIndex];
         TileAxis startAxis =center+ new TileAxis(-portalItem.m_sizeXAxis / 2, -portalItem.m_sizeYAxis / 2);
         m_PortalIndex = m_IndexEmptyInner.Find(p => m_AllTiles[p].m_TileAxis == startAxis);
-        Debug.Log(startAxis+" "+ m_AllTiles[m_PortalIndex].m_TileAxis);
         List<int> subIndexes = new List<int>();
         if (!CheckIndexTileAreaAvailable(m_PortalIndex, portalItem.m_sizeXAxis, portalItem.m_sizeYAxis, ref subIndexes))
             Debug.LogError("WTF?");

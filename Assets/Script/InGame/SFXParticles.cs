@@ -20,11 +20,6 @@ public class SFXParticles : SFXBase
             if (particle.main.duration > m_ParticleDuration)
                 m_ParticleDuration = particle.main.duration;
 
-            particle.GetComponentsInChildren<ParticleSystemRenderer>().Traversal((ParticleSystemRenderer render) =>
-            {
-                render.sharedMaterial.color = Color.white;
-            });
-
             particle.Stop();
         });
     }
