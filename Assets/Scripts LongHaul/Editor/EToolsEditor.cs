@@ -5,10 +5,30 @@ using UnityEditor;
 using UnityEngine;
 namespace EToolsEditor
 {
+    public static class TMenuItem
+    {
+        [MenuItem("Work Flow/Apply All Selected Prefabs")]
+        static void ApplyAllPrefabs()
+        {
+            GameObject[] objects = Selection.gameObjects;
+            for (int i = 0; i < objects.Length; i++)
+            {
+                UnityEngine.Object connectedPrefab = PrefabUtility.GetPrefabParent(objects[i]);
+                if (connectedPrefab != null)
+                {
+
+                    PrefabUtility.ReplacePrefab(objects[i], connectedPrefab);
+                    Debug.Log("Prefab:" + connectedPrefab.name + " Replaced Successful!");
+                }
+            }
+        }
+    }
+
     public static class TEditor
     {
         public const string S_AssetDataBaseResources = "Assets/Resources/";
     }
+
 
     public class EAudio
     {
@@ -80,4 +100,5 @@ namespace EToolsEditor
 
         }
     }
+
 }

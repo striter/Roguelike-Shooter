@@ -211,6 +211,7 @@ MonoBehaviour:
   I_MuzzleIndex: 10001
   I_ImpactIndex: 20001
   I_IndicatorIndex: 0
+  I_HitMarkIndex: 0
   I_BufFApplyOnHit: 0
   F_Radius: 0.1
   F_Height: 0.5
@@ -227,10 +228,10 @@ ParticleSystem:
   stopAction: 0
   looping: 1
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
-  useRigidbodyForVelocity: 1
+  useRigidbodyForVelocity: 0
   startDelay:
     serializedVersion: 2
     minMaxState: 0
@@ -275,7 +276,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1864839757
+  randomSeed: -1955688552
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -671,7 +672,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     randomizeRotationDirection: 0
-    maxNumParticles: 2
+    maxNumParticles: 30
     size3D: 1
     rotation3D: 1
     gravityModifier:

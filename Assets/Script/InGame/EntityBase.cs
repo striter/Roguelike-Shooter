@@ -29,7 +29,6 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
         m_EntityInfo = new EntityInfoManager(entityInfo,this,OnReceiveDamage, OnInfoChange);
         m_HealthManager = new EntityHealth(entityInfo,OnHealthEffect,OnDead);
         TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.Attach(this, OnReceiveDamage); });
-        GetComponentsInChildren<Renderer>().Traversal((Renderer render) => { render.sharedMaterial.enableInstancing = true; });
     }
     public virtual void OnSpawn(int id)
     {

@@ -65,8 +65,19 @@ public class TResources
         sfxs.Traversal((SFXBase sfx)=> {
             int index =int.Parse( sfx.name.Split('_')[0]);
             sourceDic.Add(index,GameObject.Instantiate(sfx));
+            sfx.GetComponentsInChildren<Renderer>().Traversal((Renderer render) => { render.sharedMaterial.enableInstancing = false; });
         });
         return sourceDic;
+    }
+
+    public static Dictionary<int, SFXBase> GetAllCommonSFXs()
+    {
+        Dictionary<int, SFXBase> sfxsDic = new Dictionary<int, SFXBase>();
+        LoadAll<SFXBase>(ConstPath.S_SFXCommon).Traversal((SFXBase sfx) => {
+            sfxsDic.Add(int.Parse(sfx.name.Split('_')[0]), GameObject.Instantiate<SFXBase>(sfx));
+            sfx.GetComponentsInChildren<Renderer>().Traversal((Renderer render) => { render.sharedMaterial.enableInstancing = false; });
+        });
+        return sfxsDic;
     }
 
     public static Dictionary<int, EntityBase> GetAllStyledEntities(enum_Style entityStyle)
@@ -77,9 +88,11 @@ public class TResources
         entities.Traversal((EntityBase entity) => {
             int index = int.Parse(entity.name.Split('_')[0]);
             entitisDic.Add(index, GameObject.Instantiate<EntityBase>(entity));
+            entity.GetComponentsInChildren<Renderer>().Traversal((Renderer render) => { render.sharedMaterial.enableInstancing = false; });
         });
         return entitisDic;
     }
+
     public static WeaponBase GetPlayerWeapon(enum_PlayerWeapon weapon)
     {
         WeaponBase target;
@@ -96,14 +109,6 @@ public class TResources
         return target;
     } 
 
-    public static Dictionary<int, SFXBase> GetAllCommonSFXs()
-    {
-        Dictionary<int, SFXBase> sfxsDic = new Dictionary<int, SFXBase>();
-        LoadAll<SFXBase>(ConstPath.S_SFXCommon).Traversal((SFXBase sfx) => {
-            sfxsDic.Add(int.Parse(sfx.name.Split('_')[0]),GameObject.Instantiate<SFXBase>(sfx));
-        });
-        return sfxsDic;
-    }
     #region Will Be Replaced By AssetBundle If Needed
     public static T Instantiate<T>(string path, Transform toParent = null) where T : UnityEngine.Object
     {
