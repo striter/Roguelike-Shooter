@@ -12,7 +12,6 @@ public class SFXBase : MonoBehaviour {
     public virtual void Init(int _sfxIndex)
     {
         I_SFXIndex = _sfxIndex;
-        GetComponentsInChildren<Renderer>().Traversal((Renderer render) =>{ render.sharedMaterial.enableInstancing=true; });
     }
 
     public void Start()

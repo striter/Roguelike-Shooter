@@ -65,7 +65,7 @@ public class TResources
         sfxs.Traversal((SFXBase sfx)=> {
             int index =int.Parse( sfx.name.Split('_')[0]);
             sourceDic.Add(index,GameObject.Instantiate(sfx));
-            sfx.GetComponentsInChildren<Renderer>().Traversal((Renderer render) => { render.sharedMaterial.enableInstancing = false; });
+            sfx.GetComponentsInChildren<Renderer>().Traversal((Renderer render) => { if (render.sharedMaterial != null) render.sharedMaterial.enableInstancing = false; });
         });
         return sourceDic;
     }

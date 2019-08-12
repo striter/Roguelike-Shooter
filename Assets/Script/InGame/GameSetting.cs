@@ -145,7 +145,7 @@ namespace GameSetting
     #region GameEnum
     public enum enum_HitCheck { Invalid = -1, Static = 1, Entity = 2, Dynamic = 3, }
 
-    public enum enum_BattleDifficulty { Invalid = -1, Default = 0, Eazy = 1, Normal = 2, Hard = 3 }
+    public enum enum_BattleDifficulty { Invalid = -1,Peaceful=0, Eazy = 1, Normal = 2, Hard = 3,Final=4, }
 
     public enum enum_TileLocking { Invalid = -1, Locked = 0, Unlockable = 1, Unlocked = 2, }
 
@@ -982,24 +982,20 @@ namespace GameSetting
     public struct SGenerateEntity:ISExcel
     {
         string em_defines;
-        int i_waveCount;
         float f_eliteChance;
         RangeInt ir_fighter;
         RangeInt ir_shooter;
         RangeInt ir_aoeCaster;
         RangeInt ir_elite;
-        public int m_stageIndex;
-        public enum_TileType m_TileType;
+        public int m_waveCount;
         public enum_BattleDifficulty m_Difficulty;
-        public int m_WaveCount => i_waveCount;
         public float m_EliteChance => f_eliteChance;
         public Dictionary<enum_EntityType, RangeInt> m_EntityGenerate;
         public void InitOnValueSet()
         {
             string[] defineSplit = em_defines.Split('_');
-            m_stageIndex = int.Parse(defineSplit[0]);
-            m_TileType = (enum_TileType)(int.Parse(defineSplit[1]));
-            m_Difficulty = (enum_BattleDifficulty)(int.Parse(defineSplit[2]));
+            m_Difficulty = (enum_BattleDifficulty)(int.Parse(defineSplit[0]));
+            m_waveCount = (int.Parse(defineSplit[1]));
             m_EntityGenerate = new Dictionary<enum_EntityType, RangeInt>();
             m_EntityGenerate.Add( enum_EntityType.Fighter,ir_fighter);
             m_EntityGenerate.Add(enum_EntityType.Shooter, ir_shooter);

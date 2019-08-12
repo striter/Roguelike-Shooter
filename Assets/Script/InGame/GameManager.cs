@@ -133,7 +133,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         m_LocalPlayer.transform.position = levelInfo.m_Level.RandomEmptyTilePosition(m_GameSeed);
 
         if (levelInfo.m_TileLocking == enum_TileLocking.Unlockable&&LevelManager.OnLevelBeginBattle(levelInfo.m_TileType))
-            OnBattleStart(DataManager.GetEntityGenerateProperties(1,levelInfo.m_TileType, LevelManager.m_Difficulty));
+            OnBattleStart(LevelManager.m_Difficulty);
         else
             OnLevelFinished();
     }
@@ -215,16 +215,16 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     public bool B_WaveEntityGenerating { get; private set; } = false;
     public int m_CurrentWave { get; private set; } = -1;
     public int m_WaveCurrentEntity { get; private set; } = -1;
-    public SGenerateEntity m_WaveEnermyGenerate { get; private set; }
+    public List<SGenerateEntity> m_EntityGenerate { get; private set; } = new List<SGenerateEntity>();
     public List<int> m_EntityGenerating { get; private set; } = new List<int>();
     public Dictionary<enum_EntityType, List<int>> m_StyledEnermyEntities;
-    void OnBattleStart(SGenerateEntity enermyType)
+    void OnBattleStart(enum_BattleDifficulty difficulty)
     {
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnBattleStart);
+        m_EntityGenerate = DataManager.GetEntityGenerateProperties(difficulty);
         B_Battling = true;
         m_WaveCurrentEntity = 0;
-        m_CurrentWave = 1;
-        m_WaveEnermyGenerate = enermyType;
+        m_CurrentWave = 0;
         WaveStart();
     }
 
@@ -232,7 +232,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     {
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnWaveStart);
         m_EntityGenerating.Clear();
-        m_WaveEnermyGenerate.m_EntityGenerate.Traversal((enum_EntityType level, RangeInt range) =>
+        m_EntityGenerate[m_CurrentWave].m_EntityGenerate.Traversal((enum_EntityType level, RangeInt range) =>
         {
             int spawnCount = range.RandomRangeInt();
             for (int i = 0; i < spawnCount; i++)
@@ -251,7 +251,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     {
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnWaveFinish);
         m_CurrentWave++;
-        if (m_CurrentWave > m_WaveEnermyGenerate.m_WaveCount)
+        if (m_CurrentWave >= m_EntityGenerate.Count)
             OnBattleFinished();
         else
             WaveStart();
@@ -266,7 +266,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         if (B_WaveEntityGenerating)
             return;
 
-        if (m_WaveCurrentEntity <= 0 || (m_CurrentWave < m_WaveEnermyGenerate.m_WaveCount && m_WaveCurrentEntity <= GameConst.I_EnermyCountWaveFinish))
+        if (m_WaveCurrentEntity <= 0 || (m_CurrentWave < m_EntityGenerate.Count && m_WaveCurrentEntity <= GameConst.I_EnermyCountWaveFinish))
             WaveFinished();
     }
     void OnBattleFinished()
@@ -308,8 +308,7 @@ public static class LevelManager
 {
     public static int I_currentStageIndex;
     public static bool B_NextStage => I_currentStageIndex < GameConst.I_TotalStageCount;
-    static enum_BattleDifficulty m_currentDifficulty;
-    public static enum_BattleDifficulty m_Difficulty => m_LevelType == enum_TileType.Battle ?   m_currentDifficulty: enum_BattleDifficulty.Default;
+    static enum_BattleDifficulty m_BattleDifficulty;
     public static enum_TileType m_LevelType { get; private set; }
     public static void Init()
     {
@@ -317,7 +316,7 @@ public static class LevelManager
     }
     public static void StageBegin()
     {
-        m_currentDifficulty = enum_BattleDifficulty.Default;
+        m_BattleDifficulty = enum_BattleDifficulty.Peaceful;
         m_LevelType = enum_TileType.Invalid;
         I_currentStageIndex++;
     }
@@ -329,11 +328,25 @@ public static class LevelManager
             default:
                 return false;
             case enum_TileType.Battle:
-                if (m_currentDifficulty < enum_BattleDifficulty.Hard)
-                    m_currentDifficulty++;
+                if (m_BattleDifficulty < enum_BattleDifficulty.Hard)
+                    m_BattleDifficulty++;
                 return true;
             case enum_TileType.End:
                 return true;
+        }
+    }
+    public static enum_BattleDifficulty m_Difficulty
+    {
+        get {
+            switch (m_LevelType)
+            {
+                default:
+                    return enum_BattleDifficulty.Peaceful;
+                case enum_TileType.End:
+                    return enum_BattleDifficulty.Final;
+                case enum_TileType.Battle:
+                    return m_BattleDifficulty;
+            }
         }
     }
 }
@@ -355,14 +368,7 @@ public static class DataManager
 
          return generate;
     }
-    public static SGenerateEntity GetEntityGenerateProperties(int stageIndex,enum_TileType type,enum_BattleDifficulty battleDifficulty)
-    {
-        SGenerateEntity generate = Properties<SGenerateEntity>.PropertiesList.Find(p => p.m_stageIndex == stageIndex && p.m_TileType == type&&p.m_Difficulty==battleDifficulty);
-        if (generate.m_stageIndex == 0 || generate.m_TileType == 0 )
-            Debug.LogError("Error Properties Found Of Index:" + (stageIndex*100+ (int)type * 10 + (int)battleDifficulty).ToString());
-
-        return generate;
-    }
+    public static List<SGenerateEntity> GetEntityGenerateProperties(enum_BattleDifficulty battleDifficulty)=> Properties<SGenerateEntity>.PropertiesList.FindAll(p => p.m_Difficulty == battleDifficulty);
     public static SEntity GetEntityProperties(int index)
     {
         SEntity entity= Properties<SEntity>.PropertiesList.Find(p => p.m_Index == index);
