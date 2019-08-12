@@ -68,7 +68,6 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
 
     void OnLevelStart()     //Make Current Level Available (AI Bake)
     {
-        ObjectManager.RecycleAllInteract(enum_Interaction.Interact_Portal);
         ObjectManager.RecycleAllLevelItem();
         m_currentLevel.StartLevel();
         NavMeshBuildSettings setting = NavMesh.GetSettingsByID(0);
@@ -82,11 +81,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         m_currentLevel.SetTileLocking(enum_TileLocking.Unlocked);
         TBroadCaster<enum_BC_UIStatusChanged>.Trigger(enum_BC_UIStatusChanged.PlayerLevelStatusChanged, m_MapLevelInfo, m_currentLevel.m_TileAxis);
     }
-
-    void OnPortalInteracted(enum_TileDirection toDirection)
-    {
-        OnStageFinished();
-    }
+    
 
     public void OnChangeLevel(TileAxis targetAxis)
     {
@@ -105,12 +100,8 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
             if (m_MapLevelInfo.Get(m_currentLevel.m_Connections[direction])!=null)
                 m_MapLevelInfo.Get(m_currentLevel.m_Connections[direction]).SetTileLocking(enum_TileLocking.Unlockable);
         }
-
-        if (m_currentLevel.m_TileType == enum_TileType.End)        //Generate Portals For End IsLand
-        {
-            LevelTilePortal portal = m_currentLevel.m_Level.m_Portal;
-            ObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Interact_Portal, portal.m_worldPos).InitPortal(portal.E_WorldDireciton, OnPortalInteracted);
-        }
+        
+        m_currentLevel.m_Level.ShowPortal(OnStageFinished);
 
         TBroadCaster<enum_BC_UIStatusChanged>.Trigger(enum_BC_UIStatusChanged.PlayerLevelStatusChanged, m_MapLevelInfo, m_currentLevel.m_TileAxis);
     }

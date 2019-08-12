@@ -43,7 +43,7 @@ public class EntityPlayerBase : EntityBase {
         PCInputManager.Instance.AddBinding<EntityPlayerBase>(enum_BindingsName.Reload, OnReloadDown);
 #else
         UIManager.OnMainDown = OnMainButtonDown;
-        UIManager.OnReload = OnReload;
+        UIManager.OnReload = OnReloadDown;
         UIManager.OnSwitch = OnSwitchWeapon;
         TouchDeltaManager.Instance.Bind(OnMovementDelta, OnRotateDelta);
 #endif

@@ -41,6 +41,10 @@ namespace TTiles
         {
             return base.Equals(obj);
         }
+        public override string ToString()
+        {
+            return X + "," + Y;
+        }
         public override int GetHashCode()
         {
             return base.GetHashCode();

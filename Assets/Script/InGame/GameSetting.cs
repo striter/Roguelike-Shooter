@@ -11,6 +11,8 @@ namespace GameSetting
     #region For Designers Use
     public static class GameConst
     {
+        public const int I_TotalStageCount = 3;
+
         public const int I_ProjectileMaxDistance = 100;
         public const int I_ProjectileBlinkWhenTimeLeftLessThan = 3;
         public const float F_AimAssistDistance = 100f;
@@ -30,8 +32,6 @@ namespace GameSetting
         public const float F_PlayerCameraSmoothParam = 1f;     //Camera Smooth Param For Player .2 is suggested
         public const float F_PlayerFallSpeed = 9.8f;       //Player Fall Speed(Not Acceleration)
 
-        public const int I_TileMapPortalMinusOffset = 3;        //The Minimum Tile Offset Away From Origin Portal Will Generate
-
         public const float F_EnermyAICheckTime = .3f;       //AI Check Offset Time, 0.3 is suggested;
 
         public const int I_EnermyCountWaveFinish = 0;       //When Total Enermy Count Reaches This Amount,Wave Finish
@@ -42,20 +42,6 @@ namespace GameSetting
     {
         public static Vector3 V3_TileAxisOffset(TileAxis axis) => new Vector3(axis.X * GameConst.F_LevelTileSize, 0, axis.Y * GameConst.F_LevelTileSize);
         public static float F_BigmapYaw(Vector3 direction) => TCommon.GetAngle(direction, Vector3.forward, Vector3.up);         //Used For Bigmap Direction
-        public static enum_TileDirection E_BigMapFourDirection(Vector3 direction)  //Top 135-225    Right 45 - 135  Bottom 135 - -135 Right -135 - -45
-        {
-            float angle = F_BigmapYaw(direction);       //0-360
-            if (angle <= 45 && angle > -45)
-                return enum_TileDirection.Top;
-            if (angle <= 135 && angle > 45)
-                return enum_TileDirection.Left;
-            if (angle <= -135 || angle > 135)
-                return enum_TileDirection.Bottom;
-            if (angle <= -45 && angle > -135)
-                return enum_TileDirection.Right;
-            Debug.LogError("GameSetting.WorldOffsetDirection Error? Invalid angle of:" + angle);
-            return enum_TileDirection.Invalid;
-        }
         public static bool B_ShowHitMark(enum_HitCheck check) => check!= enum_HitCheck.Invalid;
         public static float F_SphereCastDamageReduction(float weaponDamage, float distance, float radius) => weaponDamage * (1 - (distance / radius));       //Rocket Blast Damage
         public static Vector3 V3_RangeSpreadDirection(Vector3 aimDirection, float spread, Vector3 up, Vector3 right) => (aimDirection * GameConst.I_ProjectileSpreadAtDistance + up * UnityEngine.Random.Range(-spread, spread) + right * UnityEngine.Random.Range(-spread, spread)).normalized;
@@ -167,7 +153,7 @@ namespace GameSetting
 
     public enum enum_TileType { Invalid = -1, Start = 0, Battle = 1, End = 2, Reward = 3, }
 
-    public enum enum_LevelItemType { Invalid = -1, LargeMore, LargeLess, MediumMore, MediumLess, SmallMore, SmallLess, ManmadeMore, ManmadeLess, NoCollisionMore, NoCollisionLess,BorderLinear,BorderOblique }
+    public enum enum_LevelItemType { Invalid = -1, LargeMore, LargeLess, MediumMore, MediumLess, SmallMore, SmallLess, ManmadeMore, ManmadeLess, NoCollisionMore, NoCollisionLess,BorderLinear,BorderOblique,Portal, }
 
     public enum enum_LevelTileType { Invaid = -1, Empty, Main,Border, Item, Portal, }
 
@@ -177,7 +163,7 @@ namespace GameSetting
 
     public enum enum_EntityType { Invalid = -1,Hidden=0, Fighter = 1, Shooter = 2, AOECaster = 3, Elite = 4 }
 
-    public enum enum_Interaction { Invalid = -1, Interact_Portal, }
+    public enum enum_Interaction { Invalid = -1, }      //To Be Continued
 
     public enum enum_TriggerType { Invalid = -1, Single = 1, Auto = 2, Burst = 3, Pull = 4, Store = 5, }
 
@@ -807,7 +793,7 @@ namespace GameSetting
             m_Level.transform.localPosition = Vector3.zero;
             m_Level.transform.localScale = Vector3.one;
             m_Level.SetActivate(false);
-            return m_Level.Init( innerData,outerData, _levelItemPrefabs, m_TileType, seed, m_Connections.Keys.ToList().Find(p => m_Connections[p] == new TileAxis(-1, -1)));        //Add Portal For Level End
+            return m_Level.GenerateTileItems(innerData,outerData, _levelItemPrefabs, m_TileType,seed, m_TileType== enum_TileType.End);        //Add Portal For Level End
         }
         public void StartLevel()
         {
@@ -823,58 +809,53 @@ namespace GameSetting
         public TileAxis m_TileAxis;
         public Vector3 m_Offset => GameExpression.V3_TileAxisOffset(m_TileAxis);
         public virtual enum_LevelTileType E_TileType => enum_LevelTileType.Empty;
-        public enum_TileDirection E_WorldDireciton { get; private set; } = enum_TileDirection.Invalid;
         public enum_LevelTileOccupy E_Occupation { get; private set; } = enum_LevelTileOccupy.Invalid;
-        public LevelTile(TileAxis _axis ,enum_TileDirection _direction,enum_LevelTileOccupy _occupy) 
+
+        public LevelTile(TileAxis _axis ,enum_LevelTileOccupy _occupy) 
         {
-            E_WorldDireciton = _direction;
             m_TileAxis = _axis;
             E_Occupation = _occupy;
         }
+
         public LevelTile(LevelTile tile)
         {
             m_TileAxis = tile.m_TileAxis;
-            E_WorldDireciton = tile.E_WorldDireciton;
             E_Occupation = tile.E_Occupation;
         }
     }
-    public class LevelTilePortal : LevelTile
+    public class LevelTilePortal : LevelTileItem
     {
         public override enum_LevelTileType E_TileType => enum_LevelTileType.Portal;
-        public enum_TileDirection E_PortalDirection { get; private set; }
-        public Vector3 m_worldPos;
-        public LevelTilePortal(LevelTile current, enum_TileDirection _direction,Vector3 _worldPos) : base(current)
+        public LevelTilePortal(LevelTile current,List<int> _subTileIndex,int prefabIndex) : base(current, prefabIndex, enum_LevelItemType.Portal, enum_TileDirection.Top,_subTileIndex)
         {
-            E_PortalDirection = _direction;
-            m_worldPos = _worldPos;
         }
     }
-    class LevelTileItemSub : LevelTile
+    public class LevelTileSub : LevelTile
     {
         public override enum_LevelTileType E_TileType => enum_LevelTileType.Item;
-        public int m_ParentMainIndex { get; private set; }
-        public LevelTileItemSub(LevelTile current, int _parentMainIndex) : base(current)
+        public int m_ParentTileIndex { get; private set; }
+        public LevelTileSub(LevelTile current, int _parentIndex) : base(current)
         {
-            m_ParentMainIndex = _parentMainIndex;
+            m_ParentTileIndex = _parentIndex;
         }
     }
-    class LevelTileItemMain : LevelTile
+    public class LevelTileItem : LevelTile
     {
         public override enum_LevelTileType E_TileType => enum_LevelTileType.Main;
         public int m_LevelItemListIndex { get; private set; }
         public enum_LevelItemType m_LevelItemType { get; private set; }
         public enum_TileDirection m_ItemDirection { get; private set; }
-        public List<int> m_AreaTiles { get; private set; }
+        public List<int> m_subTiles { get; private set; }
         
-        public LevelTileItemMain(LevelTile current, int levelItemListIndex, enum_LevelItemType levelItemType,enum_TileDirection _ItemDirection, List<int> _AreaTiles) : base(current)
+        public LevelTileItem(LevelTile current, int levelItemListIndex, enum_LevelItemType levelItemType,enum_TileDirection _ItemDirection, List<int> _subTiles) : base(current)
         {
             m_LevelItemListIndex = levelItemListIndex;
             m_LevelItemType = levelItemType;
-            m_AreaTiles = _AreaTiles;
+            m_subTiles = _subTiles;
             m_ItemDirection = _ItemDirection;
         }
     }
-    class LevelTileBorder : LevelTileItemMain
+    class LevelTileBorder : LevelTileItem
     {
         public override enum_LevelTileType E_TileType => enum_LevelTileType.Border;
         public LevelTileBorder(LevelTile current, int levelItemListIndex, enum_LevelItemType levelItemType, enum_TileDirection _ItemDirection) : base(current,levelItemListIndex,levelItemType,_ItemDirection,null)

@@ -17,7 +17,6 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     public enum enumDebug_LevelDrawMode
     {
         DrawTypes,
-        DrawWorldDirection,
         DrawOccupation,
         DrawItemDirection,
     }
@@ -80,6 +79,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         instance = this;
         DataManager.Init();
         ObjectManager.Init();
+        LevelManager.Init();
         TBroadCaster<enum_BC_UIStatusChanged>.Init();
         TBroadCaster<enum_BC_GameStatusChanged>.Init();
 
@@ -103,17 +103,19 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     }
     private void Start()
     {
-        InitLevel(Test_TileStyle, Test_EntityStyle,M_TESTSEED);
+        StartStage(Test_TileStyle, Test_EntityStyle,M_TESTSEED);        //Test
     }
-    void InitLevel(enum_Style _levelStyle, enum_Style _entityStyle, string _GameSeed = "")      //PreInit Bigmap , Levels LocalPlayer Before  Start The game
+    #region Level Management
+    //Call When Level Changed
+    void StartStage(enum_Style _levelStyle, enum_Style _entityStyle, string _GameSeed = "")      //PreInit Bigmap , Levels LocalPlayer Before  Start The game
     {
         if (_GameSeed == "")
             _GameSeed = DateTime.Now.ToLongTimeString();
 
         ObjectManager.Preset();
+        LevelManager.StageBegin();
         m_SeedString = _GameSeed;
         m_GameSeed = new System.Random(m_SeedString.GetHashCode());
-        m_BattleDifficulty = enum_BattleDifficulty.Default;
         m_BattleEntityStyle = _entityStyle;
         ObjectManager.RegisterLevelBase(TResources.GetLevelBase(_levelStyle));
         EnviormentManager.Instance.GenerateAllEnviorment(_levelStyle, m_GameSeed, OnLevelStart,OnStageFinished);
@@ -125,35 +127,17 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
 
         GC.Collect();
     }
-    #region Level Management
-    //Call When Level Changed
     void OnLevelStart(SBigmapLevelInfo levelInfo)
     {
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnLevelStart);
         m_LocalPlayer.transform.position = levelInfo.m_Level.RandomEmptyTilePosition(m_GameSeed);
-        bool battle = false;
-        enum_BattleDifficulty difficulty= enum_BattleDifficulty.Default;
-        if (levelInfo.m_TileLocking == enum_TileLocking.Unlockable)
-            switch (levelInfo.m_Level.m_levelType)
-            {
-                case enum_TileType.Battle:        //Generate All Enermy To Be Continued
-                    {
-                        battle = true;
-                        if (m_BattleDifficulty < enum_BattleDifficulty.Hard)
-                            m_BattleDifficulty++;
-                        difficulty = m_BattleDifficulty;
-                    }
-                    break;
-                case enum_TileType.End:
-                    battle = true;
-                    break;
-            }
 
-        if(battle)
-            OnBattleStart(DataManager.GetEntityGenerateProperties(1,levelInfo.m_TileType, difficulty));
+        if (levelInfo.m_TileLocking == enum_TileLocking.Unlockable&&LevelManager.OnLevelBeginBattle(levelInfo.m_TileType))
+            OnBattleStart(DataManager.GetEntityGenerateProperties(1,levelInfo.m_TileType, LevelManager.m_Difficulty));
         else
             OnLevelFinished();
     }
+
     //Call Enviorment Manager To Generate Portals Or Show Bigmaps, Then Go Back To OnLevelChange From Enviorment Manager
     void OnLevelFinished()
     {
@@ -163,7 +147,10 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     void OnStageFinished()
     {
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnStageFinish);
-        InitLevel(TCommon.RandomEnumValues<enum_Style>(), TCommon.RandomEnumValues<enum_Style>(), "");
+        if (LevelManager.B_NextStage)
+            StartStage(TCommon.RandomEnumValues<enum_Style>(), TCommon.RandomEnumValues<enum_Style>(), "");
+        else
+            Debug.Log("All Level Finished");
     }
     #endregion
     #region Battle Management
@@ -224,7 +211,6 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     #endregion
     #region Battle Management
     public enum_Style m_BattleEntityStyle { get; private set; }
-    public enum_BattleDifficulty m_BattleDifficulty { get; private set; }
     public bool B_Battling { get; private set; } = false;
     public bool B_WaveEntityGenerating { get; private set; } = false;
     public int m_CurrentWave { get; private set; } = -1;
@@ -318,6 +304,39 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     #endregion
 }
 #region External Tools Packaging Class
+public static class LevelManager
+{
+    public static int I_currentStageIndex;
+    public static bool B_NextStage => I_currentStageIndex < GameConst.I_TotalStageCount;
+    static enum_BattleDifficulty m_currentDifficulty;
+    public static enum_BattleDifficulty m_Difficulty => m_LevelType == enum_TileType.Battle ?   m_currentDifficulty: enum_BattleDifficulty.Default;
+    public static enum_TileType m_LevelType { get; private set; }
+    public static void Init()
+    {
+        I_currentStageIndex = 0;
+    }
+    public static void StageBegin()
+    {
+        m_currentDifficulty = enum_BattleDifficulty.Default;
+        m_LevelType = enum_TileType.Invalid;
+        I_currentStageIndex++;
+    }
+    public static bool OnLevelBeginBattle(enum_TileType type)
+    {
+        m_LevelType = type;
+        switch (type)
+        {
+            default:
+                return false;
+            case enum_TileType.Battle:
+                if (m_currentDifficulty < enum_BattleDifficulty.Hard)
+                    m_currentDifficulty++;
+                return true;
+            case enum_TileType.End:
+                return true;
+        }
+    }
+}
 public static class DataManager
 {
     public static void Init()
@@ -400,7 +419,7 @@ public static class ObjectManager
     }
     public static void RegisterLevelBase(LevelBase levelprefab)
     {
-        ObjectPoolManager<int, LevelBase>.Register(0,levelprefab, enum_PoolSaveType.DynamicMaxAmount,1,null);
+        ObjectPoolManager<int, LevelBase>.Register(0,levelprefab, enum_PoolSaveType.DynamicMaxAmount,1,(LevelBase level)=>{ level.Init(); });
     }
     public static void RegisterLevelItem(Dictionary<LevelItemBase, int> registerDic)
     {
@@ -511,10 +530,6 @@ public static class ObjectManager
     public static void RecycleInteract(enum_Interaction type, InteractBase target)
     {
         ObjectPoolManager<enum_Interaction, InteractBase>.Recycle(type, target);
-    }
-    public static void RecycleAllInteract(enum_Interaction type)
-    {
-        ObjectPoolManager<enum_Interaction, InteractBase>.RecycleAll(type);
     }
     #endregion
     #region Level/LevelItem
