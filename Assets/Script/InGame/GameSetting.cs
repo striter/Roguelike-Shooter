@@ -119,17 +119,14 @@ namespace GameSetting
     #region For Developers Use
 
     #region BroadCastEnum
-    enum enum_BC_UIStatusChanged
-    {
-        Invalid = -1,
-        PlayerInfoChanged,
-        PlayerLevelStatusChanged,
-    }
     enum enum_BC_GameStatusChanged
     {
         Invalid = -1,
         OnSpawnEntity,
         OnRecycleEntity,
+
+        PlayerInfoChanged,
+        PlayerLevelStatusChanged,
 
         OnStageStart,       //Total Stage Start
         OnStageFinish,
@@ -325,8 +322,10 @@ namespace GameSetting
         public float F_TotalHealth => m_MaxHealth + m_MaxArmor;
         public float F_HealthScale =>Mathf.Clamp01( m_CurrentHealth/m_MaxHealth);
         public float F_ArmorScale => Mathf.Clamp01(m_CurrentArmor/ m_MaxArmor);
-        
+        public float F_EHPScale => Mathf.Clamp01((m_CurrentArmor+m_CurrentHealth)/(m_MaxArmor+m_MaxHealth));
         protected float f_ArmorRegenCheck;
+        Action OnDamage;
+        public void AddOnDamageAction(Action damageAction) => OnDamage += damageAction;
         protected void DamageArmor(float amount)
         {
             m_CurrentArmor -= amount;
@@ -383,9 +382,15 @@ namespace GameSetting
                         }
                         break;
                 }
+
                 f_ArmorRegenCheck = m_ArmorRegenDuration;
+
+                OnDamage?.Invoke();
                 if (b_IsDead)
+                {
                     OnDead();
+                    OnDamage = null;
+                }
             }
             else if (damageInfo.m_AmountApply < 0)    //Healing
             {
@@ -426,6 +431,7 @@ namespace GameSetting
                         break;
                 }
             }
+            
             return true;
         }
 

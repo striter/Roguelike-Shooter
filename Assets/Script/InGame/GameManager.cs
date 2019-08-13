@@ -80,7 +80,6 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         DataManager.Init();
         ObjectManager.Init();
         LevelManager.Init();
-        TBroadCaster<enum_BC_UIStatusChanged>.Init();
         TBroadCaster<enum_BC_GameStatusChanged>.Init();
 
         m_PlayerInfo = TGameData<CPlayerSave>.Read();

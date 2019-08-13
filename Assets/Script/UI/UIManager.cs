@@ -26,17 +26,15 @@ public class UIManager : SingletonMono<UIManager> {
         tf_Top.Find("SporeBtn").GetComponent<Button>().onClick.AddListener(() => { UIPageBase.ShowPage<UI_SporeManager>(transform,true); });
         img_Reload = tf_Top.Find("Reload").GetComponent<Image>();
         txt_Main = tf_Top.Find("Main/Text").GetComponent<Text>();
-
     }
     private void Start()
     {
         UIPageBase.ShowPage<UI_BigmapControl>(transform, false);
-        TBroadCaster<enum_BC_UIStatusChanged>.Add<EntityPlayerBase>(enum_BC_UIStatusChanged.PlayerInfoChanged, OnPlayerStatusChanegd);
-
+        TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityPlayerBase>(enum_BC_GameStatusChanged.PlayerInfoChanged, OnPlayerStatusChanegd);
     }
     private void OnDisable()
     {
-        TBroadCaster<enum_BC_UIStatusChanged>.Remove<EntityPlayerBase>(enum_BC_UIStatusChanged.PlayerInfoChanged, OnPlayerStatusChanegd);
+        TBroadCaster<enum_BC_GameStatusChanged>.Remove<EntityPlayerBase>(enum_BC_GameStatusChanged.PlayerInfoChanged, OnPlayerStatusChanegd);
     }
     void OnPlayerStatusChanegd(EntityPlayerBase player)
     {
@@ -47,5 +45,4 @@ public class UIManager : SingletonMono<UIManager> {
         img_Reload.fillAmount = player.m_WeaponCurrent != null ? player.m_WeaponCurrent.F_ReloadStatus : 1;
         txt_Main.text = player.B_Interacting ? "Interact" : "Fire";
     }
-
 }
