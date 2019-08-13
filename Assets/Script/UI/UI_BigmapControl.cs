@@ -10,24 +10,22 @@ public class UI_BigmapControl : UIPageBase {        //This Page Won't Hide(One P
     RectTransform rtf_MapPlayer;
     Button btn_Bigmap;
     Image img_BigmapRaycast, img_CancelRaycast;
-    RectTransform rtf_MinimapTrans, rtf_BigmapTrans,rtf_MapGrid;
-    public bool B_IsBigmapMode = false;
+    RectTransform rtf_MapGrid;
+    public bool B_ShowBigmap = false;
     protected override void Init(bool useAnim)
     {
         base.Init(useAnim);
-        gc_BigMapController = new UIT_GridControllerMono<UIGI_BigmapLevelInfo>(tf_Container.Find("MapBtn"));
+        gc_BigMapController = new UIT_GridControllerMono<UIGI_BigmapLevelInfo>(tf_Container.Find("MapGrid"));
         rtf_MapGrid = gc_BigMapController.transform.GetComponent<RectTransform>();
         rtf_MapPlayer = gc_BigMapController.transform.Find("MapPlayer").GetComponent<RectTransform>();
-        btn_Bigmap = gc_BigMapController.transform.GetComponent<Button>();
+        btn_Bigmap = transform.Find("ShowBigmap").GetComponent<Button>();
         img_BigmapRaycast = btn_Bigmap.GetComponent<Image>();
         img_CancelRaycast = btn_Cancel.GetComponent<Image>();
         btn_Bigmap.onClick.AddListener(OnBigmapBtnClick);
-        rtf_MinimapTrans = tf_Container.Find("MinimapTrans").GetComponent<RectTransform>();
-        rtf_BigmapTrans = tf_Container.Find("BigmapTrans").GetComponent<RectTransform>();
-        SwitchMapmode(false,false);
         TBroadCaster<enum_BC_GameStatusChanged>.Add(enum_BC_GameStatusChanged.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatusChanged>.Add(enum_BC_GameStatusChanged.OnBattleFinish, OnBattleFinish);
         TBroadCaster<enum_BC_GameStatusChanged>.Add<SBigmapLevelInfo[,], TileAxis>(enum_BC_GameStatusChanged.PlayerLevelStatusChanged, OnLevelStatusChanged);
+        ShowMap(false, false);
     }
 
     protected override void OnDestroy()
@@ -39,7 +37,7 @@ public class UI_BigmapControl : UIPageBase {        //This Page Won't Hide(One P
     }
     void OnBattleStart()
     {
-        SwitchMapmode(false);
+        ShowMap(false);
         this.SetActivate(false);
     }
     void OnBattleFinish()
@@ -49,28 +47,26 @@ public class UI_BigmapControl : UIPageBase {        //This Page Won't Hide(One P
 
     protected void OnBigmapBtnClick()
     {
-        SwitchMapmode(true);
+        ShowMap(true);
     }
     protected override void OnCancelBtnClick()
     {
-        SwitchMapmode(false);
+        ShowMap(false);
     }
-    void SwitchMapmode(bool isBigmapMode,bool useAnim=true)     //useAnim To Be Continued
+    void ShowMap(bool showBigmap,bool useAnim=true)     //useAnim To Be Continued
     {
-        B_IsBigmapMode = isBigmapMode;
-        img_BigmapRaycast.raycastTarget = !B_IsBigmapMode;
-        img_CancelRaycast.raycastTarget = B_IsBigmapMode;
-        
-        rtf_MapGrid.pivot = B_IsBigmapMode? rtf_BigmapTrans.pivot:rtf_MinimapTrans.pivot;
-        rtf_MapGrid.position = B_IsBigmapMode ? rtf_BigmapTrans.position : rtf_MinimapTrans.position;
-        rtf_MapGrid.localScale = B_IsBigmapMode ? rtf_BigmapTrans.localScale : rtf_MinimapTrans.localScale;
-        img_Background.color = TCommon.ColorAlpha(img_Background.color,B_IsBigmapMode? f_bgAlphaStart:0f);
+        B_ShowBigmap = showBigmap;
+        img_BigmapRaycast.raycastTarget = !B_ShowBigmap;
+        img_CancelRaycast.raycastTarget = B_ShowBigmap;
+        btn_Bigmap.SetActivate(!showBigmap);
+        rtf_MapGrid.SetActivate(showBigmap);
+        img_Background.color = TCommon.ColorAlpha(img_Background.color,B_ShowBigmap? f_bgAlphaStart:0f);
     }
     void OnMapTileClick(TileAxis axis)
     {
-        if (!B_IsBigmapMode)
+        if (!B_ShowBigmap)
         {
-            SwitchMapmode(true);
+            ShowMap(true);
             return;
         }
         EnviormentManager.Instance.OnChangeLevel(axis);
