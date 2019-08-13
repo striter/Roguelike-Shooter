@@ -61,20 +61,6 @@ public class EntityPlayerBase : EntityBase {
         if (m_Assist)
             m_Assist.ForceRecycle();
     }
-    protected override void OnCostMana(float manaCost)
-    {
-        float manaMinus = m_CurrentMana - manaCost;
-        if (manaMinus <= 0)
-        {
-            m_Coins += manaMinus;
-            manaMinus = m_CurrentMana;
-        }
-        else
-        {
-            manaMinus = manaCost;
-        }
-        base.OnCostMana(manaMinus);
-    }
     void OnMainButtonDown(bool down)
     {
         if (down)
@@ -95,7 +81,7 @@ public class EntityPlayerBase : EntityBase {
     void ObtainWeapon(WeaponBase weapon)
     {
         m_WeaponObtained.Add(weapon);
-        weapon.Attach(I_EntityID,this,weapon.B_AttachLeft?tf_WeaponHoldLeft:tf_WeaponHoldRight, OnCostMana, OnFireAddRecoil,m_Animator.Reload, GetDamageBuffInfo,m_EntityInfo.F_FireRateTick,m_EntityInfo.F_ReloadRateTick);
+        weapon.Attach(I_EntityID,this,weapon.B_AttachLeft?tf_WeaponHoldLeft:tf_WeaponHoldRight, OnFireAddRecoil,m_Animator.Reload, GetDamageBuffInfo,m_EntityInfo.F_FireRateTick,m_EntityInfo.F_ReloadRateTick);
         weapon.SetActivate(false);
         if (m_WeaponCurrent == null)
             OnSwitchWeapon();

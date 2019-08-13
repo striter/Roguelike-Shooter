@@ -13,7 +13,6 @@ public class WeaponBase : MonoBehaviour {
     public bool B_Reloading { get; private set; }
     public int I_AmmoLeft { get; private set; }
     public Transform m_Muzzle { get; private set; }
-    Action<float> OnAmmoChangeCostMana;
     Action<float> OnReloadStart;
     Func<float, float> OnFireTickDelta, OnReloadTickDelta;
     Action<Vector2> OnFireRecoil;
@@ -69,7 +68,7 @@ public class WeaponBase : MonoBehaviour {
         f_fireCheck = 0;
         m_Trigger.OnDisable();
     }
-    public void Attach(int _attacherID,EntityBase _attacher,Transform _attachTo,Action<float> _OnAmmoChangeCostMana,Action<Vector2> _OnFireRecoil,Action<float> _OnReloadStart,Func<DamageBuffInfo> _OnFireBuffInfo, Func<float,float> _OnFireTickDelta,Func<float,float> _OnReloadTickDelta)
+    public void Attach(int _attacherID,EntityBase _attacher,Transform _attachTo,Action<Vector2> _OnFireRecoil,Action<float> _OnReloadStart,Func<DamageBuffInfo> _OnFireBuffInfo, Func<float,float> _OnFireTickDelta,Func<float,float> _OnReloadTickDelta)
     {
         I_AttacherID = _attacherID;
         m_Attacher = _attacher;
@@ -77,7 +76,6 @@ public class WeaponBase : MonoBehaviour {
         transform.localPosition = Vector3.zero;
         transform.localRotation = Quaternion.identity;
         transform.localScale = Vector3.one;
-        OnAmmoChangeCostMana = _OnAmmoChangeCostMana;
         OnFireRecoil = _OnFireRecoil;
         OnFireBuffInfo = _OnFireBuffInfo;
         OnFireTickDelta = _OnFireTickDelta;
@@ -115,7 +113,6 @@ public class WeaponBase : MonoBehaviour {
 
         I_AmmoLeft--;
         OnFireRecoil?.Invoke(m_WeaponInfo.m_RecoilPerShot);
-        OnAmmoChangeCostMana?.Invoke(m_WeaponInfo.m_ManaCost);
 
         return true;
     }
@@ -148,7 +145,6 @@ public class WeaponBase : MonoBehaviour {
             if (f_reloadCheck > m_WeaponInfo.m_ReloadTime)
             {
                 I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
-                OnAmmoChangeCostMana?.Invoke(0f);
                 B_Reloading = false;
             }
         }

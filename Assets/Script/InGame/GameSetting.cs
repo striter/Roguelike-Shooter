@@ -478,7 +478,6 @@ namespace GameSetting
         EntityBase m_Entity;
         public SEntity m_InfoData { get; private set; }
         public int I_ObjectPoolIndex => m_InfoData.m_Index;
-        public float F_MaxMana => m_InfoData.m_MaxMana;
         public float F_MaxHealth => m_InfoData.m_MaxHealth;
         public float F_MaxArmor => m_InfoData.m_MaxArmor;
         public float F_Spread => m_InfoData.m_Spread;
@@ -871,7 +870,6 @@ namespace GameSetting
         int e_type;
         float f_maxHealth;
         float f_maxArmor;
-        float f_maxMana;
         float f_armorRegenSpeed;
         float f_armorRegenDuration;
         float f_moveSpeed;
@@ -889,7 +887,6 @@ namespace GameSetting
         public enum_EntityType m_Type => (enum_EntityType)e_type;
         public float m_MaxHealth => f_maxHealth;
         public float m_MaxArmor => f_maxArmor;
-        public float m_MaxMana => f_maxMana;
         public float m_ArmorRegenSpeed => f_armorRegenSpeed;
         public float m_ArmorRegenDuration => f_armorRegenDuration;
         public float m_MoveSpeed => f_moveSpeed;
@@ -914,7 +911,6 @@ namespace GameSetting
         int i_projectileIndex;
         float f_fireRate;
         float f_specialRate;
-        float f_manaCost;
         int i_clipAmount;
         float f_spread;
         float f_reloadTime;
@@ -928,7 +924,6 @@ namespace GameSetting
         public int m_MuzzleSFX => i_muzzleIndex;
         public float m_FireRate => f_fireRate;
         public float m_SpecialRate => f_specialRate;
-        public float m_ManaCost => f_manaCost;
         public int m_ClipAmount => i_clipAmount;
         public float m_Spread => f_spread;
         public float m_ReloadTime => f_reloadTime;

@@ -8,7 +8,6 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
     Renderer[] m_SkinRenderers;
     protected Transform tf_Model;
     public Transform tf_Head { get; private set; }
-    public float m_CurrentMana { get; private set; }
     public bool B_IsPlayer { get; private set; }
     
     protected DamageBuffInfo GetDamageBuffInfo() => m_EntityInfo.m_DamageBuffProperty;
@@ -36,7 +35,6 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
         if (I_EntityID == -1)
             Debug.LogError("Please Init Entity Info!" + gameObject.name.ToString());
         m_HealthManager.OnActivate();
-        m_CurrentMana = m_EntityInfo.F_MaxMana;
         TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.SetEnable(true); });
         TCommon.Traversal(m_SkinRenderers, (Renderer renderer) => {renderer.materials.Traversal((Material mat)=> {mat.SetFloat("_Amount1", 0);}); });
     }
@@ -71,10 +69,6 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
     {
     }
 
-    protected virtual void OnCostMana(float manaCost)
-    {
-        m_CurrentMana -= manaCost;
-    }
 
     protected virtual void OnDead()
     {
