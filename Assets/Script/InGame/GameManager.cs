@@ -66,7 +66,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         if (Input.GetKeyDown(KeyCode.Equals))
             OnStageFinished();
 
-        UIManager.instance.transform.Find("SeedTest").GetComponent<UnityEngine.UI.Text>().text = m_SeedString;
+        UIManager.instance.transform.Find("Test/SeedTest").GetComponent<UnityEngine.UI.Text>().text = m_SeedString;
     }
 #endregion
 #endif
@@ -126,6 +126,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnStageStart);
 
         GC.Collect();
+        Resources.UnloadUnusedAssets();
     }
     void OnLevelStart(SBigmapLevelInfo levelInfo)
     {
