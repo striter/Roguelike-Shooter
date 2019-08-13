@@ -1,19 +1,17 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class UIWorldBase : MonoBehaviour,ISingleCoroutine
+public class UIWorldBase : MonoBehaviour, ISingleCoroutine
 {
-    public bool b_2D = true;
+    public static T Attach<T>(Transform toTrans,bool useAnim=true) where T : UIWorldBase
+    {
+        T template = TResources.Instantiate<T>("UI/World/" + typeof(T).ToString(), toTrans);
+        template.Init(useAnim);
+        return template;
+    }
+    public bool B_AutoRotate = true;
     protected Transform tf_Container;
     protected RectTransform rtf_Canvas;
-    public Transform TF_Container
-    {
-        get
-        {
-            return tf_Container;
-        }
-    }
-
     public virtual void Init(bool useAnim)
     {
         if (rtf_Canvas)
@@ -23,12 +21,10 @@ public class UIWorldBase : MonoBehaviour,ISingleCoroutine
         if (useAnim)
             this.StartSingleCoroutine(0,TIEnumerators.ChangeValueTo((float value) => { tf_Container.localScale=Vector3.one*value; }, 0, 1, .5f));
     }
-    protected void Update()
+    protected virtual void Update()
     {
-        if(b_2D)
-            transform.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane( transform.position- Camera.main.transform.position, Camera.main.transform.right), Camera.main.transform.up);
-        else
-            transform.LookAt(CameraController.MainCamera.transform);
+        if(B_AutoRotate)
+            transform.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane( transform.position- CameraController.MainCamera.transform.position, CameraController.MainCamera.transform.right), CameraController.MainCamera.transform.up);
     }
     protected void Hide()
     {

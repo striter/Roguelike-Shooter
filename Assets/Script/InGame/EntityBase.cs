@@ -14,6 +14,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
     public EntityInfoManager m_EntityInfo { get; private set; }
     public EntityHealth m_HealthManager { get; private set; }
     public virtual Vector3 m_PrecalculatedTargetPos(float time) { Debug.LogError("Override This Please");return Vector2.zero; }
+    
     public virtual void Init(SEntity entityInfo)
     {
         Debug.LogError("Override This Please!");

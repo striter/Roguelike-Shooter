@@ -59,6 +59,9 @@ namespace GameSetting
         public const int I_SporeManagerContainerStartRandomEnd = 30;      // Start From 0 
         public const int I_SporeManagerAutoSave = 5;      //Per Seconds Auto Save Case Game Crush
         public const int I_SporeManagerHybridMaxLevel = 40;      //Spore Level Equals Won't Hybrid
+
+        public const int I_AmmoCountMax = 20;
+        public const float F_IAmmoLineLength = 200;
     }
 
     public static class UIExpression

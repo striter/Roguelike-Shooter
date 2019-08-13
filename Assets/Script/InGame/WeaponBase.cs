@@ -24,6 +24,7 @@ public class WeaponBase : MonoBehaviour {
     bool B_AmmoFull => m_WeaponInfo.m_ClipAmount == -1||m_WeaponInfo.m_ClipAmount == I_AmmoLeft;
     float f_reloadCheck;
     public float F_ReloadStatus => B_Reloading ? f_reloadCheck / m_WeaponInfo.m_ReloadTime : 1;
+    public float F_AmmoStatus => I_AmmoLeft / (float)m_WeaponInfo.m_ClipAmount;
     float f_fireCheck = 0;
     public bool B_Actionable() => B_CanFire&&!B_Reloading&& f_fireCheck <= 0;
     protected void OnFireCheck(float pauseDuration)
