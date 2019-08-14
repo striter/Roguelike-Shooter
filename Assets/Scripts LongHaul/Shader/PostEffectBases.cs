@@ -335,9 +335,11 @@ public class PE_FogDepth : PostEffectBase
         Mat_Cur.SetFloat("_FogEnd", _fogYEnd);
         return this;
     }
-    public void SetTexture(Texture noise)
+    public void SetTexture(Texture noise,float _noiseLambert=.3f,float _noisePow=1f)
     {
         Mat_Cur.SetTexture("_NoiseTex", noise);
+        Mat_Cur.SetFloat("_NoiseLambert", _noiseLambert);
+        Mat_Cur.SetFloat("_NoisePow", _noisePow);
     }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
