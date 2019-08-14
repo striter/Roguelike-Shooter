@@ -52,7 +52,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         switch (_levelStyle)
         {
             case enum_Style.Undead:
-               // PostEffectManager.AddPostEffect<PE_FogDepthNoise>().SetEffect(Color.white).SetEffect(TCommon.ColorAlpha(Color.white, .3f), .4f, -1f, 2f).SetTexture(TResources.Load<Texture>("Texture/Noise_Fog"));
+                PostEffectManager.AddPostEffect<PE_FogDepthNoise>().SetEffect(Color.white).SetEffect(TCommon.ColorAlpha(Color.white, .3f), .5f, -1f, 4f).SetTexture(TResources.Load<Texture>("Texture/Noise_Fog"),.4f,2f);
                 break;
             case enum_Style.Iceland:
                 PostEffectManager.AddPostEffect<PE_FogDepth>().SetEffect(Color.white,.6f,-1,5);
@@ -82,7 +82,6 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.PlayerLevelStatusChanged, m_MapLevelInfo, m_currentLevel.m_TileAxis);
     }
     
-
     public void OnChangeLevel(TileAxis targetAxis)
     {
         if (m_currentLevel.m_TileAxis == targetAxis)

@@ -160,7 +160,7 @@ namespace GameSetting
 
     public enum enum_LevelGenerateType { Invalid = -1, Big = 1, Small = 2 }
 
-    public enum enum_EntityType { Invalid = -1,Hidden=0, Fighter = 1, Shooter = 2, AOECaster = 3, Elite = 4 }
+    public enum enum_EntityType { Invalid = -1,Hidden=0, Fighter = 1, Shooter_Rookie = 2,Shooter_Veteran=3, AOECaster = 4, Elite = 5 }
 
     public enum enum_Interaction { Invalid = -1, }      //To Be Continued
 
@@ -987,7 +987,8 @@ namespace GameSetting
         string em_defines;
         float f_eliteChance;
         RangeInt ir_fighter;
-        RangeInt ir_shooter;
+        RangeInt ir_shooterRookie;
+        RangeInt ir_shooterVeteran;
         RangeInt ir_aoeCaster;
         RangeInt ir_elite;
         public int m_waveCount;
@@ -1000,8 +1001,9 @@ namespace GameSetting
             m_Difficulty = (enum_BattleDifficulty)(int.Parse(defineSplit[0]));
             m_waveCount = (int.Parse(defineSplit[1]));
             m_EntityGenerate = new Dictionary<enum_EntityType, RangeInt>();
-            m_EntityGenerate.Add( enum_EntityType.Fighter,ir_fighter);
-            m_EntityGenerate.Add(enum_EntityType.Shooter, ir_shooter);
+            m_EntityGenerate.Add(enum_EntityType.Fighter,ir_fighter);
+            m_EntityGenerate.Add(enum_EntityType.Shooter_Rookie, ir_shooterRookie);
+            m_EntityGenerate.Add(enum_EntityType.Shooter_Veteran, ir_shooterVeteran);
             m_EntityGenerate.Add(enum_EntityType.AOECaster, ir_aoeCaster);
             m_EntityGenerate.Add(enum_EntityType.Elite, ir_elite);
         }

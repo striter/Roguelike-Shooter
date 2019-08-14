@@ -154,6 +154,6 @@ MonoBehaviour:
   m_sizeXAxis: 2
   m_sizeYAxis: 2
   m_ItemType: 2
-  b_showGizmos: 1
+  b_showGizmos: 0
   b_AutoCenter: 1
   b_AutoRotation: 1
