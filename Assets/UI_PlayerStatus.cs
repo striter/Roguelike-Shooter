@@ -40,16 +40,15 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
         if (player.m_WeaponCurrent != null)
         {
             sld_Reload.value = player.m_WeaponCurrent.B_Reloading? player.m_WeaponCurrent.F_ReloadStatus:0;
-            img_sld.color = player.m_WeaponCurrent.F_ReloadStatus < .3f ? Color.Lerp(Color.red, Color.white, m_player.m_WeaponCurrent.F_ReloadStatus / .3f):Color.white;
+            img_sld.color = player.m_WeaponCurrent.F_ReloadStatus < .5f ? Color.Lerp(Color.red, Color.white, m_player.m_WeaponCurrent.F_ReloadStatus / .5f) :Color.white;
             if (m_Grid.I_Count != m_player.m_WeaponCurrent.m_WeaponInfo.m_ClipAmount)
             {
                 m_Grid.ClearGrid();
                 for (int i = 0; i < player.m_WeaponCurrent.m_WeaponInfo.m_ClipAmount; i++)
                     m_Grid.AddItem(i);
 
-                int lineClipCount = (m_player.m_WeaponCurrent.m_WeaponInfo.m_ClipAmount < UIConst.I_AmmoCountMax) ? m_player.m_WeaponCurrent.m_WeaponInfo.m_ClipAmount : UIConst.I_AmmoCountMax;
-                m_GridLayout.cellSize = new Vector2((UIConst.F_IAmmoLineLength-(lineClipCount-1)*m_GridLayout.spacing.x)/lineClipCount,m_GridLayout.cellSize.y);
-                m_GridLayout.constraintCount = lineClipCount;
+                float size = (UIConst.F_IAmmoLineLength + m_GridLayout.padding.bottom + m_GridLayout.padding.top - (m_player.m_WeaponCurrent.m_WeaponInfo.m_ClipAmount - 1) * m_GridLayout.spacing.x) / m_player.m_WeaponCurrent.m_WeaponInfo.m_ClipAmount;
+                m_GridLayout.cellSize = new Vector2( m_GridLayout.cellSize.x, size);
             }
 
             for (int i = 0; i < player.m_WeaponCurrent.m_WeaponInfo.m_ClipAmount; i++)
@@ -68,8 +67,6 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
     protected void Update()
     {
         if (m_player)
-        {
             tf_Container.position =Vector3.Lerp(tf_Container.position, CameraController.MainCamera.WorldToScreenPoint(m_player.tf_Head.position),Time.deltaTime*10f);
-        }
     }
 }
