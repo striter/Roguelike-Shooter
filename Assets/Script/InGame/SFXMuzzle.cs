@@ -14,7 +14,7 @@ public class SFXMuzzle : SFXParticles
     public override void Play(int sourceID, float duration = 0)
     {
         base.Play(sourceID, duration);
-        lightCheck = .3f;
+        lightCheck = .2f;
 
         m_lights.Traversal((SFXRelativeLight light) => { light.Play(); });
     }
