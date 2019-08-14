@@ -30,6 +30,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     public int C_TestProjectileIndex = 29001;
     public int V_TestIndicatorIndex = 50002;
     public int B_TestBuffIndex = 1;
+    public bool B_AdditionalLight = true;
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.BackQuote))
@@ -67,6 +68,12 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
             OnStageFinished();
 
         UIManager.instance.transform.Find("Test/SeedTest").GetComponent<UnityEngine.UI.Text>().text = m_SeedString;
+
+        if (OptionsManager.B_AdditionalLight != B_AdditionalLight)
+        {
+            OptionsManager.B_AdditionalLight = B_AdditionalLight;
+            OptionsManager.OnOptionChanged();
+        }
     }
 #endregion
 #endif
@@ -80,6 +87,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         DataManager.Init();
         ObjectManager.Init();
         LevelManager.Init();
+        OptionsManager.Init();
         TBroadCaster<enum_BC_GameStatusChanged>.Init();
 
         m_PlayerInfo = TGameData<CPlayerSave>.Read();
@@ -571,5 +579,18 @@ public static class ObjectManager
     }
     #endregion
     #endregion
+}
+public static class OptionsManager
+{
+    public static bool B_AdditionalLight = false;
+    public static event Action event_OptionChanged;
+    public static void Init()
+    {
+    }
+    
+    public static void OnOptionChanged()
+    {
+        event_OptionChanged?.Invoke();
+    }
 }
 #endregion
