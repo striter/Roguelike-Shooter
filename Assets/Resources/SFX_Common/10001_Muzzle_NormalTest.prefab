@@ -239,7 +239,7 @@ Light:
   m_SpotAngle: 30
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 1
+    m_Type: 0
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
@@ -342,7 +342,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1338508047
+  randomSeed: -1328824739
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3724,7 +3724,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 2076590855
+  randomSeed: -709000480
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -7106,7 +7106,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1095620464
+  randomSeed: 1789512709
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -10425,7 +10425,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1128518755
+  randomSeed: -718636895
   InitialModule:
     serializedVersion: 3
     enabled: 1

@@ -9,16 +9,19 @@
 	}
 	SubShader
 	{
-		Tags { "RenderType"="Opaque"  "LightMode"="ForwardBase"}
+		Tags { "RenderType"="Opaque" }
 			Cull Back
 
 			CGINCLUDE
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"
 			#include "AutoLight.cginc"
+			sampler2D _MainTex;
+			float _TexScale;
 			ENDCG
 		Pass		//Base Pass
 		{
+			Tags { "LightMode" = "ForwardBase"}
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
@@ -40,15 +43,13 @@
 				SHADOW_COORDS(3)
 			};
 
-			sampler2D _MainTex;
-			float _TexScale;
 			float _Lambert;
 			v2f vert (appdata v)
 			{
 				v2f o;
-				o.uv  =v.uv;
 				o.pos = UnityObjectToClipPos(v.vertex);
 				o.worldPos =mul(unity_ObjectToWorld,v.vertex);
+				o.uv = float2(o.worldPos.x + o.worldPos.y, o.worldPos.z + o.worldPos.y) / _TexScale;
 				fixed3 worldNormal = normalize(mul(v.normal, (float3x3)unity_WorldToObject)); //法线方向n
 				fixed3 worldLightDir = normalize(UnityWorldSpaceLightDir(o.worldPos));
 				o.diffuse = saturate(dot(worldLightDir,worldNormal));
@@ -58,8 +59,7 @@
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-				float2 worldUV = float2(i.worldPos.x + i.worldPos.y,i.worldPos.z+i.worldPos.y)/ _TexScale;
-				float3 albedo = tex2D(_MainTex, worldUV);
+				float3 albedo = tex2D(_MainTex, i.uv);
 				UNITY_LIGHT_ATTENUATION(atten, i,i.worldPos)
 				fixed3 ambient = albedo*UNITY_LIGHTMODEL_AMBIENT.xyz;
 				atten = atten * _Lambert + (1- _Lambert);
@@ -69,6 +69,7 @@
 			ENDCG
 		}
 
+		USEPASS "Game/Common/Diffuse_Texture/FORWARDADD"
 		USEPASS "Game/Common/Diffuse_Texture_Normalmap/SHADOWCASTER"
 	}
 
