@@ -40,7 +40,7 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
         if (player.m_WeaponCurrent != null)
         {
             sld_Reload.value = player.m_WeaponCurrent.B_Reloading? player.m_WeaponCurrent.F_ReloadStatus:0;
-            img_sld.color = player.m_WeaponCurrent.F_ReloadStatus < .5f ? Color.Lerp(Color.red, Color.white, m_player.m_WeaponCurrent.F_ReloadStatus / .5f) :Color.white;
+            img_sld.color = Color.Lerp(Color.red, Color.white, m_player.m_WeaponCurrent.F_ReloadStatus );
             if (m_Grid.I_Count != m_player.m_WeaponCurrent.m_WeaponInfo.m_ClipAmount)
             {
                 m_Grid.ClearGrid();
@@ -53,7 +53,7 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
 
             for (int i = 0; i < player.m_WeaponCurrent.m_WeaponInfo.m_ClipAmount; i++)
             {
-                Color gridItemColor = player.m_WeaponCurrent.F_AmmoStatus < .3f ? Color.Lerp(Color.red, Color.white, m_player.m_WeaponCurrent.F_AmmoStatus / .3f) : Color.white;
+                Color gridItemColor = player.m_WeaponCurrent.F_AmmoStatus < .3f ?Color.red: Color.white;
                 m_Grid.GetItem(i).Set((m_player.m_WeaponCurrent.B_Reloading || i > m_player.m_WeaponCurrent.I_AmmoLeft - 1) ? new Color(0, 0, 0, 0) : gridItemColor);
             }
         }
