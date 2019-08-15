@@ -34,9 +34,9 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
         m_HealthManager = new EntityHealth(this,OnHealthEffect,OnDead);
         TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.Attach(this, OnReceiveDamage); });
     }
-    public virtual void OnSpawn(int id)
+    public virtual void OnSpawn(int _entityID)
     {
-        I_EntityID = id;
+        I_EntityID = _entityID;
         if (I_EntityID == -1)
             Debug.LogError("Please Init Entity Info!" + gameObject.name.ToString());
         m_HealthManager.OnActivate();
@@ -70,9 +70,6 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
         
         return m_HealthManager.OnReceiveDamage(damageInfo, m_EntityInfo.F_DamageReceiveMultiply);
     }
-    public virtual void OnActivate()
-    {
-    }
 
 
     protected virtual void OnDead()
@@ -85,7 +82,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
                     mat.SetFloat("_Amount1", value);
                 });
             });
-        }, 0, 1, 1f, OnRecycle));
+        }, 0, 1, GameConst.F_EntityDeadFadeTime, OnRecycle));
     }
     protected virtual void OnRecycle()
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using GameSetting;
 public class UIGI_HealthBar : UIT_GridItem {
     EntityBase m_AttachEntity;
     Text m_Name;
@@ -22,23 +22,17 @@ public class UIGI_HealthBar : UIT_GridItem {
     {
         m_AttachEntity = _attachTo;
         m_Name.text = _attachTo.I_PoolIndex.ToString();
-        _attachTo.m_HealthManager.AddOnDamageAction(OnDamage);
         OnHide();
     }
 
-    void OnHide()
+    public void OnHide()
     {
         transform.SetActivate(false);
         b_showItem = false;
     }
 
-    void OnDamage()
+    public void OnShow()
     {
-        if (m_AttachEntity.m_HealthManager.b_IsDead)
-        {
-            OnHide();
-            return;
-        }
         m_Graphics.Traversal((Graphic graphic) => { graphic.color = TCommon.ColorAlpha(graphic.color, 1f); });
 
         f_hideCheck = 2f;

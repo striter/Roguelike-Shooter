@@ -79,34 +79,26 @@ public class EntityEnermyBase : EntityBase {
         Animator animator = tf_Model.GetComponent<Animator>();
         if (animator)
             m_Animator = new EnermyAnimator(animator, E_AnimatorIndex, OnAnimKeyEvent);
+        m_AI.OnActivate();
     }
+    protected override void OnDead()
+    {
+        m_AI.Deactivate();
+        if (m_Animator != null)
+            m_Animator.OnDead();
+        base.OnDead();
+    }
+
     protected override void OnInfoChange()
     {
         base.OnInfoChange();
         m_AI.OnInfoChange();
-    }
-    public override void OnActivate()
-    {
-        base.OnActivate();
-        m_AI.OnActivate();
     }
     protected override void Update()
     {
         base.Update();
         if (m_Animator != null)
             m_Animator.SetRun( m_AI.B_AgentEnabled ? 1 : 0);
-    }
-    protected override void OnDead()
-    {
-        m_AI.Deactivate();
-        if(m_Animator!=null)
-            m_Animator.OnDead();
-        base.OnDead();
-    }
-    protected override void OnDisable()
-    {
-        m_AI.Deactivate();
-        base.OnDisable();
     }
     void OnAttackAnim(EntityBase target,bool startAttack)
     {

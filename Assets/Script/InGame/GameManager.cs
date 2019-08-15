@@ -40,7 +40,6 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         if (Input.GetKeyDown(KeyCode.Z) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
         {
             EntityBase enermy = ObjectManager.SpawnEntity(Z_TestEntityIndex, hit.point);
-            enermy.OnActivate();
             if (TestEntityBuffApplyOnSpawn > 0)
                 enermy.OnReceiveBuff(TestEntityBuffApplyOnSpawn);
         }
@@ -285,7 +284,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         for (; ; )
         {
             yield return new WaitForSeconds(_offset);
-            SpawnEntity(waveGenerate[curSpawnCount], curSpawnCount, EnviormentManager.m_currentLevel.m_Level.RandomEmptyTilePosition(m_GameSeed));
+            SpawnEnermy(waveGenerate[curSpawnCount], curSpawnCount, EnviormentManager.m_currentLevel.m_Level.RandomEmptyTilePosition(m_GameSeed));
             m_WaveCurrentEntity++;
             curSpawnCount++;
             if (curSpawnCount >= waveGenerate.Count)
@@ -295,11 +294,11 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
             }
         }
     }
-    void SpawnEntity(int entityIndex, int spawnIndex,Vector3 position)
+    void SpawnEnermy(int entityIndex, int spawnIndex,Vector3 position)
     {
         ObjectManager.SpawnIndicator(30001, position, Vector3.up).Play(entityIndex,GameConst.I_EnermySpawnDelay);
         this.StartSingleCoroutine(100 + spawnIndex, TIEnumerators.PauseDel(GameConst.I_EnermySpawnDelay, () => {
-            ObjectManager.SpawnEntity(entityIndex,position ).OnActivate();
+            ObjectManager.SpawnEntity(entityIndex,position );
         }));
     }
     #endregion

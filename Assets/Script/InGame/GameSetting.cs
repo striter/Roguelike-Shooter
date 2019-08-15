@@ -12,28 +12,25 @@ namespace GameSetting
     public static class GameConst
     {
         public const int I_TotalStageCount = 3;
+        public const float F_EntityDeadFadeTime = 2f;
+        public const float F_MaxActionAmount = 3f;
 
         public const int I_ProjectileMaxDistance = 100;
         public const int I_ProjectileBlinkWhenTimeLeftLessThan = 3;
         public const float F_AimAssistDistance = 100f;
         public const short I_BoltLastTimeAfterHit = 5;
-
         public const float F_LaserRayStartPause = .5f;      //Laser Start Pause
-
         public const float F_ParticlesMaxStopTime = 4f;
 
         public const int I_BurstFirePelletsOnceTrigger = 3;       //Times While Burst Fire
         public const int I_ProjectileSpreadAtDistance = 100;       //Meter,  Bullet Spread In A Circle At End Of This Distance
 
         public const float F_LevelTileSize = 2f;        //Cube Size For Level Tiles
-
-        public const float F_DamagePlayerFallInOcean = 10f;        //Player Ocean Fall Damage
-
+        
         public const float F_PlayerCameraSmoothParam = 1f;     //Camera Smooth Param For Player .2 is suggested
         public const float F_PlayerFallSpeed = 9.8f;       //Player Fall Speed(Not Acceleration)
 
         public const float F_EnermyAICheckTime = .3f;       //AI Check Offset Time, 0.3 is suggested;
-
         public const int I_EnermyCountWaveFinish = 0;       //When Total Enermy Count Reaches This Amount,Wave Finish
         public const int I_EnermySpawnDelay = 2;        //Enermy Spawn Delay Time 
     }
@@ -48,6 +45,8 @@ namespace GameSetting
 
         public static int GetEnermyWeaponIndex(int enermyIndex, int weaponIndex = 0, int subWeaponIndex = 0) => enermyIndex * 100 + weaponIndex * 10 + subWeaponIndex;
         public static int GetEnermyWeaponSubIndex(int weaponIndex) => weaponIndex + 1;
+
+        public static float F_ActionAmountReceive(float damageApply) => damageApply * .1f;
     }
 
     public static class UIConst
@@ -128,7 +127,8 @@ namespace GameSetting
         OnRecycleEntity,
 
         PlayerInfoChanged,
-        PlayerLevelStatusChanged,
+        LevelStatusChange,
+        EntityReceiveDamage,
 
         OnStageStart,       //Total Stage Start
         OnStageFinish,
@@ -325,8 +325,7 @@ namespace GameSetting
         public float F_HealthScale =>Mathf.Clamp01( m_CurrentHealth/m_MaxHealth);
         public float F_ArmorScale => Mathf.Clamp01(m_CurrentArmor/ m_MaxArmor);
         public float F_EHPScale => Mathf.Clamp01((m_CurrentArmor+m_CurrentHealth)/(m_MaxArmor+m_MaxHealth));
-        Action OnDamage;
-        public void AddOnDamageAction(Action damageAction) => OnDamage += damageAction;
+        protected EntityBase m_Entity;
         protected void DamageArmor(float amount)
         {
             m_CurrentArmor -= amount;
@@ -338,8 +337,8 @@ namespace GameSetting
 
         public EntityHealth(EntityBase entity, Action<enum_HealthMessageType> _OnHealthChanged, Action _OnDead) :base(entity.I_MaxHealth,_OnHealthChanged,_OnDead)
         {
+            m_Entity = entity;
             m_MaxArmor = entity.I_MaxArmor;
-
         }
         public override void OnActivate()
         {
@@ -381,13 +380,10 @@ namespace GameSetting
                         }
                         break;
                 }
-                
-                OnDamage?.Invoke();
+
+                TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.EntityReceiveDamage, damageInfo.I_SourceID, m_Entity, damageReceive);
                 if (b_IsDead)
-                {
                     OnDead();
-                    OnDamage = null;
-                }
             }
             else if (damageInfo.m_AmountApply < 0)    //Healing
             {
@@ -439,29 +435,26 @@ namespace GameSetting
 
     public class DamageInfo
     {
+        public int I_SourceID { get; private set; }
         public float m_AmountApply => m_baseDamage * m_BuffApply.F_DamageEnhanceMultiply;
         public DamageBuffInfo m_BuffApply { get; private set; }
         public enum_DamageType m_damageType { get; private set; }
         private float m_baseDamage;
         public DamageInfo(float damage,enum_DamageType type)
         {
+            I_SourceID = -1;
             m_baseDamage = damage;
             m_BuffApply = DamageBuffInfo.Create();
             m_damageType = type;
         }
-        public DamageInfo(float damage, enum_DamageType type, DamageBuffInfo buff)
+        public void SetDetailedInfo(int sourceID,DamageBuffInfo buffInfo)
         {
-            m_baseDamage = damage;
-            m_damageType = type;
-            m_BuffApply = buff;
+            I_SourceID = sourceID;
+            m_BuffApply = buffInfo;
         }
         public void ResetDamage(float damage)
         {
             m_baseDamage = damage;
-        }
-        public void ResetBuff(DamageBuffInfo buffInfo)
-        {
-            m_BuffApply = buffInfo;
         }
     }
     #endregion
@@ -471,7 +464,7 @@ namespace GameSetting
     {
         public DamageBuffInfo m_DamageBuffProperty { get; private set; }
         public List<BuffBase> m_BuffList { get; private set; } = new List<BuffBase>();
-        EntityBase m_Entity;
+        protected EntityBase m_Entity { get; private set; }
         Dictionary<int, SFXBuffEffect> m_BuffEffects = new Dictionary<int, SFXBuffEffect>();
         public float F_MaxHealth => m_Entity.I_MaxHealth;
         public float F_MaxArmor => m_Entity.I_MaxArmor;
@@ -579,16 +572,29 @@ namespace GameSetting
 
     public class PlayerInfoManager : EntityInfoManager
     {
-        List<ActionBase> m_CurrentActions = new List<ActionBase>();
+        List<ActionBase> m_ActionPool = new List<ActionBase>();
+        List<ActionBase> m_ActionHold = new List<ActionBase>();
+        List<ActionBase> m_ActionUsing = new List<ActionBase>();
         public float F_ActionAmount { get; private set; }
         public PlayerInfoManager(EntityBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnInfoChange):base(_attacher,_OnReceiveDamage,_OnInfoChange)
         {
-
+            F_ActionAmount = GameConst.F_MaxActionAmount;
+            TBroadCaster<enum_BC_GameStatusChanged>.Add<int,EntityBase, float>(enum_BC_GameStatusChanged.EntityReceiveDamage, OnEntityApplyDamage);
+        }
+        public override void OnDeactivate()
+        {
+            base.OnDeactivate();
+            TBroadCaster<enum_BC_GameStatusChanged>.Remove<int,EntityBase,float>(enum_BC_GameStatusChanged.EntityReceiveDamage, OnEntityApplyDamage);
         }
 
-        void OnPlayerApplyDamage(float damage)
+        void OnEntityApplyDamage(int applierID,EntityBase damageEntity,float amountApply)
         {
-            
+            if (applierID != m_Entity.I_EntityID)
+                return;
+
+            F_ActionAmount += GameExpression.F_ActionAmountReceive(amountApply);
+            if (F_ActionAmount > GameConst.F_MaxActionAmount)
+                F_ActionAmount = GameConst.F_MaxActionAmount;
         }
     }
     public struct ActionBase 

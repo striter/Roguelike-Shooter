@@ -58,7 +58,7 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
         B_Casting = true;
         if (I_BuffApplyOnCast > 0)
             buffInfo.m_BuffAplly.Add(I_BuffApplyOnCast);
-        m_DamageInfo.ResetBuff(buffInfo);
+        m_DamageInfo.SetDetailedInfo(sourceID,buffInfo);
         if (B_CameraShake)
             TPSCameraController.Instance.AddShake(I_ShakeAmount);
 

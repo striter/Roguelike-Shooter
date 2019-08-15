@@ -24,7 +24,7 @@ public class UI_BigmapControl : UIPageBase {        //This Page Won't Hide(One P
         btn_Bigmap.onClick.AddListener(OnBigmapBtnClick);
         TBroadCaster<enum_BC_GameStatusChanged>.Add(enum_BC_GameStatusChanged.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatusChanged>.Add(enum_BC_GameStatusChanged.OnBattleFinish, OnBattleFinish);
-        TBroadCaster<enum_BC_GameStatusChanged>.Add<SBigmapLevelInfo[,], TileAxis>(enum_BC_GameStatusChanged.PlayerLevelStatusChanged, OnLevelStatusChanged);
+        TBroadCaster<enum_BC_GameStatusChanged>.Add<SBigmapLevelInfo[,], TileAxis>(enum_BC_GameStatusChanged.LevelStatusChange, OnLevelStatusChanged);
         ShowMap(false, false);
     }
 
@@ -33,7 +33,7 @@ public class UI_BigmapControl : UIPageBase {        //This Page Won't Hide(One P
         base.OnDestroy();
         TBroadCaster<enum_BC_GameStatusChanged>.Remove(enum_BC_GameStatusChanged.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatusChanged>.Remove(enum_BC_GameStatusChanged.OnBattleFinish, OnBattleFinish);
-        TBroadCaster<enum_BC_GameStatusChanged>.Remove<SBigmapLevelInfo[,], TileAxis>(enum_BC_GameStatusChanged.PlayerLevelStatusChanged, OnLevelStatusChanged);
+        TBroadCaster<enum_BC_GameStatusChanged>.Remove<SBigmapLevelInfo[,], TileAxis>(enum_BC_GameStatusChanged.LevelStatusChange, OnLevelStatusChanged);
     }
     void OnBattleStart()
     {

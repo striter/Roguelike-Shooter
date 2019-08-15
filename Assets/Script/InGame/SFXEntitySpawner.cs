@@ -9,6 +9,6 @@ public class SFXEntitySpawner : SFXParticles {
     {
         base.Play(_sourceID);
 
-        ObjectManager.SpawnEntity(I_EntitySpawnID,transform.position).OnActivate();
+        ObjectManager.SpawnEntity(I_EntitySpawnID,transform.position);
     }
 }

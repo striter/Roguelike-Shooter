@@ -52,7 +52,7 @@ public class SFXProjectile : SFXBase
         OnPlayPreset();
         if (I_BufFApplyOnHit > 0)
             buffInfo.m_BuffAplly.Add(I_BufFApplyOnHit);
-        m_DamageInfo.ResetBuff(buffInfo);
+        m_DamageInfo.SetDetailedInfo(sourceID,buffInfo);
 
         m_Simulator = GetSimulator(direction, targetPosition);
         if (I_IndicatorIndex > 0)

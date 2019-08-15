@@ -80,7 +80,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         m_NavMeshData= NavMesh.AddNavMeshData(data);
         OnLevelPrepared(m_currentLevel);
         m_currentLevel.SetTileLocking(enum_TileLocking.Unlocked);
-        TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.PlayerLevelStatusChanged, m_MapLevelInfo, m_currentLevel.m_TileAxis);
+        TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.LevelStatusChange, m_MapLevelInfo, m_currentLevel.m_TileAxis);
     }
     
     public void OnChangeLevel(TileAxis targetAxis)
@@ -103,7 +103,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         
         m_currentLevel.m_Level.ShowPortal(OnStageFinished);
 
-        TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.PlayerLevelStatusChanged, m_MapLevelInfo, m_currentLevel.m_TileAxis);
+        TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.LevelStatusChange, m_MapLevelInfo, m_currentLevel.m_TileAxis);
     }
     static NavMeshHit sampleHit;
     public static Vector3 NavMeshPosition(Vector3 samplePosition)

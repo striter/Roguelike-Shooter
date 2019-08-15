@@ -8,6 +8,7 @@ public class LocalMessage
         Void,
         Template,
         TemplateDouble,
+        TemplateTriple,
     }
     public virtual enum_MessageType e_type => enum_MessageType.Void;
     public Action ac_listener { get; private set; }
@@ -49,6 +50,19 @@ public class LocalMessage<T, Y> : LocalMessage
     public void Trigger(T _object1, Y _object2)
     {
         ac_listener(_object1, _object2);
+    }
+}
+public class LocalMessage<T, Y,U> : LocalMessage
+{
+    public override enum_MessageType e_type => enum_MessageType.TemplateTriple;
+    public new Action<T, Y,U> ac_listener { get; private set; }
+    public LocalMessage(Action<T, Y,U> _listener)
+    {
+        ac_listener = _listener;
+    }
+    public void Trigger(T _object1, Y _object2,U _object3)
+    {
+        ac_listener(_object1, _object2,_object3);
     }
 }
 #endregion
@@ -180,5 +194,48 @@ public class TBroadCaster<TEnum>  {      //Message Center  Add / Remove / Trigge
 
         if (!triggered)
             UnityEngine.Debug.LogWarning("No Message Triggered By:" + type.ToString() + "|" + template1.ToString() + "|" + template2.ToString());
+    }
+
+    public static void Add<T, Y,U>(TEnum type, Action<T, Y,U> Listener)
+    {
+        if (dic_delegates.Count == 0)
+            UnityEngine.Debug.LogError("Please Init Broadcaster Before Add");
+
+        dic_delegates[type].Add(new LocalMessage<T, Y,U>(Listener));
+    }
+    public static void Remove<T, Y,U>(TEnum type, Action<T, Y,U> Listener)
+    {
+        LocalMessage<T, Y,U> removeTarget = null;
+        foreach (LocalMessage mb in dic_delegates[type])
+        {
+            if (mb.e_type == LocalMessage.enum_MessageType.TemplateTriple)
+                removeTarget = mb as LocalMessage<T, Y,U>;
+            if (removeTarget != null && removeTarget.ac_listener == Listener)
+            {
+                break;
+            }
+        }
+
+        if (removeTarget != null)
+            dic_delegates[type].Remove(removeTarget);
+    }
+    public static void Trigger<T, Y,U>(TEnum type, T template1, Y template2,U template3)
+    {
+        bool triggered = false;
+        foreach (LocalMessage del in dic_delegates[type])
+        {
+            LocalMessage<T, Y,U> target = null;
+            if (del.e_type == LocalMessage.enum_MessageType.TemplateTriple)
+                target = del as LocalMessage<T, Y,U>;
+
+            if (target != null)
+            {
+                triggered = true;
+                target.Trigger(template1, template2,template3);
+            }
+        }
+
+        if (!triggered)
+            UnityEngine.Debug.LogWarning("No Message Triggered By:" + type.ToString() + "|" + template1.ToString() + "|" + template2.ToString()+"|"+template3.ToString());
     }
 }
