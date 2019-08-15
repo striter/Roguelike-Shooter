@@ -25,6 +25,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
     {
         tf_Model = transform.Find("Model");
         tf_Head = transform.Find("Head");
+        I_PoolIndex = presetIndex;
         m_Flag = flag;
         m_SkinRenderers = tf_Model.Find("Skin").GetComponentsInChildren<Renderer>();
         m_HitChecks = GetComponentsInChildren<HitCheckEntity>();
