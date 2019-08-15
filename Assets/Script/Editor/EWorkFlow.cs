@@ -13,7 +13,7 @@ public class EPostProcessor : AssetPostprocessor
 }
 public class EWorkFlow_StyleColorCustomization : EditorWindow
 {
-    [MenuItem("WorkFlow/Style_ColorSerialization(Direction,Ocean,Ambient)")]
+    [MenuItem("Work Flow/Style_ColorSerialization(Direction,Ocean,Ambient)",false,0)]
     public static void StyleColorSerialization()
     {
         EWorkFlow_StyleColorCustomization window= GetWindow(typeof(EWorkFlow_StyleColorCustomization)) as EWorkFlow_StyleColorCustomization;
@@ -174,7 +174,7 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
 
 public class EWorkFlow_ModelAutoPrefabPackaging : EditorWindow
 {
-    [MenuItem("WorkFlow/Model_AutoPrefabPackaging(Material,Shader,Scripts)")]
+    [MenuItem("Work Flow/Model_AutoPrefabPackaging(Material,Shader,Scripts)",false,0)]
     public static void ModelAutoPrefabPackaging()
     {
         // Get existing open window or if none, make a new one:

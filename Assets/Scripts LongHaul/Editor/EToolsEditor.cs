@@ -7,7 +7,7 @@ namespace EToolsEditor
 {
     public static class TMenuItem
     {
-        [MenuItem("Work Flow/Apply All Selected Prefabs")]
+        [MenuItem("Work Flow/Selected Prefabs/Apply All",false,101)]
         static void ApplyAllPrefabs()
         {
             GameObject[] objects = Selection.gameObjects;
@@ -22,7 +22,7 @@ namespace EToolsEditor
                 }
             }
         }
-        [MenuItem("Work Flow/Take Screen Shot")]
+        [MenuItem("Work Flow/Take Screen Shot",false, 102)]
         static void TakeScreenShot()
         {
             DirectoryInfo directory = new DirectoryInfo(Application.persistentDataPath+"/ScreenShots");
