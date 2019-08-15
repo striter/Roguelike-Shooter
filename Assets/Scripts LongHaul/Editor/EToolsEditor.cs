@@ -22,6 +22,14 @@ namespace EToolsEditor
                 }
             }
         }
+        [MenuItem("Work Flow/Take Screen Shot")]
+        static void TakeScreenShot()
+        {
+            DirectoryInfo directory = new DirectoryInfo(Application.persistentDataPath+"/ScreenShots");
+            string path = Path.Combine(directory.Parent.FullName, string.Format("Screenshot_{0}.png", DateTime.Now.ToString("yyyyMMdd_Hmmss")));
+            Debug.Log("Sceen Shots At " + path);
+            ScreenCapture.CaptureScreenshot(path);
+        }
     }
 
     public static class TEditor
