@@ -430,18 +430,21 @@ namespace GameSetting
         public DamageBuffInfo m_BuffApply { get; private set; }
         public enum_DamageType m_damageType { get; private set; }
         private float m_baseDamage;
-        public DamageInfo(float damage,enum_DamageType type)
-        {
-            I_SourceID = -1;
-            m_baseDamage = damage;
-            m_BuffApply = DamageBuffInfo.Create();
-            m_damageType = type;
-        }
-        public void SetDetailedInfo(int sourceID,DamageBuffInfo buffInfo)
+        public DamageInfo(int sourceID,float damage,enum_DamageType type,DamageBuffInfo buffInfo)
         {
             I_SourceID = sourceID;
+            m_baseDamage = damage;
             m_BuffApply = buffInfo;
+            m_damageType = type;
         }
+        public DamageInfo(int sourceID, int buffApply)
+        {
+            I_SourceID = sourceID;
+            m_baseDamage = 0;
+            m_BuffApply =  DamageBuffInfo.Create(new List<int>() { buffApply });
+            m_damageType =  enum_DamageType.Common;
+        }
+
         public void ResetDamage(float damage)
         {
             m_baseDamage = damage;
@@ -473,7 +476,7 @@ namespace GameSetting
             m_Entity = _attacher;
             OnReceiveDamage = _OnReceiveDamage;
             OnInfoChange = _OnInfoChange;
-            m_DamageBuffProperty = DamageBuffInfo.Create();
+            m_DamageBuffProperty = new DamageBuffInfo();
         }
         public virtual void OnDeactivate()
         {
@@ -481,14 +484,14 @@ namespace GameSetting
             OnBuffChanged();
         }
         public void Tick(float deltaTime) => m_BuffList.Traversal((BuffBase buff) => { buff.OnTick(deltaTime); });
-        public void AddBuff(int buffIndex)
+        public void AddBuff(int sourceID,int buffIndex)
         {
-            BuffBase buff = GetBuff(buffIndex);
+            BuffBase buff = GetBuff(sourceID,buffIndex);
             switch (buff.m_buffInfo.m_AddType)
             {
                 case enum_BuffAddType.AddUp:
                     {
-                        m_BuffList.Add(GetBuff(buffIndex));
+                        m_BuffList.Add(buff);
                     }
                     break;
                 case enum_BuffAddType.Refresh:
@@ -497,7 +500,7 @@ namespace GameSetting
                         if (buffRefresh != null)
                             buffRefresh.ExpireRefresh();
                         else
-                            m_BuffList.Add(GetBuff(buffIndex));
+                            m_BuffList.Add(buff);
                     }
                     break;
             }
@@ -508,7 +511,7 @@ namespace GameSetting
             m_BuffList.Remove(buff);
             OnBuffChanged();
         }
-        public BuffBase GetBuff(int buffIndex) => new BuffBase(DataManager.GetEntityBuffProperties(buffIndex), OnBuffExpired, OnReceiveDamage);
+        public BuffBase GetBuff(int sourceID,int buffIndex) => new BuffBase(sourceID, DataManager.GetEntityBuffProperties(buffIndex), OnBuffExpired, OnReceiveDamage);
         public void OnBuffChanged()
         {
             //Calculate All Buff Infos
@@ -526,7 +529,7 @@ namespace GameSetting
             });
 
             F_DamageReceiveMultiply = F_DamageReceiveMultiply < 0 ? 0 : F_DamageReceiveMultiply;
-            m_DamageBuffProperty = DamageBuffInfo.Create(damageApplyEnhance, new List<int>());
+            m_DamageBuffProperty =DamageBuffInfo.Create( new List<int>(),damageApplyEnhance);
 
             //Do Effect Removal Check
             List<int> effectsList = m_BuffEffects.Keys.ToList();
@@ -593,11 +596,13 @@ namespace GameSetting
     public class BuffBase
     {
         public SBuff m_buffInfo { get; private set; }
+        int I_SourceID;
         float f_expireCheck, f_dotCheck;
         Action<BuffBase> OnBuffExpired;
         Func<DamageInfo, bool> OnDOTDamage;
-        public BuffBase(SBuff _buffInfo, Action<BuffBase> _OnBuffExpired, Func<DamageInfo, bool> _OnDOTDamage)
+        public BuffBase(int sourceID,SBuff _buffInfo, Action<BuffBase> _OnBuffExpired, Func<DamageInfo, bool> _OnDOTDamage)
         {
+            I_SourceID = sourceID;
             m_buffInfo = _buffInfo;
             OnBuffExpired = _OnBuffExpired;
             OnDOTDamage = _OnDOTDamage;
@@ -616,7 +621,7 @@ namespace GameSetting
             if (f_dotCheck > m_buffInfo.m_DamageTickTime)
             {
                 f_dotCheck -= m_buffInfo.m_DamageTickTime;
-                OnDOTDamage(new DamageInfo(m_buffInfo.m_DamagePerTick,m_buffInfo.m_DamageType));
+                OnDOTDamage(new DamageInfo(I_SourceID,m_buffInfo.m_DamagePerTick,m_buffInfo.m_DamageType,DamageBuffInfo.Default()));
             }
         }
         public void ExpireRefresh()
@@ -638,23 +643,23 @@ namespace GameSetting
     {
         public float F_DamageEnhanceMultiply { get; private set; }
         public List<int> m_BuffAplly { get; private set; }
-        public static DamageBuffInfo Create(float _damageEnhanceMultiply, List<int> _buffApply)
+        public static DamageBuffInfo Default()
         {
-            DamageBuffInfo buff = new DamageBuffInfo
-            {
-                F_DamageEnhanceMultiply = _damageEnhanceMultiply,
-                m_BuffAplly = _buffApply
-            };
-            return buff;
-        }
-        public static DamageBuffInfo Create()
-        {
-            DamageBuffInfo buff = new DamageBuffInfo
+            DamageBuffInfo info = new DamageBuffInfo()
             {
                 F_DamageEnhanceMultiply = 1f,
                 m_BuffAplly = new List<int>()
             };
-            return buff;
+            return info;
+        }
+        public static  DamageBuffInfo Create( List<int> _buffApply, float _damageEnhanceMultiply=1f)
+        {
+            DamageBuffInfo info = new DamageBuffInfo()
+            {
+                F_DamageEnhanceMultiply = _damageEnhanceMultiply,
+                m_BuffAplly = _buffApply
+            };
+            return info;
         }
     }
     #endregion

@@ -41,26 +41,26 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         {
             EntityBase enermy = ObjectManager.SpawnEntity(Z_TestEntityIndex, hit.point);
             if (TestEntityBuffApplyOnSpawn > 0)
-                enermy.OnReceiveBuff(TestEntityBuffApplyOnSpawn);
+                enermy.m_HitCheck.TryHit(new DamageInfo(-1,TestEntityBuffApplyOnSpawn));
         }
         if (Input.GetKeyDown(KeyCode.X) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
-            ObjectManager.SpawnDamageSource<SFXCast>(X_TestCastIndex, hit.point, CastForward?m_LocalPlayer.transform.forward: Vector3.up).Play(1000, DamageBuffInfo.Create());
+            ObjectManager.SpawnDamageSource<SFXCast>(X_TestCastIndex, hit.point, CastForward?m_LocalPlayer.transform.forward: Vector3.up).Play(1000, DamageBuffInfo.Default());
         if (Input.GetKeyDown(KeyCode.C) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
-            ObjectManager.SpawnDamageSource<SFXProjectile>(C_TestProjectileIndex, hit.point + Vector3.up, m_LocalPlayer.transform.forward).Play(0, m_LocalPlayer.transform.forward, hit.point + m_LocalPlayer.transform.forward * 10, DamageBuffInfo.Create());
+            ObjectManager.SpawnDamageSource<SFXProjectile>(C_TestProjectileIndex, hit.point + Vector3.up, m_LocalPlayer.transform.forward).Play(0, m_LocalPlayer.transform.forward, hit.point + m_LocalPlayer.transform.forward * 10, DamageBuffInfo.Default());
         if (Input.GetKeyDown(KeyCode.V) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
             ObjectManager.SpawnIndicator(V_TestIndicatorIndex, hit.point + Vector3.up, Vector3.up).Play(1000,3f);
         if (Input.GetKeyDown(KeyCode.B))
-            m_LocalPlayer.OnReceiveBuff(B_TestBuffIndex);
+            m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(-1,B_TestBuffIndex));
         if (Input.GetKeyDown(KeyCode.N))
-            m_LocalPlayer.BroadcastMessage("OnReceiveDamage", new DamageInfo(20, enum_DamageType.Common));
+            m_LocalPlayer.BroadcastMessage("OnReceiveDamage", new DamageInfo(-1,20, enum_DamageType.Common,DamageBuffInfo.Default()));
         if (Input.GetKeyDown(KeyCode.M))
-            m_LocalPlayer.BroadcastMessage("OnReceiveDamage", new DamageInfo(-50, enum_DamageType.Common));
+            m_LocalPlayer.BroadcastMessage("OnReceiveDamage", new DamageInfo(-1,-50, enum_DamageType.Common, DamageBuffInfo.Default()));
         if (Input.GetKeyDown(KeyCode.Alpha0))
         {
             List<EntityBase> entities = m_Entities.Values.ToList();
             entities.Traversal((EntityBase entity) => {
                 if (entity.m_Flag== enum_EntityFlag.Enermy)
-                    entity.BroadcastMessage("OnReceiveDamage", new DamageInfo(entity.m_EntityInfo.F_MaxHealth, enum_DamageType.Common));
+                    entity.BroadcastMessage("OnReceiveDamage", new DamageInfo(-1,entity.m_EntityInfo.F_MaxHealth, enum_DamageType.Common, DamageBuffInfo.Default()));
             });
         }
         if (Input.GetKeyDown(KeyCode.Equals))
@@ -272,7 +272,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     void OnBattleFinished()
     {
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnBattleFinish);
-        m_LocalPlayer.OnReceiveBuff(1001);
+        m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(-1,m_LocalPlayer.m_HealthManager.m_CurrentArmor-m_LocalPlayer.m_HealthManager.m_DefaultArmor ,enum_DamageType.ArmorOnly, DamageBuffInfo.Default()));
         B_Battling = false;
         OnLevelFinished();
     }

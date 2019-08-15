@@ -42,7 +42,6 @@ public class SFXProjectile : SFXBase
     {
         base.Init(sfxIndex);
         m_Trail = transform.GetComponentInChildren<TrailRenderer>();
-        m_DamageInfo = new DamageInfo(F_Damage, enum_DamageType.Common);
         if (B_TargetReachBlink)
                 m_Blink = new ModelBlink(transform.Find("BlinkModel"), .25f, .25f);
     }
@@ -52,8 +51,7 @@ public class SFXProjectile : SFXBase
         OnPlayPreset();
         if (I_BufFApplyOnHit > 0)
             buffInfo.m_BuffAplly.Add(I_BufFApplyOnHit);
-        m_DamageInfo.SetDetailedInfo(sourceID,buffInfo);
-
+        m_DamageInfo=new DamageInfo(sourceID,F_Damage, enum_DamageType.Common,buffInfo);
         m_Simulator = GetSimulator(direction, targetPosition);
         if (I_IndicatorIndex > 0)
             SpawnIndicator(targetPosition,Vector3.up, F_Duration(transform.position, targetPosition));

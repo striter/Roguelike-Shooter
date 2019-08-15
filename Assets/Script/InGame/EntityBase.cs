@@ -8,6 +8,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
     public float F_MovementSpeed;
     public int I_EntityID { get; private set; } = -1;
     public int I_PoolIndex { get; private set; } = -1;
+    public HitCheckEntity m_HitCheck => m_HitChecks[0];
     HitCheckEntity[] m_HitChecks;
     Renderer[] m_SkinRenderers;
     protected Transform tf_Model;
@@ -62,13 +63,14 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
     {
         m_EntityInfo.Tick(Time.deltaTime);
     }
-    public void OnReceiveBuff(int buffIndex) => m_EntityInfo.AddBuff(buffIndex);
+
+    protected void OnReceiveBuff(int sourceID,int buffIndex) => m_EntityInfo.AddBuff(sourceID,buffIndex);
     protected bool OnReceiveDamage(DamageInfo damageInfo)
     {
         if (m_HealthManager.b_IsDead)
             return false;
         
-        damageInfo.m_BuffApply.m_BuffAplly.Traversal((int buffIndex) => {OnReceiveBuff(buffIndex); });
+        damageInfo.m_BuffApply.m_BuffAplly.Traversal((int buffIndex) => {OnReceiveBuff(damageInfo.I_SourceID,buffIndex); });
         
         return m_HealthManager.OnReceiveDamage(damageInfo, m_EntityInfo.F_DamageReceiveMultiply);
     }
