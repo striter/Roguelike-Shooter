@@ -214,6 +214,10 @@ MonoBehaviour:
   I_BufFApplyOnHit: 0
   F_Radius: 0.3
   F_Height: 0
+  RI_CountExtension:
+    start: 1
+    length: 2
+  F_OffsetExtension: 10
   B_TargetReachBlink: 0
   I_BeamLength: 30
 --- !u!198 &198459710163750792

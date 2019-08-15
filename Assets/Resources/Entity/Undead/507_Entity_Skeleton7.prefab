@@ -1083,7 +1083,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 275d93242000a1d47972944c1cd255ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  I_MaxHealth: 2000
+  I_DefaultArmor: 0
+  F_MovementSpeed: 5
+  E_EnermyType: 5
   E_AnimatorIndex: 10
+  F_AIChaseRange: 1
+  F_AIAttackRange: 5
+  F_AttackDuration:
+    start: 3
+    length: 1
+  F_AttackSpread: 0
+  F_AttackTimes:
+    start: 0
+    length: 0
+  F_AttackRate: 2
   F_AttackRotateParam: 0
   I_AttackPreAimPercentage: 100
   B_AttackMove: 0

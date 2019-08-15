@@ -215,6 +215,10 @@ MonoBehaviour:
   I_BufFApplyOnHit: 0
   F_Radius: 0.1
   F_Height: 0.5
+  RI_CountExtension:
+    start: 7
+    length: 2
+  F_OffsetExtension: 2
   B_TargetReachBlink: 0
 --- !u!198 &198194951697349546
 ParticleSystem:

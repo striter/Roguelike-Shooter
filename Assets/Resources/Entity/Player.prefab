@@ -964,8 +964,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   I_MaxHealth: 100
-  I_MaxArmor: 50
-  F_MovementSpeed: 5
+  I_DefaultArmor: 50
+  F_MovementSpeed: 3
   TESTWEAPON1: 5001
   TESTWEAPON2: 4001
 --- !u!114 &114158670332917712
