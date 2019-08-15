@@ -91,9 +91,9 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
 
         m_PlayerInfo = TGameData<CPlayerSave>.Read();
 
-        TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnSpawnEntity, OnSpawnEntity);
-        TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnRecycleEntity, OnRecycleEntity);
-        TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnRecycleEntity, OnEntityDead);
+        TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnEntitySpawn, OnSpawnEntity);
+        TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnEntityDead, OnEntityDead);
+        TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnEntityRecycle, OnRecycleEntity);
         Application.targetFrameRate = 60;
     }
     private void OnDestroy()
@@ -102,9 +102,9 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
 
         TGameData<CPlayerSave>.Save(m_PlayerInfo);
 
-        TBroadCaster<enum_BC_GameStatusChanged>.Remove<EntityBase>(enum_BC_GameStatusChanged.OnSpawnEntity, OnSpawnEntity);
-        TBroadCaster<enum_BC_GameStatusChanged>.Remove<EntityBase>(enum_BC_GameStatusChanged.OnRecycleEntity, OnRecycleEntity);
-        TBroadCaster<enum_BC_GameStatusChanged>.Remove<EntityBase>(enum_BC_GameStatusChanged.OnRecycleEntity, OnEntityDead);
+        TBroadCaster<enum_BC_GameStatusChanged>.Remove<EntityBase>(enum_BC_GameStatusChanged.OnEntitySpawn, OnSpawnEntity);
+        TBroadCaster<enum_BC_GameStatusChanged>.Remove<EntityBase>(enum_BC_GameStatusChanged.OnEntityDead, OnEntityDead);
+        TBroadCaster<enum_BC_GameStatusChanged>.Remove<EntityBase>(enum_BC_GameStatusChanged.OnEntityRecycle, OnRecycleEntity);
 
     }
     private void Start()
@@ -465,15 +465,11 @@ public static class ObjectManager
         toPosition = EnviormentManager.NavMeshPosition(toPosition);
         entity.transform.position = toPosition;
         entity.OnSpawn(GameManager.I_EntityID(i_entityIndex++, entity.m_Flag));
-        TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnSpawnEntity, entity);
+        TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnEntitySpawn, entity);
         return entity;
     }
 
-    public static void RecycleEntity(int index, EntityBase target)
-    {
-        ObjectPoolManager<int, EntityBase>.Recycle(index, target);
-        TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnRecycleEntity, target);
-    }
+    public static void RecycleEntity(int index, EntityBase target)=>ObjectPoolManager<int, EntityBase>.Recycle(index, target);
     #endregion
     #region Weapon
     public static WeaponBase SpawnWeapon(enum_PlayerWeapon type, EntityPlayerBase toPlayer)

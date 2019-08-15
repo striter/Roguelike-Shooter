@@ -11,25 +11,26 @@ public class UI_EnermyHealth : SimpleSingletonMono<UI_EnermyHealth> {
     }
     private void Start()
     {
-        TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnSpawnEntity, OnSpawnEntity);
-        TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnRecycleEntity, OnRecycleEntity);
-        TBroadCaster<enum_BC_GameStatusChanged>.Add<int,EntityBase,float>(enum_BC_GameStatusChanged.EntityReceiveDamage, OnEntityDamage);
+        TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnEntitySpawn, OnEntitySpawn);
+        TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnEntityRecycle, OnEntityRecycle);
+        TBroadCaster<enum_BC_GameStatusChanged>.Add<int,EntityBase,float>(enum_BC_GameStatusChanged.OnEntityDamage, OnEntityDamage);
     }
     private void OnDestroy()
     {
-        TBroadCaster<enum_BC_GameStatusChanged>.Remove<EntityBase>(enum_BC_GameStatusChanged.OnSpawnEntity, OnSpawnEntity);
-        TBroadCaster<enum_BC_GameStatusChanged>.Remove<EntityBase>(enum_BC_GameStatusChanged.OnRecycleEntity, OnRecycleEntity);
-        TBroadCaster<enum_BC_GameStatusChanged>.Remove<int,EntityBase,float>(enum_BC_GameStatusChanged.EntityReceiveDamage, OnEntityDamage);
+        TBroadCaster<enum_BC_GameStatusChanged>.Remove<EntityBase>(enum_BC_GameStatusChanged.OnEntitySpawn, OnEntitySpawn);
+        TBroadCaster<enum_BC_GameStatusChanged>.Remove<EntityBase>(enum_BC_GameStatusChanged.OnEntityRecycle, OnEntityRecycle);
+        TBroadCaster<enum_BC_GameStatusChanged>.Remove<int,EntityBase,float>(enum_BC_GameStatusChanged.OnEntityDamage, OnEntityDamage);
     }
 
-    void OnSpawnEntity(EntityBase entity)
+    void OnEntitySpawn(EntityBase entity)
     {
         if (entity.m_Flag!= enum_EntityFlag.Enermy)
             return;
 
         m_HealthGrid.AddItem(entity.I_EntityID).AttachItem(entity);
     }
-    void OnRecycleEntity(EntityBase entity)
+
+    void OnEntityRecycle(EntityBase entity)
     {
         if (entity.m_Flag != enum_EntityFlag.Enermy)
             return;
@@ -41,9 +42,6 @@ public class UI_EnermyHealth : SimpleSingletonMono<UI_EnermyHealth> {
         if (damageEntity.m_Flag != enum_EntityFlag.Enermy)
             return;
 
-        if(damageEntity.m_HealthManager.b_IsDead)
-            m_HealthGrid.GetItem(damageEntity.I_EntityID).OnHide();
-        else
-            m_HealthGrid.GetItem(damageEntity.I_EntityID).OnShow();
+        m_HealthGrid.GetItem(damageEntity.I_EntityID).OnShow();
     }
 }

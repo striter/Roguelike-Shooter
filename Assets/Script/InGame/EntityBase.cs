@@ -74,6 +74,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
 
     protected virtual void OnDead()
     {
+        TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnEntityDead,this);
         m_EntityInfo.OnDeactivate();
         TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.HideAllAttaches(); check.SetEnable(false); });
         this.StartSingleCoroutine(1, TIEnumerators.ChangeValueTo((float value) => {
@@ -86,6 +87,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
     }
     protected virtual void OnRecycle()
     {
+        TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnEntityRecycle, this);
         ObjectManager.RecycleEntity(I_PoolIndex, this);
     }
     protected virtual void OnHealthEffect(enum_HealthMessageType type)

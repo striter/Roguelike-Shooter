@@ -123,12 +123,13 @@ namespace GameSetting
     enum enum_BC_GameStatusChanged
     {
         Invalid = -1,
-        OnSpawnEntity,
-        OnRecycleEntity,
+        OnEntitySpawn,
+        OnEntityDamage,
+        OnEntityDead,
+        OnEntityRecycle,
 
         PlayerInfoChanged,
         LevelStatusChange,
-        EntityReceiveDamage,
 
         OnStageStart,       //Total Stage Start
         OnStageFinish,
@@ -381,7 +382,7 @@ namespace GameSetting
                         break;
                 }
 
-                TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.EntityReceiveDamage, damageInfo.I_SourceID, m_Entity, damageReceive);
+                TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnEntityDamage, damageInfo.I_SourceID, m_Entity, damageReceive);
                 if (b_IsDead)
                     OnDead();
             }
@@ -579,12 +580,12 @@ namespace GameSetting
         public PlayerInfoManager(EntityBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnInfoChange):base(_attacher,_OnReceiveDamage,_OnInfoChange)
         {
             F_ActionAmount = GameConst.F_MaxActionAmount;
-            TBroadCaster<enum_BC_GameStatusChanged>.Add<int,EntityBase, float>(enum_BC_GameStatusChanged.EntityReceiveDamage, OnEntityApplyDamage);
+            TBroadCaster<enum_BC_GameStatusChanged>.Add<int,EntityBase, float>(enum_BC_GameStatusChanged.OnEntityDamage, OnEntityApplyDamage);
         }
         public override void OnDeactivate()
         {
             base.OnDeactivate();
-            TBroadCaster<enum_BC_GameStatusChanged>.Remove<int,EntityBase,float>(enum_BC_GameStatusChanged.EntityReceiveDamage, OnEntityApplyDamage);
+            TBroadCaster<enum_BC_GameStatusChanged>.Remove<int,EntityBase,float>(enum_BC_GameStatusChanged.OnEntityDamage, OnEntityApplyDamage);
         }
 
         void OnEntityApplyDamage(int applierID,EntityBase damageEntity,float amountApply)
