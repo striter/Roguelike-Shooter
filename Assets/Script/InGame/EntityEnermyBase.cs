@@ -478,7 +478,6 @@ public class EntityEnermyBase : EntityBase {
         ModelBlink m_Blink;
         Action OnSelfDetonate,OnDead;
         float timeElapsed;
-        float detonateTime;
         public EnermyCasterSelfDetonateAnimLess(SFXCast _castInfo, EntityEnermyBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo, Action _OnSelfDetonate,Action _OnDead,Transform _blinkModels) : base(_castInfo, _controller, _transform, _GetBuffInfo)
         {
             OnSelfDetonate = _OnSelfDetonate;

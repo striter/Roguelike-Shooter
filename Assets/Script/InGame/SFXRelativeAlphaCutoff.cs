@@ -7,7 +7,6 @@ public class SFXRelativeAlphaCutoff : SFXRelativeBase,ISingleCoroutine {
     public float F_StartCutoff;
     public float F_EndCutoff;
     public float F_Time;
-    float timeCheck;
     int HS_Cutoff = Shader.PropertyToID("_CutOff");
     public override void Init()
     {

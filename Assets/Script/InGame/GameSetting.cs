@@ -320,31 +320,28 @@ namespace GameSetting
     public class EntityHealth:HealthBase
     {
         public float m_CurrentArmor { get; private set; }
-        public float m_MaxArmor { get; private set; }
+        public float m_DefaultArmor { get; private set; }
         
-        public float F_TotalHealth => m_MaxHealth + m_MaxArmor;
+        public float F_TotalHealth => m_MaxHealth + m_DefaultArmor;
         public float F_HealthScale =>Mathf.Clamp01( m_CurrentHealth/m_MaxHealth);
-        public float F_ArmorScale => Mathf.Clamp01(m_CurrentArmor/ m_MaxArmor);
-        public float F_EHPScale => Mathf.Clamp01((m_CurrentArmor+m_CurrentHealth)/(m_MaxArmor+m_MaxHealth));
+        public float F_ArmorScale => Mathf.Clamp01(m_CurrentArmor/ m_DefaultArmor);
+        public float F_EHPScale => Mathf.Clamp01((m_CurrentArmor+m_CurrentHealth)/(m_DefaultArmor+m_MaxHealth));
         protected EntityBase m_Entity;
         protected void DamageArmor(float amount)
         {
             m_CurrentArmor -= amount;
             if (m_CurrentArmor < 0)
                 m_CurrentArmor = 0;
-            else if (m_CurrentArmor > m_MaxArmor)
-                m_CurrentArmor = m_MaxArmor;
         }
 
         public EntityHealth(EntityBase entity, Action<enum_HealthMessageType> _OnHealthChanged, Action _OnDead) :base(entity.I_MaxHealth,_OnHealthChanged,_OnDead)
         {
             m_Entity = entity;
-            m_MaxArmor = entity.I_MaxArmor;
+            m_DefaultArmor = entity.I_DefaultArmor;
         }
         public override void OnActivate()
         {
             base.OnActivate();
-            m_CurrentArmor = m_MaxArmor;
         }
         public override bool OnReceiveDamage(DamageInfo damageInfo,float damageMultiply=1)
         {
@@ -393,8 +390,6 @@ namespace GameSetting
                 {
                     case enum_DamageType.ArmorOnly:
                         {
-                            if (F_ArmorScale==1)
-                                return false;
                             DamageArmor(amountHeal);
                             OnHealthChanged(enum_HealthMessageType.ReceiveArmor);
                         }
@@ -417,8 +412,6 @@ namespace GameSetting
                                 return true;
                             }
                             
-                            if (F_ArmorScale>=1)
-                                return false;
                             DamageArmor(armorReceive);
                             OnHealthChanged(enum_HealthMessageType.ReceiveArmor);
                         }
@@ -427,10 +420,6 @@ namespace GameSetting
             }
             
             return true;
-        }
-
-        public void Tick(float deltaTime)
-        {
         }
     }
 
@@ -468,7 +457,6 @@ namespace GameSetting
         protected EntityBase m_Entity { get; private set; }
         Dictionary<int, SFXBuffEffect> m_BuffEffects = new Dictionary<int, SFXBuffEffect>();
         public float F_MaxHealth => m_Entity.I_MaxHealth;
-        public float F_MaxArmor => m_Entity.I_MaxArmor;
 
         public float F_DamageReceiveMultiply { get; private set; } = 1f;
         public float F_MovementSpeedMultiply { get; private set; } = 1f;
@@ -550,6 +538,7 @@ namespace GameSetting
                     m_BuffEffects.Remove(effectsList[i]);
                 }
             }
+
             //Refresh Or Add Effects
             for (int i = 0; i < m_BuffList.Count; i++)
             {
@@ -566,7 +555,6 @@ namespace GameSetting
                     m_BuffEffects[m_BuffList[i].m_buffInfo.m_Index].Play(m_Entity.I_EntityID,m_BuffList[i].m_buffInfo.m_ExpireDuration);
                 }
             }
-
             OnInfoChange();
         }
     }

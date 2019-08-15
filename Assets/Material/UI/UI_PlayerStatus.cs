@@ -36,7 +36,7 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
     {
         m_player = player;
         txt_Health.text = ((int)player.m_HealthManager.m_CurrentHealth).ToString() + "/" + ((int)player.m_HealthManager.m_MaxHealth).ToString();
-        txt_Armor.text = ((int)player.m_HealthManager.m_CurrentArmor).ToString() + "/" + ((int)player.m_HealthManager.m_MaxArmor).ToString();
+        txt_Armor.text = ((int)player.m_HealthManager.m_CurrentArmor).ToString() + "/" + ((int)player.m_HealthManager.m_DefaultArmor).ToString();
         if (player.m_WeaponCurrent != null)
         {
             sld_Reload.value = player.m_WeaponCurrent.B_Reloading? player.m_WeaponCurrent.F_ReloadStatus:0;

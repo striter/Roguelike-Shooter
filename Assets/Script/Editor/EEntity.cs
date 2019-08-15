@@ -78,7 +78,8 @@ public class EEntity : Editor {
         m_Preview.camera.transform.LookAt(m_PreviewObject.transform);
         m_Preview.BeginStaticPreview(r);
         m_Preview.camera.Render();
-        if (m_PreviewAnimator.GetInteger(hs_weaponType) != (int)m_EnermyBase.E_AnimatorIndex)
+
+        if (m_PreviewAnimator!=null&&m_PreviewAnimator.GetInteger(hs_weaponType) != (int)m_EnermyBase.E_AnimatorIndex)
         {
             m_PreviewAnimator.SetInteger(hs_weaponType,(int)m_EnermyBase.E_AnimatorIndex);
             m_PreviewAnimator.SetTrigger(hs_activate);
