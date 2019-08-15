@@ -147,19 +147,6 @@ public class PE_BSC : PostEffectBase {      //Brightness Saturation Contrast
         Mat_Cur.SetFloat("_Contrast", _contrast);
     }
 }
-public class PE_EdgeDetection : PostEffectBase  //Edge Detection Easiest
-{
-    public void SetCamera(Camera _cam)
-    {
-        base.OnSetEffect(_cam);
-        SetEffect(Color.green);
-    }
-    public void SetEffect(Color _edgeColor,float _showEdge = 1f )
-    {
-        Mat_Cur.SetColor("_EdgeColor", _edgeColor);
-        Mat_Cur.SetFloat("_ShowEdge", _showEdge);
-    }
-}
 public class PE_GaussianBlur : PostEffectBase       //Gassuain Blur
 {
     float F_BlurSpread = 2f;
@@ -351,19 +338,19 @@ public class PE_FogDepth : PostEffectBase
         Graphics.Blit(source,destination,Mat_Cur);
     }
 }
-public class PE_EdgeDetectionDepth:PE_EdgeDetection
+public class PE_DepthOutline:PostEffectBase
 {
     public override void OnSetEffect(Camera cam)
     {
         base.OnSetEffect(cam);
         cam.depthTextureMode |= DepthTextureMode.DepthNormals;
-        SetEffect();
+        SetEffect(Color.black);
     }
-    public void SetEffect(float _sampleDistance = 1f, float _sensitivityDepth = 1f, float _sensitivityNormal = 1f)
+    public void SetEffect(Color _edgeColor, float _sampleDistance = 1f, float _depthBias=.001f)
     {
+        Mat_Cur.SetColor("_EdgeColor", _edgeColor);
         Mat_Cur.SetFloat("_SampleDistance", _sampleDistance);
-        Mat_Cur.SetFloat("_SensitivityDepth", _sensitivityDepth);
-        Mat_Cur.SetFloat("_SensitivityNormals", _sensitivityNormal);
+        Mat_Cur.SetFloat("_DepthBias", _depthBias);
     }
 }
 public class PE_FogDepthNoise : PE_FogDepth
@@ -428,5 +415,13 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
         m_GaussianBlur.OnRenderImage(m_RenderTexture, m_RenderTexture);     //Blur
         Mat_Cur.SetTexture("_RenderTex", m_RenderTexture);
         Graphics.Blit(source, destination, Mat_Cur, 1);        //Mix
+    }
+}
+public class PE_DepthSSAO : PostEffectBase
+{
+    public override void OnSetEffect(Camera cam)
+    {
+        base.OnSetEffect(cam);
+        Cam_Cur.depthTextureMode |= DepthTextureMode.Depth;
     }
 }

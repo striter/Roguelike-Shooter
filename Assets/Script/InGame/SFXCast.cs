@@ -142,7 +142,6 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
             case enum_CastAreaType.ForwardTrapezium:
                 {
                     hits = Physics_Extend.TrapeziumCastAll(CastTransform.position,CastTransform.forward,CastTransform.up,V4_CastInfo,GameLayer.Mask.I_EntityOnly);
-                    Debug.Log(hits.Length);
                 }
                 break;
         }
