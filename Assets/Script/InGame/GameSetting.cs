@@ -142,6 +142,8 @@ namespace GameSetting
     #endregion
 
     #region GameEnum
+    public enum enum_EntityFlag { Invalid=-1, Player=1,Enermy=2,}
+
     public enum enum_HitCheck { Invalid = -1, Static = 1, Entity = 2, Dynamic = 3, }
 
     public enum enum_BattleDifficulty { Invalid = -1,Peaceful=0, Eazy = 1, Normal = 2, Hard = 3,Final=4, }
@@ -166,7 +168,7 @@ namespace GameSetting
 
     public enum enum_TriggerType { Invalid = -1, Single = 1, Auto = 2, Burst = 3, Pull = 4, Store = 5, }
 
-    public enum enum_EnermyWeaponProjectile { Invalid=-1, Single = 1, MultipleFan = 2, MultipleLine = 3, };
+    public enum enum_ProjectileFireType { Invalid=-1, Single = 1, MultipleFan = 2, MultipleLine = 3, };
 
     public enum enum_CastControllType { Invalid = -1, CastFromOrigin = 1, CastControlledForward = 2, CastAtTarget = 3, CastSelfDetonate=4,}
 
@@ -319,13 +321,10 @@ namespace GameSetting
         public float m_CurrentArmor { get; private set; }
         public float m_MaxArmor { get; private set; }
         
-        public float m_ArmorRegenSpeed { get; private set; }
-        public float m_ArmorRegenDuration { get; private set; }
         public float F_TotalHealth => m_MaxHealth + m_MaxArmor;
         public float F_HealthScale =>Mathf.Clamp01( m_CurrentHealth/m_MaxHealth);
         public float F_ArmorScale => Mathf.Clamp01(m_CurrentArmor/ m_MaxArmor);
         public float F_EHPScale => Mathf.Clamp01((m_CurrentArmor+m_CurrentHealth)/(m_MaxArmor+m_MaxHealth));
-        protected float f_ArmorRegenCheck;
         Action OnDamage;
         public void AddOnDamageAction(Action damageAction) => OnDamage += damageAction;
         protected void DamageArmor(float amount)
@@ -337,11 +336,9 @@ namespace GameSetting
                 m_CurrentArmor = m_MaxArmor;
         }
 
-        public EntityHealth(SEntity entityInfo, Action<enum_HealthMessageType> _OnHealthChanged, Action _OnDead) :base(entityInfo.m_MaxHealth,_OnHealthChanged,_OnDead)
+        public EntityHealth(EntityBase entity, Action<enum_HealthMessageType> _OnHealthChanged, Action _OnDead) :base(entity.I_MaxHealth,_OnHealthChanged,_OnDead)
         {
-            m_MaxArmor = entityInfo.m_MaxArmor;
-            m_ArmorRegenSpeed = entityInfo.m_ArmorRegenSpeed;
-            m_ArmorRegenDuration = entityInfo.m_ArmorRegenDuration;
+            m_MaxArmor = entity.I_MaxArmor;
 
         }
         public override void OnActivate()
@@ -384,9 +381,7 @@ namespace GameSetting
                         }
                         break;
                 }
-
-                f_ArmorRegenCheck = m_ArmorRegenDuration;
-
+                
                 OnDamage?.Invoke();
                 if (b_IsDead)
                 {
@@ -439,12 +434,6 @@ namespace GameSetting
 
         public void Tick(float deltaTime)
         {
-            if (m_ArmorRegenSpeed == 0)
-                return;
-
-            f_ArmorRegenCheck -= deltaTime;
-            if (f_ArmorRegenCheck < 0 && m_CurrentArmor != m_MaxArmor)
-                OnReceiveDamage(new DamageInfo(-1 * m_ArmorRegenSpeed * deltaTime, enum_DamageType.ArmorOnly));
         }
     }
 
@@ -484,11 +473,8 @@ namespace GameSetting
         public List<BuffBase> m_BuffList { get; private set; } = new List<BuffBase>();
         Dictionary<int, SFXBuffEffect> m_BuffEffects = new Dictionary<int, SFXBuffEffect>();
         EntityBase m_Entity;
-        public SEntity m_InfoData { get; private set; }
-        public int I_ObjectPoolIndex => m_InfoData.m_Index;
-        public float F_MaxHealth => m_InfoData.m_MaxHealth;
-        public float F_MaxArmor => m_InfoData.m_MaxArmor;
-        public float F_Spread => m_InfoData.m_Spread;
+        public float F_MaxHealth => m_Entity.I_MaxHealth;
+        public float F_MaxArmor => m_Entity.I_MaxArmor;
 
         public float F_DamageReceiveMultiply { get; private set; } = 1f;
         public float F_MovementSpeedMultiply { get; private set; } = 1f;
@@ -497,15 +483,14 @@ namespace GameSetting
 
         public float F_FireRateTick(float deltaTime) => deltaTime * F_FireRateMultiply;
         public float F_ReloadRateTick(float deltaTime) => deltaTime * F_ReloadRateMultiply;
-        public float F_MovementSpeed => m_InfoData.m_MoveSpeed * F_MovementSpeedMultiply;
+        public float F_MovementSpeed => m_Entity.F_MovementSpeed * F_MovementSpeedMultiply;
         Func<DamageInfo, bool> OnDamageEntity;
         Action OnInfoChange;
-        public EntityInfoManager(SEntity _entityInfo,EntityBase _attacher,Func<DamageInfo, bool> _OnDamageEntity,Action _OnInfoChange)
+        public EntityInfoManager(EntityBase _attacher,Func<DamageInfo, bool> _OnDamageEntity,Action _OnInfoChange)
         {
             m_Entity = _attacher;
                OnDamageEntity = _OnDamageEntity;
             OnInfoChange = _OnInfoChange;
-            m_InfoData = _entityInfo;
             m_DamageBuffProperty = DamageBuffInfo.Create();
         }
         public void Tick(float deltaTime) => m_BuffList.Traversal((BuffBase buff) => { buff.OnTick(deltaTime); });
@@ -872,45 +857,6 @@ namespace GameSetting
     #endregion
 
     #region ExcelStruct
-    public struct SEntity :ISExcel
-    {
-        int i_index;
-        int e_type;
-        float f_maxHealth;
-        float f_maxArmor;
-        float f_armorRegenSpeed;
-        float f_armorRegenDuration;
-        float f_moveSpeed;
-        float f_chaseRange;
-        float f_attackRange;    
-        bool b_battleObstacleCheck;
-        RangeFloat fr_duration;
-        float f_firerate;
-        RangeInt ir_count;
-        int i_spread;
-        RangeInt ir_rangeExtension;
-        float f_offsetExtension;
-        
-        public int m_Index=>i_index;
-        public enum_EntityType m_Type => (enum_EntityType)e_type;
-        public float m_MaxHealth => f_maxHealth;
-        public float m_MaxArmor => f_maxArmor;
-        public float m_ArmorRegenSpeed => f_armorRegenSpeed;
-        public float m_ArmorRegenDuration => f_armorRegenDuration;
-        public float m_MoveSpeed => f_moveSpeed;
-        public float m_AIChaseRange => f_chaseRange;
-        public float m_AIAttackRange => f_attackRange;
-        public bool m_BattleCheckObsatacle => b_battleObstacleCheck;
-        public RangeFloat m_BarrageDuration => fr_duration;
-        internal float m_Firerate => f_firerate;
-        public RangeInt m_ProjectileCount => ir_count;
-        public int m_Spread => i_spread>0? i_spread:0;
-        public RangeInt m_RangeExtension => ir_rangeExtension;
-        public float m_OffsetExtension => f_offsetExtension;
-        public void InitOnValueSet()
-        {
-        }
-    }
     public struct SWeapon : ISExcel
     {
         int index;

@@ -5,7 +5,8 @@ using GameSetting;
 using TPhysics;
 public class SFXProjectile : SFXBase
 {
-    public enum_EnermyWeaponProjectile E_ProjectileType= enum_EnermyWeaponProjectile.Invalid;
+    #region PresetInfos
+    public enum_ProjectileFireType E_ProjectileType= enum_ProjectileFireType.Invalid;
     public float F_Damage;
     public float F_Speed;
     public int I_MuzzleIndex;
@@ -13,8 +14,15 @@ public class SFXProjectile : SFXBase
     public int I_IndicatorIndex;
     public int I_HitMarkIndex;
     public int I_BufFApplyOnHit;
+    [Tooltip("Physics Size")]
     public float F_Radius = .5f, F_Height = 1f;
+    [Tooltip("Projectile Type:(Single|Unused) (Multiline/MultiFan| Projectile Count Each Count)")]
+    public RangeInt RI_CountExtension;
+    [Tooltip("Projectile Type:(Single|Unused) (Multiline|Offset Meter)  (MultiFan|Offset Angle)")]
+    public float F_OffsetExtension;
+    [Tooltip("Will Blink While Projectile Time Limits, Require Prefab Folder Preset,Asset/BlinkModel")]
     public bool B_TargetReachBlink = false;
+    #endregion
     protected PhysicsSimulator<HitCheckBase> m_Simulator;
     protected TrailRenderer m_Trail;
     protected SFXIndicator m_Indicator;
@@ -64,7 +72,7 @@ public class SFXProjectile : SFXBase
             m_Trail.Clear();
         }
 
-        if (E_ProjectileType == enum_EnermyWeaponProjectile.Invalid)
+        if (E_ProjectileType == enum_ProjectileFireType.Invalid)
             Debug.LogError("Error Projectile Type Invalid:" + gameObject.name);
         if (F_Damage <= 0)
             Debug.LogError("Error Damage Less Or Equals 0:"+gameObject.name);

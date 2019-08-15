@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
-public class UI_Health : SimpleSingletonMono<UI_Health> {
+public class UI_EnermyHealth : SimpleSingletonMono<UI_EnermyHealth> {
     UIT_GridControllerMono<UIGI_HealthBar> m_HealthGrid;
     protected override void Awake()
     {
@@ -22,14 +22,14 @@ public class UI_Health : SimpleSingletonMono<UI_Health> {
 
     void OnSpawnEntity(EntityBase entity)
     {
-        if (entity.B_IsPlayer)
+        if (entity.m_Flag!= enum_EntityFlag.Enermy)
             return;
 
         m_HealthGrid.AddItem(entity.I_EntityID).AttachItem(entity);
     }
     void OnRecycleEntity(EntityBase entity)
     {
-        if (entity.B_IsPlayer)
+        if (entity.m_Flag != enum_EntityFlag.Enermy)
             return;
 
         m_HealthGrid.RemoveItem(entity.I_EntityID);

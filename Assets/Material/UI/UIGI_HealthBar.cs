@@ -21,7 +21,7 @@ public class UIGI_HealthBar : UIT_GridItem {
     public void AttachItem(EntityBase _attachTo)
     {
         m_AttachEntity = _attachTo;
-        m_Name.text = _attachTo.m_EntityInfo.m_InfoData.m_Index.ToString();
+        m_Name.text = _attachTo.I_PoolIndex.ToString();
         _attachTo.m_HealthManager.AddOnDamageAction(OnDamage);
         OnHide();
     }

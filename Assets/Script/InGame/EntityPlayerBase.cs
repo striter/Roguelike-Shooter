@@ -17,9 +17,9 @@ public class EntityPlayerBase : EntityBase {
     public bool B_Interacting => m_InteractTarget != null;
     public InteractBase m_InteractTarget { get; private set; }
     public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized* m_EntityInfo.F_MovementSpeed * time;
-    public override void Init(SEntity entityInfo)
+    public override void Init(int poolPresetIndex)
     {
-        Init( entityInfo, true);
+        Init(poolPresetIndex, enum_EntityFlag.Player);
         m_CharacterController = GetComponent<CharacterController>();
         m_CharacterController.detectCollisions = false;
         gameObject.layer = GameLayer.I_MovementDetect;
