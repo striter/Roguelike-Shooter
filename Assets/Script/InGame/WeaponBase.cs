@@ -13,6 +13,7 @@ public class WeaponBase : MonoBehaviour {
     public bool B_Reloading { get; private set; }
     public int I_AmmoLeft { get; private set; }
     public Transform m_Muzzle { get; private set; }
+    
     Action<float> OnReloadStart;
     Func<float, float> OnFireTickDelta, OnReloadTickDelta;
     Action<Vector2> OnFireRecoil;
@@ -82,6 +83,10 @@ public class WeaponBase : MonoBehaviour {
         OnFireTickDelta = _OnFireTickDelta;
         OnReloadTickDelta = _OnReloadTickDelta;
         OnReloadStart = _OnReloadStart;
+    }
+    public void Detach()
+    {
+        ObjectManager.RecycleWeapon(m_WeaponInfo.m_Weapon,this);
     }
     public bool Trigger(bool down)
     {

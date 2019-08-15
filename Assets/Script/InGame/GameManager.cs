@@ -53,7 +53,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         if (Input.GetKeyDown(KeyCode.B))
             m_LocalPlayer.OnReceiveBuff(B_TestBuffIndex);
         if (Input.GetKeyDown(KeyCode.N))
-            m_LocalPlayer.BroadcastMessage("OnReceiveDamage", new DamageInfo(20, enum_DamageType.ArmorOnly));
+            m_LocalPlayer.BroadcastMessage("OnReceiveDamage", new DamageInfo(20, enum_DamageType.HealthOnly));
         if (Input.GetKeyDown(KeyCode.M))
             m_LocalPlayer.BroadcastMessage("OnReceiveDamage", new DamageInfo(-50, enum_DamageType.Common));
         if (Input.GetKeyDown(KeyCode.Alpha0))
@@ -487,6 +487,7 @@ public static class ObjectManager
 
         return ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Spawn(type, TF_Entity);
     }
+    public static void RecycleWeapon(enum_PlayerWeapon type, WeaponBase weapon)=>ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Recycle(type,weapon);
     #endregion
     #region SFX
     public static T SpawnSFX<T>(int index,Transform attachTo=null) where T:SFXBase
@@ -530,23 +531,15 @@ public static class ObjectManager
             Debug.LogError("SFX Get Error! Invalid Type:" + typeof(T).ToString() + "|Index:" + weaponIndex);
         return damageSourceInfo;
     }
-    public static void RecycleSFX(int index, SFXBase sfx)
-    {
-        ObjectPoolManager<int, SFXBase>.Recycle(index, sfx);
-    }
+    public static void RecycleSFX(int index, SFXBase sfx)=> ObjectPoolManager<int, SFXBase>.Recycle(index, sfx);
     #endregion
-    #region Interact
     public static T SpawnInteract<T>(enum_Interaction type, Vector3 toPos) where T:InteractBase
     {
         InteractBase sfx = ObjectPoolManager<enum_Interaction, InteractBase>.Spawn(type, TF_Entity);
         sfx.transform.position = toPos;
         return sfx as T;
     }
-    public static void RecycleInteract(enum_Interaction type, InteractBase target)
-    {
-        ObjectPoolManager<enum_Interaction, InteractBase>.Recycle(type, target);
-    }
-    #endregion
+    public static void RecycleInteract(enum_Interaction type, InteractBase target)=> ObjectPoolManager<enum_Interaction, InteractBase>.Recycle(type, target);
     #region Level/LevelItem
     public static LevelBase SpawnLevelPrefab(Transform toTrans)
     {

@@ -5,7 +5,7 @@ using UnityEngine;
 public class TouchDeltaManager : SingletonMono<TouchDeltaManager>
 {
     TouchTracker m_TrackLeft, m_TrackRight;
-    public Action<Vector2> OnLeftDelta,OnRightDelta;
+    Action<Vector2> OnLeftDelta,OnRightDelta;
     float f_LeftStickRadius;
     public void Bind(Action<Vector2> _OnLeftDelta,Action<Vector2> _OnRightDelta, float leftStickRadius=100)
     {

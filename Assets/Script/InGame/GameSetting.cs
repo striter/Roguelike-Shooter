@@ -471,8 +471,8 @@ namespace GameSetting
     {
         public DamageBuffInfo m_DamageBuffProperty { get; private set; }
         public List<BuffBase> m_BuffList { get; private set; } = new List<BuffBase>();
-        Dictionary<int, SFXBuffEffect> m_BuffEffects = new Dictionary<int, SFXBuffEffect>();
         EntityBase m_Entity;
+        Dictionary<int, SFXBuffEffect> m_BuffEffects = new Dictionary<int, SFXBuffEffect>();
         public float F_MaxHealth => m_Entity.I_MaxHealth;
         public float F_MaxArmor => m_Entity.I_MaxArmor;
 
@@ -484,14 +484,19 @@ namespace GameSetting
         public float F_FireRateTick(float deltaTime) => deltaTime * F_FireRateMultiply;
         public float F_ReloadRateTick(float deltaTime) => deltaTime * F_ReloadRateMultiply;
         public float F_MovementSpeed => m_Entity.F_MovementSpeed * F_MovementSpeedMultiply;
-        Func<DamageInfo, bool> OnDamageEntity;
+        Func<DamageInfo, bool> OnReceiveDamage;
         Action OnInfoChange;
-        public EntityInfoManager(EntityBase _attacher,Func<DamageInfo, bool> _OnDamageEntity,Action _OnInfoChange)
+        public EntityInfoManager(EntityBase _attacher,Func<DamageInfo, bool> _OnReceiveDamage,Action _OnInfoChange)
         {
             m_Entity = _attacher;
-               OnDamageEntity = _OnDamageEntity;
+            OnReceiveDamage = _OnReceiveDamage;
             OnInfoChange = _OnInfoChange;
             m_DamageBuffProperty = DamageBuffInfo.Create();
+        }
+        public virtual void OnDeactivate()
+        {
+            m_BuffList.Clear();
+            OnBuffChanged();
         }
         public void Tick(float deltaTime) => m_BuffList.Traversal((BuffBase buff) => { buff.OnTick(deltaTime); });
         public void AddBuff(int buffIndex)
@@ -521,12 +526,7 @@ namespace GameSetting
             m_BuffList.Remove(buff);
             OnBuffChanged();
         }
-        public void OnDeactivate()
-        {
-            m_BuffList.Clear();
-            OnBuffChanged();
-        }
-        public BuffBase GetBuff(int buffIndex) => new BuffBase(DataManager.GetEntityBuffProperties(buffIndex), OnBuffExpired, OnDamageEntity);
+        public BuffBase GetBuff(int buffIndex) => new BuffBase(DataManager.GetEntityBuffProperties(buffIndex), OnBuffExpired, OnReceiveDamage);
         public void OnBuffChanged()
         {
             //Calculate All Buff Infos
@@ -577,6 +577,24 @@ namespace GameSetting
         }
     }
 
+    public class PlayerInfoManager : EntityInfoManager
+    {
+        List<ActionBase> m_CurrentActions = new List<ActionBase>();
+        public float F_ActionAmount { get; private set; }
+        public PlayerInfoManager(EntityBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnInfoChange):base(_attacher,_OnReceiveDamage,_OnInfoChange)
+        {
+
+        }
+
+        void OnPlayerApplyDamage(float damage)
+        {
+            
+        }
+    }
+    public struct ActionBase 
+    {
+
+    }
     public class BuffBase
     {
         public SBuff m_buffInfo { get; private set; }

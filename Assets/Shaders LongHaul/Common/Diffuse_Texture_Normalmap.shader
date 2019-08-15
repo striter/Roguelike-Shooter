@@ -7,6 +7,7 @@
 	}
 		SubShader
 		{
+			Cull Back
 			CGINCLUDE
 			#include "UnityCG.cginc"
 			#include "AutoLight.cginc"

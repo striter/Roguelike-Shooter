@@ -16,6 +16,7 @@ public class EntityPlayerBase : EntityBase {
     public WeaponBase m_WeaponCurrent { get; private set; } = null;
     public bool B_Interacting => m_InteractTarget != null;
     public InteractBase m_InteractTarget { get; private set; }
+    protected override EntityInfoManager GetEntityInfo => new PlayerInfoManager(this,OnReceiveDamage,OnInfoChange);
     public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized* m_EntityInfo.F_MovementSpeed * time;
     public override void Init(int poolPresetIndex)
     {
@@ -48,18 +49,26 @@ public class EntityPlayerBase : EntityBase {
         TouchDeltaManager.Instance.Bind(OnMovementDelta, OnRotateDelta);
 #endif
     }
-    protected override void OnDisable()
-    {
-        base.OnDisable();
-        PCInputManager.Instance.DoBindingRemoval<EntityPlayerBase>();
-        PCInputManager.Instance.RemoveMovementCheck();
-        PCInputManager.Instance.RemoveRotateCheck();
-    }
     protected override void OnDead()
     {
         base.OnDead();
         if (m_Assist)
             m_Assist.ForceRecycle();
+        if (m_WeaponCurrent)
+            m_WeaponCurrent.Detach();
+
+        m_Animator.OnDead();
+        m_MoveAxisInput = Vector2.zero;
+#if UNITY_EDITOR
+        PCInputManager.Instance.DoBindingRemoval<EntityPlayerBase>();
+        PCInputManager.Instance.RemoveMovementCheck();
+        PCInputManager.Instance.RemoveRotateCheck();
+#else
+        UIManager.OnMainDown = null;
+        UIManager.OnReload = null;
+        UIManager.OnSwitch = null;
+        TouchDeltaManager.Instance.Bind(null, null);
+#endif
     }
     void OnMainButtonDown(bool down)
     {
@@ -185,6 +194,7 @@ public class EntityPlayerBase : EntityBase {
         static readonly int HS_I_WeaponType = Animator.StringToHash("i_weaponType");
         static readonly int HS_T_Activate = Animator.StringToHash("t_activate");
         static readonly int HS_T_Fire = Animator.StringToHash("t_attack");
+        static readonly int HS_T_Dead = Animator.StringToHash("t_dead");
         static readonly int HS_T_Reload = Animator.StringToHash("t_reload");
         static readonly int HS_FM_Reload = Animator.StringToHash("fm_reload");
         public PlayerAnimator(Animator _animator) : base(_animator)
@@ -209,6 +219,10 @@ public class EntityPlayerBase : EntityBase {
         {
             m_Animator.SetTrigger(HS_T_Reload);
             m_Animator.SetFloat(HS_FM_Reload, 1 / reloadTime);
+        }
+        public void OnDead()
+        {
+            m_Animator.SetTrigger(HS_T_Dead);
         }
     }
 #if UNITY_EDITOR

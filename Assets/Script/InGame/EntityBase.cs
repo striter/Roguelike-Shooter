@@ -17,6 +17,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
     public EntityInfoManager m_EntityInfo { get; private set; }
     public EntityHealth m_HealthManager { get; private set; }
     public virtual Vector3 m_PrecalculatedTargetPos(float time) { Debug.LogError("Override This Please");return Vector2.zero; }
+    protected virtual EntityInfoManager GetEntityInfo => new EntityInfoManager(this, OnReceiveDamage, OnInfoChange);
     public virtual void Init(int presetIndex)
     {
         Debug.LogError("Override This Please");
@@ -25,11 +26,11 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
     {
         tf_Model = transform.Find("Model");
         tf_Head = transform.Find("Head");
-        I_PoolIndex = presetIndex;
+        I_PoolIndex=presetIndex;
         m_Flag = flag;
         m_SkinRenderers = tf_Model.Find("Skin").GetComponentsInChildren<Renderer>();
         m_HitChecks = GetComponentsInChildren<HitCheckEntity>();
-        m_EntityInfo = new EntityInfoManager(this,OnReceiveDamage, OnInfoChange);
+        m_EntityInfo = GetEntityInfo;
         m_HealthManager = new EntityHealth(this,OnHealthEffect,OnDead);
         TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.Attach(this, OnReceiveDamage); });
     }

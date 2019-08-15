@@ -8,11 +8,11 @@
 	SubShader
 	{
 		Tags { "RenderType"="Transparent" "Queue"="Transparent" }
-			Cull Back
-			Blend SrcAlpha OneMinusSrcAlpha
-			CGINCLUDE
-			#include "UnityCG.cginc"
-			ENDCG
+		Cull Back
+		Blend SrcAlpha OneMinusSrcAlpha
+		CGINCLUDE
+		#include "UnityCG.cginc"
+		ENDCG
 		Pass		//Base Pass
 		{
 			CGPROGRAM
