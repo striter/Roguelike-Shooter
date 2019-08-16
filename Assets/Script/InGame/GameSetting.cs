@@ -181,6 +181,10 @@ namespace GameSetting
 
     public enum enum_DamageType { Invalid = -1, Common = 1, ArmorOnly = 2,HealthOnly = 3, }
 
+    public enum enum_ExpireType { Invalid=-1,Action=1,Buff=2,}
+
+    public enum enum_ActionLevel { Invalid=-1, L1=1,L2=2,L3=3, }
+
     public enum enum_PlayerWeapon
     {
         Invalid = -1,
@@ -426,10 +430,10 @@ namespace GameSetting
     public class DamageInfo
     {
         public int I_SourceID { get; private set; }
-        public float m_AmountApply => m_baseDamage * m_BuffApply.F_DamageEnhanceMultiply;
+        public float m_AmountApply => m_baseDamage  *(1+  m_BuffApply.F_DamageMultiply);
+        private float m_baseDamage;
         public DamageBuffInfo m_BuffApply { get; private set; }
         public enum_DamageType m_damageType { get; private set; }
-        private float m_baseDamage;
         public DamageInfo(int sourceID,float damage,enum_DamageType type,DamageBuffInfo buffInfo)
         {
             I_SourceID = sourceID;
@@ -455,20 +459,21 @@ namespace GameSetting
     #region BuffClass
     public class EntityInfoManager
     {
-        public DamageBuffInfo m_DamageBuffProperty { get; private set; }
-        public List<BuffBase> m_BuffList { get; private set; } = new List<BuffBase>();
+        public List<ExpireBase> m_Expires { get; private set; } = new List<ExpireBase>();
         protected EntityBase m_Entity { get; private set; }
-        Dictionary<int, SFXBuffEffect> m_BuffEffects = new Dictionary<int, SFXBuffEffect>();
+        List< SFXBuffEffect> m_BuffEffects = new List<SFXBuffEffect>();
         public float F_MaxHealth => m_Entity.I_MaxHealth;
 
         public float F_DamageReceiveMultiply { get; private set; } = 1f;
         public float F_MovementSpeedMultiply { get; private set; } = 1f;
         protected float F_FireRateMultiply { get; private set; } = 1f;
         protected float F_ReloadRateMultiply { get; private set; } = 1f;
+        protected float F_DamageMultiply { get; private set; } = 0f;
 
         public float F_FireRateTick(float deltaTime) => deltaTime * F_FireRateMultiply;
         public float F_ReloadRateTick(float deltaTime) => deltaTime * F_ReloadRateMultiply;
         public float F_MovementSpeed => m_Entity.F_MovementSpeed * F_MovementSpeedMultiply;
+        public virtual DamageBuffInfo GetDamageInfo() => DamageBuffInfo.Create(F_DamageMultiply, 0f);
         Func<DamageInfo, bool> OnReceiveDamage;
         Action OnInfoChange;
         public EntityInfoManager(EntityBase _attacher,Func<DamageInfo, bool> _OnReceiveDamage,Action _OnInfoChange)
@@ -476,110 +481,218 @@ namespace GameSetting
             m_Entity = _attacher;
             OnReceiveDamage = _OnReceiveDamage;
             OnInfoChange = _OnInfoChange;
-            m_DamageBuffProperty = new DamageBuffInfo();
         }
         public virtual void OnDeactivate()
         {
-            m_BuffList.Clear();
-            OnBuffChanged();
+            m_Expires.Clear();
+            OnInfoChanged();
         }
-        public void Tick(float deltaTime) => m_BuffList.Traversal((BuffBase buff) => { buff.OnTick(deltaTime); });
+        public void Tick(float deltaTime) => m_Expires.Traversal((ExpireBase buff) => { buff.OnTick(deltaTime); });
         public void AddBuff(int sourceID,int buffIndex)
         {
-            BuffBase buff = GetBuff(sourceID,buffIndex);
+            ExpireBuff buff = GetBuff(sourceID,buffIndex);
             switch (buff.m_buffInfo.m_AddType)
             {
                 case enum_BuffAddType.AddUp:
                     {
-                        m_BuffList.Add(buff);
+                        m_Expires.Add(buff);
                     }
                     break;
                 case enum_BuffAddType.Refresh:
                     {
-                        BuffBase buffRefresh = m_BuffList.Find(p => p.m_buffInfo.m_Index == buffIndex);
+                        ExpireBase buffRefresh = m_Expires.Find(p =>p.m_ExpireType== enum_ExpireType.Buff&& (p as ExpireBuff).m_buffInfo.m_Index == buffIndex);
                         if (buffRefresh != null)
                             buffRefresh.ExpireRefresh();
                         else
-                            m_BuffList.Add(buff);
+                            m_Expires.Add(buff);
                     }
                     break;
             }
-            OnBuffChanged();
+            OnInfoChanged();
         }
-        protected void OnBuffExpired(BuffBase buff)
+        protected void OnExpired(ExpireBase buff)
         {
-            m_BuffList.Remove(buff);
-            OnBuffChanged();
+            m_Expires.Remove(buff);
+            OnInfoChanged();
         }
-        public BuffBase GetBuff(int sourceID,int buffIndex) => new BuffBase(sourceID, DataManager.GetEntityBuffProperties(buffIndex), OnBuffExpired, OnReceiveDamage);
-        public void OnBuffChanged()
+        public ExpireBuff GetBuff(int sourceID,int buffIndex) => new ExpireBuff(sourceID, DataManager.GetEntityBuffProperties(buffIndex), OnReceiveDamage, OnExpired);
+        public virtual void OnInfoChanged()
         {
             //Calculate All Buff Infos
-            float damageApplyEnhance = 1f;
+            F_DamageMultiply = 0f;
             F_DamageReceiveMultiply = 1f;
             F_MovementSpeedMultiply = 1f;
             F_FireRateMultiply = 1f;
             F_ReloadRateMultiply = 1f;
-            m_BuffList.Traversal((BuffBase buff) => {
-                damageApplyEnhance += buff.m_buffInfo.m_DamageMultiply;
-                F_DamageReceiveMultiply -= buff.m_buffInfo.m_DamageReduction;
-                F_MovementSpeedMultiply += buff.m_buffInfo.m_MovementSpeedMultiply ;
-                F_FireRateMultiply += buff.m_buffInfo.m_FireRateMultiply;
-                F_ReloadRateMultiply += buff.m_buffInfo.m_ReloadRateMultiply;
+
+            m_Expires.Traversal((ExpireBase expire) => {
+                if (expire.m_ExpireType== enum_ExpireType.Buff)
+                {
+                    ExpireBuff buff = expire as ExpireBuff;
+                    F_DamageMultiply += buff.m_buffInfo.m_DamageMultiply;
+                    F_DamageReceiveMultiply -= buff.m_buffInfo.m_DamageReduction;
+                    F_MovementSpeedMultiply += buff.m_buffInfo.m_MovementSpeedMultiply;
+                    F_FireRateMultiply += buff.m_buffInfo.m_FireRateMultiply;
+                    F_ReloadRateMultiply += buff.m_buffInfo.m_ReloadRateMultiply;
+                }
             });
 
             F_DamageReceiveMultiply = F_DamageReceiveMultiply < 0 ? 0 : F_DamageReceiveMultiply;
-            m_DamageBuffProperty =DamageBuffInfo.Create( new List<int>(),damageApplyEnhance);
 
             //Do Effect Removal Check
-            List<int> effectsList = m_BuffEffects.Keys.ToList();
-            for (int i = 0; i < effectsList.Count; i++)
+            for (int i = 0; i < m_BuffEffects.Count; i++)
             {
-                if (m_BuffList.Find(p => p.m_buffInfo.m_Index == effectsList[i]) == null)
+                ExpireBase expire = m_Expires.Find(p => p.m_EffectIndex == m_BuffEffects[i].I_SFXIndex);
+                if (expire == null)
                 {
-                    m_BuffEffects[effectsList[i]].StopParticles();
-                    m_BuffEffects.Remove(effectsList[i]);
+                    m_BuffEffects[i].StopParticles();
+                    m_BuffEffects.RemoveAt(i);
                 }
             }
 
             //Refresh Or Add Effects
-            for (int i = 0; i < m_BuffList.Count; i++)
+            for (int i = 0; i < m_Expires.Count; i++)
             {
-                if (m_BuffList[i].m_buffInfo.m_EffectIndex <= 0)
+                if (m_Expires[i].m_EffectIndex <= 0)
                     return;
 
-                if (m_BuffEffects.ContainsKey(m_BuffList[i].m_buffInfo.m_Index))
-                {
-                    m_BuffEffects[m_BuffList[i].m_buffInfo.m_Index].Refresh(m_BuffList[i].m_buffInfo.m_ExpireDuration);
-                }
+                SFXBuffEffect particle = m_BuffEffects.Find(p=>p.I_SFXIndex==m_Expires[i].m_EffectIndex);
+
+                if (particle)
+                    particle.Refresh(m_Expires[i].m_ExpireDuration);
                 else
                 {
-                    m_BuffEffects.Add(m_BuffList[i].m_buffInfo.m_Index, ObjectManager.SpawnBuffEffect(m_BuffList[i].m_buffInfo.m_EffectIndex, m_Entity));
-                    m_BuffEffects[m_BuffList[i].m_buffInfo.m_Index].Play(m_Entity.I_EntityID,m_BuffList[i].m_buffInfo.m_ExpireDuration);
+                    particle = ObjectManager.SpawnBuffEffect(m_Expires[i].m_EffectIndex, m_Entity);
+                    particle.Play(m_Entity.I_EntityID, m_Expires[i].m_ExpireDuration);
+                    m_BuffEffects.Add(particle );
                 }
             }
             OnInfoChange();
         }
     }
 
+    public class ExpireBase
+    {
+        public virtual enum_ExpireType m_ExpireType => enum_ExpireType.Invalid;
+        public virtual int m_EffectIndex => -1;
+        public float m_ExpireDuration { get; private set; } = -1f;
+        protected Action<ExpireBase> OnExpired;
+        float f_expireCheck;
+        public ExpireBase(float _expireDuration,Action<ExpireBase> _OnExpired)
+        {
+            m_ExpireDuration = _expireDuration;
+            f_expireCheck = _expireDuration;
+            OnExpired = _OnExpired;
+        }
+        public void ExpireRefresh()
+        {
+            f_expireCheck = m_ExpireDuration;
+        }
+        public virtual void OnTick(float deltaTime)
+        {
+            if (f_expireCheck<=0)
+                return;
+
+            f_expireCheck -= deltaTime;
+            if (f_expireCheck <= 0)
+                OnExpired(this);
+        }
+    }
+
+    public class ExpireBuff:ExpireBase
+    {
+        public override enum_ExpireType m_ExpireType => enum_ExpireType.Buff;
+        public override int m_EffectIndex => m_buffInfo.m_EffectIndex;
+        public SBuff m_buffInfo { get; private set; }
+        int I_SourceID;
+        float  f_dotCheck;
+        Func<DamageInfo, bool> OnDOTDamage;
+        public ExpireBuff(int sourceID,SBuff _buffInfo, Func<DamageInfo, bool> _OnDOTDamage, Action<ExpireBase> _OnBuffExpired) :base(_buffInfo.m_ExpireDuration,_OnBuffExpired)
+        {
+            I_SourceID = sourceID;
+            m_buffInfo = _buffInfo;
+            OnDOTDamage = _OnDOTDamage;
+        }
+        public override void OnTick(float deltaTime)
+        {
+            base.OnTick(deltaTime);
+            if (m_buffInfo.m_DamageTickTime <= 0)
+                return;
+            f_dotCheck += deltaTime;
+            if (f_dotCheck > m_buffInfo.m_DamageTickTime)
+            {
+                f_dotCheck -= m_buffInfo.m_DamageTickTime;
+                OnDOTDamage(new DamageInfo(I_SourceID, m_buffInfo.m_DamagePerTick, m_buffInfo.m_DamageType, DamageBuffInfo.Default()));
+            }
+        }
+    }
+    
+    public struct DamageBuffInfo
+    {
+        public float F_DamageMultiply { get; private set; }
+        public float F_DamageAdditive { get; private set; }
+        public List<int> m_BuffAplly { get; private set; }
+        public static DamageBuffInfo Default()
+        {
+            DamageBuffInfo info = new DamageBuffInfo()
+            {
+                F_DamageMultiply = 0f,
+                F_DamageAdditive = 0f,
+                m_BuffAplly = new List<int>()
+            };
+            return info;
+        }
+        public static DamageBuffInfo Create(List<int> _buffApply)
+        {
+        DamageBuffInfo info = new DamageBuffInfo()
+        {
+            F_DamageMultiply = 0f,
+            F_DamageAdditive = 0f,
+            m_BuffAplly = _buffApply
+            };
+            return info;
+        }
+        public static  DamageBuffInfo Create(  float _damageEnhanceMultiply,float _damageAdditive=0f)
+        {
+            DamageBuffInfo info = new DamageBuffInfo()
+            {
+                F_DamageAdditive = _damageAdditive,
+                F_DamageMultiply = _damageEnhanceMultiply,
+                m_BuffAplly = new List<int>(),
+            };
+            return info;
+        }
+    }
+    #endregion
+    #region Action
     public class PlayerInfoManager : EntityInfoManager
     {
-        List<ActionBase> m_ActionPool = new List<ActionBase>();
-        List<ActionBase> m_ActionHold = new List<ActionBase>();
-        List<ActionBase> m_ActionUsing = new List<ActionBase>();
+        List<ActionBase> m_ActionStored = new List<ActionBase>();
+        List<ActionBase> m_ActionInPool = new List<ActionBase>();
+
+        List<ActionBase> m_ActionHodling = new List<ActionBase>();
+        List<ActionBase> m_ActionEquiping = new List<ActionBase>();
+
         public float F_ActionAmount { get; private set; }
-        public PlayerInfoManager(EntityBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnInfoChange):base(_attacher,_OnReceiveDamage,_OnInfoChange)
+        EntityPlayerBase m_Player;
+        public PlayerInfoManager(EntityPlayerBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnInfoChange) : base(_attacher, _OnReceiveDamage, _OnInfoChange)
         {
+            m_Player = _attacher;
             F_ActionAmount = GameConst.F_MaxActionAmount;
-            TBroadCaster<enum_BC_GameStatusChanged>.Add<int,EntityBase, float>(enum_BC_GameStatusChanged.OnEntityDamage, OnEntityApplyDamage);
+            TBroadCaster<enum_BC_GameStatusChanged>.Add<int, EntityBase, float>(enum_BC_GameStatusChanged.OnEntityDamage, OnEntityApplyDamage);
         }
         public override void OnDeactivate()
         {
             base.OnDeactivate();
-            TBroadCaster<enum_BC_GameStatusChanged>.Remove<int,EntityBase,float>(enum_BC_GameStatusChanged.OnEntityDamage, OnEntityApplyDamage);
+            TBroadCaster<enum_BC_GameStatusChanged>.Remove<int, EntityBase, float>(enum_BC_GameStatusChanged.OnEntityDamage, OnEntityApplyDamage);
         }
-
-        void OnEntityApplyDamage(int applierID,EntityBase damageEntity,float amountApply)
+        public override DamageBuffInfo GetDamageInfo()
+        {
+            float damageAdditive = 0;
+            m_ActionEquiping.Traversal((ActionBase action) =>{damageAdditive += action.GetDamageAdditive(m_Entity);});
+            return DamageBuffInfo.Create(F_DamageMultiply, damageAdditive);
+        }
+        void OnEntityApplyDamage(int applierID, EntityBase damageEntity, float amountApply)
         {
             if (applierID != m_Entity.I_EntityID)
                 return;
@@ -589,81 +702,32 @@ namespace GameSetting
                 F_ActionAmount = GameConst.F_MaxActionAmount;
         }
     }
-    public struct ActionBase 
+    public class ActionBase:ExpireBase
     {
+        public override enum_ExpireType m_ExpireType => enum_ExpireType.Action;
+        protected virtual float F_ActionUsed => -1f;
+        public enum_ActionLevel m_Level { get; private set; } = enum_ActionLevel.Invalid;
+        public virtual float GetDamageAdditive(EntityBase _entity) => 0;
+        public ActionBase(enum_ActionLevel m_level,Action<ExpireBase> _OnActionExpired, float actionExpireDuration=0) :base(actionExpireDuration, _OnActionExpired)
+        {
 
-    }
-    public class BuffBase
-    {
-        public SBuff m_buffInfo { get; private set; }
-        int I_SourceID;
-        float f_expireCheck, f_dotCheck;
-        Action<BuffBase> OnBuffExpired;
-        Func<DamageInfo, bool> OnDOTDamage;
-        public BuffBase(int sourceID,SBuff _buffInfo, Action<BuffBase> _OnBuffExpired, Func<DamageInfo, bool> _OnDOTDamage)
-        {
-            I_SourceID = sourceID;
-            m_buffInfo = _buffInfo;
-            OnBuffExpired = _OnBuffExpired;
-            OnDOTDamage = _OnDOTDamage;
-            f_expireCheck = 0;
         }
-        public void OnTick(float deltaTime)
+        public virtual void OnActionUse(EntityBase _entity)
         {
-            DotCheck(deltaTime);
-            ExpireCheck(deltaTime);
+            
         }
-        public void DotCheck(float deltaTime)
+        public virtual void OnFireOnce(EntityBase _entity)
         {
-            if (m_buffInfo.m_DamageTickTime <= 0)
-                return;
-            f_dotCheck += deltaTime;
-            if (f_dotCheck > m_buffInfo.m_DamageTickTime)
-            {
-                f_dotCheck -= m_buffInfo.m_DamageTickTime;
-                OnDOTDamage(new DamageInfo(I_SourceID,m_buffInfo.m_DamagePerTick,m_buffInfo.m_DamageType,DamageBuffInfo.Default()));
-            }
-        }
-        public void ExpireRefresh()
-        {
-            f_expireCheck = 0;
-        }
-        public void ExpireCheck(float deltaTime)
-        {
-            if (m_buffInfo.m_ExpireDuration <= 0)
-                return;
 
-            f_expireCheck += deltaTime;
-            if (f_expireCheck > m_buffInfo.m_ExpireDuration)
-                OnBuffExpired(this);
         }
-    }
-    
-    public struct DamageBuffInfo
-    {
-        public float F_DamageEnhanceMultiply { get; private set; }
-        public List<int> m_BuffAplly { get; private set; }
-        public static DamageBuffInfo Default()
+        public bool B_Upgradable => m_Level < enum_ActionLevel.L3;
+        public void Upgrade()
         {
-            DamageBuffInfo info = new DamageBuffInfo()
-            {
-                F_DamageEnhanceMultiply = 1f,
-                m_BuffAplly = new List<int>()
-            };
-            return info;
-        }
-        public static  DamageBuffInfo Create( List<int> _buffApply, float _damageEnhanceMultiply=1f)
-        {
-            DamageBuffInfo info = new DamageBuffInfo()
-            {
-                F_DamageEnhanceMultiply = _damageEnhanceMultiply,
-                m_BuffAplly = _buffApply
-            };
-            return info;
+            if (m_Level < enum_ActionLevel.L3)
+                m_Level++;
         }
     }
     #endregion
-
     #region Physics
     public static class HitCheckDetect_Extend
     {

@@ -14,7 +14,6 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
     protected Transform tf_Model;
     public Transform tf_Head { get; private set; }
     public enum_EntityFlag m_Flag { get; private set; }
-    protected DamageBuffInfo GetDamageBuffInfo() => m_EntityInfo.m_DamageBuffProperty;
     public EntityInfoManager m_EntityInfo { get; private set; }
     public EntityHealth m_HealthManager { get; private set; }
     public virtual Vector3 m_PrecalculatedTargetPos(float time) { Debug.LogError("Override This Please");return Vector2.zero; }

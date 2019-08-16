@@ -44,9 +44,9 @@ public class EntityEnermyBase : EntityBase {
             switch (projectile.E_ProjectileType)
             {
                 default: Debug.LogError("Invalid Barrage Type:" + projectile.E_ProjectileType); break;
-                case enum_ProjectileFireType.Single: weapon = new BarrageRange(projectile, this, tf_Barrel, GetDamageBuffInfo); break;
-                case enum_ProjectileFireType.MultipleFan: weapon = new BarrageMultipleFan(projectile, this, tf_Barrel, GetDamageBuffInfo); break;
-                case enum_ProjectileFireType.MultipleLine: weapon = new BarrageMultipleLine(projectile, this, tf_Barrel, GetDamageBuffInfo); break;
+                case enum_ProjectileFireType.Single: weapon = new BarrageRange(projectile, this, tf_Barrel, m_EntityInfo.GetDamageInfo); break;
+                case enum_ProjectileFireType.MultipleFan: weapon = new BarrageMultipleFan(projectile, this, tf_Barrel, m_EntityInfo.GetDamageInfo); break;
+                case enum_ProjectileFireType.MultipleLine: weapon = new BarrageMultipleLine(projectile, this, tf_Barrel, m_EntityInfo.GetDamageInfo); break;
             }
         }
 
@@ -55,20 +55,20 @@ public class EntityEnermyBase : EntityBase {
         {
             switch (cast.E_CastType)
             {
-                case enum_CastControllType.CastFromOrigin: weapon = new EnermyCaster(cast, this, tf_Barrel, GetDamageBuffInfo); break;
-                case enum_CastControllType.CastSelfDetonate: weapon = new EnermyCasterSelfDetonateAnimLess(cast,this,tf_Barrel,GetDamageBuffInfo,()=> { OnAnimKeyEvent( TAnimatorEvent.enum_AnimEvent.Fire); },OnDead,tf_Model.Find("BlinkModel"));break;
-                case enum_CastControllType.CastControlledForward: weapon = new EnermyCasterControlled(cast, this, tf_Barrel, GetDamageBuffInfo); break;
-                case enum_CastControllType.CastAtTarget: weapon = new EnermyCasterTarget(cast, this, tf_Barrel, GetDamageBuffInfo); break;
+                case enum_CastControllType.CastFromOrigin: weapon = new EnermyCaster(cast, this, tf_Barrel, m_EntityInfo.GetDamageInfo); break;
+                case enum_CastControllType.CastSelfDetonate: weapon = new EnermyCasterSelfDetonateAnimLess(cast,this,tf_Barrel, m_EntityInfo.GetDamageInfo, ()=> { OnAnimKeyEvent( TAnimatorEvent.enum_AnimEvent.Fire); },OnDead,tf_Model.Find("BlinkModel"));break;
+                case enum_CastControllType.CastControlledForward: weapon = new EnermyCasterControlled(cast, this, tf_Barrel, m_EntityInfo.GetDamageInfo); break;
+                case enum_CastControllType.CastAtTarget: weapon = new EnermyCasterTarget(cast, this, tf_Barrel, m_EntityInfo.GetDamageInfo); break;
             }
         }
 
         SFXBuffApply buffApply = weaponInfo as SFXBuffApply;
         if (buffApply)
-            weapon = new BuffApply(buffApply, this, tf_Barrel, GetDamageBuffInfo);
+            weapon = new BuffApply(buffApply, this, tf_Barrel, m_EntityInfo.GetDamageInfo);
 
         SFXEntitySpawner entitySpawner = weaponInfo as SFXEntitySpawner;
         if (entitySpawner)
-            weapon = new WeaponEntitySpawner(entitySpawner,this,tf_Barrel,GetDamageBuffInfo);
+            weapon = new WeaponEntitySpawner(entitySpawner,this,tf_Barrel, m_EntityInfo.GetDamageInfo);
 
         return weapon;
     }
