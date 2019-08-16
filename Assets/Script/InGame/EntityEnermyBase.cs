@@ -526,13 +526,13 @@ public class EntityEnermyBase : EntityBase {
         {
             OnPlayAnim(false);
             m_Cast = ObjectManager.SpawnDamageSource<SFXCast>(i_weaponIndex, transformBarrel.position, transformBarrel.forward);
-            m_Cast.PlayControlled(m_Entity.I_EntityID, transformBarrel, attacherTransform, true);
+            m_Cast.PlayControlled(m_Entity.I_EntityID, transformBarrel, attacherTransform, true,GetBuffInfo());
         }
 
         public override void OnPlayAnim(bool play)
         {
             if ( m_Cast)
-                m_Cast.PlayControlled(m_Entity.I_EntityID, transformBarrel, attacherTransform, play);
+                m_Cast.PlayControlled(m_Entity.I_EntityID, transformBarrel, attacherTransform, play, GetBuffInfo());
         }
         public override void OnDeactivate()
         {

@@ -42,22 +42,20 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
     }
     public void Play(int sourceID,DamageBuffInfo buffInfo)
     {
+        SetDamageInfo(buffInfo);
         if (F_DelayDuration <= 0)
         {
-            PlayDelayed(sourceID,buffInfo);
+            PlayDelayed(sourceID);
             return;
         }
-        if(I_DelayIndicatorIndex>0)
+        if (I_DelayIndicatorIndex>0)
             ObjectManager.SpawnIndicator(I_DelayIndicatorIndex, transform.position, Vector3.up).Play(sourceID,  F_DelayDuration);
-        this.StartSingleCoroutine(1, TIEnumerators.PauseDel(F_DelayDuration, () => { PlayDelayed(sourceID, buffInfo); }));
+        this.StartSingleCoroutine(1, TIEnumerators.PauseDel(F_DelayDuration, () => { PlayDelayed(sourceID); }));
     }
-    public virtual void PlayDelayed(int sourceID, DamageBuffInfo buffInfo)
+    public virtual void PlayDelayed(int sourceID)
     {
         PlaySFX(sourceID, I_TickCount * F_Tick + 5f);
         B_Casting = true;
-        if (I_BuffApplyOnCast > 0)
-            buffInfo.m_BuffAplly.Add(I_BuffApplyOnCast);
-        m_DamageInfo = new DamageInfo(I_SourceID, F_Damage, enum_DamageType.Common, buffInfo);
         if (B_CameraShake)
             TPSCameraController.Instance.AddShake(I_ShakeAmount);
 
@@ -67,12 +65,12 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
             B_Casting = false;
         }));
     }
-
-    public virtual void PlayControlled(int sourceID, Transform attachTrans,Transform directionTrans, bool play)
+    public virtual void PlayControlled(int sourceID, Transform attachTrans, Transform directionTrans, bool play, DamageBuffInfo buffInfo)
     {
         B_Casting = play;
         if (play)
         {
+            SetDamageInfo(buffInfo);
             PlayParticles();
             tf_ControlledAttach = attachTrans;
             tf_ControlledCast = directionTrans;
@@ -86,6 +84,12 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
             tf_ControlledCast = null;
             this.StopSingleCoroutine(0);
         }
+    }
+    void SetDamageInfo(DamageBuffInfo info)
+    {
+        if (I_BuffApplyOnCast > 0)
+            info.m_BuffAplly.Add(I_BuffApplyOnCast);
+        m_DamageInfo = new DamageInfo(I_SourceID, F_Damage, enum_DamageType.Common, info);
     }
     protected override void Update()
     {

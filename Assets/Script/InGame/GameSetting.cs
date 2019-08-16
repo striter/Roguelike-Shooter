@@ -593,7 +593,6 @@ namespace GameSetting
     public class ExpireBase
     {
         public virtual int m_EffectIndex => -1;
-        public float m_ExpireDuration { get; private set; } = -1f;
         public virtual int m_Index => -1;
         public virtual enum_ExpireRefreshType m_RefreshType => enum_ExpireRefreshType.Invalid;
         public virtual float m_MovementSpeedMultiply => 0;
@@ -601,14 +600,14 @@ namespace GameSetting
         public virtual float m_ReloadRateMultiply => 0;
         public virtual float m_DamageMultiply => 0;
         public virtual float m_DamageReduction => 0;
+        public virtual float m_ExpireDuration => 0;
 
         protected Action<ExpireBase> OnExpired;
         float f_expireCheck;
-        public ExpireBase(float _expireDuration,Action<ExpireBase> _OnExpired)
+        public ExpireBase(Action<ExpireBase> _OnExpired)
         {
-            m_ExpireDuration = _expireDuration;
-            f_expireCheck = _expireDuration;
             OnExpired = _OnExpired;
+            ExpireRefresh();
         }
         public void ExpireRefresh()
         {
@@ -635,11 +634,12 @@ namespace GameSetting
         public override float m_FireRateMultiply => m_buffInfo.m_FireRateMultiply;
         public override float m_MovementSpeedMultiply => m_buffInfo.m_MovementSpeedMultiply;
         public override float m_ReloadRateMultiply => m_buffInfo.m_ReloadRateMultiply;
+        public override float m_ExpireDuration => m_buffInfo.m_ExpireDuration;
         SBuff m_buffInfo;
         Func<DamageInfo, bool> OnDOTDamage;
         int I_SourceID;
         float  f_dotCheck;
-        public ExpireBuff(int sourceID,SBuff _buffInfo, Func<DamageInfo, bool> _OnDOTDamage, Action<ExpireBase> _OnBuffExpired) :base(_buffInfo.m_ExpireDuration,_OnBuffExpired)
+        public ExpireBuff(int sourceID,SBuff _buffInfo, Func<DamageInfo, bool> _OnDOTDamage, Action<ExpireBase> _OnBuffExpired) :base(_OnBuffExpired)
         {
             I_SourceID = sourceID;
             m_buffInfo = _buffInfo;
@@ -765,7 +765,7 @@ namespace GameSetting
         public virtual float GetValue2(EntityPlayerBase _actionEntity) => 0;
         public virtual float F_DamageAdditive(EntityPlayerBase _actionEntity) => 0;
 
-        public ActionBase(enum_ActionLevel _level,Action<ExpireBase> _OnActionExpired, float actionExpireDuration=0) :base(actionExpireDuration, _OnActionExpired)
+        public ActionBase(enum_ActionLevel _level,Action<ExpireBase> _OnActionExpired) :base(_OnActionExpired)
         {
             m_Level = _level;
         }
@@ -804,6 +804,7 @@ namespace GameSetting
     {
         public override int m_Index => 10002;
         public override enum_ActionType m_Type => enum_ActionType.Action;
+        public override float m_ExpireDuration => ActionData.F_Armor2_Duration;
         protected override int I_ActionCost => ActionData.I_Armor2_Cost;
         public override float GetValue1(EntityPlayerBase _actionEntity) => ActionData.F_Armor2_DamageAdditive(m_Level,_actionEntity.m_HealthManager.m_CurrentArmor);
         public override float F_DamageAdditive(EntityPlayerBase _actionEntity) => GetValue1(_actionEntity);
@@ -839,10 +840,12 @@ namespace GameSetting
         public override int m_Index => 10005;
         public override enum_ActionType m_Type => enum_ActionType.Action;
         protected override int I_ActionCost => ActionData.I_Armor5_Cost;
+        public override float m_ExpireDuration => ActionData.F_Armor5_Duration;
         public override float GetValue1(EntityPlayerBase _actionEntity) => ActionData.F_Armor5_DamageReduction(m_Level);
         public override float m_DamageReduction => GetValue1(null);
-        public Action_Armor5_DamageReduction(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired, ActionData.F_Armor5_Duration) { }
+        public Action_Armor5_DamageReduction(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
     }
+    
     #endregion
     #endregion
     #region Physics
