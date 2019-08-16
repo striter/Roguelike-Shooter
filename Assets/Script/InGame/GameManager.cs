@@ -30,6 +30,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     public int C_TestProjectileIndex = 29001;
     public int V_TestIndicatorIndex = 50002;
     public int B_TestBuffIndex = 1;
+    public int F5_TestActionIndex = 10001;
     public bool B_AdditionalLight = true;
     void Update()
     {
@@ -65,6 +66,9 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         }
         if (Input.GetKeyDown(KeyCode.Equals))
             OnStageFinished();
+
+        if (Input.GetKeyDown(KeyCode.F5))
+            (m_LocalPlayer as EntityPlayerBase).TestUseAction(F5_TestActionIndex);
 
         UIManager.instance.transform.Find("Test/SeedTest").GetComponent<UnityEngine.UI.Text>().text = m_SeedString;
 
@@ -358,7 +362,9 @@ public static class DataManager
         Properties<SGenerateEntity>.Init();
         Properties<SWeapon>.Init();
         Properties<SBuff>.Init();
+        InitActions();
     }
+
     public static SLevelGenerate GetItemGenerateProperties(enum_Style style,enum_LevelGenerateType prefabType,bool isInner)
     {
         SLevelGenerate generate = Properties<SLevelGenerate>.PropertiesList.Find(p => p.m_LevelStyle == style && p.m_LevelPrefabType == prefabType&&p.m_IsInner==isInner);
@@ -367,6 +373,7 @@ public static class DataManager
 
          return generate;
     }
+
     public static List<SGenerateEntity> GetEntityGenerateProperties(enum_BattleDifficulty battleDifficulty)
     {
         List<SGenerateEntity> entityList = new List<SGenerateEntity>();
@@ -380,8 +387,8 @@ public static class DataManager
             waveCount++;
         }
         return entityList;
-       
-    } 
+    }
+
     public static SWeapon GetWeaponProperties(enum_PlayerWeapon type)
     {
         SWeapon weapon= Properties<SWeapon>.PropertiesList.Find(p => p.m_Weapon == type);
@@ -395,6 +402,16 @@ public static class DataManager
         if (buff.m_Index == 0)
             Debug.LogError("Error Properties Found Of Index:" + index);
         return buff;
+    }
+
+    static Dictionary<int,Type> m_AllActions=new Dictionary<int, Type>();
+    static void InitActions()=> TReflection.GetAllInheritClasses((Type type,ActionBase action)=> { m_AllActions.Add(action.m_Index, type); }, enum_ActionLevel.Invalid,null);
+    public static ActionBase GetAction(int index,enum_ActionLevel level,Action<ExpireBase> OnExpired)
+    {
+        if (!m_AllActions.ContainsKey(index))
+            Debug.LogError("Error Action:" + index + " ,Does not exist");
+
+        return TReflection.CreateInstance<ActionBase>(m_AllActions[index],level,OnExpired);
     }
 }
 public static class ObjectManager

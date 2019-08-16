@@ -3,12 +3,18 @@ using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 
-public static class TReflection 
+public static class TReflection
 {
-    public static List<Type> GetAllInheritClasses<T> ()
+    public static T CreateInstance<T>(Type t,params object[] constructorArgs) => (T)Activator.CreateInstance(t, constructorArgs);
+    public static void GetAllInheritClasses<T> (Action<Type,T> OnInstanceCreated,params object[] constructorArgs)
     {
-        List<Type> classes= Assembly.GetExecutingAssembly().GetTypes().ToList();
-        return classes.FindAll(p => p.IsSubclassOf(typeof(T)));
+        Type[] allTypes= Assembly.GetExecutingAssembly().GetTypes();
+        Type parentType=typeof(T);
+        for (int i = 0; i < allTypes.Length; i++)
+        {
+            if (allTypes[i].IsClass && !allTypes[i].IsAbstract && allTypes[i].IsSubclassOf(parentType))
+                OnInstanceCreated(allTypes[i], CreateInstance<T>(allTypes[i], constructorArgs));
+        }
     }
     public static void InovokeAllMethod<T>(List<Type> classes,string methodName,T template) where T:class
     {

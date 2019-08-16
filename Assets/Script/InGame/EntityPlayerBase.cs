@@ -16,8 +16,13 @@ public class EntityPlayerBase : EntityBase {
     public WeaponBase m_WeaponCurrent { get; private set; } = null;
     public bool B_Interacting => m_InteractTarget != null;
     public InteractBase m_InteractTarget { get; private set; }
-    protected override EntityInfoManager GetEntityInfo => new PlayerInfoManager(this,OnReceiveDamage,OnInfoChange);
     public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized* m_EntityInfo.F_MovementSpeed * time;
+    public PlayerInfoManager m_PlayerInfo { get; private set; }
+    protected override EntityInfoManager GetEntityInfo()
+    {
+        m_PlayerInfo = new PlayerInfoManager(this, OnReceiveDamage, OnInfoChange);
+        return m_PlayerInfo;
+    }
     public override void Init(int poolPresetIndex)
     {
         Init(poolPresetIndex, enum_EntityFlag.Player);
@@ -151,7 +156,7 @@ public class EntityPlayerBase : EntityBase {
     protected override void Update()
     {
         base.Update();
-        bool canFire = !Physics.SphereCast(new Ray(tf_Head.position, tf_Head.forward), .1f, 1f, GameLayer.Mask.I_Static);
+        bool canFire = !Physics.SphereCast(new Ray(tf_Head.position, tf_Head.forward), .3f, 1f, GameLayer.Mask.I_Static);
         m_WeaponCurrent.SetCanFire(canFire);
         m_Assist.SetEnable(canFire);
         transform.rotation = Quaternion.Lerp(transform.rotation,CameraController.CameraXZRotation,GameConst.F_PlayerCameraSmoothParam);
@@ -185,7 +190,12 @@ public class EntityPlayerBase : EntityBase {
         else if (m_InteractTarget = interactTarget)
             m_InteractTarget = null;
     }
-#endregion
+    #endregion
+
+    public void TestUseAction(int actionIndex)
+    {
+        m_PlayerInfo.TestUseAction(actionIndex);
+    }
 
     protected class PlayerAnimator : AnimatorClippingTime
     {
