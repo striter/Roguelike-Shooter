@@ -8,7 +8,7 @@ public class SFXRelativeLight : SFXRelativeBase {
     public override void Init()
     {
         if(!m_Light)
-        m_Light = GetComponent<Light>();
+            m_Light = GetComponent<Light>();
     }
     private void Start()
     {
@@ -21,7 +21,7 @@ public class SFXRelativeLight : SFXRelativeBase {
     void OnOptionChange()
     {
         if (m_Light.enabled && !OptionsManager.B_AdditionalLight)
-            m_Light.enabled = false;
+            m_Light.enabled=false;
     }
     public override void Play()
     {

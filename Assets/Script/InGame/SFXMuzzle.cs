@@ -5,6 +5,7 @@ public class SFXMuzzle : SFXParticles
 {
     SFXRelativeLight[] m_lights;
     float lightCheck;
+    bool b_lightPlaying;
     public override void Init(int _sfxIndex)
     {
         base.Init(_sfxIndex);
@@ -15,7 +16,7 @@ public class SFXMuzzle : SFXParticles
     {
         base.Play(sourceID, duration);
         lightCheck = .2f;
-
+        b_lightPlaying = true;
         m_lights.Traversal((SFXRelativeLight light) => { light.Play(); });
     }
 
@@ -23,7 +24,10 @@ public class SFXMuzzle : SFXParticles
     {
         base.Update();
         lightCheck -= Time.deltaTime;
-        if (lightCheck < 0)
+        if (b_lightPlaying&&lightCheck < 0)
+        {
             m_lights.Traversal((SFXRelativeLight light) => { light.Stop(); });
+            b_lightPlaying = false;
+        }
     }
 }

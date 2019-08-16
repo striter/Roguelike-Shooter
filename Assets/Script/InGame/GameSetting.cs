@@ -838,6 +838,7 @@ namespace GameSetting
     public class Action_Armor5_DamageReduction : ActionBase
     {
         public override int m_Index => 10005;
+        public override int m_EffectIndex => base.m_EffectIndex;
         public override enum_ActionType m_Type => enum_ActionType.Action;
         protected override int I_ActionCost => ActionData.I_Armor5_Cost;
         public override float m_ExpireDuration => ActionData.F_Armor5_Duration;

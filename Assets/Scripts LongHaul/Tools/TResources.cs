@@ -29,15 +29,9 @@ public class TResources
             if (levelItem.m_ItemType == enum_LevelItemType.Invalid)
                 Debug.LogError("Please Edit Level Item(Something invalid): Resources/" + ConstPath.S_LeveLItem + _levelStyle + "/" + levelItem.name);
         }
-        LevelItemBase[] instantiatedLevelItem = new LevelItemBase[levelItemPrefabs.Length];
-        for (int i = 0; i < levelItemPrefabs.Length; i++)
-        {
-            instantiatedLevelItem[i] = GameObject.Instantiate(levelItemPrefabs[i], parent);
-            instantiatedLevelItem[i].SetActivate(false);
-        }
 
         Dictionary<enum_LevelItemType, List<LevelItemBase>> itemPrefabDic = new Dictionary<enum_LevelItemType, List<LevelItemBase>>();
-        foreach (LevelItemBase levelItem in instantiatedLevelItem)
+        foreach (LevelItemBase levelItem in levelItemPrefabs)
         {
             if (!itemPrefabDic.ContainsKey(levelItem.m_ItemType))
                 itemPrefabDic.Add(levelItem.m_ItemType, new List<LevelItemBase>());
@@ -66,6 +60,7 @@ public class TResources
             int index =int.Parse( sfx.name.Split('_')[0]);
             sourceDic.Add(index,GameObject.Instantiate(sfx));
             sfx.GetComponentsInChildren<Renderer>().Traversal((Renderer render) => { if (render.sharedMaterials != null) render.sharedMaterials.Traversal((Material material) => { if (material != null) material.enableInstancing = false; }); });
+            PreloadMaterials(sfx.gameObject);
         });
         return sourceDic;
     }
@@ -76,6 +71,7 @@ public class TResources
         LoadAll<SFXBase>(ConstPath.S_SFXCommon).Traversal((SFXBase sfx) => {
             sfxsDic.Add(int.Parse(sfx.name.Split('_')[0]), GameObject.Instantiate<SFXBase>(sfx));
             sfx.GetComponentsInChildren<Renderer>().Traversal((Renderer render) => { if (render.sharedMaterials != null) render.sharedMaterials.Traversal((Material material) => {if(material!=null) material.enableInstancing = false; }); });
+            PreloadMaterials(sfx.gameObject);
         });
         return sfxsDic;
     }
@@ -88,11 +84,14 @@ public class TResources
         entities.Traversal((EntityBase entity) => {
             int index = int.Parse(entity.name.Split('_')[0]);
             entitisDic.Add(index, GameObject.Instantiate<EntityBase>(entity));
-            entity.GetComponentsInChildren<Renderer>().Traversal((Renderer render) => { if (render.sharedMaterials != null) render.sharedMaterials.Traversal((Material material) => { if (material != null) material.enableInstancing = false; }); });
+            PreloadMaterials(entity.gameObject);
         });
         return entitisDic;
     }
-
+    static void PreloadMaterials(GameObject targetObject)
+    {
+        targetObject.GetComponentsInChildren<Renderer>().Traversal((Renderer render) => { render.sharedMaterials.Traversal((Material material) => {if(material) material.hideFlags = material.hideFlags; }); });
+    }
     public static WeaponBase GetPlayerWeapon(enum_PlayerWeapon weapon)
     {
         WeaponBase target;

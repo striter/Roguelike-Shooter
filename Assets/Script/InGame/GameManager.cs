@@ -452,7 +452,7 @@ public static class ObjectManager
     }
     public static void RegisterLevelItem(Dictionary<LevelItemBase, int> registerDic)
     {
-        registerDic.Traversal((LevelItemBase item, int count) => { ObjectPoolManager<LevelItemBase, LevelItemBase>.Register(item, item, enum_PoolSaveType.StaticMaxAmount, count, null); });
+        registerDic.Traversal((LevelItemBase item, int count) => { ObjectPoolManager<LevelItemBase, LevelItemBase>.Register(item, GameObject.Instantiate(item), enum_PoolSaveType.StaticMaxAmount, count, null); });
     }
     public static Dictionary<enum_EntityType, List<int>> RegisterAdditionalEntities(Dictionary<int, EntityBase> registerDic)
     {
