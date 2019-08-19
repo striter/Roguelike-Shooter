@@ -335,20 +335,15 @@ namespace GameSetting
 
         protected Action<enum_HealthMessageType> OnHealthChanged;
         protected Action OnDead;
-        public HealthBase(float _maxHealth, Action<enum_HealthMessageType> _OnHealthChanged, Action _OnDead)
+        public HealthBase( Action<enum_HealthMessageType> _OnHealthChanged, Action _OnDead)
         {
-            m_MaxHealth = _maxHealth;
             OnHealthChanged = _OnHealthChanged;
             OnDead = _OnDead;
         }
-        public virtual void OnActivate()
+        public  void OnActivate(float maxHealth)
         {
+            m_MaxHealth = maxHealth;
             m_CurrentHealth = m_MaxHealth;
-        }
-        public void HealthOverride(float _maxHealth)
-        {
-            m_MaxHealth = _maxHealth;
-            OnActivate();
         }
         public virtual bool OnReceiveDamage(DamageInfo damageInfo, float damageReduction = 1)
         {
@@ -382,10 +377,14 @@ namespace GameSetting
                 m_CurrentArmor = 0;
         }
 
-        public EntityHealth(EntityBase entity, Action<enum_HealthMessageType> _OnHealthChanged, Action _OnDead) :base(entity.I_MaxHealth,_OnHealthChanged,_OnDead)
+        public EntityHealth(EntityBase entity, Action<enum_HealthMessageType> _OnHealthChanged, Action _OnDead) :base(_OnHealthChanged,_OnDead)
         {
             m_Entity = entity;
-            m_DefaultArmor = entity.I_DefaultArmor;
+        }
+        public void OnActivate(float maxHealth, float defaultArmor)
+        {
+            base.OnActivate(maxHealth);
+            m_DefaultArmor= defaultArmor;
             m_CurrentArmor = m_DefaultArmor;
         }
         public override bool OnReceiveDamage(DamageInfo damageInfo,float damageMultiply=1)
@@ -1230,7 +1229,7 @@ namespace GameSetting
             EquipmentEntitySpawner spawner = _entity.OnAcquireEquipment<EquipmentEntitySpawner>(m_Index, () => { return DamageBuffInfo.Create(0, damage); });
             spawner.SetOnSpawn((EntityBase entity)=> {
                 EntityAIBase target = entity as EntityAIBase;
-                target.m_HealthManager.HealthOverride((int)health);
+                target.I_MaxHealth = (int)health;
                 target.F_AttackDuration = new RangeFloat(1, 0);
                 target.F_AttackRate = 0f;
             });
