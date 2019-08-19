@@ -6,43 +6,40 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
     public int I_MaxHealth;
     public int I_DefaultArmor;
     public float F_MovementSpeed;
+    public float F_AttackSpread;
     public int I_EntityID { get; private set; } = -1;
     public int I_PoolIndex { get; private set; } = -1;
-    public HitCheckEntity m_HitCheck => m_HitChecks[0];
-    HitCheckEntity[] m_HitChecks;
-    Renderer[] m_SkinRenderers;
-    protected Transform tf_Model;
+    public Transform tf_Model { get; private set; }
     public Transform tf_Head { get; private set; }
     public enum_EntityFlag m_Flag { get; private set; }
     public EntityInfoManager m_EntityInfo { get; private set; }
     public EntityHealth m_HealthManager { get; private set; }
+    public virtual bool B_IsPlayer => false;
+    public HitCheckEntity m_HitCheck => m_HitChecks[0];
+    HitCheckEntity[] m_HitChecks;
+    Renderer[] m_SkinRenderers;
     public virtual Vector3 m_PrecalculatedTargetPos(float time) { Debug.LogError("Override This Please");return Vector2.zero; }
     protected virtual EntityInfoManager GetEntityInfo() => new EntityInfoManager(this, OnReceiveDamage, OnInfoChange);
-
+    
     public virtual void Init(int presetIndex)
-    {
-        Debug.LogError("Override This Please");
-    }
-
-    protected virtual void Init(int presetIndex,enum_EntityFlag flag= enum_EntityFlag.Invalid)
     {
         tf_Model = transform.Find("Model");
         tf_Head = transform.Find("Head");
         I_PoolIndex=presetIndex;
-        m_Flag = flag;
         m_SkinRenderers = tf_Model.Find("Skin").GetComponentsInChildren<Renderer>();
         m_HitChecks = GetComponentsInChildren<HitCheckEntity>();
         m_EntityInfo = GetEntityInfo();
         m_HealthManager = new EntityHealth(this,OnHealthEffect,OnDead);
-        TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.Attach(this, OnReceiveDamage); });
     }
 
-    public virtual void OnSpawn(int _entityID)
+    public virtual void OnSpawn(int _entityID,enum_EntityFlag _flag)
     {
         I_EntityID = _entityID;
+        m_HitChecks.Traversal((HitCheckEntity check) => { check.Attach(this, OnReceiveDamage); });
         if (I_EntityID == -1)
             Debug.LogError("Please Init Entity Info!" + gameObject.name.ToString());
         m_HealthManager.OnActivate();
+        m_Flag = _flag;
         TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.SetEnable(true); });
         TCommon.Traversal(m_SkinRenderers, (Renderer renderer) => {renderer.materials.Traversal((Material mat)=> {mat.SetFloat("_Amount1", 0);}); });
     }

@@ -3,19 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
 using TSpecialClasses;
+using System;
+
 public class EntityPlayerBase : EntityBase {
     public enum_PlayerWeapon TESTWEAPON1 = enum_PlayerWeapon.M16A4;
     public enum_PlayerWeapon TESTWEAPON2 = enum_PlayerWeapon.M82A1;
-    public float m_Coins { get; private set; } = 0;
+    public override bool B_IsPlayer => true;
 
+    public float m_Coins { get; private set; } = 0;
     protected CharacterController m_CharacterController;
     protected PlayerAnimator m_Animator;
     protected Transform tf_WeaponHoldRight,tf_WeaponHoldLeft;
     protected List<WeaponBase> m_WeaponObtained=new List<WeaponBase>();
     protected SFXAimAssist m_Assist = null;
     public WeaponBase m_WeaponCurrent { get; private set; } = null;
-    public bool B_Interacting => m_InteractTarget != null;
-    public InteractBase m_InteractTarget { get; private set; }
+    public InteractBase m_Interact { get; private set; }
+    public EquipmentBase m_Equipment { get; private set; }
     public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized* m_EntityInfo.F_MovementSpeed * time;
     public PlayerInfoManager m_PlayerInfo { get; private set; }
     protected override EntityInfoManager GetEntityInfo()
@@ -25,7 +28,7 @@ public class EntityPlayerBase : EntityBase {
     }
     public override void Init(int poolPresetIndex)
     {
-        Init(poolPresetIndex, enum_EntityFlag.Player);
+        base.Init(poolPresetIndex);
         m_CharacterController = GetComponent<CharacterController>();
         m_CharacterController.detectCollisions = false;
         gameObject.layer = GameLayer.I_MovementDetect;
@@ -34,9 +37,9 @@ public class EntityPlayerBase : EntityBase {
         m_Animator = new PlayerAnimator(tf_Model.GetComponent<Animator>());
         transform.Find("InteractDetector").GetComponent<InteractDetector>().Init(OnInteractCheck);
     }
-    public override void OnSpawn(int id)
+    public override void OnSpawn(int id,enum_EntityFlag _flag)
     {
-        base.OnSpawn(id);
+        base.OnSpawn(id, enum_EntityFlag.Player);
         CameraController.Attach(this.transform);
 
         ObtainWeapon(ObjectManager.SpawnWeapon(TESTWEAPON1, this));
@@ -64,6 +67,15 @@ public class EntityPlayerBase : EntityBase {
 
         m_Animator.OnDead();
         m_MoveAxisInput = Vector2.zero;
+        RemoveBinding();
+    }
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+        RemoveBinding();
+    }
+    void RemoveBinding()
+    {
 #if UNITY_EDITOR
         PCInputManager.Instance.DoBindingRemoval<EntityPlayerBase>();
         PCInputManager.Instance.RemoveMovementCheck();
@@ -75,36 +87,31 @@ public class EntityPlayerBase : EntityBase {
         TouchDeltaManager.Instance.Bind(null, null);
 #endif
     }
+
     void OnMainButtonDown(bool down)
     {
-        if (down)
+        if (m_Equipment != null)
         {
-            if (m_InteractTarget != null)
-                OnInteract(down);
-            else
-                OnTriggerDown(down);
+            OnEquipment(down);
+            return;
         }
-        else
+
+        if (m_Interact != null)
         {
-            if (m_InteractTarget != null)
-                OnInteract(down);
-            OnTriggerDown(down);
+            OnInteract(down);
+            return;
         }
+        if (m_WeaponCurrent != null)
+            m_WeaponCurrent.Trigger(down);
     }
 #region WeaponControll
     void ObtainWeapon(WeaponBase weapon)
     {
         m_WeaponObtained.Add(weapon);
-        weapon.Attach(I_EntityID,this,weapon.B_AttachLeft?tf_WeaponHoldLeft:tf_WeaponHoldRight, OnFireAddRecoil,m_Animator.Reload, m_EntityInfo.GetDamageInfo, m_EntityInfo.F_FireRateTick,m_EntityInfo.F_ReloadRateTick);
+        weapon.Attach(I_EntityID,this,weapon.B_AttachLeft?tf_WeaponHoldLeft:tf_WeaponHoldRight, OnFireAddRecoil,m_Animator.Reload, m_EntityInfo.GetDamageBuffInfo, m_EntityInfo.F_FireRateTick,m_EntityInfo.F_ReloadRateTick);
         weapon.SetActivate(false);
         if (m_WeaponCurrent == null)
             OnSwitchWeapon();
-    }
-    void OnTriggerDown(bool down)
-    {
-        if (m_WeaponCurrent == null)
-            return;
-        m_WeaponCurrent.Trigger(down);
     }
     void OnReloadDown()
     {
@@ -166,29 +173,45 @@ public class EntityPlayerBase : EntityBase {
     }
     public void OnFireAddRecoil(Vector2 recoil)
     {
-        OnRotateDelta(new Vector2(Random.Range(-1f,1f)>0?1f:-1f *recoil.x,0));
+        OnRotateDelta(new Vector2(TCommon.RandomBool()?1:-1 *recoil.x,0));
         m_Animator.Fire();
     }
-#endregion
-#region PlayerInteract
+    #endregion
+    #region PlayerInteract/Equipment
+
+    public void OnInteractCheck(InteractBase interactTarget, bool isEnter)
+    {
+        if (isEnter)
+            m_Interact = interactTarget;
+        else if (m_Interact = interactTarget)
+            m_Interact = null;
+    }
     public void OnInteract(bool down)
     {
-        if (m_InteractTarget == null)
+        if (m_Interact == null)
         {
             Debug.LogError("Can't Interact With Null Target!");
             return;
         }
 
-        if (down && m_InteractTarget.TryInteract())
-            m_InteractTarget = null;
+        if (down && m_Interact.TryInteract())
+            m_Interact = null;
     }
 
-    public void OnInteractCheck(InteractBase interactTarget, bool isEnter)
+    public T OnAcquireEquipment<T>(int actionIndex, Func<DamageBuffInfo> OnDamageBuff) where T:EquipmentBase
     {
-        if (isEnter)
-            m_InteractTarget = interactTarget;
-        else if (m_InteractTarget = interactTarget)
-            m_InteractTarget = null;
+        m_Equipment = EquipmentBase.AcquireEquipment(actionIndex*10, this, tf_WeaponHoldLeft, OnDamageBuff, OnDead);
+        return m_Equipment as T;
+    }
+
+    void OnEquipment(bool down)
+    {
+        if (!down || m_Equipment == null)
+            return;
+
+        m_Equipment.Play(null,transform.position+transform.forward*10);
+        m_Equipment.OnDeactivate();
+        m_Equipment = null;
     }
     #endregion
 

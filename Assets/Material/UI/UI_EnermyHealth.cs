@@ -16,17 +16,19 @@ public class UI_EnermyHealth : SimpleSingletonMono<UI_EnermyHealth> {
         TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnEntitySpawn, OnEntitySpawn);
         TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnEntityRecycle, OnEntityRecycle);
         TBroadCaster<enum_BC_GameStatusChanged>.Add<int,EntityBase,float>(enum_BC_GameStatusChanged.OnEntityDamage, OnEntityDamage);
+        TBroadCaster<enum_BC_GameStatusChanged>.Add(enum_BC_GameStatusChanged.OnStageFinish, OnStageFinish);
     }
     private void OnDestroy()
     {
         TBroadCaster<enum_BC_GameStatusChanged>.Remove<EntityBase>(enum_BC_GameStatusChanged.OnEntitySpawn, OnEntitySpawn);
         TBroadCaster<enum_BC_GameStatusChanged>.Remove<EntityBase>(enum_BC_GameStatusChanged.OnEntityRecycle, OnEntityRecycle);
         TBroadCaster<enum_BC_GameStatusChanged>.Remove<int,EntityBase,float>(enum_BC_GameStatusChanged.OnEntityDamage, OnEntityDamage);
+        TBroadCaster<enum_BC_GameStatusChanged>.Remove(enum_BC_GameStatusChanged.OnStageFinish, OnStageFinish);
     }
     int damageCount=0;
     void OnEntitySpawn(EntityBase entity)
     {
-        if (entity.m_Flag!= enum_EntityFlag.Enermy)
+        if (entity.B_IsPlayer)
             return;
 
         m_HealthGrid.AddItem(entity.I_EntityID).AttachItem(entity);
@@ -34,7 +36,7 @@ public class UI_EnermyHealth : SimpleSingletonMono<UI_EnermyHealth> {
 
     void OnEntityRecycle(EntityBase entity)
     {
-        if (entity.m_Flag != enum_EntityFlag.Enermy)
+        if (entity.B_IsPlayer)
             return;
 
         m_HealthGrid.RemoveItem(entity.I_EntityID);
@@ -43,7 +45,7 @@ public class UI_EnermyHealth : SimpleSingletonMono<UI_EnermyHealth> {
     {
         m_DamageGrid.AddItem(damageCount++).Play(damageEntity,damage,OnDamageExpire);
 
-        if (damageEntity.m_Flag != enum_EntityFlag.Enermy)
+        if (damageEntity.B_IsPlayer)
             return;
 
         m_HealthGrid.GetItem(damageEntity.I_EntityID).OnShow();
@@ -52,5 +54,10 @@ public class UI_EnermyHealth : SimpleSingletonMono<UI_EnermyHealth> {
     void OnDamageExpire(int index)
     {
         m_DamageGrid.RemoveItem(index);
+    }
+
+    void OnStageFinish()
+    {
+        m_DamageGrid.ClearGrid();
     }
 }

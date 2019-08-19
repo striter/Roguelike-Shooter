@@ -23,7 +23,7 @@ public class SFXProjectileCastTrigger : SFXProjectile
     {
         if (b_trigger)
             return;
-        ObjectManager.SpawnDamageSource<SFXCast>(GameExpression.GetEnermyWeaponSubIndex(I_SFXIndex),point , Vector3.up).Play(I_SourceID, m_DamageInfo.m_BuffApply);
+        ObjectManager.SpawnEquipment<SFXCast>(GameExpression.GetEquipmentSubIndex(I_SFXIndex),point , Vector3.up).Play(I_SourceID, m_DamageInfo.m_BuffApply);
         b_trigger = true;
     }
 }

@@ -9,6 +9,7 @@ public class WeaponBase : MonoBehaviour {
     public bool B_AttachLeft=false;
     public int I_AttacherID { get; private set; }
     public SWeapon m_WeaponInfo { get; private set; }
+    public SFXProjectile m_ProjectileInfo { get; private set; }
     public bool B_CanFire { get; private set; } = false;
     public bool B_Reloading { get; private set; }
     public int I_AmmoLeft { get; private set; }
@@ -37,6 +38,7 @@ public class WeaponBase : MonoBehaviour {
     {
         m_Muzzle = transform.FindInAllChild("Muzzle");
         m_WeaponInfo = weaponInfo;
+        m_ProjectileInfo = ObjectManager.GetEquipmentData<SFXProjectile>((int)m_WeaponInfo.m_Weapon);
         I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
         switch (E_Trigger)
         {
@@ -111,11 +113,11 @@ public class WeaponBase : MonoBehaviour {
                 endPosition = hit.point;
             spreadDirection = (endPosition - m_Muzzle.position).normalized;
 
-            ObjectManager.SpawnDamageSource<SFXProjectile>(m_WeaponInfo.m_ProjectileSFX, m_Muzzle.position, spreadDirection).Play(I_AttacherID, spreadDirection, endPosition, OnFireBuffInfo());
+            ObjectManager.SpawnEquipment<SFXProjectile>(m_ProjectileInfo.I_SFXIndex, m_Muzzle.position, spreadDirection).Play(I_AttacherID, spreadDirection, endPosition, OnFireBuffInfo());
         }
 
-        if (m_WeaponInfo.m_MuzzleSFX != -1)
-            ObjectManager.SpawnParticles<SFXMuzzle>(m_WeaponInfo.m_MuzzleSFX, m_Muzzle.position, m_Muzzle.forward).Play(I_AttacherID);
+        if (m_ProjectileInfo.I_MuzzleIndex != -1)
+            ObjectManager.SpawnParticles<SFXMuzzle>(m_ProjectileInfo.I_MuzzleIndex, m_Muzzle.position, m_Muzzle.forward).Play(I_AttacherID);
 
         I_AmmoLeft--;
         OnFireRecoil?.Invoke(m_WeaponInfo.m_RecoilPerShot);

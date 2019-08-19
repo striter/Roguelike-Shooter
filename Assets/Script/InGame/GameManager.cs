@@ -23,8 +23,9 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     public bool B_PhysicsDebugGizmos = true;
     public bool B_LevelDebugGizmos = true;
     public enumDebug_LevelDrawMode E_LevelDebug = enumDebug_LevelDrawMode.DrawTypes;
-    public int Z_TestEntityIndex = 221;
-    public int TestEntityBuffApplyOnSpawn = 1;
+    public int Z_TestEntitySpawn = 221;
+    public enum_EntityFlag TestEntityFlag = enum_EntityFlag.Enermy;
+    public int TestEntityBuffOnSpawn = 1;
     public int X_TestCastIndex = 30003;
     public bool CastForward = true;
     public int C_TestProjectileIndex = 29001;
@@ -40,14 +41,14 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         RaycastHit hit = new RaycastHit();
         if (Input.GetKeyDown(KeyCode.Z) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
         {
-            EntityBase enermy = ObjectManager.SpawnEntity(Z_TestEntityIndex, hit.point);
-            if (TestEntityBuffApplyOnSpawn > 0)
-                enermy.m_HitCheck.TryHit(new DamageInfo(-1,TestEntityBuffApplyOnSpawn));
+            EntityBase enermy = ObjectManager.SpawnEntity(Z_TestEntitySpawn, hit.point, TestEntityFlag);
+            if (TestEntityBuffOnSpawn > 0)
+                enermy.m_HitCheck.TryHit(new DamageInfo(-1,TestEntityBuffOnSpawn));
         }
         if (Input.GetKeyDown(KeyCode.X) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
-            ObjectManager.SpawnDamageSource<SFXCast>(X_TestCastIndex, hit.point, CastForward?m_LocalPlayer.transform.forward: Vector3.up).Play(1000, DamageBuffInfo.Default());
+            ObjectManager.SpawnEquipment<SFXCast>(X_TestCastIndex, hit.point, CastForward?m_LocalPlayer.transform.forward: Vector3.up).Play(1000, DamageBuffInfo.Default());
         if (Input.GetKeyDown(KeyCode.C) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
-            ObjectManager.SpawnDamageSource<SFXProjectile>(C_TestProjectileIndex, hit.point + Vector3.up, m_LocalPlayer.transform.forward).Play(0, m_LocalPlayer.transform.forward, hit.point + m_LocalPlayer.transform.forward * 10, DamageBuffInfo.Default());
+            ObjectManager.SpawnEquipment<SFXProjectile>(C_TestProjectileIndex, hit.point + Vector3.up, m_LocalPlayer.transform.forward).Play(0, m_LocalPlayer.transform.forward, hit.point + m_LocalPlayer.transform.forward * 10, DamageBuffInfo.Default());
         if (Input.GetKeyDown(KeyCode.V) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
             ObjectManager.SpawnIndicator(V_TestIndicatorIndex, hit.point + Vector3.up, Vector3.up).Play(1000,3f);
         if (Input.GetKeyDown(KeyCode.B))
@@ -129,10 +130,9 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         m_BattleEntityStyle = _entityStyle;
         ObjectManager.RegisterLevelBase(TResources.GetLevelBase(_levelStyle));
         EnviormentManager.Instance.GenerateAllEnviorment(_levelStyle, m_GameSeed, OnLevelStart,OnStageFinished);
-        ObjectManager.RegisterEnermyDamageSource(TResources.GetAllDamageSources(m_BattleEntityStyle));
-        m_StyledEnermyEntities = ObjectManager.RegisterAdditionalEntities(TResources.GetAllStyledEntities(m_BattleEntityStyle));
+        m_StyledEnermyEntities = ObjectManager.RegisterAllEntitiesGetEnermyDic(TResources.GetCommonEntities() ,TResources.GetEnermyEntities(m_BattleEntityStyle));
 
-        m_LocalPlayer = ObjectManager.SpawnEntity(0, Vector3.zero);
+        m_LocalPlayer = ObjectManager.SpawnEntity(0, Vector3.zero, enum_EntityFlag.Player);
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnStageStart);
 
         GC.Collect();
@@ -188,12 +188,12 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         return canHit;
     }
 
-    public EntityBase GetRandomEntity(int sourceIndex,enum_EntityFlag targetFlag,Predicate<EntityBase> predict)
+    public EntityBase GetRandomEntity(int sourceIndex,enum_EntityFlag sourceFlag,bool targetAlly,Predicate<EntityBase> predict)
     {
         EntityBase target=null;
         m_Entities.TraversalRandom((int index, EntityBase entity) =>
         {
-            if (entity.m_Flag == targetFlag && entity.I_EntityID!=sourceIndex&& (predict == null || predict(entity)))
+            if ((targetAlly? entity.m_Flag == sourceFlag : entity.m_Flag!=sourceFlag) && entity.I_EntityID!=sourceIndex&& (predict == null || predict(entity)))
             {
                 target = entity;
                 return true;
@@ -302,7 +302,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     {
         ObjectManager.SpawnIndicator(30001, position, Vector3.up).Play(entityIndex,GameConst.I_EnermySpawnDelay);
         this.StartSingleCoroutine(100 + spawnIndex, TIEnumerators.PauseDel(GameConst.I_EnermySpawnDelay, () => {
-            ObjectManager.SpawnEntity(entityIndex,position );
+            ObjectManager.SpawnEntity(entityIndex,position, enum_EntityFlag.Enermy );
         }));
     }
     #endregion
@@ -435,7 +435,7 @@ public static class ObjectManager
         ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.ClearAll();
         ObjectPoolManager<int, LevelBase>.ClearAll();
 
-        TResources.GetAllCommonSFXs().Traversal((int index, SFXBase target) => {
+        TResources.GetAllEffectSFX().Traversal((int index, SFXBase target) => {
             ObjectPoolManager<int, SFXBase>.Register(index, target,
             enum_PoolSaveType.DynamicMaxAmount, 1,
             (SFXBase sfx) => { sfx.Init(index); });
@@ -454,20 +454,22 @@ public static class ObjectManager
     {
         registerDic.Traversal((LevelItemBase item, int count) => { ObjectPoolManager<LevelItemBase, LevelItemBase>.Register(item, GameObject.Instantiate(item), enum_PoolSaveType.StaticMaxAmount, count, null); });
     }
-    public static Dictionary<enum_EntityType, List<int>> RegisterAdditionalEntities(Dictionary<int, EntityBase> registerDic)
+    public static Dictionary<enum_EntityType, List<int>> RegisterAllEntitiesGetEnermyDic(Dictionary<int,EntityBase> common, Dictionary<int, EntityBase> enermies)
     {
+        common.Traversal((int index, EntityBase entity) =>{
+            ObjectPoolManager<int, EntityBase>.Register(index, entity, enum_PoolSaveType.DynamicMaxAmount, 1,
+                (EntityBase entityInstantiate) => { entityInstantiate.Init(index); });
+        });
+
         Dictionary<enum_EntityType, List<int>> enermyDic = new Dictionary<enum_EntityType, List<int>>();
-        registerDic.Traversal((int index, EntityBase entity) => {
+        enermies.Traversal((int index, EntityBase entity) => {
             ObjectPoolManager<int, EntityBase>.Register(index, entity, enum_PoolSaveType.DynamicMaxAmount, 1,
                 (EntityBase entityInstantiate) => { entityInstantiate.Init(index); });
 
-            if (entity.m_Flag== enum_EntityFlag.Enermy)
-            {
-                EntityEnermyBase enermy = entity as EntityEnermyBase;
-                if (!enermyDic.ContainsKey(enermy.E_EnermyType))
-                    enermyDic.Add(enermy.E_EnermyType, new List<int>());
-                enermyDic[enermy.E_EnermyType].Add(index);
-            }
+            EntityAIBase enermy = entity as EntityAIBase;
+            if (!enermyDic.ContainsKey(enermy.E_EnermyType))
+                enermyDic.Add(enermy.E_EnermyType, new List<int>());
+            enermyDic[enermy.E_EnermyType].Add(index);
         });
 
         return enermyDic;
@@ -476,12 +478,13 @@ public static class ObjectManager
     #region Spawn/Recycle
     #region Entity
     static int i_entityIndex = 0;
-    public static EntityBase SpawnEntity(int index,Vector3 toPosition)
+    public static EntityBase SpawnEntity(int index,Vector3 toPosition,enum_EntityFlag _flag,Action<EntityBase> _onSpawn=null)
     {
         EntityBase entity= ObjectPoolManager<int, EntityBase>.Spawn(index, TF_Entity);
         toPosition = EnviormentManager.NavMeshPosition(toPosition);
         entity.transform.position = toPosition;
-        entity.OnSpawn(GameManager.I_EntityID(i_entityIndex++, entity.m_Flag));
+        entity.OnSpawn(GameManager.I_EntityID(i_entityIndex++, _flag), _flag);
+        _onSpawn?.Invoke(entity);
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnEntitySpawn, entity);
         return entity;
     }
@@ -519,16 +522,12 @@ public static class ObjectManager
     }
     public static SFXIndicator SpawnIndicator(int index, Vector3 position, Vector3 normal, Transform attachTo = null)=> SpawnParticles<SFXIndicator>(index, position, normal, attachTo);
     public static SFXBuffEffect SpawnBuffEffect(int index, EntityBase attachTo) => SpawnParticles<SFXBuffEffect>(index, attachTo.transform.position, attachTo.transform.forward, attachTo.transform);
+    
+    public static T SpawnEquipment<T>(int weaponIndex,Vector3 position,Vector3 normal, Transform attachTo=null) where T:SFXBase
+    {
+        if (!ObjectPoolManager<int, SFXBase>.Registed(weaponIndex))
+            ObjectPoolManager<int, SFXBase>.Register(weaponIndex, TResources.GetDamageSource(weaponIndex), enum_PoolSaveType.DynamicMaxAmount, 1, (SFXBase sfx) => { sfx.Init(weaponIndex); });
 
-    public static void RegisterEnermyDamageSource(Dictionary<int, SFXBase> damageSources)
-    {
-        damageSources.Traversal((int weaponIndex, SFXBase damageSFX) => {
-            ObjectPoolManager<int, SFXBase>.Register(weaponIndex, damageSFX, enum_PoolSaveType.DynamicMaxAmount, 1, (SFXBase sfx) => {
-                sfx.Init(weaponIndex); });
-            }) ;
-    }
-    public static T SpawnDamageSource<T>(int weaponIndex,Vector3 position,Vector3 normal, Transform attachTo=null) where T:SFXBase
-    {
         T template = ObjectPoolManager<int, SFXBase>.Spawn(weaponIndex, attachTo) as T;
         if (template == null)
             Debug.LogError("Enermy Weapon Error! Invalid Type:" + typeof(T).ToString() + "|Index:" + weaponIndex);
@@ -536,8 +535,11 @@ public static class ObjectManager
         template.transform.rotation = Quaternion.LookRotation(normal);
         return template;
     }
-    public static T GetDamageSource<T>(int weaponIndex) where T : SFXBase
+    public static T GetEquipmentData<T>(int weaponIndex) where T : SFXBase
     {
+        if (!ObjectPoolManager<int, SFXBase>.Registed(weaponIndex))
+            ObjectPoolManager<int, SFXBase>.Register(weaponIndex, TResources.GetDamageSource(weaponIndex), enum_PoolSaveType.DynamicMaxAmount, 1, (SFXBase sfx) => { sfx.Init(weaponIndex); });
+
         T damageSourceInfo = ObjectPoolManager<int, SFXBase>.GetRegistedSpawnItem(weaponIndex) as T;
         if (damageSourceInfo == null)
             Debug.LogError("SFX Get Error! Invalid Type:" + typeof(T).ToString() + "|Index:" + weaponIndex);

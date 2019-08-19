@@ -14,10 +14,10 @@ public class TResources
 
         public const string S_Texture_LevelBase = "Texture/Level/Texture_Base_";
 
-        public const string S_PlayerWeapon = "PlayerWeapon/";
+        public const string S_PlayerWeapon = "WeaponModel/";
         public const string S_Entity = "Entity/";
-        public const string S_SFXCommon = "SFX_Common/";
-        public const string S_SFXEnermyWeapon = "SFX_EnermyWeapon/";
+        public const string S_SFXEffects = "SFX_Effects/";
+        public const string S_SFXEquipment = "Equipment/";
     }
     
     public static StyleColorData[] GetAllStyleCustomization(enum_Style levelStype) => LoadAll<StyleColorData>(ConstPath.S_StyleCustomization + "/" + levelStype);
@@ -51,24 +51,13 @@ public class TResources
         matRenderer.sharedMaterial.SetTexture("_MainTex", Load<Texture>(ConstPath.S_Texture_LevelBase + levelStyle));
         return level;
     }
+    
+    public static SFXBase GetDamageSource(int index) => Instantiate<SFXBase>(ConstPath.S_SFXEquipment+index.ToString());
 
-    public static Dictionary<int, SFXBase> GetAllDamageSources(enum_Style style)
-    {
-        Dictionary<int, SFXBase> sourceDic = new Dictionary<int, SFXBase>();
-        SFXBase[] sfxs = LoadAll<SFXBase>(ConstPath.S_SFXEnermyWeapon+style.ToString());
-        sfxs.Traversal((SFXBase sfx)=> {
-            int index =int.Parse( sfx.name.Split('_')[0]);
-            sourceDic.Add(index,GameObject.Instantiate(sfx));
-            sfx.GetComponentsInChildren<Renderer>().Traversal((Renderer render) => { if (render.sharedMaterials != null) render.sharedMaterials.Traversal((Material material) => { if (material != null) material.enableInstancing = false; }); });
-            PreloadMaterials(sfx.gameObject);
-        });
-        return sourceDic;
-    }
-
-    public static Dictionary<int, SFXBase> GetAllCommonSFXs()
+    public static Dictionary<int, SFXBase> GetAllEffectSFX()
     {
         Dictionary<int, SFXBase> sfxsDic = new Dictionary<int, SFXBase>();
-        LoadAll<SFXBase>(ConstPath.S_SFXCommon).Traversal((SFXBase sfx) => {
+        LoadAll<SFXBase>(ConstPath.S_SFXEffects).Traversal((SFXBase sfx) => {
             sfxsDic.Add(int.Parse(sfx.name.Split('_')[0]), GameObject.Instantiate<SFXBase>(sfx));
             sfx.GetComponentsInChildren<Renderer>().Traversal((Renderer render) => { if (render.sharedMaterials != null) render.sharedMaterials.Traversal((Material material) => {if(material!=null) material.enableInstancing = false; }); });
             PreloadMaterials(sfx.gameObject);
@@ -76,10 +65,20 @@ public class TResources
         return sfxsDic;
     }
 
-    public static Dictionary<int, EntityBase> GetAllStyledEntities(enum_Style entityStyle)
+    public static Dictionary<int, EntityBase> GetCommonEntities()
     {
         Dictionary<int, EntityBase> entitisDic = new Dictionary<int, EntityBase>();
-        entitisDic.Add(0,Instantiate<EntityBase>(ConstPath.S_Entity +"Player"));
+        EntityBase[] entities = LoadAll<EntityBase>(ConstPath.S_Entity + "Common");
+        entities.Traversal((EntityBase entity) => {
+            int index = int.Parse(entity.name.Split('_')[0]);
+            entitisDic.Add(index, GameObject.Instantiate<EntityBase>(entity));
+            PreloadMaterials(entity.gameObject);
+        });
+        return entitisDic;
+    }
+    public static Dictionary<int, EntityBase> GetEnermyEntities(enum_Style entityStyle)
+    {
+        Dictionary<int, EntityBase> entitisDic = new Dictionary<int, EntityBase>();
         EntityBase[] entities = LoadAll<EntityBase>(ConstPath.S_Entity +  entityStyle.ToString());
         entities.Traversal((EntityBase entity) => {
             int index = int.Parse(entity.name.Split('_')[0]);

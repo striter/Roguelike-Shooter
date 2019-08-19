@@ -2128,14 +2128,15 @@ MonoBehaviour:
   B_PhysicsDebugGizmos: 0
   B_LevelDebugGizmos: 0
   E_LevelDebug: 0
-  Z_TestEntityIndex: 306
-  TestEntityBuffApplyOnSpawn: 7
+  Z_TestEntitySpawn: 30001
+  TestEntityFlag: 2
+  TestEntityBuffOnSpawn: 1
   X_TestCastIndex: 20400
   CastForward: 0
   C_TestProjectileIndex: 20500
   V_TestIndicatorIndex: 0
   B_TestBuffIndex: 1001
-  F5_TestActionIndex: 10001
+  F5_TestActionIndex: 20001
   B_AdditionalLight: 1
 --- !u!4 &1133817278
 Transform:

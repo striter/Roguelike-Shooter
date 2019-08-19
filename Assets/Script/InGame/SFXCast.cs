@@ -31,8 +31,6 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
             Debug.LogError("Cast Type Invalid Detected:"+gameObject.name);
         if (V4_CastInfo == Vector4.zero)
             Debug.LogError("Cast Size Zero Detected:" + gameObject.name);
-        if (F_Damage <= 0 && I_BuffApplyOnCast <= 0)
-            Debug.LogError("None Damage Or BuffApply Detected:" + gameObject.name);
         if (I_TickCount <= 0)
             Debug.LogError("Tick Count Less Or Equals Zero:" + gameObject.name);
         if (I_TickCount > 1 && F_Tick <= 0)

@@ -21,7 +21,6 @@ public class UIGI_HealthBar : UIT_GridItem {
     public void AttachItem(EntityBase _attachTo)
     {
         m_AttachEntity = _attachTo;
-        m_Name.text = _attachTo.I_PoolIndex.ToString();
         OnHide();
     }
 
@@ -50,6 +49,7 @@ public class UIGI_HealthBar : UIT_GridItem {
         if (!b_showItem)
             return;
 
+        m_Name.text = m_AttachEntity.I_PoolIndex.ToString()+"|"+m_AttachEntity.m_HealthManager.F_TotalHealth.ToString();
         m_HealthBar.value = Mathf.Lerp(m_HealthBar.value, m_AttachEntity.m_HealthManager.F_EHPScale, Time.deltaTime * 20);
 
         rtf_RectTransform.localScale = Vector3.one * Mathf.Clamp(Vector3.Distance(m_AttachEntity.tf_Head.position, CameraController.MainCamera.transform.position) / 20, 1, 3);

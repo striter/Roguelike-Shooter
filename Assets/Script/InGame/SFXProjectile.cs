@@ -72,8 +72,6 @@ public class SFXProjectile : SFXBase
 
         if (E_ProjectileType == enum_ProjectileFireType.Invalid)
             Debug.LogError("Error Projectile Type Invalid:" + gameObject.name);
-        if (F_Damage <= 0)
-            Debug.LogError("Error Damage Less Or Equals 0:"+gameObject.name);
         if (F_Speed <= 0)
             Debug.LogError("Error Speed Less Or Equals 0:" + gameObject.name);
         if (I_ImpactIndex < 0)
