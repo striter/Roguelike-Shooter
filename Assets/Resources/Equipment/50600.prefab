@@ -230,7 +230,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   E_CastType: 3
-  F_Damage: 10
+  F_Damage: 0
   I_TickCount: 20
   F_Tick: 0.2
   I_BuffApplyOnCast: 1
