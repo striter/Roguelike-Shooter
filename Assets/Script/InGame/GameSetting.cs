@@ -709,18 +709,19 @@ namespace GameSetting
             m_Player = _attacher;
             F_ActionAmount = GameConst.F_MaxActionAmount;
             TBroadCaster<enum_BC_GameStatusChanged>.Add<int, EntityBase, float>(enum_BC_GameStatusChanged.OnEntityDamage, OnEntityApplyDamage);
-            TBroadCaster<enum_BC_GameStatusChanged>.Add(enum_BC_GameStatusChanged.OnLevelFinish, OnLevelEquipingRemove);
         }
         public override void OnDeactivate()
         {
             base.OnDeactivate();
             TBroadCaster<enum_BC_GameStatusChanged>.Remove<int, EntityBase, float>(enum_BC_GameStatusChanged.OnEntityDamage, OnEntityApplyDamage);
-            TBroadCaster<enum_BC_GameStatusChanged>.Remove(enum_BC_GameStatusChanged.OnLevelFinish, OnLevelEquipingRemove);
         }
         protected override void OnResetInfo()
         {
             base.OnResetInfo();
             F_DamageAdditive = 0f;
+            B_OneOverride = false;
+            I_ClipAdditive = 0;
+            F_ClipMultiply = 0;
         }
         protected override void OnSetExpireInfo(ExpireBase expire)
         {
@@ -763,7 +764,7 @@ namespace GameSetting
             else if(damageEntity.I_EntityID==m_Player.I_EntityID)
                 m_ActionEquiping.Traversal((ActionBase action) => { action.OnReceiveDamage(applierID,m_Player, amountApply); });
         }
-        void OnLevelEquipingRemove()
+        public void RemoveAllEquiping()
         {
             m_ActionEquiping.Traversal((ActionBase action) => { action.OnEquipingRemoval(); });
         }

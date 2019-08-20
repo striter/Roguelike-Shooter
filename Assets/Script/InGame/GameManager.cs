@@ -271,8 +271,6 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
             return;
         if (entity.m_Flag == enum_EntityFlag.Enermy)
             m_EnermyCount++;
-
-        Debug.Log("???");
     }
     void OnBattleEntityDead(EntityBase entity)
     {
@@ -280,8 +278,6 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
             return;
         if (entity.m_Flag== enum_EntityFlag.Enermy)
             m_EnermyCount--;
-
-        Debug.Log("????");
 
         if (B_WaveEntityGenerating)
             return;

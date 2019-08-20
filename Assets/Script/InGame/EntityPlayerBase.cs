@@ -41,6 +41,7 @@ public class EntityPlayerBase : EntityBase {
     {
         base.OnSpawn(id, enum_EntityFlag.Player);
         CameraController.Attach(this.transform);
+        TBroadCaster<enum_BC_GameStatusChanged>.Add(enum_BC_GameStatusChanged.OnLevelFinish, OnLevelFinished);
 
         ObtainWeapon(ObjectManager.SpawnWeapon(TESTWEAPON1, this));
         ObtainWeapon(ObjectManager.SpawnWeapon(TESTWEAPON2, this));
@@ -57,6 +58,12 @@ public class EntityPlayerBase : EntityBase {
         TouchDeltaManager.Instance.Bind(OnMovementDelta, OnRotateDelta);
 #endif
     }
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+        RemoveBinding();
+        TBroadCaster<enum_BC_GameStatusChanged>.Remove(enum_BC_GameStatusChanged.OnLevelFinish, OnLevelFinished);
+    }
     protected override void OnDead()
     {
         base.OnDead();
@@ -67,11 +74,6 @@ public class EntityPlayerBase : EntityBase {
 
         m_Animator.OnDead();
         m_MoveAxisInput = Vector2.zero;
-        RemoveBinding();
-    }
-    protected override void OnDisable()
-    {
-        base.OnDisable();
         RemoveBinding();
     }
     void RemoveBinding()
@@ -214,11 +216,17 @@ public class EntityPlayerBase : EntityBase {
         m_Equipment = null;
     }
     #endregion
-
+    #region Action
+    void OnLevelFinished()
+    {
+        m_PlayerInfo.RemoveAllEquiping();
+        m_HealthManager.OnActivate(I_MaxHealth,I_DefaultArmor);
+    }
     public void TestUseAction(int actionIndex)
     {
         m_PlayerInfo.TryUseAction(actionIndex);
     }
+    #endregion
 
     protected class PlayerAnimator : AnimatorClippingTime
     {
