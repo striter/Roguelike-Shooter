@@ -474,12 +474,11 @@ namespace GameSetting
         protected float F_FireRateMultiply { get; private set; } = 1f;
         protected float F_ReloadRateMultiply { get; private set; } = 1f;
         protected float F_DamageMultiply { get; private set; } = 0f;
-        protected float F_DamageAdditive = 0f;
         public float F_FireRateTick(float deltaTime) => deltaTime * F_FireRateMultiply;
         public float F_ReloadRateTick(float deltaTime) => deltaTime * F_ReloadRateMultiply;
         public float F_MovementSpeed => m_Entity.F_MovementSpeed * F_MovementSpeedMultiply;
 
-        public virtual DamageBuffInfo GetDamageBuffInfo() => m_DamageBuffOverride!=null?m_DamageBuffOverride():DamageBuffInfo.Create(F_DamageMultiply, F_DamageAdditive);
+        public virtual DamageBuffInfo GetDamageBuffInfo() => m_DamageBuffOverride!=null?m_DamageBuffOverride():DamageBuffInfo.Create(F_DamageMultiply, 0f);
         Func<DamageInfo, bool> OnReceiveDamage;
         Action OnInfoChange;
         public EntityInfoManager(EntityBase _attacher,Func<DamageInfo, bool> _OnReceiveDamage,Action _OnInfoChange)
@@ -535,14 +534,17 @@ namespace GameSetting
             F_FireRateMultiply += expire.m_FireRateMultiply;
             F_ReloadRateMultiply += expire.m_ReloadRateMultiply;
         }
-        public void OnInfoChanged()
+        protected virtual void OnResetInfo()
         {
             F_DamageReceiveMultiply = 1f;
             F_MovementSpeedMultiply = 1f;
             F_FireRateMultiply = 1f;
             F_ReloadRateMultiply = 1f;
             F_DamageMultiply = 0f;
-            F_DamageAdditive = 0f;
+        }
+        public void OnInfoChanged()
+        {
+            OnResetInfo();
             m_Expires.Traversal(OnSetExpireInfo);
             F_DamageReceiveMultiply = F_DamageReceiveMultiply < 0 ? 0 : F_DamageReceiveMultiply;
 
@@ -694,7 +696,13 @@ namespace GameSetting
         List<ActionBase> m_ActionHodling = new List<ActionBase>();
         List<ActionBase> m_ActionEquiping = new List<ActionBase>();
 
-        public float F_ActionAmount { get; private set; }
+        public float F_ActionAmount { get; private set; } = 0f;
+        public float F_RecoilReduction { get; private set; } = 1f;
+        public bool B_OneOverride { get; private set; } = false;
+        public int I_ClipAdditive { get; private set; } = 0;
+        public float F_ClipMultiply { get; private set; } = 1f;
+        public int I_ClipAmount(int baseClipAmount) => (int)(((B_OneOverride ? 1 : baseClipAmount) + I_ClipAdditive) * F_ClipMultiply);
+        protected float F_DamageAdditive = 0f;
         EntityPlayerBase m_Player;
         public PlayerInfoManager(EntityPlayerBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnInfoChange) : base(_attacher, _OnReceiveDamage, _OnInfoChange)
         {
@@ -709,12 +717,19 @@ namespace GameSetting
             TBroadCaster<enum_BC_GameStatusChanged>.Remove<int, EntityBase, float>(enum_BC_GameStatusChanged.OnEntityDamage, OnEntityApplyDamage);
             TBroadCaster<enum_BC_GameStatusChanged>.Remove(enum_BC_GameStatusChanged.OnLevelFinish, OnLevelEquipingRemove);
         }
+        protected override void OnResetInfo()
+        {
+            base.OnResetInfo();
+            F_DamageAdditive = 0f;
+        }
         protected override void OnSetExpireInfo(ExpireBase expire)
         {
             base.OnSetExpireInfo(expire);
             ActionBase action = expire as ActionBase;
-            if (action != null)
-                F_DamageAdditive += action.F_DamageAdditive(m_Player);
+            if (action == null)
+                return;
+
+            F_DamageAdditive += action.F_DamageAdditive(m_Player);
         }
         public bool TryUseAction(int index)
         {
@@ -736,7 +751,7 @@ namespace GameSetting
         public override DamageBuffInfo GetDamageBuffInfo()
         {
             OnInfoChanged();
-            return base.GetDamageBuffInfo();
+            return DamageBuffInfo.Create(F_DamageMultiply, F_DamageAdditive);
         }
         void OnEntityApplyDamage(int applierID, EntityBase damageEntity, float amountApply)
         {
@@ -770,10 +785,15 @@ namespace GameSetting
         public virtual float GetValue1(EntityPlayerBase _actionEntity) => 0;
         public virtual float GetValue2(EntityPlayerBase _actionEntity) => 0;
         public virtual float F_DamageAdditive(EntityPlayerBase _actionEntity) => 0;
-
+        public virtual float F_RecoilReduction(EntityPlayerBase _actionEntity) => 0;
+        public virtual bool B_ClipOverride => false;
+        public virtual int I_ClipAdditive => 0;
+        public virtual float F_ClipMultiply => 0;
         public ActionBase(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired, float _expireDuration = 0) : base(_expireDuration, _OnActionExpired)
         {
             m_Level = _level;
+            if (m_Type == enum_ActionType.Invalid)
+                Debug.LogError("Override Type Please!");
         }
         public virtual void OnEnermyKilled(EntityPlayerBase _entity)
         {

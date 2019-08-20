@@ -96,7 +96,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         m_PlayerInfo = TGameData<CPlayerSave>.Read();
 
         TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnEntitySpawn, OnSpawnEntity);
-        TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnEntityDead, OnEntityDead);
+        TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnEntityDead, OnBattleEntityDead);
         TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnEntityRecycle, OnRecycleEntity);
         Application.targetFrameRate = 60;
     }
@@ -107,7 +107,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         TGameData<CPlayerSave>.Save(m_PlayerInfo);
 
         TBroadCaster<enum_BC_GameStatusChanged>.Remove<EntityBase>(enum_BC_GameStatusChanged.OnEntitySpawn, OnSpawnEntity);
-        TBroadCaster<enum_BC_GameStatusChanged>.Remove<EntityBase>(enum_BC_GameStatusChanged.OnEntityDead, OnEntityDead);
+        TBroadCaster<enum_BC_GameStatusChanged>.Remove<EntityBase>(enum_BC_GameStatusChanged.OnEntityDead, OnBattleEntityDead);
         TBroadCaster<enum_BC_GameStatusChanged>.Remove<EntityBase>(enum_BC_GameStatusChanged.OnEntityRecycle, OnRecycleEntity);
 
     }
@@ -166,9 +166,11 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     #region Battle Management
     public static int I_EntityID(int index, enum_EntityFlag flag) => index + (int)flag*10000;       //Used For Identification Management
     Dictionary<int, EntityBase> m_Entities = new Dictionary<int, EntityBase>();
+    public int m_EnermyCount { get; private set; } = -1;
     void OnSpawnEntity(EntityBase entity)
     {
         m_Entities.Add(entity.I_EntityID, entity);
+        OnBattleEntitySpawn(entity);
     }
     void OnRecycleEntity(EntityBase entity)
     {
@@ -197,7 +199,11 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         return canHit;
     }
 
-    public EntityBase GetEntity(int entityID) => m_Entities[entityID];
+    public EntityBase GetEntity(int entityID) {
+        if (!m_Entities.ContainsKey(entityID))
+            Debug.LogError("Entity Not Contains ID:" + entityID.ToString());
+        return m_Entities[entityID]; ;
+    } 
     public EntityBase GetRandomEntity(int sourceIndex,enum_EntityFlag sourceFlag,bool targetAlly,Predicate<EntityBase> predict)
     {
         EntityBase target=null;
@@ -218,7 +224,6 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     public bool B_Battling { get; private set; } = false;
     public bool B_WaveEntityGenerating { get; private set; } = false;
     public int m_CurrentWave { get; private set; } = -1;
-    public int m_WaveCurrentEntity { get; private set; } = -1;
     public List<SGenerateEntity> m_EntityGenerate { get; private set; } = new List<SGenerateEntity>();
     public List<int> m_EntityGenerating { get; private set; } = new List<int>();
     public Dictionary<enum_EntityType, List<int>> m_StyledEnermyEntities;
@@ -227,7 +232,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnBattleStart);
         m_EntityGenerate = DataManager.GetEntityGenerateProperties(difficulty);
         B_Battling = true;
-        m_WaveCurrentEntity = 0;
+        m_EnermyCount = 0;
         m_CurrentWave = 0;
         WaveStart();
     }
@@ -260,23 +265,33 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         else
             WaveStart();
     }
-    void OnEntityDead(EntityBase entity)
+    void OnBattleEntitySpawn(EntityBase entity)
+    {
+        if (!B_Battling)
+            return;
+        if (entity.m_Flag == enum_EntityFlag.Enermy)
+            m_EnermyCount++;
+
+        Debug.Log("???");
+    }
+    void OnBattleEntityDead(EntityBase entity)
     {
         if (!B_Battling)
             return;
         if (entity.m_Flag== enum_EntityFlag.Enermy)
-            m_WaveCurrentEntity--;
+            m_EnermyCount--;
+
+        Debug.Log("????");
 
         if (B_WaveEntityGenerating)
             return;
 
-        if (m_WaveCurrentEntity <= 0 || (m_CurrentWave < m_EntityGenerate.Count && m_WaveCurrentEntity <= GameConst.I_EnermyCountWaveFinish))
+        if (m_EnermyCount <= 0 || (m_CurrentWave < m_EntityGenerate.Count && m_EnermyCount <= GameConst.I_EnermyCountWaveFinish))
             WaveFinished();
     }
     void OnBattleFinished()
     {
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnBattleFinish);
-        m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(-1,m_LocalPlayer.m_HealthManager.m_CurrentArmor-m_LocalPlayer.m_HealthManager.m_DefaultArmor ,enum_DamageType.ArmorOnly, DamageBuffInfo.Default()));
         B_Battling = false;
         OnLevelFinished();
     }
@@ -289,7 +304,6 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         {
             yield return new WaitForSeconds(_offset);
             SpawnEnermy(waveGenerate[curSpawnCount], curSpawnCount, EnviormentManager.m_currentLevel.m_Level.RandomEmptyTilePosition(m_GameSeed));
-            m_WaveCurrentEntity++;
             curSpawnCount++;
             if (curSpawnCount >= waveGenerate.Count)
             {

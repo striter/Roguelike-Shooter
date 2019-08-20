@@ -40,7 +40,7 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
     }
     public void Play(int sourceID,DamageBuffInfo buffInfo)
     {
-        SetDamageInfo(buffInfo);
+        SetDamageInfo(buffInfo,sourceID);
         if (F_DelayDuration <= 0)
         {
             PlayDelayed(sourceID);
@@ -68,7 +68,7 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
         B_Casting = play;
         if (play)
         {
-            SetDamageInfo(buffInfo);
+            SetDamageInfo(buffInfo,sourceID);
             PlayParticles();
             tf_ControlledAttach = attachTrans;
             tf_ControlledCast = directionTrans;
@@ -83,11 +83,11 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
             this.StopSingleCoroutine(0);
         }
     }
-    void SetDamageInfo(DamageBuffInfo info)
+    void SetDamageInfo(DamageBuffInfo info,int id)
     {
         if (I_BuffApplyOnCast > 0)
             info.m_BuffAplly.Add(I_BuffApplyOnCast);
-        m_DamageInfo = new DamageInfo(I_SourceID, F_Damage, enum_DamageType.Common, info);
+        m_DamageInfo = new DamageInfo(id, F_Damage, enum_DamageType.Common, info);
     }
     protected override void Update()
     {
