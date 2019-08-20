@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using TExcel;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
 {

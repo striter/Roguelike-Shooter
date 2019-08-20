@@ -50,43 +50,6 @@ namespace GameSetting
         public static float F_ActionAmountReceive(float damageApply) => damageApply * .1f;
         
     }
-    public static class ActionData
-    {
-        #region Cost
-        public const int I_10001_Cost = 2;
-        public const int I_10002_Cost = 2;
-        public const int I_10003_Cost = 2;
-        public const int I_10004_Cost = 0;
-        public const int I_10005_Cost = 3;
-
-        public const int I_20001_Cost = 2;
-        public const int I_20004_Cost = 1;
-
-        public const int I_30001_Cost = 1;
-        public const int I_30002_Cost = 2;
-        #endregion
-
-        #region Duration
-        public const float F_10002_Duration = 10f;
-        public const float F_10005_Duration = 30f;
-        #endregion
-
-        #region Expression
-        public static float F_10001_ArmorAdditive(enum_ActionLevel level) => -30f * (int)level;
-        public static float F_10002_ArmorDamageAdditive(enum_ActionLevel level, float currentArmor) => currentArmor * 1f;
-        public static float F_10003_ArmorMultiplyAdditive(enum_ActionLevel level, float currentArmor) => -currentArmor * .3f*(int)level ;
-        public static float F_10004_ArmorActionAcquire(enum_ActionLevel level, float currentArmor) => currentArmor / (20f +  10f*(int)level );
-        public static float F_10005_ArmorDamageReduction(enum_ActionLevel level) => .2f * (int)level;
-
-        public static float F_20001_ArmorTurretHealth(enum_ActionLevel level, float currentArmor) => currentArmor * (2*(int)level);
-        public static float F_20001_ArmorTurretDamage(enum_ActionLevel level, float currentArmor) => currentArmor * (1.5f*(int)level);
-        public static float F_20004_DamageDealt(enum_ActionLevel level, float weaponDamage) => weaponDamage * 2 * (int)level;
-
-        public static float F_30001_ArmorActionAdditive(enum_ActionLevel level, float currentArmor) => currentArmor * (10* (int)level);
-        public static float F_30002_ArmorDamageReturn(enum_ActionLevel level, float currentArmor) => currentArmor * (2 * (int)level);
-
-        #endregion
-    }
 
     public static class UIConst
     {
@@ -496,7 +459,7 @@ namespace GameSetting
     }
     #endregion
 
-    #region BuffClass
+    #region BuffManager
     public class EntityInfoManager
     {
         protected EntityBase m_Entity { get; private set; }
@@ -755,10 +718,11 @@ namespace GameSetting
         }
         public bool TryUseAction(int index)
         {
-            ActionBase action = DataManager.GetAction(index, enum_ActionLevel.L3, OnExpireElapsed);
-            AddExpire(action);
-            m_ActionEquiping.Add(action);
-            action.ActionUse(m_Player);
+            ActionBase targetAction = DataManager.GetAction(index, enum_ActionLevel.L3, OnExpireElapsed);
+            m_ActionEquiping.Traversal((ActionBase action) => { action.OnAddActionElse(m_Player,targetAction.m_Index); });
+            AddExpire(targetAction);
+            m_ActionEquiping.Add(targetAction);
+            targetAction.ActionUse(m_Player);
             return true;
         }
         protected override void OnExpireElapsed(ExpireBase expire)
@@ -794,6 +758,55 @@ namespace GameSetting
             F_ActionAmount += amount;
             if (F_ActionAmount > GameConst.F_MaxActionAmount)
                 F_ActionAmount = GameConst.F_MaxActionAmount;
+        }
+    }
+
+    public class ActionBase : ExpireBase
+    {
+        public enum_ActionLevel m_Level { get; private set; } = enum_ActionLevel.Invalid;
+        public virtual int I_ActionCost => -1;
+        public virtual bool B_ActionAble => true;
+        public virtual enum_ActionType m_Type => enum_ActionType.Invalid;
+        public virtual float GetValue1(EntityPlayerBase _actionEntity) => 0;
+        public virtual float GetValue2(EntityPlayerBase _actionEntity) => 0;
+        public virtual float F_DamageAdditive(EntityPlayerBase _actionEntity) => 0;
+
+        public ActionBase(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired, float _expireDuration = 0) : base(_expireDuration, _OnActionExpired)
+        {
+            m_Level = _level;
+        }
+        public virtual void OnEnermyKilled(EntityPlayerBase _entity)
+        {
+        }
+        public void ActionUse(EntityPlayerBase _actionEntity)
+        {
+            OnActionUse(_actionEntity);
+            if (m_ExpireDuration <= 0 && m_Type != enum_ActionType.LevelEquipment)
+                ForceExpire();
+        }
+        protected virtual void OnActionUse(EntityPlayerBase _actionEntity)
+        {
+
+        }
+        public virtual void OnAddActionElse(EntityPlayerBase _actionEntity, float actionAmount)
+        {
+        }
+        public virtual void OnReceiveDamage(int applier, EntityPlayerBase receiver, float amount)
+        {
+        }
+        public virtual void OnDealtDemage(int applier, EntityBase receiver, float amount)
+        {
+        }
+        public void OnEquipingRemoval()
+        {
+            if (m_Type == enum_ActionType.LevelEquipment)
+                ForceExpire();
+        }
+        public bool B_Upgradable => m_Level < enum_ActionLevel.L3;
+        public void Upgrade()
+        {
+            if (m_Level < enum_ActionLevel.L3)
+                m_Level++;
         }
     }
     #endregion
@@ -1138,162 +1151,7 @@ namespace GameSetting
         }
     }
     #endregion
-
-    #region ActionBases
-
-    public class ActionBase : ExpireBase
-    {
-        public enum_ActionLevel m_Level { get; private set; } = enum_ActionLevel.Invalid;
-        protected virtual int I_ActionCost => -1;
-        public virtual bool B_ActionAble => true;
-        public virtual enum_ActionType m_Type => enum_ActionType.Invalid;
-        public virtual float GetValue1(EntityPlayerBase _actionEntity) => 0;
-        public virtual float GetValue2(EntityPlayerBase _actionEntity) => 0;
-        public virtual float F_DamageAdditive(EntityPlayerBase _actionEntity) => 0;
- 
-        public ActionBase(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired,float _expireDuration=0) : base(_expireDuration,_OnActionExpired)
-        {
-            m_Level = _level;
-        }
-        public virtual void OnEnermyKilled(EntityPlayerBase _entity)
-        {
-        }
-        public void ActionUse(EntityPlayerBase _actionEntity)
-        {
-            OnActionUse(_actionEntity);
-            if(m_ExpireDuration<=0&&m_Type!= enum_ActionType.LevelEquipment)
-                ForceExpire();
-        }
-        protected virtual void OnActionUse(EntityPlayerBase _actionEntity)
-        {
-
-        }
-        public virtual void OnAddActionElse(float actionAmount)
-        {
-        }
-        public virtual void OnReceiveDamage(int applier,EntityPlayerBase receiver,float amount)
-        {
-        }
-        public virtual void OnDealtDemage(int applier, EntityBase receiver,float amount)
-        {
-        }
-        public void OnEquipingRemoval()
-        {
-            if (m_Type == enum_ActionType.LevelEquipment)
-                ForceExpire();
-        }
-        public bool B_Upgradable => m_Level < enum_ActionLevel.L3;
-        public void Upgrade()
-        {
-            if (m_Level < enum_ActionLevel.L3)
-                m_Level++;
-        }
-    }
-    public class Action_10001_ArmorAdditive : ActionBase
-    {
-        public override int m_Index => 10001;
-        public override enum_ActionType m_Type => enum_ActionType.Action;
-        protected override int I_ActionCost => ActionData.I_10001_Cost;
-        public override float GetValue1(EntityPlayerBase _actionEntity) => ActionData.F_10001_ArmorAdditive(m_Level);
-        protected override void OnActionUse(EntityPlayerBase _actionEntity)
-        {
-            _actionEntity.m_HitCheck.TryHit(new DamageInfo(_actionEntity.I_EntityID, GetValue1(_actionEntity), enum_DamageType.ArmorOnly, DamageBuffInfo.Default()));
-        }
-        public Action_10001_ArmorAdditive(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
-    }
-    public class Action_10002_ArmorDamageAdditive : ActionBase
-    {
-        public override int m_Index => 10002;
-        public override enum_ActionType m_Type => enum_ActionType.Action;
-        protected override int I_ActionCost => ActionData.I_10002_Cost;
-        public override float GetValue1(EntityPlayerBase _actionEntity) => ActionData.F_10002_ArmorDamageAdditive(m_Level, _actionEntity.m_HealthManager.m_CurrentArmor);
-        public override float F_DamageAdditive(EntityPlayerBase _actionEntity) => GetValue1(_actionEntity);
-        public Action_10002_ArmorDamageAdditive(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired, ActionData.F_10002_Duration) { }
-    }
-    public class Action_10003_ArmorMultiplyAdditive : ActionBase
-    {
-        public override int m_Index => 10003;
-        protected override int I_ActionCost => ActionData.I_10003_Cost;
-        public override float GetValue1(EntityPlayerBase _actionEntity) => ActionData.F_10003_ArmorMultiplyAdditive(m_Level, _actionEntity.m_HealthManager.m_CurrentArmor);
-        protected override void OnActionUse(EntityPlayerBase _actionEntity)
-        {
-            _actionEntity.m_HitCheck.TryHit(new DamageInfo(_actionEntity.I_EntityID, GetValue1(_actionEntity), enum_DamageType.ArmorOnly, DamageBuffInfo.Default()));
-        }
-        public Action_10003_ArmorMultiplyAdditive(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
-    }
-    public class Action_10004_ArmorActionReturn : ActionBase
-    {
-        public override int m_Index => 10004;
-        public override enum_ActionType m_Type => enum_ActionType.Action;
-        protected override int I_ActionCost => ActionData.I_10004_Cost;
-        public override float GetValue1(EntityPlayerBase _actionEntity) => ActionData.F_10004_ArmorActionAcquire(m_Level, _actionEntity.m_HealthManager.m_CurrentArmor);
-        protected override void OnActionUse(EntityPlayerBase _actionEntity)
-        {
-            (_actionEntity.m_EntityInfo as PlayerInfoManager).AddActionAmount(GetValue1(_actionEntity));
-        }
-        public Action_10004_ArmorActionReturn(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
-    }
-    public class Action_10005_ArmorDamageReduction : ActionBase
-    {
-        public override int m_Index => 10005;
-        public override enum_ActionType m_Type => enum_ActionType.Action;
-        public override int m_EffectIndex => base.m_EffectIndex;
-        protected override int I_ActionCost => ActionData.I_10005_Cost;
-        public override float GetValue1(EntityPlayerBase _actionEntity) => ActionData.F_10005_ArmorDamageReduction(m_Level);
-        public override float m_DamageReduction => GetValue1(null);
-        public Action_10005_ArmorDamageReduction(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired, ActionData.F_10005_Duration) { }
-    }
-
-    public class Action_20001_ArmorTurret : ActionBase
-    {
-        public override int m_Index => 20001;
-        protected override int I_ActionCost => ActionData.I_20001_Cost;
-        public override enum_ActionType m_Type => enum_ActionType.Equipment;
-        public override float GetValue1(EntityPlayerBase _actionEntity) => ActionData.F_20001_ArmorTurretHealth(m_Level, _actionEntity.m_HealthManager.m_CurrentArmor);
-        public override float GetValue2(EntityPlayerBase _actionEntity) => ActionData.F_20001_ArmorTurretDamage(m_Level, _actionEntity.m_HealthManager.m_CurrentArmor);
-        protected override void OnActionUse(EntityPlayerBase _entity)
-        {
-            float health = GetValue1(_entity);
-            float damage = GetValue2(_entity);
-            EquipmentEntitySpawner spawner = _entity.OnAcquireEquipment<EquipmentEntitySpawner>(m_Index, () => { return DamageBuffInfo.Create(0, damage); });
-            spawner.SetOnSpawn((EntityBase entity)=> {
-                EntityAIBase target = entity as EntityAIBase;
-                target.I_MaxHealth = (int)health;
-                target.F_AttackDuration = new RangeFloat(1, 0);
-                target.F_AttackTimes = new RangeInt(1, 0);
-                target.F_AttackRate = 0f;
-            });
-        }
-        public Action_20001_ArmorTurret(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
-    }
-
-    public class Action_20004_ExplosiveGrenade : ActionBase
-    {
-        public override int m_Index => 20004;
-        protected override int I_ActionCost => ActionData.I_20004_Cost;
-        public override enum_ActionType m_Type => enum_ActionType.Equipment;
-        public override float GetValue1(EntityPlayerBase _actionEntity) => ActionData.F_20004_DamageDealt(m_Level, _actionEntity.m_WeaponCurrent.m_ProjectileInfo.F_Damage);
-        protected override void OnActionUse(EntityPlayerBase _entity)
-        {
-            _entity.OnAcquireEquipment<EquipmentBase>(m_Index,()=> { return DamageBuffInfo.Create(0, GetValue1(_entity)); });
-        }
-        public Action_20004_ExplosiveGrenade(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
-    }
-
-    public class Action_30001_ : ActionBase
-    {
-        public override int m_Index => 30001;
-        protected override int I_ActionCost => ActionData.I_30001_Cost;
-        public override enum_ActionType m_Type => enum_ActionType.LevelEquipment;
-        public override float GetValue1(EntityPlayerBase _actionEntity) => ActionData.F_30002_ArmorDamageReturn(m_Level,_actionEntity.m_HealthManager.m_CurrentArmor);
-        public override void OnReceiveDamage(int applier, EntityPlayerBase receiver, float amount)
-        {
-            GameManager.Instance.GetEntity(applier).m_HitCheck.TryHit(new DamageInfo(receiver.I_EntityID,GetValue1(receiver), enum_DamageType.Common,DamageBuffInfo.Default()));
-        }
-
-        public Action_30001_(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
-    }
-    #endregion
+    
     #region Equipment
     public class EquipmentBase
     {
