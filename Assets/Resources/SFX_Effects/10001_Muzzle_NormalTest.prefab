@@ -249,7 +249,7 @@ Light:
   m_Cookie: {fileID: 0}
   m_DrawHalo: 0
   m_Flare: {fileID: 0}
-  m_RenderMode: 0
+  m_RenderMode: 1
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -342,7 +342,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1328824739
+  randomSeed: 1934580474
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3724,7 +3724,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -709000480
+  randomSeed: 1108476782
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -7106,7 +7106,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1789512709
+  randomSeed: -1610266480
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -10425,7 +10425,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -718636895
+  randomSeed: -1114488255
   InitialModule:
     serializedVersion: 3
     enabled: 1
