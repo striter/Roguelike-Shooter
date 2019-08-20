@@ -55,15 +55,15 @@ namespace GameSetting
         #region Cost
         public const int I_10001_Cost = 2;
         public const int I_10002_Cost = 2;
-        public const int I_10003_Cost = 3;
+        public const int I_10003_Cost = 2;
         public const int I_10004_Cost = 0;
-        public const int I_1005_Cost = 3;
+        public const int I_10005_Cost = 3;
 
         public const int I_20001_Cost = 2;
         public const int I_20004_Cost = 1;
 
-        public const int I_30021_Cost = 1;
-        public const int I_30022_Cost = 2;
+        public const int I_30001_Cost = 1;
+        public const int I_30002_Cost = 2;
         #endregion
 
         #region Duration
@@ -73,7 +73,7 @@ namespace GameSetting
 
         #region Expression
         public static float F_10001_ArmorAdditive(enum_ActionLevel level) => -30f * (int)level;
-        public static float F_10002_ArmorDamageAdditive(enum_ActionLevel level, float currentArmor) => currentArmor * .1f;
+        public static float F_10002_ArmorDamageAdditive(enum_ActionLevel level, float currentArmor) => currentArmor * 1f;
         public static float F_10003_ArmorMultiplyAdditive(enum_ActionLevel level, float currentArmor) => -currentArmor * .3f*(int)level ;
         public static float F_10004_ArmorActionAcquire(enum_ActionLevel level, float currentArmor) => currentArmor / (20f +  10f*(int)level );
         public static float F_10005_ArmorDamageReduction(enum_ActionLevel level) => 20f * (int)level;
@@ -82,8 +82,8 @@ namespace GameSetting
         public static float F_20001_ArmorTurretDamage(enum_ActionLevel level, float currentArmor) => currentArmor * (1.5f*(int)level);
         public static float F_20004_DamageDealt(enum_ActionLevel level, float weaponDamage) => weaponDamage * 2 * (int)level;
 
-        public static float F_30021_ArmorActionAdditive(enum_ActionLevel level, float currentArmor) => currentArmor * (10* (int)level);
-        public static float F_30022_ArmorDamageReturn(enum_ActionLevel level, float currentArmor) => currentArmor * (2 * (int)level);
+        public static float F_30001_ArmorActionAdditive(enum_ActionLevel level, float currentArmor) => currentArmor * (10* (int)level);
+        public static float F_30002_ArmorDamageReturn(enum_ActionLevel level, float currentArmor) => currentArmor * (2 * (int)level);
 
         #endregion
     }
@@ -1197,7 +1197,7 @@ namespace GameSetting
         public override int m_Index => 10005;
         public override int m_EffectIndex => base.m_EffectIndex;
         public override enum_ActionType m_Type => enum_ActionType.Action;
-        protected override int I_ActionCost => ActionData.I_1005_Cost;
+        protected override int I_ActionCost => ActionData.I_10005_Cost;
         public override float GetValue1(EntityPlayerBase _actionEntity) => ActionData.F_10005_ArmorDamageReduction(m_Level);
         public override float m_DamageReduction => GetValue1(null);
         public Action_10005_ArmorDamageReduction(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired, ActionData.F_10005_Duration) { }
