@@ -11,7 +11,7 @@ public class SFXProjectileDestroyable : SFXProjectile {
     {
         base.Init(sfxIndex);
         m_hitCheck = GetComponent<HitCheckDynamic>();
-        m_Health = new HealthBase(I_MaxHealth,null, OnDestroyed);
+        m_Health = new HealthBase(null, OnDestroyed);
     }
     public override void Play(int sourceID, Vector3 direction, Vector3 targetPosition, DamageBuffInfo buffInfo)
     {
@@ -21,7 +21,7 @@ public class SFXProjectileDestroyable : SFXProjectile {
     protected override void OnPlayPreset()
     {
         base.OnPlayPreset();
-        m_Health.OnActivate();
+        m_Health.OnActivate(I_MaxHealth);
         if (I_MaxHealth < 0)
             Debug.LogError("Destroyable Health Lower Than 0!"+gameObject.name);
     }

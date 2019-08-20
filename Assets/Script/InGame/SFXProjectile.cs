@@ -58,7 +58,7 @@ public class SFXProjectile : SFXBase
 
         PlaySFX(sourceID, F_Duration(transform.position, targetPosition));
     }
-
+    
     protected virtual void OnPlayPreset()
     {
         B_SimulatePhysics = true;

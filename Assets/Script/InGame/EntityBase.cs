@@ -38,7 +38,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
         m_HitChecks.Traversal((HitCheckEntity check) => { check.Attach(this, OnReceiveDamage); });
         if (I_EntityID == -1)
             Debug.LogError("Please Init Entity Info!" + gameObject.name.ToString());
-        m_HealthManager.OnActivate();
+        m_HealthManager.OnActivate(I_MaxHealth,I_DefaultArmor);
         m_Flag = _flag;
         TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.SetEnable(true); });
         TCommon.Traversal(m_SkinRenderers, (Renderer renderer) => {renderer.materials.Traversal((Material mat)=> {mat.SetFloat("_Amount1", 0);}); });

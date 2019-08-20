@@ -9,6 +9,8 @@ public class SFXRelativeLight : SFXRelativeBase {
     {
         if(!m_Light)
             m_Light = GetComponent<Light>();
+
+        m_Light.enabled = false;
     }
     private void Start()
     {
