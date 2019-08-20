@@ -623,12 +623,13 @@ namespace GameSetting
         public virtual float m_ReloadRateMultiply => 0;
         public virtual float m_DamageMultiply => 0;
         public virtual float m_DamageReduction => 0;
-        public virtual float m_ExpireDuration => 0;
+        public float m_ExpireDuration { get; private set; } = 0;
 
         protected Action<ExpireBase> OnExpired;
         float f_expireCheck;
-        public ExpireBase(Action<ExpireBase> _OnExpired)
+        public ExpireBase(float _ExpireDuration,Action<ExpireBase> _OnExpired)
         {
+            m_ExpireDuration = _ExpireDuration;
             OnExpired = _OnExpired;
             ExpireRefresh();
         }
@@ -657,12 +658,12 @@ namespace GameSetting
         public override float m_FireRateMultiply => m_buffInfo.m_FireRateMultiply;
         public override float m_MovementSpeedMultiply => m_buffInfo.m_MovementSpeedMultiply;
         public override float m_ReloadRateMultiply => m_buffInfo.m_ReloadRateMultiply;
-        public override float m_ExpireDuration => m_buffInfo.m_ExpireDuration;
+        
         SBuff m_buffInfo;
         Func<DamageInfo, bool> OnDOTDamage;
         int I_SourceID;
         float  f_dotCheck;
-        public ExpireBuff(int sourceID,SBuff _buffInfo, Func<DamageInfo, bool> _OnDOTDamage, Action<ExpireBase> _OnBuffExpired) :base(_OnBuffExpired)
+        public ExpireBuff(int sourceID,SBuff _buffInfo, Func<DamageInfo, bool> _OnDOTDamage, Action<ExpireBase> _OnBuffExpired) :base(_buffInfo.m_ExpireDuration,_OnBuffExpired)
         {
             I_SourceID = sourceID;
             m_buffInfo = _buffInfo;
@@ -1131,8 +1132,7 @@ namespace GameSetting
         public virtual float GetValue1(EntityPlayerBase _actionEntity) => 0;
         public virtual float GetValue2(EntityPlayerBase _actionEntity) => 0;
         public virtual float F_DamageAdditive(EntityPlayerBase _actionEntity) => 0;
-
-        public ActionBase(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_OnActionExpired)
+        public ActionBase(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired,float _expireDuration=0) : base(_expireDuration,_OnActionExpired)
         {
             m_Level = _level;
         }
@@ -1171,11 +1171,10 @@ namespace GameSetting
     {
         public override int m_Index => 10002;
         public override enum_ActionType m_Type => enum_ActionType.Action;
-        public override float m_ExpireDuration => ActionData.F_10002_Duration;
         protected override int I_ActionCost => ActionData.I_10002_Cost;
         public override float GetValue1(EntityPlayerBase _actionEntity) => ActionData.F_10002_ArmorDamageAdditive(m_Level, _actionEntity.m_HealthManager.m_CurrentArmor);
         public override float F_DamageAdditive(EntityPlayerBase _actionEntity) => GetValue1(_actionEntity);
-        public Action_10002_ArmorDamageAdditive(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
+        public Action_10002_ArmorDamageAdditive(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired, ActionData.F_10002_Duration) { }
     }
     public class Action_10003_ArmorMultiplyAdditive : ActionBase
     {
@@ -1209,10 +1208,9 @@ namespace GameSetting
         public override int m_EffectIndex => base.m_EffectIndex;
         public override enum_ActionType m_Type => enum_ActionType.Action;
         protected override int I_ActionCost => ActionData.I_1005_Cost;
-        public override float m_ExpireDuration => ActionData.F_10005_Duration;
         public override float GetValue1(EntityPlayerBase _actionEntity) => ActionData.F_10005_ArmorDamageReduction(m_Level);
         public override float m_DamageReduction => GetValue1(null);
-        public Action_10005_ArmorDamageReduction(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
+        public Action_10005_ArmorDamageReduction(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired, ActionData.F_10005_Duration) { }
     }
 
     public class Action_20001_ArmorTurret : ActionBase

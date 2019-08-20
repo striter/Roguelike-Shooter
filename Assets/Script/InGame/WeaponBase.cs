@@ -10,7 +10,7 @@ public class WeaponBase : MonoBehaviour {
     public int I_AttacherID { get; private set; }
     public SWeapon m_WeaponInfo { get; private set; }
     public SFXProjectile m_ProjectileInfo { get; private set; }
-    public bool B_CanFire { get; private set; } = false;
+    public bool B_Triggerable { get; private set; } = false;
     public bool B_Reloading { get; private set; }
     public int I_AmmoLeft { get; private set; }
     public Transform m_Muzzle { get; private set; }
@@ -28,7 +28,8 @@ public class WeaponBase : MonoBehaviour {
     public float F_ReloadStatus => B_Reloading ? f_reloadCheck / m_WeaponInfo.m_ReloadTime : 1;
     public float F_AmmoStatus => I_AmmoLeft / (float)m_WeaponInfo.m_ClipAmount;
     float f_fireCheck = 0;
-    public bool B_Actionable() => B_CanFire&&!B_Reloading&& f_fireCheck <= 0;
+    public bool B_TriggerActionable() => B_Triggerable&&B_Actionable();
+    public bool B_Actionable() => !B_Reloading && f_fireCheck <= 0;
     protected void OnFireCheck(float pauseDuration)
     {
         f_fireCheck = pauseDuration;
@@ -42,12 +43,12 @@ public class WeaponBase : MonoBehaviour {
         I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
         switch (E_Trigger)
         {
-            default: Debug.LogError("Add More Convertions Here:" + E_Trigger); m_Trigger = new TriggerSingle(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, B_Actionable, OnFireCheck, CheckCanAutoReload); break;
-            case enum_TriggerType.Auto: m_Trigger = new TriggerAuto(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, B_Actionable, OnFireCheck,CheckCanAutoReload);break;
-            case enum_TriggerType.Single:m_Trigger = new TriggerSingle(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, B_Actionable, OnFireCheck, CheckCanAutoReload);break;
-            case enum_TriggerType.Burst:m_Trigger = new TriggerBurst(m_WeaponInfo.m_FireRate,m_WeaponInfo.m_SpecialRate, FireOnce, B_Actionable,OnFireCheck, CheckCanAutoReload);break;
-            case enum_TriggerType.Pull: m_Trigger = new TriggerPull(()=> { Debug.Log("Pull"); },m_WeaponInfo.m_FireRate,m_WeaponInfo.m_SpecialRate, FireOnce, B_Actionable, OnFireCheck, CheckCanAutoReload); break;
-            case enum_TriggerType.Store:m_Trigger = new TriggerStore(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, B_Actionable, OnFireCheck, CheckCanAutoReload);break;
+            default: Debug.LogError("Add More Convertions Here:" + E_Trigger); m_Trigger = new TriggerSingle(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, B_TriggerActionable, OnFireCheck, CheckCanAutoReload); break;
+            case enum_TriggerType.Auto: m_Trigger = new TriggerAuto(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, B_TriggerActionable, OnFireCheck,CheckCanAutoReload);break;
+            case enum_TriggerType.Single:m_Trigger = new TriggerSingle(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, B_TriggerActionable, OnFireCheck, CheckCanAutoReload);break;
+            case enum_TriggerType.Burst:m_Trigger = new TriggerBurst(m_WeaponInfo.m_FireRate,m_WeaponInfo.m_SpecialRate, FireOnce, B_TriggerActionable,OnFireCheck, CheckCanAutoReload);break;
+            case enum_TriggerType.Pull: m_Trigger = new TriggerPull(()=> { Debug.Log("Pull"); },m_WeaponInfo.m_FireRate,m_WeaponInfo.m_SpecialRate, FireOnce, B_TriggerActionable, OnFireCheck, CheckCanAutoReload); break;
+            case enum_TriggerType.Store:m_Trigger = new TriggerStore(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, B_TriggerActionable, OnFireCheck, CheckCanAutoReload);break;
         }
     }
     protected virtual void Start()
@@ -98,7 +99,7 @@ public class WeaponBase : MonoBehaviour {
 
     public void SetCanFire(bool _canFire)
     {
-        B_CanFire = _canFire;
+        B_Triggerable = _canFire;
     }
     RaycastHit hit;
     protected virtual bool FireOnce()
