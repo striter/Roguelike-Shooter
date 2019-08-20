@@ -54,10 +54,9 @@ namespace TPhysics
             for (int i = 0; i < castHits.Length; i++)
             {
                 T temp = castHits[i].collider.GetComponent<T>();
-                if (CanHitTarget(temp))
-                    if (OnTargetHit(castHits[i],temp))
+                if (CanHitTarget(temp)&&OnTargetHit(castHits[i],temp))
                         break;
-            }
+            }   
         }
         public virtual bool OnTargetHit(RaycastHit hit, T template)
         {

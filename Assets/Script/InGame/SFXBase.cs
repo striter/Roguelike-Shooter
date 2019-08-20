@@ -46,7 +46,7 @@ public class SFXBase : MonoBehaviour {
     protected  virtual void OnRecycle()
     {
         b_Playing = false;
-           OnSFXPlayFinished?.Invoke();
+        OnSFXPlayFinished?.Invoke();
         ObjectManager.RecycleSFX(I_SFXIndex, this);
     }
 

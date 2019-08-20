@@ -63,7 +63,7 @@ public class EntityAIBase : EntityBase {
     {
         if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
             m_Animator.OnAttack(startAttack);
-        else
+        else if(startAttack)
             OnAnimKeyEvent(TAnimatorEvent.enum_AnimEvent.Fire);
     }
     protected void OnAnimKeyEvent(TAnimatorEvent.enum_AnimEvent animEvent)

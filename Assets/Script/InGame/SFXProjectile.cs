@@ -112,7 +112,7 @@ public class SFXProjectile : SFXBase
             B_SimulatePhysics = false;
         if (B_RecycleOnHit)
             OnRecycle();
-
+        
         return !B_HitMultiple;
     }
     protected virtual bool CanHitTarget(HitCheckBase hitCheck)=> !m_EntityHitted.Contains(hitCheck.I_AttacherID) && GameManager.B_DoHitCheck(hitCheck,I_SourceID);

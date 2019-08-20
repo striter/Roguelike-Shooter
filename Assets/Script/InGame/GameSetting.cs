@@ -1139,9 +1139,6 @@ namespace GameSetting
         public virtual void OnActionUse(EntityPlayerBase _entity)
         {
         }
-        public virtual void OnFireOnce(EntityPlayerBase _entity)
-        {
-        }
         public virtual void OnEnermyKilled(EntityPlayerBase _entity)
         {
         }
@@ -1229,6 +1226,7 @@ namespace GameSetting
                 EntityAIBase target = entity as EntityAIBase;
                 target.I_MaxHealth = (int)health;
                 target.F_AttackDuration = new RangeFloat(1, 0);
+                target.F_AttackTimes = new RangeInt(1, 0);
                 target.F_AttackRate = 0f;
             });
             OnExpired(this);
