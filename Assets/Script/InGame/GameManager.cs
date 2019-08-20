@@ -404,14 +404,14 @@ public static class DataManager
         return buff;
     }
 
-    static Dictionary<int,Type> m_AllActions=new Dictionary<int, Type>();
-    static void InitActions()=> TReflection.GetAllInheritClasses((Type type,ActionBase action)=> { m_AllActions.Add(action.m_Index, type); }, enum_ActionLevel.Invalid,null);
+    static Dictionary<int,ActionBase> m_AllActions=new Dictionary<int, ActionBase>();
+    static void InitActions()=> TReflection.GetAllInheritClasses((Type type,ActionBase action)=> { m_AllActions.Add(action.m_Index, TReflection.CreateInstance<ActionBase>(type,enum_ActionLevel.Invalid,null)); }, enum_ActionLevel.Invalid,null);
     public static ActionBase GetAction(int index,enum_ActionLevel level,Action<ExpireBase> OnExpired)
     {
         if (!m_AllActions.ContainsKey(index))
             Debug.LogError("Error Action:" + index + " ,Does not exist");
 
-        return TReflection.CreateInstance<ActionBase>(m_AllActions[index],level,OnExpired);
+        return TReflection.CreateInstance<ActionBase>(m_AllActions[index].GetType(),level,OnExpired);
     }
 }
 public static class ObjectManager

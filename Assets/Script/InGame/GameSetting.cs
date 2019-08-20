@@ -500,7 +500,7 @@ namespace GameSetting
     public class EntityInfoManager
     {
         protected EntityBase m_Entity { get; private set; }
-        public List<ExpireBase> m_Buffs { get; private set; } = new List<ExpireBase>();
+        public List<ExpireBase> m_Expires { get; private set; } = new List<ExpireBase>();
         List< SFXBuffEffect> m_BuffEffects = new List<SFXBuffEffect>();
         Func<DamageBuffInfo> m_DamageBuffOverride = null;
         public void AddDamageOverride(Func<DamageBuffInfo> damageOverride) => m_DamageBuffOverride = damageOverride;
@@ -511,12 +511,12 @@ namespace GameSetting
         protected float F_FireRateMultiply { get; private set; } = 1f;
         protected float F_ReloadRateMultiply { get; private set; } = 1f;
         protected float F_DamageMultiply { get; private set; } = 0f;
-
+        protected float F_DamageAdditive { get; private set; } = 0f;
         public float F_FireRateTick(float deltaTime) => deltaTime * F_FireRateMultiply;
         public float F_ReloadRateTick(float deltaTime) => deltaTime * F_ReloadRateMultiply;
         public float F_MovementSpeed => m_Entity.F_MovementSpeed * F_MovementSpeedMultiply;
 
-        public virtual DamageBuffInfo GetDamageBuffInfo() => m_DamageBuffOverride!=null?m_DamageBuffOverride():DamageBuffInfo.Create(F_DamageMultiply, 0f);
+        public virtual DamageBuffInfo GetDamageBuffInfo() => m_DamageBuffOverride!=null?m_DamageBuffOverride():DamageBuffInfo.Create(F_DamageMultiply, F_DamageAdditive);
         Func<DamageInfo, bool> OnReceiveDamage;
         Action OnInfoChange;
         public EntityInfoManager(EntityBase _attacher,Func<DamageInfo, bool> _OnReceiveDamage,Action _OnInfoChange)
@@ -527,64 +527,66 @@ namespace GameSetting
         }
         public virtual void OnDeactivate()
         {
-            m_Buffs.Clear();
+            m_Expires.Clear();
             m_BuffEffects.Clear();
             m_DamageBuffOverride = null;
             OnInfoChanged();
         }
-        public virtual void Tick(float deltaTime) => m_Buffs.Traversal((ExpireBase buff) => { buff.OnTick(deltaTime); });
+
+        public virtual void Tick(float deltaTime) => m_Expires.Traversal((ExpireBase buff) => { buff.OnTick(deltaTime); });
+        protected void AddExpire(ExpireBase expire)
+        {
+            m_Expires.Add(expire);
+            if(expire.m_ExpireDuration>0)
+                OnInfoChanged();
+        }
+        protected virtual void OnExpireElapsed(ExpireBase expire)
+        {
+            m_Expires.Remove(expire);
+            if (expire.m_ExpireDuration > 0)
+                OnInfoChanged();
+        }
         public void AddBuff(int sourceID,int buffIndex)
         {
-            ExpireBuff buff = GetBuff(sourceID,buffIndex);
+            ExpireBuff buff = new ExpireBuff(sourceID, DataManager.GetEntityBuffProperties(buffIndex), OnReceiveDamage, OnExpireElapsed);
             switch (buff.m_RefreshType)
             {
                 case enum_ExpireRefreshType.AddUp:
-                    {
-                        m_Buffs.Add(buff);
-                    }
+                        AddExpire(buff);
                     break;
                 case enum_ExpireRefreshType.Refresh:
                     {
-                        ExpireBase buffRefresh = m_Buffs.Find(p =>p.m_Index == buffIndex);
+                        ExpireBase buffRefresh = m_Expires.Find(p =>p.m_Index == buffIndex);
                         if (buffRefresh != null)
                             buffRefresh.ExpireRefresh();
-                        else
-                            m_Buffs.Add(buff);
+                        AddExpire(buff);
                     }
                     break;
             }
-            OnInfoChanged();
         }
-
-        protected void OnExpired(ExpireBase buff)
+        protected virtual void OnSetExpireInfo(ExpireBase expire)
         {
-            m_Buffs.Remove(buff);
-            OnInfoChanged();
+            F_DamageMultiply += expire.m_DamageMultiply;
+            F_DamageReceiveMultiply -= expire.m_DamageReduction;
+            F_MovementSpeedMultiply += expire.m_MovementSpeedMultiply;
+            F_FireRateMultiply += expire.m_FireRateMultiply;
+            F_ReloadRateMultiply += expire.m_ReloadRateMultiply;
         }
-        public ExpireBuff GetBuff(int sourceID,int buffIndex) => new ExpireBuff(sourceID, DataManager.GetEntityBuffProperties(buffIndex), OnReceiveDamage, OnExpired);
-        public virtual void OnInfoChanged()
+        public void OnInfoChanged()
         {
-            //Calculate All Buff Infos
-            F_DamageMultiply = 0f;
             F_DamageReceiveMultiply = 1f;
             F_MovementSpeedMultiply = 1f;
             F_FireRateMultiply = 1f;
             F_ReloadRateMultiply = 1f;
-
-            m_Buffs.Traversal((ExpireBase expire) => {
-                F_DamageMultiply += expire.m_DamageMultiply;
-                F_DamageReceiveMultiply -= expire.m_DamageReduction;
-                F_MovementSpeedMultiply += expire.m_MovementSpeedMultiply;
-                F_FireRateMultiply += expire.m_FireRateMultiply;
-                F_ReloadRateMultiply += expire.m_ReloadRateMultiply;
-            });
-
+            F_DamageMultiply = 0f;
+            F_DamageAdditive = 0f;
+            m_Expires.Traversal(OnSetExpireInfo);
             F_DamageReceiveMultiply = F_DamageReceiveMultiply < 0 ? 0 : F_DamageReceiveMultiply;
 
             //Do Effect Removal Check
             for (int i = 0; i < m_BuffEffects.Count; i++)
             {
-                ExpireBase expire = m_Buffs.Find(p => p.m_EffectIndex == m_BuffEffects[i].I_SFXIndex);
+                ExpireBase expire = m_Expires.Find(p => p.m_EffectIndex == m_BuffEffects[i].I_SFXIndex);
                 if (expire == null)
                 {
                     m_BuffEffects[i].StopParticles();
@@ -593,19 +595,19 @@ namespace GameSetting
             }
 
             //Refresh Or Add Effects
-            for (int i = 0; i < m_Buffs.Count; i++)
+            for (int i = 0; i < m_Expires.Count; i++)
             {
-                if (m_Buffs[i].m_EffectIndex <= 0)
+                if (m_Expires[i].m_EffectIndex <= 0)
                     return;
 
-                SFXBuffEffect particle = m_BuffEffects.Find(p=>p.I_SFXIndex==m_Buffs[i].m_EffectIndex);
+                SFXBuffEffect particle = m_BuffEffects.Find(p=>p.I_SFXIndex==m_Expires[i].m_EffectIndex);
 
                 if (particle)
-                    particle.Refresh(m_Buffs[i].m_ExpireDuration);
+                    particle.Refresh(m_Expires[i].m_ExpireDuration);
                 else
                 {
-                    particle = ObjectManager.SpawnBuffEffect(m_Buffs[i].m_EffectIndex, m_Entity);
-                    particle.Play(m_Entity.I_EntityID, m_Buffs[i].m_ExpireDuration);
+                    particle = ObjectManager.SpawnBuffEffect(m_Expires[i].m_EffectIndex, m_Entity);
+                    particle.Play(m_Entity.I_EntityID, m_Expires[i].m_ExpireDuration);
                     m_BuffEffects.Add(particle );
                 }
             }
@@ -726,8 +728,7 @@ namespace GameSetting
         List<ActionBase> m_ActionStored = new List<ActionBase>();
         List<ActionBase> m_ActionInPool = new List<ActionBase>();
         List<ActionBase> m_ActionHodling = new List<ActionBase>();
-
-        List<ActionBase> m_ActionEquiping = new List<ActionBase>();
+        
 
         public float F_ActionAmount { get; private set; }
         EntityPlayerBase m_Player;
@@ -742,29 +743,19 @@ namespace GameSetting
             base.OnDeactivate();
             TBroadCaster<enum_BC_GameStatusChanged>.Remove<int, EntityBase, float>(enum_BC_GameStatusChanged.OnEntityDamage, OnEntityApplyDamage);
         }
-        public override void Tick(float deltaTime)
+        protected override void OnSetExpireInfo(ExpireBase expire)
         {
-            base.Tick(deltaTime);
-            m_ActionEquiping.Traversal((ActionBase action) => { action.OnTick(deltaTime); });
+            base.OnSetExpireInfo(expire);
+
         }
-        public override DamageBuffInfo GetDamageBuffInfo()
+        public bool TryUseAction(int index)
         {
-            float damageAdditive = 0;
-            m_ActionEquiping.Traversal((ActionBase action) =>{  damageAdditive += action.F_DamageAdditive(m_Player);});
-            return DamageBuffInfo.Create(F_DamageMultiply, damageAdditive);
-        }
-        public void TestUseAction(int index)
-        {
-            ActionBase targetAction = DataManager.GetAction(index, enum_ActionLevel.L3, OnActionExpired);
-            m_ActionEquiping.Add(targetAction);
+            ActionBase targetAction = DataManager.GetAction(index, enum_ActionLevel.L3, OnExpireElapsed);
+            AddExpire(targetAction);
             targetAction.OnActionUse(m_Player);
+            return true;
         }
-        void OnActionExpired(ExpireBase action)
-        {
-            m_ActionEquiping.Remove(action as ActionBase);
-            if(action.m_ExpireDuration>0)
-                OnInfoChanged();
-        }
+
         void OnEntityApplyDamage(int applierID, EntityBase damageEntity, float amountApply)
         {
             if (applierID != m_Entity.I_EntityID)
@@ -812,6 +803,7 @@ namespace GameSetting
         }
         public override Vector3 GetSimulatedPosition(float elapsedTime)=> m_startPos + m_Direction * Expressions.SpeedShift(m_horizontalSpeed, elapsedTime); 
     }
+
     public class ProjectilePhysicsLerpSimulator : PhysicsSimulatorCapsule<HitCheckBase>
     {
         bool b_lerpFinished;
@@ -1132,6 +1124,7 @@ namespace GameSetting
         public virtual float GetValue1(EntityPlayerBase _actionEntity) => 0;
         public virtual float GetValue2(EntityPlayerBase _actionEntity) => 0;
         public virtual float F_DamageAdditive(EntityPlayerBase _actionEntity) => 0;
+ 
         public ActionBase(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired,float _expireDuration=0) : base(_expireDuration,_OnActionExpired)
         {
             m_Level = _level;
