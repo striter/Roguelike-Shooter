@@ -170,6 +170,15 @@ namespace GameSetting_Action
         public override float F_ClipMultiply => GetValue1(null);
         public Action_10008_ClipMultiply(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired, ActionData.F_10008_Duration) { }
     }
+    public class Action_10009_ProjectileSpeedMultiply : ActionBase
+    {
+        public override enum_ActionType m_Type => enum_ActionType.Action;
+        public override int m_Index => 10009;
+        public override int I_ActionCost => ActionData.I_10009_Cost;
+        public override float GetValue1(EntityPlayerBase _actionEntity) => ActionData.F_10009_BulletSpeedAdditive(m_Level);
+        public override float F_ProjectileSpeedMultiply => GetValue1(null);
+        public Action_10009_ProjectileSpeedMultiply(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired, ActionData.F_10009_Duration) { }
+    }
     #endregion
     #region EquipmentItem
     public class Action_20001_ArmorTurret : ActionBase

@@ -698,6 +698,7 @@ namespace GameSetting
 
         public float F_ActionAmount { get; private set; } = 0f;
         public float F_RecoilReduction { get; private set; } = 1f;
+        public float F_ProjectileSpeedMuiltiply { get; private set; } = 1f;
         public bool B_OneOverride { get; private set; } = false;
         public int I_ClipAdditive { get; private set; } = 0;
         public float F_ClipMultiply { get; private set; } = 1f;
@@ -721,7 +722,9 @@ namespace GameSetting
             F_DamageAdditive = 0f;
             B_OneOverride = false;
             I_ClipAdditive = 0;
-            F_ClipMultiply = 0;
+            F_ClipMultiply = 1f;
+            F_RecoilReduction = 0;
+            F_ProjectileSpeedMuiltiply = 1f;
         }
         protected override void OnSetExpireInfo(ExpireBase expire)
         {
@@ -731,6 +734,11 @@ namespace GameSetting
                 return;
 
             F_DamageAdditive += action.F_DamageAdditive(m_Player);
+            F_RecoilReduction += action.F_RecoilReduction(m_Player);
+            F_ProjectileSpeedMuiltiply += action.F_ProjectileSpeedMultiply;
+            F_ClipMultiply += action.F_ClipMultiply;
+            B_OneOverride |= action.B_ClipOverride;
+            I_ClipAdditive += action.I_ClipAdditive;
         }
         public bool TryUseAction(int index)
         {
@@ -787,6 +795,7 @@ namespace GameSetting
         public virtual float GetValue2(EntityPlayerBase _actionEntity) => 0;
         public virtual float F_DamageAdditive(EntityPlayerBase _actionEntity) => 0;
         public virtual float F_RecoilReduction(EntityPlayerBase _actionEntity) => 0;
+        public virtual float F_ProjectileSpeedMultiply => 0;
         public virtual bool B_ClipOverride => false;
         public virtual int I_ClipAdditive => 0;
         public virtual float F_ClipMultiply => 0;
