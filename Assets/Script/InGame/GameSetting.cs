@@ -62,7 +62,7 @@ namespace GameSetting
         public const int I_20001_Cost = 2;
         public const int I_20004_Cost = 1;
 
-        public const int I_30021_Cost = 1;
+        public const int I_30001_Cost = 1;
         public const int I_30022_Cost = 2;
         #endregion
 
@@ -76,7 +76,7 @@ namespace GameSetting
         public static float F_10002_ArmorDamageAdditive(enum_ActionLevel level, float currentArmor) => currentArmor * .1f;
         public static float F_10003_ArmorMultiplyAdditive(enum_ActionLevel level, float currentArmor) => -currentArmor * .3f*(int)level ;
         public static float F_10004_ArmorActionAcquire(enum_ActionLevel level, float currentArmor) => currentArmor / (20f +  10f*(int)level );
-        public static float F_10005_ArmorDamageReduction(enum_ActionLevel level) => 20f * (int)level;
+        public static float F_10005_ArmorDamageReduction(enum_ActionLevel level) => .2f * (int)level;
 
         public static float F_20001_ArmorTurretHealth(enum_ActionLevel level, float currentArmor) => currentArmor * (2*(int)level);
         public static float F_20001_ArmorTurretDamage(enum_ActionLevel level, float currentArmor) => currentArmor * (1.5f*(int)level);
@@ -222,7 +222,7 @@ namespace GameSetting
 
     public enum enum_ActionLevel { Invalid=-1, L1=1,L2=2,L3=3, }
 
-    public enum enum_ActionType { Invalid = -1, Action = 1,Equipment = 2, LongLast, }
+    public enum enum_ActionType { Invalid = -1, Action = 1,Equipment = 2, LevelEquipment, }
 
     public enum enum_PlayerWeapon
     {
@@ -511,7 +511,7 @@ namespace GameSetting
         protected float F_FireRateMultiply { get; private set; } = 1f;
         protected float F_ReloadRateMultiply { get; private set; } = 1f;
         protected float F_DamageMultiply { get; private set; } = 0f;
-        protected float F_DamageAdditive { get; private set; } = 0f;
+        protected float F_DamageAdditive = 0f;
         public float F_FireRateTick(float deltaTime) => deltaTime * F_FireRateMultiply;
         public float F_ReloadRateTick(float deltaTime) => deltaTime * F_ReloadRateMultiply;
         public float F_MovementSpeed => m_Entity.F_MovementSpeed * F_MovementSpeedMultiply;
@@ -536,15 +536,15 @@ namespace GameSetting
         public virtual void Tick(float deltaTime) => m_Expires.Traversal((ExpireBase buff) => { buff.OnTick(deltaTime); });
         protected void AddExpire(ExpireBase expire)
         {
+            Debug.Log("?");
             m_Expires.Add(expire);
-            if(expire.m_ExpireDuration>0)
-                OnInfoChanged();
+            OnInfoChanged();
         }
         protected virtual void OnExpireElapsed(ExpireBase expire)
         {
+            Debug.Log("??");
             m_Expires.Remove(expire);
-            if (expire.m_ExpireDuration > 0)
-                OnInfoChanged();
+            OnInfoChanged();
         }
         public void AddBuff(int sourceID,int buffIndex)
         {
@@ -627,7 +627,7 @@ namespace GameSetting
         public virtual float m_DamageReduction => 0;
         public float m_ExpireDuration { get; private set; } = 0;
 
-        protected Action<ExpireBase> OnExpired;
+        private Action<ExpireBase> OnExpired;
         float f_expireCheck;
         public ExpireBase(float _ExpireDuration,Action<ExpireBase> _OnExpired)
         {
@@ -648,6 +648,7 @@ namespace GameSetting
             if (f_expireCheck <= 0)
                 OnExpired(this);
         }
+        public void ForceExpire()=>OnExpired(this);
     }
 
     public class ExpireBuff:ExpireBase
@@ -728,7 +729,7 @@ namespace GameSetting
         List<ActionBase> m_ActionStored = new List<ActionBase>();
         List<ActionBase> m_ActionInPool = new List<ActionBase>();
         List<ActionBase> m_ActionHodling = new List<ActionBase>();
-        
+        List<ActionBase> m_ActionEquiping = new List<ActionBase>();
 
         public float F_ActionAmount { get; private set; }
         EntityPlayerBase m_Player;
@@ -737,30 +738,55 @@ namespace GameSetting
             m_Player = _attacher;
             F_ActionAmount = GameConst.F_MaxActionAmount;
             TBroadCaster<enum_BC_GameStatusChanged>.Add<int, EntityBase, float>(enum_BC_GameStatusChanged.OnEntityDamage, OnEntityApplyDamage);
+            TBroadCaster<enum_BC_GameStatusChanged>.Add(enum_BC_GameStatusChanged.OnLevelFinish, OnLevelEquipingRemove);
         }
         public override void OnDeactivate()
         {
             base.OnDeactivate();
             TBroadCaster<enum_BC_GameStatusChanged>.Remove<int, EntityBase, float>(enum_BC_GameStatusChanged.OnEntityDamage, OnEntityApplyDamage);
+            TBroadCaster<enum_BC_GameStatusChanged>.Remove(enum_BC_GameStatusChanged.OnLevelFinish, OnLevelEquipingRemove);
         }
         protected override void OnSetExpireInfo(ExpireBase expire)
         {
             base.OnSetExpireInfo(expire);
-
+            ActionBase action = expire as ActionBase;
+            if (action != null)
+                F_DamageAdditive += action.F_DamageAdditive(m_Player);
         }
         public bool TryUseAction(int index)
         {
-            ActionBase targetAction = DataManager.GetAction(index, enum_ActionLevel.L3, OnExpireElapsed);
-            AddExpire(targetAction);
-            targetAction.OnActionUse(m_Player);
+            ActionBase action = DataManager.GetAction(index, enum_ActionLevel.L3, OnExpireElapsed);
+            AddExpire(action);
+            m_ActionEquiping.Add(action);
+            action.ActionUse(m_Player);
             return true;
         }
+        protected override void OnExpireElapsed(ExpireBase expire)
+        {
+            base.OnExpireElapsed(expire);
+            ActionBase action = expire as ActionBase;
+            if (action!=null)
+                m_ActionEquiping.Remove(action);
+        }
 
+        public override DamageBuffInfo GetDamageBuffInfo()
+        {
+            OnInfoChanged();
+            return base.GetDamageBuffInfo();
+        }
         void OnEntityApplyDamage(int applierID, EntityBase damageEntity, float amountApply)
         {
-            if (applierID != m_Entity.I_EntityID)
-                return;
-            AddActionAmount(GameExpression.F_ActionAmountReceive(amountApply));
+            if (applierID == m_Player.I_EntityID)
+            {
+                m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDemage(applierID, damageEntity, amountApply); });
+                AddActionAmount(GameExpression.F_ActionAmountReceive(amountApply));
+            }
+            else if(damageEntity.I_EntityID==m_Player.I_EntityID)
+                m_ActionEquiping.Traversal((ActionBase action) => { action.OnReceiveDamage(applierID,m_Player, amountApply); });
+        }
+        void OnLevelEquipingRemove()
+        {
+            m_ActionEquiping.Traversal((ActionBase action) => { action.OnEquipingRemoval(); });
         }
 
         public void AddActionAmount(float amount)
@@ -1129,13 +1155,33 @@ namespace GameSetting
         {
             m_Level = _level;
         }
-        public virtual void OnActionUse(EntityPlayerBase _entity)
-        {
-        }
         public virtual void OnEnermyKilled(EntityPlayerBase _entity)
         {
         }
+        public void ActionUse(EntityPlayerBase _actionEntity)
+        {
+            OnActionUse(_actionEntity);
+            if(m_ExpireDuration<=0&&m_Type!= enum_ActionType.LevelEquipment)
+                ForceExpire();
+        }
+        protected virtual void OnActionUse(EntityPlayerBase _actionEntity)
+        {
 
+        }
+        public virtual void OnAddActionElse(float actionAmount)
+        {
+        }
+        public virtual void OnReceiveDamage(int applier,EntityPlayerBase receiver,float amount)
+        {
+        }
+        public virtual void OnDealtDemage(int applier, EntityBase receiver,float amount)
+        {
+        }
+        public void OnEquipingRemoval()
+        {
+            if (m_Type == enum_ActionType.LevelEquipment)
+                ForceExpire();
+        }
         public bool B_Upgradable => m_Level < enum_ActionLevel.L3;
         public void Upgrade()
         {
@@ -1143,17 +1189,15 @@ namespace GameSetting
                 m_Level++;
         }
     }
-
     public class Action_10001_ArmorAdditive : ActionBase
     {
         public override int m_Index => 10001;
         public override enum_ActionType m_Type => enum_ActionType.Action;
         protected override int I_ActionCost => ActionData.I_10001_Cost;
         public override float GetValue1(EntityPlayerBase _actionEntity) => ActionData.F_10001_ArmorAdditive(m_Level);
-        public override void OnActionUse(EntityPlayerBase _actionEntity)
+        protected override void OnActionUse(EntityPlayerBase _actionEntity)
         {
             _actionEntity.m_HitCheck.TryHit(new DamageInfo(_actionEntity.I_EntityID, GetValue1(_actionEntity), enum_DamageType.ArmorOnly, DamageBuffInfo.Default()));
-            OnExpired(this);
         }
         public Action_10001_ArmorAdditive(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
     }
@@ -1169,13 +1213,11 @@ namespace GameSetting
     public class Action_10003_ArmorMultiplyAdditive : ActionBase
     {
         public override int m_Index => 10003;
-        public override enum_ActionType m_Type => enum_ActionType.Action;
         protected override int I_ActionCost => ActionData.I_10003_Cost;
         public override float GetValue1(EntityPlayerBase _actionEntity) => ActionData.F_10003_ArmorMultiplyAdditive(m_Level, _actionEntity.m_HealthManager.m_CurrentArmor);
-        public override void OnActionUse(EntityPlayerBase _actionEntity)
+        protected override void OnActionUse(EntityPlayerBase _actionEntity)
         {
             _actionEntity.m_HitCheck.TryHit(new DamageInfo(_actionEntity.I_EntityID, GetValue1(_actionEntity), enum_DamageType.ArmorOnly, DamageBuffInfo.Default()));
-            OnExpired(this);
         }
         public Action_10003_ArmorMultiplyAdditive(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
     }
@@ -1185,18 +1227,17 @@ namespace GameSetting
         public override enum_ActionType m_Type => enum_ActionType.Action;
         protected override int I_ActionCost => ActionData.I_10004_Cost;
         public override float GetValue1(EntityPlayerBase _actionEntity) => ActionData.F_10004_ArmorActionAcquire(m_Level, _actionEntity.m_HealthManager.m_CurrentArmor);
-        public override void OnActionUse(EntityPlayerBase _actionEntity)
+        protected override void OnActionUse(EntityPlayerBase _actionEntity)
         {
             (_actionEntity.m_EntityInfo as PlayerInfoManager).AddActionAmount(GetValue1(_actionEntity));
-            OnExpired(this);
         }
         public Action_10004_ArmorActionReturn(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
     }
     public class Action_10005_ArmorDamageReduction : ActionBase
     {
         public override int m_Index => 10005;
-        public override int m_EffectIndex => base.m_EffectIndex;
         public override enum_ActionType m_Type => enum_ActionType.Action;
+        public override int m_EffectIndex => base.m_EffectIndex;
         protected override int I_ActionCost => ActionData.I_1005_Cost;
         public override float GetValue1(EntityPlayerBase _actionEntity) => ActionData.F_10005_ArmorDamageReduction(m_Level);
         public override float m_DamageReduction => GetValue1(null);
@@ -1210,7 +1251,7 @@ namespace GameSetting
         public override enum_ActionType m_Type => enum_ActionType.Equipment;
         public override float GetValue1(EntityPlayerBase _actionEntity) => ActionData.F_20001_ArmorTurretHealth(m_Level, _actionEntity.m_HealthManager.m_CurrentArmor);
         public override float GetValue2(EntityPlayerBase _actionEntity) => ActionData.F_20001_ArmorTurretDamage(m_Level, _actionEntity.m_HealthManager.m_CurrentArmor);
-        public override void OnActionUse(EntityPlayerBase _entity)
+        protected override void OnActionUse(EntityPlayerBase _entity)
         {
             float health = GetValue1(_entity);
             float damage = GetValue2(_entity);
@@ -1222,7 +1263,6 @@ namespace GameSetting
                 target.F_AttackTimes = new RangeInt(1, 0);
                 target.F_AttackRate = 0f;
             });
-            OnExpired(this);
         }
         public Action_20001_ArmorTurret(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
     }
@@ -1233,14 +1273,26 @@ namespace GameSetting
         protected override int I_ActionCost => ActionData.I_20004_Cost;
         public override enum_ActionType m_Type => enum_ActionType.Equipment;
         public override float GetValue1(EntityPlayerBase _actionEntity) => ActionData.F_20004_DamageDealt(m_Level, _actionEntity.m_WeaponCurrent.m_ProjectileInfo.F_Damage);
-        public override void OnActionUse(EntityPlayerBase _entity)
+        protected override void OnActionUse(EntityPlayerBase _entity)
         {
             _entity.OnAcquireEquipment<EquipmentBase>(m_Index,()=> { return DamageBuffInfo.Create(0, GetValue1(_entity)); });
-            OnExpired(this);
         }
         public Action_20004_ExplosiveGrenade(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
     }
 
+    public class Action_30001_ : ActionBase
+    {
+        public override int m_Index => 30001;
+        protected override int I_ActionCost => ActionData.I_30001_Cost;
+        public override enum_ActionType m_Type => enum_ActionType.LevelEquipment;
+        public override float GetValue1(EntityPlayerBase _actionEntity) => ActionData.F_30022_ArmorDamageReturn(m_Level,_actionEntity.m_HealthManager.m_CurrentArmor);
+        public override void OnReceiveDamage(int applier, EntityPlayerBase receiver, float amount)
+        {
+            GameManager.Instance.GetEntity(applier).m_HitCheck.TryHit(new DamageInfo(receiver.I_EntityID,GetValue1(receiver), enum_DamageType.Common,DamageBuffInfo.Default()));
+        }
+
+        public Action_30001_(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
+    }
     #endregion
     #region Equipment
     public class EquipmentBase

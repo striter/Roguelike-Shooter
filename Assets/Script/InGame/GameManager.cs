@@ -166,6 +166,16 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     #endregion
     #region Battle Management
     public static int I_EntityID(int index, enum_EntityFlag flag) => index + (int)flag*10000;       //Used For Identification Management
+    Dictionary<int, EntityBase> m_Entities = new Dictionary<int, EntityBase>();
+    void OnSpawnEntity(EntityBase entity)
+    {
+        m_Entities.Add(entity.I_EntityID, entity);
+    }
+    void OnRecycleEntity(EntityBase entity)
+    {
+        m_Entities.Remove(entity.I_EntityID);
+    }
+
     public static bool B_CanHitEntity(HitCheckEntity targetHitCheck, int sourceEntityID)  //If Match Will Hit Target,Player Particles ETC
     {
         if (targetHitCheck.I_AttacherID == sourceEntityID)
@@ -188,6 +198,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         return canHit;
     }
 
+    public EntityBase GetEntity(int entityID) => m_Entities[entityID];
     public EntityBase GetRandomEntity(int sourceIndex,enum_EntityFlag sourceFlag,bool targetAlly,Predicate<EntityBase> predict)
     {
         EntityBase target=null;
@@ -201,16 +212,6 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
             return false;
         });
         return target;
-    }
-
-    public Dictionary<int, EntityBase> m_Entities { get; private set; } = new Dictionary<int, EntityBase>();
-    void OnSpawnEntity(EntityBase entity)
-    {
-        m_Entities.Add(entity.I_EntityID, entity);
-    }
-    void OnRecycleEntity(EntityBase entity)
-    {
-        m_Entities.Remove(entity.I_EntityID);
     }
     #endregion
     #region Battle Management
