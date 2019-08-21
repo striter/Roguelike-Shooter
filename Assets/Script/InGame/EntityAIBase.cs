@@ -56,6 +56,9 @@ public class EntityAIBase : EntityBase {
     protected override void Update()
     {
         base.Update();
+        if (m_HealthManager.b_IsDead)
+            return;
+
         if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
         {
             m_Animator.SetRun(m_AI.B_AgentEnabled ? 1 : 0);
@@ -133,6 +136,22 @@ public class EntityAIBase : EntityBase {
         protected Func<EntityBase, bool> OnCheckTarget;
         protected EquipmentBase m_Weapon;
         protected EntityInfoManager m_Info => m_Entity.m_EntityInfo;
+        RaycastHit[] m_Raycasts;
+        float f_movementSimulate, f_battleSimulate, f_calculateSimulate, f_checkTargetSimulate;
+        Vector3 v3_TargetDirection;
+        float f_targetDistance;
+        bool b_targetOutChaseRange;
+        bool b_targetOutAttackRange;
+        bool b_MoveTowardsTarget;
+        bool b_CanAttackTarget;
+        bool b_AgentReachDestination;
+        bool b_idled = false;
+        bool b_targetVisible;
+        int i_targetUnvisibleCount;
+        bool b_targetRotationWithin;
+        bool b_targetHideBehindWall => i_targetUnvisibleCount == 40;
+        bool b_targetAvailable => m_Target != null && !m_Target.m_HealthManager.b_IsDead;
+
         public bool B_AgentEnabled
         {
             get
@@ -177,6 +196,11 @@ public class EntityAIBase : EntityBase {
         {
             B_AgentEnabled = true;
             b_attacking = false;
+            f_battleSimulate = 0f;
+            f_movementSimulate = 0f;
+            f_checkTargetSimulate = 0f;
+            f_calculateSimulate = 0f;
+            f_targetDistance = 0f;
         }
         public void OnInfoChange()
         {
@@ -188,22 +212,6 @@ public class EntityAIBase : EntityBase {
             m_Weapon.OnDeactivate();
             this.StopAllSingleCoroutines();
         }
-        RaycastHit[] m_Raycasts;
-        float f_movementSimulate, f_battleSimulate, f_calculateSimulate,f_checkTargetSimulate;
-        Vector3 v3_TargetDirection;
-        float f_targetDistance;
-        bool b_targetOutChaseRange;
-        bool b_targetOutAttackRange;
-        bool b_MoveTowardsTarget;
-        bool b_CanAttackTarget;
-        bool b_AgentReachDestination;
-        bool b_idled = false;
-        bool b_targetVisible;
-        int i_targetUnvisibleCount;
-        bool b_targetRotationWithin;
-        bool b_targetHideBehindWall => i_targetUnvisibleCount == 40;
-        bool b_targetAvailable => m_Target != null && !m_Target.m_HealthManager.b_IsDead;
-
         public void OnTick(float deltaTime)
         {
             if (m_Entity.m_EntityInfo.B_Stunned)

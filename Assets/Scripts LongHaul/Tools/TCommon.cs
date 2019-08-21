@@ -170,10 +170,20 @@ public static class TCommon
     {
         return randomSeed != null ? array[randomSeed.Next(array.GetLength(0)), randomSeed.Next(array.GetLength(1))] : array[UnityEngine.Random.Range(0, array.GetLength(0)), UnityEngine.Random.Range(0, array.GetLength(1))];
     }
-    public static void Traversal<T>(this List<T> list, Action<T> OnEachItem)
+    public static void Traversal<T>(this List<T> list, Action<T> OnEachItem,bool listChanged=false)
     {
-        for (int i = 0; i < list.Count; i++)
-            OnEachItem(list[i]);
+        if (listChanged)
+        {
+            List<T> tempList = new List<T>();
+            tempList.AddRange(list);
+            for (int i = 0; i < tempList.Count; i++)
+                OnEachItem(tempList[i]);
+        }
+        else
+        {
+            for (int i = 0; i < list.Count; i++)
+                OnEachItem(list[i]);
+        }
     }
     public static void Traversal<T>(this List<T> list, Action<int, T> OnEachItem)
     {

@@ -66,6 +66,7 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
     public virtual void PlayControlled(int sourceID, Transform attachTrans, Transform directionTrans, bool play, DamageBuffInfo buffInfo)
     {
         B_Casting = play;
+        Debug.Log(play);
         if (play)
         {
             SetDamageInfo(buffInfo,sourceID);

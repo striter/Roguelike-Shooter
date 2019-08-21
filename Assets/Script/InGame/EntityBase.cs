@@ -28,7 +28,6 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
         I_PoolIndex=presetIndex;
         m_SkinRenderers = tf_Model.Find("Skin").GetComponentsInChildren<Renderer>();
         m_HitChecks = GetComponentsInChildren<HitCheckEntity>();
-        m_HitChecks.Traversal((HitCheckEntity check) => { check.Attach(this, OnReceiveDamage); });
         m_EntityInfo = GetEntityInfo();
         m_HealthManager = new EntityHealth(this,OnHealthEffect,OnDead);
     }
@@ -41,7 +40,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
             Debug.LogError("Please Init Entity Info!" + gameObject.name.ToString());
 
        m_HealthManager.OnActivate(I_MaxHealth,I_DefaultArmor);
-       m_HitChecks.Traversal((HitCheckEntity check) => { check.SetEnable(true); });
+       m_HitChecks.Traversal((HitCheckEntity check) => { check.Attach(this,OnReceiveDamage);  check.SetEnable(true); });
        m_SkinRenderers.Traversal((Renderer renderer) => {renderer.materials.Traversal((Material mat)=> {mat.SetFloat("_Amount1", 0);}); });
     }
     protected virtual void OnInfoChange()
@@ -59,6 +58,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
     protected virtual void Update()
     {
         m_EntityInfo.Tick(Time.deltaTime);
+
     }
 
     protected bool OnReceiveDamage(DamageInfo damageInfo)

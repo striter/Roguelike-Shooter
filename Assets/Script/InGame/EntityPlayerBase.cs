@@ -177,8 +177,8 @@ public class EntityPlayerBase : EntityBase {
     }
     public void OnFireAddRecoil(Vector2 recoil)
     {
-        Debug.Log(TCommon.RandomBool());
         OnRotateDelta(new Vector2((TCommon.RandomBool()?1:-1) *recoil.x,0));
+        m_PlayerInfo.OnFireOnce();
         m_Animator.Fire();
     }
     #endregion
@@ -222,7 +222,7 @@ public class EntityPlayerBase : EntityBase {
     #region Action
     void OnLevelFinished()
     {
-        m_PlayerInfo.RemoveAllEquiping();
+        m_PlayerInfo.OnBattleFinished();
         m_HealthManager.OnActivate(I_MaxHealth,I_DefaultArmor);
     }
     public void TestUseAction(int actionIndex)

@@ -186,7 +186,7 @@ namespace GameSetting
 
     public enum enum_ActionLevel { Invalid=-1, L1=1,L2=2,L3=3, }
 
-    public enum enum_ActionType { Invalid = -1, Action = 1,Equipment = 2, LevelEquipment, }
+    public enum enum_ActionExpireType { Invalid = -1, AfterDuration = 1, AfterUse =2  ,AfterFire=3 ,AfterBattle=4, }
 
     public enum enum_PlayerWeapon
     {
@@ -761,6 +761,9 @@ namespace GameSetting
             InfoChange();
             return DamageBuffInfo.DamageInfo(F_DamageMultiply, F_DamageAdditive);
         }
+
+        public void OnFireOnce() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnAfterFire(); },true);
+        public void OnBattleFinished() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnBattleFinished(); },true);
         void OnEntityApplyDamage(int applierID, EntityBase damageEntity, float amountApply)
         {
             if (applierID == m_Player.I_EntityID)
@@ -771,10 +774,7 @@ namespace GameSetting
             else if(damageEntity.I_EntityID==m_Player.I_EntityID)
                 m_ActionEquiping.Traversal((ActionBase action) => { action.OnReceiveDamage(applierID,m_Player, amountApply); });
         }
-        public void RemoveAllEquiping()
-        {
-            m_ActionEquiping.Traversal((ActionBase action) => { action.OnEquipingRemoval(); });
-        }
+
 
         public void AddActionAmount(float amount)
         {
@@ -789,7 +789,7 @@ namespace GameSetting
         public enum_ActionLevel m_Level { get; private set; } = enum_ActionLevel.Invalid;
         public virtual int I_ActionCost => -1;
         public virtual bool B_ActionAble => true;
-        public virtual enum_ActionType m_Type => enum_ActionType.Invalid;
+        public virtual enum_ActionExpireType m_ExpireType => enum_ActionExpireType.Invalid;
         public virtual float GetValue1(EntityPlayerBase _actionEntity) => 0;
         public virtual float GetValue2(EntityPlayerBase _actionEntity) => 0;
         public virtual float GetValue3(EntityPlayerBase _actionEntity) => 0;
@@ -802,36 +802,30 @@ namespace GameSetting
         public ActionBase(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired, float _expireDuration = 0) : base(_expireDuration, _OnActionExpired)
         {
             m_Level = _level;
-            if (m_Type == enum_ActionType.Invalid)
+            if (m_ExpireType == enum_ActionExpireType.Invalid)
                 Debug.LogError("Override Type Please!");
-        }
-        public virtual void OnEnermyKilled(EntityPlayerBase _entity)
-        {
         }
         public void ActionUse(EntityPlayerBase _actionEntity)
         {
             OnActionUse(_actionEntity);
-            if (m_ExpireDuration <= 0 && m_Type != enum_ActionType.LevelEquipment)
+            if (m_ExpireType == enum_ActionExpireType.AfterUse)
                 ForceExpire();
         }
-        protected virtual void OnActionUse(EntityPlayerBase _actionEntity)
+        public void OnBattleFinished()
         {
+            if (m_ExpireType == enum_ActionExpireType.AfterBattle)
+                ForceExpire();
+        }
+        public void OnAfterFire()
+        {
+            if (m_ExpireType == enum_ActionExpireType.AfterFire)
+                ForceExpire();
+        }
+        protected virtual void OnActionUse(EntityPlayerBase _actionEntity) {}
+        public virtual void OnAddActionElse(EntityPlayerBase _actionEntity, float actionAmount) { }
+        public virtual void OnReceiveDamage(int applier, EntityPlayerBase receiver, float amount) { }
+        public virtual void OnDealtDemage(int applier, EntityBase receiver, float amount){ }
 
-        }
-        public virtual void OnAddActionElse(EntityPlayerBase _actionEntity, float actionAmount)
-        {
-        }
-        public virtual void OnReceiveDamage(int applier, EntityPlayerBase receiver, float amount)
-        {
-        }
-        public virtual void OnDealtDemage(int applier, EntityBase receiver, float amount)
-        {
-        }
-        public void OnEquipingRemoval()
-        {
-            if (m_Type == enum_ActionType.LevelEquipment)
-                ForceExpire();
-        }
         public bool B_Upgradable => m_Level < enum_ActionLevel.L3;
         public void Upgrade()
         {
