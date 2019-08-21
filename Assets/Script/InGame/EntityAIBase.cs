@@ -255,7 +255,7 @@ public class EntityAIBase : EntityBase {
             b_targetOutAttackRange = f_targetDistance > m_Entity.F_AIAttackRange;
             b_MoveTowardsTarget = b_targetHideBehindWall || b_targetOutChaseRange;
 
-            b_CanAttackTarget = !b_targetOutAttackRange  && b_targetRotationWithin&&!FrontBlocked();
+            b_CanAttackTarget = !b_targetOutAttackRange  && b_targetRotationWithin && (!m_Entity.B_BattleCheckObstacle||b_targetVisible) &&!FrontBlocked();
 
             b_AgentReachDestination = m_Agent.destination == Vector3.zero || TCommon.GetXZDistance(headTransform.position, m_Agent.destination) < 1f;
         }
