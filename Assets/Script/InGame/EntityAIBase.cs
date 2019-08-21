@@ -56,9 +56,11 @@ public class EntityAIBase : EntityBase {
     protected override void Update()
     {
         base.Update();
-        m_Animator.SetStun(m_EntityInfo.B_Stunned);
-        if (E_AnimatorIndex !=  enum_EnermyAnim.Invalid)
-            m_Animator.SetRun( m_AI.B_AgentEnabled ? 1 : 0);
+        if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
+        {
+            m_Animator.SetRun(m_AI.B_AgentEnabled ? 1 : 0);
+            m_Animator.SetStun(m_EntityInfo.B_Stunned);
+        }
 
         m_AI.OnTick(Time.deltaTime);
     }
