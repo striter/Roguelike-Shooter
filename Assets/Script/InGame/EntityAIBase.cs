@@ -205,7 +205,6 @@ public class EntityAIBase : EntityBase {
                 f_movementSimulate -= GameConst.F_EnermyAICheckTime*m_Info.F_MovementSpeedMultiply;
                 if(f_battleSimulate>0)
                 f_battleSimulate -= m_Info.F_ReloadRateTick( GameConst.F_EnermyAICheckTime);
-
                 if (!b_targetAvailable)
                     RecheckTarget();
 
@@ -256,6 +255,10 @@ public class EntityAIBase : EntityBase {
             i_playCount = m_Entity.F_AttackTimes.RandomRangeInt();
             i_playCount = i_playCount <= 0 ? 1 : i_playCount;       //Make Sure Play Once At Least
             this.StartSingleCoroutine(2, Attack(i_playCount, m_Entity.F_AttackRate));
+
+            if (m_Entity.m_Flag == enum_EntityFlag.Player)
+                Debug.Log(m_Entity.F_AttackRate * i_playCount + m_Entity.F_AttackDuration.RandomRangeFloat());
+
             return m_Entity.F_AttackRate * i_playCount + m_Entity.F_AttackDuration.RandomRangeFloat();
         }
         IEnumerator Attack(int count,float fireRate)

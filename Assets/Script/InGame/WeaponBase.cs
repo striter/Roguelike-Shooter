@@ -1,45 +1,51 @@
 ﻿using UnityEngine;
 using GameSetting;
 using System;
-using System.Collections.Generic;
 
 public class WeaponBase : MonoBehaviour {
     public enum_TriggerType E_Trigger = enum_TriggerType.Invalid;
     public enum_PlayerAnim E_Anim= enum_PlayerAnim.Invalid;
     public bool B_AttachLeft=false;
+
+
+    SWeapon m_WeaponInfo;
     public int I_AttacherID { get; private set; }
-    public SWeapon m_WeaponInfo { get; private set; }
-    public SFXProjectile m_ProjectileInfo { get; private set; }
+    public float F_BaseSpeed { get; private set; }
+    public float F_BaseDamage { get; private set; }
+    public int I_MuzzleIndex { get; private set; }
+
     public bool B_Triggerable { get; private set; } = false;
     public bool B_Reloading { get; private set; }
     public int I_AmmoLeft { get; private set; }
     public Transform m_Muzzle { get; private set; }
-    
-    Action<float> OnReloadStart;
-    Func<float, float> OnFireTickDelta, OnReloadTickDelta;
-    Action<Vector2> OnFireRecoil;
-    Func<DamageBuffInfo> OnFireBuffInfo;
-
-    WeaponTrigger m_Trigger=null;
-    EntityBase m_Attacher;
-    bool B_HaveAmmoLeft => m_WeaponInfo.m_ClipAmount == -1 || I_AmmoLeft > 0;
-    bool B_AmmoFull => m_WeaponInfo.m_ClipAmount == -1||m_WeaponInfo.m_ClipAmount == I_AmmoLeft;
-    float f_reloadCheck;
+    public int I_ClipAmout { get; private set; }
+    public float F_BaseFirerate => m_WeaponInfo.m_FireRate;
+    public float F_Speed => m_Attacher.m_PlayerInfo.F_ProjectileSpeedMuiltiply * F_BaseSpeed;
+    public Vector2 F_Recoil => m_Attacher.m_PlayerInfo.F_RecoilMultiply * m_WeaponInfo.m_RecoilPerShot;
     public float F_ReloadStatus => B_Reloading ? f_reloadCheck / m_WeaponInfo.m_ReloadTime : 1;
-    public float F_AmmoStatus => I_AmmoLeft / (float)m_WeaponInfo.m_ClipAmount;
-    float f_fireCheck = 0;
-    public bool B_TriggerActionable() => B_Triggerable&&B_Actionable();
+    public float F_AmmoStatus => I_AmmoLeft / (float)I_ClipAmout;
+    public bool B_TriggerActionable() => B_Triggerable && B_Actionable();
     public bool B_Actionable() => !B_Reloading && f_fireCheck <= 0;
-    protected void OnFireCheck(float pauseDuration)
-    {
-        f_fireCheck = pauseDuration;
-    }
+
+    EntityPlayerBase m_Attacher;
+    WeaponTrigger m_Trigger = null;
+    Action<float> OnReloadStart;
+    Action<Vector2> OnFireRecoil;
+
+    float f_reloadCheck, f_fireCheck;
+    bool B_HaveAmmoLeft => m_WeaponInfo.m_ClipAmount == -1 || I_AmmoLeft > 0;
+    bool B_AmmoFull => m_WeaponInfo.m_ClipAmount == -1||I_ClipAmout == I_AmmoLeft;
+    protected void OnFireCheck(float pauseDuration) => f_fireCheck = pauseDuration;
 
     public void Init(SWeapon weaponInfo)
     {
         m_Muzzle = transform.FindInAllChild("Muzzle");
         m_WeaponInfo = weaponInfo;
-        m_ProjectileInfo = ObjectManager.GetEquipmentData<SFXProjectile>((int)m_WeaponInfo.m_Weapon);
+        SFXProjectile projectileInfo = ObjectManager.GetEquipmentData<SFXProjectile>(m_WeaponInfo.m_Index);
+        F_BaseSpeed = projectileInfo.F_Speed;
+        F_BaseDamage = projectileInfo.F_Damage;
+        I_MuzzleIndex = projectileInfo.I_MuzzleIndex;
+        I_ClipAmout = m_WeaponInfo.m_ClipAmount;
         I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
         switch (E_Trigger)
         {
@@ -56,16 +62,6 @@ public class WeaponBase : MonoBehaviour {
         if (m_WeaponInfo.m_Weapon == 0)
             Debug.LogError("Please Init Entity Info!" + gameObject.name.ToString());
     }
-    protected void Update()
-    {
-        if (m_Trigger != null)
-            m_Trigger.Tick(OnFireTickDelta(Time.deltaTime));
-
-        if (f_fireCheck > 0)
-            f_fireCheck -= OnFireTickDelta(Time.deltaTime);
-
-        ReloadTick(Time.deltaTime);
-    }
     protected virtual void OnDisable()
     {;
         B_Reloading = false;
@@ -73,7 +69,7 @@ public class WeaponBase : MonoBehaviour {
         f_fireCheck = 0;
         m_Trigger.OnDisable();
     }
-    public void Attach(int _attacherID,EntityBase _attacher,Transform _attachTo,Action<Vector2> _OnFireRecoil,Action<float> _OnReloadStart,Func<DamageBuffInfo> _OnFireBuffInfo, Func<float,float> _OnFireTickDelta,Func<float,float> _OnReloadTickDelta)
+    public void Attach(int _attacherID,EntityPlayerBase _attacher,Transform _attachTo,Action<Vector2> _OnFireRecoil,Action<float> _OnReloadStart)
     {
         I_AttacherID = _attacherID;
         m_Attacher = _attacher;
@@ -82,9 +78,6 @@ public class WeaponBase : MonoBehaviour {
         transform.localRotation = Quaternion.identity;
         transform.localScale = Vector3.one;
         OnFireRecoil = _OnFireRecoil;
-        OnFireBuffInfo = _OnFireBuffInfo;
-        OnFireTickDelta = _OnFireTickDelta;
-        OnReloadTickDelta = _OnReloadTickDelta;
         OnReloadStart = _OnReloadStart;
     }
     public void Detach()
@@ -114,14 +107,16 @@ public class WeaponBase : MonoBehaviour {
                 endPosition = hit.point;
             spreadDirection = (endPosition - m_Muzzle.position).normalized;
 
-            ObjectManager.SpawnEquipment<SFXProjectile>(m_ProjectileInfo.I_SFXIndex, m_Muzzle.position, spreadDirection).Play(I_AttacherID, spreadDirection, endPosition, OnFireBuffInfo());
+            SFXProjectile projectile = ObjectManager.SpawnEquipment<SFXProjectile>(m_WeaponInfo.m_Index, m_Muzzle.position, spreadDirection);
+            projectile.F_Speed = F_Speed;
+            projectile.Play(I_AttacherID, spreadDirection, endPosition, m_Attacher.m_PlayerInfo.GetDamageBuffInfo());
         }
 
-        if (m_ProjectileInfo.I_MuzzleIndex != -1)
-            ObjectManager.SpawnParticles<SFXMuzzle>(m_ProjectileInfo.I_MuzzleIndex, m_Muzzle.position, m_Muzzle.forward).Play(I_AttacherID);
+        if (I_MuzzleIndex != -1)
+            ObjectManager.SpawnParticles<SFXMuzzle>(I_MuzzleIndex, m_Muzzle.position, m_Muzzle.forward).Play(I_AttacherID);
 
         I_AmmoLeft--;
-        OnFireRecoil?.Invoke(m_WeaponInfo.m_RecoilPerShot);
+        OnFireRecoil?.Invoke(F_Recoil);
 
         return true;
     }
@@ -144,18 +139,41 @@ public class WeaponBase : MonoBehaviour {
     {
         B_Reloading = true;
         f_reloadCheck = 0;
-        OnReloadStart?.Invoke(m_WeaponInfo.m_ReloadTime  / OnReloadTickDelta(1));
+        OnReloadStart?.Invoke(m_WeaponInfo.m_ReloadTime  / m_Attacher.m_PlayerInfo.F_ReloadRateTick(1f) );
     }
-    void ReloadTick(float deltaTime)
+
+    protected void Update()
     {
+        DataUpdate();
+
+        float fireTick = m_Attacher.m_PlayerInfo.F_FireRateTick(Time.deltaTime);
+
+        if (m_Trigger != null)
+            m_Trigger.Tick(fireTick);
+
+        if (f_fireCheck > 0)
+            f_fireCheck -= fireTick;
+
         if (B_Reloading)
         {
-            f_reloadCheck += OnReloadTickDelta(deltaTime);
+            f_reloadCheck += m_Attacher.m_PlayerInfo.F_ReloadRateTick(Time.deltaTime);
             if (f_reloadCheck > m_WeaponInfo.m_ReloadTime)
             {
-                I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
+                I_AmmoLeft = I_ClipAmout;
                 B_Reloading = false;
             }
+        }
+
+    }
+
+    void DataUpdate()
+    {
+        int clipAmount = m_Attacher.m_PlayerInfo.I_ClipAmount(m_WeaponInfo.m_ClipAmount);
+        if (I_ClipAmout != clipAmount)
+        {
+            I_ClipAmout = clipAmount;
+            if (I_AmmoLeft > I_ClipAmout)
+                I_AmmoLeft = I_ClipAmout;
         }
     }
     #region TriggerType

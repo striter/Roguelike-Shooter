@@ -498,13 +498,13 @@ namespace GameSetting
         public virtual void Tick(float deltaTime) => m_Expires.Traversal((ExpireBase buff) => { buff.OnTick(deltaTime); });
         protected void AddExpire(ExpireBase expire)
         {
-            Debug.Log("?");
+            Debug.Log("Add Expire:"+expire.m_Index);
             m_Expires.Add(expire);
             OnInfoChanged();
         }
         protected virtual void OnExpireElapsed(ExpireBase expire)
         {
-            Debug.Log("??");
+            Debug.Log("Remove Expire:"+expire.m_Index);
             m_Expires.Remove(expire);
             OnInfoChanged();
         }
@@ -541,12 +541,14 @@ namespace GameSetting
             F_FireRateMultiply = 1f;
             F_ReloadRateMultiply = 1f;
             F_DamageMultiply = 0f;
+
+            if (F_DamageReceiveMultiply < 0)
+                F_DamageReceiveMultiply = 0;
         }
         public void OnInfoChanged()
         {
             OnResetInfo();
             m_Expires.Traversal(OnSetExpireInfo);
-            F_DamageReceiveMultiply = F_DamageReceiveMultiply < 0 ? 0 : F_DamageReceiveMultiply;
 
             //Do Effect Removal Check
             for (int i = 0; i < m_BuffEffects.Count; i++)
@@ -697,11 +699,11 @@ namespace GameSetting
         List<ActionBase> m_ActionEquiping = new List<ActionBase>();
 
         public float F_ActionAmount { get; private set; } = 0f;
-        public float F_RecoilReduction { get; private set; } = 1f;
+        public float F_RecoilMultiply { get; private set; } = 1f;
         public float F_ProjectileSpeedMuiltiply { get; private set; } = 1f;
-        public bool B_OneOverride { get; private set; } = false;
-        public int I_ClipAdditive { get; private set; } = 0;
-        public float F_ClipMultiply { get; private set; } = 1f;
+        protected bool B_OneOverride { get; private set; } = false;
+        protected int I_ClipAdditive { get; private set; } = 0;
+        protected float F_ClipMultiply { get; private set; } = 1f;
         public int I_ClipAmount(int baseClipAmount) => (int)(((B_OneOverride ? 1 : baseClipAmount) + I_ClipAdditive) * F_ClipMultiply);
         protected float F_DamageAdditive = 0f;
         EntityPlayerBase m_Player;
@@ -723,8 +725,11 @@ namespace GameSetting
             B_OneOverride = false;
             I_ClipAdditive = 0;
             F_ClipMultiply = 1f;
-            F_RecoilReduction = 0;
+            F_RecoilMultiply = 1f;
             F_ProjectileSpeedMuiltiply = 1f;
+
+            if (F_RecoilMultiply < 0)
+                F_RecoilMultiply = 0;
         }
         protected override void OnSetExpireInfo(ExpireBase expire)
         {
@@ -734,11 +739,14 @@ namespace GameSetting
                 return;
 
             F_DamageAdditive += action.F_DamageAdditive(m_Player);
-            F_RecoilReduction += action.F_RecoilReduction(m_Player);
+            F_RecoilMultiply += action.F_RecoilMultiplyAdditive(m_Player);
             F_ProjectileSpeedMuiltiply += action.F_ProjectileSpeedMultiply;
             F_ClipMultiply += action.F_ClipMultiply;
             B_OneOverride |= action.B_ClipOverride;
             I_ClipAdditive += action.I_ClipAdditive;
+
+            if (F_RecoilMultiply < 0)
+                F_RecoilMultiply = 0;
         }
         public bool TryUseAction(int index)
         {
@@ -794,7 +802,7 @@ namespace GameSetting
         public virtual float GetValue1(EntityPlayerBase _actionEntity) => 0;
         public virtual float GetValue2(EntityPlayerBase _actionEntity) => 0;
         public virtual float F_DamageAdditive(EntityPlayerBase _actionEntity) => 0;
-        public virtual float F_RecoilReduction(EntityPlayerBase _actionEntity) => 0;
+        public virtual float F_RecoilMultiplyAdditive(EntityPlayerBase _actionEntity) => 0;
         public virtual float F_ProjectileSpeedMultiply => 0;
         public virtual bool B_ClipOverride => false;
         public virtual int I_ClipAdditive => 0;
@@ -1065,6 +1073,7 @@ namespace GameSetting
         float f_stunAfterShot;
         float f_recoilHorizontal;
         float f_recoilVertical;
+        public int m_Index => index;
         public enum_PlayerWeapon m_Weapon => (enum_PlayerWeapon)index;
         public string m_Name => s_name;
         public float m_FireRate => f_fireRate;

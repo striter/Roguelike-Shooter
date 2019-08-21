@@ -87,7 +87,7 @@ GameObject:
   - component: {fileID: 114481616185339978}
   - component: {fileID: 114099882450065170}
   m_Layer: 0
-  m_Name: 30001_Player_Turrent1
+  m_Name: 30001_Turret_Cannon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -420,7 +420,7 @@ MonoBehaviour:
   F_AttackRotateParam: 1.5
   I_AttackPreAimPercentage: 50
   B_AttackMove: 1
-  B_SwitchTarget: 0
+  B_SwitchTarget: 1
 --- !u!114 &114680769457280220
 MonoBehaviour:
   m_ObjectHideFlags: 1

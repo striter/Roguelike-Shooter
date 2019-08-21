@@ -41,17 +41,17 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
         {
             sld_Reload.value = player.m_WeaponCurrent.B_Reloading? player.m_WeaponCurrent.F_ReloadStatus:0;
             img_sld.color = Color.Lerp(Color.red, Color.white, m_player.m_WeaponCurrent.F_ReloadStatus );
-            if (m_Grid.I_Count != m_player.m_WeaponCurrent.m_WeaponInfo.m_ClipAmount)
+            if (m_Grid.I_Count != m_player.m_WeaponCurrent.I_ClipAmout)
             {
                 m_Grid.ClearGrid();
-                for (int i = 0; i < player.m_WeaponCurrent.m_WeaponInfo.m_ClipAmount; i++)
+                for (int i = 0; i < player.m_WeaponCurrent.I_ClipAmout; i++)
                     m_Grid.AddItem(i);
 
-                float size = (UIConst.F_IAmmoLineLength - m_GridLayout.padding.bottom - m_GridLayout.padding.top - (m_player.m_WeaponCurrent.m_WeaponInfo.m_ClipAmount - 1) * m_GridLayout.spacing.y) / m_player.m_WeaponCurrent.m_WeaponInfo.m_ClipAmount;
+                float size = (UIConst.F_IAmmoLineLength - m_GridLayout.padding.bottom - m_GridLayout.padding.top - (m_player.m_WeaponCurrent.I_ClipAmout - 1) * m_GridLayout.spacing.y) / m_player.m_WeaponCurrent.I_ClipAmout;
                 m_GridLayout.cellSize = new Vector2( m_GridLayout.cellSize.x, size);
             }
 
-            for (int i = 0; i < player.m_WeaponCurrent.m_WeaponInfo.m_ClipAmount; i++)
+            for (int i = 0; i < player.m_WeaponCurrent.I_ClipAmout; i++)
             {
                 Color gridItemColor = player.m_WeaponCurrent.F_AmmoStatus < .5f ?Color.Lerp( Color.red,Color.white,( player.m_WeaponCurrent.F_AmmoStatus/.5f)): Color.white;
                 m_Grid.GetItem(i).Set((m_player.m_WeaponCurrent.B_Reloading || i > m_player.m_WeaponCurrent.I_AmmoLeft - 1) ? new Color(0, 0, 0, 0) : gridItemColor);

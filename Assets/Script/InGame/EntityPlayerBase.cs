@@ -89,7 +89,6 @@ public class EntityPlayerBase : EntityBase {
         TouchDeltaManager.Instance.Bind(null, null);
 #endif
     }
-
     void OnMainButtonDown(bool down)
     {
         if (m_Equipment != null)
@@ -106,21 +105,24 @@ public class EntityPlayerBase : EntityBase {
         if (m_WeaponCurrent != null)
             m_WeaponCurrent.Trigger(down);
     }
-#region WeaponControll
+    #region WeaponControll
     void ObtainWeapon(WeaponBase weapon)
     {
         m_WeaponObtained.Add(weapon);
-        weapon.Attach(I_EntityID,this,weapon.B_AttachLeft?tf_WeaponHoldLeft:tf_WeaponHoldRight, OnFireAddRecoil,m_Animator.Reload, m_EntityInfo.GetDamageBuffInfo, m_EntityInfo.F_FireRateTick,m_EntityInfo.F_ReloadRateTick);
+        weapon.Attach(I_EntityID,this,weapon.B_AttachLeft?tf_WeaponHoldLeft:tf_WeaponHoldRight, OnFireAddRecoil,m_Animator.Reload);
         weapon.SetActivate(false);
+
         if (m_WeaponCurrent == null)
             OnSwitchWeapon();
     }
+
     void OnReloadDown()
     {
         if (m_WeaponCurrent == null)
             return;
         m_WeaponCurrent.TryReload();
     }
+
     void OnSwitchWeapon()
     {
         if (m_WeaponCurrent == null)
