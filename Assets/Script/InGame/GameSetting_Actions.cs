@@ -1,7 +1,7 @@
 ﻿using GameSetting;
 using UnityEngine;
 using System;
-
+using System.Collections.Generic;
 namespace GameSetting_Action
 {
     public static class ActionData
@@ -51,7 +51,8 @@ namespace GameSetting_Action
         public static float F_20001_ArmorTurretHealth(enum_ActionLevel level, float currentArmor) => currentArmor * (2 * (int)level);
         public static float F_20001_ArmorTurretDamage(enum_ActionLevel level, float currentArmor) => currentArmor * (1.5f * (int)level);
         public static float F_20002_DamageDealt(enum_ActionLevel level) => 50f;
-        public static float F_20002_StunDuration(enum_ActionLevel level) => 2f * (int)level;
+        public static float F_20002_BuffIndex(enum_ActionLevel level) => 200020 + (int)level;
+        public static float F_20003_Health(enum_ActionLevel level) => 400;
         public static float F_20003_FireRate(enum_ActionLevel level, float weaponFirerate) =>  weaponFirerate / (.7f * (int)level);
         public static float F_20003_DamageDealt(enum_ActionLevel level, float weaponDamage) => .7f * weaponDamage * (int)level;
         public static float F_20004_DamageDealt(enum_ActionLevel level, float weaponDamage) => weaponDamage * 2 * (int)level;
@@ -64,13 +65,13 @@ namespace GameSetting_Action
 
     public static class ActionHelper
     {
-        public static void PlayerAcquireSimpleEquipmentItem(EntityPlayerBase player, int equipmentIndex,float damage)
+        public static void PlayerAcquireSimpleEquipmentItem(EntityPlayerBase player, int equipmentIndex,float damage,int buffIndex=-1)
         {
-            player.OnAcquireEquipment<EquipmentBase>(equipmentIndex, () => { return DamageBuffInfo.Create(0,damage); });
+            player.OnAcquireEquipment<EquipmentBase>(equipmentIndex, () => { return DamageBuffInfo.EquipmentInfo(damage,buffIndex); });
         }
         public static void PlayerAcquireEntityEquipmentItem(EntityPlayerBase player, int equipmentIndex, float damage,int health,float fireRate)
         {
-            player.OnAcquireEquipment<EquipmentEntitySpawner>(equipmentIndex, () => { return DamageBuffInfo.Create(0, damage); }).SetOnSpawn((EntityBase entity) => {
+            player.OnAcquireEquipment<EquipmentEntitySpawner>(equipmentIndex, () => { return DamageBuffInfo.DamageInfo(0, damage); }).SetOnSpawn((EntityBase entity) => {
                 EntityAIBase target = entity as EntityAIBase;
                 target.I_MaxHealth = health;
                 target.F_AttackDuration = new RangeFloat(0f, 0);
@@ -191,6 +192,16 @@ namespace GameSetting_Action
         protected override void OnActionUse(EntityPlayerBase _entity)=> ActionHelper.PlayerAcquireEntityEquipmentItem(_entity,m_Index,GetValue2(_entity),(int)GetValue1(_entity),1f);
         public Action_20001_Armor_Turret_Cannon(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
     }
+    public class Action_20002_FireRate_FrozenGrenade : ActionBase
+    {
+        public override int m_Index => 20002;
+        public override int I_ActionCost => ActionData.I_20002_Cost;
+        public override enum_ActionType m_Type => enum_ActionType.Equipment;
+        public override float GetValue1(EntityPlayerBase _actionEntity) => ActionData.F_20002_DamageDealt(m_Level);
+        public override float GetValue2(EntityPlayerBase _actionEntity) => ActionData.F_20002_BuffIndex(m_Level);
+        protected override void OnActionUse(EntityPlayerBase _entity) => ActionHelper.PlayerAcquireSimpleEquipmentItem(_entity, m_Index, GetValue1(_entity),(int)GetValue2(_entity));
+        public Action_20002_FireRate_FrozenGrenade(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
+    }
     public class Action_20003_Firerate_Turret_Minigun : ActionBase
     {
         public override int m_Index => 20003;
@@ -198,17 +209,18 @@ namespace GameSetting_Action
         public override enum_ActionType m_Type => enum_ActionType.Equipment;
         public override float GetValue1(EntityPlayerBase _actionEntity) => ActionData.F_20003_FireRate(m_Level, _actionEntity.m_WeaponCurrent.F_BaseFirerate);
         public override float GetValue2(EntityPlayerBase _actionEntity) => ActionData.F_20003_DamageDealt(m_Level, _actionEntity.m_WeaponCurrent.F_BaseDamage) ;
-        protected override void OnActionUse(EntityPlayerBase _entity) => ActionHelper.PlayerAcquireEntityEquipmentItem(_entity, m_Index, GetValue2(_entity), 400, GetValue1(_entity));
+        public override float GetValue3(EntityPlayerBase _actionEntity) => ActionData.F_20003_Health(m_Level);
+        protected override void OnActionUse(EntityPlayerBase _entity) => ActionHelper.PlayerAcquireEntityEquipmentItem(_entity, m_Index, GetValue2(_entity), (int)GetValue3(_entity), GetValue1(_entity));
         public Action_20003_Firerate_Turret_Minigun(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
     }
-    public class Action_20004_Damage_Grenade : ActionBase
+    public class Action_20004_Damage_ExplosiveGrenade : ActionBase
     {
         public override int m_Index => 20004;
         public override int I_ActionCost => ActionData.I_20004_Cost;
         public override enum_ActionType m_Type => enum_ActionType.Equipment;
         public override float GetValue1(EntityPlayerBase _actionEntity) => ActionData.F_20004_DamageDealt(m_Level, _actionEntity.m_WeaponCurrent.F_BaseDamage);
         protected override void OnActionUse(EntityPlayerBase _entity)=> ActionHelper.PlayerAcquireSimpleEquipmentItem(_entity,m_Index, GetValue1(_entity));
-        public Action_20004_Damage_Grenade(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
+        public Action_20004_Damage_ExplosiveGrenade(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
     }
     #endregion
     #region LevelEquipment

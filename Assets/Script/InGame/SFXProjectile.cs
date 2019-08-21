@@ -22,6 +22,7 @@ public class SFXProjectile : SFXBase
     public float F_OffsetExtension;
     [Tooltip("Will Blink While Projectile Time Limits, Require Prefab Folder Preset,Asset/BlinkModel")]
     public bool B_TargetReachBlink = false;
+    public Color C_BlinkColor = Color.red;
     #endregion
     protected PhysicsSimulator<HitCheckBase> m_Simulator;
     protected TrailRenderer m_Trail;
@@ -43,7 +44,7 @@ public class SFXProjectile : SFXBase
         base.Init(sfxIndex);
         m_Trail = transform.GetComponentInChildren<TrailRenderer>();
         if (B_TargetReachBlink)
-                m_Blink = new ModelBlink(transform.Find("BlinkModel"), .25f, .25f);
+                m_Blink = new ModelBlink(transform.Find("BlinkModel"), .25f, .25f,C_BlinkColor);
     }
 
     public virtual void Play(int sourceID, Vector3 direction, Vector3 targetPosition, DamageBuffInfo buffInfo)

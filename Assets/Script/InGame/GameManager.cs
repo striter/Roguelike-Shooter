@@ -64,6 +64,14 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
                     entity.BroadcastMessage("OnReceiveDamage", new DamageInfo(-1,entity.m_EntityInfo.F_MaxHealth, enum_DamageType.Common, DamageBuffInfo.Default()));
             });
         }
+        if (Input.GetKeyDown(KeyCode.Alpha9))
+        {
+            List<EntityBase> entities = m_Entities.Values.ToList();
+            entities.Traversal((EntityBase entity) => {
+                if (entity.m_Flag == enum_EntityFlag.Enermy)
+                    entity.BroadcastMessage("OnReceiveDamage", new DamageInfo(-1, 0, enum_DamageType.Common, DamageBuffInfo.BuffInfo(new List<int>() { 200023})));
+            });
+        }
         if (Input.GetKeyDown(KeyCode.Equals))
             OnStageFinished();
 
@@ -80,6 +88,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     }
 #endregion
 #endif
+
     public EntityBase m_LocalPlayer { get; private set; } = null;
     public static CPlayerSave m_PlayerInfo { get; private set; }
     public System.Random m_GameSeed { get; private set; } = null;
@@ -103,7 +112,6 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     private void OnDestroy()
     {
         this.StopAllSingleCoroutines();
-
         TGameData<CPlayerSave>.Save(m_PlayerInfo);
 
         TBroadCaster<enum_BC_GameStatusChanged>.Remove<EntityBase>(enum_BC_GameStatusChanged.OnEntitySpawn, OnSpawnEntity);
@@ -289,7 +297,6 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         if (!B_Battling|| B_WaveEntityGenerating)
             return;
 
-        Debug.Log(m_FlagEntityCount(enum_EntityFlag.Enermy));
         if (m_FlagEntityCount( enum_EntityFlag.Enermy) <= 0 || (m_CurrentWave < m_EntityGenerate.Count && m_FlagEntityCount(enum_EntityFlag.Enermy) <= GameConst.I_EnermyCountWaveFinish))
             WaveFinished();
     }

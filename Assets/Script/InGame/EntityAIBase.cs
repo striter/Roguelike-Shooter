@@ -56,6 +56,7 @@ public class EntityAIBase : EntityBase {
     protected override void Update()
     {
         base.Update();
+        m_Animator.SetStun(m_EntityInfo.B_Stunned);
         if (E_AnimatorIndex !=  enum_EnermyAnim.Invalid)
             m_Animator.SetRun( m_AI.B_AgentEnabled ? 1 : 0);
 
@@ -95,6 +96,10 @@ public class EntityAIBase : EntityBase {
             m_Animator.SetTrigger(HS_T_Activate);
             OnAnimEvent = _OnAnimEvent;
             m_Animator.GetComponent<TAnimatorEvent>().Attach(OnAnimEvent);
+        }
+        public void SetStun(bool stun)
+        {
+            m_Animator.speed = stun ? 0 : 1;
         }
         public void SetRun(float forward)
         {
@@ -198,6 +203,12 @@ public class EntityAIBase : EntityBase {
 
         public void OnTick(float deltaTime)
         {
+            if (m_Entity.m_EntityInfo.B_Stunned)
+            {
+                B_AgentEnabled = false;
+                return;
+            }
+
             CheckTarget(deltaTime);
             CheckTargetParams(deltaTime);
             CheckBattle(deltaTime);
@@ -254,9 +265,7 @@ public class EntityAIBase : EntityBase {
             b_targetOutChaseRange = f_targetDistance > m_Entity.F_AIChaseRange;
             b_targetOutAttackRange = f_targetDistance > m_Entity.F_AIAttackRange;
             b_MoveTowardsTarget = b_targetHideBehindWall || b_targetOutChaseRange;
-
             b_CanAttackTarget = !b_targetOutAttackRange  && b_targetRotationWithin && (!m_Entity.B_BattleCheckObstacle||b_targetVisible) &&!FrontBlocked();
-
             b_AgentReachDestination = m_Agent.destination == Vector3.zero || TCommon.GetXZDistance(headTransform.position, m_Agent.destination) < 1f;
         }
         #region Battle
@@ -304,7 +313,11 @@ public class EntityAIBase : EntityBase {
             }
         }
 
-        public void OnAttackTriggerd() => m_Weapon.Play(b_preAim, m_Target);
+        public void OnAttackTriggerd()
+        {
+            if(b_targetAvailable)
+                m_Weapon.Play(b_preAim, m_Target);
+        }
         void OnAttackFinished()
         {
             b_attacking = false;

@@ -28,6 +28,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
         I_PoolIndex=presetIndex;
         m_SkinRenderers = tf_Model.Find("Skin").GetComponentsInChildren<Renderer>();
         m_HitChecks = GetComponentsInChildren<HitCheckEntity>();
+        m_HitChecks.Traversal((HitCheckEntity check) => { check.Attach(this, OnReceiveDamage); });
         m_EntityInfo = GetEntityInfo();
         m_HealthManager = new EntityHealth(this,OnHealthEffect,OnDead);
     }
@@ -35,13 +36,13 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
     public virtual void OnSpawn(int _entityID,enum_EntityFlag _flag)
     {
         I_EntityID = _entityID;
-        m_HitChecks.Traversal((HitCheckEntity check) => { check.Attach(this, OnReceiveDamage); });
+        m_Flag = _flag;
         if (I_EntityID == -1)
             Debug.LogError("Please Init Entity Info!" + gameObject.name.ToString());
-        m_HealthManager.OnActivate(I_MaxHealth,I_DefaultArmor);
-        m_Flag = _flag;
-        TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.SetEnable(true); });
-        TCommon.Traversal(m_SkinRenderers, (Renderer renderer) => {renderer.materials.Traversal((Material mat)=> {mat.SetFloat("_Amount1", 0);}); });
+
+       m_HealthManager.OnActivate(I_MaxHealth,I_DefaultArmor);
+       m_HitChecks.Traversal((HitCheckEntity check) => { check.SetEnable(true); });
+       m_SkinRenderers.Traversal((Renderer renderer) => {renderer.materials.Traversal((Material mat)=> {mat.SetFloat("_Amount1", 0);}); });
     }
     protected virtual void OnInfoChange()
     {
@@ -60,13 +61,12 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
         m_EntityInfo.Tick(Time.deltaTime);
     }
 
-    protected void OnReceiveBuff(int sourceID,int buffIndex) => m_EntityInfo.AddBuff(sourceID,buffIndex);
     protected bool OnReceiveDamage(DamageInfo damageInfo)
     {
         if (m_HealthManager.b_IsDead)
             return false;
         
-        damageInfo.m_BuffApply.m_BuffAplly.Traversal((int buffIndex) => {OnReceiveBuff(damageInfo.I_SourceID,buffIndex); });
+        damageInfo.m_BuffApply.m_BuffAplly.Traversal((int buffIndex) => { m_EntityInfo.AddBuff(damageInfo.I_SourceID, buffIndex);});
         
         return m_HealthManager.OnReceiveDamage(damageInfo, m_EntityInfo.F_DamageReceiveMultiply);
     }

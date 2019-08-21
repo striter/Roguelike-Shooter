@@ -449,7 +449,7 @@ namespace GameSetting
         {
             I_SourceID = sourceID;
             m_baseDamage = 0;
-            m_BuffApply =  DamageBuffInfo.Create(new List<int>() { buffApply });
+            m_BuffApply =  DamageBuffInfo.BuffInfo(new List<int>() { buffApply });
             m_damageType =  enum_DamageType.Common;
         }
 
@@ -479,7 +479,10 @@ namespace GameSetting
         public float F_ReloadRateTick(float deltaTime) => deltaTime * F_ReloadRateMultiply;
         public float F_MovementSpeed => m_Entity.F_MovementSpeed * F_MovementSpeedMultiply;
 
-        public virtual DamageBuffInfo GetDamageBuffInfo() => m_DamageBuffOverride!=null?m_DamageBuffOverride():DamageBuffInfo.Create(F_DamageMultiply, 0f);
+        float f_stunCheck = 0;
+        public bool B_Stunned => f_stunCheck > 0;
+
+        public virtual DamageBuffInfo GetDamageBuffInfo() => m_DamageBuffOverride!=null?m_DamageBuffOverride():DamageBuffInfo.DamageInfo(F_DamageMultiply, 0f);
         Func<DamageInfo, bool> OnReceiveDamage;
         Action OnInfoChange;
         public EntityInfoManager(EntityBase _attacher,Func<DamageInfo, bool> _OnReceiveDamage,Action _OnInfoChange)
@@ -495,8 +498,11 @@ namespace GameSetting
             m_DamageBuffOverride = null;
             OnInfoChanged();
         }
+        public virtual void Tick(float deltaTime) {
+            m_Expires.Traversal((ExpireBase buff) => { buff.OnTick(deltaTime); });
 
-        public virtual void Tick(float deltaTime) => m_Expires.Traversal((ExpireBase buff) => { buff.OnTick(deltaTime); });
+            if (B_Stunned) f_stunCheck -= deltaTime;
+        }
         protected void AddExpire(ExpireBase expire)
         {
             Debug.Log("Add Expire:"+expire.m_Index);
@@ -512,6 +518,7 @@ namespace GameSetting
         public void AddBuff(int sourceID,int buffIndex)
         {
             ExpireBuff buff = new ExpireBuff(sourceID, DataManager.GetEntityBuffProperties(buffIndex), OnReceiveDamage, OnExpireElapsed);
+            OnStun(buff.m_StunDuration);
             switch (buff.m_RefreshType)
             {
                 case enum_ExpireRefreshType.AddUp:
@@ -522,11 +529,13 @@ namespace GameSetting
                         ExpireBase buffRefresh = m_Expires.Find(p =>p.m_Index == buffIndex);
                         if (buffRefresh != null)
                             buffRefresh.ExpireRefresh();
-                        AddExpire(buff);
+                        else
+                            AddExpire(buff);
                     }
                     break;
             }
         }
+        void OnStun(float duration) => f_stunCheck = f_stunCheck < duration ? duration : f_stunCheck;
         protected virtual void OnSetExpireInfo(ExpireBase expire)
         {
             F_DamageMultiply += expire.m_DamageMultiply;
@@ -579,6 +588,7 @@ namespace GameSetting
                     m_BuffEffects.Add(particle );
                 }
             }
+
             OnInfoChange();
         }
     }
@@ -619,6 +629,7 @@ namespace GameSetting
         public void ForceExpire()=>OnExpired(this);
     }
 
+
     public class ExpireBuff:ExpireBase
     {
         public override int m_EffectIndex => m_buffInfo.m_EffectIndex;
@@ -629,7 +640,7 @@ namespace GameSetting
         public override float m_FireRateMultiply => m_buffInfo.m_FireRateMultiply;
         public override float m_MovementSpeedMultiply => m_buffInfo.m_MovementSpeedMultiply;
         public override float m_ReloadRateMultiply => m_buffInfo.m_ReloadRateMultiply;
-        
+        public float m_StunDuration => m_buffInfo.m_Stun?m_buffInfo.m_ExpireDuration:0f;
         SBuff m_buffInfo;
         Func<DamageInfo, bool> OnDOTDamage;
         int I_SourceID;
@@ -653,46 +664,20 @@ namespace GameSetting
             }
         }
     }
-    
+
     public struct DamageBuffInfo
     {
         public float F_DamageMultiply { get; private set; }
         public float F_DamageAdditive { get; private set; }
         public List<int> m_BuffAplly { get; private set; }
-        public static DamageBuffInfo Default()
-        {
-            DamageBuffInfo info = new DamageBuffInfo()
-            {
-                F_DamageMultiply = 0f,
-                F_DamageAdditive = 0f,
-                m_BuffAplly = new List<int>()
-            };
-            return info;
-        }
-        public static DamageBuffInfo Create(List<int> _buffApply)
-        {
-        DamageBuffInfo info = new DamageBuffInfo()
-        {
-            F_DamageMultiply = 0f,
-            F_DamageAdditive = 0f,
-            m_BuffAplly = _buffApply
-            };
-            return info;
-        }
-        public static  DamageBuffInfo Create(  float _damageEnhanceMultiply,float _damageAdditive=0f)
-        {
-            DamageBuffInfo info = new DamageBuffInfo()
-            {
-                F_DamageAdditive = _damageAdditive,
-                F_DamageMultiply = _damageEnhanceMultiply,
-                m_BuffAplly = new List<int>(),
-            };
-            return info;
-        }
+        public static DamageBuffInfo Default() => new DamageBuffInfo() { F_DamageMultiply = 0f, F_DamageAdditive = 0f, m_BuffAplly = new List<int>() };
+        public static DamageBuffInfo BuffInfo(List<int> _buffApply) => new DamageBuffInfo() { F_DamageMultiply = 0f, F_DamageAdditive = 0f, m_BuffAplly = _buffApply };
+        public static DamageBuffInfo DamageInfo(float _damageEnhanceMultiply, float _damageAdditive) => new DamageBuffInfo() { F_DamageMultiply = _damageEnhanceMultiply, F_DamageAdditive = _damageAdditive, m_BuffAplly = new List<int>() };
+        public static DamageBuffInfo EquipmentInfo(float _damageAdditive, int buffIndex) => new DamageBuffInfo() { F_DamageMultiply = 0f, F_DamageAdditive = _damageAdditive, m_BuffAplly = buffIndex==-1?new List<int>():new List<int> { buffIndex} };
     }
-    #endregion
-    #region ActionManager
-    public class PlayerInfoManager : EntityInfoManager
+        #endregion
+        #region ActionManager
+        public class PlayerInfoManager : EntityInfoManager
     {
         List<ActionBase> m_ActionStored = new List<ActionBase>();
         List<ActionBase> m_ActionInPool = new List<ActionBase>();
@@ -769,7 +754,7 @@ namespace GameSetting
         public override DamageBuffInfo GetDamageBuffInfo()
         {
             OnInfoChanged();
-            return DamageBuffInfo.Create(F_DamageMultiply, F_DamageAdditive);
+            return DamageBuffInfo.DamageInfo(F_DamageMultiply, F_DamageAdditive);
         }
         void OnEntityApplyDamage(int applierID, EntityBase damageEntity, float amountApply)
         {
@@ -802,6 +787,7 @@ namespace GameSetting
         public virtual enum_ActionType m_Type => enum_ActionType.Invalid;
         public virtual float GetValue1(EntityPlayerBase _actionEntity) => 0;
         public virtual float GetValue2(EntityPlayerBase _actionEntity) => 0;
+        public virtual float GetValue3(EntityPlayerBase _actionEntity) => 0;
         public virtual float F_DamageAdditive(EntityPlayerBase _actionEntity) => 0;
         public virtual float F_RecoilMultiplyAdditive(EntityPlayerBase _actionEntity) => 0;
         public virtual float F_ProjectileSpeedMultiply => 0;
@@ -915,7 +901,8 @@ namespace GameSetting
         float f_simulate;
         float f_blinkRate;
         float f_blinkTime;
-        public ModelBlink(Transform BlinkModel, float _blinkRate, float _blinkTime)
+        Color c_blinkColor;
+        public ModelBlink(Transform BlinkModel, float _blinkRate, float _blinkTime,Color _blinkColor)
         {
             if (BlinkModel == null)
                 Debug.LogError("Error! Blink Model Init, BlinkModel Folder Required!");
@@ -933,7 +920,7 @@ namespace GameSetting
         {
             f_simulate = 0f;
             this.StopSingleCoroutine(0);
-            m_materials.Traversal((Material material) => { material.SetColor("_Color", TCommon.ColorAlpha(Color.red, 0)); }); 
+            m_materials.Traversal((Material material) => { material.SetColor("_Color", TCommon.ColorAlpha(c_blinkColor, 0)); }); 
         }
         public void Tick(float deltaTime)
         {
@@ -941,7 +928,7 @@ namespace GameSetting
             if (f_simulate > f_blinkRate)
             {
                 this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => {
-                    m_materials.Traversal((Material material) => { material.SetColor("_Color", TCommon.ColorAlpha(Color.red, value)); }); }, 1, 0, f_blinkTime));
+                    m_materials.Traversal((Material material) => { material.SetColor("_Color", TCommon.ColorAlpha(c_blinkColor, value)); }); }, 1, 0, f_blinkTime));
                 f_simulate -= f_blinkRate;
             }
         }
@@ -1169,6 +1156,7 @@ namespace GameSetting
         float f_damageTickTime;
         float f_damagePerTick;
         int i_damageType;
+        bool b_stun;
         public int m_Index => index;
         public enum_ExpireRefreshType m_AddType => (enum_ExpireRefreshType)i_addType;
         public float m_ExpireDuration => f_expireDuration;
@@ -1181,6 +1169,7 @@ namespace GameSetting
         public float m_DamageTickTime => f_damageTickTime;
         public float m_DamagePerTick => f_damagePerTick;
         public enum_DamageType m_DamageType =>(enum_DamageType)i_damageType;
+        public bool m_Stun => b_stun;
         public void InitOnValueSet()
         {
             f_movementSpeedMultiply = f_movementSpeedMultiply > 0 ? f_movementSpeedMultiply/100f : 0;
@@ -1290,7 +1279,7 @@ namespace GameSetting
         public EnermyCasterSelfDetonateAnimLess(SFXCast _castInfo, EntityBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo, Action _OnDead, Transform _blinkModels) : base(_castInfo, _controller, _transform, _GetBuffInfo)
         {
             OnDead = _OnDead;
-            m_Blink = new ModelBlink(_blinkModels, .25f, .25f);
+            m_Blink = new ModelBlink(_blinkModels, .25f, .25f,Color.red);
             timeElapsed = 0;
         }
         void Tick()
