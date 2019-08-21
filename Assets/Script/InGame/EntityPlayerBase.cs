@@ -177,7 +177,8 @@ public class EntityPlayerBase : EntityBase {
     }
     public void OnFireAddRecoil(Vector2 recoil)
     {
-        OnRotateDelta(new Vector2(TCommon.RandomBool()?1:-1 *recoil.x,0));
+        Debug.Log(TCommon.RandomBool());
+        OnRotateDelta(new Vector2((TCommon.RandomBool()?1:-1) *recoil.x,0));
         m_Animator.Fire();
     }
     #endregion
