@@ -496,7 +496,7 @@ namespace GameSetting
             m_Expires.Clear();
             m_BuffEffects.Clear();
             m_DamageBuffOverride = null;
-            OnInfoChanged();
+            InfoChange();
         }
         public virtual void Tick(float deltaTime) {
             m_Expires.Traversal((ExpireBase buff) => { buff.OnTick(deltaTime); });
@@ -507,13 +507,18 @@ namespace GameSetting
         {
             Debug.Log("Add Expire:"+expire.m_Index);
             m_Expires.Add(expire);
-            OnInfoChanged();
+            InfoChange();
+        }
+        void RefreshExpire(ExpireBase expire)
+        {
+            expire.ExpireRefresh();
+            InfoChange();
         }
         protected virtual void OnExpireElapsed(ExpireBase expire)
         {
             Debug.Log("Remove Expire:"+expire.m_Index);
             m_Expires.Remove(expire);
-            OnInfoChanged();
+            InfoChange();
         }
         public void AddBuff(int sourceID,int buffIndex)
         {
@@ -528,7 +533,7 @@ namespace GameSetting
                     {
                         ExpireBase buffRefresh = m_Expires.Find(p =>p.m_Index == buffIndex);
                         if (buffRefresh != null)
-                            buffRefresh.ExpireRefresh();
+                            RefreshExpire(buffRefresh);
                         else
                             AddExpire(buff);
                     }
@@ -555,7 +560,7 @@ namespace GameSetting
             if (F_DamageReceiveMultiply < 0)
                 F_DamageReceiveMultiply = 0;
         }
-        public void OnInfoChanged()
+        public void InfoChange()
         {
             OnResetInfo();
             m_Expires.Traversal(OnSetExpireInfo);
@@ -753,7 +758,7 @@ namespace GameSetting
 
         public override DamageBuffInfo GetDamageBuffInfo()
         {
-            OnInfoChanged();
+            InfoChange();
             return DamageBuffInfo.DamageInfo(F_DamageMultiply, F_DamageAdditive);
         }
         void OnEntityApplyDamage(int applierID, EntityBase damageEntity, float amountApply)
@@ -899,7 +904,7 @@ namespace GameSetting
     {
         Material[] m_materials;
         float f_simulate;
-        float f_blinkRate;
+        float f_blinkRate; 
         float f_blinkTime;
         Color c_blinkColor;
         public ModelBlink(Transform BlinkModel, float _blinkRate, float _blinkTime,Color _blinkColor)
@@ -913,6 +918,7 @@ namespace GameSetting
                 m_materials[i] = renderers[i].material;
             f_blinkRate = _blinkRate;
             f_blinkTime = _blinkTime;
+            c_blinkColor = _blinkColor;
             f_simulate = 0f;
             OnReset();
         }
