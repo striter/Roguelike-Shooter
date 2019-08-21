@@ -64,6 +64,7 @@ public class EntityAIBase : EntityBase {
 
         m_AI.OnTick(Time.deltaTime);
     }
+
     void OnAttackAnim(EntityBase target,bool startAttack)
     {
         if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
@@ -208,6 +209,8 @@ public class EntityAIBase : EntityBase {
             if (m_Entity.m_EntityInfo.B_Stunned)
             {
                 B_AgentEnabled = false;
+                if (b_attacking)
+                    OnAttackFinished();
                 return;
             }
 
