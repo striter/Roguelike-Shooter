@@ -488,12 +488,11 @@ public static class ObjectManager
     #region Spawn/Recycle
     #region Entity
     static int i_entityIndex = 0;
-    public static EntityBase SpawnEntity(int index,Vector3 toPosition,enum_EntityFlag _flag,Action<EntityBase> _OnSpawnSetData=null)
+    public static EntityBase SpawnEntity(int index,Vector3 toPosition,enum_EntityFlag _flag)
     {
         EntityBase entity= ObjectPoolManager<int, EntityBase>.Spawn(index, TF_Entity);
         toPosition = EnviormentManager.NavMeshPosition(toPosition);
         entity.transform.position = toPosition;
-        _OnSpawnSetData?.Invoke(entity);
         entity.OnSpawn(GameManager.I_EntityID(i_entityIndex++, _flag), _flag);
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnEntitySpawn, entity);
         return entity;

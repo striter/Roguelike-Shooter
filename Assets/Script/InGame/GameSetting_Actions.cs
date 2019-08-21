@@ -198,7 +198,7 @@ namespace GameSetting_Action
         public override enum_ActionType m_Type => enum_ActionType.Equipment;
         public override float GetValue1(EntityPlayerBase _actionEntity) => ActionData.F_20003_FireRate(m_Level, _actionEntity.m_WeaponCurrent.F_BaseFirerate);
         public override float GetValue2(EntityPlayerBase _actionEntity) => ActionData.F_20003_DamageDealt(m_Level, _actionEntity.m_WeaponCurrent.F_BaseDamage) ;
-        protected override void OnActionUse(EntityPlayerBase _entity) => ActionHelper.PlayerAcquireEntityEquipmentItem(_entity, m_Index, GetValue2(_entity), 400, (int)GetValue1(_entity));
+        protected override void OnActionUse(EntityPlayerBase _entity) => ActionHelper.PlayerAcquireEntityEquipmentItem(_entity, m_Index, GetValue2(_entity), 400, GetValue1(_entity));
         public Action_20003_Firerate_Turret_Minigun(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
     }
     public class Action_20004_Damage_Grenade : ActionBase
