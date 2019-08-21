@@ -87,6 +87,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     protected override void Awake()
     {
         instance = this;
+        InitEntityDic();
         DataManager.Init();
         ObjectManager.Init();
         LevelManager.Init();
@@ -122,6 +123,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         if (_GameSeed == "")
             _GameSeed = DateTime.Now.ToLongTimeString();
 
+        EntityPreset();
         ObjectManager.Preset();
         LevelManager.StageBegin();
         m_SeedString = _GameSeed;
@@ -163,18 +165,56 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
             Debug.Log("All Level Finished");
     }
     #endregion
-    #region Battle Management
+    #region Entity Management
     public static int I_EntityID(int index, enum_EntityFlag flag) => index + (int)flag*10000;       //Used For Identification Management
     Dictionary<int, EntityBase> m_Entities = new Dictionary<int, EntityBase>();
-    public int m_EnermyCount { get; private set; } = -1;
+    Dictionary<enum_EntityFlag, List<EntityBase>> m_AllyEntities = new Dictionary<enum_EntityFlag, List<EntityBase>>();
+    Dictionary<enum_EntityFlag, List<EntityBase>> m_OppositeEntities = new Dictionary<enum_EntityFlag, List<EntityBase>>();
+    public int m_FlagEntityCount(enum_EntityFlag flag) => m_AllyEntities[flag].Count;
+    public List<EntityBase> GetEntities(enum_EntityFlag sourceFlag, bool getAlly) => getAlly ? m_AllyEntities[sourceFlag] : m_OppositeEntities[sourceFlag];
+    public EntityBase GetEntity(int entityID)
+    {
+        if (!m_Entities.ContainsKey(entityID))
+            Debug.LogError("Entity Not Contains ID:" + entityID.ToString());
+        return m_Entities[entityID]; ;
+    }
+    void InitEntityDic()
+    {
+        TCommon.TraversalEnum((enum_EntityFlag flag) => {
+            m_AllyEntities.Add(flag, new List<EntityBase>());
+            m_OppositeEntities.Add(flag, new List<EntityBase>());
+        });
+    }
+
+    void EntityPreset()
+    {
+        m_Entities.Clear();
+        TCommon.TraversalEnum((enum_EntityFlag flag) => {
+            m_AllyEntities[flag].Clear();
+            m_OppositeEntities[flag].Clear();
+        });
+    }
+
     void OnSpawnEntity(EntityBase entity)
     {
         m_Entities.Add(entity.I_EntityID, entity);
-        OnBattleEntitySpawn(entity);
+        
+        m_AllyEntities[entity.m_Flag].Add(entity);
+        m_OppositeEntities.Traversal((enum_EntityFlag flag)=> {
+            if (flag != entity.m_Flag)
+                m_OppositeEntities[flag].Add(entity);
+        });
     }
+
     void OnRecycleEntity(EntityBase entity)
     {
         m_Entities.Remove(entity.I_EntityID);
+
+        m_AllyEntities[entity.m_Flag].Remove(entity);
+        m_OppositeEntities.Traversal((enum_EntityFlag flag) => {
+            if (flag != entity.m_Flag)
+                m_OppositeEntities[flag].Remove(entity);
+        });
     }
 
     public static bool B_CanHitEntity(HitCheckEntity targetHitCheck, int sourceEntityID)  //If Match Will Hit Target,Player Particles ETC
@@ -199,25 +239,6 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         return canHit;
     }
 
-    public EntityBase GetEntity(int entityID) {
-        if (!m_Entities.ContainsKey(entityID))
-            Debug.LogError("Entity Not Contains ID:" + entityID.ToString());
-        return m_Entities[entityID]; ;
-    } 
-    public EntityBase GetRandomEntity(int sourceIndex,enum_EntityFlag sourceFlag,bool targetAlly,Predicate<EntityBase> predict)
-    {
-        EntityBase target=null;
-        m_Entities.TraversalRandom((int index, EntityBase entity) =>
-        {
-            if ((targetAlly? entity.m_Flag == sourceFlag : entity.m_Flag!=sourceFlag) && entity.I_EntityID!=sourceIndex&& (predict == null || predict(entity)))
-            {
-                target = entity;
-                return true;
-            }
-            return false;
-        });
-        return target;
-    }
     #endregion
     #region Battle Management
     public enum_Style m_BattleEntityStyle { get; private set; }
@@ -232,7 +253,6 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnBattleStart);
         m_EntityGenerate = DataManager.GetEntityGenerateProperties(difficulty);
         B_Battling = true;
-        m_EnermyCount = 0;
         m_CurrentWave = 0;
         WaveStart();
     }
@@ -265,24 +285,12 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         else
             WaveStart();
     }
-    void OnBattleEntitySpawn(EntityBase entity)
-    {
-        if (!B_Battling)
-            return;
-        if (entity.m_Flag == enum_EntityFlag.Enermy)
-            m_EnermyCount++;
-    }
     void OnBattleEntityDead(EntityBase entity)
     {
-        if (!B_Battling)
-            return;
-        if (entity.m_Flag== enum_EntityFlag.Enermy)
-            m_EnermyCount--;
-
-        if (B_WaveEntityGenerating)
+        if (!B_Battling|| B_WaveEntityGenerating)
             return;
 
-        if (m_EnermyCount <= 0 || (m_CurrentWave < m_EntityGenerate.Count && m_EnermyCount <= GameConst.I_EnermyCountWaveFinish))
+        if (m_FlagEntityCount( enum_EntityFlag.Enermy) <= 0 || (m_CurrentWave < m_EntityGenerate.Count && m_FlagEntityCount(enum_EntityFlag.Enermy) <= GameConst.I_EnermyCountWaveFinish))
             WaveFinished();
     }
     void OnBattleFinished()

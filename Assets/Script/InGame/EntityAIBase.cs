@@ -23,7 +23,6 @@ public class EntityAIBase : EntityBase {
     [Range(0, 100)]
     public int I_AttackPreAimPercentage = 50;
     public bool B_AttackMove = true;
-    public bool B_SwitchTarget = false;
     bool OnCheckTarget(EntityBase target) => target.m_Flag!=m_Flag && !target.m_HealthManager.b_IsDead;
     public override Vector3 m_PrecalculatedTargetPos(float time)=> tf_Head.position;
     public override void Init(int entityPresetIndex)
@@ -182,7 +181,7 @@ public class EntityAIBase : EntityBase {
             this.StopAllSingleCoroutines();
         }
         RaycastHit[] m_Raycasts;
-        float f_movementSimulate, f_battleSimulate, f_calculateSimulate;
+        float f_movementSimulate, f_battleSimulate, f_calculateSimulate,f_checkTargetSimulate;
         Vector3 v3_TargetDirection;
         float f_targetDistance;
         bool b_targetOutChaseRange;
@@ -196,21 +195,41 @@ public class EntityAIBase : EntityBase {
         bool b_targetRotationWithin;
         bool b_targetHideBehindWall => i_targetUnvisibleCount == 40;
         bool b_targetAvailable => m_Target != null && !m_Target.m_HealthManager.b_IsDead;
+
         public void OnTick(float deltaTime)
         {
+            CheckTarget(deltaTime);
             CheckTargetParams(deltaTime);
             CheckBattle(deltaTime);
             CheckPosition(deltaTime);
             CheckRotation(deltaTime);
         }
-
-        void RecheckTarget()
+        
+        void CheckTarget(float deltaTime)
         {
-            if (b_targetAvailable)
+            if (f_checkTargetSimulate > 0)
+            {
+                f_checkTargetSimulate -= deltaTime;
                 return;
+            }
+            f_checkTargetSimulate = GameConst.F_AITargetCheckParam;
 
-            m_Target = GameManager.Instance.GetRandomEntity(m_Entity.I_EntityID, m_Entity.m_Flag, m_Weapon.B_TargetAlly, null);
-        } 
+
+            List<EntityBase> entites = GameManager.Instance.GetEntities(m_Entity.m_Flag ,m_Weapon.B_TargetAlly);
+
+            if (m_Entity.m_Flag == enum_EntityFlag.Player)
+                Debug.Log(entites.Count);
+
+            for (int i = 0; i < entites.Count; i++)
+            {
+                float distance = TCommon.GetXZDistance(headTransform.position, entites[i].tf_Head.position);
+                if (!b_targetAvailable|| distance < f_targetDistance)
+                {
+                    m_Target = entites[i];
+                    f_targetDistance = distance;
+                }
+            }
+        }
 
         void CheckTargetParams(float deltaTime)
         {
@@ -219,9 +238,8 @@ public class EntityAIBase : EntityBase {
                 f_calculateSimulate -= deltaTime;
                 return;
             }
-            f_calculateSimulate = GameConst.F_AITargetCheckDuration;
+            f_calculateSimulate = GameConst.F_AITargetCalculationParam;
 
-            RecheckTarget();
             if (!b_targetAvailable)
                 return;
 
@@ -237,11 +255,11 @@ public class EntityAIBase : EntityBase {
             b_targetOutAttackRange = f_targetDistance > m_Entity.F_AIAttackRange;
             b_MoveTowardsTarget = b_targetHideBehindWall || b_targetOutChaseRange;
 
-            b_CanAttackTarget = !b_targetOutAttackRange &&(!m_Entity.B_BattleCheckObstacle || b_targetVisible) && b_targetRotationWithin;
+            b_CanAttackTarget = !b_targetOutAttackRange  && b_targetRotationWithin;
 
             b_AgentReachDestination = m_Agent.destination == Vector3.zero || TCommon.GetXZDistance(headTransform.position, m_Agent.destination) < 1f;
         }
-        #region Attack
+        #region Battle
         int i_playCount;
         bool b_preAim;
         bool b_attacking;
@@ -292,25 +310,20 @@ public class EntityAIBase : EntityBase {
             b_attacking = false;
             m_Weapon.OnPlayAnim(false);
             OnAttackAnim(m_Target, false);
-
-            if (m_Entity.B_SwitchTarget)
-                RecheckTarget();
         }
         #endregion
         #region Position
         void CheckPosition(float deltaTime)
         {
-            if (f_movementSimulate > 0)
-                f_movementSimulate -= deltaTime * m_Info.F_MovementSpeedMultiply;
-
             if ((b_attacking && !m_Entity.B_AttackMove))
-            {
                 B_AgentEnabled = false;
+
+            if (f_movementSimulate > 0)
+            {
+                f_movementSimulate -= deltaTime * m_Info.F_MovementSpeedMultiply;
                 return;
             }
-
-            if (f_movementSimulate >0)
-                return;
+            f_movementSimulate = GameConst.F_AITargetCalculationParam;
 
             if (!b_idled && b_AgentReachDestination && !b_targetOutChaseRange && UnityEngine.Random.Range(0, 2) > 0)
             {

@@ -12,6 +12,5 @@ public class SFXEntitySpawner : SFXParticles {
         EntityBase entity= ObjectManager.SpawnEntity(I_EntitySpawnID,transform.position, _flag);
         OnSpawn?.Invoke(entity);
         entity.m_EntityInfo.AddDamageOverride(_damageInfoOverride);
-        Debug.Log(entity.name);
     }
 }

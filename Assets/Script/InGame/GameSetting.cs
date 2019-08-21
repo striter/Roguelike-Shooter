@@ -30,7 +30,8 @@ namespace GameSetting
         public const float F_PlayerCameraSmoothParam = 1f;     //Camera Smooth Param For Player .2 is suggested
         public const float F_PlayerFallSpeed = 9.8f;       //Player Fall Speed(Not Acceleration)
 
-        public const float F_AITargetCheckDuration = .3f;       //AI Check Offset Time, 0.3 is suggested;
+        public const float F_AITargetCheckParam = 3f;       //AI Retarget Duration,3 is suggested
+        public const float F_AITargetCalculationParam = 1f;       //AI Target Param Calculation Duration, 1 is suggested;
         public const int I_EnermyCountWaveFinish = 0;       //When Total Enermy Count Reaches This Amount,Wave Finish
         public const int I_EnermySpawnDelay = 2;        //Enermy Spawn Delay Time 
 
