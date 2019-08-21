@@ -97,7 +97,6 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         m_PlayerInfo = TGameData<CPlayerSave>.Read();
 
         TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnEntitySpawn, OnSpawnEntity);
-        TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnEntityDead, OnBattleEntityDead);
         TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnEntityRecycle, OnRecycleEntity);
         Application.targetFrameRate = 60;
     }
@@ -108,7 +107,6 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         TGameData<CPlayerSave>.Save(m_PlayerInfo);
 
         TBroadCaster<enum_BC_GameStatusChanged>.Remove<EntityBase>(enum_BC_GameStatusChanged.OnEntitySpawn, OnSpawnEntity);
-        TBroadCaster<enum_BC_GameStatusChanged>.Remove<EntityBase>(enum_BC_GameStatusChanged.OnEntityDead, OnBattleEntityDead);
         TBroadCaster<enum_BC_GameStatusChanged>.Remove<EntityBase>(enum_BC_GameStatusChanged.OnEntityRecycle, OnRecycleEntity);
 
     }
@@ -215,6 +213,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
             if (flag != entity.m_Flag)
                 m_OppositeEntities[flag].Remove(entity);
         });
+        OnBattleEntityRecycle(entity);
     }
 
     public static bool B_CanHitEntity(HitCheckEntity targetHitCheck, int sourceEntityID)  //If Match Will Hit Target,Player Particles ETC
@@ -285,11 +284,12 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         else
             WaveStart();
     }
-    void OnBattleEntityDead(EntityBase entity)
+    void OnBattleEntityRecycle(EntityBase entity)
     {
         if (!B_Battling|| B_WaveEntityGenerating)
             return;
 
+        Debug.Log(m_FlagEntityCount(enum_EntityFlag.Enermy));
         if (m_FlagEntityCount( enum_EntityFlag.Enermy) <= 0 || (m_CurrentWave < m_EntityGenerate.Count && m_FlagEntityCount(enum_EntityFlag.Enermy) <= GameConst.I_EnermyCountWaveFinish))
             WaveFinished();
     }

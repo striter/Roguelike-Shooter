@@ -214,16 +214,16 @@ public class EntityAIBase : EntityBase {
             }
             f_checkTargetSimulate = GameConst.F_AITargetCheckParam;
 
+            m_Target = null;
+            f_targetDistance = float.MaxValue;
 
             List<EntityBase> entites = GameManager.Instance.GetEntities(m_Entity.m_Flag ,m_Weapon.B_TargetAlly);
-
-            if (m_Entity.m_Flag == enum_EntityFlag.Player)
-                Debug.Log(entites.Count);
-
             for (int i = 0; i < entites.Count; i++)
             {
                 float distance = TCommon.GetXZDistance(headTransform.position, entites[i].tf_Head.position);
-                if (!b_targetAvailable|| distance < f_targetDistance)
+                bool visible = !m_Entity.B_BattleCheckObstacle || TargetVisible(entites[i]);
+                bool isAvailableClosetTarget = distance<f_targetDistance&&visible;
+                if (!b_targetAvailable|| isAvailableClosetTarget)
                 {
                     m_Target = entites[i];
                     f_targetDistance = distance;
@@ -243,7 +243,7 @@ public class EntityAIBase : EntityBase {
             if (!b_targetAvailable)
                 return;
 
-            b_targetVisible = CheckTargetVisible();
+            b_targetVisible = TargetVisible(m_Target);
 
             if (!b_targetVisible)
                 i_targetUnvisibleCount = i_targetUnvisibleCount + 1 > 40 ? 40 : i_targetUnvisibleCount + 1;
@@ -255,7 +255,7 @@ public class EntityAIBase : EntityBase {
             b_targetOutAttackRange = f_targetDistance > m_Entity.F_AIAttackRange;
             b_MoveTowardsTarget = b_targetHideBehindWall || b_targetOutChaseRange;
 
-            b_CanAttackTarget = !b_targetOutAttackRange  && b_targetRotationWithin;
+            b_CanAttackTarget = !b_targetOutAttackRange  && b_targetRotationWithin&&!FrontBlocked();
 
             b_AgentReachDestination = m_Agent.destination == Vector3.zero || TCommon.GetXZDistance(headTransform.position, m_Agent.destination) < 1f;
         }
@@ -363,12 +363,10 @@ public class EntityAIBase : EntityBase {
             return EnviormentManager.NavMeshPosition(m_SamplePosition+TCommon.RandomXZSphere(5f));
         }
 
-        bool CheckTargetVisible()
+        bool FrontBlocked() => Physics.SphereCast(new Ray(headTransform.position, headTransform.forward), 1f, 2, GameLayer.Mask.I_Static);
+        bool TargetVisible(EntityBase target)
         {
-            if (Physics.SphereCast(new Ray(headTransform.position, headTransform.forward), 1f, 2, GameLayer.Mask.I_Static))     //Front Blocked
-                return false;
-
-            m_Raycasts = Physics.RaycastAll(m_Entity.tf_Head.position, v3_TargetDirection, Vector3.Distance(m_Entity.tf_Head.position, m_Target.tf_Head.position), GameLayer.Mask.I_StaticEntity);
+            m_Raycasts = Physics.RaycastAll(m_Entity.tf_Head.position, v3_TargetDirection, Vector3.Distance(m_Entity.tf_Head.position, target.tf_Head.position), GameLayer.Mask.I_StaticEntity);
             for (int i = 0; i < m_Raycasts.Length; i++)
             {
                 if (m_Raycasts[i].collider.gameObject.layer == GameLayer.I_Static)
@@ -376,7 +374,7 @@ public class EntityAIBase : EntityBase {
                 else if (m_Raycasts[i].collider.gameObject.layer == GameLayer.I_Entity)
                 {
                     HitCheckEntity entity = m_Raycasts[i].collider.GetComponent<HitCheckEntity>();
-                    if (entity.m_Attacher.I_EntityID != m_Target.I_EntityID && entity.m_Attacher.I_EntityID != m_Entity.I_EntityID)
+                    if (entity.m_Attacher.I_EntityID != target.I_EntityID && entity.m_Attacher.I_EntityID != m_Entity.I_EntityID)
                         return false;
                 }
             }
