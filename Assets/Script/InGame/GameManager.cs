@@ -42,26 +42,26 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         {
             EntityBase enermy = ObjectManager.SpawnEntity(Z_TestEntitySpawn, hit.point, TestEntityFlag);
             if (TestEntityBuffOnSpawn > 0)
-                enermy.m_HitCheck.TryHit(new DamageInfo(-1,TestEntityBuffOnSpawn));
+                enermy.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common,DamageDeliverInfo.BuffInfo(-1, TestEntityBuffOnSpawn)));
         }
         if (Input.GetKeyDown(KeyCode.X) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
-            ObjectManager.SpawnEquipment<SFXCast>(X_TestCastIndex, hit.point, CastForward?m_LocalPlayer.transform.forward: Vector3.up).Play(1000, DamageBuffInfo.Default());
+            ObjectManager.SpawnEquipment<SFXCast>(X_TestCastIndex, hit.point, CastForward?m_LocalPlayer.transform.forward: Vector3.up).Play(DamageDeliverInfo.Default(-1));
         if (Input.GetKeyDown(KeyCode.C) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
-            ObjectManager.SpawnEquipment<SFXProjectile>(C_TestProjectileIndex, hit.point + Vector3.up, m_LocalPlayer.transform.forward).Play(0, m_LocalPlayer.transform.forward, hit.point + m_LocalPlayer.transform.forward * 10, DamageBuffInfo.Default());
+            ObjectManager.SpawnEquipment<SFXProjectile>(C_TestProjectileIndex, hit.point + Vector3.up, m_LocalPlayer.transform.forward).Play(DamageDeliverInfo.Default(-1), m_LocalPlayer.transform.forward, hit.point + m_LocalPlayer.transform.forward * 10);
         if (Input.GetKeyDown(KeyCode.V) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
             ObjectManager.SpawnIndicator(V_TestIndicatorIndex, hit.point + Vector3.up, Vector3.up).Play(1000,3f);
         if (Input.GetKeyDown(KeyCode.B))
-            m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(-1,B_TestBuffIndex));
+            m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common, DamageDeliverInfo.BuffInfo(-1, B_TestBuffIndex )));
         if (Input.GetKeyDown(KeyCode.N))
-            m_LocalPlayer.BroadcastMessage("OnReceiveDamage", new DamageInfo(-1,20, enum_DamageType.Common,DamageBuffInfo.Default()));
+            m_LocalPlayer.BroadcastMessage("OnReceiveDamage", new DamageInfo(20, enum_DamageType.Common,DamageDeliverInfo.Default(-1)));
         if (Input.GetKeyDown(KeyCode.M))
-            m_LocalPlayer.BroadcastMessage("OnReceiveDamage", new DamageInfo(-1,-50, enum_DamageType.Common, DamageBuffInfo.Default()));
+            m_LocalPlayer.BroadcastMessage("OnReceiveDamage", new DamageInfo(-50, enum_DamageType.Common, DamageDeliverInfo.Default(-1)));
         if (Input.GetKeyDown(KeyCode.Alpha0))
         {
             List<EntityBase> entities = m_Entities.Values.ToList();
             entities.Traversal((EntityBase entity) => {
                 if (entity.m_Flag== enum_EntityFlag.Enermy)
-                    entity.BroadcastMessage("OnReceiveDamage", new DamageInfo(-1,entity.m_EntityInfo.F_MaxHealth, enum_DamageType.Common, DamageBuffInfo.Default()));
+                    entity.BroadcastMessage("OnReceiveDamage", new DamageInfo(entity.m_EntityInfo.F_MaxHealth, enum_DamageType.Common, DamageDeliverInfo.Default(-1)));
             });
         }
         if (Input.GetKeyDown(KeyCode.Alpha9))
@@ -69,7 +69,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
             List<EntityBase> entities = m_Entities.Values.ToList();
             entities.Traversal((EntityBase entity) => {
                 if (entity.m_Flag == enum_EntityFlag.Enermy)
-                    entity.BroadcastMessage("OnReceiveDamage", new DamageInfo(-1, 0, enum_DamageType.Common, DamageBuffInfo.BuffInfo(new List<int>() { 200023})));
+                    entity.BroadcastMessage("OnReceiveDamage", new DamageInfo(0, enum_DamageType.Common, DamageDeliverInfo.BuffInfo(-1, 200023)));
             });
         }
         if (Input.GetKeyDown(KeyCode.Equals))
@@ -172,7 +172,6 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     }
     #endregion
     #region Entity Management
-    public static int I_EntityID(int index, enum_EntityFlag flag) => index + (int)flag*10000;       //Used For Identification Management
     Dictionary<int, EntityBase> m_Entities = new Dictionary<int, EntityBase>();
     Dictionary<enum_EntityFlag, List<EntityBase>> m_AllyEntities = new Dictionary<enum_EntityFlag, List<EntityBase>>();
     Dictionary<enum_EntityFlag, List<EntityBase>> m_OppositeEntities = new Dictionary<enum_EntityFlag, List<EntityBase>>();
@@ -502,13 +501,12 @@ public static class ObjectManager
     #endregion
     #region Spawn/Recycle
     #region Entity
-    static int i_entityIndex = 0;
     public static EntityBase SpawnEntity(int index,Vector3 toPosition,enum_EntityFlag _flag)
     {
         EntityBase entity= ObjectPoolManager<int, EntityBase>.Spawn(index, TF_Entity);
         toPosition = EnviormentManager.NavMeshPosition(toPosition);
         entity.transform.position = toPosition;
-        entity.OnSpawn(GameManager.I_EntityID(i_entityIndex++, _flag), _flag);
+        entity.OnSpawn(IdentificationManager.I_EntityID(_flag), _flag);
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnEntitySpawn, entity);
         return entity;
     }
@@ -610,4 +608,27 @@ public static class OptionsManager
         event_OptionChanged?.Invoke();
     }
 }
+
+
+#region Identification
+public static class IdentificationManager
+{
+    static int i_entityIndex = 0;
+    public static int I_EntityID(enum_EntityFlag flag)
+    {
+        i_entityIndex++;
+        if (i_entityIndex == int.MaxValue)
+            i_entityIndex = 0;
+        return i_entityIndex + (int)flag * 100000;
+    }
+    static int i_damageInfoIndex = 0;
+    public static int I_DamageIdentityID()
+    {
+        i_damageInfoIndex++;
+        if (i_damageInfoIndex == int.MaxValue)
+            i_damageInfoIndex = 0;
+        return i_damageInfoIndex;
+    }
+}
+#endregion
 #endregion

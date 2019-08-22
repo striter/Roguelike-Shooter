@@ -6,9 +6,10 @@ public class LocalMessage
     public enum enum_MessageType
     {
         Void,
-        Template,
-        TemplateDouble,
-        TemplateTriple,
+        OneTemplate,
+        TowTemplate,
+        ThreeTemplate,
+        FourTemplate,
     }
     public virtual enum_MessageType e_type => enum_MessageType.Void;
     public Action ac_listener { get; private set; }
@@ -27,7 +28,7 @@ public class LocalMessage
 }
 public class LocalMessage<T> : LocalMessage
 {
-    public override enum_MessageType e_type => enum_MessageType.Template;
+    public override enum_MessageType e_type => enum_MessageType.OneTemplate;
     public new Action<T> ac_listener { get; private set; }
     public LocalMessage(Action<T> _listener)
     {
@@ -41,7 +42,7 @@ public class LocalMessage<T> : LocalMessage
 }
 public class LocalMessage<T, Y> : LocalMessage
 {
-    public override enum_MessageType e_type => enum_MessageType.TemplateDouble;
+    public override enum_MessageType e_type => enum_MessageType.TowTemplate;
     public new Action<T, Y> ac_listener { get; private set; }
     public LocalMessage(Action<T, Y> _listener)
     {
@@ -54,7 +55,7 @@ public class LocalMessage<T, Y> : LocalMessage
 }
 public class LocalMessage<T, Y,U> : LocalMessage
 {
-    public override enum_MessageType e_type => enum_MessageType.TemplateTriple;
+    public override enum_MessageType e_type => enum_MessageType.ThreeTemplate;
     public new Action<T, Y,U> ac_listener { get; private set; }
     public LocalMessage(Action<T, Y,U> _listener)
     {
@@ -63,6 +64,19 @@ public class LocalMessage<T, Y,U> : LocalMessage
     public void Trigger(T _object1, Y _object2,U _object3)
     {
         ac_listener(_object1, _object2,_object3);
+    }
+}
+public class LocalMessage<T, Y, U,I> : LocalMessage
+{
+    public override enum_MessageType e_type => enum_MessageType.ThreeTemplate;
+    public new Action<T, Y, U> ac_listener { get; private set; }
+    public LocalMessage(Action<T, Y, U> _listener)
+    {
+        ac_listener = _listener;
+    }
+    public void Trigger(T _object1, Y _object2, U _object3)
+    {
+        ac_listener(_object1, _object2, _object3);
     }
 }
 #endregion
@@ -122,7 +136,7 @@ public class TBroadCaster<TEnum>  {      //Message Center  Add / Remove / Trigge
         LocalMessage<T> removeTarget = null;
         foreach (LocalMessage mb in dic_delegates[type])
         {
-            if (mb.e_type == LocalMessage.enum_MessageType.Template)
+            if (mb.e_type == LocalMessage.enum_MessageType.OneTemplate)
                 removeTarget = mb as LocalMessage<T>;
             if (removeTarget != null && removeTarget.ac_listener == Listener)
             {
@@ -139,7 +153,7 @@ public class TBroadCaster<TEnum>  {      //Message Center  Add / Remove / Trigge
         foreach (LocalMessage del in dic_delegates[type])
         {
             LocalMessage<T> target=null;
-            if (del.e_type == LocalMessage.enum_MessageType.Template)
+            if (del.e_type == LocalMessage.enum_MessageType.OneTemplate)
                 target = del as LocalMessage<T>;
 
             if (target != null)
@@ -165,7 +179,7 @@ public class TBroadCaster<TEnum>  {      //Message Center  Add / Remove / Trigge
         LocalMessage<T,Y> removeTarget = null;
         foreach (LocalMessage mb in dic_delegates[type])
         {
-            if (mb.e_type == LocalMessage.enum_MessageType.TemplateDouble)
+            if (mb.e_type == LocalMessage.enum_MessageType.TowTemplate)
                 removeTarget = mb as LocalMessage<T,Y>;
             if (removeTarget != null && removeTarget.ac_listener == Listener)
             {
@@ -182,7 +196,7 @@ public class TBroadCaster<TEnum>  {      //Message Center  Add / Remove / Trigge
         foreach (LocalMessage del in dic_delegates[type])
         {
             LocalMessage<T,Y> target = null;
-            if (del.e_type == LocalMessage.enum_MessageType.TemplateDouble)
+            if (del.e_type == LocalMessage.enum_MessageType.TowTemplate)
                 target = del as LocalMessage<T,Y>;
 
             if (target != null)
@@ -208,7 +222,7 @@ public class TBroadCaster<TEnum>  {      //Message Center  Add / Remove / Trigge
         LocalMessage<T, Y,U> removeTarget = null;
         foreach (LocalMessage mb in dic_delegates[type])
         {
-            if (mb.e_type == LocalMessage.enum_MessageType.TemplateTriple)
+            if (mb.e_type == LocalMessage.enum_MessageType.ThreeTemplate)
                 removeTarget = mb as LocalMessage<T, Y,U>;
             if (removeTarget != null && removeTarget.ac_listener == Listener)
             {
@@ -225,7 +239,7 @@ public class TBroadCaster<TEnum>  {      //Message Center  Add / Remove / Trigge
         foreach (LocalMessage del in dic_delegates[type])
         {
             LocalMessage<T, Y,U> target = null;
-            if (del.e_type == LocalMessage.enum_MessageType.TemplateTriple)
+            if (del.e_type == LocalMessage.enum_MessageType.ThreeTemplate)
                 target = del as LocalMessage<T, Y,U>;
 
             if (target != null)

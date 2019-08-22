@@ -87,11 +87,11 @@ namespace GameSetting_Action
     {
         public static void PlayerAcquireSimpleEquipmentItem(EntityPlayerBase player, int equipmentIndex,float damage,int buffIndex=-1)
         {
-            player.OnAcquireEquipment<EquipmentBase>(equipmentIndex, () => { return DamageBuffInfo.EquipmentInfo(damage,buffIndex); });
+            player.OnAcquireEquipment<EquipmentBase>(equipmentIndex, () => { return DamageDeliverInfo.EquipmentInfo(player.I_EntityID,damage,buffIndex); });
         }
         public static void PlayerAcquireEntityEquipmentItem(EntityPlayerBase player, int equipmentIndex, float damage,int health,float fireRate)
         {
-            player.OnAcquireEquipment<EquipmentEntitySpawner>(equipmentIndex, () => { return DamageBuffInfo.DamageInfo(0, damage); }).SetOnSpawn((EntityBase entity) => {
+            player.OnAcquireEquipment<EquipmentEntitySpawner>(equipmentIndex, () => { return DamageDeliverInfo.DamageInfo(player.I_EntityID ,0, damage); }).SetOnSpawn((EntityBase entity) => {
                 EntityAIBase target = entity as EntityAIBase;
                 target.I_MaxHealth = health;
                 target.F_AttackDuration = new RangeFloat(0f, 0);
@@ -103,13 +103,13 @@ namespace GameSetting_Action
         {
             if (damageAmount < 0)
                 Debug.LogError("Howd Fk Damage Below Zero?");
-            GameManager.Instance.GetEntity(targetID).m_HitCheck.TryHit(new DamageInfo(player.I_EntityID,damageAmount, damageType, DamageBuffInfo.Default()));
+            GameManager.Instance.GetEntity(targetID).m_HitCheck.TryHit(new DamageInfo(damageAmount, damageType, DamageDeliverInfo.Default(player.I_EntityID)));
         }
         public static void PlayerReceiveHealing(EntityPlayerBase player,float healtAmount,enum_DamageType type= enum_DamageType.Common)
         {
             if (healtAmount >= 0)
                 Debug.LogError("Howd Fk Healing Above Zero?");
-            player.m_HitCheck.TryHit(new DamageInfo(player.I_EntityID,healtAmount,type, DamageBuffInfo.Default()));
+            player.m_HitCheck.TryHit(new DamageInfo(healtAmount,type, DamageDeliverInfo.Default(player.I_EntityID)));
         }
         public static void PlayerReceiveActionAmount(EntityPlayerBase player, float amount)
         {

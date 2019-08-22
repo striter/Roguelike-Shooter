@@ -11,10 +11,10 @@ public class SFXProjectileDestroyableSpreadDelay : SFXProjectileDestroyableSprea
         base.Init(sfxIndex);
         m_Particles = GetComponentsInChildren<ParticleSystem>();
     }
-    public override void Play(int sourceID, Vector3 direction, Vector3 targetPosition, DamageBuffInfo buffInfo)
+    public override void Play( DamageDeliverInfo buffInfo, Vector3 direction, Vector3 targetPosition)
     {
         targetPosition = EnviormentManager.NavMeshPosition(targetPosition) + Vector3.up * .5f;
-        base.Play(sourceID, direction, targetPosition, buffInfo);
+        base.Play(buffInfo,direction, targetPosition);
         m_Particles.Traversal((ParticleSystem particle) => { particle.Stop(); });
         transform.localScale = Vector3.zero;
         B_SimulatePhysics = false;

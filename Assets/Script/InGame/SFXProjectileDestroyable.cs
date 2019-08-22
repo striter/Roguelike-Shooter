@@ -13,10 +13,10 @@ public class SFXProjectileDestroyable : SFXProjectile {
         m_hitCheck = GetComponent<HitCheckDynamic>();
         m_Health = new HealthBase(null, OnDestroyed);
     }
-    public override void Play(int sourceID, Vector3 direction, Vector3 targetPosition, DamageBuffInfo buffInfo)
+    public override void Play(DamageDeliverInfo buffInfo, Vector3 direction, Vector3 targetPosition)
     {
-        base.Play(sourceID, direction, targetPosition, buffInfo);
-        m_hitCheck.Attach(sourceID, OnReceiveDamage);
+        base.Play(buffInfo, direction, targetPosition);
+        m_hitCheck.Attach(buffInfo.I_SourceID, OnReceiveDamage);
     }
     protected override void OnPlayPreset()
     {

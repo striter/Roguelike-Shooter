@@ -16,6 +16,7 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
     public bool B_CameraShake = false;
     public int I_ShakeAmount = 0;
     protected DamageInfo m_DamageInfo;
+    public int m_sourceID => m_DamageInfo.m_detail.I_SourceID;
     protected virtual float F_ParticleDuration => 5f;
     protected virtual float F_CastLength => V4_CastInfo.z;
     public bool B_Casting { get; private set; } = false;
@@ -38,21 +39,21 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
         if (F_DelayDuration > 0 && I_DelayIndicatorIndex < 0)
             Debug.LogError("Delay Indicator Less Than Zero:" + gameObject.name);
     }
-    public void Play(int sourceID,DamageBuffInfo buffInfo)
+    public void Play(DamageDeliverInfo buffInfo)
     {
-        SetDamageInfo(buffInfo,sourceID);
+        SetDamageInfo(buffInfo);
         if (F_DelayDuration <= 0)
         {
-            PlayDelayed(sourceID);
+            PlayDelayed();
             return;
         }
         if (I_DelayIndicatorIndex>0)
-            ObjectManager.SpawnIndicator(I_DelayIndicatorIndex, transform.position, Vector3.up).Play(sourceID,  F_DelayDuration);
-        this.StartSingleCoroutine(1, TIEnumerators.PauseDel(F_DelayDuration, () => { PlayDelayed(sourceID); }));
+            ObjectManager.SpawnIndicator(I_DelayIndicatorIndex, transform.position, Vector3.up).Play(m_sourceID,  F_DelayDuration);
+        this.StartSingleCoroutine(1, TIEnumerators.PauseDel(F_DelayDuration, PlayDelayed));
     }
-    public virtual void PlayDelayed(int sourceID)
+    public virtual void PlayDelayed()
     {
-        PlaySFX(sourceID, I_TickCount * F_Tick + 5f);
+        PlaySFX(m_DamageInfo.m_detail.I_SourceID, I_TickCount * F_Tick + 5f);
         B_Casting = true;
         if (B_CameraShake)
             TPSCameraController.Instance.AddShake(I_ShakeAmount);
@@ -63,13 +64,13 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
             B_Casting = false;
         }));
     }
-    public virtual void PlayControlled(int sourceID, Transform attachTrans, Transform directionTrans, bool play, DamageBuffInfo buffInfo)
+    public virtual void PlayControlled(int sourceID, Transform attachTrans, Transform directionTrans, bool play, DamageDeliverInfo buffInfo)
     {
         B_Casting = play;
         Debug.Log(play);
         if (play)
         {
-            SetDamageInfo(buffInfo,sourceID);
+            SetDamageInfo(buffInfo);
             PlayParticles();
             tf_ControlledAttach = attachTrans;
             tf_ControlledCast = directionTrans;
@@ -84,11 +85,11 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
             this.StopSingleCoroutine(0);
         }
     }
-    void SetDamageInfo(DamageBuffInfo info,int id)
+    void SetDamageInfo(DamageDeliverInfo info)
     {
         if (I_BuffApplyOnCast > 0)
             info.m_BuffAplly.Add(I_BuffApplyOnCast);
-        m_DamageInfo = new DamageInfo(id, F_Damage, enum_DamageType.Common, info);
+        m_DamageInfo = new DamageInfo(F_Damage, enum_DamageType.Common, info);
     }
     protected override void Update()
     {
@@ -110,7 +111,7 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
         for (int i = 0; i < hits.Length; i++)
         {
             HitCheckEntity entity = hits[i].collider.DetectEntity();
-            if (entity!=null&&!targetHitted.Contains(entity.I_AttacherID)&&GameManager.B_CanDamageEntity(entity, I_SourceID))
+            if (entity!=null&&!targetHitted.Contains(entity.I_AttacherID)&&GameManager.B_CanDamageEntity(entity, m_sourceID))
             {
                 targetHitted.Add(entity.I_AttacherID);
                 OnDamageEntity(entity);

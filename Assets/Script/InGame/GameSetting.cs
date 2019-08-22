@@ -49,7 +49,7 @@ namespace GameSetting
         public static int GetEquipmentSubIndex(int weaponIndex) => weaponIndex + 1;
 
         public static float F_ActionAmountReceive(float damageApply) => damageApply * .1f;
-        
+
     }
 
     public static class UIConst
@@ -121,6 +121,8 @@ namespace GameSetting
     #endregion
 
     #region For Developers Use
+
+
 
     #region BroadCastEnum
     enum enum_BC_GameStatusChanged
@@ -360,7 +362,7 @@ namespace GameSetting
             {
                 float damageReceive = damageInfo.m_AmountApply*damageMultiply;
 
-                switch (damageInfo.m_damageType)
+                switch (damageInfo.m_Type)
                 {
                     case enum_DamageType.ArmorOnly:
                         {
@@ -387,14 +389,14 @@ namespace GameSetting
                         break;
                 }
 
-                TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnEntityDamage, damageInfo.I_SourceID, m_Entity, damageReceive);
+                TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnEntityDamage, damageInfo.m_detail, m_Entity, damageReceive);
                 if (b_IsDead)
                     OnDead();
             }
             else if (damageInfo.m_AmountApply < 0)    //Healing
             {
                 float amountHeal = damageInfo.m_AmountApply;
-                switch (damageInfo.m_damageType)
+                switch (damageInfo.m_Type)
                 {
                     case enum_DamageType.ArmorOnly:
                         {
@@ -433,30 +435,32 @@ namespace GameSetting
 
     public class DamageInfo
     {
-        public int I_SourceID { get; private set; }
-        public float m_AmountApply => m_baseDamage  *(1+  m_BuffApply.F_DamageMultiply)+ m_BuffApply.F_DamageAdditive;
+        public float m_AmountApply => m_baseDamage  *(1+  m_detail.m_DamageMultiply)+ m_detail.m_DamageAdditive;
         private float m_baseDamage;
-        public DamageBuffInfo m_BuffApply { get; private set; }
-        public enum_DamageType m_damageType { get; private set; }
-        public DamageInfo(int sourceID,float damage,enum_DamageType type,DamageBuffInfo buffInfo)
+        public enum_DamageType m_Type { get; private set; }
+        public DamageDeliverInfo m_detail { get; private set; }
+        public DamageInfo(float damage,enum_DamageType type,DamageDeliverInfo detail)
         {
-            I_SourceID = sourceID;
             m_baseDamage = damage;
-            m_BuffApply = buffInfo;
-            m_damageType = type;
+            m_detail = detail;
+            m_Type = type;
         }
-        public DamageInfo(int sourceID, int buffApply)
-        {
-            I_SourceID = sourceID;
-            m_baseDamage = 0;
-            m_BuffApply =  DamageBuffInfo.BuffInfo(new List<int>() { buffApply });
-            m_damageType =  enum_DamageType.Common;
-        }
-
-        public void ResetDamage(float damage)
+        public void ResetBaseDamage(float damage)
         {
             m_baseDamage = damage;
         }
+    }
+    public class DamageDeliverInfo
+    {
+        public int I_IdentiyID { get; private set; } = IdentificationManager.I_DamageIdentityID();
+        public int I_SourceID { get; private set; } 
+        public float m_DamageMultiply { get; private set; }
+        public float m_DamageAdditive { get; private set; }
+        public List<int> m_BuffAplly { get; private set; }
+        public static DamageDeliverInfo Default(int sourceID) => new DamageDeliverInfo() { I_SourceID = sourceID, m_DamageMultiply = 0f, m_DamageAdditive = 0f, m_BuffAplly = new List<int>() };
+        public static DamageDeliverInfo BuffInfo(int sourceID, int buffApply) => new DamageDeliverInfo() { I_SourceID = sourceID, m_DamageMultiply = 0f, m_DamageAdditive = 0f, m_BuffAplly =new List<int>() { buffApply } };
+        public static DamageDeliverInfo DamageInfo(int sourceID, float _damageEnhanceMultiply, float _damageAdditive) => new DamageDeliverInfo() { I_SourceID = sourceID, m_DamageMultiply = _damageEnhanceMultiply, m_DamageAdditive = _damageAdditive, m_BuffAplly = new List<int>() };
+        public static DamageDeliverInfo EquipmentInfo(int sourceID, float _damageAdditive, int buffIndex) => new DamageDeliverInfo() { I_SourceID = sourceID, m_DamageMultiply = 0f, m_DamageAdditive = _damageAdditive, m_BuffAplly = buffIndex == -1 ? new List<int>() : new List<int> { buffIndex } };
     }
     #endregion
 
@@ -466,8 +470,7 @@ namespace GameSetting
         protected EntityBase m_Entity { get; private set; }
         public List<ExpireBase> m_Expires { get; private set; } = new List<ExpireBase>();
         List< SFXBuffEffect> m_BuffEffects = new List<SFXBuffEffect>();
-        Func<DamageBuffInfo> m_DamageBuffOverride = null;
-        public void AddDamageOverride(Func<DamageBuffInfo> damageOverride) => m_DamageBuffOverride = damageOverride;
+
         public float F_MaxHealth => m_Entity.I_MaxHealth;
         
         public float F_DamageReceiveMultiply { get; private set; } = 1f;
@@ -482,7 +485,14 @@ namespace GameSetting
         float f_stunCheck = 0;
         public bool B_Stunned => f_stunCheck > 0;
 
-        public virtual DamageBuffInfo GetDamageBuffInfo() => m_DamageBuffOverride!=null?m_DamageBuffOverride():DamageBuffInfo.DamageInfo(F_DamageMultiply, 0f);
+        bool damageOverride = false;
+        DamageDeliverInfo m_DamageBuffOverride;
+        public void AddDamageOverride(DamageDeliverInfo _damageOverride)
+        {
+            damageOverride = true;
+            m_DamageBuffOverride = _damageOverride;
+        }
+        public virtual DamageDeliverInfo GetDamageBuffInfo() => damageOverride ? m_DamageBuffOverride:DamageDeliverInfo.DamageInfo(m_Entity.I_EntityID ,F_DamageMultiply, 0f);
         Func<DamageInfo, bool> OnReceiveDamage;
         Action OnInfoChange;
         public EntityInfoManager(EntityBase _attacher,Func<DamageInfo, bool> _OnReceiveDamage,Action _OnInfoChange)
@@ -491,11 +501,15 @@ namespace GameSetting
             OnReceiveDamage = _OnReceiveDamage;
             OnInfoChange = _OnInfoChange;
         }
+        public virtual void OnActivate()
+        {
+            f_stunCheck = 0f;
+            damageOverride = false;
+        }
         public virtual void OnDeactivate()
         {
             m_Expires.Clear();
             m_BuffEffects.Clear();
-            m_DamageBuffOverride = null;
             InfoChange();
         }
         public virtual void Tick(float deltaTime) {
@@ -665,21 +679,11 @@ namespace GameSetting
             if (f_dotCheck > m_buffInfo.m_DamageTickTime)
             {
                 f_dotCheck -= m_buffInfo.m_DamageTickTime;
-                OnDOTDamage(new DamageInfo(I_SourceID, m_buffInfo.m_DamagePerTick, m_buffInfo.m_DamageType, DamageBuffInfo.Default()));
+                OnDOTDamage(new DamageInfo(m_buffInfo.m_DamagePerTick, m_buffInfo.m_DamageType, DamageDeliverInfo.Default(I_SourceID)));
             }
         }
     }
 
-    public struct DamageBuffInfo
-    {
-        public float F_DamageMultiply { get; private set; }
-        public float F_DamageAdditive { get; private set; }
-        public List<int> m_BuffAplly { get; private set; }
-        public static DamageBuffInfo Default() => new DamageBuffInfo() { F_DamageMultiply = 0f, F_DamageAdditive = 0f, m_BuffAplly = new List<int>() };
-        public static DamageBuffInfo BuffInfo(List<int> _buffApply) => new DamageBuffInfo() { F_DamageMultiply = 0f, F_DamageAdditive = 0f, m_BuffAplly = _buffApply };
-        public static DamageBuffInfo DamageInfo(float _damageEnhanceMultiply, float _damageAdditive) => new DamageBuffInfo() { F_DamageMultiply = _damageEnhanceMultiply, F_DamageAdditive = _damageAdditive, m_BuffAplly = new List<int>() };
-        public static DamageBuffInfo EquipmentInfo(float _damageAdditive, int buffIndex) => new DamageBuffInfo() { F_DamageMultiply = 0f, F_DamageAdditive = _damageAdditive, m_BuffAplly = buffIndex==-1?new List<int>():new List<int> { buffIndex} };
-    }
         #endregion
         #region ActionManager
         public class PlayerInfoManager : EntityInfoManager
@@ -702,12 +706,12 @@ namespace GameSetting
         {
             m_Player = _attacher;
             F_ActionAmount = GameConst.F_MaxActionAmount;
-            TBroadCaster<enum_BC_GameStatusChanged>.Add<int, EntityBase, float>(enum_BC_GameStatusChanged.OnEntityDamage, OnEntityApplyDamage);
+            TBroadCaster<enum_BC_GameStatusChanged>.Add<DamageDeliverInfo, EntityBase, float>(enum_BC_GameStatusChanged.OnEntityDamage, OnEntityApplyDamage);
         }
         public override void OnDeactivate()
         {
             base.OnDeactivate();
-            TBroadCaster<enum_BC_GameStatusChanged>.Remove<int, EntityBase, float>(enum_BC_GameStatusChanged.OnEntityDamage, OnEntityApplyDamage);
+            TBroadCaster<enum_BC_GameStatusChanged>.Remove<DamageDeliverInfo, EntityBase, float>(enum_BC_GameStatusChanged.OnEntityDamage, OnEntityApplyDamage);
         }
         protected override void OnResetInfo()
         {
@@ -756,23 +760,24 @@ namespace GameSetting
                 m_ActionEquiping.Remove(action);
         }
 
-        public override DamageBuffInfo GetDamageBuffInfo()
+        public override DamageDeliverInfo GetDamageBuffInfo()
         {
             InfoChange();
-            return DamageBuffInfo.DamageInfo(F_DamageMultiply, F_DamageAdditive);
+            DamageDeliverInfo info= DamageDeliverInfo.DamageInfo(m_Entity.I_EntityID, F_DamageMultiply, F_DamageAdditive);
+            m_ActionEquiping.Traversal((ActionBase action) => { action.OnFireIdentity(info.I_IdentiyID); }, true);
+            return info;
         }
 
-        public void OnFireOnce() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnAfterFire(); },true);
         public void OnBattleFinished() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnBattleFinished(); },true);
-        void OnEntityApplyDamage(int applierID, EntityBase damageEntity, float amountApply)
+        void OnEntityApplyDamage(DamageDeliverInfo damageInfo, EntityBase damageEntity, float amountApply)
         {
-            if (applierID == m_Player.I_EntityID)
+            if (damageInfo.I_SourceID == m_Player.I_EntityID)
             {
-                m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDemage(applierID, damageEntity, amountApply); });
+                m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDemage(damageInfo.I_IdentiyID,damageInfo.I_SourceID, damageEntity, amountApply); });
                 AddActionAmount(GameExpression.F_ActionAmountReceive(amountApply));
             }
-            else if(damageEntity.I_EntityID==m_Player.I_EntityID)
-                m_ActionEquiping.Traversal((ActionBase action) => { action.OnReceiveDamage(applierID,m_Player, amountApply); });
+            else if (damageEntity.I_EntityID == m_Player.I_EntityID)
+                m_ActionEquiping.Traversal((ActionBase action) => { action.OnReceiveDamage(damageInfo.I_SourceID, m_Player, amountApply); });
         }
 
 
@@ -816,15 +821,20 @@ namespace GameSetting
             if (m_ExpireType == enum_ActionExpireType.AfterBattle)
                 ForceExpire();
         }
-        public void OnAfterFire()
+        public void OnFireIdentity(int index)
         {
+            OnAfterFire(index);
             if (m_ExpireType == enum_ActionExpireType.AfterFire)
                 ForceExpire();
+        }
+        public virtual void OnAfterFire(int index)
+        {
+
         }
         protected virtual void OnActionUse(EntityPlayerBase _actionEntity) {}
         public virtual void OnAddActionElse(EntityPlayerBase _actionEntity, float actionAmount) { }
         public virtual void OnReceiveDamage(int applier, EntityPlayerBase receiver, float amount) { }
-        public virtual void OnDealtDemage(int applier, EntityBase receiver, float amount){ }
+        public virtual void OnDealtDemage(int damageID,int applier, EntityBase receiver, float amount){ }
 
         public bool B_Upgradable => m_Level < enum_ActionLevel.L3;
         public void Upgrade()
@@ -1189,7 +1199,7 @@ namespace GameSetting
         protected EntityBase m_Entity;
         protected Transform attacherTransform => m_Entity.tf_Head;
         protected Transform transformBarrel;
-        protected Func<DamageBuffInfo> GetBuffInfo;
+        protected Func<DamageDeliverInfo> GetDamageDeliverInfo;
         protected EntityInfoManager m_Info
         {
             get
@@ -1199,14 +1209,14 @@ namespace GameSetting
                 return m_Entity.m_EntityInfo;
             }
         }
-        public EquipmentBase(SFXBase weaponBase, EntityBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo)
+        public EquipmentBase(SFXBase weaponBase, EntityBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo)
         {
             i_weaponIndex = weaponBase.I_SFXIndex;
             m_Entity = _controller;
             transformBarrel = _transform;
             if (_transform == null)
                 Debug.LogError("Null Weapon Barrel Found!");
-            GetBuffInfo = _GetBuffInfo;
+            GetDamageDeliverInfo = _GetBuffInfo;
         }
         protected virtual Vector3 GetTargetPosition(bool preAim, EntityBase _target) => _target.tf_Head.position;
         public void Play(bool _preAim, EntityBase _target) => Play(_target,GetTargetPosition(_preAim, _target));
@@ -1222,7 +1232,7 @@ namespace GameSetting
 
         }
 
-        public static EquipmentBase AcquireEquipment(int weaponIndex, EntityBase _entity, Transform tf_Barrel, Func<DamageBuffInfo> GetDamageBuffInfo, Action OnDead)
+        public static EquipmentBase AcquireEquipment(int weaponIndex, EntityBase _entity, Transform tf_Barrel, Func<DamageDeliverInfo> GetDamageBuffInfo, Action OnDead)
         {
             EquipmentBase weapon = null;
             SFXBase weaponInfo = ObjectManager.GetEquipmentData<SFXBase>(weaponIndex);
@@ -1263,12 +1273,12 @@ namespace GameSetting
     }
     public class EquipmentCaster : EquipmentBase
     {
-        public EquipmentCaster(SFXCast _castInfo, EntityBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo) : base(_castInfo, _controller, _transform, _GetBuffInfo)
+        public EquipmentCaster(SFXCast _castInfo, EntityBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(_castInfo, _controller, _transform, _GetBuffInfo)
         {
         }
         public override void Play(EntityBase _target, Vector3 _calculatedPosition)
         {
-            ObjectManager.SpawnEquipment<SFXCast>(i_weaponIndex, attacherTransform.position, attacherTransform.forward).Play(m_Entity.I_EntityID, GetBuffInfo());
+            ObjectManager.SpawnEquipment<SFXCast>(i_weaponIndex, attacherTransform.position, attacherTransform.forward).Play(GetDamageDeliverInfo());
         }
     }
     public class EnermyCasterSelfDetonateAnimLess : EquipmentCaster, ISingleCoroutine
@@ -1276,7 +1286,7 @@ namespace GameSetting
         ModelBlink m_Blink;
         Action OnDead;
         float timeElapsed;
-        public EnermyCasterSelfDetonateAnimLess(SFXCast _castInfo, EntityBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo, Action _OnDead, Transform _blinkModels) : base(_castInfo, _controller, _transform, _GetBuffInfo)
+        public EnermyCasterSelfDetonateAnimLess(SFXCast _castInfo, EntityBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo, Action _OnDead, Transform _blinkModels) : base(_castInfo, _controller, _transform, _GetBuffInfo)
         {
             OnDead = _OnDead;
             m_Blink = new ModelBlink(_blinkModels, .25f, .25f,Color.red);
@@ -1289,7 +1299,7 @@ namespace GameSetting
             m_Blink.Tick(Time.deltaTime * timeMultiply);
             if (timeElapsed > 2f)
             {
-                ObjectManager.SpawnEquipment<SFXCast>(i_weaponIndex, attacherTransform.position, attacherTransform.forward).Play(m_Entity.I_EntityID, GetBuffInfo());
+                ObjectManager.SpawnEquipment<SFXCast>(i_weaponIndex, attacherTransform.position, attacherTransform.forward).Play( GetDamageDeliverInfo());
                 OnDead();
                 this.StopSingleCoroutine(0);
             }
@@ -1308,20 +1318,20 @@ namespace GameSetting
     public class EquipmentCasterControlled : EquipmentCaster
     {
         SFXCast m_Cast;
-        public EquipmentCasterControlled(SFXCast _castInfo, EntityBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo) : base(_castInfo, _controller, _transform, _GetBuffInfo)
+        public EquipmentCasterControlled(SFXCast _castInfo, EntityBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(_castInfo, _controller, _transform, _GetBuffInfo)
         {
         }
         public override void Play(EntityBase _target, Vector3 _calculatedPosition)
         {
             OnPlayAnim(false);
             m_Cast = ObjectManager.SpawnEquipment<SFXCast>(i_weaponIndex, transformBarrel.position, transformBarrel.forward);
-            m_Cast.PlayControlled(m_Entity.I_EntityID, transformBarrel, attacherTransform, true, GetBuffInfo());
+            m_Cast.PlayControlled(m_Entity.I_EntityID, transformBarrel, attacherTransform, true, GetDamageDeliverInfo());
         }
 
         public override void OnPlayAnim(bool play)
         {
             if (m_Cast)
-                m_Cast.PlayControlled(m_Entity.I_EntityID, transformBarrel, attacherTransform, play, GetBuffInfo());
+                m_Cast.PlayControlled(m_Entity.I_EntityID, transformBarrel, attacherTransform, play, GetDamageDeliverInfo());
         }
         public override void OnDeactivate()
         {
@@ -1332,13 +1342,13 @@ namespace GameSetting
 
     public class EquipmentCasterTarget : EquipmentCaster
     {
-        public EquipmentCasterTarget(SFXCast _castInfo, EntityBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo) : base(_castInfo, _controller, _transform, _GetBuffInfo)
+        public EquipmentCasterTarget(SFXCast _castInfo, EntityBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(_castInfo, _controller, _transform, _GetBuffInfo)
         {
         }
         protected override Vector3 GetTargetPosition(bool preAim, EntityBase _target) => EnviormentManager.NavMeshPosition(_target.transform.position + TCommon.RandomXZSphere(m_Entity.F_AttackSpread));
         public override void Play(EntityBase _target, Vector3 _calculatedPosition)
         {
-            ObjectManager.SpawnEquipment<SFXCast>(i_weaponIndex,_calculatedPosition,Vector3.up).Play(m_Entity.I_EntityID, GetBuffInfo());
+            ObjectManager.SpawnEquipment<SFXCast>(i_weaponIndex,_calculatedPosition,Vector3.up).Play( GetDamageDeliverInfo());
         }
     }
     public class EquipmentBarrageRange : EquipmentBase
@@ -1348,7 +1358,7 @@ namespace GameSetting
         protected RangeInt m_CountExtension { get; private set; }
         protected float m_OffsetExtension { get; private set; }
 
-        public EquipmentBarrageRange(SFXProjectile projectileInfo, EntityBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo) : base(projectileInfo, _controller, _transform, _GetBuffInfo)
+        public EquipmentBarrageRange(SFXProjectile projectileInfo, EntityBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(projectileInfo, _controller, _transform, _GetBuffInfo)
         {
             i_muzzleIndex = projectileInfo.I_MuzzleIndex;
             f_projectileSpeed = projectileInfo.F_Speed;
@@ -1380,12 +1390,12 @@ namespace GameSetting
         {
             if (i_muzzleIndex > 0)
                 ObjectManager.SpawnParticles<SFXMuzzle>(i_muzzleIndex, startPosition, direction).Play(m_Entity.I_EntityID);
-            ObjectManager.SpawnEquipment<SFXProjectile>(i_weaponIndex, startPosition, direction).Play(m_Entity.I_EntityID, direction, targetPosition, GetBuffInfo());
+            ObjectManager.SpawnEquipment<SFXProjectile>(i_weaponIndex, startPosition, direction).Play(GetDamageDeliverInfo(),direction, targetPosition);
         }
     }
     public class EquipmentBarrageMultipleLine : EquipmentBarrageRange
     {
-        public EquipmentBarrageMultipleLine(SFXProjectile projectileInfo, EntityBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo) : base(projectileInfo, _controller, _transform, _GetBuffInfo)
+        public EquipmentBarrageMultipleLine(SFXProjectile projectileInfo, EntityBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(projectileInfo, _controller, _transform, _GetBuffInfo)
         {
         }
         public override void Play(EntityBase _target, Vector3 _calculatedPosition)
@@ -1401,7 +1411,7 @@ namespace GameSetting
     }
     public class EquipmentBarrageMultipleFan : EquipmentBarrageRange
     {
-        public EquipmentBarrageMultipleFan(SFXProjectile projectileInfo, EntityBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo) : base(projectileInfo, _controller, _transform, _GetBuffInfo)
+        public EquipmentBarrageMultipleFan(SFXProjectile projectileInfo, EntityBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(projectileInfo, _controller, _transform, _GetBuffInfo)
         {
         }
         public override void Play(EntityBase _target, Vector3 _calculatedPosition)
@@ -1423,7 +1433,7 @@ namespace GameSetting
         public override bool B_TargetAlly => true;
         SBuff m_buffInfo;
         SFXBuffApply m_Effect;
-        public BuffApply(SFXBuffApply buffApplyinfo, EntityBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo) : base(buffApplyinfo, _controller, _transform, _GetBuffInfo)
+        public BuffApply(SFXBuffApply buffApplyinfo, EntityBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(buffApplyinfo, _controller, _transform, _GetBuffInfo)
         {
             m_buffInfo = DataManager.GetEntityBuffProperties(buffApplyinfo.I_BuffIndex);
         }
@@ -1438,7 +1448,7 @@ namespace GameSetting
 
     public class EquipmentEntitySpawner : EquipmentBase
     {
-        public EquipmentEntitySpawner(SFXEntitySpawner spawner, EntityBase _controller, Transform _transform, Func<DamageBuffInfo> _GetBuffInfo) : base(spawner, _controller, _transform, _GetBuffInfo)
+        public EquipmentEntitySpawner(SFXEntitySpawner spawner, EntityBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(spawner, _controller, _transform, _GetBuffInfo)
         {
         }
         Action<EntityBase> OnSpawn;
@@ -1448,7 +1458,7 @@ namespace GameSetting
         }
         public override void Play(EntityBase _target, Vector3 _calculatedPosition)
         {
-            ObjectManager.SpawnEquipment<SFXEntitySpawner>(i_weaponIndex, transformBarrel.position, Vector3.up).Play(m_Entity.I_EntityID, m_Entity.m_Flag,GetBuffInfo,OnSpawn);
+            ObjectManager.SpawnEquipment<SFXEntitySpawner>(i_weaponIndex, transformBarrel.position, Vector3.up).Play(m_Entity.I_EntityID, m_Entity.m_Flag,GetDamageDeliverInfo(),OnSpawn);
         }
     }
     #endregion

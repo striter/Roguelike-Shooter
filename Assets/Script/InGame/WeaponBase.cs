@@ -109,7 +109,7 @@ public class WeaponBase : MonoBehaviour {
 
             SFXProjectile projectile = ObjectManager.SpawnEquipment<SFXProjectile>(m_WeaponInfo.m_Index, m_Muzzle.position, spreadDirection);
             projectile.F_Speed = F_Speed;
-            projectile.Play(I_AttacherID, spreadDirection, endPosition, m_Attacher.m_PlayerInfo.GetDamageBuffInfo());
+            projectile.Play(m_Attacher.m_PlayerInfo.GetDamageBuffInfo(), spreadDirection, endPosition);
         }
 
         if (I_MuzzleIndex != -1)

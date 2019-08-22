@@ -231,6 +231,9 @@ public class EntityAIBase : EntityBase {
         
         void CheckTarget(float deltaTime)
         {
+            if (!b_targetAvailable)
+                RecheckTarget();
+
             if (f_checkTargetSimulate > 0)
             {
                 f_checkTargetSimulate -= deltaTime;
@@ -238,16 +241,20 @@ public class EntityAIBase : EntityBase {
             }
             f_checkTargetSimulate = GameConst.F_AITargetCheckParam;
 
+            RecheckTarget();
+        }
+        void RecheckTarget()
+        {
             m_Target = null;
             f_targetDistance = float.MaxValue;
 
-            List<EntityBase> entites = GameManager.Instance.GetEntities(m_Entity.m_Flag ,m_Weapon.B_TargetAlly);
+            List<EntityBase> entites = GameManager.Instance.GetEntities(m_Entity.m_Flag, m_Weapon.B_TargetAlly);
             for (int i = 0; i < entites.Count; i++)
             {
                 float distance = TCommon.GetXZDistance(headTransform.position, entites[i].tf_Head.position);
                 bool visible = !m_Entity.B_BattleCheckObstacle || TargetVisible(entites[i]);
-                bool isAvailableClosetTarget = distance<f_targetDistance&&visible;
-                if (!b_targetAvailable|| isAvailableClosetTarget)
+                bool isAvailableClosetTarget = distance < f_targetDistance && visible;
+                if (!b_targetAvailable || isAvailableClosetTarget)
                 {
                     m_Target = entites[i];
                     f_targetDistance = distance;

@@ -20,12 +20,11 @@ public class SFXCastLaserBeam : SFXCast {
         m_Muzzles.Traversal((ParticleSystem particle) => { particle.Stop(); });
         m_Impacts.Traversal((ParticleSystem particle) => { particle.Stop(); });
     }
-    public override void PlayDelayed(int sourceID)
+    public override void PlayDelayed()
     {
-        base.Play(sourceID);
+        base.PlayDelayed();
         m_Muzzles.Traversal((ParticleSystem particle) => { particle.Play(); });
         m_Impacts.Traversal((ParticleSystem particle) => { particle.Play(); });
-        
     }
     protected override void Update()
     {
@@ -46,7 +45,7 @@ public class SFXCastLaserBeam : SFXCast {
             HitCheckBase hitCheck = hit.collider.Detect();
             hitted = true;
             if (hitCheck.m_HitCheckType == enum_HitCheck.Entity)
-                hitted = GameManager.B_CanHitEntity((hitCheck as HitCheckEntity),I_SourceID);
+                hitted = GameManager.B_CanHitEntity((hitCheck as HitCheckEntity), m_sourceID);
 
             if (hitted)
             {

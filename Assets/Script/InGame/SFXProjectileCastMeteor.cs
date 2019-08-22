@@ -12,11 +12,11 @@ public class SFXProjectileCastMeteor : SFXProjectileCastTrigger
         if (I_IndicatorIndex <= 0)
             Debug.LogError("Indicator Index Less Or Equals 0");
     }
-    public override void Play(int sourceID, Vector3 direction, Vector3 targetPosition,DamageBuffInfo buffInfo)
+    public override void Play(DamageDeliverInfo buffInfo, Vector3 direction, Vector3 targetPosition)
     {
         Vector3 startPos = targetPosition + Vector3.up * F_StartHeight + new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f)) * F_SpreadRadius;
         Vector3 spreadDirection = (targetPosition - startPos).normalized;
         transform.position = startPos;
-        base.Play(sourceID, spreadDirection, targetPosition,buffInfo);
+        base.Play(buffInfo,spreadDirection, targetPosition);
     }
 }

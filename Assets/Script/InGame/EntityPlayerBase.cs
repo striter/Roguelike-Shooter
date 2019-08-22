@@ -151,7 +151,7 @@ public class EntityPlayerBase : EntityBase {
         m_Animator.SwitchAnim(m_WeaponCurrent.E_Anim);
     }
 #endregion
-#region PlayerControll
+    #region PlayerControll
     Vector2 m_MoveAxisInput;
     void OnRotateDelta(Vector2 rotateDelta)
     {
@@ -178,7 +178,6 @@ public class EntityPlayerBase : EntityBase {
     public void OnFireAddRecoil(Vector2 recoil)
     {
         OnRotateDelta(new Vector2((TCommon.RandomBool()?1:-1) *recoil.x,0));
-        m_PlayerInfo.OnFireOnce();
         m_Animator.Fire();
     }
     #endregion
@@ -203,7 +202,7 @@ public class EntityPlayerBase : EntityBase {
             m_Interact = null;
     }
 
-    public T OnAcquireEquipment<T>(int actionIndex, Func<DamageBuffInfo> OnDamageBuff) where T:EquipmentBase
+    public T OnAcquireEquipment<T>(int actionIndex, Func<DamageDeliverInfo> OnDamageBuff) where T:EquipmentBase
     {
         m_Equipment = EquipmentBase.AcquireEquipment(actionIndex*10, this, tf_WeaponHoldLeft, OnDamageBuff, OnDead);
         return m_Equipment as T;

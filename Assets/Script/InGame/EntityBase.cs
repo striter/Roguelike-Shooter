@@ -39,6 +39,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
         if (I_EntityID == -1)
             Debug.LogError("Please Init Entity Info!" + gameObject.name.ToString());
 
+       m_EntityInfo.OnActivate();
        m_HealthManager.OnActivate(I_MaxHealth,I_DefaultArmor);
        m_HitChecks.Traversal((HitCheckEntity check) => { check.Attach(this,OnReceiveDamage);  check.SetEnable(true); });
        m_SkinRenderers.Traversal((Renderer renderer) => {renderer.materials.Traversal((Material mat)=> {mat.SetFloat("_Amount1", 0);}); });
@@ -66,7 +67,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
         if (m_HealthManager.b_IsDead)
             return false;
         
-        damageInfo.m_BuffApply.m_BuffAplly.Traversal((int buffIndex) => { m_EntityInfo.AddBuff(damageInfo.I_SourceID, buffIndex);});
+        damageInfo.m_detail.m_BuffAplly.Traversal((int buffIndex) => { m_EntityInfo.AddBuff(damageInfo.m_detail.I_SourceID, buffIndex);});
         
         return m_HealthManager.OnReceiveDamage(damageInfo, m_EntityInfo.F_DamageReceiveMultiply);
     }
