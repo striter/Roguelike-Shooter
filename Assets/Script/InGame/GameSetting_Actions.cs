@@ -229,6 +229,7 @@ namespace GameSetting_Action
     #region NormalAction
     public class Action_10001_ArmorAdditive : ActionAfterUse
     {
+        public override int m_Index => 10001;
         public override int I_ActionCost => ActionData.I_10001_Cost;
         public override float GetValue1(EntityPlayerBase _actionEntity) => ActionData.F_10001_ArmorAdditive(m_Level);
         public override void OnActionUse(EntityPlayerBase _actionEntity) {
