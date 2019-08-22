@@ -703,7 +703,7 @@ namespace GameSetting
         protected float F_ClipMultiply { get; private set; } = 1f;
         public int I_ClipAmount(int baseClipAmount) => (int)(((B_OneOverride ? 1 : baseClipAmount) + I_ClipAdditive) * F_ClipMultiply);
         protected float F_DamageAdditive = 0f;
-        protected Dictionary<int, List<ActionAfterFire>> m_AfterFire = new Dictionary<int, List<ActionAfterFire>>();
+        protected List<ActionAfterFire> m_AfterFire = new List<ActionAfterFire>();
         EntityPlayerBase m_Player;
         public PlayerInfoManager(EntityPlayerBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnInfoChange) : base(_attacher, _OnReceiveDamage, _OnInfoChange)
         {
@@ -753,13 +753,10 @@ namespace GameSetting
             InfoChange();
             DamageDeliverInfo info = DamageDeliverInfo.PlayerDamageInfo(m_Entity.I_EntityID, F_DamageMultiply, F_DamageAdditive);
             m_ActionEquiping.Traversal((ActionBase action) => {
-                action.OnAfterFire();
+                action.OnAfterFire(info.I_IdentiyID);
+
                 if (action.m_ExpireType == enum_ActionExpireType.AfterFire)
-                {
-                    if (!m_AfterFire.ContainsKey(info.I_IdentiyID))
-                        m_AfterFire.Add(info.I_IdentiyID,new List<ActionAfterFire>());
-                    m_AfterFire[info.I_IdentiyID].Add(action as ActionAfterFire);
-                }
+                    m_AfterFire.Add(action as ActionAfterFire);
             }, true);
             return info;
         }
@@ -789,13 +786,7 @@ namespace GameSetting
 
         void OnEntityApplyDamage(DamageDeliverInfo damageInfo, EntityBase damageEntity, float amountApply)
         {
-            if (m_AfterFire.ContainsKey(damageInfo.I_IdentiyID))
-            {
-                m_AfterFire[damageInfo.I_IdentiyID].Traversal((ActionAfterFire action) => {
-                    if (action.OnActionHitEntity(m_Player, damageEntity))
-                        m_AfterFire[damageInfo.I_IdentiyID].Remove(action);
-                        },true);
-            }
+            m_AfterFire.Traversal((ActionAfterFire action) => {if (action.OnActionHitEntity(damageInfo.I_IdentiyID,m_Player, damageEntity))  m_AfterFire.Remove(action); }, true);
 
             if (damageInfo.I_SourceID == m_Player.I_EntityID)
             {

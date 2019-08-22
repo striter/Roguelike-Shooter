@@ -150,7 +150,7 @@ namespace GameSetting_Action
         public virtual void OnDealtDemage(int applier, EntityBase receiver, float amount) { }
         public virtual void OnReloadFinish(EntityPlayerBase _actionEntity) { }
         public virtual void OnAfterBattle() { }
-        public virtual void OnAfterFire() { }
+        public virtual void OnAfterFire(int identity) { }
         public bool B_Upgradable => m_Level < enum_ActionLevel.L3;
         public void Upgrade()
         {
@@ -173,8 +173,24 @@ namespace GameSetting_Action
     public class ActionAfterFire : ActionBase
     {
         public override enum_ActionExpireType m_ExpireType => enum_ActionExpireType.AfterFire;
-        public override void OnAfterFire() => ForceExpire();
-        public virtual bool OnActionHitEntity(EntityPlayerBase _actionEntity, EntityBase _targetEntity) { return true; }
+        protected int m_fireIdentity = -1;
+        public override void OnAfterFire(int _identity)
+        {
+            m_fireIdentity = _identity;
+            ForceExpire();
+        }
+        public bool OnActionHitEntity(int damageIdentity, EntityPlayerBase _actionEntity, EntityBase _targetEntity)
+        {
+            if (m_fireIdentity != damageIdentity)
+                return false;
+            return OnActionHit(_actionEntity, _targetEntity);
+        }
+
+        protected virtual bool OnActionHit(EntityPlayerBase _playerBase, EntityBase _hitEntity)
+        {
+            Debug.Log("Override This Please");
+            return false;
+        }
         public ActionAfterFire(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
     }
     public class ActionAfterBattle : ActionBase
@@ -309,7 +325,7 @@ namespace GameSetting_Action
         public override float GetValue1(EntityPlayerBase _actionEntity) => ActionData.F_10011_SingleDamageMultiply(m_Level);
         public override float GetValue2(EntityPlayerBase _actionEntity) => ActionData.F_10011_EntityKillActionReturn(m_Level);
         public override float m_DamageMultiply => GetValue1(null);
-        public override bool OnActionHitEntity(EntityPlayerBase _actionEntity, EntityBase _targetEntity)
+        protected override bool OnActionHit(EntityPlayerBase _actionEntity, EntityBase _targetEntity)
         {
             if (!_targetEntity.m_HealthManager.b_IsDead)
                 return false;
@@ -325,7 +341,7 @@ namespace GameSetting_Action
         public override float GetValue1(EntityPlayerBase _actionEntity) => ActionData.F_10012_SingleDamageMultiply(m_Level);
         public override float GetValue2(EntityPlayerBase _actionEntity) => ActionData.F_10012_EntityKillHealing(m_Level);
         public override float m_DamageMultiply => GetValue1(null);
-        public override bool OnActionHitEntity(EntityPlayerBase _actionEntity, EntityBase _targetEntity)
+        protected override bool OnActionHit(EntityPlayerBase _actionEntity, EntityBase _targetEntity)
         {
             if (!_targetEntity.m_HealthManager.b_IsDead)
                 return false;
@@ -340,7 +356,7 @@ namespace GameSetting_Action
         public override int I_ActionCost => ActionData.I_10013_Cost;
         public override float GetValue1(EntityPlayerBase _actionEntity) => ActionData.F_10013_SingleDamageMultiply(m_Level);
         public override float m_DamageMultiply => GetValue1(null);
-        public override bool OnActionHitEntity(EntityPlayerBase _actionEntity, EntityBase _targetEntity)
+        protected override bool OnActionHit(EntityPlayerBase _actionEntity, EntityBase _targetEntity)
         {
             if (!_targetEntity.m_HealthManager.b_IsDead)
                 return false;
@@ -461,7 +477,12 @@ namespace GameSetting_Action
         public override float m_DamageMultiply =>  m_TriggerOn? ActionData.F_30006_ReloadDamageMultiply(m_Level):0;
         bool m_TriggerOn = false;
         public override void OnActionUse(EntityPlayerBase _actionEntity)=> m_TriggerOn = false;
-        public override void OnAfterFire()=> m_TriggerOn = false;
+
+        public override void OnReloadFinish(EntityPlayerBase _actionEntity)
+        {
+            m_TriggerOn = false;
+            base.OnReloadFinish(_actionEntity);
+        }
         protected override void OnReloadTrigger(EntityPlayerBase _entity) => m_TriggerOn = true;
         public Action_30006_ReloadDamageMultiply(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
     }
