@@ -109,7 +109,7 @@ public class EntityPlayerBase : EntityBase {
     void ObtainWeapon(WeaponBase weapon)
     {
         m_WeaponObtained.Add(weapon);
-        weapon.Attach(I_EntityID,this,weapon.B_AttachLeft?tf_WeaponHoldLeft:tf_WeaponHoldRight, OnFireAddRecoil,m_Animator.Reload);
+        weapon.Attach(I_EntityID,this,weapon.B_AttachLeft?tf_WeaponHoldLeft:tf_WeaponHoldRight, OnFireAddRecoil,OnReload);
         weapon.SetActivate(false);
 
         if (m_WeaponCurrent == null)
@@ -149,6 +149,13 @@ public class EntityPlayerBase : EntityBase {
         m_Assist.Play(I_EntityID,tf_Head, tf_Head, GameConst.F_AimAssistDistance,GameLayer.Mask.I_All,(Collider collider)=> {return GameManager.B_DoHitCheck(collider.Detect(),I_EntityID); });
 
         m_Animator.SwitchAnim(m_WeaponCurrent.E_Anim);
+    }
+    void OnReload(bool start, float param)
+    {
+        if (start)
+            m_Animator.Reload(param);
+        else
+            m_PlayerInfo.OnReloadFinish();
     }
 #endregion
     #region PlayerControll

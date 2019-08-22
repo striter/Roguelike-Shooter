@@ -29,7 +29,7 @@ public class WeaponBase : MonoBehaviour {
 
     EntityPlayerBase m_Attacher;
     WeaponTrigger m_Trigger = null;
-    Action<float> OnReloadStart;
+    Action<bool,float> OnReload;
     Action<Vector2> OnFireRecoil;
 
     float f_reloadCheck, f_fireCheck;
@@ -69,7 +69,7 @@ public class WeaponBase : MonoBehaviour {
         f_fireCheck = 0;
         m_Trigger.OnDisable();
     }
-    public void Attach(int _attacherID,EntityPlayerBase _attacher,Transform _attachTo,Action<Vector2> _OnFireRecoil,Action<float> _OnReloadStart)
+    public void Attach(int _attacherID,EntityPlayerBase _attacher,Transform _attachTo,Action<Vector2> _OnFireRecoil,Action<bool,float> _OnReload)
     {
         I_AttacherID = _attacherID;
         m_Attacher = _attacher;
@@ -78,7 +78,7 @@ public class WeaponBase : MonoBehaviour {
         transform.localRotation = Quaternion.identity;
         transform.localScale = Vector3.one;
         OnFireRecoil = _OnFireRecoil;
-        OnReloadStart = _OnReloadStart;
+        OnReload = _OnReload;
     }
     public void Detach()
     {
@@ -99,6 +99,8 @@ public class WeaponBase : MonoBehaviour {
     {
         if (!B_HaveAmmoLeft)
             return false;
+
+        DamageDeliverInfo damageInfo = m_Attacher.m_PlayerInfo.GetDamageBuffInfo();
         for (int i = 0; i < m_WeaponInfo.m_PelletsPerShot; i++)
         {
             Vector3 spreadDirection = GameExpression.V3_RangeSpreadDirection(m_Attacher.tf_Head.forward, m_WeaponInfo.m_Spread, m_Attacher.tf_Head.up, m_Attacher.tf_Head.right);
@@ -109,7 +111,7 @@ public class WeaponBase : MonoBehaviour {
 
             SFXProjectile projectile = ObjectManager.SpawnEquipment<SFXProjectile>(m_WeaponInfo.m_Index, m_Muzzle.position, spreadDirection);
             projectile.F_Speed = F_Speed;
-            projectile.Play(m_Attacher.m_PlayerInfo.GetDamageBuffInfo(), spreadDirection, endPosition);
+            projectile.Play(damageInfo, spreadDirection, endPosition);
         }
 
         if (I_MuzzleIndex != -1)
@@ -139,7 +141,7 @@ public class WeaponBase : MonoBehaviour {
     {
         B_Reloading = true;
         f_reloadCheck = 0;
-        OnReloadStart?.Invoke(m_WeaponInfo.m_ReloadTime  / m_Attacher.m_PlayerInfo.F_ReloadRateTick(1f) );
+        OnReload?.Invoke(true, m_WeaponInfo.m_ReloadTime  / m_Attacher.m_PlayerInfo.F_ReloadRateTick(1f) );
     }
 
     protected void Update()
@@ -161,6 +163,7 @@ public class WeaponBase : MonoBehaviour {
             {
                 I_AmmoLeft = I_ClipAmout;
                 B_Reloading = false;
+                OnReload(false, 0);
             }
         }
 

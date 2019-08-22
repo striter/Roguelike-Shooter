@@ -967,7 +967,7 @@ MonoBehaviour:
   I_DefaultArmor: 50
   F_MovementSpeed: 3
   F_AttackSpread: 0
-  TESTWEAPON1: 5001
+  TESTWEAPON1: 6001
   TESTWEAPON2: 4001
 --- !u!114 &114158670332917712
 MonoBehaviour:

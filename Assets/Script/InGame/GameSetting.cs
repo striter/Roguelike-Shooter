@@ -5,6 +5,7 @@ using System;
 using TTiles;
 using TPhysics;
 using System.Linq;
+using GameSetting_Action;
 #pragma warning disable 0649
 namespace GameSetting
 {
@@ -453,14 +454,15 @@ namespace GameSetting
     public class DamageDeliverInfo
     {
         public int I_IdentiyID { get; private set; } = IdentificationManager.I_DamageIdentityID();
-        public int I_SourceID { get; private set; } 
-        public float m_DamageMultiply { get; private set; }
-        public float m_DamageAdditive { get; private set; }
-        public List<int> m_BuffAplly { get; private set; }
-        public static DamageDeliverInfo Default(int sourceID) => new DamageDeliverInfo() { I_SourceID = sourceID, m_DamageMultiply = 0f, m_DamageAdditive = 0f, m_BuffAplly = new List<int>() };
+        public int I_SourceID { get; private set; } = -1;
+        public float m_DamageMultiply { get; private set; } = 0;
+        public float m_DamageAdditive { get; private set; } = 0;
+        public List<int> m_BuffAplly { get; private set; } = new List<int>();
+        public static DamageDeliverInfo Default(int sourceID) => new DamageDeliverInfo() { I_SourceID = sourceID, m_DamageMultiply = 0f, m_DamageAdditive = 0f };
         public static DamageDeliverInfo BuffInfo(int sourceID, int buffApply) => new DamageDeliverInfo() { I_SourceID = sourceID, m_DamageMultiply = 0f, m_DamageAdditive = 0f, m_BuffAplly =new List<int>() { buffApply } };
-        public static DamageDeliverInfo DamageInfo(int sourceID, float _damageEnhanceMultiply, float _damageAdditive) => new DamageDeliverInfo() { I_SourceID = sourceID, m_DamageMultiply = _damageEnhanceMultiply, m_DamageAdditive = _damageAdditive, m_BuffAplly = new List<int>() };
-        public static DamageDeliverInfo EquipmentInfo(int sourceID, float _damageAdditive, int buffIndex) => new DamageDeliverInfo() { I_SourceID = sourceID, m_DamageMultiply = 0f, m_DamageAdditive = _damageAdditive, m_BuffAplly = buffIndex == -1 ? new List<int>() : new List<int> { buffIndex } };
+        public static DamageDeliverInfo DamageInfo(int sourceID, float _damageEnhanceMultiply) => new DamageDeliverInfo() { I_SourceID = sourceID, m_DamageMultiply = _damageEnhanceMultiply};
+        public static DamageDeliverInfo EquipmentInfo(int sourceID, float _damageAdditive, int buffIndex) => new DamageDeliverInfo() { I_SourceID = sourceID, m_DamageMultiply = 0f, m_DamageAdditive = _damageAdditive, m_BuffAplly = buffIndex == -1 ? new List<int>() : new List<int> { buffIndex },  };
+        public static DamageDeliverInfo PlayerDamageInfo(int sourceID, float _damageEnhanceMultiply, float _damageAdditive) =>new DamageDeliverInfo() { I_SourceID = sourceID, m_DamageMultiply = _damageEnhanceMultiply, m_DamageAdditive = _damageAdditive, };
     }
     #endregion
 
@@ -484,7 +486,6 @@ namespace GameSetting
 
         float f_stunCheck = 0;
         public bool B_Stunned => f_stunCheck > 0;
-
         bool damageOverride = false;
         DamageDeliverInfo m_DamageBuffOverride;
         public void AddDamageOverride(DamageDeliverInfo _damageOverride)
@@ -492,7 +493,8 @@ namespace GameSetting
             damageOverride = true;
             m_DamageBuffOverride = _damageOverride;
         }
-        public virtual DamageDeliverInfo GetDamageBuffInfo() => damageOverride ? m_DamageBuffOverride:DamageDeliverInfo.DamageInfo(m_Entity.I_EntityID ,F_DamageMultiply, 0f);
+
+        public virtual DamageDeliverInfo GetDamageBuffInfo() => damageOverride ? m_DamageBuffOverride:DamageDeliverInfo.DamageInfo(m_Entity.I_EntityID ,F_DamageMultiply);
         Func<DamageInfo, bool> OnReceiveDamage;
         Action OnInfoChange;
         public EntityInfoManager(EntityBase _attacher,Func<DamageInfo, bool> _OnReceiveDamage,Action _OnInfoChange)
@@ -517,7 +519,7 @@ namespace GameSetting
 
             if (B_Stunned) f_stunCheck -= deltaTime;
         }
-        protected void AddExpire(ExpireBase expire)
+        protected virtual void AddExpire(ExpireBase expire)
         {
             Debug.Log("Add Expire:"+expire.m_Index);
             m_Expires.Add(expire);
@@ -645,7 +647,7 @@ namespace GameSetting
             if (f_expireCheck <= 0)
                 OnExpired(this);
         }
-        public void ForceExpire()=>OnExpired(this);
+        protected void ForceExpire()=>OnExpired(this);
     }
 
 
@@ -701,17 +703,23 @@ namespace GameSetting
         protected float F_ClipMultiply { get; private set; } = 1f;
         public int I_ClipAmount(int baseClipAmount) => (int)(((B_OneOverride ? 1 : baseClipAmount) + I_ClipAdditive) * F_ClipMultiply);
         protected float F_DamageAdditive = 0f;
+        protected Dictionary<int, List<ActionAfterFire>> m_AfterFire = new Dictionary<int, List<ActionAfterFire>>();
         EntityPlayerBase m_Player;
         public PlayerInfoManager(EntityPlayerBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnInfoChange) : base(_attacher, _OnReceiveDamage, _OnInfoChange)
         {
             m_Player = _attacher;
             F_ActionAmount = GameConst.F_MaxActionAmount;
+        }
+        public override void OnActivate()
+        {
+            base.OnActivate();
             TBroadCaster<enum_BC_GameStatusChanged>.Add<DamageDeliverInfo, EntityBase, float>(enum_BC_GameStatusChanged.OnEntityDamage, OnEntityApplyDamage);
         }
         public override void OnDeactivate()
         {
             base.OnDeactivate();
             TBroadCaster<enum_BC_GameStatusChanged>.Remove<DamageDeliverInfo, EntityBase, float>(enum_BC_GameStatusChanged.OnEntityDamage, OnEntityApplyDamage);
+            m_AfterFire.Clear();
         }
         protected override void OnResetInfo()
         {
@@ -722,9 +730,7 @@ namespace GameSetting
             F_ClipMultiply = 1f;
             F_RecoilMultiply = 1f;
             F_ProjectileSpeedMuiltiply = 1f;
-
-            if (F_RecoilMultiply < 0)
-                F_RecoilMultiply = 0;
+            
         }
         protected override void OnSetExpireInfo(ExpireBase expire)
         {
@@ -739,9 +745,24 @@ namespace GameSetting
             F_ClipMultiply += action.F_ClipMultiply;
             B_OneOverride |= action.B_ClipOverride;
             I_ClipAdditive += action.I_ClipAdditive;
-
             if (F_RecoilMultiply < 0)
                 F_RecoilMultiply = 0;
+        }
+        public override DamageDeliverInfo GetDamageBuffInfo()
+        {
+            InfoChange();
+            Debug.Log(F_DamageMultiply);
+            DamageDeliverInfo info = DamageDeliverInfo.PlayerDamageInfo(m_Entity.I_EntityID, F_DamageMultiply, F_DamageAdditive);
+            m_ActionEquiping.Traversal((ActionBase action) => {
+                action.OnAfterFire();
+                if (action.m_ExpireType == enum_ActionExpireType.AfterFire)
+                {
+                    if (!m_AfterFire.ContainsKey(info.I_IdentiyID))
+                        m_AfterFire.Add(info.I_IdentiyID,new List<ActionAfterFire>());
+                    m_AfterFire[info.I_IdentiyID].Add(action as ActionAfterFire);
+                }
+            }, true);
+            return info;
         }
         public bool TryUseAction(int index)
         {
@@ -749,9 +770,10 @@ namespace GameSetting
             m_ActionEquiping.Traversal((ActionBase action) => { action.OnAddActionElse(m_Player,targetAction.m_Index); });
             AddExpire(targetAction);
             m_ActionEquiping.Add(targetAction);
-            targetAction.ActionUse(m_Player);
+            targetAction.OnActionUse(m_Player);
             return true;
         }
+
         protected override void OnExpireElapsed(ExpireBase expire)
         {
             base.OnExpireElapsed(expire);
@@ -760,24 +782,29 @@ namespace GameSetting
                 m_ActionEquiping.Remove(action);
         }
 
-        public override DamageDeliverInfo GetDamageBuffInfo()
-        {
-            InfoChange();
-            DamageDeliverInfo info= DamageDeliverInfo.DamageInfo(m_Entity.I_EntityID, F_DamageMultiply, F_DamageAdditive);
-            m_ActionEquiping.Traversal((ActionBase action) => { action.OnFireIdentity(info.I_IdentiyID); }, true);
-            return info;
+        public void OnReloadFinish() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnReloadFinish(m_Player); });
+        public void OnBattleFinished() {
+            m_ActionEquiping.Traversal((ActionBase action) => {action.OnAfterBattle(); }, true);
+            m_AfterFire.Clear();
         }
 
-        public void OnBattleFinished() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnBattleFinished(); },true);
         void OnEntityApplyDamage(DamageDeliverInfo damageInfo, EntityBase damageEntity, float amountApply)
         {
+            if (m_AfterFire.ContainsKey(damageInfo.I_IdentiyID))
+            {
+                m_AfterFire[damageInfo.I_IdentiyID].Traversal((ActionAfterFire action) => {
+                    if (action.OnActionHitEntity(m_Player, damageEntity))
+                        m_AfterFire[damageInfo.I_IdentiyID].Remove(action);
+                        },true);
+            }
+
             if (damageInfo.I_SourceID == m_Player.I_EntityID)
             {
-                m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDemage(damageInfo.I_IdentiyID,damageInfo.I_SourceID, damageEntity, amountApply); });
+                m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDemage(damageInfo.I_SourceID, damageEntity, amountApply); });
                 AddActionAmount(GameExpression.F_ActionAmountReceive(amountApply));
             }
             else if (damageEntity.I_EntityID == m_Player.I_EntityID)
-                m_ActionEquiping.Traversal((ActionBase action) => { action.OnReceiveDamage(damageInfo.I_SourceID, m_Player, amountApply); });
+                m_ActionEquiping.Traversal((ActionBase action) => { action.OnReceiveDamage(damageInfo.I_SourceID, m_Player, amountApply);  });
         }
 
 
@@ -789,60 +816,6 @@ namespace GameSetting
         }
     }
 
-    public class ActionBase : ExpireBase
-    {
-        public enum_ActionLevel m_Level { get; private set; } = enum_ActionLevel.Invalid;
-        public virtual int I_ActionCost => -1;
-        public virtual bool B_ActionAble => true;
-        public virtual enum_ActionExpireType m_ExpireType => enum_ActionExpireType.Invalid;
-        public virtual float GetValue1(EntityPlayerBase _actionEntity) => 0;
-        public virtual float GetValue2(EntityPlayerBase _actionEntity) => 0;
-        public virtual float GetValue3(EntityPlayerBase _actionEntity) => 0;
-        public virtual float F_DamageAdditive(EntityPlayerBase _actionEntity) => 0;
-        public virtual float F_RecoilMultiplyAdditive(EntityPlayerBase _actionEntity) => 0;
-        public virtual float F_ProjectileSpeedMultiply => 0;
-        public virtual bool B_ClipOverride => false;
-        public virtual int I_ClipAdditive => 0;
-        public virtual float F_ClipMultiply => 0;
-        public ActionBase(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired, float _expireDuration = 0) : base(_expireDuration, _OnActionExpired)
-        {
-            m_Level = _level;
-            if (m_ExpireType == enum_ActionExpireType.Invalid)
-                Debug.LogError("Override Type Please!");
-        }
-        public void ActionUse(EntityPlayerBase _actionEntity)
-        {
-            OnActionUse(_actionEntity);
-            if (m_ExpireType == enum_ActionExpireType.AfterUse)
-                ForceExpire();
-        }
-        public void OnBattleFinished()
-        {
-            if (m_ExpireType == enum_ActionExpireType.AfterBattle)
-                ForceExpire();
-        }
-        public void OnFireIdentity(int index)
-        {
-            OnAfterFire(index);
-            if (m_ExpireType == enum_ActionExpireType.AfterFire)
-                ForceExpire();
-        }
-        public virtual void OnAfterFire(int index)
-        {
-
-        }
-        protected virtual void OnActionUse(EntityPlayerBase _actionEntity) {}
-        public virtual void OnAddActionElse(EntityPlayerBase _actionEntity, float actionAmount) { }
-        public virtual void OnReceiveDamage(int applier, EntityPlayerBase receiver, float amount) { }
-        public virtual void OnDealtDemage(int damageID,int applier, EntityBase receiver, float amount){ }
-
-        public bool B_Upgradable => m_Level < enum_ActionLevel.L3;
-        public void Upgrade()
-        {
-            if (m_Level < enum_ActionLevel.L3)
-                m_Level++;
-        }
-    }
     #endregion
     #region Physics
     public static class HitCheckDetect_Extend

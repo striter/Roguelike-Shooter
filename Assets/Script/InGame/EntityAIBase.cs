@@ -42,7 +42,7 @@ public class EntityAIBase : EntityBase {
     }
     protected override void OnDead()
     {
-        m_AI.Deactivate();
+        m_AI.OnDeactivate();
         if (E_AnimatorIndex !=  enum_EnermyAnim.Invalid)
             m_Animator.OnDead();
         base.OnDead();
@@ -120,6 +120,7 @@ public class EntityAIBase : EntityBase {
         public void OnDead()
         {
             m_Animator.SetTrigger(HS_T_Dead);
+            m_Animator.fireEvents = false;
         }
     }
     #region AI
@@ -206,7 +207,7 @@ public class EntityAIBase : EntityBase {
         {
             m_Agent.speed = m_Info.F_MovementSpeed;
         }
-        public void Deactivate()
+        public void OnDeactivate()
         {
             B_AgentEnabled = false;
             m_Weapon.OnDeactivate();

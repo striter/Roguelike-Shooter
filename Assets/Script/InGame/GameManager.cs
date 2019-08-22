@@ -1,4 +1,5 @@
 ﻿using GameSetting;
+using GameSetting_Action;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -31,6 +32,8 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     public int V_TestIndicatorIndex = 50002;
     public int B_TestBuffIndex = 1;
     public int F5_TestActionIndex = 10001;
+    public int F6_TestActionIndex = 10001;
+    public int F7_TestActionIndex = 10001;
     public bool B_AdditionalLight = true;
     void Update()
     {
@@ -77,6 +80,10 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
 
         if (Input.GetKeyDown(KeyCode.F5))
             (m_LocalPlayer as EntityPlayerBase).TestUseAction(F5_TestActionIndex);
+        if (Input.GetKeyDown(KeyCode.F6))
+            (m_LocalPlayer as EntityPlayerBase).TestUseAction(F6_TestActionIndex);
+        if (Input.GetKeyDown(KeyCode.F7))
+            (m_LocalPlayer as EntityPlayerBase).TestUseAction(F7_TestActionIndex);
 
         UIManager.instance.transform.Find("Test/SeedTest").GetComponent<UnityEngine.UI.Text>().text = m_SeedString;
 
@@ -429,7 +436,7 @@ public static class DataManager
     }
 
     static Dictionary<int,ActionBase> m_AllActions=new Dictionary<int, ActionBase>();
-    static void InitActions()=> TReflection.GetAllInheritClasses((Type type,ActionBase action)=> { m_AllActions.Add(action.m_Index, TReflection.CreateInstance<ActionBase>(type,enum_ActionLevel.Invalid,null)); }, enum_ActionLevel.Invalid,null);
+    static void InitActions()=> TReflection.GetAllInheritClasses((Type type,ActionBase action)=> { if(action.m_Index>0) m_AllActions.Add(action.m_Index, TReflection.CreateInstance<ActionBase>(type,enum_ActionLevel.Invalid,null)); }, enum_ActionLevel.Invalid,null);
     public static ActionBase GetAction(int index,enum_ActionLevel level,Action<ExpireBase> OnExpired)
     {
         if (!m_AllActions.ContainsKey(index))
