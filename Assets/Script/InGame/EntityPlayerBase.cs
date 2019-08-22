@@ -211,6 +211,7 @@ public class EntityPlayerBase : EntityBase {
 
     public T OnAcquireEquipment<T>(int actionIndex, Func<DamageDeliverInfo> OnDamageBuff) where T:EquipmentBase
     {
+        OnMainButtonDown(false);
         m_Equipment = EquipmentBase.AcquireEquipment(actionIndex*10, this, tf_WeaponHoldLeft, OnDamageBuff, OnDead);
         return m_Equipment as T;
     }

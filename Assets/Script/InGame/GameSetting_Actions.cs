@@ -173,7 +173,7 @@ namespace GameSetting_Action
     public class ActionAfterFire : ActionBase
     {
         public override enum_ActionExpireType m_ExpireType => enum_ActionExpireType.AfterFire;
-        public override void OnAfterBattle() => ForceExpire();
+        public override void OnAfterFire() => ForceExpire();
         public virtual bool OnActionHitEntity(EntityPlayerBase _actionEntity, EntityBase _targetEntity) { return true; }
         public ActionAfterFire(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
     }

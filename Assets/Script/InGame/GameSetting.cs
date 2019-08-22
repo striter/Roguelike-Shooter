@@ -751,7 +751,6 @@ namespace GameSetting
         public override DamageDeliverInfo GetDamageBuffInfo()
         {
             InfoChange();
-            Debug.Log(F_DamageMultiply);
             DamageDeliverInfo info = DamageDeliverInfo.PlayerDamageInfo(m_Entity.I_EntityID, F_DamageMultiply, F_DamageAdditive);
             m_ActionEquiping.Traversal((ActionBase action) => {
                 action.OnAfterFire();
