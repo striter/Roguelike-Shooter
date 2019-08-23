@@ -188,7 +188,7 @@ namespace GameSetting
 
     public enum enum_ActionLevel { Invalid=-1, L1=1,L2=2,L3=3, }
 
-    public enum enum_ActionExpireType { Invalid = -1, AfterDuration = 1, AfterUse =2  ,AfterFire=3 ,AfterBattle=4, }
+    public enum enum_ActionExpireType { Invalid = -1, AfterDuration = 1, AfterUse =2  ,AfterFire=3 ,AfterBattle=4,AfterWeaponSwitch=5, }
 
     public enum enum_PlayerWeapon
     {
@@ -727,7 +727,7 @@ namespace GameSetting
         public bool TryUseAction(int index)
         {
             ActionBase targetAction = DataManager.CreateAction(index, enum_ActionLevel.L3, OnExpireElapsed);
-            m_ActionEquiping.Traversal((ActionBase action) => { action.OnAddActionElse(m_Player, targetAction.m_Index); });
+            m_ActionEquiping.Traversal((ActionBase action) => { action.OnAddActionElse(targetAction.m_Index); });
             AddExpire(targetAction);
             m_ActionEquiping.Add(targetAction);
             targetAction.OnActionUse(m_Player);
@@ -751,8 +751,8 @@ namespace GameSetting
             if (action == null)
                 return;
 
-            F_DamageAdditive += action.F_DamageAdditive(m_Player);
-            F_RecoilMultiply += action.F_RecoilMultiplyAdditive(m_Player);
+            F_DamageAdditive += action.F_DamageAdditive;
+            F_RecoilMultiply += action.F_RecoilMultiplyAdditive;
             F_ProjectileSpeedMuiltiply += action.F_ProjectileSpeedMultiply;
             F_ClipMultiply += action.F_ClipMultiply;
             B_OneOverride |= action.B_ClipOverride;
@@ -780,7 +780,7 @@ namespace GameSetting
                 m_ActionEquiping.Remove(action);
         }
 
-        public void OnReloadFinish() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnReloadFinish(m_Player); });
+        public void OnReloadFinish() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnReloadFinish(); });
         public void OnBattleFinished() {
             m_ActionEquiping.Traversal((ActionBase action) => {action.OnAfterBattle(); }, true);
             m_AfterFire.Clear();
@@ -788,15 +788,15 @@ namespace GameSetting
 
         void OnEntityApplyDamage(DamageDeliverInfo damageInfo, EntityBase damageEntity, float amountApply)
         {
-            m_AfterFire.Traversal((ActionAfterFire action) => {if (action.OnActionHitEntity(damageInfo.I_IdentiyID,m_Player, damageEntity))  m_AfterFire.Remove(action); }, true);
+            m_AfterFire.Traversal((ActionAfterFire action) => {if (action.OnActionHitEntity(damageInfo.I_IdentiyID, damageEntity))  m_AfterFire.Remove(action); }, true);
 
             if (damageInfo.I_SourceID == m_Player.I_EntityID)
             {
-                m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDemage(damageInfo.I_SourceID, damageEntity, amountApply); });
+                m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDemage( damageEntity, amountApply); });
                 AddActionAmount(GameExpression.F_ActionAmountReceive(amountApply));
             }
             else if (damageEntity.I_EntityID == m_Player.I_EntityID)
-                m_ActionEquiping.Traversal((ActionBase action) => { action.OnReceiveDamage(damageInfo.I_SourceID, m_Player, amountApply);  });
+                m_ActionEquiping.Traversal((ActionBase action) => { action.OnReceiveDamage(damageInfo.I_SourceID, amountApply);  });
         }
         #endregion
     }
