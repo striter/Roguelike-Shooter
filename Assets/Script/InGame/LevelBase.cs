@@ -25,21 +25,23 @@ public class LevelBase : MonoBehaviour {
     List<int> m_IndexItemMain=new List<int>();
     List<int> t_IndexTemp = new List<int>();
     Dictionary<enum_LevelItemType, List<LevelItemBase>> m_AllItemPrefabs = new Dictionary<enum_LevelItemType, List<LevelItemBase>>();
+    public int I_InnerHalfLength { get; private set; }
+    public int I_OuterHalfLength { get; private set; }
     public Dictionary<LevelItemBase,int> GenerateTileItems(SLevelGenerate _innerData,SLevelGenerate _outerData, Dictionary<enum_LevelItemType, List<LevelItemBase>> allItemPrefabs, enum_TileType _levelType, System.Random _seed, bool showPortal)
     {
         m_AllItemPrefabs = allItemPrefabs;
         m_seed = _seed;
         m_levelType = _levelType;
 
-        int innerLength = _innerData.m_Length.RandomRangeInt(m_seed);
-        int outerLength = _outerData.m_Length.RandomRangeInt(m_seed);
-        outerLength = (innerLength + outerLength) % 2 == 0 ? outerLength+1 : outerLength;
-        int totalRadius = innerLength + outerLength;
+        I_InnerHalfLength = _innerData.m_Length.RandomRangeInt(m_seed);
+        I_OuterHalfLength = _outerData.m_Length.RandomRangeInt(m_seed);
+        I_OuterHalfLength = (I_InnerHalfLength + I_OuterHalfLength) % 2 == 0 ? I_OuterHalfLength + 1 : I_OuterHalfLength;
+        int totalRadius = I_InnerHalfLength + I_OuterHalfLength;
         tf_Model.localScale = Vector3.one * totalRadius*2;
         //Create Data
         int index = 0;
         TileAxis origin = new TileAxis(-totalRadius/2 , -totalRadius/2 );
-        int borderLength = innerLength/2;
+        int borderLength = I_InnerHalfLength / 2;
         for (int i = 0; i < totalRadius; i++)
         {
             for (int j = 0; j < totalRadius; j++)
@@ -78,7 +80,6 @@ public class LevelBase : MonoBehaviour {
 
         m_IndexItemMain.AddRange(m_IndexBorder);
         Dictionary<LevelItemBase, int> itemCountDic = new Dictionary<LevelItemBase, int>();
-        itemCountDic.Add(m_AllItemPrefabs[enum_LevelItemType.Portal][0], 1);
         for (int i = 0; i < m_IndexItemMain.Count; i++)
         {
             LevelTileItem main = m_AllTiles[m_IndexItemMain[i]] as LevelTileItem;
@@ -104,9 +105,7 @@ public class LevelBase : MonoBehaviour {
             return;
 
         LevelTilePortal portal = m_AllTiles[m_PortalIndex] as LevelTilePortal;
-        LevelItemBase portalItem = ObjectManager.SpawnLevelItem(m_AllItemPrefabs[ enum_LevelItemType.Portal][portal.m_LevelItemListIndex],tf_LevelItem,portal.m_Offset);
-        portalItem.Init(this,portal.m_ItemDirection);
-        portalItem.GetComponentInChildren<InteractPortal>().InitPortal(OnPortalInteracted);
+        ObjectManager.SpawnPortal(EnviormentManager.NavMeshPosition(portal.m_Offset)).Play(OnPortalInteracted);
     }
 
     void GenerateBorderTile(List<int> borderTiles)
@@ -152,11 +151,11 @@ public class LevelBase : MonoBehaviour {
             m_PortalIndex = -1;
             return;
         }
-        LevelItemBase portalItem = m_AllItemPrefabs[enum_LevelItemType.Portal][styledPrefabIndex];
-        TileAxis startAxis =center+ new TileAxis(-portalItem.m_sizeXAxis / 2, -portalItem.m_sizeYAxis / 2);
+
+        TileAxis startAxis =center+ new TileAxis(-GameConst.I_PortalTileMaxSize / 2, -GameConst.I_PortalTileMaxSize / 2);
         m_PortalIndex = m_IndexEmptyInner.Find(p => m_AllTiles[p].m_TileAxis == startAxis);
         List<int> subIndexes = new List<int>();
-        if (!CheckIndexTileAreaAvailable(m_PortalIndex, portalItem.m_sizeXAxis, portalItem.m_sizeYAxis, ref subIndexes))
+        if (!CheckIndexTileAreaAvailable(m_PortalIndex, GameConst.I_PortalTileMaxSize, GameConst.I_PortalTileMaxSize, ref subIndexes))
             Debug.LogError("WTF?");
         LevelTilePortal portal = new LevelTilePortal(m_AllTiles[m_PortalIndex],subIndexes,styledPrefabIndex);
         m_AllTiles[m_PortalIndex] = portal;
@@ -242,8 +241,8 @@ public class LevelBase : MonoBehaviour {
 
     #endregion
 
-    public Vector3 RandomEmptyTilePosition(System.Random seed, bool isInner = true) => transform.TransformPoint(m_AllTiles[isInner ? m_IndexEmptyInner.RandomItem(seed) : m_IndexEmptyOuter.RandomItem(seed)].m_Offset);
     public Vector3 OffsetToWorldPosition(Vector3 offset) => transform.TransformPoint(offset);
+    public Vector3 RandomEmptyTilePosition(System.Random seed, bool isInner = true) => OffsetToWorldPosition(m_AllTiles[isInner ? m_IndexEmptyInner.RandomItem(seed) : m_IndexEmptyOuter.RandomItem(seed)].m_Offset);
 #if UNITY_EDITOR
 #region Gizmos For Test
     private void OnDrawGizmos()

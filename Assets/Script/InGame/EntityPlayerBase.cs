@@ -41,7 +41,7 @@ public class EntityPlayerBase : EntityBase {
     {
         base.OnSpawn(id, enum_EntityFlag.Player);
         CameraController.Attach(this.transform);
-        TBroadCaster<enum_BC_GameStatusChanged>.Add(enum_BC_GameStatusChanged.OnLevelFinish, OnLevelFinished);
+        TBroadCaster<enum_BC_GameStatusChanged>.Add<Vector3>(enum_BC_GameStatusChanged.OnLevelFinish, OnLevelFinished);
 
         ObtainWeapon(ObjectManager.SpawnWeapon(TESTWEAPON1, this));
         ObtainWeapon(ObjectManager.SpawnWeapon(TESTWEAPON2, this));
@@ -62,7 +62,7 @@ public class EntityPlayerBase : EntityBase {
     {
         base.OnDisable();
         RemoveBinding();
-        TBroadCaster<enum_BC_GameStatusChanged>.Remove(enum_BC_GameStatusChanged.OnLevelFinish, OnLevelFinished);
+        TBroadCaster<enum_BC_GameStatusChanged>.Remove<Vector3>(enum_BC_GameStatusChanged.OnLevelFinish, OnLevelFinished);
     }
     protected override void OnDead()
     {
@@ -227,7 +227,7 @@ public class EntityPlayerBase : EntityBase {
     }
     #endregion
     #region Action
-    void OnLevelFinished()
+    void OnLevelFinished(Vector3 interactPosition)
     {
         m_PlayerInfo.OnBattleFinished();
         m_HealthManager.OnActivate(I_MaxHealth,I_DefaultArmor);

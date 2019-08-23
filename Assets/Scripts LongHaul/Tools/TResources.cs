@@ -18,6 +18,8 @@ public class TResources
         public const string S_Entity = "Entity/";
         public const string S_SFXEffects = "SFX_Effects/";
         public const string S_SFXEquipment = "Equipment/";
+        public const string S_InteractPortal = "Interact/Portal_";
+        public const string S_InteractActionChest = "Interact/ActionChest_Stage";
     }
     
     public static StyleColorData[] GetAllStyleCustomization(enum_Style levelStype) => LoadAll<StyleColorData>(ConstPath.S_StyleCustomization + "/" + levelStype);
@@ -105,7 +107,9 @@ public class TResources
             target = TResources.Instantiate<WeaponBase>(ConstPath.S_PlayerWeapon+"Error");
         }
         return target;
-    } 
+    }
+    public static InteractBase GetInteractPortal(enum_Style portalStyle) => Instantiate<InteractBase>( ConstPath.S_InteractPortal + portalStyle.ToString());
+    public static InteractBase GetInteractActionChest(int stageIndex) => Instantiate<InteractBase>(ConstPath.S_InteractActionChest + stageIndex.ToString());
 
     #region Will Be Replaced By AssetBundle If Needed
     public static T Instantiate<T>(string path, Transform toParent = null) where T : UnityEngine.Object

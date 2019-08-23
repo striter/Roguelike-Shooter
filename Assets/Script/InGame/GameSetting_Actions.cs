@@ -225,7 +225,6 @@ namespace GameSetting_Action
         public ActionAfterBattle_ReloadTrigger(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
     }
     #endregion
-
     #region NormalAction
     public class Action_10001_ArmorAdditive : ActionAfterUse
     {
@@ -488,5 +487,4 @@ namespace GameSetting_Action
         public Action_30006_ReloadDamageMultiply(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
     }
     #endregion
-
 }

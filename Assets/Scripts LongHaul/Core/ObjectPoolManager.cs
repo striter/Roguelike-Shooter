@@ -131,7 +131,7 @@ public class ObjectPoolManager<T,Y> where Y:MonoBehaviour {
             Recycle(identity, ltemp[i]);
         }
     }
-    public static void RecycleAllManagedItems() 
+    public static void RecycleAll() 
     {
         d_ItemInfos.Traversal((T temp, ItemPoolInfo info)=> {
             RecycleAll(temp);

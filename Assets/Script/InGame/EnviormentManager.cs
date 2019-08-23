@@ -13,7 +13,6 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
     public static SBigmapLevelInfo m_currentLevel { get; private set; }
     public SBigmapLevelInfo[,] m_MapLevelInfo { get; private set; }
     public Light m_DirectionalLight { get; protected set; }
-    protected NavMeshDataInstance m_NavMeshData;
     public System.Random m_mainSeed;
     public Action<SBigmapLevelInfo> OnLevelPrepared;
     public Action OnStageFinished;
@@ -26,12 +25,12 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
     protected void Start()
     {
         TBroadCaster<enum_BC_GameStatusChanged>.Add(enum_BC_GameStatusChanged.OnStageStart, OnStageStart);
-        TBroadCaster<enum_BC_GameStatusChanged>.Add(enum_BC_GameStatusChanged.OnLevelFinish, OnLevelFinished);
+        TBroadCaster<enum_BC_GameStatusChanged>.Add<Vector3>(enum_BC_GameStatusChanged.OnLevelFinish, OnLevelFinished);
     }
     protected void OnDestroy()
     {
         TBroadCaster<enum_BC_GameStatusChanged>.Remove(enum_BC_GameStatusChanged.OnStageStart, OnStageStart);
-        TBroadCaster<enum_BC_GameStatusChanged>.Remove(enum_BC_GameStatusChanged.OnLevelFinish, OnLevelFinished);
+        TBroadCaster<enum_BC_GameStatusChanged>.Remove<Vector3>(enum_BC_GameStatusChanged.OnLevelFinish, OnLevelFinished);
     }
     public void GenerateAllEnviorment(enum_Style _LevelStyle,System.Random seed,Action<SBigmapLevelInfo> _OnLevelPrepared,Action _OnStageFinished)
     {
@@ -60,6 +59,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
                 break;
         }
     }
+
     #region Level
     void OnStageStart()
     {
@@ -70,19 +70,14 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
     void OnLevelStart()     //Make Current Level Available (AI Bake)
     {
         ObjectManager.RecycleAllLevelItem();
+        ObjectManager.RecycleAllInteract();
         m_currentLevel.StartLevel();
-        NavMeshBuildSettings setting = NavMesh.GetSettingsByID(0);
-        List<NavMeshBuildSource> sources = new List<NavMeshBuildSource>();
-        NavMeshBuilder.CollectSources(m_currentLevel.m_Level.transform, -1, NavMeshCollectGeometry.PhysicsColliders, 0, new List<NavMeshBuildMarkup>() { }, sources);
-        Bounds bound = new Bounds(Vector3.zero, new Vector3(100, 20, 100));
-        NavMeshData data = NavMeshBuilder.BuildNavMeshData(setting, sources, bound, Vector3.zero, Quaternion.identity);
-        NavMesh.RemoveNavMeshData(m_NavMeshData);
-        m_NavMeshData= NavMesh.AddNavMeshData(data);
+        BuildNavMeshData(m_currentLevel.m_Level);
         OnLevelPrepared(m_currentLevel);
         m_currentLevel.SetTileLocking(enum_TileLocking.Unlocked);
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.LevelStatusChange, m_MapLevelInfo, m_currentLevel.m_TileAxis);
     }
-    
+
     public void OnChangeLevel(TileAxis targetAxis)
     {
         if (m_currentLevel.m_TileAxis == targetAxis)
@@ -93,24 +88,27 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         OnLevelStart();
     }
 
-    void OnLevelFinished()
+    void OnLevelFinished(Vector3 chestSpawnPos)
     {
         foreach (enum_TileDirection direction in m_currentLevel.m_Connections.Keys)     //Set Connected Island Unlockable
         {
             if (m_MapLevelInfo.Get(m_currentLevel.m_Connections[direction])!=null)
                 m_MapLevelInfo.Get(m_currentLevel.m_Connections[direction]).SetTileLocking(enum_TileLocking.Unlockable);
         }
-        
-        m_currentLevel.m_Level.ShowPortal(OnStageFinished);
+
+        //Generate Interacts
+        switch (m_currentLevel.m_TileType)
+        {
+            case enum_TileType.End:
+                m_currentLevel.m_Level.ShowPortal(OnStageFinished);
+                break;
+            case enum_TileType.Battle:
+            case enum_TileType.Start:
+                ObjectManager.SpawnChest(NavMeshPosition(chestSpawnPos,false)).Play();
+                break;
+        }
 
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.LevelStatusChange, m_MapLevelInfo, m_currentLevel.m_TileAxis);
-    }
-    static NavMeshHit sampleHit;
-    public static Vector3 NavMeshPosition(Vector3 samplePosition)
-    {
-        if (NavMesh.SamplePosition(samplePosition, out sampleHit, 20, -1))
-            return sampleHit.position;
-        return samplePosition;
     }
     #endregion
     #region BigMap
@@ -230,6 +228,29 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         
         if (tileEnd.m_TileType == enum_TileType.End)       //Add Special Place For Portal To Generate
             tileEnd.m_Connections.Add(directionConnection, new TileAxis(-1,-1));
+    }
+    #endregion
+    #region Navigation
+    protected NavMeshDataInstance m_NavMeshDataEntity, m_NavMeshDataInteract;
+    static NavMeshHit sampleHit;
+    public static Vector3 NavMeshPosition(Vector3 samplePosition, bool maskEntity = true)
+    {
+        if (NavMesh.SamplePosition(samplePosition, out sampleHit, 20, 1 << (maskEntity ? 0 : 3)))
+            return sampleHit.position;
+        return samplePosition;
+    }
+
+    void BuildNavMeshData(LevelBase itemSetLevel)
+    {
+        List<NavMeshBuildSource> sources = new List<NavMeshBuildSource>();
+        Bounds bound = new Bounds(Vector3.zero, new Vector3(itemSetLevel.I_InnerHalfLength * 2, 2, itemSetLevel.I_InnerHalfLength * 2));
+        NavMeshBuilder.CollectSources(itemSetLevel.transform, -1, NavMeshCollectGeometry.PhysicsColliders, 0, new List<NavMeshBuildMarkup>() { }, sources);
+        NavMesh.RemoveNavMeshData(m_NavMeshDataEntity);
+        m_NavMeshDataEntity = NavMesh.AddNavMeshData(NavMeshBuilder.BuildNavMeshData(NavMesh.GetSettingsByIndex(0), sources, bound, Vector3.zero, itemSetLevel.transform.rotation));
+
+        NavMeshBuilder.CollectSources(itemSetLevel.transform, -1, NavMeshCollectGeometry.RenderMeshes, 3, new List<NavMeshBuildMarkup>() { }, sources);
+        NavMesh.RemoveNavMeshData(m_NavMeshDataInteract);
+        m_NavMeshDataInteract = NavMesh.AddNavMeshData(NavMeshBuilder.BuildNavMeshData(NavMesh.GetSettingsByIndex(1), sources, bound, Vector3.zero, itemSetLevel.transform.rotation));
     }
     #endregion
 }

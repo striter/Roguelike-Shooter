@@ -139,9 +139,8 @@ public class TBroadCaster<TEnum>  {      //Message Center  Add / Remove / Trigge
             if (mb.e_type == LocalMessage.enum_MessageType.OneTemplate)
                 removeTarget = mb as LocalMessage<T>;
             if (removeTarget != null && removeTarget.ac_listener == Listener)
-            {
                 break;
-            }
+            removeTarget = null;
         }
 
         if (removeTarget!=null)
@@ -182,9 +181,8 @@ public class TBroadCaster<TEnum>  {      //Message Center  Add / Remove / Trigge
             if (mb.e_type == LocalMessage.enum_MessageType.TowTemplate)
                 removeTarget = mb as LocalMessage<T,Y>;
             if (removeTarget != null && removeTarget.ac_listener == Listener)
-            {
                 break;
-            }
+            removeTarget = null;
         }
 
         if (removeTarget != null)
@@ -225,9 +223,8 @@ public class TBroadCaster<TEnum>  {      //Message Center  Add / Remove / Trigge
             if (mb.e_type == LocalMessage.enum_MessageType.ThreeTemplate)
                 removeTarget = mb as LocalMessage<T, Y,U>;
             if (removeTarget != null && removeTarget.ac_listener == Listener)
-            {
                 break;
-            }
+            removeTarget = null;
         }
 
         if (removeTarget != null)

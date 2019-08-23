@@ -5,7 +5,7 @@ using GameSetting;
 [RequireComponent(typeof(HitCheckDynamic))]
 public class InteractBase : MonoBehaviour {
     public virtual string S_InteractKeyword => "";
-    protected virtual void Init()
+    public virtual void Init()
     {
     }
     public virtual bool TryInteract()

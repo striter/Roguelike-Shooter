@@ -114,7 +114,7 @@ public class EntityAIBase : EntityBase {
         public void OnAttack(bool attack)
         {
             if(attack)
-            m_Animator.SetTrigger(HS_T_Attack);
+                m_Animator.SetTrigger(HS_T_Attack);
             m_Animator.SetBool(HS_B_Attack,attack);
         }
         public void OnDead()

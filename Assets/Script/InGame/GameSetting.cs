@@ -27,7 +27,8 @@ namespace GameSetting
         public const int I_ProjectileSpreadAtDistance = 100;       //Meter,  Bullet Spread In A Circle At End Of This Distance
 
         public const float F_LevelTileSize = 2f;        //Cube Size For Level Tiles
-        
+        public const int I_PortalTileMaxSize = 3;
+
         public const float F_PlayerCameraSmoothParam = 1f;     //Camera Smooth Param For Player .2 is suggested
         public const float F_PlayerFallSpeed = 9.8f;       //Player Fall Speed(Not Acceleration)
 
@@ -62,8 +63,6 @@ namespace GameSetting
         public const int I_SporeManagerContainerStartRandomEnd = 30;      // Start From 0 
         public const int I_SporeManagerAutoSave = 5;      //Per Seconds Auto Save Case Game Crush
         public const int I_SporeManagerHybridMaxLevel = 40;      //Spore Level Equals Won't Hybrid
-        
-        public const float F_IAmmoLineLength = 200;
     }
 
     public static class UIExpression
@@ -161,7 +160,7 @@ namespace GameSetting
 
     public enum enum_TileType { Invalid = -1, Start = 0, Battle = 1, End = 2, Reward = 3, }
 
-    public enum enum_LevelItemType { Invalid = -1, LargeMore, LargeLess, MediumMore, MediumLess, SmallMore, SmallLess, ManmadeMore, ManmadeLess, NoCollisionMore, NoCollisionLess,BorderLinear,BorderOblique,Portal, }
+    public enum enum_LevelItemType { Invalid = -1, LargeMore, LargeLess, MediumMore, MediumLess, SmallMore, SmallLess, ManmadeMore, ManmadeLess, NoCollisionMore, NoCollisionLess,BorderLinear,BorderOblique,Portal,}
 
     public enum enum_LevelTileType { Invaid = -1, Empty, Main,Border, Item, Portal, }
 
@@ -171,7 +170,7 @@ namespace GameSetting
 
     public enum enum_EntityType { Invalid = -1,Hidden=0, Fighter = 1, Shooter_Rookie = 2,Shooter_Veteran=3, AOECaster = 4, Elite = 5 }
 
-    public enum enum_Interaction { Invalid = -1, }      //To Be Continued
+    public enum enum_Interaction { Invalid = -1,Portal=1,ActionChest=2, }      //To Be Continued
 
     public enum enum_TriggerType { Invalid = -1, Single = 1, Auto = 2, Burst = 3, Pull = 4, Store = 5, }
 
@@ -687,14 +686,10 @@ namespace GameSetting
     }
 
         #endregion
-        #region ActionManager
-        public class PlayerInfoManager : EntityInfoManager
+    #region ActionManager
+    public class PlayerInfoManager : EntityInfoManager
     {
-        List<ActionBase> m_ActionStored = new List<ActionBase>();
-        List<ActionBase> m_ActionInPool = new List<ActionBase>();
-        List<ActionBase> m_ActionHodling = new List<ActionBase>();
         List<ActionBase> m_ActionEquiping = new List<ActionBase>();
-
         public float F_ActionAmount { get; private set; } = 0f;
         public float F_RecoilMultiply { get; private set; } = 1f;
         public float F_ProjectileSpeedMuiltiply { get; private set; } = 1f;
@@ -721,6 +716,24 @@ namespace GameSetting
             TBroadCaster<enum_BC_GameStatusChanged>.Remove<DamageDeliverInfo, EntityBase, float>(enum_BC_GameStatusChanged.OnEntityDamage, OnEntityApplyDamage);
             m_AfterFire.Clear();
         }
+
+        public void AddActionAmount(float amount)
+        {
+            F_ActionAmount += amount;
+            if (F_ActionAmount > GameConst.F_MaxActionAmount)
+                F_ActionAmount = GameConst.F_MaxActionAmount;
+        }
+
+        public bool TryUseAction(int index)
+        {
+            ActionBase targetAction = DataManager.CreateAction(index, enum_ActionLevel.L3, OnExpireElapsed);
+            m_ActionEquiping.Traversal((ActionBase action) => { action.OnAddActionElse(m_Player, targetAction.m_Index); });
+            AddExpire(targetAction);
+            m_ActionEquiping.Add(targetAction);
+            targetAction.OnActionUse(m_Player);
+            return true;
+        }
+        #region ActionInfos
         protected override void OnResetInfo()
         {
             base.OnResetInfo();
@@ -730,7 +743,6 @@ namespace GameSetting
             F_ClipMultiply = 1f;
             F_RecoilMultiply = 1f;
             F_ProjectileSpeedMuiltiply = 1f;
-            
         }
         protected override void OnSetExpireInfo(ExpireBase expire)
         {
@@ -760,16 +772,6 @@ namespace GameSetting
             }, true);
             return info;
         }
-        public bool TryUseAction(int index)
-        {
-            ActionBase targetAction = DataManager.GetAction(index, enum_ActionLevel.L3, OnExpireElapsed);
-            m_ActionEquiping.Traversal((ActionBase action) => { action.OnAddActionElse(m_Player,targetAction.m_Index); });
-            AddExpire(targetAction);
-            m_ActionEquiping.Add(targetAction);
-            targetAction.OnActionUse(m_Player);
-            return true;
-        }
-
         protected override void OnExpireElapsed(ExpireBase expire)
         {
             base.OnExpireElapsed(expire);
@@ -796,14 +798,7 @@ namespace GameSetting
             else if (damageEntity.I_EntityID == m_Player.I_EntityID)
                 m_ActionEquiping.Traversal((ActionBase action) => { action.OnReceiveDamage(damageInfo.I_SourceID, m_Player, amountApply);  });
         }
-
-
-        public void AddActionAmount(float amount)
-        {
-            F_ActionAmount += amount;
-            if (F_ActionAmount > GameConst.F_MaxActionAmount)
-                F_ActionAmount = GameConst.F_MaxActionAmount;
-        }
+        #endregion
     }
 
     #endregion

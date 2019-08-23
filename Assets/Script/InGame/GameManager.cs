@@ -120,10 +120,9 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     {
         this.StopAllSingleCoroutines();
         TGameData<CPlayerSave>.Save(m_PlayerInfo);
-
         TBroadCaster<enum_BC_GameStatusChanged>.Remove<EntityBase>(enum_BC_GameStatusChanged.OnEntitySpawn, OnSpawnEntity);
         TBroadCaster<enum_BC_GameStatusChanged>.Remove<EntityBase>(enum_BC_GameStatusChanged.OnEntityRecycle, OnRecycleEntity);
-
+        
     }
     private void Start()
     {
@@ -137,12 +136,11 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
             _GameSeed = DateTime.Now.ToLongTimeString();
 
         EntityPreset();
-        ObjectManager.Preset();
+        ObjectManager.Preset(_levelStyle,LevelManager.I_currentStageIndex);
         LevelManager.StageBegin();
         m_SeedString = _GameSeed;
         m_GameSeed = new System.Random(m_SeedString.GetHashCode());
         m_BattleEntityStyle = _entityStyle;
-        ObjectManager.RegisterLevelBase(TResources.GetLevelBase(_levelStyle));
         EnviormentManager.Instance.GenerateAllEnviorment(_levelStyle, m_GameSeed, OnLevelStart,OnStageFinished);
         m_StyledEnermyEntities = ObjectManager.RegisterAllEntitiesGetEnermyDic(TResources.GetCommonEntities() ,TResources.GetEnermyEntities(m_BattleEntityStyle));
 
@@ -160,13 +158,13 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         if (levelInfo.m_TileLocking == enum_TileLocking.Unlockable&&LevelManager.OnLevelBeginBattle(levelInfo.m_TileType))
             OnBattleStart(LevelManager.m_Difficulty);
         else
-            OnLevelFinished();
+            OnLevelFinished(Vector3.zero);
     }
 
-    //Call Enviorment Manager To Generate Portals Or Show Bigmaps, Then Go Back To OnLevelChange From Enviorment Manager
-    void OnLevelFinished()
+    //Call Enviorment Manager To Generate Interacts And Show Bigmaps, Then Go Back To OnLevelChange From Enviorment Manager
+    void OnLevelFinished(Vector3 spawnInteractPos)
     {
-        TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnLevelFinish);
+        TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnLevelFinish,spawnInteractPos);
     }
 
     void OnStageFinished()
@@ -289,28 +287,28 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         });
         this.StartSingleCoroutine(0, IE_GenerateEnermy(m_EntityGenerating, .1f));
     }
-    void WaveFinished()
-    {
-        TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnWaveFinish);
-        m_CurrentWave++;
-        if (m_CurrentWave >= m_EntityGenerate.Count)
-            OnBattleFinished();
-        else
-            WaveStart();
-    }
     void OnBattleEntityRecycle(EntityBase entity)
     {
         if (!B_Battling|| B_WaveEntityGenerating)
             return;
 
         if (m_FlagEntityCount( enum_EntityFlag.Enermy) <= 0 || (m_CurrentWave < m_EntityGenerate.Count && m_FlagEntityCount(enum_EntityFlag.Enermy) <= GameConst.I_EnermyCountWaveFinish))
-            WaveFinished();
+            WaveFinished(entity.transform.position);
     }
-    void OnBattleFinished()
+    void WaveFinished(Vector3 lastEntityPos)
+    {
+        TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnWaveFinish);
+        m_CurrentWave++;
+        if (m_CurrentWave >= m_EntityGenerate.Count)
+            OnBattleFinished(lastEntityPos);
+        else
+            WaveStart();
+    }
+    void OnBattleFinished(Vector3 lastEntityPos)
     {
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnBattleFinish);
         B_Battling = false;
-        OnLevelFinished();
+        OnLevelFinished(lastEntityPos);
     }
 
     IEnumerator IE_GenerateEnermy(List<int> waveGenerate, float _offset)
@@ -385,6 +383,38 @@ public static class LevelManager
         }
     }
 }
+public static class OptionsManager
+{
+    public static bool B_AdditionalLight = true;
+    public static event Action event_OptionChanged;
+    public static void Init()
+    {
+    }
+    
+    public static void OnOptionChanged()
+    {
+        event_OptionChanged?.Invoke();
+    }
+}
+public static class IdentificationManager
+{
+    static int i_entityIndex = 0;
+    public static int I_EntityID(enum_EntityFlag flag)
+    {
+        i_entityIndex++;
+        if (i_entityIndex == int.MaxValue)
+            i_entityIndex = 0;
+        return i_entityIndex + (int)flag * 100000;
+    }
+    static int i_damageInfoIndex = 0;
+    public static int I_DamageIdentityID()
+    {
+        i_damageInfoIndex++;
+        if (i_damageInfoIndex == int.MaxValue)
+            i_damageInfoIndex = 0;
+        return i_damageInfoIndex;
+    }
+}
 public static class DataManager
 {
     public static void Init()
@@ -396,13 +426,13 @@ public static class DataManager
         InitActions();
     }
 
-    public static SLevelGenerate GetItemGenerateProperties(enum_Style style,enum_LevelGenerateType prefabType,bool isInner)
+    public static SLevelGenerate GetItemGenerateProperties(enum_Style style, enum_LevelGenerateType prefabType, bool isInner)
     {
-        SLevelGenerate generate = Properties<SLevelGenerate>.PropertiesList.Find(p => p.m_LevelStyle == style && p.m_LevelPrefabType == prefabType&&p.m_IsInner==isInner);
-        if (generate.m_LevelStyle == 0 || generate.m_LevelPrefabType == 0||generate.m_ItemGenerate==null)
-            Debug.LogError("Error Properties Found Of Index:" + ((int)style*100+ (int)prefabType*10+(isInner?0:1)).ToString());
+        SLevelGenerate generate = Properties<SLevelGenerate>.PropertiesList.Find(p => p.m_LevelStyle == style && p.m_LevelPrefabType == prefabType && p.m_IsInner == isInner);
+        if (generate.m_LevelStyle == 0 || generate.m_LevelPrefabType == 0 || generate.m_ItemGenerate == null)
+            Debug.LogError("Error Properties Found Of Index:" + ((int)style * 100 + (int)prefabType * 10 + (isInner ? 0 : 1)).ToString());
 
-         return generate;
+        return generate;
     }
 
     public static List<SGenerateEntity> GetEntityGenerateProperties(enum_BattleDifficulty battleDifficulty)
@@ -411,7 +441,7 @@ public static class DataManager
         int waveCount = 1;
         for (int i = 0; i < 10; i++)
         {
-            List<SGenerateEntity> randomItems = Properties<SGenerateEntity>.PropertiesList.FindAll(p => p.m_Difficulty == battleDifficulty&&p.m_waveCount==waveCount);
+            List<SGenerateEntity> randomItems = Properties<SGenerateEntity>.PropertiesList.FindAll(p => p.m_Difficulty == battleDifficulty && p.m_waveCount == waveCount);
             if (randomItems == null || randomItems.Count == 0)
                 break;
             entityList.Add(randomItems.RandomItem());
@@ -422,9 +452,9 @@ public static class DataManager
 
     public static SWeapon GetWeaponProperties(enum_PlayerWeapon type)
     {
-        SWeapon weapon= Properties<SWeapon>.PropertiesList.Find(p => p.m_Weapon == type);
-        if(weapon.m_Weapon==0)
-            Debug.LogError("Error Properties Found Of Index:" +type.ToString()+"|"+((int)type));
+        SWeapon weapon = Properties<SWeapon>.PropertiesList.Find(p => p.m_Weapon == type);
+        if (weapon.m_Weapon == 0)
+            Debug.LogError("Error Properties Found Of Index:" + type.ToString() + "|" + ((int)type));
         return weapon;
     }
     public static SBuff GetEntityBuffProperties(int index)
@@ -435,14 +465,13 @@ public static class DataManager
         return buff;
     }
 
-    static Dictionary<int,ActionBase> m_AllActions=new Dictionary<int, ActionBase>();
-    static void InitActions()=> TReflection.GetAllInheritClasses((Type type,ActionBase action)=> { if(action.m_Index>0) m_AllActions.Add(action.m_Index, TReflection.CreateInstance<ActionBase>(type,enum_ActionLevel.Invalid,null)); }, enum_ActionLevel.Invalid,null);
-    public static ActionBase GetAction(int index,enum_ActionLevel level,Action<ExpireBase> OnExpired)
+    static Dictionary<int, ActionBase> m_AllActions = new Dictionary<int, ActionBase>();
+    static void InitActions() => TReflection.GetAllInheritClasses((Type type, ActionBase action) => { if (action.m_Index > 0) m_AllActions.Add(action.m_Index, TReflection.CreateInstance<ActionBase>(type, enum_ActionLevel.Invalid, null)); }, enum_ActionLevel.Invalid, null);
+    public static ActionBase CreateAction(int index, enum_ActionLevel level, Action<ExpireBase> OnExpired)
     {
         if (!m_AllActions.ContainsKey(index))
             Debug.LogError("Error Action:" + index + " ,Does not exist");
-
-        return TReflection.CreateInstance<ActionBase>(m_AllActions[index].GetType(),level,OnExpired);
+        return TReflection.CreateInstance<ActionBase>(m_AllActions[index].GetType(), level, OnExpired);
     }
 }
 public static class ObjectManager
@@ -457,7 +486,7 @@ public static class ObjectManager
         TF_SFXPlaying = new GameObject("SFX_Playing").transform;
     }
     #region Register
-    public static void Preset()
+    public static void Preset(enum_Style levelStyle,int stageIndex)
     {
         ObjectPoolManager<int, SFXBase>.ClearAll();
         ObjectPoolManager<int, EntityBase>.ClearAll();
@@ -466,28 +495,25 @@ public static class ObjectManager
         ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.ClearAll();
         ObjectPoolManager<int, LevelBase>.ClearAll();
 
+        RegisterLevelBase(TResources.GetLevelBase(levelStyle));
+        RegisterInteractions(levelStyle,stageIndex);
         TResources.GetAllEffectSFX().Traversal((int index, SFXBase target) => {
             ObjectPoolManager<int, SFXBase>.Register(index, target,
             enum_PoolSaveType.DynamicMaxAmount, 1,
             (SFXBase sfx) => { sfx.Init(index); });
         });
-
-        TCommon.TraversalEnum((enum_Interaction type) => {
-            ObjectPoolManager<enum_Interaction, InteractBase>.Register(type, TResources.Instantiate<InteractBase>("Interact/" + type.ToString()),
-            enum_PoolSaveType.DynamicMaxAmount, 1, null);
-        });
     }
-    public static void RegisterLevelBase(LevelBase levelprefab)
+    static void RegisterLevelBase(LevelBase levelprefab)
     {
-        ObjectPoolManager<int, LevelBase>.Register(0,levelprefab, enum_PoolSaveType.DynamicMaxAmount,1,(LevelBase level)=>{ level.Init(); });
+        ObjectPoolManager<int, LevelBase>.Register(0, levelprefab, enum_PoolSaveType.DynamicMaxAmount, 1, (LevelBase level) => { level.Init(); });
     }
     public static void RegisterLevelItem(Dictionary<LevelItemBase, int> registerDic)
     {
         registerDic.Traversal((LevelItemBase item, int count) => { ObjectPoolManager<LevelItemBase, LevelItemBase>.Register(item, GameObject.Instantiate(item), enum_PoolSaveType.StaticMaxAmount, count, null); });
     }
-    public static Dictionary<enum_EntityType, List<int>> RegisterAllEntitiesGetEnermyDic(Dictionary<int,EntityBase> common, Dictionary<int, EntityBase> enermies)
+    public static Dictionary<enum_EntityType, List<int>> RegisterAllEntitiesGetEnermyDic(Dictionary<int, EntityBase> common, Dictionary<int, EntityBase> enermies)
     {
-        common.Traversal((int index, EntityBase entity) =>{
+        common.Traversal((int index, EntityBase entity) => {
             ObjectPoolManager<int, EntityBase>.Register(index, entity, enum_PoolSaveType.DynamicMaxAmount, 1,
                 (EntityBase entityInstantiate) => { entityInstantiate.Init(index); });
         });
@@ -508,9 +534,9 @@ public static class ObjectManager
     #endregion
     #region Spawn/Recycle
     #region Entity
-    public static EntityBase SpawnEntity(int index,Vector3 toPosition,enum_EntityFlag _flag)
+    public static EntityBase SpawnEntity(int index, Vector3 toPosition, enum_EntityFlag _flag)
     {
-        EntityBase entity= ObjectPoolManager<int, EntityBase>.Spawn(index, TF_Entity);
+        EntityBase entity = ObjectPoolManager<int, EntityBase>.Spawn(index, TF_Entity);
         toPosition = EnviormentManager.NavMeshPosition(toPosition);
         entity.transform.position = toPosition;
         entity.OnSpawn(IdentificationManager.I_EntityID(_flag), _flag);
@@ -518,7 +544,7 @@ public static class ObjectManager
         return entity;
     }
 
-    public static void RecycleEntity(int index, EntityBase target)=>ObjectPoolManager<int, EntityBase>.Recycle(index, target);
+    public static void RecycleEntity(int index, EntityBase target) => ObjectPoolManager<int, EntityBase>.Recycle(index, target);
     #endregion
     #region Weapon
     public static WeaponBase SpawnWeapon(enum_PlayerWeapon type, EntityPlayerBase toPlayer)
@@ -531,28 +557,28 @@ public static class ObjectManager
 
         return ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Spawn(type, TF_Entity);
     }
-    public static void RecycleWeapon(enum_PlayerWeapon type, WeaponBase weapon)=>ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Recycle(type,weapon);
+    public static void RecycleWeapon(enum_PlayerWeapon type, WeaponBase weapon) => ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Recycle(type, weapon);
     #endregion
     #region SFX
-    public static T SpawnSFX<T>(int index,Transform attachTo=null) where T:SFXBase
+    public static T SpawnSFX<T>(int index, Transform attachTo = null) where T : SFXBase
     {
-        T sfx = ObjectPoolManager<int, SFXBase>.Spawn(index, attachTo?attachTo: TF_SFXPlaying) as T;
+        T sfx = ObjectPoolManager<int, SFXBase>.Spawn(index, attachTo ? attachTo : TF_SFXPlaying) as T;
         if (sfx == null)
             Debug.LogError("SFX Spawn Error! Invalid SFX Type:" + typeof(T) + ",Index:" + index);
         return sfx;
     }
 
-    public static T SpawnParticles<T>(int index, Vector3 position, Vector3 normal, Transform attachTo = null) where T:SFXParticles
+    public static T SpawnParticles<T>(int index, Vector3 position, Vector3 normal, Transform attachTo = null) where T : SFXParticles
     {
-        T sfx = SpawnSFX<T>(index,attachTo);
+        T sfx = SpawnSFX<T>(index, attachTo);
         sfx.transform.position = position;
         sfx.transform.rotation = Quaternion.LookRotation(normal);
         return sfx;
     }
-    public static SFXIndicator SpawnIndicator(int index, Vector3 position, Vector3 normal, Transform attachTo = null)=> SpawnParticles<SFXIndicator>(index, position, normal, attachTo);
+    public static SFXIndicator SpawnIndicator(int index, Vector3 position, Vector3 normal, Transform attachTo = null) => SpawnParticles<SFXIndicator>(index, position, normal, attachTo);
     public static SFXBuffEffect SpawnBuffEffect(int index, EntityBase attachTo) => SpawnParticles<SFXBuffEffect>(index, attachTo.transform.position, attachTo.transform.forward, attachTo.transform);
-    
-    public static T SpawnEquipment<T>(int weaponIndex,Vector3 position,Vector3 normal, Transform attachTo=null) where T:SFXBase
+
+    public static T SpawnEquipment<T>(int weaponIndex, Vector3 position, Vector3 normal, Transform attachTo = null) where T : SFXBase
     {
         if (!ObjectPoolManager<int, SFXBase>.Registed(weaponIndex))
             ObjectPoolManager<int, SFXBase>.Register(weaponIndex, TResources.GetDamageSource(weaponIndex), enum_PoolSaveType.DynamicMaxAmount, 1, (SFXBase sfx) => { sfx.Init(weaponIndex); });
@@ -574,22 +600,35 @@ public static class ObjectManager
             Debug.LogError("SFX Get Error! Invalid Type:" + typeof(T).ToString() + "|Index:" + weaponIndex);
         return damageSourceInfo;
     }
-    public static void RecycleSFX(int index, SFXBase sfx)=> ObjectPoolManager<int, SFXBase>.Recycle(index, sfx);
+    public static void RecycleSFX(int index, SFXBase sfx) => ObjectPoolManager<int, SFXBase>.Recycle(index, sfx);
     #endregion
-    public static T SpawnInteract<T>(enum_Interaction type, Vector3 toPos) where T:InteractBase
+    #region Interact
+    static void RegisterInteractions(enum_Style portalStyle, int stageIndex)
     {
-        InteractBase sfx = ObjectPoolManager<enum_Interaction, InteractBase>.Spawn(type, TF_Entity);
-        sfx.transform.position = toPos;
-        return sfx as T;
+        ObjectPoolManager<enum_Interaction, InteractBase>.Register( enum_Interaction.Portal,TResources.GetInteractPortal(portalStyle), enum_PoolSaveType.StaticMaxAmount,1,(InteractBase interact)=> { interact.Init(); });
+        ObjectPoolManager<enum_Interaction, InteractBase>.Register(enum_Interaction.ActionChest, TResources.GetInteractActionChest(stageIndex), enum_PoolSaveType.StaticMaxAmount, 1, (InteractBase interact) => { interact.Init(); });
     }
-    public static void RecycleInteract(enum_Interaction type, InteractBase target)=> ObjectPoolManager<enum_Interaction, InteractBase>.Recycle(type, target);
+    public static InteractPortal SpawnPortal(Vector3 toPos)
+    {
+        InteractPortal portal= ObjectPoolManager<enum_Interaction, InteractBase>.Spawn(enum_Interaction.Portal,TF_SFXPlaying) as InteractPortal;
+        portal.transform.position = toPos;
+        return portal;
+    }
+    public static InteractActionChest SpawnChest(Vector3 toPos)
+    {
+        InteractActionChest chest = ObjectPoolManager<enum_Interaction, InteractBase>.Spawn(enum_Interaction.ActionChest, TF_SFXPlaying) as InteractActionChest;
+        chest.transform.position = toPos;
+        return chest;
+    }
+    public static void RecycleAllInteract() => ObjectPoolManager<enum_Interaction, InteractBase>.RecycleAll();
+    #endregion
     #region Level/LevelItem
     public static LevelBase SpawnLevelPrefab(Transform toTrans)
     {
-       return ObjectPoolManager<int, LevelBase>.Spawn(0,toTrans);
+        return ObjectPoolManager<int, LevelBase>.Spawn(0, toTrans);
     }
 
-    public static LevelItemBase SpawnLevelItem(LevelItemBase itemObject,Transform itemParent,Vector3 localPosition)
+    public static LevelItemBase SpawnLevelItem(LevelItemBase itemObject, Transform itemParent, Vector3 localPosition)
     {
         LevelItemBase spawnedItem = ObjectPoolManager<LevelItemBase, LevelItemBase>.Spawn(itemObject, itemParent);
         spawnedItem.transform.localPosition = localPosition;
@@ -597,45 +636,22 @@ public static class ObjectManager
     }
     public static void RecycleAllLevelItem()
     {
-        ObjectPoolManager<LevelItemBase, LevelItemBase>.RecycleAllManagedItems();
+        ObjectPoolManager<LevelItemBase, LevelItemBase>.RecycleAll();
     }
     #endregion
     #endregion
 }
-public static class OptionsManager
+public static class ActionsManager
 {
-    public static bool B_AdditionalLight = true;
-    public static event Action event_OptionChanged;
+    static List<ActionBase> m_ActionStored;
+    static List<ActionBase> m_ActionInPool;
+    static List<ActionBase> m_ActionHodling;
+    
     public static void Init()
     {
-    }
-    
-    public static void OnOptionChanged()
-    {
-        event_OptionChanged?.Invoke();
+        m_ActionStored = new List<ActionBase>();
+        m_ActionInPool = new List<ActionBase>();
+        m_ActionHodling = new List<ActionBase>();
     }
 }
-
-
-#region Identification
-public static class IdentificationManager
-{
-    static int i_entityIndex = 0;
-    public static int I_EntityID(enum_EntityFlag flag)
-    {
-        i_entityIndex++;
-        if (i_entityIndex == int.MaxValue)
-            i_entityIndex = 0;
-        return i_entityIndex + (int)flag * 100000;
-    }
-    static int i_damageInfoIndex = 0;
-    public static int I_DamageIdentityID()
-    {
-        i_damageInfoIndex++;
-        if (i_damageInfoIndex == int.MaxValue)
-            i_damageInfoIndex = 0;
-        return i_damageInfoIndex;
-    }
-}
-#endregion
 #endregion

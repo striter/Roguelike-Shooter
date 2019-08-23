@@ -70,7 +70,7 @@ public class SingletonMono<T>  : MonoBehaviour where T : MonoBehaviour
     }
 }
 
-public class SingleTon<T> where T:new()
+public class SingleTon<T> where T : new()
 {
     private static T instance;
     public static T Instance
