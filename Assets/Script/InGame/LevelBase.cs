@@ -73,7 +73,6 @@ public class LevelBase : MonoBehaviour {
                 index++;
             }
         }
-        GeneratePortalTile(showPortal,TileAxis.Zero, 0);
         GenerateBorderTile(m_IndexBorder);
         GenerateRandomMainTile(_innerData,m_IndexEmptyInner);
         GenerateRandomMainTile(_outerData, m_IndexEmptyOuter);
@@ -98,14 +97,6 @@ public class LevelBase : MonoBehaviour {
             LevelItemBase itemMain = ObjectManager.SpawnLevelItem (m_AllItemPrefabs[main.m_LevelItemType][main.m_LevelItemListIndex], tf_LevelItem, main.m_Offset);
             itemMain.Init(this, main.m_ItemDirection);
         }
-    }
-    public void ShowPortal(Action OnPortalInteracted)
-    {
-        if (m_PortalIndex == -1)
-            return;
-
-        LevelTilePortal portal = m_AllTiles[m_PortalIndex] as LevelTilePortal;
-        ObjectManager.SpawnPortal(EnviormentManager.NavMeshPosition(portal.m_Offset)).Play(OnPortalInteracted);
     }
 
     void GenerateBorderTile(List<int> borderTiles)
@@ -142,25 +133,6 @@ public class LevelBase : MonoBehaviour {
             enum_TileDirection direction = tile1.m_TileAxis.OffsetDirection(tile2.m_TileAxis);
             m_AllTiles[sortedBorder[i]] = new LevelTileBorder(m_AllTiles[sortedBorder[i]], 0, TTiles.TTiles.m_FourDirections.Contains(direction) ? enum_LevelItemType.BorderLinear : enum_LevelItemType.BorderOblique ,direction);
         }
-    }
-
-    void GeneratePortalTile(bool showPortal,TileAxis center,int styledPrefabIndex)
-    {
-        if (!showPortal)
-        {
-            m_PortalIndex = -1;
-            return;
-        }
-
-        TileAxis startAxis =center+ new TileAxis(-GameConst.I_PortalTileMaxSize / 2, -GameConst.I_PortalTileMaxSize / 2);
-        m_PortalIndex = m_IndexEmptyInner.Find(p => m_AllTiles[p].m_TileAxis == startAxis);
-        List<int> subIndexes = new List<int>();
-        if (!CheckIndexTileAreaAvailable(m_PortalIndex, GameConst.I_PortalTileMaxSize, GameConst.I_PortalTileMaxSize, ref subIndexes))
-            Debug.LogError("WTF?");
-        LevelTilePortal portal = new LevelTilePortal(m_AllTiles[m_PortalIndex],subIndexes,styledPrefabIndex);
-        m_AllTiles[m_PortalIndex] = portal;
-        for (int i = 0; i < subIndexes.Count; i++)
-            m_AllTiles[subIndexes[i]] = new LevelTileSub(m_AllTiles[subIndexes[i]], m_PortalIndex);
     }
 
     void GenerateRandomMainTile(SLevelGenerate generate,List<int> emptyTile)

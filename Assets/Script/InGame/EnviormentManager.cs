@@ -88,7 +88,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         OnLevelStart();
     }
 
-    void OnLevelFinished(Vector3 chestSpawnPos)
+    void OnLevelFinished(Vector3 interactSpawnPos)
     {
         foreach (enum_TileDirection direction in m_currentLevel.m_Connections.Keys)     //Set Connected Island Unlockable
         {
@@ -100,11 +100,11 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         switch (m_currentLevel.m_TileType)
         {
             case enum_TileType.End:
-                m_currentLevel.m_Level.ShowPortal(OnStageFinished);
+                ObjectManager.SpawnPortal(NavMeshPosition(interactSpawnPos,false)).Play(OnStageFinished);
                 break;
             case enum_TileType.Battle:
             case enum_TileType.Start:
-                ObjectManager.SpawnChest(NavMeshPosition(chestSpawnPos,false)).Play();
+                ObjectManager.SpawnChest(NavMeshPosition(interactSpawnPos,false)).Play();
                 break;
         }
 

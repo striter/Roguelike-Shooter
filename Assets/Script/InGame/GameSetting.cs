@@ -974,13 +974,7 @@ namespace GameSetting
             E_Occupation = tile.E_Occupation;
         }
     }
-    public class LevelTilePortal : LevelTileItem
-    {
-        public override enum_LevelTileType E_TileType => enum_LevelTileType.Portal;
-        public LevelTilePortal(LevelTile current,List<int> _subTileIndex,int prefabIndex) : base(current, prefabIndex, enum_LevelItemType.Portal, enum_TileDirection.Top,_subTileIndex)
-        {
-        }
-    }
+
     public class LevelTileSub : LevelTile
     {
         public override enum_LevelTileType E_TileType => enum_LevelTileType.Item;
