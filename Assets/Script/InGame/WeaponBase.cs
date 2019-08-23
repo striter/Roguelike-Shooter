@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using GameSetting;
 using System;
+using System.Collections.Generic;
 
 public class WeaponBase : MonoBehaviour {
     public enum_TriggerType E_Trigger = enum_TriggerType.Invalid;
@@ -9,7 +10,8 @@ public class WeaponBase : MonoBehaviour {
 
 
     SWeapon m_WeaponInfo;
-    public int I_AttacherID { get; private set; }
+    List<int> m_WeaponAction;
+    EntityPlayerBase m_Attacher;
     public float F_BaseSpeed { get; private set; }
     public float F_BaseDamage { get; private set; }
     public int I_MuzzleIndex { get; private set; }
@@ -27,7 +29,6 @@ public class WeaponBase : MonoBehaviour {
     public bool B_TriggerActionable() => B_Triggerable && B_Actionable();
     public bool B_Actionable() => !B_Reloading && f_fireCheck <= 0;
 
-    EntityPlayerBase m_Attacher;
     WeaponTrigger m_Trigger = null;
     Action<bool,float> OnReload;
     Action<Vector2> OnFireRecoil;
@@ -69,9 +70,8 @@ public class WeaponBase : MonoBehaviour {
         f_fireCheck = 0;
         m_Trigger.OnDisable();
     }
-    public void Attach(int _attacherID,EntityPlayerBase _attacher,Transform _attachTo,Action<Vector2> _OnFireRecoil,Action<bool,float> _OnReload)
+    public void Attach(EntityPlayerBase _attacher,Transform _attachTo,Action<Vector2> _OnFireRecoil,Action<bool,float> _OnReload)
     {
-        I_AttacherID = _attacherID;
         m_Attacher = _attacher;
         transform.SetParent(_attachTo);
         transform.localPosition = Vector3.zero;
@@ -115,7 +115,7 @@ public class WeaponBase : MonoBehaviour {
         }
 
         if (I_MuzzleIndex != -1)
-            ObjectManager.SpawnParticles<SFXMuzzle>(I_MuzzleIndex, m_Muzzle.position, m_Muzzle.forward).Play(I_AttacherID);
+            ObjectManager.SpawnParticles<SFXMuzzle>(I_MuzzleIndex, m_Muzzle.position, m_Muzzle.forward).Play(m_Attacher.I_EntityID);
 
         I_AmmoLeft--;
         OnFireRecoil?.Invoke(F_Recoil);

@@ -99,12 +99,12 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         //Generate Interacts
         switch (m_currentLevel.m_TileType)
         {
-            case enum_TileType.End:
-                ObjectManager.SpawnPortal(NavMeshPosition(interactSpawnPos,false)).Play(OnStageFinished);
-                break;
             case enum_TileType.Battle:
             case enum_TileType.Start:
-                ObjectManager.SpawnChest(NavMeshPosition(interactSpawnPos,false)).Play();
+                ObjectManager.SpawnChest(NavMeshPosition(interactSpawnPos, false)).Play();
+                break;
+            case enum_TileType.End:
+                ObjectManager.SpawnPortal(NavMeshPosition(interactSpawnPos,false)).Play(OnStageFinished);
                 break;
         }
 
