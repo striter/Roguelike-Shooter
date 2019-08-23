@@ -111,6 +111,7 @@ GameObject:
   - component: {fileID: 4259561799114222}
   - component: {fileID: 136622149296104314}
   - component: {fileID: 114158670332917712}
+  - component: {fileID: 208629087550614118}
   m_Layer: 10
   m_Name: Collider
   m_TagString: Untagged
@@ -189,7 +190,6 @@ GameObject:
   - component: {fileID: 4991228344696976}
   - component: {fileID: 114040939570611316}
   - component: {fileID: 143469235641181466}
-  - component: {fileID: 208563366567023318}
   m_Layer: 14
   m_Name: 0_Player
   m_TagString: Untagged
@@ -1113,16 +1113,16 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1.2, z: 0}
---- !u!208 &208563366567023318
+--- !u!208 &208629087550614118
 NavMeshObstacle:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1333480194626894}
+  m_GameObject: {fileID: 1144568446642610}
   m_Enabled: 1
   serializedVersion: 3
   m_Shape: 0
-  m_Extents: {x: 0.6, y: 1.2, z: 0.6}
+  m_Extents: {x: 0.7, y: 1.2, z: 0.7}
   m_MoveThreshold: 0.1
   m_Carve: 0
   m_CarveOnlyStationary: 1

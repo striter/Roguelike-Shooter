@@ -1027,6 +1027,7 @@ MonoBehaviour:
   I_MaxHealth: 300
   I_DefaultArmor: 0
   F_MovementSpeed: 3
+  F_AttackSpread: 2
   E_EnermyType: 2
   E_AnimatorIndex: 130
   F_AIChaseRange: 26
@@ -1034,15 +1035,14 @@ MonoBehaviour:
   F_AttackDuration:
     start: 2
     length: 1
-  F_AttackSpread: 2
   F_AttackTimes:
     start: 2
     length: 2
   F_AttackRate: 0.33
+  B_BattleCheckObstacle: 0
   F_AttackRotateParam: 1
   I_AttackPreAimPercentage: 50
   B_AttackMove: 1
-  B_SwitchTarget: 0
 --- !u!136 &136817645965296846
 CapsuleCollider:
   m_ObjectHideFlags: 1
@@ -1133,7 +1133,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 1587510289150768}
   m_Enabled: 0
   m_AgentTypeID: 0
-  m_Radius: 0.8
+  m_Radius: 0.9
   m_Speed: 2.5
   m_Acceleration: 8
   avoidancePriority: 50
@@ -1155,7 +1155,7 @@ NavMeshObstacle:
   m_Enabled: 0
   serializedVersion: 3
   m_Shape: 0
-  m_Extents: {x: 0.8, y: 1.5, z: 0.8}
+  m_Extents: {x: 0.9, y: 1.5, z: 0.9}
   m_MoveThreshold: 0.1
   m_Carve: 0
   m_CarveOnlyStationary: 1

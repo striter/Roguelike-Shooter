@@ -518,8 +518,9 @@ namespace GameSetting_Action
         {
             base.OnDealtDemage( receiver, amount);
             m_TotalDamageDealt += amount;
-            if (m_TotalDamageDealt >= Value1)
-                m_TotalDamageDealt -= Value1;
+            if (m_TotalDamageDealt < Value1)
+                return;
+            m_TotalDamageDealt -= Value1;
 
             ActionHelper.PlayerReceiveHealing(m_ActionEntity, Value2, enum_DamageType.ArmorOnly);
         }
