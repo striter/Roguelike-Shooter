@@ -6,7 +6,7 @@ using GameSetting;
 public class InteractBase : MonoBehaviour {
     public virtual string S_InteractKeyword => "";
     public virtual bool B_InteractaOnce => false;
-    public bool B_Interactable;
+    public bool B_Interactable { get; private set; } = false;
     public virtual void Init()
     {
 
@@ -15,7 +15,7 @@ public class InteractBase : MonoBehaviour {
     {
         B_Interactable = true;
     }
-    public virtual bool TryInteract()
+    public virtual bool TryInteract(EntityPlayerBase _interactor)
     {
         if (B_InteractaOnce)
             B_Interactable = false;

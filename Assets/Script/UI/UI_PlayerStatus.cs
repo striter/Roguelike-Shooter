@@ -61,23 +61,23 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
             }
 
             img_sld.color = Color.Lerp(Color.red, Color.white, m_player.m_WeaponCurrent.F_ReloadStatus);
-            if (m_AmmoGrid.I_Count != m_player.m_WeaponCurrent.I_ClipAmout)
+            if (m_AmmoGrid.I_Count != m_player.m_WeaponCurrent.I_ClipAmount)
             {
                 m_AmmoGrid.ClearGrid();
-                if (m_player.m_WeaponCurrent.I_ClipAmout <= 30)
+                if (m_player.m_WeaponCurrent.I_ClipAmount <= 30)
                 {
-                    for (int i = 0; i < weaponInfo.I_ClipAmout; i++)
+                    for (int i = 0; i < weaponInfo.I_ClipAmount; i++)
                         m_AmmoGrid.AddItem(i);
 
-                    float size = (f_ammoGridLength - m_GridLayout.padding.bottom - m_GridLayout.padding.top - (m_player.m_WeaponCurrent.I_ClipAmout - 1) * m_GridLayout.spacing.y) / m_player.m_WeaponCurrent.I_ClipAmout;
+                    float size = (f_ammoGridLength - m_GridLayout.padding.bottom - m_GridLayout.padding.top - (m_player.m_WeaponCurrent.I_ClipAmount - 1) * m_GridLayout.spacing.y) / m_player.m_WeaponCurrent.I_ClipAmount;
                     m_GridLayout.cellSize = new Vector2(m_GridLayout.cellSize.x, size);
                 }
             }
 
             Color ammoStatusColor = weaponInfo.F_AmmoStatus < .5f ? Color.Lerp(Color.red, Color.white, (weaponInfo.F_AmmoStatus / .5f)) : Color.white;
-            if (m_player.m_WeaponCurrent.I_ClipAmout <= 30)
+            if (m_player.m_WeaponCurrent.I_ClipAmount <= 30)
             {
-                for (int i = 0; i < weaponInfo.I_ClipAmout; i++)
+                for (int i = 0; i < weaponInfo.I_ClipAmount; i++)
                     m_AmmoGrid.GetItem(i).Set((m_player.m_WeaponCurrent.B_Reloading || i > m_player.m_WeaponCurrent.I_AmmoLeft - 1) ? new Color(0, 0, 0, 0) : ammoStatusColor);
                 sld_Reload.value = 0;
             }

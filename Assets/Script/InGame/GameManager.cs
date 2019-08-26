@@ -165,6 +165,22 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     void OnLevelFinished(Vector3 spawnInteractPos)
     {
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnLevelFinish,spawnInteractPos);
+
+        //Generate Interacts
+        switch (EnviormentManager.m_currentLevel.m_TileType)
+        {
+            case enum_TileType.Battle:
+                ObjectManager.SpawnInteractChest(EnviormentManager.NavMeshPosition(spawnInteractPos, false)).Play();
+                break;
+            case enum_TileType.Start:
+                ObjectManager.SpawnInteractChest(EnviormentManager.NavMeshPosition(Vector3.left, false)).Play();
+                ObjectManager.SpawnWeaponContainer(EnviormentManager.NavMeshPosition(Vector3.right, false)).Play( enum_PlayerWeapon.AKM,new List<int>() {40001,40003 });
+                break;
+            case enum_TileType.End:
+                ObjectManager.SpawnInteractPortal(EnviormentManager.NavMeshPosition(spawnInteractPos, false)).Play(OnStageFinished);
+                break;
+        }
+
     }
 
     void OnStageFinished()
@@ -547,7 +563,7 @@ public static class ObjectManager
     public static void RecycleEntity(int index, EntityBase target) => ObjectPoolManager<int, EntityBase>.Recycle(index, target);
     #endregion
     #region Weapon
-    public static WeaponBase SpawnWeapon(enum_PlayerWeapon type, EntityPlayerBase toPlayer)
+    public static WeaponBase SpawnWeapon(enum_PlayerWeapon type,Transform toTrans=null)
     {
         if (!ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Registed(type))
         {
@@ -555,7 +571,7 @@ public static class ObjectManager
             ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Register(type, preset, enum_PoolSaveType.DynamicMaxAmount, 1, (WeaponBase weapon) => { weapon.Init(DataManager.GetWeaponProperties(type)); });
         }
 
-        return ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Spawn(type, TF_Entity);
+        return ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Spawn(type, toTrans?toTrans:TF_Entity);
     }
     public static void RecycleWeapon(enum_PlayerWeapon type, WeaponBase weapon) => ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Recycle(type, weapon);
     #endregion
@@ -607,18 +623,25 @@ public static class ObjectManager
     {
         ObjectPoolManager<enum_Interaction, InteractBase>.Register( enum_Interaction.Portal,TResources.GetInteractPortal(portalStyle), enum_PoolSaveType.StaticMaxAmount,1,(InteractBase interact)=> { interact.Init(); });
         ObjectPoolManager<enum_Interaction, InteractBase>.Register(enum_Interaction.ActionChest, TResources.GetInteractActionChest(stageIndex), enum_PoolSaveType.StaticMaxAmount, 1, (InteractBase interact) => { interact.Init(); });
+        ObjectPoolManager<enum_Interaction, InteractBase>.Register(enum_Interaction.WeaponContainer, TResources.GetInteractWeaponContainer(), enum_PoolSaveType.StaticMaxAmount, 1, (InteractBase interact) => { interact.Init(); });
     }
-    public static InteractPortal SpawnPortal(Vector3 toPos)
+    public static InteractPortal SpawnInteractPortal(Vector3 toPos)
     {
         InteractPortal portal= ObjectPoolManager<enum_Interaction, InteractBase>.Spawn(enum_Interaction.Portal,TF_SFXPlaying) as InteractPortal;
         portal.transform.position = toPos;
         return portal;
     }
-    public static InteractActionChest SpawnChest(Vector3 toPos)
+    public static InteractActionChest SpawnInteractChest(Vector3 toPos)
     {
         InteractActionChest chest = ObjectPoolManager<enum_Interaction, InteractBase>.Spawn(enum_Interaction.ActionChest, TF_SFXPlaying) as InteractActionChest;
         chest.transform.position = toPos;
         return chest;
+    }
+    public static InteractWeaponContainer SpawnWeaponContainer(Vector3 toPos)
+    {
+        InteractWeaponContainer container = ObjectPoolManager<enum_Interaction, InteractBase>.Spawn(enum_Interaction.WeaponContainer, TF_SFXPlaying) as InteractWeaponContainer;
+        container.transform.position = toPos;
+        return container;
     }
     public static void RecycleAllInteract() => ObjectPoolManager<enum_Interaction, InteractBase>.RecycleAll();
     #endregion

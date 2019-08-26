@@ -103,10 +103,10 @@ public class LevelBase : MonoBehaviour {
         if (m_levelType != enum_TileType.Start)
             return;
 
-        TileAxis startAxis = TileAxis.Zero + new TileAxis(-GameConst.I_InteractClearRange / 2, -GameConst.I_InteractClearRange / 2);
+        TileAxis startAxis = TileAxis.Zero + new TileAxis(-3 / 2, -3 / 2);
         int centerIndex = m_IndexEmptyInner.Find(p => m_AllTiles[p].m_TileAxis == startAxis);
         List<int> subIndexes = new List<int>();
-        if (!CheckIndexTileAreaAvailable(centerIndex, GameConst.I_InteractClearRange, GameConst.I_InteractClearRange, ref subIndexes))
+        if (!CheckIndexTileAreaAvailable(centerIndex, 3, 3, ref subIndexes))
             Debug.LogError("WTF?");
 
         m_AllTiles[centerIndex] = new LevelTileInteract(m_AllTiles[centerIndex]);

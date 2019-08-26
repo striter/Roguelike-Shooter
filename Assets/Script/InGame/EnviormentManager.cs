@@ -96,18 +96,6 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
                 m_MapLevelInfo.Get(m_currentLevel.m_Connections[direction]).SetTileLocking(enum_TileLocking.Unlockable);
         }
 
-        //Generate Interacts
-        switch (m_currentLevel.m_TileType)
-        {
-            case enum_TileType.Battle:
-            case enum_TileType.Start:
-                ObjectManager.SpawnChest(NavMeshPosition(interactSpawnPos, false)).Play();
-                break;
-            case enum_TileType.End:
-                ObjectManager.SpawnPortal(NavMeshPosition(interactSpawnPos,false)).Play(OnStageFinished);
-                break;
-        }
-
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.LevelStatusChange, m_MapLevelInfo, m_currentLevel.m_TileAxis);
     }
     #endregion

@@ -27,7 +27,6 @@ namespace GameSetting
         public const int I_ProjectileSpreadAtDistance = 100;       //Meter,  Bullet Spread In A Circle At End Of This Distance
 
         public const float F_LevelTileSize = 2f;        //Cube Size For Level Tiles
-        public const int I_InteractClearRange = 2;
 
         public const float F_PlayerCameraSmoothParam = 1f;     //Camera Smooth Param For Player .2 is suggested
         public const float F_PlayerFallSpeed = 9.8f;       //Player Fall Speed(Not Acceleration)
@@ -170,7 +169,7 @@ namespace GameSetting
 
     public enum enum_EntityType { Invalid = -1,Hidden=0, Fighter = 1, Shooter_Rookie = 2,Shooter_Veteran=3, AOECaster = 4, Elite = 5 }
 
-    public enum enum_Interaction { Invalid = -1,Portal=1,ActionChest=2, }      //To Be Continued
+    public enum enum_Interaction { Invalid = -1,Portal=1,ActionChest=2, WeaponContainer=3,}      //To Be Continued
 
     public enum enum_TriggerType { Invalid = -1, Single = 1, Auto = 2, Burst = 3, Pull = 4, Store = 5, }
 
@@ -685,7 +684,7 @@ namespace GameSetting
         }
     }
 
-        #endregion
+    #endregion
     #region ActionManager
     public class PlayerInfoManager : EntityInfoManager
     {
@@ -733,6 +732,13 @@ namespace GameSetting
             targetAction.OnActionUse(m_Player);
             return true;
         }
+        protected override void OnExpireElapsed(ExpireBase expire)
+        {
+            base.OnExpireElapsed(expire);
+            ActionBase action = expire as ActionBase;
+            if (action != null)
+                m_ActionEquiping.Remove(action);
+        }
         #region ActionInfos
         protected override void OnResetInfo()
         {
@@ -772,20 +778,13 @@ namespace GameSetting
             }, true);
             return info;
         }
-        protected override void OnExpireElapsed(ExpireBase expire)
-        {
-            base.OnExpireElapsed(expire);
-            ActionBase action = expire as ActionBase;
-            if (action!=null)
-                m_ActionEquiping.Remove(action);
-        }
-
+        public void OnAttachWeapon(WeaponBase weapon)=> weapon.m_WeaponAction.Traversal((int actionIndex) => { TryUseAction(actionIndex); });
+        public void OnDetachWeapon()=>  m_ActionEquiping.Traversal((ActionBase action) => { action.OnWeaponDetach(); },true);
         public void OnReloadFinish() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnReloadFinish(); });
         public void OnBattleFinished() {
-            m_ActionEquiping.Traversal((ActionBase action) => {action.OnAfterBattle(); }, true);
+            m_ActionEquiping.Traversal((ActionBase action) => { action.OnAfterBattle(); }, true);
             m_AfterFire.Clear();
         }
-
         void OnEntityApplyDamage(DamageDeliverInfo damageInfo, EntityBase damageEntity, float amountApply)
         {
             m_AfterFire.Traversal((ActionAfterFire action) => {if (action.OnActionHitEntity(damageInfo.I_IdentiyID, damageEntity))  m_AfterFire.Remove(action); }, true);

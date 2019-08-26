@@ -14,7 +14,6 @@ public class EntityPlayerBase : EntityBase {
     protected CharacterController m_CharacterController;
     protected PlayerAnimator m_Animator;
     protected Transform tf_WeaponHoldRight,tf_WeaponHoldLeft;
-    protected List<WeaponBase> m_WeaponObtained=new List<WeaponBase>();
     protected SFXAimAssist m_Assist = null;
     public WeaponBase m_WeaponCurrent { get; private set; } = null;
     public InteractBase m_Interact { get; private set; }
@@ -43,18 +42,16 @@ public class EntityPlayerBase : EntityBase {
         CameraController.Attach(this.transform);
         TBroadCaster<enum_BC_GameStatusChanged>.Add<Vector3>(enum_BC_GameStatusChanged.OnLevelFinish, OnLevelFinished);
 
-        ObtainWeapon(ObjectManager.SpawnWeapon(TESTWEAPON1, this));
-        ObtainWeapon(ObjectManager.SpawnWeapon(TESTWEAPON2, this));
+        ObtainWeapon(ObjectManager.SpawnWeapon(TESTWEAPON1));
+
 #if UNITY_EDITOR
         PCInputManager.Instance.AddMouseRotateDelta(OnRotateDelta);
         PCInputManager.Instance.AddMovementDelta(OnMovementDelta);
         PCInputManager.Instance.AddBinding<EntityPlayerBase>(enum_BindingsName.Fire, OnMainButtonDown);
-        PCInputManager.Instance.AddBinding<EntityPlayerBase>(enum_BindingsName.Interact, OnSwitchWeapon);
         PCInputManager.Instance.AddBinding<EntityPlayerBase>(enum_BindingsName.Reload, OnReloadDown);
 #else
         UIManager.OnMainDown = OnMainButtonDown;
         UIManager.OnReload = OnReloadDown;
-        UIManager.OnSwitch = OnSwitchWeapon;
         TouchDeltaManager.Instance.Bind(OnMovementDelta, OnRotateDelta);
 #endif
     }
@@ -70,7 +67,7 @@ public class EntityPlayerBase : EntityBase {
         if (m_Assist)
             m_Assist.ForceRecycle();
         if (m_WeaponCurrent)
-            m_WeaponCurrent.Detach();
+            m_WeaponCurrent.OnDetach();
 
         m_Animator.OnDead();
         m_MoveAxisInput = Vector2.zero;
@@ -106,16 +103,6 @@ public class EntityPlayerBase : EntityBase {
             m_WeaponCurrent.Trigger(down);
     }
     #region WeaponControll
-    void ObtainWeapon(WeaponBase weapon)
-    {
-        m_WeaponObtained.Add(weapon);
-        weapon.Attach(this,weapon.B_AttachLeft?tf_WeaponHoldLeft:tf_WeaponHoldRight, OnFireAddRecoil,OnReload);
-        weapon.SetActivate(false);
-
-        if (m_WeaponCurrent == null)
-            OnSwitchWeapon();
-    }
-
     void OnReloadDown()
     {
         if (m_WeaponCurrent == null)
@@ -123,32 +110,26 @@ public class EntityPlayerBase : EntityBase {
         m_WeaponCurrent.TryReload();
     }
 
-    void OnSwitchWeapon()
+    public WeaponBase ObtainWeapon(WeaponBase _weapon)
     {
-        if (m_WeaponCurrent == null)
+        WeaponBase previousWeapon = m_WeaponCurrent;
+
+        if (m_WeaponCurrent)
         {
-            if (m_WeaponObtained != null)
-                m_WeaponCurrent = m_WeaponObtained[0];
+            m_WeaponCurrent.OnDetach();
+            m_PlayerInfo.OnDetachWeapon();
         }
-        else
-        {
-            int index = m_WeaponObtained.IndexOf(m_WeaponCurrent);
-            index++;
-            if (index == m_WeaponObtained.Count)
-                index = 0;
 
-            m_WeaponCurrent.SetActivate(false);
-            m_WeaponCurrent = m_WeaponObtained[index];
-        }
-        m_WeaponCurrent.SetActivate(true);
-
-        if (m_Assist)
-            m_Assist.ForceRecycle();
-
-        m_Assist = ObjectManager.SpawnSFX<SFXAimAssist>(01);
-        m_Assist.Play(I_EntityID,tf_Head, tf_Head, GameConst.F_AimAssistDistance,GameLayer.Mask.I_All,(Collider collider)=> {return GameManager.B_DoHitCheck(collider.Detect(),I_EntityID); });
-
+        m_WeaponCurrent = _weapon;
+        m_WeaponCurrent.OnAttach(this, _weapon.B_AttachLeft ? tf_WeaponHoldLeft : tf_WeaponHoldRight, OnFireAddRecoil, OnReload);
+        m_PlayerInfo.OnAttachWeapon(m_WeaponCurrent);
         m_Animator.SwitchAnim(m_WeaponCurrent.E_Anim);
+        
+        if (m_Assist) m_Assist.ForceRecycle();
+        m_Assist = ObjectManager.SpawnSFX<SFXAimAssist>(01);
+        m_Assist.Play(I_EntityID, tf_Head, tf_Head, GameConst.F_AimAssistDistance, GameLayer.Mask.I_All, (Collider collider) => { return GameManager.B_DoHitCheck(collider.Detect(), I_EntityID); });
+
+        return previousWeapon;
     }
     void OnReload(bool start, float param)
     {
@@ -188,8 +169,7 @@ public class EntityPlayerBase : EntityBase {
         m_Animator.Fire();
     }
     #endregion
-    #region PlayerInteract/Equipment
-
+    #region PlayerInteract
     public void OnInteractCheck(InteractBase interactTarget, bool isEnter)
     {
         if (isEnter)
@@ -205,14 +185,15 @@ public class EntityPlayerBase : EntityBase {
             return;
         }
 
-        if (down && m_Interact.TryInteract())
+        if (down && m_Interact.TryInteract(this)&&!m_Interact.B_Interactable)
             m_Interact = null;
     }
-
-    public T OnAcquireEquipment<T>(int actionIndex, Func<DamageDeliverInfo> OnDamageBuff) where T:EquipmentBase
+    #endregion
+    #region Equipment
+    public T OnAcquireEquipment<T>(int actionIndex, Func<DamageDeliverInfo> OnDamageBuff) where T : EquipmentBase
     {
         OnMainButtonDown(false);
-        m_Equipment = EquipmentBase.AcquireEquipment(actionIndex*10, this, tf_WeaponHoldLeft, OnDamageBuff, OnDead);
+        m_Equipment = EquipmentBase.AcquireEquipment(actionIndex * 10, this, tf_WeaponHoldLeft, OnDamageBuff, OnDead);
         return m_Equipment as T;
     }
 
@@ -221,7 +202,7 @@ public class EntityPlayerBase : EntityBase {
         if (!down || m_Equipment == null)
             return;
 
-        m_Equipment.Play(null,transform.position+transform.forward*10);
+        m_Equipment.Play(null, transform.position + transform.forward * 10);
         m_Equipment.OnDeactivate();
         m_Equipment = null;
     }

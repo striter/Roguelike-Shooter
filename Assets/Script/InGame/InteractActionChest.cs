@@ -19,9 +19,9 @@ public class InteractActionChest : InteractBase {
         m_Animation[m_clipName].speed = 0;
         m_Animation.Play();
     }
-    public override bool TryInteract()
+    public override bool TryInteract(EntityPlayerBase _interactor)
     {
-        base.TryInteract();
+        base.TryInteract(_interactor);
         m_Animation[m_clipName].speed = 1;
         m_Animation.Play();
         return true;
@@ -29,6 +29,6 @@ public class InteractActionChest : InteractBase {
 
     void OnKeyAnim()
     {
-        Debug.Log("???");
+        Debug.Log("Chest Opened???");
     }
 }

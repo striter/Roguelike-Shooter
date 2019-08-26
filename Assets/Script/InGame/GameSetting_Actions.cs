@@ -162,7 +162,7 @@ namespace GameSetting_Action
         public virtual void OnReloadFinish() { }
         public virtual void OnAfterBattle() { }
         public virtual void OnAfterFire(int identity) { }
-        public virtual void OnAfterWeaponSwitch() { }
+        public virtual void OnWeaponDetach() { }
         public bool B_Upgradable => m_Level < enum_ActionLevel.L3;
         public void Upgrade()
         {
@@ -240,12 +240,12 @@ namespace GameSetting_Action
         }
         public ActionAfterBattle_ReloadTrigger(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
     }
-    public class ActionAfterWeaponSwitch : ActionBase
+    public class ActionAfterWeaponDetach : ActionBase
     {
         public override int I_ActionCost => 0;
         public override enum_ActionExpireType m_ExpireType => enum_ActionExpireType.AfterWeaponSwitch;
-        public override void OnAfterWeaponSwitch() => ForceExpire();
-        public ActionAfterWeaponSwitch(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
+        public override void OnWeaponDetach() => ForceExpire();
+        public ActionAfterWeaponDetach(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
     }
     #endregion
 
@@ -508,7 +508,7 @@ namespace GameSetting_Action
     }
     #endregion
     #region WeaponAction
-    public class Action_40001_DealtDamageAddArmor : ActionAfterWeaponSwitch
+    public class Action_40001_DealtDamageAddArmor : ActionAfterWeaponDetach
     {
         public override int m_Index => 40001;
         float m_TotalDamageDealt=0;
@@ -527,7 +527,7 @@ namespace GameSetting_Action
         public Action_40001_DealtDamageAddArmor(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
     }
 
-    public class Action_40002_DealtDamageAddActionRandom : ActionAfterWeaponSwitch
+    public class Action_40002_DealtDamageAddActionRandom : ActionAfterWeaponDetach
     {
         public override int m_Index => 40002;
         public override float Value1 => ActionData.F_40002_DamageDealtAddActionPercentage(m_Level);
@@ -540,7 +540,7 @@ namespace GameSetting_Action
         }
         public Action_40002_DealtDamageAddActionRandom(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
     }
-    public class Action_40003_FireTimesDamageAdditive : ActionAfterWeaponSwitch
+    public class Action_40003_FireTimesDamageAdditive : ActionAfterWeaponDetach
     {
         public override int m_Index => 40003;
         public override float Value1=> ActionData.F_40003_FireTimesCount(m_Level);
@@ -560,7 +560,7 @@ namespace GameSetting_Action
         }
         public Action_40003_FireTimesDamageAdditive(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
     }
-    public class Action_40007_DamageReductionCooldown : ActionAfterWeaponSwitch
+    public class Action_40007_DamageReductionCooldown : ActionAfterWeaponDetach
     {
         public override int m_Index => 40007;
         public override float Value1 => ActionData.F_40007_DamageReductionDuration(m_Level);
@@ -604,7 +604,7 @@ namespace GameSetting_Action
         }
         public Action_40007_DamageReductionCooldown(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
     }
-    public class Action_40012_UseActionReturn : ActionAfterWeaponSwitch
+    public class Action_40012_UseActionReturn : ActionAfterWeaponDetach
     {
         public override int m_Index => 40012;
         public override float Value1 => ActionData.F_40012_ActionReturn(m_Level);
@@ -616,7 +616,7 @@ namespace GameSetting_Action
         public Action_40012_UseActionReturn(enum_ActionLevel _level, Action<ExpireBase> _OnActionExpired) : base(_level, _OnActionExpired) { }
     }
 
-    public class Action_40014_KillArmorAdditive : ActionAfterWeaponSwitch
+    public class Action_40014_KillArmorAdditive : ActionAfterWeaponDetach
     {
         public override int m_Index => 40014;
         public override float Value1 => ActionData.F_40014_ArmorAdditive(m_Level);

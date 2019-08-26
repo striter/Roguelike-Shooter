@@ -12,9 +12,9 @@ public class InteractPortal : InteractBase {
         base.Play();
         OnPortalInteract = _OnPortalInteract;
     }
-    public override bool TryInteract()
+    public override bool TryInteract(EntityPlayerBase _interactor)
     {
-        base.TryInteract();
+        base.TryInteract(_interactor);
         OnPortalInteract();
         return true;
     }
