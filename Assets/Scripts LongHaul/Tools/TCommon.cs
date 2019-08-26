@@ -210,16 +210,16 @@ public static class TCommon
         for (int i = 0; i < array.Length; i++)
             OnEachItem(array[i]);
     }
+    public static void Traversal<T>(this T[] array, Action<T, int> OnEachItem)
+    {
+        for (int i = 0; i < array.Length; i++)
+            OnEachItem(array[i], i);
+    }
     public static void Traversal<T>(this T[,] array, Action<T> OnEachItem)
     {
         for (int i = 0; i < array.GetLength(0); i++)
             for (int j = 0; j < array.GetLength(1); j++)
                 OnEachItem(array[i, j]);
-    }
-    public static void Traversal<T>(this T[] array, Action<T, int> OnEachItem)
-    {
-        for (int i = 0; i < array.Length; i++)
-            OnEachItem(array[i], i);
     }
     public static void TraversalEnum<T>(Action<T, int> enumAction)    //Can't Constraint T to System.Enum?
     {

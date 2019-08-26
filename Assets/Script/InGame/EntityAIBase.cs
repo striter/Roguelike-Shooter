@@ -188,6 +188,7 @@ public class EntityAIBase : EntityBase {
             m_Weapon = _weapon;
             m_Obstacle = m_Entity.GetComponent<NavMeshObstacle>();
             m_Agent = m_Entity.GetComponent<NavMeshAgent>();
+            m_Agent.stoppingDistance = 1.5f;
             OnAttackAnim = _onAttack;
             OnCheckTarget = _onCheck;
             B_AgentEnabled = false;
@@ -195,7 +196,7 @@ public class EntityAIBase : EntityBase {
 
         public void OnActivate()
         {
-            B_AgentEnabled = true;
+            B_AgentEnabled = false;
             b_attacking = false;
             f_battleSimulate = 0f;
             f_movementSimulate = 0f;

@@ -2345,7 +2345,7 @@ MonoBehaviour:
   B_PhysicsDebugGizmos: 1
   B_LevelDebugGizmos: 0
   E_LevelDebug: 0
-  Z_TestEntitySpawn: 306
+  Z_TestEntitySpawn: 301
   TestEntityFlag: 2
   TestEntityBuffOnSpawn: 0
   X_TestCastIndex: 20400

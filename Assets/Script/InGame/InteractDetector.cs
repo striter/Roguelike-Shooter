@@ -15,4 +15,10 @@ public class InteractDetector : MonoBehaviour {
         if (target != null&&target.B_Interactable)
             OnInteractCheck(target, true);
     }
+    private void OnTriggerExit(Collider other)
+    {
+        InteractBase target = other.GetComponent<InteractBase>();
+        if (target != null && target.B_Interactable)
+            OnInteractCheck(target, false);
+    }
 }
