@@ -341,7 +341,7 @@ public static class TCommon
     public static int RandomPercentage(System.Random seed=null)=> seed != null ? seed.Next(0, 101)  : UnityEngine.Random.Range(0, 101);
     public static Vector3 RandomXZSphere(float radius) => Vector3.forward.RotateDirection(Vector3.up, UnityEngine.Random.Range(0, 360)) * UnityEngine.Random.Range(0, radius);
 
-    public static T RandomEnumValues<T>()        //Can't Constraint T to System.Enum
+    public static T RandomEnumValues<T>(System.Random _seed)        //Can't Constraint T to System.Enum
     {
         if (!typeof(T).IsSubclassOf(typeof(Enum)))
         {
@@ -349,7 +349,7 @@ public static class TCommon
             return default(T);
         }
         Array allEnums = Enum.GetValues(typeof(T));
-        int randomIndex =UnityEngine.Random.Range(1,allEnums.Length);
+        int randomIndex = _seed != null ? _seed.Next(1, allEnums.Length): UnityEngine.Random.Range(1,allEnums.Length);
         int count=0;
         foreach (object temp in allEnums)
         {
@@ -360,6 +360,8 @@ public static class TCommon
         }
         return default(T);
     }
+
+
     public static List<T> EnumList<T>()
     {
         List<T> list = new List<T>();

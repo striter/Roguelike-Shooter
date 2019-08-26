@@ -101,6 +101,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         instance = this;
         InitEntityDic();
         DataManager.Init();
+        ObjectManager.Init();
         LevelManager.Init(M_TESTSEED);
         OptionsManager.Init();
         TBroadCaster<enum_BC_GameStatusChanged>.Init();
@@ -164,7 +165,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
                 break;
             case enum_TileType.Start:
                 ObjectManager.SpawnInteractChest(EnviormentManager.NavMeshPosition(Vector3.left, false)).Play();
-                ObjectManager.SpawnWeaponContainer(EnviormentManager.NavMeshPosition(Vector3.right, false)).Play(TCommon.RandomEnumValues<enum_PlayerWeapon>(), new List<ActionBase>() { DataManager.RendomWeaponAction(LevelManager.E_currentStage.ToActionLevel()) });
+                ObjectManager.SpawnWeaponContainer(EnviormentManager.NavMeshPosition(Vector3.right, false)).Play(TCommon.RandomEnumValues<enum_PlayerWeapon>(LevelManager.m_GameSeed), new List<ActionBase>() { DataManager.RendomWeaponAction(LevelManager.E_currentStage.ToActionLevel()) });
                 break;
             case enum_TileType.End:
                 ObjectManager.SpawnInteractPortal(EnviormentManager.NavMeshPosition(spawnInteractPos, false)).Play(OnStageFinished);
