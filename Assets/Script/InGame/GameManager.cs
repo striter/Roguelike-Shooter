@@ -359,7 +359,7 @@ public static class LevelManager
         E_currentStage = 0;
         List<enum_Style> styleList = TCommon.EnumList<enum_Style>();
         TCommon.TraversalEnum((enum_StageLevel level) => {
-            enum_Style style = styleList.RandomItem();
+            enum_Style style = styleList.RandomItem(m_GameSeed);
             styleList.Remove(style);
             m_StageStyle.Add(level,style);
         });
