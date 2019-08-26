@@ -135,9 +135,10 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         if (_GameSeed == "")
             _GameSeed = DateTime.Now.ToLongTimeString();
 
-        EntityPreset();
-        ObjectManager.Preset(_levelStyle,LevelManager.I_currentStageIndex);
         LevelManager.StageBegin();
+
+        EntityPreset();
+        ObjectManager.Preset(_levelStyle,LevelManager.E_currentStage);
         m_SeedString = _GameSeed;
         m_GameSeed = new System.Random(m_SeedString.GetHashCode());
         m_BattleEntityStyle = _entityStyle;
@@ -154,8 +155,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     {
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnLevelStart);
         m_LocalPlayer.transform.position = levelInfo.m_Level.RandomEmptyTilePosition(m_GameSeed);
-
-        if (levelInfo.m_TileLocking == enum_TileLocking.Unlockable&&LevelManager.OnLevelBeginBattle(levelInfo.m_TileType))
+        if (LevelManager.CanLevelBattle(levelInfo))
             OnBattleStart(LevelManager.m_Difficulty);
         else
             OnLevelFinished(Vector3.zero);
@@ -167,14 +167,14 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnLevelFinish,spawnInteractPos);
 
         //Generate Interacts
-        switch (EnviormentManager.m_currentLevel.m_TileType)
+        switch (LevelManager.m_LevelType)
         {
             case enum_TileType.Battle:
                 ObjectManager.SpawnInteractChest(EnviormentManager.NavMeshPosition(spawnInteractPos, false)).Play();
                 break;
             case enum_TileType.Start:
                 ObjectManager.SpawnInteractChest(EnviormentManager.NavMeshPosition(Vector3.left, false)).Play();
-                ObjectManager.SpawnWeaponContainer(EnviormentManager.NavMeshPosition(Vector3.right, false)).Play( enum_PlayerWeapon.AKM,new List<int>() {40001,40003 });
+                ObjectManager.SpawnWeaponContainer(EnviormentManager.NavMeshPosition(Vector3.right, false)).Play(TCommon.RandomEnumValues<enum_PlayerWeapon>(), new List<ActionBase>() { DataManager.RendomWeaponAction(LevelManager.E_currentStage.ToActionLevel()) });
                 break;
             case enum_TileType.End:
                 ObjectManager.SpawnInteractPortal(EnviormentManager.NavMeshPosition(spawnInteractPos, false)).Play(OnStageFinished);
@@ -355,24 +355,26 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
 #region External Tools Packaging Class
 public static class LevelManager
 {
-    public static int I_currentStageIndex;
-    public static bool B_NextStage => I_currentStageIndex < GameConst.I_TotalStageCount;
+    public static enum_StageLevel E_currentStage;
+    public static bool B_NextStage => E_currentStage != enum_StageLevel.Ranger;
     static enum_BattleDifficulty m_BattleDifficulty;
     public static enum_TileType m_LevelType { get; private set; }
     public static void Init()
     {
-        I_currentStageIndex = 0;
+        E_currentStage = 0;
     }
     public static void StageBegin()
     {
         m_BattleDifficulty = enum_BattleDifficulty.Peaceful;
         m_LevelType = enum_TileType.Invalid;
-        I_currentStageIndex++;
+        E_currentStage++;
     }
-    public static bool OnLevelBeginBattle(enum_TileType type)
+    public static bool CanLevelBattle(SBigmapLevelInfo level)
     {
-        m_LevelType = type;
-        switch (type)
+        m_LevelType = level.m_TileType;
+        if (level.m_TileLocking != enum_TileLocking.Unlockable)
+            return false;
+        switch (m_LevelType)
         {
             default:
                 return false;
@@ -482,12 +484,19 @@ public static class DataManager
     }
 
     static Dictionary<int, ActionBase> m_AllActions = new Dictionary<int, ActionBase>();
-    static void InitActions() => TReflection.GetAllInheritClasses((Type type, ActionBase action) => { if (action.m_Index > 0) m_AllActions.Add(action.m_Index, TReflection.CreateInstance<ActionBase>(type, enum_ActionLevel.Invalid, null)); }, enum_ActionLevel.Invalid, null);
-    public static ActionBase CreateAction(int index, enum_ActionLevel level, Action<ExpireBase> OnExpired)
+    static List<int> m_WeaponActions = new List<int>();
+    static void InitActions() => TReflection.GetAllInheritClasses((Type type, ActionBase action) => {
+        if (action.m_Index > 0)
+            m_AllActions.Add(action.m_Index, action);
+        if (action.m_ExpireType == enum_ActionExpireType.AfterWeaponSwitch)
+            m_WeaponActions.Add(action.m_Index);
+    }, enum_ActionLevel.Invalid);
+    public static ActionBase RendomWeaponAction(enum_ActionLevel level)=> CreateAction(m_WeaponActions.RandomItem(),level);
+    public static ActionBase CreateAction(int index, enum_ActionLevel level)
     {
         if (!m_AllActions.ContainsKey(index))
             Debug.LogError("Error Action:" + index + " ,Does not exist");
-        return TReflection.CreateInstance<ActionBase>(m_AllActions[index].GetType(), level, OnExpired);
+        return TReflection.CreateInstance<ActionBase>(m_AllActions[index].GetType(), level);
     }
 }
 public static class ObjectManager
@@ -502,7 +511,7 @@ public static class ObjectManager
         TF_SFXPlaying = new GameObject("SFX_Playing").transform;
     }
     #region Register
-    public static void Preset(enum_Style levelStyle,int stageIndex)
+    public static void Preset(enum_Style levelStyle,enum_StageLevel stageLevel)
     {
         ObjectPoolManager<int, SFXBase>.ClearAll();
         ObjectPoolManager<int, EntityBase>.ClearAll();
@@ -512,7 +521,7 @@ public static class ObjectManager
         ObjectPoolManager<int, LevelBase>.ClearAll();
 
         RegisterLevelBase(TResources.GetLevelBase(levelStyle));
-        RegisterInteractions(levelStyle,stageIndex);
+        RegisterInteractions(levelStyle,stageLevel);
         TResources.GetAllEffectSFX().Traversal((int index, SFXBase target) => {
             ObjectPoolManager<int, SFXBase>.Register(index, target,
             enum_PoolSaveType.DynamicMaxAmount, 1,
@@ -619,7 +628,7 @@ public static class ObjectManager
     public static void RecycleSFX(int index, SFXBase sfx) => ObjectPoolManager<int, SFXBase>.Recycle(index, sfx);
     #endregion
     #region Interact
-    static void RegisterInteractions(enum_Style portalStyle, int stageIndex)
+    static void RegisterInteractions(enum_Style portalStyle, enum_StageLevel stageIndex)
     {
         ObjectPoolManager<enum_Interaction, InteractBase>.Register( enum_Interaction.Portal,TResources.GetInteractPortal(portalStyle), enum_PoolSaveType.StaticMaxAmount,1,(InteractBase interact)=> { interact.Init(); });
         ObjectPoolManager<enum_Interaction, InteractBase>.Register(enum_Interaction.ActionChest, TResources.GetInteractActionChest(stageIndex), enum_PoolSaveType.StaticMaxAmount, 1, (InteractBase interact) => { interact.Init(); });

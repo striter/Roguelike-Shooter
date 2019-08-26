@@ -12,7 +12,6 @@ namespace GameSetting
     #region For Designers Use
     public static class GameConst
     {
-        public const int I_TotalStageCount = 3;
         public const float F_EntityDeadFadeTime = 2f;
         public const float F_MaxActionAmount = 3f;
 
@@ -93,6 +92,8 @@ namespace GameSetting
 
     public static class Enum_Relative
     {
+        public static enum_ActionLevel ToActionLevel(this enum_StageLevel stageLevel) => (enum_ActionLevel)stageLevel;
+
         public static enum_LevelGenerateType ToPrefabType(this enum_TileType type)
         {
             switch (type)
@@ -147,11 +148,13 @@ namespace GameSetting
     #endregion
 
     #region GameEnum
+    public enum enum_StageLevel { Invalid = -1, Rookie = 1, Veteran = 2, Ranger = 3 }
+
+    public enum enum_BattleDifficulty { Invalid = -1, Peaceful = 0, Eazy = 1, Normal = 2, Hard = 3, Final = 4, }
+
     public enum enum_EntityFlag { Invalid=-1, Player=1,Enermy=2,}
 
     public enum enum_HitCheck { Invalid = -1, Static = 1, Entity = 2, Dynamic = 3, }
-
-    public enum enum_BattleDifficulty { Invalid = -1,Peaceful=0, Eazy = 1, Normal = 2, Hard = 3,Final=4, }
 
     public enum enum_TileLocking { Invalid = -1, Locked = 0, Unlockable = 1, Unlocked = 2, }
 
@@ -250,6 +253,7 @@ namespace GameSetting
         Heavy_Shield_Spear_163=163,
         Heavy_Remote_164=164,
     }
+
     #endregion
 
     #region GameLayer
@@ -623,14 +627,16 @@ namespace GameSetting
         public virtual float m_DamageMultiply => 0;
         public virtual float m_DamageReduction => 0;
         public float m_ExpireDuration { get; private set; } = 0;
-
         private Action<ExpireBase> OnExpired;
         float f_expireCheck;
-        public ExpireBase(float _ExpireDuration,Action<ExpireBase> _OnExpired)
+        public ExpireBase(float _ExpireDuration)
         {
             m_ExpireDuration = _ExpireDuration;
-            OnExpired = _OnExpired;
             ExpireRefresh();
+        }
+        protected void Activate(Action<ExpireBase> _OnExpired)
+        {
+            OnExpired = _OnExpired;
         }
         public void ExpireRefresh()
         {
@@ -664,11 +670,12 @@ namespace GameSetting
         Func<DamageInfo, bool> OnDOTDamage;
         int I_SourceID;
         float  f_dotCheck;
-        public ExpireBuff(int sourceID,SBuff _buffInfo, Func<DamageInfo, bool> _OnDOTDamage, Action<ExpireBase> _OnBuffExpired) :base(_buffInfo.m_ExpireDuration,_OnBuffExpired)
+        public ExpireBuff(int sourceID,SBuff _buffInfo, Func<DamageInfo, bool> _OnDOTDamage, Action<ExpireBase> _OnExpired) :base(_buffInfo.m_ExpireDuration)
         {
             I_SourceID = sourceID;
             m_buffInfo = _buffInfo;
             OnDOTDamage = _OnDOTDamage;
+            base.Activate(_OnExpired);
         }
         public override void OnTick(float deltaTime)
         {
@@ -723,14 +730,17 @@ namespace GameSetting
                 F_ActionAmount = GameConst.F_MaxActionAmount;
         }
 
-        public bool TryUseAction(int index)
+        public bool TestUseAction(int index)
         {
-            ActionBase targetAction = DataManager.CreateAction(index, enum_ActionLevel.L3, OnExpireElapsed);
+            OnUseAcion( DataManager.CreateAction(index, enum_ActionLevel.L3));
+            return true;
+        }
+        protected void OnUseAcion(ActionBase targetAction)
+        {
             m_ActionEquiping.Traversal((ActionBase action) => { action.OnAddActionElse(targetAction.m_Index); });
             AddExpire(targetAction);
             m_ActionEquiping.Add(targetAction);
-            targetAction.OnActionUse(m_Player);
-            return true;
+            targetAction.OnActionUse(m_Player, OnExpireElapsed);
         }
         protected override void OnExpireElapsed(ExpireBase expire)
         {
@@ -778,7 +788,7 @@ namespace GameSetting
             }, true);
             return info;
         }
-        public void OnAttachWeapon(WeaponBase weapon)=> weapon.m_WeaponAction.Traversal((int actionIndex) => { TryUseAction(actionIndex); });
+        public void OnAttachWeapon(WeaponBase weapon)=> weapon.m_WeaponAction.Traversal((ActionBase action) => { OnUseAcion(action); });
         public void OnDetachWeapon()=>  m_ActionEquiping.Traversal((ActionBase action) => { action.OnWeaponDetach(); },true);
         public void OnReloadFinish() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnReloadFinish(); });
         public void OnBattleFinished() {
@@ -800,6 +810,43 @@ namespace GameSetting
         #endregion
     }
 
+    public class ActionBase : ExpireBase
+    {
+        public EntityPlayerBase m_ActionEntity { get; private set; }
+        public enum_ActionLevel m_Level { get; private set; } = enum_ActionLevel.Invalid;
+        public virtual int I_ActionCost => -1;
+        public virtual bool B_ActionAble => true;
+        public virtual enum_ActionExpireType m_ExpireType => enum_ActionExpireType.Invalid;
+        public virtual float Value1 => 0;
+        public virtual float Value2 => 0;
+        public virtual float Value3 => 0;
+        public virtual float F_DamageAdditive => 0;
+        public virtual float F_RecoilMultiplyAdditive => 0;
+        public virtual float F_ProjectileSpeedMultiply => 0;
+        public virtual bool B_ClipOverride => false;
+        public virtual int I_ClipAdditive => 0;
+        public virtual float F_ClipMultiply => 0;
+        public ActionBase(enum_ActionLevel _level, float _expireDuration = 0) : base(_expireDuration)
+        {
+            m_Level = _level;
+            if (m_ExpireType == enum_ActionExpireType.Invalid)
+                Debug.LogError("Override Type Please!");
+        }
+        public virtual void OnActionUse(EntityPlayerBase _actionEntity, Action<ExpireBase> _OnActionExpired) { base.Activate(_OnActionExpired); m_ActionEntity = _actionEntity; }
+        public virtual void OnAddActionElse(float actionAmount) { }
+        public virtual void OnReceiveDamage(int applier, float amount) { }
+        public virtual void OnDealtDemage(EntityBase receiver, float amount) { }
+        public virtual void OnReloadFinish() { }
+        public virtual void OnAfterBattle() { }
+        public virtual void OnAfterFire(int identity) { }
+        public virtual void OnWeaponDetach() { }
+        public bool B_Upgradable => m_Level < enum_ActionLevel.L3;
+        public void Upgrade()
+        {
+            if (m_Level < enum_ActionLevel.L3)
+                m_Level++;
+        }
+    }
     #endregion
     #region Physics
     public static class HitCheckDetect_Extend

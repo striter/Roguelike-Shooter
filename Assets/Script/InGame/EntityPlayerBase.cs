@@ -215,7 +215,7 @@ public class EntityPlayerBase : EntityBase {
     }
     public void TestUseAction(int actionIndex)
     {
-        m_PlayerInfo.TryUseAction(actionIndex);
+        m_PlayerInfo.TestUseAction(actionIndex);
     }
     #endregion
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
+using GameSetting_Action;
 public class InteractWeaponContainer : InteractBase {
     Transform tf_ModelContainer;
     WeaponBase m_Weapon;
@@ -10,7 +11,7 @@ public class InteractWeaponContainer : InteractBase {
         base.Init();
         tf_ModelContainer = transform.Find("Container/Model");
     }
-    public void Play(enum_PlayerWeapon _weapon,List<int> _actionIndexes)
+    public void Play(enum_PlayerWeapon _weapon,List<ActionBase> _actionIndexes)
     {
         base.Play();
         m_Weapon = ObjectManager.SpawnWeapon(_weapon,tf_ModelContainer);

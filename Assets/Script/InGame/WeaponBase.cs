@@ -11,7 +11,7 @@ public class WeaponBase : MonoBehaviour {
 
     EntityPlayerBase m_Attacher;
     public SWeapon m_WeaponInfo { get; private set; }
-    public List<int> m_WeaponAction { get; private set; } = new List<int>();
+    public List<ActionBase> m_WeaponAction { get; private set; } = new List<ActionBase>();
     public float F_BaseSpeed { get; private set; } = 0;
     public float F_BaseDamage { get; private set; } = 0;
     public int I_MuzzleIndex { get; private set; } = -1;
@@ -70,7 +70,7 @@ public class WeaponBase : MonoBehaviour {
         m_Trigger.OnDisable();
     }
 
-    public void OnSpawn(List<int> _actionIndexes)
+    public void OnSpawn(List<ActionBase> _actionIndexes)
     {
         m_WeaponAction = _actionIndexes;
     }
