@@ -360,4 +360,16 @@ public static class TCommon
         }
         return default(T);
     }
+    public static List<T> EnumList<T>()
+    {
+        List<T> list = new List<T>();
+        Array allEnums = Enum.GetValues(typeof(T));
+        for (int i = 0; i < allEnums.Length; i++)
+        {
+            if (allEnums.GetValue(i).ToString() == "Invalid")
+                continue;
+            list.Add((T)allEnums.GetValue(i));
+        }
+        return list;
+    }
 }

@@ -9,8 +9,6 @@ using UnityEngine;
 
 public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
 {
-    public enum_Style Test_TileStyle = enum_Style.Desert;
-    public enum_Style Test_EntityStyle = enum_Style.Invalid;
     public string M_TESTSEED = "";
 #if UNITY_EDITOR
     #region Test
@@ -85,7 +83,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         if (Input.GetKeyDown(KeyCode.F7))
             (m_LocalPlayer as EntityPlayerBase).TestUseAction(F7_TestActionIndex);
 
-        UIManager.instance.transform.Find("Test/SeedTest").GetComponent<UnityEngine.UI.Text>().text = m_SeedString;
+        UIManager.instance.transform.Find("Test/SeedTest").GetComponent<UnityEngine.UI.Text>().text = LevelManager.m_Seed;
 
         if (OptionsManager.B_AdditionalLight != B_AdditionalLight)
         {
@@ -98,15 +96,12 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
 
     public EntityBase m_LocalPlayer { get; private set; } = null;
     public static CPlayerSave m_PlayerInfo { get; private set; }
-    public System.Random m_GameSeed { get; private set; } = null;
-    public string m_SeedString { get; private set; } = null;
     protected override void Awake()
     {
         instance = this;
         InitEntityDic();
         DataManager.Init();
-        ObjectManager.Init();
-        LevelManager.Init();
+        LevelManager.Init(M_TESTSEED);
         OptionsManager.Init();
         TBroadCaster<enum_BC_GameStatusChanged>.Init();
 
@@ -126,23 +121,18 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     }
     private void Start()
     {
-        StartStage(Test_TileStyle, Test_EntityStyle,M_TESTSEED);        //Test
+        StartStage();        //Test
     }
     #region Level Management
     //Call When Level Changed
-    void StartStage(enum_Style _levelStyle, enum_Style _entityStyle, string _GameSeed = "")      //PreInit Bigmap , Levels LocalPlayer Before  Start The game
+    void StartStage()      //PreInit Bigmap , Levels LocalPlayer Before  Start The game
     {
-        if (_GameSeed == "")
-            _GameSeed = DateTime.Now.ToLongTimeString();
-
-        LevelManager.StageBegin();
+        enum_Style _style=LevelManager.StageBegin();
 
         EntityPreset();
-        ObjectManager.Preset(_levelStyle,LevelManager.E_currentStage);
-        m_SeedString = _GameSeed;
-        m_GameSeed = new System.Random(m_SeedString.GetHashCode());
-        m_BattleEntityStyle = _entityStyle;
-        EnviormentManager.Instance.GenerateAllEnviorment(_levelStyle, m_GameSeed, OnLevelStart,OnStageFinished);
+        ObjectManager.Preset(_style,LevelManager.E_currentStage);
+        m_BattleEntityStyle = _style;
+        EnviormentManager.Instance.GenerateAllEnviorment(_style, LevelManager.m_GameSeed, OnLevelStart,OnStageFinished);
         m_StyledEnermyEntities = ObjectManager.RegisterAllEntitiesGetEnermyDic(TResources.GetCommonEntities() ,TResources.GetEnermyEntities(m_BattleEntityStyle));
 
         m_LocalPlayer = ObjectManager.SpawnEntity(0, Vector3.zero, enum_EntityFlag.Player);
@@ -154,7 +144,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     void OnLevelStart(SBigmapLevelInfo levelInfo)
     {
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnLevelStart);
-        m_LocalPlayer.transform.position = levelInfo.m_Level.RandomEmptyTilePosition(m_GameSeed);
+        m_LocalPlayer.transform.position = levelInfo.m_Level.RandomEmptyTilePosition(LevelManager.m_GameSeed);
         if (LevelManager.CanLevelBattle(levelInfo))
             OnBattleStart(LevelManager.m_Difficulty);
         else
@@ -187,7 +177,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     {
         TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnStageFinish);
         if (LevelManager.B_NextStage)
-            StartStage(TCommon.RandomEnumValues<enum_Style>(), TCommon.RandomEnumValues<enum_Style>(), "");
+            StartStage();
         else
             Debug.Log("All Level Finished");
     }
@@ -334,7 +324,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         for (; ; )
         {
             yield return new WaitForSeconds(_offset);
-            SpawnEnermy(waveGenerate[curSpawnCount], curSpawnCount, EnviormentManager.m_currentLevel.m_Level.RandomEmptyTilePosition(m_GameSeed));
+            SpawnEnermy(waveGenerate[curSpawnCount], curSpawnCount, EnviormentManager.m_currentLevel.m_Level.RandomEmptyTilePosition(LevelManager.m_GameSeed));
             curSpawnCount++;
             if (curSpawnCount >= waveGenerate.Count)
             {
@@ -359,16 +349,29 @@ public static class LevelManager
     public static bool B_NextStage => E_currentStage != enum_StageLevel.Ranger;
     static enum_BattleDifficulty m_BattleDifficulty;
     public static enum_TileType m_LevelType { get; private set; }
-    public static void Init()
+    static Dictionary<enum_StageLevel, enum_Style> m_StageStyle = new Dictionary<enum_StageLevel, enum_Style>();
+    public static string m_Seed { get; private set; }
+    public static System.Random m_GameSeed { get; private set; }
+    public static void Init(string _seed)
     {
+        m_Seed = _seed == "" ? System.DateTime.Now.ToLongTimeString() : _seed;
+        m_GameSeed = new System.Random( m_Seed.GetHashCode());
         E_currentStage = 0;
+        List<enum_Style> styleList = TCommon.EnumList<enum_Style>();
+        TCommon.TraversalEnum((enum_StageLevel level) => {
+            enum_Style style = styleList.RandomItem();
+            styleList.Remove(style);
+            m_StageStyle.Add(level,style);
+        });
     }
-    public static void StageBegin()
+    public static enum_Style StageBegin()
     {
+        E_currentStage++;
         m_BattleDifficulty = enum_BattleDifficulty.Peaceful;
         m_LevelType = enum_TileType.Invalid;
-        E_currentStage++;
+        return m_StageStyle[E_currentStage];
     }
+
     public static bool CanLevelBattle(SBigmapLevelInfo level)
     {
         m_LevelType = level.m_TileType;

@@ -19,7 +19,7 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
         EWorkFlow_StyleColorCustomization window= GetWindow(typeof(EWorkFlow_StyleColorCustomization)) as EWorkFlow_StyleColorCustomization;
         selectingStyleType = enum_Style.Invalid;
         previousData = StyleColorData.Default();
-        InitAllMat();
+        Init();
         previousData.SaveData(directionalLight);
         window.Show();
     }
@@ -28,17 +28,12 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
     static Light directionalLight;
     static StyleColorData previousData;
     string extraName="Please Edit This";
-    static void InitAllMat()
+    static void Init()
     {
-
         if (EditorApplication.isPlaying)
-        {
             directionalLight = EnviormentManager.Instance.m_DirectionalLight;
-        }
         else
-        {
             directionalLight = GameObject.Find("Enviorment/Directional Light").GetComponent<Light>();
-        }
     }
     private void OnGUI()
     {
@@ -50,9 +45,8 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
             GUILayout.EndVertical();
             return;
         }
-        if (EditorApplication.isPlaying)
-            selectingStyleType = GameManager.Instance.Test_TileStyle;
-        InitAllMat();
+
+        Init();
 
 
         if (selectingStyleType == enum_Style.Invalid)
