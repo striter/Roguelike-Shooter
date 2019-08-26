@@ -27,7 +27,7 @@ namespace GameSetting
         public const int I_ProjectileSpreadAtDistance = 100;       //Meter,  Bullet Spread In A Circle At End Of This Distance
 
         public const float F_LevelTileSize = 2f;        //Cube Size For Level Tiles
-        public const int I_PortalTileMaxSize = 3;
+        public const int I_InteractClearRange = 2;
 
         public const float F_PlayerCameraSmoothParam = 1f;     //Camera Smooth Param For Player .2 is suggested
         public const float F_PlayerFallSpeed = 9.8f;       //Player Fall Speed(Not Acceleration)
@@ -162,7 +162,7 @@ namespace GameSetting
 
     public enum enum_LevelItemType { Invalid = -1, LargeMore, LargeLess, MediumMore, MediumLess, SmallMore, SmallLess, ManmadeMore, ManmadeLess, NoCollisionMore, NoCollisionLess,BorderLinear,BorderOblique,Portal,}
 
-    public enum enum_LevelTileType { Invaid = -1, Empty, Main,Border, Item, Portal, }
+    public enum enum_LevelTileType { Invaid = -1, Empty, Main,Border, Item, Interact, }
 
     public enum enum_LevelTileOccupy { Invalid = -1, Inner, Outer, Border, }
 
@@ -1004,6 +1004,14 @@ namespace GameSetting
     {
         public override enum_LevelTileType E_TileType => enum_LevelTileType.Border;
         public LevelTileBorder(LevelTile current, int levelItemListIndex, enum_LevelItemType levelItemType, enum_TileDirection _ItemDirection) : base(current,levelItemListIndex,levelItemType,_ItemDirection,null)
+        {
+        }
+    }
+    class LevelTileInteract : LevelTile
+    {
+        public override enum_LevelTileType E_TileType => enum_LevelTileType.Interact;
+
+        public LevelTileInteract(LevelTile current) : base(current.m_TileAxis,current.E_Occupation)
         {
         }
     }

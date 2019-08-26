@@ -18,7 +18,6 @@ public class LevelBase : MonoBehaviour {
 
     #region TileMapInfos
     List<LevelTile> m_AllTiles=new List<LevelTile>();
-    int m_PortalIndex;
     List<int> m_IndexEmptyInner = new List<int>();
     List<int> m_IndexEmptyOuter = new List<int>();
     List<int> m_IndexBorder = new List<int>();
@@ -73,6 +72,7 @@ public class LevelBase : MonoBehaviour {
                 index++;
             }
         }
+        ClearTileForInteract();
         GenerateBorderTile(m_IndexBorder);
         GenerateRandomMainTile(_innerData,m_IndexEmptyInner);
         GenerateRandomMainTile(_outerData, m_IndexEmptyOuter);
@@ -98,7 +98,25 @@ public class LevelBase : MonoBehaviour {
             itemMain.Init(this, main.m_ItemDirection);
         }
     }
+    void ClearTileForInteract()
+    {
+        if (m_levelType != enum_TileType.Start)
+            return;
 
+        TileAxis startAxis = TileAxis.Zero + new TileAxis(-GameConst.I_InteractClearRange / 2, -GameConst.I_InteractClearRange / 2);
+        int centerIndex = m_IndexEmptyInner.Find(p => m_AllTiles[p].m_TileAxis == startAxis);
+        List<int> subIndexes = new List<int>();
+        if (!CheckIndexTileAreaAvailable(centerIndex, GameConst.I_InteractClearRange, GameConst.I_InteractClearRange, ref subIndexes))
+            Debug.LogError("WTF?");
+
+        m_AllTiles[centerIndex] = new LevelTileInteract(m_AllTiles[centerIndex]);
+        m_IndexEmptyInner.Remove(centerIndex);
+        for (int i = 0; i < subIndexes.Count; i++)
+        {
+            m_AllTiles[subIndexes[i]] = new LevelTileInteract(m_AllTiles[subIndexes[i]]);
+            m_IndexEmptyInner.Remove(subIndexes[i]);
+        }
+    }
     void GenerateBorderTile(List<int> borderTiles)
     {
         List<int> sortedBorder = new List<int>();
@@ -278,7 +296,7 @@ public class LevelBase : MonoBehaviour {
                             case enum_LevelTileType.Item:
                                 targetColor = TCommon.ColorAlpha(Color.blue, .5f); sizeParam = 1f;
                                 break;
-                            case enum_LevelTileType.Portal:
+                            case enum_LevelTileType.Interact:
                                 targetColor = TCommon.ColorAlpha(Color.white, .5f); sizeParam = 1f;
                                 break;
                             case enum_LevelTileType.Border:
