@@ -231,8 +231,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   E_CastType: 3
   F_Damage: 0
-  I_TickCount: 20
-  F_Tick: 0.2
+  I_TickCount: 8
+  F_Tick: 0.5
   I_BuffApplyOnCast: 1
   E_AreaType: 1
   V4_CastInfo: {x: 6, y: 0, z: 0, w: 0}
