@@ -257,7 +257,6 @@ public class EntityPlayerBase : EntityBase {
 #else
         UIManager.OnMainDown = null;
         UIManager.OnReload = null;
-        UIManager.OnSwitch = null;
         TouchDeltaManager.Instance.Bind(null, null);
 #endif
     }

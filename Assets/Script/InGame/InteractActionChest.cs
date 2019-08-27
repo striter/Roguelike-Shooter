@@ -33,7 +33,7 @@ public class InteractActionChest : InteractBase {
 
     void OnKeyAnim()
     {
-        UIManager.Instance.ShowAcquirePage().Play(m_Actions,OnActionSelectConfirm);
+        UIManager.Instance.ShowPage<UI_ActionAcquire>(true).Play(m_Actions,OnActionSelectConfirm);
     }
     void OnActionSelectConfirm(int index)
     {

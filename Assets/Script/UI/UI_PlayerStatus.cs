@@ -8,6 +8,7 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
 {
     Transform tf_Container,tf_Center,tf_Left;
     Text  txt_Health, txt_Armor,txt_ActionAmount;
+    Button btn_ActionStorage;
     Slider sld_Reload;
     Image img_sld;
     UIT_GridControllerMono<UIGI_AmmoItem> m_AmmoGrid;
@@ -31,6 +32,8 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
         tf_Left = tf_Container.Find("Left");
         m_ActionGrid =new UIT_GridControllerMono<UIGI_ActionHoldItem>(tf_Left.Find("ActionGrid"));
         txt_ActionAmount = m_ActionGrid.transform.Find("ActionAmount").GetComponent<Text>();
+        btn_ActionStorage = m_ActionGrid.transform.Find("ActionStorage").GetComponent<Button>();
+        btn_ActionStorage.onClick.AddListener(OnActionStorageClick);
     }
     private void Start()
     {
@@ -52,7 +55,7 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
     {
         if (!m_Player)
             m_Player = _player;
-        txt_ActionAmount.text = _player.m_PlayerActions.m_ActionHodling.Count == 0 ? _player.m_PlayerActions.m_ActionStored.Count.ToString() : _player.m_PlayerActions.m_ActionAmount.ToString();
+        txt_ActionAmount.text = _player.m_PlayerActions.m_ActionHolding.Count == 0 ? _player.m_PlayerActions.m_ActionStored.Count.ToString() : _player.m_PlayerActions.m_ActionAmount.ToString();
         tf_Center.position = Vector3.Lerp(tf_Center.position, CameraController.MainCamera.WorldToScreenPoint(m_Player.tf_Head.position), Time.deltaTime * 10f);
     }
     void OnHealthStatus(EntityHealth _healthManager)
@@ -105,14 +108,19 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
     void OnActionStatus(PlayerActionManager actionInfo)
     {
         m_ActionGrid.ClearGrid();
-        for (int i = 0; i < actionInfo.m_ActionHodling.Count; i++)
-            m_ActionGrid.AddItem(i).SetInfo(actionInfo.m_ActionHodling[i],OnActionUse);
+        for (int i = 0; i < actionInfo.m_ActionHolding.Count; i++)
+            m_ActionGrid.AddItem(i).SetInfo(actionInfo.m_ActionHolding[i],OnActionUse);
+
+        btn_ActionStorage.SetActivate(actionInfo.m_ActionHolding.Count==0);
     }
     void OnActionUse(int index)
     {
         m_Player.m_PlayerActions.TryUseAction(index);
     }
-
+    void OnActionStorageClick()
+    {
+        UIManager.Instance.ShowPage<UI_ActionStorage>(true).Show(m_Player.m_PlayerActions.m_ActionStored);
+    }
     void OnExpireStatus(PlayerInfoManager expireInfo)
     {
 

@@ -25,12 +25,12 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
     protected void Start()
     {
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageStart, OnStageStart);
-        TBroadCaster<enum_BC_GameStatus>.Add<Vector3>(enum_BC_GameStatus.OnLevelFinish, OnLevelFinished);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnLevelFinish, OnLevelFinished);
     }
     protected void OnDestroy()
     {
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnStageStart, OnStageStart);
-        TBroadCaster<enum_BC_GameStatus>.Remove<Vector3>(enum_BC_GameStatus.OnLevelFinish, OnLevelFinished);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnLevelFinish, OnLevelFinished);
     }
     public void GenerateAllEnviorment(enum_Style _LevelStyle,System.Random seed,Action<SBigmapLevelInfo> _OnLevelPrepared,Action _OnStageFinished)
     {
@@ -88,7 +88,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         OnLevelStart();
     }
 
-    void OnLevelFinished(Vector3 interactSpawnPos)
+    void OnLevelFinished()
     {
         foreach (enum_TileDirection direction in m_currentLevel.m_Connections.Keys)     //Set Connected Island Unlockable
         {

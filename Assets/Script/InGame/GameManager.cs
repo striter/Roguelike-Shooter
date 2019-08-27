@@ -144,32 +144,40 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnLevelStart);
         m_LocalPlayer.transform.position = levelInfo.m_Level.RandomEmptyTilePosition(LevelManager.m_GameSeed);
+
         if (LevelManager.CanLevelBattle(levelInfo))
+        {
             OnBattleStart(LevelManager.m_Difficulty);
+        }
         else
-            OnLevelFinished(Vector3.zero);
+        {
+            if (levelInfo.m_TileLocking != enum_TileLocking.Unlocked)
+                SpawnInteract(Vector3.zero);
+            OnLevelFinished();
+        }
     }
 
     //Call Enviorment Manager To Generate Interacts And Show Bigmaps, Then Go Back To OnLevelChange From Enviorment Manager
-    void OnLevelFinished(Vector3 spawnInteractPos)
+    void OnLevelFinished()
     {
-        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnLevelFinish,spawnInteractPos);
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnLevelFinish);
+    }
 
-        //Generate Interacts
+    void SpawnInteract(Vector3 pos)
+    {
         switch (LevelManager.m_LevelType)
         {
             case enum_TileType.Battle:
-                ObjectManager.SpawnInteractChest(EnviormentManager.NavMeshPosition(spawnInteractPos, false)).Play(new List<ActionBase> { DataManager.RandomPlayerAction(LevelManager.m_currentStage.ToActionLevel()), DataManager.RandomPlayerAction(LevelManager.m_currentStage.ToActionLevel()) });
+                ObjectManager.SpawnInteractChest(EnviormentManager.NavMeshPosition(pos, false)).Play(new List<ActionBase> { DataManager.RandomPlayerAction(LevelManager.m_currentStage.ToActionLevel()), DataManager.RandomPlayerAction(LevelManager.m_currentStage.ToActionLevel()) });
                 break;
             case enum_TileType.Start:
                 ObjectManager.SpawnInteractChest(EnviormentManager.NavMeshPosition(Vector3.left, false)).Play(new List<ActionBase> { DataManager.RandomPlayerAction(LevelManager.m_currentStage.ToActionLevel()), DataManager.RandomPlayerAction(LevelManager.m_currentStage.ToActionLevel()) });
                 ObjectManager.SpawnWeaponContainer(EnviormentManager.NavMeshPosition(Vector3.right, false)).Play(TCommon.RandomEnumValues<enum_PlayerWeapon>(LevelManager.m_GameSeed), new List<ActionBase>() { DataManager.RendomWeaponAction(LevelManager.m_currentStage.ToActionLevel()) });
                 break;
             case enum_TileType.End:
-                ObjectManager.SpawnInteractPortal(EnviormentManager.NavMeshPosition(spawnInteractPos, false)).Play(OnStageFinished);
+                ObjectManager.SpawnInteractPortal(EnviormentManager.NavMeshPosition(pos, false)).Play(OnStageFinished);
                 break;
         }
-
     }
 
     void OnStageFinished()
@@ -324,7 +332,8 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleFinish);
         B_Battling = false;
-        OnLevelFinished(lastEntityPos);
+        OnLevelFinished();
+        SpawnInteract(lastEntityPos);
     }
 
     IEnumerator IE_GenerateEnermy(List<int> waveGenerate, float _offset)

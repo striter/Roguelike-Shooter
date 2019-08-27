@@ -988,7 +988,7 @@ namespace GameSetting
         public float m_ActionAmount { get; private set; } = 0f;
         public List<ActionBase> m_ActionStored { get; private set; } = new List<ActionBase>();
         public List<ActionBase> m_ActionInPool { get; private set; } = new List<ActionBase>();
-        public List<ActionBase> m_ActionHodling { get; private set; } = new List<ActionBase>();
+        public List<ActionBase> m_ActionHolding { get; private set; } = new List<ActionBase>();
         int I_EntityID;
         Action OnActionChanged;
         Action<ActionBase> OnActionUse;
@@ -1003,6 +1003,7 @@ namespace GameSetting
             m_ActionStored = _actions;
             m_MaxActionAmount = GameConst.F_MaxAcountAmount;
             m_ActionAmount = m_MaxActionAmount;
+            OnActionChanged();
             TBroadCaster<enum_BC_GameStatus>.Add<DamageDeliverInfo, EntityBase, float>(enum_BC_GameStatus.OnEntityDamage, OnEntityApplyDamage);
         }
         public void OnDeactivate()
@@ -1014,36 +1015,36 @@ namespace GameSetting
         public void OnBattleStart()
         {
             m_ActionInPool = new List<ActionBase>(m_ActionStored);
-            m_ActionHodling.Clear();
+            m_ActionHolding.Clear();
             RefillHoldingActions();
             OnActionChanged();
         }
         public void OnBattleFinish()
         {
             m_ActionInPool.Clear();
-            m_ActionHodling.Clear();
+            m_ActionHolding.Clear();
             OnActionChanged();
         }
 
         void RefillHoldingActions()
         {
-            if (m_ActionInPool.Count <= 0 || m_ActionHodling.Count >= 3)
+            if (m_ActionInPool.Count <= 0 || m_ActionHolding.Count >= 3)
                 return;
 
             int index = m_ActionInPool.RandomIndex();
-            m_ActionHodling.Add(m_ActionInPool[index]);
+            m_ActionHolding.Add(m_ActionInPool[index]);
             m_ActionInPool.RemoveAt(index);
             RefillHoldingActions();
         }
         public bool TryUseAction(int index)
         {
-            ActionBase action = m_ActionHodling[index];
+            ActionBase action = m_ActionHolding[index];
             if (m_ActionAmount < action.I_ActionCost)
                 return false;
 
             m_ActionAmount -= action.I_ActionCost;
             OnActionUse(action);
-            m_ActionHodling.RemoveAt(index);
+            m_ActionHolding.RemoveAt(index);
             RefillHoldingActions();
             OnActionChanged();
             return true;

@@ -17,7 +17,7 @@ public class UIManager : SingletonMono<UIManager> {
         txt_Coin = tf_Top.Find("Coin").GetComponent<Text>();
         tf_Top.Find("Reload").GetComponent<Button>().onClick.AddListener(() => { OnReload?.Invoke(); });
         tf_Top.Find("Main").GetComponent<UIT_EventTriggerListener>().D_OnPress+=(bool down,Vector2 pos) => { OnMainDown?.Invoke(down); };
-        tf_Top.Find("SporeBtn").GetComponent<Button>().onClick.AddListener(() => { UIPageBase.ShowPage<UI_SporeManager>(transform,true); });
+        tf_Top.Find("SporeBtn").GetComponent<Button>().onClick.AddListener(() => { ShowPage<UI_SporeManager>(true); });
         txt_Main = tf_Top.Find("Main/Text").GetComponent<Text>();
         tf_Pages = transform.Find("Pages");
         tf_Common = transform.Find("Common");
@@ -31,9 +31,9 @@ public class UIManager : SingletonMono<UIManager> {
     {
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityPlayerBase>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnPlayerStatusChanged);
     }
-    public UI_ActionAcquire ShowAcquirePage()
+    public T ShowPage<T>(bool animate) where T : UIPageBase
     {
-        return UIPageBase.ShowPage<UI_ActionAcquire>(tf_Pages, true);
+        return UIPageBase.ShowPage<T>(tf_Pages, true);
     }
     void OnPlayerStatusChanged(EntityPlayerBase player)
     {
