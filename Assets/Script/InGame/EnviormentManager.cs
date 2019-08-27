@@ -24,13 +24,13 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
     }
     protected void Start()
     {
-        TBroadCaster<enum_BC_GameStatusChanged>.Add(enum_BC_GameStatusChanged.OnStageStart, OnStageStart);
-        TBroadCaster<enum_BC_GameStatusChanged>.Add<Vector3>(enum_BC_GameStatusChanged.OnLevelFinish, OnLevelFinished);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageStart, OnStageStart);
+        TBroadCaster<enum_BC_GameStatus>.Add<Vector3>(enum_BC_GameStatus.OnLevelFinish, OnLevelFinished);
     }
     protected void OnDestroy()
     {
-        TBroadCaster<enum_BC_GameStatusChanged>.Remove(enum_BC_GameStatusChanged.OnStageStart, OnStageStart);
-        TBroadCaster<enum_BC_GameStatusChanged>.Remove<Vector3>(enum_BC_GameStatusChanged.OnLevelFinish, OnLevelFinished);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnStageStart, OnStageStart);
+        TBroadCaster<enum_BC_GameStatus>.Remove<Vector3>(enum_BC_GameStatus.OnLevelFinish, OnLevelFinished);
     }
     public void GenerateAllEnviorment(enum_Style _LevelStyle,System.Random seed,Action<SBigmapLevelInfo> _OnLevelPrepared,Action _OnStageFinished)
     {
@@ -75,7 +75,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         BuildNavMeshData(m_currentLevel.m_Level);
         OnLevelPrepared(m_currentLevel);
         m_currentLevel.SetTileLocking(enum_TileLocking.Unlocked);
-        TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.LevelStatusChange, m_MapLevelInfo, m_currentLevel.m_TileAxis);
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_LevelStatusChange, m_MapLevelInfo, m_currentLevel.m_TileAxis);
     }
 
     public void OnChangeLevel(TileAxis targetAxis)
@@ -96,7 +96,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
                 m_MapLevelInfo.Get(m_currentLevel.m_Connections[direction]).SetTileLocking(enum_TileLocking.Unlockable);
         }
 
-        TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.LevelStatusChange, m_MapLevelInfo, m_currentLevel.m_TileAxis);
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_LevelStatusChange, m_MapLevelInfo, m_currentLevel.m_TileAxis);
     }
     #endregion
     #region BigMap

@@ -13,7 +13,7 @@ namespace GameSetting
     public static class GameConst
     {
         public const float F_EntityDeadFadeTime = 2f;
-        public const float F_MaxActionAmount = 3f;
+        public const float F_MaxAcountAmount = 3f;
 
         public const int I_ProjectileMaxDistance = 100;
         public const int I_ProjectileBlinkWhenTimeLeftLessThan = 3;
@@ -32,6 +32,7 @@ namespace GameSetting
 
         public const float F_AITargetCheckParam = 3f;       //AI Retarget Duration,3 is suggested
         public const float F_AITargetCalculationParam = 1f;       //AI Target Param Calculation Duration, 1 is suggested;
+        public const float F_AIMovementCalculationParam = .3f;
         public const int I_EnermyCountWaveFinish = 0;       //When Total Enermy Count Reaches This Amount,Wave Finish
         public const int I_EnermySpawnDelay = 2;        //Enermy Spawn Delay Time 
 
@@ -121,20 +122,15 @@ namespace GameSetting
     #endregion
 
     #region For Developers Use
-
-
-
+    
     #region BroadCastEnum
-    enum enum_BC_GameStatusChanged
+    enum enum_BC_GameStatus
     {
         Invalid = -1,
         OnEntitySpawn,
         OnEntityDamage,
         OnEntityDead,
         OnEntityRecycle,
-
-        PlayerInfoChanged,
-        LevelStatusChange,
 
         OnStageStart,       //Total Stage Start
         OnStageFinish,
@@ -144,6 +140,18 @@ namespace GameSetting
         OnBattleFinish,
         OnWaveStart,     //Battle Wave
         OnWaveFinish,
+
+    }
+
+    enum enum_BC_UIStatus
+    {
+        Invalid=-1,
+        UI_PlayerCommonStatus,
+        UI_PlayerHealthStatus,
+        UI_PlayerAmmoStatus,
+        UI_PlayerActionStatus,
+        UI_PlayerExpireStatus,
+        UI_LevelStatusChange,
     }
     #endregion
 
@@ -182,7 +190,7 @@ namespace GameSetting
 
     public enum enum_CastAreaType { Invalid = -1, OverlapSphere = 1, ForwardBox = 2, ForwardCapsule = 3, ForwardTrapezium = 4, }
 
-    public enum enum_HealthMessageType { Invalid = -1, DamageHealth = 1, ReceiveHealth = 2, DamageArmor = 3, ReceiveArmor = 4 }
+    public enum enum_HealthChangeMessage { Invalid = -1,Begin=0, DamageHealth = 1, ReceiveHealth = 2, DamageArmor = 3, ReceiveArmor = 4 }
 
     public enum enum_DamageType { Invalid = -1, Common = 1, ArmorOnly = 2,HealthOnly = 3, }
 
@@ -275,14 +283,192 @@ namespace GameSetting
     #endregion
 
     #region GameSave
-    public class CPlayerSave : ISave        //Save Outta Game
+    public class CPlayerDataSave : ISave        //Save Outta Game
     {
         public float f_blue;
-        public CPlayerSave()
+        public CPlayerDataSave()
         {
             f_blue = 100;
         }
+        public void OnBlueUsed(float amount)
+        {
+            f_blue -= amount;
+        }
     }
+    public class CPlayerGameSave : ISave
+    {
+        public enum_PlayerWeapon m_weapon;
+        public List<ActionInfo> m_weaponActions;
+        public List<ActionInfo> m_storedActions;
+        public CPlayerGameSave()
+        {
+            m_weapon = enum_PlayerWeapon.P92;
+            m_weaponActions = new List<ActionInfo>();
+            m_storedActions = new List<ActionInfo>() { ActionInfo.Create(DataManager.RandomPlayerAction(enum_ActionLevel.L1)),ActionInfo.Create( DataManager.RandomPlayerAction(enum_ActionLevel.L1)) };
+        }
+        public void Adjust(EntityPlayerBase _player)
+        {
+            m_weapon = _player.m_WeaponCurrent.m_WeaponInfo.m_Weapon;
+            m_weaponActions = ActionInfo.Create(_player.m_WeaponCurrent.m_WeaponAction);
+            m_storedActions = ActionInfo.Create(_player.m_PlayerActions.m_ActionStored);
+        }
+    }
+    #endregion
+
+    #region DataStruct
+    public struct ActionInfo : IXmlPhrase
+    {
+        public int m_Index { get; private set; }
+        public enum_ActionLevel m_Level { get; private set; }
+        public string ToXMLData() => m_Index.ToString() + "," + m_Level.ToString();
+        public ActionInfo(string xmlData)
+        {
+            string[] split = xmlData.Split(',');
+            m_Index = int.Parse(split[0]);
+            m_Level = (enum_ActionLevel)Enum.Parse(typeof(enum_ActionLevel),split[1]);
+        }
+        public static ActionInfo Create(int index, enum_ActionLevel level) => new ActionInfo { m_Index = index, m_Level = level };
+        public static ActionInfo Create(ActionBase action) => new ActionInfo { m_Index = action.m_Index, m_Level = action.m_Level };
+        public static List<ActionInfo> Create(List<ActionBase> actions)
+        {
+            List<ActionInfo> infos = new List<ActionInfo>();
+            actions.Traversal((ActionBase action) => { infos.Add(Create(action)); });
+            return infos;
+        }
+    }
+
+    public struct SWeapon : ISExcel
+    {
+        int index;
+        string s_name;
+        float f_fireRate;
+        float f_specialRate;
+        int i_clipAmount;
+        float f_spread;
+        float f_reloadTime;
+        int i_PelletsPerShot;
+        float f_stunAfterShot;
+        float f_recoilHorizontal;
+        float f_recoilVertical;
+        public int m_Index => index;
+        public enum_PlayerWeapon m_Weapon => (enum_PlayerWeapon)index;
+        public string m_Name => s_name;
+        public float m_FireRate => f_fireRate;
+        public float m_SpecialRate => f_specialRate;
+        public int m_ClipAmount => i_clipAmount;
+        public float m_Spread => f_spread;
+        public float m_ReloadTime => f_reloadTime;
+        public int m_PelletsPerShot => i_PelletsPerShot;
+        public float m_stunAfterShot => f_stunAfterShot;
+        public Vector2 m_RecoilPerShot => new Vector2(f_recoilHorizontal, f_recoilVertical);
+        public void InitOnValueSet()
+        {
+        }
+    }
+    public struct SLevelGenerate : ISExcel
+    {
+        string em_defines;
+        RangeInt ir_length;
+        RangeInt ir_smallLess;
+        RangeInt ir_smallMore;
+        RangeInt ir_mediumLess;
+        RangeInt ir_mediumMore;
+        RangeInt ir_largeLess;
+        RangeInt ir_largeMore;
+        RangeInt ir_manmadeLess;
+        RangeInt ir_manmadeMore;
+        RangeInt ir_noCollisionLess;
+        RangeInt ir_noCollisionMore;
+        public bool m_IsInner;
+        public enum_Style m_LevelStyle;
+        public enum_LevelGenerateType m_LevelPrefabType;
+        public Dictionary<enum_LevelItemType, RangeInt> m_ItemGenerate;
+        public RangeInt m_Length => ir_length;
+        public void InitOnValueSet()
+        {
+            string[] defineSplit = em_defines.Split('_');
+            if (defineSplit.Length != 3)
+                Debug.LogError("Please Corret Format Of DefineSplit:" + em_defines);
+            m_LevelStyle = (enum_Style)(int.Parse(defineSplit[0]));
+            m_LevelPrefabType = (enum_LevelGenerateType)(int.Parse(defineSplit[1]));
+            m_IsInner = int.Parse(defineSplit[2]) == 1;
+            m_ItemGenerate = new Dictionary<enum_LevelItemType, RangeInt>();
+            m_ItemGenerate.Add(enum_LevelItemType.LargeLess, ir_largeLess);
+            m_ItemGenerate.Add(enum_LevelItemType.LargeMore, ir_largeMore);
+            m_ItemGenerate.Add(enum_LevelItemType.MediumLess, ir_mediumLess);
+            m_ItemGenerate.Add(enum_LevelItemType.MediumMore, ir_mediumMore);
+            m_ItemGenerate.Add(enum_LevelItemType.SmallLess, ir_smallLess);
+            m_ItemGenerate.Add(enum_LevelItemType.SmallMore, ir_smallMore);
+            m_ItemGenerate.Add(enum_LevelItemType.ManmadeLess, ir_manmadeLess);
+            m_ItemGenerate.Add(enum_LevelItemType.ManmadeMore, ir_manmadeMore);
+            m_ItemGenerate.Add(enum_LevelItemType.NoCollisionLess, ir_noCollisionLess);
+            m_ItemGenerate.Add(enum_LevelItemType.NoCollisionMore, ir_noCollisionMore);
+        }
+    }
+    public struct SGenerateEntity : ISExcel
+    {
+        string em_defines;
+        float f_eliteChance;
+        RangeInt ir_fighter;
+        RangeInt ir_shooterRookie;
+        RangeInt ir_shooterVeteran;
+        RangeInt ir_aoeCaster;
+        RangeInt ir_elite;
+        public int m_waveCount;
+        public enum_BattleDifficulty m_Difficulty;
+        public float m_EliteChance => f_eliteChance;
+        public Dictionary<enum_EntityType, RangeInt> m_EntityGenerate;
+        public void InitOnValueSet()
+        {
+            string[] defineSplit = em_defines.Split('_');
+            m_Difficulty = (enum_BattleDifficulty)(int.Parse(defineSplit[0]));
+            m_waveCount = (int.Parse(defineSplit[1]));
+            m_EntityGenerate = new Dictionary<enum_EntityType, RangeInt>();
+            m_EntityGenerate.Add(enum_EntityType.Fighter, ir_fighter);
+            m_EntityGenerate.Add(enum_EntityType.Shooter_Rookie, ir_shooterRookie);
+            m_EntityGenerate.Add(enum_EntityType.Shooter_Veteran, ir_shooterVeteran);
+            m_EntityGenerate.Add(enum_EntityType.AOECaster, ir_aoeCaster);
+            m_EntityGenerate.Add(enum_EntityType.Elite, ir_elite);
+        }
+    }
+    public struct SBuff : ISExcel
+    {
+        int index;
+        int i_addType;
+        float f_expireDuration;
+        int i_effect;
+        float f_movementSpeedMultiply;
+        float f_fireRateMultiply;
+        float f_reloadRateMultiply;
+        float f_damageMultiply;
+        float f_damageReduce;
+        float f_damageTickTime;
+        float f_damagePerTick;
+        int i_damageType;
+        bool b_stun;
+        public int m_Index => index;
+        public enum_ExpireRefreshType m_AddType => (enum_ExpireRefreshType)i_addType;
+        public float m_ExpireDuration => f_expireDuration;
+        public int m_EffectIndex => i_effect;
+        public float m_MovementSpeedMultiply => f_movementSpeedMultiply;
+        public float m_FireRateMultiply => f_fireRateMultiply;
+        public float m_ReloadRateMultiply => f_reloadRateMultiply;
+        public float m_DamageMultiply => f_damageMultiply;
+        public float m_DamageReduction => f_damageReduce;
+        public float m_DamageTickTime => f_damageTickTime;
+        public float m_DamagePerTick => f_damagePerTick;
+        public enum_DamageType m_DamageType => (enum_DamageType)i_damageType;
+        public bool m_Stun => b_stun;
+        public void InitOnValueSet()
+        {
+            f_movementSpeedMultiply = f_movementSpeedMultiply > 0 ? f_movementSpeedMultiply / 100f : 0;
+            f_fireRateMultiply = f_fireRateMultiply > 0 ? f_fireRateMultiply / 100f : 0;
+            f_reloadRateMultiply = f_reloadRateMultiply > 0 ? f_reloadRateMultiply / 100f : 0;
+            f_damageMultiply = f_damageMultiply > 0 ? f_damageMultiply / 100f : 0;
+            f_damageReduce = f_damageReduce > 0 ? f_damageReduce / 100f : 0;
+        }
+    }
+
     #endregion
 
     #region GameClass/Structs
@@ -302,9 +488,9 @@ namespace GameSetting
                 m_CurrentHealth = m_MaxHealth;
         }
 
-        protected Action<enum_HealthMessageType> OnHealthChanged;
+        protected Action<enum_HealthChangeMessage> OnHealthChanged;
         protected Action OnDead;
-        public HealthBase( Action<enum_HealthMessageType> _OnHealthChanged, Action _OnDead)
+        public HealthBase( Action<enum_HealthChangeMessage> _OnHealthChanged, Action _OnDead)
         {
             OnHealthChanged = _OnHealthChanged;
             OnDead = _OnDead;
@@ -320,7 +506,7 @@ namespace GameSetting
                 return false;
 
             m_CurrentHealth -= damageInfo.m_AmountApply * damageReduction;
-            OnHealthChanged?.Invoke( enum_HealthMessageType.DamageHealth);
+            OnHealthChanged?.Invoke( enum_HealthChangeMessage.DamageHealth);
 
             if (b_IsDead)
                 OnDead();
@@ -346,7 +532,7 @@ namespace GameSetting
                 m_CurrentArmor = 0;
         }
 
-        public EntityHealth(EntityBase entity, Action<enum_HealthMessageType> _OnHealthChanged, Action _OnDead) :base(_OnHealthChanged,_OnDead)
+        public EntityHealth(EntityBase entity, Action<enum_HealthChangeMessage> _OnHealthChanged, Action _OnDead) :base(_OnHealthChanged,_OnDead)
         {
             m_Entity = entity;
         }
@@ -355,6 +541,7 @@ namespace GameSetting
             base.OnActivate(maxHealth);
             m_DefaultArmor= defaultArmor;
             m_CurrentArmor = m_DefaultArmor;
+            OnHealthChanged(enum_HealthChangeMessage.Begin);
         }
         public override bool OnReceiveDamage(DamageInfo damageInfo,float damageMultiply=1)
         {
@@ -372,13 +559,13 @@ namespace GameSetting
                             if (F_ArmorScale == 0)
                                 return false;
                             DamageArmor(damageReceive);
-                            OnHealthChanged(enum_HealthMessageType.DamageArmor);
+                            OnHealthChanged(enum_HealthChangeMessage.DamageArmor);
                         }
                         break;
                     case enum_DamageType.HealthOnly:
                         {
                             DamageHealth(damageReceive);
-                            OnHealthChanged(enum_HealthMessageType.DamageHealth);
+                            OnHealthChanged(enum_HealthChangeMessage.DamageHealth);
                         }
                         break;
                     case enum_DamageType.Common:
@@ -387,12 +574,12 @@ namespace GameSetting
                             DamageArmor(damageReceive);
                             if (healthDamage > 0)
                                 DamageHealth(healthDamage);
-                            OnHealthChanged(healthDamage >= 0 ? enum_HealthMessageType.DamageHealth : enum_HealthMessageType.DamageArmor);
+                            OnHealthChanged(healthDamage >= 0 ? enum_HealthChangeMessage.DamageHealth : enum_HealthChangeMessage.DamageArmor);
                         }
                         break;
                 }
 
-                TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnEntityDamage, damageInfo.m_detail, m_Entity, damageReceive);
+                TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityDamage, damageInfo.m_detail, m_Entity, damageReceive);
                 if (b_IsDead)
                     OnDead();
             }
@@ -404,7 +591,7 @@ namespace GameSetting
                     case enum_DamageType.ArmorOnly:
                         {
                             DamageArmor(amountHeal);
-                            OnHealthChanged(enum_HealthMessageType.ReceiveArmor);
+                            OnHealthChanged(enum_HealthChangeMessage.ReceiveArmor);
                         }
                         break;
                     case enum_DamageType.HealthOnly:
@@ -412,7 +599,7 @@ namespace GameSetting
                             if (F_HealthScale==1)
                                 return false;
                             DamageHealth(amountHeal);
-                            OnHealthChanged( enum_HealthMessageType.ReceiveHealth);
+                            OnHealthChanged( enum_HealthChangeMessage.ReceiveHealth);
                         }
                         break;
                     case enum_DamageType.Common:
@@ -421,12 +608,12 @@ namespace GameSetting
                             DamageHealth(amountHeal);
                             if (armorReceive>0)
                             {
-                                OnHealthChanged(enum_HealthMessageType.ReceiveHealth);
+                                OnHealthChanged(enum_HealthChangeMessage.ReceiveHealth);
                                 return true;
                             }
                             
                             DamageArmor(armorReceive);
-                            OnHealthChanged(enum_HealthMessageType.ReceiveArmor);
+                            OnHealthChanged(enum_HealthChangeMessage.ReceiveArmor);
                         }
                         break;
                 }
@@ -509,6 +696,7 @@ namespace GameSetting
         {
             f_stunCheck = 0f;
             damageOverride = false;
+            InfoChange();
         }
         public virtual void OnDeactivate()
         {
@@ -692,11 +880,11 @@ namespace GameSetting
     }
 
     #endregion
+
     #region ActionManager
     public class PlayerInfoManager : EntityInfoManager
     {
         List<ActionBase> m_ActionEquiping = new List<ActionBase>();
-        public float F_ActionAmount { get; private set; } = 0f;
         public float F_RecoilMultiply { get; private set; } = 1f;
         public float F_ProjectileSpeedMuiltiply { get; private set; } = 1f;
         protected bool B_OneOverride { get; private set; } = false;
@@ -709,38 +897,26 @@ namespace GameSetting
         public PlayerInfoManager(EntityPlayerBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnInfoChange) : base(_attacher, _OnReceiveDamage, _OnInfoChange)
         {
             m_Player = _attacher;
-            F_ActionAmount = GameConst.F_MaxActionAmount;
         }
         public override void OnActivate()
         {
             base.OnActivate();
-            TBroadCaster<enum_BC_GameStatusChanged>.Add<DamageDeliverInfo, EntityBase, float>(enum_BC_GameStatusChanged.OnEntityDamage, OnEntityApplyDamage);
+            TBroadCaster<enum_BC_GameStatus>.Add<DamageDeliverInfo, EntityBase, float>(enum_BC_GameStatus.OnEntityDamage, OnEntityApplyDamage);
         }
         public override void OnDeactivate()
         {
             base.OnDeactivate();
-            TBroadCaster<enum_BC_GameStatusChanged>.Remove<DamageDeliverInfo, EntityBase, float>(enum_BC_GameStatusChanged.OnEntityDamage, OnEntityApplyDamage);
+            TBroadCaster<enum_BC_GameStatus>.Remove<DamageDeliverInfo, EntityBase, float>(enum_BC_GameStatus.OnEntityDamage, OnEntityApplyDamage);
             m_AfterFire.Clear();
         }
 
-        public void AddActionAmount(float amount)
-        {
-            F_ActionAmount += amount;
-            if (F_ActionAmount > GameConst.F_MaxActionAmount)
-                F_ActionAmount = GameConst.F_MaxActionAmount;
-        }
-
-        public bool TestUseAction(int index)
-        {
-            OnUseAcion( DataManager.CreateAction(index, enum_ActionLevel.L3));
-            return true;
-        }
-        protected void OnUseAcion(ActionBase targetAction)
+        public void OnUseAcion(ActionBase targetAction)
         {
             m_ActionEquiping.Traversal((ActionBase action) => { action.OnAddActionElse(targetAction.m_Index); });
+            targetAction.InitAction(m_Player, OnExpireElapsed);
             AddExpire(targetAction);
             m_ActionEquiping.Add(targetAction);
-            targetAction.OnActionUse(m_Player, OnExpireElapsed);
+            targetAction.OnActionUse();
         }
         protected override void OnExpireElapsed(ExpireBase expire)
         {
@@ -791,7 +967,7 @@ namespace GameSetting
         public void OnAttachWeapon(WeaponBase weapon)=> weapon.m_WeaponAction.Traversal((ActionBase action) => { OnUseAcion(action); });
         public void OnDetachWeapon()=>  m_ActionEquiping.Traversal((ActionBase action) => { action.OnWeaponDetach(); },true);
         public void OnReloadFinish() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnReloadFinish(); });
-        public void OnBattleFinished() {
+        public void OnBattleFinish() {
             m_ActionEquiping.Traversal((ActionBase action) => { action.OnAfterBattle(); }, true);
             m_AfterFire.Clear();
         }
@@ -800,16 +976,102 @@ namespace GameSetting
             m_AfterFire.Traversal((ActionAfterFire action) => {if (action.OnActionHitEntity(damageInfo.I_IdentiyID, damageEntity))  m_AfterFire.Remove(action); }, true);
 
             if (damageInfo.I_SourceID == m_Player.I_EntityID)
-            {
                 m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDemage( damageEntity, amountApply); });
-                AddActionAmount(GameExpression.F_ActionAmountReceive(amountApply));
-            }
             else if (damageEntity.I_EntityID == m_Player.I_EntityID)
                 m_ActionEquiping.Traversal((ActionBase action) => { action.OnReceiveDamage(damageInfo.I_SourceID, amountApply);  });
         }
         #endregion
     }
+    public class PlayerActionManager
+    {
+        public float m_MaxActionAmount { get; private set; } = 3f;
+        public float m_ActionAmount { get; private set; } = 0f;
+        public List<ActionBase> m_ActionStored { get; private set; } = new List<ActionBase>();
+        public List<ActionBase> m_ActionInPool { get; private set; } = new List<ActionBase>();
+        public List<ActionBase> m_ActionHodling { get; private set; } = new List<ActionBase>();
+        int I_EntityID;
+        Action OnActionChanged;
+        Action<ActionBase> OnActionUse;
+        public PlayerActionManager(Action _OnActionChanged,Action<ActionBase> _OnActionUse)
+        {
+            OnActionChanged = _OnActionChanged;
+            OnActionUse = _OnActionUse;
+        }
+        public void OnActivate(int _entityID,List<ActionBase> _actions)
+        {
+            I_EntityID = _entityID;
+            m_ActionStored = _actions;
+            m_MaxActionAmount = GameConst.F_MaxAcountAmount;
+            m_ActionAmount = m_MaxActionAmount;
+            TBroadCaster<enum_BC_GameStatus>.Add<DamageDeliverInfo, EntityBase, float>(enum_BC_GameStatus.OnEntityDamage, OnEntityApplyDamage);
+        }
+        public void OnDeactivate()
+        {
+            TBroadCaster<enum_BC_GameStatus>.Remove<DamageDeliverInfo, EntityBase, float>(enum_BC_GameStatus.OnEntityDamage, OnEntityApplyDamage);
+        }
 
+        #region Action Interact
+        public void OnBattleStart()
+        {
+            m_ActionInPool = new List<ActionBase>(m_ActionStored);
+            m_ActionHodling.Clear();
+            RefillHoldingActions();
+            OnActionChanged();
+        }
+        public void OnBattleFinish()
+        {
+            m_ActionInPool.Clear();
+            m_ActionHodling.Clear();
+            OnActionChanged();
+        }
+
+        void RefillHoldingActions()
+        {
+            if (m_ActionInPool.Count <= 0 || m_ActionHodling.Count >= 3)
+                return;
+
+            int index = m_ActionInPool.RandomIndex();
+            m_ActionHodling.Add(m_ActionInPool[index]);
+            m_ActionInPool.RemoveAt(index);
+            RefillHoldingActions();
+        }
+        public bool TryUseAction(int index)
+        {
+            ActionBase action = m_ActionHodling[index];
+            if (m_ActionAmount < action.I_ActionCost)
+                return false;
+
+            m_ActionAmount -= action.I_ActionCost;
+            OnActionUse(action);
+            m_ActionHodling.RemoveAt(index);
+            RefillHoldingActions();
+            OnActionChanged();
+            return true;
+        }
+
+        public void AddStoredAction(ActionBase action)=> m_ActionStored.Add(action);
+        public void UpgradeAction(int index)
+        {
+
+        }
+        #endregion
+
+        #region Action Info
+        void OnEntityApplyDamage(DamageDeliverInfo damageInfo, EntityBase damageEntity, float amountApply)
+        {
+            if (damageInfo.I_SourceID == I_EntityID)
+                AddActionAmount(GameExpression.F_ActionAmountReceive(amountApply));
+        }
+
+        public void AddActionAmount(float amount)
+        {
+            m_ActionAmount += amount;
+            if (m_ActionAmount > m_MaxActionAmount)
+                m_ActionAmount = m_MaxActionAmount;
+        }
+        #endregion
+
+    }
     public class ActionBase : ExpireBase
     {
         public EntityPlayerBase m_ActionEntity { get; private set; }
@@ -832,7 +1094,8 @@ namespace GameSetting
             if (m_ExpireType == enum_ActionExpireType.Invalid)
                 Debug.LogError("Override Type Please!");
         }
-        public virtual void OnActionUse(EntityPlayerBase _actionEntity, Action<ExpireBase> _OnActionExpired) { base.Activate(_OnActionExpired); m_ActionEntity = _actionEntity; }
+        public void InitAction(EntityPlayerBase _actionEntity, Action<ExpireBase> _OnActionExpired) { base.Activate(_OnActionExpired); m_ActionEntity = _actionEntity; }
+        public virtual void OnActionUse() { }
         public virtual void OnAddActionElse(float actionAmount) { }
         public virtual void OnReceiveDamage(int applier, float amount) { }
         public virtual void OnDealtDemage(EntityBase receiver, float amount) { }
@@ -848,6 +1111,7 @@ namespace GameSetting
         }
     }
     #endregion
+
     #region Physics
     public static class HitCheckDetect_Extend
     {
@@ -1059,140 +1323,6 @@ namespace GameSetting
 
         public LevelTileInteract(LevelTile current) : base(current.m_TileAxis,current.E_Occupation)
         {
-        }
-    }
-    #endregion
-
-    #region ExcelStruct
-    public struct SWeapon : ISExcel
-    {
-        int index;
-        string s_name;
-        float f_fireRate;
-        float f_specialRate;
-        int i_clipAmount;
-        float f_spread;
-        float f_reloadTime;
-        int i_PelletsPerShot;
-        float f_stunAfterShot;
-        float f_recoilHorizontal;
-        float f_recoilVertical;
-        public int m_Index => index;
-        public enum_PlayerWeapon m_Weapon => (enum_PlayerWeapon)index;
-        public string m_Name => s_name;
-        public float m_FireRate => f_fireRate;
-        public float m_SpecialRate => f_specialRate;
-        public int m_ClipAmount => i_clipAmount;
-        public float m_Spread => f_spread;
-        public float m_ReloadTime => f_reloadTime;
-        public int m_PelletsPerShot => i_PelletsPerShot;
-        public float m_stunAfterShot => f_stunAfterShot;
-        public Vector2 m_RecoilPerShot => new Vector2(f_recoilHorizontal, f_recoilVertical);
-        public void InitOnValueSet()
-        {
-        }
-    }
-    public struct SLevelGenerate : ISExcel
-    {
-        string em_defines;
-        RangeInt ir_length;
-        RangeInt ir_smallLess;
-        RangeInt ir_smallMore;
-        RangeInt ir_mediumLess;
-        RangeInt ir_mediumMore;
-        RangeInt ir_largeLess;
-        RangeInt ir_largeMore;
-        RangeInt ir_manmadeLess;
-        RangeInt ir_manmadeMore;
-        RangeInt ir_noCollisionLess;
-        RangeInt ir_noCollisionMore;
-        public bool m_IsInner;
-        public enum_Style m_LevelStyle;
-        public enum_LevelGenerateType m_LevelPrefabType;
-        public Dictionary<enum_LevelItemType, RangeInt> m_ItemGenerate;
-        public RangeInt m_Length => ir_length;
-        public void InitOnValueSet()
-        {
-            string[] defineSplit = em_defines.Split('_');
-            if (defineSplit.Length != 3)
-                Debug.LogError("Please Corret Format Of DefineSplit:" +em_defines   );
-            m_LevelStyle = (enum_Style)(int.Parse(defineSplit[0]));
-            m_LevelPrefabType = (enum_LevelGenerateType)(int.Parse(defineSplit[1]));
-            m_IsInner = int.Parse(defineSplit[2]) == 1;
-            m_ItemGenerate = new Dictionary<enum_LevelItemType, RangeInt>(); 
-            m_ItemGenerate.Add(enum_LevelItemType.LargeLess, ir_largeLess);
-            m_ItemGenerate.Add(enum_LevelItemType.LargeMore, ir_largeMore);
-            m_ItemGenerate.Add(enum_LevelItemType.MediumLess, ir_mediumLess);
-            m_ItemGenerate.Add(enum_LevelItemType.MediumMore, ir_mediumMore);
-            m_ItemGenerate.Add(enum_LevelItemType.SmallLess,ir_smallLess);
-            m_ItemGenerate.Add(enum_LevelItemType.SmallMore, ir_smallMore);
-            m_ItemGenerate.Add(enum_LevelItemType.ManmadeLess, ir_manmadeLess);
-            m_ItemGenerate.Add(enum_LevelItemType.ManmadeMore, ir_manmadeMore);
-            m_ItemGenerate.Add(enum_LevelItemType.NoCollisionLess, ir_noCollisionLess);
-            m_ItemGenerate.Add(enum_LevelItemType.NoCollisionMore, ir_noCollisionMore);
-        }
-    }
-    public struct SGenerateEntity:ISExcel
-    {
-        string em_defines;
-        float f_eliteChance;
-        RangeInt ir_fighter;
-        RangeInt ir_shooterRookie;
-        RangeInt ir_shooterVeteran;
-        RangeInt ir_aoeCaster;
-        RangeInt ir_elite;
-        public int m_waveCount;
-        public enum_BattleDifficulty m_Difficulty;
-        public float m_EliteChance => f_eliteChance;
-        public Dictionary<enum_EntityType, RangeInt> m_EntityGenerate;
-        public void InitOnValueSet()
-        {
-            string[] defineSplit = em_defines.Split('_');
-            m_Difficulty = (enum_BattleDifficulty)(int.Parse(defineSplit[0]));
-            m_waveCount = (int.Parse(defineSplit[1]));
-            m_EntityGenerate = new Dictionary<enum_EntityType, RangeInt>();
-            m_EntityGenerate.Add(enum_EntityType.Fighter,ir_fighter);
-            m_EntityGenerate.Add(enum_EntityType.Shooter_Rookie, ir_shooterRookie);
-            m_EntityGenerate.Add(enum_EntityType.Shooter_Veteran, ir_shooterVeteran);
-            m_EntityGenerate.Add(enum_EntityType.AOECaster, ir_aoeCaster);
-            m_EntityGenerate.Add(enum_EntityType.Elite, ir_elite);
-        }
-    }
-    public struct SBuff : ISExcel
-    {
-        int index;
-        int i_addType;
-        float f_expireDuration;
-        int i_effect;
-        float f_movementSpeedMultiply;
-        float f_fireRateMultiply;
-        float f_reloadRateMultiply;
-        float f_damageMultiply;
-        float f_damageReduce;
-        float f_damageTickTime;
-        float f_damagePerTick;
-        int i_damageType;
-        bool b_stun;
-        public int m_Index => index;
-        public enum_ExpireRefreshType m_AddType => (enum_ExpireRefreshType)i_addType;
-        public float m_ExpireDuration => f_expireDuration;
-        public int m_EffectIndex => i_effect;
-        public float m_MovementSpeedMultiply => f_movementSpeedMultiply ;
-        public float m_FireRateMultiply => f_fireRateMultiply;
-        public float m_ReloadRateMultiply => f_reloadRateMultiply;
-        public float m_DamageMultiply => f_damageMultiply;
-        public float m_DamageReduction => f_damageReduce ;
-        public float m_DamageTickTime => f_damageTickTime;
-        public float m_DamagePerTick => f_damagePerTick;
-        public enum_DamageType m_DamageType =>(enum_DamageType)i_damageType;
-        public bool m_Stun => b_stun;
-        public void InitOnValueSet()
-        {
-            f_movementSpeedMultiply = f_movementSpeedMultiply > 0 ? f_movementSpeedMultiply/100f : 0;
-            f_fireRateMultiply = f_fireRateMultiply > 0 ? f_fireRateMultiply / 100f : 0;
-            f_reloadRateMultiply = f_reloadRateMultiply > 0 ? f_reloadRateMultiply / 100f : 0;
-            f_damageMultiply = f_damageMultiply > 0 ? f_damageMultiply / 100f : 0;
-            f_damageReduce = f_damageReduce > 0 ? f_damageReduce / 100f : 0;
         }
     }
     #endregion

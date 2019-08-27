@@ -11,11 +11,10 @@ public class InteractWeaponContainer : InteractBase {
         base.Init();
         tf_ModelContainer = transform.Find("Container/Model");
     }
-    public void Play(enum_PlayerWeapon _weapon,List<ActionBase> _actionIndexes)
+    public void Play(enum_PlayerWeapon _weapon,List<ActionBase> _actions)
     {
         base.Play();
-        m_Weapon = ObjectManager.SpawnWeapon(_weapon,tf_ModelContainer);
-        m_Weapon.OnSpawn(_actionIndexes);
+        m_Weapon = ObjectManager.SpawnWeapon(_weapon, _actions, tf_ModelContainer);
     }
     public override bool TryInteract(EntityPlayerBase _interactor)
     {
@@ -24,10 +23,5 @@ public class InteractWeaponContainer : InteractBase {
         m_Weapon.transform.localPosition = Vector3.zero;
         m_Weapon.transform.localRotation = Quaternion.identity;
         return base.TryInteract(_interactor);
-    }
-    private void OnDisable()
-    {
-        if(m_Weapon)
-            ObjectManager.RecycleWeapon(m_Weapon.m_WeaponInfo.m_Weapon, m_Weapon);
     }
 }

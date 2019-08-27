@@ -55,8 +55,8 @@ GameObject:
   - component: {fileID: 4532852292659312}
   - component: {fileID: 114828876274307462}
   - component: {fileID: 114848564624811900}
-  - component: {fileID: 65847811407823318}
   - component: {fileID: 111362713022299928}
+  - component: {fileID: 65641937694803888}
   m_Layer: 0
   m_Name: ActionChest_Rookie
   m_TagString: Untagged
@@ -220,6 +220,18 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1665436081024510}
   m_Mesh: {fileID: 4300000, guid: 9ba3fe460930ff34e93bfe31828eb8a8, type: 3}
+--- !u!65 &65641937694803888
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1245459059159106}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.6, y: 0.8, z: 1}
+  m_Center: {x: 0, y: 0.4, z: 0}
 --- !u!65 &65743191602543810
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -232,18 +244,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.6822877, y: 0.42789325, z: 0.9642111}
   m_Center: {x: -0.0010436177, y: 0.20909543, z: 0.48210555}
---- !u!65 &65847811407823318
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1245459059159106}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 3, y: 2, z: 2}
-  m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!65 &65878621754604258
 BoxCollider:
   m_ObjectHideFlags: 1

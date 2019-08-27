@@ -19,6 +19,7 @@ public class EntityPlayerBase : EntityBase {
     public InteractBase m_Interact { get; private set; }
     public EquipmentBase m_Equipment { get; private set; }
     public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized* m_EntityInfo.F_MovementSpeed * time;
+    public PlayerActionManager m_PlayerActions { get; private set; }
     public PlayerInfoManager m_PlayerInfo { get; private set; }
     protected override EntityInfoManager GetEntityInfo()
     {
@@ -35,31 +36,19 @@ public class EntityPlayerBase : EntityBase {
         tf_WeaponHoldLeft = transform.FindInAllChild("WeaponHold_L");
         m_Animator = new PlayerAnimator(tf_Model.GetComponent<Animator>());
         transform.Find("InteractDetector").GetComponent<InteractDetector>().Init(OnInteractCheck);
+        m_PlayerActions = new PlayerActionManager(OnActionsChange,m_PlayerInfo.OnUseAcion);
     }
     public override void OnSpawn(int id,enum_EntityFlag _flag)
     {
         base.OnSpawn(id, enum_EntityFlag.Player);
         CameraController.Attach(this.transform);
-        TBroadCaster<enum_BC_GameStatusChanged>.Add<Vector3>(enum_BC_GameStatusChanged.OnLevelFinish, OnLevelFinished);
-
-        ObtainWeapon(ObjectManager.SpawnWeapon(TESTWEAPON1));
-
-#if UNITY_EDITOR
-        PCInputManager.Instance.AddMouseRotateDelta(OnRotateDelta);
-        PCInputManager.Instance.AddMovementDelta(OnMovementDelta);
-        PCInputManager.Instance.AddBinding<EntityPlayerBase>(enum_BindingsName.Fire, OnMainButtonDown);
-        PCInputManager.Instance.AddBinding<EntityPlayerBase>(enum_BindingsName.Reload, OnReloadDown);
-#else
-        UIManager.OnMainDown = OnMainButtonDown;
-        UIManager.OnReload = OnReloadDown;
-        TouchDeltaManager.Instance.Bind(OnMovementDelta, OnRotateDelta);
-#endif
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart,m_PlayerActions.OnBattleStart);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, m_PlayerActions.OnBattleFinish);
+        SetBinding(true);
     }
-    protected override void OnDisable()
+    public void SetPlayerInfo(List<ActionBase> storedActions)
     {
-        base.OnDisable();
-        RemoveBinding();
-        TBroadCaster<enum_BC_GameStatusChanged>.Remove<Vector3>(enum_BC_GameStatusChanged.OnLevelFinish, OnLevelFinished);
+        m_PlayerActions.OnActivate(I_EntityID,storedActions);
     }
     protected override void OnDead()
     {
@@ -69,23 +58,29 @@ public class EntityPlayerBase : EntityBase {
         if (m_WeaponCurrent)
             m_WeaponCurrent.OnDetach();
 
+        m_PlayerActions.OnDeactivate();
         m_Animator.OnDead();
         m_MoveAxisInput = Vector2.zero;
-        RemoveBinding();
+        SetBinding(false);
     }
-    void RemoveBinding()
+    protected override void OnDisable()
     {
-#if UNITY_EDITOR
-        PCInputManager.Instance.DoBindingRemoval<EntityPlayerBase>();
-        PCInputManager.Instance.RemoveMovementCheck();
-        PCInputManager.Instance.RemoveRotateCheck();
-#else
-        UIManager.OnMainDown = null;
-        UIManager.OnReload = null;
-        UIManager.OnSwitch = null;
-        TouchDeltaManager.Instance.Bind(null, null);
-#endif
+        base.OnDisable();
+        SetBinding(false);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
     }
+    void OnBattleStart()
+    {
+        m_PlayerActions.OnBattleStart();
+    }
+    void OnBattleFinish()
+    {
+        m_PlayerActions.OnBattleFinish();
+        m_PlayerInfo.OnBattleFinish();
+        m_HealthManager.OnActivate(I_MaxHealth, I_DefaultArmor);
+    }
+
     void OnMainButtonDown(bool down)
     {
         if (m_Equipment != null)
@@ -102,12 +97,21 @@ public class EntityPlayerBase : EntityBase {
         if (m_WeaponCurrent != null)
             m_WeaponCurrent.Trigger(down);
     }
+    
     #region WeaponControll
     void OnReloadDown()
     {
         if (m_WeaponCurrent == null)
             return;
         m_WeaponCurrent.TryReload();
+    }
+
+    void OnReload(bool start, float param)
+    {
+        if (start)
+            m_Animator.Reload(param);
+        else
+            m_PlayerInfo.OnReloadFinish();
     }
 
     public WeaponBase ObtainWeapon(WeaponBase _weapon)
@@ -130,13 +134,6 @@ public class EntityPlayerBase : EntityBase {
         m_Assist.Play(I_EntityID, tf_Head, tf_Head, GameConst.F_AimAssistDistance, GameLayer.Mask.I_All, (Collider collider) => { return GameManager.B_DoHitCheck(collider.Detect(), I_EntityID); });
 
         return previousWeapon;
-    }
-    void OnReload(bool start, float param)
-    {
-        if (start)
-            m_Animator.Reload(param);
-        else
-            m_PlayerInfo.OnReloadFinish();
     }
 #endregion
     #region PlayerControll
@@ -161,7 +158,7 @@ public class EntityPlayerBase : EntityBase {
         transform.rotation = Quaternion.Lerp(transform.rotation,CameraController.CameraXZRotation,GameConst.F_PlayerCameraSmoothParam);
         Vector3 direction = (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized;
         m_CharacterController.Move(direction*m_EntityInfo.F_MovementSpeed * Time.deltaTime + Vector3.down * GameConst.F_PlayerFallSpeed*Time.deltaTime);
-        TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.PlayerInfoChanged, this);
+        OnCommonStatus();
     }
     public void OnFireAddRecoil(Vector2 recoil)
     {
@@ -208,16 +205,63 @@ public class EntityPlayerBase : EntityBase {
     }
     #endregion
     #region Action
-    void OnLevelFinished(Vector3 interactPosition)
-    {
-        m_PlayerInfo.OnBattleFinished();
-        m_HealthManager.OnActivate(I_MaxHealth,I_DefaultArmor);
-    }
     public void TestUseAction(int actionIndex)
     {
-        m_PlayerInfo.TestUseAction(actionIndex);
+        m_PlayerInfo.OnUseAcion(DataManager.CreateAction(actionIndex, enum_ActionLevel.L3));
     }
     #endregion
+
+    #region UI Indicator
+    protected void OnCommonStatus()
+    {
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerAmmoStatus, m_WeaponCurrent);
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerCommonStatus, this);
+    }
+
+    protected override void OnInfoChange()
+    {
+        base.OnInfoChange();
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerExpireStatus, m_PlayerInfo);
+    }
+    protected void OnActionsChange()
+    {
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerActionStatus, m_PlayerActions);
+    }
+    protected override void OnHealthChanged(enum_HealthChangeMessage type)
+    {
+        base.OnHealthChanged(type);
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerHealthStatus, m_HealthManager);
+    }
+    #endregion
+
+    void SetBinding(bool on)
+    {
+        if (on)
+        {
+#if UNITY_EDITOR
+            PCInputManager.Instance.AddMouseRotateDelta(OnRotateDelta);
+            PCInputManager.Instance.AddMovementDelta(OnMovementDelta);
+            PCInputManager.Instance.AddBinding<EntityPlayerBase>(enum_BindingsName.Fire, OnMainButtonDown);
+            PCInputManager.Instance.AddBinding<EntityPlayerBase>(enum_BindingsName.Reload, OnReloadDown);
+#else
+        UIManager.OnMainDown = OnMainButtonDown;
+        UIManager.OnReload = OnReloadDown;
+        TouchDeltaManager.Instance.Bind(OnMovementDelta, OnRotateDelta);
+#endif
+            return;
+        }
+#if UNITY_EDITOR
+        PCInputManager.Instance.DoBindingRemoval<EntityPlayerBase>();
+        PCInputManager.Instance.RemoveMovementCheck();
+        PCInputManager.Instance.RemoveRotateCheck();
+#else
+        UIManager.OnMainDown = null;
+        UIManager.OnReload = null;
+        UIManager.OnSwitch = null;
+        TouchDeltaManager.Instance.Bind(null, null);
+#endif
+    }
+
 
     protected class PlayerAnimator : AnimatorClippingTime
     {

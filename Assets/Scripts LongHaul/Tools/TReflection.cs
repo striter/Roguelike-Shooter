@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public static class TReflection
 {
     public static T CreateInstance<T>(Type t,params object[] constructorArgs) => (T)Activator.CreateInstance(t, constructorArgs);
-    public static void GetAllInheritClasses<T> (Action<Type,T> OnInstanceCreated,params object[] constructorArgs)
+    public static void TraversalAllInheritedClasses<T> (Action<Type,T> OnInstanceCreated,params object[] constructorArgs)
     {
         Type[] allTypes= Assembly.GetExecutingAssembly().GetTypes();
         Type parentType=typeof(T);

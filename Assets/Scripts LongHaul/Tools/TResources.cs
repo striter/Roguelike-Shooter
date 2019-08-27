@@ -8,6 +8,7 @@ public class TResources
 {
     public class ConstPath
     {
+        public const string S_PlayerEntity = "Entity/0_Player";
         public const string S_LevelPrefab = "Level/Main/LevelPrefab";
         public const string S_LeveLItem = "Level/Item";
         public const string S_StyleCustomization = "Level/Customization";
@@ -67,7 +68,7 @@ public class TResources
         });
         return sfxsDic;
     }
-
+    public static EntityPlayerBase GetPlayer(Transform parent) => Instantiate<EntityPlayerBase>(ConstPath.S_PlayerEntity,parent);
     public static Dictionary<int, EntityBase> GetCommonEntities()
     {
         Dictionary<int, EntityBase> entitisDic = new Dictionary<int, EntityBase>();

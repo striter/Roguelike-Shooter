@@ -21,8 +21,8 @@ GameObject:
   - component: {fileID: 4108023711845124}
   - component: {fileID: 114120062250239626}
   - component: {fileID: 114123505587947830}
-  - component: {fileID: 65822543763651368}
   - component: {fileID: 111549125705779478}
+  - component: {fileID: 65796282087040308}
   m_Layer: 0
   m_Name: ActionChest_Veteran
   m_TagString: Untagged
@@ -244,7 +244,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.6822877, y: 0.42789322, z: 0.9642111}
   m_Center: {x: -0.0010436177, y: 0.20909542, z: 0.48210555}
---- !u!65 &65822543763651368
+--- !u!65 &65796282087040308
 BoxCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -254,8 +254,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 3, y: 2, z: 2}
-  m_Center: {x: 0, y: 0.5, z: 0}
+  m_Size: {x: 1.6, y: 0.8, z: 1}
+  m_Center: {x: 0, y: 0.4, z: 0}
 --- !u!111 &111549125705779478
 Animation:
   m_ObjectHideFlags: 1

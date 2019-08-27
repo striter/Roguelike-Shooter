@@ -40,8 +40,8 @@ GameObject:
   - component: {fileID: 4084886095899334}
   - component: {fileID: 114072771900244178}
   - component: {fileID: 114484703579651542}
-  - component: {fileID: 65624120321939670}
   - component: {fileID: 111826526175488080}
+  - component: {fileID: 65522354029443276}
   m_Layer: 0
   m_Name: ActionChest_Ranger
   m_TagString: Untagged
@@ -220,7 +220,7 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1011613383169974}
   m_Mesh: {fileID: 4300002, guid: 4544f208551c9a54da397d873c077792, type: 3}
---- !u!65 &65624120321939670
+--- !u!65 &65522354029443276
 BoxCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -230,8 +230,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 3, y: 2, z: 2}
-  m_Center: {x: 0, y: 0.5, z: 0}
+  m_Size: {x: 1.6, y: 0.8, z: 1}
+  m_Center: {x: 0, y: 0.4, z: 0}
 --- !u!65 &65833260882074304
 BoxCollider:
   m_ObjectHideFlags: 1

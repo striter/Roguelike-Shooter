@@ -35,22 +35,24 @@ public class EntityAIBase : EntityBase {
 
     public override void OnSpawn(int id,enum_EntityFlag _flag)
     {
-        base.OnSpawn(id,_flag);
         if (E_AnimatorIndex!= enum_EnermyAnim.Invalid)
             m_Animator = new EnermyAnimator(tf_Model.GetComponent<Animator>(), E_AnimatorIndex, OnAnimKeyEvent);
         m_AI.OnActivate();
+        base.OnSpawn(id, _flag);
     }
     protected override void OnDead()
     {
+        base.OnDead();
         m_AI.OnDeactivate();
         if (E_AnimatorIndex !=  enum_EnermyAnim.Invalid)
             m_Animator.OnDead();
-        base.OnDead();
     }
 
     protected override void OnInfoChange()
     {
         base.OnInfoChange();
+        if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
+            m_Animator.SetMovementSpeed(m_EntityInfo.F_MovementSpeed);
         m_AI.OnInfoChange();
     }
     protected override void Update()
@@ -94,6 +96,7 @@ public class EntityAIBase : EntityBase {
         static readonly int HS_T_Attack = Animator.StringToHash("t_attack");
         static readonly int HS_F_Forward = Animator.StringToHash("f_forward");
         static readonly int HS_B_Attack = Animator.StringToHash("b_attack");
+        static readonly int HS_FM_Movement = Animator.StringToHash("fm_movement");
         Action<TAnimatorEvent.enum_AnimEvent> OnAnimEvent;
         public EnermyAnimator(Animator _animator, enum_EnermyAnim _animIndex,Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) : base(_animator)
         {
@@ -110,6 +113,10 @@ public class EntityAIBase : EntityBase {
         public void SetRun(float forward)
         {
             m_Animator.SetFloat(HS_F_Forward, forward);
+        }
+        public void SetMovementSpeed( float movementSpeed)
+        {
+            m_Animator.SetFloat(HS_FM_Movement, movementSpeed / 4f);
         }
         public void OnAttack(bool attack)
         {
@@ -288,7 +295,6 @@ public class EntityAIBase : EntityBase {
             b_targetOutAttackRange = f_targetDistance > m_Entity.F_AIAttackRange;
             b_MoveTowardsTarget = b_targetHideBehindWall || b_targetOutChaseRange;
             b_CanAttackTarget = !b_targetOutAttackRange  && b_targetRotationWithin && (!m_Entity.B_BattleCheckObstacle||b_targetVisible) &&!FrontBlocked();
-            b_AgentReachDestination = m_Agent.destination == Vector3.zero || TCommon.GetXZDistance(headTransform.position, m_Agent.destination) < 1f;
         }
         #region Battle
         int i_playCount;
@@ -358,8 +364,9 @@ public class EntityAIBase : EntityBase {
                 f_movementSimulate -= deltaTime * m_Info.F_MovementSpeedMultiply;
                 return;
             }
-            f_movementSimulate = GameConst.F_AITargetCalculationParam;
+            f_movementSimulate = GameConst.F_AIMovementCalculationParam;
 
+            b_AgentReachDestination = m_Agent.destination == Vector3.zero || TCommon.GetXZDistance(headTransform.position, m_Agent.destination) < 1f;
             if (!b_idled && b_AgentReachDestination && !b_targetOutChaseRange && UnityEngine.Random.Range(0, 2) > 0)
             {
                 b_idled = true;

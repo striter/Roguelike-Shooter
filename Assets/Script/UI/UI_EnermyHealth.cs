@@ -13,17 +13,17 @@ public class UI_EnermyHealth : SimpleSingletonMono<UI_EnermyHealth> {
     }
     private void Start()
     {
-        TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnEntitySpawn, OnEntitySpawn);
-        TBroadCaster<enum_BC_GameStatusChanged>.Add<EntityBase>(enum_BC_GameStatusChanged.OnEntityRecycle, OnEntityRecycle);
-        TBroadCaster<enum_BC_GameStatusChanged>.Add(enum_BC_GameStatusChanged.OnStageFinish, OnStageFinish);
-        TBroadCaster<enum_BC_GameStatusChanged>.Add<DamageDeliverInfo, EntityBase, float>(enum_BC_GameStatusChanged.OnEntityDamage, OnEntityDamage);
+        TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntitySpawn, OnEntitySpawn);
+        TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageFinish, OnStageFinish);
+        TBroadCaster<enum_BC_GameStatus>.Add<DamageDeliverInfo, EntityBase, float>(enum_BC_GameStatus.OnEntityDamage, OnEntityDamage);
     }
     private void OnDestroy()
     {
-        TBroadCaster<enum_BC_GameStatusChanged>.Remove<EntityBase>(enum_BC_GameStatusChanged.OnEntitySpawn, OnEntitySpawn);
-        TBroadCaster<enum_BC_GameStatusChanged>.Remove<EntityBase>(enum_BC_GameStatusChanged.OnEntityRecycle, OnEntityRecycle);
-        TBroadCaster<enum_BC_GameStatusChanged>.Remove(enum_BC_GameStatusChanged.OnStageFinish, OnStageFinish);
-        TBroadCaster<enum_BC_GameStatusChanged>.Remove<DamageDeliverInfo, EntityBase, float>(enum_BC_GameStatusChanged.OnEntityDamage, OnEntityDamage);
+        TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntitySpawn, OnEntitySpawn);
+        TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnStageFinish, OnStageFinish);
+        TBroadCaster<enum_BC_GameStatus>.Remove<DamageDeliverInfo, EntityBase, float>(enum_BC_GameStatus.OnEntityDamage, OnEntityDamage);
     }
     int damageCount=0;
     void OnEntitySpawn(EntityBase entity)

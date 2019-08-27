@@ -1,4 +1,5 @@
 ﻿
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,6 +9,8 @@ public class UIT_GridDefaultItem : UIT_GridItem {
     protected Button btn_Default;
     protected Image img_Default;
     protected Image img_HighLight;
+    public bool B_HighLight { get; protected set; }
+    Action<int> OnItemClick;
     protected override void Init()
     {
         base.Init();
@@ -18,7 +21,11 @@ public class UIT_GridDefaultItem : UIT_GridItem {
         if (btn_Default != null)
             btn_Default.onClick.AddListener(OnItemTrigger);
     }
-    public void SetItemInfo(string defaultText = "", bool highLight = false, Sprite defaultSprite = null, bool setNativeSize = false)
+    public void SetDefaultOnClick(Action<int> _OnItemClick)
+    {
+        OnItemClick = _OnItemClick;
+    }
+        public void SetItemInfo(string defaultText = "", bool highLight = false, Sprite defaultSprite = null, bool setNativeSize = false)
     {
         if (defaultText != "")
             txt_Default.text = defaultText;
@@ -30,13 +37,17 @@ public class UIT_GridDefaultItem : UIT_GridItem {
         }
         SetHighLight(highLight);
     }
-    public override void SetHighLight(bool highLight)
+    public void SetHighLight(bool highLight)
     {
-        base.SetHighLight(highLight);
+        B_HighLight = highLight;
         if (img_HighLight == null)
         {
             return;
         }
         img_HighLight.SetActivate(highLight);
+    }
+    protected void OnItemTrigger()
+    {
+        OnItemClick?.Invoke(I_Index);
     }
 }

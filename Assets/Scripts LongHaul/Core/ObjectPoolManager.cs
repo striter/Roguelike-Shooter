@@ -137,16 +137,20 @@ public class ObjectPoolManager<T,Y> where Y:MonoBehaviour {
             RecycleAll(temp);
         });
     }
-    public static void ClearAll()
+    public static void ClearAll(Predicate<T> predict=null)
     {
         d_ItemInfos.Traversal((T temp, ItemPoolInfo info) => {
+            if (predict!=null && !predict(temp))
+                return;
+
             GameObject.Destroy(info.m_spawnItem.gameObject);
 
             for (int i = 0; i < info.l_Deactive.Count; i++)
                 GameObject.Destroy(info.l_Deactive[i].gameObject);
             for (int i = 0; i < info.l_Active.Count; i++)
                 GameObject.Destroy(info.l_Active[i].gameObject);
-        });
-        d_ItemInfos.Clear();
+
+            d_ItemInfos.Remove(temp);
+        },true);
     }
 }

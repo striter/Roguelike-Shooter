@@ -39,7 +39,7 @@ public static class TGameData<T> where T : class,ISave, new()
         for (int i = 0; i < fi_current.Length; i++)
         {
             xml_Node = xml_TotalNode.SelectSingleNode(fi_current[i].Name);
-            xml_Node.InnerText = TXmlPhrase.Phrase[fi_current[i].FieldType, fi_current[i].GetValue(target)];
+            xml_Node.InnerText = TXmlPhrase.Phrase[ fi_current[i].GetValue(target)];
             xml_TotalNode.AppendChild(xml_Node);
         }
         xml_Doc.Save(s_FullPath);
@@ -103,7 +103,7 @@ public static class TGameData<T> where T : class,ISave, new()
         for (int i = 0; i < fi_current.Length; i++)
         {
             xml_Element = xml_Doc.CreateElement(fi_current[i].Name);
-            xml_Element.InnerText =TXmlPhrase.Phrase[fi_current[i].FieldType,fi_current[i].GetValue(temp)];
+            xml_Element.InnerText =TXmlPhrase.Phrase[fi_current[i].GetValue(temp)];
             xml_TotalNode.AppendChild(xml_Element);
         }
 

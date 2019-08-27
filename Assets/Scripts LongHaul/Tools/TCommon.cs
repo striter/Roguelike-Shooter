@@ -200,10 +200,19 @@ public static class TCommon
         foreach (Y temp in dic.Values)
             OnEachValue(temp);
     }
-    public static void Traversal<T, Y>(this Dictionary<T, Y> dic, Action<T, Y> OnEachPair)
+    public static void Traversal<T, Y>(this Dictionary<T, Y> dic, Action<T, Y> OnEachPair,bool changeValue=false)
     {
-        foreach (T temp in dic.Keys)
-            OnEachPair(temp, dic[temp]);
+        if (changeValue)
+        {
+            Dictionary<T, Y> tempDic = new Dictionary<T, Y>(dic);
+            foreach (T temp in tempDic.Keys)
+                OnEachPair(temp, tempDic[temp]);
+        }
+        else
+        {
+            foreach (T temp in dic.Keys)
+                OnEachPair(temp, dic[temp]);
+        }
     }
     public static void Traversal<T>(this T[] array, Action<T> OnEachItem)
     {

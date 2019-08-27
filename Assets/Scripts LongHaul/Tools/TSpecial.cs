@@ -623,12 +623,16 @@ public struct RangeInt
         length = _length;
     }
 }
+public interface IXmlPhrase
+{
+    string ToXMLData();
+}
 public class TXmlPhrase : SingleTon<TXmlPhrase>
 {
     Dictionary<Type, Func<object, string>> dic_valueToXmlData = new Dictionary<Type, Func<object, string>>();
     Dictionary<Type, Func<string, object>> dic_xmlDataToValue = new Dictionary<Type, Func<string, object>>();
     Dictionary<Type, Func<object>> dic_xmlDataDefault = new Dictionary<Type, Func<object>>();
-    public TXmlPhrase()
+    public TXmlPhrase()     //Common Smaller Forms Translate/Retranslate
     {
         dic_valueToXmlData.Add(typeof(int), (object target) => { return target.ToString(); });
         dic_xmlDataToValue.Add(typeof(int), (string xmlData) => { return int.Parse(xmlData); });
@@ -655,19 +659,13 @@ public class TXmlPhrase : SingleTon<TXmlPhrase>
         dic_xmlDataToValue.Add(typeof(RangeFloat), (string xmlData) => { string[] split = xmlData.Split(','); return new RangeFloat(float.Parse(split[0]), float.Parse(split[1])); });
         dic_xmlDataDefault.Add(typeof(RangeFloat), () => { return new RangeFloat(-1, 0); });
     }
-    public static TXmlPhrase Phrase
-    {
-        get
-        {
-            return Instance;
-        }
-    }
-    public object GetDefault(Type type) => dic_xmlDataDefault.ContainsKey(type) ? dic_xmlDataDefault[type]() : type.IsValueType ? Activator.CreateInstance(type) : null;
-    public string this[Type type, object value]
+    public static TXmlPhrase Phrase=>Instance;
+    public string this[object value]
     {
         get
         {
             StringBuilder sb_xmlData = new StringBuilder();
+            Type type = value.GetType();
             if (type.IsGenericType)
             {
                 if (type.GetGenericTypeDefinition() == typeof(List<>))
@@ -678,7 +676,8 @@ public class TXmlPhrase : SingleTon<TXmlPhrase>
                         sb_xmlData.Append(ValueToXmlData(listType, obj));
                         sb_xmlData.Append(";");
                     }
-                    sb_xmlData.Remove(sb_xmlData.Length - 1, 1);
+                    if(sb_xmlData.Length!=0)
+                        sb_xmlData.Remove(sb_xmlData.Length - 1, 1);
                 }
                 else if (type.GetGenericTypeDefinition() == typeof(Dictionary<,>))
                 {
@@ -691,7 +690,8 @@ public class TXmlPhrase : SingleTon<TXmlPhrase>
                         sb_xmlData.Append(ValueToXmlData(valueType, obj.Value));
                         sb_xmlData.Append(";");
                     }
-                    sb_xmlData.Remove(sb_xmlData.Length - 1, 1);
+                    if (sb_xmlData.Length != 0)
+                        sb_xmlData.Remove(sb_xmlData.Length - 1, 1);
                 }
             }
             else
@@ -743,14 +743,26 @@ public class TXmlPhrase : SingleTon<TXmlPhrase>
             return obj_target;
         }
     }
+    public object GetDefault(Type type) => dic_xmlDataDefault.ContainsKey(type) ? dic_xmlDataDefault[type]() : type.IsValueType ? Activator.CreateInstance(type) : null;
     string ValueToXmlData(Type type, object value)
     {
+        if (typeof(IXmlPhrase).IsAssignableFrom(type))
+            return ((IXmlPhrase)value).ToXMLData(); 
+
+        if (type.IsEnum)
+            return value.ToString();
         if (!dic_valueToXmlData.ContainsKey(type))
             Debug.LogWarning("Xml Error Invlid Type:" + type.ToString() + " For Base Type To Phrase");
         return dic_valueToXmlData[type](value);
     }
     object XmlDataToValue(Type type, string xmlData)
     {
+        if (typeof(IXmlPhrase).IsAssignableFrom(type))
+            return Activator.CreateInstance(type,xmlData);
+
+        if (type.IsEnum)
+            return Enum.Parse(type,xmlData);
+
         if (!dic_xmlDataToValue.ContainsKey(type))
             Debug.LogWarning("Xml Error Invlid Type:" + type.ToString() + " For Xml Data To Phrase");
         return dic_xmlDataToValue[type](xmlData);

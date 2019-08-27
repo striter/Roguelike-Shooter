@@ -29,7 +29,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
         m_SkinRenderers = tf_Model.Find("Skin").GetComponentsInChildren<Renderer>();
         m_HitChecks = GetComponentsInChildren<HitCheckEntity>();
         m_EntityInfo = GetEntityInfo();
-        m_HealthManager = new EntityHealth(this,OnHealthEffect,OnDead);
+        m_HealthManager = new EntityHealth(this,OnHealthChanged,OnDead);
     }
 
     public virtual void OnSpawn(int _entityID,enum_EntityFlag _flag)
@@ -44,22 +44,16 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
        m_HitChecks.Traversal((HitCheckEntity check) => { check.Attach(this,OnReceiveDamage);  check.SetEnable(true); });
        m_SkinRenderers.Traversal((Renderer renderer) => {renderer.materials.Traversal((Material mat)=> {mat.SetFloat("_Amount1", 0);}); });
     }
-    protected virtual void OnInfoChange()
-    {
 
-    }
-    protected virtual void OnEnable()
-    {
-    }
+    protected virtual void OnInfoChange(){}
+    protected virtual void OnEnable(){}
     protected virtual void OnDisable()
     {
-        m_EntityInfo.OnDeactivate();
-        this.StopSingleCoroutine(0);
+        this.StopSingleCoroutines(0,1);
     }
     protected virtual void Update()
     {
         m_EntityInfo.Tick(Time.deltaTime);
-
     }
 
     protected bool OnReceiveDamage(DamageInfo damageInfo)
@@ -72,10 +66,8 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
         return m_HealthManager.OnReceiveDamage(damageInfo, m_EntityInfo.F_DamageReceiveMultiply);
     }
 
-
     protected virtual void OnDead()
     {
-        TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnEntityDead,this);
         m_EntityInfo.OnDeactivate();
         TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.HideAllAttaches(); check.SetEnable(false); });
         this.StartSingleCoroutine(1, TIEnumerators.ChangeValueTo((float value) => {
@@ -85,27 +77,28 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
                 });
             });
         }, 0, 1, GameConst.F_EntityDeadFadeTime, OnRecycle));
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityDead,this);
     }
     protected virtual void OnRecycle()
     {
-        TBroadCaster<enum_BC_GameStatusChanged>.Trigger(enum_BC_GameStatusChanged.OnEntityRecycle, this);
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityRecycle, this);
         ObjectManager.RecycleEntity(I_PoolIndex, this);
     }
-    protected virtual void OnHealthEffect(enum_HealthMessageType type)
+    protected virtual void OnHealthChanged(enum_HealthChangeMessage type)
     {
         Color targetColor = Color.white;
         switch (type)
         {
-            case enum_HealthMessageType.DamageArmor:
+            case enum_HealthChangeMessage.DamageArmor:
                 targetColor = Color.yellow;
                 break;
-            case enum_HealthMessageType.DamageHealth:
+            case enum_HealthChangeMessage.DamageHealth:
                 targetColor = Color.red;
                 break;
-            case enum_HealthMessageType.ReceiveArmor:
+            case enum_HealthChangeMessage.ReceiveArmor:
                 targetColor = Color.blue;
                 break;
-            case enum_HealthMessageType.ReceiveHealth:
+            case enum_HealthChangeMessage.ReceiveHealth:
                 targetColor = Color.green;
                 break;
         }

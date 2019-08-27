@@ -65,6 +65,59 @@ public class UIT_GridController
         return ActiveItemDic.ContainsKey(identity);
     }
 }
+public class UIT_GridControllerMono<T>:UIT_GridController where T:UIT_GridItem
+{
+    Dictionary<int, T> MonoItemDic = new Dictionary<int, T>();
+    public int I_Count=> MonoItemDic.Count;
+    public GridLayoutGroup m_GridLayout { get; private set; }
+    public UIT_GridControllerMono(Transform _transform) : base(_transform)
+    {
+        m_GridLayout = _transform.GetComponent<GridLayoutGroup>();
+    }
+    public new T AddItem(int identity) 
+    {
+        T item = base.AddItem(identity).GetComponent<T>();
+        OnItemAdd(item,identity);
+        MonoItemDic.Add(identity,item);
+        item.SetActivate(true);
+        item.transform.SetSiblingIndex(identity); 
+        return item;
+    }
+    protected virtual void OnItemAdd(T item,int identity)
+    {
+        item.SetGridControlledItem(identity, this);
+    }
+    public void SortChildrenSibling()
+    {
+        List<int> keyCollections = MonoItemDic.Keys.ToList();
+        keyCollections.Sort((a,b)=> {return a > b?1:-1; });
+        for (int i = 0; i < keyCollections.Count; i++)
+            MonoItemDic[keyCollections[i]].transform.SetAsLastSibling();
+    }
+    public new T GetItem(int identity)
+    {
+        return Contains(identity)?MonoItemDic[identity]:null;
+    }
+    public override void ClearGrid()
+    {
+        base.ClearGrid();
+        MonoItemDic.Clear();
+    }
+    public override void RemoveItem(int identity)
+    {
+        base.RemoveItem(identity);
+        MonoItemDic[identity].Reset();
+        MonoItemDic.Remove(identity);
+    }
+    public void TraversalItem(Action<int, T> onEach)
+    {
+        foreach (int i in ActiveItemDic.Keys)
+        {
+            onEach(i, MonoItemDic[i]);
+        }
+    }
+}
+
 public class UIT_GridControllerDefaultMono<T> : UIT_GridControllerMono<T> where T : UIT_GridDefaultItem
 {
     bool b_btnEnable;
@@ -85,9 +138,13 @@ public class UIT_GridControllerDefaultMono<T> : UIT_GridControllerMono<T> where 
         base.ClearGrid();
         I_CurrentSelecting = -1;
     }
-    public override void DeHighlightAll()
+    protected override void OnItemAdd(T item, int identity)
     {
-        base.DeHighlightAll();
+        base.OnItemAdd(item, identity);
+        item.SetDefaultOnClick(OnItemClick);
+    }
+    public void DeHighlightAll()
+    {
         I_CurrentSelecting = -1;
     }
     public override void RemoveItem(int identity)
@@ -97,7 +154,7 @@ public class UIT_GridControllerDefaultMono<T> : UIT_GridControllerMono<T> where 
         if (identity == I_CurrentSelecting)
             I_CurrentSelecting = -1;
     }
-    public void OnItemSelect(int identity)
+    public void OnItemClick(int identity)
     {
         if (!b_btnEnable)
             return;
@@ -129,61 +186,5 @@ public class UIT_GridControllerDefaultMono<T> : UIT_GridControllerMono<T> where 
     public void SetBtnsEnable(bool active)
     {
         b_btnEnable = active;
-    }
-}
-public class UIT_GridControllerMono<T>:UIT_GridController where T:UIT_GridItem
-{
-    Dictionary<int, T> MonoItemDic = new Dictionary<int, T>();
-    public int I_Count=> MonoItemDic.Count;
-    public GridLayoutGroup m_GridLayout { get; private set; }
-    public UIT_GridControllerMono(Transform _transform) : base(_transform)
-    {
-        m_GridLayout = _transform.GetComponent<GridLayoutGroup>();
-    }
-    public new T AddItem(int identity) 
-    {
-        T item = base.AddItem(identity).GetComponent<T>();
-        item.SetGridControlledItem(identity,this, null);
-        MonoItemDic.Add(identity,item);
-        item.SetActivate(true);
-        item.transform.SetSiblingIndex(identity); 
-        return item;
-    }
-    public void SortChildrenSibling()
-    {
-        List<int> keyCollections = MonoItemDic.Keys.ToList();
-        keyCollections.Sort((a,b)=> {return a > b?1:-1; });
-        for (int i = 0; i < keyCollections.Count; i++)
-            MonoItemDic[keyCollections[i]].transform.SetAsLastSibling();
-    }
-    public new T GetItem(int identity)
-    {
-        return Contains(identity)?MonoItemDic[identity]:null;
-    }
-    public override void ClearGrid()
-    {
-        base.ClearGrid();
-        MonoItemDic.Clear();
-    }
-    public virtual void DeHighlightAll()
-    {
-        foreach (T template in MonoItemDic.Values)
-        {
-            if(template.B_HighLight)
-            template.SetHighLight(false);
-        }
-    }
-    public override void RemoveItem(int identity)
-    {
-        base.RemoveItem(identity);
-        MonoItemDic[identity].Reset();
-        MonoItemDic.Remove(identity);
-    }
-    public void TraversalItem(Action<int, T> onEach)
-    {
-        foreach (int i in ActiveItemDic.Keys)
-        {
-            onEach(i, MonoItemDic[i]);
-        }
     }
 }

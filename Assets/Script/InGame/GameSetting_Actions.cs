@@ -125,20 +125,21 @@ namespace GameSetting_Action
         public static void PlayerReceiveActionAmount(EntityPlayerBase player, float amount)
         {
             Debug.Log("Player Receive Aciton Amount:" + amount);
-            player.m_PlayerInfo.AddActionAmount(amount);
+            player.m_PlayerActions.AddActionAmount(amount);
         }
         public static void PlayerUpgradeAction(EntityPlayerBase player)
         {
             Debug.Log("Player Upgrade Current Random Action");
+            player.m_PlayerActions.UpgradeAction(-1);
         }
     }
     #region ActionBase
     public class ActionAfterUse : ActionBase
     {
         public override enum_ActionExpireType m_ExpireType => enum_ActionExpireType.AfterUse;
-        public override void OnActionUse(EntityPlayerBase _actionEntity, Action<ExpireBase> _OnActionExpired)
+        public override void OnActionUse()
         {
-            base.OnActionUse(_actionEntity,_OnActionExpired);
+            base.OnActionUse();
             ForceExpire();
         }
         public ActionAfterUse(enum_ActionLevel _level) : base(_level) { }
@@ -218,8 +219,8 @@ namespace GameSetting_Action
         public override int m_Index => 10001;
         public override int I_ActionCost => ActionData.I_10001_Cost;
         public override float Value1 => ActionData.F_10001_ArmorAdditive(m_Level);
-        public override void OnActionUse(EntityPlayerBase _actionEntity, Action<ExpireBase> _OnActionExpired) {
-            base.OnActionUse(_actionEntity,_OnActionExpired);
+        public override void OnActionUse() {
+            base.OnActionUse();
             ActionHelper.PlayerReceiveHealing(m_ActionEntity, Value1, enum_DamageType.ArmorOnly);
         }
         public Action_10001_ArmorAdditive(enum_ActionLevel _level) : base(_level) { }
@@ -237,8 +238,8 @@ namespace GameSetting_Action
         public override int m_Index => 10003;
         public override int I_ActionCost => ActionData.I_10003_Cost;
         public override float Value1 => ActionData.F_10003_ArmorMultiplyAdditive(m_Level, m_ActionEntity.m_HealthManager.m_CurrentArmor);
-        public override void OnActionUse(EntityPlayerBase _actionEntity, Action<ExpireBase> _OnActionExpired) {
-            base.OnActionUse(_actionEntity,_OnActionExpired);
+        public override void OnActionUse() {
+            base.OnActionUse();
             ActionHelper.PlayerReceiveHealing(m_ActionEntity, Value1, enum_DamageType.ArmorOnly);
         } 
         public Action_10003_ArmorMultiplyAdditive(enum_ActionLevel _level) : base(_level) { }
@@ -248,9 +249,9 @@ namespace GameSetting_Action
         public override int m_Index => 10004;
         public override int I_ActionCost => ActionData.I_10004_Cost;
         public override float Value1 => ActionData.F_10004_ArmorActionAcquire(m_Level, m_ActionEntity.m_HealthManager.m_CurrentArmor);
-        public override void OnActionUse(EntityPlayerBase _actionEntity, Action<ExpireBase> _OnActionExpired)
+        public override void OnActionUse()
         {
-            base.OnActionUse(_actionEntity,_OnActionExpired);
+            base.OnActionUse();
             ActionHelper.PlayerReceiveActionAmount(m_ActionEntity, Value1);
         } 
         public Action_10004_ArmorActionReturn(enum_ActionLevel _level) : base(_level) { }
@@ -368,9 +369,9 @@ namespace GameSetting_Action
         public override int I_ActionCost => ActionData.I_20001_Cost;
         public override float Value1 => ActionData.F_20001_ArmorTurretHealth(m_Level, m_ActionEntity.m_HealthManager.m_CurrentArmor);
         public override float Value2 => ActionData.F_20001_ArmorTurretDamage(m_Level, m_ActionEntity.m_HealthManager.m_CurrentArmor);
-        public override void OnActionUse(EntityPlayerBase _entity, Action<ExpireBase> _OnActionExpired) {
-            base.OnActionUse(_entity,_OnActionExpired);
-            ActionHelper.PlayerAcquireEntityEquipmentItem(_entity, m_Index, Value2, (int)Value1, 1f);
+        public override void OnActionUse() {
+            base.OnActionUse();
+            ActionHelper.PlayerAcquireEntityEquipmentItem(m_ActionEntity, m_Index, Value2, (int)Value1, 1f);
         }
         public Action_20001_Armor_Turret_Cannon(enum_ActionLevel _level) : base(_level) { }
     }
@@ -380,9 +381,9 @@ namespace GameSetting_Action
         public override int I_ActionCost => ActionData.I_20002_Cost;
         public override float Value1=> ActionData.F_20002_DamageDealt(m_Level);
         public override float Value2=> ActionData.F_20002_BuffIndex(m_Level);
-        public override void OnActionUse(EntityPlayerBase _entity, Action<ExpireBase> _OnActionExpired)
+        public override void OnActionUse()
         {
-            base.OnActionUse(_entity,_OnActionExpired);
+            base.OnActionUse();
             ActionHelper.PlayerAcquireSimpleEquipmentItem(m_ActionEntity, m_Index, Value1, (int)Value2);
         }
         public Action_20002_FireRate_FrozenGrenade(enum_ActionLevel _level) : base(_level) { }
@@ -394,10 +395,10 @@ namespace GameSetting_Action
         public override float Value1 => ActionData.F_20003_FireRate(m_Level, m_ActionEntity.m_WeaponCurrent.F_BaseFirerate);
         public override float Value2 => ActionData.F_20003_DamageDealt(m_Level, m_ActionEntity.m_WeaponCurrent.F_BaseDamage) ;
         public override float Value3 => ActionData.F_20003_Health(m_Level);
-        public override void OnActionUse(EntityPlayerBase _entity, Action<ExpireBase> _OnActionExpired)
+        public override void OnActionUse()
         {
-            base.OnActionUse(_entity,_OnActionExpired);
-            ActionHelper.PlayerAcquireEntityEquipmentItem(_entity, m_Index, Value2, (int)Value3, Value1);
+            base.OnActionUse();
+            ActionHelper.PlayerAcquireEntityEquipmentItem(m_ActionEntity, m_Index, Value2, (int)Value3, Value1);
         }
         public Action_20003_Firerate_Turret_Minigun(enum_ActionLevel _level) : base(_level) { }
     }
@@ -406,8 +407,8 @@ namespace GameSetting_Action
         public override int m_Index => 20004;
         public override int I_ActionCost => ActionData.I_20004_Cost;
         public override float Value1 => ActionData.F_20004_DamageDealt(m_Level, m_ActionEntity.m_WeaponCurrent.F_BaseDamage);
-        public override void OnActionUse(EntityPlayerBase _entity, Action<ExpireBase> _OnActionExpired) {
-            base.OnActionUse(_entity,_OnActionExpired);
+        public override void OnActionUse() {
+            base.OnActionUse();
             ActionHelper.PlayerAcquireSimpleEquipmentItem(m_ActionEntity, m_Index, Value1);
         }
         public Action_20004_Damage_ExplosiveGrenade(enum_ActionLevel _level) : base(_level) { }

@@ -5,6 +5,8 @@ using GameSetting;
 public class InteractActionChest : InteractBase {
     Animation m_Animation;
     string m_clipName;
+    List<ActionBase> m_Actions;
+    EntityPlayerBase m_Interactor;
     public override bool B_InteractaOnce => true;
     public override void Init()
     {
@@ -12,9 +14,10 @@ public class InteractActionChest : InteractBase {
         m_Animation = GetComponentInChildren<Animation>();
         m_clipName = m_Animation.clip.name;
     }
-    public new void Play()
+    public void Play(List<ActionBase> _actions)
     {
         base.Play();
+        m_Actions = _actions;
         m_Animation[m_clipName].normalizedTime = 0;
         m_Animation[m_clipName].speed = 0;
         m_Animation.Play();
@@ -22,6 +25,7 @@ public class InteractActionChest : InteractBase {
     public override bool TryInteract(EntityPlayerBase _interactor)
     {
         base.TryInteract(_interactor);
+        m_Interactor = _interactor;
         m_Animation[m_clipName].speed = 1;
         m_Animation.Play();
         return true;
@@ -29,6 +33,10 @@ public class InteractActionChest : InteractBase {
 
     void OnKeyAnim()
     {
-        Debug.Log("Chest Opened???");
+        UIManager.Instance.ShowAcquirePage().Play(m_Actions,OnActionSelectConfirm);
+    }
+    void OnActionSelectConfirm(int index)
+    {
+        m_Interactor.m_PlayerActions.AddStoredAction(m_Actions[index]);
     }
 }
