@@ -6,7 +6,8 @@ using UnityEngine.UI;
 
 public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
 {
-    Transform tf_Container,tf_Center,tf_Left;
+    Transform tf_Container,tf_PlayerData,tf_Left;
+    Transform tf_WeaponData;
     Text  txt_Health, txt_Armor,txt_ActionAmount;
     Button btn_ActionStorage;
     Slider sld_Reload;
@@ -20,10 +21,10 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
     {
         base.Awake();
         tf_Container = transform.Find("Container");
-        tf_Center = tf_Container.Find("Center");
-        txt_Health = tf_Center.Find("Health").GetComponent<Text>();
-        txt_Armor = tf_Center.Find("Armor").GetComponent<Text>();
-        m_AmmoGrid = new UIT_GridControllerMono<UIGI_AmmoItem>(tf_Center.Find("AmmoGrid"));
+        tf_PlayerData = tf_Container.Find("PlayerData");
+        txt_Health = tf_PlayerData.Find("Health").GetComponent<Text>();
+        txt_Armor = tf_PlayerData.Find("Armor").GetComponent<Text>();
+        m_AmmoGrid = new UIT_GridControllerMono<UIGI_AmmoItem>(tf_PlayerData.Find("AmmoGrid"));
         m_GridLayout = m_AmmoGrid.transform.GetComponent<GridLayoutGroup>();
         f_ammoGridLength = m_AmmoGrid.transform.GetComponent<RectTransform>().sizeDelta.y;
         sld_Reload = m_AmmoGrid.transform.Find("Reload").GetComponent<Slider>();
@@ -34,6 +35,8 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
         txt_ActionAmount = m_ActionGrid.transform.Find("ActionAmount").GetComponent<Text>();
         btn_ActionStorage = m_ActionGrid.transform.Find("ActionStorage").GetComponent<Button>();
         btn_ActionStorage.onClick.AddListener(OnActionStorageClick);
+
+        tf_WeaponData = tf_Container.Find("WeaponData");
     }
     private void Start()
     {
@@ -56,7 +59,7 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
         if (!m_Player)
             m_Player = _player;
         txt_ActionAmount.text = _player.m_PlayerInfo.m_ActionHolding.Count == 0 ? _player.m_PlayerInfo.m_ActionStored.Count.ToString() : _player.m_PlayerInfo.m_ActionAmount.ToString();
-        tf_Center.position = Vector3.Lerp(tf_Center.position, CameraController.MainCamera.WorldToScreenPoint(m_Player.tf_Head.position), Time.deltaTime * 10f);
+        tf_PlayerData.position = Vector3.Lerp(tf_PlayerData.position, CameraController.MainCamera.WorldToScreenPoint(m_Player.tf_Head.position), Time.deltaTime * 10f);
     }
     void OnHealthStatus(EntityHealth _healthManager)
     {

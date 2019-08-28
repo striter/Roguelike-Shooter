@@ -183,6 +183,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
 
     void OnStageFinished()
     {
+        LevelManager.StageFinished();
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageFinish);
         if (LevelManager.B_NextStage)
         {
@@ -365,7 +366,7 @@ public static class LevelManager
 {
     public static enum_StageLevel m_currentStage;
     public static StageRarityGenerate m_actionGenerate;
-    public static bool B_NextStage => m_currentStage != enum_StageLevel.Ranger;
+    public static bool B_NextStage => m_currentStage <= enum_StageLevel.Ranger;
     static enum_BattleDifficulty m_BattleDifficulty;
     public static enum_TileType m_LevelType { get; private set; }
     static Dictionary<enum_StageLevel, enum_Style> m_StageStyle = new Dictionary<enum_StageLevel, enum_Style>();
@@ -376,7 +377,7 @@ public static class LevelManager
     {
         m_Seed = _seed == "" ? System.DateTime.Now.ToLongTimeString() : _seed;
         m_GameSeed = new System.Random( m_Seed.GetHashCode());
-        m_currentStage = 0;
+        m_currentStage =  enum_StageLevel.Rookie;
         List<enum_Style> styleList = TCommon.EnumList<enum_Style>();
         TCommon.TraversalEnum((enum_StageLevel level) => {
             enum_Style style = styleList.RandomItem(m_GameSeed);
@@ -386,10 +387,13 @@ public static class LevelManager
     }
     public static void StageBegin()
     {
-        m_currentStage++;
         m_actionGenerate = GameExpression.GetActionGenerate(m_currentStage);
         m_BattleDifficulty = enum_BattleDifficulty.Peaceful;
         m_LevelType = enum_TileType.Invalid;
+    }
+    public static void StageFinished()
+    {
+        m_currentStage++;
     }
 
     public static bool CanLevelBattle(SBigmapLevelInfo level)

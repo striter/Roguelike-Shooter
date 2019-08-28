@@ -46,19 +46,19 @@ namespace GameSetting_Action
         #region Expressions
         public static float F_10001_ArmorAdditive(enum_RarityLevel level) => 30f * (int)level;
         public static float F_10002_ArmorDamageAdditive(enum_RarityLevel level) =>  1f;
-        public static float F_10003_ArmorMultiplyAdditive(enum_RarityLevel level) => .3f * (int)level;
+        public static int IP_10003_ArmorMultiplyAdditive(enum_RarityLevel level) => 30 * (int)level;
         public static float F_10004_ArmorActionAcquire(enum_RarityLevel level) => 60f - 10f * (int)level;
-        public static float F_10005_ArmorDamageReduction(enum_RarityLevel level) => .2f * (int)level;
-        public static float F_10006_FireRateAdditive(enum_RarityLevel level) => .3f * (int)level;
-        public static float F_10007_RecoilMultiplyAdditive(enum_RarityLevel level) => .3f * (int)level;
-        public static float F_10008_ClipMultiply(enum_RarityLevel level) => .2f * (int)level;
-        public static float F_10009_BulletSpeedAdditive(enum_RarityLevel level) => .3f * (int)level;
-        public static float F_10010_SingleDamageMultiply(enum_RarityLevel level) => 4 * (int)level;
-        public static float F_10011_SingleDamageMultiply(enum_RarityLevel level) => 2 * (int)level;
+        public static int IP_10005_ArmorDamageReduction(enum_RarityLevel level) =>  20 * (int)level;
+        public static int IP_10006_FireRateAdditive(enum_RarityLevel level) => 30 * (int)level;
+        public static int IP_10007_RecoilMultiplyAdditive(enum_RarityLevel level) => 20 * (int)level;
+        public static int IP_10008_ClipMultiply(enum_RarityLevel level) => 20 * (int)level;
+        public static int IP_10009_BulletSpeedAdditive(enum_RarityLevel level) => 30 * (int)level;
+        public static int IP_10010_SingleDamageMultiply(enum_RarityLevel level) => 400 * (int)level;
+        public static int IP_10011_SingleDamageMultiply(enum_RarityLevel level) => 200 * (int)level;
         public static float F_10011_EntityKillActionReturn(enum_RarityLevel level) => 1 + (int)level;
-        public static float F_10012_SingleDamageMultiply(enum_RarityLevel level) => 2 * (int)level;
+        public static int IP_10012_SingleDamageMultiply(enum_RarityLevel level) => 200 * (int)level;
         public static float F_10012_EntityKillHealing(enum_RarityLevel level) => 30 * (int)level;
-        public static float F_10013_SingleDamageMultiply(enum_RarityLevel level) => 2 * (int)level;
+        public static int IP_10013_SingleDamageMultiply(enum_RarityLevel level) => 200 * (int)level;
         public static float F_10014_ReloadRateMultiplyAdditive(enum_RarityLevel level) => .3f * (int)level;
 
         public static float F_20001_ArmorTurretHealth(enum_RarityLevel level) =>  2 * (int)level;
@@ -76,12 +76,12 @@ namespace GameSetting_Action
         public static float F_30004_DamageAdditive(enum_RarityLevel level) => 200 * (int)level;
         public static float F_30005_ReloadTimesHeal(enum_RarityLevel level) => 5 - 1 * (int)level;
         public static float F_30005_ReloadHealAmount(enum_RarityLevel level) => -10f;
-        public static float F_30006_ReloadTimesDamageMultiply(enum_RarityLevel level) => 2;
+        public static int IP_30006_ReloadTimesDamageMultiply(enum_RarityLevel level) => 200;
         public static float F_30006_ReloadDamageMultiply(enum_RarityLevel level) => 2 * (int)level;
 
         public static float F_40001_DamageDealtCount(enum_RarityLevel level) => 2000 / Mathf.Pow(2, (int)level-1);
         public static float F_40001_ArmorAdditive(enum_RarityLevel level) => 20f;
-        public static float F_40002_DamageDealtAddActionPercentage(enum_RarityLevel level) => 5 * (int)level;
+        public static int IP_40002_DamageDealtAddActionRate(enum_RarityLevel level) => 5 * (int)level;
         public static float F_40002_AddActionAmount(enum_RarityLevel level) => 1f;
         public static float F_40003_FireTimesCount(enum_RarityLevel level) => 6 - (int)level;
         public static float F_40003_DamageAdditive(enum_RarityLevel level) => 300f;
@@ -237,10 +237,10 @@ namespace GameSetting_Action
     {
         public override int m_Index => 10003;
         public override int I_ActionCost => ActionData.I_10003_Cost;
-        public override float Value1 => ActionData.F_10003_ArmorMultiplyAdditive(m_Level);
+        public override float Value1 => ActionData.IP_10003_ArmorMultiplyAdditive(m_Level);
         public override void OnActionUse() {
             base.OnActionUse();
-            ActionHelper.PlayerReceiveHealing(m_ActionEntity, -Value1 * m_ActionEntity.m_HealthManager.m_CurrentArmor, enum_DamageType.ArmorOnly);
+            ActionHelper.PlayerReceiveHealing(m_ActionEntity, -Value1 / 100f * m_ActionEntity.m_HealthManager.m_CurrentArmor, enum_DamageType.ArmorOnly);
         } 
         public Action_10003_ArmorMultiplyAdditive(enum_RarityLevel _level) : base(_level) { }
     }
@@ -261,57 +261,57 @@ namespace GameSetting_Action
         public override int m_Index => 10005;
         public override int m_EffectIndex => base.m_EffectIndex;
         public override int I_ActionCost => ActionData.I_10005_Cost;
-        public override float Value1 => ActionData.F_10005_ArmorDamageReduction(m_Level);
-        public override float m_DamageReduction => Value1;
+        public override float Value1 => ActionData.IP_10005_ArmorDamageReduction(m_Level);
+        public override float m_DamageReduction => Value1 / 100f;
         public Action_10005_ArmorDamageReduction(enum_RarityLevel _level) : base(_level, ActionData.F_10005_Duration) { }
     }
     public class Action_10006_FireRateAdditive: ActionAfterDuration
     {
         public override int m_Index => 10006;
         public override int I_ActionCost => ActionData.I_10006_Cost;
-        public override float Value1 =>ActionData.F_10006_FireRateAdditive(m_Level);
-        public override float m_FireRateMultiply => Value1;
+        public override float Value1 =>ActionData.IP_10006_FireRateAdditive(m_Level);
+        public override float m_FireRateMultiply => Value1 / 100f;
         public Action_10006_FireRateAdditive(enum_RarityLevel _level) : base(_level, ActionData.F_10006_Duration) { }
     }
     public class Action_10007_RecoilReduction : ActionAfterDuration
     {
         public override int m_Index => 10007;
         public override int I_ActionCost => ActionData.I_10007_Cost;
-        public override float Value1 => ActionData.F_10007_RecoilMultiplyAdditive(m_Level);
-        public override float F_RecoilMultiplyAdditive => Value1;
+        public override float Value1 => ActionData.IP_10007_RecoilMultiplyAdditive(m_Level);
+        public override float F_RecoilMultiplyAdditive => Value1 / 100f;
         public Action_10007_RecoilReduction(enum_RarityLevel _level) : base(_level, ActionData.F_10007_Duration) { }
     }
     public class Action_10008_ClipMultiply : ActionAfterDuration
     {
         public override int m_Index => 10008;
         public override int I_ActionCost => ActionData.I_10008_Cost;
-        public override float Value1 => ActionData.F_10008_ClipMultiply(m_Level);
-        public override float F_ClipMultiply => Value1;
+        public override float Value1 => ActionData.IP_10008_ClipMultiply(m_Level) ;
+        public override float F_ClipMultiply => Value1 / 100f;
         public Action_10008_ClipMultiply(enum_RarityLevel _level) : base(_level, ActionData.F_10008_Duration) { }
     }
     public class Action_10009_ProjectileSpeedMultiply : ActionAfterDuration
     {
         public override int m_Index => 10009;
         public override int I_ActionCost => ActionData.I_10009_Cost;
-        public override float Value1 => ActionData.F_10009_BulletSpeedAdditive(m_Level);
-        public override float F_ProjectileSpeedMultiply => Value1;
+        public override float Value1 => ActionData.IP_10009_BulletSpeedAdditive(m_Level);
+        public override float F_ProjectileSpeedMultiply => Value1 / 100f;
         public Action_10009_ProjectileSpeedMultiply(enum_RarityLevel _level) : base(_level, ActionData.F_10009_Duration) { }
     }
     public class Action_10010_SingleDamageMultiply : ActionAfterFire
     {
         public override int m_Index => 10010;
         public override int I_ActionCost => ActionData.I_10010_Cost;
-        public override float Value1 => ActionData.F_10010_SingleDamageMultiply(m_Level);
-        public override float m_DamageMultiply => Value1;
+        public override float Value1 => ActionData.IP_10010_SingleDamageMultiply(m_Level) ;
+        public override float m_DamageMultiply => Value1 / 100f;
         public Action_10010_SingleDamageMultiply(enum_RarityLevel _level) : base(_level) { }
     }
     public class Action_10011_SingleDamageKillActionReturn : ActionAfterFire
     {
         public override int m_Index => 10011;
         public override int I_ActionCost => ActionData.I_10011_Cost;
-        public override float Value1 => ActionData.F_10011_SingleDamageMultiply(m_Level);
+        public override float Value1 => ActionData.IP_10011_SingleDamageMultiply(m_Level) ;
         public override float Value2 => ActionData.F_10011_EntityKillActionReturn(m_Level);
-        public override float m_DamageMultiply => Value1;
+        public override float m_DamageMultiply => Value1 / 100f;
         protected override bool OnActionHit( EntityBase _targetEntity)
         {
             if (!_targetEntity.m_HealthManager.b_IsDead)
@@ -325,9 +325,9 @@ namespace GameSetting_Action
     {
         public override int m_Index => 10012;
         public override int I_ActionCost => ActionData.I_10012_Cost;
-        public override float Value1 => ActionData.F_10012_SingleDamageMultiply(m_Level);
+        public override float Value1 => ActionData.IP_10012_SingleDamageMultiply(m_Level) ;
         public override float Value2 => ActionData.F_10012_EntityKillHealing(m_Level);
-        public override float m_DamageMultiply => Value1;
+        public override float m_DamageMultiply => Value1 / 100f;
         protected override bool OnActionHit( EntityBase _targetEntity)
         {
             if (!_targetEntity.m_HealthManager.b_IsDead)
@@ -341,8 +341,8 @@ namespace GameSetting_Action
     {
         public override int m_Index => 10013;
         public override int I_ActionCost => ActionData.I_10013_Cost;
-        public override float Value1 => ActionData.F_10013_SingleDamageMultiply(m_Level);
-        public override float m_DamageMultiply => Value1;
+        public override float Value1 => ActionData.IP_10013_SingleDamageMultiply(m_Level) ;
+        public override float m_DamageMultiply => Value1 / 100f;
         protected override bool OnActionHit( EntityBase _targetEntity)
         {
             if (!_targetEntity.m_HealthManager.b_IsDead)
@@ -462,8 +462,8 @@ namespace GameSetting_Action
     {
         public override int m_Index => 30006;
         public override int I_ActionCost => ActionData.I_30006_Cost;
-        public override float Value1 => ActionData.F_30006_ReloadTimesDamageMultiply(m_Level);
-        public override float m_DamageMultiply =>  m_TriggerOn? ActionData.F_30006_ReloadDamageMultiply(m_Level):0;
+        public override float Value1 => ActionData.IP_30006_ReloadTimesDamageMultiply(m_Level);
+        public override float m_DamageMultiply =>  m_TriggerOn?Value1 / 100f : 0;
         bool m_TriggerOn = false;
         public override void OnReloadFinish()
         {
@@ -497,7 +497,7 @@ namespace GameSetting_Action
     public class Action_40002_DealtDamageAddActionRandom : ActionAfterWeaponDetach
     {
         public override int m_Index => 40002;
-        public override float Value1 => ActionData.F_40002_DamageDealtAddActionPercentage(m_Level);
+        public override float Value1 => ActionData.IP_40002_DamageDealtAddActionRate(m_Level);
         public override float Value2 => ActionData.F_40002_AddActionAmount(m_Level);
         public override void OnAfterFire(int identity)
         {

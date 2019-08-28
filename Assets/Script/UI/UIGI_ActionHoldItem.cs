@@ -23,5 +23,4 @@ public class UIGI_ActionHoldItem : UIT_GridItem {
         OnClick = _OnClick;
         m_Name.text = actionInfo.GetNameLocalizeKey().Localize();
     }
-    
 }
