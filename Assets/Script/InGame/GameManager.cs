@@ -130,13 +130,12 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     //Call When Level Changed
     void StartStage()      //PreInit Bigmap , Levels LocalPlayer Before  Start The game
     {
-        enum_Style _style=LevelManager.StageBegin();
+        LevelManager.StageBegin();
 
         EntityPreset();
-        ObjectManager.Preset(_style,LevelManager.m_currentStage);
-        m_BattleEntityStyle = _style;
-        EnviormentManager.Instance.GenerateAllEnviorment(_style, LevelManager.m_GameSeed, OnLevelStart,OnStageFinished);
-        m_StyledEnermyEntities = ObjectManager.RegisterAllEntitiesGetEnermyDic(TResources.GetCommonEntities() ,TResources.GetEnermyEntities(m_BattleEntityStyle));
+        ObjectManager.Preset(LevelManager.m_currentStyle,LevelManager.m_currentStage);
+        EnviormentManager.Instance.GenerateAllEnviorment(LevelManager.m_currentStyle, LevelManager.m_GameSeed, OnLevelStart,OnStageFinished);
+        m_StyledEnermyEntities = ObjectManager.RegisterAllEntitiesGetEnermyDic(TResources.GetCommonEntities() ,TResources.GetEnermyEntities(LevelManager.m_currentStyle));
         m_LocalPlayer = ObjectManager.SpawnPlayer(DataManager.m_PlayerGameInfo);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageStart);
 
@@ -149,39 +148,33 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         m_LocalPlayer.transform.position = levelInfo.m_Level.RandomEmptyTilePosition(LevelManager.m_GameSeed);
 
         if (LevelManager.CanLevelBattle(levelInfo))
-        {
             OnBattleStart(LevelManager.m_Difficulty);
-        }
         else
-        {
-            if (levelInfo.m_TileLocking != enum_TileLocking.Unlocked)
-                SpawnInteract(Vector3.zero);
-            OnLevelFinished();
-        }
+            OnLevelFinished(levelInfo.m_TileLocking != enum_TileLocking.Unlocked,Vector3.zero);
     }
 
     //Call Enviorment Manager To Generate Interacts And Show Bigmaps, Then Go Back To OnLevelChange From Enviorment Manager
-    void OnLevelFinished()
+    void OnLevelFinished(bool spawnInteract, Vector3 interactPos)
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnLevelFinish);
-    }
-
-    void SpawnInteract(Vector3 pos)
-    {
+        if (!spawnInteract)
+            return;
+        enum_ActionLevel level = LevelManager.m_actionGenerate.GetLevel(TCommon.RandomPercentage());
         switch (LevelManager.m_LevelType)
         {
             case enum_TileType.Battle:
-                ObjectManager.SpawnInteractChest(EnviormentManager.NavMeshPosition(pos, false)).Play(new List<ActionBase> { DataManager.RandomPlayerAction(LevelManager.m_currentStage.ToActionLevel()), DataManager.RandomPlayerAction(LevelManager.m_currentStage.ToActionLevel()) });
+                ObjectManager.SpawnInteractChest(EnviormentManager.NavMeshPosition(interactPos, false)).Play(new List<ActionBase> { DataManager.RandomPlayerAction(level), DataManager.RandomPlayerAction(level) });
                 break;
             case enum_TileType.Start:
-                ObjectManager.SpawnInteractChest(EnviormentManager.NavMeshPosition(Vector3.left, false)).Play(new List<ActionBase> { DataManager.RandomPlayerAction(LevelManager.m_currentStage.ToActionLevel()), DataManager.RandomPlayerAction(LevelManager.m_currentStage.ToActionLevel()) });
+                ObjectManager.SpawnInteractChest(EnviormentManager.NavMeshPosition(Vector3.left, false)).Play(new List<ActionBase> { DataManager.RandomPlayerAction(level), DataManager.RandomPlayerAction(level) });
                 ObjectManager.SpawnWeaponContainer(EnviormentManager.NavMeshPosition(Vector3.right, false)).Play(TCommon.RandomEnumValues<enum_PlayerWeapon>(LevelManager.m_GameSeed), new List<ActionBase>() { DataManager.RendomWeaponAction(LevelManager.m_currentStage.ToActionLevel()) });
                 break;
             case enum_TileType.End:
-                ObjectManager.SpawnInteractPortal(EnviormentManager.NavMeshPosition(pos, false)).Play(OnStageFinished);
+                ObjectManager.SpawnInteractPortal(EnviormentManager.NavMeshPosition(interactPos, false)).Play(OnStageFinished);
                 break;
         }
     }
+
 
     void OnStageFinished()
     {
@@ -279,7 +272,6 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
 
     #endregion
     #region Battle Management
-    public enum_Style m_BattleEntityStyle { get; private set; }
     public bool B_Battling { get; private set; } = false;
     public bool B_WaveEntityGenerating { get; private set; } = false;
     public int m_CurrentWave { get; private set; } = -1;
@@ -306,7 +298,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
             {
                 if (!m_StyledEnermyEntities.ContainsKey(level))
                 {
-                    Debug.LogWarning("Current Enermy Style:" + m_BattleEntityStyle + " Not Contains Type:" + level);
+                    Debug.LogWarning("Current Enermy Style:" + LevelManager.m_currentStyle + " Not Contains Type:" + level);
                     continue;
                 }
                 m_EntityGenerating.Add(m_StyledEnermyEntities[level].RandomItem());
@@ -335,8 +327,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleFinish);
         B_Battling = false;
-        SpawnInteract(lastEntityPos);
-        OnLevelFinished();
+        OnLevelFinished(true,lastEntityPos);
     }
 
     IEnumerator IE_GenerateEnermy(List<int> waveGenerate, float _offset)
@@ -368,10 +359,12 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
 public static class LevelManager
 {
     public static enum_StageLevel m_currentStage;
+    public static ActionGenerate m_actionGenerate;
     public static bool B_NextStage => m_currentStage != enum_StageLevel.Ranger;
     static enum_BattleDifficulty m_BattleDifficulty;
     public static enum_TileType m_LevelType { get; private set; }
     static Dictionary<enum_StageLevel, enum_Style> m_StageStyle = new Dictionary<enum_StageLevel, enum_Style>();
+    public static enum_Style m_currentStyle => m_StageStyle[m_currentStage];
     public static string m_Seed { get; private set; }
     public static System.Random m_GameSeed { get; private set; }
     public static void Init(string _seed)
@@ -386,12 +379,12 @@ public static class LevelManager
             m_StageStyle.Add(level,style);
         });
     }
-    public static enum_Style StageBegin()
+    public static void StageBegin()
     {
         m_currentStage++;
+        m_actionGenerate = GameExpression.GetActionGenerate(m_currentStage);
         m_BattleDifficulty = enum_BattleDifficulty.Peaceful;
         m_LevelType = enum_TileType.Invalid;
-        return m_StageStyle[m_currentStage];
     }
 
     public static bool CanLevelBattle(SBigmapLevelInfo level)

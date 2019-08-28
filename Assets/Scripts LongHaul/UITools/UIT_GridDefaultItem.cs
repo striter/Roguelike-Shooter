@@ -14,6 +14,9 @@ public class UIT_GridDefaultItem : UIT_GridItem {
     protected override void Init()
     {
         base.Init();
+        if (txt_Default)
+            return;
+
         txt_Default = tf_Container.Find("DefaultText").GetComponentNullable<Text>();
         img_Default = tf_Container.Find("DefaultImage").GetComponentNullable<Image>();
         img_HighLight = tf_Container.Find("DefaultHighLight").GetComponentNullable<Image>();

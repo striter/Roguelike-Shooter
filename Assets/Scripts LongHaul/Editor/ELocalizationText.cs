@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(UIT_Localization))]
+[CustomEditor(typeof(UIT_Localization)),CanEditMultipleObjects]
 public class ELocalizationText : UnityEditor.UI.TextEditor
 {
     UIT_Localization m_target = null;

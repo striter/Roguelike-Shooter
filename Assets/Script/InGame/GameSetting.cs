@@ -51,6 +51,16 @@ namespace GameSetting
 
         public static float F_ActionAmountReceive(float damageApply) => damageApply * .1f;
 
+        public static ActionGenerate GetActionGenerate(enum_StageLevel level)
+        {
+            switch (level)
+            {
+                default: return ActionGenerate.Create(new Dictionary<enum_ActionLevel, int>());
+                case enum_StageLevel.Rookie: return ActionGenerate.Create(new Dictionary<enum_ActionLevel, int>() { { enum_ActionLevel.L1, 75 }, { enum_ActionLevel.L2, 25 } });
+                case enum_StageLevel.Veteran: return ActionGenerate.Create(new Dictionary<enum_ActionLevel, int>() { { enum_ActionLevel.L1, 30 }, { enum_ActionLevel.L2, 60 }, { enum_ActionLevel.L3, 10 } });
+                case enum_StageLevel.Ranger: return ActionGenerate.Create(new Dictionary<enum_ActionLevel, int>() { { enum_ActionLevel.L2, 60 }, { enum_ActionLevel.L3, 40 } });
+            }
+        }
     }
 
     public static class UIConst
@@ -122,8 +132,9 @@ namespace GameSetting
 
     public static class LocalizationKeyJoint
     {
-        public static string NameKey(this ActionBase action) => "Action_Name_" + action.m_Index;
-        public static string IntroKey(this ActionBase action) => "Action_Intro_" + action.m_Index;
+        public static string GetNameLocalizeKey(this ActionBase action) => "Action_Name_" + action.m_Index;
+        public static string GetIntroLocalizeKey(this ActionBase action) => "Action_Intro_" + action.m_Index;
+        public static string GetLocalizeKey(this enum_ActionLevel level) => "Action_Level_" + level;
     }
     #endregion
 
@@ -322,6 +333,25 @@ namespace GameSetting
     #endregion
 
     #region DataStruct
+    public struct ActionGenerate
+    {
+        Dictionary<enum_ActionLevel, int> m_Rarities;
+        public enum_ActionLevel GetLevel(int value)
+        {
+            enum_ActionLevel targetLevel = enum_ActionLevel.Invalid;
+            int totalAmount=0;
+            m_Rarities.Traversal((enum_ActionLevel level,int amount)=> {
+                if (targetLevel != enum_ActionLevel.Invalid)
+                    return;
+                totalAmount += amount;
+                if (totalAmount > value)
+                    targetLevel = level;
+            });
+            return targetLevel;
+        }
+        public static ActionGenerate Create(Dictionary<enum_ActionLevel, int> _Rarities)=> new ActionGenerate() { m_Rarities = _Rarities };
+    }
+
     public struct ActionInfo : IXmlPhrase
     {
         public int m_Index { get; private set; }
@@ -371,6 +401,7 @@ namespace GameSetting
         {
         }
     }
+
     public struct SLevelGenerate : ISExcel
     {
         string em_defines;
@@ -411,6 +442,7 @@ namespace GameSetting
             m_ItemGenerate.Add(enum_LevelItemType.NoCollisionMore, ir_noCollisionMore);
         }
     }
+
     public struct SGenerateEntity : ISExcel
     {
         string em_defines;
@@ -437,6 +469,7 @@ namespace GameSetting
             m_EntityGenerate.Add(enum_EntityType.Elite, ir_elite);
         }
     }
+
     public struct SBuff : ISExcel
     {
         int index;
@@ -955,6 +988,7 @@ namespace GameSetting
             m_ActionEquiping.Traversal((ActionBase action) => { action.OnAddActionElse(targetAction.m_Index); });
             AddExpire(targetAction);
             m_ActionEquiping.Add(targetAction);
+            targetAction.Activate(m_Player, OnExpireElapsed);
             targetAction.OnActionUse();
         }
         protected override void OnExpireElapsed(ExpireBase expire)
@@ -1013,14 +1047,11 @@ namespace GameSetting
             {
                 m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDemage(damageEntity, amountApply); });
                 AddActionAmount(GameExpression.F_ActionAmountReceive(amountApply));
-
             }
             else if (damageEntity.I_EntityID == m_Player.I_EntityID)
             {
-
                 m_ActionEquiping.Traversal((ActionBase action) => { action.OnReceiveDamage(damageInfo.I_SourceID, amountApply); });
             }
-
         }
         #endregion
 
@@ -1051,7 +1082,6 @@ namespace GameSetting
         }
         public void AddStoredAction(ActionBase action)
         {
-            action.Init(m_Player,OnExpireElapsed);
             m_ActionStored.Add(action);
         }
         public void AddActionAmount(float amount)
@@ -1088,7 +1118,7 @@ namespace GameSetting
             if (m_ExpireType == enum_ActionExpireType.Invalid)
                 Debug.LogError("Override Type Please!");
         }
-        public void Init(EntityPlayerBase _actionEntity,Action<ExpireBase> OnExpired) { m_ActionEntity = _actionEntity;Activate(OnExpired); }
+        public void Activate(EntityPlayerBase _actionEntity,Action<ExpireBase> OnExpired) { m_ActionEntity = _actionEntity;Activate(OnExpired); }
         public virtual void OnActionUse() { }
         public virtual void OnAddActionElse(float actionAmount) { }
         public virtual void OnReceiveDamage(int applier, float amount) { }

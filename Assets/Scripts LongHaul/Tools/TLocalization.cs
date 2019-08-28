@@ -35,10 +35,10 @@ public static class TLocalization
         OnLocaleChanged?.Invoke();
         IsInit = true;
     }
-    public static bool CanLocalize(this string key) => CurLocalization.ContainsKey(key);
+    public static bool CanLocalize(this string key)=>key!=null&&CurLocalization.ContainsKey(key);
     public static string Localize(this string key)
     {
-        if (CanLocalize(key))
+        if (CurLocalization.ContainsKey(key))
             return CurLocalization[key.Replace("\\n", "\n")];
 
         Debug.LogWarning("Localization Key:(" + key + ") Not Found In Localization " + e_CurLocation.ToString());
