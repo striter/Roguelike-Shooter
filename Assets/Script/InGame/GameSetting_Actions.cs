@@ -381,6 +381,7 @@ namespace GameSetting_Action
         public override int I_ActionCost => ActionData.I_20002_Cost;
         public override float Value1=> ActionData.F_20002_DamageDealt(m_Level);
         public override float Value2=> ActionData.F_20002_BuffIndex(m_Level);
+        public override float Value3 => DataManager.GetEntityBuffProperties((int)ActionData.F_20002_BuffIndex(m_Level)).m_ExpireDuration;
         public override void OnActionUse()
         {
             base.OnActionUse();
