@@ -169,7 +169,6 @@ namespace GameSetting_Action
 
         protected virtual bool OnActionHit( EntityBase _hitEntity)
         {
-            Debug.Log("Override This Please");
             return false;
         }
         public ActionAfterFire(enum_RarityLevel _level) : base(_level) { }
