@@ -76,8 +76,8 @@ namespace GameSetting_Action
         public static float F_30004_DamageAdditive(enum_RarityLevel level) => 200 * (int)level;
         public static float F_30005_ReloadTimesHeal(enum_RarityLevel level) => 5 - 1 * (int)level;
         public static float F_30005_ReloadHealAmount(enum_RarityLevel level) => -10f;
-        public static int IP_30006_ReloadTimesDamageMultiply(enum_RarityLevel level) => 200;
-        public static float F_30006_ReloadDamageMultiply(enum_RarityLevel level) => 2 * (int)level;
+        public static int I_30006_ReloadTimesCount(enum_RarityLevel level) => 2;
+        public static int IP_30006_ReloadDamageMultiplyPercentage(enum_RarityLevel level) => 200 * (int)level;
 
         public static float F_40001_DamageDealtCount(enum_RarityLevel level) => 2000 / Mathf.Pow(2, (int)level-1);
         public static float F_40001_ArmorAdditive(enum_RarityLevel level) => 20f;
@@ -462,8 +462,9 @@ namespace GameSetting_Action
     {
         public override int m_Index => 30006;
         public override int I_ActionCost => ActionData.I_30006_Cost;
-        public override float Value1 => ActionData.IP_30006_ReloadTimesDamageMultiply(m_Level);
-        public override float m_DamageMultiply =>  m_TriggerOn?Value1 / 100f : 0;
+        public override float Value1 => ActionData.I_30006_ReloadTimesCount(m_Level);
+        public override float Value2 => ActionData.IP_30006_ReloadDamageMultiplyPercentage(m_Level);
+        public override float m_DamageMultiply =>  m_TriggerOn?Value2 / 100f : 0;
         bool m_TriggerOn = false;
         public override void OnReloadFinish()
         {
