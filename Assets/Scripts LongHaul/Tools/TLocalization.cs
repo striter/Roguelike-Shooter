@@ -35,8 +35,8 @@ public static class TLocalization
         OnLocaleChanged?.Invoke();
         IsInit = true;
     }
-    public static bool CanLocalize(this string key)=>key!=null&&CurLocalization.ContainsKey(key);
-    public static string Localize(this string key)
+    public static bool CanLocalize(string key)=>key!=null&&CurLocalization.ContainsKey(key);
+    public static string GetKeyLocalized(string key)
     {
         if (CurLocalization.ContainsKey(key))
             return CurLocalization[key.Replace("\\n", "\n")];

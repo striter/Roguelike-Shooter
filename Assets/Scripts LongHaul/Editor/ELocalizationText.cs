@@ -11,15 +11,23 @@ public class ELocalizationText : UnityEditor.UI.TextEditor
     {
         m_target = target as UIT_Localization;
 
-        GUILayout.BeginHorizontal();
-        GUILayout.Label("Localize Key:", GUILayout.Width(Screen.width / 3-20));
-        m_target.LocalizeKey = GUILayout.TextArea(m_target.LocalizeKey, GUILayout.Width(Screen.width*2/3-20) );
-        GUILayout.EndHorizontal();
-        GUILayout.BeginHorizontal();
-        TLocalization.SetRegion(enum_LanguageRegion.CN);
-        GUILayout.Label("Localized Text:", GUILayout.Width(Screen.width / 3 - 20));
-        GUILayout.Label(m_target.LocalizeKey.CanLocalize()?m_target.LocalizeKey.Localize():"Unable To Localize", GUILayout.Width(Screen.width * 2 / 3 - 20));
-        GUILayout.EndHorizontal();
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.Label("Auto Localize:", GUILayout.Width(Screen.width / 3 - 20));
+        m_target.B_AutoLocalize = EditorGUILayout.Toggle(m_target.B_AutoLocalize, GUILayout.Width(Screen.width * 2 / 3 - 20));
+        EditorGUILayout.EndHorizontal();
+
+        if (m_target.B_AutoLocalize)
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Localize Key:", GUILayout.Width(Screen.width / 3 - 20));
+            m_target.LocalizeKey = GUILayout.TextArea(m_target.LocalizeKey, GUILayout.Width(Screen.width * 2 / 3 - 20));
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            TLocalization.SetRegion(enum_LanguageRegion.CN);
+            GUILayout.Label("Localized Text:", GUILayout.Width(Screen.width / 3 - 20));
+            GUILayout.Label( TLocalization.CanLocalize(m_target.LocalizeKey) ? TLocalization.GetKeyLocalized(m_target.LocalizeKey) : "Unable To Localize", GUILayout.Width(Screen.width * 2 / 3 - 20));
+            GUILayout.EndHorizontal();
+        }
         base.OnInspectorGUI();
     }
 }

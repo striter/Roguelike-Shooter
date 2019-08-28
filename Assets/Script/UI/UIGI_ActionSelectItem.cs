@@ -11,8 +11,8 @@ public class UIGI_ActionSelectItem : UIT_GridDefaultItem
     }
     public void SetInfo(ActionBase action)
     {
-        base.SetItemInfo(action.GetNameLocalizeKey().Localize(), false);
-        txt_Intro.text = string.Format(action.GetIntroLocalizeKey().Localize(), action.m_ExpireDuration, action.Value1, action.Value2, action.Value3);
-        txt_Level.text = action.m_Level.GetLocalizeKey().Localize();
+        base.SetItemInfo(action.GetNameLocalizeKey(), false);
+        txt_Intro.text = string.Format(action.GetIntroLocalizeKey(), action.m_ExpireDuration, action.Value1, action.Value2, action.Value3);
+        txt_Level.text = action.m_Level.GetLocalizeKey();
     }
 }

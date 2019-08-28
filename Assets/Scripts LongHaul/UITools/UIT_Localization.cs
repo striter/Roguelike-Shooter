@@ -2,20 +2,43 @@
 using UnityEngine.UI;
 public class UIT_Localization : Text
 {
+    public bool B_AutoLocalize = false;
     public string LocalizeKey;
     protected override void Awake()
     {
         base.Awake();
-        TLocalization.OnLocaleChanged += OnLocaleChanged;
+        if(B_AutoLocalize)
+            TLocalization.OnLocaleChanged += OnKeyLocalize;
+    }
+    protected override void Start()
+    {
+        base.Start();
+        if (B_AutoLocalize)
+            OnKeyLocalize();
     }
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        TLocalization.OnLocaleChanged -= OnLocaleChanged;
+        if(B_AutoLocalize)
+            TLocalization.OnLocaleChanged -= OnKeyLocalize;
     }
 
-    void OnLocaleChanged()
+    void OnKeyLocalize()
     {
-        base.text = LocalizeKey.Localize();
+        base.text = TLocalization.GetKeyLocalized(LocalizeKey);
+    }
+
+    public override string text
+    {
+        get
+        {
+            return base.text;
+        }
+
+        set
+        {
+            LocalizeKey = value;
+            OnKeyLocalize();
+        }
     }
 }

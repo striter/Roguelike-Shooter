@@ -84,7 +84,7 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
             return;
 
         m_targetWeapon = targetWeapon;
-        txt_WeaponName.text = m_targetWeapon.m_WeaponInfo.m_Weapon.GetNameLocalizeKey().Localize();
+        txt_WeaponName.text = m_targetWeapon.m_WeaponInfo.m_Weapon.GetNameLocalizeKey();
 
         if (m_targetWeapon.m_WeaponAction.Count > 0)
         {

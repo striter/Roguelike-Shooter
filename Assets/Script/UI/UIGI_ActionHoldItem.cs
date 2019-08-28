@@ -21,6 +21,6 @@ public class UIGI_ActionHoldItem : UIT_GridItem {
     public void SetInfo(ActionBase actionInfo,Action<int> _OnClick)
     {
         OnClick = _OnClick;
-        m_Name.text = actionInfo.GetNameLocalizeKey().Localize();
+        m_Name.text = actionInfo.GetNameLocalizeKey();
     }
 }
