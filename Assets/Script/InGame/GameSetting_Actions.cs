@@ -118,7 +118,7 @@ namespace GameSetting_Action
         public static void PlayerReceiveHealing(EntityPlayerBase player,float heal,enum_DamageType type= enum_DamageType.Common)
         {
             Debug.Log("Player Receive Healing Amount:" + heal);
-            if (heal >= 0)
+            if (heal <= 0)
                 Debug.LogError("Howd Fk Healing Below Zero?");
             player.m_HitCheck.TryHit(new DamageInfo(-heal,type, DamageDeliverInfo.Default(player.I_EntityID)));
         }
