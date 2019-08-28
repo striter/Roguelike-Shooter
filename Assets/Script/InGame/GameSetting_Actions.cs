@@ -81,7 +81,7 @@ namespace GameSetting_Action
 
         public static float F_40001_DamageDealtCount(enum_RarityLevel level) => 2000 / Mathf.Pow(2, (int)level-1);
         public static float F_40001_ArmorAdditive(enum_RarityLevel level) => 20f;
-        public static int IP_40002_DamageDealtAddActionRate(enum_RarityLevel level) => 5 * (int)level;
+        public static int IP_40002_DamageDealtAddActionRate(enum_RarityLevel level) => 1 * (int)level;
         public static float F_40002_AddActionAmount(enum_RarityLevel level) => 1f;
         public static float F_40003_FireTimesCount(enum_RarityLevel level) => 6 - (int)level;
         public static float F_40003_DamageAdditive(enum_RarityLevel level) => 300f;
