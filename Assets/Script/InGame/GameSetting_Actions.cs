@@ -44,20 +44,20 @@ namespace GameSetting_Action
         public const float F_10014_Duration = 30f;
         #endregion
         #region Expressions
-        public static float F_10001_ArmorAdditive(enum_ActionLevel level) => -30f * (int)level;
+        public static float F_10001_ArmorAdditive(enum_ActionLevel level) => 30f * (int)level;
         public static float F_10002_ArmorDamageAdditive(enum_ActionLevel level) =>  1f;
-        public static float F_10003_ArmorMultiplyAdditive(enum_ActionLevel level) => -.3f * (int)level;
+        public static float F_10003_ArmorMultiplyAdditive(enum_ActionLevel level) => .3f * (int)level;
         public static float F_10004_ArmorActionAcquire(enum_ActionLevel level) => 20f + 10f * (int)level;
         public static float F_10005_ArmorDamageReduction(enum_ActionLevel level) => .2f * (int)level;
         public static float F_10006_FireRateAdditive(enum_ActionLevel level) => .3f * (int)level;
-        public static float F_10007_RecoilMultiplyAdditive(enum_ActionLevel level) => -.3f * (int)level;
+        public static float F_10007_RecoilMultiplyAdditive(enum_ActionLevel level) => .3f * (int)level;
         public static float F_10008_ClipMultiply(enum_ActionLevel level) => .2f * (int)level;
         public static float F_10009_BulletSpeedAdditive(enum_ActionLevel level) => .3f * (int)level;
         public static float F_10010_SingleDamageMultiply(enum_ActionLevel level) => 4 * (int)level;
         public static float F_10011_SingleDamageMultiply(enum_ActionLevel level) => 2 * (int)level;
         public static float F_10011_EntityKillActionReturn(enum_ActionLevel level) => 1 + (int)level;
         public static float F_10012_SingleDamageMultiply(enum_ActionLevel level) => 2 * (int)level;
-        public static float F_10012_EntityKillHealing(enum_ActionLevel level) => -30 * (int)level;
+        public static float F_10012_EntityKillHealing(enum_ActionLevel level) => 30 * (int)level;
         public static float F_10013_SingleDamageMultiply(enum_ActionLevel level) => 2 * (int)level;
         public static float F_10014_ReloadRateMultiplyAdditive(enum_ActionLevel level) => .3f * (int)level;
 
@@ -80,16 +80,16 @@ namespace GameSetting_Action
         public static float F_30006_ReloadDamageMultiply(enum_ActionLevel level) => 2 * (int)level;
 
         public static float F_40001_DamageDealtCount(enum_ActionLevel level) => 2000 / Mathf.Pow(2, (int)level-1);
-        public static float F_40001_ArmorAdditive(enum_ActionLevel level) => -20f;
+        public static float F_40001_ArmorAdditive(enum_ActionLevel level) => 20f;
         public static float F_40002_DamageDealtAddActionPercentage(enum_ActionLevel level) => 5 * (int)level;
         public static float F_40002_AddActionAmount(enum_ActionLevel level) => 1f;
         public static float F_40003_FireTimesCount(enum_ActionLevel level) => 6 - (int)level;
         public static float F_40003_DamageAdditive(enum_ActionLevel level) => 300f;
         public static float F_40007_DamageReductionDuration(enum_ActionLevel level) => (int)level;
-        public static float F_40007_ArmorAdditive(enum_ActionLevel level) => -30 * (int)level;
+        public static float F_40007_ArmorAdditive(enum_ActionLevel level) => 30 * (int)level;
         public static float F_40007_Cooldown(enum_ActionLevel level) => 60f;
         public static float F_40012_ActionReturn(enum_ActionLevel level) => .2f * (int)level;
-        public static float F_40014_ArmorAdditive(enum_ActionLevel level) => -10 * (int)level;
+        public static float F_40014_ArmorAdditive(enum_ActionLevel level) => 10 * (int)level;
         #endregion
     }
 
@@ -119,8 +119,8 @@ namespace GameSetting_Action
         {
             Debug.Log("Player Receive Healing Amount:" + heal);
             if (heal >= 0)
-                Debug.LogError("Howd Fk Healing Above Zero?");
-            player.m_HitCheck.TryHit(new DamageInfo(heal,type, DamageDeliverInfo.Default(player.I_EntityID)));
+                Debug.LogError("Howd Fk Healing Below Zero?");
+            player.m_HitCheck.TryHit(new DamageInfo(-heal,type, DamageDeliverInfo.Default(player.I_EntityID)));
         }
         public static void PlayerReceiveActionAmount(EntityPlayerBase player, float amount)
         {
@@ -240,7 +240,7 @@ namespace GameSetting_Action
         public override float Value1 => ActionData.F_10003_ArmorMultiplyAdditive(m_Level);
         public override void OnActionUse() {
             base.OnActionUse();
-            ActionHelper.PlayerReceiveHealing(m_ActionEntity, Value1 * m_ActionEntity.m_HealthManager.m_CurrentArmor, enum_DamageType.ArmorOnly);
+            ActionHelper.PlayerReceiveHealing(m_ActionEntity, -Value1 * m_ActionEntity.m_HealthManager.m_CurrentArmor, enum_DamageType.ArmorOnly);
         } 
         public Action_10003_ArmorMultiplyAdditive(enum_ActionLevel _level) : base(_level) { }
     }
@@ -419,7 +419,7 @@ namespace GameSetting_Action
     {
         public override int m_Index => 30001;
         public override int I_ActionCost => ActionData.I_30001_Cost;
-        public override float Value1 => -ActionData.F_30001_ArmorActionAdditive(m_Level);
+        public override float Value1 => ActionData.F_30001_ArmorActionAdditive(m_Level);
         public override void OnAddActionElse(float actionAmount) => ActionHelper.PlayerReceiveHealing(m_ActionEntity, Value1, enum_DamageType.ArmorOnly);
         public Action_30001_ArmorActionAdditive(enum_ActionLevel _level) : base(_level) { }
     }

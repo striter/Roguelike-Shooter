@@ -15,6 +15,9 @@ public static class TLocalization
     static Dictionary<string, string> CurLocalization = new Dictionary<string, string>();
     public static void SetRegion(enum_LanguageRegion location)
     {
+        if (e_CurLocation == location)
+            return;
+
         e_CurLocation = location;
 
         List<string[]> data = TExcel.Tools.GetExcelData("SLocalization");
@@ -32,9 +35,10 @@ public static class TLocalization
         OnLocaleChanged?.Invoke();
         IsInit = true;
     }
+    public static bool CanLocalize(this string key) => CurLocalization.ContainsKey(key);
     public static string Localize(this string key)
     {
-        if (CurLocalization.ContainsKey(key))
+        if (CanLocalize(key))
             return CurLocalization[key.Replace("\\n", "\n")];
 
         Debug.LogWarning("Localization Key:(" + key + ") Not Found In Localization " + e_CurLocation.ToString());

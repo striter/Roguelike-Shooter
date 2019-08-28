@@ -1,23 +1,21 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-[RequireComponent(typeof(Text))]
-public class UIT_Localization : MonoBehaviour
+public class UIT_Localization : Text
 {
-    public string KEY;
-    private void Awake()
+    public string LocalizeKey;
+    protected override void Awake()
     {
+        base.Awake();
         TLocalization.OnLocaleChanged += OnLocaleChanged;
     }
-    private void Start()
+    protected override void OnDestroy()
     {
-        OnLocaleChanged();
-    }
-    private void OnDestroy()
-    {
+        base.OnDestroy();
         TLocalization.OnLocaleChanged -= OnLocaleChanged;
     }
+
     void OnLocaleChanged()
     {
-        GetComponent<Text>().text = KEY.Localize(); 
+        base.text = LocalizeKey.Localize();
     }
 }
