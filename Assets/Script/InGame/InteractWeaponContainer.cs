@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
-using GameSetting_Action;
 public class InteractWeaponContainer : InteractBase {
     Transform tf_ModelContainer;
-    WeaponBase m_Weapon;
+    public WeaponBase m_Weapon { get; private set; }
+    public override enum_Interaction m_InteractType => enum_Interaction.WeaponContainer;
     public override void Init()
     {
         base.Init();

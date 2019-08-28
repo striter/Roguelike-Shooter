@@ -7,7 +7,6 @@ using UnityEngine.UI;
 public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
 {
     Transform tf_Container,tf_PlayerData,tf_Left;
-    Transform tf_WeaponData;
     Text  txt_Health, txt_Armor,txt_ActionAmount;
     Button btn_ActionStorage;
     Slider sld_Reload;
@@ -17,6 +16,11 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
     GridLayoutGroup m_GridLayout;
     EntityPlayerBase m_Player;
     float f_ammoGridLength;
+
+    Transform tf_WeaponData;
+    WeaponBase m_targetWeapon;
+    Text txt_WeaponName;
+    UIGI_ActionSelectItem m_weaponActionData;
     protected override void Awake()
     {
         base.Awake();
@@ -37,6 +41,9 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
         btn_ActionStorage.onClick.AddListener(OnActionStorageClick);
 
         tf_WeaponData = tf_Container.Find("WeaponData");
+        txt_WeaponName = tf_WeaponData.Find("Container/WeaponName").GetComponent<Text>();
+        m_weaponActionData = tf_WeaponData.Find("Container/ActionData").GetComponent<UIGI_ActionSelectItem>();
+        m_weaponActionData.SetGridControlledItem(0, null);
     }
     private void Start()
     {
@@ -60,7 +67,28 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
             m_Player = _player;
         txt_ActionAmount.text = _player.m_PlayerInfo.m_ActionHolding.Count == 0 ? _player.m_PlayerInfo.m_ActionStored.Count.ToString() : _player.m_PlayerInfo.m_ActionAmount.ToString();
         tf_PlayerData.position = Vector3.Lerp(tf_PlayerData.position, CameraController.MainCamera.WorldToScreenPoint(m_Player.tf_Head.position), Time.deltaTime * 10f);
+
+        
+        if (_player.m_Interact==null||_player.m_Interact.m_InteractType != enum_Interaction.WeaponContainer)
+        {
+            m_targetWeapon = null;
+            tf_WeaponData.SetActivate(false);
+            return;
+        }
+        if (tf_WeaponData.SetActivate(true))
+            tf_WeaponData.position = CameraController.MainCamera.WorldToScreenPoint(_player.m_Interact.transform.position);
+        tf_WeaponData.position = Vector3.Lerp(tf_WeaponData.position, CameraController.MainCamera.WorldToScreenPoint(_player.m_Interact.transform.position), Time.deltaTime * 10f);
+
+        WeaponBase targetWeapon = (_player.m_Interact as InteractWeaponContainer).m_Weapon;
+        if (m_targetWeapon == targetWeapon)
+            return;
+
+        m_targetWeapon = targetWeapon;
+        txt_WeaponName.text = m_targetWeapon.m_WeaponInfo.m_Weapon.GetNameLocalizeKey().Localize();
+        if(m_targetWeapon.m_WeaponAction.Count>0)
+            m_weaponActionData.SetInfo(m_targetWeapon.m_WeaponAction[0]);
     }
+
     void OnHealthStatus(EntityHealth _healthManager)
     {
         txt_Health.text = ((int)_healthManager.m_CurrentHealth).ToString() + "/" + ((int)_healthManager.m_MaxHealth).ToString();

@@ -135,6 +135,7 @@ namespace GameSetting
         public static string GetNameLocalizeKey(this ActionBase action) => "Action_Name_" + action.m_Index;
         public static string GetIntroLocalizeKey(this ActionBase action) => "Action_Intro_" + action.m_Index;
         public static string GetLocalizeKey(this enum_RarityLevel level) => "Action_Level_" + level;
+        public static string GetNameLocalizeKey(this enum_PlayerWeapon weapon) => "Weapon_Name_" + weapon;
     }
     #endregion
 
@@ -376,7 +377,6 @@ namespace GameSetting
     public struct SWeapon : ISExcel
     {
         int index;
-        string s_name;
         float f_fireRate;
         float f_specialRate;
         int i_clipAmount;
@@ -388,7 +388,6 @@ namespace GameSetting
         float f_recoilVertical;
         public int m_Index => index;
         public enum_PlayerWeapon m_Weapon => (enum_PlayerWeapon)index;
-        public string m_Name => s_name;
         public float m_FireRate => f_fireRate;
         public float m_SpecialRate => f_specialRate;
         public int m_ClipAmount => i_clipAmount;

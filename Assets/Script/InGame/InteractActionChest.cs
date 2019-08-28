@@ -7,6 +7,7 @@ public class InteractActionChest : InteractBase {
     string m_clipName;
     List<ActionBase> m_Actions;
     EntityPlayerBase m_Interactor;
+    public override enum_Interaction m_InteractType => enum_Interaction.ActionChest;
     public override bool B_InteractaOnce => true;
     public override void Init()
     {

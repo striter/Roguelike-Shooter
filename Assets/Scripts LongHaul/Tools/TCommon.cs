@@ -28,19 +28,15 @@ public static class TCommonUI
 }
 public static class TCommon
 {
-    public static void SetActivate(this MonoBehaviour behaviour, bool active)
+    public static bool SetActivate(this MonoBehaviour behaviour, bool active)=>SetActivate(behaviour.gameObject, active);
+    public static bool SetActivate(this Transform tra, bool active)=> SetActivate(tra.gameObject, active);
+    public static bool SetActivate(this GameObject go, bool active)
     {
-        if (behaviour.gameObject.activeSelf != active)
-            SetActivate(behaviour.gameObject, active);
-    }
-    public static void SetActivate(this Transform tra, bool active)
-    {
-        SetActivate(tra.gameObject, active);
-    }
-    public static void SetActivate(this GameObject go, bool active)
-    {
-        if (go.activeSelf != active)
-            go.SetActive(active);
+        if (go.activeSelf == active)
+            return false;
+
+        go.SetActive(active);
+        return true;
     }
     public static void DestroyChildren(this Transform trans)
     {
