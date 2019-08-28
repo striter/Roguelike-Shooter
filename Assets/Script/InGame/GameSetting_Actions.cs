@@ -48,7 +48,7 @@ namespace GameSetting_Action
         public static float F_10002_ArmorDamageAdditive(enum_RarityLevel level) =>  1f;
         public static int IP_10003_ArmorMultiplyAdditive(enum_RarityLevel level) => 30 * (int)level;
         public static float F_10004_ArmorActionAcquire(enum_RarityLevel level) => 60f - 10f * (int)level;
-        public static int IP_10005_ArmorDamageReduction(enum_RarityLevel level) =>  20 * (int)level;
+        public static int IP_10005_ArmorDamageReduction(enum_RarityLevel level) =>  30 * (int)level;
         public static int IP_10006_FireRateAdditive(enum_RarityLevel level) => 30 * (int)level;
         public static int IP_10007_RecoilMultiplyAdditive(enum_RarityLevel level) => 20 * (int)level;
         public static int IP_10008_ClipMultiply(enum_RarityLevel level) => 20 * (int)level;
