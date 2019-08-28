@@ -203,7 +203,7 @@ public class EntityPlayerBase : EntityBase {
     #region Action
     public void TestUseAction(int actionIndex)
     {
-        m_PlayerInfo.OnUseAcion(DataManager.CreateAction(actionIndex, enum_ActionLevel.L3));
+        m_PlayerInfo.OnUseAcion(DataManager.CreateAction(actionIndex, enum_RarityLevel.L3));
     }
     #endregion
 

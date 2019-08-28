@@ -84,7 +84,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         if (Input.GetKeyDown(KeyCode.F7))
             (m_LocalPlayer as EntityPlayerBase).TestUseAction(F7_TestActionIndex);
         if (Input.GetKeyDown(KeyCode.F8))
-            m_LocalPlayer.m_PlayerInfo.AddStoredAction(DataManager.CreateAction(F8_TestAcquireAction, enum_ActionLevel.L1));
+            m_LocalPlayer.m_PlayerInfo.AddStoredAction(DataManager.CreateAction(F8_TestAcquireAction, enum_RarityLevel.L1));
 
         UIManager.instance.transform.Find("Test/SeedTest").GetComponent<UnityEngine.UI.Text>().text = LevelManager.m_Seed;
 
@@ -159,15 +159,20 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnLevelFinish);
         if (!spawnInteract)
             return;
-        enum_ActionLevel level = LevelManager.m_actionGenerate.GetLevel(TCommon.RandomPercentage());
         switch (LevelManager.m_LevelType)
         {
-            case enum_TileType.Battle:
-                ObjectManager.SpawnInteractChest(EnviormentManager.NavMeshPosition(interactPos, false)).Play(new List<ActionBase> { DataManager.RandomPlayerAction(level), DataManager.RandomPlayerAction(level) });
-                break;
             case enum_TileType.Start:
-                ObjectManager.SpawnInteractChest(EnviormentManager.NavMeshPosition(Vector3.left, false)).Play(new List<ActionBase> { DataManager.RandomPlayerAction(level), DataManager.RandomPlayerAction(level) });
-                ObjectManager.SpawnWeaponContainer(EnviormentManager.NavMeshPosition(Vector3.right, false)).Play(TCommon.RandomEnumValues<enum_PlayerWeapon>(LevelManager.m_GameSeed), new List<ActionBase>() { DataManager.RendomWeaponAction(LevelManager.m_currentStage.ToActionLevel()) });
+                {
+                    enum_RarityLevel level = LevelManager.m_currentStage.ToActionLevel();
+                    ObjectManager.SpawnInteractChest(EnviormentManager.NavMeshPosition(Vector3.left, false)).Play(new List<ActionBase> { DataManager.RandomPlayerAction(level), DataManager.RandomPlayerAction(level) });
+                    ObjectManager.SpawnWeaponContainer(EnviormentManager.NavMeshPosition(Vector3.right, false)).Play(TCommon.RandomEnumValues<enum_PlayerWeapon>(LevelManager.m_GameSeed), new List<ActionBase>() { DataManager.RendomWeaponAction(level) });
+                }
+                break;
+            case enum_TileType.Battle:
+                {
+                    enum_RarityLevel level = LevelManager.m_actionGenerate.GetLevel(TCommon.RandomPercentage());
+                    ObjectManager.SpawnInteractChest(EnviormentManager.NavMeshPosition(interactPos, false)).Play(new List<ActionBase> { DataManager.RandomPlayerAction(level), DataManager.RandomPlayerAction(level) });
+                }
                 break;
             case enum_TileType.End:
                 ObjectManager.SpawnInteractPortal(EnviormentManager.NavMeshPosition(interactPos, false)).Play(OnStageFinished);
@@ -359,7 +364,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
 public static class LevelManager
 {
     public static enum_StageLevel m_currentStage;
-    public static ActionGenerate m_actionGenerate;
+    public static StageRarityGenerate m_actionGenerate;
     public static bool B_NextStage => m_currentStage != enum_StageLevel.Ranger;
     static enum_BattleDifficulty m_BattleDifficulty;
     public static enum_TileType m_LevelType { get; private set; }
@@ -536,16 +541,16 @@ public static class DataManager
             m_WeaponActions.Add(action.m_Index);
         else
             m_PlayerActions.Add(action.m_Index);
-    }, enum_ActionLevel.Invalid);
-    public static ActionBase RendomWeaponAction(enum_ActionLevel level)=> CreateAction(m_WeaponActions.RandomItem(),level);
-    public static ActionBase RandomPlayerAction(enum_ActionLevel level) => CreateAction(m_PlayerActions.RandomItem(), level);
+    }, enum_RarityLevel.Invalid);
+    public static ActionBase RendomWeaponAction(enum_RarityLevel level)=> CreateAction(m_WeaponActions.RandomItem(),level);
+    public static ActionBase RandomPlayerAction(enum_RarityLevel level) => CreateAction(m_PlayerActions.RandomItem(), level);
     public static List<ActionBase> GetActions(List<ActionInfo> infos)
     {
         List<ActionBase> actions = new List<ActionBase>();
         infos.Traversal((ActionInfo info) => { actions.Add(CreateAction(info.m_Index, info.m_Level)); });
         return actions;
     }
-    public static ActionBase CreateAction(int index, enum_ActionLevel level)
+    public static ActionBase CreateAction(int index, enum_RarityLevel level)
     {
         if (!m_AllActions.ContainsKey(index))
             Debug.LogError("Error Action:" + index + " ,Does not exist");

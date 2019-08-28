@@ -51,14 +51,14 @@ namespace GameSetting
 
         public static float F_ActionAmountReceive(float damageApply) => damageApply * .1f;
 
-        public static ActionGenerate GetActionGenerate(enum_StageLevel level)
+        public static StageRarityGenerate GetActionGenerate(enum_StageLevel level)
         {
             switch (level)
             {
-                default: return ActionGenerate.Create(new Dictionary<enum_ActionLevel, int>());
-                case enum_StageLevel.Rookie: return ActionGenerate.Create(new Dictionary<enum_ActionLevel, int>() { { enum_ActionLevel.L1, 75 }, { enum_ActionLevel.L2, 25 } });
-                case enum_StageLevel.Veteran: return ActionGenerate.Create(new Dictionary<enum_ActionLevel, int>() { { enum_ActionLevel.L1, 30 }, { enum_ActionLevel.L2, 60 }, { enum_ActionLevel.L3, 10 } });
-                case enum_StageLevel.Ranger: return ActionGenerate.Create(new Dictionary<enum_ActionLevel, int>() { { enum_ActionLevel.L2, 60 }, { enum_ActionLevel.L3, 40 } });
+                default: return StageRarityGenerate.Create(new Dictionary<enum_RarityLevel, int>());
+                case enum_StageLevel.Rookie: return StageRarityGenerate.Create(new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } });
+                case enum_StageLevel.Veteran: return StageRarityGenerate.Create(new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 30 }, { enum_RarityLevel.L2, 60 }, { enum_RarityLevel.L3, 10 } });
+                case enum_StageLevel.Ranger: return StageRarityGenerate.Create(new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L2, 60 }, { enum_RarityLevel.L3, 40 } });
             }
         }
     }
@@ -103,7 +103,7 @@ namespace GameSetting
 
     public static class Enum_Relative
     {
-        public static enum_ActionLevel ToActionLevel(this enum_StageLevel stageLevel) => (enum_ActionLevel)stageLevel;
+        public static enum_RarityLevel ToActionLevel(this enum_StageLevel stageLevel) => (enum_RarityLevel)stageLevel;
 
         public static enum_LevelGenerateType ToPrefabType(this enum_TileType type)
         {
@@ -134,7 +134,7 @@ namespace GameSetting
     {
         public static string GetNameLocalizeKey(this ActionBase action) => "Action_Name_" + action.m_Index;
         public static string GetIntroLocalizeKey(this ActionBase action) => "Action_Intro_" + action.m_Index;
-        public static string GetLocalizeKey(this enum_ActionLevel level) => "Action_Level_" + level;
+        public static string GetLocalizeKey(this enum_RarityLevel level) => "Action_Level_" + level;
     }
     #endregion
 
@@ -213,7 +213,7 @@ namespace GameSetting
 
     public enum enum_ExpireRefreshType { Invalid = -1, AddUp = 1, Refresh = 2 }
 
-    public enum enum_ActionLevel { Invalid=-1, L1=1,L2=2,L3=3, }
+    public enum enum_RarityLevel { Invalid=-1, L1=1,L2=2,L3=3, }
 
     public enum enum_ActionExpireType { Invalid = -1, AfterDuration = 1, AfterUse =2  ,AfterFire=3 ,AfterBattle=4,AfterWeaponSwitch=5, }
 
@@ -321,7 +321,7 @@ namespace GameSetting
         {
             m_weapon = enum_PlayerWeapon.P92;
             m_weaponActions = new List<ActionInfo>();
-            m_storedActions = new List<ActionInfo>() { ActionInfo.Create(DataManager.RandomPlayerAction(enum_ActionLevel.L1)),ActionInfo.Create( DataManager.RandomPlayerAction(enum_ActionLevel.L1)) };
+            m_storedActions = new List<ActionInfo>() { ActionInfo.Create(DataManager.RandomPlayerAction(enum_RarityLevel.L1)),ActionInfo.Create( DataManager.RandomPlayerAction(enum_RarityLevel.L1)) };
         }
         public void Adjust(EntityPlayerBase _player)
         {
@@ -333,15 +333,15 @@ namespace GameSetting
     #endregion
 
     #region DataStruct
-    public struct ActionGenerate
+    public struct StageRarityGenerate
     {
-        Dictionary<enum_ActionLevel, int> m_Rarities;
-        public enum_ActionLevel GetLevel(int value)
+        Dictionary<enum_RarityLevel, int> m_Rarities;
+        public enum_RarityLevel GetLevel(int value)
         {
-            enum_ActionLevel targetLevel = enum_ActionLevel.Invalid;
+            enum_RarityLevel targetLevel = enum_RarityLevel.Invalid;
             int totalAmount=0;
-            m_Rarities.Traversal((enum_ActionLevel level,int amount)=> {
-                if (targetLevel != enum_ActionLevel.Invalid)
+            m_Rarities.Traversal((enum_RarityLevel level,int amount)=> {
+                if (targetLevel != enum_RarityLevel.Invalid)
                     return;
                 totalAmount += amount;
                 if (totalAmount > value)
@@ -349,21 +349,21 @@ namespace GameSetting
             });
             return targetLevel;
         }
-        public static ActionGenerate Create(Dictionary<enum_ActionLevel, int> _Rarities)=> new ActionGenerate() { m_Rarities = _Rarities };
+        public static StageRarityGenerate Create(Dictionary<enum_RarityLevel, int> _Rarities)=> new StageRarityGenerate() { m_Rarities = _Rarities };
     }
 
     public struct ActionInfo : IXmlPhrase
     {
         public int m_Index { get; private set; }
-        public enum_ActionLevel m_Level { get; private set; }
+        public enum_RarityLevel m_Level { get; private set; }
         public string ToXMLData() => m_Index.ToString() + "," + m_Level.ToString();
         public ActionInfo(string xmlData)
         {
             string[] split = xmlData.Split(',');
             m_Index = int.Parse(split[0]);
-            m_Level = (enum_ActionLevel)Enum.Parse(typeof(enum_ActionLevel),split[1]);
+            m_Level = (enum_RarityLevel)Enum.Parse(typeof(enum_RarityLevel),split[1]);
         }
-        public static ActionInfo Create(int index, enum_ActionLevel level) => new ActionInfo { m_Index = index, m_Level = level };
+        public static ActionInfo Create(int index, enum_RarityLevel level) => new ActionInfo { m_Index = index, m_Level = level };
         public static ActionInfo Create(ActionBase action) => new ActionInfo { m_Index = action.m_Index, m_Level = action.m_Level };
         public static List<ActionInfo> Create(List<ActionBase> actions)
         {
@@ -1099,7 +1099,7 @@ namespace GameSetting
     public class ActionBase : ExpireBase
     {
         public EntityPlayerBase m_ActionEntity { get; private set; }
-        public enum_ActionLevel m_Level { get; private set; } = enum_ActionLevel.Invalid;
+        public enum_RarityLevel m_Level { get; private set; } = enum_RarityLevel.Invalid;
         public virtual int I_ActionCost => -1;
         public virtual bool B_ActionAble => true;
         public virtual enum_ActionExpireType m_ExpireType => enum_ActionExpireType.Invalid;
@@ -1112,7 +1112,7 @@ namespace GameSetting
         public virtual bool B_ClipOverride => false;
         public virtual int I_ClipAdditive => 0;
         public virtual float F_ClipMultiply => 0;
-        public ActionBase(enum_ActionLevel _level, float _expireDuration = 0) : base(_expireDuration)
+        public ActionBase(enum_RarityLevel _level, float _expireDuration = 0) : base(_expireDuration)
         {
             m_Level = _level;
             if (m_ExpireType == enum_ActionExpireType.Invalid)
@@ -1127,10 +1127,10 @@ namespace GameSetting
         public virtual void OnAfterBattle() { }
         public virtual void OnAfterFire(int identity) { }
         public virtual void OnWeaponDetach() { }
-        public bool B_Upgradable => m_Level < enum_ActionLevel.L3;
+        public bool B_Upgradable => m_Level < enum_RarityLevel.L3;
         public void Upgrade()
         {
-            if (m_Level < enum_ActionLevel.L3)
+            if (m_Level < enum_RarityLevel.L3)
                 m_Level++;
         }
     }
