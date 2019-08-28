@@ -49,7 +49,7 @@ namespace GameSetting
         public static int GetAIEquipment(int entityIndex, int weaponIndex = 0, int subWeaponIndex = 0) => entityIndex * 100 + weaponIndex * 10 + subWeaponIndex;
         public static int GetEquipmentSubIndex(int weaponIndex) => weaponIndex + 1;
 
-        public static float F_ActionAmountReceive(float damageApply) => damageApply * .0018f;
+        public static float F_ActionAmountReceive(float damageApply) => damageApply * .001f;
 
         public static StageRarityGenerate GetActionGenerate(enum_StageLevel level)
         {
