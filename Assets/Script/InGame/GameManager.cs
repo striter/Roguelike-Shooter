@@ -411,6 +411,7 @@ public static class LevelManager
                 return true;
         }
     }
+
     public static enum_BattleDifficulty m_Difficulty
     {
         get {
@@ -430,7 +431,7 @@ public static class OptionsManager
 {
     public static bool B_AdditionalLight = true;
     public static event Action event_OptionChanged;
-    public static enum_LanguageRegion m_currentLanguage = enum_LanguageRegion.EN;
+    public static enum_LanguageRegion m_currentLanguage = enum_LanguageRegion.CN;
     public static void Init()
     {
         TLocalization.SetRegion(m_currentLanguage);

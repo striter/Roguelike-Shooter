@@ -45,9 +45,9 @@ namespace GameSetting_Action
         #endregion
         #region Expressions
         public static float F_10001_ArmorAdditive(enum_ActionLevel level) => -30f * (int)level;
-        public static float F_10002_ArmorDamageAdditive(enum_ActionLevel level, float currentArmor) => currentArmor * 1f;
-        public static float F_10003_ArmorMultiplyAdditive(enum_ActionLevel level, float currentArmor) => -currentArmor * .3f * (int)level;
-        public static float F_10004_ArmorActionAcquire(enum_ActionLevel level, float currentArmor) => currentArmor / (20f + 10f * (int)level);
+        public static float F_10002_ArmorDamageAdditive(enum_ActionLevel level) =>  1f;
+        public static float F_10003_ArmorMultiplyAdditive(enum_ActionLevel level) => -.3f * (int)level;
+        public static float F_10004_ArmorActionAcquire(enum_ActionLevel level) => 20f + 10f * (int)level;
         public static float F_10005_ArmorDamageReduction(enum_ActionLevel level) => .2f * (int)level;
         public static float F_10006_FireRateAdditive(enum_ActionLevel level) => .3f * (int)level;
         public static float F_10007_RecoilMultiplyAdditive(enum_ActionLevel level) => -.3f * (int)level;
@@ -61,17 +61,17 @@ namespace GameSetting_Action
         public static float F_10013_SingleDamageMultiply(enum_ActionLevel level) => 2 * (int)level;
         public static float F_10014_ReloadRateMultiplyAdditive(enum_ActionLevel level) => .3f * (int)level;
 
-        public static float F_20001_ArmorTurretHealth(enum_ActionLevel level, float currentArmor) => currentArmor * (2 * (int)level);
-        public static float F_20001_ArmorTurretDamage(enum_ActionLevel level, float currentArmor) => currentArmor * (1.5f * (int)level);
+        public static float F_20001_ArmorTurretHealth(enum_ActionLevel level) =>  2 * (int)level;
+        public static float F_20001_ArmorTurretDamage(enum_ActionLevel level) =>  1.5f * (int)level;
         public static float F_20002_DamageDealt(enum_ActionLevel level) => 50f;
         public static float F_20002_BuffIndex(enum_ActionLevel level) => 200020 + (int)level;
         public static float F_20003_Health(enum_ActionLevel level) => 400;
-        public static float F_20003_FireRate(enum_ActionLevel level, float weaponFirerate) =>  weaponFirerate / (.7f * (int)level);
-        public static float F_20003_DamageDealt(enum_ActionLevel level, float weaponDamage) => .7f * weaponDamage * (int)level;
-        public static float F_20004_DamageDealt(enum_ActionLevel level, float weaponDamage) => weaponDamage * 2 * (int)level;
+        public static float F_20003_FireRate(enum_ActionLevel level) =>  .7f * (int)level;
+        public static float F_20003_DamageDealt(enum_ActionLevel level) => .7f *  (int)level;
+        public static float F_20004_DamageDealt(enum_ActionLevel level) =>  2 * (int)level;
 
         public static float F_30001_ArmorActionAdditive(enum_ActionLevel level) => 10 * (int)level;
-        public static float F_30002_ArmorDamageReturn(enum_ActionLevel level, float currentArmor) => currentArmor * (2 * (int)level);
+        public static float F_30002_ArmorDamageReturn(enum_ActionLevel level) =>  2 * (int)level;
         public static float F_30003_DamageAdditive(enum_ActionLevel level) => 20f * (int)level;
         public static float F_30004_DamageAdditive(enum_ActionLevel level) => 200 * (int)level;
         public static float F_30005_ReloadTimesHeal(enum_ActionLevel level) => 5 - 1 * (int)level;
@@ -229,18 +229,18 @@ namespace GameSetting_Action
     {
         public override int m_Index => 10002;
         public override int I_ActionCost => ActionData.I_10002_Cost;
-        public override float Value1 => ActionData.F_10002_ArmorDamageAdditive(m_Level, m_ActionEntity.m_HealthManager.m_CurrentArmor);
-        public override float F_DamageAdditive => Value1;
+        public override float Value1 => ActionData.F_10002_ArmorDamageAdditive(m_Level);
+        public override float F_DamageAdditive =>  Value1* m_ActionEntity.m_HealthManager.m_CurrentArmor;
         public Action_10002_ArmorDamageAdditive(enum_ActionLevel _level) : base(_level, ActionData.F_10002_Duration) { }
     }
     public class Action_10003_ArmorMultiplyAdditive : ActionAfterUse
     {
         public override int m_Index => 10003;
         public override int I_ActionCost => ActionData.I_10003_Cost;
-        public override float Value1 => ActionData.F_10003_ArmorMultiplyAdditive(m_Level, m_ActionEntity.m_HealthManager.m_CurrentArmor);
+        public override float Value1 => ActionData.F_10003_ArmorMultiplyAdditive(m_Level);
         public override void OnActionUse() {
             base.OnActionUse();
-            ActionHelper.PlayerReceiveHealing(m_ActionEntity, Value1, enum_DamageType.ArmorOnly);
+            ActionHelper.PlayerReceiveHealing(m_ActionEntity, Value1 * m_ActionEntity.m_HealthManager.m_CurrentArmor, enum_DamageType.ArmorOnly);
         } 
         public Action_10003_ArmorMultiplyAdditive(enum_ActionLevel _level) : base(_level) { }
     }
@@ -248,11 +248,11 @@ namespace GameSetting_Action
     {
         public override int m_Index => 10004;
         public override int I_ActionCost => ActionData.I_10004_Cost;
-        public override float Value1 => ActionData.F_10004_ArmorActionAcquire(m_Level, m_ActionEntity.m_HealthManager.m_CurrentArmor);
+        public override float Value1 => ActionData.F_10004_ArmorActionAcquire(m_Level);
         public override void OnActionUse()
         {
             base.OnActionUse();
-            ActionHelper.PlayerReceiveActionAmount(m_ActionEntity, Value1);
+            ActionHelper.PlayerReceiveActionAmount(m_ActionEntity, Value1* m_ActionEntity.m_HealthManager.m_CurrentArmor);
         } 
         public Action_10004_ArmorActionReturn(enum_ActionLevel _level) : base(_level) { }
     }
@@ -367,11 +367,11 @@ namespace GameSetting_Action
     {
         public override int m_Index => 20001;
         public override int I_ActionCost => ActionData.I_20001_Cost;
-        public override float Value1 => ActionData.F_20001_ArmorTurretHealth(m_Level, m_ActionEntity.m_HealthManager.m_CurrentArmor);
-        public override float Value2 => ActionData.F_20001_ArmorTurretDamage(m_Level, m_ActionEntity.m_HealthManager.m_CurrentArmor);
+        public override float Value1 => ActionData.F_20001_ArmorTurretHealth(m_Level);
+        public override float Value2 => ActionData.F_20001_ArmorTurretDamage(m_Level);
         public override void OnActionUse() {
             base.OnActionUse();
-            ActionHelper.PlayerAcquireEntityEquipmentItem(m_ActionEntity, m_Index, Value2, (int)Value1, 1f);
+            ActionHelper.PlayerAcquireEntityEquipmentItem(m_ActionEntity, m_Index, Value2* m_ActionEntity.m_HealthManager.m_CurrentArmor, (int)(Value1* m_ActionEntity.m_HealthManager.m_CurrentArmor), 1f);
         }
         public Action_20001_Armor_Turret_Cannon(enum_ActionLevel _level) : base(_level) { }
     }
@@ -392,13 +392,13 @@ namespace GameSetting_Action
     {
         public override int m_Index => 20003;
         public override int I_ActionCost => ActionData.I_20003_Cost;
-        public override float Value1 => ActionData.F_20003_FireRate(m_Level, m_ActionEntity.m_WeaponCurrent.F_BaseFirerate);
-        public override float Value2 => ActionData.F_20003_DamageDealt(m_Level, m_ActionEntity.m_WeaponCurrent.F_BaseDamage) ;
+        public override float Value1 => ActionData.F_20003_FireRate(m_Level);
+        public override float Value2 => ActionData.F_20003_DamageDealt(m_Level) ;
         public override float Value3 => ActionData.F_20003_Health(m_Level);
         public override void OnActionUse()
         {
             base.OnActionUse();
-            ActionHelper.PlayerAcquireEntityEquipmentItem(m_ActionEntity, m_Index, Value2, (int)Value3, Value1);
+            ActionHelper.PlayerAcquireEntityEquipmentItem(m_ActionEntity, m_Index, Value2* m_ActionEntity.m_WeaponCurrent.F_BaseDamage, (int)Value3, Value1 * m_ActionEntity.m_WeaponCurrent.F_BaseFirerate);
         }
         public Action_20003_Firerate_Turret_Minigun(enum_ActionLevel _level) : base(_level) { }
     }
@@ -406,10 +406,10 @@ namespace GameSetting_Action
     {
         public override int m_Index => 20004;
         public override int I_ActionCost => ActionData.I_20004_Cost;
-        public override float Value1 => ActionData.F_20004_DamageDealt(m_Level, m_ActionEntity.m_WeaponCurrent.F_BaseDamage);
+        public override float Value1 => ActionData.F_20004_DamageDealt(m_Level);
         public override void OnActionUse() {
             base.OnActionUse();
-            ActionHelper.PlayerAcquireSimpleEquipmentItem(m_ActionEntity, m_Index, Value1);
+            ActionHelper.PlayerAcquireSimpleEquipmentItem(m_ActionEntity, m_Index, Value1* m_ActionEntity.m_WeaponCurrent.F_BaseDamage);
         }
         public Action_20004_Damage_ExplosiveGrenade(enum_ActionLevel _level) : base(_level) { }
     }
@@ -427,8 +427,8 @@ namespace GameSetting_Action
     {
         public override int m_Index => 30002;
         public override int I_ActionCost => ActionData.I_30002_Cost;
-        public override float Value1 => ActionData.F_30002_ArmorDamageReturn(m_Level, m_ActionEntity.m_HealthManager.m_CurrentArmor);
-        public override void OnReceiveDamage(int applier, float amount) => ActionHelper.PlayerDealtDamageToEntity(m_ActionEntity, applier,Value1);
+        public override float Value1 => ActionData.F_30002_ArmorDamageReturn(m_Level);
+        public override void OnReceiveDamage(int applier, float amount) => ActionHelper.PlayerDealtDamageToEntity(m_ActionEntity, applier,Value1* m_ActionEntity.m_HealthManager.m_CurrentArmor);
         public Action_30002_ArmorDemageReturn(enum_ActionLevel _level) : base(_level) { }
     }
     public class Action_30003_DamageAdditive : ActionAfterBattle
