@@ -85,8 +85,14 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
 
         m_targetWeapon = targetWeapon;
         txt_WeaponName.text = m_targetWeapon.m_WeaponInfo.m_Weapon.GetNameLocalizeKey().Localize();
-        if(m_targetWeapon.m_WeaponAction.Count>0)
+
+        if (m_targetWeapon.m_WeaponAction.Count > 0)
+        {
             m_weaponActionData.SetInfo(m_targetWeapon.m_WeaponAction[0]);
+            m_weaponActionData.SetActivate(true);
+        }
+        else
+            m_weaponActionData.SetActivate(false);
     }
 
     void OnHealthStatus(EntityHealth _healthManager)
