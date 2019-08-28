@@ -149,7 +149,7 @@ public class EntityPlayerBase : EntityBase {
     {
         base.Update();
         bool canFire = !Physics.SphereCast(new Ray(tf_Head.position, tf_Head.forward), .3f, 1.5f, GameLayer.Mask.I_Static);
-        m_WeaponCurrent.SetCanFire(canFire);
+        m_WeaponCurrent.Tick(Time.deltaTime,canFire);
         m_Assist.SetEnable(canFire);
         transform.rotation = Quaternion.Lerp(transform.rotation,CameraController.CameraXZRotation,GameConst.F_PlayerCameraSmoothParam);
         Vector3 direction = (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized;

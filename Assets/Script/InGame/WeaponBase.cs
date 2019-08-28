@@ -28,7 +28,6 @@ public class WeaponBase : MonoBehaviour {
     public float F_AmmoStatus => I_AmmoLeft / (float)I_ClipAmount;
     public bool B_TriggerActionable() => B_Triggerable && B_Actionable();
     public bool B_Actionable() => !B_Reloading && f_fireCheck <= 0;
-    public bool B_Attached => m_Attacher != null;
 
     WeaponTrigger m_Trigger = null;
     Action<bool,float> OnReload;
@@ -96,11 +95,7 @@ public class WeaponBase : MonoBehaviour {
         m_Trigger.OnSetTrigger(down);
         return true;
     }
-
-    public void SetCanFire(bool _canFire)
-    {
-        B_Triggerable = _canFire;
-    }
+    
     RaycastHit hit;
     protected virtual bool FireOnce()
     {
@@ -151,12 +146,10 @@ public class WeaponBase : MonoBehaviour {
         OnReload?.Invoke(true, m_WeaponInfo.m_ReloadTime  / m_Attacher.m_PlayerInfo.F_ReloadRateTick(1f) );
     }
 
-    protected void Update()
+    public void Tick(float deltaTime,bool _canFire)
     {
-        if (!B_Attached)
-            return;
-
-        DataUpdate();
+        B_Triggerable = _canFire;
+        AmmoStatus();
 
         float fireTick = m_Attacher.m_PlayerInfo.F_FireRateTick(Time.deltaTime);
 
@@ -176,10 +169,9 @@ public class WeaponBase : MonoBehaviour {
                 OnReload(false, 0);
             }
         }
-
     }
 
-    void DataUpdate()
+    void AmmoStatus()
     {
         int clipAmount = m_Attacher.m_PlayerInfo.I_ClipAmount(m_WeaponInfo.m_ClipAmount);
         if (I_ClipAmount != clipAmount)
