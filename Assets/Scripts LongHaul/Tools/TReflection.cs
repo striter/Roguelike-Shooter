@@ -16,7 +16,7 @@ public static class TReflection
                 OnInstanceCreated(allTypes[i], CreateInstance<T>(allTypes[i], constructorArgs));
         }
     }
-    public static void InovokeAllMethod<T>(List<Type> classes,string methodName,T template) where T:class
+    public static void InvokeAllMethod<T>(List<Type> classes,string methodName,T template) where T:class
     {
         foreach (Type t in classes)
         {

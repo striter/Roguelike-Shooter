@@ -41,7 +41,7 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
         TBroadCaster<enum_BC_UIStatus>.Add<EntityHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<WeaponBase>(enum_BC_UIStatus.UI_PlayerAmmoStatus, OnAmmoStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerExpireStatus, OnExpireStatus);
-        TBroadCaster<enum_BC_UIStatus>.Add<PlayerActionManager>(enum_BC_UIStatus.UI_PlayerActionStatus, OnActionStatus);
+        TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerActionStatus, OnActionStatus);
     }
     protected void OnDestroy()
     {
@@ -49,13 +49,13 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<WeaponBase>(enum_BC_UIStatus.UI_PlayerAmmoStatus, OnAmmoStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerExpireStatus, OnExpireStatus);
-        TBroadCaster<enum_BC_UIStatus>.Remove<PlayerActionManager>(enum_BC_UIStatus.UI_PlayerActionStatus, OnActionStatus);
+        TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerActionStatus, OnActionStatus);
     }
     void OnCommonStatus(EntityPlayerBase _player)
     {
         if (!m_Player)
             m_Player = _player;
-        txt_ActionAmount.text = _player.m_PlayerActions.m_ActionHolding.Count == 0 ? _player.m_PlayerActions.m_ActionStored.Count.ToString() : _player.m_PlayerActions.m_ActionAmount.ToString();
+        txt_ActionAmount.text = _player.m_PlayerInfo.m_ActionHolding.Count == 0 ? _player.m_PlayerInfo.m_ActionStored.Count.ToString() : _player.m_PlayerInfo.m_ActionAmount.ToString();
         tf_Center.position = Vector3.Lerp(tf_Center.position, CameraController.MainCamera.WorldToScreenPoint(m_Player.tf_Head.position), Time.deltaTime * 10f);
     }
     void OnHealthStatus(EntityHealth _healthManager)
@@ -105,7 +105,7 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
         }
     }
 
-    void OnActionStatus(PlayerActionManager actionInfo)
+    void OnActionStatus(PlayerInfoManager actionInfo)
     {
         m_ActionGrid.ClearGrid();
         for (int i = 0; i < actionInfo.m_ActionHolding.Count; i++)
@@ -115,11 +115,11 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
     }
     void OnActionUse(int index)
     {
-        m_Player.m_PlayerActions.TryUseAction(index);
+        m_Player.m_PlayerInfo.TryUseAction(index);
     }
     void OnActionStorageClick()
     {
-        UIManager.Instance.ShowPage<UI_ActionStorage>(true).Show(m_Player.m_PlayerActions.m_ActionStored);
+        UIManager.Instance.ShowPage<UI_ActionStorage>(true).Show(m_Player.m_PlayerInfo.m_ActionStored);
     }
     void OnExpireStatus(PlayerInfoManager expireInfo)
     {

@@ -37,6 +37,6 @@ public class InteractActionChest : InteractBase {
     }
     void OnActionSelectConfirm(int index)
     {
-        m_Interactor.m_PlayerActions.AddStoredAction(m_Actions[index]);
+        m_Interactor.m_PlayerInfo.AddStoredAction(m_Actions[index]);
     }
 }

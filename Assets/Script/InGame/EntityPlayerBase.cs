@@ -19,11 +19,10 @@ public class EntityPlayerBase : EntityBase {
     public InteractBase m_Interact { get; private set; }
     public EquipmentBase m_Equipment { get; private set; }
     public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized* m_EntityInfo.F_MovementSpeed * time;
-    public PlayerActionManager m_PlayerActions { get; private set; }
     public PlayerInfoManager m_PlayerInfo { get; private set; }
     protected override EntityInfoManager GetEntityInfo()
     {
-        m_PlayerInfo = new PlayerInfoManager(this, OnReceiveDamage, OnInfoChange);
+        m_PlayerInfo = new PlayerInfoManager(this, OnReceiveDamage, OnInfoChange,OnActionsChange);
         return m_PlayerInfo;
     }
     public override void Init(int poolPresetIndex)
@@ -36,19 +35,18 @@ public class EntityPlayerBase : EntityBase {
         tf_WeaponHoldLeft = transform.FindInAllChild("WeaponHold_L");
         m_Animator = new PlayerAnimator(tf_Model.GetComponent<Animator>());
         transform.Find("InteractDetector").GetComponent<InteractDetector>().Init(OnInteractCheck);
-        m_PlayerActions = new PlayerActionManager(OnActionsChange,m_PlayerInfo.OnUseAcion);
     }
     public override void OnSpawn(int id,enum_EntityFlag _flag)
     {
         base.OnSpawn(id, enum_EntityFlag.Player);
         CameraController.Attach(this.transform);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart,m_PlayerActions.OnBattleStart);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, m_PlayerActions.OnBattleFinish);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart,OnBattleStart);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
         SetBinding(true);
     }
     public void SetPlayerInfo(List<ActionBase> storedActions)
     {
-        m_PlayerActions.OnActivate(I_EntityID,storedActions);
+        m_PlayerInfo.InitActionInfo(storedActions);
     }
     protected override void OnDead()
     {
@@ -58,7 +56,6 @@ public class EntityPlayerBase : EntityBase {
         if (m_WeaponCurrent)
             m_WeaponCurrent.OnDetach();
 
-        m_PlayerActions.OnDeactivate();
         m_Animator.OnDead();
         m_MoveAxisInput = Vector2.zero;
         SetBinding(false);
@@ -72,11 +69,10 @@ public class EntityPlayerBase : EntityBase {
     }
     void OnBattleStart()
     {
-        m_PlayerActions.OnBattleStart();
+        m_PlayerInfo.OnBattleStart();
     }
     void OnBattleFinish()
     {
-        m_PlayerActions.OnBattleFinish();
         m_PlayerInfo.OnBattleFinish();
         m_HealthManager.OnActivate(I_MaxHealth, I_DefaultArmor);
     }
@@ -225,7 +221,7 @@ public class EntityPlayerBase : EntityBase {
     }
     protected void OnActionsChange()
     {
-        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerActionStatus, m_PlayerActions);
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerActionStatus, m_PlayerInfo);
     }
     protected override void OnHealthChanged(enum_HealthChangeMessage type)
     {

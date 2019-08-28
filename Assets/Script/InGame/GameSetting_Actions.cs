@@ -125,12 +125,12 @@ namespace GameSetting_Action
         public static void PlayerReceiveActionAmount(EntityPlayerBase player, float amount)
         {
             Debug.Log("Player Receive Aciton Amount:" + amount);
-            player.m_PlayerActions.AddActionAmount(amount);
+            player.m_PlayerInfo.AddActionAmount(amount);
         }
         public static void PlayerUpgradeAction(EntityPlayerBase player)
         {
             Debug.Log("Player Upgrade Current Random Action");
-            player.m_PlayerActions.UpgradeAction(-1);
+            player.m_PlayerInfo.UpgradeAction(-1);
         }
     }
     #region ActionBase

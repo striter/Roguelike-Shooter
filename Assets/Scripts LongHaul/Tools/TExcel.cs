@@ -32,64 +32,76 @@ namespace TExcel
                 }
             }
         }
-        public static List<T> Init(string _extraPath="")        //Load Sync
+        public static void Init()        //Load Sync
         {
-            TextAsset asset = Resources.Load<TextAsset>("Excel/" + typeof(T).Name.ToString() + _extraPath);
+            l_PropertyList = new List<T>();
+            Type type = typeof(T);
+            l_PropertyList=Tools.GetFieldData<T>(Tools.GetExcelData(type.Name), type.GetFields(BindingFlags.NonPublic | BindingFlags.Instance));
+        }
+        public static void Clear()
+        {
+            l_PropertyList.Clear();
+            l_PropertyList = null;
+        }
+    }
+
+    class Tools
+    {
+        public static List<string[]> GetExcelData(string dataSource,bool extraSheets=false) 
+        {
+            TextAsset asset = Resources.Load<TextAsset>("Excel/" + dataSource);
             if (asset == null)
             {
-                Debug.LogError("Path: Resources/Excel/" + typeof(T).Name.ToString() + _extraPath+ ".bytes Not Found");
+                Debug.LogError("Path: Resources/Excel/" + dataSource + ".bytes Not Found");
                 return null;
             }
-            SetUpList(asset.bytes);
-            return l_PropertyList;
-        }
 
-        static void SetUpList(byte[] bytes)
-        {
-            try
+            IExcelDataReader reader = ExcelReaderFactory.CreateBinaryReader(new MemoryStream(asset.bytes));
+            List<string[]> result = new List<string[]>();
+            do
             {
-
-                l_PropertyList = new List<T>();
-                IExcelDataReader reader = ExcelReaderFactory.CreateBinaryReader(new MemoryStream(bytes));
-                List<string[]> result = new List<string[]>();
-                //do            //Unlock Need To Read Extra Sheets
-                //{
                 while (reader.Read())
                 {
                     string[] row = new string[reader.FieldCount];
                     for (int i = 0; i < row.Length; i++)
                     {
-                        string data = reader.GetString(i);
+                        string data = reader.GetString(i);  
                         row[i] = data == null ? "" : data;
                     }
                     result.Add(row);
                 }
-                //} while (reader.NextResult());
+            } while (extraSheets && reader.NextResult());
+            return result;
+        }
 
-
+        public static List<T> GetFieldData<T>(List<string[]> data, FieldInfo[] fields) where T : ISExcel
+        {
+            List<T> targetData = new List<T>();
+            try
+            {
                 Type type = typeof(T);
-                object obj = Activator.CreateInstance(type, true);
-                FieldInfo[] fields = type.GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+
                 for (int i = 0; i < fields.Length; i++)
                 {
-                    string temp = result[0][i].ToString();
+                    string temp = data[0][i].ToString();
                     if (!temp.Equals(fields[i].Name) && !temp.Equals(-1))
                     {
-                        throw new Exception(" Struct Or Excel Pos Not Equals:(" + type.ToString() + "Struct Property:(Column:"+i+"|" + fields[i].Name + ") Excel Property:(Row:"+  i +"|" + temp + ")");
+                        throw new Exception(" Struct Or Excel Pos Not Equals:(" + type.ToString() + "Struct Property:(Column:" + i + "|" + fields[i].Name + ") Excel Property:(Row:" + i + "|" + temp + ")");
                     }
                 }
-                for (int i = 0; i < result.Count; i++)
+                for (int i = 0; i < data.Count; i++)
                 {
                     if (i <= 1)     //Ignore Row 0 and 1
                         continue;
 
+                    object obj = Activator.CreateInstance(type, true);
                     for (int j = 0; j < fields.Length; j++)
                     {
                         try
                         {
                             Type phraseType = fields[j].FieldType;
                             object value = null;
-                            string phraseValue = result[i][j].ToString();
+                            string phraseValue = data[i][j].ToString();
                             if (phraseValue.Length == 0)
                                 value = TXmlPhrase.Phrase.GetDefault(phraseType);
                             else
@@ -99,42 +111,19 @@ namespace TExcel
                         }
                         catch (Exception e)
                         {
-                            throw new Exception("Inner Info:|" + result[i + 1][j].ToString() + "|,Field:" + fields[j].Name + "|" + fields[j].FieldType.ToString() + ", Rows/Column:" + (i + 1).ToString() + "/" + (j + 1).ToString() + "    Message:" + e.Message);
+                            throw new Exception("Inner Info:|" + data[i + 1][j].ToString() + "|,Field:" + fields[j].Name + "|" + fields[j].FieldType.ToString() + ", Rows/Column:" + (i + 1).ToString() + "/" + (j + 1).ToString() + "    Message:" + e.Message);
                         }
                     }
-
                     T temp = (T)obj;
                     temp.InitOnValueSet();
-                    l_PropertyList.Add(temp);
-
+                    targetData.Add(temp);
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                Debug.LogError("Excel|"+typeof(T).Name.ToString()+" Error:"+e.Message+e.StackTrace);
+                Debug.LogError("Excel|" + typeof(T).Name.ToString() + " Error:" + e.Message + e.StackTrace);
             }
+            return targetData;
         }
-
-        // Abandoned Cause No Such Huge Excel Needs To Load Async!
-        //static Coroutine cor_Load;
-        //public static void InitAsync(Delegates.DelVoid OnFinished,string _extraPath="")
-        //{
-        //    s_extraPath = _extraPath;
-        //    TCoroutine.SafeStartCoroutine(ref cor_Load,(LoadExcelAsync(OnFinished)));
-        //}
-        //static  IEnumerator LoadExcelAsync(Delegates.DelVoid OnFinished)
-        //{
-        //    for (; ; )
-        //    {
-        //        WWW file = new WWW(Application.streamingAssetsPath + "/Excel/" + typeof(T).Name.ToString() + s_extraPath + ".xls");
-        //        while (!file.isDone)
-        //        {
-        //            yield return null;
-        //        }
-        //        SetUpList(file.bytes);
-        //        OnFinished();
-        //        yield break;
-        //    }
-        //}
     }
 }

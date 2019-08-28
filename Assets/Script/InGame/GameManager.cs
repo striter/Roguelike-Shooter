@@ -32,6 +32,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     public int F5_TestActionIndex = 10001;
     public int F6_TestActionIndex = 10001;
     public int F7_TestActionIndex = 10001;
+    public int F8_TestAcquireAction = 10001;
     public bool B_AdditionalLight = true;
     void Update()
     {
@@ -82,6 +83,8 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
             (m_LocalPlayer as EntityPlayerBase).TestUseAction(F6_TestActionIndex);
         if (Input.GetKeyDown(KeyCode.F7))
             (m_LocalPlayer as EntityPlayerBase).TestUseAction(F7_TestActionIndex);
+        if (Input.GetKeyDown(KeyCode.F8))
+            m_LocalPlayer.m_PlayerInfo.AddStoredAction(DataManager.CreateAction(F8_TestAcquireAction, enum_ActionLevel.L1));
 
         UIManager.instance.transform.Find("Test/SeedTest").GetComponent<UnityEngine.UI.Text>().text = LevelManager.m_Seed;
 
@@ -332,8 +335,8 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleFinish);
         B_Battling = false;
-        OnLevelFinished();
         SpawnInteract(lastEntityPos);
+        OnLevelFinished();
     }
 
     IEnumerator IE_GenerateEnermy(List<int> waveGenerate, float _offset)
@@ -427,8 +430,10 @@ public static class OptionsManager
 {
     public static bool B_AdditionalLight = true;
     public static event Action event_OptionChanged;
+    public static enum_LanguageRegion m_currentLanguage = enum_LanguageRegion.EN;
     public static void Init()
     {
+        TLocalization.SetRegion(m_currentLanguage);
     }
     
     public static void OnOptionChanged()

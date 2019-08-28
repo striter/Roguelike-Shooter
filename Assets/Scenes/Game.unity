@@ -2551,6 +2551,7 @@ MonoBehaviour:
   F5_TestActionIndex: 10001
   F6_TestActionIndex: 40012
   F7_TestActionIndex: 40014
+  F8_TestAcquireAction: 10002
   B_AdditionalLight: 1
 --- !u!4 &1133817278
 Transform:
@@ -3184,6 +3185,7 @@ GameObject:
   - component: {fileID: 1627088166}
   - component: {fileID: 1627088168}
   - component: {fileID: 1627088167}
+  - component: {fileID: 1627088169}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -3248,6 +3250,18 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1627088165}
+--- !u!114 &1627088169
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1627088165}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b9603b9559d01c46a38e4498071bafb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  KEY: UI_Game_Reload
 --- !u!1 &1726175377
 GameObject:
   m_ObjectHideFlags: 0

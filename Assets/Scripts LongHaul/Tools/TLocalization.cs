@@ -1,33 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 #pragma warning disable 0649        //Warnning Closed Cause  Use Private Field To Protected Value Set By Reflection 
-struct SLocaliztaion:TExcel.ISExcel     //for excel Uses Only
-{
-    private string key;
-    private string value;
-    public string GetKey
-    {
-        get
-
-        {
-            return key;
-        }
-    }
-    public string GetValue
-    {
-        get
-        {
-            return value;
-        }
-    }
-    public void InitOnValueSet()
-    {
-    }
-}
 public enum enum_LanguageRegion
 {
-    CN,
-    EN,
+    CN=1,
+    EN=2,
 }
 public static class TLocalization 
 {
@@ -38,23 +16,28 @@ public static class TLocalization
     public static void SetRegion(enum_LanguageRegion location)
     {
         e_CurLocation = location;
-        TExcel.Properties<SLocaliztaion>.Init("_"+e_CurLocation.ToString());
-        CurLocalization.Clear();
-        for (int i = 0; i < TExcel.Properties<SLocaliztaion>.Count; i++)
+
+        List<string[]> data = TExcel.Tools.GetExcelData("SLocalization");
+
+        for (int i = 1; i < data[0].Length; i++)
         {
-            CurLocalization.Add(TExcel.Properties<SLocaliztaion>.PropertiesList[i].GetKey, TExcel.Properties<SLocaliztaion>.PropertiesList[i].GetValue);
+            if (data[0][i] != ((enum_LanguageRegion)i).ToString())
+                Debug.LogError("SLocalizataion Not Init Propertly:" + i.ToString());    
         }
-        if (OnLocaleChanged != null)
-            OnLocaleChanged();
+
+        CurLocalization.Clear();
+        int localizeIndex = (int)e_CurLocation;
+        for (int i = 0; i < data.Count; i++)
+            CurLocalization.Add(data[i][0], data[i][localizeIndex]);
+        OnLocaleChanged?.Invoke();
         IsInit = true;
     }
     public static string Localize(this string key)
     {
         if (CurLocalization.ContainsKey(key))
-        {
             return CurLocalization[key.Replace("\\n", "\n")];
-        }
-        UnityEngine.Debug.LogWarning("Localization Key:(" + key + ") Not Found In Localization " + e_CurLocation.ToString());
+
+        Debug.LogWarning("Localization Key:(" + key + ") Not Found In Localization " + e_CurLocation.ToString());
         return key;
     }
 }

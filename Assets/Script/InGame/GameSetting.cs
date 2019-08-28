@@ -119,6 +119,12 @@ namespace GameSetting
             }
         }
     }
+
+    public static class LocalizationKeyJoint
+    {
+        public static string NameKey(this ActionBase action) => "Action_Name_" + action.m_Index;
+        public static string IntroKey(this ActionBase action) => "Action_Intro_" + action.m_Index;
+    }
     #endregion
 
     #region For Developers Use
@@ -310,7 +316,7 @@ namespace GameSetting
         {
             m_weapon = _player.m_WeaponCurrent.m_WeaponInfo.m_Weapon;
             m_weaponActions = ActionInfo.Create(_player.m_WeaponCurrent.m_WeaponAction);
-            m_storedActions = ActionInfo.Create(_player.m_PlayerActions.m_ActionStored);
+            m_storedActions = ActionInfo.Create(_player.m_PlayerInfo.m_ActionStored);
         }
     }
     #endregion
@@ -884,7 +890,7 @@ namespace GameSetting
     #region ActionManager
     public class PlayerInfoManager : EntityInfoManager
     {
-        List<ActionBase> m_ActionEquiping = new List<ActionBase>();
+        EntityPlayerBase m_Player;
         public float F_RecoilMultiply { get; private set; } = 1f;
         public float F_ProjectileSpeedMuiltiply { get; private set; } = 1f;
         protected bool B_OneOverride { get; private set; } = false;
@@ -892,16 +898,32 @@ namespace GameSetting
         protected float F_ClipMultiply { get; private set; } = 1f;
         public int I_ClipAmount(int baseClipAmount) => (int)(((B_OneOverride ? 1 : baseClipAmount) + I_ClipAdditive) * F_ClipMultiply);
         protected float F_DamageAdditive = 0f;
+
+        public float m_MaxActionAmount { get; private set; } = 3f;
+        public float m_ActionAmount { get; private set; } = 0f;
+        List<ActionBase> m_ActionEquiping = new List<ActionBase>();
         protected List<ActionAfterFire> m_AfterFire = new List<ActionAfterFire>();
-        EntityPlayerBase m_Player;
-        public PlayerInfoManager(EntityPlayerBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnInfoChange) : base(_attacher, _OnReceiveDamage, _OnInfoChange)
+        public List<ActionBase> m_ActionStored { get; private set; } = new List<ActionBase>();
+        public List<ActionBase> m_ActionInPool { get; private set; } = new List<ActionBase>();
+        public List<ActionBase> m_ActionHolding { get; private set; } = new List<ActionBase>();
+        Action OnActionChange;
+        public PlayerInfoManager(EntityPlayerBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnInfoChange,Action _OnActionChange) : base(_attacher, _OnReceiveDamage, _OnInfoChange)
         {
             m_Player = _attacher;
+            OnActionChange = _OnActionChange;
         }
         public override void OnActivate()
         {
             base.OnActivate();
             TBroadCaster<enum_BC_GameStatus>.Add<DamageDeliverInfo, EntityBase, float>(enum_BC_GameStatus.OnEntityDamage, OnEntityApplyDamage);
+        }
+        public void InitActionInfo(List<ActionBase> _actions)
+        {
+            for (int i = 0; i < _actions.Count; i++)
+                AddStoredAction(_actions[i]);
+            m_MaxActionAmount = GameConst.F_MaxAcountAmount;
+            m_ActionAmount = m_MaxActionAmount;
+            OnActionChange();
         }
         public override void OnDeactivate()
         {
@@ -910,10 +932,27 @@ namespace GameSetting
             m_AfterFire.Clear();
         }
 
+        public void OnBattleStart()
+        {
+            m_ActionInPool = new List<ActionBase>(m_ActionStored);
+            m_ActionHolding.Clear();
+            RefillHoldingActions();
+            OnActionChange();
+        }
+        public void OnBattleFinish()
+        {
+            m_ActionInPool.Clear();
+            m_ActionHolding.Clear();
+            m_ActionEquiping.Traversal((ActionBase action) => { action.OnAfterBattle(); }, true);
+            m_AfterFire.Clear();
+            OnActionChange();
+        }
+
+
+        #region Player Info
         public void OnUseAcion(ActionBase targetAction)
         {
             m_ActionEquiping.Traversal((ActionBase action) => { action.OnAddActionElse(targetAction.m_Index); });
-            targetAction.InitAction(m_Player, OnExpireElapsed);
             AddExpire(targetAction);
             m_ActionEquiping.Add(targetAction);
             targetAction.OnActionUse();
@@ -925,7 +964,6 @@ namespace GameSetting
             if (action != null)
                 m_ActionEquiping.Remove(action);
         }
-        #region ActionInfos
         protected override void OnResetInfo()
         {
             base.OnResetInfo();
@@ -967,63 +1005,38 @@ namespace GameSetting
         public void OnAttachWeapon(WeaponBase weapon)=> weapon.m_WeaponAction.Traversal((ActionBase action) => { OnUseAcion(action); });
         public void OnDetachWeapon()=>  m_ActionEquiping.Traversal((ActionBase action) => { action.OnWeaponDetach(); },true);
         public void OnReloadFinish() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnReloadFinish(); });
-        public void OnBattleFinish() {
-            m_ActionEquiping.Traversal((ActionBase action) => { action.OnAfterBattle(); }, true);
-            m_AfterFire.Clear();
-        }
         void OnEntityApplyDamage(DamageDeliverInfo damageInfo, EntityBase damageEntity, float amountApply)
         {
             m_AfterFire.Traversal((ActionAfterFire action) => {if (action.OnActionHitEntity(damageInfo.I_IdentiyID, damageEntity))  m_AfterFire.Remove(action); }, true);
 
             if (damageInfo.I_SourceID == m_Player.I_EntityID)
-                m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDemage( damageEntity, amountApply); });
+            {
+                m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDemage(damageEntity, amountApply); });
+                AddActionAmount(GameExpression.F_ActionAmountReceive(amountApply));
+
+            }
             else if (damageEntity.I_EntityID == m_Player.I_EntityID)
-                m_ActionEquiping.Traversal((ActionBase action) => { action.OnReceiveDamage(damageInfo.I_SourceID, amountApply);  });
+            {
+
+                m_ActionEquiping.Traversal((ActionBase action) => { action.OnReceiveDamage(damageInfo.I_SourceID, amountApply); });
+            }
+
         }
         #endregion
-    }
-    public class PlayerActionManager
-    {
-        public float m_MaxActionAmount { get; private set; } = 3f;
-        public float m_ActionAmount { get; private set; } = 0f;
-        public List<ActionBase> m_ActionStored { get; private set; } = new List<ActionBase>();
-        public List<ActionBase> m_ActionInPool { get; private set; } = new List<ActionBase>();
-        public List<ActionBase> m_ActionHolding { get; private set; } = new List<ActionBase>();
-        int I_EntityID;
-        Action OnActionChanged;
-        Action<ActionBase> OnActionUse;
-        public PlayerActionManager(Action _OnActionChanged,Action<ActionBase> _OnActionUse)
-        {
-            OnActionChanged = _OnActionChanged;
-            OnActionUse = _OnActionUse;
-        }
-        public void OnActivate(int _entityID,List<ActionBase> _actions)
-        {
-            I_EntityID = _entityID;
-            m_ActionStored = _actions;
-            m_MaxActionAmount = GameConst.F_MaxAcountAmount;
-            m_ActionAmount = m_MaxActionAmount;
-            OnActionChanged();
-            TBroadCaster<enum_BC_GameStatus>.Add<DamageDeliverInfo, EntityBase, float>(enum_BC_GameStatus.OnEntityDamage, OnEntityApplyDamage);
-        }
-        public void OnDeactivate()
-        {
-            TBroadCaster<enum_BC_GameStatus>.Remove<DamageDeliverInfo, EntityBase, float>(enum_BC_GameStatus.OnEntityDamage, OnEntityApplyDamage);
-        }
 
         #region Action Interact
-        public void OnBattleStart()
+        public bool TryUseAction(int index)
         {
-            m_ActionInPool = new List<ActionBase>(m_ActionStored);
-            m_ActionHolding.Clear();
+            ActionBase action = m_ActionHolding[index];
+            if (m_ActionAmount < action.I_ActionCost)
+                return false;
+
+            m_ActionAmount -= action.I_ActionCost;
+            OnUseAcion(action);
+            m_ActionHolding.RemoveAt(index);
             RefillHoldingActions();
-            OnActionChanged();
-        }
-        public void OnBattleFinish()
-        {
-            m_ActionInPool.Clear();
-            m_ActionHolding.Clear();
-            OnActionChanged();
+            OnActionChange();
+            return true;
         }
 
         void RefillHoldingActions()
@@ -1036,42 +1049,22 @@ namespace GameSetting
             m_ActionInPool.RemoveAt(index);
             RefillHoldingActions();
         }
-        public bool TryUseAction(int index)
+        public void AddStoredAction(ActionBase action)
         {
-            ActionBase action = m_ActionHolding[index];
-            if (m_ActionAmount < action.I_ActionCost)
-                return false;
-
-            m_ActionAmount -= action.I_ActionCost;
-            OnActionUse(action);
-            m_ActionHolding.RemoveAt(index);
-            RefillHoldingActions();
-            OnActionChanged();
-            return true;
+            action.Init(m_Player,OnExpireElapsed);
+            m_ActionStored.Add(action);
         }
-
-        public void AddStoredAction(ActionBase action)=> m_ActionStored.Add(action);
-        public void UpgradeAction(int index)
-        {
-
-        }
-        #endregion
-
-        #region Action Info
-        void OnEntityApplyDamage(DamageDeliverInfo damageInfo, EntityBase damageEntity, float amountApply)
-        {
-            if (damageInfo.I_SourceID == I_EntityID)
-                AddActionAmount(GameExpression.F_ActionAmountReceive(amountApply));
-        }
-
         public void AddActionAmount(float amount)
         {
             m_ActionAmount += amount;
             if (m_ActionAmount > m_MaxActionAmount)
                 m_ActionAmount = m_MaxActionAmount;
         }
-        #endregion
+        public void UpgradeAction(int index)
+        {
 
+        }
+        #endregion
     }
     public class ActionBase : ExpireBase
     {
@@ -1095,7 +1088,7 @@ namespace GameSetting
             if (m_ExpireType == enum_ActionExpireType.Invalid)
                 Debug.LogError("Override Type Please!");
         }
-        public void InitAction(EntityPlayerBase _actionEntity, Action<ExpireBase> _OnActionExpired) { base.Activate(_OnActionExpired); m_ActionEntity = _actionEntity; }
+        public void Init(EntityPlayerBase _actionEntity,Action<ExpireBase> OnExpired) { m_ActionEntity = _actionEntity;Activate(OnExpired); }
         public virtual void OnActionUse() { }
         public virtual void OnAddActionElse(float actionAmount) { }
         public virtual void OnReceiveDamage(int applier, float amount) { }

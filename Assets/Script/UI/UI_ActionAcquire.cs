@@ -22,7 +22,7 @@ public class UI_ActionAcquire : UIPageBase {
         OnIndexSelect = _OnIndexSelect;
         m_Grid.ClearGrid();
         for (int i = 0; i < actions.Count; i++)
-            m_Grid.AddItem(i).SetItemInfo(actions[i].m_Index.ToString()+"/"+actions[i].m_Level.ToString(),false);
+            m_Grid.AddItem(i).SetInfo(actions[i]);
     }
 
     void OnItemSelected(int index)

@@ -14,6 +14,6 @@ public class UI_ActionStorage : UIPageBase {
     {
         m_Grid.ClearGrid();
         for (int i = 0; i < showList.Count; i++)
-            m_Grid.AddItem(i).SetItemInfo(showList[i].m_Index+"/"+showList[i].m_Level);
+            m_Grid.AddItem(i).SetInfo(showList[i]);
     }
 }
