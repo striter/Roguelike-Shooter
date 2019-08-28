@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-public class UIT_Localization : Text
+public class UIT_TextLocalization : Text
 {
     public bool B_AutoLocalize = false;
     public string LocalizeKey;
