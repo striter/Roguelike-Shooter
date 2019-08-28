@@ -262,7 +262,7 @@ namespace GameSetting_Action
         public override int m_EffectIndex => base.m_EffectIndex;
         public override int I_ActionCost => ActionData.I_10005_Cost;
         public override float Value1 => ActionData.IP_10005_ArmorDamageReduction(m_Level);
-        public override float m_DamageReduction => Value1 / 100f;
+        public override float m_DamageReduction=> Value1 / 100f;
         public Action_10005_ArmorDamageReduction(enum_RarityLevel _level) : base(_level, ActionData.F_10005_Duration) { }
     }
     public class Action_10006_FireRateAdditive: ActionAfterDuration
@@ -278,7 +278,7 @@ namespace GameSetting_Action
         public override int m_Index => 10007;
         public override int I_ActionCost => ActionData.I_10007_Cost;
         public override float Value1 => ActionData.IP_10007_RecoilMultiplyAdditive(m_Level);
-        public override float F_RecoilMultiplyAdditive => Value1 / 100f;
+        public override float F_RecoilReduction => Value1 / 100f;
         public Action_10007_RecoilReduction(enum_RarityLevel _level) : base(_level, ActionData.F_10007_Duration) { }
     }
     public class Action_10008_ClipMultiply : ActionAfterDuration

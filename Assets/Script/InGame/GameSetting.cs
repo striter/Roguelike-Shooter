@@ -1016,7 +1016,7 @@ namespace GameSetting
                 return;
 
             F_DamageAdditive += action.F_DamageAdditive;
-            F_RecoilMultiply += action.F_RecoilMultiplyAdditive;
+            F_RecoilMultiply -= action.F_RecoilReduction;
             F_ProjectileSpeedMuiltiply += action.F_ProjectileSpeedMultiply;
             F_ClipMultiply += action.F_ClipMultiply;
             B_OneOverride |= action.B_ClipOverride;
@@ -1107,7 +1107,7 @@ namespace GameSetting
         public virtual float Value2 => 0;
         public virtual float Value3 => 0;
         public virtual float F_DamageAdditive => 0;
-        public virtual float F_RecoilMultiplyAdditive => 0;
+        public virtual float F_RecoilReduction => 0;
         public virtual float F_ProjectileSpeedMultiply => 0;
         public virtual bool B_ClipOverride => false;
         public virtual int I_ClipAdditive => 0;
