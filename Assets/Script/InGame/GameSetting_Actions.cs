@@ -240,7 +240,7 @@ namespace GameSetting_Action
         public override float Value1 => ActionData.IP_10003_ArmorMultiplyAdditive(m_Level);
         public override void OnActionUse() {
             base.OnActionUse();
-            ActionHelper.PlayerReceiveHealing(m_ActionEntity, -Value1 / 100f * m_ActionEntity.m_HealthManager.m_CurrentArmor, enum_DamageType.ArmorOnly);
+            ActionHelper.PlayerReceiveHealing(m_ActionEntity, Value1 / 100f * m_ActionEntity.m_HealthManager.m_CurrentArmor, enum_DamageType.ArmorOnly);
         } 
         public Action_10003_ArmorMultiplyAdditive(enum_RarityLevel _level) : base(_level) { }
     }
