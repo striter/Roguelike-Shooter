@@ -724,6 +724,8 @@ namespace GameSetting
         public virtual DamageDeliverInfo GetDamageBuffInfo() => damageOverride ? m_DamageBuffOverride:DamageDeliverInfo.DamageInfo(m_Entity.I_EntityID ,F_DamageMultiply);
         Func<DamageInfo, bool> OnReceiveDamage;
         Action OnInfoChange;
+        bool b_infoUpdated = false;
+        public void EntityInfoChange() => b_infoUpdated = false;
         public EntityInfoManager(EntityBase _attacher,Func<DamageInfo, bool> _OnReceiveDamage,Action _OnInfoChange)
         {
             m_Entity = _attacher;
@@ -734,35 +736,36 @@ namespace GameSetting
         {
             f_stunCheck = 0f;
             damageOverride = false;
-            InfoChange();
+            EntityInfoChange();
         }
         public virtual void OnDeactivate()
         {
             m_Expires.Clear();
             m_BuffEffects.Clear();
-            InfoChange();
+            EntityInfoChange();
         }
         public virtual void Tick(float deltaTime) {
             m_Expires.Traversal((ExpireBase buff) => { buff.OnTick(deltaTime); });
-
+            if (!b_infoUpdated)
+                UpdateInfo();
             if (B_Stunned) f_stunCheck -= deltaTime;
         }
         protected virtual void AddExpire(ExpireBase expire)
         {
             Debug.Log("Add Expire:"+expire.m_Index);
             m_Expires.Add(expire);
-            InfoChange();
+            EntityInfoChange();
         }
         void RefreshExpire(ExpireBase expire)
         {
             expire.ExpireRefresh();
-            InfoChange();
+            EntityInfoChange();
         }
         protected virtual void OnExpireElapsed(ExpireBase expire)
         {
             Debug.Log("Remove Expire:"+expire.m_Index);
             m_Expires.Remove(expire);
-            InfoChange();
+            EntityInfoChange();
         }
         public void AddBuff(int sourceID,int buffIndex)
         {
@@ -792,6 +795,9 @@ namespace GameSetting
             F_MovementSpeedMultiply += expire.m_MovementSpeedMultiply;
             F_FireRateMultiply += expire.m_FireRateMultiply;
             F_ReloadRateMultiply += expire.m_ReloadRateMultiply;
+
+            if (F_DamageReceiveMultiply < 0)
+                F_DamageReceiveMultiply = 0;
         }
         protected virtual void OnResetInfo()
         {
@@ -800,12 +806,10 @@ namespace GameSetting
             F_FireRateMultiply = 1f;
             F_ReloadRateMultiply = 1f;
             F_DamageMultiply = 0f;
-
-            if (F_DamageReceiveMultiply < 0)
-                F_DamageReceiveMultiply = 0;
         }
-        public void InfoChange()
+        void UpdateInfo()
         {
+            b_infoUpdated = true;
             OnResetInfo();
             m_Expires.Traversal(OnSetExpireInfo);
 
@@ -826,15 +830,15 @@ namespace GameSetting
                 if (m_Expires[i].m_EffectIndex <= 0)
                     return;
 
-                SFXBuffEffect particle = m_BuffEffects.Find(p=>p.I_SFXIndex==m_Expires[i].m_EffectIndex);
+                SFXBuffEffect particle = m_BuffEffects.Find(p => p.I_SFXIndex == m_Expires[i].m_EffectIndex);
 
                 if (particle)
-                    particle.Refresh(m_Expires[i].m_ExpireDuration);
+                    particle.Refresh(m_Expires[i].m_EffectDuration);
                 else
                 {
                     particle = ObjectManager.SpawnBuffEffect(m_Expires[i].m_EffectIndex, m_Entity);
-                    particle.Play(m_Entity.I_EntityID, m_Expires[i].m_ExpireDuration);
-                    m_BuffEffects.Add(particle );
+                    particle.Play(m_Entity.I_EntityID, m_Expires[i].m_EffectDuration);
+                    m_BuffEffects.Add(particle);
                 }
             }
 
@@ -852,6 +856,7 @@ namespace GameSetting
         public virtual float m_ReloadRateMultiply => 0;
         public virtual float m_DamageMultiply => 0;
         public virtual float m_DamageReduction => 0;
+        public virtual float m_EffectDuration => m_ExpireDuration;
         public float m_ExpireDuration { get; private set; } = 0;
         private Action<ExpireBase> OnExpired;
         float f_expireCheck;
@@ -949,6 +954,11 @@ namespace GameSetting
             base.OnActivate();
             TBroadCaster<enum_BC_GameStatus>.Add<DamageDeliverInfo, EntityBase, float>(enum_BC_GameStatus.OnEntityDamage, OnEntityApplyDamage);
         }
+        public override void Tick(float deltaTime)
+        {
+            base.Tick(deltaTime);
+            EntityInfoChange();
+        }
         public void InitActionInfo(List<ActionBase> _actions)
         {
             for (int i = 0; i < _actions.Count; i++)
@@ -979,7 +989,6 @@ namespace GameSetting
             m_AfterFire.Clear();
             OnActionChange();
         }
-
 
         #region Player Info
         public void OnUseAcion(ActionBase targetAction)
@@ -1020,12 +1029,12 @@ namespace GameSetting
             F_ClipMultiply += action.F_ClipMultiply;
             B_OneOverride |= action.B_ClipOverride;
             I_ClipAdditive += action.I_ClipAdditive;
+
             if (F_RecoilMultiply < 0)
                 F_RecoilMultiply = 0;
         }
         public override DamageDeliverInfo GetDamageBuffInfo()
         {
-            InfoChange();
             DamageDeliverInfo info = DamageDeliverInfo.PlayerDamageInfo(m_Entity.I_EntityID, F_DamageMultiply, F_DamageAdditive);
             m_ActionEquiping.Traversal((ActionBase action) => {
                 action.OnAfterFire(info.I_IdentiyID);

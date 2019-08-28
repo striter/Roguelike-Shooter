@@ -531,6 +531,8 @@ namespace GameSetting_Action
     public class Action_40007_DamageReductionCooldown : ActionAfterWeaponDetach
     {
         public override int m_Index => 40007;
+        public override int m_EffectIndex => m_activating ? 40002 : -1;
+        public override float m_EffectDuration => Value1;
         public override float Value1 => ActionData.F_40007_DamageReductionDuration(m_Level);
         public override float Value2 => ActionData.F_40007_ArmorAdditive(m_Level);
         public override float Value3 => ActionData.F_40007_Cooldown(m_Level);
@@ -545,19 +547,8 @@ namespace GameSetting_Action
             if (m_cooldowning)
                 m_cooldownCheck -= deltaTime;
 
-
             if (m_activating)
-            {
                 m_activateCheck -= deltaTime;
-                if (!m_activating)
-                    ActionHelper.PlayerReceiveHealing(m_ActionEntity, Value2, enum_DamageType.ArmorOnly);
-            }
-
-        }
-        void Activate()
-        {
-            m_activateCheck += Value1;
-            m_cooldownCheck += Value3;
         }
         public override void OnReceiveDamage(int applier,float amount)
         {
@@ -565,9 +556,11 @@ namespace GameSetting_Action
             if (m_activating||m_cooldowning)
                 return;
 
-
-            if (m_ActionEntity.m_HealthManager.m_CurrentArmor < 0)
-                Activate();
+            if (m_ActionEntity.m_HealthManager.m_CurrentArmor <= 0)
+            {
+                m_activateCheck += Value1;
+                m_cooldownCheck += Value3;
+            }
         }
         public Action_40007_DamageReductionCooldown(enum_RarityLevel _level) : base(_level) { }
     }
