@@ -14,7 +14,6 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
     public int F_DelayDuration;
     public int I_DelayIndicatorIndex;
     public bool B_CameraShake = false;
-    public int I_ShakeAmount = 0;
     protected DamageInfo m_DamageInfo;
     public int m_sourceID => m_DamageInfo.m_detail.I_SourceID;
     protected virtual float F_ParticleDuration => 5f;
@@ -56,7 +55,7 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
         PlaySFX(m_DamageInfo.m_detail.I_SourceID, I_TickCount * F_Tick + 5f);
         B_Casting = true;
         if (B_CameraShake)
-            TPSCameraController.Instance.AddShake(I_ShakeAmount);
+            TPSCameraController.Instance.AddShake(V4_CastInfo.magnitude);
 
         PlayParticles();
         this.StartSingleCoroutine(0, TIEnumerators.TickCount(DoBlastCheck, I_TickCount, F_Tick, () => {
