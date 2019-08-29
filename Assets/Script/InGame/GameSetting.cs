@@ -778,6 +778,7 @@ namespace GameSetting
             f_stunCheck = 0f;
             damageOverride = false;
             EntityInfoChange();
+            OnExpireChange();
         }
         public virtual void OnDeactivate()
         {
