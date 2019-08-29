@@ -27,7 +27,7 @@ public class UIT_TextLocalization : Text
     {
         base.text = TLocalization.GetKeyLocalized(LocalizeKey);
     }
-
+    public string formatText(string baseFormat, params object[] subItems) => base.text = string.Format(TLocalization.GetKeyLocalized(baseFormat), subItems);
     public override string text
     {
         get
