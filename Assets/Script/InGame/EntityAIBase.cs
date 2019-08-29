@@ -262,6 +262,7 @@ public class EntityAIBase : EntityBase {
             {
                 if (entites[i].I_EntityID == m_Entity.I_EntityID)
                     continue;
+
                 float distance = TCommon.GetXZDistance(headTransform.position, entites[i].tf_Head.position);
                 bool visible = !m_Entity.B_BattleCheckObstacle || TargetVisible(entites[i]);
                 bool isAvailableClosetTarget = distance < f_targetDistance && visible;
@@ -358,15 +359,19 @@ public class EntityAIBase : EntityBase {
         #region Position
         void CheckPosition(float deltaTime)
         {
-            if ((b_attacking && !m_Entity.B_AttackMove))
-                B_AgentEnabled = false;
-
             if (f_movementSimulate > 0)
             {
                 f_movementSimulate -= deltaTime * m_Info.F_MovementSpeedMultiply;
                 return;
             }
             f_movementSimulate = GameConst.F_AIMovementCalculationParam;
+
+            if (m_Entity.m_EntityInfo.F_MovementSpeed == 0||( b_attacking && !m_Entity.B_AttackMove))
+            {
+                B_AgentEnabled = false;
+                return;
+            }
+
 
             b_AgentReachDestination = m_Agent.destination == Vector3.zero || TCommon.GetXZDistance(headTransform.position, m_Agent.destination) < 1f;
             if (!b_idled && b_AgentReachDestination && !b_targetOutChaseRange && UnityEngine.Random.Range(0, 2) > 0)
@@ -432,6 +437,9 @@ public class EntityAIBase : EntityBase {
                 return;
 
             v3_TargetDirection = TCommon.GetXZLookDirection(headTransform.position, targetHeadTransform.position);
+            if (v3_TargetDirection == Vector3.zero)
+                return;
+
             b_targetRotationWithin = Mathf.Abs( TCommon.GetAngle(v3_TargetDirection, transform.forward, Vector3.up))<15;
             m_Agent.updateRotation = b_targetOutAttackRange;
             if (!m_Agent.updateRotation)

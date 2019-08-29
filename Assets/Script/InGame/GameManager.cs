@@ -637,8 +637,7 @@ public static class ObjectManager
     public static EntityBase SpawnEntity(int index, Vector3 toPosition, enum_EntityFlag _flag)
     {
         EntityBase entity = ObjectPoolManager<int, EntityBase>.Spawn(index, TF_Entity);
-        toPosition = EnviormentManager.NavMeshPosition(toPosition);
-        entity.transform.position = toPosition;
+        entity.transform.position = EnviormentManager.NavMeshPosition(toPosition, true);
         entity.OnSpawn(IdentificationManager.I_EntityID(_flag), _flag);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntitySpawn, entity);
         return entity;
