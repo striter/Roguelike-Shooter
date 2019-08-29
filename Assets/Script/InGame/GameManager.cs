@@ -85,6 +85,8 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
             (m_LocalPlayer as EntityPlayerBase).TestUseAction(F7_TestActionIndex);
         if (Input.GetKeyDown(KeyCode.F8))
             m_LocalPlayer.m_PlayerInfo.AddStoredAction(DataManager.CreateAction(F8_TestAcquireAction, enum_RarityLevel.L1));
+        if (Input.GetKeyDown(KeyCode.F9))
+            PostEffectManager.StartAreaScan(m_LocalPlayer.tf_Head.position,Color.white, TResources.Load<Texture>(TResources.ConstPath.S_PETex_Holograph),15f,.7f,2f,50,3f);
 
         UIManager.instance.transform.Find("Test/SeedTest").GetComponent<UnityEngine.UI.Text>().text = LevelManager.m_Seed;
 

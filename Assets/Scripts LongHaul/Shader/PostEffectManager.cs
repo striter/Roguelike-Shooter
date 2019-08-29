@@ -2,8 +2,9 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Camera)),ExecuteInEditMode]
-public class PostEffectManager : SimpleSingletonMono<PostEffectManager> {
+public class PostEffectManager : SimpleSingletonMono<PostEffectManager>,ISingleCoroutine {
     public bool B_TestMode=false;
+    #region Interact
     public static T AddPostEffect<T>() where T:PostEffectBase,new()
     {
         if (GetPostEffect<T>() != null)
@@ -12,14 +13,11 @@ public class PostEffectManager : SimpleSingletonMono<PostEffectManager> {
             return null;
         }
         T effetBase = new T();
-        effetBase.OnSetEffect(Instance.cam_cur);
+        effetBase.OnSetEffect(Instance);
         Instance.m_PostEffects.Add( effetBase);
         return effetBase;
     }
-    public static T GetPostEffect<T>() where T : PostEffectBase, new()
-    {
-        return Instance.m_PostEffects.Find(p => p.GetType() ==typeof(T)) as T;
-    }
+    public static T GetPostEffect<T>() where T : PostEffectBase, new()=> Instance.m_PostEffects.Find(p => p.GetType() ==typeof(T)) as T;
     public static void RemovePostEffect<T>() where T : PostEffectBase, new()
     {
         T effect = GetPostEffect<T>();
@@ -31,19 +29,44 @@ public class PostEffectManager : SimpleSingletonMono<PostEffectManager> {
         Instance.m_PostEffects.Traversal((PostEffectBase effect)=> { effect.OnDestroy(); });
         Instance.m_PostEffects.Clear();
     }
-    
+
+    public static void StartAreaScan(Vector3 startPoint,Color scanColor, Texture scanTex=null,float scale=1f, float lerp=.7f,float width=1f,float range=20,float duration=1.5f)
+    {
+        if (GetPostEffect<PE_AreaScanDepth>() != null)
+            RemovePostEffect<PE_AreaScanDepth>();
+
+        PE_AreaScanDepth areaScan= AddPostEffect<PE_AreaScanDepth>();
+        areaScan.SetEffect(startPoint, scanColor, scanTex,scale, lerp, width);
+        Instance.StartSingleCoroutine(0,TIEnumerators.ChangeValueTo((float value)=> {
+            areaScan.SetElapse(range*value);
+        },0,1,duration,()=> {
+            RemovePostEffect<PE_AreaScanDepth>();
+        }));
+    }
+    #endregion
     List<PostEffectBase> m_PostEffects=new List<PostEffectBase>();
-    Camera cam_cur;
+    public Camera m_Camera { get; protected set; }
+    public bool calculateDepthWorldPos { get; set; } = false;
     protected override void Awake()
     {
         base.Awake();
-        cam_cur = GetComponent<Camera>();
+        m_Camera = GetComponent<Camera>();
+        m_Camera.depthTextureMode = DepthTextureMode.None;
+        calculateDepthWorldPos = false;
     }
+    
     RenderTexture tempTexture1, tempTexture2;
     protected void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
         tempTexture1 = RenderTexture.GetTemporary(Screen.width, Screen.height, 0);
         Graphics.Blit(source, tempTexture1);
+
+        if (calculateDepthWorldPos)
+        {
+            m_ViewProjectionMatrixInverse = CalculateViewProjectionMatrixInverse();
+            m_FrustumCornorsRay = CalculateFrustumCornorsRay();
+        }
+
         for (int i = 0; i < m_PostEffects.Count; i++)
         {
             if (B_TestMode)
@@ -60,4 +83,45 @@ public class PostEffectManager : SimpleSingletonMono<PostEffectManager> {
         Graphics.Blit(tempTexture1,destination);
         RenderTexture.ReleaseTemporary(tempTexture1);
     }
+    #region Matrix
+    public Matrix4x4 m_ViewProjectionMatrixInverse { get; private set; }
+    public Matrix4x4 m_FrustumCornorsRay { get; private set; }
+    protected Matrix4x4 CalculateViewProjectionMatrixInverse() => (m_Camera.projectionMatrix * m_Camera.worldToCameraMatrix).inverse;
+    protected Matrix4x4 CalculateFrustumCornorsRay()
+    {
+        float fov = m_Camera.fieldOfView;
+        float near = m_Camera.nearClipPlane;
+        float far = m_Camera.farClipPlane;
+        float aspect = m_Camera.aspect;
+
+        Transform cameraTrans = m_Camera.transform;
+        float halfHeight = near * Mathf.Tan(fov * .5f * Mathf.Deg2Rad);
+        Vector3 toRight = cameraTrans.right * halfHeight * aspect;
+        Vector3 toTop = cameraTrans.up * halfHeight;
+
+        Vector3 topLeft = cameraTrans.forward * near + toTop - toRight;
+        float scale = topLeft.magnitude / near;
+        topLeft.Normalize();
+        topLeft *= scale;
+
+        Vector3 topRight = cameraTrans.forward * near + toTop + toRight;
+        topRight.Normalize();
+        topRight *= scale;
+
+        Vector3 bottomLeft = cameraTrans.forward * near - toTop - toRight;
+        bottomLeft.Normalize();
+        bottomLeft *= scale;
+        Vector3 bottomRight = cameraTrans.forward * near - toTop + toRight;
+        bottomRight.Normalize();
+        bottomRight *= scale;
+
+        Matrix4x4 frustumCornersRay = Matrix4x4.identity;
+        frustumCornersRay.SetRow(0, bottomLeft);
+        frustumCornersRay.SetRow(1, bottomRight);
+        frustumCornersRay.SetRow(2, topLeft);
+        frustumCornersRay.SetRow(3, topRight);
+
+        return frustumCornersRay;
+    }
+    #endregion
 }

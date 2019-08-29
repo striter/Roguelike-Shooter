@@ -22,6 +22,9 @@ public class TResources
         public const string S_InteractPortal = "Interact/Portal_";
         public const string S_InteractActionChest = "Interact/ActionChest_";
         public const string S_InteractWeaponContainer = "Interact/WeaponContainer";
+
+        public const string S_PETex_NoiseFog = "Texture/PE_NoiseFog";
+        public const string S_PETex_Holograph = "Texture/PE_Holograph";
     }
     
     public static StyleColorData[] GetAllStyleCustomization(enum_Style levelStype) => LoadAll<StyleColorData>(ConstPath.S_StyleCustomization + "/" + levelStype);
