@@ -75,7 +75,7 @@ namespace GameSetting_Action
         public static float F_30003_DamageAdditive(enum_RarityLevel level) => 20f * (int)level;
         public static float F_30004_DamageAdditive(enum_RarityLevel level) => 200 * (int)level;
         public static float F_30005_ReloadTimesHeal(enum_RarityLevel level) => 5 - 1 * (int)level;
-        public static float F_30005_ReloadHealAmount(enum_RarityLevel level) => -10f;
+        public static float F_30005_ReloadHealAmount(enum_RarityLevel level) => 10f;
         public static int I_30006_ReloadTimesCount(enum_RarityLevel level) => 2;
         public static int IP_30006_ReloadDamageMultiplyPercentage(enum_RarityLevel level) => 200 * (int)level;
 
