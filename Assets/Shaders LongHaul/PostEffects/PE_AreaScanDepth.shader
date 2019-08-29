@@ -70,9 +70,10 @@
 				float3 worldPos = _WorldSpaceCameraPos+ i.interpolatedRay.xyz*linearDepth;
 				float offsetLength = length(worldPos - _ScanOrigin.xyz);
 				float scanValue = .0f;
+				float4 texColor = tex2D(_ScanTex, i.uv*_ScanTexScale);
 				if (offsetLength<_ScanElapse&&offsetLength>_ScanElapse - _ScanWidth)
-					scanValue = _ScanLerp;
-				return fixed4(lerp(tex2D(_MainTex,i.uv).rgb, (tex2D(_ScanTex, i.uv*_ScanTexScale)*_ScanColor).rgb, scanValue),1);
+					scanValue = _ScanLerp*texColor.r;
+				return fixed4(lerp(tex2D(_MainTex,i.uv).rgb, (texColor*_ScanColor).rgb, scanValue),1);
 			}
 			ENDCG
 		}
