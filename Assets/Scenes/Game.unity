@@ -265,12 +265,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 50127161}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Script: {fileID: 11500000, guid: 5b9603b9559d01c46a38e4498071bafb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
-  m_RaycastTarget: 0
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -282,14 +282,16 @@ MonoBehaviour:
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 4
-    m_MaxSize: 146
+    m_MaxSize: 48
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
-    m_LineSpacing: 1
-  m_Text: 10001
+    m_LineSpacing: 0
+  m_Text: AAAA
+  B_AutoLocalize: 0
+  LocalizeKey: 
 --- !u!222 &50127164
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1717,6 +1719,7 @@ MonoBehaviour:
     m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: WeaponNameaaaaaaaaa
+  B_AutoLocalize: 0
   LocalizeKey: 
 --- !u!222 &669778070
 CanvasRenderer:
@@ -2422,6 +2425,7 @@ MonoBehaviour:
     m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+  B_AutoLocalize: 0
   LocalizeKey: 
 --- !u!222 &910581722
 CanvasRenderer:
@@ -2892,7 +2896,7 @@ MonoBehaviour:
   B_PhysicsDebugGizmos: 1
   B_LevelDebugGizmos: 0
   E_LevelDebug: 0
-  Z_TestEntitySpawn: 301
+  Z_TestEntitySpawn: 201
   TestEntityFlag: 2
   TestEntityBuffOnSpawn: 0
   X_TestCastIndex: 20400
@@ -2900,9 +2904,9 @@ MonoBehaviour:
   C_TestProjectileIndex: 20500
   V_TestIndicatorIndex: 0
   B_TestBuffIndex: 1001
-  F5_TestActionIndex: 10005
+  F5_TestActionIndex: 10010
   F6_TestActionIndex: 40012
-  F7_TestActionIndex: 40014
+  F7_TestActionIndex: 40007
   F8_TestAcquireAction: 10007
   B_AdditionalLight: 1
 --- !u!4 &1133817278
@@ -3057,6 +3061,7 @@ MonoBehaviour:
     m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+  B_AutoLocalize: 0
   LocalizeKey: 
 --- !u!222 &1187703138
 CanvasRenderer:
@@ -3600,6 +3605,7 @@ MonoBehaviour:
     m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+  B_AutoLocalize: 0
   LocalizeKey: 
 --- !u!222 &1451665071
 CanvasRenderer:
@@ -3892,7 +3898,8 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: 
+  m_Text: Reload
+  B_AutoLocalize: 1
   LocalizeKey: UI_Game_Reload
 --- !u!222 &1627088168
 CanvasRenderer:
