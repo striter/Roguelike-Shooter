@@ -59,7 +59,7 @@ namespace GameSetting_Action
         public static int IP_10012_SingleDamageMultiply(enum_RarityLevel level) => 200 * (int)level;
         public static float F_10012_EntityKillHealing(enum_RarityLevel level) => 30 * (int)level;
         public static int IP_10013_SingleDamageMultiply(enum_RarityLevel level) => 200 * (int)level;
-        public static float F_10014_ReloadRateMultiplyAdditive(enum_RarityLevel level) => .3f * (int)level;
+        public static int IP_10014_ReloadRateMultiplyPercentage(enum_RarityLevel level) => 30*(int)level;
 
         public static float F_20001_ArmorTurretHealth(enum_RarityLevel level) =>  2 * (int)level;
         public static float F_20001_ArmorTurretDamage(enum_RarityLevel level) =>  1.5f * (int)level;
@@ -356,8 +356,8 @@ namespace GameSetting_Action
         public override enum_ActionExpireType m_ExpireType => enum_ActionExpireType.AfterDuration;
         public override int m_Index => 10014;
         public override int I_ActionCost => ActionData.I_10014_Cost;
-        public override float Value1 => ActionData.F_10014_ReloadRateMultiplyAdditive(m_Level);
-        public override float m_ReloadRateMultiply => Value1;
+        public override float Value1 => ActionData.IP_10014_ReloadRateMultiplyPercentage(m_Level);
+        public override float m_ReloadRateMultiply => Value1/100f;
         public Action_10014_ReloadRateMultiply(enum_RarityLevel _level) : base(_level, ActionData.F_10014_Duration) { }
     }
     #endregion

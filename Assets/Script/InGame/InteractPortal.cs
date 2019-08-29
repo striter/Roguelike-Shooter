@@ -4,19 +4,17 @@ using TTiles;
 using System;
 
 public class InteractPortal : InteractBase {
-    public override string S_InteractKeyword => "Portal";
     public override enum_Interaction m_InteractType => enum_Interaction.Portal;
+    protected override bool B_InteractaOnce => true;
     Action OnPortalInteract;
-    public override bool B_InteractaOnce => true;
     public void Play( Action _OnPortalInteract)
     {
         base.Play();
         OnPortalInteract = _OnPortalInteract;
     }
-    public override bool TryInteract(EntityPlayerBase _interactor)
+    protected override void OnInteractSuccessful(EntityPlayerBase _interactTarget)
     {
-        base.TryInteract(_interactor);
+        base.OnInteractSuccessful(_interactTarget);
         OnPortalInteract();
-        return true;
     }
 }

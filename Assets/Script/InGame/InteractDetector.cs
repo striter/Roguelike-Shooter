@@ -12,13 +12,13 @@ public class InteractDetector : MonoBehaviour {
     private void OnTriggerEnter(Collider other)
     {
         InteractBase target = other.GetComponent<InteractBase>();
-        if (target != null&&target.B_Interactable)
+        if (target != null)
             OnInteractCheck(target, true);
     }
     private void OnTriggerExit(Collider other)
     {
         InteractBase target = other.GetComponent<InteractBase>();
-        if (target != null && target.B_Interactable)
+        if (target != null)
             OnInteractCheck(target, false);
     }
 }

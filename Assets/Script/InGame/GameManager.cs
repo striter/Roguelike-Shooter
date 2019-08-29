@@ -47,9 +47,9 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
                 enermy.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common,DamageDeliverInfo.BuffInfo(-1, TestEntityBuffOnSpawn)));
         }
         if (Input.GetKeyDown(KeyCode.X) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
-            ObjectManager.SpawnEquipment<SFXCast>(X_TestCastIndex, hit.point, CastForward?m_LocalPlayer.transform.forward: Vector3.up).Play(DamageDeliverInfo.Default(-1));
+            ObjectManager.SpawnEquipment<SFXCast>(X_TestCastIndex, hit.point, CastForward?m_LocalPlayer.transform.forward: Vector3.up).Play(DamageDeliverInfo.Default(m_LocalPlayer.I_EntityID));
         if (Input.GetKeyDown(KeyCode.C) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
-            ObjectManager.SpawnEquipment<SFXProjectile>(C_TestProjectileIndex, hit.point + Vector3.up, m_LocalPlayer.transform.forward).Play(DamageDeliverInfo.Default(-1), m_LocalPlayer.transform.forward, hit.point + m_LocalPlayer.transform.forward * 10);
+            ObjectManager.SpawnEquipment<SFXProjectile>(C_TestProjectileIndex, hit.point + Vector3.up, m_LocalPlayer.transform.forward).Play(DamageDeliverInfo.Default(m_LocalPlayer.I_EntityID), m_LocalPlayer.transform.forward, hit.point + m_LocalPlayer.transform.forward * 10);
         if (Input.GetKeyDown(KeyCode.V) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
             ObjectManager.SpawnIndicator(V_TestIndicatorIndex, hit.point + Vector3.up, Vector3.up).Play(1000,3f);
         if (Input.GetKeyDown(KeyCode.B))
@@ -161,27 +161,42 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnLevelFinish);
         if (!spawnInteract)
             return;
+
         switch (LevelManager.m_LevelType)
         {
             case enum_TileType.Start:
                 {
                     enum_RarityLevel level = LevelManager.m_currentStage.ToActionLevel();
-                    ObjectManager.SpawnInteractChest(EnviormentManager.NavMeshPosition(Vector3.left, false)).Play(new List<ActionBase> { DataManager.RandomPlayerAction(level), DataManager.RandomPlayerAction(level) });
-                    ObjectManager.SpawnWeaponContainer(EnviormentManager.NavMeshPosition(Vector3.right, false)).Play(TCommon.RandomEnumValues<enum_PlayerWeapon>(LevelManager.m_GameSeed), new List<ActionBase>() { DataManager.RendomWeaponAction(level) });
+                    ObjectManager.SpawnInteract<InteractActionChest>( enum_Interaction.ActionChest,EnviormentManager.NavMeshPosition(Vector3.left, false)).Play(new List<ActionBase> { DataManager.RandomPlayerAction(level), DataManager.RandomPlayerAction(level) });
+                    ObjectManager.SpawnInteract<InteractWeaponContainer>( enum_Interaction.WeaponContainer,EnviormentManager.NavMeshPosition(Vector3.right, false)).Play(TCommon.RandomEnumValues<enum_PlayerWeapon>(LevelManager.m_GameSeed), new List<ActionBase>() { DataManager.RendomWeaponAction(level) });
                 }
                 break;
             case enum_TileType.Battle:
                 {
-                    enum_RarityLevel level = LevelManager.m_actionGenerate.GetLevel(TCommon.RandomPercentage());
-                    ObjectManager.SpawnInteractChest(EnviormentManager.NavMeshPosition(interactPos, false)).Play(new List<ActionBase> { DataManager.RandomPlayerAction(level), DataManager.RandomPlayerAction(level) });
+                    enum_RarityLevel level = LevelManager.m_actionGenerate.GetActionRarityLevel();
+                    ObjectManager.SpawnInteract<InteractActionChest>( enum_Interaction.ActionChest,EnviormentManager.NavMeshPosition(interactPos, false)).Play(new List<ActionBase> { DataManager.RandomPlayerAction(level), DataManager.RandomPlayerAction(level) });
                 }
                 break;
             case enum_TileType.End:
-                ObjectManager.SpawnInteractPortal(EnviormentManager.NavMeshPosition(interactPos, false)).Play(OnStageFinished);
+                ObjectManager.SpawnInteract<InteractPortal>( enum_Interaction.Portal,EnviormentManager.NavMeshPosition(interactPos, false)).Play(OnStageFinished);
                 break;
         }
     }
+    void OnEntityDead(EntityBase entity)
+    {
+        if (entity.B_IsPlayer)
+            DataManager.AdjustGameData(null);
 
+        if (entity.m_Flag == enum_EntityFlag.Enermy)
+        {
+            if (LevelManager.m_actionGenerate.CanGenerateHealth())
+                ObjectManager.SpawnInteract<InteractHealth>(enum_Interaction.Health, EnviormentManager.NavMeshPosition(entity.transform.position, false)).Play(GameConst.I_HealthPickupAmount);
+
+            int coinAmount = LevelManager.m_actionGenerate.GetCoinGenerate((entity as EntityAIBase).E_EnermyType);
+            if(coinAmount!=-1)
+                ObjectManager.SpawnInteract<InteractCoin>(enum_Interaction.Coin, EnviormentManager.NavMeshPosition(entity.transform.position, false)).Play(coinAmount);
+        }
+    }
 
     void OnStageFinished()
     {
@@ -197,11 +212,6 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
             DataManager.AdjustGameData(null);
             Debug.Log("All Level Finished");
         }
-    }
-    void OnEntityDead(EntityBase entity)
-    {
-        if (entity.B_IsPlayer)
-            DataManager.AdjustGameData(null);
     }
     #endregion
     #region Entity Management
@@ -367,7 +377,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
 public static class LevelManager
 {
     public static enum_StageLevel m_currentStage;
-    public static StageRarityGenerate m_actionGenerate;
+    public static StageInteractGenerate m_actionGenerate;
     public static bool B_NextStage => m_currentStage <= enum_StageLevel.Ranger;
     static enum_BattleDifficulty m_BattleDifficulty;
     public static enum_TileType m_LevelType { get; private set; }
@@ -389,7 +399,7 @@ public static class LevelManager
     }
     public static void StageBegin()
     {
-        m_actionGenerate = GameExpression.GetActionGenerate(m_currentStage);
+        m_actionGenerate = GameExpression.GetInteractGenerate(m_currentStage);
         m_BattleDifficulty = enum_BattleDifficulty.Peaceful;
         m_LevelType = enum_TileType.Invalid;
     }
@@ -704,27 +714,18 @@ public static class ObjectManager
     {
         ObjectPoolManager<enum_Interaction, InteractBase>.Register( enum_Interaction.Portal,TResources.GetInteractPortal(portalStyle), enum_PoolSaveType.StaticMaxAmount,1,(InteractBase interact)=> { interact.Init(); });
         ObjectPoolManager<enum_Interaction, InteractBase>.Register(enum_Interaction.ActionChest, TResources.GetInteractActionChest(stageIndex), enum_PoolSaveType.StaticMaxAmount, 1, (InteractBase interact) => { interact.Init(); });
-        ObjectPoolManager<enum_Interaction, InteractBase>.Register(enum_Interaction.WeaponContainer, TResources.GetInteractWeaponContainer(), enum_PoolSaveType.StaticMaxAmount, 1, (InteractBase interact) => { interact.Init(); });
+        ObjectPoolManager<enum_Interaction, InteractBase>.Register(enum_Interaction.WeaponContainer, TResources.GetInteract( enum_Interaction.WeaponContainer ), enum_PoolSaveType.StaticMaxAmount, 1, (InteractBase interact) => { interact.Init(); });
+        ObjectPoolManager<enum_Interaction, InteractBase>.Register(enum_Interaction.Coin, TResources.GetInteract( enum_Interaction.Coin), enum_PoolSaveType.DynamicMaxAmount, 1, (InteractBase interact) => { interact.Init(); });
+        ObjectPoolManager<enum_Interaction, InteractBase>.Register(enum_Interaction.Health, TResources.GetInteract( enum_Interaction.Health), enum_PoolSaveType.DynamicMaxAmount, 1, (InteractBase interact) => { interact.Init(); });
     }
-    public static InteractPortal SpawnInteractPortal(Vector3 toPos)
+    public static T SpawnInteract<T>(enum_Interaction type, Vector3 toPos) where T : InteractBase
     {
-        InteractPortal portal= ObjectPoolManager<enum_Interaction, InteractBase>.Spawn(enum_Interaction.Portal,TF_SFXPlaying) as InteractPortal;
-        portal.transform.position = toPos;
-        return portal;
-    }
-    public static InteractActionChest SpawnInteractChest(Vector3 toPos)
-    {
-        InteractActionChest chest = ObjectPoolManager<enum_Interaction, InteractBase>.Spawn(enum_Interaction.ActionChest, TF_SFXPlaying) as InteractActionChest;
-        chest.transform.position = toPos;
-        return chest;
-    }
-    public static InteractWeaponContainer SpawnWeaponContainer(Vector3 toPos)
-    {
-        InteractWeaponContainer container = ObjectPoolManager<enum_Interaction, InteractBase>.Spawn(enum_Interaction.WeaponContainer, TF_SFXPlaying) as InteractWeaponContainer;
-        container.transform.position = toPos;
-        return container;
+        T target = ObjectPoolManager<enum_Interaction, InteractBase>.Spawn(type , TF_SFXPlaying) as T;
+        target.transform.position = toPos;
+        return target;
     }
     public static void RecycleAllInteract() => ObjectPoolManager<enum_Interaction, InteractBase>.RecycleAll();
+    public static void RecycleInteract(enum_Interaction interact,InteractBase target) => ObjectPoolManager<enum_Interaction, InteractBase>.Recycle(interact,target);
     #endregion
     #region Level/LevelItem
     public static LevelBase SpawnLevelPrefab(Transform toTrans)

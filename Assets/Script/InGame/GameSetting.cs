@@ -36,6 +36,7 @@ namespace GameSetting
         public const int I_EnermyCountWaveFinish = 0;       //When Total Enermy Count Reaches This Amount,Wave Finish
         public const int I_EnermySpawnDelay = 2;        //Enermy Spawn Delay Time 
 
+        public const int I_HealthPickupAmount = 50;
     }
 
     public static class GameExpression
@@ -51,14 +52,31 @@ namespace GameSetting
 
         public static float F_ActionAmountReceive(float damageApply) => damageApply * .001f;
 
-        public static StageRarityGenerate GetActionGenerate(enum_StageLevel level)
+        public static StageInteractGenerate GetInteractGenerate(enum_StageLevel level)
         {
             switch (level)
             {
-                default: return StageRarityGenerate.Create(new Dictionary<enum_RarityLevel, int>());
-                case enum_StageLevel.Rookie: return StageRarityGenerate.Create(new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } });
-                case enum_StageLevel.Veteran: return StageRarityGenerate.Create(new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 30 }, { enum_RarityLevel.L2, 60 }, { enum_RarityLevel.L3, 10 } });
-                case enum_StageLevel.Ranger: return StageRarityGenerate.Create(new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L2, 60 }, { enum_RarityLevel.L3, 40 } });
+                default: return StageInteractGenerate.Create(0,new Dictionary<enum_RarityLevel, int>(),new List<CoinsGenerateInfo>());
+                case enum_StageLevel.Rookie: return StageInteractGenerate.Create(20, new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },
+                    new List<CoinsGenerateInfo>() {CoinsGenerateInfo.Create( enum_EntityType.Fighter,10,new RangeInt(5,1)),
+                    CoinsGenerateInfo.Create( enum_EntityType.Shooter_Rookie,10,new RangeInt(5,1)),
+                    CoinsGenerateInfo.Create( enum_EntityType.Shooter_Veteran,10,new RangeInt(5,1)),
+                    CoinsGenerateInfo.Create( enum_EntityType.AOECaster,10,new RangeInt(5,1)),
+                    CoinsGenerateInfo.Create( enum_EntityType.Elite,10,new RangeInt(5,1)) });
+                case enum_StageLevel.Veteran:
+                    return StageInteractGenerate.Create(20, new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },
+                    new List<CoinsGenerateInfo>() {CoinsGenerateInfo.Create( enum_EntityType.Fighter,10,new RangeInt(5,1)),
+                    CoinsGenerateInfo.Create( enum_EntityType.Shooter_Rookie,10,new RangeInt(5,1)),
+                    CoinsGenerateInfo.Create( enum_EntityType.Shooter_Veteran,10,new RangeInt(5,1)),
+                    CoinsGenerateInfo.Create( enum_EntityType.AOECaster,10,new RangeInt(5,1)),
+                    CoinsGenerateInfo.Create( enum_EntityType.Elite,10,new RangeInt(5,1))});
+                case enum_StageLevel.Ranger:
+                    return StageInteractGenerate.Create(20, new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },
+                    new List<CoinsGenerateInfo>() {CoinsGenerateInfo.Create( enum_EntityType.Fighter,10,new RangeInt(5,1)),
+                    CoinsGenerateInfo.Create( enum_EntityType.Shooter_Rookie,10,new RangeInt(5,1)),
+                    CoinsGenerateInfo.Create( enum_EntityType.Shooter_Veteran,10,new RangeInt(5,1)),
+                    CoinsGenerateInfo.Create( enum_EntityType.AOECaster,10,new RangeInt(5,1)),
+                    CoinsGenerateInfo.Create( enum_EntityType.Elite,10,new RangeInt(5,1)) });
             }
         }
     }
@@ -198,7 +216,7 @@ namespace GameSetting
 
     public enum enum_EntityType { Invalid = -1,Hidden=0, Fighter = 1, Shooter_Rookie = 2,Shooter_Veteran=3, AOECaster = 4, Elite = 5 }
 
-    public enum enum_Interaction { Invalid = -1,Portal=1,ActionChest=2, WeaponContainer=3,}      //To Be Continued
+    public enum enum_Interaction { Invalid = -1,Portal=1,ActionChest=2, WeaponContainer=3,Coin=11,Health=12}      //To Be Continued
 
     public enum enum_TriggerType { Invalid = -1, Single = 1, Auto = 2, Burst = 3, Pull = 4, Store = 5, }
 
@@ -316,16 +334,19 @@ namespace GameSetting
     public class CPlayerGameSave : ISave
     {
         public enum_PlayerWeapon m_weapon;
+        public int m_coins;
         public List<ActionInfo> m_weaponActions;
         public List<ActionInfo> m_storedActions;
         public CPlayerGameSave()
         {
+            m_coins = 0;
             m_weapon = enum_PlayerWeapon.P92;
             m_weaponActions = new List<ActionInfo>();
             m_storedActions = new List<ActionInfo>() { ActionInfo.Create(DataManager.RandomPlayerAction(enum_RarityLevel.L1)),ActionInfo.Create( DataManager.RandomPlayerAction(enum_RarityLevel.L1)) };
         }
         public void Adjust(EntityPlayerBase _player)
         {
+            m_coins = _player.m_PlayerInfo.m_Coins;
             m_weapon = _player.m_WeaponCurrent.m_WeaponInfo.m_Weapon;
             m_weaponActions = ActionInfo.Create(_player.m_WeaponCurrent.m_WeaponAction);
             m_storedActions = ActionInfo.Create(_player.m_PlayerInfo.m_ActionStored);
@@ -334,14 +355,32 @@ namespace GameSetting
     #endregion
 
     #region DataStruct
-    public struct StageRarityGenerate
+    public struct CoinsGenerateInfo
     {
-        Dictionary<enum_RarityLevel, int> m_Rarities;
-        public enum_RarityLevel GetLevel(int value)
+        public enum_EntityType m_type { get; private set; }
+        public int m_rate { get; private set; }
+        public RangeInt m_amount { get; private set; }
+        public static CoinsGenerateInfo Create(enum_EntityType type, int rate, RangeInt amount) => new CoinsGenerateInfo() { m_type = type, m_rate = rate, m_amount = amount };
+    }
+    public struct StageInteractGenerate
+    {
+        List<CoinsGenerateInfo> m_CoinRarities;
+        Dictionary<enum_RarityLevel, int> m_ActionRarities;
+        int m_healthGenerate;
+        public bool CanGenerateHealth() => TCommon.RandomPercentage() <= m_healthGenerate;
+        public int GetCoinGenerate(enum_EntityType entityType)
         {
+            CoinsGenerateInfo info = m_CoinRarities.Find(p => p.m_type == entityType);
+            if (info.m_type == 0)
+                Debug.LogError("Null Coins Info Found Of:" + entityType);
+            return TCommon.RandomPercentage() <= info.m_rate?info.m_amount.RandomRangeInt():-1;
+        } 
+        public enum_RarityLevel GetActionRarityLevel()
+        {
+            float value = TCommon.RandomPercentage();
             enum_RarityLevel targetLevel = enum_RarityLevel.Invalid;
             int totalAmount=0;
-            m_Rarities.Traversal((enum_RarityLevel level,int amount)=> {
+            m_ActionRarities.Traversal((enum_RarityLevel level,int amount)=> {
                 if (targetLevel != enum_RarityLevel.Invalid)
                     return;
                 totalAmount += amount;
@@ -350,9 +389,8 @@ namespace GameSetting
             });
             return targetLevel;
         }
-        public static StageRarityGenerate Create(Dictionary<enum_RarityLevel, int> _Rarities)=> new StageRarityGenerate() { m_Rarities = _Rarities };
+        public static StageInteractGenerate Create(int healthGenerate,Dictionary<enum_RarityLevel, int> _actionRarities, List<CoinsGenerateInfo> _coinsRarities) => new StageInteractGenerate() {m_healthGenerate=healthGenerate, m_ActionRarities = _actionRarities,m_CoinRarities=_coinsRarities };
     }
-
     public struct ActionInfo : IXmlPhrase
     {
         public int m_Index { get; private set; }
@@ -944,6 +982,8 @@ namespace GameSetting
         public List<ActionBase> m_ActionInPool { get; private set; } = new List<ActionBase>();
         public List<ActionBase> m_ActionHolding { get; private set; } = new List<ActionBase>();
         Action OnActionChange;
+
+        public int m_Coins { get; private set; } = 0;
         public PlayerInfoManager(EntityPlayerBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnInfoChange,Action _OnActionChange) : base(_attacher, _OnReceiveDamage, _OnInfoChange)
         {
             m_Player = _attacher;
@@ -1101,6 +1141,13 @@ namespace GameSetting
         public void UpgradeAction(int index)
         {
 
+        }
+        #endregion
+
+        #region CoinInfo
+        public void OnCoinsReceive(int coinAmount)
+        {
+            m_Coins += coinAmount;
         }
         #endregion
     }

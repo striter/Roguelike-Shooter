@@ -10,7 +10,6 @@ public class EntityPlayerBase : EntityBase {
     public enum_PlayerWeapon TESTWEAPON2 = enum_PlayerWeapon.M82A1;
     public override bool B_IsPlayer => true;
 
-    public float m_Coins { get; private set; } = 0;
     protected CharacterController m_CharacterController;
     protected PlayerAnimator m_Animator;
     protected Transform tf_WeaponHoldRight,tf_WeaponHoldLeft;
@@ -40,6 +39,7 @@ public class EntityPlayerBase : EntityBase {
     {
         base.OnSpawn(id, enum_EntityFlag.Player);
         CameraController.Attach(this.transform);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnLevelStart, OnLevelStart);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart,OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
         SetBinding(true);
@@ -66,6 +66,11 @@ public class EntityPlayerBase : EntityBase {
         SetBinding(false);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnLevelStart, OnLevelStart);
+    }
+    void OnLevelStart()
+    {
+        m_Interact = null;
     }
     void OnBattleStart()
     {
@@ -148,6 +153,9 @@ public class EntityPlayerBase : EntityBase {
     protected override void Update()
     {
         base.Update();
+        if (m_HealthManager.b_IsDead)
+            return;
+
         bool canFire = !Physics.SphereCast(new Ray(tf_Head.position, tf_Head.forward), .3f, 1.5f, GameLayer.Mask.I_Static);
         m_WeaponCurrent.Tick(Time.deltaTime,canFire);
         m_Assist.SetEnable(canFire);
@@ -165,6 +173,15 @@ public class EntityPlayerBase : EntityBase {
     #region PlayerInteract
     public void OnInteractCheck(InteractBase interactTarget, bool isEnter)
     {
+        if (!interactTarget.B_Interactable(this))
+            return;
+
+        if (interactTarget.B_InteractOnTrigger)
+        {
+            interactTarget.TryInteract(this);
+            return;
+        }
+
         if (isEnter)
             m_Interact = interactTarget;
         else if (m_Interact = interactTarget)
@@ -178,7 +195,7 @@ public class EntityPlayerBase : EntityBase {
             return;
         }
 
-        if (down && m_Interact.TryInteract(this)&&!m_Interact.B_Interactable)
+        if (down && m_Interact.TryInteract(this)&&!m_Interact.B_Interactable(this))
             m_Interact = null;
     }
     #endregion

@@ -16,12 +16,12 @@ public class InteractWeaponContainer : InteractBase {
         base.Play();
         m_Weapon = ObjectManager.SpawnWeapon(_weapon, _actions, tf_ModelContainer);
     }
-    public override bool TryInteract(EntityPlayerBase _interactor)
+    protected override void OnInteractSuccessful(EntityPlayerBase _interactTarget)
     {
-        m_Weapon=_interactor.ObtainWeapon(m_Weapon);
+        base.OnInteractSuccessful(_interactTarget);
+        m_Weapon = _interactTarget.ObtainWeapon(m_Weapon);
         m_Weapon.transform.SetParent(tf_ModelContainer);
         m_Weapon.transform.localPosition = Vector3.zero;
         m_Weapon.transform.localRotation = Quaternion.identity;
-        return base.TryInteract(_interactor);
     }
 }

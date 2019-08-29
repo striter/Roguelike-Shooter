@@ -37,7 +37,7 @@ public class UIManager : SingletonMono<UIManager> {
     }
     void OnPlayerStatusChanged(EntityPlayerBase player)
     {
-        txt_Coin.text = player.m_Coins.ToString();
+        txt_Coin.text = player.m_PlayerInfo.m_Coins.ToString();
         txt_Main.text = player.m_Equipment!=null ?"Use Equipment":player.m_Interact!=null? "Interact" : "Fire";
     }
 }

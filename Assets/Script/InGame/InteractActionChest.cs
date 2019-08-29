@@ -8,7 +8,7 @@ public class InteractActionChest : InteractBase {
     List<ActionBase> m_Actions;
     EntityPlayerBase m_Interactor;
     public override enum_Interaction m_InteractType => enum_Interaction.ActionChest;
-    public override bool B_InteractaOnce => true;
+    protected override bool B_InteractaOnce => true;
     public override void Init()
     {
         base.Init();
@@ -23,15 +23,13 @@ public class InteractActionChest : InteractBase {
         m_Animation[m_clipName].speed = 0;
         m_Animation.Play();
     }
-    public override bool TryInteract(EntityPlayerBase _interactor)
+    protected override void OnInteractSuccessful(EntityPlayerBase _interactTarget)
     {
-        base.TryInteract(_interactor);
-        m_Interactor = _interactor;
+        base.OnInteractSuccessful(_interactTarget);
+        m_Interactor = _interactTarget;
         m_Animation[m_clipName].speed = 1;
         m_Animation.Play();
-        return true;
     }
-
     void OnKeyAnim()
     {
         UIManager.Instance.ShowPage<UI_ActionAcquire>(true).Play(m_Actions,OnActionSelectConfirm);
