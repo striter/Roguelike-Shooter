@@ -930,13 +930,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 275d93242000a1d47972944c1cd255ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  I_MaxHealth: 600
+  I_MaxHealth: 300
   I_DefaultArmor: 0
   F_MovementSpeed: 6
   F_AttackSpread: 5
-  E_EnermyType: 3
+  E_EnermyType: 2
   E_AnimatorIndex: 152
-  F_AIChaseRange: 15
+  F_AIChaseRange: 18
   F_AIAttackRange: 20
   F_AttackDuration:
     start: 4
