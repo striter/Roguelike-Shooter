@@ -13,6 +13,7 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
     Image img_sld;
     UIT_GridControllerMono<UIGI_AmmoItem> m_AmmoGrid;
     UIT_GridControllerMono<UIGI_ActionHoldItem> m_ActionGrid;
+    UIT_GridControllerMono<UIGI_ExpireInfoItem> m_ExpireGrid;
     GridLayoutGroup m_GridLayout;
     EntityPlayerBase m_Player;
     float f_ammoGridLength;
@@ -39,6 +40,7 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
         txt_ActionAmount = m_ActionGrid.transform.Find("ActionAmount").GetComponent<Text>();
         btn_ActionStorage = m_ActionGrid.transform.Find("ActionStorage").GetComponent<Button>();
         btn_ActionStorage.onClick.AddListener(OnActionStorageClick);
+        m_ExpireGrid = new UIT_GridControllerMono<UIGI_ExpireInfoItem>(tf_Left.Find("ExpireGrid"));
 
         tf_WeaponData = tf_Container.Find("WeaponData");
         txt_WeaponName = tf_WeaponData.Find("Container/WeaponName").GetComponent<Text>();
@@ -160,6 +162,8 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
     }
     void OnExpireStatus(PlayerInfoManager expireInfo)
     {
-
+        m_ExpireGrid.ClearGrid();
+        for (int i = 0; i < expireInfo.m_Expires.Count; i++)
+            m_ExpireGrid.AddItem(i).SetInfo(expireInfo.m_Expires[i]);
     }
 }

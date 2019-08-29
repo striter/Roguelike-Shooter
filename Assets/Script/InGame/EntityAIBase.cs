@@ -48,9 +48,9 @@ public class EntityAIBase : EntityBase {
             m_Animator.OnDead();
     }
 
-    protected override void OnInfoChange()
+    protected override void OnExpireChange()
     {
-        base.OnInfoChange();
+        base.OnExpireChange();
         if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
             m_Animator.SetMovementSpeed(m_EntityInfo.F_MovementSpeed);
         m_AI.OnInfoChange();

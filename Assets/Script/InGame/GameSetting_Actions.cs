@@ -136,7 +136,7 @@ namespace GameSetting_Action
     #region ActionBase
     public class ActionAfterUse : ActionBase
     {
-        public override enum_ActionExpireType m_ExpireType => enum_ActionExpireType.AfterUse;
+        public override enum_ActionExpireType m_ActionExpireType => enum_ActionExpireType.AfterUse;
         public override void OnActionUse()
         {
             base.OnActionUse();
@@ -146,13 +146,13 @@ namespace GameSetting_Action
     }
     public class ActionAfterDuration : ActionBase
     {
-        public override enum_ActionExpireType m_ExpireType => enum_ActionExpireType.AfterDuration;
+        public override enum_ActionExpireType m_ActionExpireType => enum_ActionExpireType.AfterDuration;
         public ActionAfterDuration(enum_RarityLevel _level) : base(_level) { }
         public ActionAfterDuration(enum_RarityLevel _level,float _duration) : base(_level,_duration) { }
     }
     public class ActionAfterFire : ActionBase
     {
-        public override enum_ActionExpireType m_ExpireType => enum_ActionExpireType.AfterFire;
+        public override enum_ActionExpireType m_ActionExpireType => enum_ActionExpireType.AfterFire;
         protected int m_fireIdentity = -1;
         public override void OnAfterFire(int _identity)
         {
@@ -175,7 +175,7 @@ namespace GameSetting_Action
     }
     public class ActionAfterBattle : ActionBase
     {
-        public override enum_ActionExpireType m_ExpireType => enum_ActionExpireType.AfterBattle;
+        public override enum_ActionExpireType m_ActionExpireType => enum_ActionExpireType.AfterBattle;
         public override void OnAfterBattle()
         {
             base.OnAfterBattle();
@@ -206,7 +206,7 @@ namespace GameSetting_Action
     public class ActionAfterWeaponDetach : ActionBase
     {
         public override int I_ActionCost => 0;
-        public override enum_ActionExpireType m_ExpireType => enum_ActionExpireType.AfterWeaponSwitch;
+        public override enum_ActionExpireType m_ActionExpireType => enum_ActionExpireType.AfterWeaponSwitch;
         public override void OnWeaponDetach() => ForceExpire();
         public ActionAfterWeaponDetach(enum_RarityLevel _level) : base(_level) { }
     }
@@ -353,7 +353,7 @@ namespace GameSetting_Action
     }
     public class Action_10014_ReloadRateMultiply : ActionAfterDuration
     {
-        public override enum_ActionExpireType m_ExpireType => enum_ActionExpireType.AfterDuration;
+        public override enum_ActionExpireType m_ActionExpireType => enum_ActionExpireType.AfterDuration;
         public override int m_Index => 10014;
         public override int I_ActionCost => ActionData.I_10014_Cost;
         public override float Value1 => ActionData.IP_10014_ReloadRateMultiplyPercentage(m_Level);

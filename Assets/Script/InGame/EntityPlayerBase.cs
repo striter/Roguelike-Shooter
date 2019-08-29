@@ -21,7 +21,7 @@ public class EntityPlayerBase : EntityBase {
     public PlayerInfoManager m_PlayerInfo { get; private set; }
     protected override EntityInfoManager GetEntityInfo()
     {
-        m_PlayerInfo = new PlayerInfoManager(this, OnReceiveDamage, OnInfoChange,OnActionsChange);
+        m_PlayerInfo = new PlayerInfoManager(this, OnReceiveDamage, OnExpireChange,OnActionsChange);
         return m_PlayerInfo;
     }
     public override void Init(int poolPresetIndex)
@@ -231,9 +231,9 @@ public class EntityPlayerBase : EntityBase {
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerCommonStatus, this);
     }
 
-    protected override void OnInfoChange()
+    protected override void OnExpireChange()
     {
-        base.OnInfoChange();
+        base.OnExpireChange();
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerExpireStatus, m_PlayerInfo);
     }
     protected void OnActionsChange()

@@ -553,7 +553,7 @@ public static class DataManager
             return;
 
         m_AllActions.Add(action.m_Index, action);
-        if (action.m_ExpireType == enum_ActionExpireType.AfterWeaponSwitch)
+        if (action.m_ActionExpireType == enum_ActionExpireType.AfterWeaponSwitch)
             m_WeaponActions.Add(action.m_Index);
         else
             m_PlayerActions.Add(action.m_Index);

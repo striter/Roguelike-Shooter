@@ -150,6 +150,7 @@ namespace GameSetting
 
     public static class LocalizationKeyJoint
     {
+        public static string GetNameLocalizeKey(this BuffBase buff) => "Buff_Name_" + buff.m_Index;
         public static string GetNameLocalizeKey(this ActionBase action) => "Action_Name_" + action.m_Index;
         public static string GetIntroLocalizeKey(this ActionBase action) => "Action_Intro_" + action.m_Index;
         public static string GetLocalizeKey(this enum_RarityLevel level) => "Action_Level_" + level;
@@ -229,6 +230,8 @@ namespace GameSetting
     public enum enum_HealthChangeMessage { Invalid = -1,Begin=0, DamageHealth = 1, ReceiveHealth = 2, DamageArmor = 3, ReceiveArmor = 4 }
 
     public enum enum_DamageType { Invalid = -1, Common = 1, ArmorOnly = 2,HealthOnly = 3, }
+
+    public enum enum_ExpireType { Invalid=-1,Buff=1,Action=2, }
 
     public enum enum_ExpireRefreshType { Invalid = -1, AddUp = 1, Refresh = 2 }
 
@@ -761,14 +764,14 @@ namespace GameSetting
 
         public virtual DamageDeliverInfo GetDamageBuffInfo() => damageOverride ? m_DamageBuffOverride:DamageDeliverInfo.DamageInfo(m_Entity.I_EntityID ,F_DamageMultiply);
         Func<DamageInfo, bool> OnReceiveDamage;
-        Action OnInfoChange;
+        Action OnExpireChange;
         bool b_infoUpdated = false;
         public void EntityInfoChange() => b_infoUpdated = false;
         public EntityInfoManager(EntityBase _attacher,Func<DamageInfo, bool> _OnReceiveDamage,Action _OnInfoChange)
         {
             m_Entity = _attacher;
             OnReceiveDamage = _OnReceiveDamage;
-            OnInfoChange = _OnInfoChange;
+            OnExpireChange = _OnInfoChange;
         }
         public virtual void OnActivate()
         {
@@ -793,6 +796,7 @@ namespace GameSetting
             Debug.Log("Add Expire:"+expire.m_Index);
             m_Expires.Add(expire);
             EntityInfoChange();
+            OnExpireChange();
         }
         void RefreshExpire(ExpireBase expire)
         {
@@ -804,10 +808,11 @@ namespace GameSetting
             Debug.Log("Remove Expire:"+expire.m_Index);
             m_Expires.Remove(expire);
             EntityInfoChange();
+            OnExpireChange();
         }
         public void AddBuff(int sourceID,int buffIndex)
         {
-            ExpireBuff buff = new ExpireBuff(sourceID, DataManager.GetEntityBuffProperties(buffIndex), OnReceiveDamage, OnExpireElapsed);
+            BuffBase buff = new BuffBase(sourceID, DataManager.GetEntityBuffProperties(buffIndex), OnReceiveDamage, OnExpireElapsed);
             OnStun(buff.m_StunDuration);
             switch (buff.m_RefreshType)
             {
@@ -879,8 +884,6 @@ namespace GameSetting
                     m_BuffEffects.Add(particle);
                 }
             }
-
-            OnInfoChange();
         }
     }
 
@@ -888,6 +891,7 @@ namespace GameSetting
     {
         public virtual int m_EffectIndex => -1;
         public virtual int m_Index => -1;
+        public virtual enum_ExpireType m_ExpireType => enum_ExpireType.Invalid;
         public virtual enum_ExpireRefreshType m_RefreshType => enum_ExpireRefreshType.Invalid;
         public virtual float m_MovementSpeedMultiply => 0;
         public virtual float m_FireRateMultiply => 0;
@@ -897,7 +901,7 @@ namespace GameSetting
         public virtual float m_EffectDuration => m_ExpireDuration;
         public float m_ExpireDuration { get; private set; } = 0;
         private Action<ExpireBase> OnExpired;
-        float f_expireCheck;
+        public float f_expireCheck { get; private set; }
         public ExpireBase(float _ExpireDuration)
         {
             m_ExpireDuration = _ExpireDuration;
@@ -924,8 +928,9 @@ namespace GameSetting
     }
 
 
-    public class ExpireBuff:ExpireBase
+    public class BuffBase:ExpireBase
     {
+        public override enum_ExpireType m_ExpireType => enum_ExpireType.Buff;
         public override int m_EffectIndex => m_buffInfo.m_EffectIndex;
         public override enum_ExpireRefreshType m_RefreshType => m_buffInfo.m_AddType;
         public override float m_DamageMultiply => m_buffInfo.m_DamageMultiply;
@@ -939,7 +944,7 @@ namespace GameSetting
         Func<DamageInfo, bool> OnDOTDamage;
         int I_SourceID;
         float  f_dotCheck;
-        public ExpireBuff(int sourceID,SBuff _buffInfo, Func<DamageInfo, bool> _OnDOTDamage, Action<ExpireBase> _OnExpired) :base(_buffInfo.m_ExpireDuration)
+        public BuffBase(int sourceID,SBuff _buffInfo, Func<DamageInfo, bool> _OnDOTDamage, Action<ExpireBase> _OnExpired) :base(_buffInfo.m_ExpireDuration)
         {
             I_SourceID = sourceID;
             m_buffInfo = _buffInfo;
@@ -1079,7 +1084,7 @@ namespace GameSetting
             m_ActionEquiping.Traversal((ActionBase action) => {
                 action.OnAfterFire(info.I_IdentiyID);
 
-                if (action.m_ExpireType == enum_ActionExpireType.AfterFire)
+                if (action.m_ActionExpireType == enum_ActionExpireType.AfterFire)
                     m_AfterFire.Add(action as ActionAfterFire);
             }, true);
             return info;
@@ -1153,11 +1158,12 @@ namespace GameSetting
     }
     public class ActionBase : ExpireBase
     {
+        public override enum_ExpireType m_ExpireType => enum_ExpireType.Action;
         public EntityPlayerBase m_ActionEntity { get; private set; }
         public enum_RarityLevel m_Level { get; private set; } = enum_RarityLevel.Invalid;
         public virtual int I_ActionCost => -1;
         public virtual bool B_ActionAble => true;
-        public virtual enum_ActionExpireType m_ExpireType => enum_ActionExpireType.Invalid;
+        public virtual enum_ActionExpireType m_ActionExpireType => enum_ActionExpireType.Invalid;
         public virtual float Value1 => 0;
         public virtual float Value2 => 0;
         public virtual float Value3 => 0;
@@ -1170,7 +1176,7 @@ namespace GameSetting
         public ActionBase(enum_RarityLevel _level, float _expireDuration = 0) : base(_expireDuration)
         {
             m_Level = _level;
-            if (m_ExpireType == enum_ActionExpireType.Invalid)
+            if (m_ActionExpireType == enum_ActionExpireType.Invalid)
                 Debug.LogError("Override Type Please!");
         }
         public void Activate(EntityPlayerBase _actionEntity,Action<ExpireBase> OnExpired) { m_ActionEntity = _actionEntity;Activate(OnExpired); }

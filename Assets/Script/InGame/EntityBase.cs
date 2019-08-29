@@ -19,7 +19,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
     HitCheckEntity[] m_HitChecks;
     Renderer[] m_SkinRenderers;
     public virtual Vector3 m_PrecalculatedTargetPos(float time) { Debug.LogError("Override This Please");return Vector2.zero; }
-    protected virtual EntityInfoManager GetEntityInfo() => new EntityInfoManager(this, OnReceiveDamage, OnInfoChange);
+    protected virtual EntityInfoManager GetEntityInfo() => new EntityInfoManager(this, OnReceiveDamage, OnExpireChange);
     
     public virtual void Init(int presetIndex)
     {
@@ -45,7 +45,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
        m_SkinRenderers.Traversal((Renderer renderer) => {renderer.materials.Traversal((Material mat)=> {mat.SetFloat("_Amount1", 0);}); });
     }
 
-    protected virtual void OnInfoChange(){}
+    protected virtual void OnExpireChange(){}
     protected virtual void OnEnable(){}
     protected virtual void OnDisable()
     {
