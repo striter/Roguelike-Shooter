@@ -260,6 +260,8 @@ public class EntityAIBase : EntityBase {
             List<EntityBase> entites = GameManager.Instance.GetEntities(m_Entity.m_Flag, m_Weapon.B_TargetAlly);
             for (int i = 0; i < entites.Count; i++)
             {
+                if (entites[i].I_EntityID == m_Entity.I_EntityID)
+                    continue;
                 float distance = TCommon.GetXZDistance(headTransform.position, entites[i].tf_Head.position);
                 bool visible = !m_Entity.B_BattleCheckObstacle || TargetVisible(entites[i]);
                 bool isAvailableClosetTarget = distance < f_targetDistance && visible;
