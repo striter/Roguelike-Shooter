@@ -92,10 +92,19 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
             SetInteractInfo((_player.m_Interact as InteractTrade).m_InteractTarget);
         }
         else
+        {
             SetInteractInfo(_player.m_Interact);
+        }
     }
+    WeaponBase m_targetWeapon;
     void SetInteractInfo(InteractBase interact)
     {
+        if (interact.m_InteractType == enum_Interaction.Weapon)
+        {
+            SetInteractWeaponInfo(interact as InteractWeapon);
+            return;
+        }
+
         if (m_lastInteract == interact.m_InteractType)
             return;
         m_lastInteract = interact.m_InteractType;
@@ -109,20 +118,21 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
                     m_ActionData.SetInfo((interact as InteractAction).m_Action);
                 }
                 break;
-            case enum_Interaction.Weapon:
-                {
-                    WeaponBase weapon = (interact as InteractWeaponContainer).m_Weapon;
-                    txt_interactName.localizeText = weapon.m_WeaponInfo.m_Weapon.GetNameLocalizeKey();
-                    
-                    m_ActionData.SetActivate(weapon.m_WeaponAction.Count > 0);      //Test
-                    if (weapon.m_WeaponAction.Count > 0)        //Test
-                        m_ActionData.SetInfo(weapon.m_WeaponAction[0]);     //Test????
-                }
-                break;
             default:
                 txt_interactName.localizeText = interact.m_InteractType.GetInteractTitle();
                 break;
         }
+    }
+    void SetInteractWeaponInfo(InteractWeapon interactWeapon)
+    {
+        if (m_targetWeapon == interactWeapon.m_Weapon)
+            return;
+        m_targetWeapon = interactWeapon.m_Weapon;
+        txt_interactName.localizeText = m_targetWeapon.m_WeaponInfo.m_Weapon.GetNameLocalizeKey();
+        m_lastInteract = enum_Interaction.Invalid;
+        m_ActionData.SetActivate(m_targetWeapon.m_WeaponAction.Count > 0);      //Test
+        if (m_targetWeapon.m_WeaponAction.Count > 0)        //Test
+            m_ActionData.SetInfo(m_targetWeapon.m_WeaponAction[0]);     //Test????
     }
     #endregion
     #region Health

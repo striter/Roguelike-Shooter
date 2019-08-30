@@ -52,12 +52,34 @@ namespace GameSetting
 
         public static float F_ActionAmountReceive(float damageApply) => damageApply * .001f;
 
+        public static RangeInt GetTradePrice(enum_Interaction interactType, enum_RarityLevel level)
+        {
+            switch (interactType)
+            {
+                default: Debug.LogError("No Coins Can Phrase Here!"); return new RangeInt(0, -1);
+                case enum_Interaction.Health:
+                    return new RangeInt(4, 2);
+                case enum_Interaction.Action:
+                case enum_Interaction.Weapon:
+                    switch (level)
+                    {
+                        default: Debug.LogError("Invalid Level!"); return new RangeInt(0, -1);
+                        case enum_RarityLevel.L1: return new RangeInt(8, 4);
+                        case enum_RarityLevel.L2: return new RangeInt(16, 8);
+                        case enum_RarityLevel.L3: return new RangeInt(24, 12);
+                    }
+            }
+        }
+
         public static StageInteractGenerate GetInteractGenerate(enum_StageLevel level)
         {
             switch (level)
             {
-                default: return StageInteractGenerate.Create(0,new Dictionary<enum_RarityLevel, int>(),new List<CoinsGenerateInfo>());
-                case enum_StageLevel.Rookie: return StageInteractGenerate.Create(20, new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },
+                default: return StageInteractGenerate.Create(0,new Dictionary<enum_RarityLevel, int>(),new Dictionary<enum_RarityLevel, int>(),new List<CoinsGenerateInfo>());
+                case enum_StageLevel.Rookie:
+                    return StageInteractGenerate.Create(20,
+                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },
+                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },
                     new List<CoinsGenerateInfo>() { CoinsGenerateInfo.Create( enum_EntityType.SubHidden,0,new RangeInt(0,0)),
                     CoinsGenerateInfo.Create( enum_EntityType.Fighter,10,new RangeInt(5,1)),
                     CoinsGenerateInfo.Create( enum_EntityType.Shooter_Rookie,10,new RangeInt(5,1)),
@@ -65,18 +87,21 @@ namespace GameSetting
                     CoinsGenerateInfo.Create( enum_EntityType.AOECaster,10,new RangeInt(5,1)),
                     CoinsGenerateInfo.Create( enum_EntityType.Elite,10,new RangeInt(5,1)) });
                 case enum_StageLevel.Veteran:
-                    return StageInteractGenerate.Create(20, new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },
-                    new List<CoinsGenerateInfo>() {CoinsGenerateInfo.Create( enum_EntityType.SubHidden,0,new RangeInt(0,0)),
+                    return StageInteractGenerate.Create(20,
+                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },
+                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },
+                    new List<CoinsGenerateInfo>() { CoinsGenerateInfo.Create( enum_EntityType.SubHidden,0,new RangeInt(0,0)),
                     CoinsGenerateInfo.Create( enum_EntityType.Fighter,10,new RangeInt(5,1)),
                     CoinsGenerateInfo.Create( enum_EntityType.Shooter_Rookie,10,new RangeInt(5,1)),
                     CoinsGenerateInfo.Create( enum_EntityType.Shooter_Veteran,10,new RangeInt(5,1)),
                     CoinsGenerateInfo.Create( enum_EntityType.AOECaster,10,new RangeInt(5,1)),
-                    CoinsGenerateInfo.Create( enum_EntityType.Elite,10,new RangeInt(5,1))});
+                    CoinsGenerateInfo.Create( enum_EntityType.Elite,10,new RangeInt(5,1)) });
                 case enum_StageLevel.Ranger:
-                    return StageInteractGenerate.Create(20, new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },
-                    new List<CoinsGenerateInfo>() {
-                    CoinsGenerateInfo.Create( enum_EntityType.SubHidden,0,new RangeInt(0,0)),
-                    CoinsGenerateInfo.Create(enum_EntityType.Fighter,10,new RangeInt(5,1)),
+                    return StageInteractGenerate.Create(20,
+                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },
+                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },
+                    new List<CoinsGenerateInfo>() { CoinsGenerateInfo.Create( enum_EntityType.SubHidden,0,new RangeInt(0,0)),
+                    CoinsGenerateInfo.Create( enum_EntityType.Fighter,10,new RangeInt(5,1)),
                     CoinsGenerateInfo.Create( enum_EntityType.Shooter_Rookie,10,new RangeInt(5,1)),
                     CoinsGenerateInfo.Create( enum_EntityType.Shooter_Veteran,10,new RangeInt(5,1)),
                     CoinsGenerateInfo.Create( enum_EntityType.AOECaster,10,new RangeInt(5,1)),
@@ -385,32 +410,22 @@ namespace GameSetting
     }
     public struct StageInteractGenerate
     {
-        List<CoinsGenerateInfo> m_CoinRarities;
-        Dictionary<enum_RarityLevel, int> m_ActionRarities;
+        List<CoinsGenerateInfo> m_CoinRate;
+        Dictionary<enum_RarityLevel, int> m_ActionRate;
+        Dictionary<enum_RarityLevel, int> m_TradeRate;
         int m_healthGenerate;
-        public bool CanGenerateHealth() => TCommon.RandomPercentage() <= m_healthGenerate;
-        public int GetCoinGenerate(enum_EntityType entityType)
+        public bool CanGenerateHealth(System.Random seed) => TCommon.RandomPercentage(seed) <= m_healthGenerate;
+        public int GetCoinGenerate(enum_EntityType entityType, System.Random seed)
         {
-            CoinsGenerateInfo info = m_CoinRarities.Find(p => p.m_type == entityType);
+            CoinsGenerateInfo info = m_CoinRate.Find(p => p.m_type == entityType);
             if (info.m_type == 0)
                 Debug.LogError("Null Coins Info Found Of:" + entityType);
             return TCommon.RandomPercentage() <= info.m_rate?info.m_amount.RandomRangeInt():-1;
-        } 
-        public enum_RarityLevel GetActionRarityLevel()
-        {
-            float value = TCommon.RandomPercentage();
-            enum_RarityLevel targetLevel = enum_RarityLevel.Invalid;
-            int totalAmount=0;
-            m_ActionRarities.Traversal((enum_RarityLevel level,int amount)=> {
-                if (targetLevel != enum_RarityLevel.Invalid)
-                    return;
-                totalAmount += amount;
-                if (totalAmount > value)
-                    targetLevel = level;
-            });
-            return targetLevel;
         }
-        public static StageInteractGenerate Create(int healthGenerate,Dictionary<enum_RarityLevel, int> _actionRarities, List<CoinsGenerateInfo> _coinsRarities) => new StageInteractGenerate() {m_healthGenerate=healthGenerate, m_ActionRarities = _actionRarities,m_CoinRarities=_coinsRarities };
+        public enum_RarityLevel GetActionRarityLevel(System.Random seed) => TCommon.RandomPercentage(m_ActionRate, seed);
+        public enum_RarityLevel GetTradeRarityLevel(System.Random seed) => TCommon.RandomPercentage(m_TradeRate, seed);
+        public static StageInteractGenerate Create(int _healthGenerate,Dictionary<enum_RarityLevel, int> _actionRate, Dictionary<enum_RarityLevel, int> _tradeRate, List<CoinsGenerateInfo> _coinRate) => new StageInteractGenerate() {m_healthGenerate=_healthGenerate, m_ActionRate = _actionRate,m_TradeRate=_tradeRate,m_CoinRate=_coinRate };
+        
     }
     public struct ActionInfo : IXmlPhrase
     {

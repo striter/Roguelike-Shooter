@@ -351,6 +351,25 @@ public static class TCommon
     public static float RandomRangeFloat(this RangeFloat ir, System.Random seed = null)=> seed != null ? seed.Next((int)(ir.start * 1000), (int)(ir.end * 1000)) / 100 : UnityEngine.Random.Range(ir.start, ir.end);
     public static bool RandomBool(System.Random seed = null) => seed != null ? seed.Next(0, 2) > 0 : UnityEngine.Random.Range(0, 2) > 0;
     public static int RandomPercentage(System.Random seed=null)=> seed != null ? seed.Next(0, 101)  : UnityEngine.Random.Range(0, 101);
+    public static T RandomPercentage<T>( Dictionary<T, int> percentageRate, System.Random seed = null)
+    {
+        float value = RandomPercentage(seed);
+
+        T targetLevel = default(T);
+        int totalAmount = 0;
+        bool marked = false; ;
+        percentageRate.Traversal((T temp, int amount) => {
+            if (marked)
+                return;
+            totalAmount += amount;
+            if (totalAmount > value)
+            {
+                targetLevel = temp;
+                marked = true;
+            }
+        });
+        return targetLevel;
+    }
     public static Vector3 RandomXZSphere(float radius) => Vector3.forward.RotateDirection(Vector3.up, UnityEngine.Random.Range(0, 360)) * UnityEngine.Random.Range(0, radius);
 
     public static T RandomEnumValues<T>(System.Random _seed)        //Can't Constraint T to System.Enum

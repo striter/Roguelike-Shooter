@@ -70,7 +70,6 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
     void OnLevelStart()     //Make Current Level Available (AI Bake)
     {
         ObjectManager.RecycleAllLevelItem();
-        ObjectManager.RecycleAllInteract();
         m_currentLevel.StartLevel();
         BuildNavMeshData(m_currentLevel.m_Level);
         OnLevelPrepared(m_currentLevel);
