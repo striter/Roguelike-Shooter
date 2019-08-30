@@ -84,8 +84,8 @@ GameObject:
   - component: {fileID: 136630500536308508}
   - component: {fileID: 195981414016733636}
   - component: {fileID: 208706188226401826}
-  - component: {fileID: 114481616185339978}
   - component: {fileID: 114099882450065170}
+  - component: {fileID: 114966098593807808}
   m_Layer: 0
   m_Name: 30001_Turret_Cannon
   m_TagString: Untagged
@@ -391,36 +391,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2091396369435d24bad4838db15bbe09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114481616185339978
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1291371841804026}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 275d93242000a1d47972944c1cd255ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  I_MaxHealth: 500
-  I_DefaultArmor: 0
-  F_MovementSpeed: 0
-  F_AttackSpread: 0
-  E_EnermyType: 0
-  E_AnimatorIndex: -1
-  F_AIChaseRange: 20
-  F_AIAttackRange: 20
-  F_AttackDuration:
-    start: 0
-    length: 0
-  F_AttackTimes:
-    start: 1
-    length: 0
-  F_AttackRate: 1
-  B_BattleCheckObstacle: 1
-  F_AttackRotateParam: 1.5
-  I_AttackPreAimPercentage: 50
-  B_AttackMove: 1
 --- !u!114 &114680769457280220
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -434,6 +404,36 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   V3_RotateDireciton: {x: 0, y: 1, z: 0}
   F_RotateSpeed: 25
+--- !u!114 &114966098593807808
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1291371841804026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 417e477385c21d047a2bb190782a39ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  I_MaxHealth: 500
+  I_DefaultArmor: 0
+  F_MovementSpeed: 0
+  F_AttackSpread: 0
+  E_EnermyType: 0
+  E_AnimatorIndex: -1
+  F_AIChaseRange: 0
+  F_AIAttackRange: 0
+  F_AttackDuration:
+    start: 0
+    length: 0
+  F_AttackTimes:
+    start: 1
+    length: 0
+  F_AttackRate: 1
+  B_BattleCheckObstacle: 1
+  F_AttackRotateParam: 1
+  I_AttackPreAimPercentage: 50
+  B_AttackMove: 1
 --- !u!136 &136630500536308508
 CapsuleCollider:
   m_ObjectHideFlags: 1

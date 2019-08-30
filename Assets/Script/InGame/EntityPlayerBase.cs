@@ -35,18 +35,19 @@ public class EntityPlayerBase : EntityBase {
         m_Animator = new PlayerAnimator(tf_Model.GetComponent<Animator>());
         transform.Find("InteractDetector").GetComponent<InteractDetector>().Init(OnInteractCheck);
     }
-    public override void OnSpawn(int id,enum_EntityFlag _flag)
-    {
-        base.OnSpawn(id, enum_EntityFlag.Player);
-        CameraController.Attach(this.transform);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnLevelStart, OnLevelStart);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart,OnBattleStart);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
-        SetBinding(true);
-    }
     public void SetPlayerInfo(List<ActionBase> storedActions)
     {
         m_PlayerInfo.InitActionInfo(storedActions);
+    }
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+        CameraController.Attach(this.transform);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnLevelStart, OnLevelStart);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnLevelFinish, OnLevelFinish);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
+        SetBinding(true);
     }
     protected override void OnDead()
     {
@@ -67,11 +68,10 @@ public class EntityPlayerBase : EntityBase {
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnLevelStart, OnLevelStart);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnLevelFinish, OnLevelFinish);
     }
-    void OnLevelStart()
-    {
-        m_Interact = null;
-    }
+    void OnLevelStart()=> m_Interact = null;
+    void OnLevelFinish()=> m_Equipment = null;
     void OnBattleStart()
     {
         m_PlayerInfo.OnBattleStart();

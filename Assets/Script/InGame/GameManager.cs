@@ -642,6 +642,14 @@ public static class ObjectManager
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntitySpawn, entity);
         return entity;
     }
+    public static EntityAISub SpawnSubEntity(int index, Vector3 toPosition,int spanwer, enum_EntityFlag _flag)
+    {
+        EntityAISub entity = SpawnEntity(index, toPosition, _flag) as EntityAISub;
+        if (entity == null)
+            Debug.LogError("Entity ID:" + index + " was not a Sub Entity(EntityAISub)");
+        entity.OnRegister(spanwer);
+        return entity;
+    }
     public static EntityPlayerBase SpawnPlayer(CPlayerGameSave playerSave)
     {
         EntityPlayerBase player = SpawnEntity(0,Vector3.zero, enum_EntityFlag.Player) as EntityPlayerBase;

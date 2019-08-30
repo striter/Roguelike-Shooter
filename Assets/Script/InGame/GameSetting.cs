@@ -58,21 +58,25 @@ namespace GameSetting
             {
                 default: return StageInteractGenerate.Create(0,new Dictionary<enum_RarityLevel, int>(),new List<CoinsGenerateInfo>());
                 case enum_StageLevel.Rookie: return StageInteractGenerate.Create(20, new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },
-                    new List<CoinsGenerateInfo>() {CoinsGenerateInfo.Create( enum_EntityType.Fighter,10,new RangeInt(5,1)),
+                    new List<CoinsGenerateInfo>() { CoinsGenerateInfo.Create( enum_EntityType.SubHidden,0,new RangeInt(0,0)),
+                    CoinsGenerateInfo.Create( enum_EntityType.Fighter,10,new RangeInt(5,1)),
                     CoinsGenerateInfo.Create( enum_EntityType.Shooter_Rookie,10,new RangeInt(5,1)),
                     CoinsGenerateInfo.Create( enum_EntityType.Shooter_Veteran,10,new RangeInt(5,1)),
                     CoinsGenerateInfo.Create( enum_EntityType.AOECaster,10,new RangeInt(5,1)),
                     CoinsGenerateInfo.Create( enum_EntityType.Elite,10,new RangeInt(5,1)) });
                 case enum_StageLevel.Veteran:
                     return StageInteractGenerate.Create(20, new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },
-                    new List<CoinsGenerateInfo>() {CoinsGenerateInfo.Create( enum_EntityType.Fighter,10,new RangeInt(5,1)),
+                    new List<CoinsGenerateInfo>() {CoinsGenerateInfo.Create( enum_EntityType.SubHidden,0,new RangeInt(0,0)),
+                    CoinsGenerateInfo.Create( enum_EntityType.Fighter,10,new RangeInt(5,1)),
                     CoinsGenerateInfo.Create( enum_EntityType.Shooter_Rookie,10,new RangeInt(5,1)),
                     CoinsGenerateInfo.Create( enum_EntityType.Shooter_Veteran,10,new RangeInt(5,1)),
                     CoinsGenerateInfo.Create( enum_EntityType.AOECaster,10,new RangeInt(5,1)),
                     CoinsGenerateInfo.Create( enum_EntityType.Elite,10,new RangeInt(5,1))});
                 case enum_StageLevel.Ranger:
                     return StageInteractGenerate.Create(20, new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },
-                    new List<CoinsGenerateInfo>() {CoinsGenerateInfo.Create( enum_EntityType.Fighter,10,new RangeInt(5,1)),
+                    new List<CoinsGenerateInfo>() {
+                    CoinsGenerateInfo.Create( enum_EntityType.SubHidden,0,new RangeInt(0,0)),
+                    CoinsGenerateInfo.Create(enum_EntityType.Fighter,10,new RangeInt(5,1)),
                     CoinsGenerateInfo.Create( enum_EntityType.Shooter_Rookie,10,new RangeInt(5,1)),
                     CoinsGenerateInfo.Create( enum_EntityType.Shooter_Veteran,10,new RangeInt(5,1)),
                     CoinsGenerateInfo.Create( enum_EntityType.AOECaster,10,new RangeInt(5,1)),
@@ -164,6 +168,7 @@ namespace GameSetting
     enum enum_BC_GameStatus
     {
         Invalid = -1,
+
         OnEntitySpawn,
         OnEntityDamage,
         OnEntityDead,
@@ -177,7 +182,6 @@ namespace GameSetting
         OnBattleFinish,
         OnWaveStart,     //Battle Wave
         OnWaveFinish,
-
     }
 
     enum enum_BC_UIStatus
@@ -215,7 +219,7 @@ namespace GameSetting
 
     public enum enum_LevelGenerateType { Invalid = -1, Big = 1, Small = 2 }
 
-    public enum enum_EntityType { Invalid = -1,Hidden=0, Fighter = 1, Shooter_Rookie = 2,Shooter_Veteran=3, AOECaster = 4, Elite = 5 }
+    public enum enum_EntityType { Invalid = -1,SubHidden=0, Fighter = 1, Shooter_Rookie = 2,Shooter_Veteran=3, AOECaster = 4, Elite = 5 }
 
     public enum enum_Interaction { Invalid = -1,Portal=1,ActionChest=2, WeaponContainer=3,Coin=11,Health=12}      //To Be Continued
 
@@ -734,7 +738,7 @@ namespace GameSetting
     }
     #endregion
 
-    #region BuffManager
+    #region Entity Info Manager
     public class EntityInfoManager
     {
         protected EntityBase m_Entity { get; private set; }
@@ -754,29 +758,21 @@ namespace GameSetting
 
         float f_stunCheck = 0;
         public bool B_Stunned => f_stunCheck > 0;
-        bool damageOverride = false;
-        DamageDeliverInfo m_DamageBuffOverride;
-        public void AddDamageOverride(DamageDeliverInfo _damageOverride)
-        {
-            damageOverride = true;
-            m_DamageBuffOverride = _damageOverride;
-        }
 
-        public virtual DamageDeliverInfo GetDamageBuffInfo() => damageOverride ? m_DamageBuffOverride:DamageDeliverInfo.DamageInfo(m_Entity.I_EntityID ,F_DamageMultiply);
+        public virtual DamageDeliverInfo GetDamageBuffInfo() => DamageDeliverInfo.DamageInfo(m_Entity.I_EntityID ,F_DamageMultiply);
         Func<DamageInfo, bool> OnReceiveDamage;
         Action OnExpireChange;
         bool b_infoUpdated = false;
         public void EntityInfoChange() => b_infoUpdated = false;
-        public EntityInfoManager(EntityBase _attacher,Func<DamageInfo, bool> _OnReceiveDamage,Action _OnInfoChange)
+        public EntityInfoManager(EntityBase _attacher,Func<DamageInfo, bool> _OnReceiveDamage,Action _OnExpireChange)
         {
             m_Entity = _attacher;
             OnReceiveDamage = _OnReceiveDamage;
-            OnExpireChange = _OnInfoChange;
+            OnExpireChange = _OnExpireChange;
         }
         public virtual void OnActivate()
         {
             f_stunCheck = 0f;
-            damageOverride = false;
             EntityInfoChange();
             OnExpireChange();
         }
@@ -888,87 +884,28 @@ namespace GameSetting
         }
     }
 
-    public class ExpireBase
+    public class EntitySubInfoManager : EntityInfoManager
     {
-        public virtual int m_EffectIndex => -1;
-        public virtual int m_Index => -1;
-        public virtual enum_ExpireType m_ExpireType => enum_ExpireType.Invalid;
-        public virtual enum_ExpireRefreshType m_RefreshType => enum_ExpireRefreshType.Invalid;
-        public virtual float m_MovementSpeedMultiply => 0;
-        public virtual float m_FireRateMultiply => 0;
-        public virtual float m_ReloadRateMultiply => 0;
-        public virtual float m_DamageMultiply => 0;
-        public virtual float m_DamageReduction => 0;
-        public virtual float m_EffectDuration => m_ExpireDuration;
-        public float m_ExpireDuration { get; private set; } = 0;
-        private Action<ExpireBase> OnExpired;
-        public float f_expireCheck { get; private set; }
-        public ExpireBase(float _ExpireDuration)
+        bool damageOverride = false;
+        DamageDeliverInfo m_DamageBuffOverride;
+        public void AddDamageOverride(DamageDeliverInfo _damageOverride)
         {
-            m_ExpireDuration = _ExpireDuration;
-            ExpireRefresh();
+            damageOverride = true;
+            m_DamageBuffOverride = _damageOverride;
         }
-        protected void Activate(Action<ExpireBase> _OnExpired)
-        {
-            OnExpired = _OnExpired;
-        }
-        public void ExpireRefresh()
-        {
-            f_expireCheck = m_ExpireDuration;
-        }
-        public virtual void OnTick(float deltaTime)
-        {
-            if (m_ExpireDuration <= 0)
-                return;
 
-            f_expireCheck -= deltaTime;
-            if (f_expireCheck <= 0)
-                OnExpired(this);
-        }
-        protected void ForceExpire()=>OnExpired(this);
-    }
-
-
-    public class BuffBase:ExpireBase
-    {
-        public override enum_ExpireType m_ExpireType => enum_ExpireType.Buff;
-        public override int m_EffectIndex => m_buffInfo.m_EffectIndex;
-        public override enum_ExpireRefreshType m_RefreshType => m_buffInfo.m_AddType;
-        public override float m_DamageMultiply => m_buffInfo.m_DamageMultiply;
-        public override float m_DamageReduction => m_buffInfo.m_DamageReduction;
-        public override int m_Index => m_buffInfo.m_Index;
-        public override float m_FireRateMultiply => m_buffInfo.m_FireRateMultiply;
-        public override float m_MovementSpeedMultiply => m_buffInfo.m_MovementSpeedMultiply;
-        public override float m_ReloadRateMultiply => m_buffInfo.m_ReloadRateMultiply;
-        public float m_StunDuration => m_buffInfo.m_Stun?m_buffInfo.m_ExpireDuration:0f;
-        SBuff m_buffInfo;
-        Func<DamageInfo, bool> OnDOTDamage;
-        int I_SourceID;
-        float  f_dotCheck;
-        public BuffBase(int sourceID,SBuff _buffInfo, Func<DamageInfo, bool> _OnDOTDamage, Action<ExpireBase> _OnExpired) :base(_buffInfo.m_ExpireDuration)
+        public override DamageDeliverInfo GetDamageBuffInfo() => damageOverride ? m_DamageBuffOverride : base.GetDamageBuffInfo();
+        public override void OnActivate()
         {
-            I_SourceID = sourceID;
-            m_buffInfo = _buffInfo;
-            OnDOTDamage = _OnDOTDamage;
-            base.Activate(_OnExpired);
+            base.OnActivate();
+            damageOverride = false;
         }
-        public override void OnTick(float deltaTime)
+        public EntitySubInfoManager(EntityBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
         {
-            base.OnTick(deltaTime);
-            if (m_buffInfo.m_DamageTickTime <= 0)
-                return;
-            f_dotCheck += deltaTime;
-            if (f_dotCheck > m_buffInfo.m_DamageTickTime)
-            {
-                f_dotCheck -= m_buffInfo.m_DamageTickTime;
-                OnDOTDamage(new DamageInfo(m_buffInfo.m_DamagePerTick, m_buffInfo.m_DamageType, DamageDeliverInfo.Default(I_SourceID)));
-            }
+
         }
     }
 
-    #endregion
-
-    #region ActionManager
     public class PlayerInfoManager : EntityInfoManager
     {
         EntityPlayerBase m_Player;
@@ -990,7 +927,7 @@ namespace GameSetting
         Action OnActionChange;
 
         public int m_Coins { get; private set; } = 0;
-        public PlayerInfoManager(EntityPlayerBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnInfoChange,Action _OnActionChange) : base(_attacher, _OnReceiveDamage, _OnInfoChange)
+        public PlayerInfoManager(EntityPlayerBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange, Action _OnActionChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
         {
             m_Player = _attacher;
             OnActionChange = _OnActionChange;
@@ -1090,12 +1027,12 @@ namespace GameSetting
             }, true);
             return info;
         }
-        public void OnAttachWeapon(WeaponBase weapon)=> weapon.m_WeaponAction.Traversal((ActionBase action) => { OnUseAcion(action); });
-        public void OnDetachWeapon()=>  m_ActionEquiping.Traversal((ActionBase action) => { action.OnWeaponDetach(); },true);
+        public void OnAttachWeapon(WeaponBase weapon) => weapon.m_WeaponAction.Traversal((ActionBase action) => { OnUseAcion(action); });
+        public void OnDetachWeapon() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnWeaponDetach(); }, true);
         public void OnReloadFinish() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnReloadFinish(); });
         void OnEntityApplyDamage(DamageDeliverInfo damageInfo, EntityBase damageEntity, float amountApply)
         {
-            m_AfterFire.Traversal((ActionAfterFire action) => {if (action.OnActionHitEntity(damageInfo.I_IdentiyID, damageEntity))  m_AfterFire.Remove(action); }, true);
+            m_AfterFire.Traversal((ActionAfterFire action) => { if (action.OnActionHitEntity(damageInfo.I_IdentiyID, damageEntity)) m_AfterFire.Remove(action); }, true);
 
             if (damageInfo.I_SourceID == m_Player.I_EntityID)
             {
@@ -1157,6 +1094,88 @@ namespace GameSetting
         }
         #endregion
     }
+
+    #endregion
+
+    #region Expires
+
+    public class ExpireBase
+    {
+        public virtual int m_EffectIndex => -1;
+        public virtual int m_Index => -1;
+        public virtual enum_ExpireType m_ExpireType => enum_ExpireType.Invalid;
+        public virtual enum_ExpireRefreshType m_RefreshType => enum_ExpireRefreshType.Invalid;
+        public virtual float m_MovementSpeedMultiply => 0;
+        public virtual float m_FireRateMultiply => 0;
+        public virtual float m_ReloadRateMultiply => 0;
+        public virtual float m_DamageMultiply => 0;
+        public virtual float m_DamageReduction => 0;
+        public virtual float m_EffectDuration => m_ExpireDuration;
+        public float m_ExpireDuration { get; private set; } = 0;
+        private Action<ExpireBase> OnExpired;
+        public float f_expireCheck { get; private set; }
+        public ExpireBase(float _ExpireDuration)
+        {
+            m_ExpireDuration = _ExpireDuration;
+            ExpireRefresh();
+        }
+        protected void Activate(Action<ExpireBase> _OnExpired)
+        {
+            OnExpired = _OnExpired;
+        }
+        public void ExpireRefresh()
+        {
+            f_expireCheck = m_ExpireDuration;
+        }
+        public virtual void OnTick(float deltaTime)
+        {
+            if (m_ExpireDuration <= 0)
+                return;
+
+            f_expireCheck -= deltaTime;
+            if (f_expireCheck <= 0)
+                OnExpired(this);
+        }
+        protected void ForceExpire() => OnExpired(this);
+    }
+
+    public class BuffBase : ExpireBase
+    {
+        public override enum_ExpireType m_ExpireType => enum_ExpireType.Buff;
+        public override int m_EffectIndex => m_buffInfo.m_EffectIndex;
+        public override enum_ExpireRefreshType m_RefreshType => m_buffInfo.m_AddType;
+        public override float m_DamageMultiply => m_buffInfo.m_DamageMultiply;
+        public override float m_DamageReduction => m_buffInfo.m_DamageReduction;
+        public override int m_Index => m_buffInfo.m_Index;
+        public override float m_FireRateMultiply => m_buffInfo.m_FireRateMultiply;
+        public override float m_MovementSpeedMultiply => m_buffInfo.m_MovementSpeedMultiply;
+        public override float m_ReloadRateMultiply => m_buffInfo.m_ReloadRateMultiply;
+        public float m_StunDuration => m_buffInfo.m_Stun ? m_buffInfo.m_ExpireDuration : 0f;
+        SBuff m_buffInfo;
+        Func<DamageInfo, bool> OnDOTDamage;
+        int I_SourceID;
+        float f_dotCheck;
+        public BuffBase(int sourceID, SBuff _buffInfo, Func<DamageInfo, bool> _OnDOTDamage, Action<ExpireBase> _OnExpired) : base(_buffInfo.m_ExpireDuration)
+        {
+            I_SourceID = sourceID;
+            m_buffInfo = _buffInfo;
+            OnDOTDamage = _OnDOTDamage;
+            base.Activate(_OnExpired);
+        }
+        public override void OnTick(float deltaTime)
+        {
+            base.OnTick(deltaTime);
+            if (m_buffInfo.m_DamageTickTime <= 0)
+                return;
+            f_dotCheck += deltaTime;
+            if (f_dotCheck > m_buffInfo.m_DamageTickTime)
+            {
+                f_dotCheck -= m_buffInfo.m_DamageTickTime;
+                OnDOTDamage(new DamageInfo(m_buffInfo.m_DamagePerTick, m_buffInfo.m_DamageType, DamageDeliverInfo.Default(I_SourceID)));
+            }
+        }
+    }
+
     public class ActionBase : ExpireBase
     {
         public override enum_ExpireType m_ExpireType => enum_ExpireType.Action;
@@ -1486,7 +1505,7 @@ namespace GameSetting
             if (buffApply)
                 weapon = new BuffApply(buffApply, _entity, tf_Barrel, GetDamageBuffInfo);
 
-            SFXEntitySpawner entitySpawner = weaponInfo as SFXEntitySpawner;
+            SFXSubEntitySpawner entitySpawner = weaponInfo as SFXSubEntitySpawner;
             if (entitySpawner)
                 weapon = new EquipmentEntitySpawner(entitySpawner, _entity, tf_Barrel, GetDamageBuffInfo);
 
@@ -1670,7 +1689,7 @@ namespace GameSetting
 
     public class EquipmentEntitySpawner : EquipmentBase
     {
-        public EquipmentEntitySpawner(SFXEntitySpawner spawner, EntityBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(spawner, _controller, _transform, _GetBuffInfo)
+        public EquipmentEntitySpawner(SFXSubEntitySpawner spawner, EntityBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(spawner, _controller, _transform, _GetBuffInfo)
         {
         }
         Action<EntityBase> OnSpawn;
@@ -1680,7 +1699,7 @@ namespace GameSetting
         }
         public override void Play(EntityBase _target, Vector3 _calculatedPosition)
         {
-            ObjectManager.SpawnEquipment<SFXEntitySpawner>(i_weaponIndex, transformBarrel.position, Vector3.up).Play(m_Entity.I_EntityID, m_Entity.m_Flag,GetDamageDeliverInfo(),OnSpawn);
+            ObjectManager.SpawnEquipment<SFXSubEntitySpawner>(i_weaponIndex, transformBarrel.position, Vector3.up).Play(m_Entity.I_EntityID, m_Entity.m_Flag,GetDamageDeliverInfo(),m_Entity.I_EntityID,OnSpawn);
         }
     }
     #endregion
