@@ -25,7 +25,7 @@ public class InteractTrade : InteractBase {
     protected override bool B_CanInteract(EntityPlayerBase _interactor) => _interactor.m_PlayerInfo.m_Coins >= m_TradePrice;
     public override bool TryInteract(EntityPlayerBase _interactor)
     {
-        if (!m_InteractTarget.TryInteract(_interactor))
+        if (!B_CanInteract(_interactor)||!m_InteractTarget.TryInteract(_interactor))
             return false;
         return base.TryInteract(_interactor);
     }

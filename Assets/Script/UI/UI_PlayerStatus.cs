@@ -18,6 +18,7 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
     EntityPlayerBase m_Player;
     float f_ammoGridLength;
 
+    enum_Interaction m_lastInteract;
     Transform tf_InteractData;
     UIT_TextLocalization txt_interactName;
     UIT_TextLocalization txt_interactPrice;
@@ -75,6 +76,7 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
         if (_player.m_Interact==null)
         {
             tf_InteractData.SetActivate(false);
+            m_lastInteract = enum_Interaction.Invalid;
             return;
         }
 
@@ -94,6 +96,9 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
     }
     void SetInteractInfo(InteractBase interact)
     {
+        if (m_lastInteract == interact.m_InteractType)
+            return;
+        m_lastInteract = interact.m_InteractType;
         m_ActionData.SetActivate(false);
         switch (interact.m_InteractType)
         {
