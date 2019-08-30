@@ -25,20 +25,15 @@ public class UIT_TextLocalization : Text
 
     void OnKeyLocalize()
     {
-        base.text = TLocalization.GetKeyLocalized(LocalizeKey);
+        text = TLocalization.GetKeyLocalized(LocalizeKey);
     }
-    public string formatText(string baseFormat, params object[] subItems) => base.text = string.Format(TLocalization.GetKeyLocalized(baseFormat), subItems);
-    public override string text
-    {
-        get
-        {
-            return base.text;
-        }
 
+    public string formatText(string formatKey, params object[] subItems) => base.text = string.Format(TLocalization.GetKeyLocalized(formatKey), subItems);
+    public string localizeText
+    {
         set
         {
-            LocalizeKey = value;
-            OnKeyLocalize();
+            text = TLocalization.GetKeyLocalized(value);
         }
     }
 }

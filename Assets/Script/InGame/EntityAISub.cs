@@ -4,7 +4,7 @@ using GameSetting;
 using UnityEngine;
 
 public class EntityAISub : EntityAIBase {
-    int m_SpawnerEntityID = -1;
+    public int m_SpawnerEntityID { get; private set; }
     public EntitySubInfoManager m_SubInfo { get; private set; }
     protected override EntityInfoManager GetEntityInfo()
     {

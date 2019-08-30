@@ -72,7 +72,7 @@ public class LevelBase : MonoBehaviour {
                 index++;
             }
         }
-        ClearTileForInteract();
+        TryClearCenterTile();
         GenerateBorderTile(m_IndexBorder);
         GenerateRandomMainTile(_innerData,m_IndexEmptyInner);
         GenerateRandomMainTile(_outerData, m_IndexEmptyOuter);
@@ -98,9 +98,9 @@ public class LevelBase : MonoBehaviour {
             itemMain.Init(this, main.m_ItemDirection);
         }
     }
-    void ClearTileForInteract()
+    void TryClearCenterTile()
     {
-        if (m_levelType != enum_TileType.Start)
+        if (m_levelType!= enum_TileType.Start&&m_levelType!= enum_TileType.Trader)
             return;
 
         TileAxis startAxis = TileAxis.Zero + new TileAxis(-3 / 2, -3 / 2);

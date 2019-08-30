@@ -303,10 +303,7 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
             Debug.LogError("Null Shader Found!");
         m_GaussianBlur = new PE_GaussianBlur();
         GameObject temp = new GameObject("Render Camera");
-        temp.transform.SetParent(m_Manager.m_Camera.transform);
-        temp.transform.localPosition = Vector3.zero;
-        temp.transform.localRotation = Quaternion.identity;
-        temp.transform.localScale = Vector3.one;
+        temp.transform.SetParentResetTransform(m_Manager.m_Camera.transform);
         m_RenderCamera = temp.AddComponent<Camera>();
         m_RenderCamera.clearFlags = CameraClearFlags.SolidColor;
         m_RenderCamera.backgroundColor = Color.black;

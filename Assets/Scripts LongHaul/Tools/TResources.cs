@@ -21,7 +21,7 @@ public class TResources
         public const string S_SFXEquipment = "Equipment/";
         public const string S_InteractPortal = "Interact/Portal_";
         public const string S_InteractActionChest = "Interact/ActionChest_";
-        public const string S_Interact = "Interact/";
+        public const string S_InteractCommon = "Interact/Interact_";
 
         public const string S_PETex_NoiseFog = "Texture/PE_NoiseFog";
         public const string S_PETex_Holograph = "Texture/PE_Holograph";
@@ -115,7 +115,7 @@ public class TResources
     }
     public static InteractBase GetInteractPortal(enum_Style portalStyle) => Instantiate<InteractBase>( ConstPath.S_InteractPortal + portalStyle.ToString());
     public static InteractBase GetInteractActionChest(enum_StageLevel stageLevel) => Instantiate<InteractBase>(ConstPath.S_InteractActionChest + stageLevel.ToString());
-    public static InteractBase GetInteract(enum_Interaction type) => Instantiate<InteractBase>(ConstPath.S_Interact + type);
+    public static InteractBase GetInteract(enum_Interaction type) => Instantiate<InteractBase>(ConstPath.S_InteractCommon + type);
     #region Will Be Replaced By AssetBundle If Needed
     public static T Instantiate<T>(string path, Transform toParent = null) where T : UnityEngine.Object
     {

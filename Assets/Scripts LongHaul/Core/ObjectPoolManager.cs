@@ -83,10 +83,7 @@ public class ObjectPoolManager<T,Y> where Y:MonoBehaviour {
             info.OnItemInstantiate?.Invoke(item);
         }
         info.l_Active.Add(item);
-        item.transform.SetParent(toTrans==null? PoolParent.tf_PoolSpawn : toTrans);
-        item.transform.localPosition = Vector3.zero;
-        item.transform.localRotation = Quaternion.identity;
-        item.transform.localScale = Vector3.one;
+        item.transform.SetParentResetTransform(toTrans == null ? PoolParent.tf_PoolSpawn : toTrans);
         item.SetActivate(true);
         return item;
     }
@@ -110,7 +107,7 @@ public class ObjectPoolManager<T,Y> where Y:MonoBehaviour {
         {
             if (info.l_Deactive.Count >= info.i_poolSaveAmount)
             {
-                GameObject.Destroy(obj);
+                GameObject.Destroy(obj.gameObject);
             }
             else
             {

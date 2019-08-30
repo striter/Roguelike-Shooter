@@ -18,10 +18,10 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
     EntityPlayerBase m_Player;
     float f_ammoGridLength;
 
-    Transform tf_WeaponData;
-    WeaponBase m_targetWeapon;
-    Text txt_WeaponName;
-    UIGI_ActionSelectItem m_weaponActionData;
+    Transform tf_InteractData;
+    UIT_TextLocalization txt_interactName;
+    UIT_TextLocalization txt_interactPrice;
+    UIGI_ActionSelectItem m_ActionData;
     protected override void Awake()
     {
         base.Awake();
@@ -42,10 +42,11 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
         btn_ActionStorage.onClick.AddListener(OnActionStorageClick);
         m_ExpireGrid = new UIT_GridControllerMono<UIGI_ExpireInfoItem>(tf_Left.Find("ExpireGrid"));
 
-        tf_WeaponData = tf_Container.Find("WeaponData");
-        txt_WeaponName = tf_WeaponData.Find("Container/WeaponName").GetComponent<Text>();
-        m_weaponActionData = tf_WeaponData.Find("Container/ActionData").GetComponent<UIGI_ActionSelectItem>();
-        m_weaponActionData.SetGridControlledItem(0, null);
+        tf_InteractData = tf_Container.Find("InteractData");
+        txt_interactName = tf_InteractData.Find("Container/InteractName").GetComponent<UIT_TextLocalization>();
+        txt_interactPrice = tf_InteractData.Find("Container/InteractPrice").GetComponent<UIT_TextLocalization>();
+        m_ActionData = tf_InteractData.Find("Container/ActionData").GetComponent<UIGI_ActionSelectItem>();
+        m_ActionData.SetGridControlledItem(0, null);
     }
     private void Start()
     {
@@ -63,46 +64,70 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
         TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerExpireStatus, OnExpireStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerActionStatus, OnActionStatus);
     }
+    #region PlayerData/Interact
     void OnCommonStatus(EntityPlayerBase _player)
     {
         if (!m_Player)
             m_Player = _player;
         txt_ActionAmount.text = _player.m_PlayerInfo.m_ActionHolding.Count == 0 ? _player.m_PlayerInfo.m_ActionStored.Count.ToString() : _player.m_PlayerInfo.m_ActionAmount.ToString();
         tf_PlayerData.position = Vector3.Lerp(tf_PlayerData.position, CameraController.MainCamera.WorldToScreenPoint(m_Player.tf_Head.position), Time.deltaTime * 10f);
-
         
-        if (_player.m_Interact==null||_player.m_Interact.m_InteractType != enum_Interaction.WeaponContainer)
+        if (_player.m_Interact==null)
         {
-            m_targetWeapon = null;
-            tf_WeaponData.SetActivate(false);
+            tf_InteractData.SetActivate(false);
             return;
         }
-        if (tf_WeaponData.SetActivate(true))
-            tf_WeaponData.position = CameraController.MainCamera.WorldToScreenPoint(_player.m_Interact.transform.position);
-        tf_WeaponData.position = Vector3.Lerp(tf_WeaponData.position, CameraController.MainCamera.WorldToScreenPoint(_player.m_Interact.transform.position), Time.deltaTime * 10f);
 
-        WeaponBase targetWeapon = (_player.m_Interact as InteractWeaponContainer).m_Weapon;
-        if (m_targetWeapon == targetWeapon)
-            return;
+        if (tf_InteractData.SetActivate(true))
+            tf_InteractData.position = CameraController.MainCamera.WorldToScreenPoint(_player.m_Interact.transform.position);
+            tf_InteractData.position = Vector3.Lerp(tf_InteractData.position, CameraController.MainCamera.WorldToScreenPoint(_player.m_Interact.transform.position), Time.deltaTime * 10f);
 
-        m_targetWeapon = targetWeapon;
-        txt_WeaponName.text = m_targetWeapon.m_WeaponInfo.m_Weapon.GetNameLocalizeKey();
-
-        if (m_targetWeapon.m_WeaponAction.Count > 0)
+        bool isTradeItem = _player.m_Interact.m_InteractType == enum_Interaction.Trade;
+        txt_interactPrice.SetActivate(isTradeItem);
+        if (isTradeItem)
         {
-            m_weaponActionData.SetInfo(m_targetWeapon.m_WeaponAction[0]);
-            m_weaponActionData.SetActivate(true);
+            txt_interactPrice.text = (_player.m_Interact as InteractTrade).m_TradePrice.ToString();
+            SetInteractInfo((_player.m_Interact as InteractTrade).m_InteractTarget);
         }
         else
-            m_weaponActionData.SetActivate(false);
+            SetInteractInfo(_player.m_Interact);
     }
-
+    void SetInteractInfo(InteractBase interact)
+    {
+        m_ActionData.SetActivate(false);
+        switch (interact.m_InteractType)
+        {
+            case enum_Interaction.Action:
+                {
+                    m_ActionData.SetActivate(true);
+                    txt_interactName.localizeText = interact.m_InteractType.GetInteractTitle();
+                    m_ActionData.SetInfo((interact as InteractAction).m_Action);
+                }
+                break;
+            case enum_Interaction.Weapon:
+                {
+                    WeaponBase weapon = (interact as InteractWeaponContainer).m_Weapon;
+                    txt_interactName.localizeText = weapon.m_WeaponInfo.m_Weapon.GetNameLocalizeKey();
+                    
+                    m_ActionData.SetActivate(weapon.m_WeaponAction.Count > 0);      //Test
+                    if (weapon.m_WeaponAction.Count > 0)        //Test
+                        m_ActionData.SetInfo(weapon.m_WeaponAction[0]);     //Test????
+                }
+                break;
+            default:
+                txt_interactName.localizeText = interact.m_InteractType.GetInteractTitle();
+                break;
+        }
+    }
+    #endregion
+    #region Health
     void OnHealthStatus(EntityHealth _healthManager)
     {
         txt_Health.text = ((int)_healthManager.m_CurrentHealth).ToString() + "/" + ((int)_healthManager.m_MaxHealth).ToString();
         txt_Armor.text = ((int)_healthManager.m_CurrentArmor).ToString() + "/" + ((int)_healthManager.m_DefaultArmor).ToString();
     }
-
+    #endregion
+    #region Ammo
     void OnAmmoStatus(WeaponBase weaponInfo)
     {
         m_AmmoGrid.transform.SetActivate(weaponInfo != null);
@@ -143,7 +168,8 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
             img_sld.color = ammoStatusColor;
         }
     }
-
+    #endregion
+    #region Action/Expire
     void OnActionStatus(PlayerInfoManager actionInfo)
     {
         m_ActionGrid.ClearGrid();
@@ -166,4 +192,5 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
         for (int i = 0; i < expireInfo.m_Expires.Count; i++)
             m_ExpireGrid.AddItem(i).SetInfo(expireInfo.m_Expires[i]);
     }
+    #endregion
 }

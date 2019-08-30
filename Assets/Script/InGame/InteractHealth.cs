@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class InteractHealth : InteractBase {
-    public override bool B_InteractOnTrigger => true;
-    protected override bool B_RecycleOnInteract => true;
+public class InteractHealth : InteractPickup {
     public override enum_Interaction m_InteractType => enum_Interaction.Health;
     protected override bool B_CanInteract(EntityPlayerBase _interactor) => _interactor.m_HealthManager.F_HealthScale < 1;
-    public float m_healAmount;
-    public void Play(float _healthAmount)
+    public float m_healAmount { get; private set; }
+    public InteractHealth Play(float _healthAmount)
     {
+        base.Play();
         m_healAmount = _healthAmount;
+        return this;
     }
     protected override void OnInteractSuccessful(EntityPlayerBase _interactTarget)
     {

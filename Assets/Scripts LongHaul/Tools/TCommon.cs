@@ -48,6 +48,13 @@ public static class TCommon
             }
         }
     }
+    public static void SetParentResetTransform(this Transform source,Transform target)
+    {
+        source.SetParent(target);
+        source.transform.localPosition = Vector3.zero;
+        source.transform.localScale = Vector3.one;
+        source.transform.localRotation = Quaternion.identity;
+    }
     public static void SetChildLayer(this Transform trans, int layer)
     {
         foreach (Transform temp in trans.gameObject.GetComponentsInChildren<Transform>(true))
@@ -226,7 +233,7 @@ public static class TCommon
             for (int j = 0; j < array.GetLength(1); j++)
                 OnEachItem(array[i, j]);
     }
-    public static void TraversalEnum<T>(Action<T, int> enumAction)    //Can't Constraint T to System.Enum?
+    public static void TraversalEnum<T>(Action<T, int> enumAction)     //Can't Constraint T to System.Enum?
     {
         if (!typeof(T).IsSubclassOf(typeof(Enum)))
         {

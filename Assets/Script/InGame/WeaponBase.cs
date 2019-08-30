@@ -77,10 +77,7 @@ public class WeaponBase : MonoBehaviour {
     public void OnAttach(EntityPlayerBase _attacher,Transform _attachTo,Action<Vector2> _OnFireRecoil,Action<bool,float> _OnReload)
     {
         m_Attacher = _attacher;
-        transform.SetParent(_attachTo);
-        transform.localPosition = Vector3.zero;
-        transform.localRotation = Quaternion.identity;
-        transform.localScale = Vector3.one;
+        transform.SetParentResetTransform(_attachTo);
         OnFireRecoil = _OnFireRecoil;
         OnReload = _OnReload;
     }

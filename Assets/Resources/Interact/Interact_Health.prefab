@@ -88,9 +88,9 @@ GameObject:
   - component: {fileID: 114958648815793290}
   - component: {fileID: 114607963659347156}
   - component: {fileID: 135571881101140752}
-  - component: {fileID: 111466230980232930}
+  - component: {fileID: 111135547001784680}
   m_Layer: 0
-  m_Name: Health
+  m_Name: Interact_Health
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -131,40 +131,40 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1199128515786998}
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: 0.6830127, y: 0.1830127, z: 0.1830127, w: 0.6830127}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.4}
   m_Children: []
   m_Father: {fileID: 4154515637040050}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 60, y: 90, z: 90}
 --- !u!4 &4877759695284958
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1078501447052022}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0.2588191, w: 0.9659258}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.4}
   m_Children: []
   m_Father: {fileID: 4154515637040050}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 30}
 --- !u!4 &4993919951349172
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1612678412517464}
-  m_LocalRotation: {x: 0, y: 0, z: 0.60876137, w: 0.7933534}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4154515637040050}
   m_Father: {fileID: 4192264963926868}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 75}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &23531435934804774
 MeshRenderer:
   m_ObjectHideFlags: 1
@@ -271,7 +271,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!111 &111466230980232930
+--- !u!111 &111135547001784680
 Animation:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -279,9 +279,9 @@ Animation:
   m_GameObject: {fileID: 1869712059222912}
   m_Enabled: 1
   serializedVersion: 3
-  m_Animation: {fileID: 7400000, guid: 9a458626e739506468aa6d2bef030373, type: 2}
+  m_Animation: {fileID: 7400000, guid: 98bb9d248ef87a845a8ae56ba67f4d80, type: 2}
   m_Animations:
-  - {fileID: 7400000, guid: 9a458626e739506468aa6d2bef030373, type: 2}
+  - {fileID: 7400000, guid: 98bb9d248ef87a845a8ae56ba67f4d80, type: 2}
   m_WrapMode: 0
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
@@ -308,7 +308,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 176ab128b4385de4a949916ddfa69e34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_healAmount: 0
 --- !u!135 &135571881101140752
 SphereCollider:
   m_ObjectHideFlags: 1

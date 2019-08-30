@@ -173,7 +173,7 @@ public class EntityPlayerBase : EntityBase {
     #region PlayerInteract
     public void OnInteractCheck(InteractBase interactTarget, bool isEnter)
     {
-        if (!interactTarget.B_Interactable(this))
+        if (!interactTarget.B_Interactable)
             return;
 
         if (interactTarget.B_InteractOnTrigger)
@@ -184,7 +184,7 @@ public class EntityPlayerBase : EntityBase {
 
         if (isEnter)
             m_Interact = interactTarget;
-        else if (m_Interact = interactTarget)
+        else if (m_Interact == interactTarget)
             m_Interact = null;
     }
     public void OnInteract(bool down)
@@ -195,7 +195,7 @@ public class EntityPlayerBase : EntityBase {
             return;
         }
 
-        if (down && m_Interact.TryInteract(this)&&!m_Interact.B_Interactable(this))
+        if (down && m_Interact.TryInteract(this)&&!m_Interact.B_Interactable)
             m_Interact = null;
     }
     #endregion

@@ -6,7 +6,7 @@ using GameSetting;
 using System;
 using TTiles;
 public class UIManager : SingletonMono<UIManager> {
-    Transform tf_Top,tf_Common,tf_Pages;
+    Transform tf_Top,tf_Pages;
     Text txt_Coin,txt_Main;
     public static Action OnReload;
     public static Action<bool> OnMainDown;
@@ -20,7 +20,6 @@ public class UIManager : SingletonMono<UIManager> {
         tf_Top.Find("SporeBtn").GetComponent<Button>().onClick.AddListener(() => { ShowPage<UI_SporeManager>(true); });
         txt_Main = tf_Top.Find("Main/Text").GetComponent<Text>();
         tf_Pages = transform.Find("Pages");
-        tf_Common = transform.Find("Common");
     }
     private void Start()
     {

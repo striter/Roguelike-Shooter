@@ -10,7 +10,7 @@ using LPWAsset;
 public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
     public Transform tf_LevelParent { get; private set; }
     public enum_Style m_StyleCurrent { get; private set; } = enum_Style.Invalid;
-    public static SBigmapLevelInfo m_currentLevel { get; private set; }
+    public SBigmapLevelInfo m_currentLevel { get; private set; }
     public SBigmapLevelInfo[,] m_MapLevelInfo { get; private set; }
     public Light m_DirectionalLight { get; protected set; }
     public System.Random m_mainSeed;
@@ -123,8 +123,8 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         subGenerateTiles.AddRange(mainRoadTiles.GetRange(2, mainRoadTiles.Count - 3));
         if (subGenerateTiles.Count == 3)
         {
-            subGenerateTiles[0].ResetTileType(enum_TileType.Reward);
-            subGenerateTiles[2].ResetTileType(enum_TileType.Reward);
+            subGenerateTiles[0].ResetTileType(enum_TileType.Trader);
+            subGenerateTiles[2].ResetTileType(enum_TileType.Trader);
         }
         else
         {
@@ -132,7 +132,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
             subGenerateTiles.TraversalRandom( (SBigmapTileInfo tile) => {
                 rewardIndex++;
                 if (rewardIndex % 2 == 0)
-                    tile.ResetTileType(enum_TileType.Reward);
+                    tile.ResetTileType(enum_TileType.Trader);
                 return false; }, bigMapSeed);
         }
 
@@ -157,13 +157,13 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         if (subBattleTile!=null)
         TTiles.TTiles.m_FourDirections.TraversalRandom( (enum_TileDirection direction) => {
             SBigmapTileInfo nearbyTile = bigmapTiles.Get(subBattleTile.m_TileAxis.DirectionAxis(direction));
-            if (nearbyTile != null && (nearbyTile.m_TileType== enum_TileType.Reward|| nearbyTile.m_TileType == enum_TileType.Battle))
+            if (nearbyTile != null && (nearbyTile.m_TileType== enum_TileType.Trader|| nearbyTile.m_TileType == enum_TileType.Battle))
                 ConnectTile(subBattleTile,nearbyTile);
             return false; }, bigMapSeed);
 
 
         //Generate Last Reward Tile
-        subGenerateTiles.RemoveAll(p => p.m_TileType == enum_TileType.Reward);
+        subGenerateTiles.RemoveAll(p => p.m_TileType == enum_TileType.Trader);
         SBigmapTileInfo subRewardTile = null;
         subGenerateTiles.TraversalRandom( (SBigmapTileInfo tile) =>
         {
@@ -173,7 +173,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
                 if (targetSubrewardTile != null && targetSubrewardTile.m_TileType == enum_TileType.Invalid)
                 {
                     subRewardTile = targetSubrewardTile;
-                    subRewardTile.ResetTileType(enum_TileType.Reward);
+                    subRewardTile.ResetTileType(enum_TileType.Trader);
                     ConnectTile(subRewardTile, tile);
                 }
                 return subRewardTile!=null;

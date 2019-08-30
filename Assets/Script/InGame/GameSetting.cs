@@ -111,7 +111,7 @@ namespace GameSetting
             {
                 default: color = TCommon.ColorAlpha(Color.blue, .5f); break;
                 case enum_TileType.Battle: color = TCommon.ColorAlpha(Color.red, .5f); break;
-                case enum_TileType.Reward: color = TCommon.ColorAlpha(Color.green, .5f); break;
+                case enum_TileType.Trader: color = TCommon.ColorAlpha(Color.green, .5f); break;
                 case enum_TileType.Start: color = TCommon.ColorAlpha(Color.blue, .5f); break;
                 case enum_TileType.End: color = TCommon.ColorAlpha(Color.black, .5f); break;
             }
@@ -120,6 +120,19 @@ namespace GameSetting
                 case enum_TileLocking.Unlockable: color = TCommon.ColorAlpha(color, .2f); break;
             }
             return color;
+        }
+        public static Color ActionRarityColor(this enum_RarityLevel level)
+        {
+            switch (level) {
+                case enum_RarityLevel.L1:
+                    return Color.green;
+                case enum_RarityLevel.L2:
+                    return Color.blue;
+                case enum_RarityLevel.L3:
+                    return Color.yellow;
+                default:
+                    return Color.magenta;
+            }
         }
     }
 
@@ -135,7 +148,7 @@ namespace GameSetting
                 case enum_TileType.Battle:
                 case enum_TileType.End:
                     return enum_LevelGenerateType.Big;
-                case enum_TileType.Reward:
+                case enum_TileType.Trader:
                 case enum_TileType.Start:
                     return enum_LevelGenerateType.Small;
             }
@@ -159,6 +172,7 @@ namespace GameSetting
         public static string GetIntroLocalizeKey(this ActionBase action) => "Action_Intro_" + action.m_Index;
         public static string GetLocalizeKey(this enum_RarityLevel level) => "Action_Level_" + level;
         public static string GetNameLocalizeKey(this enum_PlayerWeapon weapon) => "Weapon_Name_" + weapon;
+        public static string GetInteractTitle(this enum_Interaction interact) => "Interact_" + interact;
     }
     #endregion
 
@@ -209,7 +223,7 @@ namespace GameSetting
 
     public enum enum_Style { Invalid = -1, Forest = 1, Desert = 2, Iceland = 3, Horde = 4, Undead = 5, }
 
-    public enum enum_TileType { Invalid = -1, Start = 0, Battle = 1, End = 2, Reward = 3, }
+    public enum enum_TileType { Invalid = -1, Start = 0, Battle = 1, End = 2, Trader = 3, }
 
     public enum enum_LevelItemType { Invalid = -1, LargeMore, LargeLess, MediumMore, MediumLess, SmallMore, SmallLess, ManmadeMore, ManmadeLess, NoCollisionMore, NoCollisionLess,BorderLinear,BorderOblique,Portal,}
 
@@ -221,7 +235,7 @@ namespace GameSetting
 
     public enum enum_EntityType { Invalid = -1,SubHidden=0, Fighter = 1, Shooter_Rookie = 2,Shooter_Veteran=3, AOECaster = 4, Elite = 5 }
 
-    public enum enum_Interaction { Invalid = -1,Portal=1,ActionChest=2, WeaponContainer=3,Coin=11,Health=12}      //To Be Continued
+    public enum enum_Interaction { Invalid = -1,Portal=1,ActionChest=2,Trade=10,Coin=11,Health=12,Action=13, Weapon = 14, }      //To Be Continued
 
     public enum enum_TriggerType { Invalid = -1, Single = 1, Auto = 2, Burst = 3, Pull = 4, Store = 5, }
 
@@ -1091,6 +1105,10 @@ namespace GameSetting
         public void OnCoinsReceive(int coinAmount)
         {
             m_Coins += coinAmount;
+        }
+        public void OnCoinsRemoval(int coinAmount)
+        {
+            m_Coins -= coinAmount;
         }
         #endregion
     }
