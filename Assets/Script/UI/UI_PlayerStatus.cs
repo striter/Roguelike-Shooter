@@ -104,6 +104,7 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
             SetInteractWeaponInfo(interact as InteractWeapon);
             return;
         }
+        m_targetWeapon = null;
 
         if (m_lastInteract == interact.m_InteractType)
             return;
@@ -127,6 +128,7 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
     {
         if (m_targetWeapon == interactWeapon.m_Weapon)
             return;
+
         m_targetWeapon = interactWeapon.m_Weapon;
         txt_interactName.localizeText = m_targetWeapon.m_WeaponInfo.m_Weapon.GetNameLocalizeKey();
         m_lastInteract = enum_Interaction.Invalid;
