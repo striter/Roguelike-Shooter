@@ -78,8 +78,8 @@ namespace GameSetting
                 default: return StageInteractGenerate.Create(0,new Dictionary<enum_RarityLevel, int>(),new Dictionary<enum_RarityLevel, int>(),new List<CoinsGenerateInfo>());
                 case enum_StageLevel.Rookie:
                     return StageInteractGenerate.Create(20,
-                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },
-                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },
+                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },    //宝箱等级概率
+                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },    //交易等级概率
                     new List<CoinsGenerateInfo>() { CoinsGenerateInfo.Create( enum_EntityType.SubHidden,0,new RangeInt(0,0)),
                     CoinsGenerateInfo.Create( enum_EntityType.Fighter,10,new RangeInt(5,1)),
                     CoinsGenerateInfo.Create( enum_EntityType.Shooter_Rookie,10,new RangeInt(5,1)),
