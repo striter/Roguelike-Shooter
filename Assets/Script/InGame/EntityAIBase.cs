@@ -403,13 +403,13 @@ public class EntityAIBase : EntityBase {
 
         Vector3 GetUnstuckPosition()
         {
-            return EnviormentManager.NavMeshPosition(m_Entity.transform.position+TCommon.RandomXZSphere(10f));
+            return EnvironmentManager.NavMeshPosition(m_Entity.transform.position+TCommon.RandomXZSphere(10f));
         }
 
         Vector3 GetSamplePosition()
         {
             Vector3 m_SamplePosition= m_Entity.transform.position+ (b_MoveTowardsTarget? v3_TargetDirection : -v3_TargetDirection).normalized*5;
-            return EnviormentManager.NavMeshPosition(m_SamplePosition+TCommon.RandomXZSphere(5f));
+            return EnvironmentManager.NavMeshPosition(m_SamplePosition+TCommon.RandomXZSphere(5f));
         }
 
         bool FrontBlocked() => Physics.SphereCast(new Ray(headTransform.position, headTransform.forward), 1f, 2, GameLayer.Mask.I_Static);

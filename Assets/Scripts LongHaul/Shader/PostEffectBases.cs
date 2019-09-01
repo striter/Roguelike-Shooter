@@ -336,7 +336,7 @@ public class PE_DepthSSAO : PostEffectBase
     public override void OnSetEffect(PostEffectManager _manager)
     {
         base.OnSetEffect(_manager);
-        m_Manager.m_Camera.depthTextureMode |= DepthTextureMode.Depth;
+        m_Manager.m_Camera.depthTextureMode |= DepthTextureMode.DepthNormals;
     }
 }
 public class PE_AreaScanDepth : PostEffectBase

@@ -1619,7 +1619,7 @@ namespace GameSetting
         public EquipmentCasterTarget(SFXCast _castInfo, EntityBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(_castInfo, _controller, _transform, _GetBuffInfo)
         {
         }
-        protected override Vector3 GetTargetPosition(bool preAim, EntityBase _target) => EnviormentManager.NavMeshPosition(_target.transform.position + TCommon.RandomXZSphere(m_Entity.F_AttackSpread));
+        protected override Vector3 GetTargetPosition(bool preAim, EntityBase _target) => EnvironmentManager.NavMeshPosition(_target.transform.position + TCommon.RandomXZSphere(m_Entity.F_AttackSpread));
         public override void Play(EntityBase _target, Vector3 _calculatedPosition)
         {
             ObjectManager.SpawnEquipment<SFXCast>(i_weaponIndex,_calculatedPosition,Vector3.up).Play( GetDamageDeliverInfo());

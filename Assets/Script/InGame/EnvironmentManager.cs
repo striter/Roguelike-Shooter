@@ -7,7 +7,7 @@ using UnityEngine.AI;
 using System;
 using LPWAsset;
 
-public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
+public class EnvironmentManager : SimpleSingletonMono<EnvironmentManager> {
     public Transform tf_LevelParent { get; private set; }
     public enum_Style m_StyleCurrent { get; private set; } = enum_Style.Invalid;
     public SBigmapLevelInfo m_currentLevel { get; private set; }
@@ -49,6 +49,7 @@ public class EnviormentManager : SimpleSingletonMono<EnviormentManager> {
         PostEffectManager.RemoveAllPostEffect();
         PostEffectManager.AddPostEffect<PE_BloomSpecific>().SetEffect(2, 10, 2);
         //PostEffectManager.AddPostEffect<PE_DepthOutline>().SetEffect(Color.black,1.2f,0.0001f);
+        //PostEffectManager.AddPostEffect<PE_DepthSSAO>();
         switch (_levelStyle)
         {
             case enum_Style.Undead:

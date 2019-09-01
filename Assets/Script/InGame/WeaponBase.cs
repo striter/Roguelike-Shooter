@@ -100,9 +100,10 @@ public class WeaponBase : MonoBehaviour {
             return false;
 
         DamageDeliverInfo damageInfo = m_Attacher.m_PlayerInfo.GetDamageBuffInfo();
+        Vector3 spreadDirection = Vector3.zero;
         for (int i = 0; i < m_WeaponInfo.m_PelletsPerShot; i++)
         {
-            Vector3 spreadDirection = GameExpression.V3_RangeSpreadDirection(m_Attacher.tf_Head.forward, m_WeaponInfo.m_Spread, m_Attacher.tf_Head.up, m_Attacher.tf_Head.right);
+            spreadDirection = GameExpression.V3_RangeSpreadDirection(m_Attacher.tf_Head.forward, m_WeaponInfo.m_Spread, m_Attacher.tf_Head.up, m_Attacher.tf_Head.right);
             Vector3 endPosition = m_Attacher.tf_Head.position + spreadDirection * GameConst.I_ProjectileMaxDistance;
             if (Physics.Raycast(m_Attacher.tf_Head.position, spreadDirection, out hit, GameConst.I_ProjectileMaxDistance, GameLayer.Mask.I_All) &&  GameManager.B_DoHitCheck(hit.collider.Detect(),m_Attacher.I_EntityID))
                 endPosition = hit.point;
@@ -114,7 +115,7 @@ public class WeaponBase : MonoBehaviour {
         }
 
         if (I_MuzzleIndex != -1)
-            ObjectManager.SpawnParticles<SFXMuzzle>(I_MuzzleIndex, m_Muzzle.position, m_Muzzle.forward).Play(m_Attacher.I_EntityID);
+            ObjectManager.SpawnParticles<SFXMuzzle>(I_MuzzleIndex, m_Muzzle.position, spreadDirection).Play(m_Attacher.I_EntityID);
 
         I_AmmoLeft--;
         OnFireRecoil?.Invoke(F_Recoil);

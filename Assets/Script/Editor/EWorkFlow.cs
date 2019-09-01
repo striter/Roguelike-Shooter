@@ -31,7 +31,7 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
     static void Init()
     {
         if (EditorApplication.isPlaying)
-            directionalLight = EnviormentManager.Instance.m_DirectionalLight;
+            directionalLight = EnvironmentManager.Instance.m_DirectionalLight;
         else
             directionalLight = GameObject.Find("Enviorment/Directional Light").GetComponent<Light>();
     }
