@@ -183,7 +183,9 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
             case enum_TileType.Battle:
                 {
                     enum_RarityLevel level = m_level.m_actionGenerate.GetActionRarityLevel(m_level.m_GameSeed);
-                    ObjectManager.SpawnInteract<InteractActionChest>( enum_Interaction.ActionChest, EnvironmentManager.NavMeshPosition(interactPos, false), EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(new List<ActionBase> { DataManager.RandomPlayerAction(level, m_level.m_GameSeed), DataManager.RandomPlayerAction(level, m_level.m_GameSeed) });
+                    ActionBase action1 = DataManager.RandomPlayerAction(level, m_level.m_GameSeed);
+                    ActionBase action2 = DataManager.RandomPlayerAction(level, m_level.m_GameSeed, action1.m_Index);
+                    ObjectManager.SpawnInteract<InteractActionChest>( enum_Interaction.ActionChest, EnvironmentManager.NavMeshPosition(interactPos, false), EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(new List<ActionBase> { action1,action2 });
                 }
                 break;
             case enum_TileType.Trader:
