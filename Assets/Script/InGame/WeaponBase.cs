@@ -61,8 +61,6 @@ public class WeaponBase : MonoBehaviour {
 
     protected virtual void OnDisable()
     {;
-        m_Attacher = null;
-        m_WeaponAction = null;
         B_Reloading = false;
         f_reloadCheck = 0;
         f_fireCheck = 0;

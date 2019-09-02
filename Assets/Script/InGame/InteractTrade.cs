@@ -32,6 +32,7 @@ public class InteractTrade : InteractBase {
     protected override void OnInteractSuccessful(EntityPlayerBase _interactTarget)
     {
         base.OnInteractSuccessful(_interactTarget);
+        _interactTarget.m_PlayerInfo.OnCoinsRemoval(m_TradePrice);
         m_InteractTarget.transform.SetParent(transform.parent);
         m_InteractTarget.SetInteractable(true);
         m_InteractTarget = null;
