@@ -927,14 +927,14 @@ namespace GameSetting
     public class EntitySubInfoManager : EntityInfoManager
     {
         bool damageOverride = false;
-        DamageDeliverInfo m_DamageBuffOverride;
-        public void AddDamageOverride(DamageDeliverInfo _damageOverride)
+        Func<DamageDeliverInfo> m_DamageBuffOverride;
+        public void AddDamageOverride(Func<DamageDeliverInfo> _damageOverride)
         {
             damageOverride = true;
             m_DamageBuffOverride = _damageOverride;
         }
 
-        public override DamageDeliverInfo GetDamageBuffInfo() => damageOverride ? m_DamageBuffOverride : base.GetDamageBuffInfo();
+        public override DamageDeliverInfo GetDamageBuffInfo() => damageOverride ? m_DamageBuffOverride() : base.GetDamageBuffInfo();
         public override void OnActivate()
         {
             base.OnActivate();
@@ -1743,7 +1743,7 @@ namespace GameSetting
         }
         public override void Play(EntityBase _target, Vector3 _calculatedPosition)
         {
-            ObjectManager.SpawnEquipment<SFXSubEntitySpawner>(i_weaponIndex, transformBarrel.position, Vector3.up).Play(m_Entity.I_EntityID, m_Entity.m_Flag,GetDamageDeliverInfo(),m_Entity.I_EntityID,OnSpawn);
+            ObjectManager.SpawnEquipment<SFXSubEntitySpawner>(i_weaponIndex, transformBarrel.position, Vector3.up).Play(m_Entity.I_EntityID, m_Entity.m_Flag,GetDamageDeliverInfo,m_Entity.I_EntityID,OnSpawn);
         }
     }
     #endregion

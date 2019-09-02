@@ -17,12 +17,13 @@ public class SFXProjectileCastTrigger : SFXProjectile
     }
     protected override void OnHitTarget(RaycastHit hit, HitCheckBase hitCheck)
     {
-        OnCastTrigger(hit.point);
+        OnCastTrigger(hit.point==Vector3.zero?v3_castPoint:hit.point);
     }
     protected void OnCastTrigger(Vector3 point)
     {
         if (b_trigger)
             return;
+        
         ObjectManager.SpawnEquipment<SFXCast>(GameExpression.GetEquipmentSubIndex(I_SFXIndex),point , Vector3.up).Play(m_DamageInfo.m_detail);
         b_trigger = true;
     }

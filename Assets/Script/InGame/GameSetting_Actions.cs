@@ -372,7 +372,7 @@ namespace GameSetting_Action
             base.OnActionUse();
             ActionHelper.PlayerAcquireEntityEquipmentItem(m_ActionEntity, m_Index, (int)(Value1* m_ActionEntity.m_HealthManager.m_CurrentArmor), 1f, GetDamageInfo);
         }
-        public DamageDeliverInfo GetDamageInfo()=>DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, Value2 * m_ActionEntity.m_HealthManager.m_CurrentArmor, -1);
+        public DamageDeliverInfo GetDamageInfo()=> DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, Value2 * m_ActionEntity.m_HealthManager.m_CurrentArmor, -1);
         public Action_20001_Armor_Turret_Cannon(enum_RarityLevel _level) : base(_level) { }
     }
     public class Action_20002_FireRate_FrozenGrenade : ActionAfterUse
