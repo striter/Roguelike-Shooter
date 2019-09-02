@@ -17,6 +17,7 @@ public class InteractTrade : InteractBase {
     public InteractBase m_InteractTarget { get; private set; }
     public void Play(int _tradePrice,InteractBase _interactItem)
     {
+        base.Play();
         m_TradePrice = _tradePrice;
         m_InteractTarget = _interactItem;
         m_InteractTarget.SetInteractable(false);
