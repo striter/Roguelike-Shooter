@@ -112,6 +112,8 @@ namespace GameSetting
 
     public static class UIConst
     {
+        public const int I_AmmoCountToSlider = 30;      //Ammo UI,While Clip Above This Will Turn To Be Slider
+
         public const int I_SporeManagerUnitTime = 60;//Seconds
         public const int I_SporeManagerContainersMaxAmount = 9;  //Max Amount Of SporeManager Container
         public const int I_SporeManagerContainerStartFreeSlot = 3;    //Free Slot For New Player
