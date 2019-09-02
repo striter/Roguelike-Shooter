@@ -383,19 +383,25 @@ namespace GameSetting
         public int m_coins;
         public List<ActionInfo> m_weaponActions;
         public List<ActionInfo> m_storedActions;
+        public string m_GameSeed;
+        public enum_StageLevel m_StageLevel;
         public CPlayerGameSave()
         {
             m_coins = 0;
             m_weapon = enum_PlayerWeapon.P92;
             m_weaponActions = new List<ActionInfo>();
-            m_storedActions = new List<ActionInfo>() { ActionInfo.Create(DataManager.RandomPlayerAction(enum_RarityLevel.L1)),ActionInfo.Create( DataManager.RandomPlayerAction(enum_RarityLevel.L1)) };
+            m_storedActions = new List<ActionInfo>() { ActionInfo.Create(DataManager.RandomPlayerAction(enum_RarityLevel.L1,null)),ActionInfo.Create( DataManager.RandomPlayerAction(enum_RarityLevel.L1,null)) };
+            m_GameSeed = DateTime.Now.ToLongTimeString().ToString();
+            m_StageLevel = enum_StageLevel.Rookie;
         }
-        public void Adjust(EntityPlayerBase _player)
+        public void Adjust(EntityPlayerBase _player,LevelManager _level)
         {
             m_coins = _player.m_PlayerInfo.m_Coins;
             m_weapon = _player.m_WeaponCurrent.m_WeaponInfo.m_Weapon;
             m_weaponActions = ActionInfo.Create(_player.m_WeaponCurrent.m_WeaponAction);
             m_storedActions = ActionInfo.Create(_player.m_PlayerInfo.m_ActionStored);
+            m_GameSeed = _level.m_Seed;
+            m_StageLevel = _level.m_currentStage;
         }
     }
     #endregion

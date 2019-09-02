@@ -95,7 +95,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         if (Input.GetKeyDown(KeyCode.KeypadPlus))
             m_LocalPlayer.m_PlayerInfo.OnCoinsReceive(10);
 
-        UIManager.instance.transform.Find("Test/SeedTest").GetComponent<UnityEngine.UI.Text>().text = LevelManager.m_Seed;
+        UIManager.instance.transform.Find("Test/SeedTest").GetComponent<UnityEngine.UI.Text>().text = m_level.m_Seed;
 
         if (OptionsManager.B_AdditionalLight != B_AdditionalLight)
         {
@@ -103,18 +103,19 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
             OptionsManager.OnOptionChanged();
         }
     }
-#endregion
+    #endregion
 #endif
 
+    LevelManager m_level;
     public EntityPlayerBase m_LocalPlayer { get; private set; } = null;
     protected override void Awake()
     {
         instance = this;
         InitEntityDic();
         DataManager.Init();
-        LevelManager.Init(M_TESTSEED);
         OptionsManager.Init();
         ObjectManager.Init();
+        m_level = M_TESTSEED != ""? new LevelManager(M_TESTSEED, enum_StageLevel.Rookie):new LevelManager(DataManager.m_PlayerGameInfo);
         TBroadCaster<enum_BC_GameStatus>.Init();
         TBroadCaster<enum_BC_UIStatus>.Init();
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntitySpawn, OnSpawnEntity);
@@ -139,12 +140,11 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     //Call When Level Changed
     void StartStage()      //PreInit Bigmap , Levels LocalPlayer Before  Start The game
     {
-        LevelManager.StageBegin();
-
+        m_level.StageBegin();
         EntityPreset();
-        ObjectManager.Preset(LevelManager.m_currentStyle,LevelManager.m_currentStage);
-        EnvironmentManager.Instance.GenerateAllEnviorment(LevelManager.m_currentStyle, LevelManager.m_GameSeed, OnLevelStart,OnStageFinished);
-        m_StyledEnermyEntities = ObjectManager.RegisterAllEntitiesGetEnermyDic(TResources.GetCommonEntities() ,TResources.GetEnermyEntities(LevelManager.m_currentStyle));
+        ObjectManager.Preset(m_level.m_currentStyle,m_level.m_currentStage);
+        EnvironmentManager.Instance.GenerateAllEnviorment(m_level.m_currentStyle, m_level.m_GameSeed, OnLevelStart,OnStageFinished);
+        m_StyledEnermyEntities = ObjectManager.RegisterAllEntitiesGetEnermyDic(TResources.GetCommonEntities() ,TResources.GetEnermyEntities(m_level.m_currentStyle));
         m_LocalPlayer = ObjectManager.SpawnPlayer(DataManager.m_PlayerGameInfo);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageStart);
 
@@ -156,10 +156,10 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         ObjectManager.RecycleAllInteract();
         m_Entities.Traversal((EntityBase entity) => { if (!entity.B_IsPlayer) ObjectManager.RecycleEntity(entity.I_PoolIndex, entity); });
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnLevelStart);
-        m_LocalPlayer.transform.position = levelInfo.m_Level.RandomEmptyTilePosition(LevelManager.m_GameSeed);
+        m_LocalPlayer.transform.position = levelInfo.m_Level.RandomEmptyTilePosition(m_level.m_GameSeed);
 
-        if (LevelManager.CanLevelBattle(levelInfo))
-            OnBattleStart(LevelManager.m_Difficulty);
+        if (m_level.CanLevelBattle(levelInfo))
+            OnBattleStart(m_level.m_Difficulty);
         else
             OnLevelFinished(levelInfo.m_TileLocking != enum_TileLocking.Unlocked,Vector3.zero);
     }
@@ -171,37 +171,35 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         if (!spawnInteract)
             return;
 
-        switch (LevelManager.m_LevelType)
+        switch (m_level.m_LevelType)
         {
             case enum_TileType.Start:
                 {
-                    enum_RarityLevel level = LevelManager.m_currentStage.ToActionLevel();
-                    ObjectManager.SpawnInteract<InteractActionChest>( enum_Interaction.ActionChest,EnvironmentManager.NavMeshPosition(Vector3.left*2, false)).Play(new List<ActionBase> { DataManager.RandomPlayerAction(level), DataManager.RandomPlayerAction(level) });
-                    ObjectManager.SpawnInteract<InteractWeapon>( enum_Interaction.Weapon,EnvironmentManager.NavMeshPosition(Vector3.right*2, false)).Play(ObjectManager.SpawnWeapon(TCommon.RandomEnumValues<enum_PlayerWeapon>(LevelManager.m_GameSeed), new List<ActionBase>() { DataManager.RendomWeaponAction(level) }));
-
-
+                    enum_RarityLevel level = m_level.m_currentStage.ToActionLevel();
+                    ObjectManager.SpawnInteract<InteractActionChest>( enum_Interaction.ActionChest,EnvironmentManager.NavMeshPosition(Vector3.left*2, false)).Play(new List<ActionBase> { DataManager.RandomPlayerAction(level, m_level.m_GameSeed), DataManager.RandomPlayerAction(level, m_level.m_GameSeed) });
+                    ObjectManager.SpawnInteract<InteractWeapon>( enum_Interaction.Weapon,EnvironmentManager.NavMeshPosition(Vector3.right*2, false)).Play(ObjectManager.SpawnWeapon(TCommon.RandomEnumValues<enum_PlayerWeapon>(m_level.m_GameSeed), new List<ActionBase>() { DataManager.RendomWeaponAction(level, m_level.m_GameSeed) }));
                 }
                 break;
             case enum_TileType.Battle:
                 {
-                    enum_RarityLevel level = LevelManager.m_actionGenerate.GetActionRarityLevel(LevelManager.m_GameSeed);
-                    ObjectManager.SpawnInteract<InteractActionChest>( enum_Interaction.ActionChest,EnvironmentManager.NavMeshPosition(interactPos, false)).Play(new List<ActionBase> { DataManager.RandomPlayerAction(level), DataManager.RandomPlayerAction(level) });
+                    enum_RarityLevel level = m_level.m_actionGenerate.GetActionRarityLevel(m_level.m_GameSeed);
+                    ObjectManager.SpawnInteract<InteractActionChest>( enum_Interaction.ActionChest,EnvironmentManager.NavMeshPosition(interactPos, false)).Play(new List<ActionBase> { DataManager.RandomPlayerAction(level, m_level.m_GameSeed), DataManager.RandomPlayerAction(level, m_level.m_GameSeed) });
                 }
                 break;
             case enum_TileType.Trader:
                 {
                     ObjectManager.SpawnEntity<EntityTrader>(1, Vector3.back*2, enum_EntityFlag.Player);
-                    ActionBase action1 = DataManager.RandomPlayerAction(LevelManager.m_actionGenerate.GetTradeRarityLevel(LevelManager.m_GameSeed));
-                    int price1 = GameExpression.GetTradePrice(enum_Interaction.Action, action1.m_Level).RandomRangeInt(LevelManager.m_GameSeed);
+                    ActionBase action1 = DataManager.RandomPlayerAction(m_level.m_actionGenerate.GetTradeRarityLevel(m_level.m_GameSeed),m_level.m_GameSeed);
+                    int price1 = GameExpression.GetTradePrice(enum_Interaction.Action, action1.m_Level).RandomRangeInt(m_level.m_GameSeed);
                     ObjectManager.SpawnInteract<InteractTrade>(enum_Interaction.Trade, EnvironmentManager.NavMeshPosition(Vector3.left * 2, false)).Play(price1 , ObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action, Vector3.zero).Play(action1));
-                    ActionBase action2 = DataManager.RandomPlayerAction(LevelManager.m_actionGenerate.GetTradeRarityLevel(LevelManager.m_GameSeed));
-                    int price2 = GameExpression.GetTradePrice(enum_Interaction.Action, action2.m_Level).RandomRangeInt(LevelManager.m_GameSeed);
+                    ActionBase action2 = DataManager.RandomPlayerAction(m_level.m_actionGenerate.GetTradeRarityLevel(m_level.m_GameSeed), m_level.m_GameSeed);
+                    int price2 = GameExpression.GetTradePrice(enum_Interaction.Action, action2.m_Level).RandomRangeInt(m_level.m_GameSeed);
                     ObjectManager.SpawnInteract<InteractTrade>(enum_Interaction.Trade, EnvironmentManager.NavMeshPosition(Vector3.right * 1.6f + Vector3.forward * 2, false)).Play(price2, ObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action, Vector3.zero).Play(action2));
 
-                    int price3 = GameExpression.GetTradePrice(enum_Interaction.Health, enum_RarityLevel.Invalid).RandomRangeInt(LevelManager.m_GameSeed);
+                    int price3 = GameExpression.GetTradePrice(enum_Interaction.Health, enum_RarityLevel.Invalid).RandomRangeInt(m_level.m_GameSeed);
                     ObjectManager.SpawnInteract<InteractTrade>(enum_Interaction.Trade, EnvironmentManager.NavMeshPosition(Vector3.left * 1.6f + Vector3.forward * 2, false)).Play(price3, ObjectManager.SpawnInteract<InteractHealth>(enum_Interaction.Health, Vector3.zero).Play(20));
 
-                    WeaponBase weapon = ObjectManager.SpawnWeapon(TCommon.RandomEnumValues<enum_PlayerWeapon>(LevelManager.m_GameSeed), new List<ActionBase>() { DataManager.RandomPlayerAction(LevelManager.m_actionGenerate.GetTradeRarityLevel(LevelManager.m_GameSeed)) });
+                    WeaponBase weapon = ObjectManager.SpawnWeapon(TCommon.RandomEnumValues<enum_PlayerWeapon>(m_level.m_GameSeed), new List<ActionBase>() { DataManager.RandomPlayerAction(m_level.m_actionGenerate.GetTradeRarityLevel(m_level.m_GameSeed), m_level.m_GameSeed) });
                     ObjectManager.SpawnInteract<InteractTrade>(enum_Interaction.Trade, EnvironmentManager.NavMeshPosition(Vector3.right * 2, false)).Play(10, ObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, EnvironmentManager.NavMeshPosition(Vector3.right, false)).Play(weapon));
                 }
                 break;
@@ -213,14 +211,14 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     void OnEntityDead(EntityBase entity)
     {
         if (entity.B_IsPlayer)
-            DataManager.AdjustGameData(null);
+            DataManager.AdjustGameData(null,null);
 
         if (entity.m_Flag == enum_EntityFlag.Enermy)
         {
-            if (LevelManager.m_actionGenerate.CanGenerateHealth(LevelManager.m_GameSeed))
+            if (m_level.m_actionGenerate.CanGenerateHealth(m_level.m_GameSeed))
                 ObjectManager.SpawnInteract<InteractHealth>(enum_Interaction.Health, EnvironmentManager.NavMeshPosition(entity.transform.position, false)).Play(GameConst.I_HealthPickupAmount);
 
-            int coinAmount = LevelManager.m_actionGenerate.GetCoinGenerate((entity as EntityAIBase).E_EnermyType, LevelManager.m_GameSeed);
+            int coinAmount = m_level.m_actionGenerate.GetCoinGenerate((entity as EntityAIBase).E_EnermyType, m_level.m_GameSeed);
             if(coinAmount!=-1)
                 ObjectManager.SpawnInteract<InteractCoin>(enum_Interaction.Coin, EnvironmentManager.NavMeshPosition(entity.transform.position, false)).Play(coinAmount);
         }
@@ -228,16 +226,16 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
 
     void OnStageFinished()
     {
-        LevelManager.StageFinished();
+        m_level.StageFinished();
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageFinish);
-        if (LevelManager.B_NextStage)
+        if (m_level.B_NextStage)
         {
-            DataManager.AdjustGameData(m_LocalPlayer);
+            DataManager.AdjustGameData(m_LocalPlayer,m_level);
             StartStage();
         }
         else
         {
-            DataManager.AdjustGameData(null);
+            DataManager.AdjustGameData(null,null);
             Debug.Log("All Level Finished");
         }
     }
@@ -345,7 +343,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
             {
                 if (!m_StyledEnermyEntities.ContainsKey(level))
                 {
-                    Debug.LogWarning("Current Enermy Style:" + LevelManager.m_currentStyle + " Not Contains Type:" + level);
+                    Debug.LogWarning("Current Enermy Style:" + m_level.m_currentStyle + " Not Contains Type:" + level);
                     continue;
                 }
                 m_EntityGenerating.Add(m_StyledEnermyEntities[level].RandomItem());
@@ -384,7 +382,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         for (; ; )
         {
             yield return new WaitForSeconds(_offset);
-            SpawnEnermy(waveGenerate[curSpawnCount], curSpawnCount, EnvironmentManager.Instance.m_currentLevel.m_Level.RandomEmptyTilePosition(LevelManager.m_GameSeed));
+            SpawnEnermy(waveGenerate[curSpawnCount], curSpawnCount, EnvironmentManager.Instance.m_currentLevel.m_Level.RandomEmptyTilePosition(m_level.m_GameSeed));
             curSpawnCount++;
             if (curSpawnCount >= waveGenerate.Count)
             {
@@ -403,22 +401,24 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     #endregion
 }
 #region External Tools Packaging Class
-public static class LevelManager
+public class LevelManager
 {
-    public static enum_StageLevel m_currentStage;
-    public static StageInteractGenerate m_actionGenerate;
-    public static bool B_NextStage => m_currentStage <= enum_StageLevel.Ranger;
-    static enum_BattleDifficulty m_BattleDifficulty;
-    public static enum_TileType m_LevelType { get; private set; }
+    public StageInteractGenerate m_actionGenerate { get; private set; }
+    public bool B_NextStage => m_currentStage <= enum_StageLevel.Ranger;
+    public enum_TileType m_LevelType { get; private set; }
+    public enum_StageLevel m_currentStage { get; private set; }
     static Dictionary<enum_StageLevel, enum_Style> m_StageStyle = new Dictionary<enum_StageLevel, enum_Style>();
-    public static enum_Style m_currentStyle => m_StageStyle[m_currentStage];
-    public static string m_Seed { get; private set; }
-    public static System.Random m_GameSeed { get; private set; }
-    public static void Init(string _seed)
+    public enum_Style m_currentStyle => m_StageStyle[m_currentStage];
+    public string m_Seed { get; private set; }
+    public System.Random m_GameSeed { get; private set; }
+    public LevelManager(CPlayerGameSave _saveData):this(_saveData.m_GameSeed, _saveData.m_StageLevel)
     {
-        m_Seed = _seed == "" ? System.DateTime.Now.ToLongTimeString() : _seed;
+    }
+    public LevelManager(string _seed,enum_StageLevel _stage)
+    {
+        m_Seed =  _seed;
         m_GameSeed = new System.Random( m_Seed.GetHashCode());
-        m_currentStage =  enum_StageLevel.Rookie;
+        m_currentStage = _stage;
         List<enum_Style> styleList = TCommon.EnumList<enum_Style>();
         TCommon.TraversalEnum((enum_StageLevel level) => {
             enum_Style style = styleList.RandomItem(m_GameSeed);
@@ -426,18 +426,18 @@ public static class LevelManager
             m_StageStyle.Add(level,style);
         });
     }
-    public static void StageBegin()
+    public void StageBegin()
     {
         m_actionGenerate = GameExpression.GetInteractGenerate(m_currentStage);
         m_BattleDifficulty = enum_BattleDifficulty.Peaceful;
         m_LevelType = enum_TileType.Invalid;
     }
-    public static void StageFinished()
+    public void StageFinished()
     {
         m_currentStage++;
     }
 
-    public static bool CanLevelBattle(SBigmapLevelInfo level)
+    public bool CanLevelBattle(SBigmapLevelInfo level)
     {
         m_LevelType = level.m_TileType;
         if (level.m_TileLocking != enum_TileLocking.Unlockable)
@@ -455,7 +455,8 @@ public static class LevelManager
         }
     }
 
-    public static enum_BattleDifficulty m_Difficulty
+    static enum_BattleDifficulty m_BattleDifficulty;
+    public enum_BattleDifficulty m_Difficulty
     {
         get {
             switch (m_LevelType)
@@ -520,10 +521,10 @@ public static class DataManager
         m_PlayerGameInfo = TGameData<CPlayerGameSave>.Read();
     }
     #region GameSave
-    public static void AdjustGameData(EntityPlayerBase data)
+    public static void AdjustGameData(EntityPlayerBase data,LevelManager level)
     {
         if (data != null)
-            m_PlayerGameInfo.Adjust(data);
+            m_PlayerGameInfo.Adjust(data,level);
         else
             m_PlayerGameInfo = new CPlayerGameSave();
         TGameData<CPlayerGameSave>.Save(m_PlayerGameInfo);
@@ -587,8 +588,8 @@ public static class DataManager
         else
             m_PlayerActions.Add(action.m_Index);
     }, enum_RarityLevel.Invalid);
-    public static ActionBase RendomWeaponAction(enum_RarityLevel level)=> CreateAction(m_WeaponActions.RandomItem(),level);
-    public static ActionBase RandomPlayerAction(enum_RarityLevel level) => CreateAction(m_PlayerActions.RandomItem(), level);
+    public static ActionBase RendomWeaponAction(enum_RarityLevel level,System.Random seed)=> CreateAction(m_WeaponActions.RandomItem(seed),level);
+    public static ActionBase RandomPlayerAction(enum_RarityLevel level, System.Random seed) => CreateAction(m_PlayerActions.RandomItem(seed), level);
     public static List<ActionBase> GetActions(List<ActionInfo> infos)
     {
         List<ActionBase> actions = new List<ActionBase>();
