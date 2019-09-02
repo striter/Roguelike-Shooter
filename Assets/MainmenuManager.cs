@@ -9,7 +9,6 @@ public class MainmenuManager : SimpleSingletonMono<MainmenuManager> {
     {
         base.Awake();
         m_currentSelectItem = null;
-        TouchInputManager.Instance.OnSingleTouch += OnTouch;
         Transform interactions = transform.Find("Interactions");
         TCommon.TraversalEnum((enum_Scene scene) => {
             switch (scene)
@@ -24,6 +23,10 @@ public class MainmenuManager : SimpleSingletonMono<MainmenuManager> {
                     break;
             }
         });
+    }
+    private void Start()
+    {
+        TouchInputManager.Instance.OnSingleTouch += OnTouch;
     }
     RaycastHit hit;
     void OnTouch(bool touch)
