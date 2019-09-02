@@ -9,11 +9,13 @@ public class LevelBase : MonoBehaviour {
     public List<LevelTile> m_MapData;
     public enum_TileType m_levelType { get; private set; }
     protected Transform tf_LevelItem,tf_Model;
+    public Transform tf_Interact { get; private set; }
     public System.Random m_seed { get; private set; }
     public void Init()
     {
         tf_LevelItem = transform.Find("Item");
         tf_Model = transform.Find("Model");
+        tf_Interact = transform.Find("Interact");
     }
 
     #region TileMapInfos
@@ -72,7 +74,7 @@ public class LevelBase : MonoBehaviour {
                 index++;
             }
         }
-        TryClearCenterTile();
+        ClearTileForInteracts();
         GenerateBorderTile(m_IndexBorder);
         GenerateRandomMainTile(_innerData,m_IndexEmptyInner);
         GenerateRandomMainTile(_outerData, m_IndexEmptyOuter);
@@ -98,7 +100,7 @@ public class LevelBase : MonoBehaviour {
             itemMain.Init(this, main.m_ItemDirection);
         }
     }
-    void TryClearCenterTile()
+    void ClearTileForInteracts()
     {
         if (m_levelType!= enum_TileType.Start&&m_levelType!= enum_TileType.Trader)
             return;

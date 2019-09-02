@@ -24,10 +24,4 @@ public class InteractWeapon : InteractBase {
         m_Weapon = _interactTarget.ObtainWeapon(m_Weapon);
         m_Weapon.transform.SetParentResetTransform(tf_ModelContainer);
     }
-    private void OnDisable()
-    {
-        if(m_Weapon)
-            ObjectManager.RecycleWeapon(m_Weapon);
-        m_Weapon = null;
-    }
 }
