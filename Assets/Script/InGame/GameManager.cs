@@ -186,7 +186,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
                 break;
             case enum_TileType.Trader:
                 {
-                    ObjectManager.SpawnEntity<EntityTrader>(1, Vector3.back*2, enum_EntityFlag.Player);
+                    ObjectManager.SpawnEntity<EntityTrader>(1, Vector3.back*2, enum_EntityFlag.Player, EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact);
                     ActionBase action1 = DataManager.RandomPlayerAction(m_level.m_actionGenerate.GetTradeRarityLevel(m_level.m_GameSeed),m_level.m_GameSeed);
                     int price1 = GameExpression.GetTradePrice(enum_Interaction.Action, action1.m_Level).RandomRangeInt(m_level.m_GameSeed);
                     ObjectManager.SpawnInteract<InteractTrade>(enum_Interaction.Trade, EnvironmentManager.NavMeshPosition(Vector3.left * 2, false), EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(price1 , ObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action, Vector3.zero).Play(action1));
@@ -663,13 +663,14 @@ public static class ObjectManager
     #endregion
     #region Spawn/Recycle
     #region Entity
-    public static T SpawnEntity<T>(int index, Vector3 toPosition, enum_EntityFlag _flag) where T:EntityBase
+    public static T SpawnEntity<T>(int index, Vector3 toPosition, enum_EntityFlag _flag,Transform parentTrans=null) where T:EntityBase
     {
         T entity = ObjectPoolManager<int, EntityBase>.Spawn(index, TF_Entity) as T;
         if (entity == null)
             Debug.LogError("Entity ID:" + index +",Type:"+typeof(T).ToString()+" Not Found");
         entity.transform.position = EnvironmentManager.NavMeshPosition(toPosition, true);
         entity.OnSpawn(IdentificationManager.I_EntityID(_flag), _flag);
+        if (parentTrans) entity.transform.SetParent(parentTrans);
         TBroadCaster<enum_BC_GameStatus>.Trigger<EntityBase>(enum_BC_GameStatus.OnEntitySpawn, entity);
         return entity as T;
     }
