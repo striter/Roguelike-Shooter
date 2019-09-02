@@ -28,7 +28,6 @@ public class EntityAIBase : EntityBase {
     public override void Init(int entityPresetIndex)
     {
         base.Init(entityPresetIndex);
-        tf_Model.transform.rotation = Quaternion.Euler(-15, 0, 0);
         Transform tf_Barrel = transform.FindInAllChild("Barrel");
         m_AI = new EnermyAIControllerBase(this, EquipmentBase.AcquireEquipment(GameExpression.GetAIEquipment(entityPresetIndex, 0),this,tf_Barrel,m_EntityInfo.GetDamageBuffInfo,OnDead), OnAttackAnim, OnCheckTarget);
     }
