@@ -1,20 +1,20 @@
 fileFormatVersion: 2
-guid: 67761d91ea5e44d4aaffedef2a8be5ca
+guid: caff2c59ae60ebd469edb5765b1372f1
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
     100000: //RootNode
-    100002: pasted__group10
-    100004: pasted__SF_Prop_Goblin_Spike_010
     400000: //RootNode
-    400002: pasted__group10
-    400004: pasted__SF_Prop_Goblin_Spike_010
     2100000: pasted__pasted__pasted__pasted__lambert28
-    2300000: pasted__SF_Prop_Goblin_Spike_010
-    3300000: pasted__SF_Prop_Goblin_Spike_010
-    4300000: pasted__SF_Prop_Goblin_Spike_010
-    9500000: //RootNode
-  externalObjects: {}
+    2300000: //RootNode
+    3300000: //RootNode
+    4300000: buluo_zhalan
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: pasted__pasted__pasted__pasted__lambert28
+    second: {fileID: 2100000, guid: 8bb0c15ab0cd46f4da94f53c0396fae0, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
@@ -88,7 +88,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 0
   humanoidOversampling: 1
   additionalBone: 0
   userData: 
