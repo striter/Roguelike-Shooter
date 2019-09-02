@@ -71,13 +71,14 @@
 			ENDCG
 		}
 
+
 		Pass
 		{
 			Name "ForwardAdd"
 			Tags{"LightMode" = "ForwardAdd"}
 			Blend One One
 			CGPROGRAM
-			#pragma multi_compile_fwdadd
+			#pragma multi_compile_fwdadd_fullshadows
 			#pragma vertex vertAdd
 			#pragma fragment fragAdd
 
@@ -92,6 +93,7 @@
 				float4 pos : SV_POSITION;
 				float3 worldPos:TEXCOORD1;
 				float diffuse : TEXCOORD2;
+				SHADOW_COORDS(3)
 			};
 
 			v2f vertAdd(appdata v)
@@ -102,6 +104,7 @@
 				fixed3 worldNormal = normalize(mul(v.normal, (float3x3)unity_WorldToObject)); //法线方向n
 				fixed3 worldLightDir = normalize(UnityWorldSpaceLightDir(o.worldPos));
 				o.diffuse = saturate(dot(worldLightDir, worldNormal));
+				TRANSFER_SHADOW(o);
 				return o;
 			}
 
@@ -113,6 +116,7 @@
 			}
 				ENDCG
 		}
+
 
 		USEPASS "Game/Common/Diffuse_Texture_Normalmap/SHADOWCASTER"
 	}

@@ -39,9 +39,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4084886095899334}
   - component: {fileID: 114072771900244178}
-  - component: {fileID: 114484703579651542}
   - component: {fileID: 111826526175488080}
   - component: {fileID: 65522354029443276}
+  - component: {fileID: 114487980789514866}
   m_Layer: 0
   m_Name: ActionChest_Ranger
   m_TagString: Untagged
@@ -293,7 +293,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f62cdd659d216734e828ce07e4431bf6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114484703579651542
+--- !u!114 &114487980789514866
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -301,7 +301,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1076190044516800}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62d09be21441f524d850aaf663ec49a2, type: 3}
+  m_Script: {fileID: 11500000, guid: 82fb4765216cd2648b46458431b47460, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &114992984816579808

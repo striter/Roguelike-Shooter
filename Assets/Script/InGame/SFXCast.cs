@@ -124,7 +124,7 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
             case enum_CastAreaType.OverlapSphere:
                 {
                     float radius = V4_CastInfo.x;
-                    hits= Physics.SphereCastAll(CastTransform.position, radius, CastTransform.forward,0f, GameLayer.Mask.I_EntityOnly);
+                    hits= Physics.SphereCastAll(CastTransform.position, radius, CastTransform.forward,0f, GameLayer.Mask.I_Entity);
                 }
                 break;
             case enum_CastAreaType.ForwardCapsule:
@@ -132,17 +132,17 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
                     float radius = V4_CastInfo.x;
                     float castLength = F_CastLength - radius*2;
                     castLength = castLength > 0 ? castLength : 0f;
-                    hits = Physics.SphereCastAll(CastTransform.position+ CastTransform.forward * radius, radius, CastTransform.forward, castLength, GameLayer.Mask.I_EntityOnly);
+                    hits = Physics.SphereCastAll(CastTransform.position+ CastTransform.forward * radius, radius, CastTransform.forward, castLength, GameLayer.Mask.I_Entity);
                 }
                 break;
             case enum_CastAreaType.ForwardBox:
                 {
-                    hits = Physics_Extend.BoxCastAll(CastTransform.position, CastTransform.forward,CastTransform.up, new Vector3(V4_CastInfo.x,V4_CastInfo.y,F_CastLength), GameLayer.Mask.I_EntityOnly);
+                    hits = Physics_Extend.BoxCastAll(CastTransform.position, CastTransform.forward,CastTransform.up, new Vector3(V4_CastInfo.x,V4_CastInfo.y,F_CastLength), GameLayer.Mask.I_Entity);
                 }
                 break;
             case enum_CastAreaType.ForwardTrapezium:
                 {
-                    hits = Physics_Extend.TrapeziumCastAll(CastTransform.position,CastTransform.forward,CastTransform.up,V4_CastInfo,GameLayer.Mask.I_EntityOnly);
+                    hits = Physics_Extend.TrapeziumCastAll(CastTransform.position,CastTransform.forward,CastTransform.up,V4_CastInfo,GameLayer.Mask.I_Entity);
                 }
                 break;
         }

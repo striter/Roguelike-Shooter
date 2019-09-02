@@ -7,7 +7,7 @@ public class InteractDetector : MonoBehaviour {
     public void Init(Action<InteractBase, bool> _OnInteractCheck)
     {
         OnInteractCheck = _OnInteractCheck;
-        gameObject.layer = GameLayer.I_DynamicDetect;
+        gameObject.layer = GameLayer.I_InteractDetect;
     }
     private void OnTriggerEnter(Collider other)
     {

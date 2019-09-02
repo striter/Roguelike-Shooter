@@ -34,10 +34,10 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4350757830571878}
-  - component: {fileID: 114310191658298676}
   - component: {fileID: 114726392211290492}
   - component: {fileID: 135093028237761552}
   - component: {fileID: 208014517998111746}
+  - component: {fileID: 114052286123391234}
   m_Layer: 0
   m_Name: Portal_Desert
   m_TagString: Untagged
@@ -165,7 +165,7 @@ Transform:
   m_Father: {fileID: 4399486371962908}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
---- !u!114 &114310191658298676
+--- !u!114 &114052286123391234
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -173,7 +173,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1128279104760688}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62d09be21441f524d850aaf663ec49a2, type: 3}
+  m_Script: {fileID: 11500000, guid: 82fb4765216cd2648b46458431b47460, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &114726392211290492

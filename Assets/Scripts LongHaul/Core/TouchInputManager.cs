@@ -3,15 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TouchInputManager : SingletonMono<TouchInputManager> {
-    Vector2 v3_SingleTouchPos;
-    public static Vector2 SingleTouchPos
-    {
-        get
-        {
-            return Instance.v3_SingleTouchPos;
-        }
-    }
+public class TouchInputManager : SimpleSingletonMono<TouchInputManager> {
+    public static Vector2 v3_SingleTouchPos { get; private set; }
 #if !UNITY_EDITOR
     bool b_dualFinger;
     float f_dualFingerStartPos;

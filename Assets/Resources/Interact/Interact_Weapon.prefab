@@ -20,9 +20,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4013511720260212}
   - component: {fileID: 135461518061605248}
-  - component: {fileID: 114396795544542712}
   - component: {fileID: 114168283174747586}
   - component: {fileID: 111244957330354360}
+  - component: {fileID: 114075257281848284}
   m_Layer: 0
   m_Name: Interact_Weapon
   m_TagString: Untagged
@@ -116,6 +116,17 @@ Animation:
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
   m_CullingType: 0
+--- !u!114 &114075257281848284
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1070125159629676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82fb4765216cd2648b46458431b47460, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114168283174747586
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -125,17 +136,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 87b7a612bac980f4b8d88412ed6e32ee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &114396795544542712
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1070125159629676}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62d09be21441f524d850aaf663ec49a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!135 &135461518061605248

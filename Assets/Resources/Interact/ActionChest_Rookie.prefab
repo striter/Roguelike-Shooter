@@ -54,9 +54,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4532852292659312}
   - component: {fileID: 114828876274307462}
-  - component: {fileID: 114848564624811900}
   - component: {fileID: 111362713022299928}
   - component: {fileID: 65641937694803888}
+  - component: {fileID: 114815746251206370}
   m_Layer: 0
   m_Name: ActionChest_Rookie
   m_TagString: Untagged
@@ -282,6 +282,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f62cdd659d216734e828ce07e4431bf6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114815746251206370
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1245459059159106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82fb4765216cd2648b46458431b47460, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114828876274307462
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -291,17 +302,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8135cd8e85b257749a2492bcdd249a8f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &114848564624811900
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1245459059159106}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62d09be21441f524d850aaf663ec49a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &114854338417365960

@@ -186,6 +186,7 @@ namespace GameSetting
                 case enum_HitCheck.Entity: return GameLayer.I_Entity;
                 case enum_HitCheck.Static: return GameLayer.I_Static;
                 case enum_HitCheck.Dynamic: return GameLayer.I_Dynamic;
+                case enum_HitCheck.Interact:return GameLayer.I_Interact;
             }
         }
     }
@@ -242,7 +243,7 @@ namespace GameSetting
 
     public enum enum_EntityFlag { Invalid=-1, Player=1,Enermy=2,}
 
-    public enum enum_HitCheck { Invalid = -1, Static = 1, Entity = 2, Dynamic = 3, }
+    public enum enum_HitCheck { Invalid = -1, Static = 1, Entity = 2, Dynamic = 3,Interact=4, }
 
     public enum enum_TileLocking { Invalid = -1, Locked = 0, Unlockable = 1, Unlocked = 2, }
 
@@ -352,13 +353,15 @@ namespace GameSetting
         public static readonly int I_Static = LayerMask.NameToLayer("static");
         public static readonly int I_Entity = LayerMask.NameToLayer("entity");
         public static readonly int I_Dynamic = LayerMask.NameToLayer("dynamic");
-        public static readonly int I_DynamicDetect = LayerMask.NameToLayer("dynamicDetect");
+        public static readonly int I_Interact = LayerMask.NameToLayer("interact");
+        public static readonly int I_InteractDetect = LayerMask.NameToLayer("interactDetect");
         public static readonly int I_MovementDetect = LayerMask.NameToLayer("movementDetect");
         public static class Mask
         {
             public static readonly int I_All = 1 << GameLayer.I_Static | 1 << GameLayer.I_Entity | 1 << GameLayer.I_Dynamic;
             public static readonly int I_StaticEntity = 1 << GameLayer.I_Static | 1 << GameLayer.I_Entity;
-            public static readonly int I_EntityOnly = (1 << I_Entity);
+            public static readonly int I_Entity = (1 << GameLayer.I_Entity);
+            public static readonly int I_Interact = (1 << GameLayer.I_Interact);
             public static readonly int I_Static = (1 << GameLayer.I_Static);
         }
     }

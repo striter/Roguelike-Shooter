@@ -35,9 +35,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4441937431660042}
   - component: {fileID: 114152046916439840}
-  - component: {fileID: 114918459026497192}
   - component: {fileID: 135846726246254518}
   - component: {fileID: 111529288191065112}
+  - component: {fileID: 114254946078226914}
   m_Layer: 0
   m_Name: Interact_Coin
   m_TagString: Untagged
@@ -199,7 +199,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c07580458a4ec8d4cafbcd2740b2d977, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114918459026497192
+--- !u!114 &114254946078226914
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -207,7 +207,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1840202416367668}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62d09be21441f524d850aaf663ec49a2, type: 3}
+  m_Script: {fileID: 11500000, guid: 82fb4765216cd2648b46458431b47460, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!135 &135846726246254518

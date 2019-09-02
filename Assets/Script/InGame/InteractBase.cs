@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
-[RequireComponent(typeof(HitCheckDynamic))]
+[RequireComponent(typeof(HitCheckInteract))]
 public class InteractBase : MonoBehaviour {
     public virtual enum_Interaction m_InteractType => enum_Interaction.Invalid;
     public virtual bool B_InteractOnTrigger => false;

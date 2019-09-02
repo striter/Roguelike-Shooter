@@ -2,17 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-public class TSceneLoader:SimpleSingletonMono<TSceneLoader>,ISingleCoroutine {
-    public enum enum_Scene
+public enum enum_Scene
+{
+    Invalid = -1,
+    Main = 0,
+    Game = 1,
+    STest = 2,
+}
+public class TSceneLoader:SingletonMono<TSceneLoader>,ISingleCoroutine {
+
+    public void LoadScene(enum_Scene scene)
     {
-        Invalid = -1,
-        Main=0,
-        Game=1,
-        STest=2,
-    }
-    public void LoadScene()
-    {
-        AsyncOperation operation = SceneManager.LoadSceneAsync(0,LoadSceneMode.Single); 
+        AsyncOperation operation = SceneManager.LoadSceneAsync((int)scene,LoadSceneMode.Single); 
         operation.allowSceneActivation = false;
         this.StartSingleCoroutine(0, TIEnumerators.Tick(() =>
         {
