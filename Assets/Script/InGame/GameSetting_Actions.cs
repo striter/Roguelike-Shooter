@@ -99,9 +99,9 @@ namespace GameSetting_Action
         {
             player.OnAcquireEquipment<EquipmentBase>(equipmentIndex, () => { return DamageDeliverInfo.EquipmentInfo(player.I_EntityID,damage,buffIndex); });
         }
-        public static void PlayerAcquireEntityEquipmentItem(EntityPlayerBase player, int equipmentIndex, float damage,int health,float fireRate)
+        public static void PlayerAcquireEntityEquipmentItem(EntityPlayerBase player, int equipmentIndex,int health,float fireRate, Func<DamageDeliverInfo> damage)
         {
-            player.OnAcquireEquipment<EquipmentEntitySpawner>(equipmentIndex, () => { return DamageDeliverInfo.EquipmentInfo(player.I_EntityID , damage,-1); }).SetOnSpawn((EntityBase entity) => {
+            player.OnAcquireEquipment<EquipmentEntitySpawner>(equipmentIndex,damage).SetOnSpawn((EntityBase entity) => {
                 EntityAIBase target = entity as EntityAIBase;
                 target.I_MaxHealth = health;
                 target.F_AttackDuration = new RangeFloat(0f, 0);
@@ -370,8 +370,9 @@ namespace GameSetting_Action
         public override float Value2 => ActionData.F_20001_ArmorTurretDamage(m_Level);
         public override void OnActionUse() {
             base.OnActionUse();
-            ActionHelper.PlayerAcquireEntityEquipmentItem(m_ActionEntity, m_Index, Value2* m_ActionEntity.m_HealthManager.m_CurrentArmor, (int)(Value1* m_ActionEntity.m_HealthManager.m_CurrentArmor), 1f);
+            ActionHelper.PlayerAcquireEntityEquipmentItem(m_ActionEntity, m_Index, (int)(Value1* m_ActionEntity.m_HealthManager.m_CurrentArmor), 1f, GetDamageInfo);
         }
+        public DamageDeliverInfo GetDamageInfo()=>DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, Value2 * m_ActionEntity.m_HealthManager.m_CurrentArmor, -1);
         public Action_20001_Armor_Turret_Cannon(enum_RarityLevel _level) : base(_level) { }
     }
     public class Action_20002_FireRate_FrozenGrenade : ActionAfterUse
@@ -398,8 +399,9 @@ namespace GameSetting_Action
         public override void OnActionUse()
         {
             base.OnActionUse();
-            ActionHelper.PlayerAcquireEntityEquipmentItem(m_ActionEntity, m_Index, Value2* m_ActionEntity.m_WeaponCurrent.F_BaseDamage, (int)Value3, Value1 * m_ActionEntity.m_WeaponCurrent.F_BaseFirerate);
+            ActionHelper.PlayerAcquireEntityEquipmentItem(m_ActionEntity, m_Index, (int)Value3, Value1 * m_ActionEntity.m_WeaponCurrent.F_BaseFirerate,GetDamageInfo);
         }
+        public DamageDeliverInfo GetDamageInfo() => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, Value2 * m_ActionEntity.m_WeaponCurrent.F_BaseDamage, -1);
         public Action_20003_Firerate_Turret_Minigun(enum_RarityLevel _level) : base(_level) { }
     }
     public class Action_20004_Damage_ExplosiveGrenade : ActionAfterUse
