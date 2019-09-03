@@ -219,8 +219,8 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
                 break;
             case enum_TileType.ActionAdjustment:
                 {
-                    ObjectManager.SpawnEntity<EntityTrader>(2, Vector3.back, enum_EntityFlag.Neutal, EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact);
-                    ObjectManager.SpawnInteract<InteractActionAdjustment>(enum_Interaction.ActionAdjustment, Vector3.forward, EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(m_level.m_currentStage);
+                    ObjectManager.SpawnEntity<EntityTrader>(2, Vector3.zero, enum_EntityFlag.Neutal, EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact);
+                    ObjectManager.SpawnInteract<InteractActionAdjustment>(enum_Interaction.ActionAdjustment,Vector3.zero, EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(m_level.m_currentStage);
                 }
                 break;
             case enum_TileType.BattleTrade:

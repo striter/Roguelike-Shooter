@@ -13,7 +13,7 @@ public class UIT_TextLocalization : Text
     protected override void Start()
     {
         base.Start();
-        if (B_AutoLocalize)
+        if (B_AutoLocalize&&TLocalization.IsInit)
             OnKeyLocalize();
     }
     protected override void OnDestroy()
