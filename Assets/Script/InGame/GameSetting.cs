@@ -57,9 +57,9 @@ namespace GameSetting
             switch (interactType)
             {
                 default: Debug.LogError("No Coins Can Phrase Here!"); return new RangeInt(0, -1);
-                case enum_Interaction.Health:
+                case enum_Interaction.PickupHealth:
                     return new RangeInt(4, 2);
-                case enum_Interaction.Action:
+                case enum_Interaction.PickupAction:
                 case enum_Interaction.Weapon:
                     switch (level)
                     {
@@ -141,8 +141,8 @@ namespace GameSetting
                 case enum_TileType.Battle: color = TCommon.ColorAlpha(Color.red, .5f); break;
                 case enum_TileType.Start: color = TCommon.ColorAlpha(Color.grey, .5f); break;
                 case enum_TileType.End: color = TCommon.ColorAlpha(Color.black, .5f); break;
-                case enum_TileType.Trader: color = TCommon.ColorAlpha(Color.green, .5f); break;
-                case enum_TileType.ActionBattle: color = TCommon.ColorAlpha(Color.yellow, .5f); break;
+                case enum_TileType.CoinsTrade: color = TCommon.ColorAlpha(Color.green, .5f); break;
+                case enum_TileType.BattleTrade: color = TCommon.ColorAlpha(Color.yellow, .5f); break;
                 case enum_TileType.ActionAdjustment: color = TCommon.ColorAlpha(Color.white, .5f); break;
             }
             switch (levelLocking)
@@ -175,12 +175,12 @@ namespace GameSetting
             switch (type)
             {
                 default: Debug.LogError("Please Edit This Please:" + type.ToString()); return enum_LevelGenerateType.Invalid;
-                case enum_TileType.ActionBattle:
+                case enum_TileType.BattleTrade:
                 case enum_TileType.Battle:
                 case enum_TileType.End:
                     return enum_LevelGenerateType.Big;
                 case enum_TileType.ActionAdjustment:
-                case enum_TileType.Trader:
+                case enum_TileType.CoinsTrade:
                 case enum_TileType.Start:
                     return enum_LevelGenerateType.Small;
             }
@@ -223,8 +223,7 @@ namespace GameSetting
 
         OnStageStart,       //Total Stage Start
         OnStageFinish,
-        OnLevelStart,       //Change Between Each Level
-        OnLevelFinish,
+        OnChangeLevel,       //Change Between Each Level
         OnBattleStart,      //Battle Against Entity
         OnBattleFinish,
         OnWaveStart,     //Battle Wave
@@ -246,7 +245,7 @@ namespace GameSetting
     #region GameEnum
     public enum enum_StageLevel { Invalid = -1, Rookie = 1, Veteran = 2, Ranger = 3 }
 
-    public enum enum_BattleDifficulty { Invalid = -1, Peaceful = 0, Eazy = 1, Normal = 2, Hard = 3, Final = 4, }
+    public enum enum_BattleDifficulty { Invalid = -1, Peaceful = 0, Eazy = 1, Normal = 2, Hard = 3, End = 4, BattleTrade=10, }
 
     public enum enum_EntityFlag { Invalid=-1, Neutal = 0, Player =1,Enermy=2,}
 
@@ -256,7 +255,7 @@ namespace GameSetting
 
     public enum enum_Style { Invalid = -1, Forest = 1, Desert = 2, Iceland = 3, Horde = 4, Undead = 5, }
 
-    public enum enum_TileType { Invalid = -1, Start = 0, Battle = 1, End = 2, Trader = 11,ActionAdjustment=12,ActionBattle=13, }
+    public enum enum_TileType { Invalid = -1, Start = 0, Battle = 1, End = 2, CoinsTrade = 11,ActionAdjustment=12,BattleTrade=13, }
 
     public enum enum_LevelItemType { Invalid = -1, LargeMore, LargeLess, MediumMore, MediumLess, SmallMore, SmallLess, ManmadeMore, ManmadeLess, NoCollisionMore, NoCollisionLess,BorderLinear,BorderOblique,Portal,}
 
@@ -268,7 +267,7 @@ namespace GameSetting
 
     public enum enum_EntityType { Invalid = -1,SubHidden=0, Fighter = 1, Shooter_Rookie = 2,Shooter_Veteran=3, AOECaster = 4, Elite = 5 }
 
-    public enum enum_Interaction { Invalid = -1,Portal=1,ActionChest=2,Trade=10,Coin=11,Health=12,Action=13, Weapon = 14,ActionAdjustment=15, }      //To Be Continued
+    public enum enum_Interaction { Invalid = -1,Portal=1,ActionChest=2,ContainerTrade=10, ContainerBattle = 11, PickupCoin = 20, PickupHealth =21,PickupAction=22, Weapon = 23,ActionAdjustment=24, }
 
     public enum enum_TriggerType { Invalid = -1, Single = 1, Auto = 2, Burst = 3, Pull = 4, Store = 5, }
 

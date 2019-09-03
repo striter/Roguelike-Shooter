@@ -35,16 +35,16 @@ public class EntityPlayerBase : EntityBase {
         m_Animator = new PlayerAnimator(tf_Model.GetComponent<Animator>());
         transform.Find("InteractDetector").GetComponent<InteractDetector>().Init(OnInteractCheck);
     }
-    public void SetPlayerInfo(List<ActionBase> storedActions)
+    public void SetPlayerInfo(int coins, List<ActionBase> storedActions)
     {
+        m_PlayerInfo.OnCoinsReceive(coins);
         m_PlayerInfo.InitActionInfo(storedActions);
     }
     protected override void OnEnable()
     {
         base.OnEnable();
         CameraController.Attach(this.transform);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnLevelStart, OnLevelStart);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnLevelFinish, OnLevelFinish);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
         SetBinding(true);
@@ -67,17 +67,19 @@ public class EntityPlayerBase : EntityBase {
         SetBinding(false);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnLevelStart, OnLevelStart);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnLevelFinish, OnLevelFinish);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);;
     }
-    void OnLevelStart()=> m_Interact = null;
-    void OnLevelFinish()=> m_Equipment = null;
+    void OnChangeLevel()
+    {
+        m_Interact = null;
+    } 
     void OnBattleStart()
     {
         m_PlayerInfo.OnBattleStart();
     }
     void OnBattleFinish()
     {
+        m_Equipment = null;
         m_PlayerInfo.OnBattleFinish();
         m_HealthManager.OnActivate(I_MaxHealth, I_DefaultArmor);
     }

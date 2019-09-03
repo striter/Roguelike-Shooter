@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class InteractCoin : InteractPickup {
-    public override enum_Interaction m_InteractType => enum_Interaction.Coin;
+public class InteractPickupCoin : InteractPickup {
+    public override enum_Interaction m_InteractType => enum_Interaction.PickupCoin;
     public int m_CoinAmount { get; private set; }
-    public InteractCoin Play(int coinAmount)
+    public InteractPickupCoin Play(int coinAmount)
     {
         base.Play();
         m_CoinAmount = coinAmount;

@@ -52,10 +52,10 @@ GameObject:
   m_Component:
   - component: {fileID: 4581222859846450}
   - component: {fileID: 135050677205383650}
-  - component: {fileID: 114093709637074496}
   - component: {fileID: 114213671537409542}
+  - component: {fileID: 114844531519746172}
   m_Layer: 0
-  m_Name: Interact_Trade
+  m_Name: Interact_ContainerBattle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -172,17 +172,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1008168824422434}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &114093709637074496
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1467152542018250}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b617a108061bb243bc1627ef7f48a09, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114213671537409542
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -192,6 +181,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 82fb4765216cd2648b46458431b47460, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114844531519746172
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1467152542018250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28ee9d31c27625a489f4d00735a9ad6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!135 &135050677205383650

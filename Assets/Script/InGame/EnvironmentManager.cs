@@ -25,12 +25,12 @@ public class EnvironmentManager : SimpleSingletonMono<EnvironmentManager> {
     protected void Start()
     {
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageStart, OnStageStart);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnLevelFinish, OnLevelFinished);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
     }
     protected void OnDestroy()
     {
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnStageStart, OnStageStart);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnLevelFinish, OnLevelFinished);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
     }
     public void GenerateAllEnviorment(enum_Style _LevelStyle,System.Random seed,Action<SBigmapLevelInfo> _OnLevelPrepared,Action _OnStageFinished)
     {
@@ -65,10 +65,10 @@ public class EnvironmentManager : SimpleSingletonMono<EnvironmentManager> {
     void OnStageStart()
     {
         m_currentLevel = m_MapLevelInfo.Find(p => p.m_TileType == enum_TileType.Start);
-        OnLevelStart();
+        PrepareCurrentLevel();
     }
 
-    void OnLevelStart()     //Make Current Level Available (AI Bake)
+    void PrepareCurrentLevel()     //Make Current Level Available (AI Bake)
     {
         ObjectManager.RecycleAllLevelItem();
         m_currentLevel.StartLevel();
@@ -85,10 +85,10 @@ public class EnvironmentManager : SimpleSingletonMono<EnvironmentManager> {
 
         m_currentLevel.m_Level.SetActivate(false);
         m_currentLevel = (m_MapLevelInfo.Get(targetAxis));
-        OnLevelStart();
+        PrepareCurrentLevel();
     }
 
-    void OnLevelFinished()
+    void OnChangeLevel()
     {
         foreach (enum_TileDirection direction in m_currentLevel.m_Connections.Keys)     //Set Connected Island Unlockable
         {
@@ -158,12 +158,12 @@ public class EnvironmentManager : SimpleSingletonMono<EnvironmentManager> {
         if (subBattleTile!=null)
         TTiles.TTiles.m_FourDirections.TraversalRandom( (enum_TileDirection direction) => {
             SBigmapTileInfo nearbyTile = bigmapTiles.Get(subBattleTile.m_TileAxis.DirectionAxis(direction));
-            if (nearbyTile != null && (nearbyTile.m_TileType== enum_TileType.Trader|| nearbyTile.m_TileType == enum_TileType.Battle))
+            if (nearbyTile != null && (nearbyTile.m_TileType== enum_TileType.CoinsTrade|| nearbyTile.m_TileType == enum_TileType.Battle))
                 ConnectTile(subBattleTile,nearbyTile);
             return false; }, _seed);
         
         //Generate Last Reward Tile
-        subGenerateTiles.RemoveAll(p => p.m_TileType == enum_TileType.Trader);
+        subGenerateTiles.RemoveAll(p => p.m_TileType == enum_TileType.CoinsTrade);
         SBigmapTileInfo subRewardTile = null;
         subGenerateTiles.TraversalRandom( (SBigmapTileInfo tile) =>
         {
@@ -182,13 +182,13 @@ public class EnvironmentManager : SimpleSingletonMono<EnvironmentManager> {
         }, _seed);
 
         //Set All Reward Tiles
-        List<enum_TileType> rewardTypes = new List<enum_TileType>() { enum_TileType.ActionAdjustment, enum_TileType.ActionBattle, enum_TileType.Trader };
+        List<enum_TileType> rewardTypes = new List<enum_TileType>() { enum_TileType.ActionAdjustment, enum_TileType.BattleTrade, enum_TileType.CoinsTrade };
         for (int i = 0; i < rewardTiles.Count; i++)
         {
             if (rewardTypes.Count == 0)
             {
                 Debug.LogError("Invalid Type Here,Use Trader By Default");
-                rewardTiles[i].ResetTileType( enum_TileType.Trader);
+                rewardTiles[i].ResetTileType( enum_TileType.CoinsTrade);
                 continue;
             }
             enum_TileType type = rewardTypes.RandomItem(_seed);

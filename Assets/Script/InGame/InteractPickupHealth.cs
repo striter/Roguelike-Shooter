@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class InteractHealth : InteractPickup {
-    public override enum_Interaction m_InteractType => enum_Interaction.Health;
+public class InteractPickupHealth : InteractPickup {
+    public override enum_Interaction m_InteractType => enum_Interaction.PickupHealth;
     protected override bool B_CanInteract(EntityPlayerBase _interactor) => _interactor.m_HealthManager.F_HealthScale < 1;
     public float m_healAmount { get; private set; }
-    public InteractHealth Play(float _healthAmount)
+    public InteractPickupHealth Play(float _healthAmount)
     {
         base.Play();
         m_healAmount = _healthAmount;

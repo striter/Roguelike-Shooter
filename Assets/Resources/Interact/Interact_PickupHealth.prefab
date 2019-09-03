@@ -90,7 +90,7 @@ GameObject:
   - component: {fileID: 111135547001784680}
   - component: {fileID: 114913138000248522}
   m_Layer: 0
-  m_Name: Interact_Health
+  m_Name: Interact_PickupHealth
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

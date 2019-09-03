@@ -85,11 +85,16 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
             tf_InteractData.position = Vector3.Lerp(tf_InteractData.position, CameraController.MainCamera.WorldToScreenPoint(_player.m_Interact.transform.position), Time.deltaTime * 10f);
 
         int tradePrice = 0;
-        if (_player.m_Interact.m_InteractType == enum_Interaction.Trade)
+        if (_player.m_Interact.m_InteractType == enum_Interaction.ContainerTrade)
         {
-            InteractTrade trade = _player.m_Interact as InteractTrade;
+            InteractContainerTrade trade = _player.m_Interact as InteractContainerTrade;
             tradePrice = trade.m_TradePrice;
             SetInteractInfo(trade.m_InteractTarget);
+        }
+        else if (_player.m_Interact.m_InteractType == enum_Interaction.ContainerBattle)
+        {
+            InteractContainerBattle battle = _player.m_Interact as InteractContainerBattle;
+            SetInteractInfo(battle.m_InteractTarget);
         }
         else
         {
@@ -115,11 +120,11 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
         m_ActionData.SetActivate(false);
         switch (interact.m_InteractType)
         {
-            case enum_Interaction.Action:
+            case enum_Interaction.PickupAction:
                 {
                     m_ActionData.SetActivate(true);
                     txt_interactName.localizeText = interact.m_InteractType.GetInteractTitle();
-                    m_ActionData.SetInfo((interact as InteractAction).m_Action);
+                    m_ActionData.SetInfo((interact as InteractPickupAction).m_Action);
                 }
                 break;
             default:
