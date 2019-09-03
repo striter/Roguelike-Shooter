@@ -33,7 +33,7 @@ public class UIT_TextLocalization : Text
     {
         set
         {
-            text = TLocalization.GetKeyLocalized(S_AutoLocalizeKey);
+            text = TLocalization.GetKeyLocalized(value);
         }
     }
 }
