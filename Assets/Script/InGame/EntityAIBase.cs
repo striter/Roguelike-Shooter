@@ -313,23 +313,34 @@ public class EntityAIBase : EntityBase {
             b_preAim = TCommon.RandomPercentage() >= m_Entity.I_AttackPreAimPercentage;
             i_playCount = m_Entity.F_AttackTimes.RandomRangeInt();
             i_playCount = i_playCount <= 0 ? 1 : i_playCount;       //Make Sure Play Once At Least
+            b_attacking = true;
+            m_Weapon.OnPlayAnim(true);
             this.StartSingleCoroutine(0, Attack(i_playCount, m_Entity.F_AttackRate));
 
             f_battleSimulate = m_Entity.F_AttackRate * i_playCount + m_Entity.F_AttackDuration.RandomRangeFloat();
         }
         IEnumerator Attack(int count,float fireRate)
         {
-            float m_attackSimulate= 0;
-            b_attacking = true;
-            m_Weapon.OnPlayAnim(true);
-            OnAttackAnim(m_Target, true);
-            count--;
+            float m_attackSimulate= 0f;
+            float m_frontCheck = fireRate;
             for (; ; )
             {
-                m_attackSimulate +=m_Entity.m_EntityInfo.F_FireRateTick(Time.deltaTime);
-                if (m_attackSimulate >= fireRate)
+                float fireRateDeltatime= m_Entity.m_EntityInfo.F_FireRateTick(Time.deltaTime);
+                m_attackSimulate -= fireRateDeltatime;
+                m_frontCheck -= fireRateDeltatime;
+                if (m_frontCheck <= 0)
                 {
-                    m_attackSimulate -= fireRate;
+                    m_frontCheck = .3f;
+                    if (FrontBlocked())
+                    {
+                        OnAttackFinished();
+                        yield break;
+                    }
+                }
+
+                if (m_attackSimulate <= 0 )
+                {
+                    m_attackSimulate = fireRate;
 
                     if (count <= 0)
                     {
