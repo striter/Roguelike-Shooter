@@ -1999,46 +1999,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 11
       objectReference: {fileID: 0}
-    - target: {fileID: 195599446312921816, guid: 932ef6601d079ac4b9874e89280f1c03,
-        type: 2}
-      propertyPath: m_Radius
-      value: 0.7
-      objectReference: {fileID: 0}
-    - target: {fileID: 208651010292234202, guid: 932ef6601d079ac4b9874e89280f1c03,
-        type: 2}
-      propertyPath: m_Extents.x
-      value: 0.7
-      objectReference: {fileID: 0}
-    - target: {fileID: 208651010292234202, guid: 932ef6601d079ac4b9874e89280f1c03,
-        type: 2}
-      propertyPath: m_Extents.z
-      value: 0.7
-      objectReference: {fileID: 0}
-    - target: {fileID: 195599446312921816, guid: 932ef6601d079ac4b9874e89280f1c03,
-        type: 2}
-      propertyPath: m_ObstacleAvoidanceType
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 195599446312921816, guid: 932ef6601d079ac4b9874e89280f1c03,
-        type: 2}
-      propertyPath: m_WalkableMask
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 195599446312921816, guid: 932ef6601d079ac4b9874e89280f1c03,
-        type: 2}
-      propertyPath: m_AutoRepath
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 195599446312921816, guid: 932ef6601d079ac4b9874e89280f1c03,
-        type: 2}
-      propertyPath: m_AutoTraverseOffMeshLink
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 195599446312921816, guid: 932ef6601d079ac4b9874e89280f1c03,
-        type: 2}
-      propertyPath: avoidancePriority
-      value: 50
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 932ef6601d079ac4b9874e89280f1c03, type: 2}
   m_IsPrefabParent: 0

@@ -146,7 +146,7 @@ GameObject:
   - component: {fileID: 33566743581821484}
   - component: {fileID: 23295916408510408}
   - component: {fileID: 65437084715830814}
-  - component: {fileID: 114635135160847424}
+  - component: {fileID: 114127634805792394}
   m_Layer: 0
   m_Name: Shield
   m_TagString: Untagged
@@ -1129,7 +1129,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &114635135160847424
+--- !u!114 &114127634805792394
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -1137,7 +1137,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1243606179835760}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f62cdd659d216734e828ce07e4431bf6, type: 3}
+  m_Script: {fileID: 11500000, guid: 62d09be21441f524d850aaf663ec49a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &114679542760397622
@@ -7945,7 +7945,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 2
-  randomSeed: -1888223480
+  randomSeed: 1810276161
   InitialModule:
     serializedVersion: 3
     enabled: 1
