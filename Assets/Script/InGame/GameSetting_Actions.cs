@@ -35,47 +35,47 @@ namespace GameSetting_Action
         public const int I_30006_Cost = 1;
         #endregion
         #region Durations
-        public const float F_10002_Duration = 10f;
+        public const float F_10002_Duration = 30f;
         public const float F_10005_Duration = 30f;
-        public const float F_10006_Duration = 20f;
-        public const float F_10007_Duration = 20f;
+        public const float F_10006_Duration = 30f;
+        public const float F_10007_Duration = 30f;
         public const float F_10008_Duration = 30f;
         public const float F_10009_Duration = 30f;
         public const float F_10014_Duration = 30f;
         #endregion
         #region Expressions
-        public static float F_10001_ArmorAdditive(enum_RarityLevel level) => 30f * (int)level;
-        public static float F_10002_ArmorDamageAdditive(enum_RarityLevel level) =>  1f;
-        public static int IP_10003_ArmorMultiplyAdditive(enum_RarityLevel level) => 30 * (int)level;
+        public static float F_10001_ArmorAdditive(enum_RarityLevel level) => 30 + 30f * (int)level;
+        public static float F_10002_ArmorDamageAdditive(enum_RarityLevel level) => 1f * (int)level;
+        public static int IP_10003_ArmorMultiplyAdditive(enum_RarityLevel level) => 30 + 30 * (int)level;
         public static float F_10004_ArmorActionAcquire(enum_RarityLevel level) => 60f - 10f * (int)level;
-        public static int IP_10005_ArmorDamageReduction(enum_RarityLevel level) =>  30 * (int)level;
-        public static int IP_10006_FireRateAdditive(enum_RarityLevel level) => 30 * (int)level;
-        public static int IP_10007_RecoilMultiplyAdditive(enum_RarityLevel level) => 20 * (int)level;
-        public static int IP_10008_ClipMultiply(enum_RarityLevel level) => 20 * (int)level;
-        public static int IP_10009_BulletSpeedAdditive(enum_RarityLevel level) => 30 * (int)level;
-        public static int IP_10010_SingleDamageMultiply(enum_RarityLevel level) => 400 * (int)level;
-        public static int IP_10011_SingleDamageMultiply(enum_RarityLevel level) => 200 * (int)level;
+        public static int IP_10005_ArmorDamageReduction(enum_RarityLevel level) => 30 + 20 * (int)level;
+        public static int IP_10006_FireRateAdditive(enum_RarityLevel level) => 30 + 30 * (int)level;
+        public static int IP_10007_RecoilMultiplyAdditive(enum_RarityLevel level) => 40 + 20 * (int)level;
+        public static int IP_10008_ClipMultiply(enum_RarityLevel level) => 100 * (int)level;
+        public static int IP_10009_BulletSpeedAdditive(enum_RarityLevel level) => 60 * (int)level;
+        public static int IP_10010_SingleDamageMultiply(enum_RarityLevel level) => 200 + 400 * (int)level;
+        public static int IP_10011_SingleDamageMultiply(enum_RarityLevel level) => 200 + 200 * (int)level;
         public static float F_10011_EntityKillActionReturn(enum_RarityLevel level) => 1 + (int)level;
-        public static int IP_10012_SingleDamageMultiply(enum_RarityLevel level) => 200 * (int)level;
+        public static int IP_10012_SingleDamageMultiply(enum_RarityLevel level) => 200 + 200 * (int)level;
         public static float F_10012_EntityKillHealing(enum_RarityLevel level) => 30 * (int)level;
-        public static int IP_10013_SingleDamageMultiply(enum_RarityLevel level) => 200 * (int)level;
-        public static int IP_10014_ReloadRateMultiplyPercentage(enum_RarityLevel level) => 30*(int)level;
+        public static int IP_10013_SingleDamageMultiply(enum_RarityLevel level) => 200 + 200 * (int)level;
+        public static int IP_10014_ReloadRateMultiplyPercentage(enum_RarityLevel level) => 60 + 40 * (int)level;
 
-        public static float F_20001_ArmorTurretHealth(enum_RarityLevel level) =>  2 * (int)level;
-        public static float F_20001_ArmorTurretDamage(enum_RarityLevel level) =>  1.5f * (int)level;
+        public static float F_20001_Health(enum_RarityLevel level) => 200;
+        public static float F_20001_ArmorTurretDamage(enum_RarityLevel level) => 1.5f * (int)level;
         public static float F_20002_DamageDealt(enum_RarityLevel level) => 50f;
         public static float F_20002_BuffIndex(enum_RarityLevel level) => 200020 + (int)level;
-        public static float F_20003_Health(enum_RarityLevel level) => 400;
-        public static float F_20003_FireRate(enum_RarityLevel level) =>  .7f * (int)level;
-        public static float F_20003_DamageDealt(enum_RarityLevel level) => .7f *  (int)level;
-        public static float F_20004_DamageDealt(enum_RarityLevel level) =>  2 * (int)level;
+        public static float F_20003_Health(enum_RarityLevel level) => 200;
+        public static float F_20003_FireRate(enum_RarityLevel level) => .7f * (int)level;
+        public static float F_20003_DamageDealt(enum_RarityLevel level) => .7f * (int)level;
+        public static float F_20004_DamageDealt(enum_RarityLevel level) => 2 + 2 * (int)level;
 
-        public static float F_30001_ArmorActionAdditive(enum_RarityLevel level) => 10 * (int)level;
-        public static float F_30002_ArmorDamageReturn(enum_RarityLevel level) =>  2 * (int)level;
+        public static float F_30001_ArmorActionAdditive(enum_RarityLevel level) => 10 + 10 * (int)level;
+        public static float F_30002_ArmorDamageReturn(enum_RarityLevel level) => 2 * (int)level;
         public static float F_30003_DamageAdditive(enum_RarityLevel level) => 20f * (int)level;
         public static float F_30004_DamageAdditive(enum_RarityLevel level) => 200 * (int)level;
         public static float F_30005_ReloadTimesHeal(enum_RarityLevel level) => 5 - 1 * (int)level;
-        public static float F_30005_ReloadHealAmount(enum_RarityLevel level) => 10f;
+        public static float F_30005_ReloadHealAmount(enum_RarityLevel level) => 20f;
         public static int I_30006_ReloadTimesCount(enum_RarityLevel level) => 2;
         public static int IP_30006_ReloadDamageMultiplyPercentage(enum_RarityLevel level) => 200 * (int)level;
 
@@ -366,7 +366,7 @@ namespace GameSetting_Action
     {
         public override int m_Index => 20001;
         public override int I_ActionCost => ActionData.I_20001_Cost;
-        public override float Value1 => ActionData.F_20001_ArmorTurretHealth(m_Level);
+        public override float Value1 => ActionData.F_20001_Health(m_Level);
         public override float Value2 => ActionData.F_20001_ArmorTurretDamage(m_Level);
         public override void OnActionUse() {
             base.OnActionUse();
