@@ -70,8 +70,8 @@ namespace GameSetting
                     }
             }
         }
-        public static int GetActionRemovePrice(enum_StageLevel stage, int removeTimes) => 5 * (removeTimes + 1) * (int)stage;
-        public static int GetActionUpgradePrice(enum_StageLevel stage, int upgradeTimes) => 5 * (upgradeTimes + 1) * (int)stage;
+        public static int GetActionRemovePrice(enum_StageLevel stage, int removeTimes) => 8 + 2 * (removeTimes + 1) * (int)stage;
+        public static int GetActionUpgradePrice(enum_StageLevel stage, int upgradeTimes) => 8 + 2 * (upgradeTimes + 1) * (int)stage;
         public static StageInteractGenerate GetInteractGenerate(enum_StageLevel level)
         {
             switch (level)
