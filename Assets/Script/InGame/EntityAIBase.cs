@@ -326,7 +326,6 @@ public class EntityAIBase : EntityBase {
             for (; ; )
             {
                 float fireRateDeltatime= m_Entity.m_EntityInfo.F_FireRateTick(Time.deltaTime);
-                m_attackSimulate -= fireRateDeltatime;
                 m_frontCheck -= fireRateDeltatime;
                 if (m_frontCheck <= 0)
                 {
@@ -338,6 +337,7 @@ public class EntityAIBase : EntityBase {
                     }
                 }
 
+                m_attackSimulate -= fireRateDeltatime;
                 if (m_attackSimulate <= 0 )
                 {
                     m_attackSimulate = fireRate;

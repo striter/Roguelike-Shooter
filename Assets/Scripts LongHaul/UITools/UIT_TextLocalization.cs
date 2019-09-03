@@ -3,7 +3,7 @@ using UnityEngine.UI;
 public class UIT_TextLocalization : Text
 {
     public bool B_AutoLocalize = false;
-    public string LocalizeKey;
+    public string S_AutoLocalizeKey;
     protected override void Awake()
     {
         base.Awake();
@@ -25,7 +25,7 @@ public class UIT_TextLocalization : Text
 
     void OnKeyLocalize()
     {
-        text = TLocalization.GetKeyLocalized(LocalizeKey);
+        text = TLocalization.GetKeyLocalized(S_AutoLocalizeKey);
     }
 
     public string formatText(string formatKey, params object[] subItems) => base.text = string.Format(TLocalization.GetKeyLocalized(formatKey), subItems);
@@ -33,7 +33,7 @@ public class UIT_TextLocalization : Text
     {
         set
         {
-            text = TLocalization.GetKeyLocalized(value);
+            text = TLocalization.GetKeyLocalized(S_AutoLocalizeKey);
         }
     }
 }

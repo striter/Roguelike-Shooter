@@ -17,9 +17,9 @@ public class UIGI_ExpireInfoItem : UIT_GridItem {
     {
         m_target = expire;
         if (expire.m_ExpireType == enum_ExpireType.Action)
-            txt_Name.LocalizeKey = (expire as ActionBase).GetNameLocalizeKey();
+            txt_Name.localizeText = (expire as ActionBase).GetNameLocalizeKey();
         else if (expire.m_ExpireType == enum_ExpireType.Buff)
-            txt_Name.LocalizeKey = (expire as BuffBase).GetNameLocalizeKey();
+            txt_Name.localizeText = (expire as BuffBase).GetNameLocalizeKey();
         txt_ElapsedTime.text = "";
     }
     private void Update()
