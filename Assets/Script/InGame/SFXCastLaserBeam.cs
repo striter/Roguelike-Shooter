@@ -43,11 +43,7 @@ public class SFXCastLaserBeam : SFXCast {
         {
             RaycastHit hit = hits[i];
             HitCheckBase hitCheck = hit.collider.Detect();
-            hitted = true;
-            if (hitCheck.m_HitCheckType == enum_HitCheck.Entity)
-                hitted = GameManager.B_CanHitEntity((hitCheck as HitCheckEntity), m_sourceID);
-
-            if (hitted)
+            if (GameManager.B_CanHitTarget(hitCheck, m_sourceID))
             {
                 f_castLength = TCommon.GetXZDistance(CastTransform.position, hit.point) + .2f;
                 hitPoint = hit.point;

@@ -157,18 +157,18 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         m_LocalPlayer.transform.position = levelInfo.m_Level.RandomEmptyTilePosition(m_level.m_GameSeed);
 
         if (m_level.CanLevelBattle(levelInfo))
-            OnBattleStart(m_level.m_Difficulty);
+            OnBattleStart();
         else
             OnLevelFinished(levelInfo.m_TileLocking != enum_TileLocking.Unlocked,Vector3.zero);
     }
 
-    //Call Enviorment Manager To Generate Interacts And Show Bigmaps, Then Go Back To OnLevelChange From Enviorment Manager
     void OnLevelFinished(bool spawnInteract, Vector3 interactPos)
     {
-        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnLevelFinish);
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnLevelFinish);    //Call Enviorment Manager  And Show Bigmaps, Then Go Back To OnLevelChange From Enviorment Manager
+
+        //Generate Interacts
         if (!spawnInteract)
             return;
-
         switch (m_level.m_LevelType)
         {
             case enum_TileType.Start:
@@ -190,7 +190,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
                 break;
             case enum_TileType.Trader:
                 {
-                    ObjectManager.SpawnEntity<EntityTrader>(1, Vector3.back*2, enum_EntityFlag.Player, EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact);
+                    ObjectManager.SpawnEntity<EntityTrader>(1, Vector3.back*2, enum_EntityFlag.Neutal, EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact);
                     ActionBase action1 = DataManager.RandomPlayerAction(m_level.m_actionGenerate.GetTradeRarityLevel(m_level.m_GameSeed),m_level.m_GameSeed);
                     int price1 = GameExpression.GetTradePrice(enum_Interaction.Action, action1.m_Level).RandomRangeInt(m_level.m_GameSeed);
                     ObjectManager.SpawnInteract<InteractTrade>(enum_Interaction.Trade, EnvironmentManager.NavMeshPosition(Vector3.left * 2, false), EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(price1 , ObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action, Vector3.zero).Play(action1));
@@ -203,6 +203,12 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
 
                     WeaponBase weapon = ObjectManager.SpawnWeapon(TCommon.RandomEnumValues<enum_PlayerWeapon>(m_level.m_GameSeed), new List<ActionBase>() { DataManager.RendomWeaponAction(m_level.m_actionGenerate.GetTradeRarityLevel(m_level.m_GameSeed), m_level.m_GameSeed) });
                     ObjectManager.SpawnInteract<InteractTrade>(enum_Interaction.Trade, EnvironmentManager.NavMeshPosition(Vector3.right * 2, false), EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(10, ObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, EnvironmentManager.NavMeshPosition(Vector3.right, false)).Play(weapon));
+                }
+                break;
+            case enum_TileType.ActionAdjustment:
+                {
+                    ObjectManager.SpawnEntity<EntityTrader>(2, Vector3.back , enum_EntityFlag.Neutal, EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact);
+                    ObjectManager.SpawnInteract<InteractActionAdjustment>(enum_Interaction.ActionAdjustment, Vector3.forward , EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(m_level.m_currentStage);
                 }
                 break;
             case enum_TileType.End:
@@ -276,10 +282,9 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     void OnSpawnEntity(EntityBase entity)
     {
         m_Entities.Add(entity.I_EntityID, entity);
-        
         m_AllyEntities[entity.m_Flag].Add(entity);
         m_OppositeEntities.Traversal((enum_EntityFlag flag)=> {
-            if (flag != entity.m_Flag)
+            if (entity.m_Flag!= enum_EntityFlag.Neutal&&flag != entity.m_Flag)
                 m_OppositeEntities[flag].Add(entity);
         });
     }
@@ -287,30 +292,27 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     void OnRecycleEntity(EntityBase entity)
     {
         m_Entities.Remove(entity.I_EntityID);
-
         m_AllyEntities[entity.m_Flag].Remove(entity);
         m_OppositeEntities.Traversal((enum_EntityFlag flag) => {
-            if (flag != entity.m_Flag)
+            if (entity.m_Flag != enum_EntityFlag.Neutal && flag != entity.m_Flag)
                 m_OppositeEntities[flag].Remove(entity);
         });
         OnBattleEntityRecycle(entity);
     }
 
-    public static bool B_CanHitEntity(HitCheckEntity targetHitCheck, int sourceEntityID)  //If Match Will Hit Target,Player Particles ETC
+    static bool B_CanHitEntity(HitCheckEntity targetHitCheck, int sourceID)  //If Match Will Hit Target,Player Particles ETC
     {
-        if (targetHitCheck.I_AttacherID == sourceEntityID)
+        if (targetHitCheck.I_AttacherID == sourceID)
             return false;
-        return !Instance.m_Entities.ContainsKey(sourceEntityID) || targetHitCheck.m_Attacher.m_Flag != Instance.m_Entities[sourceEntityID].m_Flag;
+        return !Instance.m_Entities.ContainsKey(sourceID) || targetHitCheck.m_Attacher.m_Flag != Instance.m_Entities[sourceID].m_Flag;
     }
     public static bool B_CanDamageEntity(HitCheckEntity hb, int sourceID)   //After Hit,If Match Target Hit Succeed
     {
         if (hb.I_AttacherID == sourceID)
             return false;
-
-        return Instance.m_Entities.ContainsKey(sourceID) && hb.m_Attacher.m_Flag != Instance.m_Entities[sourceID].m_Flag;
+        return Instance.m_Entities.ContainsKey(sourceID) &&hb.m_Attacher.m_Flag!= enum_EntityFlag.Neutal&&hb.m_Attacher.m_Flag != Instance.m_Entities[sourceID].m_Flag;
     }
-
-    public static bool B_DoHitCheck(HitCheckBase hitCheck,int sourceID)
+    public static bool B_CanHitTarget(HitCheckBase hitCheck,int sourceID)
     {
         bool canHit = hitCheck.I_AttacherID!=sourceID;
         if (hitCheck.m_HitCheckType == enum_HitCheck.Entity)
@@ -326,10 +328,10 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     public List<SGenerateEntity> m_EntityGenerate { get; private set; } = new List<SGenerateEntity>();
     public List<int> m_EntityGenerating { get; private set; } = new List<int>();
     public Dictionary<enum_EntityType, List<int>> m_StyledEnermyEntities;
-    void OnBattleStart(enum_BattleDifficulty difficulty)
+    void OnBattleStart()
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleStart);
-        m_EntityGenerate = DataManager.GetEntityGenerateProperties(difficulty);
+        m_EntityGenerate = DataManager.GetEntityGenerateProperties(m_level.m_Difficulty);
         B_Battling = true;
         m_CurrentWave = 0;
         WaveStart();

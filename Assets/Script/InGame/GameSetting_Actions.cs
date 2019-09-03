@@ -130,7 +130,7 @@ namespace GameSetting_Action
         public static void PlayerUpgradeAction(EntityPlayerBase player)
         {
             Debug.Log("Player Upgrade Current Random Action");
-            player.m_PlayerInfo.UpgradeAction(-1);
+            player.m_PlayerInfo.UpgradeRandomHoldingAction();
         }
     }
     #region ActionBase

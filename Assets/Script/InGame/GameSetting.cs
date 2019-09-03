@@ -70,7 +70,8 @@ namespace GameSetting
                     }
             }
         }
-
+        public static int GetActionRemovePrice(enum_StageLevel stage, int removeTimes) => 5 * (removeTimes + 1) * (int)stage;
+        public static int GetActionUpgradePrice(enum_StageLevel stage, int upgradeTimes) => 5 * (upgradeTimes + 1) * (int)stage;
         public static StageInteractGenerate GetInteractGenerate(enum_StageLevel level)
         {
             switch (level)
@@ -138,9 +139,11 @@ namespace GameSetting
             {
                 default: color = TCommon.ColorAlpha(Color.blue, .5f); break;
                 case enum_TileType.Battle: color = TCommon.ColorAlpha(Color.red, .5f); break;
-                case enum_TileType.Trader: color = TCommon.ColorAlpha(Color.green, .5f); break;
-                case enum_TileType.Start: color = TCommon.ColorAlpha(Color.blue, .5f); break;
+                case enum_TileType.Start: color = TCommon.ColorAlpha(Color.grey, .5f); break;
                 case enum_TileType.End: color = TCommon.ColorAlpha(Color.black, .5f); break;
+                case enum_TileType.Trader: color = TCommon.ColorAlpha(Color.green, .5f); break;
+                case enum_TileType.ActionBattle: color = TCommon.ColorAlpha(Color.yellow, .5f); break;
+                case enum_TileType.ActionAdjustment: color = TCommon.ColorAlpha(Color.white, .5f); break;
             }
             switch (levelLocking)
             {
@@ -172,9 +175,11 @@ namespace GameSetting
             switch (type)
             {
                 default: Debug.LogError("Please Edit This Please:" + type.ToString()); return enum_LevelGenerateType.Invalid;
+                case enum_TileType.ActionBattle:
                 case enum_TileType.Battle:
                 case enum_TileType.End:
                     return enum_LevelGenerateType.Big;
+                case enum_TileType.ActionAdjustment:
                 case enum_TileType.Trader:
                 case enum_TileType.Start:
                     return enum_LevelGenerateType.Small;
@@ -243,7 +248,7 @@ namespace GameSetting
 
     public enum enum_BattleDifficulty { Invalid = -1, Peaceful = 0, Eazy = 1, Normal = 2, Hard = 3, Final = 4, }
 
-    public enum enum_EntityFlag { Invalid=-1, Player=1,Enermy=2,}
+    public enum enum_EntityFlag { Invalid=-1, Neutal = 0, Player =1,Enermy=2,}
 
     public enum enum_HitCheck { Invalid = -1, Static = 1, Entity = 2, Dynamic = 3,Interact=4, }
 
@@ -251,7 +256,7 @@ namespace GameSetting
 
     public enum enum_Style { Invalid = -1, Forest = 1, Desert = 2, Iceland = 3, Horde = 4, Undead = 5, }
 
-    public enum enum_TileType { Invalid = -1, Start = 0, Battle = 1, End = 2, Trader = 3, }
+    public enum enum_TileType { Invalid = -1, Start = 0, Battle = 1, End = 2, Trader = 11,ActionAdjustment=12,ActionBattle=13, }
 
     public enum enum_LevelItemType { Invalid = -1, LargeMore, LargeLess, MediumMore, MediumLess, SmallMore, SmallLess, ManmadeMore, ManmadeLess, NoCollisionMore, NoCollisionLess,BorderLinear,BorderOblique,Portal,}
 
@@ -263,7 +268,7 @@ namespace GameSetting
 
     public enum enum_EntityType { Invalid = -1,SubHidden=0, Fighter = 1, Shooter_Rookie = 2,Shooter_Veteran=3, AOECaster = 4, Elite = 5 }
 
-    public enum enum_Interaction { Invalid = -1,Portal=1,ActionChest=2,Trade=10,Coin=11,Health=12,Action=13, Weapon = 14, }      //To Be Continued
+    public enum enum_Interaction { Invalid = -1,Portal=1,ActionChest=2,Trade=10,Coin=11,Health=12,Action=13, Weapon = 14,ActionAdjustment=15, }      //To Be Continued
 
     public enum enum_TriggerType { Invalid = -1, Single = 1, Auto = 2, Burst = 3, Pull = 4, Store = 5, }
 
@@ -965,7 +970,8 @@ namespace GameSetting
         public List<ActionBase> m_ActionInPool { get; private set; } = new List<ActionBase>();
         public List<ActionBase> m_ActionHolding { get; private set; } = new List<ActionBase>();
         Action OnActionChange;
-
+        protected bool b_actionChangeIndicated = true;
+        protected void IndicateActionUI() => b_actionChangeIndicated = false;
         public int m_Coins { get; private set; } = 0;
         public PlayerInfoManager(EntityPlayerBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange, Action _OnActionChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
         {
@@ -981,6 +987,11 @@ namespace GameSetting
         {
             base.Tick(deltaTime);
             EntityInfoChange();
+            if (!b_actionChangeIndicated)
+            {
+                b_actionChangeIndicated = true;
+                OnActionChange?.Invoke();
+            }
         }
         public void InitActionInfo(List<ActionBase> _actions)
         {
@@ -988,7 +999,6 @@ namespace GameSetting
                 AddStoredAction(_actions[i]);
             m_MaxActionAmount = GameConst.F_MaxAcountAmount;
             m_ActionAmount = m_MaxActionAmount;
-            OnActionChange();
         }
         public override void OnDeactivate()
         {
@@ -1002,7 +1012,7 @@ namespace GameSetting
             m_ActionInPool = new List<ActionBase>(m_ActionStored);
             m_ActionHolding.Clear();
             RefillHoldingActions();
-            OnActionChange();
+            IndicateActionUI();
         }
         public void OnBattleFinish()
         {
@@ -1010,7 +1020,7 @@ namespace GameSetting
             m_ActionHolding.Clear();
             m_ActionEquiping.Traversal((ActionBase action) => { action.OnAfterBattle(); }, true);
             m_AfterFire.Clear();
-            OnActionChange();
+            IndicateActionUI();
         }
 
         #region Player Info
@@ -1097,7 +1107,7 @@ namespace GameSetting
             OnUseAcion(action);
             m_ActionHolding.RemoveAt(index);
             RefillHoldingActions();
-            OnActionChange();
+            IndicateActionUI();
             return true;
         }
 
@@ -1111,19 +1121,31 @@ namespace GameSetting
             m_ActionInPool.RemoveAt(index);
             RefillHoldingActions();
         }
+        public void UpgradeRandomHoldingAction()
+        {
+            m_ActionHolding.RandomItem().Upgrade();
+            IndicateActionUI();
+        }
         public void AddStoredAction(ActionBase action)
         {
             m_ActionStored.Add(action);
+            IndicateActionUI();
+        }
+        public void RemoveStoredAction(int index)
+        {
+            m_ActionStored.RemoveAt(index);
+            IndicateActionUI();
+        }
+        public void UpgradeStoredAction(int index)
+        {
+            m_ActionStored[index].Upgrade();
+            IndicateActionUI();
         }
         public void AddActionAmount(float amount)
         {
             m_ActionAmount += amount;
             if (m_ActionAmount > m_MaxActionAmount)
                 m_ActionAmount = m_MaxActionAmount;
-        }
-        public void UpgradeAction(int index)
-        {
-
         }
         #endregion
 

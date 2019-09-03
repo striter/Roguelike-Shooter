@@ -84,17 +84,20 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
             tf_InteractData.position = CameraController.MainCamera.WorldToScreenPoint(_player.m_Interact.transform.position);
             tf_InteractData.position = Vector3.Lerp(tf_InteractData.position, CameraController.MainCamera.WorldToScreenPoint(_player.m_Interact.transform.position), Time.deltaTime * 10f);
 
-        bool isTradeItem = _player.m_Interact.m_InteractType == enum_Interaction.Trade;
-        txt_interactPrice.SetActivate(isTradeItem);
-        if (isTradeItem)
+        int tradePrice = 0;
+        if (_player.m_Interact.m_InteractType == enum_Interaction.Trade)
         {
-            txt_interactPrice.text = (_player.m_Interact as InteractTrade).m_TradePrice.ToString();
-            SetInteractInfo((_player.m_Interact as InteractTrade).m_InteractTarget);
+            InteractTrade trade = _player.m_Interact as InteractTrade;
+            tradePrice = trade.m_TradePrice;
+            SetInteractInfo(trade.m_InteractTarget);
         }
         else
         {
             SetInteractInfo(_player.m_Interact);
         }
+        txt_interactPrice.SetActivate(tradePrice>0);
+        if(tradePrice>0)
+        txt_interactPrice.text = tradePrice.ToString();
     }
     WeaponBase m_targetWeapon;
     void SetInteractInfo(InteractBase interact)

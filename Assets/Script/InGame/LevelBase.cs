@@ -102,7 +102,7 @@ public class LevelBase : MonoBehaviour {
     }
     void ClearTileForInteracts()
     {
-        if (m_levelType!= enum_TileType.Start&&m_levelType!= enum_TileType.Trader)
+        if (m_levelType== enum_TileType.Battle||m_levelType== enum_TileType.End)     //Dun need to clear when battle only
             return;
 
         TileAxis startAxis = TileAxis.Zero + new TileAxis(-3 / 2, -3 / 2);

@@ -103,7 +103,7 @@ public class WeaponBase : MonoBehaviour {
         {
             spreadDirection = GameExpression.V3_RangeSpreadDirection(m_Attacher.tf_Head.forward, m_WeaponInfo.m_Spread, m_Attacher.tf_Head.up, m_Attacher.tf_Head.right);
             Vector3 endPosition = m_Attacher.tf_Head.position + spreadDirection * GameConst.I_ProjectileMaxDistance;
-            if (Physics.Raycast(m_Attacher.tf_Head.position, spreadDirection, out hit, GameConst.I_ProjectileMaxDistance, GameLayer.Mask.I_All) &&  GameManager.B_DoHitCheck(hit.collider.Detect(),m_Attacher.I_EntityID))
+            if (Physics.Raycast(m_Attacher.tf_Head.position, spreadDirection, out hit, GameConst.I_ProjectileMaxDistance, GameLayer.Mask.I_All) &&  GameManager.B_CanHitTarget(hit.collider.Detect(),m_Attacher.I_EntityID))
                 endPosition = hit.point;
             spreadDirection = (endPosition - m_Muzzle.position).normalized;
 

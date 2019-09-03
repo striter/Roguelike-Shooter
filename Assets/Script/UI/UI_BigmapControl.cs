@@ -70,7 +70,7 @@ public class UI_BigmapControl : UIPageBase {        //This Page Won't Hide(One P
             return;
         }
         EnvironmentManager.Instance.OnChangeLevel(axis);
-    }
+    }   
 
     void OnLevelStatusChanged(SBigmapLevelInfo[,] bigMap, TileAxis playerAxis)
     {
