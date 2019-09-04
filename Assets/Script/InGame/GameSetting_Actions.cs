@@ -63,6 +63,7 @@ namespace GameSetting_Action
 
         public static float F_20001_Health(enum_RarityLevel level) => 200;
         public static float F_20001_ArmorTurretDamage(enum_RarityLevel level) => 1.5f * (int)level;
+        public static float F_20001_TurretMinumumDamage(enum_RarityLevel level) => 50f;
         public static float F_20002_DamageDealt(enum_RarityLevel level) => 50f;
         public static float F_20002_BuffIndex(enum_RarityLevel level) => 200020 + (int)level;
         public static float F_20003_Health(enum_RarityLevel level) => 200;
@@ -368,11 +369,12 @@ namespace GameSetting_Action
         public override int I_ActionCost => ActionData.I_20001_Cost;
         public override float Value1 => ActionData.F_20001_Health(m_Level);
         public override float Value2 => ActionData.F_20001_ArmorTurretDamage(m_Level);
+        public override float Value3 => ActionData.F_20001_TurretMinumumDamage(m_Level);
         public override void OnActionUse() {
             base.OnActionUse();
             ActionHelper.PlayerAcquireEntityEquipmentItem(m_ActionEntity, m_Index, (int)(Value1* m_ActionEntity.m_HealthManager.m_CurrentArmor), 1f, GetDamageInfo);
         }
-        public DamageDeliverInfo GetDamageInfo()=> DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, Value2 * m_ActionEntity.m_HealthManager.m_CurrentArmor, -1);
+        public DamageDeliverInfo GetDamageInfo()=> DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, Value3+Value2 * m_ActionEntity.m_HealthManager.m_CurrentArmor, -1);
         public Action_20001_Armor_Turret_Cannon(enum_RarityLevel _level) : base(_level) { }
     }
     public class Action_20002_FireRate_FrozenGrenade : ActionAfterUse
