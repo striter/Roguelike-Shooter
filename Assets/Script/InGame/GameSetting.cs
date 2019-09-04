@@ -50,10 +50,11 @@ namespace GameSetting
         public static int GetAIEquipment(int entityIndex, int weaponIndex = 0, int subWeaponIndex = 0) => entityIndex * 100 + weaponIndex * 10 + subWeaponIndex;
         public static int GetEquipmentSubIndex(int weaponIndex) => weaponIndex + 1;
 
-        public static float F_ActionAmountReceive(float damageApply) => damageApply * .001f;
+        public static float GetActionAmountRevive(float damageApply) => damageApply * .001f;
 
-        public static float F_GameResultScore(enum_StageLevel _stage, int _levelPassed, int _enermyKilled) => 200 * ((int)_stage-1) + 20 * (_levelPassed-1) + 1 * _enermyKilled;
-        public static float F_ResultRewardCoin(float _resultScore) => _resultScore;
+        public static float GetResultLevelScore(enum_StageLevel _stage, int _levelPassed) => 200 * ((int)_stage-1) + 20 * (_levelPassed-1);
+        public static float GetResultKillScore(int _enermyKilled) => _enermyKilled*1;
+        public static float GetResultRewardCoins(float _totalScore) => _totalScore;
 
         public static RangeInt GetTradePrice(enum_Interaction interactType, enum_RarityLevel level)
         {
@@ -268,7 +269,7 @@ namespace GameSetting
 
     public enum enum_LevelGenerateType { Invalid = -1, Big = 1, Small = 2 }
 
-    public enum enum_EntityType { Invalid = -1,SubHidden=0, Fighter = 1, Shooter_Rookie = 2,Shooter_Veteran=3, AOECaster = 4, Elite = 5 }
+    public enum enum_EntityType { Invalid = -1, Fighter = 1, Shooter_Rookie = 2,Shooter_Veteran=3, AOECaster = 4, Elite = 5, SubHidden = 99 }
 
     public enum enum_Interaction { Invalid = -1,Portal=1,ActionChest=2,ContainerTrade=10, ContainerBattle = 11, PickupCoin = 20, PickupHealth =21,PickupAction=22, Weapon = 23,ActionAdjustment=24, }
 
@@ -1091,7 +1092,7 @@ namespace GameSetting
             if (damageInfo.I_SourceID == m_Player.I_EntityID)
             {
                 m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDemage(damageEntity, amountApply); });
-                AddActionAmount(GameExpression.F_ActionAmountReceive(amountApply));
+                AddActionAmount(GameExpression.GetActionAmountRevive(amountApply));
             }
             else if (damageEntity.I_EntityID == m_Player.I_EntityID)
             {

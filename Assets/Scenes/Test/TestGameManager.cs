@@ -5,7 +5,7 @@ using UnityEngine;
 public class TestGameManager : GameManager {
     private new void Awake()
     {
-        instance = this;
+        Instance = this;
     }
     private void Start()
     {

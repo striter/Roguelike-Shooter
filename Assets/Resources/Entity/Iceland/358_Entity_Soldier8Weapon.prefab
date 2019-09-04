@@ -641,7 +641,7 @@ MonoBehaviour:
   I_DefaultArmor: 0
   F_MovementSpeed: 5
   F_AttackSpread: 0
-  E_EnermyType: 0
+  E_EnermyType: 99
   E_AnimatorIndex: -1
   F_AIChaseRange: 1
   F_AIAttackRange: 3

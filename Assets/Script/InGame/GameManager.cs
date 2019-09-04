@@ -7,7 +7,7 @@ using System.Linq;
 using TExcel;
 using UnityEngine;
 
-public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
+public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
 {
     public string M_TESTSEED = "";
 #if UNITY_EDITOR
@@ -95,7 +95,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         if (Input.GetKeyDown(KeyCode.KeypadPlus))
             m_LocalPlayer.m_PlayerInfo.OnCoinsReceive(10);
 
-        UIManager.instance.transform.Find("Test/SeedTest").GetComponent<UnityEngine.UI.Text>().text = m_GameLevel.m_Seed;
+        UIManager.Instance.transform.Find("Test/SeedTest").GetComponent<UnityEngine.UI.Text>().text = m_GameLevel.m_Seed;
 
         if (OptionsManager.B_AdditionalLight != B_AdditionalLight)
         {
@@ -111,7 +111,7 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     public EntityPlayerBase m_LocalPlayer { get; private set; } = null;
     protected override void Awake()
     {
-        instance = this;
+        base.Awake();
         InitEntityDic();
         GameDataManager.Init();
         OptionsManager.Init();
@@ -124,14 +124,12 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnRecycleEntity);
         Application.targetFrameRate = 60;
     }
-    private void OnDestroy()
+    private void OnDisable()
     {
         this.StopAllSingleCoroutines();
-        GameDataManager.SavePlayerData();
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntitySpawn, OnSpawnEntity);
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityDead, OnEntityDead);
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnRecycleEntity);
-        
     }
     private void Start()
     {
@@ -194,9 +192,13 @@ public class GameManager : SingletonMono<GameManager>, ISingleCoroutine
     void OnGameFinished(bool win)
     {
         GameDataManager.ClearGameData();
-        float score = GameExpression.F_GameResultScore(m_GameLevel.m_currentStage,m_PlayerRecord.i_levelPassed,m_PlayerRecord.i_entitiesKilled);
-        float coin = GameExpression.F_ResultRewardCoin(score);
-        UIManager.instance.ShowPage<UI_GameResult>(true).Play(win,score,coin,()=> {
+        float levelScore = GameExpression.GetResultLevelScore(m_GameLevel.m_currentStage,m_PlayerRecord.i_levelPassed);
+        float killScore = GameExpression.GetResultKillScore( m_PlayerRecord.i_entitiesKilled);
+        float coin = GameExpression.GetResultRewardCoins(levelScore+killScore);
+        GameDataManager.m_PlayerInfo.f_blue += coin;
+        GameDataManager.SavePlayerData();
+        UIManager.Instance.ShowPage<UI_GameResult>(true).Play(win, levelScore, killScore, coin,()=> {
+            GameObjectManager.RecycleAllObject();
             TSceneLoader.Instance.LoadScene( enum_Scene.Main);
         });
     }
@@ -439,7 +441,7 @@ public class GameLevelManager
     public bool B_NextStage => m_currentStage <= enum_StageLevel.Ranger;
     public enum_TileType m_LevelType { get; private set; }
     public enum_StageLevel m_currentStage { get; private set; }
-    static Dictionary<enum_StageLevel, enum_Style> m_StageStyle = new Dictionary<enum_StageLevel, enum_Style>();
+    Dictionary<enum_StageLevel, enum_Style> m_StageStyle = new Dictionary<enum_StageLevel, enum_Style>();
     public enum_Style m_currentStyle => m_StageStyle[m_currentStage];
     public string m_Seed { get; private set; }
     public System.Random m_GameSeed { get; private set; }
@@ -669,8 +671,7 @@ public static class GameObjectManager
         TF_SFXWaitForRecycle = new GameObject("SFX_WaitForRecycle").transform;
         TF_SFXPlaying = new GameObject("SFX_Playing").transform;
     }
-    #region Register
-    public static void Preset(enum_Style levelStyle,enum_StageLevel stageLevel)
+    public static void RecycleAllObject()
     {
         ObjectPoolManager<int, SFXBase>.ClearAll();
         ObjectPoolManager<int, EntityBase>.ClearAll();
@@ -678,7 +679,11 @@ public static class GameObjectManager
         ObjectPoolManager<LevelItemBase, LevelItemBase>.ClearAll();
         ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.ClearAll();
         ObjectPoolManager<int, LevelBase>.ClearAll();
-
+    }
+    #region Register
+    public static void Preset(enum_Style levelStyle,enum_StageLevel stageLevel)
+    {
+        RecycleAllObject();
         RegisterLevelBase(TResources.GetLevelBase(levelStyle));
         RegisterInteractions(levelStyle,stageLevel);
         TResources.GetAllEffectSFX().Traversal((int index, SFXBase target) => {
