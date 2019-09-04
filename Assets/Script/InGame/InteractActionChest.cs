@@ -27,7 +27,6 @@ public class InteractActionChest : InteractBase {
         base.OnInteractSuccessful(_interactTarget);
         m_Interactor = _interactTarget;
         UI_ActionAcquire page = UIManager.Instance.ShowPage<UI_ActionAcquire>(true);
-        SetInteractable(false);
         if (page == null)
             return;
         page.Play(m_Actions, OnActionSelectConfirm);
