@@ -133,7 +133,7 @@ public class EntityPlayerBase : EntityBase {
         m_Animator.SwitchAnim(m_WeaponCurrent.E_Anim);
         
         if (m_Assist) m_Assist.ForceRecycle();
-        m_Assist = ObjectManager.SpawnSFX<SFXAimAssist>(01);
+        m_Assist = GameObjectManager.SpawnSFX<SFXAimAssist>(01);
         m_Assist.Play(I_EntityID, tf_Head, tf_Head, GameConst.F_AimAssistDistance, GameLayer.Mask.I_All, (Collider collider) => { return GameManager.B_CanHitTarget(collider.Detect(), I_EntityID); });
 
         return previousWeapon;
@@ -222,7 +222,7 @@ public class EntityPlayerBase : EntityBase {
     #region Action
     public void TestUseAction(int actionIndex)
     {
-        m_PlayerInfo.OnUseAcion(DataManager.CreateAction(actionIndex, enum_RarityLevel.L3));
+        m_PlayerInfo.OnUseAcion(GameDataManager.CreateAction(actionIndex, enum_RarityLevel.L3));
     }
     #endregion
 

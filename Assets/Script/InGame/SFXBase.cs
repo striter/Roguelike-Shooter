@@ -47,7 +47,7 @@ public class SFXBase : MonoBehaviour {
     {
         b_Playing = false;
         OnSFXPlayFinished?.Invoke();
-        ObjectManager.RecycleSFX(I_SFXIndex, this);
+        GameObjectManager.RecycleSFX(I_SFXIndex, this);
     }
 
 }

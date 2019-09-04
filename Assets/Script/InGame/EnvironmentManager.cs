@@ -70,7 +70,7 @@ public class EnvironmentManager : SimpleSingletonMono<EnvironmentManager> {
 
     void PrepareCurrentLevel()     //Make Current Level Available (AI Bake)
     {
-        ObjectManager.RecycleAllLevelItem();
+        GameObjectManager.RecycleAllLevelItem();
         m_currentLevel.StartLevel();
         BuildNavMeshData(m_currentLevel.m_Level);
         OnLevelPrepared(m_currentLevel);
@@ -207,10 +207,10 @@ public class EnvironmentManager : SimpleSingletonMono<EnvironmentManager> {
                 if (m_MapLevelInfo[i, j].m_TileType != enum_TileType.Invalid)
                 {
                     enum_LevelGenerateType generateType = m_MapLevelInfo[i, j].m_TileType.ToPrefabType();
-                    SLevelGenerate innerData = DataManager.GetItemGenerateProperties(_levelStyle, generateType, true);
-                    SLevelGenerate outerData = DataManager.GetItemGenerateProperties(_levelStyle, generateType, false);
+                    SLevelGenerate innerData = GameDataManager.GetItemGenerateProperties(_levelStyle, generateType, true);
+                    SLevelGenerate outerData = GameDataManager.GetItemGenerateProperties(_levelStyle, generateType, false);
 
-                    Dictionary<LevelItemBase, int> itemCountDic = m_MapLevelInfo[i, j].GenerateMap(ObjectManager.SpawnLevelPrefab(_generateParent), innerData, outerData, levelItemPrefabs, _seed);
+                    Dictionary<LevelItemBase, int> itemCountDic = m_MapLevelInfo[i, j].GenerateMap(GameObjectManager.SpawnLevelPrefab(_generateParent), innerData, outerData, levelItemPrefabs, _seed);
                     itemCountDic.Traversal((LevelItemBase item, int count) => {
                         if (!maxItemCountDic.ContainsKey(item))
                             maxItemCountDic.Add(item, 0);
@@ -220,7 +220,7 @@ public class EnvironmentManager : SimpleSingletonMono<EnvironmentManager> {
                 }
             }
         
-        ObjectManager.RegisterLevelItem(maxItemCountDic);
+        GameObjectManager.RegisterLevelItem(maxItemCountDic);
         return m_MapLevelInfo;
     }
     static void ConnectTile(SBigmapTileInfo tileStart,SBigmapTileInfo tileEnd)

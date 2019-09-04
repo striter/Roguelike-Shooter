@@ -86,7 +86,7 @@ public class UI_SporeManager : UIPageBase,ISingleCoroutine {
     void RefreshManagerInfo()
     {
         txt_Coin.text = "Coins:" + m_ManagerInfo.f_coin;
-        txt_Blue.text = "Blues:" + DataManager.m_PlayerInfo.f_blue;
+        txt_Blue.text = "Blues:" + GameDataManager.m_PlayerInfo.f_blue;
     }
 
     void RefreshContainerInfo()
@@ -208,12 +208,12 @@ public class UI_SporeManager : UIPageBase,ISingleCoroutine {
 
     void OnBlueAcquireChest()
     {
-        if (DataManager.m_PlayerInfo.f_blue < m_CurrentSporeRate.F_BlueChestPrice)
+        if (GameDataManager.m_PlayerInfo.f_blue < m_CurrentSporeRate.F_BlueChestPrice)
             return;
         int spareSlot = m_ManagerInfo.GetSpareSlot();
         if (spareSlot == -1)
             return;
-        DataManager.m_PlayerInfo.OnBlueUsed( m_CurrentSporeRate.F_BlueChestPrice);
+        GameDataManager.m_PlayerInfo.OnBlueUsed( m_CurrentSporeRate.F_BlueChestPrice);
         m_ManagerInfo[spareSlot] = m_CurrentSporeRate.AcquireNewSpore();
 
         RefreshContainerInfo();

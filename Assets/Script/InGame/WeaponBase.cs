@@ -42,7 +42,7 @@ public class WeaponBase : MonoBehaviour {
     {
         m_Muzzle = transform.FindInAllChild("Muzzle");
         m_WeaponInfo = weaponInfo;
-        SFXProjectile projectileInfo = ObjectManager.GetEquipmentData<SFXProjectile>(m_WeaponInfo.m_Index);
+        SFXProjectile projectileInfo = GameObjectManager.GetEquipmentData<SFXProjectile>(m_WeaponInfo.m_Index);
         F_BaseSpeed = projectileInfo.F_Speed;
         F_BaseDamage = projectileInfo.F_Damage;
         I_MuzzleIndex = projectileInfo.I_MuzzleIndex;
@@ -107,13 +107,13 @@ public class WeaponBase : MonoBehaviour {
                 endPosition = hit.point;
             spreadDirection = (endPosition - m_Muzzle.position).normalized;
 
-            SFXProjectile projectile = ObjectManager.SpawnEquipment<SFXProjectile>(m_WeaponInfo.m_Index, m_Muzzle.position, spreadDirection);
+            SFXProjectile projectile = GameObjectManager.SpawnEquipment<SFXProjectile>(m_WeaponInfo.m_Index, m_Muzzle.position, spreadDirection);
             projectile.F_Speed = F_Speed;
             projectile.Play(damageInfo, spreadDirection, endPosition);
         }
 
         if (I_MuzzleIndex != -1)
-            ObjectManager.SpawnParticles<SFXMuzzle>(I_MuzzleIndex, m_Muzzle.position, spreadDirection).Play(m_Attacher.I_EntityID);
+            GameObjectManager.SpawnParticles<SFXMuzzle>(I_MuzzleIndex, m_Muzzle.position, spreadDirection).Play(m_Attacher.I_EntityID);
 
         I_AmmoLeft--;
         OnFireRecoil?.Invoke(F_Recoil);

@@ -82,7 +82,7 @@ public class EntityBase : MonoBehaviour, ISingleCoroutine
     protected virtual void OnRecycle()
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityRecycle, this);
-        ObjectManager.RecycleEntity(I_PoolIndex, this);
+        GameObjectManager.RecycleEntity(I_PoolIndex, this);
     }
     protected virtual void OnHealthChanged(enum_HealthChangeMessage type)
     {

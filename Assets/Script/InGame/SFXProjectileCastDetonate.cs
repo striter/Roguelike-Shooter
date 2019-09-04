@@ -14,7 +14,7 @@ public class SFXProjectileCastDetonate : SFXProjectileCastTrigger {
         transform.SetParent(hitCheck.transform);
         if(m_Trail)
             m_Trail.enabled = false;
-        f_TimeCheck = Time.time + ObjectManager.GetEquipmentData<SFXCast>(GameExpression.GetEquipmentSubIndex(I_SFXIndex)).F_DelayDuration;
+        f_TimeCheck = Time.time + GameObjectManager.GetEquipmentData<SFXCast>(GameExpression.GetEquipmentSubIndex(I_SFXIndex)).F_DelayDuration;
         OnCastTrigger(hit.point);
     }
 }

@@ -142,7 +142,7 @@ public class SFXProjectile : SFXBase
     #endregion
     protected virtual void SpawnIndicator(Vector3 position,Vector3 direction,float duration)
     {
-        m_Indicator = ObjectManager.SpawnIndicator(I_IndicatorIndex, position, direction);
+        m_Indicator = GameObjectManager.SpawnIndicator(I_IndicatorIndex, position, direction);
         m_Indicator.Play(m_sourceID, duration );
     }
     protected void SpawnImpact(RaycastHit hitInfo, HitCheckBase hitParent)
@@ -152,14 +152,14 @@ public class SFXProjectile : SFXBase
         Vector3 hitNormal = hitSource ? -transform.forward : hitInfo.normal;
 
         if (I_ImpactIndex > 0)
-             ObjectManager.SpawnParticles<SFXImpact>(I_ImpactIndex,hitPoint,hitNormal, null).Play(m_sourceID);
+             GameObjectManager.SpawnParticles<SFXImpact>(I_ImpactIndex,hitPoint,hitNormal, null).Play(m_sourceID);
 
         if (I_HitMarkIndex > 0)
         {
             bool showhitMark = GameExpression.B_ShowHitMark(hitParent.m_HitCheckType);
             if (showhitMark)
             {
-                SFXHitMark hitMark= ObjectManager.SpawnParticles<SFXHitMark>(I_HitMarkIndex,hitPoint,hitNormal, hitParent.transform);
+                SFXHitMark hitMark= GameObjectManager.SpawnParticles<SFXHitMark>(I_HitMarkIndex,hitPoint,hitNormal, hitParent.transform);
                 hitMark.Play(m_sourceID);
                 if (hitParent.m_HitCheckType == enum_HitCheck.Entity)
                     (hitParent as HitCheckEntity).AttachHitMark(hitMark);

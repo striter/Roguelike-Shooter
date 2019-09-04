@@ -35,10 +35,10 @@ public class SFXProjectileDestroyableSpread : SFXProjectileDestroyable {
         f_spreadCheck -= F_SpreadDuration;
 
         Vector3 splitDirection = transform.forward.RotateDirection(Vector3.up, i_spreadCountCheck * I_SpreadAngleEach);
-        SFXProjectile projectile = ObjectManager.SpawnEquipment<SFXProjectile>(GameExpression.GetEquipmentSubIndex(I_SFXIndex), m_CenterPos, Vector3.up);
+        SFXProjectile projectile = GameObjectManager.SpawnEquipment<SFXProjectile>(GameExpression.GetEquipmentSubIndex(I_SFXIndex), m_CenterPos, Vector3.up);
         projectile.Play(m_DamageInfo.m_detail, splitDirection, m_CenterPos + splitDirection * 10);
         if (projectile.I_MuzzleIndex > 0)
-            ObjectManager.SpawnParticles<SFXMuzzle>(projectile.I_MuzzleIndex, m_CenterPos, splitDirection).Play(m_sourceID);
+            GameObjectManager.SpawnParticles<SFXMuzzle>(projectile.I_MuzzleIndex, m_CenterPos, splitDirection).Play(m_sourceID);
 
         i_spreadCountCheck++;
         if (i_spreadCountCheck >= I_SpreadCount)

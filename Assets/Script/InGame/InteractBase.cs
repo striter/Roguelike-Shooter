@@ -31,7 +31,7 @@ public class InteractBase : MonoBehaviour {
         if (B_InteractaOnce)
             SetInteractable(false);
         if (B_RecycleOnInteract)
-            ObjectManager.RecycleInteract(m_InteractType, this);
+            GameObjectManager.RecycleInteract(m_InteractType, this);
         return true;
     }
     protected virtual void OnInteractSuccessful(EntityPlayerBase _interactTarget)

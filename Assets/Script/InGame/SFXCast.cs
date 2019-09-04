@@ -47,7 +47,7 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
             return;
         }
         if (I_DelayIndicatorIndex>0)
-            ObjectManager.SpawnIndicator(I_DelayIndicatorIndex, transform.position, Vector3.up).Play(m_sourceID,  F_DelayDuration);
+            GameObjectManager.SpawnIndicator(I_DelayIndicatorIndex, transform.position, Vector3.up).Play(m_sourceID,  F_DelayDuration);
         this.StartSingleCoroutine(1, TIEnumerators.PauseDel(F_DelayDuration, PlayDelayed));
     }
     public virtual void PlayDelayed()

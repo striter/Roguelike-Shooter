@@ -52,6 +52,9 @@ namespace GameSetting
 
         public static float F_ActionAmountReceive(float damageApply) => damageApply * .001f;
 
+        public static float F_GameResultScore(enum_StageLevel _stage, int _levelPassed, int _enermyKilled) => 200 * ((int)_stage-1) + 20 * (_levelPassed-1) + 1 * _enermyKilled;
+        public static float F_ResultRewardCoin(float _resultScore) => _resultScore;
+
         public static RangeInt GetTradePrice(enum_Interaction interactType, enum_RarityLevel level)
         {
             switch (interactType)
@@ -175,10 +178,10 @@ namespace GameSetting
             switch (type)
             {
                 default: Debug.LogError("Please Edit This Please:" + type.ToString()); return enum_LevelGenerateType.Invalid;
-                case enum_TileType.BattleTrade:
                 case enum_TileType.Battle:
                 case enum_TileType.End:
                     return enum_LevelGenerateType.Big;
+                case enum_TileType.BattleTrade:
                 case enum_TileType.ActionAdjustment:
                 case enum_TileType.CoinsTrade:
                 case enum_TileType.Start:
@@ -390,6 +393,7 @@ namespace GameSetting
     {
         public enum_PlayerWeapon m_weapon;
         public int m_coins;
+        public int m_kills;
         public List<ActionInfo> m_weaponActions;
         public List<ActionInfo> m_storedActions;
         public string m_GameSeed;
@@ -399,11 +403,11 @@ namespace GameSetting
             m_coins = 0;
             m_weapon = enum_PlayerWeapon.P92;
             m_weaponActions = new List<ActionInfo>();
-            m_storedActions = new List<ActionInfo>() { ActionInfo.Create(DataManager.RandomPlayerAction(enum_RarityLevel.L1,null)),ActionInfo.Create( DataManager.RandomPlayerAction(enum_RarityLevel.L1,null)) };
+            m_storedActions = new List<ActionInfo>() { ActionInfo.Create(GameDataManager.RandomPlayerAction(enum_RarityLevel.L1,null)),ActionInfo.Create( GameDataManager.RandomPlayerAction(enum_RarityLevel.L1,null)) };
             m_GameSeed = DateTime.Now.ToLongTimeString().ToString();
             m_StageLevel = enum_StageLevel.Rookie;
         }
-        public void Adjust(EntityPlayerBase _player,LevelManager _level)
+        public void Adjust(EntityPlayerBase _player,GameLevelManager _level,GameRecordManager _record)
         {
             m_coins = _player.m_PlayerInfo.m_Coins;
             m_weapon = _player.m_WeaponCurrent.m_WeaponInfo.m_Weapon;
@@ -411,6 +415,7 @@ namespace GameSetting
             m_storedActions = ActionInfo.Create(_player.m_PlayerInfo.m_ActionStored);
             m_GameSeed = _level.m_Seed;
             m_StageLevel = _level.m_currentStage;
+            m_kills = _record.i_entitiesKilled;
         }
     }
     #endregion
@@ -769,7 +774,7 @@ namespace GameSetting
     }
     public class DamageDeliverInfo
     {
-        public int I_IdentiyID { get; private set; } = IdentificationManager.I_DamageIdentityID();
+        public int I_IdentiyID { get; private set; } = GameIdentificationManager.I_DamageIdentityID();
         public int I_SourceID { get; private set; } = -1;
         public float m_DamageMultiply { get; private set; } = 0;
         public float m_DamageAdditive { get; private set; } = 0;
@@ -853,7 +858,7 @@ namespace GameSetting
         }
         public void AddBuff(int sourceID,int buffIndex)
         {
-            BuffBase buff = new BuffBase(sourceID, DataManager.GetEntityBuffProperties(buffIndex), OnReceiveDamage, OnExpireElapsed);
+            BuffBase buff = new BuffBase(sourceID, GameDataManager.GetEntityBuffProperties(buffIndex), OnReceiveDamage, OnExpireElapsed);
             OnStun(buff.m_StunDuration);
             switch (buff.m_RefreshType)
             {
@@ -920,7 +925,7 @@ namespace GameSetting
                     particle.Refresh(m_Expires[i].m_EffectDuration);
                 else
                 {
-                    particle = ObjectManager.SpawnBuffEffect(m_Expires[i].m_EffectIndex, m_Entity);
+                    particle = GameObjectManager.SpawnBuffEffect(m_Expires[i].m_EffectIndex, m_Entity);
                     particle.Play(m_Entity.I_EntityID, m_Expires[i].m_EffectDuration);
                     m_BuffEffects.Add(particle);
                 }
@@ -1541,7 +1546,7 @@ namespace GameSetting
         public static EquipmentBase AcquireEquipment(int weaponIndex, EntityBase _entity, Transform tf_Barrel, Func<DamageDeliverInfo> GetDamageBuffInfo, Action OnDead)
         {
             EquipmentBase weapon = null;
-            SFXBase weaponInfo = ObjectManager.GetEquipmentData<SFXBase>(weaponIndex);
+            SFXBase weaponInfo = GameObjectManager.GetEquipmentData<SFXBase>(weaponIndex);
             SFXProjectile projectile = weaponInfo as SFXProjectile;
             if (projectile)
             {
@@ -1584,7 +1589,7 @@ namespace GameSetting
         }
         public override void Play(EntityBase _target, Vector3 _calculatedPosition)
         {
-            ObjectManager.SpawnEquipment<SFXCast>(i_weaponIndex, attacherTransform.position, attacherTransform.forward).Play(GetDamageDeliverInfo());
+            GameObjectManager.SpawnEquipment<SFXCast>(i_weaponIndex, attacherTransform.position, attacherTransform.forward).Play(GetDamageDeliverInfo());
         }
     }
     public class EnermyCasterSelfDetonateAnimLess : EquipmentCaster, ISingleCoroutine
@@ -1605,7 +1610,7 @@ namespace GameSetting
             m_Blink.Tick(Time.deltaTime * timeMultiply);
             if (timeElapsed > 2f)
             {
-                ObjectManager.SpawnEquipment<SFXCast>(i_weaponIndex, attacherTransform.position, attacherTransform.forward).Play( GetDamageDeliverInfo());
+                GameObjectManager.SpawnEquipment<SFXCast>(i_weaponIndex, attacherTransform.position, attacherTransform.forward).Play( GetDamageDeliverInfo());
                 OnDead();
                 this.StopSingleCoroutine(0);
             }
@@ -1630,7 +1635,7 @@ namespace GameSetting
         public override void Play(EntityBase _target, Vector3 _calculatedPosition)
         {
             OnPlayAnim(false);
-            m_Cast = ObjectManager.SpawnEquipment<SFXCast>(i_weaponIndex, transformBarrel.position, transformBarrel.forward);
+            m_Cast = GameObjectManager.SpawnEquipment<SFXCast>(i_weaponIndex, transformBarrel.position, transformBarrel.forward);
             m_Cast.PlayControlled(m_Entity.I_EntityID, transformBarrel, attacherTransform, true, GetDamageDeliverInfo());
         }
 
@@ -1654,7 +1659,7 @@ namespace GameSetting
         protected override Vector3 GetTargetPosition(bool preAim, EntityBase _target) => EnvironmentManager.NavMeshPosition(_target.transform.position + TCommon.RandomXZSphere(m_Entity.F_AttackSpread));
         public override void Play(EntityBase _target, Vector3 _calculatedPosition)
         {
-            ObjectManager.SpawnEquipment<SFXCast>(i_weaponIndex,_calculatedPosition,Vector3.up).Play( GetDamageDeliverInfo());
+            GameObjectManager.SpawnEquipment<SFXCast>(i_weaponIndex,_calculatedPosition,Vector3.up).Play( GetDamageDeliverInfo());
         }
     }
     public class EquipmentBarrageRange : EquipmentBase
@@ -1695,8 +1700,8 @@ namespace GameSetting
         protected void FireBullet(Vector3 startPosition, Vector3 direction, Vector3 targetPosition)
         {
             if (i_muzzleIndex > 0)
-                ObjectManager.SpawnParticles<SFXMuzzle>(i_muzzleIndex, startPosition, direction).Play(m_Entity.I_EntityID);
-            ObjectManager.SpawnEquipment<SFXProjectile>(i_weaponIndex, startPosition, direction).Play(GetDamageDeliverInfo(),direction, targetPosition);
+                GameObjectManager.SpawnParticles<SFXMuzzle>(i_muzzleIndex, startPosition, direction).Play(m_Entity.I_EntityID);
+            GameObjectManager.SpawnEquipment<SFXProjectile>(i_weaponIndex, startPosition, direction).Play(GetDamageDeliverInfo(),direction, targetPosition);
         }
     }
     public class EquipmentBarrageMultipleLine : EquipmentBarrageRange
@@ -1741,12 +1746,12 @@ namespace GameSetting
         SFXBuffApply m_Effect;
         public BuffApply(SFXBuffApply buffApplyinfo, EntityBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(buffApplyinfo, _controller, _transform, _GetBuffInfo)
         {
-            m_buffInfo = DataManager.GetEntityBuffProperties(buffApplyinfo.I_BuffIndex);
+            m_buffInfo = GameDataManager.GetEntityBuffProperties(buffApplyinfo.I_BuffIndex);
         }
         public override void Play(EntityBase _target, Vector3 _calculatedPosition)
         {
             if (!m_Effect || !m_Effect.b_Playing)
-                m_Effect = ObjectManager.SpawnEquipment<SFXBuffApply>(i_weaponIndex, transformBarrel.position, Vector3.up);
+                m_Effect = GameObjectManager.SpawnEquipment<SFXBuffApply>(i_weaponIndex, transformBarrel.position, Vector3.up);
 
             m_Effect.Play(m_Entity.I_EntityID, m_buffInfo, transformBarrel, _target);
         }
@@ -1764,7 +1769,7 @@ namespace GameSetting
         }
         public override void Play(EntityBase _target, Vector3 _calculatedPosition)
         {
-            ObjectManager.SpawnEquipment<SFXSubEntitySpawner>(i_weaponIndex, transformBarrel.position, Vector3.up).Play(m_Entity.I_EntityID, m_Entity.m_Flag,GetDamageDeliverInfo,m_Entity.I_EntityID,OnSpawn);
+            GameObjectManager.SpawnEquipment<SFXSubEntitySpawner>(i_weaponIndex, transformBarrel.position, Vector3.up).Play(m_Entity.I_EntityID, m_Entity.m_Flag,GetDamageDeliverInfo,m_Entity.I_EntityID,OnSpawn);
         }
     }
     #endregion

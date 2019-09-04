@@ -96,7 +96,7 @@ public class LevelBase : MonoBehaviour {
         for (int i = 0; i < m_IndexItemMain.Count; i++)
         {
             LevelTileItem main = m_AllTiles[m_IndexItemMain[i]] as LevelTileItem;
-            LevelItemBase itemMain = ObjectManager.SpawnLevelItem (m_AllItemPrefabs[main.m_LevelItemType][main.m_LevelItemListIndex], tf_LevelItem, main.m_Offset);
+            LevelItemBase itemMain = GameObjectManager.SpawnLevelItem (m_AllItemPrefabs[main.m_LevelItemType][main.m_LevelItemListIndex], tf_LevelItem, main.m_Offset);
             itemMain.Init(this, main.m_ItemDirection);
         }
     }

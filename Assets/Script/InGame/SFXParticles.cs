@@ -56,7 +56,7 @@ public class SFXParticles : SFXBase
     }
     public virtual void StopParticles()
     {
-        transform.SetParent(ObjectManager.TF_SFXWaitForRecycle);
+        transform.SetParent(GameObjectManager.TF_SFXWaitForRecycle);
         f_TimeCheck = Time.time + GameConst.F_ParticlesMaxStopTime;
         B_ParticlesPlaying = false;
         m_relativeSFXs.Traversal((SFXRelativeBase sfxRelative) => { sfxRelative.Stop(); });
