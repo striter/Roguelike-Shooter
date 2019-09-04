@@ -13,8 +13,12 @@ namespace GameSetting
     public static class GameConst
     {
         public const float F_EntityDeadFadeTime = 2f;
+
         public const float F_MaxActionAmount = 4f;
         public const float F_RestoreActionAmount = 2f;
+        public const float F_ActionShuffleCost = 3f;
+        public const float F_ActionShuffleCooldown = 10f;
+
         public const int I_ProjectileMaxDistance = 100;
         public const int I_ProjectileBlinkWhenTimeLeftLessThan = 3;
         public const float F_AimAssistDistance = 100f;
@@ -37,6 +41,7 @@ namespace GameSetting
         public const int I_EnermySpawnDelay = 2;        //Enermy Spawn Delay Time 
 
         public const int I_HealthPickupAmount = 50;
+        public const int I_ArmorPickupAmount = 25;
     }
 
     public static class GameExpression
@@ -974,6 +979,9 @@ namespace GameSetting
         Action OnActionChange;
         protected bool b_actionChangeIndicated = true;
         protected void IndicateActionUI() => b_actionChangeIndicated = false;
+        protected float f_shuffleCheck = -1;
+        protected bool b_shuffling => f_shuffleCheck > 0;
+
         public int m_Coins { get; private set; } = 0;
         public PlayerInfoManager(EntityPlayerBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange, Action _OnActionChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
         {
@@ -985,6 +993,12 @@ namespace GameSetting
             base.OnActivate();
             TBroadCaster<enum_BC_GameStatus>.Add<DamageDeliverInfo, EntityBase, float>(enum_BC_GameStatus.OnEntityDamage, OnEntityApplyDamage);
         }
+        public override void OnDeactivate()
+        {
+            base.OnDeactivate();
+            TBroadCaster<enum_BC_GameStatus>.Remove<DamageDeliverInfo, EntityBase, float>(enum_BC_GameStatus.OnEntityDamage, OnEntityApplyDamage);
+        }
+
         public override void Tick(float deltaTime)
         {
             base.Tick(deltaTime);
@@ -994,6 +1008,13 @@ namespace GameSetting
                 b_actionChangeIndicated = true;
                 OnActionChange?.Invoke();
             }
+
+            if (b_shuffling)
+            {
+                f_shuffleCheck -= deltaTime;
+                if (f_shuffleCheck <= 0)
+                    OnShuffle();
+            }
         }
         public void InitActionInfo(List<ActionBase> _actions)
         {
@@ -1001,16 +1022,9 @@ namespace GameSetting
                 AddStoredAction(_actions[i]);
             m_ActionAmount = GameConst.F_RestoreActionAmount;
         }
-        public override void OnDeactivate()
-        {
-            base.OnDeactivate();
-            TBroadCaster<enum_BC_GameStatus>.Remove<DamageDeliverInfo, EntityBase, float>(enum_BC_GameStatus.OnEntityDamage, OnEntityApplyDamage);
-            m_AfterFire.Clear();
-        }
 
         public void OnBattleStart()
         {
-            m_ActionAmount = GameConst.F_RestoreActionAmount;
             m_ActionInPool = new List<ActionBase>(m_ActionStored);
             m_ActionHolding.Clear();
             RefillHoldingActions();
@@ -1018,6 +1032,8 @@ namespace GameSetting
         }
         public void OnBattleFinish()
         {
+            m_ActionAmount = GameConst.F_RestoreActionAmount;
+            f_shuffleCheck = -1;
             m_ActionInPool.Clear();
             m_ActionHolding.Clear();
             m_ActionEquiping.Traversal((ActionBase action) => { action.OnAfterBattle(); }, true);
@@ -1099,6 +1115,7 @@ namespace GameSetting
         #endregion
 
         #region Action Interact
+
         public bool TryUseAction(int index)
         {
             ActionBase action = m_ActionHolding[index];
@@ -1112,7 +1129,18 @@ namespace GameSetting
             IndicateActionUI();
             return true;
         }
+        public bool TryShuffle()
+        {
+            if (m_ActionAmount < GameConst.F_ActionShuffleCost)
+                return false;
+            m_ActionAmount -= GameConst.F_ActionShuffleCost;
+            f_shuffleCheck = GameConst.F_ActionShuffleCooldown;
+            return true;
+        }
+        void OnShuffle()
+        {
 
+        }
         void RefillHoldingActions()
         {
             if (m_ActionInPool.Count <= 0 || m_ActionHolding.Count >= 3)

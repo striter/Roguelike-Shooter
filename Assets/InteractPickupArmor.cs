@@ -4,7 +4,6 @@ using UnityEngine;
 using GameSetting;
 public class InteractPickupArmor : InteractPickup {
     public override enum_Interaction m_InteractType => enum_Interaction.PickupHealth;
-    protected override bool B_CanInteract(EntityPlayerBase _interactor) => _interactor.m_HealthManager.F_HealthScale < 1;
     public float m_healAmount { get; private set; }
     public InteractPickupArmor Play(float _armorAmount)
     {
