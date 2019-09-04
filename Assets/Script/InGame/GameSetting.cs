@@ -82,7 +82,27 @@ namespace GameSetting
             {
                 default: return StageInteractGenerate.Create(new Dictionary<enum_RarityLevel, int>(),new Dictionary<enum_RarityLevel, int>(),new Dictionary<enum_EntityType, CoinsGenerateInfo>());
                 case enum_StageLevel.Rookie:
+                    return StageInteractGenerate.Create(
+                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },    //宝箱等级概率
+                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },    //交易等级概率
+                    new Dictionary<enum_EntityType, CoinsGenerateInfo>() {
+                     { enum_EntityType.SubHidden, CoinsGenerateInfo.Create( 0,0, 0, new RangeInt(0, 0)) },     //实体掉落生成概率 类型,血,护甲,金币,金币数值范围
+                     { enum_EntityType.Fighter, CoinsGenerateInfo.Create( 0,0, 0, new RangeInt(0, 0)) },
+                     { enum_EntityType.Shooter_Rookie, CoinsGenerateInfo.Create( 0,0, 0, new RangeInt(0, 0)) },
+                     { enum_EntityType.Shooter_Veteran, CoinsGenerateInfo.Create( 0,0, 0, new RangeInt(0, 0)) },
+                     { enum_EntityType.AOECaster, CoinsGenerateInfo.Create( 0,0, 0, new RangeInt(0, 0)) },
+                     { enum_EntityType.Elite, CoinsGenerateInfo.Create( 0,0, 0, new RangeInt(0, 0)) }});
                 case enum_StageLevel.Veteran:
+                    return StageInteractGenerate.Create(
+                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },    //宝箱等级概率
+                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },    //交易等级概率
+                    new Dictionary<enum_EntityType, CoinsGenerateInfo>() {
+                     { enum_EntityType.SubHidden, CoinsGenerateInfo.Create( 0,0, 0, new RangeInt(0, 0)) },     //实体掉落生成概率 类型,血,护甲,金币,金币数值范围
+                     { enum_EntityType.Fighter, CoinsGenerateInfo.Create( 0,0, 0, new RangeInt(0, 0)) },
+                     { enum_EntityType.Shooter_Rookie, CoinsGenerateInfo.Create( 0,0, 0, new RangeInt(0, 0)) },
+                     { enum_EntityType.Shooter_Veteran, CoinsGenerateInfo.Create( 0,0, 0, new RangeInt(0, 0)) },
+                     { enum_EntityType.AOECaster, CoinsGenerateInfo.Create( 0,0, 0, new RangeInt(0, 0)) },
+                     { enum_EntityType.Elite, CoinsGenerateInfo.Create( 0,0, 0, new RangeInt(0, 0)) }});
                 case enum_StageLevel.Ranger:
                     return StageInteractGenerate.Create(
                     new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },    //宝箱等级概率
