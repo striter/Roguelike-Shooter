@@ -670,6 +670,7 @@ public static class GameObjectManager
         TF_Entity = new GameObject("Entity").transform;
         TF_SFXWaitForRecycle = new GameObject("SFX_WaitForRecycle").transform;
         TF_SFXPlaying = new GameObject("SFX_Playing").transform;
+        ObjectPoolManager.Init();
     }
     public static void RecycleAllObject()
     {
@@ -743,7 +744,6 @@ public static class GameObjectManager
     public static EntityPlayerBase SpawnPlayer(CPlayerGameSave playerSave)
     {
         EntityPlayerBase player = SpawnEntity<EntityPlayerBase>(0,Vector3.zero, enum_EntityFlag.Player);
-        Debug.Log(TXmlPhrase.Phrase[playerSave.m_storedActions]+","+playerSave.m_weapon+","+playerSave.m_weaponActions.Count);
         player.SetPlayerInfo(playerSave.m_coins,GameDataManager.GetActions(playerSave.m_storedActions));
         player.ObtainWeapon(SpawnWeapon(playerSave.m_weapon,GameDataManager.GetActions(playerSave.m_weaponActions)));
         return player;

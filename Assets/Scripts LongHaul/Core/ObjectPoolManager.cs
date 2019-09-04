@@ -9,12 +9,17 @@ public enum enum_PoolSaveType
     StaticMaxAmount,
     DynamicMaxAmount,
 }
-internal static class PoolParent
+public class ObjectPoolManager
 {
-    public static Transform tf_PoolSpawn = new GameObject("PoolSpawn").transform;
-    public static Transform tf_PoolRegist = new GameObject("PoolRegist").transform;
+    public static Transform tf_PoolSpawn;
+    public static Transform tf_PoolRegist;
+    public static void Init()
+    {
+        tf_PoolSpawn= new GameObject("PoolSpawn").transform;
+        tf_PoolRegist = new GameObject("PoolRegist").transform;
+    }
 }
-public class ObjectPoolManager<T,Y> where Y:MonoBehaviour {
+public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y:MonoBehaviour {
 
     class ItemPoolInfo
     {
@@ -45,7 +50,7 @@ public class ObjectPoolManager<T,Y> where Y:MonoBehaviour {
             return;
         }
         d_ItemInfos.Add(identity, new ItemPoolInfo());
-        registerItem.transform.SetParent(PoolParent.tf_PoolRegist);
+        registerItem.transform.SetParent(tf_PoolRegist);
         OnItemInstantiate?.Invoke(registerItem);
         registerItem.SetActivate(false);
         ItemPoolInfo info = d_ItemInfos[identity];
@@ -56,7 +61,7 @@ public class ObjectPoolManager<T,Y> where Y:MonoBehaviour {
         Y spawnItem;
         for (int i = 0; i < info.i_poolSaveAmount; i++)
         {
-            spawnItem = GameObject.Instantiate(info.m_spawnItem, PoolParent.tf_PoolSpawn).GetComponent<Y>();
+            spawnItem = GameObject.Instantiate(info.m_spawnItem, tf_PoolSpawn).GetComponent<Y>();
             spawnItem.name = info.m_spawnItem.name + (info.l_Deactive.Count + info.l_Active.Count).ToString();
             info.OnItemInstantiate?.Invoke(spawnItem);
             info.l_Deactive.Add(spawnItem);
@@ -78,12 +83,12 @@ public class ObjectPoolManager<T,Y> where Y:MonoBehaviour {
         }
         else
         {
-            item = GameObject.Instantiate(info.m_spawnItem, PoolParent.tf_PoolSpawn);
+            item = GameObject.Instantiate(info.m_spawnItem, tf_PoolSpawn);
             item.name = info.m_spawnItem.name+(info.l_Deactive.Count + info.l_Active.Count).ToString();
             info.OnItemInstantiate?.Invoke(item);
         }
         info.l_Active.Add(item);
-        item.transform.SetParentResetTransform(toTrans == null ? PoolParent.tf_PoolSpawn : toTrans);
+        item.transform.SetParentResetTransform(toTrans == null ? tf_PoolSpawn : toTrans);
         item.SetActivate(true);
         return item;
     }
@@ -100,7 +105,7 @@ public class ObjectPoolManager<T,Y> where Y:MonoBehaviour {
         {
             info.i_poolSaveAmount++;
             obj.SetActivate(false);
-            obj.transform.SetParent(PoolParent.tf_PoolSpawn);
+            obj.transform.SetParent(tf_PoolSpawn);
             info.l_Deactive.Add(obj);
         }
         else if (info.e_type == enum_PoolSaveType.StaticMaxAmount)
@@ -112,7 +117,7 @@ public class ObjectPoolManager<T,Y> where Y:MonoBehaviour {
             else
             {
                 obj.SetActivate(false);
-                obj.transform.SetParent(PoolParent.tf_PoolSpawn);
+                obj.transform.SetParent(tf_PoolSpawn);
                 info.l_Deactive.Add(obj);
             }
         }
