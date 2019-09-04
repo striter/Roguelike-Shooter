@@ -66,7 +66,7 @@ namespace GameSetting_Action
         public static float F_20002_DamageDealt(enum_RarityLevel level) => 50f;
         public static float F_20002_BuffIndex(enum_RarityLevel level) => 200020 + (int)level;
         public static float F_20003_Health(enum_RarityLevel level) => 200;
-        public static float F_20003_FireRate(enum_RarityLevel level) => .7f * (int)level;
+        public static float F_20003_FireRate(enum_RarityLevel level) => 1f;
         public static float F_20003_DamageDealt(enum_RarityLevel level) => .7f * (int)level;
         public static float F_20004_DamageDealt(enum_RarityLevel level) => 2 + 2 * (int)level;
 
@@ -399,7 +399,7 @@ namespace GameSetting_Action
         public override void OnActionUse()
         {
             base.OnActionUse();
-            ActionHelper.PlayerAcquireEntityEquipmentItem(m_ActionEntity, m_Index, (int)Value3, Value1 * m_ActionEntity.m_WeaponCurrent.F_BaseFirerate,GetDamageInfo);
+            ActionHelper.PlayerAcquireEntityEquipmentItem(m_ActionEntity, m_Index, (int)Value3, Value1 ,GetDamageInfo);
         }
         public DamageDeliverInfo GetDamageInfo() => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, Value2 * m_ActionEntity.m_WeaponCurrent.F_BaseDamage, -1);
         public Action_20003_Firerate_Turret_Minigun(enum_RarityLevel _level) : base(_level) { }
