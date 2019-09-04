@@ -372,7 +372,7 @@ namespace GameSetting_Action
         public override float Value3 => ActionData.F_20001_TurretMinumumDamage(m_Level);
         public override void OnActionUse() {
             base.OnActionUse();
-            ActionHelper.PlayerAcquireEntityEquipmentItem(m_ActionEntity, m_Index, (int)(Value1* m_ActionEntity.m_HealthManager.m_CurrentArmor), 1f, GetDamageInfo);
+            ActionHelper.PlayerAcquireEntityEquipmentItem(m_ActionEntity, m_Index,  (int)(Value1* m_ActionEntity.m_HealthManager.m_CurrentArmor), 1f, GetDamageInfo);
         }
         public DamageDeliverInfo GetDamageInfo()=> DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, Value3+Value2 * m_ActionEntity.m_HealthManager.m_CurrentArmor, -1);
         public Action_20001_Armor_Turret_Cannon(enum_RarityLevel _level) : base(_level) { }

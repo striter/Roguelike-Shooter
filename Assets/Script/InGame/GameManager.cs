@@ -268,11 +268,15 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
     {
         if (entity.m_Flag != enum_EntityFlag.Enermy)
             return;
+        EntityAIBase target = entity as EntityAIBase;
 
-        if (m_GameLevel.m_actionGenerate.CanGenerateHealth(m_GameLevel.m_GameSeed))
+        if (m_GameLevel.m_actionGenerate.CanGenerateHealth(target.E_EnermyType))
             GameObjectManager.SpawnInteract<InteractPickupHealth>(enum_Interaction.PickupHealth, EnvironmentManager.NavMeshPosition(entity.transform.position, false), EnvironmentManager.Instance.m_currentLevel.m_Level.transform).Play(GameConst.I_HealthPickupAmount);
 
-        int coinAmount = m_GameLevel.m_actionGenerate.GetCoinGenerate((entity as EntityAIBase).E_EnermyType, m_GameLevel.m_GameSeed);
+        if (m_GameLevel.m_actionGenerate.CanGenerateArmor(target.E_EnermyType))
+            GameObjectManager.SpawnInteract<InteractPickupArmor>(enum_Interaction.PickupArmor, EnvironmentManager.NavMeshPosition(entity.transform.position, false), EnvironmentManager.Instance.m_currentLevel.m_Level.transform).Play(GameConst.I_HealthPickupAmount);
+
+        int coinAmount = m_GameLevel.m_actionGenerate.GetCoinGenerate(target.E_EnermyType);
         if (coinAmount != -1)
             GameObjectManager.SpawnInteract<InteractPickupCoin>(enum_Interaction.PickupCoin, EnvironmentManager.NavMeshPosition(entity.transform.position, false), EnvironmentManager.Instance.m_currentLevel.m_Level.transform).Play(coinAmount);
     }
