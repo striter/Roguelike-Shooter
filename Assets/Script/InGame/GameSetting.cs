@@ -1030,10 +1030,10 @@ namespace GameSetting
         public void OnBattleFinish()
         {
             m_ActionAmount = GameConst.F_RestoreActionAmount;
-            f_shuffleCheck = -1;
             m_ActionInPool.Clear();
             m_ActionEquiping.Traversal((ActionBase action) => { action.OnAfterBattle(); }, true);
             m_AfterFire.Clear();
+            f_shuffleCheck = -1;
             ClearHoldingActions();
         }
 
