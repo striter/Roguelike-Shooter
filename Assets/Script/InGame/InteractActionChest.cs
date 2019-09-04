@@ -8,8 +8,6 @@ public class InteractActionChest : InteractBase {
     List<ActionBase> m_Actions;
     EntityPlayerBase m_Interactor;
     public override enum_Interaction m_InteractType => enum_Interaction.ActionChest;
-    
-    protected override bool B_InteractaOnce => true;
     public override void Init()
     {
         base.Init();
@@ -28,15 +26,21 @@ public class InteractActionChest : InteractBase {
     {
         base.OnInteractSuccessful(_interactTarget);
         m_Interactor = _interactTarget;
-        m_Animation[m_clipName].speed = 1;
-        m_Animation.Play();
+        UI_ActionAcquire page = UIManager.Instance.ShowPage<UI_ActionAcquire>(true);
+        SetInteractable(false);
+        if (page == null)
+            return;
+        page.Play(m_Actions, OnActionSelectConfirm);
     }
     void OnKeyAnim()
     {
-        UIManager.Instance.ShowPage<UI_ActionAcquire>(true).Play(m_Actions,OnActionSelectConfirm);
     }
     void OnActionSelectConfirm(int index)
     {
+        m_Interactor.OnInteractCheck(this, false);
+        SetInteractable(false);
         m_Interactor.m_PlayerInfo.AddStoredAction(m_Actions[index]);
+        m_Animation[m_clipName].speed = 1;
+        m_Animation.Play();
     }
 }

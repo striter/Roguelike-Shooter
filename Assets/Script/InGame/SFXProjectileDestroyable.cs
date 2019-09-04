@@ -21,7 +21,7 @@ public class SFXProjectileDestroyable : SFXProjectile {
     protected override void OnPlayPreset()
     {
         base.OnPlayPreset();
-        m_Health.OnActivate(I_MaxHealth);
+        m_Health.OnActivate(I_MaxHealth,true);
         if (I_MaxHealth < 0)
             Debug.LogError("Destroyable Health Lower Than 0!"+gameObject.name);
     }

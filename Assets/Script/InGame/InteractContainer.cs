@@ -21,12 +21,11 @@ public class InteractContainer : InteractBase {
     {
         m_InteractTarget = _interactItem;
         m_InteractTarget.SetInteractable(false);
-        m_InteractTarget.transform.SetParentResetTransform(tf_Model);
+        m_InteractTarget.transform.position = tf_Model.position;
+        m_InteractTarget.transform.rotation = tf_Model.rotation;
     }
     protected void Detach()
     {
         m_InteractTarget.SetInteractable(true);
-        m_InteractTarget.transform.SetParent(transform.parent);
-        m_InteractTarget = null;
     }
 }

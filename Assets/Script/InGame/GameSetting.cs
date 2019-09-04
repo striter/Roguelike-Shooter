@@ -13,8 +13,8 @@ namespace GameSetting
     public static class GameConst
     {
         public const float F_EntityDeadFadeTime = 2f;
-        public const float F_MaxAcountAmount = 3f;
-
+        public const float F_MaxActionAmount = 4f;
+        public const float F_RestoreActionAmount = 2f;
         public const int I_ProjectileMaxDistance = 100;
         public const int I_ProjectileBlinkWhenTimeLeftLessThan = 3;
         public const float F_AimAssistDistance = 100f;
@@ -261,7 +261,7 @@ namespace GameSetting
 
     public enum enum_TileType { Invalid = -1, Start = 0, Battle = 1, End = 2, CoinsTrade = 11,ActionAdjustment=12,BattleTrade=13, }
 
-    public enum enum_LevelItemType { Invalid = -1, LargeMore, LargeLess, MediumMore, MediumLess, SmallMore, SmallLess, ManmadeMore, ManmadeLess, NoCollisionMore, NoCollisionLess,BorderLinear,BorderOblique,Portal,}
+    public enum enum_LevelItemType { Invalid = -1, LargeMore, LargeLess, MediumMore, MediumLess, SmallMore, SmallLess, ManmadeMore, ManmadeLess, NoCollisionMore, NoCollisionLess,BorderLinear,BorderOblique,}
 
     public enum enum_LevelTileType { Invaid = -1, Empty, Main,Border, Item, Interact, }
 
@@ -628,9 +628,10 @@ namespace GameSetting
             OnHealthChanged = _OnHealthChanged;
             OnDead = _OnDead;
         }
-        public  void OnActivate(float maxHealth)
+        public void OnActivate(float maxHealth,bool restoreHealth)
         {
             m_MaxHealth = maxHealth;
+            if(restoreHealth)
             m_CurrentHealth = m_MaxHealth;
         }
         public virtual bool OnReceiveDamage(DamageInfo damageInfo, float damageReduction = 1)
@@ -669,9 +670,9 @@ namespace GameSetting
         {
             m_Entity = entity;
         }
-        public void OnActivate(float maxHealth, float defaultArmor)
+        public void OnActivate(float maxHealth, float defaultArmor,bool restoreHealth)
         {
-            base.OnActivate(maxHealth);
+            base.OnActivate(maxHealth,restoreHealth);
             m_DefaultArmor= defaultArmor;
             m_CurrentArmor = m_DefaultArmor;
             OnHealthChanged(enum_HealthChangeMessage.Begin);
@@ -967,7 +968,6 @@ namespace GameSetting
         public int I_ClipAmount(int baseClipAmount) => (int)(((B_OneOverride ? 1 : baseClipAmount) + I_ClipAdditive) * F_ClipMultiply);
         protected float F_DamageAdditive = 0f;
 
-        public float m_MaxActionAmount { get; private set; } = 3f;
         public float m_ActionAmount { get; private set; } = 0f;
         List<ActionBase> m_ActionEquiping = new List<ActionBase>();
         protected List<ActionAfterFire> m_AfterFire = new List<ActionAfterFire>();
@@ -1002,8 +1002,7 @@ namespace GameSetting
         {
             for (int i = 0; i < _actions.Count; i++)
                 AddStoredAction(_actions[i]);
-            m_MaxActionAmount = GameConst.F_MaxAcountAmount;
-            m_ActionAmount = m_MaxActionAmount;
+            m_ActionAmount = GameConst.F_RestoreActionAmount;
         }
         public override void OnDeactivate()
         {
@@ -1014,6 +1013,7 @@ namespace GameSetting
 
         public void OnBattleStart()
         {
+            m_ActionAmount = GameConst.F_RestoreActionAmount;
             m_ActionInPool = new List<ActionBase>(m_ActionStored);
             m_ActionHolding.Clear();
             RefillHoldingActions();
@@ -1149,8 +1149,8 @@ namespace GameSetting
         public void AddActionAmount(float amount)
         {
             m_ActionAmount += amount;
-            if (m_ActionAmount > m_MaxActionAmount)
-                m_ActionAmount = m_MaxActionAmount;
+            if (m_ActionAmount > GameConst.F_MaxActionAmount)
+                m_ActionAmount = GameConst.F_MaxActionAmount;
         }
         #endregion
 

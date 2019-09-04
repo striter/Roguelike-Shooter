@@ -11,8 +11,6 @@
 		Tags {"RenderType" = "BloomColor" "IgnoreProjector" = "True" "Queue" = "Transparent" }
 		Cull Back Lighting Off ZWrite Off Fog { Color(0,0,0,0) }
 		Blend SrcAlpha OneMinusSrcAlpha
-
-		Cull Back
 		Pass
 		{
 			name "MAIN"

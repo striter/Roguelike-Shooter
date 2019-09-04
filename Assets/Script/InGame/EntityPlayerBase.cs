@@ -81,7 +81,7 @@ public class EntityPlayerBase : EntityBase {
     {
         m_Equipment = null;
         m_PlayerInfo.OnBattleFinish();
-        m_HealthManager.OnActivate(I_MaxHealth, I_DefaultArmor);
+        m_HealthManager.OnActivate(I_MaxHealth, I_DefaultArmor,false);
     }
 
     void OnMainButtonDown(bool down)

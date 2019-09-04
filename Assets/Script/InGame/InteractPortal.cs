@@ -5,7 +5,6 @@ using System;
 
 public class InteractPortal : InteractBase {
     public override enum_Interaction m_InteractType => enum_Interaction.Portal;
-    protected override bool B_InteractaOnce => true;
     Action OnPortalInteract;
     public void Play( Action _OnPortalInteract)
     {

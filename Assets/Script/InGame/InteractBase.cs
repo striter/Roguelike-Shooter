@@ -6,7 +6,6 @@ using GameSetting;
 public class InteractBase : MonoBehaviour {
     public virtual enum_Interaction m_InteractType => enum_Interaction.Invalid;
     public virtual bool B_InteractOnTrigger => false;
-    protected virtual bool B_InteractaOnce => false;
     protected virtual bool B_CanInteract(EntityPlayerBase _interactor) => true;
     protected virtual bool B_RecycleOnInteract => false;
     public bool B_Interactable { get; private set; } = true;
@@ -28,8 +27,6 @@ public class InteractBase : MonoBehaviour {
 
         OnInteractSuccessful(_interactor);
         B_Interacted = true;
-        if (B_InteractaOnce)
-            SetInteractable(false);
         if (B_RecycleOnInteract)
             GameObjectManager.RecycleInteract(m_InteractType, this);
         return true;
