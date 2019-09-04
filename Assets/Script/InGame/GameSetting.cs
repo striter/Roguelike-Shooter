@@ -1136,8 +1136,8 @@ namespace GameSetting
         }
         void OnShuffle()
         {
+            m_ActionInPool = new List<ActionBase>(m_ActionStored);
             ClearHoldingActions();
-            m_ActionHolding = new List<ActionBase>(m_ActionStored);
             RefillHoldingActions();
         }
         void RefillHoldingActions()
