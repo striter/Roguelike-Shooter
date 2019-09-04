@@ -10,6 +10,7 @@ public class UI_BigmapControl : UIPageBase {        //This Page Won't Hide(One P
     RectTransform rtf_MapPlayer;
     Button btn_Bigmap;
     Image img_BigmapRaycast, img_CancelRaycast;
+    UIT_TextLocalization txt_ChestTips;
     RectTransform rtf_MapGrid;
     public bool B_ShowBigmap = false;
     protected override void Init(bool useAnim)
@@ -22,6 +23,7 @@ public class UI_BigmapControl : UIPageBase {        //This Page Won't Hide(One P
         img_BigmapRaycast = btn_Bigmap.GetComponent<Image>();
         img_CancelRaycast = btn_Cancel.GetComponent<Image>();
         btn_Bigmap.onClick.AddListener(OnBigmapBtnClick);
+        txt_ChestTips = tf_Container.Find("ChestTips").GetComponent<UIT_TextLocalization>();
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
         TBroadCaster<enum_BC_UIStatus>.Add<SBigmapLevelInfo[,], TileAxis>(enum_BC_UIStatus.UI_LevelStatusChange, OnLevelStatusChanged);
@@ -56,6 +58,7 @@ public class UI_BigmapControl : UIPageBase {        //This Page Won't Hide(One P
     void ShowMap(bool showBigmap,bool useAnim=true)     //useAnim To Be Continued
     {
         B_ShowBigmap = showBigmap;
+        txt_ChestTips.SetActivate(showBigmap&&GameManager.Instance.B_ShowChestTips);
         img_BigmapRaycast.raycastTarget = !B_ShowBigmap;
         img_CancelRaycast.raycastTarget = B_ShowBigmap;
         btn_Bigmap.SetActivate(!showBigmap);

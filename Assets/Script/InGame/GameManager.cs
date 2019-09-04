@@ -107,6 +107,8 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
     public GameLevelManager m_GameLevel { get; private set; }
     public GameRecordManager m_PlayerRecord { get; private set; }
     public EntityPlayerBase m_LocalPlayer { get; private set; } = null;
+    InteractActionChest m_RewardChest;
+    public bool B_ShowChestTips=>m_RewardChest!=null&&m_RewardChest.B_Interactable;
     protected override void Awake()
     {
         base.Awake();
@@ -153,6 +155,12 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnChangeLevel);
         m_LocalPlayer.transform.position = levelInfo.m_Level.RandomEmptyTilePosition(m_GameLevel.m_GameSeed);
+
+        if (m_RewardChest != null)
+        {
+            GameObjectManager.RecycleInteract(m_RewardChest);
+            m_RewardChest = null;
+        }
 
         if (levelInfo.m_TileLocking == enum_TileLocking.Unlocked)
             return;
@@ -211,7 +219,8 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
                     enum_RarityLevel level = m_GameLevel.m_currentStage.ToActionLevel();
                     ActionBase action1 = GameDataManager.RandomPlayerAction(level, m_GameLevel.m_GameSeed);
                     ActionBase action2 = GameDataManager.RandomPlayerAction(level, m_GameLevel.m_GameSeed, action1.m_Index);
-                    GameObjectManager.SpawnInteract<InteractActionChest>(enum_Interaction.ActionChest, EnvironmentManager.NavMeshPosition(Vector3.left * 2, false), EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(new List<ActionBase> { action1, action2 });
+                    m_RewardChest = GameObjectManager.SpawnInteract<InteractActionChest>(enum_Interaction.ActionChest, EnvironmentManager.NavMeshPosition(Vector3.left * 2, false), EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact);
+                    m_RewardChest.Play(new List<ActionBase> { action1, action2 });
                     GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, EnvironmentManager.NavMeshPosition(Vector3.right * 2, false), EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(GameObjectManager.SpawnWeapon(TCommon.RandomEnumValues<enum_PlayerWeapon>(m_GameLevel.m_GameSeed), new List<ActionBase>() { GameDataManager.RendomWeaponAction(level, m_GameLevel.m_GameSeed) }));
                 }
                 break;
@@ -259,7 +268,8 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
                     enum_RarityLevel level = m_GameLevel.m_actionGenerate.GetActionRarityLevel(m_GameLevel.m_GameSeed);
                     ActionBase action1 = GameDataManager.RandomPlayerAction(level, m_GameLevel.m_GameSeed);
                     ActionBase action2 = GameDataManager.RandomPlayerAction(level, m_GameLevel.m_GameSeed, action1.m_Index);
-                    GameObjectManager.SpawnInteract<InteractActionChest>(enum_Interaction.ActionChest, EnvironmentManager.NavMeshPosition(rewardPos, false), EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(new List<ActionBase> { action1, action2 });
+                    m_RewardChest = GameObjectManager.SpawnInteract<InteractActionChest>(enum_Interaction.ActionChest, EnvironmentManager.NavMeshPosition(rewardPos, false), EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact);
+                    m_RewardChest.Play(new List<ActionBase> { action1, action2 });
                 }
                 break;
         }
@@ -827,7 +837,7 @@ public static class GameObjectManager
         target.transform.position = toPos;
         return target;
     }
-    public static void RecycleInteract(enum_Interaction interact,InteractBase target) => ObjectPoolManager<enum_Interaction, InteractBase>.Recycle(interact,target);
+    public static void RecycleInteract(InteractBase target) => ObjectPoolManager<enum_Interaction, InteractBase>.Recycle(target.m_InteractType,target);
     public static void RecycleAllInteract(enum_Interaction interact) => ObjectPoolManager<enum_Interaction, InteractBase>.RecycleAll(interact);
     #endregion
     #region Level/LevelItem

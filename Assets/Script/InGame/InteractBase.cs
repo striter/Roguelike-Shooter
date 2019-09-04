@@ -28,7 +28,7 @@ public class InteractBase : MonoBehaviour {
         OnInteractSuccessful(_interactor);
         B_Interacted = true;
         if (B_RecycleOnInteract)
-            GameObjectManager.RecycleInteract(m_InteractType, this);
+            GameObjectManager.RecycleInteract( this);
         return true;
     }
     protected virtual void OnInteractSuccessful(EntityPlayerBase _interactTarget)
