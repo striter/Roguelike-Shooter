@@ -29,6 +29,7 @@ public class EnvironmentManager : SimpleSingletonMono<EnvironmentManager> {
     }
     protected void OnDestroy()
     {
+        RemoveNavmeshData();
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnStageStart, OnStageStart);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
     }
@@ -245,15 +246,21 @@ public class EnvironmentManager : SimpleSingletonMono<EnvironmentManager> {
 
     void BuildNavMeshData(LevelBase itemSetLevel)
     {
+        RemoveNavmeshData();
+
         List<NavMeshBuildSource> sources = new List<NavMeshBuildSource>();
         Bounds bound = new Bounds(Vector3.zero, new Vector3(itemSetLevel.I_InnerHalfLength * 2, .2f, itemSetLevel.I_InnerHalfLength * 2));
         NavMeshBuilder.CollectSources(itemSetLevel.transform, -1, NavMeshCollectGeometry.PhysicsColliders, 0, new List<NavMeshBuildMarkup>() { }, sources);
-        NavMesh.RemoveNavMeshData(m_NavMeshDataEntity);
         m_NavMeshDataEntity = NavMesh.AddNavMeshData(NavMeshBuilder.BuildNavMeshData(NavMesh.GetSettingsByIndex(0), sources, bound, Vector3.zero, itemSetLevel.transform.rotation));
 
         NavMeshBuilder.CollectSources(itemSetLevel.transform, -1, NavMeshCollectGeometry.RenderMeshes, 3, new List<NavMeshBuildMarkup>() { }, sources);
-        NavMesh.RemoveNavMeshData(m_NavMeshDataInteract);
         m_NavMeshDataInteract = NavMesh.AddNavMeshData(NavMeshBuilder.BuildNavMeshData(NavMesh.GetSettingsByIndex(1), sources, bound, Vector3.zero, itemSetLevel.transform.rotation));
+    }
+
+    void RemoveNavmeshData()
+    {
+        NavMesh.RemoveNavMeshData(m_NavMeshDataEntity);
+        NavMesh.RemoveNavMeshData(m_NavMeshDataInteract);
     }
     #endregion
 }
