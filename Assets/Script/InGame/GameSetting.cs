@@ -981,7 +981,7 @@ namespace GameSetting
         protected void IndicateActionUI() => b_actionChangeIndicated = false;
         protected float f_shuffleCheck = -1;
         protected bool b_shuffling => f_shuffleCheck > 0;
-
+        public float f_shuffleScale => f_shuffleCheck / GameConst.F_ActionShuffleCooldown;
         public int m_Coins { get; private set; } = 0;
         public PlayerInfoManager(EntityPlayerBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange, Action _OnActionChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
         {
@@ -1025,20 +1025,16 @@ namespace GameSetting
 
         public void OnBattleStart()
         {
-            m_ActionInPool = new List<ActionBase>(m_ActionStored);
-            m_ActionHolding.Clear();
-            RefillHoldingActions();
-            IndicateActionUI();
+            OnShuffle();
         }
         public void OnBattleFinish()
         {
             m_ActionAmount = GameConst.F_RestoreActionAmount;
             f_shuffleCheck = -1;
             m_ActionInPool.Clear();
-            m_ActionHolding.Clear();
             m_ActionEquiping.Traversal((ActionBase action) => { action.OnAfterBattle(); }, true);
             m_AfterFire.Clear();
-            IndicateActionUI();
+            ClearHoldingActions();
         }
 
         #region Player Info
@@ -1119,7 +1115,7 @@ namespace GameSetting
         public bool TryUseAction(int index)
         {
             ActionBase action = m_ActionHolding[index];
-            if (m_ActionAmount < action.I_ActionCost)
+            if (b_shuffling||m_ActionAmount < action.I_ActionCost)
                 return false;
 
             m_ActionAmount -= action.I_ActionCost;
@@ -1131,15 +1127,18 @@ namespace GameSetting
         }
         public bool TryShuffle()
         {
-            if (m_ActionAmount < GameConst.F_ActionShuffleCost)
+            if (b_shuffling||m_ActionAmount < GameConst.F_ActionShuffleCost)
                 return false;
             m_ActionAmount -= GameConst.F_ActionShuffleCost;
             f_shuffleCheck = GameConst.F_ActionShuffleCooldown;
+            ClearHoldingActions();
             return true;
         }
         void OnShuffle()
         {
-
+            ClearHoldingActions();
+            m_ActionHolding = new List<ActionBase>(m_ActionStored);
+            RefillHoldingActions();
         }
         void RefillHoldingActions()
         {
@@ -1150,6 +1149,11 @@ namespace GameSetting
             m_ActionHolding.Add(m_ActionInPool[index]);
             m_ActionInPool.RemoveAt(index);
             RefillHoldingActions();
+        }
+        void ClearHoldingActions()
+        {
+            m_ActionHolding.Clear();
+            IndicateActionUI();
         }
         public void UpgradeRandomHoldingAction()
         {

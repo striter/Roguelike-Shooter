@@ -8,8 +8,8 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
 {
     Transform tf_Container,tf_PlayerData,tf_Left;
     Text  txt_Health, txt_Armor,txt_ActionAmount;
-    Button btn_ActionStorage;
-    Slider sld_Reload;
+    Button btn_ActionStorage,btn_ActionShuffle;
+    Slider sld_Reload,sld_ShuffleCooldown;
     Image img_sld;
     UIT_GridControllerMono<UIGI_AmmoItem> m_AmmoGrid;
     UIT_GridControllerMono<UIGI_ActionHoldItem> m_ActionGrid;
@@ -41,6 +41,9 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
         txt_ActionAmount = m_ActionGrid.transform.Find("ActionAmount").GetComponent<Text>();
         btn_ActionStorage = m_ActionGrid.transform.Find("ActionStorage").GetComponent<Button>();
         btn_ActionStorage.onClick.AddListener(OnActionStorageClick);
+        btn_ActionShuffle = m_ActionGrid.transform.Find("ActionShuffle").GetComponent<Button>();
+        btn_ActionShuffle.onClick.AddListener(OnActionShuffleClick);
+        sld_ShuffleCooldown = btn_ActionShuffle.transform.Find("ShuffleSlider").GetComponent<Slider>();
         m_ExpireGrid = new UIT_GridControllerMono<UIGI_ExpireInfoItem>(tf_Left.Find("ExpireGrid"));
 
         tf_InteractData = tf_Container.Find("InteractData");
@@ -70,7 +73,8 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
     {
         if (!m_Player)
             m_Player = _player;
-        txt_ActionAmount.text = _player.m_PlayerInfo.m_ActionHolding.Count == 0 ? _player.m_PlayerInfo.m_ActionStored.Count.ToString() : _player.m_PlayerInfo.m_ActionAmount.ToString();
+        txt_ActionAmount.text = GameManager.Instance.B_Battling ? _player.m_PlayerInfo.m_ActionAmount.ToString() : _player.m_PlayerInfo.m_ActionStored.Count.ToString();
+        sld_ShuffleCooldown.value = _player.m_PlayerInfo.f_shuffleScale;
         tf_PlayerData.position = Vector3.Lerp(tf_PlayerData.position, CameraController.MainCamera.WorldToScreenPoint(m_Player.tf_Head.position), Time.deltaTime * 10f);
         
         if (_player.m_Interact==null)
@@ -201,7 +205,8 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
         for (int i = 0; i < actionInfo.m_ActionHolding.Count; i++)
             m_ActionGrid.AddItem(i).SetInfo(actionInfo.m_ActionHolding[i],OnActionUse);
 
-        btn_ActionStorage.SetActivate(actionInfo.m_ActionHolding.Count==0);
+        btn_ActionShuffle.SetActivate(GameManager.Instance.B_Battling);
+        btn_ActionStorage.SetActivate(!GameManager.Instance.B_Battling);
     }
     void OnActionUse(int index)
     {
@@ -210,6 +215,10 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
     void OnActionStorageClick()
     {
         UIManager.Instance.ShowPage<UI_ActionStorage>(true).Show(m_Player.m_PlayerInfo.m_ActionStored);
+    }
+    void OnActionShuffleClick()
+    {
+        m_Player.m_PlayerInfo.TryShuffle();
     }
     void OnExpireStatus(PlayerInfoManager expireInfo)
     {
