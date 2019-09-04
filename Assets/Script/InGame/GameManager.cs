@@ -95,8 +95,6 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
         if (Input.GetKeyDown(KeyCode.KeypadPlus))
             m_LocalPlayer.m_PlayerInfo.OnCoinsReceive(10);
 
-        UIManager.Instance.transform.Find("Test/SeedTest").GetComponent<UnityEngine.UI.Text>().text = m_GameLevel.m_Seed;
-
         if (OptionsManager.B_AdditionalLight != B_AdditionalLight)
         {
             OptionsManager.B_AdditionalLight = B_AdditionalLight;
@@ -106,8 +104,8 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
     #endregion
 #endif
 
-    GameLevelManager m_GameLevel;
-    GameRecordManager m_PlayerRecord;
+    public GameLevelManager m_GameLevel { get; private set; }
+    public GameRecordManager m_PlayerRecord { get; private set; }
     public EntityPlayerBase m_LocalPlayer { get; private set; } = null;
     protected override void Awake()
     {

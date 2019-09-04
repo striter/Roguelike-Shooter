@@ -23,6 +23,7 @@ public class UIManager : SingletonMono<UIManager> {
     }
     private void Start()
     {
+        transform.Find("Test/SeedTest").GetComponent<Text>().text = GameManager.Instance.m_GameLevel.m_Seed;
         UIPageBase.ShowPage<UI_BigmapControl>(tf_Pages, false);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityPlayerBase>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnPlayerStatusChanged);
     }
