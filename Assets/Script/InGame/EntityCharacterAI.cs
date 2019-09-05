@@ -7,9 +7,10 @@ using GameSetting;
 using System;
 
 [RequireComponent(typeof(NavMeshAgent),typeof(NavMeshObstacle))]
-public class EntityAIBase : EntityBase {
-    public enum_EntityType E_EnermyType= enum_EntityType.Invalid;
+public class EntityCharacterAI : EntityCharacterBase {
+    public enum_CharacterType E_EnermyType= enum_CharacterType.Invalid;
     public enum_EnermyAnim E_AnimatorIndex= enum_EnermyAnim.Invalid;
+    public override enum_EntityController m_Controller => enum_EntityController.AI;
     public float F_AIChaseRange;
     public float F_AIAttackRange;
     public RangeFloat F_AttackDuration;
@@ -23,13 +24,13 @@ public class EntityAIBase : EntityBase {
     [Range(0, 100)]
     public int I_AttackPreAimPercentage = 50;
     public bool B_AttackMove = true;
-    bool OnCheckTarget(EntityBase target) => target.m_Flag!=m_Flag && !target.m_HealthManager.b_IsDead;
+    bool OnCheckTarget(EntityCharacterBase target) => target.m_Flag!=m_Flag && !target.m_HealthManager.b_IsDead;
     public override Vector3 m_PrecalculatedTargetPos(float time)=> tf_Head.position;
     public override void Init(int entityPresetIndex)
     {
         base.Init(entityPresetIndex);
         Transform tf_Barrel = transform.FindInAllChild("Barrel");
-        m_AI = new EnermyAIControllerBase(this, EquipmentBase.AcquireEquipment(GameExpression.GetAIEquipment(entityPresetIndex, 0),this,tf_Barrel,m_EntityInfo.GetDamageBuffInfo,OnDead), OnAttackAnim, OnCheckTarget);
+        m_AI = new EnermyAIControllerBase(this, EquipmentBase.AcquireEquipment(GameExpression.GetAIEquipment(entityPresetIndex, 0),this,tf_Barrel,m_CharacterInfo.GetDamageBuffInfo,OnDead), OnAttackAnim, OnCheckTarget);
     }
 
     public override void OnSpawn(int id,enum_EntityFlag _flag)
@@ -51,7 +52,7 @@ public class EntityAIBase : EntityBase {
     {
         base.OnExpireChange();
         if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
-            m_Animator.SetMovementSpeed(m_EntityInfo.F_MovementSpeed);
+            m_Animator.SetMovementSpeed(m_CharacterInfo.F_MovementSpeed);
         m_AI.OnInfoChange();
     }
     protected override void Update()
@@ -63,13 +64,13 @@ public class EntityAIBase : EntityBase {
         if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
         {
             m_Animator.SetRun(m_AI.B_AgentEnabled ? 1 : 0);
-            m_Animator.SetStun(m_EntityInfo.B_Stunned);
+            m_Animator.SetStun(m_CharacterInfo.B_Stunned);
         }
 
         m_AI.OnTick(Time.deltaTime);
     }
 
-    void OnAttackAnim(EntityBase target,bool startAttack)
+    void OnAttackAnim(EntityCharacterBase target,bool startAttack)
     {
         if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
             m_Animator.OnAttack(startAttack);
@@ -132,17 +133,17 @@ public class EntityAIBase : EntityBase {
     #region AI
     class EnermyAIControllerBase : ISingleCoroutine
     {
-        protected EntityAIBase m_Entity;
-        protected EntityBase m_Target;
+        protected EntityCharacterAI m_Entity;
+        protected EntityCharacterBase m_Target;
         protected Transform transform => m_Agent.transform;
         protected Transform headTransform => m_Entity.tf_Head;
         protected Transform targetHeadTransform => m_Target.tf_Head;
         protected NavMeshAgent m_Agent;
         protected NavMeshObstacle m_Obstacle;
-        protected Action<EntityBase, bool> OnAttackAnim;
-        protected Func<EntityBase, bool> OnCheckTarget;
+        protected Action<EntityCharacterBase, bool> OnAttackAnim;
+        protected Func<EntityCharacterBase, bool> OnCheckTarget;
         protected EquipmentBase m_Weapon;
-        protected EntityInfoManager m_Info => m_Entity.m_EntityInfo;
+        protected CharacterInfoManager m_Info => m_Entity.m_CharacterInfo;
         RaycastHit[] m_Raycasts;
         float f_movementSimulate, f_battleSimulate, f_calculateSimulate, f_checkTargetSimulate;
         Vector3 v3_TargetDirection;
@@ -188,7 +189,7 @@ public class EntityAIBase : EntityBase {
             }
         }
 
-        public EnermyAIControllerBase(EntityAIBase _entityControlling, EquipmentBase _weapon, Action<EntityBase, bool> _onAttack, Func<EntityBase, bool> _onCheck)
+        public EnermyAIControllerBase(EntityCharacterAI _entityControlling, EquipmentBase _weapon, Action<EntityCharacterBase, bool> _onAttack, Func<EntityCharacterBase, bool> _onCheck)
         {
             m_Entity = _entityControlling;
             m_Weapon = _weapon;
@@ -222,7 +223,7 @@ public class EntityAIBase : EntityBase {
         }
         public void OnTick(float deltaTime)
         {
-            if (m_Entity.m_EntityInfo.B_Stunned)
+            if (m_Entity.m_CharacterInfo.B_Stunned)
             {
                 B_AgentEnabled = false;
                 if (b_attacking)
@@ -256,7 +257,7 @@ public class EntityAIBase : EntityBase {
             m_Target = null;
             f_targetDistance = float.MaxValue;
 
-            List<EntityBase> entites = GameManager.Instance.GetEntities(m_Entity.m_Flag, m_Weapon.B_TargetAlly);
+            List<EntityCharacterBase> entites = GameManager.Instance.GetEntities(m_Entity.m_Flag, m_Weapon.B_TargetAlly);
             for (int i = 0; i < entites.Count; i++)
             {
                 if (entites[i].I_EntityID == m_Entity.I_EntityID)
@@ -325,7 +326,7 @@ public class EntityAIBase : EntityBase {
             float m_frontCheck = fireRate;
             for (; ; )
             {
-                float fireRateDeltatime= m_Entity.m_EntityInfo.F_FireRateTick(Time.deltaTime);
+                float fireRateDeltatime= m_Entity.m_CharacterInfo.F_FireRateTick(Time.deltaTime);
                 m_frontCheck -= fireRateDeltatime;
                 if (m_frontCheck <= 0)
                 {
@@ -376,7 +377,7 @@ public class EntityAIBase : EntityBase {
             }
             f_movementSimulate = GameConst.F_AIMovementCalculationParam;
 
-            if (m_Entity.m_EntityInfo.F_MovementSpeed == 0||( b_attacking && !m_Entity.B_AttackMove))
+            if (m_Entity.m_CharacterInfo.F_MovementSpeed == 0||( b_attacking && !m_Entity.B_AttackMove))
             {
                 B_AgentEnabled = false;
                 return;
@@ -423,7 +424,7 @@ public class EntityAIBase : EntityBase {
         }
 
         bool FrontBlocked() => Physics.SphereCast(new Ray(headTransform.position, headTransform.forward), 1f, 2, GameLayer.Mask.I_Static);
-        bool TargetVisible(EntityBase target)
+        bool TargetVisible(EntityCharacterBase target)
         {
             m_Raycasts = Physics.RaycastAll(m_Entity.tf_Head.position, v3_TargetDirection, Vector3.Distance(m_Entity.tf_Head.position, target.tf_Head.position), GameLayer.Mask.I_StaticEntity);
             for (int i = 0; i < m_Raycasts.Length; i++)

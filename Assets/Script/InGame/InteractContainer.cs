@@ -11,7 +11,7 @@ public class InteractContainer : InteractBase {
         base.Init();
         tf_Model = transform.Find("Container/Model");
     }
-    public override bool TryInteract(EntityPlayerBase _interactor)
+    public override bool TryInteract(EntityCharacterPlayer _interactor)
     {
         if (!B_CanInteract(_interactor) || !m_InteractTarget.TryInteract(_interactor))
             return false;

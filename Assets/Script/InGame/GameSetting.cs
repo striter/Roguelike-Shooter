@@ -85,40 +85,40 @@ namespace GameSetting
         {
             switch (level)
             {
-                default: return StageInteractGenerate.Create(new Dictionary<enum_RarityLevel, int>(),new Dictionary<enum_RarityLevel, int>(),new Dictionary<enum_EntityType, CoinsGenerateInfo>());
+                default: return StageInteractGenerate.Create(new Dictionary<enum_RarityLevel, int>(),new Dictionary<enum_RarityLevel, int>(),new Dictionary<enum_CharacterType, CoinsGenerateInfo>());
                 case enum_StageLevel.Rookie:
                     return StageInteractGenerate.Create(
                     new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },    //宝箱等级概率
                     new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },    //交易等级概率
-                    new Dictionary<enum_EntityType, CoinsGenerateInfo>() {
-                     { enum_EntityType.SubHidden, CoinsGenerateInfo.Create( 0,0, 0, new RangeInt(0, 0)) },     //实体掉落生成概率 类型,血,护甲,金币,金币数值范围
-                     { enum_EntityType.Fighter, CoinsGenerateInfo.Create( 1,5, 10, new RangeInt(2, 2)) },
-                     { enum_EntityType.Shooter_Rookie, CoinsGenerateInfo.Create( 1,5, 10, new RangeInt(2, 2)) },
-                     { enum_EntityType.Shooter_Veteran, CoinsGenerateInfo.Create( 2,10, 20, new RangeInt(3, 3)) },
-                     { enum_EntityType.AOECaster, CoinsGenerateInfo.Create( 5,15, 40, new RangeInt(4, 4)) },
-                     { enum_EntityType.Elite, CoinsGenerateInfo.Create( 10,20, 100, new RangeInt(6, 6)) }});
+                    new Dictionary<enum_CharacterType, CoinsGenerateInfo>() {
+                     { enum_CharacterType.SubHidden, CoinsGenerateInfo.Create( 0,0, 0, new RangeInt(0, 0)) },     //实体掉落生成概率 类型,血,护甲,金币,金币数值范围
+                     { enum_CharacterType.Fighter, CoinsGenerateInfo.Create( 1,5, 10, new RangeInt(2, 2)) },
+                     { enum_CharacterType.Shooter_Rookie, CoinsGenerateInfo.Create( 1,5, 10, new RangeInt(2, 2)) },
+                     { enum_CharacterType.Shooter_Veteran, CoinsGenerateInfo.Create( 2,10, 20, new RangeInt(3, 3)) },
+                     { enum_CharacterType.AOECaster, CoinsGenerateInfo.Create( 5,15, 40, new RangeInt(4, 4)) },
+                     { enum_CharacterType.Elite, CoinsGenerateInfo.Create( 10,20, 100, new RangeInt(6, 6)) }});
                 case enum_StageLevel.Veteran:
                     return StageInteractGenerate.Create(
                     new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },    //宝箱等级概率
                     new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },    //交易等级概率
-                    new Dictionary<enum_EntityType, CoinsGenerateInfo>() {
-                     { enum_EntityType.SubHidden, CoinsGenerateInfo.Create( 0,0, 0, new RangeInt(0, 0)) },     //实体掉落生成概率 类型,血,护甲,金币,金币数值范围
-                     { enum_EntityType.Fighter, CoinsGenerateInfo.Create( 1,5, 10, new RangeInt(2, 2)) },
-                     { enum_EntityType.Shooter_Rookie, CoinsGenerateInfo.Create( 1,5, 10, new RangeInt(2, 2)) },
-                     { enum_EntityType.Shooter_Veteran, CoinsGenerateInfo.Create( 2,10, 20, new RangeInt(3, 3)) },
-                     { enum_EntityType.AOECaster, CoinsGenerateInfo.Create( 5,15, 40, new RangeInt(4, 4)) },
-                     { enum_EntityType.Elite, CoinsGenerateInfo.Create( 10,20, 100, new RangeInt(6, 6)) }});
+                    new Dictionary<enum_CharacterType, CoinsGenerateInfo>() {
+                     { enum_CharacterType.SubHidden, CoinsGenerateInfo.Create( 0,0, 0, new RangeInt(0, 0)) },     //实体掉落生成概率 类型,血,护甲,金币,金币数值范围
+                     { enum_CharacterType.Fighter, CoinsGenerateInfo.Create( 1,5, 10, new RangeInt(2, 2)) },
+                     { enum_CharacterType.Shooter_Rookie, CoinsGenerateInfo.Create( 1,5, 10, new RangeInt(2, 2)) },
+                     { enum_CharacterType.Shooter_Veteran, CoinsGenerateInfo.Create( 2,10, 20, new RangeInt(3, 3)) },
+                     { enum_CharacterType.AOECaster, CoinsGenerateInfo.Create( 5,15, 40, new RangeInt(4, 4)) },
+                     { enum_CharacterType.Elite, CoinsGenerateInfo.Create( 10,20, 100, new RangeInt(6, 6)) }});
                 case enum_StageLevel.Ranger:
                     return StageInteractGenerate.Create(
                     new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },    //宝箱等级概率
                     new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },    //交易等级概率
-                    new Dictionary<enum_EntityType,CoinsGenerateInfo>() {
-                     { enum_EntityType.SubHidden, CoinsGenerateInfo.Create( 0,0, 0, new RangeInt(0, 0)) },     //实体掉落生成概率 类型,血,护甲,金币,金币数值范围
-                     { enum_EntityType.Fighter, CoinsGenerateInfo.Create( 1,5, 10, new RangeInt(2, 2)) },
-                     { enum_EntityType.Shooter_Rookie, CoinsGenerateInfo.Create( 1,5, 10, new RangeInt(2, 2)) },
-                     { enum_EntityType.Shooter_Veteran, CoinsGenerateInfo.Create( 2,10, 20, new RangeInt(3, 3)) },
-                     { enum_EntityType.AOECaster, CoinsGenerateInfo.Create( 5,15, 40, new RangeInt(4, 4)) },
-                     { enum_EntityType.Elite, CoinsGenerateInfo.Create( 10,20, 100, new RangeInt(6, 6)) }});
+                    new Dictionary<enum_CharacterType,CoinsGenerateInfo>() {
+                     { enum_CharacterType.SubHidden, CoinsGenerateInfo.Create( 0,0, 0, new RangeInt(0, 0)) },     //实体掉落生成概率 类型,血,护甲,金币,金币数值范围
+                     { enum_CharacterType.Fighter, CoinsGenerateInfo.Create( 1,5, 10, new RangeInt(2, 2)) },
+                     { enum_CharacterType.Shooter_Rookie, CoinsGenerateInfo.Create( 1,5, 10, new RangeInt(2, 2)) },
+                     { enum_CharacterType.Shooter_Veteran, CoinsGenerateInfo.Create( 2,10, 20, new RangeInt(3, 3)) },
+                     { enum_CharacterType.AOECaster, CoinsGenerateInfo.Create( 5,15, 40, new RangeInt(4, 4)) },
+                     { enum_CharacterType.Elite, CoinsGenerateInfo.Create( 10,20, 100, new RangeInt(6, 6)) }});
             }
         }
     }
@@ -229,9 +229,10 @@ namespace GameSetting
         Invalid = -1,
 
         OnEntitySpawn,
-        OnEntityDamage,
-        OnEntityDead,
         OnEntityRecycle,
+
+        OnCharacterDamage,
+        OnCharacterDead,
 
         OnStageStart,       //Total Stage Start
         OnStageFinish,
@@ -259,7 +260,9 @@ namespace GameSetting
 
     public enum enum_BattleDifficulty { Invalid = -1, Peaceful = 0, Eazy = 1, Normal = 2, Hard = 3, End = 4, BattleTrade=10, }
 
-    public enum enum_EntityFlag { Invalid=-1, Neutal = 0, Player =1,Enermy=2,}
+    public enum enum_EntityController {Invalid=-1,None=1,AI=2, Player=3, }
+
+    public enum enum_EntityFlag { Invalid=-1, None=0, Player =1,Enermy=2, Neutal = 3, } 
 
     public enum enum_HitCheck { Invalid = -1, Static = 1, Entity = 2, Dynamic = 3,Interact=4, }
 
@@ -277,7 +280,7 @@ namespace GameSetting
 
     public enum enum_LevelGenerateType { Invalid = -1, Big = 1, Small = 2 }
 
-    public enum enum_EntityType { Invalid = -1, Fighter = 1, Shooter_Rookie = 2,Shooter_Veteran=3, AOECaster = 4, Elite = 5, SubHidden = 99 }
+    public enum enum_CharacterType { Invalid = -1, Fighter = 1, Shooter_Rookie = 2,Shooter_Veteran=3, AOECaster = 4, Elite = 5, SubHidden = 99 }
 
     public enum enum_Interaction { Invalid = -1,Portal=1,ActionChest=2,ContainerTrade=10, ContainerBattle = 11, PickupCoin = 20, PickupHealth =21,PickupArmor=22,PickupAction=23, Weapon = 24,ActionAdjustment=25, }
 
@@ -416,7 +419,7 @@ namespace GameSetting
             m_GameSeed = DateTime.Now.ToLongTimeString().ToString();
             m_StageLevel = enum_StageLevel.Rookie;
         }
-        public void Adjust(EntityPlayerBase _player,GameLevelManager _level,GameRecordManager _record)
+        public void Adjust(EntityCharacterPlayer _player,GameLevelManager _level,GameRecordManager _record)
         {
             m_coins = _player.m_PlayerInfo.m_Coins;
             m_weapon = _player.m_WeaponCurrent.m_WeaponInfo.m_Weapon;
@@ -440,15 +443,15 @@ namespace GameSetting
     }
     public struct StageInteractGenerate
     {
-        Dictionary<enum_EntityType, CoinsGenerateInfo> m_CoinRate;
+        Dictionary<enum_CharacterType, CoinsGenerateInfo> m_CoinRate;
         Dictionary<enum_RarityLevel, int> m_ActionRate;
         Dictionary<enum_RarityLevel, int> m_TradeRate;
-        public bool CanGenerateHealth(enum_EntityType entityType) => TCommon.RandomPercentage() <= m_CoinRate[entityType].m_HealthRate;
-        public bool CanGenerateArmor(enum_EntityType entityType) => TCommon.RandomPercentage() <= m_CoinRate[entityType].m_ArmorRate;
-        public int GetCoinGenerate(enum_EntityType entityType)=> TCommon.RandomPercentage() <= m_CoinRate[entityType].m_CoinRate? m_CoinRate[entityType].m_CoinRange.RandomRangeInt():-1;
+        public bool CanGenerateHealth(enum_CharacterType entityType) => TCommon.RandomPercentage() <= m_CoinRate[entityType].m_HealthRate;
+        public bool CanGenerateArmor(enum_CharacterType entityType) => TCommon.RandomPercentage() <= m_CoinRate[entityType].m_ArmorRate;
+        public int GetCoinGenerate(enum_CharacterType entityType)=> TCommon.RandomPercentage() <= m_CoinRate[entityType].m_CoinRate? m_CoinRate[entityType].m_CoinRange.RandomRangeInt():-1;
         public enum_RarityLevel GetActionRarityLevel(System.Random seed) => TCommon.RandomPercentage(m_ActionRate, seed);
         public enum_RarityLevel GetTradeRarityLevel(System.Random seed) => TCommon.RandomPercentage(m_TradeRate, seed);
-        public static StageInteractGenerate Create(Dictionary<enum_RarityLevel, int> _actionRate, Dictionary<enum_RarityLevel, int> _tradeRate, Dictionary<enum_EntityType, CoinsGenerateInfo> _coinRate) => new StageInteractGenerate() { m_ActionRate = _actionRate,m_TradeRate=_tradeRate,m_CoinRate=_coinRate };
+        public static StageInteractGenerate Create(Dictionary<enum_RarityLevel, int> _actionRate, Dictionary<enum_RarityLevel, int> _tradeRate, Dictionary<enum_CharacterType, CoinsGenerateInfo> _coinRate) => new StageInteractGenerate() { m_ActionRate = _actionRate,m_TradeRate=_tradeRate,m_CoinRate=_coinRate };
     }
     public struct ActionInfo : IXmlPhrase
     {
@@ -551,18 +554,18 @@ namespace GameSetting
         public int m_waveCount;
         public enum_BattleDifficulty m_Difficulty;
         public float m_EliteChance => f_eliteChance;
-        public Dictionary<enum_EntityType, RangeInt> m_EntityGenerate;
+        public Dictionary<enum_CharacterType, RangeInt> m_EntityGenerate;
         public void InitOnValueSet()
         {
             string[] defineSplit = em_defines.Split('_');
             m_Difficulty = (enum_BattleDifficulty)(int.Parse(defineSplit[0]));
             m_waveCount = (int.Parse(defineSplit[1]));
-            m_EntityGenerate = new Dictionary<enum_EntityType, RangeInt>();
-            m_EntityGenerate.Add(enum_EntityType.Fighter, ir_fighter);
-            m_EntityGenerate.Add(enum_EntityType.Shooter_Rookie, ir_shooterRookie);
-            m_EntityGenerate.Add(enum_EntityType.Shooter_Veteran, ir_shooterVeteran);
-            m_EntityGenerate.Add(enum_EntityType.AOECaster, ir_aoeCaster);
-            m_EntityGenerate.Add(enum_EntityType.Elite, ir_elite);
+            m_EntityGenerate = new Dictionary<enum_CharacterType, RangeInt>();
+            m_EntityGenerate.Add(enum_CharacterType.Fighter, ir_fighter);
+            m_EntityGenerate.Add(enum_CharacterType.Shooter_Rookie, ir_shooterRookie);
+            m_EntityGenerate.Add(enum_CharacterType.Shooter_Veteran, ir_shooterVeteran);
+            m_EntityGenerate.Add(enum_CharacterType.AOECaster, ir_aoeCaster);
+            m_EntityGenerate.Add(enum_CharacterType.Elite, ir_elite);
         }
     }
 
@@ -612,7 +615,10 @@ namespace GameSetting
     {
         public float m_CurrentHealth { get; private set; }
         public float m_MaxHealth { get; private set; }
-        
+
+        public float F_HealthScale => Mathf.Clamp01(m_CurrentHealth / m_MaxHealth);
+        public virtual float F_TotalEHP => m_CurrentHealth;
+        public virtual float F_EHPScale => Mathf.Clamp01( m_CurrentHealth /  m_MaxHealth);
         public bool b_IsDead => m_CurrentHealth <= 0;
         protected void DamageHealth(float health)
         {
@@ -638,7 +644,7 @@ namespace GameSetting
         }
         public virtual bool OnReceiveDamage(DamageInfo damageInfo, float damageReduction = 1)
         {
-            if (b_IsDead)
+            if (b_IsDead||damageInfo.m_Type== enum_DamageType.ArmorOnly)
                 return false;
 
             m_CurrentHealth -= damageInfo.m_AmountApply * damageReduction;
@@ -655,12 +661,11 @@ namespace GameSetting
     {
         public float m_CurrentArmor { get; private set; }
         public float m_DefaultArmor { get; private set; }
-        
-        public float F_TotalHealth => m_CurrentArmor + m_CurrentHealth;
-        public float F_HealthScale =>Mathf.Clamp01( m_CurrentHealth/m_MaxHealth);
-        public float F_ArmorScale => Mathf.Clamp01(m_CurrentArmor/ m_DefaultArmor);
-        public float F_EHPScale => Mathf.Clamp01((m_CurrentArmor+m_CurrentHealth)/(m_DefaultArmor+m_MaxHealth));
-        protected EntityBase m_Entity;
+
+        public override float F_TotalEHP => m_CurrentArmor + base.F_TotalEHP;
+        public override float F_EHPScale => Mathf.Clamp01((m_CurrentArmor + m_CurrentHealth) / (m_DefaultArmor + m_MaxHealth));
+        public float F_ArmorScale => Mathf.Clamp01(m_CurrentArmor / m_DefaultArmor);
+        protected EntityCharacterBase m_Entity;
         protected void DamageArmor(float amount)
         {
             m_CurrentArmor -= amount;
@@ -668,7 +673,7 @@ namespace GameSetting
                 m_CurrentArmor = 0;
         }
 
-        public EntityHealth(EntityBase entity, Action<enum_HealthChangeMessage> _OnHealthChanged, Action _OnDead) :base(_OnHealthChanged,_OnDead)
+        public EntityHealth(EntityCharacterBase entity, Action<enum_HealthChangeMessage> _OnHealthChanged, Action _OnDead) :base(_OnHealthChanged,_OnDead)
         {
             m_Entity = entity;
         }
@@ -715,7 +720,7 @@ namespace GameSetting
                         break;
                 }
 
-                TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityDamage, damageInfo.m_detail, m_Entity, damageReceive);
+                TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterDamage, damageInfo.m_detail, m_Entity, damageReceive);
                 if (b_IsDead)
                     OnDead();
             }
@@ -792,9 +797,9 @@ namespace GameSetting
     #endregion
 
     #region Entity Info Manager
-    public class EntityInfoManager
+    public class CharacterInfoManager
     {
-        protected EntityBase m_Entity { get; private set; }
+        protected EntityCharacterBase m_Entity { get; private set; }
         public List<ExpireBase> m_Expires { get; private set; } = new List<ExpireBase>();
         List< SFXBuffEffect> m_BuffEffects = new List<SFXBuffEffect>();
 
@@ -817,7 +822,7 @@ namespace GameSetting
         Action OnExpireChange;
         bool b_infoUpdated = false;
         public void EntityInfoChange() => b_infoUpdated = false;
-        public EntityInfoManager(EntityBase _attacher,Func<DamageInfo, bool> _OnReceiveDamage,Action _OnExpireChange)
+        public CharacterInfoManager(EntityCharacterBase _attacher,Func<DamageInfo, bool> _OnReceiveDamage,Action _OnExpireChange)
         {
             m_Entity = _attacher;
             OnReceiveDamage = _OnReceiveDamage;
@@ -937,7 +942,7 @@ namespace GameSetting
         }
     }
 
-    public class EntitySubInfoManager : EntityInfoManager
+    public class EntitySubInfoManager : CharacterInfoManager
     {
         bool damageOverride = false;
         Func<DamageDeliverInfo> m_DamageBuffOverride;
@@ -953,15 +958,15 @@ namespace GameSetting
             base.OnActivate();
             damageOverride = false;
         }
-        public EntitySubInfoManager(EntityBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
+        public EntitySubInfoManager(EntityCharacterBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
         {
 
         }
     }
 
-    public class PlayerInfoManager : EntityInfoManager
+    public class PlayerInfoManager : CharacterInfoManager
     {
-        EntityPlayerBase m_Player;
+        EntityCharacterPlayer m_Player;
         public float F_RecoilMultiply { get; private set; } = 1f;
         public float F_ProjectileSpeedMuiltiply { get; private set; } = 1f;
         protected bool B_OneOverride { get; private set; } = false;
@@ -983,7 +988,7 @@ namespace GameSetting
         protected bool b_shuffling => f_shuffleCheck > 0;
         public float f_shuffleScale => f_shuffleCheck / GameConst.F_ActionShuffleCooldown;
         public int m_Coins { get; private set; } = 0;
-        public PlayerInfoManager(EntityPlayerBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange, Action _OnActionChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
+        public PlayerInfoManager(EntityCharacterPlayer _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange, Action _OnActionChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
         {
             m_Player = _attacher;
             OnActionChange = _OnActionChange;
@@ -991,12 +996,12 @@ namespace GameSetting
         public override void OnActivate()
         {
             base.OnActivate();
-            TBroadCaster<enum_BC_GameStatus>.Add<DamageDeliverInfo, EntityBase, float>(enum_BC_GameStatus.OnEntityDamage, OnEntityApplyDamage);
+            TBroadCaster<enum_BC_GameStatus>.Add<DamageDeliverInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterDamage, OnCharacterDamage);
         }
         public override void OnDeactivate()
         {
             base.OnDeactivate();
-            TBroadCaster<enum_BC_GameStatus>.Remove<DamageDeliverInfo, EntityBase, float>(enum_BC_GameStatus.OnEntityDamage, OnEntityApplyDamage);
+            TBroadCaster<enum_BC_GameStatus>.Remove<DamageDeliverInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterDamage, OnCharacterDamage);
         }
 
         public override void Tick(float deltaTime)
@@ -1094,7 +1099,7 @@ namespace GameSetting
         public void OnAttachWeapon(WeaponBase weapon) => weapon.m_WeaponAction.Traversal((ActionBase action) => { OnUseAcion(action); });
         public void OnDetachWeapon() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnWeaponDetach(); }, true);
         public void OnReloadFinish() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnReloadFinish(); });
-        void OnEntityApplyDamage(DamageDeliverInfo damageInfo, EntityBase damageEntity, float amountApply)
+        void OnCharacterDamage(DamageDeliverInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
         {
             m_AfterFire.Traversal((ActionAfterFire action) => { if (action.OnActionHitEntity(damageInfo.I_IdentiyID, damageEntity)) m_AfterFire.Remove(action); }, true);
 
@@ -1287,7 +1292,7 @@ namespace GameSetting
     public class ActionBase : ExpireBase
     {
         public override enum_ExpireType m_ExpireType => enum_ExpireType.Action;
-        public EntityPlayerBase m_ActionEntity { get; private set; }
+        public EntityCharacterPlayer m_ActionEntity { get; private set; }
         public enum_RarityLevel m_Level { get; private set; } = enum_RarityLevel.Invalid;
         public int m_Identity { get; private set; } = -1;
         public virtual int I_ActionCost => -1;
@@ -1309,11 +1314,11 @@ namespace GameSetting
             if (m_ActionExpireType == enum_ActionExpireType.Invalid)
                 Debug.LogError("Override Type Please!");
         }
-        public void Activate(EntityPlayerBase _actionEntity,Action<ExpireBase> OnExpired) { m_ActionEntity = _actionEntity;Activate(OnExpired); }
+        public void Activate(EntityCharacterPlayer _actionEntity,Action<ExpireBase> OnExpired) { m_ActionEntity = _actionEntity;Activate(OnExpired); }
         public virtual void OnActionUse() { }
         public virtual void OnAddActionElse(float actionAmount) { }
         public virtual void OnReceiveDamage(int applier, float amount) { }
-        public virtual void OnDealtDemage(EntityBase receiver, float amount) { }
+        public virtual void OnDealtDemage(EntityCharacterBase receiver, float amount) { }
         public virtual void OnReloadFinish() { }
         public virtual void OnAfterBattle() { }
         public virtual void OnAfterFire(int identity) { }
@@ -1547,20 +1552,20 @@ namespace GameSetting
     {
         public virtual bool B_TargetAlly => false;
         protected int i_weaponIndex;
-        protected EntityBase m_Entity;
+        protected EntityCharacterBase m_Entity;
         protected Transform attacherTransform => m_Entity.tf_Head;
         protected Transform transformBarrel;
         protected Func<DamageDeliverInfo> GetDamageDeliverInfo;
-        protected EntityInfoManager m_Info
+        protected CharacterInfoManager m_Info
         {
             get
             {
                 if (m_Entity == null)
                     Debug.LogError("Null Entity Controlling?");
-                return m_Entity.m_EntityInfo;
+                return m_Entity.m_CharacterInfo;
             }
         }
-        public EquipmentBase(SFXBase weaponBase, EntityBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo)
+        public EquipmentBase(SFXBase weaponBase, EntityCharacterBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo)
         {
             i_weaponIndex = weaponBase.I_SFXIndex;
             m_Entity = _controller;
@@ -1569,9 +1574,9 @@ namespace GameSetting
                 Debug.LogError("Null Weapon Barrel Found!");
             GetDamageDeliverInfo = _GetBuffInfo;
         }
-        protected virtual Vector3 GetTargetPosition(bool preAim, EntityBase _target) => _target.tf_Head.position;
-        public void Play(bool _preAim, EntityBase _target) => Play(_target,GetTargetPosition(_preAim, _target));
-        public virtual void Play(EntityBase _target, Vector3 _calculatedPosition)
+        protected virtual Vector3 GetTargetPosition(bool preAim, EntityCharacterBase _target) => _target.tf_Head.position;
+        public void Play(bool _preAim, EntityCharacterBase _target) => Play(_target,GetTargetPosition(_preAim, _target));
+        public virtual void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
 
         }
@@ -1583,7 +1588,7 @@ namespace GameSetting
 
         }
 
-        public static EquipmentBase AcquireEquipment(int weaponIndex, EntityBase _entity, Transform tf_Barrel, Func<DamageDeliverInfo> GetDamageBuffInfo, Action OnDead)
+        public static EquipmentBase AcquireEquipment(int weaponIndex, EntityCharacterBase _entity, Transform tf_Barrel, Func<DamageDeliverInfo> GetDamageBuffInfo, Action OnDead)
         {
             EquipmentBase weapon = null;
             SFXBase weaponInfo = GameObjectManager.GetEquipmentData<SFXBase>(weaponIndex);
@@ -1624,10 +1629,10 @@ namespace GameSetting
     }
     public class EquipmentCaster : EquipmentBase
     {
-        public EquipmentCaster(SFXCast _castInfo, EntityBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(_castInfo, _controller, _transform, _GetBuffInfo)
+        public EquipmentCaster(SFXCast _castInfo, EntityCharacterBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(_castInfo, _controller, _transform, _GetBuffInfo)
         {
         }
-        public override void Play(EntityBase _target, Vector3 _calculatedPosition)
+        public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
             GameObjectManager.SpawnEquipment<SFXCast>(i_weaponIndex, attacherTransform.position, attacherTransform.forward).Play(GetDamageDeliverInfo());
         }
@@ -1637,7 +1642,7 @@ namespace GameSetting
         ModelBlink m_Blink;
         Action OnDead;
         float timeElapsed;
-        public EnermyCasterSelfDetonateAnimLess(SFXCast _castInfo, EntityBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo, Action _OnDead, Transform _blinkModels) : base(_castInfo, _controller, _transform, _GetBuffInfo)
+        public EnermyCasterSelfDetonateAnimLess(SFXCast _castInfo, EntityCharacterBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo, Action _OnDead, Transform _blinkModels) : base(_castInfo, _controller, _transform, _GetBuffInfo)
         {
             OnDead = _OnDead;
             m_Blink = new ModelBlink(_blinkModels, .25f, .25f,Color.red);
@@ -1655,7 +1660,7 @@ namespace GameSetting
                 this.StopSingleCoroutine(0);
             }
         }
-        public override void Play(EntityBase _target, Vector3 _calculatedPosition)
+        public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
             timeElapsed = 0;
             this.StartSingleCoroutine(0, TIEnumerators.Tick(Tick));
@@ -1669,10 +1674,10 @@ namespace GameSetting
     public class EquipmentCasterControlled : EquipmentCaster
     {
         SFXCast m_Cast;
-        public EquipmentCasterControlled(SFXCast _castInfo, EntityBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(_castInfo, _controller, _transform, _GetBuffInfo)
+        public EquipmentCasterControlled(SFXCast _castInfo, EntityCharacterBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(_castInfo, _controller, _transform, _GetBuffInfo)
         {
         }
-        public override void Play(EntityBase _target, Vector3 _calculatedPosition)
+        public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
             OnPlayAnim(false);
             m_Cast = GameObjectManager.SpawnEquipment<SFXCast>(i_weaponIndex, transformBarrel.position, transformBarrel.forward);
@@ -1693,11 +1698,11 @@ namespace GameSetting
 
     public class EquipmentCasterTarget : EquipmentCaster
     {
-        public EquipmentCasterTarget(SFXCast _castInfo, EntityBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(_castInfo, _controller, _transform, _GetBuffInfo)
+        public EquipmentCasterTarget(SFXCast _castInfo, EntityCharacterBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(_castInfo, _controller, _transform, _GetBuffInfo)
         {
         }
-        protected override Vector3 GetTargetPosition(bool preAim, EntityBase _target) => EnvironmentManager.NavMeshPosition(_target.transform.position + TCommon.RandomXZSphere(m_Entity.F_AttackSpread));
-        public override void Play(EntityBase _target, Vector3 _calculatedPosition)
+        protected override Vector3 GetTargetPosition(bool preAim, EntityCharacterBase _target) => EnvironmentManager.NavMeshPosition(_target.transform.position + TCommon.RandomXZSphere(m_Entity.F_AttackSpread));
+        public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
             GameObjectManager.SpawnEquipment<SFXCast>(i_weaponIndex,_calculatedPosition,Vector3.up).Play( GetDamageDeliverInfo());
         }
@@ -1709,7 +1714,7 @@ namespace GameSetting
         protected RangeInt m_CountExtension { get; private set; }
         protected float m_OffsetExtension { get; private set; }
 
-        public EquipmentBarrageRange(SFXProjectile projectileInfo, EntityBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(projectileInfo, _controller, _transform, _GetBuffInfo)
+        public EquipmentBarrageRange(SFXProjectile projectileInfo, EntityCharacterBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(projectileInfo, _controller, _transform, _GetBuffInfo)
         {
             i_muzzleIndex = projectileInfo.I_MuzzleIndex;
             f_projectileSpeed = projectileInfo.F_Speed;
@@ -1718,13 +1723,13 @@ namespace GameSetting
         }
 
 
-        public override void Play(EntityBase _target, Vector3 _calculatedPosition)
+        public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
             Vector3 startPosition = transformBarrel.position;
             Vector3 direction = TCommon.GetXZLookDirection(startPosition, _calculatedPosition);
             FireBullet(startPosition, direction, _calculatedPosition);
         }
-        protected override Vector3 GetTargetPosition(bool preAim, EntityBase _target)
+        protected override Vector3 GetTargetPosition(bool preAim, EntityCharacterBase _target)
         {
             float startDistance = TCommon.GetXZDistance(transformBarrel.position, _target.tf_Head.position);
             Vector3 targetPosition = preAim ? _target.m_PrecalculatedTargetPos(startDistance / f_projectileSpeed) : _target.tf_Head.position;
@@ -1746,10 +1751,10 @@ namespace GameSetting
     }
     public class EquipmentBarrageMultipleLine : EquipmentBarrageRange
     {
-        public EquipmentBarrageMultipleLine(SFXProjectile projectileInfo, EntityBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(projectileInfo, _controller, _transform, _GetBuffInfo)
+        public EquipmentBarrageMultipleLine(SFXProjectile projectileInfo, EntityCharacterBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(projectileInfo, _controller, _transform, _GetBuffInfo)
         {
         }
-        public override void Play(EntityBase _target, Vector3 _calculatedPosition)
+        public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
             Vector3 startPosition = transformBarrel.position;
             Vector3 direction = TCommon.GetXZLookDirection(startPosition, _calculatedPosition);
@@ -1762,10 +1767,10 @@ namespace GameSetting
     }
     public class EquipmentBarrageMultipleFan : EquipmentBarrageRange
     {
-        public EquipmentBarrageMultipleFan(SFXProjectile projectileInfo, EntityBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(projectileInfo, _controller, _transform, _GetBuffInfo)
+        public EquipmentBarrageMultipleFan(SFXProjectile projectileInfo, EntityCharacterBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(projectileInfo, _controller, _transform, _GetBuffInfo)
         {
         }
-        public override void Play(EntityBase _target, Vector3 _calculatedPosition)
+        public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
             Vector3 startPosition = transformBarrel.position;
             Vector3 direction = TCommon.GetXZLookDirection(startPosition, _calculatedPosition);
@@ -1784,11 +1789,11 @@ namespace GameSetting
         public override bool B_TargetAlly => true;
         SBuff m_buffInfo;
         SFXBuffApply m_Effect;
-        public BuffApply(SFXBuffApply buffApplyinfo, EntityBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(buffApplyinfo, _controller, _transform, _GetBuffInfo)
+        public BuffApply(SFXBuffApply buffApplyinfo, EntityCharacterBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(buffApplyinfo, _controller, _transform, _GetBuffInfo)
         {
             m_buffInfo = GameDataManager.GetEntityBuffProperties(buffApplyinfo.I_BuffIndex);
         }
-        public override void Play(EntityBase _target, Vector3 _calculatedPosition)
+        public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
             if (!m_Effect || !m_Effect.b_Playing)
                 m_Effect = GameObjectManager.SpawnEquipment<SFXBuffApply>(i_weaponIndex, transformBarrel.position, Vector3.up);
@@ -1799,19 +1804,20 @@ namespace GameSetting
 
     public class EquipmentEntitySpawner : EquipmentBase
     {
-        public EquipmentEntitySpawner(SFXSubEntitySpawner spawner, EntityBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(spawner, _controller, _transform, _GetBuffInfo)
+        public EquipmentEntitySpawner(SFXSubEntitySpawner spawner, EntityCharacterBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(spawner, _controller, _transform, _GetBuffInfo)
         {
         }
-        Action<EntityBase> OnSpawn;
-        public void SetOnSpawn(Action<EntityBase> _OnSpawn)
+        Action<EntityCharacterBase> OnSpawn;
+        public void SetOnSpawn(Action<EntityCharacterBase> _OnSpawn)
         {
             OnSpawn = _OnSpawn;
         }
-        public override void Play(EntityBase _target, Vector3 _calculatedPosition)
+        public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
             GameObjectManager.SpawnEquipment<SFXSubEntitySpawner>(i_weaponIndex, transformBarrel.position, Vector3.up).Play(m_Entity.I_EntityID, m_Entity.m_Flag,GetDamageDeliverInfo,m_Entity.I_EntityID,OnSpawn);
         }
     }
+
     #endregion
 
     #endregion

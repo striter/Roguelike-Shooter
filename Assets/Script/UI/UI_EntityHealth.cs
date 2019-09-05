@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
-public class UI_EnermyHealth : SimpleSingletonMono<UI_EnermyHealth> {
+public class UI_EntityHealth : SimpleSingletonMono<UI_EntityHealth> {
     UIT_GridControllerMono<UIGI_HealthBar> m_HealthGrid;
     UIT_GridControllerMono<UIGI_Damage> m_DamageGrid;
     protected override void Awake()
@@ -16,7 +16,7 @@ public class UI_EnermyHealth : SimpleSingletonMono<UI_EnermyHealth> {
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntitySpawn, OnEntitySpawn);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageFinish, OnStageFinish);
-        TBroadCaster<enum_BC_GameStatus>.Add<DamageDeliverInfo, EntityBase, float>(enum_BC_GameStatus.OnEntityDamage, OnEntityDamage);
+        TBroadCaster<enum_BC_GameStatus>.Add<DamageDeliverInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterDamage, OnCharacterDamage);
     }
     protected override void OnDestroy()
     {
@@ -24,12 +24,14 @@ public class UI_EnermyHealth : SimpleSingletonMono<UI_EnermyHealth> {
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntitySpawn, OnEntitySpawn);
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnStageFinish, OnStageFinish);
-        TBroadCaster<enum_BC_GameStatus>.Remove<DamageDeliverInfo, EntityBase, float>(enum_BC_GameStatus.OnEntityDamage, OnEntityDamage);
+        TBroadCaster<enum_BC_GameStatus>.Remove<DamageDeliverInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterDamage, OnCharacterDamage);
     }
+
+    bool b_showEntityHealthInfo(EntityBase entity) => (entity as EntityCharacterPlayer) == null;
     int damageCount=0;
     void OnEntitySpawn(EntityBase entity)
     {
-        if (entity.B_IsPlayer)
+        if (!b_showEntityHealthInfo(entity))
             return;
 
         m_HealthGrid.AddItem(entity.I_EntityID).AttachItem(entity);
@@ -37,16 +39,16 @@ public class UI_EnermyHealth : SimpleSingletonMono<UI_EnermyHealth> {
 
     void OnEntityRecycle(EntityBase entity)
     {
-        if (entity.B_IsPlayer)
+        if (!b_showEntityHealthInfo(entity))
             return;
 
         m_HealthGrid.RemoveItem(entity.I_EntityID);
     }
-    void OnEntityDamage(DamageDeliverInfo damageDetail, EntityBase damageEntity, float damage)
+    void OnCharacterDamage(DamageDeliverInfo damageDetail, EntityCharacterBase damageEntity, float damage)
     {
         m_DamageGrid.AddItem(damageCount++).Play(damageEntity,damage,OnDamageExpire);
 
-        if (damageEntity.B_IsPlayer)
+        if (!b_showEntityHealthInfo(damageEntity))
             return;
 
         m_HealthGrid.GetItem(damageEntity.I_EntityID).OnShow();

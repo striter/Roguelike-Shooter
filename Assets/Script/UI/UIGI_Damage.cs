@@ -5,7 +5,7 @@ public class UIGI_Damage : UIT_GridItem {
     Text m_Amount;
     float f_expireCheck;
     Action<int> OnAnimFinished;
-    EntityBase m_attachEntity;
+    EntityCharacterBase m_attachEntity;
     RectTransform rtf_Container;
     protected override void Init()
     {
@@ -13,7 +13,7 @@ public class UIGI_Damage : UIT_GridItem {
         rtf_Container = tf_Container.GetComponent<RectTransform>();
         m_Amount = tf_Container.Find("Amount").GetComponent<Text>();
     }
-    public void Play(EntityBase damageEntity,float amount,Action<int> _OnAnimFinished)
+    public void Play(EntityCharacterBase damageEntity,float amount,Action<int> _OnAnimFinished)
     {
         m_attachEntity = damageEntity;
         m_Amount.text = amount.ToString();

@@ -5,11 +5,8 @@ using GameSetting;
 using TSpecialClasses;
 using System;
 
-public class EntityPlayerBase : EntityBase {
-    public enum_PlayerWeapon TESTWEAPON1 = enum_PlayerWeapon.M16A4;
-    public enum_PlayerWeapon TESTWEAPON2 = enum_PlayerWeapon.M82A1;
-    public override bool B_IsPlayer => true;
-
+public class EntityCharacterPlayer : EntityCharacterBase {
+    public override enum_EntityController m_Controller => enum_EntityController.Player;
     protected CharacterController m_CharacterController;
     protected PlayerAnimator m_Animator;
     protected Transform tf_WeaponHoldRight,tf_WeaponHoldLeft;
@@ -17,9 +14,9 @@ public class EntityPlayerBase : EntityBase {
     public WeaponBase m_WeaponCurrent { get; private set; } = null;
     public InteractBase m_Interact { get; private set; }
     public EquipmentBase m_Equipment { get; private set; }
-    public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized* m_EntityInfo.F_MovementSpeed * time;
+    public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized* m_CharacterInfo.F_MovementSpeed * time;
     public PlayerInfoManager m_PlayerInfo { get; private set; }
-    protected override EntityInfoManager GetEntityInfo()
+    protected override CharacterInfoManager GetEntityInfo()
     {
         m_PlayerInfo = new PlayerInfoManager(this, OnReceiveDamage, OnExpireChange,OnActionsChange);
         return m_PlayerInfo;
@@ -163,7 +160,7 @@ public class EntityPlayerBase : EntityBase {
         m_Assist.SetEnable(canFire);
         transform.rotation = Quaternion.Lerp(transform.rotation,CameraController.CameraXZRotation,GameConst.F_PlayerCameraSmoothParam);
         Vector3 direction = (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized;
-        m_CharacterController.Move(direction*m_EntityInfo.F_MovementSpeed * Time.deltaTime + Vector3.down * GameConst.F_PlayerFallSpeed*Time.deltaTime);
+        m_CharacterController.Move(direction*m_CharacterInfo.F_MovementSpeed * Time.deltaTime + Vector3.down * GameConst.F_PlayerFallSpeed*Time.deltaTime);
         OnCommonStatus();
     }
     public void OnFireAddRecoil(Vector2 recoil)
@@ -214,7 +211,7 @@ public class EntityPlayerBase : EntityBase {
         if (!down || m_Equipment == null)
             return;
 
-        m_Equipment.Play(null, transform.position + transform.forward * 10);
+        m_Equipment.Play(this, transform.position + transform.forward * 10);
         m_Equipment.OnDeactivate();
         m_Equipment = null;
     }
@@ -256,8 +253,8 @@ public class EntityPlayerBase : EntityBase {
 #if UNITY_EDITOR
             PCInputManager.Instance.AddMouseRotateDelta(OnRotateDelta);
             PCInputManager.Instance.AddMovementDelta(OnMovementDelta);
-            PCInputManager.Instance.AddBinding<EntityPlayerBase>(enum_BindingsName.Fire, OnMainButtonDown);
-            PCInputManager.Instance.AddBinding<EntityPlayerBase>(enum_BindingsName.Reload, OnReloadDown);
+            PCInputManager.Instance.AddBinding<EntityCharacterPlayer>(enum_BindingsName.Fire, OnMainButtonDown);
+            PCInputManager.Instance.AddBinding<EntityCharacterPlayer>(enum_BindingsName.Reload, OnReloadDown);
 #else
         UIManager.OnMainDown = OnMainButtonDown;
         UIManager.OnReload = OnReloadDown;
@@ -266,7 +263,7 @@ public class EntityPlayerBase : EntityBase {
             return;
         }
 #if UNITY_EDITOR
-        PCInputManager.Instance.DoBindingRemoval<EntityPlayerBase>();
+        PCInputManager.Instance.DoBindingRemoval<EntityCharacterPlayer>();
         PCInputManager.Instance.RemoveMovementCheck();
         PCInputManager.Instance.RemoveRotateCheck();
 #else

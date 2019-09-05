@@ -16,7 +16,7 @@ public class InteractActionAdjustment : InteractBase {
         m_removeCount = 0;
     }
 
-    protected override void OnInteractSuccessful(EntityPlayerBase _interactTarget)
+    protected override void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)
     {
         base.OnInteractSuccessful(_interactTarget);
         UI_ActionAdjustment adjustment = UIManager.Instance.ShowPage<UI_ActionAdjustment>(true);

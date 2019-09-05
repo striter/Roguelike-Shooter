@@ -11,7 +11,7 @@ public class InteractPickupArmor : InteractPickup {
         m_ArmorAmount = _armorAmount;
         return this;
     }
-    protected override void OnInteractSuccessful(EntityPlayerBase _interactTarget)
+    protected override void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)
     {
         base.OnInteractSuccessful(_interactTarget);
         _interactTarget.m_HitCheck.TryHit(new DamageInfo(-m_ArmorAmount, enum_DamageType.ArmorOnly, DamageDeliverInfo.Default(_interactTarget.I_EntityID)));

@@ -12,7 +12,7 @@ public class InteractPickupCoin : InteractPickup {
         m_CoinAmount = coinAmount;
         return this;
     }
-    protected override void OnInteractSuccessful(EntityPlayerBase _interactTarget)
+    protected override void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)
     {
         base.OnInteractSuccessful(_interactTarget);
         _interactTarget.m_PlayerInfo.OnCoinsReceive(m_CoinAmount);

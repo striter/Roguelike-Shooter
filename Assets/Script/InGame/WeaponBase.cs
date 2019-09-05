@@ -9,7 +9,7 @@ public class WeaponBase : MonoBehaviour {
     public bool B_AttachLeft=false;
 
 
-    EntityPlayerBase m_Attacher;
+    EntityCharacterPlayer m_Attacher;
     public SWeapon m_WeaponInfo { get; private set; }
     public List<ActionBase> m_WeaponAction { get; private set; } = new List<ActionBase>();
     public float F_BaseSpeed { get; private set; } = 0;
@@ -72,7 +72,7 @@ public class WeaponBase : MonoBehaviour {
         m_WeaponAction = _actionIndexes;
     }
 
-    public void OnAttach(EntityPlayerBase _attacher,Transform _attachTo,Action<Vector2> _OnFireRecoil,Action<bool,float> _OnReload)
+    public void OnAttach(EntityCharacterPlayer _attacher,Transform _attachTo,Action<Vector2> _OnFireRecoil,Action<bool,float> _OnReload)
     {
         m_Attacher = _attacher;
         transform.SetParentResetTransform(_attachTo);

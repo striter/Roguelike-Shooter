@@ -11,7 +11,7 @@ public class InteractPortal : InteractBase {
         base.Play();
         OnPortalInteract = _OnPortalInteract;
     }
-    protected override void OnInteractSuccessful(EntityPlayerBase _interactTarget)
+    protected override void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)
     {
         base.OnInteractSuccessful(_interactTarget);
         OnPortalInteract();

@@ -18,7 +18,7 @@ public class InteractPickupAction : InteractPickup {
         m_Renderer.material.color = _action.m_Level.ActionRarityColor();
         return this;
     }
-    protected override void OnInteractSuccessful(EntityPlayerBase _interactTarget)
+    protected override void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)
     {
         base.OnInteractSuccessful(_interactTarget);
         _interactTarget.m_PlayerInfo.AddStoredAction(m_Action);

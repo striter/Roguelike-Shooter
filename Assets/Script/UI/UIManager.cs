@@ -25,17 +25,17 @@ public class UIManager : SingletonMono<UIManager> {
     {
         transform.Find("Test/SeedTest").GetComponent<Text>().text = GameManager.Instance.m_GameLevel.m_Seed;
         UIPageBase.ShowPage<UI_BigmapControl>(tf_Pages, false);
-        TBroadCaster<enum_BC_UIStatus>.Add<EntityPlayerBase>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnPlayerStatusChanged);
+        TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnPlayerStatusChanged);
     }
     private void OnDestroy()
     {
-        TBroadCaster<enum_BC_UIStatus>.Remove<EntityPlayerBase>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnPlayerStatusChanged);
+        TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnPlayerStatusChanged);
     }
     public T ShowPage<T>(bool animate) where T : UIPageBase
     {
         return UIPageBase.ShowPage<T>(tf_Pages, true);
     }
-    void OnPlayerStatusChanged(EntityPlayerBase player)
+    void OnPlayerStatusChanged(EntityCharacterPlayer player)
     {
         txt_Coin.text = player.m_PlayerInfo.m_Coins.ToString();
         txt_Main.text = player.m_Equipment!=null ?"Use Equipment":player.m_Interact!=null? "Interact" : "Fire";

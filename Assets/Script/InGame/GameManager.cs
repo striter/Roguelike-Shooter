@@ -42,7 +42,7 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
         RaycastHit hit = new RaycastHit();
         if (Input.GetKeyDown(KeyCode.Z) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
         {
-            EntityBase enermy = GameObjectManager.SpawnEntity<EntityAIBase>(Z_TestEntitySpawn, hit.point, TestEntityFlag);
+            EntityCharacterBase enermy = GameObjectManager.SpawnEntity<EntityCharacterAI>(Z_TestEntitySpawn, hit.point, TestEntityFlag);
             if (TestEntityBuffOnSpawn > 0)
                 enermy.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common,DamageDeliverInfo.BuffInfo(-1, TestEntityBuffOnSpawn)));
         }
@@ -60,16 +60,16 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
             m_LocalPlayer.BroadcastMessage("OnReceiveDamage", new DamageInfo(-50, enum_DamageType.Common, DamageDeliverInfo.Default(-1)));
         if (Input.GetKeyDown(KeyCode.Alpha0))
         {
-            List<EntityBase> entities = m_Entities.Values.ToList();
-            entities.Traversal((EntityBase entity) => {
+            List<EntityCharacterBase> entities = m_Entities.Values.ToList();
+            entities.Traversal((EntityCharacterBase entity) => {
                 if (entity.m_Flag== enum_EntityFlag.Enermy)
-                    entity.BroadcastMessage("OnReceiveDamage", new DamageInfo(entity.m_EntityInfo.F_MaxHealth, enum_DamageType.Common, DamageDeliverInfo.Default(-1)));
+                    entity.BroadcastMessage("OnReceiveDamage", new DamageInfo(entity.m_CharacterInfo.F_MaxHealth, enum_DamageType.Common, DamageDeliverInfo.Default(-1)));
             });
         }
         if (Input.GetKeyDown(KeyCode.Alpha9))
         {
-            List<EntityBase> entities = m_Entities.Values.ToList();
-            entities.Traversal((EntityBase entity) => {
+            List<EntityCharacterBase> entities = m_Entities.Values.ToList();
+            entities.Traversal((EntityCharacterBase entity) => {
                 if (entity.m_Flag == enum_EntityFlag.Enermy)
                     entity.BroadcastMessage("OnReceiveDamage", new DamageInfo(0, enum_DamageType.Common, DamageDeliverInfo.BuffInfo(-1, 200023)));
             });
@@ -78,11 +78,11 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
             OnStageFinished();
 
         if (Input.GetKeyDown(KeyCode.F5))
-            (m_LocalPlayer as EntityPlayerBase).TestUseAction(F5_TestActionIndex);
+            (m_LocalPlayer as EntityCharacterPlayer).TestUseAction(F5_TestActionIndex);
         if (Input.GetKeyDown(KeyCode.F6))
-            (m_LocalPlayer as EntityPlayerBase).TestUseAction(F6_TestActionIndex);
+            (m_LocalPlayer as EntityCharacterPlayer).TestUseAction(F6_TestActionIndex);
         if (Input.GetKeyDown(KeyCode.F7))
-            (m_LocalPlayer as EntityPlayerBase).TestUseAction(F7_TestActionIndex);
+            (m_LocalPlayer as EntityCharacterPlayer).TestUseAction(F7_TestActionIndex);
         if (Input.GetKeyDown(KeyCode.F8))
             m_LocalPlayer.m_PlayerInfo.AddStoredAction(GameDataManager.CreateAction(F8_TestAcquireAction, enum_RarityLevel.L1));
         if (Input.GetKeyDown(KeyCode.F9))
@@ -109,7 +109,7 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
 
     public GameLevelManager m_GameLevel { get; private set; }
     public GameRecordManager m_PlayerRecord { get; private set; }
-    public EntityPlayerBase m_LocalPlayer { get; private set; } = null;
+    public EntityCharacterPlayer m_LocalPlayer { get; private set; } = null;
     InteractActionChest m_RewardChest;
     public bool B_ShowChestTips=>m_RewardChest!=null&&m_RewardChest.B_Interactable;
     protected override void Awake()
@@ -123,16 +123,16 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
         TBroadCaster<enum_BC_GameStatus>.Init();
         TBroadCaster<enum_BC_UIStatus>.Init();  
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntitySpawn, OnSpawnEntity);
-        TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityDead, OnEntityDead);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnRecycleEntity);
+        TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
         Application.targetFrameRate = 60;
     }
     private void OnDisable()
     {
         this.StopAllSingleCoroutines();
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntitySpawn, OnSpawnEntity);
-        TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityDead, OnEntityDead);
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnRecycleEntity);
+        TBroadCaster<enum_BC_GameStatus>.Remove<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
     }
     private void Start()
     {
@@ -173,13 +173,13 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
         else 
             SpawnInteracts();
     }
-    void OnEntityDead(EntityBase entity)
+    void OnCharacterDead(EntityCharacterBase entity)
     {
         SpawnEntityDeadPickups(entity);
         if (entity.m_Flag == enum_EntityFlag.Enermy)
             m_PlayerRecord.OnEntityKilled();
 
-        if(entity.B_IsPlayer)
+        if(entity.m_Controller== enum_EntityController.Player)
             OnGameFinished(false);
     }
 
@@ -277,11 +277,11 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
                 break;
         }
     }
-    void SpawnEntityDeadPickups(EntityBase entity)
+    void SpawnEntityDeadPickups(EntityCharacterBase entity)
     {
         if (entity.m_Flag != enum_EntityFlag.Enermy)
             return;
-        EntityAIBase target = entity as EntityAIBase;
+        EntityCharacterAI target = entity as EntityCharacterAI;
 
         if (m_GameLevel.m_actionGenerate.CanGenerateHealth(target.E_EnermyType))
             GameObjectManager.SpawnInteract<InteractPickupHealth>(enum_Interaction.PickupHealth, EnvironmentManager.NavMeshPosition(entity.transform.position, false), EnvironmentManager.Instance.m_currentLevel.m_Level.transform).Play(GameConst.I_HealthPickupAmount);
@@ -295,12 +295,12 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
     }
     #endregion
     #region Entity Management
-    Dictionary<int, EntityBase> m_Entities = new Dictionary<int, EntityBase>();
-    Dictionary<enum_EntityFlag, List<EntityBase>> m_AllyEntities = new Dictionary<enum_EntityFlag, List<EntityBase>>();
-    Dictionary<enum_EntityFlag, List<EntityBase>> m_OppositeEntities = new Dictionary<enum_EntityFlag, List<EntityBase>>();
+    Dictionary<int, EntityCharacterBase> m_Entities = new Dictionary<int, EntityCharacterBase>();
+    Dictionary<enum_EntityFlag, List<EntityCharacterBase>> m_AllyEntities = new Dictionary<enum_EntityFlag, List<EntityCharacterBase>>();
+    Dictionary<enum_EntityFlag, List<EntityCharacterBase>> m_OppositeEntities = new Dictionary<enum_EntityFlag, List<EntityCharacterBase>>();
     public int m_FlagEntityCount(enum_EntityFlag flag) => m_AllyEntities[flag].Count;
-    public List<EntityBase> GetEntities(enum_EntityFlag sourceFlag, bool getAlly) => getAlly ? m_AllyEntities[sourceFlag] : m_OppositeEntities[sourceFlag];
-    public EntityBase GetEntity(int entityID)
+    public List<EntityCharacterBase> GetEntities(enum_EntityFlag sourceFlag, bool getAlly) => getAlly ? m_AllyEntities[sourceFlag] : m_OppositeEntities[sourceFlag];
+    public EntityCharacterBase GetEntity(int entityID)
     {
         if (!m_Entities.ContainsKey(entityID))
             Debug.LogError("Entity Not Contains ID:" + entityID.ToString());
@@ -309,8 +309,8 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
     void InitEntityDic()
     {
         TCommon.TraversalEnum((enum_EntityFlag flag) => {
-            m_AllyEntities.Add(flag, new List<EntityBase>());
-            m_OppositeEntities.Add(flag, new List<EntityBase>());
+            m_AllyEntities.Add(flag, new List<EntityCharacterBase>());
+            m_OppositeEntities.Add(flag, new List<EntityCharacterBase>());
         });
     }
 
@@ -325,23 +325,32 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
 
     void OnSpawnEntity(EntityBase entity)
     {
-        m_Entities.Add(entity.I_EntityID, entity);
-        m_AllyEntities[entity.m_Flag].Add(entity);
+        if (entity.m_Controller== enum_EntityController.None)
+            return;
+
+        EntityCharacterBase character = entity as EntityCharacterBase;
+
+        m_Entities.Add(entity.I_EntityID, character);
+        m_AllyEntities[entity.m_Flag].Add(character);
         m_OppositeEntities.Traversal((enum_EntityFlag flag)=> {
             if (entity.m_Flag != enum_EntityFlag.Neutal && flag != entity.m_Flag)
-                m_OppositeEntities[flag].Add(entity);
+                m_OppositeEntities[flag].Add(character);
         });
     }
 
     void OnRecycleEntity(EntityBase entity)
     {
+        if (entity.m_Controller == enum_EntityController.None)
+            return;
+        EntityCharacterBase character = entity as EntityCharacterBase;
+
         m_Entities.Remove(entity.I_EntityID);
-        m_AllyEntities[entity.m_Flag].Remove(entity);
+        m_AllyEntities[entity.m_Flag].Remove(character);
         m_OppositeEntities.Traversal((enum_EntityFlag flag) => {
             if (entity.m_Flag != enum_EntityFlag.Neutal && flag != entity.m_Flag)
-                m_OppositeEntities[flag].Remove(entity);
+                m_OppositeEntities[flag].Remove(character);
         });
-        OnBattleEntityRecycle(entity);
+        OnBattleEntityRecycle(character);
     }
 
     static bool B_CanHitEntity(HitCheckEntity targetHitCheck, int sourceID)  //If Match Will Hit Target,Player Particles ETC
@@ -371,7 +380,7 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
     public int m_CurrentWave { get; private set; } = -1;
     public List<SGenerateEntity> m_EntityGenerate { get; private set; } = new List<SGenerateEntity>();
     public List<int> m_EntityGenerating { get; private set; } = new List<int>();
-    public Dictionary<enum_EntityType, List<int>> m_StyledEnermyEntities;
+    public Dictionary<enum_CharacterType, List<int>> m_StyledEnermyEntities;
     void OnBattleStart()
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleStart);
@@ -385,7 +394,7 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnWaveStart);
         m_EntityGenerating.Clear();
-        m_EntityGenerate[m_CurrentWave].m_EntityGenerate.Traversal((enum_EntityType level, RangeInt range) =>
+        m_EntityGenerate[m_CurrentWave].m_EntityGenerate.Traversal((enum_CharacterType level, RangeInt range) =>
         {
             int spawnCount = range.RandomRangeInt();
             for (int i = 0; i < spawnCount; i++)
@@ -400,7 +409,7 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
         });
         this.StartSingleCoroutine(0, IE_GenerateEnermy(m_EntityGenerating, .1f));
     }
-    void OnBattleEntityRecycle(EntityBase entity)
+    void OnBattleEntityRecycle(EntityCharacterBase entity)
     {
         if (!B_Battling|| B_WaveEntityGenerating)
             return;
@@ -445,7 +454,7 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
     {
         GameObjectManager.SpawnIndicator(30001, position, Vector3.up).Play(entityIndex,GameConst.I_EnermySpawnDelay);
         this.StartSingleCoroutine(100 + spawnIndex, TIEnumerators.PauseDel(GameConst.I_EnermySpawnDelay, () => {
-            GameObjectManager.SpawnEntity<EntityAIBase>(entityIndex,position, enum_EntityFlag.Enermy );
+            GameObjectManager.SpawnEntity<EntityCharacterAI>(entityIndex,position, enum_EntityFlag.Enermy );
         }));
     }
     #endregion
@@ -568,7 +577,7 @@ public static class GameDataManager
         m_PlayerGameInfo = TGameData<CPlayerGameSave>.Read();
     }
     #region GameSave
-    public static void AdjustGameData(EntityPlayerBase data,GameLevelManager level,GameRecordManager record)
+    public static void AdjustGameData(EntityCharacterPlayer data,GameLevelManager level,GameRecordManager record)
     {
         m_PlayerGameInfo.Adjust(data, level,record);
         TGameData<CPlayerGameSave>.Save(m_PlayerGameInfo);
@@ -719,19 +728,19 @@ public static class GameObjectManager
     {
         registerDic.Traversal((LevelItemBase item, int count) => { ObjectPoolManager<LevelItemBase, LevelItemBase>.Register(item, GameObject.Instantiate(item), enum_PoolSaveType.StaticMaxAmount, count, null); });
     }
-    public static Dictionary<enum_EntityType, List<int>> RegisterAllEntitiesGetEnermyDic(Dictionary<int, EntityBase> common, Dictionary<int, EntityBase> enermies)
+    public static Dictionary<enum_CharacterType, List<int>> RegisterAllEntitiesGetEnermyDic(Dictionary<int, EntityBase> common, Dictionary<int, EntityBase> enermies)
     {
         common.Traversal((int index, EntityBase entity) => {
             ObjectPoolManager<int, EntityBase>.Register(index, entity, enum_PoolSaveType.DynamicMaxAmount, 1,
                 (EntityBase entityInstantiate) => { entityInstantiate.Init(index); });
         });
 
-        Dictionary<enum_EntityType, List<int>> enermyDic = new Dictionary<enum_EntityType, List<int>>();
+        Dictionary<enum_CharacterType, List<int>> enermyDic = new Dictionary<enum_CharacterType, List<int>>();
         enermies.Traversal((int index, EntityBase entity) => {
             ObjectPoolManager<int, EntityBase>.Register(index, entity, enum_PoolSaveType.DynamicMaxAmount, 1,
                 (EntityBase entityInstantiate) => { entityInstantiate.Init(index); });
 
-            EntityAIBase enermy = entity as EntityAIBase;
+            EntityCharacterAI enermy = entity as EntityCharacterAI;
             if (!enermyDic.ContainsKey(enermy.E_EnermyType))
                 enermyDic.Add(enermy.E_EnermyType, new List<int>());
             enermyDic[enermy.E_EnermyType].Add(index);
@@ -742,7 +751,7 @@ public static class GameObjectManager
     #endregion
     #region Spawn/Recycle
     #region Entity
-    public static T SpawnEntity<T>(int index, Vector3 toPosition, enum_EntityFlag _flag,Transform parentTrans=null) where T:EntityBase
+    public static T SpawnEntity<T>(int index, Vector3 toPosition, enum_EntityFlag _flag,Transform parentTrans=null) where T: EntityBase
     {
         T entity = ObjectPoolManager<int, EntityBase>.Spawn(index, TF_Entity) as T;
         if (entity == null)
@@ -753,15 +762,15 @@ public static class GameObjectManager
         TBroadCaster<enum_BC_GameStatus>.Trigger<EntityBase>(enum_BC_GameStatus.OnEntitySpawn, entity);
         return entity as T;
     }
-    public static EntityAISub SpawnSubEntity(int index, Vector3 toPosition,int spanwer, enum_EntityFlag _flag)
+    public static EntityCharacterAISub SpawnSubEntity(int index, Vector3 toPosition,int spanwer, enum_EntityFlag _flag)
     {
-        EntityAISub entity = SpawnEntity<EntityAISub>(index, toPosition, _flag) as EntityAISub;
+        EntityCharacterAISub entity = SpawnEntity<EntityCharacterAISub>(index, toPosition, _flag) as EntityCharacterAISub;
         entity.OnRegister(spanwer);
         return entity;
     }
-    public static EntityPlayerBase SpawnPlayer(CPlayerGameSave playerSave)
+    public static EntityCharacterPlayer SpawnPlayer(CPlayerGameSave playerSave)
     {
-        EntityPlayerBase player = SpawnEntity<EntityPlayerBase>(0,Vector3.zero, enum_EntityFlag.Player);
+        EntityCharacterPlayer player = SpawnEntity<EntityCharacterPlayer>(0,Vector3.zero, enum_EntityFlag.Player);
         player.SetPlayerInfo(playerSave.m_coins,GameDataManager.CreateActions(playerSave.m_storedActions));
         player.ObtainWeapon(SpawnWeapon(playerSave.m_weapon,GameDataManager.CreateActions(playerSave.m_weaponActions)));
         return player;
@@ -799,7 +808,7 @@ public static class GameObjectManager
         return sfx;
     }
     public static SFXIndicator SpawnIndicator(int index, Vector3 position, Vector3 normal, Transform attachTo = null) => SpawnParticles<SFXIndicator>(index, position, normal, attachTo);
-    public static SFXBuffEffect SpawnBuffEffect(int index, EntityBase attachTo) => SpawnParticles<SFXBuffEffect>(index, attachTo.transform.position, attachTo.transform.forward, attachTo.transform);
+    public static SFXBuffEffect SpawnBuffEffect(int index, EntityCharacterBase attachTo) => SpawnParticles<SFXBuffEffect>(index, attachTo.transform.position, attachTo.transform.forward, attachTo.transform);
 
     public static T SpawnEquipment<T>(int weaponIndex, Vector3 position, Vector3 normal, Transform attachTo = null) where T : SFXBase
     {

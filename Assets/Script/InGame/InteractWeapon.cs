@@ -18,7 +18,7 @@ public class InteractWeapon : InteractBase {
         m_Weapon.transform.SetParentResetTransform(tf_ModelContainer);
         return this;
     }
-    protected override void OnInteractSuccessful(EntityPlayerBase _interactTarget)
+    protected override void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)
     {
         base.OnInteractSuccessful(_interactTarget);
         m_Weapon = _interactTarget.ObtainWeapon(m_Weapon);

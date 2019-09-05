@@ -6,7 +6,7 @@ public class InteractActionChest : InteractBase {
     Animation m_Animation;
     string m_clipName;
     List<ActionBase> m_Actions;
-    EntityPlayerBase m_Interactor;
+    EntityCharacterPlayer m_Interactor;
     public override enum_Interaction m_InteractType => enum_Interaction.ActionChest;
     public override void Init()
     {
@@ -22,7 +22,7 @@ public class InteractActionChest : InteractBase {
         m_Animation[m_clipName].speed = 0;
         m_Animation.Play();
     }
-    protected override void OnInteractSuccessful(EntityPlayerBase _interactTarget)
+    protected override void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)
     {
         base.OnInteractSuccessful(_interactTarget);
         m_Interactor = _interactTarget;

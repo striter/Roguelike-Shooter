@@ -2,5 +2,5 @@
 using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
-public class EntityTrader : EntityBase {
+public class EntityTrader : EntityCharacterBase {
 }

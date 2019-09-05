@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-[CustomEditor(typeof(EntityAIBase))]
+[CustomEditor(typeof(EntityCharacterAI))]
 public class EEntity : Editor {
     PreviewRenderUtility m_Preview;
     GameObject m_PreviewObject;
     Animator m_PreviewAnimator;
-    EntityAIBase m_EnermyBase;
+    EntityCharacterAI m_EnermyBase;
     int hs_activate = Animator.StringToHash("t_activate");
     int hs_attack = Animator.StringToHash("t_attack");
     int hs_b_attack = Animator.StringToHash("b_attack");
@@ -16,7 +16,7 @@ public class EEntity : Editor {
     Vector3 v3_center;
     private void OnEnable()
     {
-        m_EnermyBase = target as EntityAIBase;
+        m_EnermyBase = target as EntityCharacterAI;
         EditorApplication.update += Update;
         if (HasPreviewGUI())
         {
@@ -36,7 +36,7 @@ public class EEntity : Editor {
             }
             m_PreviewObject.transform.SetChildLayer(5);
             m_Preview.camera.cullingMask = 1 << 5;
-            DestroyImmediate(m_PreviewObject.GetComponent<EntityAIBase>());
+            DestroyImmediate(m_PreviewObject.GetComponent<EntityCharacterAI>());
             v3_center = m_PreviewObject.GetComponentInChildren<MeshRenderer>().bounds.center;
             
         }

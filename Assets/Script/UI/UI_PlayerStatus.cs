@@ -15,7 +15,7 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
     UIT_GridControllerMono<UIGI_ActionHoldItem> m_ActionGrid;
     UIT_GridControllerMono<UIGI_ExpireInfoItem> m_ExpireGrid;
     GridLayoutGroup m_GridLayout;
-    EntityPlayerBase m_Player;
+    EntityCharacterPlayer m_Player;
     float f_ammoGridLength;
 
     enum_Interaction m_lastInteract;
@@ -54,7 +54,7 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
     }
     private void Start()
     {
-        TBroadCaster<enum_BC_UIStatus>.Add<EntityPlayerBase>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
+        TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<WeaponBase>(enum_BC_UIStatus.UI_PlayerAmmoStatus, OnAmmoStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerExpireStatus, OnExpireStatus);
@@ -63,14 +63,14 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        TBroadCaster<enum_BC_UIStatus>.Remove<EntityPlayerBase>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
+        TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<WeaponBase>(enum_BC_UIStatus.UI_PlayerAmmoStatus, OnAmmoStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerExpireStatus, OnExpireStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerActionStatus, OnActionStatus);
     }
     #region PlayerData/Interact
-    void OnCommonStatus(EntityPlayerBase _player)
+    void OnCommonStatus(EntityCharacterPlayer _player)
     {
         if (!m_Player)
             m_Player = _player;

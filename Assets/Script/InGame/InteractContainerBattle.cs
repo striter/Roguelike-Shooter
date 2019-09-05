@@ -11,7 +11,7 @@ public class InteractContainerBattle : InteractContainer {
         Attach(_interactItem);
         OnInteract = _OnInteract;
     }
-    protected override void OnInteractSuccessful(EntityPlayerBase _interactTarget)
+    protected override void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)
     {
         base.OnInteractSuccessful(_interactTarget);
         OnInteract();

@@ -72,14 +72,14 @@ public class TResources
         });
         return sfxsDic;
     }
-    public static EntityPlayerBase GetPlayer(Transform parent) => Instantiate<EntityPlayerBase>(ConstPath.S_PlayerEntity,parent);
+    public static EntityCharacterPlayer GetPlayer(Transform parent) => Instantiate<EntityCharacterPlayer>(ConstPath.S_PlayerEntity,parent);
     public static Dictionary<int, EntityBase> GetCommonEntities()
     {
         Dictionary<int, EntityBase> entitisDic = new Dictionary<int, EntityBase>();
-        EntityBase[] entities = LoadAll<EntityBase>(ConstPath.S_Entity + "Common");
-        entities.Traversal((EntityBase entity) => {
+        EntityCharacterBase[] entities = LoadAll<EntityCharacterBase>(ConstPath.S_Entity + "Common");
+        entities.Traversal((EntityCharacterBase entity) => {
             int index = int.Parse(entity.name.Split('_')[0]);
-            entitisDic.Add(index, GameObject.Instantiate<EntityBase>(entity));
+            entitisDic.Add(index, GameObject.Instantiate<EntityCharacterBase>(entity));
             PreloadMaterials(entity.gameObject);
         });
         return entitisDic;

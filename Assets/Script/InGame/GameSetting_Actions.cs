@@ -106,39 +106,39 @@ namespace GameSetting_Action
 
     public static class ActionHelper
     {
-        public static void PlayerAcquireSimpleEquipmentItem(EntityPlayerBase player, int equipmentIndex,float damage,int buffIndex=-1)
+        public static void PlayerAcquireSimpleEquipmentItem(EntityCharacterPlayer player, int equipmentIndex,float damage,int buffIndex=-1)
         {
             player.OnAcquireEquipment<EquipmentBase>(equipmentIndex, () => { return DamageDeliverInfo.EquipmentInfo(player.I_EntityID,damage,buffIndex); });
         }
-        public static void PlayerAcquireEntityEquipmentItem(EntityPlayerBase player, int equipmentIndex,int health,float fireRate, Func<DamageDeliverInfo> damage)
+        public static void PlayerAcquireEntityEquipmentItem(EntityCharacterPlayer player, int equipmentIndex,int health,float fireRate, Func<DamageDeliverInfo> damage)
         {
-            player.OnAcquireEquipment<EquipmentEntitySpawner>(equipmentIndex,damage).SetOnSpawn((EntityBase entity) => {
-                EntityAIBase target = entity as EntityAIBase;
+            player.OnAcquireEquipment<EquipmentEntitySpawner>(equipmentIndex,damage).SetOnSpawn((EntityCharacterBase entity) => {
+                EntityCharacterAI target = entity as EntityCharacterAI;
                 target.I_MaxHealth = health;
                 target.F_AttackDuration = new RangeFloat(0f, 0);
                 target.F_AttackTimes = new RangeInt(1, 0);
                 target.F_AttackRate = fireRate;
             });
         }
-        public static void PlayerDealtDamageToEntity(EntityPlayerBase player,int targetID, float damageAmount, enum_DamageType damageType= enum_DamageType.Common)
+        public static void PlayerDealtDamageToEntity(EntityCharacterPlayer player,int targetID, float damageAmount, enum_DamageType damageType= enum_DamageType.Common)
         {
             if (damageAmount < 0)
                 Debug.LogError("Howd Fk Damage Below Zero?");
             GameManager.Instance.GetEntity(targetID).m_HitCheck.TryHit(new DamageInfo(damageAmount, damageType, DamageDeliverInfo.Default(player.I_EntityID)));
         }
-        public static void PlayerReceiveHealing(EntityPlayerBase player,float heal,enum_DamageType type= enum_DamageType.Common)
+        public static void PlayerReceiveHealing(EntityCharacterPlayer player,float heal,enum_DamageType type= enum_DamageType.Common)
         {
             Debug.Log("Player Receive Healing Amount:" + heal);
             if (heal <= 0)
                 Debug.LogError("Howd Fk Healing Below Zero?");
             player.m_HitCheck.TryHit(new DamageInfo(-heal,type, DamageDeliverInfo.Default(player.I_EntityID)));
         }
-        public static void PlayerReceiveActionAmount(EntityPlayerBase player, float amount)
+        public static void PlayerReceiveActionAmount(EntityCharacterPlayer player, float amount)
         {
             Debug.Log("Player Receive Aciton Amount:" + amount);
             player.m_PlayerInfo.AddActionAmount(amount);
         }
-        public static void PlayerUpgradeAction(EntityPlayerBase player)
+        public static void PlayerUpgradeAction(EntityCharacterPlayer player)
         {
             Debug.Log("Player Upgrade Current Random Action");
             player.m_PlayerInfo.UpgradeRandomHoldingAction();
@@ -171,14 +171,14 @@ namespace GameSetting_Action
             m_fireIdentity = _identity;
             ForceExpire();
         }
-        public bool OnActionHitEntity(int damageIdentity, EntityBase _targetEntity)
+        public bool OnActionHitEntity(int damageIdentity, EntityCharacterBase _targetEntity)
         {
             if (m_fireIdentity != damageIdentity)
                 return false;
             return OnActionHit(_targetEntity);
         }
 
-        protected virtual bool OnActionHit( EntityBase _hitEntity)
+        protected virtual bool OnActionHit( EntityCharacterBase _hitEntity)
         {
             return false;
         }
@@ -322,7 +322,7 @@ namespace GameSetting_Action
         public override float Value1 => ActionData.IP_10011_SingleDamageMultiply(m_Level) ;
         public override float Value2 => ActionData.F_10011_EntityKillActionReturn(m_Level);
         public override float m_DamageMultiply => Value1 / 100f;
-        protected override bool OnActionHit( EntityBase _targetEntity)
+        protected override bool OnActionHit( EntityCharacterBase _targetEntity)
         {
             if (!_targetEntity.m_HealthManager.b_IsDead)
                 return false;
@@ -338,7 +338,7 @@ namespace GameSetting_Action
         public override float Value1 => ActionData.IP_10012_SingleDamageMultiply(m_Level) ;
         public override float Value2 => ActionData.F_10012_EntityKillHealing(m_Level);
         public override float m_DamageMultiply => Value1 / 100f;
-        protected override bool OnActionHit( EntityBase _targetEntity)
+        protected override bool OnActionHit( EntityCharacterBase _targetEntity)
         {
             if (!_targetEntity.m_HealthManager.b_IsDead)
                 return false;
@@ -353,7 +353,7 @@ namespace GameSetting_Action
         public override int I_ActionCost => ActionData.I_10013_Cost;
         public override float Value1 => ActionData.IP_10013_SingleDamageMultiply(m_Level) ;
         public override float m_DamageMultiply => Value1 / 100f;
-        protected override bool OnActionHit( EntityBase _targetEntity)
+        protected override bool OnActionHit( EntityCharacterBase _targetEntity)
         {
             if (!_targetEntity.m_HealthManager.b_IsDead)
                 return false;
@@ -397,7 +397,7 @@ namespace GameSetting_Action
         public override float Value1 => ActionData.IP_10017_DamageAdditivePercentage(m_Level);
         public override float Value2 => ActionData.F_10017_EntityKillArmorAdditive(m_Level);
         public override float m_DamageMultiply => Value1 / 100f;
-        protected override bool OnActionHit(EntityBase _targetEntity)
+        protected override bool OnActionHit(EntityCharacterBase _targetEntity)
         {
             if (!_targetEntity.m_HealthManager.b_IsDead)
                 return false;
@@ -508,7 +508,7 @@ namespace GameSetting_Action
         public override float Value1 => ActionData.F_30005_DamageDealtHeal(m_Level);
         public override float Value2 => ActionData.F_30005_HealAmount(m_Level);
         float m_damageDealt = 0;
-        public override void OnDealtDemage(EntityBase receiver, float amount)
+        public override void OnDealtDemage(EntityCharacterBase receiver, float amount)
         {
             base.OnDealtDemage(receiver, amount);
             m_damageDealt += amount;
@@ -543,7 +543,7 @@ namespace GameSetting_Action
         float m_TotalDamageDealt=0;
         public override float Value1 => ActionData.F_40001_DamageDealtCount(m_Level);
         public override float Value2 => ActionData.F_40001_ArmorAdditive(m_Level);
-        public override void OnDealtDemage( EntityBase receiver, float amount)
+        public override void OnDealtDemage( EntityCharacterBase receiver, float amount)
         {
             base.OnDealtDemage( receiver, amount);
             m_TotalDamageDealt += amount;
@@ -641,7 +641,7 @@ namespace GameSetting_Action
     {
         public override int m_Index => 40014;
         public override float Value1 => ActionData.F_40014_ArmorAdditive(m_Level);
-        public override void OnDealtDemage(EntityBase receiver, float amount)
+        public override void OnDealtDemage(EntityCharacterBase receiver, float amount)
         {
             base.OnDealtDemage(receiver, amount);
             if (receiver.m_HealthManager.b_IsDead)

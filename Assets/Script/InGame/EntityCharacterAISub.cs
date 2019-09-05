@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class EntityAISub : EntityAIBase {
+public class EntityCharacterAISub : EntityCharacterAI {
     public int m_SpawnerEntityID { get; private set; }
     public EntitySubInfoManager m_SubInfo { get; private set; }
-    protected override EntityInfoManager GetEntityInfo()
+    protected override CharacterInfoManager GetEntityInfo()
     {
         m_SubInfo = new EntitySubInfoManager(this, OnReceiveDamage, OnExpireChange);
         return m_SubInfo;
