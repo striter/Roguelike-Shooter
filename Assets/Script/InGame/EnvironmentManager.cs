@@ -50,7 +50,7 @@ public class EnvironmentManager : SimpleSingletonMono<EnvironmentManager> {
         PostEffectManager.RemoveAllPostEffect();
         PostEffectManager.AddPostEffect<PE_BloomSpecific>().SetEffect(2, 10, 2);
         //PostEffectManager.AddPostEffect<PE_DepthOutline>().SetEffect(Color.black,1.2f,0.0001f);
-        //PostEffectManager.AddPostEffect<PE_DepthSSAO>();
+        PostEffectManager.AddPostEffect<PE_DepthSSAO>();
         switch (_levelStyle)
         {
             case enum_Style.Undead:

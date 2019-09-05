@@ -412,7 +412,7 @@ namespace GameSetting
             m_coins = 0;
             m_weapon = enum_PlayerWeapon.P92;
             m_weaponActions = new List<ActionInfo>();
-            m_storedActions = new List<ActionInfo>() { ActionInfo.Create(GameDataManager.RandomPlayerAction(enum_RarityLevel.L1,null)),ActionInfo.Create( GameDataManager.RandomPlayerAction(enum_RarityLevel.L1,null)) };
+            m_storedActions = new List<ActionInfo>() { ActionInfo.Create(GameDataManager.CreateRandomPlayerAction(enum_RarityLevel.L1,null)),ActionInfo.Create( GameDataManager.CreateRandomPlayerAction(enum_RarityLevel.L1,null)) };
             m_GameSeed = DateTime.Now.ToLongTimeString().ToString();
             m_StageLevel = enum_StageLevel.Rookie;
         }
@@ -1136,7 +1136,12 @@ namespace GameSetting
         }
         void OnShuffle()
         {
-            m_ActionInPool = new List<ActionBase>(m_ActionStored);
+            m_ActionInPool.Clear();
+            for (int i = 0; i < m_ActionStored.Count; i++)
+            {
+                if(m_ActionStored[i].m_ActionExpireType!= enum_ActionExpireType.AfterBattle||m_ActionEquiping.Find(p=>p.m_Identity==m_ActionStored[i].m_Identity)==null)
+                     m_ActionInPool.Add( m_ActionStored[i]);
+            }
             ClearHoldingActions();
             RefillHoldingActions();
         }
@@ -1281,6 +1286,7 @@ namespace GameSetting
         public override enum_ExpireType m_ExpireType => enum_ExpireType.Action;
         public EntityPlayerBase m_ActionEntity { get; private set; }
         public enum_RarityLevel m_Level { get; private set; } = enum_RarityLevel.Invalid;
+        public int m_Identity { get; private set; } = -1;
         public virtual int I_ActionCost => -1;
         public virtual bool B_ActionAble => true;
         public virtual enum_ActionExpireType m_ActionExpireType => enum_ActionExpireType.Invalid;
@@ -1293,8 +1299,10 @@ namespace GameSetting
         public virtual bool B_ClipOverride => false;
         public virtual int I_ClipAdditive => 0;
         public virtual float F_ClipMultiply => 0;
-        public ActionBase(enum_RarityLevel _level, float _expireDuration = 0) : base(_expireDuration)
+
+        protected ActionBase(int _identity,enum_RarityLevel _level, float _expireDuration = 0) : base(_expireDuration)
         {
+            m_Identity = _identity;
             m_Level = _level;
             if (m_ActionExpireType == enum_ActionExpireType.Invalid)
                 Debug.LogError("Override Type Please!");
