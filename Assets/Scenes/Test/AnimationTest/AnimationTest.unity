@@ -1262,6 +1262,7 @@ MonoBehaviour:
   F7_TestActionIndex: 10001
   F8_TestAcquireAction: 10001
   B_AdditionalLight: 1
+  target: {fileID: 1249683965}
 --- !u!1001 &899889787
 Prefab:
   m_ObjectHideFlags: 0
@@ -1836,6 +1837,11 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d8ad856666f38ad4489ecb3c78fe7192, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &1249683965 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1754357614826212, guid: 70bed506c9b42584daf4818c49d22f73,
+    type: 2}
+  m_PrefabInternal: {fileID: 1309149541}
 --- !u!1001 &1262970536
 Prefab:
   m_ObjectHideFlags: 0

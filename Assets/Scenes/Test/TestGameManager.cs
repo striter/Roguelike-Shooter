@@ -10,11 +10,11 @@ public class TestGameManager : GameManager {
     private void Start()
     {
 //        PostEffectManager.AddPostEffect<PE_ViewDepth>();
-        PostEffectManager.AddPostEffect<PE_BloomSpecific>().SetEffect(2, 10, 2);
+        CameraEffectManager.AddCameraEffect<PE_BloomSpecific>().SetEffect(2, 10, 2);
     }
     // Update is called once per frame
     void Update () {
         if (Input.GetKeyDown(KeyCode.BackQuote))
             Time.timeScale = Time.timeScale == 1 ? .1f : 1f;
-	}
+    }
 }

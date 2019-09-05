@@ -27,8 +27,9 @@ public class EnvironmentManager : SimpleSingletonMono<EnvironmentManager> {
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageStart, OnStageStart);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
     }
-    protected void OnDestroy()
+    protected override void OnDestroy()
     {
+        base.OnDestroy();
         RemoveNavmeshData();
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnStageStart, OnStageStart);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
@@ -47,17 +48,17 @@ public class EnvironmentManager : SimpleSingletonMono<EnvironmentManager> {
     }
     public void SetPostEffects(enum_Style _levelStyle)
     {
-        PostEffectManager.RemoveAllPostEffect();
-        PostEffectManager.AddPostEffect<PE_BloomSpecific>().SetEffect(2, 10, 2);
+        CameraEffectManager.RemoveAllPostEffect();
+        CameraEffectManager.AddCameraEffect<PE_BloomSpecific>().SetEffect(2, 10, 2);
         //PostEffectManager.AddPostEffect<PE_DepthOutline>().SetEffect(Color.black,1.2f,0.0001f);
         //PostEffectManager.AddPostEffect<PE_DepthSSAO>();
         switch (_levelStyle)
         {
             case enum_Style.Undead:
-                PostEffectManager.AddPostEffect<PE_FogDepthNoise>().SetEffect<PE_FogDepthNoise>(TCommon.ColorAlpha(Color.white, .3f), .5f, -1f, 4f).SetEffect(TResources.Load<Texture>(TResources.ConstPath.S_PETex_NoiseFog),.4f,2f);
+                CameraEffectManager.AddCameraEffect<PE_FogDepthNoise>().SetEffect<PE_FogDepthNoise>(TCommon.ColorAlpha(Color.white, .3f), .5f, -1f, 4f).SetEffect(TResources.Load<Texture>(TResources.ConstPath.S_PETex_NoiseFog),.4f,2f);
                 break;
             case enum_Style.Iceland:
-                PostEffectManager.AddPostEffect<PE_FogDepth>().SetEffect<PE_FogDepth>(Color.white,.6f,-1,5);
+                CameraEffectManager.AddCameraEffect<PE_FogDepth>().SetEffect<PE_FogDepth>(Color.white,.6f,-1,5);
                 break;
         }
     }

@@ -1151,7 +1151,7 @@ namespace GameSetting
                 return;
 
             int index = m_ActionInPool.RandomIndex();
-            m_ActionHolding.Add(m_ActionInPool[index]);
+            m_ActionHolding.Add(GameDataManager.CopyAction(m_ActionInPool[index]));
             m_ActionInPool.RemoveAt(index);
             RefillHoldingActions();
         }
@@ -1162,6 +1162,9 @@ namespace GameSetting
         }
         public void UpgradeRandomHoldingAction()
         {
+            if (m_ActionHolding.Count == 0)
+                return;
+
             m_ActionHolding.RandomItem().Upgrade();
             IndicateActionUI();
         }
@@ -1299,7 +1302,6 @@ namespace GameSetting
         public virtual bool B_ClipOverride => false;
         public virtual int I_ClipAdditive => 0;
         public virtual float F_ClipMultiply => 0;
-
         protected ActionBase(int _identity,enum_RarityLevel _level, float _expireDuration = 0) : base(_expireDuration)
         {
             m_Identity = _identity;

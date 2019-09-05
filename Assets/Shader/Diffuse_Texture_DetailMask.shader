@@ -12,6 +12,7 @@
 		Tags { "RenderType"="Opaque" }
 			Cull Back
 
+			Blend SrcAlpha OneMinusSrcAlpha
 			CGINCLUDE
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"

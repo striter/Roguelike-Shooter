@@ -30,8 +30,9 @@ public class BGMManager : SimpleSingletonMono<BGMManager>,ISingleCoroutine
     {
         Title = UIT_BGMTitle.Instance;
     }
-    private void OnDestroy()
+    protected override void OnDestroy()
     {
+        base.OnDestroy();
         this.StopAllSingleCoroutines();
     }
 

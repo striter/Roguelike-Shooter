@@ -1,15 +1,25 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
+
 public class CameraEffectBase
 {
-    protected PostEffectManager m_Manager { get; private set; }
+    public virtual DepthTextureMode m_DepthTextureMode => DepthTextureMode.None;
+    public virtual bool m_DepthToWorldMatrix => false;
+    protected CameraEffectManager m_Manager { get; private set; }
     public CameraEffectBase()
     {
     }
-    public virtual void OnSetEffect(PostEffectManager _manager)
+    public virtual void OnSetEffect(CameraEffectManager _manager)
     {
         m_Manager = _manager;
+    }
+    public virtual void OnRenderImage(RenderTexture source, RenderTexture destination)
+    {
+    }
+    public virtual void OnDestroy()
+    {
     }
 }
 #region PostEffect
@@ -18,8 +28,6 @@ public class PostEffectBase: CameraEffectBase
     const string S_ParentPath = "Hidden/PostEffect/";
     public Material m_Material { get; private set; }
     public bool m_Supported { get; private set; }
-    public virtual DepthTextureMode m_DepthTextureMode => DepthTextureMode.None;
-    public virtual bool m_DepthToWorldMatrix => false;
     public PostEffectBase()
     {
         m_Supported = true;
@@ -48,13 +56,13 @@ public class PostEffectBase: CameraEffectBase
         }
         return false;
     }
-    public virtual void OnRenderImage(RenderTexture source, RenderTexture destination)
+    public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
         if (RenderDefaultImage(source, destination)) 
             return;
         Graphics.Blit(source, destination, m_Material);
     }
-    public virtual void OnDestroy()
+    public override void OnDestroy()
     {
         GameObject.Destroy(m_Material);
     }
@@ -206,7 +214,7 @@ public class PE_MotionBlurDepth:PE_MotionBlur
 {
     public override DepthTextureMode m_DepthTextureMode => DepthTextureMode.Depth;
     private Matrix4x4 mt_CurVP;
-    public override void OnSetEffect(PostEffectManager _manager)
+    public override void OnSetEffect(CameraEffectManager _manager)
     {
         base.OnSetEffect(_manager);
         mt_CurVP = m_Manager.m_Camera.projectionMatrix * m_Manager.m_Camera.worldToCameraMatrix;
@@ -273,13 +281,14 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
     RenderTexture m_RenderTexture;
     Shader m_RenderShader;
     public PE_GaussianBlur m_GaussianBlur { get; private set; }
-    public override void OnSetEffect(PostEffectManager _manager)
+    public override void OnSetEffect(CameraEffectManager _manager)
     {
         base.OnSetEffect(_manager);
+        m_GaussianBlur = new PE_GaussianBlur();
+        m_GaussianBlur.OnSetEffect(_manager);
         m_RenderShader = Shader.Find("Hidden/PostEffect/PE_BloomSpecific_Render");
         if (m_RenderShader == null)
             Debug.LogError("Null Shader Found!");
-        m_GaussianBlur = new PE_GaussianBlur();
         GameObject temp = new GameObject("Render Camera");
         temp.transform.SetParentResetTransform(m_Manager.m_Camera.transform);
         m_RenderCamera = temp.AddComponent<Camera>();
@@ -343,16 +352,57 @@ public class PE_DepthSSAO : PostEffectBase      //Test Currently Uncomplete
 }
 #endregion
 #region CommandBuffer
-public class CommanderBufferBase
+public class CommandBufferBase:CameraEffectBase
 {
-    public virtual void OnSetEffect()
+    protected CommandBuffer m_Buffer;
+    protected virtual CameraEvent m_BufferEvent => 0;
+    public override void OnSetEffect(CameraEffectManager _manager)
     {
-
+        base.OnSetEffect(_manager);
+        m_Buffer = new CommandBuffer();
+        m_Buffer.name = this.GetType().ToString();
+        m_Manager.m_Camera.AddCommandBuffer(m_BufferEvent, m_Buffer);
+    }
+    public override void OnDestroy()
+    {
+        m_Buffer.Clear();
+        m_Manager.m_Camera.RemoveCommandBuffer(m_BufferEvent,m_Buffer);
     }
 }
 
-public class CB_DepthOfField : CommanderBufferBase
+public class CB_DepthOfFieldSpecific : CommandBufferBase
 {
-    
+    public PE_GaussianBlur m_GaussianBlur { get; private set; }
+    List<Renderer> m_targets = new List<Renderer>();
+    protected override CameraEvent m_BufferEvent => CameraEvent.AfterImageEffects;
+    public override void OnSetEffect(CameraEffectManager _manager)
+    {
+        base.OnSetEffect(_manager);
+        m_GaussianBlur = new PE_GaussianBlur();
+        m_GaussianBlur.OnSetEffect(_manager);
+    }
+    public void SetSpecificTarget(params Renderer[] targets)
+    {
+        targets.Traversal((Renderer renderer)=> {
+            if (m_targets.Contains(renderer))
+                return;
+            m_targets.Add(renderer);
+            renderer.enabled = false;
+            m_Buffer.DrawRenderer(renderer, renderer.sharedMaterial);
+        });
+    }
+    public override void OnRenderImage(RenderTexture source, RenderTexture destination)
+    {
+        m_GaussianBlur.OnRenderImage(source, destination);
+    }
+    public override void OnDestroy()
+    {
+        base.OnDestroy();
+        m_GaussianBlur.OnDestroy();
+        m_targets.Traversal((Renderer renderer) =>{
+            renderer.enabled = true;
+        });
+        m_targets.Clear();
+    }
 }
 #endregion

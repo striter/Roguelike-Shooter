@@ -2,12 +2,12 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Camera)),ExecuteInEditMode]
-public class PostEffectManager : SimpleSingletonMono<PostEffectManager>,ISingleCoroutine {
+public class CameraEffectManager : SimpleSingletonMono<CameraEffectManager>,ISingleCoroutine {
     public bool B_TestMode=false;
     #region Interact
-    public static T AddPostEffect<T>() where T:PostEffectBase,new()
+    public static T AddCameraEffect<T>() where T: CameraEffectBase, new()
     {
-        if (GetPostEffect<T>() != null)
+        if (GetCameraEffect<T>() != null)
         {
             Debug.LogError("Effect Already Exist");
             return null;
@@ -19,34 +19,34 @@ public class PostEffectManager : SimpleSingletonMono<PostEffectManager>,ISingleC
         Instance.m_calculateDepthToWorldMatrix |= effectBase.m_DepthToWorldMatrix;
         return effectBase;
     }
-    public static T GetPostEffect<T>() where T : PostEffectBase=> Instance.m_PostEffects.Find(p => p.GetType() ==typeof(T)) as T;
-    public static void RemovePostEffect<T>() where T : PostEffectBase, new()
+    public static T GetCameraEffect<T>() where T : CameraEffectBase => Instance.m_PostEffects.Find(p => p.GetType() ==typeof(T)) as T;
+    public static void RemoveCameraEffect<T>() where T : CameraEffectBase, new()
     {
-        T effect = GetPostEffect<T>();
+        T effect = GetCameraEffect<T>();
         if (effect != null)
             Instance.m_PostEffects.Remove(effect);
     }
     public static void RemoveAllPostEffect()
     {
-        Instance.m_PostEffects.Traversal((PostEffectBase effect)=> { effect.OnDestroy(); });
+        Instance.m_PostEffects.Traversal((CameraEffectBase effect)=> { effect.OnDestroy(); });
         Instance.m_PostEffects.Clear();
     }
 
     public static void StartAreaScan(Vector3 startPoint,Color scanColor, Texture scanTex=null,float scale=1f, float lerp=.7f,float width=1f,float range=20,float duration=1.5f)
     {
-        if (GetPostEffect<PE_AreaScanDepth>() != null)
-            RemovePostEffect<PE_AreaScanDepth>();
+        if (GetCameraEffect<PE_AreaScanDepth>() != null)
+            RemoveCameraEffect<PE_AreaScanDepth>();
 
-        PE_AreaScanDepth areaScan= AddPostEffect<PE_AreaScanDepth>();
+        PE_AreaScanDepth areaScan= AddCameraEffect<PE_AreaScanDepth>();
         areaScan.SetEffect(startPoint, scanColor, scanTex,scale, lerp, width);
         Instance.StartSingleCoroutine(0,TIEnumerators.ChangeValueTo((float value)=> {
             areaScan.SetElapse(range*value);
         },0,1,duration,()=> {
-            RemovePostEffect<PE_AreaScanDepth>();
+            RemoveCameraEffect<PE_AreaScanDepth>();
         }));
     }
     #endregion
-    List<PostEffectBase> m_PostEffects=new List<PostEffectBase>();
+    List<CameraEffectBase> m_PostEffects=new List<CameraEffectBase>();
     public Camera m_Camera { get; protected set; }
     public bool m_calculateDepthToWorldMatrix { get; set; } = false;
     protected override void Awake()

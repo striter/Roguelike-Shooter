@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(PostEffectManager))]
-public class EPostEffectManager : Editor {
-    PostEffectManager m_target = null;
+[CustomEditor(typeof(CameraEffectManager))]
+public class ECameraEffectManager : Editor {
+    CameraEffectManager m_target = null;
     public enum enum_PostEffect
     {
         BloomSpecific=1,
@@ -18,18 +18,18 @@ public class EPostEffectManager : Editor {
             return;
 
         if(!m_target)
-            m_target = SceneView.lastActiveSceneView.camera.gameObject.AddComponent<PostEffectManager>();
+            m_target = SceneView.lastActiveSceneView.camera.gameObject.AddComponent<CameraEffectManager>();
         GUILayout.BeginVertical();
 
-        if (PostEffectManager.GetPostEffect<PE_BloomSpecific>() != null)
+        if (CameraEffectManager.GetCameraEffect<PE_BloomSpecific>() != null)
         {
             if (GUILayout.Button("BloomSpecific_Unview"))
-                PostEffectManager.RemovePostEffect<PE_BloomSpecific>();
+                CameraEffectManager.RemoveCameraEffect<PE_BloomSpecific>();
         }
         else
         {
             if (GUILayout.Button("BloomSpecifc_Preview"))
-                PostEffectManager.AddPostEffect<PE_BloomSpecific>();
+                CameraEffectManager.AddCameraEffect<PE_BloomSpecific>();
         }
         GUILayout.EndVertical();
         SceneView.lastActiveSceneView.Repaint();

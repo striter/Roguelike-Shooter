@@ -30,8 +30,9 @@ public class UIT_BGMTitle : SimpleSingletonMono<UIT_BGMTitle>,ISingleCoroutine {
     {
         this.StartSingleCoroutine(0, TIEnumerators.RectTransformLerpTo(RectTrans, endPos, startPos, 2f, null));
     }
-    public void OnDestroy()
+    protected override void OnDestroy()
     {
+        base.OnDestroy();
         this.StopAllSingleCoroutines();
     }
 }
