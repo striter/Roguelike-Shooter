@@ -1,12 +1,25 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class PostEffectBase  {
+public class CameraEffectBase
+{
+    protected PostEffectManager m_Manager { get; private set; }
+    public CameraEffectBase()
+    {
+    }
+    public virtual void OnSetEffect(PostEffectManager _manager)
+    {
+        m_Manager = _manager;
+    }
+}
+#region PostEffect
+public class PostEffectBase: CameraEffectBase
+{
     const string S_ParentPath = "Hidden/PostEffect/";
     public Material m_Material { get; private set; }
-    protected PostEffectManager m_Manager { get; private set; }
     public bool m_Supported { get; private set; }
+    public virtual DepthTextureMode m_DepthTextureMode => DepthTextureMode.None;
+    public virtual bool m_DepthToWorldMatrix => false;
     public PostEffectBase()
     {
         m_Supported = true;
@@ -41,10 +54,6 @@ public class PostEffectBase  {
             return;
         Graphics.Blit(source, destination, m_Material);
     }
-    public virtual void OnSetEffect(PostEffectManager _manager)
-    {
-        m_Manager = _manager;
-    }
     public virtual void OnDestroy()
     {
         GameObject.Destroy(m_Material);
@@ -52,19 +61,11 @@ public class PostEffectBase  {
 }
 public class PE_ViewNormal : PostEffectBase
 {
-    public override void OnSetEffect(PostEffectManager _manager)
-    {
-        base.OnSetEffect(_manager);
-        m_Manager.m_Camera.depthTextureMode = DepthTextureMode.DepthNormals;
-    }
+    public override DepthTextureMode m_DepthTextureMode => DepthTextureMode.DepthNormals;
 }
 public class PE_ViewDepth : PostEffectBase
 {
-    public override void OnSetEffect(PostEffectManager _manager)
-    {
-        base.OnSetEffect(_manager);
-        m_Manager.m_Camera.depthTextureMode |= DepthTextureMode.Depth;
-    }
+    public override DepthTextureMode m_DepthTextureMode => DepthTextureMode.Depth;
 }
 public class PE_BSC : PostEffectBase {      //Brightness Saturation Contrast
     
@@ -203,11 +204,11 @@ public class PE_MotionBlur : PostEffectBase     //Camera Motion Blur ,Easiest
 }
 public class PE_MotionBlurDepth:PE_MotionBlur
 {
+    public override DepthTextureMode m_DepthTextureMode => DepthTextureMode.Depth;
     private Matrix4x4 mt_CurVP;
     public override void OnSetEffect(PostEffectManager _manager)
     {
         base.OnSetEffect(_manager);
-        m_Manager.m_Camera.depthTextureMode |= DepthTextureMode.Depth;
         mt_CurVP = m_Manager.m_Camera.projectionMatrix * m_Manager.m_Camera.worldToCameraMatrix;
     }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
@@ -221,27 +222,15 @@ public class PE_MotionBlurDepth:PE_MotionBlur
 }
 public class PE_FogDepth : PostEffectBase
 {
-
-    public override void OnSetEffect(PostEffectManager _manager)
-    {
-        base.OnSetEffect(_manager);
-        m_Manager.calculateDepthWorldPos |= true;
-        m_Manager.m_Camera.depthTextureMode |= DepthTextureMode.Depth;
-        SetEffect(TCommon.ColorAlpha( Color.white,.5f));
-    }
-    public PE_FogDepth SetEffect(Color _fogColor,  float _fogDensity = .5f, float _fogYStart = -1f, float _fogYEnd = 5f)
+    public override DepthTextureMode m_DepthTextureMode => DepthTextureMode.Depth;
+    public override bool m_DepthToWorldMatrix => true;
+    public T SetEffect<T>(Color _fogColor,  float _fogDensity = .5f, float _fogYStart = -1f, float _fogYEnd = 5f) where T:PE_FogDepth
     {
         m_Material.SetFloat("_FogDensity", _fogDensity);
         m_Material.SetColor("_FogColor", _fogColor);
         m_Material.SetFloat("_FogStart", _fogYStart);
         m_Material.SetFloat("_FogEnd", _fogYEnd);
-        return this;
-    }
-    public void SetTexture(Texture noise,float _noiseLambert=.3f,float _noisePow=1f)
-    {
-        m_Material.SetTexture("_NoiseTex", noise);
-        m_Material.SetFloat("_NoiseLambert", _noiseLambert);
-        m_Material.SetFloat("_NoisePow", _noisePow);
+        return this as T;
     }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
@@ -255,12 +244,7 @@ public class PE_FogDepth : PostEffectBase
 }
 public class PE_DepthOutline:PostEffectBase
 {
-    public override void OnSetEffect(PostEffectManager _manager)
-    {
-        base.OnSetEffect(_manager);
-        m_Manager.m_Camera.depthTextureMode |= DepthTextureMode.DepthNormals;
-        SetEffect(Color.black);
-    }
+    public override DepthTextureMode m_DepthTextureMode => DepthTextureMode.DepthNormals;
     public void SetEffect(Color _edgeColor, float _sampleDistance = 1f, float _depthBias=.001f)
     {
         m_Material.SetColor("_EdgeColor", _edgeColor);
@@ -270,18 +254,13 @@ public class PE_DepthOutline:PostEffectBase
 }
 public class PE_FogDepthNoise : PE_FogDepth
 {
-    public Texture TX_Noise;
-    public float F_FogSpeedX=.02f;
-    public float F_FogSpeedY=.02f;
-    public float F_NoiseAmount=.8f;
-
-    public override void OnSetEffect(PostEffectManager _manager)
+    public void SetEffect(Texture noise, float _noiseLambert = .3f, float _noisePow = 1f,float _fogSpeedX=.02f,float _fogSpeedY=.02f)
     {
-        base.OnSetEffect(_manager);
-        m_Material.SetTexture("_NoiseTex", TX_Noise);
-        m_Material.SetFloat("_FogSpeedX", F_FogSpeedX);
-        m_Material.SetFloat("_FogSpeedY", F_FogSpeedY);
-        m_Material.SetFloat("_NoiseAmount", F_NoiseAmount);
+        m_Material.SetTexture("_NoiseTex", noise);
+        m_Material.SetFloat("_NoiseLambert", _noiseLambert);
+        m_Material.SetFloat("_NoisePow", _noisePow);
+        m_Material.SetFloat("_FogSpeedX", _fogSpeedX);
+        m_Material.SetFloat("_FogSpeedY", _fogSpeedY);
     }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
@@ -294,7 +273,6 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
     RenderTexture m_RenderTexture;
     Shader m_RenderShader;
     public PE_GaussianBlur m_GaussianBlur { get; private set; }
-
     public override void OnSetEffect(PostEffectManager _manager)
     {
         base.OnSetEffect(_manager);
@@ -331,23 +309,12 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
         Graphics.Blit(source, destination, m_Material, 1);        //Mix
     }
 }
-public class PE_DepthSSAO : PostEffectBase
-{
-    public override void OnSetEffect(PostEffectManager _manager)
-    {
-        base.OnSetEffect(_manager);
-        m_Manager.m_Camera.depthTextureMode |= DepthTextureMode.DepthNormals;
-    }
-}
+
 public class PE_AreaScanDepth : PostEffectBase
 {
+    public override DepthTextureMode m_DepthTextureMode => DepthTextureMode.Depth;
+    public override bool m_DepthToWorldMatrix => true;
     static readonly int ID_ScanElapse =Shader.PropertyToID("_ScanElapse");
-    public override void OnSetEffect(PostEffectManager _manager)
-    {
-        base.OnSetEffect(_manager);
-        m_Manager.calculateDepthWorldPos |= true;
-        m_Manager.m_Camera.depthTextureMode |= DepthTextureMode.Depth;
-    }
     public void SetElapse(float elapse)
     {
         m_Material.SetFloat(ID_ScanElapse,elapse);
@@ -369,3 +336,23 @@ public class PE_AreaScanDepth : PostEffectBase
         m_Material.SetMatrix("_VPMatrixInverse", m_Manager.m_ViewProjectionMatrixInverse);
     }
 }
+
+public class PE_DepthSSAO : PostEffectBase      //Test Currently Uncomplete
+{
+    public override DepthTextureMode m_DepthTextureMode => DepthTextureMode.Depth;
+}
+#endregion
+#region CommandBuffer
+public class CommanderBufferBase
+{
+    public virtual void OnSetEffect()
+    {
+
+    }
+}
+
+public class CB_DepthOfField : CommanderBufferBase
+{
+    
+}
+#endregion

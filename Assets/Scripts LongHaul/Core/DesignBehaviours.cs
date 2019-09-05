@@ -37,6 +37,10 @@ public class SimpleSingletonMono<T> : MonoBehaviour where T : MonoBehaviour
     {
         Instance = this.GetComponent<T>();
     }
+    protected void OnDestroy()
+    {
+        Instance = null;
+    }
 }
 
 public class SingletonMono<T>  : MonoBehaviour where T : MonoBehaviour

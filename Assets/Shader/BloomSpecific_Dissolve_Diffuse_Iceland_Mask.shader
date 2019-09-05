@@ -30,6 +30,7 @@
 
 		Pass		//Base Pass
 		{
+			Name "MAIN"
 			Tags{"RenderType"="Opaque" "LightMode" = "ForwardBase" "Queue" = "Transparent"}
 			Blend SrcAlpha OneMinusSrcAlpha
 			ZWrite On

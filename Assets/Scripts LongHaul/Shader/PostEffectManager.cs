@@ -12,12 +12,14 @@ public class PostEffectManager : SimpleSingletonMono<PostEffectManager>,ISingleC
             Debug.LogError("Effect Already Exist");
             return null;
         }
-        T effetBase = new T();
-        effetBase.OnSetEffect(Instance);
-        Instance.m_PostEffects.Add( effetBase);
-        return effetBase;
+        T effectBase = new T();
+        effectBase.OnSetEffect(Instance);
+        Instance.m_PostEffects.Add(effectBase);
+        Instance.m_Camera.depthTextureMode |= effectBase.m_DepthTextureMode;
+        Instance.m_calculateDepthToWorldMatrix |= effectBase.m_DepthToWorldMatrix;
+        return effectBase;
     }
-    public static T GetPostEffect<T>() where T : PostEffectBase, new()=> Instance.m_PostEffects.Find(p => p.GetType() ==typeof(T)) as T;
+    public static T GetPostEffect<T>() where T : PostEffectBase=> Instance.m_PostEffects.Find(p => p.GetType() ==typeof(T)) as T;
     public static void RemovePostEffect<T>() where T : PostEffectBase, new()
     {
         T effect = GetPostEffect<T>();
@@ -46,13 +48,13 @@ public class PostEffectManager : SimpleSingletonMono<PostEffectManager>,ISingleC
     #endregion
     List<PostEffectBase> m_PostEffects=new List<PostEffectBase>();
     public Camera m_Camera { get; protected set; }
-    public bool calculateDepthWorldPos { get; set; } = false;
+    public bool m_calculateDepthToWorldMatrix { get; set; } = false;
     protected override void Awake()
     {
         base.Awake();
         m_Camera = GetComponent<Camera>();
         m_Camera.depthTextureMode = DepthTextureMode.None;
-        calculateDepthWorldPos = false;
+        m_calculateDepthToWorldMatrix = false;
     }
     
     RenderTexture tempTexture1, tempTexture2;
@@ -61,7 +63,7 @@ public class PostEffectManager : SimpleSingletonMono<PostEffectManager>,ISingleC
         tempTexture1 = RenderTexture.GetTemporary(Screen.width, Screen.height, 0);
         Graphics.Blit(source, tempTexture1);
 
-        if (calculateDepthWorldPos)
+        if (m_calculateDepthToWorldMatrix)
         {
             m_ViewProjectionMatrixInverse = CalculateViewProjectionMatrixInverse();
             m_FrustumCornorsRay = CalculateFrustumCornorsRay();

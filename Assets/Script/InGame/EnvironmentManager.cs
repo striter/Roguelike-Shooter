@@ -50,14 +50,14 @@ public class EnvironmentManager : SimpleSingletonMono<EnvironmentManager> {
         PostEffectManager.RemoveAllPostEffect();
         PostEffectManager.AddPostEffect<PE_BloomSpecific>().SetEffect(2, 10, 2);
         //PostEffectManager.AddPostEffect<PE_DepthOutline>().SetEffect(Color.black,1.2f,0.0001f);
-        PostEffectManager.AddPostEffect<PE_DepthSSAO>();
+        //PostEffectManager.AddPostEffect<PE_DepthSSAO>();
         switch (_levelStyle)
         {
             case enum_Style.Undead:
-                PostEffectManager.AddPostEffect<PE_FogDepthNoise>().SetEffect(Color.white).SetEffect(TCommon.ColorAlpha(Color.white, .3f), .5f, -1f, 4f).SetTexture(TResources.Load<Texture>(TResources.ConstPath.S_PETex_NoiseFog),.4f,2f);
+                PostEffectManager.AddPostEffect<PE_FogDepthNoise>().SetEffect<PE_FogDepthNoise>(TCommon.ColorAlpha(Color.white, .3f), .5f, -1f, 4f).SetEffect(TResources.Load<Texture>(TResources.ConstPath.S_PETex_NoiseFog),.4f,2f);
                 break;
             case enum_Style.Iceland:
-                PostEffectManager.AddPostEffect<PE_FogDepth>().SetEffect(Color.white,.6f,-1,5);
+                PostEffectManager.AddPostEffect<PE_FogDepth>().SetEffect<PE_FogDepth>(Color.white,.6f,-1,5);
                 break;
         }
     }
