@@ -28,7 +28,7 @@ namespace GameSetting_Action
         public const int I_20004_Cost = 1;
 
         public const int I_30001_Cost = 1;
-        public const int I_30002_Cost = 2;
+        public const int I_10015_Cost = 2;
         public const int I_30003_Cost = 2;
         public const int I_30004_Cost = 2;
         public const int I_30005_Cost = 1;
@@ -42,6 +42,7 @@ namespace GameSetting_Action
         public const float F_10008_Duration = 30f;
         public const float F_10009_Duration = 30f;
         public const float F_10014_Duration = 30f;
+        public const float F_10015_Duration = 30f;
         #endregion
         #region Expressions
         public static float F_10001_ArmorAdditive(enum_RarityLevel level) => 30 + 30f * (int)level;
@@ -72,11 +73,11 @@ namespace GameSetting_Action
         public static float F_20004_DamageDealt(enum_RarityLevel level) => 2 + 2 * (int)level;
 
         public static float F_30001_ArmorActionAdditive(enum_RarityLevel level) => 10 + 10 * (int)level;
-        public static float F_30002_ArmorDamageReturn(enum_RarityLevel level) => 2 * (int)level;
+        public static float F_10015_ArmorDamageReturn(enum_RarityLevel level) => 2 * (int)level;
         public static float F_30003_DamageAdditive(enum_RarityLevel level) => 20f * (int)level;
         public static float F_30004_DamageAdditive(enum_RarityLevel level) => 200 * (int)level;
-        public static float F_30005_ReloadTimesHeal(enum_RarityLevel level) => 5 - 1 * (int)level;
-        public static float F_30005_ReloadHealAmount(enum_RarityLevel level) => 20f;
+        public static float F_30005_DamageDealtHeal(enum_RarityLevel level) => 600 - 100 * (int)level;
+        public static float F_30005_HealAmount(enum_RarityLevel level) => 20f;
         public static int I_30006_ReloadTimesCount(enum_RarityLevel level) => 2;
         public static int IP_30006_ReloadDamageMultiplyPercentage(enum_RarityLevel level) => 200 * (int)level;
 
@@ -361,6 +362,14 @@ namespace GameSetting_Action
         public override float m_ReloadRateMultiply => Value1/100f;
         public Action_10014_ReloadRateMultiply(int _identity, enum_RarityLevel _level) : base(_identity, _level, ActionData.F_10014_Duration) { }
     }
+    public class Action_10015_ArmorDemageReturn : ActionAfterDuration
+    {
+        public override int m_Index => 10015;
+        public override int I_ActionCost => ActionData.I_10015_Cost;
+        public override float Value1 => ActionData.F_10015_ArmorDamageReturn(m_Level);
+        public override void OnReceiveDamage(int applier, float amount) => ActionHelper.PlayerDealtDamageToEntity(m_ActionEntity, applier, Value1 * m_ActionEntity.m_HealthManager.m_CurrentArmor);
+        public Action_10015_ArmorDemageReturn(int _identity, enum_RarityLevel _level) : base(_identity, _level,ActionData.F_10015_Duration) { }
+    }
     #endregion
     #region EquipmentItem
     public class Action_20001_Armor_Turret_Cannon : ActionAfterUse
@@ -427,14 +436,6 @@ namespace GameSetting_Action
         public override void OnAddActionElse(float actionAmount) => ActionHelper.PlayerReceiveHealing(m_ActionEntity, Value1, enum_DamageType.ArmorOnly);
         public Action_30001_ArmorActionAdditive(int _identity,enum_RarityLevel _level) : base(_identity,_level) { }
     }
-    public class Action_30002_ArmorDemageReturn : ActionAfterBattle
-    {
-        public override int m_Index => 30002;
-        public override int I_ActionCost => ActionData.I_30002_Cost;
-        public override float Value1 => ActionData.F_30002_ArmorDamageReturn(m_Level);
-        public override void OnReceiveDamage(int applier, float amount) => ActionHelper.PlayerDealtDamageToEntity(m_ActionEntity, applier,Value1* m_ActionEntity.m_HealthManager.m_CurrentArmor);
-        public Action_30002_ArmorDemageReturn(int _identity,enum_RarityLevel _level) : base(_identity,_level) { }
-    }
     public class Action_30003_DamageAdditive : ActionAfterBattle
     {
         public override int m_Index => 30003;
@@ -452,14 +453,23 @@ namespace GameSetting_Action
         public override float F_DamageAdditive=> Value1;
         public Action_30004_ClipOverrideDamageAdditive(int _identity,enum_RarityLevel _level) : base(_identity,_level) { }
     }
-    public class Action_30005_ReloadHeal : ActionAfterBattle_ReloadTrigger
+    public class Action_30005_DamageHeal : ActionAfterBattle
     {
         public override int m_Index => 30005;
         public override int I_ActionCost => ActionData.I_30005_Cost;
-        public override float Value1 => ActionData.F_30005_ReloadTimesHeal(m_Level);
-        public override float Value2 => ActionData.F_30005_ReloadHealAmount(m_Level);
-        protected override void OnReloadTrigger()=> ActionHelper.PlayerReceiveHealing(m_ActionEntity,Value2, enum_DamageType.HealthOnly);
-        public Action_30005_ReloadHeal(int _identity,enum_RarityLevel _level) : base(_identity,_level) { }
+        public override float Value1 => ActionData.F_30005_DamageDealtHeal(m_Level);
+        public override float Value2 => ActionData.F_30005_HealAmount(m_Level);
+        float m_damageDealt = 0;
+        public override void OnDealtDemage(EntityBase receiver, float amount)
+        {
+            base.OnDealtDemage(receiver, amount);
+            m_damageDealt += amount;
+            if (m_damageDealt < Value1)
+                return;
+            m_damageDealt -= Value1;
+            ActionHelper.PlayerReceiveHealing(m_ActionEntity, Value2, enum_DamageType.HealthOnly);
+        }
+        public Action_30005_DamageHeal(int _identity,enum_RarityLevel _level) : base(_identity,_level) { }
     }
     public class Action_30006_ReloadDamageMultiply : ActionAfterBattle_ReloadTrigger
     {
@@ -587,7 +597,7 @@ namespace GameSetting_Action
         {
             base.OnDealtDemage(receiver, amount);
             if (receiver.m_HealthManager.b_IsDead)
-                ActionHelper.PlayerReceiveHealing(m_ActionEntity,Value1, enum_DamageType.ArmorOnly);
+                ActionHelper.PlayerReceiveHealing(m_ActionEntity,Value1, enum_DamageType.HealthOnly);
         }
         public Action_40014_KillArmorAdditive(int _identity,enum_RarityLevel _level) : base(_identity,_level) { }
     }
