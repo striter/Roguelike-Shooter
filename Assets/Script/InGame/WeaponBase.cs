@@ -79,6 +79,7 @@ public class WeaponBase : MonoBehaviour {
         OnFireRecoil = _OnFireRecoil;
         OnReload = _OnReload;
     }
+
     public void OnDetach()
     {
         m_Attacher = null;
@@ -209,16 +210,16 @@ public class WeaponBase : MonoBehaviour {
             B_TriggerDown = false;
             this.StopSingleCoroutines(0,1);
         }
-        protected void OnActionPause(float pauseDuration,bool autoReload,Action actionAfterPause=null)
+        protected void OnActionPause(float pauseDuration,bool autoReload,Action ActionAfterPause=null)
         {
             if(pauseDuration!=0)
                  OnSetActionPause(pauseDuration);
-            
-            if(autoReload)
+
+            if (autoReload)
                 this.StartSingleCoroutine(0, TIEnumerators.PauseDel(pauseDuration, OnCheckAutoReload));
 
-            if (actionAfterPause != null)
-                this.StartSingleCoroutine(1, TIEnumerators.PauseDel(pauseDuration, actionAfterPause));
+            if (ActionAfterPause != null)
+                this.StartSingleCoroutine(1, TIEnumerators.PauseDel(pauseDuration, ActionAfterPause));
         }
     }
 
@@ -234,6 +235,7 @@ public class WeaponBase : MonoBehaviour {
             {
                 OnTriggerSuccessful();
                 OnActionPause(f_fireRate,true);
+                OnActionPause(0, true, null);
             }
         }
     }
