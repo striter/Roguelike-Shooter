@@ -28,6 +28,7 @@ public class EntityBase : MonoBehaviour
         I_EntityID = GameIdentificationManager.I_EntityID(m_Flag);
         gameObject.name = I_EntityID.ToString() + "_" + I_PoolIndex.ToString();
         m_HitChecks.Traversal((HitCheckEntity check) => { check.Attach(this, OnReceiveDamage); check.SetEnable(true); });
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityActivate, this);
     }
     protected virtual bool OnReceiveDamage(DamageInfo damageInfo)
     {
@@ -40,16 +41,19 @@ public class EntityBase : MonoBehaviour
     protected virtual void OnHealthChanged(enum_HealthChangeMessage message)
     {
     }
+    public void ForceDeath()
+    {
+        OnDead();
+    }
     protected virtual void OnDead()
     {
-        OnRecycle();
         TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.HideAllAttaches(); check.SetEnable(false); });
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityDeactivate, this);
     }
     protected virtual void OnRecycle()
     {
         if (I_PoolIndex < 0)
             return;
-        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityRecycle, this);
         GameObjectManager.RecycleEntity(I_PoolIndex, this);
     }
 }

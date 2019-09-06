@@ -3,12 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum enum_PoolSaveType
-{
-    Invalid = -1,
-    StaticMaxAmount,
-    DynamicMaxAmount,
-}
 public class ObjectPoolManager
 {
     protected static Transform tf_PoolSpawn { get; private set; }
@@ -23,7 +17,6 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y:MonoBehaviour {
 
     class ItemPoolInfo
     {
-        public enum_PoolSaveType e_type;
         public Y m_spawnItem;
         public int i_poolSaveAmount;
         public Action<Y> OnItemInstantiate;
@@ -42,7 +35,7 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y:MonoBehaviour {
             Debug.LogError("Identity:"+identity +"Unregisted");
         return d_ItemInfos[identity].m_spawnItem;
     }
-    public static void Register(T identity, Y registerItem,  enum_PoolSaveType savetype, int poolSaveAmount, Action<Y> OnItemInstantiate)
+    public static void Register(T identity, Y registerItem, int poolStartAmount, Action<Y> OnItemInstantiate)
     {
         if (d_ItemInfos.ContainsKey(identity))
         {
@@ -55,8 +48,7 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y:MonoBehaviour {
         registerItem.SetActivate(false);
         ItemPoolInfo info = d_ItemInfos[identity];
         info.m_spawnItem = registerItem;
-        info.i_poolSaveAmount = poolSaveAmount;
-        info.e_type = savetype;
+        info.i_poolSaveAmount = poolStartAmount;
         info.OnItemInstantiate = OnItemInstantiate;
         Y spawnItem;
         for (int i = 0; i < info.i_poolSaveAmount; i++)
@@ -101,26 +93,10 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y:MonoBehaviour {
         }
         ItemPoolInfo info = d_ItemInfos[identity];
         info.l_Active.Remove(obj);
-        if (info.e_type == enum_PoolSaveType.DynamicMaxAmount)
-        {
-            info.i_poolSaveAmount++;
-            obj.SetActivate(false);
-            obj.transform.SetParent(tf_PoolSpawn);
-            info.l_Deactive.Add(obj);
-        }
-        else if (info.e_type == enum_PoolSaveType.StaticMaxAmount)
-        {
-            if (info.l_Deactive.Count >= info.i_poolSaveAmount)
-            {
-                GameObject.Destroy(obj.gameObject);
-            }
-            else
-            {
-                obj.SetActivate(false);
-                obj.transform.SetParent(tf_PoolSpawn);
-                info.l_Deactive.Add(obj);
-            }
-        }
+        info.i_poolSaveAmount++;
+        obj.SetActivate(false);
+        obj.transform.SetParent(tf_PoolSpawn);
+        info.l_Deactive.Add(obj);
     }
 
     public static void RecycleAll(T identity)

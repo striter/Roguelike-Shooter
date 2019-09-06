@@ -1,10 +1,14 @@
 ﻿using System;
 using GameSetting;
 
-public class EntityItemBase : EntityBase {
+public class EntityComponent : EntityBase {
     public override enum_EntityController m_Controller => enum_EntityController.None;
     Action OnItemDead;
-    public void AddEvent(Action _OnDead)
+    public override void OnActivate(enum_EntityFlag _flag)
+    {
+        base.OnActivate(_flag);
+    }
+    public void AttachComponent(Action _OnDead)
     {
         OnItemDead = _OnDead;
     }
