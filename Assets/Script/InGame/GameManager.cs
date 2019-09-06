@@ -432,8 +432,8 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleFinish);
         B_Battling = false;
-        GameObjectManager.RecycleAllInteract(enum_Interaction.PickupArmor);
         SpawnRewards(lastEntityPos);
+        GameObjectManager.RecycleAllInteract(enum_Interaction.PickupArmor);
     }
 
     IEnumerator IE_GenerateEnermy(List<int> waveGenerate, float _offset)
