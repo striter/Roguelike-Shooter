@@ -191,6 +191,9 @@ public class LevelBase : MonoBehaviour {
                 }
             }
         });
+
+        if (emptyTile.Count == 0)
+            Debug.LogWarning("Level Generate Warning! Tile All Filled!");
     }
 
     int RandomAvailableTileIndex(int XCount,int YCount,bool angleRotated,List<int> emptyTiles,ref List<int> areaIndexes)

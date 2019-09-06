@@ -9,7 +9,7 @@ public class InteractBase : MonoBehaviour {
     protected virtual bool B_CanInteract(EntityCharacterPlayer _interactor) => true;
     protected virtual bool B_RecycleOnInteract => false;
     public bool B_Interactable { get; private set; } = true;
-    protected bool B_Interacted = false;
+    public virtual bool B_InteractOnce { get; private set; } = true;
     public void SetInteractable(bool interactable) => B_Interactable = interactable;
     public virtual void Init()
     {
@@ -18,7 +18,6 @@ public class InteractBase : MonoBehaviour {
     protected void Play()
     {
         B_Interactable = true;
-        B_Interacted = false;
     }
     public virtual bool TryInteract(EntityCharacterPlayer _interactor)
     {
@@ -26,7 +25,8 @@ public class InteractBase : MonoBehaviour {
             return false;
 
         OnInteractSuccessful(_interactor);
-        B_Interacted = true;
+        if (B_InteractOnce)
+            B_Interactable = false;
         if (B_RecycleOnInteract)
             GameObjectManager.RecycleInteract( this);
         return true;

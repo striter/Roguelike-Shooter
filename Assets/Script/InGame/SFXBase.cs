@@ -8,6 +8,7 @@ public class SFXBase : MonoBehaviour {
     protected float f_duration;
     protected float f_TimeCheck;
     protected float f_timeLeft;
+    protected virtual bool m_AutoRecycle => true;
     Action OnSFXPlayFinished;
     public virtual void Init(int _sfxIndex)
     {
@@ -31,7 +32,7 @@ public class SFXBase : MonoBehaviour {
 
     protected virtual void Update()
     {
-        if (!b_Playing)
+        if (!b_Playing||!m_AutoRecycle)
             return;
         f_timeLeft =   f_TimeCheck- Time.time;
 

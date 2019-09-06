@@ -199,10 +199,16 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     }
     #endregion
     #region Equipment
-    public T OnAcquireEquipment<T>(int actionIndex, Func<DamageDeliverInfo> OnDamageBuff) where T : EquipmentBase
+    public void OnUseEquipment<T>(int actionIndex, Action<T> OnItemCreated) where T:EquipmentBase
+    {
+        T target = EquipmentBase.AcquireEquipment(actionIndex * 10, this, tf_WeaponHoldLeft, m_PlayerInfo.GetDamageBuffInfo, OnDead) as T;
+        OnItemCreated?.Invoke(target);
+        target.Play(this, transform.position + transform.forward * 10);
+    }
+    public T OnAcquireEquipment<T>(int actionIndex, Func<DamageDeliverInfo> OnDamageBuff=null) where T : EquipmentBase
     {
         OnMainButtonDown(false);
-        m_Equipment = EquipmentBase.AcquireEquipment(actionIndex * 10, this, tf_WeaponHoldLeft, OnDamageBuff, OnDead);
+        m_Equipment = EquipmentBase.AcquireEquipment(actionIndex * 10, this, tf_WeaponHoldLeft, OnDamageBuff==null?m_PlayerInfo.GetDamageBuffInfo:OnDamageBuff, OnDead);
         return m_Equipment as T;
     }
 
