@@ -158,7 +158,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         int i_targetUnvisibleCount;
         bool b_targetRotationWithin;
         bool b_targetHideBehindWall => i_targetUnvisibleCount == 40;
-        bool b_targetAvailable => m_Target != null && !m_Target.m_HealthManager.b_IsDead;
+        bool b_targetAvailable => m_Target != null &&!m_Target.m_CharacterInfo.B_Cloaked && !m_Target.m_HealthManager.b_IsDead;
 
         public bool B_AgentEnabled
         {
@@ -264,8 +264,8 @@ public class EntityCharacterAI : EntityCharacterBase {
                     continue;
 
                 float distance = TCommon.GetXZDistance(headTransform.position, entites[i].tf_Head.position);
-                bool visible = !m_Entity.B_BattleCheckObstacle || TargetVisible(entites[i]);
-                bool isAvailableClosetTarget = distance < f_targetDistance && visible;
+                bool obstacleBlocked = !m_Entity.B_BattleCheckObstacle || ObstacleBlocked(entites[i]);
+                bool isAvailableClosetTarget = distance < f_targetDistance && obstacleBlocked;
                 if (!b_targetAvailable || isAvailableClosetTarget)
                 {
                     m_Target = entites[i];
@@ -286,7 +286,7 @@ public class EntityCharacterAI : EntityCharacterBase {
             if (!b_targetAvailable)
                 return;
 
-            b_targetVisible = TargetVisible(m_Target);
+            b_targetVisible = ObstacleBlocked(m_Target);
 
             if (!b_targetVisible)
                 i_targetUnvisibleCount = i_targetUnvisibleCount + 1 > 40 ? 40 : i_targetUnvisibleCount + 1;
@@ -424,7 +424,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         }
 
         bool FrontBlocked() => Physics.SphereCast(new Ray(headTransform.position, headTransform.forward), 1f, 2, GameLayer.Mask.I_Static);
-        bool TargetVisible(EntityCharacterBase target)
+        bool ObstacleBlocked(EntityCharacterBase target)
         {
             m_Raycasts = Physics.RaycastAll(m_Entity.tf_Head.position, v3_TargetDirection, Vector3.Distance(m_Entity.tf_Head.position, target.tf_Head.position), GameLayer.Mask.I_StaticEntity);
             for (int i = 0; i < m_Raycasts.Length; i++)
