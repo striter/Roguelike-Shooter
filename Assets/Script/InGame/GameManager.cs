@@ -29,6 +29,7 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
     public int C_TestProjectileIndex = 29001;
     public int V_TestIndicatorIndex = 50002;
     public int B_TestBuffIndex = 1;
+    public enum_PlayerWeapon F1_WeaponSpawnType = enum_PlayerWeapon.Invalid;
     public int F5_TestActionIndex = 10001;
     public int F6_TestActionIndex = 10001;
     public int F7_TestActionIndex = 10001;
@@ -42,7 +43,7 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
         RaycastHit hit = new RaycastHit();
         if (Input.GetKeyDown(KeyCode.Z) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
         {
-            EntityCharacterBase enermy = GameObjectManager.SpawnEntity<EntityCharacterAI>(Z_TestEntitySpawn, hit.point, TestEntityFlag);
+            EntityCharacterBase enermy = GameObjectManager.SpawnCharacter<EntityCharacterAI>(Z_TestEntitySpawn, hit.point, TestEntityFlag);
             if (TestEntityBuffOnSpawn > 0)
                 enermy.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common,DamageDeliverInfo.BuffInfo(-1, TestEntityBuffOnSpawn)));
         }
@@ -58,6 +59,8 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
             m_LocalPlayer.BroadcastMessage("OnReceiveDamage", new DamageInfo(20, enum_DamageType.Common,DamageDeliverInfo.Default(-1)));
         if (Input.GetKeyDown(KeyCode.M))
             m_LocalPlayer.BroadcastMessage("OnReceiveDamage", new DamageInfo(-50, enum_DamageType.Common, DamageDeliverInfo.Default(-1)));
+        if (Input.GetKeyDown(KeyCode.F1))
+            GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, Vector3.zero, EnvironmentManager.Instance.m_InteractParent).Play(GameObjectManager.SpawnWeapon(F1_WeaponSpawnType, new List<ActionBase>()));
         if (Input.GetKeyDown(KeyCode.Alpha0))
         {
             List<EntityCharacterBase> entities = m_Entities.Values.ToList();
@@ -229,7 +232,7 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
                 break;
             case enum_TileType.CoinsTrade:
                 {
-                    GameObjectManager.SpawnEntity<EntityTrader>(1, Vector3.back * 2, enum_EntityFlag.Neutal, EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact);
+                    GameObjectManager.SpawnCharacter<EntityTrader>(1, Vector3.back * 2, enum_EntityFlag.Neutal, EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact);
                     ActionBase action1 = GameDataManager.CreateRandomPlayerAction(m_GameLevel.m_actionGenerate.GetTradeRarityLevel(m_GameLevel.m_GameSeed), m_GameLevel.m_GameSeed);
                     int price1 = GameExpression.GetTradePrice(enum_Interaction.PickupAction, action1.m_Level).RandomRangeInt(m_GameLevel.m_GameSeed);
                     GameObjectManager.SpawnInteract<InteractContainerTrade>(enum_Interaction.ContainerTrade, EnvironmentManager.NavMeshPosition(Vector3.left * 2, false), EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(price1, GameObjectManager.SpawnInteract<InteractPickupAction>(enum_Interaction.PickupAction, Vector3.zero, EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(action1));
@@ -246,7 +249,7 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
                 break;
             case enum_TileType.ActionAdjustment:
                 {
-                    GameObjectManager.SpawnEntity<EntityTrader>(2, Vector3.zero, enum_EntityFlag.Neutal, EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact);
+                    GameObjectManager.SpawnCharacter<EntityTrader>(2, Vector3.zero, enum_EntityFlag.Neutal, EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact);
                     GameObjectManager.SpawnInteract<InteractActionAdjustment>(enum_Interaction.ActionAdjustment,Vector3.zero, EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(m_GameLevel.m_currentStage);
                 }
                 break;
@@ -454,7 +457,7 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
     {
         GameObjectManager.SpawnIndicator(30001, position, Vector3.up).Play(entityIndex,GameConst.I_EnermySpawnDelay);
         this.StartSingleCoroutine(100 + spawnIndex, TIEnumerators.PauseDel(GameConst.I_EnermySpawnDelay, () => {
-            GameObjectManager.SpawnEntity<EntityCharacterAI>(entityIndex,position, enum_EntityFlag.Enermy );
+            GameObjectManager.SpawnCharacter<EntityCharacterAI>(entityIndex,position, enum_EntityFlag.Enermy );
         }));
     }
     #endregion
@@ -750,8 +753,13 @@ public static class GameObjectManager
     }
     #endregion
     #region Spawn/Recycle
-    #region Entity
-    public static T SpawnEntity<T>(int index, Vector3 toPosition, enum_EntityFlag _flag,Transform parentTrans=null) where T: EntityBase
+    #region Character
+    public static EntityItemBase SpawnEntityItem(int index, Vector3 toPos, Transform parentTrans = null)
+    {
+        return null;
+    }
+
+    public static T SpawnCharacter<T>(int index, Vector3 toPosition, enum_EntityFlag _flag,Transform parentTrans=null) where T: EntityCharacterBase
     {
         T entity = ObjectPoolManager<int, EntityBase>.Spawn(index, TF_Entity) as T;
         if (entity == null)
@@ -762,20 +770,20 @@ public static class GameObjectManager
         TBroadCaster<enum_BC_GameStatus>.Trigger<EntityBase>(enum_BC_GameStatus.OnEntitySpawn, entity);
         return entity as T;
     }
-    public static EntityCharacterAISub SpawnSubEntity(int index, Vector3 toPosition,int spanwer, enum_EntityFlag _flag)
+    public static EntityCharacterAISub SpawnSubAI(int index, Vector3 toPosition,int spanwer, enum_EntityFlag _flag)
     {
-        EntityCharacterAISub entity = SpawnEntity<EntityCharacterAISub>(index, toPosition, _flag) as EntityCharacterAISub;
+        EntityCharacterAISub entity = SpawnCharacter<EntityCharacterAISub>(index, toPosition, _flag) as EntityCharacterAISub;
         entity.OnRegister(spanwer);
         return entity;
     }
     public static EntityCharacterPlayer SpawnPlayer(CPlayerGameSave playerSave)
     {
-        EntityCharacterPlayer player = SpawnEntity<EntityCharacterPlayer>(0,Vector3.zero, enum_EntityFlag.Player);
+        EntityCharacterPlayer player = SpawnCharacter<EntityCharacterPlayer>(0,Vector3.zero, enum_EntityFlag.Player);
         player.SetPlayerInfo(playerSave.m_coins,GameDataManager.CreateActions(playerSave.m_storedActions));
         player.ObtainWeapon(SpawnWeapon(playerSave.m_weapon,GameDataManager.CreateActions(playerSave.m_weaponActions)));
         return player;
     }
-    public static void RecycleEntity(int index, EntityBase target) => ObjectPoolManager<int, EntityBase>.Recycle(index, target);
+    public static void RecycleCharacter(int index, EntityBase target) => ObjectPoolManager<int, EntityBase>.Recycle(index, target);
     #endregion
     #region Weapon
     public static WeaponBase SpawnWeapon(enum_PlayerWeapon type,List<ActionBase> actions,Transform toTrans=null)

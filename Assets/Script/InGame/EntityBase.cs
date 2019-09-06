@@ -45,6 +45,6 @@ public class EntityBase : MonoBehaviour
     protected virtual void OnRecycle()
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityRecycle, this);
-        GameObjectManager.RecycleEntity(I_PoolIndex, this);
+        GameObjectManager.RecycleCharacter(I_PoolIndex, this);
     }
 }

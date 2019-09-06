@@ -31,8 +31,6 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     public override void OnSpawn(int _entityID,enum_EntityFlag _flag)
     {
         base.OnSpawn(_entityID,_flag);
-        if (I_EntityID == -1)
-            Debug.LogError("Please Init Entity Info!" + gameObject.name.ToString());
        m_CharacterInfo.OnActivate();
        m_HealthManager.OnActivate(I_MaxHealth,I_DefaultArmor,true);
        m_SkinRenderers.Traversal((Renderer renderer) => {renderer.materials.Traversal((Material mat)=> {mat.SetFloat("_Amount1", 0);}); });

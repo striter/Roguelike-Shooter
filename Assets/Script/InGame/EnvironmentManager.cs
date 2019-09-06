@@ -13,6 +13,7 @@ public class EnvironmentManager : SimpleSingletonMono<EnvironmentManager> {
     public SBigmapLevelInfo m_currentLevel { get; private set; }
     public SBigmapLevelInfo[,] m_MapLevelInfo { get; private set; }
     public Light m_DirectionalLight { get; protected set; }
+    public Transform m_InteractParent => m_currentLevel.m_Level.tf_Interact;
     public System.Random m_mainSeed;
     public Action<SBigmapLevelInfo> OnLevelPrepared;
     public Action OnStageFinished;
