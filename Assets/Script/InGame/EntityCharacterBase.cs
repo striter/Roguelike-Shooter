@@ -17,6 +17,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         m_HealthManager = new EntityHealth(this, OnHealthChanged, OnDead);
         return m_HealthManager;
     }
+    protected override void ActivateHealthManager()=> m_HealthManager.OnActivate(I_MaxHealth, I_DefaultArmor, true);
     public EntityHealth m_HealthManager { get; private set; }
     public override bool B_IsCharacter => true;
     public override void Init(int _poolIndex)
@@ -28,11 +29,10 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         m_CharacterInfo = GetEntityInfo();
     }
 
-    public override void OnSpawn(int _entityID,enum_EntityFlag _flag)
+    public override void OnActivate(enum_EntityFlag _flag)
     {
-        base.OnSpawn(_entityID,_flag);
+       base.OnActivate(_flag);
        m_CharacterInfo.OnActivate();
-       m_HealthManager.OnActivate(I_MaxHealth,I_DefaultArmor,true);
        m_SkinRenderers.Traversal((Renderer renderer) => {renderer.materials.Traversal((Material mat)=> {mat.SetFloat("_Amount1", 0);}); });
     }
 

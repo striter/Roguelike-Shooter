@@ -43,7 +43,7 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
         RaycastHit hit = new RaycastHit();
         if (Input.GetKeyDown(KeyCode.Z) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
         {
-            EntityCharacterBase enermy = GameObjectManager.SpawnCharacter<EntityCharacterAI>(Z_TestEntitySpawn, hit.point, TestEntityFlag);
+            EntityCharacterBase enermy = GameObjectManager.SpawnEntityCharacter<EntityCharacterAI>(Z_TestEntitySpawn, hit.point, TestEntityFlag);
             if (TestEntityBuffOnSpawn > 0)
                 enermy.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common,DamageDeliverInfo.BuffInfo(-1, TestEntityBuffOnSpawn)));
         }
@@ -149,8 +149,8 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
         EntityPreset();
         GameObjectManager.Preset(m_GameLevel.m_currentStyle,m_GameLevel.m_currentStage);
         EnvironmentManager.Instance.GenerateAllEnviorment(m_GameLevel.m_currentStyle, m_GameLevel.m_GameSeed, OnLevelChanged,OnStageFinished);
-        m_StyledEnermyEntities = GameObjectManager.RegisterAllEntitiesGetEnermyDic(TResources.GetCommonEntities() ,TResources.GetEnermyEntities(m_GameLevel.m_currentStyle));
-        m_LocalPlayer = GameObjectManager.SpawnPlayer(GameDataManager.m_PlayerGameInfo);
+        m_StyledEnermyEntities = GameObjectManager.RegisterAllCharacters(TResources.GetCommonEntities() ,TResources.GetEnermyEntities(m_GameLevel.m_currentStyle));
+        m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_PlayerGameInfo);
         m_PlayerRecord = new GameRecordManager(GameDataManager.m_PlayerGameInfo);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageStart);
 
@@ -232,7 +232,7 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
                 break;
             case enum_TileType.CoinsTrade:
                 {
-                    GameObjectManager.SpawnCharacter<EntityTrader>(1, Vector3.back * 2, enum_EntityFlag.Neutal, EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact);
+                    GameObjectManager.SpawnEntityCharacter<EntityTrader>(1, Vector3.back * 2, enum_EntityFlag.Neutal, EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact);
                     ActionBase action1 = GameDataManager.CreateRandomPlayerAction(m_GameLevel.m_actionGenerate.GetTradeRarityLevel(m_GameLevel.m_GameSeed), m_GameLevel.m_GameSeed);
                     int price1 = GameExpression.GetTradePrice(enum_Interaction.PickupAction, action1.m_Level).RandomRangeInt(m_GameLevel.m_GameSeed);
                     GameObjectManager.SpawnInteract<InteractContainerTrade>(enum_Interaction.ContainerTrade, EnvironmentManager.NavMeshPosition(Vector3.left * 2, false), EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(price1, GameObjectManager.SpawnInteract<InteractPickupAction>(enum_Interaction.PickupAction, Vector3.zero, EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(action1));
@@ -249,7 +249,7 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
                 break;
             case enum_TileType.ActionAdjustment:
                 {
-                    GameObjectManager.SpawnCharacter<EntityTrader>(2, Vector3.zero, enum_EntityFlag.Neutal, EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact);
+                    GameObjectManager.SpawnEntityCharacter<EntityTrader>(2, Vector3.zero, enum_EntityFlag.Neutal, EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact);
                     GameObjectManager.SpawnInteract<InteractActionAdjustment>(enum_Interaction.ActionAdjustment,Vector3.zero, EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(m_GameLevel.m_currentStage);
                 }
                 break;
@@ -332,7 +332,6 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
             return;
 
         EntityCharacterBase character = entity as EntityCharacterBase;
-
         m_Entities.Add(entity.I_EntityID, character);
         m_AllyEntities[entity.m_Flag].Add(character);
         m_OppositeEntities.Traversal((enum_EntityFlag flag)=> {
@@ -457,7 +456,7 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
     {
         GameObjectManager.SpawnIndicator(30001, position, Vector3.up).Play(entityIndex,GameConst.I_EnermySpawnDelay);
         this.StartSingleCoroutine(100 + spawnIndex, TIEnumerators.PauseDel(GameConst.I_EnermySpawnDelay, () => {
-            GameObjectManager.SpawnCharacter<EntityCharacterAI>(entityIndex,position, enum_EntityFlag.Enermy );
+            GameObjectManager.SpawnEntityCharacter<EntityCharacterAI>(entityIndex,position, enum_EntityFlag.Enermy );
         }));
     }
     #endregion
@@ -692,9 +691,9 @@ public static class GameDataManager
 }
 public static class GameObjectManager
 {
-    public static Transform TF_Entity;
-    public static Transform TF_SFXWaitForRecycle;
-    public static Transform TF_SFXPlaying;
+    static Transform TF_Entity;
+    static Transform TF_SFXPlaying;
+    public static Transform TF_SFXWaitForRecycle { get; private set; }
     public static void Init()
     {
         TF_Entity = new GameObject("Entity").transform;
@@ -731,15 +730,19 @@ public static class GameObjectManager
     {
         registerDic.Traversal((LevelItemBase item, int count) => { ObjectPoolManager<LevelItemBase, LevelItemBase>.Register(item, GameObject.Instantiate(item), enum_PoolSaveType.StaticMaxAmount, count, null); });
     }
-    public static Dictionary<enum_CharacterType, List<int>> RegisterAllEntitiesGetEnermyDic(Dictionary<int, EntityBase> common, Dictionary<int, EntityBase> enermies)
+    public static void RegisterAllCommonEntities(EntityBase[] commonEntities)
     {
-        common.Traversal((int index, EntityBase entity) => {
+
+    }
+    public static Dictionary<enum_CharacterType, List<int>> RegisterAllCharacters(Dictionary<int, EntityBase> commonEntities, Dictionary<int, EntityBase> styledAICharacters)
+    {
+        commonEntities.Traversal((int index, EntityBase entity) => {
             ObjectPoolManager<int, EntityBase>.Register(index, entity, enum_PoolSaveType.DynamicMaxAmount, 1,
                 (EntityBase entityInstantiate) => { entityInstantiate.Init(index); });
         });
 
         Dictionary<enum_CharacterType, List<int>> enermyDic = new Dictionary<enum_CharacterType, List<int>>();
-        enermies.Traversal((int index, EntityBase entity) => {
+        styledAICharacters.Traversal((int index, EntityBase entity) => {
             ObjectPoolManager<int, EntityBase>.Register(index, entity, enum_PoolSaveType.DynamicMaxAmount, 1,
                 (EntityBase entityInstantiate) => { entityInstantiate.Init(index); });
 
@@ -751,39 +754,46 @@ public static class GameObjectManager
 
         return enermyDic;
     }
+    static void RegisterInteractions(enum_Style portalStyle, enum_StageLevel stageIndex)
+    {
+        ObjectPoolManager<enum_Interaction, InteractBase>.Register(enum_Interaction.Portal, TResources.GetInteractPortal(portalStyle), enum_PoolSaveType.StaticMaxAmount, 1, (InteractBase interact) => { interact.Init(); });
+        ObjectPoolManager<enum_Interaction, InteractBase>.Register(enum_Interaction.ActionChest, TResources.GetInteractActionChest(stageIndex), enum_PoolSaveType.StaticMaxAmount, 1, (InteractBase interact) => { interact.Init(); });
+        TCommon.TraversalEnum((enum_Interaction enumValue) =>
+        {
+            if (enumValue >= enum_Interaction.ContainerTrade)
+                ObjectPoolManager<enum_Interaction, InteractBase>.Register(enumValue, TResources.GetInteract(enumValue), enum_PoolSaveType.StaticMaxAmount, 1, (InteractBase interact) => { interact.Init(); });
+        });
+    }
     #endregion
     #region Spawn/Recycle
     #region Character
-    public static EntityItemBase SpawnEntityItem(int index, Vector3 toPos, Transform parentTrans = null)
+    static T SpawnEntity<T>(int _poolIndex, Vector3 toPos,enum_EntityFlag _flag, Transform parentTrans = null) where T:EntityBase
     {
-        return null;
-    }
-
-    public static T SpawnCharacter<T>(int index, Vector3 toPosition, enum_EntityFlag _flag,Transform parentTrans=null) where T: EntityCharacterBase
-    {
-        T entity = ObjectPoolManager<int, EntityBase>.Spawn(index, TF_Entity) as T;
+        T entity = ObjectPoolManager<int, EntityBase>.Spawn(_poolIndex, TF_Entity) as T;
         if (entity == null)
-            Debug.LogError("Entity ID:" + index +",Type:"+typeof(T).ToString()+" Not Found");
-        entity.transform.position = EnvironmentManager.NavMeshPosition(toPosition, true);
-        entity.OnSpawn(GameIdentificationManager.I_EntityID(_flag), _flag);
+            Debug.LogError("Entity ID:" + _poolIndex + ",Type:" + typeof(T).ToString() + " Not Found");
+        entity.OnActivate(_flag);
+        entity.transform.position = EnvironmentManager.NavMeshPosition(toPos, true);
         if (parentTrans) entity.transform.SetParent(parentTrans);
         TBroadCaster<enum_BC_GameStatus>.Trigger<EntityBase>(enum_BC_GameStatus.OnEntitySpawn, entity);
-        return entity as T;
+        return entity;
     }
+    public static T SpawnEntityItem<T>(int poolIndex, Vector3 toPosition, Transform parentTrans = null) where T : EntityItemBase => SpawnEntity<T>(poolIndex, toPosition,  enum_EntityFlag.None,parentTrans);
+    public static T SpawnEntityCharacter<T>(int poolIndex, Vector3 toPosition, enum_EntityFlag _flag, Transform parentTrans = null) where T:EntityCharacterBase => SpawnEntity<T>(poolIndex,toPosition,_flag,parentTrans);
     public static EntityCharacterAISub SpawnSubAI(int index, Vector3 toPosition,int spanwer, enum_EntityFlag _flag)
     {
-        EntityCharacterAISub entity = SpawnCharacter<EntityCharacterAISub>(index, toPosition, _flag) as EntityCharacterAISub;
+        EntityCharacterAISub entity = SpawnEntityCharacter<EntityCharacterAISub>(index, toPosition, _flag);
         entity.OnRegister(spanwer);
         return entity;
     }
-    public static EntityCharacterPlayer SpawnPlayer(CPlayerGameSave playerSave)
+    public static EntityCharacterPlayer SpawnEntityPlayer(CPlayerGameSave playerSave)
     {
-        EntityCharacterPlayer player = SpawnCharacter<EntityCharacterPlayer>(0,Vector3.zero, enum_EntityFlag.Player);
+        EntityCharacterPlayer player = SpawnEntity<EntityCharacterPlayer>(0,Vector3.zero, enum_EntityFlag.Player);
         player.SetPlayerInfo(playerSave.m_coins,GameDataManager.CreateActions(playerSave.m_storedActions));
         player.ObtainWeapon(SpawnWeapon(playerSave.m_weapon,GameDataManager.CreateActions(playerSave.m_weaponActions)));
         return player;
     }
-    public static void RecycleCharacter(int index, EntityBase target) => ObjectPoolManager<int, EntityBase>.Recycle(index, target);
+    public static void RecycleEntity(int index, EntityBase target) => ObjectPoolManager<int, EntityBase>.Recycle(index, target);
     #endregion
     #region Weapon
     public static WeaponBase SpawnWeapon(enum_PlayerWeapon type,List<ActionBase> actions,Transform toTrans=null)
@@ -843,16 +853,6 @@ public static class GameObjectManager
     public static void RecycleSFX(int index, SFXBase sfx) => ObjectPoolManager<int, SFXBase>.Recycle(index, sfx);
     #endregion
     #region Interact
-    static void RegisterInteractions(enum_Style portalStyle, enum_StageLevel stageIndex)
-    {
-        ObjectPoolManager<enum_Interaction, InteractBase>.Register( enum_Interaction.Portal,TResources.GetInteractPortal(portalStyle), enum_PoolSaveType.StaticMaxAmount,1,(InteractBase interact)=> { interact.Init(); });
-        ObjectPoolManager<enum_Interaction, InteractBase>.Register(enum_Interaction.ActionChest, TResources.GetInteractActionChest(stageIndex), enum_PoolSaveType.StaticMaxAmount, 1, (InteractBase interact) => { interact.Init(); });
-        TCommon.TraversalEnum((enum_Interaction enumValue) =>
-        {
-            if (enumValue >= enum_Interaction.ContainerTrade)
-                ObjectPoolManager<enum_Interaction, InteractBase>.Register(enumValue, TResources.GetInteract(enumValue), enum_PoolSaveType.StaticMaxAmount, 1, (InteractBase interact) => { interact.Init(); });
-        });
-    }
     public static T SpawnInteract<T>(enum_Interaction type, Vector3 toPos, Transform toTrans=null) where T : InteractBase
     {
         T target = ObjectPoolManager<enum_Interaction, InteractBase>.Spawn(type , toTrans==null?TF_SFXPlaying:toTrans) as T;

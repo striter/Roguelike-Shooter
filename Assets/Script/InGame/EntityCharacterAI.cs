@@ -33,12 +33,12 @@ public class EntityCharacterAI : EntityCharacterBase {
         m_AI = new EnermyAIControllerBase(this, EquipmentBase.AcquireEquipment(GameExpression.GetAIEquipment(entityPresetIndex, 0),this,tf_Barrel,m_CharacterInfo.GetDamageBuffInfo,OnDead), OnAttackAnim, OnCheckTarget);
     }
 
-    public override void OnSpawn(int id,enum_EntityFlag _flag)
+    public override void OnActivate(enum_EntityFlag _flag)
     {
         if (E_AnimatorIndex!= enum_EnermyAnim.Invalid)
             m_Animator = new EnermyAnimator(tf_Model.GetComponent<Animator>(), E_AnimatorIndex, OnAnimKeyEvent);
         m_AI.OnActivate();
-        base.OnSpawn(id, _flag);
+        base.OnActivate(_flag);
     }
     protected override void OnDead()
     {

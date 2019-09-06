@@ -11,8 +11,8 @@ public enum enum_PoolSaveType
 }
 public class ObjectPoolManager
 {
-    public static Transform tf_PoolSpawn;
-    public static Transform tf_PoolRegist;
+    protected static Transform tf_PoolSpawn { get; private set; }
+    protected static Transform tf_PoolRegist { get; private set; }
     public static void Init()
     {
         tf_PoolSpawn= new GameObject("PoolSpawn").transform;
