@@ -175,8 +175,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   E_ProjectileType: 1
-  F_Damage: 40
-  F_Speed: 20
+  F_Damage: 29
+  F_Speed: 40
   I_MuzzleIndex: 10001
   I_ImpactIndex: 20001
   I_IndicatorIndex: 0
@@ -189,3 +189,4 @@ MonoBehaviour:
     length: 0
   F_OffsetExtension: 0
   B_TargetReachBlink: 0
+  C_BlinkColor: {r: 1, g: 0, b: 0, a: 1}
