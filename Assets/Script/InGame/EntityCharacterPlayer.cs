@@ -106,7 +106,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected override void Update()
     {
         base.Update();
-        Debug.Log(m_PlayerInfo.B_Cloaked);
         if (m_HealthManager.b_IsDead)
             return;
 

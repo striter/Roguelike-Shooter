@@ -125,16 +125,16 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
         m_GameLevel = M_TESTSEED != ""? new GameLevelManager(M_TESTSEED, enum_StageLevel.Rookie):new GameLevelManager(GameDataManager.m_PlayerGameInfo);
         TBroadCaster<enum_BC_GameStatus>.Init();
         TBroadCaster<enum_BC_UIStatus>.Init();  
-        TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnSpawnEntity);
-        TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityDeactivate, OnRecycleEntity);
+        TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntiyActivate);
+        TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityDeactivate, OnEntityDeactivate);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
         Application.targetFrameRate = 60;
     }
     private void OnDisable()
     {
         this.StopAllSingleCoroutines();
-        TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnSpawnEntity);
-        TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityDeactivate, OnRecycleEntity);
+        TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntiyActivate);
+        TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityDeactivate, OnEntityDeactivate);
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
     }
     private void Start()
@@ -184,6 +184,8 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
 
         if(entity.m_Controller== enum_EntityController.Player)
             OnGameFinished(false);
+
+        OnBattleCharacterDead(entity);
     }
 
     void OnStageFinished()
@@ -289,7 +291,7 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
         if (m_GameLevel.m_actionGenerate.CanGenerateHealth(target.E_EnermyType))
             GameObjectManager.SpawnInteract<InteractPickupHealth>(enum_Interaction.PickupHealth, EnvironmentManager.NavMeshPosition(entity.transform.position, false), EnvironmentManager.Instance.m_currentLevel.m_Level.transform).Play(GameConst.I_HealthPickupAmount);
 
-        if (m_GameLevel.m_actionGenerate.CanGenerateArmor(target.E_EnermyType))
+        if ( m_GameLevel.m_actionGenerate.CanGenerateArmor(target.E_EnermyType))
             GameObjectManager.SpawnInteract<InteractPickupArmor>(enum_Interaction.PickupArmor, EnvironmentManager.NavMeshPosition(entity.transform.position, false), EnvironmentManager.Instance.m_currentLevel.m_Level.transform).Play(GameConst.I_ArmorPickupAmount);
 
         int coinAmount = m_GameLevel.m_actionGenerate.GetCoinGenerate(target.E_EnermyType);
@@ -326,11 +328,10 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
         });
     }
 
-    void OnSpawnEntity(EntityBase entity)
+    void OnEntiyActivate(EntityBase entity)
     {
         if (entity.m_Controller== enum_EntityController.None)
             return;
-
         EntityCharacterBase character = entity as EntityCharacterBase;
         m_Entities.Add(entity.I_EntityID, character);
         m_AllyEntities[entity.m_Flag].Add(character);
@@ -340,19 +341,17 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
         });
     }
 
-    void OnRecycleEntity(EntityBase entity)
+    void OnEntityDeactivate(EntityBase entity)
     {
         if (entity.m_Controller == enum_EntityController.None)
             return;
         EntityCharacterBase character = entity as EntityCharacterBase;
-
         m_Entities.Remove(entity.I_EntityID);
         m_AllyEntities[entity.m_Flag].Remove(character);
         m_OppositeEntities.Traversal((enum_EntityFlag flag) => {
             if (entity.m_Flag != enum_EntityFlag.Neutal && flag != entity.m_Flag)
                 m_OppositeEntities[flag].Remove(character);
         });
-        OnBattleEntityRecycle(character);
     }
 
     static bool B_CanHitEntity(HitCheckEntity targetHitCheck, int sourceID)  //If Match Will Hit Target,Player Particles ETC
@@ -411,7 +410,7 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
         });
         this.StartSingleCoroutine(0, IE_GenerateEnermy(m_EntityGenerating, .1f));
     }
-    void OnBattleEntityRecycle(EntityCharacterBase entity)
+    void OnBattleCharacterDead(EntityCharacterBase entity)
     {
         if (!B_Battling|| B_WaveEntityGenerating)
             return;
