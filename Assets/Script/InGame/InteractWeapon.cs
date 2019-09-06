@@ -6,6 +6,7 @@ public class InteractWeapon : InteractBase {
     Transform tf_ModelContainer;
     public WeaponBase m_Weapon { get; private set; }
     public override enum_Interaction m_InteractType => enum_Interaction.Weapon;
+    public override bool B_InteractOnce => false;
     public override void Init()
     {
         base.Init();

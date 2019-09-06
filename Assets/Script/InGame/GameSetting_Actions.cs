@@ -29,6 +29,7 @@ namespace GameSetting_Action
         public const int I_20002_Cost = 1;
         public const int I_20003_Cost = 2;
         public const int I_20004_Cost = 1;
+        public const int I_20005_Cost = 1;
 
         public const int I_30001_Cost = 1;
         public const int I_30002_Cost = 2;
@@ -80,6 +81,9 @@ namespace GameSetting_Action
         public static float F_20003_FireRate(enum_RarityLevel level) => 1f;
         public static float F_20003_DamageDealt(enum_RarityLevel level) => .7f * (int)level;
         public static float F_20004_DamageDealt(enum_RarityLevel level) => 2 + 2 * (int)level;
+        public static float IP_20005_BaseShieldHealthPercentage(enum_RarityLevel level) => 50;
+        public static float IP_20005_BonusShieldHealthPercentage(enum_RarityLevel level) => 50 * (int)level;
+        public static float F_20005_MinimumShieldHealth(enum_RarityLevel level) => 50;
 
         public static float F_30001_ArmorActionAdditive(enum_RarityLevel level) => 10 + 10 * (int)level;
         public static float F_30002_ReceiveDamageArmorAdditive(enum_RarityLevel level) => 3 + 3 * (int)level;
@@ -118,6 +122,14 @@ namespace GameSetting_Action
                 target.F_AttackDuration = new RangeFloat(0f, 0);
                 target.F_AttackTimes = new RangeInt(1, 0);
                 target.F_AttackRate = fireRate;
+            });
+        }
+        public static void PlayerAttachShield(EntityCharacterPlayer player, int equipmentIndex, int health)
+        {
+            player.OnUseEquipment(equipmentIndex,(EquipmentShieldAttach attach)=> {
+                attach.SetOnSpawn((SFXShield shield) => {
+                    shield.m_Health.I_MaxHealth = health;
+                });
             });
         }
         public static void PlayerDealtDamageToEntity(EntityCharacterPlayer player,int targetID, float damageAmount, enum_DamageType damageType= enum_DamageType.Common)
@@ -461,6 +473,22 @@ namespace GameSetting_Action
             ActionHelper.PlayerAcquireSimpleEquipmentItem(m_ActionEntity, m_Index, Value1* m_ActionEntity.m_WeaponCurrent.F_BaseDamage);
         }
         public Action_20004_Damage_ExplosiveGrenade(int _identity,enum_RarityLevel _level) : base(_identity,_level) { }
+    }
+    public class Action_20005_Damage_ExplosiveGrenade : ActionAfterUse
+    {
+        public override int m_Index => 20005;
+        public override int I_ActionCost => ActionData.I_20005_Cost;
+        public override float Value1 => ActionData.IP_20005_BaseShieldHealthPercentage(m_Level);
+        public override float Value2 => ActionData.IP_20005_BonusShieldHealthPercentage(m_Level);
+        public override float Value3 => ActionData.F_20001_TurretMinumumDamage(m_Level);
+        public override void OnActionUse()
+        {
+            base.OnActionUse();
+            float shieldHealth = Value1 + Value2;
+            shieldHealth = shieldHealth > Value3 ? shieldHealth : Value3;
+            ActionHelper.PlayerAttachShield(m_ActionEntity, m_Index, (int)shieldHealth);
+        }
+        public Action_20005_Damage_ExplosiveGrenade(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
     #endregion
     #region LevelEquipment

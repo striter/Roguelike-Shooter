@@ -3,18 +3,16 @@ using GameSetting;
 
 public class EntityComponent : EntityBase {
     public override enum_EntityController m_Controller => enum_EntityController.None;
-    Action OnItemDead;
-    public override void OnActivate(enum_EntityFlag _flag)
+
+    Action OnEntityDead;
+    public void ActionOnDead(Action _OnDead)
     {
-        base.OnActivate(_flag);
-    }
-    public void AttachComponent(Action _OnDead)
-    {
-        OnItemDead = _OnDead;
+        OnEntityDead = _OnDead;
     }
     protected override void OnDead()
     {
         base.OnDead();
-        OnItemDead?.Invoke();
+        OnEntityDead?.Invoke();
+        OnRecycle();
     }
 }

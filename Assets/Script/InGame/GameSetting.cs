@@ -1590,17 +1590,16 @@ namespace GameSetting
 
         public static EquipmentBase AcquireEquipment(int weaponIndex, EntityCharacterBase _entity, Transform tf_Barrel, Func<DamageDeliverInfo> GetDamageBuffInfo, Action OnDead)
         {
-            EquipmentBase weapon = null;
             SFXBase weaponInfo = GameObjectManager.GetEquipmentData<SFXBase>(weaponIndex);
             SFXProjectile projectile = weaponInfo as SFXProjectile;
             if (projectile)
             {
                 switch (projectile.E_ProjectileType)
                 {
-                    default: Debug.LogError("Invalid Barrage Type:" + projectile.E_ProjectileType); break;
-                    case enum_ProjectileFireType.Single: weapon = new EquipmentBarrageRange(projectile, _entity, tf_Barrel, GetDamageBuffInfo); break;
-                    case enum_ProjectileFireType.MultipleFan: weapon = new EquipmentBarrageMultipleFan(projectile, _entity, tf_Barrel, GetDamageBuffInfo); break;
-                    case enum_ProjectileFireType.MultipleLine: weapon = new EquipmentBarrageMultipleLine(projectile, _entity, tf_Barrel, GetDamageBuffInfo); break;
+                    default: Debug.LogError("Invalid Type:" + projectile.E_ProjectileType); break;
+                    case enum_ProjectileFireType.Single: return new EquipmentBarrageRange(projectile, _entity, tf_Barrel, GetDamageBuffInfo); 
+                    case enum_ProjectileFireType.MultipleFan: return new EquipmentBarrageMultipleFan(projectile, _entity, tf_Barrel, GetDamageBuffInfo); 
+                    case enum_ProjectileFireType.MultipleLine: return new EquipmentBarrageMultipleLine(projectile, _entity, tf_Barrel, GetDamageBuffInfo); 
                 }
             }
 
@@ -1609,22 +1608,27 @@ namespace GameSetting
             {
                 switch (cast.E_CastType)
                 {
-                    case enum_CastControllType.CastFromOrigin: weapon = new EquipmentCaster(cast, _entity, tf_Barrel, GetDamageBuffInfo); break;
-                    case enum_CastControllType.CastSelfDetonate: weapon = new EnermyCasterSelfDetonateAnimLess(cast, _entity, tf_Barrel, GetDamageBuffInfo, OnDead, _entity.tf_Model.Find("BlinkModel")); break;
-                    case enum_CastControllType.CastControlledForward: weapon = new EquipmentCasterControlled(cast, _entity, tf_Barrel, GetDamageBuffInfo); break;
-                    case enum_CastControllType.CastAtTarget: weapon = new EquipmentCasterTarget(cast, _entity, tf_Barrel, GetDamageBuffInfo); break;
+                    default: Debug.LogError("Invalid Type:" + cast.E_CastType); break;
+                    case enum_CastControllType.CastFromOrigin: return new EquipmentCaster(cast, _entity, tf_Barrel, GetDamageBuffInfo);
+                    case enum_CastControllType.CastSelfDetonate: return new EnermyCasterSelfDetonateAnimLess(cast, _entity, tf_Barrel, GetDamageBuffInfo, OnDead, _entity.tf_Model.Find("BlinkModel")); 
+                    case enum_CastControllType.CastControlledForward: return new EquipmentCasterControlled(cast, _entity, tf_Barrel, GetDamageBuffInfo);
+                    case enum_CastControllType.CastAtTarget: return new EquipmentCasterTarget(cast, _entity, tf_Barrel, GetDamageBuffInfo);
                 }
             }
 
             SFXBuffApply buffApply = weaponInfo as SFXBuffApply;
             if (buffApply)
-                weapon = new BuffApply(buffApply, _entity, tf_Barrel, GetDamageBuffInfo);
+                return new BuffApply(buffApply, _entity, tf_Barrel, GetDamageBuffInfo);
 
             SFXSubEntitySpawner entitySpawner = weaponInfo as SFXSubEntitySpawner;
             if (entitySpawner)
-                weapon = new EquipmentEntitySpawner(entitySpawner, _entity, tf_Barrel, GetDamageBuffInfo);
+                return new EquipmentEntitySpawner(entitySpawner, _entity, tf_Barrel, GetDamageBuffInfo);
 
-            return weapon;
+            SFXShield shield = weaponInfo as SFXShield;
+            if (shield)
+                return new EquipmentShieldAttach(shield, _entity, tf_Barrel, GetDamageBuffInfo);
+
+            return null;
         }
     }
     public class EquipmentCaster : EquipmentBase
@@ -1818,6 +1822,24 @@ namespace GameSetting
         }
     }
 
+    public class EquipmentShieldAttach : EquipmentBase
+    {
+        public override bool B_TargetAlly => true;
+        public EquipmentShieldAttach(SFXShield shield, EntityCharacterBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(shield, _controller, _transform, _GetBuffInfo)
+        {
+        }
+        Action<SFXShield> OnSpawn;
+        public void SetOnSpawn(Action<SFXShield> _OnSpawn)
+        {
+            OnSpawn = _OnSpawn;
+        }
+        public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
+        {
+            SFXShield shield = GameObjectManager.SpawnEquipment<SFXShield>(i_weaponIndex, transformBarrel.position, Vector3.up);
+            OnSpawn?.Invoke(shield);
+            shield.Attach(_target);
+        }
+    }
     #endregion
 
     #endregion

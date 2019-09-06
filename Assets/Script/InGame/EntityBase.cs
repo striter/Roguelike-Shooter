@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using GameSetting;
+using System;
 
 public class EntityBase : MonoBehaviour
 {
@@ -26,7 +27,6 @@ public class EntityBase : MonoBehaviour
         m_Flag = _flag;
         ActivateHealthManager();
         I_EntityID = GameIdentificationManager.I_EntityID(m_Flag);
-        gameObject.name = I_EntityID.ToString() + "_" + I_PoolIndex.ToString();
         m_HitChecks.Traversal((HitCheckEntity check) => { check.Attach(this, OnReceiveDamage); check.SetEnable(true); });
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityActivate, this);
     }
@@ -41,10 +41,6 @@ public class EntityBase : MonoBehaviour
     protected virtual void OnHealthChanged(enum_HealthChangeMessage message)
     {
     }
-    public void ForceDeath()
-    {
-        OnDead();
-    }
     protected virtual void OnDead()
     {
         TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.HideAllAttaches(); check.SetEnable(false); });
@@ -55,5 +51,9 @@ public class EntityBase : MonoBehaviour
         if (I_PoolIndex < 0)
             return;
         GameObjectManager.RecycleEntity(I_PoolIndex, this);
+    }
+    public void ForceDeath()
+    {
+        OnDead();
     }
 }

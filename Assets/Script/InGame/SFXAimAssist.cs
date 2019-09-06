@@ -12,6 +12,7 @@ public class SFXAimAssist : SFXBase {
     float m_assistDistance;
     int m_castMask;
     Func<Collider, bool> CanHitCollider;
+    protected override bool m_AutoRecycle => false;
     public override void Init(int _sfxIndex)
     {
         base.Init(_sfxIndex);
@@ -32,6 +33,7 @@ public class SFXAimAssist : SFXBase {
 
     protected override void Update()
     {
+        base.Update();
         if (!m_lineRenderer.enabled)
             return;
 
