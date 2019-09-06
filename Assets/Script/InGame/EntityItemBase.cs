@@ -1,13 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using GameSetting;
-using UnityEngine;
 
 public class EntityItemBase : EntityBase {
     public override enum_EntityController m_Controller => enum_EntityController.None;
-    
-    public void AddEvent()
+    Action OnItemDead;
+    public void AddEvent(Action _OnDead)
     {
-
+        OnItemDead = _OnDead;
+    }
+    protected override void OnDead()
+    {
+        base.OnDead();
+        OnItemDead?.Invoke();
     }
 }

@@ -39,14 +39,16 @@ public class EntityBase : MonoBehaviour
 
     protected virtual void OnHealthChanged(enum_HealthChangeMessage message)
     {
-        OnRecycle();
     }
     protected virtual void OnDead()
     {
+        OnRecycle();
         TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.HideAllAttaches(); check.SetEnable(false); });
     }
     protected virtual void OnRecycle()
     {
+        if (I_PoolIndex < 0)
+            return;
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityRecycle, this);
         GameObjectManager.RecycleEntity(I_PoolIndex, this);
     }

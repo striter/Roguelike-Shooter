@@ -235,7 +235,6 @@ public class WeaponBase : MonoBehaviour {
             {
                 OnTriggerSuccessful();
                 OnActionPause(f_fireRate,true);
-                OnActionPause(0, true, null);
             }
         }
     }
@@ -252,6 +251,7 @@ public class WeaponBase : MonoBehaviour {
             {
                 B_TriggerDown=OnTriggerSuccessful();
                 OnActionPause(f_fireRate, true);
+                OnActionPause(0, true, null);
             }
         }
     }
