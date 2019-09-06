@@ -932,7 +932,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   I_MaxHealth: 300
   I_DefaultArmor: 0
-  F_MovementSpeed: 6
+  F_MovementSpeed: 3
   F_AttackSpread: 5
   E_EnermyType: 2
   E_AnimatorIndex: 152
