@@ -420,7 +420,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         Vector3 GetSamplePosition()
         {
             Vector3 m_SamplePosition= m_Entity.transform.position+ (b_MoveTowardsTarget? v3_TargetDirection : -v3_TargetDirection).normalized*5;
-            return EnvironmentManager.NavMeshPosition(m_SamplePosition+TCommon.RandomXZSphere(5f));
+            return EnvironmentManager.NavMeshPosition(m_SamplePosition+TCommon.RandomXZSphere(3f));
         }
 
         bool FrontBlocked() => Physics.SphereCast(new Ray(headTransform.position, headTransform.forward), 1f, 2, GameLayer.Mask.I_Static);

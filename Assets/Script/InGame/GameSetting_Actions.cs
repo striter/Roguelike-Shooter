@@ -24,6 +24,7 @@ namespace GameSetting_Action
         public const int I_10015_Cost = 2;
         public const int I_10016_Cost = 2;
         public const int I_10017_Cost = 1;
+        public static int I_10018_Cost(enum_RarityLevel level) => 3-(int)level;
 
         public const int I_20001_Cost = 2;
         public const int I_20002_Cost = 1;
@@ -48,6 +49,7 @@ namespace GameSetting_Action
         public const float F_10014_Duration = 30f;
         public const float F_10015_Duration = 30f;
         public const float F_10016_Duration = 30f;
+        public const float F_10018_Duration = 10f;
         #endregion
         #region Expressions
         public static float F_10001_ArmorAdditive(enum_RarityLevel level) => 30 + 30f * (int)level;
@@ -167,12 +169,6 @@ namespace GameSetting_Action
         }
         public ActionAfterUse(int _identity,enum_RarityLevel _level) : base(_identity,_level) { }
     }
-    public class ActionAfterDuration : ActionBase
-    {
-        public override enum_ActionExpireType m_ActionExpireType => enum_ActionExpireType.AfterDuration;
-        public ActionAfterDuration(int _identity,enum_RarityLevel _level) : base(_identity,_level) { }
-        public ActionAfterDuration(int _identity, enum_RarityLevel _level,float _duration) : base(_identity, _level,_duration) { }
-    }
     public class ActionAfterFire : ActionBase
     {
         public override enum_ActionExpireType m_ActionExpireType => enum_ActionExpireType.AfterFire;
@@ -247,13 +243,14 @@ namespace GameSetting_Action
         }
         public Action_10001_ArmorAdditive(int _identity,enum_RarityLevel _level) : base(_identity,_level) { }
     }
-    public class Action_10002_ArmorDamageAdditive : ActionAfterDuration
+    public class Action_10002_ArmorDamageAdditive : ActionBase
     {
         public override int m_Index => 10002;
+        protected override float F_Duration => ActionData.F_10002_Duration;
         public override int I_ActionCost => ActionData.I_10002_Cost;
         public override float Value1 => ActionData.F_10002_ArmorDamageAdditive(m_Level);
         public override float F_DamageAdditive =>  Value1* m_ActionEntity.m_HealthManager.m_CurrentArmor;
-        public Action_10002_ArmorDamageAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level, ActionData.F_10002_Duration) { }
+        public Action_10002_ArmorDamageAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
     public class Action_10003_ArmorMultiplyAdditive : ActionAfterUse
     {
@@ -278,46 +275,51 @@ namespace GameSetting_Action
         } 
         public Action_10004_ArmorActionReturn(int _identity,enum_RarityLevel _level) : base(_identity,_level) { }
     }
-    public class Action_10005_ArmorDamageReduction : ActionAfterDuration
+    public class Action_10005_ArmorDamageReduction : ActionBase
     {
         public override int m_Index => 10005;
+        protected override float F_Duration => ActionData.F_10005_Duration;
         public override int m_EffectIndex => base.m_EffectIndex;
         public override int I_ActionCost => ActionData.I_10005_Cost;
         public override float Value1 => ActionData.IP_10005_ArmorDamageReduction(m_Level);
         public override float m_DamageReduction=> Value1 / 100f;
-        public Action_10005_ArmorDamageReduction(int _identity, enum_RarityLevel _level) : base(_identity ,_level, ActionData.F_10005_Duration) { }
+        public Action_10005_ArmorDamageReduction(int _identity, enum_RarityLevel _level) : base(_identity ,_level) { }
     }
-    public class Action_10006_FireRateAdditive: ActionAfterDuration
+    public class Action_10006_FireRateAdditive: ActionBase
     {
         public override int m_Index => 10006;
         public override int I_ActionCost => ActionData.I_10006_Cost;
         public override float Value1 =>ActionData.IP_10006_FireRateAdditive(m_Level);
         public override float m_FireRateMultiply => Value1 / 100f;
-        public Action_10006_FireRateAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level, ActionData.F_10006_Duration) { }
+        protected override float F_Duration => ActionData.F_10006_Duration;
+        public Action_10006_FireRateAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
-    public class Action_10007_RecoilReduction : ActionAfterDuration
+    public class Action_10007_RecoilReduction : ActionBase
     {
         public override int m_Index => 10007;
         public override int I_ActionCost => ActionData.I_10007_Cost;
         public override float Value1 => ActionData.IP_10007_RecoilMultiplyAdditive(m_Level);
         public override float F_RecoilReduction => Value1 / 100f;
-        public Action_10007_RecoilReduction(int _identity, enum_RarityLevel _level) : base(_identity, _level, ActionData.F_10007_Duration) { }
+        protected override float F_Duration => ActionData.F_10007_Duration;
+        public Action_10007_RecoilReduction(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
-    public class Action_10008_ClipMultiply : ActionAfterDuration
+    public class Action_10008_ClipMultiply : ActionBase
     {
         public override int m_Index => 10008;
         public override int I_ActionCost => ActionData.I_10008_Cost;
         public override float Value1 => ActionData.IP_10008_ClipMultiply(m_Level) ;
         public override float F_ClipMultiply => Value1 / 100f;
-        public Action_10008_ClipMultiply(int _identity, enum_RarityLevel _level) : base(_identity, _level, ActionData.F_10008_Duration) { }
+        protected override float F_Duration => ActionData.F_10008_Duration;
+        public Action_10008_ClipMultiply(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
-    public class Action_10009_ProjectileSpeedMultiply : ActionAfterDuration
+    public class Action_10009_ProjectileSpeedMultiply : ActionBase
     {
         public override int m_Index => 10009;
         public override int I_ActionCost => ActionData.I_10009_Cost;
         public override float Value1 => ActionData.IP_10009_BulletSpeedAdditive(m_Level);
         public override float F_ProjectileSpeedMultiply => Value1 / 100f;
-        public Action_10009_ProjectileSpeedMultiply(int _identity, enum_RarityLevel _level) : base(_identity, _level, ActionData.F_10009_Duration) { }
+        protected override float F_Duration => ActionData.F_10009_Duration;
+        public Action_10009_ProjectileSpeedMultiply(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
     public class Action_10010_SingleDamageMultiply : ActionAfterFire
     {
@@ -374,24 +376,25 @@ namespace GameSetting_Action
         }
         public Action_10013_SingleProjectileKillActionUpgrade(int _identity,enum_RarityLevel _level) : base(_identity,_level) { }
     }
-    public class Action_10014_ReloadRateMultiply : ActionAfterDuration
+    public class Action_10014_ReloadRateMultiply : ActionBase
     {
-        public override enum_ActionExpireType m_ActionExpireType => enum_ActionExpireType.AfterDuration;
         public override int m_Index => 10014;
         public override int I_ActionCost => ActionData.I_10014_Cost;
         public override float Value1 => ActionData.IP_10014_ReloadRateMultiplyPercentage(m_Level);
         public override float m_ReloadRateMultiply => Value1/100f;
-        public Action_10014_ReloadRateMultiply(int _identity, enum_RarityLevel _level) : base(_identity, _level, ActionData.F_10014_Duration) { }
+        protected override float F_Duration => ActionData.F_10014_Duration;
+        public Action_10014_ReloadRateMultiply(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
-    public class Action_10015_ArmorDemageReturn : ActionAfterDuration
+    public class Action_10015_ArmorDemageReturn : ActionBase
     {
         public override int m_Index => 10015;
         public override int I_ActionCost => ActionData.I_10015_Cost;
         public override float Value1 => ActionData.F_10015_ArmorDamageReturn(m_Level);
         public override void OnReceiveDamage(int applier, float amount) => ActionHelper.PlayerDealtDamageToEntity(m_ActionEntity, applier, Value1 * m_ActionEntity.m_HealthManager.m_CurrentArmor);
-        public Action_10015_ArmorDemageReturn(int _identity, enum_RarityLevel _level) : base(_identity, _level,ActionData.F_10015_Duration) { }
+        protected override float F_Duration => ActionData.F_10015_Duration;
+        public Action_10015_ArmorDemageReturn(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
-    public class Action_10016_FireBurstDamageReduce : ActionAfterDuration
+    public class Action_10016_FireBurstDamageReduce : ActionBase
     {
         public override int m_Index => 10016;
         public override int I_ActionCost => ActionData.I_10016_Cost;
@@ -399,7 +402,8 @@ namespace GameSetting_Action
         public override float Value2 => ActionData.IP_10016_FireRateAdditivePercentage(m_Level);
         public override float m_DamageMultiply => -Value1/100f;
         public override float m_FireRateMultiply => Value2/100f;
-        public Action_10016_FireBurstDamageReduce(int _identity, enum_RarityLevel _level) : base(_identity, _level, ActionData.F_10016_Duration) { }
+        protected override float F_Duration => ActionData.F_10016_Duration;
+        public Action_10016_FireBurstDamageReduce(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
 
     public class Action_10017_SingleProjectileKillArmorAdditive : ActionAfterFire
@@ -417,6 +421,14 @@ namespace GameSetting_Action
             return true;
         }
         public Action_10017_SingleProjectileKillArmorAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+    public class Action_10018_Vanish : ActionBase
+    {
+        public override int m_Index => 10018;
+        public override int I_ActionCost => ActionData.I_10018_Cost(m_Level);
+        protected override float F_Duration => ActionData.F_10018_Duration;
+        public override float F_CloakDuration => ActionData.F_10018_Duration;
+        public Action_10018_Vanish(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
     #endregion
     #region EquipmentItem

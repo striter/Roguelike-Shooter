@@ -302,7 +302,7 @@ namespace GameSetting
 
     public enum enum_RarityLevel { Invalid=-1, L1=1,L2=2,L3=3, }
 
-    public enum enum_ActionExpireType { Invalid = -1, AfterDuration = 1, AfterUse =2  ,AfterFire=3 ,AfterBattle=4,AfterWeaponSwitch=5, }
+    public enum enum_ActionExpireType { Invalid = -1,Common=1,AfterUse =2  ,AfterFire=3 ,AfterBattle=4,AfterWeaponSwitch=5, }
 
     public enum enum_PlayerWeapon
     {
@@ -816,6 +816,13 @@ namespace GameSetting
 
         float f_stunCheck = 0;
         public bool B_Stunned => f_stunCheck > 0;
+        protected void StunReset() => f_stunCheck = 0;
+        protected void OnStun(float duration) => f_stunCheck = duration > 0 ? duration : f_stunCheck;
+
+        float f_cloakCheck = 0;
+        public bool B_Cloaked => f_cloakCheck > 0;
+        protected void CloakReset() => f_cloakCheck = 0;
+        protected void OnCloak(float duration) => f_cloakCheck = duration > 0 ? duration : f_cloakCheck;
 
         public virtual DamageDeliverInfo GetDamageBuffInfo() => DamageDeliverInfo.DamageInfo(m_Entity.I_EntityID ,F_DamageMultiply);
         Func<DamageInfo, bool> OnReceiveDamage;
@@ -828,24 +835,26 @@ namespace GameSetting
             OnReceiveDamage = _OnReceiveDamage;
             OnExpireChange = _OnExpireChange;
         }
-        public virtual void OnActivate()
+
+        public virtual void OnActivate()=> Reset();
+        public virtual void OnDeactivate()=> Reset();
+        protected virtual void Reset()
         {
-            f_stunCheck = 0f;
-            EntityInfoChange();
-            OnExpireChange();
-        }
-        public virtual void OnDeactivate()
-        {
+            StunReset();
+            CloakReset();
             m_Expires.Clear();
             m_BuffEffects.Clear();
             EntityInfoChange();
+            OnExpireChange();
         }
+
         public virtual void Tick(float deltaTime) {
             m_Expires.Traversal((ExpireBase buff) => { buff.OnTick(deltaTime); });
-            if (!b_infoUpdated)
-                UpdateInfo();
+            if (!b_infoUpdated) UpdateInfo();
             if (B_Stunned) f_stunCheck -= deltaTime;
+            if (B_Cloaked) f_cloakCheck -= deltaTime;
         }
+
         protected virtual void AddExpire(ExpireBase expire)
         {
             Debug.Log("Add Expire:"+expire.m_Index);
@@ -885,7 +894,7 @@ namespace GameSetting
                     break;
             }
         }
-        void OnStun(float duration) => f_stunCheck = f_stunCheck < duration ? duration : f_stunCheck;
+
         protected virtual void OnSetExpireInfo(ExpireBase expire)
         {
             F_DamageMultiply += expire.m_DamageMultiply;
@@ -1046,6 +1055,7 @@ namespace GameSetting
         public void OnUseAcion(ActionBase targetAction)
         {
             m_ActionEquiping.Traversal((ActionBase action) => { action.OnAddActionElse(targetAction.m_Index); });
+            OnCloak(targetAction.F_CloakDuration);
             AddExpire(targetAction);
             m_ActionEquiping.Add(targetAction);
             targetAction.Activate(m_Player, OnExpireElapsed);
@@ -1088,6 +1098,7 @@ namespace GameSetting
         public override DamageDeliverInfo GetDamageBuffInfo()
         {
             DamageDeliverInfo info = DamageDeliverInfo.PlayerDamageInfo(m_Entity.I_EntityID, F_DamageMultiply, F_DamageAdditive);
+            CloakReset();
             m_ActionEquiping.Traversal((ActionBase action) => {
                 action.OnAfterFire(info.I_IdentiyID);
 
@@ -1224,16 +1235,13 @@ namespace GameSetting
         public virtual float m_DamageMultiply => 0;
         public virtual float m_DamageReduction => 0;
         public virtual float m_EffectDuration => m_ExpireDuration;
-        public float m_ExpireDuration { get; private set; } = 0;
         private Action<ExpireBase> OnExpired;
+        public float m_ExpireDuration { get; private set; } = 0;
         public float f_expireCheck { get; private set; }
-        public ExpireBase(float _ExpireDuration)
+        protected void Activate(float _ExpireDuration,Action<ExpireBase> _OnExpired)
         {
             m_ExpireDuration = _ExpireDuration;
             ExpireRefresh();
-        }
-        protected void Activate(Action<ExpireBase> _OnExpired)
-        {
             OnExpired = _OnExpired;
         }
         public void ExpireRefresh()
@@ -1268,12 +1276,12 @@ namespace GameSetting
         Func<DamageInfo, bool> OnDOTDamage;
         int I_SourceID;
         float f_dotCheck;
-        public BuffBase(int sourceID, SBuff _buffInfo, Func<DamageInfo, bool> _OnDOTDamage, Action<ExpireBase> _OnExpired) : base(_buffInfo.m_ExpireDuration)
+        public BuffBase(int sourceID, SBuff _buffInfo, Func<DamageInfo, bool> _OnDOTDamage, Action<ExpireBase> _OnExpired)
         {
             I_SourceID = sourceID;
             m_buffInfo = _buffInfo;
             OnDOTDamage = _OnDOTDamage;
-            base.Activate(_OnExpired);
+            base.Activate(_buffInfo.m_ExpireDuration, _OnExpired);
         }
         public override void OnTick(float deltaTime)
         {
@@ -1297,7 +1305,7 @@ namespace GameSetting
         public int m_Identity { get; private set; } = -1;
         public virtual int I_ActionCost => -1;
         public virtual bool B_ActionAble => true;
-        public virtual enum_ActionExpireType m_ActionExpireType => enum_ActionExpireType.Invalid;
+        public virtual enum_ActionExpireType m_ActionExpireType => enum_ActionExpireType.Common;
         public virtual float Value1 => 0;
         public virtual float Value2 => 0;
         public virtual float Value3 => 0;
@@ -1307,14 +1315,14 @@ namespace GameSetting
         public virtual bool B_ClipOverride => false;
         public virtual int I_ClipAdditive => 0;
         public virtual float F_ClipMultiply => 0;
-        protected ActionBase(int _identity,enum_RarityLevel _level, float _expireDuration = 0) : base(_expireDuration)
+        protected virtual float F_Duration => 0;
+        protected ActionBase(int _identity,enum_RarityLevel _level)
         {
             m_Identity = _identity;
             m_Level = _level;
-            if (m_ActionExpireType == enum_ActionExpireType.Invalid)
-                Debug.LogError("Override Type Please!");
         }
-        public void Activate(EntityCharacterPlayer _actionEntity,Action<ExpireBase> OnExpired) { m_ActionEntity = _actionEntity;Activate(OnExpired); }
+        public virtual float F_CloakDuration => 0;
+        public void Activate(EntityCharacterPlayer _actionEntity,Action<ExpireBase> OnExpired) { m_ActionEntity = _actionEntity;Activate(F_Duration,OnExpired); }
         public virtual void OnActionUse() { }
         public virtual void OnAddActionElse(float actionAmount) { }
         public virtual void OnReceiveDamage(int applier, float amount) { }

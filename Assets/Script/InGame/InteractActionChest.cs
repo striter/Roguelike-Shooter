@@ -8,6 +8,7 @@ public class InteractActionChest : InteractBase {
     List<ActionBase> m_Actions;
     EntityCharacterPlayer m_Interactor;
     public override enum_Interaction m_InteractType => enum_Interaction.ActionChest;
+    public override bool B_InteractOnce => false;
     public override void Init()
     {
         base.Init();

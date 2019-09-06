@@ -16,6 +16,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public EquipmentBase m_Equipment { get; private set; }
     public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized* m_CharacterInfo.F_MovementSpeed * time;
     public PlayerInfoManager m_PlayerInfo { get; private set; }
+    SkinnedMeshRenderer m_Geometry, m_Transparent;
+
     protected override CharacterInfoManager GetEntityInfo()
     {
         m_PlayerInfo = new PlayerInfoManager(this, OnReceiveDamage, OnExpireChange,OnActionsChange);
@@ -31,6 +33,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         tf_WeaponHoldLeft = transform.FindInAllChild("WeaponHold_L");
         m_Animator = new PlayerAnimator(tf_Model.GetComponent<Animator>());
         transform.Find("InteractDetector").GetComponent<InteractDetector>().Init(OnInteractCheck);
+
+        m_Geometry = tf_Model.Find("Skin").GetComponent<SkinnedMeshRenderer>();
+        m_Transparent = tf_Model.Find("Transparent").GetComponent<SkinnedMeshRenderer>();
     }
     public void SetPlayerInfo(int coins, List<ActionBase> storedActions)
     {
@@ -97,7 +102,26 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (m_WeaponCurrent != null)
             m_WeaponCurrent.Trigger(down);
     }
-    
+
+    protected override void Update()
+    {
+        base.Update();
+        Debug.Log(m_PlayerInfo.B_Cloaked);
+        if (m_HealthManager.b_IsDead)
+            return;
+
+        bool canFire = !Physics.SphereCast(new Ray(tf_Head.position, tf_Head.forward), .3f, 1.5f, GameLayer.Mask.I_Static);
+        m_WeaponCurrent.Tick(Time.deltaTime, canFire);
+        m_Assist.SetEnable(canFire);
+        transform.rotation = Quaternion.Lerp(transform.rotation, CameraController.CameraXZRotation, GameConst.F_PlayerCameraSmoothParam);
+        Vector3 direction = (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized;
+        m_CharacterController.Move(direction * m_CharacterInfo.F_MovementSpeed * Time.deltaTime + Vector3.down * GameConst.F_PlayerFallSpeed * Time.deltaTime);
+
+        m_Geometry.enabled = !m_PlayerInfo.B_Cloaked;
+        m_Transparent.enabled = m_PlayerInfo.B_Cloaked;
+
+        OnCommonStatus();
+    }
     #region WeaponControll
     void OnReloadDown()
     {
@@ -148,20 +172,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         m_MoveAxisInput = moveDelta;
         m_Animator.SetRun(m_MoveAxisInput);
-    }
-    protected override void Update()
-    {
-        base.Update();
-        if (m_HealthManager.b_IsDead)
-            return;
-
-        bool canFire = !Physics.SphereCast(new Ray(tf_Head.position, tf_Head.forward), .3f, 1.5f, GameLayer.Mask.I_Static);
-        m_WeaponCurrent.Tick(Time.deltaTime,canFire);
-        m_Assist.SetEnable(canFire);
-        transform.rotation = Quaternion.Lerp(transform.rotation,CameraController.CameraXZRotation,GameConst.F_PlayerCameraSmoothParam);
-        Vector3 direction = (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized;
-        m_CharacterController.Move(direction*m_CharacterInfo.F_MovementSpeed * Time.deltaTime + Vector3.down * GameConst.F_PlayerFallSpeed*Time.deltaTime);
-        OnCommonStatus();
     }
     public void OnFireAddRecoil(Vector2 recoil)
     {

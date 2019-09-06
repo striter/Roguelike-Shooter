@@ -729,10 +729,6 @@ public static class GameObjectManager
     {
         registerDic.Traversal((LevelItemBase item, int count) => { ObjectPoolManager<LevelItemBase, LevelItemBase>.Register(item, GameObject.Instantiate(item), count, null); });
     }
-    public static void RegisterAllCommonEntities(EntityBase[] commonEntities)
-    {
-
-    }
     public static Dictionary<enum_CharacterType, List<int>> RegisterAllCharacters(Dictionary<int, EntityBase> commonEntities, Dictionary<int, EntityBase> styledAICharacters)
     {
         commonEntities.Traversal((int index, EntityBase entity) => {
@@ -765,18 +761,18 @@ public static class GameObjectManager
     }
     #endregion
     #region Spawn/Recycle
-    #region Character
+    #region Entity
     static T SpawnEntity<T>(int _poolIndex, Vector3 toPos,enum_EntityFlag _flag, Transform parentTrans = null) where T:EntityBase
     {
         T entity = ObjectPoolManager<int, EntityBase>.Spawn(_poolIndex, TF_Entity) as T;
         if (entity == null)
             Debug.LogError("Entity ID:" + _poolIndex + ",Type:" + typeof(T).ToString() + " Not Found");
         entity.OnActivate(_flag);
+        entity.gameObject.name = entity.I_EntityID.ToString() + "_" + _poolIndex.ToString();
         entity.transform.position = EnvironmentManager.NavMeshPosition(toPos, true);
         if (parentTrans) entity.transform.SetParent(parentTrans);
         return entity;
     }
-    public static T SpawnEntityItem<T>(int poolIndex, Vector3 toPosition, Transform parentTrans = null) where T : EntityComponent => SpawnEntity<T>(poolIndex, toPosition,  enum_EntityFlag.None,parentTrans);
     public static T SpawnEntityCharacter<T>(int poolIndex, Vector3 toPosition, enum_EntityFlag _flag, Transform parentTrans = null) where T:EntityCharacterBase => SpawnEntity<T>(poolIndex,toPosition,_flag,parentTrans);
     public static EntityCharacterAISub SpawnSubAI(int index, Vector3 toPosition,int spanwer, enum_EntityFlag _flag)
     {
