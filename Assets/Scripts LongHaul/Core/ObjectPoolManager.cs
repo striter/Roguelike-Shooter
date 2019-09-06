@@ -102,12 +102,9 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y:MonoBehaviour {
     public static void RecycleAll(T identity)
     {
         ItemPoolInfo info = d_ItemInfos[identity];
-        List<Y> ltemp = new List<Y>();
-        ltemp.AddRange(info.l_Active);
-        for (int i = 0; i < ltemp.Count; i++)
-        {
-            Recycle(identity, ltemp[i]);
-        }
+        info.l_Active.Traversal((Y temp) => {
+            Recycle(identity,temp);
+        }, true);
     }
     public static void RecycleAll() 
     {
