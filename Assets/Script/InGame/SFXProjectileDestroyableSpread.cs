@@ -43,7 +43,7 @@ public class SFXProjectileDestroyableSpread : SFXProjectileDestroyable {
         i_spreadCountCheck++;
         if (i_spreadCountCheck >= I_SpreadCount)
         {
-            OnRecycle();
+            m_Health.ForceDeath();
             return;
         }
     }

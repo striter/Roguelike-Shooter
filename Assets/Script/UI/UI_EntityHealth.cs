@@ -13,23 +13,23 @@ public class UI_EntityHealth : SimpleSingletonMono<UI_EntityHealth> {
     }
     private void Start()
     {
-        TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntitySpawn, OnEntitySpawn);
-        TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
+        TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
+        TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityDeactivate, OnEntityDeactivate);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageFinish, OnStageFinish);
         TBroadCaster<enum_BC_GameStatus>.Add<DamageDeliverInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterDamage, OnCharacterDamage);
     }
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntitySpawn, OnEntitySpawn);
-        TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
+        TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
+        TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityDeactivate, OnEntityDeactivate);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnStageFinish, OnStageFinish);
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageDeliverInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterDamage, OnCharacterDamage);
     }
 
     bool b_showEntityHealthInfo(EntityBase entity) => (entity as EntityCharacterPlayer) == null;
     int damageCount=0;
-    void OnEntitySpawn(EntityBase entity)
+    void OnEntityActivate(EntityBase entity)
     {
         if (!b_showEntityHealthInfo(entity))
             return;
@@ -37,7 +37,7 @@ public class UI_EntityHealth : SimpleSingletonMono<UI_EntityHealth> {
         m_HealthGrid.AddItem(entity.I_EntityID).AttachItem(entity);
     }
 
-    void OnEntityRecycle(EntityBase entity)
+    void OnEntityDeactivate(EntityBase entity)
     {
         if (!b_showEntityHealthInfo(entity))
             return;

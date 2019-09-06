@@ -228,8 +228,8 @@ namespace GameSetting
     {
         Invalid = -1,
 
-        OnEntitySpawn,
-        OnEntityRecycle,
+        OnEntityActivate,
+        OnEntityDeactivate,
 
         OnCharacterDamage,
         OnCharacterDead,

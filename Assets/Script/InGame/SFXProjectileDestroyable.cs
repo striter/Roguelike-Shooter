@@ -2,22 +2,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-[RequireComponent(typeof(EntityItemBase))]
+[RequireComponent(typeof(EntityComponent))]
 public class SFXProjectileDestroyable : SFXProjectile {
     HitCheckDynamic m_hitCheck;
-    EntityItemBase m_Health;
+     protected EntityComponent m_Health { get; private set; }
     public override void Init(int sfxIndex)
     {
         base.Init(sfxIndex);
-        m_Health = GetComponentInChildren<EntityItemBase>();
+        m_Health = GetComponentInChildren<EntityComponent>();
         m_Health.Init(-1);
+        m_Health.AttachComponent(OnDestroyed);
     }
-    public override void Play(DamageDeliverInfo buffInfo, Vector3 direction, Vector3 targetPosition)
+    public override void Play(DamageDeliverInfo damageInfo, Vector3 direction, Vector3 targetPosition)
     {
-        base.Play(buffInfo, direction, targetPosition);
+        base.Play(damageInfo, direction, targetPosition);
+        m_Health.OnActivate( GameManager.Instance.GetEntity(damageInfo.I_SourceID).m_Flag);
     }
 
-    protected virtual void OnDestroyed()
+    protected void OnDestroyed()
     {
         OnRecycle();
     }

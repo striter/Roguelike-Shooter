@@ -125,16 +125,16 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
         m_GameLevel = M_TESTSEED != ""? new GameLevelManager(M_TESTSEED, enum_StageLevel.Rookie):new GameLevelManager(GameDataManager.m_PlayerGameInfo);
         TBroadCaster<enum_BC_GameStatus>.Init();
         TBroadCaster<enum_BC_UIStatus>.Init();  
-        TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntitySpawn, OnSpawnEntity);
-        TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnRecycleEntity);
+        TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnSpawnEntity);
+        TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityDeactivate, OnRecycleEntity);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
         Application.targetFrameRate = 60;
     }
     private void OnDisable()
     {
         this.StopAllSingleCoroutines();
-        TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntitySpawn, OnSpawnEntity);
-        TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnRecycleEntity);
+        TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnSpawnEntity);
+        TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityDeactivate, OnRecycleEntity);
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
     }
     private void Start()
@@ -717,18 +717,17 @@ public static class GameObjectManager
         RegisterLevelBase(TResources.GetLevelBase(levelStyle));
         RegisterInteractions(levelStyle,stageLevel);
         TResources.GetAllEffectSFX().Traversal((int index, SFXBase target) => {
-            ObjectPoolManager<int, SFXBase>.Register(index, target,
-            enum_PoolSaveType.DynamicMaxAmount, 1,
+            ObjectPoolManager<int, SFXBase>.Register(index, target, 1,
             (SFXBase sfx) => { sfx.Init(index); });
         });
     }
     static void RegisterLevelBase(LevelBase levelprefab)
     {
-        ObjectPoolManager<int, LevelBase>.Register(0, levelprefab, enum_PoolSaveType.DynamicMaxAmount, 1, (LevelBase level) => { level.Init(); });
+        ObjectPoolManager<int, LevelBase>.Register(0, levelprefab, 1, (LevelBase level) => { level.Init(); });
     }
     public static void RegisterLevelItem(Dictionary<LevelItemBase, int> registerDic)
     {
-        registerDic.Traversal((LevelItemBase item, int count) => { ObjectPoolManager<LevelItemBase, LevelItemBase>.Register(item, GameObject.Instantiate(item), enum_PoolSaveType.StaticMaxAmount, count, null); });
+        registerDic.Traversal((LevelItemBase item, int count) => { ObjectPoolManager<LevelItemBase, LevelItemBase>.Register(item, GameObject.Instantiate(item), count, null); });
     }
     public static void RegisterAllCommonEntities(EntityBase[] commonEntities)
     {
@@ -737,13 +736,13 @@ public static class GameObjectManager
     public static Dictionary<enum_CharacterType, List<int>> RegisterAllCharacters(Dictionary<int, EntityBase> commonEntities, Dictionary<int, EntityBase> styledAICharacters)
     {
         commonEntities.Traversal((int index, EntityBase entity) => {
-            ObjectPoolManager<int, EntityBase>.Register(index, entity, enum_PoolSaveType.DynamicMaxAmount, 1,
+            ObjectPoolManager<int, EntityBase>.Register(index, entity, 1,
                 (EntityBase entityInstantiate) => { entityInstantiate.Init(index); });
         });
 
         Dictionary<enum_CharacterType, List<int>> enermyDic = new Dictionary<enum_CharacterType, List<int>>();
         styledAICharacters.Traversal((int index, EntityBase entity) => {
-            ObjectPoolManager<int, EntityBase>.Register(index, entity, enum_PoolSaveType.DynamicMaxAmount, 1,
+            ObjectPoolManager<int, EntityBase>.Register(index, entity, 1,
                 (EntityBase entityInstantiate) => { entityInstantiate.Init(index); });
 
             EntityCharacterAI enermy = entity as EntityCharacterAI;
@@ -756,12 +755,12 @@ public static class GameObjectManager
     }
     static void RegisterInteractions(enum_Style portalStyle, enum_StageLevel stageIndex)
     {
-        ObjectPoolManager<enum_Interaction, InteractBase>.Register(enum_Interaction.Portal, TResources.GetInteractPortal(portalStyle), enum_PoolSaveType.StaticMaxAmount, 1, (InteractBase interact) => { interact.Init(); });
-        ObjectPoolManager<enum_Interaction, InteractBase>.Register(enum_Interaction.ActionChest, TResources.GetInteractActionChest(stageIndex), enum_PoolSaveType.StaticMaxAmount, 1, (InteractBase interact) => { interact.Init(); });
+        ObjectPoolManager<enum_Interaction, InteractBase>.Register(enum_Interaction.Portal, TResources.GetInteractPortal(portalStyle), 5, (InteractBase interact) => { interact.Init(); });
+        ObjectPoolManager<enum_Interaction, InteractBase>.Register(enum_Interaction.ActionChest, TResources.GetInteractActionChest(stageIndex), 5, (InteractBase interact) => { interact.Init(); });
         TCommon.TraversalEnum((enum_Interaction enumValue) =>
         {
             if (enumValue >= enum_Interaction.ContainerTrade)
-                ObjectPoolManager<enum_Interaction, InteractBase>.Register(enumValue, TResources.GetInteract(enumValue), enum_PoolSaveType.StaticMaxAmount, 1, (InteractBase interact) => { interact.Init(); });
+                ObjectPoolManager<enum_Interaction, InteractBase>.Register(enumValue, TResources.GetInteract(enumValue),5, (InteractBase interact) => { interact.Init(); });
         });
     }
     #endregion
@@ -775,10 +774,9 @@ public static class GameObjectManager
         entity.OnActivate(_flag);
         entity.transform.position = EnvironmentManager.NavMeshPosition(toPos, true);
         if (parentTrans) entity.transform.SetParent(parentTrans);
-        TBroadCaster<enum_BC_GameStatus>.Trigger<EntityBase>(enum_BC_GameStatus.OnEntitySpawn, entity);
         return entity;
     }
-    public static T SpawnEntityItem<T>(int poolIndex, Vector3 toPosition, Transform parentTrans = null) where T : EntityItemBase => SpawnEntity<T>(poolIndex, toPosition,  enum_EntityFlag.None,parentTrans);
+    public static T SpawnEntityItem<T>(int poolIndex, Vector3 toPosition, Transform parentTrans = null) where T : EntityComponent => SpawnEntity<T>(poolIndex, toPosition,  enum_EntityFlag.None,parentTrans);
     public static T SpawnEntityCharacter<T>(int poolIndex, Vector3 toPosition, enum_EntityFlag _flag, Transform parentTrans = null) where T:EntityCharacterBase => SpawnEntity<T>(poolIndex,toPosition,_flag,parentTrans);
     public static EntityCharacterAISub SpawnSubAI(int index, Vector3 toPosition,int spanwer, enum_EntityFlag _flag)
     {
@@ -801,7 +799,7 @@ public static class GameObjectManager
         if (!ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Registed(type))
         {
             WeaponBase preset = TResources.GetPlayerWeapon(type);
-            ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Register(type, preset, enum_PoolSaveType.DynamicMaxAmount, 1, (WeaponBase targetWeapon) => { targetWeapon.Init(GameDataManager.GetWeaponProperties(type)); });
+            ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Register(type, preset, 1, (WeaponBase targetWeapon) => { targetWeapon.Init(GameDataManager.GetWeaponProperties(type)); });
         }
         WeaponBase weapon = ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Spawn(type, toTrans ? toTrans : TF_Entity);
         weapon.OnSpawn(actions);
@@ -831,7 +829,7 @@ public static class GameObjectManager
     public static T SpawnEquipment<T>(int weaponIndex, Vector3 position, Vector3 normal, Transform attachTo = null) where T : SFXBase
     {
         if (!ObjectPoolManager<int, SFXBase>.Registed(weaponIndex))
-            ObjectPoolManager<int, SFXBase>.Register(weaponIndex, TResources.GetDamageSource(weaponIndex), enum_PoolSaveType.DynamicMaxAmount, 1, (SFXBase sfx) => { sfx.Init(weaponIndex); });
+            ObjectPoolManager<int, SFXBase>.Register(weaponIndex, TResources.GetDamageSource(weaponIndex), 1, (SFXBase sfx) => { sfx.Init(weaponIndex); });
 
         T template = ObjectPoolManager<int, SFXBase>.Spawn(weaponIndex, attachTo) as T;
         if (template == null)
@@ -843,7 +841,7 @@ public static class GameObjectManager
     public static T GetEquipmentData<T>(int weaponIndex) where T : SFXBase
     {
         if (!ObjectPoolManager<int, SFXBase>.Registed(weaponIndex))
-            ObjectPoolManager<int, SFXBase>.Register(weaponIndex, TResources.GetDamageSource(weaponIndex), enum_PoolSaveType.DynamicMaxAmount, 1, (SFXBase sfx) => { sfx.Init(weaponIndex); });
+            ObjectPoolManager<int, SFXBase>.Register(weaponIndex, TResources.GetDamageSource(weaponIndex), 1, (SFXBase sfx) => { sfx.Init(weaponIndex); });
 
         T damageSourceInfo = ObjectPoolManager<int, SFXBase>.GetRegistedSpawnItem(weaponIndex) as T;
         if (damageSourceInfo == null)

@@ -60,6 +60,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
 
     protected override void OnDead()
     {
+        base.OnDead();
         m_CharacterInfo.OnDeactivate();
         this.StartSingleCoroutine(1, TIEnumerators.ChangeValueTo((float value) => {
             TCommon.Traversal(m_SkinRenderers, (Renderer renderer) => {
