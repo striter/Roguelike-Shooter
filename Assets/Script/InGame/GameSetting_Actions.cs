@@ -258,7 +258,7 @@ namespace GameSetting_Action
         public override float F_Duration => ActionData.F_10002_Duration;
         public override int I_ActionCost => ActionData.I_10002_Cost;
         public override float Value1 => ActionData.F_10002_ArmorDamageAdditive(m_Level);
-        public override float F_DamageAdditive =>  Value1* m_ActionEntity.m_HealthManager.m_CurrentArmor;
+        public override float F_DamageAdditive =>  Value1* m_ActionEntity.m_PlayerHealth.m_CurrentArmor;
         public Action_10002_ArmorDamageAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
     public class Action_10003_ArmorMultiplyAdditive : ActionAfterUse
@@ -268,7 +268,7 @@ namespace GameSetting_Action
         public override float Value1 => ActionData.IP_10003_ArmorMultiplyAdditive(m_Level);
         public override void OnActionUse() {
             base.OnActionUse();
-            ActionHelper.PlayerReceiveHealing(m_ActionEntity, Value1 / 100f * m_ActionEntity.m_HealthManager.m_CurrentArmor, enum_DamageType.ArmorOnly);
+            ActionHelper.PlayerReceiveHealing(m_ActionEntity, Value1 / 100f * m_ActionEntity.m_PlayerHealth.m_CurrentArmor, enum_DamageType.ArmorOnly);
         } 
         public Action_10003_ArmorMultiplyAdditive(int _identity,enum_RarityLevel _level) : base(_identity,_level) { }
     }
@@ -280,7 +280,7 @@ namespace GameSetting_Action
         public override void OnActionUse()
         {
             base.OnActionUse();
-            ActionHelper.PlayerReceiveActionAmount(m_ActionEntity, Value1* m_ActionEntity.m_HealthManager.m_CurrentArmor);
+            ActionHelper.PlayerReceiveActionAmount(m_ActionEntity, Value1* m_ActionEntity.m_PlayerHealth.m_CurrentArmor);
         } 
         public Action_10004_ArmorActionReturn(int _identity,enum_RarityLevel _level) : base(_identity,_level) { }
     }
@@ -347,7 +347,7 @@ namespace GameSetting_Action
         public override float m_DamageMultiply => Value1 / 100f;
         protected override bool OnActionHit( EntityCharacterBase _targetEntity)
         {
-            if (!_targetEntity.m_HealthManager.b_IsDead)
+            if (!_targetEntity.m_Health.b_IsDead)
                 return false;
             ActionHelper.PlayerReceiveActionAmount(m_ActionEntity, Value2);
             return true;
@@ -363,7 +363,7 @@ namespace GameSetting_Action
         public override float m_DamageMultiply => Value1 / 100f;
         protected override bool OnActionHit( EntityCharacterBase _targetEntity)
         {
-            if (!_targetEntity.m_HealthManager.b_IsDead)
+            if (!_targetEntity.m_Health.b_IsDead)
                 return false;
             ActionHelper.PlayerReceiveHealing(m_ActionEntity, Value2, enum_DamageType.HealthOnly);
             return true;
@@ -378,7 +378,7 @@ namespace GameSetting_Action
         public override float m_DamageMultiply => Value1 / 100f;
         protected override bool OnActionHit( EntityCharacterBase _targetEntity)
         {
-            if (!_targetEntity.m_HealthManager.b_IsDead)
+            if (!_targetEntity.m_Health.b_IsDead)
                 return false;
             ActionHelper.PlayerUpgradeAction(m_ActionEntity);
             return true;
@@ -399,7 +399,7 @@ namespace GameSetting_Action
         public override int m_Index => 10015;
         public override int I_ActionCost => ActionData.I_10015_Cost;
         public override float Value1 => ActionData.F_10015_ArmorDamageReturn(m_Level);
-        public override void OnReceiveDamage(int applier, float amount) => ActionHelper.PlayerDealtDamageToEntity(m_ActionEntity, applier, Value1 * m_ActionEntity.m_HealthManager.m_CurrentArmor);
+        public override void OnReceiveDamage(int applier, float amount) => ActionHelper.PlayerDealtDamageToEntity(m_ActionEntity, applier, Value1 * m_ActionEntity.m_PlayerHealth.m_CurrentArmor);
         public override float F_Duration => ActionData.F_10015_Duration;
         public Action_10015_ArmorDemageReturn(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
@@ -424,7 +424,7 @@ namespace GameSetting_Action
         public override float m_DamageMultiply => Value1 / 100f;
         protected override bool OnActionHit(EntityCharacterBase _targetEntity)
         {
-            if (!_targetEntity.m_HealthManager.b_IsDead)
+            if (!_targetEntity.m_Health.b_IsDead)
                 return false;
             ActionHelper.PlayerReceiveHealing(m_ActionEntity, Value2, enum_DamageType.ArmorOnly);
             return true;
@@ -472,9 +472,9 @@ namespace GameSetting_Action
         public override float Value3 => ActionData.F_20001_TurretMinumumDamage(m_Level);
         public override void OnActionUse() {
             base.OnActionUse();
-            ActionHelper.PlayerAcquireEntityEquipmentItem(m_ActionEntity, m_Index,  (int)(Value1* m_ActionEntity.m_HealthManager.m_CurrentArmor), 1f, GetDamageInfo);
+            ActionHelper.PlayerAcquireEntityEquipmentItem(m_ActionEntity, m_Index,  (int)(Value1* m_ActionEntity.m_PlayerHealth.m_CurrentArmor), 1f, GetDamageInfo);
         }
-        public DamageDeliverInfo GetDamageInfo()=> DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, Value3+Value2 * m_ActionEntity.m_HealthManager.m_CurrentArmor, -1);
+        public DamageDeliverInfo GetDamageInfo()=> DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, Value3+Value2 * m_ActionEntity.m_PlayerHealth.m_CurrentArmor, -1);
         public Action_20001_Armor_Turret_Cannon(int _identity,enum_RarityLevel _level) : base(_identity,_level) { }
     }
     public class Action_20002_FireRate_FrozenGrenade : ActionAfterUse
@@ -726,7 +726,7 @@ namespace GameSetting_Action
             if (m_activating||m_cooldowning)
                 return;
 
-            if (m_ActionEntity.m_HealthManager.m_CurrentArmor <= 0)
+            if (m_ActionEntity.m_PlayerHealth.m_CurrentArmor <= 0)
             {
                 m_activateCheck += Value1;
                 m_cooldownCheck += Value3;
@@ -753,7 +753,7 @@ namespace GameSetting_Action
         public override void OnDealtDemage(EntityCharacterBase receiver, float amount)
         {
             base.OnDealtDemage(receiver, amount);
-            if (receiver.m_HealthManager.b_IsDead)
+            if (receiver.m_Health.b_IsDead)
                 ActionHelper.PlayerReceiveHealing(m_ActionEntity,Value1, enum_DamageType.HealthOnly);
         }
         public Action_40014_KillArmorAdditive(int _identity,enum_RarityLevel _level) : base(_identity,_level) { }

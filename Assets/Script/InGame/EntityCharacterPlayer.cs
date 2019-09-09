@@ -17,7 +17,13 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized* m_CharacterInfo.F_MovementSpeed * time;
     public PlayerInfoManager m_PlayerInfo { get; private set; }
     SkinnedMeshRenderer m_Geometry, m_Transparent;
-
+    public EntityHealth m_PlayerHealth { get; private set; }
+    protected override HealthBase GetHealthManager()
+    {
+        m_PlayerHealth = new EntityHealth(this, OnHealthChanged, OnDead);
+        return m_PlayerHealth;
+    }
+    protected override void ActivateHealthManager() => m_PlayerHealth.OnActivate(I_MaxHealth, I_DefaultArmor, true);
     protected override CharacterInfoManager GetEntityInfo()
     {
         m_PlayerInfo = new PlayerInfoManager(this, OnReceiveDamage, OnExpireChange,OnActionsChange);
@@ -83,7 +89,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         m_Equipment = null;
         m_PlayerInfo.OnBattleFinish();
-        m_HealthManager.OnActivate(I_MaxHealth, I_DefaultArmor,false);
+        m_PlayerHealth.OnActivate(I_MaxHealth, I_DefaultArmor,false);
     }
 
     void OnMainButtonDown(bool down)
@@ -106,7 +112,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected override void Update()
     {
         base.Update();
-        if (m_HealthManager.b_IsDead)
+        if (m_PlayerHealth.b_IsDead)
             return;
 
         bool canFire = !Physics.SphereCast(new Ray(tf_Head.position, tf_Head.forward), .3f, 1.5f, GameLayer.Mask.I_Static);
@@ -257,7 +263,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected override void OnHealthChanged(enum_HealthChangeMessage type)
     {
         base.OnHealthChanged(type);
-        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerHealthStatus, m_HealthManager);
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerHealthStatus, m_PlayerHealth);
     }
     #endregion
 

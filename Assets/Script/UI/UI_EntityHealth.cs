@@ -14,7 +14,7 @@ public class UI_EntityHealth : SimpleSingletonMono<UI_EntityHealth> {
     private void Start()
     {
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
-        TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityDeactivate, OnEntityDeactivate);
+        TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageFinish, OnStageFinish);
         TBroadCaster<enum_BC_GameStatus>.Add<DamageDeliverInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterDamage, OnCharacterDamage);
     }
@@ -22,7 +22,7 @@ public class UI_EntityHealth : SimpleSingletonMono<UI_EntityHealth> {
     {
         base.OnDestroy();
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
-        TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityDeactivate, OnEntityDeactivate);
+        TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnStageFinish, OnStageFinish);
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageDeliverInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterDamage, OnCharacterDamage);
     }
@@ -37,7 +37,7 @@ public class UI_EntityHealth : SimpleSingletonMono<UI_EntityHealth> {
         m_HealthGrid.AddItem(entity.I_EntityID).AttachItem(entity);
     }
 
-    void OnEntityDeactivate(EntityBase entity)
+    void OnEntityRecycle(EntityBase entity)
     {
         if (!b_showEntityHealthInfo(entity))
             return;

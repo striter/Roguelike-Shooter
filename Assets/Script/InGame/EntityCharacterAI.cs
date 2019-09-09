@@ -24,8 +24,9 @@ public class EntityCharacterAI : EntityCharacterBase {
     [Range(0, 100)]
     public int I_AttackPreAimPercentage = 50;
     public bool B_AttackMove = true;
-    bool OnCheckTarget(EntityCharacterBase target) => target.m_Flag!=m_Flag && !target.m_HealthManager.b_IsDead;
+    bool OnCheckTarget(EntityCharacterBase target) => target.m_Flag!=m_Flag && !target.m_Health.b_IsDead;
     public override Vector3 m_PrecalculatedTargetPos(float time)=> tf_Head.position;
+    protected override HealthBase GetHealthManager()=>new AIHealth(this,OnHealthChanged, OnDead);
     public override void Init(int entityPresetIndex)
     {
         base.Init(entityPresetIndex);
@@ -39,6 +40,10 @@ public class EntityCharacterAI : EntityCharacterBase {
             m_Animator = new EnermyAnimator(tf_Model.GetComponent<Animator>(), E_AnimatorIndex, OnAnimKeyEvent);
         m_AI.OnActivate();
         base.OnActivate(_flag);
+    }
+    public void SetDifficulty(enum_StageLevel level)
+    {
+        (m_Health as AIHealth).SetDifficulty(level);
     }
     protected override void OnDead()
     {
@@ -58,7 +63,7 @@ public class EntityCharacterAI : EntityCharacterBase {
     protected override void Update()
     {
         base.Update();
-        if (m_HealthManager.b_IsDead)
+        if (m_Health.b_IsDead)
             return;
 
         if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
@@ -158,7 +163,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         int i_targetUnvisibleCount;
         bool b_targetRotationWithin;
         bool b_targetHideBehindWall => i_targetUnvisibleCount == 40;
-        bool b_targetAvailable => m_Target != null &&!m_Target.m_CharacterInfo.B_Cloaked && !m_Target.m_HealthManager.b_IsDead;
+        bool b_targetAvailable => m_Target != null &&!m_Target.m_CharacterInfo.B_Cloaked && !m_Target.m_Health.b_IsDead;
 
         public bool B_AgentEnabled
         {

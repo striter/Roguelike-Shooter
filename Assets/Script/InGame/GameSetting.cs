@@ -230,6 +230,7 @@ namespace GameSetting
 
         OnEntityActivate,
         OnEntityDeactivate,
+        OnEntityRecycle,
 
         OnCharacterDamage,
         OnCharacterDead,
@@ -616,11 +617,12 @@ namespace GameSetting
     public class HealthBase
     {
         public float m_CurrentHealth { get; private set; }
-        public float m_MaxHealth { get; private set; }
-
-        public float F_HealthScale => Mathf.Clamp01(m_CurrentHealth / m_MaxHealth);
+        public float m_BaseMaxHealth { get; private set; }
+        public virtual float m_MaxHealth => m_BaseMaxHealth;
         public virtual float F_TotalEHP => m_CurrentHealth;
-        public virtual float F_EHPScale => Mathf.Clamp01( m_CurrentHealth /  m_MaxHealth);
+        public bool B_HealthFull => m_CurrentHealth >= m_MaxHealth;
+        public float F_BaseHealthScale =>m_CurrentHealth / m_BaseMaxHealth;
+        public virtual float F_EHPScale => Mathf.Clamp01( m_CurrentHealth / m_MaxHealth);
         public bool b_IsDead => m_CurrentHealth <= 0;
         protected void DamageHealth(float health)
         {
@@ -638,9 +640,9 @@ namespace GameSetting
             OnHealthChanged = _OnHealthChanged;
             OnDead = _OnDead;
         }
-        public void OnActivate(float maxHealth,bool restoreHealth)
+        public void OnActivate(float baseMaxHealth,bool restoreHealth)
         {
-            m_MaxHealth = maxHealth;
+            m_BaseMaxHealth = baseMaxHealth;
             if(restoreHealth)
             m_CurrentHealth = m_MaxHealth;
         }
@@ -649,8 +651,16 @@ namespace GameSetting
             if (b_IsDead||damageInfo.m_Type== enum_DamageType.ArmorOnly)
                 return false;
 
-            m_CurrentHealth -= damageInfo.m_AmountApply * damageReduction;
-            OnHealthChanged?.Invoke( enum_HealthChangeMessage.DamageHealth);
+            if (damageInfo.m_AmountApply < 0)
+            {
+                DamageHealth(damageInfo.m_AmountApply);
+                OnHealthChanged?.Invoke(enum_HealthChangeMessage.ReceiveHealth);
+            }
+            else
+            {
+                DamageHealth(damageInfo.m_AmountApply * damageReduction);
+                OnHealthChanged?.Invoke(enum_HealthChangeMessage.DamageHealth);
+            }
 
             if (b_IsDead)
                 OnDead();
@@ -658,7 +668,19 @@ namespace GameSetting
             return true;
         }
     }
-
+    public class AIHealth : EntityHealth
+    {
+        int m_HealthMultiplier = 0;
+        public override float m_MaxHealth => m_BaseMaxHealth * m_HealthMultiplier;
+        public AIHealth(EntityCharacterBase _character,Action<enum_HealthChangeMessage> _OnHealthChanged, Action _OnDead) : base(_character,_OnHealthChanged, _OnDead)
+        {
+        }
+        public void SetDifficulty(enum_StageLevel _stage)
+        {
+            m_HealthMultiplier = (int)_stage;
+            OnActivate(m_BaseMaxHealth,true);
+        }
+    }
     public class EntityHealth:HealthBase
     {
         public float m_CurrentArmor { get; private set; }
@@ -739,7 +761,7 @@ namespace GameSetting
                         break;
                     case enum_DamageType.HealthOnly:
                         {
-                            if (F_HealthScale==1)
+                            if (B_HealthFull)
                                 return false;
                             DamageHealth(amountHeal);
                             OnHealthChanged( enum_HealthChangeMessage.ReceiveHealth);
@@ -747,7 +769,7 @@ namespace GameSetting
                         break;
                     case enum_DamageType.Common:
                         {
-                            float armorReceive = amountHeal  - m_CurrentHealth+m_MaxHealth;
+                            float armorReceive = amountHeal  - m_CurrentHealth+m_BaseMaxHealth;
                             DamageHealth(amountHeal);
                             if (armorReceive>0)
                             {
@@ -804,9 +826,6 @@ namespace GameSetting
         protected EntityCharacterBase m_Entity { get; private set; }
         public List<ExpireBase> m_Expires { get; private set; } = new List<ExpireBase>();
         List< SFXBuffEffect> m_BuffEffects = new List<SFXBuffEffect>();
-
-        public float F_MaxHealth => m_Entity.I_MaxHealth;
-        
         public float F_DamageReceiveMultiply { get; private set; } = 1f;
         public float F_MovementSpeedMultiply { get; private set; } = 1f;
         protected float F_FireRateMultiply { get; private set; } = 1f;

@@ -12,13 +12,6 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     Renderer[] m_SkinRenderers;
     public virtual Vector3 m_PrecalculatedTargetPos(float time) { Debug.LogError("Override This Please");return Vector2.zero; }
     protected virtual CharacterInfoManager GetEntityInfo() => new CharacterInfoManager(this, OnReceiveDamage, OnExpireChange);
-    protected override HealthBase GetHealthManager()
-    {
-        m_HealthManager = new EntityHealth(this, OnHealthChanged, OnDead);
-        return m_HealthManager;
-    }
-    protected override void ActivateHealthManager()=> m_HealthManager.OnActivate(I_MaxHealth, I_DefaultArmor, true);
-    public EntityHealth m_HealthManager { get; private set; }
     public override bool B_IsCharacter => true;
     public override void Init(int _poolIndex)
     {

@@ -50,6 +50,8 @@ public class EntityBase : MonoBehaviour
     {
         if (I_PoolIndex < 0)
             return;
+
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityRecycle, this);
         GameObjectManager.RecycleEntity(I_PoolIndex, this);
     }
     public void ForceDeath()
