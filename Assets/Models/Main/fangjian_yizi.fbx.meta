@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 7c0bfe1405ef0ee40b37d19423d1ebf8
+guid: 01bd21eb74ee74647a176d5ec122a4a3
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
@@ -47,10 +47,10 @@ ModelImporter:
     globalScale: 1
     meshCompression: 0
     addColliders: 0
-    importVisibility: 0
+    importVisibility: 1
     importBlendShapes: 1
-    importCameras: 0
-    importLights: 0
+    importCameras: 1
+    importLights: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
@@ -66,7 +66,7 @@ ModelImporter:
     useFileScale: 1
   tangentSpace:
     normalSmoothAngle: 60
-    normalImportMode: 1
+    normalImportMode: 0
     tangentImportMode: 3
     normalCalculationMode: 4
   importAnimation: 1

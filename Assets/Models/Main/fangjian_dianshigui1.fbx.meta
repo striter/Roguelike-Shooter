@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b4946d27bbf78274a96f8b53dc5f9ee3
+guid: 3e071c63856c9a944ba375182ea0b94b
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
@@ -8,7 +8,7 @@ ModelImporter:
     2100000: aiStandardSurface1
     2300000: //RootNode
     3300000: //RootNode
-    4300000: fangjian_chuang3
+    4300000: fangjian_dianshigui1
   externalObjects:
   - first:
       type: UnityEngine:Material
@@ -47,10 +47,10 @@ ModelImporter:
     globalScale: 1
     meshCompression: 0
     addColliders: 0
-    importVisibility: 0
+    importVisibility: 1
     importBlendShapes: 1
-    importCameras: 0
-    importLights: 0
+    importCameras: 1
+    importLights: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
@@ -66,7 +66,7 @@ ModelImporter:
     useFileScale: 1
   tangentSpace:
     normalSmoothAngle: 60
-    normalImportMode: 1
+    normalImportMode: 0
     tangentImportMode: 3
     normalCalculationMode: 4
   importAnimation: 1

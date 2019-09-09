@@ -64,7 +64,7 @@
 			fixed4 frag (v2f i) : SV_Target
 			{
 				float3 albedo = tex2D(_MainTex,i.uv)*_Color;
-				albedo*= DecodeLightmap(UNITY_SAMPLE_TEX2D(unity_Lightmap, i.uvlightmap))*3;
+				albedo *= DecodeLightmap(UNITY_SAMPLE_TEX2D(unity_Lightmap, i.uvlightmap))*3;
 				UNITY_LIGHT_ATTENUATION(atten, i,i.worldPos)
 				fixed3 ambient = albedo*UNITY_LIGHTMODEL_AMBIENT.xyz;
 				atten = atten * _Lambert + (1- _Lambert);

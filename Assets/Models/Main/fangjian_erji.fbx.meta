@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b65dec6bc74b22e4fbfe9a528de0200a
+guid: 478545ec0d9927f438d662cd97d185f8
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
@@ -20,7 +20,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: aiStandardSurface2
-    second: {fileID: 2100000, guid: aa6f9eda1c1c4664db6f56b864ff1f67, type: 2}
+    second: {fileID: 2100000, guid: 6787a5c73b41760459ea66fcbb7f759f, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
@@ -53,10 +53,10 @@ ModelImporter:
     globalScale: 1
     meshCompression: 0
     addColliders: 0
-    importVisibility: 0
+    importVisibility: 1
     importBlendShapes: 1
-    importCameras: 0
-    importLights: 0
+    importCameras: 1
+    importLights: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
@@ -72,7 +72,7 @@ ModelImporter:
     useFileScale: 1
   tangentSpace:
     normalSmoothAngle: 60
-    normalImportMode: 1
+    normalImportMode: 0
     tangentImportMode: 3
     normalCalculationMode: 4
   importAnimation: 1

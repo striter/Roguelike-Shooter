@@ -13,7 +13,6 @@ public class MainmenuManager : SimpleSingletonMono<MainmenuManager> {
         TCommon.TraversalEnum((enum_Scene scene) => {
             switch (scene)
             {
-                case enum_Scene.STest:
                 case enum_Scene.Game:
                     {
                         MainmenuItem item = interactions.Find(scene.ToString()).GetComponent<MainmenuItem>();
@@ -27,7 +26,9 @@ public class MainmenuManager : SimpleSingletonMono<MainmenuManager> {
     private void Start()
     {
         TouchInputManager.Instance.OnSingleTouch += OnTouch;
+        CameraEffectManager.AddCameraEffect<PE_BloomSpecific>();
     }
+    
     RaycastHit hit;
     void OnTouch(bool touch)
     {
