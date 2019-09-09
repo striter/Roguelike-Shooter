@@ -1,5 +1,5 @@
 ﻿
-Shader "Special/Projector" {
+Shader "Game/Special/Projector" {
 	Properties{
 		_TintColor("Tint Color", Color) = (1,1,1,1)
 		_ColorStrength("Color strength", Float) = 1.0

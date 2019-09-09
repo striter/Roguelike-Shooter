@@ -15,6 +15,6 @@
 		Cull Back Lighting Off ZWrite Off Fog { Color(0,0,0,0) }
 
 		Blend SrcAlpha One
-		USEPASS "Game/Particle/Additive_NoiseFlow/MAIN"
+		USEPASS "Game/Particle/Additive_NoiseFlow_Trail/MAIN"
 	}
 }

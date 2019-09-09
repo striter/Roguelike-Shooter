@@ -8,7 +8,6 @@ public class WeaponBase : MonoBehaviour {
     public enum_PlayerAnim E_Anim= enum_PlayerAnim.Invalid;
     public bool B_AttachLeft=false;
 
-
     EntityCharacterPlayer m_Attacher;
     public SWeapon m_WeaponInfo { get; private set; }
     public List<ActionBase> m_WeaponAction { get; private set; } = new List<ActionBase>();

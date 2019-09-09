@@ -68,7 +68,8 @@ namespace TExcel
                         string data = reader.GetString(i);  
                         row[i] = data == null ? "" : data;
                     }
-                    result.Add(row);
+                    if(row[0]!="")
+                        result.Add(row);
                 }
             } while (extraSheets && reader.NextResult());
             return result;
