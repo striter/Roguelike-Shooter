@@ -215,7 +215,7 @@ public class WeaponBase : MonoBehaviour {
                  OnSetActionPause(pauseDuration);
 
             if (autoReload)
-                this.StartSingleCoroutine(0, TIEnumerators.PauseDel(pauseDuration, OnCheckAutoReload));
+                OnCheckAutoReload();
 
             if (ActionAfterPause != null)
                 this.StartSingleCoroutine(1, TIEnumerators.PauseDel(pauseDuration, ActionAfterPause));
@@ -246,12 +246,10 @@ public class WeaponBase : MonoBehaviour {
         public override void Tick(float deltaTime)
         {
             base.Tick(deltaTime);
-            Debug.Log(B_TriggerDown);
             if (B_TriggerDown && OnTriggerActionable())
             {
-                B_TriggerDown=OnTriggerSuccessful();
-                OnActionPause(f_fireRate, true);
-                OnActionPause(0, true, null);
+                if (OnTriggerSuccessful())
+                    OnActionPause(f_fireRate,true);
             }
         }
     }
