@@ -981,7 +981,7 @@ namespace GameSetting
         protected bool B_OneOverride { get; private set; } = false;
         protected int I_ClipAdditive { get; private set; } = 0;
         protected float F_ClipMultiply { get; private set; } = 1f;
-        public int I_ClipAmount(int baseClipAmount) => (int)(((B_OneOverride ? 1 : baseClipAmount) + I_ClipAdditive) * F_ClipMultiply);
+        public int I_ClipAmount(int baseClipAmount) =>baseClipAmount==0?0:(int)(((B_OneOverride ? 1 : baseClipAmount) + I_ClipAdditive) * F_ClipMultiply);
         protected float F_DamageAdditive = 0f;
 
         public float m_ActionAmount { get; private set; } = 0f;

@@ -25,6 +25,8 @@ namespace GameSetting_Action
         public const int I_10016_Cost = 2;
         public const int I_10017_Cost = 1;
         public static int I_10018_Cost(enum_RarityLevel level) => 3-(int)level;
+        public const int I_10019_Cost = 2;
+        public const int I_10020_Cost = 2;
 
         public const int I_20001_Cost = 2;
         public const int I_20002_Cost = 1;
@@ -38,6 +40,7 @@ namespace GameSetting_Action
         public const int I_30004_Cost = 2;
         public const int I_30005_Cost = 1;
         public const int I_30006_Cost = 1;
+        public const int I_30007_Cost = 2;
         #endregion
         #region Durations
         public const float F_10002_Duration = 30f;
@@ -50,6 +53,8 @@ namespace GameSetting_Action
         public const float F_10015_Duration = 30f;
         public const float F_10016_Duration = 30f;
         public const float F_10018_Duration = 10f;
+        public const float F_10019_Duration = 15f;
+        public const float F_10020_Duration = 15f;
         #endregion
         #region Expressions
         public static float F_10001_ArmorAdditive(enum_RarityLevel level) => 30 + 30f * (int)level;
@@ -73,6 +78,8 @@ namespace GameSetting_Action
         public static float IP_10016_FireRateAdditivePercentage(enum_RarityLevel level) => 60 + 60 * (int)level;
         public static float IP_10017_DamageAdditivePercentage(enum_RarityLevel level) => 200 + 200 * (int)level;
         public static float F_10017_EntityKillArmorAdditive(enum_RarityLevel level) => 40 + 30 * (int)level;
+        public static int I_10019_ClipAdditiveAmount(enum_RarityLevel level) => 3 * (int)level;
+        public static int IP_10020_HealthStealPercentage(enum_RarityLevel level) => 5*(int)level;
 
         public static float F_20001_Health(enum_RarityLevel level) => 200;
         public static float F_20001_ArmorTurretDamage(enum_RarityLevel level) => 1.5f * (int)level;
@@ -95,6 +102,8 @@ namespace GameSetting_Action
         public static float F_30005_HealAmount(enum_RarityLevel level) => 20f;
         public static int I_30006_ReloadTimesCount(enum_RarityLevel level) => 1;
         public static int IP_30006_ReloadDamageMultiplyPercentage(enum_RarityLevel level) => 100 * (int)level;
+        public static float F_MovementStackupMax(enum_RarityLevel level) => 100f;
+        public static float F_MovementStackupDamageAdditive(float stackUp, enum_RarityLevel level) => stackUp *3* (int)level;
 
         public static float F_40001_DamageDealtCount(enum_RarityLevel level) => 2000 / Mathf.Pow(2, (int)level-1);
         public static float F_40001_ArmorAdditive(enum_RarityLevel level) => 20f;
@@ -430,6 +439,28 @@ namespace GameSetting_Action
         public override float F_CloakDuration => ActionData.F_10018_Duration;
         public Action_10018_Vanish(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
+    public class Action_10019_ClipAdditive : ActionBase
+    {
+        public override int m_Index => 10019;
+        public override int I_ActionCost => ActionData.I_10019_Cost;
+        public override float Value1 => ActionData.I_10019_ClipAdditiveAmount(m_Level);
+        public override int I_ClipAdditive => (int)Value1;
+        protected override float F_Duration => ActionData.F_10019_Duration;
+        public Action_10019_ClipAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+    public class Action_10020_DamageSteal : ActionBase
+    {
+        public override int m_Index => 10020;
+        public override int I_ActionCost => ActionData.I_10020_Cost;
+        protected override float F_Duration => ActionData.F_10020_Duration;
+        public override float Value1 => ActionData.IP_10020_HealthStealPercentage(m_Level);
+        public override void OnDealtDemage(EntityCharacterBase receiver, float amount)
+        {
+            base.OnDealtDemage(receiver, amount);
+            ActionHelper.PlayerReceiveHealing(m_ActionEntity, amount * Value1, enum_DamageType.HealthOnly);
+        }
+        public Action_10020_DamageSteal(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
     #endregion
     #region EquipmentItem
     public class Action_20001_Armor_Turret_Cannon : ActionAfterUse
@@ -574,6 +605,44 @@ namespace GameSetting_Action
         }
         protected override void OnReloadTrigger() => m_TriggerOn = true;
         public Action_30006_ReloadDamageMultiply(int _identity,enum_RarityLevel _level) : base(_identity,_level) { }
+    }
+    public class Action_30007_MovementStackupDamageAdditive : ActionAfterBattle
+    {
+        public override int m_Index => 30007;
+        public override int I_ActionCost => ActionData.I_30007_Cost;
+        public override float Value1 => ActionData.F_MovementStackupMax(m_Level);
+        public override float Value2 => ActionData.F_MovementStackupDamageAdditive(m_stackUp, m_Level);
+        public override float F_DamageAdditive
+        {
+            get
+            {
+                b_fired = true;
+                return Value2;
+            }
+        }
+        protected bool b_fired = false;
+        protected float m_stackUp;
+        protected Vector3 m_prePos;
+        public override void OnActionUse()
+        {
+            base.OnActionUse();
+            m_prePos = m_ActionEntity.transform.position;
+            m_stackUp = 0;
+            b_fired = false;
+        }
+        public override void OnTick(float deltaTime)
+        {
+            base.OnTick(deltaTime);
+            if(b_fired)
+            {
+                b_fired = false;
+                m_stackUp = 0;
+            }
+            Vector3 curPos = m_ActionEntity.transform.position;
+            m_stackUp += TCommon.GetXZDistance(m_prePos,curPos);
+            m_prePos = m_ActionEntity.transform.position;
+        }
+        public Action_30007_MovementStackupDamageAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
     #endregion
     #region WeaponAction
