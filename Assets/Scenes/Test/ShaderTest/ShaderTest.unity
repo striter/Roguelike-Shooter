@@ -460,17 +460,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 566124888}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c601aa38c2dc9924aa9bc4e55e0c5993, type: 3}
+  m_Script: {fileID: 11500000, guid: d3edb4d7545332d43a7feb0ddbee14df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DepthBiasValue: 0.002
-  SampleKernelRadius: 1
-  SampleKernelCount: 16
-  AOStrength: 1
-  DownSample: 0
-  BlurRadius: 1
-  BilaterFilterStrength: 0.2
-  OnlyShowAO: 0
+  B_TestMode: 0
 --- !u!1 &914090093
 GameObject:
   m_ObjectHideFlags: 0
@@ -698,8 +691,8 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1227275903}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -111.6}
-  m_LocalScale: {x: 128, y: 128, z: 128}
+  m_LocalPosition: {x: 0, y: 1, z: -3}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 7
@@ -814,9 +807,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1422366056}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 02f19e3cdddd8c74aa5e1cf7e6c0d1eb, type: 3}
+  m_Script: {fileID: 11500000, guid: ec5a70dcd9b91fd44afdc26b709fef8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  target: {fileID: 1227275903}
 --- !u!4 &1422366058
 Transform:
   m_ObjectHideFlags: 0

@@ -135,10 +135,10 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_WeaponCurrent.TryReload();
     }
 
-    void OnReload(bool start, float param)
+    void OnReload(bool start, float reloadTime)
     {
         if (start)
-            m_Animator.Reload(param);
+            m_Animator.Reload(reloadTime);
         else
             m_PlayerInfo.OnReloadFinish();
     }

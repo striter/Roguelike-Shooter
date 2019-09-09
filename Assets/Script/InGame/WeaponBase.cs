@@ -246,6 +246,7 @@ public class WeaponBase : MonoBehaviour {
         public override void Tick(float deltaTime)
         {
             base.Tick(deltaTime);
+            Debug.Log(B_TriggerDown);
             if (B_TriggerDown && OnTriggerActionable())
             {
                 B_TriggerDown=OnTriggerSuccessful();

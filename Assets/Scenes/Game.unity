@@ -3763,7 +3763,7 @@ MonoBehaviour:
   C_TestProjectileIndex: 200
   V_TestIndicatorIndex: 0
   B_TestBuffIndex: 1001
-  F1_WeaponSpawnType: 3001
+  F1_WeaponSpawnType: 1002
   F5_TestActionIndex: 10019
   F6_TestActionIndex: 10020
   F7_TestActionIndex: 30007
