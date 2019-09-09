@@ -38,7 +38,7 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.BackQuote))
-            Time.timeScale = Time.timeScale == 1f ? .1f : 1f;
+            SetBulletTime(!m_BulletTiming);
 
         RaycastHit hit = new RaycastHit();
         if (Input.GetKeyDown(KeyCode.Z) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
@@ -410,6 +410,7 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
         });
         this.StartSingleCoroutine(0, IE_GenerateEnermy(m_EntityGenerating, .1f));
     }
+
     void OnBattleCharacterDead(EntityCharacterBase entity)
     {
         if (!B_Battling|| B_WaveEntityGenerating)
@@ -418,6 +419,7 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
         if (m_FlagEntityCount( enum_EntityFlag.Enermy) <= 0 || (m_CurrentWave < m_EntityGenerate.Count && m_FlagEntityCount(enum_EntityFlag.Enermy) <= GameConst.I_EnermyCountWaveFinish))
             WaveFinished(entity.transform.position);
     }
+
     void WaveFinished(Vector3 lastEntityPos)
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnWaveFinish);
@@ -427,6 +429,7 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
         else
             WaveStart();
     }
+
     void OnBattleFinished(Vector3 lastEntityPos)
     {
         B_Battling = false;
@@ -451,12 +454,20 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
             }
         }
     }
+
     void SpawnEnermy(int entityIndex, int spawnIndex,Vector3 position)
     {
         GameObjectManager.SpawnIndicator(30001, position, Vector3.up).Play(entityIndex,GameConst.I_EnermySpawnDelay);
         this.StartSingleCoroutine(100 + spawnIndex, TIEnumerators.PauseDel(GameConst.I_EnermySpawnDelay, () => {
             GameObjectManager.SpawnAI(entityIndex,position , m_GameLevel.m_currentStage,enum_EntityFlag.Enermy);
         }));
+    }
+
+    static bool m_BulletTiming = false;
+    public static void SetBulletTime(bool enter)
+    {
+        m_BulletTiming = enter;
+        Time.timeScale = m_BulletTiming ? .1f : 1f;
     }
     #endregion
 }

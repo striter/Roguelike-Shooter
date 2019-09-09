@@ -204,18 +204,22 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
     {
         m_ActionGrid.ClearGrid();
         for (int i = 0; i < actionInfo.m_ActionHolding.Count; i++)
-            m_ActionGrid.AddItem(i).SetInfo(actionInfo.m_ActionHolding[i],OnActionUse);
+            m_ActionGrid.AddItem(i).SetInfo(actionInfo.m_ActionHolding[i],OnActionClick, OnActionPressDuration);
 
         btn_ActionShuffle.SetActivate(GameManager.Instance.B_Battling);
         btn_ActionStorage.SetActivate(!GameManager.Instance.B_Battling);
     }
-    void OnActionUse(int index)
+    void OnActionClick(int index)
     {
         m_Player.m_PlayerInfo.TryUseAction(index);
     }
+    void OnActionPressDuration()
+    {
+        UIManager.Instance.ShowPage<UI_ActionStorage>(false).Show(false,m_Player.m_PlayerInfo) ;
+    }
     void OnActionStorageClick()
     {
-        UIManager.Instance.ShowPage<UI_ActionStorage>(true).Show(m_Player.m_PlayerInfo.m_ActionStored);
+        UIManager.Instance.ShowPage<UI_ActionStorage>(true).Show(true,m_Player.m_PlayerInfo);
     }
     void OnActionShuffleClick()
     {

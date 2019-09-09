@@ -33,7 +33,7 @@ public class UIManager : SingletonMono<UIManager> {
     }
     public T ShowPage<T>(bool animate) where T : UIPageBase
     {
-        return UIPageBase.ShowPage<T>(tf_Pages, true);
+        return UIPageBase.ShowPage<T>(tf_Pages, animate);
     }
     void OnPlayerStatusChanged(EntityCharacterPlayer player)
     {
