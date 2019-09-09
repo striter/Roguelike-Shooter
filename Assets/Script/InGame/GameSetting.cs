@@ -1317,7 +1317,7 @@ namespace GameSetting
         public virtual bool B_ClipOverride => false;
         public virtual int I_ClipAdditive => 0;
         public virtual float F_ClipMultiply => 0;
-        protected virtual float F_Duration => 0;
+        public virtual float F_Duration => 0;
         protected ActionBase(int _identity,enum_RarityLevel _level)
         {
             m_Identity = _identity;

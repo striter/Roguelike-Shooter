@@ -15,14 +15,22 @@ public class TSceneLoader:SingletonMono<TSceneLoader>,ISingleCoroutine {
     {
         AsyncOperation operation = SceneManager.LoadSceneAsync((int)scene,LoadSceneMode.Single); 
         operation.allowSceneActivation = false;
-        this.StartSingleCoroutine(0, TIEnumerators.Tick(() =>
+        this.StartSingleCoroutine(0, LoadScene(operation));
+    }
+    IEnumerator LoadScene(AsyncOperation operation)
+    {
+        operation.allowSceneActivation = false;
+        for (; ; )
         {
             Debug.Log(operation.progress);
+
             if (operation.progress == .9f)
             {
                 operation.allowSceneActivation = true;
-                this.StopSingleCoroutine(0);
+                yield break;
             }
-        },.3f));
+
+            yield return null;
+        }
     }
 }

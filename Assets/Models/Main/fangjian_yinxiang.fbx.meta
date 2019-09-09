@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 42b5fa469ea285a4e8bd0b2d8acfc02b
+guid: ccc7a76b48a840f4897382b0a568d76b
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
@@ -58,7 +58,7 @@ ModelImporter:
     importCameras: 1
     importLights: 1
     swapUVChannels: 0
-    generateSecondaryUV: 0
+    generateSecondaryUV: 1
     useFileUnits: 1
     optimizeMeshForGPU: 1
     keepQuads: 0
@@ -75,7 +75,7 @@ ModelImporter:
     normalImportMode: 0
     tangentImportMode: 3
     normalCalculationMode: 4
-  importAnimation: 1
+  importAnimation: 0
   copyAvatar: 0
   humanDescription:
     serializedVersion: 2

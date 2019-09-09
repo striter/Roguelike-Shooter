@@ -24,6 +24,7 @@
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma multi_compile_fwdbase
+			#pragma multi_compile LIGHTMAP_OFF LIGHTMAP_ON
 
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
@@ -38,7 +39,9 @@
 			{
 				float4 pos : SV_POSITION;
 				float2 uv:TEXCOORD0;
-				float2 uvlightmap:TEXCOORD1;
+#ifndef LIGHTMAP_OFF
+				float2 uv_lightmap : TEXCOORD1;
+#endif
 				float3 worldPos:TEXCOORD2;
 				float diffuse:TEXCOORD3;
 				SHADOW_COORDS(4)
@@ -51,7 +54,9 @@
 			{
 				v2f o;
 				o.uv  =v.uv;
-				o.uvlightmap=v.uv*unity_LightmapST.xy + unity_LightmapST.zw;
+#ifndef LIGHTMAP_OFF
+				o.uv_lightmap = v.uv.xy * unity_LightmapST.xy + unity_LightmapST.zw;
+#endif
 				o.pos = UnityObjectToClipPos(v.vertex);
 				o.worldPos =mul(unity_ObjectToWorld,v.vertex);
 				fixed3 worldNormal = normalize(mul(v.normal, (float3x3)unity_WorldToObject)); //法线方向n
@@ -64,7 +69,10 @@
 			fixed4 frag (v2f i) : SV_Target
 			{
 				float3 albedo = tex2D(_MainTex,i.uv)*_Color;
-				albedo *= DecodeLightmap(UNITY_SAMPLE_TEX2D(unity_Lightmap, i.uvlightmap))*3;
+				#ifndef LIGHTMAP_OFF
+				fixed3 lm = DecodeLightmap(UNITY_SAMPLE_TEX2D(unity_Lightmap, i.uv_lightmap));
+				albedo.rgb *= lm;
+				#endif
 				UNITY_LIGHT_ATTENUATION(atten, i,i.worldPos)
 				fixed3 ambient = albedo*UNITY_LIGHTMODEL_AMBIENT.xyz;
 				atten = atten * _Lambert + (1- _Lambert);
