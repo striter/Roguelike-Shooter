@@ -6,7 +6,7 @@ public class ShaderTest : MonoBehaviour {
     public GameObject target;
 	// Use this for initialization
 	void Start () {
-        CameraEffectManager.AddCameraEffect<CB_DepthOfFieldSpecific>().SetSpecificTarget(target.GetComponentsInChildren<Renderer>());	
+        CameraEffectManager.AddCameraEffect<CB_DepthOfFieldSpecificStatic>().SetStaticTarget(target.GetComponentsInChildren<Renderer>());	
 	}
 	
 }

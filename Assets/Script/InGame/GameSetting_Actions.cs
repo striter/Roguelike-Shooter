@@ -103,7 +103,7 @@ namespace GameSetting_Action
         public static int I_30006_ReloadTimesCount(enum_RarityLevel level) => 1;
         public static int IP_30006_ReloadDamageMultiplyPercentage(enum_RarityLevel level) => 100 * (int)level;
         public static float F_MovementStackupMax(enum_RarityLevel level) => 100f;
-        public static float F_MovementStackupDamageAdditive(float stackUp, enum_RarityLevel level) => stackUp *3* (int)level;
+        public static float F_MovementStackupDamageAdditive( enum_RarityLevel level) => 3* (int)level;
 
         public static float F_40001_DamageDealtCount(enum_RarityLevel level) => 2000 / Mathf.Pow(2, (int)level-1);
         public static float F_40001_ArmorAdditive(enum_RarityLevel level) => 20f;
@@ -611,10 +611,11 @@ namespace GameSetting_Action
         public override int m_Index => 30007;
         public override int I_ActionCost => ActionData.I_30007_Cost;
         public override float Value1 => ActionData.F_MovementStackupMax(m_Level);
-        public override float Value2 => ActionData.F_MovementStackupDamageAdditive(m_stackUp, m_Level);
-        public override float F_DamageAdditive => Value2;
+        public override float Value2 => ActionData.F_MovementStackupDamageAdditive( m_Level);
+        public override float F_DamageAdditive => m_stackUpDamage;
         
         protected float m_stackUp;
+        protected float m_stackUpDamage;
         protected Vector3 m_prePos;
         public override void OnActionUse()
         {
@@ -636,8 +637,9 @@ namespace GameSetting_Action
 
             m_stackUp += TCommon.GetXZDistance(m_prePos, m_ActionEntity.transform.position);
             m_prePos = m_ActionEntity.transform.position;
-            if (m_stackUp > 100)
-                m_stackUp = 100;
+            m_stackUpDamage = m_stackUp * Value2;
+            if (m_stackUpDamage > Value1)
+                m_stackUpDamage = Value1;
         }
         public Action_30007_MovementStackupDamageAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }

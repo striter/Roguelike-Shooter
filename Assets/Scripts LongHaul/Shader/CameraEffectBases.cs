@@ -15,6 +15,10 @@ public class CameraEffectBase
     {
         m_Manager = _manager;
     }
+    public virtual void OnWillRenderObject()
+    {
+
+    }
     public virtual void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
     }
@@ -370,7 +374,31 @@ public class CommandBufferBase:CameraEffectBase
     }
 }
 
-public class CB_DepthOfFieldSpecific : CommandBufferBase
+public class CB_GenerateBlurTexture : CommandBufferBase
+{
+public PE_GaussianBlur m_GaussianBlur { get; private set; }
+    protected override CameraEvent m_BufferEvent => CameraEvent.AfterEverything;
+    readonly int ID_GlobalBlurTexure = Shader.PropertyToID("_ScreenBlurTexture");
+    public override void OnSetEffect(CameraEffectManager _manager)
+    {
+        base.OnSetEffect(_manager);
+        m_GaussianBlur = new PE_GaussianBlur();
+        m_GaussianBlur.OnSetEffect(_manager);
+        m_Buffer.GetTemporaryRT(ID_GlobalBlurTexure, -1, -1, 0, FilterMode.Bilinear);
+    }
+    public override void OnWillRenderObject()
+    {
+        base.OnWillRenderObject();
+    }
+    public override void OnDestroy()
+    {
+        base.OnDestroy();
+        m_Buffer.ReleaseTemporaryRT(ID_GlobalBlurTexure);
+        m_GaussianBlur.OnDestroy();
+    }
+}
+
+public class CB_DepthOfFieldSpecificStatic : CommandBufferBase
 {
     public PE_GaussianBlur m_GaussianBlur { get; private set; }
     List<Renderer> m_targets = new List<Renderer>();
@@ -381,7 +409,7 @@ public class CB_DepthOfFieldSpecific : CommandBufferBase
         m_GaussianBlur = new PE_GaussianBlur();
         m_GaussianBlur.OnSetEffect(_manager);
     }
-    public void SetSpecificTarget(params Renderer[] targets)
+    public void SetStaticTarget(params Renderer[] targets)
     {
         targets.Traversal((Renderer renderer)=> {
             if (m_targets.Contains(renderer))

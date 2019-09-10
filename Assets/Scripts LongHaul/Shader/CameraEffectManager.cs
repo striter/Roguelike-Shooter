@@ -85,6 +85,11 @@ public class CameraEffectManager : SimpleSingletonMono<CameraEffectManager>,ISin
         Graphics.Blit(tempTexture1,destination);
         RenderTexture.ReleaseTemporary(tempTexture1);
     }
+    private void OnWillRenderObject()
+    {
+        for (int i = 0; i < m_PostEffects.Count; i++)
+            m_PostEffects[i].OnWillRenderObject();
+    }
     #region Matrix
     public Matrix4x4 m_ViewProjectionMatrixInverse { get; private set; }
     public Matrix4x4 m_FrustumCornorsRay { get; private set; }
