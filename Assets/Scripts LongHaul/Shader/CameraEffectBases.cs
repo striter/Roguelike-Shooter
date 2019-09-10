@@ -8,10 +8,14 @@ public class CameraEffectBase
     public virtual DepthTextureMode m_DepthTextureMode => DepthTextureMode.None;
     public virtual bool m_DepthToWorldMatrix => false;
     protected CameraEffectManager m_Manager { get; private set; }
-    public bool m_Supported { get; protected set; } 
+    public bool m_Supported { get; private set; } 
     public CameraEffectBase()
     {
-        m_Supported = true;
+        m_Supported=OnCreate();
+    }
+    protected virtual bool OnCreate()
+    {
+        return true;
     }
     public virtual void OnSetEffect(CameraEffectManager _manager)
     {
@@ -33,29 +37,19 @@ public class PostEffectBase: CameraEffectBase
 {
     const string S_ParentPath = "Hidden/PostEffect/";
     public Material m_Material { get; private set; }
-    public PostEffectBase():base()
+    protected override bool OnCreate()
     {
-        Shader shader = Shader.Find(S_ParentPath+this.GetType().ToString());
+        Shader shader = Shader.Find(S_ParentPath + this.GetType().ToString());
         if (shader == null)
             Debug.LogError("Shader:" + S_ParentPath + this.GetType().ToString() + " Not Found");
-        else if (!shader.isSupported)
+        if (!shader.isSupported)
             Debug.LogError("Shader:" + S_ParentPath + this.GetType().ToString() + " Is Not Supported");
-        m_Supported = shader != null && shader.isSupported;
+
         m_Material = new Material(shader) { hideFlags = HideFlags.DontSave };
-    }
-    protected bool RenderDefaultImage(RenderTexture source, RenderTexture destination)
-    {
-        if (!m_Supported)
-        {
-            Graphics.Blit(source, destination);
-            return true;
-        }
-        return false;
+        return shader != null && shader.isSupported;
     }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        if (RenderDefaultImage(source, destination)) 
-            return;
         Graphics.Blit(source, destination, m_Material);
     }
     public override void OnDestroy()
@@ -93,10 +87,6 @@ public class PE_GaussianBlur : PostEffectBase       //Gassuain Blur
     }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        if (RenderDefaultImage(source,destination))
-            return;
-
-
         if (I_DownSample == 0)
             I_DownSample = 1;
 
@@ -144,9 +134,6 @@ public class PE_Bloom : PostEffectBase
     }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        if (RenderDefaultImage(source, destination))
-            return;
-
         if (I_DownSample == 0)
             I_DownSample = 1;
         m_Material.SetFloat("_LuminanceThreshold", F_LuminanceThreshold);
@@ -236,15 +223,6 @@ public class PE_FogDepth : PostEffectBase
         m_Material.SetFloat("_FogEnd", _fogYEnd);
         return this as T;
     }
-    public override void OnRenderImage(RenderTexture source, RenderTexture destination)
-    {
-        if (RenderDefaultImage(source,destination))
-            return;
-        
-        m_Material.SetMatrix("_FrustumCornersRay",m_Manager.m_FrustumCornorsRay);
-        m_Material.SetMatrix("_VPMatrixInverse",m_Manager.m_ViewProjectionMatrixInverse);
-        Graphics.Blit(source,destination,m_Material);
-    }
 }
 public class PE_DepthOutline:PostEffectBase
 {
@@ -302,8 +280,6 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
     }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        if (RenderDefaultImage(source, destination))
-            return;
         m_RenderCamera.RenderWithShader(m_RenderShader, "RenderType");
         m_GaussianBlur.OnRenderImage(m_RenderTexture, m_RenderTexture);     //Blur
         m_Material.SetTexture("_RenderTex", m_RenderTexture);
@@ -328,13 +304,6 @@ public class PE_AreaScanDepth : PostEffectBase
         m_Material.SetFloat("_ScanWidth", width);
         m_Material.SetFloat("_ScanTexScale", _scanTexScale);
         m_Material.SetFloat("_ScanLerp", colorLerp);
-    }
-    public override void OnRenderImage(RenderTexture source, RenderTexture destination)
-    {
-        base.OnRenderImage(source, destination);
-
-        m_Material.SetMatrix("_FrustumCornersRay", m_Manager.m_FrustumCornorsRay);
-        m_Material.SetMatrix("_VPMatrixInverse", m_Manager.m_ViewProjectionMatrixInverse);
     }
 }
 

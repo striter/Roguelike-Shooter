@@ -13,10 +13,10 @@ public class CameraEffectManager : SimpleSingletonMono<CameraEffectManager>,ISin
             return null;
         }
         T effectBase = new T();
-        effectBase.OnSetEffect(Instance);
-        Instance.m_PostEffects.Add(effectBase);
         if (effectBase.m_Supported)
         {
+            effectBase.OnSetEffect(Instance);
+            Instance.m_PostEffects.Add(effectBase);
             Instance.m_Camera.depthTextureMode |= effectBase.m_DepthTextureMode;
             Instance.m_calculateDepthToWorldMatrix |= effectBase.m_DepthToWorldMatrix;
         }
@@ -68,8 +68,8 @@ public class CameraEffectManager : SimpleSingletonMono<CameraEffectManager>,ISin
 
         if (m_calculateDepthToWorldMatrix)
         {
-            m_ViewProjectionMatrixInverse = CalculateViewProjectionMatrixInverse();
-            m_FrustumCornorsRay = CalculateFrustumCornorsRay();
+            CalculateFrustumCornorsRay();
+            CalculateViewProjectionMatrixInverse();
         }
 
         for (int i = 0; i < m_PostEffects.Count; i++)
@@ -94,10 +94,8 @@ public class CameraEffectManager : SimpleSingletonMono<CameraEffectManager>,ISin
             m_PostEffects[i].OnWillRenderObject();
     }
     #region Matrix
-    public Matrix4x4 m_ViewProjectionMatrixInverse { get; private set; }
-    public Matrix4x4 m_FrustumCornorsRay { get; private set; }
-    protected Matrix4x4 CalculateViewProjectionMatrixInverse() => (m_Camera.projectionMatrix * m_Camera.worldToCameraMatrix).inverse;
-    protected Matrix4x4 CalculateFrustumCornorsRay()
+    protected void CalculateViewProjectionMatrixInverse()=>Shader.SetGlobalMatrix("_VPMatrixInverse", (m_Camera.projectionMatrix * m_Camera.worldToCameraMatrix).inverse);
+    protected void CalculateFrustumCornorsRay()
     {
         float fov = m_Camera.fieldOfView;
         float near = m_Camera.nearClipPlane;
@@ -131,7 +129,7 @@ public class CameraEffectManager : SimpleSingletonMono<CameraEffectManager>,ISin
         frustumCornersRay.SetRow(2, topLeft);
         frustumCornersRay.SetRow(3, topRight);
 
-        return frustumCornersRay;
+        Shader.SetGlobalMatrix("_FrustumCornersRay", frustumCornersRay);
     }
     #endregion
 }
