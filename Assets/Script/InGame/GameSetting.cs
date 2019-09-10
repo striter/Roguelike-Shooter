@@ -417,7 +417,7 @@ namespace GameSetting
             m_coins = 0;
             m_weapon = enum_PlayerWeapon.P92;
             m_weaponActions = new List<ActionInfo>();
-            m_storedActions = new List<ActionInfo>() { ActionInfo.Create(GameDataManager.CreateRandomPlayerAction(enum_RarityLevel.L1,null)),ActionInfo.Create( GameDataManager.CreateRandomPlayerAction(enum_RarityLevel.L1,null)) };
+            m_storedActions = new List<ActionInfo>();
             m_GameSeed = DateTime.Now.ToLongTimeString().ToString();
             m_StageLevel = enum_StageLevel.Rookie;
         }

@@ -225,10 +225,8 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
             case enum_TileType.Start:
                 {
                     enum_RarityLevel level = m_GameLevel.m_currentStage.ToActionLevel();
-                    ActionBase action1 = GameDataManager.CreateRandomPlayerAction(level, m_GameLevel.m_GameSeed);
-                    ActionBase action2 = GameDataManager.CreateRandomPlayerAction(level, m_GameLevel.m_GameSeed, action1.m_Index);
                     m_RewardChest = GameObjectManager.SpawnInteract<InteractActionChest>(enum_Interaction.ActionChest, EnvironmentManager.NavMeshPosition(Vector3.left * 2, false), EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact);
-                    m_RewardChest.Play(new List<ActionBase> { action1, action2 });
+                    m_RewardChest.Play(GameDataManager.CreateRandomPlayerActions(6,level,m_GameLevel.m_GameSeed),2);
                     GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, EnvironmentManager.NavMeshPosition(Vector3.right * 2, false), EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(GameObjectManager.SpawnWeapon(TCommon.RandomEnumValues<enum_PlayerWeapon>(m_GameLevel.m_GameSeed), new List<ActionBase>() { GameDataManager.CreateRendomWeaponAction(level, m_GameLevel.m_GameSeed) }));
                 }
                 break;
@@ -274,10 +272,8 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
             case enum_TileType.Battle:
                 {
                     enum_RarityLevel level = m_GameLevel.m_actionGenerate.GetActionRarityLevel(m_GameLevel.m_GameSeed);
-                    ActionBase action1 = GameDataManager.CreateRandomPlayerAction(level, m_GameLevel.m_GameSeed);
-                    ActionBase action2 = GameDataManager.CreateRandomPlayerAction(level, m_GameLevel.m_GameSeed, action1.m_Index);
                     m_RewardChest = GameObjectManager.SpawnInteract<InteractActionChest>(enum_Interaction.ActionChest, EnvironmentManager.NavMeshPosition(rewardPos, false), EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact);
-                    m_RewardChest.Play(new List<ActionBase> { action1, action2 });
+                    m_RewardChest.Play(GameDataManager.CreateRandomPlayerActions(2, level, m_GameLevel.m_GameSeed), 1);
                 }
                 break;
         }
@@ -668,22 +664,27 @@ public static class GameDataManager
         },-1, enum_RarityLevel.Invalid);
     }
     public static ActionBase CreateRendomWeaponAction(enum_RarityLevel level,System.Random seed)=> CreateAction(m_WeaponActions.RandomItem(seed),level);
-    public static ActionBase CreateRandomPlayerAction(enum_RarityLevel level, System.Random seed,int previousIndex=-1)
+    public static List<ActionBase> CreateRandomPlayerActions(int actionCount, enum_RarityLevel level, System.Random seed)
     {
-        int actionIndex = -1;
-        m_PlayerActions.TraversalRandom( (int index) =>
+        List<ActionBase> actions = new List<ActionBase>();
+        for (int i = 0; i < actionCount; i++)
         {
-            if (index != previousIndex)
+            int actionIndex = -1;
+            m_PlayerActions.TraversalRandom((int index) =>
             {
-                actionIndex =index ;
-                return true;
-            }
-            return false;
-        },seed);
-        if (actionIndex == -1)
-            Debug.LogError("Null Player Action Found By Random!");
-        return CreateAction(actionIndex, level);
-    } 
+                if (actions.Find(p => p.m_Index == actionIndex) == null)
+                {
+                    actionIndex = index;
+                    return true;
+                }
+                return false;
+            }, seed);
+            if (actionIndex != -1)
+                actions.Add(CreateAction(actionIndex, level));
+        }
+        return actions;
+    }
+    public static ActionBase CreateRandomPlayerAction(enum_RarityLevel level, System.Random seed) => CreateAction(m_PlayerActions.RandomIndex(seed),level);
     public static List<ActionBase> CreateActions(List<ActionInfo> infos)
     {
         List<ActionBase> actions = new List<ActionBase>();

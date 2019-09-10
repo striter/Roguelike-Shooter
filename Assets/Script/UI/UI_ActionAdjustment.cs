@@ -13,7 +13,7 @@ public class UI_ActionAdjustment : UIPageBase {
     protected override void Init(bool useAnim)
     {
         base.Init(useAnim);
-        m_Grid = new UIT_GridControllerDefaultMono<UIGI_ActionSelectItem>(tf_Container.Find("ActionGrid"), OnItemSelected, true);
+        m_Grid = new UIT_GridControllerSingleSelecting<UIGI_ActionSelectItem>(tf_Container.Find("ActionGrid"), OnItemSelected, true);
         txt_coins = tf_Container.Find("Coins").GetComponent<UIT_TextLocalization>();
         btn_remove = tf_Container.Find("BtnRemove").GetComponent<Button>();
         btn_remove.onClick.AddListener(OnRemoveClick);

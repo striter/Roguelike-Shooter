@@ -11,7 +11,7 @@ public class UI_ActionStorage : UIPageBase {
     protected override void Init(bool useAnim)
     {
         base.Init(useAnim);
-        m_Grid = new UIT_GridControllerDefaultMono<UIGI_ActionSelectItem>(tf_Container.Find("ActionGrid"),OnItemClick,false,false);
+        m_Grid = new UIT_GridControllerSingleSelecting<UIGI_ActionSelectItem>(tf_Container.Find("ActionGrid"),OnItemClick,false,false);
     }
     public void Show(bool _showStored, PlayerInfoManager _info)
     {

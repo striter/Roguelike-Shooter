@@ -67,8 +67,8 @@ public class UIT_GridController
 }
 public class UIT_GridControllerMono<T>:UIT_GridController where T:UIT_GridItem
 {
-    Dictionary<int, T> MonoItemDic = new Dictionary<int, T>();
-    public int I_Count=> MonoItemDic.Count;
+    protected Dictionary<int, T> m_ItemDic  = new Dictionary<int, T>();
+    public int I_Count=> m_ItemDic.Count;
     public GridLayoutGroup m_GridLayout { get; private set; }
     public UIT_GridControllerMono(Transform _transform) : base(_transform)
     {
@@ -78,7 +78,7 @@ public class UIT_GridControllerMono<T>:UIT_GridController where T:UIT_GridItem
     {
         T item = base.AddItem(identity).GetComponent<T>();
         OnItemAdd(item,identity);
-        MonoItemDic.Add(identity,item);
+        m_ItemDic.Add(identity,item);
         item.SetActivate(true);
         item.transform.SetSiblingIndex(identity); 
         return item;
@@ -89,43 +89,85 @@ public class UIT_GridControllerMono<T>:UIT_GridController where T:UIT_GridItem
     }
     public void SortChildrenSibling()
     {
-        List<int> keyCollections = MonoItemDic.Keys.ToList();
+        List<int> keyCollections = m_ItemDic.Keys.ToList();
         keyCollections.Sort((a,b)=> {return a > b?1:-1; });
         for (int i = 0; i < keyCollections.Count; i++)
-            MonoItemDic[keyCollections[i]].transform.SetAsLastSibling();
+            m_ItemDic[keyCollections[i]].transform.SetAsLastSibling();
     }
     public new T GetItem(int identity)
     {
-        return Contains(identity)?MonoItemDic[identity]:null;
+        return Contains(identity)?m_ItemDic[identity]:null;
     }
     public override void ClearGrid()
     {
         base.ClearGrid();
-        MonoItemDic.Clear();
+        m_ItemDic.Clear();
     }
     public override void RemoveItem(int identity)
     {
         base.RemoveItem(identity);
-        MonoItemDic[identity].Reset();
-        MonoItemDic.Remove(identity);
+        m_ItemDic[identity].Reset();
+        m_ItemDic.Remove(identity);
     }
     public void TraversalItem(Action<int, T> onEach)
     {
         foreach (int i in ActiveItemDic.Keys)
         {
-            onEach(i, MonoItemDic[i]);
+            onEach(i, m_ItemDic[i]);
         }
     }
 }
+public class UIT_GridControllerMultiSelecting<T> : UIT_GridControllerMono<T> where T : UIT_GridDefaultItem
+{
+    public int m_selectAmount { get; private set; }=-1;
+    public bool m_AllSelected => m_Selecting.Count == m_selectAmount;
+    public List<int> m_Selecting { get; private set; } = new List<int>();
+    Action<int> OnItemSelect;
+    public UIT_GridControllerMultiSelecting(Transform _transform,int _selectAmount=-1,Action<int> _OnItemSelect=null):base(_transform)
+    {
+        m_selectAmount = _selectAmount;
+        OnItemSelect = _OnItemSelect;
+    }
+    public override void ClearGrid()
+    {
+        base.ClearGrid();
+        m_Selecting.Clear();
+    }
 
-public class UIT_GridControllerDefaultMono<T> : UIT_GridControllerMono<T> where T : UIT_GridDefaultItem
+    protected override void OnItemAdd(T item, int identity)
+    {
+        base.OnItemAdd(item, identity);
+        item.SetDefaultOnClick(OnItemClick);
+    }
+    void OnItemClick(int index)
+    {
+        if (!m_Selecting.Contains(index))
+        {
+            if ( m_Selecting.Count>= m_selectAmount)
+                return;
+            else
+                m_Selecting.Add(index);
+        }
+        else
+            m_Selecting.Remove(index);
+
+
+        foreach (int item in m_ItemDic.Keys)
+        {
+            m_ItemDic[item].SetHighLight(m_Selecting.Contains(item));
+        }
+        OnItemSelect?.Invoke(index);
+    }
+}
+
+public class UIT_GridControllerSingleSelecting<T> : UIT_GridControllerMono<T> where T : UIT_GridDefaultItem
 {
     bool b_btnEnable;
     bool b_doubleClickConfirm;
     bool b_activeHighLight;
     Action<int> OnItemSelected;
     public int I_CurrentSelecting { get; private set; }
-    public UIT_GridControllerDefaultMono(Transform _transform, Action<int> _OnItemSelected = null, bool activeHighLight = true, bool doubleClickConfirm = false) : base(_transform)
+    public UIT_GridControllerSingleSelecting(Transform _transform, Action<int> _OnItemSelected = null, bool activeHighLight = true, bool doubleClickConfirm = false) : base(_transform)
     {
         b_btnEnable = true;
         b_activeHighLight = activeHighLight;
