@@ -13,6 +13,7 @@ namespace GameSetting
     public static class GameConst
     {
         public const float F_EntityDeadFadeTime = 2f;
+        public const float F_PlayerDamageAdjustmentRange = .1f;
 
         public const float F_MaxActionAmount = 4f;
         public const float F_RestoreActionAmount = 2f;
@@ -1118,7 +1119,8 @@ namespace GameSetting
         }
         public override DamageDeliverInfo GetDamageBuffInfo()
         {
-            DamageDeliverInfo info = DamageDeliverInfo.PlayerDamageInfo(m_Entity.I_EntityID, F_DamageMultiply, F_DamageAdditive);
+            float randomDamageMultiply = UnityEngine.Random.Range(-GameConst.F_PlayerDamageAdjustmentRange,GameConst.F_PlayerDamageAdjustmentRange);
+            DamageDeliverInfo info = DamageDeliverInfo.PlayerDamageInfo(m_Entity.I_EntityID, F_DamageMultiply+ randomDamageMultiply, F_DamageAdditive);
             CloakReset();
             m_ActionEquiping.Traversal((ActionBase action) => {
                 action.OnAfterFire(info.I_IdentiyID);
