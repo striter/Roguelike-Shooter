@@ -226,7 +226,10 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
                 {
                     enum_RarityLevel level = m_GameLevel.m_currentStage.ToActionLevel();
                     m_RewardChest = GameObjectManager.SpawnInteract<InteractActionChest>(enum_Interaction.ActionChest, EnvironmentManager.NavMeshPosition(Vector3.left * 2, false), EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact);
+                    if(m_GameLevel.m_currentStage== enum_StageLevel.Rookie)
                     m_RewardChest.Play(GameDataManager.CreateRandomPlayerActions(6,level,m_GameLevel.m_GameSeed),2);
+                    else
+                        m_RewardChest.Play(GameDataManager.CreateRandomPlayerActions(2, level, m_GameLevel.m_GameSeed), 1);
                     GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, EnvironmentManager.NavMeshPosition(Vector3.right * 2, false), EnvironmentManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(GameObjectManager.SpawnWeapon(TCommon.RandomEnumValues<enum_PlayerWeapon>(m_GameLevel.m_GameSeed), new List<ActionBase>() { GameDataManager.CreateRendomWeaponAction(level, m_GameLevel.m_GameSeed) }));
                 }
                 break;
