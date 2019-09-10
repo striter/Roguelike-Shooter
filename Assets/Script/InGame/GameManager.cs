@@ -672,13 +672,14 @@ public static class GameDataManager
             int actionIndex = -1;
             m_PlayerActions.TraversalRandom((int index) =>
             {
-                if (actions.Find(p => p.m_Index == actionIndex) == null)
+                if (actions.Find(p => p.m_Index == index)==null)
                 {
                     actionIndex = index;
                     return true;
                 }
                 return false;
             }, seed);
+            Debug.Log(actionIndex);
             if (actionIndex != -1)
                 actions.Add(CreateAction(actionIndex, level));
         }
