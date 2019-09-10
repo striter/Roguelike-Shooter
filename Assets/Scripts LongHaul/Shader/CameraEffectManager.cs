@@ -94,7 +94,12 @@ public class CameraEffectManager : SimpleSingletonMono<CameraEffectManager>,ISin
             m_PostEffects[i].OnWillRenderObject();
     }
     #region Matrix
-    protected void CalculateViewProjectionMatrixInverse()=>Shader.SetGlobalMatrix("_VPMatrixInverse", (m_Camera.projectionMatrix * m_Camera.worldToCameraMatrix).inverse);
+    static readonly int ID_VPMatrixInverse = Shader.PropertyToID("_VPMatrixInverse");
+    static readonly int ID_FrustumCornersRayBL = Shader.PropertyToID("_FrustumCornersRayBL");
+    static readonly int ID_FrustumCornersRayBR = Shader.PropertyToID("_FrustumCornersRayBR");
+    static readonly int ID_FrustumCornersRayTL = Shader.PropertyToID("_FrustumCornersRayTL");
+    static readonly int ID_FrustumCornersRayTR = Shader.PropertyToID("_FrustumCornersRayTR");
+    protected void CalculateViewProjectionMatrixInverse()=>Shader.SetGlobalMatrix(ID_VPMatrixInverse, (m_Camera.projectionMatrix * m_Camera.worldToCameraMatrix).inverse);
     protected void CalculateFrustumCornorsRay()
     {
         float fov = m_Camera.fieldOfView;
@@ -122,14 +127,13 @@ public class CameraEffectManager : SimpleSingletonMono<CameraEffectManager>,ISin
         Vector3 bottomRight = cameraTrans.forward * near - toTop + toRight;
         bottomRight.Normalize();
         bottomRight *= scale;
+        
 
-        Matrix4x4 frustumCornersRay = Matrix4x4.identity;
-        frustumCornersRay.SetRow(0, bottomLeft);
-        frustumCornersRay.SetRow(1, bottomRight);
-        frustumCornersRay.SetRow(2, topLeft);
-        frustumCornersRay.SetRow(3, topRight);
-
-        Shader.SetGlobalMatrix("_FrustumCornersRay", frustumCornersRay);
+        Shader.SetGlobalVector(ID_FrustumCornersRayBL, bottomLeft);
+        Shader.SetGlobalVector(ID_FrustumCornersRayBR, bottomRight);
+        Shader.SetGlobalVector(ID_FrustumCornersRayTL, topLeft);
+        Shader.SetGlobalVector(ID_FrustumCornersRayTR, topRight);
+        
     }
     #endregion
 }
