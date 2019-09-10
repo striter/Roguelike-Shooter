@@ -1008,8 +1008,8 @@ MonoBehaviour:
   F_AttackSpread: 0
   E_EnermyType: 3
   E_AnimatorIndex: 113
-  F_AIChaseRange: 30
-  F_AIAttackRange: 35
+  F_AIChaseRange: 20
+  F_AIAttackRange: 25
   F_AttackDuration:
     start: 3
     length: 1
@@ -1021,6 +1021,7 @@ MonoBehaviour:
   F_AttackRotateParam: 0.2
   I_AttackPreAimPercentage: 100
   B_AttackMove: 1
+  B_AttackFrontCheck: 1
 --- !u!114 &114276650191884532
 MonoBehaviour:
   m_ObjectHideFlags: 1

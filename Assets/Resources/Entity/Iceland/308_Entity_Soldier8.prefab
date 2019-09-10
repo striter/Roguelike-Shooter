@@ -1195,14 +1195,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 275d93242000a1d47972944c1cd255ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  I_MaxHealth: 1200
+  I_MaxHealth: 900
   I_DefaultArmor: 0
   F_MovementSpeed: 3
   F_AttackSpread: 0
-  E_EnermyType: 5
+  E_EnermyType: 4
   E_AnimatorIndex: 164
-  F_AIChaseRange: 32
-  F_AIAttackRange: 37
+  F_AIChaseRange: 25
+  F_AIAttackRange: 30
   F_AttackDuration:
     start: 5
     length: 1
@@ -1214,6 +1214,7 @@ MonoBehaviour:
   F_AttackRotateParam: 1
   I_AttackPreAimPercentage: 50
   B_AttackMove: 1
+  B_AttackFrontCheck: 1
 --- !u!114 &114099762770211614
 MonoBehaviour:
   m_ObjectHideFlags: 1
