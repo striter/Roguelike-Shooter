@@ -679,7 +679,6 @@ public static class GameDataManager
                 }
                 return false;
             }, seed);
-            Debug.Log(actionIndex);
             if (actionIndex != -1)
                 actions.Add(CreateAction(actionIndex, level));
         }
