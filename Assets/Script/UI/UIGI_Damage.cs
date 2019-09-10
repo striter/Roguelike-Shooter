@@ -16,7 +16,7 @@ public class UIGI_Damage : UIT_GridItem {
     public void Play(EntityCharacterBase damageEntity,float amount,Action<int> _OnAnimFinished)
     {
         m_attachEntity = damageEntity;
-        m_Amount.text = amount.ToString();
+        m_Amount.text = Mathf.CeilToInt(amount).ToString()+"/"+amount;
         f_expireCheck = 1f;
         OnAnimFinished = _OnAnimFinished;
     }

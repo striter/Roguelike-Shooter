@@ -13,7 +13,6 @@ namespace GameSetting
     public static class GameConst
     {
         public const float F_EntityDeadFadeTime = 2f;
-        public const float F_PlayerDamageAdjustmentRange = .1f;
 
         public const float F_MaxActionAmount = 4f;
         public const float F_RestoreActionAmount = 2f;
@@ -24,25 +23,26 @@ namespace GameSetting
         public const int I_ProjectileBlinkWhenTimeLeftLessThan = 3;
         public const float F_AimAssistDistance = 100f;
         public const short I_BoltLastTimeAfterHit = 5;
-        public const float F_LaserRayStartPause = .5f;      //Laser Start Pause
         public const float F_ParticlesMaxStopTime = 4f;
 
         public const int I_BurstFirePelletsOnceTrigger = 3;       //Times While Burst Fire
         public const int I_ProjectileSpreadAtDistance = 100;       //Meter,  Bullet Spread In A Circle At End Of This Distance
 
-        public const float F_LevelTileSize = 2f;        //Cube Size For Level Tiles
-
+        public const float F_PlayerDamageAdjustmentRange = .1f;
         public const float F_PlayerCameraSmoothParam = 1f;     //Camera Smooth Param For Player .2 is suggested
         public const float F_PlayerFallSpeed = 9.8f;       //Player Fall Speed(Not Acceleration)
 
         public const float F_AITargetCheckParam = 3f;       //AI Retarget Duration,3 is suggested
         public const float F_AITargetCalculationParam = 1f;       //AI Target Param Calculation Duration, 1 is suggested;
         public const float F_AIMovementCalculationParam = .3f;
+
         public const int I_EnermyCountWaveFinish = 0;       //When Total Enermy Count Reaches This Amount,Wave Finish
         public const int I_EnermySpawnDelay = 5;        //Enermy Spawn Delay Time 
 
         public const int I_HealthPickupAmount = 50;
         public const int I_ArmorPickupAmount = 25;
+
+        public const float F_LevelTileSize = 2f;        //Cube Size For Level Tiles
     }
 
     public static class GameExpression
