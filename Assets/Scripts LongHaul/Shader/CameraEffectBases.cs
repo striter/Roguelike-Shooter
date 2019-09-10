@@ -8,8 +8,10 @@ public class CameraEffectBase
     public virtual DepthTextureMode m_DepthTextureMode => DepthTextureMode.None;
     public virtual bool m_DepthToWorldMatrix => false;
     protected CameraEffectManager m_Manager { get; private set; }
+    public bool m_Supported { get; protected set; } 
     public CameraEffectBase()
     {
+        m_Supported = true;
     }
     public virtual void OnSetEffect(CameraEffectManager _manager)
     {
@@ -31,25 +33,15 @@ public class PostEffectBase: CameraEffectBase
 {
     const string S_ParentPath = "Hidden/PostEffect/";
     public Material m_Material { get; private set; }
-    public bool m_Supported { get; private set; }
-    public PostEffectBase()
+    public PostEffectBase():base()
     {
-        m_Supported = true;
         Shader shader = Shader.Find(S_ParentPath+this.GetType().ToString());
         if (shader == null)
-        {
-            Debug.LogError("Shader:" + S_ParentPath + this.GetType().ToString()+" Not Found");
-            m_Supported = false;
-        }
+            Debug.LogError("Shader:" + S_ParentPath + this.GetType().ToString() + " Not Found");
         else if (!shader.isSupported)
-        {
             Debug.LogError("Shader:" + S_ParentPath + this.GetType().ToString() + " Is Not Supported");
-            m_Supported = false;
-        }
-        m_Material = new Material(shader)
-        {
-            hideFlags = HideFlags.DontSave
-        };
+        m_Supported = shader != null && shader.isSupported;
+        m_Material = new Material(shader) { hideFlags = HideFlags.DontSave };
     }
     protected bool RenderDefaultImage(RenderTexture source, RenderTexture destination)
     {
@@ -273,10 +265,6 @@ public class PE_FogDepthNoise : PE_FogDepth
         m_Material.SetFloat("_NoisePow", _noisePow);
         m_Material.SetFloat("_FogSpeedX", _fogSpeedX);
         m_Material.SetFloat("_FogSpeedY", _fogSpeedY);
-    }
-    public override void OnRenderImage(RenderTexture source, RenderTexture destination)
-    {
-        base.OnRenderImage(source, destination);
     }
 }
 public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific Items

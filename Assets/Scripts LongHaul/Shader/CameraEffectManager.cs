@@ -15,8 +15,11 @@ public class CameraEffectManager : SimpleSingletonMono<CameraEffectManager>,ISin
         T effectBase = new T();
         effectBase.OnSetEffect(Instance);
         Instance.m_PostEffects.Add(effectBase);
-        Instance.m_Camera.depthTextureMode |= effectBase.m_DepthTextureMode;
-        Instance.m_calculateDepthToWorldMatrix |= effectBase.m_DepthToWorldMatrix;
+        if (effectBase.m_Supported)
+        {
+            Instance.m_Camera.depthTextureMode |= effectBase.m_DepthTextureMode;
+            Instance.m_calculateDepthToWorldMatrix |= effectBase.m_DepthToWorldMatrix;
+        }
         return effectBase;
     }
     public static T GetCameraEffect<T>() where T : CameraEffectBase => Instance.m_PostEffects.Find(p => p.GetType() ==typeof(T)) as T;
