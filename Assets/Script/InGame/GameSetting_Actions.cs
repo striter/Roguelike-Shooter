@@ -87,7 +87,7 @@ namespace GameSetting_Action
         public static float F_20002_DamageDealt(enum_RarityLevel level) => 50f;
         public static float F_20002_BuffIndex(enum_RarityLevel level) => 200020 + (int)level;
         public static float F_20003_Health(enum_RarityLevel level) => 200;
-        public static float F_20003_FireRate(enum_RarityLevel level) => 1f;
+        public static float F_20003_FireRate(enum_RarityLevel level) => 0.3f;
         public static float F_20003_DamageDealt(enum_RarityLevel level) => .7f * (int)level;
         public static float F_20004_DamageDealt(enum_RarityLevel level) => 2 + 2 * (int)level;
         public static float IP_20005_BaseShieldHealthPercentage(enum_RarityLevel level) => 50;
@@ -113,7 +113,7 @@ namespace GameSetting_Action
         public static float F_40003_DamageAdditive(enum_RarityLevel level) => 100f;
         public static float F_40007_DamageReductionDuration(enum_RarityLevel level) => (int)level;
         public static float F_40007_ArmorAdditive(enum_RarityLevel level) => 30 * (int)level;
-        public static float F_40007_Cooldown(enum_RarityLevel level) => 60f;
+        public static float F_40007_Cooldown(enum_RarityLevel level) => 20f;
         public static float F_40012_ActionReturn(enum_RarityLevel level) => .2f * (int)level;
         public static float F_40014_ArmorAdditive(enum_RarityLevel level) => 10 * (int)level;
         #endregion
