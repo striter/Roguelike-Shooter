@@ -182,9 +182,9 @@ namespace GameSetting_Action
     {
         public override enum_ActionExpireType m_ActionExpireType => enum_ActionExpireType.AfterFire;
         protected int m_fireIdentity = -1;
-        public override void OnAfterFire(int _identity)
+        public override void OnFire(int _identity)
         {
-            base.OnAfterFire(_identity);
+            base.OnFire(_identity);
             m_fireIdentity = _identity;
             ForceExpire();
         }
@@ -612,15 +612,8 @@ namespace GameSetting_Action
         public override int I_ActionCost => ActionData.I_30007_Cost;
         public override float Value1 => ActionData.F_MovementStackupMax(m_Level);
         public override float Value2 => ActionData.F_MovementStackupDamageAdditive(m_stackUp, m_Level);
-        public override float F_DamageAdditive
-        {
-            get
-            {
-                b_fired = true;
-                return Value2;
-            }
-        }
-        protected bool b_fired = false;
+        public override float F_DamageAdditive => Value2;
+        
         protected float m_stackUp;
         protected Vector3 m_prePos;
         public override void OnActionUse()
@@ -628,19 +621,23 @@ namespace GameSetting_Action
             base.OnActionUse();
             m_prePos = m_ActionEntity.transform.position;
             m_stackUp = 0;
-            b_fired = false;
         }
+        public override void OnFire(int identity) => m_stackUp = 0;
+        float timeCheck;
         public override void OnTick(float deltaTime)
         {
             base.OnTick(deltaTime);
-            if(b_fired)
+            if (timeCheck > 0)
             {
-                b_fired = false;
-                m_stackUp = 0;
+                timeCheck -= deltaTime;
+                return;
             }
-            Vector3 curPos = m_ActionEntity.transform.position;
-            m_stackUp += TCommon.GetXZDistance(m_prePos,curPos);
+            timeCheck = .5f;
+
+            m_stackUp += TCommon.GetXZDistance(m_prePos, m_ActionEntity.transform.position);
             m_prePos = m_ActionEntity.transform.position;
+            if (m_stackUp > 100)
+                m_stackUp = 100;
         }
         public Action_30007_MovementStackupDamageAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
@@ -670,9 +667,9 @@ namespace GameSetting_Action
         public override int m_Index => 40002;
         public override float Value1 => ActionData.IP_40002_DamageDealtAddActionRate(m_Level);
         public override float Value2 => ActionData.F_40002_AddActionAmount(m_Level);
-        public override void OnAfterFire(int identity)
+        public override void OnFire(int identity)
         {
-            base.OnAfterFire(identity);
+            base.OnFire(identity);
             if (TCommon.RandomPercentage() < Value1)
                 ActionHelper.PlayerReceiveActionAmount(m_ActionEntity, Value2);
         }
@@ -686,9 +683,9 @@ namespace GameSetting_Action
         bool m_triggerd = false;
         int fireCount = 0;
         public override float F_DamageAdditive => m_triggerd ? Value2 : 0;
-        public override void OnAfterFire(int identity)
+        public override void OnFire(int identity)
         {
-            base.OnAfterFire(identity);
+            base.OnFire(identity);
             m_triggerd = false;
             fireCount++;
             if (fireCount < Value1)

@@ -1123,7 +1123,7 @@ namespace GameSetting
             DamageDeliverInfo info = DamageDeliverInfo.PlayerDamageInfo(m_Entity.I_EntityID, F_DamageMultiply+ randomDamageMultiply, F_DamageAdditive);
             CloakReset();
             m_ActionEquiping.Traversal((ActionBase action) => {
-                action.OnAfterFire(info.I_IdentiyID);
+                action.OnFire(info.I_IdentiyID);
 
                 if (action.m_ActionExpireType == enum_ActionExpireType.AfterFire)
                     m_AfterFire.Add(action as ActionAfterFire);
@@ -1352,7 +1352,7 @@ namespace GameSetting
         public virtual void OnDealtDemage(EntityCharacterBase receiver, float amount) { }
         public virtual void OnReloadFinish() { }
         public virtual void OnAfterBattle() { }
-        public virtual void OnAfterFire(int identity) { }
+        public virtual void OnFire(int identity) { }
         public virtual void OnWeaponDetach() { }
         public bool B_Upgradable => m_Level < enum_RarityLevel.L3;
         public void Upgrade()
