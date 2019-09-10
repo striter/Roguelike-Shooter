@@ -940,7 +940,7 @@ MonoBehaviour:
   F_AIChaseRange: 22
   F_AIAttackRange: 27
   F_AttackDuration:
-    start: 4
+    start: 5
     length: 1
   F_AttackTimes:
     start: 1
