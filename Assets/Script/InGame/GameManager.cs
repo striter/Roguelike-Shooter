@@ -684,7 +684,7 @@ public static class GameDataManager
         }
         return actions;
     }
-    public static ActionBase CreateRandomPlayerAction(enum_RarityLevel level, System.Random seed) => CreateAction(m_PlayerActions.RandomIndex(seed),level);
+    public static ActionBase CreateRandomPlayerAction(enum_RarityLevel level, System.Random seed) => CreateAction(m_PlayerActions.RandomItem(seed),level);
     public static List<ActionBase> CreateActions(List<ActionInfo> infos)
     {
         List<ActionBase> actions = new List<ActionBase>();
