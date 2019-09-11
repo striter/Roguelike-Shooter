@@ -27,7 +27,7 @@ public class WeaponBase : MonoBehaviour {
     public float F_AmmoStatus => I_AmmoLeft / (float)I_ClipAmount;
     public bool B_TriggerActionable() => B_Triggerable && B_Actionable();
     public bool B_Actionable() => !B_Reloading && f_fireCheck <= 0;
-
+    public float m_movementReduction { get; private set; } = 0;
     WeaponTrigger m_Trigger = null;
     Action<bool,float> OnReload;
     Action<Vector2> OnFireRecoil;
@@ -117,6 +117,7 @@ public class WeaponBase : MonoBehaviour {
 
         I_AmmoLeft--;
         OnFireRecoil?.Invoke(F_Recoil);
+        m_movementReduction = GameConst.F_FireMovementReduction;
 
         return true;
     }
@@ -145,9 +146,11 @@ public class WeaponBase : MonoBehaviour {
     public void Tick(float deltaTime,bool _canFire)
     {
         B_Triggerable = _canFire;
-        AmmoStatus();
 
-        float fireTick = m_Attacher.m_PlayerInfo.F_FireRateTick(Time.deltaTime);
+        MovementStatus(deltaTime);
+        AmmoStatus(deltaTime);
+
+        float fireTick = m_Attacher.m_PlayerInfo.F_FireRateTick(deltaTime);
 
         if (m_Trigger != null)
             m_Trigger.Tick(fireTick);
@@ -157,7 +160,7 @@ public class WeaponBase : MonoBehaviour {
 
         if (B_Reloading)
         {
-            f_reloadCheck += m_Attacher.m_PlayerInfo.F_ReloadRateTick(Time.deltaTime);
+            f_reloadCheck += m_Attacher.m_PlayerInfo.F_ReloadRateTick(deltaTime);
             if (f_reloadCheck > m_WeaponInfo.m_ReloadTime)
             {
                 I_AmmoLeft = I_ClipAmount;
@@ -166,8 +169,12 @@ public class WeaponBase : MonoBehaviour {
             }
         }
     }
+    void MovementStatus(float deltaTime)
+    {
+        m_movementReduction = Mathf.Lerp(m_movementReduction, 1, deltaTime * GameConst.I_FireMovementRegen);
+    }
 
-    void AmmoStatus()
+    void AmmoStatus(float deltaTime)
     {
         int clipAmount = m_Attacher.m_PlayerInfo.I_ClipAmount(m_WeaponInfo.m_ClipAmount);
         if (I_ClipAmount != clipAmount)
@@ -177,6 +184,7 @@ public class WeaponBase : MonoBehaviour {
                 I_AmmoLeft = I_ClipAmount;
         }
     }
+    
     #endregion
     #region TriggerType
     internal class WeaponTrigger:ISingleCoroutine

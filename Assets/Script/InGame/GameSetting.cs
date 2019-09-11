@@ -19,6 +19,8 @@ namespace GameSetting
         public const float F_ActionShuffleCost = 3f;
         public const float F_ActionShuffleCooldown = 10f;
 
+        public const float F_FireMovementReduction = .2f;
+        public const int I_FireMovementRegen = 15;
         public const int I_ProjectileMaxDistance = 100;
         public const int I_ProjectileBlinkWhenTimeLeftLessThan = 3;
         public const float F_AimAssistDistance = 100f;

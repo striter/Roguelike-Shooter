@@ -73,15 +73,11 @@ public class TBroadCaster<TEnum>
         bool triggered = false;
         foreach (LocalMessage del in dic_delegates[type])
         {
-            LocalMessage<T> target = null;
-            if (del.e_type == LocalMessage.enum_MessageType.OneTemplate)
-                target = del as LocalMessage<T>;
+            if (del.e_type != LocalMessage.enum_MessageType.OneTemplate)
+                return;
 
-            if (target != null)
-            {
-                triggered = true;
-                target.Trigger(template);
-            }
+            triggered = true;
+            (del as LocalMessage<T>).Trigger(template);
         }
 
         if (!triggered)
@@ -101,7 +97,7 @@ public class TBroadCaster<TEnum>
         LocalMessage<T, Y> removeTarget = null;
         foreach (LocalMessage mb in dic_delegates[type])
         {
-            if (mb.e_type == LocalMessage.enum_MessageType.TowTemplate)
+            if (mb.e_type == LocalMessage.enum_MessageType.TwoTemplate)
                 removeTarget = mb as LocalMessage<T, Y>;
             if (removeTarget != null && removeTarget.ac_listener == Listener)
                 break;
@@ -116,15 +112,11 @@ public class TBroadCaster<TEnum>
         bool triggered = false;
         foreach (LocalMessage del in dic_delegates[type])
         {
-            LocalMessage<T, Y> target = null;
-            if (del.e_type == LocalMessage.enum_MessageType.TowTemplate)
-                target = del as LocalMessage<T, Y>;
+            if (del.e_type != LocalMessage.enum_MessageType.TwoTemplate)
+                return;
 
-            if (target != null)
-            {
-                triggered = true;
-                target.Trigger(template1, template2);
-            }
+            triggered = true;
+            (del as LocalMessage<T,Y>).Trigger(template1,template2);
         }
 
         if (!triggered)
@@ -158,15 +150,10 @@ public class TBroadCaster<TEnum>
         bool triggered = false;
         foreach (LocalMessage del in dic_delegates[type])
         {
-            LocalMessage<T, Y, U> target = null;
-            if (del.e_type == LocalMessage.enum_MessageType.ThreeTemplate)
-                target = del as LocalMessage<T, Y, U>;
-
-            if (target != null)
-            {
-                triggered = true;
-                target.Trigger(template1, template2, template3);
-            }
+            if (del.e_type != LocalMessage.enum_MessageType.ThreeTemplate)
+                return;
+            triggered = true;
+            (del as LocalMessage<T, Y, U>).Trigger(template1, template2, template3);
         }
 
         if (!triggered)
@@ -181,9 +168,8 @@ public class LocalMessage
     {
         Void,
         OneTemplate,
-        TowTemplate,
+        TwoTemplate,
         ThreeTemplate,
-        FourTemplate,
     }
     public virtual enum_MessageType e_type => enum_MessageType.Void;
     public Action ac_listener { get; private set; }
@@ -216,7 +202,7 @@ public class LocalMessage<T> : LocalMessage
 }
 public class LocalMessage<T, Y> : LocalMessage
 {
-    public override enum_MessageType e_type => enum_MessageType.TowTemplate;
+    public override enum_MessageType e_type => enum_MessageType.TwoTemplate;
     public new Action<T, Y> ac_listener { get; private set; }
     public LocalMessage(Action<T, Y> _listener)
     {

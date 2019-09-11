@@ -118,12 +118,16 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         bool canFire = !Physics.SphereCast(new Ray(tf_Head.position, tf_Head.forward), .3f, 1.5f, GameLayer.Mask.I_Static);
         m_WeaponCurrent.Tick(Time.deltaTime, canFire);
         m_Assist.SetEnable(canFire);
-        transform.rotation = Quaternion.Lerp(transform.rotation, CameraController.CameraXZRotation, GameConst.F_PlayerCameraSmoothParam);
-        Vector3 direction = (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized;
-        m_CharacterController.Move(direction * m_CharacterInfo.F_MovementSpeed * Time.deltaTime + Vector3.down * GameConst.F_PlayerFallSpeed * Time.deltaTime);
 
         m_Geometry.enabled = !m_PlayerInfo.B_Cloaked;
         m_Transparent.enabled = m_PlayerInfo.B_Cloaked;
+
+        transform.rotation = Quaternion.Lerp(transform.rotation, CameraController.CameraXZRotation, GameConst.F_PlayerCameraSmoothParam);
+
+        Vector3 moveDirection = (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized;
+        float movementSpeed = m_CharacterInfo.F_MovementSpeed * (m_WeaponCurrent == null ? 1 : m_WeaponCurrent.m_movementReduction);
+        m_CharacterController.Move((moveDirection * movementSpeed + Vector3.down * GameConst.F_PlayerFallSpeed) * Time.deltaTime);
+        m_Animator.SetRun(m_MoveAxisInput,movementSpeed/F_MovementSpeed);
 
         OnCommonStatus();
     }
@@ -167,16 +171,12 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 #endregion
     #region PlayerControll
     Vector2 m_MoveAxisInput;
+    void OnMovementDelta(Vector2 moveDelta) => m_MoveAxisInput = moveDelta;
     void OnRotateDelta(Vector2 rotateDelta)
     {
         rotateDelta.y = 0;
         rotateDelta.x = (rotateDelta.x / Screen.width) * 180f;
         CameraController.Instance.RotateCamera(rotateDelta);
-    }
-    void OnMovementDelta(Vector2 moveDelta)
-    {
-        m_MoveAxisInput = moveDelta;
-        m_Animator.SetRun(m_MoveAxisInput);
     }
     public void OnFireAddRecoil(Vector2 recoil)
     {
@@ -305,14 +305,16 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         static readonly int HS_T_Dead = Animator.StringToHash("t_dead");
         static readonly int HS_T_Reload = Animator.StringToHash("t_reload");
         static readonly int HS_FM_Reload = Animator.StringToHash("fm_reload");
+        static readonly int HS_FM_Movement = Animator.StringToHash("fm_movement");
         public PlayerAnimator(Animator _animator) : base(_animator)
         {
             _animator.fireEvents = true;
         }
-        public void SetRun(Vector2 movement)
+        public void SetRun(Vector2 movement,float movementParam)
         {
             m_Animator.SetFloat(HS_F_Forward, movement.y);
             m_Animator.SetFloat(HS_F_Strafe, movement.x);
+            m_Animator.SetFloat(HS_FM_Movement, movementParam);
         }
         public void SwitchAnim(enum_PlayerAnim animIndex)
         {
