@@ -128,7 +128,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_Geometry.enabled = !m_PlayerInfo.B_Cloaked;
         m_Transparent.enabled = m_PlayerInfo.B_Cloaked;
 
-        f_movementReductionCheck -= Time.deltaTime;
+        if(f_movementReductionCheck>0) f_movementReductionCheck -= Time.deltaTime;
         if (m_aiming) f_movementReductionCheck=GameConst.F_MovementReductionDuration;
 
         transform.rotation = Quaternion.Lerp(transform.rotation, CameraController.CameraXZRotation, GameConst.F_PlayerCameraSmoothParam);
