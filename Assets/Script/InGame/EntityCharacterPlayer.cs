@@ -14,12 +14,14 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public WeaponBase m_WeaponCurrent { get; private set; } = null;
     public InteractBase m_Interact { get; private set; }
     public EquipmentBase m_Equipment { get; private set; }
-    public override float m_baseMovementSpeed => F_MovementSpeed*(m_aiming?.5f:1f);
+    public override float m_baseMovementSpeed => F_MovementSpeed*(f_movementReductionCheck >0? GameConst.F_FireMovementReduction:1f);
     public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized* m_CharacterInfo.F_MovementSpeed * time;
     public PlayerInfoManager m_PlayerInfo { get; private set; }
     SkinnedMeshRenderer m_Geometry, m_Transparent;
     public EntityHealth m_PlayerHealth { get; private set; }
     protected bool m_aiming = false;
+    protected float f_movementReductionCheck = 0f;
+    
     protected override HealthBase GetHealthManager()
     {
         m_PlayerHealth = new EntityHealth(this, OnHealthChanged, OnDead);
@@ -117,6 +119,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         base.Update();
         if (m_PlayerHealth.b_IsDead)
             return;
+        
 
         bool canFire = !Physics.SphereCast(new Ray(tf_Head.position, tf_Head.forward), .3f, 1.5f, GameLayer.Mask.I_Static);
         m_WeaponCurrent.Tick(Time.deltaTime, canFire);
@@ -124,6 +127,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
         m_Geometry.enabled = !m_PlayerInfo.B_Cloaked;
         m_Transparent.enabled = m_PlayerInfo.B_Cloaked;
+
+        f_movementReductionCheck -= Time.deltaTime;
+        if (m_aiming) f_movementReductionCheck=GameConst.F_MovementReductionDuration;
 
         transform.rotation = Quaternion.Lerp(transform.rotation, CameraController.CameraXZRotation, GameConst.F_PlayerCameraSmoothParam);
 
