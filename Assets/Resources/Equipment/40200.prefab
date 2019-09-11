@@ -215,7 +215,7 @@ MonoBehaviour:
   F_Radius: 0.25
   F_Height: 0
   RI_CountExtension:
-    start: 6
+    start: 4
     length: 1
   F_OffsetExtension: 2.5
   B_TargetReachBlink: 0

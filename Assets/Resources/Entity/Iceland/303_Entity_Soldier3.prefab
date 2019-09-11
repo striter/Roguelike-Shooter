@@ -940,7 +940,7 @@ MonoBehaviour:
   F_AIAttackRange: 27
   F_AttackDuration:
     start: 3
-    length: 3
+    length: 1
   F_AttackTimes:
     start: 2
     length: 2
