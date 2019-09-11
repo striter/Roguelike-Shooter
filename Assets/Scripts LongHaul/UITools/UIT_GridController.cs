@@ -117,13 +117,13 @@ public class UIT_GridControllerMono<T>:UIT_GridController where T:UIT_GridItem
         }
     }
 }
-public class UIT_GridControllerMultiSelecting<T> : UIT_GridControllerMono<T> where T : UIT_GridDefaultItem
+public class UIT_GridDefaultMulti<T> : UIT_GridControllerMono<T> where T : UIT_GridDefaultItem
 {
     public int m_selectAmount { get; private set; }=-1;
     public bool m_AllSelected => m_Selecting.Count == m_selectAmount;
     public List<int> m_Selecting { get; private set; } = new List<int>();
     Action<int> OnItemSelect;
-    public UIT_GridControllerMultiSelecting(Transform _transform,int _selectAmount=-1,Action<int> _OnItemSelect=null):base(_transform)
+    public UIT_GridDefaultMulti(Transform _transform,int _selectAmount=-1,Action<int> _OnItemSelect=null):base(_transform)
     {
         m_selectAmount = _selectAmount;
         OnItemSelect = _OnItemSelect;
@@ -160,14 +160,14 @@ public class UIT_GridControllerMultiSelecting<T> : UIT_GridControllerMono<T> whe
     }
 }
 
-public class UIT_GridControllerSingleSelecting<T> : UIT_GridControllerMono<T> where T : UIT_GridDefaultItem
+public class UIT_GridDefaultSingle<T> : UIT_GridControllerMono<T> where T : UIT_GridDefaultItem
 {
     bool b_btnEnable;
     bool b_doubleClickConfirm;
     bool b_activeHighLight;
     Action<int> OnItemSelected;
     public int I_CurrentSelecting { get; private set; }
-    public UIT_GridControllerSingleSelecting(Transform _transform, Action<int> _OnItemSelected = null, bool activeHighLight = true, bool doubleClickConfirm = false) : base(_transform)
+    public UIT_GridDefaultSingle(Transform _transform, Action<int> _OnItemSelected = null, bool activeHighLight = true, bool doubleClickConfirm = false) : base(_transform)
     {
         b_btnEnable = true;
         b_activeHighLight = activeHighLight;

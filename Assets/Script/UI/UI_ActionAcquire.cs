@@ -20,9 +20,9 @@ public class UI_ActionAcquire : UIPageBase {
         OnIndexSelect = _OnIndexSelect;
            m_SingleGrid = selectAmount == 1;
         if (m_SingleGrid)
-            m_Grid = new UIT_GridControllerSingleSelecting<UIGI_ActionSelectItem>(tf_Container.Find("ActionGrid"), OnItemSelected, true);
+            m_Grid = new UIT_GridDefaultSingle<UIGI_ActionSelectItem>(tf_Container.Find("ActionGrid"), OnItemSelected, true);
         else
-            m_Grid = new UIT_GridControllerMultiSelecting<UIGI_ActionSelectItem>(tf_Container.Find("ActionGrid"), selectAmount, OnItemSelected);
+            m_Grid = new UIT_GridDefaultMulti<UIGI_ActionSelectItem>(tf_Container.Find("ActionGrid"), selectAmount, OnItemSelected);
         m_Confirm.interactable = false;
         m_Grid.ClearGrid();
         for (int i = 0; i < actions.Count; i++)
@@ -33,8 +33,8 @@ public class UI_ActionAcquire : UIPageBase {
     {
         m_Confirm.interactable = B_CanSelect;
     }
-    bool B_CanSelect => m_SingleGrid ? true : (m_Grid as UIT_GridControllerMultiSelecting<UIGI_ActionSelectItem>).m_AllSelected;
-    List<int> m_SelectIndexes => m_SingleGrid ? new List<int>() { (m_Grid as UIT_GridControllerSingleSelecting<UIGI_ActionSelectItem>).I_CurrentSelecting } : (m_Grid as UIT_GridControllerMultiSelecting<UIGI_ActionSelectItem>).m_Selecting;
+    bool B_CanSelect => m_SingleGrid ? true : (m_Grid as UIT_GridDefaultMulti<UIGI_ActionSelectItem>).m_AllSelected;
+    List<int> m_SelectIndexes => m_SingleGrid ? new List<int>() { (m_Grid as UIT_GridDefaultSingle<UIGI_ActionSelectItem>).I_CurrentSelecting } : (m_Grid as UIT_GridDefaultMulti<UIGI_ActionSelectItem>).m_Selecting;
 
     void OnConfirmClick()
     {
