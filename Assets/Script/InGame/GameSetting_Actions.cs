@@ -81,12 +81,12 @@ namespace GameSetting_Action
         public static int I_10019_ClipAdditiveAmount(enum_RarityLevel level) => 3 * (int)level;
         public static int IP_10020_HealthStealPercentage(enum_RarityLevel level) => 5*(int)level;
 
-        public static float F_20001_Health(enum_RarityLevel level) => 200;
+        public static float F_20001_Health(enum_RarityLevel level) => 500;
         public static float F_20001_ArmorTurretDamage(enum_RarityLevel level) => 1.5f * (int)level;
         public static float F_20001_TurretMinumumDamage(enum_RarityLevel level) => 50f;
         public static float F_20002_DamageDealt(enum_RarityLevel level) => 50f;
         public static float F_20002_BuffIndex(enum_RarityLevel level) => 200020 + (int)level;
-        public static float F_20003_Health(enum_RarityLevel level) => 200;
+        public static float F_20003_Health(enum_RarityLevel level) => 500;
         public static float F_20003_FireRate(enum_RarityLevel level) => 0.3f;
         public static float F_20003_DamageDealt(enum_RarityLevel level) => .7f * (int)level;
         public static float F_20004_DamageDealt(enum_RarityLevel level) => 2 + 2 * (int)level;
