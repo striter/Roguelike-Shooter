@@ -1,12 +1,12 @@
-﻿Shader "UIEffects/Fog" {
+﻿Shader "Game/UI/Fog" {
 	Properties {
 
 		_NoiseTex("Noise",2D) = "white"{}
 		_DeltaX("Delta X",Float)=1
 		_DeltaY("Delta Y",Float)=1
 
-		[PerRendererData] _MainTex("Sprite Texture", 2D) = "white" {}
-		_Color("Tint", Color) = (1,1,1,1)
+			[PerRendererData] _MainTex("Sprite Texture", 2D) = "white" {}
+			_Color("Tint", Color) = (1,1,1,1)
 
 			_StencilComp("Stencil Comparison", Float) = 8
 			_Stencil("Stencil ID", Float) = 0
@@ -54,7 +54,6 @@
 #include "UnityCG.cginc"
 		sampler2D _MainTex;
 	sampler2D _NoiseTex;
-	half4 _BurnColor;
 	float4 _Color;
 	half _DeltaX;
 	half _DeltaY;

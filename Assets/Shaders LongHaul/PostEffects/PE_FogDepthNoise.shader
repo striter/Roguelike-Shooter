@@ -25,7 +25,10 @@
 
 				#include "UnityCG.cginc"
 
-				float4x4 _FrustumCornersRay;
+			float4 _FrustumCornersRayBL;
+			float4 _FrustumCornersRayBR;
+			float4 _FrustumCornersRayTL;
+			float4 _FrustumCornersRayTR;
 				sampler2D _MainTex;
 				half4 _MainTex_TexelSize;
 				sampler2D _CameraDepthTexture;
@@ -58,12 +61,9 @@
 				if (_MainTex_TexelSize.y < 0)
 					o.uv_depth.y = 1 - o.uv_depth.y;
 #endif
-				int index = 0;
-				if (o.uv.x > .5)
-					index += 1;
-				if (o.uv.y > .5)
-					index += 2;
-				o.interpolatedRay = _FrustumCornersRay[index];
+				bool right = o.uv.x > .5;
+				bool top = o.uv.y > .5;
+				o.interpolatedRay = right ? (top ? _FrustumCornersRayTR : _FrustumCornersRayBR) : (top ? _FrustumCornersRayTL : _FrustumCornersRayBL);
 				return o;
 			}
 
@@ -72,7 +72,8 @@
 				float linearDepth = LinearEyeDepth(SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture,i.uv_depth));
 				float3 worldPos = _WorldSpaceCameraPos+ i.interpolatedRay.xyz*linearDepth;
 				float2 speed = _Time.y*float2(_FogSpeedX, _FogSpeedY);
-				float noise = pow((tex2D(_NoiseTex, worldPos.xz/20 + speed).r), _NoisePow)*(1- _NoiseLambert) + _NoiseLambert;
+				float2 noiseUV = (worldPos.xz+worldPos.y) / 20 + speed;
+				float noise = pow((tex2D(_NoiseTex, noiseUV).r), _NoisePow)*(1- _NoiseLambert) + _NoiseLambert;
 				float fogDensity = saturate((_FogEnd - worldPos.y)*_FogDensity*noise /(_FogEnd - _FogStart));
 				fixed3 col = tex2D(_MainTex, i.uv).rgb;
 				fogDensity = fogDensity==1 ? _FogColor.a : fogDensity;

@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class TResources
 {
+    #region GameExtras
     public class ConstPath
     {
         public const string S_PlayerEntity = "Entity/0_Player";
@@ -117,6 +118,7 @@ public class TResources
     public static InteractBase GetInteractPortal(enum_Style portalStyle) => Instantiate<InteractBase>( ConstPath.S_InteractPortal + portalStyle.ToString());
     public static InteractBase GetInteractActionChest(enum_StageLevel stageLevel) => Instantiate<InteractBase>(ConstPath.S_InteractActionChest + stageLevel.ToString());
     public static InteractBase GetInteract(enum_Interaction type) => Instantiate<InteractBase>(ConstPath.S_InteractCommon + type);
+    #endregion
     #region Will Be Replaced By AssetBundle If Needed
     public static T Instantiate<T>(string path, Transform toParent = null) where T : UnityEngine.Object
     {
@@ -153,6 +155,17 @@ public class TResources
 
 
     #endregion
+    public static TextAsset GetExcelData(string dataSource, bool extraSheets = false)
+    {
+        TextAsset asset = Resources.Load<TextAsset>("Excel/" + dataSource);
+        if (asset == null)
+        {
+            Debug.LogError("Path: Resources/Excel/" + dataSource + ".bytes Not Found");
+            return null;
+        }
+        return asset;
+    }
+
     public static T LoadResourceSync<T>(string bundlePath, string name) where T:UnityEngine.Object
     {
         T template = ResourceLoader.ResourcesLoader.LoadFromBundle<T>(bundlePath, name);
@@ -162,6 +175,7 @@ public class TResources
         }
         return template;
     }
+
     public static GameObject SpawnGameObjectAt( string bundlePath,string name, Transform parentTrans=null)
     {
 #if UNITY_EDITOR            //Android Bundle Item In Editor Won't Show Proper Material, Load By AssetDataBase

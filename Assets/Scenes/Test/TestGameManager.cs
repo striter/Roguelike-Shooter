@@ -10,7 +10,7 @@ public class TestGameManager : GameManager {
     private void Start()
     {
 //        PostEffectManager.AddPostEffect<PE_ViewDepth>();
-        CameraEffectManager.AddCameraEffect<PE_BloomSpecific>().SetEffect(2, 10, 2);
+        CameraEffectManager.AddCameraEffect<PE_BloomSpecific>().m_GaussianBlur.SetEffect(2, 10, 4);
     }
     // Update is called once per frame
     void Update () {

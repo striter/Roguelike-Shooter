@@ -1,10 +1,5 @@
-﻿Shader "Game/UI/Burn" {
+﻿Shader "Game/UI/BlurBackground" {
 	Properties {
-
-		_NoiseTex("Noise",2D) = "white"{}
-		_BurnColor("BurnColor",Color) = (0,0,0,0)
-		_BurnWidth("BurnWidth",Range(.05,.1))=.05
-		_Progress("Progress",Range(0,1))=0
 		[PerRendererData] _MainTex("Sprite Texture", 2D) = "white" {}
 		_Color("Tint", Color) = (1,1,1,1)
 
@@ -53,11 +48,8 @@
 #pragma multi_compile __ UNITY_UI_ALPHACLIP
 #include "UnityCG.cginc"
 		sampler2D _MainTex;
-	sampler2D _NoiseTex;
-	half4 _BurnColor;
 	float4 _Color;
-	half _Progress;
-	half _BurnWidth;
+	sampler2D _GlobalBlurTexture;
 
 	struct a2f
 	{
@@ -67,32 +59,23 @@
 	};
 	struct v2f
 	{
-		half2 uv  : TEXCOORD0;
 		float4 vertex   : SV_POSITION;
 		fixed4 color : COLOR;
+		half2 uv  : TEXCOORD0;
+		float2 screenPos:TEXCOORD1;
 	};
 	v2f vert(a2f i)
 	{
 		v2f o;
 		o.vertex = UnityObjectToClipPos(i.vertex);
+		o.screenPos = ComputeScreenPos(o.vertex);
 		o.uv = i.texcoord;
 		o.color = i.color*_Color;
 		return o;
 	}
 	fixed4 frag(v2f v) :COLOR
 	{
-	float noise = tex2D(_NoiseTex, v.uv).r;
-	float burnProgress = (1 - noise) - _Progress;
-	if (burnProgress<0)
-	{
-		discard;
-	}
-	half4 finalCol = tex2D(_MainTex, v.uv)*v.color;
-	if (burnProgress<_BurnWidth)
-	{
-		finalCol = _BurnColor;
-	}
-	return finalCol;
+	return  tex2D(_GlobalBlurTexture,v.screenPos)*v.color;
 	}
 	ENDCG
 	}

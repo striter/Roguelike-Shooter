@@ -52,6 +52,7 @@ public class CameraEffectManager : SimpleSingletonMono<CameraEffectManager>,ISin
     List<CameraEffectBase> m_PostEffects=new List<CameraEffectBase>();
     public Camera m_Camera { get; protected set; }
     public bool m_calculateDepthToWorldMatrix { get; set; } = false;
+    RenderTexture tempTexture1, tempTexture2;
     protected override void Awake()
     {
         base.Awake();
@@ -60,7 +61,6 @@ public class CameraEffectManager : SimpleSingletonMono<CameraEffectManager>,ISin
         m_calculateDepthToWorldMatrix = false;
     }
     
-    RenderTexture tempTexture1, tempTexture2;
     protected void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
         tempTexture1 = RenderTexture.GetTemporary(Screen.width, Screen.height, 0);
@@ -88,7 +88,7 @@ public class CameraEffectManager : SimpleSingletonMono<CameraEffectManager>,ISin
         Graphics.Blit(tempTexture1,destination);
         RenderTexture.ReleaseTemporary(tempTexture1);
     }
-    private void OnWillRenderObject()
+    private void OnRenderObject()
     {
         for (int i = 0; i < m_PostEffects.Count; i++)
             m_PostEffects[i].OnWillRenderObject();

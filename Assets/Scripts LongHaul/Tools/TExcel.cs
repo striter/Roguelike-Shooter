@@ -36,7 +36,7 @@ namespace TExcel
         {
             l_PropertyList = new List<T>();
             Type type = typeof(T);
-            l_PropertyList=Tools.GetFieldData<T>(Tools.GetExcelData(type.Name), type.GetFields(BindingFlags.NonPublic | BindingFlags.Instance));
+            l_PropertyList=Tools.GetFieldData<T>(Tools.ReadExcelData(TResources.GetExcelData(type.Name)));
         }
         public static void Clear()
         {
@@ -47,16 +47,9 @@ namespace TExcel
 
     class Tools
     {
-        public static List<string[]> GetExcelData(string dataSource,bool extraSheets=false) 
+        public static List<string[]> ReadExcelData(TextAsset excelAsset,bool extraSheets=false)
         {
-            TextAsset asset = Resources.Load<TextAsset>("Excel/" + dataSource);
-            if (asset == null)
-            {
-                Debug.LogError("Path: Resources/Excel/" + dataSource + ".bytes Not Found");
-                return null;
-            }
-
-            IExcelDataReader reader = ExcelReaderFactory.CreateBinaryReader(new MemoryStream(asset.bytes));
+            IExcelDataReader reader = ExcelReaderFactory.CreateBinaryReader(new MemoryStream(excelAsset.bytes));
             List<string[]> result = new List<string[]>();
             do
             {
@@ -65,18 +58,19 @@ namespace TExcel
                     string[] row = new string[reader.FieldCount];
                     for (int i = 0; i < row.Length; i++)
                     {
-                        string data = reader.GetString(i);  
+                        string data = reader.GetString(i);
                         row[i] = data == null ? "" : data;
                     }
-                    if(row[0]!="")
+                    if (row[0] != "")
                         result.Add(row);
                 }
             } while (extraSheets && reader.NextResult());
             return result;
         }
 
-        public static List<T> GetFieldData<T>(List<string[]> data, FieldInfo[] fields) where T : ISExcel
+        public static List<T> GetFieldData<T>(List<string[]> data) where T : ISExcel
         {
+            FieldInfo[] fields = typeof(T).GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
             List<T> targetData = new List<T>();
             try
             {

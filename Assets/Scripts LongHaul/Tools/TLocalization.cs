@@ -20,7 +20,7 @@ public static class TLocalization
 
         e_CurLocation = location;
 
-        List<string[]> data = TExcel.Tools.GetExcelData("SLocalization");
+        List<string[]> data = TExcel.Tools.ReadExcelData(TResources.GetExcelData("SLocalization"));
 
         for (int i = 1; i < data[0].Length; i++)
         {

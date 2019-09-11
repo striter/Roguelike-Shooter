@@ -27,6 +27,7 @@ public class CameraEffectBase
     }
     public virtual void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
+        Graphics.Blit(source, destination);
     }
     public virtual void OnDestroy()
     {
@@ -76,45 +77,47 @@ public class PE_BSC : PostEffectBase {      //Brightness Saturation Contrast
 }
 public class PE_GaussianBlur : PostEffectBase       //Gassuain Blur
 {
-    float F_BlurSpread = 2f;
-    int I_Iterations = 5;
-    int I_DownSample = 4;
+    float F_BlurSpread;
+    int I_Iterations;
+    RenderTexture buffer0, buffer1;
+    int rtW, rtH;
+    public override void OnSetEffect(CameraEffectManager _manager)
+    {
+        base.OnSetEffect(_manager);
+        SetEffect();
+    }
     public void SetEffect(float _blurSpread=2f, int _iterations=5, int _downSample = 4)
     {
         F_BlurSpread = _blurSpread;
         I_Iterations = _iterations;
-        I_DownSample = _downSample;
+        _downSample = _downSample > 0 ? _downSample : 1;
+        rtW = m_Manager.m_Camera.scaledPixelWidth >> _downSample;
+        rtH = m_Manager.m_Camera.scaledPixelHeight >> _downSample;
+        if (buffer0) RenderTexture.ReleaseTemporary(buffer0);
+        if (buffer1) RenderTexture.ReleaseTemporary(buffer1);
+        buffer0 = RenderTexture.GetTemporary(rtW, rtH, 0);
+        buffer0.filterMode = FilterMode.Bilinear;
+        buffer0.MarkRestoreExpected();
+        buffer1 = RenderTexture.GetTemporary(rtW, rtH, 0);
+        buffer0.filterMode = FilterMode.Bilinear;
+        buffer1.MarkRestoreExpected();
+    }
+    public override void OnDestroy()
+    {
+        base.OnDestroy();
+        RenderTexture.ReleaseTemporary(buffer0);
+        RenderTexture.ReleaseTemporary(buffer1);
     }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        if (I_DownSample == 0)
-            I_DownSample = 1;
-
-        int rtW = source.width >> I_DownSample;
-        int rtH = source.height >> I_DownSample;
-
-        RenderTexture buffer0 = RenderTexture.GetTemporary(rtW, rtH, 0);
-        buffer0.filterMode = FilterMode.Bilinear;
-
         Graphics.Blit(source, buffer0);
         for (int i = 0; i < I_Iterations; i++)
         {
             m_Material.SetFloat("_BlurSpread", 1 + i * F_BlurSpread);
-
-            RenderTexture buffer1;
-
-            buffer1 = RenderTexture.GetTemporary(rtW, rtH, 0);
             Graphics.Blit(buffer0, buffer1, m_Material, 0);
-            RenderTexture.ReleaseTemporary(buffer0);
-            buffer0 = buffer1;
-
-            buffer1 = RenderTexture.GetTemporary(rtW,rtH,0);
-            Graphics.Blit(buffer0, buffer1, m_Material, 1);
-            RenderTexture.ReleaseTemporary(buffer0);
-            buffer0 = buffer1;
+            Graphics.Blit(buffer1, buffer0, m_Material, 1);
         }
         Graphics.Blit(buffer0, destination);
-        RenderTexture.ReleaseTemporary(buffer0);
     }
 }
 public class PE_Bloom : PostEffectBase
@@ -272,11 +275,6 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
         m_RenderCamera.enabled = false;
         m_RenderTexture = new RenderTexture(m_Manager.m_Camera.scaledPixelWidth, m_Manager.m_Camera.scaledPixelHeight, 1);
         m_RenderCamera.targetTexture = m_RenderTexture;
-        SetEffect();
-    }
-    public void SetEffect(float _blueSpread=1f, int _iterations = 10, int _downSample=2)
-    {
-        m_GaussianBlur.SetEffect(_blueSpread, _iterations, _downSample);
     }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
@@ -331,27 +329,30 @@ public class CommandBufferBase:CameraEffectBase
     }
 }
 
-public class CB_GenerateBlurTexture : CommandBufferBase
+public class CB_GenerateGlobalBlurTexture : CommandBufferBase
 {
-public PE_GaussianBlur m_GaussianBlur { get; private set; }
-    protected override CameraEvent m_BufferEvent => CameraEvent.AfterEverything;
-    readonly int ID_GlobalBlurTexure = Shader.PropertyToID("_ScreenBlurTexture");
+    public PE_GaussianBlur m_GaussianBlur { get; private set; }
+    protected override CameraEvent m_BufferEvent => CameraEvent.BeforeImageEffects;
+    readonly int ID_GlobalBlurTexure = Shader.PropertyToID("_GlobalBlurTexture");
+    RenderTexture m_BlurTexture;
     public override void OnSetEffect(CameraEffectManager _manager)
     {
         base.OnSetEffect(_manager);
         m_GaussianBlur = new PE_GaussianBlur();
         m_GaussianBlur.OnSetEffect(_manager);
-        m_Buffer.GetTemporaryRT(ID_GlobalBlurTexure, -1, -1, 0, FilterMode.Bilinear);
+        m_BlurTexture = RenderTexture.GetTemporary(Screen.width,Screen.height);
+        Shader.SetGlobalTexture(ID_GlobalBlurTexure, m_BlurTexture);
+        m_Buffer.Blit(BuiltinRenderTextureType.CurrentActive , m_BlurTexture);
     }
-    public override void OnWillRenderObject()
+    public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        base.OnWillRenderObject();
+        base.OnRenderImage(source, destination);
+        m_GaussianBlur.OnRenderImage(m_BlurTexture, m_BlurTexture);
     }
     public override void OnDestroy()
     {
         base.OnDestroy();
-        m_Buffer.ReleaseTemporaryRT(ID_GlobalBlurTexure);
-        m_GaussianBlur.OnDestroy();
+        RenderTexture.ReleaseTemporary(m_BlurTexture);
     }
 }
 
