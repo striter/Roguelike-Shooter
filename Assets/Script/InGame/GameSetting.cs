@@ -836,7 +836,7 @@ namespace GameSetting
         protected float F_DamageMultiply { get; private set; } = 0f;
         public float F_FireRateTick(float deltaTime) => deltaTime * F_FireRateMultiply;
         public float F_ReloadRateTick(float deltaTime) => deltaTime * F_ReloadRateMultiply;
-        public float F_MovementSpeed => m_Entity.F_MovementSpeed * F_MovementSpeedMultiply;
+        public float F_MovementSpeed => m_Entity.m_baseMovementSpeed * F_MovementSpeedMultiply;
 
         float f_stunCheck = 0;
         public bool B_Stunned => f_stunCheck > 0;

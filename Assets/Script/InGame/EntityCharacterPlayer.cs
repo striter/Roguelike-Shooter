@@ -14,10 +14,12 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public WeaponBase m_WeaponCurrent { get; private set; } = null;
     public InteractBase m_Interact { get; private set; }
     public EquipmentBase m_Equipment { get; private set; }
+    public override float m_baseMovementSpeed => F_MovementSpeed*m_movementReduction;
     public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized* m_CharacterInfo.F_MovementSpeed * time;
     public PlayerInfoManager m_PlayerInfo { get; private set; }
     SkinnedMeshRenderer m_Geometry, m_Transparent;
     public EntityHealth m_PlayerHealth { get; private set; }
+    protected float m_movementReduction;
     protected override HealthBase GetHealthManager()
     {
         m_PlayerHealth = new EntityHealth(this, OnHealthChanged, OnDead);
@@ -125,7 +127,10 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         transform.rotation = Quaternion.Lerp(transform.rotation, CameraController.CameraXZRotation, GameConst.F_PlayerCameraSmoothParam);
 
         Vector3 moveDirection = (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized;
-        float movementSpeed = m_CharacterInfo.F_MovementSpeed * (m_WeaponCurrent == null ? 1 : m_WeaponCurrent.m_movementReduction);
+        m_movementReduction += Time.deltaTime * 1f;
+        if (m_movementReduction > 1f)
+            m_movementReduction = 1f;
+        float movementSpeed = m_CharacterInfo.F_MovementSpeed;
         m_CharacterController.Move((moveDirection * movementSpeed + Vector3.down * GameConst.F_PlayerFallSpeed) * Time.deltaTime);
         m_Animator.SetRun(m_MoveAxisInput,movementSpeed/F_MovementSpeed);
 
@@ -181,6 +186,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public void OnFireAddRecoil(Vector2 recoil)
     {
         OnRotateDelta(new Vector2((TCommon.RandomBool()?1:-1) *recoil.x,0));
+        m_movementReduction -= .2f;
+        if (m_movementReduction < .5f)
+            m_movementReduction = .5f;
         m_Animator.Fire();
     }
     #endregion

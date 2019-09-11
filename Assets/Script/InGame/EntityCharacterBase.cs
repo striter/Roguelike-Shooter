@@ -12,6 +12,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     Renderer[] m_SkinRenderers;
     public virtual Vector3 m_PrecalculatedTargetPos(float time) { Debug.LogError("Override This Please");return Vector2.zero; }
     protected virtual CharacterInfoManager GetEntityInfo() => new CharacterInfoManager(this, OnReceiveDamage, OnExpireChange);
+    public virtual float m_baseMovementSpeed => F_MovementSpeed;
     public override bool B_IsCharacter => true;
     public override void Init(int _poolIndex)
     {
