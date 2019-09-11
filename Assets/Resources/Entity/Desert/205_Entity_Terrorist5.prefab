@@ -955,7 +955,7 @@ MonoBehaviour:
   I_MaxHealth: 600
   I_DefaultArmor: 0
   F_MovementSpeed: 3
-  F_AttackSpread: 4
+  F_AttackSpread: 3
   E_EnermyType: 3
   E_AnimatorIndex: 140
   F_AIChaseRange: 15
@@ -966,7 +966,7 @@ MonoBehaviour:
   F_AttackTimes:
     start: 3
     length: 1
-  F_AttackRate: 0.6
+  F_AttackRate: 0.7
   B_BattleCheckObstacle: 0
   F_AttackRotateParam: 1
   I_AttackPreAimPercentage: 50
