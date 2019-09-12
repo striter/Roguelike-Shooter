@@ -69,7 +69,7 @@ public class EntityCharacterAI : EntityCharacterBase {
 
         if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
         {
-            m_Animator.SetRun(m_AI.m_Moving ? 1 : 0);
+            m_Animator.SetRun(m_AI.B_AgentEnabled ? 1 : 0);
             m_Animator.SetStun(m_CharacterInfo.B_Stunned);
         }
 
@@ -152,10 +152,10 @@ public class EntityCharacterAI : EntityCharacterBase {
         protected EquipmentBase m_Weapon;
         protected CharacterInfoManager m_Info => m_Entity.m_CharacterInfo;
         RaycastHit[] m_Raycasts;
-        float f_movementSimulate, f_battleSimulate, f_calculateSimulate, f_checkTargetSimulate;
+        float f_movementSimulate,f_movementOrderSimulate, f_battleSimulate, f_calculateSimulate, f_checkTargetSimulate;
         Vector3 v3_TargetDirection;
         float f_targetDistance;
-        bool b_targetOutChaseRange;
+        bool b_chaseTarget;
         bool b_targetOutAttackRange;
         bool b_canChaseTarget;
         bool b_CanAttackTarget;
@@ -165,7 +165,6 @@ public class EntityCharacterAI : EntityCharacterBase {
         bool b_targetHideBehindWall => i_targetUnvisibleCount == 40;
         bool b_targetAvailable => m_Target != null &&!m_Target.m_CharacterInfo.B_Cloaked && !m_Target.m_Health.b_IsDead;
         bool b_playing;
-        public bool m_Moving { get; private set; }
         public bool B_AgentEnabled
         {
             get
@@ -310,9 +309,9 @@ public class EntityCharacterAI : EntityCharacterBase {
                 i_targetUnvisibleCount = i_targetUnvisibleCount - 1 <= 0 ? 0 : i_targetUnvisibleCount - 1;
 
             f_targetDistance = TCommon.GetXZDistance(targetHeadTransform.position, headTransform.position);
-            b_targetOutChaseRange = f_targetDistance > m_Entity.F_AIChaseRange;
+            b_chaseTarget = f_targetDistance > m_Entity.F_AIChaseRange;
             b_targetOutAttackRange = f_targetDistance > m_Entity.F_AIAttackRange;
-            b_canChaseTarget = b_targetHideBehindWall || b_targetOutChaseRange;
+            b_canChaseTarget = b_targetHideBehindWall || b_chaseTarget;
             b_CanAttackTarget = !b_targetOutAttackRange  && b_targetRotationWithin && (!m_Entity.B_BattleCheckObstacle||b_targetVisible) &&!FrontBlocked();
         }
         #endregion
@@ -387,28 +386,33 @@ public class EntityCharacterAI : EntityCharacterBase {
         #region Position
         void ChecktAIDestination(float deltaTime)
         {
-            m_Moving = B_AgentEnabled&&TCommon.GetXZDistance(m_Agent.destination, m_Entity.transform.position) > .5f;
-            if (f_movementSimulate > 0)
-            {
-                f_movementSimulate -= deltaTime * m_Info.F_MovementSpeedMultiply;
-                return;
-            }
-            bool willIdle = !b_targetOutChaseRange && UnityEngine.Random.Range(0, 2) > 0;
-            f_movementSimulate = willIdle ? GameExpression.GetAIIdleDuration() : GameExpression.GetAIRedestinationDuration();
+            //Time Param Calculate
+            float movementDelta = deltaTime * m_Info.F_MovementSpeedMultiply;
+            if (f_movementOrderSimulate > 0)  f_movementOrderSimulate -= movementDelta;
+            if (f_movementSimulate > 0) { f_movementSimulate -= movementDelta; return; }
+            f_movementSimulate = GameConst.F_AIMovementCheckParam;
 
-            bool forceHoldPosition = m_Entity.m_CharacterInfo.F_MovementSpeed == 0 || (b_attacking && !m_Entity.B_AttackMove);
+            //Force Hold Position
+            if (CheckHoldPosition) { StopMoving();  return; }
 
-            B_AgentEnabled = !forceHoldPosition && !willIdle;
-            if (!B_AgentEnabled)
-                return;
-
-            m_Agent.SetDestination(GetSamplePosition());
+            //Normal Positioning
+            bool destinationReached = TCommon.GetXZDistance(m_Agent.destination, m_Entity.transform.position) < 1f;
+            if (!destinationReached && f_movementOrderSimulate > 0) return;
+            bool willIdle = !b_chaseTarget && TCommon.RandomBool();
+            f_movementOrderSimulate = willIdle ? GameExpression.GetAIIdleDuration() : GameConst.F_AIMaxRepositionDuration;
+            if (willIdle)
+                StopMoving();
+            else
+                SetDestination(GetSamplePosition());
         }
-        
-        Vector3 GetUnstuckPosition()=>  m_Entity.transform.position+TCommon.RandomXZSphere(10f);
-        Vector3 GetSamplePosition()=> b_canChaseTarget? (m_Target.transform.position ): (m_Entity.transform.position +(-v3_TargetDirection).normalized * 5) + TCommon.RandomXZSphere(3f);
-        bool FrontBlocked() => m_Entity.B_AttackFrontCheck&&Physics.SphereCast(new Ray(headTransform.position, headTransform.forward), 1f, 2, GameLayer.Mask.I_Static);
+        bool CheckHoldPosition => m_Entity.m_CharacterInfo.F_MovementSpeed == 0 || (b_attacking && !m_Entity.B_AttackMove);
 
+        void StopMoving() { B_AgentEnabled = false; }
+        void SetDestination(Vector3 destination){ B_AgentEnabled = true; m_Agent.SetDestination(destination); }
+
+        Vector3 GetSamplePosition()=>m_Entity.transform.position + (b_canChaseTarget?3:-3)*(v3_TargetDirection.normalized) + TCommon.RandomXZSphere(3f);
+
+        bool FrontBlocked() => m_Entity.B_AttackFrontCheck&&Physics.SphereCast(new Ray(headTransform.position, headTransform.forward), 1f, 2, GameLayer.Mask.I_Static);
         bool ObstacleBlocked(EntityCharacterBase target)
         {
             m_Raycasts = Physics.RaycastAll(m_Entity.tf_Head.position, v3_TargetDirection, Vector3.Distance(m_Entity.tf_Head.position, target.tf_Head.position), GameLayer.Mask.I_StaticEntity);
