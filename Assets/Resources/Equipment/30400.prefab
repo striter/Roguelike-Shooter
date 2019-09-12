@@ -207,7 +207,7 @@ MonoBehaviour:
   E_ProjectileType: 2
   F_Damage: 20
   F_Speed: 3
-  I_MuzzleIndex: 10001
+  I_MuzzleIndex: 0
   I_ImpactIndex: 20301
   I_IndicatorIndex: 0
   I_HitMarkIndex: 0
@@ -219,6 +219,7 @@ MonoBehaviour:
     length: 2
   F_OffsetExtension: 10
   B_TargetReachBlink: 0
+  C_BlinkColor: {r: 1, g: 0, b: 0, a: 1}
   I_BeamLength: 30
 --- !u!198 &198459710163750792
 ParticleSystem:
