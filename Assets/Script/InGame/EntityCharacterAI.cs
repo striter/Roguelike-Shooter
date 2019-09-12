@@ -200,7 +200,7 @@ public class EntityCharacterAI : EntityCharacterBase {
             m_Weapon = _weapon;
             m_Obstacle = m_Entity.GetComponent<NavMeshObstacle>();
             m_Agent = m_Entity.GetComponent<NavMeshAgent>();
-            m_Agent.stoppingDistance = 1.5f;
+            m_Agent.stoppingDistance = .2f;
             OnAttackAnim = _onAttack;
             OnCheckTarget = _onCheck;
             B_AgentEnabled = false;
@@ -393,11 +393,10 @@ public class EntityCharacterAI : EntityCharacterBase {
             f_movementSimulate = GameConst.F_AIMovementCheckParam;
 
             //Force Hold Position
-            if (CheckHoldPosition) { StopMoving();  return; }
+            if (CheckHoldPosition()) { StopMoving();  return; }
 
             //Normal Positioning
-            bool destinationReached = TCommon.GetXZDistance(m_Agent.destination, m_Entity.transform.position) < 1f;
-            if (!destinationReached && f_movementOrderSimulate > 0) return;
+            if (!CheckDestinationReached() && f_movementOrderSimulate > 0) return;
             bool willIdle = !b_chaseTarget && TCommon.RandomBool();
             f_movementOrderSimulate = willIdle ? GameExpression.GetAIIdleDuration() : GameConst.F_AIMaxRepositionDuration;
             if (willIdle)
@@ -405,12 +404,13 @@ public class EntityCharacterAI : EntityCharacterBase {
             else
                 SetDestination(GetSamplePosition());
         }
-        bool CheckHoldPosition => m_Entity.m_CharacterInfo.F_MovementSpeed == 0 || (b_attacking && !m_Entity.B_AttackMove);
+        bool CheckHoldPosition() => m_Entity.m_CharacterInfo.F_MovementSpeed == 0 || (b_attacking && !m_Entity.B_AttackMove);
+        bool CheckDestinationReached() => B_AgentEnabled && m_Agent.remainingDistance <= m_Agent.stoppingDistance;
 
         void StopMoving() { B_AgentEnabled = false; }
-        void SetDestination(Vector3 destination){ B_AgentEnabled = true; m_Agent.SetDestination(destination); }
+        void SetDestination(Vector3 destination) { B_AgentEnabled = true; m_Agent.SetDestination(destination); } 
 
-        Vector3 GetSamplePosition()=>m_Entity.transform.position + (b_canChaseTarget?3:-3)*(v3_TargetDirection.normalized) + TCommon.RandomXZSphere(3f);
+        Vector3 GetSamplePosition()=>EnvironmentManager.NavMeshPosition(  m_Entity.transform.position + (b_canChaseTarget?3:-3)*(v3_TargetDirection.normalized) + TCommon.RandomXZSphere(3f));
 
         bool FrontBlocked() => m_Entity.B_AttackFrontCheck&&Physics.SphereCast(new Ray(headTransform.position, headTransform.forward), 1f, 2, GameLayer.Mask.I_Static);
         bool ObstacleBlocked(EntityCharacterBase target)
