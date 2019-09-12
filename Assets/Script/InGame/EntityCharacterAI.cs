@@ -69,10 +69,11 @@ public class EntityCharacterAI : EntityCharacterBase {
 
         if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
         {
-            m_Animator.SetRun(m_AI.B_AgentEnabled ? 1 : 0);
+            m_Animator.SetRun(m_AI.m_Moving ? 1 : 0);
             m_Animator.SetStun(m_CharacterInfo.B_Stunned);
         }
 
+        m_AI.SetPlay(!m_CharacterInfo.B_Stunned);
         m_AI.OnTick(Time.deltaTime);
     }
 
@@ -156,16 +157,15 @@ public class EntityCharacterAI : EntityCharacterBase {
         float f_targetDistance;
         bool b_targetOutChaseRange;
         bool b_targetOutAttackRange;
-        bool b_MoveTowardsTarget;
+        bool b_canChaseTarget;
         bool b_CanAttackTarget;
-        bool b_AgentReachDestination;
-        bool b_idled = false;
         bool b_targetVisible;
         int i_targetUnvisibleCount;
         bool b_targetRotationWithin;
         bool b_targetHideBehindWall => i_targetUnvisibleCount == 40;
         bool b_targetAvailable => m_Target != null &&!m_Target.m_CharacterInfo.B_Cloaked && !m_Target.m_Health.b_IsDead;
-
+        bool b_playing;
+        public bool m_Moving { get; private set; }
         public bool B_AgentEnabled
         {
             get
@@ -217,33 +217,43 @@ public class EntityCharacterAI : EntityCharacterBase {
             f_calculateSimulate = 0f;
             f_targetDistance = 0f;
         }
-        public void OnInfoChange()
-        {
-            m_Agent.speed = m_Info.F_MovementSpeed;
-        }
         public void OnDeactivate()
         {
             B_AgentEnabled = false;
             m_Weapon.OnDeactivate();
             this.StopAllSingleCoroutines();
         }
-        public void OnTick(float deltaTime)
+
+        public void OnInfoChange()
         {
-            if (m_Entity.m_CharacterInfo.B_Stunned)
+            m_Agent.speed = m_Info.F_MovementSpeed;
+        }
+
+        public void SetPlay(bool play)
+        {
+            if (b_playing == play)
+                return;
+
+            b_playing = play;
+            if (!play)
             {
                 B_AgentEnabled = false;
                 if (b_attacking)
                     OnAttackFinished();
-                return;
             }
+        }
+        public void OnTick(float deltaTime)
+        {
+            if (!b_playing)
+                return;
 
             CheckTarget(deltaTime);
             CheckTargetParams(deltaTime);
             CheckBattle(deltaTime);
-            CheckPosition(deltaTime);
+            ChecktAIDestination(deltaTime);
             CheckRotation(deltaTime);
         }
-        
+        #region TargetIdentity
         void CheckTarget(float deltaTime)
         {
             if (!b_targetAvailable)
@@ -302,9 +312,10 @@ public class EntityCharacterAI : EntityCharacterBase {
             f_targetDistance = TCommon.GetXZDistance(targetHeadTransform.position, headTransform.position);
             b_targetOutChaseRange = f_targetDistance > m_Entity.F_AIChaseRange;
             b_targetOutAttackRange = f_targetDistance > m_Entity.F_AIAttackRange;
-            b_MoveTowardsTarget = b_targetHideBehindWall || b_targetOutChaseRange;
+            b_canChaseTarget = b_targetHideBehindWall || b_targetOutChaseRange;
             b_CanAttackTarget = !b_targetOutAttackRange  && b_targetRotationWithin && (!m_Entity.B_BattleCheckObstacle||b_targetVisible) &&!FrontBlocked();
         }
+        #endregion
         #region Battle
         int i_playCount;
         bool b_preAim;
@@ -374,62 +385,30 @@ public class EntityCharacterAI : EntityCharacterBase {
         }
         #endregion
         #region Position
-        void CheckPosition(float deltaTime)
+        void ChecktAIDestination(float deltaTime)
         {
+            m_Moving = B_AgentEnabled&&TCommon.GetXZDistance(m_Agent.destination, m_Entity.transform.position) > .5f;
             if (f_movementSimulate > 0)
             {
                 f_movementSimulate -= deltaTime * m_Info.F_MovementSpeedMultiply;
                 return;
             }
-            f_movementSimulate = GameConst.F_AIMovementCalculationParam;
+            bool willIdle = !b_targetOutChaseRange && UnityEngine.Random.Range(0, 2) > 0;
+            f_movementSimulate = willIdle ? GameExpression.GetAIIdleDuration() : GameExpression.GetAIRedestinationDuration();
 
-            if (m_Entity.m_CharacterInfo.F_MovementSpeed == 0||( b_attacking && !m_Entity.B_AttackMove))
-            {
-                B_AgentEnabled = false;
+            bool forceHoldPosition = m_Entity.m_CharacterInfo.F_MovementSpeed == 0 || (b_attacking && !m_Entity.B_AttackMove);
+
+            B_AgentEnabled = !forceHoldPosition && !willIdle;
+            if (!B_AgentEnabled)
                 return;
-            }
 
-
-            b_AgentReachDestination = m_Agent.destination == Vector3.zero || TCommon.GetXZDistance(headTransform.position, m_Agent.destination) < 1f;
-            if (!b_idled && b_AgentReachDestination && !b_targetOutChaseRange && UnityEngine.Random.Range(0, 2) > 0)
-            {
-                b_idled = true;
-                B_AgentEnabled = false;
-                f_movementSimulate =  UnityEngine.Random.Range(2f, 3f);
-                return;
-            }
-
-            b_idled = false;
-            B_AgentEnabled = true;
-
-            if (AgentStucked())
-                m_Agent.SetDestination(GetUnstuckPosition());
-            else if (b_AgentReachDestination)
-                m_Agent.SetDestination(GetSamplePosition());
+            m_Agent.SetDestination(GetSamplePosition());
         }
-
-        int stuckCount = 0;
-        Vector3 previousPos=Vector3.zero;
-
-        bool AgentStucked()
-        {
-            stuckCount = (previousPos != Vector3.zero && Vector3.Distance(previousPos, m_Entity.transform.position) < .5f) ? stuckCount + 1 : 0;
-            previousPos = m_Entity.transform.position;
-            return stuckCount>3;
-        }
-
-        Vector3 GetUnstuckPosition()
-        {
-            return EnvironmentManager.NavMeshPosition(m_Entity.transform.position+TCommon.RandomXZSphere(10f));
-        }
-
-        Vector3 GetSamplePosition()
-        {
-            Vector3 m_SamplePosition= m_Entity.transform.position+ (b_MoveTowardsTarget? v3_TargetDirection : -v3_TargetDirection).normalized*5;
-            return EnvironmentManager.NavMeshPosition(m_SamplePosition+TCommon.RandomXZSphere(3f));
-        }
-
+        
+        Vector3 GetUnstuckPosition()=>  m_Entity.transform.position+TCommon.RandomXZSphere(10f);
+        Vector3 GetSamplePosition()=> b_canChaseTarget? (m_Target.transform.position ): (m_Entity.transform.position +(-v3_TargetDirection).normalized * 5) + TCommon.RandomXZSphere(3f);
         bool FrontBlocked() => m_Entity.B_AttackFrontCheck&&Physics.SphereCast(new Ray(headTransform.position, headTransform.forward), 1f, 2, GameLayer.Mask.I_Static);
+
         bool ObstacleBlocked(EntityCharacterBase target)
         {
             m_Raycasts = Physics.RaycastAll(m_Entity.tf_Head.position, v3_TargetDirection, Vector3.Distance(m_Entity.tf_Head.position, target.tf_Head.position), GameLayer.Mask.I_StaticEntity);
@@ -446,8 +425,8 @@ public class EntityCharacterAI : EntityCharacterBase {
             }
             return true;
         }
-        #endregion
-        #region Rotation
+
+
         void CheckRotation(float deltaTime)
         {
             if (!b_targetAvailable)
@@ -457,7 +436,7 @@ public class EntityCharacterAI : EntityCharacterBase {
             if (v3_TargetDirection == Vector3.zero)
                 return;
 
-            b_targetRotationWithin = Mathf.Abs( TCommon.GetAngle(v3_TargetDirection, transform.forward, Vector3.up))<15;
+            b_targetRotationWithin = Mathf.Abs(TCommon.GetAngle(v3_TargetDirection, transform.forward, Vector3.up)) < 15;
             m_Agent.updateRotation = b_targetOutAttackRange;
             if (!m_Agent.updateRotation)
                 transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(v3_TargetDirection, Vector3.up), Time.deltaTime * 5 * (b_attacking ? m_Entity.F_AttackRotateParam : 1));

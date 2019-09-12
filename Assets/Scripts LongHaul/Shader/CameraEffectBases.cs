@@ -97,10 +97,8 @@ public class PE_GaussianBlur : PostEffectBase       //Gassuain Blur
         if (buffer1) RenderTexture.ReleaseTemporary(buffer1);
         buffer0 = RenderTexture.GetTemporary(rtW, rtH, 0);
         buffer0.filterMode = FilterMode.Bilinear;
-        buffer0.MarkRestoreExpected();
         buffer1 = RenderTexture.GetTemporary(rtW, rtH, 0);
         buffer0.filterMode = FilterMode.Bilinear;
-        buffer1.MarkRestoreExpected();
     }
     public override void OnDestroy()
     {
@@ -183,8 +181,6 @@ public class PE_MotionBlur : PostEffectBase     //Camera Motion Blur ,Easiest
             rt_Accumulation.hideFlags = HideFlags.DontSave;
             Graphics.Blit(source, rt_Accumulation);
        }
-
-        rt_Accumulation.MarkRestoreExpected();
 
         Graphics.Blit(source, rt_Accumulation, m_Material);
         Graphics.Blit(rt_Accumulation, destination);

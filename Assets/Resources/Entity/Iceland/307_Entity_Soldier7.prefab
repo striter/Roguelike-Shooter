@@ -1094,6 +1094,7 @@ MonoBehaviour:
   F_AttackRotateParam: 1
   I_AttackPreAimPercentage: 50
   B_AttackMove: 1
+  B_AttackFrontCheck: 1
 --- !u!114 &114559299296259918
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1227,8 +1228,8 @@ NavMeshAgent:
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 0
   m_AutoBraking: 1
-  m_AutoRepath: 0
-  m_Height: 2
+  m_AutoRepath: 1
+  m_Height: 2.5
   m_BaseOffset: 0
   m_WalkableMask: 1
   m_ObstacleAvoidanceType: 4

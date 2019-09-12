@@ -36,7 +36,6 @@ namespace GameSetting
 
         public const float F_AITargetCheckParam = 3f;       //AI Retarget Duration,3 is suggested
         public const float F_AITargetCalculationParam = 1f;       //AI Target Param Calculation Duration, 1 is suggested;
-        public const float F_AIMovementCalculationParam = .3f;
 
         public const int I_EnermyCountWaveFinish = 0;       //When Total Enermy Count Reaches This Amount,Wave Finish
         public const int I_EnermySpawnDelay = 5;        //Enermy Spawn Delay Time 
@@ -59,6 +58,9 @@ namespace GameSetting
         public static int GetEquipmentSubIndex(int weaponIndex) => weaponIndex + 1;
 
         public static float GetActionAmountRevive(float damageApply) => damageApply * .001f;
+
+        public static float GetAIRedestinationDuration() => UnityEngine.Random.Range(1f, 2f);
+        public static float GetAIIdleDuration() => UnityEngine.Random.Range(2f, 3f);
 
         public static float GetResultLevelScore(enum_StageLevel _stage, int _levelPassed) => 200 * ((int)_stage-1) + 20 * (_levelPassed-1);
         public static float GetResultKillScore(int _enermyKilled) => _enermyKilled*1;

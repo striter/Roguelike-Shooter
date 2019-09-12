@@ -9,6 +9,7 @@ public class InteractActionAdjustment : InteractBase {
     public int m_upgradeCount { get; private set; }
     public int m_removeCount{get;private set;}
     public PlayerInfoManager m_Interactor { get; private set; }
+    public override bool B_InteractOnce => false;
     public void Play(enum_StageLevel _stage)
     {
         m_stage = _stage;
