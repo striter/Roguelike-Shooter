@@ -98,8 +98,8 @@ namespace GameSetting_Action
         public static float F_30002_ReceiveDamageArmorAdditive(enum_RarityLevel level) => 3 + 3 * (int)level;
         public static float F_30003_DamageAdditive(enum_RarityLevel level) => 20f * (int)level;
         public static float F_30004_DamageAdditive(enum_RarityLevel level) => 100 * (int)level;
-        public static float F_30005_DamageDealtHeal(enum_RarityLevel level) => 200 - 50 * (int)level;
-        public static float F_30005_HealAmount(enum_RarityLevel level) => 1f;
+        public static float F_30005_DamageDealtHeal(enum_RarityLevel level) => 600 - 100 * (int)level;
+        public static float F_30005_HealAmount(enum_RarityLevel level) => 20f;
         public static int I_30006_ReloadTimesCount(enum_RarityLevel level) => 1;
         public static int IP_30006_ReloadDamageMultiplyPercentage(enum_RarityLevel level) => 100 * (int)level;
         public static float F_MovementStackupMax(enum_RarityLevel level) => 100f;
