@@ -236,7 +236,7 @@ public class EntityCharacterAI : EntityCharacterBase {
             b_playing = play;
             if (!play)
             {
-                B_AgentEnabled = false;
+                StopMoving();
                 if (b_attacking)
                     OnAttackFinished();
             }
