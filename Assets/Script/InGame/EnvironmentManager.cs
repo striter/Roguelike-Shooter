@@ -51,7 +51,7 @@ public class EnvironmentManager : SimpleSingletonMono<EnvironmentManager> {
     {
         CameraEffectManager.RemoveAllPostEffect();
         CameraEffectManager.AddCameraEffect<PE_BloomSpecific>().m_GaussianBlur.SetEffect(2, 10, 2);
-        CameraEffectManager.AddCameraEffect<CB_GenerateGlobalBlurTexture>();
+        CameraEffectManager.AddCameraEffect<CB_GenerateGlobalBlurTexture>().m_GaussianBlur.SetEffect(3,5,3);
         //PostEffectManager.AddPostEffect<PE_DepthOutline>().SetEffect(Color.black,1.2f,0.0001f);
         //PostEffectManager.AddPostEffect<PE_DepthSSAO>();
         switch (_levelStyle)

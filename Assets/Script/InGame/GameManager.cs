@@ -353,17 +353,11 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
         });
     }
 
-    static bool B_CanHitEntity(HitCheckEntity targetHitCheck, int sourceID)  //If Match Will Hit Target,Player Particles ETC
-    {
-        if (targetHitCheck.I_AttacherID == sourceID)
-            return false;
-        return !Instance.m_Entities.ContainsKey(sourceID) || targetHitCheck.m_Attacher.m_Flag != Instance.m_Entities[sourceID].m_Flag;
-    }
     public static bool B_CanDamageEntity(HitCheckEntity hb, int sourceID)   //After Hit,If Match Target Hit Succeed
     {
         if (hb.I_AttacherID == sourceID)
             return false;
-        return Instance.m_Entities.ContainsKey(sourceID) &&hb.m_Attacher.m_Flag!= enum_EntityFlag.Neutal&&hb.m_Attacher.m_Flag != Instance.m_Entities[sourceID].m_Flag;
+        return Instance.m_Entities.ContainsKey(sourceID) &&hb.m_Attacher.m_Flag != Instance.m_Entities[sourceID].m_Flag;
     }
     public static bool B_CanHitTarget(HitCheckBase hitCheck,int sourceID)
     {
@@ -373,6 +367,12 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
         return canHit;
     }
 
+    static bool B_CanHitEntity(HitCheckEntity targetHitCheck, int sourceID)  //If Match Will Hit Target,Player Particles ETC
+    {
+        if (targetHitCheck.I_AttacherID == sourceID || targetHitCheck.m_Attacher.m_Flag == enum_EntityFlag.Neutal)
+            return false;
+        return !Instance.m_Entities.ContainsKey(sourceID) || targetHitCheck.m_Attacher.m_Flag != Instance.m_Entities[sourceID].m_Flag;
+    }
     #endregion
     #region Battle Management
     public bool B_Battling { get; private set; } = false;

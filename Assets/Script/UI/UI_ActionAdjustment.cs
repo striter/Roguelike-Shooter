@@ -50,8 +50,9 @@ public class UI_ActionAdjustment : UIPageBase {
     {
         if (m_selectIndex >= 0)
         {
-            btn_upgrade.interactable = m_Interact.B_Upgradable(m_selectIndex);
-            txt_upgrade.text = "Upgrade:" + (btn_upgrade.interactable ? m_Interact.UpgradePrice.ToString():"Action Max Level");
+            enum_UI_ActionUpgradeType upgradeType = m_Interact.E_UpgradeType(m_selectIndex);
+            btn_upgrade.interactable =upgradeType== enum_UI_ActionUpgradeType.Upgradeable;
+            txt_upgrade.text = "Upgrade:" + (btn_upgrade.interactable ? m_Interact.UpgradePrice.ToString():upgradeType.ToString());
             btn_remove.interactable = m_Interact.B_Removeable(m_selectIndex);
             txt_remove.text = "Remove:" + m_Interact.RemovePrice.ToString();
         }
