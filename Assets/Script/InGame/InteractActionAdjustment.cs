@@ -39,7 +39,15 @@ public class InteractActionAdjustment : InteractBase {
         m_Interactor.OnCoinsRemoval(UpgradePrice);
         m_upgradeCount += 1;
     }
-    public bool B_Upgradable(int index) => m_Interactor.m_ActionStored[index].B_Upgradable&&m_Interactor.m_Coins >= UpgradePrice;
+    public enum_UI_ActionUpgradeType E_UpgradeType(int index)
+    {
+        if (m_Interactor.m_Coins <= UpgradePrice)
+            return enum_UI_ActionUpgradeType.LackOfCoins;
+        else if (!m_Interactor.m_ActionStored[index].B_Upgradable)
+            return enum_UI_ActionUpgradeType.MaxLevel;
+
+        return enum_UI_ActionUpgradeType.Upgradeable;
+    }
     public bool B_Removeable(int index) => m_Interactor.m_Coins >= RemovePrice;
     public int UpgradePrice => GameExpression.GetActionUpgradePrice(m_stage, m_upgradeCount);
     public int RemovePrice => GameExpression.GetActionRemovePrice(m_stage,m_removeCount);

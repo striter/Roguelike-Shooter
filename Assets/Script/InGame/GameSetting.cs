@@ -374,7 +374,7 @@ namespace GameSetting
     }
 
     #endregion
-
+    
     #region GameLayer
     public static class GameLayer
     {
@@ -2021,6 +2021,14 @@ namespace GameSetting
             }
             return I_Level - offset;
         }
+    }
+
+    public enum enum_UI_ActionUpgradeType
+    {
+        Invalid=-1,
+        Upgradeable=1,
+        LackOfCoins=2,
+        MaxLevel=3,
     }
     #endregion
 
