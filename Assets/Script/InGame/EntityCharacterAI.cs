@@ -160,9 +160,9 @@ public class EntityCharacterAI : EntityCharacterBase {
         bool b_canChaseTarget;
         bool b_CanAttackTarget;
         bool b_targetVisible;
-        int i_targetUnvisibleCount;
         bool b_targetRotationWithin;
-        bool b_targetHideBehindWall => i_targetUnvisibleCount == 40;
+        float f_targetBehindWallCheck;
+        bool b_targetHideBehindWall => f_targetBehindWallCheck <=0;
         bool b_targetAvailable => m_Target != null &&!m_Target.m_CharacterInfo.B_Cloaked && !m_Target.m_Health.b_IsDead;
         bool b_playing;
         public bool B_AgentEnabled
@@ -303,10 +303,8 @@ public class EntityCharacterAI : EntityCharacterBase {
 
             b_targetVisible = ObstacleBlocked(m_Target);
 
-            if (!b_targetVisible)
-                i_targetUnvisibleCount = i_targetUnvisibleCount + 1 > 40 ? 40 : i_targetUnvisibleCount + 1;
-            else
-                i_targetUnvisibleCount = i_targetUnvisibleCount - 1 <= 0 ? 0 : i_targetUnvisibleCount - 1;
+            f_targetBehindWallCheck+=((b_targetVisible?.5f:-1)*f_calculateSimulate);
+            f_targetBehindWallCheck = Mathf.Clamp(f_targetBehindWallCheck,0,8f);
 
             f_targetDistance = TCommon.GetXZDistance(targetHeadTransform.position, headTransform.position);
             b_chaseTarget = f_targetDistance > m_Entity.F_AIChaseRange;

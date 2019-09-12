@@ -68,7 +68,8 @@
 	{
 		v2f o;
 		o.vertex = UnityObjectToClipPos(i.vertex);
-		o.screenPos = ComputeScreenPos(o.vertex);
+		float4 screenPos = ComputeScreenPos(o.vertex);
+		o.screenPos = screenPos.xy / screenPos.w;
 		o.uv = i.texcoord;
 		o.color = i.color*_Color;
 		return o;
