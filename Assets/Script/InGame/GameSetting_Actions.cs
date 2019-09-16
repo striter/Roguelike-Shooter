@@ -7,11 +7,11 @@ namespace GameSetting_Action
     public static class ActionData
     {
         #region Costs
-        public const int I_10001_Cost = 2;
+        public const int I_10001_Cost = 1;
         public const int I_10002_Cost = 2;
-        public const int I_10003_Cost = 2;
+        public const int I_10003_Cost = 1;
         public const int I_10004_Cost = 0;
-        public const int I_10005_Cost = 3;
+        public const int I_10005_Cost = 2;
         public const int I_10006_Cost = 1;
         public const int I_10007_Cost = 1;
         public const int I_10008_Cost = 1;
