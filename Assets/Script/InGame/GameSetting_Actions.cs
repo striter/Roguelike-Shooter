@@ -7,11 +7,11 @@ namespace GameSetting_Action
     public static class ActionData
     {
         #region Costs
-        public const int I_10001_Cost = 2;
+        public const int I_10001_Cost = 1;
         public const int I_10002_Cost = 2;
-        public const int I_10003_Cost = 2;
+        public const int I_10003_Cost = 1;
         public const int I_10004_Cost = 0;
-        public const int I_10005_Cost = 3;
+        public const int I_10005_Cost = 2;
         public const int I_10006_Cost = 1;
         public const int I_10007_Cost = 1;
         public const int I_10008_Cost = 1;
@@ -98,8 +98,8 @@ namespace GameSetting_Action
         public static float F_30002_ReceiveDamageArmorAdditive(enum_RarityLevel level) => 3 + 3 * (int)level;
         public static float F_30003_DamageAdditive(enum_RarityLevel level) => 20f * (int)level;
         public static float F_30004_DamageAdditive(enum_RarityLevel level) => 100 * (int)level;
-        public static float F_30005_DamageDealtHeal(enum_RarityLevel level) => 600 - 100 * (int)level;
-        public static float F_30005_HealAmount(enum_RarityLevel level) => 20f;
+        public static float F_30005_DamageDealtHeal(enum_RarityLevel level) => 200 - 50 * (int)level;
+        public static float F_30005_HealAmount(enum_RarityLevel level) => 1f;
         public static int I_30006_ReloadTimesCount(enum_RarityLevel level) => 1;
         public static int IP_30006_ReloadDamageMultiplyPercentage(enum_RarityLevel level) => 100 * (int)level;
         public static float F_MovementStackupMax(enum_RarityLevel level) => 100f;
