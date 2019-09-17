@@ -52,10 +52,10 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected override void OnEnable()
     {
         base.OnEnable();
-        CameraController.Attach(this.transform);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
+        CameraController.Attach(this.transform);
         SetBinding(true);
     }
     protected override void OnDead()
@@ -131,7 +131,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
         Vector3 moveDirection = (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized;
         float movementSpeed = m_CharacterInfo.F_MovementSpeed;
-        m_CharacterController.Move((moveDirection * movementSpeed + Vector3.down * GameConst.F_PlayerFallSpeed) * Time.deltaTime);
+        m_CharacterController.Move(moveDirection * movementSpeed * Time.deltaTime);
         m_Animator.SetRun(m_MoveAxisInput, movementSpeed / F_MovementSpeed);
 
         OnCommonStatus();

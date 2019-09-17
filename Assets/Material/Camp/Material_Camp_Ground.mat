@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Material_Main_Ground
-  m_Shader: {fileID: 4800000, guid: 0beb9eae2e43d2f478de2b4b690f7734, type: 3}
+  m_Name: Material_Camp_Ground
+  m_Shader: {fileID: 4800000, guid: ade4537e8b0fa8c42816cfdbd36e719e, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -39,7 +39,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 23ef3ba07bc14be44bf5cb427ed727d6, type: 3}
+        m_Texture: {fileID: 2800000, guid: 6684683725436e24ab333a7926f3954c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -62,7 +62,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _Lambert: 0.52
+    - _Lambert: 0.5
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
@@ -71,7 +71,7 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _SubMultiply: 0.5
-    - _TexScale: 100
+    - _TexScale: 5
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
