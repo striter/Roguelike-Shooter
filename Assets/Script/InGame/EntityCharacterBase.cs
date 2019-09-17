@@ -9,7 +9,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     public Transform tf_Model { get; private set; }
     public Transform tf_Head { get; private set; }
     public CharacterInfoManager m_CharacterInfo { get; private set; }
-    Renderer[] m_SkinRenderers;
+    Renderer[] m_Renderers;
     public virtual Vector3 m_PrecalculatedTargetPos(float time) { Debug.LogError("Override This Please");return Vector2.zero; }
     protected virtual CharacterInfoManager GetEntityInfo() => new CharacterInfoManager(this, OnReceiveDamage, OnExpireChange);
     public virtual float m_baseMovementSpeed => F_MovementSpeed;
@@ -19,7 +19,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         base.Init(_poolIndex);
         tf_Model = transform.Find("Model");
         tf_Head = transform.Find("Head");
-        m_SkinRenderers = tf_Model.Find("Skin").GetComponentsInChildren<Renderer>();
+        m_Renderers = tf_Model.Find("Skin").GetComponentsInChildren<Renderer>();
         m_CharacterInfo = GetEntityInfo();
     }
 
@@ -27,7 +27,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     {
        base.OnActivate(_flag);
        m_CharacterInfo.OnActivate();
-       m_SkinRenderers.Traversal((Renderer renderer) => {renderer.materials.Traversal((Material mat)=> {mat.SetFloat("_Amount1", 0);}); });
+       m_Renderers.Traversal((Renderer renderer) => {renderer.materials.Traversal((Material mat)=> {mat.SetFloat("_Amount1", 0);}); });
     }
 
     protected virtual void OnExpireChange(){}
@@ -57,7 +57,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         base.OnDead();
         m_CharacterInfo.OnDeactivate();
         this.StartSingleCoroutine(1, TIEnumerators.ChangeValueTo((float value) => {
-            TCommon.Traversal(m_SkinRenderers, (Renderer renderer) => {
+            TCommon.Traversal(m_Renderers, (Renderer renderer) => {
                 renderer.materials.Traversal((Material mat) => {
                     mat.SetFloat("_Amount1", value);
                 });
@@ -84,8 +84,32 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
                 break;
         }
         this.StartSingleCoroutine(0,TIEnumerators.ChangeValueTo((float value)=> {
-            TCommon.Traversal(m_SkinRenderers, (Renderer renderer) => {
+            TCommon.Traversal(m_Renderers, (Renderer renderer) => {
                 renderer.material.SetColor("_Color",Color.Lerp(targetColor, Color.white, value)); });
           },0,1,1f));
+    }
+
+    class EntityCharacterEffectManager
+    {
+        enum enum_EffectIndex
+        {
+            Invalid=-1,
+            BaseRenderer=0,
+            DeadEffectOutline=1,
+            Transparent=2,
+            ScanEffect=3,
+        }
+        Renderer m_Skin;
+        public EntityCharacterEffectManager(Renderer _skin)
+        {
+            m_Skin = _skin;
+        }
+
+        public void OnDead()
+        {
+            
+        }
+
+
     }
 }
