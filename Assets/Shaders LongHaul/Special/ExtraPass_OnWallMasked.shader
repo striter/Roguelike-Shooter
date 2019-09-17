@@ -3,9 +3,8 @@
 	Properties
 	{
 		_MaskColor("Masked Color",Color) = (1,1,1,.5)
-		_MaskTex("Masked Texture",2D)="white"
-		_MaskParam1("Masked Param 1",float)=1
-		_MaskParam2("Masked Param 2",float) = 1
+		_MaskParam1("Masked Param 1",float) = 1
+		_MaskParam2("Masked Param 2",float) = 100
 	}
 		SubShader
 	{
@@ -81,27 +80,27 @@
 				CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
-				sampler2D _MaskTex;
 			float _MaskParam1;
 			float _MaskParam2;
 			struct v2f
 			{
 				float4 pos:SV_POSITION;
-				float2 screenUV:TEXCOORD0;
+				float4 screenPos:TEXCOORD0;
 			};
 			v2f vert(appdata_base v)
 			{
 				v2f o;
 				o.pos = UnityObjectToClipPos(v.vertex);
-				float4 screenPos= ComputeScreenPos(o.pos);
-				o.screenUV = screenPos.xy / screenPos.w/_MaskParam2;
-				o.screenUV.y += _Time.y*_MaskParam1;
+				o.screenPos = ComputeScreenPos(o.pos);
 				return o;
 			}
 
 			fixed4 frag(v2f i) :SV_TARGET
 			{
-				return (1-tex2D(_MaskTex,i.screenUV).r) *_MaskColor;
+				float2 screenUV =i.screenPos.xy / i.screenPos.w;
+				screenUV *= _MaskParam2;
+				float mask = sin(screenUV.y+  _Time.y*_MaskParam1);
+				return mask *_MaskColor;
 			}
 			ENDCG
 		}

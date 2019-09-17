@@ -41,6 +41,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         m_CharacterInfo.Tick(Time.deltaTime);
 
         m_Effect.SetCloak(m_CharacterInfo.B_Effecting( enum_CharacterEffect.Cloak));
+        m_Effect.SetScaned(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Scan));
     }
 
     protected override bool OnReceiveDamage(DamageInfo damageInfo)
@@ -75,14 +76,17 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
 
     class EntityCharacterEffectManager:ISingleCoroutine
     {
-        Shader SD_Opaque;
+        Shader SD_Opaque,SD_Outline;
         static readonly Shader SD_Transparent = Shader.Find("Game/Common/Diffuse_Texture_Transparent");
+        static readonly Shader SD_Scan = Shader.Find("Game/Extra/ScanEffect");
         static readonly int ID_Color = Shader.PropertyToID("_Color");
         static readonly int ID_Amount1=Shader.PropertyToID("_Amount1");
         static readonly int ID_Alpha = Shader.PropertyToID("_Alpha");
 
         Material[] m_Materials;
 
+        bool m_cloaked;
+        bool m_scaned;
         public EntityCharacterEffectManager(Renderer[] _skin)
         {
             Material materialBase= _skin[0].materials[0];
@@ -90,12 +94,21 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
             m_Materials = new Material[2] { materialBase, materialEffect };
             _skin.Traversal((Renderer renderer) => { renderer.materials = m_Materials;  });
             SD_Opaque = materialBase.shader;
+            SD_Outline = materialEffect.shader;
         }
 
         public void OnReset()
         {
+            m_scaned = false;
+            m_cloaked = false;
             m_Materials[0].shader = SD_Opaque;
+            m_Materials[1].shader = SD_Outline;
             m_Materials.Traversal((Material mat) => { mat.SetFloat(ID_Amount1, 0); });
+        }
+
+        public void OnDead()
+        {
+            OnReset();
         }
 
         public void OnRecycleEffect(float value)
@@ -104,7 +117,6 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
             m_Materials[1].SetFloat(ID_Amount1, value);
         }
 
-        bool m_cloaked;
         public void SetCloak(bool _cloacked)
         {
             if (m_cloaked == _cloacked)
@@ -130,6 +142,15 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
                     m_Materials[0].shader = SD_Opaque;
                 }));
             }
+        }
+
+        public void SetScaned(bool _scaned)
+        {
+            if (m_scaned == _scaned)
+                return;
+
+            m_scaned = _scaned;
+            m_Materials[1].shader = m_scaned ? SD_Scan : SD_Outline;
         }
 
         public void OnHit(enum_HealthChangeMessage type)

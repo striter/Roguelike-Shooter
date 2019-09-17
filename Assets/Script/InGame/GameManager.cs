@@ -71,10 +71,9 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
         }
         if (Input.GetKeyDown(KeyCode.Alpha9))
         {
-            List<EntityCharacterBase> entities = m_Entities.Values.ToList();
-            entities.Traversal((EntityCharacterBase entity) => {
+            m_Entities.Traversal((EntityCharacterBase entity) => {
                 if (entity.m_Flag == enum_EntityFlag.Enermy)
-                    entity.BroadcastMessage("OnReceiveDamage", new DamageInfo(0, enum_DamageType.Common, DamageDeliverInfo.BuffInfo(-1, 200023)));
+                    entity.BroadcastMessage("OnReceiveDamage", new DamageInfo(0, enum_DamageType.Common, DamageDeliverInfo.EquipmentInfo(-1,0, enum_CharacterEffect.Stun,2f)));
             });
         }
         if (Input.GetKeyDown(KeyCode.Equals))
@@ -89,7 +88,13 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
         if (Input.GetKeyDown(KeyCode.F8))
             m_LocalPlayer.m_PlayerInfo.AddStoredAction(GameDataManager.CreateAction(F8_TestAcquireAction, enum_RarityLevel.L1));
         if (Input.GetKeyDown(KeyCode.F9))
-            CameraEffectManager.StartAreaScan(m_LocalPlayer.tf_Head.position,Color.white, TResources.Load<Texture>(TResources.ConstPath.S_PETex_Holograph),15f,.7f,2f,50,3f);
+        {
+            CameraEffectManager.StartAreaScan(m_LocalPlayer.tf_Head.position, Color.white, TResources.Load<Texture>(TResources.ConstPath.S_PETex_Holograph),15f, 1f, 2f, 50, 3f);
+            m_Entities.Traversal((EntityCharacterBase entity) => {
+                if (entity.m_Flag == enum_EntityFlag.Enermy)
+                    entity.BroadcastMessage("OnReceiveDamage", new DamageInfo(0, enum_DamageType.Common, DamageDeliverInfo.EquipmentInfo(-1, 0, enum_CharacterEffect.Scan, 10f)));
+            });
+        }
         if (Input.GetKeyDown(KeyCode.F12))
         {
             EnvironmentManager.Instance.m_MapLevelInfo.Traversal((SBigmapLevelInfo info) => { if (info.m_TileLocking == enum_TileLocking.Locked) info.SetTileLocking(enum_TileLocking.Unlockable); });
