@@ -32,7 +32,6 @@ namespace GameSetting
 
         public const float F_PlayerDamageAdjustmentRange = .1f;
         public const float F_PlayerCameraSmoothParam = 1f;     //Camera Smooth Param For Player .2 is suggested
-        public const float F_PlayerFallSpeed = 9.8f;       //Player Fall Speed(Not Acceleration)
 
         public const float F_AIMovementCheckParam = .3f;
         public const float F_AITargetCheckParam = 3f;       //AI Retarget Duration,3 is suggested
