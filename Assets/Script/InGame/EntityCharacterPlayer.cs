@@ -17,7 +17,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public override float m_baseMovementSpeed => F_MovementSpeed*(f_movementReductionCheck >0? GameConst.F_FireMovementReduction:1f);
     public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized* m_CharacterInfo.F_MovementSpeed * time;
     public PlayerInfoManager m_PlayerInfo { get; private set; }
-    SkinnedMeshRenderer m_Geometry, m_Transparent;
     public EntityHealth m_PlayerHealth { get; private set; }
     protected bool m_aiming = false;
     protected float f_movementReductionCheck = 0f;
@@ -43,9 +42,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         tf_WeaponHoldLeft = transform.FindInAllChild("WeaponHold_L");
         m_Animator = new PlayerAnimator(tf_Model.GetComponent<Animator>());
         transform.Find("InteractDetector").GetComponent<InteractDetector>().Init(OnInteractCheck);
-
-        m_Geometry = tf_Model.Find("Skin").GetComponent<SkinnedMeshRenderer>();
-        m_Transparent = tf_Model.Find("Transparent").GetComponent<SkinnedMeshRenderer>();
+        
     }
     public void SetPlayerInfo(int coins, List<ActionBase> storedActions)
     {
@@ -99,6 +96,10 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void OnMainButtonDown(bool down)
     {
         m_aiming = down;
+        if (m_WeaponCurrent != null)
+            m_WeaponCurrent.Trigger(down);
+
+
         if (m_Equipment != null)
         {
             OnEquipment(down);
@@ -110,8 +111,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             OnInteract(down);
             return;
         }
-        if (m_WeaponCurrent != null)
-            m_WeaponCurrent.Trigger(down);
     }
 
     protected override void Update()
@@ -124,9 +123,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         bool canFire = !Physics.SphereCast(new Ray(tf_Head.position, tf_Head.forward), .3f, 1.5f, GameLayer.Mask.I_Static);
         m_WeaponCurrent.Tick(Time.deltaTime, canFire);
         m_Assist.SetEnable(canFire);
-
-        m_Geometry.enabled = !m_PlayerInfo.B_Cloaked;
-        m_Transparent.enabled = m_PlayerInfo.B_Cloaked;
 
         if(f_movementReductionCheck>0) f_movementReductionCheck -= Time.deltaTime;
         if (m_aiming) f_movementReductionCheck=GameConst.F_MovementReductionDuration;
