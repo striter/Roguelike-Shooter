@@ -37,6 +37,7 @@ namespace GameSetting
         public const float F_AITargetCheckParam = 3f;       //AI Retarget Duration,3 is suggested
         public const float F_AITargetCalculationParam = 1f;       //AI Target Param Calculation Duration, 1 is suggested;
         public const float F_AIMaxRepositionDuration = 5f;
+        public const int I_AIIdlePercentage = 50;
 
         public const int I_EnermyCountWaveFinish = 0;       //When Total Enermy Count Reaches This Amount,Wave Finish
         public const int I_EnermySpawnDelay = 4;        //Enermy Spawn Delay Time 

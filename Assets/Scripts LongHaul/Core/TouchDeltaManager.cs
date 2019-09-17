@@ -11,7 +11,7 @@ public class TouchDeltaManager : SingletonMono<TouchDeltaManager>
     {
         OnLeftDelta = _OnLeftDelta;
         OnRightDelta = _OnRightDelta;
-        if (UIT_JoyStick.Instance != null)  f_LeftStickRadius = UIT_JoyStick.Instance.Init().x;
+        if (UIT_JoyStick.Instance != null)  f_LeftStickRadius = UIT_JoyStick.Instance.Init().x/2;
     }
     Vector2 leftDelta = Vector2.zero;
     Vector2 rightDelta = Vector2.zero;

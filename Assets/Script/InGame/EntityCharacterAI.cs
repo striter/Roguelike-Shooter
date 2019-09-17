@@ -396,7 +396,7 @@ public class EntityCharacterAI : EntityCharacterBase {
             //Normal Positioning
             if (!CheckDestinationReached() && f_movementOrderSimulate > 0) return;
 
-            bool willIdle = !b_chaseTarget && TCommon.RandomBool();
+            bool willIdle = !b_chaseTarget && TCommon.RandomPercentage()>GameConst.I_AIIdlePercentage;
             if (willIdle)
                 StopMoving();
             else
