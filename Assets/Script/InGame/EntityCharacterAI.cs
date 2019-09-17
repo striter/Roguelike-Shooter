@@ -200,7 +200,7 @@ public class EntityCharacterAI : EntityCharacterBase {
             m_Weapon = _weapon;
             m_Obstacle = m_Entity.GetComponent<NavMeshObstacle>();
             m_Agent = m_Entity.GetComponent<NavMeshAgent>();
-            m_Agent.stoppingDistance = .2f;
+            m_Agent.stoppingDistance = 0f;
             OnAttackAnim = _onAttack;
             OnCheckTarget = _onCheck;
             B_AgentEnabled = false;
@@ -395,15 +395,16 @@ public class EntityCharacterAI : EntityCharacterBase {
 
             //Normal Positioning
             if (!CheckDestinationReached() && f_movementOrderSimulate > 0) return;
+
             bool willIdle = !b_chaseTarget && TCommon.RandomBool();
-            f_movementOrderSimulate = willIdle ? GameExpression.GetAIIdleDuration() : GameConst.F_AIMaxRepositionDuration;
             if (willIdle)
                 StopMoving();
             else
                 SetDestination(GetSamplePosition());
+            f_movementOrderSimulate = willIdle ? GameExpression.GetAIIdleDuration() : GameConst.F_AIMaxRepositionDuration;
         }
         bool CheckHoldPosition() => m_Entity.m_CharacterInfo.F_MovementSpeed == 0 || (b_attacking && !m_Entity.B_AttackMove);
-        bool CheckDestinationReached() => B_AgentEnabled && m_Agent.remainingDistance <= m_Agent.stoppingDistance;
+        bool CheckDestinationReached() => B_AgentEnabled && m_Agent.remainingDistance <= .3f;
 
         void StopMoving() { B_AgentEnabled = false; }
         void SetDestination(Vector3 destination) { B_AgentEnabled = true; m_Agent.SetDestination(destination); } 

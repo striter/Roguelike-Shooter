@@ -1,0 +1,114 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: Atlas_Game
+  m_EditorData:
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings: []
+    packingParameters:
+      serializedVersion: 2
+      padding: 2
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 1
+      enableTightPacking: 0
+    variantMultiplier: 1
+    packables:
+    - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
+    totalSpriteSurfaceArea: 787478
+    bindAsDefault: 1
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 38f42b51776c9154ba33af7287510e68, type: 3}
+  - {fileID: 21300000, guid: a42d9c5f2f4ba6243b2a8d0dd7156b69, type: 3}
+  - {fileID: 21300000, guid: 2e16002485390b04f935000c64648d96, type: 3}
+  - {fileID: 21300000, guid: 5123fc87ce124874ba38706389ab6c6e, type: 3}
+  - {fileID: 21300000, guid: cfe64325d22560f49823caf4595b2960, type: 3}
+  - {fileID: 21300000, guid: d33c057b45a868a46ab6ec37970d1b5c, type: 3}
+  - {fileID: 21300000, guid: 9cfbbb122f7c3ca4fbf5124bcdc0f7ad, type: 3}
+  - {fileID: 21300000, guid: df1b52d98d2a82b4dad501bc4177411a, type: 3}
+  - {fileID: 21300000, guid: 241b9019df49aff4a8a129d61fe1e8e3, type: 3}
+  - {fileID: 21300000, guid: 5ee3b7160fb62b743834e6d309db64be, type: 3}
+  - {fileID: 21300000, guid: 54be9c8b41cf29443a94ecaca46d9e58, type: 3}
+  - {fileID: 21300000, guid: a389a77cc5547e54fadc415628268bbd, type: 3}
+  - {fileID: 21300000, guid: bb9b55d0cd18e0741bc043e00caae287, type: 3}
+  - {fileID: 21300000, guid: 6b9793a839135b34a89c83c1e48c06da, type: 3}
+  - {fileID: 21300000, guid: 7c11af94fa1eebc4991d2291ed510491, type: 3}
+  - {fileID: 21300000, guid: c42607f5a31190146a683e5603f6761a, type: 3}
+  - {fileID: 21300000, guid: b7055a4cd0531a143ab993f1417e9f57, type: 3}
+  - {fileID: 21300000, guid: df6c58e9bdff9954bb8fb025a0385d29, type: 3}
+  - {fileID: 21300000, guid: 7dd15301aefd9104d9538054cbb637cd, type: 3}
+  - {fileID: 21300000, guid: bc79d4b98df144746a8e80a9c5c6db9e, type: 3}
+  - {fileID: 21300000, guid: 204b28d01dc0f084ea4399c7dbccb4a1, type: 3}
+  - {fileID: 21300000, guid: 90650132c9ee8ae4396c39751241d8fd, type: 3}
+  - {fileID: 21300000, guid: cfd8be99edcf15b4eb3e55ddde9f72e2, type: 3}
+  - {fileID: 21300000, guid: 547cde8135b18d045bc4a414fc924d45, type: 3}
+  - {fileID: 21300000, guid: ac9c2c22d9a4cf241a53932685201d4c, type: 3}
+  - {fileID: 21300000, guid: 88c596de9be699a4c8654cf1c1be748a, type: 3}
+  - {fileID: 21300000, guid: 6036e8e10f734ef40bd89b441dc710b6, type: 3}
+  - {fileID: 21300000, guid: b7685865c2464dd4d973041b2a4c1341, type: 3}
+  - {fileID: 21300000, guid: 640bac5e80194e345b2851ed06fbf63f, type: 3}
+  - {fileID: 21300000, guid: c43eccc80594bb847ac8236c7b2db0c4, type: 3}
+  - {fileID: 21300000, guid: 264ebbff55b3fc440b027a93040e6add, type: 3}
+  - {fileID: 21300000, guid: 1e1095088d70d3f408f3c5ab8079ab84, type: 3}
+  - {fileID: 21300000, guid: 3993448b0f1ea214fa183fe39053de20, type: 3}
+  - {fileID: 21300000, guid: 04b8ce53519e8b545891d6126f1fe6ad, type: 3}
+  - {fileID: 21300000, guid: 0fa57dd5deda3b047b51a5a3c407b4b7, type: 3}
+  - {fileID: 21300000, guid: 46d2251a19c5ab042a0ac916fa9c37f9, type: 3}
+  - {fileID: 21300000, guid: fe61bff09e038bf4c9931e29baff3183, type: 3}
+  - {fileID: 21300000, guid: 8d62631dc91e63b43939fb462b9ba730, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - btn_rocker_bottom
+  - display_StatusBar_bottom
+  - btn_action_bottom
+  - display_weapon_bottom
+  - btn_map_bottom
+  - btn_reload
+  - icon_map
+  - btn_rocker_move
+  - btn_action_fire
+  - display_progress_bottom
+  - display_progress_life
+  - display_progress_armor
+  - btn_ActionStrorage_bottom
+  - btn_action_chat
+  - btn_action_pickup
+  - btn_setting_bottom
+  - display_coins_bottom
+  - icon_ActionStorage
+  - display_progress_armor_light
+  - display_progress_life_light
+  - buff_blank
+  - icon_weapon_common
+  - display_bullet
+  - btn_map_bigmap
+  - icon_setting
+  - diasplay_ActionEnergy_full
+  - diasplay_ActionEnergy_bottom
+  - diasplay_ActionEnergy_notfull
+  - btn_map_triangle
+  - diasplay_ActionEnergy_progress
+  - icon_BulletNumber
+  - icon_Life
+  - icon_Armor
+  - icon_ActionEnergy
+  - icon_coins
+  - display_bullet_bottom
+  - icon_weapon_rank
+  - icon_buff_rank
+  m_Tag: Atlas_Game
+  m_IsVariant: 0
