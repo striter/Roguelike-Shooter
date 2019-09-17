@@ -4,7 +4,7 @@
 	{
 		_MaskColor("Masked Color",Color) = (1,1,1,.5)
 		_MaskParam1("Masked Param 1",float) = 1
-		_MaskParam2("Masked Param 2",float) = 100
+		_MaskParam2("Masked Param 2",float) = 1000
 	}
 		SubShader
 	{
@@ -71,12 +71,12 @@
 			}
 
 				Pass
-			{
+			{ 
 				Name "TexFlow"
+		Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" }		
 			Blend SrcAlpha One
-				ZWrite Off
-				Cull Back
-				ZTest Greater
+			ZWrite Off
+			ZTest Greater
 				CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
