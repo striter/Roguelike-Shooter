@@ -59,10 +59,10 @@ public class ActionTester : MonoBehaviour {
             m_GridMulti.OnItemClick(2);
             OnConfirmed();
         }
-        if (Input.GetKeyDown(KeyCode.PageUp))
-            m_OwnedParent.horizontalNormalizedPosition += 1f * Time.deltaTime;
-        else if(Input.GetKeyDown(KeyCode.PageDown))
-            m_OwnedParent.horizontalNormalizedPosition -= 1f * Time.deltaTime;
+        if (Input.GetKey(KeyCode.PageUp))
+            m_OwnedParent.verticalNormalizedPosition += 1f * Time.deltaTime;
+        else if(Input.GetKey(KeyCode.PageDown))
+            m_OwnedParent.verticalNormalizedPosition -= 1f * Time.deltaTime;
 
     }
 
@@ -80,7 +80,7 @@ public class ActionTester : MonoBehaviour {
         m_GridOwned.ClearGrid();
         for (int i = 0; i < m_OwnedActions.Count; i++)
             m_GridOwned.AddItem(i).SetItemInfo(GetBaseText( m_OwnedActions[i]));
-        m_OwnedParent.verticalNormalizedPosition = 0;
+        m_OwnedParent.verticalNormalizedPosition = 1;
     }
     string GetBaseText(ActionTest action) => action.level + "," + action.info.m_Name + "," + action.info.m_Intro;
     void On6To2Click()
