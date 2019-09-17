@@ -4293,7 +4293,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6ca33684936f8f4da278a0c8b54c026, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  F_MoveSpeed: 5
+  F_MoveSpeed: 3.5
 --- !u!143 &386611307
 CharacterController:
   m_ObjectHideFlags: 0
@@ -14188,9 +14188,9 @@ MonoBehaviour:
   F_RotateSensitive: 1
   B_CameraOffsetWallClip: 1
   B_DrawDebugLine: 0
-  TPSOffset: {x: 0, y: 10, z: -5}
-  I_YawMin: 40
-  I_YawMax: 40
+  TPSOffset: {x: 0, y: 20, z: -3}
+  I_YawMin: 60
+  I_YawMax: 60
   I_ShakeParam: 6
   F_ReverseCheck: 0.1
 --- !u!4 &1467653211
