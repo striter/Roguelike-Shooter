@@ -70,10 +70,10 @@ public class EntityCharacterAI : EntityCharacterBase {
         if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
         {
             m_Animator.SetRun(m_AI.B_AgentEnabled ? 1 : 0);
-            m_Animator.SetStun(m_CharacterInfo.B_Stunned);
+            m_Animator.SetStun(m_CharacterInfo.B_Effecting( enum_CharacterEffect.Stun));
         }
 
-        m_AI.SetPlay(!m_CharacterInfo.B_Stunned);
+        m_AI.SetPlay(!m_CharacterInfo.B_Effecting( enum_CharacterEffect.Stun));
         m_AI.OnTick(Time.deltaTime);
     }
 
@@ -163,7 +163,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         bool b_targetRotationWithin;
         float f_targetBehindWallCheck;
         bool b_targetHideBehindWall => f_targetBehindWallCheck <=0;
-        bool b_targetAvailable => m_Target != null &&!m_Target.m_CharacterInfo.B_Cloaked && !m_Target.m_Health.b_IsDead;
+        bool b_targetAvailable => m_Target != null &&!m_Target.m_CharacterInfo.B_Effecting(enum_CharacterEffect.Cloak) && !m_Target.m_Health.b_IsDead;
         bool b_playing;
         public bool B_AgentEnabled
         {

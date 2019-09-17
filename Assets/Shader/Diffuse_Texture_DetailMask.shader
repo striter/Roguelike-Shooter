@@ -1,4 +1,4 @@
-﻿Shader "Game/Realistic/Diffuse_Texture_DetailMask"
+﻿Shader "Game/Extra/Diffuse_Texture_DetailMask"
 {
 	Properties
 	{

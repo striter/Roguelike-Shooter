@@ -1,4 +1,4 @@
-﻿Shader "Game/Effect/ScanEffect"
+﻿Shader "Game/Extra/ScanEffect"
 {
 	Properties
 	{
@@ -11,5 +11,4 @@
 	{
 		USEPASS "Hidden/ExtraPass/OnWallMasked/TEXFLOW"
 	}
-
 }

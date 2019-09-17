@@ -1,4 +1,4 @@
-﻿Shader "Game/Effect/BloomSpecific/Dissolve_Diffuse_Iceland_Mask"
+﻿Shader "Game/Extra/Dissolve_Diffuse_Iceland_Mask_Bloom"
 {
 	Properties
 	{

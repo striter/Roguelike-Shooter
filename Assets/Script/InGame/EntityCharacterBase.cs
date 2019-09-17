@@ -19,7 +19,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         base.Init(_poolIndex);
         tf_Model = transform.Find("Model");
         tf_Head = transform.Find("Head");
-        m_Effect = new EntityCharacterEffectManager(tf_Model.Find("Skin").GetComponentInChildren<Renderer>());
+        m_Effect = new EntityCharacterEffectManager(tf_Model.Find("Skin").GetComponentsInChildren<Renderer>());
         m_CharacterInfo = GetEntityInfo();
     }
 
@@ -40,14 +40,16 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     {
         m_CharacterInfo.Tick(Time.deltaTime);
 
-        m_Effect.SetVanish(m_CharacterInfo.B_Cloaked);
+        m_Effect.SetCloak(m_CharacterInfo.B_Effecting( enum_CharacterEffect.Cloak));
     }
 
     protected override bool OnReceiveDamage(DamageInfo damageInfo)
     {
         if (base.OnReceiveDamage(damageInfo))
         {
-            damageInfo.m_detail.m_BuffAplly.Traversal((int buffIndex) => { m_CharacterInfo.AddBuff(damageInfo.m_detail.I_SourceID, buffIndex); });
+            damageInfo.m_detail.m_BaseBuffApply.Traversal((int buffIndex) => { m_CharacterInfo.AddBuff(damageInfo.m_detail.I_SourceID, buffIndex); });
+            if (damageInfo.m_detail.m_DamageEffect != enum_CharacterEffect.Invalid) m_CharacterInfo.OnSetEffect(damageInfo.m_detail.m_DamageEffect, damageInfo.m_detail.m_EffectDuration);
+
             return true;
         }
 
@@ -58,7 +60,6 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     {
         base.OnDead();
         m_CharacterInfo.OnDeactivate();
-        m_Effect.OnDead();
         this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo(m_Effect.OnRecycleEffect, 0, 1, GameConst.F_EntityDeadFadeTime, OnRecycle));
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterDead,this);
     }
@@ -66,30 +67,34 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     {
         m_Effect.OnHit(type);
     }
+    protected override void OnRecycle()
+    {
+        base.OnRecycle();
+        m_Effect.OnRecycle();
+    }
 
     class EntityCharacterEffectManager:ISingleCoroutine
     {
-        enum enum_EffectIndex
-        {
-            Invalid=-1,
-            BaseRenderer=0,
-            DeadEffectOutline=1,
-            Transparent=2,
-            ScanEffect=3,
-        }
-        static readonly Shader SD_Opaque = Shader.Find("Game/Common/Diffuse_Texture");
+        Shader SD_Opaque;
         static readonly Shader SD_Transparent = Shader.Find("Game/Common/Diffuse_Texture_Transparent");
         static readonly int ID_Color = Shader.PropertyToID("_Color");
         static readonly int ID_Amount1=Shader.PropertyToID("_Amount1");
+        static readonly int ID_Alpha = Shader.PropertyToID("_Alpha");
+
         Material[] m_Materials;
-        public EntityCharacterEffectManager(Renderer _skin)
+
+        public EntityCharacterEffectManager(Renderer[] _skin)
         {
-            m_Materials = _skin.materials;
+            Material materialBase= _skin[0].materials[0];
+            Material materialEffect = _skin[0].materials[1];
+            m_Materials = new Material[2] { materialBase, materialEffect };
+            _skin.Traversal((Renderer renderer) => { renderer.materials = m_Materials;  });
+            SD_Opaque = materialBase.shader;
         }
 
         public void OnReset()
         {
-            SetVanish(false);
+            m_Materials[0].shader = SD_Opaque;
             m_Materials.Traversal((Material mat) => { mat.SetFloat(ID_Amount1, 0); });
         }
 
@@ -99,26 +104,34 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
             m_Materials[1].SetFloat(ID_Amount1, value);
         }
 
-        bool vanished;
-        public void SetVanish(bool _vanished)
+        bool m_cloaked;
+        public void SetCloak(bool _cloacked)
         {
-            if (vanished == _vanished)
+            if (m_cloaked == _cloacked)
                 return;
-            OnVanishChanged(vanished);
-        }
-        void OnVanishChanged(bool vanish)
-        {
-            vanished = _vanished;
-            if (vanish)
+
+            m_cloaked = _cloacked;
+
+            m_Materials[0].shader = SD_Transparent;
+            if (_cloacked)
             {
-                this.StartSingleCoroutine(0)
+                this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) =>
+                {
+                    m_Materials[0].SetFloat(ID_Alpha, value);
+                }, 1, .3f, .5f, null));
             }
             else
             {
-
+                this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) =>
+                {
+                    m_Materials[0].SetFloat(ID_Alpha, value);
+                }, .3f, 1f, .3f, () =>
+                {
+                    m_Materials[0].shader = SD_Opaque;
+                }));
             }
-            m_Materials[0].shader = vanished ? SD_Transparent : SD_Opaque;
         }
+
         public void OnHit(enum_HealthChangeMessage type)
         {
             Color targetColor = Color.white;
@@ -142,10 +155,9 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
             }, 0, 1, 1f));
         }
 
-        public void OnDead()
+        public void OnRecycle()
         {
             this.StopAllSingleCoroutines();
         }
-
     }
 }

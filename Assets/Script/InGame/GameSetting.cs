@@ -303,6 +303,8 @@ namespace GameSetting
 
     public enum enum_DamageType { Invalid = -1, Common = 1, ArmorOnly = 2,HealthOnly = 3, }
 
+    public enum enum_CharacterEffect { Invalid=-1,Stun=1,Cloak=2,Scan=3,}
+
     public enum enum_ExpireType { Invalid=-1,Buff=1,Action=2, }
 
     public enum enum_ExpireRefreshType { Invalid = -1, AddUp = 1, Refresh = 2 }
@@ -817,12 +819,13 @@ namespace GameSetting
         public int I_SourceID { get; private set; } = -1;
         public float m_DamageMultiply { get; private set; } = 0;
         public float m_DamageAdditive { get; private set; } = 0;
-        public List<int> m_BuffAplly { get; private set; } = new List<int>();
+        public List<int> m_BaseBuffApply { get; private set; } = new List<int>();
+        public enum_CharacterEffect m_DamageEffect = enum_CharacterEffect.Invalid;
+        public float m_EffectDuration = 0;
         public static DamageDeliverInfo Default(int sourceID) => new DamageDeliverInfo() { I_SourceID = sourceID, m_DamageMultiply = 0f, m_DamageAdditive = 0f };
-        public static DamageDeliverInfo BuffInfo(int sourceID, int buffApply) => new DamageDeliverInfo() { I_SourceID = sourceID, m_DamageMultiply = 0f, m_DamageAdditive = 0f, m_BuffAplly =new List<int>() { buffApply } };
-        public static DamageDeliverInfo DamageInfo(int sourceID, float _damageEnhanceMultiply) => new DamageDeliverInfo() { I_SourceID = sourceID, m_DamageMultiply = _damageEnhanceMultiply};
-        public static DamageDeliverInfo EquipmentInfo(int sourceID, float _damageAdditive, int buffIndex) => new DamageDeliverInfo() { I_SourceID = sourceID, m_DamageMultiply = 0f, m_DamageAdditive = _damageAdditive, m_BuffAplly = buffIndex == -1 ? new List<int>() : new List<int> { buffIndex },  };
-        public static DamageDeliverInfo PlayerDamageInfo(int sourceID, float _damageEnhanceMultiply, float _damageAdditive) =>new DamageDeliverInfo() { I_SourceID = sourceID, m_DamageMultiply = _damageEnhanceMultiply, m_DamageAdditive = _damageAdditive, };
+        public static DamageDeliverInfo BuffInfo(int sourceID, int buffApply) => new DamageDeliverInfo() { I_SourceID = sourceID, m_DamageMultiply = 0f, m_DamageAdditive = 0f, m_BaseBuffApply =new List<int>() { buffApply } };
+        public static DamageDeliverInfo EquipmentInfo(int sourceID, float _damageAdditive, enum_CharacterEffect _effect, float _duration) => new DamageDeliverInfo() { I_SourceID = sourceID,  m_DamageAdditive = _damageAdditive,  m_DamageEffect = _effect, m_EffectDuration = _duration };
+        public static DamageDeliverInfo DamageInfo(int sourceID, float _damageEnhanceMultiply, float _damageAdditive) =>new DamageDeliverInfo() { I_SourceID = sourceID, m_DamageMultiply = _damageEnhanceMultiply, m_DamageAdditive = _damageAdditive, };
     }
     #endregion
 
@@ -841,34 +844,31 @@ namespace GameSetting
         public float F_ReloadRateTick(float deltaTime) => deltaTime * F_ReloadRateMultiply;
         public float F_MovementSpeed => m_Entity.m_baseMovementSpeed * F_MovementSpeedMultiply;
 
-        float f_stunCheck = 0;
-        public bool B_Stunned => f_stunCheck > 0;
-        protected void StunReset() => f_stunCheck = 0;
-        protected void OnStun(float duration) => f_stunCheck = duration > 0 ? duration : f_stunCheck;
+        protected Dictionary<enum_CharacterEffect, EffectCounterBase> m_Effects = new Dictionary<enum_CharacterEffect, EffectCounterBase>();
+        public bool B_Effecting(enum_CharacterEffect type) => m_Effects[type].m_Effecting;
+        protected void ResetEffect(enum_CharacterEffect type) => m_Effects[type].Reset();
+        public void OnSetEffect(enum_CharacterEffect type, float duration) => m_Effects[type].OnSet(duration);
 
-        float f_cloakCheck = 0;
-        public bool B_Cloaked => f_cloakCheck > 0;
-        protected void CloakReset() => f_cloakCheck = 0;
-        protected void OnCloak(float duration) => f_cloakCheck = duration > 0 ? duration : f_cloakCheck;
-
-        public virtual DamageDeliverInfo GetDamageBuffInfo() => DamageDeliverInfo.DamageInfo(m_Entity.I_EntityID ,F_DamageMultiply);
+        public virtual DamageDeliverInfo GetDamageBuffInfo() => DamageDeliverInfo.DamageInfo(m_Entity.I_EntityID ,F_DamageMultiply,0f);
         Func<DamageInfo, bool> OnReceiveDamage;
         Action OnExpireChange;
-        bool b_infoUpdated = false;
-        public void EntityInfoChange() => b_infoUpdated = false;
+
+        bool b_expireUpdated = false;
+        public void EntityInfoChange() => b_expireUpdated = false;
+
         public CharacterInfoManager(EntityCharacterBase _attacher,Func<DamageInfo, bool> _OnReceiveDamage,Action _OnExpireChange)
         {
             m_Entity = _attacher;
             OnReceiveDamage = _OnReceiveDamage;
             OnExpireChange = _OnExpireChange;
+            TCommon.TraversalEnum((enum_CharacterEffect effect) => { m_Effects.Add(effect, new EffectCounterBase()); });
         }
 
         public virtual void OnActivate()=> Reset();
         public virtual void OnDeactivate()=> Reset();
         protected virtual void Reset()
         {
-            StunReset();
-            CloakReset();
+            m_Effects.Traversal((enum_CharacterEffect type) => { m_Effects[type].Reset(); });
             m_Expires.Clear();
             m_BuffEffects.Clear();
             EntityInfoChange();
@@ -877,14 +877,12 @@ namespace GameSetting
 
         public virtual void Tick(float deltaTime) {
             m_Expires.Traversal((ExpireBase buff) => { buff.OnTick(deltaTime); });
-            if (!b_infoUpdated) UpdateInfo();
-            if (B_Stunned) f_stunCheck -= deltaTime;
-            if (B_Cloaked) f_cloakCheck -= deltaTime;
+            m_Effects.Traversal((enum_CharacterEffect type) => { m_Effects[type].Tick(deltaTime); });
+            if (!b_expireUpdated) UpdateExpireInfo();
         }
 
         protected virtual void AddExpire(ExpireBase expire)
         {
-            Debug.Log("Add Expire:"+expire.m_Index);
             m_Expires.Add(expire);
             EntityInfoChange();
             OnExpireChange();
@@ -896,7 +894,6 @@ namespace GameSetting
         }
         protected virtual void OnExpireElapsed(ExpireBase expire)
         {
-            Debug.Log("Remove Expire:"+expire.m_Index);
             m_Expires.Remove(expire);
             EntityInfoChange();
             OnExpireChange();
@@ -904,7 +901,7 @@ namespace GameSetting
         public void AddBuff(int sourceID,int buffIndex)
         {
             BuffBase buff = new BuffBase(sourceID, GameDataManager.GetEntityBuffProperties(buffIndex), OnReceiveDamage, OnExpireElapsed);
-            OnStun(buff.m_StunDuration);
+            OnSetEffect(enum_CharacterEffect.Stun,buff.m_StunDuration);
             switch (buff.m_RefreshType)
             {
                 case enum_ExpireRefreshType.AddUp:
@@ -921,7 +918,6 @@ namespace GameSetting
                     break;
             }
         }
-
         protected virtual void OnSetExpireInfo(ExpireBase expire)
         {
             F_DamageMultiply += expire.m_DamageMultiply;
@@ -941,9 +937,9 @@ namespace GameSetting
             F_ReloadRateMultiply = 1f;
             F_DamageMultiply = 0f;
         }
-        void UpdateInfo()
+        void UpdateExpireInfo()
         {
-            b_infoUpdated = true;
+            b_expireUpdated = true;
             OnResetInfo();
             m_Expires.Traversal(OnSetExpireInfo);
 
@@ -976,6 +972,7 @@ namespace GameSetting
                 }
             }
         }
+
     }
 
     public class EntitySubInfoManager : CharacterInfoManager
@@ -1082,7 +1079,7 @@ namespace GameSetting
         public void OnUseAcion(ActionBase targetAction)
         {
             m_ActionEquiping.Traversal((ActionBase action) => { action.OnAddActionElse(targetAction.m_Index); });
-            OnCloak(targetAction.F_CloakDuration);
+            OnSetEffect( enum_CharacterEffect.Cloak,targetAction.F_CloakDuration);
             AddExpire(targetAction);
             m_ActionEquiping.Add(targetAction);
             targetAction.Activate(m_Player, OnExpireElapsed);
@@ -1125,8 +1122,8 @@ namespace GameSetting
         public override DamageDeliverInfo GetDamageBuffInfo()
         {
             float randomDamageMultiply = UnityEngine.Random.Range(-GameConst.F_PlayerDamageAdjustmentRange,GameConst.F_PlayerDamageAdjustmentRange);
-            DamageDeliverInfo info = DamageDeliverInfo.PlayerDamageInfo(m_Entity.I_EntityID, F_DamageMultiply+ randomDamageMultiply, F_DamageAdditive);
-            CloakReset();
+            DamageDeliverInfo info = DamageDeliverInfo.DamageInfo(m_Entity.I_EntityID, F_DamageMultiply+ randomDamageMultiply, F_DamageAdditive);
+            base.ResetEffect(enum_CharacterEffect.Cloak);
             m_ActionEquiping.Traversal((ActionBase action) => {
                 action.OnFire(info.I_IdentiyID);
 
@@ -1250,6 +1247,33 @@ namespace GameSetting
     #endregion
 
     #region Expires
+
+    public class EffectCounterBase
+    {
+        public float m_duration { get; private set; }
+        public bool m_Effecting => m_duration > 0;
+        public EffectCounterBase()
+        {
+            Reset();
+        }
+        public void OnSet(float _duration)
+        {
+            if (_duration <= 0)
+                return;
+
+            if (m_duration < _duration)
+                m_duration = _duration;
+        }
+        public void Reset()
+        {
+            m_duration = 0;
+        }
+        public void Tick(float deltaTime)
+        {
+            if (m_duration > 0)
+                m_duration -= deltaTime;
+        }
+    }
 
     public class ExpireBase
     {
