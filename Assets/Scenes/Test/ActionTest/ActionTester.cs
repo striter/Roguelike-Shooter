@@ -36,6 +36,8 @@ public class ActionTester : MonoBehaviour {
         m_GridSingle = new UIT_GridDefaultSingle<UIT_GridDefaultItem>(transform.Find("ActionGridSingle"), OnItemClick, true);
         m_OwnedParent = transform.Find("OwnedParent").GetComponent<ScrollRect>();
         m_GridOwned = new UIT_GridControllerMono<UIT_GridDefaultItem>(m_OwnedParent.transform.Find("Viewport/ActionOwned"));
+
+        Debug.Log("'8':Random 1 Actions ,'9':Random 2 Actions,'0': Reset , '-':Minus Level, '=':Add Level ,'Page Up':ScrollView Up,'Page Down': ScrollView Down");
     }
 
     private void Update()
