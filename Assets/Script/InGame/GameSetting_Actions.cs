@@ -85,7 +85,7 @@ namespace GameSetting_Action
         public static float F_20001_ArmorTurretDamage(enum_RarityLevel level) => 1.5f * (int)level;
         public static float F_20001_TurretMinumumDamage(enum_RarityLevel level) => 50f;
         public static float F_20002_DamageDealt(enum_RarityLevel level) => 50f;
-        public static float F_20002_BuffIndex(enum_RarityLevel level) => 200020 + (int)level;
+        public static float F_20002_StunDuration(enum_RarityLevel level) =>2f *(int)level;
         public static float F_20003_Health(enum_RarityLevel level) => 500;
         public static float F_20003_FireRate(enum_RarityLevel level) => 0.3f;
         public static float F_20003_DamageDealt(enum_RarityLevel level) => .7f * (int)level;
@@ -121,9 +121,9 @@ namespace GameSetting_Action
 
     public static class ActionHelper
     {
-        public static void PlayerAcquireSimpleEquipmentItem(EntityCharacterPlayer player, int equipmentIndex,float damage,int buffIndex=-1)
+        public static void PlayerAcquireSimpleEquipmentItem(EntityCharacterPlayer player, int equipmentIndex,float damage,enum_CharacterEffect effect= enum_CharacterEffect.Invalid,float duration=0f)
         {
-            player.OnAcquireEquipment<EquipmentBase>(equipmentIndex, () => { return DamageDeliverInfo.EquipmentInfo(player.I_EntityID,damage,buffIndex); });
+            player.OnAcquireEquipment<EquipmentBase>(equipmentIndex, () => { return DamageDeliverInfo.EquipmentInfo(player.I_EntityID,damage, effect,duration); });
         }
         public static void PlayerAcquireEntityEquipmentItem(EntityCharacterPlayer player, int equipmentIndex,int health,float fireRate, Func<DamageDeliverInfo> damage)
         {
@@ -474,7 +474,7 @@ namespace GameSetting_Action
             base.OnActionUse();
             ActionHelper.PlayerAcquireEntityEquipmentItem(m_ActionEntity, m_Index,  (int)(Value1* m_ActionEntity.m_PlayerHealth.m_CurrentArmor), 1f, GetDamageInfo);
         }
-        public DamageDeliverInfo GetDamageInfo()=> DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, Value3+Value2 * m_ActionEntity.m_PlayerHealth.m_CurrentArmor, -1);
+        public DamageDeliverInfo GetDamageInfo()=> DamageDeliverInfo.DamageInfo(m_ActionEntity.I_EntityID,1f, Value3+Value2 * m_ActionEntity.m_PlayerHealth.m_CurrentArmor);
         public Action_20001_Armor_Turret_Cannon(int _identity,enum_RarityLevel _level) : base(_identity,_level) { }
     }
     public class Action_20002_FireRate_FrozenGrenade : ActionAfterUse
@@ -482,12 +482,12 @@ namespace GameSetting_Action
         public override int m_Index => 20002;
         public override int I_ActionCost => ActionData.I_20002_Cost;
         public override float Value1=> ActionData.F_20002_DamageDealt(m_Level);
-        public override float Value2=> ActionData.F_20002_BuffIndex(m_Level);
-        public override float Value3 => GameDataManager.GetEntityBuffProperties((int)ActionData.F_20002_BuffIndex(m_Level)).m_ExpireDuration;
+        public override float Value2=> ActionData.F_20002_StunDuration(m_Level);
+        public override float Value3 => GameDataManager.GetEntityBuffProperties((int)ActionData.F_20002_StunDuration(m_Level)).m_ExpireDuration;
         public override void OnActionUse()
         {
             base.OnActionUse();
-            ActionHelper.PlayerAcquireSimpleEquipmentItem(m_ActionEntity, m_Index, Value1, (int)Value2);
+            ActionHelper.PlayerAcquireSimpleEquipmentItem(m_ActionEntity, m_Index, Value1, enum_CharacterEffect.Stun, Value2);
         }
         public Action_20002_FireRate_FrozenGrenade(int _identity,enum_RarityLevel _level) : base(_identity,_level) { }
     }
@@ -503,7 +503,7 @@ namespace GameSetting_Action
             base.OnActionUse();
             ActionHelper.PlayerAcquireEntityEquipmentItem(m_ActionEntity, m_Index, (int)Value3, Value1 ,GetDamageInfo);
         }
-        public DamageDeliverInfo GetDamageInfo() => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, Value2 * m_ActionEntity.m_WeaponCurrent.F_BaseDamage, -1);
+        public DamageDeliverInfo GetDamageInfo() => DamageDeliverInfo.DamageInfo(m_ActionEntity.I_EntityID, 1f,Value2 * m_ActionEntity.m_WeaponCurrent.F_BaseDamage);
         public Action_20003_Firerate_Turret_Minigun(int _identity,enum_RarityLevel _level) : base(_identity,_level) { }
     }
     public class Action_20004_Damage_ExplosiveGrenade : ActionAfterUse

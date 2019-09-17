@@ -820,11 +820,12 @@ namespace GameSetting
         public float m_DamageMultiply { get; private set; } = 0;
         public float m_DamageAdditive { get; private set; } = 0;
         public List<int> m_BaseBuffApply { get; private set; } = new List<int>();
+        public enum_CharacterEffect m_DamageEffect = enum_CharacterEffect.Invalid;
+        public float m_EffectDuration = 0;
         public static DamageDeliverInfo Default(int sourceID) => new DamageDeliverInfo() { I_SourceID = sourceID, m_DamageMultiply = 0f, m_DamageAdditive = 0f };
         public static DamageDeliverInfo BuffInfo(int sourceID, int buffApply) => new DamageDeliverInfo() { I_SourceID = sourceID, m_DamageMultiply = 0f, m_DamageAdditive = 0f, m_BaseBuffApply =new List<int>() { buffApply } };
-        public static DamageDeliverInfo DamageInfo(int sourceID, float _damageEnhanceMultiply) => new DamageDeliverInfo() { I_SourceID = sourceID, m_DamageMultiply = _damageEnhanceMultiply};
-        public static DamageDeliverInfo EquipmentInfo(int sourceID, float _damageAdditive, int buffIndex) => new DamageDeliverInfo() { I_SourceID = sourceID, m_DamageMultiply = 0f, m_DamageAdditive = _damageAdditive, m_BaseBuffApply = buffIndex == -1 ? new List<int>() : new List<int> { buffIndex },  };
-        public static DamageDeliverInfo PlayerDamageInfo(int sourceID, float _damageEnhanceMultiply, float _damageAdditive) =>new DamageDeliverInfo() { I_SourceID = sourceID, m_DamageMultiply = _damageEnhanceMultiply, m_DamageAdditive = _damageAdditive, };
+        public static DamageDeliverInfo EquipmentInfo(int sourceID, float _damageAdditive, enum_CharacterEffect _effect, float _duration) => new DamageDeliverInfo() { I_SourceID = sourceID,  m_DamageAdditive = _damageAdditive,  m_DamageEffect = _effect, m_EffectDuration = _duration };
+        public static DamageDeliverInfo DamageInfo(int sourceID, float _damageEnhanceMultiply, float _damageAdditive) =>new DamageDeliverInfo() { I_SourceID = sourceID, m_DamageMultiply = _damageEnhanceMultiply, m_DamageAdditive = _damageAdditive, };
     }
     #endregion
 
@@ -846,9 +847,9 @@ namespace GameSetting
         protected Dictionary<enum_CharacterEffect, EffectCounterBase> m_Effects = new Dictionary<enum_CharacterEffect, EffectCounterBase>();
         public bool B_Effecting(enum_CharacterEffect type) => m_Effects[type].m_Effecting;
         protected void ResetEffect(enum_CharacterEffect type) => m_Effects[type].Reset();
-        protected void OnSetEffect(enum_CharacterEffect type, float duration) => m_Effects[type].OnSet(duration);
+        public void OnSetEffect(enum_CharacterEffect type, float duration) => m_Effects[type].OnSet(duration);
 
-        public virtual DamageDeliverInfo GetDamageBuffInfo() => DamageDeliverInfo.DamageInfo(m_Entity.I_EntityID ,F_DamageMultiply);
+        public virtual DamageDeliverInfo GetDamageBuffInfo() => DamageDeliverInfo.DamageInfo(m_Entity.I_EntityID ,F_DamageMultiply,0f);
         Func<DamageInfo, bool> OnReceiveDamage;
         Action OnExpireChange;
 
@@ -1121,7 +1122,7 @@ namespace GameSetting
         public override DamageDeliverInfo GetDamageBuffInfo()
         {
             float randomDamageMultiply = UnityEngine.Random.Range(-GameConst.F_PlayerDamageAdjustmentRange,GameConst.F_PlayerDamageAdjustmentRange);
-            DamageDeliverInfo info = DamageDeliverInfo.PlayerDamageInfo(m_Entity.I_EntityID, F_DamageMultiply+ randomDamageMultiply, F_DamageAdditive);
+            DamageDeliverInfo info = DamageDeliverInfo.DamageInfo(m_Entity.I_EntityID, F_DamageMultiply+ randomDamageMultiply, F_DamageAdditive);
             base.ResetEffect(enum_CharacterEffect.Cloak);
             m_ActionEquiping.Traversal((ActionBase action) => {
                 action.OnFire(info.I_IdentiyID);

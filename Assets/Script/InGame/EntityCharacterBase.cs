@@ -19,7 +19,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         base.Init(_poolIndex);
         tf_Model = transform.Find("Model");
         tf_Head = transform.Find("Head");
-        m_Effect = new EntityCharacterEffectManager(tf_Model.Find("Skin").GetComponentInChildren<Renderer>());
+        m_Effect = new EntityCharacterEffectManager(tf_Model.Find("Skin").GetComponentsInChildren<Renderer>());
         m_CharacterInfo = GetEntityInfo();
     }
 
@@ -48,6 +48,8 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         if (base.OnReceiveDamage(damageInfo))
         {
             damageInfo.m_detail.m_BaseBuffApply.Traversal((int buffIndex) => { m_CharacterInfo.AddBuff(damageInfo.m_detail.I_SourceID, buffIndex); });
+            if (damageInfo.m_detail.m_DamageEffect != enum_CharacterEffect.Invalid) m_CharacterInfo.OnSetEffect(damageInfo.m_detail.m_DamageEffect, damageInfo.m_detail.m_EffectDuration);
+
             return true;
         }
 
@@ -81,10 +83,13 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
 
         Material[] m_Materials;
 
-        public EntityCharacterEffectManager(Renderer _skin)
+        public EntityCharacterEffectManager(Renderer[] _skin)
         {
-            m_Materials = _skin.materials;
-            SD_Opaque = m_Materials[0].shader;
+            Material materialBase= _skin[0].materials[0];
+            Material materialEffect = _skin[0].materials[1];
+            m_Materials = new Material[2] { materialBase, materialEffect };
+            _skin.Traversal((Renderer renderer) => { renderer.materials = m_Materials;  });
+            SD_Opaque = materialBase.shader;
         }
 
         public void OnReset()
