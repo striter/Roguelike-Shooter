@@ -3765,7 +3765,7 @@ MonoBehaviour:
   B_TestBuffIndex: 1001
   F1_WeaponSpawnType: 1002
   F5_TestActionIndex: 30007
-  F6_TestActionIndex: 10020
+  F6_TestActionIndex: 10018
   F7_TestActionIndex: 30007
   F8_TestAcquireAction: 30007
   B_AdditionalLight: 1

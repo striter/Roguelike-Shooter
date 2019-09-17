@@ -193,15 +193,33 @@ public static class TCommon
         for (int i = 0; i < list.Count; i++)
             OnEachItem(i, list[i]);
     }
-    public static void Traversal<T, Y>(this Dictionary<T, Y> dic, Action<T> OnEachKey)
+    public static void Traversal<T, Y>(this Dictionary<T, Y> dic, Action<T> OnEachKey,bool changeValue=false)
     {
-        foreach (T temp in dic.Keys)
-            OnEachKey(temp);
+        if (changeValue)
+        {
+            Dictionary<T, Y> tempDic = new Dictionary<T, Y>(dic);
+            foreach (T temp in tempDic.Keys)
+                OnEachKey(temp);
+        }
+        else
+        {
+            foreach (T temp in dic.Keys)
+                OnEachKey(temp);
+        }
     }
-    public static void Traversal<T, Y>(this Dictionary<T, Y> dic, Action<Y> OnEachValue)
+    public static void Traversal<T, Y>(this Dictionary<T, Y> dic, Action<Y> OnEachValue,bool changeValue=false)
     {
-        foreach (Y temp in dic.Values)
-            OnEachValue(temp);
+        if (changeValue)
+        {
+            Dictionary<T, Y> tempDic = new Dictionary<T, Y>(dic);
+            foreach (T temp in tempDic.Keys)
+                OnEachValue(dic[temp]);
+        }
+        else
+        {
+            foreach (T temp in dic.Keys)
+                OnEachValue(dic[temp]);
+        }
     }
     public static void Traversal<T, Y>(this Dictionary<T, Y> dic, Action<T, Y> OnEachPair,bool changeValue=false)
     {

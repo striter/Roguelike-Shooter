@@ -90,8 +90,6 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
             m_LocalPlayer.m_PlayerInfo.AddStoredAction(GameDataManager.CreateAction(F8_TestAcquireAction, enum_RarityLevel.L1));
         if (Input.GetKeyDown(KeyCode.F9))
             CameraEffectManager.StartAreaScan(m_LocalPlayer.tf_Head.position,Color.white, TResources.Load<Texture>(TResources.ConstPath.S_PETex_Holograph),15f,.7f,2f,50,3f);
-        if (Input.GetKeyDown(KeyCode.F10))
-            CameraEffectManager.AddCameraEffect<CB_DepthOfFieldSpecificStatic>().SetStaticTarget(m_RewardChest.GetComponentsInChildren<Renderer>());
         if (Input.GetKeyDown(KeyCode.F12))
         {
             EnvironmentManager.Instance.m_MapLevelInfo.Traversal((SBigmapLevelInfo info) => { if (info.m_TileLocking == enum_TileLocking.Locked) info.SetTileLocking(enum_TileLocking.Unlockable); });
