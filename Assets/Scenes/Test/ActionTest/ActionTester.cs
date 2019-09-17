@@ -11,7 +11,10 @@ public class ActionTester : MonoBehaviour {
     Button btn_reset, btn_6to2, btn_2to1,btn_confirm;
     UIT_GridDefaultSingle<UIT_GridDefaultItem> m_GridSingle;
     UIT_GridDefaultMulti<UIT_GridDefaultItem> m_GridMulti;
+    Text m_Count;
+    ScrollRect m_OwnedParent;
     UIT_GridControllerMono<UIT_GridDefaultItem> m_GridOwned;
+    
     private void Awake()
     {
         btn_reset = transform.Find("BtnReset").GetComponent<Button>();
@@ -23,6 +26,7 @@ public class ActionTester : MonoBehaviour {
         btn_confirm = transform.Find("BtnConfirm").GetComponent<Button>();
         btn_confirm.onClick.AddListener(OnConfirmed);
         m_level = transform.Find("Level").GetComponent<Dropdown>();
+        m_Count = transform.Find("Count").GetComponent<Text>();
         List<SActionTest> datas = Tools.GetFieldData<SActionTest>(Tools.ReadExcelData(m_ActionTestAsset));
         m_AllActions = new List<ActionTest>();
         for (int i = 0; i < datas.Count; i++)
@@ -30,7 +34,36 @@ public class ActionTester : MonoBehaviour {
 
         m_GridMulti = new UIT_GridDefaultMulti<UIT_GridDefaultItem>(transform.Find("ActionGridMulti"),2, OnItemClick);
         m_GridSingle = new UIT_GridDefaultSingle<UIT_GridDefaultItem>(transform.Find("ActionGridSingle"), OnItemClick, true);
-        m_GridOwned = new UIT_GridControllerMono<UIT_GridDefaultItem>(transform.Find("ActionOwned"));
+        m_OwnedParent = transform.Find("OwnedParent").GetComponent<ScrollRect>();
+        m_GridOwned = new UIT_GridControllerMono<UIT_GridDefaultItem>(m_OwnedParent.transform.Find("Viewport/ActionOwned"));
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha0))
+            OnResetClick();
+        if (Input.GetKeyDown(KeyCode.Minus))
+            m_level.value--;
+        if (Input.GetKeyDown(KeyCode.Equals))
+            m_level.value++;
+        if (Input.GetKeyDown(KeyCode.Alpha8))
+        {
+            On2to1Click();
+            m_GridSingle.OnItemClick(1);
+            OnConfirmed();
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha9))
+        {
+            On6To2Click();
+            m_GridMulti.OnItemClick(1);
+            m_GridMulti.OnItemClick(2);
+            OnConfirmed();
+        }
+        if (Input.GetKeyDown(KeyCode.PageUp))
+            m_OwnedParent.horizontalNormalizedPosition += 1f * Time.deltaTime;
+        else if(Input.GetKeyDown(KeyCode.PageDown))
+            m_OwnedParent.horizontalNormalizedPosition -= 1f * Time.deltaTime;
+
     }
 
     void OnResetClick()
@@ -43,9 +76,11 @@ public class ActionTester : MonoBehaviour {
     }
     void OnActionOwnedChanged()
     {
+        m_Count.text = m_OwnedActions.Count.ToString() ;
         m_GridOwned.ClearGrid();
         for (int i = 0; i < m_OwnedActions.Count; i++)
             m_GridOwned.AddItem(i).SetItemInfo(GetBaseText( m_OwnedActions[i]));
+        m_OwnedParent.verticalNormalizedPosition = 0;
     }
     string GetBaseText(ActionTest action) => action.level + "," + action.info.m_Name + "," + action.info.m_Intro;
     void On6To2Click()

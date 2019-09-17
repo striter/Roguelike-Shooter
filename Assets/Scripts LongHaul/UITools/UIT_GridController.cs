@@ -139,7 +139,7 @@ public class UIT_GridDefaultMulti<T> : UIT_GridControllerMono<T> where T : UIT_G
         base.OnItemAdd(item, identity);
         item.SetDefaultOnClick(OnItemClick);
     }
-    void OnItemClick(int index)
+    public void OnItemClick(int index)
     {
         if (!m_Selecting.Contains(index))
         {
