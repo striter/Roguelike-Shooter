@@ -17,6 +17,7 @@
 			ENDCG
 		Pass		//Base Pass
 		{
+			NAME "MAIN"
 			Tags{"LightMode" = "ForwardBase"}
 			Cull Off
 			CGPROGRAM

@@ -48,6 +48,7 @@ public class CameraEffectManager : SimpleSingletonMono<CameraEffectManager>,ISin
             RemoveCameraEffect<PE_AreaScanDepth>();
         }));
     }
+    
     #endregion
     List<CameraEffectBase> m_PostEffects=new List<CameraEffectBase>();
     public Camera m_Camera { get; protected set; }
