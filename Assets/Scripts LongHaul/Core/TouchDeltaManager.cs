@@ -56,7 +56,7 @@ public class TouchDeltaManager : SingletonMono<TouchDeltaManager>
                 }
             }
         }
-        
+
         if(UIT_JoyStick.Instance!=null) UIT_JoyStick.Instance.SetActivate(m_TrackLeft!=null);
 
         OnLeftDelta?.Invoke(m_TrackLeft!=null?leftDelta : Vector2.zero);
