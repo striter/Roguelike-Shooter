@@ -15,6 +15,7 @@ public class CampPlayer : MonoBehaviour {
     private void Start()
     {
         CameraController.Attach(this.transform);
+        CameraController.Instance.RotateCamera(new Vector2( 180f, 0));
     }
     private void OnEnable()
     {
