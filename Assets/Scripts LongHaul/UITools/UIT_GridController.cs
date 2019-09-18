@@ -16,6 +16,7 @@ public class UIT_GridController
         transform = _transform;
         GridItem = transform.Find("GridItem").gameObject;
         GridItem.gameObject.SetActive(false);
+        InitItem(GridItem.transform);
         InactiveItemList.Add(GridItem.transform);
     }
     public virtual Transform AddItem(int identity)
@@ -29,6 +30,7 @@ public class UIT_GridController
         else
         {
             toTrans = GameObject.Instantiate(GridItem.gameObject, this.transform).transform;
+            InitItem(toTrans);
         }
         toTrans.name = identity.ToString();
         if (ActiveItemDic.ContainsKey(identity))
@@ -40,6 +42,10 @@ public class UIT_GridController
             ActiveItemDic.Add(identity, toTrans);
         }
         return toTrans;
+    }
+    protected virtual void InitItem(Transform trans)
+    {
+
     }
     public virtual Transform GetItem(int identity)
     {
@@ -79,8 +85,8 @@ public class UIT_GridControllerMono<T> : UIT_GridController where T : MonoBehavi
     public new T AddItem(int identity)
     {
         T item = base.AddItem(identity).GetComponent<T>();
-        OnItemAdd(item, identity);
         m_ItemDic.Add(identity, item);
+        OnItemAdd(item, identity);
         item.SetActivate(true);
         item.transform.SetSiblingIndex(identity);
         return item;
@@ -109,7 +115,6 @@ public class UIT_GridControllerMono<T> : UIT_GridController where T : MonoBehavi
 
     protected virtual void OnItemAdd(T item, int identity)
     {
-
     }
     protected virtual void OnItemRemove(T item, int identity)
     {
@@ -125,10 +130,15 @@ public class UIT_GridControllerMonoItem<T>: UIT_GridControllerMono<T> where T:UI
     {
         m_GridLayout = _transform.GetComponent<GridLayoutGroup>();
     }
+    protected override void InitItem(Transform trans)
+    {
+        base.InitItem(trans);
+        trans.GetComponent<T>().Init(this);
+    }
     protected override void OnItemAdd(T item,int identity)
     {
         base.OnItemAdd(item, identity);
-        item.OnActivate(identity, this);
+        item.OnActivate(identity);
     }
     protected override void OnItemRemove(T item, int identity)
     {

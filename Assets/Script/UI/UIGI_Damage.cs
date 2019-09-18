@@ -7,12 +7,13 @@ public class UIGI_Damage : UIT_GridItem {
     Action<int> OnAnimFinished;
     EntityCharacterBase m_attachEntity;
     RectTransform rtf_Container;
-    protected override void Init()
+    public override void Init(UIT_GridController parent)
     {
-        base.Init();
+        base.Init(parent);
         rtf_Container = tf_Container.GetComponent<RectTransform>();
         m_Amount = tf_Container.Find("Amount").GetComponent<Text>();
     }
+
     public void Play(EntityCharacterBase damageEntity,float amount,Action<int> _OnAnimFinished)
     {
         m_attachEntity = damageEntity;

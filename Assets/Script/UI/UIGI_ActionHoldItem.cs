@@ -10,24 +10,23 @@ public class UIGI_ActionHoldItem : UIT_GridItem {
     UIT_EventTriggerListener m_TriggerListener;
     Action<int> OnClick;
     Action OnPressDuration;
-    protected override void Init()
+    public override void Init(UIT_GridController parent)
     {
-        base.Init();
-        if (m_Name)
-            return;
+        base.Init(parent);
         m_Cost = tf_Container.Find("Cost").GetComponent<UIT_TextLocalization>();
         m_Name = tf_Container.Find("Name").GetComponent<UIT_TextLocalization>();
         m_Level = tf_Container.Find("Level").GetComponent<UIT_TextLocalization>();
         m_TriggerListener = tf_Container.Find("TriggerListener").GetComponent<UIT_EventTriggerListener>();
         m_TriggerListener.D_OnPress = OnPress;
     }
+
     public void SetInfo(ActionBase actionInfo,Action<int> _OnClick,Action _OnPressDuration)
     {
         OnClick = _OnClick;
         OnPressDuration = _OnPressDuration;
         m_Cost.text = actionInfo.m_ActionExpireType== enum_ActionExpireType.AfterWeaponSwitch?"":actionInfo.I_ActionCost.ToString();
         m_Name.localizeText = actionInfo.GetNameLocalizeKey();
-        m_Level.localizeText = actionInfo.m_Level.GetLocalizeKey();
+        m_Level.localizeText = actionInfo.m_rarity.GetLocalizeKey();
     }
 
     bool b_pressing;

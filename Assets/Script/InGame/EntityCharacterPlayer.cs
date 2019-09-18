@@ -166,11 +166,12 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_WeaponCurrent.OnAttach(this, _weapon.B_AttachLeft ? tf_WeaponHoldLeft : tf_WeaponHoldRight, OnFireAddRecoil, OnReload);
         m_PlayerInfo.OnAttachWeapon(m_WeaponCurrent);
         m_Animator.SwitchAnim(m_WeaponCurrent.E_Anim);
-        
+
         if (m_Assist) m_Assist.ForceRecycle();
         m_Assist = GameObjectManager.SpawnSFX<SFXAimAssist>(01);
         m_Assist.Play(I_EntityID, tf_Head, tf_Head, GameConst.F_AimAssistDistance, GameLayer.Mask.I_All, (Collider collider) => { return GameManager.B_CanHitTarget(collider.Detect(), I_EntityID); });
 
+        OnWeaponStatus();
         return previousWeapon;
     }
 #endregion
@@ -255,7 +256,10 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerAmmoStatus, m_WeaponCurrent);
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerCommonStatus, this);
     }
-
+    protected void OnWeaponStatus()
+    {
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerWeaponStatus, m_WeaponCurrent);
+    }
     protected override void OnExpireChange()
     {
         base.OnExpireChange();

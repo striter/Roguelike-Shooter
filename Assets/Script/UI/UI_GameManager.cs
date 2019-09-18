@@ -1,11 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using GameSetting;
 using System;
-using TTiles;
-using UnityEngine.U2D;
 
 public class UI_GameManager : SingletonMono<UI_GameManager>
 {
@@ -62,7 +58,7 @@ public class UI_GameManager : SingletonMono<UI_GameManager>
         {
             switch (player.m_Interact.m_InteractType)
             {
-                case enum_Interaction.Invalid: Debug.LogError("???? Here");break;
+                case enum_Interaction.Invalid: Debug.LogError("No Convertions Here");break;
                 case enum_Interaction.ActionAdjustment:mainImage = img_chat;break;
                 default:mainImage = img_pickup;break;
             }

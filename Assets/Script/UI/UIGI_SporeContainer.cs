@@ -10,9 +10,9 @@ public class UIGI_SporeContainer : UIT_GridItem {
     Action<int, Vector2> OnDrag;
     Action<int> OnRaycast,OnTickProfit;
     float f_tickTime,f_tickCheck;
-    protected override void Init()
+    public override void Init(UIT_GridController parent)
     {
-        base.Init();
+        base.Init(parent);
         txt_locked = tf_Container.Find("Locked").GetComponent<Text>();
         rtf_Level = tf_Container.Find("Level").GetComponent<RectTransform>();
         txt_Level = rtf_Level.GetComponentInChildren<Text>();
@@ -21,6 +21,7 @@ public class UIGI_SporeContainer : UIT_GridItem {
         listener.D_OnDrag += Drag;
         listener.D_OnRaycast = Raycast;
     }
+
     public void Init(Action<int,bool, Vector2> _OnDragStatus,Action<int,Vector2> _OnDrag,Action<int> _OnDrop,Action<int> _OnTickProfit)
     {
         OnDragStatus = _OnDragStatus;

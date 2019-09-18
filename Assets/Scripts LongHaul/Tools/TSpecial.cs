@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.U2D;
 
 namespace TTiles
 {

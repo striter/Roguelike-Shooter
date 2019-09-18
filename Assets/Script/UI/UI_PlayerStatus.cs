@@ -1,45 +1,73 @@
 ﻿using GameSetting;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using GameSetting;
 public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
 {
     Transform tf_Container,tf_PlayerData,tf_Left;
-    Text  txt_Health, txt_Armor,txt_ActionAmount;
     Button btn_ActionStorage,btn_ActionShuffle;
-    Slider sld_Reload,sld_ShuffleCooldown;
-    Image img_sld;
-    UIT_GridControllerMonoItem<UIGI_AmmoItem> m_AmmoGrid;
+    Slider sld_ShuffleCooldown;
+    Image img_reloadFill;
     UIT_GridControllerMonoItem<UIGI_ActionHoldItem> m_ActionGrid;
     UIT_GridControllerMonoItem<UIGI_ExpireInfoItem> m_ExpireGrid;
-    GridLayoutGroup m_GridLayout;
+    GridLayoutGroup m_AmmoLayout;
     EntityCharacterPlayer m_Player;
-    float f_ammoGridLength;
 
-    UI_Numeric m_CoinStatus;
+    Transform tf_AmmoData;
+    Slider sld_Reload;
+    float m_AmmoGridWidth;
+    UIT_GridControllerMonoItem<UIGI_AmmoItem> m_AmmoGrid;
+    UIC_Numeric m_AmmoAmount, m_AmmoClipAmount;
+
+    Transform tf_ArmorData;
+    Slider sld_Armor;
+    UIC_Numeric m_ArmorAmount;
+
+    Transform tf_HealthData;
+    Slider sld_Health;
+    UIC_Numeric m_HealthAmount, m_MaxHealth;
+
+    Transform tf_ActionData;
+    UIC_ActionAmount m_ActionAmount;
+
     enum_Interaction m_lastInteract;
     Transform tf_InteractData;
     UIT_TextLocalization txt_interactName;
     UIT_TextLocalization txt_interactPrice;
     UIGI_ActionSelectItem m_ActionData;
+
+    Transform tf_WeaponData;
+    UIT_TextLocalization m_WeaponName,m_WeaponAction;
+    Image m_WeaponImage;
+    UIC_RarityLevel m_WeaponActionRarity;
+    UIC_Numeric m_CoinStatus;
     protected override void Awake()
     {
         base.Awake();
         tf_Container = transform.Find("Container");
+
         tf_PlayerData = tf_Container.Find("PlayerData");
-        txt_Health = tf_PlayerData.Find("Health").GetComponent<Text>();
-        txt_Armor = tf_PlayerData.Find("Armor").GetComponent<Text>();
-        m_AmmoGrid = new UIT_GridControllerMonoItem<UIGI_AmmoItem>(tf_PlayerData.Find("AmmoGrid"));
-        m_GridLayout = m_AmmoGrid.transform.GetComponent<GridLayoutGroup>();
-        f_ammoGridLength = m_AmmoGrid.transform.GetComponent<RectTransform>().sizeDelta.y;
+        tf_AmmoData = tf_PlayerData.Find("AmmoData");
+        m_AmmoGridWidth = tf_AmmoData.GetComponent<RectTransform>().sizeDelta.x;
+        m_AmmoAmount = new UIC_Numeric(tf_AmmoData.Find("AmmoAmount"));
+        m_AmmoClipAmount = new UIC_Numeric(m_AmmoAmount.transform.Find("ClipAmount"));
+        m_AmmoGrid = new UIT_GridControllerMonoItem<UIGI_AmmoItem>(tf_AmmoData.Find("AmmoGrid"));
+        m_AmmoLayout = m_AmmoGrid.transform.GetComponent<GridLayoutGroup>();
         sld_Reload = m_AmmoGrid.transform.Find("Reload").GetComponent<Slider>();
-        img_sld = sld_Reload.transform.Find("Fill").GetComponent<Image>();
+        img_reloadFill = sld_Reload.transform.Find("Fill").GetComponent<Image>();
+
+        tf_ArmorData = tf_PlayerData.Find("ArmorData");
+        sld_Armor = tf_ArmorData.Find("ArmorSlider").GetComponent<Slider>();
+        m_ArmorAmount = new UIC_Numeric(tf_ArmorData.Find("ArmorAmount"));
+        tf_HealthData = tf_PlayerData.Find("HealthData");
+        sld_Health = tf_HealthData.Find("HealthSlider").GetComponent<Slider>();
+        m_HealthAmount = new UIC_Numeric(tf_HealthData.Find("HealthAmount"));
+        m_MaxHealth = new UIC_Numeric(m_HealthAmount.transform.Find("MaxHealth"));
+
+        tf_ActionData = tf_PlayerData.Find("ActionData");
+        m_ActionAmount = new UIC_ActionAmount( tf_ActionData.Find("ActionAmountGrid"));
 
         tf_Left = tf_Container.Find("Left");
         m_ActionGrid =new UIT_GridControllerMonoItem<UIGI_ActionHoldItem>(tf_Left.Find("ActionGrid"));
-        txt_ActionAmount = m_ActionGrid.transform.Find("ActionAmount").GetComponent<Text>();
         btn_ActionStorage = m_ActionGrid.transform.Find("ActionStorage").GetComponent<Button>();
         btn_ActionStorage.onClick.AddListener(OnActionStorageClick);
         btn_ActionShuffle = m_ActionGrid.transform.Find("ActionShuffle").GetComponent<Button>();
@@ -51,17 +79,23 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
         txt_interactName = tf_InteractData.Find("Container/InteractName").GetComponent<UIT_TextLocalization>();
         txt_interactPrice = tf_InteractData.Find("Container/InteractPrice").GetComponent<UIT_TextLocalization>();
         m_ActionData = tf_InteractData.Find("Container/ActionData").GetComponent<UIGI_ActionSelectItem>();
-        m_ActionData.OnActivate(0, null);
+        m_ActionData.Init(null);
 
+        tf_WeaponData = tf_Container.Find("WeaponData");
+        m_WeaponName = tf_WeaponData.Find("WeaponName").GetComponent<UIT_TextLocalization>();
+        m_WeaponImage = tf_WeaponData.Find("WeaponImage").GetComponent<Image>();
+        m_WeaponAction = tf_WeaponData.Find("WeaponAction").GetComponent<UIT_TextLocalization>();
+        m_WeaponActionRarity = new UIC_RarityLevel(tf_WeaponData.Find("WeaponActionRarity"));
     }
     private void Start()
     {
-        m_CoinStatus = new UI_Numeric(tf_Container.Find("CoinData/NumericGrid"));
+        m_CoinStatus = new UIC_Numeric(tf_Container.Find("CoinData/NumericGrid"));
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<WeaponBase>(enum_BC_UIStatus.UI_PlayerAmmoStatus, OnAmmoStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerExpireStatus, OnExpireStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerActionStatus, OnActionStatus);
+        TBroadCaster<enum_BC_UIStatus>.Add<WeaponBase>(enum_BC_UIStatus.UI_PlayerWeaponStatus, OnWeaponStatus);
     }
     protected override void OnDestroy()
     {
@@ -71,14 +105,16 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
         TBroadCaster<enum_BC_UIStatus>.Remove<WeaponBase>(enum_BC_UIStatus.UI_PlayerAmmoStatus, OnAmmoStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerExpireStatus, OnExpireStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerActionStatus, OnActionStatus);
+        TBroadCaster<enum_BC_UIStatus>.Remove<WeaponBase>(enum_BC_UIStatus.UI_PlayerWeaponStatus, OnWeaponStatus);
     }
     #region PlayerData/Interact
     void OnCommonStatus(EntityCharacterPlayer _player)
     {
         if (!m_Player)
             m_Player = _player;
-        txt_ActionAmount.text = GameManager.Instance.B_Battling ? _player.m_PlayerInfo.m_ActionAmount.ToString() : _player.m_PlayerInfo.m_ActionStored.Count.ToString();
+
         m_CoinStatus.SetAmount(_player.m_PlayerInfo.m_Coins);
+        m_ActionAmount.SetValue(_player.m_PlayerInfo.m_ActionAmount);
         sld_ShuffleCooldown.value = _player.m_PlayerInfo.f_shuffleScale;
         tf_PlayerData.position = Vector3.Lerp(tf_PlayerData.position, CameraController.MainCamera.WorldToScreenPoint(m_Player.tf_Head.position), Time.deltaTime * 10f);
         
@@ -111,9 +147,9 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
         }
         txt_interactPrice.SetActivate(tradePrice>0);
         if(tradePrice>0)
-        txt_interactPrice.text = tradePrice.ToString();
+            txt_interactPrice.text = tradePrice.ToString();
     }
-    WeaponBase m_targetWeapon;
+    WeaponBase m_targetInteractWeapon;
     void SetInteractInfo(InteractBase interact)
     {
         if (interact.m_InteractType == enum_Interaction.Weapon)
@@ -121,7 +157,7 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
             SetInteractWeaponInfo(interact as InteractWeapon);
             return;
         }
-        m_targetWeapon = null;
+        m_targetInteractWeapon = null;
 
         if (m_lastInteract == interact.m_InteractType)
             return;
@@ -143,30 +179,47 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
     }
     void SetInteractWeaponInfo(InteractWeapon interactWeapon)
     {
-        if (m_targetWeapon == interactWeapon.m_Weapon)
+        if (m_targetInteractWeapon == interactWeapon.m_Weapon)
             return;
 
-        m_targetWeapon = interactWeapon.m_Weapon;
-        txt_interactName.localizeText = m_targetWeapon.m_WeaponInfo.m_Weapon.GetNameLocalizeKey();
+        m_targetInteractWeapon = interactWeapon.m_Weapon;
+        txt_interactName.localizeText = m_targetInteractWeapon.m_WeaponInfo.m_Weapon.GetNameLocalizeKey();
         m_lastInteract = enum_Interaction.Invalid;
-        m_ActionData.SetActivate(m_targetWeapon.m_WeaponAction.Count > 0);      //Test
-        if (m_targetWeapon.m_WeaponAction.Count > 0)        //Test
-            m_ActionData.SetInfo(m_targetWeapon.m_WeaponAction[0]);     //Test????
+        m_ActionData.SetActivate(m_targetInteractWeapon.m_WeaponAction.Count > 0);      //Test
+        if (m_targetInteractWeapon.m_WeaponAction.Count > 0)        //Test
+            m_ActionData.SetInfo(m_targetInteractWeapon.m_WeaponAction[0]);     //Test????
     }
     #endregion
-    #region Health
+    #region Health Status
     void OnHealthStatus(EntityHealth _healthManager)
     {
-        txt_Health.text = ((int)_healthManager.m_CurrentHealth).ToString() + "/" + ((int)_healthManager.m_MaxHealth).ToString();
-        txt_Armor.text = ((int)_healthManager.m_CurrentArmor).ToString() + "/" + ((int)_healthManager.m_DefaultArmor).ToString();
+        sld_Armor.value = _healthManager.m_CurrentArmor/UIConst.F_UIMaxArmor;
+        sld_Health.value = _healthManager.F_BaseHealthScale;
+        m_ArmorAmount.SetAmount((int)_healthManager.m_CurrentArmor);
+        m_HealthAmount.SetAmount((int)_healthManager.m_CurrentHealth);
+        m_MaxHealth.SetAmount((int)_healthManager.m_MaxHealth);
     }
     #endregion
-    #region Ammo
+    #region Weapon/Ammo
+    void OnWeaponStatus(WeaponBase weaponInfo)
+    {
+        m_WeaponName.localizeText = weaponInfo.m_WeaponInfo.m_Weapon.GetNameLocalizeKey();
+
+        bool showWeaponAction = weaponInfo.m_WeaponAction.Count == 1;
+        m_WeaponAction.SetActivate(showWeaponAction);
+        m_WeaponActionRarity.transform.SetActivate(showWeaponAction);
+        if (!showWeaponAction) return;
+        m_WeaponAction.localizeText = weaponInfo.m_WeaponAction[0].GetNameLocalizeKey();
+        m_WeaponActionRarity.SetLevel(weaponInfo.m_WeaponAction[0].m_rarity);
+    }
     void OnAmmoStatus(WeaponBase weaponInfo)
     {
         m_AmmoGrid.transform.SetActivate(weaponInfo != null);
         if (weaponInfo == null)
             return;
+
+        m_AmmoAmount.SetAmount(weaponInfo.B_Reloading?0:weaponInfo.I_AmmoLeft);
+        m_AmmoClipAmount.SetAmount(weaponInfo.I_ClipAmount);
 
         if (weaponInfo.B_Reloading)
         {
@@ -175,7 +228,7 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
             return;
         }
 
-        img_sld.color = Color.Lerp(Color.red, Color.white, weaponInfo.F_ReloadStatus);
+        img_reloadFill.color = Color.Lerp(Color.red, Color.white, weaponInfo.F_ReloadStatus);
         if (m_AmmoGrid.I_Count != weaponInfo.I_ClipAmount)
         {
             m_AmmoGrid.ClearGrid();
@@ -184,8 +237,8 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
                 for (int i = 0; i < weaponInfo.I_ClipAmount; i++)
                     m_AmmoGrid.AddItem(i);
 
-                float size = (f_ammoGridLength - m_GridLayout.padding.bottom - m_GridLayout.padding.top - (weaponInfo.I_ClipAmount - 1) * m_GridLayout.spacing.y) / weaponInfo.I_ClipAmount;
-                m_GridLayout.cellSize = new Vector2(m_GridLayout.cellSize.x, size);
+                float size = (m_AmmoGridWidth - m_AmmoLayout.padding.right - m_AmmoLayout.padding.left - (weaponInfo.I_ClipAmount - 1) * m_AmmoLayout.spacing.x) / weaponInfo.I_ClipAmount;
+                m_AmmoLayout.cellSize = new Vector2(size,m_AmmoLayout.cellSize.y);
             }
         }
 
@@ -193,13 +246,13 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
         if (weaponInfo.I_ClipAmount <= UIConst.I_AmmoCountToSlider)
         {
             for (int i = 0; i < weaponInfo.I_ClipAmount; i++)
-                m_AmmoGrid.GetItem(i).Set((weaponInfo.B_Reloading || i > weaponInfo.I_AmmoLeft - 1) ? new Color(0, 0, 0, 0) : ammoStatusColor);
+                m_AmmoGrid.GetItem(i).Set((weaponInfo.B_Reloading || i > weaponInfo.I_AmmoLeft - 1) ? new Color(0, 0, 0, 1) : ammoStatusColor);
             sld_Reload.value = 0;
         }
         else
         {
             sld_Reload.value = weaponInfo.F_AmmoStatus;
-            img_sld.color = ammoStatusColor;
+            img_reloadFill.color = ammoStatusColor;
         }
     }
     #endregion
@@ -233,7 +286,12 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
     {
         m_ExpireGrid.ClearGrid();
         for (int i = 0; i < expireInfo.m_Expires.Count; i++)
+        {
+            if (expireInfo.m_Expires[i].m_ExpireType == enum_ExpireType.Action&& (expireInfo.m_Expires[i] as ActionBase).m_ActionExpireType == enum_ActionExpireType.AfterWeaponSwitch)
+                    continue;
+
             m_ExpireGrid.AddItem(i).SetInfo(expireInfo.m_Expires[i]);
+        }
     }
     #endregion
 }

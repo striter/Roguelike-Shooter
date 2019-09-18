@@ -11,15 +11,16 @@ public class UIGI_BigmapLevelInfo : UIT_GridItem {
     Button btn_ChangeLevel; Action<TileAxis> OnChangeLevelClick;
     Dictionary<enum_TileDirection, Image> dic_TileConnections=new Dictionary<enum_TileDirection, Image>();
     TileAxis m_CurrentAxis;
-    protected override void Init()
+    public override void Init(UIT_GridController parent)
     {
-        base.Init();
+        base.Init(parent);
         img_Level = tf_Container.Find("Level").GetComponent<Image>();
         btn_ChangeLevel = tf_Container.Find("ChangeLevel").GetComponent<Button>();
         btn_ChangeLevel.onClick.AddListener(OnChangeLevelBtnClick);
         for (int i = 0; i < TTiles.TTiles.m_FourDirections.Count; i++)
-            dic_TileConnections.Add(TTiles.TTiles.m_FourDirections[i],tf_Container.Find(TTiles.TTiles.m_FourDirections[i].ToString()).GetComponent<Image>());
+            dic_TileConnections.Add(TTiles.TTiles.m_FourDirections[i], tf_Container.Find(TTiles.TTiles.m_FourDirections[i].ToString()).GetComponent<Image>());
     }
+
     public void Init(Action<TileAxis> _OnChangeLevelClick)
     {
         OnChangeLevelClick = _OnChangeLevelClick;

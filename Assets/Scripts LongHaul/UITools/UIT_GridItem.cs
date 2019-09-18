@@ -8,17 +8,14 @@ public class UIT_GridItem : MonoBehaviour
     protected UIT_GridController gc_Parent;
     public RectTransform rectTransform => rtf_RectTransform;
     public int I_Index { get; protected set; }
-    protected virtual void Init()
+    public virtual void Init(UIT_GridController parent)
     {
-        if (rtf_RectTransform != null)
-            return;
+        gc_Parent = parent;
         rtf_RectTransform = transform.GetComponent<RectTransform>();
         tf_Container = transform.Find("Container");
     }
-    public void OnActivate(int _index, UIT_GridController parent)
+    public virtual void OnActivate(int _index)
     {
-        Init();
-        gc_Parent = parent;
         I_Index = _index;
     }
     public virtual void Reset()

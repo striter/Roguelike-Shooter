@@ -6,13 +6,11 @@ public class UIT_SystemInfoItem:UIT_GridItem {
     {
         rectTransform.anchoredPosition = rectPos;
     }
-    protected override void Init()
+    public override void Init(UIT_GridController parent)
     {
-        if (txt_chatInfo == null)
-        {
-            txt_chatInfo = GetComponent<Text>();
-            rtf_RectTransform = GetComponent<RectTransform>();
-        }
+        base.Init(parent);
+        txt_chatInfo = GetComponent<Text>();
+        rtf_RectTransform = GetComponent<RectTransform>();
     }
     public void SetItem(int itemIndex, string text)
     {

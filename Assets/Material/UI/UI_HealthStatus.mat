@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Material_Common_Level
-  m_Shader: {fileID: 4800000, guid: ade4537e8b0fa8c42816cfdbd36e719e, type: 3}
+  m_Name: UI_HealthStatus
+  m_Shader: {fileID: 4800000, guid: 1311caeb2d438d648a7e8e307c1b3417, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -22,10 +22,6 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _ColorMask:
-        m_Texture: {fileID: 2800000, guid: e77d7c0c191d9ab429dbc13c91e453cf, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -38,24 +34,20 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _DetailTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _EmissionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _MainMask:
-        m_Texture: {fileID: 2800000, guid: 70db952bcffae5d439275691e12bdd9a, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: bd6664c7552677e4b891d6fd2722010d, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NoiseTex:
+        m_Texture: {fileID: 2800000, guid: 782f7494879f8ab44a0fbf9afb88f05c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
@@ -66,37 +58,37 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _SubMaskTex:
-        m_Texture: {fileID: 2800000, guid: 0d10ebeee0665a1488ec61f782f8c881, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _BaseScale: 4
     - _BumpScale: 1
+    - _BurnWidth: 0.05
+    - _ColorMask: 15
     - _Cutoff: 0.5
+    - _DeltaX: 5
+    - _DeltaY: 5
     - _DetailNormalMapScale: 1
-    - _DetailScale: 3
     - _DstBlend: 0
+    - _FlowX: 0
+    - _FlowY: 20
     - _GlossMapScale: 1
-    - _Glossiness: 0
+    - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _Lambert: 1
-    - _MainScale: 15
-    - _MaskScale: 15
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _Progress: 0
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _SubMultiply: 0.5
-    - _SubScale: 20
-    - _TexScale: 10
+    - _Stencil: 0
+    - _StencilComp: 8
+    - _StencilOp: 0
+    - _StencilReadMask: 255
+    - _StencilWriteMask: 255
     - _UVSec: 0
+    - _UseUIAlphaClip: 0
     - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 0.31821087, g: 0.39705884, b: 0.13721885, a: 1}
+    - _BurnColor: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
-    - _SubColor: {r: 0.21323532, g: 0.17902252, b: 0.036061853, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}

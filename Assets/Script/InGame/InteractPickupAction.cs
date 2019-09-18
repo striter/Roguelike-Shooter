@@ -15,7 +15,7 @@ public class InteractPickupAction : InteractPickup {
     public InteractPickupAction Play(ActionBase _action)
     {
         m_Action = _action;
-        m_Renderer.material.color = _action.m_Level.ActionRarityColor();
+        m_Renderer.material.color = _action.m_rarity.ActionRarityColor();
         return this;
     }
     protected override void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)

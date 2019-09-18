@@ -141,6 +141,8 @@ namespace GameSetting
         public const int I_SporeManagerContainerStartRandomEnd = 30;      // Start From 0 
         public const int I_SporeManagerAutoSave = 5;      //Per Seconds Auto Save Case Game Crush
         public const int I_SporeManagerHybridMaxLevel = 40;      //Spore Level Equals Won't Hybrid
+
+        public const float F_UIMaxArmor = 100f;
     }
 
     public static class UIExpression
@@ -259,6 +261,7 @@ namespace GameSetting
         UI_PlayerAmmoStatus,
         UI_PlayerActionStatus,
         UI_PlayerExpireStatus,
+        UI_PlayerWeaponStatus,
     }
     #endregion
 
@@ -474,7 +477,7 @@ namespace GameSetting
             m_Level = (enum_RarityLevel)Enum.Parse(typeof(enum_RarityLevel),split[1]);
         }
         public static ActionInfo Create(int index, enum_RarityLevel level) => new ActionInfo { m_Index = index, m_Level = level };
-        public static ActionInfo Create(ActionBase action) => new ActionInfo { m_Index = action.m_Index, m_Level = action.m_Level };
+        public static ActionInfo Create(ActionBase action) => new ActionInfo { m_Index = action.m_Index, m_Level = action.m_rarity };
         public static List<ActionInfo> Create(List<ActionBase> actions)
         {
             List<ActionInfo> infos = new List<ActionInfo>();
@@ -696,7 +699,6 @@ namespace GameSetting
 
         public override float F_TotalEHP => m_CurrentArmor + base.F_TotalEHP;
         public override float F_EHPScale => Mathf.Clamp01((m_CurrentArmor + m_CurrentHealth) / (m_DefaultArmor + m_MaxHealth));
-        public float F_ArmorScale => Mathf.Clamp01(m_CurrentArmor / m_DefaultArmor);
         protected EntityCharacterBase m_Entity;
         protected void DamageArmor(float amount)
         {
@@ -729,7 +731,7 @@ namespace GameSetting
                 {
                     case enum_DamageType.ArmorOnly:
                         {
-                            if (F_ArmorScale == 0)
+                            if (m_CurrentArmor <= 0)
                                 return false;
                             DamageArmor(damageReceive);
                             OnHealthChanged(enum_HealthChangeMessage.DamageArmor);
@@ -1353,7 +1355,7 @@ namespace GameSetting
     {
         public override enum_ExpireType m_ExpireType => enum_ExpireType.Action;
         public EntityCharacterPlayer m_ActionEntity { get; private set; }
-        public enum_RarityLevel m_Level { get; private set; } = enum_RarityLevel.Invalid;
+        public enum_RarityLevel m_rarity { get; private set; } = enum_RarityLevel.Invalid;
         public int m_Identity { get; private set; } = -1;
         public virtual int I_ActionCost => -1;
         public virtual bool B_ActionAble => true;
@@ -1371,7 +1373,7 @@ namespace GameSetting
         protected ActionBase(int _identity,enum_RarityLevel _level)
         {
             m_Identity = _identity;
-            m_Level = _level;
+            m_rarity = _level;
         }
         public virtual float F_CloakDuration => 0;
         public void Activate(EntityCharacterPlayer _actionEntity,Action<ExpireBase> OnExpired) { m_ActionEntity = _actionEntity;Activate(F_Duration,OnExpired); }
@@ -1383,11 +1385,11 @@ namespace GameSetting
         public virtual void OnAfterBattle() { }
         public virtual void OnFire(int identity) { }
         public virtual void OnWeaponDetach() { }
-        public bool B_Upgradable => m_Level < enum_RarityLevel.L3;
+        public bool B_Upgradable => m_rarity < enum_RarityLevel.L3;
         public void Upgrade()
         {
-            if (m_Level < enum_RarityLevel.L3)
-                m_Level++;
+            if (m_rarity < enum_RarityLevel.L3)
+                m_rarity++;
         }
     }
     #endregion
@@ -2048,14 +2050,14 @@ namespace GameSetting
     }
     
 
-    public class UI_Numeric
+    public class UIC_Numeric
     {
         static readonly AtlasLoader m_InGameSprites = TResources.GetUIAtlas_Numeric();
         public static Sprite GetNumeric(char numeric) => m_InGameSprites["numeric_" + numeric];
-        Transform transform;
+        public Transform transform { get; private set; }
         UIT_GridControllerMono<Image> m_Grid;
         int currentAmount=-1;
-        public UI_Numeric(Transform _transform)
+        public UIC_Numeric(Transform _transform)
         {
             transform = _transform;
             m_Grid = new UIT_GridControllerMono<Image>(transform);
@@ -2074,7 +2076,43 @@ namespace GameSetting
                 m_Grid.GetOrAddItem(i).sprite = GetNumeric(amount[i]);
         }
     }
-
+    public class UIC_RarityLevel
+    {
+        public Transform transform { get; private set; }
+        Image img_level1, img_level2, img_level3;
+        public UIC_RarityLevel(Transform _transform)
+        {
+            transform = _transform;
+            img_level1 = transform.Find("Level1").GetComponent<Image>();
+            img_level2 = transform.Find("Level2").GetComponent<Image>();
+            img_level3 = transform.Find("Level3").GetComponent<Image>();
+        }
+        public void SetLevel(enum_RarityLevel level)
+        {
+            img_level1.SetActivate(level>= enum_RarityLevel.L1);
+            img_level2.SetActivate(level >= enum_RarityLevel.L2);
+            img_level3.SetActivate(level >= enum_RarityLevel.L3);
+        }
+    }
+    public class UIC_ActionAmount
+    {
+        Transform transform;
+        UIT_GridControllerMonoItem<UIGI_ActionAmountItem> m_ActionAmountGrid;
+        float m_value;
+        public UIC_ActionAmount(Transform _transform)
+        {
+            transform = _transform;
+            m_ActionAmountGrid = new UIT_GridControllerMonoItem<UIGI_ActionAmountItem>(transform);
+        }
+        public void SetValue(float value)
+        {
+            if (m_value == value)
+                return;
+            m_value = value;
+            for (int i = 0; i < GameConst.F_MaxActionAmount; i++)
+                m_ActionAmountGrid.GetOrAddItem(i).SetValue(value-i);
+        }
+    }
     public enum enum_UI_ActionUpgradeType
     {
         Invalid=-1,

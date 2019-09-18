@@ -11,18 +11,14 @@ public class UIT_GridDefaultItem : UIT_GridItem {
     protected Image img_HighLight;
     public bool B_HighLight { get; protected set; }
     Action<int> OnItemClick;
-    protected override void Init()
+    public override void Init(UIT_GridController parent)
     {
-        base.Init();
-        if (txt_Default)
-            return;
-
+        base.Init(parent);
         txt_Default = tf_Container.Find("DefaultText").GetComponentNullable<Text>();
         img_Default = tf_Container.Find("DefaultImage").GetComponentNullable<Image>();
         img_HighLight = tf_Container.Find("DefaultHighLight").GetComponentNullable<Image>();
         btn_Default = tf_Container.Find("DefaultBtn").GetComponentNullable<Button>();
-        if (btn_Default != null)
-            btn_Default.onClick.AddListener(OnItemTrigger);
+        if (btn_Default)  btn_Default.onClick.AddListener(OnItemTrigger);
     }
     public void SetDefaultOnClick(Action<int> _OnItemClick)
     {
