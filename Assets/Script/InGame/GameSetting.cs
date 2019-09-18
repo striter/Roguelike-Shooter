@@ -6,6 +6,7 @@ using TTiles;
 using TPhysics;
 using System.Linq;
 using GameSetting_Action;
+using UnityEngine.UI;
 #pragma warning disable 0649
 namespace GameSetting
 {
@@ -258,7 +259,6 @@ namespace GameSetting
         UI_PlayerAmmoStatus,
         UI_PlayerActionStatus,
         UI_PlayerExpireStatus,
-        UI_LevelStatusChange,
     }
     #endregion
 
@@ -1765,7 +1765,7 @@ namespace GameSetting
         public EquipmentCasterTarget(SFXCast _castInfo, EntityCharacterBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(_castInfo, _controller, _transform, _GetBuffInfo)
         {
         }
-        protected override Vector3 GetTargetPosition(bool preAim, EntityCharacterBase _target) => EnvironmentManager.NavMeshPosition(_target.transform.position + TCommon.RandomXZSphere(m_Entity.F_AttackSpread));
+        protected override Vector3 GetTargetPosition(bool preAim, EntityCharacterBase _target) => LevelManager.NavMeshPosition(_target.transform.position + TCommon.RandomXZSphere(m_Entity.F_AttackSpread));
         public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
             GameObjectManager.SpawnEquipment<SFXCast>(i_weaponIndex,_calculatedPosition,Vector3.up).Play( GetDamageDeliverInfo());
@@ -2044,6 +2044,34 @@ namespace GameSetting
                 }
             }
             return I_Level - offset;
+        }
+    }
+    
+
+    public class UI_Numeric
+    {
+        static readonly AtlasLoader m_InGameSprites = TResources.GetUIAtlas_Numeric();
+        public static Sprite GetNumeric(char numeric) => m_InGameSprites["numeric_" + numeric];
+        Transform transform;
+        UIT_GridControllerMono<Image> m_Grid;
+        int currentAmount=-1;
+        public UI_Numeric(Transform _transform)
+        {
+            transform = _transform;
+            m_Grid = new UIT_GridControllerMono<Image>(transform);
+        }
+
+        public void SetAmount(int _amount)
+        {
+            if (currentAmount == _amount)
+                return;
+            currentAmount = _amount;
+
+            m_Grid.ClearGrid();
+            List<int> m_units=new List<int>();
+            string amount = _amount.ToString();
+            for (int i = 0; i < amount.Length; i++)
+                m_Grid.GetOrAddItem(i).sprite = GetNumeric(amount[i]);
         }
     }
 

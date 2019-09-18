@@ -28,14 +28,13 @@ public class SFXParticles : SFXBase
         duration = duration == 0 ? m_ParticleDuration : duration;
         duration +=  GameConst.F_ParticlesMaxStopTime;
         PlaySFX(sourceID,duration);
-        ResetParticles();
         if (B_PlayOnAwake)
             PlayParticles();
     }
     public void ResetParticles()
     {
         m_relativeSFXs.Traversal((SFXRelativeBase sfxRelative) => { sfxRelative.OnReset(); });
-        m_Particles.Traversal((ParticleSystem particle) => { particle.Stop(); });
+        m_Particles.Traversal((ParticleSystem particle) => { particle.Clear(); });
      }
     public void PlayParticles()
     {
@@ -53,6 +52,7 @@ public class SFXParticles : SFXBase
     {
         base.OnRecycle();
         m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.OnRecycle(); });
+        ResetParticles();
     }
     public virtual void StopParticles()
     {

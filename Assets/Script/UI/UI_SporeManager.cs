@@ -10,7 +10,7 @@ public class UI_SporeManager : UIPageBase,ISingleCoroutine {
     Text txt_MaxLevel;
     Button btn_BuyCoin, btn_BuyBlue;
     Text txt_BuyCoin, txt_BuyBlue;
-    UIT_GridControllerMono<UIGI_SporeContainer> gc_SporeContainers;     //0 Spare //-1 Locked
+    UIT_GridControllerMonoItem<UIGI_SporeContainer> gc_SporeContainers;     //0 Spare //-1 Locked
     MessageBox_OffsetProfit m_profitMessageBox;
     CSporeManagerSave m_ManagerInfo;
     SSporeLevelRate m_CurrentSporeRate;
@@ -40,7 +40,7 @@ public class UI_SporeManager : UIPageBase,ISingleCoroutine {
 
         m_profitMessageBox = new MessageBox_OffsetProfit(tf_Container.Find("OfflineProfit"));
 
-        gc_SporeContainers = new UIT_GridControllerMono<UIGI_SporeContainer>(tf_Container.Find("SporeContainers"));
+        gc_SporeContainers = new UIT_GridControllerMonoItem<UIGI_SporeContainer>(tf_Container.Find("SporeContainers"));
         for (int i = 1; i <= UIConst.I_SporeManagerContainersMaxAmount; i++)
             gc_SporeContainers.AddItem(i).Init(OnDragSporeStatus,OnDragSpore,OnDropSpore, OnSlotTickProfit);
 

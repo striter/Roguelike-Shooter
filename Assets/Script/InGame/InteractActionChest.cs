@@ -29,7 +29,7 @@ public class InteractActionChest : InteractBase {
     {
         base.OnInteractSuccessful(_interactTarget);
         m_Interactor = _interactTarget;
-        UI_ActionAcquire page = UIManager.Instance.ShowPage<UI_ActionAcquire>(true);
+        UI_ActionAcquire page = UI_GameManager.Instance.ShowPage<UI_ActionAcquire>(true);
         if (page == null)
             return;
         page.Play(m_Actions, OnActionSelectConfirm, m_SelectAmount);

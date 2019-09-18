@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
 public class UI_EntityHealth : SimpleSingletonMono<UI_EntityHealth> {
-    UIT_GridControllerMono<UIGI_HealthBar> m_HealthGrid;
-    UIT_GridControllerMono<UIGI_Damage> m_DamageGrid;
+    UIT_GridControllerMonoItem<UIGI_HealthBar> m_HealthGrid;
+    UIT_GridControllerMonoItem<UIGI_Damage> m_DamageGrid;
     protected override void Awake()
     {
         base.Awake();
-        m_HealthGrid = new UIT_GridControllerMono<UIGI_HealthBar>(transform.Find("HealthGrid"));
-        m_DamageGrid = new UIT_GridControllerMono<UIGI_Damage>(transform.Find("DamageGrid"));
+        m_HealthGrid = new UIT_GridControllerMonoItem<UIGI_HealthBar>(transform.Find("HealthGrid"));
+        m_DamageGrid = new UIT_GridControllerMonoItem<UIGI_Damage>(transform.Find("DamageGrid"));
     }
     private void Start()
     {

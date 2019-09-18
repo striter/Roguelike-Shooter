@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.U2D;
+
 namespace TTiles
 {
     public enum enum_TileDirection
@@ -804,6 +806,27 @@ public static class Physics_Extend
     }
 }
 #endregion
+#region UI Classes
+public class AtlasLoader
+{
+    Dictionary<string, Sprite> m_SpriteDic = new Dictionary<string, Sprite>();
+    public Sprite this[string name]
+    {
+        get
+        {
+            if (!m_SpriteDic.ContainsKey(name))
+                Debug.LogError("Null Sprites Found |"+name+"|");
+            return m_SpriteDic[name];
+        }
+    }
+    public AtlasLoader(string path)
+    {
+        Sprite[] allsprites = TResources.LoadAll<Sprite>(path);
+        allsprites.Traversal((Sprite sprite)=> { m_SpriteDic.Add(sprite.name, sprite); });
+    }
+}
+#endregion
+
 #if UNITY_EDITOR
 #region Editor Class
 

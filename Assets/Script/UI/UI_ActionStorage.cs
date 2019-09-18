@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class UI_ActionStorage : UIPageBase {
-    UIT_GridControllerMono<UIGI_ActionSelectItem> m_Grid;
+    UIT_GridControllerMonoItem<UIGI_ActionSelectItem> m_Grid;
     PlayerInfoManager m_Info;
     bool showStored;
     protected override void Init(bool useAnim)

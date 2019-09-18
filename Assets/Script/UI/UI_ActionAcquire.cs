@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class UI_ActionAcquire : UIPageBase {
 
     Button m_Confirm;
-    UIT_GridControllerMono<UIGI_ActionSelectItem> m_Grid;
+    UIT_GridControllerMonoItem<UIGI_ActionSelectItem> m_Grid;
     bool m_SingleGrid;
     Action<List<int>> OnIndexSelect;
     protected override void Init(bool useAnim)

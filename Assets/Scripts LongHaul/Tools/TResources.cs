@@ -3,10 +3,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.U2D;
 
 public class TResources
 {
-    #region GameExtras
+    #region Extras
     public class ConstPath
     {
         public const string S_PlayerEntity = "Entity/0_Player";
@@ -26,8 +27,15 @@ public class TResources
 
         public const string S_PETex_NoiseFog = "Texture/PE_NoiseFog";
         public const string S_PETex_Holograph = "Texture/PE_Holograph";
+
+        public const string S_UI_Atlas_Game = "UI/Atlas/Atlas_InGame";
+        public const string S_UI_Numeric = "UI/Numeric";
     }
-    
+
+    #region UI
+    public static AtlasLoader GetUIAtlas_Numeric() => new AtlasLoader(ConstPath.S_UI_Numeric);
+    #endregion
+    #region Game
     public static StyleColorData[] GetAllStyleCustomization(enum_Style levelStype) => LoadAll<StyleColorData>(ConstPath.S_StyleCustomization + "/" + levelStype);
     public static Dictionary<enum_LevelItemType,List<LevelItemBase>>  GetAllLevelItems(enum_Style _levelStyle, Transform parent)
     {
@@ -119,6 +127,7 @@ public class TResources
     public static InteractBase GetInteractActionChest(enum_StageLevel stageLevel) => Instantiate<InteractBase>(ConstPath.S_InteractActionChest + stageLevel.ToString());
     public static InteractBase GetInteract(enum_Interaction type) => Instantiate<InteractBase>(ConstPath.S_InteractCommon + type);
     #endregion
+    #endregion
     #region Will Be Replaced By AssetBundle If Needed
     public static T Instantiate<T>(string path, Transform toParent = null) where T : UnityEngine.Object
     {
@@ -131,7 +140,7 @@ public class TResources
     {
         T prefab = Resources.Load<T>(path);
         if (prefab == null)
-            Debug.LogWarning("No Prefab At:" + path);
+            Debug.LogWarning("Invalid Item Found Of |"+typeof(T)+  "|At:" + path);
         return prefab;
     }
     public static T[] LoadAll<T>(string path) where T : UnityEngine.Object

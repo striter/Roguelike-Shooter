@@ -65,27 +65,75 @@ public class UIT_GridController
         return ActiveItemDic.ContainsKey(identity);
     }
 }
-public class UIT_GridControllerMono<T>:UIT_GridController where T:UIT_GridItem
+
+public class UIT_GridControllerMono<T> : UIT_GridController where T : MonoBehaviour
 {
-    protected Dictionary<int, T> m_ItemDic  = new Dictionary<int, T>();
+    protected Dictionary<int, T> m_ItemDic = new Dictionary<int, T>();
+    public UIT_GridControllerMono(Transform _transform) : base(_transform)
+    {
+
+    }
+
+    public T GetOrAddItem(int identity)=>Contains(identity) ? GetItem(identity) : AddItem(identity);
+    public new T GetItem(int identity)=> Contains(identity) ? m_ItemDic[identity] : null;
+    public new T AddItem(int identity)
+    {
+        T item = base.AddItem(identity).GetComponent<T>();
+        OnItemAdd(item, identity);
+        m_ItemDic.Add(identity, item);
+        item.SetActivate(true);
+        item.transform.SetSiblingIndex(identity);
+        return item;
+    }
+
+    public override void ClearGrid()
+    {
+        base.ClearGrid();
+        m_ItemDic.Clear();
+    }
+
+    public override void RemoveItem(int identity)
+    {
+        base.RemoveItem(identity);
+        OnItemRemove(m_ItemDic[identity],identity);
+        m_ItemDic.Remove(identity);
+    }
+
+    public void TraversalItem(Action<int, T> onEach)
+    {
+        foreach (int i in ActiveItemDic.Keys)
+        {
+            onEach(i, m_ItemDic[i]);
+        }
+    }
+
+    protected virtual void OnItemAdd(T item, int identity)
+    {
+
+    }
+    protected virtual void OnItemRemove(T item, int identity)
+    {
+
+    }
+}
+
+public class UIT_GridControllerMonoItem<T>: UIT_GridControllerMono<T> where T:UIT_GridItem
+{
     public int I_Count=> m_ItemDic.Count;
     public GridLayoutGroup m_GridLayout { get; private set; }
-    public UIT_GridControllerMono(Transform _transform) : base(_transform)
+    public UIT_GridControllerMonoItem(Transform _transform) : base(_transform)
     {
         m_GridLayout = _transform.GetComponent<GridLayoutGroup>();
     }
-    public new T AddItem(int identity) 
+    protected override void OnItemAdd(T item,int identity)
     {
-        T item = base.AddItem(identity).GetComponent<T>();
-        OnItemAdd(item,identity);
-        m_ItemDic.Add(identity,item);
-        item.SetActivate(true);
-        item.transform.SetSiblingIndex(identity); 
-        return item;
+        base.OnItemAdd(item, identity);
+        item.OnActivate(identity, this);
     }
-    protected virtual void OnItemAdd(T item,int identity)
+    protected override void OnItemRemove(T item, int identity)
     {
-        item.SetGridControlledItem(identity, this);
+        base.OnItemRemove(item, identity);
+        item.Reset();
     }
     public void SortChildrenSibling()
     {
@@ -94,30 +142,8 @@ public class UIT_GridControllerMono<T>:UIT_GridController where T:UIT_GridItem
         for (int i = 0; i < keyCollections.Count; i++)
             m_ItemDic[keyCollections[i]].transform.SetAsLastSibling();
     }
-    public new T GetItem(int identity)
-    {
-        return Contains(identity)?m_ItemDic[identity]:null;
-    }
-    public override void ClearGrid()
-    {
-        base.ClearGrid();
-        m_ItemDic.Clear();
-    }
-    public override void RemoveItem(int identity)
-    {
-        base.RemoveItem(identity);
-        m_ItemDic[identity].Reset();
-        m_ItemDic.Remove(identity);
-    }
-    public void TraversalItem(Action<int, T> onEach)
-    {
-        foreach (int i in ActiveItemDic.Keys)
-        {
-            onEach(i, m_ItemDic[i]);
-        }
-    }
 }
-public class UIT_GridDefaultMulti<T> : UIT_GridControllerMono<T> where T : UIT_GridDefaultItem
+public class UIT_GridDefaultMulti<T> : UIT_GridControllerMonoItem<T> where T : UIT_GridDefaultItem
 {
     public int m_selectAmount { get; private set; }=-1;
     public bool m_AllSelected => m_Selecting.Count == m_selectAmount;
@@ -159,8 +185,7 @@ public class UIT_GridDefaultMulti<T> : UIT_GridControllerMono<T> where T : UIT_G
         OnItemSelect?.Invoke(index);
     }
 }
-
-public class UIT_GridDefaultSingle<T> : UIT_GridControllerMono<T> where T : UIT_GridDefaultItem
+public class UIT_GridDefaultSingle<T> : UIT_GridControllerMonoItem<T> where T : UIT_GridDefaultItem
 {
     bool b_btnEnable;
     bool b_doubleClickConfirm;

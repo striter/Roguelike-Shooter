@@ -5,14 +5,14 @@ SpriteAtlas:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Atlas_Game
+  m_Name: Atlas_InGame
   m_EditorData:
     textureSettings:
       serializedVersion: 2
       anisoLevel: 1
       compressionQuality: 50
       maxTextureSize: 2048
-      textureCompression: 0
+      textureCompression: 2
       filterMode: 1
       generateMipMaps: 0
       readable: 0
@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 787478
+    totalSpriteSurfaceArea: 780900
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -56,7 +56,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 204b28d01dc0f084ea4399c7dbccb4a1, type: 3}
   - {fileID: 21300000, guid: 90650132c9ee8ae4396c39751241d8fd, type: 3}
   - {fileID: 21300000, guid: cfd8be99edcf15b4eb3e55ddde9f72e2, type: 3}
-  - {fileID: 21300000, guid: 547cde8135b18d045bc4a414fc924d45, type: 3}
   - {fileID: 21300000, guid: ac9c2c22d9a4cf241a53932685201d4c, type: 3}
   - {fileID: 21300000, guid: 88c596de9be699a4c8654cf1c1be748a, type: 3}
   - {fileID: 21300000, guid: 6036e8e10f734ef40bd89b441dc710b6, type: 3}
@@ -74,19 +73,19 @@ SpriteAtlas:
   m_PackedSpriteNamesToIndex:
   - btn_rocker_bottom
   - display_StatusBar_bottom
-  - btn_action_bottom
+  - btn_main_bottom
   - display_weapon_bottom
   - btn_map_bottom
   - btn_reload
   - icon_map
   - btn_rocker_move
-  - btn_action_fire
+  - btn_main_fire
   - display_progress_bottom
   - display_progress_life
   - display_progress_armor
   - btn_ActionStrorage_bottom
-  - btn_action_chat
-  - btn_action_pickup
+  - btn_main_chat
+  - btn_main_pickup
   - btn_setting_bottom
   - display_coins_bottom
   - icon_ActionStorage
@@ -95,13 +94,12 @@ SpriteAtlas:
   - buff_blank
   - icon_weapon_common
   - display_bullet
-  - btn_map_bigmap
   - icon_setting
-  - diasplay_ActionEnergy_full
-  - diasplay_ActionEnergy_bottom
-  - diasplay_ActionEnergy_notfull
+  - display_ActionEnergy_full
+  - display_ActionEnergy_bottom
+  - display_ActionEnergy_notfull
   - btn_map_triangle
-  - diasplay_ActionEnergy_progress
+  - display_ActionEnergy_progress
   - icon_BulletNumber
   - icon_Life
   - icon_Armor
@@ -110,5 +108,5 @@ SpriteAtlas:
   - display_bullet_bottom
   - icon_weapon_rank
   - icon_buff_rank
-  m_Tag: Atlas_Game
+  m_Tag: Atlas_InGame
   m_IsVariant: 0

@@ -13,7 +13,7 @@ public class ActionTester : MonoBehaviour {
     UIT_GridDefaultMulti<UIT_GridDefaultItem> m_GridMulti;
     Text m_Count;
     ScrollRect m_OwnedParent;
-    UIT_GridControllerMono<UIT_GridDefaultItem> m_GridOwned;
+    UIT_GridControllerMonoItem<UIT_GridDefaultItem> m_GridOwned;
     
     private void Awake()
     {
@@ -35,7 +35,7 @@ public class ActionTester : MonoBehaviour {
         m_GridMulti = new UIT_GridDefaultMulti<UIT_GridDefaultItem>(transform.Find("ActionGridMulti"),2, OnItemClick);
         m_GridSingle = new UIT_GridDefaultSingle<UIT_GridDefaultItem>(transform.Find("ActionGridSingle"), OnItemClick, true);
         m_OwnedParent = transform.Find("OwnedParent").GetComponent<ScrollRect>();
-        m_GridOwned = new UIT_GridControllerMono<UIT_GridDefaultItem>(m_OwnedParent.transform.Find("Viewport/ActionOwned"));
+        m_GridOwned = new UIT_GridControllerMonoItem<UIT_GridDefaultItem>(m_OwnedParent.transform.Find("Viewport/ActionOwned"));
 
         Debug.Log("'8':Random 1 Actions ,'9':Random 2 Actions,'0': Reset , '-':Minus Level, '=':Add Level ,'Page Up':ScrollView Up,'Page Down': ScrollView Down");
     }

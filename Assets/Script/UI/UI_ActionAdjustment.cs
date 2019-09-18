@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class UI_ActionAdjustment : UIPageBase {
 
-    UIT_GridControllerMono<UIGI_ActionSelectItem> m_Grid;
+    UIT_GridControllerMonoItem<UIGI_ActionSelectItem> m_Grid;
     Button btn_remove, btn_upgrade;
     UIT_TextLocalization txt_remove, txt_upgrade,txt_coins;
     int m_selectIndex = -1;

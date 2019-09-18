@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using GameSetting;
 public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
 {
     Transform tf_Container,tf_PlayerData,tf_Left;
@@ -11,13 +11,14 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
     Button btn_ActionStorage,btn_ActionShuffle;
     Slider sld_Reload,sld_ShuffleCooldown;
     Image img_sld;
-    UIT_GridControllerMono<UIGI_AmmoItem> m_AmmoGrid;
-    UIT_GridControllerMono<UIGI_ActionHoldItem> m_ActionGrid;
-    UIT_GridControllerMono<UIGI_ExpireInfoItem> m_ExpireGrid;
+    UIT_GridControllerMonoItem<UIGI_AmmoItem> m_AmmoGrid;
+    UIT_GridControllerMonoItem<UIGI_ActionHoldItem> m_ActionGrid;
+    UIT_GridControllerMonoItem<UIGI_ExpireInfoItem> m_ExpireGrid;
     GridLayoutGroup m_GridLayout;
     EntityCharacterPlayer m_Player;
     float f_ammoGridLength;
 
+    UI_Numeric m_CoinStatus;
     enum_Interaction m_lastInteract;
     Transform tf_InteractData;
     UIT_TextLocalization txt_interactName;
@@ -30,30 +31,32 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
         tf_PlayerData = tf_Container.Find("PlayerData");
         txt_Health = tf_PlayerData.Find("Health").GetComponent<Text>();
         txt_Armor = tf_PlayerData.Find("Armor").GetComponent<Text>();
-        m_AmmoGrid = new UIT_GridControllerMono<UIGI_AmmoItem>(tf_PlayerData.Find("AmmoGrid"));
+        m_AmmoGrid = new UIT_GridControllerMonoItem<UIGI_AmmoItem>(tf_PlayerData.Find("AmmoGrid"));
         m_GridLayout = m_AmmoGrid.transform.GetComponent<GridLayoutGroup>();
         f_ammoGridLength = m_AmmoGrid.transform.GetComponent<RectTransform>().sizeDelta.y;
         sld_Reload = m_AmmoGrid.transform.Find("Reload").GetComponent<Slider>();
         img_sld = sld_Reload.transform.Find("Fill").GetComponent<Image>();
 
         tf_Left = tf_Container.Find("Left");
-        m_ActionGrid =new UIT_GridControllerMono<UIGI_ActionHoldItem>(tf_Left.Find("ActionGrid"));
+        m_ActionGrid =new UIT_GridControllerMonoItem<UIGI_ActionHoldItem>(tf_Left.Find("ActionGrid"));
         txt_ActionAmount = m_ActionGrid.transform.Find("ActionAmount").GetComponent<Text>();
         btn_ActionStorage = m_ActionGrid.transform.Find("ActionStorage").GetComponent<Button>();
         btn_ActionStorage.onClick.AddListener(OnActionStorageClick);
         btn_ActionShuffle = m_ActionGrid.transform.Find("ActionShuffle").GetComponent<Button>();
         btn_ActionShuffle.onClick.AddListener(OnActionShuffleClick);
         sld_ShuffleCooldown = btn_ActionShuffle.transform.Find("ShuffleSlider").GetComponent<Slider>();
-        m_ExpireGrid = new UIT_GridControllerMono<UIGI_ExpireInfoItem>(tf_Left.Find("ExpireGrid"));
+        m_ExpireGrid = new UIT_GridControllerMonoItem<UIGI_ExpireInfoItem>(tf_Left.Find("ExpireGrid"));
 
         tf_InteractData = tf_Container.Find("InteractData");
         txt_interactName = tf_InteractData.Find("Container/InteractName").GetComponent<UIT_TextLocalization>();
         txt_interactPrice = tf_InteractData.Find("Container/InteractPrice").GetComponent<UIT_TextLocalization>();
         m_ActionData = tf_InteractData.Find("Container/ActionData").GetComponent<UIGI_ActionSelectItem>();
-        m_ActionData.SetGridControlledItem(0, null);
+        m_ActionData.OnActivate(0, null);
+
     }
     private void Start()
     {
+        m_CoinStatus = new UI_Numeric(tf_Container.Find("CoinData/NumericGrid"));
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<WeaponBase>(enum_BC_UIStatus.UI_PlayerAmmoStatus, OnAmmoStatus);
@@ -75,6 +78,7 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
         if (!m_Player)
             m_Player = _player;
         txt_ActionAmount.text = GameManager.Instance.B_Battling ? _player.m_PlayerInfo.m_ActionAmount.ToString() : _player.m_PlayerInfo.m_ActionStored.Count.ToString();
+        m_CoinStatus.SetAmount(_player.m_PlayerInfo.m_Coins);
         sld_ShuffleCooldown.value = _player.m_PlayerInfo.f_shuffleScale;
         tf_PlayerData.position = Vector3.Lerp(tf_PlayerData.position, CameraController.MainCamera.WorldToScreenPoint(m_Player.tf_Head.position), Time.deltaTime * 10f);
         
@@ -215,11 +219,11 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
     }
     void OnActionPressDuration()
     {
-        UIManager.Instance.ShowPage<UI_ActionStorage>(false).Show(false,m_Player.m_PlayerInfo) ;
+        UI_GameManager.Instance.ShowPage<UI_ActionStorage>(false).Show(false,m_Player.m_PlayerInfo) ;
     }
     void OnActionStorageClick()
     {
-        UIManager.Instance.ShowPage<UI_ActionStorage>(true).Show(true,m_Player.m_PlayerInfo);
+        UI_GameManager.Instance.ShowPage<UI_ActionStorage>(true).Show(true,m_Player.m_PlayerInfo);
     }
     void OnActionShuffleClick()
     {

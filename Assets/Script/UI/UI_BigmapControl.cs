@@ -6,73 +6,32 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class UI_BigmapControl : UIPageBase {        //This Page Won't Hide(One Page Show Bigmap/Minimap)
-    UIT_GridControllerMono<UIGI_BigmapLevelInfo> gc_BigMapController;
+    UIT_GridControllerMonoItem<UIGI_BigmapLevelInfo> gc_BigMapController;
     RectTransform rtf_MapPlayer;
-    Button btn_Bigmap;
-    Image img_BigmapRaycast, img_CancelRaycast;
-    UIT_TextLocalization txt_ChestTips;
-    RectTransform rtf_MapGrid;
     public bool B_ShowBigmap = false;
     protected override void Init(bool useAnim)
     {
         base.Init(useAnim);
-        gc_BigMapController = new UIT_GridControllerMono<UIGI_BigmapLevelInfo>(tf_Container.Find("MapGrid"));
-        rtf_MapGrid = gc_BigMapController.transform.GetComponent<RectTransform>();
+        gc_BigMapController = new UIT_GridControllerMonoItem<UIGI_BigmapLevelInfo>(tf_Container.Find("MapGrid"));
         rtf_MapPlayer = gc_BigMapController.transform.Find("MapPlayer").GetComponent<RectTransform>();
-        btn_Bigmap = transform.Find("ShowBigmap").GetComponent<Button>();
-        img_BigmapRaycast = btn_Bigmap.GetComponent<Image>();
-        img_CancelRaycast = btn_Cancel.GetComponent<Image>();
-        btn_Bigmap.onClick.AddListener(OnBigmapBtnClick);
-        txt_ChestTips = tf_Container.Find("ChestTips").GetComponent<UIT_TextLocalization>();
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
-        TBroadCaster<enum_BC_UIStatus>.Add<SBigmapLevelInfo[,], TileAxis>(enum_BC_UIStatus.UI_LevelStatusChange, OnLevelStatusChanged);
-        ShowMap(false, false);
+        tf_Container.Find("ChestTips").SetActivate( GameManager.Instance.B_ShowChestTips);
+        OnLevelStatusChanged(LevelManager.Instance.m_MapLevelInfo, LevelManager.Instance.m_currentLevel.m_TileAxis);
+        B_ShowBigmap = true;
     }
-
-    protected override void OnDestroy()
-    {
-        base.OnDestroy();
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
-        TBroadCaster<enum_BC_UIStatus>.Remove<SBigmapLevelInfo[,], TileAxis>(enum_BC_UIStatus.UI_LevelStatusChange, OnLevelStatusChanged);
-    }
-    void OnBattleStart()
-    {
-        ShowMap(false);
-        this.SetActivate(false);
-    }
-    void OnBattleFinish()
-    {
-        this.SetActivate(true);
-    }
-
-    protected void OnBigmapBtnClick()
-    {
-        ShowMap(true);
-    }
+    
     protected override void OnCancelBtnClick()
     {
-        ShowMap(false);
+        base.OnCancelBtnClick();
+        B_ShowBigmap = false;
     }
-    void ShowMap(bool showBigmap,bool useAnim=true)     //useAnim To Be Continued
-    {
-        B_ShowBigmap = showBigmap;
-        txt_ChestTips.SetActivate(showBigmap&&GameManager.Instance.B_ShowChestTips);
-        img_BigmapRaycast.raycastTarget = !B_ShowBigmap;
-        img_CancelRaycast.raycastTarget = B_ShowBigmap;
-        btn_Bigmap.SetActivate(!showBigmap);
-        rtf_MapGrid.SetActivate(showBigmap);
-        img_Background.color = TCommon.ColorAlpha(img_Background.color,B_ShowBigmap? f_bgAlphaStart:0f);
-    }
+    
     void OnMapTileClick(TileAxis axis)
     {
         if (!B_ShowBigmap)
-        {
-            ShowMap(true);
             return;
-        }
-        EnvironmentManager.Instance.OnChangeLevel(axis);
+
+        LevelManager.Instance.OnChangeLevel(axis);
+        OnCancelBtnClick();
     }   
 
     void OnLevelStatusChanged(SBigmapLevelInfo[,] bigMap, TileAxis playerAxis)
@@ -97,8 +56,8 @@ public class UI_BigmapControl : UIPageBase {        //This Page Won't Hide(One P
             infoUI.SetBigmapLevelInfo(levelInfo, connectionActivate);
             if (levelInfo.m_TileAxis == playerAxis)
             {
-                rtf_MapPlayer.SetParent(infoUI.transform);
-                rtf_MapPlayer.anchoredPosition = Vector2.zero;
+                rtf_MapPlayer.transform.SetParent(infoUI.transform);
+                rtf_MapPlayer.anchoredPosition=Vector2.zero;
             }
         });
     }

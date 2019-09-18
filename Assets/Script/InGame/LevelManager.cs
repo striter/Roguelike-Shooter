@@ -7,7 +7,7 @@ using UnityEngine.AI;
 using System;
 using LPWAsset;
 
-public class EnvironmentManager : SimpleSingletonMono<EnvironmentManager> {
+public class LevelManager : SimpleSingletonMono<LevelManager> {
     public Transform tf_LevelParent { get; private set; }
     public enum_Style m_StyleCurrent { get; private set; } = enum_Style.Invalid;
     public SBigmapLevelInfo m_currentLevel { get; private set; }
@@ -79,7 +79,6 @@ public class EnvironmentManager : SimpleSingletonMono<EnvironmentManager> {
         BuildNavMeshData(m_currentLevel.m_Level);
         OnLevelPrepared(m_currentLevel);
         m_currentLevel.SetTileLocking(enum_TileLocking.Unlocked);
-        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_LevelStatusChange, m_MapLevelInfo, m_currentLevel.m_TileAxis);
     }
 
     public void OnChangeLevel(TileAxis targetAxis)
@@ -99,8 +98,6 @@ public class EnvironmentManager : SimpleSingletonMono<EnvironmentManager> {
             if (m_MapLevelInfo.Get(m_currentLevel.m_Connections[direction])!=null)
                 m_MapLevelInfo.Get(m_currentLevel.m_Connections[direction]).SetTileLocking(enum_TileLocking.Unlockable);
         }
-
-        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_LevelStatusChange, m_MapLevelInfo, m_currentLevel.m_TileAxis);
     }
     #endregion
     #region BigMap

@@ -15,7 +15,7 @@ public class UIT_GridItem : MonoBehaviour
         rtf_RectTransform = transform.GetComponent<RectTransform>();
         tf_Container = transform.Find("Container");
     }
-    public void SetGridControlledItem(int _index, UIT_GridController parent)
+    public void OnActivate(int _index, UIT_GridController parent)
     {
         Init();
         gc_Parent = parent;

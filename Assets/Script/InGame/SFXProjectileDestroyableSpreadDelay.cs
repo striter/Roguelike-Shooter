@@ -13,7 +13,7 @@ public class SFXProjectileDestroyableSpreadDelay : SFXProjectileDestroyableSprea
     }
     public override void Play( DamageDeliverInfo buffInfo, Vector3 direction, Vector3 targetPosition)
     {
-        targetPosition = EnvironmentManager.NavMeshPosition(targetPosition) + Vector3.up * .5f;
+        targetPosition = LevelManager.NavMeshPosition(targetPosition) + Vector3.up * .5f;
         base.Play(buffInfo,direction, targetPosition);
         m_Particles.Traversal((ParticleSystem particle) => { particle.Stop(); });
         transform.localScale = Vector3.zero;

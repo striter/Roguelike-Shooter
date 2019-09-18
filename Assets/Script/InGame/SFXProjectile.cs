@@ -143,7 +143,7 @@ public class SFXProjectile : SFXBase
     protected virtual void SpawnIndicator(Vector3 position,Vector3 direction,float duration)
     {
         m_Indicator = GameObjectManager.SpawnIndicator(I_IndicatorIndex, position, direction);
-        m_Indicator.Play(m_sourceID, duration );
+        m_Indicator.Play(m_sourceID, duration);
     }
     protected void SpawnImpact(RaycastHit hitInfo, HitCheckBase hitParent)
     {
