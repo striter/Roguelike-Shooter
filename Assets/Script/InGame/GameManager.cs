@@ -141,6 +141,7 @@ public class GameManager : GameManagerBase<GameManager>, ISingleCoroutine
     //Call When Level Changed
     void StartStage()      //PreInit Bigmap , Levels LocalPlayer Before  Start The game
     {
+        GameObjectManager.RecycleAllObject();
         GameObjectManager.PresetRegistCommonObject();
 
         EntityPreset();
