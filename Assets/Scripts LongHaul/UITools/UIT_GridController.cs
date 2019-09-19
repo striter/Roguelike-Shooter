@@ -33,14 +33,9 @@ public class UIT_GridController
             InitItem(toTrans);
         }
         toTrans.name = identity.ToString();
-        if (ActiveItemDic.ContainsKey(identity))
-        {
-            Debug.LogWarning(identity + "Already Exists In Grid Dic");
-        }
-        else
-        {
-            ActiveItemDic.Add(identity, toTrans);
-        }
+        if (ActiveItemDic.ContainsKey(identity))  Debug.LogWarning(identity + "Already Exists In Grid Dic");
+        else ActiveItemDic.Add(identity, toTrans);
+        toTrans.SetActivate(true);
         return toTrans;
     }
     protected virtual void InitItem(Transform trans)
@@ -87,7 +82,6 @@ public class UIT_GridControllerMono<T> : UIT_GridController where T : MonoBehavi
         T item = base.AddItem(identity).GetComponent<T>();
         m_ItemDic.Add(identity, item);
         OnItemAdd(item, identity);
-        item.SetActivate(true);
         item.transform.SetSiblingIndex(identity);
         return item;
     }

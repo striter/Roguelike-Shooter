@@ -239,21 +239,12 @@ public class UI_PlayerStatus : UIToolsBase
     }
     void OnAmmoStatus(WeaponBase weaponInfo)
     {
-        m_AmmoGrid.transform.SetActivate(weaponInfo != null);
+        tf_AmmoData.transform.SetActivate(weaponInfo != null);
         if (weaponInfo == null)
             return;
 
         m_AmmoAmount.SetAmount(weaponInfo.B_Reloading?0:weaponInfo.I_AmmoLeft);
         m_AmmoClipAmount.SetAmount(weaponInfo.I_ClipAmount);
-
-        if (weaponInfo.B_Reloading)
-        {
-            sld_Reload.value = weaponInfo.F_ReloadStatus;
-            m_AmmoGrid.ClearGrid();
-            return;
-        }
-
-        img_reloadFill.color = Color.Lerp(Color.red, Color.white, weaponInfo.F_ReloadStatus);
         if (m_AmmoGrid.I_Count != weaponInfo.I_ClipAmount)
         {
             m_AmmoGrid.ClearGrid();
@@ -263,9 +254,10 @@ public class UI_PlayerStatus : UIToolsBase
                     m_AmmoGrid.AddItem(i);
 
                 float size = (m_AmmoGridWidth - m_AmmoLayout.padding.right - m_AmmoLayout.padding.left - (weaponInfo.I_ClipAmount - 1) * m_AmmoLayout.spacing.x) / weaponInfo.I_ClipAmount;
-                m_AmmoLayout.cellSize = new Vector2(size,m_AmmoLayout.cellSize.y);
+                m_AmmoLayout.cellSize = new Vector2(size, m_AmmoLayout.cellSize.y);
             }
         }
+
 
         Color ammoStatusColor = weaponInfo.F_AmmoStatus < .5f ? Color.Lerp(Color.red, Color.white, (weaponInfo.F_AmmoStatus / .5f)) : Color.white;
         if (weaponInfo.I_ClipAmount <= UIConst.I_AmmoCountToSlider)
@@ -278,6 +270,12 @@ public class UI_PlayerStatus : UIToolsBase
         {
             sld_Reload.value = weaponInfo.F_AmmoStatus;
             img_reloadFill.color = ammoStatusColor;
+        }
+
+        if (weaponInfo.B_Reloading)
+        {
+            sld_Reload.value = weaponInfo.F_ReloadStatus;
+            img_reloadFill.color = Color.Lerp(Color.red, Color.white, weaponInfo.F_ReloadStatus);
         }
     }
     #endregion

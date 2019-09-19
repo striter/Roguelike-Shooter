@@ -2090,6 +2090,7 @@ namespace GameSetting
         public void SetLevel(enum_RarityLevel level)
         {
             m_Grid.ClearGrid();
+            Debug.Log(level);
             for (int i = 0; i < (int)level; i++)
                 m_Grid.AddItem(i);
         }
@@ -2116,8 +2117,8 @@ namespace GameSetting
             if (m_value == value)
                 return;
             m_value = value;
-            float detail = value % 1f;
-            bool full = detail == 0;
+            float detail =value%1f;
+            bool full = value == GameConst.F_MaxActionAmount;
             img_Full.SetActivate(full);
             img_Fill.SetActivate(!full);
             txt_amount.text = ((int)value).ToString();
