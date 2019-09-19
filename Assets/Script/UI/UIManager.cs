@@ -10,11 +10,13 @@ public class UIManager :SimpleSingletonMono<UIManager>
     Transform tf_Top,tf_Pages,tf_LowerTools;
     Image img_main;
     public static void Activate(bool inGame) => TResources.InstantiateUIManager().Init(inGame);
-    public static AtlasLoader m_commonSprites = TResources.GetUIAtlas_Common();
+    public AtlasLoader m_commonSprites { get; private set; }
     public T ShowPage<T>(bool animate) where T : UIPageBase => UIPageBase.ShowPage<T>(tf_Pages, animate);
     protected T ShowTools<T>() where T : UIToolsBase => UIToolsBase.Show<T>(tf_LowerTools);
     protected void Init(bool inGame)
     {
+        m_commonSprites = TResources.GetUIAtlas_Common();
+
         tf_Top = transform.Find("Top");
         tf_LowerTools = transform.Find("Lower");
         tf_Pages = transform.Find("Pages");
