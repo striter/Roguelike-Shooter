@@ -29,9 +29,11 @@ public class TResources
 
         public const string S_UI_Atlas_Game = "UI/Atlas/Atlas_InGame";
         public const string S_UI_Numeric = "UI/Numeric";
+        public const string S_UI_Manager = "UI/UIManager";
     }
 
     #region UI
+    public static UIManager InstantiateUIManager() => Instantiate<UIManager>(ConstPath.S_UI_Manager);
     public static AtlasLoader GetUIAtlas_Numeric() => new AtlasLoader(ConstPath.S_UI_Numeric);
     #endregion
     #region Game
