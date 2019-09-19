@@ -13,6 +13,8 @@ namespace GameSetting
     #region For Designers Use
     public static class GameConst
     {
+        public const float F_Gravity = 9.8f;
+
         public const float F_EntityDeadFadeTime = 2f;
 
         public const float F_MaxActionAmount = 4f;
@@ -2070,7 +2072,6 @@ namespace GameSetting
             currentAmount = _amount;
 
             m_Grid.ClearGrid();
-            List<int> m_units=new List<int>();
             string amount = _amount.ToString();
             for (int i = 0; i < amount.Length; i++)
                 m_Grid.GetOrAddItem(i).sprite = GetNumeric(amount[i]);

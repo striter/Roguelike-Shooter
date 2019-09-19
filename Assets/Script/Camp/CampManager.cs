@@ -13,7 +13,7 @@ public class CampManager : SimpleSingletonMono<CampManager> {
                 case enum_Scene.Game:
                     {
                         CampInteractScene item = CampEnvironment.Instance.tf_Interactions.Find("Scene/"+scene.ToString()).GetComponent<CampInteractScene>();
-                        item.Play(scene,OnItemClick);
+                        item.Play(scene,OnItemInteract);
                         m_CampItemDic.Add(scene, item);
                     }
                     break;
@@ -21,7 +21,7 @@ public class CampManager : SimpleSingletonMono<CampManager> {
         });
     }
     
-    void OnItemClick(enum_Scene scene)
+    void OnItemInteract(enum_Scene scene)
     {
         TSceneLoader.Instance.LoadScene(scene);
     }

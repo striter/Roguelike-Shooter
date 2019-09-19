@@ -52,8 +52,8 @@ GameObject:
   - component: {fileID: 4582637814997592}
   - component: {fileID: 33191857620873532}
   - component: {fileID: 23376837506209634}
-  - component: {fileID: 64444703472292684}
   - component: {fileID: 114359268944939214}
+  - component: {fileID: 65797312070956244}
   m_Layer: 0
   m_Name: BorderLinear_iceland
   m_TagString: Untagged
@@ -143,8 +143,8 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1781999842770658}
   m_Mesh: {fileID: 4300000, guid: 2b3491062675e5046bf6cb0ca82c3855, type: 3}
---- !u!64 &64444703472292684
-MeshCollider:
+--- !u!65 &65797312070956244
+BoxCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -152,11 +152,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_SkinWidth: 0.01
-  m_Mesh: {fileID: 4300000, guid: 2b3491062675e5046bf6cb0ca82c3855, type: 3}
+  serializedVersion: 2
+  m_Size: {x: 41.470974, y: 312.169, z: 209.26854}
+  m_Center: {x: 0, y: 144.64545, z: 7.9942093}
 --- !u!114 &114359268944939214
 MonoBehaviour:
   m_ObjectHideFlags: 1

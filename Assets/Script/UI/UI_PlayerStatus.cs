@@ -1,8 +1,10 @@
 ﻿using GameSetting;
 using UnityEngine;
 using UnityEngine.UI;
-public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
+public class UI_PlayerStatus : UIToolsBase
 {
+    Button btn_Bigmap;
+
     Transform tf_Container,tf_PlayerData,tf_Left;
     Button btn_ActionStorage,btn_ActionShuffle;
     Slider sld_ShuffleCooldown;
@@ -40,10 +42,13 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
     Image m_WeaponImage;
     UIC_RarityLevel m_WeaponActionRarity;
     UIC_Numeric m_CoinStatus;
-    protected override void Awake()
+    protected override void Init()
     {
-        base.Awake();
+        base.Init();
         tf_Container = transform.Find("Container");
+
+        btn_Bigmap = tf_Container.Find("Bigmap").GetComponent<Button>();
+        btn_Bigmap.onClick.AddListener(() => { UIManager.Instance.ShowPage<UI_BigmapControl>(true); });
 
         tf_PlayerData = tf_Container.Find("PlayerData");
         tf_AmmoData = tf_PlayerData.Find("AmmoData");
@@ -86,9 +91,7 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
         m_WeaponImage = tf_WeaponData.Find("WeaponImage").GetComponent<Image>();
         m_WeaponAction = tf_WeaponData.Find("WeaponAction").GetComponent<UIT_TextLocalization>();
         m_WeaponActionRarity = new UIC_RarityLevel(tf_WeaponData.Find("WeaponActionRarity"));
-    }
-    private void Start()
-    {
+
         m_CoinStatus = new UIC_Numeric(tf_Container.Find("CoinData/NumericGrid"));
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
@@ -96,7 +99,10 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
         TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerExpireStatus, OnExpireStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerActionStatus, OnActionStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<WeaponBase>(enum_BC_UIStatus.UI_PlayerWeaponStatus, OnWeaponStatus);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
     }
+    
     protected override void OnDestroy()
     {
         base.OnDestroy();
@@ -106,7 +112,20 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
         TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerExpireStatus, OnExpireStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerActionStatus, OnActionStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<WeaponBase>(enum_BC_UIStatus.UI_PlayerWeaponStatus, OnWeaponStatus);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
     }
+
+    #region Bigmap
+    void OnBattleStart()
+    {
+        btn_Bigmap.SetActivate(false);
+    }
+    void OnBattleFinish()
+    {
+        btn_Bigmap.SetActivate(true);
+    }
+    #endregion
     #region PlayerData/Interact
     void OnCommonStatus(EntityCharacterPlayer _player)
     {
@@ -272,11 +291,11 @@ public class UI_PlayerStatus : SimpleSingletonMono<UI_PlayerStatus>
     }
     void OnActionPressDuration()
     {
-        UI_GameManager.Instance.ShowPage<UI_ActionStorage>(false).Show(false,m_Player.m_PlayerInfo) ;
+        UIManager.Instance.ShowPage<UI_ActionStorage>(false).Show(false,m_Player.m_PlayerInfo) ;
     }
     void OnActionStorageClick()
     {
-        UI_GameManager.Instance.ShowPage<UI_ActionStorage>(true).Show(true,m_Player.m_PlayerInfo);
+        UIManager.Instance.ShowPage<UI_ActionStorage>(true).Show(true,m_Player.m_PlayerInfo);
     }
     void OnActionShuffleClick()
     {
