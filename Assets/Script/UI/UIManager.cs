@@ -29,8 +29,8 @@ public class UIManager : SingletonMono<UIManager>
     {
         ShowTools<UI_EntityHealth>();
         ShowTools<UI_PlayerStatus>();
-
-        transform.Find("Test/SeedTest").GetComponent<Text>().text = GameManager.Instance.m_GameLevel.m_Seed;
+        
+        transform.Find("Test/SeedTest").GetComponent<Text>().text = GameManager.Instance? GameManager.Instance.m_GameLevel.m_Seed:"";
     }
 
     public T ShowPage<T>(bool animate) where T : UIPageBase => UIPageBase.ShowPage<T>(tf_Pages, animate);

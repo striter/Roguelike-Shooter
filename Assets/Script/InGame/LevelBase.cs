@@ -242,7 +242,7 @@ public class LevelBase : MonoBehaviour {
 #region Gizmos For Test
     private void OnDrawGizmos()
     {
-        if (UnityEditor.EditorApplication.isPlaying && !GameManager.Instance.B_LevelDebugGizmos)
+        if (UnityEditor.EditorApplication.isPlaying && !GameManager.Instance.B_GameLevelDebugGizmos)
             return;
 
         for (int i = 0; i < m_AllTiles.Count; i++)

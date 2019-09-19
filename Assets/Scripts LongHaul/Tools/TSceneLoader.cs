@@ -22,8 +22,6 @@ public class TSceneLoader:SingletonMono<TSceneLoader>,ISingleCoroutine {
         operation.allowSceneActivation = false;
         for (; ; )
         {
-            Debug.Log(operation.progress);
-
             if (operation.progress == .9f)
             {
                 operation.allowSceneActivation = true;
