@@ -123,7 +123,7 @@ public class GameManager : GameManagerBase<GameManager>, ISingleCoroutine
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntiyActivate);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityDeactivate, OnEntityDeactivate);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
-        m_GameLevel = M_TESTSEED != "" ? new GameLevelManager(M_TESTSEED, enum_StageLevel.Rookie) : new GameLevelManager(GameDataManager.m_PlayerGameInfo);
+        m_GameLevel = M_TESTSEED != "" ? new GameLevelManager(M_TESTSEED, enum_StageLevel.Rookie) : new GameLevelManager(GameDataManager.m_PlayerInGameInfo);
     }
     private void OnDisable()
     {
@@ -146,8 +146,8 @@ public class GameManager : GameManagerBase<GameManager>, ISingleCoroutine
         EntityPreset();
         m_GameLevel.StageBegin();
         m_Enermies = GameObjectManager.RegistStyledIngameEnermies(m_GameLevel.m_currentStyle, m_GameLevel.m_currentStage);
-        m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_PlayerGameInfo);
-        m_PlayerRecord = new GameRecordManager(GameDataManager.m_PlayerGameInfo);
+        m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_PlayerInGameInfo);
+        m_PlayerRecord = new GameRecordManager(GameDataManager.m_PlayerInGameInfo);
         LevelManager.Instance.GenerateAllEnviorment(m_GameLevel.m_currentStyle, m_GameLevel.m_GameSeed, OnLevelChanged, OnStageFinished);
         GC.Collect();
         Resources.UnloadUnusedAssets();

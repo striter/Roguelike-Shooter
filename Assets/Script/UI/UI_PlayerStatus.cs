@@ -5,15 +5,21 @@ public class UI_PlayerStatus : UIToolsBase
 {
     Button btn_Bigmap;
 
-    Transform tf_Container,tf_PlayerData,tf_Left;
-    Button btn_ActionStorage,btn_ActionShuffle;
-    Slider sld_ShuffleCooldown;
-    Image img_reloadFill;
-    UIT_GridControllerMonoItem<UIGI_ActionHoldItem> m_ActionGrid;
-    UIT_GridControllerMonoItem<UIGI_ExpireInfoItem> m_ExpireGrid;
-    GridLayoutGroup m_AmmoLayout;
+    Transform tf_Container;
     EntityCharacterPlayer m_Player;
 
+    Transform tf_ActionData;
+    UIC_ActionAmount m_ActionAmount;
+    Button btn_ActionStorage, btn_ActionShuffle;
+    Slider sld_ShuffleCooldown;
+    UIT_GridControllerMonoItem<UIGI_ActionHoldItem> m_ActionGrid;
+
+    Transform tf_ExpireData;
+    UIT_GridControllerMonoItem<UIGI_ExpireInfoItem> m_ExpireGrid;
+
+    Transform tf_StatusData;
+    Image img_reloadFill;
+    GridLayoutGroup m_AmmoLayout;
     Transform tf_AmmoData;
     Slider sld_Reload;
     float m_AmmoGridWidth;
@@ -27,9 +33,6 @@ public class UI_PlayerStatus : UIToolsBase
     Transform tf_HealthData;
     Slider sld_Health;
     UIC_Numeric m_HealthAmount, m_MaxHealth;
-
-    Transform tf_ActionData;
-    UIC_ActionAmount m_ActionAmount;
 
     enum_Interaction m_lastInteract;
     Transform tf_InteractData;
@@ -50,8 +53,8 @@ public class UI_PlayerStatus : UIToolsBase
         btn_Bigmap = tf_Container.Find("Bigmap").GetComponent<Button>();
         btn_Bigmap.onClick.AddListener(() => { UIManager.Instance.ShowPage<UI_BigmapControl>(true); });
 
-        tf_PlayerData = tf_Container.Find("PlayerData");
-        tf_AmmoData = tf_PlayerData.Find("AmmoData");
+        tf_StatusData = tf_Container.Find("StatusData");
+        tf_AmmoData = tf_StatusData.Find("AmmoData");
         m_AmmoGridWidth = tf_AmmoData.GetComponent<RectTransform>().sizeDelta.x;
         m_AmmoAmount = new UIC_Numeric(tf_AmmoData.Find("AmmoAmount"));
         m_AmmoClipAmount = new UIC_Numeric(m_AmmoAmount.transform.Find("ClipAmount"));
@@ -60,25 +63,25 @@ public class UI_PlayerStatus : UIToolsBase
         sld_Reload = m_AmmoGrid.transform.Find("Reload").GetComponent<Slider>();
         img_reloadFill = sld_Reload.transform.Find("Fill").GetComponent<Image>();
 
-        tf_ArmorData = tf_PlayerData.Find("ArmorData");
+        tf_ArmorData = tf_StatusData.Find("ArmorData");
         sld_Armor = tf_ArmorData.Find("ArmorSlider").GetComponent<Slider>();
         m_ArmorAmount = new UIC_Numeric(tf_ArmorData.Find("ArmorAmount"));
-        tf_HealthData = tf_PlayerData.Find("HealthData");
+        tf_HealthData = tf_StatusData.Find("HealthData");
         sld_Health = tf_HealthData.Find("HealthSlider").GetComponent<Slider>();
         m_HealthAmount = new UIC_Numeric(tf_HealthData.Find("HealthAmount"));
         m_MaxHealth = new UIC_Numeric(m_HealthAmount.transform.Find("MaxHealth"));
-
-        tf_ActionData = tf_PlayerData.Find("ActionData");
-        m_ActionAmount = new UIC_ActionAmount( tf_ActionData.Find("ActionAmountGrid"));
-
-        tf_Left = tf_Container.Find("Left");
-        m_ActionGrid =new UIT_GridControllerMonoItem<UIGI_ActionHoldItem>(tf_Left.Find("ActionGrid"));
-        btn_ActionStorage = m_ActionGrid.transform.Find("ActionStorage").GetComponent<Button>();
+        
+        tf_ActionData = tf_Container.Find("ActionData");
+        m_ActionAmount = new UIC_ActionAmount(tf_ActionData.Find("ActionAmount"));
+        m_ActionGrid = new UIT_GridControllerMonoItem<UIGI_ActionHoldItem>(tf_ActionData.Find("ActionGrid"));
+        btn_ActionStorage = tf_ActionData.Find("ActionStorage").GetComponent<Button>();
         btn_ActionStorage.onClick.AddListener(OnActionStorageClick);
-        btn_ActionShuffle = m_ActionGrid.transform.Find("ActionShuffle").GetComponent<Button>();
+        btn_ActionShuffle = tf_ActionData.Find("ActionShuffle").GetComponent<Button>();
         btn_ActionShuffle.onClick.AddListener(OnActionShuffleClick);
         sld_ShuffleCooldown = btn_ActionShuffle.transform.Find("ShuffleSlider").GetComponent<Slider>();
-        m_ExpireGrid = new UIT_GridControllerMonoItem<UIGI_ExpireInfoItem>(tf_Left.Find("ExpireGrid"));
+
+        tf_ExpireData = tf_Container.Find("ExpireData");
+        m_ExpireGrid = new UIT_GridControllerMonoItem<UIGI_ExpireInfoItem>(tf_ExpireData.Find("ExpireGrid"));
 
         tf_InteractData = tf_Container.Find("InteractData");
         txt_interactName = tf_InteractData.Find("Container/InteractName").GetComponent<UIT_TextLocalization>();
@@ -138,7 +141,7 @@ public class UI_PlayerStatus : UIToolsBase
         m_CoinStatus.SetAmount(_player.m_PlayerInfo.m_Coins);
         m_ActionAmount.SetValue(_player.m_PlayerInfo.m_ActionAmount);
         sld_ShuffleCooldown.value = _player.m_PlayerInfo.f_shuffleScale;
-        tf_PlayerData.position = Vector3.Lerp(tf_PlayerData.position, CameraController.MainCamera.WorldToScreenPoint(m_Player.tf_Head.position), Time.deltaTime * 10f);
+        tf_StatusData.position = Vector3.Lerp(tf_StatusData.position, CameraController.MainCamera.WorldToScreenPoint(m_Player.tf_Head.position), Time.deltaTime * 10f);
         
         if (_player.m_Interact==null)
         {

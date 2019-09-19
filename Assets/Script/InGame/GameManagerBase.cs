@@ -75,20 +75,20 @@ public static class GameDataManager
         InitActions();
 
         m_PlayerInfo = TGameData<CPlayerDataSave>.Read();
-        m_PlayerGameInfo = TGameData<CPlayerGameSave>.Read();
+        m_PlayerInGameInfo = TGameData<CPlayerGameSave>.Read();
     }
 #region GameSave
     public static CPlayerDataSave m_PlayerInfo { get; private set; }
-    public static CPlayerGameSave m_PlayerGameInfo { get; private set; }
+    public static CPlayerGameSave m_PlayerInGameInfo { get; private set; }
     public static void AdjustGameData(EntityCharacterPlayer data, GameLevelManager level, GameRecordManager record)
     {
-        m_PlayerGameInfo.Adjust(data, level, record);
-        TGameData<CPlayerGameSave>.Save(m_PlayerGameInfo);
+        m_PlayerInGameInfo.Adjust(data, level, record);
+        TGameData<CPlayerGameSave>.Save(m_PlayerInGameInfo);
     }
     public static void ClearGameData()
     {
-        m_PlayerGameInfo = new CPlayerGameSave();
-        TGameData<CPlayerGameSave>.Save(m_PlayerGameInfo);
+        m_PlayerInGameInfo = new CPlayerGameSave();
+        TGameData<CPlayerGameSave>.Save(m_PlayerInGameInfo);
     }
     public static void SavePlayerData()
     {

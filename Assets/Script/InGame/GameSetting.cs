@@ -2081,38 +2081,47 @@ namespace GameSetting
     public class UIC_RarityLevel
     {
         public Transform transform { get; private set; }
-        Image img_level1, img_level2, img_level3;
+        UIT_GridController m_Grid;
         public UIC_RarityLevel(Transform _transform)
         {
             transform = _transform;
-            img_level1 = transform.Find("Level1").GetComponent<Image>();
-            img_level2 = transform.Find("Level2").GetComponent<Image>();
-            img_level3 = transform.Find("Level3").GetComponent<Image>();
+            m_Grid = new UIT_GridController(transform);
         }
         public void SetLevel(enum_RarityLevel level)
         {
-            img_level1.SetActivate(level>= enum_RarityLevel.L1);
-            img_level2.SetActivate(level >= enum_RarityLevel.L2);
-            img_level3.SetActivate(level >= enum_RarityLevel.L3);
+            m_Grid.ClearGrid();
+            for (int i = 0; i < (int)level; i++)
+                m_Grid.AddItem(i);
         }
     }
     public class UIC_ActionAmount
     {
         Transform transform;
-        UIT_GridControllerMonoItem<UIGI_ActionAmountItem> m_ActionAmountGrid;
+        Image img_Full, img_Fill;
+        Text txt_amount, txt_Max;
+
         float m_value;
         public UIC_ActionAmount(Transform _transform)
         {
             transform = _transform;
-            m_ActionAmountGrid = new UIT_GridControllerMonoItem<UIGI_ActionAmountItem>(transform);
+            txt_amount = transform.Find("Amount").GetComponent<Text>();
+            txt_Max = transform.Find("Max").GetComponent<Text>();
+            img_Full = transform.Find("Full").GetComponent<Image>();
+            img_Fill = transform.Find("Fill").GetComponent<Image>();
+
+            txt_Max.text = GameConst.F_MaxActionAmount.ToString();
         }
         public void SetValue(float value)
         {
             if (m_value == value)
                 return;
             m_value = value;
-            for (int i = 0; i < GameConst.F_MaxActionAmount; i++)
-                m_ActionAmountGrid.GetOrAddItem(i).SetValue(value-i);
+            float detail = value % 1f;
+            bool full = detail == 0;
+            img_Full.SetActivate(full);
+            img_Fill.SetActivate(!full);
+            txt_amount.text = ((int)value).ToString();
+            if (!full) img_Fill.fillAmount = detail;
         }
     }
     public enum enum_UI_ActionUpgradeType
