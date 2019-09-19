@@ -134,7 +134,7 @@ public class GameManager : GameManagerBase<GameManager>, ISingleCoroutine
     }
     private void Start()
     {
-        UIManager.Instance.Init(true);
+        UIManager.Activate(true);
         StartStage();
     }
     #region Level Management

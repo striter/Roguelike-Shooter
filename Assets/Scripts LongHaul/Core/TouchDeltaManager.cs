@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TouchDeltaManager : SingletonMono<TouchDeltaManager>
+public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
 {
     TouchTracker m_TrackLeft, m_TrackRight;
     Action<Vector2> OnLeftDelta,OnRightDelta;
