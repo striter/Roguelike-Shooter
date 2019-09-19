@@ -76,6 +76,7 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
                     entity.BroadcastMessage("OnReceiveDamage", new DamageInfo(0, enum_DamageType.Common, DamageDeliverInfo.EquipmentInfo(-1,0, enum_CharacterEffect.Stun,2f)));
             });
         }
+
         if (Input.GetKeyDown(KeyCode.Equals))
             OnStageFinished();
 
@@ -99,8 +100,8 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
         {
             LevelManager.Instance.m_MapLevelInfo.Traversal((SBigmapLevelInfo info) => { if (info.m_TileLocking == enum_TileLocking.Locked) info.SetTileLocking(enum_TileLocking.Unlockable); });
         }
-        if (Input.GetKeyDown(KeyCode.KeypadPlus))
-            m_LocalPlayer.m_PlayerInfo.OnCoinsReceive(10);
+        if (Input.GetKeyDown(KeyCode.KeypadPlus) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
+            GameObjectManager.SpawnInteract<InteractPickupCoin>(enum_Interaction.PickupCoin, LevelManager.NavMeshPosition(hit.point, false), null).Play(10, m_LocalPlayer.transform);
         if (Input.GetKeyDown(KeyCode.KeypadMinus))
             m_LocalPlayer.m_PlayerInfo.AddActionAmount(1);
         if (OptionsManager.B_AdditionalLight != B_AdditionalLight)
@@ -299,7 +300,7 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
 
         int coinAmount = m_GameLevel.m_actionGenerate.GetCoinGenerate(target.E_EnermyType);
         if (coinAmount != -1)
-            GameObjectManager.SpawnInteract<InteractPickupCoin>(enum_Interaction.PickupCoin, LevelManager.NavMeshPosition(entity.transform.position, false), LevelManager.Instance.m_currentLevel.m_Level.transform).Play(coinAmount);
+            GameObjectManager.SpawnInteract<InteractPickupCoin>(enum_Interaction.PickupCoin, LevelManager.NavMeshPosition(entity.transform.position, false), null).Play(coinAmount,m_LocalPlayer.transform);
     }
     #endregion
     #region Entity Management
