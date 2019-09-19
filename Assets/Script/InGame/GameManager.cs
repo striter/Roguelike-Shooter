@@ -1,13 +1,11 @@
 ﻿using GameSetting;
-using GameSetting_Action;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using TExcel;
 using UnityEngine;
 
-public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
+public class GameManager : GameManagerBase<GameManager>, ISingleCoroutine
 {
     public string M_TESTSEED = "";
 #if UNITY_EDITOR
@@ -19,7 +17,7 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
         DrawItemDirection,
     }
     public bool B_PhysicsDebugGizmos = true;
-    public bool B_LevelDebugGizmos = true;
+    public bool B_GameLevelDebugGizmos = true;
     public enumDebug_LevelDrawMode E_LevelDebug = enumDebug_LevelDrawMode.DrawTypes;
     public int Z_TestEntitySpawn = 221;
     public enum_EntityFlag TestEntityFlag = enum_EntityFlag.Enermy;
@@ -122,17 +120,10 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
     {
         base.Awake();
         InitEntityDic();
-        GameDataManager.Init();
-        OptionsManager.Init();
-        GameObjectManager.Init();
-        GameIdentificationManager.Init();
-        m_GameLevel = M_TESTSEED != ""? new GameLevelManager(M_TESTSEED, enum_StageLevel.Rookie):new GameLevelManager(GameDataManager.m_PlayerGameInfo);
-        TBroadCaster<enum_BC_GameStatus>.Init();
-        TBroadCaster<enum_BC_UIStatus>.Init();  
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntiyActivate);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityDeactivate, OnEntityDeactivate);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
-        Application.targetFrameRate = 60;
+        m_GameLevel = M_TESTSEED != "" ? new GameLevelManager(M_TESTSEED, enum_StageLevel.Rookie) : new GameLevelManager(GameDataManager.m_PlayerGameInfo);
     }
     private void OnDisable()
     {
@@ -143,23 +134,23 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
     }
     private void Start()
     {
-        StartStage();        //Test
+        StartStage();
     }
     #region Level Management
     //Call When Level Changed
     void StartStage()      //PreInit Bigmap , Levels LocalPlayer Before  Start The game
     {
-        m_GameLevel.StageBegin();
+        GameObjectManager.PresetRegistCommonObject();
+
         EntityPreset();
-        GameObjectManager.Preset(m_GameLevel.m_currentStyle,m_GameLevel.m_currentStage);
-        LevelManager.Instance.GenerateAllEnviorment(m_GameLevel.m_currentStyle, m_GameLevel.m_GameSeed, OnLevelChanged,OnStageFinished);
-        m_StyledEnermyEntities = GameObjectManager.RegisterAllCharacters(TResources.GetCommonEntities() ,TResources.GetEnermyEntities(m_GameLevel.m_currentStyle));
+        m_GameLevel.StageBegin();
+        m_Enermies = GameObjectManager.RegistStyledIngameEnermies(m_GameLevel.m_currentStyle, m_GameLevel.m_currentStage);
         m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_PlayerGameInfo);
         m_PlayerRecord = new GameRecordManager(GameDataManager.m_PlayerGameInfo);
-        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageStart);
-
+        LevelManager.Instance.GenerateAllEnviorment(m_GameLevel.m_currentStyle, m_GameLevel.m_GameSeed, OnLevelChanged, OnStageFinished);
         GC.Collect();
         Resources.UnloadUnusedAssets();
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageStart);
     }
     void OnLevelChanged(SBigmapLevelInfo levelInfo)
     {
@@ -295,9 +286,9 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
         if (m_GameLevel.m_actionGenerate.CanGenerateHealth(target.E_EnermyType))
             GameObjectManager.SpawnInteract<InteractPickupHealth>(enum_Interaction.PickupHealth, LevelManager.NavMeshPosition(entity.transform.position, false), LevelManager.Instance.m_currentLevel.m_Level.transform).Play(GameConst.I_HealthPickupAmount);
 
-        if ( m_GameLevel.m_actionGenerate.CanGenerateArmor(target.E_EnermyType))
+        if (m_GameLevel.m_actionGenerate.CanGenerateArmor(target.E_EnermyType))
             GameObjectManager.SpawnInteract<InteractPickupArmor>(enum_Interaction.PickupArmor, LevelManager.NavMeshPosition(entity.transform.position, false), LevelManager.Instance.m_currentLevel.m_Level.transform).Play(GameConst.I_ArmorPickupAmount);
-
+        
         int coinAmount = m_GameLevel.m_actionGenerate.GetCoinGenerate(target.E_EnermyType);
         if (coinAmount != -1)
             GameObjectManager.SpawnInteract<InteractPickupCoin>(enum_Interaction.PickupCoin, LevelManager.NavMeshPosition(entity.transform.position, false), null).Play(coinAmount,m_LocalPlayer.transform);
@@ -385,7 +376,7 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
     public int m_CurrentWave { get; private set; } = -1;
     public List<SGenerateEntity> m_EntityGenerate { get; private set; } = new List<SGenerateEntity>();
     public List<int> m_EntityGenerating { get; private set; } = new List<int>();
-    public Dictionary<enum_CharacterType, List<int>> m_StyledEnermyEntities;
+    public Dictionary<enum_CharacterType, List<int>> m_Enermies;
     void OnBattleStart()
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleStart);
@@ -404,12 +395,12 @@ public class GameManager : SimpleSingletonMono<GameManager>, ISingleCoroutine
             int spawnCount = range.RandomRangeInt();
             for (int i = 0; i < spawnCount; i++)
             {
-                if (!m_StyledEnermyEntities.ContainsKey(level))
+                if (!m_Enermies.ContainsKey(level))
                 {
                     Debug.LogWarning("Current Enermy Style:" + m_GameLevel.m_currentStyle + " Not Contains Type:" + level);
                     continue;
                 }
-                m_EntityGenerating.Add(m_StyledEnermyEntities[level].RandomItem());
+                m_EntityGenerating.Add(m_Enermies[level].RandomItem());
             }
         });
         this.StartSingleCoroutine(0, IE_GenerateEnermy(m_EntityGenerating, .1f));
@@ -558,30 +549,6 @@ public class GameRecordManager
     public void OnEntityKilled() => i_entitiesKilled++;
     public void OnLevelPassed() => i_levelPassed++;
 }
-public class GameIdentificationManager
-{
-    static int i_entityIndex = 0;
-    static int i_damageInfoIndex = 0;
-    public static void Init()
-    {
-        i_entityIndex = 0;
-        i_damageInfoIndex = 0;
-    }
-    public static int I_EntityID(enum_EntityFlag flag)
-    {
-        i_entityIndex++;
-        if (i_entityIndex == int.MaxValue)
-            i_entityIndex = 0;
-        return i_entityIndex + (int)flag * 100000;
-    }
-    public static int I_DamageIdentityID()
-    {
-        i_damageInfoIndex++;
-        if (i_damageInfoIndex == int.MaxValue)
-            i_damageInfoIndex = 0;
-        return i_damageInfoIndex;
-    }
-}
 public static class GameObjectManager
 {
     static Transform TF_Entity;
@@ -604,33 +571,30 @@ public static class GameObjectManager
         ObjectPoolManager<int, LevelBase>.ClearAll();
     }
     #region Register
-    public static void Preset(enum_Style levelStyle,enum_StageLevel stageLevel)
+    public static void PresetRegistCommonObject()
     {
         RecycleAllObject();
-        RegisterLevelBase(TResources.GetLevelBase(levelStyle));
-        RegisterInteractions(levelStyle,stageLevel);
         TResources.GetAllEffectSFX().Traversal((int index, SFXBase target) => {
             ObjectPoolManager<int, SFXBase>.Register(index, target, 1,
             (SFXBase sfx) => { sfx.Init(index); });
         });
-    }
-    static void RegisterLevelBase(LevelBase levelprefab)
-    {
-        ObjectPoolManager<int, LevelBase>.Register(0, levelprefab, 1, (LevelBase level) => { level.Init(); });
+
+        TResources.GetCommonEntities().Traversal((int index, EntityBase entity) => {
+            ObjectPoolManager<int, EntityBase>.Register(index, entity, 1,
+                (EntityBase entityInstantiate) => { entityInstantiate.Init(index); });
+        });
     }
     public static void RegisterLevelItem(Dictionary<LevelItemBase, int> registerDic)
     {
         registerDic.Traversal((LevelItemBase item, int count) => { ObjectPoolManager<LevelItemBase, LevelItemBase>.Register(item, GameObject.Instantiate(item), count, null); });
     }
-    public static Dictionary<enum_CharacterType, List<int>> RegisterAllCharacters(Dictionary<int, EntityBase> commonEntities, Dictionary<int, EntityBase> styledAICharacters)
+    public static Dictionary<enum_CharacterType, List<int>> RegistStyledIngameEnermies(enum_Style currentStyle, enum_StageLevel stageLevel)
     {
-        commonEntities.Traversal((int index, EntityBase entity) => {
-            ObjectPoolManager<int, EntityBase>.Register(index, entity, 1,
-                (EntityBase entityInstantiate) => { entityInstantiate.Init(index); });
-        });
+        RegisterInGameInteractions(currentStyle, stageLevel);
+        ObjectPoolManager<int, LevelBase>.Register(0, TResources.GetLevelBase(currentStyle), 1, (LevelBase level) => { level.Init(); });
 
         Dictionary<enum_CharacterType, List<int>> enermyDic = new Dictionary<enum_CharacterType, List<int>>();
-        styledAICharacters.Traversal((int index, EntityBase entity) => {
+        TResources.GetEnermyEntities(currentStyle).Traversal((int index, EntityBase entity) => {
             ObjectPoolManager<int, EntityBase>.Register(index, entity, 1,
                 (EntityBase entityInstantiate) => { entityInstantiate.Init(index); });
 
@@ -639,10 +603,9 @@ public static class GameObjectManager
                 enermyDic.Add(enermy.E_EnermyType, new List<int>());
             enermyDic[enermy.E_EnermyType].Add(index);
         });
-
         return enermyDic;
     }
-    static void RegisterInteractions(enum_Style portalStyle, enum_StageLevel stageIndex)
+    static void RegisterInGameInteractions(enum_Style portalStyle, enum_StageLevel stageIndex)
     {
         ObjectPoolManager<enum_Interaction, InteractBase>.Register(enum_Interaction.Portal, TResources.GetInteractPortal(portalStyle), 5, (InteractBase interact) => { interact.Init(); });
         ObjectPoolManager<enum_Interaction, InteractBase>.Register(enum_Interaction.ActionChest, TResources.GetInteractActionChest(stageIndex), 5, (InteractBase interact) => { interact.Init(); });
@@ -771,20 +734,5 @@ public static class GameObjectManager
     }
     #endregion
     #endregion
-}
-public static class OptionsManager
-{
-    public static bool B_AdditionalLight = true;
-    public static event Action event_OptionChanged;
-    public static enum_LanguageRegion m_currentLanguage = enum_LanguageRegion.CN;
-    public static void Init()
-    {
-        TLocalization.SetRegion(m_currentLanguage);
-    }
-
-    public static void OnOptionChanged()
-    {
-        event_OptionChanged?.Invoke();
-    }
 }
 #endregion

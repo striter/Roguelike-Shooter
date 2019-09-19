@@ -63,7 +63,7 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y:MonoBehaviour {
     {
         if (!d_ItemInfos.ContainsKey(identity))
         {
-            Debug.LogWarning("Null Identity:" + identity + "Registed");
+            Debug.LogWarning("PoolManager:"+typeof(T).ToString()+","+typeof(Y).ToString()+ " Error! Null Identity:" + identity + "Registed");
             return null;
         }
         ItemPoolInfo info = d_ItemInfos[identity];

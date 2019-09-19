@@ -1,8 +1,65 @@
 ﻿using GameSetting;
-using System;
+using System.Collections;
 using System.Collections.Generic;
-using TExcel;
 using UnityEngine;
+using System;
+using TExcel;
+
+public class GameManagerBase<T> : SimpleSingletonMono<T> where T:MonoBehaviour{
+    protected override void Awake()
+    {
+        base.Awake();
+        GameDataManager.Init();
+        OptionsManager.Init();
+        GameObjectManager.Init();
+        GameIdentificationManager.Init();
+        TBroadCaster<enum_BC_GameStatus>.Init();
+        TBroadCaster<enum_BC_UIStatus>.Init();
+    }
+}
+
+public class GameIdentificationManager
+{
+    static int i_entityIndex = 0;
+    static int i_damageInfoIndex = 0;
+    public static void Init()
+    {
+        i_entityIndex = 0;
+        i_damageInfoIndex = 0;
+    }
+    public static int I_EntityID(enum_EntityFlag flag)
+    {
+        i_entityIndex++;
+        if (i_entityIndex == int.MaxValue)
+            i_entityIndex = 0;
+        return i_entityIndex + (int)flag * 100000;
+    }
+    public static int I_DamageIdentityID()
+    {
+        i_damageInfoIndex++;
+        if (i_damageInfoIndex == int.MaxValue)
+            i_damageInfoIndex = 0;
+        return i_damageInfoIndex;
+    }
+}
+
+
+public static class OptionsManager
+{
+    public static bool B_AdditionalLight = true;
+    public static event Action event_OptionChanged;
+    public static enum_LanguageRegion m_currentLanguage = enum_LanguageRegion.CN;
+    public static void Init()
+    {
+        Application.targetFrameRate = 60;
+        TLocalization.SetRegion(m_currentLanguage);
+    }
+
+    public static void OnOptionChanged()
+    {
+        event_OptionChanged?.Invoke();
+    }
+}
 
 public static class GameDataManager
 {
@@ -10,7 +67,7 @@ public static class GameDataManager
     public static void Init()
     {
         if (m_Inited) return;
-            m_Inited = true;
+        m_Inited = true;
         Properties<SLevelGenerate>.Init();
         Properties<SGenerateEntity>.Init();
         Properties<SWeapon>.Init();
@@ -20,7 +77,7 @@ public static class GameDataManager
         m_PlayerInfo = TGameData<CPlayerDataSave>.Read();
         m_PlayerGameInfo = TGameData<CPlayerGameSave>.Read();
     }
-    #region GameSave
+#region GameSave
     public static CPlayerDataSave m_PlayerInfo { get; private set; }
     public static CPlayerGameSave m_PlayerGameInfo { get; private set; }
     public static void AdjustGameData(EntityCharacterPlayer data, GameLevelManager level, GameRecordManager record)
@@ -37,8 +94,8 @@ public static class GameDataManager
     {
         TGameData<CPlayerDataSave>.Save(m_PlayerInfo);
     }
-    #endregion
-    #region ExcelData
+#endregion
+#region ExcelData
     public static SLevelGenerate GetItemGenerateProperties(enum_Style style, enum_LevelGenerateType prefabType, bool isInner)
     {
         SLevelGenerate generate = Properties<SLevelGenerate>.PropertiesList.Find(p => p.m_LevelStyle == style && p.m_LevelPrefabType == prefabType && p.m_IsInner == isInner);
@@ -79,8 +136,8 @@ public static class GameDataManager
             Debug.LogError("Error Properties Found Of Index:" + index);
         return buff;
     }
-    #endregion
-    #region ActionData
+#endregion
+#region ActionData
     static Dictionary<int, ActionBase> m_AllActions = new Dictionary<int, ActionBase>();
     static List<int> m_WeaponActions = new List<int>();
     static List<int> m_PlayerActions = new List<int>();
@@ -136,5 +193,5 @@ public static class GameDataManager
         return TReflection.CreateInstance<ActionBase>(m_AllActions[actionIndex].GetType(), m_ActionIdentity++, level);
     }
     public static ActionBase CopyAction(ActionBase targetAction) => TReflection.CreateInstance<ActionBase>(m_AllActions[targetAction.m_Index].GetType(), targetAction.m_Identity, targetAction.m_rarity);
-    #endregion
+#endregion
 }
