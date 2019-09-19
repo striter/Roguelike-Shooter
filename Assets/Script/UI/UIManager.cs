@@ -25,12 +25,12 @@ public class UIManager : SingletonMono<UIManager>
         
         transform.Find("Test/SporeBtn").GetComponent<Button>().onClick.AddListener(() => { ShowPage<UI_SporeManager>(true); });
     }
-    private void Start()
+    public void Init(bool inGame)
     {
         ShowTools<UI_EntityHealth>();
-        ShowTools<UI_PlayerStatus>();
-        
-        transform.Find("Test/SeedTest").GetComponent<Text>().text = GameManager.Instance? GameManager.Instance.m_GameLevel.m_Seed:"";
+        ShowTools<UI_PlayerStatus>().SetInGame(inGame);
+
+        if (inGame)  transform.Find("Test/SeedTest").GetComponent<Text>().text = GameManager.Instance.m_GameLevel.m_Seed ;   //Test
     }
 
     public T ShowPage<T>(bool animate) where T : UIPageBase => UIPageBase.ShowPage<T>(tf_Pages, animate);

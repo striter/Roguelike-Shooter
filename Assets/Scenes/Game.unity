@@ -520,46 +520,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 387648758}
---- !u!1 &404393421
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 404393423}
-  - component: {fileID: 404393422}
-  m_Layer: 0
-  m_Name: TouchDeltaManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &404393422
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 404393421}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 97dc74c6e279f3648ae378c07faa8d3d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &404393423
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 404393421}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.6324162, y: 120.49017, z: 532.9257}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &458612602
 GameObject:
   m_ObjectHideFlags: 0
@@ -1641,7 +1601,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   M_TESTSEED: 
   B_PhysicsDebugGizmos: 1
-  B_LevelDebugGizmos: 0
+  B_GameLevelDebugGizmos: 0
   E_LevelDebug: 0
   Z_TestEntitySpawn: 104
   TestEntityFlag: 2

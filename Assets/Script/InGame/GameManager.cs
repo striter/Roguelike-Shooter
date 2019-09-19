@@ -134,6 +134,7 @@ public class GameManager : GameManagerBase<GameManager>, ISingleCoroutine
     }
     private void Start()
     {
+        UIManager.Instance.Init(true);
         StartStage();
     }
     #region Level Management
@@ -573,7 +574,6 @@ public static class GameObjectManager
     #region Register
     public static void PresetRegistCommonObject()
     {
-        RecycleAllObject();
         TResources.GetAllEffectSFX().Traversal((int index, SFXBase target) => {
             ObjectPoolManager<int, SFXBase>.Register(index, target, 1,
             (SFXBase sfx) => { sfx.Init(index); });

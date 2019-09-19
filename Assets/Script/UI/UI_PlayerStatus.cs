@@ -115,7 +115,10 @@ public class UI_PlayerStatus : UIToolsBase
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
     }
-
+    public void SetInGame(bool inGame)
+    {
+        btn_Bigmap.SetActivate(inGame);
+    }
     #region Bigmap
     void OnBattleStart()
     {
