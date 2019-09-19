@@ -2090,7 +2090,6 @@ namespace GameSetting
         public void SetLevel(enum_RarityLevel level)
         {
             m_Grid.ClearGrid();
-            Debug.Log(level);
             for (int i = 0; i < (int)level; i++)
                 m_Grid.AddItem(i);
         }
