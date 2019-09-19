@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.U2D;
 
 namespace TTiles
 {
@@ -818,10 +819,11 @@ public class AtlasLoader
             return m_SpriteDic[name];
         }
     }
-    public AtlasLoader(string path)
+    public AtlasLoader(SpriteAtlas atlas)
     {
-        Sprite[] allsprites = TResources.LoadAll<Sprite>(path);
-        allsprites.Traversal((Sprite sprite)=> { m_SpriteDic.Add(sprite.name, sprite); });
+        Sprite[] allsprites=new Sprite[atlas.spriteCount];
+        atlas.GetSprites(allsprites);
+        allsprites.Traversal((Sprite sprite)=> { string name = sprite.name.Replace("(Clone)", ""); m_SpriteDic.Add(name, sprite); });
     }
 }
 #endregion
