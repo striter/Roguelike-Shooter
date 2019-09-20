@@ -76,7 +76,12 @@ public class EntityCharacterAI : EntityCharacterBase {
         m_AI.SetPlay(!m_CharacterInfo.B_Effecting( enum_CharacterEffect.Stun));
         m_AI.OnTick(Time.deltaTime);
     }
-
+    protected override bool OnReceiveDamage(DamageInfo damageInfo, Vector3 damageDirection)
+    {
+        if(damageDirection!=Vector3.zero)
+            transform.Translate(damageDirection *GameConst.F_AIDamageTranslate * -damageInfo.m_AmountApply);
+        return base.OnReceiveDamage(damageInfo, damageDirection);
+    }
     void OnAttackAnim(EntityCharacterBase target,bool startAttack)
     {
         if (E_AnimatorIndex != enum_EnermyAnim.Invalid)

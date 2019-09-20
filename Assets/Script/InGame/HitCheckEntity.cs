@@ -8,7 +8,7 @@ public class HitCheckEntity : HitCheckBase {
     public EntityBase m_Attacher { get; private set; } = null;
     public override enum_HitCheck m_HitCheckType => enum_HitCheck.Entity;
     
-    public void Attach(EntityBase _attacher, Func<DamageInfo, bool> _OnHitCheck)
+    public void Attach(EntityBase _attacher, Func<DamageInfo,Vector3, bool> _OnHitCheck)
     {
         base.Attach(_attacher.I_EntityID,_OnHitCheck);
         m_Attacher = _attacher;
