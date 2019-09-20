@@ -411,7 +411,7 @@ public class EntityCharacterAI : EntityCharacterBase {
 
         Vector3 GetSamplePosition()=>LevelManager.NavMeshPosition(  m_Entity.transform.position + (b_canChaseTarget?3:-3)*(v3_TargetDirection.normalized) + TCommon.RandomXZSphere(3f));
 
-        bool FrontBlocked() => m_Entity.B_AttackFrontCheck&&Physics.SphereCast(new Ray(headTransform.position, headTransform.forward), 1f, 2, GameLayer.Mask.I_Static);
+        bool FrontBlocked()=> m_Entity.B_AttackFrontCheck && Physics.SphereCast(new Ray(headTransform.position, headTransform.forward), .5f, 2, GameLayer.Mask.I_Static);
         bool ObstacleBlocked(EntityCharacterBase target)
         {
             m_Raycasts = Physics.RaycastAll(m_Entity.tf_Head.position, v3_TargetDirection, Vector3.Distance(m_Entity.tf_Head.position, target.tf_Head.position), GameLayer.Mask.I_StaticEntity);
@@ -451,7 +451,7 @@ public class EntityCharacterAI : EntityCharacterBase {
     CapsuleCollider hitbox;
     private void OnDrawGizmos()
     {
-        if (UnityEditor.EditorApplication.isPlaying && !GameManager.Instance.B_PhysicsDebugGizmos)
+        if (UnityEditor.EditorApplication.isPlaying && GameManager.Instance.B_PhysicsDebugGizmos)
             return;
 
         if(!hitbox)

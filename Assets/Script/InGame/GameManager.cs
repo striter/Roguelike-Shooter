@@ -16,6 +16,7 @@ public class GameManager : GameManagerBase<GameManager>, ISingleCoroutine
         DrawOccupation,
         DrawItemDirection,
     }
+
     public bool B_PhysicsDebugGizmos = true;
     public bool B_GameLevelDebugGizmos = true;
     public enumDebug_LevelDrawMode E_LevelDebug = enumDebug_LevelDrawMode.DrawTypes;
