@@ -21,7 +21,7 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
     Vector3 v3_temp;
     RaycastHit rh_temp;
     float f_CameraDistance;
-    protected Camera Cam_Main;
+    public Camera m_Camera { get; private set; }
     protected Transform tf_MainCamera;
     protected Transform tf_AttachTo;
     protected Vector3 v3_CameraPos;
@@ -39,8 +39,8 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
     protected override void Awake()
     {
         base.Awake();
-        Cam_Main = Camera.main;
-        tf_MainCamera = Cam_Main.transform;
+        m_Camera = Camera.main;
+        tf_MainCamera = m_Camera.transform;
         tf_CameraTrans = transform.FindOrCreateNewTransform("CameraTrans");
         tf_CameraPos = tf_CameraTrans.FindOrCreateNewTransform("CameraPos");
         b_CameraAttaching = false;
@@ -146,7 +146,7 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
         {
             return false;
         }
-        Ray r = Cam_Main.ScreenPointToRay(inputPos);
+        Ray r = m_Camera.ScreenPointToRay(inputPos);
 
         if (B_DrawDebugLine)
             Debug.DrawRay(r.origin, r.direction*1000, Color.red);
@@ -156,11 +156,11 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
 
     public Vector3 GetScreenPos(Vector3 worldPos)
     {
-        return Cam_Main.WorldToScreenPoint(worldPos);
+        return m_Camera.WorldToScreenPoint(worldPos);
     }
     #endregion
     #region Get/Set
-    public static Camera MainCamera => Instance.Cam_Main;
+    public static Camera MainCamera => Instance.m_Camera;
     public static Quaternion CameraRotation=> Instance.qt_CameraRot;
     public static Quaternion CameraXZRotation=> Quaternion.LookRotation(CameraXZForward, Vector3.up);
     public static Vector3 CameraXZForward

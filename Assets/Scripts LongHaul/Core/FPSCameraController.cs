@@ -33,7 +33,7 @@ public class FPSCameraController : CameraController
         B_SelfRotation = true;
         B_SmoothCamera = false;
 
-        f_fovStart = Cam_Main.fieldOfView;
+        f_fovStart = m_Camera.fieldOfView;
         f_fovCurrent = f_fovStart;
     }
     protected override Quaternion QT_PitchYawRotation
@@ -81,7 +81,7 @@ public class FPSCameraController : CameraController
     protected override void LateUpdate()
     {
         base.LateUpdate();
-        Cam_Main.fieldOfView = Mathf.Lerp(Cam_Main.fieldOfView,f_fovCurrent,f_angleSmoothParam);
+        m_Camera.fieldOfView = Mathf.Lerp(m_Camera.fieldOfView,f_fovCurrent,f_angleSmoothParam);
     }
     public void SetZoom(bool zoom)
     {
