@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UIT_JoyStick : SimpleSingletonMono<UIT_JoyStick> {
+public class UIT_JoyStick : MonoBehaviour {
     RectTransform rtf_Main;
     RectTransform rtf_Center;
-    public Vector2 Init()
+    public float m_JoyStickRaidus { get; private set; }
+    public void Awake()
     {
         rtf_Main = GetComponent<RectTransform>();
         rtf_Center = transform.Find("Center").GetComponent<RectTransform>();
         rtf_Main.SetActivate(false);
-        return rtf_Main.sizeDelta;
+        m_JoyStickRaidus= rtf_Main.sizeDelta.y/2-rtf_Center.sizeDelta.y/2;
     }
     public void SetPos(Vector2 startPos,Vector2 centerPos)
     {

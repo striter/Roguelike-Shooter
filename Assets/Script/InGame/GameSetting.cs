@@ -57,7 +57,7 @@ namespace GameSetting
     {
         public static Vector3 V3_TileAxisOffset(TileAxis axis) => new Vector3(axis.X * GameConst.F_LevelTileSize, 0, axis.Y * GameConst.F_LevelTileSize);
         public static float F_BigmapYaw(Vector3 direction) => TCommon.GetAngle(direction, Vector3.forward, Vector3.up);         //Used For Bigmap Direction
-        public static bool B_ShowHitMark(enum_HitCheck check) => check!= enum_HitCheck.Invalid;
+        public static bool B_ShowHitMark(enum_HitCheck check) => check != enum_HitCheck.Invalid;
         public static float F_SphereCastDamageReduction(float weaponDamage, float distance, float radius) => weaponDamage * (1 - (distance / radius));       //Rocket Blast Damage
         public static Vector3 V3_RangeSpreadDirection(Vector3 aimDirection, float spread, Vector3 up, Vector3 right) => (aimDirection * GameConst.I_ProjectileSpreadAtDistance + up * UnityEngine.Random.Range(-spread, spread) + right * UnityEngine.Random.Range(-spread, spread)).normalized;
 
@@ -65,11 +65,11 @@ namespace GameSetting
         public static int GetEquipmentSubIndex(int weaponIndex) => weaponIndex + 1;
 
         public static float GetActionAmountRevive(float damageApply) => damageApply * .001f;
-        
+
         public static float GetAIIdleDuration() => UnityEngine.Random.Range(1f, 2f);
 
-        public static float GetResultLevelScore(enum_StageLevel _stage, int _levelPassed) => 200 * ((int)_stage-1) + 20 * (_levelPassed-1);
-        public static float GetResultKillScore(int _enermyKilled) => _enermyKilled*1;
+        public static float GetResultLevelScore(enum_StageLevel _stage, int _levelPassed) => 200 * ((int)_stage - 1) + 20 * (_levelPassed - 1);
+        public static float GetResultKillScore(int _enermyKilled) => _enermyKilled * 1;
         public static float GetResultRewardCoins(float _totalScore) => _totalScore;
 
         public static RangeInt GetTradePrice(enum_Interaction interactType, enum_RarityLevel level)
@@ -96,7 +96,7 @@ namespace GameSetting
         {
             switch (level)
             {
-                default: return StageInteractGenerate.Create(new Dictionary<enum_RarityLevel, int>(),new Dictionary<enum_RarityLevel, int>(),new Dictionary<enum_CharacterType, CoinsGenerateInfo>());
+                default: return StageInteractGenerate.Create(new Dictionary<enum_RarityLevel, int>(), new Dictionary<enum_RarityLevel, int>(), new Dictionary<enum_CharacterType, CoinsGenerateInfo>());
                 case enum_StageLevel.Rookie:
                     return StageInteractGenerate.Create(
                     new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },    //宝箱等级概率
@@ -123,7 +123,7 @@ namespace GameSetting
                     return StageInteractGenerate.Create(
                     new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L2, 25 }, { enum_RarityLevel.L3, 75 } },    //宝箱等级概率
                     new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L2, 25 }, { enum_RarityLevel.L3, 75 } },    //交易等级概率
-                    new Dictionary<enum_CharacterType,CoinsGenerateInfo>() {
+                    new Dictionary<enum_CharacterType, CoinsGenerateInfo>() {
                      { enum_CharacterType.SubHidden, CoinsGenerateInfo.Create( 0,0, 0, new RangeInt(0, 0)) },     //实体掉落生成概率 类型,血,护甲,金币,金币数值范围
                      { enum_CharacterType.Fighter, CoinsGenerateInfo.Create( 8,15, 10, new RangeInt(2, 2)) },
                      { enum_CharacterType.Shooter_Rookie, CoinsGenerateInfo.Create( 8,15, 10, new RangeInt(2, 2)) },
@@ -139,7 +139,7 @@ namespace GameSetting
         public const int I_AmmoCountToSlider = 30;      //Ammo UI,While Clip Above This Will Turn To Be Slider
 
         public const float F_UIMaxArmor = 100f;
-        public const float F_MapAnimateTime=2f;
+        public const float F_MapAnimateTime = 2f;
     }
 
     public static class UIExpression
@@ -205,7 +205,7 @@ namespace GameSetting
                 case enum_HitCheck.Entity: return GameLayer.I_Entity;
                 case enum_HitCheck.Static: return GameLayer.I_Static;
                 case enum_HitCheck.Dynamic: return GameLayer.I_Dynamic;
-                case enum_HitCheck.Interact:return GameLayer.I_Interact;
+                case enum_HitCheck.Interact: return GameLayer.I_Interact;
             }
         }
     }
@@ -222,7 +222,7 @@ namespace GameSetting
     #endregion
 
     #region For Developers Use
-    
+
     #region BroadCastEnum
     enum enum_BC_GameStatus
     {
@@ -246,7 +246,7 @@ namespace GameSetting
 
     enum enum_BC_UIStatus
     {
-        Invalid=-1,
+        Invalid = -1,
         UI_PlayerCommonStatus,
         UI_PlayerHealthStatus,
         UI_PlayerAmmoStatus,
@@ -259,53 +259,53 @@ namespace GameSetting
     #region GameEnum
     public enum enum_StageLevel { Invalid = -1, Rookie = 1, Veteran = 2, Ranger = 3 }
 
-    public enum enum_BattleDifficulty { Invalid = -1, Peaceful = 0, Eazy = 1, Normal = 2, Hard = 3, End = 4, BattleTrade=10, }
+    public enum enum_BattleDifficulty { Invalid = -1, Peaceful = 0, Eazy = 1, Normal = 2, Hard = 3, End = 4, BattleTrade = 10, }
 
-    public enum enum_EntityController {Invalid=-1,None=1,AI=2, Player=3, }
+    public enum enum_EntityController { Invalid = -1, None = 1, AI = 2, Player = 3, }
 
-    public enum enum_EntityFlag { Invalid=-1, None=0, Player =1,Enermy=2, Neutal = 3, } 
+    public enum enum_EntityFlag { Invalid = -1, None = 0, Player = 1, Enermy = 2, Neutal = 3, }
 
-    public enum enum_HitCheck { Invalid = -1, Static = 1, Entity = 2, Dynamic = 3,Interact=4, }
+    public enum enum_HitCheck { Invalid = -1, Static = 1, Entity = 2, Dynamic = 3, Interact = 4, }
 
     public enum enum_TileLocking { Invalid = -1, Locked = 0, Unlockable = 1, Unlocked = 2, }
 
     public enum enum_Style { Invalid = -1, Forest = 1, Desert = 2, Iceland = 3, Horde = 4, Undead = 5, }
 
-    public enum enum_TileType { Invalid = -1, Start = 0, Battle = 1, End = 2, CoinsTrade = 11,ActionAdjustment=12,BattleTrade=13, }
+    public enum enum_TileType { Invalid = -1, Start = 0, Battle = 1, End = 2, CoinsTrade = 11, ActionAdjustment = 12, BattleTrade = 13, }
 
-    public enum enum_LevelItemType { Invalid = -1, LargeMore, LargeLess, MediumMore, MediumLess, SmallMore, SmallLess, ManmadeMore, ManmadeLess, NoCollisionMore, NoCollisionLess,BorderLinear,BorderOblique,}
+    public enum enum_LevelItemType { Invalid = -1, LargeMore, LargeLess, MediumMore, MediumLess, SmallMore, SmallLess, ManmadeMore, ManmadeLess, NoCollisionMore, NoCollisionLess, BorderLinear, BorderOblique, }
 
-    public enum enum_LevelTileType { Invaid = -1, Empty, Main,Border, Item, Interact, }
+    public enum enum_LevelTileType { Invaid = -1, Empty, Main, Border, Item, Interact, }
 
     public enum enum_LevelTileOccupy { Invalid = -1, Inner, Outer, Border, }
 
     public enum enum_LevelGenerateType { Invalid = -1, Big = 1, Small = 2 }
 
-    public enum enum_CharacterType { Invalid = -1, Fighter = 1, Shooter_Rookie = 2,Shooter_Veteran=3, AOECaster = 4, Elite = 5, SubHidden = 99 }
+    public enum enum_CharacterType { Invalid = -1, Fighter = 1, Shooter_Rookie = 2, Shooter_Veteran = 3, AOECaster = 4, Elite = 5, SubHidden = 99 }
 
-    public enum enum_Interaction { Invalid = -1,Portal=1,ActionChest=2,ContainerTrade=10, ContainerBattle = 11, PickupCoin = 20, PickupHealth =21,PickupArmor=22,PickupAction=23, Weapon = 24,ActionAdjustment=25, }
+    public enum enum_Interaction { Invalid = -1, Portal = 1, ActionChest = 2, ContainerTrade = 10, ContainerBattle = 11, PickupCoin = 20, PickupHealth = 21, PickupArmor = 22, PickupAction = 23, Weapon = 24, ActionAdjustment = 25, }
 
     public enum enum_TriggerType { Invalid = -1, Single = 1, Auto = 2, Burst = 3, Pull = 4, Store = 5, }
 
-    public enum enum_ProjectileFireType { Invalid=-1, Single = 1, MultipleFan = 2, MultipleLine = 3, };
+    public enum enum_ProjectileFireType { Invalid = -1, Single = 1, MultipleFan = 2, MultipleLine = 3, };
 
-    public enum enum_CastControllType { Invalid = -1, CastFromOrigin = 1, CastControlledForward = 2, CastAtTarget = 3, CastSelfDetonate=4,}
+    public enum enum_CastControllType { Invalid = -1, CastFromOrigin = 1, CastControlledForward = 2, CastAtTarget = 3, CastSelfDetonate = 4, }
 
     public enum enum_CastAreaType { Invalid = -1, OverlapSphere = 1, ForwardBox = 2, ForwardCapsule = 3, ForwardTrapezium = 4, }
 
-    public enum enum_HealthChangeMessage { Invalid = -1,Begin=0, DamageHealth = 1, ReceiveHealth = 2, DamageArmor = 3, ReceiveArmor = 4 }
+    public enum enum_HealthChangeMessage { Invalid = -1, Begin = 0, DamageHealth = 1, ReceiveHealth = 2, DamageArmor = 3, ReceiveArmor = 4 }
 
-    public enum enum_DamageType { Invalid = -1, Common = 1, ArmorOnly = 2,HealthOnly = 3, }
+    public enum enum_DamageType { Invalid = -1, Common = 1, ArmorOnly = 2, HealthOnly = 3, }
 
-    public enum enum_CharacterEffect { Invalid=-1,Stun=1,Cloak=2,Scan=3,}
+    public enum enum_CharacterEffect { Invalid = -1, Stun = 1, Cloak = 2, Scan = 3, }
 
-    public enum enum_ExpireType { Invalid=-1,Buff=1,Action=2, }
+    public enum enum_ExpireType { Invalid = -1, Buff = 1, Action = 2, }
 
     public enum enum_ExpireRefreshType { Invalid = -1, AddUp = 1, Refresh = 2 }
 
-    public enum enum_RarityLevel { Invalid=-1, L1=1,L2=2,L3=3, }
+    public enum enum_RarityLevel { Invalid = -1, L1 = 1, L2 = 2, L3 = 3, }
 
-    public enum enum_ActionExpireType { Invalid = -1,Common=1,AfterUse =2  ,AfterFire=3 ,AfterBattle=4,AfterWeaponSwitch=5, }
+    public enum enum_ActionExpireType { Invalid = -1, Common = 1, AfterUse = 2, AfterFire = 3, AfterBattle = 4, AfterWeaponSwitch = 5, }
 
     public enum enum_PlayerWeapon
     {
@@ -336,11 +336,11 @@ namespace GameSetting
 
     public enum enum_PlayerAnim
     {
-        Invalid=-1,
-        Rifle_1001=1001,
-        Pistol_L_1002=1002,
-        Crossbow_1003=1003,
-        Heavy_1004=1004,
+        Invalid = -1,
+        Rifle_1001 = 1001,
+        Pistol_L_1002 = 1002,
+        Crossbow_1003 = 1003,
+        Heavy_1004 = 1004,
     }
 
     public enum enum_EnermyAnim
@@ -350,27 +350,28 @@ namespace GameSetting
         Spear_R_Stick_20 = 20,
         Sword_R_Swipe_30 = 30,
         Sword_R_Slash_31 = 31,
-        Dagger_Dual_Twice_40=40,
+        Dagger_Dual_Twice_40 = 40,
         Staff_L_Cast_110 = 110,
         Staff_Dual_Cast_111 = 111,
         Staff_R_Cast_Loop_112 = 112,
-        Staff_R_Cast_113=113,
+        Staff_R_Cast_113 = 113,
         Bow_Shoot_130 = 130,
-        CrossBow_Shoot_131=131,
-        Bow_UpShoot_133=133,
+        CrossBow_Shoot_131 = 131,
+        Bow_UpShoot_133 = 133,
         Rifle_HipShot_140 = 140,
-        Rifle_AimShot_141=141,
+        Rifle_AimShot_141 = 141,
         Throwable_Hips_150 = 150,
-        Throwable_R_ThrowHip_151=151,
-        Throwable_R_ThrowBack_152=152,
-        Heavy_HipShot_161=161,
-        Heavy_Mortal_162=162,
-        Heavy_Shield_Spear_163=163,
-        Heavy_Remote_164=164,
+        Throwable_R_ThrowHip_151 = 151,
+        Throwable_R_ThrowBack_152 = 152,
+        Heavy_HipShot_161 = 161,
+        Heavy_Mortal_162 = 162,
+        Heavy_Shield_Spear_163 = 163,
+        Heavy_Remote_164 = 164,
     }
 
+    public enum enum_UI_Option_FrameRate { Invalid=-1,FPS30=30,FPS60=60,}
     #endregion
-    
+
     #region GameLayer
     public static class GameLayer
     {
@@ -432,6 +433,9 @@ namespace GameSetting
             m_StageLevel = _level.m_currentStage;
             m_kills = _record.i_entitiesKilled;
         }
+    }
+    public class CPlayerOptions : ISave
+    {
     }
     #endregion
 

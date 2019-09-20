@@ -2,19 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum enum_JoyStickMode { Invalid=-1,Retarget=1,Stational=2,}
+
 public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
 {
     TouchTracker m_TrackLeft, m_TrackRight;
     Action<Vector2> OnLeftDelta,OnRightDelta;
-    float f_LeftStickRadius=100f;
-    public void Bind(Action<Vector2> _OnLeftDelta,Action<Vector2> _OnRightDelta)
-    {
-        OnLeftDelta = _OnLeftDelta;
-        OnRightDelta = _OnRightDelta;
-        if (UIT_JoyStick.Instance != null)  f_LeftStickRadius = UIT_JoyStick.Instance.Init().x/2;
-    }
     Vector2 leftDelta = Vector2.zero;
     Vector2 rightDelta = Vector2.zero;
+    UIT_JoyStick m_Joystick;
+    public enum_JoyStickMode m_Mode { get; private set; } = enum_JoyStickMode.Invalid;
+    public void SetJoystick(UIT_JoyStick joyStick, enum_JoyStickMode mode)
+    {
+        m_Joystick = joyStick;
+        m_Mode = mode;
+    }
+    public void DoBinding(Action<Vector2> _OnLeftDelta,Action<Vector2> _OnRightDelta)
+    {
+        if (!m_Joystick)
+            Debug.LogError("Set JoyStick Before Use TouchDeltaManager!");
+
+        OnLeftDelta = _OnLeftDelta;
+        OnRightDelta = _OnRightDelta;
+    }
     private void Update()
     {
         rightDelta = Vector2.zero;
@@ -26,7 +36,7 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
                 if (m_TrackLeft == null && track.isLeft && track.isDown)
                 {
                     m_TrackLeft = track;
-                    if (UIT_JoyStick.Instance != null) UIT_JoyStick.Instance.SetPos(m_TrackLeft.v2_startPos, Vector2.zero);
+                    m_Joystick.SetPos(m_TrackLeft.v2_startPos, Vector2.zero);
                 }
                 else if (m_TrackRight == null && !track.isLeft)
                 {
@@ -50,14 +60,19 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
                 else if (m_TrackLeft != null && t.fingerId == m_TrackLeft.m_Touch.fingerId)
                 {
                     m_TrackLeft.Record(t);
-                    Vector2 centerOffset = Vector2.Distance(t.position, m_TrackLeft.v2_startPos) > f_LeftStickRadius ? (t.position - m_TrackLeft.v2_startPos).normalized * f_LeftStickRadius : t.position - m_TrackLeft.v2_startPos;
-                    leftDelta = centerOffset / f_LeftStickRadius;
-                    if (UIT_JoyStick.Instance != null)  UIT_JoyStick.Instance.SetPos(m_TrackLeft.v2_startPos,centerOffset);
+                    switch (m_Mode)
+                    {
+                        case enum_JoyStickMode.Retarget:
+                            Vector2 centerOffset = Vector2.Distance(t.position, m_TrackLeft.v2_startPos) > m_Joystick.m_JoyStickRaidus ? (t.position - m_TrackLeft.v2_startPos).normalized * m_Joystick.m_JoyStickRaidus : t.position - m_TrackLeft.v2_startPos;
+                            leftDelta = centerOffset / m_Joystick.m_JoyStickRaidus;
+                            m_Joystick.SetPos(m_TrackLeft.v2_startPos, centerOffset);
+                            break;
+                    }
                 }
             }
         }
 
-        if(UIT_JoyStick.Instance!=null) UIT_JoyStick.Instance.SetActivate(m_TrackLeft!=null);
+        m_Joystick.SetActivate(m_TrackLeft!=null);
 
         OnLeftDelta?.Invoke(m_TrackLeft!=null?leftDelta : Vector2.zero);
         OnRightDelta?.Invoke(rightDelta);

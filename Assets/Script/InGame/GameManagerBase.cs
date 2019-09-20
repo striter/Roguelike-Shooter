@@ -43,7 +43,6 @@ public class GameIdentificationManager
     }
 }
 
-
 public static class OptionsManager
 {
     public static bool B_AdditionalLight = true;
