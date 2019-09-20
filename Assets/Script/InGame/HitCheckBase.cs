@@ -6,26 +6,24 @@ using System;
 public class HitCheckBase : MonoBehaviour {
     public virtual enum_HitCheck m_HitCheckType => enum_HitCheck.Invalid;
     public int I_AttacherID { get; private set; } = -1;
-    Func<DamageInfo,Vector3, bool> OnHitCheck;
+    Func<DamageInfo, bool> OnHitCheck;
     protected Collider m_Collider;
     protected void Awake()
     {
         gameObject.layer = m_HitCheckType.ToLayer();
     }
-    protected void Attach(int index,Func<DamageInfo,Vector3, bool> _OnHitCheck)
+    protected void Attach(int index,Func<DamageInfo, bool> _OnHitCheck)
     {
         I_AttacherID= index;
         m_Collider = GetComponent<Collider>();
         OnHitCheck = _OnHitCheck;
     }
-
-    public bool TryHit(DamageInfo amount) => TryHit(amount, Vector3.zero);
-    public virtual bool TryHit(DamageInfo amount,Vector3 direction)
+    public virtual bool TryHit(DamageInfo amount)
     {
         if (OnHitCheck == null)
             return false;
 
-        return OnHitCheck(amount, direction);
+        return OnHitCheck(amount);
     }
     public void SetEnable(bool enable)
     {

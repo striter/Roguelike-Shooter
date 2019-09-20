@@ -11,7 +11,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     public CharacterInfoManager m_CharacterInfo { get; private set; }
     EntityCharacterEffectManager m_Effect;
     public virtual Vector3 m_PrecalculatedTargetPos(float time) { Debug.LogError("Override This Please");return Vector2.zero; }
-    protected virtual CharacterInfoManager GetEntityInfo() => new CharacterInfoManager(this, m_HitCheck.TryHit, OnExpireChange);
+    protected virtual CharacterInfoManager GetEntityInfo() => new CharacterInfoManager(this, OnReceiveDamage, OnExpireChange);
     public virtual float m_baseMovementSpeed => F_MovementSpeed;
     public override bool B_IsCharacter => true;
     public override void Init(int _poolIndex)
@@ -44,9 +44,9 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         m_Effect.SetScaned(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Scan));
     }
 
-    protected override bool OnReceiveDamage(DamageInfo damageInfo, Vector3 damageDirection)
+    protected override bool OnReceiveDamage(DamageInfo damageInfo)
     {
-        if (base.OnReceiveDamage(damageInfo, damageDirection))
+        if (base.OnReceiveDamage(damageInfo))
         {
             damageInfo.m_detail.m_BaseBuffApply.Traversal((int buffIndex) => { m_CharacterInfo.AddBuff(damageInfo.m_detail.I_SourceID, buffIndex); });
             if (damageInfo.m_detail.m_DamageEffect != enum_CharacterEffect.Invalid) m_CharacterInfo.OnSetEffect(damageInfo.m_detail.m_DamageEffect, damageInfo.m_detail.m_EffectDuration);
