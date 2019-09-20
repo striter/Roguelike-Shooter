@@ -36,7 +36,6 @@ namespace GameSetting
         public const float F_PlayerDamageAdjustmentRange = .1f;
         public const float F_PlayerCameraSmoothParam = 1f;     //Camera Smooth Param For Player .2 is suggested
 
-        public const float F_AIDamageTranslate = 0.003f;
         public const float F_AIMovementCheckParam = .3f;
         public const float F_AITargetCheckParam = 3f;       //AI Retarget Duration,3 is suggested
         public const float F_AITargetCalculationParam = 1f;       //AI Target Param Calculation Duration, 1 is suggested;
@@ -139,7 +138,7 @@ namespace GameSetting
         public const int I_AmmoCountToSlider = 30;      //Ammo UI,While Clip Above This Will Turn To Be Slider
 
         public const float F_UIMaxArmor = 100f;
-        public const float F_MapAnimateTime = 2f;
+        public const float F_MapAnimateTime = 1.6f;
     }
 
     public static class UIExpression
