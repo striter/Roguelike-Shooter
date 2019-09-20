@@ -148,8 +148,10 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
         }
         return hits;
     }   
-    protected virtual void OnDamageEntity(HitCheckEntity hitEntity)=>  hitEntity.TryHit(m_DamageInfo, Vector3.Normalize(hitEntity.transform.position - transform.position));
-
+    protected virtual void OnDamageEntity(HitCheckEntity hitEntity)
+    {
+        hitEntity.TryHit(m_DamageInfo);
+    }
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {

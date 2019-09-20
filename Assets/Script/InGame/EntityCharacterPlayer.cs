@@ -29,7 +29,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected override void ActivateHealthManager() => m_PlayerHealth.OnActivate(I_MaxHealth, I_DefaultArmor, true);
     protected override CharacterInfoManager GetEntityInfo()
     {
-        m_PlayerInfo = new PlayerInfoManager(this, m_HitCheck.TryHit, OnExpireChange,OnActionsChange);
+        m_PlayerInfo = new PlayerInfoManager(this, OnReceiveDamage, OnExpireChange,OnActionsChange);
         return m_PlayerInfo;
     }
     public override void Init(int poolPresetIndex)

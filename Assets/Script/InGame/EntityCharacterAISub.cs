@@ -8,7 +8,7 @@ public class EntityCharacterAISub : EntityCharacterAI {
     public EntitySubInfoManager m_SubInfo { get; private set; }
     protected override CharacterInfoManager GetEntityInfo()
     {
-        m_SubInfo = new EntitySubInfoManager(this, m_HitCheck.TryHit, OnExpireChange);
+        m_SubInfo = new EntitySubInfoManager(this, OnReceiveDamage, OnExpireChange);
         return m_SubInfo;
     }
     public void OnRegister(int _spawnerEntityID)
