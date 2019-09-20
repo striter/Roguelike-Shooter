@@ -137,25 +137,11 @@ namespace GameSetting
     {
         public const int I_AmmoCountToSlider = 30;      //Ammo UI,While Clip Above This Will Turn To Be Slider
 
-        public const int I_SporeManagerUnitTime = 60;//Seconds
-        public const int I_SporeManagerContainersMaxAmount = 9;  //Max Amount Of SporeManager Container
-        public const int I_SporeManagerContainerStartFreeSlot = 3;    //Free Slot For New Player
-        public const int I_SporeManagerContainerTickTime = 60;       //Seconds
-        public const int I_SporeManagerContainerStartRandomEnd = 30;      // Start From 0 
-        public const int I_SporeManagerAutoSave = 5;      //Per Seconds Auto Save Case Game Crush
-        public const int I_SporeManagerHybridMaxLevel = 40;      //Spore Level Equals Won't Hybrid
-
         public const float F_UIMaxArmor = 100f;
     }
 
     public static class UIExpression
     {
-        public static float F_SporeManagerProfitPerMinute(int level) => 10 * Mathf.Pow(1.3f, level - 1);     //Coins Profit Per Unit Time
-        public static float F_SporeManagerCoinsMaxAmount(int level) => 100 * Mathf.Pow(10 * Mathf.Pow(1.3f, level - 1), 1.03f) + 400 * Mathf.Pow(1.4f, level - 1);
-        //Coins Max Amount Each Level
-        public static float F_SporeManagerChestCoinRequirement(int maxLevel) => 200 * Mathf.Pow(1.4f, maxLevel - 1);       //Coin Requirement Per Chest
-        public static float F_SporeManagerChestBlueRequirement(int maxLevel) => 100 * Mathf.Pow(1.05f, maxLevel - 1);       //Blue Requirement Per Chest
-
         public static Color BigmapTileColor(enum_TileLocking levelLocking, enum_TileType levelType)
         {
             Color color;
@@ -1909,150 +1895,7 @@ namespace GameSetting
 
     #endregion
 
-    #region For UI Usage     
-    class CSporeManagerSave : ISave     //Locked=-1 Spare=1
-    {
-        public float f_coin;
-        public int i_maxLevel;
-        public int i_previousTimeStamp;
-        public double d_timePassed;
-        protected Dictionary<int, int> d_sporeContainerInfo;
-        public int I_SlotCount => d_sporeContainerInfo.Count;
-        public int this[int slotIndex]
-        {
-            set
-            {
-                if (!d_sporeContainerInfo.ContainsKey(slotIndex))
-                    Debug.LogError("Invalid Slot Index:" + slotIndex);
-
-                d_sporeContainerInfo[slotIndex] = value;
-            }
-            get
-            {
-                if (!d_sporeContainerInfo.ContainsKey(slotIndex))
-                    Debug.LogError("Invalid Slot Index:" + slotIndex);
-
-                return d_sporeContainerInfo[slotIndex];
-            }
-        }
-        public void AddSlotValue(int slotIndex, int value = 1)
-        {
-
-            if (!d_sporeContainerInfo.ContainsKey(slotIndex))
-                Debug.LogError("Invalid Slot Index:" + slotIndex);
-
-            d_sporeContainerInfo[slotIndex] += value;
-        }
-
-        public int GetSpareSlot()
-        {
-            int spareSlot = -1;
-            foreach (int slot in d_sporeContainerInfo.Keys)
-            {
-                if (d_sporeContainerInfo[slot] == 0)
-                {
-                    spareSlot = slot;
-                    break;
-                }
-            }
-            return spareSlot;
-        }
-        public void UnlockNewSlot()
-        {
-            foreach (int slot in d_sporeContainerInfo.Keys)
-                if (d_sporeContainerInfo[slot] == -1)     //If Got New Slot Unlock it
-                {
-                    d_sporeContainerInfo[slot] = 0;
-                    break;
-                }
-        }
-        public CSporeManagerSave()
-        {
-            f_coin = 1000f;
-            i_maxLevel = 1;
-            d_timePassed = 0;
-            i_previousTimeStamp = TTime.TTime.GetTimeStamp(DateTime.Now);
-            d_sporeContainerInfo = new Dictionary<int, int>() { };
-            for (int i = 1; i <= UIConst.I_SporeManagerContainersMaxAmount; i++)
-                d_sporeContainerInfo.Add(i, i <= UIConst.I_SporeManagerContainerStartFreeSlot ? 0 : -1);
-        }
-    }
-
-    public struct SSporeLevel : ISExcel
-    {
-        int maxLevel;
-        float offset0;
-        float offset1;
-        float offset2;
-        float offset3;
-        float offset4;
-        float offset5;
-        float offset6;
-        float offset7;
-        float offset8;
-        float offset9;
-        bool addSlot;
-        public int MaxLevel => maxLevel;
-        public float F_OffSet0 => offset0;
-        public float F_OffSet1 => offset1;
-        public float F_OffSet2 => offset2;
-        public float F_OffSet3 => offset3;
-        public float F_OffSet4 => offset4;
-        public float F_OffSet5 => offset5;
-        public float F_OffSet6 => offset6;
-        public float F_OffSet7 => offset7;
-        public float F_OffSet8 => offset8;
-        public float F_OffSet9 => offset9;
-        public bool B_AddSlot => addSlot;
-        public void InitOnValueSet()
-        {
-
-        }
-    }
-
-    public class SSporeLevelRate
-    {
-        SSporeLevel m_BaseInfo;
-        public float F_CoinChestPrice { get; private set; }
-        public float F_BlueChestPrice { get; private set; }
-        public float F_MaxCoinsAmount { get; private set; }
-        public int I_Level => m_BaseInfo.MaxLevel;
-        public bool B_AddSlot => m_BaseInfo.B_AddSlot;
-        public List<float> l_sporeRates;
-        public SSporeLevelRate(SSporeLevel rate)
-        {
-            m_BaseInfo = rate;
-            l_sporeRates = new List<float>() { m_BaseInfo.F_OffSet0, m_BaseInfo.F_OffSet1, m_BaseInfo.F_OffSet2, m_BaseInfo.F_OffSet3, m_BaseInfo.F_OffSet4, m_BaseInfo.F_OffSet5, m_BaseInfo.F_OffSet6, m_BaseInfo.F_OffSet7, m_BaseInfo.F_OffSet8, m_BaseInfo.F_OffSet9 };
-            float count = 0;
-            for (int i = 0; i < l_sporeRates.Count; i++)
-                count += l_sporeRates[i];
-            if (I_Level != -1 && count != 100)
-                Debug.LogError("Spore Rate Total Unmatch 100! Line:" + I_Level);
-
-            F_CoinChestPrice = UIExpression.F_SporeManagerChestCoinRequirement(I_Level);
-            F_BlueChestPrice = UIExpression.F_SporeManagerChestBlueRequirement(I_Level);
-            F_MaxCoinsAmount = UIExpression.F_SporeManagerCoinsMaxAmount(I_Level);
-        }
-
-        public int AcquireNewSpore()
-        {
-            int random = UnityEngine.Random.Range(1, 101);
-            float count = 0;
-            int offset = 0;
-            for (int i = 0; i < l_sporeRates.Count; i++)
-            {
-                count += l_sporeRates[i];
-                if (random < count)
-                {
-                    offset = i;
-                    break;
-                }
-            }
-            return I_Level - offset;
-        }
-    }
-    
-
+    #region For UI Usage
     public class UIC_Numeric
     {
         static readonly AtlasLoader m_InGameSprites = TResources.GetUIAtlas_Numeric();

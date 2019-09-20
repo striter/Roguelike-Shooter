@@ -28,7 +28,6 @@ public class UIManager :SimpleSingletonMono<UIManager>
         ShowTools<UI_EntityHealth>();
         ShowTools<UI_PlayerStatus>().SetInGame(inGame);
 
-        transform.Find("Test/SporeBtn").GetComponent<Button>().onClick.AddListener(() => { ShowPage<UI_SporeManager>(true); });
         if (inGame) transform.Find("Test/SeedTest").GetComponent<Text>().text = GameManager.Instance.m_GameLevel.m_Seed;   //Test
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnPlayerStatusChanged);
     }
