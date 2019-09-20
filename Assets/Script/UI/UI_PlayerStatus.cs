@@ -121,17 +121,22 @@ public class UI_PlayerStatus : UIToolsBase
     public void SetInGame(bool inGame)
     {
         btn_Bigmap.SetActivate(inGame);
+        btn_ActionShuffle.SetActivate(false);
+        btn_ActionStorage.SetActivate(inGame);
     }
-    #region Bigmap
+    
     void OnBattleStart()
     {
         btn_Bigmap.SetActivate(false);
+        btn_ActionShuffle.SetActivate(true);
+        btn_ActionStorage.SetActivate(false);
     }
     void OnBattleFinish()
     {
         btn_Bigmap.SetActivate(true);
+        btn_ActionShuffle.SetActivate(false);
+        btn_ActionStorage.SetActivate(true);
     }
-    #endregion
     #region PlayerData/Interact
     void OnCommonStatus(EntityCharacterPlayer _player)
     {
@@ -285,9 +290,6 @@ public class UI_PlayerStatus : UIToolsBase
         m_ActionGrid.ClearGrid();
         for (int i = 0; i < actionInfo.m_ActionHolding.Count; i++)
             m_ActionGrid.AddItem(i).SetInfo(actionInfo.m_ActionHolding[i],OnActionClick, OnActionPressDuration);
-
-        btn_ActionShuffle.SetActivate(GameManager.Instance.B_Battling);
-        btn_ActionStorage.SetActivate(!GameManager.Instance.B_Battling);
     }
     void OnActionClick(int index)
     {
