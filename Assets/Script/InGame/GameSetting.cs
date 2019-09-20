@@ -806,17 +806,19 @@ namespace GameSetting
     }
     public class DamageDeliverInfo
     {
-        public int I_IdentiyID { get; private set; } = GameIdentificationManager.I_DamageIdentityID();
+        public int I_IdentiyID { get; private set; } = -1;
         public int I_SourceID { get; private set; } = -1;
         public float m_DamageMultiply { get; private set; } = 0;
         public float m_DamageAdditive { get; private set; } = 0;
         public List<int> m_BaseBuffApply { get; private set; } = new List<int>();
         public enum_CharacterEffect m_DamageEffect = enum_CharacterEffect.Invalid;
         public float m_EffectDuration = 0;
-        public static DamageDeliverInfo Default(int sourceID) => new DamageDeliverInfo() { I_SourceID = sourceID, m_DamageMultiply = 0f, m_DamageAdditive = 0f };
-        public static DamageDeliverInfo BuffInfo(int sourceID, int buffApply) => new DamageDeliverInfo() { I_SourceID = sourceID, m_DamageMultiply = 0f, m_DamageAdditive = 0f, m_BaseBuffApply =new List<int>() { buffApply } };
-        public static DamageDeliverInfo EquipmentInfo(int sourceID, float _damageAdditive, enum_CharacterEffect _effect, float _duration) => new DamageDeliverInfo() { I_SourceID = sourceID,  m_DamageAdditive = _damageAdditive,  m_DamageEffect = _effect, m_EffectDuration = _duration };
-        public static DamageDeliverInfo DamageInfo(int sourceID, float _damageEnhanceMultiply, float _damageAdditive) =>new DamageDeliverInfo() { I_SourceID = sourceID, m_DamageMultiply = _damageEnhanceMultiply, m_DamageAdditive = _damageAdditive, };
+
+        public static DamageDeliverInfo Default(int sourceID) => new DamageDeliverInfo() { I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), I_SourceID = sourceID, m_DamageMultiply = 0f, m_DamageAdditive = 0f };
+        public static DamageDeliverInfo BuffInfo(int sourceID, int buffApply) => new DamageDeliverInfo() { I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), I_SourceID = sourceID, m_DamageMultiply = 0f, m_DamageAdditive = 0f, m_BaseBuffApply = new List<int>() { buffApply } };
+        public static DamageDeliverInfo EquipmentInfo(int sourceID, float _damageAdditive, enum_CharacterEffect _effect, float _duration) => new DamageDeliverInfo() { I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), I_SourceID = sourceID, m_DamageAdditive = _damageAdditive, m_DamageEffect = _effect, m_EffectDuration = _duration };
+        public static DamageDeliverInfo DamageInfo(int sourceID, float _damageEnhanceMultiply, float _damageAdditive) => new DamageDeliverInfo() { I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), I_SourceID = sourceID, m_DamageMultiply = _damageEnhanceMultiply, m_DamageAdditive = _damageAdditive, };
+        public static DamageDeliverInfo DamageOverrideInfo(int sourceID, DamageDeliverInfo info) => new DamageDeliverInfo() {I_SourceID = sourceID, I_IdentiyID =info.I_IdentiyID,m_DamageMultiply=info.m_DamageMultiply,m_DamageAdditive=info.m_DamageAdditive,m_BaseBuffApply=info.m_BaseBuffApply,m_DamageEffect=info.m_DamageEffect,m_EffectDuration=info.m_EffectDuration};
     }
     #endregion
 
@@ -968,19 +970,13 @@ namespace GameSetting
 
     public class EntitySubInfoManager : CharacterInfoManager
     {
-        bool damageOverride = false;
         Func<DamageDeliverInfo> m_DamageBuffOverride;
-        public void AddDamageOverride(Func<DamageDeliverInfo> _damageOverride)
-        {
-            damageOverride = true;
-            m_DamageBuffOverride = _damageOverride;
-        }
-
-        public override DamageDeliverInfo GetDamageBuffInfo() => damageOverride ? m_DamageBuffOverride() : base.GetDamageBuffInfo();
+        public void AddDamageOverride(Func<DamageDeliverInfo> _damageOverride)=> m_DamageBuffOverride = _damageOverride;
+        public override DamageDeliverInfo GetDamageBuffInfo() => m_DamageBuffOverride != null ? DamageDeliverInfo.DamageOverrideInfo(m_Entity.I_EntityID, m_DamageBuffOverride()) : base.GetDamageBuffInfo();
         public override void OnActivate()
         {
             base.OnActivate();
-            damageOverride = false;
+            m_DamageBuffOverride = null;
         }
         public EntitySubInfoManager(EntityCharacterBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
         {
@@ -1705,7 +1701,7 @@ namespace GameSetting
         {
             m_Blink = new ModelBlink(_blinkModels, .25f, .25f,Color.red);
             timeElapsed = 0;
-            b_activating = true;
+            b_activating = false;
         }
         public override void Tick(float deltaTime)
         {
@@ -1718,7 +1714,6 @@ namespace GameSetting
             if (timeElapsed > 2f)
             {
                 GameObjectManager.SpawnEquipment<SFXCast>(i_weaponIndex, attacherTransform.position, attacherTransform.forward).Play(GetDamageDeliverInfo());
-                Debug.Log("???");
                 m_Entity.m_HitCheck.TryHit(new DamageInfo(m_Entity.m_Health.F_TotalEHP, enum_DamageType.Common,DamageDeliverInfo.Default(-1)));
                 b_activating = false;
             }

@@ -89,7 +89,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         switch (animEvent)
         {
             case TAnimatorEvent.enum_AnimEvent.Fire:
-                m_AI.OnAttackTriggerd();
+                m_AI.OnAttackTriggered();
                 break;
         }
     }
@@ -370,7 +370,7 @@ public class EntityCharacterAI : EntityCharacterBase {
             }
         }
 
-        public void OnAttackTriggerd()
+        public void OnAttackTriggered()
         {
             if(b_targetAvailable)
                 m_Weapon.Play(b_preAim, m_Target);
@@ -429,8 +429,7 @@ public class EntityCharacterAI : EntityCharacterBase {
             }
             return true;
         }
-
-
+        
         void CheckRotation(float deltaTime)
         {
             if (!b_targetAvailable)
