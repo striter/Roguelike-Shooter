@@ -638,8 +638,7 @@ public static class GameObjectManager
         entity.SetDifficulty(_stage);
         return entity;
     }
-    public static EntityTrader SpawnTrader(int index, Vector3 toPosition,Transform attachTo) => SpawnEntity<EntityTrader>(index, toPosition, enum_EntityFlag.Neutal,attachTo);
-    public static EntityCharacterAISub SpawnSubAI(int index, Vector3 toPosition,int spanwer, enum_EntityFlag _flag)
+    public static EntityCharacterAISub SpawnSubAI(int index, Vector3 toPosition, int spanwer, enum_EntityFlag _flag)
     {
         EntityCharacterAISub entity = SpawnEntityCharacter<EntityCharacterAISub>(index, toPosition, _flag);
         entity.SetDifficulty(enum_StageLevel.Rookie);
@@ -653,6 +652,7 @@ public static class GameObjectManager
         player.ObtainWeapon(SpawnWeapon(playerSave.m_weapon,GameDataManager.CreateActions(playerSave.m_weaponActions)));
         return player;
     }
+    public static EntityTrader SpawnTrader(int index, Vector3 toPosition, Transform attachTo) => SpawnEntity<EntityTrader>(index, toPosition, enum_EntityFlag.Neutal, attachTo);
     public static void RecycleEntity(int index, EntityBase target) => ObjectPoolManager<int, EntityBase>.Recycle(index, target);
     #endregion
     #region Weapon
