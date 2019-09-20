@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: UI_BigmapBG
+  m_Name: UI_MapBG
   m_Shader: {fileID: 4800000, guid: 1311caeb2d438d648a7e8e307c1b3417, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4

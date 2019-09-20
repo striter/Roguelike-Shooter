@@ -138,6 +138,7 @@ namespace GameSetting
         public const int I_AmmoCountToSlider = 30;      //Ammo UI,While Clip Above This Will Turn To Be Slider
 
         public const float F_UIMaxArmor = 100f;
+        public const float F_MapAnimateTime = 2f;
     }
 
     public static class UIExpression

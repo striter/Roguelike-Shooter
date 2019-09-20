@@ -6,11 +6,11 @@ using GameSetting;
 using TTiles;
 using System;
 
-public class UIGI_BigmapLevelInfo : UIT_GridItem {
+public class UIGI_MapControlCell : UIT_GridItem {
     Image img_Level;
-    Button btn_ChangeLevel; Action<TileAxis> OnChangeLevelClick;
+    Button btn_ChangeLevel; Action<UIGI_MapControlCell> OnChangeLevelClick;
     Dictionary<enum_TileDirection, Image> dic_TileConnections=new Dictionary<enum_TileDirection, Image>();
-    TileAxis m_CurrentAxis;
+    public TileAxis m_Axis { get; private set; }
     public override void Init(UIT_GridController parent)
     {
         base.Init(parent);
@@ -21,13 +21,13 @@ public class UIGI_BigmapLevelInfo : UIT_GridItem {
             dic_TileConnections.Add(TTiles.TTiles.m_FourDirections[i], tf_Container.Find(TTiles.TTiles.m_FourDirections[i].ToString()).GetComponent<Image>());
     }
 
-    public void Init(Action<TileAxis> _OnChangeLevelClick)
+    public void Init(Action<UIGI_MapControlCell> _OnChangeLevelClick)
     {
         OnChangeLevelClick = _OnChangeLevelClick;
     }
     public void SetBigmapLevelInfo(SBigmapLevelInfo levelInfo,Dictionary<enum_TileDirection,bool> connectionActivate)
     {
-        m_CurrentAxis = levelInfo.m_TileAxis;
+        m_Axis = levelInfo.m_TileAxis;
         tf_Container.localScale = levelInfo.m_TileLocking == enum_TileLocking.Locked ? Vector3.zero : Vector3.one;
         img_Level.color = UIExpression.BigmapTileColor(levelInfo.m_TileLocking,levelInfo.m_TileType);
         foreach (enum_TileDirection direction in TTiles.TTiles.m_FourDirections)
@@ -36,6 +36,6 @@ public class UIGI_BigmapLevelInfo : UIT_GridItem {
 
     void OnChangeLevelBtnClick()
     {
-        OnChangeLevelClick(m_CurrentAxis);
+        OnChangeLevelClick(this);
     }
 }

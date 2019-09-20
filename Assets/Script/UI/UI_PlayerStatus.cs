@@ -51,7 +51,7 @@ public class UI_PlayerStatus : UIToolsBase
         tf_Container = transform.Find("Container");
 
         btn_Bigmap = tf_Container.Find("Bigmap").GetComponent<Button>();
-        btn_Bigmap.onClick.AddListener(() => { UIManager.Instance.ShowPage<UI_BigmapControl>(true); });
+        btn_Bigmap.onClick.AddListener(() => { UIManager.Instance.ShowPage<UI_MapControl>(true); });
 
         tf_StatusData = tf_Container.Find("StatusData");
         tf_AmmoData = tf_StatusData.Find("AmmoData");
