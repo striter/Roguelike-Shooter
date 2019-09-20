@@ -1631,6 +1631,10 @@ namespace GameSetting
         {
 
         }
+        public virtual void Tick(float deltaTime)
+        {
+
+        }
         public virtual void OnPlayAnim(bool play)
         {
         }
@@ -1639,7 +1643,7 @@ namespace GameSetting
 
         }
 
-        public static EquipmentBase AcquireEquipment(int weaponIndex, EntityCharacterBase _entity, Transform tf_Barrel, Func<DamageDeliverInfo> GetDamageBuffInfo, Action OnDead)
+        public static EquipmentBase AcquireEquipment(int weaponIndex, EntityCharacterBase _entity, Transform tf_Barrel, Func<DamageDeliverInfo> GetDamageBuffInfo)
         {
             SFXBase weaponInfo = GameObjectManager.GetEquipmentData<SFXBase>(weaponIndex);
             SFXProjectile projectile = weaponInfo as SFXProjectile;
@@ -1661,7 +1665,7 @@ namespace GameSetting
                 {
                     default: Debug.LogError("Invalid Type:" + cast.E_CastType); break;
                     case enum_CastControllType.CastFromOrigin: return new EquipmentCaster(cast, _entity, tf_Barrel, GetDamageBuffInfo);
-                    case enum_CastControllType.CastSelfDetonate: return new EnermyCasterSelfDetonateAnimLess(cast, _entity, tf_Barrel, GetDamageBuffInfo, OnDead, _entity.tf_Model.Find("BlinkModel")); 
+                    case enum_CastControllType.CastSelfDetonate: return new EnermyCasterSelfDetonateAnimLess(cast, _entity, tf_Barrel, GetDamageBuffInfo, _entity.tf_Model.Find("BlinkModel")); 
                     case enum_CastControllType.CastControlledForward: return new EquipmentCasterControlled(cast, _entity, tf_Barrel, GetDamageBuffInfo);
                     case enum_CastControllType.CastAtTarget: return new EquipmentCasterTarget(cast, _entity, tf_Barrel, GetDamageBuffInfo);
                 }
@@ -1692,38 +1696,40 @@ namespace GameSetting
             GameObjectManager.SpawnEquipment<SFXCast>(i_weaponIndex, attacherTransform.position, attacherTransform.forward).Play(GetDamageDeliverInfo());
         }
     }
-    public class EnermyCasterSelfDetonateAnimLess : EquipmentCaster, ISingleCoroutine
+    public class EnermyCasterSelfDetonateAnimLess : EquipmentCaster
     {
         ModelBlink m_Blink;
-        Action OnDead;
         float timeElapsed;
-        public EnermyCasterSelfDetonateAnimLess(SFXCast _castInfo, EntityCharacterBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo, Action _OnDead, Transform _blinkModels) : base(_castInfo, _controller, _transform, _GetBuffInfo)
+        bool b_activating;
+        public EnermyCasterSelfDetonateAnimLess(SFXCast _castInfo, EntityCharacterBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo, Transform _blinkModels) : base(_castInfo, _controller, _transform, _GetBuffInfo)
         {
-            OnDead = _OnDead;
             m_Blink = new ModelBlink(_blinkModels, .25f, .25f,Color.red);
             timeElapsed = 0;
+            b_activating = true;
         }
-        void Tick()
+        public override void Tick(float deltaTime)
         {
-            timeElapsed += Time.deltaTime;
+            base.Tick(deltaTime);
+            if (!b_activating||m_Entity.m_Health.b_IsDead)
+                return;
+            timeElapsed += deltaTime;
             float timeMultiply = 2f * (timeElapsed / 2f);
             m_Blink.Tick(Time.deltaTime * timeMultiply);
             if (timeElapsed > 2f)
             {
-                GameObjectManager.SpawnEquipment<SFXCast>(i_weaponIndex, attacherTransform.position, attacherTransform.forward).Play( GetDamageDeliverInfo());
-                OnDead();
-                this.StopSingleCoroutine(0);
+                GameObjectManager.SpawnEquipment<SFXCast>(i_weaponIndex, attacherTransform.position, attacherTransform.forward).Play(GetDamageDeliverInfo());
+                Debug.Log("???");
+                m_Entity.m_HitCheck.TryHit(new DamageInfo(m_Entity.m_Health.F_TotalEHP, enum_DamageType.Common,DamageDeliverInfo.Default(-1)));
+                b_activating = false;
             }
         }
         public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
+            if (b_activating)
+                return;
+
             timeElapsed = 0;
-            this.StartSingleCoroutine(0, TIEnumerators.Tick(Tick));
-        }
-        public override void OnDeactivate()
-        {
-            base.OnDeactivate();
-            this.StopSingleCoroutine(0);
+            b_activating = true;
         }
     }
     public class EquipmentCasterControlled : EquipmentCaster

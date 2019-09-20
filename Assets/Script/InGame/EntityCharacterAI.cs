@@ -32,7 +32,7 @@ public class EntityCharacterAI : EntityCharacterBase {
     {
         base.Init(entityPresetIndex);
         Transform tf_Barrel = transform.FindInAllChild("Barrel");
-        m_AI = new EnermyAIControllerBase(this, EquipmentBase.AcquireEquipment(GameExpression.GetAIEquipment(entityPresetIndex, 0),this,tf_Barrel,m_CharacterInfo.GetDamageBuffInfo,OnDead), OnAttackAnim, OnCheckTarget);
+        m_AI = new EnermyAIControllerBase(this, EquipmentBase.AcquireEquipment(GameExpression.GetAIEquipment(entityPresetIndex, 0),this,tf_Barrel,m_CharacterInfo.GetDamageBuffInfo), OnAttackAnim, OnCheckTarget);
     }
 
     public override void OnActivate(enum_EntityFlag _flag)
@@ -251,6 +251,7 @@ public class EntityCharacterAI : EntityCharacterBase {
             CheckBattle(deltaTime);
             ChecktAIDestination(deltaTime);
             CheckRotation(deltaTime);
+            if (m_Weapon!=null)  m_Weapon.Tick(deltaTime);
         }
         #region TargetIdentity
         void CheckTarget(float deltaTime)
