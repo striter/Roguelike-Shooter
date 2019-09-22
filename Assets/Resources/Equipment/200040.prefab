@@ -338,5 +338,5 @@ MonoBehaviour:
   B_RandomRotation: 1
   B_Bounce: 1
   F_BounceHitAngleMax: 0
-  F_BounceSpeedMultiply: 0.3
-  F_AdditionalLasetTimeAfterHit: 1
+  F_BounceSpeedMultiply: 0.4
+  F_AdditionalLasetTimeAfterHit: 0.5
