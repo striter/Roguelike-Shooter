@@ -132,7 +132,7 @@ public class SFXProjectile : SFXBase
                     HitCheckEntity entity = hitCheck as HitCheckEntity;
                     if (B_DealDamage && !m_EntityHitted.Contains(entity.I_AttacherID) && GameManager.B_CanDamageEntity(entity, m_sourceID))
                     {
-                        entity.TryHit(m_DamageInfo);
+                        entity.TryHit(m_DamageInfo, transform.forward);
                         m_EntityHitted.Add(entity.I_AttacherID);
                     }
                 }
