@@ -286,9 +286,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             PCInputManager.Instance.AddBinding<EntityCharacterPlayer>(enum_BindingsName.Fire, OnMainButtonDown);
             PCInputManager.Instance.AddBinding<EntityCharacterPlayer>(enum_BindingsName.Reload, OnReloadDown);
 #else
-        UIManager.OnMainDown = OnMainButtonDown;
-        UIManager.OnReload = OnReloadDown;
-        TouchDeltaManager.Instance.Bind(OnMovementDelta, OnRotateDelta);
+            UIManager.Instance.DoBinding(OnMovementDelta, OnRotateDelta, OnReloadDown, OnMainButtonDown);
 #endif
             return;
         }
@@ -296,10 +294,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         PCInputManager.Instance.DoBindingRemoval<EntityCharacterPlayer>();
         PCInputManager.Instance.RemoveMovementCheck();
         PCInputManager.Instance.RemoveRotateCheck();
-#else
-        UIManager.OnMainDown = null;
-        UIManager.OnReload = null;
-        TouchDeltaManager.Instance.Bind(null, null);
 #endif
     }
 

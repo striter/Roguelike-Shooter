@@ -5,8 +5,8 @@ using System;
 
 public class UIManager :SimpleSingletonMono<UIManager>
 {
-    public static Action OnReload;
-    public static Action<bool> OnMainDown;
+    public Action OnReload;
+    public Action<bool> OnMainDown;
     Transform tf_Top,tf_Pages,tf_LowerTools;
     Image img_main;
     public AtlasLoader m_commonSprites { get; private set; }
@@ -26,9 +26,14 @@ public class UIManager :SimpleSingletonMono<UIManager>
         tf_Top.Find("Settings").GetComponent<Button>().onClick.AddListener(() => { ShowPage<UI_Options>(inGame).SetInGame(inGame); });
         if(inGame) ShowTools<UI_EntityHealth>();
         ShowTools<UI_PlayerStatus>().SetInGame(inGame);
-        GetComponent<TouchDeltaManager>().SetJoystick(tf_Top.Find("JoyStick").GetComponent<UIT_JoyStick>(), enum_JoyStickMode.Retarget);
         if (inGame) transform.Find("Test/SeedTest").GetComponent<Text>().text = GameManager.Instance.m_GameLevel.m_Seed;   //Test
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnPlayerStatusChanged);
+    }
+    public void DoBinding(Action<Vector2> _OnLeftDelta,Action<Vector2> _OnRightDelta,Action _OnReload,Action<bool> _OnMainDown )
+    {
+        GetComponent<TouchDeltaManager>().SetJoystick(tf_Top.Find("JoyStick").GetComponent<UIT_JoyStick>(),_OnLeftDelta,_OnRightDelta);
+        OnReload = _OnReload;
+        OnMainDown = _OnMainDown;
     }
 
     protected override void OnDestroy()
