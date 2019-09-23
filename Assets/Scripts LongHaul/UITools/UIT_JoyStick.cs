@@ -22,7 +22,7 @@ public class UIT_JoyStick : SimpleSingletonMono<UIT_JoyStick>
 #endif
     RectTransform rtf_Main;
     RectTransform rtf_Center;
-    enum_Option_JoyStickMode m_Mode= enum_Option_JoyStickMode.Retarget;
+    enum_Option_JoyStickMode m_Mode= enum_Option_JoyStickMode.Invalid;
     JoyStickBase m_JoystickControl;
     Vector2 v2_startPos;
     public float m_JoyStickRaidus { get; private set; }
@@ -33,7 +33,6 @@ public class UIT_JoyStick : SimpleSingletonMono<UIT_JoyStick>
         rtf_Center = transform.Find("Center").GetComponent<RectTransform>();
         v2_startPos = rtf_Main.anchoredPosition;
         m_JoyStickRaidus = Mathf.Abs( rtf_Main.sizeDelta.y/2)-Mathf.Abs( rtf_Center.sizeDelta.y/2);
-        SetMode(m_Mode);
     }
     public void SetMode(enum_Option_JoyStickMode mode)
     {
