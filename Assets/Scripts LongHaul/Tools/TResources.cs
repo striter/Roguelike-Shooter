@@ -36,7 +36,6 @@ public class TResources
 
     #region UI
     public static UIManager InstantiateUIManager() => Instantiate<UIManager>(ConstPath.S_UI_Manager);
-    public static AtlasLoader GetUIAtlas_Weapon() => new AtlasLoader(Load<SpriteAtlas>(ConstPath.S_UI_Atlas_Weapon));
     public static AtlasLoader GetUIAtlas_Numeric() => new AtlasLoader(Load<SpriteAtlas>(ConstPath.S_UI_Atlas_Numeric));
     public static AtlasLoader GetUIAtlas_Common() =>  new AtlasLoader(Load<SpriteAtlas>(ConstPath.S_UI_Atlas_Common));
     #endregion

@@ -16,7 +16,6 @@ public class UIManager :SimpleSingletonMono<UIManager>
     public static void Activate(bool inGame) => TResources.InstantiateUIManager().Init(inGame);
     protected void Init(bool inGame)
     {
-        TResources.GetUIAtlas_Weapon();
         m_commonSprites = TResources.GetUIAtlas_Common();
 
         tf_Top = transform.Find("Top");
