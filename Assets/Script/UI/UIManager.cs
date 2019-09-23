@@ -29,7 +29,9 @@ public class UIManager :SimpleSingletonMono<UIManager>
         ShowTools<UI_PlayerStatus>().SetInGame(inGame);
         if (inGame) transform.Find("Test/SeedTest").GetComponent<Text>().text = GameManager.Instance.m_GameLevel.m_Seed;   //Test
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnPlayerStatusChanged);
+
         m_TouchDelta = GetComponent<TouchDeltaManager>();
+        OnOptionsChanged();
         OptionsManager.event_OptionChanged += OnOptionsChanged;
     }
     protected override void OnDestroy()
@@ -39,10 +41,10 @@ public class UIManager :SimpleSingletonMono<UIManager>
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnPlayerStatusChanged);
     }
 
-    void OnOptionsChanged()=> m_TouchDelta.SetMode(OptionsManager.m_OptionsData.m_JoyStickMode);
+    void OnOptionsChanged()=> UIT_JoyStick.Instance.SetMode(OptionsManager.m_OptionsData.m_JoyStickMode);
     public void DoBinding(Action<Vector2> _OnLeftDelta,Action<Vector2> _OnRightDelta,Action _OnReload,Action<bool> _OnMainDown )
     {
-        m_TouchDelta.SetJoystick(tf_Top.Find("JoyStick").GetComponent<UIT_JoyStick>(),_OnLeftDelta,_OnRightDelta);
+        m_TouchDelta.DoBinding(_OnLeftDelta,_OnRightDelta);
         OnReload = _OnReload;
         OnMainDown = _OnMainDown;
     }

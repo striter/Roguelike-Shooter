@@ -10,11 +10,14 @@ public class GameManagerBase<T> : SimpleSingletonMono<T> where T:MonoBehaviour{
     {
         base.Awake();
         GameDataManager.Init();
-        OptionsManager.Init();
         GameObjectManager.Init();
         GameIdentificationManager.Init();
         TBroadCaster<enum_BC_GameStatus>.Init();
         TBroadCaster<enum_BC_UIStatus>.Init();
+        OptionsManager.Init();
+    }
+    protected virtual void Start()
+    {
     }
 }
 
@@ -49,7 +52,6 @@ public static class OptionsManager
     public static void Init()
     {
         m_OptionsData = TGameData<CGameOptions>.Read();
-        OnOptionChanged();
     }
 
     public static void Save()

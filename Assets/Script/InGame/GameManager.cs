@@ -128,8 +128,9 @@ public class GameManager : GameManagerBase<GameManager>, ISingleCoroutine
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityDeactivate, OnEntityDeactivate);
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
     }
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
         UIManager.Activate(true);
         StartStage();
     }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum enum_Option_JoyStickMode { Invalid=-1,Retarget=1,Stational=2,}
 
 public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
 {
@@ -10,18 +9,14 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
     Action<Vector2> OnLeftDelta,OnRightDelta;
     Vector2 leftDelta = Vector2.zero;
     Vector2 rightDelta = Vector2.zero;
-    UIT_JoyStick m_Joystick;
-    public enum_Option_JoyStickMode m_Mode { get; private set; } = enum_Option_JoyStickMode.Invalid;
-    public void SetMode(enum_Option_JoyStickMode mode) => m_Mode = mode;
-    public void SetJoystick(UIT_JoyStick joyStick, Action<Vector2> _OnLeftDelta, Action<Vector2> _OnRightDelta)
+    public void DoBinding(Action<Vector2> _OnLeftDelta, Action<Vector2> _OnRightDelta)
     {
-        m_Joystick = joyStick;
         OnLeftDelta = _OnLeftDelta;
         OnRightDelta = _OnRightDelta;
     }
     private void Update()
     {
-        if (!m_Joystick)  return;
+        if (!UIT_JoyStick.Instance)  return;
 
         rightDelta = Vector2.zero;
         foreach (Touch t in Input.touches)
@@ -32,7 +27,7 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
                 if (m_TrackLeft == null && track.isLeft && track.isDown)
                 {
                     m_TrackLeft = track;
-                    m_Joystick.SetPos(m_TrackLeft.v2_startPos, Vector2.zero);
+                    UIT_JoyStick.Instance.OnActivate(true,m_TrackLeft.v2_startPos);
                 }
                 else if (m_TrackRight == null && !track.isLeft)
                 {
@@ -44,7 +39,10 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
                 if (m_TrackLeft != null && t.fingerId == m_TrackLeft.m_Touch.fingerId)
                     m_TrackLeft = null;
                 if (m_TrackRight != null && t.fingerId == m_TrackRight.m_Touch.fingerId)
+                {
                     m_TrackRight = null;
+                    UIT_JoyStick.Instance.OnActivate(false, t.position);
+                }
             }
             else if (t.phase == TouchPhase.Moved)
             {
@@ -56,20 +54,10 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
                 else if (m_TrackLeft != null && t.fingerId == m_TrackLeft.m_Touch.fingerId)
                 {
                     m_TrackLeft.Record(t);
-                    switch (m_Mode)
-                    {
-                        case enum_Option_JoyStickMode.Retarget:
-                            Vector2 centerOffset = Vector2.Distance(t.position, m_TrackLeft.v2_startPos) > m_Joystick.m_JoyStickRaidus ? (t.position - m_TrackLeft.v2_startPos).normalized * m_Joystick.m_JoyStickRaidus : t.position - m_TrackLeft.v2_startPos;
-                            leftDelta = centerOffset / m_Joystick.m_JoyStickRaidus;
-                            m_Joystick.SetPos(m_TrackLeft.v2_startPos, centerOffset);
-                            break;
-                    }
+                    leftDelta= UIT_JoyStick.Instance.OnMoved(t.position);
                 }
             }
         }
-
-        m_Joystick.SetActivate(m_TrackLeft!=null);
-
         OnLeftDelta?.Invoke(m_TrackLeft!=null?leftDelta : Vector2.zero);
         OnRightDelta?.Invoke(rightDelta);
     }

@@ -61,6 +61,7 @@ public class UIPageBase : MonoBehaviour,ISingleCoroutine
 
     protected virtual void OnDestroy()
     {
+        t_curPage = null;
         this.StopAllSingleCoroutines();
     }
 }

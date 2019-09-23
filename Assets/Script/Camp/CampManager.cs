@@ -23,8 +23,9 @@ public class CampManager : GameManagerBase<CampManager>{
             }
         });
     }
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
         UIManager.Activate(false);
         CameraEffectManager.AddCameraEffect<PE_BloomSpecific>();
         GameObjectManager.PresetRegistCommonObject();
