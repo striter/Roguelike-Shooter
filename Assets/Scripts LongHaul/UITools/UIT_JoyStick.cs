@@ -61,6 +61,7 @@ public class UIT_JoyStick : SimpleSingletonMono<UIT_JoyStick>
     public Vector2 OnMoved(Vector2 pos)
     {
         Vector2 delta= m_JoystickControl.OnMoved(pos);
+        Debug.Log(delta);
         ResetStatus();
         return delta;
     }
@@ -84,7 +85,7 @@ public class UIT_JoyStick : SimpleSingletonMono<UIT_JoyStick>
         }
         public virtual void OnActivate(bool activate, Vector2 pos)
         {
-
+            m_JoyStickOffset = Vector2.zero;
         }
         public virtual Vector2 OnMoved(Vector2 pos)
         {
@@ -109,15 +110,11 @@ public class UIT_JoyStick : SimpleSingletonMono<UIT_JoyStick>
             base.OnActivate(activate, pos);
             if (!activate)
             {
-                m_JoyStickOffset = Vector2.zero;
                 enabled = false;
                 return;
             }
-
-            enabled = Vector2.Distance(pos,m_BasePos)<m_JoystickRadius;
-            if (enabled)
-                m_JoyStickOffset = pos;
-            }
+            enabled = Vector2.Distance(pos,m_BasePos)<m_JoystickRadius*2f;
+         }
 
         public override Vector2 OnMoved(Vector2 pos)
         {

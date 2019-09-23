@@ -7,8 +7,6 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
 {
     TouchTracker m_TrackLeft, m_TrackRight;
     Action<Vector2> OnLeftDelta,OnRightDelta;
-    Vector2 leftDelta = Vector2.zero;
-    Vector2 rightDelta = Vector2.zero;
     public void DoBinding(Action<Vector2> _OnLeftDelta, Action<Vector2> _OnRightDelta)
     {
         OnLeftDelta = _OnLeftDelta;
@@ -18,7 +16,6 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
     {
         if (!UIT_JoyStick.Instance)  return;
 
-        rightDelta = Vector2.zero;
         foreach (Touch t in Input.touches)
         {
             if (t.phase == TouchPhase.Began)
@@ -37,29 +34,27 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
             else if (t.phase == TouchPhase.Ended||t.phase== TouchPhase.Canceled)
             {
                 if (m_TrackLeft != null && t.fingerId == m_TrackLeft.m_Touch.fingerId)
-                    m_TrackLeft = null;
-                if (m_TrackRight != null && t.fingerId == m_TrackRight.m_Touch.fingerId)
                 {
-                    m_TrackRight = null;
+                    m_TrackLeft = null;
                     UIT_JoyStick.Instance.OnActivate(false, t.position);
                 }
+                if (m_TrackRight != null && t.fingerId == m_TrackRight.m_Touch.fingerId)
+                    m_TrackRight = null;
             }
             else if (t.phase == TouchPhase.Moved)
             {
                 if (m_TrackRight!=null&&t.fingerId == m_TrackRight.m_Touch.fingerId)
                 {
                     m_TrackRight.Record(t);
-                    rightDelta = t.deltaPosition;
+                    OnLeftDelta(t.deltaPosition);
                 }
                 else if (m_TrackLeft != null && t.fingerId == m_TrackLeft.m_Touch.fingerId)
                 {
                     m_TrackLeft.Record(t);
-                    leftDelta= UIT_JoyStick.Instance.OnMoved(t.position);
+                    OnRightDelta(UIT_JoyStick.Instance.OnMoved(t.position));
                 }
             }
         }
-        OnLeftDelta?.Invoke(m_TrackLeft!=null?leftDelta : Vector2.zero);
-        OnRightDelta?.Invoke(rightDelta);
     }
     
     class TouchTracker
