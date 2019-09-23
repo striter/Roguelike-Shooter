@@ -37,7 +37,6 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
     }
     private void OnGUI()
     {
-
         GUILayout.BeginVertical();
         if (EditorSceneManager.GetActiveScene().name != "Game")
         {
@@ -47,7 +46,6 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
         }
 
         Init();
-
 
         if (selectingStyleType == enum_Style.Invalid)
             TCommon.TraversalEnum((enum_Style style) =>

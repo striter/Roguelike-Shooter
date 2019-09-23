@@ -19,6 +19,7 @@ public class UIT_EasyScreenLog : SimpleSingletonMono<UIT_EasyScreenLog> {
         UIText_Log = this.GetComponent<Text>();
         UIText_Log.text = "";
     }
+
     private void OnEnable()
     {
         Application.logMessageReceived += OnLogReceived;
@@ -27,6 +28,7 @@ public class UIT_EasyScreenLog : SimpleSingletonMono<UIT_EasyScreenLog> {
     {
         Application.logMessageReceived -= OnLogReceived;
     }
+
     void OnLogReceived(string info,string trace,LogType type)
     {
         log tempLog = new log();

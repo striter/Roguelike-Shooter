@@ -52,6 +52,7 @@ public static class OptionsManager
     public static void Init()
     {
         m_OptionsData = TGameData<CGameOptions>.Read();
+        OnOptionChanged();
     }
 
     public static void Save()
