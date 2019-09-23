@@ -28,7 +28,7 @@ public class TResources
         public const string S_PETex_NoiseFog = "Texture/PE_NoiseFog";
         public const string S_PETex_Holograph = "Texture/PE_Holograph";
 
-        public const string S_UI_Atlas_Game = "UI/Atlas/Atlas_InGame";
+        public const string S_UI_Atlas_Weapon = "UI/Atlas/Atlas_Weapon";
         public const string S_UI_Atlas_Numeric = "UI/Atlas/Atlas_Numeric";
         public const string S_UI_Atlas_Common = "UI/Atlas/Atlas_Common";
         public const string S_UI_Manager = "UI/UIManager";
@@ -36,8 +36,9 @@ public class TResources
 
     #region UI
     public static UIManager InstantiateUIManager() => Instantiate<UIManager>(ConstPath.S_UI_Manager);
+    public static AtlasLoader GetUIAtlas_Weapon() => new AtlasLoader(Load<SpriteAtlas>(ConstPath.S_UI_Atlas_Weapon));
     public static AtlasLoader GetUIAtlas_Numeric() => new AtlasLoader(Load<SpriteAtlas>(ConstPath.S_UI_Atlas_Numeric));
-    public static AtlasLoader GetUIAtlas_Common() => new AtlasLoader(Load<SpriteAtlas>(ConstPath.S_UI_Atlas_Common));
+    public static AtlasLoader GetUIAtlas_Common() =>  new AtlasLoader(Load<SpriteAtlas>(ConstPath.S_UI_Atlas_Common));
     #endregion
     #region Game
     public static StyleColorData[] GetAllStyleCustomization(enum_Style levelStype) => LoadAll<StyleColorData>(ConstPath.S_StyleCustomization + "/" + levelStype);

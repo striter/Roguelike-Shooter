@@ -1,6 +1,4 @@
-﻿using UnityEditor;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine.UI;
 public class UIT_TextLocalization : Text
 {
     public bool B_AutoLocalize = false;

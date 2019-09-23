@@ -11,7 +11,7 @@ SpriteAtlas:
       serializedVersion: 2
       anisoLevel: 1
       compressionQuality: 50
-      maxTextureSize: 2048
+      maxTextureSize: 4096
       textureCompression: 2
       filterMode: 1
       generateMipMaps: 0
@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 945468
+    totalSpriteSurfaceArea: 892558
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -38,7 +38,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 5123fc87ce124874ba38706389ab6c6e, type: 3}
   - {fileID: 21300000, guid: 333c96faa0f449f45aabf7004c250e02, type: 3}
   - {fileID: 21300000, guid: cfe64325d22560f49823caf4595b2960, type: 3}
-  - {fileID: 21300000, guid: b7327ece840130841a29663d6131fc34, type: 3}
   - {fileID: 21300000, guid: d33c057b45a868a46ab6ec37970d1b5c, type: 3}
   - {fileID: 21300000, guid: 173d8287c10b45f46bd5d6ebd4788330, type: 3}
   - {fileID: 21300000, guid: 4853f005632d2f44da1f424b8a9bbebb, type: 3}
@@ -78,7 +77,6 @@ SpriteAtlas:
   - display_weapon_bottom
   - display_StatusBar_bottom
   - btn_map_bottom
-  - icon_weapon_common_big
   - btn_reload
   - display_ActionEnergy_progress_full
   - display_ActionEnergy_progress_bottom

@@ -61,7 +61,6 @@ public class UIT_JoyStick : SimpleSingletonMono<UIT_JoyStick>
     public Vector2 OnMoved(Vector2 pos)
     {
         Vector2 delta= m_JoystickControl.OnMoved(pos);
-        Debug.Log(delta);
         ResetStatus();
         return delta;
     }

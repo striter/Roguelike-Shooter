@@ -37,21 +37,25 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
                 {
                     m_TrackLeft = null;
                     UIT_JoyStick.Instance.OnActivate(false, t.position);
+                    OnLeftDelta(Vector2.zero);
                 }
                 if (m_TrackRight != null && t.fingerId == m_TrackRight.m_Touch.fingerId)
+                {
                     m_TrackRight = null;
+                    OnRightDelta(Vector2.zero);
+                }
             }
             else if (t.phase == TouchPhase.Moved)
             {
                 if (m_TrackRight!=null&&t.fingerId == m_TrackRight.m_Touch.fingerId)
                 {
                     m_TrackRight.Record(t);
-                    OnLeftDelta(t.deltaPosition);
+                    OnRightDelta(t.deltaPosition);
                 }
                 else if (m_TrackLeft != null && t.fingerId == m_TrackLeft.m_Touch.fingerId)
                 {
                     m_TrackLeft.Record(t);
-                    OnRightDelta(UIT_JoyStick.Instance.OnMoved(t.position));
+                    OnLeftDelta(UIT_JoyStick.Instance.OnMoved(t.position));
                 }
             }
         }
