@@ -36,6 +36,7 @@ namespace GameSetting
         public const float F_PlayerDamageAdjustmentRange = .1f;
         public const float F_PlayerCameraSmoothParam = 1f;     //Camera Smooth Param For Player .2 is suggested
 
+        public const float F_AIDamageTranslate = .03f;
         public const float F_AIMovementCheckParam = .3f;
         public const float F_AITargetCheckParam = 3f;       //AI Retarget Duration,3 is suggested
         public const float F_AITargetCalculationParam = 1f;       //AI Target Param Calculation Duration, 1 is suggested;

@@ -12,16 +12,10 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
     Vector2 rightDelta = Vector2.zero;
     UIT_JoyStick m_Joystick;
     public enum_JoyStickMode m_Mode { get; private set; } = enum_JoyStickMode.Invalid;
-    public void SetJoystick(UIT_JoyStick joyStick, enum_JoyStickMode mode)
+    public void SetMode(enum_JoyStickMode mode) => m_Mode = mode;
+    public void SetJoystick(UIT_JoyStick joyStick, Action<Vector2> _OnLeftDelta, Action<Vector2> _OnRightDelta)
     {
         m_Joystick = joyStick;
-        m_Mode = mode;
-    }
-    public void DoBinding(Action<Vector2> _OnLeftDelta,Action<Vector2> _OnRightDelta)
-    {
-        if (!m_Joystick)
-            Debug.LogError("Set JoyStick Before Use TouchDeltaManager!");
-
         OnLeftDelta = _OnLeftDelta;
         OnRightDelta = _OnRightDelta;
     }

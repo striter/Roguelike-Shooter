@@ -30,7 +30,7 @@ public class EntityBase : MonoBehaviour
         m_HitChecks.Traversal((HitCheckEntity check) => { check.Attach(this, OnReceiveDamage); check.SetEnable(true); });
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityActivate, this);
     }
-    protected virtual bool OnReceiveDamage(DamageInfo damageInfo)
+    protected virtual bool OnReceiveDamage(DamageInfo damageInfo,Vector3 damageDirection)
     {
         if (m_Health.b_IsDead)
             return false;
