@@ -36,7 +36,7 @@ namespace GameSetting
         public const float F_PlayerDamageAdjustmentRange = .1f;
         public const float F_PlayerCameraSmoothParam = 1f;     //Camera Smooth Param For Player .2 is suggested
 
-        public const float F_AIDamageTranslate = .03f;
+        public const float F_AIDamageTranslate = 0;   //.003f;
         public const float F_AIMovementCheckParam = .3f;
         public const float F_AITargetCheckParam = 3f;       //AI Retarget Duration,3 is suggested
         public const float F_AITargetCalculationParam = 1f;       //AI Target Param Calculation Duration, 1 is suggested;
@@ -210,15 +210,6 @@ namespace GameSetting
         }
     }
 
-    public static class LocalizationKeyJoint
-    {
-        public static string GetNameLocalizeKey(this BuffBase buff) => "Buff_Name_" + buff.m_Index;
-        public static string GetNameLocalizeKey(this ActionBase action) => "Action_Name_" + action.m_Index;
-        public static string GetIntroLocalizeKey(this ActionBase action) => "Action_Intro_" + action.m_Index;
-        public static string GetLocalizeKey(this enum_RarityLevel level) => "Action_Level_" + level;
-        public static string GetNameLocalizeKey(this enum_PlayerWeapon weapon) => "Weapon_Name_" + weapon;
-        public static string GetInteractTitle(this enum_Interaction interact) => "Interact_" + interact;
-    }
     #endregion
 
     #region For Developers Use
@@ -369,7 +360,7 @@ namespace GameSetting
         Heavy_Remote_164 = 164,
     }
 
-    public enum enum_UI_Option_FrameRate { Invalid=-1,FPS30=30,FPS60=60,}
+    public enum enum_Option_FrameRate { Invalid=-1,FPS30=30,FPS60=60,}
     #endregion
 
     #region GameLayer
@@ -405,6 +396,7 @@ namespace GameSetting
             f_blue -= amount;
         }
     }
+
     public class CPlayerGameSave : ISave
     {
         public enum_PlayerWeapon m_weapon;
@@ -434,8 +426,27 @@ namespace GameSetting
             m_kills = _record.i_entitiesKilled;
         }
     }
-    public class CPlayerOptions : ISave
+
+    public class CGameOptions : ISave
     {
+        public enum_Option_JoyStickMode m_JoyStickMode;
+        public enum_Option_FrameRate m_FrameRate;
+        public enum_Option_LanguageRegion m_Region;
+        public float m_MusicVolume;
+        public float m_VFXVolume;
+        public float m_Sensitive;
+        public bool m_AdditionalLight;
+
+        public CGameOptions()
+        {
+            m_JoyStickMode = enum_Option_JoyStickMode.Retarget;
+            m_FrameRate = enum_Option_FrameRate.FPS60;
+            m_Region = enum_Option_LanguageRegion.CN;
+            m_Sensitive = .4f;
+            m_MusicVolume = .8f;
+            m_VFXVolume = .8f;
+            m_AdditionalLight = false;
+        }
     }
     #endregion
 
@@ -1980,6 +1991,19 @@ namespace GameSetting
         Upgradeable=1,
         LackOfCoins=2,
         MaxLevel=3,
+    }
+
+    public static class LocalizationKeyJoint
+    {
+        public static string GetNameLocalizeKey(this BuffBase buff) => "Buff_Name_" + buff.m_Index;
+        public static string GetNameLocalizeKey(this ActionBase action) => "Action_Name_" + action.m_Index;
+        public static string GetIntroLocalizeKey(this ActionBase action) => "Action_Intro_" + action.m_Index;
+        public static string GetLocalizeKey(this enum_RarityLevel level) => "Action_Level_" + level;
+        public static string GetNameLocalizeKey(this enum_PlayerWeapon weapon) => "Weapon_Name_" + weapon;
+        public static string GetInteractTitle(this enum_Interaction interact) => "Interact_" + interact;
+        public static string GetLocalizeKey(this enum_Option_FrameRate frameRate) => "UI_Option_" + frameRate;
+        public static string GetLocalizeKey(this enum_Option_JoyStickMode joystick) => "UI_Option_" + joystick;
+        public static string GetLocalizeKey(this enum_Option_LanguageRegion region) => "UI_Option_" + region;
     }
     #endregion
 

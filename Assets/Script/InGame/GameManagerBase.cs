@@ -45,17 +45,24 @@ public class GameIdentificationManager
 
 public static class OptionsManager
 {
-    public static bool B_AdditionalLight = true;
-    public static event Action event_OptionChanged;
-    public static enum_LanguageRegion m_currentLanguage = enum_LanguageRegion.CN;
+    public static CGameOptions m_OptionsData;
     public static void Init()
     {
-        Application.targetFrameRate = 60;
-        TLocalization.SetRegion(m_currentLanguage);
+        m_OptionsData = TGameData<CGameOptions>.Read();
+        OnOptionChanged();
     }
 
+    public static void Save()
+    {
+        TGameData<CGameOptions>.Save(m_OptionsData);
+        OnOptionChanged();
+    }
+
+    public static event Action event_OptionChanged;
     public static void OnOptionChanged()
     {
+        Application.targetFrameRate = (int)m_OptionsData.m_FrameRate;
+        TLocalization.SetRegion(m_OptionsData.m_Region);
         event_OptionChanged?.Invoke();
     }
 }

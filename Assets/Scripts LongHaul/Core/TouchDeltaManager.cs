@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum enum_JoyStickMode { Invalid=-1,Retarget=1,Stational=2,}
+public enum enum_Option_JoyStickMode { Invalid=-1,Retarget=1,Stational=2,}
 
 public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
 {
@@ -11,8 +11,8 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
     Vector2 leftDelta = Vector2.zero;
     Vector2 rightDelta = Vector2.zero;
     UIT_JoyStick m_Joystick;
-    public enum_JoyStickMode m_Mode { get; private set; } = enum_JoyStickMode.Invalid;
-    public void SetMode(enum_JoyStickMode mode) => m_Mode = mode;
+    public enum_Option_JoyStickMode m_Mode { get; private set; } = enum_Option_JoyStickMode.Invalid;
+    public void SetMode(enum_Option_JoyStickMode mode) => m_Mode = mode;
     public void SetJoystick(UIT_JoyStick joyStick, Action<Vector2> _OnLeftDelta, Action<Vector2> _OnRightDelta)
     {
         m_Joystick = joyStick;
@@ -21,6 +21,8 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
     }
     private void Update()
     {
+        if (!m_Joystick)  return;
+
         rightDelta = Vector2.zero;
         foreach (Touch t in Input.touches)
         {
@@ -56,7 +58,7 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
                     m_TrackLeft.Record(t);
                     switch (m_Mode)
                     {
-                        case enum_JoyStickMode.Retarget:
+                        case enum_Option_JoyStickMode.Retarget:
                             Vector2 centerOffset = Vector2.Distance(t.position, m_TrackLeft.v2_startPos) > m_Joystick.m_JoyStickRaidus ? (t.position - m_TrackLeft.v2_startPos).normalized * m_Joystick.m_JoyStickRaidus : t.position - m_TrackLeft.v2_startPos;
                             leftDelta = centerOffset / m_Joystick.m_JoyStickRaidus;
                             m_Joystick.SetPos(m_TrackLeft.v2_startPos, centerOffset);
@@ -71,6 +73,7 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
         OnLeftDelta?.Invoke(m_TrackLeft!=null?leftDelta : Vector2.zero);
         OnRightDelta?.Invoke(rightDelta);
     }
+    
     class TouchTracker
     {
         static float f_halfHorizontal = Screen.width / 2;

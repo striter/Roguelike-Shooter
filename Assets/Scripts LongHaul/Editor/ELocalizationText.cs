@@ -23,7 +23,7 @@ public class ELocalizationText : UnityEditor.UI.TextEditor
             m_target.S_AutoLocalizeKey= GUILayout.TextArea(m_target.S_AutoLocalizeKey, GUILayout.Width(Screen.width * 2 / 3 - 20));
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
-            TLocalization.SetRegion(enum_LanguageRegion.CN);
+            TLocalization.SetRegion(enum_Option_LanguageRegion.CN);
             GUILayout.Label("Localized Text:", GUILayout.Width(Screen.width / 3 - 20));
             GUILayout.Label( TLocalization.CanLocalize(m_target.S_AutoLocalizeKey) ? TLocalization.GetKeyLocalized(m_target.S_AutoLocalizeKey) : "Unable To Localize", GUILayout.Width(Screen.width * 2 / 3 - 20));
             GUILayout.EndHorizontal();

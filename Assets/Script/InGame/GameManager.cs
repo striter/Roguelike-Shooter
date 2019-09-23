@@ -103,11 +103,6 @@ public class GameManager : GameManagerBase<GameManager>, ISingleCoroutine
             GameObjectManager.SpawnInteract<InteractPickupCoin>(enum_Interaction.PickupCoin, LevelManager.NavMeshPosition(hit.point, false), null).Play(10, m_LocalPlayer.transform);
         if (Input.GetKeyDown(KeyCode.KeypadMinus))
             m_LocalPlayer.m_PlayerInfo.AddActionAmount(1);
-        if (OptionsManager.B_AdditionalLight != B_AdditionalLight)
-        {
-            OptionsManager.B_AdditionalLight = B_AdditionalLight;
-            OptionsManager.OnOptionChanged();
-        }
     }
     #endregion
 #endif
@@ -210,10 +205,7 @@ public class GameManager : GameManagerBase<GameManager>, ISingleCoroutine
         float coin = GameExpression.GetResultRewardCoins(levelScore+killScore);
         GameDataManager.m_PlayerInfo.f_blue += coin;
         GameDataManager.SavePlayerData();
-        UIManager.Instance.ShowPage<UI_GameResult>(true).Play(win, levelScore, killScore, coin,()=> {
-            GameObjectManager.RecycleAllObject();
-            TSceneLoader.Instance.LoadScene( enum_Scene.Main);
-        });
+        UIManager.Instance.ShowPage<UI_GameResult>(true).Play(win, levelScore, killScore, coin, OnExitGame);
     }
     #endregion
     #region InteractManagement
@@ -468,6 +460,12 @@ public class GameManager : GameManagerBase<GameManager>, ISingleCoroutine
         Time.timeScale = m_BulletTiming ? .1f : 1f;
     }
     #endregion
+
+    public void OnExitGame()
+    {
+        GameObjectManager.RecycleAllObject();
+        TSceneLoader.Instance.LoadScene(enum_Scene.Main);
+    }
 }
 #region External Tools Packaging Class
 public class GameLevelManager

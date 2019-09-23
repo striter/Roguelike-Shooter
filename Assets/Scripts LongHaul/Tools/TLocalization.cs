@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 #pragma warning disable 0649        //Warnning Closed Cause  Use Private Field To Protected Value Set By Reflection 
-public enum enum_LanguageRegion
+public enum enum_Option_LanguageRegion
 {
     CN=1,
     EN=2,
@@ -11,9 +11,9 @@ public static class TLocalization
 {
     public static bool IsInit = false;
     public static event Action OnLocaleChanged;
-    public static enum_LanguageRegion e_CurLocation { get; private set; }
+    public static enum_Option_LanguageRegion e_CurLocation { get; private set; }
     static Dictionary<string, string> CurLocalization = new Dictionary<string, string>();
-    public static void SetRegion(enum_LanguageRegion location)
+    public static void SetRegion(enum_Option_LanguageRegion location)
     {
         if (e_CurLocation == location)
             return;
@@ -24,7 +24,7 @@ public static class TLocalization
 
         for (int i = 1; i < data[0].Length; i++)
         {
-            if (data[0][i] != ((enum_LanguageRegion)i).ToString())
+            if (data[0][i] != ((enum_Option_LanguageRegion)i).ToString())
                 Debug.LogError("SLocalizataion Not Init Propertly:" + i.ToString());    
         }
 

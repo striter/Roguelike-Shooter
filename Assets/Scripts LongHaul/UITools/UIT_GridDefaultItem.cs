@@ -24,7 +24,8 @@ public class UIT_GridDefaultItem : UIT_GridItem {
     {
         OnItemClick = _OnItemClick;
     }
-        public void SetItemInfo(string defaultText = "", bool highLight = false, Sprite defaultSprite = null, bool setNativeSize = false)
+
+    public void SetItemInfo(string defaultText = "", bool highLight = false, Sprite defaultSprite = null, bool setNativeSize = false)
     {
         if (defaultText != "")
             txt_Default.text = defaultText;

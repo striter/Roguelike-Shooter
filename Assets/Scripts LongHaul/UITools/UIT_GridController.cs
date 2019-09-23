@@ -214,10 +214,6 @@ public class UIT_GridDefaultSingle<T> : UIT_GridControllerMonoItem<T> where T : 
         base.OnItemAdd(item, identity);
         item.SetDefaultOnClick(OnItemClick);
     }
-    public void DeHighlightAll()
-    {
-        I_CurrentSelecting = -1;
-    }
     public override void RemoveItem(int identity)
     {
         base.RemoveItem(identity);

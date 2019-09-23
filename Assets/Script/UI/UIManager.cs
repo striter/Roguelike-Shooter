@@ -9,6 +9,7 @@ public class UIManager :SimpleSingletonMono<UIManager>
     public Action<bool> OnMainDown;
     Transform tf_Top,tf_Pages,tf_LowerTools;
     Image img_main;
+    TouchDeltaManager m_TouchDelta;
     public AtlasLoader m_commonSprites { get; private set; }
     public T ShowPage<T>(bool animate) where T : UIPageBase => UIPageBase.ShowPage<T>(tf_Pages, animate);
     protected T ShowTools<T>() where T : UIToolsBase => UIToolsBase.Show<T>(tf_LowerTools);
@@ -28,18 +29,22 @@ public class UIManager :SimpleSingletonMono<UIManager>
         ShowTools<UI_PlayerStatus>().SetInGame(inGame);
         if (inGame) transform.Find("Test/SeedTest").GetComponent<Text>().text = GameManager.Instance.m_GameLevel.m_Seed;   //Test
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnPlayerStatusChanged);
+        m_TouchDelta = GetComponent<TouchDeltaManager>();
+        OptionsManager.event_OptionChanged += OnOptionsChanged;
     }
-    public void DoBinding(Action<Vector2> _OnLeftDelta,Action<Vector2> _OnRightDelta,Action _OnReload,Action<bool> _OnMainDown )
-    {
-        GetComponent<TouchDeltaManager>().SetJoystick(tf_Top.Find("JoyStick").GetComponent<UIT_JoyStick>(),_OnLeftDelta,_OnRightDelta);
-        OnReload = _OnReload;
-        OnMainDown = _OnMainDown;
-    }
-
     protected override void OnDestroy()
     {
         base.OnDestroy();
+        OptionsManager.event_OptionChanged -= OnOptionsChanged;
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnPlayerStatusChanged);
+    }
+
+    void OnOptionsChanged()=> m_TouchDelta.SetMode(OptionsManager.m_OptionsData.m_JoyStickMode);
+    public void DoBinding(Action<Vector2> _OnLeftDelta,Action<Vector2> _OnRightDelta,Action _OnReload,Action<bool> _OnMainDown )
+    {
+        m_TouchDelta.SetJoystick(tf_Top.Find("JoyStick").GetComponent<UIT_JoyStick>(),_OnLeftDelta,_OnRightDelta);
+        OnReload = _OnReload;
+        OnMainDown = _OnMainDown;
     }
 
     string m_mainSprite;

@@ -22,19 +22,19 @@ public class SFXRelativeLight : SFXRelativeBase {
     }
     void OnOptionChange()
     {
-        if (m_Light.enabled && !OptionsManager.B_AdditionalLight)
+        if (m_Light.enabled && !OptionsManager.m_OptionsData.m_AdditionalLight)
             m_Light.enabled=false;
     }
     public override void Play()
     {
-        if (!OptionsManager.B_AdditionalLight)
+        if (!OptionsManager.m_OptionsData.m_AdditionalLight)
             return;
         m_Light.enabled = true;
     }
 
     public override void Stop()
     {
-        if (!OptionsManager.B_AdditionalLight)
+        if (!OptionsManager.m_OptionsData.m_AdditionalLight)
             return;
         m_Light.enabled = false;
     }
