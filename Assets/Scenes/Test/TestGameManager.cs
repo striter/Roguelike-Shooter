@@ -7,8 +7,9 @@ public class TestGameManager : GameManager {
     {
         Instance = this;
     }
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
 //        PostEffectManager.AddPostEffect<PE_ViewDepth>();
         CameraEffectManager.AddCameraEffect<PE_BloomSpecific>().m_GaussianBlur.SetEffect(2, 10, 4);
     }

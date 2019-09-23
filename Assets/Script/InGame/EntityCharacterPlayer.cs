@@ -184,9 +184,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         rotateDelta.x = (rotateDelta.x / Screen.width) * 180f;
         CameraController.Instance.RotateCamera(rotateDelta*OptionsManager.m_OptionsData.m_Sensitive);
     }
-    public void OnFireAddRecoil(Vector2 recoil)
+    public void OnFireAddRecoil(float recoil)
     {
-        OnRotateDelta(new Vector2((TCommon.RandomBool()?1:-1) *recoil.x,0));
+        OnRotateDelta(new Vector2((TCommon.RandomBool()?1:-1) *recoil,0));
         m_Animator.Fire();
     }
     #endregion

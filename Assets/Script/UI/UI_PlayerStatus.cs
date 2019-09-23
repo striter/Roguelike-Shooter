@@ -44,6 +44,7 @@ public class UI_PlayerStatus : UIToolsBase
     UIT_TextLocalization m_WeaponName,m_WeaponAction;
     Image m_WeaponImage;
     UIC_RarityLevel m_WeaponActionRarity;
+
     UIC_Numeric m_CoinStatus;
     protected override void Init()
     {
@@ -94,6 +95,7 @@ public class UI_PlayerStatus : UIToolsBase
         m_WeaponImage = tf_WeaponData.Find("WeaponImage").GetComponent<Image>();
         m_WeaponAction = tf_WeaponData.Find("WeaponAction").GetComponent<UIT_TextLocalization>();
         m_WeaponActionRarity = new UIC_RarityLevel(tf_WeaponData.Find("WeaponActionRarity"));
+        tf_WeaponData.Find("WeaponDetailBtn").GetComponent<Button>().onClick.AddListener(() => { UIManager.Instance.ShowPage<UI_WeaponStatus>(true).SetInfo(m_Player.m_WeaponCurrent); });
 
         m_CoinStatus = new UIC_Numeric(tf_Container.Find("CoinData/NumericGrid"));
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);

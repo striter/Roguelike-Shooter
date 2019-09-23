@@ -176,6 +176,11 @@ namespace GameSetting
                     return Color.magenta;
             }
         }
+
+        public static float F_WeaponDamageValue(float baseDamage) => baseDamage / 100f;
+        public static  float F_WeaponFireRateValue(float baseFireRate) =>   0.05f/ baseFireRate;
+        public static float F_WeaponStabilityValue(float baseStability) =>  baseStability/3f;
+        public static float F_WeaponProjectileSpeedValue(float baseProjectileSpeed) => baseProjectileSpeed / 100f;
     }
 
     public static class Enum_Relative
@@ -1934,9 +1939,12 @@ namespace GameSetting
             currentAmount = _amount;
 
             m_Grid.ClearGrid();
-            string amount = _amount.ToString();
-            for (int i = 0; i < amount.Length; i++)
-                m_Grid.GetOrAddItem(i).sprite = GetNumeric(amount[i]);
+            SetNumeric( _amount.ToString());
+        }
+        public void SetNumeric(string _numeric)
+        {
+            for (int i = 0; i < _numeric.Length; i++)
+                m_Grid.GetOrAddItem(i).sprite = GetNumeric(_numeric[i]);
         }
     }
     public class UIC_RarityLevel

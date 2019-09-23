@@ -13,6 +13,9 @@ public class WeaponBase : MonoBehaviour {
     public List<ActionBase> m_WeaponAction { get; private set; } = new List<ActionBase>();
     public float F_BaseSpeed { get; private set; } = 0;
     public float F_BaseDamage { get; private set; } = 0;
+    public float F_BaseRecoil => m_WeaponInfo.m_RecoilPerShot.x;
+    public float F_BaseFirerate => m_WeaponInfo.m_FireRate;
+
     public int I_MuzzleIndex { get; private set; } = -1;
 
     public bool B_Triggerable { get; private set; } = false;
@@ -20,16 +23,15 @@ public class WeaponBase : MonoBehaviour {
     public int I_AmmoLeft { get; private set; } = 0;
     public Transform m_Muzzle { get; private set; } = null;
     public int I_ClipAmount { get; private set; } = 0;
-    public float F_BaseFirerate => m_WeaponInfo.m_FireRate;
     public float F_Speed => m_Attacher.m_PlayerInfo.F_ProjectileSpeedMuiltiply * F_BaseSpeed;
-    public Vector2 F_Recoil => m_Attacher.m_PlayerInfo.F_RecoilMultiply * m_WeaponInfo.m_RecoilPerShot;
+    public float F_Recoil => m_Attacher.m_PlayerInfo.F_RecoilMultiply * F_BaseRecoil;
     public float F_ReloadStatus => B_Reloading ? f_reloadCheck / m_WeaponInfo.m_ReloadTime : 1;
     public float F_AmmoStatus => I_AmmoLeft / (float)I_ClipAmount;
     public bool B_TriggerActionable() => B_Triggerable && B_Actionable();
     public bool B_Actionable() => !B_Reloading && f_fireCheck <= 0;
     WeaponTrigger m_Trigger = null;
     Action<bool,float> OnReload;
-    Action<Vector2> OnFireRecoil;
+    Action<float> OnFireRecoil;
 
     float f_reloadCheck, f_fireCheck;
     bool B_HaveAmmoLeft => m_WeaponInfo.m_ClipAmount == -1 || I_AmmoLeft > 0;
@@ -70,7 +72,7 @@ public class WeaponBase : MonoBehaviour {
         m_WeaponAction = _actionIndexes;
     }
 
-    public void OnAttach(EntityCharacterPlayer _attacher,Transform _attachTo,Action<Vector2> _OnFireRecoil,Action<bool,float> _OnReload)
+    public void OnAttach(EntityCharacterPlayer _attacher,Transform _attachTo,Action<float> _OnFireRecoil,Action<bool,float> _OnReload)
     {
         m_Attacher = _attacher;
         transform.SetParentResetTransform(_attachTo);
