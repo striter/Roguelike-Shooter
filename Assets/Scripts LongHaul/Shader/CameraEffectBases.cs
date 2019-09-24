@@ -345,7 +345,7 @@ public class CB_GenerateGlobalGaussianBlurTexture : CommandBufferBase
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
         base.OnRenderImage(source, destination);
-        //m_GaussianBlur.OnRenderImage(m_BlurTexture, m_BlurTexture);
+        m_GaussianBlur.OnRenderImage(m_BlurTexture, m_BlurTexture);
     }
     public override void OnDestroy()
     {
