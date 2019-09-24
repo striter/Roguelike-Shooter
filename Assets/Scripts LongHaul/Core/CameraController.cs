@@ -35,6 +35,8 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
     protected float f_Roll = 0;
     Action OnCameraAttached;
     protected bool b_CameraAttaching;
+
+    public CameraEffectManager m_Effect;
     #region Preset
     protected override void Awake()
     {
@@ -44,6 +46,7 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
         tf_CameraTrans = transform.FindOrCreateNewTransform("CameraTrans");
         tf_CameraPos = tf_CameraTrans.FindOrCreateNewTransform("CameraPos");
         b_CameraAttaching = false;
+        m_Effect = m_Camera.GetComponent<CameraEffectManager>();
     }
 
     protected void SetCameraOffset(Vector3 offset)

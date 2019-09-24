@@ -21,8 +21,6 @@ public class UIManager :SimpleSingletonMono<UIManager>
         m_commonSprites = TResources.GetUIAtlas_Common();
         cvs_Overlay = transform.Find("Overlay").GetComponent<Canvas>();
         cvs_Camera = transform.Find("Camera").GetComponent<Canvas>();
-        cvs_Camera.worldCamera = CameraController.Instance.m_Camera;
-        cvs_Camera.planeDistance = 1f;
 
         tf_Control = cvs_Camera.transform.Find("Control");
         tf_Tools = cvs_Camera.transform.Find("Tools");
@@ -41,6 +39,8 @@ public class UIManager :SimpleSingletonMono<UIManager>
         OptionsManager.event_OptionChanged += OnOptionsChanged;
 
         if (inGame) cvs_Overlay.transform.Find("Test/SeedTest").GetComponent<Text>().text = GameManager.Instance.m_GameLevel.m_Seed;   //Test
+
+        transform.Find("UICamera").GetComponent<CameraEffectManager>().AddCameraEffect<CB_GenerateGlobalBlurTexture>().m_GaussianBlur.SetEffect(1.5f, 3, 1);
     }
     protected override void OnDestroy()
     {

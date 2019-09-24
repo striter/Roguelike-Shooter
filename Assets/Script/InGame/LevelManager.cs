@@ -49,18 +49,17 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
     }
     public void SetPostEffects(enum_Style _levelStyle)
     {
-        CameraEffectManager.RemoveAllPostEffect();
-        CameraEffectManager.AddCameraEffect<PE_BloomSpecific>().m_GaussianBlur.SetEffect(2, 10, 2);
-        CameraEffectManager.AddCameraEffect<CB_GenerateGlobalBlurTexture>().m_GaussianBlur.SetEffect(1.5f,3,1);
-        //PostEffectManager.AddPostEffect<PE_DepthOutline>().SetEffect(Color.black,1.2f,0.0001f);
-        //PostEffectManager.AddPostEffect<PE_DepthSSAO>();
+        CameraController.Instance.m_Effect.RemoveAllPostEffect();
+        CameraController.Instance.m_Effect.AddCameraEffect<PE_BloomSpecific>().m_GaussianBlur.SetEffect(2, 10, 2);
+        //CameraController.Instance.m_Effect.AddPostEffect<PE_DepthOutline>().SetEffect(Color.black,1.2f,0.0001f);
+        //CameraController.Instance.m_Effect.AddPostEffect<PE_DepthSSAO>();
         switch (_levelStyle)
         {
             case enum_Style.Undead:
-                CameraEffectManager.AddCameraEffect<PE_FogDepthNoise>().SetEffect<PE_FogDepthNoise>(TCommon.ColorAlpha(Color.white, .3f), .5f, -1f, 5f).SetEffect(TResources.Load<Texture>(TResources.ConstPath.S_PETex_NoiseFog),.4f,2f);
+                CameraController.Instance.m_Effect.AddCameraEffect<PE_FogDepthNoise>().SetEffect<PE_FogDepthNoise>(TCommon.ColorAlpha(Color.white, .3f), .5f, -1f, 5f).SetEffect(TResources.Load<Texture>(TResources.ConstPath.S_PETex_NoiseFog),.4f,2f);
                 break;
             case enum_Style.Iceland:
-                CameraEffectManager.AddCameraEffect<PE_FogDepth>().SetEffect<PE_FogDepth>(Color.white,.6f,-1,5);
+                CameraController.Instance.m_Effect.AddCameraEffect<PE_FogDepth>().SetEffect<PE_FogDepth>(Color.white,.6f,-1,5);
                 break;
         }
     }

@@ -777,7 +777,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_Weapon_FireRate
+  m_Text: "\u5C04\u901F"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Weapon_FireRate
 --- !u!114 &114093870899322904
@@ -866,7 +866,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_Title_Weapon
+  m_Text: "\u6B66\u5668"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Title_Weapon
 --- !u!114 &114148744497855056
@@ -961,8 +961,8 @@ MonoBehaviour:
   m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.6}
+  m_Material: {fileID: 2100000, guid: e4c9a24a54a4c144f81944e422c91ab3, type: 2}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1009,7 +1009,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_Weapon_Action
+  m_Text: "\u6280\u80FD"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Weapon_Action
 --- !u!114 &114223805245106712
@@ -1152,7 +1152,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_Weapon_ClipSize
+  m_Text: "\u5F39\u5939\u5BB9\u91CF"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Weapon_ClipSize
 --- !u!114 &114345248303344074
@@ -1241,7 +1241,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_Weapon_Stability
+  m_Text: "\u7A33\u5B9A\u6027"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Weapon_Stability
 --- !u!114 &114425160393966202
@@ -1507,7 +1507,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_Weapon_ProjectileSpeed
+  m_Text: "\u5B50\u5F39\u901F\u5EA6"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Weapon_ProjectileSpeed
 --- !u!114 &114651394117367152
@@ -1872,7 +1872,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_Weapon_Damage
+  m_Text: "\u5A01\u529B"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Weapon_Damage
 --- !u!222 &222010442019138562

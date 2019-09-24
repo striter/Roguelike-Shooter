@@ -2,10 +2,10 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Camera)),ExecuteInEditMode]
-public class CameraEffectManager : SimpleSingletonMono<CameraEffectManager>,ISingleCoroutine {
+public class CameraEffectManager :MonoBehaviour, ISingleCoroutine {
     public bool B_TestMode=false;
     #region Interact
-    public static T AddCameraEffect<T>() where T: CameraEffectBase, new()
+    public T AddCameraEffect<T>() where T: CameraEffectBase, new()
     {
         if (GetCameraEffect<T>() != null)
         {
@@ -15,34 +15,34 @@ public class CameraEffectManager : SimpleSingletonMono<CameraEffectManager>,ISin
         T effectBase = new T();
         if (effectBase.m_Supported)
         {
-            effectBase.OnSetEffect(Instance);
-            Instance.m_PostEffects.Add(effectBase);
-            Instance.m_Camera.depthTextureMode |= effectBase.m_DepthTextureMode;
-            Instance.m_calculateDepthToWorldMatrix |= effectBase.m_DepthToWorldMatrix;
+            effectBase.OnSetEffect(this);
+            m_PostEffects.Add(effectBase);
+            m_Camera.depthTextureMode |= effectBase.m_DepthTextureMode;
+            m_calculateDepthToWorldMatrix |= effectBase.m_DepthToWorldMatrix;
         }
         return effectBase;
     }
-    public static T GetCameraEffect<T>() where T : CameraEffectBase => Instance.m_PostEffects.Find(p => p.GetType() ==typeof(T)) as T;
-    public static void RemoveCameraEffect<T>() where T : CameraEffectBase, new()
+    public T GetCameraEffect<T>() where T : CameraEffectBase => m_PostEffects.Find(p => p.GetType() ==typeof(T)) as T;
+    public void RemoveCameraEffect<T>() where T : CameraEffectBase, new()
     {
         T effect = GetCameraEffect<T>();
         if (effect != null)
-            Instance.m_PostEffects.Remove(effect);
+            m_PostEffects.Remove(effect);
     }
-    public static void RemoveAllPostEffect()
+    public void RemoveAllPostEffect()
     {
-        Instance.m_PostEffects.Traversal((CameraEffectBase effect)=> { effect.OnDestroy(); });
-        Instance.m_PostEffects.Clear();
+        m_PostEffects.Traversal((CameraEffectBase effect)=> { effect.OnDestroy(); });
+        m_PostEffects.Clear();
     }
 
-    public static void StartAreaScan(Vector3 startPoint,Color scanColor, Texture scanTex=null,float scale=1f, float lerp=.7f,float width=1f,float range=20,float duration=1.5f)
+    public void StartAreaScan(Vector3 startPoint,Color scanColor, Texture scanTex=null,float scale=1f, float lerp=.7f,float width=1f,float range=20,float duration=1.5f)
     {
         if (GetCameraEffect<PE_AreaScanDepth>() != null)
             RemoveCameraEffect<PE_AreaScanDepth>();
 
         PE_AreaScanDepth areaScan= AddCameraEffect<PE_AreaScanDepth>();
         areaScan.SetEffect(startPoint, scanColor, scanTex,scale, lerp, width);
-        Instance.StartSingleCoroutine(0,TIEnumerators.ChangeValueTo((float value)=> {
+        this.StartSingleCoroutine(0,TIEnumerators.ChangeValueTo((float value)=> {
             areaScan.SetElapse(range*value);
         },0,1,duration,()=> {
             RemoveCameraEffect<PE_AreaScanDepth>();
@@ -54,9 +54,8 @@ public class CameraEffectManager : SimpleSingletonMono<CameraEffectManager>,ISin
     public Camera m_Camera { get; protected set; }
     public bool m_calculateDepthToWorldMatrix { get; set; } = false;
     RenderTexture tempTexture1, tempTexture2;
-    protected override void Awake()
+    protected void Awake()
     {
-        base.Awake();
         m_Camera = GetComponent<Camera>();
         m_Camera.depthTextureMode = DepthTextureMode.None;
         m_calculateDepthToWorldMatrix = false;
