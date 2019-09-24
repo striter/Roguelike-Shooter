@@ -17,7 +17,7 @@ public class UI_PlayerStatus : UIToolsBase
     Transform tf_ExpireData;
     UIT_GridControllerMonoItem<UIGI_ExpireInfoItem> m_ExpireGrid;
 
-    Transform tf_StatusData;
+    RectTransform rtf_StatusData;
     Image img_reloadFill;
     GridLayoutGroup m_AmmoLayout;
     Transform tf_AmmoData;
@@ -35,7 +35,7 @@ public class UI_PlayerStatus : UIToolsBase
     UIC_Numeric m_HealthAmount, m_MaxHealth;
 
     enum_Interaction m_lastInteract;
-    Transform tf_InteractData;
+    RectTransform rtf_InteractData;
     UIT_TextLocalization txt_interactName;
     UIT_TextLocalization txt_interactPrice;
     UIGI_ActionSelectItem m_ActionData;
@@ -54,8 +54,8 @@ public class UI_PlayerStatus : UIToolsBase
         btn_Bigmap = tf_Container.Find("Bigmap").GetComponent<Button>();
         btn_Bigmap.onClick.AddListener(() => { UIManager.Instance.ShowPage<UI_MapControl>(true); });
 
-        tf_StatusData = tf_Container.Find("StatusData");
-        tf_AmmoData = tf_StatusData.Find("AmmoData");
+        rtf_StatusData = tf_Container.Find("StatusData").GetComponent<RectTransform>();
+        tf_AmmoData = rtf_StatusData.Find("AmmoData");
         m_AmmoGridWidth = tf_AmmoData.GetComponent<RectTransform>().sizeDelta.x;
         m_AmmoAmount = new UIC_Numeric(tf_AmmoData.Find("AmmoAmount"));
         m_AmmoClipAmount = new UIC_Numeric(m_AmmoAmount.transform.Find("ClipAmount"));
@@ -64,10 +64,10 @@ public class UI_PlayerStatus : UIToolsBase
         sld_Reload = m_AmmoGrid.transform.Find("Reload").GetComponent<Slider>();
         img_reloadFill = sld_Reload.transform.Find("Fill").GetComponent<Image>();
 
-        tf_ArmorData = tf_StatusData.Find("ArmorData");
+        tf_ArmorData = rtf_StatusData.Find("ArmorData");
         sld_Armor = tf_ArmorData.Find("ArmorSlider").GetComponent<Slider>();
         m_ArmorAmount = new UIC_Numeric(tf_ArmorData.Find("ArmorAmount"));
-        tf_HealthData = tf_StatusData.Find("HealthData");
+        tf_HealthData = rtf_StatusData.Find("HealthData");
         sld_Health = tf_HealthData.Find("HealthSlider").GetComponent<Slider>();
         m_HealthAmount = new UIC_Numeric(tf_HealthData.Find("HealthAmount"));
         m_MaxHealth = new UIC_Numeric(m_HealthAmount.transform.Find("MaxHealth"));
@@ -84,10 +84,10 @@ public class UI_PlayerStatus : UIToolsBase
         tf_ExpireData = tf_Container.Find("ExpireData");
         m_ExpireGrid = new UIT_GridControllerMonoItem<UIGI_ExpireInfoItem>(tf_ExpireData.Find("ExpireGrid"));
 
-        tf_InteractData = tf_Container.Find("InteractData");
-        txt_interactName = tf_InteractData.Find("Container/InteractName").GetComponent<UIT_TextLocalization>();
-        txt_interactPrice = tf_InteractData.Find("Container/InteractPrice").GetComponent<UIT_TextLocalization>();
-        m_ActionData = tf_InteractData.Find("Container/ActionData").GetComponent<UIGI_ActionSelectItem>();
+        rtf_InteractData = tf_Container.Find("InteractData").GetComponent<RectTransform>();
+        txt_interactName = rtf_InteractData.Find("Container/InteractName").GetComponent<UIT_TextLocalization>();
+        txt_interactPrice = rtf_InteractData.Find("Container/InteractPrice").GetComponent<UIT_TextLocalization>();
+        m_ActionData = rtf_InteractData.Find("Container/ActionData").GetComponent<UIGI_ActionSelectItem>();
         m_ActionData.Init(null);
 
         tf_WeaponData = tf_Container.Find("WeaponData");
@@ -148,18 +148,18 @@ public class UI_PlayerStatus : UIToolsBase
         m_CoinStatus.SetAmount(_player.m_PlayerInfo.m_Coins);
         m_ActionAmount.SetValue(_player.m_PlayerInfo.m_ActionAmount);
         sld_ShuffleCooldown.value = _player.m_PlayerInfo.f_shuffleScale;
-        tf_StatusData.position = Vector3.Lerp(tf_StatusData.position, CameraController.MainCamera.WorldToScreenPoint(m_Player.tf_Head.position), Time.deltaTime * 10f);
+        rtf_StatusData.anchoredPosition = Vector3.Lerp(rtf_StatusData.anchoredPosition, CameraController.MainCamera.WorldToScreenPoint(m_Player.tf_Head.position), Time.deltaTime * 10f);
         
         if (_player.m_Interact==null)
         {
-            tf_InteractData.SetActivate(false);
+            rtf_InteractData.SetActivate(false);
             m_lastInteract = enum_Interaction.Invalid;
             return;
         }
 
-        if (tf_InteractData.SetActivate(true))
-            tf_InteractData.position = CameraController.MainCamera.WorldToScreenPoint(_player.m_Interact.transform.position);
-            tf_InteractData.position = Vector3.Lerp(tf_InteractData.position, CameraController.MainCamera.WorldToScreenPoint(_player.m_Interact.transform.position), Time.deltaTime * 10f);
+        if (rtf_InteractData.SetActivate(true))
+            rtf_InteractData.anchoredPosition = CameraController.MainCamera.WorldToScreenPoint(_player.m_Interact.transform.position);
+            rtf_InteractData.anchoredPosition = Vector3.Lerp(rtf_InteractData.anchoredPosition, CameraController.MainCamera.WorldToScreenPoint(_player.m_Interact.transform.position), Time.deltaTime * 10f);
 
         int tradePrice = 0;
         if (_player.m_Interact.m_InteractType == enum_Interaction.ContainerTrade)

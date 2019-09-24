@@ -8,7 +8,8 @@ public class CameraEffectBase
     public virtual DepthTextureMode m_DepthTextureMode => DepthTextureMode.None;
     public virtual bool m_DepthToWorldMatrix => false;
     protected CameraEffectManager m_Manager { get; private set; }
-    public bool m_Supported { get; private set; } 
+    public bool m_Supported { get; private set; }
+    public virtual bool m_IsPostEffect => false;
     public CameraEffectBase()
     {
         m_Supported=OnCreate();
@@ -21,7 +22,7 @@ public class CameraEffectBase
     {
         m_Manager = _manager;
     }
-    public virtual void OnWillRenderObject()
+    public virtual void OnRenderObject()
     {
 
     }
@@ -38,6 +39,7 @@ public class PostEffectBase: CameraEffectBase
 {
     const string S_ParentPath = "Hidden/PostEffect/";
     public Material m_Material { get; private set; }
+    public override bool m_IsPostEffect => true;
     protected override bool OnCreate()
     {
         Shader shader = Shader.Find(S_ParentPath + this.GetType().ToString());
@@ -325,7 +327,7 @@ public class CommandBufferBase:CameraEffectBase
     }
 }
 
-public class CB_GenerateGlobalBlurTexture : CommandBufferBase
+public class CB_GenerateGlobalGaussianBlurTexture : CommandBufferBase
 {
     public PE_GaussianBlur m_GaussianBlur { get; private set; }
     protected override CameraEvent m_BufferEvent => CameraEvent.BeforeImageEffects;
@@ -343,7 +345,7 @@ public class CB_GenerateGlobalBlurTexture : CommandBufferBase
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
         base.OnRenderImage(source, destination);
-        m_GaussianBlur.OnRenderImage(m_BlurTexture, m_BlurTexture);
+        //m_GaussianBlur.OnRenderImage(m_BlurTexture, m_BlurTexture);
     }
     public override void OnDestroy()
     {

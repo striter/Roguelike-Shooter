@@ -15,7 +15,7 @@ public class UIManager :SimpleSingletonMono<UIManager>
     public T ShowPage<T>(bool animate) where T : UIPageBase => UIPageBase.ShowPage<T>(tf_Pages, animate);
     protected T ShowTools<T>() where T : UIToolsBase => UIToolsBase.Show<T>(tf_Tools);
     public static void Activate(bool inGame) => TResources.InstantiateUIManager().Init(inGame);
-
+    public Camera m_Camera { get; private set; }
     protected void Init(bool inGame)
     {
         m_commonSprites = TResources.GetUIAtlas_Common();
@@ -40,7 +40,8 @@ public class UIManager :SimpleSingletonMono<UIManager>
 
         if (inGame) cvs_Overlay.transform.Find("Test/SeedTest").GetComponent<Text>().text = GameManager.Instance.m_GameLevel.m_Seed;   //Test
 
-        transform.Find("UICamera").GetComponent<CameraEffectManager>().AddCameraEffect<CB_GenerateGlobalBlurTexture>().m_GaussianBlur.SetEffect(1.5f, 3, 1);
+        m_Camera = transform.Find("UICamera").GetComponent<Camera>();
+        m_Camera.GetComponent<CameraEffectManager>().AddCameraEffect<CB_GenerateGlobalGaussianBlurTexture>();
     }
     protected override void OnDestroy()
     {
