@@ -353,11 +353,10 @@ public class CB_GenerateGlobalGaussianBlurTexture : CommandBufferBase
         }
         m_Buffer.SetGlobalTexture(ID_GlobalBlurTexure, ID_TempTexture1);
     }
-
+    
     public override void OnDestroy()
     {
         base.OnDestroy();
-
         m_Buffer.ReleaseTemporaryRT(ID_TempTexture1);
         m_Buffer.ReleaseTemporaryRT(ID_TempTexture2);
         m_Buffer.Clear();

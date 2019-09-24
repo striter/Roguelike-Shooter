@@ -55,9 +55,9 @@ public class GameManager : GameManagerBase<GameManager>, ISingleCoroutine
         if (Input.GetKeyDown(KeyCode.B))
             m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common, DamageDeliverInfo.BuffInfo(-1, B_TestBuffIndex )));
         if (Input.GetKeyDown(KeyCode.N))
-            m_LocalPlayer.BroadcastMessage("OnReceiveDamage", new DamageInfo(20, enum_DamageType.Common,DamageDeliverInfo.Default(-1)));
+            m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(20, enum_DamageType.Common,DamageDeliverInfo.Default(-1)));
         if (Input.GetKeyDown(KeyCode.M))
-            m_LocalPlayer.BroadcastMessage("OnReceiveDamage", new DamageInfo(-50, enum_DamageType.Common, DamageDeliverInfo.Default(-1)));
+            m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(-50, enum_DamageType.Common, DamageDeliverInfo.Default(-1)));
         if (Input.GetKeyDown(KeyCode.F1))
             GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, Vector3.zero, LevelManager.Instance.m_InteractParent).Play(GameObjectManager.SpawnWeapon(F1_WeaponSpawnType, new List<ActionBase>()));
         if (Input.GetKeyDown(KeyCode.Alpha0))
