@@ -65,14 +65,14 @@ public class GameManager : GameManagerBase<GameManager>, ISingleCoroutine
             List<EntityCharacterBase> entities = m_Entities.Values.ToList();
             entities.Traversal((EntityCharacterBase entity) => {
                 if (entity.m_Flag== enum_EntityFlag.Enermy)
-                    entity.BroadcastMessage("OnReceiveDamage", new DamageInfo(entity.m_Health.m_MaxHealth, enum_DamageType.Common, DamageDeliverInfo.Default(-1)));
+                    entity.m_HitCheck.TryHit( new DamageInfo(entity.m_Health.m_MaxHealth, enum_DamageType.Common, DamageDeliverInfo.Default(-1)));
             });
         }
         if (Input.GetKeyDown(KeyCode.Alpha9))
         {
             m_Entities.Traversal((EntityCharacterBase entity) => {
                 if (entity.m_Flag == enum_EntityFlag.Enermy)
-                    entity.BroadcastMessage("OnReceiveDamage", new DamageInfo(0, enum_DamageType.Common, DamageDeliverInfo.EquipmentInfo(-1,0, enum_CharacterEffect.Stun,2f)));
+                    entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common, DamageDeliverInfo.EquipmentInfo(-1,0, enum_CharacterEffect.Stun,2f)));
             });
         }
 
