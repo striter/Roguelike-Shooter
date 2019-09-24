@@ -510,6 +510,8 @@ namespace GameSetting
         float f_recoilHorizontal;
         float f_recoilVertical;
         float f_movementReduction;
+        float f_RPM;
+        float f_recoilScore;
         public int m_Index => index;
         public enum_PlayerWeapon m_Weapon => (enum_PlayerWeapon)index;
         public float m_FireRate => f_fireRate;
@@ -521,6 +523,8 @@ namespace GameSetting
         public float m_stunAfterShot => f_stunAfterShot;
         public Vector2 m_RecoilPerShot => new Vector2(f_recoilHorizontal, f_recoilVertical);
         public float m_movementReduction => f_movementReduction;
+        public float m_RPM => f_RPM;
+        public float m_RecoilScore => f_recoilScore;
         public void InitOnValueSet()
         {
         }
