@@ -63,6 +63,9 @@ namespace GameSetting
 
         public static int GetAIEquipment(int entityIndex, int weaponIndex = 0, int subWeaponIndex = 0) => entityIndex * 100 + weaponIndex * 10 + subWeaponIndex;
         public static int GetEquipmentSubIndex(int weaponIndex) => weaponIndex + 1;
+        public static int GetEnermyGameDifficultyBuffIndex(enum_GameDifficulty difficulty) => 10000 + (int)difficulty;
+        public static float GetAIBaseHealthMultiplier(enum_GameDifficulty gameDifficulty)=>1f+.2f*(int)gameDifficulty;
+        public static float GetAIMaxHealthMultiplier(enum_StageLevel stageDifficulty) => (int)stageDifficulty;
 
         public static float GetActionAmountRevive(float damageApply) => damageApply * .00125f;
 
@@ -70,7 +73,7 @@ namespace GameSetting
 
         public static float GetResultLevelScore(enum_StageLevel _stage, int _levelPassed) => 200 * ((int)_stage - 1) + 20 * (_levelPassed - 1);
         public static float GetResultKillScore(int _enermyKilled) => _enermyKilled * 1;
-        public static float GetResultRewardCoins(float _totalScore) => _totalScore;
+        public static float GetResultRewardCredits(float _totalScore) => _totalScore;
 
         public static RangeInt GetTradePrice(enum_Interaction interactType, enum_RarityLevel level)
         {
@@ -253,6 +256,8 @@ namespace GameSetting
     #endregion
 
     #region GameEnum
+    public enum enum_GameDifficulty { Invalid=-1,Rookie=1,Veteran=2,Ranger=3 }
+
     public enum enum_StageLevel { Invalid = -1, Rookie = 1, Veteran = 2, Ranger = 3 }
 
     public enum enum_BattleDifficulty { Invalid = -1, Peaceful = 0, Eazy = 1, Normal = 2, Hard = 3, End = 4, BattleTrade = 10, }
@@ -389,20 +394,20 @@ namespace GameSetting
     #endregion
 
     #region GameSave
-    public class CPlayerDataSave : ISave        //Save Outta Game
+    public class CPlayerGameSave : ISave        //Save Outta Game
     {
-        public float f_blue;
-        public CPlayerDataSave()
+        public float f_Credits;
+        public enum_GameDifficulty m_GameDifficulty;
+        public enum_GameDifficulty m_DifficultyUnlocked;
+        public CPlayerGameSave()
         {
-            f_blue = 100;
-        }
-        public void OnBlueUsed(float amount)
-        {
-            f_blue -= amount;
+            f_Credits = 100;
+            m_GameDifficulty = enum_GameDifficulty.Rookie;
+            m_DifficultyUnlocked = enum_GameDifficulty.Rookie;
         }
     }
 
-    public class CPlayerGameSave : ISave
+    public class CPlayerLevelSave : ISave
     {
         public enum_PlayerWeapon m_weapon;
         public int m_coins;
@@ -411,7 +416,7 @@ namespace GameSetting
         public List<ActionInfo> m_storedActions;
         public string m_GameSeed;
         public enum_StageLevel m_StageLevel;
-        public CPlayerGameSave()
+        public CPlayerLevelSave()
         {
             m_coins = 0;
             m_weapon = enum_PlayerWeapon.P92;
@@ -427,7 +432,7 @@ namespace GameSetting
             m_weaponActions = ActionInfo.Create(_player.m_WeaponCurrent.m_WeaponAction);
             m_storedActions = ActionInfo.Create(_player.m_PlayerInfo.m_ActionStored);
             m_GameSeed = _level.m_Seed;
-            m_StageLevel = _level.m_currentStage;
+            m_StageLevel = _level.m_GameStage;
             m_kills = _record.i_entitiesKilled;
         }
     }
@@ -670,7 +675,7 @@ namespace GameSetting
         {
             m_BaseMaxHealth = baseMaxHealth;
             if(restoreHealth)
-            m_CurrentHealth = m_MaxHealth;
+                m_CurrentHealth = m_MaxHealth;
         }
         public virtual bool OnReceiveDamage(DamageInfo damageInfo, float damageReduction = 1)
         {
@@ -696,15 +701,16 @@ namespace GameSetting
     }
     public class AIHealth : EntityHealth
     {
-        int m_HealthMultiplier = 0;
+        float m_HealthMultiplier = 1f;
         public override float m_MaxHealth => m_BaseMaxHealth * m_HealthMultiplier;
         public AIHealth(EntityCharacterBase _character,Action<enum_HealthChangeMessage> _OnHealthChanged, Action _OnDead) : base(_character,_OnHealthChanged, _OnDead)
         {
+            m_HealthMultiplier = 1f;
         }
-        public void SetDifficulty(enum_StageLevel _stage)
+        public void SetHealth(float baseHealth,float maxHealthMultiplier)
         {
-            m_HealthMultiplier = (int)_stage;
-            OnActivate(m_BaseMaxHealth,true);
+            m_HealthMultiplier = maxHealthMultiplier;
+            OnActivate(baseHealth,true);
         }
     }
     public class EntityHealth:HealthBase

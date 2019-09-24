@@ -28,6 +28,16 @@ public class ELocalizationText : UnityEditor.UI.TextEditor
             GUILayout.Label( TLocalization.CanLocalize(m_target.S_AutoLocalizeKey) ? TLocalization.GetKeyLocalized(m_target.S_AutoLocalizeKey) : "Unable To Localize", GUILayout.Width(Screen.width * 2 / 3 - 20));
             GUILayout.EndHorizontal();
         }
+
+        EditorGUILayout.BeginHorizontal();
+        float spacing = EditorGUILayout.FloatField("Character Spacing:", m_target.m_characterSpacing);
+        if (spacing != m_target.m_characterSpacing)
+        {
+            m_target.m_characterSpacing = spacing;
+            m_target.SetAllDirty();
+        }
+        EditorGUILayout.EndHorizontal();
+
         base.OnInspectorGUI();
     }
 }

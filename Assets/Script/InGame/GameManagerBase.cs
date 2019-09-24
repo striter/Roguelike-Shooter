@@ -83,25 +83,31 @@ public static class GameDataManager
         Properties<SBuff>.Init();
         InitActions();
 
-        m_PlayerInfo = TGameData<CPlayerDataSave>.Read();
-        m_PlayerInGameInfo = TGameData<CPlayerGameSave>.Read();
+        m_PlayerGameData = TGameData<CPlayerGameSave>.Read();
+        m_PlayerLevelData = TGameData<CPlayerLevelSave>.Read();
     }
 #region GameSave
-    public static CPlayerDataSave m_PlayerInfo { get; private set; }
-    public static CPlayerGameSave m_PlayerInGameInfo { get; private set; }
-    public static void AdjustGameData(EntityCharacterPlayer data, GameLevelManager level, GameRecordManager record)
+    public static CPlayerGameSave m_PlayerGameData { get; private set; }
+    public static CPlayerLevelSave m_PlayerLevelData { get; private set; }
+    public static void AdjuastInGameData(EntityCharacterPlayer data, GameLevelManager level, GameRecordManager record)
     {
-        m_PlayerInGameInfo.Adjust(data, level, record);
-        TGameData<CPlayerGameSave>.Save(m_PlayerInGameInfo);
+        m_PlayerLevelData.Adjust(data, level, record);
+        TGameData<CPlayerLevelSave>.Save(m_PlayerLevelData);
     }
-    public static void ClearGameData()
+    public static void OnGameFinished(bool win,float credit)
     {
-        m_PlayerInGameInfo = new CPlayerGameSave();
-        TGameData<CPlayerGameSave>.Save(m_PlayerInGameInfo);
-    }
-    public static void SavePlayerData()
-    {
-        TGameData<CPlayerDataSave>.Save(m_PlayerInfo);
+        m_PlayerLevelData = new CPlayerLevelSave();
+
+
+        if (win && m_PlayerGameData.m_DifficultyUnlocked != enum_GameDifficulty.Veteran&&m_PlayerGameData.m_GameDifficulty==m_PlayerGameData.m_DifficultyUnlocked)
+        {
+            m_PlayerGameData.m_DifficultyUnlocked++;
+            m_PlayerGameData.m_GameDifficulty++;
+        }
+        m_PlayerGameData.f_Credits += credit;
+
+        TGameData<CPlayerLevelSave>.Save(m_PlayerLevelData);
+        TGameData<CPlayerGameSave>.Save(m_PlayerGameData);
     }
 #endregion
 #region ExcelData

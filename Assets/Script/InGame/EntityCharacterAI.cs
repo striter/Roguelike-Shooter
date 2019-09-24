@@ -42,9 +42,10 @@ public class EntityCharacterAI : EntityCharacterBase {
         m_AI.OnActivate();
         base.OnActivate(_flag);
     }
-    public void SetDifficulty(enum_StageLevel level)
+    public void SetEnermyDifficulty(enum_GameDifficulty difficulty,enum_StageLevel stageDifficulty)
     {
-        (m_Health as AIHealth).SetDifficulty(level);
+        m_CharacterInfo.AddBuff(-1,GameExpression.GetEnermyGameDifficultyBuffIndex(difficulty));
+        (m_Health as AIHealth).SetHealth(I_MaxHealth*GameExpression.GetAIBaseHealthMultiplier(difficulty), GameExpression.GetAIMaxHealthMultiplier(stageDifficulty));
     }
     protected override void OnDead()
     {
