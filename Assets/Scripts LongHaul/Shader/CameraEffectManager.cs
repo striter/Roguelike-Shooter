@@ -3,7 +3,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(Camera)),ExecuteInEditMode]
 public class CameraEffectManager :MonoBehaviour, ISingleCoroutine {
-    public bool B_TestMode=false;
+    public bool B_PostProcessingTestMode=false;
     #region Interact
     public T AddCameraEffect<T>() where T: CameraEffectBase, new()
     {
@@ -19,6 +19,7 @@ public class CameraEffectManager :MonoBehaviour, ISingleCoroutine {
             m_PostEffects.Add(effectBase);
             m_Camera.depthTextureMode |= effectBase.m_DepthTextureMode;
             m_calculateDepthToWorldMatrix |= effectBase.m_DepthToWorldMatrix;
+            m_doPostProcessing |= effectBase.m_IsPostEffect;
         }
         return effectBase;
     }
@@ -52,46 +53,54 @@ public class CameraEffectManager :MonoBehaviour, ISingleCoroutine {
     #endregion
     List<CameraEffectBase> m_PostEffects=new List<CameraEffectBase>();
     public Camera m_Camera { get; protected set; }
-    public bool m_calculateDepthToWorldMatrix { get; set; } = false;
+    public bool m_calculateDepthToWorldMatrix { get; private set; } = false;
+    public bool m_doPostProcessing { get; private set; } = false;
     RenderTexture tempTexture1, tempTexture2;
     protected void Awake()
     {
         m_Camera = GetComponent<Camera>();
         m_Camera.depthTextureMode = DepthTextureMode.None;
         m_calculateDepthToWorldMatrix = false;
+        tempTexture1 = RenderTexture.GetTemporary(Screen.width, Screen.height, 0);
+        tempTexture2 = RenderTexture.GetTemporary(Screen.width, Screen.height, 0);
     }
     
     protected void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        tempTexture1 = RenderTexture.GetTemporary(Screen.width, Screen.height, 0);
-        Graphics.Blit(source, tempTexture1);
-
         if (m_calculateDepthToWorldMatrix)
         {
             CalculateFrustumCornorsRay();
             CalculateViewProjectionMatrixInverse();
         }
 
+        if (!m_doPostProcessing)
+        {
+            Graphics.Blit(source, destination);
+            return;
+        }
+
+        Graphics.Blit(source, tempTexture1);
         for (int i = 0; i < m_PostEffects.Count; i++)
         {
-            if (B_TestMode)
+            if (B_PostProcessingTestMode)
             {   
                 m_PostEffects[i].OnRenderImage(tempTexture1, tempTexture1);
                 continue;
             }
-
-            tempTexture2 = RenderTexture.GetTemporary(Screen.width, Screen.height, 0);
             m_PostEffects[i].OnRenderImage(tempTexture1,tempTexture2);
             Graphics.Blit(tempTexture2, tempTexture1);
-            RenderTexture.ReleaseTemporary(tempTexture2);
         }
         Graphics.Blit(tempTexture1,destination);
+    }
+    private void OnDestroy()
+    {
+        RenderTexture.ReleaseTemporary(tempTexture2);
         RenderTexture.ReleaseTemporary(tempTexture1);
     }
     private void OnRenderObject()
     {
         for (int i = 0; i < m_PostEffects.Count; i++)
-            m_PostEffects[i].OnWillRenderObject();
+            m_PostEffects[i].OnRenderObject();
     }
     #region Matrix
     static readonly int ID_VPMatrixInverse = Shader.PropertyToID("_VPMatrixInverse");
