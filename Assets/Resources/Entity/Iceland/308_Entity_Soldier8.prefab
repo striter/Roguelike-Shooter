@@ -531,11 +531,11 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1468203440436296}
-  m_LocalRotation: {x: -0.0015877889, y: -0.0016104854, z: 0.7020694, w: 0.712105}
-  m_LocalPosition: {x: 0.20323682, y: 1.473942, z: 0.6513115}
+  m_LocalRotation: {x: 2.0372383e-10, y: 1.1023898e-12, z: 0.7071069, w: 0.70710677}
+  m_LocalPosition: {x: -0.03386727, y: 0, z: 0.6503856}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 4429400759847866}
+  m_Father: {fileID: 4112694396171104}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4029408387126802
@@ -576,6 +576,7 @@ Transform:
   m_LocalPosition: {x: -0.33425274, y: -1.2999511e-15, z: -2.3643465e-18}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 4026185212251710}
   - {fileID: 4437538294761730}
   - {fileID: 4206413612392280}
   - {fileID: 4380295683572824}
@@ -622,7 +623,7 @@ Transform:
   m_Children:
   - {fileID: 4029408387126802}
   m_Father: {fileID: 4112694396171104}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4247165205048800
 Transform:
@@ -666,7 +667,7 @@ Transform:
   m_Children:
   - {fileID: 4448974366100208}
   m_Father: {fileID: 4112694396171104}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4399239256809086
 Transform:
@@ -705,8 +706,7 @@ Transform:
   m_LocalRotation: {x: -0.0000038093015, y: 0.0022615753, z: 0.001684351, w: 0.99999607}
   m_LocalPosition: {x: -0.0047657127, y: -0.44027418, z: -7.232077e-17}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 4026185212251710}
+  m_Children: []
   m_Father: {fileID: 4501101441497186}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -736,7 +736,7 @@ Transform:
   m_Children:
   - {fileID: 4554097590587628}
   m_Father: {fileID: 4112694396171104}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4448974366100208
 Transform:
