@@ -64,7 +64,7 @@ namespace GameSetting
         public static int GetAIEquipment(int entityIndex, int weaponIndex = 0, int subWeaponIndex = 0) => entityIndex * 100 + weaponIndex * 10 + subWeaponIndex;
         public static int GetEquipmentSubIndex(int weaponIndex) => weaponIndex + 1;
 
-        public static float GetActionAmountRevive(float damageApply) => damageApply * .001f;
+        public static float GetActionAmountRevive(float damageApply) => damageApply * .00125f;
 
         public static float GetAIIdleDuration() => UnityEngine.Random.Range(1f, 2f);
 
@@ -177,8 +177,8 @@ namespace GameSetting
             }
         }
 
-        public static float F_WeaponDamageValue(float baseDamage) => baseDamage / 100f;
-        public static  float F_WeaponFireRateValue(float baseFireRate) =>   0.05f/ baseFireRate;
+        public static float F_WeaponDamageValue(float baseDamage) => baseDamage / 150f;
+        public static float F_WeaponFireRateValue(float baseFireRate) =>   0.05f/ baseFireRate;
         public static float F_WeaponStabilityValue(float baseStability) =>  baseStability/3f;
         public static float F_WeaponProjectileSpeedValue(float baseProjectileSpeed) => baseProjectileSpeed / 100f;
     }
