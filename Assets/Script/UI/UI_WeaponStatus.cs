@@ -42,9 +42,9 @@ public class UI_WeaponStatus : UIPageBase {
         m_WeaponName.localizeText = weapon.m_WeaponInfo.m_Weapon.GetNameLocalizeKey();
         m_ClipSize.SetNumeric(string.Format("{0:D2}", weapon.I_ClipAmount));
         m_Damage.fillAmount = UIExpression.F_WeaponDamageValue(weapon.F_BaseDamage);
-        m_FireRate.fillAmount = UIExpression.F_WeaponFireRateValue(weapon.F_BaseFirerate);
+        m_FireRate.fillAmount = UIExpression.F_WeaponFireRateValue(weapon.m_WeaponInfo.m_RPM);
         m_ProjectileSpeed.fillAmount = UIExpression.F_WeaponProjectileSpeedValue(weapon.F_BaseSpeed);
-        m_Stability.fillAmount = UIExpression.F_WeaponStabilityValue(weapon.F_Recoil);
+        m_Stability.fillAmount = UIExpression.F_WeaponStabilityValue(weapon.m_WeaponInfo.m_RecoilScore);
 
         bool showAction = weapon.m_WeaponAction.Count > 0;
         tf_ActionInfo.SetActivate(showAction);

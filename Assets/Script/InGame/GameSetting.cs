@@ -178,8 +178,8 @@ namespace GameSetting
         }
 
         public static float F_WeaponDamageValue(float baseDamage) => baseDamage / 150f;
-        public static float F_WeaponFireRateValue(float baseFireRate) =>   0.05f/ baseFireRate;
-        public static float F_WeaponStabilityValue(float baseStability) =>  baseStability/3f;
+        public static float F_WeaponFireRateValue(float baseRPM) =>    baseRPM/ 400f;
+        public static float F_WeaponStabilityValue(float baseRecoilScore) =>  baseRecoilScore/80f;
         public static float F_WeaponProjectileSpeedValue(float baseProjectileSpeed) => baseProjectileSpeed / 100f;
     }
 

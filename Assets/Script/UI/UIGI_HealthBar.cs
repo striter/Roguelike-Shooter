@@ -46,6 +46,7 @@ public class UIGI_HealthBar : UIT_GridItem {
         transform.SetActivate(true);
         b_showItem = true;
     }
+
     private void Update()
     {
         if (!b_showItem)
