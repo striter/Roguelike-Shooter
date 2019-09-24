@@ -3,7 +3,6 @@ using UnityEngine;
 
 [RequireComponent(typeof(Camera)),ExecuteInEditMode]
 public class CameraEffectManager :MonoBehaviour, ISingleCoroutine {
-    public bool B_PostProcessingTestMode=false;
     #region Interact
     public T AddCameraEffect<T>() where T: CameraEffectBase, new()
     {
@@ -82,11 +81,6 @@ public class CameraEffectManager :MonoBehaviour, ISingleCoroutine {
         Graphics.Blit(source, tempTexture1);
         for (int i = 0; i < m_PostEffects.Count; i++)
         {
-            if (B_PostProcessingTestMode)
-            {   
-                m_PostEffects[i].OnRenderImage(tempTexture1, tempTexture1);
-                continue;
-            }
             m_PostEffects[i].OnRenderImage(tempTexture1,tempTexture2);
             Graphics.Blit(tempTexture2, tempTexture1);
         }

@@ -332,26 +332,36 @@ public class CB_GenerateGlobalGaussianBlurTexture : CommandBufferBase
     public PE_GaussianBlur m_GaussianBlur { get; private set; }
     protected override CameraEvent m_BufferEvent => CameraEvent.BeforeImageEffects;
     readonly int ID_GlobalBlurTexure = Shader.PropertyToID("_GlobalBlurTexture");
-    RenderTexture m_BlurTexture;
-    public override bool m_IsPostEffect => true;
+    readonly int ID_TempTexture1 = Shader.PropertyToID("_TempRT1");
+    readonly int ID_TempTexture2 = Shader.PropertyToID("_TempRT2");
     public override void OnSetEffect(CameraEffectManager _manager)
     {
         base.OnSetEffect(_manager);
         m_GaussianBlur = new PE_GaussianBlur();
         m_GaussianBlur.OnSetEffect(_manager);
-        m_BlurTexture = RenderTexture.GetTemporary(Screen.width,Screen.height);
-        Shader.SetGlobalTexture(ID_GlobalBlurTexure, m_BlurTexture);
-        m_Buffer.Blit(BuiltinRenderTextureType.CurrentActive , m_BlurTexture);
     }
-    public override void OnRenderImage(RenderTexture source, RenderTexture destination)
+    public void SetEffect(int iterations=3, float blurSpread=1.5f,int _downSample=2)
     {
-        base.OnRenderImage(source, destination);
-        m_GaussianBlur.OnRenderImage(m_BlurTexture, m_BlurTexture);
+        m_GaussianBlur.SetEffect(blurSpread);
+        m_Buffer.GetTemporaryRT(ID_TempTexture1, -_downSample, -_downSample, 0, FilterMode.Bilinear);
+        m_Buffer.GetTemporaryRT(ID_TempTexture2, -_downSample, -_downSample, 0, FilterMode.Bilinear);
+        m_Buffer.Blit(BuiltinRenderTextureType.CurrentActive, ID_TempTexture1);
+        for (int i = 0; i < iterations; i++)
+        {
+            m_Buffer.Blit(ID_TempTexture1, ID_TempTexture2, m_GaussianBlur.m_Material, 0);
+            m_Buffer.Blit(ID_TempTexture2, ID_TempTexture1, m_GaussianBlur.m_Material, 1);
+        }
+        m_Buffer.SetGlobalTexture(ID_GlobalBlurTexure, ID_TempTexture1);
     }
+
     public override void OnDestroy()
     {
         base.OnDestroy();
-        RenderTexture.ReleaseTemporary(m_BlurTexture);
+
+        m_Buffer.ReleaseTemporaryRT(ID_TempTexture1);
+        m_Buffer.ReleaseTemporaryRT(ID_TempTexture2);
+        m_Buffer.Clear();
+        m_GaussianBlur.OnDestroy();
     }
 }
 

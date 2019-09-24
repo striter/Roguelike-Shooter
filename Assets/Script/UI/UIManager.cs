@@ -41,7 +41,7 @@ public class UIManager :SimpleSingletonMono<UIManager>
         if (inGame) cvs_Overlay.transform.Find("Test/SeedTest").GetComponent<Text>().text = GameManager.Instance.m_GameLevel.m_Seed;   //Test
 
         m_Camera = transform.Find("UICamera").GetComponent<Camera>();
-        m_Camera.GetComponent<CameraEffectManager>().AddCameraEffect<CB_GenerateGlobalGaussianBlurTexture>();
+        m_Camera.GetComponent<CameraEffectManager>().AddCameraEffect<CB_GenerateGlobalGaussianBlurTexture>().SetEffect(3, 2f,3);
     }
     protected override void OnDestroy()
     {
