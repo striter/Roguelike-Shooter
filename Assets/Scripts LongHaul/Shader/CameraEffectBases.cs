@@ -333,6 +333,7 @@ public class CB_GenerateGlobalGaussianBlurTexture : CommandBufferBase
     protected override CameraEvent m_BufferEvent => CameraEvent.BeforeImageEffects;
     readonly int ID_GlobalBlurTexure = Shader.PropertyToID("_GlobalBlurTexture");
     RenderTexture m_BlurTexture;
+    public override bool m_IsPostEffect => true;
     public override void OnSetEffect(CameraEffectManager _manager)
     {
         base.OnSetEffect(_manager);
