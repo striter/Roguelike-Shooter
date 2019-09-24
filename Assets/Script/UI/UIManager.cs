@@ -5,35 +5,42 @@ using System;
 
 public class UIManager :SimpleSingletonMono<UIManager>
 {
+    Canvas cvs_Overlay, cvs_Camera;
+    Transform tf_Control, tf_Pages, tf_Tools;
     public Action OnReload;
     public Action<bool> OnMainDown;
-    Transform tf_Top,tf_Pages,tf_LowerTools;
     Image img_main;
     TouchDeltaManager m_TouchDelta;
     public AtlasLoader m_commonSprites { get; private set; }
     public T ShowPage<T>(bool animate) where T : UIPageBase => UIPageBase.ShowPage<T>(tf_Pages, animate);
-    protected T ShowTools<T>() where T : UIToolsBase => UIToolsBase.Show<T>(tf_LowerTools);
+    protected T ShowTools<T>() where T : UIToolsBase => UIToolsBase.Show<T>(tf_Tools);
     public static void Activate(bool inGame) => TResources.InstantiateUIManager().Init(inGame);
+
     protected void Init(bool inGame)
     {
-        TResources.GetUIAtlas_Weapon();
         m_commonSprites = TResources.GetUIAtlas_Common();
+        cvs_Overlay = transform.Find("Overlay").GetComponent<Canvas>();
+        cvs_Camera = transform.Find("Camera").GetComponent<Canvas>();
+        cvs_Camera.worldCamera = CameraController.Instance.m_Camera;
+        cvs_Camera.planeDistance = 1f;
 
-        tf_Top = transform.Find("Top");
-        tf_LowerTools = transform.Find("Lower");
-        tf_Pages = transform.Find("Pages");
-        img_main = tf_Top.Find("Main/Image").GetComponent<Image>();
-        tf_Top.Find("Reload").GetComponent<Button>().onClick.AddListener(() => { OnReload?.Invoke(); });
-        tf_Top.Find("Main").GetComponent<UIT_EventTriggerListener>().D_OnPress+=(bool down,Vector2 pos) => { OnMainDown?.Invoke(down); };
-        tf_Top.Find("Settings").GetComponent<Button>().onClick.AddListener(() => { ShowPage<UI_Options>(inGame).SetInGame(inGame); });
-        if(inGame) ShowTools<UI_EntityHealth>();
+        tf_Control = cvs_Camera.transform.Find("Control");
+        tf_Tools = cvs_Camera.transform.Find("Tools");
+        img_main = tf_Control.Find("Main/Image").GetComponent<Image>();
+        tf_Control.Find("Reload").GetComponent<Button>().onClick.AddListener(() => { OnReload?.Invoke(); });
+        tf_Control.Find("Main").GetComponent<UIT_EventTriggerListener>().D_OnPress+=(bool down,Vector2 pos) => { OnMainDown?.Invoke(down); };
+        tf_Control.Find("Settings").GetComponent<Button>().onClick.AddListener(() => { ShowPage<UI_Options>(inGame).SetInGame(inGame); });
+
+        tf_Pages = cvs_Overlay.transform.Find("Pages");
+        if (inGame) ShowTools<UI_EntityHealth>();
         ShowTools<UI_PlayerStatus>().SetInGame(inGame);
-        if (inGame) transform.Find("Test/SeedTest").GetComponent<Text>().text = GameManager.Instance.m_GameLevel.m_Seed;   //Test
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnPlayerStatusChanged);
 
-        m_TouchDelta = GetComponent<TouchDeltaManager>();
+        m_TouchDelta = cvs_Camera.GetComponent<TouchDeltaManager>();
         OnOptionsChanged();
         OptionsManager.event_OptionChanged += OnOptionsChanged;
+
+        if (inGame) cvs_Overlay.transform.Find("Test/SeedTest").GetComponent<Text>().text = GameManager.Instance.m_GameLevel.m_Seed;   //Test
     }
     protected override void OnDestroy()
     {
