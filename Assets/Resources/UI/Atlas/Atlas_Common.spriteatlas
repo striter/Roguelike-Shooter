@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 1437207
+    totalSpriteSurfaceArea: 1430696
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -37,7 +37,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 38f42b51776c9154ba33af7287510e68, type: 3}
   - {fileID: 21300000, guid: 2e16002485390b04f935000c64648d96, type: 3}
   - {fileID: 21300000, guid: 5123fc87ce124874ba38706389ab6c6e, type: 3}
-  - {fileID: 21300000, guid: 8e819ef046e043343a7ed8e2d8fc56da, type: 3}
+  - {fileID: 21300000, guid: a4aa3e3531071e34980aa2bc399a6761, type: 3}
   - {fileID: 21300000, guid: 333c96faa0f449f45aabf7004c250e02, type: 3}
   - {fileID: 21300000, guid: 03eee695d9602fa4c81f4cab4cf4af33, type: 3}
   - {fileID: 21300000, guid: cfe64325d22560f49823caf4595b2960, type: 3}
@@ -56,7 +56,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 241b9019df49aff4a8a129d61fe1e8e3, type: 3}
   - {fileID: 21300000, guid: 9b5f47ee892aafe4e81749854bced7ee, type: 3}
   - {fileID: 21300000, guid: 3d5c6aefeb441674c892735313ebf060, type: 3}
-  - {fileID: 21300000, guid: 4f3bcd492eee92f459c7fbc9ecd4de3f, type: 3}
   - {fileID: 21300000, guid: 9ce17833324def44691c52a913f16b5b, type: 3}
   - {fileID: 21300000, guid: 21a472abe7f9554488aa4fee88259200, type: 3}
   - {fileID: 21300000, guid: bb9b55d0cd18e0741bc043e00caae287, type: 3}
@@ -70,6 +69,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: b7055a4cd0531a143ab993f1417e9f57, type: 3}
   - {fileID: 21300000, guid: df6c58e9bdff9954bb8fb025a0385d29, type: 3}
   - {fileID: 21300000, guid: 204b28d01dc0f084ea4399c7dbccb4a1, type: 3}
+  - {fileID: 21300000, guid: d40acf7a523f9124e830b23c072f7d9e, type: 3}
   - {fileID: 21300000, guid: 90650132c9ee8ae4396c39751241d8fd, type: 3}
   - {fileID: 21300000, guid: ac9c2c22d9a4cf241a53932685201d4c, type: 3}
   - {fileID: 21300000, guid: 640bac5e80194e345b2851ed06fbf63f, type: 3}
@@ -84,12 +84,13 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 8a06be1acd3454c4393fd6308644cc86, type: 3}
   - {fileID: 21300000, guid: 0ff93f315f0af994aadec1815651c6b2, type: 3}
   - {fileID: 21300000, guid: 36336d3907e7b3b4db736bd5fa912450, type: 3}
+  - {fileID: 21300000, guid: 9c9d65350fda00e43aae5964ee01b62f, type: 3}
   m_PackedSpriteNamesToIndex:
   - UI_weapon_bottom
   - btn_rocker_bottom
   - btn_main_bottom
   - display_weapon_bottom
-  - UI_title_orange
+  - UI_title_yellow
   - display_StatusBar_bottom
   - UI_title_green
   - btn_map_bottom
@@ -108,7 +109,6 @@ SpriteAtlas:
   - main_fire
   - display_progress_weapon
   - display_progress_weapon_bottom
-  - btn_close
   - display_progress_armor_light
   - display_progress_life_light
   - btn_ActionStrorage_bottom
@@ -122,6 +122,7 @@ SpriteAtlas:
   - display_coins_bottom
   - icon_ActionStorage
   - buff_blank
+  - btn_close
   - icon_weapon_common
   - icon_setting
   - btn_map_triangle
@@ -136,5 +137,6 @@ SpriteAtlas:
   - display_bullet
   - UI_common_info_green
   - UI_common_info_orange
+  - btn_close_strip
   m_Tag: Atlas_Common
   m_IsVariant: 0

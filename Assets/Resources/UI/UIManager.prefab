@@ -908,6 +908,7 @@ MonoBehaviour:
   m_Text: 
   B_AutoLocalize: 0
   S_AutoLocalizeKey: 
+  m_characterSpacing: 0
 --- !u!114 &114549492660449022
 MonoBehaviour:
   m_ObjectHideFlags: 1

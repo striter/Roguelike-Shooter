@@ -5,7 +5,6 @@ using GameSetting;
 using UnityEngine.UI;
 
 public class UI_WeaponStatus : UIPageBase {
-    Transform tf_StatusContainer;
 
     Transform tf_WeaponInfo;
     UIT_TextLocalization m_WeaponName;
@@ -20,9 +19,7 @@ public class UI_WeaponStatus : UIPageBase {
     protected override void Init(bool useAnim)
     {
         base.Init(useAnim);
-        tf_StatusContainer = tf_Container.Find("StatusContainer");
-
-        tf_WeaponInfo = tf_StatusContainer.Find("WeaponInfo");
+        tf_WeaponInfo = tf_Container.Find("WeaponInfo");
         m_WeaponName = tf_WeaponInfo.Find("WeaponName").GetComponent<UIT_TextLocalization>();
         m_WeaponImage = tf_WeaponInfo.Find("WeaponImage").GetComponent<Image>();
         m_ClipSize = new UIC_Numeric(tf_WeaponInfo.Find("ClipSize"));
@@ -31,7 +28,7 @@ public class UI_WeaponStatus : UIPageBase {
         m_Stability = tf_WeaponInfo.Find("Stability/Fill").GetComponent<Image>();
         m_ProjectileSpeed = tf_WeaponInfo.Find("ProjectileSpeed/Fill").GetComponent<Image>();
 
-        tf_ActionInfo = tf_StatusContainer.Find("ActionInfo");
+        tf_ActionInfo = tf_Container.Find("ActionInfo");
         m_ActionName = tf_ActionInfo.Find("ActionName").GetComponent<UIT_TextLocalization>(); 
         m_ActionIntro = tf_ActionInfo.Find("ActionIntro").GetComponent<UIT_TextLocalization>();
         m_ActionRarityText = tf_ActionInfo.Find("ActionRarityText").GetComponent<UIT_TextLocalization>();
