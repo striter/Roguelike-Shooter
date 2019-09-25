@@ -465,7 +465,7 @@ public class GameManager : GameManagerBase<GameManager>, ISingleCoroutine
     public void OnExitGame()
     {
         GameObjectManager.RecycleAllObject();
-        TSceneLoader.Instance.LoadScene(enum_Scene.Main);
+        TSceneLoader.Instance.LoadScene(enum_Scene.Camp);
     }
 }
 #region External Tools Packaging Class
