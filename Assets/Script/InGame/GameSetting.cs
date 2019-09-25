@@ -63,8 +63,8 @@ namespace GameSetting
 
         public static int GetAIEquipment(int entityIndex, int weaponIndex = 0, int subWeaponIndex = 0) => entityIndex * 100 + weaponIndex * 10 + subWeaponIndex;
         public static int GetEquipmentSubIndex(int weaponIndex) => weaponIndex + 1;
-        public static int GetEnermyGameDifficultyBuffIndex(enum_GameDifficulty difficulty) => 10000 + (int)difficulty;
-        public static float GetAIBaseHealthMultiplier(enum_GameDifficulty gameDifficulty)=>1f+.2f*(int)gameDifficulty;
+        public static int GetEnermyGameDifficultyBuffIndex(int difficulty) => 10000 + difficulty;
+        public static float GetAIBaseHealthMultiplier(int gameDifficulty)=>1f+.2f*gameDifficulty;
         public static float GetAIMaxHealthMultiplier(enum_StageLevel stageDifficulty) => (int)stageDifficulty;
 
         public static float GetActionAmountRevive(float damageApply) => damageApply * .00125f;
@@ -147,25 +147,6 @@ namespace GameSetting
 
     public static class UIExpression
     {
-        public static Color BigmapTileColor(enum_TileLocking levelLocking, enum_TileType levelType)
-        {
-            Color color;
-            switch (levelType)
-            {
-                default: color = TCommon.ColorAlpha(Color.blue, .5f); break;
-                case enum_TileType.Battle: color = TCommon.ColorAlpha(Color.red, .5f); break;
-                case enum_TileType.Start: color = TCommon.ColorAlpha(Color.grey, .5f); break;
-                case enum_TileType.End: color = TCommon.ColorAlpha(Color.black, .5f); break;
-                case enum_TileType.CoinsTrade: color = TCommon.ColorAlpha(Color.green, .5f); break;
-                case enum_TileType.BattleTrade: color = TCommon.ColorAlpha(Color.yellow, .5f); break;
-                case enum_TileType.ActionAdjustment: color = TCommon.ColorAlpha(Color.white, .5f); break;
-            }
-            switch (levelLocking)
-            {
-                case enum_TileLocking.Unlockable: color = TCommon.ColorAlpha(color, .2f); break;
-            }
-            return color;
-        }
         public static Color ActionRarityColor(this enum_RarityLevel level)
         {
             switch (level) {
@@ -256,8 +237,6 @@ namespace GameSetting
     #endregion
 
     #region GameEnum
-    public enum enum_GameDifficulty { Invalid=-1,Rookie=1,Veteran=2,Ranger=3 }
-
     public enum enum_StageLevel { Invalid = -1, Rookie = 1, Veteran = 2, Ranger = 3 }
 
     public enum enum_BattleDifficulty { Invalid = -1, Peaceful = 0, Eazy = 1, Normal = 2, Hard = 3, End = 4, BattleTrade = 10, }
@@ -397,13 +376,13 @@ namespace GameSetting
     public class CPlayerGameSave : ISave        //Save Outta Game
     {
         public float f_Credits;
-        public enum_GameDifficulty m_GameDifficulty;
-        public enum_GameDifficulty m_DifficultyUnlocked;
+        public int m_GameDifficulty;
+        public int m_DifficultyUnlocked;
         public CPlayerGameSave()
         {
             f_Credits = 100;
-            m_GameDifficulty = enum_GameDifficulty.Rookie;
-            m_DifficultyUnlocked = enum_GameDifficulty.Rookie;
+            m_GameDifficulty = 1;
+            m_DifficultyUnlocked = 1;
         }
     }
 
@@ -997,7 +976,6 @@ namespace GameSetting
                 }
             }
         }
-
     }
 
     public class EntitySubInfoManager : CharacterInfoManager
@@ -1012,19 +990,18 @@ namespace GameSetting
         }
         public EntitySubInfoManager(EntityCharacterBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
         {
-
         }
     }
 
     public class PlayerInfoManager : CharacterInfoManager
     {
         EntityCharacterPlayer m_Player;
+        public int I_ClipAmount(int baseClipAmount) => baseClipAmount == 0 ? 0 : (int)(((B_OneOverride ? 1 : baseClipAmount) + I_ClipAdditive) * F_ClipMultiply);
         public float F_RecoilMultiply { get; private set; } = 1f;
         public float F_ProjectileSpeedMuiltiply { get; private set; } = 1f;
         protected bool B_OneOverride { get; private set; } = false;
         protected int I_ClipAdditive { get; private set; } = 0;
         protected float F_ClipMultiply { get; private set; } = 1f;
-        public int I_ClipAmount(int baseClipAmount) =>baseClipAmount==0?0:(int)(((B_OneOverride ? 1 : baseClipAmount) + I_ClipAdditive) * F_ClipMultiply);
         protected float F_DamageAdditive = 0f;
 
         public float m_ActionAmount { get; private set; } = 0f;
