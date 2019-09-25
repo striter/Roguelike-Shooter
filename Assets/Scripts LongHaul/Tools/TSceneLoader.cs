@@ -5,9 +5,8 @@ using UnityEngine.SceneManagement;
 public enum enum_Scene
 {
     Invalid = -1,
-    Main = 0,
+    Camp = 0,
     Game = 1,
-    STest = 2,
 }
 public class TSceneLoader:SingletonMono<TSceneLoader>,ISingleCoroutine {
 
