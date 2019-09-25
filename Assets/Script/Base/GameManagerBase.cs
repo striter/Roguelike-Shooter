@@ -69,7 +69,6 @@ public static class OptionsManager
         event_OptionChanged?.Invoke();
     }
 }
-
 public static class GameDataManager
 {
     public static bool m_Inited { get; private set; } = false;
@@ -86,7 +85,7 @@ public static class GameDataManager
         m_PlayerGameData = TGameData<CPlayerGameSave>.Read();
         m_PlayerLevelData = TGameData<CPlayerLevelSave>.Read();
     }
-#region GameSave
+    #region GameSave
     public static CPlayerGameSave m_PlayerGameData { get; private set; }
     public static CPlayerLevelSave m_PlayerLevelData { get; private set; }
     public static void AdjuastInGameData(EntityCharacterPlayer data, GameLevelManager level, GameRecordManager record)
@@ -94,12 +93,12 @@ public static class GameDataManager
         m_PlayerLevelData.Adjust(data, level, record);
         TGameData<CPlayerLevelSave>.Save(m_PlayerLevelData);
     }
-    public static void OnGameFinished(bool win,float credit)
+    public static void OnGameFinished(bool win, float credit)
     {
         m_PlayerLevelData = new CPlayerLevelSave();
 
 
-        if (win && m_PlayerGameData.m_DifficultyUnlocked != enum_GameDifficulty.Veteran&&m_PlayerGameData.m_GameDifficulty==m_PlayerGameData.m_DifficultyUnlocked)
+        if (win && m_PlayerGameData.m_DifficultyUnlocked != enum_GameDifficulty.Ranger && m_PlayerGameData.m_GameDifficulty == m_PlayerGameData.m_DifficultyUnlocked)
         {
             m_PlayerGameData.m_DifficultyUnlocked++;
             m_PlayerGameData.m_GameDifficulty++;
@@ -109,8 +108,17 @@ public static class GameDataManager
         TGameData<CPlayerLevelSave>.Save(m_PlayerLevelData);
         TGameData<CPlayerGameSave>.Save(m_PlayerGameData);
     }
-#endregion
-#region ExcelData
+
+    public static enum_GameDifficulty SwitchGameDifficulty()
+    {
+        m_PlayerGameData.m_GameDifficulty += 1;
+        if (m_PlayerGameData.m_GameDifficulty > m_PlayerGameData.m_DifficultyUnlocked)
+            m_PlayerGameData.m_GameDifficulty = enum_GameDifficulty.Rookie;
+        TGameData<CPlayerGameSave>.Save(m_PlayerGameData);
+        return m_PlayerGameData.m_GameDifficulty;
+    }
+    #endregion
+    #region ExcelData
     public static SLevelGenerate GetItemGenerateProperties(enum_Style style, enum_LevelGenerateType prefabType, bool isInner)
     {
         SLevelGenerate generate = Properties<SLevelGenerate>.PropertiesList.Find(p => p.m_LevelStyle == style && p.m_LevelPrefabType == prefabType && p.m_IsInner == isInner);
@@ -151,8 +159,8 @@ public static class GameDataManager
             Debug.LogError("Error Properties Found Of Index:" + index);
         return buff;
     }
-#endregion
-#region ActionData
+    #endregion
+    #region ActionData
     static Dictionary<int, ActionBase> m_AllActions = new Dictionary<int, ActionBase>();
     static List<int> m_WeaponActions = new List<int>();
     static List<int> m_PlayerActions = new List<int>();
@@ -208,5 +216,5 @@ public static class GameDataManager
         return TReflection.CreateInstance<ActionBase>(m_AllActions[actionIndex].GetType(), m_ActionIdentity++, level);
     }
     public static ActionBase CopyAction(ActionBase targetAction) => TReflection.CreateInstance<ActionBase>(m_AllActions[targetAction.m_Index].GetType(), targetAction.m_Identity, targetAction.m_rarity);
-#endregion
+    #endregion
 }

@@ -186,6 +186,7 @@ public class GameManager : GameManagerBase<GameManager>, ISingleCoroutine
 
     void OnStageFinished()
     {
+        m_RewardChest = null;
         m_GameLevel.StageFinished();
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageFinish);
         if (m_GameLevel.B_NextStage)
@@ -613,7 +614,7 @@ public static class GameObjectManager
         ObjectPoolManager<enum_Interaction, InteractBase>.Register(enum_Interaction.ActionChest, TResources.GetInteractActionChest(stageIndex), 5, (InteractBase interact) => { interact.Init(); });
         TCommon.TraversalEnum((enum_Interaction enumValue) =>
         {
-            if (enumValue >= enum_Interaction.ContainerTrade)
+            if (enumValue > enum_Interaction.GameBegin&&enumValue< enum_Interaction.GameEnd)
                 ObjectPoolManager<enum_Interaction, InteractBase>.Register(enumValue, TResources.GetInteract(enumValue),5, (InteractBase interact) => { interact.Init(); });
         });
     }

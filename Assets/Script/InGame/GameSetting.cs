@@ -284,7 +284,7 @@ namespace GameSetting
 
     public enum enum_CharacterType { Invalid = -1, Fighter = 1, Shooter_Rookie = 2, Shooter_Veteran = 3, AOECaster = 4, Elite = 5, SubHidden = 99 }
 
-    public enum enum_Interaction { Invalid = -1, Portal = 1, ActionChest = 2, ContainerTrade = 10, ContainerBattle = 11, PickupCoin = 20, PickupHealth = 21, PickupArmor = 22, PickupAction = 23, Weapon = 24, ActionAdjustment = 25, }
+    public enum enum_Interaction { Invalid = -1, Portal = 1, ActionChest = 2, GameBegin, ContainerTrade , ContainerBattle , PickupCoin , PickupHealth , PickupArmor , PickupAction , Weapon , ActionAdjustment ,GameEnd,CampStage,CampDifficult, }
 
     public enum enum_TriggerType { Invalid = -1, Single = 1, Auto = 2, Burst = 3, Pull = 4, Store = 5, }
 
@@ -2011,6 +2011,8 @@ namespace GameSetting
         MaxLevel=3,
     }
 
+    #endregion
+
     public static class LocalizationKeyJoint
     {
         public static string GetNameLocalizeKey(this BuffBase buff) => "Buff_Name_" + buff.m_Index;
@@ -2018,12 +2020,10 @@ namespace GameSetting
         public static string GetIntroLocalizeKey(this ActionBase action) => "Action_Intro_" + action.m_Index;
         public static string GetLocalizeKey(this enum_RarityLevel level) => "Action_Level_" + level;
         public static string GetNameLocalizeKey(this enum_PlayerWeapon weapon) => "Weapon_Name_" + weapon;
-        public static string GetInteractTitle(this enum_Interaction interact) => "Interact_" + interact;
+        public static string GetInteractTitle(this enum_Interaction interact) => "UI_Interact_" + interact;
         public static string GetLocalizeKey(this enum_Option_FrameRate frameRate) => "UI_Option_" + frameRate;
         public static string GetLocalizeKey(this enum_Option_JoyStickMode joystick) => "UI_Option_" + joystick;
         public static string GetLocalizeKey(this enum_Option_LanguageRegion region) => "UI_Option_" + region;
     }
-    #endregion
-
     #endregion
 }
