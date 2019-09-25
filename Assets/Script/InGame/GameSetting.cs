@@ -64,7 +64,7 @@ namespace GameSetting
         public static int GetAIEquipment(int entityIndex, int weaponIndex = 0, int subWeaponIndex = 0) => entityIndex * 100 + weaponIndex * 10 + subWeaponIndex;
         public static int GetEquipmentSubIndex(int weaponIndex) => weaponIndex + 1;
         public static int GetEnermyGameDifficultyBuffIndex(enum_GameDifficulty difficulty) => 10000 + (int)difficulty;
-        public static float GetAIBaseHealthMultiplier(enum_GameDifficulty gameDifficulty)=>0.9f+.0.1f*(int)gameDifficulty;
+        public static float GetAIBaseHealthMultiplier(enum_GameDifficulty gameDifficulty)=>0.9f+0.1f*(int)gameDifficulty;
         public static float GetAIMaxHealthMultiplier(enum_StageLevel stageDifficulty) => (int)stageDifficulty;
 
         public static float GetActionAmountRevive(float damageApply) => damageApply * .00125f;
