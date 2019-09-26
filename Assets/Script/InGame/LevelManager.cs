@@ -256,7 +256,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
         RemoveNavmeshData();
 
         List<NavMeshBuildSource> sources = new List<NavMeshBuildSource>();
-        Bounds bound = new Bounds(Vector3.zero, new Vector3(itemSetLevel.I_InnerHalfLength * 2, .2f, itemSetLevel.I_InnerHalfLength * 2));
+        Bounds bound = new Bounds(Vector3.zero, new Vector3(itemSetLevel.I_InnerHalfLength * 2-1, .2f, itemSetLevel.I_InnerHalfLength * 2-1));
         NavMeshBuilder.CollectSources(itemSetLevel.transform, -1, NavMeshCollectGeometry.PhysicsColliders, 0, new List<NavMeshBuildMarkup>() { }, sources);
         m_NavMeshDataEntity = NavMesh.AddNavMeshData(NavMeshBuilder.BuildNavMeshData(NavMesh.GetSettingsByIndex(0), sources, bound, Vector3.zero, itemSetLevel.transform.rotation));
 
