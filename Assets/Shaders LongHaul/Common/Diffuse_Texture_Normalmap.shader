@@ -7,6 +7,7 @@
 	}
 		SubShader
 		{
+		Tags { "RenderType" = "Opaque" "Queue" = "Geometry" }
 			Cull Back
 			CGINCLUDE
 			#include "UnityCG.cginc"

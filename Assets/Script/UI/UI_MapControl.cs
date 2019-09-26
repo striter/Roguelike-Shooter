@@ -47,7 +47,7 @@ public class UI_MapControl : UIPageBase,ISingleCoroutine {        //This Page Wo
             {
                 connectionActivate.Add(direction, levelInfo.m_Connections.ContainsKey(direction)
                     && levelInfo.m_Connections[direction].X != -1
-                    && map.Get(levelInfo.m_Connections[direction]).m_TileLocking == enum_TileLocking.Unlockable);
+                    && map.Get(levelInfo.m_Connections[direction]).m_TileLocking != enum_TileLocking.Unseen);
             }
             bool isPlayer = levelInfo.m_TileAxis == LevelManager.Instance.m_currentLevel.m_TileAxis;
             infoUI.SetBigmapLevelInfo(levelInfo,isPlayer, connectionActivate);

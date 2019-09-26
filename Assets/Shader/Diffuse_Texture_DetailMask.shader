@@ -9,17 +9,17 @@
 	}
 	SubShader
 	{
-		Tags { "RenderType"="Opaque" }
-			Cull Back
+		Tags { "RenderType" = "Opaque" "Queue" = "Geometry" }
+		Cull Back
 
-			Blend SrcAlpha OneMinusSrcAlpha
-			CGINCLUDE
-			#include "UnityCG.cginc"
-			#include "Lighting.cginc"
-			#include "AutoLight.cginc"
-			sampler2D _MainTex;
-			float _TexScale;
-			ENDCG
+		Blend SrcAlpha OneMinusSrcAlpha
+		CGINCLUDE
+		#include "UnityCG.cginc"
+		#include "Lighting.cginc"
+		#include "AutoLight.cginc"
+		sampler2D _MainTex;
+		float _TexScale;
+		ENDCG
 		Pass		//Base Pass
 		{
 			Tags { "LightMode" = "ForwardBase"}
