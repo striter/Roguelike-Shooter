@@ -27,6 +27,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
     {
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageStart, OnStageStart);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
     }
     protected override void OnDestroy()
     {
@@ -34,6 +35,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
         RemoveNavmeshData();
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnStageStart, OnStageStart);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
     }
     public void GenerateAllEnviorment(enum_Style _LevelStyle,System.Random seed,Action<SBigmapLevelInfo> _OnLevelPrepared,Action _OnStageFinished)
     {
@@ -92,11 +94,17 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
 
     void OnChangeLevel()
     {
-        foreach (enum_TileDirection direction in m_currentLevel.m_Connections.Keys)     //Set Connected Island Unlockable
+        foreach (enum_TileDirection direction in m_currentLevel.m_Connections.Keys)     //Reveal Around Islands
         {
-            if (m_MapLevelInfo.Get(m_currentLevel.m_Connections[direction])!=null)
+            SBigmapLevelInfo info = m_MapLevelInfo.Get(m_currentLevel.m_Connections[direction]);
+            if (info != null && info.m_TileLocking == enum_TileLocking.Unseen)
                 m_MapLevelInfo.Get(m_currentLevel.m_Connections[direction]).SetTileLocking(enum_TileLocking.Unlockable);
         }
+    }
+    void OnBattleFinish()
+    {
+        Debug.Log("????");
+        m_currentLevel.SetTileLocking(enum_TileLocking.Locked);
     }
     #endregion
     #region BigMap
@@ -106,7 +114,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
         SBigmapTileInfo[,] bigmapTiles = new SBigmapTileInfo[_bigmapWidth, _bigmapHeight];
         for (int i = 0; i < _bigmapWidth; i++)
             for (int j = 0; j < _bigmapHeight; j++)
-                bigmapTiles[i, j] = new  SBigmapTileInfo(new TileAxis(i, j), enum_TileType.Invalid, enum_TileLocking.Locked);
+                bigmapTiles[i, j] = new  SBigmapTileInfo(new TileAxis(i, j), enum_TileType.Invalid, enum_TileLocking.Unseen);
 
         List<SBigmapTileInfo> mainRoadTiles = new List<SBigmapTileInfo>();
         List<SBigmapTileInfo> subGenerateTiles = new List<SBigmapTileInfo>();

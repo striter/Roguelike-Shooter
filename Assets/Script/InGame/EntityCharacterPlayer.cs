@@ -20,18 +20,19 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public EntityHealth m_PlayerHealth { get; private set; }
     protected bool m_aiming = false;
     protected float f_movementReductionCheck = 0f;
-    
     protected override HealthBase GetHealthManager()
     {
         m_PlayerHealth = new EntityHealth(this, OnHealthChanged, OnDead);
         return m_PlayerHealth;
     }
+
     protected override void ActivateHealthManager() => m_PlayerHealth.OnActivate(I_MaxHealth, I_DefaultArmor, true);
     protected override CharacterInfoManager GetEntityInfo()
     {
         m_PlayerInfo = new PlayerInfoManager(this, m_HitCheck.TryHit, OnExpireChange,OnActionsChange);
         return m_PlayerInfo;
     }
+
     public override void Init(int poolPresetIndex)
     {
         base.Init(poolPresetIndex);
@@ -246,7 +247,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     #region Action
     public void TestUseAction(int actionIndex)
     {
-        m_PlayerInfo.OnUseAcion(GameDataManager.CreateAction(actionIndex, enum_RarityLevel.L3));
+        m_PlayerInfo.OnUseAcion(GameDataManager.CreateAction(actionIndex, enum_RarityLevel.Epic));
     }
     #endregion
 

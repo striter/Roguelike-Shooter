@@ -36,7 +36,7 @@ public class UI_WeaponStatus : UIPageBase {
     }
     public void SetInfo(WeaponBase weapon)
     {
-        m_WeaponName.localizeText = weapon.m_WeaponInfo.m_Weapon.GetNameLocalizeKey();
+        m_WeaponName.localizeText = weapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
         m_ClipSize.SetNumeric(string.Format("{0:D2}", weapon.I_ClipAmount));
         m_Damage.fillAmount = UIExpression.F_WeaponDamageValue(weapon.F_BaseDamage);
         m_FireRate.fillAmount = UIExpression.F_WeaponFireRateValue(weapon.m_WeaponInfo.m_RPM);

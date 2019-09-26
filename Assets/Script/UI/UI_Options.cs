@@ -32,11 +32,11 @@ public class UI_Options : UIPageBase {
         sld_Music.value = OptionsManager.m_OptionsData.m_MusicVolume;
         sld_Sensitive.value = OptionsManager.m_OptionsData.m_Sensitive;
         sld_VFX.value = OptionsManager.m_OptionsData.m_VFXVolume;
-        TCommon.TraversalEnum((enum_Option_JoyStickMode joyStick) => { m_JoyStickModeGrid.AddItem((int)joyStick).SetItemInfo(TLocalization.GetKeyLocalized( joyStick.GetLocalizeKey())); });
+        TCommon.TraversalEnum((enum_Option_JoyStickMode joyStick) => { m_JoyStickModeGrid.AddItem((int)joyStick).SetItemInfo( joyStick.GetLocalizeKey()); });
         m_JoyStickModeGrid.OnItemClick((int)OptionsManager.m_OptionsData.m_JoyStickMode);
-        TCommon.TraversalEnum((enum_Option_FrameRate frameRate) => { m_FrameRateGrid.AddItem((int)frameRate).SetItemInfo(TLocalization.GetKeyLocalized(frameRate.GetLocalizeKey())); });
+        TCommon.TraversalEnum((enum_Option_FrameRate frameRate) => { m_FrameRateGrid.AddItem((int)frameRate).SetItemInfo(frameRate.GetLocalizeKey()); });
         m_FrameRateGrid.OnItemClick((int)OptionsManager.m_OptionsData.m_FrameRate);
-        TCommon.TraversalEnum((enum_Option_LanguageRegion region) => { m_RegionGrid.AddItem((int)region).SetItemInfo(TLocalization.GetKeyLocalized(region.GetLocalizeKey())); });
+        TCommon.TraversalEnum((enum_Option_LanguageRegion region) => { m_RegionGrid.AddItem((int)region).SetItemInfo(region.GetLocalizeKey()); });
         m_RegionGrid.OnItemClick((int)OptionsManager.m_OptionsData.m_Region);
     }
 

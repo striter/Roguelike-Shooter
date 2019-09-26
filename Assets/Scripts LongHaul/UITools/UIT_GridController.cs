@@ -75,8 +75,6 @@ public class UIT_GridControllerMono<T> : UIT_GridController where T : MonoBehavi
 
     }
 
-    public T GetOrAddItem(int identity)=>Contains(identity) ? GetItem(identity) : AddItem(identity);
-    public new T GetItem(int identity)=> Contains(identity) ? m_ItemDic[identity] : null;
     public new T AddItem(int identity)
     {
         T item = base.AddItem(identity).GetComponent<T>();
@@ -85,7 +83,11 @@ public class UIT_GridControllerMono<T> : UIT_GridController where T : MonoBehavi
         item.transform.SetSiblingIndex(identity);
         return item;
     }
-
+    public T GetOrAddItem(int identity)=>Contains(identity) ? GetItem(identity) : AddItem(identity);
+    public new T GetItem(int identity)=> Contains(identity) ? m_ItemDic[identity] : null;
+    public T AddItem(int xIdentity, int yIdentity) => AddItem(GetIdentity(xIdentity, yIdentity));
+    public T GetItem(int xIdentity, int yIdentity) => GetItem(GetIdentity(xIdentity,yIdentity));
+    int GetIdentity(int xIdentity, int yIdentity) => xIdentity + yIdentity * 1000;
     public override void ClearGrid()
     {
         base.ClearGrid();

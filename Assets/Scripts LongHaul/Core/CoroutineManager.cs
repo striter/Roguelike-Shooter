@@ -9,17 +9,18 @@ public static class TIEnumerators
 {
     public static class UI
     {
-        public static IEnumerator StartTypeWriter(Text text,string writerText,float duration)
+        public static IEnumerator StartTypeWriter(Text text,float duration)
         {
+            string targetText = text.text;
             float startTime = Time.time;
-            StringBuilder m_stringBuilder = new StringBuilder(writerText);
+            StringBuilder m_stringBuilder = new StringBuilder(targetText);
             int length=m_stringBuilder.Length;
             for (; ;)
             {
                 float timeParam = (Time.time - startTime) / duration;
                 if (timeParam > 1)
                 {
-                    text.text = writerText;
+                    text.text = targetText;
                     yield break;
                 }
                 text.text = m_stringBuilder.ToString(0, (int)(length * timeParam));

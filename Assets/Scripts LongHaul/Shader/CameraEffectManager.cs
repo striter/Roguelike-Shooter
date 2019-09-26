@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Camera)),ExecuteInEditMode]
+[RequireComponent(typeof(Camera))]
 public class CameraEffectManager :MonoBehaviour, ISingleCoroutine {
     #region Interact
     public T AddCameraEffect<T>() where T: CameraEffectBase, new()

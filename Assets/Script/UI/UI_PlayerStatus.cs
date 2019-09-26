@@ -200,12 +200,12 @@ public class UI_PlayerStatus : UIToolsBase
             case enum_Interaction.PickupAction:
                 {
                     m_ActionData.SetActivate(true);
-                    txt_interactName.localizeText = interact.m_InteractType.GetInteractTitle();
+                    txt_interactName.localizeText = interact.m_InteractType.GetLocalizeKey();
                     m_ActionData.SetInfo((interact as InteractPickupAction).m_Action);
                 }
                 break;
             default:
-                txt_interactName.localizeText = interact.m_InteractType.GetInteractTitle();
+                txt_interactName.localizeText = interact.m_InteractType.GetLocalizeKey();
                 break;
         }
     }
@@ -215,7 +215,7 @@ public class UI_PlayerStatus : UIToolsBase
             return;
 
         m_targetInteractWeapon = interactWeapon.m_Weapon;
-        txt_interactName.localizeText = m_targetInteractWeapon.m_WeaponInfo.m_Weapon.GetNameLocalizeKey();
+        txt_interactName.localizeText = m_targetInteractWeapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
         m_lastInteract = enum_Interaction.Invalid;
         m_ActionData.SetActivate(m_targetInteractWeapon.m_WeaponAction.Count > 0);      //Test
         if (m_targetInteractWeapon.m_WeaponAction.Count > 0)        //Test
@@ -235,7 +235,7 @@ public class UI_PlayerStatus : UIToolsBase
     #region Weapon/Ammo
     void OnWeaponStatus(WeaponBase weaponInfo)
     {
-        m_WeaponName.localizeText = weaponInfo.m_WeaponInfo.m_Weapon.GetNameLocalizeKey();
+        m_WeaponName.localizeText = weaponInfo.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
 
         bool showWeaponAction = weaponInfo.m_WeaponAction.Count == 1;
         m_WeaponAction.SetActivate(showWeaponAction);

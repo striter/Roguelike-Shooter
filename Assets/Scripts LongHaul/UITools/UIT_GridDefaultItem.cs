@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class UIT_GridDefaultItem : UIT_GridItem {
 
-    protected Text txt_Default;
+    protected UIT_TextLocalization txt_Default;
     protected Button btn_Default;
     protected Image img_Default;
     protected Image img_HighLight;
@@ -14,21 +14,22 @@ public class UIT_GridDefaultItem : UIT_GridItem {
     public override void Init(UIT_GridController parent)
     {
         base.Init(parent);
-        txt_Default = tf_Container.Find("DefaultText").GetComponentNullable<Text>();
+        txt_Default = tf_Container.Find("DefaultText").GetComponentNullable<UIT_TextLocalization>();
         img_Default = tf_Container.Find("DefaultImage").GetComponentNullable<Image>();
         img_HighLight = tf_Container.Find("DefaultHighLight").GetComponentNullable<Image>();
         btn_Default = tf_Container.Find("DefaultBtn").GetComponentNullable<Button>();
         if (btn_Default)  btn_Default.onClick.AddListener(OnItemTrigger);
+        if (img_HighLight) SetHighLight(false);
     }
     public void SetDefaultOnClick(Action<int> _OnItemClick)
     {
         OnItemClick = _OnItemClick;
     }
 
-    public void SetItemInfo(string defaultText = "", bool highLight = false, Sprite defaultSprite = null, bool setNativeSize = false)
+    public void SetItemInfo(string defaultKey = "", bool highLight = false, Sprite defaultSprite = null, bool setNativeSize = false)
     {
-        if (defaultText != "")
-            txt_Default.text = defaultText;
+        if (defaultKey != "")
+            txt_Default.localizeText = defaultKey;
         if (defaultSprite != null)
         {
             img_Default.sprite = defaultSprite;

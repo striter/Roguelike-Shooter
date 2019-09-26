@@ -97,8 +97,7 @@ public static class GameDataManager
     {
         m_PlayerLevelData = new CPlayerLevelSave();
 
-
-        if (win && m_PlayerGameData.m_DifficultyUnlocked != enum_GameDifficulty.Ranger && m_PlayerGameData.m_GameDifficulty == m_PlayerGameData.m_DifficultyUnlocked)
+        if (win && m_PlayerGameData.m_GameDifficulty == m_PlayerGameData.m_DifficultyUnlocked)
         {
             m_PlayerGameData.m_DifficultyUnlocked++;
             m_PlayerGameData.m_GameDifficulty++;
@@ -109,11 +108,11 @@ public static class GameDataManager
         TGameData<CPlayerGameSave>.Save(m_PlayerGameData);
     }
 
-    public static enum_GameDifficulty SwitchGameDifficulty()
+    public static int SwitchGameDifficulty()
     {
         m_PlayerGameData.m_GameDifficulty += 1;
         if (m_PlayerGameData.m_GameDifficulty > m_PlayerGameData.m_DifficultyUnlocked)
-            m_PlayerGameData.m_GameDifficulty = enum_GameDifficulty.Rookie;
+            m_PlayerGameData.m_GameDifficulty = 0;
         TGameData<CPlayerGameSave>.Save(m_PlayerGameData);
         return m_PlayerGameData.m_GameDifficulty;
     }

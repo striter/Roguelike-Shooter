@@ -5,6 +5,7 @@ using System;
 
 public class UIManager :SimpleSingletonMono<UIManager>
 {
+    public CanvasScaler m_Scaler { get; private set; }
     Canvas cvs_Overlay, cvs_Camera;
     Transform tf_Control, tf_Pages, tf_Tools;
     public Action OnReload;
@@ -20,6 +21,7 @@ public class UIManager :SimpleSingletonMono<UIManager>
     {
         m_commonSprites = TResources.GetUIAtlas_Common();
         cvs_Overlay = transform.Find("Overlay").GetComponent<Canvas>();
+        m_Scaler = cvs_Overlay.GetComponent<CanvasScaler>();
         cvs_Camera = transform.Find("Camera").GetComponent<Canvas>();
 
         tf_Control = cvs_Camera.transform.Find("Control");
@@ -61,18 +63,11 @@ public class UIManager :SimpleSingletonMono<UIManager>
     string m_mainSprite;
     void OnPlayerStatusChanged(EntityCharacterPlayer player)
     {
-        string spriteName = "main_fire";
-        if(player.m_Interact!=null)
-            switch (player.m_Interact.m_InteractType)
-            {
-                case enum_Interaction.Invalid:Debug.LogError("Invalid Pharse Here!");break;
-                case enum_Interaction.ActionAdjustment:spriteName = "main_chat";break;
-                default:spriteName = "main_pickup";break;
-            }
-
+        string spriteName = UIEnumConvertions.GetMainSprite(player);
         if (spriteName == m_mainSprite)
             return;
         m_mainSprite = spriteName;
         img_main.sprite = m_commonSprites[m_mainSprite];
     }
+
 }

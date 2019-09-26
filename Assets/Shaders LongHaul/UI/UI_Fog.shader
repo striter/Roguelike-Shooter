@@ -81,7 +81,7 @@
 	fixed4 frag(v2f v) :COLOR
 	{
 	float2 noiseUV = v.uv + float2(_Time.x*_DeltaX,_Time.x*_DeltaY);
-	float noise = tex2D(_NoiseTex, noiseUV).r;
+	float noise = tex2D(_NoiseTex, noiseUV/2).r;
 
 	half4 finalCol = tex2D(_MainTex, v.uv)*v.color;
 	return half4( finalCol.rgb, finalCol.a*noise);

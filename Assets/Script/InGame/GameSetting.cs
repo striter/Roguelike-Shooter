@@ -64,7 +64,7 @@ namespace GameSetting
         public static int GetAIEquipment(int entityIndex, int weaponIndex = 0, int subWeaponIndex = 0) => entityIndex * 100 + weaponIndex * 10 + subWeaponIndex;
         public static int GetEquipmentSubIndex(int weaponIndex) => weaponIndex + 1;
         public static int GetEnermyGameDifficultyBuffIndex(int difficulty) => 10000 + difficulty;
-        public static float GetAIBaseHealthMultiplier(int gameDifficulty)=>1f+.2f*gameDifficulty;
+        public static float GetAIBaseHealthMultiplier(int gameDifficulty)=>0.9f+0.1f*gameDifficulty;
         public static float GetAIMaxHealthMultiplier(enum_StageLevel stageDifficulty) => (int)stageDifficulty;
 
         public static float GetActionAmountRevive(float damageApply) => damageApply * .00125f;
@@ -87,9 +87,9 @@ namespace GameSetting
                     switch (level)
                     {
                         default: Debug.LogError("Invalid Level!"); return new RangeInt(0, -1);
-                        case enum_RarityLevel.L1: return new RangeInt(8, 4);
-                        case enum_RarityLevel.L2: return new RangeInt(16, 8);
-                        case enum_RarityLevel.L3: return new RangeInt(24, 12);
+                        case enum_RarityLevel.Normal: return new RangeInt(8, 4);
+                        case enum_RarityLevel.OutStanding: return new RangeInt(16, 8);
+                        case enum_RarityLevel.Epic: return new RangeInt(24, 12);
                     }
             }
         }
@@ -102,8 +102,8 @@ namespace GameSetting
                 default: return StageInteractGenerate.Create(new Dictionary<enum_RarityLevel, int>(), new Dictionary<enum_RarityLevel, int>(), new Dictionary<enum_CharacterType, CoinsGenerateInfo>());
                 case enum_StageLevel.Rookie:
                     return StageInteractGenerate.Create(
-                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },    //宝箱等级概率
-                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L1, 75 }, { enum_RarityLevel.L2, 25 } },    //交易等级概率
+                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.Normal, 75 }, { enum_RarityLevel.OutStanding, 25 } },    //宝箱等级概率
+                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.Normal, 75 }, { enum_RarityLevel.OutStanding, 25 } },    //交易等级概率
                     new Dictionary<enum_CharacterType, CoinsGenerateInfo>() {
                      { enum_CharacterType.SubHidden, CoinsGenerateInfo.Create( 0,0, 0, new RangeInt(0, 0)) },     //实体掉落生成概率 类型,血,护甲,金币,金币数值范围
                      { enum_CharacterType.Fighter, CoinsGenerateInfo.Create( 8,20, 10, new RangeInt(2, 2)) },
@@ -113,8 +113,8 @@ namespace GameSetting
                      { enum_CharacterType.Elite, CoinsGenerateInfo.Create( 8,15, 100, new RangeInt(6, 6)) }});
                 case enum_StageLevel.Veteran:
                     return StageInteractGenerate.Create(
-                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L2, 75 }, { enum_RarityLevel.L3, 25 } },    //宝箱等级概率
-                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L2, 75 }, { enum_RarityLevel.L3, 25 } },    //交易等级概率
+                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.OutStanding, 75 }, { enum_RarityLevel.Epic, 25 } },    //宝箱等级概率
+                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.OutStanding, 75 }, { enum_RarityLevel.Epic, 25 } },    //交易等级概率
                     new Dictionary<enum_CharacterType, CoinsGenerateInfo>() {
                      { enum_CharacterType.SubHidden, CoinsGenerateInfo.Create( 0,0, 0, new RangeInt(0, 0)) },     //实体掉落生成概率 类型,血,护甲,金币,金币数值范围
                      { enum_CharacterType.Fighter, CoinsGenerateInfo.Create( 8,15, 10, new RangeInt(2, 2)) },
@@ -124,8 +124,8 @@ namespace GameSetting
                      { enum_CharacterType.Elite, CoinsGenerateInfo.Create( 8,15, 100, new RangeInt(6, 6)) }});
                 case enum_StageLevel.Ranger:
                     return StageInteractGenerate.Create(
-                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L2, 25 }, { enum_RarityLevel.L3, 75 } },    //宝箱等级概率
-                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.L2, 25 }, { enum_RarityLevel.L3, 75 } },    //交易等级概率
+                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.OutStanding, 25 }, { enum_RarityLevel.Epic, 75 } },    //宝箱等级概率
+                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.OutStanding, 25 }, { enum_RarityLevel.Epic, 75 } },    //交易等级概率
                     new Dictionary<enum_CharacterType, CoinsGenerateInfo>() {
                      { enum_CharacterType.SubHidden, CoinsGenerateInfo.Create( 0,0, 0, new RangeInt(0, 0)) },     //实体掉落生成概率 类型,血,护甲,金币,金币数值范围
                      { enum_CharacterType.Fighter, CoinsGenerateInfo.Create( 8,15, 10, new RangeInt(2, 2)) },
@@ -150,11 +150,11 @@ namespace GameSetting
         public static Color ActionRarityColor(this enum_RarityLevel level)
         {
             switch (level) {
-                case enum_RarityLevel.L1:
+                case enum_RarityLevel.Normal:
                     return Color.green;
-                case enum_RarityLevel.L2:
+                case enum_RarityLevel.OutStanding:
                     return Color.blue;
-                case enum_RarityLevel.L3:
+                case enum_RarityLevel.Epic:
                     return Color.yellow;
                 default:
                     return Color.magenta;
@@ -166,8 +166,8 @@ namespace GameSetting
         public static float F_WeaponStabilityValue(float baseRecoilScore) =>1-  baseRecoilScore/80f;
         public static float F_WeaponProjectileSpeedValue(float baseProjectileSpeed) => baseProjectileSpeed / 100f;
     }
-
-    public static class Enum_Relative
+    
+    public static class GameEnumConvertions
     {
         public static enum_RarityLevel ToActionLevel(this enum_StageLevel stageLevel) => (enum_RarityLevel)stageLevel;
 
@@ -199,6 +199,81 @@ namespace GameSetting
         }
     }
 
+    public static class UIEnumConvertions
+    {
+        public static string GetSpriteName(this enum_UI_TileBattleStatus status) => "map_info_battle_" + status.ToString();
+        public static string GetSpriteName(this enum_TileType type)
+        {
+            switch (type)
+            {
+                default: return "map_tile_type_Invalid";
+                case enum_TileType.Start:
+                case enum_TileType.Battle:
+                case enum_TileType.BattleTrade:
+                case enum_TileType.CoinsTrade:
+                case enum_TileType.ActionAdjustment:
+                case enum_TileType.End:
+                    return "map_tile_type_" + type.ToString();
+            }
+        }
+        public static string GetMainSprite(this EntityCharacterPlayer player)
+        {
+            string spriteName = "main_fire";
+            if (player.m_Interact != null)
+                switch (player.m_Interact.m_InteractType)
+                {
+                    case enum_Interaction.Invalid: Debug.LogError("Invalid Pharse Here!"); break;
+                    case enum_Interaction.ActionAdjustment: spriteName = "main_chat"; break;
+                    default: spriteName = "main_pickup"; break;
+                }
+            return spriteName;
+        }
+
+        public static string GetCordinates(this TileAxis axis)
+        {
+            string x = axis.X.ToString();
+            char y = (char)(axis.Y + 65);
+            return x + "-" + y;
+        }
+        public static enum_UI_TileBattleStatus GetBattleStatus(this enum_TileType type)
+        {
+            switch (type)
+            {
+                default: return enum_UI_TileBattleStatus.Clear;
+                case enum_TileType.BattleTrade: return enum_UI_TileBattleStatus.Overwatch;
+                case enum_TileType.Battle: return enum_UI_TileBattleStatus.Patrol;
+                case enum_TileType.End: return enum_UI_TileBattleStatus.HeadQuaters;
+            }
+        }
+        public static string  GetBattlePercentage(this enum_UI_TileBattleStatus status)
+        {
+            switch (status)
+            {
+                default: return "¿";
+                case enum_UI_TileBattleStatus.Clear: return "0%";
+                case enum_UI_TileBattleStatus.Overwatch: return "50%";
+                case enum_UI_TileBattleStatus.Patrol: return "75%";
+                case enum_UI_TileBattleStatus.HeadQuaters: return "100%";
+            }
+        }
+    }
+
+    public static class LocalizationKeyJoint
+    {
+        public static string GetNameLocalizeKey(this BuffBase buff) => "Buff_Name_" + buff.m_Index;
+        public static string GetNameLocalizeKey(this ActionBase action) => "Action_Name_" + action.m_Index;
+        public static string GetIntroLocalizeKey(this ActionBase action) => "Action_Intro_" + action.m_Index;
+        public static string GetLocalizeKey(this enum_StageLevel stage) => "Game_" + stage;
+        public static string GetLocalizeKey(this enum_Style style) => "Game_" + style;
+        public static string GetLocalizeNameKey(this enum_PlayerWeapon weapon) => "Weapon_Name_" + weapon;
+        public static string GetLocalizeKey(this enum_Interaction interact) => "UI_Interact_" + interact;
+        public static string GetLocalizeKey(this enum_TileType type) => "UI_TileType_" + type;
+        public static string GetLocalizeKey(this enum_RarityLevel rarity) => "UI_Rarity_" + rarity;
+        public static string GetLocalizeKey(this enum_Option_FrameRate frameRate) => "UI_Option_" + frameRate;
+        public static string GetLocalizeKey(this enum_Option_JoyStickMode joystick) => "UI_Option_" + joystick;
+        public static string GetLocalizeKey(this enum_Option_LanguageRegion region) => "UI_Option_" + region;
+        public static string GetLocalizeKey(this enum_UI_TileBattleStatus status) => "UI_Battle_" + status;
+    }
     #endregion
 
     #region For Developers Use
@@ -247,7 +322,7 @@ namespace GameSetting
 
     public enum enum_HitCheck { Invalid = -1, Static = 1, Entity = 2, Dynamic = 3, Interact = 4, }
 
-    public enum enum_TileLocking { Invalid = -1, Locked = 0, Unlockable = 1, Unlocked = 2, }
+    public enum enum_TileLocking { Invalid = -1, Unseen=0,  Unlockable = 1, Unlocked = 2, Locked = 3, }
 
     public enum enum_Style { Invalid = -1, Forest = 1, Desert = 2, Iceland = 3, Horde = 4, Undead = 5, }
 
@@ -283,7 +358,7 @@ namespace GameSetting
 
     public enum enum_ExpireRefreshType { Invalid = -1, AddUp = 1, Refresh = 2 }
 
-    public enum enum_RarityLevel { Invalid = -1, L1 = 1, L2 = 2, L3 = 3, }
+    public enum enum_RarityLevel { Invalid = -1, Normal = 1, OutStanding = 2, Epic = 3, }
 
     public enum enum_ActionExpireType { Invalid = -1, Common = 1, AfterUse = 2, AfterFire = 3, AfterBattle = 4, AfterWeaponSwitch = 5, }
 
@@ -1379,10 +1454,10 @@ namespace GameSetting
         public virtual void OnAfterBattle() { }
         public virtual void OnFire(int identity) { }
         public virtual void OnWeaponDetach() { }
-        public bool B_Upgradable => m_rarity < enum_RarityLevel.L3;
+        public bool B_Upgradable => m_rarity < enum_RarityLevel.Epic;
         public void Upgrade()
         {
-            if (m_rarity < enum_RarityLevel.L3)
+            if (m_rarity < enum_RarityLevel.Epic)
                 m_rarity++;
         }
     }
@@ -1511,7 +1586,6 @@ namespace GameSetting
         }
         public void SetTileLocking(enum_TileLocking _lockType)
         {
-            if(m_TileLocking!= enum_TileLocking.Unlocked)
                m_TileLocking = _lockType;
         }
     }
@@ -1906,6 +1980,24 @@ namespace GameSetting
     #endregion
 
     #region For UI Usage
+    public enum enum_UI_TileBattleStatus
+    {
+        Invalid=-1,
+        Clear=1,
+        Overwatch=2,
+        Patrol=3,
+        HeadQuaters=4,
+    }
+
+    public enum enum_UI_ActionUpgradeType
+    {
+        Invalid = -1,
+        Upgradeable = 1,
+        LackOfCoins = 2,
+        MaxLevel = 3,
+    }
+
+
     public class UIC_Numeric
     {
         static readonly AtlasLoader m_InGameSprites = TResources.GetUIAtlas_Numeric();
@@ -1980,27 +2072,9 @@ namespace GameSetting
             if (!full) img_Fill.fillAmount = detail;
         }
     }
-    public enum enum_UI_ActionUpgradeType
-    {
-        Invalid=-1,
-        Upgradeable=1,
-        LackOfCoins=2,
-        MaxLevel=3,
-    }
 
     #endregion
 
-    public static class LocalizationKeyJoint
-    {
-        public static string GetNameLocalizeKey(this BuffBase buff) => "Buff_Name_" + buff.m_Index;
-        public static string GetNameLocalizeKey(this ActionBase action) => "Action_Name_" + action.m_Index;
-        public static string GetIntroLocalizeKey(this ActionBase action) => "Action_Intro_" + action.m_Index;
-        public static string GetLocalizeKey(this enum_RarityLevel level) => "Action_Level_" + level;
-        public static string GetNameLocalizeKey(this enum_PlayerWeapon weapon) => "Weapon_Name_" + weapon;
-        public static string GetInteractTitle(this enum_Interaction interact) => "UI_Interact_" + interact;
-        public static string GetLocalizeKey(this enum_Option_FrameRate frameRate) => "UI_Option_" + frameRate;
-        public static string GetLocalizeKey(this enum_Option_JoyStickMode joystick) => "UI_Option_" + joystick;
-        public static string GetLocalizeKey(this enum_Option_LanguageRegion region) => "UI_Option_" + region;
-    }
     #endregion
+
 }

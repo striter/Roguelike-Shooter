@@ -5,84 +5,86 @@ using TTiles;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UI_MapControl : UIPageBase {        //This Page Won't Hide(One Page Show Bigmap/Minimap)
-    UIT_GridControllerMonoItem<UIGI_MapControlCell> gc_BigMapController;
-    public bool B_Playing = false;
+public class UI_MapControl : UIPageBase,ISingleCoroutine {        //This Page Won't Hide(One Page Show Bigmap/Minimap)
+    Transform tf_MapTile, tf_MapInfo, tf_TileDetail;
+    UIT_GridDefaultSingle<UIGI_MapControlCell> m_AllTilesGrid;
+    UIT_TextLocalization txt_Stage, txt_Style;
+    Image img_TileType, img_TileBattleStaus;
+    UIT_TextLocalization txt_Cordinates, txt_TileType, txt_BattleStatus;
+    UIGI_MapControlCell m_targetTile;
+    Button btn_Confirm;
 
-    RectTransform rtf_MapPlayer;
-    UIGI_MapControlCell m_PlayerCell;
-    UIGI_MapControlCell m_TargetCell;
-    float m_AnimateCheck;
+    public bool B_Playing = false;
     protected override void Init(bool useAnim)
     {
         base.Init(useAnim);
-        gc_BigMapController = new UIT_GridControllerMonoItem<UIGI_MapControlCell>(tf_Container.Find("MapGrid"));
-        rtf_MapPlayer = gc_BigMapController.transform.Find("MapPlayer").GetComponent<RectTransform>();
-        tf_Container.Find("ChestTips").SetActivate( GameManager.Instance.B_ShowChestTips);
-        OnLevelStatusChanged(LevelManager.Instance.m_MapLevelInfo, LevelManager.Instance.m_currentLevel.m_TileAxis);
-        B_Playing = true;
-        m_TargetCell = null;
-    }
+        tf_Container.Find("ChestTips").SetActivate(GameManager.Instance.B_ShowChestTips);   //Test
 
-    protected override void OnCancelBtnClick()
-    {
-        base.OnCancelBtnClick();
-        B_Playing = false;
-    }
+        tf_TileDetail = tf_Container.Find("TileDetail");
+        img_TileType = tf_TileDetail.Find("Image/TileType").GetComponent<Image>();
+        img_TileBattleStaus = tf_TileDetail.Find("Image/BattleStatus/StatusImage").GetComponent<Image>();
+        txt_Cordinates = tf_TileDetail.Find("Info/Cordinates/Detail").GetComponent<UIT_TextLocalization>();
+        txt_BattleStatus = tf_TileDetail.Find("Info/BattleStatus/Detail").GetComponent<UIT_TextLocalization>();
+        txt_TileType = tf_TileDetail.Find("Info/TileType/Detail").GetComponent<UIT_TextLocalization>();
+        btn_Confirm = tf_TileDetail.Find("ConfirmBtn").GetComponent<Button>();
+        btn_Confirm.onClick.AddListener(OnConfirmBtnClick);
 
-    int UIBigmapTileIndex(TileAxis axis, int width, int height) => axis.X + axis.Y * height * 1000;
-    void OnLevelStatusChanged(SBigmapLevelInfo[,] bigMap, TileAxis playerAxis)
-    {
-        if (gc_BigMapController.I_Count == 0)
-        {
-            gc_BigMapController.m_GridLayout.constraintCount = bigMap.GetLength(0);
-            bigMap.Traversal((SBigmapLevelInfo levelInfo) => { gc_BigMapController.AddItem(UIBigmapTileIndex(levelInfo.m_TileAxis, bigMap.GetLength(0), bigMap.GetLength(1))).Init(OnMapTileClick); });
-            gc_BigMapController.SortChildrenSibling();
-            rtf_MapPlayer.SetAsLastSibling();
-        }
+        tf_MapTile = tf_Container.Find("MapTile");
+        m_AllTilesGrid = new UIT_GridDefaultSingle<UIGI_MapControlCell>(tf_MapTile.Find("TileGrid"),OnMapTileClick);
+        m_AllTilesGrid.transform.localScale = Vector3.one * UIManager.Instance.m_Scaler.scaleFactor;
+        SBigmapLevelInfo[,] map = new SBigmapLevelInfo[6, 6];
+        for (int i = 0; i < 6; i++)
+            for (int j = 0; j < 6; j++)
+                map[i,j] =i< LevelManager.Instance.m_MapLevelInfo.GetLength(0)&&j<LevelManager.Instance.m_MapLevelInfo.GetLength(1)? LevelManager.Instance.m_MapLevelInfo[i,j]:new SBigmapLevelInfo(new SBigmapTileInfo(new TileAxis(i,j), enum_TileType.Invalid, enum_TileLocking.Invalid));
 
-        bigMap.Traversal((SBigmapLevelInfo levelInfo) => {
-            UIGI_MapControlCell infoUI = gc_BigMapController.GetItem(UIBigmapTileIndex(levelInfo.m_TileAxis, bigMap.GetLength(0), bigMap.GetLength(1)));
+        m_AllTilesGrid.m_GridLayout.constraintCount = map.GetLength(0);
+        map.Traversal((SBigmapLevelInfo levelInfo) => { m_AllTilesGrid.AddItem(levelInfo.m_TileAxis.X, levelInfo.m_TileAxis.Y); });
+        m_AllTilesGrid.SortChildrenSibling();
+        map.Traversal((SBigmapLevelInfo levelInfo) => {
+            UIGI_MapControlCell infoUI = m_AllTilesGrid.GetItem(levelInfo.m_TileAxis.X,levelInfo.m_TileAxis.Y);
             Dictionary<enum_TileDirection, bool> connectionActivate = new Dictionary<enum_TileDirection, bool>();
             foreach (enum_TileDirection direction in TTiles.TTiles.m_FourDirections)
             {
                 connectionActivate.Add(direction, levelInfo.m_Connections.ContainsKey(direction)
                     && levelInfo.m_Connections[direction].X != -1
-                    && bigMap.Get(levelInfo.m_Connections[direction]).m_TileLocking != enum_TileLocking.Locked);
+                    && map.Get(levelInfo.m_Connections[direction]).m_TileLocking == enum_TileLocking.Unlockable);
             }
-            infoUI.SetBigmapLevelInfo(levelInfo, connectionActivate);
-
-            if (levelInfo.m_TileAxis == playerAxis)
-                m_PlayerCell = infoUI;
+            bool isPlayer = levelInfo.m_TileAxis == LevelManager.Instance.m_currentLevel.m_TileAxis;
+            infoUI.SetBigmapLevelInfo(levelInfo,isPlayer, connectionActivate);
+            if (isPlayer) m_AllTilesGrid.OnItemClick(infoUI.I_Index);
         });
+
+        tf_MapInfo = tf_Container.Find("MapInfo");
+        txt_Stage = tf_MapInfo.Find("Stage").GetComponent<UIT_TextLocalization>();
+        txt_Style = tf_MapInfo.Find("Style").GetComponent<UIT_TextLocalization>();
+        txt_Stage.formatKeys("UI_Map_Stage",  GameManager.Instance.m_GameLevel.m_GameStage.GetLocalizeKey());
+        txt_Style.formatKeys("UI_Map_Stage", GameManager.Instance.m_GameLevel.m_GameStyle.GetLocalizeKey());
     }
-    void OnMapTileClick(UIGI_MapControlCell targetCell)
-    {
-        if (!B_Playing||m_TargetCell!=null)
-            return;
 
-        m_TargetCell = targetCell;
-        m_AnimateCheck = UIConst.F_MapAnimateTime;
+    void OnMapTileClick(int index)
+    {
+        SetTileInfo(m_AllTilesGrid.GetItem(index));    
     }
-    private void Update()
+
+    void SetTileInfo(UIGI_MapControlCell tile)
     {
-        if (!B_Playing)
-            return;
+        m_targetTile = tile;
+        enum_UI_TileBattleStatus battleStatus = tile.m_TileInfo.m_TileType.GetBattleStatus();
+        txt_TileType.localizeText=tile.m_TileInfo.m_TileType.GetLocalizeKey();
+        txt_Cordinates.localizeText=tile.m_TileInfo.m_TileAxis.GetCordinates();
+        txt_BattleStatus.text=battleStatus.GetBattlePercentage();
+        this.StartSingleCoroutine(10, TIEnumerators.UI.StartTypeWriter(txt_TileType,.5f));
+        this.StartSingleCoroutine(11, TIEnumerators.UI.StartTypeWriter(txt_Cordinates, .5f));
+        this.StartSingleCoroutine(12, TIEnumerators.UI.StartTypeWriter(txt_BattleStatus, .5f));
+        img_TileType.sprite = UIManager.Instance.m_commonSprites[tile.m_TileInfo.m_TileType.GetSpriteName()];
+        img_TileBattleStaus.sprite = UIManager.Instance.m_commonSprites[battleStatus.GetSpriteName()];
+        bool locked = tile.m_TileInfo.m_TileLocking == enum_TileLocking.Locked || tile.m_TileInfo.m_TileAxis == LevelManager.Instance.m_currentLevel.m_TileAxis;
+        btn_Confirm.interactable = !locked;
+    }
 
-        if (!m_TargetCell)
-        {
-            rtf_MapPlayer.anchoredPosition = m_PlayerCell.rectTransform.anchoredPosition;
-            return;
-        }
-
-        m_AnimateCheck -= Time.deltaTime;
-        rtf_MapPlayer.anchoredPosition = Vector2.Lerp(m_TargetCell.rectTransform.anchoredPosition, m_PlayerCell.rectTransform.anchoredPosition, m_AnimateCheck / UIConst.F_MapAnimateTime);
-        if (m_AnimateCheck > 0f)
-            return;
-
-        B_Playing = false;
+    void OnConfirmBtnClick()
+    {
+        LevelManager.Instance.OnChangeLevel(m_targetTile.m_TileInfo.m_TileAxis);
         OnCancelBtnClick();
-        LevelManager.Instance.OnChangeLevel(m_TargetCell.m_Axis);
     }
-
 }
