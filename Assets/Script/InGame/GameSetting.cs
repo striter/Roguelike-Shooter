@@ -2078,9 +2078,10 @@ namespace GameSetting
         Button m_Button;
         Image m_Show;
         Transform m_Hide;
-        public UIC_Button(Transform _transform, Action OnButtonClick)
+        public UIC_Button(Transform _transform, UnityEngine.Events.UnityAction OnButtonClick)
         {
             m_Button = _transform.GetComponent<Button>();
+            m_Button.onClick.AddListener(OnButtonClick);
             m_Show = _transform.GetComponent<Image>();
             m_Hide = _transform.Find("Hide");
             SetInteractable(true);
