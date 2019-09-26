@@ -13,7 +13,7 @@ public class UI_MapControl : UIPageBase,ISingleCoroutine {        //This Page Wo
     UIT_TextLocalization txt_Cordinates, txt_TileType, txt_BattleStatus;
     UIGI_MapControlCell m_targetTile;
     UIC_Button btn_Confirm;
-
+    RectTransform m_Line;
     public bool B_Playing = false;
     protected override void Init(bool useAnim)
     {
@@ -23,6 +23,7 @@ public class UI_MapControl : UIPageBase,ISingleCoroutine {        //This Page Wo
         tf_TileDetail = tf_Container.Find("TileDetail");
         img_TileType = tf_TileDetail.Find("Image/TileType").GetComponent<Image>();
         img_TileBattleStaus = tf_TileDetail.Find("Image/BattleStatus/StatusImage").GetComponent<Image>();
+        m_Line = tf_TileDetail.Find("Image/DetailTarget/Line").GetComponent<RectTransform>();
         txt_Cordinates = tf_TileDetail.Find("Info/Cordinates/Detail").GetComponent<UIT_TextLocalization>();
         txt_BattleStatus = tf_TileDetail.Find("Info/BattleStatus/Detail").GetComponent<UIT_TextLocalization>();
         txt_TileType = tf_TileDetail.Find("Info/TileType/Detail").GetComponent<UIT_TextLocalization>();
@@ -57,7 +58,7 @@ public class UI_MapControl : UIPageBase,ISingleCoroutine {        //This Page Wo
         txt_Stage = tf_MapInfo.Find("Stage").GetComponent<UIT_TextLocalization>();
         txt_Style = tf_MapInfo.Find("Style").GetComponent<UIT_TextLocalization>();
         txt_Stage.formatKeys("UI_Map_Stage",  GameManager.Instance.m_GameLevel.m_GameStage.GetLocalizeKey());
-        txt_Style.formatKeys("UI_Map_Stage", GameManager.Instance.m_GameLevel.m_GameStyle.GetLocalizeKey());
+        txt_Style.formatKeys("UI_Map_Style", GameManager.Instance.m_GameLevel.m_GameStyle.GetLocalizeKey());
     }
 
     void OnMapTileClick(int index)

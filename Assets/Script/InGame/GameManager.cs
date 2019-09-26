@@ -163,7 +163,6 @@ public class GameManager : GameManagerBase<GameManager>, ISingleCoroutine
         }
 
         bool autoBattle = m_GameLevel.OnLevelChangeCheckCanBattle(levelInfo.m_TileType);
-        Debug.Log(levelInfo.m_TileLocking);
         if (levelInfo.m_TileLocking == enum_TileLocking.Unlocked)
             return;
         m_PlayerRecord.OnLevelPassed();
