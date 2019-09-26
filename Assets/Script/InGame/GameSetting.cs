@@ -2073,6 +2073,24 @@ namespace GameSetting
         }
     }
 
+    public class UIC_Button
+    {
+        Button m_Button;
+        Image m_Show;
+        Transform m_Hide;
+        public UIC_Button(Transform _transform, Action OnButtonClick)
+        {
+            m_Button = _transform.GetComponent<Button>();
+            m_Show = _transform.GetComponent<Image>();
+            m_Hide = _transform.Find("Hide");
+            SetInteractable(true);
+        }
+        public void SetInteractable(bool interactable)
+        {
+            m_Hide.SetActivate(!interactable);
+            m_Button.interactable = interactable;
+        }
+    }
     #endregion
 
     #endregion

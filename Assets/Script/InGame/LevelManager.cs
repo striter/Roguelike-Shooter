@@ -43,7 +43,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
         OnStageFinished = _OnStageFinished;
         m_mainSeed = seed;
         m_StyleCurrent = _LevelStyle;
-        m_MapLevelInfo= GenerateBigmapLevels(m_StyleCurrent, m_mainSeed, tf_LevelParent,6,5,new TileAxis(2,2));
+        m_MapLevelInfo= GenerateBigmapLevels(m_StyleCurrent, m_mainSeed, tf_LevelParent,6,5);
         StyleColorData[] customizations = TResources.GetAllStyleCustomization(_LevelStyle);
         StyleColorData randomData= customizations.Length == 0? StyleColorData.Default():customizations.RandomItem(m_mainSeed);
         randomData.DataInit(m_DirectionalLight);
@@ -103,12 +103,11 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
     }
     void OnBattleFinish()
     {
-        Debug.Log("????");
         m_currentLevel.SetTileLocking(enum_TileLocking.Locked);
     }
     #endregion
     #region BigMap
-    public static SBigmapLevelInfo[,] GenerateBigmapLevels(enum_Style _levelStyle,System.Random _seed,Transform _generateParent,int _bigmapWidth, int _bigmapHeight,TileAxis startAxis)
+    public static SBigmapLevelInfo[,] GenerateBigmapLevels(enum_Style _levelStyle,System.Random _seed,Transform _generateParent,int _bigmapWidth, int _bigmapHeight)
     {
         //Generate Big Map All Tiles
         SBigmapTileInfo[,] bigmapTiles = new SBigmapTileInfo[_bigmapWidth, _bigmapHeight];
@@ -120,6 +119,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
         List<SBigmapTileInfo> subGenerateTiles = new List<SBigmapTileInfo>();
         List<SBigmapTileInfo> rewardTiles = new List<SBigmapTileInfo>();
         //Calculate Main Path
+        TileAxis startAxis = new TileAxis(_seed.Next(1, _bigmapWidth - 1), _seed.Next(1, _bigmapHeight - 1));
         int mainPathCount = _seed.Next(2) == 1 ? 5 : 6;
         mainRoadTiles =  bigmapTiles.TileRandomFill(_seed, startAxis,(SBigmapTileInfo tile)=> { tile.ResetTileType(enum_TileType.Battle); },p=>p.m_TileType== enum_TileType.Invalid, mainPathCount);
         mainRoadTiles[0].ResetTileType(enum_TileType.Start);

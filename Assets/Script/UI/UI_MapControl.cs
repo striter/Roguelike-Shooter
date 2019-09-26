@@ -12,7 +12,7 @@ public class UI_MapControl : UIPageBase,ISingleCoroutine {        //This Page Wo
     Image img_TileType, img_TileBattleStaus;
     UIT_TextLocalization txt_Cordinates, txt_TileType, txt_BattleStatus;
     UIGI_MapControlCell m_targetTile;
-    Button btn_Confirm;
+    UIC_Button btn_Confirm;
 
     public bool B_Playing = false;
     protected override void Init(bool useAnim)
@@ -26,8 +26,7 @@ public class UI_MapControl : UIPageBase,ISingleCoroutine {        //This Page Wo
         txt_Cordinates = tf_TileDetail.Find("Info/Cordinates/Detail").GetComponent<UIT_TextLocalization>();
         txt_BattleStatus = tf_TileDetail.Find("Info/BattleStatus/Detail").GetComponent<UIT_TextLocalization>();
         txt_TileType = tf_TileDetail.Find("Info/TileType/Detail").GetComponent<UIT_TextLocalization>();
-        btn_Confirm = tf_TileDetail.Find("ConfirmBtn").GetComponent<Button>();
-        btn_Confirm.onClick.AddListener(OnConfirmBtnClick);
+        btn_Confirm = new UIC_Button(tf_TileDetail.Find("ConfirmBtn"), OnConfirmBtnClick);
 
         tf_MapTile = tf_Container.Find("MapTile");
         m_AllTilesGrid = new UIT_GridDefaultSingle<UIGI_MapControlCell>(tf_MapTile.Find("TileGrid"),OnMapTileClick);
@@ -71,7 +70,7 @@ public class UI_MapControl : UIPageBase,ISingleCoroutine {        //This Page Wo
         m_targetTile = tile;
         enum_UI_TileBattleStatus battleStatus = tile.m_TileInfo.m_TileType.GetBattleStatus();
         txt_TileType.localizeText=tile.m_TileInfo.m_TileType.GetLocalizeKey();
-        txt_Cordinates.localizeText=tile.m_TileInfo.m_TileAxis.GetCordinates();
+        txt_Cordinates.text=tile.m_TileInfo.m_TileAxis.GetCordinates();
         txt_BattleStatus.text=battleStatus.GetBattlePercentage();
         this.StartSingleCoroutine(10, TIEnumerators.UI.StartTypeWriter(txt_TileType,.5f));
         this.StartSingleCoroutine(11, TIEnumerators.UI.StartTypeWriter(txt_Cordinates, .5f));
@@ -79,7 +78,7 @@ public class UI_MapControl : UIPageBase,ISingleCoroutine {        //This Page Wo
         img_TileType.sprite = UIManager.Instance.m_commonSprites[tile.m_TileInfo.m_TileType.GetSpriteName()];
         img_TileBattleStaus.sprite = UIManager.Instance.m_commonSprites[battleStatus.GetSpriteName()];
         bool locked = tile.m_TileInfo.m_TileLocking == enum_TileLocking.Locked || tile.m_TileInfo.m_TileAxis == LevelManager.Instance.m_currentLevel.m_TileAxis;
-        btn_Confirm.interactable = !locked;
+        btn_Confirm.SetInteractable(!locked);
     }
 
     void OnConfirmBtnClick()
