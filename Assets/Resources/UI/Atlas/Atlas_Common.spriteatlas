@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 2003930
+    totalSpriteSurfaceArea: 2004065
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -104,9 +104,9 @@ SpriteAtlas:
   - {fileID: 21300000, guid: ecf5205912130214393bc27cfbe19041, type: 3}
   - {fileID: 21300000, guid: fe61bff09e038bf4c9931e29baff3183, type: 3}
   - {fileID: 21300000, guid: 8d62631dc91e63b43939fb462b9ba730, type: 3}
+  - {fileID: 21300000, guid: 08550047334a3c145a1bd10329ddf497, type: 3}
   - {fileID: 21300000, guid: 7c5f1169294267143aa67c7ad0b6fb47, type: 3}
   - {fileID: 21300000, guid: 8a06be1acd3454c4393fd6308644cc86, type: 3}
-  - {fileID: 21300000, guid: 86b5d6b14ba56bb4f9798380c0e99be8, type: 3}
   - {fileID: 21300000, guid: 18652a05e50450b4a8aea0d594f8ec36, type: 3}
   - {fileID: 21300000, guid: 9c9d65350fda00e43aae5964ee01b62f, type: 3}
   m_PackedSpriteNamesToIndex:
@@ -181,9 +181,9 @@ SpriteAtlas:
   - UI_common_angle_gray
   - icon_weapon_rank
   - icon_buff_rank
+  - map_island_route
   - display_bullet_bottom
   - display_bullet
-  - map_island_route
   - UI_Common_Square
   - btn_close_strip
   m_Tag: Atlas_Common

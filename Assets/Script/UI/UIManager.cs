@@ -5,7 +5,7 @@ using System;
 
 public class UIManager :SimpleSingletonMono<UIManager>
 {
-    public CanvasScaler m_Scaler { get; private set; }
+    public Vector2 m_FittedScale { get; private set; }
     Canvas cvs_Overlay, cvs_Camera;
     Transform tf_Control, tf_Pages, tf_Tools;
     public Action OnReload;
@@ -21,7 +21,8 @@ public class UIManager :SimpleSingletonMono<UIManager>
     {
         m_commonSprites = TResources.GetUIAtlas_Common();
         cvs_Overlay = transform.Find("Overlay").GetComponent<Canvas>();
-        m_Scaler = cvs_Overlay.GetComponent<CanvasScaler>();
+        CanvasScaler m_Scaler = cvs_Overlay.GetComponent<CanvasScaler>();
+        m_FittedScale = new Vector2(Screen.width/m_Scaler.referenceResolution.x , Screen.height/ m_Scaler.referenceResolution.y );
         cvs_Camera = transform.Find("Camera").GetComponent<Canvas>();
 
         tf_Control = cvs_Camera.transform.Find("Control");
