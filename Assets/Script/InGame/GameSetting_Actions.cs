@@ -8,22 +8,22 @@ namespace GameSetting_Action
     {
         #region Costs
         public const int I_10001_Cost = 1;
-        public const int I_10002_Cost = 2;
-        public const int I_10003_Cost = 1;
+        public const int I_10002_Cost = 3;
+        public const int I_10003_Cost = 2;
         public const int I_10004_Cost = 0;
         public const int I_10005_Cost = 2;
-        public const int I_10006_Cost = 1;
+        public const int I_10006_Cost = 2;
         public const int I_10007_Cost = 1;
         public const int I_10008_Cost = 1;
         public const int I_10009_Cost = 1;
         public const int I_10010_Cost = 1;
         public const int I_10011_Cost = 1;
-        public const int I_10012_Cost = 1;
+        public const int I_10012_Cost = 2;
         public const int I_10013_Cost = 1;
         public const int I_10014_Cost = 1;
         public const int I_10015_Cost = 2;
         public const int I_10016_Cost = 2;
-        public const int I_10017_Cost = 1;
+        public const int I_10017_Cost = 2;
         public static int I_10018_Cost(enum_RarityLevel level) => 3-(int)level;
         public const int I_10019_Cost = 2;
         public const int I_10020_Cost = 2;
@@ -57,28 +57,28 @@ namespace GameSetting_Action
         public const float F_10020_Duration = 15f;
         #endregion
         #region Expressions
-        public static float F_10001_ArmorAdditive(enum_RarityLevel level) => 30 + 30f * (int)level;
+        public static float F_10001_ArmorAdditive(enum_RarityLevel level) => 30f * (int)level;
         public static float F_10002_ArmorDamageAdditive(enum_RarityLevel level) => 1f * (int)level;
-        public static int IP_10003_ArmorMultiplyAdditive(enum_RarityLevel level) => 30 + 30 * (int)level;
+        public static int IP_10003_ArmorMultiplyAdditive(enum_RarityLevel level) => 60 * (int)level;
         public static float F_10004_ArmorActionAcquire(enum_RarityLevel level) => 60f - 10f * (int)level;
         public static int IP_10005_ArmorDamageReduction(enum_RarityLevel level) => 30 + 20 * (int)level;
-        public static int IP_10006_FireRateAdditive(enum_RarityLevel level) => 30 + 30 * (int)level;
+        public static int IP_10006_FireRateAdditive(enum_RarityLevel level) => 24 + 24 * (int)level;
         public static int IP_10007_RecoilMultiplyAdditive(enum_RarityLevel level) => 40 + 20 * (int)level;
-        public static int IP_10008_ClipMultiply(enum_RarityLevel level) => 100 * (int)level;
-        public static int IP_10009_BulletSpeedAdditive(enum_RarityLevel level) => 60 * (int)level;
+        public static int IP_10008_ClipMultiply(enum_RarityLevel level) => 25 + 25 * (int)level;
+        public static int IP_10009_BulletSpeedAdditive(enum_RarityLevel level) => 50 * (int)level;
         public static int IP_10010_SingleDamageMultiply(enum_RarityLevel level) => 200 + 400 * (int)level;
         public static int IP_10011_SingleDamageMultiply(enum_RarityLevel level) => 200 + 200 * (int)level;
         public static float F_10011_EntityKillActionReturn(enum_RarityLevel level) => 1 + (int)level;
-        public static int IP_10012_SingleDamageMultiply(enum_RarityLevel level) => 200 + 200 * (int)level;
-        public static float F_10012_EntityKillHealing(enum_RarityLevel level) => 30 * (int)level;
+        public static int IP_10012_SingleDamageMultiply(enum_RarityLevel level) => 80 + 80 * (int)level;
+        public static float F_10012_EntityKillHealing(enum_RarityLevel level) => 10 + 30 * (int)level;
         public static int IP_10013_SingleDamageMultiply(enum_RarityLevel level) => 200 + 200 * (int)level;
         public static int IP_10014_ReloadRateMultiplyPercentage(enum_RarityLevel level) => 40 + 20 * (int)level;
         public static float F_10015_ArmorDamageReturn(enum_RarityLevel level) => 2 * (int)level;
         public static float IP_10016_DamageReducePercentage(enum_RarityLevel level) => 65 - 15 * (int)level;
         public static float IP_10016_FireRateAdditivePercentage(enum_RarityLevel level) => 60 + 60 * (int)level;
-        public static float IP_10017_DamageAdditivePercentage(enum_RarityLevel level) => 200 + 200 * (int)level;
-        public static float F_10017_EntityKillArmorAdditive(enum_RarityLevel level) => 40 + 30 * (int)level;
-        public static int I_10019_ClipAdditiveAmount(enum_RarityLevel level) => 3 * (int)level;
+        public static float IP_10017_DamageAdditivePercentage(enum_RarityLevel level) => 80 + 80 * (int)level;
+        public static float F_10017_EntityKillArmorAdditive(enum_RarityLevel level) => 10 + 30 * (int)level;
+        public static int I_10019_ClipAdditiveAmount(enum_RarityLevel level) => 2 + 2 * (int)level;
         public static int IP_10020_HealthStealPercentage(enum_RarityLevel level) => 5*(int)level;
 
         public static float F_20001_Health(enum_RarityLevel level) => 500;
@@ -94,7 +94,7 @@ namespace GameSetting_Action
         public static float IP_20005_BonusShieldHealthPercentage(enum_RarityLevel level) => 50 * (int)level;
         public static float F_20005_MinimumShieldHealth(enum_RarityLevel level) => 50;
 
-        public static float F_30001_ArmorActionAdditive(enum_RarityLevel level) => 10 + 10 * (int)level;
+        public static float F_30001_ArmorActionAdditive(enum_RarityLevel level) => 6 * (int)level;
         public static float F_30002_ReceiveDamageArmorAdditive(enum_RarityLevel level) => 3 + 3 * (int)level;
         public static float F_30003_DamageAdditive(enum_RarityLevel level) => 20f * (int)level;
         public static float F_30004_DamageAdditive(enum_RarityLevel level) => 100 * (int)level;
@@ -102,8 +102,8 @@ namespace GameSetting_Action
         public static float F_30005_HealAmount(enum_RarityLevel level) => 1f;
         public static int I_30006_ReloadTimesCount(enum_RarityLevel level) => 1;
         public static int IP_30006_ReloadDamageMultiplyPercentage(enum_RarityLevel level) => 100 * (int)level;
-        public static float F_MovementStackupMax(enum_RarityLevel level) => 100f;
-        public static float F_MovementStackupDamageAdditive( enum_RarityLevel level) => 3* (int)level;
+        public static float F_MovementStackupMax(enum_RarityLevel level) => 50 + 50 *(int)level;
+        public static float F_MovementStackupDamageAdditive( enum_RarityLevel level) => 2 + 2 * (int)level;
 
         public static float F_40001_DamageDealtCount(enum_RarityLevel level) => 2000 / Mathf.Pow(2, (int)level-1);
         public static float F_40001_ArmorAdditive(enum_RarityLevel level) => 20f;
