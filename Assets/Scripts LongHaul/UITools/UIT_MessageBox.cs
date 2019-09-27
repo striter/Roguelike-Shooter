@@ -5,48 +5,35 @@ using UnityEngine.UI;
 using System;
 public class UIT_MessageBox : SimpleSingletonMono<UIT_MessageBox> {
 
-    public class MessageBoxSelection
-    {
-        public string m_Key { get; private set; }
-        public Action OnClick { get; private set; }
-        public MessageBoxSelection(string _selectionKey,Action _OnClick)
-        {
-            m_Key = _selectionKey;
-            OnClick = _OnClick;
-        }
-    }
-
-    List< MessageBoxSelection> m_AllSelections=new List<MessageBoxSelection>();
-    UIT_TextLocalization m_title;
-    UIT_GridDefaultSingle<UIT_GridDefaultItem> m_SelectionGrid;
-
+    Transform tf_Container;
+    UIT_TextLocalization m_title,m_Intro;
+    Button btn_Confirm;
+    UIT_TextLocalization txt_Confirm;
+    Action OnConfirmClick;
     protected override void Awake()
     {
         base.Awake();
         this.SetActivate(false);
-        m_title = transform.Find("Title").GetComponent<UIT_TextLocalization>();
-        m_SelectionGrid = new UIT_GridDefaultSingle<UIT_GridDefaultItem>(transform.Find("SelectionGrid"), OnSelectionsClick);
+        tf_Container = transform.Find("Container");
+        m_title = tf_Container.Find("Title").GetComponent<UIT_TextLocalization>();
+        m_Intro = tf_Container.Find("Intro").GetComponent<UIT_TextLocalization>();
+        btn_Confirm = tf_Container.Find("Confirm").GetComponent<Button>();
+        txt_Confirm = tf_Container.Find("Confirm/Text").GetComponent<UIT_TextLocalization>();
+
+        tf_Container.Find("Cancel").GetComponent<Button>().onClick.AddListener(OnCancel);
     }
-    public void Begin(string titleKey, params MessageBoxSelection[] selections)
+    public void Begin(string titleKey,string introKey, string confirmKey,Action _OnConfirmClick)
     {
         this.SetActivate(true);
         m_title.localizeText = titleKey;
-
-        m_AllSelections.Clear();
-        m_SelectionGrid.ClearGrid();
-        for (int i = 0; i < selections.Length; i++)
-        {
-            m_SelectionGrid.AddItem(i).SetItemInfo(selections[i].m_Key);
-            m_AllSelections.Add(selections[i]);
-        }
-        MessageBoxSelection cancelSelection = new MessageBoxSelection("UI_Common_Cancel", OnCancel);
-        m_AllSelections.Add(cancelSelection);
-        m_SelectionGrid.AddItem(m_AllSelections.Count-1).SetItemInfo(TLocalization.GetKeyLocalized( cancelSelection.m_Key));
+        m_Intro.localizeText = introKey;
+        txt_Confirm.localizeText = confirmKey;
+        OnConfirmClick = _OnConfirmClick;
     }
-    void OnSelectionsClick(int index)
+    void OnConfirm()
     {
         this.SetActivate(false);
-        m_AllSelections[index].OnClick();
+        OnConfirm();
     }
     void OnCancel()
     {

@@ -30,7 +30,7 @@ public class ELocalizationText : UnityEditor.UI.TextEditor
         }
 
         EditorGUILayout.BeginHorizontal();
-        float spacing = EditorGUILayout.FloatField("Character Spacing:", m_target.m_characterSpacing);
+        int spacing = EditorGUILayout.IntField("Character Spacing:", m_target.m_characterSpacing);
         if (spacing != m_target.m_characterSpacing)
         {
             m_target.m_characterSpacing = spacing;

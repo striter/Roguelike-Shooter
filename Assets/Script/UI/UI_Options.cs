@@ -46,7 +46,7 @@ public class UI_Options : UIPageBase {
     void OnMusicVolumeChanged(float value) => OptionsManager.m_OptionsData.m_MusicVolume = value;
     void OnVFXVolumeChanged(float value) => OptionsManager.m_OptionsData.m_VFXVolume = value;
     void OnSensitiveChanged(float value) => OptionsManager.m_OptionsData.m_Sensitive = value;
-    void OnMainmenuBtnClick()=> UIT_MessageBox.Instance.Begin("UI_Title_ExitGame",new UIT_MessageBox.MessageBoxSelection("UI_Selection_ExitGame",GameManager.Instance.OnExitGame));
+    void OnMainmenuBtnClick()=> UIT_MessageBox.Instance.Begin("UI_Title_ExitGame","UI_Intro_ExitGame","UI_Option_ExitGameConfirm",GameManager.Instance.OnExitGame);
 
     protected override void OnCancelBtnClick()
     {

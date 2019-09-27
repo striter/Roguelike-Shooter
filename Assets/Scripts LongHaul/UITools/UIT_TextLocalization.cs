@@ -42,7 +42,7 @@ public class UIT_TextLocalization : Text
     }
     #endregion
     #region CharacterSpacing
-    public float m_characterSpacing;
+    public int m_characterSpacing;
     float GetCalculatedSpacing(int linedLetterIndex, int lineCount)
     {
         switch (alignment)
@@ -103,6 +103,7 @@ public class UIT_TextLocalization : Text
                     toFill.SetUIVertex(m_tempVertex, uiFillVertex);
                 }
                 vertexCount++;
+                resizeTextMaxSize = resizeTextMaxSize +m_characterSpacing;
             }
             vertexCount++;
         }
