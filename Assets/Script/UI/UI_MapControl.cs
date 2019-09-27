@@ -9,11 +9,13 @@ public class UI_MapControl : UIPageBase,ISingleCoroutine {        //This Page Wo
     Transform tf_MapTile, tf_MapInfo, tf_TileDetail;
     UIT_GridDefaultSingle<UIGI_MapControlCell> m_AllTilesGrid;
     UIT_TextLocalization txt_Stage, txt_Style;
-    Image img_TileType, img_TileBattleStaus;
+    Animation m_TileTypeAnim;
+    Image img_TileTypeCurrent,img_TileTypeSelect, img_TileBattleStatus1,img_TileBattleStatus2;
     UIT_TextLocalization txt_Cordinates, txt_TileType, txt_BattleStatus;
+    RectTransform m_Line;
     UIGI_MapControlCell m_targetTile;
     UIC_Button btn_Confirm;
-    RectTransform m_Line;
+
     public bool B_Playing = false;
     protected override void Init(bool useAnim)
     {
@@ -21,8 +23,11 @@ public class UI_MapControl : UIPageBase,ISingleCoroutine {        //This Page Wo
         tf_Container.Find("ChestTips").SetActivate(GameManager.Instance.B_ShowChestTips);   //Test
 
         tf_TileDetail = tf_Container.Find("TileDetail");
-        img_TileType = tf_TileDetail.Find("Image/TileType").GetComponent<Image>();
-        img_TileBattleStaus = tf_TileDetail.Find("Image/BattleStatus/StatusImage").GetComponent<Image>();
+        m_TileTypeAnim = tf_TileDetail.Find("Image").GetComponent<Animation>();
+        img_TileTypeCurrent = tf_TileDetail.Find("Image/TileImage/TileCurrent").GetComponent<Image>();
+        img_TileTypeSelect = tf_TileDetail.Find("Image/TileImage/TileSelect").GetComponent<Image>();
+        img_TileBattleStatus1 = tf_TileDetail.Find("Image/StatusImage/StatusImage1").GetComponent<Image>();
+        img_TileBattleStatus2 = tf_TileDetail.Find("Image/StatusImage/StatusImage2").GetComponent<Image>();
         m_Line = tf_TileDetail.Find("Image/DetailTarget/Line").GetComponent<RectTransform>();
         txt_Cordinates = tf_TileDetail.Find("Info/Cordinates/Detail").GetComponent<UIT_TextLocalization>();
         txt_BattleStatus = tf_TileDetail.Find("Info/BattleStatus/Detail").GetComponent<UIT_TextLocalization>();
@@ -51,7 +56,7 @@ public class UI_MapControl : UIPageBase,ISingleCoroutine {        //This Page Wo
             }
             bool isPlayer = levelInfo.m_TileAxis == LevelManager.Instance.m_currentLevel.m_TileAxis;
             infoUI.SetBigmapLevelInfo(levelInfo,isPlayer, connectionActivate);
-            if (isPlayer) m_AllTilesGrid.OnItemClick(infoUI.I_Index);
+            if(isPlayer) m_AllTilesGrid.OnItemClick(infoUI.I_Index);
         });
 
         tf_MapInfo = tf_Container.Find("MapInfo");
@@ -76,8 +81,12 @@ public class UI_MapControl : UIPageBase,ISingleCoroutine {        //This Page Wo
         this.StartSingleCoroutine(10, TIEnumerators.UI.StartTypeWriter(txt_TileType,.5f));
         this.StartSingleCoroutine(11, TIEnumerators.UI.StartTypeWriter(txt_Cordinates, .5f));
         this.StartSingleCoroutine(12, TIEnumerators.UI.StartTypeWriter(txt_BattleStatus, .5f));
-        img_TileType.sprite = UIManager.Instance.m_commonSprites[tile.m_TileInfo.m_TileType.GetSpriteName()];
-        img_TileBattleStaus.sprite = UIManager.Instance.m_commonSprites[battleStatus.GetSpriteName()];
+        m_TileTypeAnim.Play(PlayMode.StopAll);
+        img_TileTypeCurrent.sprite = img_TileTypeSelect.sprite;
+        img_TileTypeSelect.sprite = UIManager.Instance.m_commonSprites[tile.m_TileInfo.m_TileType.GetSpriteName()];
+        img_TileBattleStatus1.sprite = UIManager.Instance.m_commonSprites[battleStatus.GetSpriteName()];
+        img_TileBattleStatus2.sprite = img_TileBattleStatus1.sprite;
+
         bool locked = tile.m_TileInfo.m_TileLocking == enum_TileLocking.Locked || tile.m_TileInfo.m_TileAxis == LevelManager.Instance.m_currentLevel.m_TileAxis;
         btn_Confirm.SetInteractable(!locked);
     }
@@ -86,5 +95,17 @@ public class UI_MapControl : UIPageBase,ISingleCoroutine {        //This Page Wo
     {
         LevelManager.Instance.OnChangeLevel(m_targetTile.m_TileInfo.m_TileAxis);
         OnCancelBtnClick();
+    }
+    float width = 0;
+    float angle = 0;
+    void Update()
+    {
+        if (m_targetTile == null) return;
+
+        Vector2 direction = tf_Container.InverseTransformPoint(m_targetTile.transform.position) - tf_Container.InverseTransformPoint(m_Line.transform.position);
+        width = Mathf.Lerp(width, direction.magnitude, Time.deltaTime * 5);
+        angle = Mathf.Lerp(angle, Vector2.SignedAngle(Vector2.up, direction), Time.deltaTime * 5);
+        m_Line.sizeDelta = new Vector2(m_Line.sizeDelta.x, width);
+        m_Line.localRotation = Quaternion.Euler(0, 0, angle);
     }
 }
