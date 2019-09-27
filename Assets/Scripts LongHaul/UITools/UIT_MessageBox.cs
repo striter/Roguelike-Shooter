@@ -33,7 +33,7 @@ public class UIT_MessageBox : SimpleSingletonMono<UIT_MessageBox> {
     void OnConfirm()
     {
         this.SetActivate(false);
-        OnConfirm();
+        OnConfirmClick();
     }
     void OnCancel()
     {
