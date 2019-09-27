@@ -18,8 +18,8 @@ public class UIT_MessageBox : SimpleSingletonMono<UIT_MessageBox> {
         m_title = tf_Container.Find("Title").GetComponent<UIT_TextLocalization>();
         m_Intro = tf_Container.Find("Intro").GetComponent<UIT_TextLocalization>();
         btn_Confirm = tf_Container.Find("Confirm").GetComponent<Button>();
+        btn_Confirm.onClick.AddListener(OnConfirm);
         txt_Confirm = tf_Container.Find("Confirm/Text").GetComponent<UIT_TextLocalization>();
-
         tf_Container.Find("Cancel").GetComponent<Button>().onClick.AddListener(OnCancel);
     }
     public void Begin(string titleKey,string introKey, string confirmKey,Action _OnConfirmClick)

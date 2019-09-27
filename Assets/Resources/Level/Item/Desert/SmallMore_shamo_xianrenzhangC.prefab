@@ -25,7 +25,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4
   m_IsActive: 1
 --- !u!1 &1772435365470630
 GameObject:
@@ -44,7 +44,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4
   m_IsActive: 1
 --- !u!4 &4159273956390680
 Transform:
@@ -144,6 +144,7 @@ MonoBehaviour:
   m_ItemType: 4
   b_showGizmos: 1
   b_AutoCenter: 1
+  b_AutoRotation: 1
 --- !u!114 &114861748370082358
 MonoBehaviour:
   m_ObjectHideFlags: 1
