@@ -32,7 +32,7 @@ public class UIT_TextLocalization : Text
     }
 
     public string formatText(string formatKey, params object[] subItems) => base.text = string.Format(TLocalization.GetKeyLocalized(formatKey), subItems);
-    public string formatKeys(string formatKey, string key) => base.text = string.Format(TLocalization.GetKeyLocalized(formatKey), key);
+    public string formatKeys(string formatKey, string key) => base.text = string.Format(TLocalization.GetKeyLocalized(formatKey), TLocalization.GetKeyLocalized(key));
     public string localizeText
     {
         set
