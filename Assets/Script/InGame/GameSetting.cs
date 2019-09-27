@@ -240,9 +240,9 @@ namespace GameSetting
             switch (type)
             {
                 default: return enum_UI_TileBattleStatus.Clear;
-                case enum_TileType.BattleTrade: return enum_UI_TileBattleStatus.Overwatch;
-                case enum_TileType.Battle: return enum_UI_TileBattleStatus.Patrol;
-                case enum_TileType.End: return enum_UI_TileBattleStatus.HeadQuaters;
+                case enum_TileType.BattleTrade: return enum_UI_TileBattleStatus.Patrol;
+                case enum_TileType.Battle: 
+                case enum_TileType.End: return enum_UI_TileBattleStatus.HardBattle;
             }
         }
         public static string  GetBattlePercentage(this enum_UI_TileBattleStatus status)
@@ -251,9 +251,9 @@ namespace GameSetting
             {
                 default: return "¿";
                 case enum_UI_TileBattleStatus.Clear: return "0%";
-                case enum_UI_TileBattleStatus.Overwatch: return "50%";
-                case enum_UI_TileBattleStatus.Patrol: return "75%";
-                case enum_UI_TileBattleStatus.HeadQuaters: return "100%";
+                case enum_UI_TileBattleStatus.Overwatch: return "25%";
+                case enum_UI_TileBattleStatus.Patrol: return "50%";
+                case enum_UI_TileBattleStatus.HardBattle: return "100%";
             }
         }
     }
@@ -1986,7 +1986,7 @@ namespace GameSetting
         Clear=1,
         Overwatch=2,
         Patrol=3,
-        HeadQuaters=4,
+        HardBattle=4,
     }
 
     public enum enum_UI_ActionUpgradeType
