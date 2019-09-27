@@ -81,6 +81,7 @@ public class UI_MapControl : UIPageBase,ISingleCoroutine {        //This Page Wo
         this.StartSingleCoroutine(10, TIEnumerators.UI.StartTypeWriter(txt_TileType,.5f));
         this.StartSingleCoroutine(11, TIEnumerators.UI.StartTypeWriter(txt_Cordinates, .5f));
         this.StartSingleCoroutine(12, TIEnumerators.UI.StartTypeWriter(txt_BattleStatus, .5f));
+        m_TileTypeAnim.Stop();
         m_TileTypeAnim.Play(PlayMode.StopAll);
         img_TileTypeCurrent.sprite = img_TileTypeSelect.sprite;
         img_TileTypeSelect.sprite = UIManager.Instance.m_commonSprites[tile.m_TileInfo.m_TileType.GetSpriteName()];
