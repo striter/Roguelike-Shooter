@@ -112,7 +112,7 @@ public static class GameDataManager
     {
         m_PlayerGameData.m_GameDifficulty += 1;
         if (m_PlayerGameData.m_GameDifficulty > m_PlayerGameData.m_DifficultyUnlocked)
-            m_PlayerGameData.m_GameDifficulty = 0;
+            m_PlayerGameData.m_GameDifficulty = 1;
         TGameData<CPlayerGameSave>.Save(m_PlayerGameData);
         return m_PlayerGameData.m_GameDifficulty;
     }
