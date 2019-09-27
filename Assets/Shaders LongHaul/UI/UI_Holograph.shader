@@ -1,6 +1,7 @@
 ﻿Shader "Game/UI/Holograph" {
 	Properties{
 		_FlowTex("Holograph Tex",2D)="white"
+		_FlowTexMultiply("Flow Tex Color Multiply",float)=1
 		_FlowVec("XY: Main Flow,ZW: FlowTex Flow",Vector)=(1,1,1,1)
 		
 		[PerRendererData] _MainTex("Sprite Texture", 2D) = "white" {}
@@ -51,6 +52,7 @@
 	#include "UnityCG.cginc"
 		sampler2D _MainTex;
 		sampler2D _FlowTex;
+		float _FlowTexMultiply;
 		float4 _FlowVec;
 		float4 _Color;
 		struct a2f
@@ -77,7 +79,7 @@
 		{
 			float4 flowCol = tex2D(_FlowTex,(v.uv+float2(_FlowVec.z*_Time.y,_FlowVec.w*_Time.y)));
 			float4 finalCol = tex2D(_MainTex,v.uv+float2(_FlowVec.x*_Time.y,_FlowVec.y*_Time.y))*v.color*flowCol.a;
-			return finalCol+ flowCol;
+			return finalCol+ flowCol* _FlowTexMultiply;
 		}
 		ENDCG
 		}

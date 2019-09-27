@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: UI_MapBG
+  m_Name: UI_Map_Beatline
   m_Shader: {fileID: 4800000, guid: 8b3d21350e219a649b1d4f0bd5db81bc, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -39,7 +39,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _FlowTex:
-        m_Texture: {fileID: 2800000, guid: d312a60fd3a7a4a4d856ae2a36d15848, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _HoloTex:
@@ -74,6 +74,7 @@ Material:
     - _DeltaY: 1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
+    - _FlowTexMultiply: 0
     - _FlowX: -0.1
     - _FlowY: 0
     - _GlossMapScale: 1
@@ -97,4 +98,4 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FlowVec: {r: 0, g: 0, b: -0.1, a: 0}
+    - _FlowVec: {r: 0.1, g: 0, b: 0, a: 0}
