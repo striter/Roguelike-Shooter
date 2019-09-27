@@ -104,8 +104,8 @@ public class UI_MapControl : UIPageBase,ISingleCoroutine {        //This Page Wo
         if (m_targetTile == null) return;
 
         Vector2 direction = tf_Container.InverseTransformPoint(m_targetTile.transform.position) - tf_Container.InverseTransformPoint(m_Line.transform.position);
-        width = Mathf.Lerp(width, direction.magnitude, Time.deltaTime * 5);
-        angle = Mathf.Lerp(angle, Vector2.SignedAngle(Vector2.up, direction), Time.deltaTime * 5);
+        width = Mathf.Lerp(width, direction.magnitude, Time.deltaTime * 20);
+        angle = Mathf.Lerp(angle, Vector2.SignedAngle(Vector2.up, direction), Time.deltaTime * 20);
         m_Line.sizeDelta = new Vector2(m_Line.sizeDelta.x, width);
         m_Line.localRotation = Quaternion.Euler(0, 0, angle);
     }

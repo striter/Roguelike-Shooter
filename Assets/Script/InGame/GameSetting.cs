@@ -424,7 +424,7 @@ namespace GameSetting
         Heavy_Remote_164 = 164,
     }
 
-    public enum enum_Option_FrameRate { Invalid=-1,FPS30=30,FPS60=60,}
+    public enum enum_Option_FrameRate { Invalid=-1,Normal=45,High=60,}
     #endregion
 
     #region GameLayer
@@ -504,7 +504,7 @@ namespace GameSetting
         public CGameOptions()
         {
             m_JoyStickMode = enum_Option_JoyStickMode.Retarget;
-            m_FrameRate = enum_Option_FrameRate.FPS60;
+            m_FrameRate = enum_Option_FrameRate.High;
             m_Region = enum_Option_LanguageRegion.CN;
             m_Sensitive = .4f;
             m_MusicVolume = .8f;

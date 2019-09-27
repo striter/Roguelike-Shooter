@@ -54,7 +54,7 @@ public class UIT_TextLocalization : Text
             case TextAnchor.UpperRight:
             case TextAnchor.MiddleRight:
             case TextAnchor.LowerRight:
-                return linedLetterIndex == lineCount - 1 ? 0 : -m_characterSpacing* linedLetterIndex;
+                return linedLetterIndex == lineCount - 1 ? 0 : -m_characterSpacing*(lineCount- linedLetterIndex-1);
             case TextAnchor.UpperCenter:
             case TextAnchor.MiddleCenter:
             case TextAnchor.LowerCenter:
@@ -103,7 +103,6 @@ public class UIT_TextLocalization : Text
                     toFill.SetUIVertex(m_tempVertex, uiFillVertex);
                 }
                 vertexCount++;
-                resizeTextMaxSize = resizeTextMaxSize +m_characterSpacing;
             }
             vertexCount++;
         }

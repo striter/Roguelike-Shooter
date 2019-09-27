@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 2103195
+    totalSpriteSurfaceArea: 2103489
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -95,10 +95,10 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 1a911c2544666bb4a846a481c73cc71a, type: 3}
   - {fileID: 21300000, guid: 25c06cb949383bb428c42d35e229b69d, type: 3}
   - {fileID: 21300000, guid: 188c123daafac1b47bae367a9a3cf618, type: 3}
+  - {fileID: 21300000, guid: 98b4c88452250c14f8223fceeab2102f, type: 3}
+  - {fileID: 21300000, guid: b3201b1809756004689d490dc284b59e, type: 3}
   - {fileID: 21300000, guid: 1de9eff4678e3874d92ff68af27eaa86, type: 3}
   - {fileID: 21300000, guid: df1a62fbfd4bc7f4db5f7315dc8e414a, type: 3}
-  - {fileID: 21300000, guid: 364f547376e8a124881d8641946fa172, type: 3}
-  - {fileID: 21300000, guid: 95daf2d74c65ce1419c3c3d7e559c78d, type: 3}
   - {fileID: 21300000, guid: e31910eada068664eaf61fcda1721a85, type: 3}
   - {fileID: 21300000, guid: a6031d8c25ddd714593081b17c1de9a9, type: 3}
   - {fileID: 21300000, guid: 640bac5e80194e345b2851ed06fbf63f, type: 3}
@@ -177,14 +177,14 @@ SpriteAtlas:
   - UI_common_black80
   - map_info_wave_kuang
   - UI_setting_slider
-  - map_info_battle_HeadQuaters
+  - map_info_battle_HardBattle
   - map_info_battle_Overwatch
   - map_info_battle_Patrol
   - map_info_battle_Clear
-  - UI_setting_x10_on
-  - UI_setting_x10_off
   - UI_setting_x11_on
   - UI_setting_x11_off
+  - UI_setting_x10_on
+  - UI_setting_x10_off
   - background_map_angle
   - UI_strip_white60
   - btn_map_triangle
