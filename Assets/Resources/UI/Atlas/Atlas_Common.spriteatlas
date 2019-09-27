@@ -177,7 +177,7 @@ SpriteAtlas:
   - UI_common_black80
   - map_info_wave_kuang
   - UI_setting_slider
-  - map_info_battle_HeadQuaters
+  - map_info_battle_HardBattle
   - map_info_battle_Overwatch
   - map_info_battle_Patrol
   - map_info_battle_Clear
