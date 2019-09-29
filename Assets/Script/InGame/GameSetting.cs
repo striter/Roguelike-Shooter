@@ -55,7 +55,7 @@ namespace GameSetting
 
     public static class GameExpression
     {
-        public static float F_PlayerSensitive(int sensitiveTap) => sensitiveTap;
+        public static float F_PlayerSensitive(int sensitiveTap) => sensitiveTap/5f;
         public static float F_GameVFXVolume(int vfxVolumeTap) => vfxVolumeTap/10f;
         public static float F_GameMusicVolume(int musicVolumeTap) => musicVolumeTap / 10f;
 

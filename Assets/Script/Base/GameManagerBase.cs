@@ -48,7 +48,9 @@ public class GameIdentificationManager
 
 public static class OptionsManager
 {
+    public static event Action event_OptionChanged;
     public static CGameOptions m_OptionsData;
+    public static float m_Sensitive=1f;
     public static void Init()
     {
         m_OptionsData = TGameData<CGameOptions>.Read();
@@ -61,9 +63,10 @@ public static class OptionsManager
         OnOptionChanged();
     }
 
-    public static event Action event_OptionChanged;
     public static void OnOptionChanged()
     {
+        m_Sensitive = GameExpression.F_PlayerSensitive(m_OptionsData.m_SensitiveTap);
+        Debug.Log(m_Sensitive);
         Application.targetFrameRate = (int)m_OptionsData.m_FrameRate;
         TLocalization.SetRegion(m_OptionsData.m_Region);
         event_OptionChanged?.Invoke();
