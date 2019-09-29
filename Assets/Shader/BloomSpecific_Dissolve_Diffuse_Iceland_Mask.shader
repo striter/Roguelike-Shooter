@@ -4,8 +4,6 @@
 	{
 		_MainTex("Main Tex",2D) = "white"{}
 		_Color("Color",Color) = (1,1,1,1)
-
-		_SubTex2("Color Special Mask",2D)="black"{}
 		_Amount3("Color Blink Speed",Range(0,10))=2
 
 		_SubTex1("Dissolve Map",2D) = "white"{}
@@ -50,7 +48,6 @@
 			{
 				float4 pos : SV_POSITION;
 				float4 uv:TEXCOORD0;
-				float2 uvMask:TEXCOORD1;
 				float3 worldPos:TEXCOORD2;
 				float diffuse:TEXCOORD3;
 				SHADOW_COORDS(4)
@@ -59,14 +56,11 @@
 			float4 _Color;
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
-			sampler2D _SubTex2;
-			float4 _SubTex2_ST;
 			v2f vert (appdata v)
 			{
 				v2f o;
 				o.uv.xy = TRANSFORM_TEX( v.uv, _MainTex);
 				o.uv.zw = TRANSFORM_TEX(v.uv, _SubTex1);
-				o.uvMask = TRANSFORM_TEX(v.uv, _SubTex2);
 				o.pos = UnityObjectToClipPos(v.vertex);
 				o.worldPos =mul(unity_ObjectToWorld,v.vertex);
 				fixed3 worldNormal = normalize(mul(v.normal, (float3x3)unity_WorldToObject)); //法线方向n
@@ -81,11 +75,12 @@
 				fixed dissolve = tex2D(_SubTex1,i.uv.zw).r - _Amount1-_Amount2;
 				clip(dissolve);
 
-				float3 albedo = tex2D(_MainTex,i.uv.xy)* _Color;
-				float4 colorMask = tex2D(_SubTex2, i.uvMask);
-				if (colorMask.r == 1)
+				float4 mainCol = tex2D(_MainTex, i.uv.xy);
+				float3 albedo = mainCol.rgb* _Color;
+				float colorMask = mainCol.a;
+				if (colorMask ==0)
 					return fixed4(albedo* abs(sin(_Time.y*_Amount3)), 1);
-				else if (colorMask.r > 0)
+				else if (colorMask< 1)
 					return fixed4(albedo, 1);
 
 				UNITY_LIGHT_ATTENUATION(atten, i,i.worldPos)

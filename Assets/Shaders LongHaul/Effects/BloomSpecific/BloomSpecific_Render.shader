@@ -1,6 +1,5 @@
 ﻿Shader "Hidden/PostEffect/PE_BloomSpecific_Render"
 {
-
 	SubShader
 	{
 		Tags { "RenderType" = "BloomColor"  "IgnoreProjector" = "True" "Queue" = "Transparent" }
@@ -102,7 +101,6 @@
 			{
 				float4 pos : SV_POSITION;
 				float4 uv:TEXCOORD0;
-				float2 uvMask:TEXCOORD1;
 			};
 
 			float4 _Color;
@@ -110,8 +108,6 @@
 			float4 _MainTex_ST;
 			sampler2D _SubTex1;
 			float4 _SubTex1_ST;
-			sampler2D _SubTex2;
-			float4 _SubTex2_ST;
 			float _Amount1;
 			float _Amount2;
 			float _Amount3;
@@ -121,7 +117,6 @@
 				v2f o;
 				o.uv.xy = TRANSFORM_TEX(v.uv, _MainTex);
 				o.uv.zw = TRANSFORM_TEX(v.uv, _SubTex1);
-				o.uvMask = TRANSFORM_TEX(v.uv, _SubTex2);
 				o.pos = UnityObjectToClipPos(v.vertex);
 				return o;
 			}
@@ -131,12 +126,11 @@
 				fixed dissolve = tex2D(_SubTex1,i.uv.zw).r - _Amount1 - _Amount2;
 				clip(dissolve);
 
-				float3 albedo = tex2D(_MainTex,i.uv.xy)* _Color;
-				float4 colorMask = tex2D(_SubTex2, i.uvMask);
-				if (colorMask.r == 1)
-					return fixed4(albedo* abs(sin(_Time.y*_Amount3)), 1);
-				else if (colorMask.r > 0)
-					return fixed4(albedo, 1);
+				float4 albedo = tex2D(_MainTex, i.uv.xy);
+				if (albedo.a == 0)
+					return fixed4(albedo.rgb* abs(sin(_Time.y*_Amount3)), 1);
+				else if (albedo.a < 1)
+					return fixed4(albedo.rgb, 1);
 
 				return fixed4(0,0,0,1);
 			}
