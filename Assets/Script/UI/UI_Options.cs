@@ -50,22 +50,20 @@ public class UI_Options : UIPageBase {
     }
 
     Transform tf_Basic, tf_Control;
-    ButtonToggle btn_FrameRate, btn_region, btn_joyStickMode;
-    SliderStatus sld_Sensitive, sld_MusicVolume, sld_VFXVolume;
     Button btn_ReturnToCamp;
 
     protected override void Init(bool useAnim)
     {
         base.Init(useAnim);
         tf_Basic = tf_Container.Find("Basic");
-        btn_FrameRate = new ButtonToggle(tf_Basic.Find("FrameRate/BtnToggle"), OnFrequencyClicked, frameRateOn());
-        btn_region = new ButtonToggle(tf_Basic.Find("Region/BtnToggle"), OnRegionClicked, regionOn());
-        sld_MusicVolume = new SliderStatus(tf_Basic.Find("MusicVolume/Slider"), OnMusicVolumeChanged, OptionsManager.m_OptionsData.m_MusicVolumeTap);
-        sld_VFXVolume = new SliderStatus(tf_Basic.Find("VFXVolume/Slider"), OnVFXVolumeChanged, OptionsManager.m_OptionsData.m_VFXVolumeTap);
+         new ButtonToggle(tf_Basic.Find("FrameRate/BtnToggle"), OnFrequencyClicked, frameRateOn());
+         new ButtonToggle(tf_Basic.Find("Region/BtnToggle"), OnRegionClicked, regionOn());
+         new SliderStatus(tf_Basic.Find("MusicVolume/Slider"), OnMusicVolumeChanged, OptionsManager.m_OptionsData.m_MusicVolumeTap);
+         new SliderStatus(tf_Basic.Find("VFXVolume/Slider"), OnVFXVolumeChanged, OptionsManager.m_OptionsData.m_VFXVolumeTap);
 
         tf_Control = tf_Container.Find("Control");
-        btn_joyStickMode = new ButtonToggle(tf_Control.Find("JoystickMode/BtnToggle"), OnJoystickClicked, joystickOn());
-        sld_Sensitive = new SliderStatus(tf_Control.Find("Sensitive/Slider"), OnSensitiveChanged, OptionsManager.m_OptionsData.m_SensitiveTap);
+         new ButtonToggle(tf_Control.Find("JoystickMode/BtnToggle"), OnJoystickClicked, joystickOn());
+         new SliderStatus(tf_Control.Find("Sensitive/Slider"), OnSensitiveChanged, OptionsManager.m_OptionsData.m_SensitiveTap);
         btn_ReturnToCamp = tf_Control.Find("ReturnToCamp/BtnReturnToCamp").GetComponent<Button>();
         btn_ReturnToCamp.onClick.AddListener(OnMainmenuBtnClick);
     }
