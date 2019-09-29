@@ -316,7 +316,7 @@ MonoBehaviour:
   C_TestProjectileIndex: 200
   V_TestIndicatorIndex: 0
   B_TestBuffIndex: 10001
-  F1_WeaponSpawnType: 1002
+  F1_WeaponSpawnType: 3001
   F5_TestActionIndex: 30007
   F6_TestActionIndex: 10018
   F7_TestActionIndex: 30007
@@ -440,7 +440,7 @@ MonoBehaviour:
   I_YawMax: 60
   I_ShakeParam: 6
   F_ReverseCheck: 0.1
-  m_RecoilCompensate: 1
+  m_RecoilCompensate: 0
 --- !u!4 &1434031919
 Transform:
   m_ObjectHideFlags: 0
