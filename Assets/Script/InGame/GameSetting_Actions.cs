@@ -73,9 +73,9 @@ namespace GameSetting_Action
         public static float F_10012_EntityKillHealing(enum_RarityLevel level) => 10 + 30 * (int)level;
         public static int IP_10013_SingleDamageMultiply(enum_RarityLevel level) => 200 + 200 * (int)level;
         public static int IP_10014_ReloadRateMultiplyPercentage(enum_RarityLevel level) => 40 + 20 * (int)level;
-        public static float F_10015_ArmorDamageReturn(enum_RarityLevel level) => 2 * (int)level;
+        public static float F_10015_ArmorDamageReturn(enum_RarityLevel level) => 1 + 1 * (int)level;
         public static float IP_10016_DamageReducePercentage(enum_RarityLevel level) => 65 - 15 * (int)level;
-        public static float IP_10016_FireRateAdditivePercentage(enum_RarityLevel level) => 60 + 60 * (int)level;
+        public static float IP_10016_FireRateAdditivePercentage(enum_RarityLevel level) => 36 + 36 * (int)level;
         public static float IP_10017_DamageAdditivePercentage(enum_RarityLevel level) => 80 + 80 * (int)level;
         public static float F_10017_EntityKillArmorAdditive(enum_RarityLevel level) => 10 + 30 * (int)level;
         public static int I_10019_ClipAdditiveAmount(enum_RarityLevel level) => 2 + 2 * (int)level;
