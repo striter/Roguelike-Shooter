@@ -311,7 +311,7 @@ MonoBehaviour:
   Z_TestEntitySpawn: 305
   TestEntityFlag: 2
   TestEntityBuffOnSpawn: 0
-  X_TestCastIndex: 20401
+  X_TestCastIndex: 30500
   CastForward: 0
   C_TestProjectileIndex: 200
   V_TestIndicatorIndex: 0

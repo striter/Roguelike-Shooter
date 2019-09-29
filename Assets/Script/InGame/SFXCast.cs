@@ -11,6 +11,7 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
     public int I_BuffApplyOnCast;
     public enum_CastAreaType E_AreaType = enum_CastAreaType.Invalid;
     public Vector4 V4_CastInfo;
+    public int I_MuzzleIndex = 0;
     public int F_DelayDuration;
     public int I_DelayIndicatorIndex;
     public bool B_CameraShake = false;
@@ -38,7 +39,7 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
         if (F_DelayDuration > 0 && I_DelayIndicatorIndex < 0)
             Debug.LogError("Delay Indicator Less Than Zero:" + gameObject.name);
     }
-    public void Play(DamageDeliverInfo buffInfo)
+    public virtual void Play(DamageDeliverInfo buffInfo)
     {
         SetDamageInfo(buffInfo);
         if (F_DelayDuration <= 0)
@@ -46,13 +47,14 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
             PlayDelayed();
             return;
         }
+
         if (I_DelayIndicatorIndex>0)
             GameObjectManager.SpawnIndicator(I_DelayIndicatorIndex, transform.position, Vector3.up).Play(m_sourceID,  F_DelayDuration);
         this.StartSingleCoroutine(1, TIEnumerators.PauseDel(F_DelayDuration, PlayDelayed));
     }
     public virtual void PlayDelayed()
     {
-        PlaySFX(m_DamageInfo.m_detail.I_SourceID, I_TickCount * F_Tick + 5f);
+        PlaySFX(m_DamageInfo.m_detail.I_SourceID, I_TickCount * F_Tick);
         B_Casting = true;
         if (B_CameraShake)
             TPSCameraController.Instance.AddShake(V4_CastInfo.magnitude);

@@ -7,6 +7,6 @@ public class SFXBuffEffect : SFXParticles {
     public void Refresh(float refreshDuration)
     {
         if (refreshDuration == 0) refreshDuration = 1f;
-        f_TimeCheck = Time.time+ refreshDuration + GameConst.F_ParticlesMaxStopTime;
+            SetLifeTime(refreshDuration );
     }
 }
