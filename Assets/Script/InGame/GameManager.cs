@@ -5,10 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class GameManager : GameManagerBase, ISingleCoroutine
+public class GameManager : GameManagerBase<GameManager>, ISingleCoroutine
 {
-    protected static GameManager nInstance;
-    public static new GameManager Instance => nInstance;
     public string M_TESTSEED = "";
 #if UNITY_EDITOR
     #region Test
@@ -116,18 +114,12 @@ public class GameManager : GameManagerBase, ISingleCoroutine
     public bool B_ShowChestTips=>m_RewardChest!=null&&m_RewardChest.B_Interactable;
     protected override void Awake()
     {
-        nInstance = this;
         base.Awake();
         InitEntityDic();
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntiyActivate);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityDeactivate, OnEntityDeactivate);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
         m_GameLevel = M_TESTSEED != "" ? new GameLevelManager(M_TESTSEED, enum_StageLevel.Rookie, 1) : new GameLevelManager(GameDataManager.m_PlayerGameData,GameDataManager.m_PlayerLevelData);
-    }
-    protected override void OnDestroy()
-    {
-        base.OnDestroy();
-        nInstance = null;
     }
     private void OnDisable()
     {

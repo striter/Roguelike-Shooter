@@ -10,8 +10,6 @@ public class TPSCameraController : CameraController
     public int I_YawMin = -90, I_YawMax = 90;
     public int I_ShakeParam;
     public float F_ReverseCheck;
-    public bool m_RecoilCompensate;
-    Vector3 v3_Recoil;
     Vector3 v3_Shake;
     float inverseCheck = 0;
     bool b_reverse;
@@ -31,27 +29,6 @@ public class TPSCameraController : CameraController
             return v3_localOffset +(b_reverse?1:-1)* v3_Shake;
         }
     }
-    protected override Quaternion QT_PitchYawRotation
-    {
-        get
-        {
-            Quaternion targetQT;
-            if (m_RecoilCompensate)
-            {
-                v3_Recoil = Vector3.Lerp(v3_Recoil, Vector3.zero, Time.deltaTime);
-                targetQT = Quaternion.Euler(f_Pitch + v3_Recoil.x, f_Yaw + v3_Recoil.y, f_Roll + v3_Recoil.z);
-            }
-            else
-            {
-                f_Pitch += v3_Recoil.x;
-                f_Yaw += v3_Recoil.y;
-                f_Roll += v3_Recoil.z;
-                v3_Recoil = Vector2.zero;
-                targetQT = Quaternion.Euler(f_Pitch , f_Yaw , f_Roll);
-            }
-            return targetQT;
-        }
-    }
     protected override void Awake()
     {
         ninstance = this;
@@ -62,7 +39,8 @@ public class TPSCameraController : CameraController
         B_CameraOffsetWallClip = true;
         SetCameraYawClamp(I_YawMin, I_YawMax);
     }
-
-    public void AddRecoil(Vector3 _recoil)=> v3_Recoil += _recoil;
-    public void AddShake(float shakeAmount)=> v3_Shake += TCommon.RandomVector(shakeAmount);
+    public void AddShake(float shakeAmount)
+    {
+        v3_Shake += TCommon.RandomVector(shakeAmount);
+    }
 }

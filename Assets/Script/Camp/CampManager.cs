@@ -2,21 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
-public class CampManager : GameManagerBase{
-    public static CampManager nInstance;
-    public static new CampManager Instance => nInstance;
-
+public class CampManager : GameManagerBase<CampManager>{
     Transform tf_PlayerStart;
     protected override void Awake()
     {
-        nInstance = this;
         base.Awake();
         tf_PlayerStart = transform.Find("PlayerStart");
-    }
-    protected override void OnDestroy()
-    {
-        base.OnDestroy();
-        nInstance = null;
     }
     protected override void Start()
     {
