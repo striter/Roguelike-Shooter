@@ -14,7 +14,7 @@ public class SFXProjectileBoltDelayCast : SFXProjectileBolt {
     protected override void OnHitTarget(RaycastHit hit, HitCheckBase entity)
     {
         base.OnHitTarget(hit, entity);
-        f_TimeCheck = Time.time+ F_DelayDuration;
+        SetLifeTime(F_DelayDuration);
     }
     protected override void OnRecycle()
     {

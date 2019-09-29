@@ -58,6 +58,9 @@ public class SFXProjectile : SFXBase
         if (I_IndicatorIndex > 0)
             SpawnIndicator(targetPosition,Vector3.up, F_Duration(transform.position, targetPosition));
 
+        if (m_Blink != null)
+            m_Blink.OnReset();
+
         PlaySFX(deliverInfo.I_SourceID, F_Duration(transform.position, targetPosition));
     }
     
@@ -87,8 +90,6 @@ public class SFXProjectile : SFXBase
             m_Indicator.StopParticles();
             m_Indicator = null;
         }
-        if (m_Blink!=null)
-            m_Blink.OnReset();
     }
     protected override void Update()
     {

@@ -423,6 +423,7 @@ namespace GameSetting
         Throwable_Hips_150 = 150,
         Throwable_R_ThrowHip_151 = 151,
         Throwable_R_ThrowBack_152 = 152,
+        Throwable_R_Summon_153=153,
         Heavy_HipShot_161 = 161,
         Heavy_Mortal_162 = 162,
         Heavy_Shield_Spear_163 = 163,
@@ -1530,6 +1531,7 @@ namespace GameSetting
     #region GameEffects
     public class ModelBlink:ISingleCoroutine
     {
+        Transform transform;
         Material[] m_materials;
         float f_simulate;
         float f_blinkRate; 
@@ -1540,6 +1542,7 @@ namespace GameSetting
             if (BlinkModel == null)
                 Debug.LogError("Error! Blink Model Init, BlinkModel Folder Required!");
 
+            transform = BlinkModel;
             Renderer[] renderers=BlinkModel.GetComponentsInChildren<Renderer>();
             m_materials = new Material[renderers.Length];
             for (int i = 0; i < renderers.Length; i++)
@@ -1550,12 +1553,15 @@ namespace GameSetting
             f_simulate = 0f;
             OnReset();
         }
+        public void SetShow(bool show) => transform.SetActivate(true);
         public void OnReset()
         {
             f_simulate = 0f;
             this.StopSingleCoroutine(0);
-            m_materials.Traversal((Material material) => { material.SetColor("_Color", TCommon.ColorAlpha(c_blinkColor, 0)); }); 
+            m_materials.Traversal((Material material) => { material.SetColor("_Color", TCommon.ColorAlpha(c_blinkColor, 0)); });
+            SetShow(false);
         }
+        
         public void Tick(float deltaTime)
         {
             f_simulate += deltaTime;
@@ -1842,12 +1848,16 @@ namespace GameSetting
 
     public class EquipmentCasterTarget : EquipmentCaster
     {
+        int i_muzzleIndex;
         public EquipmentCasterTarget(SFXCast _castInfo, EntityCharacterBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(_castInfo, _controller, _transform, _GetBuffInfo)
         {
+            i_muzzleIndex = _castInfo.I_MuzzleIndex;
         }
         protected override Vector3 GetTargetPosition(bool preAim, EntityCharacterBase _target) => LevelManager.NavMeshPosition(_target.transform.position + TCommon.RandomXZSphere(m_Entity.F_AttackSpread));
         public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
+            if (i_muzzleIndex > 0)
+                GameObjectManager.SpawnParticles<SFXMuzzle>(i_muzzleIndex, transformBarrel.position,transformBarrel.forward).Play(m_Entity.I_EntityID);
             GameObjectManager.SpawnEquipment<SFXCast>(i_weaponIndex,_calculatedPosition,Vector3.up).Play( GetDamageDeliverInfo());
         }
     }
@@ -2094,6 +2104,7 @@ namespace GameSetting
         public void SetInteractable(bool interactable)
         {
             m_Hide.SetActivate(!interactable);
+            m_Show.color = TCommon.ColorAlpha(m_Show.color, interactable ? 1 : 0);
             m_Button.interactable = interactable;
         }
     }
