@@ -184,7 +184,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         rotateDelta.y = 0;
         rotateDelta.x = (rotateDelta.x / Screen.width) * 180f;
-        TPSCameraController.Instance.RotateCamera(rotateDelta * GameExpression.F_PlayerSensitive(OptionsManager.m_OptionsData.m_SensitiveTap));
+        TPSCameraController.Instance.RotateCamera(rotateDelta *OptionsManager.m_Sensitive);
     }
 
     public void OnFireAddRecoil(float recoil)
