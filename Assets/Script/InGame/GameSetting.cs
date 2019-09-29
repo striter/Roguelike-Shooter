@@ -55,9 +55,14 @@ namespace GameSetting
 
     public static class GameExpression
     {
+        public static float F_PlayerSensitive(int sensitiveTap) => sensitiveTap;
+        public static float F_GameVFXVolume(int vfxVolumeTap) => vfxVolumeTap/10f;
+        public static float F_GameMusicVolume(int musicVolumeTap) => musicVolumeTap / 10f;
+
         public static Vector3 V3_TileAxisOffset(TileAxis axis) => new Vector3(axis.X * GameConst.F_LevelTileSize, 0, axis.Y * GameConst.F_LevelTileSize);
         public static float F_BigmapYaw(Vector3 direction) => TCommon.GetAngle(direction, Vector3.forward, Vector3.up);         //Used For Bigmap Direction
         public static bool B_ShowHitMark(enum_HitCheck check) => check != enum_HitCheck.Invalid;
+
         public static float F_SphereCastDamageReduction(float weaponDamage, float distance, float radius) => weaponDamage * (1 - (distance / radius));       //Rocket Blast Damage
         public static Vector3 V3_RangeSpreadDirection(Vector3 aimDirection, float spread, Vector3 up, Vector3 right) => (aimDirection * GameConst.I_ProjectileSpreadAtDistance + up * UnityEngine.Random.Range(-spread, spread) + right * UnityEngine.Random.Range(-spread, spread)).normalized;
 
@@ -496,9 +501,9 @@ namespace GameSetting
         public enum_Option_JoyStickMode m_JoyStickMode;
         public enum_Option_FrameRate m_FrameRate;
         public enum_Option_LanguageRegion m_Region;
-        public float m_MusicVolume;
-        public float m_VFXVolume;
-        public float m_Sensitive;
+        public int m_MusicVolumeTap;
+        public int m_VFXVolumeTap;
+        public int m_SensitiveTap;
         public bool m_AdditionalLight;
 
         public CGameOptions()
@@ -506,9 +511,9 @@ namespace GameSetting
             m_JoyStickMode = enum_Option_JoyStickMode.Retarget;
             m_FrameRate = enum_Option_FrameRate.High;
             m_Region = enum_Option_LanguageRegion.CN;
-            m_Sensitive = .4f;
-            m_MusicVolume = .8f;
-            m_VFXVolume = .8f;
+            m_SensitiveTap = 5;
+            m_MusicVolumeTap = 10;
+            m_VFXVolumeTap =10;
             m_AdditionalLight = false;
         }
     }

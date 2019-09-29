@@ -5,7 +5,7 @@ using UnityEngine;
 using System;
 using TExcel;
 
-public class GameManagerBase<T> : SimpleSingletonMono<T> where T:MonoBehaviour{
+public class GameManagerBase : SimpleSingletonMono<GameManagerBase>{
     protected override void Awake()
     {
         base.Awake();

@@ -27,7 +27,7 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
     protected Vector3 v3_CameraPos;
     protected Transform tf_CameraPos;
     protected Quaternion qt_CameraRot=Quaternion.identity;
-    protected Transform tf_CameraTrans;
+    protected Transform tf_CameraBase;
     protected Transform tf_CameraLookAt;
 
     protected float f_Yaw = 0;
@@ -43,8 +43,8 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
         base.Awake();
         m_Camera = Camera.main;
         tf_MainCamera = m_Camera.transform;
-        tf_CameraTrans = transform.FindOrCreateNewTransform("CameraTrans");
-        tf_CameraPos = tf_CameraTrans.FindOrCreateNewTransform("CameraPos");
+        tf_CameraBase = transform.FindOrCreateNewTransform("CameraTrans");
+        tf_CameraPos = tf_CameraBase.FindOrCreateNewTransform("CameraPos");
         b_CameraAttaching = false;
         m_Effect = m_Camera.GetComponent<CameraEffectManager>();
     }
@@ -62,21 +62,15 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
     }
     #endregion
     #region Interact Apis
-    public void SetCameraSmoothParam(float smoothParam)
-    {
-        F_CameraSmoothParam = smoothParam;
-    }
+    public void SetCameraSmoothParam(float smoothParam)=> F_CameraSmoothParam = smoothParam;
     public void SetCameraRotation(int vert = -1, int hori = -1)
     {
         if (vert != -1)
-        {
             f_Pitch = B_SelfRotation? Mathf.Clamp(f_Pitch, I_YawAngleMin, I_YawAngleMax):vert;
-        }
         if (hori != -1)
-        {
             f_Yaw = hori;
-        }
     }
+    public void CameraLookAt(Transform lookAtTrans) => tf_CameraLookAt = lookAtTrans;
     public static void Attach(Transform toTransform, Action _OnCameraAttached = null)
     {
         Instance.b_CameraAttaching = true;
@@ -84,10 +78,7 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
         Instance.tf_AttachTo = toTransform;
         Instance.qt_CameraRot = toTransform.rotation;
     }
-    public void CameraLookAt(Transform lookAtTrans)
-    {
-        tf_CameraLookAt = lookAtTrans;
-    }
+
     protected virtual Quaternion QT_PitchYawRotation=> Quaternion.Euler(f_Pitch, f_Yaw, f_Roll);
     protected virtual Vector3 V3_LocalPositionOffset => v3_localOffset;
     protected virtual void LateUpdate()
@@ -99,8 +90,8 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
             else
                 qt_CameraRot = B_SelfRotation ? QT_PitchYawRotation : qt_CameraRot = tf_AttachTo.rotation;
  
-            tf_CameraTrans.position = tf_AttachTo.position;
-            tf_CameraTrans.rotation = Quaternion.Euler(0, f_Yaw, 0);
+            tf_CameraBase.position = tf_AttachTo.position;
+            tf_CameraBase.rotation = Quaternion.Euler(0, f_Yaw, 0);
 
             tf_CameraPos.localPosition = V3_LocalPositionOffset;
 
@@ -170,7 +161,7 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
     {
         get
         {
-            Vector3 forward = Instance.tf_CameraTrans.forward;
+            Vector3 forward = Instance.tf_CameraBase.forward;
             forward.y = 0;
             forward = forward.normalized;
             return forward;
@@ -180,7 +171,7 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
     {
         get
         {
-            Vector3 rightward = Instance.tf_CameraTrans.right;
+            Vector3 rightward = Instance.tf_CameraBase.right;
             rightward.y = 0;
             rightward = rightward.normalized;
             return rightward;
