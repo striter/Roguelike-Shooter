@@ -120,7 +120,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
         List<SBigmapTileInfo> rewardTiles = new List<SBigmapTileInfo>();
         //Calculate Main Path
         TileAxis startAxis = new TileAxis(_seed.Next(2, _bigmapWidth - 2), _seed.Next(2, _bigmapHeight - 2));
-        int mainPathCount = _seed.Next(2) == 1 ? 5 : 6;
+        int mainPathCount =  6;
         mainRoadTiles =  bigmapTiles.TileRandomFill(_seed, startAxis,(SBigmapTileInfo tile)=> { tile.ResetTileType(enum_TileType.Battle); },p=>p.m_TileType== enum_TileType.Invalid, mainPathCount);
         mainRoadTiles[0].ResetTileType(enum_TileType.Start);
         mainRoadTiles[mainRoadTiles.Count-1].ResetTileType(enum_TileType.End);
