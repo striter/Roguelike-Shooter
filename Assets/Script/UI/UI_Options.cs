@@ -77,6 +77,7 @@ public class UI_Options : UIPageBase {
     bool OnFrequencyClicked()
     {
         OptionsManager.m_OptionsData.m_FrameRate = frameRateOn() ? enum_Option_FrameRate.High : enum_Option_FrameRate.Normal;
+        OptionsManager.OnOptionChanged();
         return frameRateOn();
     }
 
@@ -84,18 +85,32 @@ public class UI_Options : UIPageBase {
     bool OnRegionClicked()
     {
         OptionsManager.m_OptionsData.m_Region = regionOn() ? enum_Option_LanguageRegion.CN : enum_Option_LanguageRegion.EN;
+        OptionsManager.OnOptionChanged();
         return regionOn();
     }
     bool joystickOn() => OptionsManager.m_OptionsData.m_JoyStickMode == enum_Option_JoyStickMode.Retarget;
     bool OnJoystickClicked()
     {
         OptionsManager.m_OptionsData.m_JoyStickMode = joystickOn() ? enum_Option_JoyStickMode.Stational : enum_Option_JoyStickMode.Retarget;
+        OptionsManager.OnOptionChanged();
         return joystickOn();
     }
-    
-    void OnMusicVolumeChanged(float value) => OptionsManager.m_OptionsData.m_MusicVolumeTap = (int)value;
-    void OnVFXVolumeChanged(float value) => OptionsManager.m_OptionsData.m_VFXVolumeTap = (int)value;
-    void OnSensitiveChanged(float value) => OptionsManager.m_OptionsData.m_SensitiveTap = (int)value;
+
+    void OnMusicVolumeChanged(float value)
+    {
+        OptionsManager.m_OptionsData.m_MusicVolumeTap = (int)value;
+        OptionsManager.OnOptionChanged();
+    }
+    void OnVFXVolumeChanged(float value)
+    {
+        OptionsManager.m_OptionsData.m_VFXVolumeTap = (int)value;
+        OptionsManager.OnOptionChanged();
+    }
+    void OnSensitiveChanged(float value)
+    {
+        OptionsManager.m_OptionsData.m_SensitiveTap = (int)value;
+        OptionsManager.OnOptionChanged();
+    } 
     void OnMainmenuBtnClick()=> UIT_MessageBox.Instance.Begin("UI_Title_ExitGame","UI_Intro_ExitGame","UI_Option_ExitGameConfirm",GameManager.Instance.OnExitGame);
 
     protected override void OnCancelBtnClick()
