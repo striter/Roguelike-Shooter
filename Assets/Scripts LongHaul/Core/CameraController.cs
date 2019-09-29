@@ -62,15 +62,6 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
     }
     #endregion
     #region Interact Apis
-    public void SetCameraSmoothParam(float smoothParam)=> F_CameraSmoothParam = smoothParam;
-    public void SetCameraRotation(int vert = -1, int hori = -1)
-    {
-        if (vert != -1)
-            f_Pitch = B_SelfRotation? Mathf.Clamp(f_Pitch, I_YawAngleMin, I_YawAngleMax):vert;
-        if (hori != -1)
-            f_Yaw = hori;
-    }
-    public void CameraLookAt(Transform lookAtTrans) => tf_CameraLookAt = lookAtTrans;
     public static void Attach(Transform toTransform, Action _OnCameraAttached = null)
     {
         Instance.b_CameraAttaching = true;
@@ -78,8 +69,44 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
         Instance.tf_AttachTo = toTransform;
         Instance.qt_CameraRot = toTransform.rotation;
     }
+    public void CameraLookAt(Transform lookAtTrans) => tf_CameraLookAt = lookAtTrans;
+    public void SetCameraSmoothParam(float smoothParam)=> F_CameraSmoothParam = smoothParam;
+    public void SetCameraRotation(int pitch = -1, int yaw = -1)
+    {
+        if (pitch != -1)
+            f_Pitch = B_SelfRotation? Mathf.Clamp(f_Pitch, I_YawAngleMin, I_YawAngleMax):pitch;
+        if (yaw != -1)
+            f_Yaw = yaw;
+    }
+    public void RotateCamera(Vector2 _input)
+    {
+        f_Yaw += _input.x * F_RotateSensitive;
+        f_Pitch += (B_InvertCamera ? _input.y : -_input.y) * F_RotateSensitive;
+        f_Pitch = Mathf.Clamp(f_Pitch, I_YawAngleMin, I_YawAngleMax);
+    }
 
-    protected virtual Quaternion QT_PitchYawRotation=> Quaternion.Euler(f_Pitch, f_Yaw, f_Roll);
+
+    public bool InputRayCheck(Vector3 inputPos, int layerMask, ref RaycastHit rayHit)
+    {
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+        {
+            return false;
+        }
+        Ray r = m_Camera.ScreenPointToRay(inputPos);
+
+        if (B_DrawDebugLine)
+            Debug.DrawRay(r.origin, r.direction * 1000, Color.red);
+
+        return Physics.Raycast(r, out rayHit, 1000, layerMask);
+    }
+
+    public Vector3 GetScreenPos(Vector3 worldPos)
+    {
+        return m_Camera.WorldToScreenPoint(worldPos);
+    }
+    #endregion
+    #region Calculate
+    protected virtual Quaternion CalculateSelfRotation() => Quaternion.Euler(f_Pitch, f_Yaw, f_Roll);
     protected virtual Vector3 V3_LocalPositionOffset => v3_localOffset;
     protected virtual void LateUpdate()
     {
@@ -88,14 +115,14 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
             if (tf_CameraLookAt != null)
                 qt_CameraRot = Quaternion.LookRotation(tf_CameraLookAt.position - tf_MainCamera.position, Vector3.up);
             else
-                qt_CameraRot = B_SelfRotation ? QT_PitchYawRotation : qt_CameraRot = tf_AttachTo.rotation;
- 
+                qt_CameraRot = B_SelfRotation ? CalculateSelfRotation() : tf_AttachTo.rotation;
+
             tf_CameraBase.position = tf_AttachTo.position;
-            tf_CameraBase.rotation = Quaternion.Euler(0, f_Yaw, 0);
+            tf_CameraBase.rotation = Quaternion.Euler(0, qt_CameraRot.eulerAngles.y, 0);
 
             tf_CameraPos.localPosition = V3_LocalPositionOffset;
 
-            if (B_CameraOffsetWallClip&&v3_localOffset!=Vector3.zero)
+            if (B_CameraOffsetWallClip && v3_localOffset != Vector3.zero)
             {
                 v3_temp = Vector3.Normalize(tf_CameraPos.position - tf_AttachTo.position);
                 ray_temp = new Ray(tf_AttachTo.position, v3_temp);
@@ -106,51 +133,15 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
                     Debug.DrawRay(ray_temp.origin, ray_temp.direction);
             }
 
-            if (B_SmoothCamera)
-            {
-                tf_MainCamera.position = Vector3.Lerp(tf_MainCamera.position, tf_CameraPos.position, F_CameraSmoothParam);
-                tf_MainCamera.rotation = Quaternion.Lerp(tf_MainCamera.rotation, qt_CameraRot, F_CameraSmoothParam);
-            }
-            else
-            {
-                tf_MainCamera.position = tf_CameraPos.position;
-                tf_MainCamera.rotation = qt_CameraRot;
-            }
+            tf_MainCamera.position = B_SmoothCamera ? Vector3.Lerp(tf_MainCamera.position, tf_CameraPos.position, F_CameraSmoothParam) : tf_MainCamera.position;
+            tf_MainCamera.rotation = B_SmoothCamera ? Quaternion.Lerp(tf_MainCamera.rotation, qt_CameraRot, F_CameraSmoothParam) : qt_CameraRot;
 
-            if (OnCameraAttached != null&& b_CameraAttaching && Vector3.Distance(tf_MainCamera.position, tf_CameraPos.position) < .2f)
+            if (OnCameraAttached != null && b_CameraAttaching && Vector3.Distance(tf_MainCamera.position, tf_CameraPos.position) < .2f)
             {
                 b_CameraAttaching = false;
                 OnCameraAttached();
             }
         }
-    }
-
-    public void RotateCamera(Vector2 _input) {
-        f_Yaw += _input.x*F_RotateSensitive;
-        f_Pitch += (B_InvertCamera ? _input.y : -_input.y)*F_RotateSensitive;
-        f_Pitch = Mathf.Clamp(f_Pitch, I_YawAngleMin, I_YawAngleMax);
-    }
-
-    #endregion
-    #region Tools
-
-    public bool InputRayCheck(Vector3 inputPos, int layerMask, ref RaycastHit rayHit)
-    {
-        if (EventSystem.current!=null&&EventSystem.current.IsPointerOverGameObject())
-        {
-            return false;
-        }
-        Ray r = m_Camera.ScreenPointToRay(inputPos);
-
-        if (B_DrawDebugLine)
-            Debug.DrawRay(r.origin, r.direction*1000, Color.red);
-
-        return Physics.Raycast(r, out rayHit, 1000, layerMask);
-    }
-
-    public Vector3 GetScreenPos(Vector3 worldPos)
-    {
-        return m_Camera.WorldToScreenPoint(worldPos);
     }
     #endregion
     #region Get/Set

@@ -31,25 +31,20 @@ public class TPSCameraController : CameraController
             return v3_localOffset +(b_reverse?1:-1)* v3_Shake;
         }
     }
-    protected override Quaternion QT_PitchYawRotation
+    protected override Quaternion CalculateSelfRotation()
     {
-        get
+        if (m_RecoilCompensate)
         {
-            Quaternion targetQT;
-            if (m_RecoilCompensate)
-            {
-                v3_Recoil = Vector3.Lerp(v3_Recoil, Vector3.zero, Time.deltaTime);
-                targetQT = Quaternion.Euler(f_Pitch + v3_Recoil.x, f_Yaw + v3_Recoil.y, f_Roll + v3_Recoil.z);
-            }
-            else
-            {
-                f_Pitch += v3_Recoil.x;
-                f_Yaw += v3_Recoil.y;
-                f_Roll += v3_Recoil.z;
-                v3_Recoil = Vector2.zero;
-                targetQT = Quaternion.Euler(f_Pitch , f_Yaw , f_Roll);
-            }
-            return targetQT;
+            v3_Recoil = Vector3.Lerp(v3_Recoil, Vector3.zero, Time.deltaTime*5f);
+            return Quaternion.Euler(f_Pitch + v3_Recoil.x, f_Yaw + v3_Recoil.y, f_Roll + v3_Recoil.z);
+        }
+        else
+        {
+            f_Pitch += v3_Recoil.x;
+            f_Yaw += v3_Recoil.y;
+            f_Roll += v3_Recoil.z;
+            v3_Recoil = Vector2.zero;
+            return Quaternion.Euler(f_Pitch, f_Yaw, f_Roll);
         }
     }
     protected override void Awake()

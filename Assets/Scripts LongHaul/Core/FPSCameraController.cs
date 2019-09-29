@@ -36,36 +36,33 @@ public class FPSCameraController : CameraController
         f_fovStart = m_Camera.fieldOfView;
         f_fovCurrent = f_fovStart;
     }
-    protected override Quaternion QT_PitchYawRotation
+    protected override Quaternion CalculateSelfRotation()
     {
-        get
+        f_sprintRoll = Mathf.Lerp(f_sprintRoll, 0, f_angleSmoothParam);
+        f_damageRoll = Mathf.Lerp(f_damageRoll, 0, f_angleSmoothParam);
+        f_Roll = Mathf.Lerp(f_Roll, f_sprintRoll + f_damageRoll, f_angleSmoothParam);
+        if (B_SelfSetoffRecoil)
         {
-            f_sprintRoll = Mathf.Lerp(f_sprintRoll,0,f_angleSmoothParam);
-            f_damageRoll = Mathf.Lerp(f_damageRoll, 0, f_angleSmoothParam);
-            f_Roll = Mathf.Lerp(f_Roll,f_sprintRoll+f_damageRoll,f_angleSmoothParam);
-            if (B_SelfSetoffRecoil)
+            if (Time.time > f_recoilAutoSetoff)
             {
-                if (Time.time > f_recoilAutoSetoff)
-                {
-                    f_recoilPitch = Mathf.Lerp(f_recoilPitch, 0, f_angleSmoothParam);
-                    f_recoilYaw = Mathf.Lerp(f_recoilYaw, 0, f_angleSmoothParam);
-                }
-                f_damagePitch = Mathf.Lerp(f_damagePitch, 0, f_angleSmoothParam);
-                f_damageYaw = Mathf.Lerp(f_damageYaw, 0, f_angleSmoothParam);
-                return Quaternion.Euler(f_Pitch + f_recoilPitch+f_damagePitch, f_Yaw + f_recoilYaw+f_damageYaw, f_Roll);
+                f_recoilPitch = Mathf.Lerp(f_recoilPitch, 0, f_angleSmoothParam);
+                f_recoilYaw = Mathf.Lerp(f_recoilYaw, 0, f_angleSmoothParam);
             }
-            else
-            {
-                f_Pitch += f_recoilPitch;
-                f_Yaw += f_recoilYaw;
-                f_recoilPitch = 0;
-                f_recoilYaw = 0;
-                f_Pitch += f_damagePitch;
-                f_Yaw += f_damageYaw;
-                f_damagePitch = 0;
-                f_damageYaw = 0;
-                return base.QT_PitchYawRotation;
-            }
+            f_damagePitch = Mathf.Lerp(f_damagePitch, 0, f_angleSmoothParam);
+            f_damageYaw = Mathf.Lerp(f_damageYaw, 0, f_angleSmoothParam);
+            return Quaternion.Euler(f_Pitch + f_recoilPitch + f_damagePitch, f_Yaw + f_recoilYaw + f_damageYaw, f_Roll);
+        }
+        else
+        {
+            f_Pitch += f_recoilPitch;
+            f_Yaw += f_recoilYaw;
+            f_recoilPitch = 0;
+            f_recoilYaw = 0;
+            f_Pitch += f_damagePitch;
+            f_Yaw += f_damageYaw;
+            f_damagePitch = 0;
+            f_damageYaw = 0;
+            return base.CalculateSelfRotation();
         }
     }
     public void OnSprintAnimation(float animationRoll)

@@ -440,6 +440,7 @@ MonoBehaviour:
   I_YawMax: 60
   I_ShakeParam: 6
   F_ReverseCheck: 0.1
+  m_RecoilCompensate: 1
 --- !u!4 &1434031919
 Transform:
   m_ObjectHideFlags: 0
