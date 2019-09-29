@@ -2,14 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TestGameManager : GameManager {
-    private new void Awake()
+public class TestGameManager : MonoBehaviour {
+    protected void Start()
     {
-        Instance = this;
-    }
-    protected override void Start()
-    {
-        base.Start();
         //        PostEffectManager.AddPostEffect<PE_ViewDepth>();
         CameraController.Instance.m_Effect.AddCameraEffect<PE_BloomSpecific>().m_GaussianBlur.SetEffect(2, 10, 4);
     }

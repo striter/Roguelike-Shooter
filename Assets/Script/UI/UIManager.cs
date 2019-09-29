@@ -22,7 +22,9 @@ public class UIManager :SimpleSingletonMono<UIManager>
         m_commonSprites = TResources.GetUIAtlas_Common();
         cvs_Overlay = transform.Find("Overlay").GetComponent<Canvas>();
         CanvasScaler m_Scaler = cvs_Overlay.GetComponent<CanvasScaler>();
-        m_FittedScale = new Vector2(Screen.width/m_Scaler.referenceResolution.x , Screen.height/ m_Scaler.referenceResolution.y );
+        float scaleFactor = (Screen.width / (float)Screen.height) / (m_Scaler.referenceResolution.x / m_Scaler.referenceResolution.y);
+        m_FittedScale = new Vector2(scaleFactor, 1f);
+        Debug.Log(scaleFactor);
         cvs_Camera = transform.Find("Camera").GetComponent<Canvas>();
 
         tf_Control = cvs_Camera.transform.Find("Control");
@@ -70,5 +72,5 @@ public class UIManager :SimpleSingletonMono<UIManager>
         m_mainSprite = spriteName;
         img_main.sprite = m_commonSprites[m_mainSprite];
     }
-
+    
 }

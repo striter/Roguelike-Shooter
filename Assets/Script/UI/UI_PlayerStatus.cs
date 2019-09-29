@@ -55,6 +55,7 @@ public class UI_PlayerStatus : UIToolsBase
         btn_Bigmap.onClick.AddListener(() => { UIManager.Instance.ShowPage<UI_MapControl>(true); });
 
         rtf_StatusData = tf_Container.Find("StatusData").GetComponent<RectTransform>();
+        rtf_StatusData.localScale = UIManager.Instance.m_FittedScale;
         tf_AmmoData = rtf_StatusData.Find("AmmoData");
         m_AmmoGridWidth = tf_AmmoData.GetComponent<RectTransform>().sizeDelta.x;
         m_AmmoAmount = new UIC_Numeric(tf_AmmoData.Find("AmmoAmount"));
@@ -148,7 +149,7 @@ public class UI_PlayerStatus : UIToolsBase
         m_CoinStatus.SetAmount(_player.m_PlayerInfo.m_Coins);
         m_ActionAmount.SetValue(_player.m_PlayerInfo.m_ActionAmount);
         sld_ShuffleCooldown.value = _player.m_PlayerInfo.f_shuffleScale;
-        rtf_StatusData.anchoredPosition = Vector3.Lerp(rtf_StatusData.anchoredPosition, CameraController.MainCamera.WorldToScreenPoint(m_Player.tf_Head.position), Time.deltaTime * 10f);
+        rtf_StatusData.SetWorldViewPortAnchor(m_Player.tf_Head.position,CameraController.Instance.m_Camera, Time.deltaTime * 10f);
         
         if (_player.m_Interact==null)
         {
@@ -158,8 +159,8 @@ public class UI_PlayerStatus : UIToolsBase
         }
 
         if (rtf_InteractData.SetActivate(true))
-            rtf_InteractData.anchoredPosition = CameraController.MainCamera.WorldToScreenPoint(_player.m_Interact.transform.position);
-            rtf_InteractData.anchoredPosition = Vector3.Lerp(rtf_InteractData.anchoredPosition, CameraController.MainCamera.WorldToScreenPoint(_player.m_Interact.transform.position), Time.deltaTime * 10f);
+            rtf_InteractData.SetWorldViewPortAnchor(m_Player.tf_Head.position, CameraController.Instance.m_Camera, 1f);
+        rtf_InteractData.SetWorldViewPortAnchor(m_Player.tf_Head.position, CameraController.Instance.m_Camera, Time.deltaTime * 10f);
 
         int tradePrice = 0;
         if (_player.m_Interact.m_InteractType == enum_Interaction.ContainerTrade)

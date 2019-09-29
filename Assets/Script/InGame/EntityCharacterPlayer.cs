@@ -179,15 +179,17 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     #region PlayerControll
     Vector2 m_MoveAxisInput;
     void OnMovementDelta(Vector2 moveDelta) => m_MoveAxisInput = moveDelta;
+
     void OnRotateDelta(Vector2 rotateDelta)
     {
         rotateDelta.y = 0;
         rotateDelta.x = (rotateDelta.x / Screen.width) * 180f;
-        CameraController.Instance.RotateCamera(rotateDelta*OptionsManager.m_OptionsData.m_Sensitive);
+        TPSCameraController.Instance.RotateCamera(rotateDelta * GameExpression.F_PlayerSensitive(OptionsManager.m_OptionsData.m_SensitiveTap));
     }
+
     public void OnFireAddRecoil(float recoil)
     {
-        OnRotateDelta(new Vector2((TCommon.RandomBool()?1:-1) *recoil,0));
+        TPSCameraController.Instance.AddRecoil(new Vector3(0, (TCommon.RandomBool() ? 1 : -1)* recoil,0));
         m_Animator.Fire();
     }
     #endregion
