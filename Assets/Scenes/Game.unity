@@ -304,11 +304,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c088e7b318d292458e08155aef1723d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  M_TESTSEED: 
+  M_TESTSEED: 10:38:11
   B_PhysicsDebugGizmos: 1
   B_GameLevelDebugGizmos: 0
   E_LevelDebug: 0
-  Z_TestEntitySpawn: 308
+  Z_TestEntitySpawn: 305
   TestEntityFlag: 2
   TestEntityBuffOnSpawn: 0
   X_TestCastIndex: 20401
@@ -316,7 +316,7 @@ MonoBehaviour:
   C_TestProjectileIndex: 200
   V_TestIndicatorIndex: 0
   B_TestBuffIndex: 10001
-  F1_WeaponSpawnType: 1002
+  F1_WeaponSpawnType: 3001
   F5_TestActionIndex: 30007
   F6_TestActionIndex: 10018
   F7_TestActionIndex: 30007
@@ -440,7 +440,7 @@ MonoBehaviour:
   I_YawMax: 60
   I_ShakeParam: 6
   F_ReverseCheck: 0.1
-  m_RecoilCompensate: 1
+  m_RecoilCompensate: 0
 --- !u!4 &1434031919
 Transform:
   m_ObjectHideFlags: 0
