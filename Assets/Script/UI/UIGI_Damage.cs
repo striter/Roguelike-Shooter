@@ -24,7 +24,7 @@ public class UIGI_Damage : UIT_GridItem {
     private void Update()
     {
         f_expireCheck -= Time.deltaTime;
-        rtf_RectTransform.anchoredPosition = CameraController.MainCamera.WorldToScreenPoint(m_attachEntity.tf_Head.position);
+        rtf_RectTransform.SetWorldViewPortAnchor(m_attachEntity.tf_Head.position,CameraController.MainCamera,Time.deltaTime*10f);
         rtf_Container.anchoredPosition = Vector2.Lerp(new Vector2(0,200),Vector2.zero,f_expireCheck);
         m_Amount.color = Color.Lerp(TCommon.ColorAlpha(Color.red,0f),Color.red,f_expireCheck);
         if (f_expireCheck < 0)
