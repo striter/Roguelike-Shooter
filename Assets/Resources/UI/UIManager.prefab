@@ -760,7 +760,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_Common_Return
+  m_Text: "\u8FD4\u56DE"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Common_Return
   m_characterSpacing: 0

@@ -66,7 +66,6 @@ public static class OptionsManager
     public static void OnOptionChanged()
     {
         m_Sensitive = GameExpression.F_PlayerSensitive(m_OptionsData.m_SensitiveTap);
-        Debug.Log(m_Sensitive);
         Application.targetFrameRate = (int)m_OptionsData.m_FrameRate;
         TLocalization.SetRegion(m_OptionsData.m_Region);
         event_OptionChanged?.Invoke();

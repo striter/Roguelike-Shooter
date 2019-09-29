@@ -9,7 +9,6 @@ public class CampManager : GameManagerBase{
     Transform tf_PlayerStart;
     protected override void Awake()
     {
-        nInstance = this;
         base.Awake();
         tf_PlayerStart = transform.Find("PlayerStart");
     }

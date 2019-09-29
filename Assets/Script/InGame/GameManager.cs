@@ -116,7 +116,7 @@ public class GameManager : GameManagerBase, ISingleCoroutine
     public bool B_ShowChestTips=>m_RewardChest!=null&&m_RewardChest.B_Interactable;
     protected override void Awake()
     {
-        nInstance = this;
+        nInstance=this;
         base.Awake();
         InitEntityDic();
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntiyActivate);
