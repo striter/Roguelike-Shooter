@@ -440,10 +440,13 @@ public class GameManager : GameManagerBase, ISingleCoroutine
     {
         B_WaveEntityGenerating = true;
         int curSpawnCount = 0;
+        SBuff enermyDifficultyBuff = GameExpression.GetEnermyGameDifficultyBuffIndex(m_GameLevel.m_GameDifficulty);
+        float baseHealthMultiplier = GameExpression.GetAIBaseHealthMultiplier(m_GameLevel.m_GameDifficulty);
+        float maxHealthMultiplier = GameExpression.GetAIMaxHealthMultiplier(m_GameLevel.m_GameStage);
         for (; ; )
         {
             yield return new WaitForSeconds(_offset);
-            SpawnEnermy(waveGenerate[curSpawnCount], curSpawnCount, LevelManager.Instance.m_currentLevel.m_Level.RandomEmptyTilePosition(m_GameLevel.m_GameSeed));
+            SpawnEnermy(waveGenerate[curSpawnCount], curSpawnCount, LevelManager.Instance.m_currentLevel.m_Level.RandomEmptyTilePosition(m_GameLevel.m_GameSeed),baseHealthMultiplier,maxHealthMultiplier,enermyDifficultyBuff);
             curSpawnCount++;
             if (curSpawnCount >= waveGenerate.Count)
             {
@@ -453,11 +456,11 @@ public class GameManager : GameManagerBase, ISingleCoroutine
         }
     }
 
-    void SpawnEnermy(int entityIndex, int spawnIndex,Vector3 position)
+    void SpawnEnermy(int entityIndex, int spawnIndex,Vector3 position, float baseHealthMultiplier, float maxHealthMultiplier, SBuff difficultyBuff)
     {
-        GameObjectManager.SpawnIndicator(30001, position, Vector3.up).Play(entityIndex,GameConst.I_EnermySpawnDelay);
+        GameObjectManager.SpawnIndicator(30001, position, Vector3.up).Play(entityIndex, GameConst.I_EnermySpawnDelay);
         this.StartSingleCoroutine(100 + spawnIndex, TIEnumerators.PauseDel(GameConst.I_EnermySpawnDelay, () => {
-            GameObjectManager.SpawnAI(entityIndex,position , enum_EntityFlag.Enermy).SetEnermyDifficulty(m_GameLevel.m_GameDifficulty,m_GameLevel.m_GameStage);
+            GameObjectManager.SpawnAI(entityIndex,position , enum_EntityFlag.Enermy).SetEnermyDifficulty(baseHealthMultiplier, maxHealthMultiplier,difficultyBuff);
         }));
     }
     #endregion
