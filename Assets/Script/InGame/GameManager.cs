@@ -39,7 +39,7 @@ public class GameManager : GameManagerBase, ISingleCoroutine
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.BackQuote))
-            SetBulletTime(!m_BulletTiming);
+            SetBulletTime(m_BulletTime!=1f,.1f);
 
         RaycastHit hit = new RaycastHit();
         if (Input.GetKeyDown(KeyCode.Z) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
