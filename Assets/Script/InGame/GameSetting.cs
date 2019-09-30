@@ -1107,6 +1107,8 @@ namespace GameSetting
         protected float F_ClipMultiply { get; private set; } = 1f;
         protected float F_DamageAdditive = 0f;
 
+        protected Vector3 m_prePos;
+
         public float m_ActionAmount { get; private set; } = 0f;
         List<ActionBase> m_ActionEquiping = new List<ActionBase>();
         public List<ActionBase> m_ActionStored { get; private set; } = new List<ActionBase>();
@@ -1128,6 +1130,7 @@ namespace GameSetting
         {
             base.OnActivate();
             TBroadCaster<enum_BC_GameStatus>.Add<DamageDeliverInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterDamage, OnCharacterDamage);
+            m_prePos = m_Entity.transform.position;
         }
         public override void OnDeactivate()
         {
@@ -1144,6 +1147,9 @@ namespace GameSetting
                 b_actionChangeIndicated = true;
                 OnActionChange?.Invoke();
             }
+
+            OnPlayerMove(TCommon.GetXZDistance(m_prePos, m_Entity.transform.position));
+            m_prePos = m_Entity.transform.position;
 
             if (b_shuffling)
             {
@@ -1163,6 +1169,7 @@ namespace GameSetting
         {
             OnShuffle();
         }
+
         public void OnBattleFinish()
         {
             m_ActionAmount = GameConst.F_RestoreActionAmount;
@@ -1220,16 +1227,16 @@ namespace GameSetting
         }
         public override DamageDeliverInfo GetDamageBuffInfo()
         {
+            ResetEffect(enum_CharacterEffect.Cloak);
             float randomDamageMultiply = UnityEngine.Random.Range(-GameConst.F_PlayerDamageAdjustmentRange,GameConst.F_PlayerDamageAdjustmentRange);
             DamageDeliverInfo info = DamageDeliverInfo.DamageInfo(m_Entity.I_EntityID, F_DamageMultiply+ randomDamageMultiply, F_DamageAdditive);
-            base.ResetEffect(enum_CharacterEffect.Cloak);
-            m_ActionEquiping.Traversal((ActionBase action) => {
-                action.OnFire(info.I_IdentiyID);
-            }, true);
+            m_ActionEquiping.Traversal((ActionBase action) => {action.OnFire(info.I_IdentiyID);});
             return info;
         }
         public void OnAttachWeapon(WeaponBase weapon) => weapon.m_WeaponAction.Traversal((ActionBase action) => { OnUseAcion(action); });
         public void OnDetachWeapon() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnWeaponDetach(); }, true);
+
+        public void OnPlayerMove(float distance) => m_ActionEquiping.Traversal((ActionBase action) => { action.OnMove(distance); });
         public void OnReloadFinish() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnReloadFinish(); });
         void OnCharacterDamage(DamageDeliverInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
         {
@@ -1476,6 +1483,7 @@ namespace GameSetting
         public virtual void OnReloadFinish() { }
         public virtual void OnFire(int identity) { }
         public virtual void OnWeaponDetach() { }
+        public virtual void OnMove(float distsance) { }
         public bool B_Upgradable => m_rarity < enum_RarityLevel.Epic;
         public void Upgrade()
         {

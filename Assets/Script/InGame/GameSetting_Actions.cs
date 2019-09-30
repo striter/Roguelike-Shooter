@@ -146,24 +146,7 @@ namespace GameSetting_Action
         public override void OnWeaponDetach() => ForceExpire();
         public ActionAfterWeaponDetach(int _identity,enum_RarityLevel _level) : base(_identity,_level) { }
     }
-    public class ActionMovementDetect : ActionBase
-    {
-        public ActionMovementDetect(int _identity, enum_RarityLevel _level) : base(_identity, _level) {  }
-        protected Vector3 m_prePos;
-        public override void OnActionUse()
-        {
-            base.OnActionUse();
-            m_prePos = m_ActionEntity.transform.position;
-        }
-        protected virtual void OnMovementDistance(float distance) { }
-        public override void OnTick(float deltaTime)
-        {
-            base.OnTick(deltaTime);
-            OnMovementDistance(TCommon.GetXZDistance(m_prePos, m_ActionEntity.transform.position));
-            m_prePos = m_ActionEntity.transform.position;
-        }
-    }
-    public class ActionMovementStackup : ActionMovementDetect
+    public class ActionMovementStackup : ActionBase
     {
         public ActionMovementStackup(int _identity, enum_RarityLevel _level) : base(_identity, _level) { m_maxStackup=-1; }
         public ActionMovementStackup(int _identity, enum_RarityLevel _level, float _maxStackup = -1) : base(_identity, _level) { m_maxStackup = _maxStackup; }
@@ -173,9 +156,9 @@ namespace GameSetting_Action
             base.OnActionUse();
             m_stackUp = 0;
         }
-        protected override void OnMovementDistance(float amount)
+        public override void OnMove(float amount)
         {
-            base.OnMovementDistance(amount);
+            base.OnMove(amount);
             m_stackUp += amount;
             if (m_maxStackup > 0 && m_stackUp > m_maxStackup)
                 m_stackUp = m_maxStackup;
@@ -217,13 +200,13 @@ namespace GameSetting_Action
         public Action_10001_ClipAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
 
-    public class Action_10002_MoveArmorAdditive : ActionMovementDetect
+    public class Action_10002_MoveArmorAdditive : ActionBase
     {
         public override int m_Index => 10002;
         public override int I_ActionCost => ActionData.I_10002_Cost;
         public override float F_Duration => ActionData.F_10002_Duration;
         public override float Value1 => ActionData.F_10002_ArmorReceive(m_rarity);
-        protected override void OnMovementDistance(float amount) => ActionHelper.ReceiveHealing(m_ActionEntity,Value1*amount, enum_DamageType.ArmorOnly);
+        public override void OnMove(float amount) => ActionHelper.ReceiveHealing(m_ActionEntity,Value1*amount, enum_DamageType.ArmorOnly);
         public Action_10002_MoveArmorAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
 
@@ -238,13 +221,13 @@ namespace GameSetting_Action
         public Action_10003_MoveFirerateStackup(int _identity, enum_RarityLevel _level) : base(_identity, _level,ActionData.I_10003_MaxStackAmount) { }
     }
 
-    public class Action_10004_MoveEnergyAdditive : ActionMovementDetect
+    public class Action_10004_MoveEnergyAdditive : ActionBase
     {
         public override int m_Index => 10004;
         public override int I_ActionCost => ActionData.I_10004_Cost;
         public override float F_Duration => ActionData.F_10004_Duration;
         public override float Value1 => ActionData.F_10004_EnergyAdditivePerMile(m_rarity);
-        protected override void OnMovementDistance(float distance) =>ActionHelper.ReceiveEnergy(m_ActionEntity, Value1 *distance);
+        public override void OnMove(float distance) =>ActionHelper.ReceiveEnergy(m_ActionEntity, Value1 *distance);
         public Action_10004_MoveEnergyAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
 
