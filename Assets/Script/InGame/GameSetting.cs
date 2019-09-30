@@ -699,19 +699,21 @@ namespace GameSetting
             f_damageMultiply = f_damageMultiply > 0 ? f_damageMultiply / 100f : 0;
             f_damageReduce = f_damageReduce > 0 ? f_damageReduce / 100f : 0;
         }
-        public static SBuff CreateActionBuff(int index,float movementMultiply,float duration)
+        //100000-999999
+        public static SBuff CreateActionBuff(int actionIndex,float movementMultiply,float duration)
         {
             SBuff buff = new SBuff();
-            buff.index = index;
+            buff.index = actionIndex * 10;
             buff.i_addType = (int)enum_ExpireRefreshType.Refresh;
             buff.f_movementSpeedMultiply = movementMultiply;
             buff.f_expireDuration = duration;
             return buff;
         }
-        public static SBuff CreateEntityBuff(int index,float damageMultiply)
+        //1000-9999
+        public static SBuff CreateEntityBuff(int difficulty,float damageMultiply)
         {
             SBuff buff = new SBuff();
-            buff.index = index;
+            buff.index = 1000+difficulty;
             buff.i_addType = (int)enum_ExpireRefreshType.Refresh;
             buff.f_damageMultiply = damageMultiply;
             return buff;

@@ -96,14 +96,12 @@ namespace GameSetting_Action
         }
         public static void ReceiveHealing(EntityCharacterPlayer entity, float heal, enum_DamageType type = enum_DamageType.Common)
         {
-            Debug.Log("Player Receive Healing Amount:" + heal);
             if (heal <= 0)
                 Debug.LogError("Howd Fk Healing Below Zero?");
             entity.m_HitCheck.TryHit(new DamageInfo(-heal, type, DamageDeliverInfo.Default(entity.I_EntityID)));
         }
         public static void ReceiveEnergy(EntityCharacterPlayer entity, float amount)
         {
-            Debug.Log("Player Receive Energy:" + amount);
             entity.m_PlayerInfo.AddActionAmount(amount);
         }
         public static void PlayerUpgradeAction(EntityCharacterPlayer player)
@@ -161,8 +159,7 @@ namespace GameSetting_Action
         public override void OnTick(float deltaTime)
         {
             base.OnTick(deltaTime);
-            float distance = TCommon.GetXZDistance(m_prePos, m_ActionEntity.transform.position);
-            if(distance>.2f) OnMovementDistance(distance);
+            OnMovementDistance(TCommon.GetXZDistance(m_prePos, m_ActionEntity.transform.position));
             m_prePos = m_ActionEntity.transform.position;
         }
     }
@@ -183,17 +180,11 @@ namespace GameSetting_Action
             if (m_maxStackup > 0 && m_stackUp > m_maxStackup)
                 m_stackUp = m_maxStackup;
         }
-        public override void OnTick(float deltaTime)
-        {
-            if (m_maxStackup>0 && m_stackUp == m_maxStackup)
-                return;
-            base.OnTick(deltaTime);
-        }
         protected void ResetStackUp() => m_stackUp = 0;
     }
     public class ActionSingleBurstShotKill : ActionBase
     {
-        public override float F_DamageAdditive => base.F_DamageAdditive;
+        public override float F_DamageAdditive => m_fireIdentity == -1 ? Value1 : 0f;
         protected int m_fireIdentity = -1;
         public override void OnActionUse()
         {
@@ -243,7 +234,7 @@ namespace GameSetting_Action
         public override float F_Duration => ActionData.F_10003_Duration;
         public override float Value1 => ActionData.F_10003_FirerateMultiplyPerMile(m_rarity);
         public override float Value2 => ActionData.F_10003_FirerateMultiplyPerMile(m_rarity) * m_maxStackup;
-        public override float m_FireRateMultiply => Value1;
+        public override float m_FireRateMultiply => Value1*m_stackUp;
         public Action_10003_MoveFirerateStackup(int _identity, enum_RarityLevel _level) : base(_identity, _level,ActionData.I_10003_MaxStackAmount) { }
     }
 
@@ -266,7 +257,7 @@ namespace GameSetting_Action
         protected override void OnShotsHit(EntityCharacterBase _hitEntity)
         {
             if (_hitEntity.m_Health.b_IsDead)
-                ActionHelper.PlayerReciveBuff(m_ActionEntity,SBuff.CreateActionBuff(m_Index*10,Value2,Value3));
+                ActionHelper.PlayerReciveBuff(m_ActionEntity,SBuff.CreateActionBuff(m_Index,Value2/100f,Value3));
         }
         public Action_10005_SingleShotMovementAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }

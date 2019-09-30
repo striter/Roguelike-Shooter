@@ -50,7 +50,6 @@ public class UI_Options : UIPageBase {
     }
 
     Transform tf_Basic, tf_Control;
-    Transform tf_Pause;
     Button btn_ReturnToCamp;
 
     protected override void Init(bool useAnim)
