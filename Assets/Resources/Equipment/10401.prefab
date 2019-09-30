@@ -174,7 +174,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   E_ProjectileType: 1
-  F_Damage: 30
+  F_Damage: 20
   F_Speed: 10
   I_MuzzleIndex: 10101
   I_ImpactIndex: 20101
@@ -188,6 +188,7 @@ MonoBehaviour:
     length: 0
   F_OffsetExtension: 0
   B_TargetReachBlink: 0
+  C_BlinkColor: {r: 1, g: 0, b: 0, a: 1}
   I_BeamLength: 30
 --- !u!198 &198151565350543452
 ParticleSystem:
