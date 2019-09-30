@@ -639,16 +639,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   E_CastType: 1
-  F_Damage: 100
+  F_Damage: 70
   I_TickCount: 1
   F_Tick: 1
   I_BuffApplyOnCast: 0
   E_AreaType: 4
   V4_CastInfo: {x: 1.5, y: 3, z: 11, w: 6}
+  I_MuzzleIndex: 0
   F_DelayDuration: 0
   I_DelayIndicatorIndex: 0
   B_CameraShake: 0
-  I_ShakeAmount: 0
 --- !u!198 &198123011063227630
 ParticleSystem:
   m_ObjectHideFlags: 1

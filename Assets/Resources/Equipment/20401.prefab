@@ -484,16 +484,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   E_CastType: 1
-  F_Damage: 50
+  F_Damage: 40
   I_TickCount: 1
   F_Tick: 0.5
   I_BuffApplyOnCast: 0
   E_AreaType: 1
   V4_CastInfo: {x: 4, y: 0, z: 0, w: 0}
+  I_MuzzleIndex: 0
   F_DelayDuration: 0
   I_DelayIndicatorIndex: 0
   B_CameraShake: 1
-  I_ShakeAmount: 2
   B_DamageDistanceReduction: 0
 --- !u!198 &198007061504746016
 ParticleSystem:

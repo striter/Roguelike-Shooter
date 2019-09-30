@@ -319,7 +319,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   E_ProjectileType: 1
-  F_Damage: 10
+  F_Damage: 0
   F_Speed: 10
   I_MuzzleIndex: 0
   I_ImpactIndex: 0
@@ -333,6 +333,7 @@ MonoBehaviour:
     length: 0
   F_OffsetExtension: 0
   B_TargetReachBlink: 1
+  C_BlinkColor: {r: 1, g: 0, b: 0, a: 1}
   F_DirectionPitchAngle: 45
   B_RandomRotation: 1
   B_Bounce: 1
