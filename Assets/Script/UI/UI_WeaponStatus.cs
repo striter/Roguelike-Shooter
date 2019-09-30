@@ -54,7 +54,7 @@ public class UI_WeaponStatus : UIPageBase {
             m_ActionRarity.SetLevel(action.m_rarity);
         }
 
-        GameManagerBase.SetBulletTime(true, .1f);
+        GameManagerBase.SetBulletTime(true, 0f);
     }
     protected override void OnCancelBtnClick()
     {
