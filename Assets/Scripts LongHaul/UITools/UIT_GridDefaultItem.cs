@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class UIT_GridDefaultItem : UIT_GridItem {
 
-    protected UIT_TextLocalization txt_Default;
+    protected UIT_TextExtend txt_Default;
     protected Button btn_Default;
     protected Image img_Default;
     protected Image img_HighLight;
@@ -14,7 +14,7 @@ public class UIT_GridDefaultItem : UIT_GridItem {
     public override void Init(UIT_GridController parent)
     {
         base.Init(parent);
-        txt_Default = tf_Container.Find("DefaultText").GetComponentNullable<UIT_TextLocalization>();
+        txt_Default = tf_Container.Find("DefaultText").GetComponentNullable<UIT_TextExtend>();
         img_Default = tf_Container.Find("DefaultImage").GetComponentNullable<Image>();
         img_HighLight = tf_Container.Find("DefaultHighLight").GetComponentNullable<Image>();
         btn_Default = tf_Container.Find("DefaultBtn").GetComponentNullable<Button>();

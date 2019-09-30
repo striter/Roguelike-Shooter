@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(UIT_TextLocalization)),CanEditMultipleObjects]
+[CustomEditor(typeof(UIT_TextExtend)),CanEditMultipleObjects]
 public class ELocalizationText : UnityEditor.UI.TextEditor
 {
-    UIT_TextLocalization m_target = null;
+    UIT_TextExtend m_target = null;
     public override void OnInspectorGUI()
     {
-        m_target = target as UIT_TextLocalization;
+        m_target = target as UIT_TextExtend;
 
         EditorGUILayout.BeginHorizontal();
         GUILayout.Label("Auto Localize:", GUILayout.Width(Screen.width / 3 - 20));

@@ -50,6 +50,7 @@ public class UI_Options : UIPageBase {
     }
 
     Transform tf_Basic, tf_Control;
+    Transform tf_Pause;
     Button btn_ReturnToCamp;
 
     protected override void Init(bool useAnim)
@@ -71,6 +72,14 @@ public class UI_Options : UIPageBase {
     public void SetInGame(bool inGame)
     {
         btn_ReturnToCamp.SetActivate(inGame);
+        GameManagerBase.SetBulletTime(true,0f);
+    }
+
+    protected override void OnCancelBtnClick()
+    {
+        base.OnCancelBtnClick();
+        OptionsManager.Save();
+        GameManagerBase.SetBulletTime(false);
     }
 
     bool frameRateOn() => OptionsManager.m_OptionsData.m_FrameRate == enum_Option_FrameRate.Normal;
@@ -112,11 +121,5 @@ public class UI_Options : UIPageBase {
         OptionsManager.OnOptionChanged();
     } 
     void OnMainmenuBtnClick()=> UIT_MessageBox.Instance.Begin("UI_Title_ExitGame","UI_Intro_ExitGame","UI_Option_ExitGameConfirm",GameManager.Instance.OnExitGame);
-
-    protected override void OnCancelBtnClick()
-    {
-        base.OnCancelBtnClick();
-        OptionsManager.Save();
-    }
 
 }

@@ -460,13 +460,6 @@ public class GameManager : GameManagerBase, ISingleCoroutine
             GameObjectManager.SpawnAI(entityIndex,position , enum_EntityFlag.Enermy).SetEnermyDifficulty(m_GameLevel.m_GameDifficulty,m_GameLevel.m_GameStage);
         }));
     }
-
-    static bool m_BulletTiming = false;
-    public static void SetBulletTime(bool enter)
-    {
-        m_BulletTiming = enter;
-        Time.timeScale = m_BulletTiming ? .1f : 1f;
-    }
     #endregion
 
     public void OnExitGame()

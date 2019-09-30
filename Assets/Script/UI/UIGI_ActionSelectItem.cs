@@ -2,14 +2,14 @@
 using GameSetting;
 public class UIGI_ActionSelectItem : UIT_GridDefaultItem
 {
-    UIT_TextLocalization txt_Intro,txt_Level,txt_Cost,txt_Name;
+    UIT_TextExtend txt_Intro,txt_Level,txt_Cost,txt_Name;
     public override void Init(UIT_GridController parent)
     {
         base.Init(parent);
-        txt_Name = txt_Default as UIT_TextLocalization;
-        txt_Intro = tf_Container.Find("IntroText").GetComponent<UIT_TextLocalization>();
-        txt_Level = tf_Container.Find("LevelText").GetComponent<UIT_TextLocalization>();
-        txt_Cost = tf_Container.Find("CostText").GetComponent<UIT_TextLocalization>();
+        txt_Name = txt_Default as UIT_TextExtend;
+        txt_Intro = tf_Container.Find("IntroText").GetComponent<UIT_TextExtend>();
+        txt_Level = tf_Container.Find("LevelText").GetComponent<UIT_TextExtend>();
+        txt_Cost = tf_Container.Find("CostText").GetComponent<UIT_TextExtend>();
     }
     public void SetInfo(ActionBase action)
     {

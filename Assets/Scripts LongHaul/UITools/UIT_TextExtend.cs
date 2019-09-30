@@ -2,7 +2,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class UIT_TextLocalization : Text
+public class UIT_TextExtend : Text
 {
     #region Localization
     public bool B_AutoLocalize = false;
