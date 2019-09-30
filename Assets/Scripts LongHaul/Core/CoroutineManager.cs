@@ -83,21 +83,18 @@ public static class TIEnumerators
                 yield break;
         }
     }
-    public static IEnumerator ChangeValueTo(Action<float> OnValueChanged, float startValue, float endValue, float duration, Action OnFinished = null)
+    public static IEnumerator ChangeValueTo(Action<float> OnValueChanged, float startValue, float endValue, float duration, Action OnFinished = null, bool scaled = true)
     {
-        float startTime = Time.time;
+        float timeValue = duration;
         for (; ; )
         {
-            float timeParam = (Time.time - startTime) / duration;
-            if (timeParam > 1)
+            timeValue -= scaled ? Time.deltaTime : Time.unscaledDeltaTime;
+            OnValueChanged(Mathf.Lerp(endValue,startValue,timeValue/duration));
+            if (timeValue<0)
             {
                 OnValueChanged(endValue);
                 OnFinished?.Invoke();
                 yield break;
-            }
-            else
-            {
-                OnValueChanged(startValue + (endValue - startValue) * timeParam);
             }
             yield return null;
         }

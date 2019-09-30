@@ -34,7 +34,7 @@ public class UIPageBase : MonoBehaviour,ISingleCoroutine
                 tf_Container.localScale = Vector3.one * value;
                 img_Background.color = new Color(img_Background.color.r,img_Background.color.g,img_Background.color.b,value*f_bgAlphaStart);
             }
-            , 0f, 1f, .5f));
+            , 0f, 1f, .5f,null,false));
     }
     protected virtual void OnCancelBtnClick()
     {
@@ -48,7 +48,7 @@ public class UIPageBase : MonoBehaviour,ISingleCoroutine
                 tf_Container.localScale = Vector3.one * value;
                 img_Background.color = new Color(img_Background.color.r, img_Background.color.g, img_Background.color.b, value * f_bgAlphaStart);
             }
-            , 1f, 0f, .5f, OnHideFinished));
+            , 1f, 0f, .5f, OnHideFinished,false));
         else
             OnHideFinished();
     }

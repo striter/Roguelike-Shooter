@@ -48,7 +48,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     {
         if (base.OnReceiveDamage(damageInfo, damageDirection))
         {
-            damageInfo.m_detail.m_BaseBuffApply.Traversal((int buffIndex) => { m_CharacterInfo.AddBuff(damageInfo.m_detail.I_SourceID, buffIndex); });
+            damageInfo.m_detail.m_BaseBuffApply.Traversal((SBuff buffInfo) => { m_CharacterInfo.AddBuff(damageInfo.m_detail.I_SourceID, buffInfo); });
             if (damageInfo.m_detail.m_DamageEffect != enum_CharacterEffect.Invalid) m_CharacterInfo.OnSetEffect(damageInfo.m_detail.m_DamageEffect, damageInfo.m_detail.m_EffectDuration);
 
             return true;
@@ -130,17 +130,11 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
                 this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) =>
                 {
                     m_Materials[0].SetFloat(ID_Alpha, value);
-                }, 1, .3f, .5f, null));
+                }, 1, .3f, .5f));
             }
             else
             {
-                this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) =>
-                {
-                    m_Materials[0].SetFloat(ID_Alpha, value);
-                }, .3f, 1f, .3f, () =>
-                {
-                    m_Materials[0].shader = SD_Opaque;
-                }));
+                this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) =>{ m_Materials[0].SetFloat(ID_Alpha, value); }, .3f, 1f, .3f, () => {   m_Materials[0].shader = SD_Opaque; }));
             }
         }
 
