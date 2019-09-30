@@ -1035,6 +1035,9 @@ namespace GameSetting
 
             if (F_DamageReceiveMultiply < 0)
                 F_DamageReceiveMultiply = 0;
+
+            if (F_MovementSpeedMultiply < 0)
+                F_MovementSpeedMultiply = 0;
         }
         protected virtual void OnResetInfo()
         {
