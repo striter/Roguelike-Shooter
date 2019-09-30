@@ -37,6 +37,7 @@ public class SFXParticles : SFXBase
      }
     public void PlayParticles()
     {
+        Debug.Log("player" + f_duration);
         B_ParticlesPlaying = true;
         m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.Play(); });
         m_Particles.Traversal((ParticleSystem particle) => { particle.Play(); });
@@ -56,6 +57,7 @@ public class SFXParticles : SFXBase
     }
     public virtual void StopParticles()
     {
+        Debug.Log("stop" + f_duration);
         transform.SetParent(GameObjectManager.TF_SFXWaitForRecycle);
         base.SetLifeTime(GameConst.F_ParticlesMaxStopTime);
         B_ParticlesPlaying = false;
