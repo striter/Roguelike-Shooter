@@ -27,7 +27,7 @@ namespace GameSetting_Action
 
         public const int I_10005_Cost = 2;
         public static int IP_10005_OnFire_DamageMultiply(enum_RarityLevel rarity) => 80 + 80 * (int)rarity;
-        public static int IP_10006_OnKill_Buff_MovementSpeed(enum_RarityLevel rarity) => 30 + 30 * (int)rarity;
+        public static int IP_10005_OnKill_Buff_MovementSpeed(enum_RarityLevel rarity) => 30 + 30 * (int)rarity;
         public static float F_10005_OnKill_Buff_Duration = 5f;
 
         public const int I_10006_Cost = 2;
@@ -39,6 +39,7 @@ namespace GameSetting_Action
         public static int I_10007_OnKill_HealReceive(enum_RarityLevel rarity) => 10 + 30 * (int)rarity;
 
         public const int I_10008_Cost = 2;
+        public const float F_10008_Duration = 10f;
         public const int IP_10008_MovementReduction = 20;
         public static int IP_10008_FireRateAdditive(enum_RarityLevel rarity) => 36 + 36 * (int)rarity;
 
@@ -90,7 +91,7 @@ namespace GameSetting_Action
                 Debug.LogError("Howd Fk Damage Below Zero?");
             GameManager.Instance.GetEntity(targetID).m_HitCheck.TryHit(new DamageInfo(damageAmount, damageType, DamageDeliverInfo.Default(player.I_EntityID)));
         }
-        public static void PlayerReciveBuff(EntityCharacterPlayer player, SBuff buff)
+        public static void ReciveBuff(EntityCharacterPlayer player, SBuff buff)
         {
             player.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common, DamageDeliverInfo.BuffInfo(player.I_EntityID,buff)));
         }
@@ -167,7 +168,7 @@ namespace GameSetting_Action
     }
     public class ActionSingleBurstShotKill : ActionBase
     {
-        public override float F_DamageAdditive => m_fireIdentity == -1 ? Value1 : 0f;
+        protected bool m_FirstShot => m_fireIdentity == -1;
         protected int m_fireIdentity = -1;
         public override void OnActionUse()
         {
@@ -177,6 +178,9 @@ namespace GameSetting_Action
         public override void OnFire(int _identity)
         {
             base.OnFire(_identity);
+            if (m_fireIdentity != -1)
+                return;
+            SetDuration(2f);
             m_fireIdentity = _identity;
         }
         public override void OnDealtDemage(EntityCharacterBase receiver, DamageDeliverInfo deliverInfo)
@@ -185,7 +189,8 @@ namespace GameSetting_Action
             if (deliverInfo.I_IdentiyID == m_fireIdentity)
                 OnShotsHit(receiver);
         }
-        protected virtual void OnShotsHit(EntityCharacterBase _hitEntity) {}
+        protected virtual void OnShotsHit(EntityCharacterBase _hitEntity) { if (_hitEntity.m_Health.b_IsDead) OnShotsKill(); }
+        protected virtual void OnShotsKill() { }
         public ActionSingleBurstShotKill(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
     #endregion
@@ -234,15 +239,69 @@ namespace GameSetting_Action
     public class Action_10005_SingleShotMovementAdditive : ActionSingleBurstShotKill
     {
         public override int m_Index => 10005;
+        public override int I_ActionCost => ActionData.I_10005_Cost;
         public override float Value1 => ActionData.IP_10005_OnFire_DamageMultiply(m_rarity);
-        public override float Value2 => ActionData.IP_10006_OnKill_Buff_MovementSpeed(m_rarity);
+        public override float Value2 => ActionData.IP_10005_OnKill_Buff_MovementSpeed(m_rarity);
         public override float Value3 => ActionData.F_10005_OnKill_Buff_Duration;
-        protected override void OnShotsHit(EntityCharacterBase _hitEntity)
-        {
-            if (_hitEntity.m_Health.b_IsDead)
-                ActionHelper.PlayerReciveBuff(m_ActionEntity,SBuff.CreateActionBuff(m_Index,Value2/100f,Value3));
-        }
+        public override float m_DamageMultiply => m_FirstShot ? Value1/100f : 0f;
+        protected override void OnShotsKill()=>ActionHelper.ReciveBuff(m_ActionEntity,SBuff.CreateActionBuff(m_Index,Value2/100f,Value3));
         public Action_10005_SingleShotMovementAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_10006_SingleShotArmorAdditive : ActionSingleBurstShotKill
+    {
+        public override int m_Index => 10006;
+        public override int I_ActionCost => ActionData.I_10006_Cost;
+        public override float Value1 => ActionData.IP_10006_DamageMultiply(m_rarity);
+        public override float Value2 => ActionData.I_10006_OnKill_ArmorReceive(m_rarity);
+        public override float m_DamageMultiply => m_FirstShot ? Value1/100f : 0f;
+        protected override void OnShotsKill() =>ActionHelper.ReceiveHealing(m_ActionEntity, Value2, enum_DamageType.ArmorOnly);
+        public Action_10006_SingleShotArmorAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_10007_SingleShotHealthAdditive : ActionSingleBurstShotKill
+    {
+        public override int m_Index => 10007;
+        public override int I_ActionCost => ActionData.I_10007_Cost;
+        public override float Value1 => ActionData.IP_10007_OnFire_DamageMultiply(m_rarity);
+        public override float Value2 => ActionData.I_10007_OnKill_HealReceive(m_rarity);
+        public override float m_DamageMultiply => m_FirstShot ? Value1/100f : 0f;
+        protected override void OnShotsKill() => ActionHelper.ReceiveHealing(m_ActionEntity, Value2, enum_DamageType.HealthOnly);
+        public Action_10007_SingleShotHealthAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_10008_FirerateAdditiveMovementReduction : ActionBase
+    {
+        public override int m_Index => 10008;
+        public override int I_ActionCost => ActionData.I_10008_Cost;
+        public override float F_Duration => ActionData.F_10008_Duration;
+        public override float Value1 => ActionData.IP_10008_FireRateAdditive(m_rarity);
+        public override float Value2 => ActionData.IP_10008_MovementReduction;
+        public override float m_FireRateMultiply => Value1/100f;
+        public override float m_MovementSpeedMultiply => -Value2/100f;
+        public Action_10008_FirerateAdditiveMovementReduction(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_10009_FirerateAdditive : ActionBase
+    {
+        public override int m_Index => 10009;
+        public override int I_ActionCost => ActionData.I_10009_Cost;
+        public override float F_Duration => ActionData.F_10009_Duration;
+        public override float Value1 => ActionData.IP_10009_FireRateAdditive(m_rarity);
+        public override float m_FireRateMultiply => Value1 / 100f;
+        public Action_10009_FirerateAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_10010_FirerateAdditiveDamageReduction : ActionBase
+    {
+        public override int m_Index => 10010;
+        public override int I_ActionCost => ActionData.I_10010_Cost;
+        public override float F_Duration => ActionData.F_10010_Duration;
+        public override float Value1 => ActionData.F_10010_DamageReduction;
+        public override float Value2 => ActionData.IP_10010_FireRateAdditive(m_rarity);
+        public override float F_DamageAdditive => -Value1;
+        public override float m_FireRateMultiply => Value2/100f;
+        public Action_10010_FirerateAdditiveDamageReduction(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
     #endregion
     #endregion

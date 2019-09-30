@@ -1391,26 +1391,29 @@ namespace GameSetting
         private Action<ExpireBase> OnExpired;
         public float m_ExpireDuration { get; private set; } = 0;
         public float f_expireCheck { get; private set; }
-        protected void Activate(float _ExpireDuration,Action<ExpireBase> _OnExpired)
+        bool forceExpire = false;
+        protected void OnActivate(float _ExpireDuration, Action<ExpireBase> _OnExpired)
         {
-            m_ExpireDuration = _ExpireDuration;
-            ExpireRefresh();
             OnExpired = _OnExpired;
+            SetDuration(_ExpireDuration);
+            forceExpire = false;
         }
-        public void ExpireRefresh()
+
+        protected void SetDuration(float duration)
         {
-            f_expireCheck = m_ExpireDuration;
+            m_ExpireDuration = duration;
+            ExpireRefresh();
         }
+        public void ExpireRefresh()=> f_expireCheck = m_ExpireDuration;
+        protected void ForceExpire() => forceExpire = true;
         public virtual void OnTick(float deltaTime)
         {
-            if (m_ExpireDuration <= 0)
-                return;
+            if (forceExpire) OnExpired(this);
 
+            if (m_ExpireDuration <= 0) return;
             f_expireCheck -= deltaTime;
-            if (f_expireCheck <= 0)
-                OnExpired(this);
+            if (f_expireCheck <= 0) OnExpired(this);
         }
-        protected void ForceExpire() => OnExpired(this);
     }
     
     public class BuffBase : ExpireBase
@@ -1434,7 +1437,7 @@ namespace GameSetting
             I_SourceID = sourceID;
             m_buffInfo = _buffInfo;
             OnDOTDamage = _OnDOTDamage;
-            base.Activate(_buffInfo.m_ExpireDuration, _OnExpired);
+            base.OnActivate(_buffInfo.m_ExpireDuration, _OnExpired);
         }
         public override void OnTick(float deltaTime)
         {
@@ -1475,7 +1478,7 @@ namespace GameSetting
             m_Identity = _identity;
             m_rarity = _level;
         }
-        public void Activate(EntityCharacterPlayer _actionEntity,Action<ExpireBase> OnExpired) { m_ActionEntity = _actionEntity;Activate(F_Duration,OnExpired); }
+        public void Activate(EntityCharacterPlayer _actionEntity,Action<ExpireBase> OnExpired) { m_ActionEntity = _actionEntity;OnActivate(F_Duration,OnExpired); }
         public virtual void OnActionUse() { }
         public virtual void OnAddActionElse(float actionAmount) { }
         public virtual void OnReceiveDamage(int applier, float amount) { }
