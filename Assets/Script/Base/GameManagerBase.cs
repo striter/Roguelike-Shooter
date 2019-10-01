@@ -18,6 +18,17 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>{
     }
     protected virtual void Start()
     {
+        SetBulletTime(false);
+    }
+
+
+
+    protected static float m_BulletTime = 1f;
+    public static bool m_BulletTiming => m_BulletTime != 1f;
+    public static void SetBulletTime(bool enter,float duration=.8f)
+    {
+        m_BulletTime = enter ? duration:1f ;
+        Time.timeScale = m_BulletTime;
     }
 }
 
@@ -153,7 +164,7 @@ public static class GameDataManager
             Debug.LogError("Error Properties Found Of Index:" + type.ToString() + "|" + ((int)type));
         return weapon;
     }
-    public static SBuff GetEntityBuffProperties(int index)
+    public static SBuff GetPresetBuff(int index)
     {
         SBuff buff = Properties<SBuff>.PropertiesList.Find(p => p.m_Index == index);
         if (buff.m_Index == 0)

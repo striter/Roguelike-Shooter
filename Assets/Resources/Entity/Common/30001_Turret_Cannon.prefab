@@ -236,7 +236,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 4780e55c4cf5e2843860097f2258e369, type: 2}
+  - {fileID: 2100000, guid: a6540136389400844a7924560846e4dd, type: 2}
   - {fileID: 2100000, guid: a8d1906e68fa00a43b3e0033ee355b5c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -271,7 +271,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 4780e55c4cf5e2843860097f2258e369, type: 2}
+  - {fileID: 2100000, guid: a6540136389400844a7924560846e4dd, type: 2}
   - {fileID: 2100000, guid: a8d1906e68fa00a43b3e0033ee355b5c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -347,6 +347,7 @@ MonoBehaviour:
   F_AttackRotateParam: 1
   I_AttackPreAimPercentage: 50
   B_AttackMove: 1
+  B_AttackFrontCheck: 1
 --- !u!136 &136630500536308508
 CapsuleCollider:
   m_ObjectHideFlags: 1

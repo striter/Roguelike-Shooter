@@ -36,12 +36,12 @@ public class UI_PlayerStatus : UIToolsBase
 
     enum_Interaction m_lastInteract;
     RectTransform rtf_InteractData;
-    UIT_TextLocalization txt_interactName;
-    UIT_TextLocalization txt_interactPrice;
+    UIT_TextExtend txt_interactName;
+    UIT_TextExtend txt_interactPrice;
     UIGI_ActionSelectItem m_ActionData;
 
     Transform tf_WeaponData;
-    UIT_TextLocalization m_WeaponName,m_WeaponAction;
+    UIT_TextExtend m_WeaponName,m_WeaponAction;
     Image m_WeaponImage;
     UIC_RarityLevel m_WeaponActionRarity;
 
@@ -86,15 +86,15 @@ public class UI_PlayerStatus : UIToolsBase
         m_ExpireGrid = new UIT_GridControllerMonoItem<UIGI_ExpireInfoItem>(tf_ExpireData.Find("ExpireGrid"));
 
         rtf_InteractData = tf_Container.Find("InteractData").GetComponent<RectTransform>();
-        txt_interactName = rtf_InteractData.Find("Container/InteractName").GetComponent<UIT_TextLocalization>();
-        txt_interactPrice = rtf_InteractData.Find("Container/InteractPrice").GetComponent<UIT_TextLocalization>();
+        txt_interactName = rtf_InteractData.Find("Container/InteractName").GetComponent<UIT_TextExtend>();
+        txt_interactPrice = rtf_InteractData.Find("Container/InteractPrice").GetComponent<UIT_TextExtend>();
         m_ActionData = rtf_InteractData.Find("Container/ActionData").GetComponent<UIGI_ActionSelectItem>();
         m_ActionData.Init(null);
 
         tf_WeaponData = tf_Container.Find("WeaponData");
-        m_WeaponName = tf_WeaponData.Find("WeaponName").GetComponent<UIT_TextLocalization>();
+        m_WeaponName = tf_WeaponData.Find("WeaponName").GetComponent<UIT_TextExtend>();
         m_WeaponImage = tf_WeaponData.Find("WeaponImage").GetComponent<Image>();
-        m_WeaponAction = tf_WeaponData.Find("WeaponAction").GetComponent<UIT_TextLocalization>();
+        m_WeaponAction = tf_WeaponData.Find("WeaponAction").GetComponent<UIT_TextExtend>();
         m_WeaponActionRarity = new UIC_RarityLevel(tf_WeaponData.Find("WeaponActionRarity"));
         tf_WeaponData.Find("WeaponDetailBtn").GetComponent<Button>().onClick.AddListener(() => { UIManager.Instance.ShowPage<UI_WeaponStatus>(true).SetInfo(m_Player.m_WeaponCurrent); });
 

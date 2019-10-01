@@ -8,10 +8,10 @@ using UnityEngine.UI;
 public class UI_MapControl : UIPageBase,ISingleCoroutine {        //This Page Won't Hide(One Page Show Bigmap/Minimap)
     Transform tf_MapTile, tf_MapInfo, tf_TileDetail;
     UIT_GridDefaultSingle<UIGI_MapControlCell> m_AllTilesGrid;
-    UIT_TextLocalization txt_Stage, txt_Style;
+    UIT_TextExtend txt_Stage, txt_Style;
     Animation m_TileTypeAnim;
     Image img_TileTypeCurrent,img_TileTypeSelect, img_TileBattleStatus1,img_TileBattleStatus2;
-    UIT_TextLocalization txt_Cordinates, txt_TileType, txt_BattleStatus;
+    UIT_TextExtend txt_Cordinates, txt_TileType, txt_BattleStatus;
     RectTransform m_Line;
     UIGI_MapControlCell m_targetTile;
     UIC_Button btn_Confirm;
@@ -29,9 +29,9 @@ public class UI_MapControl : UIPageBase,ISingleCoroutine {        //This Page Wo
         img_TileBattleStatus1 = tf_TileDetail.Find("Image/StatusImage/StatusImage1").GetComponent<Image>();
         img_TileBattleStatus2 = tf_TileDetail.Find("Image/StatusImage/StatusImage2").GetComponent<Image>();
         m_Line = tf_TileDetail.Find("Image/DetailTarget/Line").GetComponent<RectTransform>();
-        txt_Cordinates = tf_TileDetail.Find("Info/Cordinates/Detail").GetComponent<UIT_TextLocalization>();
-        txt_BattleStatus = tf_TileDetail.Find("Info/BattleStatus/Detail").GetComponent<UIT_TextLocalization>();
-        txt_TileType = tf_TileDetail.Find("Info/TileType/Detail").GetComponent<UIT_TextLocalization>();
+        txt_Cordinates = tf_TileDetail.Find("Info/Cordinates/Detail").GetComponent<UIT_TextExtend>();
+        txt_BattleStatus = tf_TileDetail.Find("Info/BattleStatus/Detail").GetComponent<UIT_TextExtend>();
+        txt_TileType = tf_TileDetail.Find("Info/TileType/Detail").GetComponent<UIT_TextExtend>();
         btn_Confirm = new UIC_Button(tf_TileDetail.Find("ConfirmBtn"), OnConfirmBtnClick);
 
         tf_MapTile = tf_Container.Find("MapTile");
@@ -60,8 +60,8 @@ public class UI_MapControl : UIPageBase,ISingleCoroutine {        //This Page Wo
         });
 
         tf_MapInfo = tf_Container.Find("MapInfo");
-        txt_Stage = tf_MapInfo.Find("Stage").GetComponent<UIT_TextLocalization>();
-        txt_Style = tf_MapInfo.Find("Style").GetComponent<UIT_TextLocalization>();
+        txt_Stage = tf_MapInfo.Find("Stage").GetComponent<UIT_TextExtend>();
+        txt_Style = tf_MapInfo.Find("Style").GetComponent<UIT_TextExtend>();
         txt_Stage.formatKeys("UI_Map_Stage",  GameManager.Instance.m_GameLevel.m_GameStage.GetLocalizeKey());
         txt_Style.formatKeys("UI_Map_Style", GameManager.Instance.m_GameLevel.m_GameStyle.GetLocalizeKey());
     }

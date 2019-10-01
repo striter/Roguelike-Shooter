@@ -7,20 +7,20 @@ using UnityEngine.UI;
 public class UI_WeaponStatus : UIPageBase {
 
     Transform tf_WeaponInfo;
-    UIT_TextLocalization m_WeaponName;
+    UIT_TextExtend m_WeaponName;
     Image m_WeaponImage;
     UIC_Numeric m_ClipSize;
     Image m_Damage, m_FireRate, m_Stability, m_ProjectileSpeed;
 
     Transform tf_ActionInfo;
-    UIT_TextLocalization m_ActionName, m_ActionIntro,m_ActionRarityText;
+    UIT_TextExtend m_ActionName, m_ActionIntro,m_ActionRarityText;
     UIC_RarityLevel m_ActionRarity;
 
     protected override void Init(bool useAnim)
     {
         base.Init(useAnim);
         tf_WeaponInfo = tf_Container.Find("WeaponInfo");
-        m_WeaponName = tf_WeaponInfo.Find("WeaponName").GetComponent<UIT_TextLocalization>();
+        m_WeaponName = tf_WeaponInfo.Find("WeaponName").GetComponent<UIT_TextExtend>();
         m_WeaponImage = tf_WeaponInfo.Find("WeaponImage").GetComponent<Image>();
         m_ClipSize = new UIC_Numeric(tf_WeaponInfo.Find("ClipSize"));
         m_Damage = tf_WeaponInfo.Find("Damage/Fill").GetComponent<Image>();
@@ -29,9 +29,9 @@ public class UI_WeaponStatus : UIPageBase {
         m_ProjectileSpeed = tf_WeaponInfo.Find("ProjectileSpeed/Fill").GetComponent<Image>();
 
         tf_ActionInfo = tf_Container.Find("ActionInfo");
-        m_ActionName = tf_ActionInfo.Find("ActionName").GetComponent<UIT_TextLocalization>(); 
-        m_ActionIntro = tf_ActionInfo.Find("ActionIntro").GetComponent<UIT_TextLocalization>();
-        m_ActionRarityText = tf_ActionInfo.Find("ActionRarityText").GetComponent<UIT_TextLocalization>();
+        m_ActionName = tf_ActionInfo.Find("ActionName").GetComponent<UIT_TextExtend>(); 
+        m_ActionIntro = tf_ActionInfo.Find("ActionIntro").GetComponent<UIT_TextExtend>();
+        m_ActionRarityText = tf_ActionInfo.Find("ActionRarityText").GetComponent<UIT_TextExtend>();
         m_ActionRarity = new UIC_RarityLevel(tf_ActionInfo.Find("ActionRarity"));
     }
     public void SetInfo(WeaponBase weapon)
@@ -53,5 +53,12 @@ public class UI_WeaponStatus : UIPageBase {
             m_ActionRarityText.localizeText = action.m_rarity.GetLocalizeKey();
             m_ActionRarity.SetLevel(action.m_rarity);
         }
+
+        GameManagerBase.SetBulletTime(true, 0f);
+    }
+    protected override void OnCancelBtnClick()
+    {
+        base.OnCancelBtnClick();
+        GameManagerBase.SetBulletTime(false);
     }
 }

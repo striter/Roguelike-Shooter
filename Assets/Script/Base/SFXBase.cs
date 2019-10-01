@@ -6,8 +6,7 @@ public class SFXBase : MonoBehaviour {
     public bool b_Playing { get; private set; }
     public int I_SourceID { get; private set; }
     protected float f_duration { get; private set; }
-    protected float f_TimeCheck { get; private set; }
-    protected float f_timeLeft => f_duration - f_TimeCheck;
+    protected float f_timeLeft { get; private set; }
     protected virtual bool m_AutoRecycle => true;
     Action OnSFXPlayFinished;
     public virtual void Init(int _sfxIndex)
@@ -32,15 +31,15 @@ public class SFXBase : MonoBehaviour {
     protected virtual void SetLifeTime(float duration)
     {
         f_duration = duration;
-        f_TimeCheck = duration;
+        f_timeLeft = duration;
     }
 
     protected virtual void Update()
     {
         if (!b_Playing)
             return;
-        f_TimeCheck -= Time.deltaTime;
-        if (m_AutoRecycle&&f_TimeCheck < 0)
+        f_timeLeft -= Time.deltaTime;
+        if (m_AutoRecycle&&f_timeLeft < 0)
             OnRecycle();
     }
 

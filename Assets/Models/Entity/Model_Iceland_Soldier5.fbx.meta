@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: adb756f117b25c344a922c68601e3db7
+guid: 5f6acf97c37c7a448a9b68ebf0085ddf
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
@@ -17,19 +17,18 @@ ModelImporter:
     100022: LowerLeg_Left_jnt
     100024: LowerLeg_Right_jnt
     100026: Neck_jnt
-    100028: polySurface27
-    100030: SF_Character_kejibudui4 1
-    100032: //RootNode
-    100034: SF_Character_kejibudui4_zhadan
-    100036: SF_Character_kejibudui4_zhadan1
-    100038: Shoulder_Left_jnt
-    100040: Shoulder_Right_jnt
-    100042: Spine_jnt
-    100044: Spine_jnt 1
-    100046: Toe_Left_jnt
-    100048: Toe_Right_jnt
-    100050: UpperLeg_Left_jnt
-    100052: UpperLeg_Right_jnt
+    100028: SF_Character_kejibudui4 1
+    100030: //RootNode
+    100032: SF_Character_kejibudui4_chuansong
+    100034: SF_Character_kejibudui4_zhadan1
+    100036: Shoulder_Left_jnt
+    100038: Shoulder_Right_jnt
+    100040: Spine_jnt
+    100042: Spine_jnt 1
+    100044: Toe_Left_jnt
+    100046: Toe_Right_jnt
+    100048: UpperLeg_Left_jnt
+    100050: UpperLeg_Right_jnt
     400000: Arm_Left_jnt
     400002: Arm_Right_jnt
     400004: Chest_jnt
@@ -44,30 +43,26 @@ ModelImporter:
     400022: LowerLeg_Left_jnt
     400024: LowerLeg_Right_jnt
     400026: Neck_jnt
-    400028: polySurface27
-    400030: SF_Character_kejibudui4 1
-    400032: //RootNode
-    400034: SF_Character_kejibudui4_zhadan
-    400036: SF_Character_kejibudui4_zhadan1
-    400038: Shoulder_Left_jnt
-    400040: Shoulder_Right_jnt
-    400042: Spine_jnt
-    400044: Spine_jnt 1
-    400046: Toe_Left_jnt
-    400048: Toe_Right_jnt
-    400050: UpperLeg_Left_jnt
-    400052: UpperLeg_Right_jnt
+    400028: SF_Character_kejibudui4 1
+    400030: //RootNode
+    400032: SF_Character_kejibudui4_chuansong
+    400034: SF_Character_kejibudui4_zhadan1
+    400036: Shoulder_Left_jnt
+    400038: Shoulder_Right_jnt
+    400040: Spine_jnt
+    400042: Spine_jnt 1
+    400044: Toe_Left_jnt
+    400046: Toe_Right_jnt
+    400048: UpperLeg_Left_jnt
+    400050: UpperLeg_Right_jnt
     2100000: lambert316
-    2300000: polySurface27
-    2300002: SF_Character_kejibudui4_zhadan
-    2300004: SF_Character_kejibudui4_zhadan1
-    3300000: polySurface27
-    3300002: SF_Character_kejibudui4_zhadan
-    3300004: SF_Character_kejibudui4_zhadan1
-    4300000: polySurface27
+    2300000: SF_Character_kejibudui4_chuansong
+    2300002: SF_Character_kejibudui4_zhadan1
+    3300000: SF_Character_kejibudui4_chuansong
+    3300002: SF_Character_kejibudui4_zhadan1
+    4300000: SF_Character_kejibudui4_chuansong
     4300002: SF_Character_kejibudui4
-    4300004: SF_Character_kejibudui4_zhadan
-    4300006: SF_Character_kejibudui4_zhadan1
+    4300004: SF_Character_kejibudui4_zhadan1
     9500000: //RootNode
     13700000: SF_Character_kejibudui4 1
   externalObjects:
@@ -266,11 +261,6 @@ ModelImporter:
       position: {x: -0, y: 0, z: 0}
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
-    - name: SF_Character_kejibudui4_zhadan
-      parentName: Model_Iceland_Soldier5(Clone)
-      position: {x: -0, y: 1.7342474, z: 1.9105133}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
     - name: SF_Character_kejibudui4_zhadan1
       parentName: Model_Iceland_Soldier5(Clone)
       position: {x: -0, y: 1.5793283, z: -0.59914625}
@@ -356,9 +346,9 @@ ModelImporter:
       position: {x: -0.4403, y: -8.81073e-15, z: 4.7946412e-17}
       rotation: {x: 1.4461227e-13, y: 1, z: -1.1714554e-15, w: 1.746155e-15}
       scale: {x: 1, y: 1, z: 1}
-    - name: polySurface27
+    - name: SF_Character_kejibudui4_chuansong
       parentName: Hand_Right_jnt
-      position: {x: 0.52327806, y: -0.037005614, z: 9.4654805e-15}
+      position: {x: 0.310634, y: -0.037005614, z: -0.000000013868471}
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: Shoulder_Left_jnt

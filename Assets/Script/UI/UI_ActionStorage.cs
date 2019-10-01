@@ -20,14 +20,14 @@ public class UI_ActionStorage : UIPageBase {
         OnActionChanged(m_Info);
         TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerActionStatus, OnActionChanged);
         if (!showStored)
-            GameManager.SetBulletTime(true);
+            GameManagerBase.SetBulletTime(true,0f);
     }
     protected override void OnCancelBtnClick()
     {
         base.OnCancelBtnClick();
         TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerActionStatus, OnActionChanged);
         if (!showStored)
-            GameManager.SetBulletTime(false);
+            GameManagerBase.SetBulletTime(false);
     }
 
     void OnActionChanged(PlayerInfoManager info)

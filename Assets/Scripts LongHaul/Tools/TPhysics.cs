@@ -35,6 +35,7 @@ namespace TPhysics
         }
         public override void Simulate(float deltaTime)
         {
+            if (deltaTime == 0) return;
             m_simulateTime += deltaTime;
             Vector3 previousPosition = transform.position;
             transform.position = GetSimulatedPosition(m_simulateTime);

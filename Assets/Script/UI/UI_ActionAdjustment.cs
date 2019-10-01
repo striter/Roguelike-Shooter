@@ -8,19 +8,19 @@ public class UI_ActionAdjustment : UIPageBase {
 
     UIT_GridControllerMonoItem<UIGI_ActionSelectItem> m_Grid;
     Button btn_remove, btn_upgrade;
-    UIT_TextLocalization txt_remove, txt_upgrade,txt_coins;
+    UIT_TextExtend txt_remove, txt_upgrade,txt_coins;
     int m_selectIndex = -1;
     protected override void Init(bool useAnim)
     {
         base.Init(useAnim);
         m_Grid = new UIT_GridDefaultSingle<UIGI_ActionSelectItem>(tf_Container.Find("ActionGrid"), OnItemSelected, true);
-        txt_coins = tf_Container.Find("Coins").GetComponent<UIT_TextLocalization>();
+        txt_coins = tf_Container.Find("Coins").GetComponent<UIT_TextExtend>();
         btn_remove = tf_Container.Find("BtnRemove").GetComponent<Button>();
         btn_remove.onClick.AddListener(OnRemoveClick);
-        txt_remove = btn_remove.transform.Find("Text").GetComponent<UIT_TextLocalization>();
+        txt_remove = btn_remove.transform.Find("Text").GetComponent<UIT_TextExtend>();
         btn_upgrade = tf_Container.Find("BtnUpgrade").GetComponent<Button>();
         btn_upgrade.onClick.AddListener(OnUpgradeClick);
-        txt_upgrade = btn_upgrade.transform.Find("Text").GetComponent<UIT_TextLocalization>();
+        txt_upgrade = btn_upgrade.transform.Find("Text").GetComponent<UIT_TextExtend>();
     }
     InteractActionAdjustment m_Interact;
     public void Play(InteractActionAdjustment _adjust)

@@ -68,7 +68,7 @@ namespace GameSetting
 
         public static int GetAIEquipment(int entityIndex, int weaponIndex = 0, int subWeaponIndex = 0) => entityIndex * 100 + weaponIndex * 10 + subWeaponIndex;
         public static int GetEquipmentSubIndex(int weaponIndex) => weaponIndex + 1;
-        public static int GetEnermyGameDifficultyBuffIndex(int difficulty) => 10000 + difficulty;
+        public static SBuff GetEnermyGameDifficultyBuffIndex(int difficulty)=> SBuff.CreateEntityBuff(difficulty, .05f * (difficulty-1));
         public static float GetAIBaseHealthMultiplier(int gameDifficulty)=>0.99f+0.01f*gameDifficulty;
         public static float GetAIMaxHealthMultiplier(enum_StageLevel stageDifficulty) => (int)stageDifficulty;
 
@@ -365,7 +365,7 @@ namespace GameSetting
 
     public enum enum_RarityLevel { Invalid = -1, Normal = 1, OutStanding = 2, Epic = 3, }
 
-    public enum enum_ActionExpireType { Invalid = -1, Common = 1, AfterUse = 2, AfterFire = 3, AfterBattle = 4, AfterWeaponSwitch = 5, }
+    public enum enum_ActionExpireType { Invalid = -1, AutoMatic = 1, AfterWeaponSwitch = 2, }
 
     public enum enum_PlayerWeapon
     {
@@ -699,6 +699,25 @@ namespace GameSetting
             f_damageMultiply = f_damageMultiply > 0 ? f_damageMultiply / 100f : 0;
             f_damageReduce = f_damageReduce > 0 ? f_damageReduce / 100f : 0;
         }
+        //100000-999999
+        public static SBuff CreateActionBuff(int actionIndex,float movementMultiply,float duration)
+        {
+            SBuff buff = new SBuff();
+            buff.index = actionIndex * 10;
+            buff.i_addType = (int)enum_ExpireRefreshType.Refresh;
+            buff.f_movementSpeedMultiply = movementMultiply;
+            buff.f_expireDuration = duration;
+            return buff;
+        }
+        //1000-9999
+        public static SBuff CreateEntityBuff(int difficulty,float damageMultiply)
+        {
+            SBuff buff = new SBuff();
+            buff.index = 1000+difficulty;
+            buff.i_addType = (int)enum_ExpireRefreshType.Refresh;
+            buff.f_damageMultiply = damageMultiply;
+            return buff;
+        }
     }
 
     #endregion
@@ -902,12 +921,15 @@ namespace GameSetting
         public int I_SourceID { get; private set; } = -1;
         public float m_DamageMultiply { get; private set; } = 0;
         public float m_DamageAdditive { get; private set; } = 0;
-        public List<int> m_BaseBuffApply { get; private set; } = new List<int>();
+        public List<SBuff> m_BaseBuffApply { get; private set; } = new List<SBuff>();
         public enum_CharacterEffect m_DamageEffect = enum_CharacterEffect.Invalid;
+
         public float m_EffectDuration = 0;
 
+        public void AddExtraBuff(int commonBuffIndex) => m_BaseBuffApply.Add(GameDataManager.GetPresetBuff(commonBuffIndex));
         public static DamageDeliverInfo Default(int sourceID) => new DamageDeliverInfo() { I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), I_SourceID = sourceID, m_DamageMultiply = 0f, m_DamageAdditive = 0f };
-        public static DamageDeliverInfo BuffInfo(int sourceID, int buffApply) => new DamageDeliverInfo() { I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), I_SourceID = sourceID, m_DamageMultiply = 0f, m_DamageAdditive = 0f, m_BaseBuffApply = new List<int>() { buffApply } };
+        public static DamageDeliverInfo BuffInfo(int sourceID, SBuff buffApply) => new DamageDeliverInfo() { I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), I_SourceID = sourceID, m_DamageMultiply = 0f, m_DamageAdditive = 0f, m_BaseBuffApply = new List<SBuff>() { buffApply } };
+        public static DamageDeliverInfo BuffInfo(int sourceID,int commonBuffIndex)=>new DamageDeliverInfo() { I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), I_SourceID = sourceID, m_DamageMultiply = 0f, m_DamageAdditive = 0f, m_BaseBuffApply = new List<SBuff>() { GameDataManager.GetPresetBuff(commonBuffIndex) } };
         public static DamageDeliverInfo EquipmentInfo(int sourceID, float _damageAdditive, enum_CharacterEffect _effect, float _duration) => new DamageDeliverInfo() { I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), I_SourceID = sourceID, m_DamageAdditive = _damageAdditive, m_DamageEffect = _effect, m_EffectDuration = _duration };
         public static DamageDeliverInfo DamageInfo(int sourceID, float _damageEnhanceMultiply, float _damageAdditive) => new DamageDeliverInfo() { I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), I_SourceID = sourceID, m_DamageMultiply = _damageEnhanceMultiply, m_DamageAdditive = _damageAdditive, };
         public static DamageDeliverInfo DamageOverrideInfo(int sourceID, DamageDeliverInfo info) => new DamageDeliverInfo() {I_SourceID = sourceID, I_IdentiyID =info.I_IdentiyID,m_DamageMultiply=info.m_DamageMultiply,m_DamageAdditive=info.m_DamageAdditive,m_BaseBuffApply=info.m_BaseBuffApply,m_DamageEffect=info.m_DamageEffect,m_EffectDuration=info.m_EffectDuration};
@@ -983,9 +1005,9 @@ namespace GameSetting
             EntityInfoChange();
             OnExpireChange();
         }
-        public void AddBuff(int sourceID,int buffIndex)
+        public void AddBuff(int sourceID,SBuff buffInfo)
         {
-            BuffBase buff = new BuffBase(sourceID, GameDataManager.GetEntityBuffProperties(buffIndex), OnReceiveDamage, OnExpireElapsed);
+            BuffBase buff = new BuffBase(sourceID,buffInfo, OnReceiveDamage, OnExpireElapsed);
             OnSetEffect(enum_CharacterEffect.Stun,buff.m_StunDuration);
             switch (buff.m_RefreshType)
             {
@@ -994,7 +1016,7 @@ namespace GameSetting
                     break;
                 case enum_ExpireRefreshType.Refresh:
                     {
-                        ExpireBase buffRefresh = m_Expires.Find(p =>p.m_Index == buffIndex);
+                        ExpireBase buffRefresh = m_Expires.Find(p =>p.m_Index == buff.m_Index);
                         if (buffRefresh != null)
                             RefreshExpire(buffRefresh);
                         else
@@ -1013,6 +1035,9 @@ namespace GameSetting
 
             if (F_DamageReceiveMultiply < 0)
                 F_DamageReceiveMultiply = 0;
+
+            if (F_MovementSpeedMultiply < 0)
+                F_MovementSpeedMultiply = 0;
         }
         protected virtual void OnResetInfo()
         {
@@ -1085,9 +1110,10 @@ namespace GameSetting
         protected float F_ClipMultiply { get; private set; } = 1f;
         protected float F_DamageAdditive = 0f;
 
+        protected Vector3 m_prePos;
+
         public float m_ActionAmount { get; private set; } = 0f;
         List<ActionBase> m_ActionEquiping = new List<ActionBase>();
-        protected List<ActionAfterFire> m_AfterFire = new List<ActionAfterFire>();
         public List<ActionBase> m_ActionStored { get; private set; } = new List<ActionBase>();
         public List<ActionBase> m_ActionInPool { get; private set; } = new List<ActionBase>();
         public List<ActionBase> m_ActionHolding { get; private set; } = new List<ActionBase>();
@@ -1107,6 +1133,7 @@ namespace GameSetting
         {
             base.OnActivate();
             TBroadCaster<enum_BC_GameStatus>.Add<DamageDeliverInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterDamage, OnCharacterDamage);
+            m_prePos = m_Entity.transform.position;
         }
         public override void OnDeactivate()
         {
@@ -1123,6 +1150,9 @@ namespace GameSetting
                 b_actionChangeIndicated = true;
                 OnActionChange?.Invoke();
             }
+
+            OnPlayerMove(TCommon.GetXZDistance(m_prePos, m_Entity.transform.position));
+            m_prePos = m_Entity.transform.position;
 
             if (b_shuffling)
             {
@@ -1142,12 +1172,14 @@ namespace GameSetting
         {
             OnShuffle();
         }
+
         public void OnBattleFinish()
         {
             m_ActionAmount = GameConst.F_RestoreActionAmount;
             m_ActionInPool.Clear();
-            m_ActionEquiping.Traversal((ActionBase action) => { action.OnAfterBattle(); }, true);
-            m_AfterFire.Clear();
+            
+            m_ActionEquiping.Traversal((ActionBase action) => { if (action.m_ActionExpireType != enum_ActionExpireType.AfterWeaponSwitch) m_ActionEquiping.Remove(action); }, true);
+            Debug.Log(m_ActionEquiping.Count);
             f_shuffleCheck = -1;
             ClearHoldingActions();
         }
@@ -1198,27 +1230,22 @@ namespace GameSetting
         }
         public override DamageDeliverInfo GetDamageBuffInfo()
         {
+            ResetEffect(enum_CharacterEffect.Cloak);
             float randomDamageMultiply = UnityEngine.Random.Range(-GameConst.F_PlayerDamageAdjustmentRange,GameConst.F_PlayerDamageAdjustmentRange);
             DamageDeliverInfo info = DamageDeliverInfo.DamageInfo(m_Entity.I_EntityID, F_DamageMultiply+ randomDamageMultiply, F_DamageAdditive);
-            base.ResetEffect(enum_CharacterEffect.Cloak);
-            m_ActionEquiping.Traversal((ActionBase action) => {
-                action.OnFire(info.I_IdentiyID);
-
-                if (action.m_ActionExpireType == enum_ActionExpireType.AfterFire)
-                    m_AfterFire.Add(action as ActionAfterFire);
-            }, true);
+            m_ActionEquiping.Traversal((ActionBase action) => {action.OnFire(info.I_IdentiyID);});
             return info;
         }
         public void OnAttachWeapon(WeaponBase weapon) => weapon.m_WeaponAction.Traversal((ActionBase action) => { OnUseAcion(action); });
         public void OnDetachWeapon() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnWeaponDetach(); }, true);
+
+        public void OnPlayerMove(float distance) => m_ActionEquiping.Traversal((ActionBase action) => { action.OnMove(distance); });
         public void OnReloadFinish() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnReloadFinish(); });
         void OnCharacterDamage(DamageDeliverInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
         {
-            m_AfterFire.Traversal((ActionAfterFire action) => { if (action.OnActionHitEntity(damageInfo.I_IdentiyID, damageEntity)) m_AfterFire.Remove(action); }, true);
-
             if (damageInfo.I_SourceID == m_Player.I_EntityID)
             {
-                m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDemage(damageEntity, amountApply); });
+                m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDemage(damageEntity, damageInfo); });
                 AddActionAmount(GameExpression.GetActionAmountRevive(amountApply));
             }
             else if (damageEntity.I_EntityID == m_Player.I_EntityID)
@@ -1257,7 +1284,7 @@ namespace GameSetting
             m_ActionInPool.Clear();
             for (int i = 0; i < m_ActionStored.Count; i++)
             {
-                if(m_ActionStored[i].m_ActionExpireType!= enum_ActionExpireType.AfterBattle||m_ActionEquiping.Find(p=>p.m_Identity==m_ActionStored[i].m_Identity)==null)
+                if(m_ActionStored[i].m_ActionExpireType!= enum_ActionExpireType.AutoMatic||m_ActionEquiping.Find(p=>p.m_Identity==m_ActionStored[i].m_Identity)==null)
                      m_ActionInPool.Add( m_ActionStored[i]);
             }
             ClearHoldingActions();
@@ -1367,28 +1394,31 @@ namespace GameSetting
         private Action<ExpireBase> OnExpired;
         public float m_ExpireDuration { get; private set; } = 0;
         public float f_expireCheck { get; private set; }
-        protected void Activate(float _ExpireDuration,Action<ExpireBase> _OnExpired)
+        bool forceExpire = false;
+        protected void OnActivate(float _ExpireDuration, Action<ExpireBase> _OnExpired)
         {
-            m_ExpireDuration = _ExpireDuration;
-            ExpireRefresh();
             OnExpired = _OnExpired;
+            SetDuration(_ExpireDuration);
+            forceExpire = false;
         }
-        public void ExpireRefresh()
+
+        protected void SetDuration(float duration)
         {
-            f_expireCheck = m_ExpireDuration;
+            m_ExpireDuration = duration;
+            ExpireRefresh();
         }
+        public void ExpireRefresh()=> f_expireCheck = m_ExpireDuration;
+        protected void ForceExpire() => forceExpire = true;
         public virtual void OnTick(float deltaTime)
         {
-            if (m_ExpireDuration <= 0)
-                return;
+            if (forceExpire) OnExpired(this);
 
+            if (m_ExpireDuration <= 0) return;
             f_expireCheck -= deltaTime;
-            if (f_expireCheck <= 0)
-                OnExpired(this);
+            if (f_expireCheck <= 0) OnExpired(this);
         }
-        protected void ForceExpire() => OnExpired(this);
     }
-
+    
     public class BuffBase : ExpireBase
     {
         public override enum_ExpireType m_ExpireType => enum_ExpireType.Buff;
@@ -1410,7 +1440,7 @@ namespace GameSetting
             I_SourceID = sourceID;
             m_buffInfo = _buffInfo;
             OnDOTDamage = _OnDOTDamage;
-            base.Activate(_buffInfo.m_ExpireDuration, _OnExpired);
+            base.OnActivate(_buffInfo.m_ExpireDuration, _OnExpired);
         }
         public override void OnTick(float deltaTime)
         {
@@ -1434,7 +1464,7 @@ namespace GameSetting
         public int m_Identity { get; private set; } = -1;
         public virtual int I_ActionCost => -1;
         public virtual bool B_ActionAble => true;
-        public virtual enum_ActionExpireType m_ActionExpireType => enum_ActionExpireType.Common;
+        public virtual enum_ActionExpireType m_ActionExpireType => enum_ActionExpireType.AutoMatic;
         public virtual float Value1 => 0;
         public virtual float Value2 => 0;
         public virtual float Value3 => 0;
@@ -1444,22 +1474,22 @@ namespace GameSetting
         public virtual bool B_ClipOverride => false;
         public virtual int I_ClipAdditive => 0;
         public virtual float F_ClipMultiply => 0;
+        public virtual float F_CloakDuration => 0;
         public virtual float F_Duration => 0;
         protected ActionBase(int _identity,enum_RarityLevel _level)
         {
             m_Identity = _identity;
             m_rarity = _level;
         }
-        public virtual float F_CloakDuration => 0;
-        public void Activate(EntityCharacterPlayer _actionEntity,Action<ExpireBase> OnExpired) { m_ActionEntity = _actionEntity;Activate(F_Duration,OnExpired); }
+        public void Activate(EntityCharacterPlayer _actionEntity,Action<ExpireBase> OnExpired) { m_ActionEntity = _actionEntity;OnActivate(F_Duration,OnExpired); }
         public virtual void OnActionUse() { }
         public virtual void OnAddActionElse(float actionAmount) { }
         public virtual void OnReceiveDamage(int applier, float amount) { }
-        public virtual void OnDealtDemage(EntityCharacterBase receiver, float amount) { }
+        public virtual void OnDealtDemage(EntityCharacterBase receiver, DamageDeliverInfo deliverInfo) { }
         public virtual void OnReloadFinish() { }
-        public virtual void OnAfterBattle() { }
         public virtual void OnFire(int identity) { }
         public virtual void OnWeaponDetach() { }
+        public virtual void OnMove(float distsance) { }
         public bool B_Upgradable => m_rarity < enum_RarityLevel.Epic;
         public void Upgrade()
         {
@@ -1945,7 +1975,7 @@ namespace GameSetting
         SFXBuffApply m_Effect;
         public BuffApply(SFXBuffApply buffApplyinfo, EntityCharacterBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(buffApplyinfo, _controller, _transform, _GetBuffInfo)
         {
-            m_buffInfo = GameDataManager.GetEntityBuffProperties(buffApplyinfo.I_BuffIndex);
+            m_buffInfo = GameDataManager.GetPresetBuff(buffApplyinfo.I_BuffIndex);
         }
         public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
