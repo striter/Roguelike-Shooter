@@ -19,12 +19,12 @@ public class UIGI_ActionHoldItem : UIT_GridItem {
         m_TriggerListener = tf_Container.Find("TriggerListener").GetComponent<UIT_EventTriggerListener>();
         m_TriggerListener.D_OnPress = OnPress;
     }
-
+    
     public void SetInfo(ActionBase actionInfo,Action<int> _OnClick,Action _OnPressDuration)
     {
         OnClick = _OnClick;
         OnPressDuration = _OnPressDuration;
-        m_Cost.text = actionInfo.m_ActionExpireType== enum_ActionExpireType.AfterWeaponSwitch?"":actionInfo.I_ActionCost.ToString();
+        m_Cost.text = actionInfo.m_ActionExpireType == enum_ActionExpireType.AfterWeaponSwitch ? "" : actionInfo.I_Cost.ToString();
         m_Name.localizeText = actionInfo.GetNameLocalizeKey();
         m_Level.localizeText = actionInfo.m_rarity.GetLocalizeKey();
     }

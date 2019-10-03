@@ -14,6 +14,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public WeaponBase m_WeaponCurrent { get; private set; } = null;
     public InteractBase m_Interact { get; private set; }
     public EquipmentBase m_Equipment { get; private set; }
+    public int m_EquipmentTimes { get; private set; }
     public override float m_baseMovementSpeed => F_MovementSpeed*(f_movementReductionCheck >0? GameConst.F_FireMovementReduction:1f);
     public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized* m_CharacterInfo.F_MovementSpeed * time;
     public PlayerInfoManager m_PlayerInfo { get; private set; }
@@ -90,6 +91,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void OnBattleFinish()
     {
         m_Equipment = null;
+        m_EquipmentTimes = 0;
         m_PlayerInfo.OnBattleFinish();
         m_PlayerHealth.OnActivate(I_MaxHealth, I_DefaultArmor,false);
     }
@@ -223,27 +225,26 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     }
     #endregion
     #region Equipment
-    public void OnUseEquipment<T>(int actionIndex, Action<T> OnItemCreated) where T:EquipmentBase
-    {
-        T target = EquipmentBase.AcquireEquipment(actionIndex * 10, this, tf_WeaponHoldLeft, m_PlayerInfo.GetDamageBuffInfo) as T;
-        OnItemCreated?.Invoke(target);
-        target.Play(this, transform.position + transform.forward * 10);
-    }
+    public void OnAddupEquipmentUseTime(int times) => m_EquipmentTimes += times;
     public T OnAcquireEquipment<T>(int actionIndex, Func<DamageDeliverInfo> OnDamageBuff=null) where T : EquipmentBase
     {
         OnMainButtonDown(false);
-        m_Equipment = EquipmentBase.AcquireEquipment(actionIndex * 10, this, tf_WeaponHoldLeft, OnDamageBuff==null?m_PlayerInfo.GetDamageBuffInfo:OnDamageBuff);
+        m_Equipment = EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(actionIndex), this, tf_WeaponHoldLeft, OnDamageBuff==null?m_PlayerInfo.GetDamageBuffInfo:OnDamageBuff);
+        m_EquipmentTimes+=1;
         return m_Equipment as T;
     }
 
     void OnEquipment(bool down)
     {
-        if (!down || m_Equipment == null)
+        if (!down ||m_EquipmentTimes<=0||m_Equipment == null)
             return;
 
         m_Equipment.Play(this, transform.position + transform.forward * 10);
         m_Equipment.OnDeactivate();
-        m_Equipment = null;
+
+        m_EquipmentTimes--;
+        if (m_EquipmentTimes <= 0)
+            m_Equipment = null;
     }
     #endregion
     #region Action

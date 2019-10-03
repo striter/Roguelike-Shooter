@@ -32,7 +32,7 @@ public class EntityCharacterAI : EntityCharacterBase {
     {
         base.Init(entityPresetIndex);
         Transform tf_Barrel = transform.FindInAllChild("Barrel");
-        m_AI = new EnermyAIControllerBase(this, EquipmentBase.AcquireEquipment(GameExpression.GetAIEquipment(entityPresetIndex, 0),this,tf_Barrel,m_CharacterInfo.GetDamageBuffInfo), OnAttackAnim, OnCheckTarget);
+        m_AI = new EnermyAIControllerBase(this, EquipmentBase.AcquireEquipment(GameExpression.GetAIEquipmentIndex(entityPresetIndex, 0),this,tf_Barrel,m_CharacterInfo.GetDamageBuffInfo), OnAttackAnim, OnCheckTarget);
     }
 
     public override void OnActivate(enum_EntityFlag _flag)
@@ -71,10 +71,10 @@ public class EntityCharacterAI : EntityCharacterBase {
         if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
         {
             m_Animator.SetRun(m_AI.B_AgentEnabled ? 1 : 0);
-            m_Animator.SetStun(m_CharacterInfo.B_Effecting( enum_CharacterEffect.Stun));
+            m_Animator.SetStun(m_CharacterInfo.B_Effecting( enum_CharacterEffect.Freeze));
         }
 
-        m_AI.SetPlay(!m_CharacterInfo.B_Effecting( enum_CharacterEffect.Stun));
+        m_AI.SetPlay(!m_CharacterInfo.B_Effecting( enum_CharacterEffect.Freeze));
         m_AI.OnTick(Time.deltaTime);
     }
     protected override bool OnReceiveDamage(DamageInfo damageInfo, Vector3 damageDirection)

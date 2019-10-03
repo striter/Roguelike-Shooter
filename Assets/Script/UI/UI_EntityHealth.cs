@@ -16,7 +16,8 @@ public class UI_EntityHealth : UIToolsBase {
     {
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageFinish, OnStageFinish);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageFinish, ClearAll);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnGameExit, ClearAll);
         TBroadCaster<enum_BC_GameStatus>.Add<DamageDeliverInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterDamage, OnCharacterDamage);
     }
     protected override void OnDestroy()
@@ -24,7 +25,8 @@ public class UI_EntityHealth : UIToolsBase {
         base.OnDestroy();
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnStageFinish, OnStageFinish);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnStageFinish, ClearAll);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnGameExit, ClearAll);
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageDeliverInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterDamage, OnCharacterDamage);
     }
 
@@ -60,8 +62,9 @@ public class UI_EntityHealth : UIToolsBase {
         m_DamageGrid.RemoveItem(index);
     }
 
-    void OnStageFinish()
+    void ClearAll()
     {
+        m_HealthGrid.ClearGrid();
         m_DamageGrid.ClearGrid();
     }
 }

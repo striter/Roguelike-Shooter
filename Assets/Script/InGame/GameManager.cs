@@ -39,7 +39,7 @@ public class GameManager : GameManagerBase, ISingleCoroutine
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.BackQuote))
-            SetBulletTime(m_BulletTime!=1f,.1f);
+            SetBulletTime(!m_BulletTiming,.1f);
 
         RaycastHit hit = new RaycastHit();
         if (Input.GetKeyDown(KeyCode.Z) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
@@ -74,7 +74,7 @@ public class GameManager : GameManagerBase, ISingleCoroutine
         {
             m_Entities.Traversal((EntityCharacterBase entity) => {
                 if (entity.m_Flag == enum_EntityFlag.Enermy)
-                    entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common, DamageDeliverInfo.EquipmentInfo(-1,0, enum_CharacterEffect.Stun,2f)));
+                    entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common, DamageDeliverInfo.EquipmentInfo(-1,0, enum_CharacterEffect.Freeze,2f)));
             });
         }
 
@@ -139,9 +139,17 @@ public class GameManager : GameManagerBase, ISingleCoroutine
     protected override void Start()
     {
         base.Start();
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameStart);
         UIManager.Activate(true);
         StartStage();
     }
+    public void OnExitGame()
+    {
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameExit);
+        GameObjectManager.RecycleAllObject();
+        TSceneLoader.Instance.LoadScene(enum_Scene.Camp);
+    }
+
     #region Level Management
     //Call When Level Changed
     void StartStage()      //PreInit Bigmap , Levels LocalPlayer Before  Start The game
@@ -465,11 +473,6 @@ public class GameManager : GameManagerBase, ISingleCoroutine
     }
     #endregion
 
-    public void OnExitGame()
-    {
-        GameObjectManager.RecycleAllObject();
-        TSceneLoader.Instance.LoadScene(enum_Scene.Camp);
-    }
 }
 #region External Tools Packaging Class
 public class GameLevelManager

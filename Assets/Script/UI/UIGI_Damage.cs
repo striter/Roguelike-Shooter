@@ -24,8 +24,7 @@ public class UIGI_Damage : UIT_GridItem {
 
     private void Update()
     {
-        if (m_attachEntity != null && m_attachEntity.m_Health.b_IsDead) m_attachEntity = null;
-        if(m_attachEntity)  rtf_RectTransform.SetWorldViewPortAnchor(m_attachEntity.tf_Head.position, CameraController.MainCamera, Time.deltaTime * 10f);
+        rtf_RectTransform.SetWorldViewPortAnchor(m_attachEntity.tf_Head.position, CameraController.MainCamera, Time.deltaTime * 10f);
 
         f_expireCheck -= Time.deltaTime;
         rtf_Container.anchoredPosition = Vector2.Lerp(new Vector2(0,200),Vector2.zero,f_expireCheck);
