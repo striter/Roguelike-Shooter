@@ -120,8 +120,7 @@ public class GameManager : GameManagerBase, ISingleCoroutine
         base.Awake();
         InitEntityDic();
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntiyActivate);
-        TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityDeactivate, OnEntityDeactivate);
-        TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
+        TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityDeactivate, OnEntityRecycle);
         m_GameLevel = M_TESTSEED != "" ? new GameLevelManager(M_TESTSEED, enum_StageLevel.Rookie, 1) : new GameLevelManager(GameDataManager.m_PlayerGameData,GameDataManager.m_PlayerLevelData);
     }
     protected override void OnDestroy()
@@ -133,8 +132,7 @@ public class GameManager : GameManagerBase, ISingleCoroutine
     {
         this.StopAllSingleCoroutines();
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntiyActivate);
-        TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityDeactivate, OnEntityDeactivate);
-        TBroadCaster<enum_BC_GameStatus>.Remove<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
+        TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityDeactivate, OnEntityRecycle);
     }
     protected override void Start()
     {
@@ -186,17 +184,6 @@ public class GameManager : GameManagerBase, ISingleCoroutine
             OnBattleStart();
         else 
             SpawnInteracts();
-    }
-    void OnCharacterDead(EntityCharacterBase entity)
-    {
-        SpawnEntityDeadPickups(entity);
-        if (entity.m_Flag == enum_EntityFlag.Enermy)
-            m_PlayerRecord.OnEntityKilled();
-
-        if(entity.m_Controller== enum_EntityController.Player)
-            OnGameFinished(false);
-
-        OnBattleCharacterDead(entity);
     }
 
     void OnStageFinished()
@@ -347,19 +334,28 @@ public class GameManager : GameManagerBase, ISingleCoroutine
         });
     }
 
-    void OnEntityDeactivate(EntityBase entity)
+    void OnEntityRecycle(EntityBase entity)
     {
         if (entity.m_Controller == enum_EntityController.None)
             return;
         EntityCharacterBase character = entity as EntityCharacterBase;
+        
         m_Entities.Remove(entity.I_EntityID);
         m_AllyEntities[entity.m_Flag].Remove(character);
         m_OppositeEntities.Traversal((enum_EntityFlag flag) => {
             if (entity.m_Flag != enum_EntityFlag.Neutal && flag != entity.m_Flag)
                 m_OppositeEntities[flag].Remove(character);
         });
-    }
 
+        SpawnEntityDeadPickups(character);
+        if (entity.m_Flag == enum_EntityFlag.Enermy)
+            m_PlayerRecord.OnEntityKilled();
+
+        if (entity.m_Controller == enum_EntityController.Player)
+            OnGameFinished(false);
+
+        OnBattleCharacterDead(character);
+    }
     public static bool B_CanDamageEntity(HitCheckEntity hb, int sourceID)   //After Hit,If Match Target Hit Succeed
     {
         if (hb.I_AttacherID == sourceID)

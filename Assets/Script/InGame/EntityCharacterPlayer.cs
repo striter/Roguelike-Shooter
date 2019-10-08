@@ -15,7 +15,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public InteractBase m_Interact { get; private set; }
     public EquipmentBase m_Equipment { get; private set; }
     public int m_EquipmentTimes { get; private set; }
-    public override float m_baseMovementSpeed => F_MovementSpeed*(f_movementReductionCheck >0? GameConst.F_FireMovementReduction:1f);
+    public override float m_baseMovementSpeed => F_MovementSpeed*( f_movementReductionCheck >0? (1-GameConst.F_AimMovementReduction*m_PlayerInfo.F_AimMovementStrictMultiply):1f);
     public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized* m_CharacterInfo.F_MovementSpeed * time;
     public PlayerInfoManager m_PlayerInfo { get; private set; }
     public EntityHealth m_PlayerHealth { get; private set; }
@@ -44,13 +44,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         tf_WeaponHoldLeft = transform.FindInAllChild("WeaponHold_L");
         m_Animator = new PlayerAnimator(tf_Model.GetComponent<Animator>());
         transform.Find("InteractDetector").GetComponent<InteractDetector>().Init(OnInteractCheck);
-        
     }
-    public void SetPlayerInfo(int coins, List<ActionBase> storedActions)
-    {
-        m_PlayerInfo.OnCoinsReceive(coins);
-        m_PlayerInfo.InitActionInfo(storedActions);
-    }
+
     protected override void OnEnable()
     {
         base.OnEnable();
@@ -60,9 +55,23 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         CameraController.Attach(this.transform);
         SetBinding(true);
     }
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+        SetBinding(false);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel); ;
+    }
+
+    public void SetPlayerInfo(int coins, List<ActionBase> storedActions)
+    {
+        m_PlayerInfo.OnCoinsReceive(coins);
+        m_PlayerInfo.InitActionInfo(storedActions);
+    }
+
     protected override void OnDead()
     {
-        base.OnDead();
         if (m_Assist)
             m_Assist.ForceRecycle();
         if (m_WeaponCurrent)
@@ -70,15 +79,15 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
         m_Animator.OnDead();
         m_MoveAxisInput = Vector2.zero;
-        SetBinding(false);
+
+        base.OnDead();
     }
-    protected override void OnDisable()
+    public override void OnRevive(float reviveHealth, float reviveArmor)
     {
-        base.OnDisable();
-        SetBinding(false);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);;
+        base.OnRevive(reviveHealth, reviveArmor);
+        if (m_Health.b_IsDead)
+            return;
+        ObtainWeapon(m_WeaponCurrent);
     }
     void OnChangeLevel()
     {
@@ -253,7 +262,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_PlayerInfo.OnUseAcion(GameDataManager.CreateAction(actionIndex, enum_RarityLevel.Epic));
     }
     #endregion
-
     #region UI Indicator
     protected void OnCommonStatus()
     {

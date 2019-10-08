@@ -81,7 +81,7 @@ public class TBroadCaster<TEnum>
         }
 
         if (!triggered)
-            UnityEngine.Debug.LogWarning("No Message Triggered By:" + typeof(T).ToString() + "|" + template.ToString());
+            UnityEngine.Debug.LogWarning("No Message Triggered By:"+type.ToString()+"|"  + template.ToString());
     }
 
     public static void Add<T, Y>(TEnum type, Action<T, Y> Listener)

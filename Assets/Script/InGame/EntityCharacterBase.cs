@@ -14,6 +14,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     protected virtual CharacterInfoManager GetEntityInfo() => new CharacterInfoManager(this, m_HitCheck.TryHit, OnExpireChange);
     public virtual float m_baseMovementSpeed => F_MovementSpeed;
     public override bool B_IsCharacter => true;
+    protected override float DamageReceiveMultiply => m_CharacterInfo.F_DamageReceiveMultiply;
     public override void Init(int _poolIndex)
     {
         base.Init(_poolIndex);
@@ -26,18 +27,22 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     public override void OnActivate(enum_EntityFlag _flag)
     {
        base.OnActivate(_flag);
-       m_CharacterInfo.OnActivate();
         m_Effect.OnReset();
+        m_CharacterInfo.OnActivate();
+        this.StopSingleCoroutine(0);
     }
 
     protected virtual void OnExpireChange(){}
-    protected virtual void OnEnable(){}
+    protected virtual void OnEnable() { }
     protected virtual void OnDisable()
     {
-        this.StopSingleCoroutines(0,1);
+        this.StopSingleCoroutines(0);
     }
     protected virtual void Update()
     {
+        if (m_Health.b_IsDead)
+            return;
+
         m_CharacterInfo.Tick(Time.deltaTime);
 
         m_Effect.SetCloak(m_CharacterInfo.B_Effecting( enum_CharacterEffect.Cloak));
@@ -50,20 +55,28 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         {
             damageInfo.m_detail.m_BaseBuffApply.Traversal((SBuff buffInfo) => { m_CharacterInfo.AddBuff(damageInfo.m_detail.I_SourceID, buffInfo); });
             if (damageInfo.m_detail.m_DamageEffect != enum_CharacterEffect.Invalid) m_CharacterInfo.OnSetEffect(damageInfo.m_detail.m_DamageEffect, damageInfo.m_detail.m_EffectDuration);
-
             return true;
         }
-
         return false;
     }
 
     protected override void OnDead()
     {
         base.OnDead();
-        m_CharacterInfo.OnDeactivate();
         this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo(m_Effect.OnRecycleEffect, 0, 1, GameConst.F_EntityDeadFadeTime, OnRecycle));
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterDead,this);
+        m_CharacterInfo.OnDead();
     }
+
+    public virtual void OnRevive(float reviveHealth=-1, float reviveArmor=-1)
+    {
+        if (!m_Health.b_IsDead)
+            return;
+        OnActivate(m_Flag);
+        EntityHealth health = (m_Health as EntityHealth);
+        health.OnRevive(reviveHealth==-1? health.m_MaxHealth:reviveHealth,reviveArmor==-1? health.m_DefaultArmor:reviveArmor);
+    }
+
     protected override void OnHealthChanged(enum_HealthChangeMessage type)
     {
         m_Effect.OnHit(type);
@@ -71,6 +84,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     protected override void OnRecycle()
     {
         base.OnRecycle();
+        m_CharacterInfo.OnDeactivate();
         m_Effect.OnRecycle();
     }
 

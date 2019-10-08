@@ -24,9 +24,7 @@ public class UIGI_ExpireInfoItem : UIT_GridItem {
     }
     private void Update()
     {
-        if (m_target!=null&& m_target.m_ExpireDuration != 0)
-        {
-            txt_ElapsedTime.text = m_target.f_expireCheck.ToString();
-        }
+        if (m_target!=null)
+            txt_ElapsedTime.text = m_target.m_ExpireDuration == 0?"":m_target.f_expireCheck.ToString();
     }
 }

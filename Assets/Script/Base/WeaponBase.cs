@@ -162,9 +162,9 @@ public class WeaponBase : MonoBehaviour {
             f_reloadCheck += m_Attacher.m_PlayerInfo.F_ReloadRateTick(deltaTime);
             if (f_reloadCheck > m_WeaponInfo.m_ReloadTime)
             {
-                I_AmmoLeft = I_ClipAmount;
                 B_Reloading = false;
                 OnReload(false, 0);
+                I_AmmoLeft = I_ClipAmount;
             }
         }
     }
@@ -178,7 +178,6 @@ public class WeaponBase : MonoBehaviour {
                 I_AmmoLeft = I_ClipAmount;
         }
     }
-    
     #endregion
     #region TriggerType
     internal class WeaponTrigger:ISingleCoroutine

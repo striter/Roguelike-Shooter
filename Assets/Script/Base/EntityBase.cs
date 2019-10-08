@@ -44,14 +44,13 @@ public class EntityBase : MonoBehaviour
     protected virtual void OnDead()
     {
         TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.HideAllAttaches(); check.SetEnable(false); });
-        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityDeactivate, this);
     }
     protected virtual void OnRecycle()
     {
         if (I_PoolIndex < 0)
             return;
 
-        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityRecycle, this);
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityDeactivate, this);
         GameObjectManager.RecycleEntity(I_PoolIndex, this);
     }
     public void ForceDeath()

@@ -18,11 +18,12 @@ namespace GameSetting
         public const float F_EntityDeadFadeTime = 2f;
 
         public const float F_MaxActionAmount = 4f;
+        public const float I_MaxArmor = 99999;
         public const float F_RestoreActionAmount = 2f;
         public const float F_ActionShuffleCost = 3f;
         public const float F_ActionShuffleCooldown = 10f;
 
-        public const float F_FireMovementReduction = .6f;
+        public const float F_AimMovementReduction = .6f;
         public const float F_MovementReductionDuration = .1f;
         public const int I_ProjectileMaxDistance = 100;
         public const int I_ProjectileBlinkWhenTimeLeftLessThan = 3;
@@ -292,7 +293,6 @@ namespace GameSetting
 
         OnEntityActivate,
         OnEntityDeactivate,
-        OnEntityRecycle,
 
         OnCharacterDamage,
         OnCharacterDead,
@@ -359,7 +359,7 @@ namespace GameSetting
 
     public enum enum_CastAreaType { Invalid = -1, OverlapSphere = 1, ForwardBox = 2, ForwardCapsule = 3, ForwardTrapezium = 4, }
 
-    public enum enum_HealthChangeMessage { Invalid = -1, Begin = 0, DamageHealth = 1, ReceiveHealth = 2, DamageArmor = 3, ReceiveArmor = 4 }
+    public enum enum_HealthChangeMessage { Invalid = -1, Default = 0, DamageHealth = 1, ReceiveHealth = 2, DamageArmor = 3, ReceiveArmor = 4 }
 
     public enum enum_DamageType { Invalid = -1, Common = 1, ArmorOnly = 2, HealthOnly = 3, }
 
@@ -762,6 +762,10 @@ namespace GameSetting
             if(restoreHealth)
                 m_CurrentHealth = m_MaxHealth;
         }
+        public void OnRevive(float reviveHealth)
+        {
+           m_CurrentHealth = reviveHealth;
+        }
         public virtual bool OnReceiveDamage(DamageInfo damageInfo, float damageReduction = 1)
         {
             if (b_IsDead||damageInfo.m_Type== enum_DamageType.ArmorOnly)
@@ -811,6 +815,8 @@ namespace GameSetting
             m_CurrentArmor -= amount;
             if (m_CurrentArmor < 0)
                 m_CurrentArmor = 0;
+            if (m_CurrentArmor > GameConst.I_MaxArmor)
+                m_CurrentArmor = GameConst.I_MaxArmor;
         }
 
         public EntityHealth(EntityCharacterBase entity, Action<enum_HealthChangeMessage> _OnHealthChanged, Action _OnDead) :base(_OnHealthChanged,_OnDead)
@@ -822,7 +828,13 @@ namespace GameSetting
             base.OnActivate(maxHealth,restoreHealth);
             m_DefaultArmor= defaultArmor;
             m_CurrentArmor = m_DefaultArmor;
-            OnHealthChanged(enum_HealthChangeMessage.Begin);
+            OnHealthChanged(enum_HealthChangeMessage.Default);
+        }
+        public void OnRevive(float reviveHealth, float reviveArmor)
+        {
+            base.OnRevive(reviveHealth);
+            m_CurrentArmor = reviveArmor;
+            OnHealthChanged(enum_HealthChangeMessage.Default);
         }
         public override bool OnReceiveDamage(DamageInfo damageInfo,float damageMultiply=1)
         {
@@ -860,7 +872,7 @@ namespace GameSetting
                         break;
                 }
 
-                TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterDamage, damageInfo.m_detail, m_Entity, damageReceive);
+                TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterDamage, damageInfo, m_Entity, damageReceive);
                 if (b_IsDead)
                     OnDead();
             }
@@ -947,7 +959,7 @@ namespace GameSetting
     {
         protected EntityCharacterBase m_Entity { get; private set; }
         public List<ExpireBase> m_Expires { get; private set; } = new List<ExpireBase>();
-        List< SFXBuffEffect> m_BuffEffects = new List<SFXBuffEffect>();
+        List<SFXBuffEffect> m_BuffEffects = new List<SFXBuffEffect>();
         public float F_DamageReceiveMultiply { get; private set; } = 1f;
         public float F_MovementSpeedMultiply { get; private set; } = 1f;
         protected float F_FireRateMultiply { get; private set; } = 1f;
@@ -962,14 +974,14 @@ namespace GameSetting
         protected void ResetEffect(enum_CharacterEffect type) => m_Effects[type].Reset();
         public void OnSetEffect(enum_CharacterEffect type, float duration) => m_Effects[type].OnSet(duration);
 
-        public virtual DamageDeliverInfo GetDamageBuffInfo() => DamageDeliverInfo.DamageInfo(m_Entity.I_EntityID ,F_DamageMultiply,0f);
+        public virtual DamageDeliverInfo GetDamageBuffInfo() => DamageDeliverInfo.DamageInfo(m_Entity.I_EntityID, F_DamageMultiply, 0f);
         Func<DamageInfo, bool> OnReceiveDamage;
         Action OnExpireChange;
 
         bool b_expireUpdated = false;
         public void EntityInfoChange() => b_expireUpdated = false;
 
-        public CharacterInfoManager(EntityCharacterBase _attacher,Func<DamageInfo, bool> _OnReceiveDamage,Action _OnExpireChange)
+        public CharacterInfoManager(EntityCharacterBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange)
         {
             m_Entity = _attacher;
             OnReceiveDamage = _OnReceiveDamage;
@@ -977,8 +989,10 @@ namespace GameSetting
             TCommon.TraversalEnum((enum_CharacterEffect effect) => { m_Effects.Add(effect, new EffectCounterBase()); });
         }
 
-        public virtual void OnActivate()=> Reset();
-        public virtual void OnDeactivate()=> Reset();
+        public virtual void OnActivate() => Reset();
+        public virtual void OnDeactivate() { }
+        public virtual void OnDead() => Reset();
+
         protected virtual void Reset()
         {
             m_Effects.Traversal((enum_CharacterEffect type) => { m_Effects[type].Reset(); });
@@ -1110,6 +1124,7 @@ namespace GameSetting
         EntityCharacterPlayer m_Player;
         public int I_ClipAmount(int baseClipAmount) => baseClipAmount == 0 ? 0 : (int)(((B_OneOverride ? 1 : baseClipAmount) + I_ClipAdditive) * F_ClipMultiply);
         public float F_RecoilMultiply { get; private set; } = 1f;
+        public float F_AimMovementStrictMultiply { get; private set; } = 1f;
         public float F_ProjectileSpeedMuiltiply { get; private set; } = 1f;
         protected bool B_OneOverride { get; private set; } = false;
         protected int I_ClipAdditive { get; private set; } = 0;
@@ -1138,15 +1153,15 @@ namespace GameSetting
         public override void OnActivate()
         {
             base.OnActivate();
-            TBroadCaster<enum_BC_GameStatus>.Add<DamageDeliverInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterDamage, OnCharacterDamage);
+            TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterDamage, OnCharacterDamage);
             m_prePos = m_Entity.transform.position;
         }
         public override void OnDeactivate()
         {
             base.OnDeactivate();
-            TBroadCaster<enum_BC_GameStatus>.Remove<DamageDeliverInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterDamage, OnCharacterDamage);
+            TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterDamage, OnCharacterDamage);
         }
-
+        
         public override void Tick(float deltaTime)
         {
             base.Tick(deltaTime);
@@ -1183,13 +1198,16 @@ namespace GameSetting
         {
             m_ActionAmount = GameConst.F_RestoreActionAmount;
             m_ActionInPool.Clear();
-            
+
             m_ActionEquiping.Traversal((ActionBase action) => { if (action.m_ActionExpireType != enum_ActionExpireType.AfterWeaponSwitch) m_ActionEquiping.Remove(action); }, true);
-            Debug.Log(m_ActionEquiping.Count);
-            f_shuffleCheck = -1;
+            Reset();
             ClearHoldingActions();
         }
-
+        protected override void Reset()
+        {
+            base.Reset();
+            f_shuffleCheck = -1;
+        }
         #region Player Info
         public void OnUseAcion(ActionBase targetAction)
         {
@@ -1216,6 +1234,7 @@ namespace GameSetting
             F_ClipMultiply = 1f;
             F_RecoilMultiply = 1f;
             F_ProjectileSpeedMuiltiply = 1f;
+            F_AimMovementStrictMultiply = 1f;
         }
         protected override void OnSetExpireInfo(ExpireBase expire)
         {
@@ -1226,6 +1245,7 @@ namespace GameSetting
 
             F_DamageAdditive += action.F_DamageAdditive;
             F_RecoilMultiply -= action.F_RecoilReduction;
+            F_AimMovementStrictMultiply -= action.F_AimStrictReduction;
             F_ProjectileSpeedMuiltiply += action.F_ProjectileSpeedMultiply;
             F_ClipMultiply += action.F_ClipMultiply;
             B_OneOverride |= action.B_ClipOverride;
@@ -1233,6 +1253,9 @@ namespace GameSetting
 
             if (F_RecoilMultiply < 0)
                 F_RecoilMultiply = 0;
+
+            if (F_AimMovementStrictMultiply < 0)
+                F_AimMovementStrictMultiply = 0;
         }
         public override DamageDeliverInfo GetDamageBuffInfo()
         {
@@ -1247,16 +1270,22 @@ namespace GameSetting
 
         public void OnPlayerMove(float distance) => m_ActionEquiping.Traversal((ActionBase action) => { action.OnMove(distance); });
         public void OnReloadFinish() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnReloadFinish(); });
-        void OnCharacterDamage(DamageDeliverInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
+        public override void OnDead()
         {
-            if (damageInfo.I_SourceID == m_Player.I_EntityID)
+            m_ActionEquiping.Traversal((ActionBase action) => { action.OnDead(); });
+            m_ActionEquiping.Clear();
+            base.OnDead();
+        }
+        void OnCharacterDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
+        {
+            if (damageInfo.m_detail.I_SourceID == m_Player.I_EntityID)
             {
-                m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDemage(damageEntity,damageInfo.I_IdentiyID, amountApply); });
+                m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDemage(damageEntity,damageInfo, amountApply); });
                 AddActionAmount(GameExpression.GetActionAmountRevive(amountApply));
             }
             else if (damageEntity.I_EntityID == m_Player.I_EntityID)
             {
-                m_ActionEquiping.Traversal((ActionBase action) => { action.OnReceiveDamage(damageInfo.I_SourceID,damageInfo.I_IdentiyID, amountApply); });
+                m_ActionEquiping.Traversal((ActionBase action) => { action.OnReceiveDamage(damageInfo, amountApply); });
             }
         }
         #endregion
@@ -1311,12 +1340,12 @@ namespace GameSetting
             m_ActionHolding.Clear();
             IndicateActionUI();
         }
-        public void UpgradeRandomHoldingAction()
+        public void UpgradeAllHoldingAction()
         {
             if (m_ActionHolding.Count == 0)
                 return;
 
-            m_ActionHolding.RandomItem().Upgrade();
+            m_ActionHolding.Traversal((ActionBase action) => { action.Upgrade(); });
             IndicateActionUI();
         }
         public void OverrideHoldingActionCost(int cost)
@@ -1481,6 +1510,7 @@ namespace GameSetting
         public virtual float Value3 => 0;
         public virtual float F_DamageAdditive => 0;
         public virtual float F_RecoilReduction => 0;
+        public virtual float F_AimStrictReduction => 0;
         public virtual float F_ProjectileSpeedMultiply => 0;
         public virtual bool B_ClipOverride => false;
         public virtual int I_ClipAdditive => 0;
@@ -1507,12 +1537,13 @@ namespace GameSetting
         #region Interact
         public virtual void OnActionUse() { }
         public virtual void OnAddActionElse(float actionAmount) { }
-        public virtual void OnReceiveDamage(int applier, int identity, float amount) { }
-        public virtual void OnDealtDemage(EntityCharacterBase receiver, int identity, float amount) { }
+        public virtual void OnReceiveDamage(DamageInfo info, float amount) { }
+        public virtual void OnDealtDemage(EntityCharacterBase receiver,DamageInfo info, float applyAmount) { }
         public virtual void OnReloadFinish() { }
         public virtual void OnFire(int identity) { }
         public virtual void OnWeaponDetach() { }
         public virtual void OnMove(float distsance) { }
+        public virtual void OnDead() { }
         #endregion
     }
     #endregion
