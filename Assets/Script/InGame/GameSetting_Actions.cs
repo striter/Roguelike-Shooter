@@ -791,7 +791,17 @@ namespace GameSetting_Action
     }
     #endregion
     #region 20000-29999
-
+    public class Action_20001_RustShot : ActionAfterUse
+    {
+        public override int m_Index => 20001;
+        public override float Value1 => ActionData.F_20001_RustDamagePerSecond(m_rarity);
+        public override void OnActionUse()
+        {
+            base.OnActionUse();
+            m_ActionEntity.OnAcquireEquipment<EquipmentBarrageRange>(m_Index, () =>  DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID,SBuff.CreateActionDOTBuff(m_Index,10f,1f,ActionData.F_20001_RustDamagePerSecond(m_rarity), enum_DamageType.Common)));
+        }
+        public Action_20001_RustShot(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
     public class Action_20013_Grenade:ActionAfterUse
     {
         public override int m_Index => 20013;

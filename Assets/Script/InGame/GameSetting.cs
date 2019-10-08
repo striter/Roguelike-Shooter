@@ -715,6 +715,17 @@ namespace GameSetting
             buff.f_expireDuration = duration;
             return buff;
         }
+        public static SBuff CreateActionDOTBuff(int actionIndex,float duration, float damageTickTime, float damagePerTick,enum_DamageType damageType)
+        {
+            SBuff buff = new SBuff();
+            buff.index = actionIndex * 10;
+            buff.i_addType = (int)enum_ExpireRefreshType.Refresh;
+            buff.f_expireDuration = duration;
+            buff.f_damageTickTime = damageTickTime;
+            buff.f_damagePerTick = damagePerTick;
+            buff.i_damageType = (int)damageType;
+            return buff;
+        }
         //1000-9999
         public static SBuff CreateEntityBuff(int difficulty,float damageMultiply)
         {
@@ -870,6 +881,9 @@ namespace GameSetting
                             OnHealthChanged(healthDamage >= 0 ? enum_HealthChangeMessage.DamageHealth : enum_HealthChangeMessage.DamageArmor);
                         }
                         break;
+                    default:
+                        Debug.LogError("Error! Invalid Type:"+damageInfo.m_Type.ToString());
+                        break;
                 }
 
                 TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterDamage, damageInfo, m_Entity, damageReceive);
@@ -908,6 +922,9 @@ namespace GameSetting
                             DamageArmor(armorReceive);
                             OnHealthChanged(enum_HealthChangeMessage.ReceiveArmor);
                         }
+                        break;
+                    default:
+                        Debug.LogError("Error! Invalid Type:" + damageInfo.m_Type.ToString());
                         break;
                 }
             }
@@ -1924,7 +1941,6 @@ namespace GameSetting
             OnPlayAnim(false);
         }
     }
-
     public class EquipmentCasterTarget : EquipmentCaster
     {
         int i_muzzleIndex;
@@ -1954,7 +1970,6 @@ namespace GameSetting
             m_CountExtension = projectileInfo.RI_CountExtension;
             m_OffsetExtension = projectileInfo.F_OffsetExtension;
         }
-
 
         public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
@@ -2034,7 +2049,6 @@ namespace GameSetting
             m_Effect.Play(m_Entity.I_EntityID, m_buffInfo, transformBarrel, _target);
         }
     }
-
     public class EquipmentEntitySpawner : EquipmentBase
     {
         public EquipmentEntitySpawner(SFXSubEntitySpawner spawner, EntityCharacterBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(spawner, _controller, _transform, _GetBuffInfo)
@@ -2050,7 +2064,6 @@ namespace GameSetting
             GameObjectManager.SpawnEquipment<SFXSubEntitySpawner>(I_Index, transformBarrel.position, Vector3.up).Play(m_Entity.I_EntityID, m_Entity.m_Flag,GetDamageDeliverInfo,m_Entity.I_EntityID,OnSpawn);
         }
     }
-
     public class EquipmentShieldAttach : EquipmentBase
     {
         public override bool B_TargetAlly => true;

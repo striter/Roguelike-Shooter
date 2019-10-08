@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4550938155433920}
   - component: {fileID: 114579307329279138}
   m_Layer: 9
-  m_Name: 7002
+  m_Name: 7001_Test
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -177,6 +177,7 @@ MonoBehaviour:
   E_ProjectileType: 1
   F_Damage: 1000
   F_Speed: 1000
+  B_Piercing: 0
   I_MuzzleIndex: 10001
   I_ImpactIndex: 20001
   I_IndicatorIndex: 0
