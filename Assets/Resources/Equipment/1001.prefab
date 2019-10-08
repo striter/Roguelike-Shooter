@@ -53,7 +53,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4024493253424974}
-  - component: {fileID: 114098170496030918}
+  - component: {fileID: 114164712268119390}
   m_Layer: 9
   m_Name: 1001
   m_TagString: Untagged
@@ -193,7 +193,7 @@ Transform:
   m_Father: {fileID: 4198848101526772}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114098170496030918
+--- !u!114 &114164712268119390
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -201,12 +201,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1356543422575638}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1706479a5854bad47a3f4c9d8840aeac, type: 3}
+  m_Script: {fileID: 11500000, guid: 1b8d0e07754fa9b4685464e140e598ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   E_ProjectileType: 2
   F_Damage: 36.5
   F_Speed: 30
+  B_Piercing: 1
   I_MuzzleIndex: 10001
   I_ImpactIndex: 20301
   I_IndicatorIndex: 0
@@ -220,7 +221,6 @@ MonoBehaviour:
   F_OffsetExtension: 10
   B_TargetReachBlink: 0
   C_BlinkColor: {r: 1, g: 0, b: 0, a: 1}
-  I_BeamLength: 30
 --- !u!198 &198459710163750792
 ParticleSystem:
   m_ObjectHideFlags: 1

@@ -140,7 +140,7 @@ GameObject:
   - component: {fileID: 4847867912695626}
   - component: {fileID: 114973347317709960}
   m_Layer: 9
-  m_Name: 20402
+  m_Name: 200131
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -484,7 +484,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   E_CastType: 1
-  F_Damage: 40
+  F_Damage: 0
   I_TickCount: 1
   F_Tick: 0.5
   I_BuffApplyOnCast: 0
