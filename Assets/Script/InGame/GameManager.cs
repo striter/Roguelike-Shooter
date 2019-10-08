@@ -94,7 +94,7 @@ public class GameManager : GameManagerBase, ISingleCoroutine
             CameraController.Instance.m_Effect.StartAreaScan(m_LocalPlayer.tf_Head.position, Color.white, TResources.Load<Texture>(TResources.ConstPath.S_PETex_Holograph),15f, 1f, 5f, 50, 1f);
             m_Entities.Traversal((EntityCharacterBase entity) => {
                 if (entity.m_Flag == enum_EntityFlag.Enermy)
-                    entity.BroadcastMessage("OnReceiveDamage", new DamageInfo(0, enum_DamageType.Common, DamageDeliverInfo.EquipmentInfo(-1, 0, enum_CharacterEffect.Scan, 10f)));
+                    entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common, DamageDeliverInfo.EquipmentInfo(-1, 0, enum_CharacterEffect.Scan, 10f)));
             });
         }
         if (Input.GetKeyDown(KeyCode.F12))

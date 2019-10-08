@@ -142,6 +142,45 @@ namespace GameSetting_Action
         public static float P_10035_DamageAdditiveNextShot(enum_RarityLevel rarity) => 120f + 120f * (int)rarity;
         #endregion
         #region 20000-29999
+        public const int I_20001_Cost = 2;
+        public static float F_20001_RustDamagePerSecond(enum_RarityLevel rarity) => 40 * (int)rarity;
+
+        public const int I_20002_Cost = 2;
+        public static float F_20002_ArmorAdditiveTargetDead(enum_RarityLevel rarity) => 70 * (int)rarity;
+
+        public const int I_20003_Cost = 1;
+        public static float F_20003_FreezeDuration(enum_RarityLevel rarity) => 5 * (int)rarity;
+
+        public const int I_20004_Cost = 1;
+        public static float F_20004_FreezeDuration(enum_RarityLevel rarity) => 2 + 4 * (int)rarity;
+
+        public const int I_20005_Cost = 3;
+        public static float F_20005_FreezeDuration(enum_RarityLevel rarity) => .5f + (int)rarity;
+        public static float F_20005_Health(enum_RarityLevel rarity) => 300f + 100 * (int)rarity;
+        public static float F_20005_Damage(enum_RarityLevel rarity) => 10f + 10f * (int)rarity;
+        public const float F_20005_FireRate=1f;
+
+        public const int I_20006_Cost = 0;
+        public static float F_20006_FreezeDuration(enum_RarityLevel rarity) => 4 * (int)rarity;
+
+        public static int I_20007_Cost(enum_RarityLevel rarity) => 3 - (int)rarity;
+
+        public const int I_20008_Cost = 2;
+        public static float F_20008_Health(enum_RarityLevel rarity) => 300f + 100 * (int)rarity;
+        public static float F_20008_Damage(enum_RarityLevel rarity) => 10f + 10f * (int)rarity;
+        public const float F_20008_FireRate = 1f;
+
+        public const int I_20009_Cost = 3;
+        public static float F_20009_Health(enum_RarityLevel rarity) => 300f + 100 * (int)rarity;
+        public static float F_20009_Damage(enum_RarityLevel rarity) => 10f + 10f * (int)rarity;
+        public const float F_20009_FireRate = 1f;
+
+        public const int I_20012_Cost = 2;
+        public static float F_20012_AllyHealthRegen(enum_RarityLevel rarity) => 3 * (int)rarity;
+        public static float F_20012_SelfHealthRegen(enum_RarityLevel rarity) => 15 * (int)rarity;
+
+        public const int I_20013_Cost = 2;
+        public static float P_20013_DamageMultiplyBase(enum_RarityLevel rarity) => 100 + 100 * (int)rarity;
         #endregion
         #region 30000-39999
         #endregion
@@ -752,6 +791,18 @@ namespace GameSetting_Action
     }
     #endregion
     #region 20000-29999
+
+    public class Action_20013_Grenade:ActionAfterUse
+    {
+        public override int m_Index => 20013;
+        public override float Value1 => ActionData.P_20013_DamageMultiplyBase(m_rarity);
+        public override void OnActionUse()
+        {
+            base.OnActionUse();
+            m_ActionEntity.OnAcquireEquipment<EquipmentBarrageRange>(m_Index, () => DamageDeliverInfo.DamageInfo(m_ActionEntity.I_EntityID, 0, Value1*m_ActionEntity.m_WeaponCurrent.F_BaseDamage));
+        }
+        public Action_20013_Grenade(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
     #endregion
     #region 30000-39999
     #endregion

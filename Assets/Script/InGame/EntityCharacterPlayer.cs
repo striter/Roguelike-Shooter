@@ -237,9 +237,11 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public void OnAddupEquipmentUseTime(int times) => m_EquipmentTimes += times;
     public T OnAcquireEquipment<T>(int actionIndex, Func<DamageDeliverInfo> OnDamageBuff=null) where T : EquipmentBase
     {
+
         OnMainButtonDown(false);
-        m_Equipment = EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(actionIndex), this, tf_WeaponHoldLeft, OnDamageBuff==null?m_PlayerInfo.GetDamageBuffInfo:OnDamageBuff);
-        m_EquipmentTimes+=1;
+        EquipmentBase targetEquipment= EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(actionIndex), this, tf_WeaponHoldLeft, OnDamageBuff == null ? m_PlayerInfo.GetDamageBuffInfo : OnDamageBuff);
+        m_EquipmentTimes = (m_Equipment != null && m_Equipment.I_Index == targetEquipment.I_Index)?m_EquipmentTimes+1:1;
+        m_Equipment = targetEquipment;
         return m_Equipment as T;
     }
 
