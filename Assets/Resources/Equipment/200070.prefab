@@ -36,9 +36,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4675475368102452}
-  - component: {fileID: 114849450265349912}
+  - component: {fileID: 114749200122238482}
   m_Layer: 9
-  m_Name: 200040
+  m_Name: 200070
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -307,7 +307,7 @@ TrailRenderer:
     generateLightingData: 0
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
---- !u!114 &114849450265349912
+--- !u!114 &114749200122238482
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -315,7 +315,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1165261032841046}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5d83f0e5c561fe4fa5e265313ef8721, type: 3}
+  m_Script: {fileID: 11500000, guid: e86681d7ec944234eab67be92042c0c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   E_ProjectileType: 1
@@ -334,7 +334,7 @@ MonoBehaviour:
     length: 0
   F_OffsetExtension: 0
   B_TargetReachBlink: 1
-  C_BlinkColor: {r: 0, g: 0.8758622, b: 1, a: 1}
+  C_BlinkColor: {r: 1, g: 1, b: 1, a: 1}
   F_DirectionPitchAngle: 45
   B_RandomRotation: 1
   B_Bounce: 1

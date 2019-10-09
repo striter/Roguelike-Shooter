@@ -884,6 +884,36 @@ namespace GameSetting_Action
         }
         public Action_20007_TeleportDevice(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
+    public class Action_20008_MinigunTurret : ActionAfterUse
+    {
+        public override int m_Index => 20008;
+        public override int I_BaseCost => ActionData.I_20008_Cost;
+        public override float Value1 => ActionData.F_20008_Health(m_rarity);
+        public override float Value2 => ActionData.F_20008_Damage(m_rarity);
+        public override float Value3 => ActionData.F_20008_FireRate;
+        
+        public override void OnActionUse()
+        {
+            base.OnActionUse();
+            ActionHelper.PlayerAcquireEntityEquipmentItem(m_ActionEntity, m_Index, (int)Value1, Value3, () => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, Value2, enum_CharacterEffect.Invalid,0)); ;
+        }
+        public Action_20008_MinigunTurret(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+    public class Action_20009_BlastTurret : ActionAfterUse
+    {
+        public override int m_Index => 20009;
+        public override int I_BaseCost => ActionData.I_20009_Cost;
+        public override float Value1 => ActionData.F_20009_Health(m_rarity);
+        public override float Value2 => ActionData.F_20009_Damage(m_rarity);
+        public override float Value3 => ActionData.F_20009_FireRate;
+
+        public override void OnActionUse()
+        {
+            base.OnActionUse();
+            ActionHelper.PlayerAcquireEntityEquipmentItem(m_ActionEntity, m_Index, (int)Value1, Value3, () => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, Value2, enum_CharacterEffect.Invalid, 0)); ;
+        }
+        public Action_20009_BlastTurret(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
     public class Action_20013_Grenade:ActionAfterUse
     {
         public override int m_Index => 20013;
