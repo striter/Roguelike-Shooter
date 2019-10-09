@@ -961,7 +961,7 @@ namespace GameSetting
                         break;
                 }
             }
-            if(finalAmount>0)
+            if(damageInfo.m_AmountApply>0)
                 TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterDamage, damageInfo, m_Entity, finalAmount);
             if (b_IsDead)
                 OnDead();
