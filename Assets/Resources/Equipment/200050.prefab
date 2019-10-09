@@ -52,3 +52,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   I_EntitySpawnID: 30002
+  B_ApplyDOTOnSpawn: 1

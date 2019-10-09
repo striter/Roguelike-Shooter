@@ -707,6 +707,28 @@ namespace GameSetting
             f_damageMultiply = f_damageMultiply > 0 ? f_damageMultiply / 100f : 0;
             f_damageReduce = f_damageReduce > 0 ? f_damageReduce / 100f : 0;
         }
+        //Normally In Excel 0-99
+        //100-999
+        public static SBuff CreateSubEntityDOTBuff(float damageTickTime, float damagePerTick)
+        {
+            SBuff buff = new SBuff();
+            buff.index = 100;
+            buff.i_addType = (int)enum_ExpireRefreshType.Refresh;
+            buff.f_expireDuration = 0;
+            buff.f_damageTickTime = damageTickTime;
+            buff.f_damagePerTick = damagePerTick;
+            buff.i_damageType = (int)enum_DamageType.Common;
+            return buff;
+        }
+        //1000-9999
+        public static SBuff CreateEntityBuff(int difficulty, float damageMultiply)
+        {
+            SBuff buff = new SBuff();
+            buff.index = 1000 + difficulty;
+            buff.i_addType = (int)enum_ExpireRefreshType.Refresh;
+            buff.f_damageMultiply = damageMultiply;
+            return buff;
+        }
         //100000-999999
         public static SBuff CreateActionBuff(int actionIndex,float movementMultiply,float duration)
         {
@@ -726,15 +748,6 @@ namespace GameSetting
             buff.f_damageTickTime = damageTickTime;
             buff.f_damagePerTick = damagePerTick;
             buff.i_damageType = (int)damageType;
-            return buff;
-        }
-        //1000-9999
-        public static SBuff CreateEntityBuff(int difficulty,float damageMultiply)
-        {
-            SBuff buff = new SBuff();
-            buff.index = 1000+difficulty;
-            buff.i_addType = (int)enum_ExpireRefreshType.Refresh;
-            buff.f_damageMultiply = damageMultiply;
             return buff;
         }
     }
