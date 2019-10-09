@@ -327,7 +327,7 @@ namespace GameSetting
 
     public enum enum_BattleDifficulty { Invalid = -1, Peaceful = 0, Eazy = 1, Normal = 2, Hard = 3, End = 4, BattleTrade = 10, }
 
-    public enum enum_EntityController { Invalid = -1, None = 1, AI = 2, Player = 3, }
+    public enum enum_EntityController { Invalid = -1, None = 1, Player = 2, AI = 3, Device =4,}
 
     public enum enum_EntityFlag { Invalid = -1, None = 0, Player = 1, Enermy = 2, Neutal = 3, }
 

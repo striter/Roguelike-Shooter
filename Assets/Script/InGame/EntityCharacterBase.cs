@@ -19,6 +19,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     public int m_SpawnerEntityID { get; private set; }
     public void SetSpawnerID(int _spawnerEntityID) => m_SpawnerEntityID = _spawnerEntityID;
     public bool b_isSubEntity => m_SpawnerEntityID != -1;
+    protected override HealthBase GetHealthManager() => new EntityHealth(this, OnHealthChanged, OnDead);
 
     public override void Init(int _poolIndex)
     {

@@ -4,7 +4,7 @@ using GameSetting;
 using UnityEngine;
 
 public class EntityDeviceBase : EntityCharacterBase {
-    public override enum_EntityController m_Controller => enum_EntityController.AI; 
+    public override enum_EntityController m_Controller => enum_EntityController.Device; 
     EntityDetector m_Detect;
     protected List<EntityCharacterBase> m_DetectLink=new List<EntityCharacterBase>();
     public override void Init(int _poolIndex)
