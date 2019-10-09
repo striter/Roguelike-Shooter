@@ -446,8 +446,6 @@ namespace GameSetting
         public static readonly int I_Entity = LayerMask.NameToLayer("entity");
         public static readonly int I_Dynamic = LayerMask.NameToLayer("dynamic");
         public static readonly int I_Interact = LayerMask.NameToLayer("interact");
-        public static readonly int I_InteractDetect = LayerMask.NameToLayer("interactDetect");
-        public static readonly int I_MovementDetect = LayerMask.NameToLayer("movementDetect");
         public static class Mask
         {
             public static readonly int I_All = 1 << GameLayer.I_Static | 1 << GameLayer.I_Entity | 1 << GameLayer.I_Dynamic;
@@ -456,6 +454,10 @@ namespace GameSetting
             public static readonly int I_Interact = (1 << GameLayer.I_Interact);
             public static readonly int I_Static = (1 << GameLayer.I_Static);
         }
+
+        public static readonly int I_EntityDetect = LayerMask.NameToLayer("entityDetect");
+        public static readonly int I_InteractDetect = LayerMask.NameToLayer("interactDetect");
+        public static readonly int I_MovementDetect = LayerMask.NameToLayer("movementDetect");
     }
     #endregion
 
@@ -852,30 +854,30 @@ namespace GameSetting
             if (b_IsDead)
                 return false;
 
-            if (damageInfo.m_AmountApply >= 0)    //Damage
+            float finalAmount = damageInfo.m_AmountApply;
+            if (damageInfo.m_AmountApply > 0)    //Damage
             {
-                float damageReceive = damageInfo.m_AmountApply*damageMultiply;
-
+                finalAmount *=damageMultiply;
                 switch (damageInfo.m_Type)
                 {
                     case enum_DamageType.ArmorOnly:
                         {
                             if (m_CurrentArmor <= 0)
                                 return false;
-                            DamageArmor(damageReceive);
+                            DamageArmor(finalAmount);
                             OnHealthChanged(enum_HealthChangeMessage.DamageArmor);
                         }
                         break;
                     case enum_DamageType.HealthOnly:
                         {
-                            DamageHealth(damageReceive);
+                            DamageHealth(finalAmount);
                             OnHealthChanged(enum_HealthChangeMessage.DamageHealth);
                         }
                         break;
                     case enum_DamageType.Common:
                         {
-                            float healthDamage = damageReceive-m_CurrentArmor ;
-                            DamageArmor(damageReceive);
+                            float healthDamage = finalAmount-m_CurrentArmor ;
+                            DamageArmor(finalAmount);
                             if (healthDamage > 0)
                                 DamageHealth(healthDamage);
                             OnHealthChanged(healthDamage >= 0 ? enum_HealthChangeMessage.DamageHealth : enum_HealthChangeMessage.DamageArmor);
@@ -885,19 +887,14 @@ namespace GameSetting
                         Debug.LogError("Error! Invalid Type:"+damageInfo.m_Type.ToString());
                         break;
                 }
-
-                TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterDamage, damageInfo, m_Entity, damageReceive);
-                if (b_IsDead)
-                    OnDead();
             }
             else if (damageInfo.m_AmountApply < 0)    //Healing
             {
-                float amountHeal = damageInfo.m_AmountApply;
                 switch (damageInfo.m_Type)
                 {
                     case enum_DamageType.ArmorOnly:
                         {
-                            DamageArmor(amountHeal);
+                            DamageArmor(finalAmount);
                             OnHealthChanged(enum_HealthChangeMessage.ReceiveArmor);
                         }
                         break;
@@ -905,14 +902,14 @@ namespace GameSetting
                         {
                             if (B_HealthFull)
                                 return false;
-                            DamageHealth(amountHeal);
+                            DamageHealth(finalAmount);
                             OnHealthChanged( enum_HealthChangeMessage.ReceiveHealth);
                         }
                         break;
                     case enum_DamageType.Common:
                         {
-                            float armorReceive = amountHeal  - m_CurrentHealth+m_BaseMaxHealth;
-                            DamageHealth(amountHeal);
+                            float armorReceive = finalAmount - m_CurrentHealth+m_BaseMaxHealth;
+                            DamageHealth(finalAmount);
                             if (armorReceive>0)
                             {
                                 OnHealthChanged(enum_HealthChangeMessage.ReceiveHealth);
@@ -928,7 +925,10 @@ namespace GameSetting
                         break;
                 }
             }
-            
+            if(finalAmount>0)
+                TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterDamage, damageInfo, m_Entity, finalAmount);
+            if (b_IsDead)
+                OnDead();
             return true;
         }
     }
@@ -1791,7 +1791,8 @@ namespace GameSetting
         public virtual bool B_TargetAlly => false;
         public int I_Index { get; private set; } = -1;
         protected EntityCharacterBase m_Entity;
-        protected Transform attacherTransform => m_Entity.tf_Head;
+        protected Transform attacherFeet => m_Entity.transform;
+        protected Transform attacherHead => m_Entity.tf_Head;
         protected Transform transformBarrel;
         protected Func<DamageDeliverInfo> GetDamageDeliverInfo;
         protected CharacterInfoManager m_Info
@@ -1852,7 +1853,7 @@ namespace GameSetting
                 {
                     default: Debug.LogError("Invalid Type:" + cast.E_CastType); break;
                     case enum_CastControllType.CastFromOrigin: return new EquipmentCaster(cast, _entity, tf_Barrel, GetDamageBuffInfo);
-                    case enum_CastControllType.CastSelfDetonate: return new EnermyCasterSelfDetonateAnimLess(cast, _entity, tf_Barrel, GetDamageBuffInfo, _entity.tf_Model.Find("BlinkModel")); 
+                    case enum_CastControllType.CastSelfDetonate: return new EquipmentCasterSelfDetonateAnimLess(cast, _entity, tf_Barrel, GetDamageBuffInfo, _entity.tf_Model.Find("BlinkModel")); 
                     case enum_CastControllType.CastControlledForward: return new EquipmentCasterControlled(cast, _entity, tf_Barrel, GetDamageBuffInfo);
                     case enum_CastControllType.CastAtTarget: return new EquipmentCasterTarget(cast, _entity, tf_Barrel, GetDamageBuffInfo);
                 }
@@ -1875,20 +1876,37 @@ namespace GameSetting
     }
     public class EquipmentCaster : EquipmentBase
     {
+        protected int i_muzzleIndex { get; private set; }
+        protected bool b_castAtHead { get; private set; }
         public EquipmentCaster(SFXCast _castInfo, EntityCharacterBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(_castInfo, _controller, _transform, _GetBuffInfo)
         {
+            i_muzzleIndex = _castInfo.I_MuzzleIndex;
+            b_castAtHead = _castInfo.B_CastAtHead;
         }
         public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
-            GameObjectManager.SpawnEquipment<SFXCast>(I_Index, attacherTransform.position, attacherTransform.forward).Play(GetDamageDeliverInfo());
+            GameObjectManager.SpawnEquipment<SFXCast>(I_Index, b_castAtHead ? attacherHead.position:attacherFeet.position, attacherHead.forward).Play(GetDamageDeliverInfo());
         }
     }
-    public class EnermyCasterSelfDetonateAnimLess : EquipmentCaster
+    public class EquipmentCasterTarget : EquipmentCaster
+    {
+        public EquipmentCasterTarget(SFXCast _castInfo, EntityCharacterBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(_castInfo, _controller, _transform, _GetBuffInfo)
+        {
+        }
+        protected override Vector3 GetTargetPosition(bool preAim, EntityCharacterBase _target) => LevelManager.NavMeshPosition(_target.transform.position + TCommon.RandomXZSphere(m_Entity.F_AttackSpread)) + new Vector3(0, b_castAtHead ? _target.tf_Head.position.y : 0, 0);
+        public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
+        {
+            if (i_muzzleIndex > 0)
+                GameObjectManager.SpawnParticles<SFXMuzzle>(i_muzzleIndex, transformBarrel.position, transformBarrel.forward).Play(m_Entity.I_EntityID);
+            GameObjectManager.SpawnEquipment<SFXCast>(I_Index, _calculatedPosition, Vector3.up).Play(GetDamageDeliverInfo());
+        }
+    }
+    public class EquipmentCasterSelfDetonateAnimLess : EquipmentCaster
     {
         ModelBlink m_Blink;
         float timeElapsed;
         bool b_activating;
-        public EnermyCasterSelfDetonateAnimLess(SFXCast _castInfo, EntityCharacterBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo, Transform _blinkModels) : base(_castInfo, _controller, _transform, _GetBuffInfo)
+        public EquipmentCasterSelfDetonateAnimLess(SFXCast _castInfo, EntityCharacterBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo, Transform _blinkModels) : base(_castInfo, _controller, _transform, _GetBuffInfo)
         {
             m_Blink = new ModelBlink(_blinkModels, .25f, .25f,Color.red);
             timeElapsed = 0;
@@ -1904,7 +1922,7 @@ namespace GameSetting
             m_Blink.Tick(Time.deltaTime * timeMultiply);
             if (timeElapsed > 2f)
             {
-                GameObjectManager.SpawnEquipment<SFXCast>(I_Index, attacherTransform.position, attacherTransform.forward).Play(GetDamageDeliverInfo());
+                GameObjectManager.SpawnEquipment<SFXCast>(I_Index, attacherHead.position, attacherHead.forward).Play(GetDamageDeliverInfo());
                 m_Entity.m_HitCheck.TryHit(new DamageInfo(m_Entity.m_Health.F_TotalEHP, enum_DamageType.Common,DamageDeliverInfo.Default(-1)));
                 b_activating = false;
             }
@@ -1928,33 +1946,18 @@ namespace GameSetting
         {
             OnPlayAnim(false);
             m_Cast = GameObjectManager.SpawnEquipment<SFXCast>(I_Index, transformBarrel.position, transformBarrel.forward);
-            m_Cast.PlayControlled(m_Entity.I_EntityID, transformBarrel, attacherTransform, true, GetDamageDeliverInfo());
+            m_Cast.PlayControlled(m_Entity.I_EntityID, transformBarrel, attacherHead, true, GetDamageDeliverInfo());
         }
 
         public override void OnPlayAnim(bool play)
         {
             if (m_Cast)
-                m_Cast.PlayControlled(m_Entity.I_EntityID, transformBarrel, attacherTransform, play, GetDamageDeliverInfo());
+                m_Cast.PlayControlled(m_Entity.I_EntityID, transformBarrel, attacherHead, play, GetDamageDeliverInfo());
         }
         public override void OnDeactivate()
         {
             base.OnDeactivate();
             OnPlayAnim(false);
-        }
-    }
-    public class EquipmentCasterTarget : EquipmentCaster
-    {
-        int i_muzzleIndex;
-        public EquipmentCasterTarget(SFXCast _castInfo, EntityCharacterBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(_castInfo, _controller, _transform, _GetBuffInfo)
-        {
-            i_muzzleIndex = _castInfo.I_MuzzleIndex;
-        }
-        protected override Vector3 GetTargetPosition(bool preAim, EntityCharacterBase _target) => LevelManager.NavMeshPosition(_target.transform.position + TCommon.RandomXZSphere(m_Entity.F_AttackSpread));
-        public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
-        {
-            if (i_muzzleIndex > 0)
-                GameObjectManager.SpawnParticles<SFXMuzzle>(i_muzzleIndex, transformBarrel.position,transformBarrel.forward).Play(m_Entity.I_EntityID);
-            GameObjectManager.SpawnEquipment<SFXCast>(I_Index,_calculatedPosition,Vector3.up).Play( GetDamageDeliverInfo());
         }
     }
     public class EquipmentBarrageRange : EquipmentBase
@@ -2009,9 +2012,9 @@ namespace GameSetting
             Vector3 direction = TCommon.GetXZLookDirection(startPosition, _calculatedPosition);
             int waveCount = m_CountExtension.RandomRangeInt();
             float distance = TCommon.GetXZDistance(startPosition, _calculatedPosition);
-            Vector3 lineBeginPosition = startPosition - attacherTransform.right * m_OffsetExtension * ((waveCount - 1) / 2f);
+            Vector3 lineBeginPosition = startPosition - attacherHead.right * m_OffsetExtension * ((waveCount - 1) / 2f);
             for (int i = 0; i < waveCount; i++)
-                FireBullet(lineBeginPosition + attacherTransform.right * m_OffsetExtension * i, direction, transformBarrel.position + direction * distance);
+                FireBullet(lineBeginPosition + attacherHead.right * m_OffsetExtension * i, direction, transformBarrel.position + direction * distance);
         }
     }
     public class EquipmentBarrageMultipleFan : EquipmentBarrageRange

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class SFXCastTeleportDetonate : SFXCastOverlapSphere {
+public class SFXCastDetonate : SFXCastOverlapSphere {
     ModelBlink m_Blink;
     Transform m_Model;
     float f_blinkCheck;

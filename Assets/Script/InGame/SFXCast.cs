@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class SFXCast : SFXParticles,ISingleCoroutine {
     public enum_CastControllType E_CastType = enum_CastControllType.Invalid;
+    public bool B_CastAtHead = true;
     public float F_Damage;
     public int I_TickCount=1;
     public float F_Tick = .5f;
@@ -26,22 +27,15 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
     public override void Init(int _sfxIndex)
     {
         base.Init(_sfxIndex);
-        if (E_CastType == enum_CastControllType.Invalid)
-            Debug.LogError("Weapon Type Invalid Detected+"+gameObject.name);
-        if (E_AreaType == enum_CastAreaType.Invalid)
-            Debug.LogError("Cast Type Invalid Detected:"+gameObject.name);
-        if (V4_CastInfo == Vector4.zero)
-            Debug.LogError("Cast Size Zero Detected:" + gameObject.name);
-        if (I_TickCount <= 0)
-            Debug.LogError("Tick Count Less Or Equals Zero:" + gameObject.name);
-        if (I_TickCount > 1 && F_Tick <= 0)
-            Debug.LogError("Tick Duration Less Or Equals Zero:" + gameObject.name);
-        if (F_DelayDuration > 0 && I_DelayIndicatorIndex < 0)
-            Debug.LogError("Delay Indicator Less Than Zero:" + gameObject.name);
+#if UNITY_EDITOR
+        EDITOR_DEBUG();
+#endif
     }
     public virtual void Play(DamageDeliverInfo buffInfo)
     {
         SetDamageInfo(buffInfo);
+        PlaySFX(m_DamageInfo.m_detail.I_SourceID, I_TickCount * F_Tick+F_DelayDuration);
+        B_Casting = false;
         if (F_DelayDuration <= 0)
         {
             PlayDelayed();
@@ -54,7 +48,7 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
     }
     public virtual void PlayDelayed()
     {
-        PlaySFX(m_DamageInfo.m_detail.I_SourceID, I_TickCount * F_Tick);
+        this.StopSingleCoroutine(1);
         B_Casting = true;
         if (B_CameraShake)
             TPSCameraController.Instance.AddShake(V4_CastInfo.magnitude);
@@ -65,6 +59,7 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
             B_Casting = false;
         }));
     }
+
     public virtual void PlayControlled(int sourceID, Transform attachTrans, Transform directionTrans, bool play, DamageDeliverInfo buffInfo)
     {
         B_Casting = play;
@@ -152,6 +147,22 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
     }   
     protected virtual void OnDamageEntity(HitCheckEntity hitEntity)=>  hitEntity.TryHit(m_DamageInfo, Vector3.Normalize(hitEntity.transform.position - transform.position));
 
+    protected virtual void EDITOR_DEBUG()
+    {
+
+        if (E_CastType == enum_CastControllType.Invalid)
+            Debug.LogError("Weapon Type Invalid Detected+" + gameObject.name);
+        if (E_AreaType == enum_CastAreaType.Invalid)
+            Debug.LogError("Cast Type Invalid Detected:" + gameObject.name);
+        if (V4_CastInfo == Vector4.zero)
+            Debug.LogError("Cast Size Zero Detected:" + gameObject.name);
+        if (I_TickCount <= 0)
+            Debug.LogError("Tick Count Less Or Equals Zero:" + gameObject.name);
+        if (I_TickCount > 1 && F_Tick <= 0)
+            Debug.LogError("Tick Duration Less Or Equals Zero:" + gameObject.name);
+        if (F_DelayDuration > 0 && I_DelayIndicatorIndex < 0)
+            Debug.LogError("Delay Indicator Less Than Zero:" + gameObject.name);
+    }
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {

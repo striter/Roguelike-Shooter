@@ -193,7 +193,7 @@ namespace GameSetting_Action
 
         public static void PlayerAcquireEntityEquipmentItem(EntityCharacterPlayer player, int equipmentIndex, int health, float fireRate, Func<DamageDeliverInfo> damage)
         {
-            player.OnAcquireEquipment<EquipmentEntitySpawner>(equipmentIndex, damage).SetOnSpawn((EntityCharacterBase entity) => {
+            player.AcquireEquipment<EquipmentEntitySpawner>(equipmentIndex, damage).SetOnSpawn((EntityCharacterBase entity) => {
                 EntityCharacterAI target = entity as EntityCharacterAI;
                 target.I_MaxHealth = health;
                 target.F_AttackDuration = new RangeFloat(0f, 0);
@@ -799,7 +799,7 @@ namespace GameSetting_Action
         public override void OnActionUse()
         {
             base.OnActionUse();
-            m_ActionEntity.OnAcquireEquipment<EquipmentBarrageRange>(m_Index, () =>  DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID,SBuff.CreateActionDOTBuff(m_Index,10f,1f,ActionData.F_20001_RustDamagePerSecond(m_rarity), enum_DamageType.Common)));
+            m_ActionEntity.AcquireEquipment(m_Index, () =>  DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID,SBuff.CreateActionDOTBuff(m_Index,10f,1f,ActionData.F_20001_RustDamagePerSecond(m_rarity), enum_DamageType.Common)));
         }
         public Action_20001_RustShot(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
@@ -811,7 +811,7 @@ namespace GameSetting_Action
         public override void OnActionUse()
         {
             base.OnActionUse();
-            m_ActionEntity.OnAcquireEquipment<EquipmentBarrageRange>(m_Index, ()=>  DamageDeliverInfo.DamageHitInfo(m_ActionEntity.I_EntityID,OnHitEntitiy));
+            m_ActionEntity.AcquireEquipment(m_Index, ()=>  DamageDeliverInfo.DamageHitInfo(m_ActionEntity.I_EntityID,OnHitEntitiy));
         }
         void OnHitEntitiy(EntityBase receiver)
         {
@@ -831,7 +831,7 @@ namespace GameSetting_Action
         public override void OnActionUse()
         {
             base.OnActionUse();
-            m_ActionEntity.OnAcquireEquipment<EquipmentBarrageRange>(m_Index, () => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID,0, enum_CharacterEffect.Freeze,Value1));
+            m_ActionEntity.AcquireEquipment(m_Index, () => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID,0, enum_CharacterEffect.Freeze,Value1));
         }
         public Action_20003_FreezeShot(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
@@ -843,7 +843,7 @@ namespace GameSetting_Action
         public override void OnActionUse()
         {
             base.OnActionUse();
-            m_ActionEntity.OnAcquireEquipment<EquipmentBarrageRange>(m_Index, () => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, 0, enum_CharacterEffect.Freeze, Value1));
+            m_ActionEntity.AcquireEquipment(m_Index, () => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, 0, enum_CharacterEffect.Freeze, Value1));
         }
         public Action_20004_FreezeGrenade(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
@@ -861,6 +861,18 @@ namespace GameSetting_Action
         }
         public Action_20005_FreezeTurret(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
+    public class Action_20006_FreezeMine : ActionAfterUse
+    {
+        public override int m_Index => 20006;
+        public override int I_BaseCost => ActionData.I_20006_Cost;
+        public override float Value1 => ActionData.F_20006_FreezeDuration(m_rarity);
+        public override void OnActionUse()
+        {
+            base.OnActionUse();
+            m_ActionEntity.AcquireEquipment(m_Index, () => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, 0, enum_CharacterEffect.Freeze, Value1));
+        }
+        public Action_20006_FreezeMine(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
     public class Action_20013_Grenade:ActionAfterUse
     {
         public override int m_Index => 20013;
@@ -868,7 +880,7 @@ namespace GameSetting_Action
         public override void OnActionUse()
         {
             base.OnActionUse();
-            m_ActionEntity.OnAcquireEquipment<EquipmentBarrageRange>(m_Index, () => DamageDeliverInfo.DamageInfo(m_ActionEntity.I_EntityID, 0, Value1*m_ActionEntity.m_WeaponCurrent.F_BaseDamage));
+            m_ActionEntity.AcquireEquipment<EquipmentBarrageRange>(m_Index, () => DamageDeliverInfo.DamageInfo(m_ActionEntity.I_EntityID, 0, Value1*m_ActionEntity.m_WeaponCurrent.F_BaseDamage));
         }
         public Action_20013_Grenade(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
