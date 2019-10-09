@@ -1295,7 +1295,7 @@ namespace GameSetting
             if (action == null)
                 return;
 
-            F_DamageAdditive += action.F_DamageAdditive;
+            F_DamageAdditive += action.m_DamageAdditive;
             F_RecoilMultiply -= action.F_RecoilReduction;
             F_AimMovementStrictMultiply -= action.F_AimStrictReduction;
             F_ProjectileSpeedMuiltiply += action.F_ProjectileSpeedMultiply;
@@ -1563,7 +1563,7 @@ namespace GameSetting
         public virtual float Value1 => 0;
         public virtual float Value2 => 0;
         public virtual float Value3 => 0;
-        public virtual float F_DamageAdditive => 0;
+        public virtual float m_DamageAdditive => 0;
         public virtual float F_RecoilReduction => 0;
         public virtual float F_AimStrictReduction => 0;
         public virtual float F_ProjectileSpeedMultiply => 0;

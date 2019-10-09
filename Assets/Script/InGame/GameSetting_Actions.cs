@@ -192,6 +192,60 @@ namespace GameSetting_Action
         public static float P_20013_DamageMultiplyBase(enum_RarityLevel rarity) => 100 + 100 * (int)rarity;
         #endregion
         #region 30000-39999
+        public const int I_30001_Cost = 2;
+        public static float F_30001_DamagePerStack(enum_RarityLevel rarity) => 2 + 2 * (int)rarity;
+        public const int I_30001_MaxStack = 25;
+
+        public const int I_30002_Cost = 3;
+        public static float P_30002_SingleShotDamageMultiplyAfterKill(enum_RarityLevel rarity) => 40 + 40 * (int)rarity;
+
+        public const int I_30003_Cost = 2;
+        public static float F_30003_ExplosiveDamage(enum_RarityLevel rarity) => 25 + 25 * (int)rarity;
+
+        public const int I_30004_Cost = 2;
+        public static float P_30004_ReloadSpeedMultiply(enum_RarityLevel rarity) => 10 + 10 * (int)rarity;
+
+        public const int I_30005_Cost = 2;
+        public static float F_30005_FreezeDuration(enum_RarityLevel rarity) => .1f + .1f * (int)rarity;
+
+        public const int I_30006_Cost = 1;
+        public static float F_30006_FreezeDuration(enum_RarityLevel rarity) => 1 + 2 * (int)rarity;
+
+        public const int I_30007_Cost = 1;
+        public static float F_30007_DamageStackLimit(enum_RarityLevel rarity) => 35;
+        public static float F_30007_FreezeDurationPerStack(enum_RarityLevel rarity) => .1f + .2f * (int)rarity;
+
+        public static int I_30008_Cost(enum_RarityLevel rarity) => 3 - (int)rarity;
+        public static float F_30008_FreezeDuration(enum_RarityLevel rarity) => F_20006_FreezeDuration(rarity);
+
+        public const int I_30009_Cost = 2;
+        public static float P_30009_EquipmentHealthAddup(enum_RarityLevel rarity) => 25 * (int)rarity;
+
+        public const int I_30010_Cost = 2;
+        public static float F_30010_MaxHealthAddup(enum_RarityLevel rarity) => 2 * (int)rarity;
+
+        public const int I_30011_Cost = 2;
+        public static float P_30011_MaxHealthRegen(enum_RarityLevel rarity) => 2 * (int)rarity;
+
+        public const int I_30012_Cost = 2;
+        public static float P_30012_HealthRegenEachKill(enum_RarityLevel rarity) => 15 * (int)rarity;
+
+        public const int I_30013_Cost = 2;
+        public static float F_30013_HealthRegenMultiply(enum_RarityLevel rarity) => 1 * .8f * (int)rarity;
+
+        public const int I_30014_Cost = 3;
+        public static float F_30014_DamageReductionDuration(enum_RarityLevel rarity) => .5f+ .5f*(int)rarity;
+
+        public const int I_30015_Cost = 2;
+        public static float F_30015_DamageReflectPerArmor(enum_RarityLevel rarity) => 1 + 1 * (int)rarity;
+
+        public const int I_30016_Cost = 2;
+        public static float P_30016_ProjectileSpeedMultiply(enum_RarityLevel rarity) => 50 * (int)rarity;
+
+        public const int I_30017_Cost = 2;
+        public static float F_30017_ArmorAdditive(enum_RarityLevel rarity) => 6 * (int)rarity;
+        
+        public static int I_30018_Cost(enum_RarityLevel rarity)=>4-(int) rarity;
         #endregion
     }
     #endregion
@@ -199,7 +253,6 @@ namespace GameSetting_Action
     #region DevelopersUse
     public static class ActionHelper
     {
-
         public static void PlayerAcquireEntityEquipmentItem(EntityCharacterPlayer player, int equipmentIndex, int health, float fireRate, Func<DamageDeliverInfo> damage)
         {
             player.AcquireEquipment<EquipmentEntitySpawner>(equipmentIndex, damage).SetOnSpawn((EntityCharacterBase entity) => {
@@ -450,7 +503,7 @@ namespace GameSetting_Action
         public override float F_Duration => ActionData.F_10010_Duration;
         public override float Value1 => ActionData.F_10010_DamageReduction;
         public override float Value2 => ActionData.P_10010_FireRateAdditive(m_rarity);
-        public override float F_DamageAdditive => -Value1;
+        public override float m_DamageAdditive => -Value1;
         public override float m_FireRateMultiply => Value2/100f;
         public Action_10010_FirerateAdditiveDamageReduction(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
@@ -472,7 +525,7 @@ namespace GameSetting_Action
         public override int I_BaseCost => ActionData.I_10012_Cost;
         public override float F_Duration => ActionData.F_10012_Duration;
         public override float Value1 => ActionData.F_10012_DamageAdditive(m_rarity);
-        public override float F_DamageAdditive => Value1;
+        public override float m_DamageAdditive => Value1;
         public Action_10012_DamageAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
 
@@ -662,7 +715,7 @@ namespace GameSetting_Action
         public override int I_BaseCost => ActionData.I_10026_Cost;
         public override float F_Duration => ActionData.F_10026_Duration;
         public override float Value1 => ActionData.F_10026_DamageAdditiveMultiplyWithArmor(m_rarity);
-        public override float F_DamageAdditive=> Value1 * m_ActionEntity.m_PlayerHealth.m_CurrentArmor; 
+        public override float m_DamageAdditive=> Value1 * m_ActionEntity.m_PlayerHealth.m_CurrentArmor; 
         public Action_10026_DamageAdditiveArmorMultiply(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
 
@@ -686,7 +739,7 @@ namespace GameSetting_Action
         public override int m_Index => 10028;
         public override int I_BaseCost => ActionData.I_10028_Cost;
         public override float Value1 => ActionData.P_10028_NextShotDamageMultiplyPerArmor(m_rarity);
-        public override float F_DamageAdditive => m_BurstShot ? Value1 * m_ActionEntity.m_PlayerHealth.m_CurrentArmor / 100f:0;
+        public override float m_DamageAdditive => m_BurstShot ? Value1 * m_ActionEntity.m_PlayerHealth.m_CurrentArmor / 100f:0;
         public Action_10028_ArmorSingleShot(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
 
@@ -969,6 +1022,46 @@ namespace GameSetting_Action
     }
     #endregion
     #region 30000-39999
+    public class Action_30001_DamageMovementStackup : ActionStackUp
+    {
+        public override int m_Index => 30001;
+        public override int I_BaseCost => ActionData.I_30001_Cost;
+        public override float Value1 => ActionData.F_30001_DamagePerStack(m_rarity);
+        public override float Value2 => Value1*ActionData.I_30001_MaxStack;
+        public override float m_DamageAdditive => Value1 * m_stackUp;
+
+        public override void OnFire(int identity)
+        {
+            base.OnFire(identity);
+            ResetStack();
+        }
+        public override void OnMove(float distsance) => OnStackUp(distsance);
+        public Action_30001_DamageMovementStackup(int _identity, enum_RarityLevel _level) : base(_identity, _level, ActionData.I_30001_MaxStack) { }
+    }
+    public class Action_30002_KillDamageMultiply : ActionBase
+    {
+        public override int m_Index => 30002;
+        public override int I_BaseCost => ActionData.I_30002_Cost;
+        public override float Value1 => ActionData.P_30002_SingleShotDamageMultiplyAfterKill(m_rarity);
+        public override float m_DamageMultiply => m_burstShot ? Value1/100f : 0f;
+        bool m_burstShot = false;
+        public override void OnFire(int identity)
+        {
+            base.OnFire(identity);
+            m_burstShot = false;
+        }
+        public override void OnDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        {
+            base.OnDealtDemage(receiver, info, applyAmount);
+            m_burstShot = receiver.m_Health.b_IsDead;
+        }
+        public override void OnTick(float deltaTime)
+        {
+            base.OnTick(deltaTime);
+            Debug.Log(m_burstShot);
+        }
+        public Action_30002_KillDamageMultiply(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
     #endregion
     #endregion
     #endregion
