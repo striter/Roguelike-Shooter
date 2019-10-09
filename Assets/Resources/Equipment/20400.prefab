@@ -321,6 +321,7 @@ MonoBehaviour:
   E_ProjectileType: 1
   F_Damage: 0
   F_Speed: 10
+  B_Piercing: 0
   I_MuzzleIndex: 0
   I_ImpactIndex: 0
   I_IndicatorIndex: 0
@@ -339,4 +340,4 @@ MonoBehaviour:
   B_Bounce: 1
   F_BounceHitAngleMax: 0
   F_BounceSpeedMultiply: 0.5
-  F_AdditionalLasetTimeAfterHit: 2
+  F_CastTimeAfterHit: 2

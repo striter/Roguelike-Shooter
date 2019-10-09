@@ -873,6 +873,17 @@ namespace GameSetting_Action
         }
         public Action_20006_FreezeMine(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
+    public class Action_20007_TeleportDevice : ActionAfterUse
+    {
+        public override int m_Index => 20007;
+        public override int I_BaseCost => ActionData.I_20007_Cost(m_rarity);
+        public override void OnActionUse()
+        {
+            base.OnActionUse();
+            m_ActionEntity.AcquireEquipment(m_Index, () => DamageDeliverInfo.Default(m_ActionEntity.I_EntityID));
+        }
+        public Action_20007_TeleportDevice(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
     public class Action_20013_Grenade:ActionAfterUse
     {
         public override int m_Index => 20013;

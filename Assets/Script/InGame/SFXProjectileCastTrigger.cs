@@ -19,7 +19,7 @@ public class SFXProjectileCastTrigger : SFXProjectile
     {
         OnCastTrigger(hit.point==Vector3.zero?v3_castPoint:hit.point);
     }
-    protected void OnCastTrigger(Vector3 point)
+    protected virtual void OnCastTrigger(Vector3 point)
     {
         if (b_trigger)
             return;
