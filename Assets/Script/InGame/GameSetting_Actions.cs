@@ -548,17 +548,7 @@ namespace GameSetting_Action
         public override float F_Duration => ActionData.F_10018_Duration;
         public override float Value1 => ActionData.F_10018_PerStackHealthLoss;
         public override float Value2 => ActionData.P_10018_HealthStealPerStack(m_rarity);
-        float healthStealAmount;
-        public override void OnTick(float deltaTime)
-        {
-            base.OnTick(deltaTime);
-            healthStealAmount =Value2/100f*(m_ActionEntity.m_Health.m_MaxHealth-m_ActionEntity.m_Health.m_CurrentHealth)/Value1 ;
-        }
-
-        public override void OnDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
-        { 
-            ActionHelper.ReceiveHealing(m_ActionEntity,applyAmount*healthStealAmount, enum_DamageType.HealthOnly);
-        }
+        public override float m_HealthDrainMultiply => Value2 / 100f * (m_ActionEntity.m_Health.m_MaxHealth - m_ActionEntity.m_Health.m_CurrentHealth) / Value1;
         public Action_10018_HealthSteal(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
 
@@ -939,8 +929,8 @@ namespace GameSetting_Action
             });
         }
 
-        DamageDeliverInfo PlayerBuff() => DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID,SBuff.CreateMovementActionBuff(m_Index,Value2/100f,.5f));
-        DamageDeliverInfo AllyBuff() => DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID, SBuff.CreateMovementActionBuff(m_Index, Value3 / 100f, .5f));
+        DamageDeliverInfo PlayerBuff() => DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID,SBuff.CreateActionHealthDrainBuff(m_Index,Value2/100f,.5f));
+        DamageDeliverInfo AllyBuff() => DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID, SBuff.CreateActionHealthDrainBuff(m_Index, Value3 / 100f, .5f));
         public Action_20010_HealthDrainDevice(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
 

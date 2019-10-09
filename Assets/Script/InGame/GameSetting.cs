@@ -680,6 +680,7 @@ namespace GameSetting
         float f_movementSpeedMultiply;
         float f_fireRateMultiply;
         float f_reloadRateMultiply;
+        float f_healthDrainMultiply;
         float f_damageMultiply;
         float f_damageReduce;
         float f_damageTickTime;
@@ -693,6 +694,7 @@ namespace GameSetting
         public float m_MovementSpeedMultiply => f_movementSpeedMultiply;
         public float m_FireRateMultiply => f_fireRateMultiply;
         public float m_ReloadRateMultiply => f_reloadRateMultiply;
+        public float m_HealthDrainMultiply => f_healthDrainMultiply;
         public float m_DamageMultiply => f_damageMultiply;
         public float m_DamageReduction => f_damageReduce;
         public float m_DamageTickTime => f_damageTickTime;
@@ -706,6 +708,7 @@ namespace GameSetting
             f_reloadRateMultiply = f_reloadRateMultiply > 0 ? f_reloadRateMultiply / 100f : 0;
             f_damageMultiply = f_damageMultiply > 0 ? f_damageMultiply / 100f : 0;
             f_damageReduce = f_damageReduce > 0 ? f_damageReduce / 100f : 0;
+            f_healthDrainMultiply = f_healthDrainMultiply > 0 ? f_healthDrainMultiply / 100f : 0;
         }
         //Normally In Excel 0-99
         //100-999
@@ -736,6 +739,15 @@ namespace GameSetting
             buff.index = actionIndex * 10;
             buff.i_addType = (int)enum_ExpireRefreshType.Refresh;
             buff.f_movementSpeedMultiply = movementMultiply;
+            buff.f_expireDuration = duration;
+            return buff;
+        }
+        public static SBuff CreateActionHealthDrainBuff(int actionIndex, float healthDrainAmount, float duration)
+        {
+            SBuff buff = new SBuff();
+            buff.index = actionIndex * 10;
+            buff.i_addType = (int)enum_ExpireRefreshType.Refresh;
+            buff.f_healthDrainMultiply = healthDrainAmount;
             buff.f_expireDuration = duration;
             return buff;
         }
@@ -1007,6 +1019,7 @@ namespace GameSetting
         protected float F_FireRateMultiply { get; private set; } = 1f;
         protected float F_ReloadRateMultiply { get; private set; } = 1f;
         protected float F_DamageMultiply { get; private set; } = 0f;
+        protected float F_HealthDrainMultiply { get; private set; } = 0f;
         public float F_FireRateTick(float deltaTime) => deltaTime * F_FireRateMultiply;
         public float F_ReloadRateTick(float deltaTime) => deltaTime * F_ReloadRateMultiply;
         public float F_MovementSpeed => m_Entity.m_baseMovementSpeed * F_MovementSpeedMultiply;
@@ -1037,8 +1050,18 @@ namespace GameSetting
         {
             Reset();
             m_DamageBuffOverride = null;
+            TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterDamage, OnCharacterDamage);
         } 
-        public virtual void OnDeactivate() { }
+        public virtual void OnDeactivate()
+        {
+            TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterDamage, OnCharacterDamage);
+        }
+
+        protected virtual void OnCharacterDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
+        {
+            if (F_HealthDrainMultiply > 0 && damageInfo.m_detail.I_SourceID == m_Entity.I_EntityID)
+                m_Entity.m_HitCheck.TryHit(new DamageInfo(-amountApply*F_HealthDrainMultiply, enum_DamageType.HealthOnly,DamageDeliverInfo.Default(m_Entity.I_EntityID)));
+        }
         public virtual void OnDead() => Reset();
 
         protected virtual void Reset()
@@ -1093,20 +1116,6 @@ namespace GameSetting
                     break;
             }
         }
-        protected virtual void OnSetExpireInfo(ExpireBase expire)
-        {
-            F_DamageMultiply += expire.m_DamageMultiply;
-            F_DamageReceiveMultiply -= expire.m_DamageReduction;
-            F_MovementSpeedMultiply += expire.m_MovementSpeedMultiply;
-            F_FireRateMultiply += expire.m_FireRateMultiply;
-            F_ReloadRateMultiply += expire.m_ReloadRateMultiply;
-
-            if (F_DamageReceiveMultiply < 0)
-                F_DamageReceiveMultiply = 0;
-
-            if (F_MovementSpeedMultiply < 0)
-                F_MovementSpeedMultiply = 0;
-        }
         protected virtual void OnResetInfo()
         {
             F_DamageReceiveMultiply = 1f;
@@ -1114,13 +1123,29 @@ namespace GameSetting
             F_FireRateMultiply = 1f;
             F_ReloadRateMultiply = 1f;
             F_DamageMultiply = 0f;
+            F_HealthDrainMultiply = 0f;
+        }
+        protected virtual void OnSetExpireInfo(ExpireBase expire)
+        {
+            F_DamageMultiply += expire.m_DamageMultiply;
+            F_DamageReceiveMultiply -= expire.m_DamageReduction;
+            F_MovementSpeedMultiply += expire.m_MovementSpeedMultiply;
+            F_FireRateMultiply += expire.m_FireRateMultiply;
+            F_ReloadRateMultiply += expire.m_ReloadRateMultiply;
+            F_HealthDrainMultiply += expire.m_HealthDrainMultiply;
+        }
+        protected virtual void AfterInfoSet()
+        {
+            if (F_DamageReceiveMultiply < 0) F_DamageReceiveMultiply = 0;
+            if (F_MovementSpeedMultiply < 0) F_MovementSpeedMultiply = 0;
+            if (F_HealthDrainMultiply < 0) F_HealthDrainMultiply = 0;
         }
         void UpdateExpireInfo()
         {
             b_expireUpdated = true;
             OnResetInfo();
             m_Expires.Traversal(OnSetExpireInfo);
-
+            AfterInfoSet();
             //Do Effect Removal Check
             for (int i = 0; i < m_BuffEffects.Count; i++)
             {
@@ -1186,13 +1211,7 @@ namespace GameSetting
         public override void OnActivate()
         {
             base.OnActivate();
-            TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterDamage, OnCharacterDamage);
             m_prePos = m_Entity.transform.position;
-        }
-        public override void OnDeactivate()
-        {
-            base.OnDeactivate();
-            TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterDamage, OnCharacterDamage);
         }
         
         public override void Tick(float deltaTime)
@@ -1283,12 +1302,12 @@ namespace GameSetting
             F_ClipMultiply += action.F_ClipMultiply;
             B_OneOverride |= action.B_ClipOverride;
             I_ClipAdditive += action.I_ClipAdditive;
-
-            if (F_RecoilMultiply < 0)
-                F_RecoilMultiply = 0;
-
-            if (F_AimMovementStrictMultiply < 0)
-                F_AimMovementStrictMultiply = 0;
+        }
+        protected override void AfterInfoSet()
+        {
+            base.AfterInfoSet();
+            if (F_AimMovementStrictMultiply < 0)  F_AimMovementStrictMultiply = 0;
+            if (F_RecoilMultiply < 0)  F_RecoilMultiply = 0;
         }
         public override DamageDeliverInfo GetDamageBuffInfo()
         {
@@ -1309,8 +1328,9 @@ namespace GameSetting
             m_ActionEquiping.Clear();
             base.OnDead();
         }
-        void OnCharacterDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
+        protected override void OnCharacterDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
         {
+            base.OnCharacterDamage(damageInfo,damageEntity,amountApply);
             if (damageInfo.m_detail.I_SourceID == m_Player.I_EntityID)
             {
                 m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDemage(damageEntity,damageInfo, amountApply); });
@@ -1461,6 +1481,7 @@ namespace GameSetting
         public virtual float m_MovementSpeedMultiply => 0;
         public virtual float m_FireRateMultiply => 0;
         public virtual float m_ReloadRateMultiply => 0;
+        public virtual float m_HealthDrainMultiply => 0;
         public virtual float m_DamageMultiply => 0;
         public virtual float m_DamageReduction => 0;
         public virtual float m_EffectDuration => m_ExpireDuration;
@@ -1503,6 +1524,7 @@ namespace GameSetting
         public override float m_FireRateMultiply => m_buffInfo.m_FireRateMultiply;
         public override float m_MovementSpeedMultiply => m_buffInfo.m_MovementSpeedMultiply;
         public override float m_ReloadRateMultiply => m_buffInfo.m_ReloadRateMultiply;
+        public override float m_HealthDrainMultiply => m_buffInfo.m_HealthDrainMultiply;
         public float m_StunDuration => m_buffInfo.m_Stun ? m_buffInfo.m_ExpireDuration : 0f;
         SBuff m_buffInfo;
         Func<DamageInfo, bool> OnDOTDamage;
