@@ -394,7 +394,7 @@ namespace GameSetting_Action
         public override float Value2 => ActionData.P_10005_OnKill_Buff_MovementSpeed(m_rarity);
         public override float Value3 => ActionData.F_10005_OnKill_Buff_Duration;
         public override float m_DamageMultiply => m_BurstShot ? Value1/100f : 0f;
-        protected override void OnShotsKill()=>ActionHelper.ReciveBuff(m_ActionEntity,SBuff.CreateActionBuff(m_Index,Value2/100f,Value3));
+        protected override void OnShotsKill()=>ActionHelper.ReciveBuff(m_ActionEntity,SBuff.CreateMovementActionBuff(m_Index,Value2/100f,Value3));
         public Action_10005_SingleShotMovementAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
 
@@ -807,7 +807,7 @@ namespace GameSetting_Action
         public override void OnActionUse()
         {
             base.OnActionUse();
-            m_ActionEntity.AcquireEquipment(m_Index, () =>  DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID,SBuff.CreateActionDOTBuff(m_Index,10f,1f,ActionData.F_20001_RustDamagePerSecond(m_rarity), enum_DamageType.Common)));
+            m_ActionEntity.AcquireEquipment(m_Index, () =>  DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID,SBuff.CreateActionDamageBuff(m_Index,10f,1f,ActionData.F_20001_RustDamagePerSecond(m_rarity), enum_DamageType.Common)));
         }
         public Action_20001_RustShot(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
@@ -939,8 +939,8 @@ namespace GameSetting_Action
             });
         }
 
-        DamageDeliverInfo PlayerBuff() => DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID,SBuff.CreateActionBuff(m_Index,Value2/100f,.5f));
-        DamageDeliverInfo AllyBuff() => DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID, SBuff.CreateActionBuff(m_Index, Value3 / 100f, .5f));
+        DamageDeliverInfo PlayerBuff() => DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID,SBuff.CreateMovementActionBuff(m_Index,Value2/100f,.5f));
+        DamageDeliverInfo AllyBuff() => DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID, SBuff.CreateMovementActionBuff(m_Index, Value3 / 100f, .5f));
         public Action_20010_HealthDrainDevice(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
 
@@ -952,6 +952,16 @@ namespace GameSetting_Action
         public override float Value2 => ActionData.F_20012_PlayerHealthRegen(m_rarity);
         public override float Value3 => ActionData.F_20012_AIHealthRegen(m_rarity);
 
+        public override void OnActionUse()
+        {
+            base.OnActionUse();
+            m_ActionEntity.AcquireEquipment<EquipmentEntitySpawner>(m_Index).SetOnSpawn((EntityCharacterBase entity) => {
+                entity.SetHealth(Value1);
+                (entity as EntityDeviceBuffApllier).SetBuffApply(PlayerBuff, AllyBuff, .4f);
+            });
+        }
+        DamageDeliverInfo PlayerBuff() => DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID, SBuff.CreateActionHealthBuff(m_Index, Value2,1f, .5f));
+        DamageDeliverInfo AllyBuff() => DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID, SBuff.CreateActionHealthBuff(m_Index, Value3,1f, .5f));
         public Action_20012_HealthRegenDevice(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
     public class Action_20013_Grenade:ActionAfterUse

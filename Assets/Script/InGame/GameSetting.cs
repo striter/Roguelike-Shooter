@@ -730,7 +730,7 @@ namespace GameSetting
             return buff;
         }
         //100000-999999
-        public static SBuff CreateActionBuff(int actionIndex,float movementMultiply,float duration)
+        public static SBuff CreateMovementActionBuff(int actionIndex,float movementMultiply,float duration)
         {
             SBuff buff = new SBuff();
             buff.index = actionIndex * 10;
@@ -739,7 +739,18 @@ namespace GameSetting
             buff.f_expireDuration = duration;
             return buff;
         }
-        public static SBuff CreateActionDOTBuff(int actionIndex,float duration, float damageTickTime, float damagePerTick,enum_DamageType damageType)
+        public static SBuff CreateActionHealthBuff(int actionIndex, float healthPerTick,float healthTick, float duration)
+        {
+            SBuff buff = new SBuff();
+            buff.index = actionIndex * 10;
+            buff.i_addType = (int)enum_ExpireRefreshType.Refresh;
+            buff.i_damageType = (int)enum_DamageType.HealthOnly;
+            buff.f_damageTickTime = healthTick;
+            buff.f_damagePerTick = -healthPerTick;
+            buff.f_expireDuration = duration;
+            return buff;
+        }
+        public static SBuff CreateActionDamageBuff(int actionIndex,float duration, float damageTickTime, float damagePerTick,enum_DamageType damageType)
         {
             SBuff buff = new SBuff();
             buff.index = actionIndex * 10;
