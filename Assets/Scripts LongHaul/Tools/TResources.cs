@@ -88,10 +88,10 @@ public class TResources
     public static Dictionary<int, EntityBase> GetCommonEntities()
     {
         Dictionary<int, EntityBase> entitisDic = new Dictionary<int, EntityBase>();
-        EntityCharacterBase[] entities = LoadAll<EntityCharacterBase>(ConstPath.S_Entity + "Common");
-        entities.Traversal((EntityCharacterBase entity) => {
+        EntityBase[] entities = LoadAll<EntityBase>(ConstPath.S_Entity + "Common");
+        entities.Traversal((EntityBase entity) => {
             int index = int.Parse(entity.name.Split('_')[0]);
-            entitisDic.Add(index, GameObject.Instantiate<EntityCharacterBase>(entity));
+            entitisDic.Add(index, GameObject.Instantiate<EntityBase>(entity));
             PreloadMaterials(entity.gameObject);
         });
         return entitisDic;

@@ -1005,7 +1005,9 @@ namespace GameSetting
         protected void ResetEffect(enum_CharacterEffect type) => m_Effects[type].Reset();
         public void OnSetEffect(enum_CharacterEffect type, float duration) => m_Effects[type].OnSet(duration);
 
-        public virtual DamageDeliverInfo GetDamageBuffInfo() => DamageDeliverInfo.DamageInfo(m_Entity.I_EntityID, F_DamageMultiply, 0f);
+        Func<DamageDeliverInfo> m_DamageBuffOverride;
+        public void AddDamageOverride(Func<DamageDeliverInfo> _damageOverride) => m_DamageBuffOverride = _damageOverride;
+        public virtual DamageDeliverInfo GetDamageBuffInfo() => m_DamageBuffOverride != null ? DamageDeliverInfo.DamageOverrideInfo(m_Entity.I_EntityID, m_DamageBuffOverride()) : DamageDeliverInfo.DamageInfo(m_Entity.I_EntityID, F_DamageMultiply, 0f);
         Func<DamageInfo, bool> OnReceiveDamage;
         Action OnExpireChange;
 
@@ -1020,7 +1022,11 @@ namespace GameSetting
             TCommon.TraversalEnum((enum_CharacterEffect effect) => { m_Effects.Add(effect, new EffectCounterBase()); });
         }
 
-        public virtual void OnActivate() => Reset();
+        public virtual void OnActivate()
+        {
+            Reset();
+            m_DamageBuffOverride = null;
+        } 
         public virtual void OnDeactivate() { }
         public virtual void OnDead() => Reset();
 
@@ -1132,21 +1138,6 @@ namespace GameSetting
                     m_BuffEffects.Add(particle);
                 }
             }
-        }
-    }
-
-    public class EntitySubInfoManager : CharacterInfoManager
-    {
-        Func<DamageDeliverInfo> m_DamageBuffOverride;
-        public void AddDamageOverride(Func<DamageDeliverInfo> _damageOverride)=> m_DamageBuffOverride = _damageOverride;
-        public override DamageDeliverInfo GetDamageBuffInfo() => m_DamageBuffOverride != null ? DamageDeliverInfo.DamageOverrideInfo(m_Entity.I_EntityID, m_DamageBuffOverride()) : base.GetDamageBuffInfo();
-        public override void OnActivate()
-        {
-            base.OnActivate();
-            m_DamageBuffOverride = null;
-        }
-        public EntitySubInfoManager(EntityCharacterBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
-        {
         }
     }
 

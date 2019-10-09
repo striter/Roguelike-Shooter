@@ -15,6 +15,11 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     public virtual float m_baseMovementSpeed => F_MovementSpeed;
     public override bool B_IsCharacter => true;
     protected override float DamageReceiveMultiply => m_CharacterInfo.F_DamageReceiveMultiply;
+
+    public int m_SpawnerEntityID { get; private set; }
+    public void SetSpawnerID(int _spawnerEntityID) => m_SpawnerEntityID = _spawnerEntityID;
+    public bool b_isSubEntity => m_SpawnerEntityID != -1;
+
     public override void Init(int _poolIndex)
     {
         base.Init(_poolIndex);
@@ -27,16 +32,26 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     public override void OnActivate(enum_EntityFlag _flag)
     {
        base.OnActivate(_flag);
+        m_SpawnerEntityID = -1;
         m_Effect.OnReset();
         m_CharacterInfo.OnActivate();
         this.StopSingleCoroutine(0);
     }
+    public void SetHealth(float health)
+    {
+        I_MaxHealth = (int)health;
+        ActivateHealthManager();
+    }
 
     protected virtual void OnExpireChange(){}
-    protected virtual void OnEnable() { }
-    protected virtual void OnDisable()
+    protected virtual void OnEnable()
     {
-        this.StopSingleCoroutines(0);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinished);
+    }
+    protected virtual void OnDisable()
+{
+    TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinished);
+    this.StopSingleCoroutines(0);
     }
     protected virtual void Update()
     {
@@ -86,6 +101,11 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         base.OnRecycle();
         m_CharacterInfo.OnDeactivate();
         m_Effect.OnRecycle();
+    }
+    protected virtual void OnBattleFinished()
+    {
+        if (b_isSubEntity)
+            OnDead();
     }
 
     class EntityCharacterEffectManager:ISingleCoroutine

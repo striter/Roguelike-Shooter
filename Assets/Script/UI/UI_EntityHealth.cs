@@ -30,7 +30,7 @@ public class UI_EntityHealth : UIToolsBase {
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterDamage, OnCharacterDamage);
     }
 
-    bool b_showEntityHealthInfo(EntityBase entity) => (entity as EntityCharacterPlayer) == null;
+    bool b_showEntityHealthInfo(EntityBase entity) => entity.m_Controller != enum_EntityController.Player;
     int damageCount=0;
     void OnEntityActivate(EntityBase entity)
     {

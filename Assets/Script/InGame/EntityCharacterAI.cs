@@ -28,6 +28,7 @@ public class EntityCharacterAI : EntityCharacterBase {
     bool OnCheckTarget(EntityCharacterBase target) => target.m_Flag!=m_Flag && !target.m_Health.b_IsDead;
     public override Vector3 m_PrecalculatedTargetPos(float time)=> tf_Head.position;
     protected override HealthBase GetHealthManager()=>new AIHealth(this,OnHealthChanged, OnDead);
+
     public override void Init(int entityPresetIndex)
     {
         base.Init(entityPresetIndex);
@@ -42,11 +43,13 @@ public class EntityCharacterAI : EntityCharacterBase {
         m_AI.OnActivate();
         base.OnActivate(_flag);
     }
+
     public void SetEnermyDifficulty(float baseHealthMultiplier, float maxHealthMultiplier,SBuff difficultyBuff)
     {
         m_CharacterInfo.AddBuff(-1, difficultyBuff);
         (m_Health as AIHealth).SetHealth(I_MaxHealth*baseHealthMultiplier,maxHealthMultiplier);
     }
+
     protected override void OnDead()
     {
         base.OnDead();
@@ -62,6 +65,7 @@ public class EntityCharacterAI : EntityCharacterBase {
             m_Animator.SetMovementSpeed(m_CharacterInfo.F_MovementSpeed);
         m_AI.OnInfoChange();
     }
+
     protected override void Update()
     {
         base.Update();
@@ -77,12 +81,14 @@ public class EntityCharacterAI : EntityCharacterBase {
         m_AI.SetPlay(!m_CharacterInfo.B_Effecting( enum_CharacterEffect.Freeze));
         m_AI.OnTick(Time.deltaTime);
     }
+
     protected override bool OnReceiveDamage(DamageInfo damageInfo, Vector3 damageDirection)
     {
         if(damageDirection!=Vector3.zero)
             transform.Translate(damageDirection *GameConst.F_AIDamageTranslate * -damageInfo.m_AmountApply);
         return base.OnReceiveDamage(damageInfo, damageDirection);
     }
+
     void OnAttackAnim(EntityCharacterBase target,bool startAttack)
     {
         if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
@@ -90,6 +96,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         else if(startAttack)
             OnAnimKeyEvent(TAnimatorEvent.enum_AnimEvent.Fire);
     }
+
     protected void OnAnimKeyEvent(TAnimatorEvent.enum_AnimEvent animEvent)
     {
         switch (animEvent)
@@ -99,8 +106,7 @@ public class EntityCharacterAI : EntityCharacterBase {
                 break;
         }
     }
-
-
+    
     public class EnermyAnimator : AnimatorClippingTime
     {
         static readonly int HS_T_Dead = Animator.StringToHash("t_dead");

@@ -175,9 +175,17 @@ namespace GameSetting_Action
         public static float F_20009_Damage(enum_RarityLevel rarity) => 10f + 10f * (int)rarity;
         public const float F_20009_FireRate = 1f;
 
+        public const int I_20010_Cost = 3;
+        public static float F_20010_Health(enum_RarityLevel rarity) => 300;
+        public static float P_20010_PlayerHealthDrain(enum_RarityLevel rarity) =>2+4*(int)rarity;
+        public static float P_20010_AIHealthDrain(enum_RarityLevel rarity) => 20 + 40 * (int)rarity;
+
+        //20011 To Be Continued
+        
         public const int I_20012_Cost = 2;
-        public static float F_20012_AllyHealthRegen(enum_RarityLevel rarity) => 3 * (int)rarity;
-        public static float F_20012_SelfHealthRegen(enum_RarityLevel rarity) => 15 * (int)rarity;
+        public static float F_20012_Health(enum_RarityLevel rarity) => 200;
+        public static float F_20012_PlayerHealthRegen(enum_RarityLevel rarity) => 3 * (int)rarity;
+        public static float F_20012_AIHealthRegen(enum_RarityLevel rarity) => 15 * (int)rarity;
 
         public const int I_20013_Cost = 2;
         public static float P_20013_DamageMultiplyBase(enum_RarityLevel rarity) => 100 + 100 * (int)rarity;
@@ -195,7 +203,7 @@ namespace GameSetting_Action
         {
             player.AcquireEquipment<EquipmentEntitySpawner>(equipmentIndex, damage).SetOnSpawn((EntityCharacterBase entity) => {
                 EntityCharacterAI target = entity as EntityCharacterAI;
-                target.I_MaxHealth = health;
+                target.SetHealth(health);
                 target.F_AttackDuration = new RangeFloat(0f, 0);
                 target.F_AttackTimes = new RangeInt(1, 0);
                 target.F_AttackRate = fireRate;
@@ -913,6 +921,38 @@ namespace GameSetting_Action
             ActionHelper.PlayerAcquireEntityEquipmentItem(m_ActionEntity, m_Index, (int)Value1, Value3, () => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, Value2, enum_CharacterEffect.Invalid, 0)); ;
         }
         public Action_20009_BlastTurret(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+    public class Action_20010_HealthDrainDevice : ActionAfterUse
+    {
+        public override int m_Index => 20010;
+        public override int I_BaseCost => ActionData.I_20010_Cost;
+        public override float Value1 => ActionData.F_20010_Health(m_rarity);
+        public override float Value2 => ActionData.P_20010_PlayerHealthDrain(m_rarity);
+        public override float Value3 => ActionData.P_20010_AIHealthDrain(m_rarity);
+
+        public override void OnActionUse()
+        {
+            base.OnActionUse();
+            m_ActionEntity.AcquireEquipment<EquipmentEntitySpawner>(m_Index).SetOnSpawn((EntityCharacterBase entity)=> {
+                entity.SetHealth(Value1);
+                (entity as EntityDeviceBuffApllier).SetBuffApply(PlayerBuff,AllyBuff,.4f);
+            });
+        }
+
+        DamageDeliverInfo PlayerBuff() => DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID,SBuff.CreateActionBuff(m_Index,Value2/100f,.5f));
+        DamageDeliverInfo AllyBuff() => DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID, SBuff.CreateActionBuff(m_Index, Value3 / 100f, .5f));
+        public Action_20010_HealthDrainDevice(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_20012_HealthRegenDevice : ActionAfterUse
+    {
+        public override int m_Index => 20012;
+        public override int I_BaseCost => ActionData.I_20012_Cost;
+        public override float Value1 => ActionData.F_20012_Health(m_rarity);
+        public override float Value2 => ActionData.F_20012_PlayerHealthRegen(m_rarity);
+        public override float Value3 => ActionData.F_20012_AIHealthRegen(m_rarity);
+
+        public Action_20012_HealthRegenDevice(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
     public class Action_20013_Grenade:ActionAfterUse
     {

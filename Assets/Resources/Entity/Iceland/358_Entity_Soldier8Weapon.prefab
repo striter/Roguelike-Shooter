@@ -72,7 +72,7 @@ GameObject:
   - component: {fileID: 195265925062954242}
   - component: {fileID: 208837212441087546}
   - component: {fileID: 114369432402836246}
-  - component: {fileID: 114221212221614404}
+  - component: {fileID: 114294689034349854}
   m_Layer: 0
   m_Name: 358_Entity_Soldier8Weapon
   m_TagString: Untagged
@@ -626,7 +626,7 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1839640149920182}
   m_Mesh: {fileID: 4300008, guid: 6491a6b792d34a4469551d86b6395905, type: 3}
---- !u!114 &114221212221614404
+--- !u!114 &114294689034349854
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -634,7 +634,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1289635926676890}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 417e477385c21d047a2bb190782a39ca, type: 3}
+  m_Script: {fileID: 11500000, guid: 275d93242000a1d47972944c1cd255ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   I_MaxHealth: 160

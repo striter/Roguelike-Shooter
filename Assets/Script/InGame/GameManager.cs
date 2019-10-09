@@ -635,15 +635,11 @@ public static class GameObjectManager
         return entity;
     }
     static T SpawnEntityCharacter<T>(int poolIndex, Vector3 toPosition, enum_EntityFlag _flag, Transform parentTrans = null) where T:EntityCharacterBase => SpawnEntity<T>(poolIndex,toPosition,_flag,parentTrans);
-    public static EntityCharacterAI SpawnAI(int index, Vector3 toPosition, enum_EntityFlag _flag)
+    public static EntityCharacterAI SpawnAI(int index, Vector3 toPosition, enum_EntityFlag _flag)=> SpawnEntityCharacter<EntityCharacterAI>(index, toPosition, _flag);
+    public static EntityCharacterBase SpawnSubCharacter(int index, Vector3 toPosition, int spanwer, enum_EntityFlag _flag)
     {
-        EntityCharacterAI entity= SpawnEntityCharacter<EntityCharacterAI>(index, toPosition, _flag);
-        return entity;
-    }
-    public static EntityCharacterAISub SpawnSubAI(int index, Vector3 toPosition, int spanwer, enum_EntityFlag _flag)
-    {
-        EntityCharacterAISub entity = SpawnEntityCharacter<EntityCharacterAISub>(index, toPosition, _flag);
-        entity.OnRegister(spanwer);
+        EntityCharacterBase entity = SpawnEntityCharacter<EntityCharacterBase>(index, toPosition, _flag);
+        entity.SetSpawnerID(spanwer);
         return entity;
     }
     public static EntityCharacterPlayer SpawnEntityPlayer(CPlayerLevelSave playerSave)
