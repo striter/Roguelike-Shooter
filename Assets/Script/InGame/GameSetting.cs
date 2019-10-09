@@ -852,7 +852,7 @@ namespace GameSetting
             if (b_IsDead)
                 return false;
 
-            if (damageInfo.m_AmountApply > 0)    //Damage
+            if (damageInfo.m_AmountApply >= 0)    //Damage
             {
                 float damageReceive = damageInfo.m_AmountApply*damageMultiply;
 

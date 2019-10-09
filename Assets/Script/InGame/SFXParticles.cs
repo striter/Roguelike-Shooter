@@ -9,6 +9,7 @@ public class SFXParticles : SFXBase
     protected float m_ParticleDuration { get; private set; }
     protected SFXRelativeBase[] m_relativeSFXs;
     protected virtual bool B_PlayOnAwake => true;
+    protected virtual bool B_AutoStop => true;
     protected bool B_ParticlesPlaying;
     public override void Init(int _sfxIndex)
     {
@@ -47,7 +48,7 @@ public class SFXParticles : SFXBase
     protected override void Update()
     {
         base.Update();
-        if (B_PlayOnAwake && B_ParticlesPlaying && f_timeLeft < GameConst.F_ParticlesMaxStopTime)
+        if (B_AutoStop && B_ParticlesPlaying && f_timeLeft < GameConst.F_ParticlesMaxStopTime)
             StopParticles();
     }
     protected override void OnRecycle()
