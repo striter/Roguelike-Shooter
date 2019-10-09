@@ -794,6 +794,7 @@ namespace GameSetting_Action
     public class Action_20001_RustShot : ActionAfterUse
     {
         public override int m_Index => 20001;
+        public override int I_BaseCost => ActionData.I_20001_Cost;
         public override float Value1 => ActionData.F_20001_RustDamagePerSecond(m_rarity);
         public override void OnActionUse()
         {
@@ -805,6 +806,7 @@ namespace GameSetting_Action
     public class Action_20002_MarkShotArmorAdditive : ActionAfterUse
     {
         public override int m_Index => 20002;
+        public override int I_BaseCost => ActionData.I_20002_Cost;
         public override float Value1 => ActionData.F_20002_ArmorAdditiveTargetDead(m_rarity);
         public override void OnActionUse()
         {
@@ -820,6 +822,44 @@ namespace GameSetting_Action
             ActionHelper.ReceiveHealing(m_ActionEntity, Value1, enum_DamageType.ArmorOnly);
         }
         public Action_20002_MarkShotArmorAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+    public class Action_20003_FreezeShot : ActionAfterUse
+    {
+        public override int m_Index => 20003;
+        public override int I_BaseCost => ActionData.I_20003_Cost;
+        public override float Value1 => ActionData.F_20003_FreezeDuration(m_rarity);
+        public override void OnActionUse()
+        {
+            base.OnActionUse();
+            m_ActionEntity.OnAcquireEquipment<EquipmentBarrageRange>(m_Index, () => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID,0, enum_CharacterEffect.Freeze,Value1));
+        }
+        public Action_20003_FreezeShot(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+    public class Action_20004_FreezeGrenade : ActionAfterUse
+    {
+        public override int m_Index => 20004;
+        public override int I_BaseCost => ActionData.I_20004_Cost;
+        public override float Value1 => ActionData.F_20004_FreezeDuration(m_rarity);
+        public override void OnActionUse()
+        {
+            base.OnActionUse();
+            m_ActionEntity.OnAcquireEquipment<EquipmentBarrageRange>(m_Index, () => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, 0, enum_CharacterEffect.Freeze, Value1));
+        }
+        public Action_20004_FreezeGrenade(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+    public class Action_20005_FreezeTurret : ActionAfterUse
+    {
+        public override int m_Index => 20005;
+        public override int I_BaseCost => ActionData.I_20005_Cost;
+        public override float Value1 => ActionData.F_20005_FreezeDuration(m_rarity);
+        public override float Value2 => ActionData.F_20005_Health(m_rarity);
+        public override float Value3 => ActionData.F_20005_Damage(m_rarity);
+        public override void OnActionUse()
+        {
+            base.OnActionUse();
+            ActionHelper.PlayerAcquireEntityEquipmentItem(m_ActionEntity,m_Index,(int)Value2,1,()=>DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID,Value3, enum_CharacterEffect.Freeze,Value1)); ;
+        }
+        public Action_20005_FreezeTurret(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
     public class Action_20013_Grenade:ActionAfterUse
     {
