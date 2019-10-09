@@ -239,6 +239,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         OnMainButtonDown(false);
         EquipmentBase targetEquipment= EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(actionIndex), this, tf_WeaponHoldLeft, OnDamageBuff == null ? m_PlayerInfo.GetDamageBuffInfo : OnDamageBuff);
         m_EquipmentTimes = (m_Equipment != null && m_Equipment.I_Index == targetEquipment.I_Index)?m_EquipmentTimes+1:1;
+        Debug.Log(m_EquipmentTimes);
         m_Equipment = targetEquipment;
         return m_Equipment as T;
     }

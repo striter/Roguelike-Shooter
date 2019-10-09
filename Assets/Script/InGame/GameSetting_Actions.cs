@@ -802,28 +802,18 @@ namespace GameSetting_Action
         }
         public Action_20001_RustShot(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
-    public class Action_20002_MarkShotArmorAdditive : ActionBase
+    public class Action_20002_MarkShotArmorAdditive : ActionAfterUse
     {
         public override int m_Index => 20002;
         public override float Value1 => ActionData.F_20002_ArmorAdditiveTargetDead(m_rarity);
-        List<int> equipmentIdentities = new List<int>();
-        DamageDeliverInfo GetDamageInfo()
-        {
-            DamageDeliverInfo info= DamageDeliverInfo.Default(m_ActionEntity.I_EntityID);
-            equipmentIdentities.Add(info.I_IdentiyID);
-            SetDuration(2f);
-            return info;
-        }
         public override void OnActionUse()
         {
             base.OnActionUse();
-            m_ActionEntity.OnAcquireEquipment<EquipmentBarrageRange>(m_Index, GetDamageInfo);
+            m_ActionEntity.OnAcquireEquipment<EquipmentBarrageRange>(m_Index, ()=>  DamageDeliverInfo.DamageHitInfo(m_ActionEntity.I_EntityID,OnHitEntitiy));
         }
-        public override void OnDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        void OnHitEntitiy(EntityBase receiver)
         {
-            base.OnDealtDemage(receiver, info, applyAmount);
-            if (equipmentIdentities.Contains(info.m_detail.I_IdentiyID))
-                GameObjectManager.SpawnParticles<SFXMarkup>(60001,receiver.transform.position,Vector3.up).Play(m_ActionEntity.I_EntityID,receiver,OnMarkupDead);
+            GameObjectManager.SpawnParticles<SFXMarkup>(60001, receiver.transform.position, Vector3.up).Play(m_ActionEntity.I_EntityID, receiver, OnMarkupDead);
         }
         void OnMarkupDead()
         {

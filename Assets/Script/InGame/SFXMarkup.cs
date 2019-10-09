@@ -22,8 +22,9 @@ public class SFXMarkup : SFXParticles {
         transform.position = target.transform.position;
         if(target.m_Health.b_IsDead)
         {
-            OnMarkupDead();
             StopParticles();
+            OnMarkupDead();
+            OnMarkupDead = null;
         }
     }
 }

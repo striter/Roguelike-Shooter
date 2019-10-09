@@ -35,6 +35,7 @@ public class EntityBase : MonoBehaviour
         if (m_Health.b_IsDead)
             return false;
 
+        damageInfo.m_detail.m_OnHitAction?.Invoke(this);
         return m_Health.OnReceiveDamage(damageInfo, DamageReceiveMultiply);
     }
 

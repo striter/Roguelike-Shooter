@@ -958,8 +958,8 @@ namespace GameSetting
         public float m_DamageAdditive { get; private set; } = 0;
         public List<SBuff> m_BaseBuffApply { get; private set; } = new List<SBuff>();
         public enum_CharacterEffect m_DamageEffect = enum_CharacterEffect.Invalid;
-
         public float m_EffectDuration = 0;
+        public Action<EntityBase> m_OnHitAction=null;
 
         public void AddExtraBuff(int commonBuffIndex) => m_BaseBuffApply.Add(GameDataManager.GetPresetBuff(commonBuffIndex));
         public static DamageDeliverInfo Default(int sourceID) => new DamageDeliverInfo() { I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), I_SourceID = sourceID, m_DamageMultiply = 0f, m_DamageAdditive = 0f };
@@ -968,6 +968,7 @@ namespace GameSetting
         public static DamageDeliverInfo EquipmentInfo(int sourceID, float _damageAdditive, enum_CharacterEffect _effect, float _duration) => new DamageDeliverInfo() { I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), I_SourceID = sourceID, m_DamageAdditive = _damageAdditive, m_DamageEffect = _effect, m_EffectDuration = _duration };
         public static DamageDeliverInfo DamageInfo(int sourceID, float _damageEnhanceMultiply, float _damageAdditive) => new DamageDeliverInfo() { I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), I_SourceID = sourceID, m_DamageMultiply = _damageEnhanceMultiply, m_DamageAdditive = _damageAdditive, };
         public static DamageDeliverInfo DamageOverrideInfo(int sourceID, DamageDeliverInfo info) => new DamageDeliverInfo() {I_SourceID = sourceID, I_IdentiyID =info.I_IdentiyID,m_DamageMultiply=info.m_DamageMultiply,m_DamageAdditive=info.m_DamageAdditive,m_BaseBuffApply=info.m_BaseBuffApply,m_DamageEffect=info.m_DamageEffect,m_EffectDuration=info.m_EffectDuration};
+        public static DamageDeliverInfo DamageHitInfo(int sourceID, Action<EntityBase> OnHitEntity) => new DamageDeliverInfo() {I_SourceID=sourceID,I_IdentiyID=GameIdentificationManager.I_DamageIdentityID(),m_OnHitAction=OnHitEntity };
     }
     #endregion
 
