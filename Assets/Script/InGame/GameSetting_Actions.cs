@@ -1175,7 +1175,6 @@ namespace GameSetting_Action
 
         public override void OnAllyActivate(EntityCharacterBase ally)
         {
-            Debug.Log(m_ActionEntity.name);
             base.OnAllyActivate(ally);
             ally.m_Health.SetHealthMultiplier(1f+Value1/100f,true);
         }
