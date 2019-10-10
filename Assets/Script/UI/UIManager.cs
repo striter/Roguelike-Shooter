@@ -17,6 +17,7 @@ public class UIManager :SimpleSingletonMono<UIManager>
     protected T ShowTools<T>() where T : UIToolsBase => UIToolsBase.Show<T>(tf_Tools);
     public static void Activate(bool inGame) => TResources.InstantiateUIManager().Init(inGame);
     public Camera m_Camera { get; private set; }
+    CB_GenerateGlobalGaussianBlurTexture m_Blur;
     protected void Init(bool inGame)
     {
         m_commonSprites = TResources.GetUIAtlas_Common();
@@ -35,7 +36,6 @@ public class UIManager :SimpleSingletonMono<UIManager>
         tf_Pages = cvs_Overlay.transform.Find("Pages");
         if (inGame) ShowTools<UI_EntityHealth>();
         ShowTools<UI_PlayerStatus>().SetInGame(inGame);
-        TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnPlayerStatusChanged);
 
         m_TouchDelta = cvs_Camera.GetComponent<TouchDeltaManager>();
         OnOptionsChanged();
@@ -44,7 +44,9 @@ public class UIManager :SimpleSingletonMono<UIManager>
         if (inGame) cvs_Overlay.transform.Find("Test/SeedTest").GetComponent<Text>().text = GameManager.Instance.m_GameLevel.m_Seed;   //Test
 
         m_Camera = transform.Find("UICamera").GetComponent<Camera>();
-        m_Camera.GetComponent<CameraEffectManager>().AddCameraEffect<CB_GenerateGlobalGaussianBlurTexture>().SetEffect(1, 2f,2);
+        m_Blur=m_Camera.GetComponent<CameraEffectManager>().AddCameraEffect<CB_GenerateGlobalGaussianBlurTexture>();
+        m_Blur.SetEffect(1, 2f, 2);
+        TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnPlayerStatusChanged);
     }
     protected override void OnDestroy()
     {
@@ -71,4 +73,9 @@ public class UIManager :SimpleSingletonMono<UIManager>
         img_main.sprite = m_commonSprites[m_mainSprite];
     }
 
+    public void OnGameFinished(bool win, float levelScore, float killScore, float credit, Action _OnButtonClick)
+    {
+        cvs_Camera.gameObject.SetActivate(false);
+        ShowPage<UI_GameResult>(true).Play(win, levelScore, killScore, credit, _OnButtonClick);
+    }
 }

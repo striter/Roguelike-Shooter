@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 2103489
+    totalSpriteSurfaceArea: 2154049
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -60,7 +60,9 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 30e5c7c85da88f74a886ea0a055a0ab5, type: 3}
   - {fileID: 21300000, guid: 9815db2b31918bd488a568f43645a813, type: 3}
   - {fileID: 21300000, guid: 5a476d5965f1dfe4db31a215f35e9904, type: 3}
+  - {fileID: 21300000, guid: dfc35cd87afdb89468db5389efbfb5ba, type: 3}
   - {fileID: 21300000, guid: cbc16cdaafe934645b541aec0fa828cd, type: 3}
+  - {fileID: 21300000, guid: 838e3e3f0673e564aafbb7fb60b21e46, type: 3}
   - {fileID: 21300000, guid: e2aff809fde7b7d469149d996d359e8c, type: 3}
   - {fileID: 21300000, guid: 9cfbbb122f7c3ca4fbf5124bcdc0f7ad, type: 3}
   - {fileID: 21300000, guid: cee4d3d1a3e283c489ee1fed47d86dcc, type: 3}
@@ -146,7 +148,9 @@ SpriteAtlas:
   - display_progress_armor
   - display_progress_life
   - display_ActionEnergy_progress_notfull
+  - btn_commcon_yellow
   - btn_commcon_gray
+  - btn_commcon_blue
   - map_tile_type_ActionAdjustment
   - icon_map
   - map_tile_type_BattleTrade
