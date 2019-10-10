@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 081334a023db2704db167d2dfc323270, type: 3}
-    totalSpriteSurfaceArea: 1165307
+    totalSpriteSurfaceArea: 1114747
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -42,8 +42,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 4ec60bacd1dafa74b8d93d4b1cae4984, type: 3}
   - {fileID: 21300000, guid: eb6498b538c432c479fd0ccd174629b6, type: 3}
   - {fileID: 21300000, guid: fa0122c7e5ddb1d4399a011784eede79, type: 3}
-  - {fileID: 21300000, guid: dfc35cd87afdb89468db5389efbfb5ba, type: 3}
-  - {fileID: 21300000, guid: 838e3e3f0673e564aafbb7fb60b21e46, type: 3}
   - {fileID: 21300000, guid: a0e4044850dc94f4ea77c05d26531154, type: 3}
   - {fileID: 21300000, guid: 6b5e120f41ccce542848f00f95446778, type: 3}
   - {fileID: 21300000, guid: 1293ae4f9500e5046bcb8c3fc46d3fb9, type: 3}
@@ -58,8 +56,6 @@ SpriteAtlas:
   - icon_gold
   - UI_title_orange_small
   - Ruler
-  - btn_commcon_yellow
-  - btn_commcon_blue
   - icon_failure
   - Ruler_cross
   - icon_goal

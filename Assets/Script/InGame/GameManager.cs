@@ -208,7 +208,7 @@ public class GameManager : GameManagerBase, ISingleCoroutine
         float killScore = GameExpression.GetResultKillScore( m_PlayerRecord.i_entitiesKilled);
         float credit = GameExpression.GetResultRewardCredits(levelScore+killScore);
         GameDataManager.OnGameFinished(win,credit);
-        UIManager.Instance.ShowPage<UI_GameResult>(true).Play(win, levelScore, killScore, credit, OnExitGame);
+        UIManager.Instance.OnGameFinished(win, levelScore, killScore, credit, OnExitGame);
     }
     #endregion
     #region InteractManagement

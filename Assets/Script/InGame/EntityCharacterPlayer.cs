@@ -102,17 +102,14 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void OnMainButtonDown(bool down)
     {
         m_aiming = down;
-        if (m_Equipment != null)
+        if (down&&m_Equipment != null)
         {
             OnEquipment(down);
             return;
         }
 
         if (m_Interact != null)
-        {
             OnInteract(down);
-            return;
-        }
 
         if (m_WeaponCurrent != null)
             m_WeaponCurrent.Trigger(down);
