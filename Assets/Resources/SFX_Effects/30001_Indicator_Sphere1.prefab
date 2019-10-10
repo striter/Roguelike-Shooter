@@ -55,7 +55,7 @@ GameObject:
   - component: {fileID: 4883633107153858}
   - component: {fileID: 114730869868732850}
   m_Layer: 9
-  m_Name: 30001_Sphere_Indicator
+  m_Name: 30001_Indicator_Sphere1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

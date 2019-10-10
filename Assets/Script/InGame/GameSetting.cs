@@ -17,7 +17,7 @@ namespace GameSetting
 
         public const float F_EntityDeadFadeTime = 2f;
 
-        public const float F_MaxActionAmount = 4f;
+        public const float F_MaxActionAmount = 5f;
         public const float I_MaxArmor = 99999;
         public const float F_RestoreActionAmount = 2f;
         public const float F_ActionShuffleCost = 3f;
