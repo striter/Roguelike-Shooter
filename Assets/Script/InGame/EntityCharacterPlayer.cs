@@ -107,15 +107,13 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             OnEquipment(down);
             return;
         }
-        
+
+        if (m_Interact != null)
+            OnInteract(down);
+
         if (m_WeaponCurrent != null)
             m_WeaponCurrent.Trigger(down);
 
-        if (m_Interact != null)
-        {
-            OnInteract(down);
-            return;
-        }
     }
 
     protected override void Update()
