@@ -1177,7 +1177,7 @@ namespace GameSetting_Action
         {
             Debug.Log(m_ActionEntity.name);
             base.OnAllyActivate(ally);
-            ally.m_Health.SetHealthMultiplier(1f+Value1/100f);
+            ally.m_Health.SetHealthMultiplier(1f+Value1/100f,true);
         }
         public Action_30009_AllyActivateHealthAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
