@@ -1055,7 +1055,7 @@ namespace GameSetting
             m_Entity = _attacher;
             OnReceiveDamage = _OnReceiveDamage;
             OnExpireChange = _OnExpireChange;
-            TCommon.TraversalEnum((enum_CharacterEffect effect) => { m_Effects.Add(effect, new EffectCounterBase()); });
+            TCommon.TraversalEnum((enum_CharacterEffect effect) => {m_Effects.Add(effect, new EffectCounterBase( enum_ExpireRefreshType.AddUp)); });
         }
 
         public virtual void OnActivate()
@@ -1494,19 +1494,28 @@ namespace GameSetting
 
     public class EffectCounterBase
     {
+        public enum_ExpireRefreshType m_Type { get; private set; }
         public float m_duration { get; private set; }
         public bool m_Effecting => m_duration > 0;
-        public EffectCounterBase()
+        public EffectCounterBase(enum_ExpireRefreshType type)
         {
+            m_Type = type;
             Reset();
         }
         public void OnSet(float _duration)
         {
             if (_duration <= 0)
                 return;
-
-            if (m_duration < _duration)
-                m_duration = _duration;
+            switch (m_Type)
+            {
+                case enum_ExpireRefreshType.AddUp:
+                        m_duration += _duration;
+                    break;
+                case enum_ExpireRefreshType.Refresh:
+                    if (m_duration < _duration)
+                        m_duration = _duration;
+                    break;
+            }
         }
         public void Reset()
         {
@@ -1515,7 +1524,11 @@ namespace GameSetting
         public void Tick(float deltaTime)
         {
             if (m_duration > 0)
+            {
                 m_duration -= deltaTime;
+                if (m_duration < 0)
+                    m_duration = 0;
+            }
         }
     }
 
