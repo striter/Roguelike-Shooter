@@ -113,7 +113,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
         if (m_WeaponCurrent != null)
             m_WeaponCurrent.Trigger(down);
-
     }
 
     protected override void Update()
