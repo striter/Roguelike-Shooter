@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class UIPageBase : MonoBehaviour,ISingleCoroutine
 {
+    public static bool m_PageOpening => t_curPage != null;
     public static Type t_curPage;
     protected Image img_Background;
     protected Action<bool> OnInteractFinished;

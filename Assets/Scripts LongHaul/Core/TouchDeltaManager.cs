@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -14,7 +13,7 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
     }
     private void Update()
     {
-        if (!UIT_JoyStick.Instance)  return;
+        if (!UIT_JoyStick.Instance||UIPageBase.m_PageOpening)  return;
 
         foreach (Touch t in Input.touches)
         {

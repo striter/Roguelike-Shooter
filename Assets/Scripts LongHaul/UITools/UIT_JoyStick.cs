@@ -93,7 +93,6 @@ public class UIT_JoyStick : SimpleSingletonMono<UIT_JoyStick>
             return centerOffset / m_JoystickRadius;
         }
     }
-
     class JoyStickStational:JoyStickBase
     {
         bool enabled;
