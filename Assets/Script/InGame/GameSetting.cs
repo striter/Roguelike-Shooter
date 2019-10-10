@@ -294,7 +294,7 @@ namespace GameSetting
         OnEntityActivate,
         OnEntityDeactivate,
 
-        OnCharacterDamage,
+        OnCharacterHealthChange,
         OnCharacterDead,
 
         OnStageStart,       //Total Stage Start
@@ -787,6 +787,7 @@ namespace GameSetting
         public virtual float F_TotalEHP => m_CurrentHealth;
         public bool B_HealthFull => m_CurrentHealth >= m_MaxHealth;
         public float F_BaseHealthScale =>m_CurrentHealth / m_BaseMaxHealth;
+        public float F_MaxHealthValue => m_CurrentHealth / m_MaxHealth;
         public virtual float F_EHPScale => Mathf.Clamp01( m_CurrentHealth / m_MaxHealth);
         public bool b_IsDead => m_CurrentHealth <= 0;
         protected void DamageHealth(float health)
@@ -805,7 +806,7 @@ namespace GameSetting
             OnHealthChanged = _OnHealthChanged;
             OnDead = _OnDead;
         }
-        public void OnActivate(float baseMaxHealth,bool restoreHealth)
+        public void OnSetHealth(float baseMaxHealth,bool restoreHealth)
         {
             m_BaseMaxHealth = baseMaxHealth;
             if(restoreHealth)
@@ -815,14 +816,14 @@ namespace GameSetting
         {
            m_CurrentHealth = reviveHealth;
         }
-        public virtual bool OnReceiveDamage(DamageInfo damageInfo, float damageReduction = 1)
+        public virtual bool OnReceiveDamage(DamageInfo damageInfo, float damageReduction = 1,float healEnhance=1)
         {
             if (b_IsDead||damageInfo.m_Type== enum_DamageType.ArmorOnly)
                 return false;
 
             if (damageInfo.m_AmountApply < 0)
             {
-                DamageHealth(damageInfo.m_AmountApply);
+                DamageHealth(damageInfo.m_AmountApply* healEnhance);
                 OnHealthChanged?.Invoke(enum_HealthChangeMessage.ReceiveHealth);
             }
             else
@@ -837,20 +838,6 @@ namespace GameSetting
             return true;
         }
     }
-    public class AIHealth : EntityHealth
-    {
-        float m_HealthMultiplier = 1f;
-        public override float m_MaxHealth => m_BaseMaxHealth * m_HealthMultiplier;
-        public AIHealth(EntityCharacterBase _character,Action<enum_HealthChangeMessage> _OnHealthChanged, Action _OnDead) : base(_character,_OnHealthChanged, _OnDead)
-        {
-            m_HealthMultiplier = 1f;
-        }
-        public void SetHealth(float baseHealth,float maxHealthMultiplier)
-        {
-            m_HealthMultiplier = maxHealthMultiplier;
-            OnActivate(baseHealth,true);
-        }
-    }
     public class EntityHealth:HealthBase
     {
         public float m_CurrentArmor { get; private set; }
@@ -858,6 +845,9 @@ namespace GameSetting
 
         public override float F_TotalEHP => m_CurrentArmor + base.F_TotalEHP;
         public override float F_EHPScale => Mathf.Clamp01((m_CurrentArmor + m_CurrentHealth) / (m_DefaultArmor + m_MaxHealth));
+        float m_HealthMultiplier = 1f;
+        public float m_MaxHealthAdditive { get; private set; }
+        public override float m_MaxHealth => base.m_MaxHealth * m_HealthMultiplier + m_MaxHealthAdditive;
         protected EntityCharacterBase m_Entity;
         protected void DamageArmor(float amount)
         {
@@ -871,10 +861,12 @@ namespace GameSetting
         public EntityHealth(EntityCharacterBase entity, Action<enum_HealthChangeMessage> _OnHealthChanged, Action _OnDead) :base(_OnHealthChanged,_OnDead)
         {
             m_Entity = entity;
+            m_HealthMultiplier = 1f;
+            m_MaxHealthAdditive = 0;
         }
         public void OnActivate(float maxHealth, float defaultArmor,bool restoreHealth)
         {
-            base.OnActivate(maxHealth,restoreHealth);
+            base.OnSetHealth(maxHealth,restoreHealth);
             m_DefaultArmor= defaultArmor;
             m_CurrentArmor = m_DefaultArmor;
             OnHealthChanged(enum_HealthChangeMessage.Default);
@@ -885,7 +877,24 @@ namespace GameSetting
             m_CurrentArmor = reviveArmor;
             OnHealthChanged(enum_HealthChangeMessage.Default);
         }
-        public override bool OnReceiveDamage(DamageInfo damageInfo,float damageMultiply=1)
+        public void SetHealthMultiplier(float healthMultiplier,bool restoreHealth=false)
+        {
+            m_HealthMultiplier = healthMultiplier;
+            if(restoreHealth)
+                OnSetHealth(m_BaseMaxHealth, true);
+            OnHealthChanged(enum_HealthChangeMessage.Default);
+        }
+        public void SetMaxHealth(float maxHealthAdditive)
+        {
+            if (m_MaxHealthAdditive == maxHealthAdditive)
+                return;
+
+            m_MaxHealthAdditive = maxHealthAdditive;
+            if (m_CurrentHealth > m_MaxHealth)
+                OnSetHealth(m_BaseMaxHealth,true);
+            OnHealthChanged(enum_HealthChangeMessage.Default);
+        }
+        public override bool OnReceiveDamage(DamageInfo damageInfo, float damageReduction = 1, float healEnhance = 1)
         {
             if (b_IsDead)
                 return false;
@@ -893,7 +902,7 @@ namespace GameSetting
             float finalAmount = damageInfo.m_AmountApply;
             if (damageInfo.m_AmountApply > 0)    //Damage
             {
-                finalAmount *=damageMultiply;
+                finalAmount *= damageReduction;
                 switch (damageInfo.m_Type)
                 {
                     case enum_DamageType.ArmorOnly:
@@ -926,6 +935,7 @@ namespace GameSetting
             }
             else if (damageInfo.m_AmountApply < 0)    //Healing
             {
+                finalAmount *= healEnhance;
                 switch (damageInfo.m_Type)
                 {
                     case enum_DamageType.ArmorOnly:
@@ -944,7 +954,7 @@ namespace GameSetting
                         break;
                     case enum_DamageType.Common:
                         {
-                            float armorReceive = finalAmount - m_CurrentHealth+m_BaseMaxHealth;
+                            float armorReceive = finalAmount - m_CurrentHealth+m_MaxHealth;
                             DamageHealth(finalAmount);
                             if (armorReceive>0)
                             {
@@ -961,8 +971,8 @@ namespace GameSetting
                         break;
                 }
             }
-            if(damageInfo.m_AmountApply>0)
-                TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterDamage, damageInfo, m_Entity, finalAmount);
+            if(damageInfo.m_AmountApply!=0)
+                TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterHealthChange, damageInfo, m_Entity, finalAmount);
             if (b_IsDead)
                 OnDead();
             return true;
@@ -1014,7 +1024,9 @@ namespace GameSetting
         protected EntityCharacterBase m_Entity { get; private set; }
         public List<ExpireBase> m_Expires { get; private set; } = new List<ExpireBase>();
         List<SFXBuffEffect> m_BuffEffects = new List<SFXBuffEffect>();
+        public float F_MaxHealthAdditive { get; private set; } = 0f;
         public float F_DamageReceiveMultiply { get; private set; } = 1f;
+        public float F_HealReceiveMultiply { get; private set; } = 1f;
         public float F_MovementSpeedMultiply { get; private set; } = 1f;
         protected float F_FireRateMultiply { get; private set; } = 1f;
         protected float F_ReloadRateMultiply { get; private set; } = 1f;
@@ -1050,15 +1062,18 @@ namespace GameSetting
         {
             Reset();
             m_DamageBuffOverride = null;
-            TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterDamage, OnCharacterDamage);
+            TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
         } 
         public virtual void OnDeactivate()
         {
-            TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterDamage, OnCharacterDamage);
+            TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
         }
 
-        protected virtual void OnCharacterDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
+        protected virtual void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
         {
+            if (amountApply <= 0)
+                return;
+
             if (F_HealthDrainMultiply > 0 && damageInfo.m_detail.I_SourceID == m_Entity.I_EntityID)
                 m_Entity.m_HitCheck.TryHit(new DamageInfo(-amountApply*F_HealthDrainMultiply, enum_DamageType.HealthOnly,DamageDeliverInfo.Default(m_Entity.I_EntityID)));
         }
@@ -1076,7 +1091,12 @@ namespace GameSetting
         public virtual void Tick(float deltaTime) {
             m_Expires.Traversal((ExpireBase buff) => { buff.OnTick(deltaTime); });
             m_Effects.Traversal((enum_CharacterEffect type) => { m_Effects[type].Tick(deltaTime); });
-            if (!b_expireUpdated) UpdateExpireInfo();
+
+            if (!b_expireUpdated)
+            {
+                UpdateExpireInfo();
+                b_expireUpdated = true;
+            }
         }
 
         protected virtual void AddExpire(ExpireBase expire)
@@ -1118,7 +1138,8 @@ namespace GameSetting
         }
         protected virtual void OnResetInfo()
         {
-            F_DamageReceiveMultiply = 1f;
+            F_MaxHealthAdditive = 0f;
+               F_DamageReceiveMultiply = 1f;
             F_MovementSpeedMultiply = 1f;
             F_FireRateMultiply = 1f;
             F_ReloadRateMultiply = 1f;
@@ -1127,6 +1148,7 @@ namespace GameSetting
         }
         protected virtual void OnSetExpireInfo(ExpireBase expire)
         {
+            F_MaxHealthAdditive += expire.m_MaxHealthAdditive;
             F_DamageMultiply += expire.m_DamageMultiply;
             F_DamageReceiveMultiply -= expire.m_DamageReduction;
             F_MovementSpeedMultiply += expire.m_MovementSpeedMultiply;
@@ -1139,10 +1161,10 @@ namespace GameSetting
             if (F_DamageReceiveMultiply < 0) F_DamageReceiveMultiply = 0;
             if (F_MovementSpeedMultiply < 0) F_MovementSpeedMultiply = 0;
             if (F_HealthDrainMultiply < 0) F_HealthDrainMultiply = 0;
+            Debug.Log(F_MaxHealthAdditive);
         }
         void UpdateExpireInfo()
         {
-            b_expireUpdated = true;
             OnResetInfo();
             m_Expires.Traversal(OnSetExpireInfo);
             AfterInfoSet();
@@ -1212,8 +1234,13 @@ namespace GameSetting
         {
             base.OnActivate();
             m_prePos = m_Entity.transform.position;
+            TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
         }
-        
+        public override void OnDeactivate()
+        {
+            base.OnDeactivate();
+            TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
+        }
         public override void Tick(float deltaTime)
         {
             base.Tick(deltaTime);
@@ -1328,9 +1355,16 @@ namespace GameSetting
             m_ActionEquiping.Clear();
             base.OnDead();
         }
-        protected override void OnCharacterDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
+        protected override void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
         {
-            base.OnCharacterDamage(damageInfo,damageEntity,amountApply);
+            base.OnCharacterHealthChange(damageInfo,damageEntity,amountApply);
+            if (amountApply <= 0)
+            {
+                if(damageEntity.I_EntityID==m_Player.I_EntityID)
+                     m_ActionEquiping.Traversal((ActionBase action) => { action.OnReceiveHealing(damageInfo, amountApply); });
+                return;
+            }
+
             if (damageInfo.m_detail.I_SourceID == m_Player.I_EntityID)
             {
                 m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDemage(damageEntity,damageInfo, amountApply); });
@@ -1340,6 +1374,13 @@ namespace GameSetting
             {
                 m_ActionEquiping.Traversal((ActionBase action) => { action.OnReceiveDamage(damageInfo, amountApply); });
             }
+        }
+        protected void OnEntityActivate(EntityBase targetEntity)
+        {
+            if (targetEntity.m_Flag != m_Entity.m_Flag || targetEntity.I_EntityID == m_Entity.I_EntityID)
+                return;
+
+            m_ActionEquiping.Traversal((ActionBase action) => { action.OnAllyActivate(targetEntity as EntityCharacterBase); });
         }
         #endregion
 
@@ -1427,6 +1468,7 @@ namespace GameSetting
             if (m_ActionAmount > GameConst.F_MaxActionAmount)
                 m_ActionAmount = GameConst.F_MaxActionAmount;
         }
+
         #endregion
 
         #region CoinInfo
@@ -1478,6 +1520,7 @@ namespace GameSetting
         public virtual int m_Index => -1;
         public virtual enum_ExpireType m_ExpireType => enum_ExpireType.Invalid;
         public virtual enum_ExpireRefreshType m_RefreshType => enum_ExpireRefreshType.Invalid;
+        public virtual float m_MaxHealthAdditive => 0;
         public virtual float m_MovementSpeedMultiply => 0;
         public virtual float m_FireRateMultiply => 0;
         public virtual float m_ReloadRateMultiply => 0;
@@ -1594,10 +1637,15 @@ namespace GameSetting
         public virtual void OnAddActionElse(float actionAmount) { }
         public virtual void OnReceiveDamage(DamageInfo info, float amount) { }
         public virtual void OnDealtDemage(EntityCharacterBase receiver,DamageInfo info, float applyAmount) { }
+        public virtual void OnReceiveHealing(DamageInfo info, float applyAmount)
+        {
+
+        }
         public virtual void OnReloadFinish() { }
         public virtual void OnFire(int identity) { }
         public virtual void OnWeaponDetach() { }
         public virtual void OnMove(float distsance) { }
+        public virtual void OnAllyActivate(EntityCharacterBase ally) { }
         public virtual void OnDead() { }
         #endregion
     }
@@ -2094,15 +2142,18 @@ namespace GameSetting
     {
         public EquipmentEntitySpawner(SFXSubEntitySpawner spawner, EntityCharacterBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(spawner, _controller, _transform, _GetBuffInfo)
         {
+            startHealth = 0;
         }
         Action<EntityCharacterBase> OnSpawn;
-        public void SetOnSpawn(Action<EntityCharacterBase> _OnSpawn)
+        float startHealth;
+        public void SetOnSpawn(float _startHealth,Action<EntityCharacterBase> _OnSpawn)
         {
             OnSpawn = _OnSpawn;
+            startHealth = _startHealth;
         }
         public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
-            GameObjectManager.SpawnEquipment<SFXSubEntitySpawner>(I_Index, transformBarrel.position, Vector3.up).Play(m_Entity.I_EntityID, m_Entity.m_Flag,GetDamageDeliverInfo,m_Entity.I_EntityID,OnSpawn);
+            GameObjectManager.SpawnEquipment<SFXSubEntitySpawner>(I_Index, transformBarrel.position, Vector3.up).Play(m_Entity.I_EntityID, m_Entity.m_Flag,GetDamageDeliverInfo, startHealth, OnSpawn);
         }
     }
     public class EquipmentShieldAttach : EquipmentBase

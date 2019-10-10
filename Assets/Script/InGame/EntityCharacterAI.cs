@@ -27,7 +27,6 @@ public class EntityCharacterAI : EntityCharacterBase {
     public bool B_AttackFrontCheck = true;
     bool OnCheckTarget(EntityCharacterBase target) => target.m_Flag!=m_Flag && !target.m_Health.b_IsDead;
     public override Vector3 m_PrecalculatedTargetPos(float time)=> tf_Head.position;
-    protected override HealthBase GetHealthManager()=>new AIHealth(this,OnHealthChanged, OnDead);
 
     public override void Init(int entityPresetIndex)
     {
@@ -36,18 +35,19 @@ public class EntityCharacterAI : EntityCharacterBase {
         m_AI = new EnermyAIControllerBase(this, EquipmentBase.AcquireEquipment(GameExpression.GetAIEquipmentIndex(entityPresetIndex, 0),this,tf_Barrel,m_CharacterInfo.GetDamageBuffInfo), OnAttackAnim, OnCheckTarget);
     }
 
-    public override void OnActivate(enum_EntityFlag _flag)
+    public override void OnActivate(enum_EntityFlag _flag, float startHealth)
     {
         if (E_AnimatorIndex!= enum_EnermyAnim.Invalid)
             m_Animator = new EnermyAnimator(tf_Model.GetComponent<Animator>(), E_AnimatorIndex, OnAnimKeyEvent);
         m_AI.OnActivate();
-        base.OnActivate(_flag);
+        base.OnActivate(_flag,startHealth);
     }
 
     public void SetEnermyDifficulty(float baseHealthMultiplier, float maxHealthMultiplier,SBuff difficultyBuff)
     {
         m_CharacterInfo.AddBuff(-1, difficultyBuff);
-        (m_Health as AIHealth).SetHealth(I_MaxHealth*baseHealthMultiplier,maxHealthMultiplier);
+        m_Health .SetHealthMultiplier(maxHealthMultiplier);
+        m_Health.OnSetHealth(I_MaxHealth * baseHealthMultiplier,true);
     }
 
     protected override void OnDead()

@@ -7,10 +7,10 @@ using System;
 public class SFXSubEntitySpawner : SFXParticles {
     public int I_EntitySpawnID;
     public bool B_ApplyDOTOnSpawn = false;
-    public void Play(int _sourceID, enum_EntityFlag _flag, Func<DamageDeliverInfo> _damageInfoOverride,int spawnerID,Action<EntityCharacterBase> OnSpawn=null)
+    public void Play(int _sourceID, enum_EntityFlag _flag, Func<DamageDeliverInfo> _damageInfoOverride, float startHealth,Action<EntityCharacterBase> OnSpawn)
     {
         base.Play(_sourceID);
-        EntityCharacterBase entity= GameObjectManager.SpawnSubCharacter(I_EntitySpawnID,transform.position,spawnerID, _flag);
+        EntityCharacterBase entity= GameObjectManager.SpawnSubCharacter(I_EntitySpawnID,transform.position, _sourceID, _flag,startHealth);
         OnSpawn?.Invoke(entity);
         entity.m_CharacterInfo.AddDamageOverride(_damageInfoOverride);
         if (B_ApplyDOTOnSpawn)

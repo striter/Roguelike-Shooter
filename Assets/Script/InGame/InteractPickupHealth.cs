@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class InteractPickupHealth : InteractPickup {
     public override enum_Interaction m_InteractType => enum_Interaction.PickupHealth;
-    protected override bool B_CanInteract(EntityCharacterPlayer _interactor) => !_interactor.m_PlayerHealth.B_HealthFull;
+    protected override bool B_CanInteract(EntityCharacterPlayer _interactor) => !_interactor.m_Health.B_HealthFull;
     public float m_healAmount { get; private set; }
     public InteractPickupHealth Play(float _healthAmount)
     {

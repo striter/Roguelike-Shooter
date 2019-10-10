@@ -18,7 +18,7 @@ public class UI_EntityHealth : UIToolsBase {
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityDeactivate, OnEntityRecycle);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageFinish, ClearAll);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnGameExit, ClearAll);
-        TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterDamage, OnCharacterDamage);
+        TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
     }
     protected override void OnDestroy()
     {
@@ -27,7 +27,7 @@ public class UI_EntityHealth : UIToolsBase {
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityDeactivate, OnEntityRecycle);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnStageFinish, ClearAll);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnGameExit, ClearAll);
-        TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterDamage, OnCharacterDamage);
+        TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
     }
 
     bool b_showEntityHealthInfo(EntityBase entity) => entity.m_Controller != enum_EntityController.Player;
@@ -47,8 +47,11 @@ public class UI_EntityHealth : UIToolsBase {
 
         m_HealthGrid.RemoveItem(entity.I_EntityID);
     }
-    void OnCharacterDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity, float applyAmount)
+    void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float applyAmount)
     {
+        if (applyAmount <= 0)
+            return;
+
         m_DamageGrid.AddItem(damageCount++).Play(damageEntity,applyAmount,OnDamageExpire);
 
         if (!b_showEntityHealthInfo(damageEntity))

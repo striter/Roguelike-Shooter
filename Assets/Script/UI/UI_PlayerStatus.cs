@@ -227,7 +227,7 @@ public class UI_PlayerStatus : UIToolsBase
     void OnHealthStatus(EntityHealth _healthManager)
     {
         sld_Armor.value = _healthManager.m_CurrentArmor/UIConst.F_UIMaxArmor;
-        sld_Health.value = _healthManager.F_BaseHealthScale;
+        sld_Health.value = _healthManager.F_MaxHealthValue;
         m_ArmorAmount.SetAmount((int)_healthManager.m_CurrentArmor);
         m_HealthAmount.SetAmount((int)_healthManager.m_CurrentHealth);
         m_MaxHealth.SetAmount((int)_healthManager.m_MaxHealth);

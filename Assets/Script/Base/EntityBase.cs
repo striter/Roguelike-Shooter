@@ -11,10 +11,11 @@ public class EntityBase : MonoBehaviour
     public int I_MaxHealth;
     public enum_EntityFlag m_Flag { get; private set; }
     public HealthBase m_Health { get; private set; }
-    protected virtual HealthBase GetHealthManager() => new HealthBase(OnHealthChanged,OnDead);
-    protected virtual void ActivateHealthManager() => m_Health.OnActivate(I_MaxHealth, true);
+    protected virtual HealthBase GetHealthManager() => new HealthBase(OnHealthStatus,OnDead);
+    protected virtual void ActivateHealthManager(float maxHealth) => m_Health.OnSetHealth(maxHealth, true);
     public HitCheckEntity m_HitCheck => m_HitChecks[0];
     protected virtual float DamageReceiveMultiply => 1;
+    protected virtual float HealReceiveMultiply => 1f;
     HitCheckEntity[] m_HitChecks;
     public virtual void Init(int _poolIndex)
     {
@@ -22,10 +23,10 @@ public class EntityBase : MonoBehaviour
         m_HitChecks = GetComponentsInChildren<HitCheckEntity>();
         m_Health = GetHealthManager();
     }
-    public virtual void OnActivate( enum_EntityFlag _flag)
+    public virtual void OnActivate( enum_EntityFlag _flag, float startHealth =0)
     {
         m_Flag = _flag;
-        ActivateHealthManager();
+        ActivateHealthManager(startHealth>0? startHealth:I_MaxHealth);
         I_EntityID = GameIdentificationManager.I_EntityID(m_Flag);
         m_HitChecks.Traversal((HitCheckEntity check) => { check.Attach(this, OnReceiveDamage); check.SetEnable(true); });
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityActivate, this);
@@ -36,10 +37,10 @@ public class EntityBase : MonoBehaviour
             return false;
 
         damageInfo.m_detail.m_OnHitAction?.Invoke(this);
-        return m_Health.OnReceiveDamage(damageInfo, DamageReceiveMultiply);
+        return m_Health.OnReceiveDamage(damageInfo, DamageReceiveMultiply,HealReceiveMultiply);
     }
 
-    protected virtual void OnHealthChanged(enum_HealthChangeMessage message)
+    protected virtual void OnHealthStatus(enum_HealthChangeMessage message)
     {
     }
     protected virtual void OnDead()

@@ -18,17 +18,10 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public override float m_baseMovementSpeed => F_MovementSpeed*( f_movementReductionCheck >0? (1-GameConst.F_AimMovementReduction*m_PlayerInfo.F_AimMovementStrictMultiply):1f);
     public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized* m_CharacterInfo.F_MovementSpeed * time;
     public PlayerInfoManager m_PlayerInfo { get; private set; }
-    public EntityHealth m_PlayerHealth { get; private set; }
     protected bool m_aiming = false;
     protected float f_movementReductionCheck = 0f;
-    
-    protected override HealthBase GetHealthManager()
-    {
-        m_PlayerHealth = new EntityHealth(this, OnHealthChanged, OnDead);
-        return m_PlayerHealth;
-    }
 
-    protected override void ActivateHealthManager() => m_PlayerHealth.OnActivate(I_MaxHealth, I_DefaultArmor, true);
+    protected override void ActivateHealthManager(float maxHealth) => m_Health.OnActivate(maxHealth, I_DefaultArmor, true);
     protected override CharacterInfoManager GetEntityInfo()
     {
         m_PlayerInfo = new PlayerInfoManager(this, m_HitCheck.TryHit, OnExpireChange,OnActionsChange);
@@ -86,7 +79,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public override void OnRevive(float reviveHealth, float reviveArmor)
     {
         base.OnRevive(reviveHealth, reviveArmor);
-        if (m_Health.b_IsDead)
+        if (base.m_Health.b_IsDead)
             return;
         ObtainWeapon(m_WeaponCurrent);
     }
@@ -103,7 +96,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_Equipment = null;
         m_EquipmentTimes = 0;
         m_PlayerInfo.OnBattleFinish();
-        m_PlayerHealth.OnActivate(I_MaxHealth, I_DefaultArmor,false);
+        m_Health.OnActivate(I_MaxHealth, I_DefaultArmor,false);
     }
 
     void OnMainButtonDown(bool down)
@@ -128,9 +121,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected override void Update()
     {
         base.Update();
-        if (m_PlayerHealth.b_IsDead)
+        if (m_Health.b_IsDead)
             return;
-        
+
         bool canFire = !Physics.SphereCast(new Ray(tf_Head.position, tf_Head.forward), .3f, 1.5f, GameLayer.Mask.I_Static);
         m_WeaponCurrent.Tick(Time.deltaTime, canFire);
         m_Assist.SetEnable(canFire);
@@ -282,10 +275,10 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerActionStatus, m_PlayerInfo);
     }
-    protected override void OnHealthChanged(enum_HealthChangeMessage type)
+    protected override void OnHealthStatus(enum_HealthChangeMessage type)
     {
-        base.OnHealthChanged(type);
-        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerHealthStatus, m_PlayerHealth);
+        base.OnHealthStatus(type);
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerHealthStatus, m_Health);
     }
     #endregion
 

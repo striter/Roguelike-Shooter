@@ -15,11 +15,12 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     public virtual float m_baseMovementSpeed => F_MovementSpeed;
     public override bool B_IsCharacter => true;
     protected override float DamageReceiveMultiply => m_CharacterInfo.F_DamageReceiveMultiply;
-
+    protected override float HealReceiveMultiply => m_CharacterInfo.F_HealReceiveMultiply;
     public int m_SpawnerEntityID { get; private set; }
     public void SetSpawnerID(int _spawnerEntityID) => m_SpawnerEntityID = _spawnerEntityID;
     public bool b_isSubEntity => m_SpawnerEntityID != -1;
-    protected override HealthBase GetHealthManager() => new EntityHealth(this, OnHealthChanged, OnDead);
+    public new EntityHealth m_Health=>base.m_Health as EntityHealth;
+    protected override HealthBase GetHealthManager()=> new EntityHealth(this, OnHealthStatus, OnDead);
 
     public override void Init(int _poolIndex)
     {
@@ -30,29 +31,25 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         m_CharacterInfo = GetEntityInfo();
     }
 
-    public override void OnActivate(enum_EntityFlag _flag)
+    public override void OnActivate(enum_EntityFlag _flag, float startHealth =0)
     {
-       base.OnActivate(_flag);
+       base.OnActivate(_flag,startHealth);
         m_SpawnerEntityID = -1;
         m_Effect.OnReset();
         m_CharacterInfo.OnActivate();
         this.StopSingleCoroutine(0);
     }
-    public void SetHealth(float health)
-    {
-        I_MaxHealth = (int)health;
-        ActivateHealthManager();
-    }
+    protected virtual void OnExpireChange(){ }
 
-    protected virtual void OnExpireChange(){}
     protected virtual void OnEnable()
     {
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinished);
     }
     protected virtual void OnDisable()
-{
-    TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinished);
-    this.StopSingleCoroutines(0);
+    {
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinished);
+        m_CharacterInfo.OnDeactivate();
+        this.StopSingleCoroutines(0);
     }
     protected virtual void Update()
     {
@@ -60,6 +57,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
             return;
 
         m_CharacterInfo.Tick(Time.deltaTime);
+        m_Health.SetMaxHealth(m_CharacterInfo.F_MaxHealthAdditive);
 
         m_Effect.SetCloak(m_CharacterInfo.B_Effecting( enum_CharacterEffect.Cloak));
         m_Effect.SetScaned(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Scan));
@@ -93,14 +91,13 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         health.OnRevive(reviveHealth==-1? health.m_MaxHealth:reviveHealth,reviveArmor==-1? health.m_DefaultArmor:reviveArmor);
     }
 
-    protected override void OnHealthChanged(enum_HealthChangeMessage type)
+    protected override void OnHealthStatus(enum_HealthChangeMessage type)
     {
         m_Effect.OnHit(type);
     }
     protected override void OnRecycle()
     {
         base.OnRecycle();
-        m_CharacterInfo.OnDeactivate();
         m_Effect.OnRecycle();
     }
     protected virtual void OnBattleFinished()

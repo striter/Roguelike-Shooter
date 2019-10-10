@@ -7,9 +7,9 @@ public class EntityDeviceBuffApllier : EntityDeviceBase {
     Func<DamageDeliverInfo> OnApplyPlayer, OnApplyAlly;
     float f_refreshCheck;
     float f_refreshDuration;
-    public override void OnActivate(enum_EntityFlag _flag)
+    public override void OnActivate(enum_EntityFlag _flag, float startHealth)
     {
-        base.OnActivate(_flag);
+        base.OnActivate(_flag,startHealth);
         OnApplyPlayer = null;
         OnApplyAlly = null;
     }

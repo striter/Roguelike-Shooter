@@ -623,22 +623,23 @@ public static class GameObjectManager
     #endregion
     #region Spawn/Recycle
     #region Entity
-    static T SpawnEntity<T>(int _poolIndex, Vector3 toPos,enum_EntityFlag _flag, Transform parentTrans = null) where T:EntityBase
+    //Start Health 0:Use Preset I_MaxHealth
+    static T SpawnEntity<T>(int _poolIndex, Vector3 toPos,enum_EntityFlag _flag, float _startHealth = 0, Transform parentTrans = null) where T:EntityBase
     {
         T entity = ObjectPoolManager<int, EntityBase>.Spawn(_poolIndex, TF_Entity) as T;
         if (entity == null)
             Debug.LogError("Entity ID:" + _poolIndex + ",Type:" + typeof(T).ToString() + " Not Found");
-        entity.OnActivate(_flag);
+        entity.OnActivate(_flag,_startHealth);
         entity.gameObject.name = entity.I_EntityID.ToString() + "_" + _poolIndex.ToString();
         entity.transform.position = LevelManager.NavMeshPosition(toPos, true);
         if (parentTrans) entity.transform.SetParent(parentTrans);
         return entity;
     }
-    static T SpawnEntityCharacter<T>(int poolIndex, Vector3 toPosition, enum_EntityFlag _flag, Transform parentTrans = null) where T:EntityCharacterBase => SpawnEntity<T>(poolIndex,toPosition,_flag,parentTrans);
+    static T SpawnEntityCharacter<T>(int poolIndex, Vector3 toPosition, enum_EntityFlag _flag, float _startHealth = 0, Transform parentTrans = null) where T:EntityCharacterBase => SpawnEntity<T>(poolIndex,toPosition,_flag,_startHealth,parentTrans);
     public static EntityCharacterAI SpawnAI(int index, Vector3 toPosition, enum_EntityFlag _flag)=> SpawnEntityCharacter<EntityCharacterAI>(index, toPosition, _flag);
-    public static EntityCharacterBase SpawnSubCharacter(int index, Vector3 toPosition, int spanwer, enum_EntityFlag _flag)
+    public static EntityCharacterBase SpawnSubCharacter(int index, Vector3 toPosition, int spanwer, enum_EntityFlag _flag, float _startHealth =0)
     {
-        EntityCharacterBase entity = SpawnEntityCharacter<EntityCharacterBase>(index, toPosition, _flag);
+        EntityCharacterBase entity = SpawnEntityCharacter<EntityCharacterBase>(index, toPosition, _flag,_startHealth,null);
         entity.SetSpawnerID(spanwer);
         return entity;
     }
@@ -649,7 +650,7 @@ public static class GameObjectManager
         player.ObtainWeapon(SpawnWeapon(playerSave.m_weapon,GameDataManager.CreateActions(playerSave.m_weaponActions)));
         return player;
     }
-    public static EntityTrader SpawnTrader(int index, Vector3 toPosition, Transform attachTo) => SpawnEntity<EntityTrader>(index, toPosition, enum_EntityFlag.Neutal, attachTo);
+    public static EntityTrader SpawnTrader(int index, Vector3 toPosition, Transform attachTo) => SpawnEntity<EntityTrader>(index, toPosition, enum_EntityFlag.Neutal,0, attachTo);
     public static void RecycleEntity(int index, EntityBase target) => ObjectPoolManager<int, EntityBase>.Recycle(index, target);
     #endregion
     #region Weapon
