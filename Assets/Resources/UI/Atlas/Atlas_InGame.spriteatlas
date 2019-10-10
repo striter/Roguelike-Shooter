@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: Atlas_InGame
+  m_EditorData:
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings: []
+    packingParameters:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 1
+      enableTightPacking: 1
+    variantMultiplier: 1
+    packables:
+    - {fileID: 102900000, guid: 081334a023db2704db167d2dfc323270, type: 3}
+    totalSpriteSurfaceArea: 1165307
+    bindAsDefault: 1
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 0aaa3dc21666f4046978924681572f16, type: 3}
+  - {fileID: 21300000, guid: a00c4e98a73cb6d46a3f7b2ed752f740, type: 3}
+  - {fileID: 21300000, guid: f707edb8147ad104b8e3b9a3fc7ed413, type: 3}
+  - {fileID: 21300000, guid: d783a5f7194904445969c59766ac8443, type: 3}
+  - {fileID: 21300000, guid: 18a7c2d7df8a6854e9bc2e3248a93804, type: 3}
+  - {fileID: 21300000, guid: 006ea73e2bf56dc4e959b2bc4171da77, type: 3}
+  - {fileID: 21300000, guid: 4ec60bacd1dafa74b8d93d4b1cae4984, type: 3}
+  - {fileID: 21300000, guid: eb6498b538c432c479fd0ccd174629b6, type: 3}
+  - {fileID: 21300000, guid: fa0122c7e5ddb1d4399a011784eede79, type: 3}
+  - {fileID: 21300000, guid: dfc35cd87afdb89468db5389efbfb5ba, type: 3}
+  - {fileID: 21300000, guid: 838e3e3f0673e564aafbb7fb60b21e46, type: 3}
+  - {fileID: 21300000, guid: a0e4044850dc94f4ea77c05d26531154, type: 3}
+  - {fileID: 21300000, guid: 6b5e120f41ccce542848f00f95446778, type: 3}
+  - {fileID: 21300000, guid: 1293ae4f9500e5046bcb8c3fc46d3fb9, type: 3}
+  - {fileID: 21300000, guid: c08fb8623df6ada478d2261bfca4d369, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - missioncomplete_bg
+  - missionfailed_bg
+  - missioncomplete_title_en
+  - missionfailed_title_en
+  - missionfailed_title
+  - missioncomplete_title
+  - icon_gold
+  - UI_title_orange_small
+  - Ruler
+  - btn_commcon_yellow
+  - btn_commcon_blue
+  - icon_failure
+  - Ruler_cross
+  - icon_goal
+  - icon_video
+  m_Tag: Atlas_InGame
+  m_IsVariant: 0
