@@ -11,10 +11,10 @@ public class SFXProjectileBoltDelayCast : SFXProjectileBolt {
         if (F_DelayDuration < 0)
             Debug.LogError("Delay Duration Less Than 0");
     }
-    protected override void OnHitTarget(RaycastHit hit, HitCheckBase entity)
+    protected override bool OnHitTargetCanPenetrate(RaycastHit hit, HitCheckBase entity)
     {
-        base.OnHitTarget(hit, entity);
         SetLifeTime(F_DelayDuration);
+        return base.OnHitTargetCanPenetrate(hit, entity);
     }
     protected override void OnRecycle()
     {

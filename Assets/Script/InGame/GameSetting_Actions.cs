@@ -231,7 +231,7 @@ namespace GameSetting_Action
         public static float P_30012_HealthRegenEachKill(enum_RarityLevel rarity) => 15 * (int)rarity;
 
         public const int I_30013_Cost = 2;
-        public static float F_30013_HealthRegenMultiply(enum_RarityLevel rarity) => 1 * .8f * (int)rarity;
+        public static float P_30013_HealthRegenAdditive(enum_RarityLevel rarity) => 80* (int)rarity;
 
         public const int I_30014_Cost = 3;
         public static float F_30014_DamageReductionDuration(enum_RarityLevel rarity) => .5f+ .5f*(int)rarity;
@@ -1222,6 +1222,81 @@ namespace GameSetting_Action
                 ActionHelper.ReceiveHealing(m_ActionEntity,m_ActionEntity.I_MaxHealth*Value1/100f, enum_DamageType.HealthOnly);
         }
         public Action_30012_KillHealthRegen(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_30013_HealRegenAdditive : ActionBase
+    {
+        public override int m_Index => 30013;
+        public override int I_BaseCost => ActionData.I_30013_Cost;
+        public override float Value1 => ActionData.P_30013_HealthRegenAdditive(m_rarity);
+        public override float m_HealAdditive => Value1 / 100f;
+        public Action_30013_HealRegenAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_30014_ArmorDamageDamageReductionDuration : ActionBase
+    {
+        public override int m_Index => 30014;
+        public override int I_BaseCost => ActionData.I_30014_Cost;
+        public override float Value1 => ActionData.F_30014_DamageReductionDuration(m_rarity);
+        public override float m_DamageReduction => m_Effecting ? 1 : 0;
+        float m_counter = 0;
+        bool m_Effecting => m_counter > 0;
+        public override void OnTick(float deltaTime)
+        {
+            base.OnTick(deltaTime);
+            if (m_counter > 0) m_counter -= deltaTime;
+        }
+        public override void OnReceiveDamage(DamageInfo info, float amount)
+        {
+            base.OnReceiveDamage(info, amount);
+            if (m_ActionEntity.m_Health.m_CurrentArmor > 0)
+                m_counter = Value1;
+        }
+        public Action_30014_ArmorDamageDamageReductionDuration(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_30015_ArmorDamageReflection : ActionBase
+    {
+        public override int m_Index => 30015;
+        public override int I_BaseCost => ActionData.I_30015_Cost;
+        public override float Value1 => ActionData.F_30015_DamageReflectPerArmor(m_rarity);
+        public override void OnReceiveDamage(DamageInfo info, float amount)
+        {
+            base.OnReceiveDamage(info, amount);
+            if (m_ActionEntity.m_Health.m_CurrentArmor > 0)
+                ActionHelper.PlayerDealtDamageToEntity(m_ActionEntity, info.m_detail.I_SourceID, Value1 * m_ActionEntity.m_Health.m_CurrentArmor, enum_DamageType.Common);
+        }
+        public Action_30015_ArmorDamageReflection(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_30016_ProjectileSpeed : ActionBase
+    {
+        public override int m_Index => 30016;
+        public override int I_BaseCost => ActionData.I_30016_Cost;
+        public override float Value1 => ActionData.P_30016_ProjectileSpeedMultiply(m_rarity);
+        public override float F_ProjectileSpeedMultiply => Value1/100f;
+        public Action_30016_ProjectileSpeed(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_30017_ArmorAdditiveActionUse : ActionBase
+    {
+        public override int m_Index => 30017;
+        public override int I_BaseCost => ActionData.I_30017_Cost;
+        public override float Value1 => ActionData.F_30017_ArmorAdditive(m_rarity);
+        public override void OnAddActionElse(float actionAmount)
+        {
+            base.OnAddActionElse(actionAmount);
+            ActionHelper.ReceiveHealing(m_ActionEntity, Value1, enum_DamageType.ArmorOnly);
+        }
+        public Action_30017_ArmorAdditiveActionUse(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_30018_ProjectilePenetrate : ActionBase
+    {
+        public override int m_Index => 30018;
+        public override int I_BaseCost => ActionData.I_30018_Cost(m_rarity);
+        public override bool B_ProjectilePenetrade => true;
+        public Action_30018_ProjectilePenetrate(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
     #endregion
     #endregion

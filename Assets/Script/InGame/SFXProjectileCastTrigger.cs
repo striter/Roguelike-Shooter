@@ -15,9 +15,10 @@ public class SFXProjectileCastTrigger : SFXProjectile
         base.OnRecycle();
         OnCastTrigger(v3_castPoint);
     }
-    protected override void OnHitTarget(RaycastHit hit, HitCheckBase hitCheck)
+    protected override bool OnHitTargetCanPenetrate(RaycastHit hit, HitCheckBase hitCheck)
     {
         OnCastTrigger(hit.point==Vector3.zero?v3_castPoint:hit.point);
+        return false;
     }
     protected virtual void OnCastTrigger(Vector3 point)
     {

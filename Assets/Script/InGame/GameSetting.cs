@@ -1139,7 +1139,8 @@ namespace GameSetting
         protected virtual void OnResetInfo()
         {
             F_MaxHealthAdditive = 0f;
-               F_DamageReceiveMultiply = 1f;
+            F_DamageReceiveMultiply = 1f;
+            F_HealReceiveMultiply = 1f;
             F_MovementSpeedMultiply = 1f;
             F_FireRateMultiply = 1f;
             F_ReloadRateMultiply = 1f;
@@ -1151,6 +1152,7 @@ namespace GameSetting
             F_MaxHealthAdditive += expire.m_MaxHealthAdditive;
             F_DamageMultiply += expire.m_DamageMultiply;
             F_DamageReceiveMultiply -= expire.m_DamageReduction;
+            F_HealReceiveMultiply += expire.m_HealAdditive;
             F_MovementSpeedMultiply += expire.m_MovementSpeedMultiply;
             F_FireRateMultiply += expire.m_FireRateMultiply;
             F_ReloadRateMultiply += expire.m_ReloadRateMultiply;
@@ -1161,7 +1163,7 @@ namespace GameSetting
             if (F_DamageReceiveMultiply < 0) F_DamageReceiveMultiply = 0;
             if (F_MovementSpeedMultiply < 0) F_MovementSpeedMultiply = 0;
             if (F_HealthDrainMultiply < 0) F_HealthDrainMultiply = 0;
-            Debug.Log(F_MaxHealthAdditive);
+            if (F_HealReceiveMultiply < 0) F_HealReceiveMultiply = 0;
         }
         void UpdateExpireInfo()
         {
@@ -1206,6 +1208,7 @@ namespace GameSetting
         public float F_RecoilMultiply { get; private set; } = 1f;
         public float F_AimMovementStrictMultiply { get; private set; } = 1f;
         public float F_ProjectileSpeedMuiltiply { get; private set; } = 1f;
+        public bool B_ProjectilePenetrate { get; private set; } = true;
         protected bool B_OneOverride { get; private set; } = false;
         protected int I_ClipAdditive { get; private set; } = 0;
         protected float F_ClipMultiply { get; private set; } = 1f;
@@ -1311,6 +1314,7 @@ namespace GameSetting
             B_OneOverride = false;
             I_ClipAdditive = 0;
             F_ClipMultiply = 1f;
+            B_ProjectilePenetrate = false;
             F_RecoilMultiply = 1f;
             F_ProjectileSpeedMuiltiply = 1f;
             F_AimMovementStrictMultiply = 1f;
@@ -1329,6 +1333,7 @@ namespace GameSetting
             F_ClipMultiply += action.F_ClipMultiply;
             B_OneOverride |= action.B_ClipOverride;
             I_ClipAdditive += action.I_ClipAdditive;
+            B_ProjectilePenetrate |= action.B_ProjectilePenetrade;
         }
         protected override void AfterInfoSet()
         {
@@ -1527,6 +1532,7 @@ namespace GameSetting
         public virtual float m_HealthDrainMultiply => 0;
         public virtual float m_DamageMultiply => 0;
         public virtual float m_DamageReduction => 0;
+        public virtual float m_HealAdditive => 0;
         public virtual float m_EffectDuration => m_ExpireDuration;
         private Action<ExpireBase> OnExpired;
         public float m_ExpireDuration { get; private set; } = 0;
@@ -1612,6 +1618,7 @@ namespace GameSetting
         public virtual float F_ProjectileSpeedMultiply => 0;
         public virtual bool B_ClipOverride => false;
         public virtual int I_ClipAdditive => 0;
+        public virtual bool B_ProjectilePenetrade => false;
         public virtual float F_ClipMultiply => 0;
         public virtual float F_CloakDuration => 0;
         public virtual float F_Duration => 0;

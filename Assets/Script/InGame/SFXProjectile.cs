@@ -9,7 +9,7 @@ public class SFXProjectile : SFXBase
     public enum_ProjectileFireType E_ProjectileType= enum_ProjectileFireType.Invalid;
     public float F_Damage;
     public float F_Speed;
-    public bool B_Piercing;
+    public bool B_Penetrate;
     public int I_MuzzleIndex;
     public int I_ImpactIndex;
     public int I_IndicatorIndex;
@@ -31,9 +31,9 @@ public class SFXProjectile : SFXBase
     List<int> m_EntityHitted = new List<int>();
     public bool B_SimulatePhysics { get; protected set; }
     protected virtual float F_Duration(Vector3 startPos, Vector3 endPos) => GameConst.I_ProjectileMaxDistance / F_Speed;
-    protected virtual bool B_RecycleOnHit => true;
     protected virtual bool B_DisablePhysicsOnHit => true;
     protected virtual bool B_DealDamage => true;
+    protected virtual bool B_RecycleOnHit => true;
     protected ModelBlink m_Blink;
     protected virtual PhysicsSimulator<HitCheckBase> GetSimulator(Vector3 direction, Vector3 targetPosition) => new ProjectilePhysicsSimulator(transform,transform.position, direction, Vector3.down, F_Speed, F_Height,F_Radius, GameLayer.Mask.I_All, OnHitTargetBreak,CanHitTarget);
     protected DamageInfo m_DamageInfo;
@@ -107,27 +107,29 @@ public class SFXProjectile : SFXBase
         }
     }
     #region Physics
+    protected virtual bool CanHitTarget(HitCheckBase hitCheck) => !m_EntityHitted.Contains(hitCheck.I_AttacherID) && GameManager.B_CanHitTarget(hitCheck, m_sourceID);
     protected bool OnHitTargetBreak(RaycastHit hit, HitCheckBase hitCheck)
     {
-        OnHitTarget(hit, hitCheck);
+      
         SpawnImpact(hit, hitCheck);
-        if (B_DisablePhysicsOnHit)
-            B_SimulatePhysics = false;
-        if (B_RecycleOnHit)
-            OnRecycle();
-        
-        return !B_Piercing;
+        if ( OnHitTargetCanPenetrate(hit, hitCheck)&& B_Penetrate)
+            return false;
+
+        if (B_DisablePhysicsOnHit) B_SimulatePhysics = false;
+        if (B_RecycleOnHit) OnRecycle();
+        return true;
     }
-    protected virtual bool CanHitTarget(HitCheckBase hitCheck)=> !m_EntityHitted.Contains(hitCheck.I_AttacherID) && GameManager.B_CanHitTarget(hitCheck, m_sourceID);
     
-    protected virtual void OnHitTarget(RaycastHit hit, HitCheckBase hitCheck)
+    protected virtual bool OnHitTargetCanPenetrate(RaycastHit hit, HitCheckBase hitCheck)
     {
         switch (hitCheck.m_HitCheckType)
         {
             case enum_HitCheck.Dynamic:
             case enum_HitCheck.Static:
-                hitCheck.TryHit(m_DamageInfo);
-                break;
+                {
+                    hitCheck.TryHit(m_DamageInfo);
+                    return false;
+                }
             case enum_HitCheck.Entity:
                 {
                     HitCheckEntity entity = hitCheck as HitCheckEntity;
@@ -136,9 +138,11 @@ public class SFXProjectile : SFXBase
                         entity.TryHit(m_DamageInfo, transform.forward);
                         m_EntityHitted.Add(entity.I_AttacherID);
                     }
+                    return true;
                 }
-                break;
         }
+        Debug.LogError("Invalid Item Hitted:"+hit.collider);
+        return false;
     }
     #endregion
     protected virtual void SpawnIndicator(Vector3 position,Vector3 direction,float duration)

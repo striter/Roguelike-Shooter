@@ -50,10 +50,9 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y:MonoBehaviour {
         info.m_spawnItem = registerItem;
         info.i_poolSaveAmount = poolStartAmount;
         info.OnItemInstantiate = OnItemInstantiate;
-        Y spawnItem;
         for (int i = 0; i < info.i_poolSaveAmount; i++)
         {
-            spawnItem = GameObject.Instantiate(info.m_spawnItem, tf_PoolSpawn).GetComponent<Y>();
+            Y spawnItem = GameObject.Instantiate(info.m_spawnItem, tf_PoolSpawn).GetComponent<Y>();
             spawnItem.name = info.m_spawnItem.name + (info.l_Deactive.Count + info.l_Active.Count).ToString();
             info.OnItemInstantiate?.Invoke(spawnItem);
             info.l_Deactive.Add(spawnItem);

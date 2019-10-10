@@ -13,6 +13,7 @@ public class WeaponBase : MonoBehaviour {
     public List<ActionBase> m_WeaponAction { get; private set; } = new List<ActionBase>();
     public float F_BaseSpeed { get; private set; } = 0;
     public float F_BaseDamage { get; private set; } = 0;
+    public bool B_BasePenetrate { get; private set; } = false;
     public float F_BaseRecoil => m_WeaponInfo.m_RecoilPerShot.x;
     public float F_BaseFirerate => m_WeaponInfo.m_FireRate;
 
@@ -25,6 +26,7 @@ public class WeaponBase : MonoBehaviour {
     public int I_ClipAmount { get; private set; } = 0;
     public float F_Speed => m_Attacher.m_PlayerInfo.F_ProjectileSpeedMuiltiply * F_BaseSpeed;
     public float F_Recoil => m_Attacher.m_PlayerInfo.F_RecoilMultiply * F_BaseRecoil;
+    public bool B_Penetrate => m_Attacher.m_PlayerInfo.B_ProjectilePenetrate||B_BasePenetrate;
     public float F_ReloadStatus => B_Reloading ? f_reloadCheck / m_WeaponInfo.m_ReloadTime : 1;
     public float F_AmmoStatus => I_AmmoLeft / (float)I_ClipAmount;
     public bool B_TriggerActionable() => B_Triggerable && B_Actionable();
@@ -44,6 +46,7 @@ public class WeaponBase : MonoBehaviour {
         m_WeaponInfo = weaponInfo;
         SFXProjectile projectileInfo = GameObjectManager.GetEquipmentData<SFXProjectile>(m_WeaponInfo.m_Index);
         F_BaseSpeed = projectileInfo.F_Speed;
+        B_BasePenetrate = projectileInfo.B_Penetrate;
         F_BaseDamage = projectileInfo.F_Damage;
         I_MuzzleIndex = projectileInfo.I_MuzzleIndex;
         I_ClipAmount = m_WeaponInfo.m_ClipAmount;
@@ -110,6 +113,7 @@ public class WeaponBase : MonoBehaviour {
 
             SFXProjectile projectile = GameObjectManager.SpawnEquipment<SFXProjectile>(m_WeaponInfo.m_Index, m_Muzzle.position, spreadDirection);
             projectile.F_Speed = F_Speed;
+            projectile.B_Penetrate = B_Penetrate;
             projectile.Play(damageInfo, spreadDirection, endPosition);
         }
 
