@@ -75,7 +75,7 @@ namespace GameSetting
         public static float GetAIBaseHealthMultiplier(int gameDifficulty)=>0.99f+0.01f*gameDifficulty;
         public static float GetAIMaxHealthMultiplier(enum_StageLevel stageDifficulty) => (int)stageDifficulty;
 
-        public static float GetActionAmountRevive(float damageApply) => damageApply * .00125f;
+        public static float GetActionAmountRevive(float damageApply) => damageApply * .0025f;
 
         public static float GetAIIdleDuration() => UnityEngine.Random.Range(1f, 2f);
 
