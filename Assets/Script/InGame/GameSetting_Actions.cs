@@ -206,7 +206,7 @@ namespace GameSetting_Action
         public static float P_30004_ReloadSpeedMultiply(enum_RarityLevel rarity) => 10 + 10 * (int)rarity;
 
         public const int I_30005_Cost = 2;
-        public static float F_30005_FreezeDuration(enum_RarityLevel rarity) => .1f + .1f * (int)rarity;
+        public static float F_30005_FreezeDuration(enum_RarityLevel rarity) => .05f + .05f * (int)rarity;
 
         public const int I_30006_Cost = 1;
         public static float F_30006_FreezeDuration(enum_RarityLevel rarity) => 1 + 2 * (int)rarity;
