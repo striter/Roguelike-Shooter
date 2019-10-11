@@ -40,10 +40,10 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
     public void SetPostEffects(enum_Style _levelStyle)
     {
         CameraController.Instance.m_Effect.RemoveAllPostEffect();
-        CameraController.Instance.m_Effect.AddCameraEffect<PE_BloomSpecific>().m_GaussianBlur.SetEffect(2, 10, 2);
         //CameraController.Instance.m_Effect.AddPostEffect<PE_DepthOutline>().SetEffect(Color.black,1.2f,0.0001f);
         //CameraController.Instance.m_Effect.AddPostEffect<PE_DepthSSAO>();
         m_BSC = CameraController.Instance.m_Effect.AddCameraEffect<PE_BSC>();
+        CameraController.Instance.m_Effect.AddCameraEffect<PE_BloomSpecific>().m_GaussianBlur.SetEffect(2, 10, 2);
         m_BSC.SetEffect(1f, 1f, 1f);
         switch (_levelStyle)
         {
@@ -62,7 +62,7 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
     }
     protected void SetPostEffect_Revive()
     {
-        CameraController.Instance.m_Effect.AddCameraEffect<PE_Bloom>().SetEffect(2, 5, 3,.9f,1f);
+        CameraController.Instance.m_Effect.AddCameraEffect<PE_Bloom>().SetEffect(2, 3, 4,.9f,2f);
         this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => { m_BSC.SetEffect(value, 1f, 1f); }, 2f, 1, 2f,
              CameraController.Instance.m_Effect.RemoveCameraEffect<PE_Bloom>));
     }
