@@ -271,8 +271,8 @@ namespace GameSetting
         public static string GetNameLocalizeKey(this BuffBase buff) => "Buff_Name_" + buff.m_Index;
         public static string GetNameLocalizeKey(this ActionBase action) => "Action_Name_" + action.m_Index;
         public static string GetIntroLocalizeKey(this ActionBase action) => "Action_Intro_" + action.m_Index;
-        public static string GetLocalizeKey(this enum_StageLevel stage) => "Game_" + stage;
-        public static string GetLocalizeKey(this enum_Style style) => "Game_" + style;
+        public static string GetLocalizeKey(this enum_StageLevel stage) => "Game_Stage_" + stage;
+        public static string GetLocalizeKey(this enum_Style style) => "Game_Style_" + style;
         public static string GetLocalizeNameKey(this enum_PlayerWeapon weapon) => "Weapon_Name_" + weapon;
         public static string GetLocalizeKey(this enum_Interaction interact) => "UI_Interact_" + interact;
         public static string GetLocalizeKey(this enum_TileType type) => "UI_TileType_" + type;
