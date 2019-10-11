@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using GameSetting;
 using System;
 
-public class UIManager :SimpleSingletonMono<UIManager>
+public class UIManager :SimpleSingletonMono<UIManager>,ISingleCoroutine
 {
     public Vector2 m_FittedScale { get; private set; }
     Canvas cvs_Overlay, cvs_Camera;
@@ -17,6 +17,7 @@ public class UIManager :SimpleSingletonMono<UIManager>
     protected T ShowTools<T>() where T : UIToolsBase => UIToolsBase.Show<T>(tf_Tools);
     public static void Activate(bool inGame) => TResources.InstantiateUIManager().Init(inGame);
     public Camera m_Camera { get; private set; }
+    public CameraEffectManager m_Effect { get; private set; }
     CB_GenerateGlobalGaussianBlurTexture m_Blur;
     protected void Init(bool inGame)
     {
@@ -44,13 +45,15 @@ public class UIManager :SimpleSingletonMono<UIManager>
         if (inGame) cvs_Overlay.transform.Find("Test/SeedTest").GetComponent<Text>().text = GameManager.Instance.m_GameLevel.m_Seed;   //Test
 
         m_Camera = transform.Find("UICamera").GetComponent<Camera>();
-        m_Blur=m_Camera.GetComponent<CameraEffectManager>().AddCameraEffect<CB_GenerateGlobalGaussianBlurTexture>();
+        m_Effect = m_Camera.GetComponent<CameraEffectManager>();
+        m_Blur = m_Effect.AddCameraEffect<CB_GenerateGlobalGaussianBlurTexture>();
         m_Blur.SetEffect(1, 2f, 2);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnPlayerStatusChanged);
     }
     protected override void OnDestroy()
     {
         base.OnDestroy();
+        this.StopAllCoroutines();
         OptionsManager.event_OptionChanged -= OnOptionsChanged;
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnPlayerStatusChanged);
     }
@@ -78,4 +81,5 @@ public class UIManager :SimpleSingletonMono<UIManager>
         cvs_Camera.gameObject.SetActivate(false);
         ShowPage<UI_GameResult>(true).Play(win, levelScore, killScore, credit, _OnButtonClick);
     }
+
 }

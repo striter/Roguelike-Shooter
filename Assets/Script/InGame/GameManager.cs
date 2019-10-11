@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class GameManager : GameManagerBase, ISingleCoroutine
+public class GameManager : GameManagerBase
 {
     protected static GameManager nInstance;
     public static new GameManager Instance => nInstance;
@@ -114,6 +114,7 @@ public class GameManager : GameManagerBase, ISingleCoroutine
     public EntityCharacterPlayer m_LocalPlayer { get; private set; } = null;
     InteractActionChest m_RewardChest;
     public bool B_ShowChestTips=>m_RewardChest!=null&&m_RewardChest.B_Interactable;
+    public override bool B_InGame => true;
     protected override void Awake()
     {
         nInstance=this;
@@ -121,6 +122,8 @@ public class GameManager : GameManagerBase, ISingleCoroutine
         InitEntityDic();
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntiyActivate);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityDeactivate, OnEntityRecycle);
+        TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
+        TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterRevive, OnCharacterRevive);
         m_GameLevel = M_TESTSEED != "" ? new GameLevelManager(M_TESTSEED, enum_StageLevel.Rookie, 1) : new GameLevelManager(GameDataManager.m_PlayerGameData,GameDataManager.m_PlayerLevelData);
     }
     protected override void OnDestroy()
@@ -128,17 +131,18 @@ public class GameManager : GameManagerBase, ISingleCoroutine
         base.OnDestroy();
         nInstance = null;
     }
-    private void OnDisable()
+    protected override void OnDisable()
     {
-        this.StopAllSingleCoroutines();
+        base.OnDisable();
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntiyActivate);
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityDeactivate, OnEntityRecycle);
+        TBroadCaster<enum_BC_GameStatus>.Remove<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
+        TBroadCaster<enum_BC_GameStatus>.Remove<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterRevive, OnCharacterRevive);
     }
     protected override void Start()
     {
         base.Start();
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameStart);
-        UIManager.Activate(true);
         StartStage();
     }
     public void OnExitGame()
@@ -161,6 +165,7 @@ public class GameManager : GameManagerBase, ISingleCoroutine
         m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_PlayerLevelData);
         m_PlayerRecord = new GameRecordManager(GameDataManager.m_PlayerLevelData);
         LevelManager.Instance.GenerateAllEnviorment(m_GameLevel.m_GameStyle, m_GameLevel.m_GameSeed, OnLevelChanged, OnStageFinished);
+        SetPostEffects(m_GameLevel.m_GameStyle);
         GC.Collect();
         Resources.UnloadUnusedAssets();
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageStart);
@@ -410,7 +415,7 @@ public class GameManager : GameManagerBase, ISingleCoroutine
                 m_EntityGenerating.Add(m_Enermies[level].RandomItem());
             }
         });
-        this.StartSingleCoroutine(0, IE_GenerateEnermy(m_EntityGenerating, .1f));
+        this.StartSingleCoroutine(99, IE_GenerateEnermy(m_EntityGenerating, .1f));
     }
 
     void OnBattleCharacterDead(EntityCharacterBase entity)
@@ -469,6 +474,20 @@ public class GameManager : GameManagerBase, ISingleCoroutine
     }
     #endregion
 
+
+    void OnCharacterDead(EntityCharacterBase character)
+    {
+        if (character.m_Controller != enum_EntityController.Player)
+            return;
+        SetPostEffect_Dead();
+    }
+
+    void OnCharacterRevive(EntityCharacterBase character)
+    {
+        if (character.m_Controller != enum_EntityController.Player)
+            return;
+        SetPostEffect_Revive();
+    }
 }
 #region External Tools Packaging Class
 public class GameLevelManager
