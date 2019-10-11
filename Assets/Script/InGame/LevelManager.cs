@@ -47,24 +47,8 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
         StyleColorData[] customizations = TResources.GetAllStyleCustomization(_LevelStyle);
         StyleColorData randomData= customizations.Length == 0? StyleColorData.Default():customizations.RandomItem(m_mainSeed);
         randomData.DataInit(m_DirectionalLight);
-        SetPostEffects(_LevelStyle);
     }
-    public void SetPostEffects(enum_Style _levelStyle)
-    {
-        CameraController.Instance.m_Effect.RemoveAllPostEffect();
-        CameraController.Instance.m_Effect.AddCameraEffect<PE_BloomSpecific>().m_GaussianBlur.SetEffect(2, 10, 2);
-        //CameraController.Instance.m_Effect.AddPostEffect<PE_DepthOutline>().SetEffect(Color.black,1.2f,0.0001f);
-        //CameraController.Instance.m_Effect.AddPostEffect<PE_DepthSSAO>();
-        switch (_levelStyle)
-        {
-            case enum_Style.Undead:
-                CameraController.Instance.m_Effect.AddCameraEffect<PE_FogDepthNoise>().SetEffect<PE_FogDepthNoise>(TCommon.ColorAlpha(Color.white, .3f), .5f, -1f, 5f).SetEffect(TResources.Load<Texture>(TResources.ConstPath.S_PETex_NoiseFog),.4f,2f);
-                break;
-            case enum_Style.Iceland:
-                CameraController.Instance.m_Effect.AddCameraEffect<PE_FogDepth>().SetEffect<PE_FogDepth>(Color.white,.6f,-1,5);
-                break;
-        }
-    }
+
 
     #region Level
     void OnStageStart()

@@ -330,6 +330,7 @@ public class CommandBufferBase:CameraEffectBase
 public class CB_GenerateGlobalGaussianBlurTexture : CommandBufferBase
 {
     public PE_GaussianBlur m_GaussianBlur { get; private set; }
+    public PE_BSC m_BSC { get; private set; }
     protected override CameraEvent m_BufferEvent => CameraEvent.BeforeImageEffects;
     readonly int ID_GlobalBlurTexure = Shader.PropertyToID("_GlobalBlurTexture");
     readonly int ID_TempTexture1 = Shader.PropertyToID("_TempRT1");
@@ -353,7 +354,6 @@ public class CB_GenerateGlobalGaussianBlurTexture : CommandBufferBase
         }
         m_Buffer.SetGlobalTexture(ID_GlobalBlurTexure, ID_TempTexture1);
     }
-    
     public override void OnDestroy()
     {
         base.OnDestroy();

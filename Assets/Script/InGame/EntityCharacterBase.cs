@@ -89,6 +89,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         OnActivate(m_Flag);
         EntityHealth health = (m_Health as EntityHealth);
         health.OnRevive(reviveHealth==-1? health.m_MaxHealth:reviveHealth,reviveArmor==-1? health.m_DefaultArmor:reviveArmor);
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterRevive, this);
     }
 
     protected override void OnHealthStatus(enum_HealthChangeMessage type)

@@ -51,8 +51,8 @@ SpriteAtlas:
   - missionfailed_bg
   - missioncomplete_title_en
   - missionfailed_title_en
-  - missionfailed_title
-  - missioncomplete_title
+  - missionfailed_title_cn
+  - missioncomplete_title_cn
   - icon_gold
   - UI_title_orange_small
   - Ruler

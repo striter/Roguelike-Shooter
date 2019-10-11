@@ -5,7 +5,8 @@ using UnityEngine;
 using System;
 using TExcel;
 
-public class GameManagerBase : SimpleSingletonMono<GameManagerBase>{
+public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCoroutine{
+    public virtual bool B_InGame => false;
     protected override void Awake()
     {
         base.Awake();
@@ -18,10 +19,14 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>{
     }
     protected virtual void Start()
     {
+        UIManager.Activate(B_InGame);
         SetBulletTime(false);
     }
 
-
+    protected virtual void OnDisable()
+    {
+        this.StopAllSingleCoroutines();
+    }
 
     protected static float m_BulletTime = 1f;
     public static bool m_BulletTiming => m_BulletTime != 1f;
@@ -29,6 +34,37 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>{
     {
         m_BulletTime = enter ? duration:1f ;
         Time.timeScale = m_BulletTime;
+    }
+
+    PE_BSC m_BSC;
+    public void SetPostEffects(enum_Style _levelStyle)
+    {
+        CameraController.Instance.m_Effect.RemoveAllPostEffect();
+        CameraController.Instance.m_Effect.AddCameraEffect<PE_BloomSpecific>().m_GaussianBlur.SetEffect(2, 10, 2);
+        //CameraController.Instance.m_Effect.AddPostEffect<PE_DepthOutline>().SetEffect(Color.black,1.2f,0.0001f);
+        //CameraController.Instance.m_Effect.AddPostEffect<PE_DepthSSAO>();
+        m_BSC = CameraController.Instance.m_Effect.AddCameraEffect<PE_BSC>();
+        m_BSC.SetEffect(1f, 1f, 1f);
+        switch (_levelStyle)
+        {
+            case enum_Style.Undead:
+                CameraController.Instance.m_Effect.AddCameraEffect<PE_FogDepthNoise>().SetEffect<PE_FogDepthNoise>(TCommon.ColorAlpha(Color.white, .3f), .5f, -1f, 5f).SetEffect(TResources.Load<Texture>(TResources.ConstPath.S_PETex_NoiseFog), .4f, 2f);
+                break;
+            case enum_Style.Iceland:
+                CameraController.Instance.m_Effect.AddCameraEffect<PE_FogDepth>().SetEffect<PE_FogDepth>(Color.white, .6f, -1, 5);
+                break;
+        }
+    }
+
+    protected void SetPostEffect_Dead()
+    {
+        this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => { m_BSC.SetEffect(Mathf.Lerp(1f,.2f,value), Mathf.Lerp(1f, 0f, value), Mathf.Lerp(1f, .8f, value)); }, 0, 1f, 3f));
+    }
+    protected void SetPostEffect_Revive()
+    {
+        CameraController.Instance.m_Effect.AddCameraEffect<PE_Bloom>().SetEffect(2, 5, 3,.9f,1f);
+        this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => { m_BSC.SetEffect(value, 1f, 1f); }, 2f, 1, 2f,
+             CameraController.Instance.m_Effect.RemoveCameraEffect<PE_Bloom>));
     }
 }
 
