@@ -13,11 +13,11 @@ public class UIT_JoyStick : SimpleSingletonMono<UIT_JoyStick>
             return;
 
         if (Input.GetKeyDown(KeyCode.Mouse0))
-            OnActivate(true,Input.mousePosition);
+            OnActivate(Input.mousePosition);
         if (Input.GetKey(KeyCode.Mouse0))
             OnMoved(Input.mousePosition);
         if (Input.GetKeyUp(KeyCode.Mouse0))
-            OnActivate(false, Input.mousePosition);
+            OnDeactivate(); 
     }
 #endif
     RectTransform rtf_Main;
@@ -52,9 +52,14 @@ public class UIT_JoyStick : SimpleSingletonMono<UIT_JoyStick>
         ResetStatus();
     }
 
-    public void OnActivate(bool activate ,Vector2 pos)
+    public void OnActivate(Vector2 pos)
     {
-        m_JoystickControl.OnActivate(activate, pos);
+        m_JoystickControl.OnActivate( pos);
+        ResetStatus();
+    }
+    public void OnDeactivate()
+    {
+        m_JoystickControl.OnDeactivate();
         ResetStatus();
     }
 
@@ -64,11 +69,14 @@ public class UIT_JoyStick : SimpleSingletonMono<UIT_JoyStick>
         ResetStatus();
         return delta;
     }
+    private void LateUpdate()
+    {
+        transform.localScale =Vector3.Lerp(transform.localScale, m_JoystickControl.m_JoyStickShow ? Vector3.one : Vector3.zero,.2f);
+        rtf_Center.anchoredPosition = Vector2.Lerp(rtf_Center.anchoredPosition, m_JoystickControl.m_JoyStickOffset,.2f);
+    }
     void ResetStatus()
     {
-        transform.localScale = m_JoystickControl.m_JoyStickShow?Vector3.one:Vector3.zero;
         rtf_Main.anchoredPosition = m_JoystickControl.m_BasePos;
-        rtf_Center.anchoredPosition = m_JoystickControl.m_JoyStickOffset;
     }
 
     class JoyStickBase
@@ -77,12 +85,17 @@ public class UIT_JoyStick : SimpleSingletonMono<UIT_JoyStick>
         public Vector2 m_BasePos { get; protected set; } = Vector2.zero;
         public Vector2 m_JoyStickOffset { get; protected set; } = Vector2.zero;
         public float m_JoystickRadius { get; protected set; } = 0f;
-        public JoyStickBase(Vector2 startPos,float radius)
+        public JoyStickBase(Vector2 startPos, float radius)
         {
+            m_BasePos = startPos;
             m_JoystickRadius = radius;
             m_JoyStickShow = false;
         }
-        public virtual void OnActivate(bool activate, Vector2 pos)
+        public virtual void OnActivate(Vector2 pos)
+        {
+            m_JoyStickOffset = Vector2.zero;
+        }
+        public virtual void OnDeactivate()
         {
             m_JoyStickOffset = Vector2.zero;
         }
@@ -98,22 +111,20 @@ public class UIT_JoyStick : SimpleSingletonMono<UIT_JoyStick>
         bool enabled;
         public JoyStickStational(Vector2 startPos, float radius) : base(startPos,radius)
         {
-            m_BasePos = startPos;
             m_JoyStickShow = true;
             enabled = false;
         }
 
-        public override void OnActivate(bool activate, Vector2 pos)
+        public override void OnActivate( Vector2 pos)
         {
-            base.OnActivate(activate, pos);
-            if (!activate)
-            {
-                enabled = false;
-                return;
-            }
+            base.OnActivate(pos);
             enabled = Vector2.Distance(pos,m_BasePos)<m_JoystickRadius*2f;
          }
-
+        public override void OnDeactivate()
+        {
+            base.OnDeactivate();
+            enabled = false;
+        }
         public override Vector2 OnMoved(Vector2 pos)
         {
             if (!enabled) return Vector2.zero;
@@ -125,10 +136,15 @@ public class UIT_JoyStick : SimpleSingletonMono<UIT_JoyStick>
         public JoyStickRetarget(Vector2 startPos, float radius) : base(startPos, radius)
         {
         }
-        public override void OnActivate(bool activate, Vector2 pos)
+        public override void OnActivate( Vector2 pos)
         {
-            m_JoyStickShow = activate;
+            m_JoyStickShow = true;
             m_BasePos = pos;
+        }
+        public override void OnDeactivate()
+        {
+            base.OnDeactivate();
+            m_JoyStickShow = false;
         }
     }
 }
