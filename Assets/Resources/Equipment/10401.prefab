@@ -174,9 +174,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   E_ProjectileType: 1
-  F_Damage: 10
+  F_Damage: 15
   F_Speed: 6
-  B_Piercing: 1
+  B_Penetrate: 0
   I_MuzzleIndex: 10101
   I_ImpactIndex: 20101
   I_IndicatorIndex: 0
