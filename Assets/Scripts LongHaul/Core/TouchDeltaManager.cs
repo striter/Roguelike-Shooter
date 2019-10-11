@@ -13,7 +13,15 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
     }
     private void Update()
     {
-        if (!UIT_JoyStick.Instance||UIPageBase.m_PageOpening)  return;
+        if (!UIT_JoyStick.Instance)
+            return;
+        if (UIPageBase.m_PageOpening)
+        {
+            m_TrackLeft = null;
+            m_TrackRight = null;
+            UIT_JoyStick.Instance.OnDeactivate();
+            return;
+        }
 
         foreach (Touch t in Input.touches)
         {
@@ -23,7 +31,7 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
                 if (m_TrackLeft == null && track.isLeft && track.isDown)
                 {
                     m_TrackLeft = track;
-                    UIT_JoyStick.Instance.OnActivate(true,m_TrackLeft.v2_startPos);
+                    UIT_JoyStick.Instance.OnActivate(m_TrackLeft.v2_startPos);
                 }
                 else if (m_TrackRight == null && !track.isLeft)
                 {
@@ -35,7 +43,7 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
                 if (m_TrackLeft != null && t.fingerId == m_TrackLeft.m_Touch.fingerId)
                 {
                     m_TrackLeft = null;
-                    UIT_JoyStick.Instance.OnActivate(false, t.position);
+                    UIT_JoyStick.Instance.OnDeactivate();
                     OnLeftDelta(Vector2.zero);
                 }
                 if (m_TrackRight != null && t.fingerId == m_TrackRight.m_Touch.fingerId)

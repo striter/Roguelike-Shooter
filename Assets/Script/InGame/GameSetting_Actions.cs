@@ -830,6 +830,7 @@ namespace GameSetting_Action
     public class Action_10035_ImmediateReloadShotsBurst : ActionSingleBurstShotKill
     {
         public override int m_Index => 10035;
+        public override int I_BaseCost => ActionData.I_10035_Cost;
         public override float Value1 => ActionData.P_10035_DamageAdditiveNextShot(m_rarity);
         public override float m_DamageMultiply => m_BurstShot ? Value1 / 100f : 0;
         public override float m_ReloadRateMultiply => m_BurstShot ? 10f : 0;

@@ -14,45 +14,70 @@ namespace TExcel
 
     class Properties<T> where T : struct,ISExcel
     {
-        static List<T> l_PropertyList=null;
-        public static bool B_Inited => l_PropertyList != null;
-        public static int Count => PropertiesList.Count;
+        static List<T> m_Properties=null;
+        public static bool B_Inited => m_Properties != null;
+        public static int I_ColumnCount => m_Properties.Count;
         public static List<T> PropertiesList
         {
             get
             {
-                if (l_PropertyList != null)
+                if (m_Properties == null)
                 {
-                    return l_PropertyList;
-                }
-                else
-                {
-                    Debug.LogError(typeof(T).ToString()+ ",Excel Not Inited,Shoulda Init Property First");
+                    Debug.LogError(typeof(T).ToString() + ",Excel Not Inited,Shoulda Init Property First");
                     return null;
                 }
+                return m_Properties;
             }
         }
-        public static void Init()        //Load Sync
+        public static void Init()
         {
-            l_PropertyList = new List<T>();
-            Type type = typeof(T);
-            l_PropertyList=Tools.GetFieldData<T>(Tools.ReadExcelData(TResources.GetExcelData(type.Name)));
+            m_Properties =  Tools.GetFieldData<T>(Tools.ReadExcelFirstSheetData(TResources.GetExcelData(typeof(T).Name, false)));
         }
         public static void Clear()
         {
-            l_PropertyList.Clear();
-            l_PropertyList = null;
+            m_Properties.Clear();
+            m_Properties = null;
+        }
+    }
+    class SheetProperties<T> where T : struct, ISExcel
+    {
+        static Dictionary<int, List<T>> m_AllProperties = null;
+        public static bool B_Inited => m_AllProperties != null;
+        public int I_SheetCount => m_AllProperties.Count;
+        public static List<T> GetPropertiesList(int i)
+        {
+            if (m_AllProperties == null)
+            {
+                Debug.LogError(typeof(T).ToString() + ",Excel Not Inited,Shoulda Init Property First");
+                return null;
+            }
+            return m_AllProperties[i];
+        }
+        public static void Init()
+        {
+            m_AllProperties = new Dictionary<int, List<T>>();
+            Dictionary<int, List<string[]>> m_AllDatas = Tools.ReadExcelMultipleSheetData(TResources.GetExcelData(typeof(T).Name));
+            for (int i = 0; i < m_AllDatas.Count; i++)
+                m_AllProperties.Add(i, Tools.GetFieldData<T>(m_AllDatas[i]));
+        }
+        public static void Clear()
+        {
+            m_AllProperties.Clear();
+            m_AllProperties = null;
         }
     }
 
     class Tools
     {
-        public static List<string[]> ReadExcelData(TextAsset excelAsset,bool extraSheets=false)
+        public static List<string[]> ReadExcelFirstSheetData(TextAsset excelAsset) => ReadExcelData(excelAsset,false)[0];
+        public static Dictionary<int, List<string[]>> ReadExcelMultipleSheetData(TextAsset excelAsset) => ReadExcelData(excelAsset, true);
+        static Dictionary<int, List<string[]>> ReadExcelData(TextAsset excelAsset,bool readExtraSheet)
         {
             IExcelDataReader reader = ExcelReaderFactory.CreateBinaryReader(new MemoryStream(excelAsset.bytes));
-            List<string[]> result = new List<string[]>();
+            Dictionary<int, List<string[]>> result = new Dictionary<int, List<string[]>>();
             do
             {
+                result.Add(result.Count, new List<string[]>());
                 while (reader.Read())
                 {
                     string[] row = new string[reader.FieldCount];
@@ -62,9 +87,9 @@ namespace TExcel
                         row[i] = data == null ? "" : data;
                     }
                     if (row[0] != "")
-                        result.Add(row);
+                        result[result.Count-1].Add(row);
                 }
-            } while (extraSheets && reader.NextResult());
+            } while (readExtraSheet&&reader.NextResult());
             return result;
         }
 

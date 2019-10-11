@@ -392,7 +392,7 @@ public class GameManager : GameManagerBase
     void OnBattleStart()
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleStart);
-        m_EntityGenerate = GameDataManager.GetEntityGenerateProperties(m_GameLevel.m_Difficulty);
+        m_EntityGenerate = GameDataManager.GetEntityGenerateProperties(m_GameLevel.m_GameStage, m_GameLevel.m_Difficulty);
         B_Battling = true;
         m_CurrentWave = 0;
         WaveStart();

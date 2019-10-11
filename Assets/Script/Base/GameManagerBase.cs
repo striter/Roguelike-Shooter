@@ -43,8 +43,8 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
         //CameraController.Instance.m_Effect.AddPostEffect<PE_DepthOutline>().SetEffect(Color.black,1.2f,0.0001f);
         //CameraController.Instance.m_Effect.AddPostEffect<PE_DepthSSAO>();
         m_BSC = CameraController.Instance.m_Effect.AddCameraEffect<PE_BSC>();
-        CameraController.Instance.m_Effect.AddCameraEffect<PE_BloomSpecific>().m_GaussianBlur.SetEffect(2, 10, 2);
         m_BSC.SetEffect(1f, 1f, 1f);
+        CameraController.Instance.m_Effect.AddCameraEffect<PE_BloomSpecific>().m_GaussianBlur.SetEffect(2, 10, 2);
         switch (_levelStyle)
         {
             case enum_Style.Undead:
@@ -126,9 +126,9 @@ public static class GameDataManager
         if (m_Inited) return;
         m_Inited = true;
         Properties<SLevelGenerate>.Init();
-        Properties<SGenerateEntity>.Init();
         Properties<SWeapon>.Init();
         Properties<SBuff>.Init();
+        SheetProperties<SGenerateEntity>.Init();
         InitActions();
 
         m_PlayerGameData = TGameData<CPlayerGameSave>.Read();
@@ -176,20 +176,20 @@ public static class GameDataManager
         return generate;
     }
 
-    public static List<SGenerateEntity> GetEntityGenerateProperties(enum_BattleDifficulty battleDifficulty)
+    public static List<SGenerateEntity> GetEntityGenerateProperties(enum_StageLevel stage,enum_BattleDifficulty battleDifficulty)
     {
         List<SGenerateEntity> entityList = new List<SGenerateEntity>();
         int waveCount = 1;
         for (int i = 0; i < 10; i++)
         {
-            List<SGenerateEntity> randomItems = Properties<SGenerateEntity>.PropertiesList.FindAll(p => p.m_Difficulty == battleDifficulty && p.m_waveCount == waveCount);
+            List<SGenerateEntity> randomItems = SheetProperties<SGenerateEntity>.GetPropertiesList((int)stage).FindAll(p=>p.m_Difficulty == battleDifficulty && p.m_waveCount == waveCount);
             if (randomItems == null || randomItems.Count == 0)
                 break;
             entityList.Add(randomItems.RandomItem());
             waveCount++;
         }
         if (entityList.Count == 0)
-            Debug.LogError("Null Entity Generate Found By:" + (int)battleDifficulty);
+            Debug.LogError("Null Entity Generate Found By:"+(int)stage+"_" + (int)battleDifficulty);
         return entityList;
     }
 
