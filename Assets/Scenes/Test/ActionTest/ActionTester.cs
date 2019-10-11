@@ -27,7 +27,7 @@ public class ActionTester : MonoBehaviour {
         btn_confirm.onClick.AddListener(OnConfirmed);
         m_level = transform.Find("Level").GetComponent<Dropdown>();
         m_Count = transform.Find("Count").GetComponent<Text>();
-        List<SActionTest> datas = Tools.GetFieldData<SActionTest>(Tools.ReadExcelData(m_ActionTestAsset));
+        List<SActionTest> datas = Tools.GetFieldData<SActionTest>(Tools.ReadExcelFirstSheetData(m_ActionTestAsset));
         m_AllActions = new List<ActionTest>();
         for (int i = 0; i < datas.Count; i++)
             m_AllActions.Add(new ActionTest(i, datas[i]));

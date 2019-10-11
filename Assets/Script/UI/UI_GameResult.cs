@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GameSetting;
+using System;
 
 public class UI_GameResult : UIPageBase {
     UIT_TextExtend txt_Result, txt_LevelScore,txt_KillScore, txt_coins;

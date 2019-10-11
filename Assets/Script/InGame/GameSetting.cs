@@ -654,8 +654,8 @@ namespace GameSetting
         RangeInt ir_shooterVeteran;
         RangeInt ir_aoeCaster;
         RangeInt ir_elite;
-        public int m_waveCount;
         public enum_BattleDifficulty m_Difficulty;
+        public int m_waveCount;
         public float m_EliteChance => f_eliteChance;
         public Dictionary<enum_CharacterType, RangeInt> m_EntityGenerate;
         public void InitOnValueSet()
