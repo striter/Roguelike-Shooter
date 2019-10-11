@@ -978,7 +978,7 @@ MonoBehaviour:
   F_MovementSpeed: 3.5
   F_AttackSpread: 3
   E_EnermyType: 4
-  E_AnimatorIndex: 153
+  E_AnimatorIndex: 113
   F_AIChaseRange: 1
   F_AIAttackRange: 25
   F_AttackDuration:
