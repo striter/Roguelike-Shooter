@@ -387,7 +387,7 @@ public static class TCommon
             if (marked)
                 return;
             totalAmount += amount;
-            if (totalAmount > value)
+            if (totalAmount >= value)
             {
                 targetLevel = temp;
                 marked = true;
