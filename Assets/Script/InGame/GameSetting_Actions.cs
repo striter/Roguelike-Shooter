@@ -1010,6 +1010,7 @@ namespace GameSetting_Action
     public class Action_20013_Grenade:ActionAfterUse
     {
         public override int m_Index => 20013;
+        public override int I_BaseCost => ActionData.I_20013_Cost;
         public override float Value1 => ActionData.P_20013_DamageMultiplyBase(m_rarity);
         public override void OnActionUse()
         {
