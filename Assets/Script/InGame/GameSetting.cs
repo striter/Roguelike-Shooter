@@ -20,7 +20,7 @@ namespace GameSetting
         public const float F_MaxActionAmount = 5f;
         public const float I_MaxArmor = 99999;
         public const float F_RestoreActionAmount = 2f;
-        public const float F_ActionShuffleCost = 3f;
+        public const float F_ActionShuffleCost = 2f;
         public const float F_ActionShuffleCooldown = 10f;
 
         public const float F_AimMovementReduction = .6f;
