@@ -1652,9 +1652,8 @@ namespace GameSetting_Action
     #endregion
     #endregion
     #endregion
-
-    #region Abandoned
-    //#region NormalAction
+    
+    //#region ElderVersion_Abandoned
     //public class Action_10001_ArmorAdditive : ActionAfterUse
     //{
     //    public override int m_Index => 10001;
@@ -2147,30 +2146,29 @@ namespace GameSetting_Action
     //    }
     //    public Action_40007_DamageReductionCooldown(int _identity,enum_RarityLevel _level) : base(_identity,_level) { }
     //}
-    public class Action_40012_UseActionReturn : ActionWeaponPerk
-    {
-        public override int m_Index => 40012;
-        public override float Value1 => 0f;
-        public override void OnAddActionElse(ActionBase targetAction)
-        {
-            base.OnAddActionElse(targetAction);
-            ActionHelper.ReceiveEnergy(m_ActionEntity, Value1);
-        }
-        public Action_40012_UseActionReturn(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
-    }
+    //public class Action_40012_UseActionReturn : ActionWeaponPerk
+    //{
+    //    public override int m_Index => 40012;
+    //    public override float Value1 => 0f;
+    //    public override void OnAddActionElse(ActionBase targetAction)
+    //    {
+    //        base.OnAddActionElse(targetAction);
+    //        ActionHelper.ReceiveEnergy(m_ActionEntity, Value1);
+    //    }
+    //    public Action_40012_UseActionReturn(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    //}
 
-    public class Action_40014_KillArmorAdditive : ActionWeaponPerk
-    {
-        public override int m_Index => 40014;
-        public override float Value1 => 0;
-        public override void OnDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
-        {
-            base.OnDealtDemage(receiver, info, applyAmount);
-            if (receiver.m_Health.b_IsDead)
-                ActionHelper.ReceiveHealing(m_ActionEntity, Value1, enum_DamageType.HealthOnly);
-        }
-        public Action_40014_KillArmorAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
-    }
+    //public class Action_40014_KillArmorAdditive : ActionWeaponPerk
+    //{
+    //    public override int m_Index => 40014;
+    //    public override float Value1 => 0;
+    //    public override void OnDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+    //    {
+    //        base.OnDealtDemage(receiver, info, applyAmount);
+    //        if (receiver.m_Health.b_IsDead)
+    //            ActionHelper.ReceiveHealing(m_ActionEntity, Value1, enum_DamageType.HealthOnly);
+    //    }
+    //    public Action_40014_KillArmorAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    //}
     //#endregion
-    #endregion
 }
