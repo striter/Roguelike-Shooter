@@ -288,7 +288,7 @@ namespace GameSetting_Action
 
         public static float P_40017_DamageReduction(enum_RarityLevel rarity) => 20f + 15f * (int)rarity;
 
-        public static float P_40018_DamageMultiply(enum_RarityLevel rarity) => 45f + 45f * (int)rarity;
+        public static float P_40018_DamageMultiply(enum_RarityLevel rarity) => 35f + 35f * (int)rarity;
 
         public static float F_40019_EnergyAdditive(enum_RarityLevel rarity) => .2f + .2f * (int)rarity;
 
