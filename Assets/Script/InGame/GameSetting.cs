@@ -73,7 +73,7 @@ namespace GameSetting
         public static int GetEquipmentSubIndex(int weaponIndex) => weaponIndex + 1;
         public static SBuff GetEnermyGameDifficultyBuffIndex(int difficulty)=> SBuff.CreateEntityBuff(difficulty, .05f * (difficulty-1));
         public static float GetAIBaseHealthMultiplier(int gameDifficulty)=>0.99f+0.01f*gameDifficulty;
-        public static float GetAIMaxHealthMultiplier(enum_StageLevel stageDifficulty) => (int)stageDifficulty;
+        public static float GetAIMaxHealthMultiplierAdditive(enum_StageLevel stageDifficulty) => (int)stageDifficulty -1;
 
         public static float GetActionAmountRevive(float damageApply) => damageApply * .0025f;
 
@@ -350,7 +350,7 @@ namespace GameSetting
 
     public enum enum_CharacterType { Invalid = -1, Fighter = 1, Shooter_Rookie = 2, Shooter_Veteran = 3, AOECaster = 4, Elite = 5, SubHidden = 99 }
 
-    public enum enum_Interaction { Invalid = -1, Portal = 1, ActionChest = 2, GameBegin, ContainerTrade , ContainerBattle , PickupCoin , PickupHealth , PickupArmor , PickupAction , Weapon , ActionAdjustment ,GameEnd,CampStage,CampDifficult, }
+    public enum enum_Interaction { Invalid = -1, Portal = 1, ActionChest = 2, GameBegin,ActionChestStart, ContainerTrade , ContainerBattle , PickupCoin , PickupHealth , PickupArmor , PickupAction , Weapon , ActionAdjustment ,GameEnd,CampStage,CampDifficult, }
 
     public enum enum_TriggerType { Invalid = -1, Single = 1, Auto = 2, Burst = 3, Pull = 4, Store = 5, }
 
@@ -372,7 +372,7 @@ namespace GameSetting
 
     public enum enum_RarityLevel { Invalid = -1, Normal = 1, OutStanding = 2, Epic = 3, }
 
-    public enum enum_ActionExpireType { Invalid = -1, AutoMatic = 1, AfterWeaponSwitch = 2, }
+    public enum enum_ActionType { Invalid = -1, Normal = 1, WeaponPerk = 2, }
 
     public enum enum_PlayerWeapon
     {
@@ -752,6 +752,15 @@ namespace GameSetting
             buff.f_expireDuration = duration;
             return buff;
         }
+        public static SBuff CreateActionDamageMultiplyBuff(int actionIndex, float damageMultiply, float duration)
+        {
+            SBuff buff = new SBuff();
+            buff.index = actionIndex * 10;
+            buff.i_addType = (int)enum_ExpireRefreshType.Refresh;
+            buff.f_damageMultiply = damageMultiply;
+            buff.f_expireDuration = duration;
+            return buff;
+        }
         public static SBuff CreateActionHealthBuff(int actionIndex, float healthPerTick,float healthTick, float duration)
         {
             SBuff buff = new SBuff();
@@ -763,7 +772,7 @@ namespace GameSetting
             buff.f_expireDuration = duration;
             return buff;
         }
-        public static SBuff CreateActionDamageBuff(int actionIndex,float duration, float damageTickTime, float damagePerTick,enum_DamageType damageType)
+        public static SBuff CreateActionDOTBuff(int actionIndex,float duration, float damageTickTime, float damagePerTick,enum_DamageType damageType)
         {
             SBuff buff = new SBuff();
             buff.index = actionIndex * 10;
@@ -878,10 +887,9 @@ namespace GameSetting
             m_CurrentArmor = reviveArmor;
             OnHealthChanged(enum_HealthChangeMessage.Default);
         }
-        public void SetHealthMultiplier(float healthMultiplier,bool restoreHealth=false)
+        public void AddHealthMultiplier(float healthMultiplier)
         {
-            m_HealthMultiplier = healthMultiplier;
-            if(restoreHealth)
+            m_HealthMultiplier += healthMultiplier;
                 OnSetHealth(m_BaseMaxHealth, true);
             OnHealthChanged(enum_HealthChangeMessage.Default);
         }
@@ -1209,7 +1217,8 @@ namespace GameSetting
         public float F_RecoilMultiply { get; private set; } = 1f;
         public float F_AimMovementStrictMultiply { get; private set; } = 1f;
         public float F_ProjectileSpeedMuiltiply { get; private set; } = 1f;
-        public bool B_ProjectilePenetrate { get; private set; } = true;
+        public bool B_ProjectilePenetrate { get; private set; } = false;
+        public float F_AllyHealthMultiplierAdditive { get; private set; } = 0f;
         protected bool B_OneOverride { get; private set; } = false;
         protected int I_ClipAdditive { get; private set; } = 0;
         protected float F_ClipMultiply { get; private set; } = 1f;
@@ -1282,7 +1291,7 @@ namespace GameSetting
             m_ActionAmount = GameConst.F_RestoreActionAmount;
             m_ActionInPool.Clear();
 
-            m_ActionEquiping.Traversal((ActionBase action) => { if (action.m_ActionExpireType != enum_ActionExpireType.AfterWeaponSwitch) m_ActionEquiping.Remove(action); }, true);
+            m_ActionEquiping.Traversal((ActionBase action) => { if (action.m_ActionExpireType != enum_ActionType.WeaponPerk) m_ActionEquiping.Remove(action); }, true);
             Reset();
             ClearHoldingActions();
         }
@@ -1294,7 +1303,7 @@ namespace GameSetting
         #region Player Info
         public void OnUseAcion(ActionBase targetAction)
         {
-            m_ActionEquiping.Traversal((ActionBase action) => { action.OnAddActionElse(targetAction.m_Index); });
+            m_ActionEquiping.Traversal((ActionBase action) => { action.OnAddActionElse(targetAction); });
             OnSetEffect( enum_CharacterEffect.Cloak,targetAction.F_CloakDuration);
             AddExpire(targetAction);
             m_ActionEquiping.Add(targetAction);
@@ -1316,6 +1325,7 @@ namespace GameSetting
             I_ClipAdditive = 0;
             F_ClipMultiply = 1f;
             B_ProjectilePenetrate = false;
+            F_AllyHealthMultiplierAdditive = 0f;
             F_RecoilMultiply = 1f;
             F_ProjectileSpeedMuiltiply = 1f;
             F_AimMovementStrictMultiply = 1f;
@@ -1335,10 +1345,12 @@ namespace GameSetting
             B_OneOverride |= action.B_ClipOverride;
             I_ClipAdditive += action.I_ClipAdditive;
             B_ProjectilePenetrate |= action.B_ProjectilePenetrade;
+            F_AllyHealthMultiplierAdditive += action.F_AllyHealthMultiplierAdditive;
         }
         protected override void AfterInfoSet()
         {
             base.AfterInfoSet();
+            if (F_AllyHealthMultiplierAdditive < 0) F_AllyHealthMultiplierAdditive = 0;
             if (F_AimMovementStrictMultiply < 0)  F_AimMovementStrictMultiply = 0;
             if (F_RecoilMultiply < 0)  F_RecoilMultiply = 0;
         }
@@ -1350,17 +1362,19 @@ namespace GameSetting
             m_ActionEquiping.Traversal((ActionBase action) => {action.OnFire(info.I_IdentiyID);});
             return info;
         }
+
         public void OnAttachWeapon(WeaponBase weapon) => weapon.m_WeaponAction.Traversal((ActionBase action) => { OnUseAcion(action); });
         public void OnDetachWeapon() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnWeaponDetach(); }, true);
-
         public void OnPlayerMove(float distance) => m_ActionEquiping.Traversal((ActionBase action) => { action.OnMove(distance); });
         public void OnReloadFinish() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnReloadFinish(); });
+
         public override void OnDead()
         {
             m_ActionEquiping.Traversal((ActionBase action) => { action.OnDead(); });
             m_ActionEquiping.Clear();
             base.OnDead();
         }
+
         protected override void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
         {
             base.OnCharacterHealthChange(damageInfo,damageEntity,amountApply);
@@ -1381,11 +1395,15 @@ namespace GameSetting
                 m_ActionEquiping.Traversal((ActionBase action) => { action.OnReceiveDamage(damageInfo, amountApply); });
             }
         }
+
         protected void OnEntityActivate(EntityBase targetEntity)
         {
             if (targetEntity.m_Flag != m_Entity.m_Flag || targetEntity.I_EntityID == m_Entity.I_EntityID)
                 return;
 
+            EntityCharacterBase ally = (targetEntity as EntityCharacterBase);
+            if (F_AllyHealthMultiplierAdditive>0)
+               ally.m_Health.AddHealthMultiplier(F_AllyHealthMultiplierAdditive);
             m_ActionEquiping.Traversal((ActionBase action) => { action.OnAllyActivate(targetEntity as EntityCharacterBase); });
         }
         #endregion
@@ -1419,7 +1437,7 @@ namespace GameSetting
             m_ActionInPool.Clear();
             for (int i = 0; i < m_ActionStored.Count; i++)
             {
-                if(m_ActionStored[i].m_ActionExpireType!= enum_ActionExpireType.AutoMatic||m_ActionEquiping.Find(p=>p.m_Identity==m_ActionStored[i].m_Identity)==null)
+                if(m_ActionStored[i].m_ActionExpireType!= enum_ActionType.Normal||m_ActionEquiping.Find(p=>p.m_Identity==m_ActionStored[i].m_Identity)==null)
                      m_ActionInPool.Add( m_ActionStored[i]);
             }
             ClearHoldingActions();
@@ -1622,7 +1640,7 @@ namespace GameSetting
         public int m_Identity { get; private set; } = -1;
         public virtual int I_BaseCost => -1;
         public virtual bool B_ActionAble => true;
-        public virtual enum_ActionExpireType m_ActionExpireType => enum_ActionExpireType.AutoMatic;
+        public virtual enum_ActionType m_ActionExpireType => enum_ActionType.Normal;
         public virtual float Value1 => 0;
         public virtual float Value2 => 0;
         public virtual float Value3 => 0;
@@ -1632,9 +1650,10 @@ namespace GameSetting
         public virtual float F_ProjectileSpeedMultiply => 0;
         public virtual bool B_ClipOverride => false;
         public virtual int I_ClipAdditive => 0;
-        public virtual bool B_ProjectilePenetrade => false;
         public virtual float F_ClipMultiply => 0;
         public virtual float F_CloakDuration => 0;
+        public virtual bool B_ProjectilePenetrade => false;
+        public virtual float F_AllyHealthMultiplierAdditive => 0;
         public virtual float F_Duration => 0;
         protected ActionBase(int _identity,enum_RarityLevel _level)
         {
@@ -1655,7 +1674,7 @@ namespace GameSetting
         public void OverrideCost(int overrideCost)=> m_CostOverride = overrideCost;
         #region Interact
         public virtual void OnActionUse() { }
-        public virtual void OnAddActionElse(float actionAmount) { }
+        public virtual void OnAddActionElse(ActionBase targetAction) { }
         public virtual void OnReceiveDamage(DamageInfo info, float amount) { }
         public virtual void OnDealtDemage(EntityCharacterBase receiver,DamageInfo info, float applyAmount) { }
         public virtual void OnReceiveHealing(DamageInfo info, float applyAmount)

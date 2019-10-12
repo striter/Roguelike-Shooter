@@ -24,7 +24,7 @@ public class UIGI_ActionHoldItem : UIT_GridItem {
     {
         OnClick = _OnClick;
         OnPressDuration = _OnPressDuration;
-        m_Cost.text = actionInfo.m_ActionExpireType == enum_ActionExpireType.AfterWeaponSwitch ? "" : actionInfo.I_Cost.ToString();
+        m_Cost.text = actionInfo.m_ActionExpireType == enum_ActionType.WeaponPerk ? "" : actionInfo.I_Cost.ToString();
         m_Name.localizeText = actionInfo.GetNameLocalizeKey();
         m_Level.localizeText = actionInfo.m_rarity.GetLocalizeKey();
     }

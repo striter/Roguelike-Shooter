@@ -247,6 +247,57 @@ namespace GameSetting_Action
         
         public static int I_30018_Cost(enum_RarityLevel rarity)=>4-(int) rarity;
         #endregion
+        #region 40000-49999
+        public static float F_40001_ArmorAdditive(enum_RarityLevel rarity) => 6 * (int)rarity;
+
+        public static float F_40002_MaxHealthAdd(enum_RarityLevel rarity) => 30 * (int)rarity;
+
+        public static float F_40003_Range(enum_RarityLevel rarity) => 10;
+        public static float P_40003_PlayerDamageMultiply(enum_RarityLevel rarity) => 1.8f + 1.8f * (int)(rarity);
+        public static float P_40003_AllyDamageMultiply(enum_RarityLevel rarity) => 18 + 18 * (int)rarity;
+
+        public static float P_40004_MovementSpeedAdditive(enum_RarityLevel rarity) => 15 * (int)rarity;
+
+        public static float P_40005_FastReloadRate(enum_RarityLevel rarity) => 3 * (int)rarity;
+
+        public static int I_40006_ClipAdditive(enum_RarityLevel rarity) => 1 + 1 * (int)rarity;
+
+        public static float F_40007_DamageAdditive(enum_RarityLevel rarity) => .7f + .7f * (int)rarity;
+
+        public static float P_40008_MaxHealthAdditive(enum_RarityLevel rarity) => 25;
+
+        public static float F_40009_DamageMultiplyAfterRloead(enum_RarityLevel rarity) => 7f + 7f * (int)rarity;
+
+        public static float F_40010_Range(enum_RarityLevel rarity) => 10f;
+        public static float P_40010_DamageMultiply(enum_RarityLevel rarity) => 3f + 3f * (int)rarity;
+
+        public static float P_40011_ReloadMultiply(enum_RarityLevel rarity) => 10f + 10f * (int)rarity;
+
+        public static float P_40012_MovementSpeedMultiply(enum_RarityLevel rarity) => 40f * (int)rarity;
+        public static float F_40012_Duration(enum_RarityLevel rarity) => 5f;
+
+        public static float P_40013_MovementSpeedMultiply(enum_RarityLevel rarity) => 30f * (int)rarity;
+        public static float F_40013_Duration(enum_RarityLevel rarity) => 5f;
+
+        public static float P_40014_RecoilReduction(enum_RarityLevel rarity) => 25f + 25f * (int)rarity;
+
+        public static float F_40015_Range(enum_RarityLevel rarity) => 8f;
+        public static float P_40015_HealthDrain(enum_RarityLevel rarity) => 4f * (int)rarity;
+
+        public static float F_40016_EnergyAdditive(enum_RarityLevel rarity) => .1f + .1f * (int)rarity;
+
+        public static float P_40017_DamageReduction(enum_RarityLevel rarity) => 40f + 10f * (int)rarity;
+
+        public static float P_40018_DamageMultiply(enum_RarityLevel rarity) => 45f + 45f * (int)rarity;
+
+        public static float F_40019_EnergyAdditive(enum_RarityLevel rarity) => .2f + .2f * (int)rarity;
+
+        public static float F_40020_FreezeDuration(enum_RarityLevel rarity) => F_20004_FreezeDuration(rarity);
+
+        public static float F_40021_FreezeDuration(enum_RarityLevel rarity) => 1f +1f* (int)rarity;
+
+        public static float P_40022_HealAdditive(enum_RarityLevel rarity) => 80f * (int)rarity;
+        #endregion
     }
     #endregion
 
@@ -336,12 +387,12 @@ namespace GameSetting_Action
         }
         public ActionAfterBattle_ReloadTrigger(int _identity,enum_RarityLevel _level) : base(_identity,_level) { }
     }
-    public class ActionAfterWeaponDetach : ActionBase
+    public class ActionWeaponPerk : ActionBase
     {
         public override int I_BaseCost => 0;
-        public override enum_ActionExpireType m_ActionExpireType => enum_ActionExpireType.AfterWeaponSwitch;
+        public override enum_ActionType m_ActionExpireType => enum_ActionType.WeaponPerk;
         public override void OnWeaponDetach() => ForceExpire();
-        public ActionAfterWeaponDetach(int _identity,enum_RarityLevel _level) : base(_identity,_level) { }
+        public ActionWeaponPerk(int _identity,enum_RarityLevel _level) : base(_identity,_level) { }
     }
     public class ActionStackUp : ActionBase
     {
@@ -833,11 +884,10 @@ namespace GameSetting_Action
         public override int I_BaseCost => ActionData.I_10035_Cost;
         public override float Value1 => ActionData.P_10035_DamageAdditiveNextShot(m_rarity);
         public override float m_DamageMultiply => m_BurstShot ? Value1 / 100f : 0;
-        public override float m_ReloadRateMultiply => m_BurstShot ? 10f : 0;
         public override void OnActionUse()
         {
             base.OnActionUse();
-            m_ActionEntity.m_WeaponCurrent.TryReload();
+            m_ActionEntity.m_WeaponCurrent.ForceReload();
         }
         public Action_10035_ImmediateReloadShotsBurst(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
@@ -852,7 +902,7 @@ namespace GameSetting_Action
         public override void OnActionUse()
         {
             base.OnActionUse();
-            m_ActionEntity.AcquireEquipment(m_Index, () =>  DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID,SBuff.CreateActionDamageBuff(m_Index,Value1,1f,Value2, enum_DamageType.Common)));
+            m_ActionEntity.AcquireEquipment(m_Index, () =>  DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID,SBuff.CreateActionDOTBuff(m_Index,Value1,1f,Value2, enum_DamageType.Common)));
         }
         public Action_20001_RustShot(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
@@ -984,7 +1034,7 @@ namespace GameSetting_Action
         }
 
         DamageDeliverInfo PlayerBuff() => DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID,SBuff.CreateActionHealthDrainBuff(m_Index,Value2/100f,.5f));
-        DamageDeliverInfo AllyBuff() => DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID, SBuff.CreateActionHealthDrainBuff(m_Index, Value3 / 100f, .5f));
+        DamageDeliverInfo AllyBuff() => DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID, SBuff.CreateActionHealthDrainBuff(m_Index, (Value2 + Value3) / 100f, .5f));
         public Action_20010_HealthDrainDevice(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
 
@@ -1004,7 +1054,7 @@ namespace GameSetting_Action
             });
         }
         DamageDeliverInfo PlayerBuff() => DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID, SBuff.CreateActionHealthBuff(m_Index, Value2,1f, .5f));
-        DamageDeliverInfo AllyBuff() => DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID, SBuff.CreateActionHealthBuff(m_Index, Value3,1f, .5f));
+        DamageDeliverInfo AllyBuff() => DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID, SBuff.CreateActionHealthBuff(m_Index,Value2+Value3,1f, .5f));
         public Action_20012_HealthRegenDevice(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
     public class Action_20013_Grenade:ActionAfterUse
@@ -1061,7 +1111,6 @@ namespace GameSetting_Action
         public override int m_Index => 30003;
         public override int I_BaseCost => ActionData.I_30003_Cost;
         public override float Value1 => ActionData.F_30003_GrenadeDamage(m_rarity);
-        bool m_shotGrenade = false;
         EquipmentBase m_ActionEquipment;
         DamageDeliverInfo GetDamageInfo()=> DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, Value1, enum_CharacterEffect.Invalid, 0); 
         public override void OnActionUse()
@@ -1069,6 +1118,7 @@ namespace GameSetting_Action
             base.OnActionUse();
             m_ActionEquipment = EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(m_Index), m_ActionEntity, m_ActionEntity.tf_Head, GetDamageInfo);
         }
+        bool m_shotGrenade = false;
         public override void OnReloadFinish()
         {
             base.OnReloadFinish();
@@ -1161,9 +1211,9 @@ namespace GameSetting_Action
             base.OnActionUse();
             m_Equipment = EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(m_Index), m_ActionEntity, m_ActionEntity.tf_Model, GetDamageInfo);
         }
-        public override void OnAddActionElse(float actionAmount)
+        public override void OnAddActionElse(ActionBase targetAction)
         {
-            base.OnAddActionElse(actionAmount);
+            base.OnAddActionElse(targetAction);
             m_Equipment.Play(false,m_ActionEntity);
         }
         public Action_30008_FreezeTrapSpawnByActionUse(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
@@ -1174,12 +1224,7 @@ namespace GameSetting_Action
         public override int m_Index => 30009;
         public override int I_BaseCost => ActionData.I_30009_Cost;
         public override float Value1 => ActionData.P_30009_EquipmentHealthAddup(m_rarity);
-
-        public override void OnAllyActivate(EntityCharacterBase ally)
-        {
-            base.OnAllyActivate(ally);
-            ally.m_Health.SetHealthMultiplier(1f+Value1/100f,true);
-        }
+        public override float F_AllyHealthMultiplierAdditive => Value1/100f;
         public Action_30009_AllyActivateHealthAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
 
@@ -1189,9 +1234,9 @@ namespace GameSetting_Action
         public override int I_BaseCost => ActionData.I_30010_Cost;
         public override float Value1 => ActionData.F_30010_MaxHealthAddup(m_rarity);
         public override float m_MaxHealthAdditive => Value1 * m_stackUp;
-        public override void OnAddActionElse(float actionAmount)
+        public override void OnAddActionElse(ActionBase targetAction)
         {
-            base.OnAddActionElse(actionAmount);
+            base.OnAddActionElse(targetAction);
             OnStackUp(1);
         }
         public Action_30010_UseActionAddMaxHealth(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
@@ -1284,9 +1329,9 @@ namespace GameSetting_Action
         public override int m_Index => 30017;
         public override int I_BaseCost => ActionData.I_30017_Cost;
         public override float Value1 => ActionData.F_30017_ArmorAdditive(m_rarity);
-        public override void OnAddActionElse(float actionAmount)
+        public override void OnAddActionElse(ActionBase targetAction)
         {
-            base.OnAddActionElse(actionAmount);
+            base.OnAddActionElse(targetAction);
             ActionHelper.ReceiveHealing(m_ActionEntity, Value1, enum_DamageType.ArmorOnly);
         }
         public Action_30017_ArmorAdditiveActionUse(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
@@ -1298,6 +1343,311 @@ namespace GameSetting_Action
         public override int I_BaseCost => ActionData.I_30018_Cost(m_rarity);
         public override bool B_ProjectilePenetrade => true;
         public Action_30018_ProjectilePenetrate(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+    #endregion
+    #region 40000-49999
+    public class Action_40001_UseActionArmorAdditive : ActionWeaponPerk
+    {
+        public override int m_Index => 40001;
+        public override float Value1 => ActionData.F_40001_ArmorAdditive(m_rarity);
+        public override void OnActionUse()
+        {
+            base.OnActionUse();
+            ActionHelper.ReceiveHealing(m_ActionEntity, Value1, enum_DamageType.ArmorOnly);
+        }
+        public Action_40001_UseActionArmorAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_40002_MaxHealthAdditive : ActionWeaponPerk
+    {
+        public override int m_Index => 40002;
+        public override float Value1 => ActionData.F_40002_MaxHealthAdd(m_rarity);
+        public override float m_MaxHealthAdditive => Value1;
+        public Action_40002_MaxHealthAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_40003_AllyDamageMultiply : ActionWeaponPerk
+    {
+        public override int m_Index => 40003;
+        public override float Value1 => ActionData.F_40003_Range(m_rarity);
+        public override float Value2 => ActionData.P_40003_PlayerDamageMultiply(m_rarity);
+        public override float Value3 => ActionData.P_40003_AllyDamageMultiply(m_rarity);
+        public override float m_DamageMultiply => Value2/100f;
+        DamageDeliverInfo allyInfo => DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID, SBuff.CreateActionDamageMultiplyBuff(m_Index, (Value2+Value3)/100f, .5f));
+        float f_buffCheck;
+        public override void OnTick(float deltaTime)
+        {
+            base.OnTick(deltaTime);
+            if (f_buffCheck > 0f)
+            {
+                f_buffCheck -= deltaTime;
+                return;
+            }
+            f_buffCheck = .4f;
+
+            List<EntityCharacterBase> allies= GameManager.Instance.GetEntities(m_ActionEntity.m_Flag, true);
+            for (int i = 0; i < allies.Count; i++)
+            {
+                if (Vector3.Distance(m_ActionEntity.transform.position, allies[i].transform.position) < Value1)
+                    allies[i].m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common, allyInfo));
+            }
+        }
+        public Action_40003_AllyDamageMultiply(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_40004_MovementSpeedMultiply : ActionWeaponPerk
+    {
+        public override int m_Index => 40004;
+        public override float Value1 => ActionData.P_40004_MovementSpeedAdditive(m_rarity);
+        public override float m_MovementSpeedMultiply => Value1 / 100f;
+        public Action_40004_MovementSpeedMultiply(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_40005_ClipRefill : ActionWeaponPerk
+    {
+        public override int m_Index => 40005;
+        public override float Value1 => ActionData.P_40005_FastReloadRate(m_rarity);
+        public override void OnFire(int identity)
+        {
+            base.OnFire(identity);
+            if (TCommon.RandomPercentage() < Value1)
+                m_ActionEntity.m_WeaponCurrent.ForceReload();
+        }
+        public Action_40005_ClipRefill(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_40006_ClipAdditive : ActionWeaponPerk
+    {
+        public override int m_Index => 40006;
+        public override float Value1 => ActionData.I_40006_ClipAdditive(m_rarity);
+        public override int I_ClipAdditive => ActionData.I_40006_ClipAdditive(m_rarity);
+        public Action_40006_ClipAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_40007_DamageAdditive : ActionWeaponPerk
+    {
+        public override int m_Index => 40007;
+        public override float Value1 => ActionData.F_40007_DamageAdditive(m_rarity);
+        public override float m_DamageAdditive => Value1;
+        public Action_40007_DamageAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_40008_EquipmentHealthAdditive : ActionWeaponPerk
+    {
+        public override int m_Index => 40008;
+        public override float Value1 => ActionData.P_40008_MaxHealthAdditive(m_rarity);
+        public override float F_AllyHealthMultiplierAdditive => Value1 / 100f;
+        public Action_40008_EquipmentHealthAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_40009_ReloadDamageMultiply : ActionWeaponPerk
+    {
+        public override int m_Index => 40009;
+        public override float Value1 => ActionData.F_40009_DamageMultiplyAfterRloead(m_rarity);
+        public override float m_DamageMultiply => damageShot ? Value1 : 0;
+        bool damageShot = false;
+        public override void OnReloadFinish()
+        {
+            base.OnReloadFinish();
+            damageShot = true;
+        }
+        public override void OnFire(int identity)
+        {
+            base.OnFire(identity);
+            damageShot = false;
+        }
+        public Action_40009_ReloadDamageMultiply(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_40010_EnrangeExtraDamage : ActionWeaponPerk
+    {
+        public override int m_Index => 40010;
+        public override float Value1 => ActionData.F_40010_Range(m_rarity);
+        public override float Value2 => ActionData.P_40010_DamageMultiply(m_rarity);
+        public override void OnDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        {
+            base.OnDealtDemage(receiver, info, applyAmount);
+            if (Vector3.Distance(receiver.transform.position, m_ActionEntity.transform.position) < Value1)
+                receiver.m_HitCheck.TryHit(new DamageInfo(Value2 / 100f * applyAmount, enum_DamageType.Common,DamageDeliverInfo.Default(-1)));
+        }
+        public Action_40010_EnrangeExtraDamage(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_40011_ReloadRateMultiply : ActionWeaponPerk
+    {
+        public override int m_Index => 40011;
+        public override float Value1 => ActionData.P_40011_ReloadMultiply(m_rarity);
+        public override float m_ReloadRateMultiply => Value1 / 100f;
+        public Action_40011_ReloadRateMultiply(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_40012_ReceiveDamageMovementMultiplyDuration : ActionWeaponPerk
+    {
+        public override int m_Index => 40012;
+        public override float Value1 => ActionData.P_40012_MovementSpeedMultiply(m_rarity);
+        public override float Value2 => ActionData.F_40012_Duration(m_rarity);
+        public override float m_MovementSpeedMultiply => f_durationCheck > 0f ? Value1 / 100f : 0;
+        float f_durationCheck;
+        public override void OnReceiveDamage(DamageInfo info, float amount)
+        {
+            base.OnReceiveDamage(info, amount);
+            f_durationCheck = Value2;
+        }
+        public override void OnTick(float deltaTime)
+        {
+            base.OnTick(deltaTime);
+            if (f_durationCheck > 0f)
+                f_durationCheck -= deltaTime;
+        }
+        public Action_40012_ReceiveDamageMovementMultiplyDuration(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_40013_KillMovementMultiplyDuration : ActionWeaponPerk
+    {
+        public override int m_Index => 40013;
+        public override float Value1 => ActionData.P_40013_MovementSpeedMultiply(m_rarity);
+        public override float Value2 => ActionData.F_40013_Duration(m_rarity);
+        public override float m_MovementSpeedMultiply => f_durationCheck > 0f ? Value1 / 100f : 0;
+        float f_durationCheck=0f;
+        public override void OnDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        {
+            base.OnDealtDemage(receiver, info, applyAmount);
+            if(receiver.m_Health.b_IsDead)
+                f_durationCheck = Value2;
+        }
+        public override void OnTick(float deltaTime)
+        {
+            base.OnTick(deltaTime);
+            if (f_durationCheck > 0f)
+                f_durationCheck -= deltaTime;
+        }
+        public Action_40013_KillMovementMultiplyDuration(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_40014_RecoilReduction : ActionWeaponPerk
+    {
+        public override int m_Index => 40014;
+        public override float Value1 => ActionData.P_40014_RecoilReduction(m_rarity);
+        public override float F_RecoilReduction => Value1 / 100f;
+        public Action_40014_RecoilReduction(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_40015_EnrangeExtraHealthDrain : ActionWeaponPerk
+    {
+        public override int m_Index => 40015;
+        public override float Value1 => ActionData.F_40015_Range(m_rarity);
+        public override float Value2 => ActionData.P_40015_HealthDrain(m_rarity);
+        public override void OnDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        {
+            base.OnDealtDemage(receiver, info, applyAmount);
+            if (Vector3.Distance(receiver.transform.position, m_ActionEntity.transform.position) < Value1)
+                ActionHelper.ReceiveHealing(m_ActionEntity, Value2 / 100f * applyAmount, enum_DamageType.HealthOnly);
+        }
+        public Action_40015_EnrangeExtraHealthDrain(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_40016_UseActionEnergyReturn : ActionWeaponPerk
+    {
+        public override int m_Index => 40016;
+        public override float Value1 => ActionData.F_40016_EnergyAdditive(m_rarity);
+        public override void OnAddActionElse(ActionBase targetAction)
+        {
+            base.OnAddActionElse(targetAction);
+            ActionHelper.ReceiveEnergy(m_ActionEntity, Value1);
+        }
+        public Action_40016_UseActionEnergyReturn(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_40017_ArmorDamageReduction : ActionWeaponPerk
+    {
+        public override int m_Index => 40017;
+        public override float Value1 => ActionData.P_40017_DamageReduction(m_rarity);
+        public override float m_DamageReduction => m_ActionEntity.m_Health.m_CurrentArmor > 0 ? Value1/100f : 0;
+        public Action_40017_ArmorDamageReduction(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_40018_KillDamageAdditiveBurstShot : ActionWeaponPerk
+    {
+        public override int m_Index => 40018;
+        public override float Value1 => ActionData.P_40018_DamageMultiply(m_rarity);
+        public override float m_DamageMultiply => burstShot ? Value1 / 100f : 0f;
+        bool burstShot = false;
+        public override void OnDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        {
+            base.OnDealtDemage(receiver, info, applyAmount);
+            burstShot = receiver.m_Health.b_IsDead;
+        }
+        public Action_40018_KillDamageAdditiveBurstShot(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_40019_UseActionEquipmentEnergyReturn : ActionWeaponPerk
+    {
+
+        public override int m_Index => 40019;
+        public override float Value1 => ActionData.F_40019_EnergyAdditive(m_rarity);
+        public override void OnAddActionElse(ActionBase targetAction)
+        {
+            base.OnAddActionElse(targetAction);
+            if(Mathf.Ceil( targetAction.m_Index/10000f)==3)//???????????????????????????????????
+               ActionHelper.ReceiveEnergy(m_ActionEntity, Value1);
+        }
+        public Action_40019_UseActionEquipmentEnergyReturn(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_40020_KillFreezeGrenade : ActionWeaponPerk
+    {
+        public override int m_Index => 40020;
+        public override float Value1 => ActionData.F_40020_FreezeDuration(m_rarity);
+        DamageDeliverInfo GetDamageInfo() => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, 0, enum_CharacterEffect.Freeze, Value1);
+        public override void OnDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        {
+            base.OnDealtDemage(receiver, info, applyAmount);
+            if (receiver.m_Health.b_IsDead)
+                EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(m_Index),receiver,receiver.tf_Head,GetDamageInfo).Play(receiver,receiver.tf_Model.position);
+        }
+        public Action_40020_KillFreezeGrenade(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_40021_KillFreeze : ActionWeaponPerk
+    {
+        public override int m_Index => 40021;
+        public override float Value1 => ActionData.F_40021_FreezeDuration(m_rarity);
+        int m_fireIdentity = -1;
+        bool identitySet = false;
+        public override void OnFire(int identity)
+        {
+            base.OnFire(identity);
+            if (identitySet)
+            {
+                m_fireIdentity = identity;
+                identitySet = false;
+            }
+        }
+        public override void OnDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        {
+            base.OnDealtDemage(receiver, info, applyAmount);
+            if (receiver.m_Health.b_IsDead)
+            {
+                identitySet = true;
+                return;
+            }
+
+            if (info.m_detail.I_IdentiyID == m_fireIdentity)
+            {
+                receiver.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common, DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, 0, enum_CharacterEffect.Freeze, Value1)));
+                m_fireIdentity = -1;
+            }
+        }
+        public Action_40021_KillFreeze(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
+    public class Action_40022_HealAdditive : ActionWeaponPerk
+    {
+        public override int m_Index => 40022;
+        public override float Value1 => ActionData.P_40022_HealAdditive(m_rarity);
+        public override float m_HealAdditive => Value1 / 100f;
+        public Action_40022_HealAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+
     }
     #endregion
     #endregion
@@ -1797,19 +2147,19 @@ namespace GameSetting_Action
     //    }
     //    public Action_40007_DamageReductionCooldown(int _identity,enum_RarityLevel _level) : base(_identity,_level) { }
     //}
-    public class Action_40012_UseActionReturn : ActionAfterWeaponDetach
+    public class Action_40012_UseActionReturn : ActionWeaponPerk
     {
         public override int m_Index => 40012;
         public override float Value1 => 0f;
-        public override void OnAddActionElse(float actionAmount)
+        public override void OnAddActionElse(ActionBase targetAction)
         {
-            base.OnAddActionElse(actionAmount);
+            base.OnAddActionElse(targetAction);
             ActionHelper.ReceiveEnergy(m_ActionEntity, Value1);
         }
         public Action_40012_UseActionReturn(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
 
-    public class Action_40014_KillArmorAdditive : ActionAfterWeaponDetach
+    public class Action_40014_KillArmorAdditive : ActionWeaponPerk
     {
         public override int m_Index => 40014;
         public override float Value1 => 0;

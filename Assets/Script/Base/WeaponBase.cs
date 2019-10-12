@@ -182,6 +182,12 @@ public class WeaponBase : MonoBehaviour {
                 I_AmmoLeft = I_ClipAmount;
         }
     }
+
+
+    public void ForceReload()
+    {
+        I_ClipAmount = m_Attacher.m_PlayerInfo.I_ClipAmount(m_WeaponInfo.m_ClipAmount);
+    }
     #endregion
     #region TriggerType
     internal class WeaponTrigger:ISingleCoroutine
