@@ -1414,17 +1414,21 @@ namespace GameSetting
         protected override void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
         {
             base.OnCharacterHealthChange(damageInfo, damageEntity, amountApply);
-            
+            if (damageInfo.m_detail.I_SourceID <= 0)
+                return;
+
+            if (damageInfo.m_detail.I_SourceID == m_Player.I_EntityID || GameManager.Instance.GetEntity(damageInfo.m_detail.I_SourceID).m_SpawnerEntityID == m_Player.I_EntityID)
+            {
+                if (amountApply > 0)
+                    AddActionAmount(GameExpression.GetActionAmountRevive(amountApply));
+            }
+
             if (damageInfo.m_detail.I_SourceID == m_Player.I_EntityID)
             {
                 if (amountApply <= 0)
-                {
                     m_ActionEquiping.Traversal((ActionBase action) => { action.OnReceiveHealing(damageInfo, amountApply); });
-                    return;
-                }
-
-                m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDemage(damageEntity, damageInfo, amountApply); });
-                AddActionAmount(GameExpression.GetActionAmountRevive(amountApply));
+                else
+                    m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDemage(damageEntity, damageInfo, amountApply); });
             }
             else if (damageEntity.I_EntityID == m_Player.I_EntityID)
             {
