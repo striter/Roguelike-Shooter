@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 65566665842740956}
   - component: {fileID: 114432018314031874}
   m_Layer: 0
-  m_Name: ActionChestStart
+  m_Name: Interact_ActionChestStart
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
