@@ -1615,7 +1615,7 @@ namespace GameSetting_Action
         {
             base.OnDealtDemage(receiver, info, applyAmount);
             if (receiver.m_Health.b_IsDead)
-                EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(m_Index),receiver,receiver.tf_Head,GetDamageInfo).Play(receiver,receiver.tf_Model.position+TCommon.RandomXZSphere(2f));
+                EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(m_Index),receiver,receiver.tf_Model,GetDamageInfo).Play(receiver,receiver.tf_Model.position+TCommon.RandomXZSphere(.5f));
         }
         public Action_40020_KillFreezeGrenade(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }

@@ -6,11 +6,12 @@ using UnityEngine;
 public class SFXCastDetonate : SFXCastOverlapSphere {
     ModelBlink m_Blink;
     Transform m_Model;
+    public Color c_blinkColor;
     float f_blinkCheck;
     public override void Init(int _sfxIndex)
     {
         base.Init(_sfxIndex);
-        m_Blink = new ModelBlink(transform.Find("BlinkModel"), .25f, .25f, Color.red);
+        m_Blink = new ModelBlink(transform.Find("BlinkModel"), .25f, .25f, c_blinkColor);
         m_Model = transform.Find("Model");
     }
     public override void Play(DamageDeliverInfo buffInfo)
