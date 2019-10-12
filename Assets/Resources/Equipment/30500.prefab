@@ -700,6 +700,7 @@ MonoBehaviour:
   I_DelayIndicatorIndex: 0
   B_CameraShake: 1
   B_DamageDistanceReduction: 0
+  c_blinkColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!198 &198032924646734080
 ParticleSystem:
   m_ObjectHideFlags: 1

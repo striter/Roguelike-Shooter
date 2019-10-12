@@ -189,7 +189,7 @@ GameObject:
   - component: {fileID: 4600437009650938}
   - component: {fileID: 114884061071270710}
   m_Layer: 9
-  m_Name: 30500
+  m_Name: 400200
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -695,11 +695,12 @@ MonoBehaviour:
   I_BuffApplyOnCast: 0
   E_AreaType: 1
   V4_CastInfo: {x: 5, y: 0, z: 0, w: 0}
-  I_MuzzleIndex: 10305
-  F_DelayDuration: 2
+  I_MuzzleIndex: 0
+  F_DelayDuration: 3
   I_DelayIndicatorIndex: 0
   B_CameraShake: 1
   B_DamageDistanceReduction: 0
+  c_blinkColor: {r: 0, g: 0.91724133, b: 1, a: 0}
 --- !u!198 &198032924646734080
 ParticleSystem:
   m_ObjectHideFlags: 1
