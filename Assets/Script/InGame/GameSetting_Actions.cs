@@ -250,7 +250,7 @@ namespace GameSetting_Action
         #region 40000-49999
         public static float F_40001_ArmorAdditive(enum_RarityLevel rarity) => 6 * (int)rarity;
 
-        public static float F_40002_MaxHealthAdd(enum_RarityLevel rarity) => 30 * (int)rarity;
+        public static float F_40002_MaxHealthAdd(enum_RarityLevel rarity) => 60 * (int)rarity;
 
         public static float F_40003_Range(enum_RarityLevel rarity) => 10;
         public static float P_40003_PlayerDamageMultiply(enum_RarityLevel rarity) => 1.8f + 1.8f * (int)(rarity);
@@ -286,7 +286,7 @@ namespace GameSetting_Action
 
         public static float F_40016_EnergyAdditive(enum_RarityLevel rarity) => .1f + .1f * (int)rarity;
 
-        public static float P_40017_DamageReduction(enum_RarityLevel rarity) => 40f + 10f * (int)rarity;
+        public static float P_40017_DamageReduction(enum_RarityLevel rarity) => 20f + 15f * (int)rarity;
 
         public static float P_40018_DamageMultiply(enum_RarityLevel rarity) => 45f + 45f * (int)rarity;
 
