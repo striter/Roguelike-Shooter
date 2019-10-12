@@ -38,7 +38,7 @@ GameObject:
   - component: {fileID: 4675475368102452}
   - component: {fileID: 114849450265349912}
   m_Layer: 9
-  m_Name: 400020
+  m_Name: 400200
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -335,9 +335,9 @@ MonoBehaviour:
   F_OffsetExtension: 0
   B_TargetReachBlink: 1
   C_BlinkColor: {r: 0, g: 0.8758622, b: 1, a: 1}
-  F_DirectionPitchAngle: 45
+  F_DirectionPitchAngle: 30
   B_RandomRotation: 1
   B_Bounce: 1
   F_BounceHitAngleMax: 0
   F_BounceSpeedMultiply: 0.5
-  F_CastTimeAfterHit: 0.5
+  F_CastTimeAfterHit: 2
