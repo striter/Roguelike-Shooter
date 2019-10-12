@@ -45,7 +45,7 @@ public class UI_PlayerStatus : UIToolsBase
     Image m_WeaponImage;
     UIC_RarityLevel m_WeaponActionRarity;
 
-    UIC_Numeric m_CoinStatus;
+    Text m_Coins;
     protected override void Init()
     {
         base.Init();
@@ -98,7 +98,7 @@ public class UI_PlayerStatus : UIToolsBase
         m_WeaponActionRarity = new UIC_RarityLevel(tf_WeaponData.Find("WeaponActionRarity"));
         tf_WeaponData.Find("WeaponDetailBtn").GetComponent<Button>().onClick.AddListener(() => { UIManager.Instance.ShowPage<UI_WeaponStatus>(true).SetInfo(m_Player.m_WeaponCurrent); });
 
-        m_CoinStatus = new UIC_Numeric(tf_Container.Find("CoinData/NumericGrid"));
+        m_Coins = tf_Container.Find("CoinData/Data").GetComponent<Text>();
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<WeaponBase>(enum_BC_UIStatus.UI_PlayerAmmoStatus, OnAmmoStatus);
@@ -146,7 +146,7 @@ public class UI_PlayerStatus : UIToolsBase
         if (!m_Player)
             m_Player = _player;
 
-        m_CoinStatus.SetAmount(_player.m_PlayerInfo.m_Coins);
+        m_Coins.text=_player.m_PlayerInfo.m_Coins.ToString();
         m_ActionAmount.SetValue(_player.m_PlayerInfo.m_ActionAmount);
         sld_ShuffleCooldown.value = _player.m_PlayerInfo.f_shuffleScale;
         rtf_StatusData.SetWorldViewPortAnchor(m_Player.tf_Head.position, CameraController.Instance.m_Camera, Time.deltaTime * 10f);
