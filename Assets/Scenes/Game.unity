@@ -304,7 +304,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c088e7b318d292458e08155aef1723d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  M_TESTSEED: 
+  M_TESTSEED: 11:40:36
   B_PhysicsDebugGizmos: 1
   B_GameLevelDebugGizmos: 0
   E_LevelDebug: 0
@@ -317,9 +317,9 @@ MonoBehaviour:
   V_TestIndicatorIndex: 0
   B_TestBuffIndex: 10001
   F1_WeaponSpawnType: 7002
-  F5_TestActionIndex: 20007
-  F6_TestActionIndex: 10002
-  F7_TestActionIndex: 30007
+  F5_TestActionIndex: 40019
+  F6_TestActionIndex: 10015
+  F7_TestActionIndex: 10035
   F8_TestAcquireAction: 30007
   B_AdditionalLight: 1
 --- !u!4 &1133817278
