@@ -583,7 +583,7 @@ public class GameLevelManager
     public float F_KillScore => GameExpression.GetResultKillScore(m_enermiesKilled);
     public float F_LevelScore => GameExpression.GetResultLevelScore(m_GameStage, m_levelEntered);
     public float F_DifficultyBonus => GameExpression.GetResultDifficultyBonus(m_GameDifficulty);
-    public float F_FinalScore => (F_KillScore + F_LevelScore) * (1f + F_DifficultyBonus);
+    public float F_FinalScore => (F_KillScore + F_LevelScore) *  F_DifficultyBonus;
     public float F_CreditGain => GameExpression.GetResultRewardCredits(F_FinalScore);
     #endregion
 }

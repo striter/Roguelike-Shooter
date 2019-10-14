@@ -307,7 +307,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224009424725492350}
   m_Layer: 5
-  m_Name: Current
+  m_Name: CurrentStatus
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -376,7 +376,7 @@ GameObject:
   - component: {fileID: 114387954893835416}
   - component: {fileID: 111695962238236588}
   m_Layer: 5
-  m_Name: ProgressBar
+  m_Name: ProgressStatus
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1536,7 +1536,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u91D1\u5E01\u7ED3\u7B97\uFF1A"
+  m_Text: UI_Result_CoinsResult
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Result_CoinsResult
   m_characterSpacing: 0
@@ -1572,7 +1572,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u6700\u7EC8\u5F97\u5206\uFF1A"
+  m_Text: UI_Result_FinalScore
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Result_FinalScore
   m_characterSpacing: 0
@@ -1734,7 +1734,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u5173\u5361\u5F97\u5206\uFF1A"
+  m_Text: UI_Result_LevelScore
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Result_LevelScore
   m_characterSpacing: 0
@@ -1901,7 +1901,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u5B8C\u6210\u5EA6:"
+  m_Text: UI_Result_Progress
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Result_Progress
   m_characterSpacing: 0
@@ -1973,7 +1973,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "(\u5305\u542B\u89C6\u9891\u52A0\u6210+20%)"
+  m_Text: UI_Result_CoinsTips
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Result_CoinsTips
   m_characterSpacing: 0
@@ -2009,7 +2009,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u96BE\u5EA6\u52A0\u6210\uFF1A"
+  m_Text: UI_Result_DifficultyBonus
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Result_DifficultyBonus
   m_characterSpacing: 0
@@ -2200,7 +2200,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u6740\u654C\u5F97\u5206\uFF1A"
+  m_Text: UI_Result_KillScore
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Result_KillScore
   m_characterSpacing: 0
@@ -3019,7 +3019,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: -374}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224009444996265296

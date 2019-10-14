@@ -79,10 +79,10 @@ namespace GameSetting
 
         public static float GetAIIdleDuration() => UnityEngine.Random.Range(1f, 2f);
 
-        public static float GetResultProgress(bool win, enum_StageLevel _stage, int _battleLevelEntered) => win ? 1f : (.33f * ((int)_stage - 1) +.06f*_battleLevelEntered);
+        public static float GetResultProgress(bool win, enum_StageLevel _stage, int _battleLevelEntered) => win ? 1f : (.33f * ((int)_stage - 1) +.066f*_battleLevelEntered);
         public static float GetResultLevelScore(enum_StageLevel _stage, int _levelPassed) => 200 * ((int)_stage - 1) + 20 * (_levelPassed - 1);
         public static float GetResultKillScore(int _enermyKilled) => _enermyKilled * 1;
-        public static float GetResultDifficultyBonus(int _difficulty) => _difficulty * .05f;
+        public static float GetResultDifficultyBonus(int _difficulty) =>1f+ _difficulty * .05f;
         public static float GetResultRewardCredits(float _totalScore) => _totalScore;
 
         public static RangeInt GetTradePrice(enum_Interaction interactType, enum_RarityLevel level)

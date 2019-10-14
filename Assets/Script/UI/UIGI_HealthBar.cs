@@ -41,7 +41,7 @@ public class UIGI_HealthBar : UIT_GridItem {
         if (b_showItem)
             return;
         SetHealthValue(m_AttachEntity.m_Health.F_BaseHealthScale);
-        rtf_RectTransform.SetWorldViewPortAnchor(m_AttachEntity.transform.position,CameraController.MainCamera,1f);
+        rtf_RectTransform.SetWorldViewPortAnchor(m_AttachEntity.transform.position,CameraController.MainCamera);
         rtf_RectTransform.localScale = Vector3.one * Mathf.Clamp(Vector3.Distance(m_AttachEntity.transform.position, CameraController.MainCamera.transform.position) / 30, 1, 3);
         transform.SetActivate(true);
         b_showItem = true;

@@ -159,7 +159,7 @@ public class UI_PlayerStatus : UIToolsBase
         }
 
         if (rtf_InteractData.SetActivate(true))
-            rtf_InteractData.SetWorldViewPortAnchor(m_Player.tf_Head.position, CameraController.Instance.m_Camera, 1f);
+            rtf_InteractData.SetWorldViewPortAnchor(m_Player.tf_Head.position, CameraController.Instance.m_Camera);
         rtf_InteractData.SetWorldViewPortAnchor(m_Player.tf_Head.position, CameraController.Instance.m_Camera, Time.deltaTime * 10f);
 
         int tradePrice = 0;

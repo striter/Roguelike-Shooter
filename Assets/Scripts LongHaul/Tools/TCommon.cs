@@ -8,7 +8,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 public static class TCommonUI
 {
-    public static void SetWorldViewPortAnchor(this RectTransform rect, Vector3 worldPos, Camera camera, float lerpParam)
+    public static void SetWorldViewPortAnchor(this RectTransform rect, Vector3 worldPos, Camera camera, float lerpParam=1f)
     {
         Vector2 viewPortAnchor = camera.WorldToViewportPoint(worldPos);
         rect.anchorMin = Vector2.Lerp(rect.anchorMin, viewPortAnchor, lerpParam);
