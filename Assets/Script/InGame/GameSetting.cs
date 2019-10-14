@@ -947,7 +947,6 @@ namespace GameSetting
             }
             else if (damageInfo.m_AmountApply < 0)    //Healing
             {
-                finalAmount *= healEnhance;
                 switch (damageInfo.m_Type)
                 {
                     case enum_DamageType.ArmorOnly:
@@ -960,6 +959,7 @@ namespace GameSetting
                         {
                             if (B_HealthFull)
                                 return false;
+                            finalAmount *= healEnhance;
                             DamageHealth(finalAmount);
                             OnHealthChanged(enum_HealthChangeMessage.ReceiveHealth);
                         }
