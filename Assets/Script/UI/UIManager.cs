@@ -61,7 +61,7 @@ public class UIManager :SimpleSingletonMono<UIManager>,ISingleCoroutine
     void OnOptionsChanged()=> UIT_JoyStick.Instance.SetMode(OptionsManager.m_OptionsData.m_JoyStickMode);
     public void DoBinding(Action<Vector2> _OnLeftDelta,Action<Vector2> _OnRightDelta,Action _OnReload,Action<bool> _OnMainDown )
     {
-        m_TouchDelta.DoBinding(_OnLeftDelta,_OnRightDelta);
+        m_TouchDelta.DoBinding(_OnLeftDelta, _OnRightDelta, () => !UIPageBase.m_PageOpening;);
         OnReload = _OnReload;
         OnMainDown = _OnMainDown;
     }
