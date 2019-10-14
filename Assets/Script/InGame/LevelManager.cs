@@ -87,7 +87,8 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
     }
     void OnBattleFinish()
     {
-        m_currentLevel.SetTileLocking(enum_TileLocking.Locked);
+        if(m_currentLevel.m_Level.m_levelType!= enum_TileType.End)
+            m_currentLevel.SetTileLocking(enum_TileLocking.Locked);
     }
     #endregion
     #region BigMap
