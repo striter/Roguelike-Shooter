@@ -39,8 +39,8 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
             {
                 if (m_TrackLeft != null && t.fingerId == m_TrackLeft.m_Touch.fingerId)
                 {
-                    UIT_JoyStick.Instance.OnDeactivate();
                     m_TrackLeft = null;
+                    UIT_JoyStick.Instance.OnDeactivate();
                     m_leftDelta = Vector2.zero;
                 }
                 if (m_TrackRight != null && t.fingerId == m_TrackRight.m_Touch.fingerId)
@@ -54,16 +54,15 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
                 if (m_TrackRight!=null&&t.fingerId == m_TrackRight.m_Touch.fingerId)
                 {
                     m_TrackRight.Record(t);
-                    m_rightDelta=t.deltaPosition;
+                    m_rightDelta = t.deltaPosition;
                 }
                 else if (m_TrackLeft != null && t.fingerId == m_TrackLeft.m_Touch.fingerId)
                 {
                     m_TrackLeft.Record(t);
-                    m_leftDelta=UIT_JoyStick.Instance.OnMoved(t.position);
+                    m_leftDelta = UIT_JoyStick.Instance.OnMoved(t.position);
                 }
             }
         }
-
         if (OnCanSendDelta==null||!OnCanSendDelta())
             return;
 
