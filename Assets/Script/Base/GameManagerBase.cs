@@ -142,18 +142,22 @@ public static class GameDataManager
         m_PlayerLevelData.Adjust(data, level, record);
         TGameData<CPlayerLevelSave>.Save(m_PlayerLevelData);
     }
-    public static void OnGameFinished(bool win, float credit)
+    public static void OnGameFinished(bool win)
     {
         m_PlayerLevelData = new CPlayerLevelSave();
+        TGameData<CPlayerLevelSave>.Save(m_PlayerLevelData);
 
         if (win && m_PlayerGameData.m_GameDifficulty == m_PlayerGameData.m_DifficultyUnlocked)
         {
             m_PlayerGameData.m_DifficultyUnlocked++;
             m_PlayerGameData.m_GameDifficulty++;
         }
-        m_PlayerGameData.f_Credits += credit;
+        TGameData<CPlayerGameSave>.Save(m_PlayerGameData);
+    }
 
-        TGameData<CPlayerLevelSave>.Save(m_PlayerLevelData);
+    public static void OnCreditGain(float credit)
+    {
+        m_PlayerGameData.f_Credits += credit;
         TGameData<CPlayerGameSave>.Save(m_PlayerGameData);
     }
 

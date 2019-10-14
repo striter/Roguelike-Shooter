@@ -64,7 +64,7 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
             }
         }
 
-        if (!OnCanSendDelta())
+        if (OnCanSendDelta==null||!OnCanSendDelta())
             return;
 
         OnLeftDelta(m_leftDelta);

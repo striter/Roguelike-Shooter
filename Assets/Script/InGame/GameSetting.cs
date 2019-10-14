@@ -530,7 +530,7 @@ namespace GameSetting
     }
     #endregion
 
-    #region DataStruct
+    #region Data
     public struct CoinsGenerateInfo
     {
         public int m_HealthRate { get; private set; }
@@ -551,6 +551,22 @@ namespace GameSetting
         public enum_RarityLevel GetTradeRarityLevel(System.Random seed) => TCommon.RandomPercentage(m_TradeRate, seed);
         public static StageInteractGenerate Create(Dictionary<enum_RarityLevel, int> _actionRate, Dictionary<enum_RarityLevel, int> _tradeRate, Dictionary<enum_CharacterType, CoinsGenerateInfo> _coinRate) => new StageInteractGenerate() { m_ActionRate = _actionRate, m_TradeRate = _tradeRate, m_CoinRate = _coinRate };
     }
+
+    public struct GameResultData
+    {
+        int m_stagePassed;
+        int m_levelPassed;
+        int m_enermyKilled;
+        int m_difficulty;
+        public GameResultData(int stagePassed, int levelPassed, int enermyKilled, int difficulty)
+        {
+            m_stagePassed = stagePassed;
+            m_levelPassed = levelPassed;
+            m_enermyKilled = enermyKilled;
+            m_difficulty = difficulty;
+        }
+    }
+
     public struct ActionInfo : IXmlPhrase
     {
         public int m_Index { get; private set; }
@@ -1107,7 +1123,6 @@ namespace GameSetting
             m_Expires.Clear();
             m_BuffEffects.Clear();
             EntityInfoChange();
-            OnExpireChange();
         }
 
         public virtual void Tick(float deltaTime) {
@@ -1117,6 +1132,7 @@ namespace GameSetting
             if (!b_expireUpdated)
             {
                 UpdateExpireInfo();
+                OnExpireChange();
                 b_expireUpdated = true;
             }
         }
@@ -1125,7 +1141,6 @@ namespace GameSetting
         {
             m_Expires.Add(expire);
             EntityInfoChange();
-            OnExpireChange();
         }
         void RefreshExpire(ExpireBase expire)
         {
@@ -1136,7 +1151,6 @@ namespace GameSetting
         {
             m_Expires.Remove(expire);
             EntityInfoChange();
-            OnExpireChange();
         }
         public void AddBuff(int sourceID, SBuff buffInfo)
         {

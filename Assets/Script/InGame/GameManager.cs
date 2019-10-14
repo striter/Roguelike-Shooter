@@ -212,7 +212,8 @@ public class GameManager : GameManagerBase
         float levelScore = GameExpression.GetResultLevelScore(m_GameLevel.m_GameStage,m_PlayerRecord.i_levelPassed);
         float killScore = GameExpression.GetResultKillScore( m_PlayerRecord.i_entitiesKilled);
         float credit = GameExpression.GetResultRewardCredits(levelScore+killScore);
-        GameDataManager.OnGameFinished(win,credit);
+        GameDataManager.OnGameFinished(win);
+        GameDataManager.OnCreditGain(credit);
         UIManager.Instance.OnGameFinished(win, levelScore, killScore, credit, OnExitGame);
     }
     #endregion
