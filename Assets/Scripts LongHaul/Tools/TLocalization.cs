@@ -41,7 +41,7 @@ public static class TLocalization
         if (CurLocalization.ContainsKey(key))
             return CurLocalization[key.Replace("\\n", "\n")];
 
-        Debug.LogWarning("Localization Key:(" + key + ") Not Found In Localization " + e_CurLocation.ToString());
+        Debug.LogWarning("Localization Key:(" + key + ") Not Found In SLocalization ");
         return key;
     }
 }
