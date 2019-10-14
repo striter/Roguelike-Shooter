@@ -39,18 +39,19 @@ public class SFXCastLaserBeam : SFXCast {
         f_castLength = V4_CastInfo.z;
         Vector3 hitPoint = Vector3.zero;
         RaycastHit[] hits = OnCastCheck(GameLayer.Mask.I_StaticEntity);
-        bool hitted = false;
         for (int i = 0; i < hits.Length; i++)
         {
-            if (GameManager.B_CanHitTarget(hits[i].collider.Detect(), m_sourceID))
-            {
-                hitPoint = hits[i].point;
-                if (hitPoint == Vector3.zero) hitPoint = transform.position;
-                f_castLength =  TCommon.GetXZDistance(CastTransform.position, hitPoint) + .2f;
-                hitted = true;
-                break;
-            }
+            if (!GameManager.B_CanHitTarget(hits[i].collider.Detect(), m_sourceID))
+                continue;
+
+            float targetLength = TCommon.GetXZDistance(CastTransform.position, hits[i].point)+.2f;
+            if (targetLength >= f_castLength)
+                continue;
+
+            f_castLength = targetLength;
+            hitPoint = hits[i].point == Vector3.zero ? transform.position : hits[i].point;
         }
+        bool hitted = hitPoint!=Vector3.zero;
         m_Impact.SetActivate(hitted);
         m_Impact.transform.position = hitPoint;
         m_Beam.SetPosition(0, transform.position);
