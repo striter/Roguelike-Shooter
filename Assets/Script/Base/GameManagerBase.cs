@@ -182,7 +182,7 @@ public static class GameDataManager
         int waveCount = 1;
         for (int i = 0; i < 10; i++)
         {
-            List<SGenerateEntity> randomItems = SheetProperties<SGenerateEntity>.GetPropertiesList((int)stage).FindAll(p=>p.m_Difficulty == battleDifficulty && p.m_waveCount == waveCount);
+            List<SGenerateEntity> randomItems = SheetProperties<SGenerateEntity>.GetPropertiesList((int)stage-1).FindAll(p=>p.m_Difficulty == battleDifficulty && p.m_waveCount == waveCount);
             if (randomItems == null || randomItems.Count == 0)
                 break;
             entityList.Add(randomItems.RandomItem());
