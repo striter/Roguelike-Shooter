@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(UIT_TextExtend)),CanEditMultipleObjects]
-public class ELocalizationText : UnityEditor.UI.TextEditor
+public class ETextExtend : UnityEditor.UI.TextEditor
 {
     UIT_TextExtend m_target = null;
     public override void OnInspectorGUI()
