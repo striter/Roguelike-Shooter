@@ -342,9 +342,9 @@ namespace GameSetting_Action
                 Debug.LogError("Howd Fk Healing Below Zero?");
             entity.m_HitCheck.TryHit(new DamageInfo(-heal, type, DamageDeliverInfo.Default(entity.I_EntityID)));
         }
-        public static void Revive(EntityCharacterPlayer entity, float health, float armor)
+        public static void Revive(EntityCharacterPlayer entity, float health)
         {
-            entity.OnRevive(health, armor);
+            GameManager.Instance.AddPlayerReviveCheck(health);
         }
         public static void ReceiveEnergy(EntityCharacterPlayer entity, float amount)
         {
@@ -724,16 +724,15 @@ namespace GameSetting_Action
         public Action_10022_HealthRegenFromDamage(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
 
-    public class Action_10023_Revive : ActionBase
+    public class Action_10023_Revive : ActionAfterUse
     {
         public override int m_Index => 10023;
         public override int I_BaseCost => ActionData.I_10023_Cost;
         public override float Value1 => ActionData.F_10023_ReviveHealthRegen(m_rarity);
-        public override void OnDead()
+        public override void OnActionUse()
         {
-            base.OnDead();
-            ActionHelper.Revive(m_ActionEntity,Value1,0);
-            ForceExpire();
+            base.OnActionUse();
+            ActionHelper.Revive(m_ActionEntity, Value1);
         }
         public Action_10023_Revive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }

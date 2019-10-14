@@ -15,7 +15,7 @@ namespace GameSetting
     {
         public const float F_Gravity = 9.8f;
 
-        public const float F_EntityDeadFadeTime = 2f;
+        public const float F_EntityDeadFadeTime = 4f;
 
         public const float F_MaxActionAmount = 5f;
         public const float I_MaxArmor = 99999;
@@ -1387,11 +1387,9 @@ namespace GameSetting
 
         public override void OnDead()
         {
-            m_ActionEquiping.Traversal((ActionBase action) => { action.OnDead(); });
             m_ActionEquiping.Clear();
             base.OnDead();
         }
-
 
         protected void OnEntityActivate(EntityBase targetEntity)
         {
@@ -1713,7 +1711,6 @@ namespace GameSetting
         public virtual void OnWeaponDetach() { }
         public virtual void OnMove(float distsance) { }
         public virtual void OnAllyActivate(EntityCharacterBase ally) { }
-        public virtual void OnDead() { }
         #endregion
     }
     #endregion

@@ -78,8 +78,10 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     {
         base.OnDead();
         this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo(m_Effect.OnRecycleEffect, 0, 1, GameConst.F_EntityDeadFadeTime, OnRecycle));
-        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterDead,this);
         m_CharacterInfo.OnDead();
+
+        if(m_Health.b_IsDead)
+            TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterDead, this);
     }
 
     public virtual void OnRevive(float reviveHealth=-1, float reviveArmor=-1)

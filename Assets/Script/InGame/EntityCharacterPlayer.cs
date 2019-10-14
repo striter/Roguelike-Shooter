@@ -79,8 +79,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public override void OnRevive(float reviveHealth, float reviveArmor)
     {
         base.OnRevive(reviveHealth, reviveArmor);
-        if (base.m_Health.b_IsDead)
-            return;
         ObtainWeapon(m_WeaponCurrent);
     }
     void OnChangeLevel()
