@@ -102,14 +102,21 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void OnMainButtonDown(bool down)
     {
         m_aiming = down;
-        if (down&&m_Equipment != null)
+
+        if (down)
         {
-            OnEquipment(down);
-            return;
+            if (m_Equipment != null)
+            {
+                OnEquipment();
+                return;
+            }
+            if (m_Interact != null)
+            {
+                OnInteract();
+                return;
+            }
         }
 
-        if (m_Interact != null)
-            OnInteract(down);
 
         if (m_WeaponCurrent != null)
             m_WeaponCurrent.Trigger(down);
@@ -210,7 +217,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         else if (m_Interact == interactTarget)
             m_Interact = null;
     }
-    public void OnInteract(bool down)
+    public void OnInteract()
     {
         if (m_Interact == null)
         {
@@ -218,7 +225,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             return;
         }
 
-        if (down && m_Interact.TryInteract(this)&&!m_Interact.B_Interactable)
+        if (m_Interact.TryInteract(this)&&!m_Interact.B_Interactable)
             m_Interact = null;
     }
     #endregion
@@ -234,9 +241,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     }
     public T AcquireEquipment<T>(int actionIndex, Func<DamageDeliverInfo> OnDamageBuff=null) where T : EquipmentBase=> AcquireEquipment(actionIndex,OnDamageBuff) as T;
 
-    void OnEquipment(bool down)
+    void OnEquipment()
     {
-        if (!down ||m_EquipmentTimes<=0||m_Equipment == null)
+        if (m_EquipmentTimes<=0||m_Equipment == null)
             return;
 
         m_Equipment.Play(this, transform.position + transform.forward * 10);
