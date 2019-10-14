@@ -22,8 +22,8 @@ namespace GameSetting_Action
         public const int I_10003_MaxStackAmount = 100;
 
         public const int I_10004_Cost = 2;
-        public static float F_10004_Duration = 10f;
-        public static float F_10004_EnergyAdditivePerMile(enum_RarityLevel rarity) => .06f + .01f * (int)rarity;
+        public static float F_10004_Duration = 5f;
+        public static float F_10004_EnergyAdditivePerMile(enum_RarityLevel rarity) => .1f + .05f * (int)rarity;
 
         public const int I_10005_Cost = 2;
         public static int P_10005_OnFire_DamageMultiply(enum_RarityLevel rarity) => 80 + 80 * (int)rarity;
