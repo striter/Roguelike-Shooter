@@ -181,11 +181,11 @@ public class GameManager : GameManagerBase
             m_RewardChest = null;
         }
 
+        bool autoBattle = m_GameLevel.OnLevelChangeCheckCanBattle(levelInfo.m_TileType);
         if (levelInfo.m_TileLocking == enum_TileLocking.Unlocked)
             return;
-
         m_PlayerRecord.OnLevelPassed();
-        if (m_GameLevel.OnLevelChangeCheckCanBattle(levelInfo.m_TileType))
+        if (autoBattle)
             OnBattleStart();
         else 
             SpawnInteracts();

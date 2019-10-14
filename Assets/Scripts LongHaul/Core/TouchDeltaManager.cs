@@ -6,18 +6,23 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
 {
     TouchTracker m_TrackLeft, m_TrackRight;
     Action<Vector2> OnLeftDelta,OnRightDelta;
-    Func<bool> OnCanSendDelta;
-    Vector2 m_leftDelta, m_rightDelta;
-    public void DoBinding(Action<Vector2> _OnLeftDelta, Action<Vector2> _OnRightDelta,Func<bool> _OnCanSendDelta)
+    public void DoBinding(Action<Vector2> _OnLeftDelta, Action<Vector2> _OnRightDelta)
     {
-        m_leftDelta = Vector2.zero;
-        m_rightDelta = Vector2.zero;
         OnLeftDelta = _OnLeftDelta;
         OnRightDelta = _OnRightDelta;
-        OnCanSendDelta = _OnCanSendDelta;
     }
     private void Update()
     {
+        if (!UIT_JoyStick.Instance)
+            return;
+        if (UIPageBase.m_PageOpening)
+        {
+            m_TrackLeft = null;
+            m_TrackRight = null;
+            UIT_JoyStick.Instance.OnDeactivate();
+            return;
+        }
+
         foreach (Touch t in Input.touches)
         {
             if (t.phase == TouchPhase.Began)
@@ -27,26 +32,24 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
                 {
                     m_TrackLeft = track;
                     UIT_JoyStick.Instance.OnActivate(m_TrackLeft.v2_startPos);
-                    m_leftDelta = Vector2.zero;
                 }
                 else if (m_TrackRight == null && !track.isLeft)
                 {
                     m_TrackRight = track;
-                    m_rightDelta = Vector2.zero;
                 }
             }
             else if (t.phase == TouchPhase.Ended||t.phase== TouchPhase.Canceled)
             {
                 if (m_TrackLeft != null && t.fingerId == m_TrackLeft.m_Touch.fingerId)
                 {
-                    UIT_JoyStick.Instance.OnDeactivate();
                     m_TrackLeft = null;
-                    m_leftDelta = Vector2.zero;
+                    UIT_JoyStick.Instance.OnDeactivate();
+                    OnLeftDelta(Vector2.zero);
                 }
                 if (m_TrackRight != null && t.fingerId == m_TrackRight.m_Touch.fingerId)
                 {
                     m_TrackRight = null;
-                    m_rightDelta = Vector2.zero;
+                    OnRightDelta(Vector2.zero);
                 }
             }
             else if (t.phase == TouchPhase.Moved)
@@ -54,21 +57,15 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
                 if (m_TrackRight!=null&&t.fingerId == m_TrackRight.m_Touch.fingerId)
                 {
                     m_TrackRight.Record(t);
-                    m_rightDelta=t.deltaPosition;
+                    OnRightDelta(t.deltaPosition);
                 }
                 else if (m_TrackLeft != null && t.fingerId == m_TrackLeft.m_Touch.fingerId)
                 {
                     m_TrackLeft.Record(t);
-                    m_leftDelta=UIT_JoyStick.Instance.OnMoved(t.position);
+                    OnLeftDelta(UIT_JoyStick.Instance.OnMoved(t.position));
                 }
             }
         }
-
-        if (!OnCanSendDelta())
-            return;
-
-        OnLeftDelta(m_leftDelta);
-        OnRightDelta(m_rightDelta);
     }
     
     class TouchTracker
