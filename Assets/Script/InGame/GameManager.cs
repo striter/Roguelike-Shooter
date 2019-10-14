@@ -350,13 +350,11 @@ public class GameManager : GameManagerBase
         });
 
         SpawnEntityDeadPickups(character);
-        if (entity.m_Flag == enum_EntityFlag.Enermy)
-            m_PlayerRecord.OnEntityKilled();
+            OnBattleCharacterDead(character);
 
         if (entity.m_Controller == enum_EntityController.Player)
             OnGameFinished(false);
 
-        OnBattleCharacterDead(character);
     }
     public static bool B_CanDamageEntity(HitCheckEntity hb, int sourceID)   //After Hit,If Match Target Hit Succeed
     {
@@ -417,9 +415,10 @@ public class GameManager : GameManagerBase
 
     void OnBattleCharacterDead(EntityCharacterBase entity)
     {
-        if (!B_Battling|| B_WaveEntityGenerating)
+        if (!B_Battling || B_WaveEntityGenerating || entity.m_Flag != enum_EntityFlag.Enermy)
             return;
 
+        m_PlayerRecord.OnEntityKilled();
         if (m_FlagEntityCount( enum_EntityFlag.Enermy) <= 0 || (m_CurrentWave < m_EntityGenerate.Count && m_FlagEntityCount(enum_EntityFlag.Enermy) <= GameConst.I_EnermyCountWaveFinish))
             WaveFinished(entity.transform.position);
     }
