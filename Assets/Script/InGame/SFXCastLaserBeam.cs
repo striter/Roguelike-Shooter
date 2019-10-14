@@ -35,25 +35,26 @@ public class SFXCastLaserBeam : SFXCast {
         m_Beam.enabled = B_Casting;
         if (!B_Casting)
             return;
+
         f_castLength = V4_CastInfo.z;
         Vector3 hitPoint = Vector3.zero;
-        RaycastHit[] hits = Physics.BoxCastAll(CastTransform.position, new Vector3(V4_CastInfo.x / 2, V4_CastInfo.y / 2, .01f), CastTransform.forward, Quaternion.LookRotation(CastTransform.forward, CastTransform.up), f_castLength, GameLayer.Mask.I_StaticEntity);
+        RaycastHit[] hits = OnCastCheck(GameLayer.Mask.I_StaticEntity);
         bool hitted = false;
         for (int i = 0; i < hits.Length; i++)
         {
-            RaycastHit hit = hits[i];
-            HitCheckBase hitCheck = hit.collider.Detect();
-            if (GameManager.B_CanHitTarget(hitCheck, m_sourceID))
+            if (GameManager.B_CanHitTarget(hits[i].collider.Detect(), m_sourceID))
             {
-                f_castLength = TCommon.GetXZDistance(CastTransform.position, hit.point) + .2f;
-                hitPoint = hit.point;
+                hitPoint = hits[i].point;
+                if (hitPoint == Vector3.zero) hitPoint = transform.position;
+                f_castLength =  TCommon.GetXZDistance(CastTransform.position, hitPoint) + .2f;
+                hitted = true;
                 break;
             }
         }
-
         m_Impact.SetActivate(hitted);
         m_Impact.transform.position = hitPoint;
         m_Beam.SetPosition(0, transform.position);
         m_Beam.SetPosition(1, hitted?hitPoint:CastTransform.position+CastTransform.forward* f_castLength);
     }
+
 }
