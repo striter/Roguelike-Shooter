@@ -45,12 +45,12 @@ public class UI_GameResult : UIPageBase {
         tf_Goal.SetActivate(level.m_gameWin);
 
         tf_Result.Find(OptionsManager.m_OptionsData.m_Region.ToString()).SetActivate(true);
-        txt_Progress.text = string.Format("{0:000}%",(progress*100f));
+        txt_Progress.text = string.Format("{0}%",Mathf.CeilToInt(progress*100f));
         txt_LevelScore.text =level.F_LevelScore.ToString();
         txt_KillScore.text =  level.F_KillScore.ToString();
-        txt_DifficultyBonus.text = string.Format("x{0}", level.F_DifficultyBonus);
-        txt_FinalScore.text = string.Format("{0:000000}", level.F_FinalScore);
-        txt_CoinsResult.text = string.Format("{0:00000}", level.F_CreditGain);
+        txt_DifficultyBonus.text = string.Format("x{0}", Mathf.CeilToInt(level.F_DifficultyBonus));
+        txt_FinalScore.text = string.Format("{0}", Mathf.CeilToInt( level.F_FinalScore));
+        txt_CoinsResult.text = string.Format("{0}", Mathf.CeilToInt(level.F_CreditGain));
         OnButtonClick = _OnButtonClick;
     }
     protected override void OnCancelBtnClick()
