@@ -137,9 +137,9 @@ public static class GameDataManager
     #region GameSave
     public static CPlayerGameSave m_PlayerGameData { get; private set; }
     public static CPlayerLevelSave m_PlayerLevelData { get; private set; }
-    public static void AdjuastInGameData(EntityCharacterPlayer data, GameLevelManager level, GameRecordManager record)
+    public static void AdjuastInGameData(EntityCharacterPlayer data, GameLevelManager level)
     {
-        m_PlayerLevelData.Adjust(data, level, record);
+        m_PlayerLevelData.Adjust(data, level);
         TGameData<CPlayerLevelSave>.Save(m_PlayerLevelData);
     }
     public static void OnGameFinished(bool win)
@@ -154,7 +154,6 @@ public static class GameDataManager
         }
         TGameData<CPlayerGameSave>.Save(m_PlayerGameData);
     }
-
     public static void OnCreditGain(float credit)
     {
         m_PlayerGameData.f_Credits += credit;

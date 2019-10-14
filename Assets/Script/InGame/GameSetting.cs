@@ -79,8 +79,10 @@ namespace GameSetting
 
         public static float GetAIIdleDuration() => UnityEngine.Random.Range(1f, 2f);
 
+        public static float GetResultProgress(bool win, enum_StageLevel _stage, int _battleLevelEntered) => win ? 1f : (.33f * ((int)_stage - 1) +.06f*_battleLevelEntered);
         public static float GetResultLevelScore(enum_StageLevel _stage, int _levelPassed) => 200 * ((int)_stage - 1) + 20 * (_levelPassed - 1);
         public static float GetResultKillScore(int _enermyKilled) => _enermyKilled * 1;
+        public static float GetResultDifficultyBonus(int _difficulty) => _difficulty * .05f;
         public static float GetResultRewardCredits(float _totalScore) => _totalScore;
 
         public static RangeInt GetTradePrice(enum_Interaction interactType, enum_RarityLevel level)
@@ -495,7 +497,7 @@ namespace GameSetting
             m_GameSeed = DateTime.Now.ToLongTimeString().ToString();
             m_StageLevel = enum_StageLevel.Rookie;
         }
-        public void Adjust(EntityCharacterPlayer _player, GameLevelManager _level, GameRecordManager _record)
+        public void Adjust(EntityCharacterPlayer _player, GameLevelManager _level)
         {
             m_coins = _player.m_PlayerInfo.m_Coins;
             m_weapon = _player.m_WeaponCurrent.m_WeaponInfo.m_Weapon;
@@ -503,7 +505,7 @@ namespace GameSetting
             m_storedActions = ActionInfo.Create(_player.m_PlayerInfo.m_ActionStored);
             m_GameSeed = _level.m_Seed;
             m_StageLevel = _level.m_GameStage;
-            m_kills = _record.i_entitiesKilled;
+            m_kills = _level.m_enermiesKilled;
         }
     }
 
@@ -551,22 +553,6 @@ namespace GameSetting
         public enum_RarityLevel GetTradeRarityLevel(System.Random seed) => TCommon.RandomPercentage(m_TradeRate, seed);
         public static StageInteractGenerate Create(Dictionary<enum_RarityLevel, int> _actionRate, Dictionary<enum_RarityLevel, int> _tradeRate, Dictionary<enum_CharacterType, CoinsGenerateInfo> _coinRate) => new StageInteractGenerate() { m_ActionRate = _actionRate, m_TradeRate = _tradeRate, m_CoinRate = _coinRate };
     }
-
-    public struct GameResultData
-    {
-        int m_stagePassed;
-        int m_levelPassed;
-        int m_enermyKilled;
-        int m_difficulty;
-        public GameResultData(int stagePassed, int levelPassed, int enermyKilled, int difficulty)
-        {
-            m_stagePassed = stagePassed;
-            m_levelPassed = levelPassed;
-            m_enermyKilled = enermyKilled;
-            m_difficulty = difficulty;
-        }
-    }
-
     public struct ActionInfo : IXmlPhrase
     {
         public int m_Index { get; private set; }
@@ -1844,19 +1830,19 @@ namespace GameSetting
     {
         public TileAxis m_TileAxis => m_Tile;
         protected TileAxis m_Tile { get; private set; }
-        public enum_TileType m_TileType { get; private set; } = enum_TileType.Invalid;
+        public enum_TileType m_LevelType { get; private set; } = enum_TileType.Invalid;
         public enum_TileLocking m_TileLocking { get; private set; } = enum_TileLocking.Invalid;
         public Dictionary<enum_TileDirection, TileAxis> m_Connections { get; protected set; } = new Dictionary<enum_TileDirection, TileAxis>();
 
         public SBigmapTileInfo(TileAxis _tileAxis, enum_TileType _tileType, enum_TileLocking _tileLocking)
         {
             m_Tile = _tileAxis;
-            m_TileType = _tileType;
+            m_LevelType = _tileType;
             m_TileLocking = _tileLocking;
         }
         public void ResetTileType(enum_TileType _tileType)
         {
-            m_TileType = _tileType;
+            m_LevelType = _tileType;
         }
         public void SetTileLocking(enum_TileLocking _lockType)
         {
@@ -1867,7 +1853,7 @@ namespace GameSetting
     public class SBigmapLevelInfo : SBigmapTileInfo
     {
         public LevelBase m_Level { get; private set; } = null;
-        public SBigmapLevelInfo(SBigmapTileInfo tile) : base(tile.m_TileAxis, tile.m_TileType,tile.m_TileLocking)
+        public SBigmapLevelInfo(SBigmapTileInfo tile) : base(tile.m_TileAxis, tile.m_LevelType,tile.m_TileLocking)
         {
             m_Connections = tile.m_Connections;
         }
@@ -1878,7 +1864,7 @@ namespace GameSetting
             m_Level.transform.localPosition = Vector3.zero;
             m_Level.transform.localScale = Vector3.one;
             m_Level.SetActivate(false);
-            return m_Level.GenerateTileItems(innerData,outerData, _levelItemPrefabs, m_TileType,seed, m_TileType== enum_TileType.End);        //Add Portal For Level End
+            return m_Level.GenerateTileItems(innerData,outerData, _levelItemPrefabs, m_LevelType,seed, m_LevelType== enum_TileType.End);        //Add Portal For Level End
         }
         public void StartLevel()
         {

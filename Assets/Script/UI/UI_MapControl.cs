@@ -74,8 +74,8 @@ public class UI_MapControl : UIPageBase,ISingleCoroutine {        //This Page Wo
     void SetTileInfo(UIGI_MapControlCell tile)
     {
         m_targetTile = tile;
-        enum_UI_TileBattleStatus battleStatus = tile.m_TileInfo.m_TileType.GetBattleStatus();
-        txt_TileType.localizeText=tile.m_TileInfo.m_TileType.GetLocalizeKey();
+        enum_UI_TileBattleStatus battleStatus = tile.m_TileInfo.m_LevelType.GetBattleStatus();
+        txt_TileType.localizeText=tile.m_TileInfo.m_LevelType.GetLocalizeKey();
         txt_Cordinates.text=tile.m_TileInfo.m_TileAxis.GetCordinates();
         txt_BattleStatus.text=battleStatus.GetBattlePercentage();
         this.StartSingleCoroutine(10, TIEnumerators.UI.StartTypeWriter(txt_TileType,.5f));
@@ -84,7 +84,7 @@ public class UI_MapControl : UIPageBase,ISingleCoroutine {        //This Page Wo
         m_TileTypeAnim.Stop();
         m_TileTypeAnim.Play(PlayMode.StopAll);
         img_TileTypeCurrent.sprite = img_TileTypeSelect.sprite;
-        img_TileTypeSelect.sprite = UIManager.Instance.m_commonSprites[tile.m_TileInfo.m_TileType.GetSpriteName()];
+        img_TileTypeSelect.sprite = UIManager.Instance.m_commonSprites[tile.m_TileInfo.m_LevelType.GetSpriteName()];
         img_TileBattleStatus1.sprite = UIManager.Instance.m_commonSprites[battleStatus.GetSpriteName()];
         img_TileBattleStatus2.sprite = img_TileBattleStatus1.sprite;
 

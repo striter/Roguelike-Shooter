@@ -53,7 +53,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
     #region Level
     void OnStageStart()
     {
-        m_currentLevel = m_MapLevelInfo.Find(p => p.m_TileType == enum_TileType.Start);
+        m_currentLevel = m_MapLevelInfo.Find(p => p.m_LevelType == enum_TileType.Start);
         PrepareCurrentLevel();
     }
 
@@ -106,7 +106,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
         //Calculate Main Path
         TileAxis startAxis = new TileAxis(_seed.Next(2, _bigmapWidth - 2), _seed.Next(2, _bigmapHeight - 2));
         int mainPathCount =  6;
-        mainRoadTiles =  bigmapTiles.TileRandomFill(_seed, startAxis,(SBigmapTileInfo tile)=> { tile.ResetTileType(enum_TileType.Battle); },p=>p.m_TileType== enum_TileType.Invalid, mainPathCount);
+        mainRoadTiles =  bigmapTiles.TileRandomFill(_seed, startAxis,(SBigmapTileInfo tile)=> { tile.ResetTileType(enum_TileType.Battle); },p=>p.m_LevelType== enum_TileType.Invalid, mainPathCount);
         mainRoadTiles[0].ResetTileType(enum_TileType.Start);
         mainRoadTiles[mainRoadTiles.Count-1].ResetTileType(enum_TileType.End);
         //Connect Main Path Tiles
@@ -136,7 +136,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
             TTiles.TTiles.m_FourDirections.TraversalRandom( (enum_TileDirection direction) =>
             {
                 SBigmapTileInfo targetSubBattleTile = bigmapTiles.Get(tile.m_TileAxis.DirectionAxis(direction));
-                if (targetSubBattleTile!=null&& targetSubBattleTile.m_TileType== enum_TileType.Invalid)
+                if (targetSubBattleTile!=null&& targetSubBattleTile.m_LevelType== enum_TileType.Invalid)
                 {
                     subBattleTile = targetSubBattleTile;
                     subBattleTile.ResetTileType(enum_TileType.Battle);
@@ -151,19 +151,19 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
         if (subBattleTile!=null)
         TTiles.TTiles.m_FourDirections.TraversalRandom( (enum_TileDirection direction) => {
             SBigmapTileInfo nearbyTile = bigmapTiles.Get(subBattleTile.m_TileAxis.DirectionAxis(direction));
-            if (nearbyTile != null && (nearbyTile.m_TileType== enum_TileType.CoinsTrade|| nearbyTile.m_TileType == enum_TileType.Battle))
+            if (nearbyTile != null && (nearbyTile.m_LevelType== enum_TileType.CoinsTrade|| nearbyTile.m_LevelType == enum_TileType.Battle))
                 ConnectTile(subBattleTile,nearbyTile);
             return false; }, _seed);
         
         //Generate Last Reward Tile
-        subGenerateTiles.RemoveAll(p => p.m_TileType == enum_TileType.CoinsTrade);
+        subGenerateTiles.RemoveAll(p => p.m_LevelType == enum_TileType.CoinsTrade);
         SBigmapTileInfo subRewardTile = null;
         subGenerateTiles.TraversalRandom( (SBigmapTileInfo tile) =>
         {
             TTiles.TTiles.m_FourDirections.TraversalRandom( (enum_TileDirection direction) =>
             {
                 SBigmapTileInfo targetSubrewardTile = bigmapTiles.Get(tile.m_TileAxis.DirectionAxis(direction));
-                if (targetSubrewardTile != null && targetSubrewardTile.m_TileType == enum_TileType.Invalid)
+                if (targetSubrewardTile != null && targetSubrewardTile.m_LevelType == enum_TileType.Invalid)
                 {
                     subRewardTile = targetSubrewardTile;
                     rewardTiles.Add(subRewardTile);
@@ -197,9 +197,9 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
             for (int j = 0; j < _bigmapHeight; j++)
             {
                 m_MapLevelInfo[i, j] = new SBigmapLevelInfo(bigmapTiles[i, j]);
-                if (m_MapLevelInfo[i, j].m_TileType != enum_TileType.Invalid)
+                if (m_MapLevelInfo[i, j].m_LevelType != enum_TileType.Invalid)
                 {
-                    enum_LevelGenerateType generateType = m_MapLevelInfo[i, j].m_TileType.ToPrefabType();
+                    enum_LevelGenerateType generateType = m_MapLevelInfo[i, j].m_LevelType.ToPrefabType();
                     SLevelGenerate innerData = GameDataManager.GetItemGenerateProperties(_levelStyle, generateType, true);
                     SLevelGenerate outerData = GameDataManager.GetItemGenerateProperties(_levelStyle, generateType, false);
 
@@ -222,7 +222,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
         tileStart.m_Connections.Add(directionConnection, tileEnd.m_TileAxis);
         tileEnd.m_Connections.Add(directionConnection.DirectionInverse(), tileStart.m_TileAxis);
         
-        if (tileEnd.m_TileType == enum_TileType.End)       //Add Special Place For Portal To Generate
+        if (tileEnd.m_LevelType == enum_TileType.End)       //Add Special Place For Portal To Generate
             tileEnd.m_Connections.Add(directionConnection, new TileAxis(-1,-1));
     }
     #endregion

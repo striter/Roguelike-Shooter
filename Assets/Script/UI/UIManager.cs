@@ -76,10 +76,10 @@ public class UIManager :SimpleSingletonMono<UIManager>,ISingleCoroutine
         img_main.sprite = m_commonSprites[m_mainSprite];
     }
 
-    public void OnGameFinished(bool win, float levelScore, float killScore, float credit, Action _OnButtonClick)
+    public void OnGameFinished(GameLevelManager level,Action _OnButtonClick)
     {
         cvs_Camera.gameObject.SetActivate(false);
-        ShowPage<UI_GameResult>(true).Play(win, levelScore, killScore, credit, _OnButtonClick);
+        ShowPage<UI_GameResult>(true).Play(level, _OnButtonClick);
     }
 
 }

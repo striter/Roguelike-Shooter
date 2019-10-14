@@ -18,13 +18,17 @@ public class UI_GameResult : UIPageBase {
         txt_CoinsResult = tf_Container.Find("CoinsResult/Data").GetComponent<UIT_TextExtend>();
     }
 
-    public void Play(bool win,float levelScore,float killScore,float coin,Action _OnButtonClick)
+    public void Play(GameLevelManager level,Action _OnButtonClick)
     {
-        tf_Result = tf_Container.Find("Result/" + (win ? "Complete" : "Fail"));
+        tf_Result = tf_Container.Find("Result/" + (level.m_gameWin ? "Complete" : "Fail"));
+        tf_Result.SetActivate(true);
         tf_Result.Find(OptionsManager.m_OptionsData.m_Region.ToString()).SetActivate(true);
-        txt_LevelScore.text =levelScore.ToString();
-        txt_KillScore.text =  killScore.ToString();
-        txt_CoinsResult.text =  coin.ToString();
+        txt_Progress.text = string.Format("{0:000}%",(level.F_Progress*100f));
+        txt_LevelScore.text =level.F_LevelScore.ToString();
+        txt_KillScore.text =  level.F_KillScore.ToString();
+        txt_DifficultyBonus.text = string.Format("x{0}", level.F_DifficultyBonus);
+        txt_FinalScore.text =  level.F_FinalScore.ToString();
+        txt_CoinsResult.text =  level.F_CreditGain.ToString();
         OnButtonClick = _OnButtonClick;
     }
     protected override void OnCancelBtnClick()

@@ -110,7 +110,6 @@ public class GameManager : GameManagerBase
 #endif
 
     public GameLevelManager m_GameLevel { get; private set; }
-    public GameRecordManager m_PlayerRecord { get; private set; }
     public EntityCharacterPlayer m_LocalPlayer { get; private set; } = null;
     InteractActionChest m_RewardChest;
     public bool B_ShowChestTips=>m_RewardChest!=null&&m_RewardChest.B_Interactable;
@@ -160,10 +159,9 @@ public class GameManager : GameManagerBase
         GameObjectManager.PresetRegistCommonObject();
 
         EntityPreset();
-        m_GameLevel.StageBegin();
+        m_GameLevel.OnStageBegin();
         m_Enermies = GameObjectManager.RegistStyledIngameEnermies(m_GameLevel.m_GameStyle, m_GameLevel.m_GameStage);
         m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_PlayerLevelData);
-        m_PlayerRecord = new GameRecordManager(GameDataManager.m_PlayerLevelData);
         LevelManager.Instance.GenerateAllEnviorment(m_GameLevel.m_GameStyle, m_GameLevel.m_GameSeed, OnLevelChanged, OnStageFinished);
         SetPostEffects(m_GameLevel.m_GameStyle);
         GC.Collect();
@@ -181,11 +179,11 @@ public class GameManager : GameManagerBase
             m_RewardChest = null;
         }
 
-        bool autoBattle = m_GameLevel.OnLevelChangeCheckCanBattle(levelInfo.m_TileType);
-        if (levelInfo.m_TileLocking == enum_TileLocking.Unlocked)
+        bool levelUnlocked = levelInfo.m_TileLocking == enum_TileLocking.Unlocked;
+        m_GameLevel.OnLevelChange(levelInfo.m_LevelType,levelUnlocked);
+        if (levelUnlocked)
             return;
-        m_PlayerRecord.OnLevelPassed();
-        if (autoBattle)
+        if (m_GameLevel.WillBattle())
             OnBattleStart();
         else 
             SpawnInteracts();
@@ -198,7 +196,7 @@ public class GameManager : GameManagerBase
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageFinish);
         if (m_GameLevel.B_NextStage)
         {
-            GameDataManager.AdjuastInGameData(m_LocalPlayer,m_GameLevel,m_PlayerRecord);
+            GameDataManager.AdjuastInGameData(m_LocalPlayer,m_GameLevel);
             StartStage();
         }
         else
@@ -209,12 +207,10 @@ public class GameManager : GameManagerBase
 
     void OnGameFinished(bool win)
     {
-        float levelScore = GameExpression.GetResultLevelScore(m_GameLevel.m_GameStage,m_PlayerRecord.i_levelPassed);
-        float killScore = GameExpression.GetResultKillScore( m_PlayerRecord.i_entitiesKilled);
-        float credit = GameExpression.GetResultRewardCredits(levelScore+killScore);
+        m_GameLevel.OnGameFinished(win);
         GameDataManager.OnGameFinished(win);
-        GameDataManager.OnCreditGain(credit);
-        UIManager.Instance.OnGameFinished(win, levelScore, killScore, credit, OnExitGame);
+        GameDataManager.OnCreditGain(m_GameLevel.F_CreditGain);
+        UIManager.Instance.OnGameFinished(m_GameLevel, OnExitGame);
     }
     #endregion
     #region InteractManagement
@@ -419,7 +415,7 @@ public class GameManager : GameManagerBase
         if (!B_Battling || B_WaveEntityGenerating || entity.m_Flag != enum_EntityFlag.Enermy)
             return;
 
-        m_PlayerRecord.OnEntityKilled();
+        m_GameLevel.OnEntityKilled();
         if (m_FlagEntityCount( enum_EntityFlag.Enermy) <= 0 || (m_CurrentWave < m_EntityGenerate.Count && m_FlagEntityCount(enum_EntityFlag.Enermy) <= GameConst.I_EnermyCountWaveFinish))
             WaveFinished(entity.transform.position);
     }
@@ -489,6 +485,7 @@ public class GameManager : GameManagerBase
 #region External Tools Packaging Class
 public class GameLevelManager
 {
+    #region LevelData
     public StageInteractGenerate m_actionGenerate { get; private set; }
     public bool B_NextStage => m_GameStage <= enum_StageLevel.Ranger;
     public enum_TileType m_LevelType { get; private set; }
@@ -498,8 +495,34 @@ public class GameLevelManager
     public enum_Style m_GameStyle => m_StageStyle[m_GameStage];
     public string m_Seed { get; private set; }
     public System.Random m_GameSeed { get; private set; }
+    static enum_BattleDifficulty m_BattleDifficulty;
+    public enum_BattleDifficulty m_Difficulty
+    {
+        get
+        {
+            switch (m_LevelType)
+            {
+                default:
+                    return enum_BattleDifficulty.Peaceful;
+                case enum_TileType.BattleTrade:
+                    return enum_BattleDifficulty.BattleTrade;
+                case enum_TileType.End:
+                    return enum_BattleDifficulty.End;
+                case enum_TileType.Battle:
+                    return m_BattleDifficulty;
+            }
+        }
+    }
+    #endregion
+    #region RecordData
+    public int m_enermiesKilled { get; private set; }
+    public bool m_gameWin { get; private set; }
+    int m_levelEntered;
+    int m_battleLevelEntered;
+    #endregion
     public GameLevelManager(CPlayerGameSave _gameSave,CPlayerLevelSave _playerSave):this(_playerSave.m_GameSeed, _playerSave.m_StageLevel, _gameSave.m_GameDifficulty)
     {
+        m_enermiesKilled = _playerSave.m_kills;
     }
     public GameLevelManager(string _seed,enum_StageLevel _stage, int _gameDifficulty)
     {
@@ -514,20 +537,32 @@ public class GameLevelManager
             m_StageStyle.Add(level,style);
         });
     }
-    public void StageBegin()
+    public void OnStageBegin()
     {
         m_actionGenerate = GameExpression.GetInteractGenerate(m_GameStage);
         m_BattleDifficulty = enum_BattleDifficulty.Peaceful;
         m_LevelType = enum_TileType.Invalid;
+
+        m_battleLevelEntered = 0;
+        m_levelEntered = 0;
     }
     public void StageFinished()
     {
         m_GameStage++;
     }
 
-    public bool OnLevelChangeCheckCanBattle(enum_TileType type)
+    public void OnLevelChange(enum_TileType type, bool levelUnlocked)
     {
         m_LevelType = type;
+        if (levelUnlocked)
+            return;
+        if (type == enum_TileType.Battle)
+            m_battleLevelEntered ++ ;
+        m_levelEntered++;
+    }
+
+    public bool WillBattle()
+    {
         switch (m_LevelType)
         {
             default:
@@ -541,35 +576,16 @@ public class GameLevelManager
         }
     }
 
-    static enum_BattleDifficulty m_BattleDifficulty;
-    public enum_BattleDifficulty m_Difficulty
-    {
-        get {
-            switch (m_LevelType)
-            {
-                default:
-                    return enum_BattleDifficulty.Peaceful;
-                case enum_TileType.BattleTrade:
-                    return enum_BattleDifficulty.BattleTrade;
-                case enum_TileType.End:
-                    return enum_BattleDifficulty.End;
-                case enum_TileType.Battle:
-                    return m_BattleDifficulty;
-            }
-        }
-    }
-}
-public class GameRecordManager
-{
-    public int i_entitiesKilled { get; private set; } = 0;
-    public int i_levelPassed { get; private set; } = 0;
-    public GameRecordManager(CPlayerLevelSave save)
-    {
-        i_entitiesKilled = save.m_kills;
-        i_levelPassed = 0;
-    }
-    public void OnEntityKilled() => i_entitiesKilled++;
-    public void OnLevelPassed() => i_levelPassed++;
+    public void OnEntityKilled() => m_enermiesKilled++;
+    public void OnGameFinished(bool win)=> m_gameWin = win;
+    #region CalculateData
+    public float F_Progress => GameExpression.GetResultProgress(m_gameWin, m_GameStage, m_battleLevelEntered);
+    public float F_KillScore => GameExpression.GetResultKillScore(m_enermiesKilled);
+    public float F_LevelScore => GameExpression.GetResultLevelScore(m_GameStage, m_levelEntered);
+    public float F_DifficultyBonus => GameExpression.GetResultDifficultyBonus(m_GameDifficulty);
+    public float F_FinalScore => (F_KillScore + F_LevelScore) * (1f + F_DifficultyBonus);
+    public float F_CreditGain => GameExpression.GetResultRewardCredits(F_FinalScore);
+    #endregion
 }
 public static class GameObjectManager
 {
