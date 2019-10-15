@@ -108,7 +108,6 @@ public class GameManager : GameManagerBase
     }
     #endregion
 #endif
-
     public GameLevelManager m_GameLevel { get; private set; }
     public EntityCharacterPlayer m_LocalPlayer { get; private set; } = null;
     InteractActionChest m_RewardChest;
@@ -374,6 +373,38 @@ public class GameManager : GameManagerBase
         return !Instance.m_Entities.ContainsKey(sourceID) || targetHitCheck.m_Attacher.m_Flag != Instance.m_Entities[sourceID].m_Flag;
     }
     #endregion
+    #region PlayerManagement
+    List<float> m_PlayerReviveHealing = new List<float>();
+    void OnCharacterDead(EntityCharacterBase character)
+    {
+        if (character.m_Controller != enum_EntityController.Player)
+            return;
+        SetPostEffect_Dead();
+        this.StartSingleCoroutine(10, TIEnumerators.PauseDel(1.5f, CheckRevive));
+    }
+
+    void OnCharacterRevive(EntityCharacterBase character)
+    {
+        if (character.m_Controller != enum_EntityController.Player)
+            return;
+        SetPostEffect_Revive();
+    }
+
+    public void AddPlayerReviveCheck(float reviveAmount)
+    {
+        m_PlayerReviveHealing.Add(reviveAmount);
+    }
+
+    void CheckRevive()
+    {
+        if (m_PlayerReviveHealing.Count > 0)
+        {
+            m_LocalPlayer.OnRevive(m_PlayerReviveHealing[m_PlayerReviveHealing.Count - 1], 0f);
+            m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common, DamageDeliverInfo.EquipmentInfo(-1, 0, enum_CharacterEffect.Cloak, 3f)));
+            m_PlayerReviveHealing.RemoveAt(m_PlayerReviveHealing.Count - 1);
+        }
+    }
+    #endregion
     #region Battle Management
     public bool B_Battling { get; private set; } = false;
     public bool B_WaveEntityGenerating { get; private set; } = false;
@@ -381,7 +412,6 @@ public class GameManager : GameManagerBase
     public List<SGenerateEntity> m_EntityGenerate { get; private set; } = new List<SGenerateEntity>();
     public List<int> m_EntityGenerating { get; private set; } = new List<int>();
     public Dictionary<enum_CharacterType, List<int>> m_Enermies;
-    List<float> m_PlayerReviveHealing = new List<float>();
     void OnBattleStart()
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleStart);
@@ -435,6 +465,7 @@ public class GameManager : GameManagerBase
     {
         B_Battling = false;
         SpawnRewards(lastEntityPos);
+        m_PlayerReviveHealing.Clear();
         GameObjectManager.RecycleAllInteract(enum_Interaction.PickupArmor);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleFinish);
     }
@@ -467,39 +498,6 @@ public class GameManager : GameManagerBase
         }));
     }
     #endregion
-
-    #region PlayerDead/Revive
-    void OnCharacterDead(EntityCharacterBase character)
-    {
-        if (character.m_Controller != enum_EntityController.Player)
-            return;
-        SetPostEffect_Dead();
-        this.StartSingleCoroutine(10,TIEnumerators.PauseDel(2f,CheckRevive));
-    }
-
-    void OnCharacterRevive(EntityCharacterBase character)
-    {
-        if (character.m_Controller != enum_EntityController.Player)
-            return;
-        SetPostEffect_Revive();
-    }
-
-    public void AddPlayerReviveCheck(float reviveAmount)
-    {
-        m_PlayerReviveHealing.Add(reviveAmount);
-    }
-
-    void CheckRevive()
-    {
-        if (m_PlayerReviveHealing.Count > 0)
-        {
-            m_LocalPlayer.OnRevive(m_PlayerReviveHealing[m_PlayerReviveHealing.Count-1],0f);
-            m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common,DamageDeliverInfo.EquipmentInfo(-1,0, enum_CharacterEffect.Cloak,3f)));
-            m_PlayerReviveHealing.RemoveAt(m_PlayerReviveHealing.Count - 1);
-        }
-    }
-    #endregion
-
 }
 #region External Tools Packaging Class
 public class GameLevelManager
