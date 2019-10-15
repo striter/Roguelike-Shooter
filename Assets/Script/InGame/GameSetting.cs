@@ -117,10 +117,10 @@ namespace GameSetting
                     new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.Normal, 75 }, { enum_RarityLevel.OutStanding, 25 } },    //交易等级概率
                     new Dictionary<enum_CharacterType, CoinsGenerateInfo>() {
                      { enum_CharacterType.SubHidden, CoinsGenerateInfo.Create( 0,0, 0, new RangeInt(0, 0)) },     //实体掉落生成概率 类型,血,护甲,金币,金币数值范围
-                     { enum_CharacterType.Fighter, CoinsGenerateInfo.Create( 8,20, 10, new RangeInt(2, 2)) },
-                     { enum_CharacterType.Shooter_Rookie, CoinsGenerateInfo.Create( 8,15, 10, new RangeInt(2, 2)) },
-                     { enum_CharacterType.Shooter_Veteran, CoinsGenerateInfo.Create( 8,15, 20, new RangeInt(3, 3)) },
-                     { enum_CharacterType.AOECaster, CoinsGenerateInfo.Create( 8,15, 40, new RangeInt(4, 4)) },
+                     { enum_CharacterType.Fighter, CoinsGenerateInfo.Create( 8,20, 20, new RangeInt(2, 2)) },
+                     { enum_CharacterType.Shooter_Rookie, CoinsGenerateInfo.Create( 8,15, 20, new RangeInt(2, 2)) },
+                     { enum_CharacterType.Shooter_Veteran, CoinsGenerateInfo.Create( 8,15, 30, new RangeInt(3, 3)) },
+                     { enum_CharacterType.AOECaster, CoinsGenerateInfo.Create( 8,15, 50, new RangeInt(4, 4)) },
                      { enum_CharacterType.Elite, CoinsGenerateInfo.Create( 8,15, 100, new RangeInt(6, 6)) }});
                 case enum_StageLevel.Veteran:
                     return StageInteractGenerate.Create(
@@ -128,10 +128,10 @@ namespace GameSetting
                     new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.OutStanding, 75 }, { enum_RarityLevel.Epic, 25 } },    //交易等级概率
                     new Dictionary<enum_CharacterType, CoinsGenerateInfo>() {
                      { enum_CharacterType.SubHidden, CoinsGenerateInfo.Create( 0,0, 0, new RangeInt(0, 0)) },     //实体掉落生成概率 类型,血,护甲,金币,金币数值范围
-                     { enum_CharacterType.Fighter, CoinsGenerateInfo.Create( 8,15, 10, new RangeInt(2, 2)) },
-                     { enum_CharacterType.Shooter_Rookie, CoinsGenerateInfo.Create( 8,15, 10, new RangeInt(2, 2)) },
-                     { enum_CharacterType.Shooter_Veteran, CoinsGenerateInfo.Create( 8,15, 20, new RangeInt(3, 3)) },
-                     { enum_CharacterType.AOECaster, CoinsGenerateInfo.Create( 8,15, 40, new RangeInt(4, 4)) },
+                     { enum_CharacterType.Fighter, CoinsGenerateInfo.Create( 8,15, 20, new RangeInt(2, 2)) },
+                     { enum_CharacterType.Shooter_Rookie, CoinsGenerateInfo.Create( 8,15, 20, new RangeInt(2, 2)) },
+                     { enum_CharacterType.Shooter_Veteran, CoinsGenerateInfo.Create( 8,15, 30, new RangeInt(3, 3)) },
+                     { enum_CharacterType.AOECaster, CoinsGenerateInfo.Create( 8,15, 50, new RangeInt(4, 4)) },
                      { enum_CharacterType.Elite, CoinsGenerateInfo.Create( 8,15, 100, new RangeInt(6, 6)) }});
                 case enum_StageLevel.Ranger:
                     return StageInteractGenerate.Create(
@@ -139,10 +139,10 @@ namespace GameSetting
                     new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.OutStanding, 25 }, { enum_RarityLevel.Epic, 75 } },    //交易等级概率
                     new Dictionary<enum_CharacterType, CoinsGenerateInfo>() {
                      { enum_CharacterType.SubHidden, CoinsGenerateInfo.Create( 0,0, 0, new RangeInt(0, 0)) },     //实体掉落生成概率 类型,血,护甲,金币,金币数值范围
-                     { enum_CharacterType.Fighter, CoinsGenerateInfo.Create( 8,15, 10, new RangeInt(2, 2)) },
-                     { enum_CharacterType.Shooter_Rookie, CoinsGenerateInfo.Create( 8,15, 10, new RangeInt(2, 2)) },
-                     { enum_CharacterType.Shooter_Veteran, CoinsGenerateInfo.Create( 8,15, 20, new RangeInt(3, 3)) },
-                     { enum_CharacterType.AOECaster, CoinsGenerateInfo.Create( 8,15, 40, new RangeInt(4, 4)) },
+                     { enum_CharacterType.Fighter, CoinsGenerateInfo.Create( 8,15, 20, new RangeInt(2, 2)) },
+                     { enum_CharacterType.Shooter_Rookie, CoinsGenerateInfo.Create( 8,15, 20, new RangeInt(2, 2)) },
+                     { enum_CharacterType.Shooter_Veteran, CoinsGenerateInfo.Create( 8,15, 30, new RangeInt(3, 3)) },
+                     { enum_CharacterType.AOECaster, CoinsGenerateInfo.Create( 8,15, 50, new RangeInt(4, 4)) },
                      { enum_CharacterType.Elite, CoinsGenerateInfo.Create( 8,15, 100, new RangeInt(6, 6)) }});
             }
         }
