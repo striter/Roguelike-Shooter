@@ -7,8 +7,8 @@ public class SFXCastLaserBeam : SFXCast {
     LineRenderer m_Beam;
     Transform m_Muzzle, m_Impact;
     ParticleSystem[] m_Muzzles, m_Impacts;
-    float f_castLength=0;
-    protected override float F_CastLength => f_castLength <= 0 ? V4_CastInfo.z : f_castLength;
+    float f_castLength;
+    protected override float F_CastLength => f_castLength;
     public override void Init(int _sfxIndex)
     {
         base.Init(_sfxIndex);
@@ -23,15 +23,14 @@ public class SFXCastLaserBeam : SFXCast {
     public override void PlayDelayed()
     {
         base.PlayDelayed();
+        f_castLength = 0f;
         m_Muzzles.Traversal((ParticleSystem particle) => { particle.Play(); });
         m_Impacts.Traversal((ParticleSystem particle) => { particle.Play(); });
     }
+
     protected override void Update()
     {
         base.Update();
-        if (!b_Playing)
-            return;
-
         m_Beam.enabled = B_Casting;
         if (!B_Casting)
             return;
@@ -57,5 +56,4 @@ public class SFXCastLaserBeam : SFXCast {
         m_Beam.SetPosition(0, transform.position);
         m_Beam.SetPosition(1, hitted?hitPoint:CastTransform.position+CastTransform.forward* f_castLength);
     }
-
 }
