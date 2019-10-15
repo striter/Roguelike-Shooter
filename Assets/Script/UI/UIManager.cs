@@ -41,7 +41,7 @@ public class UIManager :SimpleSingletonMono<UIManager>,ISingleCoroutine
 
         m_Camera = transform.Find("UICamera").GetComponent<Camera>();
         m_Effect = m_Camera.GetComponent<CameraEffectManager>();
-        m_Blur = m_Effect.AddCameraEffect<CB_GenerateGlobalGaussianBlurTexture>();
+        m_Blur = m_Effect.GetOrAddCameraEffect<CB_GenerateGlobalGaussianBlurTexture>();
         m_Blur.SetEffect(1, 2f, 2);
 
         m_TouchDelta = cvs_Camera.GetComponent<TouchDeltaManager>();
