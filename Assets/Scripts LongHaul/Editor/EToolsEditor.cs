@@ -44,7 +44,7 @@ namespace EToolsEditor
                 window.Show();
             }
 
-            GameObject m_parent;
+            UnityEngine.Object m_parent;
             Text[] m_text;
             Font m_Font;
             bool m_replaceMissing;
@@ -70,8 +70,8 @@ namespace EToolsEditor
 
                 if (m_parent != Selection.activeObject)
                 {
-                    m_parent = Selection.activeObject as GameObject;
-                    m_text = m_parent ? m_parent.GetComponentsInChildren<Text>() : null;
+                    m_parent = Selection.activeObject;
+                    m_text = m_parent ? (m_parent as GameObject).GetComponentsInChildren<Text>() : null;
                     EditorUtility.SetDirty(this);
                 }
             }
@@ -108,6 +108,8 @@ namespace EToolsEditor
                 for (int i = 0; i < _texts.Length; i++)
                     if(!replaceMissingOnly||_texts[i].font==null)
                         _texts[i].font = m_Font;
+
+                EditorUtility.SetDirty(m_parent);
             }
         }
     }
