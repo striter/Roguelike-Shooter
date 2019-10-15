@@ -31,13 +31,12 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         m_CharacterInfo = GetEntityInfo();
     }
 
-    public override void OnActivate(enum_EntityFlag _flag, float startHealth =0)
+    public override void OnActivate(enum_EntityFlag _flag,float startHealth =0)
     {
        base.OnActivate(_flag,startHealth);
         m_SpawnerEntityID = -1;
         m_Effect.OnReset();
         m_CharacterInfo.OnActivate();
-        this.StopSingleCoroutine(0);
     }
     protected virtual void OnExpireChange(){ }
 
@@ -88,9 +87,12 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     {
         if (!m_Health.b_IsDead)
             return;
-        OnActivate(m_Flag);
+        base.OnRevive();
+        m_Effect.OnReset();
+        m_CharacterInfo.OnRevive();
         EntityHealth health = (m_Health as EntityHealth);
         health.OnRevive(reviveHealth==-1? health.m_MaxHealth:reviveHealth,reviveArmor==-1? health.m_DefaultArmor:reviveArmor);
+        this.StopSingleCoroutine(0);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterRevive, this);
     }
 

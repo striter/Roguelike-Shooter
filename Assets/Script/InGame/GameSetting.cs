@@ -856,7 +856,6 @@ namespace GameSetting
     {
         public float m_CurrentArmor { get; private set; }
         public float m_DefaultArmor { get; private set; }
-
         public override float F_TotalEHP => m_CurrentArmor + base.F_TotalEHP;
         public override float F_EHPScale => Mathf.Clamp01((m_CurrentArmor + m_CurrentHealth) / (m_DefaultArmor + m_MaxHealth));
         float m_HealthMultiplier = 1f;
@@ -881,6 +880,7 @@ namespace GameSetting
         public void OnActivate(float maxHealth, float defaultArmor, bool restoreHealth)
         {
             base.OnSetHealth(maxHealth, restoreHealth);
+            m_HealthMultiplier = 1f;
             m_DefaultArmor = defaultArmor;
             m_CurrentArmor = m_DefaultArmor;
             OnHealthChanged(enum_HealthChangeMessage.Default);
@@ -1103,7 +1103,7 @@ namespace GameSetting
                 m_Entity.m_HitCheck.TryHit(new DamageInfo(-amountApply * F_HealthDrainMultiply, enum_DamageType.HealthOnly, DamageDeliverInfo.Default(m_Entity.I_EntityID)));
         }
         public virtual void OnDead() => Reset();
-
+        public virtual void OnRevive() => Reset();
         protected virtual void Reset()
         {
             m_Effects.Traversal((enum_CharacterEffect type) => { m_Effects[type].Reset(); });

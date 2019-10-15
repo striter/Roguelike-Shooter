@@ -21,6 +21,7 @@ public class EntityBase : MonoBehaviour
     {
         I_PoolIndex = _poolIndex;
         m_HitChecks = GetComponentsInChildren<HitCheckEntity>();
+        m_HitChecks.Traversal((HitCheckEntity check) => { check.Attach(this, OnReceiveDamage); });
         m_Health = GetHealthManager();
     }
     public virtual void OnActivate( enum_EntityFlag _flag, float startHealth =0)
@@ -28,7 +29,7 @@ public class EntityBase : MonoBehaviour
         m_Flag = _flag;
         ActivateHealthManager(startHealth>0? startHealth:I_MaxHealth);
         I_EntityID = GameIdentificationManager.I_EntityID(m_Flag);
-        m_HitChecks.Traversal((HitCheckEntity check) => { check.Attach(this, OnReceiveDamage); check.SetEnable(true); });
+        EnableHitbox(true);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityActivate, this);
     }
     protected virtual bool OnReceiveDamage(DamageInfo damageInfo,Vector3 damageDirection)
@@ -45,7 +46,11 @@ public class EntityBase : MonoBehaviour
     }
     protected virtual void OnDead()
     {
-        TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.HideAllAttaches(); check.SetEnable(false); });
+        EnableHitbox(false);
+    }
+    protected virtual void OnRevive()
+    {
+        EnableHitbox(true);
     }
     protected virtual void OnRecycle()
     {
@@ -54,6 +59,10 @@ public class EntityBase : MonoBehaviour
 
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityDeactivate, this);
         GameObjectManager.RecycleEntity(I_PoolIndex, this);
+    }
+    protected virtual void EnableHitbox(bool setHitable)
+    {
+        TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.HideAllAttaches(); check.SetEnable(setHitable); });
     }
     public void ForceDeath()
     {

@@ -380,7 +380,7 @@ public class GameManager : GameManagerBase
         if (character.m_Controller != enum_EntityController.Player)
             return;
         SetPostEffect_Dead();
-        this.StartSingleCoroutine(10, TIEnumerators.PauseDel(1.5f, CheckRevive));
+        this.StartSingleCoroutine(10, TIEnumerators.PauseDel(GameConst.F_PlayerReviveCheckAfterDead, CheckRevive));
     }
 
     void OnCharacterRevive(EntityCharacterBase character)
