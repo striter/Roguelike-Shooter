@@ -879,8 +879,8 @@ namespace GameSetting
         }
         public void OnActivate(float maxHealth, float defaultArmor, bool restoreHealth)
         {
-            base.OnSetHealth(maxHealth, restoreHealth);
             m_HealthMultiplier = 1f;
+            base.OnSetHealth(maxHealth, restoreHealth);
             m_DefaultArmor = defaultArmor;
             m_CurrentArmor = m_DefaultArmor;
             OnHealthChanged(enum_HealthChangeMessage.Default);
