@@ -342,6 +342,10 @@ namespace GameSetting_Action
                 Debug.LogError("Howd Fk Healing Below Zero?");
             entity.m_HitCheck.TryHit(new DamageInfo(-heal, type, DamageDeliverInfo.Default(entity.I_EntityID)));
         }
+        public static void ReceiveEffect(EntityCharacterPlayer entity, enum_CharacterEffect effect, float duration)
+        {
+            entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common, DamageDeliverInfo.EquipmentInfo(entity.I_EntityID, 0, effect, duration)));
+        }
         public static void Revive(EntityCharacterPlayer entity, float health)
         {
             GameManager.Instance.AddPlayerReviveCheck(health);
@@ -586,7 +590,11 @@ namespace GameSetting_Action
         public override float Value1 => ActionData.F_10013_CloakDuration(m_rarity);
         public override float Value2 => ActionData.P_10013_DamageMultiply(m_rarity);
         public override float m_DamageMultiply => m_BurstShot ? Value2/100f : 0;
-        public override float F_CloakDuration => Value1;
+        public override void OnActionUse()
+        {
+            base.OnActionUse();
+            ActionHelper.ReceiveEffect(m_ActionEntity, enum_CharacterEffect.Cloak,Value1);
+        }
         public Action_10013_CloakShotBurst(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
 

@@ -1322,8 +1322,11 @@ namespace GameSetting
         #region Player Info
         public void OnUseAcion(ActionBase targetAction)
         {
-            if(targetAction.m_ActionExpireType== enum_ActionType.PlayerAction) m_ActionEquiping.Traversal((ActionBase action) => { action.OnAddActionElse(targetAction); });
-            OnSetEffect(enum_CharacterEffect.Cloak, targetAction.F_CloakDuration);
+            m_ActionEquiping.Traversal((ActionBase action) => {action.OnAddActionElse(targetAction); });
+            OnAddAction(targetAction);
+        }
+        protected void OnAddAction(ActionBase targetAction)
+        {
             AddExpire(targetAction);
             m_ActionEquiping.Add(targetAction);
             targetAction.Activate(m_Player, OnExpireElapsed);
@@ -1382,7 +1385,7 @@ namespace GameSetting
             return info;
         }
 
-        public void OnAttachWeapon(WeaponBase weapon) => weapon.m_WeaponAction.Traversal((ActionBase action) => { OnUseAcion(action); });
+        public void OnAttachWeapon(WeaponBase weapon) => weapon.m_WeaponAction.Traversal((ActionBase action) => { OnAddAction(action); });
         public void OnDetachWeapon() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnWeaponDetach(); });
         public void OnPlayerMove(float distance) => m_ActionEquiping.Traversal((ActionBase action) => { action.OnMove(distance); });
         public void OnReloadFinish() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnReloadFinish(); });
@@ -1674,7 +1677,6 @@ namespace GameSetting
         public virtual bool B_ClipOverride => false;
         public virtual int I_ClipAdditive => 0;
         public virtual float F_ClipMultiply => 0;
-        public virtual float F_CloakDuration => 0;
         public virtual bool B_ProjectilePenetrade => false;
         public virtual float F_AllyHealthMultiplierAdditive => 0;
         public virtual float F_Duration => 0;
