@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 081334a023db2704db167d2dfc323270, type: 3}
-    totalSpriteSurfaceArea: 1114747
+    totalSpriteSurfaceArea: 1127355
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -44,6 +44,10 @@ SpriteAtlas:
   - {fileID: 21300000, guid: fa0122c7e5ddb1d4399a011784eede79, type: 3}
   - {fileID: 21300000, guid: a0e4044850dc94f4ea77c05d26531154, type: 3}
   - {fileID: 21300000, guid: 6b5e120f41ccce542848f00f95446778, type: 3}
+  - {fileID: 21300000, guid: 702a32a3dc3147a47800c42865d41714, type: 3}
+  - {fileID: 21300000, guid: e051a7e66b79bb94baf2dce5172d2880, type: 3}
+  - {fileID: 21300000, guid: da00ad59e5ac2ca4489ac1856c3f870f, type: 3}
+  - {fileID: 21300000, guid: fb9d054c104418649afdc81260a93c24, type: 3}
   - {fileID: 21300000, guid: 1293ae4f9500e5046bcb8c3fc46d3fb9, type: 3}
   - {fileID: 21300000, guid: c08fb8623df6ada478d2261bfca4d369, type: 3}
   m_PackedSpriteNamesToIndex:
@@ -58,6 +62,10 @@ SpriteAtlas:
   - Ruler
   - icon_failure
   - Ruler_cross
+  - enemyHPbar_2
+  - enemyHPbar_1
+  - enemyHPbar_3
+  - enemyHPbar_bg
   - icon_goal
   - icon_video
   m_Tag: Atlas_InGame
