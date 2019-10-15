@@ -94,7 +94,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_Equipment = null;
         m_EquipmentTimes = 0;
         m_PlayerInfo.OnBattleFinish();
-        m_Health.OnActivate(I_MaxHealth, I_DefaultArmor,false);
     }
 
     void OnMainButtonDown(bool down)

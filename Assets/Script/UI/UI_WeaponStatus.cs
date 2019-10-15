@@ -53,12 +53,5 @@ public class UI_WeaponStatus : UIPageBase {
             m_ActionRarityText.localizeText = action.m_rarity.GetLocalizeKey();
             m_ActionRarity.SetLevel(action.m_rarity);
         }
-
-        GameManagerBase.SetBulletTime(true, 0f);
-    }
-    protected override void OnCancelBtnClick()
-    {
-        base.OnCancelBtnClick();
-        GameManagerBase.SetBulletTime(false);
     }
 }

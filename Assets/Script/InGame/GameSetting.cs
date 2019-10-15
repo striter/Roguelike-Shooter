@@ -885,7 +885,7 @@ namespace GameSetting
             OnHealthChanged(enum_HealthChangeMessage.Default);
         }
         public void OnRevive(float reviveHealth, float reviveArmor)
-        {
+        {   
             base.OnRevive(reviveHealth);
             m_CurrentArmor = reviveArmor;
             OnHealthChanged(enum_HealthChangeMessage.Default);
@@ -1106,13 +1106,12 @@ namespace GameSetting
         protected virtual void Reset()
         {
             m_Effects.Traversal((enum_CharacterEffect type) => { m_Effects[type].Reset(); });
-            m_Expires.Clear();
-            m_BuffEffects.Clear();
+            m_Expires.Traversal((ExpireBase expire) => { if (expire.m_ExpireType == enum_ExpireType.Buff) m_Expires.Remove(expire); }, true);
             EntityInfoChange();
         }
 
         public virtual void Tick(float deltaTime) {
-            m_Expires.Traversal((ExpireBase buff) => { buff.OnTick(deltaTime); });
+            m_Expires.Traversal((ExpireBase expire) => { expire.OnTick(deltaTime); });
             m_Effects.Traversal((enum_CharacterEffect type) => { m_Effects[type].Tick(deltaTime); });
 
             if (!b_expireUpdated)
@@ -1305,13 +1304,18 @@ namespace GameSetting
 
         public void OnBattleFinish()
         {
-            m_ActionAmount = GameConst.F_RestoreActionAmount;
-            m_ActionInPool.Clear();
-
-            m_ActionEquiping.Traversal((ActionBase action) => { if (action.m_ActionExpireType != enum_ActionType.WeaponPerk) m_ActionEquiping.Remove(action); }, true);
             Reset();
+            m_ActionAmount = GameConst.F_RestoreActionAmount;
+            m_ActionEquiping.Traversal((ActionBase action) => { if (action.m_ActionExpireType != enum_ActionType.WeaponPerk) action.ForceExpire(); });
+            m_ActionInPool.Clear();
             ClearHoldingActions();
         }
+        public override void OnDead()
+        {
+            m_ActionEquiping.Traversal((ActionBase action) => { if (action.m_ActionExpireType != enum_ActionType.WeaponPerk) action.ForceExpire(); });
+            base.OnDead();
+        }
+
         protected override void Reset()
         {
             base.Reset();
@@ -1381,15 +1385,9 @@ namespace GameSetting
         }
 
         public void OnAttachWeapon(WeaponBase weapon) => weapon.m_WeaponAction.Traversal((ActionBase action) => { OnUseAcion(action); });
-        public void OnDetachWeapon() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnWeaponDetach(); }, true);
+        public void OnDetachWeapon() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnWeaponDetach(); });
         public void OnPlayerMove(float distance) => m_ActionEquiping.Traversal((ActionBase action) => { action.OnMove(distance); });
         public void OnReloadFinish() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnReloadFinish(); });
-
-        public override void OnDead()
-        {
-            m_ActionEquiping.Clear();
-            base.OnDead();
-        }
 
         protected void OnEntityActivate(EntityBase targetEntity)
         {
@@ -1610,7 +1608,7 @@ namespace GameSetting
             ExpireRefresh();
         }
         public void ExpireRefresh()=> f_expireCheck = m_ExpireDuration;
-        protected void ForceExpire() => forceExpire = true;
+        public void ForceExpire() => forceExpire = true;
         public virtual void OnTick(float deltaTime)
         {
             if (forceExpire) OnExpired(this);

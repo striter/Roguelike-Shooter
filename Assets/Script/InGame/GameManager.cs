@@ -466,6 +466,7 @@ public class GameManager : GameManagerBase
         B_Battling = false;
         SpawnRewards(lastEntityPos);
         m_PlayerReviveHealing.Clear();
+        m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(m_LocalPlayer.m_Health.m_CurrentArmor - m_LocalPlayer.m_Health.m_DefaultArmor, enum_DamageType.ArmorOnly, DamageDeliverInfo.Default(-1)));
         GameObjectManager.RecycleAllInteract(enum_Interaction.PickupArmor);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleFinish);
     }

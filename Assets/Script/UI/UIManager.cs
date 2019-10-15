@@ -13,8 +13,6 @@ public class UIManager :SimpleSingletonMono<UIManager>,ISingleCoroutine
     Image img_main;
     TouchDeltaManager m_TouchDelta;
     public AtlasLoader m_commonSprites { get; private set; }
-    public T ShowPage<T>(bool animate) where T : UIPageBase => UIPageBase.ShowPage<T>(tf_Pages, animate);
-    protected T ShowTools<T>() where T : UIToolsBase => UIToolsBase.Show<T>(tf_Tools);
     public static void Activate(bool inGame) => TResources.InstantiateUIManager().Init(inGame);
     public Camera m_Camera { get; private set; }
     public CameraEffectManager m_Effect { get; private set; }
@@ -32,15 +30,12 @@ public class UIManager :SimpleSingletonMono<UIManager>,ISingleCoroutine
         img_main = tf_Control.Find("Main/Image").GetComponent<Image>();
         tf_Control.Find("Reload").GetComponent<Button>().onClick.AddListener(() => { OnReload?.Invoke(); });
         tf_Control.Find("Main").GetComponent<UIT_EventTriggerListener>().D_OnPress+=(bool down,Vector2 pos) => { OnMainDown?.Invoke(down); };
-        tf_Control.Find("Settings").GetComponent<Button>().onClick.AddListener(() => { ShowPage<UI_Options>(inGame).SetInGame(inGame); });
+        tf_Control.Find("Settings").GetComponent<Button>().onClick.AddListener(() => { ShowPage<UI_Options>(inGame,0f).SetInGame(inGame); });
 
         tf_Pages = cvs_Overlay.transform.Find("Pages");
         if (inGame) ShowTools<UI_EntityHealth>();
         ShowTools<UI_PlayerStatus>().SetInGame(inGame);
 
-        m_TouchDelta = cvs_Camera.GetComponent<TouchDeltaManager>();
-        OnOptionsChanged();
-        OptionsManager.event_OptionChanged += OnOptionsChanged;
 
         if (inGame) cvs_Overlay.transform.Find("Test/SeedTest").GetComponent<Text>().text = GameManager.Instance.m_GameLevel.m_Seed;   //Test
 
@@ -48,6 +43,12 @@ public class UIManager :SimpleSingletonMono<UIManager>,ISingleCoroutine
         m_Effect = m_Camera.GetComponent<CameraEffectManager>();
         m_Blur = m_Effect.AddCameraEffect<CB_GenerateGlobalGaussianBlurTexture>();
         m_Blur.SetEffect(1, 2f, 2);
+
+        m_TouchDelta = cvs_Camera.GetComponent<TouchDeltaManager>();
+        OnOptionsChanged();
+        OptionsManager.event_OptionChanged += OnOptionsChanged;
+
+        UIPageBase.OnPageExit = OnPageExit;
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnPlayerStatusChanged);
     }
     protected override void OnDestroy()
@@ -55,6 +56,7 @@ public class UIManager :SimpleSingletonMono<UIManager>,ISingleCoroutine
         base.OnDestroy();
         this.StopAllCoroutines();
         OptionsManager.event_OptionChanged -= OnOptionsChanged;
+        UIPageBase.OnPageExit = null;
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnPlayerStatusChanged);
     }
 
@@ -82,4 +84,15 @@ public class UIManager :SimpleSingletonMono<UIManager>,ISingleCoroutine
         ShowPage<UI_GameResult>(true).Play(level, _OnButtonClick);
     }
 
+    public T ShowPage<T>(bool animate,float bulletTime=1f) where T : UIPageBase
+    {
+        if(bulletTime!=1f)
+            GameManagerBase.SetBulletTime(true,bulletTime);
+        return UIPageBase.ShowPage<T>(tf_Pages, animate);
+    }
+    void OnPageExit()
+    {
+        GameManagerBase.SetBulletTime(false);
+    }
+    protected T ShowTools<T>() where T : UIToolsBase => UIToolsBase.Show<T>(tf_Tools);
 }

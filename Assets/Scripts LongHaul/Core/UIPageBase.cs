@@ -6,6 +6,7 @@ public class UIPageBase : MonoBehaviour,ISingleCoroutine
 {
     public static bool m_PageOpening => t_curPage != null;
     public static Type t_curPage;
+    public static Action OnPageExit;
     protected Image img_Background;
     protected Action<bool> OnInteractFinished;
     protected float f_bgAlphaStart;
@@ -39,6 +40,7 @@ public class UIPageBase : MonoBehaviour,ISingleCoroutine
     }
     protected virtual void OnCancelBtnClick()
     {
+        OnPageExit?.Invoke();
         Hide();
     }
     protected void Hide()

@@ -71,14 +71,12 @@ public class UI_Options : UIPageBase {
     public void SetInGame(bool inGame)
     {
         btn_ReturnToCamp.SetActivate(inGame);
-        GameManagerBase.SetBulletTime(true,0f);
     }
 
     protected override void OnCancelBtnClick()
     {
         base.OnCancelBtnClick();
         OptionsManager.Save();
-        GameManagerBase.SetBulletTime(false);
     }
 
     bool frameRateOn() => OptionsManager.m_OptionsData.m_FrameRate == enum_Option_FrameRate.Normal;
