@@ -68,7 +68,9 @@ namespace EToolsEditor
 
                 if (m_parent != Selection.activeObject)
                 {
-                    m_parent = Selection.activeObject;
+                    UnityEngine.Object obj = Selection.activeObject;
+                    m_parent = PrefabUtility.GetPrefabObject(obj) != null ? obj : null;
+                    Repaint();
                     EditorUtility.SetDirty(this);
                 }
             }
@@ -77,7 +79,7 @@ namespace EToolsEditor
                 EditorGUILayout.BeginVertical();
                 if (m_parent == null)
                 {
-                    EditorGUILayout.TextArea("Please Select Texts Parent!");
+                    EditorGUILayout.TextArea("Please Select Texts Parent Which PREFAB CONNECTED!");
                     return;
                 }
 
@@ -88,12 +90,9 @@ namespace EToolsEditor
                         count++;
 
                 EditorGUILayout.TextArea("Current Selecting:" + m_parent.name + ", Texts Counts:" + m_text.Length);
+                EditorGUILayout.TextArea("Current Missing Count:" + count);
                 m_Font = (Font)EditorGUILayout.ObjectField("Replace Font", m_Font, typeof(Font), false);
                 m_replaceMissing = EditorGUILayout.Toggle("Replace Missing",m_replaceMissing);
-                if (m_replaceMissing)
-                {
-                    EditorGUILayout.TextArea("Current Missing Count:"+count);
-                }
                 if (m_Font)
                 {
                     if (m_Font && GUILayout.Button("Set " + (m_replaceMissing ? "Missing" : "All") + " Texts Font To:" + m_Font.name))
