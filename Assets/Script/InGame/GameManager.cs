@@ -413,7 +413,7 @@ public class GameManager : GameManagerBase
     }
     void ForceRevivePlayer()
     {
-        m_PlayerReviveHealing.Add(m_LocalPlayer.m_Health.m_MaxHealth);
+        m_PlayerReviveHealing.Add(m_LocalPlayer.m_Health.m_MaxHealth);  
         CheckRevive();
     }
     #endregion
