@@ -13,8 +13,8 @@ namespace GameSetting_Action
         public static int P_10001_ClipMultiply(enum_RarityLevel rarity) => 25 + 25 * (int)rarity;
 
         public const int I_10002_Cost = 1;
-        public const float F_10002_Duration = 10f;
-        public static float F_10002_ArmorReceive(enum_RarityLevel rarity) => 1.2f * (int)rarity;
+        public const float F_10002_Duration = 5f;
+        public static float F_10002_ArmorReceive(enum_RarityLevel rarity) => 2.4f * (int)rarity;
 
         public const int I_10003_Cost = 2;
         public const float F_10003_Duration = 20f;
