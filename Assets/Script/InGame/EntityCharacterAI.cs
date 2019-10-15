@@ -46,7 +46,7 @@ public class EntityCharacterAI : EntityCharacterBase {
     public void SetEnermyDifficulty(float baseHealthMultiplier, float maxHealthMultiplier,SBuff difficultyBuff)
     {
         m_CharacterInfo.AddBuff(-1, difficultyBuff);
-        m_Health .AddHealthMultiplier(maxHealthMultiplier);
+        m_Health .SetHealthMultiplier(maxHealthMultiplier);
         m_Health.OnSetHealth(I_MaxHealth * baseHealthMultiplier,true);
     }
 

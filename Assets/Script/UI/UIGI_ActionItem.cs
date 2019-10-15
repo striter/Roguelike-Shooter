@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using GameSetting;
 using System;
 
-public class UIGI_ActionHoldItem : UIT_GridItem {
+public class UIGI_ActionItem : UIT_GridItem {
     UIT_TextExtend m_Name,m_Level,m_Cost;
     UIT_EventTriggerListener m_TriggerListener;
     Action<int> OnClick;

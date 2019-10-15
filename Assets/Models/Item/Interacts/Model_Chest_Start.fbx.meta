@@ -1,19 +1,19 @@
 fileFormatVersion: 2
-guid: 444ea1efb0d62164eae7c7621d53a8f7
+guid: 5c644505e554dcc4a88771742bbd980f
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
     100000: //RootNode
-    100002: changjing_baoxiang_4_shang4
+    100002: changjing_baoxiang 1
     400000: //RootNode
-    400002: changjing_baoxiang_4_shang4
+    400002: changjing_baoxiang 1
     2100000: aiStandardSurface9
     2300000: //RootNode
-    2300002: changjing_baoxiang_4_shang4
+    2300002: changjing_baoxiang 1
     3300000: //RootNode
-    3300002: changjing_baoxiang_4_shang4
-    4300000: changjing_baoxiang_4
-    4300002: changjing_baoxiang_4_shang4
+    3300002: changjing_baoxiang 1
+    4300000: changjing_baoxiang
+    4300002: changjing_baoxiang
   externalObjects:
   - first:
       type: UnityEngine:Material

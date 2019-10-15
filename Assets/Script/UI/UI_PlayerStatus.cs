@@ -12,7 +12,7 @@ public class UI_PlayerStatus : UIToolsBase
     UIC_ActionAmount m_ActionAmount;
     Button btn_ActionStorage, btn_ActionShuffle;
     Slider sld_ShuffleCooldown;
-    UIT_GridControllerMonoItem<UIGI_ActionHoldItem> m_ActionGrid;
+    UIT_GridControllerMonoItem<UIGI_ActionItem> m_ActionGrid;
 
     Transform tf_ExpireData;
     UIT_GridControllerMonoItem<UIGI_ExpireInfoItem> m_ExpireGrid;
@@ -75,7 +75,7 @@ public class UI_PlayerStatus : UIToolsBase
         
         tf_ActionData = tf_Container.Find("ActionData");
         m_ActionAmount = new UIC_ActionAmount(tf_ActionData.Find("ActionAmount"));
-        m_ActionGrid = new UIT_GridControllerMonoItem<UIGI_ActionHoldItem>(tf_ActionData.Find("ActionGrid"));
+        m_ActionGrid = new UIT_GridControllerMonoItem<UIGI_ActionItem>(tf_ActionData.Find("ActionGrid"));
         btn_ActionStorage = tf_ActionData.Find("ActionStorage").GetComponent<Button>();
         btn_ActionStorage.onClick.AddListener(OnActionStorageClick);
         btn_ActionShuffle = tf_ActionData.Find("ActionShuffle").GetComponent<Button>();

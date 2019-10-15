@@ -74,7 +74,7 @@ namespace GameSetting
         public static int GetEquipmentSubIndex(int weaponIndex) => weaponIndex + 1;
         public static SBuff GetEnermyGameDifficultyBuffIndex(int difficulty) => SBuff.CreateEntityBuff(difficulty, .05f * (difficulty - 1));
         public static float GetAIBaseHealthMultiplier(int gameDifficulty) => 0.99f + 0.01f * gameDifficulty;
-        public static float GetAIMaxHealthMultiplierAdditive(enum_StageLevel stageDifficulty) => (int)stageDifficulty - 1;
+        public static float GetAIMaxHealthMultiplier(enum_StageLevel stageDifficulty) => (int)stageDifficulty ;
 
         public static float GetActionAmountRevive(float damageApply) => damageApply * .0025f;
 
@@ -802,7 +802,6 @@ namespace GameSetting
         public bool B_HealthFull => m_CurrentHealth >= m_MaxHealth;
         public float F_BaseHealthScale => m_CurrentHealth / m_BaseMaxHealth;
         public float F_MaxHealthValue => m_CurrentHealth / m_MaxHealth;
-        public virtual float F_EHPScale => Mathf.Clamp01(m_CurrentHealth / m_MaxHealth);
         public bool b_IsDead => m_CurrentHealth <= 0;
         protected void DamageHealth(float health)
         {
@@ -857,7 +856,6 @@ namespace GameSetting
         public float m_CurrentArmor { get; private set; }
         public float m_DefaultArmor { get; private set; }
         public override float F_TotalEHP => m_CurrentArmor + base.F_TotalEHP;
-        public override float F_EHPScale => Mathf.Clamp01((m_CurrentArmor + m_CurrentHealth) / (m_DefaultArmor + m_MaxHealth));
         float m_HealthMultiplier = 1f;
         public float m_MaxHealthAdditive { get; private set; }
         public override float m_MaxHealth => base.m_MaxHealth * m_HealthMultiplier + m_MaxHealthAdditive;
@@ -879,7 +877,6 @@ namespace GameSetting
         }
         public void OnActivate(float maxHealth, float defaultArmor, bool restoreHealth)
         {
-            m_HealthMultiplier = 1f;
             base.OnSetHealth(maxHealth, restoreHealth);
             m_DefaultArmor = defaultArmor;
             m_CurrentArmor = m_DefaultArmor;
@@ -891,9 +888,9 @@ namespace GameSetting
             m_CurrentArmor = reviveArmor;
             OnHealthChanged(enum_HealthChangeMessage.Default);
         }
-        public void AddHealthMultiplier(float healthMultiplier)
+        public void SetHealthMultiplier(float healthMultiplier)
         {
-            m_HealthMultiplier += healthMultiplier;
+            m_HealthMultiplier = healthMultiplier;
             OnSetHealth(m_BaseMaxHealth, true);
             OnHealthChanged(enum_HealthChangeMessage.Default);
         }
@@ -1347,7 +1344,7 @@ namespace GameSetting
             I_ClipAdditive = 0;
             F_ClipMultiply = 1f;
             B_ProjectilePenetrate = false;
-            F_AllyHealthMultiplierAdditive = 0f;
+            F_AllyHealthMultiplierAdditive = 1f;
             F_RecoilMultiply = 1f;
             F_ProjectileSpeedMuiltiply = 1f;
             F_AimMovementStrictMultiply = 1f;
@@ -1372,7 +1369,7 @@ namespace GameSetting
         protected override void AfterInfoSet()
         {
             base.AfterInfoSet();
-            if (F_AllyHealthMultiplierAdditive < 0) F_AllyHealthMultiplierAdditive = 0;
+            if (F_AllyHealthMultiplierAdditive < .1f) F_AllyHealthMultiplierAdditive = .1f;
             if (F_AimMovementStrictMultiply < 0) F_AimMovementStrictMultiply = 0;
             if (F_RecoilMultiply < 0) F_RecoilMultiply = 0;
         }
@@ -1397,7 +1394,7 @@ namespace GameSetting
 
             EntityCharacterBase ally = (targetEntity as EntityCharacterBase);
             if (F_AllyHealthMultiplierAdditive > 0)
-                ally.m_Health.AddHealthMultiplier(F_AllyHealthMultiplierAdditive);
+                ally.m_Health.SetHealthMultiplier(F_AllyHealthMultiplierAdditive);
             m_ActionEquiping.Traversal((ActionBase action) => { action.OnAllyActivate(targetEntity as EntityCharacterBase); });
         }
         protected void OnCharacterHealthWillChange(DamageInfo damageInfo, EntityCharacterBase damageEntity)
@@ -2308,18 +2305,15 @@ namespace GameSetting
     {
         Transform transform;
         Image img_Full, img_Fill;
-        Text txt_amount, txt_Max;
+        Text txt_amount;
 
         float m_value;
         public UIC_ActionAmount(Transform _transform)
         {
             transform = _transform;
             txt_amount = transform.Find("Amount").GetComponent<Text>();
-            txt_Max = transform.Find("Max").GetComponent<Text>();
             img_Full = transform.Find("Full").GetComponent<Image>();
             img_Fill = transform.Find("Fill").GetComponent<Image>();
-
-            txt_Max.text = GameConst.F_MaxActionAmount.ToString();
         }
         public void SetValue(float value)
         {
