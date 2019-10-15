@@ -376,7 +376,7 @@ namespace GameSetting
 
     public enum enum_RarityLevel { Invalid = -1, Normal = 1, OutStanding = 2, Epic = 3, }
 
-    public enum enum_ActionType { Invalid = -1, Normal = 1, WeaponPerk = 2, }
+    public enum enum_ActionType { Invalid = -1, PlayerAction = 1, WeaponPerk = 2, }
 
     public enum enum_PlayerWeapon
     {
@@ -1322,7 +1322,7 @@ namespace GameSetting
         #region Player Info
         public void OnUseAcion(ActionBase targetAction)
         {
-            if(targetAction.m_ActionExpireType== enum_ActionType.Normal) m_ActionEquiping.Traversal((ActionBase action) => { action.OnAddActionElse(targetAction); });
+            if(targetAction.m_ActionExpireType== enum_ActionType.PlayerAction) m_ActionEquiping.Traversal((ActionBase action) => { action.OnAddActionElse(targetAction); });
             OnSetEffect(enum_CharacterEffect.Cloak, targetAction.F_CloakDuration);
             AddExpire(targetAction);
             m_ActionEquiping.Add(targetAction);
@@ -1460,7 +1460,7 @@ namespace GameSetting
             m_ActionInPool.Clear();
             for (int i = 0; i < m_ActionStored.Count; i++)
             {
-                if(m_ActionStored[i].m_ActionExpireType!= enum_ActionType.Normal||m_ActionEquiping.Find(p=>p.m_Identity==m_ActionStored[i].m_Identity)==null)
+                if(m_ActionStored[i].m_ActionExpireType!= enum_ActionType.PlayerAction||m_ActionEquiping.Find(p=>p.m_Identity==m_ActionStored[i].m_Identity)==null)
                      m_ActionInPool.Add( m_ActionStored[i]);
             }
             ClearHoldingActions();
@@ -1663,7 +1663,7 @@ namespace GameSetting
         public int m_Identity { get; private set; } = -1;
         public virtual int I_BaseCost => -1;
         public virtual bool B_ActionAble => true;
-        public virtual enum_ActionType m_ActionExpireType => enum_ActionType.Normal;
+        public virtual enum_ActionType m_ActionExpireType => enum_ActionType.PlayerAction;
         public virtual float Value1 => 0;
         public virtual float Value2 => 0;
         public virtual float Value3 => 0;
