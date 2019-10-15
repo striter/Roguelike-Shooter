@@ -1322,7 +1322,7 @@ namespace GameSetting
         #region Player Info
         public void OnUseAcion(ActionBase targetAction)
         {
-            m_ActionEquiping.Traversal((ActionBase action) => { action.OnAddActionElse(targetAction); });
+            if(targetAction.m_ActionExpireType== enum_ActionType.Normal) m_ActionEquiping.Traversal((ActionBase action) => { action.OnAddActionElse(targetAction); });
             OnSetEffect(enum_CharacterEffect.Cloak, targetAction.F_CloakDuration);
             AddExpire(targetAction);
             m_ActionEquiping.Add(targetAction);
