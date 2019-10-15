@@ -42,16 +42,16 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
         CameraController.Instance.m_Effect.RemoveAllPostEffect();
         //CameraController.Instance.m_Effect.AddPostEffect<PE_DepthOutline>().SetEffect(Color.black,1.2f,0.0001f);
         //CameraController.Instance.m_Effect.AddPostEffect<PE_DepthSSAO>();
-        m_BSC = CameraController.Instance.m_Effect.AddCameraEffect<PE_BSC>();
+        m_BSC = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_BSC>();
         m_BSC.SetEffect(1f, 1f, 1f);
-        CameraController.Instance.m_Effect.AddCameraEffect<PE_BloomSpecific>().m_GaussianBlur.SetEffect(2, 10, 2);
+        CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_BloomSpecific>().m_GaussianBlur.SetEffect(2, 10, 2);
         switch (_levelStyle)
         {
             case enum_Style.Undead:
-                CameraController.Instance.m_Effect.AddCameraEffect<PE_FogDepthNoise>().SetEffect<PE_FogDepthNoise>(TCommon.ColorAlpha(Color.white, .3f), .5f, -1f, 5f).SetEffect(TResources.Load<Texture>(TResources.ConstPath.S_PETex_NoiseFog), .4f, 2f);
+                CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_FogDepthNoise>().SetEffect<PE_FogDepthNoise>(TCommon.ColorAlpha(Color.white, .3f), .5f, -1f, 5f).SetEffect(TResources.Load<Texture>(TResources.ConstPath.S_PETex_NoiseFog), .4f, 2f);
                 break;
             case enum_Style.Iceland:
-                CameraController.Instance.m_Effect.AddCameraEffect<PE_FogDepth>().SetEffect<PE_FogDepth>(Color.white, .6f, -1, 5);
+                CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_FogDepth>().SetEffect<PE_FogDepth>(Color.white, .6f, -1, 5);
                 break;
         }
     }
@@ -62,7 +62,7 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
     }
     protected void SetPostEffect_Revive()
     {
-        CameraController.Instance.m_Effect.AddCameraEffect<PE_Bloom>().SetEffect(2, 3, 4,.9f,2f);
+        CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_Bloom>().SetEffect(2, 3, 4,.9f,2f);
         this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => { m_BSC.SetEffect(value, 1f, 1f); }, 2f, 1, 2f,
              CameraController.Instance.m_Effect.RemoveCameraEffect<PE_Bloom>));
     }
@@ -154,6 +154,7 @@ public static class GameDataManager
         }
         TGameData<CPlayerGameSave>.Save(m_PlayerGameData);
     }
+    public static bool CanUseCredit(float credit) => m_PlayerGameData.f_Credits >= credit;
     public static void OnCreditGain(float credit)
     {
         m_PlayerGameData.f_Credits += credit;

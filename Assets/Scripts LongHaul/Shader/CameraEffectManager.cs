@@ -4,13 +4,12 @@ using UnityEngine;
 [RequireComponent(typeof(Camera))]
 public class CameraEffectManager :MonoBehaviour, ISingleCoroutine {
     #region Interact
-    public T AddCameraEffect<T>() where T: CameraEffectBase, new()
+    public T GetOrAddCameraEffect<T>() where T: CameraEffectBase, new()
     {
-        if (GetCameraEffect<T>() != null)
-        {
-            Debug.LogError("Effect Already Exist");
-            return null;
-        }
+        T existingEffect = GetCameraEffect<T>();
+        if (existingEffect != null)
+            return existingEffect;
+
         T effectBase = new T();
         if (effectBase.m_Supported)
         {
@@ -40,7 +39,7 @@ public class CameraEffectManager :MonoBehaviour, ISingleCoroutine {
         if (GetCameraEffect<PE_AreaScanDepth>() != null)
             RemoveCameraEffect<PE_AreaScanDepth>();
 
-        PE_AreaScanDepth areaScan= AddCameraEffect<PE_AreaScanDepth>();
+        PE_AreaScanDepth areaScan= GetOrAddCameraEffect<PE_AreaScanDepth>();
         areaScan.SetEffect(startPoint, scanColor, scanTex,scale, lerp, width);
         this.StartSingleCoroutine(0,TIEnumerators.ChangeValueTo((float value)=> {
             areaScan.SetElapse(range*value);

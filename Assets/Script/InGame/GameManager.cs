@@ -402,7 +402,19 @@ public class GameManager : GameManagerBase
             m_LocalPlayer.OnRevive(m_PlayerReviveHealing[m_PlayerReviveHealing.Count - 1], 0f);
             m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common, DamageDeliverInfo.EquipmentInfo(-1, 0, enum_CharacterEffect.Cloak, 3f)));
             m_PlayerReviveHealing.RemoveAt(m_PlayerReviveHealing.Count - 1);
+            return;
         }
+        UIManager.Instance.ShowPage<UI_Revive>(true, 0f).Play(ForceRevivePlayer, OnCreditRevivePlayer, 50,GameDataManager.CanUseCredit);
+    }
+    void OnCreditRevivePlayer()
+    {
+        GameDataManager.OnCreditGain(-50);
+        ForceRevivePlayer();
+    }
+    void ForceRevivePlayer()
+    {
+        m_PlayerReviveHealing.Add(m_LocalPlayer.m_Health.m_MaxHealth);  
+        CheckRevive();
     }
     #endregion
     #region Battle Management
