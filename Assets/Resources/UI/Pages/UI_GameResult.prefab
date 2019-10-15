@@ -1908,7 +1908,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_Result_Share
+  m_Text: "\u5206\u4EAB\u6218\u7EE9"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Result_Share
   m_characterSpacing: 0
@@ -2294,7 +2294,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.654902, g: 0.654902, b: 0.654902, a: 0.6}
+  m_Color: {r: 0.8901961, g: 0.8901961, b: 0.8901961, a: 0.6}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -2314,7 +2314,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_Result_CoinsResult
+  m_Text: "\u91D1\u5E01\u7ED3\u7B97"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Result_CoinsResult
   m_characterSpacing: 0
@@ -2330,7 +2330,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.654902, g: 0.654902, b: 0.654902, a: 0.6}
+  m_Color: {r: 0.8901961, g: 0.8901961, b: 0.8901961, a: 0.6}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -2350,7 +2350,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_Result_FinalScore
+  m_Text: "\u6700\u7EC8\u5F97\u5206"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Result_FinalScore
   m_characterSpacing: 0
@@ -2422,7 +2422,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_Result_Video
+  m_Text: "\u89C6\u9891\u52A0\u6210"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Result_Video
   m_characterSpacing: 0
@@ -2492,7 +2492,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.654902, g: 0.654902, b: 0.654902, a: 0.6}
+  m_Color: {r: 0.8901961, g: 0.8901961, b: 0.8901961, a: 0.6}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -2512,7 +2512,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_Result_LevelScore
+  m_Text: "\u5173\u5361\u5F97\u5206"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Result_LevelScore
   m_characterSpacing: 0
@@ -2659,7 +2659,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.654902, g: 0.654902, b: 0.654902, a: 0.6}
+  m_Color: {r: 0.8901961, g: 0.8901961, b: 0.8901961, a: 0.6}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -2679,7 +2679,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_Result_Progress
+  m_Text: "\u5B8C\u6210\u5EA6"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Result_Progress
   m_characterSpacing: 0
@@ -2751,7 +2751,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_Result_CoinsTips
+  m_Text: "\u89C6\u9891\u52A0\u6210"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Result_CoinsTips
   m_characterSpacing: 0
@@ -2767,7 +2767,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.654902, g: 0.654902, b: 0.654902, a: 0.6}
+  m_Color: {r: 0.8901961, g: 0.8901961, b: 0.8901961, a: 0.6}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -2787,7 +2787,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_Result_DifficultyBonus
+  m_Text: "\u96BE\u5EA6\u52A0\u6210"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Result_DifficultyBonus
   m_characterSpacing: 0
@@ -2958,7 +2958,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.654902, g: 0.654902, b: 0.654902, a: 0.6}
+  m_Color: {r: 0.8901961, g: 0.8901961, b: 0.8901961, a: 0.6}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -2978,7 +2978,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_Result_KillScore
+  m_Text: "\u6740\u654C\u5F97\u5206"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Result_KillScore
   m_characterSpacing: 0
@@ -3419,7 +3419,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_Result_Return
+  m_Text: "\u8FD4\u56DE\u5927\u5385"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Result_Return
   m_characterSpacing: 0
