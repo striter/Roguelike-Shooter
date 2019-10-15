@@ -262,16 +262,16 @@ namespace GameSetting_Action
 
         public static int I_40006_ClipAdditive(enum_RarityLevel rarity) => 1 + 1 * (int)rarity;
 
-        public static float F_40007_DamageAdditive(enum_RarityLevel rarity) => .7f + .7f * (int)rarity;
+        public static float F_40007_DamageAdditive(enum_RarityLevel rarity) => 1.4f + 1.4f * (int)rarity;
 
         public static float P_40008_MaxHealthAdditive(enum_RarityLevel rarity) => 25;
 
-        public static float F_40009_DamageMultiplyAfterRloead(enum_RarityLevel rarity) => 7f + 7f * (int)rarity;
+        public static float F_40009_DamageMultiplyAfterRloead(enum_RarityLevel rarity) => 14f + 14f * (int)rarity;
 
         public static float F_40010_Range(enum_RarityLevel rarity) => 10f;
-        public static float P_40010_DamageMultiply(enum_RarityLevel rarity) => 3f + 3f * (int)rarity;
+        public static float P_40010_DamageMultiply(enum_RarityLevel rarity) => 6f + 6f * (int)rarity;
 
-        public static float P_40011_ReloadMultiply(enum_RarityLevel rarity) => 10f + 10f * (int)rarity;
+        public static float P_40011_ReloadMultiply(enum_RarityLevel rarity) => 20f + 20f * (int)rarity;
 
         public static float P_40012_MovementSpeedMultiply(enum_RarityLevel rarity) => 40f * (int)rarity;
         public static float F_40012_Duration(enum_RarityLevel rarity) => 5f;
@@ -288,7 +288,7 @@ namespace GameSetting_Action
 
         public static float P_40017_DamageReduction(enum_RarityLevel rarity) => 20f + 15f * (int)rarity;
 
-        public static float P_40018_DamageMultiply(enum_RarityLevel rarity) => 35f + 35f * (int)rarity;
+        public static float P_40018_DamageMultiply(enum_RarityLevel rarity) => 70f + 70f * (int)rarity;
 
         public static float F_40019_EnergyAdditive(enum_RarityLevel rarity) => .2f + .2f * (int)rarity;
 
