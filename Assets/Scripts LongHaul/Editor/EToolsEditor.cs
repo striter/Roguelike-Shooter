@@ -44,14 +44,16 @@ namespace EToolsEditor
                 window.Show();
             }
 
-            Transform m_parent;
+            GameObject m_parent;
             Text[] m_text;
             Font m_Font;
+            bool m_replaceMissing;
             private void OnEnable()
             {
                 m_Font = null;
                 m_parent = null;
                 m_text = null;
+                m_replaceMissing = false;
                 EditorApplication.update += Update;
             }
             private void OnDisable()
@@ -61,11 +63,14 @@ namespace EToolsEditor
             private void Update()
             {
                 if (EditorApplication.isPlaying)
-                    Close();
-
-                if (m_parent != Selection.activeTransform)
                 {
-                    m_parent = Selection.activeTransform;
+                    Close();
+                    return;
+                }
+
+                if (m_parent != Selection.activeObject)
+                {
+                    m_parent = Selection.activeObject as GameObject;
                     m_text = m_parent ? m_parent.GetComponentsInChildren<Text>() : null;
                     EditorUtility.SetDirty(this);
                 }
@@ -75,20 +80,34 @@ namespace EToolsEditor
                 EditorGUILayout.BeginVertical();
                 if (m_text == null)
                 {
-                    EditorGUILayout.TextArea("Please Select Texts Parent In Hierarchy!");
+                    EditorGUILayout.TextArea("Please Select Texts Parent!");
+                    return;
                 }
-                else
+
+                EditorGUILayout.TextArea("Current Selecting:" + m_parent.name + ", Texts Counts:" + m_text.Length);
+                m_Font = (Font)EditorGUILayout.ObjectField("Replace Font", m_Font, typeof(Font), false);
+                m_replaceMissing = EditorGUILayout.Toggle("Replace Missing",m_replaceMissing);
+                if (m_replaceMissing)
                 {
-                    EditorGUILayout.TextArea("Current Selecting:"+m_parent.name+ ", Texts Counts:"+m_text.Length);
-                    m_Font = (Font)EditorGUILayout.ObjectField("Fonts", m_Font, typeof(Font),false);
-                    
-                    if (m_Font&&GUILayout.Button("Set All Text Font To:"+m_Font.name))
-                    {
-                        for (int i = 0; i < m_text.Length; i++)
-                            m_text[i].font = m_Font;
-                    }
+                    int count = 0;
+                    for (int i = 0; i < m_text.Length; i++)
+                        if (m_text[i].font == null)
+                            count++;
+                    EditorGUILayout.TextArea("Current Missing Count:"+count);
+                }
+                if (m_Font)
+                {
+                    if (m_Font && GUILayout.Button("Set "+(m_replaceMissing?"Missing":"All")+" Texts Font To:" + m_Font.name))
+                        ReplaceFonts(m_Font,m_text,m_replaceMissing);
                 }
                 EditorGUILayout.EndVertical();
+            }
+
+            void ReplaceFonts(Font _font, Text[] _texts, bool replaceMissingOnly)
+            {
+                for (int i = 0; i < _texts.Length; i++)
+                    if(!replaceMissingOnly||_texts[i].font==null)
+                        _texts[i].font = m_Font;
             }
         }
     }
@@ -96,6 +115,8 @@ namespace EToolsEditor
     public static class TEditor
     {
         public const string S_AssetDataBaseResources = "Assets/Resources/";
+
+        public static Transform m_CurrentSelectingTransform => Selection.activeTransform;
     }
 
 

@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b227638defe884c49a3bbc42b09e9f75
+guid: 741b807a6541e6648956373b455ad69e
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -11,7 +11,8 @@ TrueTypeFontImporter:
   fontName: Genesis
   fontNames:
   - Genesis
-  fallbackFontReferences: []
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: b227638defe884c49a3bbc42b09e9f75, type: 3}
   customCharacters: 
   fontRenderingMode: 0
   ascentCalculationMode: 1
