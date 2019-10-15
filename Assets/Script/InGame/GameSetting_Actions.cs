@@ -91,7 +91,7 @@ namespace GameSetting_Action
         public const float F_10020_PerStackHealthLoss = 1f;
         public static float P_10020_MovementAdditivePerStack(enum_RarityLevel rarity) => 1 + (int)rarity;
 
-        public const int I_10021_Cost = 1;
+        public const int I_10021_Cost = 2;
         public static float F_10021_HealthRegenPerMin(enum_RarityLevel rarity) => 6f * (int)rarity;
 
         public const int I_10022_Cost = 3;
