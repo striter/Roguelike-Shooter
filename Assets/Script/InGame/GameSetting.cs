@@ -2303,6 +2303,39 @@ namespace GameSetting
                 m_Grid.AddItem(i);
         }
     }
+    public class UIC_RarityLevel_BG
+    {
+        class RarityLevel
+        {
+            public Image m_HighLight { get; private set; }
+            public Image m_BackGround { get; private set; }
+            public RarityLevel(Transform trans)
+            {
+                m_HighLight = trans.Find("HighLight").GetComponent<Image>();
+                m_BackGround = trans.Find("Background").GetComponent<Image>();
+            }
+            public void SetHighlight(bool show)
+            {
+                m_HighLight.SetActivate(show);
+                m_BackGround.SetActivate(!show);
+            }
+        }
+        public Transform transform { get; private set; }
+        UIT_GridController m_Grid;
+        Dictionary<int, RarityLevel> m_Levels = new Dictionary<int, RarityLevel>();
+        public UIC_RarityLevel_BG(Transform _transform)
+        {
+            transform = _transform;
+            m_Grid = new UIT_GridController(transform);
+            m_Grid.ClearGrid();
+            TCommon.TraversalEnum((enum_RarityLevel rarity) => { m_Levels.Add((int)rarity,new RarityLevel( m_Grid.AddItem((int)rarity))); });
+        }
+        public void SetLevel(enum_RarityLevel level)
+        {
+            for (int i = 0; i < m_Levels.Count; i++)
+                m_Levels[i].SetHighlight(i<=(int)level);
+        }
+    }
     public class UIC_ActionAmount
     {
         Transform transform;

@@ -6,7 +6,11 @@ using GameSetting;
 using System;
 
 public class UIGI_ActionItem : UIT_GridItem {
-    UIT_TextExtend m_Name,m_Level,m_Cost;
+    Image m_ActionImage;
+    Image m_TypeIcon,m_TypeBottom;
+    UIC_RarityLevel_BG m_rarity;
+    Image m_Costable;
+    UIT_TextExtend m_Cost, m_Name;
     UIT_EventTriggerListener m_TriggerListener;
     Action<int> OnClick;
     Action OnPressDuration;
@@ -15,7 +19,6 @@ public class UIGI_ActionItem : UIT_GridItem {
         base.Init(parent);
         m_Cost = tf_Container.Find("Cost").GetComponent<UIT_TextExtend>();
         m_Name = tf_Container.Find("Name").GetComponent<UIT_TextExtend>();
-        m_Level = tf_Container.Find("Level").GetComponent<UIT_TextExtend>();
         m_TriggerListener = tf_Container.Find("TriggerListener").GetComponent<UIT_EventTriggerListener>();
         m_TriggerListener.D_OnPress = OnPress;
     }
@@ -26,7 +29,6 @@ public class UIGI_ActionItem : UIT_GridItem {
         OnPressDuration = _OnPressDuration;
         m_Cost.text = actionInfo.m_ActionExpireType == enum_ActionType.WeaponPerk ? "" : actionInfo.I_Cost.ToString();
         m_Name.localizeText = actionInfo.GetNameLocalizeKey();
-        m_Level.localizeText = actionInfo.m_rarity.GetLocalizeKey();
     }
 
     bool b_pressing;
