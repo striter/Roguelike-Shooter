@@ -138,10 +138,10 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 9c9d65350fda00e43aae5964ee01b62f, type: 3}
   m_PackedSpriteNamesToIndex:
   - UI_weapon_bottom
-  - card_frame_common
+  - action_frame_common
   - btn_rocker_bottom
-  - card_main_common
-  - card_00000_common
+  - action_main_common
+  - action_00000_common
   - UI_title_orange
   - btn_main_bottom
   - btn_commcon_orange
@@ -155,9 +155,9 @@ SpriteAtlas:
   - btn_map_bottom
   - icon_weapon_common_big
   - UI_common_info_title
-  - card_title_device
-  - card_title_equipment
-  - card_title_basic
+  - action_bottom_device
+  - action_bottom_equipment
+  - action_bottom_basic
   - map_tile_type_End
   - btn_reload
   - diasplay_ActionEnergy_progress_full
@@ -192,13 +192,13 @@ SpriteAtlas:
   - map_tile_blockade
   - UI_common_black60
   - UI_common_darkgray60
-  - card_cost_device
-  - card_cost_equipment
-  - card_cost_common
-  - card_cost_basic
-  - card_icon_equipment
-  - card_icon_device
-  - card_icon_basic
+  - action_cost_device
+  - action_cost_equipment
+  - action_cost_invalid
+  - action_cost_basic
+  - action_icon_equipment
+  - action_icon_device
+  - action_icon_basic
   - diasplay_ActionEnergy_bottom
   - display_coins_bottom
   - icon_ActionStorage
@@ -222,8 +222,8 @@ SpriteAtlas:
   - background_map_angle
   - UI_strip_white60
   - btn_map_triangle
-  - card_level_blank
-  - card_level_on
+  - action_level_blank
+  - action_level_on
   - icon_BulletNumber
   - map_tile_type_Invalid
   - icon_Life

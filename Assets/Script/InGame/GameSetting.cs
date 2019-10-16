@@ -19,9 +19,9 @@ namespace GameSetting
         public const float F_EntityDeadFadeTime = 3f;
 
         public const int I_ActionHoldCount = 3;
-        public const float F_MaxActionAmount = 5f;
+        public const float F_MaxActionEnergy = 5f;
         public const float I_MaxArmor = 99999;
-        public const float F_RestoreActionAmount = 0.001f;
+        public const float F_RestoreActionEnergy = 0.001f;
         public const float F_ActionShuffleCost = 2f;
         public const float F_ActionShuffleCooldown = 10f;
 
@@ -77,7 +77,7 @@ namespace GameSetting
         public static float GetAIBaseHealthMultiplier(int gameDifficulty) => 0.99f + 0.01f * gameDifficulty;
         public static float GetAIMaxHealthMultiplier(enum_StageLevel stageDifficulty) => (int)stageDifficulty ;
 
-        public static float GetActionAmountRevive(float damageApply) => damageApply * .0025f;
+        public static float GetActionEnergyRevive(float damageApply) => damageApply * .0025f;
 
         public static float GetAIIdleDuration() => UnityEngine.Random.Range(1f, 2f);
 
@@ -226,6 +226,38 @@ namespace GameSetting
                 case enum_TileType.ActionAdjustment:
                 case enum_TileType.End:
                     return "map_tile_type_" + type.ToString();
+            }
+        }
+        public static string GetIconSprite(this enum_ActionType type)
+        {
+            switch (type)
+            {
+                default: Debug.LogError("Invalid Pharse Here!"+type.ToString());  return "";
+                case enum_ActionType.Basic: return "action_icon_basic";
+                case enum_ActionType.Device: return "action_icon_device";
+                case enum_ActionType.Equipment: return "action_icon_equipment";
+            }
+        }
+        public static string GetNameBGSprite(this enum_ActionType type)
+        {
+            switch (type)
+            {
+                default: Debug.LogError("Invalid Pharse Here!" + type.ToString()); return "";
+                case enum_ActionType.Basic: return "action_bottom_basic";
+                case enum_ActionType.Device: return "action_bottom_device";
+                case enum_ActionType.Equipment: return "action_bottom_equipment";
+            }
+        }
+        public static string GetCostBGSprite(this enum_ActionType type, bool costable)
+        {
+            if (!costable)
+                return "action_cost_invalid";
+            switch (type)
+            {
+                default: Debug.LogError("Invalid Pharse Here!" + type.ToString()); return "";
+                case enum_ActionType.Basic: return "action_cost_basic";
+                case enum_ActionType.Device: return "action_cost_device";
+                case enum_ActionType.Equipment: return "action_cost_equipment";
             }
         }
         public static string GetMainSprite(this EntityCharacterPlayer player)
@@ -1237,7 +1269,7 @@ namespace GameSetting
 
         protected Vector3 m_prePos;
 
-        public float m_ActionAmount { get; private set; } = 0f;
+        public float m_ActionEnergy { get; private set; } = 0f;
         List<ActionBase> m_ActionEquiping = new List<ActionBase>();
         public List<ActionBase> m_ActionStored { get; private set; } = new List<ActionBase>();
         public List<ActionBase> m_ActionInPool { get; private set; } = new List<ActionBase>();
@@ -1293,7 +1325,7 @@ namespace GameSetting
         {
             for (int i = 0; i < _actions.Count; i++)
                 AddStoredAction(_actions[i]);
-            m_ActionAmount = GameConst.F_RestoreActionAmount;
+            m_ActionEnergy = GameConst.F_RestoreActionEnergy;
         }
 
         public void OnBattleStart()
@@ -1304,7 +1336,7 @@ namespace GameSetting
         public void OnBattleFinish()
         {
             Reset();
-            m_ActionAmount = GameConst.F_RestoreActionAmount;
+            m_ActionEnergy = GameConst.F_RestoreActionEnergy;
             m_ActionEquiping.Traversal((ActionBase action) => { if (action.m_ActionType != enum_ActionType.WeaponPerk) action.ForceExpire(); });
             m_ActionInPool.Clear();
             ClearHoldingActions();
@@ -1418,7 +1450,7 @@ namespace GameSetting
             if (damageInfo.m_detail.I_SourceID == m_Player.I_EntityID || GameManager.Instance.GetEntity(damageInfo.m_detail.I_SourceID).m_SpawnerEntityID == m_Player.I_EntityID)
             {
                 if (amountApply > 0)
-                    AddActionAmount(GameExpression.GetActionAmountRevive(amountApply));
+                    AddActionEnergy(GameExpression.GetActionEnergyRevive(amountApply));
             }
 
             if (damageInfo.m_detail.I_SourceID == m_Player.I_EntityID)
@@ -1436,14 +1468,14 @@ namespace GameSetting
         #endregion
 
         #region Action Interact
-
+        public bool B_EnergyCostable(ActionBase action) => m_ActionEnergy >= action.I_Cost;
         public bool TryUseAction(int index)
         {
             ActionBase action = m_ActionHolding[index];
-            if (b_shuffling||m_ActionAmount < action.I_Cost)
+            if (b_shuffling||!B_EnergyCostable(action))
                 return false;
 
-            m_ActionAmount -= action.I_Cost;
+            m_ActionEnergy -= action.I_Cost;
             OnUseAcion(action);
             m_ActionHolding.RemoveAt(index);
             RefillHoldingActions();
@@ -1452,9 +1484,9 @@ namespace GameSetting
         }
         public bool TryShuffle()
         {
-            if (b_shuffling||m_ActionAmount < GameConst.F_ActionShuffleCost)
+            if (b_shuffling||m_ActionEnergy < GameConst.F_ActionShuffleCost)
                 return false;
-            m_ActionAmount -= GameConst.F_ActionShuffleCost;
+            m_ActionEnergy -= GameConst.F_ActionShuffleCost;
             f_shuffleCheck = GameConst.F_ActionShuffleCooldown;
             ClearHoldingActions();
             return true;
@@ -1513,11 +1545,11 @@ namespace GameSetting
             m_ActionStored[index].Upgrade();
             IndicateActionUI();
         }
-        public void AddActionAmount(float amount)
+        public void AddActionEnergy(float amount)
         {
-            m_ActionAmount += amount;
-            if (m_ActionAmount > GameConst.F_MaxActionAmount)
-                m_ActionAmount = GameConst.F_MaxActionAmount;
+            m_ActionEnergy += amount;
+            if (m_ActionEnergy > GameConst.F_MaxActionEnergy)
+                m_ActionEnergy = GameConst.F_MaxActionEnergy;
         }
 
         #endregion
@@ -2333,18 +2365,17 @@ namespace GameSetting
         }
         public void SetLevel(enum_RarityLevel level)
         {
-            for (int i = 0; i < m_Levels.Count; i++)
-                m_Levels[i].SetHighlight(i<=(int)level);
+            m_Levels.Traversal((int index, RarityLevel rarity) => rarity.SetHighlight(index <= (int)level));
         }
     }
-    public class UIC_ActionAmount
+    public class UIC_ActionEnergy
     {
         Transform transform;
         Image img_Full, img_Fill;
         Text txt_amount;
 
         float m_value;
-        public UIC_ActionAmount(Transform _transform)
+        public UIC_ActionEnergy(Transform _transform)
         {
             transform = _transform;
             txt_amount = transform.Find("Amount").GetComponent<Text>();
@@ -2357,7 +2388,7 @@ namespace GameSetting
                 return;
             m_value = value;
             float detail =value%1f;
-            bool full = value == GameConst.F_MaxActionAmount;
+            bool full = value == GameConst.F_MaxActionEnergy;
             img_Full.SetActivate(full);
             img_Fill.SetActivate(!full);
             txt_amount.text = ((int)value).ToString();

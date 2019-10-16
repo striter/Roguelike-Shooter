@@ -9,7 +9,7 @@ public class UI_PlayerStatus : UIToolsBase
     EntityCharacterPlayer m_Player;
 
     Transform tf_ActionData;
-    UIC_ActionAmount m_ActionAmount;
+    UIC_ActionEnergy m_ActionAmount;
     Button btn_ActionStorage, btn_ActionShuffle;
     Slider sld_ShuffleCooldown;
     UIT_GridControllerMonoItem<UIGI_ActionItem> m_ActionGrid;
@@ -74,7 +74,7 @@ public class UI_PlayerStatus : UIToolsBase
         m_MaxHealth = new UIC_Numeric(m_HealthAmount.transform.Find("MaxHealth"));
         
         tf_ActionData = tf_Container.Find("ActionData");
-        m_ActionAmount = new UIC_ActionAmount(tf_ActionData.Find("ActionAmount"));
+        m_ActionAmount = new UIC_ActionEnergy(tf_ActionData.Find("ActionAmount"));
         m_ActionGrid = new UIT_GridControllerMonoItem<UIGI_ActionItem>(tf_ActionData.Find("ActionGrid"));
         btn_ActionStorage = tf_ActionData.Find("ActionStorage").GetComponent<Button>();
         btn_ActionStorage.onClick.AddListener(OnActionStorageClick);
@@ -147,7 +147,7 @@ public class UI_PlayerStatus : UIToolsBase
             m_Player = _player;
 
         m_Coins.text=_player.m_PlayerInfo.m_Coins.ToString();
-        m_ActionAmount.SetValue(_player.m_PlayerInfo.m_ActionAmount);
+        m_ActionAmount.SetValue(_player.m_PlayerInfo.m_ActionEnergy);
         sld_ShuffleCooldown.value = _player.m_PlayerInfo.f_shuffleScale;
         rtf_StatusData.SetWorldViewPortAnchor(m_Player.tf_Head.position, CameraController.Instance.m_Camera, Time.deltaTime * 10f);
 
@@ -288,11 +288,11 @@ public class UI_PlayerStatus : UIToolsBase
     }
     #endregion
     #region Action/Expire
-    void OnActionStatus(PlayerInfoManager actionInfo)
+    void OnActionStatus(PlayerInfoManager playerInfo)
     {
         m_ActionGrid.ClearGrid();
-        for (int i = 0; i < actionInfo.m_ActionHolding.Count; i++)
-            m_ActionGrid.AddItem(i).SetInfo(actionInfo.m_ActionHolding[i],OnActionClick, OnActionPressDuration);
+        for (int i = 0; i < playerInfo.m_ActionHolding.Count; i++)
+            m_ActionGrid.AddItem(i).SetInfo(playerInfo,playerInfo.m_ActionHolding[i],OnActionClick, OnActionPressDuration);
     }
     void OnActionClick(int index)
     {
