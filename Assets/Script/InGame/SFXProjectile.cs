@@ -110,7 +110,6 @@ public class SFXProjectile : SFXBase
     protected virtual bool CanHitTarget(HitCheckBase hitCheck) => !m_EntityHitted.Contains(hitCheck.I_AttacherID) && GameManager.B_CanHitTarget(hitCheck, m_sourceID);
     protected bool OnHitTargetBreak(RaycastHit hit, HitCheckBase hitCheck)
     {
-      
         SpawnImpact(hit, hitCheck);
         if ( OnHitTargetCanPenetrate(hit, hitCheck)&& B_Penetrate)
             return false;

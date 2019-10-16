@@ -5,16 +5,15 @@ using System;
 [RequireComponent(typeof(Collider))]
 public class HitCheckBase : MonoBehaviour {
     public virtual enum_HitCheck m_HitCheckType => enum_HitCheck.Invalid;
-    public int I_AttacherID { get; private set; } = -1;
+    public virtual int I_AttacherID { get; private set; } = -1;
     Func<DamageInfo,Vector3, bool> OnHitCheck;
     protected Collider m_Collider;
     protected void Awake()
     {
         gameObject.layer = m_HitCheckType.ToLayer();
     }
-    protected void Attach(int index,Func<DamageInfo,Vector3, bool> _OnHitCheck)
+    protected void Attach(Func<DamageInfo,Vector3, bool> _OnHitCheck)
     {
-        I_AttacherID= index;
         m_Collider = GetComponent<Collider>();
         OnHitCheck = _OnHitCheck;
     }
