@@ -425,7 +425,7 @@ namespace GameSetting
         UMP45 = 3002,
         //Assult Rifle
         SCAR = 4001,
-        M16A4 = 4002,
+//        M16A4 = 4002,
         AKM = 4003,
         //Pistol
         P92 = 5001,
@@ -435,7 +435,7 @@ namespace GameSetting
         S686 = 6002,
         //Heavy Weapon
         Crossbow = 7001,
-        RocketLauncher = 7002,
+//        RocketLauncher = 7002,
     }
 
     public enum enum_PlayerAnim
