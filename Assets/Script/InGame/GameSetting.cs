@@ -1145,12 +1145,11 @@ namespace GameSetting
             m_Expires.Traversal((ExpireBase expire) => { expire.OnTick(deltaTime); });
             m_Effects.Traversal((enum_CharacterEffect type) => { m_Effects[type].Tick(deltaTime); });
 
-            if (!b_expireUpdated)
-            {
-                UpdateExpireInfo();
-                OnExpireChange();
-                b_expireUpdated = true;
-            }
+            if (b_expireUpdated)
+                return;
+            UpdateExpireInfo();
+            OnExpireChange();
+            b_expireUpdated = true;
         }
 
         protected virtual void AddExpire(ExpireBase expire)
@@ -1242,11 +1241,11 @@ namespace GameSetting
                 SFXBuffEffect particle = m_BuffEffects.Find(p => p.I_SFXIndex == m_Expires[i].m_EffectIndex);
 
                 if (particle)
-                    particle.Refresh(m_Expires[i].m_EffectDuration);
+                    particle.Refresh(m_Expires[i].m_ExpireDuration);
                 else
                 {
                     particle = GameObjectManager.SpawnBuffEffect(m_Expires[i].m_EffectIndex, m_Entity);
-                    particle.Play(m_Entity.I_EntityID, m_Expires[i].m_EffectDuration);
+                    particle.Play(m_Entity.I_EntityID, m_Expires[i].m_ExpireDuration);
                     m_BuffEffects.Add(particle);
                 }
             }
@@ -1624,7 +1623,6 @@ namespace GameSetting
         public virtual float m_DamageMultiply => 0;
         public virtual float m_DamageReduction => 0;
         public virtual float m_HealAdditive => 0;
-        public virtual float m_EffectDuration => m_ExpireDuration;
         private Action<ExpireBase> OnExpired;
         public float m_ExpireDuration { get; private set; } = 0;
         public float f_expireCheck { get; private set; }
