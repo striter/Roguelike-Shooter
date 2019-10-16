@@ -8,7 +8,7 @@ using System;
 public class UIGI_ActionItem : UIT_GridItem {
     Image m_ActionImage;
     Image m_TypeIcon,m_TypeBottom;
-    UIC_RarityLevel_BG m_rarity;
+    UIC_RarityLevel_BG m_Rarity;
     Image m_Costable;
     UIT_TextExtend m_Cost, m_Name;
     UIT_EventTriggerListener m_TriggerListener;
@@ -17,7 +17,12 @@ public class UIGI_ActionItem : UIT_GridItem {
     public override void Init(UIT_GridController parent)
     {
         base.Init(parent);
-        m_Cost = tf_Container.Find("Cost").GetComponent<UIT_TextExtend>();
+        m_ActionImage = tf_Container.Find("Icon/Image").GetComponent<Image>();
+        m_TypeIcon = tf_Container.Find("Type/Icon").GetComponent<Image>();
+        m_TypeBottom = tf_Container.Find("Type/Bottom").GetComponent<Image>();
+        m_Rarity = new UIC_RarityLevel_BG(tf_Container.Find("ActionRarity"));
+        m_Costable = tf_Container.Find("Cost").GetComponent<Image>();
+        m_Cost = tf_Container.Find("Cost/Amount").GetComponent<UIT_TextExtend>();
         m_Name = tf_Container.Find("Name").GetComponent<UIT_TextExtend>();
         m_TriggerListener = tf_Container.Find("TriggerListener").GetComponent<UIT_EventTriggerListener>();
         m_TriggerListener.D_OnPress = OnPress;
@@ -27,7 +32,7 @@ public class UIGI_ActionItem : UIT_GridItem {
     {
         OnClick = _OnClick;
         OnPressDuration = _OnPressDuration;
-        m_Cost.text = actionInfo.m_ActionExpireType == enum_ActionType.WeaponPerk ? "" : actionInfo.I_Cost.ToString();
+        m_Cost.text = actionInfo.m_ActionType == enum_ActionType.WeaponPerk ? "" : actionInfo.I_Cost.ToString();
         m_Name.localizeText = actionInfo.GetNameLocalizeKey();
     }
 

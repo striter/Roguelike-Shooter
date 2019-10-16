@@ -18,6 +18,7 @@ namespace GameSetting
         public const float F_PlayerReviveCheckAfterDead = 1.5f;
         public const float F_EntityDeadFadeTime = 3f;
 
+        public const int I_ActionHoldCount = 3;
         public const float F_MaxActionAmount = 5f;
         public const float I_MaxArmor = 99999;
         public const float F_RestoreActionAmount = 0.001f;
@@ -376,7 +377,7 @@ namespace GameSetting
 
     public enum enum_RarityLevel { Invalid = -1, Normal = 1, OutStanding = 2, Epic = 3, }
 
-    public enum enum_ActionType { Invalid = -1, PlayerAction = 1, WeaponPerk = 2, }
+    public enum enum_ActionType { Invalid = -1, Basic = 1,Device=2,Equipment=3, WeaponPerk = 4, }
 
     public enum enum_PlayerWeapon
     {
@@ -1304,13 +1305,13 @@ namespace GameSetting
         {
             Reset();
             m_ActionAmount = GameConst.F_RestoreActionAmount;
-            m_ActionEquiping.Traversal((ActionBase action) => { if (action.m_ActionExpireType != enum_ActionType.WeaponPerk) action.ForceExpire(); });
+            m_ActionEquiping.Traversal((ActionBase action) => { if (action.m_ActionType != enum_ActionType.WeaponPerk) action.ForceExpire(); });
             m_ActionInPool.Clear();
             ClearHoldingActions();
         }
         public override void OnDead()
         {
-            m_ActionEquiping.Traversal((ActionBase action) => { if (action.m_ActionExpireType != enum_ActionType.WeaponPerk) action.ForceExpire(); });
+            m_ActionEquiping.Traversal((ActionBase action) => { if (action.m_ActionType != enum_ActionType.WeaponPerk) action.ForceExpire(); });
             base.OnDead();
         }
 
@@ -1463,7 +1464,7 @@ namespace GameSetting
             m_ActionInPool.Clear();
             for (int i = 0; i < m_ActionStored.Count; i++)
             {
-                if(m_ActionStored[i].m_ActionExpireType!= enum_ActionType.PlayerAction||m_ActionEquiping.Find(p=>p.m_Identity==m_ActionStored[i].m_Identity)==null)
+                if(m_ActionStored[i].m_ActionType!= enum_ActionType.Device||m_ActionEquiping.Find(p=>p.m_Identity==m_ActionStored[i].m_Identity)==null)
                      m_ActionInPool.Add( m_ActionStored[i]);
             }
             ClearHoldingActions();
@@ -1471,7 +1472,7 @@ namespace GameSetting
         }
         void RefillHoldingActions()
         {
-            if (m_ActionInPool.Count <= 0 || m_ActionHolding.Count >= 3)
+            if (m_ActionInPool.Count <= 0 || m_ActionHolding.Count >= GameConst.I_ActionHoldCount)
                 return;
 
             int index = m_ActionInPool.RandomIndex();
@@ -1666,7 +1667,7 @@ namespace GameSetting
         public int m_Identity { get; private set; } = -1;
         public virtual int I_BaseCost => -1;
         public virtual bool B_ActionAble => true;
-        public virtual enum_ActionType m_ActionExpireType => enum_ActionType.PlayerAction;
+        public virtual enum_ActionType m_ActionType => enum_ActionType.Invalid;
         public virtual float Value1 => 0;
         public virtual float Value2 => 0;
         public virtual float Value3 => 0;
