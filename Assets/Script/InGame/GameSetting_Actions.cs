@@ -433,9 +433,9 @@ namespace GameSetting_Action
             SetDuration(2f);
             m_fireIdentity = _identity;
         }
-        public override void OnDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
-            base.OnDealtDemage(receiver, info, applyAmount);
+            base.OnAfterDealtDemage(receiver, info, applyAmount);
             if (info.m_detail.I_IdentiyID == m_fireIdentity)
                 OnShotsHit(receiver);
         }
@@ -591,7 +591,7 @@ namespace GameSetting_Action
         public override float F_Duration => ActionData.F_10011_Duration;
         public override float Value1 => ActionData.P_10011_FireRateAdditivePerHitStack(m_rarity);
         public override float m_FireRateMultiply => Value1/100f * m_stackUp;
-        public override void OnDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount) => OnStackUp(1);
+        public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount) => OnStackUp(1);
         public Action_10011_HitStackFireRate(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
 
@@ -629,11 +629,11 @@ namespace GameSetting_Action
         public override enum_ActionType m_ActionType => enum_ActionType.Basic;
         public override float F_Duration => ActionData.F_10014_Duration;
         public override float Value1 => ActionData.F_10014_HitFrozenDamageAdditive(m_rarity);
-        public override void OnWillDealtDamage(EntityCharacterBase receiver, DamageInfo info)
+        public override void OnDealtDamageSetDamage(EntityCharacterBase receiver, DamageInfo info)
         {
-            base.OnWillDealtDamage(receiver, info);
-            if (receiver.m_CharacterInfo.B_Effecting(enum_CharacterEffect.Freeze))
-                info.m_detail.SetOverrideInfo(DamageDeliverInfo.DamageInfo(m_ActionEntity.I_EntityID,0,Value1));
+            base.OnDealtDamageSetDamage(receiver, info);
+            if (receiver.m_CharacterInfo.B_Effecting(enum_CharacterEffect.Freeze)||info.m_detail.m_DamageEffect== enum_CharacterEffect.Freeze)
+                info.m_detail.SetAdditiveDamage(0,Value1);
         }
         public Action_10014_FreezeDamageApply(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
@@ -1162,9 +1162,9 @@ namespace GameSetting_Action
             base.OnFire(identity);
             m_burstShot = false;
         }
-        public override void OnDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
-            base.OnDealtDemage(receiver, info, applyAmount);
+            base.OnAfterDealtDemage(receiver, info, applyAmount);
             m_burstShot = receiver.m_Health.b_IsDead;
         }
         public Action_30002_KillDamageMultiply(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
@@ -1210,13 +1210,10 @@ namespace GameSetting_Action
         public override int m_Index => 30005;
         public override int I_BaseCost => ActionData.I_30005_Cost;
         public override float Value1 => ActionData.F_30005_FreezeDuration(m_rarity);
-        DamageDeliverInfo GetDamageInfo() => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, 0, enum_CharacterEffect.Freeze, Value1);
-        public override void OnDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        public override void OnDealtDamageSetEffect(EntityCharacterBase receiver, DamageInfo info)
         {
-            base.OnDealtDemage(receiver, info, applyAmount);
-            if (receiver.m_Health.b_IsDead)
-                return;
-            receiver.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common,GetDamageInfo()));
+            base.OnDealtDamageSetEffect(receiver, info);
+            info.m_detail.SetOverrideEffect(enum_CharacterEffect.Freeze, Value1);
         }
         public Action_30005_DamageFreeze(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
@@ -1233,9 +1230,9 @@ namespace GameSetting_Action
             base.OnActionUse();
             m_Equipment = EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(m_Index), m_ActionEntity, m_ActionEntity.tf_Head, GetDamageInfo);
         }
-        public override void OnDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
-            base.OnDealtDemage(receiver, info, applyAmount);
+            base.OnAfterDealtDemage(receiver, info, applyAmount);
             if (!receiver.m_Health.b_IsDead)
                 return;
 
@@ -1251,14 +1248,14 @@ namespace GameSetting_Action
         public override int I_BaseCost => ActionData.I_30007_Cost;
         public override float Value1 => ActionData.F_30007_DamageStackLimit(m_rarity);
         public override float Value2 => ActionData.F_30007_FreezeDurationPerStack(m_rarity);
-        public override void OnWillDealtDamage(EntityCharacterBase receiver, DamageInfo info)
+        public override void OnDealtDamageSetEffect(EntityCharacterBase receiver, DamageInfo info)
         {
-            base.OnWillDealtDamage(receiver, info);
+            base.OnDealtDamageSetEffect(receiver, info);
             float amount = info.m_AmountApply;
             if (amount < Value1)
                 return;
 
-            info.m_detail.SetOverrideInfo(DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, 0, enum_CharacterEffect.Freeze, Value2 * Mathf.Ceil(amount / Value1)));
+            info.m_detail.SetOverrideEffect(enum_CharacterEffect.Freeze, Value2 * Mathf.Ceil(amount / Value1));
         }
         public Action_30007_DamageLimitFreeze(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
@@ -1327,9 +1324,9 @@ namespace GameSetting_Action
         public override int m_Index => 30012;
         public override int I_BaseCost => ActionData.I_30012_Cost;
         public override float Value1 => ActionData.P_30012_HealthRegenEachKill(m_rarity);
-        public override void OnDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
-            base.OnDealtDemage(receiver, info, applyAmount);
+            base.OnAfterDealtDemage(receiver, info, applyAmount);
             if(receiver.m_Health.b_IsDead)
                 ActionHelper.ReceiveHealing(m_ActionEntity,m_ActionEntity.I_MaxHealth*Value1/100f, enum_DamageType.HealthOnly);
         }
@@ -1533,11 +1530,11 @@ namespace GameSetting_Action
         public override int m_Index => 40010;
         public override float Value1 => ActionData.F_40010_Range(m_rarity);
         public override float Value2 => ActionData.P_40010_DamageMultiply(m_rarity);
-        public override void OnWillDealtDamage(EntityCharacterBase receiver, DamageInfo info)
+        public override void OnDealtDamageSetDamage(EntityCharacterBase receiver, DamageInfo info)
         {
-            base.OnWillDealtDamage(receiver, info);
+            base.OnDealtDamageSetDamage(receiver, info);
             if (Vector3.Distance(receiver.transform.position, m_ActionEntity.transform.position) < Value1)
-               info.m_detail.SetOverrideInfo(DamageDeliverInfo.DamageInfo(m_ActionEntity.I_EntityID,Value1/100f,0f));
+                info.m_detail.SetAdditiveDamage(0, Value1 / 100f);
         }
         public Action_40010_EnrangeExtraDamage(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
@@ -1578,9 +1575,9 @@ namespace GameSetting_Action
         public override float Value2 => ActionData.F_40013_Duration(m_rarity);
         public override float m_MovementSpeedMultiply => f_durationCheck > 0f ? Value1 / 100f : 0;
         float f_durationCheck=0f;
-        public override void OnDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
-            base.OnDealtDemage(receiver, info, applyAmount);
+            base.OnAfterDealtDemage(receiver, info, applyAmount);
             if(receiver.m_Health.b_IsDead)
                 f_durationCheck = Value2;
         }
@@ -1606,9 +1603,9 @@ namespace GameSetting_Action
         public override int m_Index => 40015;
         public override float Value1 => ActionData.F_40015_Range(m_rarity);
         public override float Value2 => ActionData.P_40015_HealthDrain(m_rarity);
-        public override void OnDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
-            base.OnDealtDemage(receiver, info, applyAmount);
+            base.OnAfterDealtDemage(receiver, info, applyAmount);
             if (Vector3.Distance(receiver.transform.position, m_ActionEntity.transform.position) < Value1)
                 ActionHelper.ReceiveHealing(m_ActionEntity, Value2 / 100f * applyAmount, enum_DamageType.HealthOnly);
         }
@@ -1641,9 +1638,9 @@ namespace GameSetting_Action
         public override float Value1 => ActionData.P_40018_DamageMultiply(m_rarity);
         public override float m_DamageMultiply => burstShot ? Value1 / 100f : 0f;
         bool burstShot = false;
-        public override void OnDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
-            base.OnDealtDemage(receiver, info, applyAmount);
+            base.OnAfterDealtDemage(receiver, info, applyAmount);
             burstShot = receiver.m_Health.b_IsDead;
         }
         public Action_40018_KillDamageAdditiveBurstShot(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
@@ -1668,9 +1665,9 @@ namespace GameSetting_Action
         public override int m_Index => 40020;
         public override float Value1 => ActionData.F_40020_FreezeDuration(m_rarity);
         DamageDeliverInfo GetDamageInfo() => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, 0, enum_CharacterEffect.Freeze, Value1);
-        public override void OnDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
-            base.OnDealtDemage(receiver, info, applyAmount);
+            base.OnAfterDealtDemage(receiver, info, applyAmount);
             if (receiver.m_Health.b_IsDead)
                 EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(m_Index),receiver,receiver.tf_Model,GetDamageInfo).Play(receiver,receiver.tf_Model.position+TCommon.RandomXZSphere(.5f));
         }
@@ -1692,9 +1689,9 @@ namespace GameSetting_Action
                 identitySet = false;
             }
         }
-        public override void OnDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
-            base.OnDealtDemage(receiver, info, applyAmount);
+            base.OnAfterDealtDemage(receiver, info, applyAmount);
             if (receiver.m_Health.b_IsDead)
             {
                 identitySet = true;

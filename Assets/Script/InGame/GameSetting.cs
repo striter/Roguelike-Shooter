@@ -1059,7 +1059,17 @@ namespace GameSetting
         public static DamageDeliverInfo EquipmentInfo(int sourceID, float _damageAdditive, enum_CharacterEffect _effect, float _duration) => new DamageDeliverInfo() { I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), I_SourceID = sourceID, m_DamageAdditive = _damageAdditive, m_DamageEffect = _effect, m_EffectDuration = _duration };
         public static DamageDeliverInfo DamageInfo(int sourceID, float _damageEnhanceMultiply, float _damageAdditive) => new DamageDeliverInfo() { I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), I_SourceID = sourceID, m_DamageMultiply = _damageEnhanceMultiply, m_DamageAdditive = _damageAdditive, };
         public static DamageDeliverInfo DamageHitInfo(int sourceID, Action<EntityBase> OnHitEntity) => new DamageDeliverInfo() { I_SourceID = sourceID, I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), m_OnHitAction = OnHitEntity };
-        public void SetOverrideInfo(DamageDeliverInfo info)
+        public void SetOverrideEffect(enum_CharacterEffect damageEffect, float effectDuration)
+        {
+            m_DamageEffect = damageEffect;
+            m_EffectDuration = effectDuration;
+        }
+        public void SetAdditiveDamage(float damageMultiply,float damageAdditive)
+        {
+            m_DamageMultiply += damageMultiply;
+            m_DamageAdditive += damageAdditive;
+        }
+        public void SetAdditiveInfo(DamageDeliverInfo info)
         {
             m_DamageAdditive += info.m_DamageAdditive;
             m_DamageMultiply += info.m_DamageMultiply;
@@ -1097,7 +1107,7 @@ namespace GameSetting
         public virtual DamageDeliverInfo GetDamageBuffInfo()
         {
             DamageDeliverInfo deliver = DamageDeliverInfo.DamageInfo(m_Entity.I_EntityID, F_DamageMultiply, 0f);
-            if (m_DamageBuffOverride != null) deliver.SetOverrideInfo(m_DamageBuffOverride());
+            if (m_DamageBuffOverride != null) deliver.SetAdditiveInfo(m_DamageBuffOverride());
             return deliver;
         }
         Func<DamageInfo, bool> OnReceiveDamage;
@@ -1437,7 +1447,8 @@ namespace GameSetting
             if (damageInfo.m_detail.I_SourceID != m_Entity.I_EntityID)
                 return;
 
-            m_ActionEquiping.Traversal((ActionBase action) => { action.OnWillDealtDamage(damageEntity, damageInfo); });
+            m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDamageSetEffect(damageEntity, damageInfo); });
+            m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDamageSetDamage(damageEntity, damageInfo); });
         }
 
         protected override void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
@@ -1457,7 +1468,7 @@ namespace GameSetting
                 if (amountApply <= 0)
                     m_ActionEquiping.Traversal((ActionBase action) => { action.OnReceiveHealing(damageInfo, amountApply); });
                 else
-                    m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDemage(damageEntity, damageInfo, amountApply); });
+                    m_ActionEquiping.Traversal((ActionBase action) => { action.OnAfterDealtDemage(damageEntity, damageInfo, amountApply); });
             }
             else if (damageEntity.I_EntityID == m_Player.I_EntityID)
             {
@@ -1732,8 +1743,9 @@ namespace GameSetting
         public virtual void OnActionUse() { }
         public virtual void OnAddActionElse(ActionBase targetAction) { }
         public virtual void OnReceiveDamage(DamageInfo info, float amount) { }
-        public virtual void OnWillDealtDamage(EntityCharacterBase receiver,DamageInfo info) { }
-        public virtual void OnDealtDemage(EntityCharacterBase receiver,DamageInfo info, float applyAmount) { }
+        public virtual void OnDealtDamageSetEffect(EntityCharacterBase receiver,DamageInfo info) { }
+        public virtual void OnDealtDamageSetDamage(EntityCharacterBase receiver, DamageInfo info) { }
+        public virtual void OnAfterDealtDemage(EntityCharacterBase receiver,DamageInfo info, float applyAmount) { }
         public virtual void OnReceiveHealing(DamageInfo info, float applyAmount)  {}
         public virtual void OnReloadFinish() { }
         public virtual void OnFire(int identity) { }
