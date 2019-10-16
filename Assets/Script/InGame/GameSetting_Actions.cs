@@ -164,8 +164,8 @@ namespace GameSetting_Action
         public const int I_20006_Cost = 0;
         public static float F_20006_FreezeDuration(enum_RarityLevel rarity) => 4 * (int)rarity;
 
-        public static int I_20007_Cost(enum_RarityLevel rarity) => 3 - (int)rarity;
-        public static float F_20007_Distance(enum_RarityLevel rarity) => 7f + 3f * (int)rarity;
+        public static int I_20007_Cost(enum_RarityLevel rarity) => 1;
+        public static float F_20007_Distance(enum_RarityLevel rarity) => 8f * (int)rarity;
 
         public const int I_20008_Cost = 2;
         public static float F_20008_Health(enum_RarityLevel rarity) => 300f + 100 * (int)rarity;
