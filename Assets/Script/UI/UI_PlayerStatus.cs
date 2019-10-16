@@ -218,9 +218,9 @@ public class UI_PlayerStatus : UIToolsBase
         m_targetInteractWeapon = interactWeapon.m_Weapon;
         txt_interactName.autoLocalizeText = m_targetInteractWeapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
         m_lastInteract = enum_Interaction.Invalid;
-        m_ActionData.SetActivate(m_targetInteractWeapon.m_WeaponAction.Count > 0);      //Test
-        if (m_targetInteractWeapon.m_WeaponAction.Count > 0)        //Test
-            m_ActionData.SetInfo(m_targetInteractWeapon.m_WeaponAction[0]);     //Test????
+        m_ActionData.SetActivate(m_targetInteractWeapon.m_WeaponAction != null);
+        if (m_targetInteractWeapon.m_WeaponAction!=null)
+            m_ActionData.SetInfo(m_targetInteractWeapon.m_WeaponAction);
     }
     #endregion
     #region Health Status
@@ -238,12 +238,12 @@ public class UI_PlayerStatus : UIToolsBase
     {
         m_WeaponName.autoLocalizeText = weaponInfo.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
 
-        bool showWeaponAction = weaponInfo.m_WeaponAction.Count == 1;
+        bool showWeaponAction = weaponInfo.m_WeaponAction != null;
         m_WeaponAction.SetActivate(showWeaponAction);
         m_WeaponActionRarity.transform.SetActivate(showWeaponAction);
         if (!showWeaponAction) return;
-        m_WeaponAction.autoLocalizeText = weaponInfo.m_WeaponAction[0].GetNameLocalizeKey();
-        m_WeaponActionRarity.SetLevel(weaponInfo.m_WeaponAction[0].m_rarity);
+        m_WeaponAction.autoLocalizeText = weaponInfo.m_WeaponAction.GetNameLocalizeKey();
+        m_WeaponActionRarity.SetLevel(weaponInfo.m_WeaponAction.m_rarity);
     }
     void OnAmmoStatus(WeaponBase weaponInfo)
     {

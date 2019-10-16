@@ -258,6 +258,15 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         m_PlayerInfo.OnUseAcion(GameDataManager.CreateAction(actionIndex,level));
     }
+    public void UpgradeWeaponPerk(ActionBase invalidPerk)
+    {
+        m_PlayerInfo.OnDetachWeapon();
+        if (m_WeaponCurrent.m_WeaponAction == null)
+            m_WeaponCurrent.OnSpawn(invalidPerk);
+        else
+            m_WeaponCurrent.m_WeaponAction.Upgrade();
+        m_PlayerInfo.OnAttachWeapon(m_WeaponCurrent);
+    }
     #endregion
     #region UI Indicator
     protected void OnCommonStatus()

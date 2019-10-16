@@ -10,7 +10,7 @@ public class WeaponBase : MonoBehaviour {
 
     EntityCharacterPlayer m_Attacher;
     public SWeapon m_WeaponInfo { get; private set; }
-    public List<ActionBase> m_WeaponAction { get; private set; } = new List<ActionBase>();
+    public ActionBase m_WeaponAction { get; private set; } = null;
     public float F_BaseSpeed { get; private set; } = 0;
     public float F_BaseDamage { get; private set; } = 0;
     public bool B_BasePenetrate { get; private set; } = false;
@@ -70,9 +70,9 @@ public class WeaponBase : MonoBehaviour {
         m_Trigger.OnDisable();
     }
 
-    public void OnSpawn(List<ActionBase> _actionIndexes)
+    public void OnSpawn(ActionBase _weaponAction)
     {
-        m_WeaponAction = _actionIndexes;
+        m_WeaponAction = _weaponAction;
     }
 
     public void OnAttach(EntityCharacterPlayer _attacher,Transform _attachTo,Action<float> _OnFireRecoil,Action<bool,float> _OnReload)

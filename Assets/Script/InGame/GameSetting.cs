@@ -107,6 +107,11 @@ namespace GameSetting
         }
         public static int GetActionRemovePrice(enum_StageLevel stage, int removeTimes) => 8 + 2 * (removeTimes + 1) * (int)stage;
         public static int GetActionUpgradePrice(enum_StageLevel stage, int upgradeTimes) => 8 + 2 * (upgradeTimes + 1) * (int)stage;
+
+        public static enum_RarityLevel GetStartChestRarity(this enum_StageLevel stageLevel) => stageLevel.ToRarity();
+        public static enum_RarityLevel GetStartWeaponPerkRarity(this enum_StageLevel stageLevel) => (stageLevel - 1).ToRarity();
+        public static enum_RarityLevel GetTradeWeaponPerkRarity(this enum_StageLevel stageLevel) => stageLevel.ToRarity();
+        public static enum_RarityLevel GetBattleTradeActionRarity(this enum_StageLevel stageLevel) => stageLevel.ToRarity() == enum_RarityLevel.Epic ? enum_RarityLevel.Epic : (stageLevel + 1).ToRarity();
         public static StageInteractGenerate GetInteractGenerate(enum_StageLevel level)
         {
             switch (level)
@@ -181,8 +186,7 @@ namespace GameSetting
 
     public static class GameEnumConvertions
     {
-        public static enum_RarityLevel ToActionLevel(this enum_StageLevel stageLevel) => (enum_RarityLevel)stageLevel;
-
+        public static enum_RarityLevel ToRarity(this enum_StageLevel stageLevel) => (enum_RarityLevel)stageLevel;
         public static enum_LevelGenerateType ToPrefabType(this enum_TileType type)
         {
             switch (type)
@@ -387,7 +391,7 @@ namespace GameSetting
 
     public enum enum_CharacterType { Invalid = -1, Fighter = 1, Shooter_Rookie = 2, Shooter_Veteran = 3, AOECaster = 4, Elite = 5, SubHidden = 99 }
 
-    public enum enum_Interaction { Invalid = -1, Portal = 1, ActionChest = 2, GameBegin, ActionChestStart, ContainerTrade, ContainerBattle, PickupCoin, PickupHealth, PickupArmor, PickupAction, Weapon, ActionAdjustment, GameEnd, CampStage, CampDifficult, }
+    public enum enum_Interaction { Invalid = -1, Portal = 1, ActionChest = 2, GameBegin, ActionChestStart, ContainerTrade, ContainerBattle, PickupCoin, PickupHealth, PickupArmor, PickupAction, Weapon,PerkUpgrade, ActionAdjustment, GameEnd, CampStage, CampDifficult, }
 
     public enum enum_TriggerType { Invalid = -1, Single = 1, Auto = 2, Burst = 3, Pull = 4, Store = 5, }
 
@@ -518,7 +522,7 @@ namespace GameSetting
         public enum_PlayerWeapon m_weapon;
         public int m_coins;
         public int m_kills;
-        public List<ActionInfo> m_weaponActions;
+        public ActionInfo m_weaponAction;
         public List<ActionInfo> m_storedActions;
         public string m_GameSeed;
         public enum_StageLevel m_StageLevel;
@@ -526,7 +530,7 @@ namespace GameSetting
         {
             m_coins = 0;
             m_weapon = enum_PlayerWeapon.P92;
-            m_weaponActions = new List<ActionInfo>();
+            m_weaponAction = new ActionInfo();
             m_storedActions = new List<ActionInfo>();
             m_GameSeed = DateTime.Now.ToLongTimeString().ToString();
             m_StageLevel = enum_StageLevel.Rookie;
@@ -535,7 +539,7 @@ namespace GameSetting
         {
             m_coins = _player.m_PlayerInfo.m_Coins;
             m_weapon = _player.m_WeaponCurrent.m_WeaponInfo.m_Weapon;
-            m_weaponActions = ActionInfo.Create(_player.m_WeaponCurrent.m_WeaponAction);
+            m_weaponAction = ActionInfo.Create(_player.m_WeaponCurrent.m_WeaponAction);
             m_storedActions = ActionInfo.Create(_player.m_PlayerInfo.m_ActionStored);
             m_GameSeed = _level.m_Seed;
             m_StageLevel = _level.m_GameStage;
@@ -591,6 +595,7 @@ namespace GameSetting
     
     public struct ActionInfo : IXmlPhrase
     {
+        public bool m_IsNull => m_Index <= 0;
         public int m_Index { get; private set; }
         public enum_RarityLevel m_Level { get; private set; }
         public string ToXMLData() => m_Index.ToString() + "," + m_Level.ToString();
@@ -601,7 +606,7 @@ namespace GameSetting
             m_Level = (enum_RarityLevel)Enum.Parse(typeof(enum_RarityLevel), split[1]);
         }
         public static ActionInfo Create(int index, enum_RarityLevel level) => new ActionInfo { m_Index = index, m_Level = level };
-        public static ActionInfo Create(ActionBase action) => new ActionInfo { m_Index = action.m_Index, m_Level = action.m_rarity };
+        public static ActionInfo Create(ActionBase action) =>action==null?new ActionInfo() { m_Index=-1,m_Level=0} : new ActionInfo { m_Index = action.m_Index, m_Level = action.m_rarity };
         public static List<ActionInfo> Create(List<ActionBase> actions)
         {
             List<ActionInfo> infos = new List<ActionInfo>();
@@ -1434,7 +1439,11 @@ namespace GameSetting
             return info;
         }
 
-        public void OnAttachWeapon(WeaponBase weapon) => weapon.m_WeaponAction.Traversal((ActionBase action) => { OnAddAction(action); });
+        public void OnAttachWeapon(WeaponBase weapon)
+        {
+            if(weapon.m_WeaponAction!=null)
+                OnAddAction(weapon.m_WeaponAction);
+        } 
         public void OnDetachWeapon() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnWeaponDetach(); });
         public void OnPlayerMove(float distance) => m_ActionEquiping.Traversal((ActionBase action) => { action.OnMove(distance); });
         public void OnReloadFinish() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnReloadFinish(); });

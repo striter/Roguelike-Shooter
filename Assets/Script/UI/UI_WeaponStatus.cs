@@ -43,11 +43,11 @@ public class UI_WeaponStatus : UIPageBase {
         m_ProjectileSpeed.fillAmount = UIExpression.F_WeaponProjectileSpeedValue(weapon.F_BaseSpeed);
         m_Stability.fillAmount = UIExpression.F_WeaponStabilityValue(weapon.m_WeaponInfo.m_RecoilScore);
 
-        bool showAction = weapon.m_WeaponAction.Count > 0;
+        bool showAction = weapon.m_WeaponAction != null;
         tf_ActionInfo.SetActivate(showAction);
         if (showAction)
         {
-            ActionBase action = weapon.m_WeaponAction[0];
+            ActionBase action = weapon.m_WeaponAction;
             m_ActionName.localizeText = action.GetNameLocalizeKey();
             m_ActionIntro.formatText(action.GetIntroLocalizeKey(), action.F_Duration, action.Value1, action.Value2, action.Value3);
             m_ActionRarityText.localizeText = action.m_rarity.GetLocalizeKey();
