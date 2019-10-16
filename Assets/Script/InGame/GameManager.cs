@@ -106,7 +106,7 @@ public class GameManager : GameManagerBase
         if (Input.GetKeyDown(KeyCode.KeypadPlus) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
             GameObjectManager.SpawnInteract<InteractPickupCoin>(enum_Interaction.PickupCoin, LevelManager.NavMeshPosition(hit.point, false), null).Play(10, m_LocalPlayer.transform);
         if (Input.GetKeyDown(KeyCode.KeypadMinus))
-            m_LocalPlayer.m_PlayerInfo.AddActionAmount(1);
+            m_LocalPlayer.m_PlayerInfo.AddActionEnergy(1);
     }
     #endregion
 #endif

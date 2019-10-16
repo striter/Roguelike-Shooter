@@ -353,7 +353,7 @@ namespace GameSetting_Action
         }
         public static void ReceiveEnergy(EntityCharacterPlayer entity, float amount)
         {
-            entity.m_PlayerInfo.AddActionAmount(amount);
+            entity.m_PlayerInfo.AddActionEnergy(amount);
         }
         public static void PlayerUpgradeAction(EntityCharacterPlayer player)
         {

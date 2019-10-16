@@ -9,11 +9,15 @@ public class UIGI_ActionItem : UIT_GridItem {
     Image m_ActionImage;
     Image m_TypeIcon,m_TypeBottom;
     UIC_RarityLevel_BG m_Rarity;
-    Image m_Costable;
     UIT_TextExtend m_Cost, m_Name;
     UIT_EventTriggerListener m_TriggerListener;
     Action<int> OnClick;
     Action OnPressDuration;
+    bool m_costable = false;
+    Image m_Costable;
+
+    PlayerInfoManager m_InfoManager;
+    ActionBase m_ActionInfo;
     public override void Init(UIT_GridController parent)
     {
         base.Init(parent);
@@ -27,19 +31,33 @@ public class UIGI_ActionItem : UIT_GridItem {
         m_TriggerListener = tf_Container.Find("TriggerListener").GetComponent<UIT_EventTriggerListener>();
         m_TriggerListener.D_OnPress = OnPress;
     }
-    
-    public void SetInfo(ActionBase actionInfo,Action<int> _OnClick,Action _OnPressDuration)
+    public void SetInfo(PlayerInfoManager info,ActionBase actionInfo,Action<int> _OnClick,Action _OnPressDuration)
     {
         OnClick = _OnClick;
         OnPressDuration = _OnPressDuration;
-        m_Cost.text = actionInfo.m_ActionType == enum_ActionType.WeaponPerk ? "" : actionInfo.I_Cost.ToString();
+        m_TypeIcon.sprite = UIManager.Instance.m_commonSprites[actionInfo.m_ActionType.GetIconSprite()];
+        m_TypeBottom.sprite = UIManager.Instance.m_commonSprites[actionInfo.m_ActionType.GetNameBGSprite()];
+        m_Rarity.SetLevel(actionInfo.m_rarity);
+        m_Cost.text = actionInfo.I_Cost.ToString();
         m_Name.localizeText = actionInfo.GetNameLocalizeKey();
+
+        m_ActionInfo = actionInfo;
+        m_InfoManager = info;
+    }
+    void CheckCostable()
+    {
+        bool _costable = m_InfoManager.B_EnergyCostable(m_ActionInfo);
+        if (m_costable == _costable)
+            return;
+        m_costable = _costable;
+        m_Costable.sprite = UIManager.Instance.m_commonSprites[m_ActionInfo.m_ActionType.GetCostBGSprite(m_costable)];
     }
 
     bool b_pressing;
     float f_pressDuration;
     private void Update()
     {
+        CheckCostable();
         if (!b_pressing)
             return;
         f_pressDuration += Time.deltaTime;
