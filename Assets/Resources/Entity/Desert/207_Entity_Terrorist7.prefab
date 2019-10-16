@@ -966,7 +966,7 @@ MonoBehaviour:
     start: 4
     length: 1
   F_AttackTimes:
-    start: 100
+    start: 60
     length: 0
   F_AttackRate: 0.1
   B_BattleCheckObstacle: 0
