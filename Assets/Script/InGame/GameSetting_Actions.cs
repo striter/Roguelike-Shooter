@@ -165,6 +165,7 @@ namespace GameSetting_Action
         public static float F_20006_FreezeDuration(enum_RarityLevel rarity) => 4 * (int)rarity;
 
         public static int I_20007_Cost(enum_RarityLevel rarity) => 3 - (int)rarity;
+        public static float F_20007_Distance(enum_RarityLevel rarity) => 7f + 3f * (int)rarity;
 
         public const int I_20008_Cost = 2;
         public static float F_20008_Health(enum_RarityLevel rarity) => 300f + 100 * (int)rarity;
@@ -995,10 +996,11 @@ namespace GameSetting_Action
     {
         public override int m_Index => 20007;
         public override int I_BaseCost => ActionData.I_20007_Cost(m_rarity);
+        public override float Value1 => ActionData.F_20007_Distance(m_rarity);
         public override void OnActionUse()
         {
             base.OnActionUse();
-            m_ActionEntity.AcquireEquipment(m_Index, () => DamageDeliverInfo.Default(m_ActionEntity.I_EntityID));
+            m_ActionEntity.AcquireEquipment(m_Index, () => DamageDeliverInfo.Default(m_ActionEntity.I_EntityID),Value1);
         }
         public Action_20007_TeleportDevice(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
