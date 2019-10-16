@@ -14,11 +14,14 @@ public class UIGI_ActionItemDetail : UIGI_ActionItemBase {
         m_Intro = tf_Container.Find("Intro").GetComponent<UIT_TextExtend>();
         tf_Container.Find("Button").GetComponent<Button>().onClick.AddListener(OnButtonClick);
     }
-    public void SetInfo(PlayerInfoManager info, ActionBase actionInfo,Action<int> _OnClick)
+    public void SetInfo(PlayerInfoManager info, ActionBase actionInfo,Action<int> _OnClick,bool costInvalidBG)
     {
         base.SetInfo(info,actionInfo);
         m_Intro.formatText(actionInfo.GetIntroLocalizeKey(), actionInfo.F_Duration, actionInfo.Value1, actionInfo.Value2, actionInfo.Value3);
         OnClick = _OnClick;
+
+        if (!costInvalidBG)
+            SetCostable(true);
     }
 
     void OnButtonClick()
