@@ -10,6 +10,6 @@ public class SFXBuffApply : SFXParticles {
         transform.SetParent(attachTo);
         transform.position = attachTo.position;
         transform.localRotation = Quaternion.identity;
-        applyTarget.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common,DamageDeliverInfo.BuffInfo(I_SourceID,I_BuffIndex)));
+        applyTarget.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic,DamageDeliverInfo.BuffInfo(I_SourceID,I_BuffIndex)));
     }
 }

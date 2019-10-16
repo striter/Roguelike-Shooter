@@ -94,6 +94,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         m_Equipment = null;
         m_EquipmentTimes = 0;
+        m_Health.OnRestoreArmor();
         m_PlayerInfo.OnBattleFinish();
     }
 
@@ -114,7 +115,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
                 return;
             }
         }
-
 
         if (m_WeaponCurrent != null)
             m_WeaponCurrent.Trigger(down);

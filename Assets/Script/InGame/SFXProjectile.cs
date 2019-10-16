@@ -53,7 +53,7 @@ public class SFXProjectile : SFXBase
         OnPlayPreset();
         if (I_BufFApplyOnHit > 0)
             deliverInfo.AddExtraBuff(I_BufFApplyOnHit);
-        m_DamageInfo=new DamageInfo(F_Damage, enum_DamageType.Common,deliverInfo);
+        m_DamageInfo=new DamageInfo(F_Damage, enum_DamageType.Basic,deliverInfo);
         m_Simulator = GetSimulator(direction, targetPosition);
         if (I_IndicatorIndex > 0)
             SpawnIndicator(targetPosition,Vector3.up, F_Duration(transform.position, targetPosition));

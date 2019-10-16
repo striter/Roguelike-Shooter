@@ -5,13 +5,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class UI_ActionStorage : UIPageBase {
-    UIT_GridControllerMonoItem<UIGI_ActionSelectItem> m_Grid;
+    UIT_GridControllerMonoItem<UIGI_ActionItemDetail> m_Grid;
     PlayerInfoManager m_Info;
     bool showStored;
     protected override void Init(bool useAnim)
     {
         base.Init(useAnim);
-        m_Grid = new UIT_GridDefaultSingle<UIGI_ActionSelectItem>(tf_Container.Find("ActionGrid"),OnItemClick,false,false);
+        m_Grid = new UIT_GridControllerMonoItem<UIGI_ActionItemDetail>(tf_Container.Find("ActionGrid"));
     }
     public void Show(bool _showStored, PlayerInfoManager _info)
     {
@@ -31,7 +31,7 @@ public class UI_ActionStorage : UIPageBase {
         m_Grid.ClearGrid();
         List<ActionBase> targetList = showStored ?info.m_ActionStored: info.m_ActionHolding;
         for (int i = 0; i <targetList.Count; i++)
-            m_Grid.AddItem(i).SetInfo(targetList[i]);
+            m_Grid.AddItem(i).SetInfo(info,targetList[i],OnItemClick);
     }
     void OnItemClick(int index)
     {

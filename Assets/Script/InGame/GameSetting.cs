@@ -399,7 +399,7 @@ namespace GameSetting
 
     public enum enum_HealthChangeMessage { Invalid = -1, Default = 0, DamageHealth = 1, ReceiveHealth = 2, DamageArmor = 3, ReceiveArmor = 4 }
 
-    public enum enum_DamageType { Invalid = -1, Common = 1, ArmorOnly = 2, HealthOnly = 3, }
+    public enum enum_DamageType { Invalid = -1, Basic = 1, ArmorOnly = 2, HealthOnly = 3,}
 
     public enum enum_CharacterEffect { Invalid = -1, Freeze = 1, Cloak = 2, Scan = 3, }
 
@@ -758,7 +758,7 @@ namespace GameSetting
             buff.f_expireDuration = 0;
             buff.f_damageTickTime = damageTickTime;
             buff.f_damagePerTick = damagePerTick;
-            buff.i_damageType = (int)enum_DamageType.Common;
+            buff.i_damageType = (int)enum_DamageType.Basic;
             return buff;
         }
         //1000-9999
@@ -927,7 +927,7 @@ namespace GameSetting
             OnSetHealth(m_BaseMaxHealth, true);
             OnHealthChanged(enum_HealthChangeMessage.Default);
         }
-        public void SetMaxHealth(float maxHealthAdditive)
+        public void OnMaxHealthAdditive(float maxHealthAdditive)
         {
             if (m_MaxHealthAdditive == maxHealthAdditive)
                 return;
@@ -936,6 +936,11 @@ namespace GameSetting
             if (m_CurrentHealth > m_MaxHealth)
                 OnSetHealth(m_BaseMaxHealth, true);
             OnHealthChanged(enum_HealthChangeMessage.Default);
+        }
+        public void OnRestoreArmor()
+        {
+            m_CurrentArmor = m_DefaultArmor;
+            OnHealthChanged( enum_HealthChangeMessage.Default);
         }
         public override bool OnReceiveDamage(DamageInfo damageInfo, float damageReduction = 1, float healEnhance = 1)
         {
@@ -964,7 +969,7 @@ namespace GameSetting
                             OnHealthChanged(enum_HealthChangeMessage.DamageHealth);
                         }
                         break;
-                    case enum_DamageType.Common:
+                    case enum_DamageType.Basic:
                         {
                             float healthDamage = finalAmount - m_CurrentArmor;
                             DamageArmor(finalAmount);
@@ -997,7 +1002,7 @@ namespace GameSetting
                             OnHealthChanged(enum_HealthChangeMessage.ReceiveHealth);
                         }
                         break;
-                    case enum_DamageType.Common:
+                    case enum_DamageType.Basic:
                         {
                             float armorReceive = finalAmount - m_CurrentHealth + m_MaxHealth;
                             DamageHealth(finalAmount);
@@ -1012,7 +1017,7 @@ namespace GameSetting
                         }
                         break;
                     default:
-                        Debug.LogError("Error! Invalid Type:" + damageInfo.m_Type.ToString());
+                        Debug.LogError("Error! Invalid Healing Type:" + damageInfo.m_Type.ToString());
                         break;
                 }
             }
@@ -2113,7 +2118,7 @@ namespace GameSetting
             if (timeElapsed > 2f)
             {
                 GameObjectManager.SpawnEquipment<SFXCast>(I_Index, attacherHead.position, attacherHead.forward).Play(GetDamageDeliverInfo());
-                m_Entity.m_HitCheck.TryHit(new DamageInfo(m_Entity.m_Health.F_TotalEHP, enum_DamageType.Common,DamageDeliverInfo.Default(-1)));
+                m_Entity.m_HitCheck.TryHit(new DamageInfo(m_Entity.m_Health.F_TotalEHP, enum_DamageType.Basic,DamageDeliverInfo.Default(-1)));
                 b_activating = false;
             }
         }

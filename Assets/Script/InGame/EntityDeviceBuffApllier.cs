@@ -42,10 +42,10 @@ public class EntityDeviceBuffApllier : EntityDeviceBase {
             switch (entity.m_Controller)
             {
                 case enum_EntityController.AI:
-                    entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common, OnApplyAlly()));
+                    entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, OnApplyAlly()));
                     break;
                 case enum_EntityController.Player:
-                    entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common, OnApplyPlayer()));
+                    entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, OnApplyPlayer()));
                     break;
             }
         });

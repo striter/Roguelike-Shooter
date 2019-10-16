@@ -12,7 +12,7 @@ public class UI_PlayerStatus : UIToolsBase
     UIC_ActionEnergy m_ActionAmount;
     Button btn_ActionStorage, btn_ActionShuffle;
     Slider sld_ShuffleCooldown;
-    UIT_GridControllerMonoItem<UIGI_ActionItem> m_ActionGrid;
+    UIT_GridControllerMonoItem<UIGI_ActionItemHold> m_ActionGrid;
 
     Transform tf_ExpireData;
     UIT_GridControllerMonoItem<UIGI_ExpireInfoItem> m_ExpireGrid;
@@ -75,7 +75,7 @@ public class UI_PlayerStatus : UIToolsBase
         
         tf_ActionData = tf_Container.Find("ActionData");
         m_ActionAmount = new UIC_ActionEnergy(tf_ActionData.Find("ActionAmount"));
-        m_ActionGrid = new UIT_GridControllerMonoItem<UIGI_ActionItem>(tf_ActionData.Find("ActionGrid"));
+        m_ActionGrid = new UIT_GridControllerMonoItem<UIGI_ActionItemHold>(tf_ActionData.Find("ActionGrid"));
         btn_ActionStorage = tf_ActionData.Find("ActionStorage").GetComponent<Button>();
         btn_ActionStorage.onClick.AddListener(OnActionStorageClick);
         btn_ActionShuffle = tf_ActionData.Find("ActionShuffle").GetComponent<Button>();
@@ -201,12 +201,12 @@ public class UI_PlayerStatus : UIToolsBase
             case enum_Interaction.PickupAction:
                 {
                     m_ActionData.SetActivate(true);
-                    txt_interactName.localizeText = interact.m_InteractType.GetLocalizeKey();
+                    txt_interactName.autoLocalizeText = interact.m_InteractType.GetLocalizeKey();
                     m_ActionData.SetInfo((interact as InteractPickupAction).m_Action);
                 }
                 break;
             default:
-                txt_interactName.localizeText = interact.m_InteractType.GetLocalizeKey();
+                txt_interactName.autoLocalizeText = interact.m_InteractType.GetLocalizeKey();
                 break;
         }
     }
@@ -216,7 +216,7 @@ public class UI_PlayerStatus : UIToolsBase
             return;
 
         m_targetInteractWeapon = interactWeapon.m_Weapon;
-        txt_interactName.localizeText = m_targetInteractWeapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
+        txt_interactName.autoLocalizeText = m_targetInteractWeapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
         m_lastInteract = enum_Interaction.Invalid;
         m_ActionData.SetActivate(m_targetInteractWeapon.m_WeaponAction.Count > 0);      //Test
         if (m_targetInteractWeapon.m_WeaponAction.Count > 0)        //Test
@@ -236,13 +236,13 @@ public class UI_PlayerStatus : UIToolsBase
     #region Weapon/Ammo
     void OnWeaponStatus(WeaponBase weaponInfo)
     {
-        m_WeaponName.localizeText = weaponInfo.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
+        m_WeaponName.autoLocalizeText = weaponInfo.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
 
         bool showWeaponAction = weaponInfo.m_WeaponAction.Count == 1;
         m_WeaponAction.SetActivate(showWeaponAction);
         m_WeaponActionRarity.transform.SetActivate(showWeaponAction);
         if (!showWeaponAction) return;
-        m_WeaponAction.localizeText = weaponInfo.m_WeaponAction[0].GetNameLocalizeKey();
+        m_WeaponAction.autoLocalizeText = weaponInfo.m_WeaponAction[0].GetNameLocalizeKey();
         m_WeaponActionRarity.SetLevel(weaponInfo.m_WeaponAction[0].m_rarity);
     }
     void OnAmmoStatus(WeaponBase weaponInfo)

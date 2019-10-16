@@ -302,7 +302,7 @@ namespace GameSetting_Action
     }
     #endregion
 
-    #region DevelopersUse
+    #region Developers Use
     public static class ActionHelper
     {
         public static void PlayerAcquireEntityEquipmentItem(EntityCharacterPlayer player, int equipmentIndex, int health, float fireRate, Func<DamageDeliverInfo> damage)
@@ -320,13 +320,13 @@ namespace GameSetting_Action
             equipment.SetOnSpawn((SFXShield shield) => {  shield.m_Health.I_MaxHealth = health; });
             equipment.Play(false,player);
         }
-        public static void PlayerDealtDamageToEntity(EntityCharacterPlayer player, int targetID, float damageAmount, enum_DamageType damageType = enum_DamageType.Common)
+        public static void PlayerDealtDamageToEntity(EntityCharacterPlayer player, int targetID, float damageAmount, enum_DamageType damageType = enum_DamageType.Basic)
         {
             if (damageAmount < 0)
                 Debug.LogError("Howd Fk Damage Below Zero?");
             GameManager.Instance.GetEntity(targetID).m_HitCheck.TryHit(new DamageInfo(damageAmount, damageType, DamageDeliverInfo.Default(player.I_EntityID)));
         }
-        public static void ReceiveDamage(EntityCharacterPlayer player, float damage, enum_DamageType type = enum_DamageType.Common)
+        public static void ReceiveDamage(EntityCharacterPlayer player, float damage, enum_DamageType type = enum_DamageType.Basic)
         {
             if (damage < 0)
                 Debug.LogError("???????????");
@@ -335,9 +335,9 @@ namespace GameSetting_Action
 
         public static void ReciveBuff(EntityCharacterPlayer player, SBuff buff)
         {
-            player.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common, DamageDeliverInfo.BuffInfo(player.I_EntityID, buff)));
+            player.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.BuffInfo(player.I_EntityID, buff)));
         }
-        public static void ReceiveHealing(EntityCharacterPlayer entity, float heal, enum_DamageType type = enum_DamageType.Common)
+        public static void ReceiveHealing(EntityCharacterPlayer entity, float heal, enum_DamageType type = enum_DamageType.Basic)
         {
             if (heal <= 0)
                 Debug.LogError("Howd Fk Healing Below Zero?");
@@ -345,7 +345,7 @@ namespace GameSetting_Action
         }
         public static void ReceiveEffect(EntityCharacterPlayer entity, enum_CharacterEffect effect, float duration)
         {
-            entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common, DamageDeliverInfo.EquipmentInfo(entity.I_EntityID, 0, effect, duration)));
+            entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.EquipmentInfo(entity.I_EntityID, 0, effect, duration)));
         }
         public static void Revive(EntityCharacterPlayer entity, float health)
         {
@@ -664,7 +664,7 @@ namespace GameSetting_Action
             base.OnActionUse();
              GameManager.Instance.GetEntities(m_ActionEntity.m_Flag, false).Traversal((EntityCharacterBase entity)=> {
                  if (entity.m_CharacterInfo.B_Effecting( enum_CharacterEffect.Freeze))
-                     entity.m_HitCheck.TryHit(new DamageInfo(Value1/100f*m_ActionEntity.m_WeaponCurrent.F_BaseDamage, enum_DamageType.Common, DamageDeliverInfo.Default(m_ActionEntity.I_EntityID)));
+                     entity.m_HitCheck.TryHit(new DamageInfo(Value1/100f*m_ActionEntity.m_WeaponCurrent.F_BaseDamage, enum_DamageType.Basic, DamageDeliverInfo.Default(m_ActionEntity.I_EntityID)));
              });
         }
         public Action_10016_DamageAllFreezing(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
@@ -963,7 +963,7 @@ namespace GameSetting_Action
         public override void OnActionUse()
         {
             base.OnActionUse();
-            m_ActionEntity.AcquireEquipment(m_Index, () =>  DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID,SBuff.CreateActionDOTBuff(m_Index,Value1,1f,Value2, enum_DamageType.Common)));
+            m_ActionEntity.AcquireEquipment(m_Index, () =>  DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID,SBuff.CreateActionDOTBuff(m_Index,Value1,1f,Value2, enum_DamageType.Basic)));
         }
         public Action_20001_RustShot(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
@@ -1373,7 +1373,7 @@ namespace GameSetting_Action
         {
             base.OnReceiveDamage(info, amount);
             if (m_ActionEntity.m_Health.m_CurrentArmor > 0)
-                ActionHelper.PlayerDealtDamageToEntity(m_ActionEntity, info.m_detail.I_SourceID, Value1 * m_ActionEntity.m_Health.m_CurrentArmor, enum_DamageType.Common);
+                ActionHelper.PlayerDealtDamageToEntity(m_ActionEntity, info.m_detail.I_SourceID, Value1 * m_ActionEntity.m_Health.m_CurrentArmor, enum_DamageType.Basic);
         }
         public Action_30015_ArmorDamageReflection(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
@@ -1455,7 +1455,7 @@ namespace GameSetting_Action
                     continue ;
 
                 if (Vector3.Distance(m_ActionEntity.transform.position, allies[i].transform.position) < Value1)
-                    allies[i].m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common, allyInfo));
+                    allies[i].m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, allyInfo));
             }
         }
         public Action_40003_AllyDamageMultiply(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
@@ -1700,7 +1700,7 @@ namespace GameSetting_Action
 
             if (info.m_detail.I_IdentiyID == m_fireIdentity)
             {
-                receiver.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common, DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, 0, enum_CharacterEffect.Freeze, Value1)));
+                receiver.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, 0, enum_CharacterEffect.Freeze, Value1)));
                 m_fireIdentity = -1;
             }
         }

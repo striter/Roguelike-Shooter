@@ -48,7 +48,7 @@ public class GameManager : GameManagerBase
             if ((enermy as EntityCharacterAI) != null)
                 (enermy as EntityCharacterAI).SetEnermyDifficulty(GameExpression.GetAIBaseHealthMultiplier(m_GameLevel.m_GameDifficulty), GameExpression.GetAIMaxHealthMultiplier(m_GameLevel.m_GameStage), GameExpression.GetEnermyGameDifficultyBuffIndex(m_GameLevel.m_GameDifficulty));
             if (TestEntityBuffOnSpawn > 0)
-                enermy.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common,DamageDeliverInfo.BuffInfo(-1, TestEntityBuffOnSpawn)));
+                enermy.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic,DamageDeliverInfo.BuffInfo(-1, TestEntityBuffOnSpawn)));
         }
         if (Input.GetKeyDown(KeyCode.X) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
             GameObjectManager.SpawnEquipment<SFXCast>(X_TestCastIndex, hit.point, CastForward?m_LocalPlayer.transform.forward: Vector3.up).Play(DamageDeliverInfo.Default(m_LocalPlayer.I_EntityID));
@@ -57,11 +57,11 @@ public class GameManager : GameManagerBase
         if (Input.GetKeyDown(KeyCode.V) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
             GameObjectManager.SpawnIndicator(V_TestIndicatorIndex, hit.point + Vector3.up, Vector3.up).Play(1000,3f);
         if (Input.GetKeyDown(KeyCode.B))
-            m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common, DamageDeliverInfo.BuffInfo(-1, B_TestBuffIndex )));
+            m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.BuffInfo(-1, B_TestBuffIndex )));
         if (Input.GetKeyDown(KeyCode.N))
-            m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(20, enum_DamageType.Common,DamageDeliverInfo.Default(-1)));
+            m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(20, enum_DamageType.Basic,DamageDeliverInfo.Default(-1)));
         if (Input.GetKeyDown(KeyCode.M))
-            m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(-50, enum_DamageType.Common, DamageDeliverInfo.Default(-1)));
+            m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(-50, enum_DamageType.Basic, DamageDeliverInfo.Default(-1)));
         if (Input.GetKeyDown(KeyCode.F1))
             GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, Vector3.zero, LevelManager.Instance.m_InteractParent).Play(GameObjectManager.SpawnWeapon(F1_WeaponSpawnType, new List<ActionBase>()));
         if (Input.GetKeyDown(KeyCode.Alpha0))
@@ -69,14 +69,14 @@ public class GameManager : GameManagerBase
             List<EntityCharacterBase> entities = m_Entities.Values.ToList();
             entities.Traversal((EntityCharacterBase entity) => {
                 if (entity.m_Flag== enum_EntityFlag.Enermy)
-                    entity.m_HitCheck.TryHit( new DamageInfo(entity.m_Health.m_MaxHealth, enum_DamageType.Common, DamageDeliverInfo.Default(-1)));
+                    entity.m_HitCheck.TryHit( new DamageInfo(entity.m_Health.m_MaxHealth, enum_DamageType.Basic, DamageDeliverInfo.Default(-1)));
             });
         }
         if (Input.GetKeyDown(KeyCode.Alpha9))
         {
             m_Entities.Traversal((EntityCharacterBase entity) => {
                 if (entity.m_Flag == enum_EntityFlag.Enermy)
-                    entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common, DamageDeliverInfo.EquipmentInfo(-1,0, enum_CharacterEffect.Freeze,2f)));
+                    entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.EquipmentInfo(-1,0, enum_CharacterEffect.Freeze,2f)));
             });
         }
 
@@ -96,7 +96,7 @@ public class GameManager : GameManagerBase
             CameraController.Instance.m_Effect.StartAreaScan(m_LocalPlayer.tf_Head.position, Color.white, TResources.Load<Texture>(TResources.ConstPath.S_PETex_Holograph),15f, 1f, 5f, 50, 1f);
             m_Entities.Traversal((EntityCharacterBase entity) => {
                 if (entity.m_Flag == enum_EntityFlag.Enermy)
-                    entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common, DamageDeliverInfo.EquipmentInfo(-1, 0, enum_CharacterEffect.Scan, 10f)));
+                    entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.EquipmentInfo(-1, 0, enum_CharacterEffect.Scan, 10f)));
             });
         }
         if (Input.GetKeyDown(KeyCode.F12))
@@ -402,7 +402,7 @@ public class GameManager : GameManagerBase
         if (m_PlayerReviveHealing.Count > 0)
         {
             m_LocalPlayer.OnRevive(m_PlayerReviveHealing[m_PlayerReviveHealing.Count - 1], 0f);
-            m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common, DamageDeliverInfo.EquipmentInfo(-1, 0, enum_CharacterEffect.Cloak, 3f)));
+            m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.EquipmentInfo(-1, 0, enum_CharacterEffect.Cloak, 3f)));
             m_PlayerReviveHealing.RemoveAt(m_PlayerReviveHealing.Count - 1);
             return;
         }
@@ -480,7 +480,6 @@ public class GameManager : GameManagerBase
         B_Battling = false;
         SpawnRewards(lastEntityPos);
         m_PlayerReviveHealing.Clear();
-        m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(m_LocalPlayer.m_Health.m_CurrentArmor - m_LocalPlayer.m_Health.m_DefaultArmor, enum_DamageType.ArmorOnly, DamageDeliverInfo.Default(-1)));
         GameObjectManager.RecycleAllInteract(enum_Interaction.PickupArmor);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleFinish);
     }
