@@ -1464,7 +1464,7 @@ namespace GameSetting
             m_ActionInPool.Clear();
             for (int i = 0; i < m_ActionStored.Count; i++)
             {
-                if(m_ActionStored[i].m_ActionType!= enum_ActionType.Device||m_ActionEquiping.Find(p=>p.m_Identity==m_ActionStored[i].m_Identity)==null)
+                if(m_ActionStored[i].m_ActionType!= enum_ActionType.Equipment||m_ActionEquiping.Find(p=>p.m_Identity==m_ActionStored[i].m_Identity)==null)
                      m_ActionInPool.Add( m_ActionStored[i]);
             }
             ClearHoldingActions();
