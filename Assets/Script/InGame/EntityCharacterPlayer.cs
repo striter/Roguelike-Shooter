@@ -254,9 +254,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     }
     #endregion
     #region Action
-    public void TestUseAction(int actionIndex)
+    public void TestUseAction(int actionIndex,enum_RarityLevel level)
     {
-        m_PlayerInfo.OnUseAcion(GameDataManager.CreateAction(actionIndex, enum_RarityLevel.Epic));
+        m_PlayerInfo.OnUseAcion(GameDataManager.CreateAction(actionIndex,level));
     }
     #endregion
     #region UI Indicator

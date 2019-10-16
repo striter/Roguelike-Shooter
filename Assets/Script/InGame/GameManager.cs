@@ -31,9 +31,9 @@ public class GameManager : GameManagerBase
     public int V_TestIndicatorIndex = 50002;
     public int B_TestBuffIndex = 1;
     public enum_PlayerWeapon F1_WeaponSpawnType = enum_PlayerWeapon.Invalid;
-    public int F5_TestActionIndex = 10001;
-    public int F6_TestActionIndex = 10001;
-    public int F7_TestActionIndex = 10001;
+    public int F5_TestActionNormal = 10001;
+    public int F6_TestActionOutstanding = 10001;
+    public int F7_TestActionEpic = 10001;
     public int F8_TestAcquireAction = 10001;
     public bool B_AdditionalLight = true;
     void Update()
@@ -84,11 +84,11 @@ public class GameManager : GameManagerBase
             OnStageFinished();
 
         if (Input.GetKeyDown(KeyCode.F5))
-            (m_LocalPlayer as EntityCharacterPlayer).TestUseAction(F5_TestActionIndex);
+            (m_LocalPlayer as EntityCharacterPlayer).TestUseAction(F5_TestActionNormal, enum_RarityLevel.Normal);
         if (Input.GetKeyDown(KeyCode.F6))
-            (m_LocalPlayer as EntityCharacterPlayer).TestUseAction(F6_TestActionIndex);
+            (m_LocalPlayer as EntityCharacterPlayer).TestUseAction(F6_TestActionOutstanding, enum_RarityLevel.OutStanding);
         if (Input.GetKeyDown(KeyCode.F7))
-            (m_LocalPlayer as EntityCharacterPlayer).TestUseAction(F7_TestActionIndex);
+            (m_LocalPlayer as EntityCharacterPlayer).TestUseAction(F7_TestActionEpic, enum_RarityLevel.Epic);
         if (Input.GetKeyDown(KeyCode.F8))
             m_LocalPlayer.m_PlayerInfo.AddStoredAction(GameDataManager.CreateAction(F8_TestAcquireAction, enum_RarityLevel.Normal));
         if (Input.GetKeyDown(KeyCode.F9))
