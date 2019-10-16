@@ -347,9 +347,9 @@ namespace GameSetting_Action
         {
             entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.EquipmentInfo(entity.I_EntityID, 0, effect, duration)));
         }
-        public static void Revive(EntityCharacterPlayer entity, float health)
+        public static void Revive(EntityCharacterPlayer entity, float health,float armor)
         {
-            GameManager.Instance.AddPlayerReviveCheck(health);
+            GameManager.Instance.AddPlayerReviveCheck(new RangeFloat(health,armor));
         }
         public static void ReceiveEnergy(EntityCharacterPlayer entity, float amount)
         {
@@ -774,7 +774,7 @@ namespace GameSetting_Action
         public override void OnActionUse()
         {
             base.OnActionUse();
-            ActionHelper.Revive(m_ActionEntity, Value1);
+            ActionHelper.Revive(m_ActionEntity, Value1,0f);
         }
         public Action_10023_Revive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }

@@ -376,7 +376,7 @@ public class GameManager : GameManagerBase
     }
     #endregion
     #region PlayerManagement
-    List<float> m_PlayerReviveHealing = new List<float>();
+    List<RangeFloat> m_PlayerReviveHealing = new List<RangeFloat>();
     void OnCharacterDead(EntityCharacterBase character)
     {
         if (character.m_Controller != enum_EntityController.Player)
@@ -392,16 +392,16 @@ public class GameManager : GameManagerBase
         SetPostEffect_Revive();
     }
 
-    public void AddPlayerReviveCheck(float reviveAmount)
+    public void AddPlayerReviveCheck(RangeFloat reviveData)
     {
-        m_PlayerReviveHealing.Add(reviveAmount);
+        m_PlayerReviveHealing.Add(reviveData);
     }
 
     void CheckRevive()
     {
         if (m_PlayerReviveHealing.Count > 0)
         {
-            m_LocalPlayer.OnRevive(m_PlayerReviveHealing[m_PlayerReviveHealing.Count - 1], 0f);
+            m_LocalPlayer.OnRevive(m_PlayerReviveHealing[m_PlayerReviveHealing.Count - 1].start, m_PlayerReviveHealing[m_PlayerReviveHealing.Count-1].length);
             m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.EquipmentInfo(-1, 0, enum_CharacterEffect.Cloak, 3f)));
             m_PlayerReviveHealing.RemoveAt(m_PlayerReviveHealing.Count - 1);
             return;
@@ -415,7 +415,7 @@ public class GameManager : GameManagerBase
     }
     void ForceRevivePlayer()
     {
-        m_PlayerReviveHealing.Add(m_LocalPlayer.m_Health.m_MaxHealth);  
+        m_PlayerReviveHealing.Add(new RangeFloat(m_LocalPlayer.m_Health.m_MaxHealth,m_LocalPlayer.m_Health.m_DefaultArmor));  
         CheckRevive();
     }
     #endregion

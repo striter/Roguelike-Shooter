@@ -575,6 +575,7 @@ namespace GameSetting
         public RangeInt m_CoinRange { get; private set; }
         public static CoinsGenerateInfo Create(int healthRate, int armorRate, int coinRate, RangeInt coinAmount) => new CoinsGenerateInfo() { m_HealthRate = healthRate, m_ArmorRate = armorRate, m_CoinRate = coinRate, m_CoinRange = coinAmount };
     }
+
     public struct StageInteractGenerate
     {
         Dictionary<enum_CharacterType, CoinsGenerateInfo> m_CoinRate;
@@ -587,6 +588,7 @@ namespace GameSetting
         public enum_RarityLevel GetTradeRarityLevel(System.Random seed) => TCommon.RandomPercentage(m_TradeRate, seed);
         public static StageInteractGenerate Create(Dictionary<enum_RarityLevel, int> _actionRate, Dictionary<enum_RarityLevel, int> _tradeRate, Dictionary<enum_CharacterType, CoinsGenerateInfo> _coinRate) => new StageInteractGenerate() { m_ActionRate = _actionRate, m_TradeRate = _tradeRate, m_CoinRate = _coinRate };
     }
+    
     public struct ActionInfo : IXmlPhrase
     {
         public int m_Index { get; private set; }
