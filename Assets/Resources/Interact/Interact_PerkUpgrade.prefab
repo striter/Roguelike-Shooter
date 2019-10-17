@@ -42,7 +42,7 @@ GameObject:
   - component: {fileID: 33898226479046944}
   - component: {fileID: 23128297883321492}
   m_Layer: 0
-  m_Name: changjing_jixiebi 4
+  m_Name: Grid02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -59,7 +59,7 @@ GameObject:
   - component: {fileID: 33790308378517842}
   - component: {fileID: 23070325670005668}
   m_Layer: 0
-  m_Name: changjing_jixiebi 5
+  m_Name: Grid12
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -76,7 +76,7 @@ GameObject:
   - component: {fileID: 33779973088046142}
   - component: {fileID: 23841002304854456}
   m_Layer: 0
-  m_Name: changjing_jixiebi 2
+  m_Name: Grid11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -93,7 +93,7 @@ GameObject:
   - component: {fileID: 33234235131759150}
   - component: {fileID: 23900663373167024}
   m_Layer: 0
-  m_Name: changjing_jixiebi 1
+  m_Name: Grid01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -110,7 +110,7 @@ GameObject:
   - component: {fileID: 33785056168808736}
   - component: {fileID: 23320114010136644}
   m_Layer: 0
-  m_Name: changjing_jixiebi 6
+  m_Name: Grid22
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -127,7 +127,7 @@ GameObject:
   - component: {fileID: 33352683104463798}
   - component: {fileID: 23410402214374138}
   m_Layer: 0
-  m_Name: changjing_jixiebi 3
+  m_Name: Grid21
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -144,7 +144,7 @@ GameObject:
   - component: {fileID: 33801159162876746}
   - component: {fileID: 23838696505345064}
   m_Layer: 0
-  m_Name: changjing_jixiebi2
+  m_Name: Grid20
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -161,7 +161,7 @@ GameObject:
   - component: {fileID: 33926800897231402}
   - component: {fileID: 23596851820068092}
   m_Layer: 0
-  m_Name: changjing_jixiebi1
+  m_Name: Grid10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -178,7 +178,7 @@ GameObject:
   - component: {fileID: 33355696628629222}
   - component: {fileID: 23908777108363304}
   m_Layer: 0
-  m_Name: changjing_jixiebi
+  m_Name: Grid00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -195,6 +195,7 @@ GameObject:
   - component: {fileID: 114077485115308678}
   - component: {fileID: 136289512793138714}
   - component: {fileID: 114247452624665412}
+  - component: {fileID: 111442800839022154}
   m_Layer: 0
   m_Name: Interact_PerkUpgrade
   m_TagString: Untagged
@@ -215,7 +216,7 @@ Transform:
   - {fileID: 4361975584639374}
   m_Father: {fileID: 4683379765625658}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 139.99974, z: 0}
 --- !u!4 &4043717733070280
 Transform:
   m_ObjectHideFlags: 1
@@ -229,7 +230,7 @@ Transform:
   - {fileID: 4338906325231642}
   m_Father: {fileID: 4683379765625658}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 9.99997, z: 0}
 --- !u!4 &4204749644558574
 Transform:
   m_ObjectHideFlags: 1
@@ -243,7 +244,7 @@ Transform:
   - {fileID: 4935421864325680}
   m_Father: {fileID: 4894381231441012}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 17.54486}
 --- !u!4 &4326812752464352
 Transform:
   m_ObjectHideFlags: 1
@@ -270,7 +271,7 @@ Transform:
   - {fileID: 4831356294003728}
   m_Father: {fileID: 4043717733070280}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 39.999855}
 --- !u!4 &4361975584639374
 Transform:
   m_ObjectHideFlags: 1
@@ -284,7 +285,7 @@ Transform:
   - {fileID: 4326812752464352}
   m_Father: {fileID: 4024752520006854}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 15}
 --- !u!4 &4373317882436764
 Transform:
   m_ObjectHideFlags: 1
@@ -327,7 +328,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4338906325231642}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -14.999868}
 --- !u!4 &4894381231441012
 Transform:
   m_ObjectHideFlags: 1
@@ -341,7 +342,7 @@ Transform:
   - {fileID: 4204749644558574}
   m_Father: {fileID: 4683379765625658}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -100.000046, z: 0}
 --- !u!4 &4935421864325680
 Transform:
   m_ObjectHideFlags: 1
@@ -354,7 +355,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4204749644558574}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -6.015381}
 --- !u!23 &23070325670005668
 MeshRenderer:
   m_ObjectHideFlags: 1
@@ -765,6 +766,21 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1883001655401358}
   m_Mesh: {fileID: 4300008, guid: 4267c1b2136910b4f95adf9d64119a91, type: 3}
+--- !u!111 &111442800839022154
+Animation:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1981629576902692}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 7400000, guid: a273be61132fc4843a50bf924985cb69, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: a273be61132fc4843a50bf924985cb69, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 0
+  m_AnimatePhysics: 0
+  m_CullingType: 0
 --- !u!114 &114077485115308678
 MonoBehaviour:
   m_ObjectHideFlags: 1
