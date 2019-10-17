@@ -330,14 +330,14 @@ public class CommandBufferBase:CameraEffectBase
 public class CB_GenerateOpaqueTexture:CommandBufferBase
 {
     readonly int ID_GlobalOpaqueTexture = Shader.PropertyToID("_CameraOpaqueTexture");
-    protected override CameraEvent m_BufferEvent => CameraEvent.AfterSkybox;
-    readonly int ID_TempTexture1 = Shader.PropertyToID("_UIBlurTempRT1");
+    protected override CameraEvent m_BufferEvent =>CameraEvent.BeforeForwardAlpha;
+    readonly int ID_TempTexture = Shader.PropertyToID("_OpaqueTempRT");
     public override void OnSetEffect(CameraEffectManager _manager)
     {
         base.OnSetEffect(_manager);
-        m_Buffer.GetTemporaryRT(ID_TempTexture1,0,0,0, FilterMode.Bilinear);
-        m_Buffer.Blit(BuiltinRenderTextureType.CurrentActive,ID_TempTexture1);
-        m_Buffer.SetGlobalTexture(ID_GlobalOpaqueTexture, ID_TempTexture1);
+        m_Buffer.GetTemporaryRT(ID_TempTexture,-2,-2,0, FilterMode.Bilinear);
+        m_Buffer.Blit(BuiltinRenderTextureType.CurrentActive,ID_TempTexture);
+        m_Buffer.SetGlobalTexture(ID_GlobalOpaqueTexture, ID_TempTexture);
     }
 }
 
