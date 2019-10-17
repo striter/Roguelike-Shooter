@@ -13,8 +13,9 @@ public class SFXProjectileBoltDelayCast : SFXProjectileBolt {
     }
     protected override bool OnHitTargetCanPenetrate(RaycastHit hit, HitCheckBase entity)
     {
+        bool canPenetrate = base.OnHitTargetCanPenetrate(hit, entity);
         SetLifeTime(F_DelayDuration);
-        return base.OnHitTargetCanPenetrate(hit, entity);
+        return canPenetrate;
     }
     protected override void OnRecycle()
     {
