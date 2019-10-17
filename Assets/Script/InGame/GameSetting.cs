@@ -1470,11 +1470,7 @@ namespace GameSetting
             if (damageInfo.m_detail.I_SourceID <= 0)
                 return;
 
-            if (damageInfo.m_detail.I_SourceID == m_Player.I_EntityID || GameManager.Instance.GetEntity(damageInfo.m_detail.I_SourceID).m_SpawnerEntityID == m_Player.I_EntityID)
-            {
-                if (amountApply > 0)
-                    AddActionEnergy(GameExpression.GetActionEnergyRevive(amountApply));
-            }
+            OnCharacterHealthChangeAddPlayerEnergy(damageInfo.m_detail.I_SourceID, damageEntity,amountApply);
 
             if (damageInfo.m_detail.I_SourceID == m_Player.I_EntityID)
             {
@@ -1487,6 +1483,15 @@ namespace GameSetting
             {
                 m_ActionEquiping.Traversal((ActionBase action) => { action.OnReceiveDamage(damageInfo, amountApply); });
             }
+        }
+
+        void OnCharacterHealthChangeAddPlayerEnergy(int sourceID,EntityCharacterBase entity,float amountApply)
+        {
+            if (amountApply<=0||entity.b_isSubEntity)
+                return;
+
+            if (sourceID == m_Player.I_EntityID || GameManager.Instance.GetEntity(sourceID).m_SpawnerEntityID == m_Player.I_EntityID)
+                    AddActionEnergy(GameExpression.GetActionEnergyRevive(amountApply));
         }
         #endregion
 
