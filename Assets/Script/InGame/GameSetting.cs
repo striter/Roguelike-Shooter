@@ -53,7 +53,7 @@ namespace GameSetting
         public const int I_HealthPickupAmount = 25;
         public const int I_ArmorPickupAmount = 25;
 
-        public const int I_HealthTradeAmount = 20;
+        public const int I_HealthTradeAmount = 50;
 
         public const float F_LevelTileSize = 2f;        //Cube Size For Level Tiles
     }
