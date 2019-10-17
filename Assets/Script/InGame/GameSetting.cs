@@ -53,6 +53,8 @@ namespace GameSetting
         public const int I_HealthPickupAmount = 25;
         public const int I_ArmorPickupAmount = 25;
 
+        public const int I_HealthTradeAmount = 20;
+
         public const float F_LevelTileSize = 2f;        //Cube Size For Level Tiles
     }
 
@@ -1360,11 +1362,6 @@ namespace GameSetting
             m_ActionEquiping.Traversal((ActionBase action) => { if (action.m_ActionType != enum_ActionType.WeaponPerk) action.ForceExpire(); });
             m_ActionInPool.Clear();
             ClearHoldingActions();
-        }
-        public override void OnDead()
-        {
-            m_ActionEquiping.Traversal((ActionBase action) => { if (action.m_ActionType != enum_ActionType.WeaponPerk) action.ForceExpire(); });
-            base.OnDead();
         }
 
         protected override void Reset()
