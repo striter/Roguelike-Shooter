@@ -10,6 +10,7 @@ public class InteractPickupAmount : InteractPickup {
     Transform m_moveTowards;
     public virtual InteractPickupAmount Play(float amount, Transform moveTowards)
     {
+        base.Play();
         m_speed = 0;
         m_moveAble = false;
         m_moveTowards = moveTowards;
