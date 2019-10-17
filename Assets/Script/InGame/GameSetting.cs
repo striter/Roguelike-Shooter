@@ -731,7 +731,6 @@ namespace GameSetting
         float f_damageTickTime;
         float f_damagePerTick;
         int i_damageType;
-        bool b_stun;
         public int m_Index => index;
         public enum_ExpireRefreshType m_AddType => (enum_ExpireRefreshType)i_addType;
         public float m_ExpireDuration => f_expireDuration;
