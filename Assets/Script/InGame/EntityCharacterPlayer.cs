@@ -266,6 +266,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         else
             m_WeaponCurrent.m_WeaponAction.Upgrade();
         m_PlayerInfo.OnAttachWeapon(m_WeaponCurrent);
+        OnWeaponStatus();
     }
     #endregion
     #region UI Indicator
