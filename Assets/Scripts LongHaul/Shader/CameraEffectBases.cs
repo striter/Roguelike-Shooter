@@ -327,11 +327,25 @@ public class CommandBufferBase:CameraEffectBase
     }
 }
 
+public class CB_GenerateOpaqueTexture:CommandBufferBase
+{
+    readonly int ID_GlobalOpaqueTexture = Shader.PropertyToID("_CameraOpaqueTexture");
+    protected override CameraEvent m_BufferEvent => CameraEvent.AfterSkybox;
+    readonly int ID_TempTexture1 = Shader.PropertyToID("_UIBlurTempRT1");
+    public override void OnSetEffect(CameraEffectManager _manager)
+    {
+        base.OnSetEffect(_manager);
+        m_Buffer.GetTemporaryRT(ID_TempTexture1,0,0,0, FilterMode.Bilinear);
+        m_Buffer.Blit(BuiltinRenderTextureType.CurrentActive,ID_TempTexture1);
+        m_Buffer.SetGlobalTexture(ID_GlobalOpaqueTexture, ID_TempTexture1);
+    }
+}
+
 public class CB_GenerateOverlayUIGrabBlurTexture : CommandBufferBase
 {
     public PE_GaussianBlur m_GaussianBlur { get; private set; }
     protected override CameraEvent m_BufferEvent => CameraEvent.BeforeImageEffects;
-    readonly int ID_GlobalBlurTexure = Shader.PropertyToID("_UIOverlayGrabBlurTex");
+    readonly int ID_GlobalBlurTexure = Shader.PropertyToID("_CameraUIOverlayBlurTexture");
     readonly int ID_TempTexture1 = Shader.PropertyToID("_UIBlurTempRT1");
     readonly int ID_TempTexture2 = Shader.PropertyToID("_UIBlurTempRT2");
     public override void OnSetEffect(CameraEffectManager _manager)

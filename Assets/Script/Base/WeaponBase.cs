@@ -110,6 +110,7 @@ public class WeaponBase : MonoBehaviour {
             if (Physics.Raycast(m_Attacher.tf_Head.position, spreadDirection, out hit, GameConst.I_ProjectileMaxDistance, GameLayer.Mask.I_All) &&  GameManager.B_CanHitTarget(hit.collider.Detect(),m_Attacher.I_EntityID))
                 endPosition = hit.point;
             spreadDirection = (endPosition - m_Muzzle.position).normalized;
+            spreadDirection.y = 0;
 
             SFXProjectile projectile = GameObjectManager.SpawnEquipment<SFXProjectile>(m_WeaponInfo.m_Index, m_Muzzle.position, spreadDirection);
             projectile.F_Speed = F_Speed;
