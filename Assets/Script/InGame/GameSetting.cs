@@ -160,6 +160,8 @@ namespace GameSetting
 
         public const float F_UIMaxArmor = 100f;
         public const float F_MapAnimateTime = 1.6f;
+
+        public const float F_UIDamageStartOffset = 5f;
     }
 
     public static class UIExpression
