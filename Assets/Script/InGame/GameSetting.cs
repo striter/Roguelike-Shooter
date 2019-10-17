@@ -745,7 +745,6 @@ namespace GameSetting
         public float m_DamageTickTime => f_damageTickTime;
         public float m_DamagePerTick => f_damagePerTick;
         public enum_DamageType m_DamageType => (enum_DamageType)i_damageType;
-        public bool m_Stun => b_stun;
         public void InitOnValueSet()
         {
             f_movementSpeedMultiply = f_movementSpeedMultiply > 0 ? f_movementSpeedMultiply / 100f : 0;
@@ -1192,7 +1191,6 @@ namespace GameSetting
         public void AddBuff(int sourceID, SBuff buffInfo)
         {
             BuffBase buff = new BuffBase(sourceID, buffInfo, OnReceiveDamage, OnExpireElapsed);
-            OnSetEffect(enum_CharacterEffect.Freeze, buff.m_StunDuration);
             switch (buff.m_RefreshType)
             {
                 case enum_ExpireRefreshType.AddUp:
@@ -1257,8 +1255,8 @@ namespace GameSetting
             //Refresh Or Add Effects
             for (int i = 0; i < m_Expires.Count; i++)
             {
-                if (m_Expires[i].m_EffectIndex <= 0)
-                    return;
+                if (m_Expires[i].m_EffectIndex <= 0||m_Expires[i].m_ExpireDuration<=0)
+                    continue;
 
                 SFXBuffEffect particle = m_BuffEffects.Find(p => p.I_SFXIndex == m_Expires[i].m_EffectIndex);
 
@@ -1690,7 +1688,6 @@ namespace GameSetting
         public override float m_MovementSpeedMultiply => m_buffInfo.m_MovementSpeedMultiply;
         public override float m_ReloadRateMultiply => m_buffInfo.m_ReloadRateMultiply;
         public override float m_HealthDrainMultiply => m_buffInfo.m_HealthDrainMultiply;
-        public float m_StunDuration => m_buffInfo.m_Stun ? m_buffInfo.m_ExpireDuration : 0f;
         SBuff m_buffInfo;
         Func<DamageInfo, bool> OnDOTDamage;
         int I_SourceID;

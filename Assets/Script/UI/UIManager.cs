@@ -16,7 +16,7 @@ public class UIManager :SimpleSingletonMono<UIManager>,ISingleCoroutine
     public static void Activate(bool inGame) => TResources.InstantiateUIManager().Init(inGame);
     public Camera m_Camera { get; private set; }
     public CameraEffectManager m_Effect { get; private set; }
-    CB_GenerateGlobalGaussianBlurTexture m_Blur;
+    CB_GenerateOverlayUIGrabBlurTexture m_Blur;
     protected void Init(bool inGame)
     {
         m_commonSprites = TResources.GetUIAtlas_Common();
@@ -41,7 +41,7 @@ public class UIManager :SimpleSingletonMono<UIManager>,ISingleCoroutine
 
         m_Camera = transform.Find("UICamera").GetComponent<Camera>();
         m_Effect = m_Camera.GetComponent<CameraEffectManager>();
-        m_Blur = m_Effect.GetOrAddCameraEffect<CB_GenerateGlobalGaussianBlurTexture>();
+        m_Blur = m_Effect.GetOrAddCameraEffect<CB_GenerateOverlayUIGrabBlurTexture>();
         m_Blur.SetEffect(1, 2f, 2);
 
         m_TouchDelta = cvs_Camera.GetComponent<TouchDeltaManager>();

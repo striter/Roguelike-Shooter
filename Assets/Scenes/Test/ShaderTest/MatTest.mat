@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: MatTest
-  m_Shader: {fileID: 4800000, guid: ade4537e8b0fa8c42816cfdbd36e719e, type: 3}
+  m_Shader: {fileID: 4800000, guid: bd40870333ae8b84e8a09945cdd24e59, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -77,8 +77,10 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
+    - _SubMultiply: 0.5
+    - _TexScale: 8
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.52205884, g: 0.96044624, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}

@@ -26,7 +26,6 @@ public class SFXParticles : SFXBase
         if (B_PlayOnAwake)
             PlayParticles();
     }
-
     protected override void SetLifeTime(float duration) => base.SetLifeTime(duration + GameConst.F_ParticlesMaxStopTime);
     public void ResetParticles()
     {
