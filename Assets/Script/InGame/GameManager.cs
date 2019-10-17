@@ -252,7 +252,7 @@ public class GameManager : GameManagerBase
                 break;
             case enum_TileType.BattleTrade:
                 {
-                    if (false)//TCommon.RandomBool())
+                    if (TCommon.RandomBool(m_GameLevel.m_GameSeed))
                     {
                         ActionBase action = GameDataManager.CreateRandomPlayerAction(m_GameLevel.m_GameStage.GetBattleTradeActionRarity(), m_GameLevel.m_GameSeed);
                         GameObjectManager.SpawnInteract<InteractContainerBattle>(enum_Interaction.ContainerBattle, Vector3.zero, LevelManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(OnBattleStart, GameObjectManager.SpawnInteract<InteractPickupAction>(enum_Interaction.PickupAction, Vector3.zero, LevelManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(action));
