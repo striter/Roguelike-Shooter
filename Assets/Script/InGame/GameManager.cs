@@ -107,11 +107,11 @@ public class GameManager : GameManagerBase
             m_LocalPlayer.m_PlayerInfo.AddActionEnergy(1);
 
         if (Input.GetKeyDown(KeyCode.Keypad1) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
-            GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupCoin, LevelManager.NavMeshPosition(hit.point, false), null).Play(10, m_LocalPlayer.transform);
+            GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupCoin, LevelManager.NavMeshPosition(hit.point, false), LevelManager.Instance.m_InteractParent).Play(10, m_LocalPlayer.transform);
         if (Input.GetKeyDown(KeyCode.Keypad2) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
-            GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupArmor, LevelManager.NavMeshPosition(hit.point, false), null).Play(10, m_LocalPlayer.transform);
+            GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupArmor, LevelManager.NavMeshPosition(hit.point, false), LevelManager.Instance.m_InteractParent).Play(10, m_LocalPlayer.transform);
         if (Input.GetKeyDown(KeyCode.Keypad3) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
-            GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupHealth, LevelManager.NavMeshPosition(hit.point, false), null).Play(10, m_LocalPlayer.transform);
+            GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupHealth, LevelManager.NavMeshPosition(hit.point, false), LevelManager.Instance.m_InteractParent).Play(10, m_LocalPlayer.transform);
     }
     #endregion
 #endif
@@ -295,14 +295,14 @@ public class GameManager : GameManagerBase
         EntityCharacterAI target = entity as EntityCharacterAI;
 
         if (m_GameLevel.m_actionGenerate.CanGenerateHealth(target.E_EnermyType))
-            GameObjectManager.SpawnInteract<InteractPickupHealth>(enum_Interaction.PickupHealth, LevelManager.NavMeshPosition(entity.transform.position, false), LevelManager.Instance.m_currentLevel.m_Level.transform).Play(GameConst.I_HealthPickupAmount, m_LocalPlayer.transform);
+            GameObjectManager.SpawnInteract<InteractPickupHealth>(enum_Interaction.PickupHealth, LevelManager.NavMeshPosition(entity.transform.position, false)).Play(GameConst.I_HealthPickupAmount, m_LocalPlayer.transform);
 
         if (m_GameLevel.m_actionGenerate.CanGenerateArmor(target.E_EnermyType))
-            GameObjectManager.SpawnInteract<InteractPickupArmor>(enum_Interaction.PickupArmor, LevelManager.NavMeshPosition(entity.transform.position, false), LevelManager.Instance.m_currentLevel.m_Level.transform).Play(GameConst.I_ArmorPickupAmount,m_LocalPlayer.transform);
+            GameObjectManager.SpawnInteract<InteractPickupArmor>(enum_Interaction.PickupArmor, LevelManager.NavMeshPosition(entity.transform.position, false)).Play(GameConst.I_ArmorPickupAmount,m_LocalPlayer.transform);
         
         int coinAmount = m_GameLevel.m_actionGenerate.GetCoinGenerate(target.E_EnermyType);
         if (coinAmount != -1)
-            GameObjectManager.SpawnInteract<InteractPickupCoin>(enum_Interaction.PickupCoin, LevelManager.NavMeshPosition(entity.transform.position, false), null).Play(coinAmount,m_LocalPlayer.transform);
+            GameObjectManager.SpawnInteract<InteractPickupCoin>(enum_Interaction.PickupCoin, LevelManager.NavMeshPosition(entity.transform.position, false)).Play(coinAmount,m_LocalPlayer.transform);
     }
     #endregion
     #region Entity Management

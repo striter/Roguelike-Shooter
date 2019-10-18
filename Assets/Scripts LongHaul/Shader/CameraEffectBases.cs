@@ -247,18 +247,21 @@ public class PE_FocalDepth : PostEffectBase
         m_GaussianBlur = new PE_GaussianBlur();
         m_GaussianBlur.OnSetEffect(_manager);
     }
-    public void SetEffect(float focalWidth,int downSample=2)
+    public void SetEffect(int downSample=2)
     {
         m_GaussianBlur.SetEffect(2, 3, downSample);
         m_TempTexture = RenderTexture.GetTemporary(m_Manager.m_Camera.scaledPixelHeight >> downSample, m_Manager.m_Camera.scaledPixelWidth >> downSample);
         m_Material.SetTexture("_BlurTex",m_TempTexture);
-        m_Material.SetFloat("_FocalWidth", focalWidth);
     }
-    public void SetFocalTarget(Vector3 focalTarget)
+    public void SetFocalTarget(Vector3 focalTarget, float focalWidth)
     {
-        m_Material.SetFloat("_FocalDepth", Get01Depth(focalTarget));
+        float _01Depth = Get01Depth(focalTarget);
+        float _01Width = Get01DepthWidth(focalWidth);
+        m_Material.SetFloat("_FocalDepthStart",_01Depth-_01Width );
+        m_Material.SetFloat("_FocalDepthEnd", _01Depth+_01Width);
     }
-    protected float Get01Depth(Vector3 target) =>Vector3.Distance(m_Manager.m_Camera.transform.position, target);
+    protected float Get01Depth(Vector3 target) =>m_Manager.m_Camera.WorldToViewportPoint(target).z/(m_Manager.m_Camera.farClipPlane-m_Manager.m_Camera.nearClipPlane);
+    protected float Get01DepthWidth(float width) => width / (m_Manager.m_Camera.farClipPlane - m_Manager.m_Camera.nearClipPlane);
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
         m_GaussianBlur.OnRenderImage(source, m_TempTexture);
