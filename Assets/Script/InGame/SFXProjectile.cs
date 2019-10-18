@@ -108,10 +108,14 @@ public class SFXProjectile : SFXBase
     }
     #region Physics
     protected virtual bool CanHitTarget(HitCheckBase hitCheck) => !m_EntityHitted.Contains(hitCheck.I_AttacherID) && GameManager.B_CanHitTarget(hitCheck, m_sourceID);
-    protected bool OnHitTargetBreak(RaycastHit hit, HitCheckBase hitCheck)
+    protected bool OnHitTargetBreak(RaycastHit hitInfo, HitCheckBase hitCheck)
     {
-        SpawnImpact(hit, hitCheck);
-        if ( OnHitTargetCanPenetrate(hit, hitCheck)&& B_Penetrate)
+        bool hitSource = hitInfo.point == Vector3.zero;
+        Vector3 hitPoint = hitSource ? transform.position : hitInfo.point;
+        Vector3 hitNormal = hitSource ? -transform.forward : hitInfo.normal;
+        SpawnImpact(hitPoint, hitNormal);
+        SpawnHitMark(hitPoint,hitNormal,hitCheck);
+        if ( OnHitTargetCanPenetrate(hitInfo, hitCheck)&& B_Penetrate)
             return false;
 
         if (B_DisablePhysicsOnHit) B_SimulatePhysics = false;
@@ -149,25 +153,25 @@ public class SFXProjectile : SFXBase
         m_Indicator = GameObjectManager.SpawnIndicator(I_IndicatorIndex, position, direction);
         m_Indicator.Play(m_sourceID, duration);
     }
-    protected void SpawnImpact(RaycastHit hitInfo, HitCheckBase hitParent)
+    protected void SpawnImpact(Vector3 hitPoint,Vector3 hitNormal)
     {
-        bool hitSource = hitInfo.point == Vector3.zero;
-        Vector3 hitPoint = hitSource ? transform.position : hitInfo.point;
-        Vector3 hitNormal = hitSource ? -transform.forward : hitInfo.normal;
+        if (I_ImpactIndex < 0)
+            return;
 
-        if (I_ImpactIndex > 0)
-             GameObjectManager.SpawnParticles<SFXImpact>(I_ImpactIndex,hitPoint,hitNormal, null).Play(m_sourceID);
+        GameObjectManager.SpawnParticles<SFXImpact>(I_ImpactIndex,hitPoint,hitNormal, null).Play(m_sourceID);
+    }
+    protected void SpawnHitMark(Vector3 hitPoint,Vector3 hitNormal,HitCheckBase hitParent)
+    {
+        if (I_HitMarkIndex <= 0)
+            return;
 
-        if (I_HitMarkIndex > 0)
+        bool showhitMark = GameExpression.B_ShowHitMark(hitParent.m_HitCheckType);
+        if (showhitMark)
         {
-            bool showhitMark = GameExpression.B_ShowHitMark(hitParent.m_HitCheckType);
-            if (showhitMark)
-            {
-                SFXHitMark hitMark= GameObjectManager.SpawnParticles<SFXHitMark>(I_HitMarkIndex,hitPoint,hitNormal, hitParent.transform);
-                hitMark.Play(m_sourceID);
-                if (hitParent.m_HitCheckType == enum_HitCheck.Entity)
-                    (hitParent as HitCheckEntity).AttachHitMark(hitMark);
-            }
+            SFXHitMark hitMark = GameObjectManager.SpawnParticles<SFXHitMark>(I_HitMarkIndex, hitPoint, hitNormal, hitParent.transform);
+            hitMark.Play(m_sourceID);
+            if (hitParent.m_HitCheckType == enum_HitCheck.Entity)
+                (hitParent as HitCheckEntity).AttachHitMark(hitMark);
         }
     }
 
