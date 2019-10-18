@@ -1639,6 +1639,11 @@ namespace GameSetting_Action
         public override float Value1 => ActionData.P_40018_DamageMultiply(m_rarity);
         public override float m_DamageMultiply => burstShot ? Value1 / 100f : 0f;
         bool burstShot = false;
+        public override void OnFire(int identity)
+        {
+            base.OnFire(identity);
+            burstShot = false;
+        }
         public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
             base.OnAfterDealtDemage(receiver, info, applyAmount);
