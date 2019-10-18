@@ -38,6 +38,6 @@ public class UI_ActionStorage : UIPageBase {
         if (showStored)
             return;
 
-        m_Info.TryUseAction(index);
+        m_Info.TryUseHoldingAction(index);
     }
 }

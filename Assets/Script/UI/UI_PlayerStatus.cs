@@ -296,7 +296,7 @@ public class UI_PlayerStatus : UIToolsBase
     }
     void OnActionClick(int index)
     {
-        m_Player.m_PlayerInfo.TryUseAction(index);
+        m_Player.m_PlayerInfo.TryUseHoldingAction(index);
     }
     void OnActionPressDuration()
     {

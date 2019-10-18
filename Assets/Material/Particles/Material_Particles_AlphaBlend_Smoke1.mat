@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Material_Particles_AlphaBlend_Smoke1
-  m_Shader: {fileID: 4800000, guid: ad61477901681d84ea82fb9824a76f8a, type: 3}
+  m_Shader: {fileID: 4800000, guid: 34bc86830d6f22a45a58103bc354f6c6, type: 3}
   m_ShaderKeywords: _EMISSION
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0

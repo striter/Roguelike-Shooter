@@ -63,6 +63,7 @@ namespace GameSetting
     {
         public static int GetPlayerEquipmentIndex(int actionIndex) => actionIndex * 10;
         public static int GetAIEquipmentIndex(int entityIndex, int weaponIndex = 0, int subWeaponIndex = 0) => entityIndex * 100 + weaponIndex * 10 + subWeaponIndex;
+        public static int GetActionMuzzleIndex(enum_ActionType type) => 10010 + (int)type;
 
         public static float F_PlayerSensitive(int sensitiveTap) => sensitiveTap / 5f;
         public static float F_GameVFXVolume(int vfxVolumeTap) => vfxVolumeTap / 10f;
@@ -1365,6 +1366,7 @@ namespace GameSetting
         public void OnUseAcion(ActionBase targetAction)
         {
             m_ActionEquiping.Traversal((ActionBase action) => {action.OnAddActionElse(targetAction); });
+            GameObjectManager.SpawnParticles<SFXParticles>(GameExpression.GetActionMuzzleIndex(targetAction.m_ActionType), m_Player.transform.position, Vector3.up).Play(m_Player.I_EntityID);
             OnAddAction(targetAction);
         }
         protected void OnAddAction(ActionBase targetAction)
@@ -1488,7 +1490,7 @@ namespace GameSetting
 
         #region Action Interact
         public bool B_EnergyCostable(ActionBase action) => m_ActionEnergy >= action.I_Cost;
-        public bool TryUseAction(int index)
+        public bool TryUseHoldingAction(int index)
         {
             ActionBase action = m_ActionHolding[index];
             if (b_shuffling||!B_EnergyCostable(action))
