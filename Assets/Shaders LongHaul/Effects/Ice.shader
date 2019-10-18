@@ -18,12 +18,13 @@
 				#pragma fragment frag
 				#include "UnityCG.cginc"
 				#include "Lighting.cginc"
-			sampler2D _CameraOpaqueTexture;
-			sampler2D _MainTex;
-			float4 _MainTex_ST;
-			float4 _Color;
-			float _OpacityMultiple;
-			float4 _IceColor;
+				sampler2D _CameraOpaqueTexture;
+				sampler2D _MainTex;
+				float4 _MainTex_ST;
+				float4 _Color;
+				float _OpacityMultiple;
+				float4 _IceColor;
+
 			struct appdata
 			{
 				float4 vertex : POSITION;
