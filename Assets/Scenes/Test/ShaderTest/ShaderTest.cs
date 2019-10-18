@@ -6,7 +6,10 @@ public class ShaderTest : MonoBehaviour {
     public GameObject target;
 	// Use this for initialization
 	void Start () {
-        CameraController.Instance.m_Effect.GetOrAddCameraEffect<CB_GenerateGlobalGaussianBlurTexture>().SetEffect(3,2f,2);
-	}
+    GetComponent<CameraEffectManager>().GetOrAddCameraEffect<CB_GenerateOpaqueTexture>();
+        PE_FocalDepth focal= GetComponent<CameraEffectManager>().GetOrAddCameraEffect<PE_FocalDepth>();
+        focal.SetEffect(2);
+        focal.SetFocalTarget(target.transform.position,2f);
+    }
 	
 }

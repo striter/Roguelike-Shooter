@@ -59,5 +59,5 @@ public class TPSCameraController : CameraController
     }
 
     public void AddRecoil(Vector3 _recoil)=> v3_Recoil += _recoil;
-    public void AddShake(float shakeAmount)=> v3_Shake += TCommon.RandomVector(shakeAmount);
+    public void AddShake(float shakeAmount)=> v3_Shake += TCommon.RandomVector3(shakeAmount);
 }

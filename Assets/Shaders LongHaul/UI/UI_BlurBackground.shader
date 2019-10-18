@@ -49,7 +49,7 @@
 #include "UnityCG.cginc"
 		sampler2D _MainTex;
 	float4 _Color;
-	sampler2D _GlobalBlurTexture;
+	sampler2D _CameraUIOverlayBlurTexture;
 
 	struct a2f
 	{
@@ -76,7 +76,7 @@
 	}
 	fixed4 frag(v2f v) :COLOR
 	{
-	return  tex2D(_GlobalBlurTexture,v.screenPos)*v.color;
+	return  tex2D(_CameraUIOverlayBlurTexture,v.screenPos)*v.color;
 	}
 	ENDCG
 	}

@@ -52,13 +52,10 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     }
     protected virtual void Update()
     {
-        if (m_Health.b_IsDead)
-            return;
-
         m_CharacterInfo.Tick(Time.deltaTime);
-        m_Health.SetMaxHealth(m_CharacterInfo.F_MaxHealthAdditive);
-
-        m_Effect.SetCloak(m_CharacterInfo.B_Effecting( enum_CharacterEffect.Cloak));
+        m_Health.OnMaxHealthAdditive(m_CharacterInfo.F_MaxHealthAdditive);
+        m_Effect.SetCloak(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Cloak));
+        m_Effect.SetFreezed(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Freeze));
         m_Effect.SetScaned(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Scan));
     }
 
@@ -113,9 +110,10 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
 
     class EntityCharacterEffectManager:ISingleCoroutine
     {
-        Shader SD_Opaque,SD_Outline;
+        Shader SD_OpaqueBase,SD_EffectBase;
         static readonly Shader SD_Transparent = Shader.Find("Game/Common/Diffuse_Texture_Transparent");
         static readonly Shader SD_Scan = Shader.Find("Game/Extra/ScanEffect");
+        static readonly Shader SD_Ice = Shader.Find("Game/Effect/Ice");
         static readonly int ID_Color = Shader.PropertyToID("_Color");
         static readonly int ID_Amount1=Shader.PropertyToID("_Amount1");
         static readonly int ID_Alpha = Shader.PropertyToID("_Alpha");
@@ -124,22 +122,23 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
 
         bool m_cloaked;
         bool m_scaned;
+        bool m_freezed;
         public EntityCharacterEffectManager(Renderer[] _skin)
         {
             Material materialBase= _skin[0].materials[0];
             Material materialEffect = _skin[0].materials[1];
             m_Materials = new Material[2] { materialBase, materialEffect };
             _skin.Traversal((Renderer renderer) => { renderer.materials = m_Materials;  });
-            SD_Opaque = materialBase.shader;
-            SD_Outline = materialEffect.shader;
+            SD_OpaqueBase = materialBase.shader;
+            SD_EffectBase = materialEffect.shader;
         }
 
         public void OnReset()
         {
             m_scaned = false;
             m_cloaked = false;
-            m_Materials[0].shader = SD_Opaque;
-            m_Materials[1].shader = SD_Outline;
+            m_Materials[0].shader = SD_OpaqueBase;
+            m_Materials[1].shader = SD_EffectBase;
             m_Materials.Traversal((Material mat) => { mat.SetFloat(ID_Amount1, 0); });
         }
 
@@ -154,6 +153,25 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
             m_Materials[1].SetFloat(ID_Amount1, value);
         }
 
+        public void SetScaned(bool _scaned)
+        {
+            if (m_scaned == _scaned)
+                return;
+
+            m_scaned = _scaned;
+            m_Materials[1].shader = m_scaned ? SD_Scan : SD_EffectBase;
+        }
+        public void SetFreezed(bool _freezed)
+        {
+            if (m_freezed == _freezed)
+                return;
+            m_freezed = _freezed;
+            m_Materials[0].shader = m_freezed ? SD_Ice : SD_OpaqueBase;
+            if (!_freezed)
+                return;
+            m_Materials[0].SetColor("_IceColor", TCommon.HexToColor("3DAEC5FF"));
+            m_Materials[0].SetFloat("_Opacity", .5f);
+        }
         public void SetCloak(bool _cloacked)
         {
             if (m_cloaked == _cloacked)
@@ -171,17 +189,8 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
             }
             else
             {
-                this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) =>{ m_Materials[0].SetFloat(ID_Alpha, value); }, .3f, 1f, .3f, () => {   m_Materials[0].shader = SD_Opaque; }));
+                this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) =>{ m_Materials[0].SetFloat(ID_Alpha, value); }, .3f, 1f, .3f, () => {   m_Materials[0].shader = SD_OpaqueBase; }));
             }
-        }
-
-        public void SetScaned(bool _scaned)
-        {
-            if (m_scaned == _scaned)
-                return;
-
-            m_scaned = _scaned;
-            m_Materials[1].shader = m_scaned ? SD_Scan : SD_Outline;
         }
 
         public void OnHit(enum_HealthChangeMessage type)

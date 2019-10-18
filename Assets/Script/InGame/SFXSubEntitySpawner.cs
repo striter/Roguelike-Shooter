@@ -14,6 +14,6 @@ public class SFXSubEntitySpawner : SFXParticles {
         OnSpawn?.Invoke(entity);
         entity.m_CharacterInfo.AddDamageOverride(_damageInfoOverride);
         if (B_ApplyDOTOnSpawn)
-            entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Common,DamageDeliverInfo.BuffInfo(-1,SBuff.CreateSubEntityDOTBuff(1f,20f))));
+            entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic,DamageDeliverInfo.BuffInfo(-1,SBuff.SystemSubEntityDOTInfo(1f,20f))));
     }
 }

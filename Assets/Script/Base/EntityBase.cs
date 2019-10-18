@@ -21,7 +21,6 @@ public class EntityBase : MonoBehaviour
     {
         I_PoolIndex = _poolIndex;
         m_HitChecks = GetComponentsInChildren<HitCheckEntity>();
-        m_HitChecks.Traversal((HitCheckEntity check) => { check.Attach(this, OnReceiveDamage); });
         m_Health = GetHealthManager();
     }
     public virtual void OnActivate( enum_EntityFlag _flag, float startHealth =0)
@@ -29,6 +28,7 @@ public class EntityBase : MonoBehaviour
         m_Flag = _flag;
         ActivateHealthManager(startHealth>0? startHealth:I_MaxHealth);
         I_EntityID = GameIdentificationManager.I_EntityID(m_Flag);
+        m_HitChecks.Traversal((HitCheckEntity check) => { check.Attach(this, OnReceiveDamage); });
         EnableHitbox(true);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityActivate, this);
     }

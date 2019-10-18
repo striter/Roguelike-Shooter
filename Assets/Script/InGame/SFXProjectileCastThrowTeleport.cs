@@ -8,7 +8,7 @@ public class SFXProjectileCastThrowTeleport : SFXProjectileCastThrowable {
     {
         if (b_trigger)
             return;
-
-       GameManager.Instance.GetEntity(I_SourceID).transform.position=LevelManager.NavMeshPosition(point, true);
+        SpawnImpact(point, Vector3.up);
+        GameManager.Instance.GetEntity(I_SourceID).transform.position=LevelManager.NavMeshPosition(point, true);
     }
 }

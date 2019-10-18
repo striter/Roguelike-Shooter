@@ -84,7 +84,7 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
     {
         if (I_BuffApplyOnCast > 0)
             info.AddExtraBuff( I_BuffApplyOnCast);
-        m_DamageInfo = new DamageInfo(F_Damage, enum_DamageType.Common, info);
+        m_DamageInfo = new DamageInfo(F_Damage, enum_DamageType.Basic, info);
     }
     protected override void Update()
     {

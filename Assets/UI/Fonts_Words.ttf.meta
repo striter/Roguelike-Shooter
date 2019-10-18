@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 403da07da3c46044b80c0eae676b693d
+guid: 33b33e104e497534b96a6eec75d8fa6a
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -8,10 +8,11 @@ TrueTypeFontImporter:
   characterSpacing: 0
   characterPadding: 1
   includeFontData: 1
-  fontName: Fonts
+  fontName: gamewords
   fontNames:
-  - Fonts
-  fallbackFontReferences: []
+  - gamewords
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 1b96cbe36b0a7534fae2fc86ef06f937, type: 3}
   customCharacters: 
   fontRenderingMode: 0
   ascentCalculationMode: 1

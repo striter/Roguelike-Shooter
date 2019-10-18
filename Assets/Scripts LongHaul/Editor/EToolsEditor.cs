@@ -61,10 +61,7 @@ namespace EToolsEditor
             private void Update()
             {
                 if (EditorApplication.isPlaying)
-                {
-                    Close();
                     return;
-                }
 
                 if (m_parent != Selection.activeObject)
                 {
@@ -77,6 +74,11 @@ namespace EToolsEditor
             private void OnGUI()
             {
                 EditorGUILayout.BeginVertical();
+                if (EditorApplication.isPlaying)
+                {
+                    EditorGUILayout.TextArea("Available Only In EDITOR Mode!");
+                    return;
+                }
                 if (m_parent == null)
                 {
                     EditorGUILayout.TextArea("Please Select Texts Parent Which PREFAB CONNECTED!");

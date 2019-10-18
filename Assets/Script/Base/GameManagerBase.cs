@@ -45,6 +45,7 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
         m_BSC = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_BSC>();
         m_BSC.SetEffect(1f, 1f, 1f);
         CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_BloomSpecific>().m_GaussianBlur.SetEffect(2, 10, 2);
+        CameraController.Instance.m_Effect.GetOrAddCameraEffect<CB_GenerateOpaqueTexture>();
         switch (_levelStyle)
         {
             case enum_Style.Undead:
@@ -227,13 +228,13 @@ public static class GameDataManager
                 return;
 
             m_AllActions.Add(action.m_Index, action);
-            if (action.m_ActionExpireType == enum_ActionType.WeaponPerk)
+            if (action.m_ActionType == enum_ActionType.WeaponPerk)
                 m_WeaponActions.Add(action.m_Index);
             else
                 m_PlayerActions.Add(action.m_Index);
         }, -1, enum_RarityLevel.Invalid);
     }
-    public static ActionBase CreateRendomWeaponAction(enum_RarityLevel level, System.Random seed) => CreateAction(m_WeaponActions.RandomItem(seed), level);
+    public static  ActionBase CreateRandomWeaponPerk(enum_RarityLevel level, System.Random seed) =>level==0?null: CreateAction(m_WeaponActions.RandomItem(seed), level) ;
     public static List<ActionBase> CreateRandomPlayerActions(int actionCount, enum_RarityLevel level, System.Random seed)
     {
         List<ActionBase> actions = new List<ActionBase>();
@@ -258,9 +259,10 @@ public static class GameDataManager
     public static List<ActionBase> CreateActions(List<ActionInfo> infos)
     {
         List<ActionBase> actions = new List<ActionBase>();
-        infos.Traversal((ActionInfo info) => { actions.Add(CreateAction(info.m_Index, info.m_Level)); });
+        infos.Traversal((ActionInfo info) => { actions.Add(CreateAction(info)); });
         return actions;
     }
+    public static ActionBase CreateAction(ActionInfo info) => info.m_IsNull ? null : CreateAction(info.m_Index, info.m_Level);
     public static ActionBase CreateAction(int actionIndex, enum_RarityLevel level)
     {
         if (!m_AllActions.ContainsKey(actionIndex))

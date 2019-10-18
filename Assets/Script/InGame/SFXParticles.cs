@@ -6,7 +6,6 @@ using UnityEngine;
 public class SFXParticles : SFXBase
 {
     protected ParticleSystem[] m_Particles { get; private set; }
-    protected float m_ParticleDuration { get; private set; }
     protected SFXRelativeBase[] m_relativeSFXs;
     protected virtual bool B_PlayOnAwake => true;
     protected virtual bool B_AutoStop => true;
@@ -18,21 +17,15 @@ public class SFXParticles : SFXBase
         m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.Init(); });
         m_Particles = transform.GetComponentsInChildren<ParticleSystem>();
         m_Particles.Traversal((ParticleSystem particle) => {
-            if (particle.main.duration > m_ParticleDuration)
-                m_ParticleDuration = particle.main.duration;
-
             particle.Stop();
         });
     }
     public virtual void Play(int sourceID,float duration=0)
     {
-        if (duration == 0)
-            duration = m_ParticleDuration;
         PlaySFX(sourceID,duration);
         if (B_PlayOnAwake)
             PlayParticles();
     }
-
     protected override void SetLifeTime(float duration) => base.SetLifeTime(duration + GameConst.F_ParticlesMaxStopTime);
     public void ResetParticles()
     {
@@ -48,7 +41,12 @@ public class SFXParticles : SFXBase
     protected override void Update()
     {
         base.Update();
-        if (B_AutoStop && B_ParticlesPlaying && f_timeLeft < GameConst.F_ParticlesMaxStopTime)
+        if (!B_ParticlesPlaying)
+            return;
+        if (!B_AutoStop)
+            SetLifeTime(f_duration);
+
+        if (B_AutoStop && f_timeLeft < GameConst.F_ParticlesMaxStopTime)
             StopParticles();
     }
     protected override void OnRecycle()

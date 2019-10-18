@@ -15,6 +15,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public InteractBase m_Interact { get; private set; }
     public EquipmentBase m_Equipment { get; private set; }
     public int m_EquipmentTimes { get; private set; }
+    public float m_EquipmentDistance { get; private set; }
     public override float m_baseMovementSpeed => F_MovementSpeed*( f_movementReductionCheck >0? (1-GameConst.F_AimMovementReduction*m_PlayerInfo.F_AimMovementStrictMultiply):1f);
     public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized* m_CharacterInfo.F_MovementSpeed * time;
     public PlayerInfoManager m_PlayerInfo { get; private set; }
@@ -93,6 +94,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         m_Equipment = null;
         m_EquipmentTimes = 0;
+        m_Health.OnRestoreArmor();
         m_PlayerInfo.OnBattleFinish();
     }
 
@@ -113,7 +115,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
                 return;
             }
         }
-
 
         if (m_WeaponCurrent != null)
             m_WeaponCurrent.Trigger(down);
@@ -228,12 +229,13 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     #endregion
     #region Equipment
     public void OnAddupEquipmentUseTime(int times) => m_EquipmentTimes += times;
-    public EquipmentBase AcquireEquipment(int actionIndex, Func<DamageDeliverInfo> OnDamageBuff)
+    public EquipmentBase AcquireEquipment(int actionIndex, Func<DamageDeliverInfo> OnDamageBuff,float throwDistance=10f)
     {
         OnMainButtonDown(false);
         EquipmentBase targetEquipment = EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(actionIndex), this, tf_WeaponHoldLeft, OnDamageBuff == null ? m_PlayerInfo.GetDamageBuffInfo : OnDamageBuff);
         m_EquipmentTimes = (m_Equipment == null || m_Equipment.I_Index == targetEquipment.I_Index) ? m_EquipmentTimes + 1 : 1;
         m_Equipment = targetEquipment;
+        m_EquipmentDistance = throwDistance;
         return m_Equipment;
     }
     public T AcquireEquipment<T>(int actionIndex, Func<DamageDeliverInfo> OnDamageBuff=null) where T : EquipmentBase=> AcquireEquipment(actionIndex,OnDamageBuff) as T;
@@ -243,7 +245,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (m_EquipmentTimes<=0||m_Equipment == null)
             return;
 
-        m_Equipment.Play(this, transform.position + transform.forward * 10);
+        m_Equipment.Play(this, transform.position + transform.forward * m_EquipmentDistance);
         m_Equipment.OnDeactivate();
 
         m_EquipmentTimes--;
@@ -252,9 +254,19 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     }
     #endregion
     #region Action
-    public void TestUseAction(int actionIndex)
+    public void TestUseAction(int actionIndex,enum_RarityLevel level)
     {
-        m_PlayerInfo.OnUseAcion(GameDataManager.CreateAction(actionIndex, enum_RarityLevel.Epic));
+        m_PlayerInfo.OnUseAcion(GameDataManager.CreateAction(actionIndex,level));
+    }
+    public void UpgradeWeaponPerk(ActionBase invalidPerk)
+    {
+        m_PlayerInfo.OnDetachWeapon();
+        if (m_WeaponCurrent.m_WeaponAction == null)
+            m_WeaponCurrent.OnSpawn(invalidPerk);
+        else
+            m_WeaponCurrent.m_WeaponAction.Upgrade();
+        m_PlayerInfo.OnAttachWeapon(m_WeaponCurrent);
+        OnWeaponStatus();
     }
     #endregion
     #region UI Indicator

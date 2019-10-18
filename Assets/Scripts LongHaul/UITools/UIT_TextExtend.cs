@@ -7,28 +7,27 @@ public class UIT_TextExtend : Text
     #region Localization
     public bool B_AutoLocalize = false;
     public string S_AutoLocalizeKey;
-    protected override void Awake()
+    protected override void OnEnable()
     {
-        base.Awake();
-        if(B_AutoLocalize)
-            TLocalization.OnLocaleChanged += OnKeyLocalize;
+        base.OnEnable();
+        TLocalization.OnLocaleChanged += OnKeyLocalize;
+    }
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+        TLocalization.OnLocaleChanged -= OnKeyLocalize;
     }
     protected override void Start()
     {
         base.Start();
-        if (B_AutoLocalize&&TLocalization.IsInit)
+        if (TLocalization.IsInit)
             OnKeyLocalize();
-    }
-    protected override void OnDestroy()
-    {
-        base.OnDestroy();
-        if(B_AutoLocalize)
-            TLocalization.OnLocaleChanged -= OnKeyLocalize;
     }
 
     void OnKeyLocalize()
     {
-        text = TLocalization.GetKeyLocalized(S_AutoLocalizeKey);
+        if(B_AutoLocalize)
+            text = TLocalization.GetKeyLocalized(S_AutoLocalizeKey);
     }
 
     public string formatText(string formatKey, params object[] subItems) => base.text = string.Format(TLocalization.GetKeyLocalized(formatKey), subItems);
@@ -38,6 +37,15 @@ public class UIT_TextExtend : Text
         set
         {
             text = TLocalization.GetKeyLocalized(value);
+        }
+    }
+    public string autoLocalizeText
+    {
+        set
+        {
+            S_AutoLocalizeKey = value;
+            B_AutoLocalize = true;
+            OnKeyLocalize();
         }
     }
     #endregion
