@@ -413,7 +413,7 @@ public class GameManager : GameManagerBase
         if (m_PlayerReviveHealing.Count > 0)
         {
             m_LocalPlayer.OnRevive(m_PlayerReviveHealing[m_PlayerReviveHealing.Count - 1].start, m_PlayerReviveHealing[m_PlayerReviveHealing.Count-1].length);
-            m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.BuffInfo(-1,SBuff.SystemPlayerReviveInfo(GameConst.F_PlayerReviveBuffDuration))));
+            m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.BuffInfo(-1,SBuff.SystemPlayerReviveInfo(GameConst.F_PlayerReviveBuffDuration,GameExpression.I_PlayerReviveBuffIndex))));
             m_PlayerReviveHealing.RemoveAt(m_PlayerReviveHealing.Count - 1);
             return;
         }
