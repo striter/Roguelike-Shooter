@@ -386,7 +386,7 @@ public class GameManager : GameManagerBase
         return !Instance.m_Entities.ContainsKey(sourceID) || targetHitCheck.m_Attacher.m_Flag != Instance.m_Entities[sourceID].m_Flag;
     }
     #endregion
-    #region PlayerManagement
+    #region Player Management
     List<RangeFloat> m_PlayerReviveHealing = new List<RangeFloat>();
     void OnCharacterDead(EntityCharacterBase character)
     {
@@ -413,7 +413,7 @@ public class GameManager : GameManagerBase
         if (m_PlayerReviveHealing.Count > 0)
         {
             m_LocalPlayer.OnRevive(m_PlayerReviveHealing[m_PlayerReviveHealing.Count - 1].start, m_PlayerReviveHealing[m_PlayerReviveHealing.Count-1].length);
-            m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.EquipmentInfo(-1, 0, enum_CharacterEffect.Cloak, 3f)));
+            m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.BuffInfo(-1,SBuff.SystemPlayerReviveInfo(3f))));
             m_PlayerReviveHealing.RemoveAt(m_PlayerReviveHealing.Count - 1);
             return;
         }
@@ -448,7 +448,7 @@ public class GameManager : GameManagerBase
 
     void WaveStart()
     {
-        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnWaveStart);
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnWaveStart, m_EntityGenerate.Count,m_CurrentWave);
         m_EntityGenerating.Clear();
         m_EntityGenerate[m_CurrentWave].m_EntityGenerate.Traversal((enum_CharacterType level, RangeInt range) =>
         {
@@ -524,6 +524,7 @@ public class GameManager : GameManagerBase
     }
     #endregion
 }
+
 #region External Tools Packaging Class
 public class GameLevelManager
 {

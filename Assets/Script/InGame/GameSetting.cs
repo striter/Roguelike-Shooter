@@ -75,7 +75,7 @@ namespace GameSetting
         public static Vector3 V3_RangeSpreadDirection(Vector3 aimDirection, float spread, Vector3 up, Vector3 right) => (aimDirection * GameConst.I_ProjectileSpreadAtDistance + up * UnityEngine.Random.Range(-spread, spread) + right * UnityEngine.Random.Range(-spread, spread)).normalized;
 
         public static int GetEquipmentSubIndex(int weaponIndex) => weaponIndex + 1;
-        public static SBuff GetEnermyGameDifficultyBuffIndex(int difficulty) => SBuff.CreateEntityBuff(difficulty, .05f * (difficulty - 1));
+        public static SBuff GetEnermyGameDifficultyBuffIndex(int difficulty) => SBuff.CreateEnermyChallengeDifficultyBuff(difficulty, .05f * (difficulty - 1));
         public static float GetAIBaseHealthMultiplier(int gameDifficulty) => 0.99f + 0.01f * gameDifficulty;
         public static float GetAIMaxHealthMultiplier(enum_StageLevel stageDifficulty) => (int)stageDifficulty ;
 
@@ -759,19 +759,10 @@ namespace GameSetting
         }
         //Normally In Excel 0-99
         //100-999
-        public static SBuff CreateSubEntityDOTBuff(float damageTickTime, float damagePerTick)
-        {
-            SBuff buff = new SBuff();
-            buff.index = 100;
-            buff.i_addType = (int)enum_ExpireRefreshType.Refresh;
-            buff.f_expireDuration = 0;
-            buff.f_damageTickTime = damageTickTime;
-            buff.f_damagePerTick = damagePerTick;
-            buff.i_damageType = (int)enum_DamageType.Basic;
-            return buff;
-        }
+        public static SBuff SystemSubEntityDOTInfo(float damageTickTime, float damagePerTick) => new SBuff(){ index = 100,i_addType = (int)enum_ExpireRefreshType.Refresh,f_expireDuration = 0,f_damageTickTime = damageTickTime,f_damagePerTick = damagePerTick, i_damageType = (int)enum_DamageType.Basic};
+        public static SBuff SystemPlayerReviveInfo(float duration) => new SBuff() { index = 101, i_addType = (int)enum_ExpireRefreshType.Refresh, f_expireDuration = duration, f_damageReduce = 1f };
         //1000-9999
-        public static SBuff CreateEntityBuff(int difficulty, float damageMultiply)
+        public static SBuff CreateEnermyChallengeDifficultyBuff(int difficulty, float damageMultiply)
         {
             SBuff buff = new SBuff();
             buff.index = 1000 + difficulty;
