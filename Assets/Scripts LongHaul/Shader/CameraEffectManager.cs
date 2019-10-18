@@ -87,6 +87,7 @@ public class CameraEffectManager :MonoBehaviour, ISingleCoroutine {
     }
     private void OnDestroy()
     {
+        RemoveAllPostEffect();
         RenderTexture.ReleaseTemporary(tempTexture2);
         RenderTexture.ReleaseTemporary(tempTexture1);
     }
