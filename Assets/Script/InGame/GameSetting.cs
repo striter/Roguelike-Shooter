@@ -1069,8 +1069,11 @@ namespace GameSetting
         public static DamageDeliverInfo DamageHitInfo(int sourceID, Action<EntityBase> OnHitEntity) => new DamageDeliverInfo() { I_SourceID = sourceID, I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), m_OnHitAction = OnHitEntity };
         public void SetOverrideEffect(enum_CharacterEffect damageEffect, float effectDuration)
         {
+            if (m_DamageEffect != damageEffect)
+                m_EffectDuration = 0;
+
+            m_EffectDuration += effectDuration;
             m_DamageEffect = damageEffect;
-            m_EffectDuration = effectDuration;
         }
         public void SetAdditiveDamage(float damageMultiply,float damageAdditive)
         {

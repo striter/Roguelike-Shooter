@@ -21,6 +21,7 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
         if (UIT_JoyStick.Instance == null || OnCanSendDelta == null)
             return;
 
+        m_rightDelta = Vector2.zero;
         foreach (Touch t in Input.touches)
         {
             if (t.phase == TouchPhase.Began)
@@ -35,7 +36,6 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
                 else if (m_TrackRight == null && !track.isLeft)
                 {
                     m_TrackRight = track;
-                    m_rightDelta = Vector2.zero;
                 }
             }
             else if (t.phase == TouchPhase.Ended||t.phase== TouchPhase.Canceled)
@@ -49,7 +49,6 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
                 if (m_TrackRight != null && t.fingerId == m_TrackRight.m_Touch.fingerId)
                 {
                     m_TrackRight = null;
-                    m_rightDelta = Vector2.zero;
                 }
             }
             else if (t.phase == TouchPhase.Moved)

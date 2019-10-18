@@ -62,11 +62,11 @@
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-				fixed4 albedo = tex2D(_MainTex, i.uv);
+				fixed4 albedo = tex2D(_MainTex, i.uv)*_Color;
 				float3 foreCol =  albedo+ _IceColor*i.rim;
 				fixed3 backCol = tex2D(_CameraOpaqueTexture, i.screenPos.xy / i.screenPos.w+i.refract).rgb;
 				float opacity = i.rim* _OpacityMultiple;
-				float3 finalCol = lerp(backCol, foreCol, opacity)*_Color;
+				float3 finalCol = lerp(backCol, foreCol, opacity);
 				return float4(finalCol, 1);
 			}
 			ENDCG
