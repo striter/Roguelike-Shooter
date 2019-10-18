@@ -17,7 +17,7 @@ namespace GameSetting
 
         public const float F_EntityDeadFadeTime = 3f;
         public const float F_PlayerReviveCheckAfterDead = 1.5f;
-        public const float F_PlayerReviveBuffDuration = 3f;
+        public const float F_PlayerReviveBuffDuration = 6f; //复活无敌时间
 
         public const int I_ActionHoldCount = 3;
         public const float F_MaxActionEnergy = 5f;
