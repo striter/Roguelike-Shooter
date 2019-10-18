@@ -95,7 +95,7 @@ namespace GameSetting
             {
                 default: Debug.LogError("No Coins Can Phrase Here!"); return new RangeInt(0, -1);
                 case enum_Interaction.PickupHealth:
-                    return new RangeInt(4, 2);
+                    return new RangeInt(10, 0);
                 case enum_Interaction.PickupAction:
                 case enum_Interaction.Weapon:
                     switch (level)
