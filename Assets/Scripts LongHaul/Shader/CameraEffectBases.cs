@@ -246,6 +246,10 @@ public class PE_FogDepthNoise : PE_FogDepth
         m_Material.SetFloat("_FogSpeedY", _fogSpeedY);
     }
 }
+public class PE_FocalDepth : PostEffectBase
+{
+
+}
 public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific Items
 {
     Camera m_RenderCamera;
