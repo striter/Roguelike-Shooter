@@ -753,6 +753,7 @@ namespace GameSetting_Action
     {
         public override int m_Index => 10022;
         public override int I_BaseCost => ActionData.I_10022_Cost;
+        public override int m_EffectIndex => 40003;
         public override enum_ActionType m_ActionType => enum_ActionType.Basic;
         public override float F_Duration => ActionData.F_10022_Duration(m_rarity);
         public override float Value1 => ActionData.P_10022_HealthRegenTranslateFromDamage;
