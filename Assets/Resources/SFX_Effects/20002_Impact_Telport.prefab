@@ -34,9 +34,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4418145767614864}
-  - component: {fileID: 114386415456463382}
+  - component: {fileID: 114510195938555350}
   m_Layer: 9
-  m_Name: 10305_Muzzle_Iceland5
+  m_Name: 20002_Impact_Telport
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -193,7 +193,7 @@ Transform:
   m_Father: {fileID: 4122452721592968}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114386415456463382
+--- !u!114 &114510195938555350
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -201,7 +201,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1374401761774840}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64dd4948c3b06694aaaa4b4d65a19f5b, type: 3}
+  m_Script: {fileID: 11500000, guid: 4323f6332e1c1a8449d1e3ebaa1d1335, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!198 &198300478690917790
