@@ -53,7 +53,7 @@ namespace GameSetting
         public const int I_HealthPickupAmount = 25;
         public const int I_ArmorPickupAmount = 25;
 
-        public const int I_HealthTradeAmount = 20;
+        public const int I_HealthTradeAmount = 50;
 
         public const float F_LevelTileSize = 2f;        //Cube Size For Level Tiles
     }
@@ -95,7 +95,7 @@ namespace GameSetting
             {
                 default: Debug.LogError("No Coins Can Phrase Here!"); return new RangeInt(0, -1);
                 case enum_Interaction.PickupHealth:
-                    return new RangeInt(4, 2);
+                    return new RangeInt(10, 0);
                 case enum_Interaction.PickupAction:
                 case enum_Interaction.Weapon:
                     switch (level)
@@ -163,7 +163,7 @@ namespace GameSetting
         public const float F_UIMaxArmor = 100f;
         public const float F_MapAnimateTime = 1.6f;
 
-        public const float F_UIDamageStartOffset = 5f;
+        public const float F_UIDamageStartOffset = 20f; //血显示区域范围
     }
 
     public static class UIExpression
