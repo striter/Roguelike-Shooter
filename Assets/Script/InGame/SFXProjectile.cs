@@ -155,7 +155,7 @@ public class SFXProjectile : SFXBase
     }
     protected void SpawnImpact(Vector3 hitPoint,Vector3 hitNormal)
     {
-        if (I_ImpactIndex < 0)
+        if (I_ImpactIndex <= 0)
             return;
 
         GameObjectManager.SpawnParticles<SFXImpact>(I_ImpactIndex,hitPoint,hitNormal, null).Play(m_sourceID);
