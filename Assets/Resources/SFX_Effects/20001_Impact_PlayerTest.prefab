@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4613005189776620}
   - component: {fileID: 114577189347646886}
   m_Layer: 9
-  m_Name: 20001_Impact_Player
+  m_Name: 20001_Impact_PlayerTest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
