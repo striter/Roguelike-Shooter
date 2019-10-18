@@ -15,8 +15,9 @@ namespace GameSetting
     {
         public const float F_Gravity = 9.8f;
 
-        public const float F_PlayerReviveCheckAfterDead = 1.5f;
         public const float F_EntityDeadFadeTime = 3f;
+        public const float F_PlayerReviveCheckAfterDead = 1.5f;
+        public const float F_PlayerReviveBuffDuration = 3f;
 
         public const int I_ActionHoldCount = 3;
         public const float F_MaxActionEnergy = 5f;
