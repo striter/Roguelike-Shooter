@@ -17,7 +17,7 @@ namespace GameSetting
 
         public const float F_EntityDeadFadeTime = 3f;
         public const float F_PlayerReviveCheckAfterDead = 1.5f;
-        public const float F_PlayerReviveBuffDuration = 3f;
+        public const float F_PlayerReviveBuffDuration = 6f; //复活无敌时间
 
         public const int I_ActionHoldCount = 3;
         public const float F_MaxActionEnergy = 5f;
@@ -64,6 +64,7 @@ namespace GameSetting
         public static int GetPlayerEquipmentIndex(int actionIndex) => actionIndex * 10;
         public static int GetAIEquipmentIndex(int entityIndex, int weaponIndex = 0, int subWeaponIndex = 0) => entityIndex * 100 + weaponIndex * 10 + subWeaponIndex;
         public static int GetActionMuzzleIndex(enum_ActionType type) => 10010 + (int)type;
+        public const int I_PlayerReviveBuffIndex = 40004;
 
         public static float F_PlayerSensitive(int sensitiveTap) => sensitiveTap / 5f;
         public static float F_GameVFXVolume(int vfxVolumeTap) => vfxVolumeTap / 10f;
@@ -762,7 +763,7 @@ namespace GameSetting
         //Normally In Excel 0-99
         //100-999
         public static SBuff SystemSubEntityDOTInfo(float damageTickTime, float damagePerTick) => new SBuff(){ index = 100,i_addType = (int)enum_ExpireRefreshType.Refresh,f_expireDuration = 0,f_damageTickTime = damageTickTime,f_damagePerTick = damagePerTick, i_damageType = (int)enum_DamageType.Basic};
-        public static SBuff SystemPlayerReviveInfo(float duration) => new SBuff() { index = 101, i_addType = (int)enum_ExpireRefreshType.Refresh, f_expireDuration = duration, f_damageReduce = 1f };
+        public static SBuff SystemPlayerReviveInfo(float duration,int effect) => new SBuff() { index = 101,i_effect= effect, i_addType = (int)enum_ExpireRefreshType.Refresh, f_expireDuration = duration, f_damageReduce = 1f };
         //1000-9999
         public static SBuff CreateEnermyChallengeDifficultyBuff(int difficulty, float damageMultiply)
         {
