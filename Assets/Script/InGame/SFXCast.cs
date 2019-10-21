@@ -20,6 +20,7 @@ public class SFXCast : SFXParticles {
     public int m_sourceID => m_DamageInfo.m_detail.I_SourceID;
     protected virtual float F_CastLength => V4_CastInfo.z;
     protected Transform CastTransform => tf_ControlledCast ? tf_ControlledCast : transform;
+    protected float F_PlayDuration => I_TickCount * F_Tick;
     Transform tf_ControlledAttach,tf_ControlledCast;
     float f_blastTickChest = 0;
     public virtual void Play(DamageDeliverInfo buffInfo)
@@ -28,7 +29,7 @@ public class SFXCast : SFXParticles {
         if (I_DelayIndicatorIndex>0)
             GameObjectManager.SpawnIndicator(I_DelayIndicatorIndex, transform.position, Vector3.up).Play(m_sourceID,  F_DelayDuration);
 
-        PlaySFX(m_DamageInfo.m_detail.I_SourceID, I_TickCount * F_Tick, F_DelayDuration);
+        PlaySFX(m_DamageInfo.m_detail.I_SourceID,F_PlayDuration, F_DelayDuration);
     }
 
     protected override void OnPlay()

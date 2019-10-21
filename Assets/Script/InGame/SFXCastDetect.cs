@@ -4,7 +4,6 @@ using GameSetting;
 using UnityEngine;
 [RequireComponent(typeof(EntityDetector))]
 public class SFXCastDetect : SFXCastDetonate {
-    protected override bool m_AutoStop => false;
     public float F_DurationSelfDetonate;
     EntityDetector m_detector;
     public override void Init(int _sfxIndex)
@@ -18,7 +17,7 @@ public class SFXCastDetect : SFXCastDetonate {
     {
         base.Play(buffInfo);
         m_detector.SetPlay(true);
-        base.PlaySFX(I_SourceID, 0f, F_DurationSelfDetonate);
+        base.PlaySFX(I_SourceID, F_PlayDuration, F_DurationSelfDetonate);
     }
 
     void OnDetect(HitCheckEntity entity, bool enter)
@@ -27,13 +26,10 @@ public class SFXCastDetect : SFXCastDetonate {
             return;
 
         if (GameManager.B_CanDamageEntity(entity, I_SourceID))
-            base.PlaySFX(I_SourceID,0f, F_DelayDuration);
-    }
-
-    protected override void OnPlay()
-    {
-        base.OnPlay();
-        m_detector.SetPlay(false);
+        {
+            base.PlaySFX(I_SourceID, F_PlayDuration, F_DelayDuration);
+            m_detector.SetPlay(false);
+        }
     }
 
     protected override void EDITOR_DEBUG()

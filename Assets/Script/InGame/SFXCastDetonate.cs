@@ -32,7 +32,10 @@ public class SFXCastDetonate : SFXCastOverlapSphere {
         base.Update();
         if (!B_Delaying)
             return;
+
         float timeMultiply = 2f * (1-f_delayTimeLeft / F_DelayDuration);
+        if (timeMultiply < 0)
+            return;
         m_Blink.Tick(Time.deltaTime * timeMultiply);
     }
 }
