@@ -725,9 +725,12 @@ MonoBehaviour:
   E_AreaType: 1
   V4_CastInfo: {x: 4, y: 0, z: 0, w: 0}
   I_MuzzleIndex: 0
-  F_DelayDuration: 500
+  F_DelayDuration: 2
   I_DelayIndicatorIndex: 0
   B_CameraShake: 0
+  B_DamageDistanceReduction: 1
+  c_blinkColor: {r: 0, g: 0.95862055, b: 1, a: 0}
+  F_DurationSelfDetonate: 500
 --- !u!135 &135249600658089466
 SphereCollider:
   m_ObjectHideFlags: 1
