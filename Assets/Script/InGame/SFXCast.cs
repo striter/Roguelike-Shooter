@@ -55,7 +55,7 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
 
         Play();
         this.StartSingleCoroutine(0, TIEnumerators.TickCount(DoBlastCheck, I_TickCount, F_Tick, () => {
-            Stop();
+            OnStop();
             B_Casting = false;
         }));
     }
@@ -74,7 +74,7 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
         }
         else
         {
-            Stop();
+            OnStop();
             tf_ControlledAttach = null;
             tf_ControlledCast = null;
             this.StopSingleCoroutine(0);

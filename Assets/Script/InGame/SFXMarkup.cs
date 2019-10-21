@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class SFXMarkup : SFXParticles {
-    protected override bool B_AutoStop => false;
+    protected override bool m_AutoStop => false;
     EntityBase target;
     Action OnMarkupDead;
     public void Play(int sourceID,EntityBase _target,Action _OnMarkupDead)
@@ -16,13 +16,13 @@ public class SFXMarkup : SFXParticles {
     protected override void Update()
     {
         base.Update();
-        if (!B_ParticlesPlaying)
+        if (!B_Playing)
             return;
 
         transform.position = target.transform.position;
         if(target.m_Health.b_IsDead)
         {
-            Stop();
+            OnStop();
             OnMarkupDead();
             OnMarkupDead = null;
         }

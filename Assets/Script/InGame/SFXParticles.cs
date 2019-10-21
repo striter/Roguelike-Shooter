@@ -8,8 +8,6 @@ public class SFXParticles : SFXBase
     protected ParticleSystem[] m_Particles { get; private set; }
     protected SFXRelativeBase[] m_relativeSFXs;
     protected virtual bool B_PlayOnAwake => true;
-    protected virtual bool B_AutoStop => true;
-    protected bool B_ParticlesPlaying;
     public override void Init(int _sfxIndex)
     {
         base.Init(_sfxIndex);
@@ -26,8 +24,6 @@ public class SFXParticles : SFXBase
         if (B_PlayOnAwake)
             Play();
     }
-    protected override void SetLifeTime(float duration) => base.SetLifeTime(duration + GameConst.F_ParticlesMaxStopTime);
-    protected float GetLifeTime() => f_timeLeft - GameConst.F_ParticlesMaxStopTime;
     public void ResetParticles()
     {
         m_relativeSFXs.Traversal((SFXRelativeBase sfxRelative) => { sfxRelative.OnReset(); });
@@ -35,29 +31,19 @@ public class SFXParticles : SFXBase
      }
     protected virtual void Play()
     {
-        B_ParticlesPlaying = true;
         m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.Play(); });
         m_Particles.Traversal((ParticleSystem particle) => { particle.Play(); });
     }
-    public virtual void Stop()
+
+    public override void OnStop()
     {
+        base.OnStop();
         transform.SetParent(GameObjectManager.TF_SFXWaitForRecycle);
-        base.SetLifeTime(GameConst.F_ParticlesMaxStopTime);
-        B_ParticlesPlaying = false;
+        base.SetLifeTime(GameConst.F_SFXMaxStopDuration);
         m_relativeSFXs.Traversal((SFXRelativeBase sfxRelative) => { sfxRelative.Stop(); });
         m_Particles.Traversal((ParticleSystem particle) => { particle.Stop(); });
     }
-    protected override void Update()
-    {
-        base.Update();
-        if (!B_ParticlesPlaying)
-            return;
-        if (!B_AutoStop)
-            SetLifeTime(f_duration);
 
-        if (B_AutoStop && GetLifeTime()<=0)
-            Stop();
-    }
     protected override void OnRecycle()
     {
         base.OnRecycle();

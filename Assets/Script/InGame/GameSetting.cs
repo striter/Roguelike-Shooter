@@ -34,7 +34,7 @@ namespace GameSetting
         public const int I_ProjectileBlinkWhenTimeLeftLessThan = 3;
         public const float F_AimAssistDistance = 100f;
         public const short I_BoltLastTimeAfterHit = 5;
-        public const float F_ParticlesMaxStopTime = 4f;
+        public const float F_SFXMaxStopDuration = 4f;
 
         public const int I_BurstFirePelletsOnceTrigger = 3;       //Times While Burst Fire
         public const int I_ProjectileSpreadAtDistance = 100;       //Meter,  Bullet Spread In A Circle At End Of This Distance
@@ -1249,7 +1249,7 @@ namespace GameSetting
                 ExpireBase expire = m_Expires.Find(p => p.m_EffectIndex == m_BuffEffects[i].I_SFXIndex);
                 if (expire == null)
                 {
-                    m_BuffEffects[i].Stop();
+                    m_BuffEffects[i].OnStop();
                     m_BuffEffects.RemoveAt(i);
                 }
             }

@@ -68,7 +68,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected override void OnDead()
     {
         if (m_Assist)
-            m_Assist.ForceRecycle();
+            m_Assist.Recycle();
         if (m_WeaponCurrent)
             m_WeaponCurrent.OnDetach();
 
@@ -173,7 +173,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_PlayerInfo.OnAttachWeapon(m_WeaponCurrent);
         m_Animator.SwitchAnim(m_WeaponCurrent.E_Anim);
 
-        if (m_Assist) m_Assist.ForceRecycle();
+        if (m_Assist) m_Assist.Recycle();
         m_Assist = GameObjectManager.SpawnSFX<SFXAimAssist>(01);
         m_Assist.Play(I_EntityID, tf_Head, tf_Head, GameConst.F_AimAssistDistance, GameLayer.Mask.I_All, (Collider collider) => { return GameManager.B_CanHitTarget(collider.Detect(), I_EntityID); });
 

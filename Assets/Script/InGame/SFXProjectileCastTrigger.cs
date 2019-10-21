@@ -10,9 +10,9 @@ public class SFXProjectileCastTrigger : SFXProjectile
         base.Play();
         b_trigger = false;
     }
-    public override void Stop()
+    public override void OnStop()
     {
-        base.Stop();
+        base.OnStop();
         OnCastTrigger(v3_castPoint);
         OnRecycle();
     }

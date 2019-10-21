@@ -21,6 +21,6 @@ public class HitCheckEntity : HitCheckBase {
     }
     public void HideAllAttaches()
     {
-        m_Attaches.Traversal((SFXBase temp) => { temp.ForceRecycle(); });
+        m_Attaches.Traversal((SFXBase temp) => { temp.Recycle(); });
     }
 }

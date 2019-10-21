@@ -24,7 +24,7 @@ public class SFXProjectileDestroyableSpread : SFXProjectileDestroyable {
     protected override void Update()
     {
         base.Update();
-        if (!B_ParticlesPlaying)
+        if (!B_Playing)
             return;
 
         f_spreadCheck += Time.deltaTime;

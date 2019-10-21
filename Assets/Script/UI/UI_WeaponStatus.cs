@@ -44,7 +44,6 @@ public class UI_WeaponStatus : UIPageBase {
         m_Stability.fillAmount = UIExpression.F_WeaponStabilityValue(weapon.m_WeaponInfo.m_RecoilScore);
 
         bool showAction = weapon.m_WeaponAction != null;
-        tf_ActionInfo.SetActivate(showAction);
         if (showAction)
         {
             ActionBase action = weapon.m_WeaponAction;
@@ -52,6 +51,13 @@ public class UI_WeaponStatus : UIPageBase {
             m_ActionIntro.formatText(action.GetIntroLocalizeKey(), action.F_Duration, action.Value1, action.Value2, action.Value3);
             m_ActionRarityText.localizeText = action.m_rarity.GetLocalizeKey();
             m_ActionRarity.SetLevel(action.m_rarity);
+            return;
         }
+
+        //Test Here! Will Be Removed Soon
+        m_ActionIntro.localizeText = "UI_WeaponStatus_ActionInvalid";
+        m_ActionRarityText.text = "";
+        m_ActionName.text = "";
+        m_ActionRarity.SetLevel(enum_RarityLevel.Invalid);
     }
 }

@@ -80,13 +80,13 @@ public class SFXProjectile : SFXParticles
         if (I_ImpactIndex < 0)
             Debug.LogError("Error Impact Index Less 0:" + gameObject.name);
     }
-    public override void Stop()
+    public override void OnStop()
     {
-        base.Stop();
+        base.OnStop();
         B_PhysicsSimulating = false;
         if (m_Indicator)
         {
-            m_Indicator.Stop();
+            m_Indicator.OnStop();
             m_Indicator = null;
         }
     }
@@ -99,9 +99,9 @@ public class SFXProjectile : SFXParticles
 
         if (m_Blink != null)
         {
-            if (GetLifeTime() < GameConst.I_ProjectileBlinkWhenTimeLeftLessThan)
+            if (f_playTimeLeft < GameConst.I_ProjectileBlinkWhenTimeLeftLessThan)
             {
-                float timeMultiply =2f*(1- GetLifeTime() / GameConst.I_ProjectileBlinkWhenTimeLeftLessThan);
+                float timeMultiply =2f*(1- f_playTimeLeft / GameConst.I_ProjectileBlinkWhenTimeLeftLessThan);
                 m_Blink.Tick(Time.deltaTime*timeMultiply);
             }
         }
@@ -118,7 +118,7 @@ public class SFXProjectile : SFXParticles
         if ( OnHitTargetCanPenetrate(hitInfo, hitCheck)&& B_Penetrate)
             return false;
 
-        if (B_StopParticlesOnHit) Stop();
+        if (B_StopParticlesOnHit) OnStop();
         if (B_StopPhysicsOnHit) B_PhysicsSimulating = false;
         return true;
     }
@@ -180,7 +180,7 @@ public class SFXProjectile : SFXParticles
     {
         if (UnityEditor.EditorApplication.isPlaying &&GameManager.Instance&&!GameManager.Instance.B_PhysicsDebugGizmos)
             return;
-        Gizmos.color =B_ParticlesPlaying? Color.yellow:Color.red;
+        Gizmos.color =B_Playing? Color.yellow:Color.red;
         Gizmos_Extend.DrawWireCapsule(m_CenterPos,Quaternion.LookRotation( transform.up,transform.forward), Vector3.one, F_Radius,F_Height);
     }
 #endif

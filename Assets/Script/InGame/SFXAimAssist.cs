@@ -13,6 +13,7 @@ public class SFXAimAssist : SFXBase {
     int m_castMask;
     Func<Collider, bool> CanHitCollider;
     protected override bool m_AutoRecycle => false;
+    protected override bool m_AutoStop => false;
     public override void Init(int _sfxIndex)
     {
         base.Init(_sfxIndex);
