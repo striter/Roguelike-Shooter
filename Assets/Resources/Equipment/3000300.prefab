@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4550938155433920}
   - component: {fileID: 114579307329279138}
   m_Layer: 9
-  m_Name: 3000200
+  m_Name: 3000300
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -208,6 +208,7 @@ MonoBehaviour:
   E_ProjectileType: 1
   F_Damage: 0
   F_Speed: 10
+  B_Penetrate: 0
   I_MuzzleIndex: 10001
   I_ImpactIndex: 20001
   I_IndicatorIndex: 0
@@ -220,6 +221,7 @@ MonoBehaviour:
     length: 0
   F_OffsetExtension: 0
   B_TargetReachBlink: 0
+  C_BlinkColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!198 &198194951697349546
 ParticleSystem:
   m_ObjectHideFlags: 1
