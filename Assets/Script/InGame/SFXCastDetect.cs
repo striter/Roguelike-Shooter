@@ -3,22 +3,22 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 [RequireComponent(typeof(EntityDetector))]
-public class SFXCastDetect : SFXCast {
+public class SFXCastDetect : SFXCastDetonate {
+    protected override bool m_AutoStop => false;
+    public float F_DurationSelfDetonate;
     EntityDetector m_detector;
-    Transform m_Model;
     public override void Init(int _sfxIndex)
     {
         base.Init(_sfxIndex);
         m_detector=GetComponent<EntityDetector>();
         m_detector.Init(OnDetect);
-        m_Model = transform.Find("Model");
     }
 
     public override void Play(DamageDeliverInfo buffInfo)
     {
         base.Play(buffInfo);
         m_detector.SetPlay(true);
-        m_Model.SetActivate(true);
+        base.PlaySFX(I_SourceID, 0f, F_DurationSelfDetonate);
     }
 
     void OnDetect(HitCheckEntity entity, bool enter)
@@ -27,14 +27,13 @@ public class SFXCastDetect : SFXCast {
             return;
 
         if (GameManager.B_CanDamageEntity(entity, I_SourceID))
-            PlayDelayed();
+            base.PlaySFX(I_SourceID,0f, F_DelayDuration);
     }
 
-    public override void PlayDelayed()
+    protected override void OnPlay()
     {
+        base.OnPlay();
         m_detector.SetPlay(false);
-        m_Model.SetActivate(false);
-        base.PlayDelayed();
     }
 
     protected override void EDITOR_DEBUG()

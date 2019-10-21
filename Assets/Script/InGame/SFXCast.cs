@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class SFXCast : SFXParticles,ISingleCoroutine {
+public class SFXCast : SFXParticles {
     public enum_CastControllType E_CastType = enum_CastControllType.Invalid;
     public bool B_CastAtHead = true;
     public float F_Damage;
@@ -18,66 +18,43 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
     public bool B_CameraShake = false;
     protected DamageInfo m_DamageInfo;
     public int m_sourceID => m_DamageInfo.m_detail.I_SourceID;
-    protected virtual float F_ParticleDuration => 5f;
     protected virtual float F_CastLength => V4_CastInfo.z;
-    public bool B_Casting { get; private set; } = false;
-    protected override bool B_PlayOnAwake => false;
     protected Transform CastTransform => tf_ControlledCast ? tf_ControlledCast : transform;
     Transform tf_ControlledAttach,tf_ControlledCast;
-    public override void Init(int _sfxIndex)
-    {
-        base.Init(_sfxIndex);
-#if UNITY_EDITOR
-        EDITOR_DEBUG();
-#endif
-    }
+    float f_blastTickChest = 0;
     public virtual void Play(DamageDeliverInfo buffInfo)
     {
         SetDamageInfo(buffInfo);
-        PlaySFX(m_DamageInfo.m_detail.I_SourceID, I_TickCount * F_Tick+F_DelayDuration);
-        B_Casting = false;
-        if (F_DelayDuration <= 0)
-        {
-            PlayDelayed();
-            return;
-        }
-
         if (I_DelayIndicatorIndex>0)
             GameObjectManager.SpawnIndicator(I_DelayIndicatorIndex, transform.position, Vector3.up).Play(m_sourceID,  F_DelayDuration);
-        this.StartSingleCoroutine(1, TIEnumerators.PauseDel(F_DelayDuration, PlayDelayed));
+
+        PlaySFX(m_DamageInfo.m_detail.I_SourceID, I_TickCount * F_Tick, F_DelayDuration);
     }
-    public virtual void PlayDelayed()
+
+    protected override void OnPlay()
     {
-        this.StopSingleCoroutine(1);
-        B_Casting = true;
+        base.OnPlay();
         if (B_CameraShake)
             GameManagerBase.Instance.SetEffect_Shake(V4_CastInfo.magnitude);
 
-        Play();
-        this.StartSingleCoroutine(0, TIEnumerators.TickCount(DoBlastCheck, I_TickCount, F_Tick, () => {
-            OnStop();
-            B_Casting = false;
-        }));
+        if (F_Tick <= 0)
+            DoBlastCheck();
     }
 
     public virtual void PlayControlled(int sourceID, Transform attachTrans, Transform directionTrans, bool play, DamageDeliverInfo buffInfo)
     {
-        B_Casting = play;
         if (play)
         {
             SetDamageInfo(buffInfo);
-            Play();
             tf_ControlledAttach = attachTrans;
             tf_ControlledCast = directionTrans;
-            this.StartSingleCoroutine(0, TIEnumerators.Tick(DoBlastCheck, F_Tick));
-            PlaySFX(sourceID, int.MaxValue);
+            PlaySFX(sourceID, int.MaxValue,F_DelayDuration);
         }
         else
         {
-            OnStop();
             tf_ControlledAttach = null;
             tf_ControlledCast = null;
-            this.StopSingleCoroutine(0);
+            Stop();
         }
     }
     void SetDamageInfo(DamageDeliverInfo info)
@@ -89,16 +66,28 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
     protected override void Update()
     {
         base.Update();
+        if (!B_Playing)
+            return;
+
         if (tf_ControlledAttach != null)
         {
             transform.position = tf_ControlledAttach.position;
             transform.rotation = tf_ControlledAttach.rotation;
         }
+
+
+        if (F_Tick <= 0)
+            return;
+
+        if (f_blastTickChest > 0)
+        {
+            f_blastTickChest -= Time.deltaTime;
+            return;
+        }
+        DoBlastCheck();
+        f_blastTickChest = F_Tick;
     }
-    protected void OnDisable()
-    {
-        this.StopAllCoroutines();
-    }
+
     protected virtual void DoBlastCheck()
     {
         RaycastHit[] hits = OnCastCheck(GameLayer.Mask.I_Entity);
@@ -147,9 +136,8 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
     }   
     protected virtual void OnDamageEntity(HitCheckEntity hitEntity)=>  hitEntity.TryHit(m_DamageInfo, Vector3.Normalize(hitEntity.transform.position - transform.position));
 
-    protected virtual void EDITOR_DEBUG()
+    protected override void EDITOR_DEBUG()
     {
-
         if (E_CastType == enum_CastControllType.Invalid)
             Debug.LogError("Weapon Type Invalid Detected+" + gameObject.name);
         if (E_AreaType == enum_CastAreaType.Invalid)
@@ -189,7 +177,7 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
     protected Color GetGizmosColor()
     {
         Color color = Color.green;
-        if (B_Casting)
+        if (B_Playing)
             color = Color.red;
         if (!UnityEditor.EditorApplication.isPlaying)
             color = Color.yellow;

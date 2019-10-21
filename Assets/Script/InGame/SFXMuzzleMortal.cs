@@ -15,9 +15,9 @@ public class SFXMuzzleMortal : SFXMuzzle
         tf_Model = transform.Find("Model");
         m_trail = tf_Model.GetComponentInChildren<TrailRenderer>();
     }
-    public override void Play(int sourceID, float duration = -1)
+    public override void Play(int sourceID, float duration = 0,float delayDuration=0)
     {
-        base.Play(sourceID, F_PlayTime);
+        base.Play(sourceID, F_PlayTime,delayDuration);
         tf_Model.position = transform.position;
         tf_Model.rotation = Quaternion.LookRotation(Vector3.up);
         m_trail.Clear();

@@ -15,13 +15,9 @@ public class SFXProjectileTargetRangeDrop : SFXProjectile {
     protected override bool B_DealDamage => true;
     protected override float F_Duration(Vector3 startPos, Vector3 endPos) => Vector3.Distance(startPos,endPos)/F_Speed+(I_DropCount+2)*F_DropDuration;
     protected override PhysicsSimulator<HitCheckBase> GetSimulator(Vector3 direction, Vector3 targetPosition) => new ProjectilePhysicsLerpSimulator(transform, transform.position, targetPosition+Vector3.up*F_DropStartHeight, OnStop, Vector3.Distance(transform.position, targetPosition) / F_Speed, F_Height, F_Radius, GameLayer.Mask.I_All, OnHitTargetBreak,CanHitTarget);
-    protected override void Play()
+    protected override void OnPlay()
     {
-        base.Play();
-        if (F_DropDuration<=0)
-            Debug.LogError("Spread Duration Less Or Equals 0!");
-        if (I_DropCount <= 0)
-            Debug.LogError("Spread Count Less Or Equals 0!");
+        base.OnPlay();
         f_dropCheck = 0;
         i_dropCountCheck = 0;
     }
@@ -56,6 +52,15 @@ public class SFXProjectileTargetRangeDrop : SFXProjectile {
 
         Gizmos.color = Color.red;
         Gizmos_Extend.DrawCylinder(transform.position,Quaternion.LookRotation(Vector3.down),F_DropRange,F_DropStartHeight);
+    }
+
+    protected override void EDITOR_DEBUG()
+    {
+        base.EDITOR_DEBUG();
+        if (F_DropDuration <= 0)
+            Debug.LogError("Spread Duration Less Or Equals 0!");
+        if (I_DropCount <= 0)
+            Debug.LogError("Spread Count Less Or Equals 0!");
     }
 #endif
 }

@@ -15,7 +15,7 @@ public class SFXShield : SFXBase {
     }
     public void Attach(EntityCharacterBase _attacher)
     {
-        base.PlaySFX(_attacher.I_EntityID, -1);
+        base.PlaySFX(_attacher.I_EntityID, -1,-1);
         transform.SetParent(_attacher.tf_Head);
         transform.localPosition = Vector3.zero;
         transform.localRotation = Quaternion.identity;

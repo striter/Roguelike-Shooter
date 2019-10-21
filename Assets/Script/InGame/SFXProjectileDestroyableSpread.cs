@@ -11,13 +11,17 @@ public class SFXProjectileDestroyableSpread : SFXProjectileDestroyable {
     float f_spreadCheck = 0;
     protected override bool B_StopParticlesOnHit => false;
     protected override bool B_DealDamage => false;
-    protected override void Play()
+    public override void Play(DamageDeliverInfo damageInfo, Vector3 direction, Vector3 targetPosition)
     {
-        base.Play();
+        base.Play(damageInfo, direction, targetPosition);
         if (F_SpreadDuration <= 0)
             Debug.LogError("Spread Duration Less Or Equals 0!");
         if (I_SpreadCount <= 0)
             Debug.LogError("Spread Count Less Or Equals 0!");
+    }
+    protected override void OnPlay()
+    {
+        base.OnPlay();
         f_spreadCheck = 0;
         i_spreadCountCheck = 0;
     }

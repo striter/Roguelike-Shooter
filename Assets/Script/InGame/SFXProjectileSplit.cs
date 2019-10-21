@@ -9,15 +9,7 @@ public class SFXProjectileSplit : SFXProjectile {
     public float F_SplitRange;
     public int I_SplitCount;
     protected override float F_Duration(Vector3 startPos, Vector3 endPos) => Vector3.Distance(transform.position, endPos) / F_Speed;
-    protected override void Play()
-    {
-        base.Play();
-        if (I_SplitProjectileIndex <= 0)
-            Debug.LogError("Split Index Less Or Equals 0");
-        if (I_SplitCount <= 0)
-            Debug.LogError("Fan Count Less Of Equals 0");
-    }
-    public override void OnStop()
+    protected override void OnStop()
     {
         base.OnStop();
         OnSplit();
@@ -32,5 +24,14 @@ public class SFXProjectileSplit : SFXProjectile {
             Vector3 splitDirection = transform.forward.RotateDirection(Vector3.up, startAngle + i * angleEach);
             GameObjectManager.SpawnEquipment<SFXProjectile>(I_SplitProjectileIndex,transform.position, Vector3.up).Play(m_DamageInfo.m_detail,splitDirection, transform.position + splitDirection * 10);
         }
+    }
+
+    protected override void EDITOR_DEBUG()
+    {
+        base.EDITOR_DEBUG();
+        if (I_SplitProjectileIndex <= 0)
+            Debug.LogError("Split Index Less Or Equals 0");
+        if (I_SplitCount <= 0)
+            Debug.LogError("Fan Count Less Of Equals 0");
     }
 }

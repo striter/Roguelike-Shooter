@@ -29,7 +29,7 @@ public class SFXAimAssist : SFXBase {
         m_castMask = mask;
         CanHitCollider = _CanHitCollider;
         m_lineRenderer.enabled = true;
-        base.PlaySFX(sourceID,-1);
+        base.PlaySFX(sourceID,-1,-1);
     }
 
     protected override void Update()

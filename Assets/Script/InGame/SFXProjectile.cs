@@ -60,33 +60,26 @@ public class SFXProjectile : SFXParticles
 
         if (m_Blink != null)
             m_Blink.OnReset();
-
-        base.Play(deliverInfo.I_SourceID, F_Duration(transform.position, targetPosition));
-    }
-    
-    protected override void Play()
-    {
-        base.Play();
-        B_PhysicsSimulating = true;
         if (m_Trail)
         {
             m_Trail.enabled = true;
             m_Trail.Clear();
         }
-        if (E_ProjectileType == enum_ProjectileFireType.Invalid)
-            Debug.LogError("Error Projectile Type Invalid:" + gameObject.name);
-        if (F_Speed <= 0)
-            Debug.LogError("Error Speed Less Or Equals 0:" + gameObject.name);
-        if (I_ImpactIndex < 0)
-            Debug.LogError("Error Impact Index Less 0:" + gameObject.name);
+
+        base.Play(deliverInfo.I_SourceID, F_Duration(transform.position, targetPosition));
     }
-    public override void OnStop()
+    protected override void OnPlay()
+    {
+        base.OnPlay();
+        B_PhysicsSimulating = true;
+    }
+    protected override void OnStop()
     {
         base.OnStop();
         B_PhysicsSimulating = false;
         if (m_Indicator)
         {
-            m_Indicator.OnStop();
+            m_Indicator.Stop();
             m_Indicator = null;
         }
     }
@@ -176,6 +169,16 @@ public class SFXProjectile : SFXParticles
     }
 
 #if UNITY_EDITOR
+    protected override void EDITOR_DEBUG()
+    {
+        base.EDITOR_DEBUG();
+        if (E_ProjectileType == enum_ProjectileFireType.Invalid)
+            Debug.LogError("Error Projectile Type Invalid:" + gameObject.name);
+        if (F_Speed <= 0)
+            Debug.LogError("Error Speed Less Or Equals 0:" + gameObject.name);
+        if (I_ImpactIndex < 0)
+            Debug.LogError("Error Impact Index Less 0:" + gameObject.name);
+    }
     private void OnDrawGizmos()
     {
         if (UnityEditor.EditorApplication.isPlaying &&GameManager.Instance&&!GameManager.Instance.B_PhysicsDebugGizmos)

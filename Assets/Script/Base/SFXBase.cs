@@ -5,65 +5,85 @@ public class SFXBase : MonoBehaviour {
     public int I_SFXIndex { get; private set; } = -1;
     public bool b_Playing { get; private set; }
     public int I_SourceID { get; private set; }
-    protected float f_duration { get; private set; }
-    protected float f_lifeTime { get; private set; }
+    protected float f_delayDuration { get; private set; }
+    protected float f_playDuration { get; private set; }
+    protected float f_lifeDuration { get; private set; }
+    protected float f_lifeTimeCheck { get; private set; }
     protected bool B_Playing { get; private set; }
+    protected bool B_Delaying { get; private set; }
     protected virtual bool m_AutoRecycle => true;
     protected virtual bool m_AutoStop => true;
-    protected float f_playTimeLeft => f_lifeTime - GameConst.F_SFXMaxStopDuration;
-    Action OnSFXPlayFinished;
+    protected float f_playTimeLeft => f_lifeTimeCheck - GameConst.F_SFXStopExternalDuration;
+    protected float f_delayTimeLeft => f_delayDuration -(f_lifeDuration- f_lifeTimeCheck);
     public virtual void Init(int _sfxIndex)
     {
         I_SFXIndex = _sfxIndex;
+#if UNITY_EDITOR
+        EDITOR_DEBUG();
+#endif
     }
-
-    public void Start()
+    
+    protected void PlaySFX(int sourceID,float playDuration,float delayDuration)
     {
-        if (I_SFXIndex == -1)
-            Debug.LogError("Please Init Before Start!" + gameObject.name.ToString());
-    }
-
-    protected void PlaySFX(int sourceID,float duration,Action _OnSFXPlayFinished=null)
-    {
-        SetLifeTime(duration);
+        B_Delaying = true;
+        B_Playing = false;
         I_SourceID = sourceID;
-        OnSFXPlayFinished = _OnSFXPlayFinished;
+        f_playDuration = playDuration;
+        f_delayDuration = delayDuration;
+        SetLifeTime(f_playDuration + f_delayDuration);
+        if (f_delayDuration <= 0)
+            OnPlay();
+    }
+
+    protected void SetLifeTime(float lifeDuration)
+    {
+        f_lifeDuration = lifeDuration + GameConst.F_SFXStopExternalDuration;
+        f_lifeTimeCheck = f_lifeDuration;
+    }
+
+    protected virtual void OnPlay()
+    {
+        B_Delaying = false;
         B_Playing = true;
     }
 
-    protected void SetLifeTime(float duration)
-    {
-        f_duration = duration+ GameConst.F_SFXMaxStopDuration;
-        f_lifeTime = f_duration;
-    }
-
-    protected virtual void Update()
-    {
-        f_lifeTime -= Time.deltaTime;
-        if (B_Playing&&m_AutoStop && f_playTimeLeft < 0)
-            OnStop();
-
-        if (m_AutoStop && f_lifeTime < 0)
-            OnRecycle();
-    }
-
-    public virtual void OnStop()
+    protected virtual void OnStop()
     {
         B_Playing = false;
     }
 
-    protected  virtual void OnRecycle()
+    protected virtual void OnRecycle()
     {
-        OnSFXPlayFinished?.Invoke();
         GameObjectManager.RecycleSFX(I_SFXIndex, this);
     }
+
+    protected virtual void Update()
+    {
+        if (!m_AutoStop && !m_AutoRecycle)
+            return;
+
+        f_lifeTimeCheck -= Time.deltaTime;
+        if (B_Delaying &&f_delayDuration>0&& f_delayTimeLeft < 0)
+            OnPlay();
+
+        if (B_Playing&&m_AutoStop &&f_playDuration>0 && f_playTimeLeft < 0)
+            OnStop();
+
+        if (m_AutoStop && f_lifeTimeCheck < 0)
+            OnRecycle();
+    }
+
 
     public void Recycle()
     {
         OnRecycle();
     }
-    public void Stop()
-    {
 
+    protected virtual void EDITOR_DEBUG()
+    {
+        if (I_SourceID == -1)
+            Debug.LogError("How'd fk SFX SOURCE ID Equals -1");
+        if (I_SFXIndex == -1)
+            Debug.Log("How'd fk SFX Index ID Equals -1");
     }
 }

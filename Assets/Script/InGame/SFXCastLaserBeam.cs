@@ -20,9 +20,9 @@ public class SFXCastLaserBeam : SFXCast {
         m_Muzzles.Traversal((ParticleSystem particle) => { particle.Stop(); });
         m_Impacts.Traversal((ParticleSystem particle) => { particle.Stop(); });
     }
-    public override void PlayDelayed()
+    protected override void OnPlay()
     {
-        base.PlayDelayed();
+        base.OnPlay();
         f_castLength = 0f;
         m_Muzzles.Traversal((ParticleSystem particle) => { particle.Play(); });
         m_Impacts.Traversal((ParticleSystem particle) => { particle.Play(); });
@@ -31,8 +31,8 @@ public class SFXCastLaserBeam : SFXCast {
     protected override void Update()
     {
         base.Update();
-        m_Beam.enabled = B_Casting;
-        if (!B_Casting)
+        m_Beam.enabled = B_Playing;
+        if (!B_Playing)
             return;
 
         f_castLength = V4_CastInfo.z;
