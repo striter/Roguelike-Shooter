@@ -1,25 +1,25 @@
 fileFormatVersion: 2
-guid: 74676fa89b4e6174f902f089a190256b
+guid: 7e6512a409e3bd541a613cce8255d73c
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
     100000: //RootNode
-    100002: changjing_jiqiang1
+    100002: changjing_jianongpao1
     400000: //RootNode
-    400002: changjing_jiqiang1
+    400002: changjing_jianongpao1
     2100000: aiStandardSurface9
     2300000: //RootNode
-    2300002: changjing_jiqiang1
+    2300002: changjing_jianongpao1
     3300000: //RootNode
-    3300002: changjing_jiqiang1
-    4300000: changjing_jiqiang
-    4300002: changjing_jiqiang1
+    3300002: changjing_jianongpao1
+    4300000: changjing_jianongpao
+    4300002: changjing_jianongpao1
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: aiStandardSurface9
-    second: {fileID: 2100000, guid: 5dd3c33edcf47414582e68fd07d653be, type: 2}
+    second: {fileID: 2100000, guid: 4d74b3a990123ff40a0e56c8a827f172, type: 2}
   materials:
     importMaterials: 1
     materialName: 0

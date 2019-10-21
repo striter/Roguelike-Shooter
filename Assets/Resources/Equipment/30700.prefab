@@ -115,7 +115,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: cd4a2fa5f4a116e49b28787e0d4956d9, type: 2}
+  - {fileID: 2100000, guid: 958f8c2fa0a6293479194fe50a889381, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -249,6 +249,7 @@ MonoBehaviour:
   E_ProjectileType: 1
   F_Damage: 40
   F_Speed: 30
+  B_Penetrate: 0
   I_MuzzleIndex: 0
   I_ImpactIndex: 0
   I_IndicatorIndex: 30001
@@ -261,5 +262,6 @@ MonoBehaviour:
     length: 0
   F_OffsetExtension: 0
   B_TargetReachBlink: 0
+  C_BlinkColor: {r: 1, g: 0, b: 0, a: 1}
   F_SpreadRadius: 0
   F_StartHeight: 40
