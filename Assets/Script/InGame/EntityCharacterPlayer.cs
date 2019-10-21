@@ -58,7 +58,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel); ;
     }
-
+   
     public void SetPlayerInfo(int coins, List<ActionBase> storedActions)
     {
         m_PlayerInfo.OnCoinsReceive(coins);
@@ -270,6 +270,16 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     }
     #endregion
     #region UI Indicator
+    protected override bool OnReceiveDamage(DamageInfo damageInfo, Vector3 damageDirection)
+    {
+        if (base.OnReceiveDamage(damageInfo, damageDirection))
+        {
+            if(damageDirection!=Vector3.zero) GameManagerBase.Instance.SetEffect_Impact(transform.InverseTransformDirection(damageDirection));
+            return true;
+        }
+        return false;
+    }
+
     protected void OnCommonStatus()
     {
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerAmmoStatus, m_WeaponCurrent);

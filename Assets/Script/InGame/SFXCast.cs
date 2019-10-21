@@ -51,7 +51,7 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
         this.StopSingleCoroutine(1);
         B_Casting = true;
         if (B_CameraShake)
-            TPSCameraController.Instance.AddShake(V4_CastInfo.magnitude);
+            GameManagerBase.Instance.SetEffect_Shake(V4_CastInfo.magnitude);
 
         PlayParticles();
         this.StartSingleCoroutine(0, TIEnumerators.TickCount(DoBlastCheck, I_TickCount, F_Tick, () => {

@@ -27,7 +27,7 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
     {
         this.StopAllSingleCoroutines();
     }
-
+    #region Effect
     protected static float m_BulletTime = 1f;
     public static bool m_BulletTiming => m_BulletTime != 1f;
     public static void SetBulletTime(bool enter,float duration=.8f)
@@ -67,6 +67,17 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
         this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => { m_BSC.SetEffect(value, 1f, 1f); }, 2f, 1, 2f,
              CameraController.Instance.m_Effect.RemoveCameraEffect<PE_Bloom>));
     }
+
+    public void SetEffect_Shake(float amount)
+    {
+        TPSCameraController.Instance.AddShake(amount*GameConst.F_DamageImpactMultiply);
+        Handheld.Vibrate();
+    }
+    public void SetEffect_Impact(Vector3 direction)
+    {
+        TPSCameraController.Instance.SetImpact(direction.normalized*GameConst.F_DamageImpactMultiply);
+    }
+    #endregion
 }
 
 public class GameIdentificationManager

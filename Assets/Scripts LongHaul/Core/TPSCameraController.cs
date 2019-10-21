@@ -14,7 +14,7 @@ public class TPSCameraController : CameraController
     Vector3 v3_Recoil;
     Vector3 v3_Shake;
     float inverseCheck = 0;
-    bool b_reverse;
+    bool b_shakeReverse;
     protected override Vector3 V3_LocalPositionOffset
     {
         get
@@ -23,12 +23,12 @@ public class TPSCameraController : CameraController
             inverseCheck += Time.deltaTime;
             if (inverseCheck > F_ReverseCheck)
             {
-                b_reverse = !b_reverse;
+                b_shakeReverse = !b_shakeReverse;
                 inverseCheck -= F_ReverseCheck;
             }
 
             v3_Shake = Vector3.Lerp(v3_Shake, Vector3.zero, I_ShakeParam * Time.deltaTime);
-            return v3_localOffset +(b_reverse?1:-1)* v3_Shake;
+            return v3_localOffset +(b_shakeReverse?-1:1)* v3_Shake;
         }
     }
     protected override Quaternion CalculateSelfRotation()
@@ -60,4 +60,9 @@ public class TPSCameraController : CameraController
 
     public void AddRecoil(Vector3 _recoil)=> v3_Recoil += _recoil;
     public void AddShake(float shakeAmount)=> v3_Shake += TCommon.RandomVector3(shakeAmount);
+    public void SetImpact(Vector3 impactDirection)
+    {
+        v3_Shake = impactDirection;
+        b_shakeReverse = false;
+    } 
 }

@@ -14,6 +14,8 @@ namespace GameSetting
     public static class GameConst
     {
         public const float F_Gravity = 9.8f;
+        public const float F_BlastShakeMultiply = .5f;
+        public const float F_DamageImpactMultiply = 1f;
 
         public const float F_EntityDeadFadeTime = 3f;
         public const float F_PlayerReviveCheckAfterDead = 1.5f;
@@ -2443,5 +2445,4 @@ namespace GameSetting
     #endregion
 
     #endregion
-
 }
