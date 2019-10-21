@@ -96,7 +96,7 @@ public class UI_PlayerStatus : UIToolsBase
         m_WeaponImage = tf_WeaponData.Find("WeaponImage").GetComponent<Image>();
         m_WeaponAction = tf_WeaponData.Find("WeaponAction").GetComponent<UIT_TextExtend>();
         m_WeaponActionRarity = new UIC_RarityLevel(tf_WeaponData.Find("WeaponActionRarity"));
-        tf_WeaponData.Find("WeaponDetailBtn").GetComponent<Button>().onClick.AddListener(() => { UIManager.Instance.ShowPage<UI_WeaponStatus>(true,.1f).SetInfo(m_Player.m_WeaponCurrent); });
+        tf_WeaponData.Find("WeaponDetailBtn").GetComponent<Button>().onClick.AddListener(() => { UIManager.Instance.ShowPage<UI_WeaponStatus>(true,0f).SetInfo(m_Player.m_WeaponCurrent); });
 
         m_Coins = tf_Container.Find("CoinData/Data").GetComponent<Text>();
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
