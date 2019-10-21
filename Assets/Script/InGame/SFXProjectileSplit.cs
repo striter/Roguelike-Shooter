@@ -9,18 +9,19 @@ public class SFXProjectileSplit : SFXProjectile {
     public float F_SplitRange;
     public int I_SplitCount;
     protected override float F_Duration(Vector3 startPos, Vector3 endPos) => Vector3.Distance(transform.position, endPos) / F_Speed;
-    protected override void OnPlayPreset()
+    protected override void Play()
     {
-        base.OnPlayPreset();
+        base.Play();
         if (I_SplitProjectileIndex <= 0)
             Debug.LogError("Split Index Less Or Equals 0");
         if (I_SplitCount <= 0)
             Debug.LogError("Fan Count Less Of Equals 0");
     }
-    protected override void OnRecycle()
+    public override void Stop()
     {
-        base.OnRecycle();
+        base.Stop();
         OnSplit();
+        OnRecycle();
     }
     void OnSplit()
     {

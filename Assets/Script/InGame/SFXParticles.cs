@@ -24,19 +24,28 @@ public class SFXParticles : SFXBase
     {
         PlaySFX(sourceID,duration);
         if (B_PlayOnAwake)
-            PlayParticles();
+            Play();
     }
     protected override void SetLifeTime(float duration) => base.SetLifeTime(duration + GameConst.F_ParticlesMaxStopTime);
+    protected float GetLifeTime() => f_timeLeft - GameConst.F_ParticlesMaxStopTime;
     public void ResetParticles()
     {
         m_relativeSFXs.Traversal((SFXRelativeBase sfxRelative) => { sfxRelative.OnReset(); });
         m_Particles.Traversal((ParticleSystem particle) => { particle.Clear(); });
      }
-    public void PlayParticles()
+    protected virtual void Play()
     {
         B_ParticlesPlaying = true;
         m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.Play(); });
         m_Particles.Traversal((ParticleSystem particle) => { particle.Play(); });
+    }
+    public virtual void Stop()
+    {
+        transform.SetParent(GameObjectManager.TF_SFXWaitForRecycle);
+        base.SetLifeTime(GameConst.F_ParticlesMaxStopTime);
+        B_ParticlesPlaying = false;
+        m_relativeSFXs.Traversal((SFXRelativeBase sfxRelative) => { sfxRelative.Stop(); });
+        m_Particles.Traversal((ParticleSystem particle) => { particle.Stop(); });
     }
     protected override void Update()
     {
@@ -46,21 +55,13 @@ public class SFXParticles : SFXBase
         if (!B_AutoStop)
             SetLifeTime(f_duration);
 
-        if (B_AutoStop && f_timeLeft < GameConst.F_ParticlesMaxStopTime)
-            StopParticles();
+        if (B_AutoStop && GetLifeTime()<=0)
+            Stop();
     }
     protected override void OnRecycle()
     {
         base.OnRecycle();
         m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.OnRecycle(); });
         ResetParticles();
-    }
-    public virtual void StopParticles()
-    {
-        transform.SetParent(GameObjectManager.TF_SFXWaitForRecycle);
-        base.SetLifeTime(GameConst.F_ParticlesMaxStopTime);
-        B_ParticlesPlaying = false;
-        m_relativeSFXs.Traversal((SFXRelativeBase sfxRelative) => { sfxRelative.Stop(); });
-        m_Particles.Traversal((ParticleSystem particle) => { particle.Stop(); });
     }
 }

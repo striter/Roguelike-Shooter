@@ -2,7 +2,7 @@
 using UnityEngine;
 
 public class SFXProjectileBolt : SFXProjectile {
-    protected override bool B_RecycleOnHit => false;
+    protected override bool B_StopPhysicsOnHit => true;
     protected override bool OnHitTargetCanPenetrate(RaycastHit hit,HitCheckBase entity)
     {
         transform.SetParent(hit.collider.transform);

@@ -9,12 +9,11 @@ public class SFXProjectileDestroyableSpread : SFXProjectileDestroyable {
     public int I_SpreadCount = 10;
     int i_spreadCountCheck = 0;
     float f_spreadCheck = 0;
-    protected override bool B_RecycleOnHit => false;
-    protected override bool B_DisablePhysicsOnHit => false;
+    protected override bool B_StopParticlesOnHit => false;
     protected override bool B_DealDamage => false;
-    protected override void OnPlayPreset()
+    protected override void Play()
     {
-        base.OnPlayPreset();
+        base.Play();
         if (F_SpreadDuration <= 0)
             Debug.LogError("Spread Duration Less Or Equals 0!");
         if (I_SpreadCount <= 0)
@@ -25,7 +24,7 @@ public class SFXProjectileDestroyableSpread : SFXProjectileDestroyable {
     protected override void Update()
     {
         base.Update();
-        if (!B_SimulatePhysics)
+        if (!B_ParticlesPlaying)
             return;
 
         f_spreadCheck += Time.deltaTime;

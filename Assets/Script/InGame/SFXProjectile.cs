@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
 using TPhysics;
-public class SFXProjectile : SFXBase
+public class SFXProjectile : SFXParticles
 {
     #region PresetInfos
     public enum_ProjectileFireType E_ProjectileType= enum_ProjectileFireType.Invalid;
@@ -29,11 +29,11 @@ public class SFXProjectile : SFXBase
     protected TrailRenderer m_Trail;
     protected SFXIndicator m_Indicator;
     List<int> m_EntityHitted = new List<int>();
-    public bool B_SimulatePhysics { get; protected set; }
+    public bool B_PhysicsSimulating { get; private set; }
     protected virtual float F_Duration(Vector3 startPos, Vector3 endPos) => GameConst.I_ProjectileMaxDistance / F_Speed;
-    protected virtual bool B_DisablePhysicsOnHit => true;
+    protected virtual bool B_StopParticlesOnHit => true;
+    protected virtual bool B_StopPhysicsOnHit => true;
     protected virtual bool B_DealDamage => true;
-    protected virtual bool B_RecycleOnHit => true;
     protected ModelBlink m_Blink;
     protected virtual PhysicsSimulator<HitCheckBase> GetSimulator(Vector3 direction, Vector3 targetPosition) => new ProjectilePhysicsSimulator(transform,transform.position, direction, Vector3.down, F_Speed, F_Height,F_Radius, GameLayer.Mask.I_All, OnHitTargetBreak,CanHitTarget);
     protected DamageInfo m_DamageInfo;
@@ -50,7 +50,7 @@ public class SFXProjectile : SFXBase
 
     public virtual void Play(DamageDeliverInfo deliverInfo ,Vector3 direction, Vector3 targetPosition )
     {
-        OnPlayPreset();
+        m_EntityHitted.Clear();
         if (I_BufFApplyOnHit > 0)
             deliverInfo.AddExtraBuff(I_BufFApplyOnHit);
         m_DamageInfo=new DamageInfo(F_Damage, enum_DamageType.Basic,deliverInfo);
@@ -61,20 +61,18 @@ public class SFXProjectile : SFXBase
         if (m_Blink != null)
             m_Blink.OnReset();
 
-        PlaySFX(deliverInfo.I_SourceID, F_Duration(transform.position, targetPosition));
+        base.Play(deliverInfo.I_SourceID, F_Duration(transform.position, targetPosition));
     }
     
-    protected virtual void OnPlayPreset()
+    protected override void Play()
     {
-        B_SimulatePhysics = true;
-        m_EntityHitted.Clear();
-
+        base.Play();
+        B_PhysicsSimulating = true;
         if (m_Trail)
         {
             m_Trail.enabled = true;
             m_Trail.Clear();
         }
-
         if (E_ProjectileType == enum_ProjectileFireType.Invalid)
             Debug.LogError("Error Projectile Type Invalid:" + gameObject.name);
         if (F_Speed <= 0)
@@ -82,26 +80,28 @@ public class SFXProjectile : SFXBase
         if (I_ImpactIndex < 0)
             Debug.LogError("Error Impact Index Less 0:" + gameObject.name);
     }
-    protected override void OnRecycle()
+    public override void Stop()
     {
-        base.OnRecycle();
+        base.Stop();
+        B_PhysicsSimulating = false;
         if (m_Indicator)
         {
-            m_Indicator.StopParticles();
+            m_Indicator.Stop();
             m_Indicator = null;
         }
     }
     protected override void Update()
     {
         base.Update();
-        if (m_Simulator!=null&&B_SimulatePhysics)
+
+        if (m_Simulator!=null&&B_PhysicsSimulating)
             m_Simulator.Simulate(Time.deltaTime);
 
         if (m_Blink != null)
         {
-            if (f_timeLeft < GameConst.I_ProjectileBlinkWhenTimeLeftLessThan)
+            if (GetLifeTime() < GameConst.I_ProjectileBlinkWhenTimeLeftLessThan)
             {
-                float timeMultiply =2f*(1- f_timeLeft / GameConst.I_ProjectileBlinkWhenTimeLeftLessThan);
+                float timeMultiply =2f*(1- GetLifeTime() / GameConst.I_ProjectileBlinkWhenTimeLeftLessThan);
                 m_Blink.Tick(Time.deltaTime*timeMultiply);
             }
         }
@@ -118,8 +118,8 @@ public class SFXProjectile : SFXBase
         if ( OnHitTargetCanPenetrate(hitInfo, hitCheck)&& B_Penetrate)
             return false;
 
-        if (B_DisablePhysicsOnHit) B_SimulatePhysics = false;
-        if (B_RecycleOnHit) OnRecycle();
+        if (B_StopParticlesOnHit) Stop();
+        if (B_StopPhysicsOnHit) B_PhysicsSimulating = false;
         return true;
     }
     
@@ -180,7 +180,7 @@ public class SFXProjectile : SFXBase
     {
         if (UnityEditor.EditorApplication.isPlaying &&GameManager.Instance&&!GameManager.Instance.B_PhysicsDebugGizmos)
             return;
-        Gizmos.color = Color.yellow;
+        Gizmos.color =B_ParticlesPlaying? Color.yellow:Color.red;
         Gizmos_Extend.DrawWireCapsule(m_CenterPos,Quaternion.LookRotation( transform.up,transform.forward), Vector3.one, F_Radius,F_Height);
     }
 #endif

@@ -6,9 +6,9 @@ public class SFXProjectileCastMeteor : SFXProjectileCastTrigger
 {
     public float F_SpreadRadius=5;
     public float F_StartHeight = 20;
-    protected override void OnPlayPreset()
+    protected override void Play()
     {
-        base.OnPlayPreset();
+        base.Play();
         if (I_IndicatorIndex <= 0)
             Debug.LogError("Indicator Index Less Or Equals 0");
     }

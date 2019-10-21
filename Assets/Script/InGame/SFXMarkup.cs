@@ -22,7 +22,7 @@ public class SFXMarkup : SFXParticles {
         transform.position = target.transform.position;
         if(target.m_Health.b_IsDead)
         {
-            StopParticles();
+            Stop();
             OnMarkupDead();
             OnMarkupDead = null;
         }

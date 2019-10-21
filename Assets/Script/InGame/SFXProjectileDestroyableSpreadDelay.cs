@@ -5,25 +5,15 @@ using UnityEngine;
 public class SFXProjectileDestroyableSpreadDelay : SFXProjectileDestroyableSpread,ISingleCoroutine {
     public float F_DelayDuration;
     protected override PhysicsSimulator<HitCheckBase> GetSimulator(Vector3 direction, Vector3 targetPosition) => null;
-    protected ParticleSystem[] m_Particles;
-    public override void Init(int sfxIndex)
-    {
-        base.Init(sfxIndex);
-        m_Particles = GetComponentsInChildren<ParticleSystem>();
-    }
     public override void Play( DamageDeliverInfo buffInfo, Vector3 direction, Vector3 targetPosition)
     {
         targetPosition = LevelManager.NavMeshPosition(targetPosition) + Vector3.up * .5f;
-        base.Play(buffInfo,direction, targetPosition);
-        m_Particles.Traversal((ParticleSystem particle) => { particle.Stop(); });
         transform.localScale = Vector3.zero;
-        B_SimulatePhysics = false;
         this.StartSingleCoroutine(1, TIEnumerators.PauseDel(F_DelayDuration, () => {
             transform.localScale = Vector3.one;
             transform.position = targetPosition;
             transform.rotation = Quaternion.LookRotation(Vector3.forward);
-            B_SimulatePhysics = true;
-            m_Particles.Traversal((ParticleSystem particle) => { particle.Play(); });
+            base.Play(buffInfo, direction, targetPosition);
         }));
     }
     protected override void SpawnIndicator(Vector3 position, Vector3 direction, float duration)

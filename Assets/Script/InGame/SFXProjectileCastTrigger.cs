@@ -5,15 +5,16 @@ public class SFXProjectileCastTrigger : SFXProjectile
     protected override bool B_DealDamage => false;
     protected bool b_trigger = false;
     protected virtual Vector3 v3_castPoint=> transform.position + transform.forward * F_Height;
-    protected override void OnPlayPreset()
+    protected override void Play()
     {
-        base.OnPlayPreset();
+        base.Play();
         b_trigger = false;
     }
-    protected override void OnRecycle()
+    public override void Stop()
     {
-        base.OnRecycle();
+        base.Stop();
         OnCastTrigger(v3_castPoint);
+        OnRecycle();
     }
     protected override bool OnHitTargetCanPenetrate(RaycastHit hit, HitCheckBase hitCheck)
     {

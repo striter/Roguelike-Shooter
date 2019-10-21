@@ -53,9 +53,9 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
         if (B_CameraShake)
             GameManagerBase.Instance.SetEffect_Shake(V4_CastInfo.magnitude);
 
-        PlayParticles();
+        Play();
         this.StartSingleCoroutine(0, TIEnumerators.TickCount(DoBlastCheck, I_TickCount, F_Tick, () => {
-            StopParticles();
+            Stop();
             B_Casting = false;
         }));
     }
@@ -66,7 +66,7 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
         if (play)
         {
             SetDamageInfo(buffInfo);
-            PlayParticles();
+            Play();
             tf_ControlledAttach = attachTrans;
             tf_ControlledCast = directionTrans;
             this.StartSingleCoroutine(0, TIEnumerators.Tick(DoBlastCheck, F_Tick));
@@ -74,7 +74,7 @@ public class SFXCast : SFXParticles,ISingleCoroutine {
         }
         else
         {
-            StopParticles();
+            Stop();
             tf_ControlledAttach = null;
             tf_ControlledCast = null;
             this.StopSingleCoroutine(0);

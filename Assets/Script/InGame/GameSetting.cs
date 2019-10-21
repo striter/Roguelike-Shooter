@@ -1249,7 +1249,7 @@ namespace GameSetting
                 ExpireBase expire = m_Expires.Find(p => p.m_EffectIndex == m_BuffEffects[i].I_SFXIndex);
                 if (expire == null)
                 {
-                    m_BuffEffects[i].StopParticles();
+                    m_BuffEffects[i].Stop();
                     m_BuffEffects.RemoveAt(i);
                 }
             }
@@ -1446,7 +1446,7 @@ namespace GameSetting
 
         protected void OnEntityActivate(EntityBase targetEntity)
         {
-            if (targetEntity.m_Flag != m_Entity.m_Flag || targetEntity.I_EntityID == m_Entity.I_EntityID)
+            if (targetEntity.m_Controller != enum_EntityController.AI||targetEntity.m_Flag != m_Entity.m_Flag || targetEntity.I_EntityID == m_Entity.I_EntityID)
                 return;
 
             EntityCharacterBase ally = (targetEntity as EntityCharacterBase);
