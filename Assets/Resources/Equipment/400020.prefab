@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 114885417820127472}
   - component: {fileID: 54972053966326672}
   m_Layer: 9
-  m_Name: 200060
+  m_Name: 400020
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -731,7 +731,7 @@ MonoBehaviour:
   I_DelayIndicatorIndex: 0
   B_CameraShake: 0
   B_DamageDistanceReduction: 1
-  c_blinkColor: {r: 0, g: 0.95862055, b: 1, a: 0}
+  c_blinkColor: {r: 0, g: 0.95862055, b: 1, a: 1}
   F_DurationSelfDetonate: 500
 --- !u!135 &135249600658089466
 SphereCollider:
