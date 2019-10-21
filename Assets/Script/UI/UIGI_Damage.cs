@@ -7,6 +7,7 @@ public class UIGI_Damage : UIT_GridItem {
     float f_expireCheck;
     Action<int> OnAnimFinished;
     RectTransform rtf_Container,rtf_SubContainer;
+    EntityCharacterBase m_Entity;
     public override void Init(UIT_GridController parent)
     {
         base.Init(parent);
@@ -18,6 +19,7 @@ public class UIGI_Damage : UIT_GridItem {
 
     public void Play(EntityCharacterBase damageEntity,float amount,Action<int> _OnAnimFinished)
     {
+        m_Entity = damageEntity;
         rtf_RectTransform.SetWorldViewPortAnchor(damageEntity.tf_Head.position, CameraController.MainCamera);
         rtf_SubContainer.anchoredPosition = new Vector2(0,80f)+TCommon.RandomVector2(UIConst.F_UIDamageStartOffset);
         string integer = Mathf.CeilToInt(amount).ToString();
@@ -29,10 +31,12 @@ public class UIGI_Damage : UIT_GridItem {
 
     private void Update()
     {
+        rtf_RectTransform.SetWorldViewPortAnchor(m_Entity.tf_Head.position, CameraController.MainCamera, .1f);
+
         f_expireCheck -= Time.deltaTime;
-        rtf_Container.anchoredPosition = Vector2.Lerp(new Vector2(0,100),Vector2.zero,f_expireCheck);
-        m_Amount.color = Color.Lerp(TCommon.ColorAlpha(Color.red,0f),Color.red,f_expireCheck);
         if (f_expireCheck < 0)
             OnAnimFinished(I_Index);
+        rtf_Container.anchoredPosition = Vector2.Lerp(new Vector2(0,100),Vector2.zero,f_expireCheck);
+        m_Amount.color = Color.Lerp(TCommon.ColorAlpha(Color.red,0f),Color.red,f_expireCheck);
     }
 }
