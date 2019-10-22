@@ -40,10 +40,4 @@ public class SFXEffect : SFXParticles
             shape.meshRenderer = targetMesh;
         });
     }
-    protected override void OnStop()
-    {
-        base.OnStop();
-        AttachTo(null);
-    }
-
 }

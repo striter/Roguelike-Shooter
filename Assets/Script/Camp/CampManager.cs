@@ -25,6 +25,7 @@ public class CampManager : GameManagerBase{
         GameObjectManager.PresetRegistCommonObject();
         GameObjectManager.SpawnEntityPlayer(new CPlayerLevelSave()).transform.SetPositionAndRotation(tf_PlayerStart.position,tf_PlayerStart.rotation);
         CameraController.Instance.RotateCamera(new Vector2(tf_PlayerStart.eulerAngles.y,0));
+        Audio_SwitchBackground(false);
     }
     
     public void OnSceneItemInteract(enum_Scene scene)

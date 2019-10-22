@@ -173,6 +173,7 @@ public class GameManager : GameManagerBase
         GC.Collect();
         Resources.UnloadUnusedAssets();
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageStart);
+        Audio_SwitchBackground(false);
     }
     void OnLevelChanged(SBigmapLevelInfo levelInfo)
     {
@@ -439,11 +440,12 @@ public class GameManager : GameManagerBase
     public Dictionary<enum_CharacterType, List<int>> m_Enermies;
     void OnBattleStart()
     {
-        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleStart);
         m_EntityGenerate = GameDataManager.GetEntityGenerateProperties(m_GameLevel.m_GameStage, m_GameLevel.m_Difficulty);
         B_Battling = true;
         m_CurrentWave = 0;
         WaveStart();
+        Audio_SwitchBackground(true);
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleStart);
     }
 
     void WaveStart()
@@ -492,6 +494,7 @@ public class GameManager : GameManagerBase
         SpawnRewards(lastEntityPos);
         m_PlayerReviveHealing.Clear();
         GameObjectManager.RecycleAllInteract(enum_Interaction.PickupArmor);
+        Audio_SwitchBackground(false);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleFinish);
     }
 
