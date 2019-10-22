@@ -139,7 +139,7 @@ namespace GameSetting_Action
         public static float P_10034_DamageAdditiveShotAfterKill(enum_RarityLevel rarity) => 210f * (int)rarity;
 
         public const int I_10035_Cost = 2;
-        public static float P_10035_DamageAdditiveNextShot(enum_RarityLevel rarity) => 210f * (int)rarity;
+        public static float P_10035_DamageAdditiveNextShot(enum_RarityLevel rarity) => 280f * (int)rarity;
         #endregion
         #region 20000-29999
         public const int I_20001_Cost = 2;
