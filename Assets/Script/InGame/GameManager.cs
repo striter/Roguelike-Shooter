@@ -439,11 +439,11 @@ public class GameManager : GameManagerBase
     public Dictionary<enum_CharacterType, List<int>> m_Enermies;
     void OnBattleStart()
     {
-        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleStart);
         m_EntityGenerate = GameDataManager.GetEntityGenerateProperties(m_GameLevel.m_GameStage, m_GameLevel.m_Difficulty);
         B_Battling = true;
         m_CurrentWave = 0;
         WaveStart();
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleStart);
     }
 
     void WaveStart()

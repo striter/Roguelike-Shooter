@@ -31,6 +31,8 @@ public class TResources
         public const string S_UI_Atlas_Numeric = "UI/Atlas/Atlas_Numeric";
         public const string S_UI_Atlas_Common = "UI/Atlas/Atlas_Common";
         public const string S_UI_Manager = "UI/UIManager";
+
+        public const string S_Audio_Background = "Audio/Background/Music";
     }
 
     #region UI
@@ -38,7 +40,7 @@ public class TResources
     public static AtlasLoader GetUIAtlas_Numeric() => new AtlasLoader(Load<SpriteAtlas>(ConstPath.S_UI_Atlas_Numeric));
     public static AtlasLoader GetUIAtlas_Common() =>  new AtlasLoader(Load<SpriteAtlas>(ConstPath.S_UI_Atlas_Common));
     #endregion
-    #region Game
+    #region GamePrefab
     public static StyleColorData[] GetAllStyleCustomization(enum_Style levelStype) => LoadAll<StyleColorData>(ConstPath.S_StyleCustomization + "/" + levelStype);
     public static Dictionary<enum_LevelItemType,List<LevelItemBase>>  GetAllLevelItems(enum_Style _levelStyle, Transform parent)
     {
@@ -130,6 +132,9 @@ public class TResources
     public static InteractBase GetInteractActionChest(enum_StageLevel stageLevel) => Instantiate<InteractBase>(ConstPath.S_InteractActionChest + stageLevel.ToString());
     public static InteractBase GetInteract(enum_Interaction type) => Instantiate<InteractBase>(ConstPath.S_InteractCommon + type);
     #endregion
+    #region Audio
+    public static AudioClip GetAudioClip_Background(bool inGame, bool inBattle) => Load<AudioClip>(ConstPath. S_Audio_Background+(inGame?"_Game":"_Camp")+(inBattle?"_Fight":"_Relax"));
+    #endregion
     #endregion
     #region Will Be Replaced By AssetBundle If Needed
     public static T Instantiate<T>(string path, Transform toParent = null) where T : UnityEngine.Object
@@ -143,7 +148,7 @@ public class TResources
     {
         T prefab = Resources.Load<T>(path);
         if (prefab == null)
-            Debug.LogWarning("Invalid Item Found Of |"+typeof(T)+  "|At:" + path);
+            Debug.LogError("Invalid Item Found Of |"+typeof(T)+  "|At:" + path);
         return prefab;
     }
     public static T[] LoadAll<T>(string path) where T : UnityEngine.Object

@@ -185,11 +185,12 @@ public class WeaponBase : MonoBehaviour {
                 I_AmmoLeft = I_ClipAmount;
         }
     }
-
-
+    
     public void ForceReload()
     {
         I_AmmoLeft = I_ClipAmount;
+        B_Reloading = false;
+        OnReload(false, 0);
     }
     #endregion
     #region TriggerType
