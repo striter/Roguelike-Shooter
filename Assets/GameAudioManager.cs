@@ -9,6 +9,7 @@ public class GameAudioManager : AudioManager
     public static new GameAudioManager Instance => ninstance;
     static float m_volumeMultiply = 1f;
     public override float m_Volume => base.m_Volume * m_volumeMultiply;
+    Dictionary<bool, AudioClip> m_Clips = new Dictionary<bool, AudioClip>();
     protected override void Awake()
     {
         base.Awake();
@@ -17,37 +18,34 @@ public class GameAudioManager : AudioManager
     private void Start()
     {
         OptionsManager.event_OptionChanged += OnOptionChanged;
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnGameStart, OnGameStart);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
+
+        m_Clips.Add(true, TResources.GetAudioClip_Background(GameManagerBase.Instance.B_InGame, true));
+        m_Clips.Add(false, TResources.GetAudioClip_Background(GameManagerBase.Instance.B_InGame, false));
+        PlayClip(false);
     }
     protected override void OnDestroy()
     {
         base.OnDestroy();
         OptionsManager.event_OptionChanged -= OnOptionChanged;
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnGameStart, OnGameStart);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish); ;
     }
 
-    void OnGameStart()
-    {
-        Play(GameManagerBase.Instance.B_InGame, false);
-    }
-
     void OnBattleStart()
     {
-        Play(GameManagerBase.Instance.B_InGame, true);
+        PlayClip(true);
     }
 
     void OnBattleFinish()
     {
-        Play(GameManagerBase.Instance.B_InGame, false);
+        PlayClip(false);
     }
-    void Play(bool inGame,bool inBattle)
+
+    void PlayClip(bool inBattle)
     {
-        m_AudioBackground.clip = TResources.GetAudioClip_Background(inGame,inBattle);
-        m_AudioBackground.Play();
+        SwitchClip(m_Clips[inBattle]);
     }
     void OnOptionChanged()
     {
