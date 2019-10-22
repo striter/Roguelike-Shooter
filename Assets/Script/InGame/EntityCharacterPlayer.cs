@@ -135,6 +135,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
         transform.rotation = Quaternion.Lerp(transform.rotation, CameraController.CameraXZRotation, GameConst.F_PlayerCameraSmoothParam);
 
+        
         Vector3 moveDirection = (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized;
         float movementSpeed = m_CharacterInfo.F_MovementSpeed;
         m_CharacterController.Move((moveDirection * movementSpeed+Vector3.down*GameConst.F_Gravity)*Time.deltaTime);
@@ -183,7 +184,12 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 #endregion
     #region PlayerControll
     Vector2 m_MoveAxisInput;
-    void OnMovementDelta(Vector2 moveDelta) => m_MoveAxisInput = moveDelta;
+    void OnMovementDelta(Vector2 moveDelta)
+    {
+        m_MoveAxisInput = Vector2.Lerp(m_MoveAxisInput, moveDelta,Time.deltaTime*10f);
+        if (moveDelta==Vector2.zero&&m_MoveAxisInput.magnitude < .1f)
+            m_MoveAxisInput = Vector2.zero;
+    }
 
     void OnRotateDelta(Vector2 rotateDelta)
     {

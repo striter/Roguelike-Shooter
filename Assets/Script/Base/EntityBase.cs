@@ -61,6 +61,6 @@ public class EntityBase : MonoBehaviour
     }
     protected virtual void EnableHitbox(bool setHitable)
     {
-        TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.HideAllAttaches(); check.SetEnable(setHitable); });
+        TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.SetEnable(setHitable); });
     }
 }
