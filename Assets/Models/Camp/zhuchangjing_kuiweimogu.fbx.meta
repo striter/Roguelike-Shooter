@@ -1,15 +1,20 @@
 fileFormatVersion: 2
-guid: a109a8c5d692ed745ac3b2f0eeb5a5a7
+guid: 801c05effd64de4468c5c4854af0ce93
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
     100000: //RootNode
     400000: //RootNode
-    2100000: shamo_zhiwu
+    2100000: aiStandardSurface1
     2300000: //RootNode
     3300000: //RootNode
-    4300000: shamo_cao2
-  externalObjects: {}
+    4300000: zhuchangjing_kuiweimogu
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: aiStandardSurface1
+    second: {fileID: 2100000, guid: a6540136389400844a7924560846e4dd, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
