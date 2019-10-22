@@ -1,20 +1,20 @@
 fileFormatVersion: 2
-guid: f25158533334ccb4896de3e6e9576786
+guid: 0ebab9743d1edb949965efcfbc4edbf2
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
     100000: //RootNode
     400000: //RootNode
-    2100000: aiStandardSurface3
+    2100000: aiStandardSurface1
     2300000: //RootNode
     3300000: //RootNode
-    4300000: xiangrikui_1
+    4300000: zhuchangjing_mogu2
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: aiStandardSurface3
-    second: {fileID: 2100000, guid: f23e91188022dde4b94522477cfcab5d, type: 2}
+      name: aiStandardSurface1
+    second: {fileID: 2100000, guid: a6540136389400844a7924560846e4dd, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
