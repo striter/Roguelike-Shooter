@@ -32,21 +32,9 @@ public class GameAudioManager : AudioManager
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish); ;
     }
-
-    void OnBattleStart()
-    {
-        PlayClip(true);
-    }
-
-    void OnBattleFinish()
-    {
-        PlayClip(false);
-    }
-
-    void PlayClip(bool inBattle)
-    {
-        SwitchClip(m_Clips[inBattle]);
-    }
+    void OnBattleStart()=>PlayClip(true);
+    void OnBattleFinish()=> PlayClip(false);
+    void PlayClip(bool inBattle)=> SwitchClip(m_Clips[inBattle]);
     void OnOptionChanged()
     {
         m_volumeMultiply = GameExpression.F_GameMusicVolume( OptionsManager.m_OptionsData.m_MusicVolumeTap);
