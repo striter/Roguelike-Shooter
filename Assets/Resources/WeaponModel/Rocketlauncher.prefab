@@ -55,7 +55,7 @@ GameObject:
   - component: {fileID: 33542732611429840}
   - component: {fileID: 23153918009388692}
   m_Layer: 0
-  m_Name: scp_we2_rocket_launcher
+  m_Name: Case
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

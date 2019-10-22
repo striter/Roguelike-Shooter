@@ -52,7 +52,7 @@ GameObject:
   - component: {fileID: 33070200790037626}
   - component: {fileID: 23803894947217994}
   m_Layer: 0
-  m_Name: shouqiang
+  m_Name: Case
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

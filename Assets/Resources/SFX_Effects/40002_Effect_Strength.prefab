@@ -104,7 +104,7 @@ GameObject:
   - component: {fileID: 4389448587467018}
   - component: {fileID: 114217695737171176}
   m_Layer: 0
-  m_Name: 40002_BuffEffect_Strength
+  m_Name: 40002_Effect_Strength
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -235,6 +235,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c15649d448211d4b8526e098dd682d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  E_AttachTo: 2
+  B_IsMeshGlow: 0
 --- !u!198 &198117006019093522
 ParticleSystem:
   m_ObjectHideFlags: 1

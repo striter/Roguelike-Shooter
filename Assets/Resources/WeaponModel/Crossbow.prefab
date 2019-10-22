@@ -121,7 +121,7 @@ GameObject:
   - component: {fileID: 33218155329068616}
   - component: {fileID: 23626899121394550}
   m_Layer: 0
-  m_Name: scp_we2_crossbow
+  m_Name: Case
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

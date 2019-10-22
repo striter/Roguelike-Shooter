@@ -39,7 +39,7 @@ GameObject:
   - component: {fileID: 33408768858405724}
   - component: {fileID: 23570560283751274}
   m_Layer: 0
-  m_Name: scp_we2_sniper_rifle_01
+  m_Name: Case
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

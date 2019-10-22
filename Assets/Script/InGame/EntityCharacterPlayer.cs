@@ -16,6 +16,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public EquipmentBase m_Equipment { get; private set; }
     public int m_EquipmentTimes { get; private set; }
     public float m_EquipmentDistance { get; private set; }
+    public override Transform tf_Weapon => m_WeaponCurrent.m_Case;
     public override float m_baseMovementSpeed => F_MovementSpeed*( f_movementReductionCheck >0? (1-GameConst.F_AimMovementReduction*m_PlayerInfo.F_AimMovementStrictMultiply):1f);
     public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized* m_CharacterInfo.F_MovementSpeed * time;
     public PlayerInfoManager m_PlayerInfo { get; private set; }
@@ -135,6 +136,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
         transform.rotation = Quaternion.Lerp(transform.rotation, CameraController.CameraXZRotation, GameConst.F_PlayerCameraSmoothParam);
 
+        
         Vector3 moveDirection = (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized;
         float movementSpeed = m_CharacterInfo.F_MovementSpeed;
         m_CharacterController.Move((moveDirection * movementSpeed+Vector3.down*GameConst.F_Gravity)*Time.deltaTime);
@@ -183,7 +185,12 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 #endregion
     #region PlayerControll
     Vector2 m_MoveAxisInput;
-    void OnMovementDelta(Vector2 moveDelta) => m_MoveAxisInput = moveDelta;
+    void OnMovementDelta(Vector2 moveDelta)
+    {
+        m_MoveAxisInput = Vector2.Lerp(m_MoveAxisInput, moveDelta,Time.deltaTime*20f);
+        if (moveDelta==Vector2.zero&&m_MoveAxisInput.magnitude < .1f)
+            m_MoveAxisInput = Vector2.zero;
+    }
 
     void OnRotateDelta(Vector2 rotateDelta)
     {

@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
-
 public class SFXParticles : SFXBase
 {
+    Transform m_AttachTo;
+    Vector3 m_localPos,m_localDir;
     protected ParticleSystem[] m_Particles { get; private set; }
     protected SFXRelativeBase[] m_relativeSFXs;
     public override void Init(int _sfxIndex)
@@ -20,6 +21,25 @@ public class SFXParticles : SFXBase
     public virtual void Play(int sourceID,float duration=0f,float delayDuration=0f)
     {
         PlaySFX(sourceID,duration,delayDuration);
+    }
+
+    public void AttachTo(Transform _attachTo)
+    {
+        m_AttachTo = _attachTo;
+        if (!_attachTo)
+            return;
+        m_localPos = _attachTo.InverseTransformPoint(transform.position);
+        m_localDir = _attachTo.InverseTransformDirection(transform.forward);
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+        if (m_AttachTo == null)
+            return;
+
+        transform.position = m_AttachTo.TransformPoint(m_localPos);
+        transform.rotation = Quaternion.LookRotation(m_AttachTo.TransformDirection(m_localDir));
     }
     public void ResetParticles()
     {
@@ -47,10 +67,11 @@ public class SFXParticles : SFXBase
         base.OnRecycle();
         m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.OnRecycle(); });
         ResetParticles();
+        m_AttachTo = null;
     }
 
     public void Stop()
     {
-        SetLifeTime(0f);
+        OnStop();
     }
 }

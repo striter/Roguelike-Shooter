@@ -38,7 +38,7 @@ GameObject:
   - component: {fileID: 33166016875960652}
   - component: {fileID: 23380590874167078}
   m_Layer: 0
-  m_Name: scp_we2_assault_rifle_01
+  m_Name: Case
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

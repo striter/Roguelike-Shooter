@@ -8,7 +8,7 @@ public class SFXProjectileSplit : SFXProjectile {
     [Range(0,360)]
     public float F_SplitRange;
     public int I_SplitCount;
-    protected override float F_Duration(Vector3 startPos, Vector3 endPos) => Vector3.Distance(transform.position, endPos) / F_Speed;
+    protected override float F_PlayDuration(Vector3 startPos, Vector3 endPos) => Vector3.Distance(transform.position, endPos) / F_Speed;
     protected override void OnStop()
     {
         base.OnStop();

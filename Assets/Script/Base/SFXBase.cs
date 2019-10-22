@@ -10,14 +10,16 @@ public class SFXBase : MonoBehaviour {
     protected float f_lifeDuration { get; private set; }
     protected float f_lifeTimeCheck { get; private set; }
     protected bool B_Playing { get; private set; }
-    protected bool B_Delaying { get; private set; }
-    protected virtual bool m_AutoRecycle => true;
+    protected bool B_Delay { get; private set; }
+    protected bool m_Looping => B_Playing && f_playDuration <= 0;
     protected virtual bool m_AutoStop => true;
+    protected virtual bool m_AutoRecycle => true;
     protected float f_playTimeLeft => f_lifeTimeCheck - GameConst.F_SFXStopExternalDuration;
     protected float f_delayTimeLeft => f_delayDuration -(f_lifeDuration- f_lifeTimeCheck);
     public virtual void Init(int _sfxIndex)
     {
         I_SFXIndex = _sfxIndex;
+
 #if UNITY_EDITOR
         EDITOR_DEBUG();
 #endif
@@ -25,7 +27,7 @@ public class SFXBase : MonoBehaviour {
     
     protected void PlaySFX(int sourceID,float playDuration,float delayDuration)
     {
-        B_Delaying = true;
+        B_Delay = true;
         B_Playing = false;
         I_SourceID = sourceID;
         f_playDuration = playDuration;
@@ -43,12 +45,13 @@ public class SFXBase : MonoBehaviour {
 
     protected virtual void OnPlay()
     {
-        B_Delaying = false;
+        B_Delay = false;
         B_Playing = true;
     }
 
     protected virtual void OnStop()
     {
+        f_lifeTimeCheck = GameConst.F_SFXStopExternalDuration;
         B_Playing = false;
     }
 
@@ -62,17 +65,18 @@ public class SFXBase : MonoBehaviour {
         if (!m_AutoStop && !m_AutoRecycle)
             return;
 
-        f_lifeTimeCheck -= Time.deltaTime;
-        if (B_Delaying &&f_delayDuration>0&& f_delayTimeLeft < 0)
+        if(!m_Looping)
+            f_lifeTimeCheck -= Time.deltaTime;
+
+        if (B_Delay &&f_delayDuration>0&& f_delayTimeLeft < 0)
             OnPlay();
 
-        if (B_Playing&&m_AutoStop &&f_playDuration>0 && f_playTimeLeft < 0)
+        if (m_AutoStop&&B_Playing && f_playTimeLeft < 0)
             OnStop();
 
-        if (m_AutoStop && f_lifeTimeCheck < 0)
+        if (m_AutoRecycle&&f_lifeTimeCheck < 0)
             OnRecycle();
     }
-
 
     public void Recycle()
     {

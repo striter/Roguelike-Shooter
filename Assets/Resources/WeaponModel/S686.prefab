@@ -70,7 +70,7 @@ GameObject:
   - component: {fileID: 33443540833324740}
   - component: {fileID: 23691661135525586}
   m_Layer: 0
-  m_Name: scp_we_shotgun_04_part_01
+  m_Name: Case
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
