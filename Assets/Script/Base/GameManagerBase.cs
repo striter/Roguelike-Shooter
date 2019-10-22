@@ -78,15 +78,6 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
         TPSCameraController.Instance.SetImpact(direction.normalized*GameConst.F_DamageImpactMultiply);
     }
     #endregion
-    #region Audio
-    public void Audio_SwitchBackground(bool inBattle)
-    {
-        string clipPath = "Audio/Background/Music_" + (B_InGame ? "Game" : "Camp");
-        if (B_InGame)
-            clipPath +=( inBattle ? "_Battle" : "_Quiet");
-        AudioManager.Instance.Play(TResources.Load<AudioClip>(clipPath));
-    }
-    #endregion
 }
 
 public class GameIdentificationManager
@@ -136,7 +127,6 @@ public static class OptionsManager
         m_Sensitive = GameExpression.F_PlayerSensitive(m_OptionsData.m_SensitiveTap);
         Application.targetFrameRate = (int)m_OptionsData.m_FrameRate;
         TLocalization.SetRegion(m_OptionsData.m_Region);
-        AudioManager.SetVolueMultiply(GameExpression.F_GameMusicVolume(m_OptionsData.m_MusicVolumeTap));
         event_OptionChanged?.Invoke();
     }
 }
