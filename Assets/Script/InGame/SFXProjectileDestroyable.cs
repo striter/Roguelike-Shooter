@@ -15,12 +15,10 @@ public class SFXProjectileDestroyable : SFXProjectile {
     {
         m_Health.OnActivate(GameManager.Instance.GetEntity(deliverInfo.I_SourceID).m_Flag);
         m_Health.Play(OnStop);
-        Debug.Log("?");
         base.Play(deliverInfo, direction, targetPosition);
     }
     protected override void OnPlay()
     {
-        Debug.Log("??");
         m_Health.OnPlay();
         base.OnPlay();
     }
