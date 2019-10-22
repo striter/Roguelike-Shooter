@@ -13,14 +13,4 @@ public class HitCheckEntity : HitCheckBase {
         base.Attach(_OnHitCheck);
         m_Attacher = _attacher;
     }
-    List<SFXBase> m_Attaches = new List<SFXBase>();
-    public void AttachHitMark(SFXBase attachment)
-    {
-        attachment.transform.SetParent(this.transform);
-        m_Attaches.Add(attachment);
-    }
-    public void HideAllAttaches()
-    {
-        m_Attaches.Traversal((SFXBase temp) => { temp.Recycle(); });
-    }
 }

@@ -74,7 +74,6 @@ public class SFXBase : MonoBehaviour {
             OnRecycle();
     }
 
-
     public void Recycle()
     {
         OnRecycle();

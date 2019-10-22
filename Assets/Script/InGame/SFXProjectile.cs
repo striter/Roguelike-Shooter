@@ -154,7 +154,7 @@ public class SFXProjectile : SFXParticles
         if (I_ImpactIndex <= 0)
             return;
 
-        GameObjectManager.SpawnParticles<SFXImpact>(I_ImpactIndex,hitPoint,hitNormal, null).Play(m_sourceID);
+        GameObjectManager.SpawnParticles<SFXImpact>(I_ImpactIndex,hitPoint,hitNormal).Play(m_sourceID);
     }
     protected void SpawnHitMark(Vector3 hitPoint,Vector3 hitNormal,HitCheckBase hitParent)
     {
@@ -164,10 +164,9 @@ public class SFXProjectile : SFXParticles
         bool showhitMark = GameExpression.B_ShowHitMark(hitParent.m_HitCheckType);
         if (showhitMark)
         {
-            SFXHitMark hitMark = GameObjectManager.SpawnParticles<SFXHitMark>(I_HitMarkIndex, hitPoint, hitNormal, hitParent.transform);
+            SFXHitMark hitMark = GameObjectManager.SpawnParticles<SFXHitMark>(I_HitMarkIndex, hitPoint, hitNormal);
             hitMark.Play(m_sourceID);
-            if (hitParent.m_HitCheckType == enum_HitCheck.Entity)
-                (hitParent as HitCheckEntity).AttachHitMark(hitMark);
+            hitMark.AttachTo(hitParent.transform);
         }
     }
 
