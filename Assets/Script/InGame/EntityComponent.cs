@@ -1,18 +1,25 @@
-﻿using System;
-using GameSetting;
-
+﻿using GameSetting;
+using System;
+using UnityEngine;
 public class EntityComponent : EntityBase {
     public override enum_EntityController m_Controller => enum_EntityController.None;
-
     Action OnEntityDead;
-    public void ActionOnDead(Action _OnDead)
+    public void Play(Action _OnDead)
     {
         OnEntityDead = _OnDead;
+        EnableHitbox(false);
     }
     protected override void OnDead()
     {
-        base.OnDead();
         OnEntityDead?.Invoke();
+    }
+    public void OnPlay()
+    {
+        EnableHitbox(true);
+    }
+    public void OnStop()
+    {
+        base.OnDead();
         OnRecycle();
     }
 }

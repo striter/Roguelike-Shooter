@@ -11,8 +11,8 @@ public class SFXBase : MonoBehaviour {
     protected float f_lifeTimeCheck { get; private set; }
     protected bool B_Playing { get; private set; }
     protected bool B_Delaying { get; private set; }
-    protected virtual bool m_AutoRecycle => true;
-    protected virtual bool m_AutoStop => true;
+    protected virtual bool m_AutoStop => true && f_playDuration > 0;
+    protected virtual bool m_AutoRecycle => true && f_lifeTimeCheck > GameConst.F_SFXStopExternalDuration;
     protected float f_playTimeLeft => f_lifeTimeCheck - GameConst.F_SFXStopExternalDuration;
     protected float f_delayTimeLeft => f_delayDuration -(f_lifeDuration- f_lifeTimeCheck);
     public virtual void Init(int _sfxIndex)
@@ -49,6 +49,7 @@ public class SFXBase : MonoBehaviour {
 
     protected virtual void OnStop()
     {
+        f_lifeTimeCheck = GameConst.F_SFXStopExternalDuration;
         B_Playing = false;
     }
 
@@ -66,13 +67,12 @@ public class SFXBase : MonoBehaviour {
         if (B_Delaying &&f_delayDuration>0&& f_delayTimeLeft < 0)
             OnPlay();
 
-        if (B_Playing&&m_AutoStop &&f_playDuration>0 && f_playTimeLeft < 0)
+        if (B_Playing&&m_AutoStop && f_playTimeLeft < 0)
             OnStop();
 
-        if (m_AutoStop && f_lifeTimeCheck < 0)
+        if (m_AutoStop&&f_lifeTimeCheck < 0)
             OnRecycle();
     }
-
 
     public void Recycle()
     {

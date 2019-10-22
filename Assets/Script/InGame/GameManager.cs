@@ -743,23 +743,23 @@ public static class GameObjectManager
     public static void RecycleWeapon(WeaponBase weapon)=> ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Recycle(weapon.m_WeaponInfo.m_Weapon,weapon);
     #endregion
     #region SFX
-    public static T SpawnSFX<T>(int index, Transform attachTo = null) where T : SFXBase
+    public static T SpawnSFX<T>(int index) where T : SFXBase
     {
-        T sfx = ObjectPoolManager<int, SFXBase>.Spawn(index, attachTo ? attachTo : TF_SFXPlaying) as T;
+        T sfx = ObjectPoolManager<int, SFXBase>.Spawn(index,  TF_SFXPlaying) as T;
         if (sfx == null)
             Debug.LogError("SFX Spawn Error! Invalid SFX Type:" + typeof(T) + ",Index:" + index);
         return sfx;
     }
 
-    public static T SpawnParticles<T>(int index, Vector3 position, Vector3 normal, Transform attachTo = null) where T : SFXParticles
+    public static T SpawnParticles<T>(int index, Vector3 position, Vector3 normal) where T : SFXParticles
     {
-        T sfx = SpawnSFX<T>(index, attachTo);
+        T sfx = SpawnSFX<T>(index);
         sfx.transform.position = position;
         sfx.transform.rotation = Quaternion.LookRotation(normal);
         return sfx;
     }
-    public static SFXIndicator SpawnIndicator(int index, Vector3 position, Vector3 normal, Transform attachTo = null) => SpawnParticles<SFXIndicator>(index, position, normal, attachTo);
-    public static SFXBuffEffect SpawnBuffEffect(int index, EntityCharacterBase attachTo) => SpawnParticles<SFXBuffEffect>(index, attachTo.transform.position, attachTo.transform.forward, attachTo.transform);
+    public static SFXIndicator SpawnIndicator(int index, Vector3 position, Vector3 normal) => SpawnParticles<SFXIndicator>(index, position, normal);
+    public static SFXEffect SpawnBuffEffect(int index, EntityCharacterBase attachTo) => SpawnParticles<SFXEffect>(index, attachTo.transform.position, attachTo.transform.forward);
 
     public static T SpawnEquipment<T>(int weaponIndex, Vector3 position, Vector3 normal, Transform attachTo = null) where T : SFXBase
     {

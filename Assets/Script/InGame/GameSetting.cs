@@ -1097,7 +1097,7 @@ namespace GameSetting
     {
         protected EntityCharacterBase m_Entity { get; private set; }
         public List<ExpireBase> m_Expires { get; private set; } = new List<ExpireBase>();
-        List<SFXBuffEffect> m_BuffEffects = new List<SFXBuffEffect>();
+        Dictionary<int, SFXEffect> m_BuffEffects = new Dictionary<int, SFXEffect>();
         public float F_MaxHealthAdditive { get; private set; } = 0f;
         public float F_DamageReceiveMultiply { get; private set; } = 1f;
         public float F_HealReceiveMultiply { get; private set; } = 1f;
@@ -1179,6 +1179,7 @@ namespace GameSetting
         {
             m_Expires.Add(expire);
             EntityInfoChange();
+            AddEffect(expire);
         }
         void RefreshExpire(ExpireBase expire)
         {
@@ -1189,6 +1190,7 @@ namespace GameSetting
         {
             m_Expires.Remove(expire);
             EntityInfoChange();
+            RemoveEffect(expire);
         }
         public void AddBuff(int sourceID, SBuff buffInfo)
         {
@@ -1209,6 +1211,7 @@ namespace GameSetting
                     break;
             }
         }
+        #region ExpireInfo
         protected virtual void OnResetInfo()
         {
             F_MaxHealthAdditive = 0f;
@@ -1243,35 +1246,32 @@ namespace GameSetting
             OnResetInfo();
             m_Expires.Traversal(OnSetExpireInfo);
             AfterInfoSet();
-            //Do Effect Removal Check
-            for (int i = 0; i < m_BuffEffects.Count; i++)
-            {
-                ExpireBase expire = m_Expires.Find(p => p.m_EffectIndex == m_BuffEffects[i].I_SFXIndex);
-                if (expire == null)
-                {
-                    m_BuffEffects[i].Stop();
-                    m_BuffEffects.RemoveAt(i);
-                }
-            }
-
-            //Refresh Or Add Effects
-            for (int i = 0; i < m_Expires.Count; i++)
-            {
-                if (m_Expires[i].m_EffectIndex <= 0||m_Expires[i].m_ExpireDuration<=0)
-                    continue;
-
-                SFXBuffEffect particle = m_BuffEffects.Find(p => p.I_SFXIndex == m_Expires[i].m_EffectIndex);
-
-                if (particle)
-                    particle.Refresh(m_Expires[i].m_ExpireDuration);
-                else
-                {
-                    particle = GameObjectManager.SpawnBuffEffect(m_Expires[i].m_EffectIndex, m_Entity);
-                    particle.Play(m_Entity.I_EntityID, m_Expires[i].m_ExpireDuration);
-                    m_BuffEffects.Add(particle);
-                }
-            }
         }
+        #endregion
+        #region ExpireEffect
+        void AddEffect(ExpireBase expire)
+        {
+            if (expire.m_EffectIndex <= 0 || expire.m_ExpireDuration <= 0)
+                return;
+
+            if (m_BuffEffects.ContainsKey(expire.m_EffectIndex))
+                return;
+            SFXEffect effect = GameObjectManager.SpawnBuffEffect(expire.m_EffectIndex, m_Entity);
+            effect.Play(m_Entity);
+            m_BuffEffects.Add(expire.m_EffectIndex, effect);
+        }
+        void RemoveEffect(ExpireBase expire)
+        {
+            if (expire.m_EffectIndex <= 0 || expire.m_ExpireDuration <= 0)
+                return;
+
+            if (m_Expires.Find(p => p.m_EffectIndex == expire.m_EffectIndex) != null)
+                return;
+
+            m_BuffEffects[expire.m_EffectIndex].Stop();
+            m_BuffEffects.Remove(expire.m_EffectIndex);
+        }
+        #endregion
     }
 
     public class PlayerInfoManager : CharacterInfoManager
@@ -1372,7 +1372,7 @@ namespace GameSetting
         public void OnUseAcion(ActionBase targetAction)
         {
             m_ActionEquiping.Traversal((ActionBase action) => {action.OnAddActionElse(targetAction); });
-            GameObjectManager.SpawnParticles<SFXParticles>(GameExpression.GetActionMuzzleIndex(targetAction.m_ActionType), m_Player.transform.position, Vector3.up).Play(m_Player.I_EntityID);
+            GameObjectManager.SpawnParticles<SFXMuzzle>(GameExpression.GetActionMuzzleIndex(targetAction.m_ActionType), m_Player.transform.position, Vector3.up).Play(m_Player.I_EntityID);
             OnAddAction(targetAction);
         }
         protected void OnAddAction(ActionBase targetAction)
@@ -1456,11 +1456,15 @@ namespace GameSetting
         }
         protected void OnCharacterHealthWillChange(DamageInfo damageInfo, EntityCharacterBase damageEntity)
         {
-            if (damageInfo.m_detail.I_SourceID != m_Entity.I_EntityID)
-                return;
-
-            m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDamageSetEffect(damageEntity, damageInfo); });
-            m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDamageSetDamage(damageEntity, damageInfo); });
+            if (damageInfo.m_detail.I_SourceID == m_Entity.I_EntityID)
+            {
+                m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDamageSetEffect(damageEntity, damageInfo); });
+                m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDamageSetDamage(damageEntity, damageInfo); });
+            }
+            else if (damageEntity.I_EntityID == m_Player.I_EntityID)
+            {
+                m_ActionEquiping.Traversal((ActionBase action) => { action.OnBeforeReceiveDamage(damageInfo); });
+            }
         }
 
         protected override void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
@@ -1480,7 +1484,7 @@ namespace GameSetting
             }
             else if (damageEntity.I_EntityID == m_Player.I_EntityID)
             {
-                m_ActionEquiping.Traversal((ActionBase action) => { action.OnReceiveDamage(damageInfo, amountApply); });
+                m_ActionEquiping.Traversal((ActionBase action) => { action.OnAfterReceiveDamage(damageInfo, amountApply); });
             }
         }
 
@@ -1758,7 +1762,8 @@ namespace GameSetting
         #region Interact
         public virtual void OnActionUse() { }
         public virtual void OnAddActionElse(ActionBase targetAction) { }
-        public virtual void OnReceiveDamage(DamageInfo info, float amount) { }
+        public virtual void OnBeforeReceiveDamage(DamageInfo info) { }
+        public virtual void OnAfterReceiveDamage(DamageInfo info, float amount) { }
         public virtual void OnDealtDamageSetEffect(EntityCharacterBase receiver,DamageInfo info) { }
         public virtual void OnDealtDamageSetDamage(EntityCharacterBase receiver, DamageInfo info) { }
         public virtual void OnAfterDealtDemage(EntityCharacterBase receiver,DamageInfo info, float applyAmount) { }

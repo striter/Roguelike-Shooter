@@ -11,7 +11,7 @@ public class SFXShield : SFXBase {
         base.Init(_sfxIndex);
         m_Health = GetComponentInChildren<EntityComponent>();
         m_Health.Init(-1);
-        m_Health.ActionOnDead(Recycle);
+        m_Health.Play(Recycle);
     }
     public void Attach(EntityCharacterBase _attacher)
     {

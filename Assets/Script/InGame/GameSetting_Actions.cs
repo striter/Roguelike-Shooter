@@ -741,9 +741,9 @@ namespace GameSetting_Action
             base.OnTick(deltaTime);
             ActionHelper.ReceiveHealing(m_ActionEntity, Value1 * deltaTime, enum_DamageType.HealthOnly);
         }
-        public override void OnReceiveDamage(DamageInfo info, float amount)
+        public override void OnAfterReceiveDamage(DamageInfo info, float amount)
         {
-            base.OnReceiveDamage(info, amount);
+            base.OnAfterReceiveDamage(info, amount);
             ForceExpire();
         }
         public Action_10021_HealthRegen(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
@@ -758,9 +758,9 @@ namespace GameSetting_Action
         public override float F_Duration => ActionData.F_10022_Duration(m_rarity);
         public override float Value1 => ActionData.P_10022_HealthRegenTranslateFromDamage;
         public override float m_DamageReduction => 1f;
-        public override void OnReceiveDamage(DamageInfo info, float amount)
+        public override void OnAfterReceiveDamage(DamageInfo info, float amount)
         {
-            base.OnReceiveDamage(info, amount);
+            base.OnAfterReceiveDamage(info, amount);
             ActionHelper.ReceiveHealing(m_ActionEntity,info.m_AmountApply, enum_DamageType.HealthOnly);
         }
         public Action_10022_HealthRegenFromDamage(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
@@ -1356,9 +1356,9 @@ namespace GameSetting_Action
             base.OnTick(deltaTime);
             if (m_counter > 0) m_counter -= deltaTime;
         }
-        public override void OnReceiveDamage(DamageInfo info, float amount)
+        public override void OnBeforeReceiveDamage(DamageInfo info)
         {
-            base.OnReceiveDamage(info, amount);
+            base.OnBeforeReceiveDamage(info);
             if (m_ActionEntity.m_Health.m_CurrentArmor > 0)
                 m_counter = Value1;
         }
@@ -1370,9 +1370,9 @@ namespace GameSetting_Action
         public override int m_Index => 30015;
         public override int I_BaseCost => ActionData.I_30015_Cost;
         public override float Value1 => ActionData.F_30015_DamageReflectPerArmor(m_rarity);
-        public override void OnReceiveDamage(DamageInfo info, float amount)
+        public override void OnBeforeReceiveDamage(DamageInfo info)
         {
-            base.OnReceiveDamage(info, amount);
+            base.OnBeforeReceiveDamage(info);
             if (m_ActionEntity.m_Health.m_CurrentArmor > 0)
                 ActionHelper.PlayerDealtDamageToEntity(m_ActionEntity, info.m_detail.I_SourceID, Value1 * m_ActionEntity.m_Health.m_CurrentArmor, enum_DamageType.Basic);
         }
@@ -1555,9 +1555,9 @@ namespace GameSetting_Action
         public override float Value2 => ActionData.F_40012_Duration(m_rarity);
         public override float m_MovementSpeedMultiply => f_durationCheck > 0f ? Value1 / 100f : 0;
         float f_durationCheck;
-        public override void OnReceiveDamage(DamageInfo info, float amount)
+        public override void OnAfterReceiveDamage(DamageInfo info, float amount)
         {
-            base.OnReceiveDamage(info, amount);
+            base.OnAfterReceiveDamage(info, amount);
             f_durationCheck = Value2;
         }
         public override void OnTick(float deltaTime)
