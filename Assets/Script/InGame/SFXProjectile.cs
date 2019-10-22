@@ -30,7 +30,8 @@ public class SFXProjectile : SFXParticles
     protected SFXIndicator m_Indicator;
     List<int> m_EntityHitted = new List<int>();
     public bool B_PhysicsSimulating { get; private set; }
-    protected virtual float F_Duration(Vector3 startPos, Vector3 endPos) => GameConst.I_ProjectileMaxDistance / F_Speed;
+    protected virtual float F_PlayDuration(Vector3 startPos, Vector3 endPos) => GameConst.I_ProjectileMaxDistance / F_Speed;
+    protected virtual float F_PlayDelay => 0f;
     protected virtual bool B_StopParticlesOnHit => true;
     protected virtual bool B_StopPhysicsOnHit => true;
     protected virtual bool B_DealDamage => true;
@@ -55,8 +56,8 @@ public class SFXProjectile : SFXParticles
             deliverInfo.AddExtraBuff(I_BufFApplyOnHit);
         m_DamageInfo=new DamageInfo(F_Damage, enum_DamageType.Basic,deliverInfo);
         m_Simulator = GetSimulator(direction, targetPosition);
-        if (I_IndicatorIndex > 0)
-            SpawnIndicator(targetPosition,Vector3.up, F_Duration(transform.position, targetPosition));
+
+        SpawnIndicator(targetPosition,Vector3.up, F_PlayDelay);
 
         if (m_Blink != null)
             m_Blink.OnReset();
@@ -66,7 +67,7 @@ public class SFXProjectile : SFXParticles
             m_Trail.Clear();
         }
 
-        base.Play(deliverInfo.I_SourceID, F_Duration(transform.position, targetPosition));
+        base.Play(deliverInfo.I_SourceID, F_PlayDuration(transform.position, targetPosition), F_PlayDelay);
     }
     protected override void OnPlay()
     {
@@ -143,6 +144,8 @@ public class SFXProjectile : SFXParticles
     #endregion
     protected virtual void SpawnIndicator(Vector3 position,Vector3 direction,float duration)
     {
+        if (I_IndicatorIndex <= 0)
+            return;
         m_Indicator = GameObjectManager.SpawnIndicator(I_IndicatorIndex, position, direction);
         m_Indicator.Play(m_sourceID, duration);
     }

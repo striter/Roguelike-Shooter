@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
-
 public class SFXParticles : SFXBase
 {
     protected ParticleSystem[] m_Particles { get; private set; }

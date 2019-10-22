@@ -1456,11 +1456,15 @@ namespace GameSetting
         }
         protected void OnCharacterHealthWillChange(DamageInfo damageInfo, EntityCharacterBase damageEntity)
         {
-            if (damageInfo.m_detail.I_SourceID != m_Entity.I_EntityID)
-                return;
-
-            m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDamageSetEffect(damageEntity, damageInfo); });
-            m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDamageSetDamage(damageEntity, damageInfo); });
+            if (damageInfo.m_detail.I_SourceID == m_Entity.I_EntityID)
+            {
+                m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDamageSetEffect(damageEntity, damageInfo); });
+                m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDamageSetDamage(damageEntity, damageInfo); });
+            }
+            else if (damageEntity.I_EntityID == m_Player.I_EntityID)
+            {
+                m_ActionEquiping.Traversal((ActionBase action) => { action.OnBeforeReceiveDamage(damageInfo); });
+            }
         }
 
         protected override void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
@@ -1480,7 +1484,7 @@ namespace GameSetting
             }
             else if (damageEntity.I_EntityID == m_Player.I_EntityID)
             {
-                m_ActionEquiping.Traversal((ActionBase action) => { action.OnReceiveDamage(damageInfo, amountApply); });
+                m_ActionEquiping.Traversal((ActionBase action) => { action.OnAfterReceiveDamage(damageInfo, amountApply); });
             }
         }
 
@@ -1758,7 +1762,8 @@ namespace GameSetting
         #region Interact
         public virtual void OnActionUse() { }
         public virtual void OnAddActionElse(ActionBase targetAction) { }
-        public virtual void OnReceiveDamage(DamageInfo info, float amount) { }
+        public virtual void OnBeforeReceiveDamage(DamageInfo info) { }
+        public virtual void OnAfterReceiveDamage(DamageInfo info, float amount) { }
         public virtual void OnDealtDamageSetEffect(EntityCharacterBase receiver,DamageInfo info) { }
         public virtual void OnDealtDamageSetDamage(EntityCharacterBase receiver, DamageInfo info) { }
         public virtual void OnAfterDealtDemage(EntityCharacterBase receiver,DamageInfo info, float applyAmount) { }
