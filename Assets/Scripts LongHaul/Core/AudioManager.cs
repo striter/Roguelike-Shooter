@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class AudioManager: SimpleSingletonMono <AudioManager>
 {
-    protected AudioSource m_AudioBackground { get; private set; }
+    protected AudioSource m_Audio { get; private set; }
     AudioClip m_Clip;
     float m_baseVolume = 1f;
     public virtual float m_Volume => m_baseVolume;
     protected override void Awake()
     {
         base.Awake();
-        m_AudioBackground = GetComponent<AudioSource>();
-        m_AudioBackground.loop = true;
-        m_AudioBackground.playOnAwake = false;
-        m_AudioBackground.volume = m_Volume;
+        m_Audio = GetComponent<AudioSource>();
+        m_Audio.loop = true;
+        m_Audio.playOnAwake = false;
+        m_Audio.volume = m_Volume;
         m_baseVolume = 1f;
     }
 
@@ -22,9 +22,24 @@ public class AudioManager: SimpleSingletonMono <AudioManager>
     {
         if (m_Clip == _Clip)
             return;
-
         m_Clip = _Clip;
-        m_AudioBackground.clip = m_Clip;
-        m_AudioBackground.Play();
+    }
+
+    protected virtual void Update()
+    {
+        m_Audio.volume = m_Volume;
+        if (m_Audio.clip == m_Clip)
+        {
+            m_baseVolume = Mathf.Lerp(m_baseVolume, 1f, Time.deltaTime);
+        }
+        else
+        {
+            m_baseVolume = Mathf.Lerp(m_baseVolume, 0f, Time.deltaTime);
+            if (m_baseVolume <= .05f)
+            {
+                m_Audio.clip = m_Clip;
+                m_Audio.Play();
+            }
+        }
     }
 }
