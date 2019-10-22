@@ -1347,6 +1347,7 @@ namespace GameSetting_Action
     {
         public override int m_Index => 30014;
         public override int I_BaseCost => ActionData.I_30014_Cost;
+        public override int m_EffectIndex => 40004;
         public override float Value1 => ActionData.F_30014_DamageReductionDuration(m_rarity);
         public override float m_DamageReduction => m_Effecting ? 1 : 0;
         float m_counter = 0;
@@ -1354,11 +1355,14 @@ namespace GameSetting_Action
         public override void OnTick(float deltaTime)
         {
             base.OnTick(deltaTime);
-            if (m_counter > 0) m_counter -= deltaTime;
+            if (m_Effecting) m_counter -= deltaTime;
         }
         public override void OnBeforeReceiveDamage(DamageInfo info)
         {
             base.OnBeforeReceiveDamage(info);
+            if (m_Effecting)
+                return;
+
             if (m_ActionEntity.m_Health.m_CurrentArmor > 0)
                 m_counter = Value1;
         }

@@ -38,7 +38,7 @@ GameObject:
   - component: {fileID: 33285912909649022}
   - component: {fileID: 23893889629432994}
   m_Layer: 0
-  m_Name: guidaoqiang
+  m_Name: Case
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

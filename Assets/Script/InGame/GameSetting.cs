@@ -487,6 +487,14 @@ namespace GameSetting
         Heavy_Remote_164 = 164,
     }
 
+    public enum enum_EffectAttach
+    {
+        Invalid=-1,
+        Head=1,
+        Feet=2,
+        Weapon=3,
+    }
+
     public enum enum_Option_FrameRate { Invalid = -1, Normal = 45, High = 60, }
     #endregion
 
@@ -1251,18 +1259,18 @@ namespace GameSetting
         #region ExpireEffect
         void AddEffect(ExpireBase expire)
         {
-            if (expire.m_EffectIndex <= 0 || expire.m_ExpireDuration <= 0)
+            if (expire.m_EffectIndex <= 0)
                 return;
 
             if (m_BuffEffects.ContainsKey(expire.m_EffectIndex))
                 return;
-            SFXEffect effect = GameObjectManager.SpawnBuffEffect(expire.m_EffectIndex, m_Entity);
+            SFXEffect effect = GameObjectManager.SpawnBuffEffect(expire.m_EffectIndex);
             effect.Play(m_Entity);
             m_BuffEffects.Add(expire.m_EffectIndex, effect);
         }
         void RemoveEffect(ExpireBase expire)
         {
-            if (expire.m_EffectIndex <= 0 || expire.m_ExpireDuration <= 0)
+            if (expire.m_EffectIndex <= 0)
                 return;
 
             if (m_Expires.Find(p => p.m_EffectIndex == expire.m_EffectIndex) != null)
@@ -1377,10 +1385,10 @@ namespace GameSetting
         }
         protected void OnAddAction(ActionBase targetAction)
         {
-            AddExpire(targetAction);
-            m_ActionEquiping.Add(targetAction);
             targetAction.Activate(m_Player, OnExpireElapsed);
+            m_ActionEquiping.Add(targetAction);
             targetAction.OnActionUse();
+            AddExpire(targetAction);
         }
         protected override void OnExpireElapsed(ExpireBase expire)
         {
@@ -1456,6 +1464,9 @@ namespace GameSetting
         }
         protected void OnCharacterHealthWillChange(DamageInfo damageInfo, EntityCharacterBase damageEntity)
         {
+            if (damageInfo.m_AmountApply <= 0)
+                return;
+
             if (damageInfo.m_detail.I_SourceID == m_Entity.I_EntityID)
             {
                 m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDamageSetEffect(damageEntity, damageInfo); });
@@ -1484,7 +1495,8 @@ namespace GameSetting
             }
             else if (damageEntity.I_EntityID == m_Player.I_EntityID)
             {
-                m_ActionEquiping.Traversal((ActionBase action) => { action.OnAfterReceiveDamage(damageInfo, amountApply); });
+                if(amountApply<0)
+                    m_ActionEquiping.Traversal((ActionBase action) => { action.OnAfterReceiveDamage(damageInfo, amountApply); });
             }
         }
 

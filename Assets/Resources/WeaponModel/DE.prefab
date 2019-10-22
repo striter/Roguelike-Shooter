@@ -102,7 +102,7 @@ GameObject:
   - component: {fileID: 33322385213798422}
   - component: {fileID: 23023719675907500}
   m_Layer: 0
-  m_Name: scp_we_pistol_04
+  m_Name: Case
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

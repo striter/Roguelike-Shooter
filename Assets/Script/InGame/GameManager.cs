@@ -759,7 +759,7 @@ public static class GameObjectManager
         return sfx;
     }
     public static SFXIndicator SpawnIndicator(int index, Vector3 position, Vector3 normal) => SpawnParticles<SFXIndicator>(index, position, normal);
-    public static SFXEffect SpawnBuffEffect(int index, EntityCharacterBase attachTo) => SpawnParticles<SFXEffect>(index, attachTo.transform.position, attachTo.transform.forward);
+    public static SFXEffect SpawnBuffEffect(int index) => SpawnParticles<SFXEffect>(index,Vector3.zero,Vector3.up);
 
     public static T SpawnEquipment<T>(int weaponIndex, Vector3 position, Vector3 normal, Transform attachTo = null) where T : SFXBase
     {

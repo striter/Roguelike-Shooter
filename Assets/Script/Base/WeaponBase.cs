@@ -23,6 +23,7 @@ public class WeaponBase : MonoBehaviour {
     public bool B_Reloading { get; private set; } = false;
     public int I_AmmoLeft { get; private set; } = 0;
     public Transform m_Muzzle { get; private set; } = null;
+    public Transform m_Case { get; private set; } = null;
     public int I_ClipAmount { get; private set; } = 0;
     public float F_Speed => m_Attacher.m_PlayerInfo.F_ProjectileSpeedMuiltiply * F_BaseSpeed;
     public float F_Recoil => m_Attacher.m_PlayerInfo.F_RecoilMultiply * F_BaseRecoil;
@@ -43,6 +44,7 @@ public class WeaponBase : MonoBehaviour {
     public void Init(SWeapon weaponInfo)
     {
         m_Muzzle = transform.FindInAllChild("Muzzle");
+        m_Case = transform.FindInAllChild("Case");
         m_WeaponInfo = weaponInfo;
         SFXProjectile projectileInfo = GameObjectManager.GetEquipmentData<SFXProjectile>(m_WeaponInfo.m_Index);
         F_BaseSpeed = projectileInfo.F_Speed;

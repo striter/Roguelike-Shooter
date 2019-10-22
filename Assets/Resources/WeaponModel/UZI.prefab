@@ -54,7 +54,7 @@ GameObject:
   - component: {fileID: 33344289451920164}
   - component: {fileID: 23288803006203766}
   m_Layer: 0
-  m_Name: scp_we_submachine_gun_01
+  m_Name: Case
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
