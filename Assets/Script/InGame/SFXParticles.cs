@@ -43,14 +43,12 @@ public class SFXParticles : SFXBase
     }
     public void ResetParticles()
     {
-        m_relativeSFXs.Traversal((SFXRelativeBase sfxRelative) => { sfxRelative.OnReset(); });
-        m_Particles.Traversal((ParticleSystem particle) => { particle.Clear(); });
     }
 
     protected override void OnPlay()
     {
         base.OnPlay();
-        m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.Play(); });
+        m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.OnPlay(); });
         m_Particles.Traversal((ParticleSystem particle) => { particle.Play(); });
     }
 
@@ -58,7 +56,7 @@ public class SFXParticles : SFXBase
     {
         base.OnStop();
         transform.SetParent(GameObjectManager.TF_SFXWaitForRecycle);
-        m_relativeSFXs.Traversal((SFXRelativeBase sfxRelative) => { sfxRelative.Stop(); });
+        m_relativeSFXs.Traversal((SFXRelativeBase sfxRelative) => { sfxRelative.OnStop(); });
         m_Particles.Traversal((ParticleSystem particle) => { particle.Stop(); });
     }
 
@@ -66,7 +64,7 @@ public class SFXParticles : SFXBase
     {
         base.OnRecycle();
         m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.OnRecycle(); });
-        ResetParticles();
+        m_Particles.Traversal((ParticleSystem particle) => { particle.Clear(); });
         m_AttachTo = null;
     }
 

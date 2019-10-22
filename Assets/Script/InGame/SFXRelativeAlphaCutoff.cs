@@ -14,21 +14,16 @@ public class SFXRelativeAlphaCutoff : SFXRelativeBase,ISingleCoroutine {
         m_Material = GetComponent<MeshRenderer>().material;
         m_Material.SetFloat(HS_Cutoff, F_StartCutoff);
     }
-    public override void OnReset()
+    public override void OnPlay()
     {
-        base.OnReset();
-        m_Material.SetFloat(HS_Cutoff,F_StartCutoff);
-    }
-    public override void Play()
-    {
-        base.Play();
+        base.OnPlay();
         this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) =>{
             m_Material.SetFloat(HS_Cutoff,value);
         }, F_StartCutoff, F_EndCutoff, F_Time));
     }
-    public override void Stop()
+    public override void OnStop()
     {
-        base.Stop();
+        base.OnStop();
         this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => {
             m_Material.SetFloat(HS_Cutoff, value);
         }, F_EndCutoff, F_StartCutoff, F_Time));

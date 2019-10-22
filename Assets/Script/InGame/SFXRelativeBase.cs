@@ -8,15 +8,11 @@ public class SFXRelativeBase : MonoBehaviour {
     {
 
     }
-    public virtual void OnReset()
+    public virtual void OnPlay()
     {
 
     }
-    public virtual void Play()
-    {
-
-    }
-    public virtual void Stop()
+    public virtual void OnStop()
     {
         
     }

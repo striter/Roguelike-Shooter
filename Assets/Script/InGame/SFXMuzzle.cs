@@ -17,7 +17,6 @@ public class SFXMuzzle : SFXParticles
         base.Play(sourceID, duration,delayDuration);
         lightCheck = .2f;
         b_lightPlaying = true;
-        m_lights.Traversal((SFXRelativeLight light) => { light.Play(); });
     }
 
     protected override void Update()
@@ -26,8 +25,8 @@ public class SFXMuzzle : SFXParticles
         lightCheck -= Time.deltaTime;
         if (b_lightPlaying&&lightCheck < 0)
         {
-            m_lights.Traversal((SFXRelativeLight light) => { light.Stop(); });
             b_lightPlaying = false;
+            m_lights.Traversal((SFXRelativeLight light) => { light.OnStop(); });
         }
     }
 }
