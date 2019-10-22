@@ -16,6 +16,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public EquipmentBase m_Equipment { get; private set; }
     public int m_EquipmentTimes { get; private set; }
     public float m_EquipmentDistance { get; private set; }
+    public override Transform tf_Weapon => m_WeaponCurrent.m_Case;
     public override float m_baseMovementSpeed => F_MovementSpeed*( f_movementReductionCheck >0? (1-GameConst.F_AimMovementReduction*m_PlayerInfo.F_AimMovementStrictMultiply):1f);
     public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized* m_CharacterInfo.F_MovementSpeed * time;
     public PlayerInfoManager m_PlayerInfo { get; private set; }

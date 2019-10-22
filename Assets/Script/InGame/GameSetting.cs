@@ -1388,7 +1388,7 @@ namespace GameSetting
             targetAction.Activate(m_Player, OnExpireElapsed);
             m_ActionEquiping.Add(targetAction);
             targetAction.OnActionUse();
-            AddExpire(targetAction);
+            AddExpire(targetAction);    
         }
         protected override void OnExpireElapsed(ExpireBase expire)
         {

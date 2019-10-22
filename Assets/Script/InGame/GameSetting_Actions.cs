@@ -1210,6 +1210,7 @@ namespace GameSetting_Action
     {
         public override int m_Index => 30005;
         public override int I_BaseCost => ActionData.I_30005_Cost;
+        public override int m_EffectIndex => 40011;
         public override float Value1 => ActionData.F_30005_FreezeDuration(m_rarity);
         public override void OnDealtDamageSetEffect(EntityCharacterBase receiver, DamageInfo info)
         {
