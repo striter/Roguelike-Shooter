@@ -30,7 +30,7 @@ public class SFXCastDetonate : SFXCastOverlapSphere {
     protected override void Update()
     {
         base.Update();
-        if (!B_Delaying)
+        if (!B_Delay)
             return;
 
         float timeMultiply = 2f * (1-f_delayTimeLeft / F_DelayDuration);

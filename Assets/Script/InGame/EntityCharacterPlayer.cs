@@ -186,7 +186,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     Vector2 m_MoveAxisInput;
     void OnMovementDelta(Vector2 moveDelta)
     {
-        m_MoveAxisInput = Vector2.Lerp(m_MoveAxisInput, moveDelta,Time.deltaTime*10f);
+        m_MoveAxisInput = Vector2.Lerp(m_MoveAxisInput, moveDelta,Time.deltaTime*20f);
         if (moveDelta==Vector2.zero&&m_MoveAxisInput.magnitude < .1f)
             m_MoveAxisInput = Vector2.zero;
     }

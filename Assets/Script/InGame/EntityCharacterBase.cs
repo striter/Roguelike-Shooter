@@ -8,6 +8,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     public float F_AttackSpread;
     public Transform tf_Model { get; private set; }
     public Transform tf_Head { get; private set; }
+    public virtual Transform tf_Weapon { get; private set; }
     public CharacterInfoManager m_CharacterInfo { get; private set; }
     EntityCharacterEffectManager m_Effect;
     public virtual Vector3 m_PrecalculatedTargetPos(float time) { Debug.LogError("Override This Please");return Vector2.zero; }

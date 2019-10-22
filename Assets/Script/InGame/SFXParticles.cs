@@ -26,6 +26,8 @@ public class SFXParticles : SFXBase
     public void AttachTo(Transform _attachTo)
     {
         m_AttachTo = _attachTo;
+        if (!_attachTo)
+            return;
         m_localPos = _attachTo.InverseTransformPoint(transform.position);
         m_localDir = _attachTo.InverseTransformDirection(transform.forward);
     }
@@ -70,6 +72,6 @@ public class SFXParticles : SFXBase
 
     public void Stop()
     {
-        SetLifeTime(0f);
+        OnStop();
     }
 }

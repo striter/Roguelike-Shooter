@@ -49,7 +49,7 @@ public class SFXCast : SFXParticles {
             SetDamageInfo(buffInfo);
             tf_ControlledAttach = attachTrans;
             tf_ControlledCast = directionTrans;
-            PlaySFX(sourceID, int.MaxValue,F_DelayDuration);
+            PlaySFX(sourceID, 0f,F_DelayDuration);
         }
         else
         {

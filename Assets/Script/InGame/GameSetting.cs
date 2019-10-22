@@ -1178,8 +1178,8 @@ namespace GameSetting
         protected virtual void AddExpire(ExpireBase expire)
         {
             m_Expires.Add(expire);
-            EntityInfoChange();
             AddEffect(expire);
+            EntityInfoChange();
         }
         void RefreshExpire(ExpireBase expire)
         {
@@ -1189,8 +1189,8 @@ namespace GameSetting
         protected virtual void OnExpireElapsed(ExpireBase expire)
         {
             m_Expires.Remove(expire);
-            EntityInfoChange();
             RemoveEffect(expire);
+            EntityInfoChange();
         }
         public void AddBuff(int sourceID, SBuff buffInfo)
         {
