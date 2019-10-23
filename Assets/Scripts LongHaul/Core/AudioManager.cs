@@ -20,8 +20,9 @@ public class AudioManager: SimpleSingletonMono <AudioManager>
     protected virtual void Start()
     {
         GameObject obj = new GameObject("AudioObj");
+        obj.AddComponent<AudioSource>();
         SFXAudioBase audioObj= obj.AddComponent<SFXAudioBase>();
-        ObjectPoolManager<int, SFXAudioBase>.Register(1, audioObj, 5,(SFXAudioBase audios)=>audios.Init(1));
+        ObjectPoolManager<int, SFXBase>.Register(0, audioObj, 5,(SFXBase audios)=>audios.Init(0));
     }
 
     protected void SwitchBackground(AudioClip _Clip)
@@ -49,13 +50,10 @@ public class AudioManager: SimpleSingletonMono <AudioManager>
         }
     }
 
-    public void PlayClip(AudioClip _clip, Transform _target)
+    public void PlayClip(int sourceID,AudioClip _clip, Transform _target)
     {
-
-    }
-
-    public void PlayClip(AudioClip _clip, Vector3 _pos)
-    {
-
+        SFXAudioBase audio= ObjectPoolManager<int, SFXBase>.Spawn(0,null) as SFXAudioBase;
+        audio.transform.SetPositionAndRotation(_target.position, _target.rotation);
+        audio.Play(sourceID, _clip,_target);
     }
 }

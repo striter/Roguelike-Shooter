@@ -176,7 +176,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_Animator.SwitchAnim(m_WeaponCurrent.E_Anim);
 
         if (m_Assist) m_Assist.Recycle();
-        m_Assist = GameObjectManager.SpawnSFX<SFXAimAssist>(01);
+        m_Assist = GameObjectManager.SpawnSFX<SFXAimAssist>(101);
         m_Assist.Play(I_EntityID, tf_Head, tf_Head, GameConst.F_AimAssistDistance, GameLayer.Mask.I_All, (Collider collider) => { return GameManager.B_CanHitTarget(collider.Detect(), I_EntityID); });
 
         OnWeaponStatus();
