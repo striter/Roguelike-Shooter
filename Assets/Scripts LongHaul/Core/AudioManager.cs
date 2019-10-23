@@ -22,9 +22,13 @@ public class AudioManager: SimpleSingletonMono <AudioManager>
         GameObject obj = new GameObject("AudioObj");
         obj.AddComponent<AudioSource>();
         SFXAudioBase audioObj= obj.AddComponent<SFXAudioBase>();
-        ObjectPoolManager<int, SFXBase>.Register(0, audioObj, 5,(SFXBase audios)=>audios.Init(0));
+        ObjectPoolManager<int, SFXAudioBase>.Register(0, audioObj, 5,(SFXAudioBase audios)=>audios.Init(0));
     }
-
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        ObjectPoolManager<int, SFXAudioBase>.ClearAll();
+    }
     protected void SwitchBackground(AudioClip _Clip)
     {
         if (m_Clip == _Clip)
@@ -52,7 +56,7 @@ public class AudioManager: SimpleSingletonMono <AudioManager>
 
     public SFXAudioBase PlayClip(int sourceID,AudioClip _clip,bool _loop,Vector3 _position, Transform _target)
     {
-        SFXAudioBase audio= ObjectPoolManager<int, SFXBase>.Spawn(0,null) as SFXAudioBase;
+        SFXAudioBase audio= ObjectPoolManager<int, SFXAudioBase>.Spawn(0,null);
         audio.transform.position = _position;
         return audio.Play(sourceID, _clip, _target);
     }

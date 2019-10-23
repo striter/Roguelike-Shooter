@@ -43,14 +43,14 @@ public class UI_WeaponStatus : UIPageBase {
         m_WeaponName.localizeText = weapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
         m_ClipSize.SetNumeric(string.Format("{0:D2}", weapon.I_ClipAmount));
 
+        m_DamageAmount.text = string.Format("{0:N1}", weapon.F_BaseDamage);
         m_Damage.fillAmount = UIExpression.F_WeaponDamageValue(weapon.F_BaseDamage);
-        m_DamageAmount.text = weapon.F_BaseDamage.ToString();
+        m_FireRateAmount.text = string.Format("{0:N1}", weapon.m_WeaponInfo.m_RPM);
         m_FireRate.fillAmount = UIExpression.F_WeaponFireRateValue(weapon.m_WeaponInfo.m_RPM);
-        m_FireRateAmount.text = weapon.m_WeaponInfo.m_RPM.ToString();
+        m_ProjectileSpeedAmount.text = string.Format("{0:N1}", weapon.F_BaseSpeed);
         m_ProjectileSpeed.fillAmount = UIExpression.F_WeaponProjectileSpeedValue(weapon.F_BaseSpeed);
-        m_ProjectileSpeedAmount.text = weapon.F_BaseSpeed.ToString();
+        m_StabilityAmount.text = string.Format("{0:N1}", UIExpression.F_WeaponStability(weapon.m_WeaponInfo.m_RecoilScore));
         m_Stability.fillAmount = UIExpression.F_WeaponStabilityValue(weapon.m_WeaponInfo.m_RecoilScore);
-        m_StabilityAmount.text = (UIExpression.F_WeaponStabilityValue(weapon.m_WeaponInfo.m_RecoilScore)*100f).ToString();
 
         bool showAction = weapon.m_WeaponAction != null;
         if (showAction)

@@ -92,7 +92,7 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y:MonoBehaviour {
     {
         if (!d_ItemInfos.ContainsKey(identity))
         {
-            Debug.LogWarning("Null Identity Of GameObject:"+obj.name+"/"+identity+" Registed");
+            Debug.LogWarning("Null Identity Of GameObject:"+obj.name+"/"+identity+" Registed("+typeof(T).ToString()+"|"+typeof(Y).ToString()+")");
             return;
         }
         ItemPoolInfo info = d_ItemInfos[identity];
