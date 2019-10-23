@@ -40,9 +40,9 @@ public class GameAudioManager : AudioManager
     }
     void OnBattleStart()=>PlayClip(true);
     void OnBattleFinish()=> PlayClip(false);
-    void OnPageOpen() => m_Audio.pitch = .8f;
-    void OnPageClose() => m_Audio.pitch = 1f;
-    void PlayClip(bool inBattle)=> SwitchClip(m_Clips[inBattle]);
+    void OnPageOpen() => m_AudioBG.pitch = .8f;
+    void OnPageClose() => m_AudioBG.pitch = 1f;
+    void PlayClip(bool inBattle)=> SwitchBackground(m_Clips[inBattle]);
     void OnOptionChanged()
     {
         m_volumeMultiply = GameExpression.F_GameMusicVolume( OptionsManager.m_OptionsData.m_MusicVolumeTap);
