@@ -157,7 +157,7 @@ public class SFXCast : SFXParticles {
     {
         if (UnityEditor.EditorApplication.isPlaying &&GameManager.Instance&&!GameManager.Instance.B_PhysicsDebugGizmos)
             return;
-        Gizmos.color = GetGizmosColor();
+        Gizmos.color = EDITOR_GizmosColor();
         Gizmos_Extend.DrawArrow(CastTransform.position,Quaternion.LookRotation(CastTransform.forward),new Vector3(V4_CastInfo.x/10,V4_CastInfo.y/10,F_CastLength / 4));
         switch (E_AreaType)
         {
@@ -174,15 +174,6 @@ public class SFXCast : SFXParticles {
                 Gizmos_Extend.DrawTrapezium(CastTransform.position+ CastTransform.forward*F_CastLength/2,Quaternion.LookRotation(CastTransform.up,CastTransform.forward),V4_CastInfo);
                 break;
         }
-    }
-    protected Color GetGizmosColor()
-    {
-        Color color = Color.green;
-        if (B_Playing)
-            color = Color.red;
-        if (!UnityEditor.EditorApplication.isPlaying)
-            color = Color.yellow;
-        return color;
     }
 #endif
 }

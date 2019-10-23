@@ -82,7 +82,7 @@ public class SFXBase : MonoBehaviour {
     {
         OnRecycle();
     }
-
+    #if UNITY_EDITOR
     protected virtual void EDITOR_DEBUG()
     {
         if (I_SourceID == -1)
@@ -90,4 +90,17 @@ public class SFXBase : MonoBehaviour {
         if (I_SFXIndex == -1)
             Debug.Log("How'd fk SFX Index ID Equals -1");
     }
+
+    protected Color EDITOR_GizmosColor()
+    {
+        Color color = Color.red;
+        if (B_Playing)
+            color = Color.green;
+        if (B_Delay)
+            color = Color.yellow;
+        if (!UnityEditor.EditorApplication.isPlaying)
+            color = Color.white;
+        return color;
+    }
+#endif
 }

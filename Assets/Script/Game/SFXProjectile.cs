@@ -185,7 +185,7 @@ public class SFXProjectile : SFXParticles
     {
         if (UnityEditor.EditorApplication.isPlaying &&GameManager.Instance&&!GameManager.Instance.B_PhysicsDebugGizmos)
             return;
-        Gizmos.color =B_Playing? Color.yellow:Color.red;
+        Gizmos.color = EDITOR_GizmosColor();
         Gizmos_Extend.DrawWireCapsule(m_CenterPos,Quaternion.LookRotation( transform.up,transform.forward), Vector3.one, F_Radius,F_Height);
     }
 #endif
