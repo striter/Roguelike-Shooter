@@ -21,6 +21,8 @@ public class GameAudioManager : AudioManager
         OptionsManager.event_OptionChanged += OnOptionChanged;
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
+        TBroadCaster<enum_BC_UIStatus>.Add( enum_BC_UIStatus.UI_PageOpen, OnPageOpen);
+        TBroadCaster<enum_BC_UIStatus>.Add(enum_BC_UIStatus.UI_PageClose, OnPageClose);
 
         OnOptionChanged();
         m_Clips.Add(true, TResources.GetAudioClip_Background(GameManagerBase.Instance.B_InGame, true));
@@ -33,9 +35,13 @@ public class GameAudioManager : AudioManager
         OptionsManager.event_OptionChanged -= OnOptionChanged;
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish); ;
+        TBroadCaster<enum_BC_UIStatus>.Remove(enum_BC_UIStatus.UI_PageOpen, OnPageOpen);
+        TBroadCaster<enum_BC_UIStatus>.Remove(enum_BC_UIStatus.UI_PageClose, OnPageClose);
     }
     void OnBattleStart()=>PlayClip(true);
     void OnBattleFinish()=> PlayClip(false);
+    void OnPageOpen() => m_Audio.pitch = .8f;
+    void OnPageClose() => m_Audio.pitch = 1f;
     void PlayClip(bool inBattle)=> SwitchClip(m_Clips[inBattle]);
     void OnOptionChanged()
     {

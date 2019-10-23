@@ -370,6 +370,9 @@ namespace GameSetting
         UI_PlayerActionStatus,
         UI_PlayerExpireStatus,
         UI_PlayerWeaponStatus,
+
+        UI_PageOpen,
+        UI_PageClose,
     }
     #endregion
 

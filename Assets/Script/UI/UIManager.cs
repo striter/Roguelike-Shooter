@@ -86,13 +86,15 @@ public class UIManager :SimpleSingletonMono<UIManager>,ISingleCoroutine
 
     public T ShowPage<T>(bool animate,float bulletTime=1f) where T : UIPageBase
     {
-        if(bulletTime!=1f)
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PageOpen);
+        if (bulletTime!=1f)
             GameManagerBase.SetBulletTime(true,bulletTime);
         return UIPageBase.ShowPage<T>(tf_Pages, animate);
     }
     void OnPageExit()
     {
         GameManagerBase.SetBulletTime(false);
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PageClose);
     }
     protected T ShowTools<T>() where T : UIToolsBase => UIToolsBase.Show<T>(tf_Tools);
 }

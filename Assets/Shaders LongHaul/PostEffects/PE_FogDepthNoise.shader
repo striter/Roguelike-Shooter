@@ -74,7 +74,7 @@
 				float2 speed = _Time.y*float2(_FogSpeedX, _FogSpeedY);
 				float2 noiseUV = (worldPos.xz+worldPos.y) / 20 + speed;
 				float noise = pow((tex2D(_NoiseTex, noiseUV).r), _NoisePow)*(1- _NoiseLambert) + _NoiseLambert;
-				float fogDensity = saturate((_FogEnd - worldPos.y)*_FogDensity*noise /(_FogEnd - _FogStart));
+				float fogDensity =  saturate((_FogEnd - worldPos.y)*_FogDensity*noise /(_FogEnd - _FogStart));
 				fixed3 col = tex2D(_MainTex, i.uv).rgb;
 				fogDensity = fogDensity==1 ? _FogColor.a : fogDensity;
 				col.rgb += _FogColor.rgb*fogDensity;
