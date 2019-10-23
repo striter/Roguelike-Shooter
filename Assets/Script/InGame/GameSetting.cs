@@ -1179,6 +1179,7 @@ namespace GameSetting
             if (b_expireUpdated)
                 return;
             UpdateExpireInfo();
+            UpdateExpireEffect();
             OnExpireChange();
             b_expireUpdated = true;
         }
@@ -1186,7 +1187,6 @@ namespace GameSetting
         protected virtual void AddExpire(ExpireBase expire)
         {
             m_Expires.Add(expire);
-            AddEffect(expire);
             EntityInfoChange();
         }
         void RefreshExpire(ExpireBase expire)
@@ -1197,7 +1197,6 @@ namespace GameSetting
         protected virtual void OnExpireElapsed(ExpireBase expire)
         {
             m_Expires.Remove(expire);
-            RemoveEffect(expire);
             EntityInfoChange();
         }
         public void AddBuff(int sourceID, SBuff buffInfo)
@@ -1257,27 +1256,26 @@ namespace GameSetting
         }
         #endregion
         #region ExpireEffect
-        void AddEffect(ExpireBase expire)
+        void UpdateExpireEffect()
         {
-            if (expire.m_EffectIndex <= 0)
-                return;
+            m_Expires.Traversal((ExpireBase expire) =>
+            {
+                if (expire.m_EffectIndex <= 0)
+                    return;
+                if (m_BuffEffects.ContainsKey(expire.m_EffectIndex))
+                    return;
+                SFXEffect effect = GameObjectManager.SpawnBuffEffect(expire.m_EffectIndex);
+                effect.Play(m_Entity);
+                m_BuffEffects.Add(expire.m_EffectIndex, effect);
+            });
 
-            if (m_BuffEffects.ContainsKey(expire.m_EffectIndex))
-                return;
-            SFXEffect effect = GameObjectManager.SpawnBuffEffect(expire.m_EffectIndex);
-            effect.Play(m_Entity);
-            m_BuffEffects.Add(expire.m_EffectIndex, effect);
-        }
-        void RemoveEffect(ExpireBase expire)
-        {
-            if (expire.m_EffectIndex <= 0)
-                return;
+            m_BuffEffects.Traversal((int effectIndex) => {
+                if (m_Expires.Find(p => p.m_EffectIndex == effectIndex) != null)
+                    return;
 
-            if (m_Expires.Find(p => p.m_EffectIndex == expire.m_EffectIndex) != null)
-                return;
-
-            m_BuffEffects[expire.m_EffectIndex].Stop();
-            m_BuffEffects.Remove(expire.m_EffectIndex);
+                m_BuffEffects[effectIndex].Stop();
+                m_BuffEffects.Remove(effectIndex);
+            },true);
         }
         #endregion
     }

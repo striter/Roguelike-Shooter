@@ -187,9 +187,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     Vector2 m_MoveAxisInput;
     void OnMovementDelta(Vector2 moveDelta)
     {
-        m_MoveAxisInput = Vector2.Lerp(m_MoveAxisInput, moveDelta,Time.deltaTime*20f);
-        if (moveDelta==Vector2.zero&&m_MoveAxisInput.magnitude < .1f)
-            m_MoveAxisInput = Vector2.zero;
+        m_MoveAxisInput = moveDelta;
     }
 
     void OnRotateDelta(Vector2 rotateDelta)
@@ -345,14 +343,17 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         static readonly int HS_T_Reload = Animator.StringToHash("t_reload");
         static readonly int HS_FM_Reload = Animator.StringToHash("fm_reload");
         static readonly int HS_FM_Movement = Animator.StringToHash("fm_movement");
+        Vector2 v2_movement;
         public PlayerAnimator(Animator _animator) : base(_animator)
         {
             _animator.fireEvents = true;
+            v2_movement = Vector2.zero;
         }
         public void SetRun(Vector2 movement,float movementParam)
         {
-            m_Animator.SetFloat(HS_F_Forward, movement.y);
-            m_Animator.SetFloat(HS_F_Strafe, movement.x);
+            v2_movement = Vector2.Lerp(v2_movement,movement,Time.deltaTime*5f);
+            m_Animator.SetFloat(HS_F_Forward, v2_movement.y);
+            m_Animator.SetFloat(HS_F_Strafe, v2_movement.x);
             m_Animator.SetFloat(HS_FM_Movement, movementParam);
         }
         public void SwitchAnim(enum_PlayerAnim animIndex)
