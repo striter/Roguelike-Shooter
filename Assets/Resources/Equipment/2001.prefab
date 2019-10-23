@@ -206,4 +206,4 @@ MonoBehaviour:
   B_Attach: 0
   B_Loop: 0
   m_Clips:
-  - {fileID: 8300000, guid: 3d413a69ef83dcd4eb90fb40177f78c6, type: 3}
+  - {fileID: 8300000, guid: 6af41f0efed38964887b5f73f4b68388, type: 3}
