@@ -43,9 +43,4 @@ public class SFXParticles : SFXBase
         m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.OnRecycle(); });
         m_Particles.Traversal((ParticleSystem particle) => { particle.Clear(); });
     }
-
-    public void Stop()
-    {
-        OnStop();
-    }
 }

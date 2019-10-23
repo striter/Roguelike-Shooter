@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 public class SFXRelativeAudio : SFXRelativeBase {
+    public bool B_Attach;
+    public bool B_Loop;
     public AudioClip[] m_Clips;
+    SFXAudioBase m_Audio;
     public override void Init()
     {
         base.Init();
@@ -12,6 +15,12 @@ public class SFXRelativeAudio : SFXRelativeBase {
     public override void OnPlay()
     {
         base.OnPlay();
-        AudioManager.Instance.PlayClip(m_SFXSource.I_SourceID, m_Clips.RandomItem(), transform);
+        m_Audio =AudioManager.Instance.PlayClip(m_SFXSource.I_SourceID, m_Clips.RandomItem(),B_Loop,transform.position, B_Attach?transform:null);
+    }
+    public override void OnStop()
+    {
+        base.OnStop();
+        if(B_Loop)
+            m_Audio.Stop();
     }
 }

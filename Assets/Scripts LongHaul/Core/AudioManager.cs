@@ -50,10 +50,10 @@ public class AudioManager: SimpleSingletonMono <AudioManager>
         }
     }
 
-    public void PlayClip(int sourceID,AudioClip _clip, Transform _target)
+    public SFXAudioBase PlayClip(int sourceID,AudioClip _clip,bool _loop,Vector3 _position, Transform _target)
     {
         SFXAudioBase audio= ObjectPoolManager<int, SFXBase>.Spawn(0,null) as SFXAudioBase;
-        audio.transform.SetPositionAndRotation(_target.position, _target.rotation);
-        audio.Play(sourceID, _clip,_target);
+        audio.transform.position = _position;
+        return audio.Play(sourceID, _clip, _target);
     }
 }

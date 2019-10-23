@@ -95,6 +95,11 @@ public class SFXBase : MonoBehaviour {
             OnRecycle();
     }
 
+
+    public void Stop()
+    {
+        OnStop();
+    }
     public void Recycle()
     {
         OnRecycle();
