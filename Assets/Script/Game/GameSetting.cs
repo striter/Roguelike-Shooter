@@ -2195,13 +2195,15 @@ namespace GameSetting
     public class EquipmentBarrageRange : EquipmentBase
     {
         protected float f_projectileSpeed { get; private set; }
-        protected int i_muzzleIndex { get; private set; }
         protected RangeInt m_CountExtension { get; private set; }
         protected float m_OffsetExtension { get; private set; }
+        int i_muzzleIndex;
+        AudioClip m_MuzzleClip;
 
         public EquipmentBarrageRange(SFXProjectile projectileInfo, EntityCharacterBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(projectileInfo, _controller, _transform, _GetBuffInfo)
         {
             i_muzzleIndex = projectileInfo.I_MuzzleIndex;
+            m_MuzzleClip = projectileInfo.AC_MuzzleClip;
             f_projectileSpeed = projectileInfo.F_Speed;
             m_CountExtension = projectileInfo.RI_CountExtension;
             m_OffsetExtension = projectileInfo.F_OffsetExtension;
@@ -2211,7 +2213,9 @@ namespace GameSetting
         {
             Vector3 startPosition = transformBarrel.position;
             Vector3 direction = TCommon.GetXZLookDirection(startPosition, _calculatedPosition);
+            SpawnMuzzle(startPosition, direction);
             FireBullet(startPosition, direction, _calculatedPosition);
+
         }
         protected override Vector3 GetTargetPosition(bool preAim, EntityCharacterBase _target)
         {
@@ -2228,9 +2232,14 @@ namespace GameSetting
 
         protected void FireBullet(Vector3 startPosition, Vector3 direction, Vector3 targetPosition)
         {
+            GameObjectManager.SpawnEquipment<SFXProjectile>(I_Index, startPosition, direction).Play(GetDamageDeliverInfo(),direction, targetPosition);
+        }
+        protected void SpawnMuzzle(Vector3 startPosition, Vector3 direction)
+        {
             if (i_muzzleIndex > 0)
                 GameObjectManager.SpawnParticles<SFXMuzzle>(i_muzzleIndex, startPosition, direction).Play(m_Entity.I_EntityID);
-            GameObjectManager.SpawnEquipment<SFXProjectile>(I_Index, startPosition, direction).Play(GetDamageDeliverInfo(),direction, targetPosition);
+            if (m_MuzzleClip)
+                AudioManager.Instance.PlayClip(m_Entity.I_EntityID,m_MuzzleClip,false,startPosition,null);
         }
     }
     public class EquipmentBarrageMultipleLine : EquipmentBarrageRange
@@ -2245,6 +2254,7 @@ namespace GameSetting
             int waveCount = m_CountExtension.RandomRangeInt();
             float distance = TCommon.GetXZDistance(startPosition, _calculatedPosition);
             Vector3 lineBeginPosition = startPosition - attacherHead.right * m_OffsetExtension * ((waveCount - 1) / 2f);
+            SpawnMuzzle(startPosition, direction);
             for (int i = 0; i < waveCount; i++)
                 FireBullet(lineBeginPosition + attacherHead.right * m_OffsetExtension * i, direction, transformBarrel.position + direction * distance);
         }
@@ -2261,6 +2271,7 @@ namespace GameSetting
             int waveCount = m_CountExtension.RandomRangeInt();
             float beginAnle = -m_OffsetExtension * (waveCount - 1) / 2f;
             float distance = TCommon.GetXZDistance(transformBarrel.position, _calculatedPosition);
+            SpawnMuzzle(startPosition, direction);
             for (int i = 0; i < waveCount; i++)
             {
                 Vector3 fanDirection = direction.RotateDirection(Vector3.up, beginAnle + i * m_OffsetExtension);

@@ -7,6 +7,8 @@ public class WeaponBase : MonoBehaviour {
     public enum_TriggerType E_Trigger = enum_TriggerType.Invalid;
     public enum_PlayerAnim E_Anim= enum_PlayerAnim.Invalid;
     public bool B_AttachLeft=false;
+    public AudioClip m_ReloadClip1, m_ReloadClip2, m_ReloadClip3;
+    AudioClip m_MuzzleClip;
 
     EntityCharacterPlayer m_Attacher;
     public SWeapon m_WeaponInfo { get; private set; }
@@ -53,6 +55,7 @@ public class WeaponBase : MonoBehaviour {
         I_MuzzleIndex = projectileInfo.I_MuzzleIndex;
         I_ClipAmount = m_WeaponInfo.m_ClipAmount;
         I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
+        m_MuzzleClip = projectileInfo.AC_MuzzleClip;
         switch (E_Trigger)
         {
             default: Debug.LogError("Add More Convertions Here:" + E_Trigger); m_Trigger = new TriggerSingle(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, B_TriggerActionable, OnFireCheck, CheckCanAutoReload); break;
@@ -122,7 +125,8 @@ public class WeaponBase : MonoBehaviour {
 
         if (I_MuzzleIndex != -1)
             GameObjectManager.SpawnParticles<SFXMuzzle>(I_MuzzleIndex, m_Muzzle.position, spreadDirection).Play(m_Attacher.I_EntityID);
-
+        if (m_MuzzleClip)
+            AudioManager.Instance.PlayClip(m_Attacher.I_EntityID, m_MuzzleClip, false, m_Muzzle.position, null);
         I_AmmoLeft--;
         OnFireRecoil?.Invoke(F_Recoil);
 

@@ -10,6 +10,7 @@ public class SFXProjectile : SFXParticles
     public float F_Damage;
     public float F_Speed;
     public bool B_Penetrate;
+    public AudioClip AC_MuzzleClip;
     public int I_MuzzleIndex;
     public int I_ImpactIndex;
     public int I_IndicatorIndex;
