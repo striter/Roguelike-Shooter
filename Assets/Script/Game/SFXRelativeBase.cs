@@ -8,6 +8,10 @@ public class SFXRelativeBase : MonoBehaviour {
     {
 
     }
+    public virtual void Play()
+    {
+
+    }
     public virtual void OnPlay()
     {
 
