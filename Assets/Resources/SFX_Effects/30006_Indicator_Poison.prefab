@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4162941420726334}
   - component: {fileID: 114667884537672704}
+  - component: {fileID: 114925621712533896}
   m_Layer: 9
   m_Name: 30006_Indicator_Poison
   m_TagString: Untagged
@@ -111,6 +112,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fba085074898354aa7a3e0045873d88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114925621712533896
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1596096210163394}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10f1b5037af1e6c49bd7940bfa6fce95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  B_Attach: 0
+  B_Loop: 1
+  m_Clips:
+  - {fileID: 8300000, guid: 56095ab51932a7d4db12950e91983fd8, type: 3}
 --- !u!198 &198581163813272466
 ParticleSystem:
   m_ObjectHideFlags: 1
