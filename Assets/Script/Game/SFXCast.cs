@@ -29,7 +29,7 @@ public class SFXCast : SFXParticles {
         if (I_DelayIndicatorIndex>0)
             GameObjectManager.SpawnIndicator(I_DelayIndicatorIndex, transform.position, Vector3.up).Play(m_sourceID,  F_DelayDuration);
 
-        PlaySFX(m_DamageInfo.m_detail.I_SourceID,F_PlayDuration, F_DelayDuration);
+        base.Play(m_DamageInfo.m_detail.I_SourceID, F_PlayDuration, F_DelayDuration);
     }
 
     protected override void OnPlay()
