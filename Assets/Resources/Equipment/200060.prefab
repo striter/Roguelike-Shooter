@@ -499,7 +499,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1042100545162694}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8.99749, y: -0.03123331, z: 5.160257}
+  m_LocalPosition: {x: -2.2196283, y: 9.725636, z: -5.16885}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4040093703668500}
@@ -727,7 +727,7 @@ MonoBehaviour:
   E_AreaType: 1
   V4_CastInfo: {x: 4, y: 0, z: 0, w: 0}
   I_MuzzleIndex: 0
-  F_DelayDuration: 2
+  F_DelayDuration: 1
   I_DelayIndicatorIndex: 0
   B_CameraShake: 0
   B_DamageDistanceReduction: 1
@@ -743,7 +743,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 2
+  m_Radius: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!198 &198041942951422522
 ParticleSystem:
