@@ -11,7 +11,7 @@ public class UI_WeaponStatus : UIPageBase {
     Image m_WeaponImage;
     UIC_Numeric m_ClipSize;
     Image m_Damage, m_FireRate, m_Stability, m_ProjectileSpeed;
-
+    UIT_TextExtend m_DamageAmount, m_FireRateAmount, m_StabilityAmount, m_ProjectileSpeedAmount;
     Transform tf_ActionInfo;
     UIT_TextExtend m_ActionName, m_ActionIntro,m_ActionRarityText;
     UIC_RarityLevel m_ActionRarity;
@@ -24,9 +24,13 @@ public class UI_WeaponStatus : UIPageBase {
         m_WeaponImage = tf_WeaponInfo.Find("WeaponImage").GetComponent<Image>();
         m_ClipSize = new UIC_Numeric(tf_WeaponInfo.Find("ClipSize"));
         m_Damage = tf_WeaponInfo.Find("Damage/Fill").GetComponent<Image>();
+        m_DamageAmount = tf_WeaponInfo.Find("Damage/Amount").GetComponent<UIT_TextExtend>();
         m_FireRate = tf_WeaponInfo.Find("FireRate/Fill").GetComponent<Image>();
+        m_FireRateAmount = tf_WeaponInfo.Find("FireRate/Amount").GetComponent<UIT_TextExtend>();
         m_Stability = tf_WeaponInfo.Find("Stability/Fill").GetComponent<Image>();
+        m_StabilityAmount = tf_WeaponInfo.Find("Stability/Amount").GetComponent<UIT_TextExtend>();
         m_ProjectileSpeed = tf_WeaponInfo.Find("ProjectileSpeed/Fill").GetComponent<Image>();
+        m_ProjectileSpeedAmount = tf_WeaponInfo.Find("ProjectileSpeed/Amount").GetComponent<UIT_TextExtend>();
 
         tf_ActionInfo = tf_Container.Find("ActionInfo");
         m_ActionName = tf_ActionInfo.Find("ActionName").GetComponent<UIT_TextExtend>(); 
@@ -38,10 +42,15 @@ public class UI_WeaponStatus : UIPageBase {
     {
         m_WeaponName.localizeText = weapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
         m_ClipSize.SetNumeric(string.Format("{0:D2}", weapon.I_ClipAmount));
+
         m_Damage.fillAmount = UIExpression.F_WeaponDamageValue(weapon.F_BaseDamage);
+        m_DamageAmount.text = weapon.F_BaseDamage.ToString();
         m_FireRate.fillAmount = UIExpression.F_WeaponFireRateValue(weapon.m_WeaponInfo.m_RPM);
+        m_FireRateAmount.text = weapon.m_WeaponInfo.m_RPM.ToString();
         m_ProjectileSpeed.fillAmount = UIExpression.F_WeaponProjectileSpeedValue(weapon.F_BaseSpeed);
+        m_ProjectileSpeedAmount.text = weapon.F_BaseSpeed.ToString();
         m_Stability.fillAmount = UIExpression.F_WeaponStabilityValue(weapon.m_WeaponInfo.m_RecoilScore);
+        m_StabilityAmount.text = (UIExpression.F_WeaponStabilityValue(weapon.m_WeaponInfo.m_RecoilScore)*100f).ToString();
 
         bool showAction = weapon.m_WeaponAction != null;
         if (showAction)

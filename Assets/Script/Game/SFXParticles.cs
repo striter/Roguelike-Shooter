@@ -21,6 +21,7 @@ public class SFXParticles : SFXBase
     public virtual void Play(int sourceID,float duration=0f,float delayDuration=0f)
     {
         PlaySFX(sourceID,duration,delayDuration);
+        m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.Play(); });
     }
 
     public void AttachTo(Transform _attachTo)
@@ -41,10 +42,6 @@ public class SFXParticles : SFXBase
         transform.position = m_AttachTo.TransformPoint(m_localPos);
         transform.rotation = Quaternion.LookRotation(m_AttachTo.TransformDirection(m_localDir));
     }
-    public void ResetParticles()
-    {
-    }
-
     protected override void OnPlay()
     {
         base.OnPlay();
