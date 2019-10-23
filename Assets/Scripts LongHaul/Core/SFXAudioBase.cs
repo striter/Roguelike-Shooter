@@ -28,4 +28,9 @@ public class SFXAudioBase : SFXBase {
         base.OnStop();
         m_Audio.Stop();
     }
+    protected override void OnRecycle()
+    {
+        AttachTo(null);
+        ObjectPoolManager<int,SFXAudioBase>.Recycle(I_SFXIndex, this);
+    }
 }

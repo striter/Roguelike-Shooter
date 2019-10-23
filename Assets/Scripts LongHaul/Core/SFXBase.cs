@@ -60,7 +60,7 @@ public class SFXBase : MonoBehaviour {
     protected virtual void OnRecycle()
     {
         m_AttachTo = null;
-        GameObjectManager.RecycleSFX(I_SFXIndex, this);
+        ObjectPoolManager<int, SFXBase>.Recycle(I_SFXIndex, this);
     }
 
     public void AttachTo(Transform _attachTo)

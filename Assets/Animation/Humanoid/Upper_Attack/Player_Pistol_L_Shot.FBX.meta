@@ -290,7 +290,7 @@ ModelImporter:
       name: Player_Pistol_L_Shot
       takeName: Take 001
       firstFrame: 12
-      lastFrame: 24.4
+      lastFrame: 18
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
