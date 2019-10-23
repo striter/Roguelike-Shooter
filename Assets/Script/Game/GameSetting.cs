@@ -932,7 +932,7 @@ namespace GameSetting
             OnHealthChanged(enum_HealthChangeMessage.Default);
         }
         public void OnRevive(float reviveHealth, float reviveArmor)
-        {   
+        {
             base.OnRevive(reviveHealth);
             m_CurrentArmor = reviveArmor;
             OnHealthChanged(enum_HealthChangeMessage.Default);
@@ -956,7 +956,7 @@ namespace GameSetting
         public void OnRestoreArmor()
         {
             m_CurrentArmor = m_DefaultArmor;
-            OnHealthChanged( enum_HealthChangeMessage.Default);
+            OnHealthChanged(enum_HealthChangeMessage.Default);
         }
         public override bool OnReceiveDamage(DamageInfo damageInfo, float damageReduction = 1, float healEnhance = 1)
         {
@@ -968,6 +968,8 @@ namespace GameSetting
             float finalAmount = damageInfo.m_AmountApply;
             if (damageInfo.m_AmountApply > 0)    //Damage
             {
+                if (damageReduction <= 0)
+                    return false;
                 finalAmount *= damageReduction;
                 switch (damageInfo.m_Type)
                 {
@@ -1011,7 +1013,7 @@ namespace GameSetting
                         break;
                     case enum_DamageType.HealthOnly:
                         {
-                            if (B_HealthFull)
+                            if (B_HealthFull||healEnhance<=0)
                                 return false;
                             finalAmount *= healEnhance;
                             DamageHealth(finalAmount);
@@ -1037,7 +1039,7 @@ namespace GameSetting
                         break;
                 }
             }
-            if (damageInfo.m_AmountApply != 0)
+            if (finalAmount != 0)
                 TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterHealthChange, damageInfo, m_Entity, finalAmount);
             if (b_IsDead)
                 OnDead();
@@ -1378,9 +1380,16 @@ namespace GameSetting
             f_shuffleCheck = -1;
         }
         #region Player Info
-        public void OnUseAcion(ActionBase targetAction)
+        public void TestUseAction(ActionBase targetAction)        //Test Will Be Remove Soon
         {
-            m_ActionEquiping.Traversal((ActionBase action) => {action.OnAddActionElse(targetAction); });
+            m_ActionEquiping.Traversal((ActionBase action) => { action.OnUseActionElse(targetAction); });
+            if (targetAction.m_ActionType!= enum_ActionType.WeaponPerk)
+                GameObjectManager.SpawnParticles<SFXMuzzle>(GameExpression.GetActionMuzzleIndex(targetAction.m_ActionType), m_Player.transform.position, Vector3.up).Play(m_Player.I_EntityID);
+            OnAddAction(targetAction);
+        }
+        protected void OnUseAcion(ActionBase targetAction)
+        {
+            m_ActionEquiping.Traversal((ActionBase action) => {action.OnUseActionElse(targetAction); });
             GameObjectManager.SpawnParticles<SFXMuzzle>(GameExpression.GetActionMuzzleIndex(targetAction.m_ActionType), m_Player.transform.position, Vector3.up).Play(m_Player.I_EntityID);
             OnAddAction(targetAction);
         }
@@ -1388,7 +1397,7 @@ namespace GameSetting
         {
             targetAction.Activate(m_Player, OnExpireElapsed);
             m_ActionEquiping.Add(targetAction);
-            targetAction.OnActionUse();
+            targetAction.OnActivate();
             AddExpire(targetAction);    
         }
         protected override void OnExpireElapsed(ExpireBase expire)
@@ -1489,14 +1498,14 @@ namespace GameSetting
 
             if (damageInfo.m_detail.I_SourceID == m_Player.I_EntityID)
             {
-                if (amountApply <= 0)
-                    m_ActionEquiping.Traversal((ActionBase action) => { action.OnReceiveHealing(damageInfo, amountApply); });
-                else
+                if (amountApply > 0)
                     m_ActionEquiping.Traversal((ActionBase action) => { action.OnAfterDealtDemage(damageEntity, damageInfo, amountApply); });
+                else
+                    m_ActionEquiping.Traversal((ActionBase action) => { action.OnReceiveHealing(damageInfo, amountApply); });
             }
             else if (damageEntity.I_EntityID == m_Player.I_EntityID)
             {
-                if(amountApply<0)
+                if(amountApply>0)
                     m_ActionEquiping.Traversal((ActionBase action) => { action.OnAfterReceiveDamage(damageInfo, amountApply); });
             }
         }
@@ -1773,8 +1782,8 @@ namespace GameSetting
         public int I_Cost => m_CostOverride == -1 ? I_BaseCost : m_CostOverride;
         public void OverrideCost(int overrideCost)=> m_CostOverride = overrideCost;
         #region Interact
-        public virtual void OnActionUse() { }
-        public virtual void OnAddActionElse(ActionBase targetAction) { }
+        public virtual void OnActivate() { }
+        public virtual void OnUseActionElse(ActionBase targetAction) { }
         public virtual void OnBeforeReceiveDamage(DamageInfo info) { }
         public virtual void OnAfterReceiveDamage(DamageInfo info, float amount) { }
         public virtual void OnDealtDamageSetEffect(EntityCharacterBase receiver,DamageInfo info) { }

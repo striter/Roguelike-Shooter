@@ -11,17 +11,16 @@ public class UI_PlayerStatus : UIToolsBase
     Transform tf_ActionData;
     UIC_ActionEnergy m_ActionAmount;
     Button btn_ActionStorage, btn_ActionShuffle;
-    Slider sld_ShuffleCooldown;
+    Image img_ShuffleFill;
     UIT_GridControllerMonoItem<UIGI_ActionItemHold> m_ActionGrid;
 
     Transform tf_ExpireData;
     UIT_GridControllerMonoItem<UIGI_ExpireInfoItem> m_ExpireGrid;
 
     RectTransform rtf_StatusData;
-    Image img_reloadFill;
     GridLayoutGroup m_AmmoLayout;
     Transform tf_AmmoData;
-    Slider sld_Reload;
+    Image img_ReloadFill;
     float m_AmmoGridWidth;
     UIT_GridControllerMonoItem<UIGI_AmmoItem> m_AmmoGrid;
     UIC_Numeric m_AmmoAmount, m_AmmoClipAmount;
@@ -62,8 +61,7 @@ public class UI_PlayerStatus : UIToolsBase
         m_AmmoClipAmount = new UIC_Numeric(m_AmmoAmount.transform.Find("ClipAmount"));
         m_AmmoGrid = new UIT_GridControllerMonoItem<UIGI_AmmoItem>(tf_AmmoData.Find("AmmoGrid"));
         m_AmmoLayout = m_AmmoGrid.transform.GetComponent<GridLayoutGroup>();
-        sld_Reload = m_AmmoGrid.transform.Find("Reload").GetComponent<Slider>();
-        img_reloadFill = sld_Reload.transform.Find("Fill").GetComponent<Image>();
+        img_ReloadFill = m_AmmoGrid.transform.Find("Reload").GetComponent<Image>();
 
         tf_ArmorData = rtf_StatusData.Find("ArmorData");
         sld_Armor = tf_ArmorData.Find("ArmorSlider").GetComponent<Slider>();
@@ -80,7 +78,7 @@ public class UI_PlayerStatus : UIToolsBase
         btn_ActionStorage.onClick.AddListener(OnActionStorageClick);
         btn_ActionShuffle = tf_ActionData.Find("ActionShuffle").GetComponent<Button>();
         btn_ActionShuffle.onClick.AddListener(OnActionShuffleClick);
-        sld_ShuffleCooldown = btn_ActionShuffle.transform.Find("ShuffleSlider").GetComponent<Slider>();
+        img_ShuffleFill = btn_ActionShuffle.transform.Find("ShuffleFill").GetComponent<Image>();
 
         tf_ExpireData = tf_Container.Find("ExpireData");
         m_ExpireGrid = new UIT_GridControllerMonoItem<UIGI_ExpireInfoItem>(tf_ExpireData.Find("ExpireGrid"));
@@ -148,7 +146,7 @@ public class UI_PlayerStatus : UIToolsBase
 
         m_Coins.text=_player.m_PlayerInfo.m_Coins.ToString();
         m_ActionAmount.SetValue(_player.m_PlayerInfo.m_ActionEnergy);
-        sld_ShuffleCooldown.value = _player.m_PlayerInfo.f_shuffleScale;
+        img_ShuffleFill.fillAmount = _player.m_PlayerInfo.f_shuffleScale;
         rtf_StatusData.SetWorldViewPortAnchor(m_Player.tf_Head.position, CameraController.Instance.m_Camera, Time.deltaTime * 10f);
 
         if (_player.m_Interact==null)
@@ -272,18 +270,18 @@ public class UI_PlayerStatus : UIToolsBase
         {
             for (int i = 0; i < weaponInfo.I_ClipAmount; i++)
                 m_AmmoGrid.GetItem(i).Set((weaponInfo.B_Reloading || i > weaponInfo.I_AmmoLeft - 1) ? new Color(0, 0, 0, 1) : ammoStatusColor);
-            sld_Reload.value = 0;
+            img_ReloadFill.fillAmount = 0;
         }
         else
         {
-            sld_Reload.value = weaponInfo.F_AmmoStatus;
-            img_reloadFill.color = ammoStatusColor;
+            img_ReloadFill.fillAmount = weaponInfo.F_AmmoStatus;
+            img_ReloadFill.color = ammoStatusColor;
         }
 
         if (weaponInfo.B_Reloading)
         {
-            sld_Reload.value = weaponInfo.F_ReloadStatus;
-            img_reloadFill.color = Color.Lerp(Color.red, Color.white, weaponInfo.F_ReloadStatus);
+            img_ReloadFill.fillAmount = weaponInfo.F_ReloadStatus;
+            img_ReloadFill.color = Color.Lerp(Color.red, Color.white, weaponInfo.F_ReloadStatus);
         }
     }
     #endregion
