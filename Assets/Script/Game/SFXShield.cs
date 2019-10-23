@@ -25,7 +25,7 @@ public class SFXShield : SFXBase {
     protected override void Update()
     {
         base.Update();
-        if (!b_Playing)
+        if (!B_Playing)
             return;
         if (m_Attacher.m_Health.b_IsDead)
             OnRecycle();

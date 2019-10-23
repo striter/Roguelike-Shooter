@@ -3,13 +3,12 @@ using UnityEngine;
 using GameSetting;
 public class SFXBase : MonoBehaviour {
     public int I_SFXIndex { get; private set; } = -1;
-    public bool b_Playing { get; private set; }
     public int I_SourceID { get; private set; }
     protected float f_delayDuration { get; private set; }
     protected float f_playDuration { get; private set; }
     protected float f_lifeDuration { get; private set; }
     protected float f_lifeTimeCheck { get; private set; }
-    protected bool B_Playing { get; private set; }
+    public bool B_Playing { get; private set; }
     protected bool B_Delay { get; private set; }
     protected virtual bool m_Loop => true;
     protected virtual bool m_AutoStop => true;

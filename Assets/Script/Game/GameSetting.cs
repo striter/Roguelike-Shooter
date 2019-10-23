@@ -2271,7 +2271,7 @@ namespace GameSetting
         }
         public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
-            if (!m_Effect || !m_Effect.b_Playing)
+            if (!m_Effect || !m_Effect.B_Playing)
                 m_Effect = GameObjectManager.SpawnEquipment<SFXBuffApply>(I_Index, transformBarrel.position, Vector3.up);
 
             m_Effect.Play(m_Entity.I_EntityID, m_buffInfo, transformBarrel, _target);
