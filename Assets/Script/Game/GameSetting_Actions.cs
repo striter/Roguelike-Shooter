@@ -92,6 +92,7 @@ namespace GameSetting_Action
         public static float P_10020_MovementAdditivePerStack(enum_RarityLevel rarity) => 1f * (int)rarity;
 
         public const int I_10021_Cost = 2;
+        public const float F_20021_Duration = 10f;
         public static float F_10021_HealthRegenPerMin(enum_RarityLevel rarity) => 6f * (int)rarity;
 
         public const int I_10022_Cost = 3;
@@ -735,6 +736,7 @@ namespace GameSetting_Action
         public override int m_Index => 10021;
         public override int I_BaseCost => ActionData.I_10021_Cost;
         public override enum_ActionType m_ActionType => enum_ActionType.Basic;
+        public override float F_Duration => ActionData.F_20021_Duration;
         public override float Value1 => ActionData.F_10021_HealthRegenPerMin(m_rarity);
         public override void OnTick(float deltaTime)
         {
@@ -1317,7 +1319,7 @@ namespace GameSetting_Action
         {
             base.OnReceiveHealing(info, applyAmount);
             if(info.m_Type== enum_DamageType.HealthOnly)
-            OnStackUp(-applyAmount*Value1/100f);
+                OnStackUp(-applyAmount*Value1/100f);
         }
         public Action_30011_ReceiveHealingAddMaxHealth(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
