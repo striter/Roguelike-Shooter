@@ -77,7 +77,7 @@ namespace GameSetting_Action
         public static int I_10017_Cost(enum_RarityLevel rarity) => 3-(int)rarity;
         public const int I_10017_EquipmentAddUpTimes = 1;
 
-        public const int I_10018_Cost = 2;
+        public const int I_10018_Cost = 3;
         public const float F_10018_Duration = 10f;
         public const float F_10018_PerStackHealthLoss = 5f;
         public static float P_10018_HealthStealPerStack(enum_RarityLevel rarity) => .5f + .5f * (int)rarity;
@@ -98,7 +98,7 @@ namespace GameSetting_Action
         public static float F_10022_Duration(enum_RarityLevel rarity) => 4f + 2f * (int)rarity;
         public const float P_10022_HealthRegenTranslateFromDamage = 100;
 
-        public const int I_10023_Cost = 3;
+        public const int I_10023_Cost = 1;
         public static float F_10023_ReviveHealthRegen(enum_RarityLevel rarity) => 10 * (int)rarity;
 
         public const int I_10024_Cost = 1;
