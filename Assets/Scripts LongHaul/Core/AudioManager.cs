@@ -24,7 +24,11 @@ public class AudioManager: SimpleSingletonMono <AudioManager>
         SFXAudioBase audioObj= obj.AddComponent<SFXAudioBase>();
         ObjectPoolManager<int, SFXAudioBase>.Register(0, audioObj, 5,(SFXAudioBase audios)=>audios.Init(0));
     }
-
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        ObjectPoolManager<int, SFXAudioBase>.ClearAll();
+    }
     protected void SwitchBackground(AudioClip _Clip)
     {
         if (m_Clip == _Clip)
