@@ -203,7 +203,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10f1b5037af1e6c49bd7940bfa6fce95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  B_Attach: 0
+  B_Attach: 1
   B_Loop: 0
   m_Clips:
-  - {fileID: 8300000, guid: 3d413a69ef83dcd4eb90fb40177f78c6, type: 3}
+  - {fileID: 8300000, guid: 812ff75de9f1f6847afe434b949cdfa2, type: 3}
