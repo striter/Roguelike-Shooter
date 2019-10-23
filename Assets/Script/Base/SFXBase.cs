@@ -16,7 +16,7 @@ public class SFXBase : MonoBehaviour {
     protected virtual bool m_AutoRecycle => true;
     protected float f_playTimeLeft => f_lifeTimeCheck - GameConst.F_SFXStopExternalDuration;
     protected float f_delayTimeLeft => f_delayDuration -(f_lifeDuration- f_lifeTimeCheck);
-    protected bool b_looping => m_Loop && B_Playing && f_playDuration > 0f;
+    protected bool b_looping => m_Loop && B_Playing && f_playDuration <= 0f;
     public virtual void Init(int _sfxIndex)
     {
         I_SFXIndex = _sfxIndex;
