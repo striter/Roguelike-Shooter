@@ -2,6 +2,7 @@
 using UnityEngine;
 using GameSetting;
 public class SFXBase : MonoBehaviour {
+    public const int I_SFXStopExternalDuration= 4;
     public int I_SFXIndex { get; private set; } = -1;
     public int I_SourceID { get; private set; }
     protected float f_delayDuration { get; private set; }
@@ -13,7 +14,7 @@ public class SFXBase : MonoBehaviour {
     protected virtual bool m_Loop => true;
     protected virtual bool m_AutoStop => true;
     protected virtual bool m_AutoRecycle => true;
-    protected float f_playTimeLeft => f_lifeTimeCheck - GameConst.F_SFXStopExternalDuration;
+    protected float f_playTimeLeft => f_lifeTimeCheck - I_SFXStopExternalDuration;
     protected float f_delayTimeLeft => f_delayDuration -(f_lifeDuration- f_lifeTimeCheck);
     protected bool b_looping => m_Loop && B_Playing && f_playDuration <= 0f;
     Transform m_AttachTo;
@@ -40,7 +41,7 @@ public class SFXBase : MonoBehaviour {
 
     protected void SetLifeTime(float lifeDuration)
     {
-        f_lifeDuration = lifeDuration + GameConst.F_SFXStopExternalDuration;
+        f_lifeDuration = lifeDuration + I_SFXStopExternalDuration;
         f_lifeTimeCheck = f_lifeDuration;
     }
 
@@ -52,7 +53,7 @@ public class SFXBase : MonoBehaviour {
 
     protected virtual void OnStop()
     {
-        f_lifeTimeCheck = GameConst.F_SFXStopExternalDuration;
+        f_lifeTimeCheck = I_SFXStopExternalDuration;
         B_Playing = false;
     }
 

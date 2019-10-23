@@ -54,7 +54,7 @@ GameObject:
   - component: {fileID: 4394700605731218}
   - component: {fileID: 114247059167705152}
   m_Layer: 0
-  m_Name: 01_AimAssist
+  m_Name: 101_AimAssist
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
