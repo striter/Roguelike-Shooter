@@ -1,6 +1,4 @@
 ﻿
-public class SFXHitMark : SFXParticles
+public class SFXHitMark : SFXParticlesPlayOnce
 {
-    protected override bool m_Loop => false;
-    protected override bool m_AutoStop => false;
 }

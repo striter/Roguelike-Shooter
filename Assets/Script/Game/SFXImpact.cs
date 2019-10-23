@@ -1,6 +1,4 @@
 ﻿
-public class SFXImpact : SFXParticles
+public class SFXImpact : SFXParticlesPlayOnce
 {
-    protected override bool m_Loop => false;
-    protected override bool m_AutoStop => false;
 }

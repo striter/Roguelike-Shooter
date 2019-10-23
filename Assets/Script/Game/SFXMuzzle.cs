@@ -1,10 +1,8 @@
 ﻿
 using UnityEngine;
 
-public class SFXMuzzle : SFXParticles
+public class SFXMuzzle : SFXParticlesPlayOnce
 {
-    protected override bool m_Loop => false;
-    protected override bool m_AutoStop => false;
     SFXRelativeLight[] m_lights;
     float lightCheck;
     bool b_lightPlaying;
