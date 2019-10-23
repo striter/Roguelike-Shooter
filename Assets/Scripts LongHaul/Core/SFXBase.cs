@@ -4,7 +4,7 @@ using GameSetting;
 public class SFXBase : MonoBehaviour {
     public const int I_SFXStopExternalDuration= 4;
     public int I_SFXIndex { get; private set; } = -1;
-    public int I_SourceID { get; private set; }
+    public int I_SourceID { get; private set; } = -1;
     protected float f_delayDuration { get; private set; }
     protected float f_playDuration { get; private set; }
     protected float f_lifeDuration { get; private set; }
