@@ -265,12 +265,12 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     }
     public void UpgradeWeaponPerk(ActionBase invalidPerk)
     {
-        m_PlayerInfo.OnDetachWeapon();
         if (m_WeaponCurrent.m_WeaponAction == null)
+        {
             m_WeaponCurrent.OnSpawn(invalidPerk);
-        else
-            m_WeaponCurrent.m_WeaponAction.Upgrade();
-        m_PlayerInfo.OnAttachWeapon(m_WeaponCurrent);
+            m_PlayerInfo.OnAttachWeapon(m_WeaponCurrent);
+        }
+        m_WeaponCurrent.m_WeaponAction.Upgrade();
         OnWeaponStatus();
     }
     #endregion
