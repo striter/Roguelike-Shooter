@@ -261,7 +261,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     #region Action
     public void TestUseAction(int actionIndex,enum_RarityLevel level)
     {
-        m_PlayerInfo.OnUseAcion(GameDataManager.CreateAction(actionIndex,level));
+        m_PlayerInfo.TestUseAction(GameDataManager.CreateAction(actionIndex,level));
     }
     public void UpgradeWeaponPerk(ActionBase invalidPerk)
     {

@@ -17,6 +17,12 @@ public class AudioManager: SimpleSingletonMono <AudioManager>
         m_AudioBG.volume = m_Volume;
         m_baseVolume = 1f;
     }
+    protected virtual void Start()
+    {
+        GameObject obj = new GameObject("AudioObj");
+        SFXAudioBase audioObj= obj.AddComponent<SFXAudioBase>();
+        ObjectPoolManager<int, SFXAudioBase>.Register(1, audioObj, 5,(SFXAudioBase audios)=>audios.Init(1));
+    }
 
     protected void SwitchBackground(AudioClip _Clip)
     {
