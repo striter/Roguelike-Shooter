@@ -71,14 +71,12 @@
 			{
 				float linearDepth = LinearEyeDepth(SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture,i.uv_depth));
 				float3 worldPos = _WorldSpaceCameraPos+ i.interpolatedRay.xyz*linearDepth;
-				float2 speed = _Time.y*float2(_FogSpeedX, _FogSpeedY);
-				float2 noiseUV = (worldPos.xz+worldPos.y) / 20 + speed;
-				float noise = pow((tex2D(_NoiseTex, noiseUV).r), _NoisePow)*(1- _NoiseLambert) + _NoiseLambert;
-				float fogDensity =  saturate((_FogEnd - worldPos.y)*_FogDensity*noise /(_FogEnd - _FogStart));
-				fixed3 col = tex2D(_MainTex, i.uv).rgb;
-				fogDensity = fogDensity==1 ? _FogColor.a : fogDensity;
-				col.rgb += _FogColor.rgb*fogDensity;
-				return fixed4( col,1);
+				float2 worldUV = (worldPos.xz + worldPos.y);
+				float2 noiseUV1 = worldUV / 15 + _Time.y*float2(_FogSpeedX, 0);
+				float2 noiseUV2 = worldUV / 15 + _Time.y*float2(0, _FogSpeedY);
+				float noise = (tex2D(_NoiseTex, noiseUV1).r)*(tex2D(_NoiseTex, noiseUV2).r);
+				float fogDensity = linearDepth == 1 ? _FogColor.a:(_FogEnd - worldPos.y) /(_FogEnd - _FogStart)*_FogDensity*noise;
+				return fixed4(tex2D(_MainTex, i.uv).rgb + _FogColor.rgb*fogDensity,1);
 			}
 			ENDCG
 		}
