@@ -403,7 +403,7 @@ namespace GameSetting
 
     public enum enum_CharacterType { Invalid = -1, Fighter = 1, Shooter_Rookie = 2, Shooter_Veteran = 3, AOECaster = 4, Elite = 5, SubHidden = 99 }
 
-    public enum enum_Interaction { Invalid = -1, Portal = 1, ActionChest = 2, GameBegin,Bonfire, ActionChestStart, ContainerTrade, ContainerBattle, PickupCoin, PickupHealth, PickupArmor, PickupAction, Weapon,PerkUpgrade, ActionAdjustment, GameEnd, CampStage, CampDifficult, }
+    public enum enum_Interaction { Invalid = -1, Portal = 1, ActionChest = 2, GameBegin,Bonfire, ActionChestStart, ContainerTrade, ContainerBattle, PickupCoin, PickupHealth,PickupHealthPack, PickupArmor, PickupAction, Weapon,PerkUpgrade, ActionAdjustment, GameEnd, CampStage, CampDifficult, }
 
     public enum enum_TriggerType { Invalid = -1, Single = 1, Auto = 2, Burst = 3, Pull = 4, Store = 5, }
 

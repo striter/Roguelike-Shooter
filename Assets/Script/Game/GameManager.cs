@@ -241,7 +241,7 @@ public class GameManager : GameManagerBase
                     GameObjectManager.SpawnTrader(1, Vector3.back *2f, LevelManager.Instance.m_currentLevel.m_Level.tf_Interact);
 
                     int priceHealth = GameExpression.GetTradePrice(enum_Interaction.PickupHealth, enum_RarityLevel.Invalid).RandomRangeInt(m_GameLevel.m_GameSeed);
-                    GameObjectManager.SpawnInteract<InteractContainerTrade>(enum_Interaction.ContainerTrade, LevelManager.NavMeshPosition(Vector3.left * 1.5f + Vector3.forward * 1f, false), LevelManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(priceHealth, GameObjectManager.SpawnInteract<InteractPickupHealth>(enum_Interaction.PickupHealth, Vector3.zero, LevelManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(GameConst.I_HealthTradeAmount, null));
+                    GameObjectManager.SpawnInteract<InteractContainerTrade>(enum_Interaction.ContainerTrade, LevelManager.NavMeshPosition(Vector3.left * 1.5f + Vector3.forward * 1f, false), LevelManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(priceHealth, GameObjectManager.SpawnInteract<InteractPickupHealth>(enum_Interaction.PickupHealthPack, Vector3.zero, LevelManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(GameConst.I_HealthTradeAmount, null));
 
                     ActionBase action1 = GameDataManager.CreateRandomPlayerAction(m_GameLevel.m_actionGenerate.GetTradeRarityLevel(m_GameLevel.m_GameSeed), m_GameLevel.m_GameSeed);
                     int priceAction = GameExpression.GetTradePrice(enum_Interaction.PickupAction, action1.m_rarity).RandomRangeInt(m_GameLevel.m_GameSeed);
