@@ -93,7 +93,7 @@ namespace GameSetting_Action
 
         public const int I_10021_Cost = 2;
         public const float F_20021_Duration = 10f;
-        public static float F_10021_HealthRegenPerMin(enum_RarityLevel rarity) => 6f * (int)rarity;
+        public static float F_10021_HealthRegenPerMin(enum_RarityLevel rarity) => 3f * (int)rarity;
 
         public const int I_10022_Cost = 3;
         public static float F_10022_Duration(enum_RarityLevel rarity) => 4f + 2f * (int)rarity;
