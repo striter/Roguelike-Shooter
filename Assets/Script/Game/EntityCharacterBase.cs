@@ -83,11 +83,11 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
             TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterDead, this);
     }
 
-    public virtual void OnRevive(float reviveHealth=-1, float reviveArmor=-1)
+    public virtual void ReviveCharacter(float reviveHealth=-1, float reviveArmor=-1)
     {
         if (!m_Health.b_IsDead)
             return;
-        base.OnRevive();
+        OnRevive();
         m_Effect.OnReset();
         m_CharacterInfo.OnRevive();
         EntityHealth health = (m_Health as EntityHealth);
@@ -237,6 +237,10 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
             _animator.fireEvents = true;
             m_Animator.GetComponent<TAnimatorEvent>().Attach(_OnAnimEvent);
         }
+        public void OnRevive()
+        {
+            m_Animator.SetTrigger(HS_T_Activate);
+        }
         protected void OnActivate(int index)
         {
             m_Animator.SetInteger(HS_I_WeaponType, index);
@@ -252,15 +256,11 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         }
         public void SetMovementSpeed(float movementSpeed)
         {
-            m_Animator.SetFloat(HS_FM_Movement, movementSpeed / 4f);
+            m_Animator.SetFloat(HS_FM_Movement, movementSpeed);
         }
         public void OnDead()
         {
             m_Animator.SetTrigger(HS_T_Dead);
-        }
-        public void OnRevive()
-        {
-            m_Animator.SetTrigger(HS_T_Activate);
         }
     }
 }

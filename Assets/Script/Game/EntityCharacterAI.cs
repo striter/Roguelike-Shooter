@@ -69,7 +69,7 @@ public class EntityCharacterAI : EntityCharacterBase {
     {
         base.OnExpireChange();
         if (m_Animator != null)
-            m_Animator.SetMovementSpeed(m_CharacterInfo.F_MovementSpeed);
+            m_Animator.SetMovementSpeed(m_CharacterInfo.F_MovementSpeed/4f);
         m_AI.OnInfoChange();
     }
 
