@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 public class SFXAudioBase : SFXBase {
-
     AudioSource m_Audio;
     public override void Init(int _sfxIndex)
     {
@@ -16,9 +15,10 @@ public class SFXAudioBase : SFXBase {
         m_Audio.pitch = Random.Range(0.9f, 1.1f);
         m_Audio.loop = _loop;
         AttachTo(_attachTo);
-        base.PlaySFX(_sourceID,_clip.length,0);
+        base.PlaySFX(_sourceID,_loop?0:_clip.length,0);
         return this;
     }
+    public void SetPitch(float _pitch)=> m_Audio.pitch = _pitch;
     protected override void OnPlay()
     {
         base.OnPlay();
