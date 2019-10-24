@@ -699,7 +699,6 @@ public static class GameObjectManager
     }
     static void RegisterInGameInteractions(enum_Style portalStyle, enum_StageLevel stageIndex)
     {
-        ObjectPoolManager<enum_Interaction, InteractBase>.Register(enum_Interaction.Portal, TResources.GetInteractPortal(portalStyle), 5, (InteractBase interact) => { interact.Init(); });
         ObjectPoolManager<enum_Interaction, InteractBase>.Register(enum_Interaction.ActionChest, TResources.GetInteractActionChest(stageIndex), 5, (InteractBase interact) => { interact.Init(); });
         TCommon.TraversalEnum((enum_Interaction enumValue) =>
         {

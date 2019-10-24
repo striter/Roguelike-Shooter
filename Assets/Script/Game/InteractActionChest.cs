@@ -27,7 +27,6 @@ public class InteractActionChest : InteractBase {
     }
     protected override void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)
     {
-        base.OnInteractSuccessful(_interactTarget);
         m_Interactor = _interactTarget;
         UI_ActionAcquire page = UIManager.Instance.ShowPage<UI_ActionAcquire>(true);
         if (page == null)
@@ -36,6 +35,7 @@ public class InteractActionChest : InteractBase {
     }
     void OnActionSelectConfirm(List<int> indexes)
     {
+        base.OnInteractSuccessful(m_Interactor);
         m_Interactor.OnInteractCheck(this, false);
         SetInteractable(false);
         indexes.Traversal((int index)=> { m_Interactor.m_PlayerInfo.AddStoredAction(m_Actions[index]); });
