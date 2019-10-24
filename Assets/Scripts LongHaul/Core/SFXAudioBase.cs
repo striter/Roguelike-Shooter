@@ -10,10 +10,11 @@ public class SFXAudioBase : SFXBase {
         m_Audio = GetComponent<AudioSource>();
         m_Audio.playOnAwake=false;
     }
-    public SFXAudioBase Play(int _sourceID,AudioClip _clip,Transform _attachTo)
+    public SFXAudioBase Play(int _sourceID,AudioClip _clip,bool _loop,Transform _attachTo)
     {
         m_Audio.clip = _clip;
-        m_Audio.pitch = Random.Range(0.95f, 1.05f);
+        m_Audio.pitch = Random.Range(0.9f, 1.1f);
+        m_Audio.loop = _loop;
         AttachTo(_attachTo);
         base.PlaySFX(_sourceID,_clip.length,0);
         return this;

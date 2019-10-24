@@ -58,6 +58,6 @@ public class AudioManager: SimpleSingletonMono <AudioManager>
     {
         SFXAudioBase audio= ObjectPoolManager<int, SFXAudioBase>.Spawn(0,null);
         audio.transform.position = _position;
-        return audio.Play(sourceID, _clip, _target);
+        return audio.Play(sourceID, _clip,_loop, _target);
     }
 }
