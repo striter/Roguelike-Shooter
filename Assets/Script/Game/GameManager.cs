@@ -65,8 +65,8 @@ public class GameManager : GameManagerBase
             m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(20, enum_DamageType.Basic,DamageDeliverInfo.Default(-1)));
         if (Input.GetKeyDown(KeyCode.M))
             m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(-50, enum_DamageType.Basic, DamageDeliverInfo.Default(-1)));
-        if (Input.GetKeyDown(KeyCode.F1))
-            GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, Vector3.zero, LevelManager.Instance.m_InteractParent).Play(GameObjectManager.SpawnWeapon(F1_WeaponSpawnType,null));
+        if (Input.GetKeyDown(KeyCode.F1) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
+            GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon,hit.point, LevelManager.Instance.m_InteractParent).Play(GameObjectManager.SpawnWeapon(F1_WeaponSpawnType,null));
         if (Input.GetKeyDown(KeyCode.Alpha0))
         {
             List<EntityCharacterBase> entities = m_Entities.Values.ToList();
