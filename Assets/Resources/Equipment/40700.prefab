@@ -53,7 +53,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   B_Attach: 0
-  B_Loop: 1
+  B_Loop: 0
   m_Clips:
   - {fileID: 8300000, guid: 538aea4be9a7f764da891042cd4928be, type: 3}
 --- !u!114 &114326547265599346
