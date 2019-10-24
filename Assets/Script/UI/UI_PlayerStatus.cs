@@ -3,14 +3,16 @@ using UnityEngine;
 using UnityEngine.UI;
 public class UI_PlayerStatus : UIToolsBase
 {
-    Button btn_Bigmap;
-
     Transform tf_Container;
     EntityCharacterPlayer m_Player;
 
-    Transform tf_ActionData;
+    Transform tf_OutBattle;
+    Button btn_Bigmap;
+    Button btn_ActionStorage;
+
+    Transform tf_InBattle;
     UIC_ActionEnergy m_ActionAmount;
-    Button btn_ActionStorage, btn_ActionShuffle;
+    Button  btn_ActionShuffle;
     Image img_ShuffleFill;
     UIT_GridControllerMonoItem<UIGI_ActionItemHold> m_ActionGrid;
 
@@ -50,8 +52,18 @@ public class UI_PlayerStatus : UIToolsBase
         base.Init();
         tf_Container = transform.Find("Container");
 
-        btn_Bigmap = tf_Container.Find("Bigmap").GetComponent<Button>();
+        tf_OutBattle = tf_Container.Find("OutBattle");
+        btn_ActionStorage = tf_OutBattle.Find("ActionStorage").GetComponent<Button>();
+        btn_ActionStorage.onClick.AddListener(OnActionStorageClick);
+        btn_Bigmap = tf_OutBattle.Find("Bigmap").GetComponent<Button>();
         btn_Bigmap.onClick.AddListener(() => { UIManager.Instance.ShowPage<UI_MapControl>(true); });
+
+        tf_InBattle = tf_Container.Find("InBattle");
+        m_ActionAmount = new UIC_ActionEnergy(tf_InBattle.Find("ActionAmount"));
+        m_ActionGrid = new UIT_GridControllerMonoItem<UIGI_ActionItemHold>(tf_InBattle.Find("ActionGrid"));
+        btn_ActionShuffle = tf_InBattle.Find("ActionShuffle").GetComponent<Button>();
+        btn_ActionShuffle.onClick.AddListener(OnActionShuffleClick);
+        img_ShuffleFill = btn_ActionShuffle.transform.Find("ShuffleFill").GetComponent<Image>();
 
         rtf_StatusData = tf_Container.Find("StatusData").GetComponent<RectTransform>();
         rtf_StatusData.localScale = UIManager.Instance.m_FittedScale;
@@ -71,15 +83,6 @@ public class UI_PlayerStatus : UIToolsBase
         m_HealthAmount = new UIC_Numeric(tf_HealthData.Find("HealthAmount"));
         m_MaxHealth = new UIC_Numeric(m_HealthAmount.transform.Find("MaxHealth"));
         
-        tf_ActionData = tf_Container.Find("ActionData");
-        m_ActionAmount = new UIC_ActionEnergy(tf_ActionData.Find("ActionAmount"));
-        m_ActionGrid = new UIT_GridControllerMonoItem<UIGI_ActionItemHold>(tf_ActionData.Find("ActionGrid"));
-        btn_ActionStorage = tf_ActionData.Find("ActionStorage").GetComponent<Button>();
-        btn_ActionStorage.onClick.AddListener(OnActionStorageClick);
-        btn_ActionShuffle = tf_ActionData.Find("ActionShuffle").GetComponent<Button>();
-        btn_ActionShuffle.onClick.AddListener(OnActionShuffleClick);
-        img_ShuffleFill = btn_ActionShuffle.transform.Find("ShuffleFill").GetComponent<Image>();
-
         tf_ExpireData = tf_Container.Find("ExpireData");
         m_ExpireGrid = new UIT_GridControllerMonoItem<UIGI_ExpireInfoItem>(tf_ExpireData.Find("ExpireGrid"));
 
@@ -121,23 +124,22 @@ public class UI_PlayerStatus : UIToolsBase
     }
     public void SetInGame(bool inGame)
     {
-        btn_Bigmap.SetActivate(inGame);
-        btn_ActionShuffle.SetActivate(false);
-        btn_ActionStorage.SetActivate(inGame);
+        if (!inGame)
+        {
+            tf_InBattle.SetActivate(false);
+            tf_OutBattle.SetActivate(false);
+            return;
+        }
+
+        SetInBattle(false);
     }
-    
-    void OnBattleStart()
+    void SetInBattle(bool inBattle)
     {
-        btn_Bigmap.SetActivate(false);
-        btn_ActionShuffle.SetActivate(true);
-        btn_ActionStorage.SetActivate(false);
+        tf_InBattle.SetActivate(inBattle);
+        tf_OutBattle.SetActivate(!inBattle);
     }
-    void OnBattleFinish()
-    {
-        btn_Bigmap.SetActivate(true);
-        btn_ActionShuffle.SetActivate(false);
-        btn_ActionStorage.SetActivate(true);
-    }
+    void OnBattleStart()=>SetInBattle(true);
+    void OnBattleFinish()=> SetInBattle(false);
     #region PlayerData/Interact
     void OnCommonStatus(EntityCharacterPlayer _player)
     {
