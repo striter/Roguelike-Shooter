@@ -35,6 +35,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4418145767614864}
   - component: {fileID: 114386415456463382}
+  - component: {fileID: 114205809864430256}
   m_Layer: 9
   m_Name: 10305_Muzzle_Iceland5
   m_TagString: Untagged
@@ -193,6 +194,21 @@ Transform:
   m_Father: {fileID: 4122452721592968}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114205809864430256
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1374401761774840}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10f1b5037af1e6c49bd7940bfa6fce95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  B_Attach: 0
+  B_Loop: 0
+  m_Clips:
+  - {fileID: 8300000, guid: a882a6f5cd6d8864e9479bc120df4f86, type: 3}
 --- !u!114 &114386415456463382
 MonoBehaviour:
   m_ObjectHideFlags: 1

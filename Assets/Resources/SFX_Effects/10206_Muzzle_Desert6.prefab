@@ -136,6 +136,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4585963332106004}
   - component: {fileID: 114829490413362418}
+  - component: {fileID: 114087098713218726}
   m_Layer: 9
   m_Name: 10206_Muzzle_Desert6
   m_TagString: Untagged
@@ -388,6 +389,21 @@ TrailRenderer:
     generateLightingData: 0
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
+--- !u!114 &114087098713218726
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1982494274922196}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10f1b5037af1e6c49bd7940bfa6fce95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  B_Attach: 0
+  B_Loop: 0
+  m_Clips:
+  - {fileID: 8300000, guid: b01abbccd3882f544af202f8d2b74145, type: 3}
 --- !u!114 &114829490413362418
 MonoBehaviour:
   m_ObjectHideFlags: 1
