@@ -16,7 +16,6 @@ public class SFXRelativeAudio : SFXRelativeBase {
     {
         base.OnPlay();
             m_Audio =B_Attach? AudioManager.Instance.PlayClip(m_SFXSource.I_SourceID, m_Clips.RandomItem(),transform, B_Loop): AudioManager.Instance.PlayClip(m_SFXSource.I_SourceID, m_Clips.RandomItem(), transform.position, B_Loop);
-
     }
     public override void OnStop()
     {
