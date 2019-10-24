@@ -803,6 +803,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 973d0ff1c1d4b134ba53e64bff53562f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  AC_OnPlay: {fileID: 0}
+  AC_OnInteract: {fileID: 8300000, guid: 29860eb6b7054ad4f8d96fc01f077fa3, type: 3}
 --- !u!114 &114838149183411584
 MonoBehaviour:
   m_ObjectHideFlags: 1

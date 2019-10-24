@@ -304,6 +304,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8135cd8e85b257749a2492bcdd249a8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  AC_OnPlay: {fileID: 0}
+  AC_OnInteract: {fileID: 8300000, guid: c7f1ecdf76e758e4f9b5a5f9fc14e535, type: 3}
 --- !u!114 &114632559005552664
 MonoBehaviour:
   m_ObjectHideFlags: 1

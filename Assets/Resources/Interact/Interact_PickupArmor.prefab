@@ -83,10 +83,10 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4192264963926868}
+  - component: {fileID: 114839438048605188}
   - component: {fileID: 135571881101140752}
   - component: {fileID: 111135547001784680}
   - component: {fileID: 114913138000248522}
-  - component: {fileID: 114839438048605188}
   m_Layer: 0
   m_Name: Interact_PickupArmor
   m_TagString: Untagged
@@ -271,6 +271,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 534f425f93e7e75408c3b5b7c17c755d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  AC_OnPlay: {fileID: 8300000, guid: 6d458b18323d81c44ae355237e08bfb7, type: 3}
+  AC_OnInteract: {fileID: 0}
 --- !u!114 &114913138000248522
 MonoBehaviour:
   m_ObjectHideFlags: 1

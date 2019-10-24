@@ -199,6 +199,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c07580458a4ec8d4cafbcd2740b2d977, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  AC_OnPlay: {fileID: 8300000, guid: 996e92bcfef63fa42818437f3bf5753c, type: 3}
+  AC_OnInteract: {fileID: 0}
 --- !u!114 &114254946078226914
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -9,6 +9,6 @@ public class CampInteract : InteractBase {
     private void Start()
     {
         Init();
-        Play();
+        base.Play();
     }
 }

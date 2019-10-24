@@ -282,6 +282,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 176ab128b4385de4a949916ddfa69e34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  AC_OnPlay: {fileID: 8300000, guid: be11e2e30d7855f4b827096745b370e2, type: 3}
+  AC_OnInteract: {fileID: 0}
 --- !u!135 &135571881101140752
 SphereCollider:
   m_ObjectHideFlags: 1
