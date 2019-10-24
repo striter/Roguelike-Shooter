@@ -119,6 +119,7 @@ GameObject:
   - component: {fileID: 4427933090057842}
   - component: {fileID: 114413680526417114}
   - component: {fileID: 120559922318303934}
+  - component: {fileID: 114577098050988848}
   m_Layer: 9
   m_Name: 30600
   m_TagString: Untagged
@@ -308,6 +309,21 @@ MonoBehaviour:
   F_DelayDuration: 0
   I_DelayIndicatorIndex: 0
   B_CameraShake: 0
+--- !u!114 &114577098050988848
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1477696099701478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10f1b5037af1e6c49bd7940bfa6fce95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  B_Attach: 0
+  B_Loop: 1
+  m_Clips:
+  - {fileID: 8300000, guid: 316be5fca5aad0b4eba793f9a575a89a, type: 3}
 --- !u!120 &120559922318303934
 LineRenderer:
   m_ObjectHideFlags: 1
