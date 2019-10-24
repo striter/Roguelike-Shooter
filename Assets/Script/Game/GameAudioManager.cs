@@ -15,25 +15,24 @@ public class GameAudioManager : AudioManager
         base.Awake();
         ninstance = this;
     }
-
-    protected override void Start()
+    public override void OnInit()
     {
-        base.Start();
+        base.OnInit();
         OptionsManager.event_OptionChanged += OnOptionChanged;
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
-        TBroadCaster<enum_BC_UIStatus>.Add( enum_BC_UIStatus.UI_PageOpen, OnPageOpen);
+        TBroadCaster<enum_BC_UIStatus>.Add(enum_BC_UIStatus.UI_PageOpen, OnPageOpen);
         TBroadCaster<enum_BC_UIStatus>.Add(enum_BC_UIStatus.UI_PageClose, OnPageClose);
 
         OnOptionChanged();
-        if(GameManagerBase.Instance.B_InGame)       //Test
-             m_Clips.Add(true, TResources.GetAudioClip_Background(GameManagerBase.Instance.B_InGame, true));
+        if (GameManagerBase.Instance.B_InGame)       //Test
+            m_Clips.Add(true, TResources.GetAudioClip_Background(GameManagerBase.Instance.B_InGame, true));
         m_Clips.Add(false, TResources.GetAudioClip_Background(GameManagerBase.Instance.B_InGame, false));
         PlayClip(false);
     }
-    protected override void OnDestroy()
+    public override void OnRecycle()
     {
-        base.OnDestroy();
+        base.OnRecycle();
         OptionsManager.event_OptionChanged -= OnOptionChanged;
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish); ;

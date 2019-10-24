@@ -17,14 +17,14 @@ public class AudioManager: SimpleSingletonMono <AudioManager>
         m_AudioBG.volume = m_Volume;
         m_baseVolume = 1f;
     }
-    protected virtual void Start()
+    public virtual void OnInit()
     {
         GameObject obj = new GameObject("AudioObj");
         obj.AddComponent<AudioSource>();
-        SFXAudioBase audioObj= obj.AddComponent<SFXAudioBase>();
-        ObjectPoolManager<int, SFXAudioBase>.Register(0, audioObj, 5,(SFXAudioBase audios)=>audios.Init(0));
+        SFXAudioBase audioObj = obj.AddComponent<SFXAudioBase>();
+        ObjectPoolManager<int, SFXAudioBase>.Register(0, audioObj, 5, (SFXAudioBase audios) => audios.Init(0));
     }
-    private void OnDisable()
+    public virtual void OnRecycle()
     {
         ObjectPoolManager<int, SFXAudioBase>.ClearAll();
     }

@@ -29,7 +29,6 @@ public class CampManager : GameManagerBase{
     
     public void OnSceneItemInteract(enum_Scene scene)
     {
-        GameObjectManager.RecycleAllObject();
-        TSceneLoader.Instance.LoadScene(scene);
+        SwitchScene(scene);
     }
 }

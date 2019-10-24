@@ -34,7 +34,7 @@ public class SFXRelativeAudio : SFXRelativeBase {
         if (!m_Audio || !B_PlayDuringDelay)
             return;
 
-        m_Audio.SetPitch(Mathf.Lerp(1.5f,1f,m_SFXSource.f_delayLeftScale));
+        m_Audio.SetPitch(Mathf.Lerp(2f,1f,m_SFXSource.f_delayLeftScale));
     }
 
     public override void OnStop()

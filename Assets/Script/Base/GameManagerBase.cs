@@ -19,8 +19,16 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
     }
     protected virtual void Start()
     {
+        GameAudioManager.Instance.OnInit();
         UIManager.Activate(B_InGame);
         SetBulletTime(false);
+    }
+
+    protected void SwitchScene(enum_Scene scene)
+    {
+        GameAudioManager.Instance.OnRecycle();
+        GameObjectManager.RecycleAllObject();
+        TSceneLoader.Instance.LoadScene(scene);
     }
 
     protected virtual void OnDisable()

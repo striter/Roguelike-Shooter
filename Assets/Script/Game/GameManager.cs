@@ -156,8 +156,7 @@ public class GameManager : GameManagerBase
     public void OnExitGame()
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameExit);
-        GameObjectManager.RecycleAllObject();
-        TSceneLoader.Instance.LoadScene(enum_Scene.Camp);
+        SwitchScene( enum_Scene.Camp);
     }
 
     #region Level Management
