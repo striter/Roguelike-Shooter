@@ -290,6 +290,7 @@ public class GameManager : GameManagerBase
                 break;
         }
     }
+
     void SpawnEntityDeadPickups(EntityCharacterBase entity)
     {
         if (entity.m_Flag != enum_EntityFlag.Enermy)
@@ -348,7 +349,6 @@ public class GameManager : GameManagerBase
                 m_OppositeEntities[flag].Add(character);
         });
     }
-
     void OnEntityRecycle(EntityBase entity)
     {
         if (entity.m_Controller == enum_EntityController.None)
@@ -362,15 +362,28 @@ public class GameManager : GameManagerBase
                 m_OppositeEntities[flag].Remove(character);
         });
 
-        SpawnEntityDeadPickups(character);
-        OnBattleCharacterDead(character);
+        OnBattleCharacterRecycle(character);
         if (entity.m_Controller == enum_EntityController.Player)
             OnGameFinished(false);
     }
+
+    void OnCharacterDead(EntityCharacterBase character)
+    {
+        if (character.m_Controller == enum_EntityController.Player)
+        {
+            OnPlayerDead();
+            return;
+        }
+
+        SpawnEntityDeadPickups(character);
+    }
+
+
     public static bool B_CanDamageEntity(HitCheckEntity hb, int sourceID)   //After Hit,If Match Target Hit Succeed
     {
         if (hb.I_AttacherID == sourceID)
             return false;
+
         return Instance.m_Entities.ContainsKey(sourceID) &&hb.m_Attacher.m_Flag != Instance.m_Entities[sourceID].m_Flag;
     }
     public static bool B_CanHitTarget(HitCheckBase hitCheck,int sourceID)
@@ -390,14 +403,11 @@ public class GameManager : GameManagerBase
     #endregion
     #region Player Management
     List<RangeFloat> m_PlayerReviveHealing = new List<RangeFloat>();
-    void OnCharacterDead(EntityCharacterBase character)
+    void OnPlayerDead()
     {
-        if (character.m_Controller != enum_EntityController.Player)
-            return;
         SetPostEffect_Dead();
         this.StartSingleCoroutine(10, TIEnumerators.PauseDel(GameConst.F_PlayerReviveCheckAfterDead, CheckRevive));
     }
-
     void OnCharacterRevive(EntityCharacterBase character)
     {
         if (character.m_Controller != enum_EntityController.Player)
@@ -468,7 +478,7 @@ public class GameManager : GameManagerBase
         this.StartSingleCoroutine(99, IE_GenerateEnermy(m_EntityGenerating, .1f));
     }
 
-    void OnBattleCharacterDead(EntityCharacterBase entity)
+    void OnBattleCharacterRecycle(EntityCharacterBase entity)
     {
         if (!B_Battling || B_WaveEntityGenerating || entity.m_Flag != enum_EntityFlag.Enermy)
             return;

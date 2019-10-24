@@ -56,6 +56,7 @@ GameObject:
   - component: {fileID: 135571881101140752}
   - component: {fileID: 114913138000248522}
   - component: {fileID: 114094263044284386}
+  - component: {fileID: 111185546630236578}
   m_Layer: 0
   m_Name: Interact_PickupHealthPack
   m_TagString: Untagged
@@ -157,6 +158,21 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.800692, y: 0.64217144, z: 0.6113171}
   m_Center: {x: 0, y: 0.30349717, z: 0}
+--- !u!111 &111185546630236578
+Animation:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1869712059222912}
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Animation: {fileID: 7400000, guid: 98bb9d248ef87a845a8ae56ba67f4d80, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: 98bb9d248ef87a845a8ae56ba67f4d80, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_CullingType: 0
 --- !u!114 &114094263044284386
 MonoBehaviour:
   m_ObjectHideFlags: 1
