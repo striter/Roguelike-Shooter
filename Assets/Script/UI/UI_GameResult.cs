@@ -55,6 +55,7 @@ public class UI_GameResult : UIPageBase {
     }
     protected override void OnCancelBtnClick()
     {
-        OnButtonClick();
+        OnButtonClick?.Invoke();
+        OnButtonClick = null;
     }
 }
