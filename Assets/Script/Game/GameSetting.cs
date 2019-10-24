@@ -276,7 +276,7 @@ namespace GameSetting
         public static string GetMainSprite(this EntityCharacterPlayer player)
         {
             string spriteName = "main_fire";
-            if (player.m_Interact != null)
+            if (player.m_Interact != null&&player.m_Interact.B_InteractEnable)
                 switch (player.m_Interact.m_InteractType)
                 {
                     case enum_Interaction.Invalid: Debug.LogError("Invalid Pharse Here!"); break;

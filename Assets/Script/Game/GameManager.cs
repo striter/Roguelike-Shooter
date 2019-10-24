@@ -121,7 +121,7 @@ public class GameManager : GameManagerBase
     public GameLevelManager m_GameLevel { get; private set; }
     public EntityCharacterPlayer m_LocalPlayer { get; private set; } = null;
     InteractActionChest m_RewardChest;
-    public bool B_ShowChestTips=>m_RewardChest!=null&&m_RewardChest.B_Interactable;
+    public bool B_ShowChestTips=>m_RewardChest!=null&&m_RewardChest.B_InteractEnable;
     public override bool B_InGame => true;
     protected override void Awake()
     {

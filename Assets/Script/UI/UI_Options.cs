@@ -50,7 +50,7 @@ public class UI_Options : UIPageBase {
     }
 
     Transform tf_Basic, tf_Control;
-    Button btn_ReturnToCamp;
+    Transform tf_ReturnToCamp;
 
     protected override void Init(bool useAnim)
     {
@@ -64,13 +64,13 @@ public class UI_Options : UIPageBase {
         tf_Control = tf_Container.Find("Control");
          new ButtonToggle(tf_Control.Find("JoystickMode/BtnToggle"), OnJoystickClicked, joystickOn());
          new SliderStatus(tf_Control.Find("Sensitive/Slider"), OnSensitiveChanged, OptionsManager.m_OptionsData.m_SensitiveTap);
-        btn_ReturnToCamp = tf_Control.Find("ReturnToCamp/BtnReturnToCamp").GetComponent<Button>();
-        btn_ReturnToCamp.onClick.AddListener(OnMainmenuBtnClick);
+        tf_ReturnToCamp = tf_Control.Find("ReturnToCamp");
+        tf_ReturnToCamp.Find("BtnReturnToCamp").GetComponent<Button>().onClick.AddListener(OnMainmenuBtnClick);
     }
 
     public void SetInGame(bool inGame)
     {
-        btn_ReturnToCamp.SetActivate(inGame);
+        tf_ReturnToCamp.SetActivate(inGame);
     }
 
     protected override void OnCancelBtnClick()

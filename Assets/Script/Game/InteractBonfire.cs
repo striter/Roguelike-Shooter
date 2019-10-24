@@ -9,5 +9,6 @@ public class InteractBonfire : InteractBase {
     public new void Play()
     {
         base.Play();
+        SetInteractable(false);
     }
 }
