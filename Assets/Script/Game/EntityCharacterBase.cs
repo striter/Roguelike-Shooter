@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using GameSetting;
 using TSpecialClasses;
+using System;
 
 public class EntityCharacterBase : EntityBase, ISingleCoroutine
 {
@@ -231,9 +232,10 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         static readonly int HS_F_Forward = Animator.StringToHash("f_forward");
         static readonly int HS_FM_Movement = Animator.StringToHash("fm_movement");
         static readonly int HS_I_WeaponType = Animator.StringToHash("i_weaponType");
-        public CharacterAnimator(Animator _animator) : base(_animator)
+        public CharacterAnimator(Animator _animator, Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) : base(_animator)
         {
             _animator.fireEvents = true;
+            m_Animator.GetComponent<TAnimatorEvent>().Attach(_OnAnimEvent);
         }
         protected void OnActivate(int index)
         {

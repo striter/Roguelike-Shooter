@@ -26,7 +26,8 @@ public class GameAudioManager : AudioManager
         TBroadCaster<enum_BC_UIStatus>.Add(enum_BC_UIStatus.UI_PageClose, OnPageClose);
 
         OnOptionChanged();
-        m_Clips.Add(true, TResources.GetAudioClip_Background(GameManagerBase.Instance.B_InGame, true));
+        if(GameManager.Instance.B_InGame)       //Test
+             m_Clips.Add(true, TResources.GetAudioClip_Background(GameManagerBase.Instance.B_InGame, true));
         m_Clips.Add(false, TResources.GetAudioClip_Background(GameManagerBase.Instance.B_InGame, false));
         PlayClip(false);
     }

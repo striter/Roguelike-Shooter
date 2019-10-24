@@ -758,9 +758,15 @@ public static class GameObjectManager
         sfx.transform.rotation = Quaternion.LookRotation(normal);
         return sfx;
     }
-    public static SFXIndicator SpawnIndicator(int index, Vector3 position, Vector3 normal) => SpawnParticles<SFXIndicator>(index, position, normal);
-    public static SFXEffect SpawnBuffEffect(int index) => SpawnParticles<SFXEffect>(index,Vector3.zero,Vector3.up);
-
+    public static SFXIndicator SpawnIndicator(int _sourceID, Vector3 position, Vector3 normal) => SpawnParticles<SFXIndicator>(_sourceID, position, normal);
+    public static SFXEffect SpawnBuffEffect(int _sourceID) => SpawnParticles<SFXEffect>(_sourceID,Vector3.zero,Vector3.up);
+    public static void PlayMuzzle(int _sourceID,Vector3 position, Vector3 direction, int muzzleIndex, AudioClip muzzleClip=null)
+    {
+        if (muzzleIndex > 0)
+            SpawnParticles<SFXMuzzle>(muzzleIndex, position, direction).Play(_sourceID);
+        if (muzzleClip)
+            AudioManager.Instance.PlayClip(_sourceID,muzzleClip,position , false);
+    }
     public static T SpawnEquipment<T>(int weaponIndex, Vector3 position, Vector3 normal, Transform attachTo = null) where T : SFXBase
     {
         if (!ObjectPoolManager<int, SFXBase>.Registed(weaponIndex))

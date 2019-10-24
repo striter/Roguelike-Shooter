@@ -9,6 +9,9 @@ public class TAnimatorEvent : MonoBehaviour
         Fire = 1,
         FootL,
         FootR,
+        Reload1,
+        Reload2,
+        Reload3,
         Death,
     }
     Action<enum_AnimEvent> OnEventTrigger;

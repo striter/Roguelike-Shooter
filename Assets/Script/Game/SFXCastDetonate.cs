@@ -18,8 +18,7 @@ public class SFXCastDetonate : SFXCastOverlapSphere {
         base.Play(buffInfo);
         m_Blink.OnReset();
         m_Model.SetActivate(true);
-        if (I_MuzzleIndex > 0)
-            GameObjectManager.SpawnParticles<SFXMuzzle>(I_MuzzleIndex, transform.position, Vector3.up).Play(buffInfo.I_SourceID);
+        GameObjectManager.PlayMuzzle(buffInfo.I_SourceID,transform.position,Vector3.up,I_MuzzleIndex);
     }
     protected override void OnPlay()
     {

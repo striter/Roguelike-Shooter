@@ -123,10 +123,7 @@ public class WeaponBase : MonoBehaviour {
             projectile.Play(damageInfo, spreadDirection, endPosition);
         }
 
-        if (I_MuzzleIndex != -1)
-            GameObjectManager.SpawnParticles<SFXMuzzle>(I_MuzzleIndex, m_Muzzle.position, spreadDirection).Play(m_Attacher.I_EntityID);
-        if (m_MuzzleClip)
-            AudioManager.Instance.PlayClip(m_Attacher.I_EntityID, m_MuzzleClip, false, m_Muzzle.position, null);
+        GameObjectManager.PlayMuzzle(m_Attacher.I_EntityID,m_Muzzle.position,spreadDirection,I_MuzzleIndex,m_MuzzleClip);
         I_AmmoLeft--;
         OnFireRecoil?.Invoke(F_Recoil);
 
@@ -421,4 +418,16 @@ public class WeaponBase : MonoBehaviour {
     }
     #endregion
 
+    public void OnAnimEvent(TAnimatorEvent.enum_AnimEvent eventType)
+    {
+        AudioClip targetClip=null;
+        switch (eventType)
+        {
+            case TAnimatorEvent.enum_AnimEvent.Reload1:targetClip = m_ReloadClip1; break;
+            case TAnimatorEvent.enum_AnimEvent.Reload2: targetClip = m_ReloadClip2; break;
+            case TAnimatorEvent.enum_AnimEvent.Reload3: targetClip = m_ReloadClip3; break;
+        }
+        if(targetClip)
+             AudioManager.Instance.PlayClip(m_Attacher.I_EntityID, targetClip, m_Case, false);
+    }
 }

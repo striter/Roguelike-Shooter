@@ -1384,13 +1384,13 @@ namespace GameSetting
         {
             m_ActionEquiping.Traversal((ActionBase action) => { action.OnUseActionElse(targetAction); });
             if (targetAction.m_ActionType!= enum_ActionType.WeaponPerk)
-                GameObjectManager.SpawnParticles<SFXMuzzle>(GameExpression.GetActionMuzzleIndex(targetAction.m_ActionType), m_Player.transform.position, Vector3.up).Play(m_Player.I_EntityID);
+                GameObjectManager.PlayMuzzle(m_Player.I_EntityID, m_Player.transform.position, Vector3.up, GameExpression.GetActionMuzzleIndex(targetAction.m_ActionType));
             OnAddAction(targetAction);
         }
         protected void OnUseAcion(ActionBase targetAction)
         {
             m_ActionEquiping.Traversal((ActionBase action) => {action.OnUseActionElse(targetAction); });
-            GameObjectManager.SpawnParticles<SFXMuzzle>(GameExpression.GetActionMuzzleIndex(targetAction.m_ActionType), m_Player.transform.position, Vector3.up).Play(m_Player.I_EntityID);
+            GameObjectManager.PlayMuzzle(m_Player.I_EntityID, m_Player.transform.position, Vector3.up, GameExpression.GetActionMuzzleIndex(targetAction.m_ActionType));
             OnAddAction(targetAction);
         }
         protected void OnAddAction(ActionBase targetAction)
@@ -2129,8 +2129,7 @@ namespace GameSetting
         protected override Vector3 GetTargetPosition(bool preAim, EntityCharacterBase _target) => LevelManager.NavMeshPosition(_target.transform.position + TCommon.RandomXZSphere(m_Entity.F_AttackSpread)) + new Vector3(0, b_castAtHead ? _target.tf_Head.position.y : 0, 0);
         public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
-            if (i_muzzleIndex > 0)
-                GameObjectManager.SpawnParticles<SFXMuzzle>(i_muzzleIndex, transformBarrel.position, transformBarrel.forward).Play(m_Entity.I_EntityID);
+            GameObjectManager.PlayMuzzle(m_Entity.I_EntityID,transformBarrel.position,transformBarrel.forward,i_muzzleIndex);
             GameObjectManager.SpawnEquipment<SFXCast>(I_Index, _calculatedPosition, Vector3.up).Play(GetDamageDeliverInfo());
         }
     }
@@ -2235,13 +2234,7 @@ namespace GameSetting
         {
             GameObjectManager.SpawnEquipment<SFXProjectile>(I_Index, startPosition, direction).Play(GetDamageDeliverInfo(),direction, targetPosition);
         }
-        protected void SpawnMuzzle(Vector3 startPosition, Vector3 direction)
-        {
-            if (i_muzzleIndex > 0)
-                GameObjectManager.SpawnParticles<SFXMuzzle>(i_muzzleIndex, startPosition, direction).Play(m_Entity.I_EntityID);
-            if (m_MuzzleClip)
-                AudioManager.Instance.PlayClip(m_Entity.I_EntityID,m_MuzzleClip,false,startPosition,null);
-        }
+        protected void SpawnMuzzle(Vector3 startPosition, Vector3 direction) => GameObjectManager.PlayMuzzle(m_Entity.I_EntityID,startPosition,direction,i_muzzleIndex,m_MuzzleClip);
     }
     public class EquipmentBarrageMultipleLine : EquipmentBarrageRange
     {

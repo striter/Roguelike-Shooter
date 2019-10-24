@@ -54,20 +54,21 @@ public class EntityCharacterAI : EntityCharacterBase {
     protected override void OnRevive()
     {
         base.OnRevive();
-        m_Animator.OnRevive();
+        if (m_Animator != null)
+            m_Animator.OnRevive();
     }
     protected override void OnDead()
     {
         base.OnDead();
         m_AI.OnDeactivate();
-        if (E_AnimatorIndex !=  enum_EnermyAnim.Invalid)
+        if (m_Animator != null)
             m_Animator.OnDead();
     }
 
     protected override void OnExpireChange()
     {
         base.OnExpireChange();
-        if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
+        if (m_Animator != null)
             m_Animator.SetMovementSpeed(m_CharacterInfo.F_MovementSpeed);
         m_AI.OnInfoChange();
     }
@@ -78,7 +79,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         if (m_Health.b_IsDead)
             return;
 
-        if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
+        if (m_Animator != null)
         {
             m_Animator.SetForward(m_AI.B_AgentEnabled ? 1f:0f);
             m_Animator.SetPause(m_CharacterInfo.B_Effecting( enum_CharacterEffect.Freeze));
@@ -97,7 +98,7 @@ public class EntityCharacterAI : EntityCharacterBase {
 
     void OnAttackAnim(EntityCharacterBase target,bool startAttack)
     {
-        if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
+        if (m_Animator != null)
             m_Animator.OnAttack(startAttack);
         else if(startAttack)
             OnAnimKeyEvent(TAnimatorEvent.enum_AnimEvent.Fire);
@@ -117,12 +118,9 @@ public class EntityCharacterAI : EntityCharacterBase {
     {
         static readonly int HS_T_Attack = Animator.StringToHash("t_attack");
         static readonly int HS_B_Attack = Animator.StringToHash("b_attack");
-        Action<TAnimatorEvent.enum_AnimEvent> OnAnimEvent;
-        public EnermyAnimator(Animator _animator,Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) : base(_animator)
+        public EnermyAnimator(Animator _animator,Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) : base(_animator,_OnAnimEvent)
         {
             m_Animator.fireEvents = true;
-            OnAnimEvent = _OnAnimEvent;
-            m_Animator.GetComponent<TAnimatorEvent>().Attach(OnAnimEvent);
         }
         public void OnActivate(enum_EnermyAnim _animIndex) => OnActivate((int)_animIndex);
         public void OnAttack(bool attack)

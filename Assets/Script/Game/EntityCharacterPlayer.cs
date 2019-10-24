@@ -38,7 +38,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         gameObject.layer = GameLayer.I_MovementDetect;
         tf_WeaponHoldRight = transform.FindInAllChild("WeaponHold_R");
         tf_WeaponHoldLeft = transform.FindInAllChild("WeaponHold_L");
-        m_Animator = new PlayerAnimator(tf_Model.GetComponent<Animator>());
+        m_Animator = new PlayerAnimator(tf_Model.GetComponent<Animator>(), OnAnimationEvent);
         transform.Find("InteractDetector").GetComponent<InteractDetector>().Init(OnInteractCheck);
     }
 
@@ -312,6 +312,12 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     }
     #endregion
 
+    void OnAnimationEvent(TAnimatorEvent.enum_AnimEvent animEvent)
+    {
+        if (m_WeaponCurrent)
+            m_WeaponCurrent.OnAnimEvent(animEvent);
+    }
+
     void SetBinding(bool on)
     {
         if (on)
@@ -333,7 +339,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 #endif
     }
 
-
     protected class PlayerAnimator : CharacterAnimator
     {
         static readonly int HS_T_Fire = Animator.StringToHash("t_attack");
@@ -341,7 +346,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         static readonly int HS_FM_Reload = Animator.StringToHash("fm_reload");
         static readonly int HS_F_Strafe = Animator.StringToHash("f_strafe");
         Vector2 v2_movement;
-        public PlayerAnimator(Animator _animator) : base(_animator)
+        public PlayerAnimator(Animator _animator, Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) : base(_animator,_OnAnimEvent)
         {
             v2_movement = Vector2.zero;
         }
