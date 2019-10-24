@@ -208,7 +208,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     #region PlayerInteract
     public void OnInteractCheck(InteractBase interactTarget, bool isEnter)
     {
-        if (!interactTarget.B_Interactable)
+        if (!interactTarget.B_InteractEnable)
             return;
 
         if (interactTarget.B_InteractOnTrigger)
@@ -230,7 +230,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             return;
         }
 
-        if (m_Interact.TryInteract(this)&&!m_Interact.B_Interactable)
+        if (m_Interact.TryInteract(this)&&!m_Interact.B_InteractEnable)
             m_Interact = null;
     }
     #endregion

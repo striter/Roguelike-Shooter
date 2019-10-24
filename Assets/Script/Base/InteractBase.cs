@@ -8,16 +8,16 @@ public class InteractBase : MonoBehaviour {
     public virtual bool B_InteractOnTrigger => false;
     protected virtual bool B_CanInteract(EntityCharacterPlayer _interactor) => true;
     protected virtual bool B_RecycleOnInteract => false;
-    public bool B_Interactable { get; private set; } = true;
     public virtual bool B_InteractOnce { get; private set; } = true;
-    public void SetInteractable(bool interactable) => B_Interactable = interactable;
+    public bool B_InteractEnable { get; private set; } = true;
+    public void SetInteractable(bool interactable) => B_InteractEnable = interactable;
     public virtual void Init()
     {
 
     }
     protected void Play()
     {
-        B_Interactable = true;
+        B_InteractEnable = true;
     }
     public virtual bool TryInteract(EntityCharacterPlayer _interactor)
     {
@@ -26,7 +26,7 @@ public class InteractBase : MonoBehaviour {
 
         OnInteractSuccessful(_interactor);
         if (B_InteractOnce)
-            B_Interactable = false;
+            B_InteractEnable = false;
         if (B_RecycleOnInteract)
             GameObjectManager.RecycleInteract( this);
         return true;
