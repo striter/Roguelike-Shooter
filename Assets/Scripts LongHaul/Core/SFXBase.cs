@@ -8,6 +8,7 @@ public class SFXBase : MonoBehaviour {
     protected float f_delayDuration { get; private set; }
     protected float f_playDuration { get; private set; }
     protected float f_lifeDuration { get; private set; }
+
     protected float f_lifeTimeCheck { get; private set; }
     public bool B_Playing { get; private set; }
     protected bool B_Delay { get; private set; }
@@ -15,7 +16,7 @@ public class SFXBase : MonoBehaviour {
     protected virtual bool m_AutoStop => true;
     protected virtual bool m_AutoRecycle => true;
     protected float f_playTimeLeft => f_lifeTimeCheck - I_SFXStopExternalDuration;
-    protected float f_delayTimeLeft => f_delayDuration -(f_lifeDuration- f_lifeTimeCheck);
+    protected float f_delayTimeLeft { get; private set; }
     protected bool b_looping => m_Loop && B_Playing && f_playDuration <= 0f;
     Transform m_AttachTo;
     Vector3 m_localPos, m_localDir;
@@ -36,6 +37,7 @@ public class SFXBase : MonoBehaviour {
         I_SourceID = sourceID;
         f_playDuration = playDuration;
         f_delayDuration = delayDuration;
+        f_delayTimeLeft = f_delayDuration;
         SetLifeTime(f_playDuration + f_delayDuration);
     }
 
@@ -47,7 +49,6 @@ public class SFXBase : MonoBehaviour {
 
     protected virtual void OnPlay()
     {
-        B_Delay = false;
         B_Playing = true;
     }
 
@@ -80,14 +81,22 @@ public class SFXBase : MonoBehaviour {
             transform.rotation = Quaternion.LookRotation(m_AttachTo.TransformDirection(m_localDir));
         }
 
+        if (B_Delay && f_delayTimeLeft >= 0)
+        {
+            f_delayTimeLeft -= Time.deltaTime;
+            if (f_delayTimeLeft < 0)
+            {
+
+                OnPlay();
+                B_Delay = false;
+            }
+        }
+
         if (!m_AutoStop && !m_AutoRecycle)
             return;
 
         if(!b_looping)
             f_lifeTimeCheck -= Time.deltaTime;
-
-        if (B_Delay && f_delayTimeLeft < 0)
-            OnPlay();
 
         if (m_AutoStop&&B_Playing && f_playTimeLeft < 0)
             OnStop();
@@ -108,8 +117,6 @@ public class SFXBase : MonoBehaviour {
     #if UNITY_EDITOR
     protected virtual void EDITOR_DEBUG()
     {
-        if (I_SourceID == -1)
-            Debug.LogError("How'd fk SFX SOURCE ID Equals -1");
         if (I_SFXIndex == -1)
             Debug.Log("How'd fk SFX Index ID Equals -1");
     }
