@@ -68,20 +68,22 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     protected override void OnDead()
     {
-        if (m_Assist)
-            m_Assist.Recycle();
-        if (m_WeaponCurrent)
-            m_WeaponCurrent.OnDetach();
-
         m_Animator.OnDead();
         m_MoveAxisInput = Vector2.zero;
-
+        m_Assist.SetEnable(false);
         base.OnDead();
     }
-    public override void OnRevive(float reviveHealth, float reviveArmor)
+    protected override void OnRevive()
     {
-        base.OnRevive(reviveHealth, reviveArmor);
-        ObtainWeapon(m_WeaponCurrent);
+        base.OnRevive();
+        m_Assist.SetEnable(true);
+        m_Animator.OnRevive();
+    }
+    protected override void OnRecycle()
+    {
+        base.OnRecycle();
+        if (m_Assist)
+            m_Assist.Recycle();
     }
     void OnChangeLevel()
     {
@@ -173,7 +175,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_WeaponCurrent = _weapon;
         m_WeaponCurrent.OnAttach(this, _weapon.B_AttachLeft ? tf_WeaponHoldLeft : tf_WeaponHoldRight, OnFireAddRecoil, OnReload);
         m_PlayerInfo.OnAttachWeapon(m_WeaponCurrent);
-        m_Animator.SwitchAnim(m_WeaponCurrent.E_Anim);
+        m_Animator.OnActivate(m_WeaponCurrent.E_Anim);
 
         if (m_Assist) m_Assist.Recycle();
         m_Assist = GameObjectManager.SpawnSFX<SFXAimAssist>(101);
@@ -332,34 +334,24 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     }
 
 
-    protected class PlayerAnimator : AnimatorClippingTime
+    protected class PlayerAnimator : CharacterAnimator
     {
-        static readonly int HS_F_Forward = Animator.StringToHash("f_forward");
-        static readonly int HS_F_Strafe = Animator.StringToHash("f_strafe");
-        static readonly int HS_I_WeaponType = Animator.StringToHash("i_weaponType");
-        static readonly int HS_T_Activate = Animator.StringToHash("t_activate");
         static readonly int HS_T_Fire = Animator.StringToHash("t_attack");
-        static readonly int HS_T_Dead = Animator.StringToHash("t_dead");
         static readonly int HS_T_Reload = Animator.StringToHash("t_reload");
         static readonly int HS_FM_Reload = Animator.StringToHash("fm_reload");
-        static readonly int HS_FM_Movement = Animator.StringToHash("fm_movement");
+        static readonly int HS_F_Strafe = Animator.StringToHash("f_strafe");
         Vector2 v2_movement;
         public PlayerAnimator(Animator _animator) : base(_animator)
         {
-            _animator.fireEvents = true;
             v2_movement = Vector2.zero;
         }
+        public void OnActivate(enum_PlayerAnim animIndex) => OnActivate((int)animIndex);
         public void SetRun(Vector2 movement,float movementParam)
         {
             v2_movement = Vector2.Lerp(v2_movement,movement,Time.deltaTime*5f);
-            m_Animator.SetFloat(HS_F_Forward, v2_movement.y);
             m_Animator.SetFloat(HS_F_Strafe, v2_movement.x);
-            m_Animator.SetFloat(HS_FM_Movement, movementParam);
-        }
-        public void SwitchAnim(enum_PlayerAnim animIndex)
-        {
-            m_Animator.SetInteger(HS_I_WeaponType, (int)animIndex);
-            m_Animator.SetTrigger(HS_T_Activate);
+            base.SetForward(v2_movement.y);
+            base.SetMovementSpeed(movementParam);
         }
         public void Fire()
         {
@@ -369,10 +361,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         {
             m_Animator.SetTrigger(HS_T_Reload);
             m_Animator.SetFloat(HS_FM_Reload, 1 / reloadTime);
-        }
-        public void OnDead()
-        {
-            m_Animator.SetTrigger(HS_T_Dead);
         }
     }
 #if UNITY_EDITOR

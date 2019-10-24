@@ -33,12 +33,14 @@ public class EntityCharacterAI : EntityCharacterBase {
         base.Init(entityPresetIndex);
         Transform tf_Barrel = transform.FindInAllChild("Barrel");
         m_AI = new EnermyAIControllerBase(this, EquipmentBase.AcquireEquipment(GameExpression.GetAIEquipmentIndex(entityPresetIndex, 0),this,tf_Barrel,m_CharacterInfo.GetDamageBuffInfo), OnAttackAnim, OnCheckTarget);
+        if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
+            m_Animator = new EnermyAnimator(tf_Model.GetComponent<Animator>(), OnAnimKeyEvent);
     }
 
     public override void OnActivate(enum_EntityFlag _flag, float startHealth)
     {
-        if (E_AnimatorIndex!= enum_EnermyAnim.Invalid)
-            m_Animator = new EnermyAnimator(tf_Model.GetComponent<Animator>(), E_AnimatorIndex, OnAnimKeyEvent);
+        if (m_Animator!=null)
+            m_Animator.OnActivate(E_AnimatorIndex);
         m_AI.OnActivate();
         base.OnActivate(_flag,startHealth);
     }
@@ -49,7 +51,11 @@ public class EntityCharacterAI : EntityCharacterBase {
         m_Health .SetHealthMultiplier(maxHealthMultiplier);
         m_Health.OnSetHealth(I_MaxHealth * baseHealthMultiplier,true);
     }
-
+    protected override void OnRevive()
+    {
+        base.OnRevive();
+        m_Animator.OnRevive();
+    }
     protected override void OnDead()
     {
         base.OnDead();
@@ -74,8 +80,8 @@ public class EntityCharacterAI : EntityCharacterBase {
 
         if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
         {
-            m_Animator.SetRun(m_AI.B_AgentEnabled ? 1 : 0);
-            m_Animator.SetStun(m_CharacterInfo.B_Effecting( enum_CharacterEffect.Freeze));
+            m_Animator.SetForward(m_AI.B_AgentEnabled ? 1f:0f);
+            m_Animator.SetPause(m_CharacterInfo.B_Effecting( enum_CharacterEffect.Freeze));
         }
 
         m_AI.SetPlay(!m_CharacterInfo.B_Effecting( enum_CharacterEffect.Freeze));
@@ -107,46 +113,23 @@ public class EntityCharacterAI : EntityCharacterBase {
         }
     }
     
-    public class EnermyAnimator : AnimatorClippingTime
+    protected class EnermyAnimator : CharacterAnimator
     {
-        static readonly int HS_T_Dead = Animator.StringToHash("t_dead");
-        static readonly int HS_I_AnimIndex = Animator.StringToHash("i_weaponType");
-        static readonly int HS_T_Activate = Animator.StringToHash("t_activate");
         static readonly int HS_T_Attack = Animator.StringToHash("t_attack");
-        static readonly int HS_F_Forward = Animator.StringToHash("f_forward");
         static readonly int HS_B_Attack = Animator.StringToHash("b_attack");
-        static readonly int HS_FM_Movement = Animator.StringToHash("fm_movement");
         Action<TAnimatorEvent.enum_AnimEvent> OnAnimEvent;
-        public EnermyAnimator(Animator _animator, enum_EnermyAnim _animIndex,Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) : base(_animator)
+        public EnermyAnimator(Animator _animator,Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) : base(_animator)
         {
             m_Animator.fireEvents = true;
-            m_Animator.SetInteger(HS_I_AnimIndex,(int)_animIndex);
-            m_Animator.SetTrigger(HS_T_Activate);
             OnAnimEvent = _OnAnimEvent;
             m_Animator.GetComponent<TAnimatorEvent>().Attach(OnAnimEvent);
         }
-        public void SetStun(bool stun)
-        {
-            m_Animator.speed = stun ? 0 : 1;
-        }
-        public void SetRun(float forward)
-        {
-            m_Animator.SetFloat(HS_F_Forward, forward);
-        }
-        public void SetMovementSpeed( float movementSpeed)
-        {
-            m_Animator.SetFloat(HS_FM_Movement, movementSpeed / 4f);
-        }
+        public void OnActivate(enum_EnermyAnim _animIndex) => OnActivate((int)_animIndex);
         public void OnAttack(bool attack)
         {
             if(attack)
                 m_Animator.SetTrigger(HS_T_Attack);
             m_Animator.SetBool(HS_B_Attack,attack);
-        }
-        public void OnDead()
-        {
-            m_Animator.SetTrigger(HS_T_Dead);
-            m_Animator.fireEvents = false;
         }
     }
     #region AI
