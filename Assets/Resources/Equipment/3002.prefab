@@ -178,7 +178,7 @@ MonoBehaviour:
   F_Damage: 13.6
   F_Speed: 30
   B_Penetrate: 0
-  AC_MuzzleClip: {fileID: 8300000, guid: 812ff75de9f1f6847afe434b949cdfa2, type: 3}
+  AC_MuzzleClip: {fileID: 8300000, guid: adb8977a89e60d94d86053442cc0637a, type: 3}
   I_MuzzleIndex: 10001
   I_ImpactIndex: 20001
   I_IndicatorIndex: 0
