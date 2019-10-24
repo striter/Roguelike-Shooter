@@ -7,7 +7,7 @@
 	}
 	SubShader
 	{
-		Tags{ "RenderType" = "Transparent" "IgnoreProjector" = "True" "Queue" = "Transparent"}
+		Tags{ "RenderType" = "Transparent" "IgnoreProjector" = "True" "Queue" = "Transparent" "PreviewType"="Plane"}
 		Blend SrcAlpha One
 		Cull Off Lighting Off ZWrite Off Fog { Color(0,0,0,0) }
 
