@@ -2183,8 +2183,11 @@ namespace GameSetting
 
         public override void OnPlayAnim(bool play)
         {
-            if (!play&&m_Cast)
+            if (!play && m_Cast)
+            {
                 m_Cast.PlayControlled(m_Entity.I_EntityID, transformBarrel, attacherHead, false, GetDamageDeliverInfo());
+                m_Cast = null;
+            }
         }
         public override void OnDeactivate()
         {
