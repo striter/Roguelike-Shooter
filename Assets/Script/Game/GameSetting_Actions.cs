@@ -729,6 +729,7 @@ namespace GameSetting_Action
     {
         public override int m_Index => 10020;
         public override int I_BaseCost => ActionData.I_10020_Cost;
+        public override int m_EffectIndex => 40005;
         public override enum_ActionType m_ActionType => enum_ActionType.Basic;
         public override float F_Duration => ActionData.F_10020_Duration;
         public override float Value1 => ActionData.F_10020_PerStackHealthLoss;
@@ -747,6 +748,7 @@ namespace GameSetting_Action
     {
         public override int m_Index => 10021;
         public override int I_BaseCost => ActionData.I_10021_Cost;
+        public override int m_EffectIndex => 40001;
         public override enum_ActionType m_ActionType => enum_ActionType.Basic;
         public override float F_Duration => ActionData.F_20021_Duration;
         public override float Value1 => ActionData.F_10021_HealthRegenPerMin(m_rarity);
@@ -872,6 +874,7 @@ namespace GameSetting_Action
     {
         public override int m_Index => 10030;
         public override int I_BaseCost => ActionData.I_10030_Cost;
+        public override int m_EffectIndex => 40005;
         public override enum_ActionType m_ActionType => enum_ActionType.Basic;
         public override float F_Duration => ActionData.F_10030_Duration;
         public override float Value1 => ActionData.P_10030_MovementSpeedAdditive(m_rarity);
@@ -917,6 +920,7 @@ namespace GameSetting_Action
     {
         public override int m_Index => 10034;
         public override int I_BaseCost => ActionData.I_10034_Cost;
+        public override int m_EffectIndex => m_BurstShot ? 40012 : 0;
         public override enum_ActionType m_ActionType => enum_ActionType.Basic;
         public override float Value1 => ActionData.P_10034_DamageAdditiveFirstShot(m_rarity);
         public override float Value2 => ActionData.P_10034_DamageAdditiveShotAfterKill(m_rarity);
@@ -953,6 +957,7 @@ namespace GameSetting_Action
     {
         public override int m_Index => 10035;
         public override int I_BaseCost => ActionData.I_10035_Cost;
+        public override int m_EffectIndex => 40012;
         public override enum_ActionType m_ActionType => enum_ActionType.Basic;
         public override float Value1 => ActionData.P_10035_DamageAdditiveNextShot(m_rarity);
         public override float m_DamageMultiply =>  Value1 / 100f ;
@@ -1170,6 +1175,7 @@ namespace GameSetting_Action
     {
         public override int m_Index => 30002;
         public override int I_BaseCost => ActionData.I_30002_Cost;
+        public override int m_EffectIndex => 40012;
         public override float Value1 => ActionData.P_30002_SingleShotDamageMultiplyAfterKill(m_rarity);
         public override float m_DamageMultiply => m_burstShot ? Value1/100f : 0f;
         bool m_burstShot = false;
@@ -1391,6 +1397,7 @@ namespace GameSetting_Action
     {
         public override int m_Index => 30015;
         public override int I_BaseCost => ActionData.I_30015_Cost;
+        public override int m_EffectIndex => 40007;
         public override float Value1 => ActionData.F_30015_DamageReflectPerArmor(m_rarity);
         public override void OnBeforeReceiveDamage(DamageInfo info)
         {
