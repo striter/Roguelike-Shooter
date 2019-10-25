@@ -9,9 +9,12 @@ public class SFXAudioBase : SFXBase
         base.Init(_sfxIndex);
         m_Audio = GetComponent<AudioSource>();
         m_Audio.playOnAwake=false;
+    }
+    private void OnEnable()
+    {
         AudioManager.OnVolumeChanged += SetVolume;
     }
-    private void OnDestroy()
+    private void OnDisable()
     {
         AudioManager.OnVolumeChanged -= SetVolume;
     }
