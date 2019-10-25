@@ -672,8 +672,11 @@ namespace GameSetting_Action
         {
             base.OnActivate();
              GameManager.Instance.GetEntities(m_ActionEntity.m_Flag, false).Traversal((EntityCharacterBase entity)=> {
-                 if (entity.m_CharacterInfo.B_Effecting( enum_CharacterEffect.Freeze))
-                     entity.m_HitCheck.TryHit(new DamageInfo(Value1/100f*m_ActionEntity.m_WeaponCurrent.F_BaseDamage, enum_DamageType.Basic, DamageDeliverInfo.Default(m_ActionEntity.m_EntityID)));
+                 if (entity.m_CharacterInfo.B_Effecting(enum_CharacterEffect.Freeze))
+                 {
+                     entity.m_HitCheck.TryHit(new DamageInfo(Value1 / 100f * m_ActionEntity.m_WeaponCurrent.F_BaseDamage, enum_DamageType.Basic, DamageDeliverInfo.Default(m_ActionEntity.m_EntityID)));
+                     GameObjectManager.SpawnParticles<SFXMuzzle>(10014,entity.transform.position,Vector3.up).Play(m_ActionEntity.m_EntityID);
+                 }
              });
         }
         public Action_10016_DamageAllFreezing(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }

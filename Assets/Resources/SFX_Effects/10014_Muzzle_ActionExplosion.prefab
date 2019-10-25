@@ -189,7 +189,7 @@ GameObject:
   - component: {fileID: 4145520234647522}
   - component: {fileID: 114208455508739916}
   m_Layer: 9
-  m_Name: 20009_Impact_ExplosionWater
+  m_Name: 20003_Impact_ExplosionFreeze
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
