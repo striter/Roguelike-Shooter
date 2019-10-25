@@ -700,6 +700,7 @@ namespace GameSetting_Action
     {
         public override int m_Index => 10018;
         public override int I_BaseCost => ActionData.I_10018_Cost;
+        public override int m_EffectIndex => 40006;
         public override enum_ActionType m_ActionType => enum_ActionType.Basic;
         public override float F_Duration => ActionData.F_10018_Duration;
         public override float Value1 => ActionData.F_10018_PerStackHealthLoss;
