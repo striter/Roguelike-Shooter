@@ -17,11 +17,28 @@ public class EntityDeviceBase : EntityCharacterBase {
         Transform connectionsParent = transform.Find("Connections");
         m_Connections = new ObjectPoolMono<EntityCharacterBase, LineRenderer>(connectionsParent.Find("Item").gameObject, connectionsParent);
     }
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+        TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
+    }
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+        TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
+    }
+
     public override void OnActivate(enum_EntityFlag _flag, float startHealth = 0)
     {
         base.OnActivate(_flag, startHealth);
         m_Particles.Traversal((ParticleSystem particle) => { particle.Play(); });
     }
+    void OnCharacterDead(EntityCharacterBase character)
+    {
+        if (m_Connections.ContainsItem(character))
+            m_Connections.RemoveItem(character);
+    }
+
     protected override void Update()
     {
         base.Update();
@@ -37,7 +54,6 @@ public class EntityDeviceBase : EntityCharacterBase {
         m_Connections.ClearPool();
         m_Particles.Traversal((ParticleSystem particle) => { particle.Stop(); });
     }
-
     void OnEntityDetect(HitCheckEntity entity, bool enter)
     {
         if (m_Health.b_IsDead)
