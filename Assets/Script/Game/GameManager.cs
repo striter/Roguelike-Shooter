@@ -777,7 +777,7 @@ public static class GameObjectManager
         if (muzzleIndex > 0)
             SpawnParticles<SFXMuzzle>(muzzleIndex, position, direction).Play(_sourceID);
         if (muzzleClip)
-            AudioManager.Instance.PlayClip(_sourceID, muzzleClip, false, position);
+            GameAudioManager.Instance.PlayClip(_sourceID, muzzleClip, false, position);
     }
     public static T SpawnEquipment<T>(int weaponIndex, Vector3 position, Vector3 normal, Transform attachTo = null) where T : SFXBase
     {

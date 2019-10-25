@@ -428,6 +428,6 @@ public class WeaponBase : MonoBehaviour {
             case TAnimatorEvent.enum_AnimEvent.Reload3: targetClip = m_ReloadClip3; break;
         }
         if(targetClip)
-             AudioManager.Instance.PlayClip(m_Attacher.m_EntityID, targetClip, false, m_Case);
+             GameAudioManager.Instance.PlayClip(m_Attacher.m_EntityID, targetClip, false, m_Case);
     }
 }

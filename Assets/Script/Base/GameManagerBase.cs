@@ -135,9 +135,10 @@ public static class OptionsManager
         m_Sensitive = GameExpression.F_PlayerSensitive(m_OptionsData.m_SensitiveTap);
         Application.targetFrameRate = (int)m_OptionsData.m_FrameRate;
         TLocalization.SetRegion(m_OptionsData.m_Region);
-        AudioListener.volume = GameExpression.F_GameVFXVolume(m_OptionsData.m_VFXVolumeTap);
         event_OptionChanged?.Invoke();
     }
+    public static float F_SFXVolume =>GameExpression.F_GameVFXVolume(m_OptionsData.m_VFXVolumeTap);
+    public static float F_MusicVolume => GameExpression.F_GameMusicVolume(m_OptionsData.m_MusicVolumeTap);
 }
 public static class GameDataManager
 {

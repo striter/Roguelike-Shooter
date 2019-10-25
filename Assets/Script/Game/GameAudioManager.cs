@@ -8,7 +8,7 @@ public class GameAudioManager : AudioManager
     protected static GameAudioManager ninstance;
     public static new GameAudioManager Instance => ninstance;
     static float m_volumeMultiply = 1f;
-    public override float m_Volume => base.m_Volume * m_volumeMultiply;
+    public override float m_BGVolume => base.m_BGVolume * m_volumeMultiply;
     Dictionary<enum_GameMusic, AudioClip> m_MusicClip = new Dictionary<enum_GameMusic, AudioClip>();
     Dictionary<enum_GameAudioSFX, AudioClip> m_AudioClips = new Dictionary<enum_GameAudioSFX, AudioClip>();
     public AudioClip GetSFXClip(enum_GameAudioSFX sfx) => m_AudioClips[sfx];
@@ -52,11 +52,15 @@ public class GameAudioManager : AudioManager
     void OnBattleStart()=>PlayClip( enum_GameMusic.Fight, true);
     void OnBattleFinish()=> PlayClip( enum_GameMusic.Relax,true);
     void OnGameFinish(bool win) => PlayClip(win? enum_GameMusic.Win: enum_GameMusic.Lost ,false);
-    void OnPageOpen(float bulletTime) => m_AudioBG.pitch =Mathf.Lerp(.6f,1f , bulletTime);
-    void OnPageClose() => m_AudioBG.pitch = 1f;
+    void OnPageOpen(float bulletTime) =>SetBGPitch( Mathf.Lerp(.6f,1f , bulletTime));
+    void OnPageClose() => SetBGPitch(1f);
     void PlayClip(enum_GameMusic music,bool loop)=> SwitchBackground(m_MusicClip[music],loop);
+    public SFXAudioBase PlayClip(int sourceID, AudioClip _clip, bool _loop, Transform _target) => base.PlayClip(sourceID,_clip,OptionsManager.F_SFXVolume,_loop,_target);
+    public SFXAudioBase PlayClip(int sourceID, AudioClip _clip, bool _loop, Vector3 _pos) => base.PlayClip(sourceID, _clip, OptionsManager.F_SFXVolume, _loop, _pos);
+    public SFXAudioBase PlayClip(int sourceID, AudioClip _clip, bool _loop) => base.PlayClip(sourceID,_clip,OptionsManager.F_SFXVolume,_loop);
     void OnOptionChanged()
     {
-        m_volumeMultiply = GameExpression.F_GameMusicVolume( OptionsManager.m_OptionsData.m_MusicVolumeTap);
+        m_volumeMultiply = OptionsManager.F_MusicVolume;
+        SetSFXVolume(OptionsManager.F_SFXVolume);
     }
 }
