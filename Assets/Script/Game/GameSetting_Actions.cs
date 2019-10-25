@@ -514,12 +514,13 @@ namespace GameSetting_Action
     {
         public override int m_Index => 10005;
         public override int I_BaseCost => ActionData.I_10005_Cost;
+        public override int m_EffectIndex => m_BurstShot ? 40012 : 0;
         public override enum_ActionType m_ActionType => enum_ActionType.Basic;
         public override float Value1 => ActionData.P_10005_OnFire_DamageMultiply(m_rarity);
         public override float Value2 => ActionData.P_10005_OnKill_Buff_MovementSpeed(m_rarity);
         public override float Value3 => ActionData.F_10005_OnKill_Buff_Duration;
         public override float m_DamageMultiply => m_BurstShot ? Value1/100f : 0f;
-        protected override void OnShotsKill()=>ActionHelper.ReciveBuff(m_ActionEntity,SBuff.CreateMovementActionBuff(m_Index,Value2/100f,Value3));
+        protected override void OnShotsKill()=>ActionHelper.ReciveBuff(m_ActionEntity,SBuff.CreateMovementActionBuff(m_Index,40005,Value2/100f,Value3));
         public Action_10005_SingleShotMovementAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
 
@@ -527,6 +528,7 @@ namespace GameSetting_Action
     {
         public override int m_Index => 10006;
         public override int I_BaseCost => ActionData.I_10006_Cost;
+        public override int m_EffectIndex => m_BurstShot ? 40012 : 0;
         public override enum_ActionType m_ActionType => enum_ActionType.Basic;
         public override float Value1 => ActionData.P_10006_DamageMultiply(m_rarity);
         public override float Value2 => ActionData.I_10006_OnKill_ArmorReceive(m_rarity);
@@ -539,6 +541,7 @@ namespace GameSetting_Action
     {
         public override int m_Index => 10007;
         public override int I_BaseCost => ActionData.I_10007_Cost;
+        public override int m_EffectIndex => m_BurstShot ? 40012 : 0;
         public override enum_ActionType m_ActionType => enum_ActionType.Basic;
         public override float Value1 => ActionData.P_10007_OnFire_DamageMultiply(m_rarity);
         public override float Value2 => ActionData.I_10007_OnKill_HealReceive(m_rarity);
@@ -1559,9 +1562,11 @@ namespace GameSetting_Action
     public class Action_40012_ReceiveDamageMovementMultiplyDuration : ActionWeaponPerkNormal
     {
         public override int m_Index => 40012;
+        public override int m_EffectIndex => m_effecting ? 40005 : 0;
         public override float Value1 => ActionData.P_40012_MovementSpeedMultiply(m_rarity);
         public override float Value2 => ActionData.F_40012_Duration(m_rarity);
-        public override float m_MovementSpeedMultiply => f_durationCheck > 0f ? Value1 / 100f : 0;
+        public override float m_MovementSpeedMultiply => m_effecting? Value1 / 100f : 0;
+        bool m_effecting => f_durationCheck > 0f;
         float f_durationCheck;
         public override void OnAfterReceiveDamage(DamageInfo info, float amount)
         {
@@ -1580,9 +1585,11 @@ namespace GameSetting_Action
     public class Action_40013_KillMovementMultiplyDuration : ActionWeaponPerkNormal
     {
         public override int m_Index => 40013;
+        public override int m_EffectIndex => m_effecting ? 40005 : 0;
         public override float Value1 => ActionData.P_40013_MovementSpeedMultiply(m_rarity);
         public override float Value2 => ActionData.F_40013_Duration(m_rarity);
-        public override float m_MovementSpeedMultiply => f_durationCheck > 0f ? Value1 / 100f : 0;
+        public override float m_MovementSpeedMultiply =>m_effecting ? Value1 / 100f : 0;
+        bool m_effecting => f_durationCheck > 0f;
         float f_durationCheck=0f;
         public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {

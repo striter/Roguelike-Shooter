@@ -793,10 +793,11 @@ namespace GameSetting
             return buff;
         }
         //100000-999999
-        public static SBuff CreateMovementActionBuff(int actionIndex, float movementMultiply, float duration)
+        public static SBuff CreateMovementActionBuff(int actionIndex,int effectIndex, float movementMultiply, float duration)
         {
             SBuff buff = new SBuff();
             buff.index = actionIndex * 10;
+            buff.i_effect = effectIndex;
             buff.i_addType = (int)enum_ExpireRefreshType.Refresh;
             buff.f_movementSpeedMultiply = movementMultiply;
             buff.f_expireDuration = duration;
