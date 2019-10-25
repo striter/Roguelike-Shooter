@@ -37,7 +37,7 @@ public class UI_EntityHealth : UIToolsBase {
         if (!b_showEntityHealthInfo(entity))
             return;
 
-        m_HealthGrid.AddItem(entity.I_EntityID).AttachItem(entity);
+        m_HealthGrid.AddItem(entity.m_EntityID).AttachItem(entity);
     }
 
     void OnEntityRecycle(EntityBase entity)
@@ -45,7 +45,7 @@ public class UI_EntityHealth : UIToolsBase {
         if (!b_showEntityHealthInfo(entity))
             return;
 
-        m_HealthGrid.RemoveItem(entity.I_EntityID);
+        m_HealthGrid.RemoveItem(entity.m_EntityID);
     }
     void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float applyAmount)
     {
@@ -57,7 +57,7 @@ public class UI_EntityHealth : UIToolsBase {
         if (!b_showEntityHealthInfo(damageEntity))
             return;
 
-        m_HealthGrid.GetItem(damageEntity.I_EntityID).OnShow();
+        m_HealthGrid.GetItem(damageEntity.m_EntityID).OnShow();
     }
 
     void OnDamageExpire(int index)

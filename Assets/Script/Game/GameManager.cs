@@ -52,9 +52,9 @@ public class GameManager : GameManagerBase
                 enermy.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic,DamageDeliverInfo.BuffInfo(-1, TestEntityBuffOnSpawn)));
         }
         if (Input.GetKeyDown(KeyCode.X) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
-            GameObjectManager.SpawnEquipment<SFXCast>(X_TestCastIndex, hit.point, CastForward?m_LocalPlayer.transform.forward: Vector3.up).Play(DamageDeliverInfo.Default(m_LocalPlayer.I_EntityID));
+            GameObjectManager.SpawnEquipment<SFXCast>(X_TestCastIndex, hit.point, CastForward?m_LocalPlayer.transform.forward: Vector3.up).Play(DamageDeliverInfo.Default(m_LocalPlayer.m_EntityID));
         if (Input.GetKeyDown(KeyCode.C) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
-            GameObjectManager.SpawnEquipment<SFXProjectile>(C_TestProjectileIndex, hit.point + Vector3.up, m_LocalPlayer.transform.forward).Play(DamageDeliverInfo.Default(m_LocalPlayer.I_EntityID), m_LocalPlayer.transform.forward, hit.point + m_LocalPlayer.transform.forward * 10);
+            GameObjectManager.SpawnEquipment<SFXProjectile>(C_TestProjectileIndex, hit.point + Vector3.up, m_LocalPlayer.transform.forward).Play(DamageDeliverInfo.Default(m_LocalPlayer.m_EntityID), m_LocalPlayer.transform.forward, hit.point + m_LocalPlayer.transform.forward * 10);
         if (Input.GetKeyDown(KeyCode.V) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
             GameObjectManager.SpawnIndicator(V_TestIndicatorIndex, hit.point + Vector3.up, Vector3.up).Play(-1,3f);
         if (Input.GetKeyDown(KeyCode.Comma) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
@@ -343,7 +343,7 @@ public class GameManager : GameManagerBase
         if (entity.m_Controller== enum_EntityController.None)
             return;
         EntityCharacterBase character = entity as EntityCharacterBase;
-        m_Entities.Add(entity.I_EntityID, character);
+        m_Entities.Add(entity.m_EntityID, character);
         m_AllyEntities[entity.m_Flag].Add(character);
         m_OppositeEntities.Traversal((enum_EntityFlag flag)=> {
             if (entity.m_Flag != enum_EntityFlag.Neutal && flag != entity.m_Flag)
@@ -356,7 +356,7 @@ public class GameManager : GameManagerBase
             return;
         EntityCharacterBase character = entity as EntityCharacterBase;
         
-        m_Entities.Remove(entity.I_EntityID);
+        m_Entities.Remove(entity.m_EntityID);
         m_AllyEntities[entity.m_Flag].Remove(character);
         m_OppositeEntities.Traversal((enum_EntityFlag flag) => {
             if (entity.m_Flag != enum_EntityFlag.Neutal && flag != entity.m_Flag)
@@ -717,7 +717,7 @@ public static class GameObjectManager
         if (entity == null)
             Debug.LogError("Entity ID:" + _poolIndex + ",Type:" + typeof(T).ToString() + " Not Found");
         entity.OnActivate(_flag,_startHealth);
-        entity.gameObject.name = entity.I_EntityID.ToString() + "_" + _poolIndex.ToString();
+        entity.gameObject.name = entity.m_EntityID.ToString() + "_" + _poolIndex.ToString();
         entity.transform.position = LevelManager.NavMeshPosition(toPos, true);
         if (parentTrans) entity.transform.SetParent(parentTrans);
         return entity;

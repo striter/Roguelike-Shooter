@@ -36,7 +36,7 @@ public class EntityDeviceBuffApllier : EntityDeviceBase {
 
         m_DetectLink.Traversal((EntityCharacterBase entity) =>
         {
-            if (entity.m_Flag != m_Flag||entity.I_EntityID==I_EntityID)
+            if (entity.m_Flag != m_Flag||entity.m_EntityID==m_EntityID)
                 return;
 
             switch (entity.m_Controller)

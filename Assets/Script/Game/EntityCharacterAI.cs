@@ -269,7 +269,7 @@ public class EntityCharacterAI : EntityCharacterBase {
             List<EntityCharacterBase> entites = GameManager.Instance.GetEntities(m_Entity.m_Flag, m_Weapon.B_TargetAlly);
             for (int i = 0; i < entites.Count; i++)
             {
-                if (entites[i].I_EntityID == m_Entity.I_EntityID)
+                if (entites[i].m_EntityID == m_Entity.m_EntityID)
                     continue;
 
                 float distance = TCommon.GetXZDistance(headTransform.position, entites[i].tf_Head.position);
@@ -416,7 +416,7 @@ public class EntityCharacterAI : EntityCharacterBase {
                 else if (m_Raycasts[i].collider.gameObject.layer == GameLayer.I_Entity)
                 {
                     HitCheckEntity entity = m_Raycasts[i].collider.GetComponent<HitCheckEntity>();
-                    if (entity.m_Attacher.I_EntityID != target.I_EntityID && entity.m_Attacher.I_EntityID != m_Entity.I_EntityID)
+                    if (entity.m_Attacher.m_EntityID != target.m_EntityID && entity.m_Attacher.m_EntityID != m_Entity.m_EntityID)
                         return false;
                 }
             }

@@ -494,11 +494,14 @@ namespace GameSetting
         Heavy_Remote_164 = 164,
     }
 
-    public enum enum_GameAudio
+    public enum enum_GameAudioSFX
     {
         Invalid=-1,
-        Revive=1,
 
+        EntityDamage,
+        PlayerDamage,
+
+        PlayerRevive,
     }
 
     public enum enum_GameMusic { Invalid=-1, Relax=1, Fight=2, Win=3, Lost=4,}
@@ -1137,7 +1140,7 @@ namespace GameSetting
         public void AddDamageOverride(Func<DamageDeliverInfo> _damageOverride) => m_DamageBuffOverride = _damageOverride;
         public virtual DamageDeliverInfo GetDamageBuffInfo()
         {
-            DamageDeliverInfo deliver = DamageDeliverInfo.DamageInfo(m_Entity.I_EntityID, F_DamageMultiply, 0f);
+            DamageDeliverInfo deliver = DamageDeliverInfo.DamageInfo(m_Entity.m_EntityID, F_DamageMultiply, 0f);
             if (m_DamageBuffOverride != null) deliver.SetAdditiveInfo(m_DamageBuffOverride());
             return deliver;
         }
@@ -1170,8 +1173,8 @@ namespace GameSetting
             if (amountApply <= 0)
                 return;
 
-            if (F_HealthDrainMultiply > 0 && damageInfo.m_detail.I_SourceID == m_Entity.I_EntityID)
-                m_Entity.m_HitCheck.TryHit(new DamageInfo(-amountApply * F_HealthDrainMultiply, enum_DamageType.HealthOnly, DamageDeliverInfo.Default(m_Entity.I_EntityID)));
+            if (F_HealthDrainMultiply > 0 && damageInfo.m_detail.I_SourceID == m_Entity.m_EntityID)
+                m_Entity.m_HitCheck.TryHit(new DamageInfo(-amountApply * F_HealthDrainMultiply, enum_DamageType.HealthOnly, DamageDeliverInfo.Default(m_Entity.m_EntityID)));
         }
         public virtual void OnDead() => Reset();
         public virtual void OnRevive() => Reset();
@@ -1389,13 +1392,13 @@ namespace GameSetting
         {
             m_ActionEquiping.Traversal((ActionBase action) => { action.OnUseActionElse(targetAction); });
             if (targetAction.m_ActionType!= enum_ActionType.WeaponPerk)
-                GameObjectManager.PlayMuzzle(m_Player.I_EntityID, m_Player.transform.position, Vector3.up, GameExpression.GetActionMuzzleIndex(targetAction.m_ActionType));
+                GameObjectManager.PlayMuzzle(m_Player.m_EntityID, m_Player.transform.position, Vector3.up, GameExpression.GetActionMuzzleIndex(targetAction.m_ActionType));
             OnAddAction(targetAction);
         }
         protected void OnUseAcion(ActionBase targetAction)
         {
             m_ActionEquiping.Traversal((ActionBase action) => {action.OnUseActionElse(targetAction); });
-            GameObjectManager.PlayMuzzle(m_Player.I_EntityID, m_Player.transform.position, Vector3.up, GameExpression.GetActionMuzzleIndex(targetAction.m_ActionType));
+            GameObjectManager.PlayMuzzle(m_Player.m_EntityID, m_Player.transform.position, Vector3.up, GameExpression.GetActionMuzzleIndex(targetAction.m_ActionType));
             OnAddAction(targetAction);
         }
         protected void OnAddAction(ActionBase targetAction)
@@ -1453,7 +1456,7 @@ namespace GameSetting
         {
             ResetEffect(enum_CharacterEffect.Cloak);
             float randomDamageMultiply = UnityEngine.Random.Range(-GameConst.F_PlayerDamageAdjustmentRange, GameConst.F_PlayerDamageAdjustmentRange);
-            DamageDeliverInfo info = DamageDeliverInfo.DamageInfo(m_Entity.I_EntityID, F_DamageMultiply + randomDamageMultiply, F_DamageAdditive);
+            DamageDeliverInfo info = DamageDeliverInfo.DamageInfo(m_Entity.m_EntityID, F_DamageMultiply + randomDamageMultiply, F_DamageAdditive);
             m_ActionEquiping.Traversal((ActionBase action) => { action.OnFire(info.I_IdentiyID); });
             return info;
         }
@@ -1469,7 +1472,7 @@ namespace GameSetting
 
         protected void OnEntityActivate(EntityBase targetEntity)
         {
-            if (targetEntity.m_Controller != enum_EntityController.AI||targetEntity.m_Flag != m_Entity.m_Flag || targetEntity.I_EntityID == m_Entity.I_EntityID)
+            if (targetEntity.m_Controller != enum_EntityController.AI||targetEntity.m_Flag != m_Entity.m_Flag || targetEntity.m_EntityID == m_Entity.m_EntityID)
                 return;
 
             EntityCharacterBase ally = (targetEntity as EntityCharacterBase);
@@ -1482,12 +1485,12 @@ namespace GameSetting
             if (damageInfo.m_AmountApply <= 0)
                 return;
 
-            if (damageInfo.m_detail.I_SourceID == m_Entity.I_EntityID)
+            if (damageInfo.m_detail.I_SourceID == m_Entity.m_EntityID)
             {
                 m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDamageSetEffect(damageEntity, damageInfo); });
                 m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDamageSetDamage(damageEntity, damageInfo); });
             }
-            else if (damageEntity.I_EntityID == m_Player.I_EntityID)
+            else if (damageEntity.m_EntityID == m_Player.m_EntityID)
             {
                 m_ActionEquiping.Traversal((ActionBase action) => { action.OnBeforeReceiveDamage(damageInfo); });
             }
@@ -1501,14 +1504,14 @@ namespace GameSetting
 
             OnCharacterHealthChangeAddPlayerEnergy(damageInfo.m_detail.I_SourceID, damageEntity,amountApply);
 
-            if (damageInfo.m_detail.I_SourceID == m_Player.I_EntityID)
+            if (damageInfo.m_detail.I_SourceID == m_Player.m_EntityID)
             {
                 if (amountApply > 0)
                     m_ActionEquiping.Traversal((ActionBase action) => { action.OnAfterDealtDemage(damageEntity, damageInfo, amountApply); });
                 else
                     m_ActionEquiping.Traversal((ActionBase action) => { action.OnReceiveHealing(damageInfo, amountApply); });
             }
-            else if (damageEntity.I_EntityID == m_Player.I_EntityID)
+            else if (damageEntity.m_EntityID == m_Player.m_EntityID)
             {
                 if(amountApply>0)
                     m_ActionEquiping.Traversal((ActionBase action) => { action.OnAfterReceiveDamage(damageInfo, amountApply); });
@@ -1520,7 +1523,7 @@ namespace GameSetting
             if (amountApply<=0||entity.b_isSubEntity)
                 return;
 
-            if (sourceID == m_Player.I_EntityID || GameManager.Instance.GetEntity(sourceID).m_SpawnerEntityID == m_Player.I_EntityID)
+            if (sourceID == m_Player.m_EntityID || GameManager.Instance.GetEntity(sourceID).m_SpawnerEntityID == m_Player.m_EntityID)
                     AddActionEnergy(GameExpression.GetActionEnergyRevive(amountApply));
         }
         #endregion
@@ -2134,7 +2137,7 @@ namespace GameSetting
         protected override Vector3 GetTargetPosition(bool preAim, EntityCharacterBase _target) => LevelManager.NavMeshPosition(_target.transform.position + TCommon.RandomXZSphere(m_Entity.F_AttackSpread)) + new Vector3(0, b_castAtHead ? _target.tf_Head.position.y : 0, 0);
         public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
-            GameObjectManager.PlayMuzzle(m_Entity.I_EntityID,transformBarrel.position,transformBarrel.forward,i_muzzleIndex);
+            GameObjectManager.PlayMuzzle(m_Entity.m_EntityID,transformBarrel.position,transformBarrel.forward,i_muzzleIndex);
             GameObjectManager.SpawnEquipment<SFXCast>(I_Index, _calculatedPosition, Vector3.up).Play(GetDamageDeliverInfo());
         }
     }
@@ -2183,14 +2186,14 @@ namespace GameSetting
         {
             OnPlayAnim(false);
             m_Cast = GameObjectManager.SpawnEquipment<SFXCast>(I_Index, transformBarrel.position, transformBarrel.forward);
-            m_Cast.PlayControlled(m_Entity.I_EntityID, transformBarrel, attacherHead, true, GetDamageDeliverInfo());
+            m_Cast.PlayControlled(m_Entity.m_EntityID, transformBarrel, attacherHead, true, GetDamageDeliverInfo());
         }
 
         public override void OnPlayAnim(bool play)
         {
             if (!play && m_Cast)
             {
-                m_Cast.PlayControlled(m_Entity.I_EntityID, transformBarrel, attacherHead, false, GetDamageDeliverInfo());
+                m_Cast.PlayControlled(m_Entity.m_EntityID, transformBarrel, attacherHead, false, GetDamageDeliverInfo());
                 m_Cast = null;
             }
         }
@@ -2242,7 +2245,7 @@ namespace GameSetting
         {
             GameObjectManager.SpawnEquipment<SFXProjectile>(I_Index, startPosition, direction).Play(GetDamageDeliverInfo(),direction, targetPosition);
         }
-        protected void SpawnMuzzle(Vector3 startPosition, Vector3 direction) => GameObjectManager.PlayMuzzle(m_Entity.I_EntityID,startPosition,direction,i_muzzleIndex,m_MuzzleClip);
+        protected void SpawnMuzzle(Vector3 startPosition, Vector3 direction) => GameObjectManager.PlayMuzzle(m_Entity.m_EntityID,startPosition,direction,i_muzzleIndex,m_MuzzleClip);
     }
     public class EquipmentBarrageMultipleLine : EquipmentBarrageRange
     {
@@ -2295,7 +2298,7 @@ namespace GameSetting
             if (!m_Effect || !m_Effect.B_Playing)
                 m_Effect = GameObjectManager.SpawnEquipment<SFXBuffApply>(I_Index, transformBarrel.position, Vector3.up);
 
-            m_Effect.Play(m_Entity.I_EntityID, m_buffInfo, transformBarrel, _target);
+            m_Effect.Play(m_Entity.m_EntityID, m_buffInfo, transformBarrel, _target);
         }
     }
     public class EquipmentEntitySpawner : EquipmentBase
@@ -2313,7 +2316,7 @@ namespace GameSetting
         }
         public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
-            GameObjectManager.SpawnEquipment<SFXSubEntitySpawner>(I_Index, transformBarrel.position, Vector3.up).Play(m_Entity.I_EntityID, m_Entity.m_Flag,GetDamageDeliverInfo, startHealth, OnSpawn);
+            GameObjectManager.SpawnEquipment<SFXSubEntitySpawner>(I_Index, transformBarrel.position, Vector3.up).Play(m_Entity.m_EntityID, m_Entity.m_Flag,GetDamageDeliverInfo, startHealth, OnSpawn);
         }
     }
     public class EquipmentShieldAttach : EquipmentBase

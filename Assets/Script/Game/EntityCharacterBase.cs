@@ -25,6 +25,9 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     public new EntityHealth m_Health=>base.m_Health as EntityHealth;
     protected override HealthBase GetHealthManager()=> new EntityHealth(this, OnHealthStatus, OnDead);
 
+    protected virtual enum_GameAudioSFX m_DamageClip => enum_GameAudioSFX.EntityDamage;
+    protected virtual enum_GameAudioSFX m_ReviveClip => enum_GameAudioSFX.PlayerRevive;
+
     public override void Init(int _poolIndex)
     {
         base.Init(_poolIndex);
@@ -33,15 +36,6 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         m_Effect = new EntityCharacterEffectManager(tf_Model.Find("Skin").GetComponentsInChildren<Renderer>());
         m_CharacterInfo = GetEntityInfo();
     }
-
-    public override void OnActivate(enum_EntityFlag _flag,float startHealth =0)
-    {
-       base.OnActivate(_flag,startHealth);
-        m_SpawnerEntityID = -1;
-        m_Effect.OnReset();
-        m_CharacterInfo.OnActivate();
-    }
-    protected virtual void OnExpireChange(){ }
 
     protected virtual void OnEnable()
     {
@@ -53,6 +47,16 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         m_CharacterInfo.OnDeactivate();
         this.StopSingleCoroutines(0);
     }
+
+    public override void OnActivate(enum_EntityFlag _flag,float startHealth =0)
+    {
+       base.OnActivate(_flag,startHealth);
+        m_SpawnerEntityID = -1;
+        m_Effect.OnReset();
+        m_CharacterInfo.OnActivate();
+    }
+    protected virtual void OnExpireChange(){ }
+
     protected virtual void Update()
     {
         m_CharacterInfo.Tick(Time.deltaTime);
@@ -60,6 +64,19 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         m_Effect.SetCloak(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Cloak));
         m_Effect.SetFreezed(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Freeze));
         m_Effect.SetScaned(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Scan));
+    }
+
+    public virtual void ReviveCharacter(float reviveHealth = -1, float reviveArmor = -1)
+    {
+        if (!m_Health.b_IsDead)
+            return;
+        OnRevive();
+        m_Effect.OnReset();
+        m_CharacterInfo.OnRevive();
+        EntityHealth health = (m_Health as EntityHealth);
+        health.OnRevive(reviveHealth == -1 ? health.m_MaxHealth : reviveHealth, reviveArmor == -1 ? health.m_DefaultArmor : reviveArmor);
+        this.StopSingleCoroutine(0);
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterRevive, this);
     }
 
     protected override bool OnReceiveDamage(DamageInfo damageInfo, Vector3 damageDirection)
@@ -82,23 +99,18 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         if(m_Health.b_IsDead)
             TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterDead, this);
     }
-
-    public virtual void ReviveCharacter(float reviveHealth=-1, float reviveArmor=-1)
-    {
-        if (!m_Health.b_IsDead)
-            return;
-        OnRevive();
-        m_Effect.OnReset();
-        m_CharacterInfo.OnRevive();
-        EntityHealth health = (m_Health as EntityHealth);
-        health.OnRevive(reviveHealth==-1? health.m_MaxHealth:reviveHealth,reviveArmor==-1? health.m_DefaultArmor:reviveArmor);
-        this.StopSingleCoroutine(0);
-        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterRevive, this);
-    }
+    
 
     protected override void OnHealthStatus(enum_HealthChangeMessage type)
     {
         m_Effect.OnHit(type);
+        switch (type)
+        {
+            case enum_HealthChangeMessage.DamageArmor:
+            case enum_HealthChangeMessage.DamageHealth:
+                GameAudioManager.Instance.PlayClip(m_EntityID, GameAudioManager.Instance.GetSFXClip(m_DamageClip), false, transform);
+                break;
+        }
     }
     protected override void OnRecycle()
     {

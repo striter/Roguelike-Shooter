@@ -4,7 +4,7 @@ using System;
 
 public class EntityBase : MonoBehaviour
 {
-    public int I_EntityID { get; private set; } = -1;
+    public int m_EntityID { get; private set; } = -1;
     public int I_PoolIndex { get; private set; } = -1;
     public virtual bool B_IsCharacter => false;
     public virtual enum_EntityController m_Controller => enum_EntityController.Invalid;
@@ -27,7 +27,7 @@ public class EntityBase : MonoBehaviour
     {
         m_Flag = _flag;
         ActivateHealthManager(startHealth>0? startHealth:I_MaxHealth);
-        I_EntityID = GameIdentificationManager.I_EntityID(m_Flag);
+        m_EntityID = GameIdentificationManager.I_EntityID(m_Flag);
         m_HitChecks.Traversal((HitCheckEntity check) => { check.Attach(this, OnReceiveDamage); });
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityActivate, this);
         EnableHitbox(true);

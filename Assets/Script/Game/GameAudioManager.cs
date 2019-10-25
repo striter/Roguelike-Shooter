@@ -10,7 +10,8 @@ public class GameAudioManager : AudioManager
     static float m_volumeMultiply = 1f;
     public override float m_Volume => base.m_Volume * m_volumeMultiply;
     Dictionary<enum_GameMusic, AudioClip> m_MusicClip = new Dictionary<enum_GameMusic, AudioClip>();
-    Dictionary<enum_GameAudio, AudioClip> m_AudioClips = new Dictionary<enum_GameAudio, AudioClip>();
+    Dictionary<enum_GameAudioSFX, AudioClip> m_AudioClips = new Dictionary<enum_GameAudioSFX, AudioClip>();
+    public AudioClip GetSFXClip(enum_GameAudioSFX sfx) => m_AudioClips[sfx];
     protected override void Awake()
     {
         base.Awake();
@@ -32,7 +33,7 @@ public class GameAudioManager : AudioManager
             if (GameManagerBase.Instance.B_InGame||music== enum_GameMusic.Relax)       //Test
                 m_MusicClip.Add(music, TResources.GetAudioClip_Background(GameManagerBase.Instance.B_InGame, music));
         });
-        TCommon.TraversalEnum((enum_GameAudio audio) =>
+        TCommon.TraversalEnum((enum_GameAudioSFX audio) =>
         {
             m_AudioClips.Add(audio, TResources.GetAudioClip_SFX(audio));
         });

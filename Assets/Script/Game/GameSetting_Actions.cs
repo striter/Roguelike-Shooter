@@ -325,28 +325,28 @@ namespace GameSetting_Action
         {
             if (damageAmount < 0)
                 Debug.LogError("Howd Fk Damage Below Zero?");
-            GameManager.Instance.GetEntity(targetID).m_HitCheck.TryHit(new DamageInfo(damageAmount, damageType, DamageDeliverInfo.Default(player.I_EntityID)));
+            GameManager.Instance.GetEntity(targetID).m_HitCheck.TryHit(new DamageInfo(damageAmount, damageType, DamageDeliverInfo.Default(player.m_EntityID)));
         }
         public static void ReceiveDamage(EntityCharacterPlayer player, float damage, enum_DamageType type = enum_DamageType.Basic)
         {
             if (damage < 0)
                 Debug.LogError("???????????");
-            player.m_HitCheck.TryHit(new DamageInfo(damage, type,DamageDeliverInfo.Default(player.I_EntityID)));
+            player.m_HitCheck.TryHit(new DamageInfo(damage, type,DamageDeliverInfo.Default(player.m_EntityID)));
         }
 
         public static void ReciveBuff(EntityCharacterPlayer player, SBuff buff)
         {
-            player.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.BuffInfo(player.I_EntityID, buff)));
+            player.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.BuffInfo(player.m_EntityID, buff)));
         }
         public static void ReceiveHealing(EntityCharacterPlayer entity, float heal, enum_DamageType type = enum_DamageType.Basic)
         {
             if (heal <= 0)
                 Debug.LogError("Howd Fk Healing Below Zero?");
-            entity.m_HitCheck.TryHit(new DamageInfo(-heal, type, DamageDeliverInfo.Default(entity.I_EntityID)));
+            entity.m_HitCheck.TryHit(new DamageInfo(-heal, type, DamageDeliverInfo.Default(entity.m_EntityID)));
         }
         public static void ReceiveEffect(EntityCharacterPlayer entity, enum_CharacterEffect effect, float duration)
         {
-            entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.EquipmentInfo(entity.I_EntityID, 0, effect, duration)));
+            entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.EquipmentInfo(entity.m_EntityID, 0, effect, duration)));
         }
         public static void Revive(EntityCharacterPlayer entity, float health,float armor)
         {
@@ -648,7 +648,7 @@ namespace GameSetting_Action
         public override void OnActivate()
         {
             base.OnActivate();
-            EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex( m_Index), m_ActionEntity,m_ActionEntity.tf_Model, () => { return DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, 0, enum_CharacterEffect.Freeze, Value1); }).Play(false,m_ActionEntity);
+            EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex( m_Index), m_ActionEntity,m_ActionEntity.tf_Model, () => { return DamageDeliverInfo.EquipmentInfo(m_ActionEntity.m_EntityID, 0, enum_CharacterEffect.Freeze, Value1); }).Play(false,m_ActionEntity);
         }
         public Action_10015_FreezeNearby(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
@@ -665,7 +665,7 @@ namespace GameSetting_Action
             base.OnActivate();
              GameManager.Instance.GetEntities(m_ActionEntity.m_Flag, false).Traversal((EntityCharacterBase entity)=> {
                  if (entity.m_CharacterInfo.B_Effecting( enum_CharacterEffect.Freeze))
-                     entity.m_HitCheck.TryHit(new DamageInfo(Value1/100f*m_ActionEntity.m_WeaponCurrent.F_BaseDamage, enum_DamageType.Basic, DamageDeliverInfo.Default(m_ActionEntity.I_EntityID)));
+                     entity.m_HitCheck.TryHit(new DamageInfo(Value1/100f*m_ActionEntity.m_WeaponCurrent.F_BaseDamage, enum_DamageType.Basic, DamageDeliverInfo.Default(m_ActionEntity.m_EntityID)));
              });
         }
         public Action_10016_DamageAllFreezing(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
@@ -966,7 +966,7 @@ namespace GameSetting_Action
         public override void OnActivate()
         {
             base.OnActivate();
-            m_ActionEntity.AcquireEquipment(m_Index, () =>  DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID,SBuff.CreateActionDOTBuff(m_Index,Value1,1f,Value2, enum_DamageType.Basic)));
+            m_ActionEntity.AcquireEquipment(m_Index, () =>  DamageDeliverInfo.BuffInfo(m_ActionEntity.m_EntityID,SBuff.CreateActionDOTBuff(m_Index,Value1,1f,Value2, enum_DamageType.Basic)));
         }
         public Action_20001_RustShot(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
@@ -978,11 +978,11 @@ namespace GameSetting_Action
         public override void OnActivate()
         {
             base.OnActivate();
-            m_ActionEntity.AcquireEquipment(m_Index, ()=>  DamageDeliverInfo.DamageHitInfo(m_ActionEntity.I_EntityID,OnHitEntitiy));
+            m_ActionEntity.AcquireEquipment(m_Index, ()=>  DamageDeliverInfo.DamageHitInfo(m_ActionEntity.m_EntityID,OnHitEntitiy));
         }
         void OnHitEntitiy(EntityBase receiver)
         {
-            GameObjectManager.SpawnParticles<SFXMarkup>(60001, receiver.transform.position, Vector3.up).Play(m_ActionEntity.I_EntityID, receiver, OnMarkupDead);
+            GameObjectManager.SpawnParticles<SFXMarkup>(60001, receiver.transform.position, Vector3.up).Play(m_ActionEntity.m_EntityID, receiver, OnMarkupDead);
         }
         void OnMarkupDead()
         {
@@ -998,7 +998,7 @@ namespace GameSetting_Action
         public override void OnActivate()
         {
             base.OnActivate();
-            m_ActionEntity.AcquireEquipment(m_Index, () => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID,0, enum_CharacterEffect.Freeze,Value1));
+            m_ActionEntity.AcquireEquipment(m_Index, () => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.m_EntityID,0, enum_CharacterEffect.Freeze,Value1));
         }
         public Action_20003_FreezeShot(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
@@ -1010,7 +1010,7 @@ namespace GameSetting_Action
         public override void OnActivate()
         {
             base.OnActivate();
-            m_ActionEntity.AcquireEquipment(m_Index, () => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, 0, enum_CharacterEffect.Freeze, Value1));
+            m_ActionEntity.AcquireEquipment(m_Index, () => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.m_EntityID, 0, enum_CharacterEffect.Freeze, Value1));
         }
         public Action_20004_FreezeGrenade(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
@@ -1024,7 +1024,7 @@ namespace GameSetting_Action
         public override void OnActivate()
         {
             base.OnActivate();
-            ActionHelper.PlayerAcquireEntityEquipmentItem(m_ActionEntity,m_Index,(int)Value2,1,()=>DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID,Value3, enum_CharacterEffect.Freeze,Value1)); ;
+            ActionHelper.PlayerAcquireEntityEquipmentItem(m_ActionEntity,m_Index,(int)Value2,1,()=>DamageDeliverInfo.EquipmentInfo(m_ActionEntity.m_EntityID,Value3, enum_CharacterEffect.Freeze,Value1)); ;
         }
         public Action_20005_FreezeTurret(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
@@ -1036,7 +1036,7 @@ namespace GameSetting_Action
         public override void OnActivate()
         {
             base.OnActivate();
-            m_ActionEntity.AcquireEquipment(m_Index, () => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, 0, enum_CharacterEffect.Freeze, Value1));
+            m_ActionEntity.AcquireEquipment(m_Index, () => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.m_EntityID, 0, enum_CharacterEffect.Freeze, Value1));
         }
         public Action_20006_FreezeMine(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
@@ -1048,7 +1048,7 @@ namespace GameSetting_Action
         public override void OnActivate()
         {
             base.OnActivate();
-            m_ActionEntity.AcquireEquipment(m_Index, () => DamageDeliverInfo.Default(m_ActionEntity.I_EntityID),Value1);
+            m_ActionEntity.AcquireEquipment(m_Index, () => DamageDeliverInfo.Default(m_ActionEntity.m_EntityID),Value1);
         }
         public Action_20007_TeleportDevice(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
@@ -1063,7 +1063,7 @@ namespace GameSetting_Action
         public override void OnActivate()
         {
             base.OnActivate();
-            ActionHelper.PlayerAcquireEntityEquipmentItem(m_ActionEntity, m_Index, (int)Value1, Value3, () => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, Value2, enum_CharacterEffect.Invalid,0)); ;
+            ActionHelper.PlayerAcquireEntityEquipmentItem(m_ActionEntity, m_Index, (int)Value1, Value3, () => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.m_EntityID, Value2, enum_CharacterEffect.Invalid,0)); ;
         }
         public Action_20008_MinigunTurret(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
@@ -1078,7 +1078,7 @@ namespace GameSetting_Action
         public override void OnActivate()
         {
             base.OnActivate();
-            ActionHelper.PlayerAcquireEntityEquipmentItem(m_ActionEntity, m_Index, (int)Value1, Value3, () => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, Value2, enum_CharacterEffect.Invalid, 0)); ;
+            ActionHelper.PlayerAcquireEntityEquipmentItem(m_ActionEntity, m_Index, (int)Value1, Value3, () => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.m_EntityID, Value2, enum_CharacterEffect.Invalid, 0)); ;
         }
         public Action_20009_BlastTurret(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
@@ -1098,8 +1098,8 @@ namespace GameSetting_Action
             });
         }
 
-        DamageDeliverInfo PlayerBuff() => DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID,SBuff.CreateActionHealthDrainBuff(m_Index,Value2/100f,.5f));
-        DamageDeliverInfo AllyBuff() => DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID, SBuff.CreateActionHealthDrainBuff(m_Index, (Value2 + Value3) / 100f, .5f));
+        DamageDeliverInfo PlayerBuff() => DamageDeliverInfo.BuffInfo(m_ActionEntity.m_EntityID,SBuff.CreateActionHealthDrainBuff(m_Index,Value2/100f,.5f));
+        DamageDeliverInfo AllyBuff() => DamageDeliverInfo.BuffInfo(m_ActionEntity.m_EntityID, SBuff.CreateActionHealthDrainBuff(m_Index, (Value2 + Value3) / 100f, .5f));
         public Action_20010_HealthDrainDevice(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
 
@@ -1118,8 +1118,8 @@ namespace GameSetting_Action
                 (entity as EntityDeviceBuffApllier).SetBuffApply(PlayerBuff, AllyBuff, .4f);
             });
         }
-        DamageDeliverInfo PlayerBuff() => DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID, SBuff.CreateActionHealthBuff(m_Index, Value2,1f, .5f));
-        DamageDeliverInfo AllyBuff() => DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID, SBuff.CreateActionHealthBuff(m_Index,Value2+Value3,1f, .5f));
+        DamageDeliverInfo PlayerBuff() => DamageDeliverInfo.BuffInfo(m_ActionEntity.m_EntityID, SBuff.CreateActionHealthBuff(m_Index, Value2,1f, .5f));
+        DamageDeliverInfo AllyBuff() => DamageDeliverInfo.BuffInfo(m_ActionEntity.m_EntityID, SBuff.CreateActionHealthBuff(m_Index,Value2+Value3,1f, .5f));
         public Action_20012_HealthRegenDevice(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
     public class Action_20013_Grenade:ActionDeviceNormal
@@ -1130,7 +1130,7 @@ namespace GameSetting_Action
         public override void OnActivate()
         {
             base.OnActivate();
-            m_ActionEntity.AcquireEquipment<EquipmentBarrageRange>(m_Index, () => DamageDeliverInfo.DamageInfo(m_ActionEntity.I_EntityID, 0, Value1/100f*m_ActionEntity.m_WeaponCurrent.F_BaseDamage));
+            m_ActionEntity.AcquireEquipment<EquipmentBarrageRange>(m_Index, () => DamageDeliverInfo.DamageInfo(m_ActionEntity.m_EntityID, 0, Value1/100f*m_ActionEntity.m_WeaponCurrent.F_BaseDamage));
         }
         public Action_20013_Grenade(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
@@ -1178,7 +1178,7 @@ namespace GameSetting_Action
         public override int I_BaseCost => ActionData.I_30003_Cost;
         public override float Value1 => ActionData.F_30003_GrenadeDamage(m_rarity);
         EquipmentBase m_ActionEquipment;
-        DamageDeliverInfo GetDamageInfo()=> DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, Value1, enum_CharacterEffect.Invalid, 0); 
+        DamageDeliverInfo GetDamageInfo()=> DamageDeliverInfo.EquipmentInfo(m_ActionEntity.m_EntityID, Value1, enum_CharacterEffect.Invalid, 0); 
         public override void OnActivate()
         {
             base.OnActivate();
@@ -1228,7 +1228,7 @@ namespace GameSetting_Action
         public override int I_BaseCost => ActionData.I_30006_Cost;
         public override float Value1 => ActionData.F_30006_FreezeDuration(m_rarity);
         EquipmentBase m_Equipment;
-        DamageDeliverInfo GetDamageInfo() => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, 0, enum_CharacterEffect.Freeze, Value1);
+        DamageDeliverInfo GetDamageInfo() => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.m_EntityID, 0, enum_CharacterEffect.Freeze, Value1);
         public override void OnActivate()
         {
             base.OnActivate();
@@ -1270,7 +1270,7 @@ namespace GameSetting_Action
         public override int I_BaseCost => ActionData.I_30008_Cost(m_rarity);
         public override float Value1 => ActionData.F_30008_FreezeDuration(m_rarity);
         EquipmentBase m_Equipment;
-        DamageDeliverInfo GetDamageInfo() => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID,0, enum_CharacterEffect.Freeze,Value1);
+        DamageDeliverInfo GetDamageInfo() => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.m_EntityID,0, enum_CharacterEffect.Freeze,Value1);
         public override void OnActivate()
         {
             base.OnActivate();
@@ -1445,7 +1445,7 @@ namespace GameSetting_Action
         public override float Value2 => ActionData.P_40003_PlayerDamageMultiply(m_rarity);
         public override float Value3 => ActionData.P_40003_AllyDamageMultiply(m_rarity);
         public override float m_DamageMultiply => Value2/100f;
-        DamageDeliverInfo allyInfo => DamageDeliverInfo.BuffInfo(m_ActionEntity.I_EntityID, SBuff.CreateActionDamageMultiplyBuff(m_Index, (Value2+Value3)/100f, .5f));
+        DamageDeliverInfo allyInfo => DamageDeliverInfo.BuffInfo(m_ActionEntity.m_EntityID, SBuff.CreateActionDamageMultiplyBuff(m_Index, (Value2+Value3)/100f, .5f));
         float f_buffCheck;
         public override void OnTick(float deltaTime)
         {
@@ -1460,7 +1460,7 @@ namespace GameSetting_Action
             List<EntityCharacterBase> allies= GameManager.Instance.GetEntities(m_ActionEntity.m_Flag, true);
             for (int i = 0; i < allies.Count; i++)
             {
-                if (allies[i].I_EntityID == m_ActionEntity.I_EntityID)
+                if (allies[i].m_EntityID == m_ActionEntity.m_EntityID)
                     continue ;
 
                 if (Vector3.Distance(m_ActionEntity.transform.position, allies[i].transform.position) < Value1)
@@ -1678,7 +1678,7 @@ namespace GameSetting_Action
     {
         public override int m_Index => 40020;
         public override float Value1 => ActionData.F_40020_FreezeDuration(m_rarity);
-        DamageDeliverInfo GetDamageInfo() => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, 0, enum_CharacterEffect.Freeze, Value1);
+        DamageDeliverInfo GetDamageInfo() => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.m_EntityID, 0, enum_CharacterEffect.Freeze, Value1);
         public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
             base.OnAfterDealtDemage(receiver, info, applyAmount);
@@ -1714,7 +1714,7 @@ namespace GameSetting_Action
 
             if (info.m_detail.I_IdentiyID == m_fireIdentity)
             {
-                receiver.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.EquipmentInfo(m_ActionEntity.I_EntityID, 0, enum_CharacterEffect.Freeze, Value1)));
+                receiver.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.EquipmentInfo(m_ActionEntity.m_EntityID, 0, enum_CharacterEffect.Freeze, Value1)));
                 m_fireIdentity = -1;
             }
         }

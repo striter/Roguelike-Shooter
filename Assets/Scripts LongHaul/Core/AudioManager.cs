@@ -28,7 +28,7 @@ public class AudioManager: SimpleSingletonMono <AudioManager>
         source = obj.AddComponent<AudioSource>();
         source.spatialBlend = 0;
         audioObj = obj.AddComponent<SFXAudioBase>();
-        ObjectPoolManager<int, SFXAudioBase>.Register(1, audioObj, 5, (SFXAudioBase audios) => audios.Init(0));
+        ObjectPoolManager<int, SFXAudioBase>.Register(1, audioObj, 5, (SFXAudioBase audios) => audios.Init(1));
     }
     public virtual void OnRecycle()
     {

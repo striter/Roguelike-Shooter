@@ -22,7 +22,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public PlayerInfoManager m_PlayerInfo { get; private set; }
     protected bool m_aiming = false;
     protected float f_movementReductionCheck = 0f;
-
+    protected override enum_GameAudioSFX m_DamageClip => enum_GameAudioSFX.PlayerDamage;
     protected override void ActivateHealthManager(float maxHealth) => m_Health.OnActivate(maxHealth, I_DefaultArmor, true);
     protected override CharacterInfoManager GetEntityInfo()
     {
@@ -78,6 +78,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         base.OnRevive();
         m_Assist.SetEnable(true);
         m_Animator.OnRevive();
+
+        GameAudioManager.Instance.PlayClip(m_EntityID, GameAudioManager.Instance.GetSFXClip(m_ReviveClip), false);
     }
     protected override void OnRecycle()
     {
@@ -179,7 +181,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
         if (m_Assist) m_Assist.Recycle();
         m_Assist = GameObjectManager.SpawnSFX<SFXAimAssist>(101);
-        m_Assist.Play(I_EntityID, tf_Head, tf_Head, GameConst.F_AimAssistDistance, GameLayer.Mask.I_All, (Collider collider) => { return GameManager.B_CanHitTarget(collider.Detect(), I_EntityID); });
+        m_Assist.Play(m_EntityID, tf_Head, tf_Head, GameConst.F_AimAssistDistance, GameLayer.Mask.I_All, (Collider collider) => { return GameManager.B_CanHitTarget(collider.Detect(), m_EntityID); });
 
         OnWeaponStatus();
         return previousWeapon;
