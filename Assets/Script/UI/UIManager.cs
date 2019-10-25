@@ -86,7 +86,7 @@ public class UIManager :SimpleSingletonMono<UIManager>,ISingleCoroutine
 
     public T ShowPage<T>(bool animate,float bulletTime=1f) where T : UIPageBase
     {
-        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PageOpen);
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PageOpen,bulletTime);
         if (bulletTime!=1f)
             GameManagerBase.SetBulletTime(true,bulletTime);
         return UIPageBase.ShowPage<T>(tf_Pages, animate);

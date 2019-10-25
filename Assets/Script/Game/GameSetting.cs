@@ -351,14 +351,16 @@ namespace GameSetting
         OnStageStart,       //Total Stage Start
         OnStageFinish,
 
-        OnGameStart,
-        OnGameExit,
-
         OnChangeLevel,       //Change Between Each Level
+        
         OnBattleStart,      //Battle Against Entity
         OnBattleFinish,
         OnWaveStart,     //Battle Wave
         OnWaveFinish,
+
+        OnGameStart,
+        OnGameFinish,
+        OnGameExit,
     }
 
     enum enum_BC_UIStatus
@@ -427,6 +429,8 @@ namespace GameSetting
 
     public enum enum_ActionType { Invalid = -1, Basic = 1,Device=2,Equipment=3, WeaponPerk = 4, }
 
+    public enum enum_EffectAttach { Invalid = -1,  Head = 1, Feet = 2, Weapon = 3,}
+
     public enum enum_PlayerWeapon
     {
         Invalid = -1,
@@ -493,17 +497,11 @@ namespace GameSetting
     public enum enum_GameAudio
     {
         Invalid=-1,
-        InteractArmor_Begin,
-        InteractChest_Begin,
+        Revive=1,
+
     }
 
-    public enum enum_EffectAttach
-    {
-        Invalid=-1,
-        Head=1,
-        Feet=2,
-        Weapon=3,
-    }
+    public enum enum_GameMusic { Invalid=-1, Relax=1, Fight=2, Win=3, Lost=4,}
 
     public enum enum_Option_FrameRate { Invalid = -1, Normal = 45, High = 60, }
     #endregion

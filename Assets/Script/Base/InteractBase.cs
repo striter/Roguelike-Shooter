@@ -21,7 +21,7 @@ public class InteractBase : MonoBehaviour
     {
         B_InteractEnable = true;
         if (AC_OnPlay)
-            AudioManager.Instance.PlayClip(-1,AC_OnPlay,transform.position,false);
+            AudioManager.Instance.PlayClip(-1,AC_OnPlay,false, transform.position);
     }
     public virtual bool TryInteract(EntityCharacterPlayer _interactor)
     {
@@ -38,6 +38,6 @@ public class InteractBase : MonoBehaviour
     protected virtual void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)
     {
         if (AC_OnInteract)
-            AudioManager.Instance.PlayClip(-1, AC_OnInteract, transform.position, false);
+            AudioManager.Instance.PlayClip(-1, AC_OnInteract, false, transform.position);
     }
 }

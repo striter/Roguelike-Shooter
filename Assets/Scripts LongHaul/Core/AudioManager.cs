@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class AudioManager: SimpleSingletonMono <AudioManager>
 {
     protected AudioSource m_AudioBG { get; private set; }
@@ -19,20 +18,28 @@ public class AudioManager: SimpleSingletonMono <AudioManager>
     }
     public virtual void OnInit()
     {
-        GameObject obj = new GameObject("AudioObj");
-        obj.AddComponent<AudioSource>();
+        GameObject obj = new GameObject("AudioObj_3D");
+        AudioSource source= obj.AddComponent<AudioSource>();
+        source.spatialBlend = 1;
         SFXAudioBase audioObj = obj.AddComponent<SFXAudioBase>();
         ObjectPoolManager<int, SFXAudioBase>.Register(0, audioObj, 5, (SFXAudioBase audios) => audios.Init(0));
+
+        obj = new GameObject("AudioObj_2D");
+        source = obj.AddComponent<AudioSource>();
+        source.spatialBlend = 0;
+        audioObj = obj.AddComponent<SFXAudioBase>();
+        ObjectPoolManager<int, SFXAudioBase>.Register(1, audioObj, 5, (SFXAudioBase audios) => audios.Init(0));
     }
     public virtual void OnRecycle()
     {
         ObjectPoolManager<int, SFXAudioBase>.ClearAll();
     }
-    protected void SwitchBackground(AudioClip _Clip)
+    protected void SwitchBackground(AudioClip _Clip,bool loop)
     {
         if (m_Clip == _Clip)
             return;
         m_Clip = _Clip;
+        m_AudioBG.loop = loop;
     }
 
     protected virtual void Update()
@@ -53,16 +60,22 @@ public class AudioManager: SimpleSingletonMono <AudioManager>
         }
     }
 
-    public SFXAudioBase PlayClip(int sourceID,AudioClip _clip, Transform _target, bool _loop)
+    public SFXAudioBase PlayClip(int sourceID,AudioClip _clip, bool _loop, Transform _target)
     {
-        SFXAudioBase audio= ObjectPoolManager<int, SFXAudioBase>.Spawn(0,null);
+        SFXAudioBase audio= ObjectPoolManager< int ,SFXAudioBase >.Spawn(0,null);
         audio.transform.position = _target.position;
         return audio.Play(sourceID, _clip,_loop, _target);
     }
-    public SFXAudioBase PlayClip(int sourceID, AudioClip _clip, Vector3 _position, bool _loop)
+    public SFXAudioBase PlayClip(int sourceID, AudioClip _clip, bool _loop, Vector3 _position)
     {
         SFXAudioBase audio = ObjectPoolManager<int, SFXAudioBase>.Spawn(0, null);
         audio.transform.position = _position;
         return audio.Play(sourceID, _clip, _loop, null);
+    }
+    public SFXAudioBase PlayClip(int sourceID, AudioClip _clip, bool _loop)
+    {
+        SFXAudioBase audio= ObjectPoolManager<int, SFXAudioBase>.Spawn(1, null);
+        audio.transform.position = Vector3.zero;
+        return audio.Play(sourceID,_clip,_loop,null);
     }
 }

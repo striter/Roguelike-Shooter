@@ -32,7 +32,8 @@ public class TResources
         public const string S_UI_Atlas_Common = "UI/Atlas/Atlas_Common";
         public const string S_UI_Manager = "UI/UIManager";
 
-        public const string S_Audio_Background = "Audio/Background/Music";
+        public const string S_Audio_Background = "Audio/Background/";
+        public const string S_Audio_SFX = "Audio/SFX/";
     }
 
     #region UI
@@ -133,7 +134,8 @@ public class TResources
     public static InteractBase GetInteract(enum_Interaction type) => Instantiate<InteractBase>(ConstPath.S_InteractCommon + type);
     #endregion
     #region Audio
-    public static AudioClip GetAudioClip_Background(bool inGame, bool inBattle) => Load<AudioClip>(ConstPath. S_Audio_Background+(inGame?"_Game":"_Camp")+(inBattle?"_Fight":"_Relax"));
+    public static AudioClip GetAudioClip_Background(bool inGame,enum_GameMusic music) => Load<AudioClip>(ConstPath. S_Audio_Background+(inGame?"Game_":"Camp_")+music.ToString());
+    public static AudioClip GetAudioClip_SFX(enum_GameAudio sfx) => Load<AudioClip>(ConstPath.S_Audio_SFX + sfx.ToString());
     #endregion
     #endregion
     #region Will Be Replaced By AssetBundle If Needed

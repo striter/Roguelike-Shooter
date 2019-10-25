@@ -219,6 +219,7 @@ public class GameManager : GameManagerBase
         GameDataManager.OnGameFinished(win);
         GameDataManager.OnCreditGain(m_GameLevel.F_CreditGain);
         UIManager.Instance.OnGameFinished(m_GameLevel, OnExitGame);
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameFinish, win);
     }
     #endregion
     #region InteractManagement
@@ -776,7 +777,7 @@ public static class GameObjectManager
         if (muzzleIndex > 0)
             SpawnParticles<SFXMuzzle>(muzzleIndex, position, direction).Play(_sourceID);
         if (muzzleClip)
-            AudioManager.Instance.PlayClip(_sourceID,muzzleClip,position , false);
+            AudioManager.Instance.PlayClip(_sourceID, muzzleClip, false, position);
     }
     public static T SpawnEquipment<T>(int weaponIndex, Vector3 position, Vector3 normal, Transform attachTo = null) where T : SFXBase
     {
