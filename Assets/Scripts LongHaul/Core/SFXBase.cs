@@ -15,8 +15,8 @@ public class SFXBase : MonoBehaviour {
     protected virtual bool m_Loop => true;
     protected virtual bool m_AutoStop => true;
     protected virtual bool m_AutoRecycle => true;
-    protected float f_playTimeLeft => f_lifeTimeCheck - I_SFXStopExternalDuration;
-    protected float f_delayTimeLeft { get; private set; }
+    public float f_playTimeLeft => f_lifeTimeCheck - I_SFXStopExternalDuration;
+    public float f_delayTimeLeft { get; private set; }
     public float f_delayLeftScale => f_delayTimeLeft>0? (f_delayTimeLeft / f_delayDuration):0;
     protected bool b_looping => m_Loop && B_Playing && f_playDuration <= 0f;
     Transform m_AttachTo;

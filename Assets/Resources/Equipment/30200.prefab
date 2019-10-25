@@ -158,8 +158,6 @@ MonoBehaviour:
     start: 0
     length: 0
   F_OffsetExtension: 0
-  B_TargetReachBlink: 0
-  C_BlinkColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!198 &198157631301691760
 ParticleSystem:
   m_ObjectHideFlags: 1

@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4578294924201030}
   - component: {fileID: 33336144904965054}
   - component: {fileID: 23331675494292068}
+  - component: {fileID: 114856859071692774}
   m_Layer: 0
   m_Name: BlinkModel
   m_TagString: Untagged
@@ -710,6 +711,19 @@ MonoBehaviour:
   B_Loop: 0
   m_Clips:
   - {fileID: 8300000, guid: 178285a1e04145a43b3334db22d44f91, type: 3}
+--- !u!114 &114856859071692774
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1053368814267252}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52899f6e771b31a4ea1119a9693961c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  B_BlinkDelay: 1
+  C_BlinkColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!114 &114884061071270710
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -730,11 +744,11 @@ MonoBehaviour:
   E_AreaType: 1
   V4_CastInfo: {x: 5, y: 0, z: 0, w: 0}
   I_MuzzleIndex: 10305
+  I_ImpactIndex: 0
   F_DelayDuration: 3
   I_DelayIndicatorIndex: 0
   B_CameraShake: 1
   B_DamageDistanceReduction: 0
-  c_blinkColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!198 &198032924646734080
 ParticleSystem:
   m_ObjectHideFlags: 1

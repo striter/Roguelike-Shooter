@@ -22,12 +22,8 @@ public class SFXProjectile : SFXParticles
     public RangeInt RI_CountExtension;
     [Tooltip("Projectile Type:(Single|Unused) (Multiline|Offset Meter)  (MultiFan|Offset Angle)")]
     public float F_OffsetExtension;
-    [Tooltip("Will Blink While Projectile Time Limits, Require Prefab Folder Preset,Asset/BlinkModel")]
-    public bool B_TargetReachBlink = false;
-    public Color C_BlinkColor = Color.red;
     #endregion
     protected PhysicsSimulator<HitCheckBase> m_Simulator;
-    protected TrailRenderer m_Trail;
     protected SFXIndicator m_Indicator;
     List<int> m_EntityHitted = new List<int>();
     public bool B_PhysicsSimulating { get; private set; }
@@ -36,19 +32,11 @@ public class SFXProjectile : SFXParticles
     protected virtual bool B_StopParticlesOnHit => true;
     protected virtual bool B_StopPhysicsOnHit => true;
     protected virtual bool B_DealDamage => true;
-    protected ModelBlink m_Blink;
     protected virtual PhysicsSimulator<HitCheckBase> GetSimulator(Vector3 direction, Vector3 targetPosition) => new ProjectilePhysicsSimulator(transform,transform.position, direction, Vector3.down, F_Speed, F_Height,F_Radius, GameLayer.Mask.I_All, OnHitTargetBreak,CanHitTarget);
     protected DamageInfo m_DamageInfo;
     public int m_sourceID => m_DamageInfo.m_detail.I_SourceID;
     protected virtual void PlayIndicator(float duration) => m_Indicator.Play(m_sourceID, duration);
     protected Vector3 m_CenterPos => F_Height > F_Radius * 2 ? transform.position + transform.forward * F_Height / 2 : transform.position + transform.forward * F_Radius;
-    public override void Init(int sfxIndex)
-    {
-        base.Init(sfxIndex);
-        m_Trail = transform.GetComponentInChildren<TrailRenderer>();
-        if (B_TargetReachBlink)
-                m_Blink = new ModelBlink(transform.Find("BlinkModel"), .25f, .25f,C_BlinkColor);
-    }
 
     public virtual void Play(DamageDeliverInfo deliverInfo ,Vector3 direction, Vector3 targetPosition )
     {
@@ -59,14 +47,6 @@ public class SFXProjectile : SFXParticles
         m_Simulator = GetSimulator(direction, targetPosition);
 
         SpawnIndicator(targetPosition,Vector3.up, F_PlayDelay);
-
-        if (m_Blink != null)
-            m_Blink.OnReset();
-        if (m_Trail)
-        {
-            m_Trail.enabled = true;
-            m_Trail.Clear();
-        }
 
         base.Play(deliverInfo.I_SourceID, F_PlayDuration(transform.position, targetPosition), F_PlayDelay);
     }
@@ -91,15 +71,6 @@ public class SFXProjectile : SFXParticles
 
         if (m_Simulator!=null&&B_PhysicsSimulating)
             m_Simulator.Simulate(Time.deltaTime);
-
-        if (m_Blink != null)
-        {
-            if (f_playTimeLeft < GameConst.I_ProjectileBlinkWhenTimeLeftLessThan)
-            {
-                float timeMultiply =2f*(1- f_playTimeLeft / GameConst.I_ProjectileBlinkWhenTimeLeftLessThan);
-                m_Blink.Tick(Time.deltaTime*timeMultiply);
-            }
-        }
     }
     #region Physics
     protected virtual bool CanHitTarget(HitCheckBase hitCheck) => !m_EntityHitted.Contains(hitCheck.I_AttacherID) && GameManager.B_CanHitTarget(hitCheck, m_sourceID);

@@ -460,6 +460,7 @@ MonoBehaviour:
   E_AreaType: 1
   V4_CastInfo: {x: 5, y: 0, z: 0, w: 0}
   I_MuzzleIndex: 0
+  I_ImpactIndex: 0
   F_DelayDuration: 0
   I_DelayIndicatorIndex: 0
   B_CameraShake: 1
@@ -475,6 +476,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10f1b5037af1e6c49bd7940bfa6fce95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  B_PlayDuringDelay: 0
   B_Attach: 0
   B_Loop: 0
   m_Clips:

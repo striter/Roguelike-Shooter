@@ -36,6 +36,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4998467315510600}
   - component: {fileID: 96637802621585148}
+  - component: {fileID: 114986475880329964}
   m_Layer: 0
   m_Name: Trail
   m_TagString: Untagged
@@ -295,6 +296,7 @@ MonoBehaviour:
   F_Damage: 0
   F_Speed: 50
   B_Penetrate: 0
+  AC_MuzzleClip: {fileID: 0}
   I_MuzzleIndex: 0
   I_ImpactIndex: 0
   I_IndicatorIndex: 0
@@ -306,5 +308,15 @@ MonoBehaviour:
     start: 0
     length: 0
   F_OffsetExtension: 0
-  B_TargetReachBlink: 0
-  C_BlinkColor: {r: 1, g: 0, b: 0, a: 1}
+  F_SmokeDuration: 0
+--- !u!114 &114986475880329964
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1152815115801362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bacc218cc03b0a84c9f47ae5b5156f41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

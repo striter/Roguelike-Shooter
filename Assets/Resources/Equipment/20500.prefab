@@ -36,6 +36,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4302469275429298}
   - component: {fileID: 96637802621585148}
+  - component: {fileID: 114742243180297980}
   m_Layer: 0
   m_Name: Trail
   m_TagString: Untagged
@@ -221,8 +222,17 @@ MonoBehaviour:
     start: 5
     length: 2
   F_OffsetExtension: 2
-  B_TargetReachBlink: 0
-  C_BlinkColor: {r: 1, g: 0, b: 0, a: 1}
+--- !u!114 &114742243180297980
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1284223325091568}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bacc218cc03b0a84c9f47ae5b5156f41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!198 &198194951697349546
 ParticleSystem:
   m_ObjectHideFlags: 1

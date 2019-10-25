@@ -207,7 +207,8 @@ MonoBehaviour:
   E_ProjectileType: 1
   F_Damage: 0
   F_Speed: 20
-  B_Piercing: 0
+  B_Penetrate: 0
+  AC_MuzzleClip: {fileID: 0}
   I_MuzzleIndex: 0
   I_ImpactIndex: 0
   I_IndicatorIndex: 0
@@ -219,8 +220,6 @@ MonoBehaviour:
     start: 0
     length: 0
   F_OffsetExtension: 0
-  B_TargetReachBlink: 0
-  C_BlinkColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!198 &198459710163750792
 ParticleSystem:
   m_ObjectHideFlags: 1

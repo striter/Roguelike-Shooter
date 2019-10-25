@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4565212680962402}
   - component: {fileID: 33074682480872892}
   - component: {fileID: 23217159280738968}
+  - component: {fileID: 114102858072192064}
   m_Layer: 0
   m_Name: BlinkModel
   m_TagString: Untagged
@@ -70,6 +71,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4733089974683640}
   - component: {fileID: 96207844558955790}
+  - component: {fileID: 114348667663152878}
   m_Layer: 9
   m_Name: Trail
   m_TagString: Untagged
@@ -307,6 +309,30 @@ TrailRenderer:
     generateLightingData: 0
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
+--- !u!114 &114102858072192064
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1091173488736010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52899f6e771b31a4ea1119a9693961c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  B_BlinkDelay: 0
+  C_BlinkColor: {r: 1, g: 0, b: 0, a: 1}
+--- !u!114 &114348667663152878
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1406003313940952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bacc218cc03b0a84c9f47ae5b5156f41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114749200122238482
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -322,6 +348,7 @@ MonoBehaviour:
   F_Damage: 0
   F_Speed: 20
   B_Penetrate: 0
+  AC_MuzzleClip: {fileID: 0}
   I_MuzzleIndex: 0
   I_ImpactIndex: 20002
   I_IndicatorIndex: 0
@@ -333,8 +360,6 @@ MonoBehaviour:
     start: 0
     length: 0
   F_OffsetExtension: 0
-  B_TargetReachBlink: 1
-  C_BlinkColor: {r: 1, g: 1, b: 1, a: 1}
   F_DirectionPitchAngle: 45
   B_RandomRotation: 1
   B_Bounce: 1

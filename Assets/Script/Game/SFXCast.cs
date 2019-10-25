@@ -4,6 +4,7 @@ using GameSetting;
 using UnityEngine;
 
 public class SFXCast : SFXParticles {
+    #region PresetInfo
     public enum_CastControllType E_CastType = enum_CastControllType.Invalid;
     public bool B_CastAtHead = true;
     public float F_Damage;
@@ -13,9 +14,11 @@ public class SFXCast : SFXParticles {
     public enum_CastAreaType E_AreaType = enum_CastAreaType.Invalid;
     public Vector4 V4_CastInfo;
     public int I_MuzzleIndex = 0;
+    public int I_ImpactIndex = 0;
     public int F_DelayDuration;
     public int I_DelayIndicatorIndex;
     public bool B_CameraShake = false;
+    #endregion
     protected DamageInfo m_DamageInfo;
     public int m_sourceID => m_DamageInfo.m_detail.I_SourceID;
     protected virtual float F_CastLength => V4_CastInfo.z;
@@ -37,6 +40,9 @@ public class SFXCast : SFXParticles {
         base.OnPlay();
         if (B_CameraShake)
             GameManagerBase.Instance.SetEffect_Shake(V4_CastInfo.magnitude);
+
+        if (I_ImpactIndex > 0)
+            GameObjectManager.SpawnParticles<SFXImpact>(I_ImpactIndex,transform.position,transform.forward).Play(m_sourceID);
 
         if (F_Tick <= 0)
             DoBlastCheck();

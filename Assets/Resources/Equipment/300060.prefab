@@ -554,6 +554,7 @@ MonoBehaviour:
   E_AreaType: 1
   V4_CastInfo: {x: 4, y: 0, z: 0, w: 0}
   I_MuzzleIndex: 0
+  I_ImpactIndex: 0
   F_DelayDuration: 0
   I_DelayIndicatorIndex: 0
   B_CameraShake: 1
