@@ -6,6 +6,8 @@ using GameSetting;
 public class InteractBase : MonoBehaviour
 {
     public AudioClip AC_OnPlay, AC_OnInteract;
+    public int I_MuzzleOnInteract;
+
     public virtual enum_Interaction m_InteractType => enum_Interaction.Invalid;
     public virtual bool B_InteractOnTrigger => false;
     protected virtual bool B_CanInteract(EntityCharacterPlayer _interactor) => true;
@@ -37,7 +39,6 @@ public class InteractBase : MonoBehaviour
     }
     protected virtual void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)
     {
-        if (AC_OnInteract)
-            GameAudioManager.Instance.PlayClip(-1, AC_OnInteract, false, transform.position);
+        GameObjectManager.PlayMuzzle(_interactTarget.m_EntityID,transform.position,transform.up,I_MuzzleOnInteract,AC_OnInteract);
     }
 }

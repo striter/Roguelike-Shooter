@@ -583,7 +583,6 @@ namespace GameSetting
         public int m_MusicVolumeTap;
         public int m_VFXVolumeTap;
         public int m_SensitiveTap;
-        public bool m_AdditionalLight;
 
         public CGameOptions()
         {
@@ -593,7 +592,6 @@ namespace GameSetting
             m_SensitiveTap = 5;
             m_MusicVolumeTap = 10;
             m_VFXVolumeTap = 10;
-            m_AdditionalLight = false;
         }
     }
     #endregion

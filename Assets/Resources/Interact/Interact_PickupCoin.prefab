@@ -201,6 +201,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AC_OnPlay: {fileID: 8300000, guid: 996e92bcfef63fa42818437f3bf5753c, type: 3}
   AC_OnInteract: {fileID: 0}
+  I_MuzzleOnInteract: 10021
 --- !u!114 &114254946078226914
 MonoBehaviour:
   m_ObjectHideFlags: 1
