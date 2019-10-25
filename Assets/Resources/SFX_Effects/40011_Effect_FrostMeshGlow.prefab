@@ -70,7 +70,7 @@ GameObject:
   - component: {fileID: 4447027390613628}
   - component: {fileID: 114864037004645996}
   m_Layer: 0
-  m_Name: 40011_Effect_WeaponGlow
+  m_Name: 40011_Effect_FrostMeshGlow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
