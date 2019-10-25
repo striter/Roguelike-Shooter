@@ -19,9 +19,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4565212680962402}
+  - component: {fileID: 114102858072192064}
   - component: {fileID: 33074682480872892}
   - component: {fileID: 23217159280738968}
-  - component: {fileID: 114102858072192064}
   m_Layer: 0
   m_Name: BlinkModel
   m_TagString: Untagged
@@ -321,7 +321,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   B_BlinkDelay: 0
-  C_BlinkColor: {r: 1, g: 0, b: 0, a: 1}
+  C_BlinkColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &114348667663152878
 MonoBehaviour:
   m_ObjectHideFlags: 1
