@@ -12,9 +12,9 @@ public class UIGI_MapControlCell : UIT_GridDefaultItem {
     Action<UIGI_MapControlCell> OnChangeLevelClick;
     Dictionary<enum_TileDirection, Image> dic_TileConnections=new Dictionary<enum_TileDirection, Image>();
     public SBigmapLevelInfo m_TileInfo { get; private set; }
-    public override void Init(UIT_GridController parent)
+    public override void Init()
     {
-        base.Init(parent);
+        base.Init();
         img_Level = tf_Container.Find("TileImage").GetComponent<Image>();
         tf_PlayerAt = tf_Container.Find("PlayerAt");
         tf_TileLocked = tf_Container.Find("TileLocked");

@@ -5,12 +5,10 @@ public class UIT_GridItem : MonoBehaviour
 {
     protected Transform tf_Container;
     protected RectTransform rtf_RectTransform;
-    protected UIT_GridController gc_Parent;
     public RectTransform rectTransform => rtf_RectTransform;
     public int I_Index { get; protected set; }
-    public virtual void Init(UIT_GridController parent)
+    public virtual void Init()
     {
-        gc_Parent = parent;
         rtf_RectTransform = transform.GetComponent<RectTransform>();
         tf_Container = transform.Find("Container");
     }

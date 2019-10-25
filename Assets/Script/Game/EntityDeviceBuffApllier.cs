@@ -20,6 +20,7 @@ public class EntityDeviceBuffApllier : EntityDeviceBase {
         f_refreshDuration = refreshDuration;
         f_refreshCheck = 0f;
     }
+    protected override bool CanConnectTarget(EntityCharacterBase target) => base.CanConnectTarget(target) && target.m_Flag == m_Flag;
 
     protected override void Update()
     {
@@ -34,11 +35,8 @@ public class EntityDeviceBuffApllier : EntityDeviceBase {
         }
         f_refreshCheck = f_refreshDuration;
 
-        m_DetectLink.Traversal((EntityCharacterBase entity) =>
+        m_Connections.m_ItemDic.Traversal((EntityCharacterBase entity) =>
         {
-            if (entity.m_Flag != m_Flag||entity.m_EntityID==m_EntityID)
-                return;
-
             switch (entity.m_Controller)
             {
                 case enum_EntityController.AI:

@@ -7,9 +7,9 @@ using UnityEngine.UI;
 public class UIGI_ExpireInfoItem : UIT_GridItem {
     UIT_TextExtend txt_Name, txt_ElapsedTime;
     ExpireBase m_target;
-    public override void Init(UIT_GridController parent)
+    public override void Init()
     {
-        base.Init(parent);
+        base.Init();
         txt_Name = tf_Container.Find("Name").GetComponent<UIT_TextExtend>();
         txt_ElapsedTime = tf_Container.Find("Elapsed").GetComponent<UIT_TextExtend>();
     }

@@ -4,147 +4,75 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-
-public class UIT_GridController
+public class UIT_GridControllerMono<T>  where T : MonoBehaviour
 {
-    public Transform transform;
-    protected GameObject GridItem;
-    protected Dictionary<int, Transform> ActiveItemDic = new Dictionary<int, Transform>();
-    protected List<Transform> InactiveItemList = new List<Transform>();
-    public UIT_GridController(Transform _transform)
+    public Transform transform { get; private set; }
+    protected ObjectPoolMono<int,T> m_Pool { get; private set; }
+    public int I_Count => m_Pool.m_ItemDic.Count;
+    public UIT_GridControllerMono(Transform _transform) 
     {
         transform = _transform;
-        GridItem = transform.Find("GridItem").gameObject;
-        GridItem.gameObject.SetActive(false);
+        m_Pool = new ObjectPoolMono<int,T>(transform.Find("GridItem").gameObject, _transform, InitItem);
     }
-    public virtual Transform AddItem(int identity)
+    public virtual T AddItem(int identity)
     {
-        Transform toTrans;
-        if (InactiveItemList.Count > 0)
-        {
-            toTrans = InactiveItemList[0];
-            InactiveItemList.Remove(toTrans);
-        }
-        else
-        {
-            toTrans = GameObject.Instantiate(GridItem.gameObject, this.transform).transform;
-            InitItem(toTrans);
-        }
-        toTrans.name = identity.ToString();
-        if (ActiveItemDic.ContainsKey(identity))  Debug.LogWarning(identity + "Already Exists In Grid Dic");
-        else ActiveItemDic.Add(identity, toTrans);
-        toTrans.SetActivate(true);
-        return toTrans;
-    }
-    protected virtual void InitItem(Transform trans)
-    {
-
-    }
-    public virtual Transform GetItem(int identity)
-    {
-        return ActiveItemDic[identity];
-    }
-    public virtual void RemoveItem(int identity)
-    {
-        InactiveItemList.Add(ActiveItemDic[identity]);
-        ActiveItemDic[identity].SetActivate(false);
-        ActiveItemDic.Remove(identity);
-    }
-    public virtual void ClearGrid ()
-    {
-        foreach (Transform trans in ActiveItemDic.Values)
-        {
-            trans.SetActivate(false);
-            InactiveItemList.Add(trans);
-        }
-        ActiveItemDic.Clear();
-    }
-    public bool Contains(int identity)
-    {
-        return ActiveItemDic.ContainsKey(identity);
-    }
-}
-
-public class UIT_GridControllerMono<T> : UIT_GridController where T : MonoBehaviour
-{
-    protected Dictionary<int, T> m_ItemDic = new Dictionary<int, T>();
-    public UIT_GridControllerMono(Transform _transform) : base(_transform)
-    {
-
-    }
-
-    public new T AddItem(int identity)
-    {
-        T item = base.AddItem(identity).GetComponent<T>();
-        m_ItemDic.Add(identity, item);
-        OnItemAdd(item, identity);
+        T item = m_Pool.AddItem(identity);
         item.transform.SetSiblingIndex(identity);
         return item;
     }
-    public T GetOrAddItem(int identity)=>Contains(identity) ? GetItem(identity) : AddItem(identity);
-    public new T GetItem(int identity)=> Contains(identity) ? m_ItemDic[identity] : null;
+    public void RemoveItem(int identity) => m_Pool.RemoveItem(identity);
+    public virtual void ClearGrid() => m_Pool.ClearPool();
+    protected virtual void InitItem(T item) { }
+
+    public bool Contains(int identity) => m_Pool.ContainsItem(identity);
+    public T GetItem(int identity)=> Contains(identity) ? m_Pool.GetItem(identity) : null;
     public T AddItem(int xIdentity, int yIdentity) => AddItem(GetIdentity(xIdentity, yIdentity));
     public T GetItem(int xIdentity, int yIdentity) => GetItem(GetIdentity(xIdentity,yIdentity));
     int GetIdentity(int xIdentity, int yIdentity) => xIdentity + yIdentity * 1000;
-    public override void ClearGrid()
-    {
-        base.ClearGrid();
-        m_ItemDic.Clear();
-    }
 
-    public override void RemoveItem(int identity)
-    {
-        base.RemoveItem(identity);
-        OnItemRemove(m_ItemDic[identity],identity);
-        m_ItemDic.Remove(identity);
-    }
-
+    public T GetOrAddItem(int identity)=>  Contains(identity) ? GetItem(identity) : AddItem(identity);
     public void TraversalItem(Action<int, T> onEach)
     {
-        foreach (int i in ActiveItemDic.Keys)
+        foreach (int i in m_Pool.m_ItemDic.Keys)
         {
-            onEach(i, m_ItemDic[i]);
+            onEach(i, m_Pool.GetItem(i));
         }
     }
 
-    protected virtual void OnItemAdd(T item, int identity)
-    {
-    }
-    protected virtual void OnItemRemove(T item, int identity)
-    {
-
-    }
+    
 }
 
 public class UIT_GridControllerMonoItem<T>: UIT_GridControllerMono<T> where T:UIT_GridItem
 {
-    public int I_Count=> m_ItemDic.Count;
     public GridLayoutGroup m_GridLayout { get; private set; }
     public UIT_GridControllerMonoItem(Transform _transform) : base(_transform)
     {
         m_GridLayout = _transform.GetComponent<GridLayoutGroup>();
     }
-    protected override void InitItem(Transform trans)
+
+    protected override void InitItem(T trans)
     {
         base.InitItem(trans);
-        trans.GetComponent<T>().Init(this);
+        trans.Init();
     }
-    protected override void OnItemAdd(T item,int identity)
+    public override T AddItem(int identity)
     {
-        base.OnItemAdd(item, identity);
+        T item = base.AddItem(identity);
         item.OnActivate(identity);
+        return item;
     }
-    protected override void OnItemRemove(T item, int identity)
+    public new void RemoveItem(int identity)
     {
-        base.OnItemRemove(item, identity);
+        T item = GetItem(identity);
         item.Reset();
+        base.RemoveItem(identity);
     }
     public void SortChildrenSibling()
     {
-        List<int> keyCollections = m_ItemDic.Keys.ToList();
+        List<int> keyCollections = m_Pool.m_ItemDic.Keys.ToList();
         keyCollections.Sort((a,b)=> {return a > b?1:-1; });
         for (int i = 0; i < keyCollections.Count; i++)
-            m_ItemDic[keyCollections[i]].transform.SetAsLastSibling();
+            GetItem(keyCollections[i]).transform.SetAsLastSibling();
     }
 }
 public class UIT_GridDefaultMulti<T> : UIT_GridControllerMonoItem<T> where T : UIT_GridDefaultItem
@@ -164,10 +92,11 @@ public class UIT_GridDefaultMulti<T> : UIT_GridControllerMonoItem<T> where T : U
         m_Selecting.Clear();
     }
 
-    protected override void OnItemAdd(T item, int identity)
+    public override T AddItem(int identity)
     {
-        base.OnItemAdd(item, identity);
+        T item = base.AddItem(identity);
         item.SetDefaultOnClick(OnItemClick);
+        return  item;
     }
     public void OnItemClick(int index)
     {
@@ -182,9 +111,9 @@ public class UIT_GridDefaultMulti<T> : UIT_GridControllerMonoItem<T> where T : U
             m_Selecting.Remove(index);
 
 
-        foreach (int item in m_ItemDic.Keys)
+        foreach (int identity in m_Pool.m_ItemDic.Keys)
         {
-            m_ItemDic[item].SetHighLight(m_Selecting.Contains(item));
+            GetItem(identity).SetHighLight(m_Selecting.Contains(identity));
         }
         OnItemSelect?.Invoke(index);
     }
@@ -209,15 +138,15 @@ public class UIT_GridDefaultSingle<T> : UIT_GridControllerMonoItem<T> where T : 
         base.ClearGrid();
         I_CurrentSelecting = -1;
     }
-    protected override void OnItemAdd(T item, int identity)
+    public override T AddItem(int identity)
     {
-        base.OnItemAdd(item, identity);
+        T item = base.AddItem(identity);
         item.SetDefaultOnClick(OnItemClick);
+        return item;
     }
-    public override void RemoveItem(int identity)
+    public new void RemoveItem(int identity)
     {
         base.RemoveItem(identity);
-
         if (identity == I_CurrentSelecting)
             I_CurrentSelecting = -1;
     }

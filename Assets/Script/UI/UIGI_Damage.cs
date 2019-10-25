@@ -8,9 +8,9 @@ public class UIGI_Damage : UIT_GridItem {
     Action<int> OnAnimFinished;
     RectTransform rtf_Container,rtf_SubContainer;
     EntityCharacterBase m_Entity;
-    public override void Init(UIT_GridController parent)
+    public override void Init()
     {
-        base.Init(parent);
+        base.Init();
         rtf_Container = tf_Container.GetComponent<RectTransform>();
         rtf_SubContainer = tf_Container.Find("SubContainer").GetComponent<RectTransform>();
         m_Amount = rtf_SubContainer.Find("Amount").GetComponent<Text>();

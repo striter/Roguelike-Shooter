@@ -8,9 +8,9 @@ using UnityEngine.UI;
 public class UIGI_ActionItemDetail : UIGI_ActionItemBase {
     UIT_TextExtend m_Intro;
     Action<int> OnClick;
-    public override void Init(UIT_GridController parent)
+    public override void Init()
     {
-        base.Init(parent);
+        base.Init();
         m_Intro = tf_Container.Find("Intro").GetComponent<UIT_TextExtend>();
         tf_Container.Find("Button").GetComponent<Button>().onClick.AddListener(OnButtonClick);
     }

@@ -9,9 +9,9 @@ public class UIGI_HealthBar : UIT_GridItem {
     bool b_showItem = false;
     float f_hideCheck;
     Graphic[] m_Graphics;
-    public override void Init(UIT_GridController parent)
+    public override void Init()
     {
-        base.Init(parent);
+        base.Init();
         m_HealthBar1 = tf_Container.Find("HealthBar1").GetComponent<Image>();
         m_HealthBar2 = tf_Container.Find("HealthBar2").GetComponent<Image>();
         m_HealthBar3 = tf_Container.Find("HealthBar3").GetComponent<Image>();

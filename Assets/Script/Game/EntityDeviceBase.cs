@@ -6,24 +6,35 @@ using UnityEngine;
 public class EntityDeviceBase : EntityCharacterBase {
     public override enum_EntityController m_Controller => enum_EntityController.Device; 
     EntityDetector m_Detect;
-    protected List<EntityCharacterBase> m_DetectLink=new List<EntityCharacterBase>();
     ParticleSystem[] m_Particles;
+    public ObjectPoolMono<EntityCharacterBase, LineRenderer> m_Connections { get; private set; }
     public override void Init(int _poolIndex)
     {
         base.Init(_poolIndex);
         m_Detect = transform.Find("EntityDetector").GetComponent<EntityDetector>();
         m_Detect.Init(OnEntityDetect);
         m_Particles = GetComponentsInChildren<ParticleSystem>();
+        Transform connectionsParent = transform.Find("Connections");
+        m_Connections = new ObjectPoolMono<EntityCharacterBase, LineRenderer>(connectionsParent.Find("Item").gameObject, connectionsParent);
     }
     public override void OnActivate(enum_EntityFlag _flag, float startHealth = 0)
     {
         base.OnActivate(_flag, startHealth);
         m_Particles.Traversal((ParticleSystem particle) => { particle.Play(); });
     }
+    protected override void Update()
+    {
+        base.Update();
+        m_Connections.m_ItemDic.Traversal((EntityCharacterBase target,LineRenderer item)=>
+        {
+           item.SetPosition(0,tf_Head.position);
+            item.SetPosition(1, target.tf_Head.position);
+        });
+    }
     protected override void OnDead()
     {
         base.OnDead();
-        m_DetectLink.Clear();
+        m_Connections.ClearPool();
         m_Particles.Traversal((ParticleSystem particle) => { particle.Stop(); });
     }
 
@@ -39,12 +50,16 @@ public class EntityDeviceBase : EntityCharacterBase {
             case enum_EntityController.AI:
                 {
                     EntityCharacterBase target = entity.m_Attacher as EntityCharacterBase;
+                    if (!CanConnectTarget(target))
+                        return;
+
                     if (enter)
-                        m_DetectLink.Add(target);
+                        m_Connections.AddItem(target);
                     else
-                        m_DetectLink.Remove(target);
+                        m_Connections.RemoveItem(target);
                 } 
                 break;
         }
     }
+    protected virtual bool CanConnectTarget(EntityCharacterBase target) => target.m_EntityID != m_EntityID;
 }

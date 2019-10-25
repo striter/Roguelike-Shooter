@@ -13,9 +13,9 @@ public class UIGI_ActionItemHold : UIGI_ActionItemBase
 
     PlayerInfoManager m_InfoManager;
     ActionBase m_ActionInfo;
-    public override void Init(UIT_GridController parent)
+    public override void Init()
     {
-        base.Init(parent);
+        base.Init();
         m_TriggerListener = tf_Container.Find("TriggerListener").GetComponent<UIT_EventTriggerListener>();
         m_TriggerListener.D_OnPress = OnPress;
     }

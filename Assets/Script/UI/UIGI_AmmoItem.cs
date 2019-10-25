@@ -4,9 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 public class UIGI_AmmoItem : UIT_GridItem {
     Image image;
-    public override void Init(UIT_GridController parent)
+    public override void Init()
     {
-        base.Init(parent);
+        base.Init();
         image = tf_Container.Find("Image").GetComponent<Image>();
     }
 

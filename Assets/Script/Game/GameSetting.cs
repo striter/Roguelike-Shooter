@@ -2390,15 +2390,16 @@ namespace GameSetting
     public class UIC_RarityLevel
     {
         public Transform transform { get; private set; }
-        UIT_GridController m_Grid;
+        ObjectPoolSimple<int> m_Grid;
         public UIC_RarityLevel(Transform _transform)
         {
             transform = _transform;
-            m_Grid = new UIT_GridController(transform);
+            m_Grid = new ObjectPoolSimple<int>(transform.Find("GridItem").gameObject, transform);
+            m_Grid.ClearPool();
         }
         public void SetLevel(enum_RarityLevel level)
         {
-            m_Grid.ClearGrid();
+            m_Grid.ClearPool();
             for (int i = 0; i < (int)level; i++)
                 m_Grid.AddItem(i);
         }
@@ -2421,13 +2422,13 @@ namespace GameSetting
             }
         }
         public Transform transform { get; private set; }
-        UIT_GridController m_Grid;
+        ObjectPoolSimple<int> m_Grid;
         Dictionary<int, RarityLevel> m_Levels = new Dictionary<int, RarityLevel>();
         public UIC_RarityLevel_BG(Transform _transform)
         {
             transform = _transform;
-            m_Grid = new UIT_GridController(transform);
-            m_Grid.ClearGrid();
+            m_Grid = new ObjectPoolSimple<int>(transform.Find("GridItem").gameObject,transform);
+            m_Grid.ClearPool();
             TCommon.TraversalEnum((enum_RarityLevel rarity) => { m_Levels.Add((int)rarity,new RarityLevel( m_Grid.AddItem((int)rarity))); });
         }
         public void SetLevel(enum_RarityLevel level)

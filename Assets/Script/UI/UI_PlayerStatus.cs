@@ -90,7 +90,7 @@ public class UI_PlayerStatus : UIToolsBase
         txt_interactName = rtf_InteractData.Find("Container/InteractName").GetComponent<UIT_TextExtend>();
         txt_interactPrice = rtf_InteractData.Find("Container/InteractPrice").GetComponent<UIT_TextExtend>();
         m_ActionData = rtf_InteractData.Find("Container/ActionData").GetComponent<UIGI_ActionSelectItem>();
-        m_ActionData.Init(null);
+        m_ActionData.Init();
 
         tf_WeaponData = tf_Container.Find("WeaponData");
         m_WeaponName = tf_WeaponData.Find("WeaponName").GetComponent<UIT_TextExtend>();

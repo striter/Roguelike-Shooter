@@ -3,9 +3,9 @@ using GameSetting;
 public class UIGI_ActionSelectItem : UIT_GridDefaultItem
 {
     UIT_TextExtend txt_Intro,txt_Level,txt_Cost,txt_Name;
-    public override void Init(UIT_GridController parent)
+    public override void Init()
     {
-        base.Init(parent);
+        base.Init();
         txt_Name = txt_Default as UIT_TextExtend;
         txt_Intro = tf_Container.Find("IntroText").GetComponent<UIT_TextExtend>();
         txt_Level = tf_Container.Find("LevelText").GetComponent<UIT_TextExtend>();

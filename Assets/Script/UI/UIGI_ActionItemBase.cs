@@ -15,9 +15,9 @@ public class UIGI_ActionItemBase : UIT_GridItem {
 
     PlayerInfoManager m_InfoManager;
     ActionBase m_ActionInfo;
-    public override void Init(UIT_GridController parent)
+    public override void Init()
     {
-        base.Init(parent);
+        base.Init();
         m_ActionImage = tf_Container.Find("Icon/Image").GetComponent<Image>();
         m_TypeIcon = tf_Container.Find("Type/Icon").GetComponent<Image>();
         m_TypeBottom = tf_Container.Find("Type/Bottom").GetComponent<Image>();

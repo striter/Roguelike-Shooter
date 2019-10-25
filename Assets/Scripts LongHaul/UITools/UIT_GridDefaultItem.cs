@@ -11,9 +11,9 @@ public class UIT_GridDefaultItem : UIT_GridItem {
     protected Image img_HighLight;
     public bool B_HighLight { get; protected set; }
     Action<int> OnItemClick;
-    public override void Init(UIT_GridController parent)
+    public override void Init()
     {
-        base.Init(parent);
+        base.Init();
         txt_Default = tf_Container.Find("DefaultText").GetComponentNullable<UIT_TextExtend>();
         img_Default = tf_Container.Find("DefaultImage").GetComponentNullable<Image>();
         img_HighLight = tf_Container.Find("DefaultHighLight").GetComponentNullable<Image>();
