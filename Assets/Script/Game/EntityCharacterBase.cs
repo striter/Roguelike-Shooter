@@ -132,7 +132,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         static readonly int ID_Color = Shader.PropertyToID("_Color");
         static readonly int ID_Amount1=Shader.PropertyToID("_Amount1");
         static readonly int ID_Alpha = Shader.PropertyToID("_Alpha");
-
+        static readonly Texture TX_IceDistort = TResources.Load<Texture>(TResources.ConstPath.S_PETex_NoiseFog);
         Material[] m_Materials;
 
         bool m_cloaked;
@@ -185,6 +185,8 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
             if (!_freezed)
                 return;
             m_Materials[0].SetColor("_IceColor", TCommon.HexToColor("3DAEC5FF"));
+            m_Materials[0].SetTexture("_DistortTex", TX_IceDistort);
+            m_Materials[0].SetFloat("_OpacityMultiple", .6f);
             m_Materials[0].SetFloat("_Opacity", .5f);
         }
         public void SetCloak(bool _cloacked)

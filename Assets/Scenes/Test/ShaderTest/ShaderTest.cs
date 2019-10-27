@@ -7,9 +7,9 @@ public class ShaderTest : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
     GetComponent<CameraEffectManager>().GetOrAddCameraEffect<CB_GenerateOpaqueTexture>();
-        PE_FocalDepth focal= GetComponent<CameraEffectManager>().GetOrAddCameraEffect<PE_FocalDepth>();
-        focal.SetEffect(2);
-        focal.SetFocalTarget(target.transform.position,2f);
+        //PE_FocalDepth focal= GetComponent<CameraEffectManager>().GetOrAddCameraEffect<PE_FocalDepth>();
+        //focal.SetEffect(2);
+        //focal.SetFocalTarget(target.transform.position,2f);
     }
 	
 }
