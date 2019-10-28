@@ -45,7 +45,7 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
     }
 
     PE_BSC m_BSC;
-    public void SetPostEffects(enum_Style _levelStyle)
+    public void InitPostEffects(enum_Style _levelStyle)
     {
         CameraController.Instance.m_Effect.RemoveAllPostEffect();
         //CameraController.Instance.m_Effect.AddPostEffect<PE_DepthOutline>().SetEffect(Color.black,1.2f,0.0001f);

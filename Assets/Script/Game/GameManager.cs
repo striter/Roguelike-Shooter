@@ -171,7 +171,7 @@ public class GameManager : GameManagerBase
         m_Enermies = GameObjectManager.RegistStyledIngameEnermies(m_GameLevel.m_GameStyle, m_GameLevel.m_GameStage);
         m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_PlayerLevelData);
         LevelManager.Instance.GenerateAllEnviorment(m_GameLevel.m_GameStyle, m_GameLevel.m_GameSeed, OnLevelChanged, OnStageFinished);
-        SetPostEffects(m_GameLevel.m_GameStyle);
+        InitPostEffects(m_GameLevel.m_GameStyle);
         SetPostEffect_Vortex(false,m_LocalPlayer.tf_Head, 1f);
         GC.Collect();
         Resources.UnloadUnusedAssets();
