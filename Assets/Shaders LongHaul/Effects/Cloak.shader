@@ -51,7 +51,7 @@
 			fixed4 frag (v2f i) : SV_Target
 			{
 				fixed4 albedo = tex2D(_MainTex, i.uv)*_Color;
-				fixed3 backCol = tex2D(_CameraOpaqueTexture, i.screenPos.xy / i.screenPos.w+tex2D(_DistortTex,i.uv)/20).rgb;
+				fixed3 backCol = tex2D(_CameraOpaqueTexture, i.screenPos.xy / i.screenPos.w+tex2D(_DistortTex,i.uv)/30).rgb;
 				return float4(lerp(backCol, albedo, _Opacity).rgb, 1);
 			}
 			ENDCG
