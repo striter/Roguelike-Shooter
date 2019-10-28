@@ -10,13 +10,13 @@ SpriteAtlas:
     textureSettings:
       serializedVersion: 2
       anisoLevel: 1
-      compressionQuality: 50
+      compressionQuality: 100
       maxTextureSize: 2048
       textureCompression: 2
       filterMode: 1
       generateMipMaps: 0
       readable: 0
-      crunchedCompression: 0
+      crunchedCompression: 1
       sRGB: 1
     platformSettings: []
     packingParameters:
@@ -29,44 +29,134 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 081334a023db2704db167d2dfc323270, type: 3}
-    totalSpriteSurfaceArea: 1127355
+    totalSpriteSurfaceArea: 2836855
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
+  - {fileID: 21300000, guid: fef222d1315d97a43887c63ec824fc08, type: 3}
+  - {fileID: 21300000, guid: 871af7211c4f1774ca265157e2db651a, type: 3}
   - {fileID: 21300000, guid: 0aaa3dc21666f4046978924681572f16, type: 3}
   - {fileID: 21300000, guid: a00c4e98a73cb6d46a3f7b2ed752f740, type: 3}
+  - {fileID: 21300000, guid: 3921f815ededf9242a59e1ff34a6f63a, type: 3}
+  - {fileID: 21300000, guid: 1c419ff7ab626414c95b82814843f9e2, type: 3}
   - {fileID: 21300000, guid: f707edb8147ad104b8e3b9a3fc7ed413, type: 3}
   - {fileID: 21300000, guid: d783a5f7194904445969c59766ac8443, type: 3}
   - {fileID: 21300000, guid: 18a7c2d7df8a6854e9bc2e3248a93804, type: 3}
   - {fileID: 21300000, guid: 006ea73e2bf56dc4e959b2bc4171da77, type: 3}
   - {fileID: 21300000, guid: 4ec60bacd1dafa74b8d93d4b1cae4984, type: 3}
-  - {fileID: 21300000, guid: eb6498b538c432c479fd0ccd174629b6, type: 3}
+  - {fileID: 21300000, guid: b8baf198d27163e4583c425aff5bff11, type: 3}
+  - {fileID: 21300000, guid: cfe64325d22560f49823caf4595b2960, type: 3}
+  - {fileID: 21300000, guid: 653b3a14e0f587f46ab4891770ff03cd, type: 3}
+  - {fileID: 21300000, guid: 8866ff051bff26f4e84e3afb525f3226, type: 3}
+  - {fileID: 21300000, guid: 2e93ce25300256643b9a04a1d91e0a50, type: 3}
   - {fileID: 21300000, guid: fa0122c7e5ddb1d4399a011784eede79, type: 3}
+  - {fileID: 21300000, guid: a0edf0727dbc54049ad1b24763bf40b5, type: 3}
+  - {fileID: 21300000, guid: acaf808e38e4e0246ad397f639c020ef, type: 3}
+  - {fileID: 21300000, guid: 3ed3568eaf02c50459c3a004bcf900aa, type: 3}
+  - {fileID: 21300000, guid: 48ca20a7917b66e4785597c22ec56a6a, type: 3}
+  - {fileID: 21300000, guid: 5cd44b63eb55eac47a9f7ed455f9f779, type: 3}
+  - {fileID: 21300000, guid: a9ee0bc7c49b98d41884f7111e26d74e, type: 3}
+  - {fileID: 21300000, guid: 04afc62e9953c644d850fb53afc9f3e7, type: 3}
+  - {fileID: 21300000, guid: e2aff809fde7b7d469149d996d359e8c, type: 3}
+  - {fileID: 21300000, guid: cee4d3d1a3e283c489ee1fed47d86dcc, type: 3}
+  - {fileID: 21300000, guid: bb9b55d0cd18e0741bc043e00caae287, type: 3}
+  - {fileID: 21300000, guid: 4061cdf336cc1794892f6f52c932257b, type: 3}
+  - {fileID: 21300000, guid: ae9b9982bf29a724aa7f0d31b0f2e9ee, type: 3}
+  - {fileID: 21300000, guid: 0f87968bd8c67f3489af4e41310e5a76, type: 3}
+  - {fileID: 21300000, guid: 990e81e15b09c744e840b5aa180aafb1, type: 3}
+  - {fileID: 21300000, guid: ebd3c593bd3998442a049f8206004912, type: 3}
+  - {fileID: 21300000, guid: 6914b9a982caa81418bab95b8ede019e, type: 3}
+  - {fileID: 21300000, guid: 62b00c3d6f853ae4db9aa416cf450485, type: 3}
+  - {fileID: 21300000, guid: a9f65e7b234b42a4e9f6029f7a530d75, type: 3}
+  - {fileID: 21300000, guid: 78fe34acb129e9e4d97b1ff18fd4a63a, type: 3}
+  - {fileID: 21300000, guid: 81afe17f1d2890b43a9a44f208c13bab, type: 3}
+  - {fileID: 21300000, guid: 9e9a4d39064893a459d42153d664793c, type: 3}
+  - {fileID: 21300000, guid: 9ba3f101a4bae6642a7bdceeeaa67eab, type: 3}
+  - {fileID: 21300000, guid: 204b28d01dc0f084ea4399c7dbccb4a1, type: 3}
+  - {fileID: 21300000, guid: 471f2c6bff785a049b3b37e24002cdae, type: 3}
   - {fileID: 21300000, guid: a0e4044850dc94f4ea77c05d26531154, type: 3}
+  - {fileID: 21300000, guid: c462dce27186cea40a21a488b8c445ba, type: 3}
   - {fileID: 21300000, guid: 6b5e120f41ccce542848f00f95446778, type: 3}
+  - {fileID: 21300000, guid: acf6a532035483b48a86c24956866b7c, type: 3}
+  - {fileID: 21300000, guid: 1a911c2544666bb4a846a481c73cc71a, type: 3}
+  - {fileID: 21300000, guid: 25c06cb949383bb428c42d35e229b69d, type: 3}
+  - {fileID: 21300000, guid: 188c123daafac1b47bae367a9a3cf618, type: 3}
   - {fileID: 21300000, guid: 702a32a3dc3147a47800c42865d41714, type: 3}
   - {fileID: 21300000, guid: e051a7e66b79bb94baf2dce5172d2880, type: 3}
   - {fileID: 21300000, guid: da00ad59e5ac2ca4489ac1856c3f870f, type: 3}
   - {fileID: 21300000, guid: fb9d054c104418649afdc81260a93c24, type: 3}
   - {fileID: 21300000, guid: 1293ae4f9500e5046bcb8c3fc46d3fb9, type: 3}
+  - {fileID: 21300000, guid: 676c759453b2cd241b9d51014a9fbb49, type: 3}
+  - {fileID: 21300000, guid: e31910eada068664eaf61fcda1721a85, type: 3}
   - {fileID: 21300000, guid: c08fb8623df6ada478d2261bfca4d369, type: 3}
+  - {fileID: 21300000, guid: 640bac5e80194e345b2851ed06fbf63f, type: 3}
+  - {fileID: 21300000, guid: aa3c6d5b4731f994787e878d78c964a3, type: 3}
+  - {fileID: 21300000, guid: c740497c6fad84040b9053a9b332d3ca, type: 3}
+  - {fileID: 21300000, guid: dc622a87f7dbda743a327b5e19c633c7, type: 3}
+  - {fileID: 21300000, guid: 188ba14751267e14fbe7a9071a290d59, type: 3}
+  - {fileID: 21300000, guid: 08550047334a3c145a1bd10329ddf497, type: 3}
   m_PackedSpriteNamesToIndex:
-  - missioncomplete_bg
-  - missionfailed_bg
-  - missioncomplete_title_en
-  - missionfailed_title_en
-  - missionfailed_title_cn
-  - missioncomplete_title_cn
-  - icon_gold
-  - UI_title_orange_small
-  - Ruler
-  - icon_failure
-  - Ruler_cross
-  - enemyHPbar_2
-  - enemyHPbar_1
-  - enemyHPbar_3
-  - enemyHPbar_bg
-  - icon_goal
-  - icon_video
+  - background_card_select
+  - action_frame_selected
+  - result_missioncomplete_bg
+  - result_missionfailed_bg
+  - action_frame_common
+  - action_main_common
+  - result_missioncomplete_title_en
+  - result_missionfailed_title_en
+  - result_missionfailed_title_cn
+  - result_missioncomplete_title_cn
+  - revive_icon_gold
+  - map_info_kuang
+  - status_map_bottom
+  - action_bottom_device
+  - action_bottom_equipment
+  - action_bottom_basic
+  - result_Ruler
+  - map_tile_type_End
+  - status_ActionEnergy_progress_full
+  - map_tile_type_Battle
+  - map_tile_type_Start
+  - status_ActionEnergy_progress_bottom
+  - map_tile_type_CoinsTrade
+  - status_ActionEnergy_progress_notfull
+  - map_tile_type_ActionAdjustment
+  - map_tile_type_BattleTrade
+  - status_ActionStrorage_bottom
+  - map_tile_select
+  - background_map
+  - map_tile_blockade
+  - action_cost_device
+  - action_cost_equipment
+  - action_cost_invalid
+  - action_cost_basic
+  - action_icon_equipment
+  - action_icon_device
+  - action_icon_basic
+  - status_ActionEnergy_bottom
+  - background_map_Gradient
+  - status_buff_blank
+  - backpack_shadow
+  - revive_icon_failure
+  - map_info_wave_kuang
+  - result_Ruler_cross
+  - map_info_battle_HardBattle
+  - map_info_battle_Overwatch
+  - map_info_battle_Patrol
+  - map_info_battle_Clear
+  - health_2
+  - health_1
+  - health_3
+  - health_bg
+  - result_icon_goal
+  - action_levelup_arrow
+  - background_map_angle
+  - revive_icon_video
+  - status_map_triangle
+  - action_level_blank
+  - action_level_on
+  - map_tile_type_Invalid
+  - map_tile_blockade2
+  - map_island_route
   m_Tag: Atlas_InGame
   m_IsVariant: 0

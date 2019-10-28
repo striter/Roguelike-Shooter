@@ -810,6 +810,7 @@ public static class Physics_Extend
 public class AtlasLoader
 {
     Dictionary<string, Sprite> m_SpriteDic = new Dictionary<string, Sprite>();
+    public bool Contains(string name) => m_SpriteDic.ContainsKey(name);
     public Sprite this[string name]
     {
         get

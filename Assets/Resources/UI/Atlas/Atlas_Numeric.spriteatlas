@@ -10,13 +10,13 @@ SpriteAtlas:
     textureSettings:
       serializedVersion: 2
       anisoLevel: 1
-      compressionQuality: 50
+      compressionQuality: 100
       maxTextureSize: 4096
       textureCompression: 2
       filterMode: 1
       generateMipMaps: 0
       readable: 0
-      crunchedCompression: 0
+      crunchedCompression: 1
       sRGB: 1
     platformSettings: []
     packingParameters:

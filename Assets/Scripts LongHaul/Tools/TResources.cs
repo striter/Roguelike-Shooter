@@ -30,6 +30,8 @@ public class TResources
 
         public const string S_UI_Atlas_Numeric = "UI/Atlas/Atlas_Numeric";
         public const string S_UI_Atlas_Common = "UI/Atlas/Atlas_Common";
+        public const string S_UI_Atlas_InGame = "UI/Atlas/Atlas_InGame";
+        public const string S_UI_Atlas_Action = "UI/Atlas/Atlas_Action";
         public const string S_UI_Manager = "UI/UIManager";
 
         public const string S_Audio_Background = "Audio/Background/";
@@ -48,6 +50,8 @@ public class TResources
     public static UIManager InstantiateUIManager() => Instantiate<UIManager>(ConstPath.S_UI_Manager);
     public static AtlasLoader GetUIAtlas_Numeric() => new AtlasLoader(Load<SpriteAtlas>(ConstPath.S_UI_Atlas_Numeric));
     public static AtlasLoader GetUIAtlas_Common() =>  new AtlasLoader(Load<SpriteAtlas>(ConstPath.S_UI_Atlas_Common));
+    public static AtlasLoader GetUIAtlas_InGame() => new AtlasLoader(Load<SpriteAtlas>(ConstPath.S_UI_Atlas_InGame));
+    public static AtlasLoader GetUIAtlas_Action() => new AtlasLoader(Load<SpriteAtlas>(ConstPath.S_UI_Atlas_Action));
     #endregion
     #region GamePrefab
     public static StyleColorData[] GetAllStyleCustomization(enum_Style levelStype) => LoadAll<StyleColorData>(ConstPath.S_StyleCustomization + "/" + levelStype);

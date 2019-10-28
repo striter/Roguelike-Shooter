@@ -12,14 +12,12 @@ public class UIManager :SimpleSingletonMono<UIManager>,ISingleCoroutine
     public Action<bool> OnMainDown;
     Image img_main;
     TouchDeltaManager m_TouchDelta;
-    public AtlasLoader m_commonSprites { get; private set; }
     public static void Activate(bool inGame) => TResources.InstantiateUIManager().Init(inGame);
     public Camera m_Camera { get; private set; }
     public CameraEffectManager m_Effect { get; private set; }
     CB_GenerateOverlayUIGrabBlurTexture m_Blur;
     protected void Init(bool inGame)
     {
-        m_commonSprites = TResources.GetUIAtlas_Common();
         cvs_Overlay = transform.Find("Overlay").GetComponent<Canvas>();
         CanvasScaler m_Scaler = cvs_Overlay.GetComponent<CanvasScaler>();
         m_FittedScale = new Vector2((Screen.width / (float)Screen.height) / (m_Scaler.referenceResolution.x / m_Scaler.referenceResolution.y), 1f);
@@ -75,7 +73,7 @@ public class UIManager :SimpleSingletonMono<UIManager>,ISingleCoroutine
         if (spriteName == m_mainSprite)
             return;
         m_mainSprite = spriteName;
-        img_main.sprite = m_commonSprites[m_mainSprite];
+        img_main.sprite = m_CommonSprites[m_mainSprite];
     }
 
     public void OnGameFinished(GameLevelManager level,Action _OnButtonClick)
@@ -97,4 +95,36 @@ public class UIManager :SimpleSingletonMono<UIManager>,ISingleCoroutine
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PageClose);
     }
     protected T ShowTools<T>() where T : UIToolsBase => UIToolsBase.Show<T>(tf_Tools);
+
+
+    AtlasLoader m_inGameSprites;
+    public AtlasLoader m_InGameSprites
+    {
+        get
+        {
+            if (m_inGameSprites == null)
+                m_inGameSprites = TResources.GetUIAtlas_InGame();
+            return m_inGameSprites;
+        }
+    }
+    AtlasLoader m_actionSprites;
+    public AtlasLoader m_ActionSprites
+    {
+        get
+        {
+            if (m_actionSprites == null)
+                m_actionSprites = TResources.GetUIAtlas_Action();
+            return m_actionSprites;
+        }
+    }
+    AtlasLoader m_commonSprites;
+    public AtlasLoader m_CommonSprites
+    {
+        get
+        {
+            if (m_commonSprites == null)
+                m_commonSprites = TResources.GetUIAtlas_Common();
+            return m_commonSprites;
+        }
+    }
 }
