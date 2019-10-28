@@ -205,7 +205,7 @@ public class GameManager : GameManagerBase
         if (m_GameLevel.B_NextStage)
         {
             GameDataManager.AdjuastInGameData(m_LocalPlayer,m_GameLevel);
-            StartStage();
+            UIT_Loading.Instance.Play(1f,StartStage);
         }
         else
         {
