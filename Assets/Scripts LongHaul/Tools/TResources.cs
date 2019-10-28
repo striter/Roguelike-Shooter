@@ -25,7 +25,7 @@ public class TResources
         public const string S_InteractActionChest = "Interact/ActionChest_";
         public const string S_InteractCommon = "Interact/Interact_";
 
-        public const string S_PETex_NoiseFog = "Texture/PE_NoiseFog";
+        public const string S_PETex_Noise = "Texture/PE_Noise";
         public const string S_PETex_Holograph = "Texture/PE_Holograph";
 
         public const string S_UI_Atlas_Numeric = "UI/Atlas/Atlas_Numeric";
@@ -34,6 +34,14 @@ public class TResources
 
         public const string S_Audio_Background = "Audio/Background/";
         public const string S_Audio_SFX = "Audio/SFX/";
+    }
+
+    static Texture m_NoiseTex=null;
+    public static Texture GetNoiseTex()
+    {
+        if (m_NoiseTex == null)
+            m_NoiseTex = Load<Texture>(ConstPath.S_PETex_Noise);
+        return m_NoiseTex;
     }
 
     #region UI

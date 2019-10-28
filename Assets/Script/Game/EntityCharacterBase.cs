@@ -132,7 +132,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         static readonly int ID_Color = Shader.PropertyToID("_Color");
         static readonly int ID_Amount1=Shader.PropertyToID("_Amount1");
         static readonly int ID_Opacity = Shader.PropertyToID("_Opacity");
-        static readonly Texture TX_Distort = TResources.Load<Texture>(TResources.ConstPath.S_PETex_NoiseFog);
+        static readonly Texture TX_Distort = TResources.GetNoiseTex();
         Material[] m_Materials;
 
         bool m_cloaked;

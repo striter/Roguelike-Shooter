@@ -205,6 +205,7 @@ public class GameManager : GameManagerBase
         if (m_GameLevel.B_NextStage)
         {
             GameDataManager.AdjuastInGameData(m_LocalPlayer,m_GameLevel);
+            SetPostEffect_VortexOn(CameraController.Instance.m_Camera.WorldToViewportPoint(m_LocalPlayer.transform.position),1f);
             UIT_Loading.Instance.Play(1f,StartStage);
         }
         else

@@ -57,7 +57,7 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
         switch (_levelStyle)
         {
             case enum_Style.Undead:
-                CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_FogDepthNoise>().SetEffect<PE_FogDepthNoise>(TCommon.ColorAlpha(Color.white, .3f), .5f, -1f, 5f).SetEffect(TResources.Load<Texture>(TResources.ConstPath.S_PETex_NoiseFog), .4f, 2f);
+                CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_FogDepthNoise>().SetEffect<PE_FogDepthNoise>(TCommon.ColorAlpha(Color.white, .3f), .5f, -1f, 5f).SetEffect(TResources.GetNoiseTex(), .4f, 2f);
                 break;
             case enum_Style.Iceland:
                 CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_FogDepth>().SetEffect<PE_FogDepth>(Color.white, .6f, -1, 5);
@@ -74,6 +74,16 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
         CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_Bloom>().SetEffect(2, 3, 4,.9f,2f);
         this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => { m_BSC.SetEffect(value, 1f, 1f); }, 2f, 1, 2f,
              CameraController.Instance.m_Effect.RemoveCameraEffect<PE_Bloom>));
+    }
+
+    protected void SetPostEffect_VortexOn(Vector2 distortPos,float duration)
+    {
+        PE_DistortVortex vortex = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_DistortVortex>();
+        vortex.SetTexture(TResources.GetNoiseTex());
+        this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) =>
+         {
+             vortex.SetDistort(distortPos,value);
+         },0,1, duration, CameraController.Instance.m_Effect.RemoveCameraEffect<PE_DistortVortex>));
     }
 
     public void SetEffect_Shake(float amount)
