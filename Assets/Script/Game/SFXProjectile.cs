@@ -5,7 +5,7 @@ using GameSetting;
 using TPhysics;
 public class SFXProjectile : SFXParticles
 {
-    #region PresetInfos
+    #region PresetInfos 
     public enum_ProjectileFireType E_ProjectileType= enum_ProjectileFireType.Invalid;
     public float F_Damage;
     public float F_Speed;
@@ -54,11 +54,13 @@ public class SFXProjectile : SFXParticles
     {
         base.OnPlay();
         B_PhysicsSimulating = true;
+        SetParticlesActive(true);
     }
     protected override void OnStop()
     {
         base.OnStop();
         B_PhysicsSimulating = false;
+        SetParticlesActive(false);
         if (m_Indicator)
         {
             m_Indicator.Stop();

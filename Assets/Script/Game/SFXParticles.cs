@@ -43,4 +43,9 @@ public class SFXParticles : SFXBase
         m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.OnRecycle(); });
         m_Particles.Traversal((ParticleSystem particle) => { particle.Clear(); });
     }
+
+    protected void SetParticlesActive(bool active)
+    {
+        m_Particles.Traversal((ParticleSystem particle) => { particle.transform.SetActivate(active); });
+    }
 }

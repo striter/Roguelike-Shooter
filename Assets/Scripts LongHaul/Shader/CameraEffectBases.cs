@@ -77,6 +77,19 @@ public class PE_BSC : PostEffectBase {      //Brightness Saturation Contrast
         m_Material.SetFloat("_Contrast", _contrast);
     }
 }
+public class PE_DistortVortex : PostEffectBase
+{
+    static readonly int ID_DistortParam = Shader.PropertyToID("_DistortParam");
+    public void SetTexture(Texture noise, float _noiseStrength = 1f)
+    {
+        m_Material.SetTexture("_NoiseTex", noise);
+        m_Material.SetFloat("_NoiseStrength", _noiseStrength);
+    }
+    public void SetDistort(Vector2 playerViewPort, float distortFactor)
+    {
+        m_Material.SetVector(ID_DistortParam, new Vector4(playerViewPort.x, playerViewPort.y, distortFactor));
+    }
+}
 public class PE_GaussianBlur : PostEffectBase       //Gassuain Blur
 {
     float F_BlurSpread;
@@ -326,7 +339,6 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
         m_GaussianBlur.OnDestroy();
     }
 }
-
 public class PE_AreaScanDepth : PostEffectBase
 {
     public override DepthTextureMode m_DepthTextureMode => DepthTextureMode.Depth;
@@ -346,7 +358,6 @@ public class PE_AreaScanDepth : PostEffectBase
         m_Material.SetFloat("_ScanLerp", colorLerp);
     }
 }
-
 public class PE_DepthSSAO : PostEffectBase      //Test Currently Uncomplete
 {
     public override DepthTextureMode m_DepthTextureMode => DepthTextureMode.Depth;
