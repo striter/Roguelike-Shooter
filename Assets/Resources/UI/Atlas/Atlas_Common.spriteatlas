@@ -135,7 +135,7 @@ SpriteAtlas:
   - UI_common_darkgray50_line
   - UI_common_darkgray60
   - status_coins_bottom
-  - icon_ActionStorage
+  - icon_ActionPack
   - btn_close
   - icon_weapon_common
   - icon_setting

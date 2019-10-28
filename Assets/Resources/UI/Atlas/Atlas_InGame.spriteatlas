@@ -124,7 +124,7 @@ SpriteAtlas:
   - status_ActionEnergy_progress_notfull
   - map_tile_type_ActionAdjustment
   - map_tile_type_BattleTrade
-  - status_ActionStrorage_bottom
+  - status_ActionPack_bottom
   - map_tile_select
   - background_map
   - map_tile_blockade
