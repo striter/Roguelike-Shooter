@@ -76,16 +76,15 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
              CameraController.Instance.m_Effect.RemoveCameraEffect<PE_Bloom>));
     }
 
-    protected void SetPostEffect_VortexOn(Vector2 distortPos,float duration)
+    protected void SetPostEffect_Vortex(bool on,Transform target,float duration)
     {
         PE_DistortVortex vortex = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_DistortVortex>();
         vortex.SetTexture(TResources.GetNoiseTex());
         this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) =>
          {
-             vortex.SetDistort(distortPos,value);
-         },0,1, duration, CameraController.Instance.m_Effect.RemoveCameraEffect<PE_DistortVortex>));
+             vortex.SetDistort(CameraController.Instance.m_Camera.WorldToViewportPoint(target.position),value);
+         },on?0:1,on?1:0, duration, CameraController.Instance.m_Effect.RemoveCameraEffect<PE_DistortVortex>));
     }
-
     public void SetEffect_Shake(float amount)
     {
         TPSCameraController.Instance.AddShake(amount*GameConst.F_DamageImpactMultiply);
