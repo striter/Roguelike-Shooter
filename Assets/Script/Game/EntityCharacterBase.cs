@@ -125,14 +125,14 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
 
     class EntityCharacterEffectManager:ISingleCoroutine
     {
-        Shader SD_OpaqueBase,SD_EffectBase;
-        static readonly Shader SD_Transparent = Shader.Find("Game/Common/Diffuse_Texture_Transparent");
+        Shader SD_Base,SD_Extra;
         static readonly Shader SD_Scan = Shader.Find("Game/Extra/ScanEffect");
         static readonly Shader SD_Ice = Shader.Find("Game/Effect/Ice");
+        static readonly Shader SD_Cloak = Shader.Find("Game/Effect/Cloak");
         static readonly int ID_Color = Shader.PropertyToID("_Color");
         static readonly int ID_Amount1=Shader.PropertyToID("_Amount1");
-        static readonly int ID_Alpha = Shader.PropertyToID("_Alpha");
-        static readonly Texture TX_IceDistort = TResources.Load<Texture>(TResources.ConstPath.S_PETex_NoiseFog);
+        static readonly int ID_Opacity = Shader.PropertyToID("_Opacity");
+        static readonly Texture TX_Distort = TResources.Load<Texture>(TResources.ConstPath.S_PETex_NoiseFog);
         Material[] m_Materials;
 
         bool m_cloaked;
@@ -144,16 +144,17 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
             Material materialEffect = _skin[0].materials[1];
             m_Materials = new Material[2] { materialBase, materialEffect };
             _skin.Traversal((Renderer renderer) => { renderer.materials = m_Materials;  });
-            SD_OpaqueBase = materialBase.shader;
-            SD_EffectBase = materialEffect.shader;
+            SD_Base = materialBase.shader;
+            SD_Extra = materialEffect.shader;
+
         }
 
         public void OnReset()
         {
             m_scaned = false;
             m_cloaked = false;
-            m_Materials[0].shader = SD_OpaqueBase;
-            m_Materials[1].shader = SD_EffectBase;
+            m_Materials[0].shader = SD_Base;
+            m_Materials[1].shader = SD_Extra;
             m_Materials.Traversal((Material mat) => { mat.SetFloat(ID_Amount1, 0); });
         }
 
@@ -174,19 +175,19 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
                 return;
 
             m_scaned = _scaned;
-            m_Materials[1].shader = m_scaned ? SD_Scan : SD_EffectBase;
+            m_Materials[1].shader = m_scaned ? SD_Scan : SD_Extra;
         }
         public void SetFreezed(bool _freezed)
         {
             if (m_freezed == _freezed)
                 return;
             m_freezed = _freezed;
-            m_Materials[0].shader = m_freezed ? SD_Ice : SD_OpaqueBase;
-            if (!_freezed)
+            m_Materials[0].shader = m_freezed ? SD_Ice : SD_Base;
+            if (!m_freezed)
                 return;
+
             m_Materials[0].SetColor("_IceColor", TCommon.HexToColor("3DAEC5FF"));
-            m_Materials[0].SetTexture("_DistortTex", TX_IceDistort);
-            m_Materials[0].SetFloat("_OpacityMultiple", .6f);
+            m_Materials[0].SetTexture("_DistortTex", TX_Distort);
             m_Materials[0].SetFloat("_Opacity", .5f);
         }
         public void SetCloak(bool _cloacked)
@@ -196,17 +197,18 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
 
             m_cloaked = _cloacked;
 
-            m_Materials[0].shader = SD_Transparent;
+            m_Materials[0].shader = SD_Cloak;
             if (_cloacked)
             {
+                m_Materials[0].SetTexture("_DistortTex", TX_Distort);
                 this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) =>
                 {
-                    m_Materials[0].SetFloat(ID_Alpha, value);
+                    m_Materials[0].SetFloat(ID_Opacity, value);
                 }, 1, .3f, .5f));
             }
             else
             {
-                this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) =>{ m_Materials[0].SetFloat(ID_Alpha, value); }, .3f, 1f, .3f, () => {   m_Materials[0].shader = SD_OpaqueBase; }));
+                this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) =>{ m_Materials[0].SetFloat(ID_Opacity, value); }, .3f, 1f, .3f, () => {   m_Materials[0].shader = SD_Base; }));
             }
         }
 

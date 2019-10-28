@@ -1,12 +1,11 @@
-﻿Shader "Game/Effect/Ice"
+﻿Shader "Game/Effect/Cloak"
 {
 	Properties
 	{
 		_MainTex("MainTex",2D) = "white"{}
 		_DistortTex("DistortTex",2D)="white"{}
 		_Color("Color Tint",Color) = (1,1,1,1)
-		_IceColor("Ice Color",Color) = (1,1,1,1)
-		_OpacityMultiple("Opacity Multiple",float) = .7
+		_Opacity("Opacity Multiple",float) = .7
 	}
 		SubShader
 		{
@@ -24,8 +23,7 @@
 				sampler2D _DistortTex;
 				float4 _MainTex_ST;
 				float4 _Color;
-				float _OpacityMultiple;
-				float4 _IceColor;
+				float _Opacity;
 
 			struct appdata
 			{
@@ -38,8 +36,7 @@
 			{
 				float4 vertex : SV_POSITION;
 				float2 uv : TEXCOORD0;
-				float rim : TEXCOORD1;
-				float4 screenPos:TEXCOORD2;
+				float4 screenPos:TEXCOORD1;
 			};
 
 			v2f vert (appdata v)
@@ -47,20 +44,15 @@
 				v2f o;
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-				float3 normal = normalize(v.normal);
 				o.screenPos = ComputeScreenPos(o.vertex);
-				float3 viewDir = normalize(ObjSpaceViewDir(v.vertex));
-				o.rim = saturate( 1 - dot(normal, viewDir)*2);
 				return o;
 			}
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
 				fixed4 albedo = tex2D(_MainTex, i.uv)*_Color;
-				float3 foreCol =  albedo+ _IceColor*i.rim;
-				fixed3 backCol = tex2D(_CameraOpaqueTexture, i.screenPos.xy / i.screenPos.w+tex2D(_DistortTex,i.uv+float2(_Time.y/10,_Time.y/10)).rg).rgb;
-				float3 finalCol = lerp(backCol, foreCol, _OpacityMultiple);
-				return float4(finalCol, 1);
+				fixed3 backCol = tex2D(_CameraOpaqueTexture, i.screenPos.xy / i.screenPos.w+tex2D(_DistortTex,i.uv)/20).rgb;
+				return float4(lerp(backCol, albedo, _Opacity).rgb, 1);
 			}
 			ENDCG
 		}
