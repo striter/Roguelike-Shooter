@@ -33,12 +33,12 @@ public class InteractActionChest : InteractBase {
             return;
         page.Play(m_Actions, OnActionSelectConfirm, m_SelectAmount);
     }
-    void OnActionSelectConfirm(List<int> indexes)
+    void OnActionSelectConfirm(int index)
     {
         base.OnInteractSuccessful(m_Interactor);
         m_Interactor.OnInteractCheck(this, false);
         SetInteractable(false);
-        indexes.Traversal((int index)=> { m_Interactor.m_PlayerInfo.AddStoredAction(m_Actions[index]); });
+        m_Interactor.m_PlayerInfo.AddStoredAction(m_Actions[index]);
         m_Animation[m_clipName].speed = 1;
         m_Animation.Play();
     }

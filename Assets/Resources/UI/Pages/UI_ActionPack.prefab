@@ -534,6 +534,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a58c1e99058cc774c8905d5058932080, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  img_Background: {fileID: 0}
+  f_bgAlphaStart: 0
+  b_useAnim: 0
+  btn_Cancel: {fileID: 0}
+  tf_Container: {fileID: 0}
+  showStored: 0
 --- !u!114 &114205667126475776
 MonoBehaviour:
   m_ObjectHideFlags: 1

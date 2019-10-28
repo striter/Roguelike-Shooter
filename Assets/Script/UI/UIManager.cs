@@ -48,6 +48,12 @@ public class UIManager :SimpleSingletonMono<UIManager>,ISingleCoroutine
 
         UIPageBase.OnPageExit = OnPageExit;
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnPlayerStatusChanged);
+
+        if (inGame)
+        {
+            m_InGameSprites.Check();
+            m_CommonSprites.Check();
+        }
     }
     protected override void OnDestroy()
     {

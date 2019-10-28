@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UI_ActionStorage : UIPageBase {
+public class UI_ActionPack : UIPageBase {
     UIT_GridControllerMonoItem<UIGI_ActionItemDetail> m_Grid;
     PlayerInfoManager m_Info;
     bool showStored;
@@ -31,7 +31,7 @@ public class UI_ActionStorage : UIPageBase {
         m_Grid.ClearGrid();
         List<ActionBase> targetList = showStored ?info.m_ActionStored: info.m_ActionHolding;
         for (int i = 0; i <targetList.Count; i++)
-            m_Grid.AddItem(i).SetInfo(info,targetList[i],OnItemClick,!showStored);
+            m_Grid.AddItem(i).SetInfo(targetList[i],OnItemClick,!showStored?info.B_EnergyCostable(targetList[i]):true);
     }
     void OnItemClick(int index)
     {

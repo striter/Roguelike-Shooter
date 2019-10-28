@@ -300,11 +300,11 @@ public class UI_PlayerStatus : UIToolsBase
     }
     void OnActionPressDuration()
     {
-        UIManager.Instance.ShowPage<UI_ActionStorage>(false,0f).Show(false,m_Player.m_PlayerInfo) ;
+        UIManager.Instance.ShowPage<UI_ActionPack>(false,0f).Show(false,m_Player.m_PlayerInfo) ;
     }
     void OnActionStorageClick()
     {
-        UIManager.Instance.ShowPage<UI_ActionStorage>(true).Show(true,m_Player.m_PlayerInfo);
+        UIManager.Instance.ShowPage<UI_ActionPack>(true).Show(true,m_Player.m_PlayerInfo);
     }
     void OnActionShuffleClick()
     {

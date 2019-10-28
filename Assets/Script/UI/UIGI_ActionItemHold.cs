@@ -21,7 +21,7 @@ public class UIGI_ActionItemHold : UIGI_ActionItemBase
     }
     public void SetInfo(PlayerInfoManager info,ActionBase actionInfo,Action<int> _OnClick,Action _OnPressDuration)
     {
-        base.SetInfo(info,actionInfo);
+        base.SetInfo(actionInfo);
         OnClick = _OnClick;
         OnPressDuration = _OnPressDuration;
         m_ActionInfo = actionInfo;

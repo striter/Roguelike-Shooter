@@ -5,43 +5,42 @@ using UnityEngine.UI;
 
 public class UI_ActionAcquire : UIPageBase {
 
-    Button m_Confirm;
-    UIT_GridControllerMonoItem<UIGI_ActionSelectItem> m_Grid;
-    bool m_SingleGrid;
-    Action<List<int>> OnIndexSelect;
+    Action<int> OnIndexSelect;
+    UIC_Button m_Confirm;
+    UIT_GridControllerMonoItem<UIGI_ActionItemSelect> m_Grid;
+    int m_selectIndex;
     protected override void Init(bool useAnim)
     {
         base.Init(useAnim);
-        m_Confirm = tf_Container.Find("Confirm").GetComponent<Button>();
-        m_Confirm.onClick.AddListener(OnConfirmClick);
+        m_Confirm =new UIC_Button( tf_Container.Find("Confirm"),OnConfirmClick);
+        m_Grid = new UIT_GridControllerMonoItem<UIGI_ActionItemSelect>(tf_Container.Find("ActionGrid"));
+        m_Grid.transform.localScale = UIManager.Instance.m_FittedScale;
     }
-    public void Play(List<ActionBase> actions,Action<List<int>> _OnIndexSelect, int selectAmount)
+    public void Play(List<ActionBase> actions,Action<int> _OnIndexSelect, int selectAmount)
     {
+        m_Grid.m_GridLayout.spacing = new UnityEngine.Vector2(m_Grid.m_GridLayout.spacing.x*2/actions.Count,m_Grid.m_GridLayout.spacing.y);
+        m_Confirm.SetInteractable(false);
+        m_selectIndex = -1;
         OnIndexSelect = _OnIndexSelect;
-           m_SingleGrid = selectAmount == 1;
-        if (m_SingleGrid)
-            m_Grid = new UIT_GridDefaultSingle<UIGI_ActionSelectItem>(tf_Container.Find("ActionGrid"), OnItemSelected, true);
-        else
-            m_Grid = new UIT_GridDefaultMulti<UIGI_ActionSelectItem>(tf_Container.Find("ActionGrid"), selectAmount, OnItemSelected);
-        m_Confirm.interactable = false;
         m_Grid.ClearGrid();
         for (int i = 0; i < actions.Count; i++)
-            m_Grid.AddItem(i).SetInfo(actions[i]);
+            m_Grid.AddItem(i).SetInfo(actions[i],OnItemSelected,true);
     }
 
     void OnItemSelected(int index)
     {
-        m_Confirm.interactable = B_CanSelect;
+        if (m_selectIndex != -1)
+            m_Grid.GetItem(m_selectIndex).SetHighlight(false);
+        m_selectIndex = index;
+        m_Grid.GetItem(m_selectIndex).SetHighlight(true);
+
+        m_Confirm.SetInteractable(true);
     }
-    bool B_CanSelect => m_SingleGrid ? true : (m_Grid as UIT_GridDefaultMulti<UIGI_ActionSelectItem>).m_AllSelected;
-    List<int> m_SelectIndexes => m_SingleGrid ? new List<int>() { (m_Grid as UIT_GridDefaultSingle<UIGI_ActionSelectItem>).I_CurrentSelecting } : (m_Grid as UIT_GridDefaultMulti<UIGI_ActionSelectItem>).m_Selecting;
 
     void OnConfirmClick()
     {
-        if (!B_CanSelect)
-            return;
-        m_Confirm.interactable = false;
-        OnIndexSelect(m_SelectIndexes);
+        m_Confirm.SetInteractable(false);
+        OnIndexSelect(m_selectIndex);
         OnCancelBtnClick();
     }
 }
