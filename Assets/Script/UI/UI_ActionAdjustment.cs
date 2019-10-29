@@ -16,6 +16,7 @@ public class UI_ActionAdjustment : UIPageBase {
     {
         base.Init(useAnim);
         m_Grid = new UIT_GridControllerMonoItem<UIGI_ActionItemSelect>(tf_Container.Find("ScrollView/Viewport/ActionGrid"));
+        m_Grid.transform.localScale = UIManager.Instance.m_FittedScale;
         btn_remove = tf_Container.Find("BtnRemove").GetComponent<Button>();
         btn_remove.onClick.AddListener(OnRemoveClick);
         txt_removeAmount = btn_remove.transform.Find("Cost/Amount").GetComponent<UIT_TextExtend>();
