@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InteractContainer : InteractBase {
+public class InteractContainer : InteractGameBase {
 
     public InteractBase m_InteractTarget { get; private set; }
     Transform tf_Model;
