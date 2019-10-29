@@ -278,8 +278,10 @@ namespace GameSetting
                 switch (player.m_Interact.m_InteractType)
                 {
                     case enum_Interaction.Invalid: Debug.LogError("Invalid Pharse Here!"); break;
-                    case enum_Interaction.ActionAdjustment: spriteName = "main_chat"; break;
                     default: spriteName = "main_pickup"; break;
+                    case enum_Interaction.CampFarm:
+                    case enum_Interaction.ActionAdjustment:
+                        spriteName = "main_chat"; break;
                 }
             return spriteName;
         }

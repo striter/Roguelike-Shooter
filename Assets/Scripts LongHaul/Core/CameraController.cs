@@ -62,12 +62,12 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
     }
     #endregion
     #region Interact Apis
-    public static void Attach(Transform toTransform, Action _OnCameraAttached = null)
+    public void Attach(Transform toTransform, Action _OnCameraAttached = null)
     {
-        Instance.b_CameraAttaching = true;
-        Instance.OnCameraAttached = _OnCameraAttached;
-        Instance.tf_AttachTo = toTransform;
-        Instance.qt_CameraRot = toTransform.rotation;
+        b_CameraAttaching = true;
+        OnCameraAttached = _OnCameraAttached;
+        tf_AttachTo = toTransform;
+        qt_CameraRot = toTransform.rotation;
     }
     public void CameraLookAt(Transform lookAtTrans) => tf_CameraLookAt = lookAtTrans;
     public void SetCameraSmoothParam(float smoothParam)=> F_CameraSmoothParam = smoothParam;

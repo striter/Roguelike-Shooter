@@ -4,7 +4,8 @@ using UnityEngine;
 using System;
 using GameSetting;
 
-public class CampInteract : InteractBase {
+public class InteractCamp : InteractBase {
+    public override bool B_InteractOnce => false;
     private void Start()
     {
         Init();

@@ -94,6 +94,21 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
     {
         TPSCameraController.Instance.SetImpact(direction.normalized*GameConst.F_DamageImpactMultiply);
     }
+
+    public void SetEffect_Focal(bool on,Transform target=null, float width=1f,float duration=2f)
+    {
+        if (!on)
+        {
+            CameraController.Instance.m_Effect.RemoveCameraEffect<PE_FocalDepth>();
+            return;
+        }
+        PE_FocalDepth focal= CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_FocalDepth>();
+        focal.SetEffect(2);
+        this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) =>
+         {
+             focal.SetFocalTarget(target.position, width);
+         },0,1,duration));
+    }
     #endregion
 }
 

@@ -48,7 +48,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
-        CameraController.Attach(this.transform);
+        CameraController.Instance.Attach(this.transform);
         SetBinding(true);
     }
     protected override void OnDisable()

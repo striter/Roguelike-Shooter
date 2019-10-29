@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class InteractActionAdjustment : InteractBase {
+public class InteractActionAdjustment : InteractGameBase {
     public override enum_Interaction m_InteractType => enum_Interaction.ActionAdjustment;
     public enum_StageLevel m_stage { get; private set; }
     public int m_upgradeCount { get; private set; }

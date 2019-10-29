@@ -4,8 +4,7 @@ using GameSetting;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CampInteractSwitchDifficulty : CampInteract {
-    public override bool B_InteractOnce => false;
+public class InteractCampSwitchDifficulty : InteractCamp {
     public override enum_Interaction m_InteractType => enum_Interaction.CampDifficult;
     Text m_Text;
     public override void Init()
