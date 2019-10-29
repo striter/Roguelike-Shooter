@@ -156,7 +156,7 @@ SpriteAtlas:
   - icon_weapon_rank
   - icon_buff_rank
   - UI_setting_common_bottom
-  - UI_Common_Square
+  - UI_common_Square
   - btn_close_strip
   m_Tag: Atlas_Common
   m_IsVariant: 0
