@@ -739,7 +739,7 @@ public static class GameObjectManager
         player.ObtainWeapon(SpawnWeapon(playerSave.m_weapon,GameDataManager.CreateAction(playerSave.m_weaponAction)));
         return player;
     }
-    public static EntityTrader SpawnTrader(int index, Vector3 toPosition, Transform attachTo) => SpawnEntity<EntityTrader>(index, toPosition, enum_EntityFlag.Neutal,0, attachTo);
+    public static EntityNPC SpawnTrader(int index, Vector3 toPosition, Transform attachTo) => SpawnEntity<EntityNPC>(index, toPosition, enum_EntityFlag.Neutal,0, attachTo);
     public static void RecycleEntity(int index, EntityBase target) => ObjectPoolManager<int, EntityBase>.Recycle(index, target);
     #endregion
     #region Weapon
