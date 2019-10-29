@@ -66,7 +66,7 @@ public class UI_PlayerStatus : UIToolsBase
         img_ShuffleFill = btn_ActionShuffle.transform.Find("ShuffleFill").GetComponent<Image>();
 
         rtf_StatusData = tf_Container.Find("StatusData").GetComponent<RectTransform>();
-        rtf_StatusData.localScale = UIManager.Instance.m_FittedScale;
+        rtf_StatusData.localScale = UIManagerBase.m_PageScale;
         tf_AmmoData = rtf_StatusData.Find("AmmoData");
         m_AmmoGridWidth = tf_AmmoData.GetComponent<RectTransform>().sizeDelta.x;
         m_AmmoAmount = new UIC_Numeric(tf_AmmoData.Find("AmmoAmount"));

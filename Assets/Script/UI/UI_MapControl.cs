@@ -36,7 +36,6 @@ public class UI_MapControl : UIPageBase,ISingleCoroutine {        //This Page Wo
 
         tf_MapTile = tf_Container.Find("MapTile");
         m_AllTilesGrid = new UIT_GridDefaultSingle<UIGI_MapControlCell>(tf_MapTile.Find("TileGrid"),OnMapTileClick);
-        m_AllTilesGrid.transform.localScale =  UIManager.Instance.m_FittedScale;
         SBigmapLevelInfo[,] map = new SBigmapLevelInfo[6, 6];
         for (int i = 0; i < 6; i++)
             for (int j = 0; j < 6; j++)

@@ -33,7 +33,7 @@ public class UIPageBase : MonoBehaviour,ISingleCoroutine
         btn_Cancel.onClick.AddListener(OnCancelBtnClick);
         if (useAnim)
             this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => {
-                tf_Container.localScale = Vector3.one * value;
+                tf_Container.localScale = UIManagerBase.m_PageScale * value;
                 img_Background.color = new Color(img_Background.color.r,img_Background.color.g,img_Background.color.b,value*f_bgAlphaStart);
             }
             , 0f, 1f, .5f,null,false));
@@ -48,7 +48,7 @@ public class UIPageBase : MonoBehaviour,ISingleCoroutine
         btn_Cancel.enabled = false;
         if (b_useAnim)
             this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => {
-                tf_Container.localScale = Vector3.one * value;
+                tf_Container.localScale = UIManagerBase.m_PageScale * value;
                 img_Background.color = new Color(img_Background.color.r, img_Background.color.g, img_Background.color.b, value * f_bgAlphaStart);
             }
             , 1f, 0f, .5f, OnHideFinished,false));

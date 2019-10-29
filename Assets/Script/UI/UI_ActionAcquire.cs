@@ -14,7 +14,6 @@ public class UI_ActionAcquire : UIPageBase {
         base.Init(useAnim);
         m_Confirm =new UIC_Button( tf_Container.Find("Confirm"),OnConfirmClick);
         m_Grid = new UIT_GridControllerMonoItem<UIGI_ActionItemSelect>(tf_Container.Find("ActionGrid"));
-        m_Grid.transform.localScale = UIManager.Instance.m_FittedScale;
     }
     public void Play(List<ActionBase> actions,Action<int> _OnIndexSelect, int selectAmount)
     {

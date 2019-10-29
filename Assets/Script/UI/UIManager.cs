@@ -3,26 +3,28 @@ using UnityEngine.UI;
 using GameSetting;
 using System;
 
-public class UIManager :SimpleSingletonMono<UIManager>,ISingleCoroutine
+public class UIManager :UIManagerBase,ISingleCoroutine
 {
-    public Vector2 m_FittedScale { get; private set; }
+    public static new UIManager Instance { get; private set; }
+
     Canvas cvs_Overlay, cvs_Camera;
     Transform tf_Control, tf_Pages, tf_Tools;
     public Action OnReload;
     public Action<bool> OnMainDown;
     Image img_main;
     TouchDeltaManager m_TouchDelta;
-    public static void Activate(bool inGame) => TResources.InstantiateUIManager().Init(inGame);
     public Camera m_Camera { get; private set; }
     public CameraEffectManager m_Effect { get; private set; }
     UI_MessageBoxIntro m_MessageBox;
     CB_GenerateOverlayUIGrabBlurTexture m_Blur;
+
+    public static void Activate(bool inGame) => TResources.InstantiateUIManager().Init(inGame);
     protected void Init(bool inGame)
     {
+        Instance = this;
         cvs_Overlay = transform.Find("Overlay").GetComponent<Canvas>();
+        base.Init(cvs_Overlay);
         m_MessageBox = cvs_Overlay.transform.Find("MessageBox").GetComponent<UI_MessageBoxIntro>();
-        CanvasScaler m_Scaler = cvs_Overlay.GetComponent<CanvasScaler>();
-        m_FittedScale = new Vector2((Screen.width / (float)Screen.height) / (m_Scaler.referenceResolution.x / m_Scaler.referenceResolution.y), 1f);
         cvs_Camera = transform.Find("Camera").GetComponent<Canvas>();
 
         tf_Control = cvs_Camera.transform.Find("Control");
@@ -60,6 +62,7 @@ public class UIManager :SimpleSingletonMono<UIManager>,ISingleCoroutine
     protected override void OnDestroy()
     {
         base.OnDestroy();
+        Instance = null;
         this.StopAllCoroutines();
         OptionsManager.event_OptionChanged -= OnOptionsChanged;
         UIPageBase.OnPageExit = null;

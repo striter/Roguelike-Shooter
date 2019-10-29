@@ -12,7 +12,6 @@ public class UI_ActionPack : UIPageBase {
     {
         base.Init(useAnim);
         m_Grid = new UIT_GridControllerMonoItem<UIGI_ActionItemDetail>(tf_Container.Find("ScrollView/Viewport/ActionGrid"));
-        m_Grid.m_GridLayout.transform.localScale = UIManager.Instance.m_FittedScale;
     }
     public void Show(bool _showStored, PlayerInfoManager _info)
     {
