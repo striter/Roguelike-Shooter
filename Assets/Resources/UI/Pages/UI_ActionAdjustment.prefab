@@ -2375,7 +2375,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_Adjustment_Remove
+  m_Text: "\u9500\u6BC1"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Adjustment_Remove
   m_characterSpacing: 4
@@ -3379,7 +3379,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1.5
-  m_Text: UI_ActionAdjust_WillCost
+  m_Text: "\u786E\u8BA4\u8981\u6D88\u8017"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_ActionAdjust_WillCost
   m_characterSpacing: 0
@@ -3415,7 +3415,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_ActionAdjust_Remove
+  m_Text: "\u9500\u6BC1"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_ActionAdjust_Remove
   m_characterSpacing: 6
@@ -3629,7 +3629,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_Adjustment_Upgrade
+  m_Text: "\u5347\u7EA7"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Adjustment_Upgrade
   m_characterSpacing: 4
@@ -3883,7 +3883,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1.5
-  m_Text: UI_ActionAdjust_WillCost
+  m_Text: "\u786E\u8BA4\u8981\u6D88\u8017"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_ActionAdjust_WillCost
   m_characterSpacing: 0
@@ -4587,7 +4587,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 0
-  m_Text: UI_ActionAdjust_UpgradeIntro
+  m_Text: "\u5347\u7EA7\u8FD9\u5F20\u5361\u7247\u5417\uFF1F"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_ActionAdjust_UpgradeIntro
   m_characterSpacing: 0
@@ -5082,7 +5082,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_ActionAdjust_Upgrade
+  m_Text: "\u5347\u7EA7"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_ActionAdjust_Upgrade
   m_characterSpacing: 6
@@ -5468,7 +5468,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -5827,7 +5827,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 0
-  m_Text: UI_ActionAdjust_RemoveIntro
+  m_Text: "\u786E\u8BA4\u8981\u6D88\u8017"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_ActionAdjust_RemoveIntro
   m_characterSpacing: 0
