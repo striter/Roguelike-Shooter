@@ -8,19 +8,18 @@ public class UI_ActionAdjustment : UIPageBase {
 
     UIT_GridControllerMonoItem<UIGI_ActionItemSelect> m_Grid;
     Button btn_remove, btn_upgrade;
-    UIT_TextExtend txt_remove, txt_upgrade,txt_coins;
+    UIT_TextExtend txt_removeAmount, txt_upgradeAmount;
     int m_selectIndex = -1;
     protected override void Init(bool useAnim)
     {
         base.Init(useAnim);
-        m_Grid = new UIT_GridControllerMonoItem<UIGI_ActionItemSelect>(tf_Container.Find("ActionGrid"));
-        txt_coins = tf_Container.Find("Coins").GetComponent<UIT_TextExtend>();
+        m_Grid = new UIT_GridControllerMonoItem<UIGI_ActionItemSelect>(tf_Container.Find("ScrollView/Viewport/ActionGrid"));
         btn_remove = tf_Container.Find("BtnRemove").GetComponent<Button>();
         btn_remove.onClick.AddListener(OnRemoveClick);
-        txt_remove = btn_remove.transform.Find("Text").GetComponent<UIT_TextExtend>();
+        txt_removeAmount = btn_remove.transform.Find("Cost/Amount").GetComponent<UIT_TextExtend>();
         btn_upgrade = tf_Container.Find("BtnUpgrade").GetComponent<Button>();
         btn_upgrade.onClick.AddListener(OnUpgradeClick);
-        txt_upgrade = btn_upgrade.transform.Find("Text").GetComponent<UIT_TextExtend>();
+        txt_upgradeAmount = btn_upgrade.transform.Find("Cost/Amount").GetComponent<UIT_TextExtend>();
     }
     InteractActionAdjustment m_Interact;
     public void Play(InteractActionAdjustment _adjust)
@@ -30,7 +29,6 @@ public class UI_ActionAdjustment : UIPageBase {
     }
     void OnActionStatus()
     {
-        txt_coins.text = m_Interact.m_Interactor.m_Coins.ToString();
         m_Grid.ClearGrid();
         for (int i = 0; i < m_Interact.m_Interactor.m_ActionStored.Count; i++)
             m_Grid.AddItem(i).SetInfo(m_Interact.m_Interactor.m_ActionStored[i],OnItemSelected,true);
@@ -49,21 +47,10 @@ public class UI_ActionAdjustment : UIPageBase {
     }
     void OnAdjustmentBtnStatus()
     {
-        if (m_selectIndex >= 0)
-        {
-            enum_UI_ActionUpgradeType upgradeType = m_Interact.E_UpgradeType(m_selectIndex);
-            btn_upgrade.interactable =upgradeType== enum_UI_ActionUpgradeType.Upgradeable;
-            txt_upgrade.text = "Upgrade:" + (btn_upgrade.interactable ? m_Interact.UpgradePrice.ToString():upgradeType.ToString());
-            btn_remove.interactable = m_Interact.B_Removeable(m_selectIndex);
-            txt_remove.text = "Remove:" + m_Interact.RemovePrice.ToString();
-        }
-        else
-        {
-            btn_upgrade.interactable = false;
-            btn_remove.interactable = false;
-            txt_upgrade.text = "Upgrade";
-            txt_remove.text = "Remove";
-        }
+        txt_upgradeAmount.text = m_Interact.UpgradePrice.ToString();
+        txt_removeAmount.text = m_Interact.RemovePrice.ToString();
+        btn_upgrade.interactable = m_selectIndex >= 0 && m_Interact.E_UpgradeType(m_selectIndex) == enum_UI_ActionUpgradeType.Upgradeable;
+        btn_remove.interactable = m_selectIndex >= 0 && m_Interact.B_Removeable(m_selectIndex);
     }
     void OnRemoveClick()
     {
