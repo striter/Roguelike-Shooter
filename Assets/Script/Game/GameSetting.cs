@@ -261,10 +261,8 @@ namespace GameSetting
                 case enum_ActionType.Equipment: return "action_bottom_equipment";
             }
         }
-        public static string GetCostBGSprite(this enum_ActionType type, bool costable)
+        public static string GetCostBGSprite(this enum_ActionType type)
         {
-            if (!costable)
-                return "action_cost_invalid";
             switch (type)
             {
                 default: Debug.LogError("Invalid Pharse Here!" + type.ToString()); return "";

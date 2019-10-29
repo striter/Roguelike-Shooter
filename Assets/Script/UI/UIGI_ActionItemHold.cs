@@ -16,7 +16,7 @@ public class UIGI_ActionItemHold : UIGI_ActionItemBase
     public override void Init()
     {
         base.Init();
-        m_TriggerListener = tf_Container.Find("TriggerListener").GetComponent<UIT_EventTriggerListener>();
+        m_TriggerListener = transform.Find("TriggerListener").GetComponent<UIT_EventTriggerListener>();
         m_TriggerListener.D_OnPress = OnPress;
     }
     public void SetInfo(PlayerInfoManager info,ActionBase actionInfo,Action<int> _OnClick,Action _OnPressDuration)
