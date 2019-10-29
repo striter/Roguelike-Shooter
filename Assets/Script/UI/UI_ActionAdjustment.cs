@@ -9,6 +9,8 @@ public class UI_ActionAdjustment : UIPageBase {
     UIT_GridControllerMonoItem<UIGI_ActionItemSelect> m_Grid;
     Button btn_remove, btn_upgrade;
     UIT_TextExtend txt_removeAmount, txt_upgradeAmount;
+    UI_MessageBoxRemove m_Remove;
+    UI_MessageBoxUpgrade m_Upgrade;
     int m_selectIndex = -1;
     protected override void Init(bool useAnim)
     {
@@ -20,6 +22,8 @@ public class UI_ActionAdjustment : UIPageBase {
         btn_upgrade = tf_Container.Find("BtnUpgrade").GetComponent<Button>();
         btn_upgrade.onClick.AddListener(OnUpgradeClick);
         txt_upgradeAmount = btn_upgrade.transform.Find("Cost/Amount").GetComponent<UIT_TextExtend>();
+        m_Remove = transform.Find("Remove").GetComponent<UI_MessageBoxRemove>();
+        m_Upgrade = transform.Find("Upgrade").GetComponent<UI_MessageBoxUpgrade>();
     }
     InteractActionAdjustment m_Interact;
     public void Play(InteractActionAdjustment _adjust)
@@ -52,14 +56,17 @@ public class UI_ActionAdjustment : UIPageBase {
         btn_upgrade.interactable = m_selectIndex >= 0 && m_Interact.E_UpgradeType(m_selectIndex) == enum_UI_ActionUpgradeType.Upgradeable;
         btn_remove.interactable = m_selectIndex >= 0 && m_Interact.B_Removeable(m_selectIndex);
     }
-    void OnRemoveClick()
+    void OnRemoveClick()=>m_Remove.Play(m_Interact.RemovePrice,m_Interact.m_Interactor.m_ActionStored[m_selectIndex],OnRemoveConfirmed);
+    void OnRemoveConfirmed()
     {
         m_Interact.OnRemovalAction(m_selectIndex);
         OnActionStatus();
     }
-    void OnUpgradeClick()
+
+    void OnUpgradeClick() => m_Upgrade.Play(m_Interact.UpgradePrice, m_Interact.m_Interactor.m_ActionStored[m_selectIndex], OnUpgradeConfirmed);
+    void OnUpgradeConfirmed()
     {
         m_Interact.OnUpgradeAction(m_selectIndex);
         OnActionStatus();
-    } 
+    }
 }

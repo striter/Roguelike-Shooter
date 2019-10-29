@@ -15,10 +15,12 @@ public class UIManager :SimpleSingletonMono<UIManager>,ISingleCoroutine
     public static void Activate(bool inGame) => TResources.InstantiateUIManager().Init(inGame);
     public Camera m_Camera { get; private set; }
     public CameraEffectManager m_Effect { get; private set; }
+    UI_MessageBoxIntro m_MessageBox;
     CB_GenerateOverlayUIGrabBlurTexture m_Blur;
     protected void Init(bool inGame)
     {
         cvs_Overlay = transform.Find("Overlay").GetComponent<Canvas>();
+        m_MessageBox = cvs_Overlay.transform.Find("MessageBox").GetComponent<UI_MessageBoxIntro>();
         CanvasScaler m_Scaler = cvs_Overlay.GetComponent<CanvasScaler>();
         m_FittedScale = new Vector2((Screen.width / (float)Screen.height) / (m_Scaler.referenceResolution.x / m_Scaler.referenceResolution.y), 1f);
         cvs_Camera = transform.Find("Camera").GetComponent<Canvas>();
@@ -87,6 +89,7 @@ public class UIManager :SimpleSingletonMono<UIManager>,ISingleCoroutine
         cvs_Camera.gameObject.SetActivate(false);
         ShowPage<UI_GameResult>(true).Play(level, _OnButtonClick);
     }
+    public void PlayMessageBox(string titleKey, string introKey, string confirmKey, Action _OnConfirmClick) => m_MessageBox.Begin(titleKey,introKey,confirmKey,_OnConfirmClick);
 
     public T ShowPage<T>(bool animate,float bulletTime=1f) where T : UIPageBase
     {
