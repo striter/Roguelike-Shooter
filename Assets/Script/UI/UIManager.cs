@@ -35,11 +35,16 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         tf_Control.Find("Settings").GetComponent<Button>().onClick.AddListener(() => { ShowPage<UI_Options>(inGame,0f).SetInGame(inGame); });
 
         tf_Pages = cvs_Overlay.transform.Find("Pages");
-        if (inGame) ShowTools<UI_EntityHealth>();
-        ShowTools<UI_PlayerStatus>().SetInGame(inGame);
 
 
-        if (inGame) cvs_Overlay.transform.Find("Test/SeedTest").GetComponent<Text>().text = GameManager.Instance.m_GameLevel.m_Seed;   //Test
+        if (inGame)
+        {
+            ShowTools<UI_EntityHealth>();
+            ShowTools<UI_GamePlayerStatus>();
+            cvs_Overlay.transform.Find("Test/SeedTest").GetComponent<Text>().text = GameManager.Instance.m_GameLevel.m_Seed;   //Test
+            m_InGameSprites.Check();
+            m_CommonSprites.Check();
+        }
 
         m_Camera = transform.Find("UICamera").GetComponent<Camera>();
         m_Effect = m_Camera.GetComponent<CameraEffectManager>();
@@ -52,12 +57,6 @@ public class UIManager :UIManagerBase,ISingleCoroutine
 
         UIPageBase.OnPageExit = OnPageExit;
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnPlayerStatusChanged);
-
-        if (inGame)
-        {
-            m_InGameSprites.Check();
-            m_CommonSprites.Check();
-        }
     }
     protected override void OnDestroy()
     {

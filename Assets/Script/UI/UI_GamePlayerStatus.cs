@@ -1,9 +1,10 @@
 ﻿using GameSetting;
 using UnityEngine;
 using UnityEngine.UI;
-public class UI_PlayerStatus : UIToolsBase
+public class UI_GamePlayerStatus : UIToolsBase
 {
     Transform tf_Container;
+    Animation m_Animation;
     EntityCharacterPlayer m_Player;
 
     Transform tf_OutBattle;
@@ -51,6 +52,7 @@ public class UI_PlayerStatus : UIToolsBase
     {
         base.Init();
         tf_Container = transform.Find("Container");
+        m_Animation = tf_Container.GetComponent<Animation>();
 
         tf_OutBattle = tf_Container.Find("OutBattle");
         btn_ActionStorage = tf_OutBattle.Find("ActionStorage").GetComponent<Button>();
@@ -108,6 +110,8 @@ public class UI_PlayerStatus : UIToolsBase
         TBroadCaster<enum_BC_UIStatus>.Add<WeaponBase>(enum_BC_UIStatus.UI_PlayerWeaponStatus, OnWeaponStatus);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
+
+        SetInBattle(false,false);
     }
     
     protected override void OnDestroy()
@@ -122,21 +126,18 @@ public class UI_PlayerStatus : UIToolsBase
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
     }
-    public void SetInGame(bool inGame)
-    {
-        if (!inGame)
-        {
-            tf_InBattle.SetActivate(false);
-            tf_OutBattle.SetActivate(false);
-            return;
-        }
 
-        SetInBattle(false);
-    }
-    void SetInBattle(bool inBattle)
+    void SetInBattle(bool inBattle,bool anim=true)
     {
-        tf_InBattle.SetActivate(inBattle);
-        tf_OutBattle.SetActivate(!inBattle);
+        m_ActionGrid.ClearGrid();
+        btn_Bigmap.interactable = !inBattle;
+        btn_ActionStorage.interactable = !inBattle;
+        btn_ActionShuffle.interactable = inBattle;
+        if (!anim)
+            return;
+        m_Animation[m_Animation.clip.name].speed = inBattle ? 1 : -1;
+        m_Animation[m_Animation.clip.name].normalizedTime = inBattle ? 0 : 1;
+        m_Animation.Play(m_Animation.clip.name);
     }
     void OnBattleStart()=>SetInBattle(true);
     void OnBattleFinish()=> SetInBattle(false);
