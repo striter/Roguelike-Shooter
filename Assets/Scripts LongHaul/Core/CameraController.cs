@@ -22,8 +22,8 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
     RaycastHit rh_temp;
     float f_CameraDistance;
     public Camera m_Camera { get; private set; }
+    public Transform tf_AttachTo { get; private set; }
     protected Transform tf_MainCamera;
-    protected Transform tf_AttachTo;
     protected Vector3 v3_CameraPos;
     protected Transform tf_CameraPos;
     protected Quaternion qt_CameraRot=Quaternion.identity;

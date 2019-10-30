@@ -511,6 +511,8 @@ namespace GameSetting
     public enum enum_GameMusic { Invalid=-1, Relax=1, Fight=2, Win=3, Lost=4,}
 
     public enum enum_Option_FrameRate { Invalid = -1, Normal = 45, High = 60, }
+
+    public enum enum_CampFarmItem { Invalid=-1, Empty = 0, Locked=1 , Decayed = 2, Progress1=10,Progress2,Progress3,Progress4,Progress5}
     #endregion
 
     #region GameLayer
@@ -536,20 +538,44 @@ namespace GameSetting
     #endregion
 
     #region GameSave
-    public class CPlayerGameSave : ISave        //Save Outta Game
+    public class CPlayerCampSave : ISave
     {
         public float f_Credits;
         public int m_GameDifficulty;
         public int m_DifficultyUnlocked;
-        public CPlayerGameSave()
+        public CPlayerCampSave()
         {
             f_Credits = 100;
             m_GameDifficulty = 1;
             m_DifficultyUnlocked = 1;
         }
+        public void UnlockDifficulty()
+        {
+            if (m_GameDifficulty != m_DifficultyUnlocked)
+                return;
+
+            m_DifficultyUnlocked++;
+            m_GameDifficulty++;
+        }
     }
 
-    public class CPlayerLevelSave : ISave
+    public class CCampFarmSave : ISave
+    {
+        public List<CampPlotInfo> m_PlotStatus;
+        public CCampFarmSave()
+        {
+            m_PlotStatus = new List<CampPlotInfo>() { CampPlotInfo.Create( enum_CampFarmItem.Empty), CampPlotInfo.Create(enum_CampFarmItem.Empty), CampPlotInfo.Create(enum_CampFarmItem.Empty), CampPlotInfo.Create(enum_CampFarmItem.Locked), CampPlotInfo.Create(enum_CampFarmItem.Locked), CampPlotInfo.Create(enum_CampFarmItem.Locked) };
+        }
+        public void UnlockPlot(int difficulty)
+        {
+            if (difficulty >= 3 && m_PlotStatus[3].m_Status == enum_CampFarmItem.Locked)
+                m_PlotStatus[3] = CampPlotInfo.Create(enum_CampFarmItem.Empty);
+            else if (difficulty >= 10 && m_PlotStatus[4].m_Status == enum_CampFarmItem.Locked)
+                m_PlotStatus[4] = CampPlotInfo.Create(enum_CampFarmItem.Empty);
+        }
+    }
+
+    public class CPlayerGameSave : ISave
     {
         public enum_PlayerWeapon m_weapon;
         public int m_coins;
@@ -558,7 +584,7 @@ namespace GameSetting
         public List<ActionInfo> m_storedActions;
         public string m_GameSeed;
         public enum_StageLevel m_StageLevel;
-        public CPlayerLevelSave()
+        public CPlayerGameSave()
         {
             m_coins = 0;
             m_weapon = enum_PlayerWeapon.P92;
@@ -628,6 +654,7 @@ namespace GameSetting
         public bool m_IsNull => m_Index <= 0;
         public int m_Index { get; private set; }
         public enum_RarityLevel m_Level { get; private set; }
+
         public string ToXMLData() => m_Index.ToString() + "," + m_Level.ToString();
         public ActionInfo(string xmlData)
         {
@@ -635,6 +662,7 @@ namespace GameSetting
             m_Index = int.Parse(split[0]);
             m_Level = (enum_RarityLevel)Enum.Parse(typeof(enum_RarityLevel), split[1]);
         }
+
         public static ActionInfo Create(int index, enum_RarityLevel level) => new ActionInfo { m_Index = index, m_Level = level };
         public static ActionInfo Create(ActionBase action) =>action==null?new ActionInfo() { m_Index=-1,m_Level=0} : new ActionInfo { m_Index = action.m_Index, m_Level = action.m_rarity };
         public static List<ActionInfo> Create(List<ActionBase> actions)
@@ -643,6 +671,21 @@ namespace GameSetting
             actions.Traversal((ActionBase action) => { infos.Add(Create(action)); });
             return infos;
         }
+    }
+
+    public struct CampPlotInfo : IXmlPhrase
+    {
+        public int m_StartStamp { get; private set; }
+        public enum_CampFarmItem m_Status { get; private set; }
+        public string ToXMLData() => m_StartStamp.ToString() + "," + m_Status.ToString();
+        public CampPlotInfo(string xmlData)
+        {
+            string[] split = xmlData.Split(',');
+            m_StartStamp = int.Parse(split[0]);
+            m_Status = (enum_CampFarmItem)Enum.Parse(typeof(enum_CampFarmItem),split[1]);
+        }
+
+        public static CampPlotInfo Create(enum_CampFarmItem _status ) => new CampPlotInfo { m_StartStamp=-1,m_Status=_status};
     }
 
     public struct SWeapon : ISExcel

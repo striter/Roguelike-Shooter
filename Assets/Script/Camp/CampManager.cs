@@ -23,7 +23,7 @@ public class CampManager : GameManagerBase{
         base.Start();
         CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_BloomSpecific>();
         GameObjectManager.PresetRegistCommonObject();
-        GameObjectManager.SpawnEntityPlayer(new CPlayerLevelSave()).transform.SetPositionAndRotation(tf_PlayerStart.position,tf_PlayerStart.rotation);
+        GameObjectManager.SpawnEntityPlayer(new CPlayerGameSave()).transform.SetPositionAndRotation(tf_PlayerStart.position,tf_PlayerStart.rotation);
         CameraController.Instance.RotateCamera(new Vector2(tf_PlayerStart.eulerAngles.y,0));
     }
     

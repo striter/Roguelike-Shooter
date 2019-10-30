@@ -1707,7 +1707,7 @@ GameObject:
   - component: {fileID: 224727406844371960}
   - component: {fileID: 114173530237635566}
   m_Layer: 5
-  m_Name: UI_GamePlayerStatus
+  m_Name: UIT_GamePlayerStatus
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2497,6 +2497,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61e0a315ada30e84aace58ed3650f9fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tf_Container: {fileID: 0}
+  m_Animation: {fileID: 0}
+  m_Player: {fileID: 0}
+  tf_OutBattle: {fileID: 0}
+  btn_Bigmap: {fileID: 0}
+  btn_ActionStorage: {fileID: 0}
+  tf_InBattle: {fileID: 0}
+  btn_ActionShuffle: {fileID: 0}
+  img_ShuffleFill: {fileID: 0}
+  tf_ExpireData: {fileID: 0}
+  rtf_StatusData: {fileID: 0}
+  m_AmmoLayout: {fileID: 0}
+  tf_AmmoData: {fileID: 0}
+  img_ReloadFill: {fileID: 0}
+  m_AmmoGridWidth: 0
+  tf_ArmorData: {fileID: 0}
+  sld_Armor: {fileID: 0}
+  tf_HealthData: {fileID: 0}
+  sld_Health: {fileID: 0}
+  m_lastInteract: 0
+  rtf_InteractData: {fileID: 0}
+  txt_interactName: {fileID: 0}
+  txt_interactPrice: {fileID: 0}
+  m_ActionData: {fileID: 0}
+  tf_WeaponData: {fileID: 0}
+  m_WeaponName: {fileID: 0}
+  m_WeaponAction: {fileID: 0}
+  m_WeaponImage: {fileID: 0}
+  m_Coins: {fileID: 0}
+  m_targetInteractWeapon: {fileID: 0}
 --- !u!114 &114178716601257820
 MonoBehaviour:
   m_ObjectHideFlags: 1

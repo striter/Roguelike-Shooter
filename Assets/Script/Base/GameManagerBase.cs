@@ -177,43 +177,46 @@ public static class GameDataManager
         SheetProperties<SGenerateEntity>.Init();
         InitActions();
 
+        m_PlayerCampData = TGameData<CPlayerCampSave>.Read();
+        m_CampFarmData = TGameData<CCampFarmSave>.Read();
         m_PlayerGameData = TGameData<CPlayerGameSave>.Read();
-        m_PlayerLevelData = TGameData<CPlayerLevelSave>.Read();
     }
     #region GameSave
+    public static CPlayerCampSave m_PlayerCampData { get; private set; }
+    public static CCampFarmSave m_CampFarmData { get; private set; }
     public static CPlayerGameSave m_PlayerGameData { get; private set; }
-    public static CPlayerLevelSave m_PlayerLevelData { get; private set; }
-    public static void AdjuastInGameData(EntityCharacterPlayer data, GameLevelManager level)
+    public static void AdjustInGameData(EntityCharacterPlayer data, GameLevelManager level)
     {
-        m_PlayerLevelData.Adjust(data, level);
-        TGameData<CPlayerLevelSave>.Save(m_PlayerLevelData);
+        m_PlayerGameData.Adjust(data, level);
+        TGameData<CPlayerGameSave>.Save(m_PlayerGameData);
     }
     public static void OnGameFinished(bool win)
     {
-        m_PlayerLevelData = new CPlayerLevelSave();
-        TGameData<CPlayerLevelSave>.Save(m_PlayerLevelData);
-
-        if (win && m_PlayerGameData.m_GameDifficulty == m_PlayerGameData.m_DifficultyUnlocked)
-        {
-            m_PlayerGameData.m_DifficultyUnlocked++;
-            m_PlayerGameData.m_GameDifficulty++;
-        }
+        m_PlayerGameData = new CPlayerGameSave();
         TGameData<CPlayerGameSave>.Save(m_PlayerGameData);
+
+        if (!win)
+            return;
+        m_CampFarmData.UnlockPlot(m_PlayerCampData.m_GameDifficulty);
+        TGameData<CCampFarmSave>.Save(m_CampFarmData);
+
+        m_PlayerCampData.UnlockDifficulty();
+        TGameData<CPlayerCampSave>.Save(m_PlayerCampData);
     }
-    public static bool CanUseCredit(float credit) => m_PlayerGameData.f_Credits >= credit;
+    public static bool CanUseCredit(float credit) => m_PlayerCampData.f_Credits >= credit;
     public static void OnCreditGain(float credit)
     {
-        m_PlayerGameData.f_Credits += credit;
-        TGameData<CPlayerGameSave>.Save(m_PlayerGameData);
+        m_PlayerCampData.f_Credits += credit;
+        TGameData<CPlayerCampSave>.Save(m_PlayerCampData);
     }
 
     public static int SwitchGameDifficulty()
     {
-        m_PlayerGameData.m_GameDifficulty += 1;
-        if (m_PlayerGameData.m_GameDifficulty > m_PlayerGameData.m_DifficultyUnlocked)
-            m_PlayerGameData.m_GameDifficulty = 1;
-        TGameData<CPlayerGameSave>.Save(m_PlayerGameData);
-        return m_PlayerGameData.m_GameDifficulty;
+        m_PlayerCampData.m_GameDifficulty += 1;
+        if (m_PlayerCampData.m_GameDifficulty > m_PlayerCampData.m_DifficultyUnlocked)
+            m_PlayerCampData.m_GameDifficulty = 1;
+        TGameData<CPlayerCampSave>.Save(m_PlayerCampData);
+        return m_PlayerCampData.m_GameDifficulty;
     }
     #endregion
     #region ExcelData

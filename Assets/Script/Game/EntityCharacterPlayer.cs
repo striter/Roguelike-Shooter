@@ -334,6 +334,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 #endif
             return;
         }
+
 #if UNITY_EDITOR
         PCInputManager.Instance.DoBindingRemoval<EntityCharacterPlayer>();
         PCInputManager.Instance.RemoveMovementCheck();

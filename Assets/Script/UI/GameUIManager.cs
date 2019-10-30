@@ -12,8 +12,8 @@ public class GameUIManager : UIManager {
         base.Init();
         m_InGameSprites.Check();
         m_ActionSprites.Check();
-        ShowTools<UI_EntityHealth>();
-        ShowTools<UI_GamePlayerStatus>();
+        ShowTools<UIT_EntityHealth>();
+        ShowTools<UIT_GamePlayerStatus>();
         cvs_Overlay.transform.Find("Test/SeedTest").GetComponent<Text>().text = GameManager.Instance.m_GameLevel.m_Seed;   //Test
     }
 

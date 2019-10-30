@@ -132,7 +132,7 @@ public class GameManager : GameManagerBase
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityDeactivate, OnEntityRecycle);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterRevive, OnCharacterRevive);
-        m_GameLevel = M_TESTSEED != "" ? new GameLevelManager(M_TESTSEED, enum_StageLevel.Rookie, 1) : new GameLevelManager(GameDataManager.m_PlayerGameData,GameDataManager.m_PlayerLevelData);
+        m_GameLevel = M_TESTSEED != "" ? new GameLevelManager(M_TESTSEED, enum_StageLevel.Rookie, 1) : new GameLevelManager(GameDataManager.m_PlayerCampData,GameDataManager.m_PlayerGameData);
     }
     protected override void OnDestroy()
     {
@@ -169,7 +169,7 @@ public class GameManager : GameManagerBase
         EntityPreset();
         m_GameLevel.OnStageBegin();
         m_Enermies = GameObjectManager.RegistStyledIngameEnermies(m_GameLevel.m_GameStyle, m_GameLevel.m_GameStage);
-        m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_PlayerLevelData);
+        m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_PlayerGameData);
         LevelManager.Instance.GenerateAllEnviorment(m_GameLevel.m_GameStyle, m_GameLevel.m_GameSeed, OnLevelChanged, OnStageFinished);
         InitPostEffects(m_GameLevel.m_GameStyle);
         SetPostEffect_Vortex(false,m_LocalPlayer.tf_Head, 1f);
@@ -205,7 +205,7 @@ public class GameManager : GameManagerBase
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageFinish);
         if (m_GameLevel.B_NextStage)
         {
-            GameDataManager.AdjuastInGameData(m_LocalPlayer,m_GameLevel);
+            GameDataManager.AdjustInGameData(m_LocalPlayer,m_GameLevel);
             SetPostEffect_Vortex(true,m_LocalPlayer.tf_Head,1f);
             UIT_Loading.Instance.Play(1f,StartStage);
         }
@@ -578,7 +578,7 @@ public class GameLevelManager
     int m_levelEntered;
     int m_battleLevelEntered;
     #endregion
-    public GameLevelManager(CPlayerGameSave _gameSave,CPlayerLevelSave _playerSave):this(_playerSave.m_GameSeed, _playerSave.m_StageLevel, _gameSave.m_GameDifficulty)
+    public GameLevelManager(CPlayerCampSave _gameSave,CPlayerGameSave _playerSave):this(_playerSave.m_GameSeed, _playerSave.m_StageLevel, _gameSave.m_GameDifficulty)
     {
         m_enermiesKilled = _playerSave.m_kills;
     }
@@ -732,7 +732,7 @@ public static class GameObjectManager
         entity.SetSpawnerID(spanwer);
         return entity;
     }
-    public static EntityCharacterPlayer SpawnEntityPlayer(CPlayerLevelSave playerSave)
+    public static EntityCharacterPlayer SpawnEntityPlayer(CPlayerGameSave playerSave)
     {
         EntityCharacterPlayer player = SpawnEntity<EntityCharacterPlayer>(0,Vector3.up*10f, enum_EntityFlag.Player);
         player.SetPlayerInfo(playerSave.m_coins,GameDataManager.CreateActions(playerSave.m_storedActions));

@@ -16,6 +16,15 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
         OnRightDelta = _OnRightDelta;
         OnCanSendDelta = _OnCanSendDelta;
     }
+    private void OnDisable()
+    {
+        m_TrackLeft = null;
+        m_TrackRight = null;
+        m_leftDelta = Vector2.zero;
+        m_rightDelta = Vector2.zero;
+        UIT_JoyStick.Instance.OnDeactivate();
+    }
+
     private void Update()
     {
         if (UIT_JoyStick.Instance == null || OnCanSendDelta == null)
@@ -74,7 +83,7 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
         OnLeftDelta(m_leftDelta);
         OnRightDelta(m_rightDelta);
     }
-    
+
     class TouchTracker
     {
         static float f_halfHorizontal = Screen.width / 2;

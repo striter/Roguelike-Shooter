@@ -267,14 +267,16 @@ namespace TTiles
 }
 namespace TTime
 {
-    public static class TTime
+    public static class TTimeTools
     {
+        public static int GetTimeStampNow() => GetTimeStamp(DateTime.Now);
         public static int GetTimeStamp(DateTime dt)
         {
             DateTime dateStart = new DateTime(1970, 1, 1, 8, 0, 0);
             int timeStamp = Convert.ToInt32((dt - dateStart).TotalSeconds);
             return timeStamp;
         }
+
 
         public static DateTime GetDateTime(int timeStamp)
         {

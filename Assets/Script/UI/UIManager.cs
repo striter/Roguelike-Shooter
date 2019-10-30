@@ -11,7 +11,7 @@ public class UIManager :UIManagerBase,ISingleCoroutine
     Action OnReload;
     Action<bool> OnMainDown;
     Image img_main;
-    TouchDeltaManager m_TouchDelta;
+    protected TouchDeltaManager m_TouchDelta { get; private set; }
     public Camera m_Camera { get; private set; }
     public CameraEffectManager m_Effect { get; private set; }
     CB_GenerateOverlayUIGrabBlurTexture m_Blur;
@@ -43,7 +43,7 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         m_Blur = m_Effect.GetOrAddCameraEffect<CB_GenerateOverlayUIGrabBlurTexture>();
         m_Blur.SetEffect(1, 2f, 2);
 
-        m_TouchDelta = cvs_Camera.GetComponent<TouchDeltaManager>();
+        m_TouchDelta = tf_Control.GetComponent<TouchDeltaManager>();
         OnOptionsChanged();
         OptionsManager.event_OptionChanged += OnOptionsChanged;
 

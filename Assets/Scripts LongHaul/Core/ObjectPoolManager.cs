@@ -14,7 +14,6 @@ public class ObjectPoolManager
     }
 }
 public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y:MonoBehaviour {
-
     class ItemPoolInfo
     {
         public Y m_spawnItem;

@@ -1,7 +1,7 @@
 ﻿using GameSetting;
 using UnityEngine;
 using UnityEngine.UI;
-public class UI_GamePlayerStatus : UIToolsBase
+public class UIT_GamePlayerStatus : UIToolsBase
 {
     Transform tf_Container;
     Animation m_Animation;
