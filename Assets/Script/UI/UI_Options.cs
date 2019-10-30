@@ -117,6 +117,6 @@ public class UI_Options : UIPageBase {
         OptionsManager.m_OptionsData.m_SensitiveTap = (int)value;
         OptionsManager.OnOptionChanged();
     } 
-    void OnMainmenuBtnClick()=> UIManager.Instance.PlayMessageBox("UI_Title_ExitGame","UI_Intro_ExitGame","UI_Option_ExitGameConfirm",GameManager.Instance.OnExitGame);
+    void OnMainmenuBtnClick()=> UIManager.Instance.ShowMessageBox<UIM_Intro>().Play("UI_Title_ExitGame","UI_Intro_ExitGame","UI_Option_ExitGameConfirm",GameManager.Instance.OnExitGame);
 
 }

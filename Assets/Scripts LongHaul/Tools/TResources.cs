@@ -47,7 +47,7 @@ public class TResources
     }
 
     #region UI
-    public static UIManager InstantiateUIManager() => Instantiate<UIManager>(ConstPath.S_UI_Manager);
+    public static GameObject InstantiateUIManager() => Instantiate(ConstPath.S_UI_Manager);
     public static AtlasLoader GetUIAtlas_Numeric() => new AtlasLoader(Load<SpriteAtlas>(ConstPath.S_UI_Atlas_Numeric));
     public static AtlasLoader GetUIAtlas_Common() =>  new AtlasLoader(Load<SpriteAtlas>(ConstPath.S_UI_Atlas_Common));
     public static AtlasLoader GetUIAtlas_InGame() => new AtlasLoader(Load<SpriteAtlas>(ConstPath.S_UI_Atlas_InGame));
@@ -151,13 +151,15 @@ public class TResources
     #endregion
     #endregion
     #region Will Be Replaced By AssetBundle If Needed
-    public static T Instantiate<T>(string path, Transform toParent = null) where T : UnityEngine.Object
+    public static GameObject Instantiate(string path, Transform toParent=null)
     {
         GameObject obj = Resources.Load<GameObject>(path);
         if (obj == null)
             throw new Exception("Null Path Of :Resources/" + path.ToString());
-        return UnityEngine.Object.Instantiate(obj, toParent).GetComponent<T>();
+        return UnityEngine.Object.Instantiate(obj, toParent);
     }
+    public static T Instantiate<T>(string path, Transform toParent = null) where T : UnityEngine.Component=> Instantiate(path, toParent).GetComponent<T>();
+    
     public static T Load<T>(string path) where T : UnityEngine.Object
     {
         T prefab = Resources.Load<T>(path);

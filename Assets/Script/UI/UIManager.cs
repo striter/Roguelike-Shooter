@@ -6,50 +6,38 @@ using System;
 public class UIManager :UIManagerBase,ISingleCoroutine
 {
     public static new UIManager Instance { get; private set; }
-
-    Canvas cvs_Overlay, cvs_Camera;
-    Transform tf_Control, tf_Pages, tf_Tools;
-    Button btn_Reload;
-    public Action OnReload;
-    public Action<bool> OnMainDown;
+    protected Transform tf_Control { get; private set; }
+    protected Button btn_Reload { get; private set; }
+    Action OnReload;
+    Action<bool> OnMainDown;
     Image img_main;
     TouchDeltaManager m_TouchDelta;
     public Camera m_Camera { get; private set; }
     public CameraEffectManager m_Effect { get; private set; }
-    UI_MessageBoxIntro m_MessageBox;
     CB_GenerateOverlayUIGrabBlurTexture m_Blur;
+    AtlasLoader m_commonSprites;
 
-    public static void Activate(bool inGame) => TResources.InstantiateUIManager().Init(inGame);
-    protected void Init(bool inGame)
+    public static void Activate(bool inGame)
     {
+        GameObject uiObj = TResources.InstantiateUIManager();
+        if (inGame)
+            uiObj.AddComponent<GameUIManager>().Init();
+        else
+            uiObj.AddComponent<CampUIManager>().Init();
+    } 
+    protected override void Init()
+    {
+        base.Init();
         Instance = this;
-        cvs_Overlay = transform.Find("Overlay").GetComponent<Canvas>();
-        base.Init(cvs_Overlay);
-        m_MessageBox = cvs_Overlay.transform.Find("MessageBox").GetComponent<UI_MessageBoxIntro>();
-        cvs_Camera = transform.Find("Camera").GetComponent<Canvas>();
+        cvs_Camera.transform.Find("Settings").GetComponent<Button>().onClick.AddListener(() => { ShowPage<UI_Options>(true, 0f).SetInGame(GameManagerBase.Instance.B_InGame); });
 
         tf_Control = cvs_Camera.transform.Find("Control");
-        tf_Tools = cvs_Camera.transform.Find("Tools");
         img_main = tf_Control.Find("Main/Image").GetComponent<Image>();
         btn_Reload = tf_Control.Find("Reload").GetComponent<Button>();
         btn_Reload.onClick.AddListener(() => { OnReload?.Invoke(); });
         tf_Control.Find("Main").GetComponent<UIT_EventTriggerListener>().D_OnPress+=(bool down,Vector2 pos) => { OnMainDown?.Invoke(down); };
-        tf_Control.Find("Settings").GetComponent<Button>().onClick.AddListener(() => { ShowPage<UI_Options>(inGame,0f).SetInGame(inGame); });
 
-        tf_Pages = cvs_Overlay.transform.Find("Pages");
-
-
-        m_CommonSprites.Check();
-        if (inGame)
-        {
-            m_InGameSprites.Check();
-            m_ActionSprites.Check();
-            btn_Reload.SetActivate(inGame);
-            ShowTools<UI_EntityHealth>();
-            ShowTools<UI_GamePlayerStatus>();
-            cvs_Overlay.transform.Find("Test/SeedTest").GetComponent<Text>().text = GameManager.Instance.m_GameLevel.m_Seed;   //Test
-        }
-
+        m_commonSprites = TResources.GetUIAtlas_Common();
         m_Camera = transform.Find("UICamera").GetComponent<Camera>();
         m_Effect = m_Camera.GetComponent<CameraEffectManager>();
         m_Blur = m_Effect.GetOrAddCameraEffect<CB_GenerateOverlayUIGrabBlurTexture>();
@@ -87,59 +75,21 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         if (spriteName == m_mainSprite)
             return;
         m_mainSprite = spriteName;
-        img_main.sprite = m_CommonSprites[m_mainSprite];
+        img_main.sprite = m_commonSprites[m_mainSprite];
     }
 
-    public void OnGameFinished(GameLevelManager level,Action _OnButtonClick)
-    {
-        cvs_Camera.gameObject.SetActivate(false);
-        ShowPage<UI_GameResult>(true).Play(level, _OnButtonClick);
-    }
-    public void PlayMessageBox(string titleKey, string introKey, string confirmKey, Action _OnConfirmClick) => m_MessageBox.Begin(titleKey,introKey,confirmKey,_OnConfirmClick);
 
     public T ShowPage<T>(bool animate,float bulletTime=1f) where T : UIPageBase
     {
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PageOpen,bulletTime);
         if (bulletTime!=1f)
             GameManagerBase.SetBulletTime(true,bulletTime);
-        return UIPageBase.ShowPage<T>(tf_Pages, animate);
+        return base.ShowPage<T>(animate);
     }
     void OnPageExit()
     {
         GameManagerBase.SetBulletTime(false);
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PageClose);
     }
-    protected T ShowTools<T>() where T : UIToolsBase => UIToolsBase.Show<T>(tf_Tools);
 
-
-    AtlasLoader m_inGameSprites;
-    public AtlasLoader m_InGameSprites
-    {
-        get
-        {
-            if (m_inGameSprites == null)
-                m_inGameSprites = TResources.GetUIAtlas_InGame();
-            return m_inGameSprites;
-        }
-    }
-    AtlasLoader m_actionSprites;
-    public AtlasLoader m_ActionSprites
-    {
-        get
-        {
-            if (m_actionSprites == null)
-                m_actionSprites = TResources.GetUIAtlas_Action();
-            return m_actionSprites;
-        }
-    }
-    AtlasLoader m_commonSprites;
-    public AtlasLoader m_CommonSprites
-    {
-        get
-        {
-            if (m_commonSprites == null)
-                m_commonSprites = TResources.GetUIAtlas_Common();
-            return m_commonSprites;
-        }
-    }
 }

@@ -373,6 +373,8 @@ namespace GameSetting
         UI_PlayerExpireStatus,
         UI_PlayerWeaponStatus,
 
+        UI_CampStatus,
+
         UI_PageOpen,
         UI_PageClose,
     }
@@ -562,8 +564,8 @@ namespace GameSetting
             m_weapon = enum_PlayerWeapon.P92;
             m_weaponAction = new ActionInfo();
             m_storedActions = new List<ActionInfo>();
-            m_GameSeed = DateTime.Now.ToLongTimeString().ToString();
             m_StageLevel = enum_StageLevel.Rookie;
+            m_GameSeed = DateTime.Now.ToLongTimeString().ToString();
         }
         public void Adjust(EntityCharacterPlayer _player, GameLevelManager _level)
         {

@@ -83,8 +83,8 @@ public class UI_MapControl : UIPageBase,ISingleCoroutine {        //This Page Wo
         m_TileTypeAnim.Stop();
         m_TileTypeAnim.Play(PlayMode.StopAll);
         img_TileTypeCurrent.sprite = img_TileTypeSelect.sprite;
-        img_TileTypeSelect.sprite = UIManager.Instance.m_InGameSprites[tile.m_TileInfo.m_LevelType.GetSpriteName()];
-        img_TileBattleStatus1.sprite = UIManager.Instance.m_InGameSprites[battleStatus.GetSpriteName()];
+        img_TileTypeSelect.sprite = GameUIManager.Instance.m_InGameSprites[tile.m_TileInfo.m_LevelType.GetSpriteName()];
+        img_TileBattleStatus1.sprite = GameUIManager.Instance.m_InGameSprites[battleStatus.GetSpriteName()];
         img_TileBattleStatus2.sprite = img_TileBattleStatus1.sprite;
 
         bool locked = tile.m_TileInfo.m_TileLocking == enum_TileLocking.Locked || tile.m_TileInfo.m_TileAxis == LevelManager.Instance.m_currentLevel.m_TileAxis;

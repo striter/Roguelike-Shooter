@@ -11,7 +11,7 @@ public class UIPageBase : MonoBehaviour,ISingleCoroutine
     protected Action<bool> OnInteractFinished;
     protected float f_bgAlphaStart;
     bool b_useAnim;
-    public static T ShowPage<T>(Transform parentTransform,bool useAnim) where T:UIPageBase
+    public static T Show<T>(Transform parentTransform,bool useAnim) where T:UIPageBase
     {
         if (t_curPage == typeof(T))
             return null;
@@ -33,7 +33,7 @@ public class UIPageBase : MonoBehaviour,ISingleCoroutine
         btn_Cancel.onClick.AddListener(OnCancelBtnClick);
         if (useAnim)
             this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => {
-                tf_Container.localScale = UIManagerBase.m_PageScale * value;
+                tf_Container.localScale = UIManagerBase.m_FitScale * value;
                 img_Background.color = new Color(img_Background.color.r,img_Background.color.g,img_Background.color.b,value*f_bgAlphaStart);
             }
             , 0f, 1f, .5f,null,false));
@@ -48,7 +48,7 @@ public class UIPageBase : MonoBehaviour,ISingleCoroutine
         btn_Cancel.enabled = false;
         if (b_useAnim)
             this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => {
-                tf_Container.localScale = UIManagerBase.m_PageScale * value;
+                tf_Container.localScale = UIManagerBase.m_FitScale * value;
                 img_Background.color = new Color(img_Background.color.r, img_Background.color.g, img_Background.color.b, value * f_bgAlphaStart);
             }
             , 1f, 0f, .5f, OnHideFinished,false));

@@ -3,30 +3,42 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
-public class UIT_MessageBox : MonoBehaviour {
+public class UIMessageBoxBase : MonoBehaviour {
+
+    public static T Show<T>(Transform _parentTrans) where T : UIMessageBoxBase
+    {
+        T tempBase = TResources.Instantiate<T>("UI/MessageBoxes/" + typeof(T).ToString(), _parentTrans);
+        tempBase.Init();
+        return tempBase;
+    }
+
     protected Transform tf_Container { get; private set; }
     Button btn_Confirm;
     Action OnConfirmClick;
-    protected virtual void Awake()
+
+    protected virtual void Init()
     {
-        this.SetActivate(false);
         tf_Container = transform.Find("Container");
         btn_Confirm = tf_Container.Find("Confirm").GetComponent<Button>();
         btn_Confirm.onClick.AddListener(OnConfirm);
         tf_Container.Find("Cancel").GetComponent<Button>().onClick.AddListener(OnCancel);
+        transform.localScale = UIManagerBase.m_FitScale;
     }
-    protected void Begin(Action _OnConfirmClick)
+    protected virtual void OnDestroy()
     {
-        this.SetActivate(true);
+    }
+
+    protected void Play(Action _OnConfirmClick)
+    {
         OnConfirmClick = _OnConfirmClick;
     }
     void OnConfirm()
     {
-        this.SetActivate(false);
         OnConfirmClick();
+        OnCancel();
     }
     void OnCancel()
     {
-        this.SetActivate(false);
+        Destroy(this.gameObject);
     }
 }

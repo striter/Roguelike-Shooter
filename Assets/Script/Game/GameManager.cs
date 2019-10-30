@@ -220,7 +220,7 @@ public class GameManager : GameManagerBase
         m_GameLevel.OnGameFinished(win);
         GameDataManager.OnGameFinished(win);
         GameDataManager.OnCreditGain(m_GameLevel.F_CreditGain);
-        UIManager.Instance.OnGameFinished(m_GameLevel, OnExitGame);
+        GameUIManager.Instance.OnGameFinished(m_GameLevel, OnExitGame);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameFinish, win);
     }
     #endregion

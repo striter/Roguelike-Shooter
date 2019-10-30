@@ -5,20 +5,20 @@ using UnityEngine.UI;
 using GameSetting;
 using System;
 
-public class UI_MessageBoxRemove : UIT_MessageBox {
+public class UIM_ActionRemove : UIMessageBoxBase {
     UIGI_ActionItemRichIntro m_Item;
     UIT_TextExtend m_Amount;
-    protected override void Awake()
+    protected override void Init()
     {
-        base.Awake();
+        base.Init();
         m_Item = tf_Container.Find("ActionItem").GetComponent<UIGI_ActionItemRichIntro>();
         m_Item.Init();
         m_Amount =tf_Container.Find("Intro/Coin/Amount").GetComponent<UIT_TextExtend>();
     }
     public void Play(int amount,ActionBase action,Action OnConfirmClick)
     {
-        base.Begin(OnConfirmClick);
+        base.Play(OnConfirmClick);
         m_Amount.text = amount.ToString();
-        m_Item.SetInfo(action, "FFDA6BFF");
+        m_Item.SetCommonIntro(action, "FFDA6BFF");
     }
 }

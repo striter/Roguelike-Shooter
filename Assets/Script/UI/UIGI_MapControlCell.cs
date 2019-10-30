@@ -32,7 +32,7 @@ public class UIGI_MapControlCell : UIT_GridDefaultItem {
         }
         tf_TileLocked.SetActivate(levelInfo.m_TileLocking== enum_TileLocking.Locked);
         tf_PlayerAt.SetActivate(playerAt);
-        img_Level.sprite =UIManager.Instance.m_InGameSprites[levelInfo.m_LevelType.GetSpriteName()];
+        img_Level.sprite = GameUIManager.Instance.m_InGameSprites[levelInfo.m_LevelType.GetSpriteName()];
         foreach (enum_TileDirection direction in TTiles.TTiles.m_FourDirections)
             dic_TileConnections[direction].SetActivate(connectionActivate[direction]);
     }
