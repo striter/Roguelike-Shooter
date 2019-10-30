@@ -9,6 +9,7 @@ public class UIManager :UIManagerBase,ISingleCoroutine
 
     Canvas cvs_Overlay, cvs_Camera;
     Transform tf_Control, tf_Pages, tf_Tools;
+    Button btn_Reload;
     public Action OnReload;
     public Action<bool> OnMainDown;
     Image img_main;
@@ -30,20 +31,23 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         tf_Control = cvs_Camera.transform.Find("Control");
         tf_Tools = cvs_Camera.transform.Find("Tools");
         img_main = tf_Control.Find("Main/Image").GetComponent<Image>();
-        tf_Control.Find("Reload").GetComponent<Button>().onClick.AddListener(() => { OnReload?.Invoke(); });
+        btn_Reload = tf_Control.Find("Reload").GetComponent<Button>();
+        btn_Reload.onClick.AddListener(() => { OnReload?.Invoke(); });
         tf_Control.Find("Main").GetComponent<UIT_EventTriggerListener>().D_OnPress+=(bool down,Vector2 pos) => { OnMainDown?.Invoke(down); };
         tf_Control.Find("Settings").GetComponent<Button>().onClick.AddListener(() => { ShowPage<UI_Options>(inGame,0f).SetInGame(inGame); });
 
         tf_Pages = cvs_Overlay.transform.Find("Pages");
 
 
+        m_CommonSprites.Check();
         if (inGame)
         {
+            m_InGameSprites.Check();
+            m_ActionSprites.Check();
+            btn_Reload.SetActivate(inGame);
             ShowTools<UI_EntityHealth>();
             ShowTools<UI_GamePlayerStatus>();
             cvs_Overlay.transform.Find("Test/SeedTest").GetComponent<Text>().text = GameManager.Instance.m_GameLevel.m_Seed;   //Test
-            m_InGameSprites.Check();
-            m_CommonSprites.Check();
         }
 
         m_Camera = transform.Find("UICamera").GetComponent<Camera>();
