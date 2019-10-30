@@ -12,7 +12,7 @@ public class UI_GamePlayerStatus : UIToolsBase
     Button btn_ActionStorage;
 
     Transform tf_InBattle;
-    UIC_ActionEnergy m_ActionAmount;
+    UIC_ActionEnergy m_ActionEnergy;
     Button  btn_ActionShuffle;
     Image img_ShuffleFill;
     UIT_GridControllerMonoItem<UIGI_ActionItemHold> m_ActionGrid;
@@ -61,7 +61,7 @@ public class UI_GamePlayerStatus : UIToolsBase
         btn_Bigmap.onClick.AddListener(() => { UIManager.Instance.ShowPage<UI_MapControl>(true); });
 
         tf_InBattle = tf_Container.Find("InBattle");
-        m_ActionAmount = new UIC_ActionEnergy(tf_InBattle.Find("ActionAmount"));
+        m_ActionEnergy = new UIC_ActionEnergy(tf_InBattle.Find("ActionEnergy"));
         m_ActionGrid = new UIT_GridControllerMonoItem<UIGI_ActionItemHold>(tf_InBattle.Find("ActionGrid"));
         btn_ActionShuffle = tf_InBattle.Find("ActionShuffle").GetComponent<Button>();
         btn_ActionShuffle.onClick.AddListener(OnActionShuffleClick);
@@ -148,7 +148,7 @@ public class UI_GamePlayerStatus : UIToolsBase
             m_Player = _player;
 
         m_Coins.text=_player.m_PlayerInfo.m_Coins.ToString();
-        m_ActionAmount.SetValue(_player.m_PlayerInfo.m_ActionEnergy);
+        m_ActionEnergy.SetValue(_player.m_PlayerInfo.m_ActionEnergy);
         img_ShuffleFill.fillAmount = _player.m_PlayerInfo.f_shuffleScale;
         rtf_StatusData.SetWorldViewPortAnchor(m_Player.tf_Head.position, CameraController.Instance.m_Camera, Time.deltaTime * 10f);
 
@@ -301,11 +301,11 @@ public class UI_GamePlayerStatus : UIToolsBase
     }
     void OnActionPressDuration()
     {
-        UIManager.Instance.ShowPage<UI_ActionPack>(false,0f).Show(false,m_Player.m_PlayerInfo) ;
+        UIManager.Instance.ShowPage<UI_ActionBattle>(false,0f).Show(m_Player.m_PlayerInfo) ;
     }
     void OnActionStorageClick()
     {
-        UIManager.Instance.ShowPage<UI_ActionPack>(true).Show(true,m_Player.m_PlayerInfo);
+        UIManager.Instance.ShowPage<UI_ActionPack>(true).Show(m_Player.m_PlayerInfo);
     }
     void OnActionShuffleClick()
     {

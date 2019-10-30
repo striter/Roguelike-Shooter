@@ -29,7 +29,8 @@ public class UIPageBase : MonoBehaviour,ISingleCoroutine
         tf_Container = transform.Find("Container");
         img_Background = transform.Find("Background").GetComponent<Image>();
         f_bgAlphaStart = img_Background.color.a;
-        btn_Cancel = tf_Container.Find("BtnCancel").GetComponent<Button>();
+        Transform wholeCancel = transform.Find("BtnCancel");
+        btn_Cancel = wholeCancel==null? tf_Container.Find("BtnCancel").GetComponent<Button>(): wholeCancel.GetComponent<Button>();
         btn_Cancel.onClick.AddListener(OnCancelBtnClick);
         if (useAnim)
             this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => {

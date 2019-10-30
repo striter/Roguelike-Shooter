@@ -1576,7 +1576,7 @@ GameObject:
   - component: {fileID: 222073056955162472}
   - component: {fileID: 114289704532252060}
   m_Layer: 14
-  m_Name: ActionAmount
+  m_Name: ActionEnergy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

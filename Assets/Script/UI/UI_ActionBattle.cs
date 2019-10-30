@@ -1,16 +1,17 @@
 ﻿using GameSetting;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+public class UI_ActionBattle : UIPageBase {
 
-public class UI_ActionPack : UIPageBase {
     UIT_GridControllerMonoItem<UIGI_ActionItemDetail> m_Grid;
     PlayerInfoManager m_Info;
+    UIC_ActionEnergy m_Energy;
     protected override void Init(bool useAnim)
     {
         base.Init(useAnim);
-        m_Grid = new UIT_GridControllerMonoItem<UIGI_ActionItemDetail>(tf_Container.Find("ScrollView/Viewport/ActionGrid"));
+        m_Grid = new UIT_GridControllerMonoItem<UIGI_ActionItemDetail>(tf_Container.Find("ActionGrid"));
+        m_Energy = new UIC_ActionEnergy(tf_Container.Find("ActionEnergy"));
     }
     public void Show(PlayerInfoManager _info)
     {
@@ -27,8 +28,13 @@ public class UI_ActionPack : UIPageBase {
     void OnActionChanged(PlayerInfoManager info)
     {
         m_Grid.ClearGrid();
-        List<ActionBase> targetList = info.m_ActionStored;
-        for (int i = 0; i <targetList.Count; i++)
-            m_Grid.AddItem(i).SetInfo(targetList[i],null,true);
+        List<ActionBase> targetList =  info.m_ActionHolding;
+        for (int i = 0; i < targetList.Count; i++)
+            m_Grid.AddItem(i).SetInfo(targetList[i], OnItemClick,  info.B_EnergyCostable(targetList[i]));
+        m_Energy.SetValue(info.m_ActionEnergy);
+    }
+    void OnItemClick(int index)
+    {
+        m_Info.TryUseHoldingAction(index);
     }
 }

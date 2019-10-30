@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 081334a023db2704db167d2dfc323270, type: 3}
-    totalSpriteSurfaceArea: 2890486
+    totalSpriteSurfaceArea: 3004046
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -40,6 +40,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 3921f815ededf9242a59e1ff34a6f63a, type: 3}
   - {fileID: 21300000, guid: 1c419ff7ab626414c95b82814843f9e2, type: 3}
   - {fileID: 21300000, guid: f707edb8147ad104b8e3b9a3fc7ed413, type: 3}
+  - {fileID: 21300000, guid: 8079c1dcb5b56844bb9197a46bb0b0f9, type: 3}
   - {fileID: 21300000, guid: d783a5f7194904445969c59766ac8443, type: 3}
   - {fileID: 21300000, guid: 18a7c2d7df8a6854e9bc2e3248a93804, type: 3}
   - {fileID: 21300000, guid: 006ea73e2bf56dc4e959b2bc4171da77, type: 3}
@@ -104,6 +105,7 @@ SpriteAtlas:
   - action_frame_common
   - action_main_common
   - result_missioncomplete_title_en
+  - background_usecard_angle
   - result_missionfailed_title_en
   - result_missionfailed_title_cn
   - result_missioncomplete_title_cn
@@ -152,7 +154,7 @@ SpriteAtlas:
   - health_bg
   - result_icon_goal
   - action_levelup_arrow
-  - background_map_angle
+  - background_angle
   - revive_icon_video
   - status_map_triangle
   - action_level_blank
