@@ -30,7 +30,7 @@ public class CampEnvironment : SimpleSingletonMono<CampEnvironment>
     }
     private void OnDisable()
     {
-        ObjectPoolManager<enum_CampFarmItem, CampFarmItem>.ClearAll();
+        ObjectPoolManager<enum_CampFarmItem, CampFarmItem>.OnSceneChange();
     }
 
     Transform previousTrans;

@@ -659,12 +659,12 @@ public static class GameObjectManager
     }
     public static void RecycleAllObject()
     {
-        ObjectPoolManager<int, SFXBase>.ClearAll();
-        ObjectPoolManager<int, EntityBase>.ClearAll();
-        ObjectPoolManager<enum_Interaction, InteractBase>.ClearAll();
-        ObjectPoolManager<LevelItemBase, LevelItemBase>.ClearAll();
-        ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.ClearAll();
-        ObjectPoolManager<int, LevelBase>.ClearAll();
+        ObjectPoolManager<int, SFXBase>.ForceClearAll();
+        ObjectPoolManager<int, EntityBase>.ForceClearAll();
+        ObjectPoolManager<enum_Interaction, InteractBase>.ForceClearAll();
+        ObjectPoolManager<LevelItemBase, LevelItemBase>.ForceClearAll();
+        ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.ForceClearAll();
+        ObjectPoolManager<int, LevelBase>.ForceClearAll();
     }
     #region Register
     public static void PresetRegistCommonObject()

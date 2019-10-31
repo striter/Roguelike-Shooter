@@ -43,7 +43,7 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         m_Blur = m_Effect.GetOrAddCameraEffect<CB_GenerateOverlayUIGrabBlurTexture>();
         m_Blur.SetEffect(1, 2f, 2);
 
-        m_TouchDelta = tf_Control.GetComponent<TouchDeltaManager>();
+        m_TouchDelta = transform.GetComponent<TouchDeltaManager>();
         OnOptionsChanged();
         OptionsManager.event_OptionChanged += OnOptionsChanged;
 
@@ -63,11 +63,16 @@ public class UIManager :UIManagerBase,ISingleCoroutine
     void OnOptionsChanged()=> UIT_JoyStick.Instance.SetMode(OptionsManager.m_OptionsData.m_JoyStickMode);
     public void DoBinding(Action<Vector2> _OnLeftDelta,Action<Vector2> _OnRightDelta,Action _OnReload,Action<bool> _OnMainDown )
     {
-        m_TouchDelta.DoBinding(_OnLeftDelta, _OnRightDelta, () => !UIPageBase.m_PageOpening);
+        m_TouchDelta.AddLRBinding(_OnLeftDelta, _OnRightDelta, () => !UIPageBase.m_PageOpening);
         OnReload = _OnReload;
         OnMainDown = _OnMainDown;
     }
-
+    public void RemoveBinding()
+    {
+        m_TouchDelta.RemoveAllBinding();
+        OnReload = null;
+        OnMainDown = null;
+    }
     string m_mainSprite;
     void OnPlayerStatusChanged(EntityCharacterPlayer player)
     {
@@ -92,4 +97,16 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PageClose);
     }
 
+#if UNITY_EDITOR
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+            OnMainDown?.Invoke(true);
+        else if (Input.GetMouseButtonUp(0))
+            OnMainDown?.Invoke(false);
+
+        if (Input.GetKeyDown(KeyCode.R))
+            OnReload?.Invoke();
+    }
+#endif
 }

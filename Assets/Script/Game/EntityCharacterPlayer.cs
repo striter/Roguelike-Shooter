@@ -54,10 +54,10 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected override void OnDisable()
     {
         base.OnDisable();
-        SetBinding(false);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel); ;
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel); 
+        SetBinding(false);
     }
    
     public void SetPlayerInfo(int coins, List<ActionBase> storedActions)
@@ -323,23 +323,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void SetBinding(bool on)
     {
         if (on)
-        {
-#if UNITY_EDITOR
-            PCInputManager.Instance.AddMouseRotateDelta(OnRotateDelta);
-            PCInputManager.Instance.AddMovementDelta(OnMovementDelta);
-            PCInputManager.Instance.AddBinding<EntityCharacterPlayer>(enum_BindingsName.Fire, OnMainButtonDown);
-            PCInputManager.Instance.AddBinding<EntityCharacterPlayer>(enum_BindingsName.Reload, OnReloadDown);
-#else
             UIManager.Instance.DoBinding(OnMovementDelta, OnRotateDelta, OnReloadDown, OnMainButtonDown);
-#endif
-            return;
-        }
-
-#if UNITY_EDITOR
-        PCInputManager.Instance.DoBindingRemoval<EntityCharacterPlayer>();
-        PCInputManager.Instance.RemoveMovementCheck();
-        PCInputManager.Instance.RemoveRotateCheck();
-#endif
+        else
+            UIManager.Instance.RemoveBinding();
     }
 
     protected class PlayerAnimator : CharacterAnimator

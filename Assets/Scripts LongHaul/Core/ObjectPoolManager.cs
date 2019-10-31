@@ -115,10 +115,11 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y:MonoBehaviour {
             RecycleAll(temp);
         });
     }
-    public static void ClearAll(Predicate<T> predict=null)
+    public static void OnSceneChange() => d_ItemInfos.Clear();
+    public static void ForceClearAll(Predicate<T> predict = null)
     {
         d_ItemInfos.Traversal((T temp, ItemPoolInfo info) => {
-            if (predict!=null && !predict(temp))
+            if (predict != null && !predict(temp))
                 return;
 
             GameObject.Destroy(info.m_spawnItem.gameObject);
@@ -129,7 +130,7 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y:MonoBehaviour {
                 GameObject.Destroy(info.l_Active[i].gameObject);
 
             d_ItemInfos.Remove(temp);
-        },true);
+        }, true);
     }
 }
 public class ObjectPoolMono<T, Y> : ObjectPoolSimple<T> where Y : Component
