@@ -12,12 +12,12 @@ public class UIT_CampStatus : UIToolsBase {
         base.Init();
         m_Credit = transform.Find("Credit").GetComponent<Text>();
         OnCampStatus();
-        TBroadCaster<enum_BC_UIStatus>.Add(enum_BC_UIStatus.UI_CampStatus, OnCampStatus);
+        TBroadCaster<enum_BC_UIStatus>.Add(enum_BC_UIStatus.UI_CampCreditStatus, OnCampStatus);
     }
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        TBroadCaster<enum_BC_UIStatus>.Remove(enum_BC_UIStatus.UI_CampStatus, OnCampStatus);
+        TBroadCaster<enum_BC_UIStatus>.Remove(enum_BC_UIStatus.UI_CampCreditStatus, OnCampStatus);
     }
 
     void OnCampStatus()

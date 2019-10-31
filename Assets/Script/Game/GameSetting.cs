@@ -58,6 +58,7 @@ namespace GameSetting
 
         public const float F_LevelTileSize = 2f;        //Cube Size For Level Tiles
 
+        public const int I_CampFarmProfitTickDuration = 15;
         public const int I_CampFarmItemAcquire = 70;
         public const int I_CampFarmItemDecayStampDuration = 60; //57600;      //16 hours
     }
@@ -392,7 +393,8 @@ namespace GameSetting
         UI_PlayerExpireStatus,
         UI_PlayerWeaponStatus,
 
-        UI_CampStatus,
+        UI_CampCreditStatus,
+        UI_CampFarmProfitStatus,
 
         UI_PageOpen,
         UI_PageClose,

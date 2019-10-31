@@ -46,6 +46,13 @@ public class CampManager : GameManagerBase{
         B_Farming = false;
         DetachCamera();
     }
+
+    public void OnCreditStatus(float credit)
+    {
+        GameDataManager.OnCreditGain(credit);
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_CampCreditStatus);
+    }
+
     public void AttachCamera(Transform attachTo)
     {
         CameraController.Instance.Attach(attachTo);
