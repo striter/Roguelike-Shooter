@@ -75,17 +75,9 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
         }
         public override void Enable()
         {
-#if UNITY_EDITOR
-            PCInputManager.Instance.AddMouseRotateDelta(OnRightDelta);
-            PCInputManager.Instance.AddMovementDelta(OnLeftDelta);
-#endif
         }
         public override void Disable()
         {
-#if UNITY_EDITOR
-            PCInputManager.Instance.RemoveMovementCheck();
-            PCInputManager.Instance.RemoveRotateCheck();
-#endif
             m_TrackLeft = null;
             m_TrackRight = null;
             m_leftDelta = Vector2.zero;
@@ -143,6 +135,12 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
                     }
                 }
             }
+
+#if UNITY_EDITOR
+            m_leftDelta = PCInputManager.Instance.m_MovementDelta;
+            m_rightDelta = PCInputManager.Instance.m_RotateDelta;
+#endif
+
             if (!OnCanSendDelta())
             {
                 m_leftDelta = Vector2.zero;

@@ -1,33 +1,28 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using GameSetting;
 public class UIT_CampStatus : UIToolsBase {
     Text m_Credit;
-
-    Transform tf_Farm;
-    Button m_Buy, m_Exit;
+    
     protected override void Init()
     {
         base.Init();
         m_Credit = transform.Find("Credit").GetComponent<Text>();
-        tf_Farm = transform.Find("Farm");
-        m_Buy = tf_Farm.Find("Buy").GetComponent<Button>();
-        m_Buy.onClick.AddListener(OnFarmBuyClicked);
-        m_Exit = tf_Farm.Find("Exit").GetComponent<Button>();
-        m_Exit.onClick.AddListener(OnFarmExitClicked);
+        OnCampStatus();
+        TBroadCaster<enum_BC_UIStatus>.Add(enum_BC_UIStatus.UI_CampStatus, OnCampStatus);
+    }
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        TBroadCaster<enum_BC_UIStatus>.Remove(enum_BC_UIStatus.UI_CampStatus, OnCampStatus);
     }
 
-    void OnFarmBuyClicked()
+    void OnCampStatus()
     {
-    }
-    void OnFarmExitClicked()
-    {
+        m_Credit.text = GameDataManager.m_PlayerCampData.f_Credits.ToString();
     }
 
-    public void SetInFarm(bool inFarm)
-    {
-        tf_Farm.SetActivate(inFarm);
-    }
 }

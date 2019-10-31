@@ -18,4 +18,8 @@ public class UIToolsBase : MonoBehaviour {
     {
 
     }
+    protected void Hide()
+    {
+        Destroy(this.gameObject);
+    }
 }

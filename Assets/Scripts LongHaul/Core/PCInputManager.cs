@@ -46,8 +46,6 @@ public class PCInputManager : SingletonMono<PCInputManager>
         KeyBindings.CreatePresetBinding(enum_BindingsName.Jump, enum_PressStatus.Down, KeyCode.Space);
         KeyBindings.CreatePresetBinding(enum_BindingsName.FlashLight, enum_PressStatus.Down, KeyCode.F);
     }
-    Action<Vector2> OnKeyBoardMovement;
-    Action<Vector2> OnMouseRotate;
     #region KeyBindings
     static List<KeyBindings> List_BindingList = new List<KeyBindings>();
     static Dictionary<Type, List<Action>> Dic_BindingRemoval = new Dictionary<Type, List<Action>>();
@@ -93,6 +91,7 @@ public class PCInputManager : SingletonMono<PCInputManager>
         }
     }
     #endregion
+    public Vector2 m_MovementDelta,m_RotateDelta;
     public void AddBinding<T>(enum_BindingsName name, Action trigger)
     {
         KeyBindings binding = List_BindingList.Find(p => p.Name == name);
@@ -210,49 +209,32 @@ public class PCInputManager : SingletonMono<PCInputManager>
                         Debug.LogError("How A None Status Binding Set?");
                         break;
                 }
-                if (OnKeyBoardMovement != null)
+
+                keyName = List_BindingList[i].Name;
+                switch (keyName)
                 {
-                    keyName = List_BindingList[i].Name;
-                    switch (keyName)
-                    {
-                        case enum_BindingsName.Up:
-                            up = Input.GetKey(keyCode[j]) ? 1 : 0;
-                            break;
-                        case enum_BindingsName.Down:
-                            down = Input.GetKey(keyCode[j]) ? 1 : 0;
-                            break;
-                        case enum_BindingsName.Left:
-                            left = Input.GetKey(keyCode[j]) ? 1 : 0;
-                            break;
-                        case enum_BindingsName.Right:
-                            right = Input.GetKey(keyCode[j]) ? 1 : 0;
-                            break;
-                    }
+                    case enum_BindingsName.Up:
+                        up = Input.GetKey(keyCode[j]) ? 1 : 0;
+                        break;
+                    case enum_BindingsName.Down:
+                        down = Input.GetKey(keyCode[j]) ? 1 : 0;
+                        break;
+                    case enum_BindingsName.Left:
+                        left = Input.GetKey(keyCode[j]) ? 1 : 0;
+                        break;
+                    case enum_BindingsName.Right:
+                        right = Input.GetKey(keyCode[j]) ? 1 : 0;
+                        break;
                 }
+
                 if (triggerd)
                 {
                     break;
                 }
             }
         }
-        OnKeyBoardMovement?.Invoke(new Vector2(right - left, up - down));
-        OnMouseRotate?.Invoke(new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")));
-    }
-    public void AddMovementDelta(Action<Vector2> _OnMovement)
-    {
-        OnKeyBoardMovement = _OnMovement;
-    }
-    public void RemoveMovementCheck()
-    {
-        OnKeyBoardMovement = null;
-    }
-    public void AddMouseRotateDelta(Action<Vector2> _OnRotate)
-    {
-        OnMouseRotate = _OnRotate;
-    }
-    public void RemoveRotateCheck()
-    {
-        OnMouseRotate = null;
+        m_MovementDelta= new Vector2(right - left, up - down);
+        m_RotateDelta = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
     }
     #region For RTS Only
     int ScreenHeight= Screen.height;

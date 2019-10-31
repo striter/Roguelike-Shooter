@@ -34,4 +34,27 @@ public class CampManager : GameManagerBase{
     {
         SwitchScene(scene);
     }
+
+    public bool B_Farming { get; private set; } = false;
+    public void OnFarmNPCChatted()
+    {
+        B_Farming = true;
+        AttachCamera( CampEnvironment.Instance.BeginFarm(OnFarmExit));
+    }
+    public void OnFarmExit()
+    {
+        B_Farming = false;
+        DetachCamera();
+    }
+
+    public void AttachCamera(Transform attachTo)
+    {
+        CameraController.Instance.Attach(attachTo);
+        CameraController.Instance.CameraLookAt(attachTo);
+    }
+    public void DetachCamera()
+    {
+        CameraController.Instance.Attach(tf_PlayerHead);
+        CameraController.Instance.CameraLookAt(null);
+    }
 }

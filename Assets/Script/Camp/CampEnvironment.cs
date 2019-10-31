@@ -35,21 +35,15 @@ public class CampEnvironment : SimpleSingletonMono<CampEnvironment>
         ObjectPoolManager<enum_CampFarmItem, CampFarmItem>.OnSceneChange();
     }
     
-    public void BeginFarm()
+    public Transform BeginFarm(Action OnExitFarm)
     {
-        Debug.Log("Begin");
-        CameraController.Instance.Attach(tf_FarmCameraPos);
-        CameraController.Instance.CameraLookAt(tf_FarmCameraPos);
-        CampUIManager.Instance.BeginFarm(OnDragDown,OnDrag, OnExitFarm);
+        CampUIManager.Instance.BeginFarm(OnDragDown,OnDrag, OnFarmBuy,OnExitFarm);
+        return tf_FarmCameraPos;
     }
 
-    void OnExitFarm()
-    {
-        Debug.Log("Exit");
-        CameraController.Instance.Attach(CampManager.Instance.tf_PlayerHead);
-        CameraController.Instance.CameraLookAt(null);
-    }
-
+    void OnFarmBuy()
+    { 
+}
 
     CampFarmItem m_Item;
     void OnDragDown(bool down,Vector2 inputPos)

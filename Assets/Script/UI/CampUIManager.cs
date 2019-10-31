@@ -5,33 +5,31 @@ using UnityEngine;
 
 public class CampUIManager : UIManager {
     public static new CampUIManager Instance { get; private set; }
-    UIT_CampStatus m_Status;
     protected override void Init()
     {
         base.Init();
         Instance = this;
         btn_Reload.SetActivate(false);
 
-        m_Status = ShowTools<UIT_CampStatus>();
-        m_Status.SetInFarm(false);
+        ShowTools<UIT_CampStatus>();
     }
     protected override void OnDestroy()
     {
         base.OnDestroy();
         Instance = null;
     }
-
-
-    public void BeginFarm(Action<bool,Vector2 pos> _OnDragDown, Action<Vector2> _OnDrag,Action _OnExitFarm)
+    
+    Action OnExitFarm;
+    public void BeginFarm(Action<bool,Vector2> _OnDragDown, Action<Vector2> _OnDrag, Action _OnBuyClick, Action _OnExitFarm)
     {
-        m_Status.SetInFarm(true);
-        tf_Control.SetActivate(false);
-        m_TouchDelta.AddDragBinding(_OnDragDown,_OnDrag);
+        m_TouchDelta.AddDragBinding(_OnDragDown, _OnDrag);
+        tf_Control.localScale = Vector3.zero;
+        OnExitFarm = _OnExitFarm;
+        ShowTools<UIT_FarmStatus>().Play(ExitFarm, _OnBuyClick);
     }
-    void EndFarm()
+    void ExitFarm()
     {
-        m_Status.SetInFarm(false);
-        tf_Control.SetActivate(true);
+        tf_Control.localScale=Vector3.one;
         m_TouchDelta.RemoveExtraBinding();
         OnExitFarm?.Invoke();
     }

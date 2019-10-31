@@ -9,6 +9,6 @@ public class InteractCampNPCFarm : InteractCampNPC {
     protected override void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)
     {
         base.OnInteractSuccessful(_interactTarget);
-        CampEnvironment.Instance.BeginFarm();
+        CampManager.Instance.OnFarmNPCChatted();
     }
 }
