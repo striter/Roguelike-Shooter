@@ -86,7 +86,7 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
     }
 
 
-    public bool InputRayCheck(Vector3 inputPos, int layerMask, ref RaycastHit rayHit)
+    public bool InputRayCheck(Vector2 inputPos, int layerMask, ref RaycastHit rayHit)
     {
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
         {

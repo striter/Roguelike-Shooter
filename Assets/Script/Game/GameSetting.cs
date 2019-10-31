@@ -54,10 +54,11 @@ namespace GameSetting
         public const float F_CoinsAcceleration = 8f;
         public const int I_HealthPickupAmount = 25;
         public const int I_ArmorPickupAmount = 25;
-
         public const int I_HealthTradeAmount = 50;
 
         public const float F_LevelTileSize = 2f;        //Cube Size For Level Tiles
+
+        public const int I_CampFarmItemAcquire = 70;
     }
 
     public static class GameExpression
@@ -158,6 +159,8 @@ namespace GameSetting
                      { enum_CharacterType.Elite, CoinsGenerateInfo.Create( 8,15, 100, new RangeInt(6, 6)) }});
             }
         }
+
+        public static readonly Dictionary<enum_CampFarmItem, int> GetFarmGeneratePercentage = new Dictionary< enum_CampFarmItem,int>() { {  enum_CampFarmItem.Progress1 ,60},{enum_CampFarmItem.Progress2 ,30},{enum_CampFarmItem.Progress3 ,6},{enum_CampFarmItem.Progress4,3},{ enum_CampFarmItem.Progress5,1} };
     }
 
     public static class UIConst

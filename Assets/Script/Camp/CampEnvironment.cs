@@ -8,6 +8,9 @@ public class CampEnvironment : SimpleSingletonMono<CampEnvironment>
 {
     Transform tf_Farm, tf_Plot, tf_Status, tf_FarmCameraPos;
     List<CampFarmPlot> m_Plots=new List<CampFarmPlot>();
+    Action OnExitFarm;
+    CampFarmPlot m_HybridPlot;
+    RaycastHit m_rayHit;
     protected override void Awake()
     {
         base.Awake();
@@ -34,24 +37,110 @@ public class CampEnvironment : SimpleSingletonMono<CampEnvironment>
     {
         ObjectPoolManager<enum_CampFarmItem, CampFarmItem>.OnSceneChange();
     }
-    
-    public Transform BeginFarm(Action OnExitFarm)
+
+    public Transform BeginFarm(Action _OnExitFarm)
     {
-        CampUIManager.Instance.BeginFarm(OnDragDown,OnDrag, OnFarmBuy,OnExitFarm);
+        OnExitFarm = _OnExitFarm;
+        CampUIManager.Instance.BeginFarm(OnDragDown,OnDrag, OnFarmBuy,EndFarm);
         return tf_FarmCameraPos;
     }
 
-    void OnFarmBuy()
-    { 
-}
+    void EndFarm()
+    {
+        OnExitFarm();
+        if (!m_HybridPlot)
+            return;
+        m_HybridPlot.EndDrag();
+        m_HybridPlot = null;
+    }
 
-    CampFarmItem m_Item;
+    void OnFarmBuy()
+    {
+        CampFarmPlot emptyPlot = GetItemEmptySlot();
+        if (emptyPlot==null)
+            return;
+
+        emptyPlot.Hybrid(TCommon.RandomPercentage(GameExpression.GetFarmGeneratePercentage));
+    }
+
+    CampFarmPlot GetItemEmptySlot()
+    {
+        if (GameDataManager.m_PlayerCampData.f_Credits < GameConst.I_CampFarmItemAcquire)
+            return null;
+
+        for (int i = 0; i < m_Plots.Count; i++)
+        {
+            if (m_Plots[i].m_Status == enum_CampFarmItem.Empty)
+                return m_Plots[i];
+        }
+        return null;
+    }
+
+    #region DragNDrop
     void OnDragDown(bool down,Vector2 inputPos)
     {
+        CampFarmPlot targetPlot = null;
+        if (CameraController.Instance.InputRayCheck(inputPos, GameLayer.Mask.I_Interact, ref m_rayHit))
+            targetPlot = m_rayHit.collider.GetComponent<CampFarmPlot>();
+
+        if(targetPlot!=null)
+        {
+            if (down && targetPlot.m_Status == enum_CampFarmItem.Decayed)
+            {
+                targetPlot.Clear();
+                return;
+            }
+
+            if (CanHybridPlot(targetPlot))
+            {
+                if (down)
+                {
+                    m_HybridPlot = targetPlot;
+                    m_HybridPlot.BeginDrag();
+                    return;
+                }
+
+                if (!down &&m_HybridPlot)
+                {
+                    enum_CampFarmItem hybridStatus = targetPlot.m_Status;
+                    if (hybridStatus != enum_CampFarmItem.Progress5) hybridStatus++;
+                    targetPlot.Hybrid(hybridStatus);
+                    m_HybridPlot.Clear();
+                }
+            }
+        }
+
+        if (!down && m_HybridPlot)
+        {
+            m_HybridPlot.EndDrag();
+            m_HybridPlot = null;
+        }
     }
 
     void OnDrag(Vector2 inputPos)
     {
+        if (!m_HybridPlot)
+            return;
 
+        if (CameraController.Instance.InputRayCheck(inputPos, GameLayer.Mask.I_Static, ref m_rayHit))
+            m_HybridPlot.Move(m_rayHit.point);
     }
+
+    bool CanHybridPlot(CampFarmPlot plot)
+    {
+        if (plot == m_HybridPlot)
+            return false;
+
+        switch (plot.m_Status)
+        {
+            default: return false;
+            case enum_CampFarmItem.Progress1:
+            case enum_CampFarmItem.Progress2:
+            case enum_CampFarmItem.Progress3:
+            case enum_CampFarmItem.Progress4:
+            case enum_CampFarmItem.Progress5:
+                return true;
+        }
+    }
+    #endregion
 }
