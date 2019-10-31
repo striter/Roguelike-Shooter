@@ -59,6 +59,7 @@ namespace GameSetting
         public const float F_LevelTileSize = 2f;        //Cube Size For Level Tiles
 
         public const int I_CampFarmItemAcquire = 70;
+        public const int I_CampFarmItemDecayStampDuration = 60; //57600;      //16 hours
     }
 
     public static class GameExpression
@@ -160,7 +161,22 @@ namespace GameSetting
             }
         }
 
-        public static readonly Dictionary<enum_CampFarmItem, int> GetFarmGeneratePercentage = new Dictionary< enum_CampFarmItem,int>() { {  enum_CampFarmItem.Progress1 ,60},{enum_CampFarmItem.Progress2 ,30},{enum_CampFarmItem.Progress3 ,6},{enum_CampFarmItem.Progress4,3},{ enum_CampFarmItem.Progress5,1} };
+        public static readonly Dictionary<enum_CampFarmItemStatus, int> GetFarmGeneratePercentage = new Dictionary< enum_CampFarmItemStatus,int>() { {  enum_CampFarmItemStatus.Progress1 ,60},{enum_CampFarmItemStatus.Progress2 ,30},{enum_CampFarmItemStatus.Progress3 ,6},{enum_CampFarmItemStatus.Progress4,3},{ enum_CampFarmItemStatus.Progress5,1} };
+        public static readonly Dictionary<enum_CampFarmItemStatus, float> GetFarmCreditGeneratePerSecond = new Dictionary<enum_CampFarmItemStatus, float> { { enum_CampFarmItemStatus.Progress1, .1f / 60f }, { enum_CampFarmItemStatus.Progress2, .2f / 60f }, { enum_CampFarmItemStatus.Progress3, .3f / 60f }, { enum_CampFarmItemStatus.Progress4, .5f / 60f }, { enum_CampFarmItemStatus.Progress5, 1f / 60f } };
+        public static bool CanGenerateprofit(this enum_CampFarmItemStatus status)
+        {
+            switch(status)
+            {
+                default: return false;
+                case enum_CampFarmItemStatus.Progress1:
+                case enum_CampFarmItemStatus.Progress2:
+                case enum_CampFarmItemStatus.Progress3:
+                case enum_CampFarmItemStatus.Progress4:
+                case enum_CampFarmItemStatus.Progress5:
+                    return true;
+            }
+            
+        }
     }
 
     public static class UIConst
@@ -515,7 +531,7 @@ namespace GameSetting
 
     public enum enum_Option_FrameRate { Invalid = -1, Normal = 45, High = 60, }
 
-    public enum enum_CampFarmItem { Invalid=-1, Empty = 0, Locked=1 , Decayed = 2, Progress1=10,Progress2,Progress3,Progress4,Progress5}
+    public enum enum_CampFarmItemStatus { Invalid=-1, Empty = 0, Locked=1 , Decayed = 2, Progress1=10,Progress2,Progress3,Progress4,Progress5}
     #endregion
 
     #region GameLayer
@@ -564,24 +580,30 @@ namespace GameSetting
 
     public class CCampFarmSave : ISave
     {
+        public float m_Profit;
+        public int m_OffsiteProfitStamp;
         public List<CampPlotInfo> m_PlotStatus;
         public CCampFarmSave()
         {
-            m_PlotStatus = new List<CampPlotInfo>() { CampPlotInfo.Create( enum_CampFarmItem.Empty), CampPlotInfo.Create(enum_CampFarmItem.Empty), CampPlotInfo.Create(enum_CampFarmItem.Empty), CampPlotInfo.Create(enum_CampFarmItem.Locked), CampPlotInfo.Create(enum_CampFarmItem.Locked), CampPlotInfo.Create(enum_CampFarmItem.Locked) };
+            m_Profit = 0;
+            m_OffsiteProfitStamp = TTime.TTimeTools.GetTimeStampNow();
+            m_PlotStatus = new List<CampPlotInfo>() { CampPlotInfo.Create( enum_CampFarmItemStatus.Empty), CampPlotInfo.Create(enum_CampFarmItemStatus.Empty), CampPlotInfo.Create(enum_CampFarmItemStatus.Empty), CampPlotInfo.Create(enum_CampFarmItemStatus.Locked), CampPlotInfo.Create(enum_CampFarmItemStatus.Locked), CampPlotInfo.Create(enum_CampFarmItemStatus.Locked) };
         }
-        public void Save(List<CampFarmPlot> plots)
+        public void Save(CampFarmManager manager)
         {
             m_PlotStatus.Clear();
-            for(int i=0;i<plots.Count; i++)
-                m_PlotStatus.Add(CampPlotInfo.SaveData(plots[i]));
+            m_Profit = manager.m_Profit;
+            m_OffsiteProfitStamp = manager.m_LastProfitStamp; 
+            for (int i=0;i< manager.m_Plots.Count; i++)
+                m_PlotStatus.Add(CampPlotInfo.SaveData(manager.m_Plots[i]));
         }
 
         public void UnlockPlot(int difficulty)
         {
-            if (difficulty >= 3 && m_PlotStatus[3].m_Status == enum_CampFarmItem.Locked)
-                m_PlotStatus[3] = CampPlotInfo.Create(enum_CampFarmItem.Empty);
-            else if (difficulty >= 10 && m_PlotStatus[4].m_Status == enum_CampFarmItem.Locked)
-                m_PlotStatus[4] = CampPlotInfo.Create(enum_CampFarmItem.Empty);
+            if (difficulty >= 3 && m_PlotStatus[3].m_Status == enum_CampFarmItemStatus.Locked)
+                m_PlotStatus[3] = CampPlotInfo.Create(enum_CampFarmItemStatus.Empty);
+            if (difficulty >= 10 && m_PlotStatus[4].m_Status == enum_CampFarmItemStatus.Locked)
+                m_PlotStatus[4] = CampPlotInfo.Create(enum_CampFarmItemStatus.Empty);
         }
     }
 
@@ -686,16 +708,16 @@ namespace GameSetting
     public struct CampPlotInfo : IXmlPhrase
     {
         public int m_StartStamp { get; private set; }
-        public enum_CampFarmItem m_Status { get; private set; }
+        public enum_CampFarmItemStatus m_Status { get; private set; }
         public string ToXMLData() => m_StartStamp.ToString() + "," + m_Status.ToString();
         public CampPlotInfo(string xmlData)
         {
             string[] split = xmlData.Split(',');
             m_StartStamp = int.Parse(split[0]);
-            m_Status = (enum_CampFarmItem)Enum.Parse(typeof(enum_CampFarmItem),split[1]);
+            m_Status = (enum_CampFarmItemStatus)Enum.Parse(typeof(enum_CampFarmItemStatus),split[1]);
         }
 
-        public static CampPlotInfo Create(enum_CampFarmItem _status ) => new CampPlotInfo { m_StartStamp=-1,m_Status=_status};
+        public static CampPlotInfo Create(enum_CampFarmItemStatus _status ) => new CampPlotInfo { m_StartStamp=-1,m_Status=_status};
         public static CampPlotInfo SaveData(CampFarmPlot _plot) => new CampPlotInfo { m_StartStamp = _plot.m_StartStamp, m_Status = _plot.m_Status };
     }
 

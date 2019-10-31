@@ -39,14 +39,13 @@ public class CampManager : GameManagerBase{
     public void OnFarmNPCChatted()
     {
         B_Farming = true;
-        AttachCamera( CampFarmManager.Instance.BeginFarm(OnFarmExit));
+        AttachCamera( CampFarmManager.Instance.Begin(OnFarmExit));
     }
     public void OnFarmExit()
     {
         B_Farming = false;
         DetachCamera();
     }
-
     public void AttachCamera(Transform attachTo)
     {
         CameraController.Instance.Attach(attachTo);

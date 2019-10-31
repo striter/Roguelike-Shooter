@@ -219,9 +219,14 @@ public static class GameDataManager
         return m_PlayerCampData.m_GameDifficulty;
     }
 
-    public static void SaveCampFarmData(List<CampFarmPlot> _plots)
+    public static void RecreateCampFarmData()
     {
-        m_CampFarmData.Save(_plots);
+        m_CampFarmData = new CCampFarmSave();
+        TGameData<CCampFarmSave>.Save(m_CampFarmData);
+    }
+    public static void SaveCampFarmData(CampFarmManager farmManager)
+    {
+        m_CampFarmData.Save(farmManager);
         TGameData<CCampFarmSave>.Save(m_CampFarmData);
     }
     #endregion

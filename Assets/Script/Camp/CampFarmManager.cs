@@ -3,14 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
 using System;
-
+using TTime;
 public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
 {
+    public float f_TimeScale=1f;
+    public List<CampFarmPlot> m_Plots { get; private set; } = new List<CampFarmPlot>();
+    public float m_Profit { get; private set; } = 0;
+    public int m_LastProfitStamp { get; private set; } = 0;
     Transform tf_Plot, tf_Status, tf_FarmCameraPos;
-    List<CampFarmPlot> m_Plots=new List<CampFarmPlot>();
     Action OnExitFarm;
     CampFarmPlot m_HybridPlot;
     RaycastHit m_rayHit;
+    float f_timeCheck;
     protected override void Awake()
     {
         base.Awake();
@@ -20,41 +24,50 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
     }
     private void Start()
     {
-        TCommon.TraversalEnum((enum_CampFarmItem status) =>
+        TCommon.TraversalEnum((enum_CampFarmItemStatus status) =>
         {
-            ObjectPoolManager<enum_CampFarmItem, CampFarmItem>.Register(status, tf_Status.Find(status.ToString()).GetComponent<CampFarmItem>(), 1, null);
+            ObjectPoolManager<enum_CampFarmItemStatus, CampFarmItem>.Register(status, tf_Status.Find(status.ToString()).GetComponent<CampFarmItem>(), 1, null);
         });
 
-        float profit=0;
+        if (tf_Plot.childCount != GameDataManager.m_CampFarmData.m_PlotStatus.Count)
+            GameDataManager.RecreateCampFarmData();
+
+        m_Profit = GameDataManager.m_CampFarmData.m_Profit;
+        m_LastProfitStamp = GameDataManager.m_CampFarmData.m_OffsiteProfitStamp;
+
         for (int i = 0; i < GameDataManager.m_CampFarmData.m_PlotStatus.Count; i++)
         {
             CampFarmPlot plot = tf_Plot.Find("Plot" + i.ToString()).GetComponent<CampFarmPlot>();
-            profit+= plot.Init(i,GameDataManager.m_CampFarmData.m_PlotStatus[i]);
+            plot.Init(i,GameDataManager.m_CampFarmData.m_PlotStatus[i]);
             m_Plots.Add(plot);
         }
-
-        Debug.Log(profit);
+        CheckProfit();
+        f_timeCheck = 30f;
     }
     private void OnDisable()
     {
-        ObjectPoolManager<enum_CampFarmItem, CampFarmItem>.OnSceneChange();
+        CheckProfit();
+        ObjectPoolManager<enum_CampFarmItemStatus, CampFarmItem>.OnSceneChange();
     }
 
-    public Transform BeginFarm(Action _OnExitFarm)
+    private void Update()
     {
-        OnExitFarm = _OnExitFarm;
-        CampUIManager.Instance.BeginFarm(OnDragDown,OnDrag, OnFarmBuy,EndFarm);
-        return tf_FarmCameraPos;
-    }
-
-    void EndFarm()
-    {
-        OnExitFarm();
-        GameDataManager.SaveCampFarmData(m_Plots);
-        if (!m_HybridPlot)
+        if (f_timeCheck > 0)
+        {
+            f_timeCheck -= Time.deltaTime* f_TimeScale;
             return;
-        m_HybridPlot.EndDrag();
-        m_HybridPlot = null;
+        }
+        f_timeCheck = 30f;
+        CheckProfit();
+    }
+
+    void CheckProfit()
+    {
+        int stampNow = TTimeTools.GetTimeStampNow();
+        for (int i = 0; i < m_Plots.Count; i++)
+            m_Profit += m_Plots[i].GenerateProfit(m_LastProfitStamp, stampNow);
+        m_LastProfitStamp = stampNow;
+        GameDataManager.SaveCampFarmData(this);
     }
 
     void OnFarmBuy()
@@ -64,7 +77,6 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
             return;
 
         emptyPlot.Hybrid(TCommon.RandomPercentage(GameExpression.GetFarmGeneratePercentage));
-        GameDataManager.SaveCampFarmData(m_Plots);
     }
 
     void OnHybrid(CampFarmPlot _plotDrag,CampFarmPlot _plotTarget)
@@ -72,11 +84,10 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
         if (_plotDrag.m_Status != _plotTarget.m_Status)
             return;
 
-        enum_CampFarmItem hybridStatus = _plotDrag.m_Status;
-        if (hybridStatus != enum_CampFarmItem.Progress5) hybridStatus++;
+        enum_CampFarmItemStatus hybridStatus = _plotDrag.m_Status;
+        if (hybridStatus != enum_CampFarmItemStatus.Progress5) hybridStatus++;
         _plotTarget.Hybrid(hybridStatus);
         _plotDrag.Clear();
-        GameDataManager.SaveCampFarmData(m_Plots);
     }
 
     CampFarmPlot GetItemEmptySlot()
@@ -86,13 +97,30 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
 
         for (int i = 0; i < m_Plots.Count; i++)
         {
-            if (m_Plots[i].m_Status == enum_CampFarmItem.Empty)
+            if (m_Plots[i].m_Status == enum_CampFarmItemStatus.Empty)
                 return m_Plots[i];
         }
         return null;
     }
 
-    #region DragNDrop
+    #region Interact
+    public Transform Begin(Action _OnExitFarm)
+    {
+        OnExitFarm = _OnExitFarm;
+        CampUIManager.Instance.BeginFarm(OnDragDown, OnDrag, OnFarmBuy, End);
+        return tf_FarmCameraPos;
+    }
+
+    void End()
+    {
+        OnExitFarm();
+        if (!m_HybridPlot)
+            return;
+        m_HybridPlot.EndDrag();
+        m_HybridPlot = null;
+    }
+
+
     void OnDragDown(bool down,Vector2 inputPos)
     {
         CampFarmPlot targetPlot = null;
@@ -101,13 +129,13 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
 
         if(targetPlot!=null)
         {
-            if (down && targetPlot.m_Status == enum_CampFarmItem.Decayed)
+            if (down && targetPlot.m_Status == enum_CampFarmItemStatus.Decayed)
             {
                 targetPlot.Clear();
                 return;
             }
 
-            if (CanHybridPlot(targetPlot))
+            if (targetPlot != m_HybridPlot&&GameExpression.CanGenerateprofit(targetPlot.m_Status))
             {
                 if (down)
                 {
@@ -136,22 +164,6 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
         if (CameraController.Instance.InputRayCheck(inputPos, GameLayer.Mask.I_Static, ref m_rayHit))
             m_HybridPlot.Move(m_rayHit.point);
     }
-
-    bool CanHybridPlot(CampFarmPlot plot)
-    {
-        if (plot == m_HybridPlot)
-            return false;
-
-        switch (plot.m_Status)
-        {
-            default: return false;
-            case enum_CampFarmItem.Progress1:
-            case enum_CampFarmItem.Progress2:
-            case enum_CampFarmItem.Progress3:
-            case enum_CampFarmItem.Progress4:
-            case enum_CampFarmItem.Progress5:
-                return true;
-        }
-    }
+    
     #endregion
 }
