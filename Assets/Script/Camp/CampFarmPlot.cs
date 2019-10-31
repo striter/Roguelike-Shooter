@@ -8,11 +8,12 @@ public class CampFarmPlot : MonoBehaviour {
     public int m_StartStamp { get; private set; }
     public enum_CampFarmItem m_Status { get; private set; }
     public CampFarmItem m_PlotItem { get; private set; }
-    public void Init(int index,CampPlotInfo info)
+    public float Init(int index,CampPlotInfo info)
     {
         m_Index = index;
         m_StartStamp = info.m_StartStamp;
         ResetPlotObj(info.m_Status);
+        return 0;
     }
 
     public void Hybrid(enum_CampFarmItem status)

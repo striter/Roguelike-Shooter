@@ -4,9 +4,9 @@ using UnityEngine;
 using GameSetting;
 using System;
 
-public class CampEnvironment : SimpleSingletonMono<CampEnvironment>
+public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
 {
-    Transform tf_Farm, tf_Plot, tf_Status, tf_FarmCameraPos;
+    Transform tf_Plot, tf_Status, tf_FarmCameraPos;
     List<CampFarmPlot> m_Plots=new List<CampFarmPlot>();
     Action OnExitFarm;
     CampFarmPlot m_HybridPlot;
@@ -14,10 +14,9 @@ public class CampEnvironment : SimpleSingletonMono<CampEnvironment>
     protected override void Awake()
     {
         base.Awake();
-        tf_Farm = transform.Find("Farm");
-        tf_Plot = tf_Farm.Find("Plot");
-        tf_Status = tf_Farm.Find("Status");
-        tf_FarmCameraPos = tf_Farm.Find("CameraPos");
+        tf_Plot = transform.Find("Plot");
+        tf_Status = transform.Find("Status");
+        tf_FarmCameraPos = transform.Find("CameraPos");
     }
     private void Start()
     {
@@ -26,12 +25,15 @@ public class CampEnvironment : SimpleSingletonMono<CampEnvironment>
             ObjectPoolManager<enum_CampFarmItem, CampFarmItem>.Register(status, tf_Status.Find(status.ToString()).GetComponent<CampFarmItem>(), 1, null);
         });
 
-        for (int i = 0; i < tf_Plot.childCount; i++)
+        float profit=0;
+        for (int i = 0; i < GameDataManager.m_CampFarmData.m_PlotStatus.Count; i++)
         {
             CampFarmPlot plot = tf_Plot.Find("Plot" + i.ToString()).GetComponent<CampFarmPlot>();
-            plot.Init(i,GameDataManager.m_CampFarmData.m_PlotStatus[i]);
+            profit+= plot.Init(i,GameDataManager.m_CampFarmData.m_PlotStatus[i]);
             m_Plots.Add(plot);
         }
+
+        Debug.Log(profit);
     }
     private void OnDisable()
     {
