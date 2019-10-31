@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
+using System;
+
 public class CampEnvironment : SimpleSingletonMono<CampEnvironment>
 {
     Transform tf_Farm, tf_Plot, tf_Status, tf_FarmCameraPos;
@@ -32,18 +34,30 @@ public class CampEnvironment : SimpleSingletonMono<CampEnvironment>
     {
         ObjectPoolManager<enum_CampFarmItem, CampFarmItem>.OnSceneChange();
     }
-
-    Transform previousTrans;
+    
     public void BeginFarm()
     {
-        previousTrans = CameraController.Instance.tf_AttachTo;
+        Debug.Log("Begin");
         CameraController.Instance.Attach(tf_FarmCameraPos);
         CameraController.Instance.CameraLookAt(tf_FarmCameraPos);
+        CampUIManager.Instance.BeginFarm(OnDragDown,OnDrag, OnExitFarm);
     }
 
-    public void EndFarm()
+    void OnExitFarm()
     {
-        CameraController.Instance.Attach(previousTrans);
+        Debug.Log("Exit");
+        CameraController.Instance.Attach(CampManager.Instance.tf_PlayerHead);
         CameraController.Instance.CameraLookAt(null);
+    }
+
+
+    CampFarmItem m_Item;
+    void OnDragDown(bool down,Vector2 inputPos)
+    {
+    }
+
+    void OnDrag(Vector2 inputPos)
+    {
+
     }
 }

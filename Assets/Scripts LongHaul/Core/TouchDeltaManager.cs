@@ -11,11 +11,10 @@ public enum enum_TouchCheckType
 public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
 {
     public enum_TouchCheckType m_CheckType => m_Check.Count==0 ? enum_TouchCheckType.Invalid : m_Check.Peek().m_Type;
-    public bool m_TouchChecking { get; private set; }
     Stack<TouchCheckBase> m_Check=new Stack<TouchCheckBase>();
 
     public void AddLRBinding(Action<Vector2> _OnLeftDelta, Action<Vector2> _OnRightDelta, Func<bool> _OnCanSendDelta)=>Push(new TouchCheckBaseLR(_OnLeftDelta,_OnRightDelta,_OnCanSendDelta));
-    public void AddDragBinding(Action<bool> _OnDragDown, Action<Vector2> _OnDrag) => Push(new TouchCheckExtraDrag(_OnDragDown,_OnDrag));
+    public void AddDragBinding(Action<bool,Vector2> _OnDragDown, Action<Vector2> _OnDrag) => Push(new TouchCheckExtraDrag(_OnDragDown,_OnDrag));
 
     public void RemoveExtraBinding()
     {
@@ -46,7 +45,7 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
 
     private void Update()
     {
-        if (!m_TouchChecking||m_Check.Count <= 0)
+        if (m_Check.Count <= 0)
             return;
 
         m_Check.Peek().Tick(Time.unscaledDeltaTime);
@@ -157,10 +156,10 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
     class TouchCheckExtraDrag : TouchCheckBase
     {
         public override enum_TouchCheckType m_Type => enum_TouchCheckType.TouchDrag;
-        Action<bool> OnDragDown;
+        Action<bool,Vector2> OnDragDown;
         Action<Vector2> OnDrag;
         int m_DragTrackID;
-        public TouchCheckExtraDrag(Action<bool> _OnDragDown, Action<Vector2> _OnDrag)
+        public TouchCheckExtraDrag(Action<bool,Vector2> _OnDragDown, Action<Vector2> _OnDrag)
         {
             OnDragDown = _OnDragDown;
             OnDrag = _OnDrag;
@@ -174,19 +173,18 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
         {
 #if UNITY_EDITOR
             if (Input.GetMouseButtonDown(0))
-                OnDragDown(true);
+                OnDragDown(true,Input.mousePosition);
             else if (Input.GetMouseButtonUp(0))
-                OnDragDown(false);
+                OnDragDown(false,Input.mousePosition);
             else if (Input.GetMouseButton(0))
                 OnDrag(Input.mousePosition);
 #endif
-
             foreach (Touch touch in Input.touches)
             {
                 if (m_DragTrackID == -1 && touch.phase == TouchPhase.Began)
                 {
                     m_DragTrackID = touch.fingerId;
-                    OnDragDown(true);
+                    OnDragDown(true,touch.position);
                 }
 
                 if (m_DragTrackID != touch.fingerId)
@@ -195,7 +193,7 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
                 if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
                 {
                     m_DragTrackID = -1;
-                    OnDragDown(false);
+                    OnDragDown(false,touch.position);
                     return;
                 }
                 else if (touch.phase == TouchPhase.Moved)
@@ -207,7 +205,7 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
         public override void Disable()
         {
             m_DragTrackID = -1;
-            OnDragDown(false);
+            OnDragDown(false,Vector2.zero);
         }
     }
     class TouchTracker

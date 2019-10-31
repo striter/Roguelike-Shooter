@@ -14,12 +14,15 @@ public class UIT_CampStatus : UIToolsBase {
         m_Credit = transform.Find("Credit").GetComponent<Text>();
         tf_Farm = transform.Find("Farm");
         m_Buy = tf_Farm.Find("Buy").GetComponent<Button>();
+        m_Buy.onClick.AddListener(OnFarmBuyClicked);
+        m_Exit = tf_Farm.Find("Exit").GetComponent<Button>();
+        m_Exit.onClick.AddListener(OnFarmExitClicked);
     }
 
-    void OnBuyClicked()
+    void OnFarmBuyClicked()
     {
     }
-    void OnExitClicked()
+    void OnFarmExitClicked()
     {
     }
 

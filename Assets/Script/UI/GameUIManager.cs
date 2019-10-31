@@ -42,4 +42,17 @@ public class GameUIManager : UIManager {
             return m_actionSprites;
         }
     }
+
+#if UNITY_EDITOR
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+            OnMainButtonDown(true, Vector2.zero);
+        else if (Input.GetMouseButtonUp(0))
+            OnMainButtonDown(false, Vector2.zero);
+
+        if (Input.GetKeyDown(KeyCode.R))
+            OnReloadButtonDown();
+    }
+#endif
 }

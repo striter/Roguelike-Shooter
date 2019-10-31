@@ -5,8 +5,9 @@ using GameSetting;
 public class CampManager : GameManagerBase{
     public static CampManager nInstance;
     public static new CampManager Instance => nInstance;
-
+    
     Transform tf_PlayerStart;
+    public Transform tf_PlayerHead { get; private set; }
     protected override void Awake()
     {
         nInstance = this;
@@ -23,7 +24,9 @@ public class CampManager : GameManagerBase{
         base.Start();
         CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_BloomSpecific>();
         GameObjectManager.PresetRegistCommonObject();
-        GameObjectManager.SpawnEntityPlayer(new CPlayerGameSave()).transform.SetPositionAndRotation(tf_PlayerStart.position,tf_PlayerStart.rotation);
+        EntityCharacterPlayer player = GameObjectManager.SpawnEntityPlayer(new CPlayerGameSave());
+        player.transform.SetPositionAndRotation(tf_PlayerStart.position, tf_PlayerStart.rotation);
+        tf_PlayerHead = player.tf_Head;
         CameraController.Instance.RotateCamera(new Vector2(tf_PlayerStart.eulerAngles.y,0));
     }
     

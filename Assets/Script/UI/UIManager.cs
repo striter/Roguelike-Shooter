@@ -34,8 +34,8 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         tf_Control = cvs_Camera.transform.Find("Control");
         img_main = tf_Control.Find("Main/Image").GetComponent<Image>();
         btn_Reload = tf_Control.Find("Reload").GetComponent<Button>();
-        btn_Reload.onClick.AddListener(() => { OnReload?.Invoke(); });
-        tf_Control.Find("Main").GetComponent<UIT_EventTriggerListener>().D_OnPress+=(bool down,Vector2 pos) => { OnMainDown?.Invoke(down); };
+        btn_Reload.onClick.AddListener(OnReloadButtonDown);
+        tf_Control.Find("Main").GetComponent<UIT_EventTriggerListener>().D_OnPress+= OnMainButtonDown;
 
         m_commonSprites = TResources.GetUIAtlas_Common();
         m_Camera = transform.Find("UICamera").GetComponent<Camera>();
@@ -61,9 +61,10 @@ public class UIManager :UIManagerBase,ISingleCoroutine
     }
 
     void OnOptionsChanged()=> UIT_JoyStick.Instance.SetMode(OptionsManager.m_OptionsData.m_JoyStickMode);
+    bool CheckControlable() => !UIPageBase.m_PageOpening;
     public void DoBinding(Action<Vector2> _OnLeftDelta,Action<Vector2> _OnRightDelta,Action _OnReload,Action<bool> _OnMainDown )
     {
-        m_TouchDelta.AddLRBinding(_OnLeftDelta, _OnRightDelta, () => !UIPageBase.m_PageOpening);
+        m_TouchDelta.AddLRBinding(_OnLeftDelta, _OnRightDelta,CheckControlable);
         OnReload = _OnReload;
         OnMainDown = _OnMainDown;
     }
@@ -73,6 +74,21 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         OnReload = null;
         OnMainDown = null;
     }
+
+    protected void OnReloadButtonDown()
+    {
+        if (!CheckControlable())
+            return;
+        OnReload?.Invoke();
+    }
+    protected void OnMainButtonDown(bool down,Vector2 pos)
+    {
+        if (!CheckControlable())
+            return;
+        OnMainDown?.Invoke(down);
+    }
+
+
     string m_mainSprite;
     void OnPlayerStatusChanged(EntityCharacterPlayer player)
     {
@@ -82,7 +98,6 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         m_mainSprite = spriteName;
         img_main.sprite = m_commonSprites[m_mainSprite];
     }
-
 
     public T ShowPage<T>(bool animate,float bulletTime=1f) where T : UIPageBase
     {
@@ -96,17 +111,4 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         GameManagerBase.SetBulletTime(false);
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PageClose);
     }
-
-#if UNITY_EDITOR
-    private void Update()
-    {
-        if (Input.GetMouseButtonDown(0))
-            OnMainDown?.Invoke(true);
-        else if (Input.GetMouseButtonUp(0))
-            OnMainDown?.Invoke(false);
-
-        if (Input.GetKeyDown(KeyCode.R))
-            OnReload?.Invoke();
-    }
-#endif
 }
