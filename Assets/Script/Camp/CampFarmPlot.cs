@@ -56,6 +56,7 @@ public class CampFarmPlot : MonoBehaviour {
         m_Status = status;
         m_PlotItem = ObjectPoolManager<enum_CampFarmItemStatus, CampFarmItem>.Spawn(m_Status, null);
         m_PlotItem.Bind(this);
+        m_PlotItem.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360), 0);
         EndDrag();
     }
 
@@ -70,6 +71,6 @@ public class CampFarmPlot : MonoBehaviour {
     public void EndDrag()
     {
         m_PlotItem.transform.position = transform.position;
-        m_PlotItem.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360), 0);
+
     }
 }
