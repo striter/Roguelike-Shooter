@@ -48,6 +48,7 @@ public class CampEnvironment : SimpleSingletonMono<CampEnvironment>
     void EndFarm()
     {
         OnExitFarm();
+        GameDataManager.SaveCampFarmData(m_Plots);
         if (!m_HybridPlot)
             return;
         m_HybridPlot.EndDrag();
@@ -61,6 +62,19 @@ public class CampEnvironment : SimpleSingletonMono<CampEnvironment>
             return;
 
         emptyPlot.Hybrid(TCommon.RandomPercentage(GameExpression.GetFarmGeneratePercentage));
+        GameDataManager.SaveCampFarmData(m_Plots);
+    }
+
+    void OnHybrid(CampFarmPlot _plotDrag,CampFarmPlot _plotTarget)
+    {
+        if (_plotDrag.m_Status != _plotTarget.m_Status)
+            return;
+
+        enum_CampFarmItem hybridStatus = _plotDrag.m_Status;
+        if (hybridStatus != enum_CampFarmItem.Progress5) hybridStatus++;
+        _plotTarget.Hybrid(hybridStatus);
+        _plotDrag.Clear();
+        GameDataManager.SaveCampFarmData(m_Plots);
     }
 
     CampFarmPlot GetItemEmptySlot()
@@ -100,13 +114,8 @@ public class CampEnvironment : SimpleSingletonMono<CampEnvironment>
                     return;
                 }
 
-                if (!down &&m_HybridPlot)
-                {
-                    enum_CampFarmItem hybridStatus = targetPlot.m_Status;
-                    if (hybridStatus != enum_CampFarmItem.Progress5) hybridStatus++;
-                    targetPlot.Hybrid(hybridStatus);
-                    m_HybridPlot.Clear();
-                }
+                if (!down&&m_HybridPlot)
+                    OnHybrid(m_HybridPlot, targetPlot);
             }
         }
 

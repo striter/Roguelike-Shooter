@@ -569,6 +569,13 @@ namespace GameSetting
         {
             m_PlotStatus = new List<CampPlotInfo>() { CampPlotInfo.Create( enum_CampFarmItem.Empty), CampPlotInfo.Create(enum_CampFarmItem.Empty), CampPlotInfo.Create(enum_CampFarmItem.Empty), CampPlotInfo.Create(enum_CampFarmItem.Locked), CampPlotInfo.Create(enum_CampFarmItem.Locked), CampPlotInfo.Create(enum_CampFarmItem.Locked) };
         }
+        public void Save(List<CampFarmPlot> plots)
+        {
+            m_PlotStatus.Clear();
+            for(int i=0;i<plots.Count; i++)
+                m_PlotStatus.Add(CampPlotInfo.SaveData(plots[i]));
+        }
+
         public void UnlockPlot(int difficulty)
         {
             if (difficulty >= 3 && m_PlotStatus[3].m_Status == enum_CampFarmItem.Locked)
@@ -689,6 +696,7 @@ namespace GameSetting
         }
 
         public static CampPlotInfo Create(enum_CampFarmItem _status ) => new CampPlotInfo { m_StartStamp=-1,m_Status=_status};
+        public static CampPlotInfo SaveData(CampFarmPlot _plot) => new CampPlotInfo { m_StartStamp = _plot.m_StartStamp, m_Status = _plot.m_Status };
     }
 
     public struct SWeapon : ISExcel

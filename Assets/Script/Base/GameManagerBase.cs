@@ -218,6 +218,12 @@ public static class GameDataManager
         TGameData<CPlayerCampSave>.Save(m_PlayerCampData);
         return m_PlayerCampData.m_GameDifficulty;
     }
+
+    public static void SaveCampFarmData(List<CampFarmPlot> _plots)
+    {
+        m_CampFarmData.Save(_plots);
+        TGameData<CCampFarmSave>.Save(m_CampFarmData);
+    }
     #endregion
     #region ExcelData
     public static SLevelGenerate GetItemGenerateProperties(enum_Style style, enum_LevelGenerateType prefabType, bool isInner)
