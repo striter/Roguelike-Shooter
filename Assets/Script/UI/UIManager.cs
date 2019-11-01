@@ -77,14 +77,10 @@ public class UIManager :UIManagerBase,ISingleCoroutine
 
     protected void OnReloadButtonDown()
     {
-        if (!CheckControlable())
-            return;
         OnReload?.Invoke();
     }
     protected void OnMainButtonDown(bool down,Vector2 pos)
     {
-        if (!CheckControlable())
-            return;
         OnMainDown?.Invoke(down);
     }
 

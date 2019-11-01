@@ -53,6 +53,7 @@ public class CampManager : GameManagerBase{
     {
         B_Actioning = true;
         AttachSceneCamera(attachTo, lookAt);
+        CampUIManager.Instance.ShowPage<UI_ActionStorage>(true).Play(OnActionExit);
         SetEffect_Focal(true,lookAt,.8f,2f);
     }
     void OnActionExit()

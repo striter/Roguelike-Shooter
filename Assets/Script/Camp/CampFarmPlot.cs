@@ -54,13 +54,10 @@ public class CampFarmPlot : CampFarmInteract {
     void ResetPlotObj(enum_CampFarmItemStatus status)
     {
         if (m_PlotItem)
-        {
-            m_PlotItem.Unbind();
             ObjectPoolManager<enum_CampFarmItemStatus, CampFarmItem>.Recycle(m_Status, m_PlotItem);
-        }
+
         m_Status = status;
         m_PlotItem = ObjectPoolManager<enum_CampFarmItemStatus, CampFarmItem>.Spawn(m_Status, null);
-        m_PlotItem.Bind(this);
         m_PlotItem.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360), 0);
         EndDrag();
     }

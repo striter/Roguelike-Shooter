@@ -19,7 +19,7 @@ public class UIM_ActionUpgrade : UIMessageBoxBase {
     public void Play(int amount, ActionBase action, Action OnConfirmClick)
     {
         base.Play(OnConfirmClick);
-        ActionBase newacton = GameDataManager.CreateAction(action.m_Index, action.m_rarity);
+        ActionBase newacton = ActionDataManager.CreateAction(action.m_Index, action.m_rarity);
         newacton.Upgrade();
         string changed = "B9FE00FF";
         string unChanged = "FFDA6BFF";

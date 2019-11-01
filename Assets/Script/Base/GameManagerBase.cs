@@ -10,12 +10,14 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
     protected override void Awake()
     {
         base.Awake();
-        GameDataManager.Init();
         GameObjectManager.Init();
         GameIdentificationManager.Init();
         TBroadCaster<enum_BC_GameStatus>.Init();
         TBroadCaster<enum_BC_UIStatus>.Init();
         OptionsManager.Init();
+
+        GameDataManager.Init();
+        ActionDataManager.Init();
     }
     protected virtual void Start()
     {
@@ -190,8 +192,6 @@ public static class GameDataManager
         m_PlayerCampData = TGameData<CPlayerCampSave>.Read();
         m_CampFarmData = TGameData<CCampFarmSave>.Read();
         m_PlayerGameData = TGameData<CPlayerGameSave>.Read();
-
-        InitActions(ActionCampData.GetPlayerActionSelectedData(m_PlayerCampData.m_Actions));
     }
     #region GameSave
     public static CPlayerCampSave m_PlayerCampData { get; private set; }
@@ -284,19 +284,20 @@ public static class GameDataManager
         return buff;
     }
     #endregion
-    #region ActionData
-    static Dictionary<int, ActionBase> m_AllActions = new Dictionary<int, ActionBase>();
-    static List<int> m_WeaponActions = new List<int>();
-    static List<int> m_PlayerActions = new List<int>();
-    static Dictionary<int, enum_RarityLevel> m_PlayerSelectedActions = new Dictionary<int, enum_RarityLevel>();
+}
+
+public static class ActionDataManager
+{
+    public static Dictionary<int, ActionBase> m_AllActions { get; private set; } = new Dictionary<int, ActionBase>();
+    public static List<int> m_WeaponActions { get; private set; } = new List<int>();
+    public static List<int> m_PlayerActions { get; private set; } = new List<int>();
     static int m_ActionIdentity = 0;
-    static void InitActions(Dictionary<int,enum_RarityLevel> selectedActions)
+    public static void Init()
     {
         m_AllActions.Clear();
         m_WeaponActions.Clear();
         m_PlayerActions.Clear();
         
-        m_PlayerSelectedActions = selectedActions;
         TReflection.TraversalAllInheritedClasses((Type type, ActionBase action) => {
             if (action.m_Index <= 0)
                 return;
@@ -308,7 +309,7 @@ public static class GameDataManager
                 m_PlayerActions.Add(action.m_Index);
         }, -1, enum_RarityLevel.Invalid);
     }
-    public static  ActionBase CreateRandomWeaponPerk(enum_RarityLevel level, System.Random seed) =>level==0?null: CreateAction(m_WeaponActions.RandomItem(seed), level) ;
+    public static ActionBase CreateRandomWeaponPerk(enum_RarityLevel level, System.Random seed) => level == 0 ? null : CreateAction(m_WeaponActions.RandomItem(seed), level);
     public static List<ActionBase> CreateRandomDropPlayerAction(int actionCount, enum_RarityLevel rarity, System.Random seed)
     {
         List<ActionBase> actions = new List<ActionBase>();
@@ -326,12 +327,13 @@ public static class GameDataManager
         }
         return actions;
     }
-    public static List<ActionBase> CreateRandomPlayerSelectedAction(int actionCount,System.Random seed)
+    public static List<ActionBase> CreateRandomPlayerSelectedAction(List<ActionCampData> actionSelectData,int actionCount, System.Random seed)
     {
+        Dictionary<int, enum_RarityLevel> m_selectData = ActionCampData.GetPlayerActionSelectedData(actionSelectData);
         List<ActionBase> actions = new List<ActionBase>();
         for (int i = 0; i < actionCount; i++)
         {
-            m_PlayerSelectedActions.TraversalRandom((int index,enum_RarityLevel rarity) =>
+            m_selectData.TraversalRandom((int index, enum_RarityLevel rarity) =>
             {
                 if (actions.Find(p => p.m_Index == index) == null)
                 {
@@ -358,5 +360,6 @@ public static class GameDataManager
         return TReflection.CreateInstance<ActionBase>(m_AllActions[actionIndex].GetType(), m_ActionIdentity++, level);
     }
     public static ActionBase CopyAction(ActionBase targetAction) => TReflection.CreateInstance<ActionBase>(m_AllActions[targetAction.m_Index].GetType(), targetAction.m_Identity, targetAction.m_rarity);
-    #endregion
+
+    public static ActionBase CreateAction(ActionCampData info) => CreateAction(info.m_Index, info.GetRarityLevel());
 }

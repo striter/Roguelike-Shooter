@@ -588,15 +588,15 @@ namespace GameSetting
         public float f_Credits;
         public int m_GameDifficulty;
         public int m_DifficultyUnlocked;
-        public List<ActionCampData> m_Actions;
+        public List<ActionCampData> m_SelectActions;
         public CPlayerCampSave()
         {
             f_Credits = 100;
             m_GameDifficulty = 1;
             m_DifficultyUnlocked = 1;
-            m_Actions = new List<ActionCampData>();
+            m_SelectActions = new List<ActionCampData>();
             for (int i=10001;i<=10018;i++)
-                m_Actions.Add(ActionCampData.Create(i, enum_RarityLevel.Normal,true));
+                m_SelectActions.Add(ActionCampData.Create(i, enum_RarityLevel.Normal,true));
         }
         public void UnlockDifficulty()
         {
@@ -1690,7 +1690,7 @@ namespace GameSetting
                 return;
 
             int index = m_ActionInPool.RandomIndex();
-            m_ActionHolding.Add(GameDataManager.CopyAction(m_ActionInPool[index]));
+            m_ActionHolding.Add(ActionDataManager.CopyAction(m_ActionInPool[index]));
             m_ActionInPool.RemoveAt(index);
             RefillHoldingActions();
         }
