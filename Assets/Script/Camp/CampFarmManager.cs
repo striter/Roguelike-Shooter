@@ -143,36 +143,49 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
     #region Interact
     void OnDragDown(bool down,Vector2 inputPos)
     {
-        CampFarmPlot targetPlot = null;
+        CampFarmInteract targetInteract = null;
         if (CameraController.Instance.InputRayCheck(inputPos, GameLayer.Mask.I_Interact, ref m_rayHit))
-            targetPlot = m_rayHit.collider.GetComponent<CampFarmPlot>();
+            targetInteract = m_rayHit.collider.GetComponent<CampFarmInteract>();
 
-        if(targetPlot!=null)
-        {
-            if (down && targetPlot.m_Status == enum_CampFarmItemStatus.Decayed)
-            {
-                targetPlot.Clear();
-                return;
-            }
 
-            if (targetPlot != m_HybridPlot&&GameExpression.CanGenerateprofit(targetPlot.m_Status))
-            {
-                if (down)
-                {
-                    m_HybridPlot = targetPlot;
-                    m_HybridPlot.BeginDrag();
-                    return;
-                }
-
-                if (!down&&m_HybridPlot)
-                    OnHybrid(m_HybridPlot, targetPlot);
-            }
-        }
+        if (targetInteract)
+            OnDragInteract(targetInteract,down);
+     
 
         if (!down && m_HybridPlot)
         {
             m_HybridPlot.EndDrag();
             m_HybridPlot = null;
+        }
+    }
+    void OnDragInteract(CampFarmInteract interact, bool down)
+    {
+        if (interact.B_IsRecycle && !down && m_HybridPlot)
+        {
+            m_HybridPlot.Clear();
+            m_HybridPlot = null;
+            return;
+        }
+
+        CampFarmPlot targetPlot = interact as CampFarmPlot;
+
+        if (down && targetPlot.m_Status == enum_CampFarmItemStatus.Decayed)
+        {
+            targetPlot.Clear();
+            return;
+        }
+
+        if (targetPlot != m_HybridPlot && GameExpression.CanGenerateprofit(targetPlot.m_Status))
+        {
+            if (down)
+            {
+                m_HybridPlot = targetPlot;
+                m_HybridPlot.BeginDrag();
+                return;
+            }
+
+            if (!down && m_HybridPlot)
+                OnHybrid(m_HybridPlot, targetPlot);
         }
     }
 
@@ -184,6 +197,5 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
         if (CameraController.Instance.InputRayCheck(inputPos, GameLayer.Mask.I_Static, ref m_rayHit))
             m_HybridPlot.Move(m_rayHit.point);
     }
-    
     #endregion
 }

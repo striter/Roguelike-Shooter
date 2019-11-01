@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
 using TTime;
-public class CampFarmPlot : MonoBehaviour {
+public class CampFarmPlot : CampFarmInteract {
     public int m_Index { get; private set; }
     public int m_StartStamp { get; private set; }
     public enum_CampFarmItemStatus m_Status { get; private set; }
@@ -46,6 +46,7 @@ public class CampFarmPlot : MonoBehaviour {
 
     public void Clear()
     {
+        m_DecayProgress = 0;
         m_StartStamp = -1;
         ResetPlotObj(enum_CampFarmItemStatus.Empty);
     }
