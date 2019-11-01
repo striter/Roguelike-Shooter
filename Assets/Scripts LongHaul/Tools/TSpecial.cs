@@ -811,7 +811,6 @@ public static class Physics_Extend
 #region UI Classes
 public class AtlasLoader
 {
-    public void Check() { }
     Dictionary<string, Sprite> m_SpriteDic = new Dictionary<string, Sprite>();
     public bool Contains(string name) => m_SpriteDic.ContainsKey(name);
     public Sprite this[string name]

@@ -75,6 +75,27 @@ public class UIT_GridControllerGridItem<T>: UIT_GridControllerMono<T> where T:UI
             GetItem(keyCollections[i]).transform.SetAsLastSibling();
     }
 }
+
+public class UIT_GridControllerGridItemScrollView<T> : UIT_GridControllerGridItem<T> where T : UIT_GridItem
+{
+    public UIT_GridControllerGridItemScrollView(Transform _transform) : base(_transform)
+    {
+
+    }
+
+    public void CheckVisible(float verticalNormalized,int visibleSize)
+    {
+        int total = m_Pool.m_ActiveItemDic.Count;
+        int current = (int)(verticalNormalized * total);
+        int rangeMin = (int)(current - visibleSize);
+        int rangeMax = (int)(current + visibleSize);
+        foreach (int index in m_Pool.m_ActiveItemDic.Keys)
+        {
+            int position = total  - index;
+            GetItem(index).SetShowScrollView(rangeMin< position && position < rangeMax);
+        }
+    }
+}
 public class UIT_GridDefaultMulti<T> : UIT_GridControllerGridItem<T> where T : UIT_GridDefaultItem
 {
     public int m_selectAmount { get; private set; }=-1;

@@ -15,8 +15,8 @@ public class UIManager :UIManagerBase,ISingleCoroutine
     public Camera m_Camera { get; private set; }
     public CameraEffectManager m_Effect { get; private set; }
     CB_GenerateOverlayUIGrabBlurTexture m_Blur;
-    AtlasLoader m_commonSprites;
-
+    public AtlasLoader m_CommonSprites { get; private set; }
+    public AtlasLoader m_ActionSprites { get; private set; }
     public static void Activate(bool inGame)
     {
         GameObject uiObj = TResources.InstantiateUIManager();
@@ -37,7 +37,8 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         btn_Reload.onClick.AddListener(OnReloadButtonDown);
         tf_Control.Find("Main").GetComponent<UIT_EventTriggerListener>().D_OnPress+= OnMainButtonDown;
 
-        m_commonSprites = TResources.GetUIAtlas_Common();
+        m_CommonSprites = TResources.GetUIAtlas_Common();
+        m_ActionSprites = TResources.GetUIAtlas_Action();
         m_Camera = transform.Find("UICamera").GetComponent<Camera>();
         m_Effect = m_Camera.GetComponent<CameraEffectManager>();
         m_Blur = m_Effect.GetOrAddCameraEffect<CB_GenerateOverlayUIGrabBlurTexture>();
@@ -92,7 +93,7 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         if (spriteName == m_mainSprite)
             return;
         m_mainSprite = spriteName;
-        img_main.sprite = m_commonSprites[m_mainSprite];
+        img_main.sprite = m_CommonSprites[m_mainSprite];
     }
 
     public T ShowPage<T>(bool animate,float bulletTime=1f) where T : UIPageBase

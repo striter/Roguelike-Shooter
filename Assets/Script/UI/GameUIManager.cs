@@ -6,12 +6,12 @@ using UnityEngine.UI;
 
 public class GameUIManager : UIManager {
     public static new GameUIManager Instance;
+    public AtlasLoader m_InGameSprites { get; private set; }
     protected override void Init()
     {
         Instance = this;
         base.Init();
-        m_InGameSprites.Check();
-        m_ActionSprites.Check();
+        m_InGameSprites = TResources.GetUIAtlas_InGame();
         ShowTools<UIT_EntityHealth>();
         ShowTools<UIT_GamePlayerStatus>();
         cvs_Overlay.transform.Find("Test/SeedTest").GetComponent<Text>().text = GameManager.Instance.m_GameLevel.m_Seed;   //Test
@@ -21,26 +21,6 @@ public class GameUIManager : UIManager {
     {
         cvs_Camera.gameObject.SetActivate(false);
         ShowPage<UI_GameResult>(true).Play(level, _OnButtonClick);
-    }
-    AtlasLoader m_inGameSprites;
-    public AtlasLoader m_InGameSprites
-    {
-        get
-        {
-            if (m_inGameSprites == null)
-                m_inGameSprites = TResources.GetUIAtlas_InGame();
-            return m_inGameSprites;
-        }
-    }
-    AtlasLoader m_actionSprites;
-    public AtlasLoader m_ActionSprites
-    {
-        get
-        {
-            if (m_actionSprites == null)
-                m_actionSprites = TResources.GetUIAtlas_Action();
-            return m_actionSprites;
-        }
     }
 
 #if UNITY_EDITOR

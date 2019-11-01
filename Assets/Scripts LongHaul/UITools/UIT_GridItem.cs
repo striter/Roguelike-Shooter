@@ -20,4 +20,9 @@ public class UIT_GridItem : MonoBehaviour
     {
         //To Be Continued···
     }
+
+    public void SetShowScrollView(bool show)
+    {
+        tf_Container.SetActivate(show);
+    }
 }

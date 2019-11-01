@@ -588,15 +588,15 @@ namespace GameSetting
         public float f_Credits;
         public int m_GameDifficulty;
         public int m_DifficultyUnlocked;
-        public List<ActionCampData> m_SelectActions;
+        public List<ActionStorageData> m_StorageActions;
         public CPlayerCampSave()
         {
             f_Credits = 100;
             m_GameDifficulty = 1;
             m_DifficultyUnlocked = 1;
-            m_SelectActions = new List<ActionCampData>();
+            m_StorageActions = new List<ActionStorageData>();
             for (int i=10001;i<=10018;i++)
-                m_SelectActions.Add(ActionCampData.Create(i, enum_RarityLevel.Normal,true));
+                m_StorageActions.Add(ActionStorageData.Create(i, enum_RarityLevel.Normal,true));
         }
         public void UnlockDifficulty()
         {
@@ -711,13 +711,13 @@ namespace GameSetting
         }
     }
 
-    public struct ActionCampData : IXmlPhrase
+    public struct ActionStorageData : IXmlPhrase
     {
         public int m_Index { get; private set; }
         public int m_Count { get; private set; }
         public bool m_Selected { get; private set; }
         public string ToXMLData() => m_Index.ToString() + "," + m_Count.ToString() + "," + m_Selected.ToString();
-        public ActionCampData(string xmlData)
+        public ActionStorageData(string xmlData)
         {
             string[] split = xmlData.Split(',');
             m_Index = int.Parse(split[0]);
@@ -727,7 +727,7 @@ namespace GameSetting
         
         public enum_RarityLevel GetRarityLevel()=> m_Count < 10? enum_RarityLevel.Invalid:(enum_RarityLevel)(m_Count / 10);
 
-        public static Dictionary<int,enum_RarityLevel> GetPlayerActionSelectedData(List<ActionCampData> data)
+        public static Dictionary<int,enum_RarityLevel> GetPlayerActionSelectedData(List<ActionStorageData> data)
         {
             Dictionary<int, enum_RarityLevel> selectedData = new Dictionary<int, enum_RarityLevel>();
             for(int i=0;i<data.Count;i++)
@@ -741,7 +741,7 @@ namespace GameSetting
             }
             return selectedData;
         }
-        public static ActionCampData Create(int index, enum_RarityLevel rarity, bool selected) => new ActionCampData { m_Index = index, m_Count = (int)rarity*10, m_Selected = selected };
+        public static ActionStorageData Create(int index, enum_RarityLevel rarity, bool selected) => new ActionStorageData { m_Index = index, m_Count = (int)rarity*10, m_Selected = selected };
     }
 
     public struct CampFarmPlotData : IXmlPhrase
