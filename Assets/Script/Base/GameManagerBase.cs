@@ -110,6 +110,16 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
          },0,1,duration));
     }
     #endregion
+
+
+    protected void AttachSceneCamera(Transform attachTo)
+    {
+        CameraController.Instance.Attach(attachTo, false);
+    }
+    protected void AttachPlayerCamera(Transform playerTo)
+    {
+        CameraController.Instance.Attach(playerTo, true);
+    }
 }
 
 public class GameIdentificationManager

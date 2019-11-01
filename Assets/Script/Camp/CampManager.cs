@@ -7,7 +7,7 @@ public class CampManager : GameManagerBase{
     public static new CampManager Instance => nInstance;
     
     Transform tf_PlayerStart;
-    public Transform tf_PlayerHead { get; private set; }
+    public Transform tf_Player { get; private set; }
     protected override void Awake()
     {
         nInstance = this;
@@ -26,7 +26,8 @@ public class CampManager : GameManagerBase{
         GameObjectManager.PresetRegistCommonObject();
         EntityCharacterPlayer player = GameObjectManager.SpawnEntityPlayer(new CPlayerGameSave());
         player.transform.SetPositionAndRotation(tf_PlayerStart.position, tf_PlayerStart.rotation);
-        tf_PlayerHead = player.tf_Head;
+        tf_Player = player.transform;
+        AttachPlayerCamera(tf_Player);
         CameraController.Instance.RotateCamera(new Vector2(tf_PlayerStart.eulerAngles.y,0));
     }
     
@@ -39,12 +40,12 @@ public class CampManager : GameManagerBase{
     public void OnFarmNPCChatted()
     {
         B_Farming = true;
-        AttachCamera( CampFarmManager.Instance.Begin(OnFarmExit));
+        AttachSceneCamera( CampFarmManager.Instance.Begin(OnFarmExit));
     }
     public void OnFarmExit()
     {
         B_Farming = false;
-        DetachCamera();
+        AttachPlayerCamera(tf_Player);
     }
 
     public void OnCreditStatus(float credit)
@@ -53,14 +54,4 @@ public class CampManager : GameManagerBase{
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_CampCreditStatus);
     }
 
-    public void AttachCamera(Transform attachTo)
-    {
-        CameraController.Instance.Attach(attachTo);
-        CameraController.Instance.CameraLookAt(attachTo);
-    }
-    public void DetachCamera()
-    {
-        CameraController.Instance.Attach(tf_PlayerHead);
-        CameraController.Instance.CameraLookAt(null);
-    }
 }

@@ -18,7 +18,7 @@ public class RTSCameraController : CameraController
             pullParam -= 1f;
         }
         pullParam = Mathf.Clamp(pullParam, pullParamMin, pullParamMax);
-        tf_CameraPos.localPosition = v3_localOffset+v3_localOffset.normalized*pullParam;
+        tf_CameraOffset.localPosition = v3_localOffset+v3_localOffset.normalized*pullParam;
     }
 
     ///<summary>
