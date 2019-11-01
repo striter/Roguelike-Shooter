@@ -117,8 +117,7 @@ namespace GameSetting
         }
         public static int GetActionRemovePrice(enum_StageLevel stage, int removeTimes) => 8 + 2 * (removeTimes + 1) * (int)stage;
         public static int GetActionUpgradePrice(enum_StageLevel stage, int upgradeTimes) => 8 + 2 * (upgradeTimes + 1) * (int)stage;
-
-        public static enum_RarityLevel GetStartChestRarity(this enum_StageLevel stageLevel) => stageLevel.ToRarity();
+        
         public static enum_RarityLevel GetStartWeaponPerkRarity(this enum_StageLevel stageLevel) => (stageLevel - 1).ToRarity();
         public static enum_RarityLevel GetTradeWeaponPerkRarity(this enum_StageLevel stageLevel) => stageLevel.ToRarity();
         public static enum_RarityLevel GetBattleTradeActionRarity(this enum_StageLevel stageLevel) => stageLevel.ToRarity() == enum_RarityLevel.Epic ? enum_RarityLevel.Epic : (stageLevel + 1).ToRarity();
@@ -353,6 +352,26 @@ namespace GameSetting
         public static string GetLocalizeKey(this enum_Option_LanguageRegion region) => "UI_Option_" + region;
         public static string GetLocalizeKey(this enum_UI_TileBattleStatus status) => "UI_Battle_" + status;
     }
+
+    public static class GameLayer
+    {
+        public static readonly int I_Static = LayerMask.NameToLayer("static");
+        public static readonly int I_Entity = LayerMask.NameToLayer("entity");
+        public static readonly int I_Dynamic = LayerMask.NameToLayer("dynamic");
+        public static readonly int I_Interact = LayerMask.NameToLayer("interact");
+        public static class Mask
+        {
+            public static readonly int I_All = 1 << GameLayer.I_Static | 1 << GameLayer.I_Entity | 1 << GameLayer.I_Dynamic;
+            public static readonly int I_StaticEntity = 1 << GameLayer.I_Static | 1 << GameLayer.I_Entity;
+            public static readonly int I_Entity = (1 << GameLayer.I_Entity);
+            public static readonly int I_Interact = (1 << GameLayer.I_Interact);
+            public static readonly int I_Static = (1 << GameLayer.I_Static);
+        }
+
+        public static readonly int I_EntityDetect = LayerMask.NameToLayer("entityDetect");
+        public static readonly int I_InteractDetect = LayerMask.NameToLayer("interactDetect");
+        public static readonly int I_MovementDetect = LayerMask.NameToLayer("movementDetect");
+    }
     #endregion
 
     #region For Developers Use
@@ -431,7 +450,7 @@ namespace GameSetting
 
     public enum enum_Interaction { Invalid = -1, ActionChest ,
         GameBegin,Bonfire, ActionChestStart, ContainerTrade, ContainerBattle, PickupCoin, PickupHealth,PickupHealthPack, PickupArmor, PickupAction, Weapon,PerkUpgrade, ActionAdjustment, Portal, GameEnd,
-        CampStart,CampStage, CampDifficult,CampFarm,CampEnd, }
+        CampBegin,CampStage, CampDifficult,CampFarm,CampAction,CampEnd, }
 
     public enum enum_TriggerType { Invalid = -1, Single = 1, Auto = 2, Burst = 3, Pull = 4, Store = 5, }
 
@@ -536,40 +555,48 @@ namespace GameSetting
 
     public enum enum_CampFarmItemStatus { Invalid=-1, Empty = 0, Locked=1 , Decayed = 2, Progress1=10,Progress2,Progress3,Progress4,Progress5}
     #endregion
+    
 
-    #region GameLayer
-    public static class GameLayer
+    #region Structs
+    #region Default Readonly
+    public struct CoinsGenerateInfo
     {
-        public static readonly int I_Static = LayerMask.NameToLayer("static");
-        public static readonly int I_Entity = LayerMask.NameToLayer("entity");
-        public static readonly int I_Dynamic = LayerMask.NameToLayer("dynamic");
-        public static readonly int I_Interact = LayerMask.NameToLayer("interact");
-        public static class Mask
-        {
-            public static readonly int I_All = 1 << GameLayer.I_Static | 1 << GameLayer.I_Entity | 1 << GameLayer.I_Dynamic;
-            public static readonly int I_StaticEntity = 1 << GameLayer.I_Static | 1 << GameLayer.I_Entity;
-            public static readonly int I_Entity = (1 << GameLayer.I_Entity);
-            public static readonly int I_Interact = (1 << GameLayer.I_Interact);
-            public static readonly int I_Static = (1 << GameLayer.I_Static);
-        }
+        public int m_HealthRate { get; private set; }
+        public int m_ArmorRate { get; private set; }
+        public int m_CoinRate { get; private set; }
+        public RangeInt m_CoinRange { get; private set; }
+        public static CoinsGenerateInfo Create(int healthRate, int armorRate, int coinRate, RangeInt coinAmount) => new CoinsGenerateInfo() { m_HealthRate = healthRate, m_ArmorRate = armorRate, m_CoinRate = coinRate, m_CoinRange = coinAmount };
+    }
 
-        public static readonly int I_EntityDetect = LayerMask.NameToLayer("entityDetect");
-        public static readonly int I_InteractDetect = LayerMask.NameToLayer("interactDetect");
-        public static readonly int I_MovementDetect = LayerMask.NameToLayer("movementDetect");
+    public struct StageInteractGenerate
+    {
+        Dictionary<enum_CharacterType, CoinsGenerateInfo> m_CoinRate;
+        Dictionary<enum_RarityLevel, int> m_ActionRate;
+        Dictionary<enum_RarityLevel, int> m_TradeRate;
+        public bool CanGenerateHealth(enum_CharacterType entityType) => TCommon.RandomPercentage() <= m_CoinRate[entityType].m_HealthRate;
+        public bool CanGenerateArmor(enum_CharacterType entityType) => TCommon.RandomPercentage() <= m_CoinRate[entityType].m_ArmorRate;
+        public int GetCoinGenerate(enum_CharacterType entityType) => TCommon.RandomPercentage() <= m_CoinRate[entityType].m_CoinRate ? m_CoinRate[entityType].m_CoinRange.Random() : -1;
+        public enum_RarityLevel GetActionRarityLevel(System.Random seed) => TCommon.RandomPercentage(m_ActionRate, seed);
+        public enum_RarityLevel GetTradeRarityLevel(System.Random seed) => TCommon.RandomPercentage(m_TradeRate, seed);
+        public static StageInteractGenerate Create(Dictionary<enum_RarityLevel, int> _actionRate, Dictionary<enum_RarityLevel, int> _tradeRate, Dictionary<enum_CharacterType, CoinsGenerateInfo> _coinRate) => new StageInteractGenerate() { m_ActionRate = _actionRate, m_TradeRate = _tradeRate, m_CoinRate = _coinRate };
     }
     #endregion
 
-    #region GameSave
+    #region SaveData
     public class CPlayerCampSave : ISave
     {
         public float f_Credits;
         public int m_GameDifficulty;
         public int m_DifficultyUnlocked;
+        public List<ActionCampData> m_Actions;
         public CPlayerCampSave()
         {
             f_Credits = 100;
             m_GameDifficulty = 1;
             m_DifficultyUnlocked = 1;
+            m_Actions = new List<ActionCampData>();
+            for (int i=10001;i<=10018;i++)
+                m_Actions.Add(ActionCampData.Create(i, enum_RarityLevel.Normal,true));
         }
         public void UnlockDifficulty()
         {
@@ -585,12 +612,12 @@ namespace GameSetting
     {
         public float m_Profit;
         public int m_OffsiteProfitStamp;
-        public List<CampPlotInfo> m_PlotStatus;
+        public List<CampFarmPlotData> m_PlotStatus;
         public CCampFarmSave()
         {
             m_Profit = 0;
             m_OffsiteProfitStamp = TTime.TTimeTools.GetTimeStampNow();
-            m_PlotStatus = new List<CampPlotInfo>() { CampPlotInfo.Create( enum_CampFarmItemStatus.Empty), CampPlotInfo.Create(enum_CampFarmItemStatus.Empty), CampPlotInfo.Create(enum_CampFarmItemStatus.Empty), CampPlotInfo.Create(enum_CampFarmItemStatus.Locked), CampPlotInfo.Create(enum_CampFarmItemStatus.Locked), CampPlotInfo.Create(enum_CampFarmItemStatus.Locked) };
+            m_PlotStatus = new List<CampFarmPlotData>() { CampFarmPlotData.Create( enum_CampFarmItemStatus.Empty), CampFarmPlotData.Create(enum_CampFarmItemStatus.Empty), CampFarmPlotData.Create(enum_CampFarmItemStatus.Empty), CampFarmPlotData.Create(enum_CampFarmItemStatus.Locked), CampFarmPlotData.Create(enum_CampFarmItemStatus.Locked), CampFarmPlotData.Create(enum_CampFarmItemStatus.Locked) };
         }
         public void Save(CampFarmManager manager)
         {
@@ -598,15 +625,15 @@ namespace GameSetting
             m_Profit = manager.m_Profit;
             m_OffsiteProfitStamp = manager.m_LastProfitStamp; 
             for (int i=0;i< manager.m_Plots.Count; i++)
-                m_PlotStatus.Add(CampPlotInfo.SaveData(manager.m_Plots[i]));
+                m_PlotStatus.Add(CampFarmPlotData.SaveData(manager.m_Plots[i]));
         }
 
         public void UnlockPlot(int difficulty)
         {
             if (difficulty >= 3 && m_PlotStatus[3].m_Status == enum_CampFarmItemStatus.Locked)
-                m_PlotStatus[3] = CampPlotInfo.Create(enum_CampFarmItemStatus.Empty);
+                m_PlotStatus[3] = CampFarmPlotData.Create(enum_CampFarmItemStatus.Empty);
             if (difficulty >= 10 && m_PlotStatus[4].m_Status == enum_CampFarmItemStatus.Locked)
-                m_PlotStatus[4] = CampPlotInfo.Create(enum_CampFarmItemStatus.Empty);
+                m_PlotStatus[4] = CampFarmPlotData.Create(enum_CampFarmItemStatus.Empty);
         }
     }
 
@@ -615,16 +642,16 @@ namespace GameSetting
         public enum_PlayerWeapon m_weapon;
         public int m_coins;
         public int m_kills;
-        public ActionInfo m_weaponAction;
-        public List<ActionInfo> m_storedActions;
+        public ActionGameData m_weaponAction;
+        public List<ActionGameData> m_storedActions;
         public string m_GameSeed;
         public enum_StageLevel m_StageLevel;
         public CPlayerGameSave()
         {
             m_coins = 0;
             m_weapon = enum_PlayerWeapon.P92;
-            m_weaponAction = new ActionInfo();
-            m_storedActions = new List<ActionInfo>();
+            m_weaponAction = new ActionGameData();
+            m_storedActions = new List<ActionGameData>();
             m_StageLevel = enum_StageLevel.Rookie;
             m_GameSeed = DateTime.Now.ToLongTimeString().ToString();
         }
@@ -632,8 +659,8 @@ namespace GameSetting
         {
             m_coins = _player.m_PlayerInfo.m_Coins;
             m_weapon = _player.m_WeaponCurrent.m_WeaponInfo.m_Weapon;
-            m_weaponAction = ActionInfo.Create(_player.m_WeaponCurrent.m_WeaponAction);
-            m_storedActions = ActionInfo.Create(_player.m_PlayerInfo.m_ActionStored);
+            m_weaponAction = ActionGameData.Create(_player.m_WeaponCurrent.m_WeaponAction);
+            m_storedActions = ActionGameData.Create(_player.m_PlayerInfo.m_ActionStored);
             m_GameSeed = _level.m_Seed;
             m_StageLevel = _level.m_GameStage;
             m_kills = _level.m_enermiesKilled;
@@ -659,71 +686,82 @@ namespace GameSetting
             m_VFXVolumeTap = 10;
         }
     }
-    #endregion
 
-    #region Data
-    public struct CoinsGenerateInfo
-    {
-        public int m_HealthRate { get; private set; }
-        public int m_ArmorRate { get; private set; }
-        public int m_CoinRate { get; private set; }
-        public RangeInt m_CoinRange { get; private set; }
-        public static CoinsGenerateInfo Create(int healthRate, int armorRate, int coinRate, RangeInt coinAmount) => new CoinsGenerateInfo() { m_HealthRate = healthRate, m_ArmorRate = armorRate, m_CoinRate = coinRate, m_CoinRange = coinAmount };
-    }
-
-    public struct StageInteractGenerate
-    {
-        Dictionary<enum_CharacterType, CoinsGenerateInfo> m_CoinRate;
-        Dictionary<enum_RarityLevel, int> m_ActionRate;
-        Dictionary<enum_RarityLevel, int> m_TradeRate;
-        public bool CanGenerateHealth(enum_CharacterType entityType) => TCommon.RandomPercentage() <= m_CoinRate[entityType].m_HealthRate;
-        public bool CanGenerateArmor(enum_CharacterType entityType) => TCommon.RandomPercentage() <= m_CoinRate[entityType].m_ArmorRate;
-        public int GetCoinGenerate(enum_CharacterType entityType) => TCommon.RandomPercentage() <= m_CoinRate[entityType].m_CoinRate ? m_CoinRate[entityType].m_CoinRange.Random() : -1;
-        public enum_RarityLevel GetActionRarityLevel(System.Random seed) => TCommon.RandomPercentage(m_ActionRate, seed);
-        public enum_RarityLevel GetTradeRarityLevel(System.Random seed) => TCommon.RandomPercentage(m_TradeRate, seed);
-        public static StageInteractGenerate Create(Dictionary<enum_RarityLevel, int> _actionRate, Dictionary<enum_RarityLevel, int> _tradeRate, Dictionary<enum_CharacterType, CoinsGenerateInfo> _coinRate) => new StageInteractGenerate() { m_ActionRate = _actionRate, m_TradeRate = _tradeRate, m_CoinRate = _coinRate };
-    }
-    
-    public struct ActionInfo : IXmlPhrase
+    public struct ActionGameData : IXmlPhrase
     {
         public bool m_IsNull => m_Index <= 0;
         public int m_Index { get; private set; }
         public enum_RarityLevel m_Level { get; private set; }
 
         public string ToXMLData() => m_Index.ToString() + "," + m_Level.ToString();
-        public ActionInfo(string xmlData)
+        public ActionGameData(string xmlData)
         {
             string[] split = xmlData.Split(',');
             m_Index = int.Parse(split[0]);
             m_Level = (enum_RarityLevel)Enum.Parse(typeof(enum_RarityLevel), split[1]);
         }
 
-        public static ActionInfo Create(int index, enum_RarityLevel level) => new ActionInfo { m_Index = index, m_Level = level };
-        public static ActionInfo Create(ActionBase action) =>action==null?new ActionInfo() { m_Index=-1,m_Level=0} : new ActionInfo { m_Index = action.m_Index, m_Level = action.m_rarity };
-        public static List<ActionInfo> Create(List<ActionBase> actions)
+        public static ActionGameData Create(int index, enum_RarityLevel level) => new ActionGameData { m_Index = index, m_Level = level };
+        public static ActionGameData Create(ActionBase action) => action == null ? new ActionGameData() { m_Index = -1, m_Level = 0 } : new ActionGameData { m_Index = action.m_Index, m_Level = action.m_rarity };
+        public static List<ActionGameData> Create(List<ActionBase> actions)
         {
-            List<ActionInfo> infos = new List<ActionInfo>();
+            List<ActionGameData> infos = new List<ActionGameData>();
             actions.Traversal((ActionBase action) => { infos.Add(Create(action)); });
             return infos;
         }
     }
 
-    public struct CampPlotInfo : IXmlPhrase
+    public struct ActionCampData : IXmlPhrase
+    {
+        public int m_Index { get; private set; }
+        public int m_Count { get; private set; }
+        public bool m_Selected { get; private set; }
+        public string ToXMLData() => m_Index.ToString() + "," + m_Count.ToString() + "," + m_Selected.ToString();
+        public ActionCampData(string xmlData)
+        {
+            string[] split = xmlData.Split(',');
+            m_Index = int.Parse(split[0]);
+            m_Count = int.Parse(split[1]);
+            m_Selected = bool.Parse(split[2]);
+        }
+        
+        public enum_RarityLevel GetRarityLevel()=> m_Count < 10? enum_RarityLevel.Invalid:(enum_RarityLevel)(m_Count / 10);
+
+        public static Dictionary<int,enum_RarityLevel> GetPlayerActionSelectedData(List<ActionCampData> data)
+        {
+            Dictionary<int, enum_RarityLevel> selectedData = new Dictionary<int, enum_RarityLevel>();
+            for(int i=0;i<data.Count;i++)
+            {
+                if (!data[i].m_Selected)
+                    continue;
+                enum_RarityLevel rarity = data[i].GetRarityLevel();
+                if (rarity == enum_RarityLevel.Invalid)
+                    Debug.LogError("Invalid Save Data! Selected Count Can't Less Than 10!");
+                selectedData.Add(data[i].m_Index, rarity);
+            }
+            return selectedData;
+        }
+        public static ActionCampData Create(int index, enum_RarityLevel rarity, bool selected) => new ActionCampData { m_Index = index, m_Count = (int)rarity*10, m_Selected = selected };
+    }
+
+    public struct CampFarmPlotData : IXmlPhrase
     {
         public int m_StartStamp { get; private set; }
         public enum_CampFarmItemStatus m_Status { get; private set; }
         public string ToXMLData() => m_StartStamp.ToString() + "," + m_Status.ToString();
-        public CampPlotInfo(string xmlData)
+        public CampFarmPlotData(string xmlData)
         {
             string[] split = xmlData.Split(',');
             m_StartStamp = int.Parse(split[0]);
-            m_Status = (enum_CampFarmItemStatus)Enum.Parse(typeof(enum_CampFarmItemStatus),split[1]);
+            m_Status = (enum_CampFarmItemStatus)Enum.Parse(typeof(enum_CampFarmItemStatus), split[1]);
         }
 
-        public static CampPlotInfo Create(enum_CampFarmItemStatus _status ) => new CampPlotInfo { m_StartStamp=-1,m_Status=_status};
-        public static CampPlotInfo SaveData(CampFarmPlot _plot) => new CampPlotInfo { m_StartStamp = _plot.m_StartStamp, m_Status = _plot.m_Status };
+        public static CampFarmPlotData Create(enum_CampFarmItemStatus _status) => new CampFarmPlotData { m_StartStamp = -1, m_Status = _status };
+        public static CampFarmPlotData SaveData(CampFarmPlot _plot) => new CampFarmPlotData { m_StartStamp = _plot.m_StartStamp, m_Status = _plot.m_Status };
     }
+    #endregion
 
+    #region ExcelData
     public struct SWeapon : ISExcel
     {
         int index;
@@ -929,8 +967,9 @@ namespace GameSetting
     }
 
     #endregion
+    #endregion
 
-    #region GameClass/Structs
+    #region Class
     #region GameBase
     public class HealthBase
     {
@@ -2568,6 +2607,5 @@ namespace GameSetting
         }
     }
     #endregion
-
     #endregion
 }

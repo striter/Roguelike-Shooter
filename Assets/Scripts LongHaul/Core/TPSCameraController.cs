@@ -57,8 +57,12 @@ public class TPSCameraController : CameraController
         B_CameraOffsetWallClip = true;
         SetCameraYawClamp(I_YawMin, I_YawMax);
     }
-    public void SetOffset(Vector3 offset) => SetCameraOffset(offset);
-
+    
+    public void Attach(Transform target,bool selfRotation,bool useOffset)
+    {
+        base.SetCameraOffset(useOffset ? TPSOffset : Vector3.zero);
+        base.Attach(target,selfRotation);
+    }
     public void AddRecoil(Vector3 _recoil)=> v3_Recoil += _recoil;
     public void AddShake(float shakeAmount)=> v3_Shake += TCommon.RandomVector3(shakeAmount);
     public void SetImpact(Vector3 impactDirection)

@@ -220,7 +220,7 @@ public class GameManager : GameManagerBase
     {
         m_GameLevel.OnGameFinished(win);
         GameDataManager.OnGameFinished(win);
-        GameDataManager.OnCreditGain(m_GameLevel.F_CreditGain);
+        GameDataManager.OnCreditChange(m_GameLevel.F_CreditGain);
         GameUIManager.Instance.OnGameFinished(m_GameLevel, OnExitGame);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameFinish, win);
     }
@@ -235,7 +235,7 @@ public class GameManager : GameManagerBase
                     GameObjectManager.SpawnInteract<InteractBonfire>(enum_Interaction.Bonfire, LevelManager.NavMeshPosition( Vector3.zero,false), LevelManager.Instance.m_currentLevel.m_Level.tf_Interact).Play();
 
                     m_RewardChest = GameObjectManager.SpawnInteract<InteractActionChest>(enum_Interaction.ActionChestStart, LevelManager.NavMeshPosition(Vector3.left * 3, false), LevelManager.Instance.m_currentLevel.m_Level.tf_Interact);
-                    m_RewardChest.Play(GameDataManager.CreateRandomPlayerActions(3, m_GameLevel.m_GameStage.GetStartChestRarity(), m_GameLevel.m_GameSeed), 1);
+                    m_RewardChest.Play(GameDataManager.CreateRandomPlayerSelectedAction(3, m_GameLevel.m_GameSeed), 1);
                     
                     GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, LevelManager.NavMeshPosition(Vector3.right * 3, false), LevelManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(GameObjectManager.SpawnWeapon(TCommon.RandomEnumValues<enum_PlayerWeapon>(m_GameLevel.m_GameSeed),  GameDataManager.CreateRandomWeaponPerk(m_GameLevel.m_GameStage.GetStartWeaponPerkRarity(), m_GameLevel.m_GameSeed)));
                 }
@@ -289,7 +289,7 @@ public class GameManager : GameManagerBase
                 {
                     enum_RarityLevel level = m_GameLevel.m_actionGenerate.GetActionRarityLevel(m_GameLevel.m_GameSeed);
                     m_RewardChest = GameObjectManager.SpawnInteract<InteractActionChest>(enum_Interaction.ActionChest, LevelManager.NavMeshPosition(rewardPos, false), LevelManager.Instance.m_currentLevel.m_Level.tf_Interact);
-                    m_RewardChest.Play(GameDataManager.CreateRandomPlayerActions(2, level, m_GameLevel.m_GameSeed), 1);
+                    m_RewardChest.Play(GameDataManager.CreateRandomDropPlayerAction(2, level, m_GameLevel.m_GameSeed), 1);
                 }
                 break;
         }
@@ -437,7 +437,7 @@ public class GameManager : GameManagerBase
     }
     void OnCreditRevivePlayer()
     {
-        GameDataManager.OnCreditGain(-50);
+        GameDataManager.OnCreditChange(-50);
         ForceRevivePlayer();
     }
     void ForceRevivePlayer()

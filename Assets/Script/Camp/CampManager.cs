@@ -42,15 +42,29 @@ public class CampManager : GameManagerBase{
         B_Farming = true;
         AttachSceneCamera( CampFarmManager.Instance.Begin(OnFarmExit));
     }
-    public void OnFarmExit()
+    void OnFarmExit()
     {
         B_Farming = false;
         AttachPlayerCamera(tf_Player);
     }
 
-    public void OnCreditStatus(float credit)
+    public bool B_Actioning { get; private set; } = false;
+    public void OnActionNPCChatted(Transform attachTo,Transform lookAt)
     {
-        GameDataManager.OnCreditGain(credit);
+        B_Actioning = true;
+        AttachSceneCamera(attachTo, lookAt);
+        SetEffect_Focal(true,lookAt,.8f,2f);
+    }
+    void OnActionExit()
+    {
+        B_Actioning = false;
+        AttachPlayerCamera(tf_Player);
+        SetEffect_Focal(false);
+    }
+
+    public void OnCreditStatus(float creditChange)
+    {
+        GameDataManager.OnCreditChange(creditChange);
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_CampCreditStatus);
     }
 

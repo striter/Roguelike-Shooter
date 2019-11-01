@@ -65,7 +65,7 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
        tf_AttachTo = toTransform;
         qt_CameraRot = toTransform.rotation;
     }
-    public void CameraLookAt(Transform lookAtTrans) => tf_CameraLookAt = lookAtTrans;
+    public void LookAt(Transform lookAtTrans) => tf_CameraLookAt = lookAtTrans;
     public void SetCameraSmoothParam(float smoothParam)=> F_CameraSmoothParam = smoothParam;
     public void SetCameraRotation(int pitch = -1, int yaw = -1)
     {

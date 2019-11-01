@@ -12,7 +12,7 @@ public class CampFarmPlot : CampFarmInteract {
 
     float CalculateDecayProgress(int stampNow) => Mathf.Clamp(1- (stampNow - m_StartStamp) /(float)GameConst.I_CampFarmItemDecayStampDuration,0,1);
     int m_profitStamp,m_StampCheck;
-    public float Init(int index,CampPlotInfo info,int offlineStamp,int stampNow)
+    public float Init(int index,CampFarmPlotData info,int offlineStamp,int stampNow)
     {
         m_Index = index;
         m_StartStamp = info.m_StartStamp;

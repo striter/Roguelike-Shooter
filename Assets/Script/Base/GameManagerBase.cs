@@ -110,15 +110,16 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
          },0,1,duration));
     }
     #endregion
-
-
-    protected void AttachSceneCamera(Transform attachTo)
+    
+    protected void AttachSceneCamera(Transform attachTo,Transform lookAt=null)
     {
-        CameraController.Instance.Attach(attachTo, false);
+        TPSCameraController.Instance.Attach(attachTo, false,false);
+        CameraController.Instance.LookAt(lookAt);
     }
     protected void AttachPlayerCamera(Transform playerTo)
     {
-        CameraController.Instance.Attach(playerTo, true);
+        TPSCameraController.Instance.Attach(playerTo, true,true);
+        CameraController.Instance.LookAt(null);
     }
 }
 
@@ -185,11 +186,12 @@ public static class GameDataManager
         Properties<SWeapon>.Init();
         Properties<SBuff>.Init();
         SheetProperties<SGenerateEntity>.Init();
-        InitActions();
 
         m_PlayerCampData = TGameData<CPlayerCampSave>.Read();
         m_CampFarmData = TGameData<CCampFarmSave>.Read();
         m_PlayerGameData = TGameData<CPlayerGameSave>.Read();
+
+        InitActions(ActionCampData.GetPlayerActionSelectedData(m_PlayerCampData.m_Actions));
     }
     #region GameSave
     public static CPlayerCampSave m_PlayerCampData { get; private set; }
@@ -214,7 +216,7 @@ public static class GameDataManager
         TGameData<CPlayerCampSave>.Save(m_PlayerCampData);
     }
     public static bool CanUseCredit(float credit) => m_PlayerCampData.f_Credits >= credit;
-    public static void OnCreditGain(float credit)
+    public static void OnCreditChange(float credit)
     {
         m_PlayerCampData.f_Credits += credit;
         TGameData<CPlayerCampSave>.Save(m_PlayerCampData);
@@ -286,12 +288,15 @@ public static class GameDataManager
     static Dictionary<int, ActionBase> m_AllActions = new Dictionary<int, ActionBase>();
     static List<int> m_WeaponActions = new List<int>();
     static List<int> m_PlayerActions = new List<int>();
+    static Dictionary<int, enum_RarityLevel> m_PlayerSelectedActions = new Dictionary<int, enum_RarityLevel>();
     static int m_ActionIdentity = 0;
-    static void InitActions()
+    static void InitActions(Dictionary<int,enum_RarityLevel> selectedActions)
     {
         m_AllActions.Clear();
         m_WeaponActions.Clear();
         m_PlayerActions.Clear();
+        
+        m_PlayerSelectedActions = selectedActions;
         TReflection.TraversalAllInheritedClasses((Type type, ActionBase action) => {
             if (action.m_Index <= 0)
                 return;
@@ -304,34 +309,48 @@ public static class GameDataManager
         }, -1, enum_RarityLevel.Invalid);
     }
     public static  ActionBase CreateRandomWeaponPerk(enum_RarityLevel level, System.Random seed) =>level==0?null: CreateAction(m_WeaponActions.RandomItem(seed), level) ;
-    public static List<ActionBase> CreateRandomPlayerActions(int actionCount, enum_RarityLevel level, System.Random seed)
+    public static List<ActionBase> CreateRandomDropPlayerAction(int actionCount, enum_RarityLevel rarity, System.Random seed)
     {
         List<ActionBase> actions = new List<ActionBase>();
         for (int i = 0; i < actionCount; i++)
         {
-            int actionIndex = -1;
             m_PlayerActions.TraversalRandom((int index) =>
             {
                 if (actions.Find(p => p.m_Index == index) == null)
                 {
-                    actionIndex = index;
+                    actions.Add(CreateAction(index, rarity));
                     return true;
                 }
                 return false;
             }, seed);
-            if (actionIndex != -1)
-                actions.Add(CreateAction(actionIndex, level));
+        }
+        return actions;
+    }
+    public static List<ActionBase> CreateRandomPlayerSelectedAction(int actionCount,System.Random seed)
+    {
+        List<ActionBase> actions = new List<ActionBase>();
+        for (int i = 0; i < actionCount; i++)
+        {
+            m_PlayerSelectedActions.TraversalRandom((int index,enum_RarityLevel rarity) =>
+            {
+                if (actions.Find(p => p.m_Index == index) == null)
+                {
+                    actions.Add(CreateAction(index, rarity));
+                    return true;
+                }
+                return false;
+            }, seed);
         }
         return actions;
     }
     public static ActionBase CreateRandomPlayerAction(enum_RarityLevel level, System.Random seed) => CreateAction(m_PlayerActions.RandomItem(seed), level);
-    public static List<ActionBase> CreateActions(List<ActionInfo> infos)
+    public static List<ActionBase> CreateActions(List<ActionGameData> infos)
     {
         List<ActionBase> actions = new List<ActionBase>();
-        infos.Traversal((ActionInfo info) => { actions.Add(CreateAction(info)); });
+        infos.Traversal((ActionGameData info) => { actions.Add(CreateAction(info)); });
         return actions;
     }
-    public static ActionBase CreateAction(ActionInfo info) => info.m_IsNull ? null : CreateAction(info.m_Index, info.m_Level);
+    public static ActionBase CreateAction(ActionGameData info) => info.m_IsNull ? null : CreateAction(info.m_Index, info.m_Level);
     public static ActionBase CreateAction(int actionIndex, enum_RarityLevel level)
     {
         if (!m_AllActions.ContainsKey(actionIndex))
