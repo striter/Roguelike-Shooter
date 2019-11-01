@@ -7,13 +7,13 @@ public class UI_ActionAcquire : UIPageBase {
 
     Action<int> OnIndexSelect;
     UIC_Button m_Confirm;
-    UIT_GridControllerMonoItem<UIGI_ActionItemSelect> m_Grid;
+    UIT_GridControllerGridItem<UIGI_ActionItemSelect> m_Grid;
     int m_selectIndex;
     protected override void Init(bool useAnim)
     {
         base.Init(useAnim);
         m_Confirm =new UIC_Button( tf_Container.Find("Confirm"),OnConfirmClick);
-        m_Grid = new UIT_GridControllerMonoItem<UIGI_ActionItemSelect>(tf_Container.Find("ActionGrid"));
+        m_Grid = new UIT_GridControllerGridItem<UIGI_ActionItemSelect>(tf_Container.Find("ActionGrid"));
     }
     public void Play(List<ActionBase> actions,Action<int> _OnIndexSelect, int selectAmount)
     {

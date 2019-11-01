@@ -42,10 +42,10 @@ public class UIT_GridControllerMono<T>  where T : MonoBehaviour
     
 }
 
-public class UIT_GridControllerMonoItem<T>: UIT_GridControllerMono<T> where T:UIT_GridItem
+public class UIT_GridControllerGridItem<T>: UIT_GridControllerMono<T> where T:UIT_GridItem
 {
     public GridLayoutGroup m_GridLayout { get; private set; }
-    public UIT_GridControllerMonoItem(Transform _transform) : base(_transform)
+    public UIT_GridControllerGridItem(Transform _transform) : base(_transform)
     {
         m_GridLayout = _transform.GetComponent<GridLayoutGroup>();
     }
@@ -75,7 +75,7 @@ public class UIT_GridControllerMonoItem<T>: UIT_GridControllerMono<T> where T:UI
             GetItem(keyCollections[i]).transform.SetAsLastSibling();
     }
 }
-public class UIT_GridDefaultMulti<T> : UIT_GridControllerMonoItem<T> where T : UIT_GridDefaultItem
+public class UIT_GridDefaultMulti<T> : UIT_GridControllerGridItem<T> where T : UIT_GridDefaultItem
 {
     public int m_selectAmount { get; private set; }=-1;
     public bool m_AllSelected => m_Selecting.Count == m_selectAmount;
@@ -118,7 +118,7 @@ public class UIT_GridDefaultMulti<T> : UIT_GridControllerMonoItem<T> where T : U
         OnItemSelect?.Invoke(index);
     }
 }
-public class UIT_GridDefaultSingle<T> : UIT_GridControllerMonoItem<T> where T : UIT_GridDefaultItem
+public class UIT_GridDefaultSingle<T> : UIT_GridControllerGridItem<T> where T : UIT_GridDefaultItem
 {
     bool b_btnEnable;
     bool b_doubleClickConfirm;

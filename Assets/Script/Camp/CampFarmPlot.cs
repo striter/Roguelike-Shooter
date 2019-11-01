@@ -8,7 +8,9 @@ public class CampFarmPlot : MonoBehaviour {
     public int m_StartStamp { get; private set; }
     public enum_CampFarmItemStatus m_Status { get; private set; }
     public CampFarmItem m_PlotItem { get; private set; }
-    public float m_DecayProgress(int stampNow) => (stampNow - m_StartStamp) /(float)GameConst.I_CampFarmItemDecayStampDuration;
+    public float m_DecayProgress { get; private set; }
+
+    float CalculateDecayProgress(int stampNow) => Mathf.Clamp(1- (stampNow - m_StartStamp) /(float)GameConst.I_CampFarmItemDecayStampDuration,0,1);
     int m_profitStamp,m_StampCheck;
     public float Init(int index,CampPlotInfo info,int offlineStamp,int stampNow)
     {
@@ -20,8 +22,10 @@ public class CampFarmPlot : MonoBehaviour {
         return CheckGenerateProfit(offlineStamp,stampNow);
     }
 
-    public float Tick(int stampNow)
+    public float TickProfit(int stampNow)
     {
+        m_DecayProgress = CalculateDecayProgress(stampNow);
+
         if (stampNow < m_StampCheck)
             return 0;
         m_StampCheck = stampNow + GameExpression.I_CampFarmPlotProfitDuration.Random();
@@ -31,10 +35,11 @@ public class CampFarmPlot : MonoBehaviour {
         return profit;
     }
 
-    public float DisableProfitCheck(int stampNow)=> CheckGenerateProfit(m_profitStamp, stampNow);
+    public float EndProfit(int stampNow)=> CheckGenerateProfit(m_profitStamp, stampNow);
 
     public void Hybrid(enum_CampFarmItemStatus status)
     {
+        m_DecayProgress = 1f;
         m_StartStamp = TTimeTools.GetTimeStampNow();
         ResetPlotObj(status);
     }
@@ -64,7 +69,7 @@ public class CampFarmPlot : MonoBehaviour {
         if (!GameExpression.CanGenerateprofit(m_Status))
             return 0;
 
-        bool decayed = m_DecayProgress(stampNow) >= 1f;
+        bool decayed = CalculateDecayProgress(stampNow) == 0f;
         int profitBegin = previousStamp < m_StartStamp ? m_StartStamp : previousStamp;
         int profitEnd = decayed ? m_StartStamp + GameConst.I_CampFarmItemDecayStampDuration : stampNow;
         int profitStampOffset = profitEnd - profitBegin;

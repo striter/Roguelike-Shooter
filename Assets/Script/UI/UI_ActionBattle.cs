@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 public class UI_ActionBattle : UIPageBase {
 
-    UIT_GridControllerMonoItem<UIGI_ActionItemDetail> m_Grid;
+    UIT_GridControllerGridItem<UIGI_ActionItemDetail> m_Grid;
     PlayerInfoManager m_Info;
     UIC_ActionEnergy m_Energy;
     protected override void Init(bool useAnim)
     {
         base.Init(useAnim);
-        m_Grid = new UIT_GridControllerMonoItem<UIGI_ActionItemDetail>(tf_Container.Find("ActionGrid"));
+        m_Grid = new UIT_GridControllerGridItem<UIGI_ActionItemDetail>(tf_Container.Find("ActionGrid"));
         m_Energy = new UIC_ActionEnergy(tf_Container.Find("ActionEnergy"));
     }
     public void Show(PlayerInfoManager _info)

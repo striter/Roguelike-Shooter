@@ -5,12 +5,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class UI_ActionPack : UIPageBase {
-    UIT_GridControllerMonoItem<UIGI_ActionItemDetail> m_Grid;
+    UIT_GridControllerGridItem<UIGI_ActionItemDetail> m_Grid;
     PlayerInfoManager m_Info;
     protected override void Init(bool useAnim)
     {
         base.Init(useAnim);
-        m_Grid = new UIT_GridControllerMonoItem<UIGI_ActionItemDetail>(tf_Container.Find("ScrollView/Viewport/ActionGrid"));
+        m_Grid = new UIT_GridControllerGridItem<UIGI_ActionItemDetail>(tf_Container.Find("ScrollView/Viewport/ActionGrid"));
     }
     public void Show(PlayerInfoManager _info)
     {

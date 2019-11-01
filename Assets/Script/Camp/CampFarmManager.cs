@@ -52,7 +52,7 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
     {
         int stampNow = TTimeTools.GetTimeStampNow();
         for (int i = 0; i < m_Plots.Count; i++)
-            m_Profit += m_Plots[i].DisableProfitCheck(stampNow);
+            m_Profit += m_Plots[i].EndProfit(stampNow);
         m_LastProfitStamp = stampNow;
         GameDataManager.SaveCampFarmData(this);
         ObjectPoolManager<enum_CampFarmItemStatus, CampFarmItem>.OnSceneChange();
@@ -61,13 +61,15 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
     public Transform Begin(Action _OnExitFarm)
     {
         OnExitFarm = _OnExitFarm;
-        m_FarmStatus = CampUIManager.Instance.BeginFarm(OnDragDown, OnDrag, OnFarmBuy, OnExit, OnCollectProfit);
+        m_FarmStatus = CampUIManager.Instance.BeginFarm(OnDragDown, OnDrag);
+        m_FarmStatus.Play(m_Plots, OnExit, OnFarmBuy, OnCollectProfit);
         m_FarmStatus.OnProfitChange(m_Profit);
         return tf_FarmCameraPos;
     }
 
     void OnExit()
     {
+        CampUIManager.Instance.ExitFarm();
         m_FarmStatus = null;
         OnExitFarm();
 
@@ -89,7 +91,7 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
         int stampNow= TTimeTools.GetTimeStampNow();
         for (int i = 0; i < m_Plots.Count; i++)
         {
-            float profit = m_Plots[i].Tick(stampNow);
+            float profit = m_Plots[i].TickProfit(stampNow);
             m_Profit += profit;
 
             if (profit>0&& m_FarmStatus) m_FarmStatus.OnProfitChange(i,m_Profit, profit);

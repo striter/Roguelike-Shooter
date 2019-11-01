@@ -15,17 +15,17 @@ public class UIT_GamePlayerStatus : UIToolsBase
     UIC_ActionEnergy m_ActionEnergy;
     Button  btn_ActionShuffle;
     Image img_ShuffleFill;
-    UIT_GridControllerMonoItem<UIGI_ActionItemHold> m_ActionGrid;
+    UIT_GridControllerGridItem<UIGI_ActionItemHold> m_ActionGrid;
 
     Transform tf_ExpireData;
-    UIT_GridControllerMonoItem<UIGI_ExpireInfoItem> m_ExpireGrid;
+    UIT_GridControllerGridItem<UIGI_ExpireInfoItem> m_ExpireGrid;
 
     RectTransform rtf_StatusData;
     GridLayoutGroup m_AmmoLayout;
     Transform tf_AmmoData;
     Image img_ReloadFill;
     float m_AmmoGridWidth;
-    UIT_GridControllerMonoItem<UIGI_AmmoItem> m_AmmoGrid;
+    UIT_GridControllerGridItem<UIGI_AmmoItem> m_AmmoGrid;
     UIC_Numeric m_AmmoAmount, m_AmmoClipAmount;
 
     Transform tf_ArmorData;
@@ -62,7 +62,7 @@ public class UIT_GamePlayerStatus : UIToolsBase
 
         tf_InBattle = tf_Container.Find("InBattle");
         m_ActionEnergy = new UIC_ActionEnergy(tf_InBattle.Find("ActionEnergy"));
-        m_ActionGrid = new UIT_GridControllerMonoItem<UIGI_ActionItemHold>(tf_InBattle.Find("ActionGrid"));
+        m_ActionGrid = new UIT_GridControllerGridItem<UIGI_ActionItemHold>(tf_InBattle.Find("ActionGrid"));
         btn_ActionShuffle = tf_InBattle.Find("ActionShuffle").GetComponent<Button>();
         btn_ActionShuffle.onClick.AddListener(OnActionShuffleClick);
         img_ShuffleFill = btn_ActionShuffle.transform.Find("ShuffleFill").GetComponent<Image>();
@@ -73,7 +73,7 @@ public class UIT_GamePlayerStatus : UIToolsBase
         m_AmmoGridWidth = tf_AmmoData.GetComponent<RectTransform>().sizeDelta.x;
         m_AmmoAmount = new UIC_Numeric(tf_AmmoData.Find("AmmoAmount"));
         m_AmmoClipAmount = new UIC_Numeric(m_AmmoAmount.transform.Find("ClipAmount"));
-        m_AmmoGrid = new UIT_GridControllerMonoItem<UIGI_AmmoItem>(tf_AmmoData.Find("AmmoGrid"));
+        m_AmmoGrid = new UIT_GridControllerGridItem<UIGI_AmmoItem>(tf_AmmoData.Find("AmmoGrid"));
         m_AmmoLayout = m_AmmoGrid.transform.GetComponent<GridLayoutGroup>();
         img_ReloadFill = m_AmmoGrid.transform.Find("Reload").GetComponent<Image>();
 
@@ -86,7 +86,7 @@ public class UIT_GamePlayerStatus : UIToolsBase
         m_MaxHealth = new UIC_Numeric(m_HealthAmount.transform.Find("MaxHealth"));
         
         tf_ExpireData = tf_Container.Find("ExpireData");
-        m_ExpireGrid = new UIT_GridControllerMonoItem<UIGI_ExpireInfoItem>(tf_ExpireData.Find("ExpireGrid"));
+        m_ExpireGrid = new UIT_GridControllerGridItem<UIGI_ExpireInfoItem>(tf_ExpireData.Find("ExpireGrid"));
 
         rtf_InteractData = tf_Container.Find("InteractData").GetComponent<RectTransform>();
         txt_interactName = rtf_InteractData.Find("Container/InteractName").GetComponent<UIT_TextExtend>();

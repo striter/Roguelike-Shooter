@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class UI_ActionAdjustment : UIPageBase {
 
-    UIT_GridControllerMonoItem<UIGI_ActionItemSelect> m_Grid;
+    UIT_GridControllerGridItem<UIGI_ActionItemSelect> m_Grid;
     Text m_CoinData;
     Button btn_remove, btn_upgrade;
     UIT_TextExtend txt_removeAmount, txt_upgradeAmount;
@@ -14,7 +14,7 @@ public class UI_ActionAdjustment : UIPageBase {
     protected override void Init(bool useAnim)
     {
         base.Init(useAnim);
-        m_Grid = new UIT_GridControllerMonoItem<UIGI_ActionItemSelect>(tf_Container.Find("ScrollView/Viewport/ActionGrid"));
+        m_Grid = new UIT_GridControllerGridItem<UIGI_ActionItemSelect>(tf_Container.Find("ScrollView/Viewport/ActionGrid"));
         m_CoinData = transform.Find("CoinData/Data").GetComponent<Text>();
         btn_remove = tf_Container.Find("BtnRemove").GetComponent<Button>();
         btn_remove.onClick.AddListener(OnRemoveClick);
