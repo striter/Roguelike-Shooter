@@ -34,8 +34,8 @@ public class LevelBase : MonoBehaviour {
         m_seed = _seed;
         m_levelType = _levelType;
 
-        I_InnerHalfLength = _innerData.m_Length.RandomRangeInt(m_seed);
-        I_OuterHalfLength = _outerData.m_Length.RandomRangeInt(m_seed);
+        I_InnerHalfLength = _innerData.m_Length.Random(m_seed);
+        I_OuterHalfLength = _outerData.m_Length.Random(m_seed);
         I_OuterHalfLength = (I_InnerHalfLength + I_OuterHalfLength) % 2 == 0 ? I_OuterHalfLength + 1 : I_OuterHalfLength;
         int totalRadius = I_InnerHalfLength + I_OuterHalfLength;
         tf_Model.localScale = Vector3.one * totalRadius*2;
@@ -159,7 +159,7 @@ public class LevelBase : MonoBehaviour {
     {
         TCommon.Traversal(generate.m_ItemGenerate, (enum_LevelItemType type, RangeInt range) =>
         {
-            int totalCount = range.RandomRangeInt(m_seed);
+            int totalCount = range.Random(m_seed);
             if (totalCount == 0)
                 return;
 

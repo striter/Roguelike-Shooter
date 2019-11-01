@@ -20,12 +20,14 @@ public class CampUIManager : UIManager {
     }
     
     Action OnExitFarm;
-    public void BeginFarm(Action<bool,Vector2> _OnDragDown, Action<Vector2> _OnDrag, Action _OnBuyClick, Action _OnExitFarm,Action _OnProfitClick)
+    public UIT_FarmStatus BeginFarm(Action<bool,Vector2> _OnDragDown, Action<Vector2> _OnDrag, Action _OnBuyClick, Action _OnExitFarm,Action _OnProfitClick)
     {
         m_TouchDelta.AddDragBinding(_OnDragDown, _OnDrag);
         tf_Control.localScale = Vector3.zero;
         OnExitFarm = _OnExitFarm;
-        ShowTools<UIT_FarmStatus>().Play(ExitFarm, _OnBuyClick,_OnProfitClick);
+        UIT_FarmStatus target = ShowTools<UIT_FarmStatus>();
+        target.Play(ExitFarm, _OnBuyClick, _OnProfitClick);
+        return target;
     }
     void ExitFarm()
     {

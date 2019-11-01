@@ -10,6 +10,7 @@ public class UIT_FarmStatus : UIToolsBase {
     Button m_Buy, m_Exit,m_Profit;
     Text m_ProfitAmount;
     Action OnExitClick, OnBuyClick, OnProfitClick;
+
     protected override void Init()
     {
         base.Init();
@@ -20,12 +21,10 @@ public class UIT_FarmStatus : UIToolsBase {
         m_Profit = transform.Find("Profit").GetComponent<Button>();
         m_Profit.onClick.AddListener(() => { OnProfitClick(); });
         m_ProfitAmount = m_Profit.transform.Find("Text").GetComponent<Text>();
-
-        TBroadCaster<enum_BC_UIStatus>.Add<float>(enum_BC_UIStatus.UI_CampFarmProfitStatus, OnProfitStatus);
+        
     }
     protected override void OnDestroy()
     {
-        TBroadCaster<enum_BC_UIStatus>.Remove<float>(enum_BC_UIStatus.UI_CampFarmProfitStatus, OnProfitStatus);
         base.OnDestroy();
     }
     public void Play(Action _OnExitClick, Action _OnBuyClick,Action _OnProfitClick)
@@ -34,9 +33,10 @@ public class UIT_FarmStatus : UIToolsBase {
         OnBuyClick = _OnBuyClick;
         OnProfitClick = _OnProfitClick;
     }
-    void OnProfitStatus(float amount)
+    public void OnProfitChange(float profit) => m_ProfitAmount.text = profit.ToString();
+    public void OnProfitChange(int plotIndex,float profit,float profitOffset)
     {
-        m_ProfitAmount.text = amount.ToString();
+        OnProfitChange(profit);
     }
     
 }

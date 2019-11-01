@@ -320,7 +320,7 @@ public class EntityCharacterAI : EntityCharacterBase {
                 return;
 
             b_preAim = TCommon.RandomPercentage() >= m_Entity.I_AttackPreAimPercentage;
-            i_playCount = m_Entity.F_AttackTimes.RandomRangeInt();
+            i_playCount = m_Entity.F_AttackTimes.Random();
             i_playCount = i_playCount <= 0 ? 1 : i_playCount;       //Make Sure Play Once At Least
             b_attacking = true;
             m_Weapon.OnPlayAnim(true);

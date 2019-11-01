@@ -57,10 +57,11 @@ namespace GameSetting
         public const int I_HealthTradeAmount = 50;
 
         public const float F_LevelTileSize = 2f;        //Cube Size For Level Tiles
-
-        public const int I_CampFarmProfitTickDuration = 15;
+        
         public const int I_CampFarmItemAcquire = 70;
+        public const int I_CampFarmStampCheck = 3;
         public const int I_CampFarmItemDecayStampDuration = 60; //57600;      //16 hours
+
     }
 
     public static class GameExpression
@@ -164,6 +165,7 @@ namespace GameSetting
 
         public static readonly Dictionary<enum_CampFarmItemStatus, int> GetFarmGeneratePercentage = new Dictionary< enum_CampFarmItemStatus,int>() { {  enum_CampFarmItemStatus.Progress1 ,60},{enum_CampFarmItemStatus.Progress2 ,30},{enum_CampFarmItemStatus.Progress3 ,6},{enum_CampFarmItemStatus.Progress4,3},{ enum_CampFarmItemStatus.Progress5,1} };
         public static readonly Dictionary<enum_CampFarmItemStatus, float> GetFarmCreditGeneratePerSecond = new Dictionary<enum_CampFarmItemStatus, float> { { enum_CampFarmItemStatus.Progress1, .1f / 60f }, { enum_CampFarmItemStatus.Progress2, .2f / 60f }, { enum_CampFarmItemStatus.Progress3, .3f / 60f }, { enum_CampFarmItemStatus.Progress4, .5f / 60f }, { enum_CampFarmItemStatus.Progress5, 1f / 60f } };
+        public static readonly RangeInt I_CampFarmPlotProfitDuration = new RangeInt(10, 5);
         public static bool CanGenerateprofit(this enum_CampFarmItemStatus status)
         {
             switch(status)
@@ -394,7 +396,6 @@ namespace GameSetting
         UI_PlayerWeaponStatus,
 
         UI_CampCreditStatus,
-        UI_CampFarmProfitStatus,
 
         UI_PageOpen,
         UI_PageClose,
@@ -677,7 +678,7 @@ namespace GameSetting
         Dictionary<enum_RarityLevel, int> m_TradeRate;
         public bool CanGenerateHealth(enum_CharacterType entityType) => TCommon.RandomPercentage() <= m_CoinRate[entityType].m_HealthRate;
         public bool CanGenerateArmor(enum_CharacterType entityType) => TCommon.RandomPercentage() <= m_CoinRate[entityType].m_ArmorRate;
-        public int GetCoinGenerate(enum_CharacterType entityType) => TCommon.RandomPercentage() <= m_CoinRate[entityType].m_CoinRate ? m_CoinRate[entityType].m_CoinRange.RandomRangeInt() : -1;
+        public int GetCoinGenerate(enum_CharacterType entityType) => TCommon.RandomPercentage() <= m_CoinRate[entityType].m_CoinRate ? m_CoinRate[entityType].m_CoinRange.Random() : -1;
         public enum_RarityLevel GetActionRarityLevel(System.Random seed) => TCommon.RandomPercentage(m_ActionRate, seed);
         public enum_RarityLevel GetTradeRarityLevel(System.Random seed) => TCommon.RandomPercentage(m_TradeRate, seed);
         public static StageInteractGenerate Create(Dictionary<enum_RarityLevel, int> _actionRate, Dictionary<enum_RarityLevel, int> _tradeRate, Dictionary<enum_CharacterType, CoinsGenerateInfo> _coinRate) => new StageInteractGenerate() { m_ActionRate = _actionRate, m_TradeRate = _tradeRate, m_CoinRate = _coinRate };
@@ -2337,7 +2338,7 @@ namespace GameSetting
         {
             Vector3 startPosition = transformBarrel.position;
             Vector3 direction = TCommon.GetXZLookDirection(startPosition, _calculatedPosition);
-            int waveCount = m_CountExtension.RandomRangeInt();
+            int waveCount = m_CountExtension.Random();
             float distance = TCommon.GetXZDistance(startPosition, _calculatedPosition);
             Vector3 lineBeginPosition = startPosition - attacherHead.right * m_OffsetExtension * ((waveCount - 1) / 2f);
             SpawnMuzzle(startPosition, direction);
@@ -2354,7 +2355,7 @@ namespace GameSetting
         {
             Vector3 startPosition = transformBarrel.position;
             Vector3 direction = TCommon.GetXZLookDirection(startPosition, _calculatedPosition);
-            int waveCount = m_CountExtension.RandomRangeInt();
+            int waveCount = m_CountExtension.Random();
             float beginAnle = -m_OffsetExtension * (waveCount - 1) / 2f;
             float distance = TCommon.GetXZDistance(transformBarrel.position, _calculatedPosition);
             SpawnMuzzle(startPosition, direction);

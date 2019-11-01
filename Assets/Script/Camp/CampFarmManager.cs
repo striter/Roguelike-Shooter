@@ -15,6 +15,7 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
     CampFarmPlot m_HybridPlot;
     RaycastHit m_rayHit;
     float f_timeCheck;
+    UIT_FarmStatus m_FarmStatus;
     protected override void Awake()
     {
         base.Awake();
@@ -34,43 +35,68 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
 
         m_Profit = GameDataManager.m_CampFarmData.m_Profit;
         m_LastProfitStamp = GameDataManager.m_CampFarmData.m_OffsiteProfitStamp;
+        int stampNow = TTimeTools.GetTimeStampNow();
 
         for (int i = 0; i < GameDataManager.m_CampFarmData.m_PlotStatus.Count; i++)
         {
             CampFarmPlot plot = tf_Plot.Find("Plot" + i.ToString()).GetComponent<CampFarmPlot>();
-            plot.Init(i,GameDataManager.m_CampFarmData.m_PlotStatus[i]);
+            m_Profit += plot.Init(i,GameDataManager.m_CampFarmData.m_PlotStatus[i], m_LastProfitStamp, stampNow);
             m_Plots.Add(plot);
         }
-        CheckProfit();
-        f_timeCheck = GameConst.I_CampFarmProfitTickDuration;
+
+        m_LastProfitStamp = stampNow;
+        f_timeCheck = GameConst.I_CampFarmStampCheck;
+        GameDataManager.SaveCampFarmData(this);
     }
     private void OnDisable()
     {
-        CheckProfit();
+        int stampNow = TTimeTools.GetTimeStampNow();
+        for (int i = 0; i < m_Plots.Count; i++)
+            m_Profit += m_Plots[i].DisableProfitCheck(stampNow);
+        m_LastProfitStamp = stampNow;
+        GameDataManager.SaveCampFarmData(this);
         ObjectPoolManager<enum_CampFarmItemStatus, CampFarmItem>.OnSceneChange();
+    }
+
+    public Transform Begin(Action _OnExitFarm)
+    {
+        OnExitFarm = _OnExitFarm;
+        m_FarmStatus = CampUIManager.Instance.BeginFarm(OnDragDown, OnDrag, OnFarmBuy, OnExit, OnCollectProfit);
+        m_FarmStatus.OnProfitChange(m_Profit);
+        return tf_FarmCameraPos;
+    }
+
+    void OnExit()
+    {
+        m_FarmStatus = null;
+        OnExitFarm();
+
+        if (!m_HybridPlot)
+            return;
+        m_HybridPlot.EndDrag();
+        m_HybridPlot = null;
     }
 
     private void Update()
     {
-        if (f_timeCheck > 0)
+        if(f_timeCheck>0)
         {
-            f_timeCheck -= Time.deltaTime* f_TimeScale;
+            f_timeCheck -= Time.unscaledDeltaTime;
             return;
         }
-        f_timeCheck = GameConst.I_CampFarmProfitTickDuration;
-        CheckProfit();
-    }
+        f_timeCheck = GameConst.I_CampFarmStampCheck;
 
-    void CheckProfit()
-    {
-        int stampNow = TTimeTools.GetTimeStampNow();
+        int stampNow= TTimeTools.GetTimeStampNow();
         for (int i = 0; i < m_Plots.Count; i++)
-            m_Profit += m_Plots[i].GenerateProfit(m_LastProfitStamp, stampNow);
-        m_LastProfitStamp = stampNow;
-        GameDataManager.SaveCampFarmData(this);
-        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_CampFarmProfitStatus, m_Profit);
-    }
+        {
+            float profit = m_Plots[i].Tick(stampNow);
+            m_Profit += profit;
 
+            if (profit>0&& m_FarmStatus) m_FarmStatus.OnProfitChange(i,m_Profit, profit);
+        }
+
+    }
+    
     void OnFarmBuy()
     {
         if (GameDataManager.m_PlayerCampData.f_Credits < GameConst.I_CampFarmItemAcquire)
@@ -80,14 +106,14 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
         if (emptyPlot==null)
             return;
         emptyPlot.Hybrid(TCommon.RandomPercentage(GameExpression.GetFarmGeneratePercentage));
-
         CampManager.Instance.OnCreditStatus(-GameConst.I_CampFarmItemAcquire);
     }
-    void OnProfitClick()
+
+    void OnCollectProfit()
     {
         CampManager.Instance.OnCreditStatus(m_Profit);
         m_Profit = 0;
-        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_CampFarmProfitStatus, m_Profit);
+        if (m_FarmStatus) m_FarmStatus.OnProfitChange(m_Profit);
         GameDataManager.SaveCampFarmData(this);
     }
 
@@ -113,23 +139,6 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
     }
 
     #region Interact
-    public Transform Begin(Action _OnExitFarm)
-    {
-        OnExitFarm = _OnExitFarm;
-        CampUIManager.Instance.BeginFarm(OnDragDown, OnDrag, OnFarmBuy, End,OnProfitClick);
-        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_CampFarmProfitStatus, m_Profit);
-        return tf_FarmCameraPos;
-    }
-
-    void End()
-    {
-        OnExitFarm();
-        if (!m_HybridPlot)
-            return;
-        m_HybridPlot.EndDrag();
-        m_HybridPlot = null;
-    }
-
     void OnDragDown(bool down,Vector2 inputPos)
     {
         CampFarmPlot targetPlot = null;
