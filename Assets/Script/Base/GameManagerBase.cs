@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using TExcel;
-
+using TGameSave;
 public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCoroutine{
     public virtual bool B_InGame => false;
     protected override void Awake()
@@ -129,11 +129,13 @@ public class GameIdentificationManager
 {
     static int i_entityIndex = 0;
     static int i_damageInfoIndex = 0;
+
     public static void Init()
     {
         i_entityIndex = 0;
         i_damageInfoIndex = 0;
     }
+
     public static int I_EntityID(enum_EntityFlag flag)
     {
         i_entityIndex++;
@@ -141,6 +143,7 @@ public class GameIdentificationManager
             i_entityIndex = 0;
         return i_entityIndex + (int)flag * 100000;
     }
+
     public static int I_DamageIdentityID()
     {
         i_damageInfoIndex++;
@@ -153,17 +156,17 @@ public class GameIdentificationManager
 public static class OptionsManager
 {
     public static event Action event_OptionChanged;
-    public static CGameOptions m_OptionsData;
+    public static CGameOptions m_OptionsData => TGameData<CGameOptions>.Data;
     public static float m_Sensitive=1f;
     public static void Init()
     {
-        m_OptionsData = TGameData<CGameOptions>.Read();
+        TGameData<CGameOptions>.Init();
         OnOptionChanged();
     }
 
     public static void Save()
     {
-        TGameData<CGameOptions>.Save(m_OptionsData);
+        TGameData<CGameOptions>.Save();
         OnOptionChanged();
     }
 
@@ -189,37 +192,39 @@ public static class GameDataManager
         Properties<SBuff>.Init();
         SheetProperties<SGenerateEntity>.Init();
 
-        m_PlayerCampData = TGameData<CPlayerCampSave>.Read();
-        m_CampFarmData = TGameData<CCampFarmSave>.Read();
-        m_PlayerGameData = TGameData<CPlayerGameSave>.Read();
+        TGameData<CPlayerCampSave>.Init();
+        TGameData<CCampFarmSave>.Init();
+        TGameData<CPlayerGameSave>.Init();
     }
     #region GameSave
-    public static CPlayerCampSave m_PlayerCampData { get; private set; }
-    public static CCampFarmSave m_CampFarmData { get; private set; }
-    public static CPlayerGameSave m_PlayerGameData { get; private set; }
+    public static CPlayerCampSave m_PlayerCampData => TGameData<CPlayerCampSave>.Data;
+    public static CCampFarmSave m_CampFarmData => TGameData<CCampFarmSave>.Data;
+    public static CPlayerGameSave m_PlayerGameData => TGameData<CPlayerGameSave>.Data;
     public static void AdjustInGameData(EntityCharacterPlayer data, GameLevelManager level)
     {
         m_PlayerGameData.Adjust(data, level);
-        TGameData<CPlayerGameSave>.Save(m_PlayerGameData);
+        TGameData<CPlayerGameSave>.Save();
     }
     public static void OnGameFinished(bool win)
     {
-        m_PlayerGameData = new CPlayerGameSave();
-        TGameData<CPlayerGameSave>.Save(m_PlayerGameData);
+        TGameData<CPlayerGameSave>.Reset();
+        TGameData<CPlayerGameSave>.Save();
 
         if (!win)
             return;
         m_CampFarmData.UnlockPlot(m_PlayerCampData.m_GameDifficulty);
-        TGameData<CCampFarmSave>.Save(m_CampFarmData);
+        TGameData<CCampFarmSave>.Save();
 
         m_PlayerCampData.UnlockDifficulty();
-        TGameData<CPlayerCampSave>.Save(m_PlayerCampData);
+        TGameData<CPlayerCampSave>.Save();
     }
     public static bool CanUseCredit(float credit) => m_PlayerCampData.f_Credits >= credit;
     public static void OnCreditChange(float credit)
     {
+        if (credit == 0)
+            return;
         m_PlayerCampData.f_Credits += credit;
-        TGameData<CPlayerCampSave>.Save(m_PlayerCampData);
+        TGameData<CPlayerCampSave>.Save();
     }
 
     public static int SwitchGameDifficulty()
@@ -227,19 +232,25 @@ public static class GameDataManager
         m_PlayerCampData.m_GameDifficulty += 1;
         if (m_PlayerCampData.m_GameDifficulty > m_PlayerCampData.m_DifficultyUnlocked)
             m_PlayerCampData.m_GameDifficulty = 1;
-        TGameData<CPlayerCampSave>.Save(m_PlayerCampData);
+        TGameData<CPlayerCampSave>.Save();
         return m_PlayerCampData.m_GameDifficulty;
     }
 
     public static void RecreateCampFarmData()
     {
-        m_CampFarmData = new CCampFarmSave();
-        TGameData<CCampFarmSave>.Save(m_CampFarmData);
+        TGameData<CCampFarmSave>.Reset();
+        TGameData<CCampFarmSave>.Save();
     }
     public static void SaveCampFarmData(CampFarmManager farmManager)
     {
         m_CampFarmData.Save(farmManager);
-        TGameData<CCampFarmSave>.Save(m_CampFarmData);
+        TGameData<CCampFarmSave>.Save();
+    }
+
+
+    public static void SaveActionStorageData()
+    {
+        TGameData<CPlayerCampSave>.Save();
     }
     #endregion
     #region ExcelData
@@ -289,14 +300,14 @@ public static class GameDataManager
 public static class ActionDataManager
 {
     public static Dictionary<int, ActionBase> m_AllActions { get; private set; } = new Dictionary<int, ActionBase>();
-    public static List<int> m_Perk { get; private set; } = new List<int>();
-    public static List<int> m_Action { get; private set; } = new List<int>();
+    public static List<int> m_WeaponPerk { get; private set; } = new List<int>();
+    public static List<int> m_UseableAction { get; private set; } = new List<int>();
     static int m_ActionIdentity = 0;
     public static void Init()
     {
         m_AllActions.Clear();
-        m_Perk.Clear();
-        m_Action.Clear();
+        m_WeaponPerk.Clear();
+        m_UseableAction.Clear();
         
         TReflection.TraversalAllInheritedClasses((Type type, ActionBase action) => {
             if (action.m_Index <= 0)
@@ -304,18 +315,18 @@ public static class ActionDataManager
 
             m_AllActions.Add(action.m_Index, action);
             if (action.m_ActionType == enum_ActionType.WeaponPerk)
-                m_Perk.Add(action.m_Index);
+                m_WeaponPerk.Add(action.m_Index);
             else
-                m_Action.Add(action.m_Index);
+                m_UseableAction.Add(action.m_Index);
         }, -1, enum_RarityLevel.Invalid);
     }
-    public static ActionBase CreateRandomWeaponPerk(enum_RarityLevel level, System.Random seed) => level == 0 ? null : CreateAction(m_Perk.RandomItem(seed), level);
+    public static ActionBase CreateRandomWeaponPerk(enum_RarityLevel level, System.Random seed) => level == 0 ? null : CreateAction(m_WeaponPerk.RandomItem(seed), level);
     public static List<ActionBase> CreateRandomDropPlayerAction(int actionCount, enum_RarityLevel rarity, System.Random seed)
     {
         List<ActionBase> actions = new List<ActionBase>();
         for (int i = 0; i < actionCount; i++)
         {
-            m_Action.TraversalRandom((int index) =>
+            m_UseableAction.TraversalRandom((int index) =>
             {
                 if (actions.Find(p => p.m_Index == index) == null)
                 {
@@ -327,7 +338,7 @@ public static class ActionDataManager
         }
         return actions;
     }
-    public static List<ActionBase> CreateRandomPlayerSelectedAction(List<ActionStorageData> actionSelectData,int actionCount, System.Random seed)
+    public static List<ActionBase> CreateRandomSelectedPlayerAction(List<ActionStorageData> actionSelectData,int actionCount, System.Random seed)
     {
         Dictionary<int, enum_RarityLevel> m_selectData = ActionStorageData.GetPlayerActionSelectedData(actionSelectData);
         List<ActionBase> actions = new List<ActionBase>();
@@ -345,7 +356,7 @@ public static class ActionDataManager
         }
         return actions;
     }
-    public static ActionBase CreateRandomPlayerAction(enum_RarityLevel level, System.Random seed) => CreateAction(m_Action.RandomItem(seed), level);
+    public static ActionBase CreateRandomPlayerAction(enum_RarityLevel level, System.Random seed) => CreateAction(m_UseableAction.RandomItem(seed), level);
     public static List<ActionBase> CreateActions(List<ActionGameData> infos)
     {
         List<ActionBase> actions = new List<ActionBase>();

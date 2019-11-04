@@ -87,8 +87,8 @@ public class UIT_GridControllerGridItemScrollView<T> : UIT_GridControllerGridIte
     {
         int total = m_Pool.m_ActiveItemDic.Count;
         int current = (int)(verticalNormalized * total);
-        int rangeMin = (int)(current - visibleSize);
-        int rangeMax = (int)(current + visibleSize);
+        int rangeMin = current - visibleSize;
+        int rangeMax = current + visibleSize;
         foreach (int index in m_Pool.m_ActiveItemDic.Keys)
         {
             int position = total  - index;

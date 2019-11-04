@@ -7,6 +7,7 @@ using TPhysics;
 using System.Linq;
 using GameSetting_Action;
 using UnityEngine.UI;
+using TGameSave;
 #pragma warning disable 0649
 namespace GameSetting
 {
@@ -60,8 +61,11 @@ namespace GameSetting
         
         public const int I_CampFarmItemAcquire = 70;
         public const int I_CampFarmStampCheck = 3;
-        public const int I_CampFarmItemDecayStampDuration = 60; //57600;      //16 hours
+        public const int I_CampFarmItemDecayStampDuration = 60; //57600; //16 hours
 
+        public const int I_CampActionStorageCountPerRarity = 10;
+        public const int I_CampActionCreditGainPerRequestSurplus = 100;
+        public const int I_CampActionStorageRequestStampDuration = 30;//36000 //10 hours
     }
 
     public static class GameExpression
@@ -177,8 +181,9 @@ namespace GameSetting
                 case enum_CampFarmItemStatus.Progress5:
                     return true;
             }
-            
         }
+
+        public static readonly RangeInt I_CampActionStorageRequestAmount = new RangeInt(1,4);
     }
 
     public static class UIConst
@@ -589,14 +594,16 @@ namespace GameSetting
         public int m_GameDifficulty;
         public int m_DifficultyUnlocked;
         public List<ActionStorageData> m_StorageActions;
+        public int m_StorageRequestStamp;
         public CPlayerCampSave()
         {
             f_Credits = 100;
             m_GameDifficulty = 1;
             m_DifficultyUnlocked = 1;
             m_StorageActions = new List<ActionStorageData>();
+            m_StorageRequestStamp = -1;
             for (int i=10001;i<=10018;i++)
-                m_StorageActions.Add(ActionStorageData.Create(i, enum_RarityLevel.Normal,true));
+                m_StorageActions.Add(ActionStorageData.Create(i, 10,true));
         }
         public void UnlockDifficulty()
         {
@@ -643,7 +650,7 @@ namespace GameSetting
         public int m_coins;
         public int m_kills;
         public ActionGameData m_weaponAction;
-        public List<ActionGameData> m_storedActions;
+        public List<ActionGameData> m_battleAction;
         public string m_GameSeed;
         public enum_StageLevel m_StageLevel;
         public CPlayerGameSave()
@@ -651,7 +658,7 @@ namespace GameSetting
             m_coins = 0;
             m_weapon = enum_PlayerWeapon.P92;
             m_weaponAction = new ActionGameData();
-            m_storedActions = new List<ActionGameData>();
+            m_battleAction = new List<ActionGameData>();
             m_StageLevel = enum_StageLevel.Rookie;
             m_GameSeed = DateTime.Now.ToLongTimeString().ToString();
         }
@@ -660,7 +667,7 @@ namespace GameSetting
             m_coins = _player.m_PlayerInfo.m_Coins;
             m_weapon = _player.m_WeaponCurrent.m_WeaponInfo.m_Weapon;
             m_weaponAction = ActionGameData.Create(_player.m_WeaponCurrent.m_WeaponAction);
-            m_storedActions = ActionGameData.Create(_player.m_PlayerInfo.m_ActionStored);
+            m_battleAction = ActionGameData.Create(_player.m_PlayerInfo.m_BattleAction);
             m_GameSeed = _level.m_Seed;
             m_StageLevel = _level.m_GameStage;
             m_kills = _level.m_enermiesKilled;
@@ -724,8 +731,20 @@ namespace GameSetting
             m_Count = int.Parse(split[1]);
             m_Selected = bool.Parse(split[2]);
         }
-        
-        public enum_RarityLevel GetRarityLevel()=> m_Count < 10? enum_RarityLevel.Invalid:(enum_RarityLevel)(m_Count / 10);
+
+        public void SwitchSelected() => m_Selected = !m_Selected;
+        public int OnRequestCount(int count)
+        {
+            m_Count += count;
+            int surplus = 0;
+            if (m_Count > (int) enum_RarityLevel.Epic* GameConst.I_CampActionStorageCountPerRarity)
+            {
+                surplus = m_Count - (int)enum_RarityLevel.Epic * GameConst.I_CampActionStorageCountPerRarity;
+                m_Count -= surplus;
+            }
+            return surplus;
+        } 
+        public enum_RarityLevel GetRarityLevel()=> m_Count < GameConst.I_CampActionStorageCountPerRarity ? enum_RarityLevel.Invalid:(enum_RarityLevel)(m_Count / GameConst.I_CampActionStorageCountPerRarity);
 
         public static Dictionary<int,enum_RarityLevel> GetPlayerActionSelectedData(List<ActionStorageData> data)
         {
@@ -741,7 +760,7 @@ namespace GameSetting
             }
             return selectedData;
         }
-        public static ActionStorageData Create(int index, enum_RarityLevel rarity, bool selected) => new ActionStorageData { m_Index = index, m_Count = (int)rarity*10, m_Selected = selected };
+        public static ActionStorageData Create(int index, int count, bool selected) => new ActionStorageData { m_Index = index, m_Count = count, m_Selected = selected };
     }
 
     public struct CampFarmPlotData : IXmlPhrase
@@ -1432,9 +1451,9 @@ namespace GameSetting
 
         public float m_ActionEnergy { get; private set; } = 0f;
         List<ActionBase> m_ActionEquiping = new List<ActionBase>();
-        public List<ActionBase> m_ActionStored { get; private set; } = new List<ActionBase>();
-        public List<ActionBase> m_ActionInPool { get; private set; } = new List<ActionBase>();
-        public List<ActionBase> m_ActionHolding { get; private set; } = new List<ActionBase>();
+        public List<ActionBase> m_BattleAction { get; private set; } = new List<ActionBase>();
+        public List<ActionBase> m_BattleActionPooling { get; private set; } = new List<ActionBase>();
+        public List<ActionBase> m_BattleActionPicking { get; private set; } = new List<ActionBase>();
         Action OnActionChange;
         protected bool b_actionChangeIndicated = true;
         protected void IndicateActionUI() => b_actionChangeIndicated = false;
@@ -1499,7 +1518,7 @@ namespace GameSetting
             Reset();
             m_ActionEnergy = GameConst.F_RestoreActionEnergy;
             m_ActionEquiping.Traversal((ActionBase action) => { if (action.m_ActionType != enum_ActionType.WeaponPerk) action.ForceExpire(); });
-            m_ActionInPool.Clear();
+            m_BattleActionPooling.Clear();
             ClearHoldingActions();
         }
 
@@ -1653,13 +1672,13 @@ namespace GameSetting
         public bool B_EnergyCostable(ActionBase action) => m_ActionEnergy >= action.I_Cost;
         public bool TryUseHoldingAction(int index)
         {
-            ActionBase action = m_ActionHolding[index];
+            ActionBase action = m_BattleActionPicking[index];
             if (b_shuffling||!B_EnergyCostable(action))
                 return false;
 
             m_ActionEnergy -= action.I_Cost;
             OnUseAcion(action);
-            m_ActionHolding.RemoveAt(index);
+            m_BattleActionPicking.RemoveAt(index);
             RefillHoldingActions();
             IndicateActionUI();
             return true;
@@ -1675,56 +1694,56 @@ namespace GameSetting
         }
         void OnShuffle()
         {
-            m_ActionInPool.Clear();
-            for (int i = 0; i < m_ActionStored.Count; i++)
+            m_BattleActionPooling.Clear();
+            for (int i = 0; i < m_BattleAction.Count; i++)
             {
-                if(m_ActionStored[i].m_ActionType!= enum_ActionType.Equipment||m_ActionEquiping.Find(p=>p.m_Identity==m_ActionStored[i].m_Identity)==null)
-                     m_ActionInPool.Add( m_ActionStored[i]);
+                if(m_BattleAction[i].m_ActionType!= enum_ActionType.Equipment||m_ActionEquiping.Find(p=>p.m_Identity==m_BattleAction[i].m_Identity)==null)
+                     m_BattleActionPooling.Add( m_BattleAction[i]);
             }
             ClearHoldingActions();
             RefillHoldingActions();
         }
         void RefillHoldingActions()
         {
-            if (m_ActionInPool.Count <= 0 || m_ActionHolding.Count >= GameConst.I_ActionHoldCount)
+            if (m_BattleActionPooling.Count <= 0 || m_BattleActionPicking.Count >= GameConst.I_ActionHoldCount)
                 return;
 
-            int index = m_ActionInPool.RandomIndex();
-            m_ActionHolding.Add(ActionDataManager.CopyAction(m_ActionInPool[index]));
-            m_ActionInPool.RemoveAt(index);
+            int index = m_BattleActionPooling.RandomIndex();
+            m_BattleActionPicking.Add(ActionDataManager.CopyAction(m_BattleActionPooling[index]));
+            m_BattleActionPooling.RemoveAt(index);
             RefillHoldingActions();
         }
         void ClearHoldingActions()
         {
-            m_ActionHolding.Clear();
+            m_BattleActionPicking.Clear();
             IndicateActionUI();
         }
         public void UpgradeAllHoldingAction()
         {
-            if (m_ActionHolding.Count == 0)
+            if (m_BattleActionPicking.Count == 0)
                 return;
 
-            m_ActionHolding.Traversal((ActionBase action) => { action.Upgrade(); });
+            m_BattleActionPicking.Traversal((ActionBase action) => { action.Upgrade(); });
             IndicateActionUI();
         }
         public void OverrideHoldingActionCost(int cost)
         {
-            m_ActionHolding.Traversal((ActionBase action) => { action.OverrideCost(cost); });
+            m_BattleActionPicking.Traversal((ActionBase action) => { action.OverrideCost(cost); });
             IndicateActionUI();
         }
         public void AddStoredAction(ActionBase action)
         {
-            m_ActionStored.Add(action);
+            m_BattleAction.Add(action);
             IndicateActionUI();
         }
         public void RemoveStoredAction(int index)
         {
-            m_ActionStored.RemoveAt(index);
+            m_BattleAction.RemoveAt(index);
             IndicateActionUI();
         }
         public void UpgradeStoredAction(int index)
         {
-            m_ActionStored[index].Upgrade();
+            m_BattleAction[index].Upgrade();
             IndicateActionUI();
         }
         public void AddActionEnergy(float amount)

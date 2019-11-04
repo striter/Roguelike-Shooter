@@ -292,8 +292,8 @@ public class UIT_GamePlayerStatus : UIToolsBase
     void OnActionStatus(PlayerInfoManager playerInfo)
     {
         m_ActionGrid.ClearGrid();
-        for (int i = 0; i < playerInfo.m_ActionHolding.Count; i++)
-            m_ActionGrid.AddItem(i).SetInfo(playerInfo,playerInfo.m_ActionHolding[i],OnActionClick, OnActionPressDuration);
+        for (int i = 0; i < playerInfo.m_BattleActionPicking.Count; i++)
+            m_ActionGrid.AddItem(i).SetInfo(playerInfo,playerInfo.m_BattleActionPicking[i],OnActionClick, OnActionPressDuration);
     }
     void OnActionClick(int index)
     {

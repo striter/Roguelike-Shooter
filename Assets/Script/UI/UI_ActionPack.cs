@@ -27,7 +27,7 @@ public class UI_ActionPack : UIPageBase {
     void OnActionChanged(PlayerInfoManager info)
     {
         m_Grid.ClearGrid();
-        List<ActionBase> targetList = info.m_ActionStored;
+        List<ActionBase> targetList = info.m_BattleAction;
         for (int i = 0; i <targetList.Count; i++)
             m_Grid.AddItem(i).SetInfo(targetList[i],null,true);
     }

@@ -79,7 +79,7 @@ public class UI_Options : UIPageBase {
         OptionsManager.Save();
     }
 
-    bool frameRateOn() => OptionsManager.m_OptionsData.m_FrameRate == enum_Option_FrameRate.Normal;
+    bool frameRateOn() =>  OptionsManager.m_OptionsData.m_FrameRate == enum_Option_FrameRate.Normal;
     bool OnFrequencyClicked()
     {
         OptionsManager.m_OptionsData.m_FrameRate = frameRateOn() ? enum_Option_FrameRate.High : enum_Option_FrameRate.Normal;

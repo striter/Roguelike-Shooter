@@ -235,7 +235,7 @@ public class GameManager : GameManagerBase
                     GameObjectManager.SpawnInteract<InteractBonfire>(enum_Interaction.Bonfire, LevelManager.NavMeshPosition( Vector3.zero,false), LevelManager.Instance.m_currentLevel.m_Level.tf_Interact).Play();
 
                     m_RewardChest = GameObjectManager.SpawnInteract<InteractActionChest>(enum_Interaction.ActionChestStart, LevelManager.NavMeshPosition(Vector3.left * 3, false), LevelManager.Instance.m_currentLevel.m_Level.tf_Interact);
-                    m_RewardChest.Play(ActionDataManager.CreateRandomPlayerSelectedAction(GameDataManager.m_PlayerCampData.m_StorageActions ,3, m_GameLevel.m_GameSeed), 1);
+                    m_RewardChest.Play(ActionDataManager.CreateRandomSelectedPlayerAction(GameDataManager.m_PlayerCampData.m_StorageActions ,3, m_GameLevel.m_GameSeed), 1);
                     
                     GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, LevelManager.NavMeshPosition(Vector3.right * 3, false), LevelManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(GameObjectManager.SpawnWeapon(TCommon.RandomEnumValues<enum_PlayerWeapon>(m_GameLevel.m_GameSeed), ActionDataManager.CreateRandomWeaponPerk(m_GameLevel.m_GameStage.GetStartWeaponPerkRarity(), m_GameLevel.m_GameSeed)));
                 }
@@ -736,7 +736,7 @@ public static class GameObjectManager
     public static EntityCharacterPlayer SpawnEntityPlayer(CPlayerGameSave playerSave)
     {
         EntityCharacterPlayer player = SpawnEntity<EntityCharacterPlayer>(0,Vector3.up*10f, enum_EntityFlag.Player);
-        player.SetPlayerInfo(playerSave.m_coins, ActionDataManager.CreateActions(playerSave.m_storedActions));
+        player.SetPlayerInfo(playerSave.m_coins, ActionDataManager.CreateActions(playerSave.m_battleAction));
         player.ObtainWeapon(SpawnWeapon(playerSave.m_weapon, ActionDataManager.CreateAction(playerSave.m_weaponAction)));
         return player;
     }

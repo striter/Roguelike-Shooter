@@ -25,15 +25,14 @@ public class UIGI_ActionItemBase : UIT_GridItem {
     }
     protected void SetInfo(ActionBase actionInfo)
     {
+        m_Name.localizeText = actionInfo.GetNameLocalizeKey();
         m_TypeIcon.sprite = UIManager.Instance.m_ActionSprites[actionInfo.m_ActionType.GetIconSprite()];
         m_TypeBottom.sprite = UIManager.Instance.m_ActionSprites[actionInfo.m_ActionType.GetNameBGSprite()];
         m_Rarity.SetLevel(actionInfo.m_rarity);
         m_Cost.text = actionInfo.I_Cost.ToString();
-        m_Name.localizeText = actionInfo.GetNameLocalizeKey();
         m_ActionImage.sprite = UIManager.Instance.m_ActionSprites.Contains(actionInfo.m_Index.ToString())? UIManager.Instance.m_ActionSprites[actionInfo.m_Index.ToString()]:null;
         m_Costable.sprite = UIManager.Instance.m_ActionSprites[actionInfo.m_ActionType.GetCostBGSprite()];
     }
-
     protected void SetCostable(bool _costable)
     {
         m_Costable.SetActivate(_costable);
