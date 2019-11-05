@@ -411,7 +411,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 2
+  m_Radius: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!198 &198509739870476326
 ParticleSystem:
@@ -473,7 +473,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 2
-  randomSeed: 285424442
+  randomSeed: 970952463
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3834,7 +3834,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 1503514834
+  randomSeed: 1568270509
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -7195,7 +7195,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 1006483191
+  randomSeed: 1176196231
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -10532,7 +10532,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 1261325084
+  randomSeed: -1821548009
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -13881,7 +13881,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -1667493586
+  randomSeed: -1510188065
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -17224,7 +17224,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 1330052324
+  randomSeed: 1901299229
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -20579,7 +20579,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 1200932295
+  randomSeed: -732849930
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -24267,7 +24267,7 @@ NavMeshObstacle:
   m_Enabled: 1
   serializedVersion: 3
   m_Shape: 0
-  m_Extents: {x: 2, y: 1, z: 2}
+  m_Extents: {x: 1, y: 0.5, z: 1}
   m_MoveThreshold: 0.1
   m_Carve: 0
   m_CarveOnlyStationary: 1
