@@ -79,14 +79,16 @@
 			Tags{"LightMode" = "ForwardAdd"}
 			Blend One One
 			CGPROGRAM
-			#pragma multi_compile_fwdadd_fullshadows
 			#pragma vertex vertAdd
 			#pragma fragment fragAdd
+			#pragma multi_compile_fwdadd_fullshadows
+			#pragma multi_compile_instancing
 
 			struct appdata
 			{
 				float4 vertex : POSITION;
 				float3 normal:NORMAL;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
 			struct v2f
