@@ -11,6 +11,7 @@ public class UIPageBase : MonoBehaviour,ISingleCoroutine
     protected Action<bool> OnInteractFinished;
     protected float f_bgAlphaStart;
     bool b_useAnim;
+    const float F_AnimDuration = .5f;
     public static T Show<T>(Transform parentTransform,bool useAnim) where T:UIPageBase
     {
         if (t_curPage == typeof(T))
@@ -50,7 +51,7 @@ public class UIPageBase : MonoBehaviour,ISingleCoroutine
                 tf_Container.localScale = UIManagerBase.m_FitScale * value;
                 img_Background.color = new Color(img_Background.color.r, img_Background.color.g, img_Background.color.b, value * f_bgAlphaStart);
             }
-            , 0f, 1f, .5f, null, false));
+            , 0f, 1f, F_AnimDuration, null, false));
         }
     }
     protected virtual void OnCancelBtnClick()
@@ -66,7 +67,7 @@ public class UIPageBase : MonoBehaviour,ISingleCoroutine
         this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => {
             tf_Container.localScale = UIManagerBase.m_FitScale * value;
             img_Background.color = new Color(img_Background.color.r, img_Background.color.g, img_Background.color.b, value * f_bgAlphaStart);
-        }, 1f, 0f, .5f, OnHideFinished, false));
+        }, 1f, 0f, F_AnimDuration, OnHideFinished, false));
     }
 
     void OnHideFinished()
