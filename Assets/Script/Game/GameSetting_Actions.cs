@@ -52,16 +52,16 @@ namespace GameSetting_Action
         public const float F_10010_DamageReduction = 4f;
         public static int P_10010_FireRateAdditive(enum_RarityLevel rarity) => 330 * (int)rarity;
 
-        public const int I_10011_Cost = 3;
-        public const float F_10011_Duration = 15f;
-        public static float P_10011_FireRateAdditivePerHitStack(enum_RarityLevel rarity) => 8f * (int)rarity;
+        public const int I_10011_Cost = 2;
+        public const float F_10011_Duration = 10f;
+        public static float P_10011_FireRateAdditivePerHitStack(enum_RarityLevel rarity) => 6f * (int)rarity;
 
         public const int I_10012_Cost = 2;
         public const float F_10012_Duration = 10f;
         public static float F_10012_DamageAdditive(enum_RarityLevel rarity) => 20 * (int)rarity;
 
         public const int I_10013_Cost = 2;
-        public static int P_10013_DamageMultiply(enum_RarityLevel rarity) => 280 * (int)rarity;
+        public static int P_10013_DamageMultiply(enum_RarityLevel rarity) => 140 * (int)rarity;
         public static float F_10013_CloakDuration(enum_RarityLevel rarity) => 5*(int)rarity;
 
         public const int I_10014_Cost = 2;
