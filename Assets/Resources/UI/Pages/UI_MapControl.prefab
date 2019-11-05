@@ -1687,7 +1687,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u672A\u5F00\u542F\u7684\u5B9D\u7BB1\u5C06\u4F1A\u88AB\u56DE\u6536\u3002"
+  m_Text: UI_Tips_ChestUnOpened
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Tips_ChestUnOpened
   m_characterSpacing: 0
@@ -1903,7 +1903,7 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: "\u5730\u56FE"
   B_AutoLocalize: 1
-  S_AutoLocalizeKey: UI_Map
+  S_AutoLocalizeKey: UI_Map_Title
   m_characterSpacing: 10
 --- !u!114 &114505292072219650
 MonoBehaviour:

@@ -967,7 +967,7 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: "\u6B66\u5668"
   B_AutoLocalize: 1
-  S_AutoLocalizeKey: UI_Title_Weapon
+  S_AutoLocalizeKey: UI_Weapon_Title
   m_characterSpacing: 12
 --- !u!114 &114148744497855056
 MonoBehaviour:
