@@ -11,7 +11,7 @@ public class UIPageBase : MonoBehaviour,ISingleCoroutine
     protected Action<bool> OnInteractFinished;
     protected float f_bgAlphaStart;
     bool b_useAnim;
-    const float F_AnimDuration = .5f;
+    const float F_AnimDuration = .2f;
     public static T Show<T>(Transform parentTransform,bool useAnim) where T:UIPageBase
     {
         if (t_curPage == typeof(T))
