@@ -100,7 +100,7 @@ namespace GameSetting_Action
         public const float P_10022_HealthRegenTranslateFromDamage = 100;
 
         public const int I_10023_Cost = 1;
-        public static float F_10023_ReviveHealthRegen(enum_RarityLevel rarity) => 10 * (int)rarity;
+        public static float F_10023_ReviveHealthRegen(enum_RarityLevel rarity) => 15 * (int)rarity;
 
         public const int I_10024_Cost = 1;
         public static float F_10024_ArmorAdditive(enum_RarityLevel rarity) => 30 * (int)rarity;
@@ -191,7 +191,7 @@ namespace GameSetting_Action
         public static float F_20012_AIHealthRegen(enum_RarityLevel rarity) => 15 * (int)rarity;
 
         public const int I_20013_Cost = 2;
-        public static float P_20013_DamageMultiplyBase(enum_RarityLevel rarity) => 100 + 100 * (int)rarity;
+        public static float P_20013_DamageMultiplyBase(enum_RarityLevel rarity) => 300 * (int)rarity;
         #endregion
         #region 30000-39999
         public const int I_30001_Cost = 2;
