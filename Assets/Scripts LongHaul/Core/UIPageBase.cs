@@ -43,16 +43,19 @@ public class UIPageBase : MonoBehaviour,ISingleCoroutine
         {
             btn_ContainerCancel.onClick.AddListener(OnCancelBtnClick);
             btn_ContainerCancel.enabled = true;
-        } 
-
-        if (useAnim)
-        {
-            this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => {
-                tf_Container.localScale = UIManagerBase.m_FitScale * value;
-                img_Background.color = new Color(img_Background.color.r, img_Background.color.g, img_Background.color.b, value * f_bgAlphaStart);
-            }
-            , 0f, 1f, F_AnimDuration, null, false));
         }
+
+        if (!useAnim)
+        {
+            tf_Container.localScale = UIManagerBase.m_FitScale;
+            return;
+        }
+
+        this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => {
+            tf_Container.localScale = UIManagerBase.m_FitScale * value;
+            img_Background.color = new Color(img_Background.color.r, img_Background.color.g, img_Background.color.b, value * f_bgAlphaStart);
+        }
+        , 0f, 1f, F_AnimDuration, null, false));
     }
     protected virtual void OnCancelBtnClick()
     {
