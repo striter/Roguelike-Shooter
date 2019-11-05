@@ -18,8 +18,8 @@ namespace GameSetting_Action
 
         public const int I_10003_Cost = 2;
         public const float F_10003_Duration = 20f;
-        public static float P_10003_FirerateMultiplyPerMile(enum_RarityLevel rarity) => 0.6f+0.6f * ((int)rarity);
-        public const int I_10003_MaxStackAmount = 100;
+        public static float P_10003_FirerateMultiplyPerMile(enum_RarityLevel rarity) => 12f * ((int)rarity);
+        public const int I_10003_MaxStackAmount = 30;
 
         public const int I_10004_Cost = 2;
         public static float F_10004_Duration = 5f;
@@ -41,7 +41,7 @@ namespace GameSetting_Action
         public const int I_10008_Cost = 2;
         public const float F_10008_Duration = 10f;
         public const int P_10008_MovementReduction = 20;
-        public static int P_10008_FireRateAdditive(enum_RarityLevel rarity) => 360 * (int)rarity;
+        public static int P_10008_FireRateAdditive(enum_RarityLevel rarity) => 330 * (int)rarity;
 
         public const int I_10009_Cost = 2;
         public const float F_10009_Duration = 10f;
@@ -50,7 +50,7 @@ namespace GameSetting_Action
         public const int I_10010_Cost = 2;
         public const float F_10010_Duration = 10f;
         public const float F_10010_DamageReduction = 4f;
-        public static int P_10010_FireRateAdditive(enum_RarityLevel rarity) => 360 * (int)rarity;
+        public static int P_10010_FireRateAdditive(enum_RarityLevel rarity) => 330 * (int)rarity;
 
         public const int I_10011_Cost = 3;
         public const float F_10011_Duration = 15f;
