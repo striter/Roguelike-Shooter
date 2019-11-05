@@ -21,7 +21,7 @@ public class UIPageBase : MonoBehaviour,ISingleCoroutine
         tempBase.Init(useAnim);
         return tempBase;
     }
-    protected Button btn_Cancel;
+    protected Button btn_ContainerCancel,btn_WholeCancel;
     protected Transform tf_Container;
     protected virtual void Init(bool useAnim)
     {
@@ -29,9 +29,12 @@ public class UIPageBase : MonoBehaviour,ISingleCoroutine
         tf_Container = transform.Find("Container");
         img_Background = transform.Find("Background").GetComponent<Image>();
         f_bgAlphaStart = img_Background.color.a;
-        Transform wholeCancel = transform.Find("BtnCancel");
-        btn_Cancel = wholeCancel==null? tf_Container.Find("BtnCancel").GetComponent<Button>(): wholeCancel.GetComponent<Button>();
-        btn_Cancel.onClick.AddListener(OnCancelBtnClick);
+        btn_WholeCancel = img_Background.GetComponent<Button>();
+        Transform containerCancel = tf_Container.Find("BtnCancel");
+        if(containerCancel) btn_ContainerCancel = containerCancel.GetComponent<Button>();
+
+        if (btn_WholeCancel) btn_WholeCancel.onClick.AddListener(OnCancelBtnClick);
+        if (btn_ContainerCancel) btn_ContainerCancel.onClick.AddListener(OnCancelBtnClick);
         if (useAnim)
             this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => {
                 tf_Container.localScale = UIManagerBase.m_FitScale * value;
@@ -46,7 +49,8 @@ public class UIPageBase : MonoBehaviour,ISingleCoroutine
     }
     protected void Hide()
     {
-        btn_Cancel.enabled = false;
+        btn_ContainerCancel.enabled = false;
+        btn_WholeCancel.enabled = false;
         if (b_useAnim)
             this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => {
                 tf_Container.localScale = UIManagerBase.m_FitScale * value;

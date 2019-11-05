@@ -54,7 +54,7 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
         //CameraController.Instance.m_Effect.AddPostEffect<PE_DepthSSAO>();
         m_BSC = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_BSC>();
         m_BSC.SetEffect(1f, 1f, 1f);
-        CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_BloomSpecific>().m_GaussianBlur.SetEffect(2, 10, 2);
+        CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_BloomSpecific>().m_GaussianBlur.SetEffect(2, 5,4);
         CameraController.Instance.m_Effect.GetOrAddCameraEffect<CB_GenerateOpaqueTexture>();
         switch (_levelStyle)
         {
