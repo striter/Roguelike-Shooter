@@ -127,6 +127,14 @@ public class UIT_GamePlayerStatus : UIToolsBase
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
     }
 
+    public void SetInGame(bool inGame)
+    {
+        if (inGame)
+            return;
+        tf_InBattle.SetActivate(false);
+        tf_OutBattle.SetActivate(false);
+    }
+
     void SetInBattle(bool inBattle,bool anim=true)
     {
         m_ActionGrid.ClearGrid();
@@ -301,7 +309,7 @@ public class UIT_GamePlayerStatus : UIToolsBase
     }
     void OnActionPressDuration()
     {
-        UIManager.Instance.ShowPage<UI_ActionBattle>(false,0f).Show(m_Player.m_PlayerInfo) ;
+        UIManager.Instance.ShowPage<UI_ActionBattle>(false,0f).Show(m_Player.m_PlayerInfo,m_ActionEnergy) ;
     }
     void OnActionStorageClick()
     {

@@ -12,6 +12,7 @@ public class CampUIManager : UIManager {
         btn_Reload.SetActivate(false);
 
         ShowTools<UIT_CampStatus>();
+        ShowTools<UIT_GamePlayerStatus>().SetInGame(false);
     }
     protected override void OnDestroy()
     {

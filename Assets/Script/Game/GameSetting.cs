@@ -2579,17 +2579,17 @@ namespace GameSetting
     }
     public class UIC_ActionEnergy
     {
-        Transform transform;
+        public RectTransform rectTransform { get; private set; }
         Image img_Full, img_Fill;
         Text txt_amount;
 
         float m_value;
         public UIC_ActionEnergy(Transform _transform)
         {
-            transform = _transform;
-            txt_amount = transform.Find("Amount").GetComponent<Text>();
-            img_Full = transform.Find("Full").GetComponent<Image>();
-            img_Fill = transform.Find("Fill").GetComponent<Image>();
+            rectTransform = _transform.GetComponent<RectTransform>();
+            txt_amount = rectTransform.Find("Amount").GetComponent<Text>();
+            img_Full = rectTransform.Find("Full").GetComponent<Image>();
+            img_Fill = rectTransform.Find("Fill").GetComponent<Image>();
         }
         public void SetValue(float value)
         {

@@ -1676,7 +1676,7 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 12800000, guid: 33b33e104e497534b96a6eec75d8fa6a, type: 3}
-    m_FontSize: 64
+    m_FontSize: 48
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 4
@@ -1687,9 +1687,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Chest Unopened
-  B_AutoLocalize: 0
-  S_AutoLocalizeKey: 
+  m_Text: 
+  B_AutoLocalize: 1
+  S_AutoLocalizeKey: UI_Tips_ChestUnOpened
   m_characterSpacing: 0
 --- !u!114 &114284327722865032
 MonoBehaviour:

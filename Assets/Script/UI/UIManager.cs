@@ -51,7 +51,6 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         UIPageBase.OnPageExit = OnPageExit;
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnPlayerStatusChanged);
 
-        ShowTools<UIT_GamePlayerStatus>();
     }
     protected override void OnDestroy()
     {

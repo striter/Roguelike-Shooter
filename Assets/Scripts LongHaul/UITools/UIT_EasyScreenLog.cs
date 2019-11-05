@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 public class UIT_EasyScreenLog : SimpleSingletonMono<UIT_EasyScreenLog> {
+    public bool m_ShowErrorOnly = true;
     public int LogExistCount = 10;
     public int LogSaveCount = 30;
     Text UIText_Log;
@@ -31,6 +32,9 @@ public class UIT_EasyScreenLog : SimpleSingletonMono<UIT_EasyScreenLog> {
 
     void OnLogReceived(string info,string trace,LogType type)
     {
+        if (m_ShowErrorOnly && type != LogType.Error)
+            return;
+
         log tempLog = new log();
         tempLog.logInfo = info;
         tempLog.logTrace = trace;

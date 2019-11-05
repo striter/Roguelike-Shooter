@@ -10,6 +10,6 @@ public class UIT_FpsCounter : MonoBehaviour {
     }
     private void Update()
     {
-        text.text = ((int)(1 / Time.deltaTime)).ToString();
+        text.text = ((int)(1 / Time.unscaledDeltaTime)).ToString();
     }
 }
