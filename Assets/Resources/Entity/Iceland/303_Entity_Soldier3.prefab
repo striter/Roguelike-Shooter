@@ -942,7 +942,7 @@ MonoBehaviour:
     start: 3
     length: 1
   F_AttackTimes:
-    start: 2
+    start: 1
     length: 1
   F_AttackRate: 1
   B_BattleCheckObstacle: 0
