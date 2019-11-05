@@ -21,7 +21,7 @@ public class UIPageBase : MonoBehaviour,ISingleCoroutine
         tempBase.Init(useAnim);
         return tempBase;
     }
-    protected Button btn_Cancel;
+    protected Button btn_ContainerCancel,btn_WholeCancel;
     protected Transform tf_Container;
     protected virtual void Init(bool useAnim)
     {
@@ -29,33 +29,46 @@ public class UIPageBase : MonoBehaviour,ISingleCoroutine
         tf_Container = transform.Find("Container");
         img_Background = transform.Find("Background").GetComponent<Image>();
         f_bgAlphaStart = img_Background.color.a;
-        Transform wholeCancel = transform.Find("BtnCancel");
-        btn_Cancel = wholeCancel==null? tf_Container.Find("BtnCancel").GetComponent<Button>(): wholeCancel.GetComponent<Button>();
-        btn_Cancel.onClick.AddListener(OnCancelBtnClick);
+        btn_WholeCancel = img_Background.GetComponent<Button>();
+        Transform containerCancel = tf_Container.Find("BtnCancel");
+        if(containerCancel) btn_ContainerCancel = containerCancel.GetComponent<Button>();
+
+        if (btn_WholeCancel)
+        {
+            btn_WholeCancel.onClick.AddListener(OnCancelBtnClick);
+            btn_WholeCancel.enabled = true;
+        }
+        if (btn_ContainerCancel)
+        {
+            btn_ContainerCancel.onClick.AddListener(OnCancelBtnClick);
+            btn_ContainerCancel.enabled = true;
+        } 
+
         if (useAnim)
-            this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => {
-                tf_Container.localScale = UIManagerBase.m_FitScale * value;
-                img_Background.color = new Color(img_Background.color.r,img_Background.color.g,img_Background.color.b,value*f_bgAlphaStart);
-            }
-            , 0f, 1f, .5f,null,false));
-    }
-    protected virtual void OnCancelBtnClick()
-    {
-        OnPageExit?.Invoke();
-        Hide();
-    }
-    protected void Hide()
-    {
-        btn_Cancel.enabled = false;
-        if (b_useAnim)
+        {
             this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => {
                 tf_Container.localScale = UIManagerBase.m_FitScale * value;
                 img_Background.color = new Color(img_Background.color.r, img_Background.color.g, img_Background.color.b, value * f_bgAlphaStart);
             }
-            , 1f, 0f, .5f, OnHideFinished,false));
-        else
-            OnHideFinished();
+            , 0f, 1f, .5f, null, false));
+        }
     }
+    protected virtual void OnCancelBtnClick()
+    {
+        OnPageExit?.Invoke();
+        if (btn_ContainerCancel) btn_ContainerCancel.enabled = false;
+        if (btn_WholeCancel) btn_WholeCancel.enabled = false;
+        if (!b_useAnim)
+        {
+            OnHideFinished();
+            return;
+        }
+        this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => {
+            tf_Container.localScale = UIManagerBase.m_FitScale * value;
+            img_Background.color = new Color(img_Background.color.r, img_Background.color.g, img_Background.color.b, value * f_bgAlphaStart);
+        }, 1f, 0f, .5f, OnHideFinished, false));
+    }
+
     void OnHideFinished()
     {
         t_curPage = null;
