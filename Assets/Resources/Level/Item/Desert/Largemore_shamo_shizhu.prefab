@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4162360231497434}
   - component: {fileID: 114823133862522166}
   m_Layer: 0
-  m_Name: ManmadeMore_shamo_shizhu
+  m_Name: Largemore_shamo_shizhu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

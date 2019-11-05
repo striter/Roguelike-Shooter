@@ -524,7 +524,6 @@ MonoBehaviour:
   B_SmoothCamera: 1
   F_CameraSmoothParam: 0.15
   B_InvertCamera: 0
-  B_SelfRotation: 0
   F_RotateSensitive: 1
   B_CameraOffsetWallClip: 0
   B_DrawDebugLine: 0

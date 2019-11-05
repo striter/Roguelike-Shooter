@@ -1353,7 +1353,7 @@ namespace GameSetting_Action
         {
             base.OnAfterDealtDemage(receiver, info, applyAmount);
             if(receiver.m_Health.b_IsDead)
-                ActionHelper.ReceiveHealing(m_ActionEntity,m_ActionEntity.I_MaxHealth*Value1/100f, enum_DamageType.HealthOnly);
+                ActionHelper.ReceiveHealing(m_ActionEntity,m_ActionEntity.m_Health.m_MaxHealth*Value1/100f, enum_DamageType.HealthOnly);
         }
         public Action_30012_KillHealthRegen(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }

@@ -38,7 +38,7 @@ public class UIGI_HealthBar : UIT_GridItem {
         f_hideCheck = 2f;
         if (b_showItem)
             return;
-        SetHealthValue(m_AttachEntity.m_Health.F_BaseHealthScale);
+        SetHealthValue(m_AttachEntity.m_Health.F_HealthBaseScale);
         rtf_RectTransform.SetWorldViewPortAnchor(m_AttachEntity.transform.position,CameraController.MainCamera);
         rtf_RectTransform.localScale = Vector3.one * Mathf.Clamp(Vector3.Distance(m_AttachEntity.transform.position, CameraController.MainCamera.transform.position) / 30, 1, 3);
         transform.SetActivate(true);
@@ -50,7 +50,7 @@ public class UIGI_HealthBar : UIT_GridItem {
         if (!b_showItem)
             return;
 
-        SetHealthValue(Mathf.Lerp(m_currnetHealthValue,  m_AttachEntity.m_Health.F_BaseHealthScale,Time.deltaTime*5));
+        SetHealthValue(Mathf.Lerp(m_currnetHealthValue,  m_AttachEntity.m_Health.F_HealthBaseScale,Time.deltaTime*5));
 
         rtf_RectTransform.localScale = Vector3.one * Mathf.Clamp(Vector3.Distance(m_AttachEntity.transform.position, CameraController.MainCamera.transform.position) / 20, 1, 3);
         rtf_RectTransform.SetWorldViewPortAnchor(m_AttachEntity.transform.position, CameraController.MainCamera, Time.deltaTime*20f);

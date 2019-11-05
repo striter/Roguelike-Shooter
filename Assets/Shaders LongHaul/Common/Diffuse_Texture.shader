@@ -24,14 +24,18 @@
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma multi_compile_fwdbase
+			#pragma multi_compile_instancing
 
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
+			float4 _Color;
+			float _Lambert;
 			struct appdata
 			{
 				float4 vertex : POSITION;
-				float3 normal:NORMAL;
 				float2 uv:TEXCOORD0;
+				float3 normal:NORMAL;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
 			struct v2f
@@ -42,12 +46,9 @@
 				float diffuse:TEXCOORD2;
 				SHADOW_COORDS(3)
 			};
-
-			float4 _Color;
-			float _Lambert;
-
 			v2f vert (appdata v)
 			{
+				UNITY_SETUP_INSTANCE_ID(v);
 				v2f o;
 				o.uv  =v.uv;
 				o.pos = UnityObjectToClipPos(v.vertex);

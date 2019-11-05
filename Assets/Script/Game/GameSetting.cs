@@ -997,8 +997,8 @@ namespace GameSetting
         public virtual float m_MaxHealth => m_BaseMaxHealth;
         public virtual float F_TotalEHP => m_CurrentHealth;
         public bool B_HealthFull => m_CurrentHealth >= m_MaxHealth;
-        public float F_BaseHealthScale => m_CurrentHealth / m_BaseMaxHealth;
-        public float F_MaxHealthValue => m_CurrentHealth / m_MaxHealth;
+        public float F_HealthBaseScale => m_CurrentHealth / m_BaseMaxHealth;
+        public float F_HealthMaxScale => m_CurrentHealth / m_MaxHealth;
         public bool b_IsDead => m_CurrentHealth <= 0;
         protected void DamageHealth(float health)
         {

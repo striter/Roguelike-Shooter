@@ -13,6 +13,7 @@
 			#include "UnityCG.cginc"
 			#include "AutoLight.cginc"
 			#include "Lighting.cginc"
+			#pragma multi_compile_instancing
 
 			sampler2D _MainTex;
 			half4 _MainTex_ST;
@@ -24,6 +25,7 @@
 				float4 tangent:TANGENT;
 				float3 normal:NORMAL;
 				float2 uv : TEXCOORD0;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
 			struct v2f
@@ -45,6 +47,7 @@
 			v2f vert(appdata v)
 			{
 				v2f o;
+				UNITY_SETUP_INSTANCE_ID(v);
 				o.pos = UnityObjectToClipPos(v.vertex);
 
 				o.uv = TRANSFORM_TEX(v.uv,_MainTex);
@@ -144,6 +147,7 @@
 			v2fs vertshadow(appdata_base v)
 			{
 				v2fs o;
+				UNITY_SETUP_INSTANCE_ID(v);
 				TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
 				return o;
 			}

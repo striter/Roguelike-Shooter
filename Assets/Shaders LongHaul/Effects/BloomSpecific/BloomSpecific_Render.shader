@@ -50,6 +50,7 @@
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
+			#pragma multi_compile_instancing
 
 			#include "UnityCG.cginc"
 
