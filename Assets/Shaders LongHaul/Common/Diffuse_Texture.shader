@@ -65,8 +65,9 @@
 				float3 albedo = tex2D(_MainTex,i.uv)*_Color;
 				UNITY_LIGHT_ATTENUATION(atten, i,i.worldPos)
 				fixed3 ambient = albedo*UNITY_LIGHTMODEL_AMBIENT.xyz;
+				atten *= i.diffuse;
 				atten = atten * _Lambert + (1- _Lambert);
-				float3 diffuse = albedo* _LightColor0.rgb*i.diffuse*atten;
+				float3 diffuse = albedo* _LightColor0.rgb*atten;
 				return fixed4(ambient+diffuse	,1);
 			}
 			ENDCG
