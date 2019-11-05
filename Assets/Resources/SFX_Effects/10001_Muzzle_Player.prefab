@@ -100,7 +100,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1982494274922196}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -2.2726622, y: 0.000015258789, z: 3.1851892}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4966813089538328}
@@ -233,7 +233,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 1794050833
+  randomSeed: -1503243890
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -323,7 +323,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 0.5815763, g: 0.08018869, b: 1, a: 1}
-      maxColor: {r: 1, g: 0.56850725, b: 0.2588235, a: 1}
+      maxColor: {r: 1, g: 0.41960785, b: 0.27058825, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -3645,7 +3645,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 307572263
+  randomSeed: -1069696369
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3735,7 +3735,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 0.59590364, b: 0.30588233, a: 0.5019608}
+      maxColor: {r: 1, g: 0.41960785, b: 0.27058825, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -7051,7 +7051,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -784753346
+  randomSeed: -1912678176
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -7141,7 +7141,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 0.57992244, b: 0.27843142, a: 1}
+      maxColor: {r: 1, g: 0.41960785, b: 0.27058825, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
