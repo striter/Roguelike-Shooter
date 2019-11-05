@@ -524,6 +524,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58b977c5e015c6045a2c2add16e4267a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_ShowErrorOnly: 1
   LogExistCount: 10
   LogSaveCount: 30
 --- !u!114 &114099686906943482
