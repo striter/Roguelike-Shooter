@@ -486,7 +486,7 @@ namespace GameSetting
 
     public enum enum_ExpireType { Invalid = -1, Buff = 1, Action = 2, }
 
-    public enum enum_ExpireRefreshType { Invalid = -1, AddUp = 1, Refresh = 2 }
+    public enum enum_ExpireRefreshType { Invalid = -1, AddUp = 1, Refresh = 2,RefreshIdentity=3, }
 
     public enum enum_RarityLevel { Invalid = -1, Normal = 1, OutStanding = 2, Epic = 3, }
 
@@ -966,7 +966,7 @@ namespace GameSetting
         {
             SBuff buff = new SBuff();
             buff.index = actionIndex * 10;
-            buff.i_addType = (int)enum_ExpireRefreshType.Refresh;
+            buff.i_addType = (int)enum_ExpireRefreshType.RefreshIdentity;
             buff.f_healthDrainMultiply = healthDrainAmount;
             buff.f_expireDuration = duration;
             return buff;
@@ -984,7 +984,7 @@ namespace GameSetting
         {
             SBuff buff = new SBuff();
             buff.index = actionIndex * 10;
-            buff.i_addType = (int)enum_ExpireRefreshType.Refresh;
+            buff.i_addType = (int)enum_ExpireRefreshType.RefreshIdentity;
             buff.i_damageType = (int)enum_DamageType.HealthOnly;
             buff.f_damageTickTime = healthTick;
             buff.f_damagePerTick = -healthPerTick;
@@ -1383,6 +1383,15 @@ namespace GameSetting
                     {
                         ExpireBase buffRefresh = m_Expires.Find(p => p.m_Index == buff.m_Index);
                         if (buffRefresh != null)
+                            RefreshExpire(buffRefresh);
+                        else
+                            AddExpire(buff);
+                    }
+                    break;
+                case enum_ExpireRefreshType.RefreshIdentity:
+                    {
+                        BuffBase buffRefresh = m_Expires.Find(p => p.m_Index == buff.m_Index) as BuffBase;
+                        if (buffRefresh != null&&buffRefresh.I_SourceID==buff.I_SourceID)
                             RefreshExpire(buffRefresh);
                         else
                             AddExpire(buff);
@@ -1884,9 +1893,9 @@ namespace GameSetting
         public override float m_MovementSpeedMultiply => m_buffInfo.m_MovementSpeedMultiply;
         public override float m_ReloadRateMultiply => m_buffInfo.m_ReloadRateMultiply;
         public override float m_HealthDrainMultiply => m_buffInfo.m_HealthDrainMultiply;
+        public int I_SourceID { get; private set; }
         SBuff m_buffInfo;
         Func<DamageInfo, bool> OnDOTDamage;
-        int I_SourceID;
         float f_dotCheck;
         public BuffBase(int sourceID, SBuff _buffInfo, Func<DamageInfo, bool> _OnDOTDamage, Action<ExpireBase> _OnExpired)
         {

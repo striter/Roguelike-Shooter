@@ -855,7 +855,7 @@ namespace GameSetting_Action
         public override int I_BaseCost => ActionData.I_10028_Cost;
         public override enum_ActionType m_ActionType => enum_ActionType.Basic;
         public override float Value1 => ActionData.P_10028_NextShotDamageMultiplyPerArmor(m_rarity);
-        public override float m_DamageAdditive => m_BurstShot ? Value1 * m_ActionEntity.m_Health.m_CurrentArmor / 100f:0;
+        public override float m_DamageMultiply => m_BurstShot ? Value1 * m_ActionEntity.m_Health.m_CurrentArmor / 100f : 0;
         public Action_10028_ArmorSingleShot(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
 
