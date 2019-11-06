@@ -34,8 +34,7 @@ public class CampManager : GameManagerBase
 
     public void OnSceneItemInteract(enum_Scene scene)
     {
-        SetPostEffect_Vortex(true, tf_Player, 1f);
-        UIT_Loading.Instance.Play(1f,()=> { SwitchScene(scene); });
+        OnPortalEnter(1f,tf_Player, () => { SwitchScene(scene); });
     }
 
     public bool B_Farming { get; private set; } = false;
@@ -70,6 +69,7 @@ public class CampManager : GameManagerBase
         GameDataManager.OnCreditChange(creditChange);
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_CampCreditStatus);
     }
+
 #if UNITY_EDITOR
     private void Update()
     {

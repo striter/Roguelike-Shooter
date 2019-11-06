@@ -39,6 +39,15 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
     {
         this.StopAllSingleCoroutines();
     }
+    protected void OnPortalEnter(float duration,Transform vortexTarget, Action OnEnter)
+    {
+        SetPostEffect_Vortex(true, vortexTarget, 1f);
+        UIT_Loading.Instance.Play(1f, OnEnter);
+    }
+    protected void OnPortalExit(float duration,Transform vortexTarget)
+    {
+        SetPostEffect_Vortex(false, vortexTarget, 1f);
+    }
     #region Effect
     protected static float m_BulletTime = 1f;
     public static bool m_BulletTiming => m_BulletTime != 1f;
@@ -80,7 +89,7 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
              CameraController.Instance.m_Effect.RemoveCameraEffect<PE_Bloom>));
     }
 
-    protected void SetPostEffect_Vortex(bool on,Transform target,float duration)
+    private void SetPostEffect_Vortex(bool on,Transform target,float duration)
     {
         PE_DistortVortex vortex = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_DistortVortex>();
         vortex.SetTexture(TResources.GetNoiseTex());
@@ -248,12 +257,12 @@ public static class GameDataManager
         m_CampFarmData.Save(farmManager);
         TGameData<CCampFarmSave>.Save();
     }
-
-
+    
     public static void SaveActionStorageData()
     {
         TGameData<CPlayerCampSave>.Save();
     }
+
     #endregion
     #region ExcelData
     public static SLevelGenerate GetItemGenerateProperties(enum_Style style, enum_LevelGenerateType prefabType, bool isInner)

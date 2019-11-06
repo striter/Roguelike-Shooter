@@ -173,7 +173,7 @@ public class GameManager : GameManagerBase
         CameraController.Instance.Attach(m_LocalPlayer.transform, true);
         LevelManager.Instance.GenerateAllEnviorment(m_GameLevel.m_GameStyle, m_GameLevel.m_GameSeed, OnLevelChanged, OnStageFinished);
         InitPostEffects(m_GameLevel.m_GameStyle);
-        SetPostEffect_Vortex(false,m_LocalPlayer.tf_Head, 1f);
+        OnPortalExit(1f,m_LocalPlayer.tf_Head);
         GC.Collect();
         Resources.UnloadUnusedAssets();
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageStart);
@@ -207,8 +207,7 @@ public class GameManager : GameManagerBase
         if (m_GameLevel.B_NextStage)
         {
             GameDataManager.AdjustInGameData(m_LocalPlayer,m_GameLevel);
-            SetPostEffect_Vortex(true,m_LocalPlayer.tf_Head,1f);
-            UIT_Loading.Instance.Play(1f,StartStage);
+            OnPortalEnter(1f,m_LocalPlayer.tf_Head, StartStage);
         }
         else
         {
