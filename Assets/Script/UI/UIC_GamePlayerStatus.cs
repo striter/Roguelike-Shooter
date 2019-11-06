@@ -168,7 +168,7 @@ public class UIC_GamePlayerStatus : UIControlBase
             m_Player = _player;
 
         m_Coins.text=_player.m_PlayerInfo.m_Coins.ToString();
-        m_ActionEnergy.TickValue(_player.m_PlayerInfo.m_ActionEnergy,Time.deltaTime*10f);
+        m_ActionEnergy.TickValue(_player.m_PlayerInfo.m_ActionEnergy);
         img_ShuffleFill.fillAmount = _player.m_PlayerInfo.f_shuffleScale;
         rtf_StatusData.SetWorldViewPortAnchor(m_Player.tf_Status.position, CameraController.Instance.m_Camera, Time.deltaTime * 10f);
 

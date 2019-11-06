@@ -1112,12 +1112,10 @@ namespace GameSetting_Action
         {
             base.OnActivate();
             m_ActionEntity.AcquireEquipment<EquipmentEntitySpawner>(m_Index).SetOnSpawn(Value1,(EntityCharacterBase entity)=> {
-                (entity as EntityDeviceBuffApllier).SetBuffApply(PlayerBuff,AllyBuff,.4f);
+                (entity as EntityDeviceBuffApllier).SetBuffApply(SBuff.CreateActionHealthDrainBuff(m_Index, Value2 / 100f, .5f), SBuff.CreateActionHealthDrainBuff(m_Index, (Value2 + Value3) / 100f, .5f), .4f);
             });
         }
 
-        DamageDeliverInfo PlayerBuff() => DamageDeliverInfo.BuffInfo(m_ActionEntity.m_EntityID,SBuff.CreateActionHealthDrainBuff(m_Index,Value2/100f,.5f));
-        DamageDeliverInfo AllyBuff() => DamageDeliverInfo.BuffInfo(m_ActionEntity.m_EntityID, SBuff.CreateActionHealthDrainBuff(m_Index, (Value2 + Value3) / 100f, .5f));
         public Action_20010_HealthDrainDevice(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
 
@@ -1133,11 +1131,9 @@ namespace GameSetting_Action
         {
             base.OnActivate();
             m_ActionEntity.AcquireEquipment<EquipmentEntitySpawner>(m_Index).SetOnSpawn(Value1, (EntityCharacterBase entity) => {
-                (entity as EntityDeviceBuffApllier).SetBuffApply(PlayerBuff, AllyBuff, .4f);
+                (entity as EntityDeviceBuffApllier).SetBuffApply(SBuff.CreateActionHealthBuff(m_Index, Value2, 1f, .5f), SBuff.CreateActionHealthBuff(m_Index, Value2 + Value3, 1f, .5f), .4f);
             });
         }
-        DamageDeliverInfo PlayerBuff() => DamageDeliverInfo.BuffInfo(m_ActionEntity.m_EntityID, SBuff.CreateActionHealthBuff(m_Index, Value2,1f, .5f));
-        DamageDeliverInfo AllyBuff() => DamageDeliverInfo.BuffInfo(m_ActionEntity.m_EntityID, SBuff.CreateActionHealthBuff(m_Index,Value2+Value3,1f, .5f));
         public Action_20012_HealthRegenDevice(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
     public class Action_20013_Grenade:ActionDeviceNormal

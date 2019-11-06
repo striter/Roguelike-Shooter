@@ -4,19 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
 public class EntityDeviceBuffApllier : EntityDeviceBase {
-    Func<DamageDeliverInfo> OnApplyPlayer, OnApplyAlly;
+    SBuff m_PlayerBuff, m_AllyBuff;
     float f_refreshCheck;
     float f_refreshDuration;
-    public override void OnActivate(enum_EntityFlag _flag, float startHealth)
+    public void SetBuffApply(SBuff applyPlayer,SBuff applyAlly,float refreshDuration=.8f)
     {
-        base.OnActivate(_flag,startHealth);
-        OnApplyPlayer = null;
-        OnApplyAlly = null;
-    }
-    public void SetBuffApply(Func<DamageDeliverInfo> applyPlayer,Func<DamageDeliverInfo> applyAlly,float refreshDuration=.8f)
-    {
-        OnApplyPlayer = applyPlayer;
-        OnApplyAlly = applyAlly;
+        m_PlayerBuff = applyPlayer;
+        m_AllyBuff = applyAlly;
         f_refreshDuration = refreshDuration;
         f_refreshCheck = 0f;
     }
@@ -40,10 +34,11 @@ public class EntityDeviceBuffApllier : EntityDeviceBase {
             switch (entity.m_Controller)
             {
                 case enum_EntityController.AI:
-                    entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, OnApplyAlly()));
+                    
+                    entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.BuffInfo(m_EntityID,m_AllyBuff)));
                     break;
                 case enum_EntityController.Player:
-                    entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, OnApplyPlayer()));
+                    entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.BuffInfo(m_EntityID,m_PlayerBuff)));
                     break;
             }
         });

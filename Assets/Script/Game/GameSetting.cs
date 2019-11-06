@@ -1390,8 +1390,9 @@ namespace GameSetting
                     break;
                 case enum_ExpireRefreshType.RefreshIdentity:
                     {
-                        BuffBase buffRefresh = m_Expires.Find(p => p.m_Index == buff.m_Index) as BuffBase;
-                        if (buffRefresh != null&&buffRefresh.I_SourceID==buff.I_SourceID)
+                        ExpireBase buffRefresh = m_Expires.Find(p => p.m_Index == buff.m_Index && (p.m_ExpireType == enum_ExpireType.Buff && (p as BuffBase).I_SourceID == buff.I_SourceID));
+                        Debug.Log(sourceID);
+                        if (buffRefresh != null)
                             RefreshExpire(buffRefresh);
                         else
                             AddExpire(buff);
@@ -2619,12 +2620,12 @@ namespace GameSetting
             img_Full = rectTransform.Find("Full").GetComponent<Image>();
             img_Fill = rectTransform.Find("Fill").GetComponent<Image>();
         }
-        public void TickValue(float value,float tickParam=1f)
+        public void TickValue(float value)
         {
             if (m_value == value)
                 return;
 
-            m_value = Mathf.Lerp(m_value,value,tickParam);
+            m_value =value;
             float detail = m_value % 1f;
             bool full = m_value == GameConst.F_MaxActionEnergy;
             img_Full.SetActivate(full);
