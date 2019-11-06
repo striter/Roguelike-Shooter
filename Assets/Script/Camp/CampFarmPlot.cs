@@ -3,35 +3,48 @@ using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
 using TTime;
+using System;
+
 public class CampFarmPlot : CampFarmInteract {
     public int m_Index { get; private set; }
     public int m_StartStamp { get; private set; }
     public enum_CampFarmItemStatus m_Status { get; private set; }
     public CampFarmItem m_PlotItem { get; private set; }
-    public float m_DecayProgress { get; private set; }
-
-    float CalculateDecayProgress(int stampNow) => Mathf.Clamp(1- (stampNow - m_StartStamp) /(float)GameConst.I_CampFarmItemDecayStampDuration,0,1);
+    public int m_TimeLeft { get; private set; }
+    Action<int> OnPlotStatusChanged;
     int m_profitStamp,m_StampCheck;
-    public float Init(int index,CampFarmPlotData info,int offlineStamp,int stampNow)
+    public float Init(int index,CampFarmPlotData info,int offlineStamp,int stampNow,Action<int> _OnPlotStatusChanged)
     {
         m_Index = index;
         m_StartStamp = info.m_StartStamp;
-        ResetPlotObj(info.m_Status);
+        OnPlotStatusChanged = _OnPlotStatusChanged;
+        ResetPlotStatus(info.m_Status);
         m_profitStamp = stampNow;
-        m_StampCheck = stampNow + Random.Range(25, 35);
+        ResetCheck(stampNow);
         return CheckGenerateProfit(offlineStamp,stampNow);
+    }
+
+    void ResetCheck(int stampNow)
+    {
+        if (!GameExpression.CanGenerateprofit(m_Status))
+            return;
+
+        m_profitStamp = stampNow;
+        m_StampCheck = stampNow +  Mathf.RoundToInt(0.1f / GameExpression.GetFarmItemInfo[m_Status].m_CreditPerSecond);
     }
 
     public float TickProfit(int stampNow)
     {
-        m_DecayProgress = CalculateDecayProgress(stampNow);
-
-        if (stampNow < m_StampCheck)
+        if (!GameExpression.CanGenerateprofit(m_Status))
             return 0;
-        m_StampCheck = stampNow + GameExpression.I_CampFarmPlotProfitDuration.Random();
-        
+
+        m_TimeLeft = m_StartStamp+ GameExpression.GetFarmItemInfo[m_Status].m_ItemDuration - stampNow;
+        if (stampNow < m_StampCheck&&m_TimeLeft>0)
+            return 0;
+
         float profit = CheckGenerateProfit(m_profitStamp, stampNow);
         m_profitStamp = stampNow;
+        ResetCheck(stampNow);
         return profit;
     }
 
@@ -39,25 +52,28 @@ public class CampFarmPlot : CampFarmInteract {
 
     public void Hybrid(enum_CampFarmItemStatus status)
     {
-        m_DecayProgress = 1f;
+        ResetPlotStatus(status);
         m_StartStamp = TTimeTools.GetTimeStampNow();
-        ResetPlotObj(status);
+        m_TimeLeft = GameExpression.GetFarmItemInfo[m_Status].m_ItemDuration;
+        ResetCheck(m_StartStamp);
     }
 
     public void Clear()
     {
-        m_DecayProgress = 0;
+        ResetPlotStatus(enum_CampFarmItemStatus.Empty);
+        m_TimeLeft = 0;
         m_StartStamp = -1;
-        ResetPlotObj(enum_CampFarmItemStatus.Empty);
     }
 
-    void ResetPlotObj(enum_CampFarmItemStatus status)
+    void ResetPlotStatus(enum_CampFarmItemStatus status)
     {
         if (m_PlotItem)
             ObjectPoolManager<enum_CampFarmItemStatus, CampFarmItem>.Recycle(m_Status, m_PlotItem);
 
         m_Status = status;
         m_PlotItem = ObjectPoolManager<enum_CampFarmItemStatus, CampFarmItem>.Spawn(m_Status, null);
+
+        OnPlotStatusChanged(m_Index);
         EndDrag();
     }
 
@@ -66,15 +82,16 @@ public class CampFarmPlot : CampFarmInteract {
         if (!GameExpression.CanGenerateprofit(m_Status))
             return 0;
 
-        bool decayed = CalculateDecayProgress(stampNow) == 0f;
+        m_TimeLeft = m_StartStamp+GameExpression.GetFarmItemInfo[m_Status].m_ItemDuration - stampNow;
+        bool decayed = m_TimeLeft <= 0f;
         int profitBegin = previousStamp < m_StartStamp ? m_StartStamp : previousStamp;
-        int profitEnd = decayed ? m_StartStamp + GameConst.I_CampFarmItemDecayStampDuration : stampNow;
+        int profitEnd = decayed ? m_StartStamp + GameExpression.GetFarmItemInfo[m_Status].m_ItemDuration : stampNow;
         int profitStampOffset = profitEnd - profitBegin;
-        float profit = profitStampOffset * GameExpression.GetFarmCreditGeneratePerSecond[m_Status];
+        float profit = profitStampOffset * GameExpression.GetFarmItemInfo[m_Status].m_CreditPerSecond;
         if (decayed)
         {
             m_StartStamp = -1;
-            ResetPlotObj(enum_CampFarmItemStatus.Decayed);
+            ResetPlotStatus(enum_CampFarmItemStatus.Decayed);
         }
         return profit;
     }

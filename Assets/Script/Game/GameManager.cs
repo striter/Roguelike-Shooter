@@ -545,7 +545,7 @@ public class GameManager : GameManagerBase
 public class GameLevelManager
 {
     #region LevelData
-    public StageInteractGenerate m_actionGenerate { get; private set; }
+    public StageInteractGenerateData m_actionGenerate { get; private set; }
     public bool B_NextStage => m_GameStage <= enum_StageLevel.Ranger;
     public enum_TileType m_LevelType { get; private set; }
     public enum_StageLevel m_GameStage { get; private set; }

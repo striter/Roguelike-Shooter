@@ -127,7 +127,7 @@ public class UI_ActionStorage : UIPageBase {
         ActionStorageData data = m_Data[dataIndex];
         int countSurplus= data.OnRequestCount(GameExpression.I_CampActionStorageRequestAmount.Random());
         m_Data[dataIndex] = data;
-        CampManager.Instance.OnCreditStatus(countSurplus *GameConst.I_CampActionCreditGainPerRequestSurplus);
+        CampManager.OnCreditStatus(countSurplus *GameConst.I_CampActionCreditGainPerRequestSurplus);
         GameDataManager.m_PlayerCampData.m_StorageRequestStamp = TTimeTools.GetTimeStampNow();
         GameDataManager.SaveActionStorageData();
         return data;

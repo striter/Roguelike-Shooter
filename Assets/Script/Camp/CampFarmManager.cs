@@ -8,13 +8,11 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
 {
     public float f_TimeScale=1f;
     public List<CampFarmPlot> m_Plots { get; private set; } = new List<CampFarmPlot>();
-    public float m_Profit { get; private set; } = 0;
     public int m_LastProfitStamp { get; private set; } = 0;
     Transform tf_Plot, tf_Status, tf_FarmCameraPos;
     Action OnExitFarm;
     CampFarmPlot m_HybridPlot;
     RaycastHit m_rayHit;
-    float f_timeCheck;
     UIC_FarmStatus m_FarmStatus;
     protected override void Awake()
     {
@@ -33,27 +31,29 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
         if (tf_Plot.childCount != GameDataManager.m_CampFarmData.m_PlotStatus.Count)
             GameDataManager.RecreateCampFarmData();
 
-        m_Profit = GameDataManager.m_CampFarmData.m_Profit;
         m_LastProfitStamp = GameDataManager.m_CampFarmData.m_OffsiteProfitStamp;
         int stampNow = TTimeTools.GetTimeStampNow();
 
+        float offcampProfit = 0;
         for (int i = 0; i < GameDataManager.m_CampFarmData.m_PlotStatus.Count; i++)
         {
             CampFarmPlot plot = tf_Plot.Find("Plot" + i.ToString()).GetComponent<CampFarmPlot>();
-            m_Profit += plot.Init(i,GameDataManager.m_CampFarmData.m_PlotStatus[i], m_LastProfitStamp, stampNow);
+            offcampProfit += plot.Init(i,GameDataManager.m_CampFarmData.m_PlotStatus[i], m_LastProfitStamp, stampNow,OnPlotStatusChanged);
             m_Plots.Add(plot);
         }
 
         m_LastProfitStamp = stampNow;
-        f_timeCheck = GameConst.I_CampFarmStampCheck;
+        CampManager.OnCreditStatus(offcampProfit);
         GameDataManager.SaveCampFarmData(this);
     }
     private void OnDisable()
     {
         int stampNow = TTimeTools.GetTimeStampNow();
+        float endProfit = 0;
         for (int i = 0; i < m_Plots.Count; i++)
-            m_Profit += m_Plots[i].EndProfit(stampNow);
+            endProfit += m_Plots[i].EndProfit(stampNow);
         m_LastProfitStamp = stampNow;
+        CampManager.OnCreditStatus(endProfit);
         GameDataManager.SaveCampFarmData(this);
         ObjectPoolManager<enum_CampFarmItemStatus, CampFarmItem>.OnSceneChange();
     }
@@ -62,8 +62,7 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
     {
         OnExitFarm = _OnExitFarm;
         m_FarmStatus = CampUIManager.Instance.BeginFarm(OnDragDown, OnDrag);
-        m_FarmStatus.Play(m_Plots, OnExit, OnFarmBuy, OnCollectProfit);
-        m_FarmStatus.OnProfitChange(m_Profit);
+        m_FarmStatus.Play(m_Plots, OnExit, OnFarmBuy);
         return tf_FarmCameraPos;
     }
 
@@ -79,44 +78,24 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
         m_HybridPlot = null;
     }
 
+    int curStamp = 0;
     private void Update()
     {
-        if(f_timeCheck>0)
-        {
-            f_timeCheck -= Time.unscaledDeltaTime;
-            return;
-        }
-        f_timeCheck = GameConst.I_CampFarmStampCheck;
-
         int stampNow= TTimeTools.GetTimeStampNow();
+        if (curStamp == stampNow)
+            return;
+        curStamp = stampNow;
+
         for (int i = 0; i < m_Plots.Count; i++)
         {
             float profit = m_Plots[i].TickProfit(stampNow);
-            m_Profit += profit;
+            if (profit <= 0)
+                continue;
 
-            if (profit>0&& m_FarmStatus) m_FarmStatus.OnProfitChange(i,m_Profit, profit);
+            CampManager.OnCreditStatus(profit);
+            if( m_FarmStatus) m_FarmStatus.OnProfitChange(i, profit);
         }
 
-    }
-    
-    void OnFarmBuy()
-    {
-        if (GameDataManager.m_PlayerCampData.f_Credits < GameConst.I_CampFarmItemAcquire)
-            return;
-
-        CampFarmPlot emptyPlot = GetItemEmptySlot();
-        if (emptyPlot==null)
-            return;
-        emptyPlot.Hybrid(TCommon.RandomPercentage(GameExpression.GetFarmGeneratePercentage));
-        CampManager.Instance.OnCreditStatus(-GameConst.I_CampFarmItemAcquire);
-    }
-
-    void OnCollectProfit()
-    {
-        CampManager.Instance.OnCreditStatus(m_Profit);
-        m_Profit = 0;
-        if (m_FarmStatus) m_FarmStatus.OnProfitChange(m_Profit);
-        GameDataManager.SaveCampFarmData(this);
     }
 
     void OnHybrid(CampFarmPlot _plotDrag,CampFarmPlot _plotTarget)
@@ -130,16 +109,20 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
         _plotDrag.Clear();
     }
 
-    CampFarmPlot GetItemEmptySlot()
+    void OnFarmBuy(int plotIndex)
     {
-        for (int i = 0; i < m_Plots.Count; i++)
-        {
-            if (m_Plots[i].m_Status == enum_CampFarmItemStatus.Empty)
-                return m_Plots[i];
-        }
-        return null;
+        if (m_Plots[plotIndex].m_Status != enum_CampFarmItemStatus.Empty || GameDataManager.m_PlayerCampData.f_Credits < GameConst.I_CampFarmItemAcquire)
+            return;
+
+        m_Plots[plotIndex].Hybrid(TCommon.RandomPercentage(GameExpression.GetFarmGeneratePercentage));
+        CampManager.OnCreditStatus(-GameConst.I_CampFarmItemAcquire);
     }
 
+    void OnPlotStatusChanged(int index)
+    {
+        if (m_FarmStatus)
+            m_FarmStatus.UpdatePlot(index);
+    }
     #region Interact
     void OnDragDown(bool down,Vector2 inputPos)
     {

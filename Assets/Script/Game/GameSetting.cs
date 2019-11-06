@@ -58,10 +58,10 @@ namespace GameSetting
         public const int I_HealthTradeAmount = 50;
 
         public const float F_LevelTileSize = 2f;        //Cube Size For Level Tiles
-        
+
+        public const int I_CampFarmPlot4Unlock = 3;
+        public const int I_CampFarmPlot5Unlock = 10;
         public const int I_CampFarmItemAcquire = 70;
-        public const int I_CampFarmStampCheck = 3;
-        public const int I_CampFarmItemDecayStampDuration = 60; //57600; //16 hours
 
         public const int I_CampActionStorageCountPerRarity = 10;
         public const int I_CampActionCreditGainPerRequestSurplus = 100;
@@ -125,50 +125,49 @@ namespace GameSetting
         public static enum_RarityLevel GetStartWeaponPerkRarity(this enum_StageLevel stageLevel) => (stageLevel - 1).ToRarity();
         public static enum_RarityLevel GetTradeWeaponPerkRarity(this enum_StageLevel stageLevel) => stageLevel.ToRarity();
         public static enum_RarityLevel GetBattleTradeActionRarity(this enum_StageLevel stageLevel) => stageLevel.ToRarity() == enum_RarityLevel.Epic ? enum_RarityLevel.Epic : (stageLevel + 1).ToRarity();
-        public static StageInteractGenerate GetInteractGenerate(enum_StageLevel level)
+        public static StageInteractGenerateData GetInteractGenerate(enum_StageLevel level)
         {
             switch (level)
             {
-                default: return StageInteractGenerate.Create(new Dictionary<enum_RarityLevel, int>(), new Dictionary<enum_RarityLevel, int>(), new Dictionary<enum_CharacterType, CoinsGenerateInfo>());
+                default: return StageInteractGenerateData.Create(new Dictionary<enum_RarityLevel, int>(), new Dictionary<enum_RarityLevel, int>(), new Dictionary<enum_CharacterType, CoinsGenerateData>());
                 case enum_StageLevel.Rookie:
-                    return StageInteractGenerate.Create(
+                    return StageInteractGenerateData.Create(
                     new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.Normal, 90 }, { enum_RarityLevel.OutStanding, 10 } },    //宝箱等级概率
                     new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.Normal, 75 }, { enum_RarityLevel.OutStanding, 25 } },    //交易等级概率
-                    new Dictionary<enum_CharacterType, CoinsGenerateInfo>() {
-                     { enum_CharacterType.SubHidden, CoinsGenerateInfo.Create( 0,0, 0, new RangeInt(0, 0)) },     //实体掉落生成概率 类型,血,护甲,金币,金币数值范围
-                     { enum_CharacterType.Fighter, CoinsGenerateInfo.Create( 8,20, 20, new RangeInt(2, 2)) },
-                     { enum_CharacterType.Shooter_Rookie, CoinsGenerateInfo.Create( 8,15, 20, new RangeInt(2, 2)) },
-                     { enum_CharacterType.Shooter_Veteran, CoinsGenerateInfo.Create( 8,15, 30, new RangeInt(3, 3)) },
-                     { enum_CharacterType.AOECaster, CoinsGenerateInfo.Create( 8,15, 50, new RangeInt(4, 4)) },
-                     { enum_CharacterType.Elite, CoinsGenerateInfo.Create( 8,15, 100, new RangeInt(6, 6)) }});
+                    new Dictionary<enum_CharacterType, CoinsGenerateData>() {
+                     { enum_CharacterType.SubHidden, CoinsGenerateData.Create( 0,0, 0, new RangeInt(0, 0)) },     //实体掉落生成概率 类型,血,护甲,金币,金币数值范围
+                     { enum_CharacterType.Fighter, CoinsGenerateData.Create( 8,20, 20, new RangeInt(2, 2)) },
+                     { enum_CharacterType.Shooter_Rookie, CoinsGenerateData.Create( 8,15, 20, new RangeInt(2, 2)) },
+                     { enum_CharacterType.Shooter_Veteran, CoinsGenerateData.Create( 8,15, 30, new RangeInt(3, 3)) },
+                     { enum_CharacterType.AOECaster, CoinsGenerateData.Create( 8,15, 50, new RangeInt(4, 4)) },
+                     { enum_CharacterType.Elite, CoinsGenerateData.Create( 8,15, 100, new RangeInt(6, 6)) }});
                 case enum_StageLevel.Veteran:
-                    return StageInteractGenerate.Create(
+                    return StageInteractGenerateData.Create(
                     new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.OutStanding, 90 }, { enum_RarityLevel.Epic, 10 } },    //宝箱等级概率
                     new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.OutStanding, 75 }, { enum_RarityLevel.Epic, 25 } },    //交易等级概率
-                    new Dictionary<enum_CharacterType, CoinsGenerateInfo>() {
-                     { enum_CharacterType.SubHidden, CoinsGenerateInfo.Create( 0,0, 0, new RangeInt(0, 0)) },     //实体掉落生成概率 类型,血,护甲,金币,金币数值范围
-                     { enum_CharacterType.Fighter, CoinsGenerateInfo.Create( 8,15, 20, new RangeInt(2, 2)) },
-                     { enum_CharacterType.Shooter_Rookie, CoinsGenerateInfo.Create( 8,15, 20, new RangeInt(2, 2)) },
-                     { enum_CharacterType.Shooter_Veteran, CoinsGenerateInfo.Create( 8,15, 30, new RangeInt(3, 3)) },
-                     { enum_CharacterType.AOECaster, CoinsGenerateInfo.Create( 8,15, 50, new RangeInt(4, 4)) },
-                     { enum_CharacterType.Elite, CoinsGenerateInfo.Create( 8,15, 100, new RangeInt(6, 6)) }});
+                    new Dictionary<enum_CharacterType, CoinsGenerateData>() {
+                     { enum_CharacterType.SubHidden, CoinsGenerateData.Create( 0,0, 0, new RangeInt(0, 0)) },     //实体掉落生成概率 类型,血,护甲,金币,金币数值范围
+                     { enum_CharacterType.Fighter, CoinsGenerateData.Create( 8,15, 20, new RangeInt(2, 2)) },
+                     { enum_CharacterType.Shooter_Rookie, CoinsGenerateData.Create( 8,15, 20, new RangeInt(2, 2)) },
+                     { enum_CharacterType.Shooter_Veteran, CoinsGenerateData.Create( 8,15, 30, new RangeInt(3, 3)) },
+                     { enum_CharacterType.AOECaster, CoinsGenerateData.Create( 8,15, 50, new RangeInt(4, 4)) },
+                     { enum_CharacterType.Elite, CoinsGenerateData.Create( 8,15, 100, new RangeInt(6, 6)) }});
                 case enum_StageLevel.Ranger:
-                    return StageInteractGenerate.Create(
+                    return StageInteractGenerateData.Create(
                     new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.OutStanding, 40 }, { enum_RarityLevel.Epic, 60 } },    //宝箱等级概率
                     new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.OutStanding, 25 }, { enum_RarityLevel.Epic, 75 } },    //交易等级概率
-                    new Dictionary<enum_CharacterType, CoinsGenerateInfo>() {
-                     { enum_CharacterType.SubHidden, CoinsGenerateInfo.Create( 0,0, 0, new RangeInt(0, 0)) },     //实体掉落生成概率 类型,血,护甲,金币,金币数值范围
-                     { enum_CharacterType.Fighter, CoinsGenerateInfo.Create( 8,15, 20, new RangeInt(2, 2)) },
-                     { enum_CharacterType.Shooter_Rookie, CoinsGenerateInfo.Create( 8,15, 20, new RangeInt(2, 2)) },
-                     { enum_CharacterType.Shooter_Veteran, CoinsGenerateInfo.Create( 8,15, 30, new RangeInt(3, 3)) },
-                     { enum_CharacterType.AOECaster, CoinsGenerateInfo.Create( 8,15, 50, new RangeInt(4, 4)) },
-                     { enum_CharacterType.Elite, CoinsGenerateInfo.Create( 8,15, 100, new RangeInt(6, 6)) }});
+                    new Dictionary<enum_CharacterType, CoinsGenerateData>() {
+                     { enum_CharacterType.SubHidden, CoinsGenerateData.Create( 0,0, 0, new RangeInt(0, 0)) },     //实体掉落生成概率 类型,血,护甲,金币,金币数值范围
+                     { enum_CharacterType.Fighter, CoinsGenerateData.Create( 8,15, 20, new RangeInt(2, 2)) },
+                     { enum_CharacterType.Shooter_Rookie, CoinsGenerateData.Create( 8,15, 20, new RangeInt(2, 2)) },
+                     { enum_CharacterType.Shooter_Veteran, CoinsGenerateData.Create( 8,15, 30, new RangeInt(3, 3)) },
+                     { enum_CharacterType.AOECaster, CoinsGenerateData.Create( 8,15, 50, new RangeInt(4, 4)) },
+                     { enum_CharacterType.Elite, CoinsGenerateData.Create( 8,15, 100, new RangeInt(6, 6)) }});
             }
         }
 
         public static readonly Dictionary<enum_CampFarmItemStatus, int> GetFarmGeneratePercentage = new Dictionary< enum_CampFarmItemStatus,int>() { {  enum_CampFarmItemStatus.Progress1 ,60},{enum_CampFarmItemStatus.Progress2 ,30},{enum_CampFarmItemStatus.Progress3 ,6},{enum_CampFarmItemStatus.Progress4,3},{ enum_CampFarmItemStatus.Progress5,1} };
-        public static readonly Dictionary<enum_CampFarmItemStatus, float> GetFarmCreditGeneratePerSecond = new Dictionary<enum_CampFarmItemStatus, float> { { enum_CampFarmItemStatus.Progress1, .1f / 60f }, { enum_CampFarmItemStatus.Progress2, .2f / 60f }, { enum_CampFarmItemStatus.Progress3, .3f / 60f }, { enum_CampFarmItemStatus.Progress4, .5f / 60f }, { enum_CampFarmItemStatus.Progress5, 1f / 60f } };
-        public static readonly RangeInt I_CampFarmPlotProfitDuration = new RangeInt(10, 5);
+        public static readonly Dictionary<enum_CampFarmItemStatus, CampFarmItemData> GetFarmItemInfo = new Dictionary<enum_CampFarmItemStatus, CampFarmItemData> { { enum_CampFarmItemStatus.Progress1, CampFarmItemData.Create(60, .1f / 60f) }, { enum_CampFarmItemStatus.Progress2, CampFarmItemData.Create(60, .2f / 60f) }, { enum_CampFarmItemStatus.Progress3, CampFarmItemData.Create(60, .3f / 60f) }, { enum_CampFarmItemStatus.Progress4, CampFarmItemData.Create(60, .5f / 60f) }, { enum_CampFarmItemStatus.Progress5, CampFarmItemData.Create(60, 1f / 60f) } };
         public static bool CanGenerateprofit(this enum_CampFarmItemStatus status)
         {
             switch(status)
@@ -580,18 +579,18 @@ namespace GameSetting
 
     #region Structs
     #region Default Readonly
-    public struct CoinsGenerateInfo
+    public struct CoinsGenerateData
     {
         public int m_HealthRate { get; private set; }
         public int m_ArmorRate { get; private set; }
         public int m_CoinRate { get; private set; }
         public RangeInt m_CoinRange { get; private set; }
-        public static CoinsGenerateInfo Create(int healthRate, int armorRate, int coinRate, RangeInt coinAmount) => new CoinsGenerateInfo() { m_HealthRate = healthRate, m_ArmorRate = armorRate, m_CoinRate = coinRate, m_CoinRange = coinAmount };
+        public static CoinsGenerateData Create(int healthRate, int armorRate, int coinRate, RangeInt coinAmount) => new CoinsGenerateData() { m_HealthRate = healthRate, m_ArmorRate = armorRate, m_CoinRate = coinRate, m_CoinRange = coinAmount };
     }
 
-    public struct StageInteractGenerate
+    public struct StageInteractGenerateData
     {
-        Dictionary<enum_CharacterType, CoinsGenerateInfo> m_CoinRate;
+        Dictionary<enum_CharacterType, CoinsGenerateData> m_CoinRate;
         Dictionary<enum_RarityLevel, int> m_ActionRate;
         Dictionary<enum_RarityLevel, int> m_TradeRate;
         public bool CanGenerateHealth(enum_CharacterType entityType) => TCommon.RandomPercentage() <= m_CoinRate[entityType].m_HealthRate;
@@ -599,7 +598,14 @@ namespace GameSetting
         public int GetCoinGenerate(enum_CharacterType entityType) => TCommon.RandomPercentage() <= m_CoinRate[entityType].m_CoinRate ? m_CoinRate[entityType].m_CoinRange.Random() : -1;
         public enum_RarityLevel GetActionRarityLevel(System.Random seed) => TCommon.RandomPercentage(m_ActionRate, seed);
         public enum_RarityLevel GetTradeRarityLevel(System.Random seed) => TCommon.RandomPercentage(m_TradeRate, seed);
-        public static StageInteractGenerate Create(Dictionary<enum_RarityLevel, int> _actionRate, Dictionary<enum_RarityLevel, int> _tradeRate, Dictionary<enum_CharacterType, CoinsGenerateInfo> _coinRate) => new StageInteractGenerate() { m_ActionRate = _actionRate, m_TradeRate = _tradeRate, m_CoinRate = _coinRate };
+        public static StageInteractGenerateData Create(Dictionary<enum_RarityLevel, int> _actionRate, Dictionary<enum_RarityLevel, int> _tradeRate, Dictionary<enum_CharacterType, CoinsGenerateData> _coinRate) => new StageInteractGenerateData() { m_ActionRate = _actionRate, m_TradeRate = _tradeRate, m_CoinRate = _coinRate };
+    }
+
+    public struct CampFarmItemData
+    {
+        public int m_ItemDuration { get; private set; }
+        public float m_CreditPerSecond { get; private set; }
+        public static CampFarmItemData Create(int _duration, float _creditPersecond) => new CampFarmItemData { m_ItemDuration = _duration, m_CreditPerSecond = _creditPersecond };
     }
     #endregion
 
@@ -633,19 +639,16 @@ namespace GameSetting
 
     public class CCampFarmSave : ISave
     {
-        public float m_Profit;
         public int m_OffsiteProfitStamp;
         public List<CampFarmPlotData> m_PlotStatus;
         public CCampFarmSave()
         {
-            m_Profit = 0;
             m_OffsiteProfitStamp = TTime.TTimeTools.GetTimeStampNow();
             m_PlotStatus = new List<CampFarmPlotData>() { CampFarmPlotData.Create( enum_CampFarmItemStatus.Empty), CampFarmPlotData.Create(enum_CampFarmItemStatus.Empty), CampFarmPlotData.Create(enum_CampFarmItemStatus.Empty), CampFarmPlotData.Create(enum_CampFarmItemStatus.Locked), CampFarmPlotData.Create(enum_CampFarmItemStatus.Locked), CampFarmPlotData.Create(enum_CampFarmItemStatus.Locked) };
         }
         public void Save(CampFarmManager manager)
         {
             m_PlotStatus.Clear();
-            m_Profit = manager.m_Profit;
             m_OffsiteProfitStamp = manager.m_LastProfitStamp; 
             for (int i=0;i< manager.m_Plots.Count; i++)
                 m_PlotStatus.Add(CampFarmPlotData.SaveData(manager.m_Plots[i]));
@@ -653,9 +656,9 @@ namespace GameSetting
 
         public void UnlockPlot(int difficulty)
         {
-            if (difficulty >= 3 && m_PlotStatus[3].m_Status == enum_CampFarmItemStatus.Locked)
+            if (difficulty >=GameConst.I_CampFarmPlot4Unlock && m_PlotStatus[3].m_Status == enum_CampFarmItemStatus.Locked)
                 m_PlotStatus[3] = CampFarmPlotData.Create(enum_CampFarmItemStatus.Empty);
-            if (difficulty >= 10 && m_PlotStatus[4].m_Status == enum_CampFarmItemStatus.Locked)
+            if (difficulty >= GameConst.I_CampFarmPlot5Unlock && m_PlotStatus[4].m_Status == enum_CampFarmItemStatus.Locked)
                 m_PlotStatus[4] = CampFarmPlotData.Create(enum_CampFarmItemStatus.Empty);
         }
     }

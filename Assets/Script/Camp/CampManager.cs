@@ -65,7 +65,7 @@ public class CampManager : GameManagerBase
         SetEffect_Focal(false);
     }
 
-    public void OnCreditStatus(float creditChange)
+    public static void OnCreditStatus(float creditChange)
     {
         GameDataManager.OnCreditChange(creditChange);
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_CampCreditStatus);
