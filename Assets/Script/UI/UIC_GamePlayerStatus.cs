@@ -71,7 +71,7 @@ public class UIC_GamePlayerStatus : UIControlBase
 
         rtf_StatusData = tf_Container.Find("StatusData").GetComponent<RectTransform>();
         rtf_StatusData.localScale = UIManagerBase.m_FitScale;
-        tf_AmmoData = rtf_StatusData.Find("AmmoData");
+        tf_AmmoData = rtf_StatusData.Find("Container/AmmoData");
         m_AmmoGridWidth = tf_AmmoData.GetComponent<RectTransform>().sizeDelta.x;
         m_AmmoAmount = new UIC_Numeric(tf_AmmoData.Find("AmmoAmount"));
         m_AmmoClipAmount = new UIC_Numeric(m_AmmoAmount.transform.Find("ClipAmount"));
@@ -79,10 +79,10 @@ public class UIC_GamePlayerStatus : UIControlBase
         m_AmmoLayout = m_AmmoGrid.transform.GetComponent<GridLayoutGroup>();
         img_ReloadFill = m_AmmoGrid.transform.Find("Reload").GetComponent<Image>();
 
-        tf_ArmorData = rtf_StatusData.Find("ArmorData");
+        tf_ArmorData = rtf_StatusData.Find("Container/ArmorData");
         sld_Armor = tf_ArmorData.Find("ArmorSlider").GetComponent<Slider>();
         m_ArmorAmount = new UIC_Numeric(tf_ArmorData.Find("ArmorAmount"));
-        tf_HealthData = rtf_StatusData.Find("HealthData");
+        tf_HealthData = rtf_StatusData.Find("Container/HealthData");
         sld_Health = tf_HealthData.Find("HealthSlider").GetComponent<Slider>();
         m_HealthAmount = new UIC_Numeric(tf_HealthData.Find("HealthAmount"));
         m_MaxHealth = new UIC_Numeric(m_HealthAmount.transform.Find("MaxHealth"));
@@ -170,7 +170,7 @@ public class UIC_GamePlayerStatus : UIControlBase
         m_Coins.text=_player.m_PlayerInfo.m_Coins.ToString();
         m_ActionEnergy.TickValue(_player.m_PlayerInfo.m_ActionEnergy,Time.deltaTime*10f);
         img_ShuffleFill.fillAmount = _player.m_PlayerInfo.f_shuffleScale;
-        rtf_StatusData.SetWorldViewPortAnchor(m_Player.tf_Head.position, CameraController.Instance.m_Camera, Time.deltaTime * 10f);
+        rtf_StatusData.SetWorldViewPortAnchor(m_Player.tf_Status.position, CameraController.Instance.m_Camera, Time.deltaTime * 10f);
 
         if (_player.m_Interact==null)
         {

@@ -17,6 +17,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public int m_EquipmentTimes { get; private set; }
     public float m_EquipmentDistance { get; private set; }
     public override Transform tf_Weapon => m_WeaponCurrent.m_Case;
+    public Transform tf_Status { get; private set; }
     public override float m_baseMovementSpeed => F_MovementSpeed*( f_movementReductionCheck >0? (1-GameConst.F_AimMovementReduction*m_PlayerInfo.F_AimMovementStrictMultiply):1f);
     public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized* m_CharacterInfo.F_MovementSpeed * time;
     public PlayerInfoManager m_PlayerInfo { get; private set; }
@@ -38,6 +39,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         gameObject.layer = GameLayer.I_MovementDetect;
         tf_WeaponHoldRight = transform.FindInAllChild("WeaponHold_R");
         tf_WeaponHoldLeft = transform.FindInAllChild("WeaponHold_L");
+        tf_Status = transform.FindInAllChild("Status");
         m_Animator = new PlayerAnimator(tf_Model.GetComponent<Animator>(), OnAnimationEvent);
         transform.Find("InteractDetector").GetComponent<InteractDetector>().Init(OnInteractCheck);
     }
