@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using GameSetting;
-public class UIT_CampStatus : UIToolsBase {
+public class UIC_CampStatus : UIControlBase {
     Text m_Credit;
     
     protected override void Init()

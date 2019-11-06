@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIT_FarmStatus : UIToolsBase {
+public class UIC_FarmStatus : UIControlBase {
 
     Button m_Buy, m_Exit,m_Profit;
     Text m_ProfitAmount;

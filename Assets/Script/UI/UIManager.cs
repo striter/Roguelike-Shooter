@@ -11,8 +11,10 @@ public class UIManager :UIManagerBase,ISingleCoroutine
     Action OnReload;
     Action<bool> OnMainDown;
     Image img_main;
+    protected UIT_GridControllerGridItem<UIGI_TipItem> m_TipsGrid;
     protected TouchDeltaManager m_TouchDelta { get; private set; }
     public Camera m_Camera { get; private set; }
+
     public CameraEffectManager m_Effect { get; private set; }
     CB_GenerateOverlayUIGrabBlurTexture m_Blur;
     public AtlasLoader m_CommonSprites { get; private set; }
@@ -44,13 +46,14 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         m_Blur = m_Effect.GetOrAddCameraEffect<CB_GenerateOverlayUIGrabBlurTexture>();
         m_Blur.SetEffect(1, 2f, 2);
 
+        m_TipsGrid = new UIT_GridControllerGridItem<UIGI_TipItem>(cvs_Overlay.transform.Find("Tips"));
+
         m_TouchDelta = transform.GetComponent<TouchDeltaManager>();
         OnOptionsChanged();
         OptionsManager.event_OptionChanged += OnOptionsChanged;
 
         UIPageBase.OnPageExit = OnPageExit;
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnPlayerStatusChanged);
-
     }
     protected override void OnDestroy()
     {
@@ -109,4 +112,8 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         GameManagerBase.SetBulletTime(false);
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PageClose);
     }
+
+    int tipCount = 0;
+    public void ShowTip(string key, enum_UITipsType tipsType) => m_TipsGrid.AddItem(tipCount++).ShowTips(key, tipsType,OnTipFinish);
+    void OnTipFinish(int index)=>m_TipsGrid.RemoveItem(index);
 }

@@ -211,6 +211,20 @@ namespace GameSetting
                     return Color.magenta;
             }
         }
+        public static Color TipsColor(this enum_UITipsType type)
+        {
+            switch(type)
+            {
+                case enum_UITipsType.Normal:
+                    return Color.gray;
+                case enum_UITipsType.Warning:
+                    return Color.yellow;
+                case enum_UITipsType.Error:
+                    return Color.red;
+                default:
+                    return Color.magenta;
+            }
+        }
 
         public static float F_WeaponStability(float baseRecoilScore) => 100f - baseRecoilScore * 6.25f;
         public static float F_WeaponDamageValue(float baseDamage) => baseDamage / 150f;
@@ -559,6 +573,8 @@ namespace GameSetting
     public enum enum_Option_FrameRate { Invalid = -1, Normal = 45, High = 60, }
 
     public enum enum_CampFarmItemStatus { Invalid=-1, Empty = 0, Locked=1 , Decayed = 2, Progress1=10,Progress2,Progress3,Progress4,Progress5}
+
+    public enum enum_UITipsType { Invalid=-1,Normal=0,Warning=1,Error=2}
     #endregion
     
 

@@ -15,7 +15,7 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
     CampFarmPlot m_HybridPlot;
     RaycastHit m_rayHit;
     float f_timeCheck;
-    UIT_FarmStatus m_FarmStatus;
+    UIC_FarmStatus m_FarmStatus;
     protected override void Awake()
     {
         base.Awake();

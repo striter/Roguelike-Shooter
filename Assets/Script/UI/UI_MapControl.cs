@@ -5,7 +5,7 @@ using TTiles;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UI_MapControl : UIPageBase,ISingleCoroutine {        //This Page Won't Hide(One Page Show Bigmap/Minimap)
+public class UI_MapControl : UIPageBase {
     Transform tf_MapTile, tf_MapInfo, tf_TileDetail;
     UIT_GridDefaultSingle<UIGI_MapControlCell> m_AllTilesGrid;
     UIT_TextExtend txt_Stage, txt_Style;
@@ -15,13 +15,9 @@ public class UI_MapControl : UIPageBase,ISingleCoroutine {        //This Page Wo
     RectTransform m_Line;
     UIGI_MapControlCell m_targetTile;
     UIC_Button btn_Confirm;
-
-    public bool B_Playing = false;
     protected override void Init(bool useAnim)
     {
         base.Init(useAnim);
-        tf_Container.Find("ChestTips").SetActivate(GameManager.Instance.B_ShowChestTips);   //Test
-
         tf_TileDetail = tf_Container.Find("TileDetail");
         m_TileTypeAnim = tf_TileDetail.Find("Image").GetComponent<Animation>();
         img_TileTypeCurrent = tf_TileDetail.Find("Image/TileImage/TileCurrent").GetComponent<Image>();
@@ -74,7 +70,7 @@ public class UI_MapControl : UIPageBase,ISingleCoroutine {        //This Page Wo
     {
         m_targetTile = tile;
         enum_UI_TileBattleStatus battleStatus = tile.m_TileInfo.m_LevelType.GetBattleStatus();
-        txt_TileType.localizeText=tile.m_TileInfo.m_LevelType.GetLocalizeKey();
+        txt_TileType.localizeKey=tile.m_TileInfo.m_LevelType.GetLocalizeKey();
         txt_Cordinates.text=tile.m_TileInfo.m_TileAxis.GetCordinates();
         txt_BattleStatus.text=battleStatus.GetBattlePercentage();
         this.StartSingleCoroutine(10, TIEnumerators.UI.StartTypeWriter(txt_TileType,.5f));

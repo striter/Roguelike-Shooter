@@ -40,7 +40,7 @@ public class UI_WeaponStatus : UIPageBase {
     }
     public void SetInfo(WeaponBase weapon)
     {
-        m_WeaponName.localizeText = weapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
+        m_WeaponName.localizeKey = weapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
         m_ClipSize.SetNumeric(string.Format("{0:D2}", weapon.I_ClipAmount));
 
         m_DamageAmount.text = string.Format("{0:N1}", weapon.F_BaseDamage);
@@ -56,15 +56,15 @@ public class UI_WeaponStatus : UIPageBase {
         if (showAction)
         {
             ActionBase action = weapon.m_WeaponAction;
-            m_ActionName.localizeText = action.GetNameLocalizeKey();
+            m_ActionName.localizeKey = action.GetNameLocalizeKey();
             m_ActionIntro.formatText(action.GetIntroLocalizeKey(), action.F_Duration, action.Value1, action.Value2, action.Value3);
-            m_ActionRarityText.localizeText = action.m_rarity.GetLocalizeKey();
+            m_ActionRarityText.localizeKey = action.m_rarity.GetLocalizeKey();
             m_ActionRarity.SetLevel(action.m_rarity);
             return;
         }
 
         //Test Here! Will Be Removed Soon
-        m_ActionIntro.localizeText = "UI_WeaponStatus_ActionInvalid";
+        m_ActionIntro.localizeKey = "UI_WeaponStatus_ActionInvalid";
         m_ActionRarityText.text = "";
         m_ActionName.text = "";
         m_ActionRarity.SetLevel(enum_RarityLevel.Invalid);

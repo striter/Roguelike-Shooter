@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
-public class UIT_EntityHealth : UIToolsBase {
+public class UIC_EntityHealth : UIControlBase {
     UIT_GridControllerGridItem<UIGI_HealthBar> m_HealthGrid;
     UIT_GridControllerGridItem<UIGI_Damage> m_DamageGrid;
     protected override void Init()

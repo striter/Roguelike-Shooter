@@ -30,6 +30,8 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
     {
         GameAudioManager.Instance.OnRecycle();
         GameObjectManager.RecycleAllObject();
+        CameraController.Instance.m_Camera.enabled = false;
+        UIManager.Instance.SetActivate(false);
         TSceneLoader.Instance.LoadScene(scene);
     }
 

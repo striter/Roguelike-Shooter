@@ -11,8 +11,8 @@ public class CampUIManager : UIManager {
         Instance = this;
         btn_Reload.SetActivate(false);
 
-        ShowTools<UIT_CampStatus>();
-        ShowTools<UIT_GamePlayerStatus>().SetInGame(false);
+        ShowTools<UIC_CampStatus>();
+        ShowTools<UIC_GamePlayerStatus>().SetInGame(false);
     }
     protected override void OnDestroy()
     {
@@ -21,11 +21,11 @@ public class CampUIManager : UIManager {
     }
     
     Action OnExitFarm;
-    public UIT_FarmStatus BeginFarm(Action<bool,Vector2> _OnDragDown, Action<Vector2> _OnDrag)
+    public UIC_FarmStatus BeginFarm(Action<bool,Vector2> _OnDragDown, Action<Vector2> _OnDrag)
     {
         m_TouchDelta.AddDragBinding(_OnDragDown, _OnDrag);
         tf_Control.localScale = Vector3.zero;
-        UIT_FarmStatus target = ShowTools<UIT_FarmStatus>();
+        UIC_FarmStatus target = ShowTools<UIC_FarmStatus>();
         return target;
     }
     public void ExitFarm()

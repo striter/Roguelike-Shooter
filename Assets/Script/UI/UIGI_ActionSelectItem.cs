@@ -14,9 +14,9 @@ public class UIGI_ActionSelectItem : UIT_GridDefaultItem
     public void SetInfo(ActionBase action)
     {
         base.SetItemInfo("", false);
-        txt_Name.localizeText = action.GetNameLocalizeKey();
+        txt_Name.localizeKey = action.GetNameLocalizeKey();
         txt_Cost.text = action.m_ActionType == enum_ActionType.WeaponPerk ? "" : action.I_Cost.ToString();
         txt_Intro.formatText( action.GetIntroLocalizeKey(), action.F_Duration, action.Value1, action.Value2, action.Value3); 
-        txt_Level.localizeText = action.m_rarity.GetLocalizeKey();
+        txt_Level.localizeKey = action.m_rarity.GetLocalizeKey();
     }
 }

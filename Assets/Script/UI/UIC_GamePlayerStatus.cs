@@ -1,7 +1,7 @@
 ﻿using GameSetting;
 using UnityEngine;
 using UnityEngine.UI;
-public class UIT_GamePlayerStatus : UIToolsBase
+public class UIC_GamePlayerStatus : UIControlBase
 {
     Transform tf_Container;
     Animation m_Animation;
@@ -58,7 +58,7 @@ public class UIT_GamePlayerStatus : UIToolsBase
         btn_ActionStorage = tf_OutBattle.Find("ActionStorage").GetComponent<Button>();
         btn_ActionStorage.onClick.AddListener(OnActionStorageClick);
         btn_Bigmap = tf_OutBattle.Find("Bigmap").GetComponent<Button>();
-        btn_Bigmap.onClick.AddListener(() => { UIManager.Instance.ShowPage<UI_MapControl>(true); });
+        btn_Bigmap.onClick.AddListener(OnMapControlClick  );
 
         tf_InBattle = tf_Container.Find("InBattle");
         m_ActionEnergy = new UIC_ActionEnergy(tf_InBattle.Find("ActionEnergy"));
@@ -149,6 +149,15 @@ public class UIT_GamePlayerStatus : UIToolsBase
     }
     void OnBattleStart()=>SetInBattle(true);
     void OnBattleFinish()=> SetInBattle(false);
+
+
+    void OnMapControlClick()
+    {
+        if (GameManager.Instance.B_ShowChestTips)
+            UIManager.Instance.ShowTip("UI_Tips_ChestUnOpened", enum_UITipsType.Error);
+
+        UIManager.Instance.ShowPage<UI_MapControl>(true);
+    }
     #region PlayerData/Interact
     void OnCommonStatus(EntityCharacterPlayer _player)
     {

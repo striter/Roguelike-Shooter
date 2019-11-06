@@ -29,7 +29,7 @@ public class UIT_GridDefaultItem : UIT_GridItem {
     public void SetItemInfo(string defaultKey = "", bool highLight = false, Sprite defaultSprite = null, bool setNativeSize = false)
     {
         if (defaultKey != "")
-            txt_Default.localizeText = defaultKey;
+            txt_Default.localizeKey = defaultKey;
         if (defaultSprite != null)
         {
             img_Default.sprite = defaultSprite;

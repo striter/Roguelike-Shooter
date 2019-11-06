@@ -34,7 +34,8 @@ public class CampManager : GameManagerBase
 
     public void OnSceneItemInteract(enum_Scene scene)
     {
-        SwitchScene(scene);
+        SetPostEffect_Vortex(true, tf_Player, 1f);
+        UIT_Loading.Instance.Play(1f,()=> { SwitchScene(scene); });
     }
 
     public bool B_Farming { get; private set; } = false;

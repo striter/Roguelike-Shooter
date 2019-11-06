@@ -20,7 +20,7 @@ public class UIManagerBase : SimpleSingletonMono<UIManagerBase> {
     }
 
     public T ShowPage<T>(bool useAnim) where T : UIPageBase => UIPageBase.Show<T>(tf_Page,useAnim);
-    public T ShowTools<T>() where T : UIToolsBase => UIToolsBase.Show<T>(tf_Tool);
+    public T ShowTools<T>() where T : UIControlBase => UIControlBase.Show<T>(tf_Tool);
     public T ShowMessageBox<T>() where T : UIMessageBoxBase => UIMessageBoxBase.Show<T>(tf_MessageBox);
 }
 

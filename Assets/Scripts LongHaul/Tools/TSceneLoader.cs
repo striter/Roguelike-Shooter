@@ -24,6 +24,7 @@ public class TSceneLoader:SingletonMono<TSceneLoader>,ISingleCoroutine {
             if (operation.progress == .9f)
             {
                 operation.allowSceneActivation = true;
+                GL.Clear(true, true, Color.black);
                 yield break;
             }
 

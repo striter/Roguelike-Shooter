@@ -17,8 +17,8 @@ public class UIM_Intro : UIMessageBoxBase{
     public void Play(string titleKey, string introKey, string confirmKey, Action _OnConfirmClick)
     {
         base.Play(_OnConfirmClick);
-        m_title.localizeText = titleKey;
-        m_Intro.localizeText = introKey;
-        txt_Confirm.localizeText = confirmKey;
+        m_title.localizeKey = titleKey;
+        m_Intro.localizeKey = introKey;
+        txt_Confirm.localizeKey = confirmKey;
     }
 }

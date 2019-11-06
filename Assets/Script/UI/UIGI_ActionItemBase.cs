@@ -25,7 +25,7 @@ public class UIGI_ActionItemBase : UIT_GridItem {
     }
     protected void SetInfo(ActionBase actionInfo)
     {
-        m_Name.localizeText = actionInfo.GetNameLocalizeKey();
+        m_Name.localizeKey = actionInfo.GetNameLocalizeKey();
         m_TypeIcon.sprite = UIManager.Instance.m_ActionSprites[actionInfo.m_ActionType.GetIconSprite()];
         m_TypeBottom.sprite = UIManager.Instance.m_ActionSprites[actionInfo.m_ActionType.GetNameBGSprite()];
         m_Rarity.SetLevel(actionInfo.m_rarity);

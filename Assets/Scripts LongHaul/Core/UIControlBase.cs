@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UIToolsBase : MonoBehaviour {
-    public static T Show<T>(Transform _parentTrans) where T : UIToolsBase
+public class UIControlBase : MonoBehaviour {
+    public static T Show<T>(Transform _parentTrans) where T : UIControlBase
     {
-        T tempBase = TResources.Instantiate<T>("UI/Tools/" + typeof(T).ToString(), _parentTrans);
+        T tempBase = TResources.Instantiate<T>("UI/Controls/" + typeof(T).ToString(), _parentTrans);
         tempBase.Init();
         return tempBase;
     }
