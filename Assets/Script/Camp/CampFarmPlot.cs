@@ -8,7 +8,7 @@ using System;
 public class CampFarmPlot : CampFarmInteract {
     public int m_Index { get; private set; }
     public int m_StartStamp { get; private set; }
-    public enum_CampFarmItemStatus m_Status { get; private set; }
+    public enum_CampFarmItemStatus m_Status { get; private set; } = enum_CampFarmItemStatus.Invalid;
     public CampFarmItem m_PlotItem { get; private set; }
     public int m_TimeLeft { get; private set; }
     Action<int> OnPlotStatusChanged;
@@ -18,10 +18,10 @@ public class CampFarmPlot : CampFarmInteract {
         m_Index = index;
         m_StartStamp = info.m_StartStamp;
         OnPlotStatusChanged = _OnPlotStatusChanged;
-        ResetPlotStatus(info.m_Status);
+        ResetPlotStatus(info.m_Status,false);
         m_profitStamp = stampNow;
         ResetCheck(stampNow);
-        return CheckGenerateProfit(offlineStamp,stampNow);
+        return CheckGenerateProfit(offlineStamp,stampNow,false);
     }
 
     void ResetCheck(int stampNow)
@@ -42,18 +42,18 @@ public class CampFarmPlot : CampFarmInteract {
         if (stampNow < m_StampCheck&&m_TimeLeft>0)
             return 0;
 
-        float profit = CheckGenerateProfit(m_profitStamp, stampNow);
+        float profit = CheckGenerateProfit(m_profitStamp, stampNow,true);
         m_profitStamp = stampNow;
         ResetCheck(stampNow);
         return profit;
     }
 
-    public float EndProfit(int stampNow)=> CheckGenerateProfit(m_profitStamp, stampNow);
+    public float EndProfit(int stampNow)=> CheckGenerateProfit(m_profitStamp, stampNow,false);
 
     public void Hybrid(enum_CampFarmItemStatus status)
     {
         GameObjectManager.SpawnParticles<SFXMuzzle>(10021, transform.position, Vector3.up).Play(-1);
-        ResetPlotStatus(status);
+        ResetPlotStatus(status,true);
         m_StartStamp = TTimeTools.GetTimeStampNow();
         m_TimeLeft = GameExpression.GetFarmItemInfo[m_Status].m_ItemDuration;
         ResetCheck(m_StartStamp);
@@ -61,15 +61,18 @@ public class CampFarmPlot : CampFarmInteract {
 
     public void Clear()
     {
-        ResetPlotStatus(enum_CampFarmItemStatus.Empty);
+        ResetPlotStatus(enum_CampFarmItemStatus.Empty,false);
         m_TimeLeft = 0;
         m_StartStamp = -1;
     }
-
-    void ResetPlotStatus(enum_CampFarmItemStatus status)
+    
+    void ResetPlotStatus(enum_CampFarmItemStatus status,bool showAnim)
     {
         if (m_Status == status)
             return;
+
+        if (showAnim)
+            GameObjectManager.SpawnParticles<SFXMuzzle>(10021, transform.position, Vector3.up).Play(-1);
 
         if (m_PlotItem)
             ObjectPoolManager<enum_CampFarmItemStatus, CampFarmItem>.Recycle(m_Status, m_PlotItem);
@@ -77,11 +80,12 @@ public class CampFarmPlot : CampFarmInteract {
         m_Status = status;
         m_PlotItem = ObjectPoolManager<enum_CampFarmItemStatus, CampFarmItem>.Spawn(m_Status, null);
 
+
         OnPlotStatusChanged(m_Index);
         EndDrag();
     }
 
-    float CheckGenerateProfit(int previousStamp, int stampNow)
+    float CheckGenerateProfit(int previousStamp, int stampNow,bool showDecayAnim)
     {
         if (!GameExpression.CanGenerateprofit(m_Status))
             return 0;
@@ -94,8 +98,9 @@ public class CampFarmPlot : CampFarmInteract {
         float profit = profitStampOffset * GameExpression.GetFarmItemInfo[m_Status].m_CreditPerSecond;
         if (decayed)
         {
+            ResetPlotStatus(enum_CampFarmItemStatus.Decayed, showDecayAnim);
+            m_TimeLeft = 0;
             m_StartStamp = -1;
-            ResetPlotStatus(enum_CampFarmItemStatus.Decayed);
         }
         return profit;
     }
