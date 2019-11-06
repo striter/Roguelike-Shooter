@@ -354,7 +354,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224863112957853516}
-  - component: {fileID: 111482738456303158}
   - component: {fileID: 114533673732577884}
   m_Layer: 5
   m_Name: GridItem
@@ -559,21 +558,6 @@ Camera:
   m_OcclusionCulling: 0
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!111 &111482738456303158
-Animation:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1632009023313846}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Animation: {fileID: 7400000, guid: 4e8bd1117be05c74d8beadc46afc66a4, type: 2}
-  m_Animations:
-  - {fileID: 7400000, guid: 4e8bd1117be05c74d8beadc46afc66a4, type: 2}
-  m_WrapMode: 0
-  m_PlayAutomatically: 0
-  m_AnimatePhysics: 0
-  m_CullingType: 0
 --- !u!114 &114066419301683842
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -676,7 +660,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: 123123
+  m_Text: Tips Here
   B_AutoLocalize: 0
   S_AutoLocalizeKey: 
   m_characterSpacing: 1
@@ -1812,8 +1796,8 @@ RectTransform:
   m_Father: {fileID: 224232409683823772}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: -0.5, y: 0.75}
-  m_AnchorMax: {x: -0.5, y: 0.75}
+  m_AnchorMin: {x: 0.5, y: 0.75}
+  m_AnchorMax: {x: 0.5, y: 0.75}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
