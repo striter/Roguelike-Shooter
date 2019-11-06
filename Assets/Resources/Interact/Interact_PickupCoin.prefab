@@ -200,7 +200,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AC_OnPlay: {fileID: 8300000, guid: 996e92bcfef63fa42818437f3bf5753c, type: 3}
-  AC_OnInteract: {fileID: 0}
+  AC_OnInteract: {fileID: 8300000, guid: bf1c99235552a58468f3700fb1d3ed8e, type: 3}
   I_MuzzleOnInteract: 10021
 --- !u!114 &114254946078226914
 MonoBehaviour:
