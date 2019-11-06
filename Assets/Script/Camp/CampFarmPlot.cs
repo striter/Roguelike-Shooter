@@ -58,7 +58,6 @@ public class CampFarmPlot : CampFarmInteract {
 
         m_Status = status;
         m_PlotItem = ObjectPoolManager<enum_CampFarmItemStatus, CampFarmItem>.Spawn(m_Status, null);
-        m_PlotItem.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360), 0);
         EndDrag();
     }
 
