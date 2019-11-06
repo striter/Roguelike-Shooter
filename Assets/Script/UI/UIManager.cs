@@ -6,7 +6,7 @@ using System;
 public class UIManager :UIManagerBase,ISingleCoroutine
 {
     public static new UIManager Instance { get; private set; }
-    protected Transform tf_Control { get; private set; }
+    protected Transform tf_BaseControl { get; private set; }
     protected Button btn_Reload { get; private set; }
     Action OnReload;
     Action<bool> OnMainDown;
@@ -33,11 +33,11 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         Instance = this;
         cvs_Camera.transform.Find("Settings").GetComponent<Button>().onClick.AddListener(() => { ShowPage<UI_Options>(true, 0f).SetInGame(GameManagerBase.Instance.B_InGame); });
 
-        tf_Control = cvs_Camera.transform.Find("Control");
-        img_main = tf_Control.Find("Main/Image").GetComponent<Image>();
-        btn_Reload = tf_Control.Find("Reload").GetComponent<Button>();
+        tf_BaseControl = cvs_Camera.transform.Find("BaseControl");
+        img_main = tf_BaseControl.Find("Main/Image").GetComponent<Image>();
+        btn_Reload = tf_BaseControl.Find("Reload").GetComponent<Button>();
         btn_Reload.onClick.AddListener(OnReloadButtonDown);
-        tf_Control.Find("Main").GetComponent<UIT_EventTriggerListener>().D_OnPress+= OnMainButtonDown;
+        tf_BaseControl.Find("Main").GetComponent<UIT_EventTriggerListener>().D_OnPress+= OnMainButtonDown;
 
         m_CommonSprites = TResources.GetUIAtlas_Common();
         m_ActionSprites = TResources.GetUIAtlas_Action();

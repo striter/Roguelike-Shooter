@@ -133,7 +133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224613406205115984}
   m_Layer: 5
-  m_Name: Tool
+  m_Name: Control
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -340,7 +340,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224823542523871678}
   m_Layer: 5
-  m_Name: Control
+  m_Name: BaseControl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
