@@ -2607,16 +2607,17 @@ namespace GameSetting
             img_Full = rectTransform.Find("Full").GetComponent<Image>();
             img_Fill = rectTransform.Find("Fill").GetComponent<Image>();
         }
-        public void SetValue(float value)
+        public void TickValue(float value,float tickParam=1f)
         {
             if (m_value == value)
                 return;
-            m_value = value;
-            float detail =value%1f;
-            bool full = value == GameConst.F_MaxActionEnergy;
+
+            m_value = Mathf.Lerp(m_value,value,tickParam);
+            float detail = m_value % 1f;
+            bool full = m_value == GameConst.F_MaxActionEnergy;
             img_Full.SetActivate(full);
             img_Fill.SetActivate(!full);
-            txt_amount.text = ((int)value).ToString();
+            txt_amount.text = ((int)m_value).ToString();
             if (!full) img_Fill.fillAmount = detail;
         }
     }

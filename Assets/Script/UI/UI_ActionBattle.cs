@@ -35,7 +35,7 @@ public class UI_ActionBattle : UIPageBase {
         List<ActionBase> targetList =  info.m_BattleActionPicking;
         for (int i = 0; i < targetList.Count; i++)
             m_Grid.AddItem(i).SetInfo(targetList[i], OnItemClick,  info.B_EnergyCostable(targetList[i]));
-        m_Energy.SetValue(info.m_ActionEnergy);
+        m_Energy.TickValue(info.m_ActionEnergy,1f);
     }
     void OnItemClick(int index)
     {
