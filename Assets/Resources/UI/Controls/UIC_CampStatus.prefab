@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 224285467326022438}
   - component: {fileID: 114889265381292894}
   m_Layer: 5
-  m_Name: UIT_CampStatus
+  m_Name: UIC_CampStatus
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

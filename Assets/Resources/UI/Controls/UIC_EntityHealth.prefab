@@ -182,7 +182,7 @@ GameObject:
   - component: {fileID: 224472109714408000}
   - component: {fileID: 114589985240205688}
   m_Layer: 5
-  m_Name: UIT_EntityHealth
+  m_Name: UIC_EntityHealth
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
