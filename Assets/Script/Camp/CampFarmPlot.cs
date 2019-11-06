@@ -30,7 +30,7 @@ public class CampFarmPlot : CampFarmInteract {
             return;
 
         m_profitStamp = stampNow;
-        m_StampCheck = stampNow +  Mathf.RoundToInt(0.1f / GameExpression.GetFarmItemInfo[m_Status].m_CreditPerSecond);
+        m_StampCheck = stampNow +  Mathf.RoundToInt(0.01f / GameExpression.GetFarmItemInfo[m_Status].m_CreditPerSecond);
     }
 
     public float TickProfit(int stampNow)
@@ -52,6 +52,7 @@ public class CampFarmPlot : CampFarmInteract {
 
     public void Hybrid(enum_CampFarmItemStatus status)
     {
+        GameObjectManager.SpawnParticles<SFXMuzzle>(10021, transform.position, Vector3.up).Play(-1);
         ResetPlotStatus(status);
         m_StartStamp = TTimeTools.GetTimeStampNow();
         m_TimeLeft = GameExpression.GetFarmItemInfo[m_Status].m_ItemDuration;
@@ -67,6 +68,9 @@ public class CampFarmPlot : CampFarmInteract {
 
     void ResetPlotStatus(enum_CampFarmItemStatus status)
     {
+        if (m_Status == status)
+            return;
+
         if (m_PlotItem)
             ObjectPoolManager<enum_CampFarmItemStatus, CampFarmItem>.Recycle(m_Status, m_PlotItem);
 

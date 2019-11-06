@@ -28,6 +28,7 @@ public class UIGI_FarmPlotDetail : UIT_GridItem,ISingleCoroutine {
     {
         m_Plot = _plot;
         OnPlotBuyClick = _OnPlotBuyClick;
+        UpdateInfo();
     } 
 
     public void UpdateInfo()
@@ -41,7 +42,7 @@ public class UIGI_FarmPlotDetail : UIT_GridItem,ISingleCoroutine {
             lockText = "Unlock With Extra Credits";
         m_progress.text = lockText;
         m_status.text = m_Plot.m_Status.ToString();
-        m_Buy.SetActivate(m_Plot.m_Status == GameSetting.enum_CampFarmItemStatus.Empty);
+        m_Buy.SetActivate(m_Plot.m_Status == enum_CampFarmItemStatus.Empty);
     }
 
     public void PlayProfit(float profit)
@@ -61,7 +62,7 @@ public class UIGI_FarmPlotDetail : UIT_GridItem,ISingleCoroutine {
         if (!m_Plot)
             return;
         rtf_RectTransform.SetWorldViewPortAnchor(m_Plot.transform.position, CameraController.MainCamera, .1f);
-        if (m_Plot.m_Status == GameSetting.enum_CampFarmItemStatus.Locked)
+        if (m_Plot.m_Status == enum_CampFarmItemStatus.Locked)
             return;
         m_progress.text = m_Plot.m_TimeLeft.ToString();
     }
