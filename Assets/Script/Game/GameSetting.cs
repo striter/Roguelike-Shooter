@@ -62,6 +62,7 @@ namespace GameSetting
         public const int I_CampFarmPlot4Unlock = 3;
         public const int I_CampFarmPlot5Unlock = 10;
         public const int I_CampFarmItemAcquire = 70;
+        public const float F_CampFarmItemTickAmount = 0.05f;
 
         public const int I_CampActionStorageCountPerRarity = 10;
         public const int I_CampActionCreditGainPerRequestSurplus = 100;

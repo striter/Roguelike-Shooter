@@ -30,7 +30,7 @@ public class CampFarmPlot : CampFarmInteract {
             return;
 
         m_profitStamp = stampNow;
-        m_StampCheck = stampNow +  Mathf.RoundToInt(0.01f / GameExpression.GetFarmItemInfo[m_Status].m_CreditPerSecond);
+        m_StampCheck = stampNow +  Mathf.RoundToInt(GameConst.F_CampFarmItemTickAmount / GameExpression.GetFarmItemInfo[m_Status].m_CreditPerSecond);
     }
 
     public float TickProfit(int stampNow)
