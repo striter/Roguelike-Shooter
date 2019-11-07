@@ -1755,7 +1755,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224714267742838348}
   m_Layer: 14
-  m_Name: WeaponAction
+  m_Name: ActionDetail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5425,7 +5425,7 @@ RectTransform:
   m_Children:
   - {fileID: 224797316794362140}
   m_Father: {fileID: 224714267742838348}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
@@ -6126,12 +6126,12 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 224714267742838348}
-  m_RootOrder: 0
+  m_Father: {fileID: 224729225038279888}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 23.9, y: 15.400024}
+  m_AnchoredPosition: {x: 23.899994, y: 15.400085}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!224 &224342270150754920
@@ -6898,8 +6898,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 224729225038279888}
-  m_RootOrder: 3
+  m_Father: {fileID: 224714267742838348}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -6916,8 +6916,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 224330609668034622}
   - {fileID: 224025994592285754}
+  - {fileID: 224684454231391856}
   m_Father: {fileID: 224729225038279888}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -6958,7 +6958,7 @@ RectTransform:
   - {fileID: 224615394750325782}
   - {fileID: 224144375791393084}
   - {fileID: 224758246702569224}
-  - {fileID: 224684454231391856}
+  - {fileID: 224330609668034622}
   - {fileID: 224714267742838348}
   - {fileID: 224054238573366296}
   m_Father: {fileID: 224757482603149042}

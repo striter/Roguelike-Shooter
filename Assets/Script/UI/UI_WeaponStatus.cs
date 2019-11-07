@@ -64,8 +64,8 @@ public class UI_WeaponStatus : UIPageBase {
             return;
         }
 
-        m_ActionIntro.text = "";
-        m_ActionName.localizeKey = "UI_WeaponStatus_ActionInvalid";
+        m_ActionName.localizeKey = "UI_WeaponStatus_ActionInvalidName";
+        m_ActionIntro.localizeKey = "UI_WeaponStatus_ActionInvalidIntro";
         m_ActionRarityText.text = "";
         m_ActionRarity.SetLevel(enum_RarityLevel.Invalid);
     }

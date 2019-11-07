@@ -46,8 +46,8 @@ public class UIC_GamePlayerStatus : UIControlBase
     Transform tf_WeaponData;
     UIT_TextExtend m_WeaponName;
     Image m_WeaponImage;
-    Transform tf_WeaponAction;
     UIT_TextExtend m_WeaponActionName;
+    Transform tf_WeaponActionDetail;
     UIC_RarityLevel_BG m_WeaponActionRarity;
 
     Text m_Coins;
@@ -102,9 +102,9 @@ public class UIC_GamePlayerStatus : UIControlBase
         tf_WeaponData = tf_Container.Find("WeaponData");
         m_WeaponName = tf_WeaponData.Find("WeaponName").GetComponent<UIT_TextExtend>();
         m_WeaponImage = tf_WeaponData.Find("WeaponImage").GetComponent<Image>();
-        tf_WeaponAction = tf_WeaponData.Find("WeaponAction");
-        m_WeaponActionName = tf_WeaponAction.Find("ActionName").GetComponent<UIT_TextExtend>();
-        m_WeaponActionRarity = new UIC_RarityLevel_BG(tf_WeaponAction.Find("ActionRarity"));
+        m_WeaponActionName = tf_WeaponData.Find("ActionName").GetComponent<UIT_TextExtend>();
+        tf_WeaponActionDetail = tf_WeaponData.Find("ActionDetail");
+        m_WeaponActionRarity = new UIC_RarityLevel_BG(tf_WeaponActionDetail.Find("ActionRarity"));
         tf_WeaponData.Find("WeaponDetailBtn").GetComponent<Button>().onClick.AddListener(() => { UIManager.Instance.ShowPage<UI_WeaponStatus>(true,0f).SetInfo(m_Player.m_WeaponCurrent); });
 
         m_Coins = tf_Container.Find("CoinData/Data").GetComponent<Text>();
@@ -283,10 +283,9 @@ public class UIC_GamePlayerStatus : UIControlBase
         m_WeaponName.autoLocalizeText = weaponInfo.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
 
         bool showWeaponAction = weaponInfo.m_WeaponAction != null;
-        tf_WeaponAction.SetActivate(showWeaponAction);
-        if (!showWeaponAction) return;
-        m_WeaponActionName.autoLocalizeText = weaponInfo.m_WeaponAction.GetNameLocalizeKey();
-        m_WeaponActionRarity.SetLevel(weaponInfo.m_WeaponAction.m_rarity);
+        tf_WeaponActionDetail.SetActivate(showWeaponAction);
+        m_WeaponActionName.autoLocalizeText = showWeaponAction ? weaponInfo.m_WeaponAction.GetNameLocalizeKey() : "UI_WeaponStatus_ActionInvalidName";
+        if (showWeaponAction) m_WeaponActionRarity.SetLevel(weaponInfo.m_WeaponAction.m_rarity);
     }
     void OnAmmoStatus(WeaponBase weaponInfo)
     {
