@@ -2620,7 +2620,7 @@ namespace GameSetting
             img_Full = rectTransform.Find("Full").GetComponent<Image>();
             img_Fill = rectTransform.Find("Fill").GetComponent<Image>();
         }
-        public void TickValue(float value)
+        public void SetValue(float value)
         {
             if (m_value == value)
                 return;

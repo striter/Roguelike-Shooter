@@ -1,6 +1,7 @@
 ﻿using GameSetting;
 using UnityEngine;
 using UnityEngine.UI;
+using TSpecialClasses;
 public class UIC_GamePlayerStatus : UIControlBase
 {
     Transform tf_Container;
@@ -50,6 +51,8 @@ public class UIC_GamePlayerStatus : UIControlBase
     UIC_RarityLevel_BG m_WeaponActionRarity;
 
     Text m_Coins;
+
+    DurationLerp m_HealthLerp, m_ArmorLerp, m_EnergyLerp,m_CoinLerp;
     protected override void Init()
     {
         base.Init();
@@ -105,6 +108,11 @@ public class UIC_GamePlayerStatus : UIControlBase
         tf_WeaponData.Find("WeaponDetailBtn").GetComponent<Button>().onClick.AddListener(() => { UIManager.Instance.ShowPage<UI_WeaponStatus>(true,0f).SetInfo(m_Player.m_WeaponCurrent); });
 
         m_Coins = tf_Container.Find("CoinData/Data").GetComponent<Text>();
+
+        m_HealthLerp = new DurationLerp(0f, .25f);
+        m_ArmorLerp = new DurationLerp(0f, .25f);
+        m_EnergyLerp = new DurationLerp(0f, .5f);
+        m_CoinLerp = new DurationLerp(0f, 1f);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<WeaponBase>(enum_BC_UIStatus.UI_PlayerAmmoStatus, OnAmmoStatus);
@@ -162,13 +170,28 @@ public class UIC_GamePlayerStatus : UIControlBase
         UIManager.Instance.ShowPage<UI_MapControl>(true);
     }
     #region PlayerData/Interact
+    private void Update()
+    {
+        if (!m_Player)
+            return;
+
+        if (m_EnergyLerp.TickLerp(Time.deltaTime))
+            m_ActionEnergy.SetValue(m_EnergyLerp.m_value);
+        if (m_HealthLerp.TickLerp(Time.deltaTime))
+            sld_Health.value = m_HealthLerp.m_value;
+        if (m_ArmorLerp.TickLerp(Time.deltaTime))
+            sld_Armor.value = m_ArmorLerp.m_value;
+        if (m_CoinLerp.TickLerp(Time.deltaTime))
+            m_Coins.text = ((int)(m_CoinLerp.m_value)).ToString();
+    }
+
     void OnCommonStatus(EntityCharacterPlayer _player)
     {
         if (!m_Player)
             m_Player = _player;
 
-        m_Coins.text=_player.m_PlayerInfo.m_Coins.ToString();
-        m_ActionEnergy.TickValue(_player.m_PlayerInfo.m_ActionEnergy);
+        m_CoinLerp.ChangeValue(_player.m_PlayerInfo.m_Coins);
+        m_EnergyLerp.ChangeValue(_player.m_PlayerInfo.m_ActionEnergy);
         img_ShuffleFill.fillAmount = _player.m_PlayerInfo.f_shuffleScale;
         rtf_StatusData.SetWorldViewPortAnchor(m_Player.tf_Status.position, CameraController.Instance.m_Camera, Time.deltaTime * 10f);
 
@@ -247,8 +270,8 @@ public class UIC_GamePlayerStatus : UIControlBase
     #region Health Status
     void OnHealthStatus(EntityHealth _healthManager)
     {
-        sld_Armor.value = _healthManager.m_CurrentArmor/UIConst.F_UIMaxArmor;
-        sld_Health.value = _healthManager.F_HealthMaxScale;
+        m_ArmorLerp.ChangeValue(_healthManager.m_CurrentArmor / UIConst.F_UIMaxArmor);
+        m_HealthLerp.ChangeValue(_healthManager.F_HealthMaxScale);
         m_ArmorAmount.SetAmount((int)_healthManager.m_CurrentArmor);
         m_HealthAmount.SetAmount((int)_healthManager.m_CurrentHealth);
         m_MaxHealth.SetAmount((int)_healthManager.m_MaxHealth);

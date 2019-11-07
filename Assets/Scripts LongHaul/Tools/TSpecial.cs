@@ -600,6 +600,43 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
         }
         #endregion
     }
+
+    public class DurationLerp
+    {
+        public float m_value { get; private set; }
+        float m_check;
+        float m_duration;
+
+        float m_previousValue;
+        float m_targetValue;
+        public DurationLerp(float startValue,float duration)
+        {
+            m_targetValue = startValue;
+            m_previousValue = startValue;
+            m_value = m_targetValue;
+            m_duration = duration;
+        }
+
+        public void ChangeValue(float value)
+        {
+            if ( value== m_targetValue)
+                return;
+
+            m_check = m_duration;
+            m_previousValue = m_value;
+            m_targetValue = value;
+        }
+
+        public bool TickLerp(float deltaTime)
+        {
+            if (m_check <= 0)
+                return false;
+            m_check -= Time.deltaTime;
+
+            m_value = Mathf.Lerp(m_previousValue, m_targetValue,1-m_check/m_duration);
+            return true;
+        }
+    }
 }
 #region Extra Structs/Classes
 [Serializable]
