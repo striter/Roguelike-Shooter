@@ -32,6 +32,7 @@ public class GameManager : GameManagerBase
     public int B_TestBuffIndex = 1;
     public int Comma_TestParticleIndex = 20001;
     public enum_PlayerWeapon F1_WeaponSpawnType = enum_PlayerWeapon.Invalid;
+    public int WeaponPerkOnSpawn = -1;
     public int F5_TestActionNormal = 10001;
     public int F6_TestActionOutstanding = 10001;
     public int F7_TestActionEpic = 10001;
@@ -66,7 +67,9 @@ public class GameManager : GameManagerBase
         if (Input.GetKeyDown(KeyCode.M))
             m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(-50, enum_DamageType.Basic, DamageDeliverInfo.Default(-1)));
         if (Input.GetKeyDown(KeyCode.F1) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
-            GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon,hit.point, LevelManager.Instance.m_InteractParent).Play(GameObjectManager.SpawnWeapon(F1_WeaponSpawnType,null));
+        {
+            GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, hit.point, LevelManager.Instance.m_InteractParent).Play(GameObjectManager.SpawnWeapon(F1_WeaponSpawnType, WeaponPerkOnSpawn>0?ActionDataManager.CreateAction(WeaponPerkOnSpawn, enum_RarityLevel.Normal):null));
+        }
         if (Input.GetKeyDown(KeyCode.Alpha0))
         {
             List<EntityCharacterBase> entities = m_Entities.Values.ToList();
