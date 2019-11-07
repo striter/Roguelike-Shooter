@@ -15,6 +15,8 @@ public class UIManager :UIManagerBase,ISingleCoroutine
     protected TouchDeltaManager m_TouchDelta { get; private set; }
     public Camera m_Camera { get; private set; }
 
+    Image m_OverlayBG;
+
     public CameraEffectManager m_Effect { get; private set; }
     CB_GenerateOverlayUIGrabBlurTexture m_Blur;
     public AtlasLoader m_CommonSprites { get; private set; }
@@ -38,6 +40,8 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         btn_Reload = tf_BaseControl.Find("Reload").GetComponent<Button>();
         btn_Reload.onClick.AddListener(OnReloadButtonDown);
         tf_BaseControl.Find("Main").GetComponent<UIT_EventTriggerListener>().D_OnPress+= OnMainButtonDown;
+        m_OverlayBG = cvs_Overlay.transform.Find("OverlayBG").GetComponent<Image>();
+        m_OverlayBG.SetActivate(false);
 
         m_CommonSprites = TResources.GetUIAtlas_Common();
         m_ActionSprites = TResources.GetUIAtlas_Action();
@@ -53,6 +57,7 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         OptionsManager.event_OptionChanged += OnOptionsChanged;
 
         UIPageBase.OnPageExit = OnPageExit;
+        UIMessageBoxBase.OnMessageBoxExit = OnMessageBoxExit;
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnPlayerStatusChanged);
     }
     protected override void OnDestroy()
@@ -102,17 +107,34 @@ public class UIManager :UIManagerBase,ISingleCoroutine
 
     public T ShowPage<T>(bool animate,float bulletTime=1f) where T : UIPageBase
     {
+        m_OverlayBG.SetActivate(true);
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PageOpen,bulletTime);
         if (bulletTime!=1f)
             GameManagerBase.SetBulletTime(true,bulletTime);
         return base.ShowPage<T>(animate);
     }
+
+
     void OnPageExit()
     {
+        m_OverlayBG.SetActivate(false);
         GameManagerBase.SetBulletTime(false);
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PageClose);
     }
 
+
+    public new T ShowMessageBox<T>() where T : UIMessageBoxBase
+    {
+        tf_Page.ReparentRestretchUI(cvs_Camera.transform);
+        tf_Page.SetAsLastSibling();
+        return base.ShowMessageBox<T>();
+    }
+
+    void OnMessageBoxExit()
+    {
+        tf_Page.ReparentRestretchUI(cvs_Overlay.transform);
+        tf_Page.SetSiblingIndex(1);
+    }
     int tipCount = 0;
     public void ShowTip(string key, enum_UITipsType tipsType) => m_TipsGrid.AddItem(tipCount++).ShowTips(key, tipsType,OnTipFinish);
     void OnTipFinish(int index)=>m_TipsGrid.RemoveItem(index);

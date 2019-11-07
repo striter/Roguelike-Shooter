@@ -25,6 +25,16 @@ public static class TCommonUI
     {
         graphic.color = new Color(graphic.color.r, graphic.color.g, graphic.color.b, alpha);
     }
+
+    public static void ReparentRestretchUI(this RectTransform rect,Transform targetTrans)
+    {
+        rect.SetParent(targetTrans);
+        rect.offsetMax = Vector2.zero;
+        rect.offsetMin = Vector2.zero;
+        rect.localScale = Vector3.one;
+        rect.localPosition = Vector3.zero;
+    }
+
     public static void RaycastAll(Vector2 castPos)      //Bind UIT_EventTriggerListener To Items Need To Raycast By EventSystem
     {
         PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);

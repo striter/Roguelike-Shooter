@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 public class UIMessageBoxBase : MonoBehaviour {
-
+    public static Action OnMessageBoxExit;
     public static T Show<T>(Transform _parentTrans) where T : UIMessageBoxBase
     {
         T tempBase = TResources.Instantiate<T>("UI/MessageBoxes/" + typeof(T).ToString(), _parentTrans);
@@ -39,6 +39,7 @@ public class UIMessageBoxBase : MonoBehaviour {
     }
     void OnCancel()
     {
+        OnMessageBoxExit();
         Destroy(this.gameObject);
     }
 }

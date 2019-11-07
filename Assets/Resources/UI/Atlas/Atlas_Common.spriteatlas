@@ -29,11 +29,13 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 2255401
+    totalSpriteSurfaceArea: 3096859
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: cca2ae0107e554d48b7a9e3742b5e734, type: 3}
+  - {fileID: 21300000, guid: e08d3bde1087c074d8749e4b06ae77a5, type: 3}
+  - {fileID: 21300000, guid: e3fbf3f12a144a549887391ddaa8a267, type: 3}
   - {fileID: 21300000, guid: d1253a1dfad9cfc4a870fec93ae12538, type: 3}
   - {fileID: 21300000, guid: 38f42b51776c9154ba33af7287510e68, type: 3}
   - {fileID: 21300000, guid: c27d2c2472714b74d979909501bab0f4, type: 3}
@@ -98,6 +100,8 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 9c9d65350fda00e43aae5964ee01b62f, type: 3}
   m_PackedSpriteNamesToIndex:
   - UI_common_lowpoly_background
+  - UI_common_lowpoly_background_medium
+  - UI_common_lowpoly_background_small
   - UI_weapon_bottom
   - btn_rocker_bottom
   - UI_title_orange
