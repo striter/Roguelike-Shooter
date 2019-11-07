@@ -56,6 +56,7 @@
 
 			struct appdata
 			{
+				UNITY_VERTEX_INPUT_INSTANCE_ID
 				float4 vertex : POSITION;
 			};
 
@@ -68,7 +69,7 @@
 			{
 				v2f o;
 				o.vertex = UnityObjectToClipPos(v.vertex);
-
+				UNITY_SETUP_INSTANCE_ID(v);
 				return o;
 			}
 
