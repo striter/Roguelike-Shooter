@@ -59,8 +59,8 @@ namespace GameSetting
 
         public const float F_LevelTileSize = 2f;        //Cube Size For Level Tiles
 
-        public const int I_CampFarmPlot4Unlock = 3;
-        public const int I_CampFarmPlot5Unlock = 10;
+        public const int I_CampFarmPlot4UnlockDifficulty = 3;
+        public const int I_CampFarmPlot5UnlockDifficulty = 10;
         public const int I_CampFarmItemAcquire = 70;
         public const float F_CampFarmItemTickAmount = 0.05f;
 
@@ -167,8 +167,8 @@ namespace GameSetting
             }
         }
 
-        public static readonly Dictionary<enum_CampFarmItemStatus, int> GetFarmGeneratePercentage = new Dictionary< enum_CampFarmItemStatus,int>() { {  enum_CampFarmItemStatus.Progress1 ,60},{enum_CampFarmItemStatus.Progress2 ,30},{enum_CampFarmItemStatus.Progress3 ,6},{enum_CampFarmItemStatus.Progress4,3},{ enum_CampFarmItemStatus.Progress5,1} };
-        public static readonly Dictionary<enum_CampFarmItemStatus, CampFarmItemData> GetFarmItemInfo = new Dictionary<enum_CampFarmItemStatus, CampFarmItemData> { { enum_CampFarmItemStatus.Progress1, CampFarmItemData.Create(60, .1f / 60f) }, { enum_CampFarmItemStatus.Progress2, CampFarmItemData.Create(60, .2f / 60f) }, { enum_CampFarmItemStatus.Progress3, CampFarmItemData.Create(60, .3f / 60f) }, { enum_CampFarmItemStatus.Progress4, CampFarmItemData.Create(60, .5f / 60f) }, { enum_CampFarmItemStatus.Progress5, CampFarmItemData.Create(60, 1f / 60f) } };
+        public static readonly Dictionary<enum_CampFarmItemStatus, int> GetFarmGeneratePercentage = new Dictionary< enum_CampFarmItemStatus,int>() { {  enum_CampFarmItemStatus.Progress1 ,60},{enum_CampFarmItemStatus.Progress2 ,30},{enum_CampFarmItemStatus.Progress3 ,6},{enum_CampFarmItemStatus.Progress4,3},{ enum_CampFarmItemStatus.Progress5,1} };   //Farm生成等级百分比
+        public static readonly Dictionary<enum_CampFarmItemStatus, CampFarmItemData> GetFarmItemInfo = new Dictionary<enum_CampFarmItemStatus, CampFarmItemData> { { enum_CampFarmItemStatus.Progress1, CampFarmItemData.Create(60, .1f / 60f) }, { enum_CampFarmItemStatus.Progress2, CampFarmItemData.Create(60, .2f / 60f) }, { enum_CampFarmItemStatus.Progress3, CampFarmItemData.Create(60, .3f / 60f) }, { enum_CampFarmItemStatus.Progress4, CampFarmItemData.Create(60, .5f / 60f) }, { enum_CampFarmItemStatus.Progress5, CampFarmItemData.Create(60, 1f / 60f) } };      //Farm 等级,持续时间,每秒Credit
         public static bool CanGenerateprofit(this enum_CampFarmItemStatus status)
         {
             switch(status)
@@ -657,9 +657,9 @@ namespace GameSetting
 
         public void UnlockPlot(int difficulty)
         {
-            if (difficulty >=GameConst.I_CampFarmPlot4Unlock && m_PlotStatus[3].m_Status == enum_CampFarmItemStatus.Locked)
+            if (difficulty >=GameConst.I_CampFarmPlot4UnlockDifficulty && m_PlotStatus[3].m_Status == enum_CampFarmItemStatus.Locked)
                 m_PlotStatus[3] = CampFarmPlotData.Create(enum_CampFarmItemStatus.Empty);
-            if (difficulty >= GameConst.I_CampFarmPlot5Unlock && m_PlotStatus[4].m_Status == enum_CampFarmItemStatus.Locked)
+            if (difficulty >= GameConst.I_CampFarmPlot5UnlockDifficulty && m_PlotStatus[4].m_Status == enum_CampFarmItemStatus.Locked)
                 m_PlotStatus[4] = CampFarmPlotData.Create(enum_CampFarmItemStatus.Empty);
         }
     }
