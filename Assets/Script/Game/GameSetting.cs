@@ -433,7 +433,7 @@ namespace GameSetting
         UI_PlayerExpireStatus,
         UI_PlayerWeaponStatus,
 
-        UI_CampCreditStatus,
+        UI_CampDataStatus,
 
         UI_PageOpen,
         UI_PageClose,
@@ -614,13 +614,15 @@ namespace GameSetting
     public class CPlayerCampSave : ISave
     {
         public float f_Credits;
+        public float f_TechPoints;
         public int m_GameDifficulty;
         public int m_DifficultyUnlocked;
         public List<ActionStorageData> m_StorageActions;
         public int m_StorageRequestStamp;
         public CPlayerCampSave()
         {
-            f_Credits = 100;
+            f_Credits = 0;
+            f_TechPoints = 0;
             m_GameDifficulty = 1;
             m_DifficultyUnlocked = 1;
             m_StorageActions = new List<ActionStorageData>();
@@ -628,6 +630,7 @@ namespace GameSetting
             for (int i=10001;i<=10018;i++)
                 m_StorageActions.Add(ActionStorageData.Create(i, 10,true));
         }
+
         public void UnlockDifficulty()
         {
             if (m_GameDifficulty != m_DifficultyUnlocked)

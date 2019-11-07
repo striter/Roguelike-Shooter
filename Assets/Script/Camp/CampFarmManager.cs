@@ -43,7 +43,7 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
         }
 
         m_LastProfitStamp = stampNow;
-        CampManager.OnCreditStatus(offcampProfit);
+        CampManager.Instance.OnCreditStatus(offcampProfit);
         GameDataManager.SaveCampFarmData(this);
     }
     private void OnDisable()
@@ -53,7 +53,7 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
         for (int i = 0; i < m_Plots.Count; i++)
             endProfit += m_Plots[i].EndProfit(stampNow);
         m_LastProfitStamp = stampNow;
-        CampManager.OnCreditStatus(endProfit);
+        CampManager.Instance.OnCreditStatus(endProfit);
         GameDataManager.SaveCampFarmData(this);
         ObjectPoolManager<enum_CampFarmItemStatus, CampFarmItem>.OnSceneChange();
     }
@@ -92,7 +92,7 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
             if (profit <= 0)
                 continue;
 
-            CampManager.OnCreditStatus(profit);
+            CampManager.Instance.OnCreditStatus(profit);
             if( m_FarmStatus) m_FarmStatus.OnProfitChange(i, profit);
         }
 
@@ -115,7 +115,7 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
             return;
 
         m_Plots[plotIndex].Hybrid(TCommon.RandomPercentage(GameExpression.GetFarmGeneratePercentage));
-        CampManager.OnCreditStatus(-GameConst.I_CampFarmItemAcquire);
+        CampManager.Instance.OnCreditStatus(-GameConst.I_CampFarmItemAcquire);
     }
 
     void OnPlotStatusChanged(int index)
