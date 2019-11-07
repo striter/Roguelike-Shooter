@@ -230,20 +230,25 @@ public static class GameDataManager
         TGameData<CPlayerCampSave>.Save();
     }
     public static bool CanUseCredit(float credit) => m_PlayerCampData.f_Credits >= credit;
-    public static void OnCreditChange(float credit)
+    public static void OnCreditStatus(float credit,bool inGameSaveData)
     {
         if (credit == 0)
             return;
         m_PlayerCampData.f_Credits += credit;
+        if(inGameSaveData)
+            TGameData<CPlayerCampSave>.Save();
+    }
+
+    public static void SaveCampData()
+    {
         TGameData<CPlayerCampSave>.Save();
     }
 
-    public static int SwitchGameDifficulty()
+    public static int OnCampDifficultySwitch()
     {
         m_PlayerCampData.m_GameDifficulty += 1;
         if (m_PlayerCampData.m_GameDifficulty > m_PlayerCampData.m_DifficultyUnlocked)
             m_PlayerCampData.m_GameDifficulty = 1;
-        TGameData<CPlayerCampSave>.Save();
         return m_PlayerCampData.m_GameDifficulty;
     }
 

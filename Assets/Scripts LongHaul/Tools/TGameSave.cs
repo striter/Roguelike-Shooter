@@ -40,14 +40,7 @@ namespace TGameSave
 
 
         static readonly string s_Directory = Application.persistentDataPath + "/Save";
-        static string s_FullPath
-        {
-            get
-            {
-                return s_Directory + "/" + typeof(T).Name + ".xml";
-            }
-        }
-
+        static string s_BasePath=> s_Directory + "/" + typeof(T).Name + ".xml";
         #region Tools
         static XmlDocument m_Doc;
         static XmlNode m_ParentNode;
@@ -63,11 +56,11 @@ namespace TGameSave
 
             try    //Check If File Complete
             {
-                if (!File.Exists(s_FullPath))
-                    throw new Exception("None Xml Data Found:" + s_FullPath);
+                if (!File.Exists(s_BasePath))
+                    throw new Exception("None Xml Data Found:" + s_BasePath);
 
                 m_Doc = new XmlDocument();
-                m_Doc.Load(s_FullPath);
+                m_Doc.Load(s_BasePath);
                 m_ParentNode = m_Doc.SelectSingleNode(typeof(T).Name);
 
                 if (m_ParentNode != null)
@@ -116,14 +109,14 @@ namespace TGameSave
                 temp_SubNode.InnerText = TXmlPhrase.Phrase[m_fieldInfo[i].GetValue(data)];
                 m_ParentNode.AppendChild(temp_SubNode);
             }
-            m_Doc.Save(s_FullPath);
+            m_Doc.Save(s_BasePath);
         }
 
         static T CreateDefaultDoc()
         {
             Debug.LogWarning("New Default Xml Doc Created.");
-            if (File.Exists(s_FullPath))
-                File.Delete(s_FullPath);
+            if (File.Exists(s_BasePath))
+                File.Delete(s_BasePath);
 
             T temp = new T();
 
