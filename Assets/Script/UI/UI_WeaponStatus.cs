@@ -38,6 +38,7 @@ public class UI_WeaponStatus : UIPageBase {
         m_ActionRarityText = tf_ActionInfo.Find("ActionRarityText").GetComponent<UIT_TextExtend>();
         m_ActionRarity = new UIC_RarityLevel(tf_ActionInfo.Find("ActionRarity"));
     }
+    
     public void SetInfo(WeaponBase weapon)
     {
         m_WeaponName.localizeKey = weapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
@@ -63,10 +64,9 @@ public class UI_WeaponStatus : UIPageBase {
             return;
         }
 
-        //Test Here! Will Be Removed Soon
-        m_ActionIntro.localizeKey = "UI_WeaponStatus_ActionInvalid";
+        m_ActionIntro.localizeKey = "UI_WeaponStatus_ActionInvalidIntro";
+        m_ActionName.localizeKey = "UI_WeaponStatus_ActionInvalidName";
         m_ActionRarityText.text = "";
-        m_ActionName.text = "";
         m_ActionRarity.SetLevel(enum_RarityLevel.Invalid);
     }
 }
