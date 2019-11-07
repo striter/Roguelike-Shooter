@@ -24,6 +24,14 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
         GameAudioManager.Instance.OnInit();
         UIManager.Activate(B_InGame);
         SetBulletTime(false);
+
+        OnOptionChanged();
+        OptionsManager.event_OptionChanged += OnOptionChanged;
+    }
+    protected virtual void OnDisable()
+    {
+        this.StopAllSingleCoroutines();
+        OptionsManager.event_OptionChanged -= OnOptionChanged;
     }
 
     protected void SwitchScene(enum_Scene scene)
@@ -35,10 +43,13 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
         TSceneLoader.Instance.LoadScene(scene);
     }
 
-    protected virtual void OnDisable()
+    void OnOptionChanged()
     {
-        this.StopAllSingleCoroutines();
+        TLocalization.SetRegion(OptionsManager.m_OptionsData.m_Region);
+        Application.targetFrameRate = (int)OptionsManager.m_OptionsData.m_FrameRate;
+        CameraController.Instance.m_Effect.SetMobileCostyEffectEnable(OptionsManager.m_OptionsData.m_FrameRate == enum_Option_FrameRate.High);
     }
+
     protected void OnPortalEnter(float duration,Transform vortexTarget, Action OnEnter)
     {
         SetPostEffect_Vortex(true, vortexTarget, 1f);
@@ -184,8 +195,6 @@ public static class OptionsManager
     public static void OnOptionChanged()
     {
         m_Sensitive = GameExpression.F_PlayerSensitive(m_OptionsData.m_SensitiveTap);
-        Application.targetFrameRate = (int)m_OptionsData.m_FrameRate;
-        TLocalization.SetRegion(m_OptionsData.m_Region);
         event_OptionChanged?.Invoke();
     }
     public static float F_SFXVolume =>GameExpression.F_GameVFXVolume(m_OptionsData.m_VFXVolumeTap);

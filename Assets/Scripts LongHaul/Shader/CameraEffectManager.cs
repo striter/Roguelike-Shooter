@@ -11,27 +11,37 @@ public class CameraEffectManager :MonoBehaviour, ISingleCoroutine {
             return existingEffect;
 
         T effectBase = new T();
-        if (effectBase.m_Supported)
+        if(effectBase.m_Supported)
         {
             effectBase.OnSetEffect(this);
             m_PostEffects.Add(effectBase);
-            m_Camera.depthTextureMode |= effectBase.m_DepthTextureMode;
-            m_calculateDepthToWorldMatrix |= effectBase.m_DepthToWorldMatrix;
-            m_doPostProcessing |= effectBase.m_IsPostEffect;
+            ResetPostEffectParams();
+            return effectBase;
         }
-        return effectBase;
+        return null;
     }
+
     public T GetCameraEffect<T>() where T : CameraEffectBase => m_PostEffects.Find(p => p.GetType() ==typeof(T)) as T;
     public void RemoveCameraEffect<T>() where T : CameraEffectBase, new()
     {
         T effect = GetCameraEffect<T>();
-        if (effect != null)
-            m_PostEffects.Remove(effect);
+        if (effect == null)
+            return;
+
+        m_PostEffects.Remove(effect);
+        ResetPostEffectParams();
     }
     public void RemoveAllPostEffect()
     {
         m_PostEffects.Traversal((CameraEffectBase effect)=> { effect.OnDestroy(); });
         m_PostEffects.Clear();
+        ResetPostEffectParams();
+    }
+
+    public void SetMobileCostyEffectEnable(bool enable)
+    {
+        m_MobileCostyEffectEnabled = enable;
+        ResetPostEffectParams();
     }
 
     public void StartAreaScan(Vector3 startPoint,Color scanColor, Texture scanTex=null,float scale=1f, float lerp=.7f,float width=1f,float range=20,float duration=1.5f)
@@ -51,8 +61,9 @@ public class CameraEffectManager :MonoBehaviour, ISingleCoroutine {
     #endregion
     List<CameraEffectBase> m_PostEffects=new List<CameraEffectBase>();
     public Camera m_Camera { get; protected set; }
+    public bool m_PostEffectEnabled { get; private set; } = false;
+    public bool m_MobileCostyEffectEnabled { get; private set; } = true;
     public bool m_calculateDepthToWorldMatrix { get; private set; } = false;
-    public bool m_doPostProcessing { get; private set; } = false;
     RenderTexture tempTexture1, tempTexture2;
     protected void Awake()
     {
@@ -69,7 +80,7 @@ public class CameraEffectManager :MonoBehaviour, ISingleCoroutine {
             CalculateViewProjectionMatrixInverse();
         }
 
-        if (!m_doPostProcessing)
+        if(!m_PostEffectEnabled)
         {
             Graphics.Blit(source, destination);
             return;
@@ -79,6 +90,9 @@ public class CameraEffectManager :MonoBehaviour, ISingleCoroutine {
         Graphics.Blit(source, tempTexture1);
         for (int i = 0; i < m_PostEffects.Count; i++)
         {
+            if (!m_MobileCostyEffectEnabled && m_PostEffects[i].m_MobileCosty)
+                continue;
+
             tempTexture2 = RenderTexture.GetTemporary(Screen.width, Screen.height, 0);
             m_PostEffects[i].OnRenderImage(tempTexture1,tempTexture2);
             Graphics.Blit(tempTexture2, tempTexture1);
@@ -96,7 +110,25 @@ public class CameraEffectManager :MonoBehaviour, ISingleCoroutine {
         for (int i = 0; i < m_PostEffects.Count; i++)
             m_PostEffects[i].OnRenderObject();
     }
-    #region Matrix
+
+    void ResetPostEffectParams()
+    {
+        m_PostEffectEnabled = false;
+        m_Camera.depthTextureMode = DepthTextureMode.None;
+        m_calculateDepthToWorldMatrix = false;
+
+        m_PostEffects.Traversal((CameraEffectBase effectBase) =>
+        {
+            if (!m_MobileCostyEffectEnabled && effectBase.m_MobileCosty)
+                return;
+
+            m_PostEffectEnabled |= effectBase.m_IsPostEffect;
+            m_Camera.depthTextureMode |= effectBase.m_DepthTextureMode;
+            m_calculateDepthToWorldMatrix |= effectBase.m_DepthToWorldMatrix;
+        });
+    }
+
+    #region Calculations
     static readonly int ID_VPMatrixInverse = Shader.PropertyToID("_VPMatrixInverse");
     static readonly int ID_FrustumCornersRayBL = Shader.PropertyToID("_FrustumCornersRayBL");
     static readonly int ID_FrustumCornersRayBR = Shader.PropertyToID("_FrustumCornersRayBR");

@@ -6,6 +6,7 @@ using UnityEngine.Rendering;
 public class CameraEffectBase
 {
     public virtual DepthTextureMode m_DepthTextureMode => DepthTextureMode.None;
+    public virtual bool m_MobileCosty => m_DepthTextureMode != DepthTextureMode.None;
     public virtual bool m_DepthToWorldMatrix => false;
     protected CameraEffectManager m_Manager { get; private set; }
     public bool m_Supported { get; private set; }
@@ -300,6 +301,7 @@ public class PE_DepthOutline:PostEffectBase
 }
 public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific Items
 {
+    public override bool m_MobileCosty => true;
     Camera m_RenderCamera;
     RenderTexture m_RenderTexture;
     Shader m_RenderShader;

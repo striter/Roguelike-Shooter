@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 3148900
+    totalSpriteSurfaceArea: 3105532
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -65,8 +65,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 9b5f47ee892aafe4e81749854bced7ee, type: 3}
   - {fileID: 21300000, guid: 3d5c6aefeb441674c892735313ebf060, type: 3}
   - {fileID: 21300000, guid: e286ff7018a31654ca31f0cb32a7dea1, type: 3}
-  - {fileID: 21300000, guid: 9ce17833324def44691c52a913f16b5b, type: 3}
-  - {fileID: 21300000, guid: 21a472abe7f9554488aa4fee88259200, type: 3}
   - {fileID: 21300000, guid: 6b9793a839135b34a89c83c1e48c06da, type: 3}
   - {fileID: 21300000, guid: 7c11af94fa1eebc4991d2291ed510491, type: 3}
   - {fileID: 21300000, guid: fc311cb645e606d4881502e7a9940e28, type: 3}
@@ -131,8 +129,6 @@ SpriteAtlas:
   - status_progress_weapon
   - status_progress_weapon_bottom
   - icon_map
-  - status_progress_armor_light
-  - status_progress_life_light
   - main_chat
   - main_pickup
   - btn_setting_bottom
@@ -162,7 +158,7 @@ SpriteAtlas:
   - UI_common_angle_gray
   - icon_buff_rank
   - UI_setting_common_bottom
-  - UI_Common_Square
+  - UI_common_Square
   - btn_close_strip
   m_Tag: Atlas_Common
   m_IsVariant: 0

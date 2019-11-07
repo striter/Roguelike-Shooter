@@ -30,11 +30,11 @@ public class UIC_GamePlayerStatus : UIControlBase
     UIC_Numeric m_AmmoAmount, m_AmmoClipAmount;
 
     Transform tf_ArmorData;
-    Slider sld_Armor;
+    Image m_ArmorFill;
     UIC_Numeric m_ArmorAmount;
 
     Transform tf_HealthData;
-    Slider sld_Health;
+    Image m_HealthFill;
     UIC_Numeric m_HealthAmount, m_MaxHealth;
 
     enum_Interaction m_lastInteract;
@@ -83,10 +83,10 @@ public class UIC_GamePlayerStatus : UIControlBase
         img_ReloadFill = m_AmmoGrid.transform.Find("Reload").GetComponent<Image>();
 
         tf_ArmorData = rtf_StatusData.Find("Container/ArmorData");
-        sld_Armor = tf_ArmorData.Find("ArmorSlider").GetComponent<Slider>();
+        m_ArmorFill = tf_ArmorData.Find("Fill").GetComponent<Image>();
         m_ArmorAmount = new UIC_Numeric(tf_ArmorData.Find("ArmorAmount"));
         tf_HealthData = rtf_StatusData.Find("Container/HealthData");
-        sld_Health = tf_HealthData.Find("HealthSlider").GetComponent<Slider>();
+        m_HealthFill = tf_HealthData.Find("Fill").GetComponent<Image>();
         m_HealthAmount = new UIC_Numeric(tf_HealthData.Find("HealthAmount"));
         m_MaxHealth = new UIC_Numeric(m_HealthAmount.transform.Find("MaxHealth"));
         
@@ -179,9 +179,9 @@ public class UIC_GamePlayerStatus : UIControlBase
         if (m_EnergyLerp.TickLerp(Time.deltaTime))
             m_ActionEnergy.SetValue(m_EnergyLerp.m_value);
         if (m_HealthLerp.TickLerp(Time.deltaTime))
-            sld_Health.value = m_HealthLerp.m_value;
+            m_HealthFill.fillAmount = m_HealthLerp.m_value;
         if (m_ArmorLerp.TickLerp(Time.deltaTime))
-            sld_Armor.value = m_ArmorLerp.m_value;
+            m_ArmorFill.fillAmount = m_ArmorLerp.m_value;
         if (m_CoinLerp.TickLerp(Time.deltaTime))
             m_Coins.text = ((int)(m_CoinLerp.m_value)).ToString();
     }
