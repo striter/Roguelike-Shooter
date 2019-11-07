@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 081334a023db2704db167d2dfc323270, type: 3}
-    totalSpriteSurfaceArea: 2266942
+    totalSpriteSurfaceArea: 2217229
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -44,7 +44,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 4ec60bacd1dafa74b8d93d4b1cae4984, type: 3}
   - {fileID: 21300000, guid: b8baf198d27163e4583c425aff5bff11, type: 3}
   - {fileID: 21300000, guid: 9962f76be756a5c4e8bb00c1c68468fa, type: 3}
-  - {fileID: 21300000, guid: cfe64325d22560f49823caf4595b2960, type: 3}
   - {fileID: 21300000, guid: fa0122c7e5ddb1d4399a011784eede79, type: 3}
   - {fileID: 21300000, guid: a0edf0727dbc54049ad1b24763bf40b5, type: 3}
   - {fileID: 21300000, guid: acaf808e38e4e0246ad397f639c020ef, type: 3}
@@ -93,7 +92,6 @@ SpriteAtlas:
   - revive_icon_gold
   - map_info_kuang
   - backpack_bottom
-  - status_map_bottom
   - result_Ruler
   - map_tile_type_End
   - status_ActionEnergy_progress_full
