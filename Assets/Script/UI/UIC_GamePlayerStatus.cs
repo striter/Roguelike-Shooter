@@ -113,6 +113,7 @@ public class UIC_GamePlayerStatus : UIControlBase
         m_ArmorLerp = new DurationLerp(0f, .25f);
         m_EnergyLerp = new DurationLerp(0f, .5f);
         m_CoinLerp = new DurationLerp(0f, 1f);
+        m_Coins.text = "0";
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<WeaponBase>(enum_BC_UIStatus.UI_PlayerAmmoStatus, OnAmmoStatus);

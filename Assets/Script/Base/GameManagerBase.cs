@@ -239,6 +239,15 @@ public static class GameDataManager
             TGameData<CPlayerCampSave>.Save();
     }
 
+    public static bool CanUseTechPoint(float techPoint) => m_PlayerCampData.f_TechPoints >= techPoint;
+    public static void OnTechPointStatus(float techPoint)
+    {
+        if (techPoint == 0)
+            return;
+        m_PlayerCampData.f_TechPoints += techPoint;
+        TGameData<CPlayerCampSave>.Save();
+    }
+
     public static void SaveCampData()
     {
         TGameData<CPlayerCampSave>.Save();

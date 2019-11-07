@@ -70,10 +70,16 @@ public class CampManager : GameManagerBase
         SetEffect_Focal(false);
     }
 
-    public static void OnCreditStatus(float creditChange)
+    public void OnCreditStatus(float creditChange)
     {
         GameDataManager.OnCreditStatus(creditChange,false);
-        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_CampCreditStatus);
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_CampDataStatus);
+    }
+
+    public void OnTechPointStatus(float techPoint)
+    {
+        GameDataManager.OnTechPointStatus(techPoint);
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_CampDataStatus);
     }
 
 #if UNITY_EDITOR
@@ -81,6 +87,10 @@ public class CampManager : GameManagerBase
     {
         if (Input.GetKeyDown(KeyCode.KeypadPlus))
             OnCreditStatus(1000);
+        if (Input.GetKeyDown(KeyCode.Equals))
+            OnTechPointStatus(20);
+        if (Input.GetKeyDown(KeyCode.Minus))
+            OnTechPointStatus(-15);
     }
 #endif
 }

@@ -94,7 +94,6 @@ public class TResources
         Dictionary<int, SFXBase> sfxsDic = new Dictionary<int, SFXBase>();
         LoadAll<SFXBase>(ConstPath.S_SFXEffects).Traversal((SFXBase sfx) => {
             sfxsDic.Add(int.Parse(sfx.name.Split('_')[0]), GameObject.Instantiate<SFXBase>(sfx));
-            sfx.GetComponentsInChildren<Renderer>().Traversal((Renderer render) => { if (render.sharedMaterials != null) render.sharedMaterials.Traversal((Material material) => {if(material!=null) material.enableInstancing = false; }); });
             PreloadMaterials(sfx.gameObject);
         });
         return sfxsDic;

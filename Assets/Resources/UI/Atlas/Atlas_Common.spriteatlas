@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 3096859
+    totalSpriteSurfaceArea: 3148900
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -49,8 +49,9 @@ SpriteAtlas:
   - {fileID: 21300000, guid: eb6498b538c432c479fd0ccd174629b6, type: 3}
   - {fileID: 21300000, guid: b7327ece840130841a29663d6131fc34, type: 3}
   - {fileID: 21300000, guid: 89096d0a6e9b00d44abd5207403cc172, type: 3}
+  - {fileID: 21300000, guid: 284e56e08dba8cc46a0d95b20f201435, type: 3}
   - {fileID: 21300000, guid: d33c057b45a868a46ab6ec37970d1b5c, type: 3}
-  - {fileID: 21300000, guid: 61f54339f582808468570bea9532dffc, type: 3}
+  - {fileID: 21300000, guid: b9da3ec207f132f4da154526b097b357, type: 3}
   - {fileID: 21300000, guid: c556135db77f34c49bd3d97af97a70ec, type: 3}
   - {fileID: 21300000, guid: 4340fab8c529623489aafcb701f800f5, type: 3}
   - {fileID: 21300000, guid: 30e5c7c85da88f74a886ea0a055a0ab5, type: 3}
@@ -59,23 +60,24 @@ SpriteAtlas:
   - {fileID: 21300000, guid: f8ed2f2aa40fed549b97c3b6a03dc61c, type: 3}
   - {fileID: 21300000, guid: cbc16cdaafe934645b541aec0fa828cd, type: 3}
   - {fileID: 21300000, guid: 838e3e3f0673e564aafbb7fb60b21e46, type: 3}
-  - {fileID: 21300000, guid: 9cfbbb122f7c3ca4fbf5124bcdc0f7ad, type: 3}
   - {fileID: 21300000, guid: df1b52d98d2a82b4dad501bc4177411a, type: 3}
   - {fileID: 21300000, guid: 241b9019df49aff4a8a129d61fe1e8e3, type: 3}
   - {fileID: 21300000, guid: 9b5f47ee892aafe4e81749854bced7ee, type: 3}
   - {fileID: 21300000, guid: 3d5c6aefeb441674c892735313ebf060, type: 3}
+  - {fileID: 21300000, guid: e286ff7018a31654ca31f0cb32a7dea1, type: 3}
   - {fileID: 21300000, guid: 9ce17833324def44691c52a913f16b5b, type: 3}
   - {fileID: 21300000, guid: 21a472abe7f9554488aa4fee88259200, type: 3}
   - {fileID: 21300000, guid: 6b9793a839135b34a89c83c1e48c06da, type: 3}
   - {fileID: 21300000, guid: 7c11af94fa1eebc4991d2291ed510491, type: 3}
-  - {fileID: 21300000, guid: 542f054414fe6ff49be45c44e7bc039d, type: 3}
-  - {fileID: 21300000, guid: c6376ebab25b8894296f1a670bb3593b, type: 3}
+  - {fileID: 21300000, guid: fc311cb645e606d4881502e7a9940e28, type: 3}
+  - {fileID: 21300000, guid: 980515194edb6e643ba473774b4a2065, type: 3}
+  - {fileID: 21300000, guid: 2f4aa76e0c76fd749954078e6ab4c1ec, type: 3}
   - {fileID: 21300000, guid: bd1c0690faaedc04b8bbda27351be635, type: 3}
   - {fileID: 21300000, guid: e084e15498c9b5d45ac18967796c1be8, type: 3}
   - {fileID: 21300000, guid: ecc74ae687658124aae36b926f4912fc, type: 3}
+  - {fileID: 21300000, guid: 5bd90c01e65b96645a72df74999246d6, type: 3}
   - {fileID: 21300000, guid: df6c58e9bdff9954bb8fb025a0385d29, type: 3}
   - {fileID: 21300000, guid: d40acf7a523f9124e830b23c072f7d9e, type: 3}
-  - {fileID: 21300000, guid: d28895fccf6a6f44fbdf2873ba1c993c, type: 3}
   - {fileID: 21300000, guid: 90650132c9ee8ae4396c39751241d8fd, type: 3}
   - {fileID: 21300000, guid: ac9c2c22d9a4cf241a53932685201d4c, type: 3}
   - {fileID: 21300000, guid: ffa5d357c7dd26b459d6fcb7886cd0f3, type: 3}
@@ -86,8 +88,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 1de9eff4678e3874d92ff68af27eaa86, type: 3}
   - {fileID: 21300000, guid: df1a62fbfd4bc7f4db5f7315dc8e414a, type: 3}
   - {fileID: 21300000, guid: a6031d8c25ddd714593081b17c1de9a9, type: 3}
-  - {fileID: 21300000, guid: aa3c6d5b4731f994787e878d78c964a3, type: 3}
-  - {fileID: 21300000, guid: c740497c6fad84040b9053a9b332d3ca, type: 3}
   - {fileID: 21300000, guid: 264ebbff55b3fc440b027a93040e6add, type: 3}
   - {fileID: 21300000, guid: 1e1095088d70d3f408f3c5ab8079ab84, type: 3}
   - {fileID: 21300000, guid: a53a6347ea1ad054e822a1b43811e890, type: 3}
@@ -115,6 +115,7 @@ SpriteAtlas:
   - UI_title_orange_small
   - icon_weapon_common_big
   - UI_common_info_title
+  - status_map_bottom
   - btn_reload
   - status_weapon_bottom
   - UI_title_weaponpower
@@ -125,23 +126,24 @@ SpriteAtlas:
   - btn_commcon_black90
   - btn_commcon_gray
   - btn_commcon_blue
-  - icon_map
   - btn_rocker_move
   - main_fire
   - status_progress_weapon
   - status_progress_weapon_bottom
+  - icon_map
   - status_progress_armor_light
   - status_progress_life_light
   - main_chat
   - main_pickup
   - btn_setting_bottom
-  - icon_rank_big
+  - icon_rarity
+  - status_coins_bottom
   - UI_common_black60
   - UI_common_darkgray50_line
   - UI_common_darkgray60
+  - status_background
   - icon_ActionPack
   - btn_close
-  - status_coins_bottom
   - icon_weapon_common
   - icon_setting
   - UI_common_black80
@@ -152,8 +154,6 @@ SpriteAtlas:
   - UI_setting_x10_on
   - UI_setting_x10_off
   - UI_strip_white60
-  - rarity_level_blank
-  - rarity_level_on
   - icon_BulletNumber
   - icon_Life
   - icon_bullet_big
