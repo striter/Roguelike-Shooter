@@ -143,10 +143,13 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
     }
     void OnDragInteract(CampFarmInteract interact, bool down)
     {
-        if (interact.B_IsRecycle && !down && m_HybridPlot)
+        if (interact.B_IsRecycle)
         {
-            m_HybridPlot.Clear();
-            m_HybridPlot = null;
+            if(m_HybridPlot&&!down )
+            {
+                m_HybridPlot.Clear();
+                m_HybridPlot = null;
+            }
             return;
         }
 

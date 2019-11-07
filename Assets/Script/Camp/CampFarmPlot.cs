@@ -52,7 +52,6 @@ public class CampFarmPlot : CampFarmInteract {
 
     public void Hybrid(enum_CampFarmItemStatus status)
     {
-        GameObjectManager.SpawnParticles<SFXMuzzle>(10021, transform.position, Vector3.up).Play(-1);
         ResetPlotStatus(status,true);
         m_StartStamp = TTimeTools.GetTimeStampNow();
         m_TimeLeft = GameExpression.GetFarmItemInfo[m_Status].m_ItemDuration;
@@ -61,7 +60,7 @@ public class CampFarmPlot : CampFarmInteract {
 
     public void Clear()
     {
-        ResetPlotStatus(enum_CampFarmItemStatus.Empty,false);
+        ResetPlotStatus(enum_CampFarmItemStatus.Empty,true);
         m_TimeLeft = 0;
         m_StartStamp = -1;
     }
