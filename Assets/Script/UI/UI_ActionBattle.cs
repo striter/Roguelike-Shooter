@@ -13,6 +13,7 @@ public class UI_ActionBattle : UIPageBase {
         m_Grid = new UIT_GridControllerGridItem<UIGI_ActionItemDetail>(tf_Container.Find("ActionGrid"));
         m_Energy = new UIC_ActionEnergy(tf_Container.Find("ActionEnergy"));
     }
+
     public void Show(PlayerInfoManager _info,UIC_ActionEnergy _preEnergy)
     {
         m_Info = _info;
@@ -22,6 +23,7 @@ public class UI_ActionBattle : UIPageBase {
         OnActionChanged(m_Info);
         TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerActionStatus, OnActionChanged);
     }
+
     protected override void OnCancelBtnClick()
     {
         base.OnCancelBtnClick();
@@ -37,6 +39,7 @@ public class UI_ActionBattle : UIPageBase {
             m_Grid.AddItem(i).SetInfo(targetList[i], OnItemClick,  info.B_EnergyCostable(targetList[i]));
         m_Energy.TickValue(info.m_ActionEnergy);
     }
+
     void OnItemClick(int index)
     {
         m_Info.TryUseHoldingAction(index);
