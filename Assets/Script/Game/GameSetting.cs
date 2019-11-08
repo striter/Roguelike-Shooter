@@ -114,9 +114,9 @@ namespace GameSetting
                     switch (level)
                     {
                         default: Debug.LogError("Invalid Level!"); return new RangeInt(0, -1);
-                        case enum_RarityLevel.Normal: return new RangeInt(8, 2);
-                        case enum_RarityLevel.OutStanding: return new RangeInt(12, 2);
-                        case enum_RarityLevel.Epic: return new RangeInt(16, 2);
+                        case enum_RarityLevel.Normal: return new RangeInt(8, 4);
+                        case enum_RarityLevel.OutStanding: return new RangeInt(16, 8);
+                        case enum_RarityLevel.Epic: return new RangeInt(24, 12);
                     }
             }
         }
