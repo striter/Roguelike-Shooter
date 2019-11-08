@@ -114,14 +114,14 @@ namespace GameSetting
                     switch (level)
                     {
                         default: Debug.LogError("Invalid Level!"); return new RangeInt(0, -1);
-                        case enum_RarityLevel.Normal: return new RangeInt(8, 4);
-                        case enum_RarityLevel.OutStanding: return new RangeInt(16, 8);
-                        case enum_RarityLevel.Epic: return new RangeInt(24, 12);
+                        case enum_RarityLevel.Normal: return new RangeInt(8, 2);
+                        case enum_RarityLevel.OutStanding: return new RangeInt(12, 2);
+                        case enum_RarityLevel.Epic: return new RangeInt(16, 2);
                     }
             }
         }
-        public static int GetActionRemovePrice(enum_StageLevel stage, int removeTimes) => 8 + 2 * (removeTimes + 1) * (int)stage;
-        public static int GetActionUpgradePrice(enum_StageLevel stage, int upgradeTimes) => 8 + 2 * (upgradeTimes + 1) * (int)stage;
+        public static int GetActionRemovePrice(enum_StageLevel stage, int removeTimes) => 10 * (removeTimes + 1) ;
+        public static int GetActionUpgradePrice(enum_StageLevel stage, int upgradeTimes) => 10 * (upgradeTimes + 1) ;
         
         public static enum_RarityLevel GetStartWeaponPerkRarity(this enum_StageLevel stageLevel) => (stageLevel - 1).ToRarity();
         public static enum_RarityLevel GetTradeWeaponPerkRarity(this enum_StageLevel stageLevel) => stageLevel.ToRarity();
@@ -156,7 +156,7 @@ namespace GameSetting
                 case enum_StageLevel.Ranger:
                     return StageInteractGenerateData.Create(
                     new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.OutStanding, 40 }, { enum_RarityLevel.Epic, 60 } },    //宝箱等级概率
-                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.OutStanding, 25 }, { enum_RarityLevel.Epic, 75 } },    //交易等级概率
+                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.OutStanding, 0 }, { enum_RarityLevel.Epic, 100 } },    //交易等级概率
                     new Dictionary<enum_CharacterType, CoinsGenerateData>() {
                      { enum_CharacterType.SubHidden, CoinsGenerateData.Create( 0,0, 0, new RangeInt(0, 0)) },     //实体掉落生成概率 类型,血,护甲,金币,金币数值范围
                      { enum_CharacterType.Fighter, CoinsGenerateData.Create( 8,15, 20, new RangeInt(2, 2)) },
