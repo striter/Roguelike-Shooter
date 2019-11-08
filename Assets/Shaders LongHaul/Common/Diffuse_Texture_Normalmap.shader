@@ -139,6 +139,7 @@
 				CGPROGRAM
 				#pragma vertex vertshadow
 				#pragma fragment fragshadow
+				#pragma multi_compile_instancing
 				struct v2fs
 				{
 				V2F_SHADOW_CASTER;
