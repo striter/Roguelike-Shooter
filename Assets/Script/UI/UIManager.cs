@@ -107,11 +107,15 @@ public class UIManager :UIManagerBase,ISingleCoroutine
 
     public T ShowPage<T>(bool animate,float bulletTime=1f) where T : UIPageBase
     {
-        m_OverlayBG.SetActivate(true);
-        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PageOpen,bulletTime);
-        if (bulletTime!=1f)
-            GameManagerBase.SetBulletTime(true,bulletTime);
-        return base.ShowPage<T>(animate);
+        T page = base.ShowPage<T>(animate);
+        if(page!=null)
+        {
+            m_OverlayBG.SetActivate(true);
+            TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PageOpen, bulletTime);
+            if (bulletTime != 1f)
+                GameManagerBase.SetBulletTime(true, bulletTime);
+        }
+        return page;
     }
 
 

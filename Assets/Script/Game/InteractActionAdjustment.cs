@@ -41,7 +41,7 @@ public class InteractActionAdjustment : InteractGameBase {
     }
     public enum_UI_ActionUpgradeType E_UpgradeType(int index)
     {
-        if (m_Interactor.m_Coins <= UpgradePrice)
+        if (m_Interactor.m_Coins < UpgradePrice)
             return enum_UI_ActionUpgradeType.LackOfCoins;
         else if (!m_Interactor.m_BattleAction[index].B_Upgradable)
             return enum_UI_ActionUpgradeType.MaxLevel;
