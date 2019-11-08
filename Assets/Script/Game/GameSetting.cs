@@ -88,7 +88,7 @@ namespace GameSetting
         public static Vector3 V3_RangeSpreadDirection(Vector3 aimDirection, float spread, Vector3 up, Vector3 right) => (aimDirection * GameConst.I_ProjectileSpreadAtDistance + up * UnityEngine.Random.Range(-spread, spread) + right * UnityEngine.Random.Range(-spread, spread)).normalized;
 
         public static int GetEquipmentSubIndex(int weaponIndex) => weaponIndex + 1;
-        public static SBuff GetEnermyGameDifficultyBuffIndex(int difficulty) => SBuff.CreateEnermyChallengeDifficultyBuff(difficulty, .05f * (difficulty - 1));
+        public static SBuff GetEnermyGameDifficultyBuffIndex(int difficulty) => SBuff.CreateEnermyChallengeDifficultyBuff(difficulty, .04f * (difficulty - 1));
         public static float GetAIBaseHealthMultiplier(int gameDifficulty) => 0.99f + 0.01f * gameDifficulty;
         public static float GetAIMaxHealthMultiplier(enum_StageLevel stageDifficulty) => (int)stageDifficulty ;
 
