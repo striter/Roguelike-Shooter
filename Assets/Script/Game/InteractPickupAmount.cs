@@ -34,7 +34,7 @@ public class InteractPickupAmount : InteractPickup {
             return;
 
         if (m_speed<12f)
-            m_speed += GameConst.F_CoinsAcceleration * Time.deltaTime;
+            m_speed += GameConst.F_PickupAcceleration * Time.deltaTime;
         Vector3 direction =  (m_moveTowards.position - transform.position).normalized;
         transform.position +=  direction * m_speed * Time.deltaTime;
     }

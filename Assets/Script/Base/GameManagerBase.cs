@@ -47,7 +47,7 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
     {
         TLocalization.SetRegion(OptionsManager.m_OptionsData.m_Region);
         Application.targetFrameRate = (int)OptionsManager.m_OptionsData.m_FrameRate;
-        CameraController.Instance.m_Effect.SetMobileCostyEffectEnable(OptionsManager.m_OptionsData.m_FrameRate == enum_Option_FrameRate.High);
+        CameraController.Instance.m_Effect.SetMobileCostyEffectEnable(OptionsManager.m_OptionsData.m_EnableScreenEffect);
     }
 
     protected void OnPortalEnter(float duration,Transform vortexTarget, Action OnEnter)

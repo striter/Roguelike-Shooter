@@ -57,8 +57,9 @@ public class UI_Options : UIPageBase {
         base.Init(useAnim);
         tf_Basic = tf_Container.Find("Basic");
          new ButtonToggle(tf_Basic.Find("FrameRate/BtnToggle"), OnFrequencyClicked, frameRateOn());
-         new ButtonToggle(tf_Basic.Find("Region/BtnToggle"), OnRegionClicked, regionOn());
-         new SliderStatus(tf_Basic.Find("MusicVolume/Slider"), OnMusicVolumeChanged, OptionsManager.m_OptionsData.m_MusicVolumeTap);
+        new ButtonToggle(tf_Basic.Find("ScreenEffect/BtnToggle"), OnScreenEffectClicked, screenEffectOn());
+        new ButtonToggle(tf_Basic.Find("Region/BtnToggle"), OnRegionClicked, regionOn());
+        new SliderStatus(tf_Basic.Find("MusicVolume/Slider"), OnMusicVolumeChanged, OptionsManager.m_OptionsData.m_MusicVolumeTap);
          new SliderStatus(tf_Basic.Find("VFXVolume/Slider"), OnVFXVolumeChanged, OptionsManager.m_OptionsData.m_VFXVolumeTap);
 
         tf_Control = tf_Container.Find("Control");
@@ -85,6 +86,14 @@ public class UI_Options : UIPageBase {
         OptionsManager.m_OptionsData.m_FrameRate = frameRateOn() ? enum_Option_FrameRate.High : enum_Option_FrameRate.Normal;
         OptionsManager.OnOptionChanged();
         return frameRateOn();
+    }
+
+    bool screenEffectOn() => !OptionsManager.m_OptionsData.m_EnableScreenEffect;
+    bool OnScreenEffectClicked()
+    {
+        OptionsManager.m_OptionsData.m_EnableScreenEffect = !OptionsManager.m_OptionsData.m_EnableScreenEffect;
+        OptionsManager.OnOptionChanged();
+        return screenEffectOn();
     }
 
     bool regionOn() => OptionsManager.m_OptionsData.m_Region == enum_Option_LanguageRegion.EN;
