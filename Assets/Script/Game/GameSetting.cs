@@ -114,9 +114,9 @@ namespace GameSetting
                     switch (level)
                     {
                         default: Debug.LogError("Invalid Level!"); return new RangeInt(0, -1);
-                        case enum_RarityLevel.Normal: return new RangeInt(8, 2);
-                        case enum_RarityLevel.OutStanding: return new RangeInt(12, 2);
-                        case enum_RarityLevel.Epic: return new RangeInt(16, 2);
+                        case enum_RarityLevel.Normal: return new RangeInt(8, 4);
+                        case enum_RarityLevel.OutStanding: return new RangeInt(16, 8);
+                        case enum_RarityLevel.Epic: return new RangeInt(24, 12);
                     }
             }
         }
@@ -2121,19 +2121,18 @@ namespace GameSetting
         {
             m_Connections = tile.m_Connections;
         }
-        public Dictionary<LevelItemBase, int> GenerateMap(LevelBase levelSpawned,SLevelGenerate innerData,SLevelGenerate outerData, Dictionary<enum_LevelItemType,List<LevelItemBase>> _levelItemPrefabs,System.Random seed)
+        public void GenerateMap(LevelBase levelSpawned,SLevelGenerate innerData,SLevelGenerate outerData, Dictionary<enum_LevelItemType,List<LevelItemBase>> _levelItemPrefabs,System.Random seed)
         {
             m_Level = levelSpawned;
             m_Level.transform.localRotation = Quaternion.Euler(0, seed.Next(360), 0);
             m_Level.transform.localPosition = Vector3.zero;
             m_Level.transform.localScale = Vector3.one;
-            m_Level.SetActivate(false);
-            return m_Level.GenerateTileItems(innerData,outerData, _levelItemPrefabs, m_LevelType,seed, m_LevelType== enum_TileType.End);        //Add Portal For Level End
+            m_Level.GenerateTileItems(innerData,outerData, _levelItemPrefabs, m_LevelType,seed, m_LevelType== enum_TileType.End);
         }
-        public void StartLevel()
+        public void SetLevelShow(bool show)
         {
-            m_Level.ShowAllItems();
-            m_Level.SetActivate(true);
+            if(m_Level)
+            m_Level.SetActivate(show);
         }
     }
     #endregion
