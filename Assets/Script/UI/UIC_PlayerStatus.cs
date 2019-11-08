@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TSpecialClasses;
-public class UIC_GamePlayerStatus : UIControlBase
+public class UIC_PlayerStatus : UIControlBase
 {
     Transform tf_Container;
     Animation m_Animation;
@@ -50,9 +50,7 @@ public class UIC_GamePlayerStatus : UIControlBase
     Transform tf_WeaponActionDetail;
     UIC_RarityLevel_BG m_WeaponActionRarity;
 
-    Text m_Coins;
-
-    DurationLerp m_HealthLerp, m_ArmorLerp, m_EnergyLerp,m_CoinLerp;
+    DurationLerp m_HealthLerp, m_ArmorLerp, m_EnergyLerp;
     protected override void Init()
     {
         base.Init();
@@ -107,13 +105,9 @@ public class UIC_GamePlayerStatus : UIControlBase
         m_WeaponActionRarity = new UIC_RarityLevel_BG(tf_WeaponActionDetail.Find("ActionRarity"));
         tf_WeaponData.Find("WeaponDetailBtn").GetComponent<Button>().onClick.AddListener(() => { UIManager.Instance.ShowPage<UI_WeaponStatus>(true,0f).SetInfo(m_Player.m_WeaponCurrent); });
 
-        m_Coins = tf_Container.Find("CoinData/Data").GetComponent<Text>();
-
         m_HealthLerp = new DurationLerp(0f, .25f);
         m_ArmorLerp = new DurationLerp(0f, .25f);
         m_EnergyLerp = new DurationLerp(0f, .5f);
-        m_CoinLerp = new DurationLerp(0f, 1f);
-        m_Coins.text = "0";
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<WeaponBase>(enum_BC_UIStatus.UI_PlayerAmmoStatus, OnAmmoStatus);
@@ -182,8 +176,6 @@ public class UIC_GamePlayerStatus : UIControlBase
             m_HealthFill.fillAmount = m_HealthLerp.m_value;
         if (m_ArmorLerp.TickLerp(Time.deltaTime))
             m_ArmorFill.fillAmount = m_ArmorLerp.m_value;
-        if (m_CoinLerp.TickLerp(Time.deltaTime))
-            m_Coins.text = ((int)(m_CoinLerp.m_value)).ToString();
     }
 
     void OnCommonStatus(EntityCharacterPlayer _player)
@@ -191,7 +183,6 @@ public class UIC_GamePlayerStatus : UIControlBase
         if (!m_Player)
             m_Player = _player;
 
-        m_CoinLerp.ChangeValue(_player.m_PlayerInfo.m_Coins);
         m_EnergyLerp.ChangeValue(_player.m_PlayerInfo.m_ActionEnergy);
         img_ShuffleFill.fillAmount = _player.m_PlayerInfo.f_shuffleScale;
         rtf_StatusData.SetWorldViewPortAnchor(m_Player.tf_Status.position, CameraController.Instance.m_Camera, Time.deltaTime * 10f);

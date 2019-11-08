@@ -7,7 +7,6 @@ using UnityEngine.UI;
 public class UI_ActionAdjustment : UIPageBase {
 
     UIT_GridControllerGridItem<UIGI_ActionItemSelect> m_Grid;
-    Text m_CoinData;
     Button btn_remove, btn_upgrade;
     UIT_TextExtend txt_removeAmount, txt_upgradeAmount;
     int m_selectIndex = -1;
@@ -15,7 +14,6 @@ public class UI_ActionAdjustment : UIPageBase {
     {
         base.Init(useAnim);
         m_Grid = new UIT_GridControllerGridItem<UIGI_ActionItemSelect>(tf_Container.Find("ScrollView/Viewport/ActionGrid"));
-        m_CoinData = transform.Find("CoinData/Data").GetComponent<Text>();
         btn_remove = tf_Container.Find("BtnRemove").GetComponent<Button>();
         btn_remove.onClick.AddListener(OnRemoveClick);
         txt_removeAmount = btn_remove.transform.Find("Cost/Amount").GetComponent<UIT_TextExtend>();
@@ -31,7 +29,6 @@ public class UI_ActionAdjustment : UIPageBase {
     }
     void OnActionStatus()
     {
-        m_CoinData.text = m_Interact.m_Interactor.m_Coins.ToString();
         m_Grid.ClearGrid();
         for (int i = 0; i < m_Interact.m_Interactor.m_BattleAction.Count; i++)
             m_Grid.AddItem(i).SetInfo(m_Interact.m_Interactor.m_BattleAction[i],OnItemSelected,true);

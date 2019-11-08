@@ -119,25 +119,22 @@ public class UIManager :UIManagerBase,ISingleCoroutine
     }
 
 
-    void OnPageExit()
+    protected virtual void OnPageExit()
     {
         m_OverlayBG.SetActivate(false);
         GameManagerBase.SetBulletTime(false);
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PageClose);
     }
-
-
+    
     public new T ShowMessageBox<T>() where T : UIMessageBoxBase
     {
-        tf_Page.ReparentRestretchUI(cvs_Camera.transform);
-        tf_Page.SetAsLastSibling();
+        SetPageViewMode(false);
         return base.ShowMessageBox<T>();
     }
 
     void OnMessageBoxExit()
     {
-        tf_Page.ReparentRestretchUI(cvs_Overlay.transform);
-        tf_Page.SetSiblingIndex(1);
+        SetPageViewMode(true);
     }
     int tipCount = 0;
     public void ShowTip(string key, enum_UITipsType tipsType) => m_TipsGrid.AddItem(tipCount++).ShowTips(key, tipsType,OnTipFinish);

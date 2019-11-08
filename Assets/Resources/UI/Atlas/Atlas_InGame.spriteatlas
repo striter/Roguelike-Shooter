@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 081334a023db2704db167d2dfc323270, type: 3}
-    totalSpriteSurfaceArea: 2217229
+    totalSpriteSurfaceArea: 2142549
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -41,7 +41,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: d783a5f7194904445969c59766ac8443, type: 3}
   - {fileID: 21300000, guid: 18a7c2d7df8a6854e9bc2e3248a93804, type: 3}
   - {fileID: 21300000, guid: 006ea73e2bf56dc4e959b2bc4171da77, type: 3}
-  - {fileID: 21300000, guid: 4ec60bacd1dafa74b8d93d4b1cae4984, type: 3}
   - {fileID: 21300000, guid: b8baf198d27163e4583c425aff5bff11, type: 3}
   - {fileID: 21300000, guid: 9962f76be756a5c4e8bb00c1c68468fa, type: 3}
   - {fileID: 21300000, guid: fa0122c7e5ddb1d4399a011784eede79, type: 3}
@@ -62,7 +61,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 9ba3f101a4bae6642a7bdceeeaa67eab, type: 3}
   - {fileID: 21300000, guid: 204b28d01dc0f084ea4399c7dbccb4a1, type: 3}
   - {fileID: 21300000, guid: 471f2c6bff785a049b3b37e24002cdae, type: 3}
-  - {fileID: 21300000, guid: a0e4044850dc94f4ea77c05d26531154, type: 3}
   - {fileID: 21300000, guid: c462dce27186cea40a21a488b8c445ba, type: 3}
   - {fileID: 21300000, guid: 6b5e120f41ccce542848f00f95446778, type: 3}
   - {fileID: 21300000, guid: acf6a532035483b48a86c24956866b7c, type: 3}
@@ -75,7 +73,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: fb9d054c104418649afdc81260a93c24, type: 3}
   - {fileID: 21300000, guid: 1293ae4f9500e5046bcb8c3fc46d3fb9, type: 3}
   - {fileID: 21300000, guid: e31910eada068664eaf61fcda1721a85, type: 3}
-  - {fileID: 21300000, guid: c08fb8623df6ada478d2261bfca4d369, type: 3}
   - {fileID: 21300000, guid: 640bac5e80194e345b2851ed06fbf63f, type: 3}
   - {fileID: 21300000, guid: dc622a87f7dbda743a327b5e19c633c7, type: 3}
   - {fileID: 21300000, guid: 188ba14751267e14fbe7a9071a290d59, type: 3}
@@ -89,7 +86,6 @@ SpriteAtlas:
   - result_missionfailed_title_en
   - result_missionfailed_title_cn
   - result_missioncomplete_title_cn
-  - revive_icon_gold
   - map_info_kuang
   - backpack_bottom
   - result_Ruler
@@ -110,7 +106,6 @@ SpriteAtlas:
   - background_map_Gradient
   - status_buff_blank
   - backpack_shadow
-  - revive_icon_failure
   - map_info_wave_kuang
   - result_Ruler_cross
   - map_info_battle_HardBattle
@@ -123,7 +118,6 @@ SpriteAtlas:
   - health_bg
   - result_icon_goal
   - background_angle
-  - revive_icon_video
   - status_map_triangle
   - map_tile_type_Invalid
   - map_tile_blockade2
