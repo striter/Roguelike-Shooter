@@ -91,7 +91,7 @@ namespace GameSetting_Action
         public const float F_10020_PerStackHealthLoss = 1f;
         public static float P_10020_MovementAdditivePerStack(enum_RarityLevel rarity) => 2f * (int)rarity;
 
-        public const int I_10021_Cost = 2;
+        public const int I_10021_Cost = 1;
         public const float F_20021_Duration = 10f;
         public static float F_10021_HealthRegenPerMin(enum_RarityLevel rarity) => 3f * (int)rarity;
 
@@ -100,7 +100,7 @@ namespace GameSetting_Action
         public const float P_10022_HealthRegenTranslateFromDamage = 100;
 
         public const int I_10023_Cost = 1;
-        public static float F_10023_ReviveHealthRegen(enum_RarityLevel rarity) => 15 * (int)rarity;
+        public static float F_10023_ReviveHealthRegen(enum_RarityLevel rarity) => 20 * (int)rarity;
 
         public const int I_10024_Cost = 1;
         public static float F_10024_ArmorAdditive(enum_RarityLevel rarity) => 30 * (int)rarity;
