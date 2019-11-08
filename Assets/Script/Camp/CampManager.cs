@@ -31,7 +31,7 @@ public class CampManager : GameManagerBase
         base.Start();
         CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_BloomSpecific>();
         GameObjectManager.PresetRegistCommonObject();
-        EntityCharacterPlayer player = GameObjectManager.SpawnEntityPlayer(new CPlayerGameSave());
+        EntityCharacterPlayer player = GameObjectManager.SpawnEntityPlayer(new CPlayerBattleSave());
         player.transform.SetPositionAndRotation(tf_PlayerStart.position, tf_PlayerStart.rotation);
         tf_Player = player.transform;
         AttachPlayerCamera(tf_Player);
@@ -55,19 +55,12 @@ public class CampManager : GameManagerBase
         AttachPlayerCamera(tf_Player);
     }
 
-    public bool B_Actioning { get; private set; } = false;
-    public void OnActionNPCChatted(Transform attachTo, Transform lookAt)
+    public void OnActionNPCChatted()
     {
-        B_Actioning = true;
-        AttachSceneCamera(attachTo, lookAt);
         CampUIManager.Instance.ShowPage<UI_ActionStorage>(true).Play(OnActionExit);
-        SetEffect_Focal(true, lookAt, .8f, 2f);
     }
     void OnActionExit()
     {
-        B_Actioning = false;
-        AttachPlayerCamera(tf_Player);
-        SetEffect_Focal(false);
     }
 
     public void OnCreditStatus(float creditChange)

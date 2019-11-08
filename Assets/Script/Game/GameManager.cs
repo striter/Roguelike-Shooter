@@ -185,16 +185,20 @@ public class GameManager : GameManagerBase
         Resources.UnloadUnusedAssets();
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageStart);
     }
-    void OnLevelChanged(SBigmapLevelInfo levelInfo)
+    public void ChangeLevel(TTiles.TileAxis axis)
     {
-        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnChangeLevel);
-        m_LocalPlayer.transform.position = levelInfo.m_Level.RandomEmptyTilePosition(m_GameLevel.m_GameSeed);
-
         if (m_RewardChest != null)
         {
             GameObjectManager.RecycleInteract(m_RewardChest);
             m_RewardChest = null;
         }
+        LevelManager.Instance.ChangeLevel(axis);
+    }
+
+    void OnLevelChanged(SBigmapLevelInfo levelInfo)
+    {
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnChangeLevel);
+        m_LocalPlayer.transform.position = levelInfo.m_Level.RandomEmptyTilePosition(m_GameLevel.m_GameSeed);
 
         bool levelUnlocked = levelInfo.m_TileLocking == enum_TileLocking.Unlocked;
         m_GameLevel.OnLevelChange(levelInfo.m_LevelType,levelUnlocked);
@@ -209,15 +213,13 @@ public class GameManager : GameManagerBase
         m_RewardChest = null;
         m_GameLevel.StageFinished();
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageFinish);
-        if (m_GameLevel.B_NextStage)
-        {
-            GameDataManager.AdjustInGameData(m_LocalPlayer,m_GameLevel);
-            OnPortalEnter(1f,m_LocalPlayer.tf_Head, StartStage);
-        }
-        else
+        if (!m_GameLevel.B_NextStage)
         {
             OnGameFinished(true);
+            return;
         }
+        GameDataManager.AdjustInGameData(m_LocalPlayer, m_GameLevel);
+        OnPortalEnter(1f, m_LocalPlayer.tf_Head, StartStage);
     }
 
     void OnGameFinished(bool win)
@@ -240,7 +242,7 @@ public class GameManager : GameManagerBase
                     GameObjectManager.SpawnInteract<InteractBonfire>(enum_Interaction.Bonfire,Vector3.zero, interactTrans).Play();
 
                     m_RewardChest = GameObjectManager.SpawnInteract<InteractActionChest>(enum_Interaction.ActionChestStart, Vector3.left * 3, interactTrans);
-                    m_RewardChest.Play(ActionDataManager.CreateRandomSelectedPlayerAction(GameDataManager.m_PlayerCampData.m_StorageActions ,3, m_GameLevel.m_GameSeed), 1);
+                    m_RewardChest.Play(m_GameLevel.GetRandomStartActions(3),1);
                     
                     GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, Vector3.right * 3, interactTrans).Play(GameObjectManager.SpawnWeapon(TCommon.RandomEnumValues<enum_PlayerWeapon>(m_GameLevel.m_GameSeed), ActionDataManager.CreateRandomWeaponPerk(m_GameLevel.m_GameStage.GetStartWeaponPerkRarity(), m_GameLevel.m_GameSeed)));
                 }
@@ -550,15 +552,17 @@ public class GameManager : GameManagerBase
 public class GameLevelManager
 {
     #region LevelData
+    public string m_Seed { get; private set; }
+    public List<ActionStorageData> m_startAction { get; private set; }
+    public int m_GameDifficulty { get; private set; }
+
+    public System.Random m_GameSeed { get; private set; }
     public StageInteractGenerateData m_actionGenerate { get; private set; }
     public bool B_NextStage => m_GameStage <= enum_StageLevel.Ranger;
     public enum_TileType m_LevelType { get; private set; }
     public enum_StageLevel m_GameStage { get; private set; }
-    public int m_GameDifficulty { get; private set; }
     Dictionary<enum_StageLevel, enum_Style> m_StageStyle = new Dictionary<enum_StageLevel, enum_Style>();
     public enum_Style m_GameStyle => m_StageStyle[m_GameStage];
-    public string m_Seed { get; private set; }
-    public System.Random m_GameSeed { get; private set; }
     static enum_BattleDifficulty m_BattleDifficulty;
     public enum_BattleDifficulty m_Difficulty
     {
@@ -584,9 +588,10 @@ public class GameLevelManager
     int m_levelEntered;
     int m_battleLevelEntered;
     #endregion
-    public GameLevelManager(CPlayerCampSave _gameSave,CPlayerGameSave _playerSave):this(_playerSave.m_GameSeed, _playerSave.m_StageLevel, _gameSave.m_GameDifficulty)
+    public GameLevelManager(CPlayerGameSave _gameSave,CPlayerBattleSave _battleSave):this(_battleSave.m_GameSeed, _battleSave.m_StageLevel, _gameSave.m_GameDifficulty)
     {
-        m_enermiesKilled = _playerSave.m_kills;
+        m_enermiesKilled = _battleSave.m_kills;
+        m_startAction = _battleSave.m_startAction;
     }
     public GameLevelManager(string _seed,enum_StageLevel _stage, int _gameDifficulty)
     {
@@ -642,6 +647,24 @@ public class GameLevelManager
 
     public void OnEntityKilled() => m_enermiesKilled++;
     public void OnGameFinished(bool win)=> m_gameWin = win;
+
+    public List<ActionBase> GetRandomStartActions(int count)
+    {
+        List<ActionBase> targetActions = new List<ActionBase>();
+        for (int i = 0; i < count; i++)
+        {
+            m_startAction.TraversalRandom((ActionStorageData action) =>
+            {
+                if (targetActions.Find(p => p.m_Index == action.m_Index) == null)
+                {
+                    targetActions.Add(ActionDataManager.CreateAction(action.m_Index,action.GetRarityLevel()));
+                    return true;
+                }
+                return false;
+            });
+        }
+        return targetActions;
+    }
     #region CalculateData
     public float F_Progress => GameExpression.GetResultProgress(m_gameWin, m_GameStage, m_battleLevelEntered);
     public float F_KillScore => GameExpression.GetResultKillScore(m_enermiesKilled);
@@ -742,7 +765,7 @@ public static class GameObjectManager
         entity.SetSpawnerID(spanwer);
         return entity;
     }
-    public static EntityCharacterPlayer SpawnEntityPlayer(CPlayerGameSave playerSave)
+    public static EntityCharacterPlayer SpawnEntityPlayer(CPlayerBattleSave playerSave)
     {
         EntityCharacterPlayer player = SpawnEntity<EntityCharacterPlayer>(0,Vector3.up*10f, enum_EntityFlag.Player);
         player.SetPlayerInfo(playerSave.m_coins, ActionDataManager.CreateActions(playerSave.m_battleAction));

@@ -15,8 +15,10 @@ public class UIC_CurrencyStatus : UIControlBase {
         base.Init();
         m_Credit = transform.Find("Credit/Data").GetComponent<Text>();
         m_TechPoint = transform.Find("TechPoint/Data").GetComponent<Text>();
-        m_CreditLerp = new DurationLerp(0, 1f);
-        m_TechPointLerp = new DurationLerp(0, 1f);
+        m_CreditLerp = new DurationLerp(GameDataManager.m_PlayerCampData.f_Credits, 100f);
+        m_TechPointLerp = new DurationLerp(GameDataManager.m_PlayerCampData.f_TechPoints, 50f);
+        m_Credit.text = m_CreditLerp.m_value.ToString();
+        m_TechPoint.text = m_TechPointLerp.m_value.ToString();
         OnCampStatus();
         TBroadCaster<enum_BC_UIStatus>.Add(enum_BC_UIStatus.UI_CampDataStatus, OnCampStatus);
     }

@@ -606,26 +606,29 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
         public float m_value { get; private set; }
         float m_check;
         float m_duration;
+        float m_perSecondValue;
 
         float m_previousValue;
         float m_targetValue;
-        public DurationLerp(float startValue,float duration)
+        public DurationLerp(float startValue,float perSecondValue)
         {
             m_targetValue = startValue;
             m_previousValue = startValue;
             m_value = m_targetValue;
-            m_duration = duration;
+            m_perSecondValue = perSecondValue;
         }
 
-        public void ChangeValue(float value)
+        public void ChangeValue(float value,float duration=-1)
         {
             if ( value== m_targetValue)
                 return;
 
+            m_duration = duration<0? Mathf.Abs( (value-m_value))/m_perSecondValue:duration;
             m_check = m_duration;
             m_previousValue = m_value;
             m_targetValue = value;
         }
+        
 
         public bool TickLerp(float deltaTime)
         {
