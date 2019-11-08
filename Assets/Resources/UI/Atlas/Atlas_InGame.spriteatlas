@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 081334a023db2704db167d2dfc323270, type: 3}
-    totalSpriteSurfaceArea: 2142549
+    totalSpriteSurfaceArea: 2031346
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -45,21 +45,15 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 9962f76be756a5c4e8bb00c1c68468fa, type: 3}
   - {fileID: 21300000, guid: fa0122c7e5ddb1d4399a011784eede79, type: 3}
   - {fileID: 21300000, guid: a0edf0727dbc54049ad1b24763bf40b5, type: 3}
-  - {fileID: 21300000, guid: acaf808e38e4e0246ad397f639c020ef, type: 3}
   - {fileID: 21300000, guid: 3ed3568eaf02c50459c3a004bcf900aa, type: 3}
   - {fileID: 21300000, guid: 48ca20a7917b66e4785597c22ec56a6a, type: 3}
-  - {fileID: 21300000, guid: 5cd44b63eb55eac47a9f7ed455f9f779, type: 3}
   - {fileID: 21300000, guid: a9ee0bc7c49b98d41884f7111e26d74e, type: 3}
-  - {fileID: 21300000, guid: 04afc62e9953c644d850fb53afc9f3e7, type: 3}
   - {fileID: 21300000, guid: e2aff809fde7b7d469149d996d359e8c, type: 3}
   - {fileID: 21300000, guid: cee4d3d1a3e283c489ee1fed47d86dcc, type: 3}
-  - {fileID: 21300000, guid: bb9b55d0cd18e0741bc043e00caae287, type: 3}
   - {fileID: 21300000, guid: 4061cdf336cc1794892f6f52c932257b, type: 3}
   - {fileID: 21300000, guid: ae9b9982bf29a724aa7f0d31b0f2e9ee, type: 3}
   - {fileID: 21300000, guid: 0f87968bd8c67f3489af4e41310e5a76, type: 3}
-  - {fileID: 21300000, guid: 9e9a4d39064893a459d42153d664793c, type: 3}
   - {fileID: 21300000, guid: 9ba3f101a4bae6642a7bdceeeaa67eab, type: 3}
-  - {fileID: 21300000, guid: 204b28d01dc0f084ea4399c7dbccb4a1, type: 3}
   - {fileID: 21300000, guid: 471f2c6bff785a049b3b37e24002cdae, type: 3}
   - {fileID: 21300000, guid: c462dce27186cea40a21a488b8c445ba, type: 3}
   - {fileID: 21300000, guid: 6b5e120f41ccce542848f00f95446778, type: 3}
@@ -73,7 +67,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: fb9d054c104418649afdc81260a93c24, type: 3}
   - {fileID: 21300000, guid: 1293ae4f9500e5046bcb8c3fc46d3fb9, type: 3}
   - {fileID: 21300000, guid: e31910eada068664eaf61fcda1721a85, type: 3}
-  - {fileID: 21300000, guid: 640bac5e80194e345b2851ed06fbf63f, type: 3}
   - {fileID: 21300000, guid: dc622a87f7dbda743a327b5e19c633c7, type: 3}
   - {fileID: 21300000, guid: 188ba14751267e14fbe7a9071a290d59, type: 3}
   - {fileID: 21300000, guid: 08550047334a3c145a1bd10329ddf497, type: 3}
@@ -90,21 +83,15 @@ SpriteAtlas:
   - backpack_bottom
   - result_Ruler
   - map_tile_type_End
-  - status_ActionEnergy_progress_full
   - map_tile_type_Battle
   - map_tile_type_Start
-  - status_ActionEnergy_progress_bottom
   - map_tile_type_CoinsTrade
-  - status_ActionEnergy_progress_notfull
   - map_tile_type_ActionAdjustment
   - map_tile_type_BattleTrade
-  - status_ActionPack_bottom
   - map_tile_select
   - background_map
   - map_tile_blockade
-  - status_ActionEnergy_bottom
   - background_map_Gradient
-  - status_buff_blank
   - backpack_shadow
   - map_info_wave_kuang
   - result_Ruler_cross
@@ -118,7 +105,6 @@ SpriteAtlas:
   - health_bg
   - result_icon_goal
   - background_angle
-  - status_map_triangle
   - map_tile_type_Invalid
   - map_tile_blockade2
   - map_island_route

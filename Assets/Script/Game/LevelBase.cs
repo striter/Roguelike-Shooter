@@ -8,7 +8,8 @@ using System;
 public class LevelBase : MonoBehaviour {
     public List<LevelTile> m_MapData;
     public enum_TileType m_levelType { get; private set; }
-    protected Transform tf_LevelItem,tf_Model;
+    protected Transform tf_Model;
+    public Transform tf_LevelItem { get; private set; }
     public Transform tf_Interact { get; private set; }
     public System.Random m_seed { get; private set; }
     public void Init()
@@ -28,7 +29,7 @@ public class LevelBase : MonoBehaviour {
     Dictionary<enum_LevelItemType, List<LevelItemBase>> m_AllItemPrefabs = new Dictionary<enum_LevelItemType, List<LevelItemBase>>();
     public int I_InnerHalfLength { get; private set; }
     public int I_OuterHalfLength { get; private set; }
-    public Dictionary<LevelItemBase,int> GenerateTileItems(SLevelGenerate _innerData,SLevelGenerate _outerData, Dictionary<enum_LevelItemType, List<LevelItemBase>> allItemPrefabs, enum_TileType _levelType, System.Random _seed, bool showPortal)
+    public void GenerateTileItems(SLevelGenerate _innerData,SLevelGenerate _outerData, Dictionary<enum_LevelItemType, List<LevelItemBase>> allItemPrefabs, enum_TileType _levelType, System.Random _seed, bool showPortal)
     {
         m_AllItemPrefabs = allItemPrefabs;
         m_seed = _seed;
@@ -80,25 +81,14 @@ public class LevelBase : MonoBehaviour {
         GenerateRandomMainTile(_outerData, m_IndexEmptyOuter);
 
         m_IndexItemMain.AddRange(m_IndexBorder);
-        Dictionary<LevelItemBase, int> itemCountDic = new Dictionary<LevelItemBase, int>();
+
         for (int i = 0; i < m_IndexItemMain.Count; i++)
         {
             LevelTileItem main = m_AllTiles[m_IndexItemMain[i]] as LevelTileItem;
-            LevelItemBase item = m_AllItemPrefabs[main.m_LevelItemType][main.m_LevelItemListIndex];
-            if (!itemCountDic.ContainsKey(item))
-                itemCountDic.Add(item,0);
-            itemCountDic[item]++;
-        }
-        return itemCountDic;
-    }
-    public void ShowAllItems()
-    {
-        for (int i = 0; i < m_IndexItemMain.Count; i++)
-        {
-            LevelTileItem main = m_AllTiles[m_IndexItemMain[i]] as LevelTileItem;
-            LevelItemBase itemMain = GameObjectManager.SpawnLevelItem (m_AllItemPrefabs[main.m_LevelItemType][main.m_LevelItemListIndex], tf_LevelItem, main.m_Offset);
+            LevelItemBase itemMain = GameObjectManager.SpawnLevelItem(m_AllItemPrefabs[main.m_LevelItemType][main.m_LevelItemListIndex], tf_LevelItem, main.m_Offset);
             itemMain.Init(this, main.m_ItemDirection);
         }
+
     }
     void ClearTileForInteracts()
     {

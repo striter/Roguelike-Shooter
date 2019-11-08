@@ -7,7 +7,7 @@ using UnityEngine.AI;
 using System;
 using LPWAsset;
 
-public class LevelManager : SimpleSingletonMono<LevelManager> {
+public class LevelManager : SimpleSingletonMono<LevelManager>,ISingleCoroutine {
     public Transform tf_LevelParent { get; private set; }
     public enum_Style m_StyleCurrent { get; private set; } = enum_Style.Invalid;
     public SBigmapLevelInfo m_currentLevel { get; private set; }
@@ -37,16 +37,21 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
     }
-    public void GenerateAllEnviorment(enum_Style _LevelStyle,System.Random seed,Action<SBigmapLevelInfo> _OnLevelPrepared,Action _OnStageFinished)
+    public void GenerateAllEnviorment(enum_Style _LevelStyle,System.Random seed,Action<SBigmapLevelInfo> _OnLevelPrepared,Action _OnStageFinished,Action<SBigmapLevelInfo> _OnEachLevelGenerate)
     {
         OnLevelPrepared = _OnLevelPrepared;
         OnStageFinished = _OnStageFinished;
         m_mainSeed = seed;
         m_StyleCurrent = _LevelStyle;
-        m_MapLevelInfo= GenerateBigmapLevels(m_StyleCurrent, m_mainSeed, tf_LevelParent,6,5);
+        m_MapLevelInfo= GenerateBigmapLevels(m_StyleCurrent, m_mainSeed, tf_LevelParent,6,5, _OnEachLevelGenerate);
         StyleColorData[] customizations = TResources.GetAllStyleCustomization(_LevelStyle);
         StyleColorData randomData= customizations.Length == 0? StyleColorData.Default():customizations.RandomItem(m_mainSeed);
         randomData.DataInit(m_DirectionalLight);
+        StaticBatchingUtility.Combine(tf_LevelParent.gameObject);
+        m_MapLevelInfo.Traversal((SBigmapLevelInfo info) =>
+        {
+            info.SetLevelShow(false);
+        });
     }
 
 
@@ -59,8 +64,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
 
     void PrepareCurrentLevel()     //Make Current Level Available (AI Bake)
     {
-        GameObjectManager.RecycleAllLevelItem();
-        m_currentLevel.StartLevel();
+        m_currentLevel.SetLevelShow(true);
         BuildNavMeshData(m_currentLevel.m_Level);
         OnLevelPrepared(m_currentLevel);
         m_currentLevel.SetTileLocking(enum_TileLocking.Unlocked);
@@ -71,7 +75,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
         if (m_currentLevel.m_TileAxis == targetAxis)
             return;
 
-        m_currentLevel.m_Level.SetActivate(false);
+        m_currentLevel.SetLevelShow(false);
         m_currentLevel = (m_MapLevelInfo.Get(targetAxis));
         PrepareCurrentLevel();
     }
@@ -92,7 +96,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
     }
     #endregion
     #region BigMap
-    public static SBigmapLevelInfo[,] GenerateBigmapLevels(enum_Style _levelStyle,System.Random _seed,Transform _generateParent,int _bigmapWidth, int _bigmapHeight)
+    public static SBigmapLevelInfo[,] GenerateBigmapLevels(enum_Style _levelStyle,System.Random _seed,Transform _generateParent,int _bigmapWidth, int _bigmapHeight,Action<SBigmapLevelInfo> _OnEachLevelGenerate)
     {
         //Generate Big Map All Tiles
         SBigmapTileInfo[,] bigmapTiles = new SBigmapTileInfo[_bigmapWidth, _bigmapHeight];
@@ -190,8 +194,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
         }
 
         //Load All map Levels And Set Material
-        Dictionary<enum_LevelItemType,List<LevelItemBase>> levelItemPrefabs = TResources.GetAllLevelItems(_levelStyle,null);
-        Dictionary<LevelItemBase, int> maxItemCountDic = new Dictionary<LevelItemBase, int>();
+        Dictionary<enum_LevelItemType,List<LevelItemBase>> levelItemPrefabs = GameObjectManager.RegisterLevelItem(_levelStyle);
         SBigmapLevelInfo[,] m_MapLevelInfo = new SBigmapLevelInfo[bigmapTiles.GetLength(0), bigmapTiles.GetLength(1)];      //Generate Bigmap Info
         for (int i = 0; i < _bigmapWidth; i++)
             for (int j = 0; j < _bigmapHeight; j++)
@@ -203,17 +206,11 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
                     SLevelGenerate innerData = GameDataManager.GetItemGenerateProperties(_levelStyle, generateType, true);
                     SLevelGenerate outerData = GameDataManager.GetItemGenerateProperties(_levelStyle, generateType, false);
 
-                    Dictionary<LevelItemBase, int> itemCountDic = m_MapLevelInfo[i, j].GenerateMap(GameObjectManager.SpawnLevelPrefab(_generateParent), innerData, outerData, levelItemPrefabs, _seed);
-                    itemCountDic.Traversal((LevelItemBase item, int count) => {
-                        if (!maxItemCountDic.ContainsKey(item))
-                            maxItemCountDic.Add(item, 0);
-                        if (maxItemCountDic[item] < count)
-                            maxItemCountDic[item] = count;
-                    });
+                    m_MapLevelInfo[i, j].GenerateMap(GameObjectManager.SpawnLevelPrefab(_generateParent), innerData, outerData, levelItemPrefabs, _seed);
+                    _OnEachLevelGenerate(m_MapLevelInfo[i, j]);
                 }
             }
         
-        GameObjectManager.RegisterLevelItem(maxItemCountDic);
         return m_MapLevelInfo;
     }
     static void ConnectTile(SBigmapTileInfo tileStart,SBigmapTileInfo tileEnd)
@@ -245,7 +242,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
         NavMeshBuilder.CollectSources(itemSetLevel.transform, -1, NavMeshCollectGeometry.PhysicsColliders, 0, new List<NavMeshBuildMarkup>() { }, sources);
         m_NavMeshDataEntity = NavMesh.AddNavMeshData(NavMeshBuilder.BuildNavMeshData(NavMesh.GetSettingsByIndex(0), sources, bound, Vector3.zero, itemSetLevel.transform.rotation));
 
-        NavMeshBuilder.CollectSources(itemSetLevel.transform, -1, NavMeshCollectGeometry.RenderMeshes, 3, new List<NavMeshBuildMarkup>() { }, sources);
+        NavMeshBuilder.CollectSources(itemSetLevel.transform, -1, NavMeshCollectGeometry.PhysicsColliders, 3, new List<NavMeshBuildMarkup>() { }, sources);
         m_NavMeshDataInteract = NavMesh.AddNavMeshData(NavMeshBuilder.BuildNavMeshData(NavMesh.GetSettingsByIndex(1), sources, bound, Vector3.zero, itemSetLevel.transform.rotation));
     }
 
