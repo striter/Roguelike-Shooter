@@ -55,7 +55,7 @@ GameObject:
   - component: {fileID: 224006932787730638}
   - component: {fileID: 114304285509660324}
   m_Layer: 5
-  m_Name: UIC_GameCoins
+  m_Name: UIC_CoinsStatus
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
