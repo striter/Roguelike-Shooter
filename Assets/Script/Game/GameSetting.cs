@@ -701,6 +701,7 @@ namespace GameSetting
     {
         public enum_Option_JoyStickMode m_JoyStickMode;
         public enum_Option_FrameRate m_FrameRate;
+        public bool m_EnableScreenEffect;
         public enum_Option_LanguageRegion m_Region;
         public int m_MusicVolumeTap;
         public int m_VFXVolumeTap;
@@ -710,6 +711,7 @@ namespace GameSetting
         {
             m_JoyStickMode = enum_Option_JoyStickMode.Retarget;
             m_FrameRate = enum_Option_FrameRate.High;
+            m_EnableScreenEffect = true;
             m_Region = enum_Option_LanguageRegion.CN;
             m_SensitiveTap = 5;
             m_MusicVolumeTap = 10;

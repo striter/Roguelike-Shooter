@@ -275,7 +275,10 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             m_WeaponCurrent.OnSpawn(invalidPerk);
             m_PlayerInfo.OnAttachWeapon(m_WeaponCurrent);
         }
-        m_WeaponCurrent.m_WeaponAction.Upgrade();
+        else
+        {
+            m_WeaponCurrent.m_WeaponAction.Upgrade();
+        }
         OnWeaponStatus();
     }
     #endregion
