@@ -47,7 +47,6 @@ public class UIC_PlayerStatus : UIControlBase
     UIT_TextExtend m_WeaponName;
     Image m_WeaponImage;
     UIT_TextExtend m_WeaponActionName;
-    Transform tf_WeaponActionDetail;
     UIC_RarityLevel_BG m_WeaponActionRarity;
 
     ValueLerpSeconds m_HealthLerp, m_ArmorLerp, m_EnergyLerp;
@@ -101,8 +100,7 @@ public class UIC_PlayerStatus : UIControlBase
         m_WeaponName = tf_WeaponData.Find("WeaponName").GetComponent<UIT_TextExtend>();
         m_WeaponImage = tf_WeaponData.Find("WeaponImage").GetComponent<Image>();
         m_WeaponActionName = tf_WeaponData.Find("ActionName").GetComponent<UIT_TextExtend>();
-        tf_WeaponActionDetail = tf_WeaponData.Find("ActionDetail");
-        m_WeaponActionRarity = new UIC_RarityLevel_BG(tf_WeaponActionDetail.Find("ActionRarity"));
+        m_WeaponActionRarity = new UIC_RarityLevel_BG(tf_WeaponData.Find("ActionRarity"));
         tf_WeaponData.Find("WeaponDetailBtn").GetComponent<Button>().onClick.AddListener(() => { UIManager.Instance.ShowPage<UI_WeaponStatus>(true,0f).SetInfo(m_Player.m_WeaponCurrent); });
 
         m_HealthLerp = new ValueLerpSeconds(0f, 5f,2.5f,(float value)=> { m_HealthFill.fillAmount = value; });
@@ -272,7 +270,7 @@ public class UIC_PlayerStatus : UIControlBase
         m_WeaponName.autoLocalizeText = weaponInfo.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
 
         bool showWeaponAction = weaponInfo.m_WeaponAction != null;
-        tf_WeaponActionDetail.SetActivate(showWeaponAction);
+        m_WeaponActionRarity.transform.SetActivate(showWeaponAction);
         m_WeaponActionName.autoLocalizeText = showWeaponAction ? weaponInfo.m_WeaponAction.GetNameLocalizeKey() : "UI_WeaponStatus_ActionInvalidName";
         if (showWeaponAction) m_WeaponActionRarity.SetLevel(weaponInfo.m_WeaponAction.m_rarity);
     }
