@@ -14,10 +14,11 @@ public class UIC_CoinsStatus : UIControlBase {
     {
         base.Init();
         m_Coins = transform.Find("CoinData/Data").GetComponent<Text>();
-        m_CoinLerp = new DurationLerp(0f, 10f);
+        m_CoinLerp = new DurationLerp(0f, 30f);
         m_Coins.text = "0";
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
     }
+
     protected override void OnDestroy()
     {
         base.OnDestroy();

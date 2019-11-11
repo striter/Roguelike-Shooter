@@ -606,10 +606,12 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
         public float m_value { get; private set; }
         float m_check;
         float m_duration;
+        
         float m_perSecondValue;
 
         float m_previousValue;
         float m_targetValue;
+
         public DurationLerp(float startValue,float perSecondValue)
         {
             m_targetValue = startValue;
