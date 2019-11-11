@@ -20748,7 +20748,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 45
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -34139,7 +34139,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 400000, guid: 456d6d556180d9442a73277537f3ece2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 1.53
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 456d6d556180d9442a73277537f3ece2, type: 3}
       propertyPath: m_LocalPosition.y
@@ -34147,7 +34147,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 456d6d556180d9442a73277537f3ece2, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -13.74
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 456d6d556180d9442a73277537f3ece2, type: 3}
       propertyPath: m_LocalRotation.x
@@ -39830,7 +39830,7 @@ MonoBehaviour:
   B_CameraOffsetWallClip: 1
   B_DrawDebugLine: 0
   m_Effect: {fileID: 0}
-  TPSOffset: {x: 0, y: 16, z: -3}
+  TPSOffset: {x: 0, y: 21, z: -6}
   I_YawMin: 60
   I_YawMax: 60
   I_ShakeParam: 6
@@ -58203,13 +58203,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2116914986}
-  m_LocalRotation: {x: 0.45451945, y: -0.54167527, z: 0.45451945, w: 0.54167527}
-  m_LocalPosition: {x: -23.5, y: 18, z: -3}
+  m_LocalRotation: {x: 0.3799282, y: -0.59636784, z: 0.3799282, w: 0.59636784}
+  m_LocalPosition: {x: -17, y: 18, z: -3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 86027117}
   m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 80, y: -90, z: 0}
+  m_LocalEulerAnglesHint: {x: 65, y: -90, z: 0}
 --- !u!1001 &2116982608
 Prefab:
   m_ObjectHideFlags: 0
