@@ -76,7 +76,7 @@
 					float3 hemi_ray = position + sign(dot(ray, normal)) * ray;
 					float occ_depth = tex2D(_CameraDepthTexture, saturate(hemi_ray.xy)).r;
 					float difference = depth - occ_depth;
-					occlusion += step(_FallOff, difference) * (1.0 - smoothstep(_FallOff, _SizeArea, difference));
+					occlusion += occ_depth>0? (step(_FallOff, difference) * (1.0 - smoothstep(_FallOff, _SizeArea, difference))):1;
 				}
 				float ao = 1 - _Strength * occlusion / _SampleCount;
 				return lerp( col, fixed4(0, 0, 0, 1),pow(ao,5));

@@ -1677,20 +1677,20 @@ namespace GameSetting
             base.OnCharacterHealthChange(damageInfo, damageEntity, amountApply);
             if (damageInfo.m_detail.I_SourceID <= 0)
                 return;
+            OnCharacterHealthChangeAddPlayerEnergy(damageInfo.m_detail.I_SourceID, damageEntity, amountApply);
 
-            OnCharacterHealthChangeAddPlayerEnergy(damageInfo.m_detail.I_SourceID, damageEntity,amountApply);
 
             if (damageInfo.m_detail.I_SourceID == m_Player.m_EntityID)
             {
-                if (amountApply > 0)
-                    m_ActionEquiping.Traversal((ActionBase action) => { action.OnAfterDealtDemage(damageEntity, damageInfo, amountApply); });
-                else
-                    m_ActionEquiping.Traversal((ActionBase action) => { action.OnReceiveHealing(damageInfo, amountApply); });
+                if(amountApply>0)
+                m_ActionEquiping.Traversal((ActionBase action) => { action.OnAfterDealtDemage(damageEntity, damageInfo, amountApply); });
             }
             else if (damageEntity.m_EntityID == m_Player.m_EntityID)
             {
-                if(amountApply>0)
+                if (amountApply > 0)
                     m_ActionEquiping.Traversal((ActionBase action) => { action.OnAfterReceiveDamage(damageInfo, amountApply); });
+                else
+                    m_ActionEquiping.Traversal((ActionBase action) => { action.OnReceiveHealing(damageInfo, amountApply); });
             }
         }
 
