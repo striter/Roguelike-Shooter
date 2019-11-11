@@ -361,16 +361,26 @@ public class PE_AreaScanDepth : PostEffectBase
 public class PE_DepthSSAO : PostEffectBase      //Test Currently Uncomplete
 {
     public override DepthTextureMode m_DepthTextureMode => DepthTextureMode.Depth;
-    public void SetEffect(float strength=.8f,float sizeArea=0.1f,float sphereRadius=.01f,int sampleCount=16)
+    public void SetEffect(float strength=.8f,float sizeArea=0.05f,float sphereRadius=.015f)
     {
         m_Material.SetFloat("_Strength", strength);
         m_Material.SetFloat("_SizeArea", sizeArea);
-        m_Material.SetFloat("_FallOff", m_Manager.Get01DepthWidth(sphereRadius));
 
-        Vector4[] array = new Vector4[sampleCount];
-        for (int i = 0; i < sampleCount; i++)
-            array[i] = TCommon.RandomSphere(sphereRadius);
-        m_Material.SetInt("_SampleCount", sampleCount);
+        Vector4[] array = new Vector4[16] {
+       new Vector3( 0.5381f, 0.1856f,-0.4319f),  new Vector3( 0.1379f, 0.2486f, 0.4430f),
+       new Vector3( 0.3371f, 0.5679f,-0.0057f),  new Vector3(-0.6999f,-0.0451f,-0.0019f),
+       new Vector3( 0.0689f,-0.1598f,-0.8547f),  new Vector3( 0.0560f, 0.0069f,-0.1843f),
+       new Vector3(-0.0146f, 0.1402f, 0.0762f),  new Vector3( 0.0100f,-0.1924f,-0.0344f),
+       new Vector3(-0.3577f,-0.5301f,-0.4358f),  new Vector3(-0.3169f, 0.1063f, 0.0158f),
+       new Vector3( 0.0103f,-0.5869f, 0.0046f),  new Vector3(-0.0897f,-0.4940f, 0.3287f),
+       new Vector3( 0.7119f,-0.0154f,-0.0918f),  new Vector3(-0.0533f, 0.0596f,-0.5411f),
+       new Vector3( 0.0352f,-0.0631f, 0.5460f),  new Vector3(-0.4776f, 0.2847f,-0.0271f)
+    };
+        for (int i = 0; i < array.Length; i++)
+            array[i] *= sphereRadius;
+
+        m_Material.SetFloat("_FallOff", m_Manager.Get01DepthWidth(sphereRadius) /3f);
+        m_Material.SetInt("_SampleCount", 16);
         m_Material.SetVectorArray("_SampleSphere", array);
     }
 }
