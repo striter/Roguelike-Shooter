@@ -269,13 +269,11 @@ public class PE_FocalDepth : PostEffectBase
     }
     public void SetFocalTarget(Vector3 focalTarget, float focalWidth)
     {
-        float _01Depth = Get01Depth(focalTarget);
-        float _01Width = Get01DepthWidth(focalWidth);
+        float _01Depth = m_Manager.Get01Depth(focalTarget);
+        float _01Width = m_Manager.Get01DepthWidth(focalWidth);
         m_Material.SetFloat("_FocalDepthStart",_01Depth-_01Width );
         m_Material.SetFloat("_FocalDepthEnd", _01Depth+_01Width);
     }
-    protected float Get01Depth(Vector3 target) =>m_Manager.m_Camera.WorldToViewportPoint(target).z/(m_Manager.m_Camera.farClipPlane-m_Manager.m_Camera.nearClipPlane);
-    protected float Get01DepthWidth(float width) => width / (m_Manager.m_Camera.farClipPlane - m_Manager.m_Camera.nearClipPlane);
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
         m_GaussianBlur.OnRenderImage(source, m_TempTexture);
@@ -363,11 +361,11 @@ public class PE_AreaScanDepth : PostEffectBase
 public class PE_DepthSSAO : PostEffectBase      //Test Currently Uncomplete
 {
     public override DepthTextureMode m_DepthTextureMode => DepthTextureMode.Depth;
-    public void SetEffect(float strength=.8f,float sizeArea=0.1f,float fallOff=0.0000005f,float sphereRadius=.01f,int sampleCount=16)
+    public void SetEffect(float strength=.8f,float sizeArea=0.1f,float sphereRadius=.01f,int sampleCount=16)
     {
         m_Material.SetFloat("_Strength", strength);
         m_Material.SetFloat("_SizeArea", sizeArea);
-        m_Material.SetFloat("_FallOff", fallOff);
+        m_Material.SetFloat("_FallOff", m_Manager.Get01DepthWidth(sphereRadius));
 
         Vector4[] array = new Vector4[sampleCount];
         for (int i = 0; i < sampleCount; i++)

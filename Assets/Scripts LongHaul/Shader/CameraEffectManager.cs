@@ -129,6 +129,9 @@ public class CameraEffectManager :MonoBehaviour, ISingleCoroutine {
     }
 
     #region Calculations
+
+    public float Get01Depth(Vector3 target) => m_Camera.WorldToViewportPoint(target).z / (m_Camera.farClipPlane - m_Camera.nearClipPlane);
+    public float Get01DepthWidth(float width) => width / (m_Camera.farClipPlane - m_Camera.nearClipPlane);
     static readonly int ID_VPMatrixInverse = Shader.PropertyToID("_VPMatrixInverse");
     static readonly int ID_FrustumCornersRayBL = Shader.PropertyToID("_FrustumCornersRayBL");
     static readonly int ID_FrustumCornersRayBR = Shader.PropertyToID("_FrustumCornersRayBR");
