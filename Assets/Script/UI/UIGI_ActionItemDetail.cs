@@ -14,13 +14,17 @@ public class UIGI_ActionItemDetail : UIGI_ActionItemBase {
     public virtual void SetInfo(ActionBase actionInfo,Action<int> _OnClick,bool costable)
     {
         base.SetInfo(actionInfo);
-        m_Intro.formatText(actionInfo.GetIntroLocalizeKey(), actionInfo.F_Duration, actionInfo.Value1, actionInfo.Value2, actionInfo.Value3);
-
         SetOnClick(_OnClick);
         SetCostable(costable);
     }
 
     protected void SetOnClick(Action<int> _OnClick) => OnClick = _OnClick;
+
+    protected override void SetInfo(ActionBase actionInfo)
+    {
+        base.SetInfo(actionInfo);
+        m_Intro.formatText(actionInfo.GetIntroLocalizeKey(), actionInfo.F_Duration, actionInfo.Value1, actionInfo.Value2, actionInfo.Value3);
+    }
 
     void OnButtonClick()
     {

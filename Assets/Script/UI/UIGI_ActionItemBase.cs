@@ -23,7 +23,7 @@ public class UIGI_ActionItemBase : UIT_GridItem {
         m_Cost = tf_Container.Find("Cost/Amount").GetComponent<UIT_TextExtend>();
         m_Name = tf_Container.Find("Name").GetComponent<UIT_TextExtend>();
     }
-    protected void SetInfo(ActionBase actionInfo)
+    protected virtual void SetInfo(ActionBase actionInfo)
     {
         m_Name.localizeKey = actionInfo.GetNameLocalizeKey();
         m_TypeIcon.sprite = UIManager.Instance.m_ActionSprites[actionInfo.m_ActionType.GetIconSprite()];

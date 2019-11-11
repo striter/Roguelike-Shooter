@@ -8,7 +8,7 @@ public class ShaderTest : MonoBehaviour
     public GameObject target;
     void Start ()
     {
-         //GetComponent<CameraEffectManager>().GetOrAddCameraEffect<PE_BloomSpecific>().m_GaussianBlur.SetEffect(3, 5, 4);
+        GetComponent<CameraEffectManager>().GetOrAddCameraEffect<PE_DepthSSAO>();
         //        GetComponent<CameraEffectManager>().GetOrAddCameraEffect<CB_GenerateOpaqueTexture>();
         //PE_FocalDepth focal= GetComponent<CameraEffectManager>().GetOrAddCameraEffect<PE_FocalDepth>();
         //focal.SetEffect(4);
