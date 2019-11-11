@@ -529,7 +529,7 @@ MonoBehaviour:
   B_CameraOffsetWallClip: 0
   B_DrawDebugLine: 0
   m_Effect: {fileID: 0}
-  TPSOffset: {x: 0, y: 22, z: -3}
+  TPSOffset: {x: 0, y: 16, z: -3}
   I_YawMin: 60
   I_YawMax: 60
   I_ShakeParam: 6
