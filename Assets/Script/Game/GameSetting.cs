@@ -816,7 +816,7 @@ namespace GameSetting
         float f_spread;
         float f_reloadTime;
         int i_PelletsPerShot;
-        float f_stunAfterShot;
+        float f_weight;
         float f_recoilHorizontal;
         float f_recoilVertical;
         float f_movementReduction;
@@ -830,7 +830,7 @@ namespace GameSetting
         public float m_Spread => f_spread;
         public float m_ReloadTime => f_reloadTime;
         public int m_PelletsPerShot => i_PelletsPerShot;
-        public float m_stunAfterShot => f_stunAfterShot;
+        public float m_Weight => f_weight;
         public Vector2 m_RecoilPerShot => new Vector2(f_recoilHorizontal, f_recoilVertical);
         public float m_movementReduction => f_movementReduction;
         public float m_RPM => f_RPM;

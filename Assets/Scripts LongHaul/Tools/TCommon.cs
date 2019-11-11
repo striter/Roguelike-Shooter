@@ -410,7 +410,7 @@ public static class TCommon
         return targetLevel;
     }
     public static Vector3 RandomXZSphere(float radius) => Vector3.forward.RotateDirection(Vector3.up, UnityEngine.Random.Range(0, 360)) * UnityEngine.Random.Range(0, radius);
-
+    public static Vector3 RandomSphere(float radius) => new Vector3(UnityEngine.Random.Range(-radius,radius),UnityEngine.Random.Range(-radius,radius),UnityEngine.Random.Range(-radius,radius));
     public static T RandomEnumValues<T>(System.Random _seed)        //Can't Constraint T to System.Enum
     {
         if (!typeof(T).IsSubclassOf(typeof(Enum)))

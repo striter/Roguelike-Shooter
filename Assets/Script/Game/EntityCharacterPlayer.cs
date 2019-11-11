@@ -18,13 +18,14 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public float m_EquipmentDistance { get; private set; }
     public override Transform tf_Weapon => m_WeaponCurrent.m_Case;
     public Transform tf_Status { get; private set; }
-    public override float m_baseMovementSpeed => F_MovementSpeed*( f_movementReductionCheck >0? (1-GameConst.F_AimMovementReduction*m_PlayerInfo.F_AimMovementStrictMultiply):1f);
     public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized* m_CharacterInfo.F_MovementSpeed * time;
     public PlayerInfoManager m_PlayerInfo { get; private set; }
     protected bool m_aiming = false;
     protected float f_movementReductionCheck = 0f;
     protected override enum_GameAudioSFX m_DamageClip => enum_GameAudioSFX.PlayerDamage;
     protected override void ActivateHealthManager(float maxHealth) => m_Health.OnActivate(maxHealth, I_DefaultArmor, true);
+    protected float m_BaseMovementSpeed;
+    public override float m_baseMovementSpeed=> m_BaseMovementSpeed * (f_movementReductionCheck > 0 ? (1 - GameConst.F_AimMovementReduction* m_PlayerInfo.F_AimMovementStrictMultiply) : 1f);
     protected override CharacterInfoManager GetEntityInfo()
     {
         m_PlayerInfo = new PlayerInfoManager(this, m_HitCheck.TryHit, OnExpireChange,OnActionsChange);
@@ -133,15 +134,16 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             return;
 
         bool canFire = !Physics.SphereCast(new Ray(tf_Head.position, tf_Head.forward), .3f, 1.5f, GameLayer.Mask.I_Static);
+        m_BaseMovementSpeed = F_MovementSpeed - m_WeaponCurrent.m_WeaponInfo.m_Weight;
+
         m_WeaponCurrent.Tick(Time.deltaTime, canFire);
+
         m_Assist.SetEnable(canFire);
 
         if(f_movementReductionCheck>0) f_movementReductionCheck -= Time.deltaTime;
         if (m_aiming) f_movementReductionCheck=GameConst.F_MovementReductionDuration;
 
         transform.rotation = Quaternion.Lerp(transform.rotation, CameraController.CameraXZRotation, GameConst.F_PlayerCameraSmoothParam);
-
-        
         Vector3 moveDirection = (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized;
         float movementSpeed = m_CharacterInfo.F_MovementSpeed;
         m_CharacterController.Move((moveDirection * movementSpeed+Vector3.down*GameConst.F_Gravity)*Time.deltaTime);
@@ -149,6 +151,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
         OnCommonStatus();
     }
+
     #region WeaponControll
     void OnReloadDown()
     {
@@ -187,7 +190,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         OnWeaponStatus();
         return previousWeapon;
     }
-#endregion
+
+    #endregion
     #region PlayerControll
     Vector2 m_MoveAxisInput;
     void OnMovementDelta(Vector2 moveDelta)
