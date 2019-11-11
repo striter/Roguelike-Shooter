@@ -105,9 +105,9 @@ public class UIC_PlayerStatus : UIControlBase
         m_WeaponActionRarity = new UIC_RarityLevel_BG(tf_WeaponActionDetail.Find("ActionRarity"));
         tf_WeaponData.Find("WeaponDetailBtn").GetComponent<Button>().onClick.AddListener(() => { UIManager.Instance.ShowPage<UI_WeaponStatus>(true,0f).SetInfo(m_Player.m_WeaponCurrent); });
 
-        m_HealthLerp = new ValueLerpSeconds(0f, 1f,.5f);
-        m_ArmorLerp = new ValueLerpSeconds(0f, 1f,.5f);
-        m_EnergyLerp = new ValueLerpSeconds(0f, 1.5f,.5f);
+        m_HealthLerp = new ValueLerpSeconds(0f, 5f,2.5f);
+        m_ArmorLerp = new ValueLerpSeconds(0f, 5f,2.5f);
+        m_EnergyLerp = new ValueLerpSeconds(0f, 5f, 2.5f);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<WeaponBase>(enum_BC_UIStatus.UI_PlayerAmmoStatus, OnAmmoStatus);
