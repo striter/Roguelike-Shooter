@@ -36,7 +36,7 @@ public class UIGI_ActionItemHold : UIGI_ActionItemBase
             return;
         f_pressDuration += Time.deltaTime;
 
-        if (f_pressDuration > .5f)
+        if (f_pressDuration > UIConst.F_UIActionBattlePressDuration)
         {
             OnPressDuration.Invoke();
             b_pressing = false;
@@ -44,7 +44,7 @@ public class UIGI_ActionItemHold : UIGI_ActionItemBase
     }
     void OnPress(bool down,Vector2 deltaPos)
     {
-        if (!down && f_pressDuration < .5f)
+        if (!down && f_pressDuration < UIConst.F_UIActionBattlePressDuration)
             OnClick.Invoke(I_Index);
         b_pressing = down;
         f_pressDuration = 0;
