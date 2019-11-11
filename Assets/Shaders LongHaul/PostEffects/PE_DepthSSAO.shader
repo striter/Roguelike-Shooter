@@ -70,7 +70,7 @@
 				const float radius = 0.0003;
 
 				const int samples = 16;
-				float3 sample_sphere[samples] = {
+				const float3 sample_sphere[samples] = {
 					float3(0.5381, 0.1856,-0.4319), float3(0.1379, 0.2486, 0.4430),
 					float3(0.3371, 0.5679,-0.0057), float3(-0.6999,-0.0451,-0.0019),
 					float3(0.0689,-0.1598,-0.8547), float3(0.0560, 0.0069,-0.1843),
@@ -102,7 +102,6 @@
 					occlusion += step(falloff, difference) * (1.0 - smoothstep(falloff, area, difference));
 				}
 				float ao = 1-total_strength * occlusion * (1.0 / samples);
-				
 				
 				return lerp( fixed4(col,1), fixed4(0, 0, 0, 1),pow(ao,5));
 			}
