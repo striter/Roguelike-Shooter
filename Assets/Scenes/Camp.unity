@@ -258,7 +258,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1698959631}
-  m_RootOrder: 53
+  m_RootOrder: 54
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!114 &2028287
 MonoBehaviour:
@@ -25860,7 +25860,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1698959631}
-  m_RootOrder: 60
+  m_RootOrder: 50
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!114 &906006457
 MonoBehaviour:
@@ -28998,7 +28998,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1698959631}
-  m_RootOrder: 50
+  m_RootOrder: 51
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!114 &1049496236
 MonoBehaviour:
@@ -33598,7 +33598,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1698959631}
-  m_RootOrder: 51
+  m_RootOrder: 52
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1222602723
 MonoBehaviour:
@@ -39830,7 +39830,7 @@ MonoBehaviour:
   B_CameraOffsetWallClip: 1
   B_DrawDebugLine: 0
   m_Effect: {fileID: 0}
-  TPSOffset: {x: 0, y: 22, z: -3}
+  TPSOffset: {x: 0, y: 16, z: -3}
   I_YawMin: 60
   I_YawMax: 60
   I_ShakeParam: 6
@@ -45479,19 +45479,19 @@ Transform:
   - {fileID: 1944208729}
   - {fileID: 1298624215}
   - {fileID: 861257575}
-  - {fileID: 2014644378}
   - {fileID: 977783701}
+  - {fileID: 2014644378}
+  - {fileID: 906006456}
   - {fileID: 1049496235}
   - {fileID: 1222602722}
   - {fileID: 1189683196}
   - {fileID: 2028286}
-  - {fileID: 487527274}
   - {fileID: 136984075}
   - {fileID: 1433273551}
   - {fileID: 1179399267}
   - {fileID: 706213105}
   - {fileID: 531296373}
-  - {fileID: 906006456}
+  - {fileID: 487527274}
   - {fileID: 1157298559}
   - {fileID: 702722265}
   - {fileID: 1116991835}
@@ -52534,7 +52534,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1698959631}
-  m_RootOrder: 48
+  m_RootOrder: 49
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!114 &2014644379
 MonoBehaviour:
