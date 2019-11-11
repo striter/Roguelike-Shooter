@@ -25,7 +25,6 @@
 			float _Strength;
 			float _SizeArea;
 			float _FallOff;
-			float _SphereRadius;
 			struct v2f
 			{
 				float2 uv : TEXCOORD0;
@@ -69,17 +68,17 @@
 				float depth = tex2D(_CameraDepthTexture, i.uv).r;
 				float3 position = float3(i.uv, depth);
 				float3 normal = normal_from_depth(depth, i.uv);
-				float radius_depth = _SphereRadius / depth;
 				float occlusion = 0;
 				for (int i = 0; i < _SampleCount; i++) {
-					float3 ray = radius_depth *_SampleSphere[i];
+					float3 ray = _SampleSphere[i];
 					float3 hemi_ray = position + sign(dot(ray, normal)) * ray;
 					float occ_depth = tex2D(_CameraDepthTexture, saturate(hemi_ray.xy)).r;
 					float difference = depth - occ_depth;
-					occlusion += occ_depth>0? (step(_FallOff, difference) * (1.0 - smoothstep(_FallOff, _SizeArea, difference))):1;
+					occlusion += step( difference, _FallOff) * (1.0 - smoothstep(_FallOff, _SizeArea, difference));
 				}
-				float ao = 1 - _Strength * occlusion / _SampleCount;
-				return lerp( col, fixed4(0, 0, 0, 1),pow(ao,5));
+				float ao = depth == 0 ? 0: occlusion / _SampleCount;
+				ao = pow(ao,5)*_Strength;
+				return lerp(col,float4(0,0,0,1),ao);
 			}
 			ENDCG
 		}

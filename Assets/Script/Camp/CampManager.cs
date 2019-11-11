@@ -18,6 +18,7 @@ public class CampManager : GameManagerBase
     protected override void OnDisable()
     {
         base.OnDisable();
+        CampFarmManager.Instance.OnCampExit();
         GameDataManager.SaveCampData();
     }
     protected override void OnDestroy()
@@ -29,13 +30,14 @@ public class CampManager : GameManagerBase
     protected override void Start()
     {
         base.Start();
-        CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_BloomSpecific>();
         GameObjectManager.PresetRegistCommonObject();
+        InitPostEffects(enum_Style.Invalid);
         EntityCharacterPlayer player = GameObjectManager.SpawnEntityPlayer(new CPlayerBattleSave());
         player.transform.SetPositionAndRotation(tf_PlayerStart.position, tf_PlayerStart.rotation);
         tf_Player = player.transform;
         AttachPlayerCamera(tf_Player);
         CameraController.Instance.RotateCamera(new Vector2(tf_PlayerStart.eulerAngles.y, 0));
+        CampFarmManager.Instance.OnCampEnter();
     }
 
     public void OnSceneItemInteract(enum_Scene scene)

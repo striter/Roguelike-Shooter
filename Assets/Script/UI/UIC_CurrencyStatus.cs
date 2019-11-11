@@ -15,10 +15,8 @@ public class UIC_CurrencyStatus : UIControlBase {
         base.Init();
         m_Credit = transform.Find("Credit/Data").GetComponent<Text>();
         m_TechPoint = transform.Find("TechPoint/Data").GetComponent<Text>();
-        m_CreditLerp = new ValueLerpSeconds(GameDataManager.m_PlayerCampData.f_Credits, 100f,1f);
-        m_TechPointLerp = new ValueLerpSeconds(GameDataManager.m_PlayerCampData.f_TechPoints, 50f,1f);
-        m_Credit.text = m_CreditLerp.m_value.ToString();
-        m_TechPoint.text = m_TechPointLerp.m_value.ToString();
+        m_CreditLerp = new ValueLerpSeconds(GameDataManager.m_PlayerCampData.f_Credits, 100f,1f,(float value)=> { m_Credit.text = string.Format("{0:N2}",value); });
+        m_TechPointLerp = new ValueLerpSeconds(GameDataManager.m_PlayerCampData.f_TechPoints, 50f,1f,(float value)=> { m_TechPoint.text = ((int)value).ToString(); });
         OnCampStatus();
         TBroadCaster<enum_BC_UIStatus>.Add(enum_BC_UIStatus.UI_CampDataStatus, OnCampStatus);
     }
@@ -29,10 +27,8 @@ public class UIC_CurrencyStatus : UIControlBase {
     }
     private void Update()
     {
-        if (m_CreditLerp.TickDelta(Time.deltaTime))
-            m_Credit.text = ((int)m_CreditLerp.m_value).ToString();
-        if(m_TechPointLerp.TickDelta(Time.deltaTime))
-            m_TechPoint.text = ((int)m_TechPointLerp.m_value).ToString();
+        m_CreditLerp.TickDelta(Time.deltaTime);
+        m_TechPointLerp.TickDelta(Time.deltaTime);
     }
     void OnCampStatus()
     {

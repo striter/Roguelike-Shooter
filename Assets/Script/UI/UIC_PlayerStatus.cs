@@ -105,9 +105,9 @@ public class UIC_PlayerStatus : UIControlBase
         m_WeaponActionRarity = new UIC_RarityLevel_BG(tf_WeaponActionDetail.Find("ActionRarity"));
         tf_WeaponData.Find("WeaponDetailBtn").GetComponent<Button>().onClick.AddListener(() => { UIManager.Instance.ShowPage<UI_WeaponStatus>(true,0f).SetInfo(m_Player.m_WeaponCurrent); });
 
-        m_HealthLerp = new ValueLerpSeconds(0f, 5f,2.5f);
-        m_ArmorLerp = new ValueLerpSeconds(0f, 5f,2.5f);
-        m_EnergyLerp = new ValueLerpSeconds(0f, 5f, 2.5f);
+        m_HealthLerp = new ValueLerpSeconds(0f, 5f,2.5f,(float value)=> { m_HealthFill.fillAmount = value; });
+        m_ArmorLerp = new ValueLerpSeconds(0f, 5f,2.5f, (float value) => { m_ArmorFill.fillAmount = value; });
+        m_EnergyLerp = new ValueLerpSeconds(0f, 5f, 2.5f, (float value) => { m_ActionEnergy.SetValue(value); });
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<WeaponBase>(enum_BC_UIStatus.UI_PlayerAmmoStatus, OnAmmoStatus);
@@ -170,12 +170,9 @@ public class UIC_PlayerStatus : UIControlBase
         if (!m_Player)
             return;
 
-        if (m_EnergyLerp.TickDelta(Time.deltaTime))
-            m_ActionEnergy.SetValue(m_EnergyLerp.m_value);
-        if (m_HealthLerp.TickDelta(Time.deltaTime))
-            m_HealthFill.fillAmount = m_HealthLerp.m_value;
-        if (m_ArmorLerp.TickDelta(Time.deltaTime))
-            m_ArmorFill.fillAmount = m_ArmorLerp.m_value;
+        m_EnergyLerp.TickDelta(Time.deltaTime);
+        m_HealthLerp.TickDelta(Time.deltaTime);
+        m_ArmorLerp.TickDelta(Time.deltaTime);
     }
 
     void OnCommonStatus(EntityCharacterPlayer _player)

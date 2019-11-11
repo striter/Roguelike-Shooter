@@ -603,33 +603,37 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
 
     public class ValueLerpBase
     {
-        public float m_value { get; private set; }
         float m_check;
         float m_duration;
-        public float m_previousValue { get; private set; }
-        public float m_targetValue { get; private set; }
-
-        public ValueLerpBase(float startValue)
+        protected float m_value { get; private set; }
+        protected float m_previousValue { get; private set; }
+        protected float m_targetValue { get; private set; }
+        Action<float> OnValueChanged;
+        public ValueLerpBase(float startValue, Action<float> _OnValueChanged)
         {
             m_targetValue = startValue;
             m_previousValue = startValue;
             m_value = m_targetValue;
+            OnValueChanged = _OnValueChanged;
+            OnValueChanged(m_value);
         }
 
         protected virtual void ChangeValue(float value,float duration)
         {
+            if (value == m_targetValue)
+                return;
             m_duration = duration;
             m_check = m_duration;
             m_previousValue = m_value;
             m_targetValue = value;
         }
-        public bool TickDelta(float deltaTime)
+        public void TickDelta(float deltaTime)
         {
             if (m_check <= 0)
-                return false;
+                return;
             m_check -= Time.deltaTime;
             m_value = GetValue(m_check / m_duration);
-            return true;
+            OnValueChanged(m_value);
         }
         protected virtual float GetValue(float checkLeftParam)
         {
@@ -643,19 +647,14 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
         float m_perSecondValue;
         float m_maxDuration;
         float m_maxDurationValue;
-        public ValueLerpSeconds(float startValue, float perSecondValue,float maxDuration):base(startValue)
+        public ValueLerpSeconds(float startValue, float perSecondValue,float maxDuration, Action<float> _OnValueChanged) :base(startValue,_OnValueChanged)
         {
             m_perSecondValue = perSecondValue;
             m_maxDuration = maxDuration;
             m_maxDurationValue = m_perSecondValue * maxDuration;
         }
 
-        public void ChangeValue(float value)
-        {
-            if ( value== m_targetValue)
-                return;
-            base.ChangeValue(value,Mathf.Abs(value-m_value)> m_maxDurationValue? m_maxDuration : Mathf.Abs((value - m_value)) / m_perSecondValue);
-        }
+        public void ChangeValue(float value)=> base.ChangeValue(value,Mathf.Abs(value-m_value)> m_maxDurationValue? m_maxDuration : Mathf.Abs((value - m_value)) / m_perSecondValue);
         
         protected override float GetValue(float checkLeftParam) => Mathf.Lerp(m_previousValue, m_targetValue, 1 - checkLeftParam);
     }

@@ -363,24 +363,17 @@ public class PE_AreaScanDepth : PostEffectBase
 public class PE_DepthSSAO : PostEffectBase      //Test Currently Uncomplete
 {
     public override DepthTextureMode m_DepthTextureMode => DepthTextureMode.Depth;
-    static readonly int ID_SampleCount = Shader.PropertyToID("_SampleCount");
-    static readonly int ID_SampleSphere = Shader.PropertyToID("_SampleSphere");
-    static readonly int ID_Strength = Shader.PropertyToID("_Strength");
-    static readonly int ID_SizeArea = Shader.PropertyToID("_SizeArea");
-    static readonly int ID_FallOff = Shader.PropertyToID("_FallOff");
-    static readonly int ID_SphereRadius = Shader.PropertyToID("_SphereRadius");
-    public void SetEffect(int sampleCount=16)
+    public void SetEffect(float strength=.8f,float sizeArea=0.1f,float fallOff=0.0000005f,float sphereRadius=.01f,int sampleCount=16)
     {
+        m_Material.SetFloat("_Strength", strength);
+        m_Material.SetFloat("_SizeArea", sizeArea);
+        m_Material.SetFloat("_FallOff", fallOff);
+
         Vector4[] array = new Vector4[sampleCount];
         for (int i = 0; i < sampleCount; i++)
-            array[i] = TCommon.RandomSphere(1f);
-
-        m_Material.SetInt(ID_SampleCount,sampleCount);
-        m_Material.SetVectorArray(ID_SampleSphere, array);
-        m_Material.SetFloat(ID_Strength, 1f);
-        m_Material.SetFloat(ID_SizeArea, 0.01f);
-        m_Material.SetFloat(ID_FallOff, 0.000001f);
-        m_Material.SetFloat(ID_SphereRadius, 0.0003f);
+            array[i] = TCommon.RandomSphere(sphereRadius);
+        m_Material.SetInt("_SampleCount", sampleCount);
+        m_Material.SetVectorArray("_SampleSphere", array);
     }
 }
 #endregion

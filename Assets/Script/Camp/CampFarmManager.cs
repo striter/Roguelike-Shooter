@@ -21,7 +21,7 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
         tf_Status = transform.Find("Status");
         tf_FarmCameraPos = transform.Find("CameraPos");
     }
-    private void Start()
+    public void OnCampEnter()
     {
         TCommon.TraversalEnum((enum_CampFarmItemStatus status) =>
         {
@@ -46,7 +46,7 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
         CampManager.Instance.OnCreditStatus(offcampProfit);
         GameDataManager.SaveCampFarmData(this);
     }
-    private void OnDisable()
+    public void OnCampExit()
     {
         int stampNow = TTimeTools.GetTimeStampNow();
         float endProfit = 0;

@@ -14,7 +14,7 @@ public class UIC_CoinsStatus : UIControlBase {
     {
         base.Init();
         m_Coins = transform.Find("CoinData/Data").GetComponent<Text>();
-        m_CoinLerp = new ValueLerpSeconds(0f, 20f,1f);
+        m_CoinLerp = new ValueLerpSeconds(0f, 20f,1f,(float value)=> { m_Coins.text = ((int)value).ToString(); });
         m_Coins.text = "0";
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
     }
@@ -27,8 +27,7 @@ public class UIC_CoinsStatus : UIControlBase {
 
     private void Update()
     {
-        if (m_CoinLerp.TickDelta(Time.deltaTime))
-            m_Coins.text = ((int)(m_CoinLerp.m_value)).ToString();
+        m_CoinLerp.TickDelta(Time.deltaTime);
     }
 
     void OnCommonStatus(EntityCharacterPlayer _player)
