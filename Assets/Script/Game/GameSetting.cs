@@ -1398,7 +1398,6 @@ namespace GameSetting
                 case enum_ExpireRefreshType.RefreshIdentity:
                     {
                         ExpireBase buffRefresh = m_Expires.Find(p => p.m_Index == buff.m_Index && (p.m_ExpireType == enum_ExpireType.Buff && (p as BuffBase).I_SourceID == buff.I_SourceID));
-                        Debug.Log(sourceID);
                         if (buffRefresh != null)
                             RefreshExpire(buffRefresh);
                         else
