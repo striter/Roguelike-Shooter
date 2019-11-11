@@ -15,15 +15,16 @@ public class UIGI_ActionItemStorage : UIGI_ActionItemSelect {
     public void SetStorageInfo(int actionIndex,ActionStorageData storageData,Action<int> OnItemClick)
     {
         SetOnClick(OnItemClick);
-        UpdateInfo(storageData);
+        UpdateInfo(storageData, actionIndex);
     }
 
-    public void UpdateInfo(ActionStorageData data)
+    public void UpdateInfo(ActionStorageData data, int actionIndex=-1)
     {
         enum_RarityLevel rarity = data.GetRarityLevel();
         bool costable = rarity != enum_RarityLevel.Invalid;
+        if (actionIndex == -1) actionIndex = data.m_Index;
         if (!costable) rarity = enum_RarityLevel.Normal;
-        base.SetInfo(ActionDataManager.CreateAction(data.m_Index,rarity));
+        SetInfo(ActionDataManager.CreateAction(actionIndex,rarity));
         SetCostable(costable);
         SetCount(data);
         SetHighlight(!costable);
