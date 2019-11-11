@@ -235,7 +235,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 45
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -529,7 +529,7 @@ MonoBehaviour:
   B_CameraOffsetWallClip: 0
   B_DrawDebugLine: 0
   m_Effect: {fileID: 0}
-  TPSOffset: {x: 0, y: 16, z: -3}
+  TPSOffset: {x: 0, y: 22, z: -6}
   I_YawMin: 60
   I_YawMax: 60
   I_ShakeParam: 6
