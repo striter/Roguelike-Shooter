@@ -84,9 +84,8 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
     public bool InputRayCheck(Vector2 inputPos, int layerMask, ref RaycastHit rayHit)
     {
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
-        {
             return false;
-        }
+
         Ray r = m_Camera.ScreenPointToRay(inputPos);
 
         if (B_DrawDebugLine)
