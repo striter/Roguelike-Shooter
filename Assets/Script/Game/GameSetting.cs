@@ -199,7 +199,7 @@ namespace GameSetting
 
         public const float F_UIDamageStartOffset = 20f; //血显示区域范围
 
-        public const float F_UIActionBattlePressDuration = .2f; //查看卡片说明长按时间
+        public const float F_UIActionBattlePressDuration = .3f; //查看卡片说明长按时间
     }
 
     public static class UIExpression
