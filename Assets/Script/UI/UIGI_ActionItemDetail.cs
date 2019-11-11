@@ -13,7 +13,7 @@ public class UIGI_ActionItemDetail : UIGI_ActionItemBase {
     }
     public virtual void SetInfo(ActionBase actionInfo,Action<int> _OnClick,bool costable)
     {
-        base.SetInfo(actionInfo);
+        SetInfo(actionInfo);
         SetOnClick(_OnClick);
         SetCostable(costable);
     }
