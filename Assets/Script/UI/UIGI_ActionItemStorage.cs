@@ -12,17 +12,21 @@ public class UIGI_ActionItemStorage : UIGI_ActionItemSelect {
         m_Count = transform.Find("Count").GetComponent<Text>();
     }
 
-    public void SetInfo(int actionIndex,ActionStorageData storageData,Action<int> OnItemClick)
+    public void SetStorageInfo(int actionIndex,ActionStorageData storageData,Action<int> OnItemClick)
     {
-        SetInfo(ActionDataManager.CreateAction(actionIndex, storageData.GetRarityLevel()), OnItemClick, true);
-        SetCount(storageData);
-        SetHighlight(false);
+        SetOnClick(OnItemClick);
+        UpdateInfo(storageData);
     }
 
-    public void SetInfo(ActionStorageData data)
+    public void UpdateInfo(ActionStorageData data)
     {
-        base.SetInfo(ActionDataManager.CreateAction(data.m_Index, data.GetRarityLevel()));
+        enum_RarityLevel rarity = data.GetRarityLevel();
+        bool costable = rarity != enum_RarityLevel.Invalid;
+        if (!costable) rarity = enum_RarityLevel.Normal;
+        base.SetInfo(ActionDataManager.CreateAction(data.m_Index,rarity));
+        SetCostable(costable);
         SetCount(data);
+        SetHighlight(!costable);
     }
     void SetCount(ActionStorageData data)
     {

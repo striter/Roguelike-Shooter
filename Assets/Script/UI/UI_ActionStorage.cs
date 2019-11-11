@@ -43,7 +43,7 @@ public class UI_ActionStorage : UIPageBase {
         {
             int actionIndex = ActionDataManager.m_UseableAction[i];
             ActionStorageData data =m_Data.Find(p => p.m_Index == actionIndex);
-            m_Grid.AddItem(i).SetInfo(actionIndex, data,OnItemClick);
+            m_Grid.AddItem(i).SetStorageInfo(actionIndex, data,OnItemClick);
         }
         SwitchMode(false);
     }
@@ -85,7 +85,7 @@ public class UI_ActionStorage : UIPageBase {
         if (!m_RequestMode||m_RequestIndex==-1)
             return;
 
-        m_Grid.GetItem(m_RequestIndex).SetInfo(ActionStorageRequest(m_RequestIndex));
+        m_Grid.GetItem(m_RequestIndex).UpdateInfo(ActionStorageRequest(m_RequestIndex));
         m_Grid.GetItem(m_RequestIndex).SetHighlight(false);
         m_RequestIndex = -1;
     }

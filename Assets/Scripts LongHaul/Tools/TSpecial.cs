@@ -601,46 +601,63 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
         #endregion
     }
 
-    public class DurationLerp
+    public class ValueLerpBase
     {
         public float m_value { get; private set; }
         float m_check;
         float m_duration;
-        
-        float m_perSecondValue;
+        public float m_previousValue { get; private set; }
+        public float m_targetValue { get; private set; }
 
-        float m_previousValue;
-        float m_targetValue;
-
-        public DurationLerp(float startValue,float perSecondValue)
+        public ValueLerpBase(float startValue)
         {
             m_targetValue = startValue;
             m_previousValue = startValue;
             m_value = m_targetValue;
-            m_perSecondValue = perSecondValue;
         }
 
-        public void ChangeValue(float value,float duration=-1)
+        protected virtual void ChangeValue(float value,float duration)
         {
-            if ( value== m_targetValue)
-                return;
-
-            m_duration = duration<0? Mathf.Abs( (value-m_value))/m_perSecondValue:duration;
+            m_duration = duration;
             m_check = m_duration;
             m_previousValue = m_value;
             m_targetValue = value;
         }
-        
-
-        public bool TickLerp(float deltaTime)
+        public bool TickDelta(float deltaTime)
         {
             if (m_check <= 0)
                 return false;
             m_check -= Time.deltaTime;
-
-            m_value = Mathf.Lerp(m_previousValue, m_targetValue,1-m_check/m_duration);
+            m_value = GetValue(m_check / m_duration);
             return true;
         }
+        protected virtual float GetValue(float checkLeftParam)
+        {
+            Debug.LogError("Override This Please");
+            return 0;
+        }
+    }
+
+    public class ValueLerpSeconds: ValueLerpBase
+    {
+        float m_perSecondValue;
+        float m_maxDuration;
+        float m_maxDurationValue;
+        public ValueLerpSeconds(float startValue, float perSecondValue,float maxDuration):base(startValue)
+        {
+            m_perSecondValue = perSecondValue;
+            m_maxDuration = maxDuration;
+            m_maxDurationValue = m_perSecondValue * maxDuration;
+        }
+
+        public void ChangeValue(float value)
+        {
+            if ( value== m_targetValue)
+                return;
+            base.ChangeValue(value,Mathf.Abs(value-m_value)> m_maxDurationValue? m_maxDuration : Mathf.Abs((value - m_value)) / m_perSecondValue);
+        }
+        
+        protected override float GetValue(float checkLeftParam) => Mathf.Lerp(m_previousValue, m_targetValue, 1 - checkLeftParam);
     }
 }
 #region Extra Structs/Classes
