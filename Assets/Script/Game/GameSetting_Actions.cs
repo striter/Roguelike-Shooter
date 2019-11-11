@@ -284,7 +284,7 @@ namespace GameSetting_Action
         public static float P_40014_RecoilReduction(enum_RarityLevel rarity) => 25f + 25f * (int)rarity;
 
         public static float F_40015_Range(enum_RarityLevel rarity) => 8f;
-        public static float P_40015_HealthDrain(enum_RarityLevel rarity) => 4f * (int)rarity;
+        public static float P_40015_HealthDrain(enum_RarityLevel rarity) => 2f * (int)rarity;
 
         public static float F_40016_EnergyAdditive(enum_RarityLevel rarity) => .1f + .1f * (int)rarity;
 
