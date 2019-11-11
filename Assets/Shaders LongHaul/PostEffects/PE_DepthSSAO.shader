@@ -19,7 +19,6 @@
 
 			sampler2D _MainTex;
 			half4 _MainTex_TexelSize;
-			sampler2D _NoiseTex;
 			sampler2D _CameraDepthTexture;
 			float4 _SampleSphere[32];
 			int _SampleCount;
@@ -68,13 +67,12 @@
 			{
 				float4 col = tex2D(_MainTex, i.uv);
 				float depth = tex2D(_CameraDepthTexture, i.uv).r;
-				float3 random = normalize(tex2D(_NoiseTex, i.uv* 4.0).rgb);
 				float3 position = float3(i.uv, depth);
 				float3 normal = normal_from_depth(depth, i.uv);
 				float radius_depth = _SphereRadius / depth;
 				float occlusion = 0;
 				for (int i = 0; i < _SampleCount; i++) {
-					float3 ray = radius_depth * reflect(_SampleSphere[i], random);
+					float3 ray = radius_depth *_SampleSphere[i];
 					float3 hemi_ray = position + sign(dot(ray, normal)) * ray;
 					float occ_depth = tex2D(_CameraDepthTexture, saturate(hemi_ray.xy)).r;
 					float difference = depth - occ_depth;
