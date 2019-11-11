@@ -64,7 +64,10 @@ namespace GameSetting
         public const int I_CampFarmItemAcquire = 50;
         public const float F_CampFarmItemTickAmount = 0.05f;
 
-        public const int I_CampActionStorageCountPerRarity = 10;
+        public const int I_CampActionStorageNormalCount = 10;
+        public const int I_CampActionStorageOutstandingCount = 30;
+        public const int I_CampActionStorageEpicCount = 60;
+
         public const int I_CampActionCreditGainPerRequestSurplus = 100;
         public const int I_CampActionStorageRequestStampDuration = 30;//36000 //10 hours
     }
@@ -184,6 +187,7 @@ namespace GameSetting
         }
 
         public static readonly RangeInt I_CampActionStorageRequestAmount = new RangeInt(1,4);
+        public static readonly List<int> I_CampActionStorageDefault = new List<int> { 10001, 10002, 10003, 10004, 10005, 10006, 10007, 10008, 10009, 10010 };
     }
 
     public static class UIConst
@@ -577,7 +581,6 @@ namespace GameSetting
     public enum enum_UITipsType { Invalid=-1,Normal=0,Warning=1,Error=2}
     #endregion
     
-
     #region Structs
     #region Default Readonly
     public struct CoinsGenerateData
@@ -611,7 +614,7 @@ namespace GameSetting
     #endregion
 
     #region SaveData
-    public class CPlayerCampSave : ISave
+    public class CPlayerGameSave : ISave
     {
         public float f_Credits;
         public float f_TechPoints;
@@ -619,16 +622,16 @@ namespace GameSetting
         public int m_DifficultyUnlocked;
         public List<ActionStorageData> m_StorageActions;
         public int m_StorageRequestStamp;
-        public CPlayerCampSave()
+        public CPlayerGameSave()
         {
             f_Credits = 0;
             f_TechPoints = 0;
             m_GameDifficulty = 1;
             m_DifficultyUnlocked = 1;
-            m_StorageActions = new List<ActionStorageData>();
             m_StorageRequestStamp = -1;
-            for (int i=10001;i<=10018;i++)
-                m_StorageActions.Add(ActionStorageData.Create(i, 10,true));
+            m_StorageActions = new List<ActionStorageData>();
+            for (int i = 0; i < GameExpression.I_CampActionStorageDefault.Count; i++)
+                m_StorageActions.Add(ActionStorageData.CreateDefault(GameExpression.I_CampActionStorageDefault[i]));
         }
 
         public void UnlockDifficulty()
@@ -667,16 +670,17 @@ namespace GameSetting
         }
     }
 
-    public class CPlayerGameSave : ISave
+    public class CPlayerBattleSave : ISave
     {
         public enum_PlayerWeapon m_weapon;
         public int m_coins;
         public int m_kills;
         public ActionGameData m_weaponAction;
         public List<ActionGameData> m_battleAction;
+        public List<ActionStorageData> m_startAction;
         public string m_GameSeed;
         public enum_StageLevel m_StageLevel;
-        public CPlayerGameSave()
+        public CPlayerBattleSave()
         {
             m_coins = 0;
             m_weapon = enum_PlayerWeapon.P92;
@@ -684,6 +688,7 @@ namespace GameSetting
             m_battleAction = new List<ActionGameData>();
             m_StageLevel = enum_StageLevel.Rookie;
             m_GameSeed = DateTime.Now.ToLongTimeString().ToString();
+            m_startAction = ActionDataManager.CreateRandomPlayerUnlockedAction(GameDataManager.m_PlayerCampData.m_StorageActions, 9);
         }
         public void Adjust(EntityCharacterPlayer _player, GameLevelManager _level)
         {
@@ -691,6 +696,7 @@ namespace GameSetting
             m_weapon = _player.m_WeaponCurrent.m_WeaponInfo.m_Weapon;
             m_weaponAction = ActionGameData.Create(_player.m_WeaponCurrent.m_WeaponAction);
             m_battleAction = ActionGameData.Create(_player.m_PlayerInfo.m_BattleAction);
+            m_startAction = _level.m_startAction;
             m_GameSeed = _level.m_Seed;
             m_StageLevel = _level.m_GameStage;
             m_kills = _level.m_enermiesKilled;
@@ -747,45 +753,38 @@ namespace GameSetting
     {
         public int m_Index { get; private set; }
         public int m_Count { get; private set; }
-        public bool m_Selected { get; private set; }
-        public string ToXMLData() => m_Index.ToString() + "," + m_Count.ToString() + "," + m_Selected.ToString();
+        public string ToXMLData() => m_Index.ToString() + "," + m_Count.ToString();
         public ActionStorageData(string xmlData)
         {
             string[] split = xmlData.Split(',');
             m_Index = int.Parse(split[0]);
             m_Count = int.Parse(split[1]);
-            m_Selected = bool.Parse(split[2]);
         }
-
-        public void SwitchSelected() => m_Selected = !m_Selected;
+        
         public int OnRequestCount(int count)
         {
             m_Count += count;
             int surplus = 0;
-            if (m_Count > (int) enum_RarityLevel.Epic* GameConst.I_CampActionStorageCountPerRarity)
+            if (m_Count >  GameConst.I_CampActionStorageEpicCount)
             {
-                surplus = m_Count - (int)enum_RarityLevel.Epic * GameConst.I_CampActionStorageCountPerRarity;
+                surplus = m_Count - GameConst.I_CampActionStorageEpicCount;
                 m_Count -= surplus;
             }
             return surplus;
-        } 
-        public enum_RarityLevel GetRarityLevel()=> m_Count < GameConst.I_CampActionStorageCountPerRarity ? enum_RarityLevel.Invalid:(enum_RarityLevel)(m_Count / GameConst.I_CampActionStorageCountPerRarity);
-
-        public static Dictionary<int,enum_RarityLevel> GetPlayerActionSelectedData(List<ActionStorageData> data)
-        {
-            Dictionary<int, enum_RarityLevel> selectedData = new Dictionary<int, enum_RarityLevel>();
-            for(int i=0;i<data.Count;i++)
-            {
-                if (!data[i].m_Selected)
-                    continue;
-                enum_RarityLevel rarity = data[i].GetRarityLevel();
-                if (rarity == enum_RarityLevel.Invalid)
-                    Debug.LogError("Invalid Save Data! Selected Count Can't Less Than 10!");
-                selectedData.Add(data[i].m_Index, rarity);
-            }
-            return selectedData;
         }
-        public static ActionStorageData Create(int index, int count, bool selected) => new ActionStorageData { m_Index = index, m_Count = count, m_Selected = selected };
+        public enum_RarityLevel GetRarityLevel()
+        {
+            if (m_Count >= GameConst.I_CampActionStorageEpicCount)
+                return enum_RarityLevel.Epic;
+            else if (m_Count >= GameConst.I_CampActionStorageOutstandingCount)
+                return enum_RarityLevel.OutStanding;
+            else if (m_Count >= GameConst.I_CampActionStorageNormalCount)
+                return enum_RarityLevel.Normal;
+            return enum_RarityLevel.Invalid;
+        } 
+        
+        public static ActionStorageData CreateDefault(int index) => new ActionStorageData { m_Index = index, m_Count = GameConst.I_CampActionStorageNormalCount };
+        public static ActionStorageData CreateNewData(int index) => new ActionStorageData { m_Index = index, m_Count = 0 };
     }
 
     public struct CampFarmPlotData : IXmlPhrase

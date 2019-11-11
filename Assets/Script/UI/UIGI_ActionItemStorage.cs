@@ -12,16 +12,33 @@ public class UIGI_ActionItemStorage : UIGI_ActionItemSelect {
         m_Count = transform.Find("Count").GetComponent<Text>();
     }
 
-    public void SetInfo(int actionIndex,ActionStorageData storageData,Action<int> OnItemClick)
+    public void SetStorageInfo(int actionIndex,ActionStorageData storageData,Action<int> OnItemClick)
     {
-        SetInfo(ActionDataManager.CreateAction(actionIndex, storageData.GetRarityLevel()), OnItemClick, true);
-        m_Count.text = storageData.m_Count.ToString();
-        SetHighlight(false);
+        SetOnClick(OnItemClick);
+        UpdateInfo(storageData, actionIndex);
     }
 
-    public void SetInfo(ActionStorageData data)
+    public void UpdateInfo(ActionStorageData data, int actionIndex=-1)
     {
-        base.SetInfo(ActionDataManager.CreateAction(data.m_Index, data.GetRarityLevel()));
-        m_Count.text = data.m_Count.ToString();
+        enum_RarityLevel rarity = data.GetRarityLevel();
+        bool costable = rarity != enum_RarityLevel.Invalid;
+        if (actionIndex == -1) actionIndex = data.m_Index;
+        if (!costable) rarity = enum_RarityLevel.Normal;
+        SetInfo(ActionDataManager.CreateAction(actionIndex,rarity));
+        SetCostable(costable);
+        SetCount(data);
+        SetHighlight(!costable);
+    }
+    void SetCount(ActionStorageData data)
+    {
+        enum_RarityLevel rarity = data.GetRarityLevel();
+        if (rarity == enum_RarityLevel.Normal)
+            m_Count.text = data.m_Count.ToString() + "/" + GameConst.I_CampActionStorageOutstandingCount.ToString();
+        else if (rarity == enum_RarityLevel.OutStanding)
+            m_Count.text = data.m_Count.ToString() + "/" + GameConst.I_CampActionStorageEpicCount.ToString();
+        else if (rarity == enum_RarityLevel.Epic)
+            m_Count.text = "Epic!";
+        else
+            m_Count.text = data.m_Count.ToString() + "/" + GameConst.I_CampActionStorageNormalCount.ToString();
     }
 }

@@ -212,23 +212,23 @@ public static class GameDataManager
         Properties<SBuff>.Init();
         SheetProperties<SGenerateEntity>.Init();
 
-        TGameData<CPlayerCampSave>.Init();
-        TGameData<CCampFarmSave>.Init();
         TGameData<CPlayerGameSave>.Init();
+        TGameData<CCampFarmSave>.Init();
+        TGameData<CPlayerBattleSave>.Init();
     }
     #region GameSave
-    public static CPlayerCampSave m_PlayerCampData => TGameData<CPlayerCampSave>.Data;
+    public static CPlayerGameSave m_PlayerCampData => TGameData<CPlayerGameSave>.Data;
     public static CCampFarmSave m_CampFarmData => TGameData<CCampFarmSave>.Data;
-    public static CPlayerGameSave m_PlayerGameData => TGameData<CPlayerGameSave>.Data;
+    public static CPlayerBattleSave m_PlayerGameData => TGameData<CPlayerBattleSave>.Data;
     public static void AdjustInGameData(EntityCharacterPlayer data, GameLevelManager level)
     {
         m_PlayerGameData.Adjust(data, level);
-        TGameData<CPlayerGameSave>.Save();
+        TGameData<CPlayerBattleSave>.Save();
     }
     public static void OnGameFinished(bool win)
     {
-        TGameData<CPlayerGameSave>.Reset();
-        TGameData<CPlayerGameSave>.Save();
+        TGameData<CPlayerBattleSave>.Reset();
+        TGameData<CPlayerBattleSave>.Save();
 
         if (!win)
             return;
@@ -236,7 +236,7 @@ public static class GameDataManager
         TGameData<CCampFarmSave>.Save();
 
         m_PlayerCampData.UnlockDifficulty();
-        TGameData<CPlayerCampSave>.Save();
+        TGameData<CPlayerGameSave>.Save();
     }
     public static bool CanUseCredit(float credit) => m_PlayerCampData.f_Credits >= credit;
     public static void OnCreditStatus(float credit,bool inGameSaveData)
@@ -245,7 +245,7 @@ public static class GameDataManager
             return;
         m_PlayerCampData.f_Credits += credit;
         if(inGameSaveData)
-            TGameData<CPlayerCampSave>.Save();
+            TGameData<CPlayerGameSave>.Save();
     }
 
     public static bool CanUseTechPoint(float techPoint) => m_PlayerCampData.f_TechPoints >= techPoint;
@@ -254,12 +254,12 @@ public static class GameDataManager
         if (techPoint == 0)
             return;
         m_PlayerCampData.f_TechPoints += techPoint;
-        TGameData<CPlayerCampSave>.Save();
+        TGameData<CPlayerGameSave>.Save();
     }
 
     public static void SaveCampData()
     {
-        TGameData<CPlayerCampSave>.Save();
+        TGameData<CPlayerGameSave>.Save();
     }
 
     public static int OnCampDifficultySwitch()
@@ -283,7 +283,7 @@ public static class GameDataManager
     
     public static void SaveActionStorageData()
     {
-        TGameData<CPlayerCampSave>.Save();
+        TGameData<CPlayerGameSave>.Save();
     }
 
     #endregion
@@ -372,21 +372,20 @@ public static class ActionDataManager
         }
         return actions;
     }
-    public static List<ActionBase> CreateRandomSelectedPlayerAction(List<ActionStorageData> actionSelectData,int actionCount, System.Random seed)
+    public static List<ActionStorageData> CreateRandomPlayerUnlockedAction(List<ActionStorageData> actionUnlockData,int actionCount)
     {
-        Dictionary<int, enum_RarityLevel> m_selectData = ActionStorageData.GetPlayerActionSelectedData(actionSelectData);
-        List<ActionBase> actions = new List<ActionBase>();
+        List<ActionStorageData> actions = new List<ActionStorageData>();
         for (int i = 0; i < actionCount; i++)
         {
-            m_selectData.TraversalRandom((int index, enum_RarityLevel rarity) =>
+            actionUnlockData.TraversalRandom((ActionStorageData action) =>
             {
-                if (actions.Find(p => p.m_Index == index) == null)
+                if (actions.Find(p => p.m_Index == action.m_Index) .m_Index<=0)
                 {
-                    actions.Add(CreateAction(index, rarity));
+                    actions.Add(action);
                     return true;
                 }
                 return false;
-            }, seed);
+            });
         }
         return actions;
     }

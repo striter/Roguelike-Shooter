@@ -89,8 +89,8 @@ public class UI_MapControl : UIPageBase {
 
     void OnConfirmBtnClick()
     {
-        LevelManager.Instance.OnChangeLevel(m_targetTile.m_TileInfo.m_TileAxis);
         OnCancelBtnClick();
+        GameManager.Instance.ChangeLevel(m_targetTile.m_TileInfo.m_TileAxis);
     }
     float width = 0;
     float angle = 0;

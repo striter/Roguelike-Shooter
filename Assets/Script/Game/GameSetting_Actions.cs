@@ -13,17 +13,17 @@ namespace GameSetting_Action
         public static int P_10001_ClipMultiply(enum_RarityLevel rarity) => 50 * (int)rarity;
 
         public const int I_10002_Cost = 1;
-        public const float F_10002_Duration = 5f;
-        public static float F_10002_ArmorReceive(enum_RarityLevel rarity) => 2.4f * (int)rarity;
+        public const float F_10002_Duration = 10f;
+        public static float F_10002_ArmorReceive(enum_RarityLevel rarity) => 1f * (int)rarity;
 
         public const int I_10003_Cost = 2;
-        public const float F_10003_Duration = 20f;
-        public static float P_10003_FirerateMultiplyPerMile(enum_RarityLevel rarity) => 12f * ((int)rarity);
+        public const float F_10003_Duration = 15f;
+        public static float P_10003_FirerateMultiplyPerMile(enum_RarityLevel rarity) => 11f * ((int)rarity);
         public const int I_10003_MaxStackAmount = 30;
 
         public const int I_10004_Cost = 2;
-        public static float F_10004_Duration = 5f;
-        public static float F_10004_EnergyAdditivePerMile(enum_RarityLevel rarity) => .1f + .05f * (int)rarity;
+        public static float F_10004_Duration = 10f;
+        public static float F_10004_EnergyAdditivePerMile(enum_RarityLevel rarity) => 0.05f + 0.025f * (int)rarity;
 
         public const int I_10005_Cost = 2;
         public static int P_10005_OnFire_DamageMultiply(enum_RarityLevel rarity) => 140 * (int)rarity;
@@ -99,7 +99,7 @@ namespace GameSetting_Action
         public static float F_10022_Duration(enum_RarityLevel rarity) => 4f + 2f * (int)rarity;
         public const float P_10022_HealthRegenTranslateFromDamage = 100;
 
-        public const int I_10023_Cost = 1;
+        public const int I_10023_Cost = 2;
         public static float F_10023_ReviveHealthRegen(enum_RarityLevel rarity) => 20 * (int)rarity;
 
         public const int I_10024_Cost = 1;

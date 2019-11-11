@@ -43,7 +43,7 @@ public class UI_ActionStorage : UIPageBase {
         {
             int actionIndex = ActionDataManager.m_UseableAction[i];
             ActionStorageData data =m_Data.Find(p => p.m_Index == actionIndex);
-            m_Grid.AddItem(i).SetInfo(actionIndex, data,OnItemClick);
+            m_Grid.AddItem(i).SetStorageInfo(actionIndex, data,OnItemClick);
         }
         SwitchMode(false);
     }
@@ -62,7 +62,7 @@ public class UI_ActionStorage : UIPageBase {
             else
             {
                 int dataIndex = GetValidActionStorageIndex(i);
-                highLight = dataIndex != -1 && m_Data[dataIndex].m_Selected;
+                highLight = dataIndex != -1 && m_Data[dataIndex].GetRarityLevel()>= enum_RarityLevel.Normal;
             }
 
             m_Grid.GetItem(i).SetHighlight(highLight);
@@ -71,16 +71,13 @@ public class UI_ActionStorage : UIPageBase {
 
     void OnItemClick(int index)
     {
-        UIGI_ActionItemStorage item = m_Grid.GetItem(index);
-        if (m_RequestMode)
-        {
-            if (m_RequestIndex != -1)
-                m_Grid.GetItem(m_RequestIndex).SetHighlight(false);
-            m_RequestIndex = index;
-            item.SetHighlight(true);
+        if (!m_RequestMode)
             return;
-        }
-        item.SetHighlight(ActionStorageSelect(index));
+
+        if (m_RequestIndex != -1)
+            m_Grid.GetItem(m_RequestIndex).SetHighlight(false);
+        m_RequestIndex = index;
+        m_Grid.GetItem(m_RequestIndex).SetHighlight(true);
     }
 
     void OnRequestClick()
@@ -88,7 +85,7 @@ public class UI_ActionStorage : UIPageBase {
         if (!m_RequestMode||m_RequestIndex==-1)
             return;
 
-        m_Grid.GetItem(m_RequestIndex).SetInfo(ActionStorageRequest(m_RequestIndex));
+        m_Grid.GetItem(m_RequestIndex).UpdateInfo(ActionStorageRequest(m_RequestIndex));
         m_Grid.GetItem(m_RequestIndex).SetHighlight(false);
         m_RequestIndex = -1;
     }
@@ -100,20 +97,6 @@ public class UI_ActionStorage : UIPageBase {
         OnCancelClick();
     }
 
-
-    bool ActionStorageSelect(int index)
-    {
-        int dataIndex = GetValidActionStorageIndex(index);
-        if (dataIndex != -1)
-        {
-            ActionStorageData data =m_Data[dataIndex];
-            data.SwitchSelected();
-            m_Data[dataIndex] = data;
-            return data.m_Selected;
-        }
-        return false;
-    }
-
     ActionStorageData ActionStorageRequest(int index)
     {
         int actionIndex = ActionDataManager.m_UseableAction[index];
@@ -121,7 +104,7 @@ public class UI_ActionStorage : UIPageBase {
         int dataIndex = m_Data.FindIndex(p => p.m_Index == actionIndex);
         if (dataIndex == -1)
         {
-            m_Data.Add(ActionStorageData.Create(actionIndex, 0, false));
+            m_Data.Add(ActionStorageData.CreateNewData(actionIndex));
             dataIndex = m_Data.Count - 1;
         }
         ActionStorageData data = m_Data[dataIndex];

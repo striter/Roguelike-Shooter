@@ -8,16 +8,17 @@ using UnityEngine.UI;
 public class UIC_CoinsStatus : UIControlBase {
 
     Text m_Coins;
-    DurationLerp m_CoinLerp;
+    ValueLerpSeconds m_CoinLerp;
 
     protected override void Init()
     {
         base.Init();
         m_Coins = transform.Find("CoinData/Data").GetComponent<Text>();
-        m_CoinLerp = new DurationLerp(0f, 1f);
+        m_CoinLerp = new ValueLerpSeconds(0f, 20f,1f);
         m_Coins.text = "0";
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
     }
+
     protected override void OnDestroy()
     {
         base.OnDestroy();
@@ -26,7 +27,7 @@ public class UIC_CoinsStatus : UIControlBase {
 
     private void Update()
     {
-        if (m_CoinLerp.TickLerp(Time.deltaTime))
+        if (m_CoinLerp.TickDelta(Time.deltaTime))
             m_Coins.text = ((int)(m_CoinLerp.m_value)).ToString();
     }
 

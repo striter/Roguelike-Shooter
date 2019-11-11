@@ -47,9 +47,12 @@ public class LevelManager : SimpleSingletonMono<LevelManager>,ISingleCoroutine {
         StyleColorData[] customizations = TResources.GetAllStyleCustomization(_LevelStyle);
         StyleColorData randomData= customizations.Length == 0? StyleColorData.Default():customizations.RandomItem(m_mainSeed);
         randomData.DataInit(m_DirectionalLight);
-        StaticBatchingUtility.Combine(tf_LevelParent.gameObject);
         m_MapLevelInfo.Traversal((SBigmapLevelInfo info) =>
         {
+            if (!info.m_Level)
+                return;
+
+            StaticBatchingUtility.Combine(info.m_Level.tf_LevelItem.gameObject);
             info.SetLevelShow(false);
         });
     }
@@ -70,7 +73,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager>,ISingleCoroutine {
         m_currentLevel.SetTileLocking(enum_TileLocking.Unlocked);
     }
 
-    public void OnChangeLevel(TileAxis targetAxis)
+    public void ChangeLevel(TileAxis targetAxis)
     {
         if (m_currentLevel.m_TileAxis == targetAxis)
             return;

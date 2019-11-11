@@ -15,10 +15,12 @@ public class UIGI_ActionItemDetail : UIGI_ActionItemBase {
     {
         base.SetInfo(actionInfo);
         m_Intro.formatText(actionInfo.GetIntroLocalizeKey(), actionInfo.F_Duration, actionInfo.Value1, actionInfo.Value2, actionInfo.Value3);
-        OnClick = _OnClick;
 
+        SetOnClick(_OnClick);
         SetCostable(costable);
     }
+
+    protected void SetOnClick(Action<int> _OnClick) => OnClick = _OnClick;
 
     void OnButtonClick()
     {
