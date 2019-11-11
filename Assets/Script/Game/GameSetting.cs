@@ -581,7 +581,6 @@ namespace GameSetting
     public enum enum_UITipsType { Invalid=-1,Normal=0,Warning=1,Error=2}
     #endregion
     
-
     #region Structs
     #region Default Readonly
     public struct CoinsGenerateData
