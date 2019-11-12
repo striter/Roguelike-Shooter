@@ -11,7 +11,7 @@ public class UI_ActionStorage : UIPageBase {
     Action OnCancelClick;
     Button btn_request, btn_switchMode;
     Text txt_request, txt_switchMode;
-    List<ActionStorageData> m_Data=> GameDataManager.m_PlayerCampData.m_StorageActions;
+    List<ActionStorageData> m_Data=> GameDataManager.m_GameData.m_StorageActions;
     bool m_RequestMode;
     int m_RequestIndex = -1;
     protected override void Init(bool useAnim)
@@ -111,12 +111,12 @@ public class UI_ActionStorage : UIPageBase {
         int countSurplus= data.OnRequestCount(GameExpression.I_CampActionStorageRequestAmount.Random());
         m_Data[dataIndex] = data;
         CampManager.Instance.OnCreditStatus(countSurplus *GameConst.I_CampActionCreditGainPerRequestSurplus);
-        GameDataManager.m_PlayerCampData.m_StorageRequestStamp = TTimeTools.GetTimeStampNow();
+        GameDataManager.m_GameData.m_StorageRequestStamp = TTimeTools.GetTimeStampNow();
         GameDataManager.SaveActionStorageData();
         return data;
     }
     
-    int GetActionStorageRequestTimeLeft(int stampNow) => GameDataManager.m_PlayerCampData.m_StorageRequestStamp + GameConst.I_CampActionStorageRequestStampDuration - stampNow;
+    int GetActionStorageRequestTimeLeft(int stampNow) => GameDataManager.m_GameData.m_StorageRequestStamp + GameConst.I_CampActionStorageRequestStampDuration - stampNow;
     int GetValidActionStorageIndex(int index)
     {
         int actionIndex = ActionDataManager.m_UseableAction[index];

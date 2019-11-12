@@ -618,7 +618,7 @@ namespace GameSetting
     #endregion
 
     #region SaveData
-    public class CPlayerGameSave : ISave
+    public class CGameSave : ISave
     {
         public float f_Credits;
         public float f_TechPoints;
@@ -626,7 +626,7 @@ namespace GameSetting
         public int m_DifficultyUnlocked;
         public List<ActionStorageData> m_StorageActions;
         public int m_StorageRequestStamp;
-        public CPlayerGameSave()
+        public CGameSave()
         {
             f_Credits = 0;
             f_TechPoints = 0;
@@ -648,11 +648,11 @@ namespace GameSetting
         }
     }
 
-    public class CCampFarmSave : ISave
+    public class CFarmSave : ISave
     {
         public int m_OffsiteProfitStamp;
         public List<CampFarmPlotData> m_PlotStatus;
-        public CCampFarmSave()
+        public CFarmSave()
         {
             m_OffsiteProfitStamp = TTime.TTimeTools.GetTimeStampNow();
             m_PlotStatus = new List<CampFarmPlotData>() { CampFarmPlotData.Create( enum_CampFarmItemStatus.Empty), CampFarmPlotData.Create(enum_CampFarmItemStatus.Empty), CampFarmPlotData.Create(enum_CampFarmItemStatus.Empty), CampFarmPlotData.Create(enum_CampFarmItemStatus.Locked), CampFarmPlotData.Create(enum_CampFarmItemStatus.Locked), CampFarmPlotData.Create(enum_CampFarmItemStatus.Locked) };
@@ -674,7 +674,7 @@ namespace GameSetting
         }
     }
 
-    public class CPlayerBattleSave : ISave
+    public class CBattleSave : ISave
     {
         public enum_PlayerWeapon m_weapon;
         public int m_coins;
@@ -684,7 +684,7 @@ namespace GameSetting
         public List<ActionStorageData> m_startAction;
         public string m_GameSeed;
         public enum_StageLevel m_StageLevel;
-        public CPlayerBattleSave()
+        public CBattleSave()
         {
             m_coins = 0;
             m_weapon = enum_PlayerWeapon.P92;
@@ -692,7 +692,7 @@ namespace GameSetting
             m_battleAction = new List<ActionGameData>();
             m_StageLevel = enum_StageLevel.Rookie;
             m_GameSeed = DateTime.Now.ToLongTimeString().ToString();
-            m_startAction = ActionDataManager.CreateRandomPlayerUnlockedAction(GameDataManager.m_PlayerCampData.m_StorageActions, 9);
+            m_startAction = ActionDataManager.CreateRandomPlayerUnlockedAction(GameDataManager.m_GameData.m_StorageActions, 9);
         }
         public void Adjust(EntityCharacterPlayer _player, GameLevelManager _level)
         {

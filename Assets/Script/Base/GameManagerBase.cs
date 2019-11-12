@@ -212,78 +212,78 @@ public static class GameDataManager
         Properties<SBuff>.Init();
         SheetProperties<SGenerateEntity>.Init();
 
-        TGameData<CPlayerGameSave>.Init();
-        TGameData<CCampFarmSave>.Init();
-        TGameData<CPlayerBattleSave>.Init();
+        TGameData<CGameSave>.Init();
+        TGameData<CFarmSave>.Init();
+        TGameData<CBattleSave>.Init();
     }
     #region GameSave
-    public static CPlayerGameSave m_PlayerCampData => TGameData<CPlayerGameSave>.Data;
-    public static CCampFarmSave m_CampFarmData => TGameData<CCampFarmSave>.Data;
-    public static CPlayerBattleSave m_PlayerGameData => TGameData<CPlayerBattleSave>.Data;
+    public static CGameSave m_GameData => TGameData<CGameSave>.Data;
+    public static CFarmSave m_CampFarmData => TGameData<CFarmSave>.Data;
+    public static CBattleSave m_BattleData => TGameData<CBattleSave>.Data;
     public static void AdjustInGameData(EntityCharacterPlayer data, GameLevelManager level)
     {
-        m_PlayerGameData.Adjust(data, level);
-        TGameData<CPlayerBattleSave>.Save();
+        m_BattleData.Adjust(data, level);
+        TGameData<CBattleSave>.Save();
     }
     public static void OnGameFinished(bool win)
     {
-        TGameData<CPlayerBattleSave>.Reset();
-        TGameData<CPlayerBattleSave>.Save();
+        TGameData<CBattleSave>.Reset();
+        TGameData<CBattleSave>.Save();
 
         if (!win)
             return;
-        m_CampFarmData.UnlockPlot(m_PlayerCampData.m_GameDifficulty);
-        TGameData<CCampFarmSave>.Save();
+        m_CampFarmData.UnlockPlot(m_GameData.m_GameDifficulty);
+        TGameData<CFarmSave>.Save();
 
-        m_PlayerCampData.UnlockDifficulty();
-        TGameData<CPlayerGameSave>.Save();
+        m_GameData.UnlockDifficulty();
+        TGameData<CGameSave>.Save();
     }
-    public static bool CanUseCredit(float credit) => m_PlayerCampData.f_Credits >= credit;
+    public static bool CanUseCredit(float credit) => m_GameData.f_Credits >= credit;
     public static void OnCreditStatus(float credit,bool inGameSaveData)
     {
         if (credit == 0)
             return;
-        m_PlayerCampData.f_Credits += credit;
+        m_GameData.f_Credits += credit;
         if(inGameSaveData)
-            TGameData<CPlayerGameSave>.Save();
+            TGameData<CGameSave>.Save();
     }
 
-    public static bool CanUseTechPoint(float techPoint) => m_PlayerCampData.f_TechPoints >= techPoint;
+    public static bool CanUseTechPoint(float techPoint) => m_GameData.f_TechPoints >= techPoint;
     public static void OnTechPointStatus(float techPoint)
     {
         if (techPoint == 0)
             return;
-        m_PlayerCampData.f_TechPoints += techPoint;
-        TGameData<CPlayerGameSave>.Save();
+        m_GameData.f_TechPoints += techPoint;
+        TGameData<CGameSave>.Save();
     }
 
     public static void SaveCampData()
     {
-        TGameData<CPlayerGameSave>.Save();
+        TGameData<CGameSave>.Save();
     }
 
     public static int OnCampDifficultySwitch()
     {
-        m_PlayerCampData.m_GameDifficulty += 1;
-        if (m_PlayerCampData.m_GameDifficulty > m_PlayerCampData.m_DifficultyUnlocked)
-            m_PlayerCampData.m_GameDifficulty = 1;
-        return m_PlayerCampData.m_GameDifficulty;
+        m_GameData.m_GameDifficulty += 1;
+        if (m_GameData.m_GameDifficulty > m_GameData.m_DifficultyUnlocked)
+            m_GameData.m_GameDifficulty = 1;
+        return m_GameData.m_GameDifficulty;
     }
 
     public static void RecreateCampFarmData()
     {
-        TGameData<CCampFarmSave>.Reset();
-        TGameData<CCampFarmSave>.Save();
+        TGameData<CFarmSave>.Reset();
+        TGameData<CFarmSave>.Save();
     }
     public static void SaveCampFarmData(CampFarmManager farmManager)
     {
         m_CampFarmData.Save(farmManager);
-        TGameData<CCampFarmSave>.Save();
+        TGameData<CFarmSave>.Save();
     }
     
     public static void SaveActionStorageData()
     {
-        TGameData<CPlayerGameSave>.Save();
+        TGameData<CGameSave>.Save();
     }
 
     #endregion

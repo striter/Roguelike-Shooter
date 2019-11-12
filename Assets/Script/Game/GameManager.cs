@@ -138,7 +138,9 @@ public class GameManager : GameManagerBase
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityDeactivate, OnEntityRecycle);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterRevive, OnCharacterRevive);
-        m_GameLevel = M_TESTSEED != "" ? new GameLevelManager(M_TESTSEED, enum_StageLevel.Rookie, 1) : new GameLevelManager(GameDataManager.m_PlayerCampData,GameDataManager.m_PlayerGameData);
+        if (M_TESTSEED!="")
+            GameDataManager.m_BattleData.m_GameSeed = M_TESTSEED;
+        m_GameLevel =  new GameLevelManager(GameDataManager.m_GameData,GameDataManager.m_BattleData);
     }
     protected override void OnDestroy()
     {
@@ -175,7 +177,7 @@ public class GameManager : GameManagerBase
         EntityPreset();
         m_GameLevel.OnStageBegin();
         m_Enermies = GameObjectManager.RegistStyledIngameEnermies(m_GameLevel.m_GameStyle, m_GameLevel.m_GameStage);
-        m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_PlayerGameData);
+        m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_BattleData);
         CameraController.Instance.Attach(m_LocalPlayer.transform, true);
         LevelManager.Instance.GenerateAllEnviorment(m_GameLevel.m_GameStyle, m_GameLevel.m_GameSeed, OnLevelChanged, OnStageFinished,SpawnLevelInteracts);
         InitPostEffects(m_GameLevel.m_GameStyle);
@@ -587,22 +589,19 @@ public class GameLevelManager
     int m_levelEntered;
     int m_battleLevelEntered;
     #endregion
-    public GameLevelManager(CPlayerGameSave _gameSave,CPlayerBattleSave _battleSave):this(_battleSave.m_GameSeed, _battleSave.m_StageLevel, _gameSave.m_GameDifficulty)
+    public GameLevelManager(CGameSave _gameSave,CBattleSave _battleSave)
     {
         m_enermiesKilled = _battleSave.m_kills;
         m_startAction = _battleSave.m_startAction;
-    }
-    public GameLevelManager(string _seed,enum_StageLevel _stage, int _gameDifficulty)
-    {
-        m_Seed =  _seed;
-        m_GameSeed = new System.Random( m_Seed.GetHashCode());
-        m_GameStage = _stage;
-        m_GameDifficulty = _gameDifficulty;
+        m_Seed =_battleSave.m_GameSeed;
+        m_GameSeed = new System.Random(m_Seed.GetHashCode());
+        m_GameStage = _battleSave.m_StageLevel;
+        m_GameDifficulty = _gameSave.m_GameDifficulty;
         List<enum_Style> styleList = TCommon.EnumList<enum_Style>();
         TCommon.TraversalEnum((enum_StageLevel level) => {
             enum_Style style = styleList.RandomItem(m_GameSeed);
             styleList.Remove(style);
-            m_StageStyle.Add(level,style);
+            m_StageStyle.Add(level, style);
         });
     }
     public void OnStageBegin()
@@ -757,7 +756,7 @@ public static class GameObjectManager
         return entity;
     }
     public static EntityCharacterBase SpawnEntityCharacter(int poolIndex, Vector3 toPosition, enum_EntityFlag _flag,int spawnerID=-1, float _startHealth = 0, Transform parentTrans = null) => SpawnEntity<EntityCharacterBase>(poolIndex,toPosition,_flag,spawnerID,_startHealth,parentTrans);
-    public static EntityCharacterPlayer SpawnEntityPlayer(CPlayerBattleSave playerSave)
+    public static EntityCharacterPlayer SpawnEntityPlayer(CBattleSave playerSave)
     {
         EntityCharacterPlayer player = SpawnEntity<EntityCharacterPlayer>(0,Vector3.up*10f, enum_EntityFlag.Player,-1,0);
         player.SetPlayerInfo(playerSave.m_coins, ActionDataManager.CreateActions(playerSave.m_battleAction));

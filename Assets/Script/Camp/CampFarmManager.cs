@@ -111,7 +111,7 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
 
     void OnFarmBuy(int plotIndex)
     {
-        if (m_Plots[plotIndex].m_Status != enum_CampFarmItemStatus.Empty || GameDataManager.m_PlayerCampData.f_Credits < GameConst.I_CampFarmItemAcquire)
+        if (m_Plots[plotIndex].m_Status != enum_CampFarmItemStatus.Empty || GameDataManager.m_GameData.f_Credits < GameConst.I_CampFarmItemAcquire)
             return;
 
         m_Plots[plotIndex].Hybrid(TCommon.RandomPercentage(GameExpression.GetFarmGeneratePercentage));

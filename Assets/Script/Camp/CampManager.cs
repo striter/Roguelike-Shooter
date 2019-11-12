@@ -32,7 +32,7 @@ public class CampManager : GameManagerBase
         base.Start();
         GameObjectManager.PresetRegistCommonObject();
         InitPostEffects(enum_Style.Invalid);
-        EntityCharacterPlayer player = GameObjectManager.SpawnEntityPlayer(new CPlayerBattleSave());
+        EntityCharacterPlayer player = GameObjectManager.SpawnEntityPlayer(new CBattleSave());
         player.transform.SetPositionAndRotation(tf_PlayerStart.position, tf_PlayerStart.rotation);
         tf_Player = player.transform;
         AttachPlayerCamera(tf_Player);
