@@ -969,7 +969,7 @@ MonoBehaviour:
     length: 0
   F_AttackRate: 0
   B_BattleCheckObstacle: 0
-  F_AttackRotateParam: 1
+  F_AttackRotateParam: 0.2
   I_AttackPreAimPercentage: 50
   B_AttackMove: 1
   B_AttackFrontCheck: 0

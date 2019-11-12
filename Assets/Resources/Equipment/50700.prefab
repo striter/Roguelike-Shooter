@@ -645,8 +645,8 @@ MonoBehaviour:
   I_TickCount: 1
   F_Tick: 1
   I_BuffApplyOnCast: 0
-  E_AreaType: 4
-  V4_CastInfo: {x: 1.5, y: 3, z: 11, w: 6}
+  E_AreaType: 1
+  V4_CastInfo: {x: 5, y: 0, z: 0, w: 0}
   I_MuzzleIndex: 0
   I_ImpactIndex: 0
   F_DelayDuration: 0
