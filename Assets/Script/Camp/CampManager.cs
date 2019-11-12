@@ -15,12 +15,6 @@ public class CampManager : GameManagerBase
         base.Awake();
         tf_PlayerStart = transform.Find("PlayerStart");
     }
-    protected override void OnDisable()
-    {
-        base.OnDisable();
-        CampFarmManager.Instance.OnCampExit();
-        GameDataManager.SaveCampData();
-    }
     protected override void OnDestroy()
     {
         base.OnDestroy();
@@ -67,7 +61,7 @@ public class CampManager : GameManagerBase
 
     public void OnCreditStatus(float creditChange)
     {
-        GameDataManager.OnCreditStatus(creditChange,false);
+        GameDataManager.OnCreditStatus(creditChange);
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_CampDataStatus);
     }
 

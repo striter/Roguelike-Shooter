@@ -239,13 +239,12 @@ public static class GameDataManager
         TGameData<CGameSave>.Save();
     }
     public static bool CanUseCredit(float credit) => m_GameData.f_Credits >= credit;
-    public static void OnCreditStatus(float credit,bool inGameSaveData)
+    public static void OnCreditStatus(float credit)
     {
         if (credit == 0)
             return;
         m_GameData.f_Credits += credit;
-        if(inGameSaveData)
-            TGameData<CGameSave>.Save();
+        TGameData<CGameSave>.Save();
     }
 
     public static bool CanUseTechPoint(float techPoint) => m_GameData.f_TechPoints >= techPoint;
@@ -257,16 +256,13 @@ public static class GameDataManager
         TGameData<CGameSave>.Save();
     }
 
-    public static void SaveCampData()
-    {
-        TGameData<CGameSave>.Save();
-    }
-
     public static int OnCampDifficultySwitch()
     {
         m_GameData.m_GameDifficulty += 1;
         if (m_GameData.m_GameDifficulty > m_GameData.m_DifficultyUnlocked)
             m_GameData.m_GameDifficulty = 1;
+
+        TGameData<CGameSave>.Save();
         return m_GameData.m_GameDifficulty;
     }
 

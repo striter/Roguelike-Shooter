@@ -227,7 +227,7 @@ public class GameManager : GameManagerBase
     {
         m_GameLevel.OnGameFinished(win);
         GameDataManager.OnGameFinished(win);
-        GameDataManager.OnCreditStatus(m_GameLevel.F_CreditGain,true);
+        GameDataManager.OnCreditStatus(m_GameLevel.F_CreditGain);
         GameUIManager.Instance.OnGameFinished(m_GameLevel, OnExitGame);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameFinish, win);
     }
@@ -445,7 +445,7 @@ public class GameManager : GameManagerBase
     }
     void OnCreditRevivePlayer()
     {
-        GameDataManager.OnCreditStatus(-50,true);
+        GameDataManager.OnCreditStatus(-50);
         ForceRevivePlayer();
     }
     void ForceRevivePlayer()

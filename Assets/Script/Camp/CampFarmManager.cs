@@ -46,18 +46,12 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
         CampManager.Instance.OnCreditStatus(offcampProfit);
         GameDataManager.SaveCampFarmData(this);
     }
-    public void OnCampExit()
+    private void OnDisable()
     {
-        int stampNow = TTimeTools.GetTimeStampNow();
-        float endProfit = 0;
-        for (int i = 0; i < m_Plots.Count; i++)
-            endProfit += m_Plots[i].EndProfit(stampNow);
-        m_LastProfitStamp = stampNow;
-        CampManager.Instance.OnCreditStatus(endProfit);
+        m_LastProfitStamp = TTimeTools.GetTimeStampNow();
         GameDataManager.SaveCampFarmData(this);
         ObjectPoolManager<enum_CampFarmItemStatus, CampFarmItem>.OnSceneChange();
     }
-
     public Transform Begin(Action _OnExitFarm)
     {
         OnExitFarm = _OnExitFarm;
