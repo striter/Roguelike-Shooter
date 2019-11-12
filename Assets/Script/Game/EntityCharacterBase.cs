@@ -19,9 +19,6 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     public override bool B_IsCharacter => true;
     protected override float DamageReceiveMultiply => m_CharacterInfo.F_DamageReceiveMultiply;
     protected override float HealReceiveMultiply => m_CharacterInfo.F_HealReceiveMultiply;
-    public int m_SpawnerEntityID { get; private set; }
-    public void SetSpawnerID(int _spawnerEntityID) => m_SpawnerEntityID = _spawnerEntityID;
-    public bool b_isSubEntity => m_SpawnerEntityID != -1;
     public new EntityHealth m_Health=>base.m_Health as EntityHealth;
     protected override HealthBase GetHealthManager()=> new EntityHealth(this, OnHealthStatus, OnDead);
 
@@ -48,13 +45,20 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         this.StopSingleCoroutines(0);
     }
 
-    public override void OnActivate(enum_EntityFlag _flag,float startHealth =0)
+    public override void OnActivate(enum_EntityFlag _flag,int _spawnerID=-1,float startHealth =0)
     {
-       base.OnActivate(_flag,startHealth);
-        m_SpawnerEntityID = -1;
+       base.OnActivate(_flag,_spawnerID,startHealth);
         m_Effect.OnReset();
         m_CharacterInfo.OnActivate();
     }
+
+    public void SetExtraDifficulty(float baseHealthMultiplier, float maxHealthMultiplier, SBuff difficultyBuff)
+    {
+        m_CharacterInfo.AddBuff(-1, difficultyBuff);
+        m_Health.SetHealthMultiplier(maxHealthMultiplier);
+        m_Health.OnSetHealth(I_MaxHealth * baseHealthMultiplier, true);
+    }
+
     protected virtual void OnExpireChange(){ }
 
     protected virtual void Update()
@@ -100,7 +104,6 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
             TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterDead, this);
     }
     
-
     protected override void OnHealthStatus(enum_HealthChangeMessage type)
     {
         m_Effect.OnHit(type);
@@ -112,6 +115,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
                 break;
         }
     }
+
     protected override void OnRecycle()
     {
         base.OnRecycle();

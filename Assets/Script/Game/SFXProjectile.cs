@@ -33,7 +33,7 @@ public class SFXProjectile : SFXParticles
     protected virtual bool B_StopPhysicsOnHit => true;
     protected virtual bool B_DealDamage => true;
     protected virtual PhysicsSimulator<HitCheckBase> GetSimulator(Vector3 direction, Vector3 targetPosition) => new ProjectilePhysicsSimulator(transform,transform.position, direction, Vector3.down, F_Speed, F_Height,F_Radius, GameLayer.Mask.I_All, OnHitTargetBreak,CanHitTarget);
-    protected DamageInfo m_DamageInfo;
+    protected DamageInfo m_DamageInfo { get; private set; }
     public int m_sourceID => m_DamageInfo.m_detail.I_SourceID;
     protected virtual void PlayIndicator(float duration) => m_Indicator.Play(m_sourceID, duration);
     protected Vector3 m_CenterPos => F_Height > F_Radius * 2 ? transform.position + transform.forward * F_Height / 2 : transform.position + transform.forward * F_Radius;
@@ -98,7 +98,7 @@ public class SFXProjectile : SFXParticles
             case enum_HitCheck.Dynamic:
             case enum_HitCheck.Static:
                 {
-                    hitCheck.TryHit(m_DamageInfo);
+                    hitCheck.TryHit(m_DamageInfo,transform.forward);
                     return false;
                 }
             case enum_HitCheck.Entity:

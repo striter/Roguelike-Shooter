@@ -87,7 +87,6 @@ public class SFXBase : MonoBehaviour {
             f_delayTimeLeft -= Time.deltaTime;
             if (f_delayTimeLeft < 0)
             {
-
                 OnPlay();
                 B_Delay = false;
             }

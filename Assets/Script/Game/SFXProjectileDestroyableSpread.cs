@@ -12,7 +12,7 @@ public class SFXProjectileDestroyableSpread : SFXProjectileDestroyable {
     protected override bool B_StopParticlesOnHit => false;
     protected override bool B_StopPhysicsOnHit => false;
     protected override bool B_DealDamage => false;
-    protected override float F_PlayDuration(Vector3 startPos, Vector3 endPos) => I_SpreadCount * F_SpreadDuration;
+    protected override float F_PlayDuration(Vector3 startPos, Vector3 endPos) => (I_SpreadCount+1) * F_SpreadDuration;
     protected override void OnPlay()
     {
         base.OnPlay();
@@ -32,11 +32,11 @@ public class SFXProjectileDestroyableSpread : SFXProjectileDestroyable {
 
         Vector3 splitDirection = transform.forward.RotateDirection(Vector3.up, i_spreadCountCheck * I_SpreadAngleEach);
         SFXProjectile projectile = GameObjectManager.SpawnEquipment<SFXProjectile>(GameExpression.GetEquipmentSubIndex(I_SFXIndex), m_CenterPos, Vector3.up);
-        projectile.Play(m_DamageInfo.m_detail, splitDirection, m_CenterPos + splitDirection * 10);
+        m_DamageInfo.m_detail.EntityComponentOverride(m_Health.m_EntityID);
+        projectile.Play( m_DamageInfo.m_detail, splitDirection, m_CenterPos + splitDirection * 10);
         GameObjectManager.PlayMuzzle(m_sourceID,m_CenterPos,splitDirection,projectile.I_MuzzleIndex,projectile.AC_MuzzleClip);
         i_spreadCountCheck++;
     }
-
 
     protected override void EDITOR_DEBUG()
     {

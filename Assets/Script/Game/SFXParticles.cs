@@ -12,21 +12,18 @@ public class SFXParticles : SFXBase
         m_relativeSFXs = GetComponentsInChildren<SFXRelativeBase>();
         m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.Init(); });
         m_Particles = transform.GetComponentsInChildren<ParticleSystem>();
-        m_Particles.Traversal((ParticleSystem particle) => {
-            particle.Stop();
-        });
     }
     public virtual void Play(int sourceID,float duration=0f,float delayDuration=0f)
     {
         PlaySFX(sourceID,duration,delayDuration);
         m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.Play(this); });
+        m_Particles.Traversal((ParticleSystem particle) => { particle.Simulate(0, true, true); });
     }
-
     protected override void OnPlay()
     {
         base.OnPlay();
-        m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.OnPlay(); });
-        m_Particles.Traversal((ParticleSystem particle) => { particle.Play(); });
+        m_relativeSFXs.Traversal((SFXRelativeBase relative) => {  relative.OnPlay(); });
+        m_Particles.Traversal((ParticleSystem particle) => {  particle.Play(true); });
     }
 
     protected override void OnStop()
@@ -34,7 +31,7 @@ public class SFXParticles : SFXBase
         base.OnStop();
         transform.SetParent(GameObjectManager.TF_SFXWaitForRecycle);
         m_relativeSFXs.Traversal((SFXRelativeBase sfxRelative) => { sfxRelative.OnStop(); });
-        m_Particles.Traversal((ParticleSystem particle) => { particle.Stop(); });
+        m_Particles.Traversal((ParticleSystem particle) => { particle.Stop(true); });
     }
 
     protected override void OnRecycle()

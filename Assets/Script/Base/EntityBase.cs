@@ -16,6 +16,8 @@ public class EntityBase : MonoBehaviour
     public HitCheckEntity m_HitCheck => m_HitChecks[0];
     protected virtual float DamageReceiveMultiply => 1;
     protected virtual float HealReceiveMultiply => 1f;
+    public int m_SpawnerEntityID { get; private set; }
+    public bool b_isSubEntity => m_SpawnerEntityID != -1;
     HitCheckEntity[] m_HitChecks;
     public virtual void Init(int _poolIndex)
     {
@@ -23,9 +25,10 @@ public class EntityBase : MonoBehaviour
         m_HitChecks = GetComponentsInChildren<HitCheckEntity>();
         m_Health = GetHealthManager();
     }
-    public virtual void OnActivate( enum_EntityFlag _flag, float startHealth =0)
+    public virtual void OnActivate( enum_EntityFlag _flag,int _spawnerID=-1, float startHealth =0)
     {
         m_Flag = _flag;
+        m_SpawnerEntityID = _spawnerID;
         ActivateHealthManager(startHealth>0? startHealth:I_MaxHealth);
         m_EntityID = GameIdentificationManager.I_EntityID(m_Flag);
         m_HitChecks.Traversal((HitCheckEntity check) => { check.Attach(this, OnReceiveDamage); });
