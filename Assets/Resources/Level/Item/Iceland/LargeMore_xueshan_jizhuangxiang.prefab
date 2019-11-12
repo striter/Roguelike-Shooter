@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4473632948450218}
   - component: {fileID: 114108392715592672}
   m_Layer: 0
-  m_Name: MediumLess_xueshan_jizhuangxiang
+  m_Name: LargeMore_xueshan_jizhuangxiang
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -139,7 +139,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_sizeXAxis: 3
   m_sizeYAxis: 6
-  m_ItemType: 3
+  m_ItemType: 0
   b_showGizmos: 1
   b_AutoCenter: 1
   b_AutoRotation: 1
