@@ -23,13 +23,11 @@
 			float4 _SampleSphere[32];
 			int _SampleCount;
 			float _Strength;
-			float _SizeArea;
 			float _FallOff;
 			struct v2f
 			{
 				float2 uv : TEXCOORD0;
 				float4 vertex : SV_POSITION;
-				half2 uv_depth:TEXCOORD1;
 			};
 
 			v2f vert (appdata_img v)
@@ -37,11 +35,6 @@
 				v2f o;
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.uv = v.texcoord;
-				o.uv_depth = v.texcoord;
-#if UNITY_UV_STARTS_AT_TOP
-				if (_MainTex_TexelSize.y < 0)
-					o.uv_depth.y = 1 - o.uv_depth.y;
-#endif
 				return o;
 			}
 
@@ -72,13 +65,13 @@
 				for (int i = 0; i < _SampleCount; i++) {
 					float3 ray = _SampleSphere[i];
 					float3 hemi_ray = position + sign(dot(ray, normal)) * ray;
-					float occ_depth =SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, saturate(hemi_ray.xy)).r;
+					float occ_depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, saturate(hemi_ray.xy)).r;
 					float difference = depth - occ_depth;
-					occlusion += occ_depth==0?1: step(_FallOff, difference) *(1- smoothstep(_FallOff,_SizeArea,difference));
+					occlusion += occ_depth==0?1: step(_FallOff, difference);
 				}
 				float ao = 1-occlusion / _SampleCount;
 				ao = pow(ao,5)*_Strength;
-				return lerp(col,float4(0,0,0,1),ao);
+				return lerp(col,float4(0,0,0,1),ao);	
 			}
 			ENDCG
 		}
