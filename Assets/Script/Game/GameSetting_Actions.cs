@@ -199,7 +199,7 @@ namespace GameSetting_Action
         public const int I_30001_MaxStack = 25;
 
         public const int I_30002_Cost = 3;
-        public static float P_30002_SingleShotDamageMultiplyAfterKill(enum_RarityLevel rarity) => 98 * (int)rarity;
+        public static float P_30002_SingleShotDamageMultiplyAfterKill(enum_RarityLevel rarity) => 100 * (int)rarity;
 
         public const int I_30003_Cost = 2;
         public static float F_30003_GrenadeDamage(enum_RarityLevel rarity) => 50 * (int)rarity;
