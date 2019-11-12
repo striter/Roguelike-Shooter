@@ -642,7 +642,7 @@ namespace GameSetting_Action
         {
             base.OnDealtDamageSetDamage(receiver, info);
             if (receiver.m_CharacterInfo.B_Effecting(enum_CharacterEffect.Freeze)||info.m_detail.m_DamageEffect== enum_CharacterEffect.Freeze)
-                info.m_detail.SetAdditiveDamage(0,Value1);
+                info.m_detail.DamageAdditive(0,Value1);
         }
         public Action_10014_FreezeDamageApply(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
@@ -1232,7 +1232,7 @@ namespace GameSetting_Action
         public override void OnDealtDamageSetEffect(EntityCharacterBase receiver, DamageInfo info)
         {
             base.OnDealtDamageSetEffect(receiver, info);
-            info.m_detail.SetOverrideEffect(enum_CharacterEffect.Freeze, Value1);
+            info.m_detail.EffectAdditiveOverride(enum_CharacterEffect.Freeze, Value1);
         }
         public Action_30005_DamageFreeze(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
@@ -1275,7 +1275,7 @@ namespace GameSetting_Action
             if (amount < Value1)
                 return;
 
-            info.m_detail.SetOverrideEffect(enum_CharacterEffect.Freeze, Value2 * Mathf.Ceil(amount / Value1));
+            info.m_detail.EffectAdditiveOverride(enum_CharacterEffect.Freeze, Value2 * Mathf.Ceil(amount / Value1));
         }
         public Action_30007_DamageLimitFreeze(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
@@ -1560,7 +1560,7 @@ namespace GameSetting_Action
         {
             base.OnDealtDamageSetDamage(receiver, info);
             if (Vector3.Distance(receiver.transform.position, m_ActionEntity.transform.position) < Value1)
-                info.m_detail.SetAdditiveDamage(0, Value1 / 100f);
+                info.m_detail.DamageAdditive(0, Value1 / 100f);
         }
         public Action_40010_EnrangeExtraDamage(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }

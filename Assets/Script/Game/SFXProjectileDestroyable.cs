@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 [RequireComponent(typeof(EntityComponent))]
 public class SFXProjectileDestroyable : SFXProjectile {
-     protected EntityComponent m_Health { get; private set; }
+    protected EntityComponent m_Health { get; private set; }
     public override void Init(int sfxIndex)
     {
         base.Init(sfxIndex);

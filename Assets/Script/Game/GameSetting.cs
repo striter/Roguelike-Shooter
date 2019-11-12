@@ -1256,7 +1256,8 @@ namespace GameSetting
         public static DamageDeliverInfo EquipmentInfo(int sourceID, float _damageAdditive, enum_CharacterEffect _effect, float _duration) => new DamageDeliverInfo() { I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), I_SourceID = sourceID, m_DamageAdditive = _damageAdditive, m_DamageEffect = _effect, m_EffectDuration = _duration };
         public static DamageDeliverInfo DamageInfo(int sourceID, float _damageEnhanceMultiply, float _damageAdditive) => new DamageDeliverInfo() { I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), I_SourceID = sourceID, m_DamageMultiply = _damageEnhanceMultiply, m_DamageAdditive = _damageAdditive, };
         public static DamageDeliverInfo DamageHitInfo(int sourceID, Action<EntityBase> OnHitEntity) => new DamageDeliverInfo() { I_SourceID = sourceID, I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), m_OnHitAction = OnHitEntity };
-        public void SetOverrideEffect(enum_CharacterEffect damageEffect, float effectDuration)
+        public void EntityComponentOverride(int overrideID) => I_SourceID = overrideID;
+        public void EffectAdditiveOverride(enum_CharacterEffect damageEffect, float effectDuration)
         {
             if (m_DamageEffect != damageEffect)
                 m_EffectDuration = 0;
@@ -1264,12 +1265,12 @@ namespace GameSetting
             m_EffectDuration += effectDuration;
             m_DamageEffect = damageEffect;
         }
-        public void SetAdditiveDamage(float damageMultiply,float damageAdditive)
+        public void DamageAdditive(float damageMultiply,float damageAdditive)
         {
             m_DamageMultiply += damageMultiply;
             m_DamageAdditive += damageAdditive;
         }
-        public void SetAdditiveInfo(DamageDeliverInfo info)
+        public void InfoAdditive(DamageDeliverInfo info)
         {
             m_DamageAdditive += info.m_DamageAdditive;
             m_DamageMultiply += info.m_DamageMultiply;
@@ -1307,7 +1308,7 @@ namespace GameSetting
         public virtual DamageDeliverInfo GetDamageBuffInfo()
         {
             DamageDeliverInfo deliver = DamageDeliverInfo.DamageInfo(m_Entity.m_EntityID, F_DamageMultiply, 0f);
-            if (m_DamageBuffOverride != null) deliver.SetAdditiveInfo(m_DamageBuffOverride());
+            if (m_DamageBuffOverride != null) deliver.InfoAdditive(m_DamageBuffOverride());
             return deliver;
         }
         Func<DamageInfo, bool> OnReceiveDamage;
