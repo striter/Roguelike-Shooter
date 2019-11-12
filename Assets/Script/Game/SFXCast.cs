@@ -6,7 +6,7 @@ using UnityEngine;
 public class SFXCast : SFXParticles {
     #region PresetInfo
     public enum_CastControllType E_CastType = enum_CastControllType.Invalid;
-    public bool B_CastAtHead = true;
+    public enum_CastTarget E_CastTarget =  enum_CastTarget.Invalid;
     public float F_Damage;
     public int I_TickCount=1;
     public float F_Tick = .5f;

@@ -72,9 +72,9 @@ Material:
     - _SrcBlend: 1
     - _UVSec: 0
     - _VerticalWaveParam: 0.1
-    - _WaveSpeed: 1
+    - _WaveSpeed: 2
     - _YEnd: 4
-    - _YMultiple: 0.3
+    - _YMultiple: 0.5
     - _YStart: 0
     - _ZWrite: 1
     m_Colors:
