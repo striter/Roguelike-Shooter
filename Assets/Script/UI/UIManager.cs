@@ -21,6 +21,7 @@ public class UIManager :UIManagerBase,ISingleCoroutine
     CB_GenerateOverlayUIGrabBlurTexture m_Blur;
     public AtlasLoader m_CommonSprites { get; private set; }
     public AtlasLoader m_ActionSprites { get; private set; }
+    public AtlasLoader m_WeaponSprites { get; private set; }
     public static void Activate(bool inGame)
     {
         GameObject uiObj = TResources.InstantiateUIManager();
@@ -45,6 +46,7 @@ public class UIManager :UIManagerBase,ISingleCoroutine
 
         m_CommonSprites = TResources.GetUIAtlas_Common();
         m_ActionSprites = TResources.GetUIAtlas_Action();
+        m_WeaponSprites = TResources.GetUIAtlas_Weapon();
         m_Camera = transform.Find("UICamera").GetComponent<Camera>();
         m_Effect = m_Camera.GetComponent<CameraEffectManager>();
         m_Blur = m_Effect.GetOrAddCameraEffect<CB_GenerateOverlayUIGrabBlurTexture>();

@@ -331,7 +331,7 @@ namespace GameSetting
                 }
             return spriteName;
         }
-
+        public static string GetSpriteName(this enum_PlayerWeapon weapon) => ((int)weapon).ToString();
         public static string GetCordinates(this TileAxis axis)
         {
             string x = axis.X.ToString();
@@ -1682,9 +1682,10 @@ namespace GameSetting
             if (damageInfo.m_detail.I_SourceID == m_Player.m_EntityID)
             {
                 if(amountApply>0)
-                m_ActionEquiping.Traversal((ActionBase action) => { action.OnAfterDealtDemage(damageEntity, damageInfo, amountApply); });
+                    m_ActionEquiping.Traversal((ActionBase action) => { action.OnAfterDealtDemage(damageEntity, damageInfo, amountApply); });
             }
-            else if (damageEntity.m_EntityID == m_Player.m_EntityID)
+
+            if (damageEntity.m_EntityID == m_Player.m_EntityID)
             {
                 if (amountApply > 0)
                     m_ActionEquiping.Traversal((ActionBase action) => { action.OnAfterReceiveDamage(damageInfo, amountApply); });

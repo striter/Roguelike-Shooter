@@ -41,6 +41,7 @@ public class UI_WeaponStatus : UIPageBase {
     
     public void SetInfo(WeaponBase weapon)
     {
+        m_WeaponImage.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Weapon.GetSpriteName()];
         m_WeaponName.localizeKey = weapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
         m_ClipSize.SetNumeric(string.Format("{0:D2}", weapon.I_ClipAmount));
 

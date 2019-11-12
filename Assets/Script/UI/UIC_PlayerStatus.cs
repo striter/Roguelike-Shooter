@@ -265,14 +265,15 @@ public class UIC_PlayerStatus : UIControlBase
     }
     #endregion
     #region Weapon/Ammo
-    void OnWeaponStatus(WeaponBase weaponInfo)
+    void OnWeaponStatus(WeaponBase waepon)
     {
-        m_WeaponName.autoLocalizeText = weaponInfo.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
+        m_WeaponImage.sprite = UIManager.Instance.m_WeaponSprites[waepon.m_WeaponInfo.m_Weapon.GetSpriteName()];
+        m_WeaponName.autoLocalizeText = waepon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
 
-        bool showWeaponAction = weaponInfo.m_WeaponAction != null;
+        bool showWeaponAction = waepon.m_WeaponAction != null;
         m_WeaponActionRarity.transform.SetActivate(showWeaponAction);
-        m_WeaponActionName.autoLocalizeText = showWeaponAction ? weaponInfo.m_WeaponAction.GetNameLocalizeKey() : "UI_WeaponStatus_ActionInvalidName";
-        if (showWeaponAction) m_WeaponActionRarity.SetLevel(weaponInfo.m_WeaponAction.m_rarity);
+        m_WeaponActionName.autoLocalizeText = showWeaponAction ? waepon.m_WeaponAction.GetNameLocalizeKey() : "UI_WeaponStatus_ActionInvalidName";
+        if (showWeaponAction) m_WeaponActionRarity.SetLevel(waepon.m_WeaponAction.m_rarity);
     }
     void OnAmmoStatus(WeaponBase weaponInfo)
     {
