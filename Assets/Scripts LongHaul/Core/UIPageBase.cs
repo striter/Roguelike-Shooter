@@ -48,12 +48,12 @@ public class UIPageBase : MonoBehaviour,ISingleCoroutine
 
         if (!useAnim)
         {
-            tf_Container.localScale = m_BaseScale*UIManagerBase.m_FitScale;
+            tf_Container.localScale = m_BaseScale*UIManagerBase.m_PageFitScale;
             return;
         }
 
         this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => {
-            tf_Container.localScale = m_BaseScale*UIManagerBase.m_FitScale * value;
+            tf_Container.localScale = m_BaseScale*UIManagerBase.m_PageFitScale * value;
             img_Background.color = new Color(img_Background.color.r, img_Background.color.g, img_Background.color.b, value * f_bgAlphaStart);
         }
         , 0f, 1f, F_AnimDuration, null, false));
@@ -69,7 +69,7 @@ public class UIPageBase : MonoBehaviour,ISingleCoroutine
             return;
         }
         this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => {
-            tf_Container.localScale = m_BaseScale*UIManagerBase.m_FitScale * value;
+            tf_Container.localScale = m_BaseScale*UIManagerBase.m_PageFitScale * value;
             img_Background.color = new Color(img_Background.color.r, img_Background.color.g, img_Background.color.b, value * f_bgAlphaStart);
         }, 1f, 0f, F_AnimDuration, OnHideFinished, false));
     }
