@@ -269,7 +269,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   E_CastType: 1
   E_CastTarget: 2
-  F_Damage: 60
+  F_Damage: 50
   I_TickCount: 1
   F_Tick: 1
   I_BuffApplyOnCast: 0
