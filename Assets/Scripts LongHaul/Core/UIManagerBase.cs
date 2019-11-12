@@ -7,7 +7,7 @@ public class UIManagerBase : SimpleSingletonMono<UIManagerBase> {
 
     protected Canvas cvs_Overlay, cvs_Camera;
     private RectTransform tf_Page, tf_OverlayControl,tf_CameraControl,tf_MessageBox;
-    public static Vector2 m_FitScale { get; private set; }
+    public static Vector2 m_PageFitScale { get; private set; }
     protected virtual void Init()
     {
         cvs_Overlay = transform.Find("Overlay").GetComponent<Canvas>();
@@ -18,7 +18,8 @@ public class UIManagerBase : SimpleSingletonMono<UIManagerBase> {
         tf_CameraControl = cvs_Camera.transform.Find("Control").GetComponent<RectTransform>();
         tf_MessageBox = cvs_Overlay.transform.Find("MessageBox").GetComponent<RectTransform>();
         CanvasScaler m_Scaler = cvs_Overlay.GetComponent<CanvasScaler>();
-        m_FitScale = Vector2.one * (Screen.width / (float)Screen.height) / (m_Scaler.referenceResolution.x / m_Scaler.referenceResolution.y);
+        
+        m_PageFitScale = Vector2.one * ((Screen.width / m_Scaler.referenceResolution.x)*(1-m_Scaler.matchWidthOrHeight) +(Screen.height / m_Scaler.referenceResolution.y)*( m_Scaler.matchWidthOrHeight));
     }
 
     protected T ShowPage<T>(bool useAnim) where T : UIPageBase => UIPageBase.Show<T>(tf_Page,useAnim);

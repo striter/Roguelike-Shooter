@@ -22,7 +22,7 @@ public class UIMessageBoxBase : MonoBehaviour {
         btn_Confirm = tf_Container.Find("Confirm").GetComponent<Button>();
         btn_Confirm.onClick.AddListener(OnConfirm);
         tf_Container.Find("Cancel").GetComponent<Button>().onClick.AddListener(OnCancel);
-        transform.localScale = UIManagerBase.m_FitScale;
+        transform.localScale = UIManagerBase.m_PageFitScale;
     }
     protected virtual void OnDestroy()
     {
