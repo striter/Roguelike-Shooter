@@ -483,6 +483,8 @@ namespace GameSetting
 
     public enum enum_CastControllType { Invalid = -1, CastFromOrigin = 1, CastControlledForward = 2, CastAtTarget = 3, CastSelfDetonate = 4, }
 
+    public enum enum_CastTarget { Invalid=-1,Head=1,Weapon=2,Feet=3}
+
     public enum enum_CastAreaType { Invalid = -1, OverlapSphere = 1, ForwardBox = 2, ForwardCapsule = 3, ForwardTrapezium = 4, }
 
     public enum enum_HealthChangeMessage { Invalid = -1, Default = 0, DamageHealth = 1, ReceiveHealth = 2, DamageArmor = 3, ReceiveArmor = 4 }
@@ -2291,15 +2293,31 @@ namespace GameSetting
     public class EquipmentCaster : EquipmentBase
     {
         protected int i_muzzleIndex { get; private set; }
-        protected bool b_castAtHead { get; private set; }
+        protected enum_CastTarget m_CastAt { get; private set; }
         public EquipmentCaster(SFXCast _castInfo, EntityCharacterBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(_castInfo, _controller, _transform, _GetBuffInfo)
         {
             i_muzzleIndex = _castInfo.I_MuzzleIndex;
-            b_castAtHead = _castInfo.B_CastAtHead;
+            m_CastAt = _castInfo.E_CastTarget;
         }
         public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
-            GameObjectManager.SpawnEquipment<SFXCast>(I_Index, b_castAtHead ? attacherHead.position:attacherFeet.position, attacherHead.forward).Play(GetDamageDeliverInfo());
+            Transform castAt = GetCastAt(_target);
+            GameObjectManager.SpawnEquipment<SFXCast>(I_Index, castAt.position, castAt.forward).Play(GetDamageDeliverInfo());
+        }
+        protected Transform GetCastAt(EntityCharacterBase character)
+        {
+            switch(m_CastAt)
+            {
+                default:
+                    Debug.LogError("Invalid Phrase Here");
+                    return null;
+                case enum_CastTarget.Feet:
+                    return character.transform;
+                case enum_CastTarget.Head:
+                    return character.tf_Head;
+                case enum_CastTarget.Weapon:
+                    return character.tf_Weapon;
+            }
         }
     }
     public class EquipmentCasterTarget : EquipmentCaster
@@ -2307,7 +2325,11 @@ namespace GameSetting
         public EquipmentCasterTarget(SFXCast _castInfo, EntityCharacterBase _controller, Transform _transform, Func<DamageDeliverInfo> _GetBuffInfo) : base(_castInfo, _controller, _transform, _GetBuffInfo)
         {
         }
-        protected override Vector3 GetTargetPosition(bool preAim, EntityCharacterBase _target) => LevelManager.NavMeshPosition(_target.transform.position + TCommon.RandomXZSphere(m_Entity.F_AttackSpread)) + new Vector3(0, b_castAtHead ? _target.tf_Head.position.y : 0, 0);
+        protected override Vector3 GetTargetPosition(bool preAim, EntityCharacterBase _target)
+        {
+            Transform castAt = GetCastAt(_target);
+            return LevelManager.NavMeshPosition(castAt.position + TCommon.RandomXZSphere(m_Entity.F_AttackSpread)) + new Vector3(0, castAt.position.y, 0);
+        }
         public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
             GameObjectManager.PlayMuzzle(m_Entity.m_EntityID,transformBarrel.position,transformBarrel.forward,i_muzzleIndex);
