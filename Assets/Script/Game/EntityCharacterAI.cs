@@ -45,12 +45,6 @@ public class EntityCharacterAI : EntityCharacterBase {
         base.OnActivate(_flag,_spawnerID,startHealth);
     }
 
-    public void SetEnermyDifficulty(float baseHealthMultiplier, float maxHealthMultiplier,SBuff difficultyBuff)
-    {
-        m_CharacterInfo.AddBuff(-1, difficultyBuff);
-        m_Health .SetHealthMultiplier(maxHealthMultiplier);
-        m_Health.OnSetHealth(I_MaxHealth * baseHealthMultiplier,true);
-    }
     protected override void OnRevive()
     {
         base.OnRevive();

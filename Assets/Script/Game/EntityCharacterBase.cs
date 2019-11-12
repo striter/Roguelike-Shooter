@@ -51,6 +51,14 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         m_Effect.OnReset();
         m_CharacterInfo.OnActivate();
     }
+
+    public void SetExtraDifficulty(float baseHealthMultiplier, float maxHealthMultiplier, SBuff difficultyBuff)
+    {
+        m_CharacterInfo.AddBuff(-1, difficultyBuff);
+        m_Health.SetHealthMultiplier(maxHealthMultiplier);
+        m_Health.OnSetHealth(I_MaxHealth * baseHealthMultiplier, true);
+    }
+
     protected virtual void OnExpireChange(){ }
 
     protected virtual void Update()
@@ -96,7 +104,6 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
             TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterDead, this);
     }
     
-
     protected override void OnHealthStatus(enum_HealthChangeMessage type)
     {
         m_Effect.OnHit(type);
@@ -108,6 +115,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
                 break;
         }
     }
+
     protected override void OnRecycle()
     {
         base.OnRecycle();
