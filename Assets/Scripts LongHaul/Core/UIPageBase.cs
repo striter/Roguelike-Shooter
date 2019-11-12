@@ -10,6 +10,7 @@ public class UIPageBase : MonoBehaviour,ISingleCoroutine
     protected Image img_Background;
     protected Action<bool> OnInteractFinished;
     protected float f_bgAlphaStart;
+    public float m_BaseScale = 1f;
     bool b_useAnim;
     const float F_AnimDuration = .2f;
     public static T Show<T>(Transform parentTransform,bool useAnim) where T:UIPageBase
@@ -47,12 +48,12 @@ public class UIPageBase : MonoBehaviour,ISingleCoroutine
 
         if (!useAnim)
         {
-            tf_Container.localScale = UIManagerBase.m_FitScale;
+            tf_Container.localScale = m_BaseScale*UIManagerBase.m_FitScale;
             return;
         }
 
         this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => {
-            tf_Container.localScale = UIManagerBase.m_FitScale * value;
+            tf_Container.localScale = m_BaseScale*UIManagerBase.m_FitScale * value;
             img_Background.color = new Color(img_Background.color.r, img_Background.color.g, img_Background.color.b, value * f_bgAlphaStart);
         }
         , 0f, 1f, F_AnimDuration, null, false));
@@ -68,7 +69,7 @@ public class UIPageBase : MonoBehaviour,ISingleCoroutine
             return;
         }
         this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => {
-            tf_Container.localScale = UIManagerBase.m_FitScale * value;
+            tf_Container.localScale = m_BaseScale*UIManagerBase.m_FitScale * value;
             img_Background.color = new Color(img_Background.color.r, img_Background.color.g, img_Background.color.b, value * f_bgAlphaStart);
         }, 1f, 0f, F_AnimDuration, OnHideFinished, false));
     }
