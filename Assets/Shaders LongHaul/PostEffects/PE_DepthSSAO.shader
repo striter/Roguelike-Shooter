@@ -65,14 +65,14 @@
 			fixed4 frag (v2f i) : SV_Target
 			{
 				float4 col = tex2D(_MainTex, i.uv);
-				float depth = tex2D(_CameraDepthTexture, i.uv).r;
+				float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.uv).r;
 				float3 position = float3(i.uv, depth);
 				float3 normal = normal_from_depth(depth, i.uv);
 				float occlusion = 0;
 				for (int i = 0; i < _SampleCount; i++) {
 					float3 ray = _SampleSphere[i];
 					float3 hemi_ray = position + sign(dot(ray, normal)) * ray;
-					float occ_depth = tex2D(_CameraDepthTexture, saturate(hemi_ray.xy)).r;
+					float occ_depth =SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, saturate(hemi_ray.xy)).r;
 					float difference = depth - occ_depth;
 					occlusion += occ_depth==0?1: step(_FallOff, difference) *(1- smoothstep(_FallOff,_SizeArea,difference));
 				}

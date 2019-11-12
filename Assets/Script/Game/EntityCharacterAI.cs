@@ -27,12 +27,13 @@ public class EntityCharacterAI : EntityCharacterBase {
     public bool B_AttackFrontCheck = true;
     bool OnCheckTarget(EntityCharacterBase target) => target.m_Flag!=m_Flag && !target.m_Health.b_IsDead;
     public override Vector3 m_PrecalculatedTargetPos(float time)=> tf_Head.position;
-
+    Transform tf_Barrel;
+    public override Transform tf_Weapon => tf_Barrel;
     public override void Init(int entityPresetIndex)
     {
         base.Init(entityPresetIndex);
-        Transform tf_Barrel = transform.FindInAllChild("Barrel");
-        m_AI = new EnermyAIControllerBase(this, EquipmentBase.AcquireEquipment(GameExpression.GetAIEquipmentIndex(entityPresetIndex, 0),this,tf_Barrel,m_CharacterInfo.GetDamageBuffInfo), OnAttackAnim, OnCheckTarget);
+        tf_Barrel = transform.FindInAllChild("Barrel");
+        m_AI = new EnermyAIControllerBase(this, EquipmentBase.AcquireEquipment(GameExpression.GetAIEquipmentIndex(entityPresetIndex, 0),this,m_CharacterInfo.GetDamageBuffInfo), OnAttackAnim, OnCheckTarget);
         if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
             m_Animator = new EnermyAnimator(tf_Model.GetComponent<Animator>(), OnAnimKeyEvent);
     }

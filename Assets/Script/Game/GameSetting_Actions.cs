@@ -317,7 +317,7 @@ namespace GameSetting_Action
         }
         public static void PlayerAttachShield(EntityCharacterPlayer player, int equipmentIndex, int health)
         {
-            EquipmentShieldAttach equipment = EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(equipmentIndex), player, player.tf_Model,null) as EquipmentShieldAttach;
+            EquipmentShieldAttach equipment = EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(equipmentIndex), player,null) as EquipmentShieldAttach;
             equipment.SetOnSpawn((SFXShield shield) => {  shield.m_Health.I_MaxHealth = health; });
             equipment.Play(false,player);
         }
@@ -656,7 +656,7 @@ namespace GameSetting_Action
         public override void OnActivate()
         {
             base.OnActivate();
-            EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex( m_Index), m_ActionEntity,m_ActionEntity.tf_Model, () => { return DamageDeliverInfo.EquipmentInfo(m_ActionEntity.m_EntityID, 0, enum_CharacterEffect.Freeze, Value1); }).Play(false,m_ActionEntity);
+            EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex( m_Index), m_ActionEntity, () => { return DamageDeliverInfo.EquipmentInfo(m_ActionEntity.m_EntityID, 0, enum_CharacterEffect.Freeze, Value1); }).Play(false,m_ActionEntity);
         }
         public Action_10015_FreezeNearby(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
@@ -1197,7 +1197,7 @@ namespace GameSetting_Action
         public override void OnActivate()
         {
             base.OnActivate();
-            m_ActionEquipment = EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(m_Index), m_ActionEntity, m_ActionEntity.tf_Head, GetDamageInfo);
+            m_ActionEquipment = EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(m_Index), m_ActionEntity, GetDamageInfo);
         }
         bool m_shotGrenade = false;
         public override void OnReloadFinish()
@@ -1247,7 +1247,7 @@ namespace GameSetting_Action
         public override void OnActivate()
         {
             base.OnActivate();
-            m_Equipment = EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(m_Index), m_ActionEntity, m_ActionEntity.tf_Head, GetDamageInfo);
+            m_Equipment = EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(m_Index), m_ActionEntity, GetDamageInfo);
         }
         public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
@@ -1290,7 +1290,7 @@ namespace GameSetting_Action
         public override void OnActivate()
         {
             base.OnActivate();
-            m_Equipment = EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(m_Index), m_ActionEntity, m_ActionEntity.tf_Model, GetDamageInfo);
+            m_Equipment = EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(m_Index), m_ActionEntity, GetDamageInfo);
         }
         public override void OnUseActionElse(ActionBase targetAction)
         {
@@ -1704,7 +1704,7 @@ namespace GameSetting_Action
         {
             base.OnAfterDealtDemage(receiver, info, applyAmount);
             if (receiver.m_Health.b_IsDead)
-                EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(m_Index),receiver,receiver.tf_Model,GetDamageInfo).Play(receiver,receiver.tf_Model.position+TCommon.RandomXZSphere(.5f));
+                EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(m_Index),receiver,GetDamageInfo).Play(receiver,receiver.tf_Model.position+TCommon.RandomXZSphere(.5f));
         }
         public Action_40020_KillFreezeGrenade(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
