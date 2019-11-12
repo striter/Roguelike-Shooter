@@ -2302,7 +2302,7 @@ namespace GameSetting
         }
         public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
-            Transform castAt = GetCastAt(_target);
+            Transform castAt = GetCastAt(m_Entity);
             GameObjectManager.SpawnEquipment<SFXCast>(I_Index, castAt.position, castAt.forward).Play(GetDamageDeliverInfo());
         }
         protected Transform GetCastAt(EntityCharacterBase character)
