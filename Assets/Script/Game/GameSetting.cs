@@ -136,7 +136,7 @@ namespace GameSetting
                 default: return StageInteractGenerateData.Create(new Dictionary<enum_RarityLevel, int>(), new Dictionary<enum_RarityLevel, int>(), new Dictionary<enum_CharacterType, CoinsGenerateData>());
                 case enum_StageLevel.Rookie:
                     return StageInteractGenerateData.Create(
-                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.Normal, 90 }, { enum_RarityLevel.OutStanding, 10 } },    //宝箱等级概率
+                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.Normal, 100 }, { enum_RarityLevel.OutStanding, 0 } },    //宝箱等级概率
                     new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.Normal, 75 }, { enum_RarityLevel.OutStanding, 25 } },    //交易等级概率
                     new Dictionary<enum_CharacterType, CoinsGenerateData>() {
                      { enum_CharacterType.SubHidden, CoinsGenerateData.Create( 0,0, 0, new RangeInt(0, 0)) },     //实体掉落生成概率 类型,血,护甲,金币,金币数值范围
@@ -147,7 +147,7 @@ namespace GameSetting
                      { enum_CharacterType.Elite, CoinsGenerateData.Create( 8,15, 100, new RangeInt(6, 6)) }});
                 case enum_StageLevel.Veteran:
                     return StageInteractGenerateData.Create(
-                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.OutStanding, 90 }, { enum_RarityLevel.Epic, 10 } },    //宝箱等级概率
+                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.OutStanding, 100 }, { enum_RarityLevel.Epic, 0 } },    //宝箱等级概率
                     new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.OutStanding, 75 }, { enum_RarityLevel.Epic, 25 } },    //交易等级概率
                     new Dictionary<enum_CharacterType, CoinsGenerateData>() {
                      { enum_CharacterType.SubHidden, CoinsGenerateData.Create( 0,0, 0, new RangeInt(0, 0)) },     //实体掉落生成概率 类型,血,护甲,金币,金币数值范围
@@ -158,7 +158,7 @@ namespace GameSetting
                      { enum_CharacterType.Elite, CoinsGenerateData.Create( 8,15, 100, new RangeInt(6, 6)) }});
                 case enum_StageLevel.Ranger:
                     return StageInteractGenerateData.Create(
-                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.OutStanding, 40 }, { enum_RarityLevel.Epic, 60 } },    //宝箱等级概率
+                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.OutStanding, 0 }, { enum_RarityLevel.Epic, 100 } },    //宝箱等级概率
                     new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.OutStanding, 0 }, { enum_RarityLevel.Epic, 100 } },    //交易等级概率
                     new Dictionary<enum_CharacterType, CoinsGenerateData>() {
                      { enum_CharacterType.SubHidden, CoinsGenerateData.Create( 0,0, 0, new RangeInt(0, 0)) },     //实体掉落生成概率 类型,血,护甲,金币,金币数值范围
