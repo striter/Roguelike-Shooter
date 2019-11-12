@@ -1187,9 +1187,9 @@ namespace GameSetting
                         break;
                     case enum_DamageType.HealthOnly:
                         {
-                            if (B_HealthFull||healEnhance<=0)
-                                return false;
                             finalAmount *= healEnhance;
+                            if (B_HealthFull||finalAmount>0)
+                                break;
                             DamageHealth(finalAmount);
                             OnHealthChanged(enum_HealthChangeMessage.ReceiveHealth);
                         }

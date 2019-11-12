@@ -1331,11 +1331,11 @@ namespace GameSetting_Action
         public override enum_ActionType m_ActionType => enum_ActionType.Equipment;
         public override float Value1 => ActionData.P_30011_MaxHealthRegen(m_rarity);
         public override float m_MaxHealthAdditive => m_stackUp;
-        public override void OnReceiveHealing(DamageInfo info, float applyAmount)
+        public override void OnReceiveHealing(DamageInfo info, float amount)
         {
-            base.OnReceiveHealing(info, applyAmount);
+            base.OnReceiveHealing(info, amount);
             if(info.m_Type== enum_DamageType.HealthOnly)
-                OnStackUp(-applyAmount*Value1/100f);
+                OnStackUp(-info.m_AmountApply*Value1/100f);
         }
         public Action_30011_ReceiveHealingAddMaxHealth(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
