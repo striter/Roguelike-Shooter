@@ -63,7 +63,6 @@ public class UIC_PlayerStatus : UIControlBase
         img_ShuffleFill = btn_ActionShuffle.transform.Find("ShuffleFill").GetComponent<Image>();
 
         rtf_StatusData = tf_Container.Find("StatusData").GetComponent<RectTransform>();
-        rtf_StatusData.localScale = UIManagerBase.m_PageFitScale;
         tf_AmmoData = rtf_StatusData.Find("Container/AmmoData");
         m_AmmoGridWidth = tf_AmmoData.GetComponent<RectTransform>().sizeDelta.x;
         m_AmmoAmount = new UIC_Numeric(tf_AmmoData.Find("AmmoAmount"));
@@ -237,7 +236,7 @@ public class UIC_PlayerStatus : UIControlBase
     }
     void OnActionPressDuration()
     {
-        UIManager.Instance.ShowPage<UI_ActionBattle>(false,0f).Show(m_Player.m_PlayerInfo,m_ActionEnergy) ;
+        UIManager.Instance.ShowPage<UI_ActionBattle>(false,0f).Show(m_Player.m_PlayerInfo) ;
     }
     void OnActionStorageClick()
     {

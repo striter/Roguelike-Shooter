@@ -56,7 +56,7 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
     {
         OnExitFarm = _OnExitFarm;
         m_FarmStatus = CampUIManager.Instance.BeginFarm(OnDragDown, OnDrag);
-        m_FarmStatus.Play(m_Plots, OnExit, OnFarmBuy);
+        m_FarmStatus.Play(m_Plots, OnFarmBuy,OnFarmClear);
         return tf_FarmCameraPos;
     }
 
@@ -110,6 +110,14 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
 
         m_Plots[plotIndex].Hybrid(TCommon.RandomPercentage(GameExpression.GetFarmGeneratePercentage));
         CampManager.Instance.OnCreditStatus(-GameConst.I_CampFarmItemAcquire);
+    }
+
+    void OnFarmClear(int plotIndex)
+    {
+        if (m_Plots[plotIndex].m_Status != enum_CampFarmItemStatus.Decayed)
+            return;
+
+        m_Plots[plotIndex].Clear();
     }
 
     void OnPlotStatusChanged(int index)

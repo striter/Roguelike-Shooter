@@ -6,8 +6,8 @@ using TSpecialClasses;
 using UnityEngine.UI;
 
 public class UIC_PlayerInteract : UIControlBase {
-    AnimationControlBase m_Animation;
     RectTransform rtf_InteractData;
+    Transform tf_Container;
     Transform tf_TradePrice;
     UIT_TextExtend m_TradePrice;
     Transform tf_Weapon;
@@ -25,21 +25,21 @@ public class UIC_PlayerInteract : UIControlBase {
     {
         base.Init();
         rtf_InteractData = transform.Find("InteractData").GetComponent<RectTransform>();
-        m_Animation = new AnimationControlBase(rtf_InteractData.GetComponent<Animation>(),true);
-        Transform container = rtf_InteractData.Find("Container");
-        tf_TradePrice = container.Find("TradePrice");
+        tf_Container = rtf_InteractData.Find("Container");
+        tf_TradePrice = tf_Container.Find("TradePrice");
         m_TradePrice = tf_TradePrice.Find("Amount").GetComponent<UIT_TextExtend>();
-        tf_Weapon = container.Find("Weapon");
+        tf_Weapon = tf_Container.Find("Weapon");
         m_WeaponImage = tf_Weapon.Find("WeaponImage").GetComponent<Image>();
         m_WeaponName = tf_Weapon.Find("WeaponName").GetComponent<UIT_TextExtend>();
-        tf_Action = container.Find("Action");
+        tf_Action = tf_Container.Find("Action");
         m_Action = tf_Action.Find("ActionItem").GetComponent<UIGI_ActionItemBase>();
         m_Action.Init();
-        tf_Item = container.Find("Item");
+        tf_Item = tf_Container.Find("Item");
         m_ItemName = tf_Item.Find("Name").GetComponent<UIT_TextExtend>();
-        tf_Intro = container.Find("Intro");
+        tf_Intro = tf_Container.Find("Intro");
         m_WeaponActionHUD = new UI_WeaponActionHUD(tf_Intro.Find("WeaponAction"));
         m_Intro = tf_Intro.Find("Intro").GetComponent<UIT_TextExtend>();
+        
         TBroadCaster<enum_BC_UIStatus>.Add<InteractBase>(enum_BC_UIStatus.UI_PlayerInteractStatus,OnInteractStatus);
     }
     protected override void OnDestroy()
@@ -51,11 +51,11 @@ public class UIC_PlayerInteract : UIControlBase {
     void OnInteractStatus(InteractBase _interact)
     {
         m_interact = _interact;
-        m_Animation.Play(m_interact != null);
+        rtf_InteractData.SetActivate(false);
+        rtf_InteractData.SetActivate(m_interact != null);
         if (!m_interact)
             return;
         rtf_InteractData.SetWorldViewPortAnchor(m_interact.transform.position, CameraController.Instance.m_Camera);
-
 
         bool tradeOn = false;
         InteractBase interactInfo = m_interact;
@@ -66,6 +66,7 @@ public class UIC_PlayerInteract : UIControlBase {
                 break;
             case enum_Interaction.ContainerTrade:
                 {
+                    tradeOn = true;
                     InteractContainerTrade trade = m_interact as InteractContainerTrade;
                     m_TradePrice.text = trade.m_TradePrice.ToString();
                     interactInfo = trade.m_TradeInteract;
@@ -74,8 +75,9 @@ public class UIC_PlayerInteract : UIControlBase {
         }
         tf_TradePrice.SetActivate(tradeOn);
         UpdateInfo(interactInfo);
-    }
 
+        LayoutRebuilder.ForceRebuildLayoutImmediate(tf_Container as RectTransform);
+    }
     void UpdateInfo(InteractBase interactInfo)
     {
         bool weaponOn=false;
@@ -119,6 +121,8 @@ public class UIC_PlayerInteract : UIControlBase {
         m_WeaponActionHUD.transform.SetActivate(weaponActionOn);
         tf_Action.SetActivate(actionOn);
         tf_Item.SetActivate(itemOn);
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(tf_Intro as RectTransform);
     }
 
     private void Update()
@@ -126,7 +130,7 @@ public class UIC_PlayerInteract : UIControlBase {
         if (!m_interact)
             return;
 
-        rtf_InteractData.SetWorldViewPortAnchor(m_interact.transform.position, CameraController.Instance.m_Camera, Time.deltaTime);
+        rtf_InteractData.SetWorldViewPortAnchor(m_interact.transform.position, CameraController.Instance.m_Camera, Time.deltaTime*10f);
     }
 
 }

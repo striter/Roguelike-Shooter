@@ -5,8 +5,8 @@ using UnityEngine.UI;
 public class UIGI_FarmPlotDetail : UIT_GridItem,ISingleCoroutine {
     CampFarmPlot m_Plot;
     Text m_status, m_progress, m_coin;
-    Button m_Buy;
-    Action<int> OnPlotBuyClick;
+    Button m_Buy,m_Clear;
+    Action<int> OnPlotBuyClick, OnPlotClearClick;
     public override void Init()
     {
         base.Init();
@@ -15,6 +15,8 @@ public class UIGI_FarmPlotDetail : UIT_GridItem,ISingleCoroutine {
         m_coin = tf_Container.Find("Coin").GetComponent<Text>();
         m_Buy = tf_Container.Find("Buy").GetComponent<Button>();
         m_Buy.onClick.AddListener(OnBuyClick);
+        m_Clear = tf_Container.Find("Clear").GetComponent<Button>();
+        m_Clear.onClick.AddListener(OnClearClick);
         m_coin.SetActivate(false);
     }
 
@@ -24,10 +26,11 @@ public class UIGI_FarmPlotDetail : UIT_GridItem,ISingleCoroutine {
         this.StopAllSingleCoroutines();
     }
 
-    public void SetPlotInfo(CampFarmPlot _plot,Action<int> _OnPlotBuyClick)
+    public void SetPlotInfo(CampFarmPlot _plot,Action<int> _OnPlotBuyClick,Action<int> _OnPlotClearClick)
     {
         m_Plot = _plot;
         OnPlotBuyClick = _OnPlotBuyClick;
+        OnPlotClearClick = _OnPlotClearClick;
         UpdateInfo();
     } 
 
@@ -55,6 +58,10 @@ public class UIGI_FarmPlotDetail : UIT_GridItem,ISingleCoroutine {
     void OnBuyClick()
     {
         OnPlotBuyClick?.Invoke(I_Index);
+    }
+    void OnClearClick()
+    {
+        OnPlotClearClick?.Invoke(I_Index);
     }
 
     private void Update()

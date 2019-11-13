@@ -244,7 +244,10 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             return;
         }
 
-        if (m_Interact.TryInteract(this)&&!m_Interact.B_InteractEnable)
+        if (!m_Interact.TryInteract(this))
+            return;
+
+        if (!m_Interact.B_InteractEnable)
             m_Interact = null;
 
         OnInteractStatus();
