@@ -369,13 +369,16 @@ namespace GameSetting
         public static string GetLocalizeKey(this enum_StageLevel stage) => "Game_Stage_" + stage;
         public static string GetLocalizeKey(this enum_Style style) => "Game_Style_" + style;
         public static string GetLocalizeNameKey(this enum_PlayerWeapon weapon) => "Weapon_Name_" + weapon;
-        public static string GetLocalizeKey(this enum_Interaction interact) => "UI_Interact_" + interact;
+        public static string GetNameLocalizeKey(this enum_Interaction interact) => "UI_Interact_" + interact;
+        public static string GetIntroLocalizeKey(this enum_Interaction interact) => "UI_Interact_" + interact + "_Intro";
         public static string GetLocalizeKey(this enum_TileType type) => "UI_TileType_" + type;
         public static string GetLocalizeKey(this enum_RarityLevel rarity) => "UI_Rarity_" + rarity;
         public static string GetLocalizeKey(this enum_Option_FrameRate frameRate) => "UI_Option_" + frameRate;
         public static string GetLocalizeKey(this enum_Option_JoyStickMode joystick) => "UI_Option_" + joystick;
         public static string GetLocalizeKey(this enum_Option_LanguageRegion region) => "UI_Option_" + region;
         public static string GetLocalizeKey(this enum_UI_TileBattleStatus status) => "UI_Battle_" + status;
+
+        public static string SetActionIntro(this ActionBase actionInfo, UIT_TextExtend text) => text.formatText(actionInfo.GetIntroLocalizeKey() ,actionInfo.F_Duration, actionInfo.Value1, actionInfo.Value2, actionInfo.Value3);
     }
 
     public static class GameLayer
@@ -433,6 +436,7 @@ namespace GameSetting
     {
         Invalid = -1,
         UI_PlayerCommonStatus,
+        UI_PlayerInteractStatus,
         UI_PlayerHealthStatus,
         UI_PlayerAmmoStatus,
         UI_PlayerActionStatus,
@@ -2629,6 +2633,26 @@ namespace GameSetting
         public void SetLevel(enum_RarityLevel level)
         {
             m_Levels.Traversal((int index, RarityLevel rarity) => rarity.SetHighlight(index <= (int)level));
+        }
+    }
+    public class UI_WeaponActionHUD
+    {
+        public Transform transform { get; private set; }
+        UIT_TextExtend m_WeaponActionName;
+        UIC_RarityLevel_BG m_WeaponActionRarity;
+        public UI_WeaponActionHUD(Transform _transform)
+        {
+            transform = _transform;
+            m_WeaponActionName = _transform.Find("ActionName").GetComponent<UIT_TextExtend>();
+            m_WeaponActionRarity = new UIC_RarityLevel_BG(_transform.Find("ActionRarity"));
+        }
+
+        public void SetInfo(ActionBase action)
+        {
+            bool showWeaponAction = action != null;
+            m_WeaponActionRarity.transform.SetActivate(showWeaponAction);
+            m_WeaponActionName.autoLocalizeText = showWeaponAction ? action.GetNameLocalizeKey() : "UI_WeaponStatus_ActionInvalidName";
+            if (showWeaponAction) m_WeaponActionRarity.SetLevel(action.m_rarity);
         }
     }
     public class UIC_ActionEnergy

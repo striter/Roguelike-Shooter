@@ -5,7 +5,7 @@ using GameSetting;
 using TTime;
 using System;
 
-public class CampFarmPlot : CampFarmInteract {
+public class CampFarmPlot : MonoBehaviour {
     public int m_Index { get; private set; }
     public int m_StartStamp { get; private set; }
     public enum_CampFarmItemStatus m_Status { get; private set; } = enum_CampFarmItemStatus.Invalid;

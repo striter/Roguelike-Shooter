@@ -245,7 +245,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         }
     }
 
-    protected class CharacterAnimator:AnimatorClippingTime
+    protected class CharacterAnimator:AnimatorBase
     {
         static readonly int HS_T_Dead = Animator.StringToHash("t_dead");
         static readonly int HS_T_Activate = Animator.StringToHash("t_activate");

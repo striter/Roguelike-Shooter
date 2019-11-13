@@ -120,9 +120,9 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
     #region Interact
     void OnDragDown(bool down,Vector2 inputPos)
     {
-        CampFarmInteract targetInteract = null;
+        CampFarmPlot targetInteract = null;
         if (CameraController.Instance.InputRayCheck(inputPos, GameLayer.Mask.I_Interact, ref m_rayHit))
-            targetInteract = m_rayHit.collider.GetComponent<CampFarmInteract>();
+            targetInteract = m_rayHit.collider.GetComponent<CampFarmPlot>();
 
 
         if (targetInteract)
@@ -135,17 +135,8 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
             m_HybridPlot = null;
         }
     }
-    void OnDragInteract(CampFarmInteract interact, bool down)
+    void OnDragInteract(CampFarmPlot interact, bool down)
     {
-        if (interact.B_IsRecycle)
-        {
-            if(m_HybridPlot&&!down )
-            {
-                m_HybridPlot.Clear();
-                m_HybridPlot = null;
-            }
-            return;
-        }
 
         CampFarmPlot targetPlot = interact as CampFarmPlot;
 

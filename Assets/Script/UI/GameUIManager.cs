@@ -15,6 +15,7 @@ public class GameUIManager : UIManager {
         base.Init();
         m_InGameSprites = TResources.GetUIAtlas_InGame();
         ShowControls<UIC_EntityHealth>();
+        ShowControls<UIC_PlayerInteract>();
         ShowControls<UIC_PlayerStatus>().SetInGame(true);
         m_Coins = ShowControls<UIC_CoinsStatus>();
         m_CoinsOverlay = false;

@@ -389,16 +389,36 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
     }
 
     
-    public class AnimatorClippingTime
+    public class AnimatorBase
     {
-        protected Animator m_Animator;
-        public AnimatorClippingTime(Animator _animator)
+        public Animator m_Animator { get; private set; }
+        public AnimatorBase(Animator _animator)
         {
             m_Animator = _animator;
         }
 
     }
+    public class AnimationControlBase
+    {
+        public Animation m_Animation { get; private set; }
+        public AnimationControlBase(Animation _animation,bool startFromOn=true)
+        {
+            m_Animation = _animation;
+            SetPlayOn(startFromOn);
+        }
 
+        public void Play(bool playOn)
+        {
+            SetPlayOn(playOn);
+            m_Animation.Play(m_Animation.clip.name);
+        }
+
+        void SetPlayOn(bool playOn)
+        {
+            m_Animation[m_Animation.clip.name].speed = playOn ? 1 : -1;
+            m_Animation[m_Animation.clip.name].normalizedTime = playOn ? 0 : 1;
+        }
+    }
     //Navigation AI System Chase/Follow/Attack/Idle ETC...
     public class NavigationAgentAI<T> : SimpleMonoLifetime, ISingleCoroutine where T : MonoBehaviour
     {

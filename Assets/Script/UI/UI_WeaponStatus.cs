@@ -59,7 +59,7 @@ public class UI_WeaponStatus : UIPageBase {
         {
             ActionBase action = weapon.m_WeaponAction;
             m_ActionName.localizeKey = action.GetNameLocalizeKey();
-            m_ActionIntro.formatText(action.GetIntroLocalizeKey(), action.F_Duration, action.Value1, action.Value2, action.Value3);
+            action.SetActionIntro(m_ActionIntro);
             m_ActionRarityText.localizeKey = action.m_rarity.GetLocalizeKey();
             m_ActionRarity.SetLevel(action.m_rarity);   
             return;

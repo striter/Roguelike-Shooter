@@ -37,4 +37,10 @@ public class UIGI_ActionItemBase : UIT_GridItem {
     {
         m_Costable.SetActivate(_costable);
     }
+
+    public void SetBaseInfo(ActionBase actionInfo)
+    {
+        SetInfo(actionInfo);
+        SetCostable(true);
+    }
 }

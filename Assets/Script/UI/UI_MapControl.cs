@@ -57,8 +57,8 @@ public class UI_MapControl : UIPageBase {
         tf_MapInfo = tf_Container.Find("MapInfo");
         txt_Stage = tf_MapInfo.Find("Stage").GetComponent<UIT_TextExtend>();
         txt_Style = tf_MapInfo.Find("Style").GetComponent<UIT_TextExtend>();
-        txt_Stage.formatKeys("UI_Map_Stage",  GameManager.Instance.m_GameLevel.m_GameStage.GetLocalizeKey());
-        txt_Style.formatKeys("UI_Map_Style", GameManager.Instance.m_GameLevel.m_GameStyle.GetLocalizeKey());
+        txt_Stage.formatKey("UI_Map_Stage",  GameManager.Instance.m_GameLevel.m_GameStage.GetLocalizeKey());
+        txt_Style.formatKey("UI_Map_Style", GameManager.Instance.m_GameLevel.m_GameStyle.GetLocalizeKey());
     }
 
     void OnMapTileClick(int index)

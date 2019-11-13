@@ -92,6 +92,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void OnChangeLevel()
     {
         m_Interact = null;
+        OnInteractStatus();
     } 
     void OnBattleStart()
     {
@@ -225,9 +226,15 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         }
 
         if (isEnter)
+        {
             m_Interact = interactTarget;
+            OnInteractStatus();
+        }
         else if (m_Interact == interactTarget)
+        {
             m_Interact = null;
+            OnInteractStatus();
+        }
     }
     public void OnInteract()
     {
@@ -239,6 +246,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
         if (m_Interact.TryInteract(this)&&!m_Interact.B_InteractEnable)
             m_Interact = null;
+
+        OnInteractStatus();
     }
     #endregion
     #region Equipment
@@ -301,6 +310,10 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerAmmoStatus, m_WeaponCurrent);
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerCommonStatus, this);
+    }
+    protected void OnInteractStatus()
+    {
+        TBroadCaster<enum_BC_UIStatus>.Trigger( enum_BC_UIStatus.UI_PlayerInteractStatus,m_Interact);
     }
     protected void OnWeaponStatus()
     {

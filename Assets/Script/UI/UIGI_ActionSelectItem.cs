@@ -16,7 +16,7 @@ public class UIGI_ActionSelectItem : UIT_GridDefaultItem
         base.SetItemInfo("", false);
         txt_Name.localizeKey = action.GetNameLocalizeKey();
         txt_Cost.text = action.m_ActionType == enum_ActionType.WeaponPerk ? "" : action.I_Cost.ToString();
-        txt_Intro.formatText( action.GetIntroLocalizeKey(), action.F_Duration, action.Value1, action.Value2, action.Value3); 
+        action.SetActionIntro(txt_Intro);
         txt_Level.localizeKey = action.m_rarity.GetLocalizeKey();
     }
 }

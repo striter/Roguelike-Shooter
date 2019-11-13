@@ -5,7 +5,7 @@ using TSpecialClasses;
 public class UIC_PlayerStatus : UIControlBase
 {
     Transform tf_Container;
-    Animation m_Animation;
+    AnimationControlBase m_BattleAnimation;
     EntityCharacterPlayer m_Player;
 
     Transform tf_OutBattle;
@@ -37,24 +37,17 @@ public class UIC_PlayerStatus : UIControlBase
     Image m_HealthFill;
     UIC_Numeric m_HealthAmount, m_MaxHealth;
 
-    enum_Interaction m_lastInteract;
-    RectTransform rtf_InteractData;
-    UIT_TextExtend txt_interactName;
-    UIT_TextExtend txt_interactPrice;
-    UIGI_ActionSelectItem m_ActionData;
-
     Transform tf_WeaponData;
     UIT_TextExtend m_WeaponName;
     Image m_WeaponImage;
-    UIT_TextExtend m_WeaponActionName;
-    UIC_RarityLevel_BG m_WeaponActionRarity;
+    UI_WeaponActionHUD m_WeaponActionHUD;
 
     ValueLerpSeconds m_HealthLerp, m_ArmorLerp, m_EnergyLerp;
     protected override void Init()
     {
         base.Init();
         tf_Container = transform.Find("Container");
-        m_Animation = tf_Container.GetComponent<Animation>();
+        m_BattleAnimation =new AnimationControlBase( tf_Container.GetComponent<Animation>(),false);
 
         tf_OutBattle = tf_Container.Find("OutBattle");
         btn_ActionStorage = tf_OutBattle.Find("ActionStorage").GetComponent<Button>();
@@ -90,17 +83,10 @@ public class UIC_PlayerStatus : UIControlBase
         tf_ExpireData = tf_Container.Find("ExpireData");
         m_ExpireGrid = new UIT_GridControllerGridItem<UIGI_ExpireInfoItem>(tf_ExpireData.Find("ExpireGrid"));
 
-        rtf_InteractData = tf_Container.Find("InteractData").GetComponent<RectTransform>();
-        txt_interactName = rtf_InteractData.Find("Container/InteractName").GetComponent<UIT_TextExtend>();
-        txt_interactPrice = rtf_InteractData.Find("Container/InteractPrice").GetComponent<UIT_TextExtend>();
-        m_ActionData = rtf_InteractData.Find("Container/ActionData").GetComponent<UIGI_ActionSelectItem>();
-        m_ActionData.Init();
-
         tf_WeaponData = tf_Container.Find("WeaponData");
         m_WeaponName = tf_WeaponData.Find("WeaponName").GetComponent<UIT_TextExtend>();
         m_WeaponImage = tf_WeaponData.Find("WeaponImage").GetComponent<Image>();
-        m_WeaponActionName = tf_WeaponData.Find("ActionName").GetComponent<UIT_TextExtend>();
-        m_WeaponActionRarity = new UIC_RarityLevel_BG(tf_WeaponData.Find("ActionRarity"));
+        m_WeaponActionHUD = new UI_WeaponActionHUD(tf_WeaponData);
         tf_WeaponData.Find("WeaponDetailBtn").GetComponent<Button>().onClick.AddListener(() => { UIManager.Instance.ShowPage<UI_WeaponStatus>(true,0f).SetInfo(m_Player.m_WeaponCurrent); });
 
         m_HealthLerp = new ValueLerpSeconds(0f, 5f,2.5f,(float value)=> { m_HealthFill.fillAmount = value; });
@@ -145,11 +131,7 @@ public class UIC_PlayerStatus : UIControlBase
         btn_Bigmap.interactable = !inBattle;
         btn_ActionStorage.interactable = !inBattle;
         btn_ActionShuffle.interactable = inBattle;
-        if (!anim)
-            return;
-        m_Animation[m_Animation.clip.name].speed = inBattle ? 1 : -1;
-        m_Animation[m_Animation.clip.name].normalizedTime = inBattle ? 0 : 1;
-        m_Animation.Play(m_Animation.clip.name);
+        if (anim) m_BattleAnimation.Play(inBattle);
     }
     void OnBattleStart()=>SetInBattle(true);
     void OnBattleFinish()=> SetInBattle(false);
@@ -181,77 +163,6 @@ public class UIC_PlayerStatus : UIControlBase
         m_EnergyLerp.ChangeValue(_player.m_PlayerInfo.m_ActionEnergy);
         img_ShuffleFill.fillAmount = _player.m_PlayerInfo.f_shuffleScale;
         rtf_StatusData.SetWorldViewPortAnchor(m_Player.tf_Status.position, CameraController.Instance.m_Camera, Time.deltaTime * 10f);
-
-        if (_player.m_Interact==null)
-        {
-            rtf_InteractData.SetActivate(false);
-            m_lastInteract = enum_Interaction.Invalid;
-            return;
-        }
-
-        if (rtf_InteractData.SetActivate(true))
-            rtf_InteractData.SetWorldViewPortAnchor(m_Player.tf_Head.position, CameraController.Instance.m_Camera);
-        rtf_InteractData.SetWorldViewPortAnchor(m_Player.tf_Head.position, CameraController.Instance.m_Camera, Time.deltaTime * 10f);
-
-        int tradePrice = 0;
-        if (_player.m_Interact.m_InteractType == enum_Interaction.ContainerTrade)
-        {
-            InteractContainerTrade trade = _player.m_Interact as InteractContainerTrade;
-            tradePrice = trade.m_TradePrice;
-            SetInteractInfo(trade.m_InteractTarget);
-        }
-        else if (_player.m_Interact.m_InteractType == enum_Interaction.ContainerBattle)
-        {
-            InteractContainerBattle battle = _player.m_Interact as InteractContainerBattle;
-            SetInteractInfo(battle.m_InteractTarget);
-        }
-        else
-        {
-            SetInteractInfo(_player.m_Interact);
-        }
-        txt_interactPrice.SetActivate(tradePrice>0);
-        if(tradePrice>0)
-            txt_interactPrice.text = tradePrice.ToString();
-    }
-    WeaponBase m_targetInteractWeapon;
-    void SetInteractInfo(InteractBase interact)
-    {
-        if (interact.m_InteractType == enum_Interaction.Weapon)
-        {
-            SetInteractWeaponInfo(interact as InteractWeapon);
-            return;
-        }
-        m_targetInteractWeapon = null;
-
-        if (m_lastInteract == interact.m_InteractType)
-            return;
-        m_lastInteract = interact.m_InteractType;
-        m_ActionData.SetActivate(false);
-        switch (interact.m_InteractType)
-        {
-            case enum_Interaction.PickupAction:
-                {
-                    m_ActionData.SetActivate(true);
-                    txt_interactName.autoLocalizeText = interact.m_InteractType.GetLocalizeKey();
-                    m_ActionData.SetInfo((interact as InteractPickupAction).m_Action);
-                }
-                break;
-            default:
-                txt_interactName.autoLocalizeText = interact.m_InteractType.GetLocalizeKey();
-                break;
-        }
-    }
-    void SetInteractWeaponInfo(InteractWeapon interactWeapon)
-    {
-        if (m_targetInteractWeapon == interactWeapon.m_Weapon)
-            return;
-
-        m_targetInteractWeapon = interactWeapon.m_Weapon;
-        txt_interactName.autoLocalizeText = m_targetInteractWeapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
-        m_lastInteract = enum_Interaction.Invalid;
-        m_ActionData.SetActivate(m_targetInteractWeapon.m_WeaponAction != null);
-        if (m_targetInteractWeapon.m_WeaponAction!=null)
-            m_ActionData.SetInfo(m_targetInteractWeapon.m_WeaponAction);
     }
     #endregion
     #region Health Status
@@ -265,15 +176,11 @@ public class UIC_PlayerStatus : UIControlBase
     }
     #endregion
     #region Weapon/Ammo
-    void OnWeaponStatus(WeaponBase waepon)
+    void OnWeaponStatus(WeaponBase weapon)
     {
-        m_WeaponImage.sprite = UIManager.Instance.m_WeaponSprites[waepon.m_WeaponInfo.m_Weapon.GetSpriteName()];
-        m_WeaponName.autoLocalizeText = waepon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
-
-        bool showWeaponAction = waepon.m_WeaponAction != null;
-        m_WeaponActionRarity.transform.SetActivate(showWeaponAction);
-        m_WeaponActionName.autoLocalizeText = showWeaponAction ? waepon.m_WeaponAction.GetNameLocalizeKey() : "UI_WeaponStatus_ActionInvalidName";
-        if (showWeaponAction) m_WeaponActionRarity.SetLevel(waepon.m_WeaponAction.m_rarity);
+        m_WeaponImage.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Weapon.GetSpriteName()];
+        m_WeaponName.autoLocalizeText = weapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
+        m_WeaponActionHUD.SetInfo(weapon.m_WeaponAction);
     }
     void OnAmmoStatus(WeaponBase weaponInfo)
     {
