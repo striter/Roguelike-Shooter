@@ -5,22 +5,28 @@ using UnityEngine;
 using UnityEngine.UI;
 using GameSetting;
 public class UI_Options : UIPageBase {
-    class ButtonToggle
+    class BoolToggle : ValueToggle<bool>
     {
-        Func<bool> OnToggle;
-        Image m_On, m_Off;
-        public ButtonToggle(Transform _transform, Func<bool> _OnToggle, bool showState)
+        static readonly List<bool> values = new List<bool> { true, false };
+        public BoolToggle(Transform _transform, Func<bool> _OnToggle, bool showState):base(_transform,_OnToggle,showState,values)
+        {
+
+        }
+    }
+    class ValueToggle<T>
+    {
+        Func<T> OnToggle;
+        Dictionary<T, Image> m_ToggleImages=new Dictionary<T, Image>();
+        public ValueToggle(Transform _transform, Func<T> _OnToggle, T showState,List<T> values)
         {
             _transform.GetComponent<Button>().onClick.AddListener(OnButtonClick);
-            m_On = _transform.Find("On").GetComponent<Image>();
-            m_Off = _transform.Find("Off").GetComponent<Image>();
+            values.Traversal((T value) => { m_ToggleImages.Add(value, _transform.Find(value.ToString()).GetComponent<Image>()); });
             OnToggle = _OnToggle;
             SetShowState(showState);
         }
-        void SetShowState(bool showState)
+        void SetShowState(T showState)
         {
-            m_On.SetActivate(showState);
-            m_Off.SetActivate(!showState);
+            m_ToggleImages.Traversal((T value, Image image) => { image.SetActivate(value.Equals(showState)); });
         }
         void OnButtonClick()
         {
@@ -56,14 +62,14 @@ public class UI_Options : UIPageBase {
     {
         base.Init(useAnim);
         tf_Basic = tf_Container.Find("Basic");
-         new ButtonToggle(tf_Basic.Find("FrameRate/BtnToggle"), OnFrequencyClicked, frameRateOn());
-        new ButtonToggle(tf_Basic.Find("ScreenEffect/BtnToggle"), OnScreenEffectClicked, screenEffectOn());
-        new ButtonToggle(tf_Basic.Find("Region/BtnToggle"), OnRegionClicked, regionOn());
+        new BoolToggle(tf_Basic.Find("FrameRate/BtnToggle"), OnFrequencyClicked, GetFrameRateOption());
+        new ValueToggle<enum_Option_ScreenEffect>(tf_Basic.Find("ScreenEffect/BtnToggle"), OnScreenEffectClicked, GetScreenEffectOption(),new List<enum_Option_ScreenEffect> {  enum_Option_ScreenEffect.Normal, enum_Option_ScreenEffect.High, enum_Option_ScreenEffect.Epic});
+        new BoolToggle(tf_Basic.Find("Region/BtnToggle"), OnRegionClicked, GetRegionOption());
         new SliderStatus(tf_Basic.Find("MusicVolume/Slider"), OnMusicVolumeChanged, OptionsManager.m_OptionsData.m_MusicVolumeTap);
          new SliderStatus(tf_Basic.Find("VFXVolume/Slider"), OnVFXVolumeChanged, OptionsManager.m_OptionsData.m_VFXVolumeTap);
 
         tf_Control = tf_Container.Find("Control");
-         new ButtonToggle(tf_Control.Find("JoystickMode/BtnToggle"), OnJoystickClicked, joystickOn());
+         new BoolToggle(tf_Control.Find("JoystickMode/BtnToggle"), OnJoystickClicked, GetJoystickOption());
          new SliderStatus(tf_Control.Find("Sensitive/Slider"), OnSensitiveChanged, OptionsManager.m_OptionsData.m_SensitiveTap);
         tf_ReturnToCamp = tf_Control.Find("ReturnToCamp");
         tf_ReturnToCamp.Find("BtnReturnToCamp").GetComponent<Button>().onClick.AddListener(OnMainmenuBtnClick);
@@ -80,35 +86,37 @@ public class UI_Options : UIPageBase {
         OptionsManager.Save();
     }
 
-    bool frameRateOn() =>  OptionsManager.m_OptionsData.m_FrameRate == enum_Option_FrameRate.Normal;
+    bool GetFrameRateOption() =>  OptionsManager.m_OptionsData.m_FrameRate == enum_Option_FrameRate.Normal;
     bool OnFrequencyClicked()
     {
-        OptionsManager.m_OptionsData.m_FrameRate = frameRateOn() ? enum_Option_FrameRate.High : enum_Option_FrameRate.Normal;
+        OptionsManager.m_OptionsData.m_FrameRate = GetFrameRateOption() ? enum_Option_FrameRate.High : enum_Option_FrameRate.Normal;
         OptionsManager.OnOptionChanged();
-        return frameRateOn();
+        return GetFrameRateOption();
     }
 
-    bool screenEffectOn() => !OptionsManager.m_OptionsData.m_EnableScreenEffect;
-    bool OnScreenEffectClicked()
+    enum_Option_ScreenEffect GetScreenEffectOption() => OptionsManager.m_OptionsData.m_ScreenEffect;
+    enum_Option_ScreenEffect OnScreenEffectClicked()
     {
-        OptionsManager.m_OptionsData.m_EnableScreenEffect = !OptionsManager.m_OptionsData.m_EnableScreenEffect;
+        OptionsManager.m_OptionsData.m_ScreenEffect++;
+        if (OptionsManager.m_OptionsData.m_ScreenEffect > enum_Option_ScreenEffect.Epic)
+            OptionsManager.m_OptionsData.m_ScreenEffect = enum_Option_ScreenEffect.Normal;
         OptionsManager.OnOptionChanged();
-        return screenEffectOn();
+        return GetScreenEffectOption();
     }
 
-    bool regionOn() => OptionsManager.m_OptionsData.m_Region == enum_Option_LanguageRegion.EN;
+    bool GetRegionOption() => OptionsManager.m_OptionsData.m_Region == enum_Option_LanguageRegion.EN;
     bool OnRegionClicked()
     {
-        OptionsManager.m_OptionsData.m_Region = regionOn() ? enum_Option_LanguageRegion.CN : enum_Option_LanguageRegion.EN;
+        OptionsManager.m_OptionsData.m_Region = GetRegionOption() ? enum_Option_LanguageRegion.CN : enum_Option_LanguageRegion.EN;
         OptionsManager.OnOptionChanged();
-        return regionOn();
+        return GetRegionOption();
     }
-    bool joystickOn() => OptionsManager.m_OptionsData.m_JoyStickMode == enum_Option_JoyStickMode.Retarget;
+    bool GetJoystickOption() => OptionsManager.m_OptionsData.m_JoyStickMode == enum_Option_JoyStickMode.Retarget;
     bool OnJoystickClicked()
     {
-        OptionsManager.m_OptionsData.m_JoyStickMode = joystickOn() ? enum_Option_JoyStickMode.Stational : enum_Option_JoyStickMode.Retarget;
+        OptionsManager.m_OptionsData.m_JoyStickMode = GetJoystickOption() ? enum_Option_JoyStickMode.Stational : enum_Option_JoyStickMode.Retarget;
         OptionsManager.OnOptionChanged();
-        return joystickOn();
+        return GetJoystickOption();
     }
 
     void OnMusicVolumeChanged(float value)

@@ -580,6 +580,8 @@ namespace GameSetting
 
     public enum enum_Option_FrameRate { Invalid = -1, Normal = 45, High = 60, }
 
+    public enum enum_Option_ScreenEffect { Invalid=-1,Normal,High,Epic}
+
     public enum enum_CampFarmItemStatus { Invalid=-1, Empty = 0, Locked=1 , Decayed = 2, Progress1=10,Progress2,Progress3,Progress4,Progress5}
 
     public enum enum_UITipsType { Invalid=-1,Normal=0,Warning=1,Error=2}
@@ -711,7 +713,7 @@ namespace GameSetting
     {
         public enum_Option_JoyStickMode m_JoyStickMode;
         public enum_Option_FrameRate m_FrameRate;
-        public bool m_EnableScreenEffect;
+        public enum_Option_ScreenEffect m_ScreenEffect;
         public enum_Option_LanguageRegion m_Region;
         public int m_MusicVolumeTap;
         public int m_VFXVolumeTap;
@@ -721,7 +723,7 @@ namespace GameSetting
         {
             m_JoyStickMode = enum_Option_JoyStickMode.Retarget;
             m_FrameRate = enum_Option_FrameRate.High;
-            m_EnableScreenEffect = true;
+            m_ScreenEffect =  enum_Option_ScreenEffect.High;
             m_Region = enum_Option_LanguageRegion.CN;
             m_SensitiveTap = 5;
             m_MusicVolumeTap = 10;
