@@ -270,7 +270,7 @@ public class PE_FocalDepth : PostEffectBase
     public void SetFocalTarget(Vector3 focalTarget, float focalWidth)
     {
         float _01Depth = m_Manager.Get01Depth(focalTarget);
-        float _01Width = m_Manager.Get01DepthWidth(focalWidth);
+        float _01Width = m_Manager.Get01DepthLength(focalWidth);
         m_Material.SetFloat("_FocalDepthStart",_01Depth-_01Width );
         m_Material.SetFloat("_FocalDepthEnd", _01Depth+_01Width);
     }
@@ -361,11 +361,8 @@ public class PE_AreaScanDepth : PostEffectBase
 public class PE_DepthSSAO : PostEffectBase      //Test Currently Uncomplete
 {
     public override DepthTextureMode m_DepthTextureMode => DepthTextureMode.Depth;
-    public void SetEffect(float strength=.6f,float sizeArea= 0.075f, float sphereRadius=.03f,float fallOff = 0.0000005f)
+    public void SetEffect(float strength=.6f, float sphereRadius=.03f, float fallOffScale=15)
     {
-        m_Material.SetFloat("_Strength", strength);
-        m_Material.SetFloat("_SizeArea", sizeArea);
-
         Vector4[] array = new Vector4[16] {
             new Vector3( 0.5381f, 0.1856f,-0.4319f),  new Vector3( 0.1379f, 0.2486f, 0.4430f),new Vector3( 0.3371f, 0.5679f,-0.0057f),  new Vector3(-0.6999f,-0.0451f,-0.0019f),
             new Vector3( 0.0689f,-0.1598f,-0.8547f),  new Vector3( 0.0560f, 0.0069f,-0.1843f),new Vector3(-0.0146f, 0.1402f, 0.0762f),  new Vector3( 0.0100f,-0.1924f,-0.0344f),
@@ -373,10 +370,11 @@ public class PE_DepthSSAO : PostEffectBase      //Test Currently Uncomplete
             new Vector3( 0.7119f,-0.0154f,-0.0918f),  new Vector3(-0.0533f, 0.0596f,-0.5411f),new Vector3( 0.0352f,-0.0631f, 0.5460f),  new Vector3(-0.4776f, 0.2847f,-0.0271f)};
         for (int i = 0; i < array.Length; i++)
             array[i] *= sphereRadius;
-
         m_Material.SetInt("_SampleCount", 16);
         m_Material.SetVectorArray("_SampleSphere", array);
-        m_Material.SetFloat("_FallOff", fallOff);
+
+        m_Material.SetFloat("_Strength", strength);
+        m_Material.SetFloat("_FallOff", m_Manager.Get01DepthLength(sphereRadius)/ fallOffScale);
     }
 }
 #endregion
