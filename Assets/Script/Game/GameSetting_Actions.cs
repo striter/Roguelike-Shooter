@@ -179,16 +179,16 @@ namespace GameSetting_Action
         public const float F_20009_FireRate = 1f;
 
         public const int I_20010_Cost = 2;
-        public static float F_20010_Health(enum_RarityLevel rarity) => 300;
-        public static float P_20010_PlayerHealthDrain(enum_RarityLevel rarity) =>4*(int)rarity;
-        public static float P_20010_AIHealthDrain(enum_RarityLevel rarity) => 80 * (int)rarity;
+        public static float F_20010_Health(enum_RarityLevel rarity) => 400;
+        public static float P_20010_PlayerHealthDrain(enum_RarityLevel rarity) =>2*(int)rarity;
+        public static float P_20010_AIHealthDrain(enum_RarityLevel rarity) => 100 * (int)rarity;
 
         //20011 To Be Continued
         
         public const int I_20012_Cost = 2;
-        public static float F_20012_Health(enum_RarityLevel rarity) => 200;
-        public static float F_20012_PlayerHealthRegen(enum_RarityLevel rarity) => 3 * (int)rarity;
-        public static float F_20012_AIHealthRegen(enum_RarityLevel rarity) => 15 * (int)rarity;
+        public static float F_20012_Health(enum_RarityLevel rarity) => 400;
+        public static float F_20012_PlayerHealthRegen(enum_RarityLevel rarity) => 1.5 * (int)rarity;
+        public static float F_20012_AIHealthRegen(enum_RarityLevel rarity) => 20 * (int)rarity;
 
         public const int I_20013_Cost = 2;
         public static float P_20013_DamageMultiplyBase(enum_RarityLevel rarity) => 300 * (int)rarity;
