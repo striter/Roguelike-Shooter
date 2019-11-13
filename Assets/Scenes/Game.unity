@@ -323,7 +323,7 @@ MonoBehaviour:
   WeaponPerkOnSpawn: -1
   F5_TestActionNormal: 10016
   F6_TestActionOutstanding: 20006
-  F7_TestActionEpic: 40020
+  F7_TestActionEpic: 30015
   F8_TestAcquireAction: 30005
   B_AdditionalLight: 1
 --- !u!4 &1133817278
