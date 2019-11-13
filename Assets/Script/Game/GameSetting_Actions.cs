@@ -187,7 +187,7 @@ namespace GameSetting_Action
         
         public const int I_20012_Cost = 2;
         public static float F_20012_Health(enum_RarityLevel rarity) => 400;
-        public static float F_20012_PlayerHealthRegen(enum_RarityLevel rarity) => 1 * (int)rarity;
+        public static float F_20012_PlayerHealthRegen(enum_RarityLevel rarity) => 1.5f * (int)rarity;
         public static float F_20012_AIHealthRegen(enum_RarityLevel rarity) => 20 * (int)rarity;
 
         public const int I_20013_Cost = 2;
