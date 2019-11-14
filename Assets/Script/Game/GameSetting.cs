@@ -68,7 +68,7 @@ namespace GameSetting
 
         public const int I_CampActionStorageNormalCount = 10;
         public const int I_CampActionStorageOutstandingCount = 30;
-        public const int I_CampActionStorageEpicCount = 82800;
+        public const int I_CampActionStorageEpicCount = 60;
 
         public const int I_CampActionCreditGainPerRequestSurplus = 100;
         public const int I_CampActionStorageRequestStampDuration = 30;//36000 //10 hours
