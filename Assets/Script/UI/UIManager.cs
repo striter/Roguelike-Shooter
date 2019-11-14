@@ -10,7 +10,7 @@ public class UIManager :UIManagerBase,ISingleCoroutine
     protected Button btn_Reload { get; private set; }
     Action OnReload;
     Action<bool> OnMainDown;
-    Image img_main;
+    Image img_main,m_setting;
     protected UIT_GridControllerGridItem<UIGI_TipItem> m_TipsGrid;
     protected TouchDeltaManager m_TouchDelta { get; private set; }
     public Camera m_Camera { get; private set; }
@@ -34,7 +34,8 @@ public class UIManager :UIManagerBase,ISingleCoroutine
     {
         base.Init();
         Instance = this;
-        cvs_Camera.transform.Find("Settings").GetComponent<Button>().onClick.AddListener(() => { ShowPage<UI_Options>(true, 0f).SetInGame(GameManagerBase.Instance.B_InGame); });
+        cvs_Camera.transform.Find("Settings").GetComponent<Button>().onClick.AddListener(OnSettingBtnClick);
+        m_setting = cvs_Camera.transform.Find("Settings/Image").GetComponent<Image>();
 
         tf_BaseControl = cvs_Camera.transform.Find("BaseControl");
         img_main = tf_BaseControl.Find("Main/Image").GetComponent<Image>();
@@ -141,4 +142,20 @@ public class UIManager :UIManagerBase,ISingleCoroutine
     int tipCount = 0;
     public void ShowTip(string key, enum_UITipsType tipsType) => m_TipsGrid.AddItem(tipCount++).ShowTips(key, tipsType,OnTipFinish);
     void OnTipFinish(int index)=>m_TipsGrid.RemoveItem(index);
+
+    void OnSettingBtnClick()
+    {
+        if (OnSettingClick != null)
+        {
+            OnSettingClick();
+            return;
+        }
+        ShowPage<UI_Options>(true, 0f).SetInGame(GameManagerBase.Instance.B_InGame);
+    }
+    Action OnSettingClick;
+    protected void OverrideSetting(Action Override=null)
+    {
+        OnSettingClick = Override;
+        m_setting.sprite = m_CommonSprites[Override == null ? "icon_setting" : "icon_close"];
+    }
 }

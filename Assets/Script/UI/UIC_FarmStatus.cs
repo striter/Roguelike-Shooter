@@ -10,23 +10,18 @@ public class UIC_FarmStatus : UIControlBase {
     Text m_ProfitAmount;
     UIT_GridControllerGridItem<UIGI_FarmPlotDetail> m_PlotGrid;
     UIT_GridControllerGridItem<UIGI_FarmProfit> m_ProfitAnim;
-    Action OnExitClick;
     protected override void Init()
     {
         base.Init();
         m_PlotGrid = new UIT_GridControllerGridItem<UIGI_FarmPlotDetail>(transform.Find("DetailGrid"));
         m_ProfitAnim = new UIT_GridControllerGridItem<UIGI_FarmProfit>(transform.Find("ProfitGrid"));
-        transform.Find("Exit").GetComponent<Button>().onClick.AddListener(OnExitBtnClick);
     }
-    public void Play(List<CampFarmPlot> plots, Action<int> _OnBuyClick,Action<int> _OnClearClick,Action _OnExitClick)
+    public void Play(List<CampFarmPlot> plots, Action<int> _OnBuyClick,Action<int> _OnClearClick)
     {
-        OnExitClick = _OnExitClick;
         m_PlotGrid.ClearGrid();
         for (int i = 0; i < plots.Count; i++)
             m_PlotGrid.AddItem(i).SetPlotInfo(plots[i], _OnBuyClick,_OnClearClick);
     }
-    void OnExitBtnClick() => OnExitClick();
-
     public void UpdatePlot(int index) => m_PlotGrid.GetItem(index).UpdateInfo();
 
     int profitIndex = 0;
