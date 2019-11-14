@@ -324,7 +324,7 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
         m_RenderCamera.farClipPlane = m_Manager.m_Camera.farClipPlane;
         m_RenderCamera.fieldOfView = m_Manager.m_Camera.fieldOfView;
         m_RenderCamera.enabled = false;
-        m_RenderTexture = new RenderTexture(m_Manager.m_Camera.scaledPixelWidth, m_Manager.m_Camera.scaledPixelHeight, 1);
+        m_RenderTexture = RenderTexture.GetTemporary(m_Manager.m_Camera.scaledPixelWidth, m_Manager.m_Camera.scaledPixelHeight, 1);
         m_RenderCamera.targetTexture = m_RenderTexture;
     }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
@@ -338,6 +338,7 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
     {
         base.OnDestroy();
         m_GaussianBlur.OnDestroy();
+        RenderTexture.ReleaseTemporary(m_RenderTexture);
     }
 }
 public class PE_AreaScanDepth : PostEffectBase
