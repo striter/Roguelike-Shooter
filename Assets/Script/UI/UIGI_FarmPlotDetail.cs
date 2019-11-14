@@ -78,6 +78,7 @@ public class UIGI_FarmPlotDetail : UIT_GridItem {
         if (!m_Plot)
             return;
         rtf_RectTransform.SetWorldViewPortAnchor(m_Plot.m_PlotItem.transform.position, CameraController.MainCamera, .2f);
+        rtf_RectTransform.localScale = Vector3.one * Mathf.Lerp(1.5f, 1, rtf_RectTransform.anchorMin.y / 1f);
     }
     public void StampTick()
     {
