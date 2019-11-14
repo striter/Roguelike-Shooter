@@ -223,7 +223,7 @@ namespace GameSetting
             switch(type)
             {
                 case enum_UITipsType.Normal:
-                    return Color.gray;
+                    return Color.white;
                 case enum_UITipsType.Warning:
                     return Color.yellow;
                 case enum_UITipsType.Error:
