@@ -81,7 +81,7 @@ public class TBroadCaster<TEnum>
         }
 
         if (!triggered)
-            UnityEngine.Debug.LogWarning("No Message Triggered By:"+type.ToString()+"|"  + template.ToString());
+            UnityEngine.Debug.LogWarning("No Message Triggered By:"+type.ToString()+"|"  + typeof(T).ToString());
     }
 
     public static void Add<T, Y>(TEnum type, Action<T, Y> Listener)
@@ -120,7 +120,7 @@ public class TBroadCaster<TEnum>
         }
 
         if (!triggered)
-            UnityEngine.Debug.LogWarning("No Message Triggered By:" + type.ToString() + "|" + template1.ToString() + "|" + template2.ToString());
+            UnityEngine.Debug.LogWarning("No Message Triggered By:" + type.ToString() + "|" + typeof(T) .ToString() + "|" + typeof(Y).ToString());
     }
 
     public static void Add<T, Y, U>(TEnum type, Action<T, Y, U> Listener)
@@ -157,7 +157,7 @@ public class TBroadCaster<TEnum>
         }
 
         if (!triggered)
-            UnityEngine.Debug.LogWarning("No Message Triggered By:" + type.ToString() + "|" + template1.ToString() + "|" + template2.ToString() + "|" + template3.ToString());
+            UnityEngine.Debug.LogWarning("No Message Triggered By:" + type.ToString() + "|" + typeof(T).ToString() + "|" + typeof(Y).ToString() + "|" + typeof(U).ToString());
     }
 }
 

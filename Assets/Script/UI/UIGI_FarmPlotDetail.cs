@@ -11,7 +11,7 @@ public class UIGI_FarmPlotDetail : UIT_GridItem {
     UIT_TextExtend m_LockProj, m_LockText;
     Transform tf_Profiting;
     Slider m_Duration;
-    UIT_TextExtend m_DurationLeft;
+    UIT_TextExtend m_DurationLeft,m_Status;
 
     CampFarmPlot m_Plot;
     Action<int> OnPlotAcquireClick, OnPlotClearClick;
@@ -26,6 +26,7 @@ public class UIGI_FarmPlotDetail : UIT_GridItem {
         tf_Profiting = tf_Container.Find("Profiting");
         m_Duration = tf_Profiting.Find("Duration").GetComponent<Slider>();
         m_DurationLeft = tf_Profiting.Find("DurationLeft").GetComponent<UIT_TextExtend>();
+        m_Status = tf_Profiting.Find("Status").GetComponent<UIT_TextExtend>();
         tf_Locked = tf_Container.Find("Locked");
         m_LockProj = tf_Locked.Find("LockProj").GetComponent<UIT_TextExtend>();
         m_LockText = m_LockProj.transform.Find("LockText").GetComponent<UIT_TextExtend>();
@@ -48,6 +49,14 @@ public class UIGI_FarmPlotDetail : UIT_GridItem {
         bool decayed = false;
         bool empty = false;
         bool locked = false;
+        bool showProfiting = false;
+        if (GameExpression.CanGenerateprofit(m_Plot.m_Status))
+        {
+            showProfiting = true;
+            m_Status.localizeKey = m_Plot.m_Status.GetLocalizeKey();
+            m_Duration.value = m_Plot.m_StampLeftScale;
+            m_DurationLeft.text = m_Plot.m_Timeleft;
+        }
         switch (m_Plot.m_Status)
         {
             case enum_CampFarmItemStatus.Locked:
@@ -70,7 +79,7 @@ public class UIGI_FarmPlotDetail : UIT_GridItem {
         m_Clear.SetActivate(decayed);
         m_Acquire.SetActivate(empty);
         tf_Locked.SetActivate(locked);
-        tf_Profiting.SetActivate(!decayed && !empty && !locked);
+        tf_Profiting.SetActivate(showProfiting);
     }
 
     private void Update()

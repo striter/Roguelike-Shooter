@@ -55,8 +55,8 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
     public Transform Begin(Action _OnExitFarm)
     {
         OnExitFarm = _OnExitFarm;
-        m_FarmStatus = CampUIManager.Instance.BeginFarm(OnDragDown, OnDrag);
-        m_FarmStatus.Play(m_Plots, OnFarmBuy,OnFarmClear,OnExit);
+        m_FarmStatus = CampUIManager.Instance.BeginFarm(OnDragDown, OnDrag, OnExit);
+        m_FarmStatus.Play(m_Plots, OnFarmBuy,OnFarmClear);
         return tf_FarmCameraPos;
     }
 

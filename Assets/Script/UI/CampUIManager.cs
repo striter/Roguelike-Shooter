@@ -21,9 +21,10 @@ public class CampUIManager : UIManager {
     }
     
     Action OnExitFarm;
-    public UIC_FarmStatus BeginFarm(Action<bool,Vector2> _OnDragDown, Action<Vector2> _OnDrag)
+    public UIC_FarmStatus BeginFarm(Action<bool,Vector2> _OnDragDown, Action<Vector2> _OnDrag,Action _OnExit)
     {
         m_TouchDelta.AddDragBinding(_OnDragDown, _OnDrag);
+        OverrideSetting(_OnExit);
         tf_BaseControl.localScale = Vector3.zero;
         UIC_FarmStatus target = ShowControls<UIC_FarmStatus>();
         return target;
@@ -31,6 +32,7 @@ public class CampUIManager : UIManager {
     public void ExitFarm()
     {
         tf_BaseControl.localScale=Vector3.one;
+        OverrideSetting(null);
         m_TouchDelta.RemoveExtraBinding();
         OnExitFarm?.Invoke();
     }
