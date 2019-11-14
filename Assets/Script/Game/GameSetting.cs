@@ -172,7 +172,7 @@ namespace GameSetting
         }
 
         public static readonly Dictionary<enum_CampFarmItemStatus, int> GetFarmGeneratePercentage = new Dictionary< enum_CampFarmItemStatus,int>() { {  enum_CampFarmItemStatus.Progress1 ,60},{enum_CampFarmItemStatus.Progress2 ,30},{enum_CampFarmItemStatus.Progress3 ,6},{enum_CampFarmItemStatus.Progress4,3},{ enum_CampFarmItemStatus.Progress5,1} };   //Farm生成等级百分比
-        public static readonly Dictionary<enum_CampFarmItemStatus, CampFarmItemData> GetFarmItemInfo = new Dictionary<enum_CampFarmItemStatus, CampFarmItemData> { { enum_CampFarmItemStatus.Progress1, CampFarmItemData.Create(82800, .1f / 60f) }, { enum_CampFarmItemStatus.Progress2, CampFarmItemData.Create(82800, .2f / 60f) }, { enum_CampFarmItemStatus.Progress3, CampFarmItemData.Create(82800, .3f / 60f) }, { enum_CampFarmItemStatus.Progress4, CampFarmItemData.Create(82800, .5f / 60f) }, { enum_CampFarmItemStatus.Progress5, CampFarmItemData.Create(82800, 1f / 60f) } };      //Farm 等级,持续时间,每秒Credit
+        public static readonly Dictionary<enum_CampFarmItemStatus, CampFarmItemData> GetFarmItemInfo = new Dictionary<enum_CampFarmItemStatus, CampFarmItemData> { { enum_CampFarmItemStatus.Progress1, CampFarmItemData.Create(60, .1f / 60f) }, { enum_CampFarmItemStatus.Progress2, CampFarmItemData.Create(60, .2f / 60f) }, { enum_CampFarmItemStatus.Progress3, CampFarmItemData.Create(60, .3f / 60f) }, { enum_CampFarmItemStatus.Progress4, CampFarmItemData.Create(60, .5f / 60f) }, { enum_CampFarmItemStatus.Progress5, CampFarmItemData.Create(60, 1f / 60f) } };      //Farm 等级,持续时间,每秒Credit
         public static bool CanGenerateprofit(this enum_CampFarmItemStatus status)
         {
             switch(status)
