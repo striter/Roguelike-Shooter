@@ -111,7 +111,7 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
             return;
         if (GameDataManager.m_GameData.f_Credits < GameConst.I_CampFarmItemAcquire)
         {
-            UIManager.Instance.ShowTip("UI_Tips_LackOfCredit", enum_UITipsType.Normal);
+            UIManager.Instance.ShowTip("UI_Tips_LackOfCredit", enum_UITipsType.Error);
             return;
         }
         m_Plots[plotIndex].Hybrid(TCommon.RandomPercentage(GameExpression.GetFarmGeneratePercentage));
