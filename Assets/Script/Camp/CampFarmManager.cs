@@ -107,9 +107,13 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
 
     void OnFarmBuy(int plotIndex)
     {
-        if (m_Plots[plotIndex].m_Status != enum_CampFarmItemStatus.Empty || GameDataManager.m_GameData.f_Credits < GameConst.I_CampFarmItemAcquire)
+        if (m_Plots[plotIndex].m_Status != enum_CampFarmItemStatus.Empty)
             return;
-
+        if (GameDataManager.m_GameData.f_Credits < GameConst.I_CampFarmItemAcquire)
+        {
+            UIManager.Instance.ShowTip("UI_Tips_LackOfCredit", enum_UITipsType.Error);
+            return;
+        }
         m_Plots[plotIndex].Hybrid(TCommon.RandomPercentage(GameExpression.GetFarmGeneratePercentage));
         CampManager.Instance.OnCreditStatus(-GameConst.I_CampFarmItemAcquire);
     }

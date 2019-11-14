@@ -12,6 +12,7 @@ public class CampUIManager : UIManager {
         btn_Reload.SetActivate(false);
 
         ShowControls<UIC_PlayerStatus>().SetInGame(false);
+        ShowControls<UIC_PlayerInteract>();
         ShowControls<UIC_CurrencyStatus>();
     }
     protected override void OnDestroy()
