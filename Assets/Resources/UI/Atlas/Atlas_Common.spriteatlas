@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 3647779
+    totalSpriteSurfaceArea: 3651875
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -92,6 +92,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: d40acf7a523f9124e830b23c072f7d9e, type: 3}
   - {fileID: 21300000, guid: ac9c2c22d9a4cf241a53932685201d4c, type: 3}
   - {fileID: 21300000, guid: a0e4044850dc94f4ea77c05d26531154, type: 3}
+  - {fileID: 21300000, guid: daf8af51f0554554dba88ad6e059dca3, type: 3}
   - {fileID: 21300000, guid: ffa5d357c7dd26b459d6fcb7886cd0f3, type: 3}
   - {fileID: 21300000, guid: 6433a4f32ecfda541886965e846ea0e0, type: 3}
   - {fileID: 21300000, guid: a3083f2f75bbc6d44836979886b6c10f, type: 3}
@@ -172,6 +173,7 @@ SpriteAtlas:
   - btn_close
   - icon_setting
   - icon_failure
+  - UI_common_circle
   - UI_common_black80
   - UI_setting_slider
   - icon_ActionEnergy
@@ -190,7 +192,7 @@ SpriteAtlas:
   - UI_common_angle_gray
   - icon_buff_rank
   - UI_setting_common_bottom
-  - UI_Common_Square
+  - UI_common_square
   - btn_close_strip
   m_Tag: Atlas_Common
   m_IsVariant: 0

@@ -323,7 +323,7 @@ AnimatorStateTransition:
   m_IsExit: 0
   serializedVersion: 3
   m_TransitionDuration: 0.1
-  m_TransitionOffset: 0
+  m_TransitionOffset: 0.1
   m_ExitTime: 0.75
   m_HasExitTime: 0
   m_HasFixedDuration: 1
@@ -887,7 +887,7 @@ AnimatorState:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Reload
-  m_Speed: 2
+  m_Speed: 2.1
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 1101438177828729126}
@@ -990,7 +990,7 @@ AnimatorState:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Reload
-  m_Speed: 2
+  m_Speed: 2.1
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 1101692212392751338}
@@ -1093,7 +1093,7 @@ AnimatorState:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Reload
-  m_Speed: 2
+  m_Speed: 2.1
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 1101463793377467746}
