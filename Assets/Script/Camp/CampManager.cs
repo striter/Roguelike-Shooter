@@ -77,7 +77,7 @@ public class CampManager : GameManagerBase
         if (Input.GetKeyDown(KeyCode.KeypadPlus))
             OnCreditStatus(100);
         if (Input.GetKeyDown(KeyCode.KeypadMinus))
-            OnCreditStatus(50);
+            OnCreditStatus(-50);
         if (Input.GetKeyDown(KeyCode.Equals))
             OnTechPointStatus(20);
         if (Input.GetKeyDown(KeyCode.Minus))
