@@ -63,6 +63,7 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
     void OnExit()
     {
         CampUIManager.Instance.ExitFarm();
+        m_FarmStatus.Hide();
         m_FarmStatus = null;
         OnExitFarm();
 

@@ -20,7 +20,7 @@ public class UIControlBase : MonoBehaviour {
     {
 
     }
-    protected void Hide()
+    public void Hide()
     {
         Destroy(this.gameObject);
     }
