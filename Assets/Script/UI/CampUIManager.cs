@@ -9,7 +9,6 @@ public class CampUIManager : UIManager {
     {
         base.Init();
         Instance = this;
-        btn_Reload.SetActivate(false);
 
         ShowControls<UIC_PlayerStatus>().SetInGame(false);
         ShowControls<UIC_PlayerInteract>();
