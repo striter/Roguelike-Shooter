@@ -24,7 +24,7 @@ public class CampUIManager : UIManager {
     public UIC_FarmStatus BeginFarm(Action<bool,Vector2> _OnDragDown, Action<Vector2> _OnDrag,Action _OnExit)
     {
         m_TouchDelta.AddDragBinding(_OnDragDown, _OnDrag);
-        OverrideSetting(_OnExit);
+        OverrideSetting(ExitFarm);
         tf_BaseControl.localScale = Vector3.zero;
         UIC_FarmStatus target = ShowControls<UIC_FarmStatus>();
         return target;
