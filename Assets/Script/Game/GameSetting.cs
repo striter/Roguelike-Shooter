@@ -63,7 +63,7 @@ namespace GameSetting
         public const int I_CampFarmPlot5UnlockDifficulty = 10;
         public const int I_CampFarmPlot6UnlockTechPoints = 3000;
         public const int I_CampFarmItemAcquire = 50;
-        public const int I_CampFarmDecayDuration = 60;
+        public const int I_CampFarmDecayDuration = 20;
         public const float F_CampFarmItemTickAmount = 0.05f;
 
         public const int I_CampActionStorageNormalCount = 10;
