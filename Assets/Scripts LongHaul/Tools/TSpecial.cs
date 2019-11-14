@@ -420,7 +420,7 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
             m_Animation.Play(m_Animation.clip.name);
         }
 
-        void SetPlayOn(bool playOn)
+        public void SetPlayOn(bool playOn)
         {
             m_Animation[m_Animation.clip.name].speed = playOn ? 1 : -1;
             m_Animation[m_Animation.clip.name].normalizedTime = playOn ? 0 : 1;

@@ -370,8 +370,8 @@ namespace GameSetting
         public static string GetLocalizeKey(this enum_StageLevel stage) => "Game_Stage_" + stage;
         public static string GetLocalizeKey(this enum_Style style) => "Game_Style_" + style;
         public static string GetLocalizeNameKey(this enum_PlayerWeapon weapon) => "Weapon_Name_" + weapon;
-        public static string GetNameLocalizeKey(this enum_Interaction interact) => "UI_Interact_" + interact;
-        public static string GetIntroLocalizeKey(this enum_Interaction interact) => "UI_Interact_" + interact + "_Intro";
+        public static string GetNameLocalizeKey(this InteractBase interact) => "UI_Interact_" + interact.m_InteractType+interact.m_ExternalLocalizeKeyJoint;
+        public static string GetIntroLocalizeKey(this InteractBase interact) => "UI_Interact_" + interact.m_InteractType +interact.m_ExternalLocalizeKeyJoint+ "_Intro";
         public static string GetLocalizeKey(this enum_TileType type) => "UI_TileType_" + type;
         public static string GetLocalizeKey(this enum_RarityLevel rarity) => "UI_Rarity_" + rarity;
         public static string GetLocalizeKey(this enum_Option_FrameRate frameRate) => "UI_Option_" + frameRate;

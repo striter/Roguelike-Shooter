@@ -112,8 +112,8 @@ public class UIC_PlayerInteract : UIControlBase {
             default:
                 {
                     itemOn = true;
-                    m_ItemName.localizeKey = interactInfo.m_InteractType.GetNameLocalizeKey();
-                    m_Intro.localizeKey = interactInfo.m_InteractType.GetIntroLocalizeKey();
+                    m_ItemName.localizeKey = interactInfo.GetNameLocalizeKey();
+                    m_Intro.localizeKey = interactInfo.GetIntroLocalizeKey();
                 }
                 break;
         }

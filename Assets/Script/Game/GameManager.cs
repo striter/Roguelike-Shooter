@@ -243,7 +243,7 @@ public class GameManager : GameManagerBase
                     GameObjectManager.SpawnInteract<InteractBonfire>(enum_Interaction.Bonfire,Vector3.zero, interactTrans).Play();
 
                     m_RewardChest = GameObjectManager.SpawnInteract<InteractActionChest>(enum_Interaction.ActionChestStart, Vector3.left * 3, interactTrans);
-                    m_RewardChest.Play(m_GameLevel.GetRandomStartActions(3),1);
+                    m_RewardChest.Play(m_GameLevel.GetRandomStartActions(3),1,true);
                     
                     GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, Vector3.right * 3, interactTrans).Play(GameObjectManager.SpawnWeapon(TCommon.RandomEnumValues<enum_PlayerWeapon>(m_GameLevel.m_GameSeed), ActionDataManager.CreateRandomWeaponPerk(m_GameLevel.m_GameStage.GetStartWeaponPerkRarity(), m_GameLevel.m_GameSeed)));
                 }
@@ -291,13 +291,13 @@ public class GameManager : GameManagerBase
         switch (m_GameLevel.m_LevelType)
         {
             case enum_TileType.End:
-                GameObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Portal, LevelManager.NavMeshPosition(rewardPos, false), LevelManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(OnStageFinished);
+                GameObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Portal, LevelManager.NavMeshPosition(rewardPos, false), LevelManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(OnStageFinished,m_GameLevel.m_GameStage);
                 break;
             case enum_TileType.Battle:
                 {
                     enum_RarityLevel level = m_GameLevel.m_actionGenerate.GetActionRarityLevel(m_GameLevel.m_GameSeed);
                     m_RewardChest = GameObjectManager.SpawnInteract<InteractActionChest>(enum_Interaction.ActionChest, LevelManager.NavMeshPosition(rewardPos, false), LevelManager.Instance.m_currentLevel.m_Level.tf_Interact);
-                    m_RewardChest.Play(ActionDataManager.CreateRandomDropPlayerAction(2, level, m_GameLevel.m_GameSeed), 1);
+                    m_RewardChest.Play(ActionDataManager.CreateRandomDropPlayerAction(2, level, m_GameLevel.m_GameSeed), 1,false);
                 }
                 break;
         }
