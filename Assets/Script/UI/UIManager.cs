@@ -157,5 +157,6 @@ public class UIManager :UIManagerBase,ISingleCoroutine
     {
         OnSettingClick = Override;
         m_setting.sprite = m_CommonSprites[Override == null ? "icon_setting" : "icon_close"];
+        m_setting.SetNativeSize();
     }
 }
