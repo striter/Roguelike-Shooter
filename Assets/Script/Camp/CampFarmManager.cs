@@ -56,7 +56,7 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
     {
         OnExitFarm = _OnExitFarm;
         m_FarmStatus = CampUIManager.Instance.BeginFarm(OnDragDown, OnDrag);
-        m_FarmStatus.Play(m_Plots, OnFarmBuy,OnFarmClear);
+        m_FarmStatus.Play(m_Plots, OnFarmBuy,OnFarmClear,OnExit);
         return tf_FarmCameraPos;
     }
 
@@ -87,9 +87,10 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
                 continue;
 
             CampManager.Instance.OnCreditStatus(profit);
-            if( m_FarmStatus) m_FarmStatus.OnProfitChange(i, profit);
+            if( m_FarmStatus) m_FarmStatus.OnProfitChange(m_Plots[i].m_PlotItem.transform.position, profit);
         }
 
+        if (m_FarmStatus) m_FarmStatus.StampTick();
     }
 
     void OnHybrid(CampFarmPlot _plotDrag,CampFarmPlot _plotTarget)
@@ -154,7 +155,7 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
             return;
         }
 
-        if (targetPlot != m_HybridPlot && GameExpression.CanGenerateprofit(targetPlot.m_Status))
+        if (targetPlot != m_HybridPlot && targetPlot.m_CanGenerateProfit)
         {
             if (down)
             {

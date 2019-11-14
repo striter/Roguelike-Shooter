@@ -13,7 +13,7 @@ SpriteAtlas:
       compressionQuality: 100
       maxTextureSize: 4096
       textureCompression: 2
-      filterMode: 1
+      filterMode: 0
       generateMipMaps: 0
       readable: 0
       crunchedCompression: 1
@@ -24,12 +24,12 @@ SpriteAtlas:
       padding: 8
       blockOffset: 1
       allowAlphaSplitting: 0
-      enableRotation: 0
+      enableRotation: 1
       enableTightPacking: 0
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 3600315
+    totalSpriteSurfaceArea: 3647779
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -75,6 +75,8 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 9b5f47ee892aafe4e81749854bced7ee, type: 3}
   - {fileID: 21300000, guid: 3d5c6aefeb441674c892735313ebf060, type: 3}
   - {fileID: 21300000, guid: e286ff7018a31654ca31f0cb32a7dea1, type: 3}
+  - {fileID: 21300000, guid: 1bbd8ac21a552a147b90c2cad81488e9, type: 3}
+  - {fileID: 21300000, guid: 002194195bbdf2a4abf17c09acff091c, type: 3}
   - {fileID: 21300000, guid: bb9b55d0cd18e0741bc043e00caae287, type: 3}
   - {fileID: 21300000, guid: 103777f59dccac046b04b33d5f911a0e, type: 3}
   - {fileID: 21300000, guid: 7af61d167b98c9a469909528eab1af09, type: 3}
@@ -97,6 +99,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: b3201b1809756004689d490dc284b59e, type: 3}
   - {fileID: 21300000, guid: 1de9eff4678e3874d92ff68af27eaa86, type: 3}
   - {fileID: 21300000, guid: df1a62fbfd4bc7f4db5f7315dc8e414a, type: 3}
+  - {fileID: 21300000, guid: 8b66b0559d1136245865a87da4359ce2, type: 3}
   - {fileID: 21300000, guid: c08fb8623df6ada478d2261bfca4d369, type: 3}
   - {fileID: 21300000, guid: a6031d8c25ddd714593081b17c1de9a9, type: 3}
   - {fileID: 21300000, guid: 640bac5e80194e345b2851ed06fbf63f, type: 3}
@@ -118,7 +121,7 @@ SpriteAtlas:
   - main_bottom
   - UI_title_orange
   - icon_diamond
-  - icon_gold
+  - icon_credit
   - btn_commcon_orange
   - UI_title_yellow
   - btn_reload
@@ -152,6 +155,8 @@ SpriteAtlas:
   - status_progress_weapon
   - status_progress_weapon_bottom
   - icon_map
+  - status_progress_armor_top
+  - status_progress_health_top
   - status_ActionPack_bottom
   - btn_setting_bottom
   - status_interact_intro_bottom
@@ -174,6 +179,7 @@ SpriteAtlas:
   - UI_setting_x11_off
   - UI_setting_x10_on
   - UI_setting_x10_off
+  - icon_close
   - icon_video
   - UI_strip_white60
   - status_map_triangle

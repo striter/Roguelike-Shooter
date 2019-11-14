@@ -16,7 +16,6 @@ public class UIManagerBase : SimpleSingletonMono<UIManagerBase> {
         tf_OverlayControl = cvs_Overlay.transform.Find("Control").GetComponent<RectTransform>();
         tf_CameraControl = cvs_Camera.transform.Find("Control").GetComponent<RectTransform>();
         tf_MessageBox = cvs_Overlay.transform.Find("MessageBox").GetComponent<RectTransform>();
-        CanvasScaler m_Scaler = cvs_Overlay.GetComponent<CanvasScaler>();
     }
 
     protected T ShowPage<T>(bool useAnim) where T : UIPageBase => UIPageBase.Show<T>(tf_Page,useAnim);

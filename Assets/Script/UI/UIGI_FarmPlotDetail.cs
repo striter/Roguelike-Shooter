@@ -2,75 +2,88 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
-public class UIGI_FarmPlotDetail : UIT_GridItem,ISingleCoroutine {
+using TTime;
+public class UIGI_FarmPlotDetail : UIT_GridItem {
+    Button m_Acquire;
+    UIT_TextExtend m_AcquireAmount;
+    Button m_Clear;
+    Transform tf_Locked;
+    UIT_TextExtend m_LockProj, m_LockText;
+    Transform tf_Profiting;
+    Slider m_Duration;
+    UIT_TextExtend m_DurationLeft;
+
     CampFarmPlot m_Plot;
-    Text m_status, m_progress, m_coin;
-    Button m_Buy,m_Clear;
-    Action<int> OnPlotBuyClick, OnPlotClearClick;
+    Action<int> OnPlotAcquireClick, OnPlotClearClick;
     public override void Init()
     {
         base.Init();
-        m_status = tf_Container.Find("Status").GetComponent<Text>();
-        m_progress = tf_Container.Find("Progress").GetComponent<Text>();
-        m_coin = tf_Container.Find("Coin").GetComponent<Text>();
-        m_Buy = tf_Container.Find("Buy").GetComponent<Button>();
-        m_Buy.onClick.AddListener(OnBuyClick);
+        m_Acquire = tf_Container.Find("Acquire").GetComponent<Button>();
+        m_Acquire.onClick.AddListener(OnAcquireClick);
+        m_AcquireAmount = m_Acquire.transform.Find("Amount").GetComponent<UIT_TextExtend>();
         m_Clear = tf_Container.Find("Clear").GetComponent<Button>();
         m_Clear.onClick.AddListener(OnClearClick);
-        m_coin.SetActivate(false);
+        tf_Profiting = tf_Container.Find("Profiting");
+        m_Duration = tf_Profiting.Find("Duration").GetComponent<Slider>();
+        m_DurationLeft = tf_Profiting.Find("DurationLeft").GetComponent<UIT_TextExtend>();
+        tf_Locked = tf_Container.Find("Locked");
+        m_LockProj = tf_Locked.Find("LockProj").GetComponent<UIT_TextExtend>();
+        m_LockText = m_LockProj.transform.Find("LockText").GetComponent<UIT_TextExtend>();
     }
 
-    private void OnDisable()
-    {
-        m_Plot = null;
-        this.StopAllSingleCoroutines();
-    }
+    private void OnDisable()=> m_Plot = null;
+    void OnAcquireClick() => OnPlotAcquireClick?.Invoke(I_Index);
+    void OnClearClick() => OnPlotClearClick?.Invoke(I_Index);
 
-    public void SetPlotInfo(CampFarmPlot _plot,Action<int> _OnPlotBuyClick,Action<int> _OnPlotClearClick)
+    public void SetPlotInfo(CampFarmPlot _plot,Action<int> _OnPlotAcquireClick,Action<int> _OnPlotClearClick)
     {
         m_Plot = _plot;
-        OnPlotBuyClick = _OnPlotBuyClick;
+        OnPlotAcquireClick = _OnPlotAcquireClick;
         OnPlotClearClick = _OnPlotClearClick;
         UpdateInfo();
-    } 
+    }
 
     public void UpdateInfo()
     {
-        string lockText = "";
-        if (I_Index == 3 && m_Plot.m_Status == enum_CampFarmItemStatus.Locked)
-            lockText = "Unlock At Difficulty 3";
-        else if (I_Index == 4 && m_Plot.m_Status == enum_CampFarmItemStatus.Locked)
-            lockText = "Unlock At Difficulty 4";
-        else if (I_Index == 5 && m_Plot.m_Status == enum_CampFarmItemStatus.Locked)
-            lockText = "Unlock With Extra Credits";
-        m_progress.text = lockText;
-        m_status.text = m_Plot.m_Status.ToString();
-        m_Buy.SetActivate(m_Plot.m_Status == enum_CampFarmItemStatus.Empty);
-    }
-
-    public void PlayProfit(float profit)
-    {
-        m_coin.text = profit.ToString();
-        m_coin.SetActivate(true);
-        this.StartSingleCoroutine(0,TIEnumerators.ChangeValueTo((float value)=> { m_coin.rectTransform.anchoredPosition = Vector2.Lerp(Vector2.zero, new Vector2(0, 200), value); },0,1,2f,()=> { m_coin.SetActivate(false); }));
-    }
-
-    void OnBuyClick()
-    {
-        OnPlotBuyClick?.Invoke(I_Index);
-    }
-    void OnClearClick()
-    {
-        OnPlotClearClick?.Invoke(I_Index);
+        bool decayed = false;
+        bool empty = false;
+        bool locked = false;
+        switch (m_Plot.m_Status)
+        {
+            case enum_CampFarmItemStatus.Locked:
+                locked= true;
+                string key="", value="" ;
+                if (I_Index == 3) { key = "UI_FarmStatus_Unlock4";value = GameConst.I_CampFarmPlot4UnlockDifficulty.ToString(); }
+                else if (I_Index == 4){ key = "UI_FarmStatus_Unlock5"; value = GameConst.I_CampFarmPlot5UnlockDifficulty.ToString(); }
+                else if (I_Index == 5) { key = "UI_FarmStatus_Unlock6"; value = GameConst.I_CampFarmPlot6UnlockTechPoints.ToString(); }
+                m_LockText.formatText(key,value);
+                m_LockText.formatText(key,value);
+                break;
+            case enum_CampFarmItemStatus.Decayed:
+                decayed = true;
+                break;
+            case enum_CampFarmItemStatus.Empty:
+                empty = true;
+                m_AcquireAmount.text = GameConst.I_CampFarmItemAcquire.ToString();
+                break;
+        }
+        m_Clear.SetActivate(decayed);
+        m_Acquire.SetActivate(empty);
+        tf_Locked.SetActivate(locked);
+        tf_Profiting.SetActivate(!decayed && !empty && !locked);
     }
 
     private void Update()
     {
         if (!m_Plot)
             return;
-        rtf_RectTransform.SetWorldViewPortAnchor(m_Plot.transform.position, CameraController.MainCamera, .1f);
-        if (m_Plot.m_Status == enum_CampFarmItemStatus.Locked)
+        rtf_RectTransform.SetWorldViewPortAnchor(m_Plot.m_PlotItem.transform.position, CameraController.MainCamera, .2f);
+    }
+    public void StampTick()
+    {
+        if (!m_Plot || !m_Plot.m_CanGenerateProfit)
             return;
-        m_progress.text = m_Plot.m_TimeLeft.ToString();
+        m_Duration.value = m_Plot.m_StampLeftScale;
+        m_DurationLeft.text = m_Plot.m_Timeleft;
     }
 }

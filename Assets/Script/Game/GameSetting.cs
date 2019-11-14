@@ -61,6 +61,7 @@ namespace GameSetting
 
         public const int I_CampFarmPlot4UnlockDifficulty = 3;
         public const int I_CampFarmPlot5UnlockDifficulty = 10;
+        public const int I_CampFarmPlot6UnlockTechPoints = 3000;
         public const int I_CampFarmItemAcquire = 50;
         public const float F_CampFarmItemTickAmount = 0.05f;
 

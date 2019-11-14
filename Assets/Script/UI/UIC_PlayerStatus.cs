@@ -30,11 +30,11 @@ public class UIC_PlayerStatus : UIControlBase
     UIC_Numeric m_AmmoAmount, m_AmmoClipAmount;
 
     Transform tf_ArmorData;
-    Image m_ArmorFill;
+    Slider m_ArmorFill;
     UIC_Numeric m_ArmorAmount;
 
     Transform tf_HealthData;
-    Image m_HealthFill;
+    Slider m_HealthFill;
     UIC_Numeric m_HealthAmount, m_MaxHealth;
 
     Transform tf_WeaponData;
@@ -72,10 +72,10 @@ public class UIC_PlayerStatus : UIControlBase
         img_ReloadFill = m_AmmoGrid.transform.Find("Reload").GetComponent<Image>();
 
         tf_ArmorData = rtf_StatusData.Find("Container/ArmorData");
-        m_ArmorFill = tf_ArmorData.Find("Fill").GetComponent<Image>();
+        m_ArmorFill = tf_ArmorData.Find("Slider").GetComponent<Slider>();
         m_ArmorAmount = new UIC_Numeric(tf_ArmorData.Find("ArmorAmount"));
         tf_HealthData = rtf_StatusData.Find("Container/HealthData");
-        m_HealthFill = tf_HealthData.Find("Fill").GetComponent<Image>();
+        m_HealthFill = tf_HealthData.Find("Slider").GetComponent<Slider>();
         m_HealthAmount = new UIC_Numeric(tf_HealthData.Find("HealthAmount"));
         m_MaxHealth = new UIC_Numeric(m_HealthAmount.transform.Find("MaxHealth"));
         
@@ -88,8 +88,8 @@ public class UIC_PlayerStatus : UIControlBase
         m_WeaponActionHUD = new UI_WeaponActionHUD(tf_WeaponData);
         tf_WeaponData.Find("WeaponDetailBtn").GetComponent<Button>().onClick.AddListener(() => { UIManager.Instance.ShowPage<UI_WeaponStatus>(true,0f).SetInfo(m_Player.m_WeaponCurrent); });
 
-        m_HealthLerp = new ValueLerpSeconds(0f, 5f,2.5f,(float value)=> { m_HealthFill.fillAmount = value; });
-        m_ArmorLerp = new ValueLerpSeconds(0f, 5f,2.5f, (float value) => { m_ArmorFill.fillAmount = value; });
+        m_HealthLerp = new ValueLerpSeconds(0f, 5f,2.5f,(float value)=> { m_HealthFill.value = value; });
+        m_ArmorLerp = new ValueLerpSeconds(0f, 5f,2.5f, (float value) => { m_ArmorFill.value = value; });
         m_EnergyLerp = new ValueLerpSeconds(0f, 5f, 2.5f, (float value) => { m_ActionEnergy.SetValue(value); });
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
