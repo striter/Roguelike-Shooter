@@ -21,8 +21,9 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
     }
     protected virtual void Start()
     {
-        GameAudioManager.Instance.OnInit();
         UIManager.Activate(B_InGame);
+        GameAudioManager.Instance.OnInit();
+        GameObjectManager.PresetRegistCommonObject();
         SetBulletTime(false);
 
         OnOptionChanged();

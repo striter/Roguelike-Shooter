@@ -61,13 +61,19 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
 
     protected virtual void OnExpireChange(){ }
 
-    protected virtual void Update()
+    private void Update()
     {
         m_CharacterInfo.Tick(Time.deltaTime);
         m_Health.OnMaxHealthAdditive(m_CharacterInfo.F_MaxHealthAdditive);
         m_Effect.SetCloak(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Cloak));
         m_Effect.SetFreezed(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Freeze));
         m_Effect.SetScaned(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Scan));
+        if (!m_Health.b_IsDead)
+            OnCharacterUpdate(Time.deltaTime);
+    }
+    protected virtual void OnCharacterUpdate(float deltaTime)
+    {
+
     }
 
     public virtual void ReviveCharacter(float reviveHealth = -1, float reviveArmor = -1)

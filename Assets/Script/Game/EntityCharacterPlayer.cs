@@ -9,7 +9,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public override enum_EntityController m_Controller => enum_EntityController.Player;
     protected CharacterController m_CharacterController;
     protected PlayerAnimator m_Animator;
-    protected Transform tf_WeaponHoldRight,tf_WeaponHoldLeft;
+    public Transform tf_WeaponAim { get; private set; }
+    protected Transform tf_WeaponHoldRight, tf_WeaponHoldLeft;
     protected SFXAimAssist m_Assist = null;
     public WeaponBase m_WeaponCurrent { get; private set; } = null;
     public InteractBase m_Interact { get; private set; }
@@ -18,26 +19,28 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public float m_EquipmentDistance { get; private set; }
     public override Transform tf_Weapon => m_WeaponCurrent.m_Case;
     public Transform tf_Status { get; private set; }
-    public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized* m_CharacterInfo.F_MovementSpeed * time;
+    public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized * m_CharacterInfo.F_MovementSpeed * time;
     public PlayerInfoManager m_PlayerInfo { get; private set; }
     protected bool m_aiming = false;
-    protected float f_movementReductionCheck = 0f;
+    protected float f_aimMovementReduction = 0f;
+    protected bool m_aimingMovementReduction => f_aimMovementReduction > 0f;
     protected override enum_GameAudioSFX m_DamageClip => enum_GameAudioSFX.PlayerDamage;
     protected override void ActivateHealthManager(float maxHealth) => m_Health.OnActivate(maxHealth, I_DefaultArmor, true);
     protected float m_BaseMovementSpeed;
-    public override float m_baseMovementSpeed=> m_BaseMovementSpeed * (f_movementReductionCheck > 0 ? (1 - GameConst.F_AimMovementReduction* m_PlayerInfo.F_AimMovementStrictMultiply) : 1f);
+    public override float m_baseMovementSpeed => m_BaseMovementSpeed;
     protected override CharacterInfoManager GetEntityInfo()
     {
-        m_PlayerInfo = new PlayerInfoManager(this, m_HitCheck.TryHit, OnExpireChange,OnActionsChange);
+        m_PlayerInfo = new PlayerInfoManager(this, m_HitCheck.TryHit, OnExpireChange, OnActionsChange);
         return m_PlayerInfo;
     }
 
     public override void Init(int poolPresetIndex)
     {
         base.Init(poolPresetIndex);
+        gameObject.layer = GameLayer.I_MovementDetect;
         m_CharacterController = GetComponent<CharacterController>();
         m_CharacterController.detectCollisions = false;
-        gameObject.layer = GameLayer.I_MovementDetect;
+        tf_WeaponAim = transform.Find("WeaponAim");
         tf_WeaponHoldRight = transform.FindInAllChild("WeaponHold_R");
         tf_WeaponHoldLeft = transform.FindInAllChild("WeaponHold_L");
         tf_Status = transform.FindInAllChild("Status");
@@ -58,10 +61,10 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         base.OnDisable();
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel); 
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
         SetBinding(false);
     }
-   
+
     public void SetPlayerInfo(int coins, List<ActionBase> storedActions)
     {
         m_PlayerInfo.OnCoinsReceive(coins);
@@ -93,7 +96,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         m_Interact = null;
         OnInteractStatus();
-    } 
+    }
     void OnBattleStart()
     {
         m_PlayerInfo.OnBattleStart();
@@ -128,30 +131,22 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             m_WeaponCurrent.Trigger(down);
     }
 
-    protected override void Update()
+    protected virtual void OnAbilityDown()
     {
-        base.Update();
-        if (m_Health.b_IsDead)
-            return;
 
-        bool canFire = !Physics.SphereCast(new Ray(tf_Head.position, tf_Head.forward), .3f, 1.5f, GameLayer.Mask.I_Static);
-        m_BaseMovementSpeed = F_MovementSpeed - m_WeaponCurrent.m_WeaponInfo.m_Weight;
+    }
 
-        m_WeaponCurrent.Tick(Time.deltaTime, canFire);
-
-        m_Assist.SetEnable(canFire);
-
-        if(f_movementReductionCheck>0) f_movementReductionCheck -= Time.deltaTime;
-        if (m_aiming) f_movementReductionCheck=GameConst.F_MovementReductionDuration;
-
-        transform.rotation = Quaternion.Lerp(transform.rotation, CameraController.CameraXZRotation, GameConst.F_PlayerCameraSmoothParam);
-        Vector3 moveDirection = (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized;
-        float movementSpeed = m_CharacterInfo.F_MovementSpeed;
-        m_CharacterController.Move((moveDirection * movementSpeed+Vector3.down*GameConst.F_Gravity)*Time.deltaTime);
-        m_Animator.SetRun(m_MoveAxisInput, movementSpeed / F_MovementSpeed);
-
+    protected override void OnCharacterUpdate(float deltaTime)
+    {
+        base.OnCharacterUpdate(deltaTime);
+        OnWeaponTick(deltaTime);
+        OnMoveTick(deltaTime);
         OnCommonStatus();
     }
+
+    protected virtual float CalculateBaseMovementSpeed() => (F_MovementSpeed - m_WeaponCurrent.m_WeaponInfo.m_Weight) * (m_aimingMovementReduction ? (1 - GameConst.F_AimMovementReduction * m_PlayerInfo.F_AimMovementStrictMultiply) : 1f);
+    protected virtual Vector3 CalculateMoveDirection(Vector2 axisInput) => Vector3.Normalize(CameraController.CameraXZRightward * axisInput.x + CameraController.CameraXZForward * axisInput.y);
+    protected virtual Quaternion CalculateTargetRotation() => CameraController.CameraXZRotation;
 
     #region WeaponControll
     void OnReloadDown()
@@ -169,6 +164,14 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             m_PlayerInfo.OnReloadFinish();
     }
 
+    protected virtual bool CalculateCanWeaponFire() => !Physics.SphereCast(new Ray(tf_WeaponAim.position, tf_WeaponAim.forward), .3f, 1.5f, GameLayer.Mask.I_Static);
+    void OnWeaponTick(float deltaTime)
+    {
+        bool canFire = CalculateCanWeaponFire();
+        m_WeaponCurrent.Tick(Time.deltaTime, canFire);
+        m_Assist.SetEnable(canFire);
+    }
+
     public WeaponBase ObtainWeapon(WeaponBase _weapon)
     {
         WeaponBase previousWeapon = m_WeaponCurrent;
@@ -178,7 +181,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             m_WeaponCurrent.OnDetach();
             m_PlayerInfo.OnDetachWeapon();
         }
-
+        tf_WeaponAim.rotation = CalculateTargetRotation();
         m_WeaponCurrent = _weapon;
         m_WeaponCurrent.OnAttach(this, _weapon.B_AttachLeft ? tf_WeaponHoldLeft : tf_WeaponHoldRight, OnFireAddRecoil, OnReload);
         m_PlayerInfo.OnAttachWeapon(m_WeaponCurrent);
@@ -186,7 +189,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
         if (m_Assist) m_Assist.Recycle();
         m_Assist = GameObjectManager.SpawnSFX<SFXAimAssist>(101);
-        m_Assist.Play(m_EntityID, tf_Head, tf_Head, GameConst.F_AimAssistDistance, GameLayer.Mask.I_All, (Collider collider) => { return GameManager.B_CanHitTarget(collider.Detect(), m_EntityID); });
+        m_Assist.Play(m_EntityID, tf_WeaponAim, tf_WeaponAim, GameConst.F_AimAssistDistance, GameLayer.Mask.I_All, (Collider collider) => { return GameManager.B_CanHitTarget(collider.Detect(), m_EntityID); });
 
         OnWeaponStatus();
         return previousWeapon;
@@ -194,7 +197,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     #endregion
     #region PlayerControll
-    Vector2 m_MoveAxisInput;
+    protected Vector2 m_MoveAxisInput { get; private set; }
+    protected Vector2 m_RotateAxisInput{get;private set; }
+
     void OnMovementDelta(Vector2 moveDelta)
     {
         m_MoveAxisInput = moveDelta;
@@ -204,7 +209,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         rotateDelta.y = 0;
         rotateDelta.x = (rotateDelta.x / Screen.width) * 180f;
-        TPSCameraController.Instance.RotateCamera(rotateDelta *OptionsManager.m_Sensitive);
+        m_RotateAxisInput = rotateDelta;
     }
 
     public void OnFireAddRecoil(float recoil)
@@ -212,6 +217,22 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         TPSCameraController.Instance.AddRecoil(new Vector3(0, (TCommon.RandomBool() ? 1 : -1)* recoil,0));
         m_Animator.Fire();
     }
+
+    void OnMoveTick(float deltaTime)
+    {
+        if (m_aimingMovementReduction) f_aimMovementReduction -= deltaTime;
+        if (m_aiming) f_aimMovementReduction = GameConst.F_MovementReductionDuration;
+
+        TPSCameraController.Instance.RotateCamera(m_RotateAxisInput * OptionsManager.m_Sensitive);
+        transform.rotation = Quaternion.Lerp(transform.rotation, CalculateTargetRotation(),deltaTime*GameConst.I_PlayerRotationSmoothParam);
+
+        m_BaseMovementSpeed = CalculateBaseMovementSpeed();
+        Vector3 moveDirection = CalculateMoveDirection(m_MoveAxisInput);
+        float finalMovementSpeed = m_CharacterInfo.F_MovementSpeed;
+        m_CharacterController.Move((moveDirection * finalMovementSpeed + Vector3.down * GameConst.F_Gravity) * deltaTime);
+        m_Animator.SetRun(m_MoveAxisInput, finalMovementSpeed / F_MovementSpeed);
+    }
+
     #endregion
     #region PlayerInteract
     public void OnInteractCheck(InteractBase interactTarget, bool isEnter)
@@ -347,7 +368,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void SetBinding(bool on)
     {
         if (on)
-            UIManager.Instance.DoBinding(OnMovementDelta, OnRotateDelta, OnReloadDown, OnMainButtonDown);
+            UIManager.Instance.DoBinding(OnMovementDelta, OnRotateDelta, OnReloadDown, OnMainButtonDown,OnAbilityDown);
         else
             UIManager.Instance.RemoveBinding();
     }

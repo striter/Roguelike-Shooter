@@ -39,9 +39,9 @@ public class EntityDeviceBase : EntityCharacterBase {
             m_Connections.RemoveItem(character);
     }
 
-    protected override void Update()
+    protected override void OnCharacterUpdate(float deltaTime)
     {
-        base.Update();
+        base.OnCharacterUpdate(deltaTime);
         m_Connections.m_ItemDic.Traversal((EntityCharacterBase target,LineRenderer item)=>
         {
            item.SetPosition(0,tf_Head.position);

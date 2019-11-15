@@ -24,7 +24,6 @@ public class CampManager : GameManagerBase
     protected override void Start()
     {
         base.Start();
-        GameObjectManager.PresetRegistCommonObject();
         InitPostEffects(enum_Style.Invalid);
         EntityCharacterPlayer player = GameObjectManager.SpawnEntityPlayer(new CBattleSave());
         player.transform.SetPositionAndRotation(tf_PlayerStart.position, tf_PlayerStart.rotation);
