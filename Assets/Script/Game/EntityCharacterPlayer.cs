@@ -9,6 +9,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public override enum_EntityController m_Controller => enum_EntityController.Player;
     protected CharacterController m_CharacterController;
     protected PlayerAnimator m_Animator;
+    protected virtual PlayerAnimator GetAnimatorController(Animator animator, Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) => new PlayerAnimator(animator, _OnAnimEvent);
     public Transform tf_WeaponAim { get; private set; }
     protected Transform tf_WeaponHoldRight, tf_WeaponHoldLeft;
     protected SFXAimAssist m_Assist = null;
@@ -44,7 +45,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         tf_WeaponHoldRight = transform.FindInAllChild("WeaponHold_R");
         tf_WeaponHoldLeft = transform.FindInAllChild("WeaponHold_L");
         tf_Status = transform.FindInAllChild("Status");
-        m_Animator = new PlayerAnimator(tf_Model.GetComponent<Animator>(), OnAnimationEvent);
+        m_Animator = GetAnimatorController(tf_Model.GetComponent<Animator>(),OnAnimationEvent);
         transform.Find("InteractDetector").GetComponent<InteractDetector>().Init(OnInteractCheck);
     }
 

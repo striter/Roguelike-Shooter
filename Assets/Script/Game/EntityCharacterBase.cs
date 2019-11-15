@@ -253,8 +253,8 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
 
     protected class CharacterAnimator:AnimatorBase
     {
+        protected static readonly int HS_T_Activate = Animator.StringToHash("t_activate");
         static readonly int HS_T_Dead = Animator.StringToHash("t_dead");
-        static readonly int HS_T_Activate = Animator.StringToHash("t_activate");
         static readonly int HS_F_Forward = Animator.StringToHash("f_forward");
         static readonly int HS_FM_Movement = Animator.StringToHash("fm_movement");
         static readonly int HS_I_WeaponType = Animator.StringToHash("i_weaponType");

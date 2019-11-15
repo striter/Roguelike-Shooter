@@ -553,7 +553,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1038797790156768}
-  m_LocalRotation: {x: 0.0056910357, y: -0.026152594, z: -0.29420283, w: 0.95536816}
+  m_LocalRotation: {x: 0.005691036, y: -0.026152596, z: -0.29420286, w: 0.9553682}
   m_LocalPosition: {x: -0.47657192, y: -44.027428, z: -7.232074e-15}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -648,7 +648,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1573511608827224}
-  m_LocalRotation: {x: -0.26757434, y: 0.11768229, z: 0.16130412, w: 0.94262177}
+  m_LocalRotation: {x: -0.26757434, y: 0.1176823, z: 0.16130412, w: 0.9426218}
   m_LocalPosition: {x: -33.425285, y: 0, z: -2.3643427e-16}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -692,7 +692,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1920176594161656}
-  m_LocalRotation: {x: -0.7836927, y: -0.10475132, z: -0.09808987, w: 0.6043436}
+  m_LocalRotation: {x: -0.7836928, y: -0.104751326, z: -0.098089874, w: 0.60434365}
   m_LocalPosition: {x: 37.452213, y: 0.000011920929, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -746,7 +746,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1121877293362958}
-  m_LocalRotation: {x: 0.10385907, y: -0.56990093, z: 0.06429916, w: 0.8125834}
+  m_LocalRotation: {x: 0.103859074, y: -0.569901, z: 0.064299166, w: 0.81258345}
   m_LocalPosition: {x: -47.119038, y: 3.1856551e-13, z: 1.4478112e-14}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1002,7 +1002,7 @@ Animator:
   m_GameObject: {fileID: 1615095339196038}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 8a99303042b731c40ba1d045debd6b46, type: 3}
-  m_Controller: {fileID: 9100000, guid: 32ac3aa59a670024aa07f60e7307d13f, type: 2}
+  m_Controller: {fileID: 9100000, guid: 13a40a26706c3b947b68a73bd3e5874e, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
