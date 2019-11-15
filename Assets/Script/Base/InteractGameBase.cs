@@ -1,12 +1,17 @@
-﻿using System.Collections;
+﻿using GameSetting;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InteractGameBase : InteractBase {
+public class InteractGameBase : InteractBase,ObjectPoolItem<enum_Interaction> {
 
     protected virtual bool B_RecycleOnInteract => false;
     public AudioClip AC_OnPlay, AC_OnInteract;
     public int I_MuzzleOnInteract;
+
+    public virtual void OnPoolItemInit(enum_Interaction temp)
+    {
+    }
     protected override void Play()
     {
         base.Play();
@@ -20,4 +25,5 @@ public class InteractGameBase : InteractBase {
         if (B_RecycleOnInteract)
             GameObjectManager.RecycleInteract(this);
     }
+     
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using GameSetting;
-public class SFXBase : MonoBehaviour {
+public class SFXBase :MonoBehaviour, ObjectPoolItem<int> {
     public const int I_SFXStopExternalDuration= 4;
     public int I_SFXIndex { get; private set; } = -1;
     public int I_SourceID { get; private set; } = -1;
@@ -21,16 +21,15 @@ public class SFXBase : MonoBehaviour {
     protected bool b_looping => m_Loop && B_Playing && f_playDuration <= 0f;
     Transform m_AttachTo;
     Vector3 m_localPos, m_localDir;
-
-    public virtual void Init(int _sfxIndex)
+    public virtual void OnPoolItemInit(int identity)
     {
-        I_SFXIndex = _sfxIndex;
+        I_SFXIndex = identity;
 
 #if UNITY_EDITOR
         EDITOR_DEBUG();
 #endif
     }
-    
+
     protected void PlaySFX(int sourceID,float playDuration,float delayDuration)
     {
         B_Delay = true;
@@ -132,5 +131,6 @@ public class SFXBase : MonoBehaviour {
             color = Color.white;
         return color;
     }
+
 #endif
 }

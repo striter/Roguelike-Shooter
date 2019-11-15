@@ -12,10 +12,6 @@ public class InteractBase : MonoBehaviour
     public virtual bool B_InteractOnce { get; private set; } = true;
     public bool B_InteractEnable { get; private set; } = true;
     public void SetInteractable(bool interactable) => B_InteractEnable = interactable;
-    public virtual void Init()
-    {
-
-    }
     protected virtual void Play()
     {
         B_InteractEnable = true;

@@ -9,9 +9,9 @@ public class SFXCastLaserBeam : SFXCast {
     ParticleSystem[] m_Muzzles, m_Impacts;
     float f_castLength;
     protected override float F_CastLength => f_castLength;
-    public override void Init(int _sfxIndex)
+    public override void OnPoolItemInit(int identity)
     {
-        base.Init(_sfxIndex);
+        base.OnPoolItemInit(identity);
         m_Beam = GetComponent<LineRenderer>();
         m_Muzzle = transform.Find("Muzzle");
         m_Impact = transform.Find("Impact");
@@ -20,6 +20,7 @@ public class SFXCastLaserBeam : SFXCast {
         m_Muzzles.Traversal((ParticleSystem particle) => { particle.Stop(); });
         m_Impacts.Traversal((ParticleSystem particle) => { particle.Stop(); });
     }
+
     protected override void OnPlay()
     {
         base.OnPlay();

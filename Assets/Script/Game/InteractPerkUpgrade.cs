@@ -4,15 +4,15 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class InteractPerkUpgrade : InteractBase {
+public class InteractPerkUpgrade : InteractGameBase {
     public override enum_Interaction m_InteractType => enum_Interaction.PerkUpgrade;
     public override bool B_InteractOnce => true;
     ActionBase m_invalidPerk;
     Animation m_Anim;
     Action OnInteract;
-    public override void Init()
+    public override void OnPoolItemInit(enum_Interaction temp)
     {
-        base.Init();
+        base.OnPoolItemInit(temp);
         m_Anim = GetComponent<Animation>();
     }
     public void Play(Action _OnInteract,ActionBase _invalidPerk)

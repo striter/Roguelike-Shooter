@@ -6,11 +6,11 @@ public class SFXShield : SFXBase {
     protected override bool m_AutoRecycle => false;
     public EntityComponent m_Health { get; private set; }
     EntityCharacterBase m_Attacher;
-    public override void Init(int _sfxIndex)
+    public override void OnPoolItemInit(int identity)
     {
-        base.Init(_sfxIndex);
+        base.OnPoolItemInit(identity);
         m_Health = GetComponentInChildren<EntityComponent>();
-        m_Health.Init(-1);
+        m_Health.OnPoolItemInit(-1);
         m_Health.Play(Recycle);
     }
     public void Attach(EntityCharacterBase _attacher)

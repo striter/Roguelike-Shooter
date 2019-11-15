@@ -7,9 +7,9 @@ public class InteractPickupAction : InteractPickup {
     public override enum_Interaction m_InteractType => enum_Interaction.PickupAction;
     public ActionBase m_Action { get; private set; }
     Renderer m_Renderer;
-    public override void Init()
+    public override void OnPoolItemInit(enum_Interaction temp)
     {
-        base.Init();
+        base.OnPoolItemInit(temp);
         m_Renderer = GetComponentInChildren<Renderer>();
     }
     public InteractPickupAction Play(ActionBase _action)

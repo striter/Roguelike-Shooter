@@ -6,9 +6,9 @@ public class SFXProjectileSmoke : SFXProjectile {
     LineRenderer m_Smoke;
     public float F_SmokeDuration;
     float f_smokeCheck;
-    public override void Init(int sfxIndex)
+    public override void OnPoolItemInit(int identity)
     {
-        base.Init(sfxIndex);
+        base.OnPoolItemInit(identity);
         m_Smoke = transform.Find("Smoke").GetComponent<LineRenderer>();
     }
     protected override void OnPlay()
