@@ -4,16 +4,19 @@ using UnityEngine;
 using GameSetting;
 using TTiles;
 
-public class LevelItemBase : MonoBehaviour {
+public class LevelItemBase : MonoBehaviour,ObjectPoolItem<LevelItemBase> {
     public LevelBase m_LevelParent { get; private set; }
     public int m_sizeXAxis = 1;
     public int m_sizeYAxis = 1;
     public enum_LevelItemType m_ItemType = enum_LevelItemType.Invalid;
     Transform tf_Model;
-    public void Init(LevelBase levelParent,enum_TileDirection direction)
+    public void OnPoolItemInit(LevelItemBase identity)
+    {
+        tf_Model = transform.Find("Model");
+    }
+    public void SetDirection(LevelBase levelParent,enum_TileDirection direction)
     {
         m_LevelParent = levelParent;
-        tf_Model = transform.Find("Model");
         ItemRecenter(direction == enum_TileDirection.Right || direction == enum_TileDirection.Left);
         tf_Model.localRotation = Quaternion.Euler(0, (int)direction * 45, 0);
         transform.SetActivate(true);
@@ -46,5 +49,6 @@ public class LevelItemBase : MonoBehaviour {
         if (b_AutoCenter)
             ItemRecenter();
     }
+
 #endif
 }

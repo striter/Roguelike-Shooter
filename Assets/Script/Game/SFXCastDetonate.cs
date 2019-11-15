@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class SFXCastDetonate : SFXCastOverlapSphere {
     Transform m_Model;
-    public override void Init(int _sfxIndex)
+    public override void OnPoolItemInit(int identity)
     {
-        base.Init(_sfxIndex);
+        base.OnPoolItemInit(identity);
         m_Model = transform.Find("Model");
     }
     public override void Play(DamageDeliverInfo buffInfo)

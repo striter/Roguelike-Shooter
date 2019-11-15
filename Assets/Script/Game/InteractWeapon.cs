@@ -7,9 +7,9 @@ public class InteractWeapon : InteractGameBase {
     public WeaponBase m_Weapon { get; private set; }
     public override enum_Interaction m_InteractType => enum_Interaction.Weapon;
     public override bool B_InteractOnce => false;
-    public override void Init()
+    public override void OnPoolItemInit(enum_Interaction temp)
     {
-        base.Init();
+        base.OnPoolItemInit(temp);
         tf_ModelContainer = transform.Find("Container/Model");
     }
     public InteractWeapon Play(WeaponBase weapon )

@@ -8,26 +8,25 @@ public class EntityDeviceBase : EntityCharacterBase {
     EntityDetector m_Detect;
     ParticleSystem[] m_Particles;
     public ObjectPoolMono<EntityCharacterBase, LineRenderer> m_Connections { get; private set; }
-    public override void Init(int _poolIndex)
+    public override void OnPoolItemInit(int _poolIndex)
     {
-        base.Init(_poolIndex);
+        base.OnPoolItemInit(_poolIndex);
         m_Detect = transform.Find("EntityDetector").GetComponent<EntityDetector>();
         m_Detect.Init(OnEntityDetect);
         m_Particles = GetComponentsInChildren<ParticleSystem>();
         Transform connectionsParent = transform.Find("Connections");
         m_Connections = new ObjectPoolMono<EntityCharacterBase, LineRenderer>(connectionsParent.Find("Item").gameObject, connectionsParent);
     }
-    protected override void OnEnable()
+    protected override void OnPoolItemEnable()
     {
-        base.OnEnable();
+        base.OnPoolItemEnable();
         TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
     }
-    protected override void OnDisable()
+    protected override void OnPoolItemDisable()
     {
-        base.OnDisable();
+        base.OnPoolItemDisable();
         TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
     }
-
     public override void OnActivate(enum_EntityFlag _flag, int _spawnerID = -1, float startHealth = 0)
     {
         base.OnActivate(_flag,_spawnerID, startHealth);

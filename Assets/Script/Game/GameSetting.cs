@@ -510,7 +510,7 @@ namespace GameSetting
 
     public enum enum_EffectAttach { Invalid = -1,  Head = 1, Feet = 2, Weapon = 3,}
 
-    public enum enum_PlayerCharacter {Invalid=-1,Test=10000,Beth=10001,Jason=10002,Charles=10003 }
+    public enum enum_PlayerCharacter {Invalid=-1,Beth=10001,Jason=10002,Charles=10003 }
 
     public enum enum_InteractCharacter { Invalid=-1,Trader=20001,Trainer=20002, }
 
@@ -2237,9 +2237,9 @@ namespace GameSetting
                 return m_Entity.m_CharacterInfo;
             }
         }
-        public EquipmentBase(SFXBase weaponBase, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo)
+        public EquipmentBase(int equipmentIndex, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo)
         {
-            I_Index = weaponBase.I_SFXIndex;
+            I_Index = equipmentIndex;
             m_Entity = _controller;
             GetDamageDeliverInfo = _GetBuffInfo;
         }
@@ -2270,9 +2270,9 @@ namespace GameSetting
                 switch (projectile.E_ProjectileType)
                 {
                     default: Debug.LogError("Invalid Type:" + projectile.E_ProjectileType); break;
-                    case enum_ProjectileFireType.Single: return new EquipmentBarrageRange(projectile, _entity, GetDamageBuffInfo); 
-                    case enum_ProjectileFireType.MultipleFan: return new EquipmentBarrageMultipleFan(projectile, _entity, GetDamageBuffInfo); 
-                    case enum_ProjectileFireType.MultipleLine: return new EquipmentBarrageMultipleLine(projectile, _entity, GetDamageBuffInfo); 
+                    case enum_ProjectileFireType.Single: return new EquipmentBarrageRange(weaponIndex,projectile, _entity, GetDamageBuffInfo); 
+                    case enum_ProjectileFireType.MultipleFan: return new EquipmentBarrageMultipleFan(weaponIndex,projectile, _entity, GetDamageBuffInfo); 
+                    case enum_ProjectileFireType.MultipleLine: return new EquipmentBarrageMultipleLine(weaponIndex,projectile, _entity, GetDamageBuffInfo); 
                 }
             }
 
@@ -2282,24 +2282,24 @@ namespace GameSetting
                 switch (cast.E_CastType)
                 {
                     default: Debug.LogError("Invalid Type:" + cast.E_CastType); break;
-                    case enum_CastControllType.CastFromOrigin: return new EquipmentCaster(cast, _entity, GetDamageBuffInfo);
-                    case enum_CastControllType.CastSelfDetonate: return new EquipmentCasterSelfDetonateAnimLess(cast, _entity, GetDamageBuffInfo, _entity.tf_Model.Find("BlinkModel")); 
-                    case enum_CastControllType.CastControlledForward: return new EquipmentCasterControlled(cast, _entity, GetDamageBuffInfo);
-                    case enum_CastControllType.CastAtTarget: return new EquipmentCasterTarget(cast, _entity, GetDamageBuffInfo);
+                    case enum_CastControllType.CastFromOrigin: return new EquipmentCaster(weaponIndex,cast, _entity, GetDamageBuffInfo);
+                    case enum_CastControllType.CastSelfDetonate: return new EquipmentCasterSelfDetonateAnimLess(weaponIndex,cast, _entity, GetDamageBuffInfo, _entity.tf_Model.Find("BlinkModel")); 
+                    case enum_CastControllType.CastControlledForward: return new EquipmentCasterControlled(weaponIndex,cast, _entity, GetDamageBuffInfo);
+                    case enum_CastControllType.CastAtTarget: return new EquipmentCasterTarget(weaponIndex,cast, _entity, GetDamageBuffInfo);
                 }
             }
 
             SFXBuffApply buffApply = weaponInfo as SFXBuffApply;
             if (buffApply)
-                return new BuffApply(buffApply, _entity, GetDamageBuffInfo);
+                return new BuffApply(weaponIndex,buffApply, _entity, GetDamageBuffInfo);
 
             SFXSubEntitySpawner entitySpawner = weaponInfo as SFXSubEntitySpawner;
             if (entitySpawner)
-                return new EquipmentEntitySpawner(entitySpawner, _entity, GetDamageBuffInfo);
+                return new EquipmentEntitySpawner(weaponIndex,entitySpawner, _entity, GetDamageBuffInfo);
 
             SFXShield shield = weaponInfo as SFXShield;
             if (shield)
-                return new EquipmentShieldAttach(shield, _entity, GetDamageBuffInfo);
+                return new EquipmentShieldAttach(weaponIndex,shield, _entity, GetDamageBuffInfo);
 
             return null;
         }
@@ -2309,7 +2309,7 @@ namespace GameSetting
         protected int i_muzzleIndex { get; private set; }
         protected enum_CastTarget m_CastAt { get; private set; }
         protected bool m_castForward { get; private set; }
-        public EquipmentCaster(SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(_castInfo, _controller, _GetBuffInfo)
+        public EquipmentCaster(int equipmentIndex,SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex, _controller, _GetBuffInfo)
         {
             i_muzzleIndex = _castInfo.I_MuzzleIndex;
             m_CastAt = _castInfo.E_CastTarget;
@@ -2338,7 +2338,7 @@ namespace GameSetting
     }
     public class EquipmentCasterTarget : EquipmentCaster
     {
-        public EquipmentCasterTarget(SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(_castInfo, _controller, _GetBuffInfo)
+        public EquipmentCasterTarget(int equipmentIndex,SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex,_castInfo, _controller, _GetBuffInfo)
         {
         }
         protected override Vector3 GetTargetPosition(bool preAim, EntityCharacterBase _target)
@@ -2357,7 +2357,7 @@ namespace GameSetting
         ModelBlink m_Blink;
         float timeElapsed;
         bool b_activating;
-        public EquipmentCasterSelfDetonateAnimLess(SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo, Transform _blinkModels) : base(_castInfo, _controller, _GetBuffInfo)
+        public EquipmentCasterSelfDetonateAnimLess(int equipmentIndex,SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo, Transform _blinkModels) : base(equipmentIndex,_castInfo, _controller, _GetBuffInfo)
         {
             m_Blink = new ModelBlink(_blinkModels, .25f, .25f,Color.red);
             timeElapsed = 0;
@@ -2390,7 +2390,7 @@ namespace GameSetting
     public class EquipmentCasterControlled : EquipmentCaster
     {
         SFXCast m_Cast;
-        public EquipmentCasterControlled(SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(_castInfo, _controller, _GetBuffInfo)
+        public EquipmentCasterControlled(int equipmentIndex,SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex,_castInfo, _controller, _GetBuffInfo)
         {
         }
         public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
@@ -2422,7 +2422,7 @@ namespace GameSetting
         int i_muzzleIndex;
         AudioClip m_MuzzleClip;
 
-        public EquipmentBarrageRange(SFXProjectile projectileInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(projectileInfo, _controller, _GetBuffInfo)
+        public EquipmentBarrageRange(int equipmentIndex,SFXProjectile projectileInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex, _controller, _GetBuffInfo)
         {
             i_muzzleIndex = projectileInfo.I_MuzzleIndex;
             m_MuzzleClip = projectileInfo.AC_MuzzleClip;
@@ -2460,7 +2460,7 @@ namespace GameSetting
     }
     public class EquipmentBarrageMultipleLine : EquipmentBarrageRange
     {
-        public EquipmentBarrageMultipleLine(SFXProjectile projectileInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(projectileInfo, _controller, _GetBuffInfo)
+        public EquipmentBarrageMultipleLine(int equipmentIndex,SFXProjectile projectileInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex,projectileInfo, _controller, _GetBuffInfo)
         {
         }
         public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
@@ -2477,7 +2477,7 @@ namespace GameSetting
     }
     public class EquipmentBarrageMultipleFan : EquipmentBarrageRange
     {
-        public EquipmentBarrageMultipleFan(SFXProjectile projectileInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(projectileInfo, _controller, _GetBuffInfo)
+        public EquipmentBarrageMultipleFan(int equipmentIndex,SFXProjectile projectileInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex,projectileInfo, _controller, _GetBuffInfo)
         {
         }
         public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
@@ -2500,7 +2500,7 @@ namespace GameSetting
         public override bool B_TargetAlly => true;
         SBuff m_buffInfo;
         SFXBuffApply m_Effect;
-        public BuffApply(SFXBuffApply buffApplyinfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(buffApplyinfo, _controller, _GetBuffInfo)
+        public BuffApply(int equipmentIndex,SFXBuffApply buffApplyinfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex, _controller, _GetBuffInfo)
         {
             m_buffInfo = GameDataManager.GetPresetBuff(buffApplyinfo.I_BuffIndex);
         }
@@ -2514,7 +2514,7 @@ namespace GameSetting
     }
     public class EquipmentEntitySpawner : EquipmentBase
     {
-        public EquipmentEntitySpawner(SFXSubEntitySpawner spawner, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(spawner, _controller, _GetBuffInfo)
+        public EquipmentEntitySpawner(int equipmentIndex,SFXSubEntitySpawner spawner, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex, _controller, _GetBuffInfo)
         {
             startHealth = 0;
         }
@@ -2533,7 +2533,7 @@ namespace GameSetting
     public class EquipmentShieldAttach : EquipmentBase
     {
         public override bool B_TargetAlly => true;
-        public EquipmentShieldAttach(SFXShield shield, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(shield, _controller, _GetBuffInfo)
+        public EquipmentShieldAttach(int equipmentIndex,SFXShield shield, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex, _controller, _GetBuffInfo)
         {
         }
         Action<SFXShield> OnSpawn;

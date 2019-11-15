@@ -2,7 +2,7 @@
 using GameSetting;
 using System;
 
-public class EntityBase : MonoBehaviour
+public class EntityBase : ObjectPoolMonoItem<int>
 {
     public int m_EntityID { get; private set; } = -1;
     public int I_PoolIndex { get; private set; } = -1;
@@ -20,8 +20,9 @@ public class EntityBase : MonoBehaviour
     public int m_SpawnerEntityID { get; private set; }
     public bool b_isSubEntity => m_SpawnerEntityID != -1;
     HitCheckEntity[] m_HitChecks;
-    public virtual void Init(int _poolIndex)
+    public override void OnPoolItemInit(int _poolIndex)
     {
+        base.OnPoolItemInit(_poolIndex);
         I_PoolIndex = _poolIndex;
         m_HitChecks = GetComponentsInChildren<HitCheckEntity>();
         m_Health = GetHealthManager();

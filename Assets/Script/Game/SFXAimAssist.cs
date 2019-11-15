@@ -14,9 +14,9 @@ public class SFXAimAssist : SFXBase {
     Func<Collider, bool> CanHitCollider;
     protected override bool m_AutoRecycle => false;
     protected override bool m_AutoStop => false;
-    public override void Init(int _sfxIndex)
+    public override void OnPoolItemInit(int identity)
     {
-        base.Init(_sfxIndex);
+        base.OnPoolItemInit(identity);
         m_lineRenderer = transform.GetComponentInChildren<LineRenderer>();
         m_lineRenderer.positionCount = 2;
         tf_Dot = transform.Find("Dot");

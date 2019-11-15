@@ -4,11 +4,11 @@ using UnityEngine;
 public class SFXAudioBase : SFXBase
 {
     AudioSource m_Audio;
-    public override void Init(int _sfxIndex)
+    public override void OnPoolItemInit(int identity)
     {
-        base.Init(_sfxIndex);
+        base.OnPoolItemInit(identity);
         m_Audio = GetComponent<AudioSource>();
-        m_Audio.playOnAwake=false;
+        m_Audio.playOnAwake = false;
     }
     private void OnEnable()
     {

@@ -9,9 +9,9 @@ public class SFXMuzzleMortal : SFXMuzzle
     public float F_PlayTime = 5f;
     Transform tf_Model;
     TrailRenderer m_trail;
-    public override void Init(int _sfxIndex)
+    public override void OnPoolItemInit(int identity)
     {
-        base.Init(_sfxIndex);
+        base.OnPoolItemInit(identity);
         tf_Model = transform.Find("Model");
         m_trail = tf_Model.GetComponentInChildren<TrailRenderer>();
     }
