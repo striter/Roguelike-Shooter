@@ -13,12 +13,12 @@ public class EntityCharacterPlayerBeth : EntityCharacterPlayer {
     protected float f_rollCheck;
     protected bool m_rolling => f_rollCheck > 0;
     Vector3 m_rollDirection,m_rollStartDirection;
-    protected override void OnAbilityDown()
+    protected override void OnAbilityTrigger()
     {
-        base.OnAbilityDown();
+        base.OnAbilityTrigger();
 
         f_rollCheck = 1f;
-        m_rollStartDirection = transform.forward;
+        m_rollStartDirection = base.CalculateMoveDirection(new Vector2(0,1));
         Vector2 rollAxisDirection = m_MoveAxisInput == Vector2.zero ? new Vector2(0, 1) : m_MoveAxisInput;
         m_rollDirection = base.CalculateMoveDirection(rollAxisDirection);
         m_Animator.BeginRoll(rollAxisDirection);

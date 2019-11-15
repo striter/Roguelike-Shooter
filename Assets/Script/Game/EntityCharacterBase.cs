@@ -251,7 +251,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         }
     }
 
-    protected class CharacterAnimator:AnimatorBase
+    protected class CharacterAnimator:AnimatorControlBase
     {
         protected static readonly int HS_T_Activate = Animator.StringToHash("t_activate");
         static readonly int HS_T_Dead = Animator.StringToHash("t_dead");
