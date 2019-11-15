@@ -19,7 +19,6 @@ public class TPSCameraController : CameraController
     {
         get
         {
-
             inverseCheck += Time.deltaTime;
             if (inverseCheck > F_ReverseCheck)
             {

@@ -1,7 +1,7 @@
 fileFormatVersion: 2
-guid: 11165787b4d7a384e871228892793795
+guid: 4e3247414bee4f447ae17ac12604adf3
 ModelImporter:
-  serializedVersion: 19
+  serializedVersion: 22
   fileIDToRecycleName:
     100000: //RootNode
     100002: B_Prop1
@@ -245,16 +245,17 @@ ModelImporter:
     4300014: Shield
     4300016: WeaponR
     4300018: WeaponL
-    7400000: Armed-Roll-Right
+    7400000: Player_Roll_Left
     9500000: //RootNode
     11100000: //RootNode
     13700000: Soldier_Mesh
     13700002: RPG-Character-Mesh
-    2186277476908879412: ImportLogs
+  externalObjects: {}
   materials:
     importMaterials: 0
     materialName: 0
     materialSearch: 1
+    materialLocation: 0
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
@@ -269,18 +270,20 @@ ModelImporter:
       and has rotation animation that will be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
     animationCompression: 0
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
+    extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Armed-Roll-Right
+      name: Player_Roll_Left
       takeName: Take 001
       firstFrame: 2
-      lastFrame: 26
+      lastFrame: 17
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -310,13 +313,18 @@ ModelImporter:
     globalScale: 0.01
     meshCompression: 0
     addColliders: 0
+    importVisibility: 0
     importBlendShapes: 0
+    importCameras: 0
+    importLights: 0
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
     optimizeMeshForGPU: 0
     keepQuads: 0
     weldVertices: 0
+    preserveHierarchy: 0
+    indexFormat: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
@@ -326,6 +334,7 @@ ModelImporter:
     normalSmoothAngle: 60
     normalImportMode: 2
     tangentImportMode: 2
+    normalCalculationMode: 0
   importAnimation: 1
   copyAvatar: 1
   humanDescription:

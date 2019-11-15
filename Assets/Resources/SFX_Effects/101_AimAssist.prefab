@@ -189,7 +189,7 @@ LineRenderer:
   m_SortingOrder: 0
   m_Positions:
   - {x: 0, y: 0, z: 0}
-  - {x: 1, y: 0, z: 0}
+  - {x: 2, y: 0, z: 0}
   m_Parameters:
     serializedVersion: 2
     widthMultiplier: 0.2
@@ -207,7 +207,7 @@ LineRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 1, g: 0, b: 0, a: 0.5019608}
+      key0: {r: 1, g: 0, b: 0, a: 0}
       key1: {r: 1, g: 0, b: 0, a: 0.5019608}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}

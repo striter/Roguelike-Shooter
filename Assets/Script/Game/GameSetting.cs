@@ -40,7 +40,7 @@ namespace GameSetting
         public const int I_ProjectileSpreadAtDistance = 100;       //Meter,  Bullet Spread In A Circle At End Of This Distance
 
         public const float F_PlayerDamageAdjustmentRange = .1f;
-        public const float F_PlayerCameraSmoothParam = 1f;     //Camera Smooth Param For Player .2 is suggested
+        public const int I_PlayerRotationSmoothParam = 10;     //Camera Smooth Param For Player 10 is suggested
 
         public const float F_AIDamageTranslate = 0;   //.003f;
         public const float F_AIMovementCheckParam = .3f;
@@ -510,6 +510,10 @@ namespace GameSetting
 
     public enum enum_EffectAttach { Invalid = -1,  Head = 1, Feet = 2, Weapon = 3,}
 
+    public enum enum_PlayerCharacter {Invalid=-1,Test=10000,Beth=10001,Jason=10002,Charles=10003 }
+
+    public enum enum_InteractCharacter { Invalid=-1,Trader=20001,Trainer=20002, }
+
     public enum enum_PlayerWeapon
     {
         Invalid = -1,
@@ -627,6 +631,8 @@ namespace GameSetting
         public int m_GameDifficulty;
         public int m_DifficultyUnlocked;
         public List<ActionStorageData> m_StorageActions;
+        public enum_PlayerCharacter m_CharacterSelected;
+        public enum_PlayerWeapon m_WeaponSelected;
         public int m_StorageRequestStamp;
         public CGameSave()
         {
@@ -636,6 +642,8 @@ namespace GameSetting
             m_DifficultyUnlocked = 1;
             m_StorageRequestStamp = -1;
             m_StorageActions = new List<ActionStorageData>();
+            m_CharacterSelected = enum_PlayerCharacter.Test;
+            m_WeaponSelected = enum_PlayerWeapon.UMP45;
             for (int i = 0; i < GameExpression.I_CampActionStorageDefault.Count; i++)
                 m_StorageActions.Add(ActionStorageData.CreateDefault(GameExpression.I_CampActionStorageDefault[i]));
         }
@@ -678,22 +686,24 @@ namespace GameSetting
 
     public class CBattleSave : ISave
     {
-        public enum_PlayerWeapon m_weapon;
+        public string m_GameSeed;
+        public enum_StageLevel m_Stage;
         public int m_coins;
         public int m_kills;
         public ActionGameData m_weaponAction;
         public List<ActionGameData> m_battleAction;
+        public enum_PlayerWeapon m_weapon;
+        public enum_PlayerCharacter m_character;
         public List<ActionStorageData> m_startAction;
-        public string m_GameSeed;
-        public enum_StageLevel m_StageLevel;
         public CBattleSave()
         {
             m_coins = 0;
-            m_weapon = enum_PlayerWeapon.P92;
             m_weaponAction = new ActionGameData();
             m_battleAction = new List<ActionGameData>();
-            m_StageLevel = enum_StageLevel.Rookie;
+            m_Stage = enum_StageLevel.Rookie;
             m_GameSeed = DateTime.Now.ToLongTimeString().ToString();
+            m_character = GameDataManager.m_GameData.m_CharacterSelected;
+            m_weapon = GameDataManager.m_GameData.m_WeaponSelected;
             m_startAction = ActionDataManager.CreateRandomPlayerUnlockedAction(GameDataManager.m_GameData.m_StorageActions, 9);
         }
         public void Adjust(EntityCharacterPlayer _player, GameLevelManager _level)
@@ -704,7 +714,7 @@ namespace GameSetting
             m_battleAction = ActionGameData.Create(_player.m_PlayerInfo.m_BattleAction);
             m_startAction = _level.m_startAction;
             m_GameSeed = _level.m_Seed;
-            m_StageLevel = _level.m_GameStage;
+            m_Stage = _level.m_GameStage;
             m_kills = _level.m_enermiesKilled;
         }
     }
@@ -971,10 +981,23 @@ namespace GameSetting
             buff.f_expireDuration = duration;
             return buff;
         }
+        public static SBuff CreateActionHealthBuff(int actionIndex, float healthPerTick, float healthTick, float duration)
+        {
+            SBuff buff = new SBuff();
+            buff.index = actionIndex * 10;
+            buff.i_effect = 40008;
+            buff.i_addType = (int)enum_ExpireRefreshType.RefreshIdentity;
+            buff.i_damageType = (int)enum_DamageType.HealthOnly;
+            buff.f_damageTickTime = healthTick;
+            buff.f_damagePerTick = -healthPerTick;
+            buff.f_expireDuration = duration;
+            return buff;
+        }
         public static SBuff CreateActionHealthDrainBuff(int actionIndex, float healthDrainAmount, float duration)
         {
             SBuff buff = new SBuff();
             buff.index = actionIndex * 10;
+            buff.i_effect = 40009;
             buff.i_addType = (int)enum_ExpireRefreshType.RefreshIdentity;
             buff.f_healthDrainMultiply = healthDrainAmount;
             buff.f_expireDuration = duration;
@@ -986,17 +1009,6 @@ namespace GameSetting
             buff.index = actionIndex * 10;
             buff.i_addType = (int)enum_ExpireRefreshType.Refresh;
             buff.f_damageMultiply = damageMultiply;
-            buff.f_expireDuration = duration;
-            return buff;
-        }
-        public static SBuff CreateActionHealthBuff(int actionIndex, float healthPerTick, float healthTick, float duration)
-        {
-            SBuff buff = new SBuff();
-            buff.index = actionIndex * 10;
-            buff.i_addType = (int)enum_ExpireRefreshType.RefreshIdentity;
-            buff.i_damageType = (int)enum_DamageType.HealthOnly;
-            buff.f_damageTickTime = healthTick;
-            buff.f_damagePerTick = -healthPerTick;
             buff.f_expireDuration = duration;
             return buff;
         }

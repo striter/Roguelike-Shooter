@@ -8,7 +8,7 @@ public class UIManager :UIManagerBase,ISingleCoroutine
     public static new UIManager Instance { get; private set; }
     protected Transform tf_BaseControl { get; private set; }
     protected Button btn_Reload { get; private set; }
-    Action OnReload;
+    Action OnReload,OnAbility;
     Action<bool> OnMainDown;
     Image img_main,m_setting;
     protected UIT_GridControllerGridItem<UIGI_TipItem> m_TipsGrid;
@@ -75,10 +75,11 @@ public class UIManager :UIManagerBase,ISingleCoroutine
 
     void OnOptionsChanged()=> UIT_JoyStick.Instance.SetMode(OptionsManager.m_OptionsData.m_JoyStickMode);
     bool CheckControlable() => !UIPageBase.m_PageOpening;
-    public void DoBinding(Action<Vector2> _OnLeftDelta,Action<Vector2> _OnRightDelta,Action _OnReload,Action<bool> _OnMainDown )
+    public void DoBinding(Action<Vector2> _OnLeftDelta,Action<Vector2> _OnRightDelta,Action _OnReload,Action<bool> _OnMainDown,Action _OnAbility)
     {
         m_TouchDelta.AddLRBinding(_OnLeftDelta, _OnRightDelta,CheckControlable);
         OnReload = _OnReload;
+        OnAbility = _OnAbility;
         OnMainDown = _OnMainDown;
     }
     public void RemoveBinding()
@@ -86,16 +87,12 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         m_TouchDelta.RemoveAllBinding();
         OnReload = null;
         OnMainDown = null;
+        OnAbility = null;
     }
 
-    protected void OnReloadButtonDown()
-    {
-        OnReload?.Invoke();
-    }
-    protected void OnMainButtonDown(bool down,Vector2 pos)
-    {
-        OnMainDown?.Invoke(down);
-    }
+    protected void OnReloadButtonDown()=>OnReload?.Invoke();
+    protected void OnMainButtonDown(bool down,Vector2 pos)=>OnMainDown?.Invoke(down);
+    protected void OnAbilityDown() => OnAbility?.Invoke();
 
 
     string m_mainSprite;
@@ -159,4 +156,21 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         m_setting.sprite = m_CommonSprites[Override == null ? "icon_setting" : "icon_close"];
         m_setting.SetNativeSize();
     }
+
+
+
+#if UNITY_EDITOR
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+            OnMainButtonDown(true, Vector2.zero);
+        else if (Input.GetMouseButtonUp(0))
+            OnMainButtonDown(false, Vector2.zero);
+
+        if (Input.GetKeyDown(KeyCode.R))
+            OnReloadButtonDown();
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+            OnAbilityDown();
+    }
+#endif
 }

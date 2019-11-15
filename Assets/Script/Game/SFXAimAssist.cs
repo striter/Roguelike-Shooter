@@ -47,8 +47,8 @@ public class SFXAimAssist : SFXBase {
             tf_Dot.position = hit.point;
             tf_Dot.SetActivate(true);
         }
-        m_lineRenderer.SetPosition(1, tf_muzzle.position);
-        m_lineRenderer.SetPosition(0, m_assistTarget);
+        m_lineRenderer.SetPosition(0, tf_muzzle.position);
+        m_lineRenderer.SetPosition(1, m_assistTarget);
     }
 
     public void SetEnable(bool activate)
