@@ -13,7 +13,7 @@ public class CampFarmPlot : MonoBehaviour {
     public bool m_CanGenerateProfit { get; private set; }
     public int m_StampLeft { get; private set; }
     public string m_Timeleft => TTimeTools.GetHMS(m_StampLeft);
-    public float m_StampLeftScale => (float)m_StampLeft / GameExpression.GetFarmItemInfo[m_Status].m_ItemDuration
+    public float m_StampLeftScale => (float)m_StampLeft / GameConst.I_CampFarmDecayDuration
 ;    Action<int> OnPlotStatusChanged;
     int m_profitStamp,m_StampCheck;
     public float Init(int index,CampFarmPlotData info,int offlineStamp,int stampNow,Action<int> _OnPlotStatusChanged)
@@ -33,7 +33,7 @@ public class CampFarmPlot : MonoBehaviour {
             return;
 
         m_profitStamp = stampNow;
-        m_StampCheck = stampNow +  Mathf.RoundToInt(GameConst.F_CampFarmItemTickAmount / GameExpression.GetFarmItemInfo[m_Status].m_CreditPerSecond);
+        m_StampCheck = stampNow +  Mathf.RoundToInt(GameConst.F_CampFarmItemTickAmount / GameExpression.GetFarmCreditPerSecond[m_Status]);
     }
 
     public float TickProfit(int stampNow)
@@ -41,7 +41,7 @@ public class CampFarmPlot : MonoBehaviour {
         if (!m_CanGenerateProfit)
             return 0;
 
-        m_StampLeft = m_StartStamp+ GameExpression.GetFarmItemInfo[m_Status].m_ItemDuration - stampNow;
+        m_StampLeft = m_StartStamp+ GameConst.I_CampFarmDecayDuration - stampNow;
         if (stampNow < m_StampCheck&&m_StampLeft>0)
             return 0;
 
@@ -55,17 +55,17 @@ public class CampFarmPlot : MonoBehaviour {
 
     public void Hybrid(enum_CampFarmItemStatus status)
     {
-        ResetPlotStatus(status,true);
         m_StartStamp = TTimeTools.GetTimeStampNow();
-        m_StampLeft = GameExpression.GetFarmItemInfo[m_Status].m_ItemDuration;
+        m_StampLeft = GameConst.I_CampFarmDecayDuration;
+        ResetPlotStatus(status,true);
         ResetCheck(m_StartStamp);
     }
 
     public void Clear()
     {
-        ResetPlotStatus(enum_CampFarmItemStatus.Empty,true);
         m_StampLeft = 0;
         m_StartStamp = -1;
+        ResetPlotStatus(enum_CampFarmItemStatus.Empty,true);
     }
     
     void ResetPlotStatus(enum_CampFarmItemStatus status,bool showAnim)
@@ -92,12 +92,12 @@ public class CampFarmPlot : MonoBehaviour {
         if (!m_CanGenerateProfit)
             return 0;
 
-        m_StampLeft = m_StartStamp+GameExpression.GetFarmItemInfo[m_Status].m_ItemDuration - stampNow;
+        m_StampLeft = m_StartStamp+ GameConst.I_CampFarmDecayDuration - stampNow;
         bool decayed = m_StampLeft <= 0f;
         int profitBegin = previousStamp < m_StartStamp ? m_StartStamp : previousStamp;
-        int profitEnd = decayed ? m_StartStamp + GameExpression.GetFarmItemInfo[m_Status].m_ItemDuration : stampNow;
+        int profitEnd = decayed ? m_StartStamp + GameConst.I_CampFarmDecayDuration : stampNow;
         int profitStampOffset = profitEnd - profitBegin;
-        float profit = profitStampOffset * GameExpression.GetFarmItemInfo[m_Status].m_CreditPerSecond;
+        float profit = profitStampOffset * GameExpression.GetFarmCreditPerSecond[m_Status];
         if (decayed)
         {
             ResetPlotStatus(enum_CampFarmItemStatus.Decayed, showDecayAnim);

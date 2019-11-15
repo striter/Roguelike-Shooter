@@ -63,6 +63,7 @@ namespace GameSetting
         public const int I_CampFarmPlot5UnlockDifficulty = 10;
         public const int I_CampFarmPlot6UnlockTechPoints = 3000;
         public const int I_CampFarmItemAcquire = 50;
+        public const int I_CampFarmDecayDuration = 20;
         public const float F_CampFarmItemTickAmount = 0.05f;
 
         public const int I_CampActionStorageNormalCount = 10;
@@ -172,7 +173,7 @@ namespace GameSetting
         }
 
         public static readonly Dictionary<enum_CampFarmItemStatus, int> GetFarmGeneratePercentage = new Dictionary< enum_CampFarmItemStatus,int>() { {  enum_CampFarmItemStatus.Progress1 ,60},{enum_CampFarmItemStatus.Progress2 ,30},{enum_CampFarmItemStatus.Progress3 ,6},{enum_CampFarmItemStatus.Progress4,3},{ enum_CampFarmItemStatus.Progress5,1} };   //Farm生成等级百分比
-        public static readonly Dictionary<enum_CampFarmItemStatus, CampFarmItemData> GetFarmItemInfo = new Dictionary<enum_CampFarmItemStatus, CampFarmItemData> { { enum_CampFarmItemStatus.Progress1, CampFarmItemData.Create(82800, .1f / 60f) }, { enum_CampFarmItemStatus.Progress2, CampFarmItemData.Create(82800, .2f / 60f) }, { enum_CampFarmItemStatus.Progress3, CampFarmItemData.Create(82800, .3f / 60f) }, { enum_CampFarmItemStatus.Progress4, CampFarmItemData.Create(82800, .5f / 60f) }, { enum_CampFarmItemStatus.Progress5, CampFarmItemData.Create(82800, 1f / 60f) } };      //Farm 等级,持续时间,每秒Credit
+        public static readonly Dictionary<enum_CampFarmItemStatus, float> GetFarmCreditPerSecond = new Dictionary<enum_CampFarmItemStatus, float> { { enum_CampFarmItemStatus.Progress1, .1f / 60f}, { enum_CampFarmItemStatus.Progress2, .2f / 60f }, { enum_CampFarmItemStatus.Progress3, .3f / 60f }, { enum_CampFarmItemStatus.Progress4, .5f / 60f }, { enum_CampFarmItemStatus.Progress5,1f / 60f } };      //Farm 等级,每秒Credit
         public static bool CanGenerateprofit(this enum_CampFarmItemStatus status)
         {
             switch(status)
@@ -223,11 +224,11 @@ namespace GameSetting
             switch(type)
             {
                 case enum_UITipsType.Normal:
-                    return Color.gray;
+                    return Color.green;
                 case enum_UITipsType.Warning:
                     return Color.yellow;
                 case enum_UITipsType.Error:
-                    return Color.red;
+                    return Color.white;
                 default:
                     return Color.magenta;
             }
@@ -615,13 +616,6 @@ namespace GameSetting
         public enum_RarityLevel GetActionRarityLevel(System.Random seed) => TCommon.RandomPercentage(m_ActionRate, seed);
         public enum_RarityLevel GetTradeRarityLevel(System.Random seed) => TCommon.RandomPercentage(m_TradeRate, seed);
         public static StageInteractGenerateData Create(Dictionary<enum_RarityLevel, int> _actionRate, Dictionary<enum_RarityLevel, int> _tradeRate, Dictionary<enum_CharacterType, CoinsGenerateData> _coinRate) => new StageInteractGenerateData() { m_ActionRate = _actionRate, m_TradeRate = _tradeRate, m_CoinRate = _coinRate };
-    }
-
-    public struct CampFarmItemData
-    {
-        public int m_ItemDuration { get; private set; }
-        public float m_CreditPerSecond { get; private set; }
-        public static CampFarmItemData Create(int _duration, float _creditPersecond) => new CampFarmItemData { m_ItemDuration = _duration, m_CreditPerSecond = _creditPersecond };
     }
     #endregion
 

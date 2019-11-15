@@ -138,7 +138,6 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
         if (CameraController.Instance.InputRayCheck(inputPos, GameLayer.Mask.I_Interact, ref m_rayHit))
             targetInteract = m_rayHit.collider.GetComponent<CampFarmPlot>();
 
-
         if (targetInteract)
             OnDragInteract(targetInteract,down);
      
@@ -154,10 +153,17 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
 
         CampFarmPlot targetPlot = interact as CampFarmPlot;
 
-        if (down && targetPlot.m_Status == enum_CampFarmItemStatus.Decayed)
+        if (down)
         {
-            targetPlot.Clear();
-            return;
+            switch (targetPlot.m_Status)
+            {
+                case enum_CampFarmItemStatus.Empty:
+                    OnFarmBuy(targetPlot.m_Index);
+                    return;
+                case enum_CampFarmItemStatus.Decayed:
+                    OnFarmClear(targetPlot.m_Index);
+                    return;
+            }
         }
 
         if (targetPlot != m_HybridPlot && targetPlot.m_CanGenerateProfit)

@@ -1033,10 +1033,10 @@ MonoBehaviour:
   F_AIChaseRange: 17
   F_AIAttackRange: 22
   F_AttackDuration:
-    start: 2
+    start: 3
     length: 1
   F_AttackTimes:
-    start: 3
+    start: 2
     length: 1
   F_AttackRate: 0.33
   B_BattleCheckObstacle: 0
