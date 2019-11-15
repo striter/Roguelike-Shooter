@@ -66,10 +66,11 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         SetBinding(false);
     }
 
-    public void SetPlayerInfo(int coins, List<ActionBase> storedActions)
+    public void SetPlayerInfo(int coins,float health, List<ActionBase> storedActions)
     {
         m_PlayerInfo.OnCoinsReceive(coins);
         m_PlayerInfo.InitActionInfo(storedActions);
+        m_Health.OnRevive(health>0?health:I_MaxHealth,I_DefaultArmor);
     }
 
     protected override void OnDead()

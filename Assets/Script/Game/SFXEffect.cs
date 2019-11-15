@@ -34,7 +34,7 @@ public class SFXEffect : SFXParticles
         MeshRenderer targetMesh = attachTo.GetComponent<MeshRenderer>();
         if (targetMesh == null)
             Debug.Log("Null Mesh Found!");
-        m_Particles.Traversal((ParticleSystem particle) =>
+        m_Particle.m_Particles.Traversal((ParticleSystem particle) =>
         {
             ParticleSystem.ShapeModule shape = particle.shape;
             shape.meshRenderer = targetMesh;
