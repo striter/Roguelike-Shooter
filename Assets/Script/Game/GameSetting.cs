@@ -981,10 +981,23 @@ namespace GameSetting
             buff.f_expireDuration = duration;
             return buff;
         }
+        public static SBuff CreateActionHealthBuff(int actionIndex, float healthPerTick, float healthTick, float duration)
+        {
+            SBuff buff = new SBuff();
+            buff.index = actionIndex * 10;
+            buff.i_effect = 40008;
+            buff.i_addType = (int)enum_ExpireRefreshType.RefreshIdentity;
+            buff.i_damageType = (int)enum_DamageType.HealthOnly;
+            buff.f_damageTickTime = healthTick;
+            buff.f_damagePerTick = -healthPerTick;
+            buff.f_expireDuration = duration;
+            return buff;
+        }
         public static SBuff CreateActionHealthDrainBuff(int actionIndex, float healthDrainAmount, float duration)
         {
             SBuff buff = new SBuff();
             buff.index = actionIndex * 10;
+            buff.i_effect = 40009;
             buff.i_addType = (int)enum_ExpireRefreshType.RefreshIdentity;
             buff.f_healthDrainMultiply = healthDrainAmount;
             buff.f_expireDuration = duration;
@@ -996,17 +1009,6 @@ namespace GameSetting
             buff.index = actionIndex * 10;
             buff.i_addType = (int)enum_ExpireRefreshType.Refresh;
             buff.f_damageMultiply = damageMultiply;
-            buff.f_expireDuration = duration;
-            return buff;
-        }
-        public static SBuff CreateActionHealthBuff(int actionIndex, float healthPerTick, float healthTick, float duration)
-        {
-            SBuff buff = new SBuff();
-            buff.index = actionIndex * 10;
-            buff.i_addType = (int)enum_ExpireRefreshType.RefreshIdentity;
-            buff.i_damageType = (int)enum_DamageType.HealthOnly;
-            buff.f_damageTickTime = healthTick;
-            buff.f_damagePerTick = -healthPerTick;
             buff.f_expireDuration = duration;
             return buff;
         }

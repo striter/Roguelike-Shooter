@@ -41,6 +41,9 @@ public class CampManager : GameManagerBase
     public bool B_Farming { get; private set; } = false;
     public void OnFarmNPCChatted()
     {
+        if (B_Farming)
+            return;
+
         B_Farming = true;
         AttachSceneCamera(CampFarmManager.Instance.Begin(OnFarmExit));
     }
@@ -50,12 +53,18 @@ public class CampManager : GameManagerBase
         AttachPlayerCamera(tf_Player);
     }
 
+    public bool B_ActionStorage { get; private set; } = false;
     public void OnActionNPCChatted()
     {
+        if (B_ActionStorage)
+            return;
+
+        B_ActionStorage = true;
         CampUIManager.Instance.ShowPage<UI_ActionStorage>(true).Play(OnActionExit);
     }
     void OnActionExit()
     {
+        B_ActionStorage = false;
     }
 
     public void OnCreditStatus(float creditChange)

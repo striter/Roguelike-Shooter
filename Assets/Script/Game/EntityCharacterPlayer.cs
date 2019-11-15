@@ -145,8 +145,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     }
 
     protected virtual float CalculateBaseMovementSpeed() => (F_MovementSpeed - m_WeaponCurrent.m_WeaponInfo.m_Weight) * (m_aimingMovementReduction ? (1 - GameConst.F_AimMovementReduction * m_PlayerInfo.F_AimMovementStrictMultiply) : 1f);
-    protected virtual Vector3 CalculateMoveDirection(Vector2 axisInput) => Vector3.Normalize(CameraController.CameraXZRightward * axisInput.x + CameraController.CameraXZForward * axisInput.y);
     protected virtual Quaternion CalculateTargetRotation() => CameraController.CameraXZRotation;
+    protected virtual Vector3 CalculateMoveDirection(Vector2 axisInput) => Vector3.Normalize(CameraController.CameraXZRightward * axisInput.x + CameraController.CameraXZForward * axisInput.y);
 
     #region WeaponControll
     void OnReloadDown()
@@ -229,9 +229,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         transform.rotation = Quaternion.Lerp(transform.rotation, CalculateTargetRotation(),deltaTime*GameConst.I_PlayerRotationSmoothParam);
 
         m_BaseMovementSpeed = CalculateBaseMovementSpeed();
-        Vector3 moveDirection = CalculateMoveDirection(m_MoveAxisInput);
+
         float finalMovementSpeed = m_CharacterInfo.F_MovementSpeed;
-        m_CharacterController.Move((moveDirection * finalMovementSpeed + Vector3.down * GameConst.F_Gravity) * deltaTime);
+        m_CharacterController.Move((CalculateMoveDirection(m_MoveAxisInput) * finalMovementSpeed + Vector3.down * GameConst.F_Gravity) * deltaTime);
         m_Animator.SetRun(m_MoveAxisInput, finalMovementSpeed / F_MovementSpeed);
     }
 
