@@ -12,16 +12,16 @@ public class SFXCastDetect : SFXCastDetonate {
         m_detector = GetComponent<EntityDetector>();
         m_detector.Init(OnDetect);
     }
-    private void OnEnable()
+    protected override void OnPoolItemEnable()
     {
+        base.OnPoolItemEnable();
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnDetectEntity);
     }
-
-    private void OnDisable()
+    protected override void OnPoolItemDisable()
     {
+        base.OnPoolItemDisable();
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnDetectEntity);
     }
-
 
     public override void Play(DamageDeliverInfo buffInfo)
     {

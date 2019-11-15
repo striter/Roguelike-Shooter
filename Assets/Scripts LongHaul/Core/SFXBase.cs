@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using GameSetting;
-public class SFXBase :MonoBehaviour, ObjectPoolItem<int> {
+public class SFXBase :ObjectPoolMonoItem<int> {
     public const int I_SFXStopExternalDuration= 4;
     public int I_SFXIndex { get; private set; } = -1;
     public int I_SourceID { get; private set; } = -1;
@@ -21,7 +21,7 @@ public class SFXBase :MonoBehaviour, ObjectPoolItem<int> {
     protected bool b_looping => m_Loop && B_Playing && f_playDuration <= 0f;
     Transform m_AttachTo;
     Vector3 m_localPos, m_localDir;
-    public virtual void OnPoolItemInit(int identity)
+    public override void OnPoolItemInit(int identity)
     {
         I_SFXIndex = identity;
 
@@ -29,7 +29,6 @@ public class SFXBase :MonoBehaviour, ObjectPoolItem<int> {
         EDITOR_DEBUG();
 #endif
     }
-
     protected void PlaySFX(int sourceID,float playDuration,float delayDuration)
     {
         B_Delay = true;
