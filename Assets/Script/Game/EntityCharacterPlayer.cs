@@ -169,6 +169,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         if (m_WeaponCurrent == null)
             return;
+        tf_WeaponAim.rotation = CalculateTargetRotation();
         bool canFire = CalculateCanInteract();
         m_WeaponCurrent.Tick(Time.deltaTime, canFire);
         m_Assist.SetEnable(canFire&&!m_WeaponCurrent.B_Reloading);
@@ -183,7 +184,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             m_WeaponCurrent.OnDetach();
             m_PlayerInfo.OnDetachWeapon();
         }
-        tf_WeaponAim.rotation = CalculateTargetRotation();
         m_WeaponCurrent = _weapon;
         m_WeaponCurrent.OnAttach(this, _weapon.B_AttachLeft ? tf_WeaponHoldLeft : tf_WeaponHoldRight, OnFireAddRecoil, OnReload);
         m_PlayerInfo.OnAttachWeapon(m_WeaponCurrent);
