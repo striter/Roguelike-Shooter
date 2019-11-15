@@ -230,7 +230,7 @@ namespace GameSetting_Action
         public static float P_30011_MaxHealthRegen(enum_RarityLevel rarity) => 24 * (int)rarity;
 
         public const int I_30012_Cost = 2;
-        public static float P_30012_HealthRegenEachKill(enum_RarityLevel rarity) => 15 * (int)rarity;
+        public static float P_30012_HealthRegenEachKill(enum_RarityLevel rarity) => 10 * (int)rarity;
 
         public const int I_30013_Cost = 1;
         public static float P_30013_HealthRegenAdditive(enum_RarityLevel rarity) => 40* (int)rarity;
