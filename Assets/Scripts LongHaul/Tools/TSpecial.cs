@@ -395,16 +395,15 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
         }
     }
 
-    
-    public class AnimatorBase
+    public class AnimatorControlBase
     {
         public Animator m_Animator { get; private set; }
-        public AnimatorBase(Animator _animator)
+        public AnimatorControlBase(Animator _animator)
         {
             m_Animator = _animator;
         }
-
     }
+
     public class AnimationControlBase
     {
         public Animation m_Animation { get; private set; }
@@ -426,6 +425,37 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
             m_Animation[m_Animation.clip.name].normalizedTime = playOn ? 0 : 1;
         }
     }
+
+    public class ParticleControlBase
+    {
+        public ParticleSystem[] m_Particles { get; private set; }
+        public ParticleControlBase(Transform transform)
+        {
+            m_Particles=transform.GetComponentsInChildren<ParticleSystem>();
+        }
+        public void Reset()
+        {
+            m_Particles.Traversal((ParticleSystem particle) => { particle.Simulate(0, true, true); });
+        }
+
+        public void Play()
+        {
+            m_Particles.Traversal((ParticleSystem particle) => { particle.Play(true); });
+        }
+        public void Stop()
+        {
+            m_Particles.Traversal((ParticleSystem particle) => { particle.Stop(true); });
+        }
+        public void Clear()
+        {
+            m_Particles.Traversal((ParticleSystem particle) => { particle.Clear(); });
+        }
+        public void SetActive(bool active)
+        {
+            m_Particles.Traversal((ParticleSystem particle) => { particle.transform.SetActivate(active); });
+        }
+    }
+
     //Navigation AI System Chase/Follow/Attack/Idle ETC...
     public class NavigationAgentAI<T> : SimpleMonoLifetime, ISingleCoroutine where T : MonoBehaviour
     {

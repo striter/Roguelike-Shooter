@@ -13,10 +13,12 @@ public class InteractActionChest : InteractBase
     List<ActionBase> m_Actions;
     int m_SelectAmount;
     EntityCharacterPlayer m_Interactor;
+    TSpecialClasses.ParticleControlBase m_Particles;
     public override void Init()
     {
         base.Init();
         m_Animation =new AnimationControlBase( GetComponentInChildren<Animation>());
+        m_Particles = new ParticleControlBase(transform); 
     }
     public void Play(List<ActionBase> _actions,int selectAmount,bool _startChest)
     {
@@ -25,6 +27,7 @@ public class InteractActionChest : InteractBase
         m_SelectAmount = selectAmount;
         m_StartChest = _startChest;
         m_Animation.SetPlayOn(true);
+        m_Particles.Play();
     }
     protected override void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)
     {
@@ -41,6 +44,7 @@ public class InteractActionChest : InteractBase
         SetInteractable(false);
         m_Interactor.m_PlayerInfo.AddStoredAction(m_Actions[index]);
         m_Animation.Play(true);
+        m_Particles.Stop();
     }
     void OnKeyAnim()
     {

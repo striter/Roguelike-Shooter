@@ -759,8 +759,8 @@ public static class GameObjectManager
     public static EntityCharacterPlayer SpawnEntityPlayer(CBattleSave playerSave)
     {
         EntityCharacterPlayer player = SpawnEntity<EntityCharacterPlayer>((int)playerSave.m_character,Vector3.up*10f, enum_EntityFlag.Player,-1,0);
-        player.SetPlayerInfo(playerSave.m_coins, ActionDataManager.CreateActions(playerSave.m_battleAction));
         player.ObtainWeapon(SpawnWeapon(playerSave.m_weapon, ActionDataManager.CreateAction(playerSave.m_weaponAction)));
+        player.SetPlayerInfo(playerSave.m_coins,playerSave.m_health,ActionDataManager.CreateActions(playerSave.m_battleAction));
         return player;
     }
     public static EntityNPC SpawnNPC(enum_InteractCharacter npc, Vector3 toPosition, Transform attachTo) => SpawnEntity<EntityNPC>((int)npc, toPosition, enum_EntityFlag.Neutal,-1,0, attachTo);

@@ -513,7 +513,7 @@ MonoBehaviour:
   I_YawMax: 30
   I_ShakeParam: 0
   F_ReverseCheck: 0
-  m_RecoilCompensate: 0
+  m_RecoilCompensate: 1
 --- !u!4 &159911114
 Transform:
   m_ObjectHideFlags: 0
@@ -1782,6 +1782,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02f19e3cdddd8c74aa5e1cf7e6c0d1eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  B_PhysicsDebugGizmos: 1
+  Z_TestEntitySpawn: 221
+  TestEntityFlag: 2
+  TestEntityBuffOnSpawn: 1
   m_EnermiesType: 1
   m_Character: 10001
 --- !u!4 &814739320 stripped

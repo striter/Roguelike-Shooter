@@ -642,7 +642,7 @@ namespace GameSetting
             m_DifficultyUnlocked = 1;
             m_StorageRequestStamp = -1;
             m_StorageActions = new List<ActionStorageData>();
-            m_CharacterSelected = enum_PlayerCharacter.Test;
+            m_CharacterSelected = enum_PlayerCharacter.Beth;
             m_WeaponSelected = enum_PlayerWeapon.UMP45;
             for (int i = 0; i < GameExpression.I_CampActionStorageDefault.Count; i++)
                 m_StorageActions.Add(ActionStorageData.CreateDefault(GameExpression.I_CampActionStorageDefault[i]));
@@ -692,12 +692,14 @@ namespace GameSetting
         public int m_kills;
         public ActionGameData m_weaponAction;
         public List<ActionGameData> m_battleAction;
+        public float m_health;
         public enum_PlayerWeapon m_weapon;
         public enum_PlayerCharacter m_character;
         public List<ActionStorageData> m_startAction;
         public CBattleSave()
         {
             m_coins = 0;
+            m_health = -1;
             m_weaponAction = new ActionGameData();
             m_battleAction = new List<ActionGameData>();
             m_Stage = enum_StageLevel.Rookie;
@@ -709,6 +711,7 @@ namespace GameSetting
         public void Adjust(EntityCharacterPlayer _player, GameLevelManager _level)
         {
             m_coins = _player.m_PlayerInfo.m_Coins;
+            m_health = _player.m_Health.m_CurrentHealth;
             m_weapon = _player.m_WeaponCurrent.m_WeaponInfo.m_Weapon;
             m_weaponAction = ActionGameData.Create(_player.m_WeaponCurrent.m_WeaponAction);
             m_battleAction = ActionGameData.Create(_player.m_PlayerInfo.m_BattleAction);
