@@ -26,6 +26,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected float f_aimMovementReduction = 0f;
     protected bool m_aimingMovementReduction => f_aimMovementReduction > 0f;
     protected override enum_GameAudioSFX m_DamageClip => enum_GameAudioSFX.PlayerDamage;
+    protected float f_abilityCoolDown = 0f;
+    protected bool m_AbilityCooldowning => f_abilityCoolDown > 0f;
     protected override void ActivateHealthManager(float maxHealth) => m_Health.OnActivate(maxHealth, I_DefaultArmor, true);
     protected float m_BaseMovementSpeed;
     public override float m_baseMovementSpeed => m_BaseMovementSpeed;
@@ -111,7 +113,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_PlayerInfo.OnBattleFinish();
     }
 
-    void OnMainButtonDown(bool down)
+    void OnMainDown(bool down)
     {
         m_aiming = down;
 
@@ -132,17 +134,13 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (m_WeaponCurrent != null)
             m_WeaponCurrent.Trigger(down);
     }
-
-    protected virtual void OnAbilityDown()
-    {
-
-    }
-
+    
     protected override void OnCharacterUpdate(float deltaTime)
     {
         base.OnCharacterUpdate(deltaTime);
         OnWeaponTick(deltaTime);
         OnMoveTick(deltaTime);
+        OnAbilityTick(deltaTime);
         OnCommonStatus();
     }
 
@@ -151,7 +149,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected virtual Vector3 CalculateMoveDirection(Vector2 axisInput) => Vector3.Normalize(CameraController.CameraXZRightward * axisInput.x + CameraController.CameraXZForward * axisInput.y);
 
     #region WeaponControll
-    void OnReloadDown()
+    void OnReloadClick()
     {
         if (m_WeaponCurrent == null)
             return;
@@ -238,6 +236,28 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     }
 
     #endregion
+    #region PlayerAbility
+    void OnAbilityTick(float deltaTime)
+    {
+        if (m_AbilityCooldowning)
+            f_abilityCoolDown -= deltaTime;
+    }
+
+    void OnAbilityClick()
+    {
+        if (m_AbilityCooldowning)
+            return;
+
+        f_abilityCoolDown = 1f;
+        OnAbilityTrigger();
+    }
+
+    protected virtual void OnAbilityTrigger()
+    {
+
+    }
+
+    #endregion
     #region PlayerInteract
     public void OnInteractCheck(InteractBase interactTarget, bool isEnter)
     {
@@ -282,7 +302,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public void OnAddupEquipmentUseTime(int times) => m_EquipmentTimes += times;
     public EquipmentBase AcquireEquipment(int actionIndex, Func<DamageDeliverInfo> OnDamageBuff,float throwDistance=10f)
     {
-        OnMainButtonDown(false);
+        OnMainDown(false);
         EquipmentBase targetEquipment = EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(actionIndex), this, OnDamageBuff == null ? m_PlayerInfo.GetDamageBuffInfo : OnDamageBuff);
         m_EquipmentTimes = (m_Equipment == null || m_Equipment.I_Index == targetEquipment.I_Index) ? m_EquipmentTimes + 1 : 1;
         m_Equipment = targetEquipment;
@@ -372,7 +392,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void SetBinding(bool on)
     {
         if (on)
-            UIManager.Instance.DoBinding(OnMovementDelta, OnRotateDelta, OnReloadDown, OnMainButtonDown,OnAbilityDown);
+            UIManager.Instance.DoBinding(OnMovementDelta, OnRotateDelta, OnReloadClick, OnMainDown,OnAbilityClick);
         else
             UIManager.Instance.RemoveBinding();
     }

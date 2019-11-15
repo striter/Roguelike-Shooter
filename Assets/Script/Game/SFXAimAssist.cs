@@ -38,7 +38,6 @@ public class SFXAimAssist : SFXBase {
         if (!m_lineRenderer.enabled)
             return;
 
-        SetEnable(false);
         tf_Dot.SetActivate(false);
         RaycastHit hit;
         m_assistTarget = tf_check.position + tf_check.forward * m_assistDistance;

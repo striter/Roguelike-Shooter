@@ -13,9 +13,9 @@ public class EntityCharacterPlayerBeth : EntityCharacterPlayer {
     protected float f_rollCheck;
     protected bool m_rolling => f_rollCheck > 0;
     Vector3 m_rollDirection,m_rollStartDirection;
-    protected override void OnAbilityDown()
+    protected override void OnAbilityTrigger()
     {
-        base.OnAbilityDown();
+        base.OnAbilityTrigger();
 
         f_rollCheck = 1f;
         m_rollStartDirection = base.CalculateMoveDirection(new Vector2(0,1));
