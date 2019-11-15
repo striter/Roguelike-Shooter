@@ -459,11 +459,6 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: f2017e54db8bc0e4fa52dba65a53c81b, type: 2}
   m_IsPrefabParent: 0
---- !u!4 &121614911 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 4379348878481146, guid: 2a18fc1b12a4fdd49a35f430555f1e53,
-    type: 2}
-  m_PrefabInternal: {fileID: 1897275604}
 --- !u!1 &159911112
 GameObject:
   m_ObjectHideFlags: 0
@@ -847,7 +842,7 @@ Transform:
   - {fileID: 1971633180}
   - {fileID: 1168010657}
   - {fileID: 1452639508}
-  - {fileID: 121614911}
+  - {fileID: 1897275605}
   - {fileID: 624667753}
   m_Father: {fileID: 0}
   m_RootOrder: 4
@@ -1744,6 +1739,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_EnermiesType: 1
+  m_Character: 10001
 --- !u!4 &814739320 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4330177718562234, guid: 36a24dca79844b94380901e34585215f,
@@ -4792,6 +4788,10 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2a18fc1b12a4fdd49a35f430555f1e53, type: 2}
   m_IsPrefabParent: 0
+--- !u!4 &1897275605 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 1897275604}
 --- !u!1001 &1924911242
 Prefab:
   m_ObjectHideFlags: 0

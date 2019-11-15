@@ -27,7 +27,7 @@ public class EntityCharacterPlayerBeth : EntityCharacterPlayer {
         f_rollCheck = 0;
     }
 
-    protected override bool CalculateCanWeaponFire() => m_rolling ? false : base.CalculateCanWeaponFire();
+    protected override bool CalculateCanInteract() => m_rolling ? false : base.CalculateCanInteract();
     protected override float CalculateBaseMovementSpeed() => m_rolling?F_MovementSpeed*1.5f:base.CalculateBaseMovementSpeed();
     protected override Vector3 CalculateMoveDirection(Vector2 moveAxisInput) => m_rolling ? m_rollDirection : base.CalculateMoveDirection(moveAxisInput);
     protected override Quaternion CalculateTargetRotation() => m_rolling ? Quaternion.LookRotation(m_rollDirection, Vector3.up) : base.CalculateTargetRotation();

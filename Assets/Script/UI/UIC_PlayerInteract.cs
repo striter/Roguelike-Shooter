@@ -39,7 +39,7 @@ public class UIC_PlayerInteract : UIControlBase {
         tf_Intro = tf_Container.Find("Intro");
         m_WeaponActionHUD = new UI_WeaponActionHUD(tf_Intro.Find("WeaponAction"));
         m_Intro = tf_Intro.Find("Intro").GetComponent<UIT_TextExtend>();
-        
+        rtf_InteractData.SetActivate(false);
         TBroadCaster<enum_BC_UIStatus>.Add<InteractBase>(enum_BC_UIStatus.UI_PlayerInteractStatus,OnInteractStatus);
     }
     protected override void OnDestroy()
@@ -51,7 +51,6 @@ public class UIC_PlayerInteract : UIControlBase {
     void OnInteractStatus(InteractBase _interact)
     {
         m_interact = _interact;
-        rtf_InteractData.SetActivate(false);
         rtf_InteractData.SetActivate(m_interact != null);
         if (!m_interact)
             return;

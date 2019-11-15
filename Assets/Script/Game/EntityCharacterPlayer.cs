@@ -164,12 +164,14 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             m_PlayerInfo.OnReloadFinish();
     }
 
-    protected virtual bool CalculateCanWeaponFire() => !Physics.SphereCast(new Ray(tf_WeaponAim.position, tf_WeaponAim.forward), .3f, 1.5f, GameLayer.Mask.I_Static);
+    protected virtual bool CalculateCanInteract() => !Physics.SphereCast(new Ray(tf_WeaponAim.position, tf_WeaponAim.forward), .3f, 1.5f, GameLayer.Mask.I_Static);
     void OnWeaponTick(float deltaTime)
     {
-        bool canFire = CalculateCanWeaponFire();
+        if (m_WeaponCurrent == null)
+            return;
+        bool canFire = CalculateCanInteract();
         m_WeaponCurrent.Tick(Time.deltaTime, canFire);
-        m_Assist.SetEnable(canFire);
+        m_Assist.SetEnable(canFire&&!m_WeaponCurrent.B_Reloading);
     }
 
     public WeaponBase ObtainWeapon(WeaponBase _weapon)
