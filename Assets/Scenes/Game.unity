@@ -319,11 +319,11 @@ MonoBehaviour:
   V_TestIndicatorIndex: 0
   B_TestBuffIndex: 4
   Comma_TestParticleIndex: 20001
-  F1_WeaponSpawnType: 3001
+  F1_WeaponSpawnType: 2001
   WeaponPerkOnSpawn: -1
   F5_TestActionNormal: 10016
   F6_TestActionOutstanding: 20006
-  F7_TestActionEpic: 40020
+  F7_TestActionEpic: 30015
   F8_TestAcquireAction: 30005
   B_AdditionalLight: 1
 --- !u!4 &1133817278
@@ -523,7 +523,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   B_SmoothCamera: 1
-  F_CameraSmoothParam: 0.15
+  F_CameraSmoothParam: 0.3
   B_InvertCamera: 0
   F_RotateSensitive: 1
   B_CameraOffsetWallClip: 0

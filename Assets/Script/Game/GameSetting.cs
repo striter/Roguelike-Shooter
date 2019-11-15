@@ -40,7 +40,7 @@ namespace GameSetting
         public const int I_ProjectileSpreadAtDistance = 100;       //Meter,  Bullet Spread In A Circle At End Of This Distance
 
         public const float F_PlayerDamageAdjustmentRange = .1f;
-        public const float F_PlayerCameraSmoothParam = 1f;     //Camera Smooth Param For Player .2 is suggested
+        public const int I_PlayerRotationSmoothParam = 10;     //Camera Smooth Param For Player 10 is suggested
 
         public const float F_AIDamageTranslate = 0;   //.003f;
         public const float F_AIMovementCheckParam = .3f;
@@ -61,7 +61,9 @@ namespace GameSetting
 
         public const int I_CampFarmPlot4UnlockDifficulty = 3;
         public const int I_CampFarmPlot5UnlockDifficulty = 10;
+        public const int I_CampFarmPlot6UnlockTechPoints = 3000;
         public const int I_CampFarmItemAcquire = 50;
+        public const int I_CampFarmDecayDuration = 20;
         public const float F_CampFarmItemTickAmount = 0.05f;
 
         public const int I_CampActionStorageNormalCount = 10;
@@ -171,7 +173,7 @@ namespace GameSetting
         }
 
         public static readonly Dictionary<enum_CampFarmItemStatus, int> GetFarmGeneratePercentage = new Dictionary< enum_CampFarmItemStatus,int>() { {  enum_CampFarmItemStatus.Progress1 ,60},{enum_CampFarmItemStatus.Progress2 ,30},{enum_CampFarmItemStatus.Progress3 ,6},{enum_CampFarmItemStatus.Progress4,3},{ enum_CampFarmItemStatus.Progress5,1} };   //Farm生成等级百分比
-        public static readonly Dictionary<enum_CampFarmItemStatus, CampFarmItemData> GetFarmItemInfo = new Dictionary<enum_CampFarmItemStatus, CampFarmItemData> { { enum_CampFarmItemStatus.Progress1, CampFarmItemData.Create(82800, .1f / 60f) }, { enum_CampFarmItemStatus.Progress2, CampFarmItemData.Create(82800, .2f / 60f) }, { enum_CampFarmItemStatus.Progress3, CampFarmItemData.Create(82800, .3f / 60f) }, { enum_CampFarmItemStatus.Progress4, CampFarmItemData.Create(82800, .5f / 60f) }, { enum_CampFarmItemStatus.Progress5, CampFarmItemData.Create(82800, 1f / 60f) } };      //Farm 等级,持续时间,每秒Credit
+        public static readonly Dictionary<enum_CampFarmItemStatus, float> GetFarmCreditPerSecond = new Dictionary<enum_CampFarmItemStatus, float> { { enum_CampFarmItemStatus.Progress1, .1f / 60f}, { enum_CampFarmItemStatus.Progress2, .2f / 60f }, { enum_CampFarmItemStatus.Progress3, .3f / 60f }, { enum_CampFarmItemStatus.Progress4, .5f / 60f }, { enum_CampFarmItemStatus.Progress5,1f / 60f } };      //Farm 等级,每秒Credit
         public static bool CanGenerateprofit(this enum_CampFarmItemStatus status)
         {
             switch(status)
@@ -222,11 +224,11 @@ namespace GameSetting
             switch(type)
             {
                 case enum_UITipsType.Normal:
-                    return Color.gray;
+                    return Color.green;
                 case enum_UITipsType.Warning:
                     return Color.yellow;
                 case enum_UITipsType.Error:
-                    return Color.red;
+                    return Color.white;
                 default:
                     return Color.magenta;
             }
@@ -369,13 +371,17 @@ namespace GameSetting
         public static string GetLocalizeKey(this enum_StageLevel stage) => "Game_Stage_" + stage;
         public static string GetLocalizeKey(this enum_Style style) => "Game_Style_" + style;
         public static string GetLocalizeNameKey(this enum_PlayerWeapon weapon) => "Weapon_Name_" + weapon;
-        public static string GetLocalizeKey(this enum_Interaction interact) => "UI_Interact_" + interact;
+        public static string GetNameLocalizeKey(this InteractBase interact) => "UI_Interact_" + interact.m_InteractType+interact.m_ExternalLocalizeKeyJoint;
+        public static string GetIntroLocalizeKey(this InteractBase interact) => "UI_Interact_" + interact.m_InteractType +interact.m_ExternalLocalizeKeyJoint+ "_Intro";
         public static string GetLocalizeKey(this enum_TileType type) => "UI_TileType_" + type;
         public static string GetLocalizeKey(this enum_RarityLevel rarity) => "UI_Rarity_" + rarity;
         public static string GetLocalizeKey(this enum_Option_FrameRate frameRate) => "UI_Option_" + frameRate;
         public static string GetLocalizeKey(this enum_Option_JoyStickMode joystick) => "UI_Option_" + joystick;
         public static string GetLocalizeKey(this enum_Option_LanguageRegion region) => "UI_Option_" + region;
         public static string GetLocalizeKey(this enum_UI_TileBattleStatus status) => "UI_Battle_" + status;
+        public static string GetLocalizeKey(this enum_CampFarmItemStatus status) => "UI_Farm_" + status;
+
+        public static string SetActionIntro(this ActionBase actionInfo, UIT_TextExtend text) => text.formatText(actionInfo.GetIntroLocalizeKey() ,actionInfo.F_Duration, actionInfo.Value1, actionInfo.Value2, actionInfo.Value3);
     }
 
     public static class GameLayer
@@ -433,6 +439,7 @@ namespace GameSetting
     {
         Invalid = -1,
         UI_PlayerCommonStatus,
+        UI_PlayerInteractStatus,
         UI_PlayerHealthStatus,
         UI_PlayerAmmoStatus,
         UI_PlayerActionStatus,
@@ -502,6 +509,10 @@ namespace GameSetting
     public enum enum_ActionType { Invalid = -1, Basic = 1,Device=2,Equipment=3, WeaponPerk = 4, }
 
     public enum enum_EffectAttach { Invalid = -1,  Head = 1, Feet = 2, Weapon = 3,}
+
+    public enum enum_PlayerCharacter {Invalid=-1,Test=10000,Beth=10001,Jason=10002,Charles=10003 }
+
+    public enum enum_InteractCharacter { Invalid=-1,Trader=20001,Trainer=20002, }
 
     public enum enum_PlayerWeapon
     {
@@ -580,6 +591,8 @@ namespace GameSetting
 
     public enum enum_Option_FrameRate { Invalid = -1, Normal = 45, High = 60, }
 
+    public enum enum_Option_ScreenEffect { Invalid=-1,Normal,High,Epic}
+
     public enum enum_CampFarmItemStatus { Invalid=-1, Empty = 0, Locked=1 , Decayed = 2, Progress1=10,Progress2,Progress3,Progress4,Progress5}
 
     public enum enum_UITipsType { Invalid=-1,Normal=0,Warning=1,Error=2}
@@ -608,13 +621,6 @@ namespace GameSetting
         public enum_RarityLevel GetTradeRarityLevel(System.Random seed) => TCommon.RandomPercentage(m_TradeRate, seed);
         public static StageInteractGenerateData Create(Dictionary<enum_RarityLevel, int> _actionRate, Dictionary<enum_RarityLevel, int> _tradeRate, Dictionary<enum_CharacterType, CoinsGenerateData> _coinRate) => new StageInteractGenerateData() { m_ActionRate = _actionRate, m_TradeRate = _tradeRate, m_CoinRate = _coinRate };
     }
-
-    public struct CampFarmItemData
-    {
-        public int m_ItemDuration { get; private set; }
-        public float m_CreditPerSecond { get; private set; }
-        public static CampFarmItemData Create(int _duration, float _creditPersecond) => new CampFarmItemData { m_ItemDuration = _duration, m_CreditPerSecond = _creditPersecond };
-    }
     #endregion
 
     #region SaveData
@@ -625,6 +631,8 @@ namespace GameSetting
         public int m_GameDifficulty;
         public int m_DifficultyUnlocked;
         public List<ActionStorageData> m_StorageActions;
+        public enum_PlayerCharacter m_CharacterSelected;
+        public enum_PlayerWeapon m_WeaponSelected;
         public int m_StorageRequestStamp;
         public CGameSave()
         {
@@ -634,6 +642,8 @@ namespace GameSetting
             m_DifficultyUnlocked = 1;
             m_StorageRequestStamp = -1;
             m_StorageActions = new List<ActionStorageData>();
+            m_CharacterSelected = enum_PlayerCharacter.Beth;
+            m_WeaponSelected = enum_PlayerWeapon.UMP45;
             for (int i = 0; i < GameExpression.I_CampActionStorageDefault.Count; i++)
                 m_StorageActions.Add(ActionStorageData.CreateDefault(GameExpression.I_CampActionStorageDefault[i]));
         }
@@ -676,33 +686,38 @@ namespace GameSetting
 
     public class CBattleSave : ISave
     {
-        public enum_PlayerWeapon m_weapon;
+        public string m_GameSeed;
+        public enum_StageLevel m_Stage;
         public int m_coins;
         public int m_kills;
         public ActionGameData m_weaponAction;
         public List<ActionGameData> m_battleAction;
+        public float m_health;
+        public enum_PlayerWeapon m_weapon;
+        public enum_PlayerCharacter m_character;
         public List<ActionStorageData> m_startAction;
-        public string m_GameSeed;
-        public enum_StageLevel m_StageLevel;
         public CBattleSave()
         {
             m_coins = 0;
-            m_weapon = enum_PlayerWeapon.P92;
+            m_health = -1;
             m_weaponAction = new ActionGameData();
             m_battleAction = new List<ActionGameData>();
-            m_StageLevel = enum_StageLevel.Rookie;
+            m_Stage = enum_StageLevel.Rookie;
             m_GameSeed = DateTime.Now.ToLongTimeString().ToString();
+            m_character = GameDataManager.m_GameData.m_CharacterSelected;
+            m_weapon = GameDataManager.m_GameData.m_WeaponSelected;
             m_startAction = ActionDataManager.CreateRandomPlayerUnlockedAction(GameDataManager.m_GameData.m_StorageActions, 9);
         }
         public void Adjust(EntityCharacterPlayer _player, GameLevelManager _level)
         {
             m_coins = _player.m_PlayerInfo.m_Coins;
+            m_health = _player.m_Health.m_CurrentHealth;
             m_weapon = _player.m_WeaponCurrent.m_WeaponInfo.m_Weapon;
             m_weaponAction = ActionGameData.Create(_player.m_WeaponCurrent.m_WeaponAction);
             m_battleAction = ActionGameData.Create(_player.m_PlayerInfo.m_BattleAction);
             m_startAction = _level.m_startAction;
             m_GameSeed = _level.m_Seed;
-            m_StageLevel = _level.m_GameStage;
+            m_Stage = _level.m_GameStage;
             m_kills = _level.m_enermiesKilled;
         }
     }
@@ -711,7 +726,7 @@ namespace GameSetting
     {
         public enum_Option_JoyStickMode m_JoyStickMode;
         public enum_Option_FrameRate m_FrameRate;
-        public bool m_EnableScreenEffect;
+        public enum_Option_ScreenEffect m_ScreenEffect;
         public enum_Option_LanguageRegion m_Region;
         public int m_MusicVolumeTap;
         public int m_VFXVolumeTap;
@@ -721,7 +736,7 @@ namespace GameSetting
         {
             m_JoyStickMode = enum_Option_JoyStickMode.Retarget;
             m_FrameRate = enum_Option_FrameRate.High;
-            m_EnableScreenEffect = true;
+            m_ScreenEffect =  enum_Option_ScreenEffect.High;
             m_Region = enum_Option_LanguageRegion.CN;
             m_SensitiveTap = 5;
             m_MusicVolumeTap = 10;
@@ -969,10 +984,23 @@ namespace GameSetting
             buff.f_expireDuration = duration;
             return buff;
         }
+        public static SBuff CreateActionHealthBuff(int actionIndex, float healthPerTick, float healthTick, float duration)
+        {
+            SBuff buff = new SBuff();
+            buff.index = actionIndex * 10;
+            buff.i_effect = 40008;
+            buff.i_addType = (int)enum_ExpireRefreshType.RefreshIdentity;
+            buff.i_damageType = (int)enum_DamageType.HealthOnly;
+            buff.f_damageTickTime = healthTick;
+            buff.f_damagePerTick = -healthPerTick;
+            buff.f_expireDuration = duration;
+            return buff;
+        }
         public static SBuff CreateActionHealthDrainBuff(int actionIndex, float healthDrainAmount, float duration)
         {
             SBuff buff = new SBuff();
             buff.index = actionIndex * 10;
+            buff.i_effect = 40009;
             buff.i_addType = (int)enum_ExpireRefreshType.RefreshIdentity;
             buff.f_healthDrainMultiply = healthDrainAmount;
             buff.f_expireDuration = duration;
@@ -984,17 +1012,6 @@ namespace GameSetting
             buff.index = actionIndex * 10;
             buff.i_addType = (int)enum_ExpireRefreshType.Refresh;
             buff.f_damageMultiply = damageMultiply;
-            buff.f_expireDuration = duration;
-            return buff;
-        }
-        public static SBuff CreateActionHealthBuff(int actionIndex, float healthPerTick, float healthTick, float duration)
-        {
-            SBuff buff = new SBuff();
-            buff.index = actionIndex * 10;
-            buff.i_addType = (int)enum_ExpireRefreshType.RefreshIdentity;
-            buff.i_damageType = (int)enum_DamageType.HealthOnly;
-            buff.f_damageTickTime = healthTick;
-            buff.f_damagePerTick = -healthPerTick;
             buff.f_expireDuration = duration;
             return buff;
         }
@@ -2291,15 +2308,17 @@ namespace GameSetting
     {
         protected int i_muzzleIndex { get; private set; }
         protected enum_CastTarget m_CastAt { get; private set; }
+        protected bool m_castForward { get; private set; }
         public EquipmentCaster(SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(_castInfo, _controller, _GetBuffInfo)
         {
             i_muzzleIndex = _castInfo.I_MuzzleIndex;
             m_CastAt = _castInfo.E_CastTarget;
+            m_castForward = _castInfo.B_CastForward;
         }
         public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
             Transform castAt = GetCastAt(m_Entity);
-            GameObjectManager.SpawnEquipment<SFXCast>(I_Index, castAt.position, Vector3.up).Play(GetDamageDeliverInfo());
+            GameObjectManager.SpawnEquipment<SFXCast>(I_Index, castAt.position, m_castForward?castAt.forward:Vector3.up).Play(GetDamageDeliverInfo());
         }
         protected Transform GetCastAt(EntityCharacterBase character)
         {
@@ -2330,7 +2349,7 @@ namespace GameSetting
         public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
             GameObjectManager.PlayMuzzle(m_Entity.m_EntityID,m_Entity.tf_Weapon.position, m_Entity.tf_Weapon.forward,i_muzzleIndex);
-            GameObjectManager.SpawnEquipment<SFXCast>(I_Index, _calculatedPosition, Vector3.up).Play(GetDamageDeliverInfo());
+            GameObjectManager.SpawnEquipment<SFXCast>(I_Index, _calculatedPosition,m_castForward?m_Entity.tf_Weapon.forward:Vector3.up).Play(GetDamageDeliverInfo());
         }
     }
     public class EquipmentCasterSelfDetonateAnimLess : EquipmentCaster
@@ -2627,6 +2646,26 @@ namespace GameSetting
         public void SetLevel(enum_RarityLevel level)
         {
             m_Levels.Traversal((int index, RarityLevel rarity) => rarity.SetHighlight(index <= (int)level));
+        }
+    }
+    public class UI_WeaponActionHUD
+    {
+        public Transform transform { get; private set; }
+        UIT_TextExtend m_WeaponActionName;
+        UIC_RarityLevel_BG m_WeaponActionRarity;
+        public UI_WeaponActionHUD(Transform _transform)
+        {
+            transform = _transform;
+            m_WeaponActionName = _transform.Find("ActionName").GetComponent<UIT_TextExtend>();
+            m_WeaponActionRarity = new UIC_RarityLevel_BG(_transform.Find("ActionRarity"));
+        }
+
+        public void SetInfo(ActionBase action)
+        {
+            bool showWeaponAction = action != null;
+            m_WeaponActionRarity.transform.SetActivate(showWeaponAction);
+            m_WeaponActionName.autoLocalizeText = showWeaponAction ? action.GetNameLocalizeKey() : "UI_WeaponStatus_ActionInvalidName";
+            if (showWeaponAction) m_WeaponActionRarity.SetLevel(action.m_rarity);
         }
     }
     public class UIC_ActionEnergy

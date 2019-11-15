@@ -6,37 +6,29 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class UIC_FarmStatus : UIControlBase {
-
-    Button m_Buy, m_Exit;
+    
     Text m_ProfitAmount;
-    Action OnExitClick;
     UIT_GridControllerGridItem<UIGI_FarmPlotDetail> m_PlotGrid;
+    UIT_GridControllerGridItem<UIGI_FarmProfit> m_ProfitAnim;
     protected override void Init()
     {
         base.Init();
-        m_Exit = transform.Find("Exit").GetComponent<Button>();
-        m_Exit.onClick.AddListener(()=> {Destroy(this.gameObject); OnExitClick(); });
         m_PlotGrid = new UIT_GridControllerGridItem<UIGI_FarmPlotDetail>(transform.Find("DetailGrid"));
+        m_ProfitAnim = new UIT_GridControllerGridItem<UIGI_FarmProfit>(transform.Find("ProfitGrid"));
     }
-    protected override void OnDestroy()
-    {
-        base.OnDestroy();
-    }
-    public void Play(List<CampFarmPlot> plots, Action _OnExitClick, Action<int> _OnBuyClick)
+    public void Play(List<CampFarmPlot> plots, Action<int> _OnBuyClick,Action<int> _OnClearClick)
     {
         m_PlotGrid.ClearGrid();
         for (int i = 0; i < plots.Count; i++)
-        {
-            m_PlotGrid.AddItem(i).SetPlotInfo(plots[i], _OnBuyClick);
-        }
-        OnExitClick = _OnExitClick;
+            m_PlotGrid.AddItem(i).SetPlotInfo(plots[i], _OnBuyClick,_OnClearClick);
     }
-
     public void UpdatePlot(int index) => m_PlotGrid.GetItem(index).UpdateInfo();
 
-    public void OnProfitChange(int plotIndex,float profitOffset)
+    int profitIndex = 0;
+    public void OnProfitChange(Vector3 position,float profitOffset)=>  m_ProfitAnim.AddItem(profitIndex++).Play(position,profitOffset,OnProfitAnimFinished);
+    void OnProfitAnimFinished(int index) => m_ProfitAnim.RemoveItem(index);
+    public void StampTick()
     {
-        m_PlotGrid.GetItem(plotIndex).PlayProfit(profitOffset);
+        m_PlotGrid.TraversalItem((int index, UIGI_FarmPlotDetail item)=>item.StampTick());
     }
-    
 }

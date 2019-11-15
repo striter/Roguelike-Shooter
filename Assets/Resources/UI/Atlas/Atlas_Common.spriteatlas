@@ -13,7 +13,7 @@ SpriteAtlas:
       compressionQuality: 100
       maxTextureSize: 4096
       textureCompression: 2
-      filterMode: 1
+      filterMode: 0
       generateMipMaps: 0
       readable: 0
       crunchedCompression: 1
@@ -24,12 +24,12 @@ SpriteAtlas:
       padding: 8
       blockOffset: 1
       allowAlphaSplitting: 0
-      enableRotation: 0
+      enableRotation: 1
       enableTightPacking: 0
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 3448819
+    totalSpriteSurfaceArea: 3651875
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -50,6 +50,8 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 15d05e6f933533347985283c2f86695c, type: 3}
   - {fileID: 21300000, guid: e868cc3d7910fa24b9ba4af45ba132ad, type: 3}
   - {fileID: 21300000, guid: 03eee695d9602fa4c81f4cab4cf4af33, type: 3}
+  - {fileID: 21300000, guid: 3fe06c5a57aefaa45adbd537992ef55b, type: 3}
+  - {fileID: 21300000, guid: 7bd08dcb3c10806438ad8855d01926c1, type: 3}
   - {fileID: 21300000, guid: 6ad81d33339312847ac3d99a5b456c92, type: 3}
   - {fileID: 21300000, guid: eb6498b538c432c479fd0ccd174629b6, type: 3}
   - {fileID: 21300000, guid: 39b0811ce62c60d4ba40d6a46c91e0c0, type: 3}
@@ -73,8 +75,13 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 9b5f47ee892aafe4e81749854bced7ee, type: 3}
   - {fileID: 21300000, guid: 3d5c6aefeb441674c892735313ebf060, type: 3}
   - {fileID: 21300000, guid: e286ff7018a31654ca31f0cb32a7dea1, type: 3}
+  - {fileID: 21300000, guid: 1bbd8ac21a552a147b90c2cad81488e9, type: 3}
+  - {fileID: 21300000, guid: 002194195bbdf2a4abf17c09acff091c, type: 3}
   - {fileID: 21300000, guid: bb9b55d0cd18e0741bc043e00caae287, type: 3}
   - {fileID: 21300000, guid: 103777f59dccac046b04b33d5f911a0e, type: 3}
+  - {fileID: 21300000, guid: 7af61d167b98c9a469909528eab1af09, type: 3}
+  - {fileID: 21300000, guid: 8b289ebd8107e9a44a60b9c352e8ecd5, type: 3}
+  - {fileID: 21300000, guid: d08a45402af2b2f4e84c2e25b1f797b6, type: 3}
   - {fileID: 21300000, guid: 47eb7ae82a989b64397bfe77670384b7, type: 3}
   - {fileID: 21300000, guid: 980515194edb6e643ba473774b4a2065, type: 3}
   - {fileID: 21300000, guid: bd1c0690faaedc04b8bbda27351be635, type: 3}
@@ -85,6 +92,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: d40acf7a523f9124e830b23c072f7d9e, type: 3}
   - {fileID: 21300000, guid: ac9c2c22d9a4cf241a53932685201d4c, type: 3}
   - {fileID: 21300000, guid: a0e4044850dc94f4ea77c05d26531154, type: 3}
+  - {fileID: 21300000, guid: daf8af51f0554554dba88ad6e059dca3, type: 3}
   - {fileID: 21300000, guid: ffa5d357c7dd26b459d6fcb7886cd0f3, type: 3}
   - {fileID: 21300000, guid: 6433a4f32ecfda541886965e846ea0e0, type: 3}
   - {fileID: 21300000, guid: a3083f2f75bbc6d44836979886b6c10f, type: 3}
@@ -92,6 +100,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: b3201b1809756004689d490dc284b59e, type: 3}
   - {fileID: 21300000, guid: 1de9eff4678e3874d92ff68af27eaa86, type: 3}
   - {fileID: 21300000, guid: df1a62fbfd4bc7f4db5f7315dc8e414a, type: 3}
+  - {fileID: 21300000, guid: 8b66b0559d1136245865a87da4359ce2, type: 3}
   - {fileID: 21300000, guid: c08fb8623df6ada478d2261bfca4d369, type: 3}
   - {fileID: 21300000, guid: a6031d8c25ddd714593081b17c1de9a9, type: 3}
   - {fileID: 21300000, guid: 640bac5e80194e345b2851ed06fbf63f, type: 3}
@@ -113,7 +122,7 @@ SpriteAtlas:
   - main_bottom
   - UI_title_orange
   - icon_diamond
-  - icon_gold
+  - icon_credit
   - btn_commcon_orange
   - UI_title_yellow
   - btn_reload
@@ -122,13 +131,15 @@ SpriteAtlas:
   - UI_title_orange_medium
   - status_weapon_bottom
   - UI_title_green
+  - status_interact_weapon_bottom
+  - status_interact_action_bottom
   - icon_coins
   - UI_title_orange_small
   - status_map_bottom
   - UI_common_info_title
-  - diasplay_ActionEnergy_progress_bottom
-  - diasplay_ActionEnergy_progress_full
-  - diasplay_ActionEnergy_progress_notfull
+  - status_ActionEnergy_progress_bottom
+  - status_ActionEnergy_progress_full
+  - status_ActionEnergy_progress_notfull
   - main_fire
   - UI_title_weaponpower
   - status_progress_bottom
@@ -145,9 +156,14 @@ SpriteAtlas:
   - status_progress_weapon
   - status_progress_weapon_bottom
   - icon_map
+  - status_progress_armor_top
+  - status_progress_health_top
   - status_ActionPack_bottom
   - btn_setting_bottom
-  - diasplay_ActionEnergy_bottom
+  - status_interact_intro_bottom
+  - status_interact_item_bottom
+  - status_interact_trade_bottom
+  - status_ActionEnergy_bottom
   - icon_rarity
   - UI_common_black60
   - UI_common_darkgray50_line
@@ -157,6 +173,7 @@ SpriteAtlas:
   - btn_close
   - icon_setting
   - icon_failure
+  - UI_common_circle
   - UI_common_black80
   - UI_setting_slider
   - icon_ActionEnergy
@@ -164,6 +181,7 @@ SpriteAtlas:
   - UI_setting_x11_off
   - UI_setting_x10_on
   - UI_setting_x10_off
+  - icon_close
   - icon_video
   - UI_strip_white60
   - status_map_triangle

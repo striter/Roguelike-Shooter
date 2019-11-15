@@ -116,12 +116,9 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y:MonoBehaviour {
         });
     }
     public static void OnSceneChange() => d_ItemInfos.Clear();
-    public static void ForceClearAll(Predicate<T> predict = null)
+    public static void DestroyAll()
     {
         d_ItemInfos.Traversal((T temp, ItemPoolInfo info) => {
-            if (predict != null && !predict(temp))
-                return;
-
             GameObject.Destroy(info.m_spawnItem.gameObject);
 
             for (int i = 0; i < info.l_Deactive.Count; i++)

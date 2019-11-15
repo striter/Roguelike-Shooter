@@ -15,6 +15,7 @@ public class GameUIManager : UIManager {
         base.Init();
         m_InGameSprites = TResources.GetUIAtlas_InGame();
         ShowControls<UIC_EntityHealth>();
+        ShowControls<UIC_PlayerInteract>();
         ShowControls<UIC_PlayerStatus>().SetInGame(true);
         m_Coins = ShowControls<UIC_CoinsStatus>();
         m_CoinsOverlay = false;
@@ -44,17 +45,4 @@ public class GameUIManager : UIManager {
             SetControlViewMode(m_Coins, false);
         m_CoinsOverlay = false;
     }
-
-#if UNITY_EDITOR
-    private void Update()
-    {
-        if (Input.GetMouseButtonDown(0))
-            OnMainButtonDown(true, Vector2.zero);
-        else if (Input.GetMouseButtonUp(0))
-            OnMainButtonDown(false, Vector2.zero);
-
-        if (Input.GetKeyDown(KeyCode.R))
-            OnReloadButtonDown();
-    }
-#endif
 }

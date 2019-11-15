@@ -54,17 +54,19 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
     }
     public Transform Begin(Action _OnExitFarm)
     {
-        OnExitFarm = _OnExitFarm;
-        m_FarmStatus = CampUIManager.Instance.BeginFarm(OnDragDown, OnDrag);
-        m_FarmStatus.Play(m_Plots, OnExit, OnFarmBuy);
+            OnExitFarm = _OnExitFarm;
+            m_FarmStatus = CampUIManager.Instance.BeginFarm(OnDragDown, OnDrag, OnExit);
+            m_FarmStatus.Play(m_Plots, OnFarmBuy, OnFarmClear);
         return tf_FarmCameraPos;
     }
 
     void OnExit()
     {
         CampUIManager.Instance.ExitFarm();
+        m_FarmStatus.Hide();
         m_FarmStatus = null;
         OnExitFarm();
+        OnExitFarm = null;
 
         if (!m_HybridPlot)
             return;
@@ -87,9 +89,10 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
                 continue;
 
             CampManager.Instance.OnCreditStatus(profit);
-            if( m_FarmStatus) m_FarmStatus.OnProfitChange(i, profit);
+            if( m_FarmStatus) m_FarmStatus.OnProfitChange(m_Plots[i].m_PlotItem.transform.position, profit);
         }
 
+        if (m_FarmStatus) m_FarmStatus.StampTick();
     }
 
     void OnHybrid(CampFarmPlot _plotDrag,CampFarmPlot _plotTarget)
@@ -105,11 +108,23 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
 
     void OnFarmBuy(int plotIndex)
     {
-        if (m_Plots[plotIndex].m_Status != enum_CampFarmItemStatus.Empty || GameDataManager.m_GameData.f_Credits < GameConst.I_CampFarmItemAcquire)
+        if (m_Plots[plotIndex].m_Status != enum_CampFarmItemStatus.Empty)
             return;
-
+        if (GameDataManager.m_GameData.f_Credits < GameConst.I_CampFarmItemAcquire)
+        {
+            UIManager.Instance.ShowTip("UI_Tips_LackOfCredit", enum_UITipsType.Error);
+            return;
+        }
         m_Plots[plotIndex].Hybrid(TCommon.RandomPercentage(GameExpression.GetFarmGeneratePercentage));
         CampManager.Instance.OnCreditStatus(-GameConst.I_CampFarmItemAcquire);
+    }
+
+    void OnFarmClear(int plotIndex)
+    {
+        if (m_Plots[plotIndex].m_Status != enum_CampFarmItemStatus.Decayed)
+            return;
+
+        m_Plots[plotIndex].Clear();
     }
 
     void OnPlotStatusChanged(int index)
@@ -120,10 +135,9 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
     #region Interact
     void OnDragDown(bool down,Vector2 inputPos)
     {
-        CampFarmInteract targetInteract = null;
+        CampFarmPlot targetInteract = null;
         if (CameraController.Instance.InputRayCheck(inputPos, GameLayer.Mask.I_Interact, ref m_rayHit))
-            targetInteract = m_rayHit.collider.GetComponent<CampFarmInteract>();
-
+            targetInteract = m_rayHit.collider.GetComponent<CampFarmPlot>();
 
         if (targetInteract)
             OnDragInteract(targetInteract,down);
@@ -135,27 +149,25 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
             m_HybridPlot = null;
         }
     }
-    void OnDragInteract(CampFarmInteract interact, bool down)
+    void OnDragInteract(CampFarmPlot interact, bool down)
     {
-        if (interact.B_IsRecycle)
-        {
-            if(m_HybridPlot&&!down )
-            {
-                m_HybridPlot.Clear();
-                m_HybridPlot = null;
-            }
-            return;
-        }
 
         CampFarmPlot targetPlot = interact as CampFarmPlot;
 
-        if (down && targetPlot.m_Status == enum_CampFarmItemStatus.Decayed)
+        if (down)
         {
-            targetPlot.Clear();
-            return;
+            switch (targetPlot.m_Status)
+            {
+                case enum_CampFarmItemStatus.Empty:
+                    OnFarmBuy(targetPlot.m_Index);
+                    return;
+                case enum_CampFarmItemStatus.Decayed:
+                    OnFarmClear(targetPlot.m_Index);
+                    return;
+            }
         }
 
-        if (targetPlot != m_HybridPlot && GameExpression.CanGenerateprofit(targetPlot.m_Status))
+        if (targetPlot != m_HybridPlot && targetPlot.m_CanGenerateProfit)
         {
             if (down)
             {

@@ -43,8 +43,8 @@
 				const float2 offset1 = float2(0.0, 0.001);
 				const float2 offset2 = float2(0.001, 0.0);
 
-				float depth1 = tex2D(_CameraDepthTexture, texcoords + offset1).r;
-				float depth2 = tex2D(_CameraDepthTexture, texcoords + offset2).r;
+				float depth1 = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, texcoords + offset1).r;
+				float depth2 = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, texcoords + offset2).r;
 
 				float3 p1 = float3(offset1, depth1 - depth);
 				float3 p2 = float3(offset2, depth2 - depth);
@@ -67,10 +67,15 @@
 					float3 hemi_ray = position + sign(dot(ray, normal)) * ray;
 					float occ_depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, saturate(hemi_ray.xy)).r;
 					float difference = depth - occ_depth;
-					occlusion += occ_depth==0?1: step(_FallOff, difference);
+#if defined(UNITY_REVERSED_Z)
+					occlusion += occ_depth == 0 ? 1 : step(_FallOff, difference);
+#else
+					occlusion += occ_depth == 1 ? 1 : step(_FallOff, -difference);
+#endif
 				}
-				float ao = 1-occlusion / _SampleCount;
-				ao = pow(ao,5)*_Strength;
+				occlusion /= _SampleCount;
+
+				float ao = pow(1-occlusion,5)*_Strength;
 				return lerp(col,float4(0,0,0,1),ao);	
 			}
 			ENDCG

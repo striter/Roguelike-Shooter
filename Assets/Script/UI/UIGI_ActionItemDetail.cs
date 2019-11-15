@@ -23,7 +23,7 @@ public class UIGI_ActionItemDetail : UIGI_ActionItemBase {
     protected override void SetInfo(ActionBase actionInfo)
     {
         base.SetInfo(actionInfo);
-        m_Intro.formatText(actionInfo.GetIntroLocalizeKey(), actionInfo.F_Duration, actionInfo.Value1, actionInfo.Value2, actionInfo.Value3);
+        actionInfo.SetActionIntro( m_Intro);
     }
 
     void OnButtonClick()

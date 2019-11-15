@@ -12,18 +12,22 @@ public class SFXCastDetect : SFXCastDetonate {
         m_detector=GetComponent<EntityDetector>();
         m_detector.Init(OnDetect);
     }
+    private void OnEnable()
+    {
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnDetectEntity);
+    }
+
+    private void OnDisable()
+    {
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnDetectEntity);
+    }
+
 
     public override void Play(DamageDeliverInfo buffInfo)
     {
         base.Play(buffInfo);
         m_detector.SetPlay(true);
         base.PlaySFX(I_SourceID, F_PlayDuration, F_DurationSelfDetonate);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnDetectEntity);
-    }
-    protected override void OnPlay()
-    {
-        base.OnPlay();
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnDetectEntity);
     }
     void OnDetect(HitCheckEntity entity, bool enter)
     {

@@ -6,6 +6,7 @@ using GameSetting;
 public class InteractBase : MonoBehaviour
 {
     public virtual enum_Interaction m_InteractType => enum_Interaction.Invalid;
+    public virtual string m_ExternalLocalizeKeyJoint=>"";
     public virtual bool B_InteractOnTrigger => false;
     protected virtual bool B_CanInteract(EntityCharacterPlayer _interactor) => true;
     public virtual bool B_InteractOnce { get; private set; } = true;

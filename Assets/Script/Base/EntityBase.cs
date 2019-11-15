@@ -14,6 +14,7 @@ public class EntityBase : MonoBehaviour
     protected virtual HealthBase GetHealthManager() => new HealthBase(OnHealthStatus,OnDead);
     protected virtual void ActivateHealthManager(float maxHealth) => m_Health.OnSetHealth(maxHealth, true);
     public HitCheckEntity m_HitCheck => m_HitChecks[0];
+    protected bool m_HitCheckEnabled { get; private set; } = false;
     protected virtual float DamageReceiveMultiply => 1;
     protected virtual float HealReceiveMultiply => 1f;
     public int m_SpawnerEntityID { get; private set; }
@@ -64,6 +65,9 @@ public class EntityBase : MonoBehaviour
     }
     protected virtual void EnableHitbox(bool setHitable)
     {
-        TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.SetEnable(setHitable); });
+        if (m_HitCheckEnabled == setHitable)
+            return;
+        m_HitCheckEnabled = setHitable;
+        TCommon.Traversal(m_HitChecks, (HitCheckEntity check) => { check.SetEnable(m_HitCheckEnabled); });
     }
 }

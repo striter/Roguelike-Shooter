@@ -13,7 +13,7 @@ SpriteAtlas:
       compressionQuality: 100
       maxTextureSize: 4096
       textureCompression: 2
-      filterMode: 1
+      filterMode: 0
       generateMipMaps: 0
       readable: 0
       crunchedCompression: 1
@@ -24,7 +24,7 @@ SpriteAtlas:
       padding: 8
       blockOffset: 1
       allowAlphaSplitting: 0
-      enableRotation: 0
+      enableRotation: 1
       enableTightPacking: 0
     variantMultiplier: 1
     packables:

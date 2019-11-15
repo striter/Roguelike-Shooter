@@ -16,12 +16,9 @@ public class EntityDeviceBuffApllier : EntityDeviceBase {
     }
     protected override bool CanConnectTarget(EntityCharacterBase target) => base.CanConnectTarget(target) && target.m_Flag == m_Flag;
 
-    protected override void Update()
+    protected override void OnCharacterUpdate(float deltaTime)
     {
-        base.Update();
-        if (m_Health.b_IsDead)
-            return;
-
+        base.OnCharacterUpdate(deltaTime);
         if (f_refreshCheck > 0)
         {
             f_refreshCheck -= Time.deltaTime;

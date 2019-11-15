@@ -2,7 +2,8 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Camera))]
-public class CameraEffectManager :MonoBehaviour, ISingleCoroutine {
+public class CameraEffectManager :MonoBehaviour, ISingleCoroutine
+{
     #region Interact
     public T GetOrAddCameraEffect<T>() where T: CameraEffectBase, new()
     {
@@ -38,9 +39,10 @@ public class CameraEffectManager :MonoBehaviour, ISingleCoroutine {
         ResetPostEffectParams();
     }
 
-    public void SetMobileCostyEffectEnable(bool enable)
+    public void SetCostyEffectEnable(bool mobileCostEnable,bool highCostEnable)
     {
-        m_MobileCostyEffectEnabled = enable;
+        m_MobileCostEffectEnabled = mobileCostEnable;
+        m_HighCostEffectEnabled = highCostEnable;
         ResetPostEffectParams();
     }
 
@@ -62,7 +64,8 @@ public class CameraEffectManager :MonoBehaviour, ISingleCoroutine {
     List<CameraEffectBase> m_PostEffects=new List<CameraEffectBase>();
     public Camera m_Camera { get; protected set; }
     public bool m_PostEffectEnabled { get; private set; } = false;
-    public bool m_MobileCostyEffectEnabled { get; private set; } = true;
+    public bool m_MobileCostEffectEnabled { get; private set; } = true;
+    public bool m_HighCostEffectEnabled { get; private set; } = true;
     public bool m_calculateDepthToWorldMatrix { get; private set; } = false;
     RenderTexture tempTexture1, tempTexture2;
     protected void Awake()
@@ -90,7 +93,9 @@ public class CameraEffectManager :MonoBehaviour, ISingleCoroutine {
         Graphics.Blit(source, tempTexture1);
         for (int i = 0; i < m_PostEffects.Count; i++)
         {
-            if (!m_MobileCostyEffectEnabled && m_PostEffects[i].m_MobileCosty)
+            if (!m_MobileCostEffectEnabled && m_PostEffects[i].m_MobileCost)
+                continue;
+            if (!m_HighCostEffectEnabled && m_PostEffects[i].m_HighCost)
                 continue;
 
             tempTexture2 = RenderTexture.GetTemporary(Screen.width, Screen.height, 0);
@@ -119,7 +124,7 @@ public class CameraEffectManager :MonoBehaviour, ISingleCoroutine {
 
         m_PostEffects.Traversal((CameraEffectBase effectBase) =>
         {
-            if (!m_MobileCostyEffectEnabled && effectBase.m_MobileCosty)
+            if (!m_MobileCostEffectEnabled && effectBase.m_MobileCost)
                 return;
 
             m_PostEffectEnabled |= effectBase.m_IsPostEffect;

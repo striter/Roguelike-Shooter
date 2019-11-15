@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class InteractContainer : InteractGameBase {
 
-    public InteractBase m_InteractTarget { get; private set; }
+    public InteractBase m_TradeInteract { get; private set; }
     Transform tf_Model;
     public override void Init()
     {
@@ -13,19 +13,19 @@ public class InteractContainer : InteractGameBase {
     }
     public override bool TryInteract(EntityCharacterPlayer _interactor)
     {
-        if (!B_CanInteract(_interactor) || !m_InteractTarget.TryInteract(_interactor))
+        if (!B_CanInteract(_interactor) || !m_TradeInteract.TryInteract(_interactor))
             return false;
         return base.TryInteract(_interactor);
     }
     protected void Attach(InteractBase _interactItem)
     {
-        m_InteractTarget = _interactItem;
-        m_InteractTarget.SetInteractable(false);
-        m_InteractTarget.transform.position = tf_Model.position;
-        m_InteractTarget.transform.rotation = tf_Model.rotation;
+        m_TradeInteract = _interactItem;
+        m_TradeInteract.SetInteractable(false);
+        m_TradeInteract.transform.position = tf_Model.position;
+        m_TradeInteract.transform.rotation = tf_Model.rotation;
     }
     protected void Detach()
     {
-        m_InteractTarget.SetInteractable(true);
+        m_TradeInteract.SetInteractable(true);
     }
 }

@@ -110,9 +110,9 @@ public class WeaponBase : MonoBehaviour {
         Vector3 spreadDirection = Vector3.zero;
         for (int i = 0; i < m_WeaponInfo.m_PelletsPerShot; i++)
         {
-            spreadDirection = GameExpression.V3_RangeSpreadDirection(m_Attacher.tf_Head.forward, m_WeaponInfo.m_Spread, m_Attacher.tf_Head.up, m_Attacher.tf_Head.right);
-            Vector3 endPosition = m_Attacher.tf_Head.position + spreadDirection * GameConst.I_ProjectileMaxDistance;
-            if (Physics.Raycast(m_Attacher.tf_Head.position, spreadDirection, out hit, GameConst.I_ProjectileMaxDistance, GameLayer.Mask.I_All) &&  GameManager.B_CanHitTarget(hit.collider.Detect(),m_Attacher.m_EntityID))
+            spreadDirection = GameExpression.V3_RangeSpreadDirection(m_Attacher.tf_WeaponAim.forward, m_WeaponInfo.m_Spread, m_Attacher.tf_WeaponAim.up, m_Attacher.tf_WeaponAim.right);
+            Vector3 endPosition = m_Attacher.tf_WeaponAim.position + spreadDirection * GameConst.I_ProjectileMaxDistance;
+            if (Physics.Raycast(m_Attacher.tf_WeaponAim.position, spreadDirection, out hit, GameConst.I_ProjectileMaxDistance, GameLayer.Mask.I_All) &&  GameManager.B_CanHitTarget(hit.collider.Detect(),m_Attacher.m_EntityID))
                 endPosition = hit.point;
             spreadDirection = (endPosition - m_Muzzle.position).normalized;
             spreadDirection.y = 0;

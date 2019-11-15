@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-public class UIT_GridControllerMono<T>  where T : MonoBehaviour
+public class UIT_GridControllerMono<T>  where T : Component
 {
     public Transform transform { get; private set; }
     protected ObjectPoolMono<int,T> m_Pool { get; private set; }

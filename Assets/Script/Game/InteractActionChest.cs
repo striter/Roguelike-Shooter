@@ -2,28 +2,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
-public class InteractActionChest : InteractBase {
-    Animation m_Animation;
-    string m_clipName;
+using TSpecialClasses;
+public class InteractActionChest : InteractBase
+{
+    public override enum_Interaction m_InteractType => enum_Interaction.ActionChest;
+    public override bool B_InteractOnce => false;
+    public bool m_StartChest { get; private set; } = false;
+    public override string m_ExternalLocalizeKeyJoint =>"_"+(m_StartChest?"Start":"Battle");
+    AnimationControlBase m_Animation;
     List<ActionBase> m_Actions;
     int m_SelectAmount;
     EntityCharacterPlayer m_Interactor;
-    public override enum_Interaction m_InteractType => enum_Interaction.ActionChest;
-    public override bool B_InteractOnce => false;
+    TSpecialClasses.ParticleControlBase m_Particles;
     public override void Init()
     {
         base.Init();
-        m_Animation = GetComponentInChildren<Animation>();
-        m_clipName = m_Animation.clip.name;
+        m_Animation =new AnimationControlBase( GetComponentInChildren<Animation>());
+        m_Particles = new ParticleControlBase(transform); 
     }
-    public void Play(List<ActionBase> _actions,int selectAmount)
+    public void Play(List<ActionBase> _actions,int selectAmount,bool _startChest)
     {
         base.Play();
         m_Actions = _actions;
         m_SelectAmount = selectAmount;
-        m_Animation[m_clipName].normalizedTime = 0;
-        m_Animation[m_clipName].speed = 0;
-        m_Animation.Play();
+        m_StartChest = _startChest;
+        m_Animation.SetPlayOn(true);
+        m_Particles.Play();
     }
     protected override void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)
     {
@@ -39,8 +43,8 @@ public class InteractActionChest : InteractBase {
         m_Interactor.OnInteractCheck(this, false);
         SetInteractable(false);
         m_Interactor.m_PlayerInfo.AddStoredAction(m_Actions[index]);
-        m_Animation[m_clipName].speed = 1;
-        m_Animation.Play();
+        m_Animation.Play(true);
+        m_Particles.Stop();
     }
     void OnKeyAnim()
     {

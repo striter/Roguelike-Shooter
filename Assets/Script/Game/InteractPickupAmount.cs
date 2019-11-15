@@ -15,8 +15,11 @@ public class InteractPickupAmount : InteractPickup {
         m_OutOfBattle = false;
         m_moveTowards = moveTowards;
         m_Amount = amount;
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
         return this;
+    }
+    private void OnEnable()
+    {
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
     }
     private void OnDisable()
     {

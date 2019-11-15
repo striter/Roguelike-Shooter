@@ -6,7 +6,8 @@ using UnityEngine.Rendering;
 public class CameraEffectBase
 {
     public virtual DepthTextureMode m_DepthTextureMode => DepthTextureMode.None;
-    public virtual bool m_MobileCosty => m_DepthTextureMode != DepthTextureMode.None;
+    public virtual bool m_MobileCost => m_DepthTextureMode != DepthTextureMode.None;
+    public virtual bool m_HighCost => false;
     public virtual bool m_DepthToWorldMatrix => false;
     protected CameraEffectManager m_Manager { get; private set; }
     public bool m_Supported { get; private set; }
@@ -299,7 +300,7 @@ public class PE_DepthOutline:PostEffectBase
 }
 public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific Items
 {
-    public override bool m_MobileCosty => true;
+    public override bool m_MobileCost => true;
     Camera m_RenderCamera;
     RenderTexture m_RenderTexture;
     Shader m_RenderShader;
@@ -323,7 +324,7 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
         m_RenderCamera.farClipPlane = m_Manager.m_Camera.farClipPlane;
         m_RenderCamera.fieldOfView = m_Manager.m_Camera.fieldOfView;
         m_RenderCamera.enabled = false;
-        m_RenderTexture = new RenderTexture(m_Manager.m_Camera.scaledPixelWidth, m_Manager.m_Camera.scaledPixelHeight, 1);
+        m_RenderTexture = RenderTexture.GetTemporary(m_Manager.m_Camera.scaledPixelWidth, m_Manager.m_Camera.scaledPixelHeight, 1);
         m_RenderCamera.targetTexture = m_RenderTexture;
     }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
@@ -337,6 +338,7 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
     {
         base.OnDestroy();
         m_GaussianBlur.OnDestroy();
+        RenderTexture.ReleaseTemporary(m_RenderTexture);
     }
 }
 public class PE_AreaScanDepth : PostEffectBase
@@ -358,8 +360,9 @@ public class PE_AreaScanDepth : PostEffectBase
         m_Material.SetFloat("_ScanLerp", colorLerp);
     }
 }
-public class PE_DepthSSAO : PostEffectBase      //Test Currently Uncomplete
+public class PE_DepthSSAO : PostEffectBase
 {
+    public override bool m_HighCost => true;
     public override DepthTextureMode m_DepthTextureMode => DepthTextureMode.Depth;
     public void SetEffect(float strength=.6f, float sphereRadius=.03f, float fallOffScale=15)
     {

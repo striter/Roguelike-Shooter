@@ -277,6 +277,13 @@ namespace TTime
             return timeStamp;
         }
 
+        public static string GetHMS(int stamp)
+        {
+            int hours = stamp / 3600;
+            int minutes = (stamp - hours * 3600) / 60;
+            int seconds = stamp - hours * 3600 - minutes * 60;
+            return string.Format("{0:D2}:{1:D2}:{2:D2}", hours, + minutes, seconds);
+        }
 
         public static DateTime GetDateTime(int timeStamp)
         {
@@ -388,15 +395,65 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
         }
     }
 
-    
-    public class AnimatorClippingTime
+    public class AnimatorControlBase
     {
-        protected Animator m_Animator;
-        public AnimatorClippingTime(Animator _animator)
+        public Animator m_Animator { get; private set; }
+        public AnimatorControlBase(Animator _animator)
         {
             m_Animator = _animator;
         }
+    }
 
+    public class AnimationControlBase
+    {
+        public Animation m_Animation { get; private set; }
+        public AnimationControlBase(Animation _animation,bool startFromOn=true)
+        {
+            m_Animation = _animation;
+            SetPlayOn(startFromOn);
+        }
+
+        public void Play(bool playOn)
+        {
+            SetPlayOn(playOn);
+            m_Animation.Play(m_Animation.clip.name);
+        }
+
+        public void SetPlayOn(bool playOn)
+        {
+            m_Animation[m_Animation.clip.name].speed = playOn ? 1 : -1;
+            m_Animation[m_Animation.clip.name].normalizedTime = playOn ? 0 : 1;
+        }
+    }
+
+    public class ParticleControlBase
+    {
+        public ParticleSystem[] m_Particles { get; private set; }
+        public ParticleControlBase(Transform transform)
+        {
+            m_Particles=transform.GetComponentsInChildren<ParticleSystem>();
+        }
+        public void Reset()
+        {
+            m_Particles.Traversal((ParticleSystem particle) => { particle.Simulate(0, true, true); });
+        }
+
+        public void Play()
+        {
+            m_Particles.Traversal((ParticleSystem particle) => { particle.Play(true); });
+        }
+        public void Stop()
+        {
+            m_Particles.Traversal((ParticleSystem particle) => { particle.Stop(true); });
+        }
+        public void Clear()
+        {
+            m_Particles.Traversal((ParticleSystem particle) => { particle.Clear(); });
+        }
+        public void SetActive(bool active)
+        {
+            m_Particles.Traversal((ParticleSystem particle) => { particle.transform.SetActivate(active); });
+        }
     }
 
     //Navigation AI System Chase/Follow/Attack/Idle ETC...
