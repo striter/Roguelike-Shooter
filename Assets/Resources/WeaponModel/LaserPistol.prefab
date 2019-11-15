@@ -186,5 +186,5 @@ MonoBehaviour:
   E_Anim: 1002
   B_AttachLeft: 1
   m_ReloadClip1: {fileID: 8300000, guid: fc82457182a1c7c41b257959ea893343, type: 3}
-  m_ReloadClip2: {fileID: 8300000, guid: fc82457182a1c7c41b257959ea893343, type: 3}
+  m_ReloadClip2: {fileID: 0}
   m_ReloadClip3: {fileID: 0}
