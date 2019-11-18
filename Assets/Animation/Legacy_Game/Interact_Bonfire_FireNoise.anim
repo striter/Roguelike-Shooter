@@ -5,7 +5,7 @@ AnimationClip:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Interact_Bonfire
+  m_Name: Interact_Bonfire_FireNoise
   serializedVersion: 6
   m_Legacy: 1
   m_Compressed: 0
@@ -62,7 +62,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Point light
+    path: 
   m_ScaleCurves: []
   m_FloatCurves:
   - curve:
@@ -108,7 +108,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_Intensity
-    path: Point light
+    path: 
     classID: 108
     script: {fileID: 0}
   - curve:
@@ -154,7 +154,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_Range
-    path: Point light
+    path: 
     classID: 108
     script: {fileID: 0}
   m_PPtrCurves: []
@@ -236,7 +236,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: Point light
+    path: 
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -258,7 +258,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: Point light
+    path: 
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -310,7 +310,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: Point light
+    path: 
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -356,7 +356,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_Intensity
-    path: Point light
+    path: 
     classID: 108
     script: {fileID: 0}
   - curve:
@@ -402,7 +402,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_Range
-    path: Point light
+    path: 
     classID: 108
     script: {fileID: 0}
   m_EulerEditorCurves: []

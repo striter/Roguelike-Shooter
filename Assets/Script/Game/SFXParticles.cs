@@ -13,11 +13,11 @@ public class SFXParticles : SFXBase
         m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.Init(); });
         m_Particle = new TSpecialClasses.ParticleControlBase(transform);
     }
+
     public virtual void Play(int sourceID,float duration=0f,float delayDuration=0f)
     {
         PlaySFX(sourceID,duration,delayDuration);
         m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.Play(this); });
-        m_Particle.Reset();
     }
     protected override void OnPlay()
     {

@@ -240,7 +240,7 @@ public class GameManager : GameManagerBase
         {
             case enum_TileType.Start:
                 {
-                    GameObjectManager.SpawnInteract<InteractBonfire>(enum_Interaction.Bonfire,Vector3.zero, interactTrans).Play();
+                    GameObjectManager.SpawnInteract<InteractBonfire>(enum_Interaction.Bonfire,Vector3.zero, interactTrans).Play(m_LocalPlayer);
 
                     m_RewardChest = GameObjectManager.SpawnInteract<InteractActionChest>(enum_Interaction.ActionChestStart, Vector3.left * 3, interactTrans);
                     m_RewardChest.Play(m_GameLevel.GetRandomStartActions(3),1,true);
@@ -723,7 +723,7 @@ public static class GameObjectManager
     }
     static void RegisterInGameInteractions(enum_Style portalStyle, enum_StageLevel stageIndex)
     {
-        ObjectPoolManager<enum_Interaction, InteractGameBase>.Register(enum_Interaction.ActionChest, TResources.GetInteractActionChest(stageIndex), 5);
+        ObjectPoolManager<enum_Interaction, InteractGameBase>.Register(enum_Interaction.ActionChest, TResources.GetInteractActionChest(stageIndex), 1);
 
         TCommon.TraversalEnum((enum_Interaction enumValue) =>
         {

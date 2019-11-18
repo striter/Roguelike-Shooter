@@ -53,7 +53,6 @@ public class LevelManager : SimpleSingletonMono<LevelManager>,ISingleCoroutine {
                 return;
 
             StaticBatchingUtility.Combine(info.m_Level.tf_LevelItem.gameObject);
-            info.SetLevelShow(false);
         });
     }
 

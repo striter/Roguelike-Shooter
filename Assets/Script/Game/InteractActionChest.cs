@@ -26,7 +26,7 @@ public class InteractActionChest : InteractGameBase
         m_Actions = _actions;
         m_SelectAmount = selectAmount;
         m_StartChest = _startChest;
-        m_Animation.SetPlayOn(true);
+        m_Animation.SetPlayPosition(true);
         m_Particles.Play();
     }
     protected override void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)

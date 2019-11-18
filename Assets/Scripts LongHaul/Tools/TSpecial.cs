@@ -410,19 +410,27 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
         public AnimationControlBase(Animation _animation,bool startFromOn=true)
         {
             m_Animation = _animation;
-            SetPlayOn(startFromOn);
+            SetPlayPosition(startFromOn);
+            m_Animation.playAutomatically = false;
         }
 
-        public void Play(bool playOn)
+        public void Play(bool forward)
         {
-            SetPlayOn(playOn);
+            SetPlayPosition(forward);
             m_Animation.Play(m_Animation.clip.name);
+            m_Animation.playAutomatically = true;
         }
 
-        public void SetPlayOn(bool playOn)
+        public void Stop()
         {
-            m_Animation[m_Animation.clip.name].speed = playOn ? 1 : -1;
-            m_Animation[m_Animation.clip.name].normalizedTime = playOn ? 0 : 1;
+            m_Animation.Stop();
+            m_Animation.playAutomatically = false;
+        }
+
+        public void SetPlayPosition(bool forward)
+        {
+            m_Animation[m_Animation.clip.name].speed = forward ? 1 : -1;
+            m_Animation[m_Animation.clip.name].normalizedTime = forward ? 0 : 1;
         }
     }
 
@@ -433,18 +441,22 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
         {
             m_Particles=transform.GetComponentsInChildren<ParticleSystem>();
         }
-        public void Reset()
-        {
-            m_Particles.Traversal((ParticleSystem particle) => { particle.Simulate(0, true, true); });
-        }
-
         public void Play()
         {
-            m_Particles.Traversal((ParticleSystem particle) => { particle.Play(true); });
+            m_Particles.Traversal((ParticleSystem particle) => {
+                particle.Simulate(0, true, true);
+                particle.Play(true);
+                ParticleSystem.MainModule main = particle.main;
+                main.playOnAwake = true;
+            });
         }
         public void Stop()
         {
-            m_Particles.Traversal((ParticleSystem particle) => { particle.Stop(true); });
+            m_Particles.Traversal((ParticleSystem particle) => {
+                particle.Stop(true);
+                ParticleSystem.MainModule main = particle.main;
+                main.playOnAwake = false;
+            });
         }
         public void Clear()
         {
