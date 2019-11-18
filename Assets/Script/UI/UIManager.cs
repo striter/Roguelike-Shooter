@@ -10,6 +10,7 @@ public class UIManager :UIManagerBase,ISingleCoroutine
     protected UIT_GridControllerGridItem<UIGI_TipItem> m_TipsGrid;
     public Camera m_Camera { get; private set; }
     public UIC_CharacterControl m_PlayerControl { get; private set; }
+    public UIC_PlayerStatus m_PlayerStatus { get; private set; }
 
     public CameraEffectManager m_Effect { get; private set; }
     CB_GenerateOverlayUIGrabBlurTexture m_Blur;
@@ -31,6 +32,7 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         cvs_Camera.transform.Find("Settings").GetComponent<Button>().onClick.AddListener(OnSettingBtnClick);
         m_setting = cvs_Camera.transform.Find("Settings/Image").GetComponent<Image>();
 
+        m_PlayerStatus =ShowControls<UIC_PlayerStatus>();
         m_PlayerControl = ShowControls<UIC_CharacterControl>();
         ShowControls<UIC_PlayerInteract>();
 

@@ -10,7 +10,7 @@ public class CampUIManager : UIManager {
         base.Init();
         Instance = this;
 
-        ShowControls<UIC_PlayerStatus>().SetInGame(false);
+        m_PlayerStatus.SetInGame(false);
         ShowControls<UIC_CurrencyStatus>();
     }
     protected override void OnDestroy()

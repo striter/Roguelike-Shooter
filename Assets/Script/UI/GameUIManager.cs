@@ -14,11 +14,12 @@ public class GameUIManager : UIManager {
         Instance = this;
         base.Init();
         m_InGameSprites = TResources.GetUIAtlas_InGame();
+
+        m_PlayerStatus.SetInGame(true);
         ShowControls<UIC_EntityHealth>();
-        ShowControls<UIC_PlayerInteract>();
-        ShowControls<UIC_PlayerStatus>().SetInGame(true);
         m_Coins = ShowControls<UIC_CoinsStatus>();
         m_CoinsOverlay = false;
+
         cvs_Overlay.transform.Find("Test/SeedTest").GetComponent<Text>().text = GameManager.Instance.m_GameLevel.m_Seed;   //Test
     }
 

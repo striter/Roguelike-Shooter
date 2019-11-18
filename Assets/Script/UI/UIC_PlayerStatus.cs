@@ -43,6 +43,8 @@ public class UIC_PlayerStatus : UIControlBase
     UI_WeaponActionHUD m_WeaponActionHUD;
 
     ValueLerpSeconds m_HealthLerp, m_ArmorLerp, m_EnergyLerp;
+
+    Transform tf_Dying;
     protected override void Init()
     {
         base.Init();
@@ -91,6 +93,9 @@ public class UIC_PlayerStatus : UIControlBase
         m_HealthLerp = new ValueLerpSeconds(0f, 4f, 2f, (float value) => { m_HealthFill.value = value; });
         m_ArmorLerp = new ValueLerpSeconds(0f, 4f, 2f, (float value) => { m_ArmorFill.value = value; });
         m_EnergyLerp = new ValueLerpSeconds(0f, 4f, 2f, (float value) => { m_ActionEnergy.SetValue(value); });
+
+        tf_Dying = tf_Container.Find("Dying");
+
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<WeaponBase>(enum_BC_UIStatus.UI_PlayerAmmoStatus, OnAmmoStatus);
@@ -131,6 +136,7 @@ public class UIC_PlayerStatus : UIControlBase
         btn_ActionStorage.interactable = !inBattle;
         btn_ActionShuffle.interactable = inBattle;
         if (anim) m_BattleAnimation.Play(inBattle);
+        tf_Dying.SetActivate(false);
     }
     void OnBattleStart()=>SetInBattle(true);
     void OnBattleFinish()=> SetInBattle(false);
@@ -160,6 +166,7 @@ public class UIC_PlayerStatus : UIControlBase
             m_Player = _player;
 
         m_EnergyLerp.ChangeValue(_player.m_PlayerInfo.m_ActionEnergy);
+        tf_Dying.SetActivate(_player.m_Health.F_HealthMaxScale < .2f);
         img_ShuffleFill.fillAmount = _player.m_PlayerInfo.f_shuffleScale;
         rtf_StatusData.SetWorldViewPortAnchor(m_Player.tf_Status.position, CameraController.Instance.m_Camera, Time.deltaTime * 10f);
     }
