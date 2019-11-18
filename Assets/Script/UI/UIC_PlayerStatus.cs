@@ -248,6 +248,7 @@ public class UIC_PlayerStatus : UIControlBase
     }
     void OnExpireStatus(PlayerInfoManager expireInfo)
     {
+        return;
         m_ExpireGrid.ClearGrid();
         for (int i = 0; i < expireInfo.m_Expires.Count; i++)
         {
