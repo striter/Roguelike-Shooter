@@ -107,30 +107,42 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     {
         if (!B_HaveAmmoLeft)
             return false;
-
+        I_AmmoLeft--;
         DamageDeliverInfo damageInfo = m_Attacher.m_PlayerInfo.GetDamageBuffInfo();
-        Vector3 spreadDirection = Vector3.zero;
-        for (int i = 0; i < m_WeaponInfo.m_PelletsPerShot; i++)
-        {
-            spreadDirection = GameExpression.V3_RangeSpreadDirection(m_Attacher.tf_WeaponAim.forward, m_WeaponInfo.m_Spread, m_Attacher.tf_WeaponAim.up, m_Attacher.tf_WeaponAim.right);
-            Vector3 endPosition = m_Attacher.tf_WeaponAim.position + spreadDirection * GameConst.I_ProjectileMaxDistance;
-            if (Physics.Raycast(m_Attacher.tf_WeaponAim.position, spreadDirection, out hit, GameConst.I_ProjectileMaxDistance, GameLayer.Mask.I_All) &&  GameManager.B_CanHitTarget(hit.collider.Detect(),m_Attacher.m_EntityID))
-                endPosition = hit.point;
-            spreadDirection = (endPosition - m_Muzzle.position).normalized;
-            spreadDirection.y = 0;
+        OnFireRecoil?.Invoke(F_Recoil);
 
+        Vector3 spreadDirection = m_Attacher.tf_WeaponAim.forward;
+        Vector3 endPosition = m_Attacher.tf_WeaponAim.position + spreadDirection * GameConst.I_ProjectileMaxDistance;
+        if (Physics.Raycast(m_Attacher.tf_WeaponAim.position, spreadDirection, out hit, GameConst.I_ProjectileMaxDistance, GameLayer.Mask.I_All) && GameManager.B_CanHitTarget(hit.collider.Detect(), m_Attacher.m_EntityID))
+            endPosition = hit.point;
+        spreadDirection = (endPosition - m_Muzzle.position).normalized;
+        spreadDirection.y = 0;
+
+        if (m_WeaponInfo.m_PelletsPerShot == 1)
+        {
             SFXProjectile projectile = GameObjectManager.SpawnEquipment<SFXProjectile>(m_WeaponInfo.m_Index, m_Muzzle.position, spreadDirection);
             projectile.F_Speed = F_Speed;
             projectile.B_Penetrate = B_Penetrate;
             projectile.Play(damageInfo, spreadDirection, endPosition);
         }
-
-        GameObjectManager.PlayMuzzle(m_Attacher.m_EntityID,m_Muzzle.position,spreadDirection,I_MuzzleIndex,m_MuzzleClip);
-        I_AmmoLeft--;
-        OnFireRecoil?.Invoke(F_Recoil);
-
+        else
+        {
+            int waveCount = m_WeaponInfo.m_PelletsPerShot;
+            float beginAnle = -m_WeaponInfo.m_Spread * (waveCount - 1) / 2f;
+            for (int i = 0; i < waveCount; i++)
+            {
+                Vector3 fanDirection = spreadDirection.RotateDirection(Vector3.up, beginAnle + i * m_WeaponInfo.m_Spread);
+                endPosition = m_Attacher.tf_WeaponAim.position + fanDirection * GameConst.I_ProjectileMaxDistance;
+                SFXProjectile projectile = GameObjectManager.SpawnEquipment<SFXProjectile>(m_WeaponInfo.m_Index, m_Muzzle.position, fanDirection);
+                projectile.F_Speed = F_Speed;
+                projectile.B_Penetrate = B_Penetrate;
+                projectile.Play(damageInfo, fanDirection, endPosition);
+            }
+        }
+        GameObjectManager.PlayMuzzle(m_Attacher.m_EntityID, m_Muzzle.position, spreadDirection, I_MuzzleIndex, m_MuzzleClip);
         return true;
     }
+    
 
     void CheckCanAutoReload()
     {
