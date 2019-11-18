@@ -258,7 +258,7 @@ namespace GameSetting_Action
         public static float P_40003_PlayerDamageMultiply(enum_RarityLevel rarity) => 4.2f * (int)(rarity);
         public static float P_40003_AllyDamageMultiply(enum_RarityLevel rarity) => 42 * (int)rarity;
 
-        public static float P_40004_MovementSpeedAdditive(enum_RarityLevel rarity) => 15 * (int)rarity;
+        public static float P_40004_MovementSpeedAdditive(enum_RarityLevel rarity) => 13 * (int)rarity;
 
         public static float P_40005_FastReloadRate(enum_RarityLevel rarity) => 4 * (int)rarity;
 
