@@ -1724,14 +1724,24 @@ namespace GameSetting
         #endregion
 
         #region Action Interact
-        public bool B_EnergyCostable(ActionBase action) => m_ActionEnergy >= action.I_Cost;
+        public bool CanCostEnergy(float cost) => m_ActionEnergy >= cost;
+        public bool TryCostEnergy(float cost)
+        {
+            if (!CanCostEnergy(cost))
+            {
+                //To Be Continued
+                return false;
+            }
+
+            m_ActionEnergy -= cost;
+            return true;
+        } 
         public bool TryUseHoldingAction(int index)
         {
             ActionBase action = m_BattleActionPicking[index];
-            if (b_shuffling||!B_EnergyCostable(action))
+            if (b_shuffling||!TryCostEnergy(action.I_Cost))
                 return false;
-
-            m_ActionEnergy -= action.I_Cost;
+            
             OnUseAcion(action);
             m_BattleActionPicking.RemoveAt(index);
             RefillHoldingActions();
@@ -1740,9 +1750,8 @@ namespace GameSetting
         }
         public bool TryShuffle()
         {
-            if (b_shuffling||m_ActionEnergy < GameConst.F_ActionShuffleCost)
+            if (b_shuffling||!TryCostEnergy(GameConst.F_ActionShuffleCost))
                 return false;
-            m_ActionEnergy -= GameConst.F_ActionShuffleCost;
             f_shuffleCheck = GameConst.F_ActionShuffleCooldown;
             ClearHoldingActions();
             return true;

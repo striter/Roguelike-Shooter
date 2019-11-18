@@ -31,7 +31,7 @@ public class UIGI_ActionItemHold : UIGI_ActionItemBase
     float f_pressDuration;
     private void Update()
     {
-        SetCostable(m_InfoManager.B_EnergyCostable(m_ActionInfo));
+        SetCostable(m_InfoManager.CanCostEnergy(m_ActionInfo.I_Cost));
         if (!b_pressing)
             return;
         f_pressDuration += Time.deltaTime;

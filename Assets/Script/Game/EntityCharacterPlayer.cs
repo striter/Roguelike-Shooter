@@ -6,6 +6,10 @@ using TSpecialClasses;
 using System;
 
 public class EntityCharacterPlayer : EntityCharacterBase {
+    #region Preset
+    public int I_AbilityCost = 0;
+    public float F_AbilityCoolDown = 0f;
+    #endregion
     public override enum_EntityController m_Controller => enum_EntityController.Player;
     protected CharacterController m_CharacterController;
     protected PlayerAnimator m_Animator;
@@ -76,6 +80,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     protected override void OnDead()
     {
+        f_abilityCoolDown = 0f;
         m_Animator.OnDead();
         m_MoveAxisInput = Vector2.zero;
         m_Assist.SetEnable(false);
@@ -143,7 +148,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         OnCommonStatus();
     }
 
-    protected virtual float CalculateBaseMovementSpeed() => (F_MovementSpeed - m_WeaponCurrent.m_WeaponInfo.m_Weight) * (m_aimingMovementReduction ? (1 - GameConst.F_AimMovementReduction * m_PlayerInfo.F_AimMovementStrictMultiply) : 1f);
+    protected virtual float CalculateMovementSpeedBase() => (F_MovementSpeed - m_WeaponCurrent.m_WeaponInfo.m_Weight);
+    protected virtual float CalculateMovementSpeedMultiple()=> m_aimingMovementReduction ? (1 - GameConst.F_AimMovementReduction * m_PlayerInfo.F_AimMovementStrictMultiply) : 1f;
     protected virtual Quaternion CalculateTargetRotation() => CameraController.CameraXZRotation;
     protected virtual Vector3 CalculateMoveDirection(Vector2 axisInput) => Vector3.Normalize(CameraController.CameraXZRightward * axisInput.x + CameraController.CameraXZForward * axisInput.y);
 
@@ -163,13 +169,13 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             m_PlayerInfo.OnReloadFinish();
     }
 
-    protected virtual bool CalculateCanInteract() => !Physics.SphereCast(new Ray(tf_WeaponAim.position, tf_WeaponAim.forward), .3f, 1.5f, GameLayer.Mask.I_Static);
+    protected virtual bool CalculateCanFire() => !Physics.SphereCast(new Ray(tf_WeaponAim.position, tf_WeaponAim.forward), .3f, 1.5f, GameLayer.Mask.I_Static);
     void OnWeaponTick(float deltaTime)
     {
         if (m_WeaponCurrent == null)
             return;
         tf_WeaponAim.rotation = CalculateTargetRotation();
-        bool canFire = CalculateCanInteract();
+        bool canFire = CalculateCanFire();
         m_WeaponCurrent.Tick(Time.deltaTime, canFire);
         m_Assist.SetEnable(canFire&&!m_WeaponCurrent.B_Reloading);
     }
@@ -197,7 +203,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     }
 
     #endregion
-    #region PlayerControll
+    #region CharacterControll
     protected Vector2 m_MoveAxisInput { get; private set; }
     protected Vector2 m_RotateAxisInput{get;private set; }
 
@@ -227,7 +233,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         TPSCameraController.Instance.RotateCamera(m_RotateAxisInput * OptionsManager.m_Sensitive);
         transform.rotation = Quaternion.Lerp(transform.rotation, CalculateTargetRotation(),deltaTime*GameConst.I_PlayerRotationSmoothParam);
 
-        m_BaseMovementSpeed = CalculateBaseMovementSpeed();
+        m_BaseMovementSpeed = CalculateMovementSpeedBase() * CalculateMovementSpeedMultiple();
 
         float finalMovementSpeed = m_CharacterInfo.F_MovementSpeed;
         m_CharacterController.Move((CalculateMoveDirection(m_MoveAxisInput) * finalMovementSpeed + Vector3.down * GameConst.F_Gravity) * deltaTime);
@@ -235,8 +241,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     }
 
     #endregion
-    #region PlayerAbility
-    void OnAbilityTick(float deltaTime)
+    #region CharacterAbility
+    protected void OnAbilityTick(float deltaTime)
     {
         if (m_AbilityCooldowning)
             f_abilityCoolDown -= deltaTime;
@@ -244,16 +250,14 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     void OnAbilityClick()
     {
-        if (m_AbilityCooldowning)
+        if (m_AbilityCooldowning||!m_PlayerInfo.TryCostEnergy(I_AbilityCost))
             return;
-
-        f_abilityCoolDown = 1f;
+        f_abilityCoolDown = F_AbilityCoolDown;
         OnAbilityTrigger();
     }
 
     protected virtual void OnAbilityTrigger()
     {
-
     }
 
     #endregion
