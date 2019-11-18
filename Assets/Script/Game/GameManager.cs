@@ -688,7 +688,7 @@ public static class GameObjectManager
     {
         ObjectPoolManager<int, SFXBase>.DestroyAll();
         ObjectPoolManager<int, EntityBase>.DestroyAll();
-        ObjectPoolManager<enum_Interaction, InteractBase>.DestroyAll();
+        ObjectPoolManager<enum_Interaction, InteractGameBase>.DestroyAll();
         ObjectPoolManager<LevelItemBase, LevelItemBase>.DestroyAll();
         ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.DestroyAll();
         ObjectPoolManager<int, LevelBase>.DestroyAll();
@@ -696,33 +696,23 @@ public static class GameObjectManager
     #region Register
     public static void PresetRegistCommonObject()
     {
-        TResources.GetAllEffectSFX().Traversal((int index, SFXBase target) => {
-            ObjectPoolManager<int, SFXBase>.Register(index, target, 1,
-            (SFXBase sfx) => { sfx.Init(index); });
-        });
-
-        TResources.GetCommonEntities().Traversal((int index, EntityBase entity) => {
-            ObjectPoolManager<int, EntityBase>.Register(index, entity, 1,
-                (EntityBase entityInstantiate) => { entityInstantiate.Init(index); });
-        });
+        TResources.GetAllEffectSFX().Traversal((int index, SFXBase target) => {ObjectPoolManager<int, SFXBase>.Register(index, target, 1); });
+        TResources.GetCommonEntities().Traversal((int index, EntityBase entity) => { ObjectPoolManager<int, EntityBase>.Register(index, entity, 1); });
     }
     public static Dictionary<enum_LevelItemType,List<LevelItemBase>> RegisterLevelItem(enum_Style _style)
     {
         Dictionary<enum_LevelItemType, List<LevelItemBase>> items = TResources.GetAllLevelItems(_style, null);
-        items.Traversal((enum_LevelItemType type,List< LevelItemBase> levelItems) => {
-            levelItems.Traversal((LevelItemBase item) => { ObjectPoolManager<LevelItemBase, LevelItemBase>.Register(item, GameObject.Instantiate(item), 1, null); });
-        });
+        items.Traversal((enum_LevelItemType type,List< LevelItemBase> levelItems) => { levelItems.Traversal((LevelItemBase item) => { ObjectPoolManager<LevelItemBase, LevelItemBase>.Register(item, GameObject.Instantiate(item), 1); }); });
         return items;
     }
     public static Dictionary<enum_CharacterType, List<int>> RegistStyledIngameEnermies(enum_Style currentStyle, enum_StageLevel stageLevel)
     {
         RegisterInGameInteractions(currentStyle, stageLevel);
-        ObjectPoolManager<int, LevelBase>.Register(0, TResources.GetLevelBase(currentStyle), 1, (LevelBase level) => { level.Init(); });
+        ObjectPoolManager<int, LevelBase>.Register(0, TResources.GetLevelBase(currentStyle), 1);
 
         Dictionary<enum_CharacterType, List<int>> enermyDic = new Dictionary<enum_CharacterType, List<int>>();
         TResources.GetEnermyEntities(currentStyle).Traversal((int index, EntityBase entity) => {
-            ObjectPoolManager<int, EntityBase>.Register(index, entity, 1,
-                (EntityBase entityInstantiate) => { entityInstantiate.Init(index); });
+            ObjectPoolManager<int, EntityBase>.Register(index, entity, 1 );
 
             EntityCharacterAI enermy = entity as EntityCharacterAI;
             if (!enermyDic.ContainsKey(enermy.E_EnermyType))
@@ -733,11 +723,12 @@ public static class GameObjectManager
     }
     static void RegisterInGameInteractions(enum_Style portalStyle, enum_StageLevel stageIndex)
     {
-        ObjectPoolManager<enum_Interaction, InteractBase>.Register(enum_Interaction.ActionChest, TResources.GetInteractActionChest(stageIndex), 5, (InteractBase interact) => { interact.Init(); });
+        ObjectPoolManager<enum_Interaction, InteractGameBase>.Register(enum_Interaction.ActionChest, TResources.GetInteractActionChest(stageIndex), 5);
+
         TCommon.TraversalEnum((enum_Interaction enumValue) =>
         {
             if (enumValue > enum_Interaction.GameBegin&&enumValue< enum_Interaction.GameEnd)
-                ObjectPoolManager<enum_Interaction, InteractBase>.Register(enumValue, TResources.GetInteract(enumValue),5, (InteractBase interact) => { interact.Init(); });
+                ObjectPoolManager<enum_Interaction, InteractGameBase>.Register(enumValue, TResources.GetInteract(enumValue),5);
         });
     }
     #endregion
@@ -772,7 +763,7 @@ public static class GameObjectManager
         if (!ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Registed(type))
         {
             WeaponBase preset = TResources.GetPlayerWeapon(type);
-            ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Register(type, preset, 1, (WeaponBase targetWeapon) => { targetWeapon.Init(GameDataManager.GetWeaponProperties(type)); });
+            ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Register(type, preset, 1);
         }
         WeaponBase weapon = ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Spawn(type, toTrans ? toTrans : TF_Entity);
         weapon.OnSpawn(perk);
@@ -808,7 +799,7 @@ public static class GameObjectManager
     public static T SpawnEquipment<T>(int weaponIndex, Vector3 position, Vector3 normal, Transform attachTo = null) where T : SFXBase
     {
         if (!ObjectPoolManager<int, SFXBase>.Registed(weaponIndex))
-            ObjectPoolManager<int, SFXBase>.Register(weaponIndex, TResources.GetDamageSource(weaponIndex), 1, (SFXBase sfx) => { sfx.Init(weaponIndex); });
+            ObjectPoolManager<int, SFXBase>.Register(weaponIndex, TResources.GetDamageSource(weaponIndex), 1);
 
         T template = ObjectPoolManager<int, SFXBase>.Spawn(weaponIndex, attachTo) as T;
         if (template == null)
@@ -820,7 +811,7 @@ public static class GameObjectManager
     public static T GetEquipmentData<T>(int weaponIndex) where T : SFXBase
     {
         if (!ObjectPoolManager<int, SFXBase>.Registed(weaponIndex))
-            ObjectPoolManager<int, SFXBase>.Register(weaponIndex, TResources.GetDamageSource(weaponIndex), 1, (SFXBase sfx) => { sfx.Init(weaponIndex); });
+            ObjectPoolManager<int, SFXBase>.Register(weaponIndex, TResources.GetDamageSource(weaponIndex), 1);
 
         T damageSourceInfo = ObjectPoolManager<int, SFXBase>.GetRegistedSpawnItem(weaponIndex) as T;
         if (damageSourceInfo == null)
@@ -829,14 +820,14 @@ public static class GameObjectManager
     }
     #endregion
     #region Interact
-    public static T SpawnInteract<T>(enum_Interaction type, Vector3 toPos, Transform toTrans=null) where T : InteractBase
+    public static T SpawnInteract<T>(enum_Interaction type, Vector3 toPos, Transform toTrans=null) where T : InteractGameBase
     {
-        T target = ObjectPoolManager<enum_Interaction, InteractBase>.Spawn(type , toTrans==null?TF_SFXPlaying:toTrans) as T;
+        T target = ObjectPoolManager<enum_Interaction, InteractGameBase>.Spawn(type , toTrans==null?TF_SFXPlaying:toTrans) as T;
         target.transform.position = toPos;
         return target;
     }
-    public static void RecycleInteract(InteractBase target) => ObjectPoolManager<enum_Interaction, InteractBase>.Recycle(target.m_InteractType,target);
-    public static void RecycleAllInteract(enum_Interaction interact) => ObjectPoolManager<enum_Interaction, InteractBase>.RecycleAll(interact);
+    public static void RecycleInteract(InteractGameBase target) => ObjectPoolManager<enum_Interaction, InteractGameBase>.Recycle(target.m_InteractType,target);
+    public static void RecycleAllInteract(enum_Interaction interact) => ObjectPoolManager<enum_Interaction, InteractGameBase>.RecycleAll(interact);
     #endregion
     #region Level/LevelItem
     public static LevelBase SpawnLevelPrefab(Transform toTrans)=>ObjectPoolManager<int, LevelBase>.Spawn(0, toTrans);

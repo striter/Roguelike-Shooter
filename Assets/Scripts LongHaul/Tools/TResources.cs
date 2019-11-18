@@ -142,9 +142,9 @@ public class TResources
         }
         return target;
     }
-    public static InteractBase GetInteractPortal(enum_Style portalStyle) => Instantiate<InteractBase>( ConstPath.S_InteractPortal + portalStyle.ToString());
-    public static InteractBase GetInteractActionChest(enum_StageLevel stageLevel) => Instantiate<InteractBase>(ConstPath.S_InteractActionChest + stageLevel.ToString());
-    public static InteractBase GetInteract(enum_Interaction type) => Instantiate<InteractBase>(ConstPath.S_InteractCommon + type);
+    public static InteractGameBase GetInteractPortal(enum_Style portalStyle) => Instantiate<InteractGameBase>( ConstPath.S_InteractPortal + portalStyle.ToString());
+    public static InteractGameBase GetInteractActionChest(enum_StageLevel stageLevel) => Instantiate<InteractGameBase>(ConstPath.S_InteractActionChest + stageLevel.ToString());
+    public static InteractGameBase GetInteract(enum_Interaction type) => Instantiate<InteractGameBase>(ConstPath.S_InteractCommon + type);
     #endregion
     #region Audio
     public static AudioClip GetAudioClip_Background(bool inGame,enum_GameMusic music) => Load<AudioClip>(ConstPath. S_Audio_Background+(inGame?"Game_":"Camp_")+music.ToString());

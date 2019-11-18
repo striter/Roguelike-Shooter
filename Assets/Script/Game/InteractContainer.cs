@@ -1,14 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using GameSetting;
 using UnityEngine;
 
 public class InteractContainer : InteractGameBase {
 
     public InteractBase m_TradeInteract { get; private set; }
     Transform tf_Model;
-    public override void Init()
+    public override void OnPoolItemInit(enum_Interaction temp)
     {
-        base.Init();
+        base.OnPoolItemInit(temp);
         tf_Model = transform.Find("Container/Model");
     }
     public override bool TryInteract(EntityCharacterPlayer _interactor)

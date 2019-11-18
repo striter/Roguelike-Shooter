@@ -37,9 +37,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         return m_PlayerInfo;
     }
 
-    public override void Init(int poolPresetIndex)
+    public override void OnPoolItemInit(int poolPresetIndex)
     {
-        base.Init(poolPresetIndex);
+        base.OnPoolItemInit(poolPresetIndex);
         gameObject.layer = GameLayer.I_MovementDetect;
         m_CharacterController = GetComponent<CharacterController>();
         m_CharacterController.detectCollisions = false;
@@ -50,18 +50,17 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_Animator = GetAnimatorController(tf_Model.GetComponent<Animator>(),OnAnimationEvent);
         transform.Find("InteractDetector").GetComponent<InteractDetector>().Init(OnInteractCheck);
     }
-
-    protected override void OnEnable()
+    protected override void OnPoolItemEnable()
     {
-        base.OnEnable();
+        base.OnPoolItemEnable();
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
         SetBinding(true);
     }
-    protected override void OnDisable()
+    protected override void OnPoolItemDisable()
     {
-        base.OnDisable();
+        base.OnPoolItemDisable();
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
@@ -169,6 +168,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         if (m_WeaponCurrent == null)
             return;
+        tf_WeaponAim.rotation = CalculateTargetRotation();
         bool canFire = CalculateCanInteract();
         m_WeaponCurrent.Tick(Time.deltaTime, canFire);
         m_Assist.SetEnable(canFire&&!m_WeaponCurrent.B_Reloading);
@@ -183,7 +183,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             m_WeaponCurrent.OnDetach();
             m_PlayerInfo.OnDetachWeapon();
         }
-        tf_WeaponAim.rotation = CalculateTargetRotation();
         m_WeaponCurrent = _weapon;
         m_WeaponCurrent.OnAttach(this, _weapon.B_AttachLeft ? tf_WeaponHoldLeft : tf_WeaponHoldRight, OnFireAddRecoil, OnReload);
         m_PlayerInfo.OnAttachWeapon(m_WeaponCurrent);

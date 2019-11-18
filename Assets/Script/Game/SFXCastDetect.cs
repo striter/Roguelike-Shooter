@@ -6,22 +6,22 @@ using UnityEngine;
 public class SFXCastDetect : SFXCastDetonate {
     public float F_DurationSelfDetonate;
     EntityDetector m_detector;
-    public override void Init(int _sfxIndex)
+    public override void OnPoolItemInit(int identity)
     {
-        base.Init(_sfxIndex);
-        m_detector=GetComponent<EntityDetector>();
+        base.OnPoolItemInit(identity);
+        m_detector = GetComponent<EntityDetector>();
         m_detector.Init(OnDetect);
     }
-    private void OnEnable()
+    protected override void OnPoolItemEnable()
     {
+        base.OnPoolItemEnable();
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnDetectEntity);
     }
-
-    private void OnDisable()
+    protected override void OnPoolItemDisable()
     {
+        base.OnPoolItemDisable();
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnDetectEntity);
     }
-
 
     public override void Play(DamageDeliverInfo buffInfo)
     {

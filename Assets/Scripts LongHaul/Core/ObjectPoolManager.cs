@@ -3,6 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public interface ObjectPoolItem<T>{void OnPoolItemInit(T identity);}
+public class ObjectPoolMonoItem<T> :MonoBehaviour,ObjectPoolItem<T>
+{
+    public bool m_IsPoolItem { get; private set; }
+    public T m_Identity { get; private set; }
+    public virtual void OnPoolItemInit(T identity)
+    {
+        m_Identity = identity;
+        m_IsPoolItem = true;
+    }
+    protected virtual void OnPoolItemEnable() { }
+    protected virtual void OnPoolItemDisable(){}
+    private void OnEnable() {if (m_IsPoolItem) OnPoolItemEnable(); }
+    private void OnDisable() { if (m_IsPoolItem) OnPoolItemDisable();}
+}
 public class ObjectPoolManager
 {
     protected static Transform tf_PoolSpawn { get; private set; }
@@ -13,20 +28,20 @@ public class ObjectPoolManager
         tf_PoolRegist = new GameObject("PoolRegist").transform;
     }
 }
-public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y:MonoBehaviour {
+public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,ObjectPoolItem<T>
+{
     class ItemPoolInfo
     {
         public Y m_spawnItem;
         public int i_poolSaveAmount;
-        public Action<Y> OnItemInstantiate;
         public List<Y> l_Deactive=new List<Y>();
         public List<Y> l_Active=new List<Y>();
 
-        public Y Instantiate()
+        public Y NewItem(T identity)
         {
             Y item = GameObject.Instantiate(m_spawnItem, tf_PoolSpawn); ;
             item.name = m_spawnItem.name + "_"+(l_Deactive.Count + l_Active.Count).ToString();
-            OnItemInstantiate?.Invoke(item);
+            item.OnPoolItemInit(identity);
             return item;
         }
     }
@@ -42,7 +57,7 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y:MonoBehaviour {
             Debug.LogError("Identity:"+identity +"Unregisted");
         return d_ItemInfos[identity].m_spawnItem;
     }
-    public static void Register(T identity, Y registerItem, int poolStartAmount, Action<Y> OnItemInstantiate)
+    public static void Register(T identity, Y registerItem, int poolStartAmount)
     {
         if (d_ItemInfos.ContainsKey(identity))
         {
@@ -51,15 +66,13 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y:MonoBehaviour {
         }
         d_ItemInfos.Add(identity, new ItemPoolInfo());
         registerItem.transform.SetParent(tf_PoolRegist);
-        OnItemInstantiate?.Invoke(registerItem);
         registerItem.SetActivate(false);
         ItemPoolInfo info = d_ItemInfos[identity];
         info.m_spawnItem = registerItem;
         info.i_poolSaveAmount = poolStartAmount;
-        info.OnItemInstantiate = OnItemInstantiate;
         for (int i = 0; i < info.i_poolSaveAmount; i++)
         {
-            Y spawnItem = info.Instantiate();
+            Y spawnItem = info.NewItem(identity);
             info.l_Deactive.Add(spawnItem);
         }
     }
@@ -79,7 +92,7 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y:MonoBehaviour {
         }
         else
         {
-            item = info.Instantiate();
+            item = info.NewItem(identity);
         }
         info.l_Active.Add(item);
         item.transform.SetParentResetTransform(toTrans == null ? tf_PoolSpawn : toTrans);

@@ -3,7 +3,8 @@ using GameSetting;
 using System;
 using System.Collections.Generic;
 
-public class WeaponBase : MonoBehaviour {
+public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
+{ 
     public enum_TriggerType E_Trigger = enum_TriggerType.Invalid;
     public enum_PlayerAnim E_Anim= enum_PlayerAnim.Invalid;
     public bool B_AttachLeft=false;
@@ -43,11 +44,11 @@ public class WeaponBase : MonoBehaviour {
     bool B_AmmoFull => m_WeaponInfo.m_ClipAmount == -1||I_ClipAmount == I_AmmoLeft;
     protected void OnFireCheck(float pauseDuration) => f_fireCheck = pauseDuration;
 
-    public void Init(SWeapon weaponInfo)
+    public override void OnPoolItemInit(enum_PlayerWeapon weapon)
     {
         m_Muzzle = transform.FindInAllChild("Muzzle");
         m_Case = transform.FindInAllChild("Case");
-        m_WeaponInfo = weaponInfo;
+        m_WeaponInfo = GameDataManager.GetWeaponProperties(weapon);
         SFXProjectile projectileInfo = GameObjectManager.GetEquipmentData<SFXProjectile>(m_WeaponInfo.m_Index);
         F_BaseSpeed = projectileInfo.F_Speed;
         B_BasePenetrate = projectileInfo.B_Penetrate;
@@ -67,8 +68,9 @@ public class WeaponBase : MonoBehaviour {
         }
     }
 
-    protected virtual void OnDisable()
-    {;
+    protected override void OnPoolItemDisable()
+    {
+        base.OnPoolItemDisable();
         B_Reloading = false;
         f_reloadCheck = 0;
         f_fireCheck = 0;

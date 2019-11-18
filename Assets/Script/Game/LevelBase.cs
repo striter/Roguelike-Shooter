@@ -5,14 +5,14 @@ using GameSetting;
 using TTiles;
 using System;
 
-public class LevelBase : MonoBehaviour {
+public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
     public List<LevelTile> m_MapData;
     public enum_TileType m_levelType { get; private set; }
     protected Transform tf_Model;
     public Transform tf_LevelItem { get; private set; }
     public Transform tf_Interact { get; private set; }
     public System.Random m_seed { get; private set; }
-    public void Init()
+    public void OnPoolItemInit(int identity)
     {
         tf_LevelItem = transform.Find("Item");
         tf_Model = transform.Find("Model");
@@ -86,7 +86,7 @@ public class LevelBase : MonoBehaviour {
         {
             LevelTileItem main = m_AllTiles[m_IndexItemMain[i]] as LevelTileItem;
             LevelItemBase itemMain = GameObjectManager.SpawnLevelItem(m_AllItemPrefabs[main.m_LevelItemType][main.m_LevelItemListIndex], tf_LevelItem, main.m_Offset);
-            itemMain.Init(this, main.m_ItemDirection);
+            itemMain.SetDirection(this, main.m_ItemDirection);
         }
 
     }

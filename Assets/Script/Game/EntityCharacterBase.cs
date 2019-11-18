@@ -25,31 +25,34 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     protected virtual enum_GameAudioSFX m_DamageClip => enum_GameAudioSFX.EntityDamage;
     protected virtual enum_GameAudioSFX m_ReviveClip => enum_GameAudioSFX.PlayerRevive;
 
-    public override void Init(int _poolIndex)
+    public override void OnPoolItemInit(int _poolIndex)
     {
-        base.Init(_poolIndex);
+        base.OnPoolItemInit(_poolIndex);
         tf_Model = transform.Find("Model");
         tf_Head = transform.Find("Head");
         m_Effect = new EntityCharacterEffectManager(tf_Model.Find("Skin").GetComponentsInChildren<Renderer>());
         m_CharacterInfo = GetEntityInfo();
     }
 
-    protected virtual void OnEnable()
+    protected override void OnPoolItemEnable()
     {
+        base.OnPoolItemEnable();
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinished);
+        m_CharacterInfo.OnActivate();
     }
-    protected virtual void OnDisable()
+
+    protected override void OnPoolItemDisable()
     {
+        base.OnPoolItemDisable();
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinished);
-        m_CharacterInfo.OnDeactivate();
         this.StopSingleCoroutines(0);
+        m_CharacterInfo.OnDeactivate();
     }
 
     public override void OnActivate(enum_EntityFlag _flag,int _spawnerID=-1,float startHealth =0)
     {
        base.OnActivate(_flag,_spawnerID,startHealth);
         m_Effect.OnReset();
-        m_CharacterInfo.OnActivate();
     }
 
     public void SetExtraDifficulty(float baseHealthMultiplier, float maxHealthMultiplier, SBuff difficultyBuff)

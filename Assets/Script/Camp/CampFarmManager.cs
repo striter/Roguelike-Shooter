@@ -25,7 +25,7 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
     {
         TCommon.TraversalEnum((enum_CampFarmItemStatus status) =>
         {
-            ObjectPoolManager<enum_CampFarmItemStatus, CampFarmItem>.Register(status, tf_Status.Find(status.ToString()).GetComponent<CampFarmItem>(), 1, null);
+            ObjectPoolManager<enum_CampFarmItemStatus, CampFarmItem>.Register(status, tf_Status.Find(status.ToString()).GetComponent<CampFarmItem>(), 1);
         });
 
         if (tf_Plot.childCount != GameDataManager.m_CampFarmData.m_PlotStatus.Count)

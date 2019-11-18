@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
 using TSpecialClasses;
-public class InteractActionChest : InteractBase
+public class InteractActionChest : InteractGameBase
 {
     public override enum_Interaction m_InteractType => enum_Interaction.ActionChest;
     public override bool B_InteractOnce => false;
@@ -14,11 +14,11 @@ public class InteractActionChest : InteractBase
     int m_SelectAmount;
     EntityCharacterPlayer m_Interactor;
     TSpecialClasses.ParticleControlBase m_Particles;
-    public override void Init()
+    public override void OnPoolItemInit(enum_Interaction identity)
     {
-        base.Init();
-        m_Animation =new AnimationControlBase( GetComponentInChildren<Animation>());
-        m_Particles = new ParticleControlBase(transform); 
+        base.OnPoolItemInit(identity);
+        m_Animation = new AnimationControlBase(GetComponentInChildren<Animation>());
+        m_Particles = new ParticleControlBase(transform);
     }
     public void Play(List<ActionBase> _actions,int selectAmount,bool _startChest)
     {

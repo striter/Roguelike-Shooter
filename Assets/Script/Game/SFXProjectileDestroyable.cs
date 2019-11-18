@@ -5,11 +5,11 @@ using UnityEngine;
 [RequireComponent(typeof(EntityComponent))]
 public class SFXProjectileDestroyable : SFXProjectile {
     protected EntityComponent m_Health { get; private set; }
-    public override void Init(int sfxIndex)
+    public override void OnPoolItemInit(int identity)
     {
-        base.Init(sfxIndex);
+        base.OnPoolItemInit(identity);
         m_Health = GetComponentInChildren<EntityComponent>();
-        m_Health.Init(-1);
+        m_Health.OnPoolItemInit(-1);
     }
     public override void Play(DamageDeliverInfo deliverInfo, Vector3 direction, Vector3 targetPosition)
     {
