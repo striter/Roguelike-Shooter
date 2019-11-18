@@ -75,7 +75,7 @@ namespace GameSetting
 
     public static class GameExpression
     {
-        public static int GetPlayerEquipmentIndex(int actionIndex) => actionIndex * 10;
+        public static int GetPlayerEquipmentIndex(int equipmentIndex) => equipmentIndex * 10;
         public static int GetAIEquipmentIndex(int entityIndex, int weaponIndex = 0, int subWeaponIndex = 0) => entityIndex * 100 + weaponIndex * 10 + subWeaponIndex;
         public static int GetActionMuzzleIndex(enum_ActionType type) => 10010 + (int)type;
         public const int I_PlayerReviveBuffIndex = 40004;
@@ -517,27 +517,27 @@ namespace GameSetting
     {
         Invalid = -1,
         //Laser
-        LaserPistol = 1001,
-        Railgun = 1002,
+        LaserPistol = 101,
+        Railgun = 102,
         //Snipe Rifle
-        M82A1 = 2001,
-        Kar98 = 2002,
+        M82A1 = 201,
+        Kar98 = 202,
         //Submachine Gun
-        UZI = 3001,
-        UMP45 = 3002,
+        UZI = 301,
+        UMP45 = 302,
         //Assult Rifle
-        SCAR = 4001,
-//        M16A4 = 4002,
-        AKM = 4003,
+        SCAR = 401,
+        M16A4 = 402,
+        AKM = 403,
         //Pistol
-        P92 = 5001,
-        DE = 5002,
+        P92 = 501,
+        DE = 502,
         //Shotgun
-        XM1014 = 6001,
-        S686 = 6002,
+        XM1014 = 601,
+        S686 = 602,
         //Heavy Weapon
-        Crossbow = 7001,
-//        RocketLauncher = 7002,
+        Crossbow = 701,
+        RocketLauncher = 702,
     }
 
     public enum enum_PlayerAnim

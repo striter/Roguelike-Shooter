@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4550938155433920}
   - component: {fileID: 114579307329279138}
   m_Layer: 9
-  m_Name: 2001
+  m_Name: 3010
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -36,7 +36,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4302469275429298}
   - component: {fileID: 96637802621585148}
-  - component: {fileID: 114171168693652626}
+  - component: {fileID: 114646933807541634}
   m_Layer: 0
   m_Name: Trail
   m_TagString: Untagged
@@ -164,17 +164,6 @@ TrailRenderer:
     generateLightingData: 0
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
---- !u!114 &114171168693652626
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1284223325091568}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bacc218cc03b0a84c9f47ae5b5156f41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114579307329279138
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -187,10 +176,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   E_ProjectileType: 1
-  F_Damage: 72.9
-  F_Speed: 60
+  F_Damage: 15.3
+  F_Speed: 25
   B_Penetrate: 0
-  AC_MuzzleClip: {fileID: 8300000, guid: 6af41f0efed38964887b5f73f4b68388, type: 3}
+  AC_MuzzleClip: {fileID: 8300000, guid: adb8977a89e60d94d86053442cc0637a, type: 3}
   I_MuzzleIndex: 10001
   I_ImpactIndex: 20001
   I_IndicatorIndex: 0
@@ -202,3 +191,14 @@ MonoBehaviour:
     start: 0
     length: 0
   F_OffsetExtension: 0
+--- !u!114 &114646933807541634
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1284223325091568}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bacc218cc03b0a84c9f47ae5b5156f41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
