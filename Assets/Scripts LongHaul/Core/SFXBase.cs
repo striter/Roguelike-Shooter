@@ -23,6 +23,7 @@ public class SFXBase :ObjectPoolMonoItem<int> {
     Vector3 m_localPos, m_localDir;
     public override void OnPoolItemInit(int identity)
     {
+        base.OnPoolItemInit(identity);
         I_SFXIndex = identity;
 
 #if UNITY_EDITOR

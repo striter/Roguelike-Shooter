@@ -179,7 +179,7 @@ public class GameManager : GameManagerBase
         m_Enermies = GameObjectManager.RegistStyledIngameEnermies(m_GameLevel.m_GameStyle, m_GameLevel.m_GameStage);
         m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_BattleData);
         CameraController.Instance.Attach(m_LocalPlayer.transform, true);
-        LevelManager.Instance.GenerateAllEnviorment(m_GameLevel.m_GameStyle, m_GameLevel.m_GameSeed, OnLevelChanged, OnStageFinished,SpawnLevelInteracts);
+        LevelManager.Instance.GenerateAllEnviorment(m_GameLevel.m_GameStyle, m_GameLevel.m_GameSeed, OnLevelChanged, OnStageFinished,OnLevelGenerate);
         InitPostEffects(m_GameLevel.m_GameStyle);
         OnPortalExit(1f,m_LocalPlayer.tf_Head);
         GC.Collect();
@@ -233,7 +233,7 @@ public class GameManager : GameManagerBase
     }
     #endregion
     #region InteractManagement
-    void SpawnLevelInteracts(SBigmapLevelInfo level)
+    void OnLevelGenerate(SBigmapLevelInfo level)
     {
         Transform interactTrans = level.m_Level.tf_Interact;
         switch (level.m_LevelType)
@@ -504,14 +504,12 @@ public class GameManager : GameManagerBase
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnWaveFinish);
         m_CurrentWave++;
-        if (m_CurrentWave >= m_EntityGenerate.Count)
-            OnBattleFinished(lastEntityPos);
-        else
+        if (m_CurrentWave < m_EntityGenerate.Count)
+        {
             WaveStart();
-    }
+            return;
+        }
 
-    void OnBattleFinished(Vector3 lastEntityPos)
-    {
         B_Battling = false;
         SpawnRewards(lastEntityPos);
         m_PlayerReviveHealing.Clear();

@@ -2148,7 +2148,6 @@ namespace GameSetting
             m_Level.transform.localPosition = Vector3.zero;
             m_Level.transform.localScale = Vector3.one;
             m_Level.GenerateTileItems(innerData,outerData, _levelItemPrefabs, m_LevelType,seed, m_LevelType== enum_TileType.End);
-            m_Level.SetActivate(false);
         }
         public void SetLevelShow(bool show)
         {

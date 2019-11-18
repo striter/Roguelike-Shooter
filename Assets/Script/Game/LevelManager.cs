@@ -15,7 +15,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager>,ISingleCoroutine {
     public Light m_DirectionalLight { get; protected set; }
     public Transform m_InteractParent => m_currentLevel.m_Level.tf_Interact;
     public System.Random m_mainSeed;
-    public Action<SBigmapLevelInfo> OnLevelPrepared;
+    public Action<SBigmapLevelInfo> OnLevelPrepared,OnEachLevelGenerate;
     public Action OnStageFinished;
     protected override void Awake()
     {
@@ -41,22 +41,21 @@ public class LevelManager : SimpleSingletonMono<LevelManager>,ISingleCoroutine {
     {
         OnLevelPrepared = _OnLevelPrepared;
         OnStageFinished = _OnStageFinished;
+        OnEachLevelGenerate = _OnEachLevelGenerate;
         m_mainSeed = seed;
         m_StyleCurrent = _LevelStyle;
-        m_MapLevelInfo= GenerateBigmapLevels(m_StyleCurrent, m_mainSeed, tf_LevelParent,6,5, _OnEachLevelGenerate);
+        m_MapLevelInfo = GenerateBigmapLevels(m_StyleCurrent, m_mainSeed, tf_LevelParent,6,5, OnLevelGenerateFinish);
         StyleColorData[] customizations = TResources.GetAllStyleCustomization(_LevelStyle);
         StyleColorData randomData= customizations.Length == 0? StyleColorData.Default():customizations.RandomItem(m_mainSeed);
         randomData.DataInit(m_DirectionalLight);
-        m_MapLevelInfo.Traversal((SBigmapLevelInfo info) =>
-        {
-            if (!info.m_Level)
-                return;
-
-            StaticBatchingUtility.Combine(info.m_Level.tf_LevelItem.gameObject);
-        });
     }
 
-
+    void OnLevelGenerateFinish(SBigmapLevelInfo levelInfo)
+    {
+        StaticBatchingUtility.Combine(levelInfo.m_Level.tf_LevelItem.gameObject);
+        levelInfo.SetLevelShow(false);
+        OnEachLevelGenerate(levelInfo);
+    }
     #region Level
     void OnStageStart()
     {
