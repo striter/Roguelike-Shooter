@@ -11,6 +11,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public float F_AbilityCoolDown = 0f;
     #endregion
     public override enum_EntityController m_Controller => enum_EntityController.Player;
+    public virtual enum_PlayerCharacter m_Character => enum_PlayerCharacter.Invalid;
     protected CharacterController m_CharacterController;
     protected PlayerAnimator m_Animator;
     protected virtual PlayerAnimator GetAnimatorController(Animator animator, Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) => new PlayerAnimator(animator, _OnAnimEvent);
@@ -395,9 +396,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void SetBinding(bool on)
     {
         if (on)
-            UIManager.Instance.DoBinding(OnMovementDelta, OnRotateDelta, OnReloadClick, OnMainDown,OnAbilityClick);
+            UIManager.Instance.m_PlayerControl.DoBinding(this, OnMovementDelta, OnRotateDelta, OnReloadClick, OnMainDown,OnAbilityClick);
         else
-            UIManager.Instance.RemoveBinding();
+            UIManager.Instance.m_PlayerControl.RemoveBinding();
     }
 
     protected class PlayerAnimator : CharacterAnimator

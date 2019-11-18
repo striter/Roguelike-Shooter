@@ -317,20 +317,21 @@ namespace GameSetting
                 case enum_ActionType.Equipment: return "action_cost_equipment";
             }
         }
-        public static string GetMainSprite(this EntityCharacterPlayer player)
+        public static string GetMainSprite(InteractBase interact)
         {
-            string spriteName = "main_fire";
-            if (player.m_Interact != null&&player.m_Interact.B_InteractEnable)
-                switch (player.m_Interact.m_InteractType)
+            string spriteName = "control_main_fire";
+            if (interact != null&&interact.B_InteractEnable)
+                switch (interact.m_InteractType)
                 {
                     case enum_Interaction.Invalid: Debug.LogError("Invalid Pharse Here!"); break;
-                    default: spriteName = "main_pickup"; break;
+                    default: spriteName = "control_main_pickup"; break;
                     case enum_Interaction.CampFarm:
                     case enum_Interaction.ActionAdjustment:
-                        spriteName = "main_chat"; break;
+                        spriteName = "control_main_chat"; break;
                 }
             return spriteName;
         }
+        public static string GetAbilitySprite(enum_PlayerCharacter character) => "control_ability_" + character;
         public static string GetSpriteName(this enum_PlayerWeapon weapon) => ((int)weapon).ToString();
         public static string GetCordinates(this TileAxis axis)
         {

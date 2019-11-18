@@ -6,16 +6,10 @@ using System;
 public class UIManager :UIManagerBase,ISingleCoroutine
 {
     public static new UIManager Instance { get; private set; }
-    protected Transform tf_BaseControl { get; private set; }
-    protected Button btn_Reload { get; private set; }
-    Action OnReload,OnAbility;
-    Action<bool> OnMainDown;
-    Image img_main,m_setting;
+    Image m_setting, m_OverlayBG;
     protected UIT_GridControllerGridItem<UIGI_TipItem> m_TipsGrid;
-    protected TouchDeltaManager m_TouchDelta { get; private set; }
     public Camera m_Camera { get; private set; }
-
-    Image m_OverlayBG;
+    public UIC_CharacterControl m_PlayerControl { get; private set; }
 
     public CameraEffectManager m_Effect { get; private set; }
     CB_GenerateOverlayUIGrabBlurTexture m_Blur;
@@ -37,17 +31,16 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         cvs_Camera.transform.Find("Settings").GetComponent<Button>().onClick.AddListener(OnSettingBtnClick);
         m_setting = cvs_Camera.transform.Find("Settings/Image").GetComponent<Image>();
 
-        tf_BaseControl = cvs_Camera.transform.Find("BaseControl");
-        img_main = tf_BaseControl.Find("Main/Image").GetComponent<Image>();
-        btn_Reload = tf_BaseControl.Find("Reload").GetComponent<Button>();
-        btn_Reload.onClick.AddListener(OnReloadButtonDown);
-        tf_BaseControl.Find("Main").GetComponent<UIT_EventTriggerListener>().D_OnPress+= OnMainButtonDown;
+        m_PlayerControl = ShowControls<UIC_CharacterControl>();
+        ShowControls<UIC_PlayerInteract>();
+
         m_OverlayBG = cvs_Overlay.transform.Find("OverlayBG").GetComponent<Image>();
         m_OverlayBG.SetActivate(false);
 
         m_CommonSprites = TResources.GetUIAtlas_Common();
         m_ActionSprites = TResources.GetUIAtlas_Action();
         m_WeaponSprites = TResources.GetUIAtlas_Weapon();
+
         m_Camera = transform.Find("UICamera").GetComponent<Camera>();
         m_Effect = m_Camera.GetComponent<CameraEffectManager>();
         m_Blur = m_Effect.GetOrAddCameraEffect<CB_GenerateOverlayUIGrabBlurTexture>();
@@ -55,54 +48,15 @@ public class UIManager :UIManagerBase,ISingleCoroutine
 
         m_TipsGrid = new UIT_GridControllerGridItem<UIGI_TipItem>(cvs_Overlay.transform.Find("Tips"));
 
-        m_TouchDelta = transform.GetComponent<TouchDeltaManager>();
-        OnOptionsChanged();
-        OptionsManager.event_OptionChanged += OnOptionsChanged;
-
         UIPageBase.OnPageExit = OnPageExit;
         UIMessageBoxBase.OnMessageBoxExit = OnMessageBoxExit;
-        TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnPlayerStatusChanged);
     }
     protected override void OnDestroy()
     {
         base.OnDestroy();
         Instance = null;
         this.StopAllCoroutines();
-        OptionsManager.event_OptionChanged -= OnOptionsChanged;
         UIPageBase.OnPageExit = null;
-        TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnPlayerStatusChanged);
-    }
-
-    void OnOptionsChanged()=> UIT_JoyStick.Instance.SetMode(OptionsManager.m_OptionsData.m_JoyStickMode);
-    bool CheckControlable() => !UIPageBase.m_PageOpening;
-    public void DoBinding(Action<Vector2> _OnLeftDelta,Action<Vector2> _OnRightDelta,Action _OnReload,Action<bool> _OnMainDown,Action _OnAbility)
-    {
-        m_TouchDelta.AddLRBinding(_OnLeftDelta, _OnRightDelta,CheckControlable);
-        OnReload = _OnReload;
-        OnAbility = _OnAbility;
-        OnMainDown = _OnMainDown;
-    }
-    public void RemoveBinding()
-    {
-        m_TouchDelta.RemoveAllBinding();
-        OnReload = null;
-        OnMainDown = null;
-        OnAbility = null;
-    }
-
-    protected void OnReloadButtonDown()=>OnReload?.Invoke();
-    protected void OnMainButtonDown(bool down,Vector2 pos)=>OnMainDown?.Invoke(down);
-    protected void OnAbilityDown() => OnAbility?.Invoke();
-
-
-    string m_mainSprite;
-    void OnPlayerStatusChanged(EntityCharacterPlayer player)
-    {
-        string spriteName = UIEnumConvertions.GetMainSprite(player);
-        if (spriteName == m_mainSprite)
-            return;
-        m_mainSprite = spriteName;
-        img_main.sprite = m_CommonSprites[m_mainSprite];
     }
 
     public T ShowPage<T>(bool animate,float bulletTime=1f) where T : UIPageBase
@@ -156,21 +110,4 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         m_setting.sprite = m_CommonSprites[Override == null ? "icon_setting" : "icon_close"];
         m_setting.SetNativeSize();
     }
-
-
-
-#if UNITY_EDITOR
-    private void Update()
-    {
-        if (Input.GetMouseButtonDown(0))
-            OnMainButtonDown(true, Vector2.zero);
-        else if (Input.GetMouseButtonUp(0))
-            OnMainButtonDown(false, Vector2.zero);
-
-        if (Input.GetKeyDown(KeyCode.R))
-            OnReloadButtonDown();
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-            OnAbilityDown();
-    }
-#endif
 }

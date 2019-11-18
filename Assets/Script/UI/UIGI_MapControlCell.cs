@@ -7,8 +7,8 @@ using TTiles;
 using System;
 
 public class UIGI_MapControlCell : UIT_GridDefaultItem {
-    Transform tf_PlayerAt,tf_TileLocked;
-    Image img_Level;
+    Transform tf_TileLocked;
+    Image img_Level,img_Background;
     Action<UIGI_MapControlCell> OnChangeLevelClick;
     Dictionary<enum_TileDirection, Image> dic_TileConnections=new Dictionary<enum_TileDirection, Image>();
     public SBigmapLevelInfo m_TileInfo { get; private set; }
@@ -16,7 +16,7 @@ public class UIGI_MapControlCell : UIT_GridDefaultItem {
     {
         base.Init();
         img_Level = tf_Container.Find("TileImage").GetComponent<Image>();
-        tf_PlayerAt = tf_Container.Find("PlayerAt");
+        img_Background = tf_Container.Find("Background").GetComponent<Image>();
         tf_TileLocked = tf_Container.Find("TileLocked");
         for (int i = 0; i < TTiles.TTiles.m_FourDirections.Count; i++)
             dic_TileConnections.Add(TTiles.TTiles.m_FourDirections[i], tf_Container.Find(TTiles.TTiles.m_FourDirections[i].ToString()).GetComponent<Image>());
@@ -31,9 +31,25 @@ public class UIGI_MapControlCell : UIT_GridDefaultItem {
             return;
         }
         tf_TileLocked.SetActivate(levelInfo.m_TileLocking== enum_TileLocking.Locked);
-        tf_PlayerAt.SetActivate(playerAt);
+        img_Background.color =TCommon.GetHexColor( GetBackgroundColor(levelInfo.m_TileLocking,playerAt));
         img_Level.sprite = GameUIManager.Instance.m_InGameSprites[levelInfo.m_LevelType.GetSpriteName()];
         foreach (enum_TileDirection direction in TTiles.TTiles.m_FourDirections)
             dic_TileConnections[direction].SetActivate(connectionActivate[direction]);
+    }
+    string GetBackgroundColor(enum_TileLocking type,bool playerAt)
+    {
+        if (playerAt)
+            return "B9FF01FF";
+
+        switch (type)
+        {
+            default:
+                return "000000FF";
+            case enum_TileLocking.Unlockable:
+                return "A7A7A764";
+            case enum_TileLocking.Locked:
+            case enum_TileLocking.Unlocked:
+                return "A7A7A7FF";
+        }
     }
 }

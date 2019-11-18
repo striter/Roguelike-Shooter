@@ -105,7 +105,7 @@ public static class TCommon
         lookDirection.Normalize();
         return lookDirection;
     }
-    public static Color HexToColor(string hex)
+    public static Color GetHexColor(string hex)
     {
         byte br = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
         byte bg = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);

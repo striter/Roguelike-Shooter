@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 3651875
+    totalSpriteSurfaceArea: 3727971
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -44,6 +44,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 4ec60bacd1dafa74b8d93d4b1cae4984, type: 3}
   - {fileID: 21300000, guid: b6db95752d4b8db4cb74238362db9486, type: 3}
   - {fileID: 21300000, guid: a4aa3e3531071e34980aa2bc399a6761, type: 3}
+  - {fileID: 21300000, guid: c697a9c3f4e357a49a2f2188d3ba0ac9, type: 3}
   - {fileID: 21300000, guid: cfcb8e7134464ad429196864a48dfb77, type: 3}
   - {fileID: 21300000, guid: 1e5956a73e79d9147b8b50c2823ab6f5, type: 3}
   - {fileID: 21300000, guid: 333c96faa0f449f45aabf7004c250e02, type: 3}
@@ -75,6 +76,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 9b5f47ee892aafe4e81749854bced7ee, type: 3}
   - {fileID: 21300000, guid: 3d5c6aefeb441674c892735313ebf060, type: 3}
   - {fileID: 21300000, guid: e286ff7018a31654ca31f0cb32a7dea1, type: 3}
+  - {fileID: 21300000, guid: a3a3fc2a5bfac4f468277215d70f9ca4, type: 3}
   - {fileID: 21300000, guid: 1bbd8ac21a552a147b90c2cad81488e9, type: 3}
   - {fileID: 21300000, guid: 002194195bbdf2a4abf17c09acff091c, type: 3}
   - {fileID: 21300000, guid: bb9b55d0cd18e0741bc043e00caae287, type: 3}
@@ -118,14 +120,15 @@ SpriteAtlas:
   - UI_common_lowpoly_background_medium
   - UI_common_lowpoly_background_small
   - UI_weapon_bottom
-  - btn_rocker_bottom
+  - control_rocker_bottom
   - main_bottom
   - UI_title_orange
   - icon_diamond
   - icon_credit
   - btn_commcon_orange
   - UI_title_yellow
-  - btn_reload
+  - control_ability_bottom
+  - control_reload
   - btn_commcon_unavailable
   - status_StatusBar_bottom
   - UI_title_orange_medium
@@ -140,7 +143,7 @@ SpriteAtlas:
   - status_ActionEnergy_progress_bottom
   - status_ActionEnergy_progress_full
   - status_ActionEnergy_progress_notfull
-  - main_fire
+  - control_main_fire
   - UI_title_weaponpower
   - status_progress_bottom
   - status_progress_armor
@@ -149,13 +152,14 @@ SpriteAtlas:
   - btn_commcon_black90
   - btn_commcon_gray
   - btn_commcon_blue
-  - main_chat
+  - control_main_chat
   - status_coins_bottom
-  - main_pickup
-  - btn_rocker_move
+  - control_main_pickup
+  - control_rocker_move
   - status_progress_weapon
   - status_progress_weapon_bottom
   - icon_map
+  - control_ability_Beth
   - status_progress_armor_top
   - status_progress_health_top
   - status_ActionPack_bottom

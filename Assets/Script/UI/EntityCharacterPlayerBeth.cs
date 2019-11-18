@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using GameSetting;
 using UnityEngine;
 
 public class EntityCharacterPlayerBeth : EntityCharacterPlayer {
@@ -8,7 +9,8 @@ public class EntityCharacterPlayerBeth : EntityCharacterPlayer {
     public float F_RollSpeedMultiple;
     public float F_RollDuration;
     #endregion
-    new PlayerAnimatorBeth m_Animator;
+    public override enum_PlayerCharacter m_Character => enum_PlayerCharacter.Beth;
+    private new PlayerAnimatorBeth m_Animator;
     protected override PlayerAnimator GetAnimatorController(Animator animator,Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent)
     {
         m_Animator= new PlayerAnimatorBeth(animator, _OnAnimEvent);

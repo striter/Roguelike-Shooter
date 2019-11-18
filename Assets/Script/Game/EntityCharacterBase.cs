@@ -199,7 +199,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
             if (!m_freezed)
                 return;
 
-            m_Materials[0].SetColor("_IceColor", TCommon.HexToColor("3DAEC5FF"));
+            m_Materials[0].SetColor("_IceColor", TCommon.GetHexColor("3DAEC5FF"));
             m_Materials[0].SetTexture("_DistortTex", TX_Distort);
             m_Materials[0].SetFloat("_Opacity", .5f);
         }
