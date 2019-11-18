@@ -21,11 +21,13 @@
 			#pragma vertex vert
 			#pragma fragment frag
 			#include "UnityCG.cginc"
+			#pragma multi_compile_instancing
 			struct appdata
 			{
 				float4 vertex : POSITION;
 				float4 color    : COLOR;
 				float2 uv:TEXCOORD0;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
 			struct v2f
@@ -40,6 +42,7 @@
 			float _Amount1;
 			v2f vert(appdata v)
 			{
+				UNITY_SETUP_INSTANCE_ID(v);
 				v2f o;
 				float3 viewDir = normalize(ObjSpaceViewDir(v.vertex));
 				o.vertex = UnityObjectToClipPos(v.vertex+viewDir*_Amount1);
