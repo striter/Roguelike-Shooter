@@ -59,12 +59,12 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
         m_MuzzleClip = projectileInfo.AC_MuzzleClip;
         switch (E_Trigger)
         {
-            default: Debug.LogError("Add More Convertions Here:" + E_Trigger); m_Trigger = new TriggerSingle(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, B_TriggerActionable, OnFireCheck, CheckCanAutoReload); break;
-            case enum_TriggerType.Auto: m_Trigger = new TriggerAuto(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, B_TriggerActionable, OnFireCheck,CheckCanAutoReload);break;
-            case enum_TriggerType.Single:m_Trigger = new TriggerSingle(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, B_TriggerActionable, OnFireCheck, CheckCanAutoReload);break;
-            case enum_TriggerType.Burst:m_Trigger = new TriggerBurst(m_WeaponInfo.m_FireRate,m_WeaponInfo.m_SpecialRate, FireOnce, B_TriggerActionable,OnFireCheck, CheckCanAutoReload);break;
-            case enum_TriggerType.Pull: m_Trigger = new TriggerPull(()=> { Debug.Log("Pull"); },m_WeaponInfo.m_FireRate,m_WeaponInfo.m_SpecialRate, FireOnce, B_TriggerActionable, OnFireCheck, CheckCanAutoReload); break;
-            case enum_TriggerType.Store:m_Trigger = new TriggerStore(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, FireOnce, B_TriggerActionable, OnFireCheck, CheckCanAutoReload);break;
+            default: Debug.LogError("Add More Convertions Here:" + E_Trigger); m_Trigger = new TriggerSingle(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, OnTrigger, B_TriggerActionable, OnFireCheck, CheckCanAutoReload); break;
+            case enum_TriggerType.Auto: m_Trigger = new TriggerAuto(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, OnTrigger, B_TriggerActionable, OnFireCheck,CheckCanAutoReload);break;
+            case enum_TriggerType.Single:m_Trigger = new TriggerSingle(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, OnTrigger, B_TriggerActionable, OnFireCheck, CheckCanAutoReload);break;
+            case enum_TriggerType.Burst:m_Trigger = new TriggerBurst(m_WeaponInfo.m_FireRate,m_WeaponInfo.m_SpecialRate, OnTrigger, B_TriggerActionable,OnFireCheck, CheckCanAutoReload);break;
+            case enum_TriggerType.Pull: m_Trigger = new TriggerPull(()=> { Debug.Log("Pull"); },m_WeaponInfo.m_FireRate,m_WeaponInfo.m_SpecialRate, OnTrigger, B_TriggerActionable, OnFireCheck, CheckCanAutoReload); break;
+            case enum_TriggerType.Store:m_Trigger = new TriggerStore(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, OnTrigger, B_TriggerActionable, OnFireCheck, CheckCanAutoReload);break;
         }
     }
 
@@ -103,7 +103,7 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     }
     
     RaycastHit hit;
-    protected virtual bool FireOnce()
+    protected virtual bool OnTrigger()
     {
         if (!B_HaveAmmoLeft)
             return false;
@@ -120,29 +120,26 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
 
         if (m_WeaponInfo.m_PelletsPerShot == 1)
         {
-            SFXProjectile projectile = GameObjectManager.SpawnEquipment<SFXProjectile>(m_WeaponInfo.m_Index, m_Muzzle.position, spreadDirection);
-            projectile.F_Speed = F_Speed;
-            projectile.B_Penetrate = B_Penetrate;
-            projectile.Play(damageInfo, spreadDirection, endPosition);
+            FireOneBullet(damageInfo, spreadDirection);
         }
         else
         {
             int waveCount = m_WeaponInfo.m_PelletsPerShot;
             float beginAnle = -m_WeaponInfo.m_Spread * (waveCount - 1) / 2f;
             for (int i = 0; i < waveCount; i++)
-            {
-                Vector3 fanDirection = spreadDirection.RotateDirection(Vector3.up, beginAnle + i * m_WeaponInfo.m_Spread);
-                endPosition = m_Attacher.tf_WeaponAim.position + fanDirection * GameConst.I_ProjectileMaxDistance;
-                SFXProjectile projectile = GameObjectManager.SpawnEquipment<SFXProjectile>(m_WeaponInfo.m_Index, m_Muzzle.position, fanDirection);
-                projectile.F_Speed = F_Speed;
-                projectile.B_Penetrate = B_Penetrate;
-                projectile.Play(damageInfo, fanDirection, endPosition);
-            }
+                FireOneBullet(damageInfo, spreadDirection.RotateDirection(Vector3.up, beginAnle + i * m_WeaponInfo.m_Spread));
         }
         GameObjectManager.PlayMuzzle(m_Attacher.m_EntityID, m_Muzzle.position, spreadDirection, I_MuzzleIndex, m_MuzzleClip);
         return true;
     }
     
+    void FireOneBullet(DamageDeliverInfo damage,Vector3 direction)
+    {
+        SFXProjectile projectile = GameObjectManager.SpawnEquipment<SFXProjectile>(m_WeaponInfo.m_Index, m_Muzzle.position, direction);
+        projectile.F_Speed = F_Speed;
+        projectile.B_Penetrate = B_Penetrate;
+        projectile.Play(damage, direction, m_Attacher.tf_Weapon.position+direction* GameConst.I_ProjectileMaxDistance);
+    }
 
     void CheckCanAutoReload()
     {
