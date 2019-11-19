@@ -72,6 +72,7 @@ public class UIC_GameControl : UIControlBase
     }
     void OnBattleFinish()
     {
+        btn_Bigmap.SetActivate(true);
         btn_ActionStorage.SetActivate(true);
     }
 

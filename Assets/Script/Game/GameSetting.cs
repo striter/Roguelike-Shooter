@@ -276,9 +276,9 @@ namespace GameSetting
     public static class UIEnumConvertions
     {
         public static string GetSpriteName(this enum_UI_TileBattleStatus status) => "map_info_battle_" + status.ToString();
-        public static string GetSpriteName(this enum_TileType type)
+        public static string GetUISprite(this SBigmapLevelInfo info)
         {
-            switch (type)
+            switch (info.m_LevelType)
             {
                 default: return "map_tile_type_Invalid";
                 case enum_TileType.Start:
@@ -286,8 +286,25 @@ namespace GameSetting
                 case enum_TileType.BattleTrade:
                 case enum_TileType.CoinsTrade:
                 case enum_TileType.ActionAdjustment:
+                    return "map_tile_type_" + info.m_LevelType.ToString();
                 case enum_TileType.End:
-                    return "map_tile_type_" + type.ToString();
+                    return "map_tile_type_" + (info.m_TileLocking == enum_TileLocking.Unlockable ? info.m_LevelType.ToString() : "Portal");
+            }
+        }
+        public static string GetUIBGColor(this enum_TileLocking type, bool playerAt)
+        {
+            if (playerAt)
+                return "B9FF01FF";
+
+            switch (type)
+            {
+                default:
+                    return "000000FF";
+                case enum_TileLocking.Unlockable:
+                    return "A7A7A764";
+                case enum_TileLocking.Locked:
+                case enum_TileLocking.Unlocked:
+                    return "A7A7A7FF";
             }
         }
         public static string GetIconSprite(this enum_ActionType type)
@@ -363,6 +380,7 @@ namespace GameSetting
                 case enum_UI_TileBattleStatus.HardBattle: return "100%";
             }
         }
+
     }
 
     public static class LocalizationKeyJoint
