@@ -76,7 +76,7 @@ MonoBehaviour:
   F_Tick: 0.4
   I_BuffApplyOnCast: 0
   E_AreaType: 1
-  V4_CastInfo: {x: 3.2, y: 0, z: 0, w: 0}
+  V4_CastInfo: {x: 5.6, y: 0, z: 0, w: 0}
   I_MuzzleIndex: 0
   I_ImpactIndex: 0
   F_DelayDuration: 0
