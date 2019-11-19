@@ -148,9 +148,6 @@ public class UIC_PlayerStatus : UIControlBase
 
     void OnMapControlClick()
     {
-        if (GameManager.Instance.B_ShowChestTips)
-            UIManager.Instance.m_Indicates.ShowTip("UI_Tips_ChestUnOpened", enum_UITipsType.Error);
-
         UIManager.Instance.ShowPage<UI_MapControl>(true);
     }
     #region PlayerData/Interact

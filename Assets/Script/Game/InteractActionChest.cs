@@ -32,19 +32,15 @@ public class InteractActionChest : InteractGameBase
     protected override void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)
     {
         m_Interactor = _interactTarget;
-        UI_ActionAcquire page = UIManager.Instance.ShowPage<UI_ActionAcquire>(true);
-        if (page == null)
-            return;
-        page.Play(m_Actions, OnActionSelectConfirm, m_SelectAmount);
+        SetInteractable(false);
+        m_Animation.Play(true);
+        m_Particles.Stop();
+        UIManager.Instance.ShowPage<UI_ActionAcquire>(true).Play(m_Actions, OnActionSelectConfirm, m_SelectAmount);
     }
     void OnActionSelectConfirm(int index)
     {
         base.OnInteractSuccessful(m_Interactor);
-        m_Interactor.OnInteractCheck(this, false);
-        SetInteractable(false);
         m_Interactor.m_PlayerInfo.AddStoredAction(m_Actions[index]);
-        m_Animation.Play(true);
-        m_Particles.Stop();
     }
     void OnKeyAnim()
     {
