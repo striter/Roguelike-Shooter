@@ -1398,7 +1398,6 @@ namespace GameSetting
                 return;
             UpdateExpireInfo();
             UpdateExpireEffect();
-            OnExpireChange();
             b_expireUpdated = true;
         }
 
@@ -1406,6 +1405,7 @@ namespace GameSetting
         {
             m_Expires.Add(expire);
             EntityInfoChange();
+            OnExpireChange();
         }
         void RefreshExpire(ExpireBase expire)
         {
@@ -1416,6 +1416,7 @@ namespace GameSetting
         {
             m_Expires.Remove(expire);
             EntityInfoChange();
+            OnExpireChange();
         }
         public void AddBuff(int sourceID, SBuff buffInfo)
         {
@@ -2673,7 +2674,7 @@ namespace GameSetting
             m_Grid.ClearPool();
             TCommon.TraversalEnum((enum_RarityLevel rarity) => { m_Levels.Add((int)rarity,new RarityLevel( m_Grid.AddItem((int)rarity))); });
         }
-        public void SetLevel(enum_RarityLevel level)
+        public void SetRarity(enum_RarityLevel level)
         {
             m_Levels.Traversal((int index, RarityLevel rarity) => rarity.SetHighlight(index <= (int)level));
         }
@@ -2695,7 +2696,7 @@ namespace GameSetting
             bool showWeaponAction = action != null;
             m_WeaponActionRarity.transform.SetActivate(showWeaponAction);
             m_WeaponActionName.autoLocalizeText = showWeaponAction ? action.GetNameLocalizeKey() : "UI_WeaponStatus_ActionInvalidName";
-            if (showWeaponAction) m_WeaponActionRarity.SetLevel(action.m_rarity);
+            if (showWeaponAction) m_WeaponActionRarity.SetRarity(action.m_rarity);
         }
     }
     public class UIC_ActionEnergy
