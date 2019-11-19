@@ -19,7 +19,7 @@ public class UIManagerBase : SimpleSingletonMono<UIManagerBase> {
     }
 
     protected T ShowPage<T>(bool useAnim) where T : UIPageBase => UIPageBase.Show<T>(tf_Page,useAnim);
-    protected T ShowControls<T>() where T : UIControlBase => UIControlBase.Show<T>(tf_CameraControl);
+    protected T ShowControls<T>(bool overlayView=false) where T : UIControlBase => UIControlBase.Show<T>(overlayView?tf_OverlayControl:tf_CameraControl);
     protected T ShowMessageBox<T>() where T : UIMessageBoxBase => UIMessageBoxBase.Show<T>(tf_MessageBox);
 
     protected void SetControlViewMode(UIControlBase control, bool overlay) => TCommonUI.ReparentRestretchUI(control.rectTransform, overlay ? tf_OverlayControl : tf_CameraControl );

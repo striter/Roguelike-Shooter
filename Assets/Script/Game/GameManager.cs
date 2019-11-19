@@ -473,6 +473,10 @@ public class GameManager : GameManagerBase
     void WaveStart()
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnWaveStart, m_EntityGenerate.Count,m_CurrentWave);
+
+        bool finalWave = m_CurrentWave + 1==m_EntityGenerate.Count ;
+        UIManager.Instance.m_Indicates.ShowWarning("UI_Indicates_EnermyApproching","UI_Indicates_Wave",(m_CurrentWave+1).ToString(),finalWave?"UI_Indicates_FinalWave":"",3f);
+
         m_EntityGenerating.Clear();
         m_EntityGenerate[m_CurrentWave].m_EntityGenerate.Traversal((enum_CharacterType level, RangeInt range) =>
         {

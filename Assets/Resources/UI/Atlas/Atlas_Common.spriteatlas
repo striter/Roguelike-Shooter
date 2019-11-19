@@ -140,7 +140,7 @@ SpriteAtlas:
   - status_interact_action_bottom
   - icon_coins
   - UI_title_orange_small
-  - display_caution_bottom
+  - indicates_caution_bottom
   - status_map_bottom
   - UI_common_info_title
   - status_ActionEnergy_progress_bottom
@@ -200,7 +200,7 @@ SpriteAtlas:
   - UI_common_angle_gray
   - icon_buff_rank
   - UI_setting_common_bottom
-  - UI_Common_Square
+  - UI_common_square
   - btn_close_strip
   m_Tag: Atlas_Common
   m_IsVariant: 0

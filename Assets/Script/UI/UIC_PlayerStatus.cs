@@ -4,10 +4,15 @@ using UnityEngine.UI;
 using TSpecialClasses;
 public class UIC_PlayerStatus : UIControlBase
 {
+    public AnimationCurve m_DyingCurve;
+
     Transform tf_Container;
     AnimationControlBase m_BattleAnimation;
     EntityCharacterPlayer m_Player;
 
+    bool m_dying;
+    RawImage img_Dying;
+    
     Transform tf_OutBattle;
     Button btn_Bigmap;
     Button btn_ActionStorage;
@@ -43,13 +48,13 @@ public class UIC_PlayerStatus : UIControlBase
     UI_WeaponActionHUD m_WeaponActionHUD;
 
     ValueLerpSeconds m_HealthLerp, m_ArmorLerp, m_EnergyLerp;
-
-    Transform tf_Dying;
     protected override void Init()
     {
         base.Init();
         tf_Container = transform.Find("Container");
         m_BattleAnimation =new AnimationControlBase( tf_Container.GetComponent<Animation>(),false);
+
+        img_Dying = tf_Container.Find("Dying").GetComponent<RawImage>();
 
         tf_OutBattle = tf_Container.Find("OutBattle");
         btn_ActionStorage = tf_OutBattle.Find("ActionStorage").GetComponent<Button>();
@@ -94,8 +99,6 @@ public class UIC_PlayerStatus : UIControlBase
         m_ArmorLerp = new ValueLerpSeconds(0f, 4f, 2f, (float value) => { m_ArmorFill.value = value; });
         m_EnergyLerp = new ValueLerpSeconds(0f, 4f, 2f, (float value) => { m_ActionEnergy.SetValue(value); });
 
-        tf_Dying = tf_Container.Find("Dying");
-
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<WeaponBase>(enum_BC_UIStatus.UI_PlayerAmmoStatus, OnAmmoStatus);
@@ -136,7 +139,8 @@ public class UIC_PlayerStatus : UIControlBase
         btn_ActionStorage.interactable = !inBattle;
         btn_ActionShuffle.interactable = inBattle;
         if (anim) m_BattleAnimation.Play(inBattle);
-        tf_Dying.SetActivate(false);
+        img_Dying.SetActivate(false);
+        m_dying = false;
     }
     void OnBattleStart()=>SetInBattle(true);
     void OnBattleFinish()=> SetInBattle(false);
@@ -145,7 +149,7 @@ public class UIC_PlayerStatus : UIControlBase
     void OnMapControlClick()
     {
         if (GameManager.Instance.B_ShowChestTips)
-            UIManager.Instance.ShowTip("UI_Tips_ChestUnOpened", enum_UITipsType.Error);
+            UIManager.Instance.m_Indicates.ShowTip("UI_Tips_ChestUnOpened", enum_UITipsType.Error);
 
         UIManager.Instance.ShowPage<UI_MapControl>(true);
     }
@@ -158,6 +162,12 @@ public class UIC_PlayerStatus : UIControlBase
         m_EnergyLerp.TickDelta(Time.deltaTime);
         m_HealthLerp.TickDelta(Time.deltaTime);
         m_ArmorLerp.TickDelta(Time.deltaTime);
+
+        if (m_dying)
+        {
+            float dyingValue = 1-Mathf.InverseLerp(UIConst.I_PlayerDyingMinValue, UIConst.I_PlayerDyingMaxValue, m_Player.m_Health.m_CurrentHealth) ;
+            img_Dying.color = TCommon.ColorAlpha(img_Dying.color,dyingValue+m_DyingCurve.Evaluate(Time.time)*.3f);
+        }
     }
 
     void OnCommonStatus(EntityCharacterPlayer _player)
@@ -165,8 +175,14 @@ public class UIC_PlayerStatus : UIControlBase
         if (!m_Player)
             m_Player = _player;
 
+        bool dying = !_player.m_Health.b_IsDead&&_player.m_Health.m_CurrentHealth < UIConst.I_PlayerDyingMaxValue;
+        if(m_dying!= dying)
+        {
+            m_dying = dying;
+            img_Dying.SetActivate(m_dying);
+        }
+
         m_EnergyLerp.ChangeValue(_player.m_PlayerInfo.m_ActionEnergy);
-        tf_Dying.SetActivate(_player.m_Health.F_HealthMaxScale < .2f);
         img_ShuffleFill.fillAmount = _player.m_PlayerInfo.f_shuffleScale;
         rtf_StatusData.SetWorldViewPortAnchor(m_Player.tf_Status.position, CameraController.Instance.m_Camera, Time.deltaTime * 10f);
     }

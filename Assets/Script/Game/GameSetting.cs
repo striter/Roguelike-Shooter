@@ -193,6 +193,8 @@ namespace GameSetting
     public static class UIConst
     {
         public const int I_AmmoCountToSlider = 180;      //Ammo UI,While Clip Above This Will Turn To Be Slider大于此值变成白条
+        public const int I_PlayerDyingMinValue = 10;
+        public const int I_PlayerDyingMaxValue = 50;
 
         public const float F_UIMaxArmor = 100f;
         public const float F_MapAnimateTime = 1.6f;
