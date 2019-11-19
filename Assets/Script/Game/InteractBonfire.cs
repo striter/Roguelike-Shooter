@@ -33,8 +33,7 @@ public class InteractBonfire : InteractGameBase {
         if (!m_Target)
             return;
 
-        OnDistinguish();
-        m_FireDistinguishAnim.SetPlayPosition(false);
+        OnDistinguish(false);
     }
 
     void OnFireLit(EntityCharacterPlayer _Player)       //Fire On,Smoke On,Light On
@@ -49,12 +48,15 @@ public class InteractBonfire : InteractGameBase {
         m_FireLightAnim.Play(true);
     }
 
-    void OnDistinguish()        //Light Low,Fire Off,Start Distinguish
+    void OnDistinguish(bool anim)        //Light Low,Fire Off,Start Distinguish
     {
         m_Target = null;
         
         m_FireParticles.Stop();
-        m_FireDistinguishAnim.Play(true);
+        if(anim)
+            m_FireDistinguishAnim.Play(true);
+        else
+            m_FireDistinguishAnim.SetPlayPosition(false);
         m_FireLightAnim.Stop();
     }
 
@@ -68,7 +70,7 @@ public class InteractBonfire : InteractGameBase {
             m_distinguishCheck -= Time.deltaTime;
             if (m_distinguishCheck < 0)
             {
-                OnDistinguish();
+                OnDistinguish(true);
                 return;
             }
         }
