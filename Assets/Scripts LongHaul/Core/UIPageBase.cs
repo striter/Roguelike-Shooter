@@ -18,6 +18,8 @@ public class UIPageBase : UIComponentBase,ISingleCoroutine
     const float F_AnimDuration = .2f;
     public static T Show<T>(Transform parentTransform,bool useAnim) where T:UIPageBase
     {
+        if (Opening<T>())
+            return null;
         T page = TResources.Instantiate<T>("UI/Pages/" + typeof(T).ToString(), parentTransform);
         page.Init(useAnim);
         m_Pages.Add(page);

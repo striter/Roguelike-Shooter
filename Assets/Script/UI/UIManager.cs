@@ -70,17 +70,13 @@ public class UIManager :UIManagerBase,ISingleCoroutine
     public new T ShowMessageBox<T>() where T : UIMessageBoxBase => base.ShowMessageBox<T>();
     public T ShowPage<T>(bool animate,float bulletTime=1f) where T : UIPageBase
     {
-        if (UIPageBase.Opening<T>())
-            return null;
-
         T page = base.ShowPage<T>(animate);
-        if(page!=null)
-        {
-            m_OverlayBG.SetActivate(true);
-            TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PageOpen, bulletTime);
-            if (bulletTime != 1f)
-                GameManagerBase.SetBulletTime(true, bulletTime);
-        }
+        if (page == null)
+            return null;
+        m_OverlayBG.SetActivate(true);
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PageOpen, bulletTime);
+        if (bulletTime != 1f)
+            GameManagerBase.SetBulletTime(true, bulletTime);
         return page;
     }
 
