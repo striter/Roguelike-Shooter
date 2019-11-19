@@ -30,9 +30,7 @@ public class UIGI_MapControlCell : UIT_GridDefaultItem {
             tf_Container.SetActivate(false);
             return;
         }
-        bool locked = levelInfo.m_TileLocking == enum_TileLocking.Locked;
-        bool passed = levelInfo.m_TileLocking != enum_TileLocking.Unlockable;
-        tf_TileLocked.SetActivate(locked);
+        tf_TileLocked.SetActivate(levelInfo.m_TileLocking == enum_TileLocking.Locked);
         img_Background.color =TCommon.GetHexColor(levelInfo.m_TileLocking.GetUIBGColor(playerAt));
         img_Level.sprite = GameUIManager.Instance.m_InGameSprites[levelInfo.GetUISprite()];
         foreach (enum_TileDirection direction in TTiles.TTiles.m_FourDirections)

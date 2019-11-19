@@ -223,14 +223,17 @@ public class UIC_PlayerStatus : UIControlBase
 
     void OnExpireStatus(PlayerInfoManager expireInfo)
     {
-        return;
         m_ExpireGrid.ClearGrid();
         for (int i = 0; i < expireInfo.m_Expires.Count; i++)
         {
-            if (expireInfo.m_Expires[i].m_ExpireType == enum_ExpireType.Action&& (expireInfo.m_Expires[i] as ActionBase).m_ActionType == enum_ActionType.WeaponPerk)
+            if (expireInfo.m_Expires[i].m_ExpireType != enum_ExpireType.Action)
+                continue;
+            ActionBase action = (expireInfo.m_Expires[i] as ActionBase);
+
+            if (action .m_ActionType == enum_ActionType.WeaponPerk)
                     continue;
 
-            m_ExpireGrid.AddItem(i).SetInfo(expireInfo.m_Expires[i]);
+            m_ExpireGrid.AddItem(i).SetInfo(action);
         }
     }
 }
