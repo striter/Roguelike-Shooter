@@ -12,16 +12,15 @@ public class InteractActionChest : InteractGameBase
     AnimationControlBase m_Animation;
     List<ActionBase> m_Actions;
     int m_SelectAmount;
-    EntityCharacterPlayer m_Interactor;
     TSpecialClasses.ParticleControlBase m_Particles;
-    float m_playerCanGetThisChestInALongDistanceWithoutAnyInteractCheck = 0;
     public override void OnPoolItemInit(enum_Interaction identity)
     {
         base.OnPoolItemInit(identity);
         m_Animation = new AnimationControlBase(GetComponentInChildren<Animation>());
         m_Particles = new ParticleControlBase(transform);
     }
-    public void Play(List<ActionBase> _actions, int selectAmount, bool _startChest,EntityCharacterPlayer interactor,float forceInteractCheck=-1f)
+
+    public void Play(List<ActionBase> _actions, int selectAmount, bool _startChest)
     {
         base.Play();
         m_Actions = _actions;
@@ -29,32 +28,14 @@ public class InteractActionChest : InteractGameBase
         m_StartChest = _startChest;
         m_Animation.SetPlayPosition(true);
         m_Particles.Play();
-        m_Interactor = interactor;
-        m_playerCanGetThisChestInALongDistanceWithoutAnyInteractCheck = forceInteractCheck;
-    }
-
-    private void Update()
-    {
-        if (m_playerCanGetThisChestInALongDistanceWithoutAnyInteractCheck < 0)
-            return;
-
-        m_playerCanGetThisChestInALongDistanceWithoutAnyInteractCheck -= Time.deltaTime;
-        if (m_playerCanGetThisChestInALongDistanceWithoutAnyInteractCheck < 0)
-            OnInteractSuccessful(m_Interactor);
     }
 
     protected override void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)
     {
-        m_Interactor = _interactTarget;
         SetInteractable(false);
         m_Animation.Play(true);
         m_Particles.Stop();
-        GameUIManager.Instance.ShowGameControlPage<UI_ActionAcquire>(true).Play(m_Actions, OnActionSelectConfirm, m_SelectAmount);
-    }
-    void OnActionSelectConfirm(int index)
-    {
-        base.OnInteractSuccessful(m_Interactor);
-        m_Interactor.m_PlayerInfo.AddStoredAction(m_Actions[index]);
+        GameUIManager.Instance.ShowGameControlPage<UI_ActionAcquire>(true).Play(m_Actions,_interactTarget, m_SelectAmount);
     }
     void OnKeyAnim()
     {

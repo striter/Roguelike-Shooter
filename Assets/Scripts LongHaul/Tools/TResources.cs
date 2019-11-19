@@ -143,7 +143,6 @@ public class TResources
         return target;
     }
     public static InteractGameBase GetInteractPortal(enum_Style portalStyle) => Instantiate<InteractGameBase>( ConstPath.S_InteractPortal + portalStyle.ToString());
-    public static InteractGameBase GetInteractActionChest(enum_StageLevel stageLevel) => Instantiate<InteractGameBase>(ConstPath.S_InteractActionChest + stageLevel.ToString());
     public static InteractGameBase GetInteract(enum_Interaction type) => Instantiate<InteractGameBase>(ConstPath.S_InteractCommon + type);
     #endregion
     #region Audio

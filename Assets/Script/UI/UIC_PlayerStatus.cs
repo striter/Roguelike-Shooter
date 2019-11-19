@@ -99,16 +99,10 @@ public class UIC_PlayerStatus : UIControlBase
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
     }
 
-    public UIC_PlayerStatus SetInGame(bool inGame)
-    {
-        tf_ActionControl.SetActivate(inGame);
-        return this;
-    }
-
     void SetInBattle(bool inBattle,bool anim=true)
     {
         m_ActionGrid.ClearGrid();
-        btn_ActionShuffle.interactable = inBattle;
+        tf_ActionControl.SetActivate(inBattle);
         img_Dying.SetActivate(false);
         m_dying = false;
     }

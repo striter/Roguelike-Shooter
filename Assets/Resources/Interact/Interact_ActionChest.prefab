@@ -41,7 +41,7 @@ GameObject:
   - component: {fileID: 65856087535387046}
   - component: {fileID: 114632559005552664}
   m_Layer: 0
-  m_Name: Interact_ActionChestStart
+  m_Name: Interact_ActionChest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -364,6 +364,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8135cd8e85b257749a2492bcdd249a8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  AC_OnPlay: {fileID: 0}
+  AC_OnInteract: {fileID: 0}
+  I_MuzzleOnInteract: 0
 --- !u!114 &114632559005552664
 MonoBehaviour:
   m_ObjectHideFlags: 1

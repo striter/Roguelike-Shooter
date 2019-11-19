@@ -31,7 +31,6 @@ public class UIC_GameControl : UIControlBase
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<WeaponBase>(enum_BC_UIStatus.UI_PlayerWeaponStatus, OnWeaponStatus);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
     }
 
     protected override void OnDestroy()
@@ -40,22 +39,11 @@ public class UIC_GameControl : UIControlBase
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<WeaponBase>(enum_BC_UIStatus.UI_PlayerWeaponStatus, OnWeaponStatus);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
     }
 
     void OnMapControlClick() => UIManager.Instance.ShowPage<UI_MapControl>(true);
-    void OnActionStorageClick()
-    {
-        if (UIPageBase.Opening<UI_ActionPack>() || UIPageBase.Opening<UI_WeaponStatus>())
-            return;
-        UIManager.Instance.ShowPage<UI_ActionPack>(true).Show(m_Player.m_PlayerInfo);
-    }
-    void OnWeaponDetailClick()
-    {
-        if (UIPageBase.Opening<UI_ActionPack>() || UIPageBase.Opening<UI_WeaponStatus>())
-            return;
-        UIManager.Instance.ShowPage<UI_WeaponStatus>(true, 0f).SetInfo(m_Player.m_WeaponCurrent);
-    }
+    void OnActionStorageClick()=> UIManager.Instance.ShowPage<UI_ActionPack>(true).Show(m_Player.m_PlayerInfo);
+    void OnWeaponDetailClick()=>  UIManager.Instance.ShowPage<UI_WeaponStatus>(true, 0f).SetInfo(m_Player.m_WeaponCurrent);
 
     void OnCommonStatus(EntityCharacterPlayer _player) => m_Player = _player;
     public UIC_GameControl SetInGame(bool inGame)
@@ -67,15 +55,13 @@ public class UIC_GameControl : UIControlBase
 
     void OnBattleStart()
     {
-        btn_Bigmap.SetActivate(false);
         btn_ActionStorage.SetActivate(false);
+        ShowBigmapBtn(false);
     }
-    void OnBattleFinish()
+    public void ShowActionStorage(bool active)
     {
-        btn_Bigmap.SetActivate(true);
-        btn_ActionStorage.SetActivate(true);
+        btn_ActionStorage.SetActivate(active);
     }
-
     public void ShowBigmapBtn(bool active)
     {
         btn_Bigmap.SetActivate(active);

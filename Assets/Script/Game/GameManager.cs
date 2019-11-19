@@ -234,8 +234,8 @@ public class GameManager : GameManagerBase
                 {
                     GameObjectManager.SpawnInteract<InteractBonfire>(enum_Interaction.Bonfire,Vector3.zero, interactTrans).Play(m_LocalPlayer);
 
-                    InteractActionChest chest = GameObjectManager.SpawnInteract<InteractActionChest>(enum_Interaction.ActionChestStart, Vector3.left * 3, interactTrans);
-                    chest.Play(m_GameLevel.GetRandomStartActions(3),1,true,m_LocalPlayer);
+                    InteractActionChest chest = GameObjectManager.SpawnInteract<InteractActionChest>(enum_Interaction.ActionChest, Vector3.left * 3, interactTrans);
+                    chest.Play(m_GameLevel.GetRandomStartActions(3),1,true);
                     
                     GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, Vector3.right * 3, interactTrans).Play(GameObjectManager.SpawnWeapon(TCommon.RandomEnumValues<enum_PlayerWeapon>(m_GameLevel.m_GameSeed), ActionDataManager.CreateRandomWeaponPerk(m_GameLevel.m_GameStage.GetStartWeaponPerkRarity(), m_GameLevel.m_GameSeed)));
                 }
@@ -280,18 +280,15 @@ public class GameManager : GameManagerBase
 
     void SpawnRewards(Vector3 rewardPos)
     {
-        switch (m_GameLevel.m_LevelType)
+        if (m_GameLevel.m_LevelType == enum_TileType.End || m_GameLevel.m_LevelType == enum_TileType.Battle)
         {
-            case enum_TileType.End:
-                GameObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Portal, LevelManager.NavMeshPosition(rewardPos, false), LevelManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(OnStageFinished,m_GameLevel.m_GameStage);
-                break;
-            case enum_TileType.Battle:
-                {
-                    enum_RarityLevel level = m_GameLevel.m_actionGenerate.GetActionRarityLevel(m_GameLevel.m_GameSeed);
-                    InteractActionChest chest = GameObjectManager.SpawnInteract<InteractActionChest>(enum_Interaction.ActionChest, LevelManager.NavMeshPosition(rewardPos, false), LevelManager.Instance.m_currentLevel.m_Level.tf_Interact);
-                    chest.Play(ActionDataManager.CreateRandomDropPlayerAction(2, level, m_GameLevel.m_GameSeed), 1,false,m_LocalPlayer,GameConst.F_ActionChestForceInteractDuration);
-                }
-                break;
+            enum_RarityLevel level = m_GameLevel.m_actionGenerate.GetActionRarityLevel(m_GameLevel.m_GameSeed);
+            GameUIManager.Instance.ShowGameControlPage<UI_ActionAcquire>(true).Play(ActionDataManager.CreateRandomDropPlayerAction(2, level, m_GameLevel.m_GameSeed), m_LocalPlayer, 1);
+        }
+
+        if (m_GameLevel.m_LevelType== enum_TileType.End)
+        {
+            GameObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Portal, LevelManager.NavMeshPosition(rewardPos, false), LevelManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(OnStageFinished, m_GameLevel.m_GameStage);
         }
     }
 
@@ -653,7 +650,7 @@ public class GameLevelManager
                     return true;
                 }
                 return false;
-            });
+            },m_GameSeed);
         }
         return targetActions;
     }
@@ -717,8 +714,6 @@ public static class GameObjectManager
     }
     static void RegisterInGameInteractions(enum_Style portalStyle, enum_StageLevel stageIndex)
     {
-        ObjectPoolManager<enum_Interaction, InteractGameBase>.Register(enum_Interaction.ActionChest, TResources.GetInteractActionChest(stageIndex), 1);
-
         TCommon.TraversalEnum((enum_Interaction enumValue) =>
         {
             if (enumValue > enum_Interaction.GameBegin&&enumValue< enum_Interaction.GameEnd)

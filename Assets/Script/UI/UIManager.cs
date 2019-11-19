@@ -30,7 +30,7 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         manager.InitGameControls(inGame);
     }
 
-    protected virtual void Init()
+    protected override void Init()
     {
         base.Init();
         Instance = this;
@@ -48,14 +48,13 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         m_Effect = m_Camera.GetComponent<CameraEffectManager>();
         m_Blur = m_Effect.GetOrAddCameraEffect<CB_GenerateOverlayUIGrabBlurTexture>();
         m_Blur.SetEffect(1, 2f, 2);
-
     }
 
     protected virtual void InitGameControls(bool inGame)
     {
         m_Indicates = ShowControls<UIC_Indicates>(true);
         m_GameControl = ShowControls<UIC_GameControl>().SetInGame(inGame);
-        m_PlayerStatus = ShowControls<UIC_PlayerStatus>().SetInGame(inGame);
+        m_PlayerStatus = ShowControls<UIC_PlayerStatus>();
         m_CharacterControl = ShowControls<UIC_CharacterControl>();
         ShowControls<UIC_PlayerInteract>();
     }

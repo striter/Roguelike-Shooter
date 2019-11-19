@@ -7,7 +7,7 @@ public class UIManagerBase : SimpleSingletonMono<UIManagerBase> {
 
     protected Canvas cvs_Overlay, cvs_Camera;
     private RectTransform tf_OverlayPage,tf_CameraPage,tf_OverlayControl,tf_CameraControl,tf_MessageBox;
-    protected void Init()
+    protected virtual void Init()
     {
         cvs_Overlay = transform.Find("Overlay").GetComponent<Canvas>();
         cvs_Camera = transform.Find("Camera").GetComponent<Canvas>();
@@ -29,7 +29,7 @@ public class UIManagerBase : SimpleSingletonMono<UIManagerBase> {
         UIMessageBoxBase.OnMessageBoxExit = null;
     }
 
-    void AdjustPageSibling()
+    protected virtual void OnAdjustPageSibling()
     {
         bool pageShow = UIMessageBoxBase.m_MessageBox == null;
         for (int i = 0; i < UIPageBase.m_Pages.Count; i++)
@@ -39,18 +39,18 @@ public class UIManagerBase : SimpleSingletonMono<UIManagerBase> {
         }
     }
 
-    protected virtual void OnPageExit()=> AdjustPageSibling();
-    protected virtual void OnMessageBoxExit() => AdjustPageSibling();
+    protected virtual void OnPageExit()=> OnAdjustPageSibling();
+    protected virtual void OnMessageBoxExit() => OnAdjustPageSibling();
     protected T ShowPage<T>(bool useAnim) where T : UIPageBase
     {
         T page = UIPageBase.Show<T>(tf_OverlayPage, useAnim);
-        AdjustPageSibling();
+        OnAdjustPageSibling();
         return page ;
     }
     protected T ShowMessageBox<T>() where T : UIMessageBoxBase
     {
         T messageBox = UIMessageBoxBase.Show<T>(tf_MessageBox);
-        AdjustPageSibling();
+        OnAdjustPageSibling();
         return messageBox;
     }
 
