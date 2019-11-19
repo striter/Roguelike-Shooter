@@ -23,9 +23,6 @@ public class UI_ActionAcquire : UIPageBase {
         m_Grid.ClearGrid();
         for (int i = 0; i < actions.Count; i++)
             m_Grid.AddItem(i).SetInfo(actions[i],OnItemSelected,true);
-
-        GameUIManager.Instance.m_GameControl.ShowBigmapBtn(false);
-        GameUIManager.Instance.m_GameControl.ShowActionStorage(true);
     }
 
     void OnItemSelected(int index)
@@ -48,7 +45,7 @@ public class UI_ActionAcquire : UIPageBase {
     protected override void OnCancelBtnClick()=>GameUIManager.Instance.ShowMessageBox<UIM_Intro>().Play("UI_Title_ExitActionAcquire", "UI_Intro_ExitActionAcquire", "UI_Option_ExitActionAcquireConfirm", OnCancel);
     void OnCancel()
     {
-        GameUIManager.Instance.m_GameControl.ShowBigmapBtn(true);
+        GameUIManager.Instance.m_GameControl.ShowMapBtn(true);
         base.OnCancelBtnClick();
     }
 }
