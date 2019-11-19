@@ -30,26 +30,11 @@ public class UIGI_MapControlCell : UIT_GridDefaultItem {
             tf_Container.SetActivate(false);
             return;
         }
-        tf_TileLocked.SetActivate(levelInfo.m_TileLocking== enum_TileLocking.Locked);
-        img_Background.color =TCommon.GetHexColor( GetBackgroundColor(levelInfo.m_TileLocking,playerAt));
-        img_Level.sprite = GameUIManager.Instance.m_InGameSprites[levelInfo.m_LevelType.GetSpriteName()];
+        tf_TileLocked.SetActivate(levelInfo.m_TileLocking == enum_TileLocking.Locked);
+        img_Background.color =TCommon.GetHexColor(levelInfo.m_TileLocking.GetUIBGColor(playerAt));
+        img_Level.sprite = GameUIManager.Instance.m_InGameSprites[levelInfo.GetUISprite()];
         foreach (enum_TileDirection direction in TTiles.TTiles.m_FourDirections)
             dic_TileConnections[direction].SetActivate(connectionActivate[direction]);
     }
-    string GetBackgroundColor(enum_TileLocking type,bool playerAt)
-    {
-        if (playerAt)
-            return "B9FF01FF";
 
-        switch (type)
-        {
-            default:
-                return "000000FF";
-            case enum_TileLocking.Unlockable:
-                return "A7A7A764";
-            case enum_TileLocking.Locked:
-            case enum_TileLocking.Unlocked:
-                return "A7A7A7FF";
-        }
-    }
 }

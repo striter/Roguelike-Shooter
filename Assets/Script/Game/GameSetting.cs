@@ -50,8 +50,8 @@ namespace GameSetting
 
         public const int I_EnermyCountWaveFinish = 0;       //When Total Enermy Count Reaches This Amount,Wave Finish
         public const int I_EnermySpawnDelay = 4;        //Enermy Spawn Delay Time 
-
-        public const float F_PickupAcceleration = 8f;
+        
+        public const float F_PickupAcceleration = 800f; //拾取物的飞行加速速度
         public const int I_HealthPickupAmount = 25;
         public const int I_ArmorPickupAmount = 25;
         public const int I_HealthTradeAmount = 50;
@@ -275,9 +275,9 @@ namespace GameSetting
     public static class UIEnumConvertions
     {
         public static string GetSpriteName(this enum_UI_TileBattleStatus status) => "map_info_battle_" + status.ToString();
-        public static string GetSpriteName(this enum_TileType type)
+        public static string GetUISprite(this SBigmapLevelInfo info)
         {
-            switch (type)
+            switch (info.m_LevelType)
             {
                 default: return "map_tile_type_Invalid";
                 case enum_TileType.Start:
@@ -285,8 +285,25 @@ namespace GameSetting
                 case enum_TileType.BattleTrade:
                 case enum_TileType.CoinsTrade:
                 case enum_TileType.ActionAdjustment:
+                    return "map_tile_type_" + info.m_LevelType.ToString();
                 case enum_TileType.End:
-                    return "map_tile_type_" + type.ToString();
+                    return "map_tile_type_" + (info.m_TileLocking == enum_TileLocking.Unlockable ? info.m_LevelType.ToString() : "Portal");
+            }
+        }
+        public static string GetUIBGColor(this enum_TileLocking type, bool playerAt)
+        {
+            if (playerAt)
+                return "B9FF01FF";
+
+            switch (type)
+            {
+                default:
+                    return "000000FF";
+                case enum_TileLocking.Unlockable:
+                    return "A7A7A764";
+                case enum_TileLocking.Locked:
+                case enum_TileLocking.Unlocked:
+                    return "A7A7A7FF";
             }
         }
         public static string GetIconSprite(this enum_ActionType type)
@@ -362,6 +379,7 @@ namespace GameSetting
                 case enum_UI_TileBattleStatus.HardBattle: return "100%";
             }
         }
+
     }
 
     public static class LocalizationKeyJoint
@@ -481,8 +499,8 @@ namespace GameSetting
 
     public enum enum_CharacterType { Invalid = -1, Fighter = 1, Shooter_Rookie = 2, Shooter_Veteran = 3, AOECaster = 4, Elite = 5, SubHidden = 99 }
 
-    public enum enum_Interaction { Invalid = -1, ActionChest ,
-        GameBegin,Bonfire, ActionChestStart, ContainerTrade, ContainerBattle, PickupCoin, PickupHealth,PickupHealthPack, PickupArmor, PickupAction, Weapon,PerkUpgrade, ActionAdjustment, Portal, GameEnd,
+    public enum enum_Interaction { Invalid = -1,
+        GameBegin,Bonfire, ActionChest, ContainerTrade, ContainerBattle, PickupCoin, PickupHealth,PickupHealthPack, PickupArmor, PickupAction, Weapon,PerkUpgrade, ActionAdjustment, Portal, GameEnd,
         CampBegin,CampStage, CampDifficult,CampFarm,CampAction,CampEnd, }
 
     public enum enum_TriggerType { Invalid = -1, Single = 1, Auto = 2, Burst = 3, Pull = 4, Store = 5, }
@@ -1379,7 +1397,6 @@ namespace GameSetting
                 return;
             UpdateExpireInfo();
             UpdateExpireEffect();
-            OnExpireChange();
             b_expireUpdated = true;
         }
 
@@ -1387,6 +1404,7 @@ namespace GameSetting
         {
             m_Expires.Add(expire);
             EntityInfoChange();
+            OnExpireChange();
         }
         void RefreshExpire(ExpireBase expire)
         {
@@ -1397,6 +1415,7 @@ namespace GameSetting
         {
             m_Expires.Remove(expire);
             EntityInfoChange();
+            OnExpireChange();
         }
         public void AddBuff(int sourceID, SBuff buffInfo)
         {
@@ -1893,6 +1912,7 @@ namespace GameSetting
         private Action<ExpireBase> OnExpired;
         public float m_ExpireDuration { get; private set; } = 0;
         public float f_expireCheck { get; private set; }
+        public float f_expireScale => f_expireCheck / m_ExpireDuration;
         bool forceExpire = false;
         protected void OnActivate(float _ExpireDuration, Action<ExpireBase> _OnExpired)
         {
@@ -2654,7 +2674,7 @@ namespace GameSetting
             m_Grid.ClearPool();
             TCommon.TraversalEnum((enum_RarityLevel rarity) => { m_Levels.Add((int)rarity,new RarityLevel( m_Grid.AddItem((int)rarity))); });
         }
-        public void SetLevel(enum_RarityLevel level)
+        public void SetRarity(enum_RarityLevel level)
         {
             m_Levels.Traversal((int index, RarityLevel rarity) => rarity.SetHighlight(index <= (int)level));
         }
@@ -2676,7 +2696,7 @@ namespace GameSetting
             bool showWeaponAction = action != null;
             m_WeaponActionRarity.transform.SetActivate(showWeaponAction);
             m_WeaponActionName.autoLocalizeText = showWeaponAction ? action.GetNameLocalizeKey() : "UI_WeaponStatus_ActionInvalidName";
-            if (showWeaponAction) m_WeaponActionRarity.SetLevel(action.m_rarity);
+            if (showWeaponAction) m_WeaponActionRarity.SetRarity(action.m_rarity);
         }
     }
     public class UIC_ActionEnergy

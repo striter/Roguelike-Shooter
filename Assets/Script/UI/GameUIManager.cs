@@ -44,11 +44,15 @@ public class GameUIManager : UIManager {
     protected override void OnPageExit()
     {
         base.OnPageExit();
-        if (UIPageBase.I_PageCount > 0)
+        if (!m_OverlayControl||UIPageBase.I_PageCount != 0)
             return;
-
-        if (m_OverlayControl)
-            SetControlViewMode(m_OverlayControl, false);
+        SetControlViewMode(m_OverlayControl, false);
         m_OverlayControl = null;
+    }
+    protected override void OnAdjustPageSibling()
+    {
+        base.OnAdjustPageSibling();
+        if(m_OverlayControl)
+            SetControlViewMode(m_OverlayControl, UIPageBase.I_PageCount == 1);
     }
 }

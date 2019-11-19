@@ -300,12 +300,12 @@ MonoBehaviour:
   E_CastType: 2
   E_CastTarget: 1
   B_CastForward: 0
-  F_Damage: 10
+  F_Damage: 15
   I_TickCount: 10
   F_Tick: 0.5
   I_BuffApplyOnCast: 0
   E_AreaType: 3
-  V4_CastInfo: {x: 0.2, y: 0, z: 25, w: 0}
+  V4_CastInfo: {x: 0.4, y: 0, z: 25, w: 0}
   I_MuzzleIndex: 0
   I_ImpactIndex: 0
   F_DelayDuration: 0

@@ -79,7 +79,7 @@ public class UI_MapControl : UIPageBase {
         m_TileTypeAnim.Stop();
         m_TileTypeAnim.Play(PlayMode.StopAll);
         img_TileTypeCurrent.sprite = img_TileTypeSelect.sprite;
-        img_TileTypeSelect.sprite = GameUIManager.Instance.m_InGameSprites[tile.m_TileInfo.m_LevelType.GetSpriteName()];
+        img_TileTypeSelect.sprite = GameUIManager.Instance.m_InGameSprites[tile.m_TileInfo.GetUISprite()];
         img_TileBattleStatus1.sprite = GameUIManager.Instance.m_InGameSprites[battleStatus.GetSpriteName()];
         img_TileBattleStatus2.sprite = img_TileBattleStatus1.sprite;
 

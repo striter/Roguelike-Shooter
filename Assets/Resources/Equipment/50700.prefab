@@ -269,12 +269,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   E_CastType: 1
   E_CastTarget: 2
+  B_CastForward: 0
   F_Damage: 40
   I_TickCount: 1
   F_Tick: 0.5
   I_BuffApplyOnCast: 0
   E_AreaType: 1
-  V4_CastInfo: {x: 4, y: 0, z: 0, w: 0}
+  V4_CastInfo: {x: 4.4, y: 0, z: 0, w: 0}
   I_MuzzleIndex: 0
   I_ImpactIndex: 0
   F_DelayDuration: 0

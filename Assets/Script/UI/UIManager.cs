@@ -30,7 +30,7 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         manager.InitGameControls(inGame);
     }
 
-    protected virtual void Init()
+    protected override void Init()
     {
         base.Init();
         Instance = this;
@@ -48,7 +48,6 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         m_Effect = m_Camera.GetComponent<CameraEffectManager>();
         m_Blur = m_Effect.GetOrAddCameraEffect<CB_GenerateOverlayUIGrabBlurTexture>();
         m_Blur.SetEffect(1, 2f, 2);
-
     }
 
     protected virtual void InitGameControls(bool inGame)
@@ -65,7 +64,6 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         base.OnDestroy();
         Instance = null;
         this.StopAllCoroutines();
-        UIPageBase.OnPageExit = null;
     }
 
 
@@ -73,13 +71,12 @@ public class UIManager :UIManagerBase,ISingleCoroutine
     public T ShowPage<T>(bool animate,float bulletTime=1f) where T : UIPageBase
     {
         T page = base.ShowPage<T>(animate);
-        if(page!=null)
-        {
-            m_OverlayBG.SetActivate(true);
-            TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PageOpen, bulletTime);
-            if (bulletTime != 1f)
-                GameManagerBase.SetBulletTime(true, bulletTime);
-        }
+        if (page == null)
+            return null;
+        m_OverlayBG.SetActivate(true);
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PageOpen, bulletTime);
+        if (bulletTime != 1f)
+            GameManagerBase.SetBulletTime(true, bulletTime);
         return page;
     }
 

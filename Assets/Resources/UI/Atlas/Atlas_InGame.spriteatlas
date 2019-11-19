@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 081334a023db2704db167d2dfc323270, type: 3}
-    totalSpriteSurfaceArea: 2031346
+    totalSpriteSurfaceArea: 2071146
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -45,11 +45,12 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 9962f76be756a5c4e8bb00c1c68468fa, type: 3}
   - {fileID: 21300000, guid: fa0122c7e5ddb1d4399a011784eede79, type: 3}
   - {fileID: 21300000, guid: a0edf0727dbc54049ad1b24763bf40b5, type: 3}
+  - {fileID: 21300000, guid: 12c8606a8595d3c4296a7893b563be4e, type: 3}
   - {fileID: 21300000, guid: 3ed3568eaf02c50459c3a004bcf900aa, type: 3}
   - {fileID: 21300000, guid: 48ca20a7917b66e4785597c22ec56a6a, type: 3}
   - {fileID: 21300000, guid: a9ee0bc7c49b98d41884f7111e26d74e, type: 3}
   - {fileID: 21300000, guid: e2aff809fde7b7d469149d996d359e8c, type: 3}
-  - {fileID: 21300000, guid: cee4d3d1a3e283c489ee1fed47d86dcc, type: 3}
+  - {fileID: 21300000, guid: c6b65ee3d246fd345b9ccd328a569d2e, type: 3}
   - {fileID: 21300000, guid: 4061cdf336cc1794892f6f52c932257b, type: 3}
   - {fileID: 21300000, guid: ae9b9982bf29a724aa7f0d31b0f2e9ee, type: 3}
   - {fileID: 21300000, guid: 0f87968bd8c67f3489af4e41310e5a76, type: 3}
@@ -83,6 +84,7 @@ SpriteAtlas:
   - backpack_bottom
   - result_Ruler
   - map_tile_type_End
+  - map_tile_type_Portal
   - map_tile_type_Battle
   - map_tile_type_Start
   - map_tile_type_CoinsTrade

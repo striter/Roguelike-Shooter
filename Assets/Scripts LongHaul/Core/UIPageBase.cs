@@ -14,10 +14,12 @@ public class UIPageBase : UIComponentBase,ISingleCoroutine
     protected Action<bool> OnInteractFinished;
     protected float f_bgAlphaStart;
     public float m_BaseScale = 1f;
-    bool b_useAnim;
+    bool m_Animating;
     const float F_AnimDuration = .2f;
     public static T Show<T>(Transform parentTransform,bool useAnim) where T:UIPageBase
     {
+        if (Opening<T>())
+            return null;
         T page = TResources.Instantiate<T>("UI/Pages/" + typeof(T).ToString(), parentTransform);
         page.Init(useAnim);
         m_Pages.Add(page);
@@ -28,7 +30,7 @@ public class UIPageBase : UIComponentBase,ISingleCoroutine
     protected void Init(bool useAnim)
     {
         Init();
-        b_useAnim = useAnim;
+        m_Animating = useAnim;
         if (!useAnim)
         {
             tf_Container.localScale = Vector2.one * m_BaseScale;
@@ -69,7 +71,7 @@ public class UIPageBase : UIComponentBase,ISingleCoroutine
     {
         if (btn_ContainerCancel) btn_ContainerCancel.enabled = false;
         if (btn_WholeCancel) btn_WholeCancel.enabled = false;
-        if (!b_useAnim)
+        if (!m_Animating)
         {
             OnHideFinished();
             return;
@@ -89,7 +91,7 @@ public class UIPageBase : UIComponentBase,ISingleCoroutine
     protected virtual void OnDestroy()
     {
         m_Pages.Remove(this);
-        OnPageExit();
         this.StopAllSingleCoroutines();
+        OnPageExit?.Invoke();
     }
 }

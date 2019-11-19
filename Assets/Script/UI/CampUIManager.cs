@@ -13,7 +13,7 @@ public class CampUIManager : UIManager {
     protected override void InitGameControls(bool inGame)
     {
         base.InitGameControls(inGame);
-        ShowControls<UIC_CurrencyStatus>();
+        ShowControls<UIC_CurrencyStatus>(false);
     }
     protected override void OnDestroy()
     {

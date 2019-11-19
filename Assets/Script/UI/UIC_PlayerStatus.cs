@@ -12,12 +12,14 @@ public class UIC_PlayerStatus : UIControlBase
     bool m_dying;
     RawImage img_Dying;
 
-    Transform tf_ActionControl;
+    Transform tf_ExtraControl;
+    TSpecialClasses.AnimationControlBase m_ControlAnimation;
     UIC_ActionEnergy m_ActionEnergy;
     Button  btn_ActionShuffle;
     Image img_ShuffleFill;
     UIT_GridControllerGridItem<UIGI_ActionItemHold> m_ActionGrid;
-
+    Button btn_map;
+    
     Transform tf_ExpireData;
     UIT_GridControllerGridItem<UIGI_ExpireInfoItem> m_ExpireGrid;
 
@@ -45,12 +47,15 @@ public class UIC_PlayerStatus : UIControlBase
 
         img_Dying = tf_Container.Find("Dying").GetComponent<RawImage>();
 
-        tf_ActionControl = tf_Container.Find("ActionControl");
-        m_ActionEnergy = new UIC_ActionEnergy(tf_ActionControl.Find("ActionEnergy"));
-        m_ActionGrid = new UIT_GridControllerGridItem<UIGI_ActionItemHold>(tf_ActionControl.Find("ActionGrid"));
-        btn_ActionShuffle = tf_ActionControl.Find("ActionShuffle").GetComponent<Button>();
+        tf_ExtraControl = tf_Container.Find("ExtraControl");
+        m_ControlAnimation = new AnimationControlBase(tf_ExtraControl.GetComponent<Animation>());
+        m_ActionEnergy = new UIC_ActionEnergy(tf_ExtraControl.Find("ActionEnergy"));
+        m_ActionGrid = new UIT_GridControllerGridItem<UIGI_ActionItemHold>(tf_ExtraControl.Find("ActionGrid"));
+        btn_ActionShuffle = tf_ExtraControl.Find("ActionShuffle").GetComponent<Button>();
         btn_ActionShuffle.onClick.AddListener(OnActionShuffleClick);
         img_ShuffleFill = btn_ActionShuffle.transform.Find("ShuffleFill").GetComponent<Image>();
+        btn_map = tf_ExtraControl.Find("Map").GetComponent<Button>();
+        btn_map.onClick.AddListener(OnMapControlClick);
 
         rtf_StatusData = tf_Container.Find("StatusData").GetComponent<RectTransform>();
         tf_AmmoData = rtf_StatusData.Find("Container/AmmoData");
@@ -101,19 +106,24 @@ public class UIC_PlayerStatus : UIControlBase
 
     public UIC_PlayerStatus SetInGame(bool inGame)
     {
-        tf_ActionControl.SetActivate(inGame);
+        tf_ExtraControl.SetActivate(inGame);
         return this;
     }
 
-    void SetInBattle(bool inBattle,bool anim=true)
+    void OnBattleStart() => SetInBattle(true, true);
+    void OnBattleFinish() => SetInBattle(false, true);
+
+    void SetInBattle(bool inBattle,bool animate)
     {
         m_ActionGrid.ClearGrid();
+        if (animate) m_ControlAnimation.Play(inBattle);
+        else m_ControlAnimation.SetPlayPosition(inBattle);
         btn_ActionShuffle.interactable = inBattle;
+        btn_map.interactable = !inBattle;
+
         img_Dying.SetActivate(false);
         m_dying = false;
     }
-    void OnBattleStart()=>SetInBattle(true);
-    void OnBattleFinish()=> SetInBattle(false);
     
     private void Update()
     {
@@ -198,6 +208,8 @@ public class UIC_PlayerStatus : UIControlBase
         }
     }
 
+    void OnMapControlClick() => UIManager.Instance.ShowPage<UI_MapControl>(true);
+
     void OnActionStatus(PlayerInfoManager playerInfo)
     {
         m_ActionGrid.ClearGrid();
@@ -205,31 +217,23 @@ public class UIC_PlayerStatus : UIControlBase
             m_ActionGrid.AddItem(i).SetInfo(playerInfo,playerInfo.m_BattleActionPicking[i],OnActionClick, OnActionPressDuration);
     }
 
-    void OnActionClick(int index)
-    {
-        m_Player.m_PlayerInfo.TryUseHoldingAction(index);
-    }
-
-    void OnActionPressDuration()
-    {
-        UIManager.Instance.ShowPage<UI_ActionBattle>(false,0f).Show(m_Player.m_PlayerInfo) ;
-    }
-
-    void OnActionShuffleClick()
-    {
-        m_Player.m_PlayerInfo.TryShuffle();
-    }
+    void OnActionClick(int index)=> m_Player.m_PlayerInfo.TryUseHoldingAction(index);
+    void OnActionPressDuration()=> UIManager.Instance.ShowPage<UI_ActionBattle>(false,0f).Show(m_Player.m_PlayerInfo) ;
+    void OnActionShuffleClick()=>m_Player.m_PlayerInfo.TryShuffle();
 
     void OnExpireStatus(PlayerInfoManager expireInfo)
     {
-        return;
         m_ExpireGrid.ClearGrid();
         for (int i = 0; i < expireInfo.m_Expires.Count; i++)
         {
-            if (expireInfo.m_Expires[i].m_ExpireType == enum_ExpireType.Action&& (expireInfo.m_Expires[i] as ActionBase).m_ActionType == enum_ActionType.WeaponPerk)
+            if (expireInfo.m_Expires[i].m_ExpireType != enum_ExpireType.Action)
+                continue;
+            ActionBase action = (expireInfo.m_Expires[i] as ActionBase);
+
+            if (action .m_ActionType == enum_ActionType.WeaponPerk)
                     continue;
 
-            m_ExpireGrid.AddItem(i).SetInfo(expireInfo.m_Expires[i]);
+            m_ExpireGrid.AddItem(i).SetInfo(action);
         }
     }
 }
