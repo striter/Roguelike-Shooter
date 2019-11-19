@@ -13,6 +13,7 @@ public class UIC_PlayerStatus : UIControlBase
     RawImage img_Dying;
 
     Transform tf_ExtraControl;
+    TSpecialClasses.AnimationControlBase m_ControlAnimation;
     UIC_ActionEnergy m_ActionEnergy;
     Button  btn_ActionShuffle;
     Image img_ShuffleFill;
@@ -47,6 +48,7 @@ public class UIC_PlayerStatus : UIControlBase
         img_Dying = tf_Container.Find("Dying").GetComponent<RawImage>();
 
         tf_ExtraControl = tf_Container.Find("ExtraControl");
+        m_ControlAnimation = new AnimationControlBase(tf_ExtraControl.GetComponent<Animation>());
         m_ActionEnergy = new UIC_ActionEnergy(tf_ExtraControl.Find("ActionEnergy"));
         m_ActionGrid = new UIT_GridControllerGridItem<UIGI_ActionItemHold>(tf_ExtraControl.Find("ActionGrid"));
         btn_ActionShuffle = tf_ExtraControl.Find("ActionShuffle").GetComponent<Button>();
@@ -87,7 +89,7 @@ public class UIC_PlayerStatus : UIControlBase
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
 
-        SetInBattle(false);
+        SetInBattle(false,false);
     }
     
     protected override void OnDestroy()
@@ -108,19 +110,20 @@ public class UIC_PlayerStatus : UIControlBase
         return this;
     }
 
-    void SetInBattle(bool inBattle)
+    void OnBattleStart() => SetInBattle(true, true);
+    void OnBattleFinish() => SetInBattle(false, true);
+
+    void SetInBattle(bool inBattle,bool animate)
     {
         m_ActionGrid.ClearGrid();
-        btn_map.SetActivate(!inBattle);
-        m_ActionEnergy.rectTransform .SetActivate(inBattle);
-        m_ActionGrid.transform.SetActivate(inBattle);
-        btn_ActionShuffle.SetActivate(inBattle);
+        if (animate) m_ControlAnimation.Play(inBattle);
+        else m_ControlAnimation.SetPlayPosition(inBattle);
+        btn_ActionShuffle.interactable = inBattle;
+        btn_map.interactable = !inBattle;
+
         img_Dying.SetActivate(false);
         m_dying = false;
     }
-
-    void OnBattleStart()=>SetInBattle(true);
-    void OnBattleFinish()=> SetInBattle(false);
     
     private void Update()
     {

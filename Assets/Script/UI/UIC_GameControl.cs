@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class UIC_GameControl : UIControlBase
 {
+    TSpecialClasses.AnimationControlBase m_Animation;
     EntityCharacterPlayer m_Player;
     Transform tf_WeaponData;
     UIT_TextExtend m_WeaponName;
@@ -16,6 +17,7 @@ public class UIC_GameControl : UIControlBase
     protected override void Init()
     {
         base.Init();
+        m_Animation = new TSpecialClasses.AnimationControlBase(transform.GetComponent<Animation>());
         btn_ActionStorage = transform.Find("ActionStorage").GetComponent<Button>();
         btn_ActionStorage.onClick.AddListener(OnActionStorageClick);
 
@@ -28,6 +30,7 @@ public class UIC_GameControl : UIControlBase
         TBroadCaster<enum_BC_UIStatus>.Add<WeaponBase>(enum_BC_UIStatus.UI_PlayerWeaponStatus, OnWeaponStatus);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
+        SetInBattle(false,false);
     }
 
     protected override void OnDestroy()
@@ -55,12 +58,13 @@ public class UIC_GameControl : UIControlBase
         return this;
     }
 
-    void OnBattleStart()
+    void SetInBattle(bool inBattle,bool anim)
     {
-        btn_ActionStorage.SetActivate(false);
+        if (anim) m_Animation.Play(inBattle);
+        else m_Animation.SetPlayPosition(inBattle);
+
+        btn_ActionStorage.interactable = !inBattle;
     }
-    void OnBattleFinish()
-    {
-        btn_ActionStorage.SetActivate(true);
-    }
+    void OnBattleStart() => SetInBattle(true, true);
+    void OnBattleFinish() => SetInBattle(false, true);
 }

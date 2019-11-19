@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class UIComponentBase : MonoBehaviour {
-    public RectTransform rectTransform { get; private set; }
+    public RectTransform rectTransform { get;private set; }
 
     protected virtual void Init()
     {

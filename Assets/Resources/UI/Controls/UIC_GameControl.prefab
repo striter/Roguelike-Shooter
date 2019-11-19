@@ -154,6 +154,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224559036579313408}
   - component: {fileID: 114734567570152990}
+  - component: {fileID: 111420001781131040}
   m_Layer: 5
   m_Name: UIC_GameControl
   m_TagString: Untagged
@@ -230,6 +231,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!111 &111420001781131040
+Animation:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1501201214939118}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 7400000, guid: 072a7e150dcdab9499ecdbec7fc3346d, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: 072a7e150dcdab9499ecdbec7fc3346d, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_CullingType: 0
 --- !u!114 &114035364020649180
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -866,7 +882,7 @@ RectTransform:
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -159.30005, y: -387}
   m_SizeDelta: {x: 120, y: 120}
-  m_Pivot: {x: 0, y: 0.5}
+  m_Pivot: {x: 1, y: 0.5}
 --- !u!224 &224787509422077240
 RectTransform:
   m_ObjectHideFlags: 1

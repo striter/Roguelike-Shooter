@@ -54,12 +54,25 @@ public class UIManagerBase : SimpleSingletonMono<UIManagerBase> {
         return messageBox;
     }
 
-    protected T ShowControls<T>(bool overlayView = false)where T: UIControlBase
+    Dictionary<UIControlBase, int> m_ControlSibiling = new Dictionary<UIControlBase, int>();
+    protected T ShowControls<T>(bool overlayView=false)where T: UIControlBase
     {
-        return  UIControlBase.Show<T>(overlayView ? tf_OverlayControl : tf_CameraControl); ;
+        T control = UIControlBase.Show<T>(overlayView ? tf_OverlayControl : tf_CameraControl);
+        m_ControlSibiling.Add(control,m_ControlSibiling.Count -1);
+        return control;
     }
 
-    protected void SetControlViewMode(UIControlBase control, bool overlay) => TCommonUI.ReparentRestretchUI(control.rectTransform, overlay ? tf_OverlayControl : tf_CameraControl );
+    protected void SetControlViewMode(UIControlBase control, bool overlay)
+    {
+        if (!m_ControlSibiling.ContainsKey(control))
+        {
+            Debug.LogError("?");
+            return;
+        }
+
+        TCommonUI.ReparentRestretchUI(control.rectTransform, overlay ? tf_OverlayControl : tf_CameraControl);
+        control.transform.SetSiblingIndex(m_ControlSibiling[control]);
+    }
     protected void SetPageViewMode(UIPageBase page, bool overlay) => TCommonUI.ReparentRestretchUI(page.rectTransform, overlay ? tf_OverlayPage : tf_CameraPage);
 }
 
