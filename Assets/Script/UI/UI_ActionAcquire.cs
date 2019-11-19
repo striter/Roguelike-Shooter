@@ -39,7 +39,12 @@ public class UI_ActionAcquire : UIPageBase {
     void OnConfirmClick()
     {
         m_Confirm.SetInteractable(false);
-        OnCancelBtnClick();
+        base.OnCancelBtnClick();
         OnIndexSelect(m_selectIndex);
+    }
+
+    protected override void OnCancelBtnClick()
+    {
+        GameUIManager.Instance.ShowMessageBox<UIM_Intro>().Play("UI_Title_ExitActionAcquire", "UI_Intro_ExitActionAcquire", "UI_Option_ExitActionAcquireConfirm", base.OnCancelBtnClick);
     }
 }
