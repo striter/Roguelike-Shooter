@@ -1,17 +1,15 @@
 ﻿using GameSetting;
 using System;
 using System.Collections.Generic;
-using UnityEngine.UI;
-
 public class UI_ActionAcquire : UIPageBase {
 
     Action<int> OnIndexSelect;
     UIC_Button m_Confirm;
     UIT_GridControllerGridItem<UIGI_ActionItemSelect> m_Grid;
     int m_selectIndex;
-    protected override void Init(bool useAnim)
+    protected override void Init()
     {
-        base.Init(useAnim);
+        base.Init();
         m_Confirm =new UIC_Button( tf_Container.Find("Confirm"),OnConfirmClick);
         m_Grid = new UIT_GridControllerGridItem<UIGI_ActionItemSelect>(tf_Container.Find("ActionGrid"));
     }
@@ -39,7 +37,9 @@ public class UI_ActionAcquire : UIPageBase {
     void OnConfirmClick()
     {
         m_Confirm.SetInteractable(false);
+        base.OnCancelBtnClick();
         OnIndexSelect(m_selectIndex);
-        OnCancelBtnClick();
     }
+
+    protected override void OnCancelBtnClick()=>GameUIManager.Instance.ShowMessageBox<UIM_Intro>().Play("UI_Title_ExitActionAcquire", "UI_Intro_ExitActionAcquire", "UI_Option_ExitActionAcquireConfirm", base.OnCancelBtnClick);
 }

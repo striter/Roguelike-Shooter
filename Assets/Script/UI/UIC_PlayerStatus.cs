@@ -4,15 +4,15 @@ using UnityEngine.UI;
 using TSpecialClasses;
 public class UIC_PlayerStatus : UIControlBase
 {
+    public AnimationCurve m_DyingCurve;
+
     Transform tf_Container;
-    AnimationControlBase m_BattleAnimation;
     EntityCharacterPlayer m_Player;
 
-    Transform tf_OutBattle;
-    Button btn_Bigmap;
-    Button btn_ActionStorage;
+    bool m_dying;
+    RawImage img_Dying;
 
-    Transform tf_InBattle;
+    Transform tf_ActionControl;
     UIC_ActionEnergy m_ActionEnergy;
     Button  btn_ActionShuffle;
     Image img_ShuffleFill;
@@ -37,30 +37,18 @@ public class UIC_PlayerStatus : UIControlBase
     Slider m_HealthFill;
     UIC_Numeric m_HealthAmount, m_MaxHealth;
 
-    Transform tf_WeaponData;
-    UIT_TextExtend m_WeaponName;
-    Image m_WeaponImage;
-    UI_WeaponActionHUD m_WeaponActionHUD;
-
     ValueLerpSeconds m_HealthLerp, m_ArmorLerp, m_EnergyLerp;
-
-    Transform tf_Dying;
     protected override void Init()
     {
         base.Init();
         tf_Container = transform.Find("Container");
-        m_BattleAnimation =new AnimationControlBase( tf_Container.GetComponent<Animation>(),false);
 
-        tf_OutBattle = tf_Container.Find("OutBattle");
-        btn_ActionStorage = tf_OutBattle.Find("ActionStorage").GetComponent<Button>();
-        btn_ActionStorage.onClick.AddListener(OnActionStorageClick);
-        btn_Bigmap = tf_OutBattle.Find("Bigmap").GetComponent<Button>();
-        btn_Bigmap.onClick.AddListener(OnMapControlClick  );
+        img_Dying = tf_Container.Find("Dying").GetComponent<RawImage>();
 
-        tf_InBattle = tf_Container.Find("InBattle");
-        m_ActionEnergy = new UIC_ActionEnergy(tf_InBattle.Find("ActionEnergy"));
-        m_ActionGrid = new UIT_GridControllerGridItem<UIGI_ActionItemHold>(tf_InBattle.Find("ActionGrid"));
-        btn_ActionShuffle = tf_InBattle.Find("ActionShuffle").GetComponent<Button>();
+        tf_ActionControl = tf_Container.Find("ActionControl");
+        m_ActionEnergy = new UIC_ActionEnergy(tf_ActionControl.Find("ActionEnergy"));
+        m_ActionGrid = new UIT_GridControllerGridItem<UIGI_ActionItemHold>(tf_ActionControl.Find("ActionGrid"));
+        btn_ActionShuffle = tf_ActionControl.Find("ActionShuffle").GetComponent<Button>();
         btn_ActionShuffle.onClick.AddListener(OnActionShuffleClick);
         img_ShuffleFill = btn_ActionShuffle.transform.Find("ShuffleFill").GetComponent<Image>();
 
@@ -84,24 +72,15 @@ public class UIC_PlayerStatus : UIControlBase
         tf_ExpireData = tf_Container.Find("ExpireData");
         m_ExpireGrid = new UIT_GridControllerGridItem<UIGI_ExpireInfoItem>(tf_ExpireData.Find("ExpireGrid"));
 
-        tf_WeaponData = tf_Container.Find("WeaponData");
-        m_WeaponName = tf_WeaponData.Find("WeaponName").GetComponent<UIT_TextExtend>();
-        m_WeaponImage = tf_WeaponData.Find("WeaponImage").GetComponent<Image>();
-        m_WeaponActionHUD = new UI_WeaponActionHUD(tf_WeaponData);
-        tf_WeaponData.Find("WeaponDetailBtn").GetComponent<Button>().onClick.AddListener(() => { UIManager.Instance.ShowPage<UI_WeaponStatus>(true,0f).SetInfo(m_Player.m_WeaponCurrent); });
-
         m_HealthLerp = new ValueLerpSeconds(0f, 4f, 2f, (float value) => { m_HealthFill.value = value; });
         m_ArmorLerp = new ValueLerpSeconds(0f, 4f, 2f, (float value) => { m_ArmorFill.value = value; });
         m_EnergyLerp = new ValueLerpSeconds(0f, 4f, 2f, (float value) => { m_ActionEnergy.SetValue(value); });
-
-        tf_Dying = tf_Container.Find("Dying");
 
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<WeaponBase>(enum_BC_UIStatus.UI_PlayerAmmoStatus, OnAmmoStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerExpireStatus, OnExpireStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerActionStatus, OnActionStatus);
-        TBroadCaster<enum_BC_UIStatus>.Add<WeaponBase>(enum_BC_UIStatus.UI_PlayerWeaponStatus, OnWeaponStatus);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
 
@@ -116,62 +95,58 @@ public class UIC_PlayerStatus : UIControlBase
         TBroadCaster<enum_BC_UIStatus>.Remove<WeaponBase>(enum_BC_UIStatus.UI_PlayerAmmoStatus, OnAmmoStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerExpireStatus, OnExpireStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerActionStatus, OnActionStatus);
-        TBroadCaster<enum_BC_UIStatus>.Remove<WeaponBase>(enum_BC_UIStatus.UI_PlayerWeaponStatus, OnWeaponStatus);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
     }
 
-    public void SetInGame(bool inGame)
+    public UIC_PlayerStatus SetInGame(bool inGame)
     {
-        if (inGame)
-            return;
-        tf_InBattle.SetActivate(false);
-        tf_OutBattle.SetActivate(false);
+        tf_ActionControl.SetActivate(inGame);
+        return this;
     }
 
     void SetInBattle(bool inBattle,bool anim=true)
     {
         m_ActionGrid.ClearGrid();
-        btn_Bigmap.interactable = !inBattle;
-        btn_ActionStorage.interactable = !inBattle;
         btn_ActionShuffle.interactable = inBattle;
-        if (anim) m_BattleAnimation.Play(inBattle);
-        tf_Dying.SetActivate(false);
+        img_Dying.SetActivate(false);
+        m_dying = false;
     }
     void OnBattleStart()=>SetInBattle(true);
     void OnBattleFinish()=> SetInBattle(false);
-
-
-    void OnMapControlClick()
-    {
-        if (GameManager.Instance.B_ShowChestTips)
-            UIManager.Instance.ShowTip("UI_Tips_ChestUnOpened", enum_UITipsType.Error);
-
-        UIManager.Instance.ShowPage<UI_MapControl>(true);
-    }
-    #region PlayerData/Interact
+    
     private void Update()
     {
         if (!m_Player)
             return;
 
+        rtf_StatusData.SetWorldViewPortAnchor(m_Player.tf_Status.position, CameraController.Instance.m_Camera, Time.deltaTime * 10f);
+
         m_EnergyLerp.TickDelta(Time.deltaTime);
         m_HealthLerp.TickDelta(Time.deltaTime);
         m_ArmorLerp.TickDelta(Time.deltaTime);
+
+        if (m_dying)
+        {
+            float dyingValue = 1-Mathf.InverseLerp(UIConst.I_PlayerDyingMinValue, UIConst.I_PlayerDyingMaxValue, m_Player.m_Health.m_CurrentHealth) ;
+            img_Dying.color = TCommon.ColorAlpha(img_Dying.color,dyingValue+m_DyingCurve.Evaluate(Time.time)*.3f);
+        }
     }
 
     void OnCommonStatus(EntityCharacterPlayer _player)
     {
-        if (!m_Player)
-            m_Player = _player;
+        m_Player = _player;
+        bool dying = !m_Player.m_Health.b_IsDead&& m_Player.m_Health.m_CurrentHealth < UIConst.I_PlayerDyingMaxValue;
+        if(m_dying!= dying)
+        {
+            m_dying = dying;
+            img_Dying.SetActivate(m_dying);
+        }
 
-        m_EnergyLerp.ChangeValue(_player.m_PlayerInfo.m_ActionEnergy);
-        tf_Dying.SetActivate(_player.m_Health.F_HealthMaxScale < .2f);
-        img_ShuffleFill.fillAmount = _player.m_PlayerInfo.f_shuffleScale;
-        rtf_StatusData.SetWorldViewPortAnchor(m_Player.tf_Status.position, CameraController.Instance.m_Camera, Time.deltaTime * 10f);
+        m_EnergyLerp.ChangeValue(m_Player.m_PlayerInfo.m_ActionEnergy);
+        img_ShuffleFill.fillAmount = m_Player.m_PlayerInfo.f_shuffleScale;
     }
-    #endregion
-    #region Health Status
+
     void OnHealthStatus(EntityHealth _healthManager)
     {
         m_ArmorLerp.ChangeValue(_healthManager.m_CurrentArmor / UIConst.F_UIMaxArmor);
@@ -180,14 +155,7 @@ public class UIC_PlayerStatus : UIControlBase
         m_HealthAmount.SetAmount((int)_healthManager.m_CurrentHealth);
         m_MaxHealth.SetAmount((int)_healthManager.m_MaxHealth);
     }
-    #endregion
-    #region Weapon/Ammo
-    void OnWeaponStatus(WeaponBase weapon)
-    {
-        m_WeaponImage.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Weapon.GetSpriteName()];
-        m_WeaponName.autoLocalizeText = weapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
-        m_WeaponActionHUD.SetInfo(weapon.m_WeaponAction);
-    }
+
     void OnAmmoStatus(WeaponBase weaponInfo)
     {
         tf_AmmoData.transform.SetActivate(weaponInfo != null);
@@ -229,30 +197,29 @@ public class UIC_PlayerStatus : UIControlBase
             img_ReloadFill.color = Color.Lerp(Color.red, Color.white, weaponInfo.F_ReloadStatus);
         }
     }
-    #endregion
-    #region Action/Expire
+
     void OnActionStatus(PlayerInfoManager playerInfo)
     {
         m_ActionGrid.ClearGrid();
         for (int i = 0; i < playerInfo.m_BattleActionPicking.Count; i++)
             m_ActionGrid.AddItem(i).SetInfo(playerInfo,playerInfo.m_BattleActionPicking[i],OnActionClick, OnActionPressDuration);
     }
+
     void OnActionClick(int index)
     {
         m_Player.m_PlayerInfo.TryUseHoldingAction(index);
     }
+
     void OnActionPressDuration()
     {
         UIManager.Instance.ShowPage<UI_ActionBattle>(false,0f).Show(m_Player.m_PlayerInfo) ;
     }
-    void OnActionStorageClick()
-    {
-        UIManager.Instance.ShowPage<UI_ActionPack>(true).Show(m_Player.m_PlayerInfo);
-    }
+
     void OnActionShuffleClick()
     {
         m_Player.m_PlayerInfo.TryShuffle();
     }
+
     void OnExpireStatus(PlayerInfoManager expireInfo)
     {
         return;
@@ -265,5 +232,4 @@ public class UIC_PlayerStatus : UIControlBase
             m_ExpireGrid.AddItem(i).SetInfo(expireInfo.m_Expires[i]);
         }
     }
-    #endregion
 }

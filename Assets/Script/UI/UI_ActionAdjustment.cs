@@ -10,9 +10,9 @@ public class UI_ActionAdjustment : UIPageBase {
     Button btn_remove, btn_upgrade;
     UIT_TextExtend txt_removeAmount, txt_upgradeAmount;
     int m_selectIndex = -1;
-    protected override void Init(bool useAnim)
+    protected override void Init()
     {
-        base.Init(useAnim);
+        base.Init();
         m_Grid = new UIT_GridControllerGridItem<UIGI_ActionItemSelect>(tf_Container.Find("ScrollView/Viewport/ActionGrid"));
         btn_remove = tf_Container.Find("BtnRemove").GetComponent<Button>();
         btn_remove.onClick.AddListener(OnRemoveClick);

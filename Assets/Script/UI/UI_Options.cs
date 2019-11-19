@@ -58,9 +58,9 @@ public class UI_Options : UIPageBase {
     Transform tf_Basic, tf_Control;
     Transform tf_ReturnToCamp;
 
-    protected override void Init(bool useAnim)
+    protected override void Init()
     {
-        base.Init(useAnim);
+        base.Init();
         tf_Basic = tf_Container.Find("Basic");
         new BoolToggle(tf_Basic.Find("FrameRate/BtnToggle"), OnFrequencyClicked, GetFrameRateOption());
         new ValueToggle<enum_Option_ScreenEffect>(tf_Basic.Find("ScreenEffect/BtnToggle"), OnScreenEffectClicked, GetScreenEffectOption(),new List<enum_Option_ScreenEffect> {  enum_Option_ScreenEffect.Normal, enum_Option_ScreenEffect.High, enum_Option_ScreenEffect.Epic});

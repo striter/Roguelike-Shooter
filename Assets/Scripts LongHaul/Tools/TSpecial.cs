@@ -418,13 +418,11 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
         {
             SetPlayPosition(forward);
             m_Animation.Play(m_Animation.clip.name);
-            m_Animation.playAutomatically = true;
         }
 
         public void Stop()
         {
             m_Animation.Stop();
-            m_Animation.playAutomatically = false;
         }
 
         public void SetPlayPosition(bool forward)

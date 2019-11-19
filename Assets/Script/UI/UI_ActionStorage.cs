@@ -14,9 +14,9 @@ public class UI_ActionStorage : UIPageBase {
     List<ActionStorageData> m_Data=> GameDataManager.m_GameData.m_StorageActions;
     bool m_RequestMode;
     int m_RequestIndex = -1;
-    protected override void Init(bool useAnim)
+    protected override void Init()
     {
-        base.Init(useAnim);
+        base.Init();
         m_Grid = new UIT_GridControllerGridItemScrollView<UIGI_ActionItemStorage>(tf_Container.Find("ScrollView/Viewport/ActionGrid"));
         m_ScrollView = tf_Container.Find("ScrollView").GetComponent<ScrollRect>();
         btn_request = tf_Container.Find("Request").GetComponent<Button>();

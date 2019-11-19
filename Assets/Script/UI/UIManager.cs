@@ -7,10 +7,11 @@ public class UIManager :UIManagerBase,ISingleCoroutine
 {
     public static new UIManager Instance { get; private set; }
     Image m_setting, m_OverlayBG;
-    protected UIT_GridControllerGridItem<UIGI_TipItem> m_TipsGrid;
     public Camera m_Camera { get; private set; }
-    public UIC_CharacterControl m_PlayerControl { get; private set; }
+    public UIC_CharacterControl m_CharacterControl { get; private set; }
+    public UIC_GameControl m_GameControl { get; private set; }
     public UIC_PlayerStatus m_PlayerStatus { get; private set; }
+    public UIC_Indicates m_Indicates { get; private set; }
 
     public CameraEffectManager m_Effect { get; private set; }
     CB_GenerateOverlayUIGrabBlurTexture m_Blur;
@@ -20,21 +21,21 @@ public class UIManager :UIManagerBase,ISingleCoroutine
     public static void Activate(bool inGame)
     {
         GameObject uiObj = TResources.InstantiateUIManager();
+        UIManager manager = null;
         if (inGame)
-            uiObj.AddComponent<GameUIManager>().Init();
+            manager = uiObj.AddComponent<GameUIManager>();
         else
-            uiObj.AddComponent<CampUIManager>().Init();
-    } 
-    protected override void Init()
+            manager = uiObj.AddComponent<CampUIManager>();
+        manager.Init();
+        manager.InitGameControls(inGame);
+    }
+
+    protected virtual void Init()
     {
         base.Init();
         Instance = this;
         cvs_Camera.transform.Find("Settings").GetComponent<Button>().onClick.AddListener(OnSettingBtnClick);
         m_setting = cvs_Camera.transform.Find("Settings/Image").GetComponent<Image>();
-
-        m_PlayerStatus =ShowControls<UIC_PlayerStatus>();
-        m_PlayerControl = ShowControls<UIC_CharacterControl>();
-        ShowControls<UIC_PlayerInteract>();
 
         m_OverlayBG = cvs_Overlay.transform.Find("OverlayBG").GetComponent<Image>();
         m_OverlayBG.SetActivate(false);
@@ -48,11 +49,17 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         m_Blur = m_Effect.GetOrAddCameraEffect<CB_GenerateOverlayUIGrabBlurTexture>();
         m_Blur.SetEffect(1, 2f, 2);
 
-        m_TipsGrid = new UIT_GridControllerGridItem<UIGI_TipItem>(cvs_Overlay.transform.Find("Tips"));
-
-        UIPageBase.OnPageExit = OnPageExit;
-        UIMessageBoxBase.OnMessageBoxExit = OnMessageBoxExit;
     }
+
+    protected virtual void InitGameControls(bool inGame)
+    {
+        m_Indicates = ShowControls<UIC_Indicates>(true);
+        m_GameControl = ShowControls<UIC_GameControl>().SetInGame(inGame);
+        m_PlayerStatus = ShowControls<UIC_PlayerStatus>().SetInGame(inGame);
+        m_CharacterControl = ShowControls<UIC_CharacterControl>();
+        ShowControls<UIC_PlayerInteract>();
+    }
+
     protected override void OnDestroy()
     {
         base.OnDestroy();
@@ -61,6 +68,8 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         UIPageBase.OnPageExit = null;
     }
 
+
+    public new T ShowMessageBox<T>() where T : UIMessageBoxBase => base.ShowMessageBox<T>();
     public T ShowPage<T>(bool animate,float bulletTime=1f) where T : UIPageBase
     {
         T page = base.ShowPage<T>(animate);
@@ -74,27 +83,17 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         return page;
     }
 
-
-    protected virtual void OnPageExit()
+    protected override void OnPageExit()
     {
+        base.OnPageExit();
+        if (UIPageBase.I_PageCount > 0)
+            return;
+
         m_OverlayBG.SetActivate(false);
         GameManagerBase.SetBulletTime(false);
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PageClose);
     }
-    
-    public new T ShowMessageBox<T>() where T : UIMessageBoxBase
-    {
-        SetPageViewMode(false);
-        return base.ShowMessageBox<T>();
-    }
 
-    void OnMessageBoxExit()
-    {
-        SetPageViewMode(true);
-    }
-    int tipCount = 0;
-    public void ShowTip(string key, enum_UITipsType tipsType) => m_TipsGrid.AddItem(tipCount++).ShowTips(key, tipsType,OnTipFinish);
-    void OnTipFinish(int index)=>m_TipsGrid.RemoveItem(index);
 
     void OnSettingBtnClick()
     {

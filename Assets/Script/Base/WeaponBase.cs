@@ -44,12 +44,13 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     bool B_AmmoFull => m_WeaponInfo.m_ClipAmount == -1||I_ClipAmount == I_AmmoLeft;
     protected void OnFireCheck(float pauseDuration) => f_fireCheck = pauseDuration;
 
+    SFXProjectile m_ProjectilInfo;
     public override void OnPoolItemInit(enum_PlayerWeapon weapon)
     {
         m_Muzzle = transform.FindInAllChild("Muzzle");
         m_Case = transform.FindInAllChild("Case");
         m_WeaponInfo = GameDataManager.GetWeaponProperties(weapon);
-        SFXProjectile projectileInfo = GameObjectManager.GetEquipmentData<SFXProjectile>(m_WeaponInfo.m_Index);
+        SFXProjectile projectileInfo = GameObjectManager.GetEquipmentData<SFXProjectile>(GameExpression.GetPlayerEquipmentIndex( m_WeaponInfo.m_Index));
         F_BaseSpeed = projectileInfo.F_Speed;
         B_BasePenetrate = projectileInfo.B_Penetrate;
         F_BaseDamage = projectileInfo.F_Damage;
@@ -135,7 +136,7 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     
     void FireOneBullet(DamageDeliverInfo damage,Vector3 direction)
     {
-        SFXProjectile projectile = GameObjectManager.SpawnEquipment<SFXProjectile>(m_WeaponInfo.m_Index, m_Muzzle.position, direction);
+        SFXProjectile projectile = GameObjectManager.SpawnEquipment<SFXProjectile>(GameExpression.GetPlayerEquipmentIndex( m_WeaponInfo.m_Index), m_Muzzle.position, direction);
         projectile.F_Speed = F_Speed;
         projectile.B_Penetrate = B_Penetrate;
         projectile.Play(damage, direction, m_Attacher.tf_Weapon.position+direction* GameConst.I_ProjectileMaxDistance);

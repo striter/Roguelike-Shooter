@@ -973,9 +973,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u80CC\u5305"
+  m_Text: 
   B_AutoLocalize: 1
-  S_AutoLocalizeKey: UI_ActionPack_Title
+  S_AutoLocalizeKey: UI_ActionAdjustment_Title
   m_characterSpacing: 12
 --- !u!114 &114102975252970618
 MonoBehaviour:
@@ -2126,9 +2126,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u9009\u62E9\u4F60\u7684\u5361\u7247"
+  m_Text: 
   B_AutoLocalize: 1
-  S_AutoLocalizeKey: UI_ActionAcquire_Tip
+  S_AutoLocalizeKey: UI_ActionAdjustment_Tip
   m_characterSpacing: 2
 --- !u!114 &114955537134112322
 MonoBehaviour:

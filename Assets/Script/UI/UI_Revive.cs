@@ -7,9 +7,9 @@ public class UI_Revive : UIPageBase
     Button btn_Video, btn_Credit;
     Text txt_Credit;
     float m_reviveCredit;
-    protected override void Init(bool useAnim)
+    protected override void Init()
     {
-        base.Init(useAnim);
+        base.Init();
         btn_Video = tf_Container.Find("BtnVideo").GetComponent<Button>();
         btn_Video.onClick.AddListener(OnVideoBtnClick);
         btn_Credit = tf_Container.Find("BtnCredit").GetComponent<Button>();
