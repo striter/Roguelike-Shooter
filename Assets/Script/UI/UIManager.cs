@@ -65,7 +65,6 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         base.OnDestroy();
         Instance = null;
         this.StopAllCoroutines();
-        UIPageBase.OnPageExit = null;
     }
 
 

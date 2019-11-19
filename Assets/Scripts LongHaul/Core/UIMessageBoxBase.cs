@@ -41,10 +41,10 @@ public class UIMessageBoxBase : UIComponentBase {
     {
         OnConfirmClick = _OnConfirmClick;
     }
+    void OnCancel() => Destroy(this.gameObject);
     void OnConfirm()
     {
         OnConfirmClick();
         OnCancel();
     }
-    void OnCancel() => Destroy(this.gameObject);
 }

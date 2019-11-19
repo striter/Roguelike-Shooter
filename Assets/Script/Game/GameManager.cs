@@ -235,7 +235,7 @@ public class GameManager : GameManagerBase
                     GameObjectManager.SpawnInteract<InteractBonfire>(enum_Interaction.Bonfire,Vector3.zero, interactTrans).Play(m_LocalPlayer);
 
                     InteractActionChest chest = GameObjectManager.SpawnInteract<InteractActionChest>(enum_Interaction.ActionChestStart, Vector3.left * 3, interactTrans);
-                    chest.Play(m_GameLevel.GetRandomStartActions(3),1,true);
+                    chest.Play(m_GameLevel.GetRandomStartActions(3),1,true,m_LocalPlayer);
                     
                     GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, Vector3.right * 3, interactTrans).Play(GameObjectManager.SpawnWeapon(TCommon.RandomEnumValues<enum_PlayerWeapon>(m_GameLevel.m_GameSeed), ActionDataManager.CreateRandomWeaponPerk(m_GameLevel.m_GameStage.GetStartWeaponPerkRarity(), m_GameLevel.m_GameSeed)));
                 }
@@ -289,7 +289,7 @@ public class GameManager : GameManagerBase
                 {
                     enum_RarityLevel level = m_GameLevel.m_actionGenerate.GetActionRarityLevel(m_GameLevel.m_GameSeed);
                     InteractActionChest chest = GameObjectManager.SpawnInteract<InteractActionChest>(enum_Interaction.ActionChest, LevelManager.NavMeshPosition(rewardPos, false), LevelManager.Instance.m_currentLevel.m_Level.tf_Interact);
-                    chest.Play(ActionDataManager.CreateRandomDropPlayerAction(2, level, m_GameLevel.m_GameSeed), 1,false);
+                    chest.Play(ActionDataManager.CreateRandomDropPlayerAction(2, level, m_GameLevel.m_GameSeed), 1,false,m_LocalPlayer,GameConst.F_ActionChestForceInteractDuration);
                 }
                 break;
         }

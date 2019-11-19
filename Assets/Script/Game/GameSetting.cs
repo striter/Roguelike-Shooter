@@ -51,6 +51,7 @@ namespace GameSetting
         public const int I_EnermyCountWaveFinish = 0;       //When Total Enermy Count Reaches This Amount,Wave Finish
         public const int I_EnermySpawnDelay = 4;        //Enermy Spawn Delay Time 
 
+        public const float F_ActionChestForceInteractDuration = 2f;
         public const float F_PickupAcceleration = 8f;
         public const int I_HealthPickupAmount = 25;
         public const int I_ArmorPickupAmount = 25;

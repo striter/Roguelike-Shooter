@@ -112,6 +112,7 @@ public class UIC_PlayerStatus : UIControlBase
         img_Dying.SetActivate(false);
         m_dying = false;
     }
+
     void OnBattleStart()=>SetInBattle(true);
     void OnBattleFinish()=> SetInBattle(false);
     

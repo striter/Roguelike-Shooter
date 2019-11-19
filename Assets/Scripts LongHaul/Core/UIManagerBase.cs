@@ -22,6 +22,12 @@ public class UIManagerBase : SimpleSingletonMono<UIManagerBase> {
         tf_OverlayControl = cvs_Overlay.transform.Find("Control").GetComponent<RectTransform>();
         tf_CameraControl = cvs_Camera.transform.Find("Control").GetComponent<RectTransform>();
     }
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        UIPageBase.OnPageExit = null;
+        UIMessageBoxBase.OnMessageBoxExit = null;
+    }
 
     void AdjustPageSibling()
     {
