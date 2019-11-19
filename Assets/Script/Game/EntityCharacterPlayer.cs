@@ -396,9 +396,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void SetBinding(bool on)
     {
         if (on)
-            UIManager.Instance.m_PlayerControl.DoBinding(this, OnMovementDelta, OnRotateDelta, OnReloadClick, OnMainDown,OnAbilityClick);
+            UIManager.Instance.m_CharacterControl.DoBinding(this, OnMovementDelta, OnRotateDelta, OnReloadClick, OnMainDown,OnAbilityClick);
         else
-            UIManager.Instance.m_PlayerControl.RemoveBinding();
+            UIManager.Instance.m_CharacterControl.RemoveBinding();
     }
 
     protected class PlayerAnimator : CharacterAnimator

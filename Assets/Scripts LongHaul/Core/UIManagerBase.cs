@@ -7,7 +7,7 @@ public class UIManagerBase : SimpleSingletonMono<UIManagerBase> {
 
     protected Canvas cvs_Overlay, cvs_Camera;
     private RectTransform tf_Page, tf_OverlayControl,tf_CameraControl,tf_MessageBox;
-    protected virtual void Init()
+    protected void Init()
     {
         cvs_Overlay = transform.Find("Overlay").GetComponent<Canvas>();
         cvs_Camera = transform.Find("Camera").GetComponent<Canvas>();

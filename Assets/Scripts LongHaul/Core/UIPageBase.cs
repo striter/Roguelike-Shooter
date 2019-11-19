@@ -5,8 +5,9 @@ using UnityEngine.UI;
 public class UIPageBase : MonoBehaviour,ISingleCoroutine
 {
     public static bool m_PageOpening => t_curPage != null;
-    public static Type t_curPage;
-    public static Action OnPageExit;
+    public static Type t_curPage=null;
+    public static int I_PageCount { get; private set; } =0;
+    public static Action OnAllPageExit;
     protected Image img_Background;
     protected Action<bool> OnInteractFinished;
     protected float f_bgAlphaStart;
@@ -21,7 +22,14 @@ public class UIPageBase : MonoBehaviour,ISingleCoroutine
         t_curPage = typeof(T);
         T tempBase = TResources.Instantiate<T>("UI/Pages/" + typeof(T).ToString(), parentTransform);
         tempBase.Init(useAnim);
+        I_PageCount++;
         return tempBase;
+    }
+    void OnPageHide()
+    {
+        I_PageCount--;
+        if(I_PageCount==0)
+            OnAllPageExit?.Invoke();
     }
     protected Button btn_ContainerCancel,btn_WholeCancel;
     protected Transform tf_Container;
@@ -60,7 +68,7 @@ public class UIPageBase : MonoBehaviour,ISingleCoroutine
     }
     protected virtual void OnCancelBtnClick()
     {
-        OnPageExit?.Invoke();
+        OnPageHide();
         if (btn_ContainerCancel) btn_ContainerCancel.enabled = false;
         if (btn_WholeCancel) btn_WholeCancel.enabled = false;
         if (!b_useAnim)

@@ -9,8 +9,10 @@ public class CampUIManager : UIManager {
     {
         base.Init();
         Instance = this;
-
-        m_PlayerStatus.SetInGame(false);
+    }
+    protected override void InitGameControls(bool inGame)
+    {
+        base.InitGameControls(inGame);
         ShowControls<UIC_CurrencyStatus>();
     }
     protected override void OnDestroy()
@@ -21,13 +23,13 @@ public class CampUIManager : UIManager {
     
     public UIC_FarmStatus BeginFarm(Action<bool,Vector2> _OnDragDown, Action<Vector2> _OnDrag,Action _OnExit)
     {
-        m_PlayerControl.AddDragBinding(_OnDragDown, _OnDrag);
+        m_CharacterControl.AddDragBinding(_OnDragDown, _OnDrag);
         OverrideSetting(_OnExit);
         return ShowControls<UIC_FarmStatus>();
     }
     public void ExitFarm()
     {
-        m_PlayerControl.RemoveDragBinding();
+        m_CharacterControl.RemoveDragBinding();
         OverrideSetting(null);
     }
 }
