@@ -11,8 +11,6 @@ public class UIC_GameControl : UIControlBase
     UIT_TextExtend m_WeaponName;
     Image m_WeaponImage;
     UI_WeaponActionHUD m_WeaponActionHUD;
-
-    Button btn_map;
     Button btn_ActionStorage;
 
     protected override void Init()
@@ -20,8 +18,6 @@ public class UIC_GameControl : UIControlBase
         base.Init();
         btn_ActionStorage = transform.Find("ActionStorage").GetComponent<Button>();
         btn_ActionStorage.onClick.AddListener(OnActionStorageClick);
-        btn_map = transform.Find("Bigmap").GetComponent<Button>();
-        btn_map.onClick.AddListener(OnMapControlClick);
 
         tf_WeaponData = transform.Find("WeaponData");
         m_WeaponName = tf_WeaponData.Find("WeaponName").GetComponent<UIT_TextExtend>();
@@ -43,7 +39,6 @@ public class UIC_GameControl : UIControlBase
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
     }
 
-    void OnMapControlClick() => UIManager.Instance.ShowPage<UI_MapControl>(true);
     void OnActionStorageClick()=> UIManager.Instance.ShowPage<UI_ActionPack>(true).Show(m_Player.m_PlayerInfo);
     void OnWeaponDetailClick()=>  UIManager.Instance.ShowPage<UI_WeaponStatus>(true, 0f).SetInfo(m_Player.m_WeaponCurrent);
     void OnCommonStatus(EntityCharacterPlayer _player) => m_Player = _player;
@@ -56,7 +51,6 @@ public class UIC_GameControl : UIControlBase
 
     public UIC_GameControl SetInGame(bool inGame)
     {
-        btn_map.SetActivate(inGame);
         btn_ActionStorage.SetActivate(inGame);
         return this;
     }
@@ -64,12 +58,9 @@ public class UIC_GameControl : UIControlBase
     void OnBattleStart()
     {
         btn_ActionStorage.SetActivate(false);
-        ShowMapBtn(false);
     }
     void OnBattleFinish()
     {
         btn_ActionStorage.SetActivate(true);
     }
-
-    public void ShowMapBtn(bool active)=>btn_map.SetActivate(active);
 }

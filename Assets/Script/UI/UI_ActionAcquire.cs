@@ -45,7 +45,6 @@ public class UI_ActionAcquire : UIPageBase {
     protected override void OnCancelBtnClick()=>GameUIManager.Instance.ShowMessageBox<UIM_Intro>().Play("UI_Title_ExitActionAcquire", "UI_Intro_ExitActionAcquire", "UI_Option_ExitActionAcquireConfirm", OnCancel);
     void OnCancel()
     {
-        GameUIManager.Instance.m_GameControl.ShowMapBtn(true);
         base.OnCancelBtnClick();
     }
 }

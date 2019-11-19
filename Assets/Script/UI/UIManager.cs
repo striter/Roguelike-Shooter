@@ -54,7 +54,7 @@ public class UIManager :UIManagerBase,ISingleCoroutine
     {
         m_Indicates = ShowControls<UIC_Indicates>(true);
         m_GameControl = ShowControls<UIC_GameControl>().SetInGame(inGame);
-        m_PlayerStatus = ShowControls<UIC_PlayerStatus>();
+        m_PlayerStatus = ShowControls<UIC_PlayerStatus>().SetInGame(inGame);
         m_CharacterControl = ShowControls<UIC_CharacterControl>();
         ShowControls<UIC_PlayerInteract>();
     }

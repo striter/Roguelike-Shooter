@@ -1912,6 +1912,7 @@ namespace GameSetting
         private Action<ExpireBase> OnExpired;
         public float m_ExpireDuration { get; private set; } = 0;
         public float f_expireCheck { get; private set; }
+        public float f_expireScale => f_expireCheck / m_ExpireDuration;
         bool forceExpire = false;
         protected void OnActivate(float _ExpireDuration, Action<ExpireBase> _OnExpired)
         {
