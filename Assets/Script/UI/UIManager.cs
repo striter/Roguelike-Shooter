@@ -8,7 +8,8 @@ public class UIManager :UIManagerBase,ISingleCoroutine
     public static new UIManager Instance { get; private set; }
     Image m_setting, m_OverlayBG;
     public Camera m_Camera { get; private set; }
-    public UIC_CharacterControl m_PlayerControl { get; private set; }
+    public UIC_CharacterControl m_CharacterControl { get; private set; }
+    public UIC_GameControl m_GameControl { get; private set; }
     public UIC_PlayerStatus m_PlayerStatus { get; private set; }
     public UIC_Indicates m_Indicates { get; private set; }
 
@@ -20,22 +21,21 @@ public class UIManager :UIManagerBase,ISingleCoroutine
     public static void Activate(bool inGame)
     {
         GameObject uiObj = TResources.InstantiateUIManager();
+        UIManager manager = null;
         if (inGame)
-            uiObj.AddComponent<GameUIManager>().Init();
+            manager = uiObj.AddComponent<GameUIManager>();
         else
-            uiObj.AddComponent<CampUIManager>().Init();
-    } 
-    protected override void Init()
+            manager = uiObj.AddComponent<CampUIManager>();
+        manager.Init();
+        manager.InitGameControls(inGame);
+    }
+
+    protected virtual void Init()
     {
         base.Init();
         Instance = this;
         cvs_Camera.transform.Find("Settings").GetComponent<Button>().onClick.AddListener(OnSettingBtnClick);
         m_setting = cvs_Camera.transform.Find("Settings/Image").GetComponent<Image>();
-
-        m_Indicates = ShowControls<UIC_Indicates>(true);
-        m_PlayerStatus =ShowControls<UIC_PlayerStatus>();
-        m_PlayerControl = ShowControls<UIC_CharacterControl>();
-        ShowControls<UIC_PlayerInteract>();
 
         m_OverlayBG = cvs_Overlay.transform.Find("OverlayBG").GetComponent<Image>();
         m_OverlayBG.SetActivate(false);
@@ -49,15 +49,25 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         m_Blur = m_Effect.GetOrAddCameraEffect<CB_GenerateOverlayUIGrabBlurTexture>();
         m_Blur.SetEffect(1, 2f, 2);
 
-        UIPageBase.OnPageExit = OnPageExit;
+        UIPageBase.OnAllPageExit = OnAllPageExit;
         UIMessageBoxBase.OnMessageBoxExit = OnMessageBoxExit;
     }
+
+    protected virtual void InitGameControls(bool inGame)
+    {
+        m_Indicates = ShowControls<UIC_Indicates>(true);
+        m_GameControl = ShowControls<UIC_GameControl>().SetInGame(inGame);
+        m_PlayerStatus = ShowControls<UIC_PlayerStatus>().SetInGame(inGame);
+        m_CharacterControl = ShowControls<UIC_CharacterControl>();
+        ShowControls<UIC_PlayerInteract>();
+    }
+
     protected override void OnDestroy()
     {
         base.OnDestroy();
         Instance = null;
         this.StopAllCoroutines();
-        UIPageBase.OnPageExit = null;
+        UIPageBase.OnAllPageExit = null;
     }
 
     public T ShowPage<T>(bool animate,float bulletTime=1f) where T : UIPageBase
@@ -74,7 +84,7 @@ public class UIManager :UIManagerBase,ISingleCoroutine
     }
 
 
-    protected virtual void OnPageExit()
+    protected virtual void OnAllPageExit()
     {
         m_OverlayBG.SetActivate(false);
         GameManagerBase.SetBulletTime(false);

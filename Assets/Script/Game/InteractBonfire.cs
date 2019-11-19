@@ -6,8 +6,8 @@ using UnityEngine;
 public class InteractBonfire : InteractGameBase {
     public override enum_Interaction m_InteractType => enum_Interaction.Bonfire;
     protected override bool B_CanInteract(EntityCharacterPlayer _interactor) => false;
-    TSpecialClasses.ParticleControlBase m_FireParticles,m_SmokeParticles;
-    TSpecialClasses.AnimationControlBase m_FireDistinguishAnim,m_FireLightAnim;
+    TSpecialClasses.ParticleControlBase m_FireParticles;
+    Transform tf_Light;
     EntityCharacterPlayer m_Target;
     DamageInfo m_HealInfo;
     float m_distinguishCheck, m_healBuffCheck;
@@ -15,9 +15,7 @@ public class InteractBonfire : InteractGameBase {
     {
         base.OnPoolItemInit(temp);
         m_FireParticles = new TSpecialClasses.ParticleControlBase(transform.Find("Fire"));
-        m_SmokeParticles = new TSpecialClasses.ParticleControlBase(transform.Find("Smoke"));
-        m_FireDistinguishAnim = new TSpecialClasses.AnimationControlBase(GetComponent<Animation>());
-        m_FireLightAnim = new TSpecialClasses.AnimationControlBase(transform.Find("Light").GetComponent<Animation>());
+        tf_Light = transform.Find("Light");
         m_HealInfo = new DamageInfo(0, enum_DamageType.HealthOnly, DamageDeliverInfo.BuffInfo(-1,SBuff.SystemPlayerBonfireHealInfo()));
     }
 
@@ -33,7 +31,7 @@ public class InteractBonfire : InteractGameBase {
         if (!m_Target)
             return;
 
-        OnDistinguish(false);
+        OnDistinguish();
     }
 
     void OnFireLit(EntityCharacterPlayer _Player)       //Fire On,Smoke On,Light On
@@ -44,20 +42,15 @@ public class InteractBonfire : InteractGameBase {
         m_distinguishCheck = 8f;
 
         m_FireParticles.Play();
-        m_SmokeParticles.Play();
-        m_FireLightAnim.Play(true);
+        tf_Light.SetActivate(true);
     }
 
-    void OnDistinguish(bool anim)        //Light Low,Fire Off,Start Distinguish
+    void OnDistinguish()        //Light Low,Fire Off,Start Distinguish
     {
         m_Target = null;
         
         m_FireParticles.Stop();
-        if(anim)
-            m_FireDistinguishAnim.Play(true);
-        else
-            m_FireDistinguishAnim.SetPlayPosition(false);
-        m_FireLightAnim.Stop();
+        tf_Light.SetActivate(false);
     }
 
     private void Update()
@@ -70,7 +63,7 @@ public class InteractBonfire : InteractGameBase {
             m_distinguishCheck -= Time.deltaTime;
             if (m_distinguishCheck < 0)
             {
-                OnDistinguish(true);
+                OnDistinguish();
                 return;
             }
         }
