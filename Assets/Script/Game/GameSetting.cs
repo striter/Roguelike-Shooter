@@ -51,8 +51,8 @@ namespace GameSetting
         public const int I_EnermyCountWaveFinish = 0;       //When Total Enermy Count Reaches This Amount,Wave Finish
         public const int I_EnermySpawnDelay = 4;        //Enermy Spawn Delay Time 
 
-        public const float F_ActionChestForceInteractDuration = 2f;
-        public const float F_PickupAcceleration = 8f;
+        public const float F_ActionChestForceInteractDuration = 2f; //打开卡片选择的延迟时间
+        public const float F_PickupAcceleration = 800f; //拾取物的飞行加速速度
         public const int I_HealthPickupAmount = 25;
         public const int I_ArmorPickupAmount = 25;
         public const int I_HealthTradeAmount = 50;
