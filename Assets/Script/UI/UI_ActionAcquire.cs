@@ -39,7 +39,7 @@ public class UI_ActionAcquire : UIPageBase {
     void OnConfirmClick()
     {
         m_Confirm.SetInteractable(false);
-        OnIndexSelect(m_selectIndex);
         OnCancelBtnClick();
+        OnIndexSelect(m_selectIndex);
     }
 }

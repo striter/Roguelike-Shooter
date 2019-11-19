@@ -7,10 +7,10 @@ public class UIManager :UIManagerBase,ISingleCoroutine
 {
     public static new UIManager Instance { get; private set; }
     Image m_setting, m_OverlayBG;
-    protected UIT_GridControllerGridItem<UIGI_TipItem> m_TipsGrid;
     public Camera m_Camera { get; private set; }
     public UIC_CharacterControl m_PlayerControl { get; private set; }
     public UIC_PlayerStatus m_PlayerStatus { get; private set; }
+    public UIC_Indicates m_Indicates { get; private set; }
 
     public CameraEffectManager m_Effect { get; private set; }
     CB_GenerateOverlayUIGrabBlurTexture m_Blur;
@@ -32,6 +32,7 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         cvs_Camera.transform.Find("Settings").GetComponent<Button>().onClick.AddListener(OnSettingBtnClick);
         m_setting = cvs_Camera.transform.Find("Settings/Image").GetComponent<Image>();
 
+        m_Indicates = ShowControls<UIC_Indicates>(true);
         m_PlayerStatus =ShowControls<UIC_PlayerStatus>();
         m_PlayerControl = ShowControls<UIC_CharacterControl>();
         ShowControls<UIC_PlayerInteract>();
@@ -47,8 +48,6 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         m_Effect = m_Camera.GetComponent<CameraEffectManager>();
         m_Blur = m_Effect.GetOrAddCameraEffect<CB_GenerateOverlayUIGrabBlurTexture>();
         m_Blur.SetEffect(1, 2f, 2);
-
-        m_TipsGrid = new UIT_GridControllerGridItem<UIGI_TipItem>(cvs_Overlay.transform.Find("Tips"));
 
         UIPageBase.OnPageExit = OnPageExit;
         UIMessageBoxBase.OnMessageBoxExit = OnMessageBoxExit;
@@ -92,10 +91,6 @@ public class UIManager :UIManagerBase,ISingleCoroutine
     {
         SetPageViewMode(true);
     }
-    int tipCount = 0;
-    public void ShowTip(string key, enum_UITipsType tipsType) => m_TipsGrid.AddItem(tipCount++).ShowTips(key, tipsType,OnTipFinish);
-    void OnTipFinish(int index)=>m_TipsGrid.RemoveItem(index);
-
     void OnSettingBtnClick()
     {
         if (OnSettingClick != null)

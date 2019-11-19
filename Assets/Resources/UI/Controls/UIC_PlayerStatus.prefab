@@ -712,7 +712,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224300763808408214}
-  - component: {fileID: 111473529055734776}
   - component: {fileID: 222404817700696678}
   - component: {fileID: 114671474051569794}
   m_Layer: 14
@@ -1645,21 +1644,6 @@ Animation:
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
   m_CullingType: 0
---- !u!111 &111473529055734776
-Animation:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1344424814602164}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Animation: {fileID: 7400000, guid: 97c7c46c6b9d0c7408972519a02765ba, type: 2}
-  m_Animations:
-  - {fileID: 7400000, guid: 97c7c46c6b9d0c7408972519a02765ba, type: 2}
-  m_WrapMode: 0
-  m_PlayAutomatically: 1
-  m_AnimatePhysics: 0
-  m_CullingType: 0
 --- !u!111 &111628740838620310
 Animation:
   m_ObjectHideFlags: 1
@@ -2183,6 +2167,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61e0a315ada30e84aace58ed3650f9fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_DyingCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: -0.5
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.5
+      value: 0.5
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+    - serializedVersion: 2
+      time: 1
+      value: -0.5
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 1
+    m_PostInfinity: 1
+    m_RotationOrder: 0
 --- !u!114 &114178716601257820
 MonoBehaviour:
   m_ObjectHideFlags: 1
