@@ -15,9 +15,9 @@ public class UI_MapControl : UIPageBase {
     RectTransform m_Line;
     UIGI_MapControlCell m_targetTile;
     UIC_Button btn_Confirm;
-    protected override void Init(bool useAnim)
+    protected override void Init()
     {
-        base.Init(useAnim);
+        base.Init();
         tf_TileDetail = tf_Container.Find("TileDetail");
         m_TileTypeAnim = tf_TileDetail.Find("Image").GetComponent<Animation>();
         img_TileTypeCurrent = tf_TileDetail.Find("Image/TileImage/TileCurrent").GetComponent<Image>();

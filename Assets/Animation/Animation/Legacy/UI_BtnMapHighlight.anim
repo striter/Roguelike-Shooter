@@ -5,7 +5,7 @@ AnimationClip:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Map_BattleStatus
+  m_Name: UI_BtnMapHighlight
   serializedVersion: 6
   m_Legacy: 1
   m_Compressed: 0
@@ -21,21 +21,21 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 2
         time: 0
-        value: 0
-        inSlope: 170
-        outSlope: 170
-        tangentMode: 34
+        value: -32
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
       - serializedVersion: 2
         time: 1
-        value: 170
-        inSlope: 170
-        outSlope: 170
-        tangentMode: 34
+        value: -47
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_AnchoredPosition.x
-    path: StatusImage1
+    path: DecorateTriangle1
     classID: 224
     script: {fileID: 0}
   - curve:
@@ -43,65 +43,21 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 2
         time: 0
-        value: 0
+        value: 32
         inSlope: 0
         outSlope: 0
-        tangentMode: 34
+        tangentMode: 136
       - serializedVersion: 2
         time: 1
-        value: 0
+        value: 47
         inSlope: 0
         outSlope: 0
-        tangentMode: 34
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_AnchoredPosition.y
-    path: StatusImage1
-    classID: 224
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 2
-        time: 0
-        value: -170
-        inSlope: 170
-        outSlope: 170
-        tangentMode: 34
-      - serializedVersion: 2
-        time: 1
-        value: 0
-        inSlope: 170
-        outSlope: 170
-        tangentMode: 34
+        tangentMode: 136
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_AnchoredPosition.x
-    path: StatusImage2
-    classID: 224
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 2
-        time: 0
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 34
-      - serializedVersion: 2
-        time: 1
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 34
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_AnchoredPosition.y
-    path: StatusImage2
+    path: DecorateTriangle2
     classID: 224
     script: {fileID: 0}
   m_PPtrCurves: []
@@ -139,21 +95,21 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 2
         time: 0
-        value: 0
-        inSlope: 170
-        outSlope: 170
-        tangentMode: 34
+        value: -32
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
       - serializedVersion: 2
         time: 1
-        value: 170
-        inSlope: 170
-        outSlope: 170
-        tangentMode: 34
+        value: -47
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_AnchoredPosition.x
-    path: StatusImage1
+    path: DecorateTriangle1
     classID: 224
     script: {fileID: 0}
   - curve:
@@ -161,65 +117,21 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 2
         time: 0
-        value: 0
+        value: 32
         inSlope: 0
         outSlope: 0
-        tangentMode: 34
+        tangentMode: 136
       - serializedVersion: 2
         time: 1
-        value: 0
+        value: 47
         inSlope: 0
         outSlope: 0
-        tangentMode: 34
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_AnchoredPosition.y
-    path: StatusImage1
-    classID: 224
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 2
-        time: 0
-        value: -170
-        inSlope: 170
-        outSlope: 170
-        tangentMode: 34
-      - serializedVersion: 2
-        time: 1
-        value: 0
-        inSlope: 170
-        outSlope: 170
-        tangentMode: 34
+        tangentMode: 136
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_AnchoredPosition.x
-    path: StatusImage2
-    classID: 224
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 2
-        time: 0
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 34
-      - serializedVersion: 2
-        time: 1
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 34
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_AnchoredPosition.y
-    path: StatusImage2
+    path: DecorateTriangle2
     classID: 224
     script: {fileID: 0}
   m_EulerEditorCurves: []

@@ -3,28 +3,38 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
-public class UIMessageBoxBase : MonoBehaviour {
+public class UIMessageBoxBase : UIComponentBase {
+    public static UIMessageBoxBase m_MessageBox { get; private set; }
     public static Action OnMessageBoxExit;
     public static T Show<T>(Transform _parentTrans) where T : UIMessageBoxBase
     {
-        T tempBase = TResources.Instantiate<T>("UI/MessageBoxes/" + typeof(T).ToString(), _parentTrans);
-        tempBase.Init();
-        return tempBase;
-    }
+        if(m_MessageBox)
+        {
+            Debug.LogError("Can't Open Another MessageBox While One Is Active");
+            return null;
+        }
 
+        T messageBox = TResources.Instantiate<T>("UI/MessageBoxes/" + typeof(T).ToString(), _parentTrans);
+        messageBox.Init();
+        return messageBox;
+    }
     protected Transform tf_Container { get; private set; }
     Button btn_Confirm;
     Action OnConfirmClick;
 
-    protected virtual void Init()
+    protected override void Init()
     {
+        base.Init();
         tf_Container = transform.Find("Container");
         btn_Confirm = tf_Container.Find("Confirm").GetComponent<Button>();
         btn_Confirm.onClick.AddListener(OnConfirm);
         tf_Container.Find("Cancel").GetComponent<Button>().onClick.AddListener(OnCancel);
+        m_MessageBox = this;
     }
     protected virtual void OnDestroy()
     {
+        m_MessageBox = null;
+        OnMessageBoxExit();
     }
 
     protected void Play(Action _OnConfirmClick)
@@ -36,9 +46,5 @@ public class UIMessageBoxBase : MonoBehaviour {
         OnConfirmClick();
         OnCancel();
     }
-    void OnCancel()
-    {
-        OnMessageBoxExit();
-        Destroy(this.gameObject);
-    }
+    void OnCancel() => Destroy(this.gameObject);
 }

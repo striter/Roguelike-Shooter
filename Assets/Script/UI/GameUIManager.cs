@@ -8,7 +8,7 @@ public class GameUIManager : UIManager {
     public static new GameUIManager Instance;
     public AtlasLoader m_InGameSprites { get; private set; }
     UIC_CoinsStatus m_Coins;
-    bool m_CoinsOverlay;
+    UIControlBase m_OverlayControl;
     protected override void Init()
     {
         Instance = this;
@@ -21,7 +21,6 @@ public class GameUIManager : UIManager {
         base.InitGameControls(inGame);
         ShowControls<UIC_EntityHealth>();
         m_Coins = ShowControls<UIC_CoinsStatus>();
-        m_CoinsOverlay = false;
     }
 
     public void OnGameFinished(GameLevelManager level, Action _OnButtonClick)
@@ -30,20 +29,26 @@ public class GameUIManager : UIManager {
         ShowPage<UI_GameResult>(true).Play(level, _OnButtonClick);
     }
 
-    public T ShowPage<T>(bool animate, float bulletTime = 1f, bool showCoins=false) where T:UIPageBase
+    public T ShowCoinsPage<T>(bool animate, float bulletTime = 1f) where T:UIPageBase
     {
-        m_CoinsOverlay = showCoins;
-        if (m_CoinsOverlay)
-            SetControlViewMode(m_Coins, true);
-
+        m_OverlayControl = m_Coins;
+        SetControlViewMode(m_OverlayControl, true);
         return base.ShowPage<T>(animate, bulletTime);
     }
-
-    protected override void OnAllPageExit()
+    public T ShowGameControlPage<T>(bool animate, float bulletTime = 1f) where T : UIPageBase
     {
-        base.OnAllPageExit();
-        if(m_CoinsOverlay)
-            SetControlViewMode(m_Coins, false);
-        m_CoinsOverlay = false;
+        m_OverlayControl = m_GameControl;
+            SetControlViewMode(m_OverlayControl, true);
+        return ShowPage<T>(animate, bulletTime);
+    }
+    protected override void OnPageExit()
+    {
+        base.OnPageExit();
+        if (UIPageBase.I_PageCount > 0)
+            return;
+
+        if (m_OverlayControl)
+            SetControlViewMode(m_OverlayControl, false);
+        m_OverlayControl = null;
     }
 }

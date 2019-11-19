@@ -7,9 +7,9 @@ public class UI_ActionBattle : UIPageBase {
     UIT_GridControllerGridItem<UIGI_ActionItemDetail> m_Grid;
     PlayerInfoManager m_Info;
     UIC_ActionEnergy m_Energy;
-    protected override void Init(bool useAnim)
+    protected override void Init()
     {
-        base.Init(useAnim);
+        base.Init();
         m_Grid = new UIT_GridControllerGridItem<UIGI_ActionItemDetail>(tf_Container.Find("ActionGrid"));
         m_Energy = new UIC_ActionEnergy(tf_Container.Find("ActionEnergy"));
     }

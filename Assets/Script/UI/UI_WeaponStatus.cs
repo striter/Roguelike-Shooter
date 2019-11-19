@@ -16,9 +16,9 @@ public class UI_WeaponStatus : UIPageBase {
     UIT_TextExtend m_ActionName, m_ActionIntro,m_ActionRarityText;
     UIC_RarityLevel m_ActionRarity;
 
-    protected override void Init(bool useAnim)
+    protected override void Init()
     {
-        base.Init(useAnim);
+        base.Init();
         tf_WeaponInfo = tf_Container.Find("WeaponInfo");
         m_WeaponName = tf_WeaponInfo.Find("WeaponName").GetComponent<UIT_TextExtend>();
         m_WeaponImage = tf_WeaponInfo.Find("WeaponImage").GetComponent<Image>();

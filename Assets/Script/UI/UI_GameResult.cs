@@ -10,9 +10,9 @@ public class UI_GameResult : UIPageBase {
     UIT_TextExtend txt_Difficulty;
     RectTransform rtf_CurrentStatus;
     Transform tf_Stage1, tf_Stage2, tf_Stage3,tf_Goal;
-    protected override void Init(bool useAnim)
+    protected override void Init()
     {
-        base.Init(useAnim);
+        base.Init();
         txt_Progress = tf_Container.Find("Progress/Data").GetComponent<UIT_TextExtend>();
         txt_LevelScore = tf_Container.Find("LevelScore/Data").GetComponent<UIT_TextExtend>();
         txt_KillScore = tf_Container.Find("KillScore/Data").GetComponent<UIT_TextExtend>();

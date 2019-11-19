@@ -35,7 +35,7 @@ public class InteractActionChest : InteractGameBase
         SetInteractable(false);
         m_Animation.Play(true);
         m_Particles.Stop();
-        UIManager.Instance.ShowPage<UI_ActionAcquire>(true).Play(m_Actions, OnActionSelectConfirm, m_SelectAmount);
+        GameUIManager.Instance.ShowGameControlPage<UI_ActionAcquire>(true).Play(m_Actions, OnActionSelectConfirm, m_SelectAmount);
     }
     void OnActionSelectConfirm(int index)
     {

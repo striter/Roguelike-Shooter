@@ -49,8 +49,6 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         m_Blur = m_Effect.GetOrAddCameraEffect<CB_GenerateOverlayUIGrabBlurTexture>();
         m_Blur.SetEffect(1, 2f, 2);
 
-        UIPageBase.OnAllPageExit = OnAllPageExit;
-        UIMessageBoxBase.OnMessageBoxExit = OnMessageBoxExit;
     }
 
     protected virtual void InitGameControls(bool inGame)
@@ -67,9 +65,11 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         base.OnDestroy();
         Instance = null;
         this.StopAllCoroutines();
-        UIPageBase.OnAllPageExit = null;
+        UIPageBase.OnPageExit = null;
     }
 
+
+    public new T ShowMessageBox<T>() where T : UIMessageBoxBase => base.ShowMessageBox<T>();
     public T ShowPage<T>(bool animate,float bulletTime=1f) where T : UIPageBase
     {
         T page = base.ShowPage<T>(animate);
@@ -83,24 +83,18 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         return page;
     }
 
-
-    protected virtual void OnAllPageExit()
+    protected override void OnPageExit()
     {
+        base.OnPageExit();
+        if (UIPageBase.I_PageCount > 0)
+            return;
+
         m_OverlayBG.SetActivate(false);
         GameManagerBase.SetBulletTime(false);
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PageClose);
     }
-    
-    public new T ShowMessageBox<T>() where T : UIMessageBoxBase
-    {
-        SetPageViewMode(false);
-        return base.ShowMessageBox<T>();
-    }
 
-    void OnMessageBoxExit()
-    {
-        SetPageViewMode(true);
-    }
+
     void OnSettingBtnClick()
     {
         if (OnSettingClick != null)

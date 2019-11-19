@@ -20,7 +20,7 @@ public class InteractActionAdjustment : InteractGameBase {
     protected override void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)
     {
         base.OnInteractSuccessful(_interactTarget);
-        UI_ActionAdjustment adjustment = GameUIManager.Instance.ShowPage<UI_ActionAdjustment>(true,1f,true);
+        UI_ActionAdjustment adjustment = GameUIManager.Instance.ShowCoinsPage<UI_ActionAdjustment>(true,1f);
         if (adjustment == null)
             return;
         m_Interactor = _interactTarget.m_PlayerInfo;

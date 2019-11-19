@@ -7,9 +7,9 @@ using UnityEngine;
 public class UI_ActionPack : UIPageBase {
     UIT_GridControllerGridItem<UIGI_ActionItemDetail> m_Grid;
     PlayerInfoManager m_Info;
-    protected override void Init(bool useAnim)
+    protected override void Init()
     {
-        base.Init(useAnim);
+        base.Init();
         m_Grid = new UIT_GridControllerGridItem<UIGI_ActionItemDetail>(tf_Container.Find("ScrollView/Viewport/ActionGrid"));
     }
     public void Show(PlayerInfoManager _info)
