@@ -217,7 +217,7 @@ public class UIC_PlayerStatus : UIControlBase
             m_ActionGrid.AddItem(i).SetInfo(playerInfo,playerInfo.m_BattleActionPicking[i],OnActionClick, OnActionPressDuration);
     }
 
-    void OnActionClick(int index)=> m_Player.m_PlayerInfo.TryUseHoldingAction(index);
+    void OnActionClick(int index)=> m_Player.m_PlayerInfo.TryUsePickingAction(index);
     void OnActionPressDuration()=> UIManager.Instance.ShowPage<UI_ActionBattle>(false,0f).Show(m_Player.m_PlayerInfo) ;
     void OnActionShuffleClick()=>m_Player.m_PlayerInfo.TryShuffle();
 

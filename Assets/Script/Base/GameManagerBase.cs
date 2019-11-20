@@ -357,7 +357,7 @@ public static class ActionDataManager
         List<ActionBase> actions = new List<ActionBase>();
         for (int i = 0; i < actionCount; i++)
         {
-            m_UseableAction.TraversalRandom((int index) =>
+            m_UseableAction.TraversalRandomBreak((int index) =>
             {
                 if (actions.Find(p => p.m_Index == index) == null)
                 {
@@ -374,7 +374,7 @@ public static class ActionDataManager
         List<ActionStorageData> actions = new List<ActionStorageData>();
         for (int i = 0; i < actionCount; i++)
         {
-            actionUnlockData.TraversalRandom((ActionStorageData action) =>
+            actionUnlockData.TraversalRandomBreak((ActionStorageData action) =>
             {
                 if (actions.Find(p => p.m_Index == action.m_Index) .m_Index<=0)
                 {

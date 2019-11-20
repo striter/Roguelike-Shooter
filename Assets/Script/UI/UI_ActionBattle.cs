@@ -38,6 +38,6 @@ public class UI_ActionBattle : UIPageBase {
 
     void OnItemClick(int index)
     {
-        m_Info.TryUseHoldingAction(index);
+        m_Info.TryUsePickingAction(index);
     }
 }

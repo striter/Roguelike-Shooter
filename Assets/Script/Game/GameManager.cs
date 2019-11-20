@@ -37,7 +37,6 @@ public class GameManager : GameManagerBase
     public int F6_TestActionOutstanding = 10001;
     public int F7_TestActionEpic = 10001;
     public int F8_TestAcquireAction = 10001;
-    public bool B_AdditionalLight = true;
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.BackQuote))
@@ -398,8 +397,8 @@ public class GameManager : GameManagerBase
     {
         if (hb.I_AttacherID == sourceID || !Instance.m_Entities.ContainsKey(sourceID))
             return false;
-        EntityBase sourceEntity = Instance.GetEntity(sourceID);
-        return !sourceEntity.m_Health.b_IsDead && hb.m_Attacher.m_Flag != sourceEntity.m_Flag;
+        
+        return  hb.m_Attacher.m_Flag != Instance.GetEntity(sourceID).m_Flag;
     }
     #endregion
     #region Player Management
@@ -642,7 +641,7 @@ public class GameLevelManager
         List<ActionBase> targetActions = new List<ActionBase>();
         for (int i = 0; i < count; i++)
         {
-            m_startAction.TraversalRandom((ActionStorageData action) =>
+            m_startAction.TraversalRandomBreak((ActionStorageData action) =>
             {
                 if (targetActions.Find(p => p.m_Index == action.m_Index) == null)
                 {

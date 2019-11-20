@@ -128,7 +128,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager>,ISingleCoroutine {
         else
         {
             int rewardIndex = 0;
-            subGenerateTiles.TraversalRandom( (SBigmapTileInfo tile) => {
+            subGenerateTiles.TraversalRandomBreak( (SBigmapTileInfo tile) => {
                 rewardIndex++;
                 if (rewardIndex % 2 == 0)
                     rewardTiles.Add(tile);
@@ -137,8 +137,8 @@ public class LevelManager : SimpleSingletonMono<LevelManager>,ISingleCoroutine {
 
         //Create Sub Battle Tile
         SBigmapTileInfo subBattleTile = null;
-        subGenerateTiles.TraversalRandom( (SBigmapTileInfo tile)=> {
-            TTiles.TTiles.m_FourDirections.TraversalRandom( (enum_TileDirection direction) =>
+        subGenerateTiles.TraversalRandomBreak( (SBigmapTileInfo tile)=> {
+            TTiles.TTiles.m_FourDirections.TraversalRandomBreak( (enum_TileDirection direction) =>
             {
                 SBigmapTileInfo targetSubBattleTile = bigmapTiles.Get(tile.m_TileAxis.DirectionAxis(direction));
                 if (targetSubBattleTile!=null&& targetSubBattleTile.m_LevelType== enum_TileType.Invalid)
@@ -154,7 +154,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager>,ISingleCoroutine {
 
         //Connect Sub Battle Tile To All Tiles Nearby
         if (subBattleTile!=null)
-        TTiles.TTiles.m_FourDirections.TraversalRandom( (enum_TileDirection direction) => {
+        TTiles.TTiles.m_FourDirections.TraversalRandomBreak( (enum_TileDirection direction) => {
             SBigmapTileInfo nearbyTile = bigmapTiles.Get(subBattleTile.m_TileAxis.DirectionAxis(direction));
             if (nearbyTile != null && (nearbyTile.m_LevelType== enum_TileType.CoinsTrade|| nearbyTile.m_LevelType == enum_TileType.Battle))
                 ConnectTile(subBattleTile,nearbyTile);
@@ -163,9 +163,9 @@ public class LevelManager : SimpleSingletonMono<LevelManager>,ISingleCoroutine {
         //Generate Last Reward Tile
         subGenerateTiles.RemoveAll(p => p.m_LevelType == enum_TileType.CoinsTrade);
         SBigmapTileInfo subRewardTile = null;
-        subGenerateTiles.TraversalRandom( (SBigmapTileInfo tile) =>
+        subGenerateTiles.TraversalRandomBreak( (SBigmapTileInfo tile) =>
         {
-            TTiles.TTiles.m_FourDirections.TraversalRandom( (enum_TileDirection direction) =>
+            TTiles.TTiles.m_FourDirections.TraversalRandomBreak( (enum_TileDirection direction) =>
             {
                 SBigmapTileInfo targetSubrewardTile = bigmapTiles.Get(tile.m_TileAxis.DirectionAxis(direction));
                 if (targetSubrewardTile != null && targetSubrewardTile.m_LevelType == enum_TileType.Invalid)

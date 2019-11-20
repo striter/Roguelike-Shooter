@@ -209,10 +209,14 @@ public static class TCommon
                 OnEachItem(list[i]);
         }
     }
-    public static void Traversal<T>(this List<T> list, Action<int, T> OnEachItem)
+
+    public static void TraversalBreak<T>(this List<T> list, Func<T,bool> OnEachItem)
     {
         for (int i = 0; i < list.Count; i++)
-            OnEachItem(i, list[i]);
+        {
+            if (OnEachItem(list[i]))
+                break;
+        }
     }
     public static void Traversal<T, Y>(this Dictionary<T, Y> dic, Action<T> OnEachKey,bool changeValue=false)
     {
@@ -302,7 +306,7 @@ public static class TCommon
             enumAction((T)temp);
         }
     }
-    public static void TraversalRandom<T>(this List<T> list, Func<T, bool> OnRandomItemStop = null, System.Random seed = null)
+    public static void TraversalRandomBreak<T>(this List<T> list, Func<T, bool> OnRandomItemStop = null, System.Random seed = null)
     {
         if (list.Count == 0)
             return;
@@ -318,7 +322,7 @@ public static class TCommon
                 index = 0;
         }
     }
-    public static void TraversalRandom<T, Y>(this Dictionary<T, Y> dictionary, Func<T, Y, bool> OnRandomItemStop = null, System.Random seed = null)
+    public static void TraversalRandomBreak<T, Y>(this Dictionary<T, Y> dictionary, Func<T, Y, bool> OnRandomItemStop = null, System.Random seed = null)
     {
         if (dictionary.Count == 0)
             return;
