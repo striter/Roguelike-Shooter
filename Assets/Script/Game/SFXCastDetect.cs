@@ -12,11 +12,13 @@ public class SFXCastDetect : SFXCastDetonate {
         m_detector = GetComponent<EntityDetector>();
         m_detector.Init(OnDetect);
     }
+
     protected override void OnPoolItemEnable()
     {
         base.OnPoolItemEnable();
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnDetectEntity);
     }
+
     protected override void OnPoolItemDisable()
     {
         base.OnPoolItemDisable();
@@ -29,6 +31,7 @@ public class SFXCastDetect : SFXCastDetonate {
         m_detector.SetPlay(true);
         base.PlaySFX(I_SourceID, F_PlayDuration, F_DurationSelfDetonate);
     }
+
     void OnDetect(HitCheckEntity entity, bool enter)
     {
         if (enter&& GameManager.B_CanDamageEntity(entity, I_SourceID))

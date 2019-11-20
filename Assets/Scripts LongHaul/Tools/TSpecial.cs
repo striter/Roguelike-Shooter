@@ -246,7 +246,7 @@ namespace TTiles
             for (int i = 0; i < fillCount; i++)
             {
                 T temp = targetList[i];
-                m_FourDirections.TraversalRandom((enum_TileDirection randomDirection) => {
+                m_FourDirections.TraversalRandomBreak((enum_TileDirection randomDirection) => {
                     TileAxis axis = temp.m_TileAxis.DirectionAxis(randomDirection);
                     if (axis.InRange(tileArray))
                     {

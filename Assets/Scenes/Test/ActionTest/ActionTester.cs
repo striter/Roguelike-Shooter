@@ -100,7 +100,7 @@ public class ActionTester : MonoBehaviour {
         for (int i = 0; i < count; i++)
         {
             ActionTest random = null;
-            TCommon.TraversalRandom(m_AllActions, (ActionTest action) =>{
+            TCommon.TraversalRandomBreak(m_AllActions, (ActionTest action) =>{
                 if (result.Find(p => p.index == action.index) == null)
                 {
                     random = action;

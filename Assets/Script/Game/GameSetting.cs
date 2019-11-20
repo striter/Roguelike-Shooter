@@ -140,8 +140,8 @@ namespace GameSetting
                     new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.Normal, 75 }, { enum_RarityLevel.OutStanding, 25 } },    //交易等级概率
                     new Dictionary<enum_CharacterType, CoinsGenerateData>() {
                      { enum_CharacterType.SubHidden, CoinsGenerateData.Create( 0,0, 0, new RangeInt(0, 0)) },     //实体掉落生成概率 类型,血,护甲,金币,金币数值范围
-                     { enum_CharacterType.Fighter, CoinsGenerateData.Create( 8,20, 20, new RangeInt(2, 2)) },
-                     { enum_CharacterType.Shooter_Rookie, CoinsGenerateData.Create( 8,15, 20, new RangeInt(2, 2)) },
+                     { enum_CharacterType.Fighter, CoinsGenerateData.Create( 8,20, 20, new RangeInt(4, 2)) },
+                     { enum_CharacterType.Shooter_Rookie, CoinsGenerateData.Create( 8,15, 20, new RangeInt(4, 2)) },
                      { enum_CharacterType.Shooter_Veteran, CoinsGenerateData.Create( 8,15, 30, new RangeInt(3, 3)) },
                      { enum_CharacterType.AOECaster, CoinsGenerateData.Create( 8,15, 50, new RangeInt(4, 4)) },
                      { enum_CharacterType.Elite, CoinsGenerateData.Create( 8,15, 100, new RangeInt(6, 6)) }});
@@ -1395,6 +1395,7 @@ namespace GameSetting
         }
         public virtual void OnDead() => Reset();
         public virtual void OnRevive() => Reset();
+        public virtual void OnExpireListChange() => OnExpireChange?.Invoke();
         protected virtual void Reset()
         {
             m_Effects.Traversal((enum_CharacterEffect type) => { m_Effects[type].Reset(); });
@@ -1417,7 +1418,7 @@ namespace GameSetting
         {
             m_Expires.Add(expire);
             EntityInfoChange();
-            OnExpireChange();
+            OnExpireListChange();
         }
         void RefreshExpire(ExpireBase expire)
         {
@@ -1428,7 +1429,7 @@ namespace GameSetting
         {
             m_Expires.Remove(expire);
             EntityInfoChange();
-            OnExpireChange();
+            OnExpireListChange();
         }
         public void AddBuff(int sourceID, SBuff buffInfo)
         {
@@ -1522,6 +1523,16 @@ namespace GameSetting
 
     public class PlayerInfoManager : CharacterInfoManager
     {
+        #region Test Will Be Remove Soon
+        public void TestUseAction(ActionBase targetAction)
+        {
+            m_ActionEquiping.Traversal((ActionBase action) => { action.OnUseActionElse(targetAction); });
+            if (targetAction.m_ActionType != enum_ActionType.WeaponPerk)
+                GameObjectManager.PlayMuzzle(m_Player.m_EntityID, m_Player.transform.position, Vector3.up, GameExpression.GetActionMuzzleIndex(targetAction.m_ActionType));
+            OnAddAction(targetAction);
+        }
+        #endregion
+
         EntityCharacterPlayer m_Player;
         public int I_ClipAmount(int baseClipAmount) => baseClipAmount == 0 ? 0 : (int)(((B_OneOverride ? 1 : baseClipAmount) + I_ClipAdditive) * F_ClipMultiply);
         public float F_RecoilMultiply { get; private set; } = 1f;
@@ -1541,6 +1552,7 @@ namespace GameSetting
         public List<ActionBase> m_BattleAction { get; private set; } = new List<ActionBase>();
         public List<ActionBase> m_BattleActionPooling { get; private set; } = new List<ActionBase>();
         public List<ActionBase> m_BattleActionPicking { get; private set; } = new List<ActionBase>();
+        ActionDeviceNormal m_CurrentDevice;
         Action OnActionChange;
         protected bool b_actionChangeIndicated = true;
         protected void IndicateActionUI() => b_actionChangeIndicated = false;
@@ -1560,8 +1572,6 @@ namespace GameSetting
             TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
             TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
         }
-
-
         public override void OnDeactivate()
         {
             base.OnDeactivate();
@@ -1595,8 +1605,15 @@ namespace GameSetting
             m_ActionEnergy = GameConst.F_RestoreActionEnergy;
         }
 
+
         public void OnBattleStart()
         {
+            OnShuffle();
+        }
+
+        public override void OnExpireListChange()
+        {
+            base.OnExpireListChange();
             OnShuffle();
         }
 
@@ -1606,6 +1623,7 @@ namespace GameSetting
             m_ActionEnergy = GameConst.F_RestoreActionEnergy;
             m_ActionEquiping.Traversal((ActionBase action) => { if (action.m_ActionType != enum_ActionType.WeaponPerk) action.ForceExpire(); });
             m_BattleActionPooling.Clear();
+            m_CurrentDevice = null;
             ClearHoldingActions();
         }
 
@@ -1614,14 +1632,7 @@ namespace GameSetting
             base.Reset();
             f_shuffleCheck = -1;
         }
-        #region Player Info
-        public void TestUseAction(ActionBase targetAction)        //Test Will Be Remove Soon
-        {
-            m_ActionEquiping.Traversal((ActionBase action) => { action.OnUseActionElse(targetAction); });
-            if (targetAction.m_ActionType!= enum_ActionType.WeaponPerk)
-                GameObjectManager.PlayMuzzle(m_Player.m_EntityID, m_Player.transform.position, Vector3.up, GameExpression.GetActionMuzzleIndex(targetAction.m_ActionType));
-            OnAddAction(targetAction);
-        }
+        #region Info Update
         protected void OnUseAcion(ActionBase targetAction)
         {
             m_ActionEquiping.Traversal((ActionBase action) => {action.OnUseActionElse(targetAction); });
@@ -1633,14 +1644,16 @@ namespace GameSetting
             targetAction.Activate(m_Player, OnExpireElapsed);
             m_ActionEquiping.Add(targetAction);
             targetAction.OnActivate();
-            AddExpire(targetAction);    
+            AddExpire(targetAction);
+            CheckDevice();
         }
         protected override void OnExpireElapsed(ExpireBase expire)
         {
-            base.OnExpireElapsed(expire);
             ActionBase action = expire as ActionBase;
             if (action != null)
                 m_ActionEquiping.Remove(action);
+            base.OnExpireElapsed(expire);
+            CheckDevice();
         }
         protected override void OnResetInfo()
         {
@@ -1755,7 +1768,6 @@ namespace GameSetting
                     AddActionEnergy(GameExpression.GetActionEnergyRevive(amountApply));
         }
         #endregion
-
         #region Action Interact
         public bool CanCostEnergy(float cost) => m_ActionEnergy >= cost;
         public bool TryCostEnergy(float cost)
@@ -1768,38 +1780,47 @@ namespace GameSetting
 
             m_ActionEnergy -= cost;
             return true;
+        }
+
+        public void DoCopyAction(ActionBase action)
+        {
+            OnAddAction(ActionDataManager.CopyAction(action));
+            IndicateActionUI();
         } 
-        public bool TryUseHoldingAction(int index)
+        public bool TryUsePickingAction(int index)
         {
             ActionBase action = m_BattleActionPicking[index];
-            if (b_shuffling||!TryCostEnergy(action.I_Cost))
+            if (b_shuffling || !TryCostEnergy(action.I_Cost))
                 return false;
-            
+
             OnUseAcion(action);
             m_BattleActionPicking.RemoveAt(index);
             RefillHoldingActions();
             IndicateActionUI();
             return true;
         }
+
         public bool TryShuffle()
         {
-            if (b_shuffling||!TryCostEnergy(GameConst.F_ActionShuffleCost))
+            if (b_shuffling || !TryCostEnergy(GameConst.F_ActionShuffleCost))
                 return false;
             f_shuffleCheck = GameConst.F_ActionShuffleCooldown;
             ClearHoldingActions();
             return true;
         }
+
         void OnShuffle()
         {
             m_BattleActionPooling.Clear();
             for (int i = 0; i < m_BattleAction.Count; i++)
             {
-                if(m_BattleAction[i].m_ActionType!= enum_ActionType.Equipment||m_ActionEquiping.Find(p=>p.m_Identity==m_BattleAction[i].m_Identity)==null)
-                     m_BattleActionPooling.Add( m_BattleAction[i]);
+                if (m_BattleAction[i].m_ActionType != enum_ActionType.Equipment || m_ActionEquiping.Find(p => p.m_Identity == m_BattleAction[i].m_Identity) == null)
+                    m_BattleActionPooling.Add(m_BattleAction[i]);
             }
             ClearHoldingActions();
             RefillHoldingActions();
         }
+
         void RefillHoldingActions()
         {
             if (m_BattleActionPooling.Count <= 0 || m_BattleActionPicking.Count >= GameConst.I_ActionHoldCount)
@@ -1810,11 +1831,13 @@ namespace GameSetting
             m_BattleActionPooling.RemoveAt(index);
             RefillHoldingActions();
         }
+
         void ClearHoldingActions()
         {
             m_BattleActionPicking.Clear();
             IndicateActionUI();
         }
+
         public void UpgradeAllHoldingAction()
         {
             if (m_BattleActionPicking.Count == 0)
@@ -1823,35 +1846,63 @@ namespace GameSetting
             m_BattleActionPicking.Traversal((ActionBase action) => { action.Upgrade(); });
             IndicateActionUI();
         }
+
         public void OverrideHoldingActionCost(int cost)
         {
             m_BattleActionPicking.Traversal((ActionBase action) => { action.OverrideCost(cost); });
             IndicateActionUI();
         }
+
         public void AddStoredAction(ActionBase action)
         {
             m_BattleAction.Add(action);
             IndicateActionUI();
         }
+
         public void RemoveStoredAction(int index)
         {
             m_BattleAction.RemoveAt(index);
             IndicateActionUI();
         }
+
         public void UpgradeStoredAction(int index)
         {
             m_BattleAction[index].Upgrade();
             IndicateActionUI();
         }
+
         public void AddActionEnergy(float amount)
         {
             m_ActionEnergy += amount;
             if (m_ActionEnergy > GameConst.F_MaxActionEnergy)
                 m_ActionEnergy = GameConst.F_MaxActionEnergy;
         }
-
         #endregion
 
+        #region Action Device Interact
+        public bool m_HaveDevice => m_CurrentDevice != null;
+        public bool TryUseDevice()
+        {
+            if (m_CurrentDevice == null)
+                return false;
+            m_CurrentDevice.OnUseDevice();
+            m_CurrentDevice = null;
+            return true;
+        }
+
+        void CheckDevice()
+        {
+            m_CurrentDevice = null;
+            m_ActionEquiping.TraversalBreak((ActionBase action) => {
+                if (action.m_ActionType == enum_ActionType.Device)
+                {
+                    m_CurrentDevice = action as ActionDeviceNormal;
+                    return true;
+                }
+                return false;
+            });
+        }
+        #endregion
         #region CoinInfo
         public void OnCoinsReceive(int coinAmount)
         {
@@ -2029,6 +2080,7 @@ namespace GameSetting
         public void OverrideCost(int overrideCost)=> m_CostOverride = overrideCost;
         #region Interact
         public virtual void OnActivate() { }
+        public virtual void OnUseDevice() { }
         public virtual void OnUseActionElse(ActionBase targetAction) { }
         public virtual void OnBeforeReceiveDamage(DamageInfo info) { }
         public virtual void OnAfterReceiveDamage(DamageInfo info, float amount) { }

@@ -20,8 +20,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected SFXAimAssist m_Assist = null;
     public WeaponBase m_WeaponCurrent { get; private set; } = null;
     public InteractBase m_Interact { get; private set; }
-    public EquipmentBase m_Equipment { get; private set; }
-    public int m_EquipmentTimes { get; private set; }
     public float m_EquipmentDistance { get; private set; }
     public override Transform tf_Weapon => m_WeaponCurrent.m_Case;
     public Transform tf_Status { get; private set; }
@@ -112,8 +110,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     }
     void OnBattleFinish()
     {
-        m_Equipment = null;
-        m_EquipmentTimes = 0;
         m_Health.OnRestoreArmor();
         m_PlayerInfo.OnBattleFinish();
     }
@@ -124,11 +120,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
         if (down)
         {
-            if (m_Equipment != null)
-            {
-                OnEquipment();
+            if (m_PlayerInfo.TryUseDevice())
                 return;
-            }
+
             if (m_Interact != null)
             {
                 OnInteract();
@@ -300,32 +294,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             m_Interact = null;
 
         OnInteractStatus();
-    }
-    #endregion
-    #region Equipment
-    public void OnAddupEquipmentUseTime(int times) => m_EquipmentTimes += times;
-    public EquipmentBase AcquireEquipment(int actionIndex, Func<DamageDeliverInfo> OnDamageBuff,float throwDistance=10f)
-    {
-        OnMainDown(false);
-        EquipmentBase targetEquipment = EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(actionIndex), this, OnDamageBuff == null ? m_PlayerInfo.GetDamageBuffInfo : OnDamageBuff);
-        m_EquipmentTimes = (m_Equipment == null || m_Equipment.I_Index == targetEquipment.I_Index) ? m_EquipmentTimes + 1 : 1;
-        m_Equipment = targetEquipment;
-        m_EquipmentDistance = throwDistance;
-        return m_Equipment;
-    }
-    public T AcquireEquipment<T>(int actionIndex, Func<DamageDeliverInfo> OnDamageBuff=null) where T : EquipmentBase=> AcquireEquipment(actionIndex,OnDamageBuff) as T;
-
-    void OnEquipment()
-    {
-        if (m_EquipmentTimes<=0||m_Equipment == null)
-            return;
-
-        m_Equipment.Play(this, transform.position + transform.forward * m_EquipmentDistance);
-        m_Equipment.OnDeactivate();
-
-        m_EquipmentTimes--;
-        if (m_EquipmentTimes <= 0)
-            m_Equipment = null;
     }
     #endregion
     #region Action
