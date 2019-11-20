@@ -47,10 +47,7 @@ public class UIGI_ActionItemHold : UIGI_ActionItemBase
     void OnPress(bool down,Vector2 deltaPos)
     {
         if (!down && f_pressDuration < UIConst.F_UIActionBattlePressDuration)
-        {
             OnClick.Invoke(I_Index);
-            Debug.Log(I_Index);
-        }
         b_pressing = down;
         f_pressDuration = 0;
     }
