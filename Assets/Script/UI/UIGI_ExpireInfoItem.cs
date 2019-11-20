@@ -31,7 +31,7 @@ public class UIGI_ExpireInfoItem : UIT_GridItem {
         if (m_target != null && m_target.m_ExpireDuration != 0)
         {
             m_DurationFill.fillAmount = 1-m_target.f_expireLeftScale;
-            m_Duration.text = string.Format("{0:N2}s", m_target.f_expireCheck);
+            m_Duration.text = string.Format("{0:N1}s", m_target.f_expireCheck);
         }
     }
 }

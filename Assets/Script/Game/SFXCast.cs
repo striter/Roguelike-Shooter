@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class SFXCast : SFXParticles {
+public class SFXCast : SFXEquipmentBase {
     #region PresetInfo
     public enum_CastControllType E_CastType = enum_CastControllType.Invalid;
     public enum_CastTarget E_CastTarget =  enum_CastTarget.Invalid;
@@ -43,7 +43,7 @@ public class SFXCast : SFXParticles {
             GameManagerBase.Instance.SetEffect_Shake(V4_CastInfo.magnitude);
 
         if (I_ImpactIndex > 0)
-            GameObjectManager.SpawnParticles<SFXImpact>(I_ImpactIndex,transform.position,transform.forward).Play(m_sourceID);
+            GameObjectManager.SpawnSFX<SFXImpact>(I_ImpactIndex,transform.position,transform.forward).Play(m_sourceID);
 
         if (F_Tick <= 0)
             DoBlastCheck();
@@ -103,7 +103,7 @@ public class SFXCast : SFXParticles {
         for (int i = 0; i < hits.Length; i++)
         {
             HitCheckEntity entity = hits[i].collider.DetectEntity();
-            if (entity!=null&&!targetHitted.Contains(entity.I_AttacherID)&&GameManager.B_CanDamageEntity(entity, m_sourceID))
+            if (entity!=null&&!targetHitted.Contains(entity.I_AttacherID)&&GameManager.B_CanSFXDamageEntity(entity, m_sourceID))
             {
                 targetHitted.Add(entity.I_AttacherID);
                 OnDamageEntity(entity);

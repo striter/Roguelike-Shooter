@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
 using TPhysics;
-public class SFXProjectile : SFXParticles
+public class SFXProjectile : SFXEquipmentBase
 {
     #region PresetInfos 
     public enum_ProjectileFireType E_ProjectileType= enum_ProjectileFireType.Invalid;
@@ -75,7 +75,7 @@ public class SFXProjectile : SFXParticles
             m_Simulator.Simulate(Time.deltaTime);
     }
     #region Physics
-    protected virtual bool CanHitTarget(HitCheckBase hitCheck) => !m_EntityHitted.Contains(hitCheck.I_AttacherID) && GameManager.B_CanHitTarget(hitCheck, m_sourceID);
+    protected virtual bool CanHitTarget(HitCheckBase hitCheck) => !m_EntityHitted.Contains(hitCheck.I_AttacherID) && GameManager.B_CanSFXHitTarget(hitCheck, m_sourceID);
     protected bool OnHitTargetBreak(RaycastHit hitInfo, HitCheckBase hitCheck)
     {
         bool hitSource = hitInfo.point == Vector3.zero;
@@ -104,7 +104,7 @@ public class SFXProjectile : SFXParticles
             case enum_HitCheck.Entity:
                 {
                     HitCheckEntity entity = hitCheck as HitCheckEntity;
-                    if (B_DealDamage && !m_EntityHitted.Contains(entity.I_AttacherID) && GameManager.B_CanDamageEntity(entity, m_sourceID))
+                    if (B_DealDamage && !m_EntityHitted.Contains(entity.I_AttacherID) && GameManager.B_CanSFXDamageEntity(entity, m_sourceID))
                     {
                         entity.TryHit(m_DamageInfo, transform.forward);
                         m_EntityHitted.Add(entity.I_AttacherID);
@@ -128,7 +128,7 @@ public class SFXProjectile : SFXParticles
         if (I_ImpactIndex <= 0)
             return;
 
-        GameObjectManager.SpawnParticles<SFXImpact>(I_ImpactIndex,hitPoint,hitNormal).Play(m_sourceID);
+        GameObjectManager.SpawnSFX<SFXImpact>(I_ImpactIndex,hitPoint,hitNormal).Play(m_sourceID);
     }
     protected void SpawnHitMark(Vector3 hitPoint,Vector3 hitNormal,HitCheckBase hitParent)
     {
@@ -138,7 +138,7 @@ public class SFXProjectile : SFXParticles
         bool showhitMark = GameExpression.B_ShowHitMark(hitParent.m_HitCheckType);
         if (showhitMark)
         {
-            SFXHitMark hitMark = GameObjectManager.SpawnParticles<SFXHitMark>(I_HitMarkIndex, hitPoint, hitNormal);
+            SFXHitMark hitMark = GameObjectManager.SpawnSFX<SFXHitMark>(I_HitMarkIndex, hitPoint, hitNormal);
             hitMark.Play(m_sourceID);
             hitMark.AttachTo(hitParent.transform);
         }

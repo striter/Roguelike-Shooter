@@ -1,6 +1,4 @@
-﻿using System;
-using UnityEngine;
-using GameSetting;
+﻿using UnityEngine;
 public class SFXBase :ObjectPoolMonoItem<int> {
     public const int I_SFXStopExternalDuration= 4;
     public int I_SFXIndex { get; private set; } = -1;
@@ -63,8 +61,9 @@ public class SFXBase :ObjectPoolMonoItem<int> {
     protected virtual void OnRecycle()
     {
         m_AttachTo = null;
-        ObjectPoolManager<int, SFXBase>.Recycle(I_SFXIndex, this);
+        DoSFXRecycle();
     }
+    protected virtual void DoSFXRecycle()=> ObjectPoolManager<int, SFXBase>.Recycle(I_SFXIndex, this);
 
     public void AttachTo(Transform _attachTo)
     {

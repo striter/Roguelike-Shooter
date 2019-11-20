@@ -41,7 +41,7 @@ public class SFXCastLaserBeam : SFXCast {
         RaycastHit[] hits = OnCastCheck(GameLayer.Mask.I_StaticEntity);
         for (int i = 0; i < hits.Length; i++)
         {
-            if (!GameManager.B_CanHitTarget(hits[i].collider.Detect(), m_sourceID))
+            if (!GameManager.B_CanSFXHitTarget(hits[i].collider.Detect(), m_sourceID))
                 continue;
 
             float targetLength = TCommon.GetXZDistance(CastTransform.position, hits[i].point)+.2f;
