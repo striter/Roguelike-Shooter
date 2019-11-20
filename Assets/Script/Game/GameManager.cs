@@ -378,28 +378,28 @@ public class GameManager : GameManagerBase
 
         SpawnEntityDeadPickups(character);
     }
-
-
-    public static bool B_CanDamageEntity(HitCheckEntity hb, int sourceID)   //After Hit,If Match Target Hit Succeed
-    {
-        if (hb.I_AttacherID == sourceID)
-            return false;
-
-        return Instance.m_Entities.ContainsKey(sourceID) &&hb.m_Attacher.m_Flag != Instance.m_Entities[sourceID].m_Flag;
-    }
+        //If Match Will Hit Target
     public static bool B_CanHitTarget(HitCheckBase hitCheck,int sourceID)
     {
         bool canHit = hitCheck.I_AttacherID!=sourceID;
-        if (hitCheck.m_HitCheckType == enum_HitCheck.Entity)
+        if (hitCheck.m_HitCheckType == enum_HitCheck.Entity)        //Entity Special Check
             return canHit&&B_CanHitEntity(hitCheck as HitCheckEntity, sourceID);
         return canHit;
     }
-
-    static bool B_CanHitEntity(HitCheckEntity targetHitCheck, int sourceID)  //If Match Will Hit Target,Player Particles ETC
+    //If Match Will Hit Entity
+    static bool B_CanHitEntity(HitCheckEntity targetHitCheck, int sourceID)
     {
         if (targetHitCheck.I_AttacherID == sourceID || targetHitCheck.m_Attacher.m_Flag == enum_EntityFlag.Neutal)
             return false;
         return !Instance.m_Entities.ContainsKey(sourceID) || targetHitCheck.m_Attacher.m_Flag != Instance.m_Entities[sourceID].m_Flag;
+    }
+    //After Hit,If Match Target Hit Succeed
+    public static bool B_CanDamageEntity(HitCheckEntity hb, int sourceID) 
+    {
+        if (hb.I_AttacherID == sourceID || !Instance.m_Entities.ContainsKey(sourceID))
+            return false;
+        EntityBase sourceEntity = Instance.GetEntity(sourceID);
+        return !sourceEntity.m_Health.b_IsDead && hb.m_Attacher.m_Flag != sourceEntity.m_Flag;
     }
     #endregion
     #region Player Management
