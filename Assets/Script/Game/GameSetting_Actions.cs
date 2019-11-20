@@ -725,6 +725,7 @@ namespace GameSetting_Action
 
             for (int i = 0; i < Value1; i++)
                 m_ActionEntity.m_PlayerInfo.DoCopyAction(targetAction);
+
             ForceExpire();
         }
         public Action_10017_DeviceCopy(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }

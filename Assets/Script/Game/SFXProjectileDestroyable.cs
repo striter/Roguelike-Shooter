@@ -17,6 +17,18 @@ public class SFXProjectileDestroyable : SFXProjectile {
         m_Health.Play(OnStop);
         base.Play(deliverInfo, direction, targetPosition);
     }
+    protected override void OnPoolItemEnable()
+    {
+        base.OnPoolItemEnable();
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnStop);
+    }
+
+    protected override void OnPoolItemDisable()
+    {
+        base.OnPoolItemDisable();
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnStop);
+    }
+
     protected override void OnPlay()
     {
         m_Health.OnPlay();
