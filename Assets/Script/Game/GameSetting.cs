@@ -1394,8 +1394,7 @@ namespace GameSetting
                 m_Entity.m_HitCheck.TryHit(new DamageInfo(-amountApply * F_HealthDrainMultiply, enum_DamageType.HealthOnly, DamageDeliverInfo.Default(m_Entity.m_EntityID)));
         }
         public virtual void OnDead() => Reset();
-        public virtual void OnRevive() => Reset();
-        public virtual void OnExpireListChange() => OnExpireChange?.Invoke();
+        public virtual void OnRevive() => Reset(); 
         protected virtual void Reset()
         {
             m_Effects.Traversal((enum_CharacterEffect type) => { m_Effects[type].Reset(); });
@@ -1418,7 +1417,7 @@ namespace GameSetting
         {
             m_Expires.Add(expire);
             EntityInfoChange();
-            OnExpireListChange();
+            OnExpireChange?.Invoke();
         }
         void RefreshExpire(ExpireBase expire)
         {
@@ -1429,7 +1428,7 @@ namespace GameSetting
         {
             m_Expires.Remove(expire);
             EntityInfoChange();
-            OnExpireListChange();
+            OnExpireChange?.Invoke();
         }
         public void AddBuff(int sourceID, SBuff buffInfo)
         {
@@ -1610,13 +1609,7 @@ namespace GameSetting
         {
             OnShuffle();
         }
-
-        public override void OnExpireListChange()
-        {
-            base.OnExpireListChange();
-            CheckDevice();
-        }
-
+        
         public void OnBattleFinish()
         {
             Reset();
@@ -2345,16 +2338,15 @@ namespace GameSetting
         {
 
         }
+        public virtual void OnPlayAnim(bool play)
+        {
+        }
         public virtual void Tick(float deltaTime)
         {
 
         }
-        public virtual void OnPlayAnim(bool play)
-        {
-        }
         public virtual void OnDeactivate()
         {
-
         }
 
         public static EquipmentBase AcquireEquipment(int weaponIndex, EntityCharacterBase _entity, Func<DamageDeliverInfo> GetDamageBuffInfo)
