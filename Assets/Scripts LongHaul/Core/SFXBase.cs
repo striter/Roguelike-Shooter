@@ -49,12 +49,14 @@ public class SFXBase :ObjectPoolMonoItem<int> {
 
     protected virtual void OnPlay()
     {
+        B_Delay = false;
         B_Playing = true;
     }
 
     protected virtual void OnStop()
     {
         f_lifeTimeCheck = I_SFXStopExternalDuration;
+        B_Delay = false;
         B_Playing = false;
     }
 
@@ -85,10 +87,7 @@ public class SFXBase :ObjectPoolMonoItem<int> {
         {
             f_delayTimeLeft -= Time.deltaTime;
             if (f_delayTimeLeft < 0)
-            {
                 OnPlay();
-                B_Delay = false;
-            }
         }
 
         if (!m_AutoStop && !m_AutoRecycle)
