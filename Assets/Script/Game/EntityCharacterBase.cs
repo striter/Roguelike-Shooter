@@ -2,6 +2,8 @@
 using GameSetting;
 using TSpecialClasses;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 public class EntityCharacterBase : EntityBase, ISingleCoroutine
 {
@@ -30,7 +32,10 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         base.OnPoolItemInit(_identity, _OnRecycle);
         tf_Model = transform.Find("Model");
         tf_Head = transform.Find("Head");
-        m_Effect = new EntityCharacterEffectManager(tf_Model.Find("Skin").GetComponentsInChildren<Renderer>());
+        List<Renderer> renderers = tf_Model.Find("Skin").GetComponentsInChildren<Renderer>().ToList();
+        if(ExtraRendererOnlyAvailableFor107WhatAwkwardRequirementWhyNotPutThemIntoOneModelCauseOutModelArtistCantDoItHaveToCreateThisIntoMyCodeLikeABunchOfShitForFuckingRealSucks)
+        renderers.Add(ExtraRendererOnlyAvailableFor107WhatAwkwardRequirementWhyNotPutThemIntoOneModelCauseOutModelArtistCantDoItHaveToCreateThisIntoMyCodeLikeABunchOfShitForFuckingRealSucks);
+        m_Effect = new EntityCharacterEffectManager(renderers);
         m_CharacterInfo = GetEntityInfo();
     }
 
@@ -151,7 +156,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         bool m_cloaked;
         bool m_scaned;
         bool m_freezed;
-        public EntityCharacterEffectManager(Renderer[] _skin)
+        public EntityCharacterEffectManager(List<Renderer> _skin)
         {
             Material materialBase= _skin[0].materials[0];
             Material materialEffect = _skin[0].materials[1];
@@ -292,4 +297,9 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
             m_Animator.SetTrigger(HS_T_Dead);
         }
     }
+
+
+    #region ?
+    public Renderer ExtraRendererOnlyAvailableFor107WhatAwkwardRequirementWhyNotPutThemIntoOneModelCauseOutModelArtistCantDoItHaveToCreateThisIntoMyCodeLikeABunchOfShitForFuckingRealSucks;
+    #endregion
 }

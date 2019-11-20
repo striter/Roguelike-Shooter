@@ -132,9 +132,9 @@ public class UIC_PlayerStatus : UIControlBase
 
         rtf_StatusData.SetWorldViewPortAnchor(m_Player.tf_Status.position, CameraController.Instance.m_Camera, Time.deltaTime * 10f);
 
-        m_EnergyLerp.TickDelta(Time.deltaTime);
-        m_HealthLerp.TickDelta(Time.deltaTime);
-        m_ArmorLerp.TickDelta(Time.deltaTime);
+        m_EnergyLerp.TickDelta(Time.unscaledDeltaTime);
+        m_HealthLerp.TickDelta(Time.unscaledDeltaTime);
+        m_ArmorLerp.TickDelta(Time.unscaledDeltaTime);
 
         if (m_dying)
         {

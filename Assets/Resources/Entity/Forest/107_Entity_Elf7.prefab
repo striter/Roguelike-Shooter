@@ -1166,6 +1166,8 @@ MonoBehaviour:
   I_DefaultArmor: 0
   F_MovementSpeed: 3
   F_AttackSpread: 0
+  ? ExtraRendererOnlyAvailableFor107WhatAwkwardRequirementWhyNotPutThemIntoOneModelCauseOutModelArtistCantDoItHaveToCreateThisIntoMyCodeLikeABunchOfShitForFuckingRealSucks
+  : {fileID: 23295916408510408}
   E_EnermyType: 5
   E_AnimatorIndex: 163
   F_AIChaseRange: 10
