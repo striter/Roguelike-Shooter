@@ -57,7 +57,7 @@ public class GameManager : GameManagerBase
         if (Input.GetKeyDown(KeyCode.V) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
             GameObjectManager.SpawnIndicator(V_TestIndicatorIndex, hit.point + Vector3.up, Vector3.up).Play(-1,3f);
         if (Input.GetKeyDown(KeyCode.Comma) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
-            GameObjectManager.SpawnParticles<SFXParticles>(Comma_TestParticleIndex, hit.point + Vector3.up, Vector3.up).Play(-1);
+            GameObjectManager.SpawnSFX<SFXParticles>(Comma_TestParticleIndex, hit.point + Vector3.up, Vector3.up).Play(-1);
         if (Input.GetKeyDown(KeyCode.B))
             m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.BuffInfo(-1, B_TestBuffIndex )));
         if (Input.GetKeyDown(KeyCode.N))
@@ -139,11 +139,13 @@ public class GameManager : GameManagerBase
             GameDataManager.m_BattleData.m_GameSeed = M_TESTSEED;
         m_GameLevel =  new GameLevelManager(GameDataManager.m_GameData,GameDataManager.m_BattleData);
     }
+
     protected override void OnDestroy()
     {
         base.OnDestroy();
         nInstance = null;
     }
+
     protected override void OnDisable()
     {
         base.OnDisable();
@@ -185,12 +187,12 @@ public class GameManager : GameManagerBase
     }
     public void ChangeLevel(TTiles.TileAxis axis)
     {
+        GameObjectManager.RecycleAllWeapon(p=>p.I_SourceID>0&&!m_Entities.ContainsKey(p.I_SourceID));      //Remove All Playing Else Entity SFX
         LevelManager.Instance.ChangeLevel(axis);
     }
     void OnLevelChanged(SBigmapLevelInfo levelInfo)
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnChangeLevel);
-        GameObjectManager.RecycleAllSFX();
         m_LocalPlayer.transform.position = levelInfo.m_Level.RandomEmptyTilePosition(m_GameLevel.m_GameSeed);
 
         bool levelUnlocked = levelInfo.m_TileLocking == enum_TileLocking.Unlocked;
@@ -377,28 +379,31 @@ public class GameManager : GameManagerBase
 
         SpawnEntityDeadPickups(character);
     }
-        //If Match Will Hit Target
-    public static bool B_CanHitTarget(HitCheckBase hitCheck,int sourceID)
+
+    #endregion
+    #region SFXHitCheck
+    
+    public static bool B_CanSFXHitTarget(HitCheckBase hitCheck, int sourceID)    //If Match Will Hit Target
     {
-        bool canHit = hitCheck.I_AttacherID!=sourceID;
-        if (hitCheck.m_HitCheckType == enum_HitCheck.Entity)        //Entity Special Check
-            return canHit&&B_CanHitEntity(hitCheck as HitCheckEntity, sourceID);
+        bool canHit = hitCheck.I_AttacherID != sourceID;
+        if (hitCheck.m_HitCheckType == enum_HitCheck.Entity)    //Entity Special Check
+            return canHit && B_CanSFXHitEntity(hitCheck as HitCheckEntity, sourceID);
         return canHit;
     }
-    //If Match Will Hit Entity
-    static bool B_CanHitEntity(HitCheckEntity targetHitCheck, int sourceID)
+    
+    static bool B_CanSFXHitEntity(HitCheckEntity targetHitCheck, int sourceID)    //If Match Will Hit Entity
     {
         if (targetHitCheck.I_AttacherID == sourceID || targetHitCheck.m_Attacher.m_Flag == enum_EntityFlag.Neutal)
             return false;
         return !Instance.m_Entities.ContainsKey(sourceID) || targetHitCheck.m_Attacher.m_Flag != Instance.m_Entities[sourceID].m_Flag;
     }
-    //After Hit,If Match Target Hit Succeed
-    public static bool B_CanDamageEntity(HitCheckEntity hb, int sourceID) 
+   
+    public static bool B_CanSFXDamageEntity(HitCheckEntity hb, int sourceID)    //After Hit,If Match Target Hit Succeed
     {
-        if (hb.I_AttacherID == sourceID || !Instance.m_Entities.ContainsKey(sourceID))
+        if (!Instance.B_Battling||hb.I_AttacherID == sourceID || !Instance.m_Entities.ContainsKey(sourceID))
             return false;
-        
-        return  hb.m_Attacher.m_Flag != Instance.GetEntity(sourceID).m_Flag;
+
+        return hb.m_Attacher.m_Flag != Instance.GetEntity(sourceID).m_Flag;
     }
     #endregion
     #region Player Management
@@ -666,17 +671,20 @@ public static class GameObjectManager
 {
     static Transform TF_Entity;
     static Transform TF_SFXPlaying;
+    static Transform TF_SFXWeapon;
     public static Transform TF_SFXWaitForRecycle { get; private set; }
     public static void Init()
     {
         TF_Entity = new GameObject("Entity").transform;
         TF_SFXWaitForRecycle = new GameObject("SFX_WaitForRecycle").transform;
-        TF_SFXPlaying = new GameObject("SFX_Playing").transform;
+        TF_SFXPlaying = new GameObject("SFX_CommonPlaying").transform;
+        TF_SFXWeapon = new GameObject("SFX_Weapon").transform;
         ObjectPoolManager.Init();
     }
     public static void RecycleAllObject()
     {
         ObjectPoolManager<int, SFXBase>.DestroyAll();
+        ObjectPoolManager<int, SFXEquipmentBase>.DestroyAll();
         ObjectPoolManager<int, EntityBase>.DestroyAll();
         ObjectPoolManager<enum_Interaction, InteractGameBase>.DestroyAll();
         ObjectPoolManager<LevelItemBase, LevelItemBase>.DestroyAll();
@@ -760,58 +768,54 @@ public static class GameObjectManager
     public static void RecycleWeapon(WeaponBase weapon)=> ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Recycle(weapon.m_WeaponInfo.m_Weapon,weapon);
     #endregion
     #region SFX
-    public static T SpawnSFX<T>(int index) where T : SFXBase
+    public static T SpawnSFX<T>(int index, Vector3 position, Vector3 normal) where T : SFXBase
     {
-        T sfx = ObjectPoolManager<int, SFXBase>.Spawn(index,  TF_SFXPlaying) as T;
+        T sfx = ObjectPoolManager<int, SFXBase>.Spawn(index, TF_SFXPlaying) as T;
         if (sfx == null)
             Debug.LogError("SFX Spawn Error! Invalid SFX Type:" + typeof(T) + ",Index:" + index);
-        return sfx;
-    }
-
-    public static T SpawnParticles<T>(int index, Vector3 position, Vector3 normal) where T : SFXParticles
-    {
-        T sfx = SpawnSFX<T>(index);
         sfx.transform.position = position;
         sfx.transform.rotation = Quaternion.LookRotation(normal);
         return sfx;
     }
-    public static SFXIndicator SpawnIndicator(int _sourceID, Vector3 position, Vector3 normal) => SpawnParticles<SFXIndicator>(_sourceID, position, normal);
-    public static SFXEffect SpawnBuffEffect(int _sourceID) => SpawnParticles<SFXEffect>(_sourceID,Vector3.zero,Vector3.up);
+    public static SFXIndicator SpawnIndicator(int _sourceID, Vector3 position, Vector3 normal) => SpawnSFX<SFXIndicator>(_sourceID, position, normal);
+    public static SFXEffect SpawnBuffEffect(int _sourceID) => SpawnSFX<SFXEffect>(_sourceID,Vector3.zero,Vector3.up);
+
     public static void PlayMuzzle(int _sourceID,Vector3 position, Vector3 direction, int muzzleIndex, AudioClip muzzleClip=null)
     {
         if (muzzleIndex > 0)
-            SpawnParticles<SFXMuzzle>(muzzleIndex, position, direction).Play(_sourceID);
+            SpawnSFX<SFXMuzzle>(muzzleIndex, position, direction).Play(_sourceID);
         if (muzzleClip)
             GameAudioManager.Instance.PlayClip(_sourceID, muzzleClip, false, position);
     }
-    public static T SpawnEquipment<T>(int weaponIndex, Vector3 position, Vector3 normal, Transform attachTo = null) where T : SFXBase
-    {
-        if (!ObjectPoolManager<int, SFXBase>.Registed(weaponIndex))
-            ObjectPoolManager<int, SFXBase>.Register(weaponIndex, TResources.GetDamageSource(weaponIndex), 1);
 
-        T template = ObjectPoolManager<int, SFXBase>.Spawn(weaponIndex, attachTo) as T;
+    public static T SpawnEquipment<T>(int weaponIndex, Vector3 position, Vector3 normal, Transform attachTo = null) where T : SFXEquipmentBase
+    {
+        if (!ObjectPoolManager<int, SFXEquipmentBase>.Registed(weaponIndex))
+            ObjectPoolManager<int, SFXEquipmentBase>.Register(weaponIndex, TResources.GetDamageSource(weaponIndex), 1);
+
+        T template = ObjectPoolManager<int, SFXEquipmentBase>.Spawn(weaponIndex, attachTo==null?TF_SFXWeapon:attachTo) as T;
         if (template == null)
             Debug.LogError("Enermy Weapon Error! Invalid Type:" + typeof(T).ToString() + "|Index:" + weaponIndex);
         template.transform.position = position;
         template.transform.rotation = Quaternion.LookRotation(normal);
         return template;
     }
-    public static T GetEquipmentData<T>(int weaponIndex) where T : SFXBase
+    public static T GetEquipmentData<T>(int weaponIndex) where T : SFXEquipmentBase
     {
-        if (!ObjectPoolManager<int, SFXBase>.Registed(weaponIndex))
-            ObjectPoolManager<int, SFXBase>.Register(weaponIndex, TResources.GetDamageSource(weaponIndex), 1);
+        if (!ObjectPoolManager<int, SFXEquipmentBase>.Registed(weaponIndex))
+            ObjectPoolManager<int, SFXEquipmentBase>.Register(weaponIndex, TResources.GetDamageSource(weaponIndex), 1);
 
-        T damageSourceInfo = ObjectPoolManager<int, SFXBase>.GetRegistedSpawnItem(weaponIndex) as T;
+        T damageSourceInfo = ObjectPoolManager<int, SFXEquipmentBase>.GetRegistedSpawnItem(weaponIndex) as T;
         if (damageSourceInfo == null)
             Debug.LogError("SFX Get Error! Invalid Type:" + typeof(T).ToString() + "|Index:" + weaponIndex);
         return damageSourceInfo;
     }
-    public static void RecycleAllSFX() => ObjectPoolManager<int, SFXBase>.RecycleAll();
+    public static void RecycleAllWeapon(Predicate<SFXEquipmentBase> predicate) => ObjectPoolManager<int, SFXEquipmentBase>.RecycleAll(predicate);
     #endregion
     #region Interact
     public static T SpawnInteract<T>(enum_Interaction type, Vector3 toPos, Transform toTrans=null) where T : InteractGameBase
     {
-        T target = ObjectPoolManager<enum_Interaction, InteractGameBase>.Spawn(type , toTrans==null?TF_SFXPlaying:toTrans) as T;
+        T target = ObjectPoolManager<enum_Interaction, InteractGameBase>.Spawn(type , toTrans==null? TF_SFXPlaying : toTrans) as T;
         target.transform.position = toPos;
         return target;
     }

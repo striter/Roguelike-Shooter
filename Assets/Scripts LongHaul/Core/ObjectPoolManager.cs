@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface ObjectPoolItem<T>{void OnPoolItemInit(T identity);}
+public interface ObjectPoolItem<T>{
+    void OnPoolItemInit(T identity);
+}
 public class ObjectPoolMonoItem<T> :MonoBehaviour,ObjectPoolItem<T>
 {
     public bool m_IsPoolItem { get; private set; }
@@ -122,10 +124,14 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,Obj
             Recycle(identity,temp);
         }, true);
     }
-    public static void RecycleAll() 
+    public static void RecycleAll(Predicate<Y>  predicate=null) 
     {
-        d_ItemInfos.Traversal((T temp, ItemPoolInfo info)=> {
-            RecycleAll(temp);
+        d_ItemInfos.Traversal((T identity, ItemPoolInfo info)=> {
+            info.l_Active.Traversal((Y target) =>
+            {
+                if (predicate == null || predicate(target))
+                    Recycle(identity, target);
+            },true);
         });
     }
     public static void OnSceneChange() => d_ItemInfos.Clear();

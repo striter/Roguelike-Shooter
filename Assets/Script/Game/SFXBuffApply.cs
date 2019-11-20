@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
-public class SFXBuffApply : SFXParticles {
+public class SFXBuffApply : SFXEquipmentBase {
     public int I_BuffIndex;
     public void Play(int I_SourceID,SBuff buffInfo,Transform attachTo,EntityCharacterBase applyTarget)
     {

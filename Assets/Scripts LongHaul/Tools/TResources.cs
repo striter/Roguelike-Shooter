@@ -57,6 +57,7 @@ public class TResources
     #endregion
     #region GamePrefab
     public static StyleColorData[] GetAllStyleCustomization(enum_Style levelStype) => LoadAll<StyleColorData>(ConstPath.S_StyleCustomization + "/" + levelStype);
+
     public static Dictionary<enum_LevelItemType,List<LevelItemBase>>  GetAllLevelItems(enum_Style _levelStyle, Transform parent)
     {
         LevelItemBase[] styledLevelItemPrefabs = LoadAll<LevelItemBase>(ConstPath.S_LeveLItem + "/" + _levelStyle);
@@ -81,6 +82,7 @@ public class TResources
 
         return itemPrefabDic;
     }
+
     public static LevelBase GetLevelBase(enum_Style levelStyle)
     {
         LevelBase level = Instantiate<LevelBase>(ConstPath.S_LevelPrefab);
@@ -89,7 +91,7 @@ public class TResources
         return level;
     }
     
-    public static SFXBase GetDamageSource(int index) => Instantiate<SFXBase>(ConstPath.S_SFXEquipment+index.ToString());
+    public static SFXEquipmentBase GetDamageSource(int index) => Instantiate<SFXEquipmentBase>(ConstPath.S_SFXEquipment+index.ToString());
 
     public static Dictionary<int, SFXBase> GetAllEffectSFX()
     {
@@ -100,6 +102,7 @@ public class TResources
         });
         return sfxsDic;
     }
+
     public static EntityCharacterPlayer GetPlayer(Transform parent) => Instantiate<EntityCharacterPlayer>(ConstPath.S_PlayerEntity,parent);
     public static Dictionary<int, EntityBase> GetCommonEntities()
     {

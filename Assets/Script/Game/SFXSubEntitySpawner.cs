@@ -4,7 +4,7 @@ using UnityEngine;
 using GameSetting;
 using System;
 
-public class SFXSubEntitySpawner : SFXParticles {
+public class SFXSubEntitySpawner : SFXEquipmentBase {
     public int I_EntitySpawnID;
     public bool B_ApplyDOTOnSpawn = false;
     public void Play(int _sourceID, enum_EntityFlag _flag, Func<DamageDeliverInfo> _damageInfoOverride, float startHealth,Action<EntityCharacterBase> OnSpawn)

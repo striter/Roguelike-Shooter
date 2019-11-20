@@ -704,7 +704,7 @@ namespace GameSetting_Action
                  if (entity.m_CharacterInfo.B_Effecting(enum_CharacterEffect.Freeze))
                  {
                      entity.m_HitCheck.TryHit(new DamageInfo(Value1 / 100f * m_ActionEntity.m_WeaponCurrent.F_BaseDamage, enum_DamageType.Basic, DamageDeliverInfo.Default(m_ActionEntity.m_EntityID)));
-                     GameObjectManager.SpawnParticles<SFXMuzzle>(10014,entity.transform.position,Vector3.up).Play(m_ActionEntity.m_EntityID);
+                     GameObjectManager.SpawnSFX<SFXMuzzle>(10014,entity.transform.position,Vector3.up).Play(m_ActionEntity.m_EntityID);
                  }
              });
         }
@@ -1027,7 +1027,7 @@ namespace GameSetting_Action
         public override EquipmentBase GetDevice() => ActionHelper.GetCommonDevice(m_Index, m_ActionEntity, () => DamageDeliverInfo.DamageHitInfo(m_ActionEntity.m_EntityID, OnHitEntitiy));
         void OnHitEntitiy(EntityBase receiver)
         {
-            GameObjectManager.SpawnParticles<SFXMarkup>(60001, receiver.transform.position, Vector3.up).Play(m_ActionEntity.m_EntityID, receiver, OnMarkupDead);
+            GameObjectManager.SpawnSFX<SFXMarkup>(60001, receiver.transform.position, Vector3.up).Play(m_ActionEntity.m_EntityID, receiver, OnMarkupDead);
         }
         void OnMarkupDead()
         {

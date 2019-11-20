@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SFXShield : SFXBase {
+public class SFXShield : SFXEquipmentBase {
     protected override bool m_AutoRecycle => false;
     public EntityComponent m_Health { get; private set; }
     EntityCharacterBase m_Attacher;

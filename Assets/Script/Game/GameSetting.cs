@@ -2359,7 +2359,7 @@ namespace GameSetting
 
         public static EquipmentBase AcquireEquipment(int weaponIndex, EntityCharacterBase _entity, Func<DamageDeliverInfo> GetDamageBuffInfo)
         {
-            SFXBase weaponInfo = GameObjectManager.GetEquipmentData<SFXBase>(weaponIndex);
+            SFXEquipmentBase weaponInfo = GameObjectManager.GetEquipmentData<SFXEquipmentBase>(weaponIndex);
             SFXProjectile projectile = weaponInfo as SFXProjectile;
             if (projectile)
             {
