@@ -188,10 +188,10 @@ public class GameManager : GameManagerBase
     {
         LevelManager.Instance.ChangeLevel(axis);
     }
-
     void OnLevelChanged(SBigmapLevelInfo levelInfo)
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnChangeLevel);
+        GameObjectManager.RecycleAllSFX();
         m_LocalPlayer.transform.position = levelInfo.m_Level.RandomEmptyTilePosition(m_GameLevel.m_GameSeed);
 
         bool levelUnlocked = levelInfo.m_TileLocking == enum_TileLocking.Unlocked;
@@ -807,6 +807,7 @@ public static class GameObjectManager
             Debug.LogError("SFX Get Error! Invalid Type:" + typeof(T).ToString() + "|Index:" + weaponIndex);
         return damageSourceInfo;
     }
+    public static void RecycleAllSFX() => ObjectPoolManager<int, SFXBase>.RecycleAll();
     #endregion
     #region Interact
     public static T SpawnInteract<T>(enum_Interaction type, Vector3 toPos, Transform toTrans=null) where T : InteractGameBase
