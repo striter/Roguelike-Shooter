@@ -364,7 +364,7 @@ public class PE_DepthSSAO : PostEffectBase
 {
     public override bool m_HighCost => true;
     public override DepthTextureMode m_DepthTextureMode => DepthTextureMode.Depth;
-    public void SetEffect(float strength=.6f, float sphereRadius=.03f, float fallOffScale=15)
+    public void SetEffect(float strength=.8f, float sphereRadius=.03f, float fallOffScale=30,int _sampleCount=12)
     {
         Vector4[] array = new Vector4[16] {
             new Vector3( 0.5381f, 0.1856f,-0.4319f),  new Vector3( 0.1379f, 0.2486f, 0.4430f),new Vector3( 0.3371f, 0.5679f,-0.0057f),  new Vector3(-0.6999f,-0.0451f,-0.0019f),
@@ -373,7 +373,7 @@ public class PE_DepthSSAO : PostEffectBase
             new Vector3( 0.7119f,-0.0154f,-0.0918f),  new Vector3(-0.0533f, 0.0596f,-0.5411f),new Vector3( 0.0352f,-0.0631f, 0.5460f),  new Vector3(-0.4776f, 0.2847f,-0.0271f)};
         for (int i = 0; i < array.Length; i++)
             array[i] *= sphereRadius;
-        m_Material.SetInt("_SampleCount", 16);
+        m_Material.SetInt("_SampleCount", _sampleCount);
         m_Material.SetVectorArray("_SampleSphere", array);
 
         m_Material.SetFloat("_Strength", strength);

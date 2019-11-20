@@ -379,7 +379,20 @@ namespace GameSetting
                 case enum_UI_TileBattleStatus.HardBattle: return "100%";
             }
         }
+        public static string GetUIBGColor(this enum_ActionType type)
+        {
+            switch(type)
+            {
+                default: return "000000FF";
+                case enum_ActionType.Basic:
+                    return "FAC108FF";
+                case enum_ActionType.Device:
+                    return "00B4FFFF";
+                case enum_ActionType.Equipment:
+                    return "B0FE00FF";
+            }
 
+        }
     }
 
     public static class LocalizationKeyJoint
@@ -1912,7 +1925,7 @@ namespace GameSetting
         private Action<ExpireBase> OnExpired;
         public float m_ExpireDuration { get; private set; } = 0;
         public float f_expireCheck { get; private set; }
-        public float f_expireScale => f_expireCheck / m_ExpireDuration;
+        public float f_expireLeftScale => f_expireCheck / m_ExpireDuration;
         bool forceExpire = false;
         protected void OnActivate(float _ExpireDuration, Action<ExpireBase> _OnExpired)
         {

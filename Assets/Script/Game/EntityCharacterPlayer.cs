@@ -251,7 +251,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     void OnAbilityClick()
     {
-        if (m_AbilityCooldowning||!m_PlayerInfo.TryCostEnergy(I_AbilityCost))
+        if (m_AbilityCooldowning||m_Health.b_IsDead||!m_PlayerInfo.TryCostEnergy(I_AbilityCost))
             return;
         f_abilityCoolDown = F_AbilityCoolDown;
         OnAbilityTrigger();
