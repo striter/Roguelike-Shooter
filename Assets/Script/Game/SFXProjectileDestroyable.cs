@@ -1,15 +1,16 @@
 ﻿using GameSetting;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 [RequireComponent(typeof(EntityComponent))]
 public class SFXProjectileDestroyable : SFXProjectile {
     protected EntityComponent m_Health { get; private set; }
-    public override void OnPoolItemInit(int identity)
+    public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
-        base.OnPoolItemInit(identity);
+        base.OnPoolItemInit(_identity, _OnRecycle);
         m_Health = GetComponentInChildren<EntityComponent>();
-        m_Health.OnPoolItemInit(-1);
+        m_Health.OnPoolItemInit(-1,null);
     }
     public override void Play(DamageDeliverInfo deliverInfo, Vector3 direction, Vector3 targetPosition)
     {

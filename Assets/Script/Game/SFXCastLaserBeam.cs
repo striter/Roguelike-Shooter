@@ -1,4 +1,5 @@
 ﻿using GameSetting;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,9 +10,9 @@ public class SFXCastLaserBeam : SFXCast {
     ParticleSystem[] m_Muzzles, m_Impacts;
     float f_castLength;
     protected override float F_CastLength => f_castLength;
-    public override void OnPoolItemInit(int identity)
+    public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
-        base.OnPoolItemInit(identity);
+        base.OnPoolItemInit(_identity, _OnRecycle);
         m_Beam = GetComponent<LineRenderer>();
         m_Muzzle = transform.Find("Muzzle");
         m_Impact = transform.Find("Impact");

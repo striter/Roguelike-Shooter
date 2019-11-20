@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
@@ -6,9 +7,9 @@ public class SFXParticles : SFXBase
 {
     protected SFXRelativeBase[] m_relativeSFXs;
     public TSpecialClasses.ParticleControlBase m_Particle { get; private set; }
-    public override void OnPoolItemInit(int identity)
+    public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
-        base.OnPoolItemInit(identity);
+        base.OnPoolItemInit(_identity, _OnRecycle);
         m_relativeSFXs = GetComponentsInChildren<SFXRelativeBase>();
         m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.Init(); });
         m_Particle = new TSpecialClasses.ParticleControlBase(transform);

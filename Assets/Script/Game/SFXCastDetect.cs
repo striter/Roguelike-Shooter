@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
@@ -6,9 +7,9 @@ using UnityEngine;
 public class SFXCastDetect : SFXCastDetonate {
     public float F_DurationSelfDetonate;
     EntityDetector m_detector;
-    public override void OnPoolItemInit(int identity)
+    public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
-        base.OnPoolItemInit(identity);
+        base.OnPoolItemInit(_identity, _OnRecycle);
         m_detector = GetComponent<EntityDetector>();
         m_detector.Init(OnDetect);
     }

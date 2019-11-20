@@ -45,11 +45,11 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     protected void OnFireCheck(float pauseDuration) => f_fireCheck = pauseDuration;
 
     SFXProjectile m_ProjectilInfo;
-    public override void OnPoolItemInit(enum_PlayerWeapon weapon)
+    public override void OnPoolItemInit(enum_PlayerWeapon _identity, Action<enum_PlayerWeapon, MonoBehaviour> _OnRecycle)
     {
         m_Muzzle = transform.FindInAllChild("Muzzle");
         m_Case = transform.FindInAllChild("Case");
-        m_WeaponInfo = GameDataManager.GetWeaponProperties(weapon);
+        m_WeaponInfo = GameDataManager.GetWeaponProperties(_identity);
         SFXProjectile projectileInfo = GameObjectManager.GetEquipmentData<SFXProjectile>(GameExpression.GetPlayerEquipmentIndex( m_WeaponInfo.m_Index));
         F_BaseSpeed = projectileInfo.F_Speed;
         B_BasePenetrate = projectileInfo.B_Penetrate;

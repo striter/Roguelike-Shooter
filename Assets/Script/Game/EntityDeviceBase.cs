@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
@@ -8,9 +9,10 @@ public class EntityDeviceBase : EntityCharacterBase {
     EntityDetector m_Detect;
     ParticleSystem[] m_Particles;
     public ObjectPoolMono<EntityCharacterBase, LineRenderer> m_Connections { get; private set; }
-    public override void OnPoolItemInit(int _poolIndex)
+
+    public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
-        base.OnPoolItemInit(_poolIndex);
+        base.OnPoolItemInit(_identity, _OnRecycle);
         m_Detect = transform.Find("EntityDetector").GetComponent<EntityDetector>();
         m_Detect.Init(OnEntityDetect);
         m_Particles = GetComponentsInChildren<ParticleSystem>();

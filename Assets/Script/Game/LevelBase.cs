@@ -12,7 +12,7 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
     public Transform tf_LevelItem { get; private set; }
     public Transform tf_Interact { get; private set; }
     public System.Random m_seed { get; private set; }
-    public void OnPoolItemInit(int identity)
+    public void OnPoolItemInit(int identity,Action<int,MonoBehaviour> _OnRecycle)
     {
         tf_LevelItem = transform.Find("Item");
         tf_Model = transform.Find("Model");

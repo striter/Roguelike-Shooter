@@ -18,7 +18,7 @@ public class SFXProjectileSplit : SFXProjectile {
     {
         float angleEach = F_SplitRange / I_SplitCount;
         float startAngle = -(I_SplitCount - 1) * angleEach / 2f;
-        int subProjectTileIndex = GameExpression.GetEquipmentSubIndex(I_SFXIndex);
+        int subProjectTileIndex = GameExpression.GetEquipmentSubIndex(m_Identity);
         SFXProjectile projectileInfo = GameObjectManager.GetEquipmentData<SFXProjectile>(subProjectTileIndex);
         for (int i = 0; i < I_SplitCount; i++)
         {

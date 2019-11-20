@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
@@ -9,9 +10,9 @@ public class SFXMuzzleMortal : SFXMuzzle
     public float F_PlayTime = 5f;
     Transform tf_Model;
     TrailRenderer m_trail;
-    public override void OnPoolItemInit(int identity)
+    public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
-        base.OnPoolItemInit(identity);
+        base.OnPoolItemInit(_identity, _OnRecycle);
         tf_Model = transform.Find("Model");
         m_trail = tf_Model.GetComponentInChildren<TrailRenderer>();
     }

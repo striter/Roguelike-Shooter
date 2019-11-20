@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
 using TTiles;
+using System;
 
-public class LevelItemBase : MonoBehaviour,ObjectPoolItem<LevelItemBase> {
+public class LevelItemBase : ObjectPoolMonoItem<LevelItemBase> {
     public LevelBase m_LevelParent { get; private set; }
     public int m_sizeXAxis = 1;
     public int m_sizeYAxis = 1;
     public enum_LevelItemType m_ItemType = enum_LevelItemType.Invalid;
     Transform tf_Model;
-    public void OnPoolItemInit(LevelItemBase identity)
+    public override void OnPoolItemInit(LevelItemBase _identity, Action<LevelItemBase, MonoBehaviour> _OnSelfRecycle)
     {
+        base.OnPoolItemInit(_identity, _OnSelfRecycle);
         tf_Model = transform.Find("Model");
     }
     public void SetDirection(LevelBase levelParent,enum_TileDirection direction)

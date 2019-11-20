@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
@@ -7,9 +8,9 @@ public class InteractPickupAction : InteractPickup {
     public override enum_Interaction m_InteractType => enum_Interaction.PickupAction;
     public ActionBase m_Action { get; private set; }
     Renderer m_Renderer;
-    public override void OnPoolItemInit(enum_Interaction temp)
+    public override void OnPoolItemInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
     {
-        base.OnPoolItemInit(temp);
+        base.OnPoolItemInit(identity, OnRecycle);
         m_Renderer = GetComponentInChildren<Renderer>();
     }
     public InteractPickupAction Play(ActionBase _action)

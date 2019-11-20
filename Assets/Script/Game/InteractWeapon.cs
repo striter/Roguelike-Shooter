@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
+using System;
+
 public class InteractWeapon : InteractGameBase {
     Transform tf_ModelContainer;
     public WeaponBase m_Weapon { get; private set; }
     public override enum_Interaction m_InteractType => enum_Interaction.Weapon;
     public override bool B_InteractOnce => false;
-    public override void OnPoolItemInit(enum_Interaction temp)
+    public override void OnPoolItemInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
     {
-        base.OnPoolItemInit(temp);
+        base.OnPoolItemInit(identity, OnRecycle);
         tf_ModelContainer = transform.Find("Container/Model");
     }
     public InteractWeapon Play(WeaponBase weapon )

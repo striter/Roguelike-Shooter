@@ -1,4 +1,5 @@
 ﻿using GameSetting;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,9 +10,10 @@ public class InteractGameBase : InteractBase,ObjectPoolItem<enum_Interaction> {
     public AudioClip AC_OnPlay, AC_OnInteract;
     public int I_MuzzleOnInteract;
 
-    public virtual void OnPoolItemInit(enum_Interaction temp)
+    public virtual void OnPoolItemInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
     {
     }
+
     protected override void Play()
     {
         base.Play();
@@ -25,5 +27,5 @@ public class InteractGameBase : InteractBase,ObjectPoolItem<enum_Interaction> {
         if (B_RecycleOnInteract)
             GameObjectManager.RecycleInteract(this);
     }
-     
+
 }

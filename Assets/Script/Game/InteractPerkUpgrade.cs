@@ -10,9 +10,9 @@ public class InteractPerkUpgrade : InteractGameBase {
     ActionBase m_invalidPerk;
     Animation m_Anim;
     Action OnInteract;
-    public override void OnPoolItemInit(enum_Interaction temp)
+    public override void OnPoolItemInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
     {
-        base.OnPoolItemInit(temp);
+        base.OnPoolItemInit(identity, OnRecycle);
         m_Anim = GetComponent<Animation>();
     }
     public void Play(Action _OnInteract,ActionBase _invalidPerk)

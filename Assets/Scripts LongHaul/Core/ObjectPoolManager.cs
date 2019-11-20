@@ -4,21 +4,28 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public interface ObjectPoolItem<T>{
-    void OnPoolItemInit(T identity);
+    void OnPoolItemInit(T identity,Action<T,MonoBehaviour> OnRecycle);
 }
 public class ObjectPoolMonoItem<T> :MonoBehaviour,ObjectPoolItem<T>
 {
     public bool m_IsPoolItem { get; private set; }
     public T m_Identity { get; private set; }
-    public virtual void OnPoolItemInit(T identity)
+    public Action<T,MonoBehaviour> OnSelfRecycle;
+    public virtual void OnPoolItemInit(T _identity,Action<T,MonoBehaviour> _OnSelfRecycle)
     {
-        m_Identity = identity;
+        m_Identity = _identity;
         m_IsPoolItem = true;
+        OnSelfRecycle = _OnSelfRecycle;
     }
+    protected void DoPoolItemRecycle()
+    {
+        m_IsPoolItem = false;
+        OnSelfRecycle(m_Identity, this);
+    }
+    private void OnEnable() { if (m_IsPoolItem) OnPoolItemEnable(); }
+    private void OnDisable() { if (m_IsPoolItem) OnPoolItemDisable(); }
     protected virtual void OnPoolItemEnable() { }
     protected virtual void OnPoolItemDisable(){}
-    private void OnEnable() {if (m_IsPoolItem) OnPoolItemEnable(); }
-    private void OnDisable() { if (m_IsPoolItem) OnPoolItemDisable();}
 }
 public class ObjectPoolManager
 {
@@ -39,11 +46,11 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,Obj
         public List<Y> l_Deactive=new List<Y>();
         public List<Y> l_Active=new List<Y>();
 
-        public Y NewItem(T identity)
+        public Y NewItem(T identity,Action<T,MonoBehaviour> OnRecycle)
         {
             Y item = GameObject.Instantiate(m_spawnItem, tf_PoolSpawn); ;
             item.name = m_spawnItem.name + "_"+(l_Deactive.Count + l_Active.Count).ToString();
-            item.OnPoolItemInit(identity);
+            item.OnPoolItemInit(identity, OnRecycle);
             return item;
         }
     }
@@ -74,7 +81,7 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,Obj
         info.i_poolSaveAmount = poolStartAmount;
         for (int i = 0; i < info.i_poolSaveAmount; i++)
         {
-            Y spawnItem = info.NewItem(identity);
+            Y spawnItem = info.NewItem(identity,SelfRecycle);
             info.l_Deactive.Add(spawnItem);
         }
     }
@@ -94,14 +101,14 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,Obj
         }
         else
         {
-            item = info.NewItem(identity);
+            item = info.NewItem(identity,SelfRecycle);
         }
         info.l_Active.Add(item);
         item.transform.SetParentResetTransform(toTrans == null ? tf_PoolSpawn : toTrans);
         item.SetActivate(true);
         return item;
     }
-
+    static void SelfRecycle(T identity, MonoBehaviour obj) => Recycle(identity, obj as Y);
     public static void Recycle(T identity,Y obj)
     {
         if (!d_ItemInfos.ContainsKey(identity))

@@ -1614,7 +1614,7 @@ namespace GameSetting
         public override void OnExpireListChange()
         {
             base.OnExpireListChange();
-            OnShuffle();
+            CheckDevice();
         }
 
         public void OnBattleFinish()

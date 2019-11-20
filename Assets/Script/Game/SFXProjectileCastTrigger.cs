@@ -26,7 +26,7 @@ public class SFXProjectileCastTrigger : SFXProjectile
         if (b_trigger)
             return;
         
-        GameObjectManager.SpawnEquipment<SFXCast>(GameExpression.GetEquipmentSubIndex(I_SFXIndex),point , Vector3.up).Play(m_DamageInfo.m_detail);
+        GameObjectManager.SpawnEquipment<SFXCast>(GameExpression.GetEquipmentSubIndex(m_Identity),point , Vector3.up).Play(m_DamageInfo.m_detail);
         b_trigger = true;
     }
 }

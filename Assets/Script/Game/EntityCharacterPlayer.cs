@@ -40,9 +40,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         return m_PlayerInfo;
     }
 
-    public override void OnPoolItemInit(int poolPresetIndex)
+    public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
-        base.OnPoolItemInit(poolPresetIndex);
+        base.OnPoolItemInit(_identity, _OnRecycle);
         gameObject.layer = GameLayer.I_MovementDetect;
         m_CharacterController = GetComponent<CharacterController>();
         m_CharacterController.detectCollisions = false;

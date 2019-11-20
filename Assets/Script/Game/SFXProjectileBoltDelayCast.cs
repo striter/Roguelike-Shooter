@@ -15,7 +15,7 @@ public class SFXProjectileBoltDelayCast : SFXProjectileBolt {
     protected override void OnStop()
     {
         base.OnStop();
-        GameObjectManager.SpawnEquipment<SFXCast>(GameExpression.GetEquipmentSubIndex(I_SFXIndex), transform.position + F_Height * transform.forward, Vector3.up).Play(m_DamageInfo.m_detail);
+        GameObjectManager.SpawnEquipment<SFXCast>(GameExpression.GetEquipmentSubIndex(m_Identity), transform.position + F_Height * transform.forward, Vector3.up).Play(m_DamageInfo.m_detail);
         OnRecycle();
     }
 

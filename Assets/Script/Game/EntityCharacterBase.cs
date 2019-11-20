@@ -25,9 +25,9 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     protected virtual enum_GameAudioSFX m_DamageClip => enum_GameAudioSFX.EntityDamage;
     protected virtual enum_GameAudioSFX m_ReviveClip => enum_GameAudioSFX.PlayerRevive;
 
-    public override void OnPoolItemInit(int _poolIndex)
+    public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
-        base.OnPoolItemInit(_poolIndex);
+        base.OnPoolItemInit(_identity, _OnRecycle);
         tf_Model = transform.Find("Model");
         tf_Head = transform.Find("Head");
         m_Effect = new EntityCharacterEffectManager(tf_Model.Find("Skin").GetComponentsInChildren<Renderer>());

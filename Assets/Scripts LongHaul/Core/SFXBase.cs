@@ -1,7 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 public class SFXBase :ObjectPoolMonoItem<int> {
     public const int I_SFXStopExternalDuration= 4;
-    public int I_SFXIndex { get; private set; } = -1;
     public int I_SourceID { get; private set; } = -1;
     protected float f_delayDuration { get; private set; }
     protected float f_playDuration { get; private set; }
@@ -19,11 +19,9 @@ public class SFXBase :ObjectPoolMonoItem<int> {
     protected bool b_looping => m_Loop && B_Playing && f_playDuration <= 0f;
     Transform m_AttachTo;
     Vector3 m_localPos, m_localDir;
-    public override void OnPoolItemInit(int identity)
+    public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
-        base.OnPoolItemInit(identity);
-        I_SFXIndex = identity;
-
+        base.OnPoolItemInit(_identity, _OnRecycle);
 #if UNITY_EDITOR
         EDITOR_DEBUG();
 #endif
@@ -61,9 +59,8 @@ public class SFXBase :ObjectPoolMonoItem<int> {
     protected virtual void OnRecycle()
     {
         m_AttachTo = null;
-        DoSFXRecycle();
+        DoPoolItemRecycle();
     }
-    protected virtual void DoSFXRecycle()=> ObjectPoolManager<int, SFXBase>.Recycle(I_SFXIndex, this);
 
     public void AttachTo(Transform _attachTo)
     {
@@ -112,11 +109,7 @@ public class SFXBase :ObjectPoolMonoItem<int> {
         OnRecycle();
     }
 
-    protected virtual void EDITOR_DEBUG()
-    {
-        if (I_SFXIndex == -1)
-            Debug.Log("How'd fk SFX Index ID Equals -1");
-    }
+    protected virtual void EDITOR_DEBUG(){}
 #if UNITY_EDITOR
     protected Color EDITOR_GizmosColor()
     {

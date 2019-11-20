@@ -5,7 +5,6 @@ using System;
 public class EntityBase : ObjectPoolMonoItem<int>
 {
     public int m_EntityID { get; private set; } = -1;
-    public int I_PoolIndex { get; private set; } = -1;
     public virtual bool B_IsCharacter => false;
     public virtual enum_EntityController m_Controller => enum_EntityController.Invalid;
     public int I_MaxHealth;
@@ -20,10 +19,9 @@ public class EntityBase : ObjectPoolMonoItem<int>
     public int m_SpawnerEntityID { get; private set; }
     public bool b_isSubEntity => m_SpawnerEntityID != -1;
     HitCheckEntity[] m_HitChecks;
-    public override void OnPoolItemInit(int _poolIndex)
+    public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
-        base.OnPoolItemInit(_poolIndex);
-        I_PoolIndex = _poolIndex;
+        base.OnPoolItemInit(_identity, _OnRecycle);
         m_HitChecks = GetComponentsInChildren<HitCheckEntity>();
         m_Health = GetHealthManager();
     }
@@ -60,9 +58,7 @@ public class EntityBase : ObjectPoolMonoItem<int>
     protected virtual void OnRecycle()
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityDeactivate, this);
-
-        if (I_PoolIndex > 0)
-            GameObjectManager.RecycleEntity(I_PoolIndex, this);
+        DoPoolItemRecycle();
     }
     protected virtual void EnableHitbox(bool setHitable)
     {

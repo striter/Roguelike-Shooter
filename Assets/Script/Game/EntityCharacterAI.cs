@@ -29,11 +29,11 @@ public class EntityCharacterAI : EntityCharacterBase {
     public override Vector3 m_PrecalculatedTargetPos(float time)=> tf_Head.position;
     Transform tf_Barrel;
     public override Transform tf_Weapon => tf_Barrel;
-    public override void OnPoolItemInit(int entityPresetIndex)
+    public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
-        base.OnPoolItemInit(entityPresetIndex);
+        base.OnPoolItemInit(_identity, _OnRecycle);
         tf_Barrel = transform.FindInAllChild("Barrel");
-        m_AI = new EnermyAIControllerBase(this, EquipmentBase.AcquireEquipment(GameExpression.GetAIEquipmentIndex(entityPresetIndex, 0),this,m_CharacterInfo.GetDamageBuffInfo), OnAttackAnim, OnCheckTarget);
+        m_AI = new EnermyAIControllerBase(this, EquipmentBase.AcquireEquipment(GameExpression.GetAIEquipmentIndex(m_Identity, 0),this,m_CharacterInfo.GetDamageBuffInfo), OnAttackAnim, OnCheckTarget);
         if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
             m_Animator = new EnermyAnimator(tf_Model.GetComponent<Animator>(), OnAnimKeyEvent);
     }

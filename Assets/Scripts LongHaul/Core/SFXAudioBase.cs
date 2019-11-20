@@ -1,12 +1,13 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 public class SFXAudioBase : SFXBase
 {
     AudioSource m_Audio;
-    public override void OnPoolItemInit(int identity)
+    public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
-        base.OnPoolItemInit(identity);
+        base.OnPoolItemInit(_identity, _OnRecycle);
         m_Audio = GetComponent<AudioSource>();
         m_Audio.playOnAwake = false;
     }
@@ -22,7 +23,7 @@ public class SFXAudioBase : SFXBase
     public SFXAudioBase Play(int _sourceID,AudioClip _clip,float _volume,bool _loop,Transform _attachTo)
     {
         m_Audio.clip = _clip;
-        m_Audio.pitch = Random.Range(0.9f, 1.1f);
+        m_Audio.pitch = UnityEngine.Random.Range(0.9f, 1.1f);
         m_Audio.loop = _loop;
         SetVolume(_volume);
         AttachTo(_attachTo);
@@ -44,6 +45,6 @@ public class SFXAudioBase : SFXBase
     protected override void OnRecycle()
     {
         AttachTo(null);
-        ObjectPoolManager<int,SFXAudioBase>.Recycle(I_SFXIndex, this);
+        DoPoolItemRecycle();
     }
 }

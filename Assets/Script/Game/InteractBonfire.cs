@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
@@ -11,14 +12,13 @@ public class InteractBonfire : InteractGameBase {
     EntityCharacterPlayer m_Target;
     DamageInfo m_HealInfo;
     float m_distinguishCheck, m_healBuffCheck;
-    public override void OnPoolItemInit(enum_Interaction temp)
+    public override void OnPoolItemInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
     {
-        base.OnPoolItemInit(temp);
+        base.OnPoolItemInit(identity, OnRecycle);
         m_FireParticles = new TSpecialClasses.ParticleControlBase(transform.Find("Fire"));
         tf_Light = transform.Find("Light");
-        m_HealInfo = new DamageInfo(0, enum_DamageType.HealthOnly, DamageDeliverInfo.BuffInfo(-1,SBuff.SystemPlayerBonfireHealInfo()));
+        m_HealInfo = new DamageInfo(0, enum_DamageType.HealthOnly, DamageDeliverInfo.BuffInfo(-1, SBuff.SystemPlayerBonfireHealInfo()));
     }
-
     public void Play(EntityCharacterPlayer _Player)
     {
         base.Play();
