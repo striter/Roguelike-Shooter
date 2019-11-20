@@ -41,6 +41,11 @@ public class EntityCharacterPlayerBeth : EntityCharacterPlayer {
         }
         EnableHitbox(!m_rolling);
     }
+    protected override void OnDead()
+    {
+        base.OnDead();
+        f_rollCheck = -1;
+    }
     protected override bool CalculateCanFire() => m_rolling ? false : base.CalculateCanFire();
     protected override float CalculateMovementSpeedBase() => (m_rolling? F_RollSpeedMultiple :1)* base.CalculateMovementSpeedBase();
     protected override float CalculateMovementSpeedMultiple() => m_rolling ? 1f : base.CalculateMovementSpeedMultiple();
