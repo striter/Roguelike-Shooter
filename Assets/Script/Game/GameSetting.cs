@@ -140,8 +140,8 @@ namespace GameSetting
                     new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.Normal, 75 }, { enum_RarityLevel.OutStanding, 25 } },    //交易等级概率
                     new Dictionary<enum_CharacterType, CoinsGenerateData>() {
                      { enum_CharacterType.SubHidden, CoinsGenerateData.Create( 0,0, 0, new RangeInt(0, 0)) },     //实体掉落生成概率 类型,血,护甲,金币,金币数值范围
-                     { enum_CharacterType.Fighter, CoinsGenerateData.Create( 8,20, 20, new RangeInt(2, 2)) },
-                     { enum_CharacterType.Shooter_Rookie, CoinsGenerateData.Create( 8,15, 20, new RangeInt(2, 2)) },
+                     { enum_CharacterType.Fighter, CoinsGenerateData.Create( 8,20, 20, new RangeInt(4, 2)) },
+                     { enum_CharacterType.Shooter_Rookie, CoinsGenerateData.Create( 8,15, 20, new RangeInt(4, 2)) },
                      { enum_CharacterType.Shooter_Veteran, CoinsGenerateData.Create( 8,15, 30, new RangeInt(3, 3)) },
                      { enum_CharacterType.AOECaster, CoinsGenerateData.Create( 8,15, 50, new RangeInt(4, 4)) },
                      { enum_CharacterType.Elite, CoinsGenerateData.Create( 8,15, 100, new RangeInt(6, 6)) }});
