@@ -108,7 +108,7 @@ namespace GameSetting_Action
         public const int I_10025_Cost = 2;
         public static float P_10025_ArmorAdditiveMultiply(enum_RarityLevel rarity) => 60* (int)rarity;
 
-        public const int I_10026_Cost = 3;
+        public const int I_10026_Cost = 2;
         public const float F_10026_Duration = 10f;
         public static float F_10026_DamageAdditiveMultiplyWithArmor(enum_RarityLevel rarity) => 0.2f * (int)rarity;
 
