@@ -6,10 +6,10 @@ using UnityEngine;
 public class SFXCast : SFXEquipmentBase {
     #region PresetInfo
     public enum_CastControllType E_CastType = enum_CastControllType.Invalid;
-    public enum_CastTarget E_CastTarget =  enum_CastTarget.Invalid;
+    public enum_CastTarget E_CastTarget = enum_CastTarget.Invalid;
     public bool B_CastForward = false;
     public float F_Damage;
-    public int I_TickCount=1;
+    public int I_TickCount = 1;
     public float F_Tick = .5f;
     public int I_BuffApplyOnCast;
     public enum_CastAreaType E_AreaType = enum_CastAreaType.Invalid;
@@ -25,15 +25,37 @@ public class SFXCast : SFXEquipmentBase {
     protected virtual float F_CastLength => V4_CastInfo.z;
     protected Transform CastTransform => tf_ControlledCast ? tf_ControlledCast : transform;
     protected float F_PlayDuration => I_TickCount * F_Tick;
-    Transform tf_ControlledAttach,tf_ControlledCast;
+    Transform tf_ControlledAttach, tf_ControlledCast;
     float f_blastTickChest = 0;
     public virtual void Play(DamageDeliverInfo buffInfo)
     {
         SetDamageInfo(buffInfo);
-        if (I_DelayIndicatorIndex>0)
-            GameObjectManager.SpawnIndicator(I_DelayIndicatorIndex, transform.position, Vector3.up).Play(m_sourceID,  F_DelayDuration);
+        if (I_DelayIndicatorIndex > 0)
+            GameObjectManager.SpawnIndicator(I_DelayIndicatorIndex, transform.position, Vector3.up).Play(m_sourceID, F_DelayDuration);
 
         base.Play(m_DamageInfo.m_detail.I_SourceID, F_PlayDuration, F_DelayDuration);
+    }
+
+    public virtual void PlayControlled(int sourceID, Transform attachTrans, Transform directionTrans, DamageDeliverInfo buffInfo)
+    {
+        SetDamageInfo(buffInfo);
+        tf_ControlledAttach = attachTrans;
+        tf_ControlledCast = directionTrans;
+        base.Play(sourceID, 0f, F_DelayDuration);
+    }
+
+    public void OnControlledCheck(DamageDeliverInfo info)
+    {
+        SetDamageInfo(info);
+        DoBlastCheck();
+    }
+
+    public virtual void StopControlled()
+    {
+
+        tf_ControlledAttach = null;
+        tf_ControlledCast = null;
+        Stop();
     }
 
     protected override void OnPlay()
@@ -43,28 +65,12 @@ public class SFXCast : SFXEquipmentBase {
             GameManagerBase.Instance.SetEffect_Shake(V4_CastInfo.magnitude);
 
         if (I_ImpactIndex > 0)
-            GameObjectManager.SpawnSFX<SFXImpact>(I_ImpactIndex,transform.position,transform.forward).Play(m_sourceID);
+            GameObjectManager.SpawnSFX<SFXImpact>(I_ImpactIndex, transform.position, transform.forward).Play(m_sourceID);
 
         if (F_Tick <= 0)
             DoBlastCheck();
     }
 
-    public virtual void PlayControlled(int sourceID, Transform attachTrans, Transform directionTrans, bool play, DamageDeliverInfo buffInfo)
-    {
-        if (play)
-        {
-            SetDamageInfo(buffInfo);
-            tf_ControlledAttach = attachTrans;
-            tf_ControlledCast = directionTrans;
-            base.Play(sourceID, 0f,F_DelayDuration);
-        }
-        else
-        {
-            tf_ControlledAttach = null;
-            tf_ControlledCast = null;
-            Stop();
-        }
-    }
     void SetDamageInfo(DamageDeliverInfo info)
     {
         if (I_BuffApplyOnCast > 0)

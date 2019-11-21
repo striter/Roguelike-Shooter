@@ -2488,14 +2488,14 @@ namespace GameSetting
         {
             OnPlayAnim(false);
             m_Cast = GameObjectManager.SpawnEquipment<SFXCast>(I_Index, m_Entity.tf_Weapon.position, m_Entity.tf_Weapon.forward);
-            m_Cast.PlayControlled(m_Entity.m_EntityID, m_Entity.tf_Weapon, attacherHead, true, GetDamageDeliverInfo());
+            m_Cast.PlayControlled(m_Entity.m_EntityID, m_Entity.tf_Weapon, attacherHead, GetDamageDeliverInfo());
         }
 
         public override void OnPlayAnim(bool play)
         {
             if (!play && m_Cast)
             {
-                m_Cast.PlayControlled(m_Entity.m_EntityID, m_Entity.tf_Weapon, attacherHead, false, GetDamageDeliverInfo());
+                m_Cast.StopControlled();
                 m_Cast = null;
             }
         }

@@ -25,6 +25,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public Transform tf_Status { get; private set; }
     public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized * m_CharacterInfo.F_MovementSpeed * time;
     public PlayerInfoManager m_PlayerInfo { get; private set; }
+    public bool m_WeaponBlocked { get; private set; } = false;
     protected bool m_aiming = false;
     protected float f_aimMovementReduction = 0f;
     protected bool m_aimingMovementReduction => f_aimMovementReduction > 0f;
@@ -164,15 +165,15 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             m_PlayerInfo.OnReloadFinish();
     }
 
-    protected virtual bool CalculateCanFire() => !Physics.SphereCast(new Ray(tf_WeaponAim.position, tf_WeaponAim.forward), .3f, 1.5f, GameLayer.Mask.I_Static);
+    protected virtual bool GetFrontObstacle() => Physics.SphereCast(new Ray(tf_WeaponAim.position, tf_WeaponAim.forward), .3f, 1.5f, GameLayer.Mask.I_Static);
     void OnWeaponTick(float deltaTime)
     {
         if (m_WeaponCurrent == null)
             return;
         tf_WeaponAim.rotation = CalculateTargetRotation();
-        bool canFire = CalculateCanFire();
-        m_WeaponCurrent.Tick(Time.deltaTime, canFire);
-        m_Assist.SetEnable(canFire&&!m_WeaponCurrent.B_Reloading);
+        m_WeaponBlocked = GetFrontObstacle();
+        m_Assist.SetEnable(!m_WeaponBlocked && !m_WeaponCurrent.B_Reloading);
+        m_WeaponCurrent.Tick(Time.deltaTime);
     }
 
     public WeaponBase ObtainWeapon(WeaponBase _weapon)

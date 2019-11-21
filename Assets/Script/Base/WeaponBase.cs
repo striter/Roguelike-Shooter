@@ -13,16 +13,15 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     public float F_BaseDamage { get; protected set; } = 0;
     public float F_BaseRecoil => m_WeaponInfo.m_RecoilPerShot;
     public float F_BaseFirerate => m_WeaponInfo.m_FireRate;
-    public bool B_Triggerable { get; private set; } = false;
     public bool B_Reloading { get; private set; } = false;
     public int I_AmmoLeft { get; private set; } = 0;
     public Transform m_Muzzle { get; private set; } = null;
     public Transform m_Case { get; private set; } = null;
     public int I_ClipAmount { get; private set; } = 0;
     public float F_Recoil => m_Attacher.m_PlayerInfo.F_RecoilMultiply * F_BaseRecoil;
-    public bool B_TriggerActionable() => B_Triggerable && B_Actionable();
-    public bool B_Actionable() => !B_Reloading && f_fireCheck <= 0;
-    WeaponTrigger m_Trigger = null;
+    public bool B_Fireable() => !B_Reloading && f_fireCheck <= 0&& !m_Attacher.m_WeaponBlocked;
+    public bool B_Reloadable() => !B_Reloading && !B_AmmoFull;
+    protected WeaponTrigger m_Trigger { get; private set; }
     Action<bool,float> OnReload;
     Action<float> OnFireRecoil;
 
@@ -41,7 +40,7 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
         m_WeaponInfo = GameDataManager.GetWeaponProperties(_identity);
         I_ClipAmount = m_WeaponInfo.m_ClipAmount;
         I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
-        m_Trigger = new TriggerAuto(m_WeaponInfo.m_FireRate, OnTrigger, B_TriggerActionable, OnFireCheck, CheckCanAutoReload);
+        m_Trigger = new WeaponTrigger(m_WeaponInfo.m_FireRate, OnTriggerOnce, OnFireCheck, CheckCanAutoReload);
         OnGetEquipmentData(GameObjectManager.GetEquipmentData<SFXEquipmentBase>(GameExpression.GetPlayerEquipmentIndex(m_WeaponInfo.m_Index)));
     }
 
@@ -77,13 +76,9 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     }
 
     #region PlayerInteract
-    public bool Trigger(bool down)
-    {
-        m_Trigger.OnSetTrigger(down);
-        return true;
-    }
+    public void Trigger(bool down)=>m_Trigger.OnSetTrigger(down);
     
-    protected virtual bool OnTrigger()
+    protected bool OnTriggerOnce()
     {
         if (!B_HaveAmmoLeft)
             return false;
@@ -92,7 +87,6 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
         OnTriggerSuccessful();
         return true;
     }
-
     protected virtual void OnTriggerSuccessful()
     {
 
@@ -107,7 +101,7 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     }
     public bool TryReload()
     {
-        if (!B_Actionable()||B_AmmoFull)
+        if (!B_Reloadable())
             return false;
         StartReload();
         return true;
@@ -119,32 +113,21 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
         OnReload?.Invoke(true, m_WeaponInfo.m_ReloadTime  / m_Attacher.m_PlayerInfo.F_ReloadRateTick(1f) );
     }
 
-    public void Tick(float deltaTime,bool _canFire)
+    public void Tick(float deltaTime)
     {
-        B_Triggerable = _canFire;
-        
-        AmmoStatus(deltaTime);
-
-        float fireTick = m_Attacher.m_PlayerInfo.F_FireRateTick(deltaTime);
-
-        if (m_Trigger != null)
-            m_Trigger.Tick(fireTick);
+        OnAmmoTick(m_Attacher.m_PlayerInfo.F_ReloadRateTick(deltaTime));
+        OnFireTick(m_Attacher.m_PlayerInfo.F_FireRateTick(deltaTime));
+    }
+    protected virtual void OnFireTick(float deltaTime)
+    {
+        if (B_Fireable())
+            m_Trigger.Tick(deltaTime);
 
         if (f_fireCheck > 0)
-            f_fireCheck -= fireTick;
-
-        if (B_Reloading)
-        {
-            f_reloadCheck += m_Attacher.m_PlayerInfo.F_ReloadRateTick(deltaTime);
-            if (f_reloadCheck > m_WeaponInfo.m_ReloadTime)
-            {
-                B_Reloading = false;
-                OnReload(false, 0);
-                I_AmmoLeft = I_ClipAmount;
-            }
-        }
+            f_fireCheck -= deltaTime;
     }
-    void AmmoStatus(float deltaTime)
+
+    void OnAmmoTick(float deltaTime)
     {
         int clipAmount = m_Attacher.m_PlayerInfo.I_ClipAmount(m_WeaponInfo.m_ClipAmount);
         if (I_ClipAmount != clipAmount)
@@ -152,6 +135,17 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
             I_ClipAmount = clipAmount;
             if (I_AmmoLeft > I_ClipAmount)
                 I_AmmoLeft = I_ClipAmount;
+        }
+
+        if (B_Reloading)
+        {
+            f_reloadCheck += deltaTime;
+            if (f_reloadCheck > m_WeaponInfo.m_ReloadTime)
+            {
+                B_Reloading = false;
+                OnReload(false, 0);
+                I_AmmoLeft = I_ClipAmount;
+            }
         }
     }
     
@@ -162,19 +156,17 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
         OnReload(false, 0);
     }
     #endregion
-    internal class WeaponTrigger:ISingleCoroutine
+    public class WeaponTrigger:ISingleCoroutine
     {
         public bool B_TriggerDown { get; protected set; }
         protected float f_fireRate { get; private set; }
         protected Func<bool> OnTriggerSuccessful { get; private set; }
-        protected Func<bool> OnTriggerActionable { get; private set; }
         private Action<float> OnSetActionPause;
         private Action OnCheckAutoReload;
-        public WeaponTrigger(float _fireRate, Func<bool> _OnTriggerSuccessful,Func<bool> _OnTriggerActionable, Action<float> _OnSetActionPause,Action _OnCheckAutoReload)
+        public WeaponTrigger(float _fireRate, Func<bool> _OnTriggerSuccessful, Action<float> _OnSetActionPause,Action _OnCheckAutoReload)
         {
             f_fireRate = _fireRate;
             OnTriggerSuccessful = _OnTriggerSuccessful;
-            OnTriggerActionable = _OnTriggerActionable;
             OnSetActionPause = _OnSetActionPause;
             OnCheckAutoReload = _OnCheckAutoReload;
         }
@@ -183,10 +175,16 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
         {
             B_TriggerDown = down;
         }
+
         public virtual void Tick(float deltaTime)
         {
+            if (!B_TriggerDown)
+                return;
 
+            if (OnTriggerSuccessful())
+                OnActionPause(f_fireRate, true);
         }
+
         public virtual void OnDisable()
         {
             B_TriggerDown = false;
@@ -202,22 +200,6 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
 
             if (ActionAfterPause != null)
                 this.StartSingleCoroutine(0, TIEnumerators.PauseDel(pauseDuration, ActionAfterPause));
-        }
-    }
-    
-    internal class TriggerAuto : WeaponTrigger
-    {
-        public TriggerAuto(float _fireRate, Func<bool> _OnTriggerSuccessful, Func<bool> _OnTriggerActionable, Action<float> _OnSetActionPause, Action _OnCheckAutoReload) : base(_fireRate, _OnTriggerSuccessful, _OnTriggerActionable, _OnSetActionPause, _OnCheckAutoReload)
-        {
-        }
-        public override void Tick(float deltaTime)
-        {
-            base.Tick(deltaTime);
-            if (B_TriggerDown && OnTriggerActionable())
-            {
-                if (OnTriggerSuccessful())
-                    OnActionPause(f_fireRate,true);
-            }
         }
     }
     
