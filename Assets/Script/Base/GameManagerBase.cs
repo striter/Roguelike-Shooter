@@ -10,19 +10,20 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
     protected override void Awake()
     {
         base.Awake();
-        GameObjectManager.Init();
-        GameIdentificationManager.Init();
+        LoadingManager.OnOtherSceneEnter(B_InGame? enum_Scene.Game: enum_Scene.Camp);
         TBroadCaster<enum_BC_GameStatus>.Init();
         TBroadCaster<enum_BC_UIStatus>.Init();
-        OptionsManager.Init();
-
+        GameIdentificationManager.Init();
         GameDataManager.Init();
         ActionDataManager.Init();
+        OptionsManager.Init();
     }
+
     protected virtual void Start()
     {
         UIManager.Activate(B_InGame);
-        GameAudioManager.Instance.OnInit();
+        GameObjectManager.Init();
+        GameAudioManager.Instance.Init();
         GameObjectManager.PresetRegistCommonObject();
         SetBulletTime(false);
 
@@ -41,7 +42,7 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
         GameObjectManager.RecycleAllObject();
         CameraController.Instance.m_Camera.enabled = false;
         UIManager.Instance.SetActivate(false);
-        TSceneLoader.Instance.LoadScene(scene);
+        LoadingManager.BeginLoad(scene);
     }
 
     void OnOptionChanged()
@@ -53,9 +54,9 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
 
     protected void OnPortalEnter(float duration,Transform vortexTarget, Action OnEnter)
     {
-        SetPostEffect_Vortex(true, vortexTarget, 1f);
-        UIT_Loading.Instance.Play(1f, OnEnter);
+        SetPostEffect_Vortex(true, vortexTarget, 1f,OnEnter);
     }
+
     protected void OnPortalExit(float duration,Transform vortexTarget)
     {
         SetPostEffect_Vortex(false, vortexTarget, 1f);
@@ -101,14 +102,17 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
              CameraController.Instance.m_Effect.RemoveCameraEffect<PE_Bloom>));
     }
 
-    private void SetPostEffect_Vortex(bool on,Transform target,float duration)
+    private void SetPostEffect_Vortex(bool on,Transform target,float duration,Action OnEnter=null)
     {
         PE_DistortVortex vortex = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_DistortVortex>();
         vortex.SetTexture(TResources.GetNoiseTex());
         this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) =>
          {
              vortex.SetDistort(CameraController.Instance.m_Camera.WorldToViewportPoint(target.position),value);
-         },on?0:1,on?1:0, duration, CameraController.Instance.m_Effect.RemoveCameraEffect<PE_DistortVortex>));
+         },on?0:1,on?1:0, duration,()=> {
+             CameraController.Instance.m_Effect.RemoveCameraEffect<PE_DistortVortex>();
+             OnEnter?.Invoke();
+         } ));
     }
     public void SetEffect_Shake(float amount)
     {

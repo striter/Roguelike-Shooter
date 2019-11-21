@@ -53,6 +53,6 @@ public class GameUIManager : UIManager {
     {
         base.OnAdjustPageSibling();
         if(m_OverlayControl)
-            SetControlViewMode(m_OverlayControl, UIPageBase.I_PageCount == 1);
+            SetControlViewMode(m_OverlayControl,UIMessageBoxBase.m_MessageBox==null&&UIPageBase.I_PageCount==1);
     }
 }

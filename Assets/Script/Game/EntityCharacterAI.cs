@@ -436,7 +436,7 @@ public class EntityCharacterAI : EntityCharacterBase {
     CapsuleCollider hitbox;
     private void OnDrawGizmos()
     {
-        if (UnityEditor.EditorApplication.isPlaying && GameManager.Instance.B_PhysicsDebugGizmos)
+        if (UnityEditor.EditorApplication.isPlaying &&GameManager.Instance&&GameManager.Instance.B_PhysicsDebugGizmos)
             return;
 
         if(!hitbox)

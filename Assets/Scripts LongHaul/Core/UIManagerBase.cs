@@ -28,7 +28,6 @@ public class UIManagerBase : SimpleSingletonMono<UIManagerBase> {
         UIPageBase.OnPageExit = null;
         UIMessageBoxBase.OnMessageBoxExit = null;
     }
-
     protected virtual void OnAdjustPageSibling()
     {
         bool pageShow = UIMessageBoxBase.m_MessageBox == null;
@@ -38,7 +37,6 @@ public class UIManagerBase : SimpleSingletonMono<UIManagerBase> {
             SetPageViewMode(UIPageBase.m_Pages[i], pageOverlay);
         }
     }
-
     protected virtual void OnPageExit()=> OnAdjustPageSibling();
     protected virtual void OnMessageBoxExit() => OnAdjustPageSibling();
     protected T ShowPage<T>(bool useAnim) where T : UIPageBase

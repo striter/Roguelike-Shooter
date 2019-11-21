@@ -33,9 +33,9 @@ public class CampManager : GameManagerBase
         CampFarmManager.Instance.OnCampEnter();
     }
 
-    public void OnSceneItemInteract(enum_Scene scene)
+    public void OnSceneItemInteract()
     {
-        OnPortalEnter(1f,tf_Player, () => { SwitchScene(scene); });
+        OnPortalEnter(1f,tf_Player, () => { SwitchScene( enum_Scene.Game); });
     }
 
     public bool B_Farming { get; private set; } = false;

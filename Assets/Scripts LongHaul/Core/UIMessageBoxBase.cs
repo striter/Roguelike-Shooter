@@ -29,6 +29,8 @@ public class UIMessageBoxBase : UIComponentBase {
         btn_Confirm = tf_Container.Find("Confirm").GetComponent<Button>();
         btn_Confirm.onClick.AddListener(OnConfirm);
         tf_Container.Find("Cancel").GetComponent<Button>().onClick.AddListener(OnCancel);
+        Button btn_BG = transform.Find("Background").GetComponent<Button>();
+        if (btn_BG) btn_BG.onClick.AddListener(OnCancel);
         m_MessageBox = this;
     }
     protected virtual void OnDestroy()
@@ -41,7 +43,7 @@ public class UIMessageBoxBase : UIComponentBase {
     {
         OnConfirmClick = _OnConfirmClick;
     }
-    void OnCancel() => Destroy(this.gameObject);
+     void OnCancel() => Destroy(this.gameObject);
     void OnConfirm()
     {
         OnConfirmClick();

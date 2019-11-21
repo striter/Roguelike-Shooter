@@ -17,9 +17,9 @@ public class GameAudioManager : AudioManager
         base.Awake();
         ninstance = this;
     }
-    public override void OnInit()
+    public override void Init()
     {
-        base.OnInit();
+        base.Init();
         OptionsManager.event_OptionChanged += OnOptionChanged;
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);

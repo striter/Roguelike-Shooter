@@ -16,7 +16,7 @@ public class AudioManager: SimpleSingletonMono <AudioManager>
         m_AudioBG.volume = m_BGVolume;
         m_baseVolume = 1f;
     }
-    public virtual void OnInit()
+    public virtual void Init()
     {
         GameObject obj = new GameObject("AudioObj_3D");
         AudioSource source= obj.AddComponent<AudioSource>();
