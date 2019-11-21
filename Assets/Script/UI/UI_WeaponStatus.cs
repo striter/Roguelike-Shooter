@@ -45,14 +45,14 @@ public class UI_WeaponStatus : UIPageBase {
         m_WeaponName.localizeKey = weapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
         m_ClipSize.SetNumeric(string.Format("{0:D2}", weapon.I_ClipAmount));
 
-        m_DamageAmount.text = string.Format("{0:N1}", weapon.F_BaseDamage);
-        m_Damage.fillAmount = UIExpression.F_WeaponDamageValue(weapon.F_BaseDamage);
-        m_FireRateAmount.text = string.Format("{0:N1}", weapon.m_WeaponInfo.m_RPM);
-        m_FireRate.fillAmount = UIExpression.F_WeaponFireRateValue(weapon.m_WeaponInfo.m_RPM);
-        m_ProjectileSpeedAmount.text = string.Format("{0:N1}", weapon.F_BaseSpeed);
-        m_ProjectileSpeed.fillAmount = UIExpression.F_WeaponProjectileSpeedValue(weapon.F_BaseSpeed);
-        m_StabilityAmount.text = string.Format("{0:N1}", UIExpression.F_WeaponStability(weapon.m_WeaponInfo.m_RecoilScore));
-        m_Stability.fillAmount = UIExpression.F_WeaponStabilityValue(weapon.m_WeaponInfo.m_RecoilScore);
+        m_DamageAmount.text = string.Format("{0:N1}", weapon.m_WeaponInfo.m_UIDamage);
+        m_Damage.fillAmount = UIExpression.GetUIWeaponDamageValue(weapon.m_WeaponInfo.m_UIDamage);
+        m_StabilityAmount.text = string.Format("{0:N1}", weapon.m_WeaponInfo.m_UIStability);
+        m_Stability.fillAmount = UIExpression.GetUIWeaponStabilityValue(weapon.m_WeaponInfo.m_UIStability);
+        m_FireRateAmount.text = string.Format("{0:N1}", weapon.m_WeaponInfo.m_UIRPM);
+        m_FireRate.fillAmount = UIExpression.GetUIWeaponRPMValue(weapon.m_WeaponInfo.m_UIRPM);
+        m_ProjectileSpeedAmount.text = string.Format("{0:N1}", weapon.m_WeaponInfo.m_UISpeed);
+        m_ProjectileSpeed.fillAmount = UIExpression.GetUIWeaponSpeedValue(weapon.m_WeaponInfo.m_UISpeed);
 
         bool showAction = weapon.m_WeaponAction != null;
         if (showAction)

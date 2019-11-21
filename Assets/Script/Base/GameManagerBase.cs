@@ -30,6 +30,7 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
         OnOptionChanged();
         OptionsManager.event_OptionChanged += OnOptionChanged;
     }
+
     protected virtual void OnDisable()
     {
         this.StopAllSingleCoroutines();

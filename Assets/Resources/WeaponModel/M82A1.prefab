@@ -170,7 +170,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4620733109291788}
-  - component: {fileID: 114040561782655780}
+  - component: {fileID: 114487488515754344}
   m_Layer: 0
   m_Name: M82A1
   m_TagString: Untagged
@@ -891,7 +891,7 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1131473585657856}
   m_Mesh: {fileID: 4300024, guid: 4852216ba4ec76040afc6ad00b021d66, type: 3}
---- !u!114 &114040561782655780
+--- !u!114 &114487488515754344
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -902,9 +902,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b95bf8cd0c887424eba18d0aa1f44dc6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  E_Trigger: 2
   E_Anim: 1001
   B_AttachLeft: 0
-  m_ReloadClip1: {fileID: 8300000, guid: 237960a0cffb9cf4ca9e7cb988f29816, type: 3}
-  m_ReloadClip2: {fileID: 8300000, guid: 5f0f04150e4e08d4696be44e849c1054, type: 3}
-  m_ReloadClip3: {fileID: 8300000, guid: 237960a0cffb9cf4ca9e7cb988f29816, type: 3}
+  m_ReloadClip1: {fileID: 0}
+  m_ReloadClip2: {fileID: 0}
+  m_ReloadClip3: {fileID: 0}

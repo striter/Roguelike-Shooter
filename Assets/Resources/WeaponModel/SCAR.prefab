@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4457639546979222}
-  - component: {fileID: 114348243471940134}
+  - component: {fileID: 114015559745105270}
   m_Layer: 0
   m_Name: SCAR
   m_TagString: Untagged
@@ -602,7 +602,7 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1776504946249446}
   m_Mesh: {fileID: 4300006, guid: de991c8695320344ea33e13fdf6c48ab, type: 3}
---- !u!114 &114348243471940134
+--- !u!114 &114015559745105270
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -613,9 +613,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b95bf8cd0c887424eba18d0aa1f44dc6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  E_Trigger: 2
   E_Anim: 1001
   B_AttachLeft: 0
-  m_ReloadClip1: {fileID: 8300000, guid: 4196da2a1a350ca4dbc615aad9e21b7f, type: 3}
-  m_ReloadClip2: {fileID: 8300000, guid: 4196da2a1a350ca4dbc615aad9e21b7f, type: 3}
-  m_ReloadClip3: {fileID: 8300000, guid: 4196da2a1a350ca4dbc615aad9e21b7f, type: 3}
+  m_ReloadClip1: {fileID: 0}
+  m_ReloadClip2: {fileID: 0}
+  m_ReloadClip3: {fileID: 0}

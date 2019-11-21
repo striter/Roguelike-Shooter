@@ -85,7 +85,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4013817647996756}
-  - component: {fileID: 114018902814785438}
+  - component: {fileID: 114453644647543708}
   m_Layer: 0
   m_Name: XM1014
   m_TagString: Untagged
@@ -387,7 +387,7 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1011709612679620}
   m_Mesh: {fileID: 4300016, guid: 06eeaf9195ed97c4aa6965c3c24eaf9d, type: 3}
---- !u!114 &114018902814785438
+--- !u!114 &114453644647543708
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -398,9 +398,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b95bf8cd0c887424eba18d0aa1f44dc6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  E_Trigger: 2
   E_Anim: 1004
   B_AttachLeft: 0
-  m_ReloadClip1: {fileID: 8300000, guid: b4a7023a73afb0042b518ccc3e817b64, type: 3}
-  m_ReloadClip2: {fileID: 8300000, guid: b4a7023a73afb0042b518ccc3e817b64, type: 3}
-  m_ReloadClip3: {fileID: 8300000, guid: b4a7023a73afb0042b518ccc3e817b64, type: 3}
+  m_ReloadClip1: {fileID: 0}
+  m_ReloadClip2: {fileID: 0}
+  m_ReloadClip3: {fileID: 0}

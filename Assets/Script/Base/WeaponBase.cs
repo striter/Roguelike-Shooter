@@ -1,36 +1,25 @@
 ﻿using UnityEngine;
 using GameSetting;
 using System;
-using System.Collections.Generic;
 
 public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
 { 
-    public enum_TriggerType E_Trigger = enum_TriggerType.Invalid;
     public enum_PlayerAnim E_Anim= enum_PlayerAnim.Invalid;
     public bool B_AttachLeft=false;
     public AudioClip m_ReloadClip1, m_ReloadClip2, m_ReloadClip3;
-    AudioClip m_MuzzleClip;
-
-    EntityCharacterPlayer m_Attacher;
+    protected EntityCharacterPlayer m_Attacher { get; private set; }
     public SWeapon m_WeaponInfo { get; private set; }
     public ActionBase m_WeaponAction { get; private set; } = null;
-    public float F_BaseSpeed { get; private set; } = 0;
-    public float F_BaseDamage { get; private set; } = 0;
-    public bool B_BasePenetrate { get; private set; } = false;
-    public float F_BaseRecoil => m_WeaponInfo.m_RecoilPerShot.x;
+    public float F_BaseDamage { get; protected set; } = 0;
+    public float F_BaseRecoil => m_WeaponInfo.m_RecoilPerShot;
     public float F_BaseFirerate => m_WeaponInfo.m_FireRate;
-
-    public int I_MuzzleIndex { get; private set; } = -1;
-
     public bool B_Triggerable { get; private set; } = false;
     public bool B_Reloading { get; private set; } = false;
     public int I_AmmoLeft { get; private set; } = 0;
     public Transform m_Muzzle { get; private set; } = null;
     public Transform m_Case { get; private set; } = null;
     public int I_ClipAmount { get; private set; } = 0;
-    public float F_Speed => m_Attacher.m_PlayerInfo.F_ProjectileSpeedMuiltiply * F_BaseSpeed;
     public float F_Recoil => m_Attacher.m_PlayerInfo.F_RecoilMultiply * F_BaseRecoil;
-    public bool B_Penetrate => m_Attacher.m_PlayerInfo.B_ProjectilePenetrate||B_BasePenetrate;
     public float F_ReloadStatus => B_Reloading ? f_reloadCheck / m_WeaponInfo.m_ReloadTime : 1;
     public float F_AmmoStatus => I_AmmoLeft / (float)I_ClipAmount;
     public bool B_TriggerActionable() => B_Triggerable && B_Actionable();
@@ -44,29 +33,20 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     bool B_AmmoFull => m_WeaponInfo.m_ClipAmount == -1||I_ClipAmount == I_AmmoLeft;
     protected void OnFireCheck(float pauseDuration) => f_fireCheck = pauseDuration;
 
-    SFXProjectile m_ProjectilInfo;
+    EquipmentBase m_Equipment;
     public override void OnPoolItemInit(enum_PlayerWeapon _identity, Action<enum_PlayerWeapon, MonoBehaviour> _OnRecycle)
     {
         m_Muzzle = transform.FindInAllChild("Muzzle");
         m_Case = transform.FindInAllChild("Case");
         m_WeaponInfo = GameDataManager.GetWeaponProperties(_identity);
-        SFXProjectile projectileInfo = GameObjectManager.GetEquipmentData<SFXProjectile>(GameExpression.GetPlayerEquipmentIndex( m_WeaponInfo.m_Index));
-        F_BaseSpeed = projectileInfo.F_Speed;
-        B_BasePenetrate = projectileInfo.B_Penetrate;
-        F_BaseDamage = projectileInfo.F_Damage;
-        I_MuzzleIndex = projectileInfo.I_MuzzleIndex;
+        OnGetEquipmentData (GameObjectManager.GetEquipmentData<SFXEquipmentBase>(GameExpression.GetPlayerEquipmentIndex( m_WeaponInfo.m_Index)));
         I_ClipAmount = m_WeaponInfo.m_ClipAmount;
         I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
-        m_MuzzleClip = projectileInfo.AC_MuzzleClip;
-        switch (E_Trigger)
-        {
-            default: Debug.LogError("Add More Convertions Here:" + E_Trigger); m_Trigger = new TriggerSingle(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, OnTrigger, B_TriggerActionable, OnFireCheck, CheckCanAutoReload); break;
-            case enum_TriggerType.Auto: m_Trigger = new TriggerAuto(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, OnTrigger, B_TriggerActionable, OnFireCheck,CheckCanAutoReload);break;
-            case enum_TriggerType.Single:m_Trigger = new TriggerSingle(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, OnTrigger, B_TriggerActionable, OnFireCheck, CheckCanAutoReload);break;
-            case enum_TriggerType.Burst:m_Trigger = new TriggerBurst(m_WeaponInfo.m_FireRate,m_WeaponInfo.m_SpecialRate, OnTrigger, B_TriggerActionable,OnFireCheck, CheckCanAutoReload);break;
-            case enum_TriggerType.Pull: m_Trigger = new TriggerPull(()=> { Debug.Log("Pull"); },m_WeaponInfo.m_FireRate,m_WeaponInfo.m_SpecialRate, OnTrigger, B_TriggerActionable, OnFireCheck, CheckCanAutoReload); break;
-            case enum_TriggerType.Store:m_Trigger = new TriggerStore(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, OnTrigger, B_TriggerActionable, OnFireCheck, CheckCanAutoReload);break;
-        }
+        m_Trigger = new TriggerAuto(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, OnTrigger, B_TriggerActionable, OnFireCheck, CheckCanAutoReload);
+    }
+
+    protected virtual void OnGetEquipmentData(SFXEquipmentBase equipment)
+    {
     }
 
     protected override void OnPoolItemDisable()
@@ -103,43 +83,19 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
         return true;
     }
     
-    RaycastHit hit;
     protected virtual bool OnTrigger()
     {
         if (!B_HaveAmmoLeft)
             return false;
-        I_AmmoLeft--;
-        DamageDeliverInfo damageInfo = m_Attacher.m_PlayerInfo.GetDamageBuffInfo();
         OnFireRecoil?.Invoke(F_Recoil);
-
-        Vector3 spreadDirection = m_Attacher.tf_WeaponAim.forward;
-        Vector3 endPosition = m_Attacher.tf_WeaponAim.position + spreadDirection * GameConst.I_ProjectileMaxDistance;
-        if (Physics.Raycast(m_Attacher.tf_WeaponAim.position, spreadDirection, out hit, GameConst.I_ProjectileMaxDistance, GameLayer.Mask.I_All) && GameManager.B_CanSFXHitTarget(hit.collider.Detect(), m_Attacher.m_EntityID))
-            endPosition = hit.point;
-        spreadDirection = (endPosition - m_Muzzle.position).normalized;
-        spreadDirection.y = 0;
-
-        if (m_WeaponInfo.m_PelletsPerShot == 1)
-        {
-            FireOneBullet(damageInfo, spreadDirection);
-        }
-        else
-        {
-            int waveCount = m_WeaponInfo.m_PelletsPerShot;
-            float beginAnle = -m_WeaponInfo.m_Spread * (waveCount - 1) / 2f;
-            for (int i = 0; i < waveCount; i++)
-                FireOneBullet(damageInfo, spreadDirection.RotateDirection(Vector3.up, beginAnle + i * m_WeaponInfo.m_Spread));
-        }
-        GameObjectManager.PlayMuzzle(m_Attacher.m_EntityID, m_Muzzle.position, spreadDirection, I_MuzzleIndex, m_MuzzleClip);
+        I_AmmoLeft--;
+        OnTriggerSuccessful();
         return true;
     }
-    
-    void FireOneBullet(DamageDeliverInfo damage,Vector3 direction)
+
+    protected virtual void OnTriggerSuccessful()
     {
-        SFXProjectile projectile = GameObjectManager.SpawnEquipment<SFXProjectile>(GameExpression.GetPlayerEquipmentIndex( m_WeaponInfo.m_Index), m_Muzzle.position, direction);
-        projectile.F_Speed = F_Speed;
-        projectile.B_Penetrate = B_Penetrate;
-        projectile.Play(damage, direction, m_Attacher.tf_Weapon.position+direction* GameConst.I_ProjectileMaxDistance);
+
     }
 
     void CheckCanAutoReload()
@@ -206,7 +162,6 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
         OnReload(false, 0);
     }
     #endregion
-    #region TriggerType
     internal class WeaponTrigger:ISingleCoroutine
     {
         public bool B_TriggerDown { get; protected set; }
@@ -235,7 +190,7 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
         public virtual void OnDisable()
         {
             B_TriggerDown = false;
-            this.StopSingleCoroutines(0,1);
+            this.StopSingleCoroutines(0);
         }
         protected void OnActionPause(float pauseDuration,bool autoReload,Action ActionAfterPause=null)
         {
@@ -246,26 +201,10 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
                 OnCheckAutoReload();
 
             if (ActionAfterPause != null)
-                this.StartSingleCoroutine(1, TIEnumerators.PauseDel(pauseDuration, ActionAfterPause));
+                this.StartSingleCoroutine(0, TIEnumerators.PauseDel(pauseDuration, ActionAfterPause));
         }
     }
-
-    internal class TriggerSingle : WeaponTrigger
-    {
-        public TriggerSingle(float _fireRate, float _specialRate, Func<bool> _OnTriggerSuccessful, Func<bool> _OnTriggerActionable, Action<float> _OnSetActionPause, Action OnCheckAutoReload) : base(_fireRate,_specialRate, _OnTriggerSuccessful, _OnTriggerActionable,_OnSetActionPause, OnCheckAutoReload)
-        {
-        }
-        public override void OnSetTrigger(bool down)
-        {
-            base.OnSetTrigger(down);
-            if (B_TriggerDown && OnTriggerActionable())
-            {
-                OnTriggerSuccessful();
-                OnActionPause(f_fireRate,true);
-            }
-        }
-    }
-
+    
     internal class TriggerAuto : WeaponTrigger
     {
         public TriggerAuto(float _fireRate, float _specialRate, Func<bool> _OnTriggerSuccessful, Func<bool> _OnTriggerActionable, Action<float> _OnSetActionPause, Action _OnCheckAutoReload) : base(_fireRate, _specialRate, _OnTriggerSuccessful, _OnTriggerActionable, _OnSetActionPause, _OnCheckAutoReload)
@@ -281,155 +220,7 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
             }
         }
     }
-
-    internal class TriggerBurst : WeaponTrigger
-    {
-        float f_burstTime;
-        float f_burstRate;
-        bool b_bursting;
-        int i_burstIndex;
-        public TriggerBurst(float _fireRate, float _specialRate, Func<bool> _OnTriggerSuccessful, Func<bool> _OnTriggerActionable, Action<float> _OnSetActionPause, Action _OnCheckAutoReload) : base(_fireRate, _specialRate, _OnTriggerSuccessful, _OnTriggerActionable, _OnSetActionPause, _OnCheckAutoReload)
-        {
-            f_burstRate = _specialRate;
-        }
-        public override void OnDisable()
-        {
-            base.OnDisable();
-            b_bursting = false;
-        }
-        public override void OnSetTrigger(bool down)
-        {
-            base.OnSetTrigger(down);
-            if (!b_bursting && B_TriggerDown && OnTriggerActionable())
-            {
-                OnActionPause(f_fireRate,true);
-                b_bursting = true;
-                i_burstIndex = 0;
-                f_burstTime = 0;
-            }
-        }
-        public override void Tick(float deltaTime)
-        {
-            base.Tick(deltaTime);
-            if (b_bursting)
-            {
-                f_burstTime += deltaTime;
-                if (f_burstTime > f_burstRate)
-                {
-                    f_burstTime -= f_burstRate;
-                    i_burstIndex++;
-                    OnTriggerSuccessful();
-                    if (i_burstIndex >= GameConst.I_BurstFirePelletsOnceTrigger)
-                    {
-                        b_bursting = false;
-                    }
-                }
-            }
-        }
-    }
-
-
-    internal class TriggerPull : WeaponTrigger,ISingleCoroutine
-    {
-        float f_pullTime;
-        float f_pullDuration;
-        public bool B_Pulling { get; private set; } = false;
-        public bool B_NeedPull { get; private set; } = false;
-        Action OnPull;
-        public TriggerPull(Action _OnPull, float _fireRate, float _specialRate, Func<bool> _OnTriggerSuccessful, Func<bool> _OnTriggerActionable, Action<float> _OnSetActionPause, Action _OnCheckAutoReload) : base(_fireRate, _specialRate, _OnTriggerSuccessful, _OnTriggerActionable, _OnSetActionPause, _OnCheckAutoReload)
-        {
-            OnPull = _OnPull;
-            f_pullDuration = _specialRate;
-        }
-        public override void OnDisable()
-        {
-            base.OnDisable();
-            B_Pulling = false;
-        }
-        public override void OnSetTrigger(bool down)
-        {
-            base.OnSetTrigger(down);
-            if (down && OnTriggerActionable())
-            {
-                if (B_NeedPull)
-                {
-                    OnPull();
-                    OnActionPause(f_pullDuration,true);
-                    B_Pulling = true;
-                    f_pullTime = 0;
-                }
-                else
-                {
-                    OnTriggerSuccessful();
-                    OnActionPause(f_fireRate,false,()=> { OnSetTrigger(true); });
-                    B_NeedPull = true;
-                }
-            }
-        }
-        public override void Tick(float deltaTime)
-        {
-            base.Tick(deltaTime);
-            if (B_Pulling&&B_NeedPull)
-            {
-                f_pullTime += deltaTime;
-                if (f_pullTime > f_pullDuration)
-                {
-                    B_NeedPull = false;
-                    B_Pulling = false;
-                }
-            }
-        }
-    }
-
-    internal class TriggerStore : WeaponTrigger
-    {
-        float f_storeTime;
-        float f_minStoreTime,f_maxStoreTime;
-        public bool B_Storing { get; private set; }
-        public TriggerStore(float _fireRate, float _specialRate, Func<bool> _OnTriggerSuccessful, Func<bool> _OnTriggerActionable, Action<float> _OnSetActionPause, Action _OnCheckAutoReload) : base(_fireRate, _specialRate, _OnTriggerSuccessful, _OnTriggerActionable, _OnSetActionPause, _OnCheckAutoReload)
-        {
-            f_minStoreTime = _fireRate;
-            f_maxStoreTime = _specialRate;
-        }
-
-        public override void OnDisable()
-        {
-            base.OnDisable();
-            B_Storing = false;
-        }
-
-        public override void OnSetTrigger(bool down)
-        {
-            base.OnSetTrigger(down);
-            if (OnTriggerActionable())
-            {
-                if (!B_TriggerDown && f_storeTime >= f_minStoreTime)
-                    OnTriggerSuccessful();
-
-                B_Storing = B_TriggerDown;
-                f_storeTime = 0f;
-            }
-        }
-
-        public override void Tick(float deltaTime)
-        {
-            base.Tick(deltaTime);
-            if (B_Storing)
-            {
-                f_storeTime += deltaTime;
-
-                //Release If Above Max Time
-                if (f_storeTime >= f_maxStoreTime)
-                {
-                    OnTriggerSuccessful();
-                    B_Storing = false;
-                    f_storeTime = 0f;
-                }
-            }
-        }
-    }
-    #endregion
-
+    
     public void OnAnimEvent(TAnimatorEvent.enum_AnimEvent eventType)
     {
         AudioClip targetClip=null;

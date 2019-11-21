@@ -234,11 +234,10 @@ namespace GameSetting
             }
         }
 
-        public static float F_WeaponStability(float baseRecoilScore) => 100f - baseRecoilScore * 6.25f;
-        public static float F_WeaponDamageValue(float baseDamage) => baseDamage / 150f;
-        public static float F_WeaponFireRateValue(float baseRPM) => baseRPM / 400f;
-        public static float F_WeaponStabilityValue(float baseRecoilScore) => F_WeaponStability(baseRecoilScore) / 100f;
-        public static float F_WeaponProjectileSpeedValue(float baseProjectileSpeed) => baseProjectileSpeed / 100f;
+        public static float GetUIWeaponDamageValue(float uiDamage) => Mathf.InverseLerp(40,150,uiDamage);
+        public static float GetUIWeaponRPMValue(float uiRPM) =>  Mathf.InverseLerp(40,150,uiRPM);
+        public static float GetUIWeaponSpeedValue(float uiSpeed) =>  Mathf.InverseLerp(40, 150, uiSpeed);
+        public static float GetUIWeaponStabilityValue(float uiStability) =>  Mathf.InverseLerp(40, 150, uiStability);
     }
 
     public static class GameEnumConvertions
@@ -515,9 +514,7 @@ namespace GameSetting
     public enum enum_Interaction { Invalid = -1,
         GameBegin,Bonfire, ActionChest, ContainerTrade, ContainerBattle, PickupCoin, PickupHealth,PickupHealthPack, PickupArmor, PickupAction, Weapon,PerkUpgrade, ActionAdjustment, Portal, GameEnd,
         CampBegin,CampStage, CampDifficult,CampFarm,CampAction,CampEnd, }
-
-    public enum enum_TriggerType { Invalid = -1, Single = 1, Auto = 2, Burst = 3, Pull = 4, Store = 5, }
-
+    
     public enum enum_ProjectileFireType { Invalid = -1, Single = 1, MultipleFan = 2, MultipleLine = 3, };
 
     public enum enum_CastControllType { Invalid = -1, CastFromOrigin = 1, CastControlledForward = 2, CastAtTarget = 3, CastSelfDetonate = 4, }
@@ -866,10 +863,13 @@ namespace GameSetting
         float f_reloadTime;
         int i_PelletsPerShot;
         float f_weight;
-        float f_recoilHorizontal;
-        float f_recoilVertical;
-        float f_RPM;
-        float f_recoilScore;
+        float f_recoil;
+
+        float f_UIDamage;
+        float f_UIRPM;
+        float f_UISpeed;
+        float f_UIStability;
+
         public int m_Index => index;
         public enum_PlayerWeapon m_Weapon => (enum_PlayerWeapon)index;
         public float m_FireRate => f_fireRate;
@@ -879,9 +879,13 @@ namespace GameSetting
         public float m_ReloadTime => f_reloadTime;
         public int m_PelletsPerShot => i_PelletsPerShot;
         public float m_Weight => f_weight;
-        public Vector2 m_RecoilPerShot => new Vector2(f_recoilHorizontal, f_recoilVertical);
-        public float m_RPM => f_RPM;
-        public float m_RecoilScore => f_recoilScore;
+        public float m_RecoilPerShot =>f_recoil;
+
+        public float m_UIDamage => f_UIDamage;
+        public float m_UIRPM => f_UIRPM;
+        public float m_UISpeed => f_UISpeed;
+        public float m_UIStability => f_UIStability;
+
         public void InitOnValueSet()
         {
         }
