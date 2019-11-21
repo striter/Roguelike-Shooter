@@ -43,9 +43,9 @@ namespace GameSetting_Action
         public const int P_10008_MovementReduction = 20;
         public static int P_10008_FireRateAdditive(enum_RarityLevel rarity) => 160 * (int)rarity;
 
-        public const int I_10009_Cost = 2;
+        public const int I_10009_Cost = 1;
         public const float F_10009_Duration = 10f;
-        public static int P_10009_FireRateAdditive(enum_RarityLevel rarity) => 110 * (int)rarity;
+        public static int P_10009_FireRateAdditive(enum_RarityLevel rarity) => 55 * (int)rarity;
 
         public const int I_10010_Cost = 2;
         public const float F_10010_Duration = 10f;
