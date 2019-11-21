@@ -66,7 +66,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4485698510477838}
-  - component: {fileID: 114362951053407588}
+  - component: {fileID: 114263223999930884}
   m_Layer: 0
   m_Name: AKM
   m_TagString: Untagged
@@ -458,7 +458,7 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1216369126973114}
   m_Mesh: {fileID: 4300010, guid: 846c0d48f31c00f4383d8974b094248b, type: 3}
---- !u!114 &114362951053407588
+--- !u!114 &114263223999930884
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -466,7 +466,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1415909025515404}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b95bf8cd0c887424eba18d0aa1f44dc6, type: 3}
+  m_Script: {fileID: 11500000, guid: babca4e37b9eb89488c8f789a0a06c3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   E_Anim: 1001

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 using UnityEngine.AI;
@@ -943,7 +944,10 @@ public class AtlasLoader
         get
         {
             if (!m_SpriteDic.ContainsKey(name))
-                Debug.LogError("Null Sprites Found |"+name+"|");
+            {
+                Debug.LogWarning("Null Sprites Found |" + name + "|");
+                return m_SpriteDic.Values.First();
+            }
             return m_SpriteDic[name];
         }
     }
