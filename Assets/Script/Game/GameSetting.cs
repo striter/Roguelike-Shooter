@@ -547,7 +547,7 @@ namespace GameSetting
     {
         Invalid = -1,
         //Laser
-        LaserPistol = 101,
+        RailPistol = 101,
         Railgun = 102,
         //Snipe Rifle
         M82A1 = 201,
@@ -569,6 +569,7 @@ namespace GameSetting
         Crossbow = 701,
         RocketLauncher = 702,
         FlameThrower=703,
+        BeamDriller=704,
     }
 
     public enum enum_PlayerAnim
