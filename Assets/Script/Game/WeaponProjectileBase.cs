@@ -57,5 +57,4 @@ public class WeaponProjectileBase : WeaponBase
         projectile.B_Penetrate = B_Penetrate;
         projectile.Play(damage, direction, m_Attacher.tf_Weapon.position + direction * GameConst.I_ProjectileMaxDistance);
     }
-
 }

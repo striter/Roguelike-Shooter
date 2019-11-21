@@ -20,8 +20,6 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     public Transform m_Case { get; private set; } = null;
     public int I_ClipAmount { get; private set; } = 0;
     public float F_Recoil => m_Attacher.m_PlayerInfo.F_RecoilMultiply * F_BaseRecoil;
-    public float F_ReloadStatus => B_Reloading ? f_reloadCheck / m_WeaponInfo.m_ReloadTime : 1;
-    public float F_AmmoStatus => I_AmmoLeft / (float)I_ClipAmount;
     public bool B_TriggerActionable() => B_Triggerable && B_Actionable();
     public bool B_Actionable() => !B_Reloading && f_fireCheck <= 0;
     WeaponTrigger m_Trigger = null;
@@ -29,6 +27,8 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     Action<float> OnFireRecoil;
 
     float f_reloadCheck, f_fireCheck;
+    public float F_ReloadStatus => B_Reloading ? f_reloadCheck / m_WeaponInfo.m_ReloadTime : 1;
+    public float F_AmmoStatus => I_AmmoLeft / (float)I_ClipAmount;
     bool B_HaveAmmoLeft => m_WeaponInfo.m_ClipAmount == -1 || I_AmmoLeft > 0;
     bool B_AmmoFull => m_WeaponInfo.m_ClipAmount == -1||I_ClipAmount == I_AmmoLeft;
     protected void OnFireCheck(float pauseDuration) => f_fireCheck = pauseDuration;
@@ -39,10 +39,10 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
         m_Muzzle = transform.FindInAllChild("Muzzle");
         m_Case = transform.FindInAllChild("Case");
         m_WeaponInfo = GameDataManager.GetWeaponProperties(_identity);
-        OnGetEquipmentData (GameObjectManager.GetEquipmentData<SFXEquipmentBase>(GameExpression.GetPlayerEquipmentIndex( m_WeaponInfo.m_Index)));
         I_ClipAmount = m_WeaponInfo.m_ClipAmount;
         I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
-        m_Trigger = new TriggerAuto(m_WeaponInfo.m_FireRate, m_WeaponInfo.m_SpecialRate, OnTrigger, B_TriggerActionable, OnFireCheck, CheckCanAutoReload);
+        m_Trigger = new TriggerAuto(m_WeaponInfo.m_FireRate, OnTrigger, B_TriggerActionable, OnFireCheck, CheckCanAutoReload);
+        OnGetEquipmentData(GameObjectManager.GetEquipmentData<SFXEquipmentBase>(GameExpression.GetPlayerEquipmentIndex(m_WeaponInfo.m_Index)));
     }
 
     protected virtual void OnGetEquipmentData(SFXEquipmentBase equipment)
@@ -170,7 +170,7 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
         protected Func<bool> OnTriggerActionable { get; private set; }
         private Action<float> OnSetActionPause;
         private Action OnCheckAutoReload;
-        public WeaponTrigger(float _fireRate,float _specialRate, Func<bool> _OnTriggerSuccessful,Func<bool> _OnTriggerActionable, Action<float> _OnSetActionPause,Action _OnCheckAutoReload)
+        public WeaponTrigger(float _fireRate, Func<bool> _OnTriggerSuccessful,Func<bool> _OnTriggerActionable, Action<float> _OnSetActionPause,Action _OnCheckAutoReload)
         {
             f_fireRate = _fireRate;
             OnTriggerSuccessful = _OnTriggerSuccessful;
@@ -207,7 +207,7 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     
     internal class TriggerAuto : WeaponTrigger
     {
-        public TriggerAuto(float _fireRate, float _specialRate, Func<bool> _OnTriggerSuccessful, Func<bool> _OnTriggerActionable, Action<float> _OnSetActionPause, Action _OnCheckAutoReload) : base(_fireRate, _specialRate, _OnTriggerSuccessful, _OnTriggerActionable, _OnSetActionPause, _OnCheckAutoReload)
+        public TriggerAuto(float _fireRate, Func<bool> _OnTriggerSuccessful, Func<bool> _OnTriggerActionable, Action<float> _OnSetActionPause, Action _OnCheckAutoReload) : base(_fireRate, _OnTriggerSuccessful, _OnTriggerActionable, _OnSetActionPause, _OnCheckAutoReload)
         {
         }
         public override void Tick(float deltaTime)

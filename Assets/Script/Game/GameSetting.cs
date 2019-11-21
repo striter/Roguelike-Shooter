@@ -568,6 +568,7 @@ namespace GameSetting
         //Heavy Weapon
         Crossbow = 701,
         RocketLauncher = 702,
+        FlameThrower=703,
     }
 
     public enum enum_PlayerAnim
@@ -857,7 +858,6 @@ namespace GameSetting
     {
         int index;
         float f_fireRate;
-        float f_specialRate;
         int i_clipAmount;
         float f_spread;
         float f_reloadTime;
@@ -873,7 +873,6 @@ namespace GameSetting
         public int m_Index => index;
         public enum_PlayerWeapon m_Weapon => (enum_PlayerWeapon)index;
         public float m_FireRate => f_fireRate;
-        public float m_SpecialRate => f_specialRate;
         public int m_ClipAmount => i_clipAmount;
         public float m_Spread => f_spread;
         public float m_ReloadTime => f_reloadTime;

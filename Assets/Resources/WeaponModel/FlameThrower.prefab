@@ -19,9 +19,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4892897361463616}
-  - component: {fileID: 114623028780580178}
+  - component: {fileID: 114910718250330774}
   m_Layer: 0
-  m_Name: Error
+  m_Name: FlameThrower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -170,7 +170,7 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1997029233746490}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &114623028780580178
+--- !u!114 &114910718250330774
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -178,10 +178,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1305394874654766}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b95bf8cd0c887424eba18d0aa1f44dc6, type: 3}
+  m_Script: {fileID: 11500000, guid: f36aaef2dd894814d9e6946db53640ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  E_Anim: 1001
+  E_Anim: -1
   B_AttachLeft: 0
   m_ReloadClip1: {fileID: 0}
   m_ReloadClip2: {fileID: 0}

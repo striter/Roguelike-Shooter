@@ -85,7 +85,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4626560930977606}
-  - component: {fileID: 114790007946429578}
+  - component: {fileID: 114159887967129434}
   m_Layer: 0
   m_Name: Crossbow
   m_TagString: Untagged
@@ -462,7 +462,7 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1456708751270642}
   m_Mesh: {fileID: 4300010, guid: c40ff62f0cb84a44b9bce81448dc3dab, type: 3}
---- !u!114 &114790007946429578
+--- !u!114 &114159887967129434
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -470,7 +470,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1729818770330804}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b95bf8cd0c887424eba18d0aa1f44dc6, type: 3}
+  m_Script: {fileID: 11500000, guid: babca4e37b9eb89488c8f789a0a06c3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   E_Anim: 1003
