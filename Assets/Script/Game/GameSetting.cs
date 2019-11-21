@@ -192,7 +192,7 @@ namespace GameSetting
 
     public static class UIConst
     {
-        public const int I_AmmoCountToSlider = 180;      //Ammo UI,While Clip Above This Will Turn To Be Slider大于此值变成白条
+        public const int I_AmmoCountToSlider = 200;      //Ammo UI,While Clip Above This Will Turn To Be Slider大于此值变成白条
         public const int I_PlayerDyingMinValue = 10;
         public const int I_PlayerDyingMaxValue = 50;
 
@@ -234,10 +234,10 @@ namespace GameSetting
             }
         }
 
-        public static float GetUIWeaponDamageValue(float uiDamage) => Mathf.InverseLerp(40,150,uiDamage);
-        public static float GetUIWeaponRPMValue(float uiRPM) =>  Mathf.InverseLerp(40,150,uiRPM);
-        public static float GetUIWeaponSpeedValue(float uiSpeed) =>  Mathf.InverseLerp(40, 150, uiSpeed);
-        public static float GetUIWeaponStabilityValue(float uiStability) =>  Mathf.InverseLerp(40, 150, uiStability);
+        public static float GetUIWeaponDamageValue(float uiDamage) => Mathf.InverseLerp(0,100,uiDamage);
+        public static float GetUIWeaponRPMValue(float uiRPM) =>  Mathf.InverseLerp(0,400,uiRPM);
+        public static float GetUIWeaponSpeedValue(float uiSpeed) =>  Mathf.InverseLerp(0, 100, uiSpeed);
+        public static float GetUIWeaponStabilityValue(float uiStability) =>  Mathf.InverseLerp(0, 10, uiStability);
     }
 
     public static class GameEnumConvertions
