@@ -569,8 +569,11 @@ namespace GameSetting
         //Heavy Weapon
         Crossbow = 701,
         RocketLauncher = 702,
-        FlameThrower=703,
-        BeamDriller=704,
+        MachineGun = 703,
+        //Special
+        Flamer = 801,
+        Driller = 802,
+        Bouncer = 803,
     }
 
     public enum enum_PlayerAnim

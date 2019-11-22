@@ -19,9 +19,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4550938155433920}
-  - component: {fileID: 114579307329279138}
+  - component: {fileID: 114217759110967742}
   m_Layer: 9
-  m_Name: 3010
+  m_Name: 8030
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -36,7 +36,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4302469275429298}
   - component: {fileID: 96637802621585148}
-  - component: {fileID: 114646933807541634}
+  - component: {fileID: 114802102252515526}
   m_Layer: 0
   m_Name: Trail
   m_TagString: Untagged
@@ -164,7 +164,7 @@ TrailRenderer:
     generateLightingData: 0
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
---- !u!114 &114579307329279138
+--- !u!114 &114217759110967742
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -172,16 +172,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 1032428382501042}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b8d0e07754fa9b4685464e140e598ea, type: 3}
+  m_Script: {fileID: 11500000, guid: 9d6ae3b2683015443b66e9f6597bce56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   E_ProjectileType: 1
-  F_Damage: 15.3
-  F_Speed: 25
-  B_Penetrate: 0
-  AC_MuzzleClip: {fileID: 8300000, guid: adb8977a89e60d94d86053442cc0637a, type: 3}
-  I_MuzzleIndex: 10001
-  I_ImpactIndex: 20001
+  F_Damage: 20
+  F_Speed: 20
+  B_Penetrate: 1
+  AC_MuzzleClip: {fileID: 0}
+  I_MuzzleIndex: 0
+  I_ImpactIndex: 0
   I_IndicatorIndex: 0
   I_HitMarkIndex: 0
   I_BufFApplyOnHit: 0
@@ -191,7 +191,9 @@ MonoBehaviour:
     start: 0
     length: 0
   F_OffsetExtension: 0
---- !u!114 &114646933807541634
+  I_BounceCount: 10
+  I_SwapRange: 10
+--- !u!114 &114802102252515526
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}

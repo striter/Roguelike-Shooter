@@ -207,10 +207,13 @@ namespace TPhysics
         public override bool OnTargetHit(float deltaTime,RaycastHit hit, T template)
         {
             bool hitBreak = base.OnTargetHit(deltaTime,hit, template);
-            m_BounceTimesLeft--;
-            Redirection(OnBounceDirection == null ? Vector3.Normalize(Vector3.Reflect(m_Direction, hit.normal)) : OnBounceDirection( m_Direction,hit.normal));
-            m_simulating = m_BounceTimesLeft > 0;
-            return true;
+            if (hitBreak)
+            {
+                m_BounceTimesLeft--;
+                Redirection(OnBounceDirection == null ? Vector3.Normalize(Vector3.Reflect(m_Direction, hit.normal)) : OnBounceDirection(m_Direction, hit.normal));
+                m_simulating = m_BounceTimesLeft > 0;
+            }
+            return hitBreak;
         }
 
     }
