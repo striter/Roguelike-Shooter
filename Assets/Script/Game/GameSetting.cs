@@ -646,7 +646,7 @@ namespace GameSetting
 
     public enum enum_UITipsType { Invalid=-1,Normal=0,Warning=1,Error=2}
 
-    public enum enum_UIWeaponRarity { Invalid=-1,Ordinary=0, Advanced = 1, Rare =2,Legend=3}
+    public enum enum_UIWeaponRarity { Invalid=-1,Ordinary=1, Advanced = 2, Rare =3,Legend=4}
     #endregion
     
     #region Structs
