@@ -2367,12 +2367,10 @@ namespace GameSetting
     }
     public class EquipmentCaster : EquipmentBase
     {
-        protected int i_muzzleIndex { get; private set; }
         protected enum_CastTarget m_CastAt { get; private set; }
         protected bool m_castForward { get; private set; }
         public EquipmentCaster(int equipmentIndex,SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex, _controller, _GetBuffInfo)
         {
-            i_muzzleIndex = _castInfo.I_MuzzleIndex;
             m_CastAt = _castInfo.E_CastTarget;
             m_castForward = _castInfo.B_CastForward;
         }
@@ -2409,7 +2407,6 @@ namespace GameSetting
         }
         public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
-            GameObjectManager.PlayMuzzle(m_Entity.m_EntityID,m_Entity.tf_Weapon.position, m_Entity.tf_Weapon.forward,i_muzzleIndex);
             GameObjectManager.SpawnEquipment<SFXCast>(I_Index, _calculatedPosition,m_castForward?m_Entity.tf_Weapon.forward:Vector3.up).Play(GetDamageDeliverInfo());
         }
     }

@@ -364,8 +364,8 @@ MonoBehaviour:
   I_BuffApplyOnCast: 0
   E_AreaType: 4
   V4_CastInfo: {x: 3, y: 5, z: 6.5, w: 7}
-  I_MuzzleIndex: 0
-  I_ImpactIndex: 0
+  I_MuzzleIndex: 11002
+  I_ImpactIndex: 21002
   F_DelayDuration: 0
   I_DelayIndicatorIndex: 0
   B_CameraShake: 0
