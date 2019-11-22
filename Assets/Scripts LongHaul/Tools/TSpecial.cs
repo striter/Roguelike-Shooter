@@ -916,7 +916,6 @@ public static class Physics_Extend
         {
             Vector3 boxPos = position + forward * castLength * i;
             Vector3 boxInfo = new Vector3(trapeziumInfo.x+(trapeziumInfo.w-trapeziumInfo.x)*i/castCount,trapeziumInfo.y,castLength);
-            Debug.DrawLine(boxPos,boxPos+forward*castLength,Color.red,5f);
             RaycastHit[] hits = BoxCastAll(boxPos,forward,up,boxInfo,layerMask);
             for (int j = 0; j < hits.Length; j++)
             {

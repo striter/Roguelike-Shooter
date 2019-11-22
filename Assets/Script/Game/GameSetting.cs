@@ -574,6 +574,7 @@ namespace GameSetting
         Flamer = 801,
         Driller = 802,
         Bouncer = 803,
+        Tesla=804,
     }
 
     public enum enum_PlayerAnim
