@@ -400,7 +400,7 @@ namespace GameSetting
             switch (rarity)
             {
                 default: return "FFFFFFFF";
-                case enum_UIWeaponRarity.Ordinaty: return "E3E3E3FF";
+                case enum_UIWeaponRarity.Ordinary: return "E3E3E3FF";
                 case enum_UIWeaponRarity.Advanced: return "6F8AFFFF";
                 case enum_UIWeaponRarity.Rare: return "C26FFF";
                 case enum_UIWeaponRarity.Legend: return "FFCC1F";
@@ -646,7 +646,7 @@ namespace GameSetting
 
     public enum enum_UITipsType { Invalid=-1,Normal=0,Warning=1,Error=2}
 
-    public enum enum_UIWeaponRarity { Invalid=-1,Ordinaty=0, Advanced = 1, Rare =2,Legend=3}
+    public enum enum_UIWeaponRarity { Invalid=-1,Ordinary=0, Advanced = 1, Rare =2,Legend=3}
     #endregion
     
     #region Structs
