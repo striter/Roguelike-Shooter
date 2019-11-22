@@ -14,8 +14,6 @@ public class SFXCast : SFXEquipmentBase {
     public int I_BuffApplyOnCast;
     public enum_CastAreaType E_AreaType = enum_CastAreaType.Invalid;
     public Vector4 V4_CastInfo;
-    public int I_MuzzleIndex = 0;
-    public int I_ImpactIndex = 0;
     public int F_DelayDuration;
     public int I_DelayIndicatorIndex;
     public bool B_CameraShake = false;
@@ -63,10 +61,7 @@ public class SFXCast : SFXEquipmentBase {
         base.OnPlay();
         if (B_CameraShake)
             GameManagerBase.Instance.SetEffect_Shake(V4_CastInfo.magnitude);
-
-        if (I_ImpactIndex > 0)
-            GameObjectManager.SpawnSFX<SFXImpact>(I_ImpactIndex, transform.position, transform.forward).Play(m_sourceID);
-
+        
         if (F_Tick <= 0)
             DoBlastCheck();
     }

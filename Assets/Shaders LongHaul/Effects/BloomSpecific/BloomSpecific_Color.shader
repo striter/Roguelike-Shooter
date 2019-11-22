@@ -2,7 +2,6 @@
 {
 	Properties
 	{
-	    _MainTex("Texture", 2D) = "white" {}
 	    _Color("_Color",Color)=(1,1,1,1)
 	}
 
@@ -33,8 +32,6 @@
 				float4 color    : TEXCOORD0;
 				float2 uv:TEXCOORD1;
 			};
-			sampler2D _MainTex;
-			float4 _MainTex_ST;
 			float4 _Color;
 
 			v2f vert(appdata v)
@@ -42,15 +39,14 @@
 				v2f o;
 				UNITY_SETUP_INSTANCE_ID(v);
 				o.vertex = UnityObjectToClipPos(v.vertex);
-				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+				o.uv = v.uv;
 				o.color = v.color;
 				return o;
 			}
 
 			fixed4 frag(v2f i) : SV_Target
 			{
-				fixed4 col = tex2D(_MainTex,i.uv)*_Color*i.color;
-				return col;
+				return i.color*_Color;
 			}
 			ENDCG
 		}

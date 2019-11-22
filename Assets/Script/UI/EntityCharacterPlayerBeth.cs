@@ -46,7 +46,7 @@ public class EntityCharacterPlayerBeth : EntityCharacterPlayer {
         base.OnDead();
         f_rollCheck = -1;
     }
-    protected override bool GetFrontObstacle() => m_rolling ? false : base.GetFrontObstacle();
+    protected override bool CalculateWeaponFire() => !m_rolling&& base.CalculateWeaponFire();
     protected override float CalculateMovementSpeedBase() => (m_rolling? F_RollSpeedMultiple :1)* base.CalculateMovementSpeedBase();
     protected override float CalculateMovementSpeedMultiple() => m_rolling ? 1f : base.CalculateMovementSpeedMultiple();
     protected override Vector3 CalculateMoveDirection(Vector2 moveAxisInput) => m_rolling ? m_rollDirection : base.CalculateMoveDirection(moveAxisInput);

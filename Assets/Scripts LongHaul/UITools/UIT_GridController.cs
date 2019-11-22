@@ -7,12 +7,12 @@ using UnityEngine.UI;
 public class UIT_GridControllerMono<T>  where T : Component
 {
     public Transform transform { get; private set; }
-    protected ObjectPoolMono<int,T> m_Pool { get; private set; }
-    public int I_Count => m_Pool.m_ItemDic.Count;
+    protected ObjectPoolSimple<int,T> m_Pool { get; private set; }
+    public int I_Count => m_Pool.m_ActiveItemDic.Count;
     public UIT_GridControllerMono(Transform _transform) 
     {
         transform = _transform;
-        m_Pool = new ObjectPoolMono<int,T>(transform.Find("GridItem").gameObject, _transform, InitItem);
+        m_Pool = new ObjectPoolSimple<int,T>(transform.Find("GridItem").gameObject, _transform, InitItem,(T item)=>item.transform);
     }
     public virtual T AddItem(int identity)
     {
@@ -22,8 +22,7 @@ public class UIT_GridControllerMono<T>  where T : Component
     }
     public void RemoveItem(int identity) => m_Pool.RemoveItem(identity);
     public virtual void ClearGrid() => m_Pool.ClearPool();
-    protected virtual void InitItem(T item) { }
-
+    protected virtual T InitItem(Transform item,int identity) => item.GetComponent<T>();
     public bool Contains(int identity) => m_Pool.ContainsItem(identity);
     public T GetItem(int identity)=> Contains(identity) ? m_Pool.GetItem(identity) : null;
     public T AddItem(int xIdentity, int yIdentity) => AddItem(GetIdentity(xIdentity, yIdentity));
@@ -33,13 +32,11 @@ public class UIT_GridControllerMono<T>  where T : Component
     public T GetOrAddItem(int identity)=>  Contains(identity) ? GetItem(identity) : AddItem(identity);
     public void TraversalItem(Action<int, T> onEach)
     {
-        foreach (int i in m_Pool.m_ItemDic.Keys)
+        foreach (int i in m_Pool.m_ActiveItemDic.Keys)
         {
             onEach(i, m_Pool.GetItem(i));
         }
     }
-
-    
 }
 
 public class UIT_GridControllerGridItem<T>: UIT_GridControllerMono<T> where T:UIT_GridItem
@@ -49,12 +46,13 @@ public class UIT_GridControllerGridItem<T>: UIT_GridControllerMono<T> where T:UI
     {
         m_GridLayout = _transform.GetComponent<GridLayoutGroup>();
     }
-
-    protected override void InitItem(T trans)
+    protected override T InitItem(Transform trans, int identity)
     {
-        base.InitItem(trans);
-        trans.Init();
+        T item = base.InitItem(trans, identity);
+        item.Init();
+        return item;
     }
+
     public override T AddItem(int identity)
     {
         T item = base.AddItem(identity);
@@ -69,7 +67,7 @@ public class UIT_GridControllerGridItem<T>: UIT_GridControllerMono<T> where T:UI
     }
     public void SortChildrenSibling()
     {
-        List<int> keyCollections = m_Pool.m_ItemDic.Keys.ToList();
+        List<int> keyCollections = m_Pool.m_ActiveItemDic.Keys.ToList();
         keyCollections.Sort((a,b)=> {return a > b?1:-1; });
         for (int i = 0; i < keyCollections.Count; i++)
             GetItem(keyCollections[i]).transform.SetAsLastSibling();
@@ -132,7 +130,7 @@ public class UIT_GridDefaultMulti<T> : UIT_GridControllerGridItem<T> where T : U
             m_Selecting.Remove(index);
 
 
-        foreach (int identity in m_Pool.m_ItemDic.Keys)
+        foreach (int identity in m_Pool.m_ActiveItemDic.Keys)
         {
             GetItem(identity).SetHighLight(m_Selecting.Contains(identity));
         }

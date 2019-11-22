@@ -788,12 +788,12 @@ public static class GameObjectManager
             GameAudioManager.Instance.PlayClip(_sourceID, muzzleClip, false, position);
     }
 
-    public static T SpawnEquipment<T>(int weaponIndex, Vector3 position, Vector3 normal, Transform attachTo = null) where T : SFXEquipmentBase
+    public static T SpawnEquipment<T>(int weaponIndex, Vector3 position, Vector3 normal) where T : SFXEquipmentBase
     {
         if (!ObjectPoolManager<int, SFXEquipmentBase>.Registed(weaponIndex))
             ObjectPoolManager<int, SFXEquipmentBase>.Register(weaponIndex, TResources.GetDamageSource(weaponIndex), 1);
 
-        T template = ObjectPoolManager<int, SFXEquipmentBase>.Spawn(weaponIndex, attachTo==null?TF_SFXWeapon:attachTo) as T;
+        T template = ObjectPoolManager<int, SFXEquipmentBase>.Spawn(weaponIndex, TF_SFXWeapon) as T;
         if (template == null)
             Debug.LogError("Enermy Weapon Error! Invalid Type:" + typeof(T).ToString() + "|Index:" + weaponIndex);
         template.transform.position = position;

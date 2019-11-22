@@ -257,7 +257,6 @@ public class EntityCharacterAI : EntityCharacterBase {
         {
             m_Target = null;
             f_targetDistance = float.MaxValue;
-
             List<EntityCharacterBase> entites = GameManager.Instance.GetEntities(m_Entity.m_Flag, m_Weapon.B_TargetAlly);
             for (int i = 0; i < entites.Count; i++)
             {

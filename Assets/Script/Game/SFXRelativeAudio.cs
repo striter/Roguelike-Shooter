@@ -46,11 +46,14 @@ public class SFXRelativeAudio : SFXRelativeBase {
 
     void PlayAudio()
     {
+        if (m_Audio)
+            m_Audio.Stop();
+
         m_Audio = B_Attach ? GameAudioManager.Instance.PlayClip(m_SFXSource.I_SourceID, m_Clips.RandomItem(), B_Loop, transform) : GameAudioManager.Instance.PlayClip(m_SFXSource.I_SourceID, m_Clips.RandomItem(), B_Loop, transform.position);
     }
     void StopAudio()
     {
-        if (B_Loop)
+        if (m_Audio&&B_Loop)
             m_Audio.Stop();
 
         m_Audio = null;

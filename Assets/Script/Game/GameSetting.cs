@@ -25,7 +25,7 @@ namespace GameSetting
         public const int I_ActionHoldCount = 3;
         public const float F_MaxActionEnergy = 5f;
         public const float I_MaxArmor = 99999;
-        public const float F_RestoreActionEnergy = 0.001f;
+        public const float F_RestoreActionEnergy = 0.001f; //战斗结束时给的能量 //战斗外的默认能量值
         public const float F_ActionShuffleCost = 2f;
         public const float F_ActionShuffleCooldown = 10f;
 
@@ -36,7 +36,7 @@ namespace GameSetting
         public const float F_AimAssistDistance = 100f;
         public const short I_BoltLastTimeAfterHit = 5;
 
-        public const int I_BurstFirePelletsOnceTrigger = 3;       //Times While Burst Fire
+        public const int I_BurstFirePelletsOnceTrigger = 3;       //Times While Burst Fire //似乎已经没用？
 
         public const float F_PlayerDamageAdjustmentRange = .1f;
         public const int I_PlayerRotationSmoothParam = 10;     //Camera Smooth Param For Player 10 is suggested
@@ -49,9 +49,9 @@ namespace GameSetting
         public const int I_AIIdlePercentage = 50;
 
         public const int I_EnermyCountWaveFinish = 0;       //When Total Enermy Count Reaches This Amount,Wave Finish
-        public const int I_EnermySpawnDelay = 4;        //Enermy Spawn Delay Time 
+        public const int I_EnermySpawnDelay = 3;        //Enermy Spawn Delay Time 
         
-        public const float F_PickupAcceleration = 800f; //拾取物的飞行加速速度
+        public const float F_PickupAcceleration = 600f; //拾取物的飞行加速速度
         public const int I_HealthPickupAmount = 25;
         public const int I_ArmorPickupAmount = 25;
         public const int I_HealthTradeAmount = 50;
@@ -95,7 +95,7 @@ namespace GameSetting
         public static float GetAIBaseHealthMultiplier(int gameDifficulty) => 0.99f + 0.01f * gameDifficulty;
         public static float GetAIMaxHealthMultiplier(enum_StageLevel stageDifficulty) => (int)stageDifficulty ;
 
-        public static float GetActionEnergyRevive(float damageApply) => damageApply * .0025f;
+        public static float GetActionEnergyRevive(float damageApply) => damageApply * .0025f;    //伤害转换成能量的比率
 
         public static float GetAIIdleDuration() => UnityEngine.Random.Range(1f, 2f);
 
@@ -236,7 +236,7 @@ namespace GameSetting
 
         public static float GetUIWeaponDamageValue(float uiDamage) => Mathf.InverseLerp(0,100,uiDamage);   //武器数据查看ui标准
         public static float GetUIWeaponRPMValue(float uiRPM) =>  Mathf.InverseLerp(0,400,uiRPM);
-        public static float GetUIWeaponStabilityValue(float uiStability) => Mathf.InverseLerp(0, 10, uiStability);
+        public static float GetUIWeaponStabilityValue(float uiStability) => Mathf.InverseLerp(0, 100, uiStability);
         public static float GetUIWeaponSpeedValue(float uiSpeed) =>  Mathf.InverseLerp(0, 100, uiSpeed);
 
     }
@@ -391,7 +391,20 @@ namespace GameSetting
                 case enum_ActionType.Equipment:
                     return "B0FE00FF";
             }
+        }
 
+
+        public static string GetUIInteractBackground(this enum_UIWeaponRarity rarity) => "interact_" + rarity;
+        public static string GetUITextColor(this enum_UIWeaponRarity rarity)
+        {
+            switch (rarity)
+            {
+                default: return "FFFFFFFF";
+                case enum_UIWeaponRarity.Ordinary: return "E3E3E3FF";
+                case enum_UIWeaponRarity.Advanced: return "6F8AFFFF";
+                case enum_UIWeaponRarity.Rare: return "C26FFF";
+                case enum_UIWeaponRarity.Legend: return "FFCC1F";
+            }
         }
     }
 
@@ -569,8 +582,12 @@ namespace GameSetting
         //Heavy Weapon
         Crossbow = 701,
         RocketLauncher = 702,
-        FlameThrower=703,
-        BeamDriller=704,
+        Minigun = 703,
+        //Special
+        Flamer = 801,
+        Driller = 802,
+        Bouncer = 803,
+        Tesla=804,
     }
 
     public enum enum_PlayerAnim
@@ -628,6 +645,8 @@ namespace GameSetting
     public enum enum_CampFarmItemStatus { Invalid=-1, Empty = 0, Locked=1 , Decayed = 2, Progress1=10,Progress2,Progress3,Progress4,Progress5}
 
     public enum enum_UITipsType { Invalid=-1,Normal=0,Warning=1,Error=2}
+
+    public enum enum_UIWeaponRarity { Invalid=-1,Ordinary=1, Advanced = 2, Rare =3,Legend=4}
     #endregion
     
     #region Structs
@@ -867,10 +886,11 @@ namespace GameSetting
         float f_weight;
         float f_recoil;
 
+        int i_UIRarity;
         float f_UIDamage;
         float f_UIRPM;
-        float f_UISpeed;
         float f_UIStability;
+        float f_UISpeed;
 
         public int m_Index => index;
         public enum_PlayerWeapon m_Weapon => (enum_PlayerWeapon)index;
@@ -882,10 +902,11 @@ namespace GameSetting
         public float m_Weight => f_weight;
         public float m_RecoilPerShot =>f_recoil;
 
+        public enum_UIWeaponRarity m_UIRarity => (enum_UIWeaponRarity)i_UIRarity;
         public float m_UIDamage => f_UIDamage;
         public float m_UIRPM => f_UIRPM;
-        public float m_UISpeed => f_UISpeed;
         public float m_UIStability => f_UIStability;
+        public float m_UISpeed => f_UISpeed;
 
         public void InitOnValueSet()
         {
@@ -2116,42 +2137,6 @@ namespace GameSetting
             return null;
         }
     }
-    public class ProjectilePhysicsSimulator : PhysicsSimulatorCapsule<HitCheckBase> 
-    {
-        protected Vector3 m_VerticalDirection;
-        float m_horizontalSpeed;
-        public ProjectilePhysicsSimulator(Transform _transform, Vector3 _startPos, Vector3 _horizontalDirection, Vector3 _verticalDirection, float _horizontalSpeed, float _height, float _radius, int _hitLayer, Func<RaycastHit,HitCheckBase,bool> _onTargetHit,Predicate<HitCheckBase> _canHitTarget):base(_transform,_startPos, _horizontalDirection,_height,_radius,_hitLayer,_onTargetHit,_canHitTarget)
-        {
-            m_VerticalDirection = _verticalDirection.normalized;
-            m_horizontalSpeed = _horizontalSpeed;
-        }
-        public override Vector3 GetSimulatedPosition(float elapsedTime)=> m_startPos + m_Direction * Expressions.SpeedShift(m_horizontalSpeed, elapsedTime); 
-    }
-
-    public class ProjectilePhysicsLerpSimulator : PhysicsSimulatorCapsule<HitCheckBase>
-    {
-        bool b_lerpFinished;
-        Action OnLerpFinished;
-        Vector3 m_endPos;
-        float f_totalTime;
-        public ProjectilePhysicsLerpSimulator(Transform _transform, Vector3 _startPos,Vector3 _endPos,Action _OnLerpFinished, float _duration, float _height, float _radius, int _hitLayer, Func<RaycastHit,HitCheckBase, bool> _onTargetHit, Predicate<HitCheckBase> _canHitTarget) : base(_transform, _startPos,_endPos-_startPos , _height, _radius, _hitLayer, _onTargetHit,_canHitTarget)
-        {
-            m_endPos = _endPos;
-            OnLerpFinished = _OnLerpFinished;
-            f_totalTime= _duration;
-            b_lerpFinished = false;
-        }
-        public override void Simulate(float deltaTime)
-        {
-            base.Simulate(deltaTime);
-            if (!b_lerpFinished && m_simulateTime > f_totalTime)
-            {
-                OnLerpFinished?.Invoke();
-                b_lerpFinished = true;
-            }
-         }
-        public override Vector3 GetSimulatedPosition(float elapsedTime) =>b_lerpFinished?m_endPos:Vector3.Lerp(m_startPos, m_endPos, elapsedTime / f_totalTime);
-    }
     #endregion
 
     #region GameEffects
@@ -2399,12 +2384,10 @@ namespace GameSetting
     }
     public class EquipmentCaster : EquipmentBase
     {
-        protected int i_muzzleIndex { get; private set; }
         protected enum_CastTarget m_CastAt { get; private set; }
         protected bool m_castForward { get; private set; }
         public EquipmentCaster(int equipmentIndex,SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex, _controller, _GetBuffInfo)
         {
-            i_muzzleIndex = _castInfo.I_MuzzleIndex;
             m_CastAt = _castInfo.E_CastTarget;
             m_castForward = _castInfo.B_CastForward;
         }
@@ -2441,7 +2424,6 @@ namespace GameSetting
         }
         public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
-            GameObjectManager.PlayMuzzle(m_Entity.m_EntityID,m_Entity.tf_Weapon.position, m_Entity.tf_Weapon.forward,i_muzzleIndex);
             GameObjectManager.SpawnEquipment<SFXCast>(I_Index, _calculatedPosition,m_castForward?m_Entity.tf_Weapon.forward:Vector3.up).Play(GetDamageDeliverInfo());
         }
     }
@@ -2695,11 +2677,11 @@ namespace GameSetting
     public class UIC_RarityLevel
     {
         public Transform transform { get; private set; }
-        ObjectPoolSimple<int> m_Grid;
+        ObjectPoolSimple<int,Transform> m_Grid;
         public UIC_RarityLevel(Transform _transform)
         {
             transform = _transform;
-            m_Grid = new ObjectPoolSimple<int>(transform.Find("GridItem").gameObject, transform);
+            m_Grid = new ObjectPoolSimple<int,Transform>(transform.Find("GridItem").gameObject, transform,(Transform trans, int identity)=>trans, (Transform trans) => trans);
             m_Grid.ClearPool();
         }
         public void SetLevel(enum_RarityLevel level)
@@ -2727,12 +2709,12 @@ namespace GameSetting
             }
         }
         public Transform transform { get; private set; }
-        ObjectPoolSimple<int> m_Grid;
+        ObjectPoolSimple<int,Transform> m_Grid;
         Dictionary<int, RarityLevel> m_Levels = new Dictionary<int, RarityLevel>();
         public UIC_RarityLevel_BG(Transform _transform)
         {
             transform = _transform;
-            m_Grid = new ObjectPoolSimple<int>(transform.Find("GridItem").gameObject,transform);
+            m_Grid = new ObjectPoolSimple<int, Transform>(transform.Find("GridItem").gameObject,transform,(Transform trans,int identity)=>trans,(Transform trans)=>trans);
             m_Grid.ClearPool();
             TCommon.TraversalEnum((enum_RarityLevel rarity) => { m_Levels.Add((int)rarity,new RarityLevel( m_Grid.AddItem((int)rarity))); });
         }
@@ -2793,20 +2775,20 @@ namespace GameSetting
     public class UIC_Button
     {
         Button m_Button;
-        Image m_Show;
+        Transform m_Show;
         Transform m_Hide;
         public UIC_Button(Transform _transform, UnityEngine.Events.UnityAction OnButtonClick)
         {
             m_Button = _transform.GetComponent<Button>();
             m_Button.onClick.AddListener(OnButtonClick);
-            m_Show = _transform.GetComponent<Image>();
+            m_Show = _transform.Find("Show");
             m_Hide = _transform.Find("Hide");
             SetInteractable(true);
         }
         public void SetInteractable(bool interactable)
         {
             m_Hide.SetActivate(!interactable);
-            m_Show.color = TCommon.ColorAlpha(m_Show.color, interactable ? 1 : 0);
+            m_Show.SetActivate(interactable);
             m_Button.interactable = interactable;
         }
     }

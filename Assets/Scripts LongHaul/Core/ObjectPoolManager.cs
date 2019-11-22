@@ -156,85 +156,55 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,Obj
         }, true);
     }
 }
-public class ObjectPoolMono<T, Y> : ObjectPoolSimple<T> where Y : Component
-{
-    Action<Y> InitItem;
-    public Dictionary<T, Y> m_ItemDic { get; private set; } = new Dictionary<T, Y>();
-    public ObjectPoolMono(GameObject obj, Transform poolTrans, Action<Y> _OnInitItem=null) : base(obj,poolTrans)
-    {
-        InitItem = _OnInitItem;
-    }
 
-    protected override void OnInitItem(Transform trans, T identity)
-    {
-        base.OnInitItem(trans, identity);
-        InitItem?.Invoke(trans.GetComponent<Y>());
-    }
-    public new Y AddItem(T identity)
-    {
-        Y item = base.AddItem(identity).GetComponent<Y>();
-        m_ItemDic.Add(identity, item);
-        return item;
-    }
-    public new Y GetItem(T identity) => m_ItemDic[identity];
-    public override void RemoveItem(T identity)
-    {
-        base.RemoveItem(identity);
-        m_ItemDic.Remove(identity);
-    }
-    public override void ClearPool()
-    {
-        base.ClearPool();
-        m_ItemDic.Clear();
-    }
-
-}
-public class ObjectPoolSimple<T> 
+public class ObjectPoolSimple<T,Y> 
 {
     Transform transform;
     protected GameObject GridItem;
-    public Dictionary<T, Transform> m_ActiveItemDic { get; private set; } = new Dictionary<T, Transform>();
-    public List<Transform> m_InactiveItemList { get; private set; } = new List<Transform>();
-    protected virtual void OnInitItem(Transform trans, T identity) { }
-    public ObjectPoolSimple(GameObject obj, Transform poolTrans)
+    public Dictionary<T, Y> m_ActiveItemDic { get; private set; } = new Dictionary<T, Y>();
+    public List<Y> m_InactiveItemList { get; private set; } = new List<Y>();
+    protected Func<Transform,T, Y> OnInitItem;
+    protected Func<Y, Transform> GetItemTransform;
+    public ObjectPoolSimple(GameObject obj, Transform poolTrans,Func<Transform,T,Y> _OnInitItem,Func<Y,Transform> _GetItemTransform)
     {
         GridItem = obj;
         GridItem.gameObject.SetActive(false);
         transform = poolTrans;
+        OnInitItem = _OnInitItem;
+        GetItemTransform = _GetItemTransform;
     }
     public bool ContainsItem(T identity) => m_ActiveItemDic.ContainsKey(identity);
-    public Transform GetItem(T identity) => m_ActiveItemDic[identity];
-    public Transform AddItem(T identity)
+    public Y GetItem(T identity) => m_ActiveItemDic[identity];
+    public Y AddItem(T identity)
     {
-        Transform toTrans;
+        Y targetItem;
         if (m_InactiveItemList.Count > 0)
         {
-            toTrans = m_InactiveItemList[0];
-            m_InactiveItemList.Remove(toTrans);
+            targetItem = m_InactiveItemList[0];
+            m_InactiveItemList.Remove(targetItem);
         }
         else
         {
-            toTrans = GameObject.Instantiate(GridItem.gameObject, transform).transform;
-            OnInitItem(toTrans,identity);
+            targetItem = OnInitItem(GameObject.Instantiate(GridItem.gameObject, transform).transform, identity); 
         }
-        toTrans.name = identity.ToString();
         if (m_ActiveItemDic.ContainsKey(identity)) Debug.LogWarning(identity + "Already Exists In Grid Dic");
-        else m_ActiveItemDic.Add(identity, toTrans);
-        toTrans.SetActivate(true);
-        return toTrans;
+        else m_ActiveItemDic.Add(identity, targetItem);
+        GetItemTransform(targetItem).name = identity.ToString();
+        GetItemTransform(targetItem).SetActivate(true);
+        return targetItem;
     }
     public virtual void RemoveItem(T identity)
     {
         m_InactiveItemList.Add(m_ActiveItemDic[identity]);
-        m_ActiveItemDic[identity].SetActivate(false);
+        GetItemTransform(m_ActiveItemDic[identity]).SetActivate(false);
         m_ActiveItemDic.Remove(identity);
     }
     public virtual void ClearPool()
     {
-        foreach (Transform trans in m_ActiveItemDic.Values)
+        foreach (Y target in m_ActiveItemDic.Values)
         {
-            trans.SetActivate(false);
-            m_InactiveItemList.Add(trans);
+            GetItemTransform(target).SetActivate(false);
+            m_InactiveItemList.Add(target);
         }
         m_ActiveItemDic.Clear();
     }

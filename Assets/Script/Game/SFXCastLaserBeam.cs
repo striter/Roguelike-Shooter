@@ -3,33 +3,30 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-[RequireComponent(typeof(LineRenderer))]
+
 public class SFXCastLaserBeam : SFXCast {
     LineRenderer m_Beam;
-    Transform m_Muzzle, m_Impact;
-    ParticleSystem[] m_Muzzles, m_Impacts;
+    TSpecialClasses.ParticleControlBase m_Impact;
     float f_castLength;
     protected override float F_CastLength => f_castLength;
     public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
         base.OnPoolItemInit(_identity, _OnRecycle);
-        m_Beam = GetComponent<LineRenderer>();
-        m_Muzzle = transform.Find("Muzzle");
-        m_Impact = transform.Find("Impact");
-        m_Muzzles = m_Muzzle.GetComponentsInChildren<ParticleSystem>();
-        m_Impacts = m_Impact.GetComponentsInChildren<ParticleSystem>();
-        m_Muzzles.Traversal((ParticleSystem particle) => { particle.Stop(); });
-        m_Impacts.Traversal((ParticleSystem particle) => { particle.Stop(); });
+        m_Beam = transform.Find("Connections").GetComponent<LineRenderer>();
+        m_Impact =new TSpecialClasses.ParticleControlBase( transform.Find("Impact"));
     }
 
     protected override void OnPlay()
     {
         base.OnPlay();
         f_castLength = 0f;
-        m_Muzzles.Traversal((ParticleSystem particle) => { particle.Play(); });
-        m_Impacts.Traversal((ParticleSystem particle) => { particle.Play(); });
+        m_Impact.Play();
     }
-
+    protected override void OnStop()
+    {
+        base.OnStop();
+        m_Impact.Stop();
+    }
     protected override void Update()
     {
         base.Update();
@@ -53,7 +50,7 @@ public class SFXCastLaserBeam : SFXCast {
             hitPoint = hits[i].point == Vector3.zero ? transform.position : hits[i].point;
         }
         bool hitted = hitPoint!=Vector3.zero;
-        m_Impact.SetActivate(hitted);
+        m_Impact.SetActive(hitted);
         m_Impact.transform.position = hitPoint;
         m_Beam.SetPosition(0, transform.position);
         m_Beam.SetPosition(1, hitted?hitPoint:CastTransform.position+CastTransform.forward* f_castLength);

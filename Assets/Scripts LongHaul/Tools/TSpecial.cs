@@ -435,10 +435,12 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
 
     public class ParticleControlBase
     {
+        public Transform transform { get; private set; }
         public ParticleSystem[] m_Particles { get; private set; }
-        public ParticleControlBase(Transform transform)
+        public ParticleControlBase(Transform _transform)
         {
-            m_Particles=transform.GetComponentsInChildren<ParticleSystem>();
+            transform = _transform;
+            m_Particles = transform?transform.GetComponentsInChildren<ParticleSystem>():new ParticleSystem[0];
         }
         public void Play()
         {
@@ -914,7 +916,6 @@ public static class Physics_Extend
         {
             Vector3 boxPos = position + forward * castLength * i;
             Vector3 boxInfo = new Vector3(trapeziumInfo.x+(trapeziumInfo.w-trapeziumInfo.x)*i/castCount,trapeziumInfo.y,castLength);
-            Debug.DrawLine(boxPos,boxPos+forward*castLength,Color.red,5f);
             RaycastHit[] hits = BoxCastAll(boxPos,forward,up,boxInfo,layerMask);
             for (int j = 0; j < hits.Length; j++)
             {

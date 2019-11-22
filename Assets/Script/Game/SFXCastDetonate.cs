@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class SFXCastDetonate : SFXCastOverlapSphere {
+public class SFXCastDetonate : SFXCastOverlapSphere
+{
+    public int I_MuzzleIndex = 0;
     Transform m_Model;
     public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
