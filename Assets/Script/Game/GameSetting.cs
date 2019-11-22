@@ -871,9 +871,9 @@ namespace GameSetting
         float f_recoil;
 
         float f_UIDamage;
-        float f_UIRPM;
-        float f_UISpeed;
         float f_UIStability;
+        float f_UISpeed;
+        float f_UIRPM;
 
         public int m_Index => index;
         public enum_PlayerWeapon m_Weapon => (enum_PlayerWeapon)index;
@@ -2760,20 +2760,20 @@ namespace GameSetting
     public class UIC_Button
     {
         Button m_Button;
-        Image m_Show;
+        Transform m_Show;
         Transform m_Hide;
         public UIC_Button(Transform _transform, UnityEngine.Events.UnityAction OnButtonClick)
         {
             m_Button = _transform.GetComponent<Button>();
             m_Button.onClick.AddListener(OnButtonClick);
-            m_Show = _transform.GetComponent<Image>();
+            m_Show = _transform.Find("Show");
             m_Hide = _transform.Find("Hide");
             SetInteractable(true);
         }
         public void SetInteractable(bool interactable)
         {
             m_Hide.SetActivate(!interactable);
-            m_Show.color = TCommon.ColorAlpha(m_Show.color, interactable ? 1 : 0);
+            m_Show.SetActivate(interactable);
             m_Button.interactable = interactable;
         }
     }

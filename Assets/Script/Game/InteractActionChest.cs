@@ -14,12 +14,10 @@ public class InteractActionChest : InteractGameBase
     AnimationControlBase m_Animation;
     List<ActionBase> m_Actions;
     int m_SelectAmount;
-    TSpecialClasses.ParticleControlBase m_Particles;
     public override void OnPoolItemInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
     {
         base.OnPoolItemInit(identity, OnRecycle);
         m_Animation = new AnimationControlBase(GetComponentInChildren<Animation>());
-        m_Particles = new ParticleControlBase(transform);
     }
 
     public void Play(List<ActionBase> _actions, int selectAmount, bool _startChest)
@@ -29,14 +27,12 @@ public class InteractActionChest : InteractGameBase
         m_SelectAmount = selectAmount;
         m_StartChest = _startChest;
         m_Animation.SetPlayPosition(true);
-        m_Particles.Play();
     }
 
     protected override void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)
     {
         SetInteractable(false);
         m_Animation.Play(true);
-        m_Particles.Stop();
         GameUIManager.Instance.ShowGameControlPage<UI_ActionAcquire>(true).Play(m_Actions,_interactTarget, m_SelectAmount);
     }
     void OnKeyAnim()
