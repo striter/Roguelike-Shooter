@@ -391,7 +391,20 @@ namespace GameSetting
                 case enum_ActionType.Equipment:
                     return "B0FE00FF";
             }
+        }
 
+
+        public static string GetUIInteractBackground(this enum_UIWeaponRarity rarity) => "interact_" + rarity;
+        public static string GetUITextColor(this enum_UIWeaponRarity rarity)
+        {
+            switch (rarity)
+            {
+                default: return "FFFFFFFF";
+                case enum_UIWeaponRarity.Ordinaty: return "E3E3E3FF";
+                case enum_UIWeaponRarity.Advanced: return "6F8AFFFF";
+                case enum_UIWeaponRarity.Rare: return "C26FFF";
+                case enum_UIWeaponRarity.Legend: return "FFCC1F";
+            }
         }
     }
 
@@ -632,6 +645,8 @@ namespace GameSetting
     public enum enum_CampFarmItemStatus { Invalid=-1, Empty = 0, Locked=1 , Decayed = 2, Progress1=10,Progress2,Progress3,Progress4,Progress5}
 
     public enum enum_UITipsType { Invalid=-1,Normal=0,Warning=1,Error=2}
+
+    public enum enum_UIWeaponRarity { Invalid=-1,Ordinaty=0, Advanced = 1, Rare =2,Legend=3}
     #endregion
     
     #region Structs
@@ -871,6 +886,7 @@ namespace GameSetting
         float f_weight;
         float f_recoil;
 
+        int f_UIRarity;
         float f_UIDamage;
         float f_UIRPM;
         float f_UIStability;
@@ -886,6 +902,7 @@ namespace GameSetting
         public float m_Weight => f_weight;
         public float m_RecoilPerShot =>f_recoil;
 
+        public enum_UIWeaponRarity m_UIRarity => (enum_UIWeaponRarity)f_UIRarity;
         public float m_UIDamage => f_UIDamage;
         public float m_UIRPM => f_UIRPM;
         public float m_UIStability => f_UIStability;

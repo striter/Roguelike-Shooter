@@ -11,7 +11,7 @@ public class UIC_PlayerInteract : UIControlBase {
     Transform tf_TradePrice;
     UIT_TextExtend m_TradePrice;
     Transform tf_Weapon;
-    Image m_WeaponImage;
+    Image m_WeaponBackground,m_WeaponImage;
     UIT_TextExtend m_WeaponName;
     Transform tf_Action;
     UIGI_ActionItemBase m_Action;
@@ -29,6 +29,7 @@ public class UIC_PlayerInteract : UIControlBase {
         tf_TradePrice = tf_Container.Find("TradePrice");
         m_TradePrice = tf_TradePrice.Find("Amount").GetComponent<UIT_TextExtend>();
         tf_Weapon = tf_Container.Find("Weapon");
+        m_WeaponBackground = tf_Weapon.Find("Background").GetComponent<Image>();
         m_WeaponImage = tf_Weapon.Find("WeaponImage").GetComponent<Image>();
         m_WeaponName = tf_Weapon.Find("WeaponName").GetComponent<UIT_TextExtend>();
         tf_Action = tf_Container.Find("Action");
@@ -90,7 +91,9 @@ public class UIC_PlayerInteract : UIControlBase {
                     weaponOn = true;
                     weaponActionOn = true;
                     WeaponBase weapon = (interactInfo as InteractWeapon).m_Weapon;
+                    m_WeaponBackground.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_UIRarity.GetUIInteractBackground()];
                     m_WeaponImage.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Weapon.GetSpriteName()];
+                    m_WeaponName.color = TCommon.GetHexColor(weapon.m_WeaponInfo.m_UIRarity.GetUITextColor());
                     m_WeaponName.localizeKey = weapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
 
                     m_WeaponActionHUD.SetInfo(weapon.m_WeaponAction);

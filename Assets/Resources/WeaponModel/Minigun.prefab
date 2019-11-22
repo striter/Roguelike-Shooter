@@ -119,7 +119,7 @@ GameObject:
   - component: {fileID: 4892897361463616}
   - component: {fileID: 114113070804298518}
   m_Layer: 0
-  m_Name: MachineGun
+  m_Name: Minigun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
