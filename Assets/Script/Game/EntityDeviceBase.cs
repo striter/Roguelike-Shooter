@@ -8,7 +8,7 @@ public class EntityDeviceBase : EntityCharacterBase {
     public override enum_EntityController m_Controller => enum_EntityController.Device; 
     EntityDetector m_Detect;
     ParticleSystem[] m_Particles;
-    public ObjectPoolMono<EntityCharacterBase, LineRenderer> m_Connections { get; private set; }
+    public ObjectPoolSimple<EntityCharacterBase, LineRenderer> m_Connections { get; private set; }
 
     public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
@@ -17,7 +17,7 @@ public class EntityDeviceBase : EntityCharacterBase {
         m_Detect.Init(OnEntityDetect);
         m_Particles = GetComponentsInChildren<ParticleSystem>();
         Transform connectionsParent = transform.Find("Connections");
-        m_Connections = new ObjectPoolMono<EntityCharacterBase, LineRenderer>(connectionsParent.Find("Item").gameObject, connectionsParent);
+        m_Connections = new ObjectPoolSimple<EntityCharacterBase, LineRenderer>(connectionsParent.Find("Item").gameObject, connectionsParent,(Transform transform,EntityCharacterBase identity)=>transform.GetComponent<LineRenderer>(),(LineRenderer target)=>target.transform);
     }
     protected override void OnPoolItemEnable()
     {
@@ -43,7 +43,7 @@ public class EntityDeviceBase : EntityCharacterBase {
     protected override void OnCharacterUpdate(float deltaTime)
     {
         base.OnCharacterUpdate(deltaTime);
-        m_Connections.m_ItemDic.Traversal((EntityCharacterBase target,LineRenderer item)=>
+        m_Connections.m_ActiveItemDic.Traversal((EntityCharacterBase target,LineRenderer item)=>
         {
             item.SetPosition(0,tf_Head.position);
             item.SetPosition(1, target.tf_Head.position);

@@ -26,7 +26,7 @@ public class EntityDeviceBuffApllier : EntityDeviceBase {
         }
         f_refreshCheck = f_refreshDuration;
 
-        m_Connections.m_ItemDic.Traversal((EntityCharacterBase entity) =>
+        m_Connections.m_ActiveItemDic.Traversal((EntityCharacterBase entity) =>
         {
             switch (entity.m_Controller)
             {

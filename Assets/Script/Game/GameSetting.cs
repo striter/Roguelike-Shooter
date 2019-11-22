@@ -871,9 +871,9 @@ namespace GameSetting
         float f_recoil;
 
         float f_UIDamage;
+        float f_UIRPM;
         float f_UIStability;
         float f_UISpeed;
-        float f_UIRPM;
 
         public int m_Index => index;
         public enum_PlayerWeapon m_Weapon => (enum_PlayerWeapon)index;
@@ -887,8 +887,8 @@ namespace GameSetting
 
         public float m_UIDamage => f_UIDamage;
         public float m_UIRPM => f_UIRPM;
-        public float m_UISpeed => f_UISpeed;
         public float m_UIStability => f_UIStability;
+        public float m_UISpeed => f_UISpeed;
 
         public void InitOnValueSet()
         {
@@ -2662,11 +2662,11 @@ namespace GameSetting
     public class UIC_RarityLevel
     {
         public Transform transform { get; private set; }
-        ObjectPoolSimple<int> m_Grid;
+        ObjectPoolSimple<int,Transform> m_Grid;
         public UIC_RarityLevel(Transform _transform)
         {
             transform = _transform;
-            m_Grid = new ObjectPoolSimple<int>(transform.Find("GridItem").gameObject, transform);
+            m_Grid = new ObjectPoolSimple<int,Transform>(transform.Find("GridItem").gameObject, transform,(Transform trans, int identity)=>trans, (Transform trans) => trans);
             m_Grid.ClearPool();
         }
         public void SetLevel(enum_RarityLevel level)
@@ -2694,12 +2694,12 @@ namespace GameSetting
             }
         }
         public Transform transform { get; private set; }
-        ObjectPoolSimple<int> m_Grid;
+        ObjectPoolSimple<int,Transform> m_Grid;
         Dictionary<int, RarityLevel> m_Levels = new Dictionary<int, RarityLevel>();
         public UIC_RarityLevel_BG(Transform _transform)
         {
             transform = _transform;
-            m_Grid = new ObjectPoolSimple<int>(transform.Find("GridItem").gameObject,transform);
+            m_Grid = new ObjectPoolSimple<int, Transform>(transform.Find("GridItem").gameObject,transform,(Transform trans,int identity)=>trans,(Transform trans)=>trans);
             m_Grid.ClearPool();
             TCommon.TraversalEnum((enum_RarityLevel rarity) => { m_Levels.Add((int)rarity,new RarityLevel( m_Grid.AddItem((int)rarity))); });
         }
