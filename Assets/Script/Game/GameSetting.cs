@@ -25,7 +25,7 @@ namespace GameSetting
         public const int I_ActionHoldCount = 3;
         public const float F_MaxActionEnergy = 5f;
         public const float I_MaxArmor = 99999;
-        public const float F_RestoreActionEnergy = 0.001f;
+        public const float F_RestoreActionEnergy = 0.001f; //战斗结束时给的能量 //战斗外的默认能量值
         public const float F_ActionShuffleCost = 2f;
         public const float F_ActionShuffleCooldown = 10f;
 
@@ -36,7 +36,7 @@ namespace GameSetting
         public const float F_AimAssistDistance = 100f;
         public const short I_BoltLastTimeAfterHit = 5;
 
-        public const int I_BurstFirePelletsOnceTrigger = 3;       //Times While Burst Fire
+        public const int I_BurstFirePelletsOnceTrigger = 3;       //Times While Burst Fire //似乎已经没用？
 
         public const float F_PlayerDamageAdjustmentRange = .1f;
         public const int I_PlayerRotationSmoothParam = 10;     //Camera Smooth Param For Player 10 is suggested
@@ -49,9 +49,9 @@ namespace GameSetting
         public const int I_AIIdlePercentage = 50;
 
         public const int I_EnermyCountWaveFinish = 0;       //When Total Enermy Count Reaches This Amount,Wave Finish
-        public const int I_EnermySpawnDelay = 4;        //Enermy Spawn Delay Time 
+        public const int I_EnermySpawnDelay = 3;        //Enermy Spawn Delay Time 
         
-        public const float F_PickupAcceleration = 800f; //拾取物的飞行加速速度
+        public const float F_PickupAcceleration = 600f; //拾取物的飞行加速速度
         public const int I_HealthPickupAmount = 25;
         public const int I_ArmorPickupAmount = 25;
         public const int I_HealthTradeAmount = 50;
@@ -95,7 +95,7 @@ namespace GameSetting
         public static float GetAIBaseHealthMultiplier(int gameDifficulty) => 0.99f + 0.01f * gameDifficulty;
         public static float GetAIMaxHealthMultiplier(enum_StageLevel stageDifficulty) => (int)stageDifficulty ;
 
-        public static float GetActionEnergyRevive(float damageApply) => damageApply * .0025f;
+        public static float GetActionEnergyRevive(float damageApply) => damageApply * .0025f;    //伤害转换成能量的比率
 
         public static float GetAIIdleDuration() => UnityEngine.Random.Range(1f, 2f);
 
