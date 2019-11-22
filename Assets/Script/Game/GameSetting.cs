@@ -2116,42 +2116,6 @@ namespace GameSetting
             return null;
         }
     }
-    public class ProjectilePhysicsSimulator : PhysicsSimulatorCapsule<HitCheckBase> 
-    {
-        protected Vector3 m_VerticalDirection;
-        float m_horizontalSpeed;
-        public ProjectilePhysicsSimulator(Transform _transform, Vector3 _startPos, Vector3 _horizontalDirection, Vector3 _verticalDirection, float _horizontalSpeed, float _height, float _radius, int _hitLayer, Func<RaycastHit,HitCheckBase,bool> _onTargetHit,Predicate<HitCheckBase> _canHitTarget):base(_transform,_startPos, _horizontalDirection,_height,_radius,_hitLayer,_onTargetHit,_canHitTarget)
-        {
-            m_VerticalDirection = _verticalDirection.normalized;
-            m_horizontalSpeed = _horizontalSpeed;
-        }
-        public override Vector3 GetSimulatedPosition(float elapsedTime)=> m_startPos + m_Direction * Expressions.SpeedShift(m_horizontalSpeed, elapsedTime); 
-    }
-
-    public class ProjectilePhysicsLerpSimulator : PhysicsSimulatorCapsule<HitCheckBase>
-    {
-        bool b_lerpFinished;
-        Action OnLerpFinished;
-        Vector3 m_endPos;
-        float f_totalTime;
-        public ProjectilePhysicsLerpSimulator(Transform _transform, Vector3 _startPos,Vector3 _endPos,Action _OnLerpFinished, float _duration, float _height, float _radius, int _hitLayer, Func<RaycastHit,HitCheckBase, bool> _onTargetHit, Predicate<HitCheckBase> _canHitTarget) : base(_transform, _startPos,_endPos-_startPos , _height, _radius, _hitLayer, _onTargetHit,_canHitTarget)
-        {
-            m_endPos = _endPos;
-            OnLerpFinished = _OnLerpFinished;
-            f_totalTime= _duration;
-            b_lerpFinished = false;
-        }
-        public override void Simulate(float deltaTime)
-        {
-            base.Simulate(deltaTime);
-            if (!b_lerpFinished && m_simulateTime > f_totalTime)
-            {
-                OnLerpFinished?.Invoke();
-                b_lerpFinished = true;
-            }
-         }
-        public override Vector3 GetSimulatedPosition(float elapsedTime) =>b_lerpFinished?m_endPos:Vector3.Lerp(m_startPos, m_endPos, elapsedTime / f_totalTime);
-    }
     #endregion
 
     #region GameEffects

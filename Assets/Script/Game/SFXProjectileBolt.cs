@@ -3,10 +3,10 @@ using UnityEngine;
 
 public class SFXProjectileBolt : SFXProjectile {
     protected override bool B_StopPhysicsOnHit => true;
-    protected override bool OnHitTargetCanPenetrate(RaycastHit hit,HitCheckBase entity)
+    protected override bool CheckCanPenetrate(HitCheckBase hitCheck)
     {
-        AttachTo(hit.collider.transform);
+        AttachTo(hitCheck.transform);
         SetLifeTime(GameConst.I_BoltLastTimeAfterHit);
-        return base.OnHitTargetCanPenetrate(hit, entity);
+        return false;
     }
 }
