@@ -80,8 +80,7 @@ public class SFXProjectile : SFXEquipmentBase
         Vector3 hitNormal = hitSource ? -transform.forward : hitInfo.normal;
         SpawnImpact(hitPoint, -transform.forward);
         SpawnHitMark(hitPoint,hitNormal,hitCheck);
-        OnHitTarget(hitInfo, hitCheck);
-        if (CheckCanPenetrate(hitCheck))
+        if (OnHitTarget(hitInfo, hitCheck)&&CheckCanPenetrate(hitCheck))
             return false;
 
         if (B_StopParticlesOnHit) OnStop();
