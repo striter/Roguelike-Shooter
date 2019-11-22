@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Material_Weapon_Player_BloomLight
+  m_Name: Material_Weapon_Player_TeslaLight
   m_Shader: {fileID: 4800000, guid: b687ec3c46774764ba097482cb08eb5d, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
@@ -33,5 +33,5 @@ Material:
     m_Floats:
     - _Lambert: 0.5
     m_Colors:
-    - _Color: {r: 0, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.9034481, g: 0, b: 1, a: 1}
     - _ReflectColor: {r: 0.28676468, g: 0.28676468, b: 0.28676468, a: 0.5019608}

@@ -11,15 +11,13 @@ public class WeaponCastBase : WeaponBase {
         SFXCast cast = equipment as SFXCast;
         F_BaseDamage = cast.F_Damage;
     }
-
-    bool casting => m_Trigger.B_TriggerDown && !B_Reloading&&m_Attacher.m_weaponCanFire;
+    
     void Update()
     {
-        SetCastAvailable(casting);
+        SetCastAvailable(m_Trigger.B_TriggerDown && !B_Reloading&&!m_Attacher.m_Health.b_IsDead && m_Attacher.m_weaponCanFire);
     }
     void SetCastAvailable(bool showCast)
     {
-
         if (showCast)
         {
             if (m_Cast)

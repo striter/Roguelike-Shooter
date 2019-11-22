@@ -569,7 +569,7 @@ namespace GameSetting
         //Heavy Weapon
         Crossbow = 701,
         RocketLauncher = 702,
-        MachineGun = 703,
+        Minigun = 703,
         //Special
         Flamer = 801,
         Driller = 802,

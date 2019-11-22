@@ -147,8 +147,8 @@ MonoBehaviour:
   F_Speed: 20
   B_Penetrate: 1
   AC_MuzzleClip: {fileID: 0}
-  I_MuzzleIndex: 0
-  I_ImpactIndex: 0
+  I_MuzzleIndex: 11002
+  I_ImpactIndex: 21002
   I_IndicatorIndex: 0
   I_HitMarkIndex: 0
   I_BufFApplyOnHit: 0
