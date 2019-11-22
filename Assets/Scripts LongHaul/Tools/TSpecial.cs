@@ -438,7 +438,7 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
         public ParticleSystem[] m_Particles { get; private set; }
         public ParticleControlBase(Transform transform)
         {
-            m_Particles=transform.GetComponentsInChildren<ParticleSystem>();
+            m_Particles= transform?transform.GetComponentsInChildren<ParticleSystem>():new ParticleSystem[0];
         }
         public void Play()
         {

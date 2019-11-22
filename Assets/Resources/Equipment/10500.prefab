@@ -38,7 +38,7 @@ GameObject:
   - component: {fileID: 33647363487418386}
   - component: {fileID: 23605277349225990}
   m_Layer: 0
-  m_Name: SF_Character_jingling_5_jian (2)
+  m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

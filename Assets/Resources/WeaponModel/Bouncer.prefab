@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4892897361463616}
-  - component: {fileID: 114910718250330774}
+  - component: {fileID: 114359286173425756}
   m_Layer: 0
   m_Name: Bouncer
   m_TagString: Untagged
@@ -170,7 +170,7 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1997029233746490}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &114910718250330774
+--- !u!114 &114359286173425756
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -178,10 +178,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1305394874654766}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f36aaef2dd894814d9e6946db53640ef, type: 3}
+  m_Script: {fileID: 11500000, guid: babca4e37b9eb89488c8f789a0a06c3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  E_Anim: 1004
+  E_Anim: -1
   B_AttachLeft: 0
   m_ReloadClip1: {fileID: 0}
   m_ReloadClip2: {fileID: 0}

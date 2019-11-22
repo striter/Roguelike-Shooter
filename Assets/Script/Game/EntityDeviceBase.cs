@@ -45,7 +45,7 @@ public class EntityDeviceBase : EntityCharacterBase {
         base.OnCharacterUpdate(deltaTime);
         m_Connections.m_ItemDic.Traversal((EntityCharacterBase target,LineRenderer item)=>
         {
-           item.SetPosition(0,tf_Head.position);
+            item.SetPosition(0,tf_Head.position);
             item.SetPosition(1, target.tf_Head.position);
         });
     }

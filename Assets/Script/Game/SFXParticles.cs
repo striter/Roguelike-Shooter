@@ -12,7 +12,7 @@ public class SFXParticles : SFXBase
         base.OnPoolItemInit(_identity, _OnRecycle);
         m_relativeSFXs = GetComponentsInChildren<SFXRelativeBase>();
         m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.Init(); });
-        m_Particle = new TSpecialClasses.ParticleControlBase(transform);
+        m_Particle = new TSpecialClasses.ParticleControlBase(transform.Find("Particles"));
     }
 
     public virtual void Play(int sourceID,float duration=0f,float delayDuration=0f)
