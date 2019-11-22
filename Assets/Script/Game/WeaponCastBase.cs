@@ -12,15 +12,13 @@ public class WeaponCastBase : WeaponBase {
         F_BaseDamage = cast.F_Damage;
     }
 
-    protected override void OnFireTick(float deltaTime)
+    bool casting => m_Trigger.B_TriggerDown && !B_Reloading&&m_Attacher.m_weaponCanFire;
+    void Update()
     {
-        CheckCastAvailable(deltaTime);
-        base.OnFireTick(deltaTime);
+        SetCastAvailable(casting);
     }
-
-    void CheckCastAvailable(float deltaTime)
+    void SetCastAvailable(bool showCast)
     {
-        bool showCast = m_Trigger.B_TriggerDown &&!B_Reloading;
 
         if (showCast)
         {

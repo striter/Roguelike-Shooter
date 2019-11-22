@@ -19,8 +19,6 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     public Transform m_Case { get; private set; } = null;
     public int I_ClipAmount { get; private set; } = 0;
     public float F_Recoil => m_Attacher.m_PlayerInfo.F_RecoilMultiply * F_BaseRecoil;
-    public bool B_Fireable() => !B_Reloading && f_fireCheck <= 0&& !m_Attacher.m_WeaponBlocked;
-    public bool B_Reloadable() => !B_Reloading && !B_AmmoFull;
     protected WeaponTrigger m_Trigger { get; private set; }
     Action<bool,float> OnReload;
     Action<float> OnFireRecoil;
@@ -31,8 +29,7 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     bool B_HaveAmmoLeft => m_WeaponInfo.m_ClipAmount == -1 || I_AmmoLeft > 0;
     bool B_AmmoFull => m_WeaponInfo.m_ClipAmount == -1||I_ClipAmount == I_AmmoLeft;
     protected void OnFireCheck(float pauseDuration) => f_fireCheck = pauseDuration;
-
-    EquipmentBase m_Equipment;
+    
     public override void OnPoolItemInit(enum_PlayerWeapon _identity, Action<enum_PlayerWeapon, MonoBehaviour> _OnRecycle)
     {
         m_Muzzle = transform.FindInAllChild("Muzzle");
@@ -101,7 +98,7 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     }
     public bool TryReload()
     {
-        if (!B_Reloadable())
+        if (B_Reloading || B_AmmoFull)
             return false;
         StartReload();
         return true;
@@ -113,21 +110,7 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
         OnReload?.Invoke(true, m_WeaponInfo.m_ReloadTime  / m_Attacher.m_PlayerInfo.F_ReloadRateTick(1f) );
     }
 
-    public void Tick(float deltaTime)
-    {
-        OnAmmoTick(m_Attacher.m_PlayerInfo.F_ReloadRateTick(deltaTime));
-        OnFireTick(m_Attacher.m_PlayerInfo.F_FireRateTick(deltaTime));
-    }
-    protected virtual void OnFireTick(float deltaTime)
-    {
-        if (B_Fireable())
-            m_Trigger.Tick(deltaTime);
-
-        if (f_fireCheck > 0)
-            f_fireCheck -= deltaTime;
-    }
-
-    void OnAmmoTick(float deltaTime)
+    public void AmmoTick(float deltaTime)
     {
         int clipAmount = m_Attacher.m_PlayerInfo.I_ClipAmount(m_WeaponInfo.m_ClipAmount);
         if (I_ClipAmount != clipAmount)
@@ -147,6 +130,15 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
                 I_AmmoLeft = I_ClipAmount;
             }
         }
+    }
+    public void FireTick(float deltaTime)
+    {
+        if (f_fireCheck > 0)
+            f_fireCheck -= deltaTime;
+        if (B_Reloading || f_fireCheck > 0)
+            return;
+        
+        m_Trigger.Tick(deltaTime);
     }
     
     public void ForceReload()
