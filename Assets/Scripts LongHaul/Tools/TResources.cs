@@ -87,7 +87,7 @@ public class TResources
     {
         LevelBase level = Instantiate<LevelBase>(ConstPath.S_LevelPrefab);
         Renderer matRenderer = level.GetComponentInChildren<Renderer>();
-        matRenderer.sharedMaterial.SetTexture("_MainTex", Load<Texture>(ConstPath.S_Texture_LevelBase + levelStyle));
+        matRenderer.material.SetTexture("_MainTex", Load<Texture>(ConstPath.S_Texture_LevelBase + levelStyle));
         return level;
     }
     
