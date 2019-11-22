@@ -310,16 +310,16 @@ MonoBehaviour:
   B_PhysicsDebugGizmos: 1
   B_GameLevelDebugGizmos: 0
   E_LevelDebug: 0
-  Z_TestEntitySpawn: 101
+  Z_TestEntitySpawn: 301
   TestEntityFlag: 2
   TestEntityBuffOnSpawn: 0
-  X_TestCastIndex: 402
+  X_TestCastIndex: 3
   CastForward: 0
   C_TestProjectileIndex: 20400
   V_TestIndicatorIndex: 0
   B_TestBuffIndex: 4
   Comma_TestParticleIndex: 20001
-  F1_WeaponSpawnType: 802
+  F1_WeaponSpawnType: 801
   WeaponPerkOnSpawn: -1
   F5_TestActionNormal: 10016
   F6_TestActionOutstanding: 20006
