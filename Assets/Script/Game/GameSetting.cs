@@ -886,7 +886,7 @@ namespace GameSetting
         float f_weight;
         float f_recoil;
 
-        int f_UIRarity;
+        int i_UIRarity;
         float f_UIDamage;
         float f_UIRPM;
         float f_UIStability;
@@ -902,7 +902,7 @@ namespace GameSetting
         public float m_Weight => f_weight;
         public float m_RecoilPerShot =>f_recoil;
 
-        public enum_UIWeaponRarity m_UIRarity => (enum_UIWeaponRarity)f_UIRarity;
+        public enum_UIWeaponRarity m_UIRarity => (enum_UIWeaponRarity)i_UIRarity;
         public float m_UIDamage => f_UIDamage;
         public float m_UIRPM => f_UIRPM;
         public float m_UIStability => f_UIStability;
