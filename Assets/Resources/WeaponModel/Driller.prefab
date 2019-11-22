@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4892897361463616}
   - component: {fileID: 114910718250330774}
   m_Layer: 0
-  m_Name: BeamDriller
+  m_Name: Driller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

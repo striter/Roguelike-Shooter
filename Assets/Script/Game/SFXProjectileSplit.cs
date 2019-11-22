@@ -25,7 +25,7 @@ public class SFXProjectileSplit : SFXProjectile {
             Vector3 splitDirection = transform.forward.RotateDirection(Vector3.up, startAngle + i * angleEach);
             GameObjectManager.SpawnEquipment<SFXProjectile>(subProjectTileIndex, transform.position, Vector3.up).Play(m_DamageInfo.m_detail,splitDirection, transform.position + splitDirection * 10);
         }
-        GameObjectManager.PlayMuzzle(m_sourceID,transform.position,transform.forward, projectileInfo.I_MuzzleIndex, projectileInfo.AC_MuzzleClip);
+        GameObjectManager.PlayMuzzle(m_SourceID,transform.position,transform.forward, projectileInfo.I_MuzzleIndex, projectileInfo.AC_MuzzleClip);
     }
 
     protected override void EDITOR_DEBUG()
