@@ -25,7 +25,7 @@ namespace GameSetting
         public const int I_ActionHoldCount = 3;
         public const float F_MaxActionEnergy = 5f;
         public const float I_MaxArmor = 99999;
-        public const float F_RestoreActionEnergy = 0.001f; //战斗结束时给的能量
+        public const float F_RestoreActionEnergy = 0.001f; //战斗结束时给的能量 //战斗外的默认能量值
         public const float F_ActionShuffleCost = 2f;
         public const float F_ActionShuffleCooldown = 10f;
 
