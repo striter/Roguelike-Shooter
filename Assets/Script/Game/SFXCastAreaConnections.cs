@@ -87,6 +87,12 @@ public class SFXCastAreaConnections : SFXCast {
         }
 
         m_Connections.m_ActiveItemDic.Traversal((EntityBase key) => { if (!entityEffecting.Contains(key)) m_Connections.RemoveItem(key); }, true);
-        entityEffecting.Traversal((EntityBase entity) => { if (!m_Connections.ContainsItem(entity)) m_Connections.AddItem(entity).SetTarget(entity.transform); });
+        entityEffecting.Traversal((EntityBase entity) => {
+            if (m_Connections.ContainsItem(entity))
+                return;
+
+            EntityCharacterBase character = entity as EntityCharacterBase;
+            m_Connections.AddItem(entity).SetTarget(character? character.tf_Head:entity.transform);
+        });
     }
 }

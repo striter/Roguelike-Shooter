@@ -25,7 +25,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public Transform tf_Status { get; private set; }
     public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized * m_CharacterInfo.F_MovementSpeed * time;
     public PlayerInfoManager m_PlayerInfo { get; private set; }
-    public bool m_WeaponBlocked { get; private set; } = false;
     protected bool m_aiming = false;
     protected float f_aimMovementReduction = 0f;
     protected bool m_aimingMovementReduction => f_aimMovementReduction > 0f;
@@ -148,8 +147,10 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected virtual float CalculateMovementSpeedMultiple()=> m_aimingMovementReduction ? (1 - GameConst.F_AimMovementReduction * m_PlayerInfo.F_AimMovementStrictMultiply) : 1f;
     protected virtual Quaternion CalculateTargetRotation() => CameraController.CameraXZRotation;
     protected virtual Vector3 CalculateMoveDirection(Vector2 axisInput) => Vector3.Normalize(CameraController.CameraXZRightward * axisInput.x + CameraController.CameraXZForward * axisInput.y);
+    protected virtual bool CalculateWeaponFire() => !Physics.SphereCast(new Ray(tf_WeaponAim.position, tf_WeaponAim.forward), .3f, 1.5f, GameLayer.Mask.I_Static);
 
     #region WeaponControll
+    public bool m_weaponCanFire { get; private set; } = false;
     void OnReloadClick()
     {
         if (m_WeaponCurrent == null)
@@ -164,16 +165,16 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         else
             m_PlayerInfo.OnReloadFinish();
     }
-
-    protected virtual bool GetFrontObstacle() => Physics.SphereCast(new Ray(tf_WeaponAim.position, tf_WeaponAim.forward), .3f, 1.5f, GameLayer.Mask.I_Static);
     void OnWeaponTick(float deltaTime)
     {
+        m_weaponCanFire = CalculateWeaponFire();
         if (m_WeaponCurrent == null)
             return;
         tf_WeaponAim.rotation = CalculateTargetRotation();
-        m_WeaponBlocked = GetFrontObstacle();
-        m_Assist.SetEnable(!m_WeaponBlocked && !m_WeaponCurrent.B_Reloading);
-        m_WeaponCurrent.Tick(Time.deltaTime);
+        m_Assist.SetEnable(m_weaponCanFire && !m_WeaponCurrent.B_Reloading);
+        m_WeaponCurrent.AmmoTick(m_PlayerInfo.F_ReloadRateTick(deltaTime));
+        if (m_weaponCanFire)
+            m_WeaponCurrent.FireTick(m_PlayerInfo.F_FireRateTick( deltaTime));
     }
 
     public WeaponBase ObtainWeapon(WeaponBase _weapon)
