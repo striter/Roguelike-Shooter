@@ -77,7 +77,7 @@
 					float occ_depth = Get01Depth(saturate(hemi_ray.xy));
 					float difference = depth- occ_depth;
 					
-					occlusion += lerp(-1,1,smoothstep(-_FallOff,_FallOff,difference));
+					occlusion += step(_FallOff, abs(difference))*lerp(-1,1,smoothstep(-_FallOff,_FallOff,difference));
 				}
 				occlusion = saturate( occlusion/_SampleCount);
 				float ao = pow(occlusion,3)*_Strength;
