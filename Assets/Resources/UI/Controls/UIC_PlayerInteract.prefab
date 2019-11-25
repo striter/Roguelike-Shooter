@@ -317,7 +317,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224202723221506124}
-  - component: {fileID: 111215384255639936}
   m_Layer: 5
   m_Name: InteractData
   m_TagString: Untagged
@@ -760,21 +759,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!111 &111215384255639936
-Animation:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1577698245793784}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Animation: {fileID: 0}
-  m_Animations:
-  - {fileID: 0}
-  m_WrapMode: 0
-  m_PlayAutomatically: 0
-  m_AnimatePhysics: 0
-  m_CullingType: 0
 --- !u!114 &114001396846432024
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1209,7 +1193,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 3fe06c5a57aefaa45adbd537992ef55b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 68dcaa7c693b3bd4199cac026581fc58, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
