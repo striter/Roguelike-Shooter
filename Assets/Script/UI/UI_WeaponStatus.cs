@@ -49,7 +49,7 @@ public class UI_WeaponStatus : UIPageBase {
         m_WeaponName.localizeKey = weapon.m_Weapon.GetLocalizeNameKey();
         m_WeaponName.color = TCommon.GetHexColor(weapon.m_UIRarity.GetUITextColor());
         m_WeaponBackgroundShadow.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_UIRarity.GetUIStatusShadowBackground()];
-        m_ClipSize.text = weapon.m_ClipAmount.ToString();
+        m_ClipSize.text = string.Format("{0:D2}", weapon.m_ClipAmount);
 
         m_DamageAmount.text = string.Format("{0:N1}", weapon.m_UIDamage);
         m_Damage.fillAmount = UIExpression.GetUIWeaponDamageValue(weapon.m_UIDamage);
