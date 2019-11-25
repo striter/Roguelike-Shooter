@@ -205,7 +205,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   E_ProjectileType: 2
-  F_Damage: 90
+  F_Damage: 134
   F_Speed: 50
   B_Penetrate: 1
   AC_MuzzleClip: {fileID: 8300000, guid: f96059fda463a6643bfc4e2d2c76aac1, type: 3}
