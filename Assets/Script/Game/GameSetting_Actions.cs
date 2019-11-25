@@ -335,7 +335,8 @@ namespace GameSetting_Action
         {
             if (damageAmount < 0)
                 Debug.LogError("Howd Fk Damage Below Zero?");
-            GameManager.Instance.GetEntity(targetID).m_HitCheck.TryHit(new DamageInfo(damageAmount, damageType, DamageDeliverInfo.Default(player.m_EntityID)));
+            if(GameManager.Instance.EntityExists(targetID))
+                GameManager.Instance.GetEntity(targetID).m_HitCheck.TryHit(new DamageInfo(damageAmount, damageType, DamageDeliverInfo.Default(player.m_EntityID)));
         }
         public static void ReceiveDamage(EntityCharacterPlayer player, float damage, enum_DamageType type = enum_DamageType.Basic)
         {

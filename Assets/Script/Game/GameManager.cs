@@ -323,9 +323,10 @@ public class GameManager : GameManagerBase
     Dictionary<enum_EntityFlag, List<EntityCharacterBase>> m_OppositeEntities = new Dictionary<enum_EntityFlag, List<EntityCharacterBase>>();
     public int m_FlagEntityCount(enum_EntityFlag flag) => m_AllyEntities[flag].Count;
     public List<EntityCharacterBase> GetEntities(enum_EntityFlag sourceFlag, bool getAlly) => getAlly ? m_AllyEntities[sourceFlag] : m_OppositeEntities[sourceFlag];
+    public bool EntityExists(int entityID) => m_Entities.ContainsKey(entityID);
     public EntityBase GetEntity(int entityID)
     {
-        if (!m_Entities.ContainsKey(entityID))
+        if (!EntityExists(entityID))
             Debug.LogError("Entity Not Contains ID:" + entityID.ToString());
         return m_Entities[entityID]; ;
     }
@@ -388,7 +389,6 @@ public class GameManager : GameManagerBase
 
     #endregion
     #region SFXHitCheck
-    
     public static bool B_CanSFXHitTarget(HitCheckBase hitCheck, int sourceID)    //If Match Will Hit Target
     {
         bool canHit = hitCheck.I_AttacherID != sourceID;
@@ -396,7 +396,7 @@ public class GameManager : GameManagerBase
             return canHit && B_CanSFXHitEntity(hitCheck as HitCheckEntity, sourceID);
         return canHit;
     }
-    
+
     static bool B_CanSFXHitEntity(HitCheckEntity targetHitCheck, int sourceID)    //If Match Will Hit Entity
     {
         if (targetHitCheck.I_AttacherID == sourceID || targetHitCheck.m_Attacher.m_Flag == enum_EntityFlag.Neutal)

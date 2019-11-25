@@ -40,4 +40,9 @@ public class SFXProjectileDestroyable : SFXProjectile {
         m_Health.OnStop();
         base.OnStop();
     }
+    protected override void OnRecycle()
+    {
+        base.OnRecycle();
+        m_Health.OnRecycle();
+    }
 }

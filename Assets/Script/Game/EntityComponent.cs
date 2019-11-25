@@ -1,7 +1,7 @@
 ﻿using GameSetting;
 using System;
 using UnityEngine;
-public class EntityComponent : EntityBase {
+public class EntityComponent : EntityBase {     //Temporaty Solution
     public override enum_EntityController m_Controller => enum_EntityController.None;
     Action OnEntityDead;
     public void Play(Action _OnDead)
@@ -20,6 +20,9 @@ public class EntityComponent : EntityBase {
     public void OnStop()
     {
         base.OnDead();
-        OnRecycle();
+    }
+    public new void OnRecycle()
+    {
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityDeactivate, this as EntityBase);
     }
 }

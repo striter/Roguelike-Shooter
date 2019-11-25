@@ -32,7 +32,7 @@ public class UIT_EasyScreenLog : SimpleSingletonMono<UIT_EasyScreenLog> {
 
     void OnLogReceived(string info,string trace,LogType type)
     {
-        if (m_ShowErrorOnly && type != LogType.Error)
+        if (m_ShowErrorOnly && type != LogType.Error&&type!= LogType.Exception)
             return;
 
         log tempLog = new log();

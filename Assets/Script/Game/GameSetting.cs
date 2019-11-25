@@ -2518,8 +2518,10 @@ namespace GameSetting
         }
         protected override Vector3 GetTargetPosition(bool preAim, EntityCharacterBase _target)
         {
+            preAim = preAim && f_projectileSpeed > 10f;     //Case Aim Some Shit Positions
+
             float startDistance = TCommon.GetXZDistance(m_Entity.tf_Weapon.position, _target.tf_Head.position);
-            Vector3 targetPosition = preAim ? _target.m_PrecalculatedTargetPos(startDistance / f_projectileSpeed) : _target.tf_Head.position;
+            Vector3 targetPosition =  preAim ? _target.m_PrecalculatedTargetPos(startDistance / f_projectileSpeed) : _target.tf_Head.position;
 
             if (preAim && Mathf.Abs(TCommon.GetAngle(m_Entity.tf_Weapon.forward, TCommon.GetXZLookDirection(m_Entity.tf_Weapon.position, targetPosition), Vector3.up)) > 90)    //Target Positioned Back, Return Target
                 targetPosition = _target.tf_Head.position;
