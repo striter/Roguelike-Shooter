@@ -91,7 +91,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager>,ISingleCoroutine {
                 OnEnvironmentLoaded();
                 yield break;
             }
-            yield return new WaitForSeconds(0.1f);
+            yield return null;
         }
     }
     #region Level

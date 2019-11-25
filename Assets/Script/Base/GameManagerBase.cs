@@ -37,13 +37,13 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
         OptionsManager.event_OptionChanged -= OnOptionChanged;
     }
 
-    protected void SwitchScene(enum_Scene scene)
+    protected void SwitchScene(enum_Scene scene,Func<bool> onfinishLoading=null)
     {
         GameAudioManager.Instance.OnRecycle();
         GameObjectManager.RecycleAllObject();
         CameraController.Instance.m_Camera.enabled = false;
         UIManager.Instance.SetActivate(false);
-        LoadingManager.BeginLoad(scene);
+        LoadingManager.BeginLoad(scene,onfinishLoading);
     }
 
     void OnOptionChanged()
