@@ -319,7 +319,7 @@ MonoBehaviour:
   V_TestIndicatorIndex: 0
   B_TestBuffIndex: 4
   Comma_TestParticleIndex: 20001
-  F1_WeaponSpawnType: 702
+  F1_WeaponSpawnType: 501
   WeaponPerkOnSpawn: -1
   F5_TestActionNormal: 10016
   F6_TestActionOutstanding: 20006
