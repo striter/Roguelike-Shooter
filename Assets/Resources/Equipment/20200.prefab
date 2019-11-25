@@ -55,7 +55,7 @@ GameObject:
   - component: {fileID: 199609332856478158}
   - component: {fileID: 198194951697349546}
   m_Layer: 0
-  m_Name: Bullet
+  m_Name: Particles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -293,7 +293,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 121447411
+  randomSeed: -281148288
   InitialModule:
     serializedVersion: 3
     enabled: 1
