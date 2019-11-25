@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 3350394
+    totalSpriteSurfaceArea: 3394596
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -58,6 +58,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: dfee1c79ec53af4438b2fae542531758, type: 3}
   - {fileID: 21300000, guid: 6847768e5e8958849bc2f250edc4fd9a, type: 3}
   - {fileID: 21300000, guid: 9ff4ddd5857d6e84e9be010dd6f29daa, type: 3}
+  - {fileID: 21300000, guid: 149e2cecb8f07c544a062ec19ac1c490, type: 3}
   - {fileID: 21300000, guid: 4340fab8c529623489aafcb701f800f5, type: 3}
   - {fileID: 21300000, guid: 30e5c7c85da88f74a886ea0a055a0ab5, type: 3}
   - {fileID: 21300000, guid: 9815db2b31918bd488a568f43645a813, type: 3}
@@ -93,6 +94,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: daf8af51f0554554dba88ad6e059dca3, type: 3}
   - {fileID: 21300000, guid: ffa5d357c7dd26b459d6fcb7886cd0f3, type: 3}
   - {fileID: 21300000, guid: 99a8936246ab8294792fcc6b90309f8d, type: 3}
+  - {fileID: 21300000, guid: eb7a94fd6ce83cc4ab473b324bc74b01, type: 3}
   - {fileID: 21300000, guid: 6433a4f32ecfda541886965e846ea0e0, type: 3}
   - {fileID: 21300000, guid: a3083f2f75bbc6d44836979886b6c10f, type: 3}
   - {fileID: 21300000, guid: 38f81ac9a2b60d84a83738c539b8b202, type: 3}
@@ -110,6 +112,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: ecf5205912130214393bc27cfbe19041, type: 3}
   - {fileID: 21300000, guid: 8d62631dc91e63b43939fb462b9ba730, type: 3}
   - {fileID: 21300000, guid: 1d1cbd9d970e66944b59ae6da5ccd634, type: 3}
+  - {fileID: 21300000, guid: b90f37943d8ea154aaf285c3d486b175, type: 3}
   - {fileID: 21300000, guid: 42c8ac79d9254264b8c9785a333d591a, type: 3}
   - {fileID: 21300000, guid: 18652a05e50450b4a8aea0d594f8ec36, type: 3}
   - {fileID: 21300000, guid: 9c9d65350fda00e43aae5964ee01b62f, type: 3}
@@ -139,6 +142,7 @@ SpriteAtlas:
   - status_ActionEnergy_progress_full
   - status_ActionEnergy_progress_notfull
   - control_main_fire
+  - icon_map_stage
   - status_progress_bottom
   - status_progress_armor
   - status_progress_life
@@ -174,6 +178,7 @@ SpriteAtlas:
   - UI_common_circle
   - UI_common_black80
   - buff_frame
+  - UI_common_triangle
   - UI_setting_slider
   - icon_ActionEnergy
   - icon_bullet_big
@@ -191,6 +196,7 @@ SpriteAtlas:
   - UI_common_angle_gray
   - icon_buff_rank
   - buff_level_blank
+  - UI_common_RectangleLine
   - UI_setting_common_bottom
   - UI_common_square
   - btn_close_strip
