@@ -395,6 +395,8 @@ namespace GameSetting
 
 
         public static string GetUIInteractBackground(this enum_UIWeaponRarity rarity) => "interact_" + rarity;
+        public static string GetUIStatusShadowBackground(this enum_UIWeaponRarity rarity) => "weapon_shadow_" + rarity;
+        public static string GetUIGameControlBackground(this enum_UIWeaponRarity rarity) => "gamecontrol_" + rarity;
         public static string GetUITextColor(this enum_UIWeaponRarity rarity)
         {
             switch (rarity)
@@ -2739,7 +2741,7 @@ namespace GameSetting
         {
             bool showWeaponAction = action != null;
             m_WeaponActionRarity.transform.SetActivate(showWeaponAction);
-            m_WeaponActionName.autoLocalizeText = showWeaponAction ? action.GetNameLocalizeKey() : "UI_WeaponStatus_ActionInvalidName";
+            m_WeaponActionName.autoLocalizeText = showWeaponAction ? action.GetNameLocalizeKey() : "UI_Weapon_ActionInvalidName";
             if (showWeaponAction) m_WeaponActionRarity.SetRarity(action.m_rarity);
         }
     }

@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4789796910258958}
   - component: {fileID: 114541257289270124}
   m_Layer: 0
-  m_Name: ManmadeLess_shamo_fangwu4
+  m_Name: LargeMore_shamo_fangwu4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -152,7 +152,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_sizeXAxis: 5
   m_sizeYAxis: 6
-  m_ItemType: 7
+  m_ItemType: 0
   b_showGizmos: 1
   b_AutoCenter: 1
   b_AutoRotation: 1
