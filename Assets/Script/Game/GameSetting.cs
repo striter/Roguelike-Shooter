@@ -2678,23 +2678,6 @@ namespace GameSetting
     }
     public class UIC_RarityLevel
     {
-        public Transform transform { get; private set; }
-        ObjectPoolSimple<int,Transform> m_Grid;
-        public UIC_RarityLevel(Transform _transform)
-        {
-            transform = _transform;
-            m_Grid = new ObjectPoolSimple<int,Transform>(transform.Find("GridItem").gameObject, transform,(Transform trans, int identity)=>trans, (Transform trans) => trans);
-            m_Grid.ClearPool();
-        }
-        public void SetLevel(enum_RarityLevel level)
-        {
-            m_Grid.ClearPool();
-            for (int i = 0; i < (int)level; i++)
-                m_Grid.AddItem(i);
-        }
-    }
-    public class UIC_RarityLevel_BG
-    {
         class RarityLevel
         {
             public Image m_HighLight { get; private set; }
@@ -2713,7 +2696,7 @@ namespace GameSetting
         public Transform transform { get; private set; }
         ObjectPoolSimple<int,Transform> m_Grid;
         Dictionary<int, RarityLevel> m_Levels = new Dictionary<int, RarityLevel>();
-        public UIC_RarityLevel_BG(Transform _transform)
+        public UIC_RarityLevel(Transform _transform)
         {
             transform = _transform;
             m_Grid = new ObjectPoolSimple<int, Transform>(transform.Find("GridItem").gameObject,transform,(Transform trans,int identity)=>trans,(Transform trans)=>trans);
@@ -2729,12 +2712,12 @@ namespace GameSetting
     {
         public Transform transform { get; private set; }
         UIT_TextExtend m_WeaponActionName;
-        UIC_RarityLevel_BG m_WeaponActionRarity;
+        UIC_RarityLevel m_WeaponActionRarity;
         public UI_WeaponActionHUD(Transform _transform)
         {
             transform = _transform;
             m_WeaponActionName = _transform.Find("ActionName").GetComponent<UIT_TextExtend>();
-            m_WeaponActionRarity = new UIC_RarityLevel_BG(_transform.Find("ActionRarity"));
+            m_WeaponActionRarity = new UIC_RarityLevel(_transform.Find("ActionRarity"));
         }
 
         public void SetInfo(ActionBase action)

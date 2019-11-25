@@ -6,14 +6,14 @@ using UnityEngine.UI;
 public class UIGI_ExpireInfoItem : UIT_GridItem {
     UIT_TextExtend m_Duration;
     Image m_Image,m_DurationFill,m_ActionType;
-    UIC_RarityLevel_BG m_Rarity;
+    UIC_RarityLevel m_Rarity;
     ActionBase m_target;
     public override void Init()
     {
         base.Init();
         m_Duration = tf_Container.Find("Duration").GetComponent<UIT_TextExtend>();
         m_DurationFill = tf_Container.Find("DurationFill").GetComponent<Image>();
-        m_Rarity = new UIC_RarityLevel_BG(tf_Container.Find("Rarity"));
+        m_Rarity = new UIC_RarityLevel(tf_Container.Find("Rarity"));
         m_Image = tf_Container.Find("Mask/Image").GetComponent<Image>();
         m_ActionType = tf_Container.Find("ActionType").GetComponent<Image>();
     }

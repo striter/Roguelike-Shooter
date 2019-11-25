@@ -360,7 +360,6 @@ public class GameManager : GameManagerBase
     }
     void OnEntityRecycle(EntityBase entity)
     {
-
         m_Entities.Remove(entity.m_EntityID);
         if (entity.m_Controller == enum_EntityController.None)
             return;

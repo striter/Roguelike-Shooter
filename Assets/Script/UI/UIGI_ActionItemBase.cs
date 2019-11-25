@@ -8,7 +8,7 @@ using System;
 public class UIGI_ActionItemBase : UIT_GridItem {
     Image m_ActionImage;
     Image m_TypeIcon,m_TypeBottom;
-    UIC_RarityLevel_BG m_Rarity;
+    UIC_RarityLevel m_Rarity;
     protected UIT_TextExtend m_Cost { get; private set; }
     UIT_TextExtend m_Name;
     Image m_Costable;
@@ -18,7 +18,7 @@ public class UIGI_ActionItemBase : UIT_GridItem {
         m_ActionImage = tf_Container.Find("Icon/Image").GetComponent<Image>();
         m_TypeIcon = tf_Container.Find("Type/Icon").GetComponent<Image>();
         m_TypeBottom = tf_Container.Find("Type/Bottom").GetComponent<Image>();
-        m_Rarity = new UIC_RarityLevel_BG(tf_Container.Find("ActionRarity"));
+        m_Rarity = new UIC_RarityLevel(tf_Container.Find("ActionRarity"));
         m_Costable = tf_Container.Find("Cost/Cost").GetComponent<Image>();
         m_Cost = tf_Container.Find("Cost/Amount").GetComponent<UIT_TextExtend>();
         m_Name = tf_Container.Find("Name").GetComponent<UIT_TextExtend>();

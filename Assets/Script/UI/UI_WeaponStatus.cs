@@ -61,17 +61,17 @@ public class UI_WeaponStatus : UIPageBase {
         m_ProjectileSpeed.fillAmount = UIExpression.GetUIWeaponSpeedValue(weapon.m_UISpeed);
 
         bool showAction = weaponAction != null;
+        m_ActionRarity.transform.SetActivate(showAction);
         if (showAction)
         {
             ActionBase action = weaponAction;
             m_ActionName.localizeKey = action.GetNameLocalizeKey();
             action.SetActionIntro(m_ActionIntro);
-            m_ActionRarity.SetLevel(action.m_rarity);   
+            m_ActionRarity.SetRarity(action.m_rarity);   
             return;
         }
 
         m_ActionName.localizeKey = "UI_Weapon_ActionInvalidName";
         m_ActionIntro.localizeKey = "UI_Weapon_ActionInvalidIntro";
-        m_ActionRarity.SetLevel(enum_RarityLevel.Invalid);
     }
 }
