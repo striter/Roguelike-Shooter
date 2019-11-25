@@ -27,11 +27,52 @@ SpriteAtlas:
       enableRotation: 0
       enableTightPacking: 0
     variantMultiplier: 1
-    packables: []
-    totalSpriteSurfaceArea: 0
+    packables:
+    - {fileID: 102900000, guid: 86d96483a0a3b2249b2ef23c02cd1052, type: 3}
+    totalSpriteSurfaceArea: 124820
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
-  m_PackedSprites: []
-  m_PackedSpriteNamesToIndex: []
+  m_PackedSprites:
+  - {fileID: 21300000, guid: f6e5b9c2d41aca844800641141f5f75e, type: 3}
+  - {fileID: 21300000, guid: 63db973f45738cd499bb1cecb672678f, type: 3}
+  - {fileID: 21300000, guid: 7280db7e7161a2e45a6e725a8782204e, type: 3}
+  - {fileID: 21300000, guid: 3dd53fc94d5f7154287e6fb450a0fccf, type: 3}
+  - {fileID: 21300000, guid: a201455e91aa28e4ebde41681ca26858, type: 3}
+  - {fileID: 21300000, guid: 6e6d2ac4adba41c44a237f3eff609ede, type: 3}
+  - {fileID: 21300000, guid: 1996cdee77083fd4fb87e8a1e453a282, type: 3}
+  - {fileID: 21300000, guid: e1604c0f100f04d479ee61de639e1ae6, type: 3}
+  - {fileID: 21300000, guid: 22496132f8d4cf244bf4a15f8f6735b7, type: 3}
+  - {fileID: 21300000, guid: 22bf2c0ad3aee764d8e8b091c515bf4e, type: 3}
+  - {fileID: 21300000, guid: f39cd9ce0cf0cac49bcfd57f0e9489bc, type: 3}
+  - {fileID: 21300000, guid: 6c62438910c7c3449a3880c6b6533608, type: 3}
+  - {fileID: 21300000, guid: 04b827a9780bb1540bbb76ac73fbef21, type: 3}
+  - {fileID: 21300000, guid: aa35d5a6477663c4eaf8da4d43e09ad2, type: 3}
+  - {fileID: 21300000, guid: deced9b749a737147adeda502e618274, type: 3}
+  - {fileID: 21300000, guid: 22721664588f865489ecb88aaec508b7, type: 3}
+  - {fileID: 21300000, guid: 694d190ddcef89e49bbc925cc9a14e26, type: 3}
+  - {fileID: 21300000, guid: ac78d4f6026f9ef41b6571a752f717e9, type: 3}
+  - {fileID: 21300000, guid: 8714544e53d1cff46b7a18e4cc0006c2, type: 3}
+  - {fileID: 21300000, guid: 21d9e0352689bfe4f895e476b4109444, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - icon_loading_19
+  - icon_loading_12
+  - icon_loading_8
+  - icon_loading_9
+  - icon_loading_3
+  - icon_loading_13
+  - icon_loading_10
+  - icon_loading_0
+  - icon_loading_2
+  - icon_loading_5
+  - icon_loading_16
+  - icon_loading_18
+  - icon_loading_14
+  - icon_loading_15
+  - icon_loading_6
+  - icon_loading_7
+  - icon_loading_4
+  - icon_loading_17
+  - icon_loading_11
+  - icon_loading_1
   m_Tag: Atlas_LoadingAnim
   m_IsVariant: 0
