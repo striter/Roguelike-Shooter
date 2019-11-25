@@ -100,7 +100,7 @@ public class UIC_PlayerInteract : UIControlBase {
                     if(weapon.m_WeaponAction!=null)
                         weapon.m_WeaponAction.SetActionIntro(m_Intro);
                     else
-                        m_Intro.localizeKey = "UI_WeaponStatus_ActionInvalidIntro";
+                        m_Intro.localizeKey = "UI_Weapon_ActionInvalidIntro";
                 }
                 break;
             case enum_Interaction.PickupAction:
