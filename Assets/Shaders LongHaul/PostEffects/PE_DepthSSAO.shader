@@ -76,11 +76,12 @@
 					float3 hemi_ray = position + sign(dot(ray, normal)) * ray;
 					float occ_depth = Get01Depth(saturate(hemi_ray.xy));
 					float difference = depth- occ_depth;
-					occlusion += lerp(-.5f,1,step(_FallOff, difference));
+					
+					occlusion += step(_FallOff, abs(difference))*lerp(-1,1,smoothstep(-_FallOff,_FallOff,difference));
 				}
 				occlusion = saturate( occlusion/_SampleCount);
 				float ao = pow(occlusion,3)*_Strength;
-				return lerp(col,float4(0,0,0,1),ao);	
+				return lerp(col,float4(0,0,0,1),ao);
 			}
 			ENDCG
 		}

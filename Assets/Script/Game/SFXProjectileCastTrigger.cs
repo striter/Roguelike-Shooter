@@ -16,10 +16,10 @@ public class SFXProjectileCastTrigger : SFXProjectile
         OnRecycle();
     }
 
-    protected override bool OnHitTarget(RaycastHit hit, HitCheckBase hitCheck)
+    protected override bool OnHitTargetPenetrate(HitCheckBase hitCheck)
     {
-        OnCastTrigger(hit.point == Vector3.zero ? v3_castPoint : hit.point);
-        return base.OnHitTarget(hit, hitCheck);
+        OnCastTrigger(v3_castPoint);
+        return base.OnHitTargetPenetrate(hitCheck);
     }
 
     protected virtual void OnCastTrigger(Vector3 point)
