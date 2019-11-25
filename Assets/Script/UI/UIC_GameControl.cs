@@ -10,6 +10,7 @@ public class UIC_GameControl : UIControlBase
     EntityCharacterPlayer m_Player;
     Transform tf_WeaponData;
     UIT_TextExtend m_WeaponName;
+    Image m_WeaponBackground;
     Image m_WeaponImage;
     UI_WeaponActionHUD m_WeaponActionHUD;
     Button btn_ActionStorage;
@@ -22,6 +23,7 @@ public class UIC_GameControl : UIControlBase
         btn_ActionStorage.onClick.AddListener(OnActionStorageClick);
 
         tf_WeaponData = transform.Find("WeaponData");
+        m_WeaponBackground = tf_WeaponData.GetComponent<Image>();
         m_WeaponName = tf_WeaponData.Find("WeaponName").GetComponent<UIT_TextExtend>();
         m_WeaponImage = tf_WeaponData.Find("WeaponImage").GetComponent<Image>();
         m_WeaponActionHUD = new UI_WeaponActionHUD(tf_WeaponData);
@@ -43,10 +45,11 @@ public class UIC_GameControl : UIControlBase
     }
 
     void OnActionStorageClick()=> UIManager.Instance.ShowPage<UI_ActionPack>(true).Show(m_Player.m_PlayerInfo);
-    void OnWeaponDetailClick()=>  UIManager.Instance.ShowPage<UI_WeaponStatus>(true, 0f).SetInfo(m_Player.m_WeaponCurrent);
+    void OnWeaponDetailClick()=>  UIManager.Instance.ShowPage<UI_WeaponStatus>(true, 0f).SetInfo(m_Player.m_WeaponCurrent.m_WeaponInfo,m_Player.m_WeaponCurrent.m_WeaponAction);
     void OnCommonStatus(EntityCharacterPlayer _player) => m_Player = _player;
     void OnWeaponStatus(WeaponBase weapon)
     {
+        m_WeaponBackground.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_UIRarity.GetUIGameControlBackground()];
         m_WeaponImage.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Weapon.GetSpriteName()];
         m_WeaponName.autoLocalizeText = weapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
         m_WeaponActionHUD.SetInfo(weapon.m_WeaponAction);
