@@ -80,7 +80,8 @@ public class SFXProjectile : SFXEquipmentBase
         Vector3 hitNormal = hitSource ? -transform.forward : hitInfo.normal;
         SpawnImpact(hitPoint, -transform.forward);
         SpawnHitMark(hitPoint,hitNormal,hitCheck);
-        if (OnHitTarget(hitInfo, hitCheck)&&CheckCanPenetrate(hitCheck))
+        OnHitTarget(hitInfo, hitCheck);
+        if (OnHitTargetPenetrate(hitCheck))
             return false;
 
         if (B_StopParticlesOnHit) OnStop();
@@ -88,28 +89,28 @@ public class SFXProjectile : SFXEquipmentBase
         return true;
     }
 
-    protected virtual bool OnHitTarget(RaycastHit hit, HitCheckBase hitCheck)
+    protected void OnHitTarget(RaycastHit hit, HitCheckBase hitCheck)
     {
         switch (hitCheck.m_HitCheckType)
         {
             default:
                 Debug.LogError("Invalid Item Hitted:" + hit.collider);
-                return false;
+                break;
             case enum_HitCheck.Dynamic:
             case enum_HitCheck.Static:
-                return hitCheck.TryHit(m_DamageInfo, transform.forward);
+                hitCheck.TryHit(m_DamageInfo, transform.forward);
+                break;
             case enum_HitCheck.Entity:
                 HitCheckEntity _entity = hitCheck as HitCheckEntity;
                 if (CanDamageEntity(_entity))
                 {
                     _entity.TryHit(m_DamageInfo, transform.forward);
                     m_EntityHitted.Add(_entity.I_AttacherID);
-                    return true;
                 }
-                return false;
+                break;
         }
     }
-    protected virtual bool CheckCanPenetrate(HitCheckBase hitCheck)
+    protected virtual bool OnHitTargetPenetrate(HitCheckBase hitCheck)
     {
         switch (hitCheck.m_HitCheckType)
         {

@@ -107,6 +107,12 @@ public static class TCommon
     }
     public static Color GetHexColor(string hex)
     {
+        if (hex.Length != 8)
+        {
+            Debug.LogError("Hex Color Length Not Equals 8!");
+            return Color.magenta;
+        }
+
         byte br = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
         byte bg = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
         byte bb = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);

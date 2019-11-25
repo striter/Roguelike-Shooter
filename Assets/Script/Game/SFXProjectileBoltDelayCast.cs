@@ -6,10 +6,11 @@ using UnityEngine;
 public class SFXProjectileBoltDelayCast : SFXProjectileBolt {
     protected override bool B_StopParticlesOnHit => false;
     public float F_DelayDuration;
-    protected override bool CheckCanPenetrate(HitCheckBase hitCheck)
+    protected override bool OnHitTargetPenetrate(HitCheckBase hitCheck)
     {
+        bool canHit = base.OnHitTargetPenetrate(hitCheck);
         SetLifeTime(F_DelayDuration);
-        return base.CheckCanPenetrate(hitCheck);
+        return canHit;
     }
     protected override void OnStop()
     {
