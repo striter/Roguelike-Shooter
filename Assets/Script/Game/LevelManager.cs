@@ -12,11 +12,13 @@ public class LevelManager : SimpleSingletonMono<LevelManager>,ISingleCoroutine {
     public enum_Style m_StyleCurrent { get; private set; } = enum_Style.Invalid;
     public SBigmapLevelInfo m_currentLevel { get; private set; }
     public SBigmapLevelInfo[,] m_MapLevelInfo { get; private set; }
+    public bool m_Loading { get; private set; }
     public Light m_DirectionalLight { get; protected set; }
     public Transform m_InteractParent => m_currentLevel.m_Level.tf_Interact;
     public System.Random m_mainSeed;
     public Action<SBigmapLevelInfo> OnLevelPrepared,OnEachLevelGenerate;
-    public Action OnStageFinished;
+    Action OnStageFinished;
+    Action OnEnvironmentLoaded;
     protected override void Awake()
     {
         base.Awake();
@@ -37,24 +39,60 @@ public class LevelManager : SimpleSingletonMono<LevelManager>,ISingleCoroutine {
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
     }
-    public void GenerateAllEnviorment(enum_Style _LevelStyle,System.Random seed,Action<SBigmapLevelInfo> _OnLevelPrepared,Action _OnStageFinished,Action<SBigmapLevelInfo> _OnEachLevelGenerate)
+    public void GameInit( Action<SBigmapLevelInfo> _OnLevelPrepared, Action _OnStageFinished, Action<SBigmapLevelInfo> _OnEachLevelGenerate)
     {
         OnLevelPrepared = _OnLevelPrepared;
         OnStageFinished = _OnStageFinished;
         OnEachLevelGenerate = _OnEachLevelGenerate;
+    }
+    
+    public void LoadEnvironment(enum_Style _LevelStyle,System.Random seed,Action _OnEnvironmentLoaded)
+    {
+        m_Loading = true;
+           OnEnvironmentLoaded = _OnEnvironmentLoaded;
         m_mainSeed = seed;
         m_StyleCurrent = _LevelStyle;
-        m_MapLevelInfo = GenerateBigmapLevels(m_StyleCurrent, m_mainSeed, tf_LevelParent,6,5, OnLevelGenerateFinish);
         StyleColorData[] customizations = TResources.GetAllStyleCustomization(_LevelStyle);
-        StyleColorData randomData= customizations.Length == 0? StyleColorData.Default():customizations.RandomItem(m_mainSeed);
+        StyleColorData randomData = customizations.Length == 0 ? StyleColorData.Default() : customizations.RandomItem(m_mainSeed);
         randomData.DataInit(m_DirectionalLight);
+        m_MapLevelInfo = GenerateBigmap(m_StyleCurrent, m_mainSeed,6,5);
+        this.StartSingleCoroutine(0, GenerateLevel());
     }
 
-    void OnLevelGenerateFinish(SBigmapLevelInfo levelInfo)
+    IEnumerator GenerateLevel()
     {
-        StaticBatchingUtility.Combine(levelInfo.m_Level.tf_LevelItem.gameObject);
-        levelInfo.SetLevelShow(false);
-        OnEachLevelGenerate(levelInfo);
+        Dictionary<enum_LevelItemType, List<LevelItemBase>> levelItemPrefabs = GameObjectManager.RegisterLevelItem(m_StyleCurrent);
+        int length0 = m_MapLevelInfo.GetLength(0);
+        int length1 = m_MapLevelInfo.GetLength(1);
+        int i = 0, j = 0;
+        for (; ; )
+        {
+            SBigmapLevelInfo levelInfo = m_MapLevelInfo[i, j];
+            if (levelInfo.m_LevelType != enum_TileType.Invalid)
+            {
+                enum_LevelGenerateType generateType = levelInfo.m_LevelType.ToPrefabType();
+                SLevelGenerate innerData = GameDataManager.GetItemGenerateProperties(m_StyleCurrent, generateType, true);
+                SLevelGenerate outerData = GameDataManager.GetItemGenerateProperties(m_StyleCurrent, generateType, false);
+                levelInfo.GenerateMap(GameObjectManager.SpawnLevelPrefab(tf_LevelParent), innerData, outerData, levelItemPrefabs, m_mainSeed);
+                StaticBatchingUtility.Combine(levelInfo.m_Level.tf_LevelItem.gameObject);
+                levelInfo.SetLevelShow(false);
+                OnEachLevelGenerate(levelInfo);
+            }
+
+            j++;
+            if (j == length1)
+            {
+                i++;
+                j = 0;
+            }
+
+            if (i == length0)
+            {
+                OnEnvironmentLoaded();
+                yield break;
+            }
+            yield return new WaitForSeconds(0.1f);
+        }
     }
     #region Level
     void OnStageStart()
@@ -97,7 +135,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager>,ISingleCoroutine {
     }
     #endregion
     #region BigMap
-    public static SBigmapLevelInfo[,] GenerateBigmapLevels(enum_Style _levelStyle,System.Random _seed,Transform _generateParent,int _bigmapWidth, int _bigmapHeight,Action<SBigmapLevelInfo> _OnEachLevelGenerate)
+    public static SBigmapLevelInfo[,] GenerateBigmap(enum_Style _levelStyle,System.Random _seed,int _bigmapWidth, int _bigmapHeight)
     {
         //Generate Big Map All Tiles
         SBigmapTileInfo[,] bigmapTiles = new SBigmapTileInfo[_bigmapWidth, _bigmapHeight];
@@ -195,24 +233,12 @@ public class LevelManager : SimpleSingletonMono<LevelManager>,ISingleCoroutine {
         }
 
         //Load All map Levels And Set Material
-        Dictionary<enum_LevelItemType,List<LevelItemBase>> levelItemPrefabs = GameObjectManager.RegisterLevelItem(_levelStyle);
-        SBigmapLevelInfo[,] m_MapLevelInfo = new SBigmapLevelInfo[bigmapTiles.GetLength(0), bigmapTiles.GetLength(1)];      //Generate Bigmap Info
-        for (int i = 0; i < _bigmapWidth; i++)
-            for (int j = 0; j < _bigmapHeight; j++)
-            {
-                m_MapLevelInfo[i, j] = new SBigmapLevelInfo(bigmapTiles[i, j]);
-                if (m_MapLevelInfo[i, j].m_LevelType != enum_TileType.Invalid)
-                {
-                    enum_LevelGenerateType generateType = m_MapLevelInfo[i, j].m_LevelType.ToPrefabType();
-                    SLevelGenerate innerData = GameDataManager.GetItemGenerateProperties(_levelStyle, generateType, true);
-                    SLevelGenerate outerData = GameDataManager.GetItemGenerateProperties(_levelStyle, generateType, false);
-
-                    m_MapLevelInfo[i, j].GenerateMap(GameObjectManager.SpawnLevelPrefab(_generateParent), innerData, outerData, levelItemPrefabs, _seed);
-                    _OnEachLevelGenerate(m_MapLevelInfo[i, j]);
-                }
-            }
+        SBigmapLevelInfo[,] mapLevelInfo = new SBigmapLevelInfo[bigmapTiles.GetLength(0), bigmapTiles.GetLength(1)];      //Generate Bigmap Info
+        for (int i = 0; i < mapLevelInfo.GetLength(0); i++)
+            for (int j = 0; j < mapLevelInfo.GetLength(1); j++)
+                mapLevelInfo[i, j] = new SBigmapLevelInfo(bigmapTiles[i, j]);
         
-        return m_MapLevelInfo;
+        return mapLevelInfo;
     }
     static void ConnectTile(SBigmapTileInfo tileStart,SBigmapTileInfo tileEnd)
     {
