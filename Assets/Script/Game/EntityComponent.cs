@@ -20,6 +20,6 @@ public class EntityComponent : EntityBase {     //Temporaty Solution
     public void OnStop()
     {
         base.OnDead();
-        OnRecycle();
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityDeactivate, this as EntityBase);
     }
 }
