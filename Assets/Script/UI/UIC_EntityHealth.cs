@@ -30,7 +30,16 @@ public class UIC_EntityHealth : UIControlBase {
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
     }
 
-    bool b_showEntityHealthInfo(EntityBase entity) => entity.m_Controller != enum_EntityController.Player;
+    bool b_showEntityHealthInfo(EntityBase entity)
+    {
+        switch(entity.m_Controller)
+        {
+            case enum_EntityController.AI:
+            case enum_EntityController.Device:
+                return true;
+        }
+        return false;
+    } 
     int damageCount=0;
     void OnEntityActivate(EntityBase entity)
     {
