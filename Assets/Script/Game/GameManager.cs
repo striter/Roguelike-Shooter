@@ -164,19 +164,19 @@ public class GameManager : GameManagerBase
     public void OnExitGame()
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameExit);
-        SwitchScene( enum_Scene.Camp);
+        LoadingManager.Instance.ShowLoading( enum_StageLevel.Invalid);
+        SwitchScene( enum_Scene.Camp,()=> { LoadingManager.Instance.EndLoading();return true; });
     }
 
     #region Level Management
     //Call When Level Changed
     void LoadStage()      //PreInit Bigmap , Levels LocalPlayer Before  Start The game
     {
+        LoadingManager.Instance.ShowLoading(m_GameLevel.m_GameStage);
         Resources.UnloadUnusedAssets();
         GameObjectManager.RecycleAllObject();
         GameObjectManager.PresetRegistCommonObject();
-
         m_GameLevel.GetStageData();
-        LoadingManager.Instance.ShowLoading(m_GameLevel.m_GameStage);
         EntityReset();
         m_Enermies = GameObjectManager.RegistStyledIngameEnermies(m_GameLevel.m_GameStyle, m_GameLevel.m_GameStage);
         InitPostEffects(m_GameLevel.m_GameStyle);

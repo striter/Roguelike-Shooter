@@ -298,7 +298,7 @@ namespace GameSetting_Action
 
         public static float F_40021_FreezeDuration(enum_RarityLevel rarity) => 2f* (int)rarity;
 
-        public static float P_40022_HealAdditive(enum_RarityLevel rarity) => 40f * (int)rarity;
+        public static float P_40022_HealAdditive(enum_RarityLevel rarity) => 80f * (int)rarity;
         #endregion
     }
     #endregion

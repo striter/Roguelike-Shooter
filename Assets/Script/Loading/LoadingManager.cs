@@ -18,12 +18,25 @@ public class LoadingManager : SimpleSingletonMono<LoadingManager>
     public SpriteAtlas m_LoadingSprites;
     public static bool m_GameBegin { get; private set; } = false;
     public static enum_Scene m_CurrentScene { get; private set; } = enum_Scene.Invalid;
-    public static void BeginLoad(enum_Scene scene)
+    public static void BeginLoad(enum_Scene scene, Func<bool> onLoadFinish=null)
     {
         if (m_CurrentScene != enum_Scene.Invalid)
             SceneManager.UnloadSceneAsync(SceneManager.GetSceneByBuildIndex((int)m_CurrentScene));
         m_CurrentScene = enum_Scene.Invalid;
-        SceneManager.LoadSceneAsync((int)scene, LoadSceneMode.Additive);
+        Instance.StartCoroutine(LoadScene(SceneManager.LoadSceneAsync((int)scene, LoadSceneMode.Additive), onLoadFinish));
+    }
+    static IEnumerator LoadScene(AsyncOperation operation,Func<bool> OnFinishLoading)
+    {
+        operation.allowSceneActivation = false;
+        for(; ; )
+        {
+            if(operation.progress>=.9f&&(OnFinishLoading==null||OnFinishLoading()))
+            {
+                operation.allowSceneActivation = true;
+                yield break;
+            }
+            yield return null;
+        }
     }
 
     public static void OnOtherSceneEnter(enum_Scene scene)
@@ -45,6 +58,7 @@ public class LoadingManager : SimpleSingletonMono<LoadingManager>
     protected override void OnDestroy()
     {
         base.OnDestroy();
+        StopAllCoroutines();
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
