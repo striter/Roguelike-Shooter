@@ -402,8 +402,8 @@ namespace GameSetting
                 default: return "FFFFFFFF";
                 case enum_UIWeaponRarity.Ordinary: return "E3E3E3FF";
                 case enum_UIWeaponRarity.Advanced: return "6F8AFFFF";
-                case enum_UIWeaponRarity.Rare: return "C26FFF";
-                case enum_UIWeaponRarity.Legend: return "FFCC1F";
+                case enum_UIWeaponRarity.Rare: return "C26FFFFF";
+                case enum_UIWeaponRarity.Legend: return "FFCC1FFF";
             }
         }
     }

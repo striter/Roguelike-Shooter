@@ -14,8 +14,9 @@ public class SFXCastLaserBeam : SFXCast {
         base.OnPoolItemInit(_identity, _OnRecycle);
         m_Beam = transform.Find("Connections").GetComponent<LineRenderer>();
         m_Impact =new TSpecialClasses.ParticleControlBase( transform.Find("Impact"));
+        m_Beam.SetPosition(0, Vector3.zero);
+        m_Beam.SetPosition(1, Vector3.zero);
     }
-
     protected override void OnPlay()
     {
         base.OnPlay();
