@@ -557,7 +557,7 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: 2
   B_AutoLocalize: 1
-  S_AutoLocalizeKey: Game_Stage_Veteran
+  S_AutoLocalizeKey: UI_Loading_Veteran
   m_characterSpacing: 0
 --- !u!222 &487757173
 CanvasRenderer:
@@ -999,7 +999,7 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: 3
   B_AutoLocalize: 1
-  S_AutoLocalizeKey: Game_Stage_Ranger
+  S_AutoLocalizeKey: UI_Loading_Ranger
   m_characterSpacing: 0
 --- !u!222 &926808655
 CanvasRenderer:
@@ -1364,7 +1364,7 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: 1
   B_AutoLocalize: 1
-  S_AutoLocalizeKey: Game_Stage_Rookie
+  S_AutoLocalizeKey: UI_Loading_Rookie
   m_characterSpacing: 0
 --- !u!222 &1403157719
 CanvasRenderer:
