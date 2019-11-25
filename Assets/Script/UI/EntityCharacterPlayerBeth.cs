@@ -39,7 +39,7 @@ public class EntityCharacterPlayerBeth : EntityCharacterPlayer {
             if (!m_rolling)
                 m_Animator.EndRoll();
         }
-        EnableHitbox(!m_rolling);
+        //EnableHitbox(!m_rolling);
     }
     protected override void OnDead()
     {
