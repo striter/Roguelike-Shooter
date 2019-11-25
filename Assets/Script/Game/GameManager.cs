@@ -176,7 +176,7 @@ public class GameManager : GameManagerBase
         GameObjectManager.PresetRegistCommonObject();
 
         m_GameLevel.GetStageData();
-        LoadingManager.Instance.ShowLoading(true, (int)m_GameLevel.m_GameStage);
+        LoadingManager.Instance.ShowLoading(m_GameLevel.m_GameStage);
         EntityReset();
         m_Enermies = GameObjectManager.RegistStyledIngameEnermies(m_GameLevel.m_GameStyle, m_GameLevel.m_GameStage);
         InitPostEffects(m_GameLevel.m_GameStyle);
