@@ -239,7 +239,7 @@ namespace GameSetting_Action
         public static float F_30014_DamageReductionDuration(enum_RarityLevel rarity) => 1f*(int)rarity;
 
         public const int I_30015_Cost = 2;
-        public static float F_30015_DamageReflectPerArmor(enum_RarityLevel rarity) => 1 + 1 * (int)rarity;
+        public static float F_30015_DamageReflectPerArmor(enum_RarityLevel rarity) => 2 * (int)rarity;
 
         public const int I_30016_Cost = 1;
         public static float P_30016_ProjectileSpeedMultiply(enum_RarityLevel rarity) => 50 * (int)rarity;
