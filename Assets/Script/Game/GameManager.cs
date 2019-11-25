@@ -157,8 +157,9 @@ public class GameManager : GameManagerBase
     protected override void Start()
     {
         base.Start();
+        LevelManager.Instance.GameInit( OnLevelChanged, OnStageFinished, OnLevelGenerate);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameStart);
-        StartStage();
+        LoadStage();
     }
     public void OnExitGame()
     {
@@ -168,23 +169,29 @@ public class GameManager : GameManagerBase
 
     #region Level Management
     //Call When Level Changed
-    void StartStage()      //PreInit Bigmap , Levels LocalPlayer Before  Start The game
+    void LoadStage()      //PreInit Bigmap , Levels LocalPlayer Before  Start The game
     {
+        Resources.UnloadUnusedAssets();
         GameObjectManager.RecycleAllObject();
         GameObjectManager.PresetRegistCommonObject();
 
-        EntityPreset();
-        m_GameLevel.OnStageBegin();
+        m_GameLevel.GetStageData();
+        LoadingManager.Instance.ShowLoading(true, (int)m_GameLevel.m_GameStage);
+        EntityReset();
         m_Enermies = GameObjectManager.RegistStyledIngameEnermies(m_GameLevel.m_GameStyle, m_GameLevel.m_GameStage);
+        InitPostEffects(m_GameLevel.m_GameStyle);
+        LevelManager.Instance.LoadEnvironment(m_GameLevel.m_GameStyle, m_GameLevel.m_GameSeed,OnStageLoaded);
+    }
+    void OnStageLoaded()
+    {
+        GC.Collect();
         m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_BattleData);
         CameraController.Instance.Attach(m_LocalPlayer.transform, true);
-        LevelManager.Instance.GenerateAllEnviorment(m_GameLevel.m_GameStyle, m_GameLevel.m_GameSeed, OnLevelChanged, OnStageFinished,OnLevelGenerate);
-        InitPostEffects(m_GameLevel.m_GameStyle);
-        OnPortalExit(1f,m_LocalPlayer.tf_Head);
-        GC.Collect();
-        Resources.UnloadUnusedAssets();
+        OnPortalExit(1f, m_LocalPlayer.tf_Head);
+        LoadingManager.Instance.EndLoading();
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageStart);
     }
+
     public void ChangeLevel(TTiles.TileAxis axis)
     {
         GameObjectManager.RecycleAllWeapon(p=>p.I_SourceID>0&&!m_Entities.ContainsKey(p.I_SourceID));      //Remove All Playing Else Entity SFX
@@ -213,7 +220,7 @@ public class GameManager : GameManagerBase
             return;
         }
         GameDataManager.AdjustInGameData(m_LocalPlayer, m_GameLevel);
-        OnPortalEnter(1f, m_LocalPlayer.tf_Head, StartStage);
+        OnPortalEnter(1f, m_LocalPlayer.tf_Head, LoadStage);
     }
 
     void OnGameFinished(bool win)
@@ -330,7 +337,7 @@ public class GameManager : GameManagerBase
         });
     }
 
-    void EntityPreset()
+    void EntityReset()
     {
         m_Entities.Clear();
         TCommon.TraversalEnum((enum_EntityFlag flag) => {
@@ -599,7 +606,7 @@ public class GameLevelManager
             m_StageStyle.Add(level, style);
         });
     }
-    public void OnStageBegin()
+    public void GetStageData()
     {
         m_actionGenerate = GameExpression.GetInteractGenerate(m_GameStage);
         m_BattleDifficulty = enum_BattleDifficulty.Peaceful;
