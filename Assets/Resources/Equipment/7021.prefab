@@ -431,7 +431,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1480526431946986}
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 4.4858446, y: 12.779724, z: 7.79138}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4933386375644420}
@@ -532,14 +532,12 @@ MonoBehaviour:
   E_CastType: 1
   E_CastTarget: -1
   B_CastForward: 0
-  F_Damage: 0
+  F_Damage: 202.8
   I_TickCount: 1
   F_Tick: 0.5
   I_BuffApplyOnCast: 0
   E_AreaType: 1
   V4_CastInfo: {x: 4, y: 0, z: 0, w: 0}
-  I_MuzzleIndex: 0
-  I_ImpactIndex: 0
   F_DelayDuration: 0
   I_DelayIndicatorIndex: 0
   B_CameraShake: 1
