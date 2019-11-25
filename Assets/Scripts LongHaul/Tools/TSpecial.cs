@@ -938,7 +938,7 @@ public static class Physics_Extend
 #region UI Classes
 public class AtlasLoader
 {
-    Dictionary<string, Sprite> m_SpriteDic = new Dictionary<string, Sprite>();
+    protected Dictionary<string, Sprite> m_SpriteDic { get; private set; } = new Dictionary<string, Sprite>();
     public bool Contains(string name) => m_SpriteDic.ContainsKey(name);
     public Sprite this[string name]
     {
@@ -957,6 +957,28 @@ public class AtlasLoader
         Sprite[] allsprites=new Sprite[atlas.spriteCount];
         atlas.GetSprites(allsprites);
         allsprites.Traversal((Sprite sprite)=> { string name = sprite.name.Replace("(Clone)", ""); m_SpriteDic.Add(name, sprite); });
+    }
+}
+
+public class AtlasAnim:AtlasLoader
+{
+    int animIndex=0;
+    List<Sprite> m_Anims;
+    public AtlasAnim(SpriteAtlas atlas):base(atlas)
+    {
+        m_Anims = m_SpriteDic.Values.ToList();
+    }
+    public Sprite Reset()
+    {
+        animIndex = 0;
+        return m_Anims[animIndex];
+    }
+    public Sprite Tick()
+    {
+        animIndex++;
+        if (animIndex == m_Anims.Count)
+            animIndex = 0;
+        return m_Anims[animIndex];
     }
 }
 #endregion
