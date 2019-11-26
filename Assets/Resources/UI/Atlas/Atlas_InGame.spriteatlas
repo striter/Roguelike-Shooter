@@ -29,11 +29,11 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 081334a023db2704db167d2dfc323270, type: 3}
-    totalSpriteSurfaceArea: 2071146
+    totalSpriteSurfaceArea: 2178848
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
-  - {fileID: 21300000, guid: fef222d1315d97a43887c63ec824fc08, type: 3}
+  - {fileID: 21300000, guid: 6671b623e72080f41a9b698dff195d20, type: 3}
   - {fileID: 21300000, guid: 0aaa3dc21666f4046978924681572f16, type: 3}
   - {fileID: 21300000, guid: a00c4e98a73cb6d46a3f7b2ed752f740, type: 3}
   - {fileID: 21300000, guid: f707edb8147ad104b8e3b9a3fc7ed413, type: 3}
@@ -41,8 +41,9 @@ SpriteAtlas:
   - {fileID: 21300000, guid: d783a5f7194904445969c59766ac8443, type: 3}
   - {fileID: 21300000, guid: 18a7c2d7df8a6854e9bc2e3248a93804, type: 3}
   - {fileID: 21300000, guid: 006ea73e2bf56dc4e959b2bc4171da77, type: 3}
+  - {fileID: 21300000, guid: ce23f48acd6ddf541b7a5d298771ae09, type: 3}
+  - {fileID: 21300000, guid: 7e8939e4e7672634a85dc521ef1497a7, type: 3}
   - {fileID: 21300000, guid: b8baf198d27163e4583c425aff5bff11, type: 3}
-  - {fileID: 21300000, guid: 9962f76be756a5c4e8bb00c1c68468fa, type: 3}
   - {fileID: 21300000, guid: fa0122c7e5ddb1d4399a011784eede79, type: 3}
   - {fileID: 21300000, guid: a0edf0727dbc54049ad1b24763bf40b5, type: 3}
   - {fileID: 21300000, guid: 12c8606a8595d3c4296a7893b563be4e, type: 3}
@@ -80,8 +81,9 @@ SpriteAtlas:
   - result_missionfailed_title_en
   - result_missionfailed_title_cn
   - result_missioncomplete_title_cn
-  - map_info_kuang
   - backpack_bottom
+  - officer_bottom
+  - map_info_kuang
   - result_Ruler
   - map_tile_type_End
   - map_tile_type_Portal
