@@ -68,9 +68,9 @@ public class EntityCharacterAI : EntityCharacterBase {
         m_AI.OnInfoChange();
     }
 
-    protected override void OnCharacterUpdate(float deltaTime)
+    protected override void OnAliveTick(float deltaTime)
     {
-        base.OnCharacterUpdate(deltaTime);
+        base.OnAliveTick(deltaTime);
         if (m_Animator != null)
         {
             m_Animator.SetForward(m_AI.B_AgentEnabled ? 1f:0f);

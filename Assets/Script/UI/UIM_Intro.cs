@@ -14,11 +14,10 @@ public class UIM_Intro : UIMessageBoxBase{
         m_Intro = tf_Container.Find("Intro").GetComponent<UIT_TextExtend>();
         txt_Confirm = tf_Container.Find("Confirm/Text").GetComponent<UIT_TextExtend>();
     }
-    public void Play(string titleKey, string introKey, string confirmKey, Action _OnConfirmClick)
+    public void Play(string titleKey, string introKey, Action _OnConfirmClick)
     {
         base.Play(_OnConfirmClick);
         m_title.localizeKey = titleKey;
         m_Intro.localizeKey = introKey;
-        txt_Confirm.localizeKey = confirmKey;
     }
 }

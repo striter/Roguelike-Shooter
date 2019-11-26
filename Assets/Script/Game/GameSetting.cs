@@ -1587,11 +1587,13 @@ namespace GameSetting
         protected bool b_shuffling => f_shuffleCheck > 0;
         public float f_shuffleScale => f_shuffleCheck / GameConst.F_ActionShuffleCooldown;
         public int m_Coins { get; private set; } = 0;
+
         public PlayerInfoManager(EntityCharacterPlayer _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange, Action _OnActionChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
         {
             m_Player = _attacher;
             OnActionChange = _OnActionChange;
         }
+
         public override void OnActivate()
         {
             base.OnActivate();
@@ -1599,12 +1601,14 @@ namespace GameSetting
             TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
             TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
         }
+
         public override void OnDeactivate()
         {
             base.OnDeactivate();
             TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
             TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
         }
+
         public override void Tick(float deltaTime)
         {
             base.Tick(deltaTime);
@@ -1625,14 +1629,14 @@ namespace GameSetting
                     OnShuffle();
             }
         }
+
         public void InitActionInfo(List<ActionBase> _actions)
         {
             for (int i = 0; i < _actions.Count; i++)
                 AddStoredAction(_actions[i]);
             m_ActionEnergy = GameConst.F_RestoreActionEnergy;
         }
-
-
+        
         public void OnBattleStart()
         {
             OnShuffle();
@@ -1653,6 +1657,8 @@ namespace GameSetting
             base.Reset();
             f_shuffleCheck = -1;
         }
+
+
         #region Info Update
         protected void OnUseAcion(ActionBase targetAction)
         {
@@ -1898,9 +1904,6 @@ namespace GameSetting
             if (m_ActionEnergy > GameConst.F_MaxActionEnergy)
                 m_ActionEnergy = GameConst.F_MaxActionEnergy;
         }
-        #endregion
-
-        #region Action Device Interact
         public bool m_HaveDevice => m_CurrentDevice != null;
         public bool TryUseDevice()
         {
@@ -1923,7 +1926,18 @@ namespace GameSetting
                 return false;
             });
         }
+
+        public bool CheckRevive(ref RangeFloat reviveAmount)
+        {
+            for(int i=0;i<m_ActionEquiping.Count;i++)
+            {
+                if (m_ActionEquiping[i].OnCheckRevive(ref reviveAmount))
+                    return true;
+            }
+            return false;
+        }
         #endregion
+
         #region CoinInfo
         public void OnCoinsReceive(int coinAmount)
         {
@@ -2114,6 +2128,7 @@ namespace GameSetting
         public virtual void OnWeaponDetach() { }
         public virtual void OnMove(float distsance) { }
         public virtual void OnAllyActivate(EntityCharacterBase ally) { }
+        public virtual bool OnCheckRevive(ref RangeFloat amount) { return false; }
         #endregion
     }
     #endregion

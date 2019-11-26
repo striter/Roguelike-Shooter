@@ -130,7 +130,7 @@ public class UIC_PlayerStatus : UIControlBase
         if (!m_Player)
             return;
 
-        rtf_StatusData.SetWorldViewPortAnchor(m_Player.tf_Status.position, CameraController.Instance.m_Camera, Time.deltaTime * 10f);
+        rtf_StatusData.SetWorldViewPortAnchor(m_Player.tf_UIStatus.position, CameraController.Instance.m_Camera, Time.deltaTime * 10f);
 
         m_EnergyLerp.TickDelta(Time.unscaledDeltaTime);
         m_HealthLerp.TickDelta(Time.unscaledDeltaTime);

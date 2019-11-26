@@ -77,12 +77,12 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         m_Effect.SetFreezed(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Freeze));
         m_Effect.SetScaned(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Scan));
         if (!m_Health.b_IsDead)
-            OnCharacterUpdate(Time.deltaTime);
+            OnAliveTick(Time.deltaTime);
+        else
+            OnDeadTick(Time.deltaTime);
     }
-    protected virtual void OnCharacterUpdate(float deltaTime)
-    {
-
-    }
+    protected virtual void OnAliveTick(float deltaTime) { }
+    protected virtual void OnDeadTick(float deltaTime) { }
 
     public virtual void ReviveCharacter(float reviveHealth = -1, float reviveArmor = -1)
     {

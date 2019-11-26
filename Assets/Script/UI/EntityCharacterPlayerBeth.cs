@@ -30,9 +30,9 @@ public class EntityCharacterPlayerBeth : EntityCharacterPlayer {
         m_Animator.BeginRoll(forward,F_RollDuration);
     }
 
-    protected override void OnCharacterUpdate(float deltaTime)
+    protected override void OnAliveTick(float deltaTime)
     {
-        base.OnCharacterUpdate(deltaTime);
+        base.OnAliveTick(deltaTime);
         if (m_rolling)
         {
             f_rollCheck -= deltaTime;
