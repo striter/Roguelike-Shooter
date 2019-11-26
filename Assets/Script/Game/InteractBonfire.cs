@@ -47,7 +47,6 @@ public class InteractBonfire : InteractGameBase {
 
     void OnDistinguish()        //Light Low,Fire Off,Start Distinguish
     {
-        Debug.Log("distinguish");
         m_Target = null;
         m_FireParticles.Stop();
         tf_Light.SetActivate(false);
