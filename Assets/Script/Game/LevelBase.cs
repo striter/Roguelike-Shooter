@@ -76,9 +76,8 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
                 }
                 index++;
             }
-            yield return null;
         }
-
+        yield return null;
         ClearTileForInteracts();
         GenerateBorderTile(m_IndexBorder);
         GenerateRandomMainTile(_innerData,m_IndexEmptyInner);
