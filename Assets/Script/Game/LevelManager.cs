@@ -7,7 +7,7 @@ using UnityEngine.AI;
 using System;
 using LPWAsset;
 
-public class LevelManager : SimpleSingletonMono<LevelManager>,ISingleCoroutine {
+public class LevelManager : SimpleSingletonMono<LevelManager> {
     public Transform tf_LevelParent { get; private set; }
     public enum_Style m_StyleCurrent { get; private set; } = enum_Style.Invalid;
     public SBigmapLevelInfo m_currentLevel { get; private set; }
@@ -17,8 +17,6 @@ public class LevelManager : SimpleSingletonMono<LevelManager>,ISingleCoroutine {
     public Transform m_InteractParent => m_currentLevel.m_Level.tf_Interact;
     public System.Random m_mainSeed;
     public Action<SBigmapLevelInfo> OnLevelPrepared,OnEachLevelGenerate;
-    Action OnStageFinished;
-    Action OnEnvironmentLoaded;
     protected override void Awake()
     {
         base.Awake();
@@ -39,31 +37,25 @@ public class LevelManager : SimpleSingletonMono<LevelManager>,ISingleCoroutine {
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
     }
-    public void GameInit( Action<SBigmapLevelInfo> _OnLevelPrepared, Action _OnStageFinished, Action<SBigmapLevelInfo> _OnEachLevelGenerate)
+    public void GameInit( Action<SBigmapLevelInfo> _OnLevelPrepared, Action<SBigmapLevelInfo> _OnEachLevelGenerate)
     {
         OnLevelPrepared = _OnLevelPrepared;
-        OnStageFinished = _OnStageFinished;
         OnEachLevelGenerate = _OnEachLevelGenerate;
     }
     
-    public void LoadEnvironment(enum_Style _LevelStyle,System.Random seed,Action _OnEnvironmentLoaded)
+    public IEnumerator GenerateLevel(enum_Style _LevelStyle, System.Random seed,int length0=6,int length1=5)
     {
-        m_Loading = true;
-           OnEnvironmentLoaded = _OnEnvironmentLoaded;
         m_mainSeed = seed;
         m_StyleCurrent = _LevelStyle;
+        m_Loading = true;
+
+        yield return null;
         StyleColorData[] customizations = TResources.GetAllStyleCustomization(_LevelStyle);
         StyleColorData randomData = customizations.Length == 0 ? StyleColorData.Default() : customizations.RandomItem(m_mainSeed);
         randomData.DataInit(m_DirectionalLight);
-        m_MapLevelInfo = GenerateBigmap(m_StyleCurrent, m_mainSeed,6,5);
-        this.StartSingleCoroutine(0, GenerateLevel());
-    }
-
-    IEnumerator GenerateLevel()
-    {
+        m_MapLevelInfo = GenerateBigmap(m_StyleCurrent, m_mainSeed, 6, 5);
+        yield return null;
         Dictionary<enum_LevelItemType, List<LevelItemBase>> levelItemPrefabs = GameObjectManager.RegisterLevelItem(m_StyleCurrent);
-        int length0 = m_MapLevelInfo.GetLength(0);
-        int length1 = m_MapLevelInfo.GetLength(1);
         int i = 0, j = 0;
         for (; ; )
         {
@@ -88,7 +80,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager>,ISingleCoroutine {
 
             if (i == length0)
             {
-                OnEnvironmentLoaded();
+                m_Loading = false;
                 yield break;
             }
             yield return null;
