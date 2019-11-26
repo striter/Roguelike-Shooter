@@ -19,7 +19,6 @@ public class ObjectPoolMonoItem<T> :MonoBehaviour,ObjectPoolItem<T>
     }
     protected void DoPoolItemRecycle()
     {
-        m_IsPoolItem = false;
         OnSelfRecycle?.Invoke(m_Identity, this);
     }
     private void OnEnable() { if (m_IsPoolItem) OnPoolItemEnable(); }
