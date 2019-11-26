@@ -546,7 +546,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   E_CastType: 1
-  E_CastTarget: 1
+  E_CastTarget: 3
   B_CastForward: 0
   F_Damage: 0
   I_TickCount: 1
