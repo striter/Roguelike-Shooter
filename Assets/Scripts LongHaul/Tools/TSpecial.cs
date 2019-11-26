@@ -967,12 +967,20 @@ public class AtlasAnim:AtlasLoader
     public AtlasAnim(SpriteAtlas atlas):base(atlas)
     {
         m_Anims = m_SpriteDic.Values.ToList();
+        m_Anims.Sort((a,b) =>
+        {
+            int index1 = int.Parse(System.Text.RegularExpressions.Regex.Replace(a.name, @"[^0-9]+", ""));
+            int index2 = int.Parse(System.Text.RegularExpressions.Regex.Replace(b.name, @"[^0-9]+", ""));
+            return index2 - index1;
+        });
     }
+
     public Sprite Reset()
     {
         animIndex = 0;
         return m_Anims[animIndex];
     }
+
     public Sprite Tick()
     {
         animIndex++;
