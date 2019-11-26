@@ -266,7 +266,7 @@ namespace GameSetting_Action
 
         public static float F_40007_DamageAdditive(enum_RarityLevel rarity) => 4f * (int)rarity;
 
-        public static float P_40008_MaxHealthAdditive(enum_RarityLevel rarity) => 25;
+        public static float P_40008_MaxHealthAdditive(enum_RarityLevel rarity) => 25 * (int)rarity;
 
         public static float F_40009_DamageMultiplyAfterRloead(enum_RarityLevel rarity) => 40f * (int)rarity;
 
