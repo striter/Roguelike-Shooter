@@ -21,8 +21,8 @@ GameObject:
   - component: {fileID: 4994167522343668}
   - component: {fileID: 33266064253090890}
   - component: {fileID: 23802186290552416}
-  - component: {fileID: 64936541518096488}
   - component: {fileID: 114167117588094562}
+  - component: {fileID: 65935577765026994}
   m_Layer: 0
   m_Name: BorderOblique_Horde
   m_TagString: Untagged
@@ -143,8 +143,8 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1230314616501016}
   m_Mesh: {fileID: 4300000, guid: caff2c59ae60ebd469edb5765b1372f1, type: 3}
---- !u!64 &64936541518096488
-MeshCollider:
+--- !u!65 &65935577765026994
+BoxCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -152,11 +152,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_SkinWidth: 0.01
-  m_Mesh: {fileID: 4300000, guid: caff2c59ae60ebd469edb5765b1372f1, type: 3}
+  serializedVersion: 2
+  m_Size: {x: 91.23596, y: 499.33466, z: 224.71384}
+  m_Center: {x: -9.21277, y: 3.6610336, z: -10.429646}
 --- !u!114 &114082696626262376
 MonoBehaviour:
   m_ObjectHideFlags: 1

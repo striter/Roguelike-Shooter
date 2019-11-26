@@ -36,8 +36,8 @@ GameObject:
   - component: {fileID: 4436452138541880}
   - component: {fileID: 33784809780275370}
   - component: {fileID: 23109657037230780}
-  - component: {fileID: 64904026752924176}
   - component: {fileID: 114764799889892410}
+  - component: {fileID: 65936007956451564}
   m_Layer: 0
   m_Name: BorderOblique_desert
   m_TagString: Untagged
@@ -143,8 +143,8 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1820620904955994}
   m_Mesh: {fileID: 4300000, guid: d86f04af467f99b4fb6de43b1f5b480f, type: 3}
---- !u!64 &64904026752924176
-MeshCollider:
+--- !u!65 &65936007956451564
+BoxCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -152,11 +152,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_SkinWidth: 0.01
-  m_Mesh: {fileID: 4300000, guid: d86f04af467f99b4fb6de43b1f5b480f, type: 3}
+  serializedVersion: 2
+  m_Size: {x: 206.92574, y: 282.92285, z: 33.23503}
+  m_Center: {x: -0.000003814698, y: -0.0000076293945, z: 0.0000009536745}
 --- !u!114 &114418097003968192
 MonoBehaviour:
   m_ObjectHideFlags: 1
