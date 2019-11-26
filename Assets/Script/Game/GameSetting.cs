@@ -76,6 +76,7 @@ namespace GameSetting
     public static class GameExpression
     {
         public static int GetPlayerEquipmentIndex(int equipmentIndex) => equipmentIndex * 10;
+        public static int GetPlayerSubEquipmentIndex(int equipmentIndex) => equipmentIndex * 10 + 1;
         public static int GetAIEquipmentIndex(int entityIndex, int weaponIndex = 0, int subWeaponIndex = 0) => entityIndex * 100 + weaponIndex * 10 + subWeaponIndex;
         public static int GetActionMuzzleIndex(enum_ActionType type) => 10010 + (int)type;
         public const int I_PlayerReviveBuffIndex = 40004;

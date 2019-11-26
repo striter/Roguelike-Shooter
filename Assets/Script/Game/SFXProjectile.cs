@@ -15,7 +15,7 @@ public class SFXProjectile : SFXEquipmentBase
     public int I_ImpactIndex;
     public int I_IndicatorIndex;
     public int I_HitMarkIndex;
-    public int I_BufFApplyOnHit;
+    public int I_BuffApplyOnHit;
     [Tooltip("Physics Size")]
     public float F_Radius = .5f, F_Height = 1f;
     [Tooltip("Projectile Type:(Single|Unused) (Multiline/MultiFan| Projectile Count Each Count)")]
@@ -40,8 +40,8 @@ public class SFXProjectile : SFXEquipmentBase
     protected bool CanDamageEntity(HitCheckEntity _entity) => !m_EntityHitted.Contains(_entity.I_AttacherID) && GameManager.B_CanSFXDamageEntity(_entity, m_SourceID);
     public virtual void Play(DamageDeliverInfo deliverInfo ,Vector3 direction, Vector3 targetPosition )
     {
-        if (I_BufFApplyOnHit > 0)
-            deliverInfo.AddExtraBuff(I_BufFApplyOnHit);
+        if (I_BuffApplyOnHit > 0)
+            deliverInfo.AddExtraBuff(I_BuffApplyOnHit);
         m_DamageInfo=new DamageInfo(F_Damage, enum_DamageType.Basic,deliverInfo);
         m_PhysicsSimulator = GetSimulator(direction, targetPosition);
         SpawnIndicator(targetPosition,Vector3.up, F_PlayDelay);
