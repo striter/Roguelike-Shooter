@@ -180,13 +180,13 @@ public class GameManager : GameManagerBase
         EntityReset();
         GC.Collect();
         Resources.UnloadUnusedAssets();
-        yield return null;
+        yield return new WaitForSeconds(.5f);
         GameObjectManager.RecycleAllObject();
-        yield return null;
+        yield return new WaitForSeconds(.5f);
         GameObjectManager.PresetRegistCommonObject();
+        yield return new WaitForSeconds(.5f);
         m_Enermies = GameObjectManager.RegistStyledIngameEnermies(m_GameLevel.m_GameStyle, m_GameLevel.m_GameStage);
         yield return LevelManager.Instance.GenerateLevel(m_GameLevel.m_GameStyle, m_GameLevel.m_GameSeed);
-        //Loading Finish
         InitPostEffects(m_GameLevel.m_GameStyle);
         m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_BattleData);
         CameraController.Instance.Attach(m_LocalPlayer.transform, true);

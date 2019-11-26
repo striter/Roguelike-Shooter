@@ -618,7 +618,7 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: "\u8FD4\u56DE"
   B_AutoLocalize: 1
-  S_AutoLocalizeKey: UI_Common_Cancel
+  S_AutoLocalizeKey: UI_Common_Return
   m_characterSpacing: 10
 --- !u!114 &114943447778762404
 MonoBehaviour:

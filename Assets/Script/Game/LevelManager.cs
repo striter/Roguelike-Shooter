@@ -56,35 +56,31 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
         m_MapLevelInfo = GenerateBigmap(m_StyleCurrent, m_mainSeed, 6, 5);
         yield return null;
         Dictionary<enum_LevelItemType, List<LevelItemBase>> levelItemPrefabs = GameObjectManager.RegisterLevelItem(m_StyleCurrent);
-        int i = 0, j = 0;
-        for (; ; )
+        for (int i=0;i<length0 ;i++ )
         {
-            SBigmapLevelInfo levelInfo = m_MapLevelInfo[i, j];
-            if (levelInfo.m_LevelType != enum_TileType.Invalid)
+            for (int j = 0; j < length1; j++)
             {
-                enum_LevelGenerateType generateType = levelInfo.m_LevelType.ToPrefabType();
-                SLevelGenerate innerData = GameDataManager.GetItemGenerateProperties(m_StyleCurrent, generateType, true);
-                SLevelGenerate outerData = GameDataManager.GetItemGenerateProperties(m_StyleCurrent, generateType, false);
-                levelInfo.GenerateMap(GameObjectManager.SpawnLevelPrefab(tf_LevelParent), innerData, outerData, levelItemPrefabs, m_mainSeed);
-                StaticBatchingUtility.Combine(levelInfo.m_Level.tf_LevelItem.gameObject);
-                levelInfo.SetLevelShow(false);
-                OnEachLevelGenerate(levelInfo);
-            }
+                SBigmapLevelInfo levelInfo = m_MapLevelInfo[i, j];
+                if (levelInfo.m_LevelType != enum_TileType.Invalid)
+                {
+                    enum_LevelGenerateType generateType = levelInfo.m_LevelType.ToPrefabType();
+                    SLevelGenerate innerData = GameDataManager.GetItemGenerateProperties(m_StyleCurrent, generateType, true);
+                    SLevelGenerate outerData = GameDataManager.GetItemGenerateProperties(m_StyleCurrent, generateType, false);
 
-            j++;
-            if (j == length1)
-            {
-                i++;
-                j = 0;
+                    LevelBase m_level = GameObjectManager.SpawnLevelPrefab(tf_LevelParent);
+                    m_level.transform.localRotation = Quaternion.Euler(0, seed.Next(360), 0);
+                    m_level.transform.localPosition = Vector3.zero;
+                    m_level.transform.localScale = Vector3.one;
+                    yield return m_level.GenerateTileItems(innerData, outerData, levelItemPrefabs,levelInfo.m_LevelType, m_mainSeed);
+                    StaticBatchingUtility.Combine(m_level.tf_LevelItem.gameObject);
+                    levelInfo.SetLevelShow(false);
+                    levelInfo.SetMap(m_level);
+                    OnEachLevelGenerate(levelInfo);
+                }
+                yield return null;
             }
-
-            if (i == length0)
-            {
-                m_Loading = false;
-                yield break;
-            }
-            yield return null;
         }
+        m_Loading = false;
     }
     #region Level
     void OnStageStart()

@@ -2236,13 +2236,10 @@ namespace GameSetting
         {
             m_Connections = tile.m_Connections;
         }
-        public void GenerateMap(LevelBase levelSpawned,SLevelGenerate innerData,SLevelGenerate outerData, Dictionary<enum_LevelItemType,List<LevelItemBase>> _levelItemPrefabs,System.Random seed)
+        public void SetMap(LevelBase levelSpawned)
         {
             m_Level = levelSpawned;
-            m_Level.transform.localRotation = Quaternion.Euler(0, seed.Next(360), 0);
-            m_Level.transform.localPosition = Vector3.zero;
-            m_Level.transform.localScale = Vector3.one;
-            m_Level.GenerateTileItems(innerData,outerData, _levelItemPrefabs, m_LevelType,seed, m_LevelType== enum_TileType.End);
+            SetLevelShow(false);
         }
         public void SetLevelShow(bool show)
         {

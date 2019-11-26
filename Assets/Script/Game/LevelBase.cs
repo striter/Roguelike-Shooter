@@ -4,6 +4,7 @@ using UnityEngine;
 using GameSetting;
 using TTiles;
 using System;
+using System.Collections;
 
 public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
     public List<LevelTile> m_MapData;
@@ -29,7 +30,8 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
     Dictionary<enum_LevelItemType, List<LevelItemBase>> m_AllItemPrefabs = new Dictionary<enum_LevelItemType, List<LevelItemBase>>();
     public int I_InnerHalfLength { get; private set; }
     public int I_OuterHalfLength { get; private set; }
-    public void GenerateTileItems(SLevelGenerate _innerData,SLevelGenerate _outerData, Dictionary<enum_LevelItemType, List<LevelItemBase>> allItemPrefabs, enum_TileType _levelType, System.Random _seed, bool showPortal)
+
+    public IEnumerator GenerateTileItems(SLevelGenerate _innerData,SLevelGenerate _outerData, Dictionary<enum_LevelItemType, List<LevelItemBase>> allItemPrefabs, enum_TileType _levelType, System.Random _seed)
     {
         m_AllItemPrefabs = allItemPrefabs;
         m_seed = _seed;
@@ -74,7 +76,9 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
                 }
                 index++;
             }
+            yield return null;
         }
+
         ClearTileForInteracts();
         GenerateBorderTile(m_IndexBorder);
         GenerateRandomMainTile(_innerData,m_IndexEmptyInner);
@@ -87,8 +91,8 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
             LevelTileItem main = m_AllTiles[m_IndexItemMain[i]] as LevelTileItem;
             LevelItemBase itemMain = GameObjectManager.SpawnLevelItem(m_AllItemPrefabs[main.m_LevelItemType][main.m_LevelItemListIndex], tf_LevelItem, main.m_Offset);
             itemMain.SetDirection(this, main.m_ItemDirection);
+            yield return null;
         }
-
     }
     void ClearTileForInteracts()
     {
