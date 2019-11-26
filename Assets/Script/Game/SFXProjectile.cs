@@ -35,7 +35,7 @@ public class SFXProjectile : SFXEquipmentBase
     protected int m_SourceID => m_DamageInfo.m_detail.I_SourceID;
     protected virtual void PlayIndicator(float duration) => m_Indicator.Play(I_SourceID, duration);
     protected Vector3 m_CenterPos => F_Height > F_Radius * 2 ? transform.position + transform.forward * F_Height / 2 : transform.position + transform.forward * F_Radius;
-    List<int> m_EntityHitted = new List<int>();
+    protected List<int> m_EntityHitted = new List<int>();
     protected bool CanHitTarget(HitCheckBase hitCheck) => !m_EntityHitted.Contains(hitCheck.I_AttacherID) && GameManager.B_CanSFXHitTarget(hitCheck, m_SourceID);
     protected bool CanDamageEntity(HitCheckEntity _entity) => !m_EntityHitted.Contains(_entity.I_AttacherID) && GameManager.B_CanSFXDamageEntity(_entity, m_SourceID);
     public virtual void Play(DamageDeliverInfo deliverInfo ,Vector3 direction, Vector3 targetPosition )
