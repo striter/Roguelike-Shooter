@@ -8,21 +8,21 @@ public interface ObjectPoolItem<T>{
 }
 public class ObjectPoolMonoItem<T> :MonoBehaviour,ObjectPoolItem<T>
 {
-    public bool m_IsPoolItem { get; private set; }
+    public bool m_PoolItemInited { get; private set; }
     public T m_Identity { get; private set; }
     public Action<T,MonoBehaviour> OnSelfRecycle;
     public virtual void OnPoolItemInit(T _identity,Action<T,MonoBehaviour> _OnSelfRecycle)
     {
         m_Identity = _identity;
-        m_IsPoolItem = true;
+        m_PoolItemInited = true;
         OnSelfRecycle = _OnSelfRecycle;
     }
     protected void DoPoolItemRecycle()
     {
         OnSelfRecycle?.Invoke(m_Identity, this);
     }
-    private void OnEnable() { if (m_IsPoolItem) OnPoolItemEnable(); }
-    private void OnDisable() { if (m_IsPoolItem) OnPoolItemDisable(); }
+    private void OnEnable() { if (m_PoolItemInited) OnPoolItemEnable(); }
+    private void OnDisable() { if (m_PoolItemInited) OnPoolItemDisable(); }
     protected virtual void OnPoolItemEnable() { }
     protected virtual void OnPoolItemDisable(){}
 }

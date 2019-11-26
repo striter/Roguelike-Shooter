@@ -42,7 +42,7 @@ public class UI_ActionAcquire : UIPageBase {
         OnCancel();
     }
 
-    protected override void OnCancelBtnClick()=>GameUIManager.Instance.ShowMessageBox<UIM_Intro>().Play("UI_Title_ExitActionAcquire", "UI_Intro_ExitActionAcquire", "UI_Common_Confirm", OnCancel);
+    protected override void OnCancelBtnClick()=>GameUIManager.Instance.ShowMessageBox<UIM_Intro>().Play("UI_Title_ExitActionAcquire", "UI_Intro_ExitActionAcquire", OnCancel);
     void OnCancel()
     {
         base.OnCancelBtnClick();
