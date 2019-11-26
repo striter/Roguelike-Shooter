@@ -70,7 +70,7 @@ GameObject:
   - component: {fileID: 4201765603051862}
   - component: {fileID: 114771183890705328}
   m_Layer: 0
-  m_Name: 40012_Effect_FireMeshGlow
+  m_Name: 41002_Effect_FireMeshGlow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

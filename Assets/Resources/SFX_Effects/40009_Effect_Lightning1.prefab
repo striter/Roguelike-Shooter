@@ -104,7 +104,7 @@ GameObject:
   - component: {fileID: 4525811915207066}
   - component: {fileID: 114385400434499400}
   m_Layer: 0
-  m_Name: 40009_Effect_Lightning
+  m_Name: 40009_Effect_Lightning1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
