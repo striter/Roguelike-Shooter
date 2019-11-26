@@ -364,7 +364,7 @@ public class PE_DepthSSAO : PostEffectBase
 {
     public override bool m_HighCost => true;
     public override DepthTextureMode m_DepthTextureMode => DepthTextureMode.Depth;
-    public void SetEffect(float strength=.8f, float sphereRadius= 0.025f, int _sampleCount=16)
+    public void SetEffect(float strength=1f, float sphereRadius= 0.035f,float _fallOff=0.00001f,float _fallOffLimit= 0.003f, int _sampleCount=16)
     {
         Vector4[] array = new Vector4[16] {
             new Vector3( 0.5381f, 0.1856f,-0.4319f),  new Vector3( 0.1379f, 0.2486f, 0.4430f),new Vector3( 0.3371f, 0.5679f,-0.0057f),  new Vector3(-0.6999f,-0.0451f,-0.0019f),
@@ -377,9 +377,11 @@ public class PE_DepthSSAO : PostEffectBase
         m_Material.SetVectorArray("_SampleSphere", array);
 
         m_Material.SetFloat("_Strength", strength);
-        m_Material.SetFloat("_FallOff", m_Manager.Get01DepthLength(sphereRadius));
+        m_Material.SetFloat("_FallOff", _fallOff);
+        m_Material.SetFloat("_FallOffLimit", _fallOffLimit);
     }
 }
+
 #endregion
 #region CommandBuffer
 public class CommandBufferBase:CameraEffectBase

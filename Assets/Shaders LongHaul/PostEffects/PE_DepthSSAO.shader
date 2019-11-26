@@ -18,12 +18,12 @@
 				#include "UnityCG.cginc"
 
 			sampler2D _MainTex;
-			half4 _MainTex_TexelSize;
 			sampler2D _CameraDepthTexture;
 			float4 _SampleSphere[32];
 			int _SampleCount;
 			float _Strength;
 			float _FallOff;
+			float _FallOffLimit;
 			struct v2f
 			{
 				float2 uv : TEXCOORD0;
@@ -38,40 +38,37 @@
 				return o;
 			}
 
-			float3 normal_from_depth(float depth, float2 texcoords) {
+			float3 normal_from_depth(float2 texcoords) {
 
 				const float2 offset1 = float2(0.0, 0.001);
 				const float2 offset2 = float2(0.001, 0.0);
 
+				float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, texcoords);
 				float depth1 = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, texcoords + offset1);
 				float depth2 = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, texcoords + offset2);
 				
 				float3 p1 = float3(offset1, depth1 - depth);
 				float3 p2 = float3(offset2, depth2 - depth);
-
-				float3 normal = cross(p1, p2);
-				normal.z = -normal.z;
-
-				return normalize(normal);
+				return -normalize(cross(p1, p2));
 			}
 
 			fixed4 frag (v2f i) : SV_Target
 			{
 				float4 col = tex2D(_MainTex, i.uv);
+				float3 normal = normal_from_depth( i.uv);
 				float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.uv);
 				float3 position = float3(i.uv, depth);
-				float3 normal = normal_from_depth(depth, i.uv);
 				float occlusion = 0;
 				for (int i = 0; i < _SampleCount; i++) {
 					float3 ray = _SampleSphere[i];
 					float3 hemi_ray = position + sign(dot(ray, normal)) * ray;
-					float occ_depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, saturate(hemi_ray.xy));
-					float difference = occ_depth- depth;
-					
-					occlusion += step(_FallOff, abs(difference))*lerp(-1,1,smoothstep(-_FallOff,_FallOff,difference));
+					float occ_depth =  SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, saturate(hemi_ray.xy));
+					float difference = occ_depth-depth; 
+
+					occlusion += step(difference,_FallOffLimit)* lerp(-1, 1, smoothstep(-_FallOff, _FallOff, difference));
 				}
-				occlusion = saturate( occlusion/_SampleCount);
-				float ao = pow(occlusion,3)*_Strength;
+				occlusion =  saturate( occlusion/_SampleCount);
+				float ao = pow(occlusion,5)*_Strength;
 				return lerp(col,float4(0,0,0,1),ao);
 			}
 			ENDCG

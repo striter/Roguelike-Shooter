@@ -21,17 +21,18 @@
 
 				#include "UnityCG.cginc"
 
-			sampler2D _MainTex;
-			half4 _MainTex_TexelSize;
 			sampler2D _CameraDepthTexture;
-			half _FogDensity;
-			fixed4 _FogColor;
-			float _FogStart;
-			float _FogEnd;
 			float4 _FrustumCornersRayBL;
 			float4 _FrustumCornersRayBR;
 			float4 _FrustumCornersRayTL;
 			float4 _FrustumCornersRayTR;
+
+			sampler2D _MainTex;
+			half4 _MainTex_TexelSize;
+			half _FogDensity;
+			fixed4 _FogColor;
+			float _FogStart;
+			float _FogEnd;
 
 			struct v2f
 			{
@@ -51,7 +52,6 @@
 				if (_MainTex_TexelSize.y < 0)
 					o.uv_depth.y = 1 - o.uv_depth.y;
 #endif
-				int index = 0;
 				bool right = o.uv.x > .5;
 				bool top = o.uv.y > .5;
 				o.interpolatedRay = right ? (top? _FrustumCornersRayTR: _FrustumCornersRayBR) : (top? _FrustumCornersRayTL: _FrustumCornersRayBL);

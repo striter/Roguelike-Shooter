@@ -13,7 +13,6 @@ public class ShaderTest : MonoBehaviour
         //PE_FocalDepth focal= GetComponent<CameraEffectManager>().GetOrAddCameraEffect<PE_FocalDepth>();
         //focal.SetEffect(4);
         //focal.SetFocalTarget(target.transform.position,1f);
-
     }
 
 }
