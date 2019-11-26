@@ -167,7 +167,7 @@ public class LoadingManager : SimpleSingletonMono<LoadingManager>
                 tickCheck -= Time.deltaTime;
                 return;
             }
-            tickCheck = .1f;
+            tickCheck = .05f;
             m_Loading.sprite = m_LoadingSprites.Tick();
         }
     }
