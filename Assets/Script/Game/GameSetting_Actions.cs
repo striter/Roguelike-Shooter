@@ -526,7 +526,11 @@ namespace GameSetting_Action
         public override enum_ActionType m_ActionType => enum_ActionType.Basic;
         public override float F_Duration => ActionData.F_10002_Duration;
         public override float Value1 => ActionData.F_10002_ArmorReceive(m_rarity);
-        public override void OnMove(float amount) => ActionHelper.ReceiveHealing(m_ActionEntity,Value1*amount, enum_DamageType.ArmorOnly);
+        public override void OnMove(float amount)
+        {
+            if (amount > 0)
+                ActionHelper.ReceiveHealing(m_ActionEntity, Value1 * amount, enum_DamageType.ArmorOnly);
+        }
         public Action_10002_MoveArmorAdditive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
 
