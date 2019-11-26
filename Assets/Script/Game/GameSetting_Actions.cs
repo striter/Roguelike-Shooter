@@ -202,7 +202,7 @@ namespace GameSetting_Action
         public static float P_30002_SingleShotDamageMultiplyAfterKill(enum_RarityLevel rarity) => 100 * (int)rarity;
 
         public const int I_30003_Cost = 2;
-        public static float F_30003_GrenadeDamage(enum_RarityLevel rarity) => 50 * (int)rarity;
+        public static float F_30003_GrenadeDamage(enum_RarityLevel rarity) => 100 * (int)rarity;
 
         public const int I_30004_Cost = 2;
         public static float P_30004_ReloadSpeedMultiply(enum_RarityLevel rarity) => 50 * (int)rarity;
