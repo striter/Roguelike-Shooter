@@ -655,6 +655,7 @@ namespace GameSetting_Action
     {
         public override int m_Index => 10012;
         public override int I_BaseCost => ActionData.I_10012_Cost;
+        public override int m_EffectIndex => 40011;
         public override enum_ActionType m_ActionType => enum_ActionType.Basic;
         public override float F_Duration => ActionData.F_10012_Duration;
         public override float Value1 => ActionData.F_10012_DamageAdditive(m_rarity);
