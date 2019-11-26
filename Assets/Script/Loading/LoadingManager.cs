@@ -156,11 +156,18 @@ public class LoadingManager : SimpleSingletonMono<LoadingManager>
             transform.SetActivate(false);
         }
 
+        float tickCheck = 0f;
         public void Tick(float deltaTime)
         {
             if (!playing)
                 return;
 
+            if(tickCheck>0)
+            {
+                tickCheck -= Time.deltaTime;
+                return;
+            }
+            tickCheck = .1f;
             m_Loading.sprite = m_LoadingSprites.Tick();
         }
     }

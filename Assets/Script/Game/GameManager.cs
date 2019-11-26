@@ -176,12 +176,12 @@ public class GameManager : GameManagerBase
         //Start Loading
         LoadingManager.Instance.ShowLoading(m_GameLevel.m_GameStage);
         yield return null;
+        GameObjectManager.RecycleAllObject();
+        yield return null;
         m_GameLevel.GetStageData();
         EntityReset();
         GC.Collect();
         Resources.UnloadUnusedAssets();
-        yield return null;
-        GameObjectManager.RecycleAllObject();
         yield return null;
         GameObjectManager.PresetRegistCommonObject();
         yield return null;
