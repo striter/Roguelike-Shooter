@@ -377,7 +377,7 @@ public class PE_DepthSSAO : PostEffectBase
         m_Material.SetVectorArray("_SampleSphere", array);
 
         m_Material.SetFloat("_Strength", strength);
-        m_Material.SetFloat("_FallOff", m_Manager.Get01DepthLength(sphereRadius)/10f);
+        m_Material.SetFloat("_FallOff", m_Manager.Get01DepthLength(sphereRadius));
     }
 }
 #endregion

@@ -43,8 +43,8 @@
 				const float2 offset1 = float2(0.0, 0.001);
 				const float2 offset2 = float2(0.001, 0.0);
 
-				float depth1 =  SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, texcoords + offset1);
-				float depth2 = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, texcoords + offset2);
+				float depth1 = Linear01Depth(SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, texcoords + offset1));
+				float depth2 = Linear01Depth(SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, texcoords + offset2));
 				
 				float3 p1 = float3(offset1, depth1 - depth);
 				float3 p2 = float3(offset2, depth2 - depth);
@@ -58,15 +58,15 @@
 			fixed4 frag (v2f i) : SV_Target
 			{
 				float4 col = tex2D(_MainTex, i.uv);
-				float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.uv);
+				float depth = Linear01Depth(SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.uv));
 				float3 position = float3(i.uv, depth);
 				float3 normal = normal_from_depth(depth, i.uv);
 				float occlusion = 0;
 				for (int i = 0; i < _SampleCount; i++) {
 					float3 ray = _SampleSphere[i];
 					float3 hemi_ray = position + sign(dot(ray, normal)) * ray;
-					float occ_depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, saturate(hemi_ray.xy));
-					float difference = occ_depth-depth;
+					float occ_depth = Linear01Depth( SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, saturate(hemi_ray.xy)));
+					float difference = depth-occ_depth;
 					
 					occlusion += step(_FallOff, abs(difference))*lerp(-1,1,smoothstep(-_FallOff,_FallOff,difference));
 				}
