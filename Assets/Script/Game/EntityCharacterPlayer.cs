@@ -22,7 +22,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public InteractBase m_Interact { get; private set; }
     public float m_EquipmentDistance { get; private set; }
     public Transform tf_UIStatus { get; private set; }
-    public override Transform tf_Weapon => m_WeaponCurrent.m_Case;
+    public override Transform tf_Weapon => m_WeaponCurrent.m_Muzzle;
+    public override Transform tf_WeaponModel => m_WeaponCurrent.m_Case;
     public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized * m_CharacterInfo.F_MovementSpeed * time;
     public PlayerInfoManager m_PlayerInfo { get; private set; }
     protected override void ActivateHealthManager(float maxHealth) => m_Health.OnActivate(maxHealth, I_DefaultArmor, true);

@@ -553,7 +553,7 @@ namespace GameSetting
 
     public enum enum_ActionType { Invalid = -1, Basic = 1,Device=2,Equipment=3, WeaponPerk = 4, }
 
-    public enum enum_EffectAttach { Invalid = -1,  Head = 1, Feet = 2, Weapon = 3,}
+    public enum enum_EffectAttach { Invalid = -1,  Head = 1, Feet = 2, WeaponModel = 3,}
 
     public enum enum_PlayerCharacter {Invalid=-1,Beth=10001,Jason=10002,Charles=10003 }
 
@@ -2486,7 +2486,7 @@ namespace GameSetting
         {
             OnPlayAnim(false);
             m_Cast = GameObjectManager.SpawnEquipment<SFXCast>(I_Index, m_Entity.tf_Weapon.position, m_Entity.tf_Weapon.forward);
-            m_Cast.PlayControlled(m_Entity.m_EntityID, m_Entity.tf_Weapon, attacherHead, GetDamageDeliverInfo());
+            m_Cast.PlayControlled(m_Entity.m_EntityID, m_Entity, attacherHead, GetDamageDeliverInfo());
         }
 
         public override void OnPlayAnim(bool play)
@@ -2634,7 +2634,7 @@ namespace GameSetting
         }
         public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
-            SFXShield shield = GameObjectManager.SpawnEquipment<SFXShield>(I_Index, m_Entity.tf_Weapon.position, Vector3.up);
+            SFXShield shield = GameObjectManager.SpawnEquipment<SFXShield>(I_Index, m_Entity.tf_Model.position, Vector3.up);
             OnSpawn?.Invoke(shield);
             shield.Attach(_target);
         }

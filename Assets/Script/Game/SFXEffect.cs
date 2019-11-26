@@ -18,8 +18,8 @@ public class SFXEffect : SFXParticles
             case enum_EffectAttach.Head:
                 attachTo = entity.tf_Head;
                 break;
-            case enum_EffectAttach.Weapon:
-                attachTo = entity.tf_Weapon;
+            case enum_EffectAttach.WeaponModel:
+                attachTo = entity.tf_WeaponModel;
                 break;
         }
         if (attachTo == null)

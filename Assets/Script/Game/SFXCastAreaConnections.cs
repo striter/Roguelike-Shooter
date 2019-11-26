@@ -44,21 +44,30 @@ public class SFXCastAreaConnections : SFXCast {
             m_Renderer.SetPosition(1, targetTrans.position);
         }
     }
+    TSpecialClasses.ParticleControlBase m_GroundParticles;
     public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
         base.OnPoolItemInit(_identity, _OnRecycle);
         Transform connections = transform.Find("Connections");
         m_Connections = new ObjectPoolSimple<EntityBase, ConnectionsItem>(connections.Find("Item").gameObject,connections,(Transform trans, EntityBase entity)=>new ConnectionsItem(trans),(ConnectionsItem item)=>item.transform);
+        m_GroundParticles = new TSpecialClasses.ParticleControlBase(transform.Find("ParticlesGround"));
+    }
+    public override void Play(DamageDeliverInfo buffInfo)
+    {
+        base.Play(buffInfo);
+        m_Particle.Clear();
     }
     protected override void OnPlay()
     {
         base.OnPlay();
+        m_GroundParticles.Play();
         m_Connections.ClearPool();
     }
 
     protected override void OnStop()
     {
         base.OnStop();
+        m_GroundParticles.Stop();
         m_Connections.ClearPool();
     }
     float check;
