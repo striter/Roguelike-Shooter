@@ -383,11 +383,20 @@ public class GameManager : GameManagerBase
     {
         if (character.m_Controller == enum_EntityController.Player)
         {
-            OnPlayerDead();
+            SetPostEffect_Dead();
             return;
         }
 
         SpawnEntityDeadPickups(character);
+    }
+
+    void OnCharacterRevive(EntityCharacterBase character)
+    {
+        if (character.m_Controller == enum_EntityController.Player)
+        {
+            SetPostEffect_Revive();
+            return;
+        }
     }
 
     #endregion
@@ -415,45 +424,17 @@ public class GameManager : GameManagerBase
         return hb.m_Attacher.m_Flag != Instance.GetEntity(sourceID).m_Flag;
     }
     #endregion
-    #region Player Management
-    List<RangeFloat> m_PlayerReviveHealing = new List<RangeFloat>();
-    void OnPlayerDead()
+    #region Revive Management
+    Action OnRevivePlay;
+    public void CheckRevive(Action _OnRevivePlayer)
     {
-        SetPostEffect_Dead();
-        this.StartSingleCoroutine(10, TIEnumerators.PauseDel(GameConst.F_PlayerReviveCheckAfterDead, CheckRevive));
-    }
-    void OnCharacterRevive(EntityCharacterBase character)
-    {
-        if (character.m_Controller != enum_EntityController.Player)
-            return;
-        SetPostEffect_Revive();
-    }
-
-    public void AddPlayerReviveCheck(RangeFloat reviveData)
-    {
-        m_PlayerReviveHealing.Add(reviveData);
-    }
-
-    void CheckRevive()
-    {
-        if (m_PlayerReviveHealing.Count > 0)
-        {
-            m_LocalPlayer.ReviveCharacter(m_PlayerReviveHealing[m_PlayerReviveHealing.Count - 1].start, m_PlayerReviveHealing[m_PlayerReviveHealing.Count-1].length);
-            m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.BuffInfo(-1,SBuff.SystemPlayerReviveInfo(GameConst.F_PlayerReviveBuffDuration,GameExpression.I_PlayerReviveBuffIndex))));
-            m_PlayerReviveHealing.RemoveAt(m_PlayerReviveHealing.Count - 1);
-            return;
-        }
-        UIManager.Instance.ShowPage<UI_Revive>(true, 0f).Play(ForceRevivePlayer, OnCreditRevivePlayer, 50,GameDataManager.CanUseCredit);
+        OnRevivePlay = _OnRevivePlayer;
+        UIManager.Instance.ShowPage<UI_Revive>(true, 0f).Play(_OnRevivePlayer, OnCreditRevivePlayer, 50,GameDataManager.CanUseCredit);
     }
     void OnCreditRevivePlayer()
     {
         GameDataManager.OnCreditStatus(-50);
-        ForceRevivePlayer();
-    }
-    void ForceRevivePlayer()
-    {
-        m_PlayerReviveHealing.Add(new RangeFloat(m_LocalPlayer.m_Health.m_MaxHealth,m_LocalPlayer.m_Health.m_DefaultArmor));  
-        CheckRevive();
+        OnRevivePlay();
     }
     #endregion
     #region Battle Management
@@ -518,7 +499,6 @@ public class GameManager : GameManagerBase
 
         B_Battling = false;
         SpawnRewards(lastEntityPos);
-        m_PlayerReviveHealing.Clear();
         GameObjectManager.RecycleAllInteract(enum_Interaction.PickupArmor);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleFinish);
     }

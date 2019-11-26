@@ -25,13 +25,19 @@ public class UIGI_ExpireInfoItem : UIT_GridItem {
         m_Rarity.SetRarity(action.m_rarity);
         m_Image.sprite = GameUIManager.Instance.m_ActionSprites[action.m_Index.ToString()];
         m_DurationFill.fillAmount = 0;
+        CheckFillAmount();
     }
+    void CheckFillAmount()
+    {
+        if (m_target.m_ExpireDuration == 0)
+            return;
+
+        m_DurationFill.fillAmount = 1 - m_target.f_expireLeftScale;
+        m_Duration.text = string.Format("{0:N1}s", m_target.f_expireCheck);
+    }
+
     private void Update()
     {
-        if (m_target != null && m_target.m_ExpireDuration != 0)
-        {
-            m_DurationFill.fillAmount = 1-m_target.f_expireLeftScale;
-            m_Duration.text = string.Format("{0:N1}s", m_target.f_expireCheck);
-        }
+        CheckFillAmount();
     }
 }

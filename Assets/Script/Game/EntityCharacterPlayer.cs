@@ -21,19 +21,22 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public WeaponBase m_WeaponCurrent { get; private set; } = null;
     public InteractBase m_Interact { get; private set; }
     public float m_EquipmentDistance { get; private set; }
+    public Transform tf_UIStatus { get; private set; }
     public override Transform tf_Weapon => m_WeaponCurrent.m_Case;
-    public Transform tf_Status { get; private set; }
     public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized * m_CharacterInfo.F_MovementSpeed * time;
     public PlayerInfoManager m_PlayerInfo { get; private set; }
+    protected override void ActivateHealthManager(float maxHealth) => m_Health.OnActivate(maxHealth, I_DefaultArmor, true);
     protected bool m_aiming = false;
+    protected override enum_GameAudioSFX m_DamageClip => enum_GameAudioSFX.PlayerDamage;
+
     protected float f_aimMovementReduction = 0f;
     protected bool m_aimingMovementReduction => f_aimMovementReduction > 0f;
-    protected override enum_GameAudioSFX m_DamageClip => enum_GameAudioSFX.PlayerDamage;
-    protected float f_abilityCoolDown = 0f;
-    protected bool m_AbilityCooldowning => f_abilityCoolDown > 0f;
-    protected override void ActivateHealthManager(float maxHealth) => m_Health.OnActivate(maxHealth, I_DefaultArmor, true);
     protected float m_BaseMovementSpeed;
     public override float m_baseMovementSpeed => m_BaseMovementSpeed;
+    protected float f_abilityCoolDown = 0f;
+    protected bool m_AbilityCooldowning => f_abilityCoolDown > 0f;
+    protected float f_reviveCheck = 0f;
+
     protected override CharacterInfoManager GetEntityInfo()
     {
         m_PlayerInfo = new PlayerInfoManager(this, m_HitCheck.TryHit, OnExpireChange, OnActionsChange);
@@ -49,7 +52,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         tf_WeaponAim = transform.Find("WeaponAim");
         tf_WeaponHoldRight = transform.FindInAllChild("WeaponHold_R");
         tf_WeaponHoldLeft = transform.FindInAllChild("WeaponHold_L");
-        tf_Status = transform.FindInAllChild("Status");
+        tf_UIStatus = transform.FindInAllChild("Status");
         m_Animator = GetAnimatorController(tf_Model.GetComponent<Animator>(),OnAnimationEvent);
         transform.Find("InteractDetector").GetComponent<InteractDetector>().Init(OnInteractCheck);
     }
@@ -80,6 +83,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected override void OnDead()
     {
         f_abilityCoolDown = 0f;
+        f_reviveCheck = GameConst.F_PlayerReviveCheckAfterDead;
         m_Animator.OnDead();
         m_MoveAxisInput = Vector2.zero;
         m_Assist.SetEnable(false);
@@ -134,9 +138,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             m_WeaponCurrent.Trigger(down);
     }
     
-    protected override void OnCharacterUpdate(float deltaTime)
+    protected override void OnAliveTick(float deltaTime)
     {
-        base.OnCharacterUpdate(deltaTime);
+        base.OnAliveTick(deltaTime);
         OnWeaponTick(deltaTime);
         OnMoveTick(deltaTime);
         OnAbilityTick(deltaTime);
@@ -356,7 +360,34 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerHealthStatus, m_Health);
     }
     #endregion
+    #region PlayerRevive
+    protected override void OnDeadTick(float deltaTime)
+    {
+        base.OnDeadTick(deltaTime);
+        if (f_reviveCheck < 0)
+            return;
 
+        f_reviveCheck -= Time.deltaTime;
+        if (f_reviveCheck < 0)
+            OnCheckRevive();
+    }
+    RangeFloat m_PlayerReviveAmount;
+    void OnCheckRevive()
+    {
+        m_PlayerReviveAmount = new RangeFloat(m_Health.m_MaxHealth, m_Health.m_DefaultArmor);
+        if (m_PlayerInfo.CheckRevive(ref m_PlayerReviveAmount))
+        {
+            RevivePlayer();
+            return;
+        }
+        GameManager.Instance.CheckRevive(RevivePlayer);
+    }
+    void RevivePlayer()
+    {
+        ReviveCharacter(m_PlayerReviveAmount.start, m_PlayerReviveAmount.length);
+        m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.BuffInfo(-1, SBuff.SystemPlayerReviveInfo(GameConst.F_PlayerReviveBuffDuration, GameExpression.I_PlayerReviveBuffIndex))));
+    }
+    #endregion
     void OnAnimationEvent(TAnimatorEvent.enum_AnimEvent animEvent)
     {
         if (m_WeaponCurrent)

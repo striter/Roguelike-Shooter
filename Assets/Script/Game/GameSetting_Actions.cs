@@ -359,10 +359,7 @@ namespace GameSetting_Action
         {
             entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.EquipmentInfo(entity.m_EntityID, 0, effect, duration)));
         }
-        public static void Revive(EntityCharacterPlayer entity, float health,float armor)
-        {
-            GameManager.Instance.AddPlayerReviveCheck(new RangeFloat(health,armor));
-        }
+
         public static void ReceiveEnergy(EntityCharacterPlayer entity, float amount)
         {
             entity.m_PlayerInfo.AddActionEnergy(amount);
@@ -384,6 +381,19 @@ namespace GameSetting_Action
         }
         public ActionAfterUse(int _identity,enum_RarityLevel _level) : base(_identity,_level) { }
     }
+
+    public class ActionReviveNormal : ActionBase
+    {
+        protected virtual RangeFloat m_ReviveAmount => new RangeFloat();
+        public override bool OnCheckRevive(ref RangeFloat amount)
+        {
+            amount = m_ReviveAmount;
+            ForceExpire();
+            return true;
+        }
+        public ActionReviveNormal(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
+    }
+
     public class ActionAfterBattle_ReloadTrigger : ActionBase
     {
         protected int m_reloadTimes;
@@ -437,6 +447,7 @@ namespace GameSetting_Action
             SetDuration(0f);
             m_fireIdentity = -1;
         }
+
         public override void OnFire(int _identity)
         {
             base.OnFire(_identity);
@@ -460,16 +471,19 @@ namespace GameSetting_Action
         public override enum_ActionType m_ActionType => enum_ActionType.Device;
         EquipmentBase m_Equipment;
         protected virtual float m_DeviceDistance=>10;
+
         public override void OnActivate()
         {
             base.OnActivate();
             m_Equipment = GetDevice();
         }
+
         public virtual EquipmentBase GetDevice()
         {
             Debug.LogError("Override This Please!");
             return null;
         }
+
         public override void OnUseDevice()
         {
             base.OnUseDevice();
@@ -818,17 +832,13 @@ namespace GameSetting_Action
         public Action_10022_HealthRegenFromDamage(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
 
-    public class Action_10023_Revive : ActionAfterUse
+    public class Action_10023_Revive : ActionReviveNormal
     {
         public override int m_Index => 10023;
         public override int I_BaseCost => ActionData.I_10023_Cost;
         public override enum_ActionType m_ActionType => enum_ActionType.Basic;
         public override float Value1 => ActionData.F_10023_ReviveHealthRegen(m_rarity);
-        public override void OnActivate()
-        {
-            base.OnActivate();
-            ActionHelper.Revive(m_ActionEntity, Value1,0f);
-        }
+        protected override RangeFloat m_ReviveAmount => new RangeFloat(Value1, 0f);
         public Action_10023_Revive(int _identity, enum_RarityLevel _level) : base(_identity, _level) { }
     }
 
