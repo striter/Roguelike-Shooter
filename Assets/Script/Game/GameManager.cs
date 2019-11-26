@@ -170,21 +170,24 @@ public class GameManager : GameManagerBase
 
     #region Level Management
     //Call When Level Changed
-    void LoadStage()      //PreInit Bigmap , Levels LocalPlayer Before  Start The game
+    void LoadStage() =>this.StartSingleCoroutine(999, DoLoadStage());
+    IEnumerator DoLoadStage()     //PreInit Bigmap , Levels LocalPlayer Before  Start The game
     {
+        //Start Loading
         LoadingManager.Instance.ShowLoading(m_GameLevel.m_GameStage);
-        Resources.UnloadUnusedAssets();
-        GameObjectManager.RecycleAllObject();
-        GameObjectManager.PresetRegistCommonObject();
+        yield return null;
         m_GameLevel.GetStageData();
         EntityReset();
-        m_Enermies = GameObjectManager.RegistStyledIngameEnermies(m_GameLevel.m_GameStyle, m_GameLevel.m_GameStage);
-        InitPostEffects(m_GameLevel.m_GameStyle);
-        LevelManager.Instance.LoadEnvironment(m_GameLevel.m_GameStyle, m_GameLevel.m_GameSeed,OnStageLoaded);
-    }
-    void OnStageLoaded()
-    {
         GC.Collect();
+        Resources.UnloadUnusedAssets();
+        yield return null;
+        GameObjectManager.RecycleAllObject();
+        yield return null;
+        GameObjectManager.PresetRegistCommonObject();
+        m_Enermies = GameObjectManager.RegistStyledIngameEnermies(m_GameLevel.m_GameStyle, m_GameLevel.m_GameStage);
+        yield return LevelManager.Instance.GenerateLevel(m_GameLevel.m_GameStyle, m_GameLevel.m_GameSeed);
+        //Loading Finish
+        InitPostEffects(m_GameLevel.m_GameStyle);
         m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_BattleData);
         CameraController.Instance.Attach(m_LocalPlayer.transform, true);
         OnPortalExit(1f, m_LocalPlayer.tf_Head);
