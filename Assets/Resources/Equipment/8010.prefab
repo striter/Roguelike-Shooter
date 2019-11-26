@@ -186,7 +186,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1480526431946986}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 2.1359189, y: 17.767668, z: 14.999012}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4496554419274132}
@@ -207,12 +207,12 @@ MonoBehaviour:
   E_CastType: 2
   E_CastTarget: -1
   B_CastForward: 0
-  F_Damage: 22.9
+  F_Damage: 15.7
   I_TickCount: 1
   F_Tick: 0
   I_BuffApplyOnCast: 0
   E_AreaType: 2
-  V4_CastInfo: {x: 2, y: 2, z: 7, w: 0}
+  V4_CastInfo: {x: 2, y: 2, z: 10, w: 0}
   F_DelayDuration: 0
   I_DelayIndicatorIndex: 0
   B_CameraShake: 0
@@ -276,7 +276,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -981168571
+  randomSeed: 702137748
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3577,7 +3577,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 361572150
+  randomSeed: -824693647
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -6890,7 +6890,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 1821818335
+  randomSeed: 1055924496
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -10203,7 +10203,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -1452520004
+  randomSeed: -2021346044
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -10239,7 +10239,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 30
+      scalar: 42
       minScalar: 5
       maxCurve:
         serializedVersion: 2
