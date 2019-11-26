@@ -16,7 +16,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
     public Light m_DirectionalLight { get; protected set; }
     public Transform m_InteractParent => m_currentLevel.m_Level.tf_Interact;
     public System.Random m_mainSeed;
-    public Action<SBigmapLevelInfo> OnLevelPrepared,OnEachLevelGenerate;
+    public Action<SBigmapLevelInfo> OnLevelPrepared;
     protected override void Awake()
     {
         base.Awake();
@@ -37,13 +37,12 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
     }
-    public void GameInit( Action<SBigmapLevelInfo> _OnLevelPrepared, Action<SBigmapLevelInfo> _OnEachLevelGenerate)
+    public void GameInit( Action<SBigmapLevelInfo> _OnLevelPrepared)
     {
         OnLevelPrepared = _OnLevelPrepared;
-        OnEachLevelGenerate = _OnEachLevelGenerate;
     }
     
-    public IEnumerator GenerateLevel(enum_Style _LevelStyle, System.Random seed,int length0=6,int length1=5)
+    public IEnumerator GenerateLevel(enum_Style _LevelStyle,Action<SBigmapLevelInfo> OnEachLevelGenerate, System.Random seed,int length0=6,int length1=5)
     {
         m_mainSeed = seed;
         m_StyleCurrent = _LevelStyle;

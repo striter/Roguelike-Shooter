@@ -157,7 +157,7 @@ public class GameManager : GameManagerBase
     protected override void Start()
     {
         base.Start();
-        LevelManager.Instance.GameInit( OnLevelChanged, OnLevelGenerate);
+        LevelManager.Instance.GameInit(OnLevelChanged);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameStart);
         LoadStage();
     }
@@ -185,11 +185,12 @@ public class GameManager : GameManagerBase
         yield return null;
         GameObjectManager.PresetRegistCommonObject();
         yield return null;
-        m_Enermies = GameObjectManager.RegistStyledIngameEnermies(m_GameLevel.m_GameStyle, m_GameLevel.m_GameStage);
-        yield return LevelManager.Instance.GenerateLevel(m_GameLevel.m_GameStyle, m_GameLevel.m_GameSeed);
-        InitPostEffects(m_GameLevel.m_GameStyle);
         m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_BattleData);
         CameraController.Instance.Attach(m_LocalPlayer.transform, true);
+        m_Enermies = GameObjectManager.RegistStyledIngameEnermies(m_GameLevel.m_GameStyle, m_GameLevel.m_GameStage);
+        yield return null;
+        InitPostEffects(m_GameLevel.m_GameStyle);
+        yield return LevelManager.Instance.GenerateLevel(m_GameLevel.m_GameStyle,OnLevelGenerate, m_GameLevel.m_GameSeed);
         OnPortalExit(1f, m_LocalPlayer.tf_Head);
         LoadingManager.Instance.EndLoading();
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageStart);
