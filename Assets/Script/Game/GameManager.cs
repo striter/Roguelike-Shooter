@@ -180,11 +180,11 @@ public class GameManager : GameManagerBase
         EntityReset();
         GC.Collect();
         Resources.UnloadUnusedAssets();
-        yield return new WaitForSeconds(.5f);
+        yield return null;
         GameObjectManager.RecycleAllObject();
-        yield return new WaitForSeconds(.5f);
+        yield return null;
         GameObjectManager.PresetRegistCommonObject();
-        yield return new WaitForSeconds(.5f);
+        yield return null;
         m_Enermies = GameObjectManager.RegistStyledIngameEnermies(m_GameLevel.m_GameStyle, m_GameLevel.m_GameStage);
         yield return LevelManager.Instance.GenerateLevel(m_GameLevel.m_GameStyle, m_GameLevel.m_GameSeed);
         InitPostEffects(m_GameLevel.m_GameStyle);
