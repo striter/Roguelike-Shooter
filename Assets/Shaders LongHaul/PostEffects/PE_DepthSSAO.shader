@@ -43,7 +43,7 @@
 				const float2 offset1 = float2(0.0, 0.001);
 				const float2 offset2 = float2(0.001, 0.0);
 
-				float depth1 = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, texcoords + offset1);
+				float depth1 =  SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, texcoords + offset1);
 				float depth2 = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, texcoords + offset2);
 				
 				float3 p1 = float3(offset1, depth1 - depth);
@@ -66,7 +66,7 @@
 					float3 ray = _SampleSphere[i];
 					float3 hemi_ray = position + sign(dot(ray, normal)) * ray;
 					float occ_depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, saturate(hemi_ray.xy));
-					float difference = occ_depth- depth;
+					float difference = occ_depth-depth;
 					
 					occlusion += step(_FallOff, abs(difference))*lerp(-1,1,smoothstep(-_FallOff,_FallOff,difference));
 				}
