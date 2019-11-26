@@ -52,11 +52,11 @@ public class UIManager :UIManagerBase,ISingleCoroutine
 
     protected virtual void InitGameControls(bool inGame)
     {
-        m_Indicates = ShowControls<UIC_Indicates>(true);
         m_GameControl = ShowControls<UIC_GameControl>().SetInGame(inGame);
         m_PlayerStatus = ShowControls<UIC_PlayerStatus>().SetInGame(inGame);
         m_CharacterControl = ShowControls<UIC_CharacterControl>();
         ShowControls<UIC_PlayerInteract>();
+        m_Indicates = ShowControls<UIC_Indicates>();
     }
 
     protected override void OnDestroy()
