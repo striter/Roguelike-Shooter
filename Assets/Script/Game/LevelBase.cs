@@ -91,7 +91,6 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
             LevelTileItem main = m_AllTiles[m_IndexItemMain[i]] as LevelTileItem;
             LevelItemBase itemMain = GameObjectManager.SpawnLevelItem(m_AllItemPrefabs[main.m_LevelItemType][main.m_LevelItemListIndex], tf_LevelItem, main.m_Offset);
             itemMain.SetDirection(this, main.m_ItemDirection);
-            yield return null;
         }
     }
     void ClearTileForInteracts()

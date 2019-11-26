@@ -54,7 +54,6 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
         StyleColorData randomData = customizations.Length == 0 ? StyleColorData.Default() : customizations.RandomItem(m_mainSeed);
         randomData.DataInit(m_DirectionalLight);
         m_MapLevelInfo = GenerateBigmap(m_StyleCurrent, m_mainSeed, 6, 5);
-        yield return null;
         Dictionary<enum_LevelItemType, List<LevelItemBase>> levelItemPrefabs = GameObjectManager.RegisterLevelItem(m_StyleCurrent);
         for (int i=0;i<length0 ;i++ )
         {
