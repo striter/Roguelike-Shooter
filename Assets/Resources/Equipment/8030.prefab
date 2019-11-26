@@ -143,9 +143,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   E_ProjectileType: 1
-  F_Damage: 26.4
-  F_Speed: 20
-  B_Penetrate: 1
+  F_Damage: 13.3
+  F_Speed: 10
+  B_Penetrate: 0
   AC_MuzzleClip: {fileID: 0}
   I_MuzzleIndex: 11002
   I_ImpactIndex: 21002
@@ -158,7 +158,7 @@ MonoBehaviour:
     start: 0
     length: 0
   F_OffsetExtension: 0
-  I_BounceCount: 10
+  I_BounceCount: 15
   I_SwapRange: 10
 --- !u!198 &198096753358967406
 ParticleSystem:
