@@ -28,6 +28,7 @@ public class SFXCastAreaConnections : SFXCast {
             {
                 m_Renderer.enabled = true;
                 m_Particles.Play();
+                Tick(0f);
             }
             else
             {
