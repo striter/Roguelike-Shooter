@@ -17,7 +17,6 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
     public Transform m_InteractParent => m_currentLevel.m_Level.tf_Interact;
     public System.Random m_mainSeed;
     public Action<SBigmapLevelInfo> OnLevelPrepared,OnEachLevelGenerate;
-    Action OnStageFinished;
     protected override void Awake()
     {
         base.Awake();
@@ -38,10 +37,9 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
     }
-    public void GameInit( Action<SBigmapLevelInfo> _OnLevelPrepared, Action _OnStageFinished, Action<SBigmapLevelInfo> _OnEachLevelGenerate)
+    public void GameInit( Action<SBigmapLevelInfo> _OnLevelPrepared, Action<SBigmapLevelInfo> _OnEachLevelGenerate)
     {
         OnLevelPrepared = _OnLevelPrepared;
-        OnStageFinished = _OnStageFinished;
         OnEachLevelGenerate = _OnEachLevelGenerate;
     }
     

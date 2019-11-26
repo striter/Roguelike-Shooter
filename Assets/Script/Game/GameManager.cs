@@ -157,7 +157,7 @@ public class GameManager : GameManagerBase
     protected override void Start()
     {
         base.Start();
-        LevelManager.Instance.GameInit( OnLevelChanged, OnStageFinished, OnLevelGenerate);
+        LevelManager.Instance.GameInit( OnLevelChanged, OnLevelGenerate);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameStart);
         LoadStage();
     }
