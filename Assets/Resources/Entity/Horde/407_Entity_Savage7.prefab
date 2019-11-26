@@ -943,8 +943,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   I_MaxHealth: 960
   I_DefaultArmor: 0
-  F_MovementSpeed: 3.5
+  F_MovementSpeed: 4.5
   F_AttackSpread: 0
+  ? ExtraRendererOnlyAvailableFor107WhatAwkwardRequirementWhyNotPutThemIntoOneModelCauseOutModelArtistCantDoItHaveToCreateThisIntoMyCodeLikeABunchOfShitForFuckingRealSucks
+  : {fileID: 0}
   E_EnermyType: 5
   E_AnimatorIndex: 10
   F_AIChaseRange: 1
