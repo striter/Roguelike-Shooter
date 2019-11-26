@@ -351,7 +351,7 @@ Transform:
   m_GameObject: {fileID: 1794606096511878}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.25, y: 1.25, z: 1.25}
   m_Children:
   - {fileID: 4793011236211042}
   - {fileID: 4010303438672442}
@@ -520,9 +520,7 @@ MonoBehaviour:
   F_Tick: 0.5
   I_BuffApplyOnCast: 0
   E_AreaType: 1
-  V4_CastInfo: {x: 4, y: 0, z: 0, w: 0}
-  I_MuzzleIndex: 0
-  I_ImpactIndex: 0
+  V4_CastInfo: {x: 5, y: 0, z: 0, w: 0}
   F_DelayDuration: 0
   I_DelayIndicatorIndex: 0
   B_CameraShake: 1
@@ -587,7 +585,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -1367143859
+  randomSeed: -1419368585
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3975,7 +3973,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -479909408
+  randomSeed: -1718878100
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -7357,7 +7355,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 44256413
+  randomSeed: 949535534
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -10745,7 +10743,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 919897339
+  randomSeed: -1401952983
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -14133,7 +14131,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 1766104544
+  randomSeed: 9269612
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -17521,7 +17519,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -2135742526
+  randomSeed: 1448424576
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -24270,7 +24268,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 1906045937
+  randomSeed: 1427701894
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -27652,7 +27650,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 689739176
+  randomSeed: 1111257376
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -31040,7 +31038,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -63667736
+  randomSeed: 1421976552
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -34428,7 +34426,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 1377918941
+  randomSeed: -220134368
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -37810,7 +37808,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 1305430534
+  randomSeed: 92942943
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -41192,7 +41190,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -771055036
+  randomSeed: 109926145
   InitialModule:
     serializedVersion: 3
     enabled: 1
