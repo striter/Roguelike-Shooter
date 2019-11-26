@@ -10,6 +10,5 @@ public class WeaponProjectileRocketLauncher : WeaponProjectileBase {
         base.OnGetEquipmentData(equipment);
         SFXCast cast = GameObjectManager.GetEquipmentData<SFXCast>(GameExpression.GetPlayerSubEquipmentIndex((int)m_WeaponInfo.m_Weapon));
         F_BaseDamage = cast.F_Damage;
-        Debug.Log(F_BaseDamage);
     }
 }
