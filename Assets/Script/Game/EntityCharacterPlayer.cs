@@ -78,11 +78,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_Health.OnRevive(health>0?health:I_MaxHealth,I_DefaultArmor);
     }
 
-    public override void OnActivate(enum_EntityFlag _flag, int _spawnerID = -1, float startHealth = 0)
-    {
-        base.OnActivate(_flag, _spawnerID, startHealth);
-        m_Ability.Reset();
-    }
     protected override void OnDead()
     {
         f_reviveCheck = GameConst.F_PlayerReviveCheckAfterDead;
@@ -94,7 +89,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected override void OnRevive()
     {
         base.OnRevive();
-        m_Ability.Reset();
+        m_Ability.SetEnable(true);
         m_Assist.SetEnable(true);
         m_Animator.OnRevive();
 
@@ -115,7 +110,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void OnBattleStart()
     {
         m_PlayerInfo.OnBattleStart();
-        m_Ability.Reset();
+        m_Ability.SetEnable(true);
     }
 
     protected override void OnBattleFinish()
@@ -123,7 +118,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         base.OnBattleFinish();
         m_Health.OnRestoreArmor();
         m_PlayerInfo.OnBattleFinish();
-        m_Ability.Reset();
+        m_Ability.SetEnable(false);
     }
 
     void OnMainDown(bool down)
@@ -269,7 +264,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         public bool m_AbilityCooldowning => m_abilityCooldownLeft > 0f;
         public bool m_AbilityRunsOut => m_AbilityRunsOutable&&m_AbilityTimes == 0;
         public bool m_AbilityRunsOutable => m_baseAbilityTimes > 0;
-
+        public bool m_AbilityEnable { get; private set; } = false;
         protected float m_abilityCooldownLeft = 0f;
 
         protected float m_baseAbilityCooldown;
@@ -280,18 +275,19 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             OnAbilityTrigger = _OnAbilityTrigger;
             m_baseAbilityCooldown = abilityCoolDown;
             m_baseAbilityTimes = abilityTime;
-            Reset();
+            SetEnable(false);
         }
 
-        public void Reset()
+        public void SetEnable(bool enable)
         {
+            m_AbilityEnable = enable;
             m_abilityCooldownLeft = 0;
             m_AbilityTimes = m_AbilityRunsOutable ? m_baseAbilityTimes : -1;
         }
 
         public void OnAbilityClick()
         {
-            if (m_AbilityCooldowning|| m_AbilityRunsOut)
+            if (!m_AbilityEnable||m_AbilityCooldowning || m_AbilityRunsOut)
                 return;
             m_abilityCooldownLeft = m_baseAbilityCooldown;
             m_AbilityTimes--;
