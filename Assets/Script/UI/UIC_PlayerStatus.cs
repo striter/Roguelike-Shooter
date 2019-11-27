@@ -92,7 +92,6 @@ public class UIC_PlayerStatus : UIControlBase
         TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerActionStatus, OnActionStatus);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageStart, OnStageStart);
 
         SetActionShow(false,false);
         SetMapInBattle(false, false);
@@ -110,7 +109,6 @@ public class UIC_PlayerStatus : UIControlBase
         TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerActionStatus, OnActionStatus);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnStageStart, OnStageStart);
     }
 
     public UIC_PlayerStatus SetInGame(bool inGame)
@@ -119,11 +117,7 @@ public class UIC_PlayerStatus : UIControlBase
         return this;
     }
 
-    void OnStageStart()
-    {
-        SetActionShow(false, false);
-        SetMapInBattle(false, true);
-    }
+
     void OnBattleStart()
     {
         SetActionShow(true, true);
@@ -132,7 +126,7 @@ public class UIC_PlayerStatus : UIControlBase
     void OnBattleFinish()
     {
         SetActionShow(false, true);
-        if (GameManager.Instance.m_GameLevel.m_LevelType != enum_TileType.End)
+        if (GameManager.Instance.m_GameLevel.B_HaveNextStage)
             SetMapInBattle(false, true);
     }
 

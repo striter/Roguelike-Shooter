@@ -219,7 +219,7 @@ public class GameManager : GameManagerBase
     {
         m_GameLevel.StageFinished();
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageFinish);
-        if (!m_GameLevel.B_NextStage)
+        if (!m_GameLevel.B_HaveNextStage)
         {
             OnGameFinished(true);
             return;
@@ -291,16 +291,24 @@ public class GameManager : GameManagerBase
         }
     }
 
-    void SpawnRewards(Vector3 rewardPos)
+    void SpawnBattleEndRewards(Vector3 rewardPos)
     {
-        if (m_GameLevel.m_LevelType == enum_TileType.Battle)
-        {
-            enum_RarityLevel level = m_GameLevel.m_actionGenerate.GetActionRarityLevel(m_GameLevel.m_GameSeed);
-            GameUIManager.Instance.ShowGameControlPage<UI_ActionAcquire>(true).Play(ActionDataManager.CreateRandomDropPlayerAction(2, level, m_GameLevel.m_GameSeed), m_LocalPlayer, 1);
-        }
-        else if (m_GameLevel.m_LevelType== enum_TileType.End)
+        if (m_GameLevel.m_LevelType == enum_TileType.End)
         {
             GameObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Portal, LevelManager.NavMeshPosition(rewardPos, false), LevelManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(OnStageFinished, m_GameLevel.m_GameStage);
+        }
+        switch(m_GameLevel.m_LevelType)
+        {
+            case enum_TileType.Battle:
+            case enum_TileType.End:
+                {
+                    if (m_GameLevel.B_HaveNextStage)
+                        return;
+
+                    enum_RarityLevel level = m_GameLevel.m_actionGenerate.GetActionRarityLevel(m_GameLevel.m_GameSeed);
+                    GameUIManager.Instance.ShowGameControlPage<UI_ActionAcquire>(true).Play(ActionDataManager.CreateRandomDropPlayerAction(2, level, m_GameLevel.m_GameSeed), m_LocalPlayer, 1);
+                }
+                break;
         }
     }
 
@@ -499,7 +507,7 @@ public class GameManager : GameManagerBase
         }
 
         B_Battling = false;
-        SpawnRewards(lastEntityPos);
+        SpawnBattleEndRewards(lastEntityPos);
         GameObjectManager.RecycleAllInteract(enum_Interaction.PickupArmor);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleFinish);
     }
@@ -544,7 +552,7 @@ public class GameLevelManager
 
     public System.Random m_GameSeed { get; private set; }
     public StageInteractGenerateData m_actionGenerate { get; private set; }
-    public bool B_NextStage => m_GameStage <= enum_StageLevel.Ranger;
+    public bool B_HaveNextStage => m_GameStage < enum_StageLevel.Ranger;
     public enum_TileType m_LevelType { get; private set; }
     public enum_StageLevel m_GameStage { get; private set; }
     Dictionary<enum_StageLevel, enum_Style> m_StageStyle = new Dictionary<enum_StageLevel, enum_Style>();
