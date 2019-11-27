@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class UIC_CharacterControl : UIControlBase {
     protected TouchDeltaManager m_TouchDelta { get; private set; }
     Image m_MainImg;
-    Image m_AbilityBG,m_AbilityImg,m_AbilityRunsOut,m_AbilityTimesDecorate,m_AbilityCooldown;
+    Image m_AbilityBG,m_AbilityImg,m_AbilityRunsOut,m_AbilityTimesDecorate,m_AbilityCooldown,m_AbilityInfinite;
     Text m_AbilityTimeCounts;
     Action OnReload, OnAbility;
     Action<bool> OnMainDown;
@@ -16,12 +16,13 @@ public class UIC_CharacterControl : UIControlBase {
     {
         base.Init();
         m_MainImg = transform.Find("Main/Image").GetComponent<Image>();
-        m_AbilityBG = transform.Find("Ability/Background").GetComponent<Image>();
+        m_AbilityBG = transform.Find("Ability").GetComponent<Image>();
         m_AbilityImg = transform.Find("Ability/Image").GetComponent<Image>();
         m_AbilityTimeCounts = transform.Find("Ability/TimesCount").GetComponent<Text>();
         m_AbilityCooldown = transform.Find("Ability/Cooldown").GetComponent<Image>();
         m_AbilityRunsOut = transform.Find("Ability/RunsOut").GetComponent<Image>();
         m_AbilityTimesDecorate = transform.Find("Ability/TimesImage").GetComponent<Image>();
+        m_AbilityInfinite = transform.Find("Ability/Infinite").GetComponent<Image>();
         transform.Find("Reload").GetComponent<Button>().onClick.AddListener(OnReloadButtonDown);
         transform.Find("Ability").GetComponent<Button>().onClick.AddListener(OnAbilityClick);
         transform.Find("Main").GetComponent<UIT_EventTriggerListener>().D_OnPress += OnMainButtonDown;
@@ -52,8 +53,11 @@ public class UIC_CharacterControl : UIControlBase {
             m_cooldowning = player.m_Ability.m_AbilityCooldowning;
             m_abilityTimes = player.m_Ability.m_AbilityTimes;
             bool runsOut = player.m_Ability.m_AbilityRunsOut;
+            bool infinite = player.m_Ability.m_AbilityRunsOutable;
 
-            m_AbilityTimeCounts.text = player.m_Ability.m_AbilityRunsOutable ? m_abilityTimes.ToString() : "∞";
+            m_AbilityTimeCounts.SetActivate(!infinite);
+            m_AbilityInfinite.SetActivate(infinite);
+            if(!infinite) m_AbilityTimeCounts.text = m_abilityTimes.ToString();
             m_AbilityCooldown.SetActivate(!runsOut && m_cooldowning);
             m_AbilityImg.color = TCommon.ColorAlpha(m_AbilityImg.color, runsOut?.6f:1f);
             m_AbilityBG.sprite = UIManager.Instance.m_CommonSprites[UIEnumConvertions.GetAbilityBackground(runsOut ,m_cooldowning)];
