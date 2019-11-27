@@ -88,11 +88,10 @@ public class UIC_PlayerStatus : UIControlBase
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<WeaponBase>(enum_BC_UIStatus.UI_PlayerAmmoStatus, OnAmmoStatus);
-        TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerExpireStatus, OnExpireStatus);
-        TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerActionStatus, OnActionStatus);
+        TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerExpireListStatus, OnExpireListStatus);
+        TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerBattleActionStatus, OnBattleActionStatus);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageStart, OnStageStart);
 
         SetActionShow(false,false);
         SetMapInBattle(false, false);
@@ -106,11 +105,10 @@ public class UIC_PlayerStatus : UIControlBase
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<WeaponBase>(enum_BC_UIStatus.UI_PlayerAmmoStatus, OnAmmoStatus);
-        TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerExpireStatus, OnExpireStatus);
-        TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerActionStatus, OnActionStatus);
+        TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerExpireListStatus, OnExpireListStatus);
+        TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerBattleActionStatus, OnBattleActionStatus);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnStageStart, OnStageStart);
     }
 
     public UIC_PlayerStatus SetInGame(bool inGame)
@@ -119,11 +117,7 @@ public class UIC_PlayerStatus : UIControlBase
         return this;
     }
 
-    void OnStageStart()
-    {
-        SetActionShow(false, false);
-        SetMapInBattle(false, true);
-    }
+
     void OnBattleStart()
     {
         SetActionShow(true, true);
@@ -132,7 +126,7 @@ public class UIC_PlayerStatus : UIControlBase
     void OnBattleFinish()
     {
         SetActionShow(false, true);
-        if (GameManager.Instance.m_GameLevel.m_LevelType != enum_TileType.End)
+        if (GameManager.Instance.m_GameLevel.B_HaveNextStage)
             SetMapInBattle(false, true);
     }
 
@@ -236,7 +230,7 @@ public class UIC_PlayerStatus : UIControlBase
 
     void OnMapControlClick() => UIManager.Instance.ShowPage<UI_MapControl>(true);
 
-    void OnActionStatus(PlayerInfoManager playerInfo)
+    void OnBattleActionStatus(PlayerInfoManager playerInfo)
     {
         m_ActionGrid.ClearGrid();
         for (int i = 0; i < playerInfo.m_BattleActionPicking.Count; i++)
@@ -247,7 +241,7 @@ public class UIC_PlayerStatus : UIControlBase
     void OnActionPressDuration()=> UIManager.Instance.ShowPage<UI_ActionBattle>(false,0f).Show(m_Player.m_PlayerInfo) ;
     void OnActionShuffleClick()=>m_Player.m_PlayerInfo.TryShuffle();
 
-    void OnExpireStatus(PlayerInfoManager expireInfo)
+    void OnExpireListStatus(PlayerInfoManager expireInfo)
     {
         m_ExpireGrid.ClearGrid();
         for (int i = 0; i < expireInfo.m_Expires.Count; i++)

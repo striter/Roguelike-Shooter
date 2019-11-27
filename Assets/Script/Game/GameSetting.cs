@@ -500,8 +500,8 @@ namespace GameSetting
         UI_PlayerInteractStatus,
         UI_PlayerHealthStatus,
         UI_PlayerAmmoStatus,
-        UI_PlayerActionStatus,
-        UI_PlayerExpireStatus,
+        UI_PlayerBattleActionStatus,
+        UI_PlayerExpireListStatus,
         UI_PlayerWeaponStatus,
 
         UI_CampDataStatus,
@@ -653,7 +653,7 @@ namespace GameSetting
 
     public enum enum_Option_FrameRate { Invalid = -1, Normal = 45, High = 60, }
 
-    public enum enum_Option_ScreenEffect { Invalid=-1,Normal,High,Epic}
+    public enum enum_Option_ScreenEffect { Invalid=-1,Normal,High}
 
     public enum enum_CampFarmItemStatus { Invalid=-1, Empty = 0, Locked=1 , Decayed = 2, Progress1=10,Progress2,Progress3,Progress4,Progress5}
 
@@ -1420,16 +1420,16 @@ namespace GameSetting
             return deliver;
         }
         Func<DamageInfo, bool> OnReceiveDamage;
-        Action OnExpireChange;
+        Action OnExpireInfoChange;
 
         bool b_expireUpdated = false;
-        public void EntityInfoChange() => b_expireUpdated = false;
+        public void ExpireInfoChange() => b_expireUpdated = false;
 
         public CharacterInfoManager(EntityCharacterBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange)
         {
             m_Entity = _attacher;
             OnReceiveDamage = _OnReceiveDamage;
-            OnExpireChange = _OnExpireChange;
+            OnExpireInfoChange = _OnExpireChange;
             TCommon.TraversalEnum((enum_CharacterEffect effect) => { m_Effects.Add(effect, new EffectCounterBase(enum_ExpireRefreshType.AddUp)); });
         }
 
@@ -1457,7 +1457,7 @@ namespace GameSetting
         {
             m_Effects.Traversal((enum_CharacterEffect type) => { m_Effects[type].Reset(); });
             m_Expires.Traversal((ExpireBase expire) => { if (expire.m_ExpireType == enum_ExpireType.Buff) OnExpireElapsed(expire); }, true);
-            EntityInfoChange();
+            ExpireInfoChange();
         }
 
         public virtual void Tick(float deltaTime) {
@@ -1468,25 +1468,23 @@ namespace GameSetting
                 return;
             UpdateExpireInfo();
             UpdateExpireEffect();
+            OnExpireInfoChange?.Invoke();
             b_expireUpdated = true;
         }
 
         protected virtual void AddExpire(ExpireBase expire)
         {
             m_Expires.Add(expire);
-            EntityInfoChange();
-            OnExpireChange?.Invoke();
+            ExpireInfoChange();
         }
         void RefreshExpire(ExpireBase expire)
         {
             expire.ExpireRefresh();
-            EntityInfoChange();
         }
         protected virtual void OnExpireElapsed(ExpireBase expire)
         {
             m_Expires.Remove(expire);
-            EntityInfoChange();
-            OnExpireChange?.Invoke();
+            ExpireInfoChange();
         }
         public void AddBuff(int sourceID, SBuff buffInfo)
         {
@@ -1517,6 +1515,12 @@ namespace GameSetting
             }
         }
         #region ExpireInfo
+        void UpdateExpireInfo()
+        {
+            OnResetInfo();
+            m_Expires.Traversal(OnSetExpireInfo);
+            AfterInfoSet();
+        }
         protected virtual void OnResetInfo()
         {
             F_MaxHealthAdditive = 0f;
@@ -1545,12 +1549,6 @@ namespace GameSetting
             if (F_MovementSpeedMultiply < 0) F_MovementSpeedMultiply = 0;
             if (F_HealthDrainMultiply < 0) F_HealthDrainMultiply = 0;
             if (F_HealReceiveMultiply < 0) F_HealReceiveMultiply = 0;
-        }
-        void UpdateExpireInfo()
-        {
-            OnResetInfo();
-            m_Expires.Traversal(OnSetExpireInfo);
-            AfterInfoSet();
         }
         #endregion
         #region ExpireEffect
@@ -1610,18 +1608,19 @@ namespace GameSetting
         public List<ActionBase> m_BattleActionPooling { get; private set; } = new List<ActionBase>();
         public List<ActionBase> m_BattleActionPicking { get; private set; } = new List<ActionBase>();
         ActionDeviceNormal m_CurrentDevice;
-        Action OnActionChange;
+        Action OnActionChange,OnExpireListChange;
         protected bool b_actionChangeIndicated = true;
-        protected void IndicateActionUI() => b_actionChangeIndicated = false;
+        protected void IndicateBattleActionUI() => b_actionChangeIndicated = false;
         protected float f_shuffleCheck = -1;
         protected bool b_shuffling => f_shuffleCheck > 0;
         public float f_shuffleScale => f_shuffleCheck / GameConst.F_ActionShuffleCooldown;
         public int m_Coins { get; private set; } = 0;
 
-        public PlayerInfoManager(EntityCharacterPlayer _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange, Action _OnActionChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
+        public PlayerInfoManager(EntityCharacterPlayer _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange,Action _OnExpireListChange, Action _OnBattleActionsChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
         {
             m_Player = _attacher;
-            OnActionChange = _OnActionChange;
+            OnActionChange = _OnBattleActionsChange;
+            OnExpireListChange = _OnExpireListChange;
         }
 
         public override void OnActivate()
@@ -1642,7 +1641,6 @@ namespace GameSetting
         public override void Tick(float deltaTime)
         {
             base.Tick(deltaTime);
-            EntityInfoChange();
             if (!b_actionChangeIndicated)
             {
                 b_actionChangeIndicated = true;
@@ -1704,6 +1702,13 @@ namespace GameSetting
             AddExpire(targetAction);
             CheckDevice();
         }
+
+        protected override void AddExpire(ExpireBase expire)
+        {
+            base.AddExpire(expire);
+            OnExpireListChange();
+        }
+
         protected override void OnExpireElapsed(ExpireBase expire)
         {
             ActionBase action = expire as ActionBase;
@@ -1711,6 +1716,7 @@ namespace GameSetting
                 m_ActionEquiping.Remove(action);
             base.OnExpireElapsed(expire);
             CheckDevice();
+            OnExpireListChange();
         }
         protected override void OnResetInfo()
         {
@@ -1842,7 +1848,7 @@ namespace GameSetting
         public void DoCopyAction(ActionBase action)
         {
             OnAddAction(ActionDataManager.CopyAction(action));
-            IndicateActionUI();
+            IndicateBattleActionUI();
         } 
         public bool TryUsePickingAction(int index)
         {
@@ -1853,7 +1859,7 @@ namespace GameSetting
             OnUseAcion(action);
             m_BattleActionPicking.RemoveAt(index);
             RefillHoldingActions();
-            IndicateActionUI();
+            IndicateBattleActionUI();
             return true;
         }
 
@@ -1892,7 +1898,7 @@ namespace GameSetting
         void ClearHoldingActions()
         {
             m_BattleActionPicking.Clear();
-            IndicateActionUI();
+            IndicateBattleActionUI();
         }
 
         public void UpgradeAllHoldingAction()
@@ -1901,31 +1907,31 @@ namespace GameSetting
                 return;
 
             m_BattleActionPicking.Traversal((ActionBase action) => { action.Upgrade(); });
-            IndicateActionUI();
+            IndicateBattleActionUI();
         }
 
         public void OverrideHoldingActionCost(int cost)
         {
             m_BattleActionPicking.Traversal((ActionBase action) => { action.OverrideCost(cost); });
-            IndicateActionUI();
+            IndicateBattleActionUI();
         }
 
         public void AddStoredAction(ActionBase action)
         {
             m_BattleAction.Add(action);
-            IndicateActionUI();
+            IndicateBattleActionUI();
         }
 
         public void RemoveStoredAction(int index)
         {
             m_BattleAction.RemoveAt(index);
-            IndicateActionUI();
+            IndicateBattleActionUI();
         }
 
         public void UpgradeStoredAction(int index)
         {
             m_BattleAction[index].Upgrade();
-            IndicateActionUI();
+            IndicateBattleActionUI();
         }
 
         public void AddActionEnergy(float amount)
