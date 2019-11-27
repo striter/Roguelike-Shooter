@@ -13,7 +13,7 @@ public class UI_ActionAcquire : UIPageBase {
         base.Init();
         m_Confirm =new UIC_Button( tf_Container.Find("Confirm"),OnConfirmClick);
         m_Grid = new UIT_GridControllerGridItem<UIGI_ActionItemSelect>(tf_Container.Find("ActionGrid"));
-        m_Title = transform.Find("Title").GetComponent<UIT_TextExtend>();
+        m_Title = tf_Container.Find("Title").GetComponent<UIT_TextExtend>();
     }
     public void Play(List<ActionBase> actions,EntityCharacterPlayer _player, int selectAmount,bool startChest)
     {

@@ -831,8 +831,8 @@ MonoBehaviour:
     m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: "\u8865\u7ED9\u7BB1"
-  B_AutoLocalize: 1
-  S_AutoLocalizeKey: UI_ActionAcquire_Title
+  B_AutoLocalize: 0
+  S_AutoLocalizeKey: 
   m_characterSpacing: 12
 --- !u!114 &114184470531660212
 MonoBehaviour:
