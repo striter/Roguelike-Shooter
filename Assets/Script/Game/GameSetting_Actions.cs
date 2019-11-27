@@ -213,7 +213,7 @@ namespace GameSetting_Action
         public const int I_30006_Cost = 2;
         public static float F_30006_FreezeDuration(enum_RarityLevel rarity) => 3 * (int)rarity;
 
-        public const int I_30007_Cost = 1;
+        public const int I_30007_Cost = 2;
         public static float F_30007_DamageStackLimit(enum_RarityLevel rarity) => 35;
         public static float F_30007_FreezeDurationPerStack(enum_RarityLevel rarity) => .1f * (int)rarity;
 
