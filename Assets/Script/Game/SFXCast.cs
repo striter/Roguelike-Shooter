@@ -45,7 +45,7 @@ public class SFXCast : SFXEquipmentBase {
     public void OnControlledCheck(DamageDeliverInfo info)
     {
         SetDamageInfo(info);
-        DoBlastCheck();
+        DoCastDealtDamage();
     }
 
     public virtual void StopControlled()
@@ -62,7 +62,7 @@ public class SFXCast : SFXEquipmentBase {
             GameManagerBase.Instance.SetEffect_Shake(V4_CastInfo.magnitude);
         
         if (F_Tick <= 0)
-            DoBlastCheck();
+            DoCastDealtDamage();
     }
 
     void SetDamageInfo(DamageDeliverInfo info)
@@ -84,23 +84,24 @@ public class SFXCast : SFXEquipmentBase {
             f_blastTickChest -= Time.deltaTime;
             return;
         }
-        DoBlastCheck();
+        DoCastDealtDamage();
         f_blastTickChest = F_Tick;
     }
 
-    protected virtual void DoBlastCheck()
+    protected virtual List<EntityBase> DoCastDealtDamage()
     {
+        List<EntityBase> entityHitted = new List<EntityBase>();
         RaycastHit[] hits = OnCastCheck(GameLayer.Mask.I_Entity);
-        List<int> targetHitted = new List<int>();
         for (int i = 0; i < hits.Length; i++)
         {
             HitCheckEntity entity = hits[i].collider.DetectEntity();
-            if (entity!=null&&!targetHitted.Contains(entity.I_AttacherID)&&GameManager.B_CanSFXDamageEntity(entity, m_sourceID))
+            if (entity!=null&&!entityHitted.Contains(entity.m_Attacher)&&GameManager.B_CanSFXDamageEntity(entity, m_sourceID))
             {
-                targetHitted.Add(entity.I_AttacherID);
+                entityHitted.Add(entity.m_Attacher);
                 OnDamageEntity(entity);
             }
         }
+        return entityHitted;
     }
     protected RaycastHit[] OnCastCheck(int layerMask)
     {

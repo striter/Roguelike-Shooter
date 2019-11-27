@@ -73,6 +73,19 @@ public class SFXCastAreaConnections : SFXCast {
         m_GroundParticles.Stop();
         m_Connections.ClearPool();
     }
+    protected override List<EntityBase> DoCastDealtDamage()
+    {
+        List<EntityBase> entityEffecting = base.DoCastDealtDamage();
+        m_Connections.m_ActiveItemDic.Traversal((EntityBase key) => { if (!entityEffecting.Contains(key)) m_Connections.RemoveItem(key); }, true);
+        entityEffecting.Traversal((EntityBase entity) => {
+            if (m_Connections.ContainsItem(entity))
+                return;
+
+            EntityCharacterBase character = entity as EntityCharacterBase;
+            m_Connections.AddItem(entity).SetTarget(character ? character.tf_Head : entity.transform);
+        });
+        return entityEffecting;
+    }
     float check;
     protected override void Update()
     {
@@ -82,33 +95,6 @@ public class SFXCastAreaConnections : SFXCast {
 
         m_GroundParticles.transform.position = tf_GroundAttach.position;
         m_GroundParticles.transform.rotation = tf_GroundAttach.rotation;
-        
         m_Connections.m_ActiveItemDic.Traversal((ConnectionsItem item)=>item.Tick(Time.deltaTime));
-
-        if (check>0)
-        {
-            check -= Time.deltaTime;
-            return;
-        }
-        check = .1f;
-
-        RaycastHit[] hits = OnCastCheck(GameLayer.Mask.I_Entity);
-        List<EntityBase> entityEffecting = new List<EntityBase>();
-        for (int i = 0; i < hits.Length; i++)
-        {
-            HitCheckEntity entity = hits[i].collider.DetectEntity();
-            if (!GameManager.B_CanSFXHitTarget(entity, m_sourceID))
-                continue;
-            entityEffecting.Add(entity.m_Attacher);
-        }
-
-        m_Connections.m_ActiveItemDic.Traversal((EntityBase key) => { if (!entityEffecting.Contains(key)) m_Connections.RemoveItem(key); }, true);
-        entityEffecting.Traversal((EntityBase entity) => {
-            if (m_Connections.ContainsItem(entity))
-                return;
-
-            EntityCharacterBase character = entity as EntityCharacterBase;
-            m_Connections.AddItem(entity).SetTarget(character? character.tf_Head:entity.transform);
-        });
     }
 }
