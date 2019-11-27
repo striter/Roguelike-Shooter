@@ -302,7 +302,7 @@ public class GameManager : GameManagerBase
             case enum_TileType.Battle:
             case enum_TileType.End:
                 {
-                    if (m_GameLevel.B_HaveNextStage)
+                    if (!m_GameLevel.B_HaveNextStage)
                         return;
 
                     enum_RarityLevel level = m_GameLevel.m_actionGenerate.GetActionRarityLevel(m_GameLevel.m_GameSeed);
