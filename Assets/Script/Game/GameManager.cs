@@ -607,8 +607,10 @@ public class GameLevelManager
     }
     public bool StageFinished()
     {
+        if (m_GameStage == enum_StageLevel.Ranger)
+            return true;
         m_GameStage++;
-        return m_GameStage == enum_StageLevel.Ranger;
+        return false;
     }
 
     public void OnLevelChange(enum_TileType type, bool levelUnlocked)
