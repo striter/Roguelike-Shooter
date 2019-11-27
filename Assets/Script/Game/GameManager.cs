@@ -217,9 +217,8 @@ public class GameManager : GameManagerBase
 
     void OnStageFinished()
     {
-        m_GameLevel.StageFinished();
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageFinish);
-        if (!m_GameLevel.B_HaveNextStage)
+        if (m_GameLevel.StageFinished())
         {
             OnGameFinished(true);
             return;
@@ -306,7 +305,7 @@ public class GameManager : GameManagerBase
                         return;
 
                     enum_RarityLevel level = m_GameLevel.m_actionGenerate.GetActionRarityLevel(m_GameLevel.m_GameSeed);
-                    GameUIManager.Instance.ShowGameControlPage<UI_ActionAcquire>(true).Play(ActionDataManager.CreateRandomDropPlayerAction(2, level, m_GameLevel.m_GameSeed), m_LocalPlayer, 1);
+                    GameUIManager.Instance.ShowGameControlPage<UI_ActionAcquire>(true).Play(ActionDataManager.CreateRandomDropPlayerAction(2, level, m_GameLevel.m_GameSeed), m_LocalPlayer, 1,false);
                 }
                 break;
         }
@@ -552,7 +551,7 @@ public class GameLevelManager
 
     public System.Random m_GameSeed { get; private set; }
     public StageInteractGenerateData m_actionGenerate { get; private set; }
-    public bool B_HaveNextStage => m_GameStage < enum_StageLevel.Ranger;
+    public bool B_HaveNextStage => m_GameStage <  enum_StageLevel.Ranger;
     public enum_TileType m_LevelType { get; private set; }
     public enum_StageLevel m_GameStage { get; private set; }
     Dictionary<enum_StageLevel, enum_Style> m_StageStyle = new Dictionary<enum_StageLevel, enum_Style>();
@@ -606,9 +605,10 @@ public class GameLevelManager
         m_battleLevelEntered = 0;
         m_levelEntered = 0;
     }
-    public void StageFinished()
+    public bool StageFinished()
     {
         m_GameStage++;
+        return m_GameStage == enum_StageLevel.Ranger;
     }
 
     public void OnLevelChange(enum_TileType type, bool levelUnlocked)

@@ -33,7 +33,7 @@ public class InteractActionChest : InteractGameBase
     {
         SetInteractable(false);
         m_Animation.Play(true);
-        GameUIManager.Instance.ShowGameControlPage<UI_ActionAcquire>(true).Play(m_Actions,_interactTarget, m_SelectAmount);
+        GameUIManager.Instance.ShowGameControlPage<UI_ActionAcquire>(true).Play(m_Actions,_interactTarget, m_SelectAmount,true);
     }
     void OnKeyAnim()
     {
