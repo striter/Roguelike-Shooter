@@ -204,6 +204,7 @@ public class GameManager : GameManagerBase
     void OnLevelChanged(SBigmapLevelInfo levelInfo)
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnChangeLevel);
+        GameObjectManager.RecycleAllWeapon(null);
         m_LocalPlayer.transform.position = levelInfo.m_Level.RandomEmptyTilePosition(m_GameLevel.m_GameSeed);
 
         bool levelUnlocked = levelInfo.m_TileLocking == enum_TileLocking.Unlocked;
