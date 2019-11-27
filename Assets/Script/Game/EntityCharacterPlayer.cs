@@ -89,7 +89,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected override void OnRevive()
     {
         base.OnRevive();
-        m_Ability.SetEnable(true);
+        m_Ability.SetEnable(GameManager.Instance.m_GameLevel.m_LevelType == enum_TileType.Battle);      //?
         m_Assist.SetEnable(true);
         m_Animator.OnRevive();
 
@@ -110,7 +110,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void OnBattleStart()
     {
         m_PlayerInfo.OnBattleStart();
-        m_Ability.SetEnable(true);
+        m_Ability.SetEnable(GameManager.Instance.m_GameLevel.m_LevelType== enum_TileType.Battle);       //?
     }
 
     protected override void OnBattleFinish()
