@@ -293,13 +293,12 @@ public class GameManager : GameManagerBase
 
     void SpawnRewards(Vector3 rewardPos)
     {
-        if (m_GameLevel.m_LevelType == enum_TileType.End || m_GameLevel.m_LevelType == enum_TileType.Battle)
+        if (m_GameLevel.m_LevelType == enum_TileType.Battle)
         {
             enum_RarityLevel level = m_GameLevel.m_actionGenerate.GetActionRarityLevel(m_GameLevel.m_GameSeed);
             GameUIManager.Instance.ShowGameControlPage<UI_ActionAcquire>(true).Play(ActionDataManager.CreateRandomDropPlayerAction(2, level, m_GameLevel.m_GameSeed), m_LocalPlayer, 1);
         }
-
-        if (m_GameLevel.m_LevelType== enum_TileType.End)
+        else if (m_GameLevel.m_LevelType== enum_TileType.End)
         {
             GameObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Portal, LevelManager.NavMeshPosition(rewardPos, false), LevelManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(OnStageFinished, m_GameLevel.m_GameStage);
         }
