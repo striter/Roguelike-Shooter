@@ -63,7 +63,7 @@ public class UI_Options : UIPageBase {
         base.Init();
         tf_Basic = tf_Container.Find("Basic");
         new BoolToggle(tf_Basic.Find("FrameRate/BtnToggle"), OnFrequencyClicked, GetFrameRateOption());
-        new ValueToggle<enum_Option_ScreenEffect>(tf_Basic.Find("ScreenEffect/BtnToggle"), OnScreenEffectClicked, GetScreenEffectOption(),new List<enum_Option_ScreenEffect> {  enum_Option_ScreenEffect.Normal, enum_Option_ScreenEffect.High, enum_Option_ScreenEffect.Epic});
+        new ValueToggle<enum_Option_ScreenEffect>(tf_Basic.Find("ScreenEffect/BtnToggle"), OnScreenEffectClicked, GetScreenEffectOption(),new List<enum_Option_ScreenEffect> {  enum_Option_ScreenEffect.Normal, enum_Option_ScreenEffect.High});
         new BoolToggle(tf_Basic.Find("Region/BtnToggle"), OnRegionClicked, GetRegionOption());
         new SliderStatus(tf_Basic.Find("MusicVolume/Slider"), OnMusicVolumeChanged, OptionsManager.m_OptionsData.m_MusicVolumeTap);
          new SliderStatus(tf_Basic.Find("VFXVolume/Slider"), OnVFXVolumeChanged, OptionsManager.m_OptionsData.m_VFXVolumeTap);
@@ -98,7 +98,7 @@ public class UI_Options : UIPageBase {
     enum_Option_ScreenEffect OnScreenEffectClicked()
     {
         OptionsManager.m_OptionsData.m_ScreenEffect++;
-        if (OptionsManager.m_OptionsData.m_ScreenEffect > enum_Option_ScreenEffect.Epic)
+        if (OptionsManager.m_OptionsData.m_ScreenEffect > enum_Option_ScreenEffect.High)
             OptionsManager.m_OptionsData.m_ScreenEffect = enum_Option_ScreenEffect.Normal;
         OptionsManager.OnOptionChanged();
         return GetScreenEffectOption();
