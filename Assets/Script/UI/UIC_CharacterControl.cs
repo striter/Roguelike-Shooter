@@ -7,16 +7,21 @@ using UnityEngine.UI;
 
 public class UIC_CharacterControl : UIControlBase {
     protected TouchDeltaManager m_TouchDelta { get; private set; }
-    Image m_MainImg, m_AbilityImg;
-    Text m_Cost;
+    Image m_MainImg;
+    Image m_AbilityBG,m_AbilityImg,m_AbilityRunsOut,m_AbilityTimesDecorate,m_AbilityCooldown;
+    Text m_AbilityTimeCounts;
     Action OnReload, OnAbility;
     Action<bool> OnMainDown;
     protected override void Init()
     {
         base.Init();
         m_MainImg = transform.Find("Main/Image").GetComponent<Image>();
+        m_AbilityBG = transform.Find("Ability/Background").GetComponent<Image>();
         m_AbilityImg = transform.Find("Ability/Image").GetComponent<Image>();
-        m_Cost = transform.Find("Ability/Cost").GetComponent<Text>();
+        m_AbilityTimeCounts = transform.Find("Ability/TimesCount").GetComponent<Text>();
+        m_AbilityCooldown = transform.Find("Ability/Cooldown").GetComponent<Image>();
+        m_AbilityRunsOut = transform.Find("Ability/RunsOut").GetComponent<Image>();
+        m_AbilityTimesDecorate = transform.Find("Ability/TimesImage").GetComponent<Image>();
         transform.Find("Reload").GetComponent<Button>().onClick.AddListener(OnReloadButtonDown);
         transform.Find("Ability").GetComponent<Button>().onClick.AddListener(OnAbilityClick);
         transform.Find("Main").GetComponent<UIT_EventTriggerListener>().D_OnPress += OnMainButtonDown;
@@ -36,12 +41,31 @@ public class UIC_CharacterControl : UIControlBase {
     bool CheckControlable() => !UIPageBase.m_PageOpening;
 
     InteractBase m_Interact;
+    bool m_cooldowning;
+    int m_abilityTimes;
     void OnPlayerStatusChanged(EntityCharacterPlayer player)
     {
-        if (player.m_Interact == m_Interact)
-            return;
-        m_Interact = player.m_Interact;
-        m_MainImg.sprite = UIManager.Instance.m_CommonSprites[UIEnumConvertions.GetMainSprite(m_Interact)];
+        if(player.m_Ability.m_AbilityCooldowning)
+            m_AbilityCooldown.fillAmount = player.m_Ability.m_AbilityCoolDownScale;
+        if(player.m_Ability.m_AbilityCooldowning!=m_cooldowning||player.m_Ability.m_AbilityTimes!=m_abilityTimes)
+        {
+            m_cooldowning = player.m_Ability.m_AbilityCooldowning;
+            m_abilityTimes = player.m_Ability.m_AbilityTimes;
+            bool runsOut = player.m_Ability.m_AbilityRunsOut;
+
+            m_AbilityTimeCounts.text = player.m_Ability.m_AbilityRunsOutable ? m_abilityTimes.ToString() : "∞";
+            m_AbilityCooldown.SetActivate(!runsOut && m_cooldowning);
+            m_AbilityImg.color = TCommon.ColorAlpha(m_AbilityImg.color, runsOut?.6f:1f);
+            m_AbilityBG.sprite = UIManager.Instance.m_CommonSprites[UIEnumConvertions.GetAbilityBackground(runsOut ,m_cooldowning)];
+            m_AbilityRunsOut.SetActivate(runsOut);
+            m_AbilityTimesDecorate.SetActivate(!runsOut);
+        }
+
+        if (player.m_Interact != m_Interact)
+        {
+            m_Interact = player.m_Interact;
+            m_MainImg.sprite = UIManager.Instance.m_CommonSprites[UIEnumConvertions.GetMainSprite(m_Interact)];
+        }
     }
 
     public void DoBinding(EntityCharacterPlayer player,Action<Vector2> _OnLeftDelta, Action<Vector2> _OnRightDelta, Action _OnReload, Action<bool> _OnMainDown, Action _OnAbility)
@@ -51,7 +75,6 @@ public class UIC_CharacterControl : UIControlBase {
         OnAbility = _OnAbility;
         OnMainDown = _OnMainDown;
         m_AbilityImg.sprite = UIManager.Instance.m_CommonSprites[UIEnumConvertions.GetAbilitySprite(player.m_Character)];
-        m_Cost.text = player.I_AbilityCost.ToString();
     }
     public void RemoveBinding()
     {

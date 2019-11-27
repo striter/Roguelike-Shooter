@@ -351,6 +351,16 @@ namespace GameSetting
                 }
             return spriteName;
         }
+        public static string GetAbilityBackground(bool runsOut,bool cooldowning)
+        {
+            if (runsOut)
+                return "control_ability_runsout";
+
+            if (cooldowning)
+                return "control_ability_bottom_cooldown";
+            else
+                return "control_ability_bottom_activate";
+        }
         public static string GetAbilitySprite(enum_PlayerCharacter character) => "control_ability_" + character;
         public static string GetSpriteName(this enum_PlayerWeapon weapon) => ((int)weapon).ToString();
         public static string GetCordinates(this TileAxis axis)
