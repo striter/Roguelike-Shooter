@@ -53,7 +53,7 @@ public class UIC_CharacterControl : UIControlBase {
             m_cooldowning = player.m_Ability.m_AbilityCooldowning;
             m_abilityTimes = player.m_Ability.m_AbilityTimes;
             bool runsOut = player.m_Ability.m_AbilityRunsOut;
-            bool infinite = player.m_Ability.m_AbilityRunsOutable;
+            bool infinite = !player.m_Ability.m_AbilityRunsOutable;
 
             m_AbilityTimeCounts.SetActivate(!infinite);
             m_AbilityInfinite.SetActivate(infinite);
