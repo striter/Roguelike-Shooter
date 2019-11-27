@@ -14,7 +14,7 @@ namespace GameSetting_Action
 
         public const int I_10002_Cost = 1;
         public const float F_10002_Duration = 5f;
-        public static float F_10002_ArmorReceive(enum_RarityLevel rarity) => 2f * (int)rarity;
+        public static float F_10002_ArmorReceive(enum_RarityLevel rarity) => 1.5f * (int)rarity;
 
         public const int I_10003_Cost = 2;
         public const float F_10003_Duration = 15f;
@@ -23,7 +23,7 @@ namespace GameSetting_Action
 
         public const int I_10004_Cost = 2;
         public static float F_10004_Duration = 5f;
-        public static float F_10004_EnergyAdditivePerMile(enum_RarityLevel rarity) => 0.1f + 0.05f * (int)rarity;
+        public static float F_10004_EnergyAdditivePerMile(enum_RarityLevel rarity) => 0.08f + 0.04f * (int)rarity;
 
         public const int I_10005_Cost = 2;
         public static int P_10005_OnFire_DamageMultiply(enum_RarityLevel rarity) => 210 * (int)rarity;
