@@ -45,6 +45,7 @@ public class SFXCastAreaConnections : SFXCast {
         }
     }
     TSpecialClasses.ParticleControlBase m_GroundParticles;
+    Transform tf_GroundAttach;
     public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
         base.OnPoolItemInit(_identity, _OnRecycle);
@@ -52,11 +53,13 @@ public class SFXCastAreaConnections : SFXCast {
         m_Connections = new ObjectPoolSimple<EntityBase, ConnectionsItem>(connections.Find("Item").gameObject,connections,(Transform trans, EntityBase entity)=>new ConnectionsItem(trans),(ConnectionsItem item)=>item.transform);
         m_GroundParticles = new TSpecialClasses.ParticleControlBase(transform.Find("ParticlesGround"));
     }
-    public override void Play(DamageDeliverInfo buffInfo)
+    public override void PlayControlled(int sourceID, EntityCharacterBase entity, Transform directionTrans, DamageDeliverInfo buffInfo)
     {
-        base.Play(buffInfo);
+        base.PlayControlled(sourceID, entity, directionTrans, buffInfo);
+        tf_GroundAttach = entity.transform;
         m_Particle.Clear();
     }
+
     protected override void OnPlay()
     {
         base.OnPlay();
@@ -76,6 +79,9 @@ public class SFXCastAreaConnections : SFXCast {
         base.Update();
         if (!B_Playing)
             return;
+
+        m_GroundParticles.transform.position = tf_GroundAttach.position;
+        m_GroundParticles.transform.rotation = tf_GroundAttach.rotation;
         
         m_Connections.m_ActiveItemDic.Traversal((ConnectionsItem item)=>item.Tick(Time.deltaTime));
 

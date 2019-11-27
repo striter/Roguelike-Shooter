@@ -23,7 +23,7 @@ public class SFXCast : SFXEquipmentBase {
     protected virtual float F_CastLength => V4_CastInfo.z;
     protected Transform CastTransform => tf_ControlledCast ? tf_ControlledCast : transform;
     protected float F_PlayDuration => I_TickCount * F_Tick;
-    Transform tf_ParticleAttach, tf_ControlledCast;
+    Transform tf_ControlledCast;
     float f_blastTickChest = 0;
     public virtual void Play(DamageDeliverInfo buffInfo)
     {
@@ -37,9 +37,8 @@ public class SFXCast : SFXEquipmentBase {
     public virtual void PlayControlled(int sourceID,EntityCharacterBase entity, Transform directionTrans, DamageDeliverInfo buffInfo)
     {
         SetDamageInfo(buffInfo);
-        tf_ParticleAttach = entity.tf_Weapon;
+        AttachTo(entity.tf_Weapon);
         tf_ControlledCast = directionTrans;
-        AttachTo(entity.transform);
         base.Play(sourceID, 0f, F_DelayDuration);
     }
 
@@ -51,8 +50,6 @@ public class SFXCast : SFXEquipmentBase {
 
     public virtual void StopControlled()
     {
-
-        tf_ParticleAttach = null;
         tf_ControlledCast = null;
         AttachTo(null);
         Stop();
@@ -79,17 +76,9 @@ public class SFXCast : SFXEquipmentBase {
         base.Update();
         if (!B_Playing)
             return;
-
-        if (tf_ParticleAttach != null)
-        {
-            m_Particle.transform.position = tf_ParticleAttach.position;
-            m_Particle.transform.rotation = tf_ParticleAttach.rotation;
-        }
-
-
+        
         if (F_Tick <= 0)
             return;
-
         if (f_blastTickChest > 0)
         {
             f_blastTickChest -= Time.deltaTime;
