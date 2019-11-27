@@ -17,17 +17,17 @@ public class UI_ActionBattle : UIPageBase {
     public void Show(PlayerInfoManager _info)
     {
         m_Info = _info;
-        OnActionChanged(m_Info);
-        TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerActionStatus, OnActionChanged);
+        OnBattleActionChanged(m_Info);
+        TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerBattleActionStatus, OnBattleActionChanged);
     }
 
     protected override void OnCancelBtnClick()
     {
         base.OnCancelBtnClick();
-        TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerActionStatus, OnActionChanged);
+        TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerBattleActionStatus, OnBattleActionChanged);
     }
 
-    void OnActionChanged(PlayerInfoManager info)
+    void OnBattleActionChanged(PlayerInfoManager info)
     {
         m_Grid.ClearGrid();
         List<ActionBase> targetList =  info.m_BattleActionPicking;

@@ -39,7 +39,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     protected override CharacterInfoManager GetEntityInfo()
     {
-        m_PlayerInfo = new PlayerInfoManager(this, m_HitCheck.TryHit, OnExpireChange, OnActionsChange);
+        m_PlayerInfo = new PlayerInfoManager(this, m_HitCheck.TryHit, OnExpireChange,OnExpireListChange, OnBattleActionsChange);
         return m_PlayerInfo;
     }
 
@@ -384,14 +384,13 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerWeaponStatus, m_WeaponCurrent);
     }
-    protected override void OnExpireChange()
+    protected void OnExpireListChange()
     {
-        base.OnExpireChange();
-        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerExpireStatus, m_PlayerInfo);
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerExpireListStatus, m_PlayerInfo);
     }
-    protected void OnActionsChange()
+    protected void OnBattleActionsChange()
     {
-        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerActionStatus, m_PlayerInfo);
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerBattleActionStatus, m_PlayerInfo);
     }
     protected override void OnHealthStatus(enum_HealthChangeMessage type)
     {
