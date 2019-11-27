@@ -702,6 +702,10 @@ namespace GameSetting
                 m_StorageActions.Add(ActionStorageData.CreateDefault(GameExpression.I_CampActionStorageDefault[i]));
         }
 
+        public void DataRecorrect()
+        {
+        }
+
         public void UnlockDifficulty()
         {
             if (m_GameDifficulty != m_DifficultyUnlocked)
@@ -735,6 +739,12 @@ namespace GameSetting
                 m_PlotStatus[3] = CampFarmPlotData.Create(enum_CampFarmItemStatus.Empty);
             if (difficulty >= GameConst.I_CampFarmPlot5UnlockDifficulty && m_PlotStatus[4].m_Status == enum_CampFarmItemStatus.Locked)
                 m_PlotStatus[4] = CampFarmPlotData.Create(enum_CampFarmItemStatus.Empty);
+        }
+
+        void ISave.DataRecorrect()
+        {
+            if(m_PlotStatus.Count!=6)
+                m_PlotStatus= new List<CampFarmPlotData>() { CampFarmPlotData.Create(enum_CampFarmItemStatus.Empty), CampFarmPlotData.Create(enum_CampFarmItemStatus.Empty), CampFarmPlotData.Create(enum_CampFarmItemStatus.Empty), CampFarmPlotData.Create(enum_CampFarmItemStatus.Locked), CampFarmPlotData.Create(enum_CampFarmItemStatus.Locked), CampFarmPlotData.Create(enum_CampFarmItemStatus.Locked) };
         }
     }
 
@@ -774,6 +784,10 @@ namespace GameSetting
             m_Stage = _level.m_GameStage;
             m_kills = _level.m_enermiesKilled;
         }
+
+        void ISave.DataRecorrect()
+        {
+        }
     }
 
     public class CGameOptions : ISave
@@ -795,6 +809,11 @@ namespace GameSetting
             m_SensitiveTap = 5;
             m_MusicVolumeTap = 10;
             m_VFXVolumeTap = 10;
+        }
+
+
+        void ISave.DataRecorrect()
+        {
         }
     }
 
