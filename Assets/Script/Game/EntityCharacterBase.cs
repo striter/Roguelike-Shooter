@@ -43,14 +43,14 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     protected override void OnPoolItemEnable()
     {
         base.OnPoolItemEnable();
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinished);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
         m_CharacterInfo.OnActivate();
     }
 
     protected override void OnPoolItemDisable()
     {
         base.OnPoolItemDisable();
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinished);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
         this.StopSingleCoroutines(0);
         m_CharacterInfo.OnDeactivate();
     }
@@ -136,7 +136,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         base.OnRecycle();
         m_Effect.OnRecycle();
     }
-    protected virtual void OnBattleFinished()
+    protected virtual void OnBattleFinish()
     {
         if (b_isSubEntity)
             OnDead();

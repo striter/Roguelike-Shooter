@@ -13,7 +13,8 @@ public class UIC_PlayerStatus : UIControlBase
     RawImage img_Dying;
 
     Transform tf_ExtraControl;
-    TSpecialClasses.AnimationControlBase m_ControlAnimation;
+    Transform tf_ActionControl, tf_MapControl;
+    TSpecialClasses.AnimationControlBase m_ActionControlAnim,m_MapControlAnim;
     UIC_ActionEnergy m_ActionEnergy;
     Button  btn_ActionShuffle;
     Image img_ShuffleFill;
@@ -48,13 +49,16 @@ public class UIC_PlayerStatus : UIControlBase
         img_Dying = tf_Container.Find("Dying").GetComponent<RawImage>();
 
         tf_ExtraControl = tf_Container.Find("ExtraControl");
-        m_ControlAnimation = new AnimationControlBase(tf_ExtraControl.GetComponent<Animation>());
-        m_ActionEnergy = new UIC_ActionEnergy(tf_ExtraControl.Find("ActionEnergy"));
-        m_ActionGrid = new UIT_GridControllerGridItem<UIGI_ActionItemHold>(tf_ExtraControl.Find("ActionGrid"));
-        btn_ActionShuffle = tf_ExtraControl.Find("ActionShuffle").GetComponent<Button>();
+        tf_ActionControl = tf_ExtraControl.Find("Action");
+        m_ActionControlAnim = new AnimationControlBase(tf_ActionControl.GetComponent<Animation>());
+        m_ActionEnergy = new UIC_ActionEnergy(tf_ActionControl.Find("ActionEnergy"));
+        m_ActionGrid = new UIT_GridControllerGridItem<UIGI_ActionItemHold>(tf_ActionControl.Find("ActionGrid"));
+        btn_ActionShuffle = tf_ActionControl.Find("ActionShuffle").GetComponent<Button>();
         btn_ActionShuffle.onClick.AddListener(OnActionShuffleClick);
         img_ShuffleFill = btn_ActionShuffle.transform.Find("ShuffleFill").GetComponent<Image>();
-        btn_map = tf_ExtraControl.Find("Map").GetComponent<Button>();
+        tf_MapControl = tf_ExtraControl.Find("Map");
+        m_MapControlAnim = new AnimationControlBase(tf_MapControl.GetComponent<Animation>());
+        btn_map = tf_MapControl.Find("MapBtn").GetComponent<Button>();
         btn_map.onClick.AddListener(OnMapControlClick);
 
         rtf_StatusData = tf_Container.Find("StatusData").GetComponent<RectTransform>();
@@ -89,7 +93,10 @@ public class UIC_PlayerStatus : UIControlBase
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
 
-        SetInBattle(false,false);
+        SetActionShow(false,false);
+        SetMapInBattle(false, false);
+        img_Dying.SetActivate(false);
+        m_dying = false;
     }
     
     protected override void OnDestroy()
@@ -110,19 +117,32 @@ public class UIC_PlayerStatus : UIControlBase
         return this;
     }
 
-    void OnBattleStart() => SetInBattle(true, true);
-    void OnBattleFinish() => SetInBattle(false, true);
+    void OnBattleStart()
+    {
+        SetActionShow(true, true);
+        SetMapInBattle(true, true);
+    }
+    void OnBattleFinish()
+    {
+        SetActionShow(false, true);
+        if (GameManager.Instance.m_GameLevel.m_LevelType != enum_TileType.End)
+            SetMapInBattle(false, true);
+    }
 
-    void SetInBattle(bool inBattle,bool animate)
+    void SetActionShow(bool show,bool animate)
     {
         m_ActionGrid.ClearGrid();
-        if (animate) m_ControlAnimation.Play(inBattle);
-        else m_ControlAnimation.SetPlayPosition(inBattle);
-        btn_ActionShuffle.interactable = inBattle;
-        btn_map.interactable = !inBattle;
+        if (animate) m_ActionControlAnim.Play(show);
+        else m_ActionControlAnim.SetPlayPosition(show);
+        btn_ActionShuffle.interactable = show;
+    }
 
-        img_Dying.SetActivate(false);
-        m_dying = false;
+    void SetMapInBattle(bool inbattle,bool animate)
+    {
+        Debug.Log("???");
+        if (animate) m_MapControlAnim.Play(inbattle);
+        else m_MapControlAnim.SetPlayPosition(inbattle);
+        btn_map.interactable = !inbattle;
     }
     
     private void Update()
