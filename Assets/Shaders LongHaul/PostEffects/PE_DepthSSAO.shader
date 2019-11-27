@@ -18,6 +18,7 @@
 				#include "UnityCG.cginc"
 
 			sampler2D _MainTex;
+	float4 _MainTex_TexelSize;
 			sampler2D _CameraDepthTexture;
 			float4 _SampleSphere[32];
 			int _SampleCount;
@@ -55,20 +56,19 @@
 			fixed4 frag (v2f i) : SV_Target
 			{
 				float4 col = tex2D(_MainTex, i.uv);
-				float3 normal = normal_from_depth( i.uv);
-				float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.uv);
-				float3 position = float3(i.uv, depth);
+				float2 uv = i.uv;
+				float3 normal = normal_from_depth(uv);
+				float depth = Linear01Depth( SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, uv));
 				float occlusion = 0;
 				for (int i = 0; i < _SampleCount; i++) {
-					float3 ray = _SampleSphere[i];
-					float3 hemi_ray = position + sign(dot(ray, normal)) * ray;
-					float occ_depth =  SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, saturate(hemi_ray.xy));
-					float difference = occ_depth-depth; 
+					float2 offset = _SampleSphere[i].xy;
+					float occ_depth = Linear01Depth(SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, uv +offset));
+					float difference = depth-occ_depth; 
 
-					occlusion += step(difference,_FallOffLimit)* lerp(-1, 1, smoothstep(-_FallOff, _FallOff, difference));
+					occlusion += lerp(-1, 1, smoothstep(-_FallOff, _FallOff, difference));
 				}
 				occlusion =  saturate( occlusion/_SampleCount);
-				float ao = pow(occlusion,5)*_Strength;
+				float ao = pow(occlusion,3)*_Strength;
 				return lerp(col,float4(0,0,0,1),ao);
 			}
 			ENDCG
