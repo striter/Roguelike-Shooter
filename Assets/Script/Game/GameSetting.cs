@@ -707,7 +707,7 @@ namespace GameSetting
             m_StorageRequestStamp = -1;
             m_StorageActions = new List<ActionStorageData>();
             m_CharacterSelected = enum_PlayerCharacter.Beth;
-            m_WeaponSelected = enum_PlayerWeapon.UMP45;
+            m_WeaponSelected = enum_PlayerWeapon.UZI;
             for (int i = 0; i < GameExpression.I_CampActionStorageDefault.Count; i++)
                 m_StorageActions.Add(ActionStorageData.CreateDefault(GameExpression.I_CampActionStorageDefault[i]));
         }
