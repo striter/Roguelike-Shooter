@@ -1423,7 +1423,7 @@ namespace GameSetting
         Action OnExpireInfoChange;
 
         bool b_expireUpdated = false;
-        public void ExpireInfoChange() => b_expireUpdated = false;
+        public void UpdateEntityInfo() => b_expireUpdated = false;
 
         public CharacterInfoManager(EntityCharacterBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange)
         {
@@ -1457,7 +1457,7 @@ namespace GameSetting
         {
             m_Effects.Traversal((enum_CharacterEffect type) => { m_Effects[type].Reset(); });
             m_Expires.Traversal((ExpireBase expire) => { if (expire.m_ExpireType == enum_ExpireType.Buff) OnExpireElapsed(expire); }, true);
-            ExpireInfoChange();
+            UpdateEntityInfo();
         }
 
         public virtual void Tick(float deltaTime) {
@@ -1475,7 +1475,7 @@ namespace GameSetting
         protected virtual void AddExpire(ExpireBase expire)
         {
             m_Expires.Add(expire);
-            ExpireInfoChange();
+            UpdateEntityInfo();
         }
         void RefreshExpire(ExpireBase expire)
         {
@@ -1484,7 +1484,7 @@ namespace GameSetting
         protected virtual void OnExpireElapsed(ExpireBase expire)
         {
             m_Expires.Remove(expire);
-            ExpireInfoChange();
+            UpdateEntityInfo();
         }
         public void AddBuff(int sourceID, SBuff buffInfo)
         {
@@ -1647,7 +1647,7 @@ namespace GameSetting
                 OnActionChange?.Invoke();
             }
 
-            ExpireInfoChange();
+            UpdateEntityInfo();
             OnPlayerMove(TCommon.GetXZDistance(m_prePos, m_Entity.transform.position));
             m_prePos = m_Entity.transform.position;
 
