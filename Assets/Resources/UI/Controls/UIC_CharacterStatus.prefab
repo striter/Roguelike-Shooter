@@ -1303,7 +1303,7 @@ GameObject:
   - component: {fileID: 224727406844371960}
   - component: {fileID: 114173530237635566}
   m_Layer: 5
-  m_Name: UIC_PlayerStatus
+  m_Name: UIC_CharacterStatus
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -68,7 +68,7 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
         qt_CameraRot = toTransform.rotation;
     }
     public void LookAt(Transform lookAtTrans) => tf_CameraLookAt = lookAtTrans;
-    public void SetCameraRotation(int pitch = -1, int yaw = -1)
+    public void SetCameraRotation(float pitch = -1, float yaw = -1)
     {
         if (pitch != -1)
             f_Pitch = m_SelfRotation? Mathf.Clamp(f_Pitch, I_YawAngleMin, I_YawAngleMax):pitch;

@@ -206,7 +206,8 @@ public class GameManager : GameManagerBase
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnChangeLevel);
         GameObjectManager.RecycleAllWeapon(null);
-        m_LocalPlayer.transform.position = levelInfo.m_Level.RandomEmptyTilePosition(m_GameLevel.m_GameSeed);
+        Vector3 randomPositon = levelInfo.m_Level.RandomEmptyTilePosition(m_GameLevel.m_GameSeed);
+        m_LocalPlayer.SetSpawnPosRot(randomPositon, Quaternion.LookRotation(-randomPositon, Vector3.up));
 
         bool levelUnlocked = levelInfo.m_TileLocking == enum_TileLocking.Unlocked;
         m_GameLevel.OnLevelChange(levelInfo.m_LevelType,levelUnlocked);

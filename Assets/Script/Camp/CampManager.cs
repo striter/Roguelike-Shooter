@@ -26,10 +26,9 @@ public class CampManager : GameManagerBase
         base.Start();
         InitPostEffects(enum_Style.Invalid);
         EntityCharacterPlayer player = GameObjectManager.SpawnEntityPlayer(new CBattleSave());
-        player.transform.SetPositionAndRotation(tf_PlayerStart.position, tf_PlayerStart.rotation);
+        player.SetSpawnPosRot(tf_PlayerStart.position, tf_PlayerStart.rotation);
         tf_Player = player.transform;
         AttachPlayerCamera(tf_Player);
-        CameraController.Instance.RotateCamera(new Vector2(tf_PlayerStart.eulerAngles.y, 0));
         CampFarmManager.Instance.OnCampEnter();
     }
 

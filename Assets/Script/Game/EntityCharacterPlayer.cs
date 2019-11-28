@@ -71,6 +71,13 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
         SetBinding(false);
     }
+    public void SetSpawnPosRot(Vector3 position,Quaternion rotation)
+    {
+        transform.position = position;
+        transform.rotation = rotation;
+        CameraController.Instance.SetCameraRotation(-1,transform.rotation.eulerAngles.y);
+    }
+
     public void SetPlayerInfo(int coins,float health, List<ActionBase> storedActions)
     {
         m_PlayerInfo.OnCoinsReceive(coins);
