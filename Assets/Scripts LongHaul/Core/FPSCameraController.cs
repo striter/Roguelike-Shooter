@@ -31,7 +31,6 @@ public class FPSCameraController : CameraController
         SetCameraYawClamp(I_YawMin,I_YawMax);
         B_CameraOffsetWallClip = false;
         m_SelfRotation = true;
-        B_SmoothCamera = false;
 
         f_fovStart = m_Camera.fieldOfView;
         f_fovCurrent = f_fovStart;
