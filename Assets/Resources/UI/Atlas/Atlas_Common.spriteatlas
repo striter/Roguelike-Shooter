@@ -13,7 +13,7 @@ SpriteAtlas:
       compressionQuality: 100
       maxTextureSize: 4096
       textureCompression: 2
-      filterMode: 0
+      filterMode: 1
       generateMipMaps: 0
       readable: 0
       crunchedCompression: 1
@@ -21,10 +21,10 @@ SpriteAtlas:
     platformSettings: []
     packingParameters:
       serializedVersion: 2
-      padding: 8
+      padding: 4
       blockOffset: 1
       allowAlphaSplitting: 0
-      enableRotation: 1
+      enableRotation: 0
       enableTightPacking: 0
     variantMultiplier: 1
     packables:
@@ -146,7 +146,7 @@ SpriteAtlas:
   - UI_common_circle
   - control_ability_bottom_cooldown
   - control_ability_bottom_activate
-  - control_ability_runsout
+  - control_ability_invalid
   - status_ActionEnergy_progress_bottom
   - status_ActionEnergy_progress_full
   - status_ActionEnergy_progress_notfull
@@ -208,7 +208,7 @@ SpriteAtlas:
   - control_ability_infinite
   - UI_common_RectangleLine
   - UI_setting_common_bottom
-  - UI_Common_Square
+  - UI_common_square
   - btn_close_strip
   m_Tag: Atlas_Common
   m_IsVariant: 0
