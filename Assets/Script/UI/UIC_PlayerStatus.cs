@@ -126,7 +126,7 @@ public class UIC_PlayerStatus : UIControlBase
     void OnBattleFinish()
     {
         SetActionShow(false, true);
-        if (GameManager.Instance.m_GameLevel.B_UIShowLevel)
+        if (!GameManager.Instance.m_GameLevel.B_IsFinalLevel)
             SetMapInBattle(false, true);
     }
 

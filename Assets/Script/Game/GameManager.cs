@@ -301,7 +301,7 @@ public class GameManager : GameManagerBase
             case enum_TileType.Battle:
             case enum_TileType.End:
                 {
-                    if (!m_GameLevel.B_HaveNextStage)
+                    if (m_GameLevel.B_IsFinalLevel)
                         return;
 
                     enum_RarityLevel level = m_GameLevel.m_actionGenerate.GetActionRarityLevel(m_GameLevel.m_GameSeed);
@@ -551,8 +551,8 @@ public class GameLevelManager
 
     public System.Random m_GameSeed { get; private set; }
     public StageInteractGenerateData m_actionGenerate { get; private set; }
-    public bool B_HaveNextStage => m_GameStage <  enum_StageLevel.Ranger;
-    public bool B_UIShowLevel => m_LevelType != enum_TileType.End||B_HaveNextStage;
+    public bool B_IsFinalLevel => B_IsFinalStage&&m_LevelType == enum_TileType.End;
+    public bool B_IsFinalStage => m_GameStage == enum_StageLevel.Ranger;
     public enum_TileType m_LevelType { get; private set; }
     public enum_StageLevel m_GameStage { get; private set; }
     Dictionary<enum_StageLevel, enum_Style> m_StageStyle = new Dictionary<enum_StageLevel, enum_Style>();
@@ -608,7 +608,7 @@ public class GameLevelManager
     }
     public bool StageFinished()
     {
-        if (m_GameStage == enum_StageLevel.Ranger)
+        if (B_IsFinalStage)
             return true;
         m_GameStage++;
         return false;
