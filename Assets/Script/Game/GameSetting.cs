@@ -1824,7 +1824,7 @@ namespace GameSetting
 
         void OnCharacterHealthChangeAddPlayerEnergy(int sourceID,EntityCharacterBase entity,float amountApply)
         {
-            if (amountApply<=0||entity.b_isSubEntity)
+            if (amountApply<=0||entity.b_isSubEntity||!GameManager.Instance.EntityExists(sourceID))
                 return;
 
             if (sourceID == m_Player.m_EntityID || GameManager.Instance.GetEntity(sourceID).m_SpawnerEntityID == m_Player.m_EntityID)
