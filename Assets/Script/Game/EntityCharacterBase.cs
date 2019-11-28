@@ -144,7 +144,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
 
     class EntityCharacterEffectManager:ISingleCoroutine
     {
-        static readonly Shader SD_Base = Shader.Find("Game/Common/Diffuse_Texture");
+        Shader SD_Base;
         static readonly Shader SD_DeathOutline=Shader.Find("Game/Effect/BloomSpecific/Bloom_DissolveEdge");
         static readonly Shader SD_Scan = Shader.Find("Game/Extra/ScanEffect");
         static readonly Shader SD_Ice = Shader.Find("Game/Effect/Ice");
@@ -163,6 +163,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         public EntityCharacterEffectManager(List<Renderer> _skin)
         {
             m_MatBase = _skin[0].material;
+            SD_Base = m_MatBase.shader;
             m_MatExtra = new Material(m_MatBase);
             m_Materials = new Material[1] { m_MatBase };
             m_skins = _skin;
