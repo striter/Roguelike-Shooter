@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TSpecialClasses;
-public class UIC_PlayerStatus : UIControlBase
+public class UIC_CharacterStatus : UIControlBase
 {
     public AnimationCurve m_DyingCurve;
 
@@ -15,7 +15,6 @@ public class UIC_PlayerStatus : UIControlBase
     Transform tf_ExtraControl;
     Transform tf_ActionControl, tf_MapControl;
     TSpecialClasses.AnimationControlBase m_ActionControlAnim,m_MapControlAnim;
-    UIC_ActionEnergy m_ActionEnergy;
     Button  btn_ActionShuffle;
     Image img_ShuffleFill;
     UIT_GridControllerGridItem<UIGI_ActionItemHold> m_ActionGrid;
@@ -40,7 +39,7 @@ public class UIC_PlayerStatus : UIControlBase
     Slider m_HealthFill;
     UIC_Numeric m_HealthAmount, m_MaxHealth;
 
-    ValueLerpSeconds m_HealthLerp, m_ArmorLerp, m_EnergyLerp;
+    ValueLerpSeconds m_HealthLerp, m_ArmorLerp;
     protected override void Init()
     {
         base.Init();
@@ -51,7 +50,6 @@ public class UIC_PlayerStatus : UIControlBase
         tf_ExtraControl = tf_Container.Find("ExtraControl");
         tf_ActionControl = tf_ExtraControl.Find("Action");
         m_ActionControlAnim = new AnimationControlBase(tf_ActionControl.GetComponent<Animation>());
-        m_ActionEnergy = new UIC_ActionEnergy(tf_ActionControl.Find("ActionEnergy"));
         m_ActionGrid = new UIT_GridControllerGridItem<UIGI_ActionItemHold>(tf_ActionControl.Find("ActionGrid"));
         btn_ActionShuffle = tf_ActionControl.Find("ActionShuffle").GetComponent<Button>();
         btn_ActionShuffle.onClick.AddListener(OnActionShuffleClick);
@@ -83,7 +81,6 @@ public class UIC_PlayerStatus : UIControlBase
 
         m_HealthLerp = new ValueLerpSeconds(0f, 4f, 2f, (float value) => { m_HealthFill.value = value; });
         m_ArmorLerp = new ValueLerpSeconds(0f, 4f, 2f, (float value) => { m_ArmorFill.value = value; });
-        m_EnergyLerp = new ValueLerpSeconds(0f, 4f, 2f, (float value) => { m_ActionEnergy.SetValue(value); });
 
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
@@ -111,7 +108,7 @@ public class UIC_PlayerStatus : UIControlBase
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
     }
 
-    public UIC_PlayerStatus SetInGame(bool inGame)
+    public UIC_CharacterStatus SetInGame(bool inGame)
     {
         tf_ExtraControl.SetActivate(inGame);
         return this;
@@ -152,7 +149,6 @@ public class UIC_PlayerStatus : UIControlBase
 
         rtf_StatusData.SetWorldViewPortAnchor(m_Player.tf_UIStatus.position, CameraController.Instance.m_Camera, Time.deltaTime * 10f);
 
-        m_EnergyLerp.TickDelta(Time.unscaledDeltaTime);
         m_HealthLerp.TickDelta(Time.unscaledDeltaTime);
         m_ArmorLerp.TickDelta(Time.unscaledDeltaTime);
 
@@ -173,7 +169,6 @@ public class UIC_PlayerStatus : UIControlBase
             img_Dying.SetActivate(m_dying);
         }
 
-        m_EnergyLerp.ChangeValue(m_Player.m_PlayerInfo.m_ActionEnergy);
         img_ShuffleFill.fillAmount = m_Player.m_PlayerInfo.f_shuffleScale;
     }
 
@@ -238,7 +233,7 @@ public class UIC_PlayerStatus : UIControlBase
     }
 
     void OnActionClick(int index)=> m_Player.m_PlayerInfo.TryUsePickingAction(index);
-    void OnActionPressDuration()=> UIManager.Instance.ShowPage<UI_ActionBattle>(false,0f).Show(m_Player.m_PlayerInfo) ;
+    void OnActionPressDuration()=> GameUIManager.Instance.ShowCharacterEnergyPage<UI_ActionBattle>(true,0f).Show(m_Player.m_PlayerInfo) ;
     void OnActionShuffleClick()=>m_Player.m_PlayerInfo.TryShuffle();
 
     void OnExpireListStatus(PlayerInfoManager expireInfo)

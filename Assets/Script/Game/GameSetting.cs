@@ -2778,34 +2778,6 @@ namespace GameSetting
             if (showWeaponAction) m_WeaponActionRarity.SetRarity(action.m_rarity);
         }
     }
-    public class UIC_ActionEnergy
-    {
-        public RectTransform rectTransform { get; private set; }
-        Image img_Full, img_Fill;
-        Text txt_amount;
-
-        float m_value;
-        public UIC_ActionEnergy(Transform _transform)
-        {
-            rectTransform = _transform.GetComponent<RectTransform>();
-            txt_amount = rectTransform.Find("Amount").GetComponent<Text>();
-            img_Full = rectTransform.Find("Full").GetComponent<Image>();
-            img_Fill = rectTransform.Find("Fill").GetComponent<Image>();
-        }
-        public void SetValue(float value)
-        {
-            if (m_value == value)
-                return;
-
-            m_value =value;
-            float detail = m_value % 1f;
-            bool full = m_value == GameConst.F_MaxActionEnergy;
-            img_Full.SetActivate(full);
-            img_Fill.SetActivate(!full);
-            txt_amount.text = ((int)m_value).ToString();
-            if (!full) img_Fill.fillAmount = detail;
-        }
-    }
 
     public class UIC_Button
     {
