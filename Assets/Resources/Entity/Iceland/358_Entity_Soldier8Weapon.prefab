@@ -368,8 +368,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1289635926676890}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 29.900618, y: 0, z: -2.9493837}
+  m_LocalRotation: {x: -0.40821788, y: 0.23456968, z: -0.10938163, w: 0.8754261}
+  m_LocalPosition: {x: -16.44, y: 2.73, z: 6.21}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4297659170793880}
@@ -392,7 +392,6 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: e26d8d19c8bc9ad40828d213f9be4841, type: 2}
-  - {fileID: 2100000, guid: a8d1906e68fa00a43b3e0033ee355b5c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -427,7 +426,6 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: e26d8d19c8bc9ad40828d213f9be4841, type: 2}
-  - {fileID: 2100000, guid: a8d1906e68fa00a43b3e0033ee355b5c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -462,7 +460,6 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: e26d8d19c8bc9ad40828d213f9be4841, type: 2}
-  - {fileID: 2100000, guid: a8d1906e68fa00a43b3e0033ee355b5c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -641,6 +638,8 @@ MonoBehaviour:
   I_DefaultArmor: 0
   F_MovementSpeed: 4.5
   F_AttackSpread: 0
+  ? ExtraRendererOnlyAvailableFor107WhatAwkwardRequirementWhyNotPutThemIntoOneModelCauseOutModelArtistCantDoItHaveToCreateThisIntoMyCodeLikeABunchOfShitForFuckingRealSucks
+  : {fileID: 0}
   E_EnermyType: 99
   E_AnimatorIndex: -1
   F_AIChaseRange: 1

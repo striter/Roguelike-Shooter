@@ -35,7 +35,10 @@ public class CampManager : GameManagerBase
 
     public void OnSceneItemInteract()
     {
-        OnPortalEnter(1f,tf_Player, () => { SwitchScene( enum_Scene.Game); });
+        OnPortalEnter(1f,tf_Player, () => {
+            LoadingManager.Instance.ShowLoading(enum_StageLevel.Rookie);
+            SwitchScene( enum_Scene.Game);
+        });
     }
 
     public bool B_Farming { get; private set; } = false;

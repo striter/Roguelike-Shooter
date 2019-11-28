@@ -170,12 +170,13 @@ public class GameManager : GameManagerBase
 
     #region Level Management
     //Call When Level Changed
-    void LoadStage() =>this.StartSingleCoroutine(999, DoLoadStage());
+    void LoadStage()
+    {
+        LoadingManager.Instance.ShowLoading(m_GameLevel.m_GameStage);
+        this.StartSingleCoroutine(999, DoLoadStage());
+    } 
     IEnumerator DoLoadStage()     //PreInit Bigmap , Levels LocalPlayer Before  Start The game
     {
-        //Start Loading
-        LoadingManager.Instance.ShowLoading(m_GameLevel.m_GameStage);
-        yield return null;
         GameObjectManager.RecycleAllObject();
         yield return null;
         m_GameLevel.GetStageData();
