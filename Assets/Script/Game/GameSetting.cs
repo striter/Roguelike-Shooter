@@ -1647,6 +1647,7 @@ namespace GameSetting
                 OnActionChange?.Invoke();
             }
 
+            ExpireInfoChange();
             OnPlayerMove(TCommon.GetXZDistance(m_prePos, m_Entity.transform.position));
             m_prePos = m_Entity.transform.position;
 

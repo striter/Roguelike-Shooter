@@ -1160,7 +1160,7 @@ namespace GameSetting_Action
             base.OnFire(identity);
             ResetStack();
         }
-        public override void OnMove(float distsance) => OnStackUp(distsance);
+        public override void OnMove(float distance) => OnStackUp(distance);
         public Action_30001_DamageMovementStackup(int _identity, enum_RarityLevel _level) : base(_identity, _level, ActionData.I_30001_MaxStack) { }
     }
     public class Action_30002_KillDamageMultiply : ActionEquipmentNormal
