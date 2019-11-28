@@ -146,7 +146,7 @@ SpriteAtlas:
   - UI_common_circle
   - control_ability_bottom_cooldown
   - control_ability_bottom_activate
-  - control_ability_runsout
+  - control_ability_invalid
   - status_ActionEnergy_progress_bottom
   - status_ActionEnergy_progress_full
   - status_ActionEnergy_progress_notfull
