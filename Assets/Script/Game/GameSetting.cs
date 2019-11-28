@@ -351,10 +351,10 @@ namespace GameSetting
                 }
             return spriteName;
         }
-        public static string GetAbilityBackground(bool runsOut,bool cooldowning)
+        public static string GetAbilityBackground(bool useable,bool cooldowning)
         {
-            if (runsOut)
-                return "control_ability_runsout";
+            if (!useable)
+                return "control_ability_invalid";
 
             if (cooldowning)
                 return "control_ability_bottom_cooldown";

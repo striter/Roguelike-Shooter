@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class UIC_CharacterControl : UIControlBase {
     protected TouchDeltaManager m_TouchDelta { get; private set; }
     Image m_MainImg;
-    Image m_AbilityBG,m_AbilityImg,m_AbilityRunsOut,m_AbilityTimesDecorate,m_AbilityCooldown,m_AbilityInfinite;
+    Image m_AbilityBG,m_AbilityImg,m_AbilityInvalid,m_AbilityTimesDecorate,m_AbilityCooldown,m_AbilityInfinite;
     Text m_AbilityTimeCounts;
     Action OnReload, OnAbility;
     Action<bool> OnMainDown;
@@ -20,7 +20,7 @@ public class UIC_CharacterControl : UIControlBase {
         m_AbilityImg = transform.Find("Ability/Image").GetComponent<Image>();
         m_AbilityTimeCounts = transform.Find("Ability/TimesCount").GetComponent<Text>();
         m_AbilityCooldown = transform.Find("Ability/Cooldown").GetComponent<Image>();
-        m_AbilityRunsOut = transform.Find("Ability/RunsOut").GetComponent<Image>();
+        m_AbilityInvalid = transform.Find("Ability/Invalid").GetComponent<Image>();
         m_AbilityTimesDecorate = transform.Find("Ability/TimesImage").GetComponent<Image>();
         m_AbilityInfinite = transform.Find("Ability/Infinite").GetComponent<Image>();
         transform.Find("Reload").GetComponent<Button>().onClick.AddListener(OnReloadButtonDown);
@@ -42,27 +42,29 @@ public class UIC_CharacterControl : UIControlBase {
     bool CheckControlable() => !UIPageBase.m_PageOpening;
 
     InteractBase m_Interact;
-    bool m_cooldowning;
-    int m_abilityTimes;
+    bool m_cooldowning=true;
+    int m_abilityTimes= 9;
+    bool m_abilityEnable = true;
     void OnPlayerStatusChanged(EntityCharacterPlayer player)
     {
-        if(player.m_Ability.m_AbilityCooldowning)
-            m_AbilityCooldown.fillAmount = player.m_Ability.m_AbilityCoolDownScale;
-        if(player.m_Ability.m_AbilityCooldowning!=m_cooldowning||player.m_Ability.m_AbilityTimes!=m_abilityTimes)
+        if(player.m_Ability.m_Cooldowning)
+            m_AbilityCooldown.fillAmount = player.m_Ability.m_CooldownScale;
+        if(player.m_Ability.m_Cooldowning!=m_cooldowning||player.m_Ability.m_Times!=m_abilityTimes|| player.m_Ability.enable!= m_abilityEnable)
         {
-            m_cooldowning = player.m_Ability.m_AbilityCooldowning;
-            m_abilityTimes = player.m_Ability.m_AbilityTimes;
-            bool runsOut = player.m_Ability.m_AbilityRunsOut;
-            bool infinite = !player.m_Ability.m_AbilityRunsOutable;
+            m_cooldowning = player.m_Ability.m_Cooldowning;
+            m_abilityTimes = player.m_Ability.m_Times;
+            m_abilityEnable = player.m_Ability.m_Useable;
 
+            bool infinite = !player.m_Ability.m_RunsOutable;
             m_AbilityTimeCounts.SetActivate(!infinite);
             m_AbilityInfinite.SetActivate(infinite);
             if(!infinite) m_AbilityTimeCounts.text = m_abilityTimes.ToString();
-            m_AbilityCooldown.SetActivate(!runsOut && m_cooldowning);
-            m_AbilityImg.color = TCommon.ColorAlpha(m_AbilityImg.color, runsOut?.6f:1f);
-            m_AbilityBG.sprite = UIManager.Instance.m_CommonSprites[UIEnumConvertions.GetAbilityBackground(runsOut ,m_cooldowning)];
-            m_AbilityRunsOut.SetActivate(runsOut);
-            m_AbilityTimesDecorate.SetActivate(!runsOut);
+
+            m_AbilityTimesDecorate.SetActivate(m_abilityEnable);
+            m_AbilityCooldown.SetActivate(m_abilityEnable && m_cooldowning);
+            m_AbilityImg.color = TCommon.ColorAlpha(m_AbilityImg.color, m_abilityEnable ? 1f:.6f);
+            m_AbilityBG.sprite = UIManager.Instance.m_CommonSprites[UIEnumConvertions.GetAbilityBackground(m_abilityEnable, m_cooldowning)];
+            m_AbilityInvalid.SetActivate(!m_abilityEnable);
         }
 
         if (player.m_Interact != m_Interact)

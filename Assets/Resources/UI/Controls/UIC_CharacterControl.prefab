@@ -74,7 +74,7 @@ GameObject:
   - component: {fileID: 222125541295670360}
   - component: {fileID: 114465728937136344}
   m_Layer: 5
-  m_Name: RunsOut
+  m_Name: Invalid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

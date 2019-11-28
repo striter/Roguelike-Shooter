@@ -89,7 +89,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected override void OnRevive()
     {
         base.OnRevive();
-        m_Ability.SetEnable(GameManager.Instance.m_GameLevel.m_LevelType == enum_TileType.Battle);      //?
+        m_Ability.SetEnable(true);
         m_Assist.SetEnable(true);
         m_Animator.OnRevive();
 
@@ -110,7 +110,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void OnBattleStart()
     {
         m_PlayerInfo.OnBattleStart();
-        m_Ability.SetEnable(GameManager.Instance.m_GameLevel.m_LevelType== enum_TileType.Battle);       //?
+        m_Ability.SetEnable(true);
     }
 
     protected override void OnBattleFinish()
@@ -259,12 +259,12 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     public class CharacterAbility
     {
-        public int m_AbilityTimes { get; private set; } = -1;
-        public float m_AbilityCoolDownScale => m_abilityCooldownLeft / m_baseAbilityCooldown;
-        public bool m_AbilityCooldowning => m_abilityCooldownLeft > 0f;
-        public bool m_AbilityRunsOut => m_AbilityRunsOutable&&m_AbilityTimes == 0;
-        public bool m_AbilityRunsOutable => m_baseAbilityTimes > 0;
-        public bool m_AbilityEnable { get; private set; } = false;
+        public int m_Times { get; private set; } = -1;
+        public float m_CooldownScale => m_abilityCooldownLeft / m_baseAbilityCooldown;
+        public bool m_Cooldowning => m_abilityCooldownLeft > 0f;
+        public bool m_Useable => m_Times != 0&&enable;
+        public bool m_RunsOutable => m_baseAbilityTimes > 0;
+        public bool enable { get; private set; } = false;
         protected float m_abilityCooldownLeft = 0f;
 
         protected float m_baseAbilityCooldown;
@@ -280,23 +280,23 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
         public void SetEnable(bool enable)
         {
-            m_AbilityEnable = enable;
+            this.enable = enable;
             m_abilityCooldownLeft = 0;
-            m_AbilityTimes = m_AbilityRunsOutable ? m_baseAbilityTimes : -1;
+            m_Times = m_RunsOutable ? m_baseAbilityTimes : -1;
         }
 
         public void OnAbilityClick()
         {
-            if (!m_AbilityEnable||m_AbilityCooldowning || m_AbilityRunsOut)
+            if (!m_Useable||m_Cooldowning)
                 return;
             m_abilityCooldownLeft = m_baseAbilityCooldown;
-            m_AbilityTimes--;
+            m_Times--;
             OnAbilityTrigger();
         }
 
         public void Tick(float deltaTime)
         {
-            if (m_AbilityCooldowning)
+            if (m_Cooldowning)
                 m_abilityCooldownLeft -= deltaTime;
         }
     }
