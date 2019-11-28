@@ -5,7 +5,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class CameraController : SimpleSingletonMono<CameraController>  {
-    public bool B_SmoothCamera = true;
     [Range(0,1)]
     public float F_CameraRotateSmooth = .3f;
     [Range(0, 1)]
@@ -109,8 +108,8 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
         else
             qt_CameraRot = m_SelfRotation ? CalculateSelfRotation() : tf_AttachTo.rotation;
 
-        tf_CameraYawBase.position = B_SmoothCamera?Vector3.Lerp(tf_CameraYawBase.position, tf_AttachTo.position,F_CameraMoveSmooth):tf_AttachTo.position;
-        tf_CameraYawBase.rotation = B_SmoothCamera?Quaternion.Lerp(tf_CameraYawBase.rotation, Quaternion.Euler(0, qt_CameraRot.eulerAngles.y, 0), F_CameraRotateSmooth) : Quaternion.Euler(0, qt_CameraRot.eulerAngles.y, 0);
+        tf_CameraYawBase.position = Vector3.Lerp(tf_CameraYawBase.position, tf_AttachTo.position, F_CameraMoveSmooth);
+        tf_CameraYawBase.rotation = Quaternion.Lerp(tf_CameraYawBase.rotation, Quaternion.Euler(0, qt_CameraRot.eulerAngles.y, 0), F_CameraRotateSmooth);
 
         tf_CameraOffset.localPosition = V3_LocalPositionOffset;
 
