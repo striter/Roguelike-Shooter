@@ -108,8 +108,8 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
         else
             qt_CameraRot = m_SelfRotation ? CalculateSelfRotation() : tf_AttachTo.rotation;
 
-        tf_CameraYawBase.position = Vector3.Lerp(tf_CameraYawBase.position, tf_AttachTo.position, F_CameraMoveSmooth);
-        tf_CameraYawBase.rotation = Quaternion.Lerp(tf_CameraYawBase.rotation, Quaternion.Euler(0, qt_CameraRot.eulerAngles.y, 0), F_CameraRotateSmooth);
+        tf_CameraYawBase.position = Vector3.Lerp(tf_CameraYawBase.position, tf_AttachTo.position,F_CameraMoveSmooth);
+        tf_CameraYawBase.rotation = Quaternion.Euler(0, qt_CameraRot.eulerAngles.y, 0);
 
         tf_CameraOffset.localPosition = V3_LocalPositionOffset;
 
@@ -124,8 +124,8 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
                 Debug.DrawRay(ray_temp.origin, ray_temp.direction);
         }
 
-        tf_MainCamera.position = tf_CameraOffset.position;
-        tf_MainCamera.rotation = qt_CameraRot;
+        tf_MainCamera.position = Vector3.Lerp(tf_MainCamera.position, tf_CameraOffset.position,F_CameraRotateSmooth);
+        tf_MainCamera.rotation = Quaternion.Lerp(tf_MainCamera.rotation,qt_CameraRot,F_CameraRotateSmooth);
     }
     #endregion
     #region Get/Set
