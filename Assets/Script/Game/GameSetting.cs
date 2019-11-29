@@ -2359,8 +2359,6 @@ namespace GameSetting
     public class EquipmentBase
     {
         public virtual bool B_TargetAlly => false;
-        public virtual bool B_HaveAnim => true;
-        public virtual bool B_TriggerByAnim => true;
         public int I_Index { get; private set; } = -1;
         protected EntityCharacterBase m_Entity;
         protected Transform attacherFeet => m_Entity.transform;
@@ -2488,8 +2486,6 @@ namespace GameSetting
     }
     public class EquipmentCasterSelfDetonateAnimLess : EquipmentCaster
     {
-        public override bool B_HaveAnim => false;
-        public override bool B_TriggerByAnim => false;
         ModelBlink m_Blink;
         float timeElapsed;
         bool b_activating;
@@ -2530,7 +2526,6 @@ namespace GameSetting
     }
     public class EquipmentCasterControlled : EquipmentCaster
     {
-        public override bool B_TriggerByAnim => false;
         SFXCast m_Cast;
         public EquipmentCasterControlled(int equipmentIndex,SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex,_castInfo, _controller, _GetBuffInfo)
         {
