@@ -701,7 +701,7 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
         {
             if (m_check <= 0)
                 return;
-            m_check -= Time.deltaTime;
+            m_check -= deltaTime;
             m_value = GetValue(m_check / m_duration);
             OnValueChanged(m_value);
         }

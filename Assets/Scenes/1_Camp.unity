@@ -10531,7 +10531,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f80473746f0c2a4ab5504ddc08f7102, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_TargetScene: 1
 --- !u!114 &308148224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -39903,14 +39902,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de5ad01c3df51c540aae148c4af809a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  B_SmoothCamera: 1
-  F_CameraSmoothParam: 0.15
+  F_CameraRotateSmooth: 0.4
+  F_CameraMoveSmooth: 0.12
   B_InvertCamera: 0
-  F_RotateSensitive: 1
+  F_RotateSensitive: 2
   B_CameraOffsetWallClip: 1
   B_DrawDebugLine: 0
   m_Effect: {fileID: 0}
-  TPSOffset: {x: 0, y: 21, z: -6}
+  TPSOffset: {x: 0, y: 22, z: -6}
   I_YawMin: 60
   I_YawMax: 60
   I_ShakeParam: 6

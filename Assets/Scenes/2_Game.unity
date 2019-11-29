@@ -310,7 +310,7 @@ MonoBehaviour:
   B_PhysicsDebugGizmos: 1
   B_GameLevelDebugGizmos: 0
   E_LevelDebug: 0
-  Z_TestEntitySpawn: 301
+  Z_TestEntitySpawn: 507
   TestEntityFlag: 2
   TestEntityBuffOnSpawn: 0
   X_TestCastIndex: 3
@@ -319,11 +319,11 @@ MonoBehaviour:
   V_TestIndicatorIndex: 0
   B_TestBuffIndex: 4
   Comma_TestParticleIndex: 20001
-  F1_WeaponSpawnType: 501
+  F1_WeaponSpawnType: 802
   WeaponPerkOnSpawn: -1
-  F5_TestActionNormal: 10016
+  F5_TestActionNormal: 30001
   F6_TestActionOutstanding: 20006
-  F7_TestActionEpic: 30015
+  F7_TestActionEpic: 30001
   F8_TestAcquireAction: 30005
 --- !u!4 &1133817278
 Transform:
@@ -521,14 +521,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de5ad01c3df51c540aae148c4af809a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  B_SmoothCamera: 1
-  F_CameraSmoothParam: 0.3
+  F_CameraRotateSmooth: 0.4
+  F_CameraMoveSmooth: 0.12
   B_InvertCamera: 0
-  F_RotateSensitive: 1
+  F_RotateSensitive: 2
   B_CameraOffsetWallClip: 0
   B_DrawDebugLine: 0
   m_Effect: {fileID: 0}
-  TPSOffset: {x: 0, y: 23, z: -6}
+  TPSOffset: {x: 0, y: 22, z: -6}
   I_YawMin: 60
   I_YawMax: 60
   I_ShakeParam: 6

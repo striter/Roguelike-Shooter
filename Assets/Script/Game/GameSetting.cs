@@ -26,8 +26,8 @@ namespace GameSetting
         public const float F_MaxActionEnergy = 5f;
         public const float I_MaxArmor = 99999;
         public const float F_RestoreActionEnergy = 0.001f; //战斗结束时给的能量 //战斗外的默认能量值
-        public const float F_ActionShuffleCost = 2f;
-        public const float F_ActionShuffleCooldown = 10f;
+        public const float F_ActionShuffleCost = 3f;
+        public const float F_ActionShuffleCooldown = 6f;
 
         public const float F_AimMovementReduction = .6f;
         public const float F_MovementReductionDuration = .1f;
@@ -491,6 +491,8 @@ namespace GameSetting
         OnGameStart,
         OnGameFinish,
         OnGameExit,
+
+        OnCampStart,
     }
 
     enum enum_BC_UIStatus
@@ -649,7 +651,7 @@ namespace GameSetting
         PlayerRevive,
     }
 
-    public enum enum_GameMusic { Invalid=-1, Relax=1, Fight=2, Win=3, Lost=4,}
+    public enum enum_GameMusic { Invalid=-1,CampMusicStart=0, CampRelax,CampMusicEnd = 99,GameMusicStart=100,  GameRelax, GameFightRelax,GameFightHard, GameWin, GameLost,GameMusicEnd=199}
 
     public enum enum_Option_FrameRate { Invalid = -1, Normal = 45, High = 60, }
 
@@ -707,7 +709,7 @@ namespace GameSetting
             m_StorageRequestStamp = -1;
             m_StorageActions = new List<ActionStorageData>();
             m_CharacterSelected = enum_PlayerCharacter.Beth;
-            m_WeaponSelected = enum_PlayerWeapon.UMP45;
+            m_WeaponSelected = enum_PlayerWeapon.UZI;
             for (int i = 0; i < GameExpression.I_CampActionStorageDefault.Count; i++)
                 m_StorageActions.Add(ActionStorageData.CreateDefault(GameExpression.I_CampActionStorageDefault[i]));
         }
@@ -1423,7 +1425,7 @@ namespace GameSetting
         Action OnExpireInfoChange;
 
         bool b_expireUpdated = false;
-        public void ExpireInfoChange() => b_expireUpdated = false;
+        public void UpdateEntityInfo() => b_expireUpdated = false;
 
         public CharacterInfoManager(EntityCharacterBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange)
         {
@@ -1457,7 +1459,7 @@ namespace GameSetting
         {
             m_Effects.Traversal((enum_CharacterEffect type) => { m_Effects[type].Reset(); });
             m_Expires.Traversal((ExpireBase expire) => { if (expire.m_ExpireType == enum_ExpireType.Buff) OnExpireElapsed(expire); }, true);
-            ExpireInfoChange();
+            UpdateEntityInfo();
         }
 
         public virtual void Tick(float deltaTime) {
@@ -1475,7 +1477,7 @@ namespace GameSetting
         protected virtual void AddExpire(ExpireBase expire)
         {
             m_Expires.Add(expire);
-            ExpireInfoChange();
+            UpdateEntityInfo();
         }
         void RefreshExpire(ExpireBase expire)
         {
@@ -1484,7 +1486,7 @@ namespace GameSetting
         protected virtual void OnExpireElapsed(ExpireBase expire)
         {
             m_Expires.Remove(expire);
-            ExpireInfoChange();
+            UpdateEntityInfo();
         }
         public void AddBuff(int sourceID, SBuff buffInfo)
         {
@@ -1647,6 +1649,7 @@ namespace GameSetting
                 OnActionChange?.Invoke();
             }
 
+            UpdateEntityInfo();
             OnPlayerMove(TCommon.GetXZDistance(m_prePos, m_Entity.transform.position));
             m_prePos = m_Entity.transform.position;
 
@@ -2776,34 +2779,6 @@ namespace GameSetting
             m_WeaponActionRarity.transform.SetActivate(showWeaponAction);
             m_WeaponActionName.autoLocalizeText = showWeaponAction ? action.GetNameLocalizeKey() : "UI_Weapon_ActionInvalidName";
             if (showWeaponAction) m_WeaponActionRarity.SetRarity(action.m_rarity);
-        }
-    }
-    public class UIC_ActionEnergy
-    {
-        public RectTransform rectTransform { get; private set; }
-        Image img_Full, img_Fill;
-        Text txt_amount;
-
-        float m_value;
-        public UIC_ActionEnergy(Transform _transform)
-        {
-            rectTransform = _transform.GetComponent<RectTransform>();
-            txt_amount = rectTransform.Find("Amount").GetComponent<Text>();
-            img_Full = rectTransform.Find("Full").GetComponent<Image>();
-            img_Fill = rectTransform.Find("Fill").GetComponent<Image>();
-        }
-        public void SetValue(float value)
-        {
-            if (m_value == value)
-                return;
-
-            m_value =value;
-            float detail = m_value % 1f;
-            bool full = m_value == GameConst.F_MaxActionEnergy;
-            img_Full.SetActivate(full);
-            img_Fill.SetActivate(!full);
-            txt_amount.text = ((int)m_value).ToString();
-            if (!full) img_Fill.fillAmount = detail;
         }
     }
 

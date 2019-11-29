@@ -4,14 +4,16 @@ using System.Collections.Generic;
 using UnityEngine;
 public class UI_ActionBattle : UIPageBase {
 
-    UIT_GridControllerGridItem<UIGI_ActionItemDetail> m_Grid;
+    UIT_GridControllerGridItem<UIGI_ActionItemSelect> m_Grid;
     PlayerInfoManager m_Info;
-    UIC_ActionEnergy m_Energy;
+    UIC_Button btn_Confirm;
+    int m_selectIndex = -1;
     protected override void Init()
     {
         base.Init();
-        m_Grid = new UIT_GridControllerGridItem<UIGI_ActionItemDetail>(tf_Container.Find("ActionGrid"));
-        m_Energy = new UIC_ActionEnergy(tf_Container.Find("ActionEnergy"));
+        m_Grid = new UIT_GridControllerGridItem<UIGI_ActionItemSelect>(tf_Container.Find("ActionGrid"));
+        btn_Confirm =new UIC_Button( tf_Container.Find("ConfirmBtn"),OnConfirmBtnClick);
+        btn_Confirm.SetInteractable(false);
     }
 
     public void Show(PlayerInfoManager _info)
@@ -29,15 +31,27 @@ public class UI_ActionBattle : UIPageBase {
 
     void OnBattleActionChanged(PlayerInfoManager info)
     {
+        m_selectIndex = -1;
+        btn_Confirm.SetInteractable(false);
         m_Grid.ClearGrid();
         List<ActionBase> targetList =  info.m_BattleActionPicking;
         for (int i = 0; i < targetList.Count; i++)
             m_Grid.AddItem(i).SetInfo(targetList[i], OnItemClick,  info.CanCostEnergy(targetList[i].I_Cost));
-        m_Energy.SetValue(info.m_ActionEnergy);
     }
 
     void OnItemClick(int index)
     {
-        m_Info.TryUsePickingAction(index);
+        if (m_selectIndex != -1)
+            m_Grid.GetItem(m_selectIndex).SetHighlight(false);
+        m_selectIndex = index;
+        m_Grid.GetItem(m_selectIndex).SetHighlight(true);
+        btn_Confirm.SetInteractable(true);
     }
+    void OnConfirmBtnClick()
+    {
+        if (m_selectIndex < 0)
+            return;
+        m_Info.TryUsePickingAction(m_selectIndex);
+    }
+
 }

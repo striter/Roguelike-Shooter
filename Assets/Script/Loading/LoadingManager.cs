@@ -66,7 +66,7 @@ public class LoadingManager : SimpleSingletonMono<LoadingManager>
     {
         if (m_GameBegin)
             return;
-        m_Logo.Begin(() => { BeginLoad(enum_Scene.Camp); });
+        m_Logo.Begin(() => { SceneManager.LoadScene((int)enum_Scene.Camp); });
         m_GameBegin = true;
     }
 
@@ -107,11 +107,14 @@ public class LoadingManager : SimpleSingletonMono<LoadingManager>
             if (animationCheck < 0)
                 return;
             animationCheck -= deltaTime;
-            if (animationCheck < 0)
+            if (OnFinished!=null&& animationCheck < .5f)
             {
-                transform.SetActivate(false);
                 OnFinished?.Invoke();
+                OnFinished = null;
             }
+
+            if (animationCheck < 0)
+                transform.SetActivate(false);
         }
     }
 

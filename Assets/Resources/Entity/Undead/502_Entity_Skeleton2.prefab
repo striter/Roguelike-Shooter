@@ -493,8 +493,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1587510289150768}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 49.59, y: 0, z: 2.56}
+  m_LocalRotation: {x: -0.40821788, y: 0.23456968, z: -0.10938163, w: 0.8754261}
+  m_LocalPosition: {x: 44.2262, y: -19.22409, z: -12.214708}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4374832970908778}
@@ -1028,15 +1028,17 @@ MonoBehaviour:
   I_DefaultArmor: 0
   F_MovementSpeed: 3.5
   F_AttackSpread: 2
+  ? ExtraRendererOnlyAvailableFor107WhatAwkwardRequirementWhyNotPutThemIntoOneModelCauseOutModelArtistCantDoItHaveToCreateThisIntoMyCodeLikeABunchOfShitForFuckingRealSucks
+  : {fileID: 0}
   E_EnermyType: 2
   E_AnimatorIndex: 130
   F_AIChaseRange: 17
   F_AIAttackRange: 22
   F_AttackDuration:
-    start: 3
+    start: 2
     length: 1
   F_AttackTimes:
-    start: 2
+    start: 1
     length: 1
   F_AttackRate: 0.33
   B_BattleCheckObstacle: 0
@@ -1072,7 +1074,6 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: 1dd235e967768684da0120f777b58f01, type: 2}
-  - {fileID: 2100000, guid: a8d1906e68fa00a43b3e0033ee355b5c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
