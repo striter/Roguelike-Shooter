@@ -16,7 +16,7 @@ public class EntityCharacterAI : EntityCharacterBase {
     public RangeFloat F_AttackDuration;
     public RangeInt F_AttackTimes;
     public float F_AttackRate;
-    EnermyAIControllerBase m_AI;
+    protected EnermyAIControllerBase m_AI { get; private set; }
     EnermyAnimator m_Animator;
     public bool B_BattleCheckObstacle = false;
     [Range(0,3)]
@@ -65,7 +65,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         base.OnExpireChange();
         if (m_Animator != null)
             m_Animator.SetMovementSpeed(m_CharacterInfo.F_MovementSpeed/4f);
-        m_AI.OnInfoChange();
+        m_AI.m_Agent.speed = m_CharacterInfo.F_MovementSpeed;
     }
 
     protected override void OnAliveTick(float deltaTime)
@@ -88,7 +88,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         return base.OnReceiveDamage(damageInfo, damageDirection);
     }
 
-    void OnAttackAnim(bool startAttack)=>m_Animator.OnAttack(startAttack);
+    protected virtual void OnAttackAnim(bool startAttack)=>m_Animator.OnAttack(startAttack);
 
     protected void OnAnimKeyEvent(TAnimatorEvent.enum_AnimEvent animEvent)
     {
@@ -117,14 +117,14 @@ public class EntityCharacterAI : EntityCharacterBase {
         }
     }
     #region AI
-    class EnermyAIControllerBase 
+    protected class  EnermyAIControllerBase
     {
+        public NavMeshAgent m_Agent { get; private set; }
         protected EntityCharacterAI m_Entity;
         protected EntityCharacterBase m_Target;
         protected Transform transform => m_Agent.transform;
         protected Transform headTransform => m_Entity.tf_Head;
         protected Transform targetHeadTransform => m_Target.tf_Head;
-        protected NavMeshAgent m_Agent;
         protected NavMeshObstacle m_Obstacle;
         protected Action<bool> OnAttackAnim;
         protected Func<EntityCharacterBase, bool> OnCheckTarget;
@@ -197,12 +197,7 @@ public class EntityCharacterAI : EntityCharacterBase {
             B_AgentEnabled = false;
             m_Weapon.OnDeactivate();
         }
-
-        public void OnInfoChange()
-        {
-            m_Agent.speed = m_Info.F_MovementSpeed;
-        }
-
+        
         public void SetPlay(bool play)
         {
             if (b_playing == play)

@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-public class AudioManager: SimpleSingletonMono <AudioManager>
+public class AudioManagerBase : SimpleSingletonMono <AudioManagerBase>
 {
     public static event Action<float> OnVolumeChanged;
     AudioSource m_AudioBG;
@@ -16,7 +16,7 @@ public class AudioManager: SimpleSingletonMono <AudioManager>
         m_AudioBG.volume = m_BGVolume;
         m_baseVolume = 1f;
     }
-    protected void Init()
+    public virtual void Init()
     {
         GameObject obj = new GameObject("AudioObj_3D");
         AudioSource source= obj.AddComponent<AudioSource>();
@@ -30,7 +30,7 @@ public class AudioManager: SimpleSingletonMono <AudioManager>
         audioObj = obj.AddComponent<SFXAudioBase>();
         ObjectPoolManager<int, SFXAudioBase>.Register(1, audioObj, 5);
     }
-    protected void OnRecycle()
+    public virtual void Recycle()
     {
         ObjectPoolManager<int, SFXAudioBase>.DestroyAll();
     }

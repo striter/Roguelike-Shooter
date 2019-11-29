@@ -30,7 +30,7 @@ public class CampManager : GameManagerBase
         tf_Player = player.transform;
         AttachPlayerCamera(tf_Player);
         CampFarmManager.Instance.OnCampEnter();
-        GameAudioManager.Instance.PlayClip(enum_GameMusic.CampRelax, true);
+        CampAudioManager.Instance.PlayBGM(enum_CampMusic.Relax);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCampStart);
     }
     
