@@ -88,7 +88,11 @@ public class EntityCharacterAI : EntityCharacterBase {
         return base.OnReceiveDamage(damageInfo, damageDirection);
     }
 
-    protected virtual void OnAttackAnim(bool startAttack)=>m_Animator.OnAttack(startAttack);
+    protected virtual void OnAttackAnim(bool startAttack)
+    {
+        if (m_Animator!=null) m_Animator.OnAttack(startAttack);
+        else if(startAttack) m_AI.OnAttackAnimTrigger();
+    } 
 
     protected void OnAnimKeyEvent(TAnimatorEvent.enum_AnimEvent animEvent)
     {
@@ -280,7 +284,7 @@ public class EntityCharacterAI : EntityCharacterBase {
             f_targetDistance = TCommon.GetXZDistance(targetHeadTransform.position, headTransform.position);
             b_targetOutChaseRange = f_targetDistance > m_Entity.F_AIChaseRange;
             b_targetOutAttackRange = f_targetDistance > m_Entity.F_AIAttackRange;
-            bool attackBlocked = (m_Entity.B_BattleCheckObstacle && b_targetVisible) || FrontBlocked();
+            bool attackBlocked = (m_Entity.B_BattleCheckObstacle && !b_targetVisible) || FrontBlocked();
             b_CanStartAttack = b_targetAvailable&& !b_targetOutAttackRange  && b_targetRotationWithin && !attackBlocked;
             b_CanKeepAttack = b_targetAvailable && !attackBlocked;
         }
@@ -316,11 +320,14 @@ public class EntityCharacterAI : EntityCharacterBase {
         }
         void CheckAttack(float deltaTime)
         {
-            if (i_playCount <= 0||!b_CanKeepAttack)
+            if (!b_CanKeepAttack)
             {
                 OnAttackFinished();
                 return;
             }
+
+            if (i_playCount <= 0)
+                return;
 
             if (f_fireCheckSimulate > 0)
             {
@@ -330,18 +337,14 @@ public class EntityCharacterAI : EntityCharacterBase {
             f_fireCheckSimulate = m_Entity.F_AttackRate;
 
             i_playCount--;
-            if (m_Weapon.B_TriggerByAnim)
-            {
-                OnAttackAnim(true);
-                return;
-            }
-            OnAttackAnimTrigger();
+            OnAttackAnim(true);
         }
 
         public void OnAttackAnimTrigger() => OnAttackTrigged();
         void OnAttackTrigged()
         {
-            m_Weapon.Play(b_preAim, m_Target);
+            if(b_targetAvailable)
+                m_Weapon.Play(b_preAim, m_Target);
             if (i_playCount <= 0)
                 OnAttackFinished();
         }
@@ -349,8 +352,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         {
             b_attacking = false;
             m_Weapon.OnSetAttack(false);
-            if (m_Weapon.B_HaveAnim)
-                OnAttackAnim(false);
+            OnAttackAnim(false);
             f_battleSimulate = m_Entity.F_AttackDuration.RandomRangeFloat();
         }
         #endregion
@@ -362,7 +364,7 @@ public class EntityCharacterAI : EntityCharacterBase {
             if (f_movementOrderSimulate > 0)  f_movementOrderSimulate -= movementDelta;
             if (f_movementSimulate > 0) { f_movementSimulate -= movementDelta; return; }
             f_movementSimulate = GameConst.F_AIMovementCheckParam;
-
+            
             //Force Hold Position
             if (CheckHoldPosition()) { StopMoving();  return; }
 
