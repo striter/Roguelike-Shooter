@@ -480,7 +480,7 @@ public class GameManager : GameManagerBase
                 m_EntityGenerating.Add(m_Enermies[level].RandomItem());
             }
         });
-        this.StartSingleCoroutine(99, IE_GenerateEnermy(m_EntityGenerating, .1f));
+        this.StartSingleCoroutine(99, IE_GenerateEnermy(m_EntityGenerating, GameConst.F_EnermySpawnOffsetEach));
     }
 
     void OnBattleCharacterRecycle(EntityCharacterBase entity)
