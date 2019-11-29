@@ -429,7 +429,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   F_CameraRotateSmooth: 0.4
-  F_CameraMoveSmooth: 0.12
+  F_CameraMoveSmooth: 0.1
   B_InvertCamera: 0
   F_RotateSensitive: 2
   B_CameraOffsetWallClip: 0
