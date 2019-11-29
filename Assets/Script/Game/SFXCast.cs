@@ -25,6 +25,7 @@ public class SFXCast : SFXEquipmentBase {
     protected float F_PlayDuration => I_TickCount * F_Tick;
     Transform tf_ControlledCast;
     float f_blastTickChest = 0;
+    public bool m_ControlledCast => tf_ControlledCast != null;
     public virtual void Play(DamageDeliverInfo buffInfo)
     {
         SetDamageInfo(buffInfo);
@@ -34,11 +35,11 @@ public class SFXCast : SFXEquipmentBase {
         base.Play(m_DamageInfo.m_detail.I_SourceID, F_PlayDuration, F_DelayDuration);
     }
 
-    public virtual void PlayControlled(int sourceID,EntityCharacterBase entity, Transform directionTrans, DamageDeliverInfo buffInfo)
+    public virtual void PlayControlled(int sourceID,EntityCharacterBase entity, Transform directionTrans,DamageDeliverInfo idInfo)
     {
-        SetDamageInfo(buffInfo);
-        AttachTo(entity.tf_Weapon);
+        SetDamageInfo(idInfo);
         tf_ControlledCast = directionTrans;
+        AttachTo(entity.tf_Weapon);
         base.Play(sourceID, 0f, F_DelayDuration);
     }
 
@@ -58,6 +59,9 @@ public class SFXCast : SFXEquipmentBase {
     protected override void OnPlay()
     {
         base.OnPlay();
+        if (m_ControlledCast)
+            return;
+
         if (B_CameraShake)
             GameManagerBase.Instance.SetEffect_Shake(V4_CastInfo.magnitude);
         

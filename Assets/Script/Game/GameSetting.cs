@@ -44,8 +44,8 @@ namespace GameSetting
         public const float F_AIDamageTranslate = 0;   //.003f;
         public const float F_AIMovementCheckParam = .3f;
         public const float F_AITargetCheckParam = 3f;       //AI Retarget Duration,3 is suggested
-        public const float F_AITargetCalculationParam = 1f;       //AI Target Param Calculation Duration, 1 is suggested;
-        public const float F_AIMaxRepositionDuration = 5f;
+        public const float F_AITargetCalculationParam = .5f;       //AI Target Param Calculation Duration, 1 is suggested;
+        public const float F_AIMaxRepositionDuration = .5f;
         public const int I_AIIdlePercentage = 50;
 
         public const int I_EnermyCountWaveFinish = 0;       //When Total Enermy Count Reaches This Amount,Wave Finish
@@ -2355,6 +2355,8 @@ namespace GameSetting
     public class EquipmentBase
     {
         public virtual bool B_TargetAlly => false;
+        public virtual bool B_HaveAnim => true;
+        public virtual bool B_TriggerByAnim => true;
         public int I_Index { get; private set; } = -1;
         protected EntityCharacterBase m_Entity;
         protected Transform attacherFeet => m_Entity.transform;
@@ -2381,7 +2383,7 @@ namespace GameSetting
         {
 
         }
-        public virtual void OnPlayAnim(bool play)
+        public virtual void OnSetAttack(bool play)
         {
         }
         public virtual void Tick(float deltaTime)
@@ -2482,6 +2484,8 @@ namespace GameSetting
     }
     public class EquipmentCasterSelfDetonateAnimLess : EquipmentCaster
     {
+        public override bool B_HaveAnim => false;
+        public override bool B_TriggerByAnim => false;
         ModelBlink m_Blink;
         float timeElapsed;
         bool b_activating;
@@ -2506,40 +2510,52 @@ namespace GameSetting
                 b_activating = false;
             }
         }
-        public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
+        public override void OnSetAttack(bool play)
         {
-            if (b_activating)
+            base.OnSetAttack(play);
+            if (!play || b_activating)
                 return;
 
             timeElapsed = 0;
             b_activating = true;
         }
+        public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
+        {
+            return;
+        }
     }
     public class EquipmentCasterControlled : EquipmentCaster
     {
+        public override bool B_TriggerByAnim => false;
         SFXCast m_Cast;
         public EquipmentCasterControlled(int equipmentIndex,SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex,_castInfo, _controller, _GetBuffInfo)
         {
         }
         public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
-            OnPlayAnim(false);
-            m_Cast = GameObjectManager.SpawnEquipment<SFXCast>(I_Index, m_Entity.tf_Weapon.position, m_Entity.tf_Weapon.forward);
-            m_Cast.PlayControlled(m_Entity.m_EntityID, m_Entity, attacherHead, GetDamageDeliverInfo());
+            if (!m_Cast)
+            {
+                m_Cast = GameObjectManager.SpawnEquipment<SFXCast>(I_Index, m_Entity.tf_Weapon.position, m_Entity.tf_Weapon.forward);
+                m_Cast.PlayControlled(m_Entity.m_EntityID, m_Entity, attacherHead, DamageDeliverInfo.Default(m_Entity.m_EntityID));
+            }
+
+            if (m_Cast)
+                m_Cast.OnControlledCheck(GetDamageDeliverInfo());
         }
 
-        public override void OnPlayAnim(bool play)
+        public override void OnSetAttack(bool play)
         {
-            if (!play && m_Cast)
+            if (m_Cast)
             {
                 m_Cast.StopControlled();
                 m_Cast = null;
             }
         }
+
         public override void OnDeactivate()
         {
             base.OnDeactivate();
-            OnPlayAnim(false);
+            OnSetAttack(false);
         }
     }
     public class EquipmentBarrageRange : EquipmentBase
