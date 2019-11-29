@@ -22,6 +22,7 @@ public class GameAudioManager : AudioManager
             if (clip) m_GameMusic.Add(music, clip);
         });
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageBeginLoad, OnStageBeginLoad);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageStart, OnStageStart);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish); ;
         TBroadCaster<enum_BC_GameStatus>.Add<bool>(enum_BC_GameStatus.OnGameFinish, OnGameFinish);
@@ -30,6 +31,7 @@ public class GameAudioManager : AudioManager
     {
         base.Recycle();
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnStageBeginLoad, OnStageBeginLoad);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnStageStart, OnStageStart);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish); ;
         TBroadCaster<enum_BC_GameStatus>.Remove<bool>(enum_BC_GameStatus.OnGameFinish, OnGameFinish);
@@ -50,7 +52,10 @@ public class GameAudioManager : AudioManager
             m_GameMusic.Add(music, clip);
         });
     }
-    
+    void OnStageStart()
+    {
+        PlayBGM(enum_GameMusic.Relax, true);
+    }
     void OnBattleStart()
     {
         if(GameManager.Instance.m_GameLevel.m_LevelType == enum_TileType.End)
