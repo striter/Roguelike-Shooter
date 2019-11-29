@@ -712,7 +712,7 @@ public class GameMusicManager
 
     void OnWaveStart(int total, int current, bool finalWave)
     {
-        if (finalWave)
+        if (finalWave&&GameManager.Instance.m_GameLevel.m_LevelType== enum_TileType.End)
             GameAudioManager.Instance.PlayClip(enum_GameMusic.GameFightHard, true);
     }
     void OnBattleFinish() => GameAudioManager.Instance.Stop();
