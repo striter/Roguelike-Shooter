@@ -53,7 +53,8 @@ public class GameAudioManager : AudioManager
     
     void OnBattleStart()
     {
-        PlayBGM(GameManager.Instance.m_GameLevel.m_LevelType == enum_TileType.End ? enum_GameMusic.FightHard : enum_GameMusic.FightRelax, true);
+        if(GameManager.Instance.m_GameLevel.m_LevelType == enum_TileType.End)
+        PlayBGM( enum_GameMusic.Fight, true);
     }
     void OnBattleFinish()
     {
