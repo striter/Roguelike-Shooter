@@ -444,10 +444,10 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4774772795832778}
-  - component: {fileID: 114954735759712100}
   - component: {fileID: 114834534513207440}
   - component: {fileID: 195275486914979146}
   - component: {fileID: 208912014715892150}
+  - component: {fileID: 114037911258291420}
   - component: {fileID: 136500707643455048}
   m_Layer: 10
   m_Name: 407_Entity_Savage7
@@ -919,6 +919,17 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114037911258291420
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1997024290601734}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2091396369435d24bad4838db15bbe09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114420065745049942
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -955,25 +966,15 @@ MonoBehaviour:
     start: 3
     length: 1
   F_AttackTimes:
-    start: 0
-    length: 0
-  F_AttackRate: 5
+    start: 8
+    length: 4
+  F_AttackRate: 0.4
   B_BattleCheckObstacle: 0
   F_AttackRotateParam: 1
   I_AttackPreAimPercentage: 50
   B_AttackMove: 1
   F_AttackFrontCheck: 0
   F_AttackMoveMultiply: 2
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1997024290601734}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2091396369435d24bad4838db15bbe09, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!136 &136500707643455048
 CapsuleCollider:
   m_ObjectHideFlags: 1

@@ -208,7 +208,7 @@ SpriteAtlas:
   - control_ability_infinite
   - UI_common_RectangleLine
   - UI_setting_common_bottom
-  - UI_Common_Square
+  - UI_common_square
   - btn_close_strip
   m_Tag: Atlas_Common
   m_IsVariant: 0

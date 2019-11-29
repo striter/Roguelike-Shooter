@@ -304,11 +304,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c088e7b318d292458e08155aef1723d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  M_TESTSEED: 11:40:36
+  M_TESTSEED: 10:38:24
   B_PhysicsDebugGizmos: 1
   B_GameLevelDebugGizmos: 0
   E_LevelDebug: 0
-  Z_TestEntitySpawn: 302
+  Z_TestEntitySpawn: 407
   TestEntityFlag: 2
   TestEntityBuffOnSpawn: 7
   X_TestCastIndex: 3
