@@ -24,7 +24,7 @@ public class EntityCharacterAI : EntityCharacterBase {
     [Range(0, 100)]
     public int I_AttackPreAimPercentage = 50;
     public bool B_AttackMove = true;
-    public bool B_AttackFrontCheck = true;
+    public float F_AttackFrontCheck = 2f;
     bool OnCheckTarget(EntityCharacterBase target) => target.m_Flag!=m_Flag && !target.m_Health.b_IsDead;
     public override Vector3 m_PrecalculatedTargetPos(float time)=> tf_Head.position;
     Transform tf_Barrel;
@@ -216,6 +216,7 @@ public class EntityCharacterAI : EntityCharacterBase {
                     OnAttackFinished();
             }
         }
+
         public void OnTick(float deltaTime)
         {
             if (!b_playing)
@@ -228,6 +229,7 @@ public class EntityCharacterAI : EntityCharacterBase {
             CheckRotation(deltaTime);
             if (m_Weapon!=null)  m_Weapon.Tick(deltaTime);
         }
+
         #region TargetIdentity
         void CheckTarget(float deltaTime)
         {
@@ -284,6 +286,7 @@ public class EntityCharacterAI : EntityCharacterBase {
             b_CanAttackTarget = b_targetAvailable&& !b_targetOutAttackRange  && b_targetRotationWithin && (!m_Entity.B_BattleCheckObstacle||b_targetVisible) &&!FrontBlocked();
         }
         #endregion
+
         #region Battle
         void CheckBattle(float deltaTime)
         {
@@ -372,13 +375,15 @@ public class EntityCharacterAI : EntityCharacterBase {
                 SetDestination(GetSamplePosition());
             f_movementOrderSimulate = inrangeIdle ? GameExpression.GetAIIdleDuration() : GameConst.F_AIMaxRepositionDuration;
         }
+
         bool CheckHoldPosition() => m_Entity.m_CharacterInfo.F_MovementSpeed == 0 || (b_attacking && !m_Entity.B_AttackMove);
         bool CheckDestinationReached() => B_AgentEnabled && m_Agent.remainingDistance <= .3f;
 
         void StopMoving() { B_AgentEnabled = false; }
         void SetDestination(Vector3 destination) { B_AgentEnabled = true; m_Agent.SetDestination(destination); }
         Vector3 GetSamplePosition()=>LevelManager.NavMeshPosition(m_Entity.transform.position + (b_targetOutChaseRange ? 5 : -5) * (m_forwardDirection.normalized) + TCommon.RandomXZSphere(3f));
-        bool FrontBlocked()=> m_Entity.B_AttackFrontCheck && Physics.SphereCast(new Ray(headTransform.position, headTransform.forward), .5f, 2, GameLayer.Mask.I_Static);
+        bool FrontBlocked()=> m_Entity.F_AttackFrontCheck>0f && Physics.SphereCast(new Ray(headTransform.position, headTransform.forward), .5f, m_Entity.F_AttackFrontCheck, GameLayer.Mask.I_Static);
+
         bool ObstacleBlocked(EntityCharacterBase target)
         {
             m_Raycasts = Physics.RaycastAll(m_Entity.tf_Head.position, m_forwardDirection, Vector3.Distance(m_Entity.tf_Head.position, target.tf_Head.position), GameLayer.Mask.I_StaticEntity);
