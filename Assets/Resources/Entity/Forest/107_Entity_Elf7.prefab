@@ -1173,7 +1173,7 @@ MonoBehaviour:
   F_AIChaseRange: 17
   F_AIAttackRange: 25
   F_AttackDuration:
-    start: 1
+    start: 2
     length: 1
   F_AttackTimes:
     start: 1
@@ -1183,7 +1183,7 @@ MonoBehaviour:
   F_AttackRotateParam: 1
   I_AttackPreAimPercentage: 50
   B_AttackMove: 1
-  B_AttackFrontCheck: 1
+  F_AttackFrontCheck: 2
 --- !u!114 &114850124102981534
 MonoBehaviour:
   m_ObjectHideFlags: 1
