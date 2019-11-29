@@ -962,9 +962,8 @@ MonoBehaviour:
   F_AttackRotateParam: 1
   I_AttackPreAimPercentage: 50
   B_AttackMove: 1
-  F_AttackFrontCheck: 2
+  F_AttackFrontCheck: 0
   F_AttackMoveMultiply: 2
---- !u!114 &114954735759712100
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}

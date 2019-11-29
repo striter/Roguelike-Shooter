@@ -15,7 +15,7 @@ public class UIPageBase : UIComponentBase,ISingleCoroutine
     protected float f_bgAlphaStart;
     public float m_BaseScale = 1f;
     bool m_Animating;
-    const float F_AnimDuration = .2f;
+    const float F_AnimDuration = .15f;
     public static T Show<T>(Transform parentTransform,bool useAnim) where T:UIPageBase
     {
         if (Opening<T>())
