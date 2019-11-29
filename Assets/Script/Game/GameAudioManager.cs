@@ -23,7 +23,7 @@ public class GameAudioManager : AudioManager
         base.Init();
         TCommon.TraversalEnum((enum_GameMusic music) =>
         {
-            AudioClip clip =  ((inGame&&music> enum_GameMusic.GameMusicStart&&music< enum_GameMusic.GameMusicEnd)||(!inGame&&music> enum_GameMusic.CampMusicStart&&music< enum_GameMusic.CampMusicEnd))? TResources.GetAudioClip_Background(music):null;
+            AudioClip clip = ((inGame && music > enum_GameMusic.GameMusicStart && music < enum_GameMusic.GameMusicEnd) || (!inGame && music > enum_GameMusic.CampMusicStart && music < enum_GameMusic.CampMusicEnd)) ? TResources.GetAudioClip_Background(music) : null;
             if (clip) m_GameMusic.Add(music, clip);
         });
         if (inGame) TCommon.TraversalEnum((enum_GameAudioSFX audio) => { m_AudioClips.Add(audio, TResources.GetAudioClip_SFX(audio)); });
@@ -41,8 +41,14 @@ public class GameAudioManager : AudioManager
         OptionsManager.event_OptionChanged -= OnOptionChanged;
     }
 
-    void OnPageOpen(float bulletTime) => SetBGPitch(Mathf.Lerp(.6f, 1f, bulletTime));
-    void OnPageClose() => SetBGPitch(1f);
+    void OnPageOpen(float bulletTime)
+    {
+        //SetBGPitch(Mathf.Lerp(.6f, 1f, bulletTime));
+    }
+    void OnPageClose()
+    {
+        //SetBGPitch(1f);
+    }
     void OnOptionChanged()
     {
         m_volumeMultiply = OptionsManager.F_MusicVolume;
