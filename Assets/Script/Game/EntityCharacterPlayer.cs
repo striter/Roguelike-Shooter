@@ -60,15 +60,13 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected override void OnPoolItemEnable()
     {
         base.OnPoolItemEnable();
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
+        TBroadCaster<enum_BC_GameStatus>.Add<SBigmapLevelInfo>(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
         SetBinding(true);
     }
     protected override void OnPoolItemDisable()
     {
         base.OnPoolItemDisable();
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
+        TBroadCaster<enum_BC_GameStatus>.Remove<SBigmapLevelInfo>(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
         SetBinding(false);
     }
     public void SetSpawnPosRot(Vector3 position,Quaternion rotation)
@@ -108,14 +106,16 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (m_Assist)
             m_Assist.Recycle();
     }
-    void OnChangeLevel()
+    void OnChangeLevel(SBigmapLevelInfo info)
     {
         m_Interact = null;
         OnInteractStatus();
     }
 
-    void OnBattleStart()
+
+    protected override void OnBattleStart()
     {
+        base.OnBattleStart();
         m_PlayerInfo.OnBattleStart();
         m_Ability.SetEnable(true);
     }

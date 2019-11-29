@@ -491,6 +491,8 @@ namespace GameSetting
         OnGameStart,
         OnGameFinish,
         OnGameExit,
+
+        OnCampStart,
     }
 
     enum enum_BC_UIStatus
@@ -649,7 +651,7 @@ namespace GameSetting
         PlayerRevive,
     }
 
-    public enum enum_GameMusic { Invalid=-1, Relax=1, Fight=2, Win=3, Lost=4,}
+    public enum enum_GameMusic { Invalid=-1,CampMusicStart=0, CampRelax,CampMusicEnd = 99,GameMusicStart=100,  GameRelax, GameFightRelax,GameFightHard, GameWin, GameLost,GameMusicEnd=199}
 
     public enum enum_Option_FrameRate { Invalid = -1, Normal = 45, High = 60, }
 

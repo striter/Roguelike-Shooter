@@ -21,14 +21,13 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
 
     protected virtual void Start()
     {
-        UIManager.Activate(B_InGame);
         GameObjectManager.Init();
-        GameAudioManager.Instance.Init();
+        GameAudioManager.Instance.Init(B_InGame);
         GameObjectManager.PresetRegistCommonObject();
-        SetBulletTime(false);
-
+        UIManager.Activate(B_InGame);
         OnOptionChanged();
         OptionsManager.event_OptionChanged += OnOptionChanged;
+        SetBulletTime(false);
     }
 
     protected virtual void OnDisable()
@@ -39,7 +38,7 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
 
     protected void SwitchScene(enum_Scene scene,Func<bool> onfinishLoading=null)
     {
-        GameAudioManager.Instance.OnRecycle();
+        GameAudioManager.Instance.OnRecycle(B_InGame);
         GameObjectManager.RecycleAllObject();
         UIManager.Instance.SetActivate(false);
         LoadingManager.BeginLoad(scene,onfinishLoading);

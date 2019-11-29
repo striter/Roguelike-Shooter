@@ -124,6 +124,7 @@ public class GameManager : GameManagerBase
     #endregion
 #endif
     public GameLevelManager m_GameLevel { get; private set; }
+    public GameMusicManager m_GameBGM { get; private set; }
     public EntityCharacterPlayer m_LocalPlayer { get; private set; } = null;
     public override bool B_InGame => true;
     protected override void Awake()
@@ -138,12 +139,14 @@ public class GameManager : GameManagerBase
         if (M_TESTSEED!="")
             GameDataManager.m_BattleData.m_GameSeed = M_TESTSEED;
         m_GameLevel =  new GameLevelManager(GameDataManager.m_GameData,GameDataManager.m_BattleData);
+        m_GameBGM = new GameMusicManager();
     }
 
     protected override void OnDestroy()
     {
         base.OnDestroy();
         nInstance = null;
+        m_GameBGM.OnDestroy();
     }
 
     protected override void OnDisable()
@@ -202,18 +205,14 @@ public class GameManager : GameManagerBase
         GameObjectManager.RecycleAllWeapon(p=>p.I_SourceID>0&&!m_Entities.ContainsKey(p.I_SourceID));      //Remove All Playing Else Entity SFX
         LevelManager.Instance.ChangeLevel(axis);
     }
-    void OnLevelChanged(SBigmapLevelInfo levelInfo)
+    void OnLevelChanged(SBigmapLevelInfo levelInfo,bool levelUnlocked)
     {
-        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnChangeLevel);
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnChangeLevel,levelInfo);
         GameObjectManager.RecycleAllWeapon(null);
         Vector3 randomPositon = levelInfo.m_Level.RandomEmptyTilePosition(m_GameLevel.m_GameSeed);
         m_LocalPlayer.SetSpawnPosRot(randomPositon, Quaternion.LookRotation(-randomPositon, Vector3.up));
-
-        bool levelUnlocked = levelInfo.m_TileLocking == enum_TileLocking.Unlocked;
         m_GameLevel.OnLevelChange(levelInfo.m_LevelType,levelUnlocked);
-        if (levelUnlocked)
-            return;
-        if (m_GameLevel.WillBattle())
+        if (levelUnlocked&& m_GameLevel.WillBattle())
             OnBattleStart();
     }
 
@@ -465,10 +464,9 @@ public class GameManager : GameManagerBase
 
     void WaveStart()
     {
-        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnWaveStart, m_EntityGenerate.Count,m_CurrentWave);
-
         bool finalWave = m_CurrentWave + 1==m_EntityGenerate.Count ;
         UIManager.Instance.m_Indicates.ShowWarning("UI_Indicates_EnermyApproching","UI_Indicates_Wave",(m_CurrentWave+1).ToString(),finalWave?"UI_Indicates_FinalWave":"",3f);
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnWaveStart, m_EntityGenerate.Count, m_CurrentWave,finalWave);
 
         m_EntityGenerating.Clear();
         m_EntityGenerate[m_CurrentWave].m_EntityGenerate.Traversal((enum_CharacterType level, RangeInt range) =>
@@ -669,6 +667,56 @@ public class GameLevelManager
     public float F_FinalScore => (F_KillScore + F_LevelScore) *  F_DifficultyBonus;
     public float F_CreditGain => GameExpression.GetResultRewardCredits(F_FinalScore);
     #endregion
+}
+public class GameMusicManager
+{
+    public GameMusicManager()
+    {
+        TBroadCaster<enum_BC_GameStatus>.Add<SBigmapLevelInfo>(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
+        TBroadCaster<enum_BC_GameStatus>.Add<int, int, bool>(enum_BC_GameStatus.OnWaveStart, OnWaveStart);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish); ;
+        TBroadCaster<enum_BC_GameStatus>.Add<bool>(enum_BC_GameStatus.OnGameFinish, OnGameFinish);
+    }
+    public void OnDestroy()
+    {
+        TBroadCaster<enum_BC_GameStatus>.Remove<int, int, bool>(enum_BC_GameStatus.OnWaveStart, OnWaveStart);
+        TBroadCaster<enum_BC_GameStatus>.Remove<SBigmapLevelInfo>(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish); ;
+        TBroadCaster<enum_BC_GameStatus>.Remove<bool>(enum_BC_GameStatus.OnGameFinish, OnGameFinish);
+    }
+    void OnChangeLevel(SBigmapLevelInfo info)
+    {
+        switch (info.m_LevelType)
+        {
+            case enum_TileType.Start:
+            case enum_TileType.CoinsTrade:
+            case enum_TileType.ActionAdjustment:
+                GameAudioManager.Instance.PlayClip(enum_GameMusic.GameRelax, true);
+                break;
+        }
+    }
+
+    void OnBattleStart()
+    {
+        switch (GameManager.Instance.m_GameLevel.m_LevelType)
+        {
+            case enum_TileType.ActionAdjustment:
+            case enum_TileType.Battle:
+            case enum_TileType.End:
+                GameAudioManager.Instance.PlayClip(enum_GameMusic.GameFightRelax, true);
+                break;
+        }
+    }
+
+    void OnWaveStart(int total, int current, bool finalWave)
+    {
+        if (finalWave)
+            GameAudioManager.Instance.PlayClip(enum_GameMusic.GameFightHard, true);
+    }
+    void OnBattleFinish() => GameAudioManager.Instance.Stop();
+    void OnGameFinish(bool win) => GameAudioManager.Instance.PlayClip(win ? enum_GameMusic.GameWin : enum_GameMusic.GameLost, false);
 }
 public static class GameObjectManager
 {
