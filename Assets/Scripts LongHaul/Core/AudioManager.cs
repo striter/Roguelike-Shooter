@@ -15,7 +15,6 @@ public class AudioManager: SimpleSingletonMono <AudioManager>
         m_AudioBG.playOnAwake = false;
         m_AudioBG.volume = m_BGVolume;
         m_baseVolume = 1f;
-        m_Stop = true;
     }
     protected void Init()
     {
