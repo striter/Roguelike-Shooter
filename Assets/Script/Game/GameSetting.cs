@@ -188,7 +188,7 @@ namespace GameSetting
         }
 
         public static readonly RangeInt I_CampActionStorageRequestAmount = new RangeInt(1,4);
-        public static readonly List<int> I_CampActionStorageDefault = new List<int> { 10001, 10002, 10003, 10004, 10005, 10006, 10007, 10008, 10009, 10010 };
+        public static readonly List<int> I_CampActionStorageDefault = new List<int> { 10002, 10004, 10006, 10009, 10011, 10012, 10013, 10014, 10016, 10018, 10021, 10022, 10023, 10024, 10025, 10030, 10033, 10034, 20001, 20004, 20005, 20009, 20012, 30001, 30002, 30004, 30005, 30009, 30014, 30018 };
     }
 
     public static class UIConst
