@@ -478,6 +478,7 @@ namespace GameSetting
         OnCharacterDead,
         OnCharacterRevive,
 
+        OnStageBeginLoad,
         OnStageStart,       //Total Stage Start
         OnStageFinish,
 
@@ -651,7 +652,9 @@ namespace GameSetting
         PlayerRevive,
     }
 
-    public enum enum_GameMusic { Invalid=-1,CampMusicStart=0, CampRelax,CampMusicEnd = 99,GameMusicStart=100,  GameRelax, GameFightRelax,GameFightHard, GameWin, GameLost,GameMusicEnd=199}
+    public enum enum_GameMusic { Invalid=-1,StyledStart=1,  Relax, FightRelax,StyledEnd=10, FightHard}
+
+    public enum enum_CampMusic { Invalid=-1, Relax = 0,}
 
     public enum enum_Option_FrameRate { Invalid = -1, Normal = 45, High = 60, }
 

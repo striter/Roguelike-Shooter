@@ -35,7 +35,8 @@ public class TResources
         public const string S_UI_Atlas_Weapon = "UI/Atlas/Atlas_Weapon";
         public const string S_UI_Manager = "UI/UIManager";
 
-        public const string S_Audio_Background = "Audio/Background/";
+        public const string S_Audio_GameBGM = "Audio/Background/Game_";
+        public const string S_Audio_CampBGM = "Audio/Background/Camp_";
         public const string S_Audio_SFX = "Audio/SFX/";
     }
 
@@ -135,7 +136,9 @@ public class TResources
     public static InteractGameBase GetInteract(enum_Interaction type) => Instantiate<InteractGameBase>(ConstPath.S_InteractCommon + type);
     #endregion
     #region Audio
-    public static AudioClip GetAudioClip_Background(enum_GameMusic music) => Load<AudioClip>(ConstPath. S_Audio_Background+music.ToString());
+    public static AudioClip GetGameBGM(enum_GameMusic music) => Load<AudioClip>(ConstPath.S_Audio_GameBGM+music);
+    public static AudioClip GetGameBGM_Styled(enum_GameMusic music,enum_Style style) => Load<AudioClip>(ConstPath.S_Audio_GameBGM +style+"_" +music);
+    public static AudioClip GetCampBGM(enum_CampMusic music) => Load<AudioClip>(ConstPath.S_Audio_CampBGM + music);
     public static AudioClip GetAudioClip_SFX(enum_GameAudioSFX sfx) => Load<AudioClip>(ConstPath.S_Audio_SFX + sfx.ToString());
     #endregion
     #endregion

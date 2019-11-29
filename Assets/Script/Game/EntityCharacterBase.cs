@@ -128,7 +128,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         {
             case enum_HealthChangeMessage.DamageArmor:
             case enum_HealthChangeMessage.DamageHealth:
-                GameAudioManager.Instance.PlayClip(m_EntityID, GameAudioManager.Instance.GetSFXClip(m_DamageClip), false, transform);
+                AudioManager.Instance.PlayClip(m_EntityID, AudioManager.Instance.GetSFXClip(m_DamageClip), false, transform);
                 break;
         }
     }

@@ -98,7 +98,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_Assist.SetEnable(true);
         m_Animator.OnRevive();
 
-        GameAudioManager.Instance.PlayClip(m_EntityID, GameAudioManager.Instance.GetSFXClip(m_ReviveClip), false);
+        AudioManager.Instance.PlayClip(m_EntityID, AudioManager.Instance.GetSFXClip(m_ReviveClip), false);
     }
     protected override void OnRecycle()
     {

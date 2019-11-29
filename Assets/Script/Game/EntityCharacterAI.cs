@@ -16,7 +16,7 @@ public class EntityCharacterAI : EntityCharacterBase {
     public RangeFloat F_AttackDuration;
     public RangeInt F_AttackTimes;
     public float F_AttackRate;
-    EnermyAIControllerBase m_AI;
+    protected EnermyAIControllerBase m_AI { get; private set; }
     EnermyAnimator m_Animator;
     public bool B_BattleCheckObstacle = false;
     [Range(0,3)]
@@ -65,7 +65,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         base.OnExpireChange();
         if (m_Animator != null)
             m_Animator.SetMovementSpeed(m_CharacterInfo.F_MovementSpeed/4f);
-        m_AI.OnInfoChange();
+        m_AI.m_Agent.speed = m_CharacterInfo.F_MovementSpeed;
     }
 
     protected override void OnAliveTick(float deltaTime)
@@ -88,7 +88,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         return base.OnReceiveDamage(damageInfo, damageDirection);
     }
 
-    void OnAttackAnim(bool startAttack)=>m_Animator.OnAttack(startAttack);
+    protected virtual void OnAttackAnim(bool startAttack)=>m_Animator.OnAttack(startAttack);
 
     protected void OnAnimKeyEvent(TAnimatorEvent.enum_AnimEvent animEvent)
     {
@@ -117,14 +117,14 @@ public class EntityCharacterAI : EntityCharacterBase {
         }
     }
     #region AI
-    class EnermyAIControllerBase 
+    protected class  EnermyAIControllerBase
     {
+        public NavMeshAgent m_Agent { get; private set; }
         protected EntityCharacterAI m_Entity;
         protected EntityCharacterBase m_Target;
         protected Transform transform => m_Agent.transform;
         protected Transform headTransform => m_Entity.tf_Head;
         protected Transform targetHeadTransform => m_Target.tf_Head;
-        protected NavMeshAgent m_Agent;
         protected NavMeshObstacle m_Obstacle;
         protected Action<bool> OnAttackAnim;
         protected Func<EntityCharacterBase, bool> OnCheckTarget;
@@ -134,9 +134,11 @@ public class EntityCharacterAI : EntityCharacterBase {
         float f_movementSimulate,f_movementOrderSimulate, f_battleSimulate, f_calculateSimulate, f_checkTargetSimulate,f_fireCheckSimulate;
         Vector3 m_forwardDirection;
         float f_targetDistance;
+
         bool b_targetOutChaseRange;
         bool b_targetOutAttackRange;
-        bool b_CanAttackTarget;
+        bool b_CanStartAttack;
+        bool b_CanKeepAttack;
         bool b_targetVisible;
         bool b_targetRotationWithin;
         bool b_targetAvailable => m_Target != null &&!m_Target.m_CharacterInfo.B_Effecting(enum_CharacterEffect.Cloak) && !m_Target.m_Health.b_IsDead;
@@ -197,12 +199,7 @@ public class EntityCharacterAI : EntityCharacterBase {
             B_AgentEnabled = false;
             m_Weapon.OnDeactivate();
         }
-
-        public void OnInfoChange()
-        {
-            m_Agent.speed = m_Info.F_MovementSpeed;
-        }
-
+        
         public void SetPlay(bool play)
         {
             if (b_playing == play)
@@ -283,7 +280,9 @@ public class EntityCharacterAI : EntityCharacterBase {
             f_targetDistance = TCommon.GetXZDistance(targetHeadTransform.position, headTransform.position);
             b_targetOutChaseRange = f_targetDistance > m_Entity.F_AIChaseRange;
             b_targetOutAttackRange = f_targetDistance > m_Entity.F_AIAttackRange;
-            b_CanAttackTarget = b_targetAvailable&& !b_targetOutAttackRange  && b_targetRotationWithin && (!m_Entity.B_BattleCheckObstacle||b_targetVisible) &&!FrontBlocked();
+            bool attackBlocked = (m_Entity.B_BattleCheckObstacle && b_targetVisible) || FrontBlocked();
+            b_CanStartAttack = b_targetAvailable&& !b_targetOutAttackRange  && b_targetRotationWithin && !attackBlocked;
+            b_CanKeepAttack = b_targetAvailable && !attackBlocked;
         }
         #endregion
 
@@ -299,7 +298,7 @@ public class EntityCharacterAI : EntityCharacterBase {
             if (f_battleSimulate > 0)
                 f_battleSimulate -= m_Info.F_ReloadRateTick(deltaTime);
 
-            if (f_battleSimulate > 0 || !b_CanAttackTarget)
+            if (f_battleSimulate > 0 || !b_CanStartAttack)
                 return;
             
             StartAttack(m_Entity.F_AttackTimes.Random(), TCommon.RandomPercentage() >= m_Entity.I_AttackPreAimPercentage);
@@ -319,7 +318,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         }
         void CheckAttack(float deltaTime)
         {
-            if (!b_CanAttackTarget)
+            if (!b_CanKeepAttack)
             {
                 OnAttackFinished();
                 return;
@@ -381,7 +380,7 @@ public class EntityCharacterAI : EntityCharacterBase {
 
         void StopMoving() { B_AgentEnabled = false; }
         void SetDestination(Vector3 destination) { B_AgentEnabled = true; m_Agent.SetDestination(destination); }
-        Vector3 GetSamplePosition()=>LevelManager.NavMeshPosition(m_Entity.transform.position + (b_targetOutChaseRange ? 5 : -5) * (m_forwardDirection.normalized) + TCommon.RandomXZSphere(3f));
+        Vector3 GetSamplePosition()=> LevelManager.NavMeshPosition(m_Entity.transform.position + (b_targetOutChaseRange ? 5 : -5) * (m_forwardDirection.normalized) + TCommon.RandomXZSphere(3f));
         bool FrontBlocked()=> m_Entity.F_AttackFrontCheck>0f && Physics.SphereCast(new Ray(headTransform.position, headTransform.forward), .5f, m_Entity.F_AttackFrontCheck, GameLayer.Mask.I_Static);
 
         bool ObstacleBlocked(EntityCharacterBase target)

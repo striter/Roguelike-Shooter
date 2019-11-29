@@ -1029,13 +1029,13 @@ MonoBehaviour:
     start: 5
     length: 1
   F_AttackTimes:
-    start: 0
-    length: 0
-  F_AttackRate: 5
+    start: 8
+    length: 4
+  F_AttackRate: 0.5
   B_BattleCheckObstacle: 0
   F_AttackRotateParam: 0.5
   I_AttackPreAimPercentage: 0
-  B_AttackMove: 1
+  B_AttackMove: 0
   F_AttackFrontCheck: 2
 --- !u!114 &114759364180817616
 MonoBehaviour:

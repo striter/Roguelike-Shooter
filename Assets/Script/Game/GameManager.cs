@@ -124,7 +124,6 @@ public class GameManager : GameManagerBase
     #endregion
 #endif
     public GameLevelManager m_GameLevel { get; private set; }
-    public GameMusicManager m_GameBGM { get; private set; }
     public EntityCharacterPlayer m_LocalPlayer { get; private set; } = null;
     public override bool B_InGame => true;
     protected override void Awake()
@@ -139,14 +138,12 @@ public class GameManager : GameManagerBase
         if (M_TESTSEED!="")
             GameDataManager.m_BattleData.m_GameSeed = M_TESTSEED;
         m_GameLevel =  new GameLevelManager(GameDataManager.m_GameData,GameDataManager.m_BattleData);
-        m_GameBGM = new GameMusicManager();
     }
 
     protected override void OnDestroy()
     {
         base.OnDestroy();
         nInstance = null;
-        m_GameBGM.OnDestroy();
     }
 
     protected override void OnDisable()
@@ -180,6 +177,7 @@ public class GameManager : GameManagerBase
     } 
     IEnumerator DoLoadStage()     //PreInit Bigmap , Levels LocalPlayer Before  Start The game
     {
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageBeginLoad);
         GameObjectManager.RecycleAllObject();
         yield return null;
         m_GameLevel.GetStageData();
@@ -668,56 +666,6 @@ public class GameLevelManager
     public float F_CreditGain => GameExpression.GetResultRewardCredits(F_FinalScore);
     #endregion
 }
-public class GameMusicManager
-{
-    public GameMusicManager()
-    {
-        TBroadCaster<enum_BC_GameStatus>.Add<SBigmapLevelInfo>(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
-        TBroadCaster<enum_BC_GameStatus>.Add<int, int, bool>(enum_BC_GameStatus.OnWaveStart, OnWaveStart);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish); ;
-        TBroadCaster<enum_BC_GameStatus>.Add<bool>(enum_BC_GameStatus.OnGameFinish, OnGameFinish);
-    }
-    public void OnDestroy()
-    {
-        TBroadCaster<enum_BC_GameStatus>.Remove<int, int, bool>(enum_BC_GameStatus.OnWaveStart, OnWaveStart);
-        TBroadCaster<enum_BC_GameStatus>.Remove<SBigmapLevelInfo>(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish); ;
-        TBroadCaster<enum_BC_GameStatus>.Remove<bool>(enum_BC_GameStatus.OnGameFinish, OnGameFinish);
-    }
-    void OnChangeLevel(SBigmapLevelInfo info)
-    {
-        switch (info.m_LevelType)
-        {
-            case enum_TileType.Start:
-            case enum_TileType.CoinsTrade:
-            case enum_TileType.ActionAdjustment:
-                GameAudioManager.Instance.PlayClip(enum_GameMusic.GameRelax, true);
-                break;
-        }
-    }
-
-    void OnBattleStart()
-    {
-        switch (GameManager.Instance.m_GameLevel.m_LevelType)
-        {
-            case enum_TileType.ActionAdjustment:
-            case enum_TileType.Battle:
-            case enum_TileType.End:
-                GameAudioManager.Instance.PlayClip(enum_GameMusic.GameFightRelax, true);
-                break;
-        }
-    }
-
-    void OnWaveStart(int total, int current, bool finalWave)
-    {
-        if (finalWave&&GameManager.Instance.m_GameLevel.m_LevelType== enum_TileType.End)
-            GameAudioManager.Instance.PlayClip(enum_GameMusic.GameFightHard, true);
-    }
-    void OnBattleFinish() => GameAudioManager.Instance.Stop();
-    void OnGameFinish(bool win) => GameAudioManager.Instance.PlayClip(win ? enum_GameMusic.GameWin : enum_GameMusic.GameLost, false);
-}
 public static class GameObjectManager
 {
     static Transform TF_Entity;
@@ -836,7 +784,7 @@ public static class GameObjectManager
         if (muzzleIndex > 0)
             SpawnSFX<SFXMuzzle>(muzzleIndex, position, direction).Play(_sourceID);
         if (muzzleClip)
-            GameAudioManager.Instance.PlayClip(_sourceID, muzzleClip, false, position);
+            AudioManager.Instance.PlayClip(_sourceID, muzzleClip, false, position);
     }
 
     public static T SpawnEquipment<T>(int weaponIndex, Vector3 position, Vector3 normal) where T : SFXEquipmentBase

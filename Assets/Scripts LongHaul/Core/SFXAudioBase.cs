@@ -13,11 +13,11 @@ public class SFXAudioBase : SFXBase
     }
     private void OnEnable()
     {
-        AudioManager.OnVolumeChanged += SetVolume;
+        AudioManagerBase .OnVolumeChanged += SetVolume;
     }
     private void OnDisable()
     {
-        AudioManager.OnVolumeChanged -= SetVolume;
+        AudioManagerBase .OnVolumeChanged -= SetVolume;
     }
 
     public SFXAudioBase Play(int _sourceID,AudioClip _clip,float _volume,bool _loop,Transform _attachTo)

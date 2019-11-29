@@ -3,64 +3,68 @@ using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
 [RequireComponent(typeof(AudioSource))]
-public class GameAudioManager : AudioManager
+public class GameAudioManager : AudioManager 
 {
-    protected static GameAudioManager ninstance;
-    public static new GameAudioManager Instance => ninstance;
+    public static new GameAudioManager Instance { get; private set; }
     protected override void Awake()
     {
         base.Awake();
-        ninstance = this;
+        Instance = this;
     }
-    static float m_volumeMultiply = 1f;
-    public override float m_BGVolume => base.m_BGVolume * m_volumeMultiply;
     Dictionary<enum_GameMusic, AudioClip> m_GameMusic = new Dictionary<enum_GameMusic, AudioClip>();
-    Dictionary<enum_GameAudioSFX, AudioClip> m_AudioClips = new Dictionary<enum_GameAudioSFX, AudioClip>();
-    public AudioClip GetSFXClip(enum_GameAudioSFX sfx) => m_AudioClips[sfx];
 
-    public void Init(bool inGame)
+    public override void Init()
     {
         base.Init();
         TCommon.TraversalEnum((enum_GameMusic music) =>
         {
-            AudioClip clip = ((inGame && music > enum_GameMusic.GameMusicStart && music < enum_GameMusic.GameMusicEnd) || (!inGame && music > enum_GameMusic.CampMusicStart && music < enum_GameMusic.CampMusicEnd)) ? TResources.GetAudioClip_Background(music) : null;
+            AudioClip clip = (music < enum_GameMusic.StyledStart || music > enum_GameMusic.StyledEnd) ? TResources.GetGameBGM(music) : null;
             if (clip) m_GameMusic.Add(music, clip);
         });
-        if (inGame) TCommon.TraversalEnum((enum_GameAudioSFX audio) => { m_AudioClips.Add(audio, TResources.GetAudioClip_SFX(audio)); });
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageBeginLoad, OnStageBeginLoad);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish); ;
+        TBroadCaster<enum_BC_GameStatus>.Add<bool>(enum_BC_GameStatus.OnGameFinish, OnGameFinish);
+    }
+    public override void Recycle()
+    {
+        base.Recycle();
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnStageBeginLoad, OnStageBeginLoad);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish); ;
+        TBroadCaster<enum_BC_GameStatus>.Remove<bool>(enum_BC_GameStatus.OnGameFinish, OnGameFinish);
+    }
 
-        TBroadCaster<enum_BC_UIStatus>.Add<float>(enum_BC_UIStatus.UI_PageOpen, OnPageOpen);
-        TBroadCaster<enum_BC_UIStatus>.Add(enum_BC_UIStatus.UI_PageClose, OnPageClose);
-        OptionsManager.event_OptionChanged += OnOptionChanged;
-        OnOptionChanged();
-    }
-    public void OnRecycle(bool inGame)
+    void OnStageBeginLoad()
     {
-        base.OnRecycle();
-        TBroadCaster<enum_BC_UIStatus>.Remove<float>(enum_BC_UIStatus.UI_PageOpen, OnPageOpen);
-        TBroadCaster<enum_BC_UIStatus>.Remove(enum_BC_UIStatus.UI_PageClose, OnPageClose);
-        OptionsManager.event_OptionChanged -= OnOptionChanged;
-    }
+        TCommon.TraversalEnum((enum_GameMusic music) =>
+        {
+            if (!(music > enum_GameMusic.StyledStart && music < enum_GameMusic.StyledEnd))
+                return;
+            if (m_GameMusic.ContainsKey(music))
+                m_GameMusic.Remove(music);
 
-    void OnPageOpen(float bulletTime)
-    {
-        //SetBGPitch(Mathf.Lerp(.6f, 1f, bulletTime));
+            AudioClip clip = TResources.GetGameBGM_Styled(music,GameManager.Instance.m_GameLevel.m_GameStyle);
+            if (!clip)
+                return;
+            m_GameMusic.Add(music, clip);
+        });
     }
-    void OnPageClose()
+    
+    void OnBattleStart()
     {
-        //SetBGPitch(1f);
+        PlayBGM(GameManager.Instance.m_GameLevel.m_LevelType == enum_TileType.End ? enum_GameMusic.FightHard : enum_GameMusic.FightRelax, true);
     }
-    void OnOptionChanged()
+    void OnBattleFinish()
     {
-        m_volumeMultiply = OptionsManager.F_MusicVolume;
-        SetSFXVolume(OptionsManager.F_SFXVolume);
+        if (GameManager.Instance.m_GameLevel.B_IsFinalLevel)
+            Stop();
+        else
+            PlayBGM(enum_GameMusic.Relax,true);
     }
-    #region Game
-    public SFXAudioBase PlayClip(int sourceID, AudioClip _clip, bool _loop, Transform _target) => base.PlayClip(sourceID, _clip, OptionsManager.F_SFXVolume, _loop, _target);
-    public SFXAudioBase PlayClip(int sourceID, AudioClip _clip, bool _loop, Vector3 _pos) => base.PlayClip(sourceID, _clip, OptionsManager.F_SFXVolume, _loop, _pos);
-    public SFXAudioBase PlayClip(int sourceID, AudioClip _clip, bool _loop) => base.PlayClip(sourceID, _clip, OptionsManager.F_SFXVolume, _loop);
-    #endregion
+    void OnGameFinish(bool win) => SetBGPitch(.8f);
 
-    public void PlayClip(enum_GameMusic music, bool loop)
+    void PlayBGM(enum_GameMusic music, bool loop)
     {
         if (m_GameMusic.ContainsKey(music))
             SwitchBackground(m_GameMusic[music], loop);
