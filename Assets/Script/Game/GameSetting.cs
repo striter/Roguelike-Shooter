@@ -50,6 +50,7 @@ namespace GameSetting
 
         public const int I_EnermyCountWaveFinish = 0;       //When Total Enermy Count Reaches This Amount,Wave Finish
         public const int I_EnermySpawnDelay = 3;        //Enermy Spawn Delay Time 
+        public const float F_EnermySpawnOffsetEach = .1f;       //Enermy Spawn Offset Each
         
         public const float F_PickupAcceleration = 600f; //拾取物的飞行加速速度
         public const int I_HealthPickupAmount = 25;
