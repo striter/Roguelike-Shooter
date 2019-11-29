@@ -1178,7 +1178,7 @@ MonoBehaviour:
   F_AttackTimes:
     start: 1
     length: 0
-  F_AttackRate: 1
+  F_AttackRate: 0.5
   B_BattleCheckObstacle: 0
   F_AttackRotateParam: 1
   I_AttackPreAimPercentage: 50

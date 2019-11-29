@@ -135,7 +135,7 @@ public class TResources
     public static InteractGameBase GetInteract(enum_Interaction type) => Instantiate<InteractGameBase>(ConstPath.S_InteractCommon + type);
     #endregion
     #region Audio
-    public static AudioClip GetAudioClip_Background(bool inGame,enum_GameMusic music) => Load<AudioClip>(ConstPath. S_Audio_Background+(inGame?"Game_":"Camp_")+music.ToString());
+    public static AudioClip GetAudioClip_Background(enum_GameMusic music) => Load<AudioClip>(ConstPath. S_Audio_Background+music.ToString());
     public static AudioClip GetAudioClip_SFX(enum_GameAudioSFX sfx) => Load<AudioClip>(ConstPath.S_Audio_SFX + sfx.ToString());
     #endregion
     #endregion

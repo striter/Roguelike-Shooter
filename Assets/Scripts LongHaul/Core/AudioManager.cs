@@ -16,7 +16,7 @@ public class AudioManager: SimpleSingletonMono <AudioManager>
         m_AudioBG.volume = m_BGVolume;
         m_baseVolume = 1f;
     }
-    public virtual void Init()
+    protected void Init()
     {
         GameObject obj = new GameObject("AudioObj_3D");
         AudioSource source= obj.AddComponent<AudioSource>();
@@ -30,7 +30,7 @@ public class AudioManager: SimpleSingletonMono <AudioManager>
         audioObj = obj.AddComponent<SFXAudioBase>();
         ObjectPoolManager<int, SFXAudioBase>.Register(1, audioObj, 5);
     }
-    public virtual void OnRecycle()
+    protected void OnRecycle()
     {
         ObjectPoolManager<int, SFXAudioBase>.DestroyAll();
     }
@@ -41,22 +41,37 @@ public class AudioManager: SimpleSingletonMono <AudioManager>
         m_Clip = _Clip;
         m_AudioBG.loop = loop;
     }
+    protected void StopBackground() => m_Clip = null;
     protected void SetSFXVolume(float volume) => OnVolumeChanged?.Invoke(volume);
     protected void SetBGPitch(float pitch) => m_AudioBG.pitch = pitch;
     protected virtual void Update()
     {
         m_AudioBG.volume = m_BGVolume;
-        if (m_AudioBG.clip == m_Clip)
+
+        if (m_Clip == null)
         {
-            m_baseVolume = Mathf.Lerp(m_baseVolume, 1f, Time.deltaTime);
+            if (m_AudioBG.isPlaying)
+            {
+                m_baseVolume = Mathf.Lerp(m_baseVolume, 0f, Time.deltaTime*2);
+                if (m_baseVolume <= .05f)
+                    m_AudioBG.Stop();
+            }
+            return;
         }
         else
         {
-            m_baseVolume = Mathf.Lerp(m_baseVolume, 0f, Time.deltaTime);
-            if (m_baseVolume <= .05f)
+            if (m_AudioBG.clip == m_Clip)
             {
-                m_AudioBG.clip = m_Clip;
-                m_AudioBG.Play();
+                m_baseVolume = Mathf.Lerp(m_baseVolume, 1f, Time.deltaTime*2);
+            }
+            else
+            {
+                m_baseVolume = Mathf.Lerp(m_baseVolume, 0f, Time.deltaTime*2);
+                if (m_baseVolume <= .05f)
+                {
+                    m_AudioBG.clip = m_Clip;
+                    m_AudioBG.Play();
+                }
             }
         }
     }

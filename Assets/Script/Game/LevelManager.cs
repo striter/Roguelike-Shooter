@@ -16,7 +16,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
     public Light m_DirectionalLight { get; protected set; }
     public Transform m_InteractParent => m_currentLevel.m_Level.tf_Interact;
     public System.Random m_mainSeed;
-    public Action<SBigmapLevelInfo> OnLevelPrepared;
+    public Action<SBigmapLevelInfo,bool> OnChangeLevelLoaded;
     protected override void Awake()
     {
         base.Awake();
@@ -26,7 +26,6 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
     protected void Start()
     {
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageStart, OnStageStart);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
     }
     protected override void OnDestroy()
@@ -34,12 +33,11 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
         base.OnDestroy();
         RemoveNavmeshData();
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnStageStart, OnStageStart);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
     }
-    public void GameInit( Action<SBigmapLevelInfo> _OnLevelPrepared)
+    public void GameInit( Action<SBigmapLevelInfo,bool> _OnChangeLevelLoaded)
     {
-        OnLevelPrepared = _OnLevelPrepared;
+        OnChangeLevelLoaded = _OnChangeLevelLoaded;
     }
     
     public IEnumerator GenerateLevel(enum_Style _LevelStyle,Action<SBigmapLevelInfo> OnEachLevelGenerate, System.Random seed,int length0=6,int length1=5)
@@ -81,38 +79,30 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
         m_Loading = false;
     }
     #region Level
-    void OnStageStart()
-    {
-        m_currentLevel = m_MapLevelInfo.Find(p => p.m_LevelType == enum_TileType.Start);
-        PrepareCurrentLevel();
-    }
-
-    void PrepareCurrentLevel()     //Make Current Level Available (AI Bake)
-    {
-        m_currentLevel.SetLevelShow(true);
-        BuildNavMeshData(m_currentLevel.m_Level);
-        OnLevelPrepared(m_currentLevel);
-        m_currentLevel.SetTileLocking(enum_TileLocking.Unlocked);
-    }
-
+    void OnStageStart()=> LoadLevel(m_MapLevelInfo.Find(p => p.m_LevelType == enum_TileType.Start));
     public void ChangeLevel(TileAxis targetAxis)
     {
         if (m_currentLevel.m_TileAxis == targetAxis)
             return;
 
-        m_currentLevel.SetLevelShow(false);
-        m_currentLevel = (m_MapLevelInfo.Get(targetAxis));
-        PrepareCurrentLevel();
+        LoadLevel(m_MapLevelInfo.Get(targetAxis));
     }
 
-    void OnChangeLevel()
+    void LoadLevel(SBigmapLevelInfo level )     //Make Current Level Available (AI Bake)
     {
+        if(m_currentLevel!=null)
+            m_currentLevel.SetLevelShow(false);
+        m_currentLevel = level;
+        m_currentLevel.SetLevelShow(true);
+        BuildNavMeshData(m_currentLevel.m_Level);
         foreach (enum_TileDirection direction in m_currentLevel.m_Connections.Keys)     //Reveal Around Islands
         {
             SBigmapLevelInfo info = m_MapLevelInfo.Get(m_currentLevel.m_Connections[direction]);
             if (info != null && info.m_TileLocking == enum_TileLocking.Unseen)
                 m_MapLevelInfo.Get(m_currentLevel.m_Connections[direction]).SetTileLocking(enum_TileLocking.Unlockable);
         }
+        OnChangeLevelLoaded(m_currentLevel,m_currentLevel.m_TileLocking== enum_TileLocking.Unlockable);
+        m_currentLevel.SetTileLocking(enum_TileLocking.Unlocked);
     }
     void OnBattleFinish()
     {
