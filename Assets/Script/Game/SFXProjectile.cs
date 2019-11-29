@@ -103,10 +103,8 @@ public class SFXProjectile : SFXEquipmentBase
             case enum_HitCheck.Entity:
                 HitCheckEntity _entity = hitCheck as HitCheckEntity;
                 if (CanDamageEntity(_entity))
-                {
                     _entity.TryHit(m_DamageInfo, transform.forward);
-                    m_EntityHitted.Add(_entity.I_AttacherID);
-                }
+                m_EntityHitted.Add(_entity.I_AttacherID);
                 break;
         }
     }

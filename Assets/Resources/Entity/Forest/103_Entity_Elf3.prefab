@@ -963,7 +963,7 @@ MonoBehaviour:
   F_AttackRotateParam: 1
   I_AttackPreAimPercentage: 0
   B_AttackMove: 1
-  B_AttackFrontCheck: 1
+  F_AttackFrontCheck: 0.5
 --- !u!114 &114172474372172832
 MonoBehaviour:
   m_ObjectHideFlags: 1
