@@ -26,7 +26,7 @@ namespace GameSetting
         public const float F_MaxActionEnergy = 5f;
         public const float I_MaxArmor = 99999;
         public const float F_RestoreActionEnergy = 0.001f; //战斗结束时给的能量 //战斗外的默认能量值
-        public const float F_ActionShuffleCost = 3f;
+        public const float F_ActionShuffleCost = 2f;
         public const float F_ActionShuffleCooldown = 6f;
 
         public const float F_AimMovementReduction = .6f;
@@ -52,7 +52,7 @@ namespace GameSetting
         public const int I_EnermySpawnDelay = 2;        //Enermy Spawn Delay Time 
         public const float F_EnermySpawnOffsetEach = .5f;       //Enermy Spawn Offset Each
 
-        public const float F_PickupAcceleration = 600f; //拾取物的飞行加速速度
+        public const float F_PickupAcceleration = 800f; //拾取物的飞行加速速度
         public const int I_HealthPickupAmount = 25;
         public const int I_ArmorPickupAmount = 25;
         public const int I_HealthTradeAmount = 50;
