@@ -652,7 +652,7 @@ namespace GameSetting
         PlayerRevive,
     }
 
-    public enum enum_GameMusic { Invalid=-1,StyledStart=1,  Relax, FightRelax,StyledEnd=10, FightHard,GameWin, GameLost}
+    public enum enum_GameMusic { Invalid=-1,StyledStart=1,  Relax, FightRelax,StyledEnd=10, FightHard}
 
     public enum enum_CampMusic { Invalid=-1, Relax = 0,}
 

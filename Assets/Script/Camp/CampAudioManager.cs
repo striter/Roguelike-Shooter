@@ -17,7 +17,7 @@ public class CampAudioManager : AudioManager {
     {
         base.Init();
         TCommon.TraversalEnum((enum_CampMusic music) => {
-            m_CampMusic.Add(music, TResources.GetAudioClip_Background(music));
+            m_CampMusic.Add(music, TResources.GetCampBGM(music));
         });
     }
 

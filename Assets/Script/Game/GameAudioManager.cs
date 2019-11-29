@@ -18,7 +18,7 @@ public class GameAudioManager : AudioManager
         base.Init();
         TCommon.TraversalEnum((enum_GameMusic music) =>
         {
-            AudioClip clip =  TResources.GetAudioClip_Background(music) ;
+            AudioClip clip = (music < enum_GameMusic.StyledStart || music > enum_GameMusic.StyledEnd) ? TResources.GetGameBGM(music) : null;
             if (clip) m_GameMusic.Add(music, clip);
         });
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageBeginLoad, OnStageBeginLoad);
@@ -39,7 +39,18 @@ public class GameAudioManager : AudioManager
 
     void OnStageBeginLoad()
     {
+        TCommon.TraversalEnum((enum_GameMusic music) =>
+        {
+            if (!(music > enum_GameMusic.StyledStart && music < enum_GameMusic.StyledEnd))
+                return;
+            if (m_GameMusic.ContainsKey(music))
+                m_GameMusic.Remove(music);
 
+            AudioClip clip = TResources.GetGameBGM_Styled(music,GameManager.Instance.m_GameLevel.m_GameStyle);
+            if (!clip)
+                return;
+            m_GameMusic.Add(music, clip);
+        });
     }
 
     void OnChangeLevel(SBigmapLevelInfo info)
@@ -68,7 +79,7 @@ public class GameAudioManager : AudioManager
         }
     }
     void OnBattleFinish() =>  Stop();
-    void OnGameFinish(bool win) => PlayBGM(win ? enum_GameMusic.GameWin : enum_GameMusic.GameLost, false);
+    void OnGameFinish(bool win) => SetBGPitch(.8f);
 
     void PlayBGM(enum_GameMusic music, bool loop)
     {
