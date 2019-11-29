@@ -4,6 +4,11 @@ public class SFXProjectileCastTrigger : SFXProjectile
 {
     protected virtual Vector3 v3_castPoint=> transform.position + transform.forward * F_Height;
     protected bool m_CastTriggered = false;
+    protected override void OnPlay()
+    {
+        base.OnPlay();
+        m_CastTriggered = false;
+    }
     protected override void OnStop()
     {
         base.OnStop();
