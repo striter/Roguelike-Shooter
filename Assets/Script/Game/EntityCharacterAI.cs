@@ -343,7 +343,8 @@ public class EntityCharacterAI : EntityCharacterBase {
         public void OnAttackAnimTrigger() => OnAttackTrigged();
         void OnAttackTrigged()
         {
-            m_Weapon.Play(b_preAim, m_Target);
+            if(b_targetAvailable)
+                m_Weapon.Play(b_preAim, m_Target);
             if (i_playCount <= 0)
                 OnAttackFinished();
         }
