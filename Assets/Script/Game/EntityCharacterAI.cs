@@ -320,11 +320,14 @@ public class EntityCharacterAI : EntityCharacterBase {
         }
         void CheckAttack(float deltaTime)
         {
-            if (i_playCount <= 0||!b_CanKeepAttack)
+            if (!b_CanKeepAttack)
             {
                 OnAttackFinished();
                 return;
             }
+
+            if (i_playCount <= 0)
+                return;
 
             if (f_fireCheckSimulate > 0)
             {
@@ -360,7 +363,7 @@ public class EntityCharacterAI : EntityCharacterBase {
             if (f_movementOrderSimulate > 0)  f_movementOrderSimulate -= movementDelta;
             if (f_movementSimulate > 0) { f_movementSimulate -= movementDelta; return; }
             f_movementSimulate = GameConst.F_AIMovementCheckParam;
-
+            
             //Force Hold Position
             if (CheckHoldPosition()) { StopMoving();  return; }
 
