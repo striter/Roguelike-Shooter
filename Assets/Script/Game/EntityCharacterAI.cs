@@ -95,7 +95,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         switch (animEvent)
         {
             case TAnimatorEvent.enum_AnimEvent.Fire:
-                m_AI.OnAttackTriggered();
+                m_AI.OnAttackAnimTrigger();
                 break;
         }
     }
@@ -313,12 +313,10 @@ public class EntityCharacterAI : EntityCharacterBase {
             b_preAim = preAim;
             b_attacking = true;
             m_Weapon.OnSetAttack(true);
-            if (m_Weapon.B_HaveAnim)
-                OnAttackAnim(true);
         }
         void CheckAttack(float deltaTime)
         {
-            if (!b_CanKeepAttack)
+            if (i_playCount <= 0||!b_CanKeepAttack)
             {
                 OnAttackFinished();
                 return;
@@ -331,18 +329,22 @@ public class EntityCharacterAI : EntityCharacterBase {
             }
             f_fireCheckSimulate = m_Entity.F_AttackRate;
 
-            if (m_Weapon.B_TriggerByAnim)
-                OnAttackAnim(true);
-            else
-                OnAttackTriggered();
-
             i_playCount--;
+            if (m_Weapon.B_TriggerByAnim)
+            {
+                OnAttackAnim(true);
+                return;
+            }
+            OnAttackAnimTrigger();
+        }
+
+        public void OnAttackAnimTrigger() => OnAttackTrigged();
+        void OnAttackTrigged()
+        {
+            m_Weapon.Play(b_preAim, m_Target);
             if (i_playCount <= 0)
                 OnAttackFinished();
         }
-
-        public void OnAttackTriggered() => m_Weapon.Play(b_preAim, m_Target);
-
         void OnAttackFinished()
         {
             b_attacking = false;
