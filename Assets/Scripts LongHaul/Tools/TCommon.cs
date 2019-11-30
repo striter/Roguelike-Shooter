@@ -20,12 +20,7 @@ public static class TCommonUI
         rect .anchorMin = Vector2.Lerp(rect.anchorMin, viewPortAnchor, lerpParam);
         rect.anchorMax = Vector2.Lerp(rect.anchorMin, viewPortAnchor, lerpParam);
     }
-
-    public static void SetAlpha(this MaskableGraphic graphic, float alpha)
-    {
-        graphic.color = new Color(graphic.color.r, graphic.color.g, graphic.color.b, alpha);
-    }
-
+    
     public static void ReparentRestretchUI(this RectTransform rect,Transform targetTrans)
     {
         rect.SetParent(targetTrans);
@@ -49,8 +44,10 @@ public static class TCommonUI
         }
     }
 }
+
 public static class TCommon
 {
+    #region Transform
     public static bool SetActivate(this MonoBehaviour behaviour, bool active)=>SetActivate(behaviour.gameObject, active);
     public static bool SetActivate(this Transform tra, bool active)=> SetActivate(tra.gameObject, active);
     public static bool SetActivate(this GameObject go, bool active)
@@ -63,13 +60,11 @@ public static class TCommon
     }
     public static void DestroyChildren(this Transform trans)
     {
-        if (trans.childCount > 0)
-        {
-            for (int i = 0; i < trans.childCount; i++)
-            {
-                GameObject.Destroy(trans.GetChild(i).gameObject);
-            }
-        }
+        int count = trans.childCount;
+        if (count <= 0)
+            return;
+        for (int i = 0; i < count; i++)
+            GameObject.Destroy(trans.GetChild(i).gameObject);
     }
     public static void SetParentResetTransform(this Transform source,Transform target)
     {
@@ -90,21 +85,44 @@ public static class TCommon
         Debug.LogWarning("Null Child Name:" + name + ",Find Of Parent:" + trans.name);
         return null;
     }
-    public static void SetTransformShow(Transform tra, bool active)
+
+    public static T Find<T>(this T[,] array, Predicate<T> predicate)
     {
-        tra.localScale = active ? Vector3.one : Vector3.zero;
+        int length0 = array.GetLength(0);
+        int length1 = array.GetLength(1);
+        for (int i = 0; i < length0; i++)
+            for (int j = 0; j < length1; j++)
+                if (predicate(array[i, j])) return array[i, j];
+        return default(T);
     }
-    public static float GetXZDistance(Vector3 start, Vector3 end)
+
+    public static T GetComponentNullable<T>(this Transform parent) where T : MonoBehaviour
     {
-        return new Vector2(start.x - end.x, start.z - end.z).magnitude;
+        if (parent == null)
+            return null;
+        return parent.GetComponent<T>();
     }
-    public static Vector3 GetXZLookDirection(Vector3 startPoint, Vector3 endPoint)
+
+    public static void SortChildByNameIndex(Transform transform, bool higherUpper = true)
     {
-        Vector3 lookDirection = endPoint - startPoint;
-        lookDirection.y = 0;
-        lookDirection.Normalize();
-        return lookDirection;
+        List<Transform> childList = new List<Transform>();
+        List<int> childIndexList = new List<int>();
+
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            childList.Add(transform.GetChild(i));
+            childIndexList.Add(int.Parse(childList[i].gameObject.name));
+        }
+        childIndexList.Sort((a, b) => { return a <= b ? (higherUpper ? 1 : -1) : (higherUpper ? -1 : 1); });
+
+        for (int i = 0; i < childList.Count; i++)
+        {
+            childList[i].SetSiblingIndex(childIndexList.FindIndex(p => p == int.Parse(childList[i].name)));
+        }
     }
+
+    #endregion
+    #region Color
     public static Color GetHexColor(string hex)
     {
         if (hex.Length != 8)
@@ -120,16 +138,22 @@ public static class TCommon
         float r = br / 255f; float g = bg / 255f; float b = bb / 255f; float a = cc / 255f;
         return new Color(r, g, b, a);
     }
-    public static Color ColorAlpha(Color origin, float alpha)
+    public static Color ColorAlpha(Color origin, float alpha)=> new Color(origin.r, origin.g, origin.b, alpha);
+    #endregion
+    #region Vector/Angle
+    public static float GetXZDistance(Vector3 start, Vector3 end)
     {
-        return new Color(origin.r, origin.g, origin.b, alpha);
+        return new Vector2(start.x - end.x, start.z - end.z).magnitude;
     }
-    public static float GetAngle180(float angle)
+    public static Vector3 GetXZLookDirection(Vector3 startPoint, Vector3 endPoint)
     {
-        if (angle > 180)
-            angle -= 360;
-        return angle;
+        Vector3 lookDirection = endPoint - startPoint;
+        lookDirection.y = 0;
+        lookDirection.Normalize();
+        return lookDirection;
     }
+    public static Vector3 RotateDirection(this Vector3 Direction, Vector3 axis, float angle) => (Quaternion.AngleAxis(angle, axis) * Direction).normalized;
+
     public static float GetAngle(Vector3 first, Vector3 second, Vector3 up)
     {
         float angle = Vector3.Angle(first, second);
@@ -163,62 +187,28 @@ public static class TCommon
         }
         return angle;
     }
-    public static Vector3 RotateDirection(this Vector3 Direction, Vector3 axis, float angle) => (Quaternion.AngleAxis(angle, axis) * Direction).normalized;
-    public static Quaternion RandomRotation()
-    {
-        return Quaternion.Euler(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360));
-    }
-    public static Vector2 RandomVector2(float offset)=> new Vector2(UnityEngine.Random.Range(-offset, offset), UnityEngine.Random.Range(-offset, offset));
-    public static Vector3 RandomVector3(float offset)=> new Vector3(UnityEngine.Random.Range(-offset, offset), UnityEngine.Random.Range(-offset, offset), UnityEngine.Random.Range(-offset, offset));
-    public static Transform FindOrCreateNewTransform(this Transform parentTrans, string name)
-    {
-        Transform toTrans;
-        toTrans = parentTrans.Find(name);
-        if (toTrans == null)
-        {
-            toTrans = new GameObject().transform;
-            toTrans.SetParent(parentTrans);
-            toTrans.name = name;
-        }
-        return toTrans;
-    }
-    #region List/Array/Enum Traversal
-
-    public static T RandomItem<T>(this List<T> randomList, System.Random randomSeed = null)
-    {
-        return randomList[randomSeed != null ? randomSeed.Next(randomList.Count) : UnityEngine.Random.Range(0, randomList.Count)];
-    }
-    public static int RandomIndex<T>(this List<T> randomList, System.Random randomSeed = null)
-    {
-        return randomSeed != null ? randomSeed.Next(randomList.Count) : UnityEngine.Random.Range(0, randomList.Count);
-    }
-    public static T RandomItem<T>(this T[] array, System.Random randomSeed = null)
-    {
-        return randomSeed != null ? array[randomSeed.Next(array.Length)] : array[UnityEngine.Random.Range(0, array.Length)];
-    }
-    public static T RandomItem<T>(this T[,] array, System.Random randomSeed = null)
-    {
-        return randomSeed != null ? array[randomSeed.Next(array.GetLength(0)), randomSeed.Next(array.GetLength(1))] : array[UnityEngine.Random.Range(0, array.GetLength(0)), UnityEngine.Random.Range(0, array.GetLength(1))];
-    }
+    #endregion
+    #region Collections/Array Traversal
     public static void Traversal<T>(this List<T> list, Action<T> OnEachItem,bool listChanged=false)
     {
+        int count = list.Count;
         if (listChanged)
         {
             List<T> tempList = new List<T>();
             tempList.AddRange(list);
-            for (int i = 0; i < tempList.Count; i++)
+            for (int i = 0; i < count; i++)
                 OnEachItem(tempList[i]);
         }
         else
         {
-            for (int i = 0; i < list.Count; i++)
+            for (int i = 0; i < count; i++)
                 OnEachItem(list[i]);
         }
     }
-
     public static void TraversalBreak<T>(this List<T> list, Func<T,bool> OnEachItem)
     {
-        for (int i = 0; i < list.Count; i++)
+        int count = list.Count;
+        for (int i = 0; i < count; i++)
         {
             if (OnEachItem(list[i]))
                 break;
@@ -268,34 +258,17 @@ public static class TCommon
     }
     public static void Traversal<T>(this T[] array, Action<T> OnEachItem)
     {
-        for (int i = 0; i < array.Length; i++)
+        int length = array.Length;
+        for (int i = 0; i < length; i++)
             OnEachItem(array[i]);
-    }
-    public static void Traversal<T>(this T[] array, Action<T, int> OnEachItem)
-    {
-        for (int i = 0; i < array.Length; i++)
-            OnEachItem(array[i], i);
     }
     public static void Traversal<T>(this T[,] array, Action<T> OnEachItem)
     {
-        for (int i = 0; i < array.GetLength(0); i++)
-            for (int j = 0; j < array.GetLength(1); j++)
+        int length0 = array.GetLength(0);
+        int length1 = array.GetLength(1);
+        for (int i = 0; i < length0; i++)
+            for (int j = 0; j < length1; j++)
                 OnEachItem(array[i, j]);
-    }
-    public static void TraversalEnum<T>(Action<T, int> enumAction)     //Can't Constraint T to System.Enum?
-    {
-        if (!typeof(T).IsSubclassOf(typeof(Enum)))
-        {
-            Debug.LogError("Can't Traversal EnEnum Class!");
-            return;
-        }
-
-        foreach (object temp in Enum.GetValues(typeof(T)))
-        {
-            if (temp.ToString() == "Invalid")
-                continue;
-            enumAction((T)temp, (int)temp);
-        }
     }
     public static void TraversalEnum<T>(Action<T> enumAction)    //Can't Constraint T to System.Enum?
     {
@@ -318,7 +291,8 @@ public static class TCommon
             return;
 
         int index = list.RandomIndex(seed);
-        for (int i = 0; i < list.Count; i++)
+        int count = list.Count;
+        for (int i = 0; i < count; i++)
         {
             if (OnRandomItemStop != null && OnRandomItemStop(list[index]))
                 break;
@@ -345,57 +319,25 @@ public static class TCommon
                 index = 0;
         }
     }
+
+    public static List<T> GetEnumList<T>()
+    {
+        List<T> list = new List<T>();
+        Array allEnums = Enum.GetValues(typeof(T));
+        for (int i = 0; i < allEnums.Length; i++)
+        {
+            if (allEnums.GetValue(i).ToString() == "Invalid")
+                continue;
+            list.Add((T)allEnums.GetValue(i));
+        }
+        return list;
+    }
     #endregion
-    public static List<int> SplitIndexComma(this string toSplit)
-    {
-        List<int> indexes = new List<int>();
-        string[] splitIndexes = toSplit.Split(',');
-        for (int i = 0; i < splitIndexes.Length; i++)
-        {
-            indexes.Add(int.Parse(splitIndexes[i]));
-        }
-        return indexes;
-    }
-    public static T Find<T>(this T[,] array, Predicate<T> predicate)
-    {
-        for (int i = 0; i < array.GetLength(0); i++)
-            for (int j = 0; j < array.GetLength(1); j++)
-                if (predicate(array[i, j])) return array[i, j];
-        return default(T);
-    }
-    public static string ToStringLog<T>(this List<T> tempList)
-    {
-        string target = "";
-        for (int i = 0; i < tempList.Count; i++)
-        {
-            target += tempList[i].ToString();
-            target += " ";
-        }
-        return target;
-    }
-    public static T GetComponentNullable<T>(this Transform parent) where T : MonoBehaviour
-    {
-        if (parent == null)
-            return null;
-        return parent.GetComponent<T>();
-    }
-    public static void SortChildByNameIndex(Transform transform, bool higherUpper = true)
-    {
-        List<Transform> childList = new List<Transform>();
-        List<int> childIndexList = new List<int>();
-
-        for (int i = 0; i < transform.childCount; i++)
-        {
-            childList.Add(transform.GetChild(i));
-            childIndexList.Add(int.Parse(childList[i].gameObject.name));
-        }
-        childIndexList.Sort((a, b) => { return a <= b ? (higherUpper ? 1 : -1) : (higherUpper ? -1 : 1); });
-
-        for (int i = 0; i < childList.Count; i++)
-        {
-            childList[i].SetSiblingIndex(childIndexList.FindIndex(p => p == int.Parse(childList[i].name)));
-        }
-    }
+    #region Random
+    public static T RandomItem<T>(this List<T> randomList, System.Random randomSeed = null) => randomList[randomSeed != null ? randomSeed.Next(randomList.Count) : UnityEngine.Random.Range(0, randomList.Count)];
+    public static int RandomIndex<T>(this List<T> randomList, System.Random randomSeed = null) => randomSeed != null ? randomSeed.Next(randomList.Count) : UnityEngine.Random.Range(0, randomList.Count);
+    public static T RandomItem<T>(this T[] array, System.Random randomSeed = null) => randomSeed != null ? array[randomSeed.Next(array.Length)] : array[UnityEngine.Random.Range(0, array.Length)];
+    public static T RandomItem<T>(this T[,] array, System.Random randomSeed = null) => randomSeed != null ? array[randomSeed.Next(array.GetLength(0)), randomSeed.Next(array.GetLength(1))] : array[UnityEngine.Random.Range(0, array.GetLength(0)), UnityEngine.Random.Range(0, array.GetLength(1))];
     public static int Random(this RangeInt ir,System.Random seed = null)=> seed != null ? seed.Next(ir.start, ir.end + 1) : UnityEngine.Random.Range(ir.start, ir.end + 1);
     public static float RandomRangeFloat(this RangeFloat ir, System.Random seed = null)=> seed != null ? seed.Next((int)(ir.start * 1000), (int)(ir.end * 1000)) / 100 : UnityEngine.Random.Range(ir.start, ir.end);
     public static bool RandomBool(System.Random seed = null) => seed != null ? seed.Next(0, 2) > 0 : UnityEngine.Random.Range(0, 2) > 0;
@@ -420,7 +362,8 @@ public static class TCommon
         return targetLevel;
     }
     public static Vector3 RandomXZSphere(float radius) => Vector3.forward.RotateDirection(Vector3.up, UnityEngine.Random.Range(0, 360)) * UnityEngine.Random.Range(0, radius);
-    public static Vector3 RandomSphereEdge() =>Vector3.Normalize( new Vector3(UnityEngine.Random.Range(-1f,1f),UnityEngine.Random.Range(-1f,1f),UnityEngine.Random.Range(-1f,1f)));
+    public static Vector2 RandomVector2(float offset) => new Vector2(UnityEngine.Random.Range(-offset, offset), UnityEngine.Random.Range(-offset, offset));
+    public static Vector3 RandomVector3(float offset) => new Vector3(UnityEngine.Random.Range(-offset, offset), UnityEngine.Random.Range(-offset, offset), UnityEngine.Random.Range(-offset, offset));
     public static T RandomEnumValues<T>(System.Random _seed)        //Can't Constraint T to System.Enum
     {
         if (!typeof(T).IsSubclassOf(typeof(Enum)))
@@ -440,18 +383,5 @@ public static class TCommon
         }
         return default(T);
     }
-
-
-    public static List<T> EnumList<T>()
-    {
-        List<T> list = new List<T>();
-        Array allEnums = Enum.GetValues(typeof(T));
-        for (int i = 0; i < allEnums.Length; i++)
-        {
-            if (allEnums.GetValue(i).ToString() == "Invalid")
-                continue;
-            list.Add((T)allEnums.GetValue(i));
-        }
-        return list;
-    }
+    #endregion
 }

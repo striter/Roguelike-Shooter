@@ -41,8 +41,10 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
         base.Awake();
         m_Camera = Camera.main;
         tf_MainCamera = m_Camera.transform;
-        tf_CameraYawBase = transform.FindOrCreateNewTransform("CameraTrans");
-        tf_CameraOffset = tf_CameraYawBase.FindOrCreateNewTransform("CameraPos");
+        tf_CameraYawBase = new GameObject("CameraTrans").transform;
+        tf_CameraYawBase.SetParentResetTransform(transform);
+        tf_CameraOffset = new GameObject("CameraPos").transform;
+        tf_CameraOffset.SetParentResetTransform(tf_CameraYawBase);
         m_Effect = m_Camera.GetComponent<CameraEffectManager>();
     }
 

@@ -582,7 +582,7 @@ public class GameLevelManager
         m_GameSeed = new System.Random(m_Seed.GetHashCode());
         m_GameStage = _battleSave.m_Stage;
         m_GameDifficulty = _gameSave.m_GameDifficulty;
-        List<enum_Style> styleList = TCommon.EnumList<enum_Style>();
+        List<enum_Style> styleList = TCommon.GetEnumList<enum_Style>();
         TCommon.TraversalEnum((enum_StageLevel level) => {
             enum_Style style = styleList.RandomItem(m_GameSeed);
             styleList.Remove(style);
