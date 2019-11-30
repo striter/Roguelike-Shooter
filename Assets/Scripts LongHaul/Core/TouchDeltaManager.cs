@@ -92,8 +92,10 @@ public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
                 return;
 
             m_rightDelta = Vector2.zero;
-            foreach (Touch t in Input.touches)
+            int touchCount = Input.touchCount;
+            for (int i = 0; i < touchCount;i++)
             {
+                Touch t = Input.GetTouch(i);
                 if (t.phase == TouchPhase.Began)
                 {
                     TouchTracker track = new TouchTracker(t);
