@@ -14,7 +14,7 @@ namespace GameSetting_Action
 
         public const int I_10002_Cost = 1;
         public const float F_10002_Duration = 5f;
-        public static float F_10002_ArmorReceive(enum_RarityLevel rarity) => 2f * (int)rarity;
+        public static float F_10002_ArmorReceive(enum_RarityLevel rarity) => 1.5f * (int)rarity;
 
         public const int I_10003_Cost = 2;
         public const float F_10003_Duration = 15f;
@@ -23,7 +23,7 @@ namespace GameSetting_Action
 
         public const int I_10004_Cost = 2;
         public static float F_10004_Duration = 5f;
-        public static float F_10004_EnergyAdditivePerMile(enum_RarityLevel rarity) => 0.1f + 0.05f * (int)rarity;
+        public static float F_10004_EnergyAdditivePerMile(enum_RarityLevel rarity) => 0.08f + 0.04f * (int)rarity;
 
         public const int I_10005_Cost = 2;
         public static int P_10005_OnFire_DamageMultiply(enum_RarityLevel rarity) => 210 * (int)rarity;
@@ -157,7 +157,7 @@ namespace GameSetting_Action
         public static float F_20004_FreezeDuration(enum_RarityLevel rarity) => 3 * (int)rarity;
 
         public const int I_20005_Cost = 3;
-        public static float F_20005_FreezeDuration(enum_RarityLevel rarity) => 1f;
+        public static float F_20005_FreezeDuration(enum_RarityLevel rarity) => 0.8f;
         public static float F_20005_Health(enum_RarityLevel rarity) => 400 * (int)rarity;
         public static float F_20005_Damage(enum_RarityLevel rarity) => 40;
         public const float F_20005_FireRate=1f;
@@ -213,7 +213,7 @@ namespace GameSetting_Action
         public const int I_30006_Cost = 2;
         public static float F_30006_FreezeDuration(enum_RarityLevel rarity) => 3 * (int)rarity;
 
-        public const int I_30007_Cost = 1;
+        public const int I_30007_Cost = 2;
         public static float F_30007_DamageStackLimit(enum_RarityLevel rarity) => 35;
         public static float F_30007_FreezeDurationPerStack(enum_RarityLevel rarity) => .1f * (int)rarity;
 
@@ -266,7 +266,7 @@ namespace GameSetting_Action
 
         public static float F_40007_DamageAdditive(enum_RarityLevel rarity) => 4f * (int)rarity;
 
-        public static float P_40008_MaxHealthAdditive(enum_RarityLevel rarity) => 25 * (int)rarity;
+        public static float P_40008_MaxHealthAdditive(enum_RarityLevel rarity) => 50 * (int)rarity;
 
         public static float F_40009_DamageMultiplyAfterRloead(enum_RarityLevel rarity) => 40f * (int)rarity;
 
@@ -1160,7 +1160,7 @@ namespace GameSetting_Action
             base.OnFire(identity);
             ResetStack();
         }
-        public override void OnMove(float distsance) => OnStackUp(distsance);
+        public override void OnMove(float distance) => OnStackUp(distance);
         public Action_30001_DamageMovementStackup(int _identity, enum_RarityLevel _level) : base(_identity, _level, ActionData.I_30001_MaxStack) { }
     }
     public class Action_30002_KillDamageMultiply : ActionEquipmentNormal

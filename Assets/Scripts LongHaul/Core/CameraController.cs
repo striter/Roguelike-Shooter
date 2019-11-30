@@ -5,8 +5,10 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class CameraController : SimpleSingletonMono<CameraController>  {
-    public bool B_SmoothCamera = true;
-    public float F_CameraSmoothParam = .3f;
+    [Range(0,1)]
+    public float F_CameraRotateSmooth = .3f;
+    [Range(0, 1)]
+    public float F_CameraMoveSmooth = .3f;
     public bool B_InvertCamera = false;
     public float F_RotateSensitive = 1;
     public bool B_CameraOffsetWallClip = true;
@@ -68,8 +70,7 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
         qt_CameraRot = toTransform.rotation;
     }
     public void LookAt(Transform lookAtTrans) => tf_CameraLookAt = lookAtTrans;
-    public void SetCameraSmoothParam(float smoothParam)=> F_CameraSmoothParam = smoothParam;
-    public void SetCameraRotation(int pitch = -1, int yaw = -1)
+    public void SetCameraRotation(float pitch = -1, float yaw = -1)
     {
         if (pitch != -1)
             f_Pitch = m_SelfRotation? Mathf.Clamp(f_Pitch, I_YawAngleMin, I_YawAngleMax):pitch;
@@ -109,7 +110,7 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
         else
             qt_CameraRot = m_SelfRotation ? CalculateSelfRotation() : tf_AttachTo.rotation;
 
-        tf_CameraYawBase.position = tf_AttachTo.position;
+        tf_CameraYawBase.position = Vector3.Lerp(tf_CameraYawBase.position, tf_AttachTo.position,F_CameraMoveSmooth);
         tf_CameraYawBase.rotation = Quaternion.Euler(0, qt_CameraRot.eulerAngles.y, 0);
 
         tf_CameraOffset.localPosition = V3_LocalPositionOffset;
@@ -125,8 +126,8 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
                 Debug.DrawRay(ray_temp.origin, ray_temp.direction);
         }
 
-        tf_MainCamera.position = B_SmoothCamera ? Vector3.Lerp(tf_MainCamera.position, tf_CameraOffset.position, F_CameraSmoothParam) : tf_MainCamera.position;
-        tf_MainCamera.rotation = B_SmoothCamera ? Quaternion.Lerp(tf_MainCamera.rotation, qt_CameraRot, F_CameraSmoothParam) : qt_CameraRot;
+        tf_MainCamera.position = Vector3.Lerp(tf_MainCamera.position, tf_CameraOffset.position,F_CameraRotateSmooth);
+        tf_MainCamera.rotation = Quaternion.Lerp(tf_MainCamera.rotation,qt_CameraRot,F_CameraRotateSmooth);
     }
     #endregion
     #region Get/Set

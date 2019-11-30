@@ -26,16 +26,20 @@ public class CampManager : GameManagerBase
         base.Start();
         InitPostEffects(enum_Style.Invalid);
         EntityCharacterPlayer player = GameObjectManager.SpawnEntityPlayer(new CBattleSave());
-        player.transform.SetPositionAndRotation(tf_PlayerStart.position, tf_PlayerStart.rotation);
+        player.SetSpawnPosRot(tf_PlayerStart.position, tf_PlayerStart.rotation);
         tf_Player = player.transform;
         AttachPlayerCamera(tf_Player);
-        CameraController.Instance.RotateCamera(new Vector2(tf_PlayerStart.eulerAngles.y, 0));
         CampFarmManager.Instance.OnCampEnter();
+        CampAudioManager.Instance.PlayBGM(enum_CampMusic.Relax);
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCampStart);
     }
-
+    
     public void OnSceneItemInteract()
     {
-        OnPortalEnter(1f,tf_Player, () => { SwitchScene( enum_Scene.Game); });
+        OnPortalEnter(1f,tf_Player, () => {
+            LoadingManager.Instance.ShowLoading(enum_StageLevel.Rookie);
+            SwitchScene( enum_Scene.Game);
+        });
     }
 
     public bool B_Farming { get; private set; } = false;

@@ -45,6 +45,7 @@ public class SFXCastAreaConnections : SFXCast {
         }
     }
     TSpecialClasses.ParticleControlBase m_GroundParticles;
+    Transform tf_GroundAttach;
     public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
         base.OnPoolItemInit(_identity, _OnRecycle);
@@ -52,11 +53,13 @@ public class SFXCastAreaConnections : SFXCast {
         m_Connections = new ObjectPoolSimple<EntityBase, ConnectionsItem>(connections.Find("Item").gameObject,connections,(Transform trans, EntityBase entity)=>new ConnectionsItem(trans),(ConnectionsItem item)=>item.transform);
         m_GroundParticles = new TSpecialClasses.ParticleControlBase(transform.Find("ParticlesGround"));
     }
-    public override void Play(DamageDeliverInfo buffInfo)
+    public override void PlayControlled(int sourceID, EntityCharacterBase entity, Transform directionTrans,DamageDeliverInfo idInfo)
     {
-        base.Play(buffInfo);
+        base.PlayControlled(sourceID, entity, directionTrans,idInfo);
+        tf_GroundAttach = entity.transform;
         m_Particle.Clear();
     }
+
     protected override void OnPlay()
     {
         base.OnPlay();
@@ -70,39 +73,28 @@ public class SFXCastAreaConnections : SFXCast {
         m_GroundParticles.Stop();
         m_Connections.ClearPool();
     }
-    float check;
-    protected override void Update()
+    protected override List<EntityBase> DoCastDealtDamage()
     {
-        base.Update();
-        if (!B_Playing)
-            return;
-        
-        m_Connections.m_ActiveItemDic.Traversal((ConnectionsItem item)=>item.Tick(Time.deltaTime));
-
-        if (check>0)
-        {
-            check -= Time.deltaTime;
-            return;
-        }
-        check = .1f;
-
-        RaycastHit[] hits = OnCastCheck(GameLayer.Mask.I_Entity);
-        List<EntityBase> entityEffecting = new List<EntityBase>();
-        for (int i = 0; i < hits.Length; i++)
-        {
-            HitCheckEntity entity = hits[i].collider.DetectEntity();
-            if (!GameManager.B_CanSFXHitTarget(entity, m_sourceID))
-                continue;
-            entityEffecting.Add(entity.m_Attacher);
-        }
-
+        List<EntityBase> entityEffecting = base.DoCastDealtDamage();
         m_Connections.m_ActiveItemDic.Traversal((EntityBase key) => { if (!entityEffecting.Contains(key)) m_Connections.RemoveItem(key); }, true);
         entityEffecting.Traversal((EntityBase entity) => {
             if (m_Connections.ContainsItem(entity))
                 return;
 
             EntityCharacterBase character = entity as EntityCharacterBase;
-            m_Connections.AddItem(entity).SetTarget(character? character.tf_Head:entity.transform);
+            m_Connections.AddItem(entity).SetTarget(character ? character.tf_Head : entity.transform);
         });
+        return entityEffecting;
+    }
+    float check;
+    protected override void Update()
+    {
+        base.Update();
+        if (!B_Playing)
+            return;
+
+        m_GroundParticles.transform.position = tf_GroundAttach.position;
+        m_GroundParticles.transform.rotation = tf_GroundAttach.rotation;
+        m_Connections.m_ActiveItemDic.Traversal((ConnectionsItem item)=>item.Tick(Time.deltaTime));
     }
 }

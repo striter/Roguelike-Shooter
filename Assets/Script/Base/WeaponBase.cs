@@ -205,6 +205,6 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
             case TAnimatorEvent.enum_AnimEvent.Reload3: targetClip = m_ReloadClip3; break;
         }
         if(targetClip)
-             GameAudioManager.Instance.PlayClip(m_Attacher.m_EntityID, targetClip, false, m_Case);
+            AudioManager.Instance.PlayClip(m_Attacher.m_EntityID, targetClip, false, m_Case);
     }
 }

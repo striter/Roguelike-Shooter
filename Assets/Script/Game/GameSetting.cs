@@ -27,7 +27,7 @@ namespace GameSetting
         public const float I_MaxArmor = 99999;
         public const float F_RestoreActionEnergy = 0.001f; //战斗结束时给的能量 //战斗外的默认能量值
         public const float F_ActionShuffleCost = 2f;
-        public const float F_ActionShuffleCooldown = 10f;
+        public const float F_ActionShuffleCooldown = 6f;
 
         public const float F_AimMovementReduction = .6f;
         public const float F_MovementReductionDuration = .1f;
@@ -44,14 +44,15 @@ namespace GameSetting
         public const float F_AIDamageTranslate = 0;   //.003f;
         public const float F_AIMovementCheckParam = .3f;
         public const float F_AITargetCheckParam = 3f;       //AI Retarget Duration,3 is suggested
-        public const float F_AITargetCalculationParam = 1f;       //AI Target Param Calculation Duration, 1 is suggested;
-        public const float F_AIMaxRepositionDuration = 5f;
+        public const float F_AITargetCalculationParam = .5f;       //AI Target Param Calculation Duration, 1 is suggested;
+        public const float F_AIMaxRepositionDuration = .5f;
         public const int I_AIIdlePercentage = 50;
 
         public const int I_EnermyCountWaveFinish = 0;       //When Total Enermy Count Reaches This Amount,Wave Finish
-        public const int I_EnermySpawnDelay = 3;        //Enermy Spawn Delay Time 
-        
-        public const float F_PickupAcceleration = 600f; //拾取物的飞行加速速度
+        public const int I_EnermySpawnDelay = 2;        //Enermy Spawn Delay Time 
+        public const float F_EnermySpawnOffsetEach = .5f;       //Enermy Spawn Offset Each
+
+        public const float F_PickupAcceleration = 800f; //拾取物的飞行加速速度
         public const int I_HealthPickupAmount = 25;
         public const int I_ArmorPickupAmount = 25;
         public const int I_HealthTradeAmount = 50;
@@ -188,7 +189,7 @@ namespace GameSetting
         }
 
         public static readonly RangeInt I_CampActionStorageRequestAmount = new RangeInt(1,4);
-        public static readonly List<int> I_CampActionStorageDefault = new List<int> { 10001, 10002, 10003, 10004, 10005, 10006, 10007, 10008, 10009, 10010 };
+        public static readonly List<int> I_CampActionStorageDefault = new List<int> { 10002, 10004, 10006, 10009, 10011, 10012, 10013, 10014, 10016, 10018, 10021, 10022, 10023, 10024, 10025, 10030, 10033, 10034, 20001, 20004, 20005, 20009, 20012, 30001, 30002, 30004, 30005, 30009, 30014, 30018 };
     }
 
     public static class UIConst
@@ -351,6 +352,16 @@ namespace GameSetting
                 }
             return spriteName;
         }
+        public static string GetAbilityBackground(bool useable,bool cooldowning)
+        {
+            if (!useable)
+                return "control_ability_invalid";
+
+            if (cooldowning)
+                return "control_ability_bottom_cooldown";
+            else
+                return "control_ability_bottom_activate";
+        }
         public static string GetAbilitySprite(enum_PlayerCharacter character) => "control_ability_" + character;
         public static string GetSpriteName(this enum_PlayerWeapon weapon) => ((int)weapon).ToString();
         public static string GetCordinates(this TileAxis axis)
@@ -468,6 +479,7 @@ namespace GameSetting
         OnCharacterDead,
         OnCharacterRevive,
 
+        OnStageBeginLoad,
         OnStageStart,       //Total Stage Start
         OnStageFinish,
 
@@ -481,6 +493,8 @@ namespace GameSetting
         OnGameStart,
         OnGameFinish,
         OnGameExit,
+
+        OnCampStart,
     }
 
     enum enum_BC_UIStatus
@@ -490,8 +504,8 @@ namespace GameSetting
         UI_PlayerInteractStatus,
         UI_PlayerHealthStatus,
         UI_PlayerAmmoStatus,
-        UI_PlayerActionStatus,
-        UI_PlayerExpireStatus,
+        UI_PlayerBattleActionStatus,
+        UI_PlayerExpireListStatus,
         UI_PlayerWeaponStatus,
 
         UI_CampDataStatus,
@@ -639,11 +653,13 @@ namespace GameSetting
         PlayerRevive,
     }
 
-    public enum enum_GameMusic { Invalid=-1, Relax=1, Fight=2, Win=3, Lost=4,}
+    public enum enum_GameMusic { Invalid=-1,StyledStart=1,  Relax,StyledEnd=10, Fight}
+
+    public enum enum_CampMusic { Invalid=-1, Relax = 0,}
 
     public enum enum_Option_FrameRate { Invalid = -1, Normal = 45, High = 60, }
 
-    public enum enum_Option_ScreenEffect { Invalid=-1,Normal,High,Epic}
+    public enum enum_Option_ScreenEffect { Invalid=-1,Normal,High}
 
     public enum enum_CampFarmItemStatus { Invalid=-1, Empty = 0, Locked=1 , Decayed = 2, Progress1=10,Progress2,Progress3,Progress4,Progress5}
 
@@ -697,9 +713,13 @@ namespace GameSetting
             m_StorageRequestStamp = -1;
             m_StorageActions = new List<ActionStorageData>();
             m_CharacterSelected = enum_PlayerCharacter.Beth;
-            m_WeaponSelected = enum_PlayerWeapon.UMP45;
+            m_WeaponSelected = enum_PlayerWeapon.UZI;
             for (int i = 0; i < GameExpression.I_CampActionStorageDefault.Count; i++)
                 m_StorageActions.Add(ActionStorageData.CreateDefault(GameExpression.I_CampActionStorageDefault[i]));
+        }
+
+        public void DataRecorrect()
+        {
         }
 
         public void UnlockDifficulty()
@@ -735,6 +755,12 @@ namespace GameSetting
                 m_PlotStatus[3] = CampFarmPlotData.Create(enum_CampFarmItemStatus.Empty);
             if (difficulty >= GameConst.I_CampFarmPlot5UnlockDifficulty && m_PlotStatus[4].m_Status == enum_CampFarmItemStatus.Locked)
                 m_PlotStatus[4] = CampFarmPlotData.Create(enum_CampFarmItemStatus.Empty);
+        }
+
+        void ISave.DataRecorrect()
+        {
+            if(m_PlotStatus.Count!=6)
+                m_PlotStatus= new List<CampFarmPlotData>() { CampFarmPlotData.Create(enum_CampFarmItemStatus.Empty), CampFarmPlotData.Create(enum_CampFarmItemStatus.Empty), CampFarmPlotData.Create(enum_CampFarmItemStatus.Empty), CampFarmPlotData.Create(enum_CampFarmItemStatus.Locked), CampFarmPlotData.Create(enum_CampFarmItemStatus.Locked), CampFarmPlotData.Create(enum_CampFarmItemStatus.Locked) };
         }
     }
 
@@ -774,6 +800,10 @@ namespace GameSetting
             m_Stage = _level.m_GameStage;
             m_kills = _level.m_enermiesKilled;
         }
+
+        void ISave.DataRecorrect()
+        {
+        }
     }
 
     public class CGameOptions : ISave
@@ -795,6 +825,11 @@ namespace GameSetting
             m_SensitiveTap = 5;
             m_MusicVolumeTap = 10;
             m_VFXVolumeTap = 10;
+        }
+
+
+        void ISave.DataRecorrect()
+        {
         }
     }
 
@@ -1391,16 +1426,16 @@ namespace GameSetting
             return deliver;
         }
         Func<DamageInfo, bool> OnReceiveDamage;
-        Action OnExpireChange;
+        Action OnExpireInfoChange;
 
         bool b_expireUpdated = false;
-        public void EntityInfoChange() => b_expireUpdated = false;
+        public void UpdateEntityInfo() => b_expireUpdated = false;
 
         public CharacterInfoManager(EntityCharacterBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange)
         {
             m_Entity = _attacher;
             OnReceiveDamage = _OnReceiveDamage;
-            OnExpireChange = _OnExpireChange;
+            OnExpireInfoChange = _OnExpireChange;
             TCommon.TraversalEnum((enum_CharacterEffect effect) => { m_Effects.Add(effect, new EffectCounterBase(enum_ExpireRefreshType.AddUp)); });
         }
 
@@ -1428,7 +1463,7 @@ namespace GameSetting
         {
             m_Effects.Traversal((enum_CharacterEffect type) => { m_Effects[type].Reset(); });
             m_Expires.Traversal((ExpireBase expire) => { if (expire.m_ExpireType == enum_ExpireType.Buff) OnExpireElapsed(expire); }, true);
-            EntityInfoChange();
+            UpdateEntityInfo();
         }
 
         public virtual void Tick(float deltaTime) {
@@ -1439,25 +1474,23 @@ namespace GameSetting
                 return;
             UpdateExpireInfo();
             UpdateExpireEffect();
+            OnExpireInfoChange?.Invoke();
             b_expireUpdated = true;
         }
 
         protected virtual void AddExpire(ExpireBase expire)
         {
             m_Expires.Add(expire);
-            EntityInfoChange();
-            OnExpireChange?.Invoke();
+            UpdateEntityInfo();
         }
         void RefreshExpire(ExpireBase expire)
         {
             expire.ExpireRefresh();
-            EntityInfoChange();
         }
         protected virtual void OnExpireElapsed(ExpireBase expire)
         {
             m_Expires.Remove(expire);
-            EntityInfoChange();
-            OnExpireChange?.Invoke();
+            UpdateEntityInfo();
         }
         public void AddBuff(int sourceID, SBuff buffInfo)
         {
@@ -1488,6 +1521,12 @@ namespace GameSetting
             }
         }
         #region ExpireInfo
+        void UpdateExpireInfo()
+        {
+            OnResetInfo();
+            m_Expires.Traversal(OnSetExpireInfo);
+            AfterInfoSet();
+        }
         protected virtual void OnResetInfo()
         {
             F_MaxHealthAdditive = 0f;
@@ -1516,12 +1555,6 @@ namespace GameSetting
             if (F_MovementSpeedMultiply < 0) F_MovementSpeedMultiply = 0;
             if (F_HealthDrainMultiply < 0) F_HealthDrainMultiply = 0;
             if (F_HealReceiveMultiply < 0) F_HealReceiveMultiply = 0;
-        }
-        void UpdateExpireInfo()
-        {
-            OnResetInfo();
-            m_Expires.Traversal(OnSetExpireInfo);
-            AfterInfoSet();
         }
         #endregion
         #region ExpireEffect
@@ -1581,18 +1614,19 @@ namespace GameSetting
         public List<ActionBase> m_BattleActionPooling { get; private set; } = new List<ActionBase>();
         public List<ActionBase> m_BattleActionPicking { get; private set; } = new List<ActionBase>();
         ActionDeviceNormal m_CurrentDevice;
-        Action OnActionChange;
+        Action OnActionChange,OnExpireListChange;
         protected bool b_actionChangeIndicated = true;
-        protected void IndicateActionUI() => b_actionChangeIndicated = false;
+        protected void IndicateBattleActionUI() => b_actionChangeIndicated = false;
         protected float f_shuffleCheck = -1;
         protected bool b_shuffling => f_shuffleCheck > 0;
         public float f_shuffleScale => f_shuffleCheck / GameConst.F_ActionShuffleCooldown;
         public int m_Coins { get; private set; } = 0;
 
-        public PlayerInfoManager(EntityCharacterPlayer _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange, Action _OnActionChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
+        public PlayerInfoManager(EntityCharacterPlayer _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange,Action _OnExpireListChange, Action _OnBattleActionsChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
         {
             m_Player = _attacher;
-            OnActionChange = _OnActionChange;
+            OnActionChange = _OnBattleActionsChange;
+            OnExpireListChange = _OnExpireListChange;
         }
 
         public override void OnActivate()
@@ -1613,13 +1647,13 @@ namespace GameSetting
         public override void Tick(float deltaTime)
         {
             base.Tick(deltaTime);
-            EntityInfoChange();
             if (!b_actionChangeIndicated)
             {
                 b_actionChangeIndicated = true;
                 OnActionChange?.Invoke();
             }
 
+            UpdateEntityInfo();
             OnPlayerMove(TCommon.GetXZDistance(m_prePos, m_Entity.transform.position));
             m_prePos = m_Entity.transform.position;
 
@@ -1675,6 +1709,13 @@ namespace GameSetting
             AddExpire(targetAction);
             CheckDevice();
         }
+
+        protected override void AddExpire(ExpireBase expire)
+        {
+            base.AddExpire(expire);
+            OnExpireListChange();
+        }
+
         protected override void OnExpireElapsed(ExpireBase expire)
         {
             ActionBase action = expire as ActionBase;
@@ -1682,6 +1723,7 @@ namespace GameSetting
                 m_ActionEquiping.Remove(action);
             base.OnExpireElapsed(expire);
             CheckDevice();
+            OnExpireListChange();
         }
         protected override void OnResetInfo()
         {
@@ -1789,7 +1831,7 @@ namespace GameSetting
 
         void OnCharacterHealthChangeAddPlayerEnergy(int sourceID,EntityCharacterBase entity,float amountApply)
         {
-            if (amountApply<=0||entity.b_isSubEntity)
+            if (amountApply<=0||entity.b_isSubEntity||!GameManager.Instance.EntityExists(sourceID))
                 return;
 
             if (sourceID == m_Player.m_EntityID || GameManager.Instance.GetEntity(sourceID).m_SpawnerEntityID == m_Player.m_EntityID)
@@ -1813,7 +1855,7 @@ namespace GameSetting
         public void DoCopyAction(ActionBase action)
         {
             OnAddAction(ActionDataManager.CopyAction(action));
-            IndicateActionUI();
+            IndicateBattleActionUI();
         } 
         public bool TryUsePickingAction(int index)
         {
@@ -1824,7 +1866,7 @@ namespace GameSetting
             OnUseAcion(action);
             m_BattleActionPicking.RemoveAt(index);
             RefillHoldingActions();
-            IndicateActionUI();
+            IndicateBattleActionUI();
             return true;
         }
 
@@ -1863,7 +1905,7 @@ namespace GameSetting
         void ClearHoldingActions()
         {
             m_BattleActionPicking.Clear();
-            IndicateActionUI();
+            IndicateBattleActionUI();
         }
 
         public void UpgradeAllHoldingAction()
@@ -1872,31 +1914,31 @@ namespace GameSetting
                 return;
 
             m_BattleActionPicking.Traversal((ActionBase action) => { action.Upgrade(); });
-            IndicateActionUI();
+            IndicateBattleActionUI();
         }
 
         public void OverrideHoldingActionCost(int cost)
         {
             m_BattleActionPicking.Traversal((ActionBase action) => { action.OverrideCost(cost); });
-            IndicateActionUI();
+            IndicateBattleActionUI();
         }
 
         public void AddStoredAction(ActionBase action)
         {
             m_BattleAction.Add(action);
-            IndicateActionUI();
+            IndicateBattleActionUI();
         }
 
         public void RemoveStoredAction(int index)
         {
             m_BattleAction.RemoveAt(index);
-            IndicateActionUI();
+            IndicateBattleActionUI();
         }
 
         public void UpgradeStoredAction(int index)
         {
             m_BattleAction[index].Upgrade();
-            IndicateActionUI();
+            IndicateBattleActionUI();
         }
 
         public void AddActionEnergy(float amount)
@@ -2343,7 +2385,7 @@ namespace GameSetting
         {
 
         }
-        public virtual void OnPlayAnim(bool play)
+        public virtual void OnSetAttack(bool play)
         {
         }
         public virtual void Tick(float deltaTime)
@@ -2468,13 +2510,18 @@ namespace GameSetting
                 b_activating = false;
             }
         }
-        public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
+        public override void OnSetAttack(bool play)
         {
-            if (b_activating)
+            base.OnSetAttack(play);
+            if (!play || b_activating)
                 return;
 
             timeElapsed = 0;
             b_activating = true;
+        }
+        public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
+        {
+            return;
         }
     }
     public class EquipmentCasterControlled : EquipmentCaster
@@ -2485,23 +2532,29 @@ namespace GameSetting
         }
         public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
-            OnPlayAnim(false);
-            m_Cast = GameObjectManager.SpawnEquipment<SFXCast>(I_Index, m_Entity.tf_Weapon.position, m_Entity.tf_Weapon.forward);
-            m_Cast.PlayControlled(m_Entity.m_EntityID, m_Entity, attacherHead, GetDamageDeliverInfo());
+            if (!m_Cast)
+            {
+                m_Cast = GameObjectManager.SpawnEquipment<SFXCast>(I_Index, m_Entity.tf_Weapon.position, m_Entity.tf_Weapon.forward);
+                m_Cast.PlayControlled(m_Entity.m_EntityID, m_Entity, attacherHead, DamageDeliverInfo.Default(m_Entity.m_EntityID));
+            }
+
+            if (m_Cast)
+                m_Cast.OnControlledCheck(GetDamageDeliverInfo());
         }
 
-        public override void OnPlayAnim(bool play)
+        public override void OnSetAttack(bool play)
         {
-            if (!play && m_Cast)
+            if (m_Cast)
             {
                 m_Cast.StopControlled();
                 m_Cast = null;
             }
         }
+
         public override void OnDeactivate()
         {
             base.OnDeactivate();
-            OnPlayAnim(false);
+            OnSetAttack(false);
         }
     }
     public class EquipmentBarrageRange : EquipmentBase
@@ -2741,34 +2794,6 @@ namespace GameSetting
             m_WeaponActionRarity.transform.SetActivate(showWeaponAction);
             m_WeaponActionName.autoLocalizeText = showWeaponAction ? action.GetNameLocalizeKey() : "UI_Weapon_ActionInvalidName";
             if (showWeaponAction) m_WeaponActionRarity.SetRarity(action.m_rarity);
-        }
-    }
-    public class UIC_ActionEnergy
-    {
-        public RectTransform rectTransform { get; private set; }
-        Image img_Full, img_Fill;
-        Text txt_amount;
-
-        float m_value;
-        public UIC_ActionEnergy(Transform _transform)
-        {
-            rectTransform = _transform.GetComponent<RectTransform>();
-            txt_amount = rectTransform.Find("Amount").GetComponent<Text>();
-            img_Full = rectTransform.Find("Full").GetComponent<Image>();
-            img_Fill = rectTransform.Find("Fill").GetComponent<Image>();
-        }
-        public void SetValue(float value)
-        {
-            if (m_value == value)
-                return;
-
-            m_value =value;
-            float detail = m_value % 1f;
-            bool full = m_value == GameConst.F_MaxActionEnergy;
-            img_Full.SetActivate(full);
-            img_Fill.SetActivate(!full);
-            txt_amount.text = ((int)m_value).ToString();
-            if (!full) img_Fill.fillAmount = detail;
         }
     }
 

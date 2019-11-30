@@ -52,7 +52,6 @@ public class TPSCameraController : CameraController
         base.Awake();
         SetCameraOffset(TPSOffset);
         m_SelfRotation = true;
-        B_SmoothCamera = true;
         B_CameraOffsetWallClip = true;
         SetCameraYawClamp(I_YawMin, I_YawMax);
     }

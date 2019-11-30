@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 081334a023db2704db167d2dfc323270, type: 3}
-    totalSpriteSurfaceArea: 2178848
+    totalSpriteSurfaceArea: 2167104
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -37,8 +37,8 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 0aaa3dc21666f4046978924681572f16, type: 3}
   - {fileID: 21300000, guid: a00c4e98a73cb6d46a3f7b2ed752f740, type: 3}
   - {fileID: 21300000, guid: f707edb8147ad104b8e3b9a3fc7ed413, type: 3}
-  - {fileID: 21300000, guid: 8079c1dcb5b56844bb9197a46bb0b0f9, type: 3}
   - {fileID: 21300000, guid: d783a5f7194904445969c59766ac8443, type: 3}
+  - {fileID: 21300000, guid: 103d90c5da42cc84aa6f39191e7c6866, type: 3}
   - {fileID: 21300000, guid: 18a7c2d7df8a6854e9bc2e3248a93804, type: 3}
   - {fileID: 21300000, guid: 006ea73e2bf56dc4e959b2bc4171da77, type: 3}
   - {fileID: 21300000, guid: ce23f48acd6ddf541b7a5d298771ae09, type: 3}
@@ -77,8 +77,8 @@ SpriteAtlas:
   - result_missioncomplete_bg
   - result_missionfailed_bg
   - result_missioncomplete_title_en
-  - background_usecard_angle
   - result_missionfailed_title_en
+  - background_usecard_angle
   - result_missionfailed_title_cn
   - result_missioncomplete_title_cn
   - backpack_bottom

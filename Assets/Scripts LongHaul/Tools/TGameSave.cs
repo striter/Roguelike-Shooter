@@ -11,6 +11,7 @@ namespace TGameSave
 {
     public interface ISave
     {
+        void DataRecorrect();
     }
     public static class TGameData<T> where T : class, ISave, new()
     {
@@ -92,6 +93,8 @@ namespace TGameSave
                     string data = m_ParentNode.SelectSingleNode(m_fieldInfo[i].Name).InnerText;
                     m_fieldInfo[i].SetValue(temp, TXmlPhrase.Phrase[m_fieldInfo[i].FieldType, data]);
                 }
+
+                temp.DataRecorrect();
                 return temp;
             }
             catch (Exception e)

@@ -6,8 +6,8 @@ using TSpecialClasses;
 using System;
 
 public class EntityCharacterPlayer : EntityCharacterBase {
-    #region Preset
-    public int I_AbilityCost = 0;
+    #region PresetData
+    public int I_AbilityTimes = -1;
     public float F_AbilityCoolDown = 0f;
     #endregion
     public override enum_EntityController m_Controller => enum_EntityController.Player;
@@ -34,13 +34,12 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected bool m_aimingMovementReduction => f_aimMovementReduction > 0f;
     protected float m_BaseMovementSpeed;
     public override float m_baseMovementSpeed => m_BaseMovementSpeed;
-    protected float f_abilityCoolDown = 0f;
-    protected bool m_AbilityCooldowning => f_abilityCoolDown > 0f;
     protected float f_reviveCheck = 0f;
+    public CharacterAbility m_Ability { get; private set; }
 
     protected override CharacterInfoManager GetEntityInfo()
     {
-        m_PlayerInfo = new PlayerInfoManager(this, m_HitCheck.TryHit, OnExpireChange, OnActionsChange);
+        m_PlayerInfo = new PlayerInfoManager(this, m_HitCheck.TryHit, OnExpireChange,OnExpireListChange, OnBattleActionsChange);
         return m_PlayerInfo;
     }
 
@@ -55,23 +54,26 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         tf_WeaponHoldLeft = transform.FindInAllChild("WeaponHold_L");
         tf_UIStatus = transform.FindInAllChild("Status");
         m_Animator = GetAnimatorController(tf_Model.GetComponent<Animator>(),OnAnimationEvent);
+        m_Ability = new CharacterAbility(I_AbilityTimes, F_AbilityCoolDown, OnAbilityTrigger);
         transform.Find("InteractDetector").GetComponent<InteractDetector>().Init(OnInteractCheck);
     }
     protected override void OnPoolItemEnable()
     {
         base.OnPoolItemEnable();
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
+        TBroadCaster<enum_BC_GameStatus>.Add<SBigmapLevelInfo>(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
         SetBinding(true);
     }
     protected override void OnPoolItemDisable()
     {
         base.OnPoolItemDisable();
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
+        TBroadCaster<enum_BC_GameStatus>.Remove<SBigmapLevelInfo>(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
         SetBinding(false);
+    }
+    public void SetSpawnPosRot(Vector3 position,Quaternion rotation)
+    {
+        transform.position = position;
+        transform.rotation = rotation;
+        CameraController.Instance.SetCameraRotation(-1,transform.rotation.eulerAngles.y);
     }
 
     public void SetPlayerInfo(int coins,float health, List<ActionBase> storedActions)
@@ -83,7 +85,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     protected override void OnDead()
     {
-        f_abilityCoolDown = 0f;
         f_reviveCheck = GameConst.F_PlayerReviveCheckAfterDead;
         m_Animator.OnDead();
         m_MoveAxisInput = Vector2.zero;
@@ -93,10 +94,11 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected override void OnRevive()
     {
         base.OnRevive();
+        m_Ability.SetEnable(true);
         m_Assist.SetEnable(true);
         m_Animator.OnRevive();
 
-        GameAudioManager.Instance.PlayClip(m_EntityID, GameAudioManager.Instance.GetSFXClip(m_ReviveClip), false);
+        AudioManager.Instance.PlayClip(m_EntityID, AudioManager.Instance.GetSFXClip(m_ReviveClip), false);
     }
     protected override void OnRecycle()
     {
@@ -104,19 +106,26 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (m_Assist)
             m_Assist.Recycle();
     }
-    void OnChangeLevel()
+    void OnChangeLevel(SBigmapLevelInfo info)
     {
         m_Interact = null;
         OnInteractStatus();
     }
-    void OnBattleStart()
+
+
+    protected override void OnBattleStart()
     {
+        base.OnBattleStart();
         m_PlayerInfo.OnBattleStart();
+        m_Ability.SetEnable(true);
     }
-    void OnBattleFinish()
+
+    protected override void OnBattleFinish()
     {
+        base.OnBattleFinish();
         m_Health.OnRestoreArmor();
         m_PlayerInfo.OnBattleFinish();
+        m_Ability.SetEnable(false);
     }
 
     void OnMainDown(bool down)
@@ -144,7 +153,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         base.OnAliveTick(deltaTime);
         OnWeaponTick(deltaTime);
         OnMoveTick(deltaTime);
-        OnAbilityTick(deltaTime);
+        m_Ability.Tick(deltaTime);
         OnCommonStatus();
     }
 
@@ -244,24 +253,60 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     #endregion
     #region CharacterAbility
-    protected void OnAbilityTick(float deltaTime)
+    public void OnAbilityClick()
     {
-        if (m_AbilityCooldowning)
-            f_abilityCoolDown -= deltaTime;
-    }
-
-    void OnAbilityClick()
-    {
-        if (m_AbilityCooldowning||m_Health.b_IsDead||!m_PlayerInfo.TryCostEnergy(I_AbilityCost))
+        if (m_Health.b_IsDead)
             return;
-        f_abilityCoolDown = F_AbilityCoolDown;
-        OnAbilityTrigger();
+        m_Ability.OnAbilityClick();
     }
-
+    
     protected virtual void OnAbilityTrigger()
     {
     }
 
+    public class CharacterAbility
+    {
+        public int m_Times { get; private set; } = -1;
+        public float m_CooldownScale => m_abilityCooldownLeft / m_baseAbilityCooldown;
+        public bool m_Cooldowning => m_abilityCooldownLeft > 0f;
+        public bool m_Useable => m_Times != 0&&enable;
+        public bool m_RunsOutable => m_baseAbilityTimes > 0;
+        public bool enable { get; private set; } = false;
+        protected float m_abilityCooldownLeft = 0f;
+
+        protected float m_baseAbilityCooldown;
+        protected int m_baseAbilityTimes;
+        Action OnAbilityTrigger;
+        public CharacterAbility(int abilityTime, float abilityCoolDown, Action _OnAbilityTrigger)
+        {
+            OnAbilityTrigger = _OnAbilityTrigger;
+            m_baseAbilityCooldown = abilityCoolDown;
+            m_baseAbilityTimes = abilityTime;
+            SetEnable(false);
+        }
+
+        public void SetEnable(bool enable)
+        {
+            this.enable = enable;
+            m_abilityCooldownLeft = 0;
+            m_Times = m_RunsOutable ? m_baseAbilityTimes : -1;
+        }
+
+        public void OnAbilityClick()
+        {
+            if (!m_Useable||m_Cooldowning)
+                return;
+            m_abilityCooldownLeft = m_baseAbilityCooldown;
+            m_Times--;
+            OnAbilityTrigger();
+        }
+
+        public void Tick(float deltaTime)
+        {
+            if (m_Cooldowning)
+                m_abilityCooldownLeft -= deltaTime;
+        }
+    }
     #endregion
     #region PlayerInteract
     public void OnInteractCheck(InteractBase interactTarget, bool isEnter)
@@ -346,14 +391,13 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerWeaponStatus, m_WeaponCurrent);
     }
-    protected override void OnExpireChange()
+    protected void OnExpireListChange()
     {
-        base.OnExpireChange();
-        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerExpireStatus, m_PlayerInfo);
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerExpireListStatus, m_PlayerInfo);
     }
-    protected void OnActionsChange()
+    protected void OnBattleActionsChange()
     {
-        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerActionStatus, m_PlayerInfo);
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerBattleActionStatus, m_PlayerInfo);
     }
     protected override void OnHealthStatus(enum_HealthChangeMessage type)
     {

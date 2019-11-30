@@ -444,10 +444,10 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4774772795832778}
-  - component: {fileID: 114954735759712100}
-  - component: {fileID: 114938999067334964}
+  - component: {fileID: 114834534513207440}
   - component: {fileID: 195275486914979146}
   - component: {fileID: 208912014715892150}
+  - component: {fileID: 114037911258291420}
   - component: {fileID: 136500707643455048}
   m_Layer: 10
   m_Name: 407_Entity_Savage7
@@ -810,9 +810,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1997024290601734}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 38.57, y: 0, z: 7.03}
-  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
+  m_LocalRotation: {x: -0.40821788, y: 0.23456968, z: -0.10938163, w: 0.8754261}
+  m_LocalPosition: {x: 36.917603, y: -12.037727, z: -6.1846313}
+  m_LocalScale: {x: 1.5, y: 1, z: 1}
   m_Children:
   - {fileID: 4048223323908314}
   - {fileID: 4601914150986852}
@@ -919,6 +919,17 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114037911258291420
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1997024290601734}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2091396369435d24bad4838db15bbe09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114420065745049942
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -930,7 +941,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3356421ce9f15c24abe075638be6ff4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114938999067334964
+--- !u!114 &114834534513207440
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -938,42 +949,32 @@ MonoBehaviour:
   m_GameObject: {fileID: 1997024290601734}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 275d93242000a1d47972944c1cd255ba, type: 3}
+  m_Script: {fileID: 11500000, guid: 382eda1e7e54f2d42a9696155f55413f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  I_MaxHealth: 960
+  I_MaxHealth: 600
   I_DefaultArmor: 0
-  F_MovementSpeed: 4.5
+  F_MovementSpeed: 3.5
   F_AttackSpread: 0
   ? ExtraRendererOnlyAvailableFor107WhatAwkwardRequirementWhyNotPutThemIntoOneModelCauseOutModelArtistCantDoItHaveToCreateThisIntoMyCodeLikeABunchOfShitForFuckingRealSucks
   : {fileID: 0}
   E_EnermyType: 5
   E_AnimatorIndex: 10
-  F_AIChaseRange: 1
-  F_AIAttackRange: 6
+  F_AIChaseRange: 3
+  F_AIAttackRange: 8
   F_AttackDuration:
     start: 3
     length: 1
   F_AttackTimes:
-    start: 0
-    length: 0
-  F_AttackRate: 5
+    start: 8
+    length: 4
+  F_AttackRate: 0.4
   B_BattleCheckObstacle: 0
   F_AttackRotateParam: 1
   I_AttackPreAimPercentage: 50
   B_AttackMove: 1
-  B_AttackFrontCheck: 1
---- !u!114 &114954735759712100
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1997024290601734}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2091396369435d24bad4838db15bbe09, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  F_AttackFrontCheck: 0
+  F_AttackMoveMultiply: 2.5
 --- !u!136 &136500707643455048
 CapsuleCollider:
   m_ObjectHideFlags: 1
@@ -1002,7 +1003,6 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: c75ed478d9323df4da43e3262d64b37f, type: 2}
-  - {fileID: 2100000, guid: a8d1906e68fa00a43b3e0033ee355b5c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

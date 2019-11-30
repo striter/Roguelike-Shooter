@@ -170,12 +170,14 @@ public class GameManager : GameManagerBase
 
     #region Level Management
     //Call When Level Changed
-    void LoadStage() =>this.StartSingleCoroutine(999, DoLoadStage());
+    void LoadStage()
+    {
+        LoadingManager.Instance.ShowLoading(m_GameLevel.m_GameStage);
+        this.StartSingleCoroutine(999, DoLoadStage());
+    } 
     IEnumerator DoLoadStage()     //PreInit Bigmap , Levels LocalPlayer Before  Start The game
     {
-        //Start Loading
-        LoadingManager.Instance.ShowLoading(m_GameLevel.m_GameStage);
-        yield return null;
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageBeginLoad);
         GameObjectManager.RecycleAllObject();
         yield return null;
         m_GameLevel.GetStageData();
@@ -201,24 +203,21 @@ public class GameManager : GameManagerBase
         GameObjectManager.RecycleAllWeapon(p=>p.I_SourceID>0&&!m_Entities.ContainsKey(p.I_SourceID));      //Remove All Playing Else Entity SFX
         LevelManager.Instance.ChangeLevel(axis);
     }
-    void OnLevelChanged(SBigmapLevelInfo levelInfo)
+    void OnLevelChanged(SBigmapLevelInfo levelInfo,bool levelUnlocked)
     {
-        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnChangeLevel);
-        m_LocalPlayer.transform.position = levelInfo.m_Level.RandomEmptyTilePosition(m_GameLevel.m_GameSeed);
-
-        bool levelUnlocked = levelInfo.m_TileLocking == enum_TileLocking.Unlocked;
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnChangeLevel,levelInfo);
+        GameObjectManager.RecycleAllWeapon(null);
+        Vector3 randomPositon = levelInfo.m_Level.RandomEmptyTilePosition(m_GameLevel.m_GameSeed);
+        m_LocalPlayer.SetSpawnPosRot(randomPositon, Quaternion.LookRotation(-randomPositon, Vector3.up));
         m_GameLevel.OnLevelChange(levelInfo.m_LevelType,levelUnlocked);
-        if (levelUnlocked)
-            return;
-        if (m_GameLevel.WillBattle())
+        if (levelUnlocked&& m_GameLevel.WillBattle())
             OnBattleStart();
     }
 
     void OnStageFinished()
     {
-        m_GameLevel.StageFinished();
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageFinish);
-        if (!m_GameLevel.B_NextStage)
+        if (m_GameLevel.StageFinished())
         {
             OnGameFinished(true);
             return;
@@ -290,17 +289,24 @@ public class GameManager : GameManagerBase
         }
     }
 
-    void SpawnRewards(Vector3 rewardPos)
+    void SpawnBattleEndRewards(Vector3 rewardPos)
     {
-        if (m_GameLevel.m_LevelType == enum_TileType.End || m_GameLevel.m_LevelType == enum_TileType.Battle)
-        {
-            enum_RarityLevel level = m_GameLevel.m_actionGenerate.GetActionRarityLevel(m_GameLevel.m_GameSeed);
-            GameUIManager.Instance.ShowGameControlPage<UI_ActionAcquire>(true).Play(ActionDataManager.CreateRandomDropPlayerAction(2, level, m_GameLevel.m_GameSeed), m_LocalPlayer, 1);
-        }
-
-        if (m_GameLevel.m_LevelType== enum_TileType.End)
+        if (m_GameLevel.m_LevelType == enum_TileType.End)
         {
             GameObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Portal, LevelManager.NavMeshPosition(rewardPos, false), LevelManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(OnStageFinished, m_GameLevel.m_GameStage);
+        }
+        switch(m_GameLevel.m_LevelType)
+        {
+            case enum_TileType.Battle:
+            case enum_TileType.End:
+                {
+                    if (m_GameLevel.B_IsFinalLevel)
+                        return;
+
+                    enum_RarityLevel level = m_GameLevel.m_actionGenerate.GetActionRarityLevel(m_GameLevel.m_GameSeed);
+                    GameUIManager.Instance.ShowGameControlPage<UI_ActionAcquire>(true).Play(ActionDataManager.CreateRandomDropPlayerAction(2, level, m_GameLevel.m_GameSeed), m_LocalPlayer, 1,false);
+                }
+                break;
         }
     }
 
@@ -456,10 +462,9 @@ public class GameManager : GameManagerBase
 
     void WaveStart()
     {
-        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnWaveStart, m_EntityGenerate.Count,m_CurrentWave);
-
         bool finalWave = m_CurrentWave + 1==m_EntityGenerate.Count ;
         UIManager.Instance.m_Indicates.ShowWarning("UI_Indicates_EnermyApproching","UI_Indicates_Wave",(m_CurrentWave+1).ToString(),finalWave?"UI_Indicates_FinalWave":"",3f);
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnWaveStart, m_EntityGenerate.Count, m_CurrentWave,finalWave);
 
         m_EntityGenerating.Clear();
         m_EntityGenerate[m_CurrentWave].m_EntityGenerate.Traversal((enum_CharacterType level, RangeInt range) =>
@@ -475,7 +480,7 @@ public class GameManager : GameManagerBase
                 m_EntityGenerating.Add(m_Enermies[level].RandomItem());
             }
         });
-        this.StartSingleCoroutine(99, IE_GenerateEnermy(m_EntityGenerating, .1f));
+        this.StartSingleCoroutine(99, IE_GenerateEnermy(m_EntityGenerating, GameConst.F_EnermySpawnOffsetEach));
     }
 
     void OnBattleCharacterRecycle(EntityCharacterBase entity)
@@ -499,7 +504,7 @@ public class GameManager : GameManagerBase
         }
 
         B_Battling = false;
-        SpawnRewards(lastEntityPos);
+        SpawnBattleEndRewards(lastEntityPos);
         GameObjectManager.RecycleAllInteract(enum_Interaction.PickupArmor);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleFinish);
     }
@@ -544,7 +549,8 @@ public class GameLevelManager
 
     public System.Random m_GameSeed { get; private set; }
     public StageInteractGenerateData m_actionGenerate { get; private set; }
-    public bool B_NextStage => m_GameStage <= enum_StageLevel.Ranger;
+    public bool B_IsFinalLevel => B_IsFinalStage&&m_LevelType == enum_TileType.End;
+    public bool B_IsFinalStage => m_GameStage == enum_StageLevel.Ranger;
     public enum_TileType m_LevelType { get; private set; }
     public enum_StageLevel m_GameStage { get; private set; }
     Dictionary<enum_StageLevel, enum_Style> m_StageStyle = new Dictionary<enum_StageLevel, enum_Style>();
@@ -598,9 +604,12 @@ public class GameLevelManager
         m_battleLevelEntered = 0;
         m_levelEntered = 0;
     }
-    public void StageFinished()
+    public bool StageFinished()
     {
+        if (B_IsFinalStage)
+            return true;
         m_GameStage++;
+        return false;
     }
 
     public void OnLevelChange(enum_TileType type, bool levelUnlocked)
@@ -775,7 +784,7 @@ public static class GameObjectManager
         if (muzzleIndex > 0)
             SpawnSFX<SFXMuzzle>(muzzleIndex, position, direction).Play(_sourceID);
         if (muzzleClip)
-            GameAudioManager.Instance.PlayClip(_sourceID, muzzleClip, false, position);
+            AudioManager.Instance.PlayClip(_sourceID, muzzleClip, false, position);
     }
 
     public static T SpawnEquipment<T>(int weaponIndex, Vector3 position, Vector3 normal) where T : SFXEquipmentBase

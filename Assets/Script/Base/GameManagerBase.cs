@@ -21,14 +21,13 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
 
     protected virtual void Start()
     {
-        UIManager.Activate(B_InGame);
+        AudioManagerBase.Instance.Init();
         GameObjectManager.Init();
-        GameAudioManager.Instance.Init();
         GameObjectManager.PresetRegistCommonObject();
-        SetBulletTime(false);
-
+        UIManager.Activate(B_InGame);
         OnOptionChanged();
         OptionsManager.event_OptionChanged += OnOptionChanged;
+        SetBulletTime(false);
     }
 
     protected virtual void OnDisable()
@@ -39,9 +38,8 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
 
     protected void SwitchScene(enum_Scene scene,Func<bool> onfinishLoading=null)
     {
-        GameAudioManager.Instance.OnRecycle();
+        AudioManagerBase.Instance.Recycle();
         GameObjectManager.RecycleAllObject();
-        CameraController.Instance.m_Camera.enabled = false;
         UIManager.Instance.SetActivate(false);
         LoadingManager.BeginLoad(scene,onfinishLoading);
     }
@@ -50,7 +48,7 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
     {
         TLocalization.SetRegion(OptionsManager.m_OptionsData.m_Region);
         Application.targetFrameRate = (int)OptionsManager.m_OptionsData.m_FrameRate;
-        CameraController.Instance.m_Effect.SetCostyEffectEnable(OptionsManager.m_OptionsData.m_ScreenEffect>= enum_Option_ScreenEffect.High, OptionsManager.m_OptionsData.m_ScreenEffect>= enum_Option_ScreenEffect.Epic);
+        CameraController.Instance.m_Effect.SetCostyEffectEnable(OptionsManager.m_OptionsData.m_ScreenEffect>= enum_Option_ScreenEffect.High,false);
     }
 
     protected void OnPortalEnter(float duration,Transform vortexTarget, Action OnEnter)
@@ -78,7 +76,7 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
         //CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_DepthOutline>().SetEffect(Color.black,1.2f,0.0001f);
         m_BSC = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_BSC>();
         m_BSC.SetEffect(1f, 1f, 1f);
-        CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_DepthSSAO>().SetEffect();
+//        CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_DepthSSAO>().SetEffect();
         CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_BloomSpecific>().m_GaussianBlur.SetEffect(3, 10,2);
         CameraController.Instance.m_Effect.GetOrAddCameraEffect<CB_GenerateOpaqueTexture>();
         switch (_levelStyle)
