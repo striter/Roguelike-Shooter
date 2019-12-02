@@ -12,16 +12,15 @@ public class UIC_CharacterStatus : UIControlBase
     bool m_dying;
     RawImage img_Dying;
 
+    Transform tf_ExpireData;
+    UIT_GridControllerGridItem<UIGI_ExpireInfoItem> m_ExpireGrid;
+
     Transform tf_ExtraControl;
-    Transform tf_ActionControl, tf_MapControl;
-    TSpecialClasses.AnimationControlBase m_ActionControlAnim,m_MapControlAnim;
+    Transform tf_ActionControl;
+    TSpecialClasses.AnimationControlBase m_ActionControlAnim;
     Button  btn_ActionShuffle;
     Image img_ShuffleFill;
     UIT_GridControllerGridItem<UIGI_ActionItemHold> m_ActionGrid;
-    Button btn_map;
-    
-    Transform tf_ExpireData;
-    UIT_GridControllerGridItem<UIGI_ExpireInfoItem> m_ExpireGrid;
 
     RectTransform rtf_StatusData;
     GridLayoutGroup m_AmmoLayout;
@@ -40,6 +39,10 @@ public class UIC_CharacterStatus : UIControlBase
     UIC_Numeric m_HealthAmount, m_MaxHealth;
 
     ValueLerpSeconds m_HealthLerp, m_ArmorLerp;
+
+    Transform tf_MapData;
+    UIT_TextExtend m_MapTitle;
+    Image m_MapPrevious, m_MapCurrent, m_MapNext;
     protected override void Init()
     {
         base.Init();
@@ -54,10 +57,6 @@ public class UIC_CharacterStatus : UIControlBase
         btn_ActionShuffle = tf_ActionControl.Find("ActionShuffle").GetComponent<Button>();
         btn_ActionShuffle.onClick.AddListener(OnActionShuffleClick);
         img_ShuffleFill = btn_ActionShuffle.transform.Find("ShuffleFill").GetComponent<Image>();
-        tf_MapControl = tf_ExtraControl.Find("Map");
-        m_MapControlAnim = new AnimationControlBase(tf_MapControl.GetComponent<Animation>());
-        btn_map = tf_MapControl.Find("MapBtn").GetComponent<Button>();
-        btn_map.onClick.AddListener(OnMapControlClick);
 
         rtf_StatusData = tf_Container.Find("StatusData").GetComponent<RectTransform>();
         tf_AmmoData = rtf_StatusData.Find("Container/AmmoData");
@@ -82,6 +81,12 @@ public class UIC_CharacterStatus : UIControlBase
         m_HealthLerp = new ValueLerpSeconds(0f, 4f, 2f, (float value) => { m_HealthFill.value = value; });
         m_ArmorLerp = new ValueLerpSeconds(0f, 4f, 2f, (float value) => { m_ArmorFill.value = value; });
 
+        tf_MapData = tf_Container.Find("MapData");
+        m_MapTitle = tf_MapData.Find("Title").GetComponent<UIT_TextExtend>();
+        m_MapPrevious = tf_MapData.Find("Previous").GetComponent<Image>();
+        m_MapCurrent = tf_MapData.Find("Current").GetComponent<Image>();
+        m_MapNext = tf_MapData.Find("Next").GetComponent<Image>();
+
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<WeaponBase>(enum_BC_UIStatus.UI_PlayerAmmoStatus, OnAmmoStatus);
@@ -89,9 +94,9 @@ public class UIC_CharacterStatus : UIControlBase
         TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerBattleActionStatus, OnBattleActionStatus);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
 
         SetActionShow(false,false);
-        SetMapInBattle(false, false);
         img_Dying.SetActivate(false);
         m_dying = false;
     }
@@ -106,25 +111,38 @@ public class UIC_CharacterStatus : UIControlBase
         TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerBattleActionStatus, OnBattleActionStatus);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
     }
 
     public UIC_CharacterStatus SetInGame(bool inGame)
     {
+        tf_MapData.SetActivate(inGame);
         tf_ExtraControl.SetActivate(inGame);
         return this;
     }
 
+    void OnChangeLevel()
+    {
+        bool finalLevel = GameManager.Instance.m_GameLevel.B_IsFinalLevel;
+        bool firstLevel = GameManager.Instance.m_GameLevel.B_IsFirstLevel;
+        m_MapPrevious.SetActivate(!firstLevel);
+        if (!firstLevel)
+        {
+            SBigmapLevelInfo previousInfo = LevelManager.Instance.m_previousLevel;
+            m_MapPrevious.sprite = GameUIManager.Instance.m_InGameSprites[(previousInfo == null ? enum_LevelType.End : previousInfo.m_LevelType).GetUISprite()];
+        }
+        m_MapCurrent.sprite = GameUIManager.Instance.m_InGameSprites[GameManager.Instance.m_GameLevel.m_LevelType.GetUISprite()];
+        m_MapNext.SetActivate(!finalLevel);
+        m_MapTitle.formatText("UI_Map_Title",string.Format("<color=#FFDA6B>{0}</color>", (int)(GameManager.Instance.m_GameLevel.m_GameStage-1)*10+LevelManager.Instance.m_currentLevelIndex+1));
+    }
 
     void OnBattleStart()
     {
         SetActionShow(true, true);
-        SetMapInBattle(true, true);
     }
     void OnBattleFinish()
     {
         SetActionShow(false, true);
-        if (!GameManager.Instance.m_GameLevel.B_IsFinalLevel)
-            SetMapInBattle(false, true);
     }
 
     void SetActionShow(bool show,bool animate)
@@ -133,13 +151,6 @@ public class UIC_CharacterStatus : UIControlBase
         if (animate) m_ActionControlAnim.Play(show);
         else m_ActionControlAnim.SetPlayPosition(show);
         btn_ActionShuffle.interactable = show;
-    }
-
-    void SetMapInBattle(bool inbattle,bool animate)
-    {
-        if (animate) m_MapControlAnim.Play(inbattle);
-        else m_MapControlAnim.SetPlayPosition(inbattle);
-        btn_map.interactable = !inbattle;
     }
     
     private void Update()
@@ -222,8 +233,6 @@ public class UIC_CharacterStatus : UIControlBase
             img_ReloadFill.color = Color.Lerp(Color.red, Color.white, weaponInfo.F_ReloadStatus);
         }
     }
-
-    void OnMapControlClick() => UIManager.Instance.ShowPage<UI_MapControl>(true);
 
     void OnBattleActionStatus(PlayerInfoManager playerInfo)
     {

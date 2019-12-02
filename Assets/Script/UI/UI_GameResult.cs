@@ -1,61 +1,57 @@
 ﻿using GameSetting;
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UI_GameResult : UIPageBase {
     Action OnButtonClick;
-    UIT_TextExtend txt_Progress, txt_LevelScore, txt_KillScore, txt_DifficultyBonus, txt_FinalScore, txt_CoinsResult;
-    Transform tf_Result;
-    Transform tf_ProgressStatus;
-    UIT_TextExtend txt_Difficulty;
-    RectTransform rtf_CurrentStatus;
-    Transform tf_Stage1, tf_Stage2, tf_Stage3,tf_Goal;
+    Image m_ResultTitle;
+    UIC_Button btn_video;
+    UIT_TextExtend m_Completion, m_CompletionScore, m_Difficulty, m_DifficultyMultiply, m_FinalScore;
+    UIT_TextExtend m_CoinsAmount;
+
     protected override void Init()
     {
         base.Init();
-        txt_Progress = tf_Container.Find("Progress/Data").GetComponent<UIT_TextExtend>();
-        txt_LevelScore = tf_Container.Find("LevelScore/Data").GetComponent<UIT_TextExtend>();
-        txt_KillScore = tf_Container.Find("KillScore/Data").GetComponent<UIT_TextExtend>();
-        txt_DifficultyBonus = tf_Container.Find("DifficultyBonus/Data").GetComponent<UIT_TextExtend>();
-        txt_FinalScore = tf_Container.Find("FinalScore/Data").GetComponent<UIT_TextExtend>();
-        txt_CoinsResult = tf_Container.Find("CoinsResult/Data").GetComponent<UIT_TextExtend>();
-
-        tf_ProgressStatus = tf_Container.Find("ProgressStatus");
-        txt_Difficulty = tf_ProgressStatus.Find("Difficulty").GetComponent<UIT_TextExtend>();
-        rtf_CurrentStatus = tf_ProgressStatus.Find("CurrentStatus").GetComponent<RectTransform>();
-
-        tf_Stage1 = tf_ProgressStatus.Find("Stage1/Passed");
-        tf_Stage2 = tf_ProgressStatus.Find("Stage2/Passed");
-        tf_Stage3 = tf_ProgressStatus.Find("Stage3/Passed");
-        tf_Goal = tf_ProgressStatus.Find("Goal");
+        m_ResultTitle = tf_Container.Find("ResultTitle").GetComponent<Image>();
+        tf_Container.Find("BtnShare").GetComponent<Button>().onClick.AddListener(OnShareBtnClick);
+        btn_video = new UIC_Button(tf_Container.Find("BtnVideo"),OnVideoBtnClick);
+        Transform tf_result = tf_Container.Find("Result");
+        m_Completion = tf_result.Find("Completion").GetComponent<UIT_TextExtend>();
+        m_CompletionScore = tf_result.Find("CompletionScore").GetComponent<UIT_TextExtend>();
+        m_Difficulty = tf_result.Find("Difficulty").GetComponent<UIT_TextExtend>();
+        m_DifficultyMultiply = tf_result.Find("DifficultyMultiply").GetComponent<UIT_TextExtend>();
+        m_FinalScore = tf_result.Find("FinalScore").GetComponent<UIT_TextExtend>();
+        m_CoinsAmount = tf_result.Find("RewardsGrid/Coins/Container/Amount").GetComponent<UIT_TextExtend>();
     }
-
+    GameLevelManager m_level;
     public void Play(GameLevelManager level,Action _OnButtonClick)
     {
-        tf_Result = tf_Container.Find("Result/" + (level.m_gameWin ? "Complete" : "Fail"));
-        tf_Result.SetActivate(true);
-
-        float progress = level.F_Progress;
-        rtf_CurrentStatus.anchorMax = new Vector2(rtf_CurrentStatus.anchorMax.x,progress);
-        rtf_CurrentStatus.anchorMin = new Vector2(rtf_CurrentStatus.anchorMin.x,progress);
-        txt_Difficulty.formatText("UI_Result_Difficulty", level.m_GameDifficulty);
-        tf_Stage1.SetActivate(level.m_GameStage > enum_StageLevel.Rookie);
-        tf_Stage2.SetActivate(level.m_GameStage > enum_StageLevel.Veteran);
-        tf_Stage3.SetActivate(level.m_gameWin);
-        tf_Goal.SetActivate(level.m_gameWin);
-
-        tf_Result.Find(OptionsManager.m_OptionsData.m_Region.ToString()).SetActivate(true);
-        txt_Progress.text = string.Format("{0}%",Mathf.CeilToInt(progress*100f));
-        txt_LevelScore.text =level.F_LevelScore.ToString();
-        txt_KillScore.text =  level.F_KillScore.ToString();
-        txt_DifficultyBonus.text = string.Format("x{0}", Mathf.CeilToInt(level.F_DifficultyBonus));
-        txt_FinalScore.text = string.Format("{0}", Mathf.CeilToInt( level.F_FinalScore));
-        txt_CoinsResult.text = string.Format("{0}", Mathf.CeilToInt(level.F_CreditGain));
+        m_level = level;
+        m_ResultTitle.sprite = GameUIManager.Instance.m_InGameSprites[UIConvertions.GetUIGameResultTitleBG(level.m_gameWin,OptionsManager.m_OptionsData.m_Region)];
+        m_Completion.text = string.Format("{0}%", (int)level.F_Completion*100f);
+        m_CompletionScore.text = string.Format("{0}", (int)level.F_CompletionScore);
+        m_Difficulty.text = string.Format("{0}", level.m_GameDifficulty);
+        m_DifficultyMultiply.text = string.Format("x{0:N1}", level.F_DifficultyBonus);
+        m_FinalScore.text = string.Format("{0}",(int)level.F_FinalScore);
+        m_CoinsAmount.text = string.Format("{0}", (int)level.F_CreditGain);
         OnButtonClick = _OnButtonClick;
     }
     protected override void OnCancelBtnClick()
     {
         OnButtonClick?.Invoke();
         OnButtonClick = null;
+    }
+
+    void OnShareBtnClick()
+    {
+
+    }
+
+    void OnVideoBtnClick()
+    {
+        GameDataManager.OnCreditStatus(m_level.F_CreditGain*.2f);
+        m_CoinsAmount.text = string.Format("{0}", (int)(m_level.F_CreditGain * 1.2f));
+        btn_video.SetInteractable(false);
     }
 }

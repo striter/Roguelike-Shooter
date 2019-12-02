@@ -63,14 +63,14 @@ public class UIC_CharacterControl : UIControlBase {
             m_AbilityTimesDecorate.SetActivate(m_abilityEnable);
             m_AbilityCooldown.SetActivate(m_abilityEnable && m_cooldowning);
             m_AbilityImg.color = TCommon.ColorAlpha(m_AbilityImg.color, m_abilityEnable ? 1f:.6f);
-            m_AbilityBG.sprite = UIManager.Instance.m_CommonSprites[UIEnumConvertions.GetAbilityBackground(m_abilityEnable, m_cooldowning)];
+            m_AbilityBG.sprite = UIManager.Instance.m_CommonSprites[UIConvertions.GetAbilityBackground(m_abilityEnable, m_cooldowning)];
             m_AbilityInvalid.SetActivate(!m_abilityEnable);
         }
 
         if (player.m_Interact != m_Interact)
         {
             m_Interact = player.m_Interact;
-            m_MainImg.sprite = UIManager.Instance.m_CommonSprites[UIEnumConvertions.GetMainSprite(m_Interact)];
+            m_MainImg.sprite = UIManager.Instance.m_CommonSprites[UIConvertions.GetMainSprite(m_Interact)];
         }
     }
 
@@ -80,7 +80,7 @@ public class UIC_CharacterControl : UIControlBase {
         OnReload = _OnReload;
         OnAbility = _OnAbility;
         OnMainDown = _OnMainDown;
-        m_AbilityImg.sprite = UIManager.Instance.m_CommonSprites[UIEnumConvertions.GetAbilitySprite(player.m_Character)];
+        m_AbilityImg.sprite = UIManager.Instance.m_CommonSprites[UIConvertions.GetAbilitySprite(player.m_Character)];
     }
     public void RemoveBinding()
     {

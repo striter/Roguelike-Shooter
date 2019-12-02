@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class UIManagerBase : SimpleSingletonMono<UIManagerBase> {
-
+    public float m_fittedScale { get; private set; }
     protected Canvas cvs_Overlay, cvs_Camera;
     private RectTransform tf_OverlayPage,tf_CameraPage,tf_OverlayControl,tf_CameraControl,tf_MessageBox;
     protected virtual void Init()
@@ -21,6 +21,9 @@ public class UIManagerBase : SimpleSingletonMono<UIManagerBase> {
 
         tf_OverlayControl = cvs_Overlay.transform.Find("Control").GetComponent<RectTransform>();
         tf_CameraControl = cvs_Camera.transform.Find("Control").GetComponent<RectTransform>();
+
+        CanvasScaler scaler = cvs_Overlay.GetComponent<CanvasScaler>();
+        m_fittedScale = ((float)Screen.height / Screen.width)/(scaler.referenceResolution.y/scaler.referenceResolution.x);
     }
     protected override void OnDestroy()
     {

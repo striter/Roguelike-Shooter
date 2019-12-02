@@ -101,9 +101,8 @@ namespace GameSetting
 
         public static float GetAIIdleDuration() => UnityEngine.Random.Range(1f, 2f);
 
-        public static float GetResultProgress(bool win, enum_StageLevel _stage, int _battleLevelEntered) => win ? 1f : (.33f * ((int)_stage - 1) +.066f*_battleLevelEntered);
+        public static float GetResultCompletion(bool win, enum_StageLevel _stage, int _battleLevelEntered) => win ? 1f : (.33f * ((int)_stage - 1) +.066f*_battleLevelEntered);
         public static float GetResultLevelScore(enum_StageLevel _stage, int _levelPassed) => 200 * ((int)_stage - 1) + 20 * (_levelPassed - 1);
-        public static float GetResultKillScore(int _enermyKilled) => _enermyKilled * 1;
         public static float GetResultDifficultyBonus(int _difficulty) =>1f+ _difficulty * .05f;
         public static float GetResultRewardCredits(float _totalScore) => _totalScore;
 
@@ -125,6 +124,20 @@ namespace GameSetting
                     }
             }
         }
+
+        public static List<enum_LevelType> GetRandomLevels(System.Random seed)
+        {
+            switch (seed.Next(1, 4))        //1-3
+            {
+                default:
+                    return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.End };
+                case 1:
+                case 2:
+                case 3:
+                    return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.BattleActionAcquire, enum_LevelType.BattlePerkUpgrade, enum_LevelType.ActionAdjustment, enum_LevelType.End };
+            }
+        }
+
         public static int GetActionRemovePrice(enum_StageLevel stage, int removeTimes) => 10 * (removeTimes + 1) ;
         public static int GetActionUpgradePrice(enum_StageLevel stage, int upgradeTimes) => 10 * (upgradeTimes + 1) ;
         
@@ -246,18 +259,19 @@ namespace GameSetting
     public static class GameEnumConvertions
     {
         public static enum_RarityLevel ToRarity(this enum_StageLevel stageLevel) => (enum_RarityLevel)stageLevel;
-        public static enum_LevelGenerateType ToPrefabType(this enum_TileType type)
+        public static enum_LevelGenerateType ToPrefabType(this enum_LevelType type)
         {
             switch (type)
             {
                 default: Debug.LogError("Please Edit This Please:" + type.ToString()); return enum_LevelGenerateType.Invalid;
-                case enum_TileType.Battle:
-                case enum_TileType.End:
+                case enum_LevelType.Battle:
+                case enum_LevelType.End:
                     return enum_LevelGenerateType.Big;
-                case enum_TileType.BattleTrade:
-                case enum_TileType.ActionAdjustment:
-                case enum_TileType.CoinsTrade:
-                case enum_TileType.Start:
+                case enum_LevelType.BattleActionAcquire:
+                case enum_LevelType.BattlePerkUpgrade:
+                case enum_LevelType.ActionAdjustment:
+                case enum_LevelType.Trade:
+                case enum_LevelType.Start:
                     return enum_LevelGenerateType.Small;
             }
         }
@@ -274,38 +288,22 @@ namespace GameSetting
         }
     }
 
-    public static class UIEnumConvertions
+    public static class UIConvertions
     {
-        public static string GetSpriteName(this enum_UI_TileBattleStatus status) => "map_info_battle_" + status.ToString();
-        public static string GetUISprite(this SBigmapLevelInfo info)
+        public static string GetUISprite(this enum_LevelType type)
         {
-            switch (info.m_LevelType)
-            {
-                default: return "map_tile_type_Invalid";
-                case enum_TileType.Start:
-                case enum_TileType.Battle:
-                case enum_TileType.BattleTrade:
-                case enum_TileType.CoinsTrade:
-                case enum_TileType.ActionAdjustment:
-                    return "map_tile_type_" + info.m_LevelType.ToString();
-                case enum_TileType.End:
-                    return "map_tile_type_" + (info.m_TileLocking == enum_TileLocking.Unlockable ? info.m_LevelType.ToString() : "Portal");
-            }
-        }
-        public static string GetUIBGColor(this enum_TileLocking type, bool playerAt)
-        {
-            if (playerAt)
-                return "B9FF01FF";
-
             switch (type)
             {
-                default:
-                    return "000000FF";
-                case enum_TileLocking.Unlockable:
-                    return "A7A7A764";
-                case enum_TileLocking.Locked:
-                case enum_TileLocking.Unlocked:
-                    return "A7A7A7FF";
+                default: return "level_Invalid";
+                case enum_LevelType.Start:
+                case enum_LevelType.Battle:
+                case enum_LevelType.Trade:
+                case enum_LevelType.ActionAdjustment:
+                case enum_LevelType.End:
+                    return "level_" + type;
+                case enum_LevelType.BattleActionAcquire:
+                case enum_LevelType.BattlePerkUpgrade:
+                    return "level_Reward";
             }
         }
         public static string GetIconSprite(this enum_ActionType type)
@@ -338,6 +336,7 @@ namespace GameSetting
                 case enum_ActionType.Equipment: return "action_cost_equipment";
             }
         }
+
         public static string GetMainSprite(InteractBase interact)
         {
             string spriteName = "control_main_fire";
@@ -364,33 +363,6 @@ namespace GameSetting
         }
         public static string GetAbilitySprite(enum_PlayerCharacter character) => "control_ability_" + character;
         public static string GetSpriteName(this enum_PlayerWeapon weapon) => ((int)weapon).ToString();
-        public static string GetCordinates(this TileAxis axis)
-        {
-            string x = axis.X.ToString();
-            char y = (char)(axis.Y + 65);
-            return x + "-" + y;
-        }
-        public static enum_UI_TileBattleStatus GetBattleStatus(this enum_TileType type)
-        {
-            switch (type)
-            {
-                default: return enum_UI_TileBattleStatus.Clear;
-                case enum_TileType.BattleTrade: return enum_UI_TileBattleStatus.Patrol;
-                case enum_TileType.Battle:
-                case enum_TileType.End: return enum_UI_TileBattleStatus.HardBattle;
-            }
-        }
-        public static string GetBattlePercentage(this enum_UI_TileBattleStatus status)
-        {
-            switch (status)
-            {
-                default: return "¿";
-                case enum_UI_TileBattleStatus.Clear: return "0%";
-                case enum_UI_TileBattleStatus.Overwatch: return "25%";
-                case enum_UI_TileBattleStatus.Patrol: return "50%";
-                case enum_UI_TileBattleStatus.HardBattle: return "100%";
-            }
-        }
         public static string GetUIBGColor(this enum_ActionType type)
         {
             switch(type)
@@ -420,6 +392,8 @@ namespace GameSetting
                 case enum_UIWeaponRarity.Legend: return "FFCC1FFF";
             }
         }
+
+        public static string GetUIGameResultTitleBG(bool win, enum_Option_LanguageRegion language) => "result_title_" + (win ? "win_" : "fail_") + language;
     }
 
     public static class LocalizationKeyJoint
@@ -432,12 +406,11 @@ namespace GameSetting
         public static string GetLocalizeNameKey(this enum_PlayerWeapon weapon) => "Weapon_Name_" + weapon;
         public static string GetNameLocalizeKey(this InteractBase interact) => "UI_Interact_" + interact.m_InteractType+interact.m_ExternalLocalizeKeyJoint;
         public static string GetIntroLocalizeKey(this InteractBase interact) => "UI_Interact_" + interact.m_InteractType +interact.m_ExternalLocalizeKeyJoint+ "_Intro";
-        public static string GetLocalizeKey(this enum_TileType type) => "UI_TileType_" + type;
+        public static string GetLocalizeKey(this enum_LevelType type) => "UI_TileType_" + type;
         public static string GetLocalizeKey(this enum_RarityLevel rarity) => "UI_Rarity_" + rarity;
         public static string GetLocalizeKey(this enum_Option_FrameRate frameRate) => "UI_Option_" + frameRate;
         public static string GetLocalizeKey(this enum_Option_JoyStickMode joystick) => "UI_Option_" + joystick;
         public static string GetLocalizeKey(this enum_Option_LanguageRegion region) => "UI_Option_" + region;
-        public static string GetLocalizeKey(this enum_UI_TileBattleStatus status) => "UI_Battle_" + status;
         public static string GetLocalizeKey(this enum_CampFarmItemStatus status) => "UI_Farm_" + status;
 
         public static string SetActionIntro(this ActionBase actionInfo, UIT_TextExtend text) => text.formatText(actionInfo.GetIntroLocalizeKey() ,actionInfo.F_Duration, actionInfo.Value1, actionInfo.Value2, actionInfo.Value3);
@@ -518,27 +491,25 @@ namespace GameSetting
     #region GameEnum
     public enum enum_StageLevel { Invalid = -1, Rookie = 1, Veteran = 2, Ranger = 3 }
 
-    public enum enum_BattleDifficulty { Invalid = -1, Peaceful = 0, Eazy = 1, Normal = 2, Hard = 3, End = 4, BattleTrade = 10, }
+    public enum enum_BattleDifficulty { Invalid = -1, Peaceful = 0, Eazy = 1, Normal = 2, Hard = 3, End = 4, BattleReward = 10, }
 
     public enum enum_EntityController { Invalid = -1, None = 1, Player = 2, AI = 3, Device = 4, }
 
     public enum enum_EntityFlag { Invalid = -1, None = 0, Player = 1, Enermy = 2, Neutal = 3, }
 
     public enum enum_HitCheck { Invalid = -1, Static = 1, Entity = 2, Dynamic = 3, Interact = 4, }
-
-    public enum enum_TileLocking { Invalid = -1, Unseen = 0, Unlockable = 1, Unlocked = 2, Locked = 3, }
-
+    
     public enum enum_Style { Invalid = -1, Forest = 1, Desert = 2, Iceland = 3, Horde = 4, Undead = 5, }
 
-    public enum enum_TileType { Invalid = -1, Start = 0, Battle = 1, End = 2, CoinsTrade = 11, ActionAdjustment = 12, BattleTrade = 13, }
+    public enum enum_LevelType { Invalid = -1, Start = 0, Battle = 1, End = 2, Trade = 11, ActionAdjustment = 12, BattleActionAcquire = 13,BattlePerkUpgrade=14, }
 
     public enum enum_LevelItemType { Invalid = -1, LargeMore, LargeLess, MediumMore, MediumLess, SmallMore, SmallLess, ManmadeMore, ManmadeLess, NoCollisionMore, NoCollisionLess, BorderLinear, BorderOblique, }
 
-    public enum enum_LevelTileType { Invaid = -1, Empty, Main, Border, Item, Interact, }
-
-    public enum enum_LevelTileOccupy { Invalid = -1, Inner, Outer, Border, }
-
     public enum enum_LevelGenerateType { Invalid = -1, Big = 1, Small = 2 }
+
+    public enum enum_LevelItemTileType { Invaid = -1, Empty, Main, Border, Item, Interact, }
+
+    public enum enum_LevelItemTileOccupy { Invalid = -1, Inner, Outer, Border, }
 
     public enum enum_CharacterType { Invalid = -1, Fighter = 1, Shooter_Rookie = 2, Shooter_Veteran = 3, AOECaster = 4, Elite = 5, SubHidden = 99 }
 
@@ -769,7 +740,6 @@ namespace GameSetting
         public string m_GameSeed;
         public enum_StageLevel m_Stage;
         public int m_coins;
-        public int m_kills;
         public ActionGameData m_weaponAction;
         public List<ActionGameData> m_battleAction;
         public float m_health;
@@ -798,7 +768,6 @@ namespace GameSetting
             m_startAction = _level.m_startAction;
             m_GameSeed = _level.m_Seed;
             m_Stage = _level.m_GameStage;
-            m_kills = _level.m_enermiesKilled;
         }
 
         void ISave.DataRecorrect()
@@ -2248,36 +2217,14 @@ namespace GameSetting
     #endregion
 
     #region BigmapTile
-    public class SBigmapTileInfo : ITileAxis
-    {
-        public TileAxis m_TileAxis => m_Tile;
-        protected TileAxis m_Tile { get; private set; }
-        public enum_TileType m_LevelType { get; private set; } = enum_TileType.Invalid;
-        public enum_TileLocking m_TileLocking { get; private set; } = enum_TileLocking.Invalid;
-        public Dictionary<enum_TileDirection, TileAxis> m_Connections { get; protected set; } = new Dictionary<enum_TileDirection, TileAxis>();
-
-        public SBigmapTileInfo(TileAxis _tileAxis, enum_TileType _tileType, enum_TileLocking _tileLocking)
-        {
-            m_Tile = _tileAxis;
-            m_LevelType = _tileType;
-            m_TileLocking = _tileLocking;
-        }
-        public void ResetTileType(enum_TileType _tileType)
-        {
-            m_LevelType = _tileType;
-        }
-        public void SetTileLocking(enum_TileLocking _lockType)
-        {
-               m_TileLocking = _lockType;
-        }
-    }
-
-    public class SBigmapLevelInfo : SBigmapTileInfo
+    public class SBigmapLevelInfo
     {
         public LevelBase m_Level { get; private set; } = null;
-        public SBigmapLevelInfo(SBigmapTileInfo tile) : base(tile.m_TileAxis, tile.m_LevelType,tile.m_TileLocking)
+        public enum_LevelType m_LevelType { get; private set; } = enum_LevelType.Invalid;
+
+        public SBigmapLevelInfo(enum_LevelType _tileType) 
         {
-            m_Connections = tile.m_Connections;
+            m_LevelType = _tileType;
         }
         public void SetMap(LevelBase levelSpawned)
         {
@@ -2289,6 +2236,10 @@ namespace GameSetting
             if(m_Level)
             m_Level.SetActivate(show);
         }
+        public void ResetTileType(enum_LevelType _tileType)
+        {
+            m_LevelType = _tileType;
+        }
     }
     #endregion
 
@@ -2297,10 +2248,10 @@ namespace GameSetting
     {
         public TileAxis m_TileAxis;
         public Vector3 m_Offset => GameExpression.V3_TileAxisOffset(m_TileAxis);
-        public virtual enum_LevelTileType E_TileType => enum_LevelTileType.Empty;
-        public enum_LevelTileOccupy E_Occupation { get; private set; } = enum_LevelTileOccupy.Invalid;
+        public virtual enum_LevelItemTileType E_TileType => enum_LevelItemTileType.Empty;
+        public enum_LevelItemTileOccupy E_Occupation { get; private set; } = enum_LevelItemTileOccupy.Invalid;
 
-        public LevelTile(TileAxis _axis ,enum_LevelTileOccupy _occupy) 
+        public LevelTile(TileAxis _axis ,enum_LevelItemTileOccupy _occupy) 
         {
             m_TileAxis = _axis;
             E_Occupation = _occupy;
@@ -2315,7 +2266,7 @@ namespace GameSetting
 
     public class LevelTileSub : LevelTile
     {
-        public override enum_LevelTileType E_TileType => enum_LevelTileType.Item;
+        public override enum_LevelItemTileType E_TileType => enum_LevelItemTileType.Item;
         public int m_ParentTileIndex { get; private set; }
         public LevelTileSub(LevelTile current, int _parentIndex) : base(current)
         {
@@ -2324,7 +2275,7 @@ namespace GameSetting
     }
     public class LevelTileItem : LevelTile
     {
-        public override enum_LevelTileType E_TileType => enum_LevelTileType.Main;
+        public override enum_LevelItemTileType E_TileType => enum_LevelItemTileType.Main;
         public int m_LevelItemListIndex { get; private set; }
         public enum_LevelItemType m_LevelItemType { get; private set; }
         public enum_TileDirection m_ItemDirection { get; private set; }
@@ -2340,14 +2291,14 @@ namespace GameSetting
     }
     class LevelTileBorder : LevelTileItem
     {
-        public override enum_LevelTileType E_TileType => enum_LevelTileType.Border;
+        public override enum_LevelItemTileType E_TileType => enum_LevelItemTileType.Border;
         public LevelTileBorder(LevelTile current, int levelItemListIndex, enum_LevelItemType levelItemType, enum_TileDirection _ItemDirection) : base(current,levelItemListIndex,levelItemType,_ItemDirection,null)
         {
         }
     }
     class LevelTileInteract : LevelTile
     {
-        public override enum_LevelTileType E_TileType => enum_LevelTileType.Interact;
+        public override enum_LevelItemTileType E_TileType => enum_LevelItemTileType.Interact;
 
         public LevelTileInteract(LevelTile current) : base(current.m_TileAxis,current.E_Occupation)
         {
@@ -2698,15 +2649,6 @@ namespace GameSetting
     #endregion
 
     #region For UI Usage
-    public enum enum_UI_TileBattleStatus
-    {
-        Invalid=-1,
-        Clear=1,
-        Overwatch=2,
-        Patrol=3,
-        HardBattle=4,
-    }
-
     public enum enum_UI_ActionUpgradeType
     {
         Invalid = -1,

@@ -10,220 +10,74 @@ using LPWAsset;
 public class LevelManager : SimpleSingletonMono<LevelManager> {
     public Transform tf_LevelParent { get; private set; }
     public enum_Style m_StyleCurrent { get; private set; } = enum_Style.Invalid;
-    public SBigmapLevelInfo m_currentLevel { get; private set; }
-    public SBigmapLevelInfo[,] m_MapLevelInfo { get; private set; }
+    public SBigmapLevelInfo m_currentLevel => m_MapLevelInfo[m_currentLevelIndex];
+    public SBigmapLevelInfo m_previousLevel => m_currentLevelIndex > 0? m_MapLevelInfo[m_currentLevelIndex - 1]:null;
+    public int m_currentLevelIndex = -1;
+    public List<SBigmapLevelInfo> m_MapLevelInfo { get; private set; } = new List<SBigmapLevelInfo>();
     public bool m_Loading { get; private set; }
     public Light m_DirectionalLight { get; protected set; }
     public Transform m_InteractParent => m_currentLevel.m_Level.tf_Interact;
     public System.Random m_mainSeed;
-    public Action<SBigmapLevelInfo,bool> OnChangeLevelLoaded;
     protected override void Awake()
     {
         base.Awake();
         tf_LevelParent = transform.Find("LevelParent");
         m_DirectionalLight = transform.Find("Directional Light").GetComponent<Light>();
     }
-    protected void Start()
-    {
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageStart, OnStageStart);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
-    }
     protected override void OnDestroy()
     {
         base.OnDestroy();
         RemoveNavmeshData();
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnStageStart, OnStageStart);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
     }
-    public void GameInit( Action<SBigmapLevelInfo,bool> _OnChangeLevelLoaded)
-    {
-        OnChangeLevelLoaded = _OnChangeLevelLoaded;
-    }
-    
-    public IEnumerator GenerateLevel(enum_Style _LevelStyle,Action<SBigmapLevelInfo> OnEachLevelGenerate, System.Random seed,int length0=6,int length1=5)
+    public IEnumerator GenerateLevel(enum_Style _LevelStyle,Action<SBigmapLevelInfo> OnEachLevelGenerate, System.Random seed)
     {
         m_mainSeed = seed;
         m_StyleCurrent = _LevelStyle;
         m_Loading = true;
-
         yield return null;
         StyleColorData[] customizations = TResources.GetAllStyleCustomization(_LevelStyle);
         StyleColorData randomData = customizations.Length == 0 ? StyleColorData.Default() : customizations.RandomItem(m_mainSeed);
         randomData.DataInit(m_DirectionalLight);
-        m_MapLevelInfo = GenerateBigmap(m_StyleCurrent, m_mainSeed, 6, 5);
-        Dictionary<enum_LevelItemType, List<LevelItemBase>> levelItemPrefabs = GameObjectManager.RegisterLevelItem(m_StyleCurrent);
-        for (int i=0;i<length0 ;i++ )
-        {
-            for (int j = 0; j < length1; j++)
-            {
-                SBigmapLevelInfo levelInfo = m_MapLevelInfo[i, j];
-                if (levelInfo.m_LevelType != enum_TileType.Invalid)
-                {
-                    enum_LevelGenerateType generateType = levelInfo.m_LevelType.ToPrefabType();
-                    SLevelGenerate innerData = GameDataManager.GetItemGenerateProperties(m_StyleCurrent, generateType, true);
-                    SLevelGenerate outerData = GameDataManager.GetItemGenerateProperties(m_StyleCurrent, generateType, false);
 
-                    LevelBase m_level = GameObjectManager.SpawnLevelPrefab(tf_LevelParent);
-                    m_level.transform.localRotation = Quaternion.Euler(0, seed.Next(360), 0);
-                    m_level.transform.localPosition = Vector3.zero;
-                    m_level.transform.localScale = Vector3.one;
-                    yield return m_level.GenerateTileItems(innerData, outerData, levelItemPrefabs,levelInfo.m_LevelType, m_mainSeed);
-                    StaticBatchingUtility.Combine(m_level.tf_LevelItem.gameObject);
-                    levelInfo.SetLevelShow(false);
-                    levelInfo.SetMap(m_level);
-                    OnEachLevelGenerate(levelInfo);
-                }
-                yield return null;
+        Dictionary<enum_LevelItemType, List<LevelItemBase>> levelItemPrefabs = GameObjectManager.RegisterLevelItem(m_StyleCurrent);
+        m_MapLevelInfo.Clear();
+        List<enum_LevelType> randomLevels = GameExpression.GetRandomLevels(m_mainSeed);
+        int count = randomLevels.Count;
+        for (int i=0;i< count; i++ )
+        {
+            SBigmapLevelInfo levelInfo = new SBigmapLevelInfo(randomLevels[i]);
+            m_MapLevelInfo.Add(levelInfo);
+            if (levelInfo.m_LevelType != enum_LevelType.Invalid)
+            {
+                enum_LevelGenerateType generateType = levelInfo.m_LevelType.ToPrefabType();
+                SLevelGenerate innerData = GameDataManager.GetItemGenerateProperties(m_StyleCurrent, generateType, true);
+                SLevelGenerate outerData = GameDataManager.GetItemGenerateProperties(m_StyleCurrent, generateType, false);
+
+                LevelBase m_level = GameObjectManager.SpawnLevelPrefab(tf_LevelParent);
+                m_level.transform.localRotation = Quaternion.Euler(0, seed.Next(360), 0);
+                m_level.transform.localPosition = Vector3.zero;
+                m_level.transform.localScale = Vector3.one;
+                yield return m_level.GenerateTileItems(innerData, outerData, levelItemPrefabs, levelInfo.m_LevelType, m_mainSeed);
+                StaticBatchingUtility.Combine(m_level.tf_LevelItem.gameObject);
+                levelInfo.SetLevelShow(false);
+                levelInfo.SetMap(m_level);
+                OnEachLevelGenerate(levelInfo);
             }
+            yield return null;
         }
         m_Loading = false;
     }
     #region Level
-    void OnStageStart()=> LoadLevel(m_MapLevelInfo.Find(p => p.m_LevelType == enum_TileType.Start));
-    public void ChangeLevel(TileAxis targetAxis)
+    public void GameStart(Action<SBigmapLevelInfo> OnChangeLevelLoaded) => LoadLevel(0, OnChangeLevelLoaded);
+    public void LoadNextLevel(Action<SBigmapLevelInfo> OnChangeLevelLoaded) =>LoadLevel(m_currentLevelIndex + 1, OnChangeLevelLoaded);
+    void LoadLevel(int index, Action<SBigmapLevelInfo> OnChangeLevelLoaded)     //Make Current Level Available (AI Bake)
     {
-        if (m_currentLevel.m_TileAxis == targetAxis)
-            return;
-
-        LoadLevel(m_MapLevelInfo.Get(targetAxis));
-    }
-
-    void LoadLevel(SBigmapLevelInfo level )     //Make Current Level Available (AI Bake)
-    {
-        if(m_currentLevel!=null)
+        if(m_currentLevelIndex>=0)
             m_currentLevel.SetLevelShow(false);
-        m_currentLevel = level;
+        m_currentLevelIndex = index;
         m_currentLevel.SetLevelShow(true);
         BuildNavMeshData(m_currentLevel.m_Level);
-        foreach (enum_TileDirection direction in m_currentLevel.m_Connections.Keys)     //Reveal Around Islands
-        {
-            SBigmapLevelInfo info = m_MapLevelInfo.Get(m_currentLevel.m_Connections[direction]);
-            if (info != null && info.m_TileLocking == enum_TileLocking.Unseen)
-                m_MapLevelInfo.Get(m_currentLevel.m_Connections[direction]).SetTileLocking(enum_TileLocking.Unlockable);
-        }
-        OnChangeLevelLoaded(m_currentLevel,m_currentLevel.m_TileLocking== enum_TileLocking.Unlockable);
-        m_currentLevel.SetTileLocking(enum_TileLocking.Unlocked);
-    }
-    void OnBattleFinish()
-    {
-        if(m_currentLevel.m_Level.m_levelType!= enum_TileType.End)
-            m_currentLevel.SetTileLocking(enum_TileLocking.Locked);
-    }
-    #endregion
-    #region BigMap
-    public static SBigmapLevelInfo[,] GenerateBigmap(enum_Style _levelStyle,System.Random _seed,int _bigmapWidth, int _bigmapHeight)
-    {
-        //Generate Big Map All Tiles
-        SBigmapTileInfo[,] bigmapTiles = new SBigmapTileInfo[_bigmapWidth, _bigmapHeight];
-        for (int i = 0; i < _bigmapWidth; i++)
-            for (int j = 0; j < _bigmapHeight; j++)
-                bigmapTiles[i, j] = new  SBigmapTileInfo(new TileAxis(i, j), enum_TileType.Invalid, enum_TileLocking.Unseen);
-
-        List<SBigmapTileInfo> mainRoadTiles = new List<SBigmapTileInfo>();
-        List<SBigmapTileInfo> subGenerateTiles = new List<SBigmapTileInfo>();
-        List<SBigmapTileInfo> rewardTiles = new List<SBigmapTileInfo>();
-        //Calculate Main Path
-        TileAxis startAxis = new TileAxis(_seed.Next(2, _bigmapWidth - 2), _seed.Next(2, _bigmapHeight - 2));
-        int mainPathCount =  6;
-        mainRoadTiles =  bigmapTiles.TileRandomFill(_seed, startAxis,(SBigmapTileInfo tile)=> { tile.ResetTileType(enum_TileType.Battle); },p=>p.m_LevelType== enum_TileType.Invalid, mainPathCount);
-        mainRoadTiles[0].ResetTileType(enum_TileType.Start);
-        mainRoadTiles[mainRoadTiles.Count-1].ResetTileType(enum_TileType.End);
-        //Connect Main Path Tiles
-        for (int i = 0; i < mainRoadTiles.Count - 1; i++)
-            ConnectTile(mainRoadTiles[i], mainRoadTiles[i + 1]);
-
-        //Generate Most Reward Island
-        subGenerateTiles.AddRange(mainRoadTiles.GetRange(2, mainRoadTiles.Count - 3));
-        if (subGenerateTiles.Count == 3)
-        {
-            rewardTiles.Add(subGenerateTiles[0]);
-            rewardTiles.Add(subGenerateTiles[2]);
-        }
-        else
-        {
-            int rewardIndex = 0;
-            subGenerateTiles.TraversalRandomBreak( (SBigmapTileInfo tile) => {
-                rewardIndex++;
-                if (rewardIndex % 2 == 0)
-                    rewardTiles.Add(tile);
-                return false; }, _seed);
-        }
-
-        //Create Sub Battle Tile
-        SBigmapTileInfo subBattleTile = null;
-        subGenerateTiles.TraversalRandomBreak( (SBigmapTileInfo tile)=> {
-            TTiles.TTiles.m_FourDirections.TraversalRandomBreak( (enum_TileDirection direction) =>
-            {
-                SBigmapTileInfo targetSubBattleTile = bigmapTiles.Get(tile.m_TileAxis.DirectionAxis(direction));
-                if (targetSubBattleTile!=null&& targetSubBattleTile.m_LevelType== enum_TileType.Invalid)
-                {
-                    subBattleTile = targetSubBattleTile;
-                    subBattleTile.ResetTileType(enum_TileType.Battle);
-                    subGenerateTiles.Add(subBattleTile);
-                }
-                return subBattleTile!=null;
-            }, _seed);
-            return subBattleTile!=null;
-        }, _seed);
-
-        //Connect Sub Battle Tile To All Tiles Nearby
-        if (subBattleTile!=null)
-        TTiles.TTiles.m_FourDirections.TraversalRandomBreak( (enum_TileDirection direction) => {
-            SBigmapTileInfo nearbyTile = bigmapTiles.Get(subBattleTile.m_TileAxis.DirectionAxis(direction));
-            if (nearbyTile != null && (nearbyTile.m_LevelType== enum_TileType.CoinsTrade|| nearbyTile.m_LevelType == enum_TileType.Battle))
-                ConnectTile(subBattleTile,nearbyTile);
-            return false; }, _seed);
-        
-        //Generate Last Reward Tile
-        subGenerateTiles.RemoveAll(p => p.m_LevelType == enum_TileType.CoinsTrade);
-        SBigmapTileInfo subRewardTile = null;
-        subGenerateTiles.TraversalRandomBreak( (SBigmapTileInfo tile) =>
-        {
-            TTiles.TTiles.m_FourDirections.TraversalRandomBreak( (enum_TileDirection direction) =>
-            {
-                SBigmapTileInfo targetSubrewardTile = bigmapTiles.Get(tile.m_TileAxis.DirectionAxis(direction));
-                if (targetSubrewardTile != null && targetSubrewardTile.m_LevelType == enum_TileType.Invalid)
-                {
-                    subRewardTile = targetSubrewardTile;
-                    rewardTiles.Add(subRewardTile);
-                    ConnectTile(subRewardTile, tile);
-                }
-                return subRewardTile!=null;
-            }, _seed);
-            return subRewardTile != null;
-        }, _seed);
-
-        //Set All Reward Tiles
-        List<enum_TileType> rewardTypes = new List<enum_TileType>() { enum_TileType.ActionAdjustment, enum_TileType.BattleTrade, enum_TileType.CoinsTrade };
-        for (int i = 0; i < rewardTiles.Count; i++)
-        {
-            if (rewardTypes.Count == 0)
-            {
-                Debug.LogError("Invalid Type Here,Use Trader By Default");
-                rewardTiles[i].ResetTileType( enum_TileType.CoinsTrade);
-                continue;
-            }
-            enum_TileType type = rewardTypes.RandomItem(_seed);
-            rewardTypes.Remove(type);
-            rewardTiles[i].ResetTileType(type);
-        }
-
-        //Load All map Levels And Set Material
-        SBigmapLevelInfo[,] mapLevelInfo = new SBigmapLevelInfo[bigmapTiles.GetLength(0), bigmapTiles.GetLength(1)];      //Generate Bigmap Info
-        for (int i = 0; i < mapLevelInfo.GetLength(0); i++)
-            for (int j = 0; j < mapLevelInfo.GetLength(1); j++)
-                mapLevelInfo[i, j] = new SBigmapLevelInfo(bigmapTiles[i, j]);
-        
-        return mapLevelInfo;
-    }
-    static void ConnectTile(SBigmapTileInfo tileStart,SBigmapTileInfo tileEnd)
-    {
-        enum_TileDirection directionConnection = tileStart.m_TileAxis.OffsetDirection(tileEnd.m_TileAxis);
-        tileStart.m_Connections.Add(directionConnection, tileEnd.m_TileAxis);
-        tileEnd.m_Connections.Add(directionConnection.DirectionInverse(), tileStart.m_TileAxis);
-        
-        if (tileEnd.m_LevelType == enum_TileType.End)       //Add Special Place For Portal To Generate
-            tileEnd.m_Connections.Add(directionConnection, new TileAxis(-1,-1));
+        OnChangeLevelLoaded(m_currentLevel);
     }
     #endregion
     #region Navigation

@@ -60,13 +60,11 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected override void OnPoolItemEnable()
     {
         base.OnPoolItemEnable();
-        TBroadCaster<enum_BC_GameStatus>.Add<SBigmapLevelInfo>(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
         SetBinding(true);
     }
     protected override void OnPoolItemDisable()
     {
         base.OnPoolItemDisable();
-        TBroadCaster<enum_BC_GameStatus>.Remove<SBigmapLevelInfo>(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
         SetBinding(false);
     }
     public void SetSpawnPosRot(Vector3 position,Quaternion rotation)
@@ -105,11 +103,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         base.OnRecycle();
         if (m_Assist)
             m_Assist.Recycle();
-    }
-    void OnChangeLevel(SBigmapLevelInfo info)
-    {
-        m_Interact = null;
-        OnInteractStatus();
     }
 
 

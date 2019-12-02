@@ -8,7 +8,7 @@ using System.Collections;
 
 public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
     public List<LevelTile> m_MapData;
-    public enum_TileType m_levelType { get; private set; }
+    public enum_LevelType m_levelType { get; private set; }
     protected Transform tf_Model;
     public Transform tf_LevelItem { get; private set; }
     public Transform tf_Interact { get; private set; }
@@ -31,7 +31,7 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
     public int I_InnerHalfLength { get; private set; }
     public int I_OuterHalfLength { get; private set; }
 
-    public IEnumerator GenerateTileItems(SLevelGenerate _innerData,SLevelGenerate _outerData, Dictionary<enum_LevelItemType, List<LevelItemBase>> allItemPrefabs, enum_TileType _levelType, System.Random _seed)
+    public IEnumerator GenerateTileItems(SLevelGenerate _innerData,SLevelGenerate _outerData, Dictionary<enum_LevelItemType, List<LevelItemBase>> allItemPrefabs, enum_LevelType _levelType, System.Random _seed)
     {
         m_AllItemPrefabs = allItemPrefabs;
         m_seed = _seed;
@@ -53,24 +53,24 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
                 TileAxis curTile = origin+new TileAxis(i, j);
                 int curX = Mathf.Abs(curTile.X);
                 int curY = Mathf.Abs(curTile.Y);
-                enum_LevelTileOccupy occupation = enum_LevelTileOccupy.Invalid;
+                enum_LevelItemTileOccupy occupation = enum_LevelItemTileOccupy.Invalid;
                 if (curX<borderLength&&curY<borderLength)
-                    occupation = enum_LevelTileOccupy.Inner;
+                    occupation = enum_LevelItemTileOccupy.Inner;
                 else if (curX > borderLength || curY > borderLength)
-                    occupation = enum_LevelTileOccupy.Outer;
+                    occupation = enum_LevelItemTileOccupy.Outer;
                 else
-                    occupation = enum_LevelTileOccupy.Border;
+                    occupation = enum_LevelItemTileOccupy.Border;
 
                 m_AllTiles.Add(new LevelTile(curTile, occupation));
                 switch (occupation)
                 {
-                    case enum_LevelTileOccupy.Inner:
+                    case enum_LevelItemTileOccupy.Inner:
                         m_IndexEmptyInner.Add(index);
                         break;
-                    case enum_LevelTileOccupy.Outer:
+                    case enum_LevelItemTileOccupy.Outer:
                         m_IndexEmptyOuter.Add(index);
                         break;
-                    case enum_LevelTileOccupy.Border:
+                    case enum_LevelItemTileOccupy.Border:
                         m_IndexBorder.Add(index);
                         break;
                 }
@@ -94,7 +94,7 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
     }
     void ClearTileForInteracts()
     {
-        if (m_levelType== enum_TileType.Battle||m_levelType== enum_TileType.End)     //Dun need to clear when battle only
+        if (m_levelType== enum_LevelType.Battle||m_levelType== enum_LevelType.End)     //Dun need to clear when battle only
             return;
 
         TileAxis startAxis = TileAxis.Zero + new TileAxis(-3 / 2, -3 / 2);
@@ -206,7 +206,7 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
         areaIndexes.Clear();
         LevelTile origin = m_AllTiles[tileIndex];
 
-        if (origin.E_TileType != enum_LevelTileType.Empty)
+        if (origin.E_TileType != enum_LevelItemTileType.Empty)
             return false;
 
         for (int i = 0; i < XCount; i++)
@@ -216,7 +216,7 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
                 if (i == 0 && j == 0)
                     continue;
 
-                int index = m_AllTiles.FindIndex(p => p.m_TileAxis==origin.m_TileAxis+new TileAxis(i,j)&&p.E_TileType== enum_LevelTileType.Empty);
+                int index = m_AllTiles.FindIndex(p => p.m_TileAxis==origin.m_TileAxis+new TileAxis(i,j)&&p.E_TileType== enum_LevelItemTileType.Empty);
                 if (index == -1)
                     return false;
 
@@ -247,7 +247,7 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
                 case GameManager.enumDebug_LevelDrawMode.DrawItemDirection:
                     {
                         sizeParam = 0f;
-                        if (m_AllTiles[i].E_TileType == enum_LevelTileType.Main||m_AllTiles[i].E_TileType== enum_LevelTileType.Border)
+                        if (m_AllTiles[i].E_TileType == enum_LevelItemTileType.Main||m_AllTiles[i].E_TileType== enum_LevelItemTileType.Border)
                         {
                             sizeParam = 1f;
                             switch((m_AllTiles[i] as LevelTileItem).m_ItemDirection) 
@@ -284,19 +284,19 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
                     {
                         switch (m_AllTiles[i].E_TileType)
                         {
-                            case enum_LevelTileType.Empty:
+                            case enum_LevelItemTileType.Empty:
                                 targetColor = TCommon.ColorAlpha(Color.green, .3f);
                                 break;
-                            case enum_LevelTileType.Main:
+                            case enum_LevelItemTileType.Main:
                                 targetColor = TCommon.ColorAlpha(Color.red, .5f); sizeParam = 1f;
                                 break;
-                            case enum_LevelTileType.Item:
+                            case enum_LevelItemTileType.Item:
                                 targetColor = TCommon.ColorAlpha(Color.blue, .5f); sizeParam = 1f;
                                 break;
-                            case enum_LevelTileType.Interact:
+                            case enum_LevelItemTileType.Interact:
                                 targetColor = TCommon.ColorAlpha(Color.white, .5f); sizeParam = 1f;
                                 break;
-                            case enum_LevelTileType.Border:
+                            case enum_LevelItemTileType.Border:
                                 targetColor = TCommon.ColorAlpha(Color.grey, .5f);
                                 break;
                         }
@@ -306,13 +306,13 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
                     {
                         switch (m_AllTiles[i].E_Occupation)
                         {
-                            case enum_LevelTileOccupy.Inner:
+                            case enum_LevelItemTileOccupy.Inner:
                                 targetColor = TCommon.ColorAlpha(Color.green,.3f);
                                 break;
-                            case enum_LevelTileOccupy.Outer:
+                            case enum_LevelItemTileOccupy.Outer:
                                 targetColor = TCommon.ColorAlpha(Color.grey, .3f);
                                 break;
-                            case enum_LevelTileOccupy.Border:
+                            case enum_LevelItemTileOccupy.Border:
                                 targetColor = TCommon.ColorAlpha(Color.red, .3f);
                                 break;
                         }

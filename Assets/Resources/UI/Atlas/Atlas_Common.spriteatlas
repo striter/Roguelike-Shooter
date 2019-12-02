@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 3533548
+    totalSpriteSurfaceArea: 3548186
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -52,12 +52,12 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 6ad81d33339312847ac3d99a5b456c92, type: 3}
   - {fileID: 21300000, guid: eb6498b538c432c479fd0ccd174629b6, type: 3}
   - {fileID: 21300000, guid: affc1d5f4fd1e014fb6d263ca566f832, type: 3}
-  - {fileID: 21300000, guid: 39b0811ce62c60d4ba40d6a46c91e0c0, type: 3}
   - {fileID: 21300000, guid: 89096d0a6e9b00d44abd5207403cc172, type: 3}
   - {fileID: 21300000, guid: 05ba41a082cc1a74288fcc4bf6947a85, type: 3}
   - {fileID: 21300000, guid: 8280ce86eddc22949910b22674ac779c, type: 3}
   - {fileID: 21300000, guid: 01ef3718fbcf89c408d0987fff8ff2d5, type: 3}
   - {fileID: 21300000, guid: 5582692e6d0647542b4f837f33e418cc, type: 3}
+  - {fileID: 21300000, guid: 3a56b431fa4e03340882f4e72bca4609, type: 3}
   - {fileID: 21300000, guid: e9ba0534027621045989b060410b060e, type: 3}
   - {fileID: 21300000, guid: dfee1c79ec53af4438b2fae542531758, type: 3}
   - {fileID: 21300000, guid: 6847768e5e8958849bc2f250edc4fd9a, type: 3}
@@ -75,7 +75,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 09e0c28f660a8be47b94d89b49411705, type: 3}
   - {fileID: 21300000, guid: df1b52d98d2a82b4dad501bc4177411a, type: 3}
   - {fileID: 21300000, guid: fb63df05d2d74bb49bf0e78b9147bd7b, type: 3}
-  - {fileID: 21300000, guid: e286ff7018a31654ca31f0cb32a7dea1, type: 3}
   - {fileID: 21300000, guid: 1bbd8ac21a552a147b90c2cad81488e9, type: 3}
   - {fileID: 21300000, guid: 002194195bbdf2a4abf17c09acff091c, type: 3}
   - {fileID: 21300000, guid: bb9b55d0cd18e0741bc043e00caae287, type: 3}
@@ -85,26 +84,30 @@ SpriteAtlas:
   - {fileID: 21300000, guid: d08a45402af2b2f4e84c2e25b1f797b6, type: 3}
   - {fileID: 21300000, guid: 47eb7ae82a989b64397bfe77670384b7, type: 3}
   - {fileID: 21300000, guid: 980515194edb6e643ba473774b4a2065, type: 3}
+  - {fileID: 21300000, guid: c75679ed2a1160d438a8626363103ae3, type: 3}
+  - {fileID: 21300000, guid: 9dc5878f1eae4214fa5e911da3fb90bd, type: 3}
   - {fileID: 21300000, guid: bd1c0690faaedc04b8bbda27351be635, type: 3}
   - {fileID: 21300000, guid: e084e15498c9b5d45ac18967796c1be8, type: 3}
   - {fileID: 21300000, guid: ecc74ae687658124aae36b926f4912fc, type: 3}
   - {fileID: 21300000, guid: f7fca1aa90fea5644a5bd4a630faf528, type: 3}
+  - {fileID: 21300000, guid: bc835d0ed1221564a8210bf74fb869d6, type: 3}
   - {fileID: 21300000, guid: baba3317718e4fc45befa1421e27a1b2, type: 3}
   - {fileID: 21300000, guid: df6c58e9bdff9954bb8fb025a0385d29, type: 3}
   - {fileID: 21300000, guid: d40acf7a523f9124e830b23c072f7d9e, type: 3}
+  - {fileID: 21300000, guid: b5e384253d5416948a663bfe54d31ac4, type: 3}
+  - {fileID: 21300000, guid: c2e22f9e51fd47c44bf1528271d362ca, type: 3}
+  - {fileID: 21300000, guid: 39155b0503cee3b4b98c59e818a463c9, type: 3}
+  - {fileID: 21300000, guid: 8b433db9b82a59c459726a0ed80d7a97, type: 3}
+  - {fileID: 21300000, guid: 7d35560c85d544a4894ac26a6b001479, type: 3}
+  - {fileID: 21300000, guid: 25e465ce24e47e84488b8788608e1391, type: 3}
   - {fileID: 21300000, guid: ac9c2c22d9a4cf241a53932685201d4c, type: 3}
   - {fileID: 21300000, guid: 1c3b1217117c6c74d99ab0e566ab8def, type: 3}
   - {fileID: 21300000, guid: a0e4044850dc94f4ea77c05d26531154, type: 3}
   - {fileID: 21300000, guid: ffa5d357c7dd26b459d6fcb7886cd0f3, type: 3}
   - {fileID: 21300000, guid: 99a8936246ab8294792fcc6b90309f8d, type: 3}
   - {fileID: 21300000, guid: eb7a94fd6ce83cc4ab473b324bc74b01, type: 3}
-  - {fileID: 21300000, guid: 6433a4f32ecfda541886965e846ea0e0, type: 3}
   - {fileID: 21300000, guid: a3083f2f75bbc6d44836979886b6c10f, type: 3}
   - {fileID: 21300000, guid: 38f81ac9a2b60d84a83738c539b8b202, type: 3}
-  - {fileID: 21300000, guid: 98b4c88452250c14f8223fceeab2102f, type: 3}
-  - {fileID: 21300000, guid: b3201b1809756004689d490dc284b59e, type: 3}
-  - {fileID: 21300000, guid: 1de9eff4678e3874d92ff68af27eaa86, type: 3}
-  - {fileID: 21300000, guid: df1a62fbfd4bc7f4db5f7315dc8e414a, type: 3}
   - {fileID: 21300000, guid: 57712a829f1d43847854e39ecca7db41, type: 3}
   - {fileID: 21300000, guid: 8b66b0559d1136245865a87da4359ce2, type: 3}
   - {fileID: 21300000, guid: c08fb8623df6ada478d2261bfca4d369, type: 3}
@@ -141,17 +144,17 @@ SpriteAtlas:
   - icon_coins
   - UI_title_orange_small
   - indicates_caution_bottom
-  - status_map_bottom
   - UI_common_info_title
   - UI_common_circle
   - control_ability_bottom_cooldown
   - control_ability_bottom_activate
   - control_ability_invalid
+  - setting_label_selected
   - status_ActionEnergy_progress_bottom
   - status_ActionEnergy_progress_full
   - status_ActionEnergy_progress_notfull
   - control_main_fire
-  - icon_map_stage
+  - icon_stage
   - status_progress_bottom
   - status_progress_armor
   - status_progress_life
@@ -164,7 +167,6 @@ SpriteAtlas:
   - control_main_pickup
   - control_rocker_move
   - control_ability_Beth
-  - icon_map
   - status_progress_armor_top
   - status_progress_health_top
   - status_ActionPack_bottom
@@ -174,26 +176,30 @@ SpriteAtlas:
   - status_interact_trade_bottom
   - status_ActionEnergy_bottom
   - icon_rarity
+  - UI_common_white20_line
+  - UI_common_white10
   - UI_common_black60
   - UI_common_darkgray50_line
   - UI_common_darkgray60
   - UI_common_darkgray70
+  - btn_commcon_darkgray
   - icon_caution
   - icon_ActionPack
   - btn_close
+  - UI_common_NextPage
+  - setting_slider
+  - setting_x11_off
+  - setting_x10_off
+  - setting_x10_on
+  - setting_x11_on
   - icon_setting
   - buff_blank
   - icon_failure
   - UI_common_black80
   - buff_frame
   - UI_common_triangle
-  - UI_setting_slider
   - icon_ActionEnergy
   - icon_bullet_big
-  - UI_setting_x11_on
-  - UI_setting_x11_off
-  - UI_setting_x10_on
-  - UI_setting_x10_off
   - control_ability_times
   - icon_close
   - icon_video
@@ -207,8 +213,8 @@ SpriteAtlas:
   - buff_level_blank
   - control_ability_infinite
   - UI_common_RectangleLine
-  - UI_setting_common_bottom
-  - UI_Common_Square
+  - setting_common_bottom
+  - UI_common_square
   - btn_close_strip
   m_Tag: Atlas_Common
   m_IsVariant: 0

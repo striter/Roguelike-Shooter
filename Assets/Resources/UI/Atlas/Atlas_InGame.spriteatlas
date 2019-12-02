@@ -29,88 +29,56 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 081334a023db2704db167d2dfc323270, type: 3}
-    totalSpriteSurfaceArea: 2167104
+    totalSpriteSurfaceArea: 1674368
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: 6671b623e72080f41a9b698dff195d20, type: 3}
-  - {fileID: 21300000, guid: 0aaa3dc21666f4046978924681572f16, type: 3}
-  - {fileID: 21300000, guid: a00c4e98a73cb6d46a3f7b2ed752f740, type: 3}
   - {fileID: 21300000, guid: f707edb8147ad104b8e3b9a3fc7ed413, type: 3}
   - {fileID: 21300000, guid: d783a5f7194904445969c59766ac8443, type: 3}
+  - {fileID: 21300000, guid: 0d9343b119eea8f4696e712b34a96a91, type: 3}
   - {fileID: 21300000, guid: 103d90c5da42cc84aa6f39191e7c6866, type: 3}
   - {fileID: 21300000, guid: 18a7c2d7df8a6854e9bc2e3248a93804, type: 3}
   - {fileID: 21300000, guid: 006ea73e2bf56dc4e959b2bc4171da77, type: 3}
   - {fileID: 21300000, guid: ce23f48acd6ddf541b7a5d298771ae09, type: 3}
   - {fileID: 21300000, guid: 7e8939e4e7672634a85dc521ef1497a7, type: 3}
-  - {fileID: 21300000, guid: b8baf198d27163e4583c425aff5bff11, type: 3}
-  - {fileID: 21300000, guid: fa0122c7e5ddb1d4399a011784eede79, type: 3}
+  - {fileID: 21300000, guid: d3693ba12401d8c4cac8765412e6c015, type: 3}
   - {fileID: 21300000, guid: a0edf0727dbc54049ad1b24763bf40b5, type: 3}
-  - {fileID: 21300000, guid: 12c8606a8595d3c4296a7893b563be4e, type: 3}
   - {fileID: 21300000, guid: 3ed3568eaf02c50459c3a004bcf900aa, type: 3}
   - {fileID: 21300000, guid: 48ca20a7917b66e4785597c22ec56a6a, type: 3}
   - {fileID: 21300000, guid: a9ee0bc7c49b98d41884f7111e26d74e, type: 3}
   - {fileID: 21300000, guid: e2aff809fde7b7d469149d996d359e8c, type: 3}
   - {fileID: 21300000, guid: c6b65ee3d246fd345b9ccd328a569d2e, type: 3}
-  - {fileID: 21300000, guid: 4061cdf336cc1794892f6f52c932257b, type: 3}
-  - {fileID: 21300000, guid: ae9b9982bf29a724aa7f0d31b0f2e9ee, type: 3}
-  - {fileID: 21300000, guid: 0f87968bd8c67f3489af4e41310e5a76, type: 3}
-  - {fileID: 21300000, guid: 9ba3f101a4bae6642a7bdceeeaa67eab, type: 3}
+  - {fileID: 21300000, guid: fc8bda41e4b7e344481fcdef48b648bc, type: 3}
   - {fileID: 21300000, guid: 471f2c6bff785a049b3b37e24002cdae, type: 3}
-  - {fileID: 21300000, guid: c462dce27186cea40a21a488b8c445ba, type: 3}
-  - {fileID: 21300000, guid: 6b5e120f41ccce542848f00f95446778, type: 3}
-  - {fileID: 21300000, guid: acf6a532035483b48a86c24956866b7c, type: 3}
-  - {fileID: 21300000, guid: 1a911c2544666bb4a846a481c73cc71a, type: 3}
-  - {fileID: 21300000, guid: 25c06cb949383bb428c42d35e229b69d, type: 3}
-  - {fileID: 21300000, guid: 188c123daafac1b47bae367a9a3cf618, type: 3}
   - {fileID: 21300000, guid: 702a32a3dc3147a47800c42865d41714, type: 3}
   - {fileID: 21300000, guid: e051a7e66b79bb94baf2dce5172d2880, type: 3}
   - {fileID: 21300000, guid: da00ad59e5ac2ca4489ac1856c3f870f, type: 3}
   - {fileID: 21300000, guid: fb9d054c104418649afdc81260a93c24, type: 3}
-  - {fileID: 21300000, guid: 1293ae4f9500e5046bcb8c3fc46d3fb9, type: 3}
   - {fileID: 21300000, guid: e31910eada068664eaf61fcda1721a85, type: 3}
-  - {fileID: 21300000, guid: dc622a87f7dbda743a327b5e19c633c7, type: 3}
-  - {fileID: 21300000, guid: 188ba14751267e14fbe7a9071a290d59, type: 3}
-  - {fileID: 21300000, guid: 08550047334a3c145a1bd10329ddf497, type: 3}
   m_PackedSpriteNamesToIndex:
   - background_card_select
-  - result_missioncomplete_bg
-  - result_missionfailed_bg
-  - result_missioncomplete_title_en
-  - result_missionfailed_title_en
+  - result_title_win_EN
+  - result_title_fail_EN
+  - level_background
   - background_usecard_angle
-  - result_missionfailed_title_cn
-  - result_missioncomplete_title_cn
+  - result_title_fail_CN
+  - result_title_win_CN
   - backpack_bottom
   - officer_bottom
-  - map_info_kuang
-  - result_Ruler
-  - map_tile_type_End
-  - map_tile_type_Portal
-  - map_tile_type_Battle
-  - map_tile_type_Start
-  - map_tile_type_CoinsTrade
-  - map_tile_type_ActionAdjustment
-  - map_tile_type_BattleTrade
-  - map_tile_select
-  - background_map
-  - map_tile_blockade
-  - background_map_Gradient
+  - settlement_bottom
+  - level_End
+  - level_Battle
+  - level_Start
+  - level_Trade
+  - level_ActionAdjustment
+  - level_Reward
+  - level_Unknown
   - backpack_shadow
-  - map_info_wave_kuang
-  - result_Ruler_cross
-  - map_info_battle_HardBattle
-  - map_info_battle_Overwatch
-  - map_info_battle_Patrol
-  - map_info_battle_Clear
   - health_2
   - health_1
   - health_3
   - health_bg
-  - result_icon_goal
   - background_angle
-  - map_tile_type_Invalid
-  - map_tile_blockade2
-  - map_island_route
   m_Tag: Atlas_InGame
   m_IsVariant: 0
