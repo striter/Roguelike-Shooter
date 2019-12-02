@@ -1467,7 +1467,7 @@ namespace GameSetting
         }
 
         public virtual void Tick(float deltaTime) {
-            m_Expires.Traversal((ExpireBase expire) => { expire.OnTick(deltaTime); });
+            m_Expires.Traversal((ExpireBase expire) => { expire.OnTick(deltaTime); },true);
             m_Effects.Traversal((enum_CharacterEffect type) => { m_Effects[type].Tick(deltaTime); });
 
             if (b_expireUpdated)
