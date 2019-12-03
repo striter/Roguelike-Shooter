@@ -64,11 +64,15 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         base.OnPoolItemEnable();
         SetBinding(true);
+        TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
+        TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
     }
     protected override void OnPoolItemDisable()
     {
         base.OnPoolItemDisable();
         SetBinding(false);
+        TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
+        TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
     }
     public void SetSpawnPosRot(Vector3 position,Quaternion rotation)
     {
@@ -155,6 +159,13 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         if (m_Weapon1) m_Weapon1.Trigger(down);
         if (m_Weapon2) m_Weapon2.Trigger(down);
+    }
+
+    void OnWeaponEnergy(float damage)
+    {
+        float energy = damage * GameConst.F_DamageEnergyTransfer;
+        if (m_Weapon1) m_Weapon1.OnReceiveEnergy(energy);
+        if (m_Weapon2) m_Weapon2.OnReceiveEnergy(energy);
     }
 
     void OnReloadClick()
@@ -364,15 +375,35 @@ public class EntityCharacterPlayer : EntityCharacterBase {
                 break;
         }
     }
-    public void OnWeaponAbilityClick(bool isFirstWeapon)
+    public void OnWeaponActionClick(bool isFirstWeapon)
     {
-        ActionBase targetAction = isFirstWeapon ? m_Weapon1.m_WeaponAction : m_Weapon2.m_WeaponAction;
-        if(targetAction!=null)
-            m_PlayerInfo.OnUseAction(ActionDataManager.CopyAction(targetAction));
+        ActionBase targetAction = isFirstWeapon ? m_Weapon1.TryUseAction() : m_Weapon2.TryUseAction();
+        if(targetAction!=null) m_PlayerInfo.OnUseAction(ActionDataManager.CopyAction(targetAction));
+        Debug.Log(m_Weapon1.m_ActionScale + " " + m_Weapon2.m_ActionScale);
     }
     public void UpgradeActionPerk()
     {
 
+    }
+
+    protected void OnCharacterHealthWillChange(DamageInfo damageInfo, EntityCharacterBase damageEntity)
+    {
+        if (damageInfo.m_AmountApply <= 0)
+            return;
+
+        if (damageInfo.m_detail.I_SourceID == m_EntityID)
+        {
+            m_PlayerInfo.OnWillDealtDamage(damageInfo,damageEntity);
+            
+        }
+        else if (damageEntity.m_EntityID == m_EntityID)
+        {
+            m_PlayerInfo.OnWillReceiveDamage(damageInfo, damageEntity);
+        }
+    }
+    protected void OnEntityActivate(EntityBase targetEntity)
+    {
+        m_PlayerInfo.OnEntityActivate(targetEntity);
     }
     #endregion
     #region UI Indicator
@@ -446,7 +477,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void SetBinding(bool on)
     {
         if (on)
-            UIManager.Instance.m_CharacterControl.DoBinding(this, OnMovementDelta, OnRotateDelta,  OnMainDown, OnSwapClick, OnReloadClick, OnWeaponAbilityClick, OnAbilityClick);
+            UIManager.Instance.m_CharacterControl.DoBinding(this, OnMovementDelta, OnRotateDelta,  OnMainDown, OnSwapClick, OnReloadClick, OnWeaponActionClick, OnAbilityClick);
         else
             UIManager.Instance.m_CharacterControl.RemoveBinding();
     }

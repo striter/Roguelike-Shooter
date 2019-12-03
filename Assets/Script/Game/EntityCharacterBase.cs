@@ -45,6 +45,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         base.OnPoolItemEnable();
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
+        TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
         m_CharacterInfo.OnActivate();
     }
 
@@ -53,8 +54,8 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         base.OnPoolItemDisable();
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
+        TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
         this.StopSingleCoroutines(0);
-        m_CharacterInfo.OnDeactivate();
     }
 
     public override void OnActivate(enum_EntityFlag _flag,int _spawnerID=-1,float startHealth =0)
@@ -111,6 +112,10 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         return false;
     }
 
+    protected virtual void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
+    {
+        m_CharacterInfo.OnCharacterHealthChange(damageInfo,damageEntity,amountApply);
+    }
     protected override void OnDead()
     {
         base.OnDead();
