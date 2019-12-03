@@ -49,8 +49,8 @@ namespace GameSetting
         public const float F_EnermySpawnOffsetEach = .5f;       //Enermy Spawn Offset Each
 
         public const float F_PickupAcceleration = 800f; //拾取物的飞行加速速度
-        public const int I_HealthPickupAmount = 10;
-        public const int I_ArmorPickupAmount = 10;
+        public const int I_HealthPickupAmount = 25;
+        public const int I_ArmorPickupAmount = 25;
         public const int I_HealthTradeAmount = 50;
 
         public const float F_LevelTileSize = 2f;        //Cube Size For Level Tiles
@@ -158,7 +158,7 @@ namespace GameSetting
                     return StageInteractGenerateData.Create(
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 00 }, { enum_WeaponRarity.Advanced, 100 }, { enum_WeaponRarity.Rare, 0 }, { enum_WeaponRarity.Legend, 0 } },
                         new Dictionary<enum_ActionRarity, int>() { { enum_ActionRarity.Normal, 60 }, { enum_ActionRarity.OutStanding, 40 }, { enum_ActionRarity.Epic, 0 } },
-                        PickupGenerateData.Create(25, 50, 60, new RangeInt(2, 3),
+                        PickupGenerateData.Create(25, 20, 30, new RangeInt(5, 5),
                         new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 13.6f }, { enum_ActionRarity.OutStanding, 4.5f }, { enum_ActionRarity.Epic, 0 } },
                         new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Ordinary, 9f },{ enum_WeaponRarity.Advanced,4.5f} }),
                         PickupGenerateData.Create(10, 100, 50, new RangeInt(10, 5),
@@ -169,7 +169,7 @@ namespace GameSetting
                     return StageInteractGenerateData.Create(
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 0 }, { enum_WeaponRarity.Rare, 100 }, { enum_WeaponRarity.Legend, 0 } },
                         new Dictionary<enum_ActionRarity, int>() { { enum_ActionRarity.Normal, 00 }, { enum_ActionRarity.OutStanding, 70 }, { enum_ActionRarity.Epic, 30 } },
-                        PickupGenerateData.Create(10, 20, 60, new RangeInt(2, 3),
+                        PickupGenerateData.Create(10, 20, 30, new RangeInt(5, 5),
                         new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 13.6f }, { enum_ActionRarity.Epic, 4.5f } },
                         new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Advanced, 9f },{ enum_WeaponRarity.Rare,4.5f} }),
                         PickupGenerateData.Create(10, 100, 100, new RangeInt(10, 5),
@@ -180,7 +180,7 @@ namespace GameSetting
                     return StageInteractGenerateData.Create(
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 0 }, { enum_WeaponRarity.Rare, 0 }, { enum_WeaponRarity.Legend, 100 } },
                         new Dictionary<enum_ActionRarity, int>() { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 100 } },
-                        PickupGenerateData.Create(10, 20, 60, new RangeInt(2, 3),
+                        PickupGenerateData.Create(10, 20, 30, new RangeInt(5, 5),
                         new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 13.6f } },
                         new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Rare, 9f },{ enum_WeaponRarity.Legend,4.5f} }),
                         PickupGenerateData.Create(0, 0, 0, new RangeInt(10, 5),
