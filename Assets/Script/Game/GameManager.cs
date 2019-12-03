@@ -266,7 +266,7 @@ public class GameManager : GameManagerBase
                     int priceHealth = GameExpression.GetTradePrice(enum_Interaction.PickupHealth).Random(m_GameLevel.m_GameSeed);
                     GameObjectManager.SpawnInteract<InteractContainerTrade>(enum_Interaction.ContainerTrade, Vector3.left * 1.5f + Vector3.forward * 1f, interactTrans).Play(priceHealth, GameObjectManager.SpawnInteract<InteractPickupHealth>(enum_Interaction.PickupHealthPack, Vector3.zero, interactTrans).Play(GameConst.I_HealthTradeAmount, null));
 
-                    ActionBase action1 = ActionDataManager.CreateRandomDropPlayerAction(m_GameLevel.m_actionGenerate.GetTradeActionRarity(m_GameLevel.m_GameSeed), m_GameLevel.m_GameSeed);
+                    ActionBase action1 = ActionDataManager.CreateRandomAction(m_GameLevel.m_actionGenerate.GetTradeActionRarity(m_GameLevel.m_GameSeed), m_GameLevel.m_GameSeed);
                     int priceAction = GameExpression.GetTradePrice(enum_Interaction.Action, action1.m_rarity).Random(m_GameLevel.m_GameSeed);
                     GameObjectManager.SpawnInteract<InteractContainerTrade>(enum_Interaction.ContainerTrade,Vector3.forward*1f, interactTrans).Play(priceAction, GameObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action, Vector3.zero, interactTrans).Play(action1));
                     
@@ -283,13 +283,13 @@ public class GameManager : GameManagerBase
                 break;
             case enum_LevelType.BattleActionAcquire:
                 {
-                    ActionBase action = ActionDataManager.CreateRandomDropPlayerAction(m_GameLevel.m_GameStage.GetBattleTradeActionRarity(), m_GameLevel.m_GameSeed);
+                    ActionBase action = ActionDataManager.CreateRandomAction(m_GameLevel.m_GameStage.GetBattleTradeActionRarity(), m_GameLevel.m_GameSeed);
                     GameObjectManager.SpawnInteract<InteractContainerBattle>(enum_Interaction.ContainerBattle, Vector3.zero, interactTrans).Play(OnBattleStart, GameObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action, Vector3.zero, interactTrans).Play(action));
                 }
                 break;
             case enum_LevelType.BattlePerkUpgrade:
                 {
-                    GameObjectManager.SpawnInteract<InteractPerkUpgrade>(enum_Interaction.PerkUpgrade, Vector3.zero, interactTrans).Play(OnBattleStart);
+                    GameObjectManager.SpawnInteract<InteractPerkUpgrade>(enum_Interaction.PerkUpgrade, Vector3.zero, interactTrans).Play(OnBattleStart,ActionDataManager.CreateRandomWeaponAbilityAction( enum_ActionRarity.Normal,m_GameLevel.m_GameSeed));
                 }
                 break;
         }
@@ -335,7 +335,7 @@ public class GameManager : GameManagerBase
 
         enum_ActionRarity actionRarity = TCommon.RandomPercentage(pickupGenerateData.m_ActionRate, enum_ActionRarity.Invalid);
         if (actionRarity != enum_ActionRarity.Invalid)
-            GameObjectManager.SpawnInteract<InteractAction>( enum_Interaction.Action, GetPickupPosition(entity)).Play(ActionDataManager.CreateRandomDropPlayerAction(actionRarity,null));
+            GameObjectManager.SpawnInteract<InteractAction>( enum_Interaction.Action, GetPickupPosition(entity)).Play(ActionDataManager.CreateRandomAction(actionRarity,null));
     }
     Vector3 GetPickupPosition(EntityCharacterBase dropper) => LevelManager.NavMeshPosition(dropper.transform.position + TCommon.RandomXZSphere(1.5f), false);
     #endregion
