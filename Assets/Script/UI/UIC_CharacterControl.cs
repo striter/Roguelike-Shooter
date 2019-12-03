@@ -77,8 +77,10 @@ public class UIC_CharacterControl : UIControlBase {
 
     protected void OnReloadButtonDown() => OnReload?.Invoke();
     protected void OnMainButtonDown(bool down, Vector2 pos) => OnMainDown?.Invoke(down);
+    protected void OnSwapClick() => OnSwap?.Invoke();
+    protected void OnWeaponFirstActionClick() => OnWeaponAction?.Invoke(true);
+    protected void OnWeaponSecondActionClick() => OnWeaponAction?.Invoke(false);
     protected void OnAbilityClick() => OnCharacterAbility?.Invoke();
-
     public void AddDragBinding(Action<bool, Vector2> _OnDragDown, Action<Vector2> _OnDrag)
     {
         transform.localScale = Vector3.zero;
@@ -102,11 +104,11 @@ public class UIC_CharacterControl : UIControlBase {
         if (Input.GetKeyDown(KeyCode.LeftShift))
             OnAbilityClick();
         if (Input.GetKeyDown(KeyCode.Tab))
-            OnSwap();
+            OnSwapClick();
         if (Input.GetKeyDown(KeyCode.Alpha1))
-            OnWeaponAction(true);
+            OnWeaponFirstActionClick();
         if (Input.GetKeyDown(KeyCode.Alpha2))
-            OnWeaponAction(false);
+            OnWeaponSecondActionClick();
 
     }
 #endif
