@@ -156,6 +156,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b776e2c539e1dc1488f9dc4dadf793d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_currentLevelIndex: -1
 --- !u!1 &777765212
 GameObject:
   m_ObjectHideFlags: 0
@@ -304,7 +305,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c088e7b318d292458e08155aef1723d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  M_TESTSEED: 10:38:24
+  M_TESTSEED: 
   B_PhysicsDebugGizmos: 1
   B_GameLevelDebugGizmos: 0
   E_LevelDebug: 0
@@ -322,7 +323,6 @@ MonoBehaviour:
   F5_TestActionNormal: 30001
   F6_TestActionOutstanding: 20006
   F7_TestActionEpic: 30001
-  F8_TestAcquireAction: 30005
 --- !u!4 &1133817278
 Transform:
   m_ObjectHideFlags: 0
@@ -435,7 +435,7 @@ MonoBehaviour:
   B_CameraOffsetWallClip: 0
   B_DrawDebugLine: 0
   m_Effect: {fileID: 0}
-  TPSOffset: {x: 0, y: 22, z: -6}
+  TPSOffset: {x: 0, y: 20, z: -6}
   I_YawMin: 60
   I_YawMax: 60
   I_ShakeParam: 6
