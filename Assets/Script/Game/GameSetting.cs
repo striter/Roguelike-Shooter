@@ -141,9 +141,6 @@ namespace GameSetting
 
         public static int GetActionRemovePrice(enum_StageLevel stage, int removeTimes) => 10 * (removeTimes + 1) ;
         public static int GetActionUpgradePrice(enum_StageLevel stage, int upgradeTimes) => 10 * (upgradeTimes + 1) ;
-        
-        public static enum_ActionRarity GetStartWeaponPerkRarity(this enum_StageLevel stageLevel) => (stageLevel - 1).ToRarity();
-        public static enum_ActionRarity GetTradeWeaponPerkRarity(this enum_StageLevel stageLevel) => stageLevel.ToRarity();
         public static enum_ActionRarity GetBattleTradeActionRarity(this enum_StageLevel stageLevel) => stageLevel.ToRarity() == enum_ActionRarity.Epic ? enum_ActionRarity.Epic : (stageLevel + 1).ToRarity();
         public static StageInteractGenerateData GetInteractGenerate(enum_StageLevel level)
         {
@@ -506,7 +503,7 @@ namespace GameSetting
 
     public enum enum_ActionRarity { Invalid = -1, Normal = 1, OutStanding = 2, Epic = 3, }
 
-    public enum enum_ActionType { Invalid = -1, Basic = 1,Device=2,Equipment=3, WeaponPerk = 4, }
+    public enum enum_ActionType { Invalid = -1, Basic = 1,Device=2,Equipment=3,}
 
     public enum enum_EffectAttach { Invalid = -1,  Head = 1, Feet = 2, WeaponModel = 3,}
 
@@ -1491,8 +1488,7 @@ namespace GameSetting
         public void TestUseAction(ActionBase targetAction)
         {
             m_ActionEquiping.Traversal((ActionBase action) => { action.OnUseActionElse(targetAction); });
-            if (targetAction.m_ActionType != enum_ActionType.WeaponPerk)
-                GameObjectManager.PlayMuzzle(m_Player.m_EntityID, m_Player.transform.position, Vector3.up, GameExpression.GetActionMuzzleIndex(targetAction.m_ActionType));
+            GameObjectManager.PlayMuzzle(m_Player.m_EntityID, m_Player.transform.position, Vector3.up, GameExpression.GetActionMuzzleIndex(targetAction.m_ActionType));
             OnAddAction(targetAction);
         }
         #endregion
@@ -1563,25 +1559,6 @@ namespace GameSetting
         }
         #region Action
         #region Interact
-        public void OnUseWeaponAction(ActionBase weaponAction)
-        {
-            if (weaponAction.m_ActionType == enum_ActionType.Equipment)
-            {
-                Debug.LogError("Can't Use Equipment Action While In This Method!");
-                return;
-            }
-            m_ActionEquiping.Add(ActionDataManager.CopyAction(weaponAction));
-        }
-        public void OnUsePlayerAction(ActionBase playerAction)
-        {
-            if (playerAction.m_ActionType != enum_ActionType.Equipment)
-            {
-                Debug.LogError("Can't Use Equipment Action While In This Method!");
-                return;
-            }
-            m_ActionEquiping.Add(ActionDataManager.CopyAction(playerAction));
-        }
-
         public void DoCopyAction(ActionBase action)
         {
             OnAddAction(ActionDataManager.CopyAction(action));
@@ -1608,11 +1585,11 @@ namespace GameSetting
         }
         #endregion
         #region List Update
-        protected void OnUseAcion(ActionBase targetAction)
+        public void OnUseAction(ActionBase targetAction)
         {
             m_ActionEquiping.Traversal((ActionBase action) => { action.OnUseActionElse(targetAction); });
             GameObjectManager.PlayMuzzle(m_Player.m_EntityID, m_Player.transform.position, Vector3.up, GameExpression.GetActionMuzzleIndex(targetAction.m_ActionType));
-            OnAddAction(targetAction);
+            OnAddAction( targetAction);
         }
         protected void OnAddAction(ActionBase targetAction)
         {
@@ -1700,13 +1677,7 @@ namespace GameSetting
             m_ActionEquiping.Traversal((ActionBase action) => { action.OnFire(info.I_IdentiyID); });
             return info;
         }
-
-        public void OnAttachWeapon(WeaponBase weapon)
-        {
-            if(weapon.m_WeaponAction!=null)
-                OnAddAction(weapon.m_WeaponAction);
-        } 
-        public void OnDetachWeapon() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnWeaponDetach(); });
+        
         public void OnPlayerMove(float distance) => m_ActionEquiping.Traversal((ActionBase action) => { action.OnMove(distance); });
         public void OnReloadFinish() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnReloadFinish(); });
 
@@ -1946,7 +1917,6 @@ namespace GameSetting
         public virtual void OnReceiveHealing(DamageInfo info, float applyAmount)  {}
         public virtual void OnReloadFinish() { }
         public virtual void OnFire(int identity) { }
-        public virtual void OnWeaponDetach() { }
         public virtual void OnMove(float distsance) { }
         public virtual void OnAllyActivate(EntityCharacterBase ally) { }
         public virtual bool OnCheckRevive(ref RangeFloat amount) { return false; }
