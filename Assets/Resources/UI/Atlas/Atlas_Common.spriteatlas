@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 3510217
+    totalSpriteSurfaceArea: 3472801
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -44,7 +44,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 4ec60bacd1dafa74b8d93d4b1cae4984, type: 3}
   - {fileID: 21300000, guid: b6db95752d4b8db4cb74238362db9486, type: 3}
   - {fileID: 21300000, guid: f5c09138b0341a64a90b45bc6cf89f5e, type: 3}
-  - {fileID: 21300000, guid: cfcb8e7134464ad429196864a48dfb77, type: 3}
   - {fileID: 21300000, guid: 1e5956a73e79d9147b8b50c2823ab6f5, type: 3}
   - {fileID: 21300000, guid: 333c96faa0f449f45aabf7004c250e02, type: 3}
   - {fileID: 21300000, guid: 15d05e6f933533347985283c2f86695c, type: 3}
@@ -62,6 +61,8 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 6847768e5e8958849bc2f250edc4fd9a, type: 3}
   - {fileID: 21300000, guid: 9ff4ddd5857d6e84e9be010dd6f29daa, type: 3}
   - {fileID: 21300000, guid: 149e2cecb8f07c544a062ec19ac1c490, type: 3}
+  - {fileID: 21300000, guid: a062f1903e456cc41a6a0b0693587325, type: 3}
+  - {fileID: 21300000, guid: 73b688457bf186b46a6918c9ad8daf1a, type: 3}
   - {fileID: 21300000, guid: 4340fab8c529623489aafcb701f800f5, type: 3}
   - {fileID: 21300000, guid: 30e5c7c85da88f74a886ea0a055a0ab5, type: 3}
   - {fileID: 21300000, guid: 9815db2b31918bd488a568f43645a813, type: 3}
@@ -76,8 +77,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: fb63df05d2d74bb49bf0e78b9147bd7b, type: 3}
   - {fileID: 21300000, guid: 1bbd8ac21a552a147b90c2cad81488e9, type: 3}
   - {fileID: 21300000, guid: 002194195bbdf2a4abf17c09acff091c, type: 3}
-  - {fileID: 21300000, guid: bb9b55d0cd18e0741bc043e00caae287, type: 3}
-  - {fileID: 21300000, guid: 103777f59dccac046b04b33d5f911a0e, type: 3}
+  - {fileID: 21300000, guid: a386833f607b4ba478930b8dfe4656ee, type: 3}
   - {fileID: 21300000, guid: 7af61d167b98c9a469909528eab1af09, type: 3}
   - {fileID: 21300000, guid: 8b289ebd8107e9a44a60b9c352e8ecd5, type: 3}
   - {fileID: 21300000, guid: d08a45402af2b2f4e84c2e25b1f797b6, type: 3}
@@ -91,7 +91,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: f7fca1aa90fea5644a5bd4a630faf528, type: 3}
   - {fileID: 21300000, guid: bc835d0ed1221564a8210bf74fb869d6, type: 3}
   - {fileID: 21300000, guid: baba3317718e4fc45befa1421e27a1b2, type: 3}
-  - {fileID: 21300000, guid: df6c58e9bdff9954bb8fb025a0385d29, type: 3}
   - {fileID: 21300000, guid: d40acf7a523f9124e830b23c072f7d9e, type: 3}
   - {fileID: 21300000, guid: b5e384253d5416948a663bfe54d31ac4, type: 3}
   - {fileID: 21300000, guid: c2e22f9e51fd47c44bf1528271d362ca, type: 3}
@@ -133,7 +132,6 @@ SpriteAtlas:
   - icon_credit
   - btn_commcon_orange
   - UI_title_orange_ML
-  - control_reload
   - btn_commcon_unavailable
   - status_StatusBar_bottom
   - UI_title_orange_medium
@@ -151,6 +149,8 @@ SpriteAtlas:
   - status_ActionEnergy_progress_notfull
   - control_main_fire
   - icon_stage
+  - control_weaponswitch
+  - control_reload
   - status_progress_bottom
   - status_progress_armor
   - status_progress_life
@@ -165,8 +165,7 @@ SpriteAtlas:
   - control_ability_Beth
   - status_progress_armor_top
   - status_progress_health_top
-  - status_ActionPack_bottom
-  - btn_setting_bottom
+  - control_setting_bottom
   - status_interact_intro_bottom
   - status_interact_item_bottom
   - status_interact_trade_bottom
@@ -180,7 +179,6 @@ SpriteAtlas:
   - UI_common_darkgray70
   - btn_commcon_darkgray
   - icon_caution
-  - icon_ActionPack
   - btn_close
   - UI_common_NextPage
   - setting_slider
@@ -208,7 +206,7 @@ SpriteAtlas:
   - buff_level_blank
   - UI_common_RectangleLine
   - setting_common_bottom
-  - UI_Common_Square
+  - UI_common_square
   - btn_close_strip
   m_Tag: Atlas_Common
   m_IsVariant: 0

@@ -6,10 +6,9 @@ using System;
 public class UIManager :UIManagerBase,ISingleCoroutine
 {
     public static new UIManager Instance { get; private set; }
-    Image m_setting, m_OverlayBG;
+    Image m_OverlayBG;
     public Camera m_Camera { get; private set; }
-    public UIC_CharacterControl m_CharacterControl { get; private set; }
-    public UIC_GameControl m_GameControl { get; private set; }
+    public UIC_Control m_UIControl { get; private set; }
     public UIC_CharacterStatus m_PlayerStatus { get; private set; }
     public UIC_Indicates m_Indicates { get; private set; }
 
@@ -34,9 +33,6 @@ public class UIManager :UIManagerBase,ISingleCoroutine
     {
         base.Init();
         Instance = this;
-        cvs_Camera.transform.Find("Settings").GetComponent<Button>().onClick.AddListener(OnSettingBtnClick);
-        m_setting = cvs_Camera.transform.Find("Settings/Image").GetComponent<Image>();
-
         m_OverlayBG = cvs_Overlay.transform.Find("OverlayBG").GetComponent<Image>();
         m_OverlayBG.SetActivate(false);
 
@@ -52,9 +48,8 @@ public class UIManager :UIManagerBase,ISingleCoroutine
 
     protected virtual void InitGameControls(bool inGame)
     {
-        m_GameControl = ShowControls<UIC_GameControl>().SetInGame(inGame);
         m_PlayerStatus = ShowControls<UIC_CharacterStatus>().SetInGame(inGame);
-        m_CharacterControl = ShowControls<UIC_CharacterControl>();
+        m_UIControl = ShowControls<UIC_Control>().SetInGame(inGame);
         ShowControls<UIC_PlayerInteract>();
         m_Indicates = ShowControls<UIC_Indicates>();
     }
@@ -89,23 +84,5 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         m_OverlayBG.SetActivate(false);
         GameManagerBase.SetBulletTime(false);
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PageClose);
-    }
-
-
-    void OnSettingBtnClick()
-    {
-        if (OnSettingClick != null)
-        {
-            OnSettingClick();
-            return;
-        }
-        ShowPage<UI_Options>(true, 0f).SetInGame(GameManagerBase.Instance.B_InGame);
-    }
-    Action OnSettingClick;
-    protected void OverrideSetting(Action Override=null)
-    {
-        OnSettingClick = Override;
-        m_setting.sprite = m_CommonSprites[Override == null ? "icon_setting" : "icon_close"];
-        m_setting.SetNativeSize();
     }
 }

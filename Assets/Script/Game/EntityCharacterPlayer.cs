@@ -18,8 +18,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public Transform tf_WeaponAim { get; private set; }
     protected Transform tf_WeaponHoldRight, tf_WeaponHoldLeft;
     protected SFXAimAssist m_Assist = null;
-    protected bool m_currentWeaponFirst { get; private set; } = false;
-    public WeaponBase m_WeaponCurrent => m_currentWeaponFirst ? m_Weapon1 : m_Weapon2;
+    public bool m_weaponEquipingFirst { get; private set; } = false;
+    public WeaponBase m_WeaponCurrent => m_weaponEquipingFirst ? m_Weapon1 : m_Weapon2;
     public WeaponBase m_Weapon1 { get; private set; }
     public WeaponBase m_Weapon2 { get; private set; }
     public InteractBase m_Interact { get; private set; }
@@ -195,7 +195,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         {
             m_WeaponCurrent.OnDetach();
             previousWeapon = m_WeaponCurrent;
-            if (m_currentWeaponFirst)
+            if (m_weaponEquipingFirst)
                 m_Weapon1 = _weapon;
             else
                 m_Weapon2 = _weapon;
@@ -209,14 +209,14 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         if (!m_Weapon2)
             return;
-        SwapWeapon(!m_currentWeaponFirst);
+        SwapWeapon(!m_weaponEquipingFirst);
     }
 
     void SwapWeapon(bool isFirst)
     {
         if(m_WeaponCurrent)
             m_WeaponCurrent.OnShow(false);
-        m_currentWeaponFirst = isFirst;
+        m_weaponEquipingFirst = isFirst;
         m_WeaponCurrent.OnShow(true);
         m_Animator.OnActivate(m_WeaponCurrent.E_Anim);
         if (m_Assist) m_Assist.Recycle();
@@ -395,7 +395,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     }
     protected void OnWeaponStatus()
     {
-        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerWeaponStatus, m_WeaponCurrent);
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerWeaponStatus, this);
     }
     protected void OnPlayerActionChange()
     {
@@ -444,9 +444,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void SetBinding(bool on)
     {
         if (on)
-            UIManager.Instance.m_CharacterControl.DoBinding(this, OnMovementDelta, OnRotateDelta,  OnMainDown,OnReloadClick, OnSwapClick,OnWeaponAbilityClick, OnAbilityClick);
+            UIManager.Instance.m_UIControl.DoBinding(this, OnMovementDelta, OnRotateDelta,  OnMainDown, OnSwapClick, OnReloadClick, OnWeaponAbilityClick, OnAbilityClick);
         else
-            UIManager.Instance.m_CharacterControl.RemoveBinding();
+            UIManager.Instance.m_UIControl.RemoveBinding();
     }
 
     protected class PlayerAnimator : CharacterAnimator
