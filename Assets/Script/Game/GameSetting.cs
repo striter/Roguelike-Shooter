@@ -470,7 +470,6 @@ namespace GameSetting
         UI_PlayerCommonStatus,
         UI_PlayerInteractStatus,
         UI_PlayerHealthStatus,
-        UI_PlayerAmmoStatus,
         UI_PlayerExpireListStatus,
         UI_PlayerWeaponStatus,
 
