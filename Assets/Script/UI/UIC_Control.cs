@@ -41,27 +41,30 @@ public class UIC_Control : UIControlBase {
         m_TouchDelta = transform.GetComponent<TouchDeltaManager>();
         OnOptionsChanged();
         OptionsManager.event_OptionChanged += OnOptionsChanged;
-        TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
+        TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OncommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerWeaponStatus, OnWeaponStatus);
-        TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerAmmoStatus, OnAmmoStatus);
-        TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnPlayerStatusChanged);
     }
     protected override void OnDestroy()
     {
         base.OnDestroy();
         OptionsManager.event_OptionChanged -= OnOptionsChanged;
-        TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnPlayerStatusChanged);
-        TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
+        TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OncommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerWeaponStatus, OnWeaponStatus);
-        TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerAmmoStatus, OnAmmoStatus);
     }
+    public UIC_Control SetInGame(bool inGame)
+    {
+        btn_ActionStorage.SetActivate(inGame);
+        return this;
+    }
+
     void OnOptionsChanged() => UIT_JoyStick.Instance.SetMode(OptionsManager.m_OptionsData.m_JoyStickMode);
     bool CheckControlable() => !UIPageBase.m_PageOpening;
 
     InteractBase m_Interact;
     bool m_cooldowning=true;
-    void OnPlayerStatusChanged(EntityCharacterPlayer player)
+    void OncommonStatus(EntityCharacterPlayer player)
     {
+        m_Player = player;
         if(player.m_Ability.m_Cooldowning)
             m_AbilityCooldown.fillAmount = player.m_Ability.m_CooldownScale;
 
@@ -77,8 +80,11 @@ public class UIC_Control : UIControlBase {
             m_Interact = player.m_Interact;
             m_MainImg.sprite = UIManager.Instance.m_CommonSprites[UIConvertions.GetMainSprite(m_Interact)];
         }
-    }
 
+        m_weapon1Data.UpdateAmmoStatus();
+        m_weapon2Data.UpdateAmmoStatus();
+    }
+    #region Controls
     public void DoBinding(EntityCharacterPlayer player,Action<Vector2> _OnLeftDelta, Action<Vector2> _OnRightDelta, Action<bool> _OnMainDown,Action _OnSwap, Action _OnReload, Action<bool> _OnWeaponAction, Action _OnCharacterAbility)
     {
         m_TouchDelta.AddLRBinding(_OnLeftDelta, _OnRightDelta, CheckControlable);
@@ -115,28 +121,6 @@ public class UIC_Control : UIControlBase {
         transform.localScale = Vector3.one;
         m_TouchDelta.RemoveExtraBinding();
     }
-
-
-    void OnWeaponDetailClick() => UIManager.Instance.ShowPage<UI_WeaponStatus>(true, 0f).Play(m_Player.m_WeaponCurrent.m_WeaponInfo, m_Player.m_WeaponCurrent.m_WeaponAction);
-    void OnCommonStatus(EntityCharacterPlayer _player) => m_Player = _player;
-    void OnWeaponStatus(EntityCharacterPlayer _player)
-    {
-        m_weapon1Data.UpdateInfo(_player.m_Weapon1, _player.m_weaponEquipingFirst);
-        m_weapon2Data.UpdateInfo(_player.m_Weapon2, !_player.m_weaponEquipingFirst);
-    }
-
-    public UIC_Control SetInGame(bool inGame)
-    {
-        btn_ActionStorage.SetActivate(inGame);
-        return this;
-    }
-
-    void OnAmmoStatus(EntityCharacterPlayer _player)
-    {
-        m_weapon1Data.UpdateAmmoStatus();
-        m_weapon2Data.UpdateAmmoStatus();
-    }
-
     void OnSettingBtnClick()
     {
         if (OnSettingClick != null)
@@ -153,6 +137,13 @@ public class UIC_Control : UIControlBase {
         m_setting.sprite = UIManager.Instance.m_CommonSprites[Override == null ? "icon_setting" : "icon_close"];
         m_setting.SetNativeSize();
     }
+    #endregion
+
+    void OnWeaponStatus(EntityCharacterPlayer _player)
+    {
+        m_weapon1Data.UpdateInfo(_player.m_Weapon1, _player.m_weaponEquipingFirst,OnWeaponFirstActionClick);
+        m_weapon2Data.UpdateInfo(_player.m_Weapon2, !_player.m_weaponEquipingFirst,OnWeaponSecondActionClick);
+    }
 
     class WeaponData
     {
@@ -163,6 +154,7 @@ public class UIC_Control : UIControlBase {
         Image m_Image;
         Transform m_Equiping, m_unEquiping;
         Text m_Clip, m_Total;
+        UIGI_ActionItemWeapon m_Action;
         public WeaponData(Transform _transform)
         {
             transform = _transform;
@@ -172,13 +164,18 @@ public class UIC_Control : UIControlBase {
             m_Equiping = transform.Find("Equiping");
             m_unEquiping = transform.Find("UnEquiping");
             _transform.Find("DetailBtn").GetComponent<Button>().onClick.AddListener(OnWeaponDetailClick);
+            m_Clip = transform.Find("AmmoStatus/Clip").GetComponent<Text>();
+            m_Total = transform.Find("AmmoStatus/Total").GetComponent<Text>();
+            m_Action = transform.Find("ActionStatus").GetComponent<UIGI_ActionItemWeapon>();
+            m_Action.Init();
         }
-        public void UpdateInfo(WeaponBase weapon, bool equiping)
+        public void UpdateInfo(WeaponBase weapon, bool equiping, Action OnWeaponActionClick)
         {
             m_weapon = weapon;
             bool invalid = m_weapon == null;
             m_Image.SetActivate(!invalid);
             m_Name.SetActivate(!invalid);
+            m_Action.Play(invalid ? null : m_weapon.m_WeaponAction, OnWeaponActionClick);
             if (invalid)
             {
                 m_Background.sprite = UIManager.Instance.m_WeaponSprites[enum_WeaponRarity.Invalid.GetUIGameControlBackground()];
@@ -191,6 +188,8 @@ public class UIC_Control : UIControlBase {
             m_Background.sprite = UIManager.Instance.m_WeaponSprites[m_weapon.m_WeaponInfo.m_Rarity.GetUIGameControlBackground()];
             m_Image.sprite = UIManager.Instance.m_WeaponSprites[m_weapon.m_WeaponInfo.m_Weapon.GetSpriteName()];
             m_Name.autoLocalizeText = m_weapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
+            UpdateAmmoStatus();
+            LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
         }
 
         public void UpdateAmmoStatus()
@@ -199,12 +198,14 @@ public class UIC_Control : UIControlBase {
                 return;
             m_Clip.text = m_weapon.I_AmmoLeft.ToString();
             m_Total.text = m_weapon.I_ClipAmount.ToString();
+            m_Action.Tick(m_weapon);
         }
 
         void OnWeaponDetailClick()
         {
             UIManager.Instance.ShowPage<UI_WeaponStatus>(true, 0f).Play(m_weapon.m_WeaponInfo,m_weapon.m_WeaponAction);
         }
+        
     }
 #if UNITY_EDITOR
     private void Update()

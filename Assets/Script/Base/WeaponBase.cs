@@ -31,9 +31,11 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
 
     public ActionBase m_WeaponAction { get; private set; } = null;
     protected float m_ActionEnergy { get; private set; } = 0;
+    public float m_EnergyRequireLeftScale => m_WeaponAction == null ? -1:  (1-m_ActionEnergy / m_WeaponAction.I_Cost);
 
     public override void OnPoolItemInit(enum_PlayerWeapon _identity, Action<enum_PlayerWeapon, MonoBehaviour> _OnRecycle)
     {
+        base.OnPoolItemInit(_identity,_OnRecycle);
         m_Muzzle = transform.FindInAllChild("Muzzle");
         m_Case = transform.FindInAllChild("Case");
         m_WeaponInfo = GameDataManager.GetWeaponProperties(_identity);
@@ -46,16 +48,12 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     protected virtual void OnGetEquipmentData(SFXEquipmentBase equipment)
     {
     }
-
     protected override void OnPoolItemDisable()
     {
         base.OnPoolItemDisable();
-        B_Reloading = false;
-        f_reloadCheck = 0;
-        f_fireCheck = 0;
+        StopReload();
         m_Trigger.OnDisable();
     }
-
     public void SetWeaponAction(ActionBase _weaponAction)
     {
         m_WeaponAction = _weaponAction;
@@ -81,24 +79,26 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     {
         transform.SetActivate(show);
     } 
+
+
     #region PlayerInteract
     public void Trigger(bool down)=>m_Trigger.OnSetTrigger(down);
     
-    public void OnEnergyDamage(float damage)
+    public void OnEnergyReceive(float energy)
     {
         if (m_WeaponAction==null)
             return;
-        m_ActionEnergy += damage;
+        m_ActionEnergy += energy;
         if (m_ActionEnergy >= m_WeaponAction.I_Cost)
             m_ActionEnergy = m_WeaponAction.I_Cost;
     }
 
-    public ActionBase TryUseAction()
+    public ActionBase GetAbilityACtion()
     {
         if(m_WeaponAction!=null&&m_ActionEnergy>=m_WeaponAction.I_Cost)
         {
             m_ActionEnergy = 0;
-            return m_WeaponAction;
+            return ActionDataManager.CopyAction( m_WeaponAction);
         }
         return null;
     }
@@ -136,6 +136,12 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
         B_Reloading = true;
         f_reloadCheck = 0;
         OnReload?.Invoke(true, m_WeaponInfo.m_ReloadTime  / m_Attacher.m_PlayerInfo.F_ReloadRateTick(1f) );
+    }
+    void StopReload()
+    {
+        B_Reloading = false;
+        f_reloadCheck = 0;
+        f_fireCheck = 0;
     }
 
     public void AmmoTick(float deltaTime)

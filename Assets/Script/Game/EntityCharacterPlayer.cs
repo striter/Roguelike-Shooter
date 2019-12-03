@@ -365,7 +365,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     }
     public void OnWeaponAbilityClick(bool isFirstWeapon)
     {
-        ActionBase targetAction = isFirstWeapon ? m_Weapon1.TryUseAction() : m_Weapon2.TryUseAction();
+        ActionBase targetAction = isFirstWeapon ? m_Weapon1.GetAbilityACtion() : m_Weapon2.GetAbilityACtion();
         m_PlayerInfo.OnUseAction(targetAction);
     }
     public void UpgradeActionPerk(ActionBase _weaponAction)
@@ -390,7 +390,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     protected void OnCommonStatus()
     {
-        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerAmmoStatus, m_WeaponCurrent);
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerCommonStatus, this);
     }
     protected void OnInteractStatus()
