@@ -18,9 +18,10 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public Transform tf_WeaponAim { get; private set; }
     protected Transform tf_WeaponHoldRight, tf_WeaponHoldLeft;
     protected SFXAimAssist m_Assist = null;
+    protected bool m_currentWeaponFirst { get; private set; } = false;
+    public WeaponBase m_WeaponCurrent => m_currentWeaponFirst ? m_Weapon1 : m_Weapon2;
     public WeaponBase m_Weapon1 { get; private set; }
     public WeaponBase m_Weapon2 { get; private set; }
-    public WeaponBase m_WeaponCurrent { get; private set; } = null;
     public InteractBase m_Interact { get; private set; }
     public float m_EquipmentDistance { get; private set; }
     public Transform tf_UIStatus { get; private set; }
@@ -179,26 +180,50 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     public WeaponBase ObtainWeapon(WeaponBase _weapon)
     {
-        WeaponBase previousWeapon = m_WeaponCurrent;
-
-        if (m_WeaponCurrent)
+        WeaponBase previousWeapon=null;
+        if (m_Weapon1 == null)
+        {
+            m_Weapon1 = _weapon;
+            SwapWeapon(true);
+        }
+        else if (m_Weapon2 == null)
+        {
+            m_Weapon2 = _weapon;
+            SwapWeapon(false);
+        }
+        else
         {
             m_WeaponCurrent.OnDetach();
-            m_PlayerInfo.OnDetachWeapon();
+            previousWeapon = m_WeaponCurrent;
+            if (m_currentWeaponFirst)
+                m_Weapon1 = _weapon;
+            else
+                m_Weapon2 = _weapon;
         }
-        m_WeaponCurrent = _weapon;
-        m_WeaponCurrent.OnAttach(this, _weapon.B_AttachLeft ? tf_WeaponHoldLeft : tf_WeaponHoldRight, OnFireAddRecoil, OnReload);
-        m_PlayerInfo.OnAttachWeapon(m_WeaponCurrent);
-        m_Animator.OnActivate(m_WeaponCurrent.E_Anim);
-
-        if (m_Assist) m_Assist.Recycle();
-        m_Assist = GameObjectManager.SpawnSFX<SFXAimAssist>(101,tf_WeaponAim.position,tf_Weapon.forward);
-        m_Assist.Play(m_EntityID, tf_WeaponAim, tf_WeaponAim, GameConst.F_AimAssistDistance, GameLayer.Mask.I_All, (Collider collider) => { return GameManager.B_CanSFXHitTarget(collider.Detect(), m_EntityID); });
-
+        _weapon.OnAttach(this, m_WeaponCurrent.B_AttachLeft ? tf_WeaponHoldLeft : tf_WeaponHoldRight, OnFireAddRecoil, OnReload);
         OnWeaponStatus();
         return previousWeapon;
     }
 
+    public void OnSwapClick()
+    {
+        if (!m_Weapon2)
+            return;
+        SwapWeapon(!m_currentWeaponFirst);
+    }
+
+    void SwapWeapon(bool isFirst)
+    {
+        if(m_WeaponCurrent)
+            m_WeaponCurrent.OnShow(false);
+        m_currentWeaponFirst = isFirst;
+        m_WeaponCurrent.OnShow(true);
+        m_Animator.OnActivate(m_WeaponCurrent.E_Anim);
+        if (m_Assist) m_Assist.Recycle();
+        m_Assist = GameObjectManager.SpawnSFX<SFXAimAssist>(101, tf_WeaponAim.position, tf_Weapon.forward);
+        m_Assist.Play(m_EntityID, tf_WeaponAim, tf_WeaponAim, GameConst.F_AimAssistDistance, GameLayer.Mask.I_All, (Collider collider) => { return GameManager.B_CanSFXHitTarget(collider.Detect(), m_EntityID); });
+        OnWeaponStatus();
+    }
     #endregion
     #region CharacterControll
     protected Vector2 m_MoveAxisInput { get; private set; }
@@ -322,20 +347,27 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     #region Action
     public void OnPickupAction(ActionBase action)
     {
-
+        switch (action.m_ActionType)
+        {
+            case enum_ActionType.Basic:
+            case enum_ActionType.Device:
+                m_WeaponCurrent.SetWeaponAction(action);
+                OnWeaponStatus();
+                break;
+            case enum_ActionType.Equipment:
+                m_PlayerInfo.OnUseAction( action);
+                break;
+        }
     }
-    public void UpgradeWeaponPerk(ActionBase invalidPerk)
+    public void OnWeaponAbilityClick(bool isFirstWeapon)
     {
-        if (m_WeaponCurrent.m_WeaponAction == null)
-        {
-            m_WeaponCurrent.OnSpawn(invalidPerk);
-            m_PlayerInfo.OnAttachWeapon(m_WeaponCurrent);
-        }
-        else
-        {
-            m_WeaponCurrent.m_WeaponAction.Upgrade();
-        }
-        OnWeaponStatus();
+        ActionBase targetAction = isFirstWeapon ? m_Weapon1.m_WeaponAction : m_Weapon2.m_WeaponAction;
+        if(targetAction!=null)
+            m_PlayerInfo.OnUseAction(ActionDataManager.CopyAction(targetAction));
+    }
+    public void UpgradeActionPerk()
+    {
+
     }
     #endregion
     #region UI Indicator
@@ -409,7 +441,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void SetBinding(bool on)
     {
         if (on)
-            UIManager.Instance.m_CharacterControl.DoBinding(this, OnMovementDelta, OnRotateDelta, OnReloadClick, OnMainDown,OnAbilityClick);
+            UIManager.Instance.m_CharacterControl.DoBinding(this, OnMovementDelta, OnRotateDelta,  OnMainDown,OnReloadClick, OnSwapClick,OnWeaponAbilityClick, OnAbilityClick);
         else
             UIManager.Instance.m_CharacterControl.RemoveBinding();
     }

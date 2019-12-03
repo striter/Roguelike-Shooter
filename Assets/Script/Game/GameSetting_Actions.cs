@@ -474,13 +474,6 @@ namespace GameSetting_Action
         public override enum_ActionType m_ActionType => enum_ActionType.Equipment;
         public ActionEquipmentNormal(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
     }
-    public class ActionWeaponPerkNormal : ActionBase
-    {
-        public override int I_BaseCost => 0;
-        public override enum_ActionType m_ActionType => enum_ActionType.WeaponPerk;
-        public override void OnWeaponDetach() => ForceExpire();
-        public ActionWeaponPerkNormal(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
-    }
     #endregion
     #region Inherted Claseses
     #region 10000-19999
@@ -1366,297 +1359,297 @@ namespace GameSetting_Action
         public Action_30018_ProjectilePenetrate(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
     }
     #endregion
-    #region 40000-49999
-    public class Action_40001_UseActionArmorAdditive : ActionWeaponPerkNormal
-    {
-        public override int m_Index => 40001;
-        public override float Value1 => ActionData.F_40001_ArmorAdditive(m_rarity);
-        public override void OnUseActionElse(ActionBase targetAction)
-        {
-            base.OnUseActionElse(targetAction);
-            ActionHelper.ReceiveHealing(m_ActionEntity, Value1, enum_DamageType.ArmorOnly);
-        }
-        public Action_40001_UseActionArmorAdditive(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
-    }
+    //#region 40000-49999 Unused
+    //public class Action_40001_UseActionArmorAdditive : ActionWeaponPerkNormal
+    //{
+    //    public override int m_Index => 40001;
+    //    public override float Value1 => ActionData.F_40001_ArmorAdditive(m_rarity);
+    //    public override void OnUseActionElse(ActionBase targetAction)
+    //    {
+    //        base.OnUseActionElse(targetAction);
+    //        ActionHelper.ReceiveHealing(m_ActionEntity, Value1, enum_DamageType.ArmorOnly);
+    //    }
+    //    public Action_40001_UseActionArmorAdditive(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+    //}
 
-    public class Action_40002_MaxHealthAdditive : ActionWeaponPerkNormal
-    {
-        public override int m_Index => 40002;
-        public override float Value1 => ActionData.F_40002_MaxHealthAdd(m_rarity);
-        public override float m_MaxHealthAdditive => Value1;
-        public Action_40002_MaxHealthAdditive(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
-    }
+    //public class Action_40002_MaxHealthAdditive : ActionWeaponPerkNormal
+    //{
+    //    public override int m_Index => 40002;
+    //    public override float Value1 => ActionData.F_40002_MaxHealthAdd(m_rarity);
+    //    public override float m_MaxHealthAdditive => Value1;
+    //    public Action_40002_MaxHealthAdditive(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+    //}
 
-    public class Action_40003_AllyDamageMultiply : ActionWeaponPerkNormal
-    {
-        public override int m_Index => 40003;
-        public override float Value1 => ActionData.F_40003_Range(m_rarity);
-        public override float Value2 => ActionData.P_40003_PlayerDamageMultiply(m_rarity);
-        public override float Value3 => ActionData.P_40003_AllyDamageMultiply(m_rarity);
-        public override float m_DamageMultiply => Value2/100f;
-        DamageDeliverInfo allyInfo => DamageDeliverInfo.BuffInfo(m_ActionEntity.m_EntityID, SBuff.CreateActionDamageMultiplyBuff(m_Index, (Value2+Value3)/100f, .5f));
-        float f_buffCheck;
-        public override void OnTick(float deltaTime)
-        {
-            base.OnTick(deltaTime);
-            if (f_buffCheck > 0f)
-            {
-                f_buffCheck -= deltaTime;
-                return;
-            }
-            f_buffCheck = .4f;
+    //public class Action_40003_AllyDamageMultiply : ActionWeaponPerkNormal
+    //{
+    //    public override int m_Index => 40003;
+    //    public override float Value1 => ActionData.F_40003_Range(m_rarity);
+    //    public override float Value2 => ActionData.P_40003_PlayerDamageMultiply(m_rarity);
+    //    public override float Value3 => ActionData.P_40003_AllyDamageMultiply(m_rarity);
+    //    public override float m_DamageMultiply => Value2/100f;
+    //    DamageDeliverInfo allyInfo => DamageDeliverInfo.BuffInfo(m_ActionEntity.m_EntityID, SBuff.CreateActionDamageMultiplyBuff(m_Index, (Value2+Value3)/100f, .5f));
+    //    float f_buffCheck;
+    //    public override void OnTick(float deltaTime)
+    //    {
+    //        base.OnTick(deltaTime);
+    //        if (f_buffCheck > 0f)
+    //        {
+    //            f_buffCheck -= deltaTime;
+    //            return;
+    //        }
+    //        f_buffCheck = .4f;
 
-            List<EntityCharacterBase> allies= GameManager.Instance.GetEntities(m_ActionEntity.m_Flag, true);
-            for (int i = 0; i < allies.Count; i++)
-            {
-                if (allies[i].m_EntityID == m_ActionEntity.m_EntityID)
-                    continue ;
+    //        List<EntityCharacterBase> allies= GameManager.Instance.GetEntities(m_ActionEntity.m_Flag, true);
+    //        for (int i = 0; i < allies.Count; i++)
+    //        {
+    //            if (allies[i].m_EntityID == m_ActionEntity.m_EntityID)
+    //                continue ;
 
-                if (Vector3.Distance(m_ActionEntity.transform.position, allies[i].transform.position) < Value1)
-                    allies[i].m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, allyInfo));
-            }
-        }
-        public Action_40003_AllyDamageMultiply(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
-    }
+    //            if (Vector3.Distance(m_ActionEntity.transform.position, allies[i].transform.position) < Value1)
+    //                allies[i].m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, allyInfo));
+    //        }
+    //    }
+    //    public Action_40003_AllyDamageMultiply(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+    //}
 
-    public class Action_40004_MovementSpeedMultiply : ActionWeaponPerkNormal
-    {
-        public override int m_Index => 40004;
-        public override float Value1 => ActionData.P_40004_MovementSpeedAdditive(m_rarity);
-        public override float m_MovementSpeedMultiply => Value1 / 100f;
-        public Action_40004_MovementSpeedMultiply(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
-    }
+    //public class Action_40004_MovementSpeedMultiply : ActionWeaponPerkNormal
+    //{
+    //    public override int m_Index => 40004;
+    //    public override float Value1 => ActionData.P_40004_MovementSpeedAdditive(m_rarity);
+    //    public override float m_MovementSpeedMultiply => Value1 / 100f;
+    //    public Action_40004_MovementSpeedMultiply(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+    //}
 
-    public class Action_40005_ClipRefill : ActionWeaponPerkNormal
-    {
-        public override int m_Index => 40005;
-        public override float Value1 => ActionData.P_40005_FastReloadRate(m_rarity);
-        public override void OnFire(int identity)
-        {
-            base.OnFire(identity);
-            if (TCommon.RandomPercentage() < Value1)
-                m_ActionEntity.m_WeaponCurrent.ForceReload();
-        }
-        public Action_40005_ClipRefill(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
-    }
+    //public class Action_40005_ClipRefill : ActionWeaponPerkNormal
+    //{
+    //    public override int m_Index => 40005;
+    //    public override float Value1 => ActionData.P_40005_FastReloadRate(m_rarity);
+    //    public override void OnFire(int identity)
+    //    {
+    //        base.OnFire(identity);
+    //        if (TCommon.RandomPercentage() < Value1)
+    //            m_ActionEntity.m_WeaponCurrent.ForceReload();
+    //    }
+    //    public Action_40005_ClipRefill(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+    //}
 
-    public class Action_40006_ClipAdditive : ActionWeaponPerkNormal
-    {
-        public override int m_Index => 40006;
-        public override float Value1 => ActionData.I_40006_ClipAdditive(m_rarity);
-        public override int I_ClipAdditive => ActionData.I_40006_ClipAdditive(m_rarity);
-        public Action_40006_ClipAdditive(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
-    }
+    //public class Action_40006_ClipAdditive : ActionWeaponPerkNormal
+    //{
+    //    public override int m_Index => 40006;
+    //    public override float Value1 => ActionData.I_40006_ClipAdditive(m_rarity);
+    //    public override int I_ClipAdditive => ActionData.I_40006_ClipAdditive(m_rarity);
+    //    public Action_40006_ClipAdditive(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+    //}
 
-    public class Action_40007_DamageAdditive : ActionWeaponPerkNormal
-    {
-        public override int m_Index => 40007;
-        public override float Value1 => ActionData.F_40007_DamageAdditive(m_rarity);
-        public override float m_DamageAdditive => Value1;
-        public Action_40007_DamageAdditive(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
-    }
+    //public class Action_40007_DamageAdditive : ActionWeaponPerkNormal
+    //{
+    //    public override int m_Index => 40007;
+    //    public override float Value1 => ActionData.F_40007_DamageAdditive(m_rarity);
+    //    public override float m_DamageAdditive => Value1;
+    //    public Action_40007_DamageAdditive(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+    //}
 
-    public class Action_40008_EquipmentHealthAdditive : ActionWeaponPerkNormal
-    {
-        public override int m_Index => 40008;
-        public override float Value1 => ActionData.P_40008_MaxHealthAdditive(m_rarity);
-        public override float F_AllyHealthMultiplierAdditive => Value1 / 100f;
-        public Action_40008_EquipmentHealthAdditive(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
-    }
+    //public class Action_40008_EquipmentHealthAdditive : ActionWeaponPerkNormal
+    //{
+    //    public override int m_Index => 40008;
+    //    public override float Value1 => ActionData.P_40008_MaxHealthAdditive(m_rarity);
+    //    public override float F_AllyHealthMultiplierAdditive => Value1 / 100f;
+    //    public Action_40008_EquipmentHealthAdditive(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+    //}
 
-    public class Action_40009_ReloadDamageMultiply : ActionWeaponPerkNormal
-    {
-        public override int m_Index => 40009;
-        public override float Value1 => ActionData.F_40009_DamageMultiplyAfterRloead(m_rarity);
-        public override float m_DamageMultiply => damageShot ? Value1/100f : 0;
-        bool damageShot = false;
-        public override void OnReloadFinish()
-        {
-            base.OnReloadFinish();
-            damageShot = true;
-        }
-        public override void OnFire(int identity)
-        {
-            base.OnFire(identity);
-            damageShot = false;
-        }
-        public Action_40009_ReloadDamageMultiply(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
-    }
+    //public class Action_40009_ReloadDamageMultiply : ActionWeaponPerkNormal
+    //{
+    //    public override int m_Index => 40009;
+    //    public override float Value1 => ActionData.F_40009_DamageMultiplyAfterRloead(m_rarity);
+    //    public override float m_DamageMultiply => damageShot ? Value1/100f : 0;
+    //    bool damageShot = false;
+    //    public override void OnReloadFinish()
+    //    {
+    //        base.OnReloadFinish();
+    //        damageShot = true;
+    //    }
+    //    public override void OnFire(int identity)
+    //    {
+    //        base.OnFire(identity);
+    //        damageShot = false;
+    //    }
+    //    public Action_40009_ReloadDamageMultiply(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+    //}
 
-    public class Action_40010_EnrangeExtraDamage : ActionWeaponPerkNormal
-    {
-        public override int m_Index => 40010;
-        public override float Value1 => ActionData.F_40010_Range(m_rarity);
-        public override float Value2 => ActionData.P_40010_DamageMultiply(m_rarity);
-        public override void OnDealtDamageSetDamage(EntityCharacterBase receiver, DamageInfo info)
-        {
-            base.OnDealtDamageSetDamage(receiver, info);
-            if (Vector3.Distance(receiver.transform.position, m_ActionEntity.transform.position) < Value1)
-                info.m_detail.DamageAdditive(0, Value1 / 100f);
-        }
-        public Action_40010_EnrangeExtraDamage(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
-    }
+    //public class Action_40010_EnrangeExtraDamage : ActionWeaponPerkNormal
+    //{
+    //    public override int m_Index => 40010;
+    //    public override float Value1 => ActionData.F_40010_Range(m_rarity);
+    //    public override float Value2 => ActionData.P_40010_DamageMultiply(m_rarity);
+    //    public override void OnDealtDamageSetDamage(EntityCharacterBase receiver, DamageInfo info)
+    //    {
+    //        base.OnDealtDamageSetDamage(receiver, info);
+    //        if (Vector3.Distance(receiver.transform.position, m_ActionEntity.transform.position) < Value1)
+    //            info.m_detail.DamageAdditive(0, Value1 / 100f);
+    //    }
+    //    public Action_40010_EnrangeExtraDamage(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+    //}
 
-    public class Action_40011_ReloadRateMultiply : ActionWeaponPerkNormal
-    {
-        public override int m_Index => 40011;
-        public override float Value1 => ActionData.P_40011_ReloadMultiply(m_rarity);
-        public override float m_ReloadRateMultiply => Value1 / 100f;
-        public Action_40011_ReloadRateMultiply(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
-    }
+    //public class Action_40011_ReloadRateMultiply : ActionWeaponPerkNormal
+    //{
+    //    public override int m_Index => 40011;
+    //    public override float Value1 => ActionData.P_40011_ReloadMultiply(m_rarity);
+    //    public override float m_ReloadRateMultiply => Value1 / 100f;
+    //    public Action_40011_ReloadRateMultiply(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+    //}
 
-    public class Action_40012_ReceiveDamageMovementMultiplyDuration : ActionWeaponPerkNormal
-    {
-        public override int m_Index => 40012;
-        public override int m_EffectIndex => m_effecting ? 40005 : 0;
-        public override float Value1 => ActionData.P_40012_MovementSpeedMultiply(m_rarity);
-        public override float Value2 => ActionData.F_40012_Duration(m_rarity);
-        public override float m_MovementSpeedMultiply => m_effecting? Value1 / 100f : 0;
-        bool m_effecting => f_durationCheck > 0f;
-        float f_durationCheck;
-        public override void OnAfterReceiveDamage(DamageInfo info, float amount)
-        {
-            base.OnAfterReceiveDamage(info, amount);
-            f_durationCheck = Value2;
-        }
-        public override void OnTick(float deltaTime)
-        {
-            base.OnTick(deltaTime);
-            if (f_durationCheck > 0f)
-                f_durationCheck -= deltaTime;
-        }
-        public Action_40012_ReceiveDamageMovementMultiplyDuration(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
-    }
+    //public class Action_40012_ReceiveDamageMovementMultiplyDuration : ActionWeaponPerkNormal
+    //{
+    //    public override int m_Index => 40012;
+    //    public override int m_EffectIndex => m_effecting ? 40005 : 0;
+    //    public override float Value1 => ActionData.P_40012_MovementSpeedMultiply(m_rarity);
+    //    public override float Value2 => ActionData.F_40012_Duration(m_rarity);
+    //    public override float m_MovementSpeedMultiply => m_effecting? Value1 / 100f : 0;
+    //    bool m_effecting => f_durationCheck > 0f;
+    //    float f_durationCheck;
+    //    public override void OnAfterReceiveDamage(DamageInfo info, float amount)
+    //    {
+    //        base.OnAfterReceiveDamage(info, amount);
+    //        f_durationCheck = Value2;
+    //    }
+    //    public override void OnTick(float deltaTime)
+    //    {
+    //        base.OnTick(deltaTime);
+    //        if (f_durationCheck > 0f)
+    //            f_durationCheck -= deltaTime;
+    //    }
+    //    public Action_40012_ReceiveDamageMovementMultiplyDuration(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+    //}
 
-    public class Action_40013_KillMovementMultiplyDuration : ActionWeaponPerkNormal
-    {
-        public override int m_Index => 40013;
-        public override int m_EffectIndex => m_effecting ? 40005 : 0;
-        public override float Value1 => ActionData.P_40013_MovementSpeedMultiply(m_rarity);
-        public override float Value2 => ActionData.F_40013_Duration(m_rarity);
-        public override float m_MovementSpeedMultiply =>m_effecting ? Value1 / 100f : 0;
-        bool m_effecting => f_durationCheck > 0f;
-        float f_durationCheck=0f;
-        public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
-        {
-            base.OnAfterDealtDemage(receiver, info, applyAmount);
-            if(receiver.m_Health.b_IsDead)
-                f_durationCheck = Value2;
-        }
-        public override void OnTick(float deltaTime)
-        {
-            base.OnTick(deltaTime);
-            if (f_durationCheck > 0f)
-                f_durationCheck -= deltaTime;
-        }
-        public Action_40013_KillMovementMultiplyDuration(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
-    }
+    //public class Action_40013_KillMovementMultiplyDuration : ActionWeaponPerkNormal
+    //{
+    //    public override int m_Index => 40013;
+    //    public override int m_EffectIndex => m_effecting ? 40005 : 0;
+    //    public override float Value1 => ActionData.P_40013_MovementSpeedMultiply(m_rarity);
+    //    public override float Value2 => ActionData.F_40013_Duration(m_rarity);
+    //    public override float m_MovementSpeedMultiply =>m_effecting ? Value1 / 100f : 0;
+    //    bool m_effecting => f_durationCheck > 0f;
+    //    float f_durationCheck=0f;
+    //    public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+    //    {
+    //        base.OnAfterDealtDemage(receiver, info, applyAmount);
+    //        if(receiver.m_Health.b_IsDead)
+    //            f_durationCheck = Value2;
+    //    }
+    //    public override void OnTick(float deltaTime)
+    //    {
+    //        base.OnTick(deltaTime);
+    //        if (f_durationCheck > 0f)
+    //            f_durationCheck -= deltaTime;
+    //    }
+    //    public Action_40013_KillMovementMultiplyDuration(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+    //}
 
-    public class Action_40014_RecoilReduction : ActionWeaponPerkNormal
-    {
-        public override int m_Index => 40014;
-        public override float Value1 => ActionData.P_40014_RecoilReduction(m_rarity);
-        public override float F_RecoilReduction => Value1 / 100f;
-        public Action_40014_RecoilReduction(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
-    }
+    //public class Action_40014_RecoilReduction : ActionWeaponPerkNormal
+    //{
+    //    public override int m_Index => 40014;
+    //    public override float Value1 => ActionData.P_40014_RecoilReduction(m_rarity);
+    //    public override float F_RecoilReduction => Value1 / 100f;
+    //    public Action_40014_RecoilReduction(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+    //}
 
-    public class Action_40015_EnrangeExtraHealthDrain : ActionWeaponPerkNormal
-    {
-        public override int m_Index => 40015;
-        public override float Value1 => ActionData.F_40015_Range(m_rarity);
-        public override float Value2 => ActionData.P_40015_HealthDrain(m_rarity);
-        public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
-        {
-            base.OnAfterDealtDemage(receiver, info, applyAmount);
-            if (Vector3.Distance(receiver.transform.position, m_ActionEntity.transform.position) < Value1)
-                ActionHelper.ReceiveHealing(m_ActionEntity, Value2 / 100f * applyAmount, enum_DamageType.HealthOnly);
-        }
-        public Action_40015_EnrangeExtraHealthDrain(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
-    }
+    //public class Action_40015_EnrangeExtraHealthDrain : ActionWeaponPerkNormal
+    //{
+    //    public override int m_Index => 40015;
+    //    public override float Value1 => ActionData.F_40015_Range(m_rarity);
+    //    public override float Value2 => ActionData.P_40015_HealthDrain(m_rarity);
+    //    public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+    //    {
+    //        base.OnAfterDealtDemage(receiver, info, applyAmount);
+    //        if (Vector3.Distance(receiver.transform.position, m_ActionEntity.transform.position) < Value1)
+    //            ActionHelper.ReceiveHealing(m_ActionEntity, Value2 / 100f * applyAmount, enum_DamageType.HealthOnly);
+    //    }
+    //    public Action_40015_EnrangeExtraHealthDrain(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+    //}
     
-    public class Action_40017_ArmorDamageReduction : ActionWeaponPerkNormal
-    {
-        public override int m_Index => 40017;
-        public override float Value1 => ActionData.P_40017_DamageReduction(m_rarity);
-        public override float m_DamageReduction => m_ActionEntity.m_Health.m_CurrentArmor > 0 ? Value1/100f : 0;
-        public Action_40017_ArmorDamageReduction(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
-    }
+    //public class Action_40017_ArmorDamageReduction : ActionWeaponPerkNormal
+    //{
+    //    public override int m_Index => 40017;
+    //    public override float Value1 => ActionData.P_40017_DamageReduction(m_rarity);
+    //    public override float m_DamageReduction => m_ActionEntity.m_Health.m_CurrentArmor > 0 ? Value1/100f : 0;
+    //    public Action_40017_ArmorDamageReduction(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+    //}
 
-    public class Action_40018_KillDamageAdditiveBurstShot : ActionWeaponPerkNormal
-    {
-        public override int m_Index => 40018;
-        public override float Value1 => ActionData.P_40018_DamageMultiply(m_rarity);
-        public override float m_DamageMultiply => burstShot ? Value1 / 100f : 0f;
-        bool burstShot = false;
-        public override void OnFire(int identity)
-        {
-            base.OnFire(identity);
-            burstShot = false;
-        }
-        public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
-        {
-            base.OnAfterDealtDemage(receiver, info, applyAmount);
-            burstShot = receiver.m_Health.b_IsDead;
-        }
-        public Action_40018_KillDamageAdditiveBurstShot(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
-    }
+    //public class Action_40018_KillDamageAdditiveBurstShot : ActionWeaponPerkNormal
+    //{
+    //    public override int m_Index => 40018;
+    //    public override float Value1 => ActionData.P_40018_DamageMultiply(m_rarity);
+    //    public override float m_DamageMultiply => burstShot ? Value1 / 100f : 0f;
+    //    bool burstShot = false;
+    //    public override void OnFire(int identity)
+    //    {
+    //        base.OnFire(identity);
+    //        burstShot = false;
+    //    }
+    //    public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+    //    {
+    //        base.OnAfterDealtDemage(receiver, info, applyAmount);
+    //        burstShot = receiver.m_Health.b_IsDead;
+    //    }
+    //    public Action_40018_KillDamageAdditiveBurstShot(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+    //}
     
-    public class Action_40020_KillFreezeGrenade : ActionWeaponPerkNormal
-    {
-        public override int m_Index => 40020;
-        public override float Value1 => ActionData.F_40020_FreezeDuration(m_rarity);
-        DamageDeliverInfo GetDamageInfo() => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.m_EntityID, 0, enum_CharacterEffect.Freeze, Value1);
-        public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
-        {
-            base.OnAfterDealtDemage(receiver, info, applyAmount);
-            if (receiver.m_Health.b_IsDead)
-                EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(m_Index),receiver,GetDamageInfo).Play(receiver,receiver.tf_Model.position+TCommon.RandomXZSphere(.5f));
-        }
-        public Action_40020_KillFreezeGrenade(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
-    }
+    //public class Action_40020_KillFreezeGrenade : ActionWeaponPerkNormal
+    //{
+    //    public override int m_Index => 40020;
+    //    public override float Value1 => ActionData.F_40020_FreezeDuration(m_rarity);
+    //    DamageDeliverInfo GetDamageInfo() => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.m_EntityID, 0, enum_CharacterEffect.Freeze, Value1);
+    //    public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+    //    {
+    //        base.OnAfterDealtDemage(receiver, info, applyAmount);
+    //        if (receiver.m_Health.b_IsDead)
+    //            EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(m_Index),receiver,GetDamageInfo).Play(receiver,receiver.tf_Model.position+TCommon.RandomXZSphere(.5f));
+    //    }
+    //    public Action_40020_KillFreezeGrenade(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+    //}
 
-    public class Action_40021_KillFreeze : ActionWeaponPerkNormal
-    {
-        public override int m_Index => 40021;
-        public override float Value1 => ActionData.F_40021_FreezeDuration(m_rarity);
-        int m_fireIdentity = -1;
-        bool identitySet = false;
-        public override void OnFire(int identity)
-        {
-            base.OnFire(identity);
-            if (identitySet)
-            {
-                m_fireIdentity = identity;
-                identitySet = false;
-            }
-        }
-        public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
-        {
-            base.OnAfterDealtDemage(receiver, info, applyAmount);
-            if (receiver.m_Health.b_IsDead)
-            {
-                identitySet = true;
-                return;
-            }
+    //public class Action_40021_KillFreeze : ActionWeaponPerkNormal
+    //{
+    //    public override int m_Index => 40021;
+    //    public override float Value1 => ActionData.F_40021_FreezeDuration(m_rarity);
+    //    int m_fireIdentity = -1;
+    //    bool identitySet = false;
+    //    public override void OnFire(int identity)
+    //    {
+    //        base.OnFire(identity);
+    //        if (identitySet)
+    //        {
+    //            m_fireIdentity = identity;
+    //            identitySet = false;
+    //        }
+    //    }
+    //    public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+    //    {
+    //        base.OnAfterDealtDemage(receiver, info, applyAmount);
+    //        if (receiver.m_Health.b_IsDead)
+    //        {
+    //            identitySet = true;
+    //            return;
+    //        }
 
-            if (info.m_detail.I_IdentiyID == m_fireIdentity)
-            {
-                receiver.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.EquipmentInfo(m_ActionEntity.m_EntityID, 0, enum_CharacterEffect.Freeze, Value1)));
-                m_fireIdentity = -1;
-            }
-        }
-        public Action_40021_KillFreeze(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
-    }
+    //        if (info.m_detail.I_IdentiyID == m_fireIdentity)
+    //        {
+    //            receiver.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.EquipmentInfo(m_ActionEntity.m_EntityID, 0, enum_CharacterEffect.Freeze, Value1)));
+    //            m_fireIdentity = -1;
+    //        }
+    //    }
+    //    public Action_40021_KillFreeze(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+    //}
 
-    public class Action_40022_HealAdditive : ActionWeaponPerkNormal
-    {
-        public override int m_Index => 40022;
-        public override float Value1 => ActionData.P_40022_HealAdditive(m_rarity);
-        public override float m_HealAdditive => Value1 / 100f;
-        public Action_40022_HealAdditive(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+    //public class Action_40022_HealAdditive : ActionWeaponPerkNormal
+    //{
+    //    public override int m_Index => 40022;
+    //    public override float Value1 => ActionData.P_40022_HealAdditive(m_rarity);
+    //    public override float m_HealAdditive => Value1 / 100f;
+    //    public Action_40022_HealAdditive(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
 
-    }
-    #endregion
+    //}
+    //#endregion
     #endregion
     #endregion
 }

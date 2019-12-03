@@ -25,7 +25,14 @@ public class InteractWeapon : InteractGameBase {
     {
         base.OnInteractSuccessful(_interactTarget);
         m_Weapon = _interactTarget.ObtainWeapon(m_Weapon);
-        m_Weapon.transform.SetParentResetTransform(tf_ModelContainer);
+        if (m_Weapon)
+        {
+            m_Weapon.transform.SetParentResetTransform(tf_ModelContainer);
+            return;
+        }
+
+        SetInteractable(false);
+        OnDisable();
     }
 
     private void OnDisable()

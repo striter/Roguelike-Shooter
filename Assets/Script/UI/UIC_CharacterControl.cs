@@ -9,7 +9,8 @@ public class UIC_CharacterControl : UIControlBase {
     protected TouchDeltaManager m_TouchDelta { get; private set; }
     Image m_MainImg;
     Image m_AbilityBG,m_AbilityImg,m_AbilityCooldown;
-    Action OnReload, OnAbility;
+    Action OnReload,OnSwap, OnCharacterAbility;
+    Action<bool> OnWeaponAction;
     Action<bool> OnMainDown;
     protected override void Init()
     {
@@ -55,12 +56,14 @@ public class UIC_CharacterControl : UIControlBase {
         }
     }
 
-    public void DoBinding(EntityCharacterPlayer player,Action<Vector2> _OnLeftDelta, Action<Vector2> _OnRightDelta, Action _OnReload, Action<bool> _OnMainDown, Action _OnAbility)
+    public void DoBinding(EntityCharacterPlayer player,Action<Vector2> _OnLeftDelta, Action<Vector2> _OnRightDelta, Action<bool> _OnMainDown,Action _OnSwap, Action _OnReload, Action<bool> _OnWeaponAction, Action _OnCharacterAbility)
     {
         m_TouchDelta.AddLRBinding(_OnLeftDelta, _OnRightDelta, CheckControlable);
-        OnReload = _OnReload;
-        OnAbility = _OnAbility;
         OnMainDown = _OnMainDown;
+        OnReload = _OnReload;
+        OnSwap = _OnSwap;
+        OnWeaponAction = _OnWeaponAction;
+        OnCharacterAbility = _OnCharacterAbility;
         m_AbilityImg.sprite = UIManager.Instance.m_CommonSprites[UIConvertions.GetAbilitySprite(player.m_Character)];
     }
     public void RemoveBinding()
@@ -68,12 +71,13 @@ public class UIC_CharacterControl : UIControlBase {
         m_TouchDelta.RemoveAllBinding();
         OnReload = null;
         OnMainDown = null;
-        OnAbility = null;
+        OnCharacterAbility = null;
+        OnSwap = null;
     }
 
     protected void OnReloadButtonDown() => OnReload?.Invoke();
     protected void OnMainButtonDown(bool down, Vector2 pos) => OnMainDown?.Invoke(down);
-    protected void OnAbilityClick() => OnAbility?.Invoke();
+    protected void OnAbilityClick() => OnCharacterAbility?.Invoke();
 
     public void AddDragBinding(Action<bool, Vector2> _OnDragDown, Action<Vector2> _OnDrag)
     {
@@ -97,6 +101,13 @@ public class UIC_CharacterControl : UIControlBase {
             OnReloadButtonDown();
         if (Input.GetKeyDown(KeyCode.LeftShift))
             OnAbilityClick();
+        if (Input.GetKeyDown(KeyCode.Tab))
+            OnSwap();
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+            OnWeaponAction(true);
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+            OnWeaponAction(false);
+
     }
 #endif
 }

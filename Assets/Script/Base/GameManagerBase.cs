@@ -342,13 +342,11 @@ public static class GameDataManager
 public static class ActionDataManager
 {
     public static Dictionary<int, ActionBase> m_AllActions { get; private set; } = new Dictionary<int, ActionBase>();
-    public static List<int> m_WeaponPerk { get; private set; } = new List<int>();
     public static List<int> m_UseableAction { get; private set; } = new List<int>();
     static int m_ActionIdentity = 0;
     public static void Init()
     {
         m_AllActions.Clear();
-        m_WeaponPerk.Clear();
         m_UseableAction.Clear();
         
         TReflection.TraversalAllInheritedClasses((Type type, ActionBase action) => {
@@ -356,15 +354,10 @@ public static class ActionDataManager
                 return;
 
             m_AllActions.Add(action.m_Index, action);
-            if (action.m_ActionType == enum_ActionType.WeaponPerk)
-                m_WeaponPerk.Add(action.m_Index);
-            else
-                m_UseableAction.Add(action.m_Index);
+            m_UseableAction.Add(action.m_Index);
         }, -1, enum_ActionRarity.Invalid);
     }
-    public static ActionBase CreateRandomWeaponPerk(enum_ActionRarity level, System.Random seed) => level == 0 ? null : CreateAction(m_WeaponPerk.RandomItem(seed), level);
     public static ActionBase CreateRandomDropPlayerAction(enum_ActionRarity rarity, System.Random seed)=> CreateAction( m_UseableAction.RandomItem(seed),rarity);
-    public static ActionBase CreateRandomPlayerAction(enum_ActionRarity level, System.Random seed) => CreateAction(m_UseableAction.RandomItem(seed), level);
     public static List<ActionBase> CreateActions(List<ActionGameData> infos)
     {
         List<ActionBase> actions = new List<ActionBase>();

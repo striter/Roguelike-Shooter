@@ -201,10 +201,6 @@ public class UIC_CharacterStatus : UIControlBase
             if (expireInfo.m_Expires[i].m_ExpireType != enum_ExpireType.Action)
                 continue;
             ActionBase action = (expireInfo.m_Expires[i] as ActionBase);
-
-            if (action .m_ActionType == enum_ActionType.WeaponPerk)
-                    continue;
-
             m_ExpireGrid.AddItem(i).SetInfo(action);
         }
     }

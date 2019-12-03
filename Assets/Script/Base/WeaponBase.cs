@@ -54,7 +54,7 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
         m_Trigger.OnDisable();
     }
 
-    public void OnSpawn(ActionBase _weaponAction)
+    public void SetWeaponAction(ActionBase _weaponAction)
     {
         m_WeaponAction = _weaponAction;
     }
@@ -65,13 +65,21 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
         transform.SetParentResetTransform(_attachTo);
         OnFireRecoil = _OnFireRecoil;
         OnReload = _OnReload;
+        OnShow(true);
     }
 
     public void OnDetach()
     {
         m_Attacher = null;
+        OnShow(true);
     }
 
+    public virtual void OnShow(bool show)
+    {
+        transform.SetActivate(show);
+        if (!show)
+            Trigger(false);
+    } 
     #region PlayerInteract
     public void Trigger(bool down)=>m_Trigger.OnSetTrigger(down);
     
