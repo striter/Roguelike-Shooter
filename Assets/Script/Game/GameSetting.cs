@@ -135,7 +135,7 @@ namespace GameSetting
 
         public static List<enum_LevelType> GetRandomLevels(System.Random seed)
         {
-            switch (seed.Next(1, 5))        //1-4
+            switch (seed.Next(1, 9))        //1-4
             {
                 default:
                     return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.End };
@@ -143,6 +143,10 @@ namespace GameSetting
                 case 2: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.BattlePerkUpgrade, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.BattleActionAcquire, enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.Battle, enum_LevelType.End };
                 case 3: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.BattlePerkUpgrade, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.BattleActionAcquire, enum_LevelType.Battle, enum_LevelType.ActionAdjustment, enum_LevelType.End };
                 case 4: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.BattlePerkUpgrade, enum_LevelType.Battle, enum_LevelType.ActionAdjustment, enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.Battle, enum_LevelType.End };
+                case 5: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.BattleActionAcquire, enum_LevelType.Battle, enum_LevelType.BattlePerkUpgrade, enum_LevelType.Battle, enum_LevelType.ActionAdjustment, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.End };
+                case 6: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.BattleActionAcquire, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.Battle, enum_LevelType.BattlePerkUpgrade, enum_LevelType.End };
+                case 7: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.BattleActionAcquire, enum_LevelType.Battle, enum_LevelType.ActionAdjustment, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.End };
+                case 8: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.BattlePerkUpgrade, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.Battle, enum_LevelType.ActionAdjustment, enum_LevelType.End };
             }
         }
 
