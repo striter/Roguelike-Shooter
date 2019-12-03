@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 3548186
+    totalSpriteSurfaceArea: 3510217
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -56,7 +56,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 05ba41a082cc1a74288fcc4bf6947a85, type: 3}
   - {fileID: 21300000, guid: 8280ce86eddc22949910b22674ac779c, type: 3}
   - {fileID: 21300000, guid: 01ef3718fbcf89c408d0987fff8ff2d5, type: 3}
-  - {fileID: 21300000, guid: 5582692e6d0647542b4f837f33e418cc, type: 3}
   - {fileID: 21300000, guid: 3a56b431fa4e03340882f4e72bca4609, type: 3}
   - {fileID: 21300000, guid: e9ba0534027621045989b060410b060e, type: 3}
   - {fileID: 21300000, guid: dfee1c79ec53af4438b2fae542531758, type: 3}
@@ -108,7 +107,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: eb7a94fd6ce83cc4ab473b324bc74b01, type: 3}
   - {fileID: 21300000, guid: a3083f2f75bbc6d44836979886b6c10f, type: 3}
   - {fileID: 21300000, guid: 38f81ac9a2b60d84a83738c539b8b202, type: 3}
-  - {fileID: 21300000, guid: 57712a829f1d43847854e39ecca7db41, type: 3}
   - {fileID: 21300000, guid: 8b66b0559d1136245865a87da4359ce2, type: 3}
   - {fileID: 21300000, guid: c08fb8623df6ada478d2261bfca4d369, type: 3}
   - {fileID: 21300000, guid: a6031d8c25ddd714593081b17c1de9a9, type: 3}
@@ -119,7 +117,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: ecf5205912130214393bc27cfbe19041, type: 3}
   - {fileID: 21300000, guid: 8d62631dc91e63b43939fb462b9ba730, type: 3}
   - {fileID: 21300000, guid: 1d1cbd9d970e66944b59ae6da5ccd634, type: 3}
-  - {fileID: 21300000, guid: f734e2c3ff1838643b5ddfd15dc79023, type: 3}
   - {fileID: 21300000, guid: b90f37943d8ea154aaf285c3d486b175, type: 3}
   - {fileID: 21300000, guid: 42c8ac79d9254264b8c9785a333d591a, type: 3}
   - {fileID: 21300000, guid: 18652a05e50450b4a8aea0d594f8ec36, type: 3}
@@ -148,7 +145,6 @@ SpriteAtlas:
   - UI_common_circle
   - control_ability_bottom_cooldown
   - control_ability_bottom_activate
-  - control_ability_invalid
   - setting_label_selected
   - status_ActionEnergy_progress_bottom
   - status_ActionEnergy_progress_full
@@ -200,7 +196,6 @@ SpriteAtlas:
   - UI_common_triangle
   - icon_ActionEnergy
   - icon_bullet_big
-  - control_ability_times
   - icon_close
   - icon_video
   - UI_strip_white60
@@ -211,7 +206,6 @@ SpriteAtlas:
   - UI_common_angle_gray
   - icon_buff_rank
   - buff_level_blank
-  - control_ability_infinite
   - UI_common_RectangleLine
   - setting_common_bottom
   - UI_Common_Square

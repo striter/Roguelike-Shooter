@@ -45,6 +45,6 @@ public class SFXAudioBase : SFXBase
     protected override void OnRecycle()
     {
         AttachTo(null);
-        DoPoolItemRecycle();
+        DoItemRecycle();
     }
 }

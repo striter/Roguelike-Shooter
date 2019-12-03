@@ -29,21 +29,23 @@ public class InteractActionAdjustment : InteractGameBase {
 
     public void OnRemovalAction(int index)
     {
-        m_Interactor.RemoveStoredAction(index);
+        m_Interactor.RemoveAction(index);
         m_Interactor.OnCoinsRemoval(RemovePrice);
         m_removeCount+=1;
     }
+
     public void OnUpgradeAction(int index)
     {
-        m_Interactor.UpgradeStoredAction(index);
+        m_Interactor.UpgradeAction(index);
         m_Interactor.OnCoinsRemoval(UpgradePrice);
         m_upgradeCount += 1;
     }
+
     public enum_UI_ActionUpgradeType E_UpgradeType(int index)
     {
         if (m_Interactor.m_Coins < UpgradePrice)
             return enum_UI_ActionUpgradeType.LackOfCoins;
-        else if (!m_Interactor.m_BattleAction[index].B_Upgradable)
+        else if (!m_Interactor.m_ActionEquiping[index].B_Upgradable)
             return enum_UI_ActionUpgradeType.MaxLevel;
 
         return enum_UI_ActionUpgradeType.Upgradeable;

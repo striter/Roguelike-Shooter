@@ -49,7 +49,7 @@ public class UIC_GameControl : UIControlBase
     void OnCommonStatus(EntityCharacterPlayer _player) => m_Player = _player;
     void OnWeaponStatus(WeaponBase weapon)
     {
-        m_WeaponBackground.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_UIRarity.GetUIGameControlBackground()];
+        m_WeaponBackground.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Rarity.GetUIGameControlBackground()];
         m_WeaponImage.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Weapon.GetSpriteName()];
         m_WeaponName.autoLocalizeText = weapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
         m_WeaponActionHUD.SetInfo(weapon.m_WeaponAction);

@@ -9,7 +9,6 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     public AudioClip m_ReloadClip1, m_ReloadClip2, m_ReloadClip3;
     protected EntityCharacterPlayer m_Attacher { get; private set; }
     public SWeapon m_WeaponInfo { get; private set; }
-    public ActionBase m_WeaponAction { get; private set; } = null;
     public float F_BaseDamage { get; protected set; } = 0;
     public float F_BaseRecoil => m_WeaponInfo.m_RecoilPerShot;
     public float F_BaseFirerate => m_WeaponInfo.m_FireRate;
@@ -29,7 +28,11 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     bool B_HaveAmmoLeft => m_WeaponInfo.m_ClipAmount == -1 || I_AmmoLeft > 0;
     bool B_AmmoFull => m_WeaponInfo.m_ClipAmount == -1||I_ClipAmount == I_AmmoLeft;
     protected void OnFireCheck(float pauseDuration) => f_fireCheck = pauseDuration;
-    
+
+    public ActionBase m_WeaponAction { get; private set; } = null;
+    protected float m_ActionEnergy { get; private set; } = 0;
+    public float m_ActionScale => m_WeaponAction == null ? -1 : m_ActionEnergy / m_WeaponAction.I_Cost;
+
     public override void OnPoolItemInit(enum_PlayerWeapon _identity, Action<enum_PlayerWeapon, MonoBehaviour> _OnRecycle)
     {
         m_Muzzle = transform.FindInAllChild("Muzzle");
@@ -54,9 +57,10 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
         m_Trigger.OnDisable();
     }
 
-    public void OnSpawn(ActionBase _weaponAction)
+    public void SetWeaponAction(ActionBase _weaponAction)
     {
         m_WeaponAction = _weaponAction;
+        m_ActionEnergy = 0;
     }
 
     public void OnAttach(EntityCharacterPlayer _attacher,Transform _attachTo,Action<float> _OnFireRecoil,Action<bool,float> _OnReload)
@@ -65,16 +69,42 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
         transform.SetParentResetTransform(_attachTo);
         OnFireRecoil = _OnFireRecoil;
         OnReload = _OnReload;
+        OnShow(true);
     }
 
     public void OnDetach()
     {
         m_Attacher = null;
+        OnShow(true);
     }
 
+    public virtual void OnShow(bool show)
+    {
+        transform.SetActivate(show);
+    } 
     #region PlayerInteract
     public void Trigger(bool down)=>m_Trigger.OnSetTrigger(down);
     
+    public void OnReceiveEnergy(float energy)
+    {
+        if (m_WeaponAction==null)
+            return;
+        m_ActionEnergy += energy;
+        if (m_ActionEnergy >= m_WeaponAction.I_Cost)
+            m_ActionEnergy = m_WeaponAction.I_Cost;
+    }
+
+    public ActionBase TryUseAction()
+    {
+        Debug.Log(m_ActionEnergy);
+        if(m_WeaponAction!=null&&m_ActionEnergy>=m_WeaponAction.I_Cost)
+        {
+            m_ActionEnergy = 0;
+            return m_WeaponAction;
+        }
+        return null;
+    }
+
     protected bool OnTriggerOnce()
     {
         if (!B_HaveAmmoLeft)

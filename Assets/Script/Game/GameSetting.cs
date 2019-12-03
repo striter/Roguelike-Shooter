@@ -21,13 +21,9 @@ namespace GameSetting
         public const float F_EntityDeadFadeTime = 3f;
         public const float F_PlayerReviveCheckAfterDead = 1.5f;
         public const float F_PlayerReviveBuffDuration = 6f; //复活无敌时间
-
-        public const int I_ActionHoldCount = 3;
-        public const float F_MaxActionEnergy = 5f;
+        
         public const float I_MaxArmor = 99999;
-        public const float F_RestoreActionEnergy = 0.001f; //战斗结束时给的能量 //战斗外的默认能量值
-        public const float F_ActionShuffleCost = 2f;
-        public const float F_ActionShuffleCooldown = 6f;
+        public const float F_DamageEnergyTransfer = .005f;
 
         public const float F_AimMovementReduction = .6f;
         public const float F_MovementReductionDuration = .1f;
@@ -106,82 +102,91 @@ namespace GameSetting
         public static float GetResultDifficultyBonus(int _difficulty) =>1f+ _difficulty * .05f;
         public static float GetResultRewardCredits(float _totalScore) => _totalScore;
 
-        public static RangeInt GetTradePrice(enum_Interaction interactType, enum_RarityLevel level)
+        public static RangeInt GetTradePrice(enum_Interaction interactType, enum_ActionRarity actionRarity= enum_ActionRarity.Invalid,enum_WeaponRarity weaponRarity= enum_WeaponRarity.Invalid)
         {
             switch (interactType)
             {
                 default: Debug.LogError("No Coins Can Phrase Here!"); return new RangeInt(0, -1);
                 case enum_Interaction.PickupHealth:
                     return new RangeInt(10, 0);
-                case enum_Interaction.PickupAction:
-                case enum_Interaction.Weapon:
-                    switch (level)
+                case enum_Interaction.Action:
+                    switch (actionRarity)
                     {
                         default: Debug.LogError("Invalid Level!"); return new RangeInt(0, -1);
-                        case enum_RarityLevel.Normal: return new RangeInt(8, 4);
-                        case enum_RarityLevel.OutStanding: return new RangeInt(16, 8);
-                        case enum_RarityLevel.Epic: return new RangeInt(24, 12);
+                        case enum_ActionRarity.Normal: return new RangeInt(8, 4);
+                        case enum_ActionRarity.OutStanding: return new RangeInt(16, 8);
+                        case enum_ActionRarity.Epic: return new RangeInt(24, 12);
+                    }
+                case enum_Interaction.Weapon:
+                    switch (weaponRarity)
+                    {
+                        default:Debug.LogError("Invalid Weapon Rarity");return new RangeInt(0, -1);
+                        case enum_WeaponRarity.Ordinary:
+                            return new RangeInt(1, 5);
+                        case enum_WeaponRarity.Advanced:
+                            return new RangeInt(1, 5);
+                        case enum_WeaponRarity.Rare:
+                            return new RangeInt(1, 5);
+                        case enum_WeaponRarity.Legend:
+                            return new RangeInt(1,5);
                     }
             }
         }
 
         public static List<enum_LevelType> GetRandomLevels(System.Random seed)
         {
-            switch (seed.Next(1, 4))        //1-3
+            switch (seed.Next(1, 5))        //1-4
             {
                 default:
                     return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.End };
-                case 1:
-                case 2:
-                case 3:
-                    return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.BattleActionAcquire, enum_LevelType.BattlePerkUpgrade, enum_LevelType.ActionAdjustment, enum_LevelType.End };
+                case 1: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.BattleActionAcquire, enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.ActionAdjustment, enum_LevelType.End };
+                case 2: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.BattlePerkUpgrade, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.BattleActionAcquire, enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.Battle, enum_LevelType.End };
+                case 3: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.BattlePerkUpgrade, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.BattleActionAcquire, enum_LevelType.Battle, enum_LevelType.ActionAdjustment, enum_LevelType.End };
+                case 4: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.BattlePerkUpgrade, enum_LevelType.Battle, enum_LevelType.ActionAdjustment, enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.Battle, enum_LevelType.End };
             }
         }
 
         public static int GetActionRemovePrice(enum_StageLevel stage, int removeTimes) => 10 * (removeTimes + 1) ;
         public static int GetActionUpgradePrice(enum_StageLevel stage, int upgradeTimes) => 10 * (upgradeTimes + 1) ;
-        
-        public static enum_RarityLevel GetStartWeaponPerkRarity(this enum_StageLevel stageLevel) => (stageLevel - 1).ToRarity();
-        public static enum_RarityLevel GetTradeWeaponPerkRarity(this enum_StageLevel stageLevel) => stageLevel.ToRarity();
-        public static enum_RarityLevel GetBattleTradeActionRarity(this enum_StageLevel stageLevel) => stageLevel.ToRarity() == enum_RarityLevel.Epic ? enum_RarityLevel.Epic : (stageLevel + 1).ToRarity();
+        public static enum_ActionRarity GetBattleTradeActionRarity(this enum_StageLevel stageLevel) => stageLevel.ToRarity() == enum_ActionRarity.Epic ? enum_ActionRarity.Epic : (stageLevel + 1).ToRarity();
         public static StageInteractGenerateData GetInteractGenerate(enum_StageLevel level)
         {
             switch (level)
             {
-                default: return StageInteractGenerateData.Create(new Dictionary<enum_RarityLevel, int>(), new Dictionary<enum_RarityLevel, int>(), new Dictionary<enum_CharacterType, CoinsGenerateData>());
+                default: return new StageInteractGenerateData();
                 case enum_StageLevel.Rookie:
                     return StageInteractGenerateData.Create(
-                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.Normal, 100 }, { enum_RarityLevel.OutStanding, 0 } },    //宝箱等级概率
-                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.Normal, 75 }, { enum_RarityLevel.OutStanding, 25 } },    //交易等级概率
-                    new Dictionary<enum_CharacterType, CoinsGenerateData>() {
-                     { enum_CharacterType.SubHidden, CoinsGenerateData.Create( 0,0, 0, new RangeInt(0, 0)) },     //实体掉落生成概率 类型,血,护甲,金币,金币数值范围
-                     { enum_CharacterType.Fighter, CoinsGenerateData.Create( 8,20, 20, new RangeInt(4, 2)) },
-                     { enum_CharacterType.Shooter_Rookie, CoinsGenerateData.Create( 8,15, 20, new RangeInt(4, 2)) },
-                     { enum_CharacterType.Shooter_Veteran, CoinsGenerateData.Create( 8,15, 30, new RangeInt(3, 3)) },
-                     { enum_CharacterType.AOECaster, CoinsGenerateData.Create( 8,15, 50, new RangeInt(4, 4)) },
-                     { enum_CharacterType.Elite, CoinsGenerateData.Create( 8,15, 100, new RangeInt(6, 6)) }});
+                        new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 50 }, { enum_WeaponRarity.Advanced, 30 }, { enum_WeaponRarity.Rare, 15 }, { enum_WeaponRarity.Legend, 100 } },
+                        new Dictionary<enum_ActionRarity, int>() { { enum_ActionRarity.Normal, 60 }, { enum_ActionRarity.OutStanding, 30 }, { enum_ActionRarity.Epic, 100 } },
+                        PickupGenerateData.Create(0, 50, 50, new RangeInt(10, 5),
+                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 9 }, { enum_ActionRarity.OutStanding, 2.27f }, { enum_ActionRarity.Epic, 0 } },
+                        new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Ordinary, 4.5f },{ enum_WeaponRarity.Advanced,2.27f} }),
+                        PickupGenerateData.Create(100, 100, 50, new RangeInt(10, 5),
+                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 20 }, { enum_ActionRarity.OutStanding, 10 }, { enum_ActionRarity.Epic, 5 } },
+                        new Dictionary<enum_WeaponRarity, float> { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 100 } })
+                        );
                 case enum_StageLevel.Veteran:
                     return StageInteractGenerateData.Create(
-                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.OutStanding, 100 }, { enum_RarityLevel.Epic, 0 } },    //宝箱等级概率
-                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.OutStanding, 75 }, { enum_RarityLevel.Epic, 25 } },    //交易等级概率
-                    new Dictionary<enum_CharacterType, CoinsGenerateData>() {
-                     { enum_CharacterType.SubHidden, CoinsGenerateData.Create( 0,0, 0, new RangeInt(0, 0)) },     //实体掉落生成概率 类型,血,护甲,金币,金币数值范围
-                     { enum_CharacterType.Fighter, CoinsGenerateData.Create( 8,15, 20, new RangeInt(2, 2)) },
-                     { enum_CharacterType.Shooter_Rookie, CoinsGenerateData.Create( 8,15, 20, new RangeInt(2, 2)) },
-                     { enum_CharacterType.Shooter_Veteran, CoinsGenerateData.Create( 8,15, 30, new RangeInt(3, 3)) },
-                     { enum_CharacterType.AOECaster, CoinsGenerateData.Create( 8,15, 50, new RangeInt(4, 4)) },
-                     { enum_CharacterType.Elite, CoinsGenerateData.Create( 8,15, 100, new RangeInt(6, 6)) }});
+                        new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 50 }, { enum_WeaponRarity.Advanced, 30 }, { enum_WeaponRarity.Rare, 15 }, { enum_WeaponRarity.Legend, 5 } },
+                        new Dictionary<enum_ActionRarity, int>() { { enum_ActionRarity.Normal, 60 }, { enum_ActionRarity.OutStanding, 30 }, { enum_ActionRarity.Epic, 10 } },
+                        PickupGenerateData.Create(50, 50, 50, new RangeInt(10, 5),
+                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 20 }, { enum_ActionRarity.OutStanding, 10 }, { enum_ActionRarity.Epic, 5 } },
+                        new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Ordinary, 10 },{ enum_WeaponRarity.Advanced,5} }),
+                        PickupGenerateData.Create(100, 100, 50, new RangeInt(10, 5),
+                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 20 }, { enum_ActionRarity.OutStanding, 10 }, { enum_ActionRarity.Epic, 5 } },
+                        new Dictionary<enum_WeaponRarity, float> { { enum_WeaponRarity.Ordinary, 10 }, { enum_WeaponRarity.Advanced, 5 } })
+                        );
                 case enum_StageLevel.Ranger:
                     return StageInteractGenerateData.Create(
-                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.OutStanding, 0 }, { enum_RarityLevel.Epic, 100 } },    //宝箱等级概率
-                    new Dictionary<enum_RarityLevel, int>() { { enum_RarityLevel.OutStanding, 0 }, { enum_RarityLevel.Epic, 100 } },    //交易等级概率
-                    new Dictionary<enum_CharacterType, CoinsGenerateData>() {
-                     { enum_CharacterType.SubHidden, CoinsGenerateData.Create( 0,0, 0, new RangeInt(0, 0)) },     //实体掉落生成概率 类型,血,护甲,金币,金币数值范围
-                     { enum_CharacterType.Fighter, CoinsGenerateData.Create( 8,15, 20, new RangeInt(2, 2)) },
-                     { enum_CharacterType.Shooter_Rookie, CoinsGenerateData.Create( 8,15, 20, new RangeInt(2, 2)) },
-                     { enum_CharacterType.Shooter_Veteran, CoinsGenerateData.Create( 8,15, 30, new RangeInt(3, 3)) },
-                     { enum_CharacterType.AOECaster, CoinsGenerateData.Create( 8,15, 50, new RangeInt(4, 4)) },
-                     { enum_CharacterType.Elite, CoinsGenerateData.Create( 8,15, 100, new RangeInt(6, 6)) }});
+                        new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 50 }, { enum_WeaponRarity.Advanced, 30 }, { enum_WeaponRarity.Rare, 15 }, { enum_WeaponRarity.Legend, 5 } },
+                        new Dictionary<enum_ActionRarity, int>() { { enum_ActionRarity.Normal, 60 }, { enum_ActionRarity.OutStanding, 30 }, { enum_ActionRarity.Epic, 10 } },
+                        PickupGenerateData.Create(50, 50, 50, new RangeInt(10, 5),
+                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 20 }, { enum_ActionRarity.OutStanding, 10 }, { enum_ActionRarity.Epic, 5 } },
+                        new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Ordinary, 10 },{ enum_WeaponRarity.Advanced,5} }),
+                        PickupGenerateData.Create(100, 100, 50, new RangeInt(10, 5),
+                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 20 }, { enum_ActionRarity.OutStanding, 10 }, { enum_ActionRarity.Epic, 5 } },
+                        new Dictionary<enum_WeaponRarity, float> { { enum_WeaponRarity.Ordinary, 10 }, { enum_WeaponRarity.Advanced, 5 } })
+                        );
             }
         }
 
@@ -200,9 +205,6 @@ namespace GameSetting
                     return true;
             }
         }
-
-        public static readonly RangeInt I_CampActionStorageRequestAmount = new RangeInt(1,4);
-        public static readonly List<int> I_CampActionStorageDefault = new List<int> { 10002, 10004, 10006, 10009, 10011, 10012, 10013, 10014, 10016, 10018, 10021, 10022, 10023, 10024, 10025, 10030, 10033, 10034, 20001, 20004, 20005, 20009, 20012, 30001, 30002, 30004, 30005, 30009, 30014, 30018 };
     }
 
     public static class UIConst
@@ -221,15 +223,16 @@ namespace GameSetting
 
     public static class UIExpression
     {
-        public static Color ActionRarityColor(this enum_RarityLevel level)
+        public static Color ActionTypeColor(this enum_ActionType type)
         {
-            switch (level) {
-                case enum_RarityLevel.Normal:
-                    return Color.green;
-                case enum_RarityLevel.OutStanding:
-                    return Color.blue;
-                case enum_RarityLevel.Epic:
+            switch (type)
+            {
+                case enum_ActionType.Basic:
                     return Color.yellow;
+                case enum_ActionType.Device:
+                    return Color.blue;
+                case enum_ActionType.Equipment:
+                    return Color.green;
                 default:
                     return Color.magenta;
             }
@@ -258,7 +261,7 @@ namespace GameSetting
 
     public static class GameEnumConvertions
     {
-        public static enum_RarityLevel ToRarity(this enum_StageLevel stageLevel) => (enum_RarityLevel)stageLevel;
+        public static enum_ActionRarity ToRarity(this enum_StageLevel stageLevel) => (enum_ActionRarity)stageLevel;
         public static enum_LevelGenerateType ToPrefabType(this enum_LevelType type)
         {
             switch (type)
@@ -351,16 +354,7 @@ namespace GameSetting
                 }
             return spriteName;
         }
-        public static string GetAbilityBackground(bool useable,bool cooldowning)
-        {
-            if (!useable)
-                return "control_ability_invalid";
-
-            if (cooldowning)
-                return "control_ability_bottom_cooldown";
-            else
-                return "control_ability_bottom_activate";
-        }
+        public static string GetAbilityBackground(bool cooldowning)=>cooldowning?"control_ability_bottom_cooldown":"control_ability_bottom_activate";
         public static string GetAbilitySprite(enum_PlayerCharacter character) => "control_ability_" + character;
         public static string GetSpriteName(this enum_PlayerWeapon weapon) => ((int)weapon).ToString();
         public static string GetUIBGColor(this enum_ActionType type)
@@ -378,18 +372,18 @@ namespace GameSetting
         }
 
 
-        public static string GetUIInteractBackground(this enum_UIWeaponRarity rarity) => "interact_" + rarity;
-        public static string GetUIStatusShadowBackground(this enum_UIWeaponRarity rarity) => "weapon_shadow_" + rarity;
-        public static string GetUIGameControlBackground(this enum_UIWeaponRarity rarity) => "gamecontrol_" + rarity;
-        public static string GetUITextColor(this enum_UIWeaponRarity rarity)
+        public static string GetUIInteractBackground(this enum_WeaponRarity rarity) => "interact_" + rarity;
+        public static string GetUIStatusShadowBackground(this enum_WeaponRarity rarity) => "weapon_shadow_" + rarity;
+        public static string GetUIGameControlBackground(this enum_WeaponRarity rarity) => "gamecontrol_" + rarity;
+        public static string GetUITextColor(this enum_WeaponRarity rarity)
         {
             switch (rarity)
             {
                 default: return "FFFFFFFF";
-                case enum_UIWeaponRarity.Ordinary: return "E3E3E3FF";
-                case enum_UIWeaponRarity.Advanced: return "6F8AFFFF";
-                case enum_UIWeaponRarity.Rare: return "C26FFFFF";
-                case enum_UIWeaponRarity.Legend: return "FFCC1FFF";
+                case enum_WeaponRarity.Ordinary: return "E3E3E3FF";
+                case enum_WeaponRarity.Advanced: return "6F8AFFFF";
+                case enum_WeaponRarity.Rare: return "C26FFFFF";
+                case enum_WeaponRarity.Legend: return "FFCC1FFF";
             }
         }
 
@@ -407,7 +401,7 @@ namespace GameSetting
         public static string GetNameLocalizeKey(this InteractBase interact) => "UI_Interact_" + interact.m_InteractType+interact.m_ExternalLocalizeKeyJoint;
         public static string GetIntroLocalizeKey(this InteractBase interact) => "UI_Interact_" + interact.m_InteractType +interact.m_ExternalLocalizeKeyJoint+ "_Intro";
         public static string GetLocalizeKey(this enum_LevelType type) => "UI_TileType_" + type;
-        public static string GetLocalizeKey(this enum_RarityLevel rarity) => "UI_Rarity_" + rarity;
+        public static string GetLocalizeKey(this enum_ActionRarity rarity) => "UI_Rarity_" + rarity;
         public static string GetLocalizeKey(this enum_Option_FrameRate frameRate) => "UI_Option_" + frameRate;
         public static string GetLocalizeKey(this enum_Option_JoyStickMode joystick) => "UI_Option_" + joystick;
         public static string GetLocalizeKey(this enum_Option_LanguageRegion region) => "UI_Option_" + region;
@@ -477,7 +471,6 @@ namespace GameSetting
         UI_PlayerInteractStatus,
         UI_PlayerHealthStatus,
         UI_PlayerAmmoStatus,
-        UI_PlayerBattleActionStatus,
         UI_PlayerExpireListStatus,
         UI_PlayerWeaponStatus,
 
@@ -511,10 +504,10 @@ namespace GameSetting
 
     public enum enum_LevelItemTileOccupy { Invalid = -1, Inner, Outer, Border, }
 
-    public enum enum_CharacterType { Invalid = -1, Fighter = 1, Shooter_Rookie = 2, Shooter_Veteran = 3, AOECaster = 4, Elite = 5, SubHidden = 99 }
+    public enum enum_EnermyType { Invalid = -1, Fighter = 1, Shooter_Rookie = 2, Shooter_Veteran = 3, AOECaster = 4, Elite = 5, SubHidden = 99 }
 
     public enum enum_Interaction { Invalid = -1,
-        GameBegin,Bonfire, ActionChest, ContainerTrade, ContainerBattle, PickupCoin, PickupHealth,PickupHealthPack, PickupArmor, PickupAction, Weapon,PerkUpgrade, ActionAdjustment, Portal, GameEnd,
+        GameBegin,Bonfire, ContainerTrade, ContainerBattle, PickupCoin, PickupHealth,PickupHealthPack, PickupArmor, Action, Weapon,PerkUpgrade, ActionAdjustment, Portal, GameEnd,
         CampBegin,CampStage, CampDifficult,CampFarm,CampAction,CampEnd, }
     
     public enum enum_ProjectileFireType { Invalid = -1, Single = 1, MultipleFan = 2, MultipleLine = 3, };
@@ -535,15 +528,17 @@ namespace GameSetting
 
     public enum enum_ExpireRefreshType { Invalid = -1, AddUp = 1, Refresh = 2,RefreshIdentity=3, }
 
-    public enum enum_RarityLevel { Invalid = -1, Normal = 1, OutStanding = 2, Epic = 3, }
+    public enum enum_ActionRarity { Invalid = -1, Normal = 1, OutStanding = 2, Epic = 3, }
 
-    public enum enum_ActionType { Invalid = -1, Basic = 1,Device=2,Equipment=3, WeaponPerk = 4, }
+    public enum enum_ActionType { Invalid = -1, Basic = 1,Device=2,Equipment=3,}
 
     public enum enum_EffectAttach { Invalid = -1,  Head = 1, Feet = 2, WeaponModel = 3,}
 
     public enum enum_PlayerCharacter {Invalid=-1,Beth=10001,Jason=10002,Charles=10003 }
 
     public enum enum_InteractCharacter { Invalid=-1,Trader=20001,Trainer=20002, }
+
+    public enum enum_WeaponRarity { Invalid = -1, Ordinary = 1, Advanced = 2, Rare = 3, Legend = 4 }
 
     public enum enum_PlayerWeapon
     {
@@ -636,31 +631,34 @@ namespace GameSetting
 
     public enum enum_UITipsType { Invalid=-1,Normal=0,Warning=1,Error=2}
 
-    public enum enum_UIWeaponRarity { Invalid=-1,Ordinary=1, Advanced = 2, Rare =3,Legend=4}
     #endregion
-    
+
     #region Structs
     #region Default Readonly
-    public struct CoinsGenerateData
+    public struct PickupGenerateData
     {
         public int m_HealthRate { get; private set; }
         public int m_ArmorRate { get; private set; }
         public int m_CoinRate { get; private set; }
         public RangeInt m_CoinRange { get; private set; }
-        public static CoinsGenerateData Create(int healthRate, int armorRate, int coinRate, RangeInt coinAmount) => new CoinsGenerateData() { m_HealthRate = healthRate, m_ArmorRate = armorRate, m_CoinRate = coinRate, m_CoinRange = coinAmount };
+        public Dictionary<enum_ActionRarity, float> m_ActionRate { get; private set; }
+        public Dictionary<enum_WeaponRarity, float> m_WeaponRate { get; private set; }
+
+        public bool CanGenerateHealth(enum_EnermyType entityType) => TCommon.RandomPercentage() <= m_HealthRate;
+        public bool CanGenerateArmor(enum_EnermyType entityType) => TCommon.RandomPercentage() <= m_ArmorRate;
+        public int GetCoinGenerate(enum_EnermyType entityType) => TCommon.RandomPercentage() <= m_CoinRate ? m_CoinRange.Random() : -1;
+        public static PickupGenerateData Create(int healthRate, int armorRate, int coinRate, RangeInt coinAmount, Dictionary<enum_ActionRarity, float> _actionRate, Dictionary<enum_WeaponRarity, float> _weaponRate) => new PickupGenerateData() { m_HealthRate = healthRate, m_ArmorRate = armorRate, m_CoinRate = coinRate, m_CoinRange = coinAmount,m_ActionRate=_actionRate,m_WeaponRate=_weaponRate };
     }
 
     public struct StageInteractGenerateData
     {
-        Dictionary<enum_CharacterType, CoinsGenerateData> m_CoinRate;
-        Dictionary<enum_RarityLevel, int> m_ActionRate;
-        Dictionary<enum_RarityLevel, int> m_TradeRate;
-        public bool CanGenerateHealth(enum_CharacterType entityType) => TCommon.RandomPercentage() <= m_CoinRate[entityType].m_HealthRate;
-        public bool CanGenerateArmor(enum_CharacterType entityType) => TCommon.RandomPercentage() <= m_CoinRate[entityType].m_ArmorRate;
-        public int GetCoinGenerate(enum_CharacterType entityType) => TCommon.RandomPercentage() <= m_CoinRate[entityType].m_CoinRate ? m_CoinRate[entityType].m_CoinRange.Random() : -1;
-        public enum_RarityLevel GetActionRarityLevel(System.Random seed) => TCommon.RandomPercentage(m_ActionRate, seed);
-        public enum_RarityLevel GetTradeRarityLevel(System.Random seed) => TCommon.RandomPercentage(m_TradeRate, seed);
-        public static StageInteractGenerateData Create(Dictionary<enum_RarityLevel, int> _actionRate, Dictionary<enum_RarityLevel, int> _tradeRate, Dictionary<enum_CharacterType, CoinsGenerateData> _coinRate) => new StageInteractGenerateData() { m_ActionRate = _actionRate, m_TradeRate = _tradeRate, m_CoinRate = _coinRate };
+        public PickupGenerateData m_NormalPickupData { get; private set; }
+        public PickupGenerateData m_ElitePickupData { get; private set; }
+        Dictionary<enum_WeaponRarity, int> m_TradeWeapon;
+        Dictionary<enum_ActionRarity, int> m_TradeAction;
+        public enum_WeaponRarity GetTradeWeaponRarity(System.Random seed) => TCommon.RandomPercentage(m_TradeWeapon, enum_WeaponRarity.Invalid, seed);
+        public enum_ActionRarity GetTradeActionRarity(System.Random seed) => TCommon.RandomPercentage(m_TradeAction, enum_ActionRarity.Invalid ,seed);
+        public static StageInteractGenerateData Create(Dictionary<enum_WeaponRarity,int> _weaponRate,  Dictionary<enum_ActionRarity, int> _actionRate, PickupGenerateData _normalGenerate,PickupGenerateData _eliteGenerate) => new StageInteractGenerateData() { m_TradeWeapon=_weaponRate,m_TradeAction=_actionRate,m_NormalPickupData=_normalGenerate,m_ElitePickupData=_eliteGenerate};
     }
     #endregion
 
@@ -671,7 +669,6 @@ namespace GameSetting
         public float f_TechPoints;
         public int m_GameDifficulty;
         public int m_DifficultyUnlocked;
-        public List<ActionStorageData> m_StorageActions;
         public enum_PlayerCharacter m_CharacterSelected;
         public enum_PlayerWeapon m_WeaponSelected;
         public int m_StorageRequestStamp;
@@ -682,11 +679,8 @@ namespace GameSetting
             m_GameDifficulty = 1;
             m_DifficultyUnlocked = 1;
             m_StorageRequestStamp = -1;
-            m_StorageActions = new List<ActionStorageData>();
             m_CharacterSelected = enum_PlayerCharacter.Beth;
             m_WeaponSelected = enum_PlayerWeapon.UZI;
-            for (int i = 0; i < GameExpression.I_CampActionStorageDefault.Count; i++)
-                m_StorageActions.Add(ActionStorageData.CreateDefault(GameExpression.I_CampActionStorageDefault[i]));
         }
 
         public void DataRecorrect()
@@ -740,32 +734,34 @@ namespace GameSetting
         public string m_GameSeed;
         public enum_StageLevel m_Stage;
         public int m_coins;
-        public ActionGameData m_weaponAction;
         public List<ActionGameData> m_battleAction;
         public float m_health;
-        public enum_PlayerWeapon m_weapon;
+        public enum_PlayerWeapon m_weapon1,m_weapon2;
+        public ActionGameData m_weaponAction1,m_weaponAction2;
         public enum_PlayerCharacter m_character;
-        public List<ActionStorageData> m_startAction;
         public CBattleSave()
         {
             m_coins = 0;
             m_health = -1;
-            m_weaponAction = new ActionGameData();
+            m_weaponAction1 = new ActionGameData();
             m_battleAction = new List<ActionGameData>();
             m_Stage = enum_StageLevel.Rookie;
             m_GameSeed = DateTime.Now.ToLongTimeString().ToString();
             m_character = GameDataManager.m_GameData.m_CharacterSelected;
-            m_weapon = GameDataManager.m_GameData.m_WeaponSelected;
-            m_startAction = ActionDataManager.CreateRandomPlayerUnlockedAction(GameDataManager.m_GameData.m_StorageActions, 9);
+            m_weapon1 = enum_PlayerWeapon.UMP45;
+            m_weapon2 = enum_PlayerWeapon.Invalid;
         }
         public void Adjust(EntityCharacterPlayer _player, GameLevelManager _level)
         {
             m_coins = _player.m_PlayerInfo.m_Coins;
             m_health = _player.m_Health.m_CurrentHealth;
-            m_weapon = _player.m_WeaponCurrent.m_WeaponInfo.m_Weapon;
-            m_weaponAction = ActionGameData.Create(_player.m_WeaponCurrent.m_WeaponAction);
-            m_battleAction = ActionGameData.Create(_player.m_PlayerInfo.m_BattleAction);
-            m_startAction = _level.m_startAction;
+
+            m_weapon1 = _player.m_Weapon1.m_WeaponInfo.m_Weapon;
+            m_weapon2 = _player.m_Weapon2==null? enum_PlayerWeapon.Invalid: _player.m_Weapon2.m_WeaponInfo.m_Weapon;
+            m_weaponAction1 = ActionGameData.Create(_player.m_Weapon1.m_WeaponAction);
+            m_weaponAction2 = ActionGameData.Create(_player.m_Weapon2==null?null:_player.m_Weapon2.m_WeaponAction);
+            m_battleAction = ActionGameData.Create(_player.m_PlayerInfo.m_ActionEquiping);
+
             m_GameSeed = _level.m_Seed;
             m_Stage = _level.m_GameStage;
         }
@@ -806,17 +802,17 @@ namespace GameSetting
     {
         public bool m_IsNull => m_Index <= 0;
         public int m_Index { get; private set; }
-        public enum_RarityLevel m_Level { get; private set; }
+        public enum_ActionRarity m_Level { get; private set; }
 
         public string ToXMLData() => m_Index.ToString() + "," + m_Level.ToString();
         public ActionGameData(string xmlData)
         {
             string[] split = xmlData.Split(',');
             m_Index = int.Parse(split[0]);
-            m_Level = (enum_RarityLevel)Enum.Parse(typeof(enum_RarityLevel), split[1]);
+            m_Level = (enum_ActionRarity)Enum.Parse(typeof(enum_ActionRarity), split[1]);
         }
 
-        public static ActionGameData Create(int index, enum_RarityLevel level) => new ActionGameData { m_Index = index, m_Level = level };
+        public static ActionGameData Create(int index, enum_ActionRarity level) => new ActionGameData { m_Index = index, m_Level = level };
         public static ActionGameData Create(ActionBase action) => action == null ? new ActionGameData() { m_Index = -1, m_Level = 0 } : new ActionGameData { m_Index = action.m_Index, m_Level = action.m_rarity };
         public static List<ActionGameData> Create(List<ActionBase> actions)
         {
@@ -825,45 +821,7 @@ namespace GameSetting
             return infos;
         }
     }
-
-    public struct ActionStorageData : IXmlPhrase
-    {
-        public int m_Index { get; private set; }
-        public int m_Count { get; private set; }
-        public string ToXMLData() => m_Index.ToString() + "," + m_Count.ToString();
-        public ActionStorageData(string xmlData)
-        {
-            string[] split = xmlData.Split(',');
-            m_Index = int.Parse(split[0]);
-            m_Count = int.Parse(split[1]);
-        }
-        
-        public int OnRequestCount(int count)
-        {
-            m_Count += count;
-            int surplus = 0;
-            if (m_Count >  GameConst.I_CampActionStorageEpicCount)
-            {
-                surplus = m_Count - GameConst.I_CampActionStorageEpicCount;
-                m_Count -= surplus;
-            }
-            return surplus;
-        }
-        public enum_RarityLevel GetRarityLevel()
-        {
-            if (m_Count >= GameConst.I_CampActionStorageEpicCount)
-                return enum_RarityLevel.Epic;
-            else if (m_Count >= GameConst.I_CampActionStorageOutstandingCount)
-                return enum_RarityLevel.OutStanding;
-            else if (m_Count >= GameConst.I_CampActionStorageNormalCount)
-                return enum_RarityLevel.Normal;
-            return enum_RarityLevel.Invalid;
-        } 
-        
-        public static ActionStorageData CreateDefault(int index) => new ActionStorageData { m_Index = index, m_Count = GameConst.I_CampActionStorageNormalCount };
-        public static ActionStorageData CreateNewData(int index) => new ActionStorageData { m_Index = index, m_Count = 0 };
-    }
-
+    
     public struct CampFarmPlotData : IXmlPhrase
     {
         public int m_StartStamp { get; private set; }
@@ -885,6 +843,7 @@ namespace GameSetting
     public struct SWeapon : ISExcel
     {
         int index;
+        int i_rarity;
         float f_fireRate;
         int i_clipAmount;
         float f_spread;
@@ -893,7 +852,6 @@ namespace GameSetting
         float f_weight;
         float f_recoil;
 
-        int i_UIRarity;
         float f_UIDamage;
         float f_UIRPM;
         float f_UIStability;
@@ -901,6 +859,7 @@ namespace GameSetting
 
         public int m_Index => index;
         public enum_PlayerWeapon m_Weapon => (enum_PlayerWeapon)index;
+        public enum_WeaponRarity m_Rarity => (enum_WeaponRarity)i_rarity;
         public float m_FireRate => f_fireRate;
         public int m_ClipAmount => i_clipAmount;
         public float m_Spread => f_spread;
@@ -909,7 +868,6 @@ namespace GameSetting
         public float m_Weight => f_weight;
         public float m_RecoilPerShot =>f_recoil;
 
-        public enum_UIWeaponRarity m_UIRarity => (enum_UIWeaponRarity)i_UIRarity;
         public float m_UIDamage => f_UIDamage;
         public float m_UIRPM => f_UIRPM;
         public float m_UIStability => f_UIStability;
@@ -973,18 +931,18 @@ namespace GameSetting
         public enum_BattleDifficulty m_Difficulty;
         public int m_waveCount;
         public float m_EliteChance => f_eliteChance;
-        public Dictionary<enum_CharacterType, RangeInt> m_EntityGenerate;
+        public Dictionary<enum_EnermyType, RangeInt> m_EntityGenerate;
         public void InitOnValueSet()
         {
             string[] defineSplit = em_defines.Split('_');
             m_Difficulty = (enum_BattleDifficulty)(int.Parse(defineSplit[0]));
             m_waveCount = (int.Parse(defineSplit[1]));
-            m_EntityGenerate = new Dictionary<enum_CharacterType, RangeInt>();
-            m_EntityGenerate.Add(enum_CharacterType.Fighter, ir_fighter);
-            m_EntityGenerate.Add(enum_CharacterType.Shooter_Rookie, ir_shooterRookie);
-            m_EntityGenerate.Add(enum_CharacterType.Shooter_Veteran, ir_shooterVeteran);
-            m_EntityGenerate.Add(enum_CharacterType.AOECaster, ir_aoeCaster);
-            m_EntityGenerate.Add(enum_CharacterType.Elite, ir_elite);
+            m_EntityGenerate = new Dictionary<enum_EnermyType, RangeInt>();
+            m_EntityGenerate.Add(enum_EnermyType.Fighter, ir_fighter);
+            m_EntityGenerate.Add(enum_EnermyType.Shooter_Rookie, ir_shooterRookie);
+            m_EntityGenerate.Add(enum_EnermyType.Shooter_Veteran, ir_shooterVeteran);
+            m_EntityGenerate.Add(enum_EnermyType.AOECaster, ir_aoeCaster);
+            m_EntityGenerate.Add(enum_EnermyType.Elite, ir_elite);
         }
     }
 
@@ -1412,13 +1370,8 @@ namespace GameSetting
         {
             Reset();
             m_DamageBuffOverride = null;
-            TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
         }
-        public virtual void OnDeactivate()
-        {
-            TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
-        }
-        protected virtual void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
+        public virtual void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
         {
             if (amountApply <= 0)
                 return;
@@ -1557,8 +1510,7 @@ namespace GameSetting
         public void TestUseAction(ActionBase targetAction)
         {
             m_ActionEquiping.Traversal((ActionBase action) => { action.OnUseActionElse(targetAction); });
-            if (targetAction.m_ActionType != enum_ActionType.WeaponPerk)
-                GameObjectManager.PlayMuzzle(m_Player.m_EntityID, m_Player.transform.position, Vector3.up, GameExpression.GetActionMuzzleIndex(targetAction.m_ActionType));
+            GameObjectManager.PlayMuzzle(m_Player.m_EntityID, m_Player.transform.position, Vector3.up, GameExpression.GetActionMuzzleIndex(targetAction.m_ActionType));
             OnAddAction(targetAction);
         }
         #endregion
@@ -1577,96 +1529,77 @@ namespace GameSetting
 
         protected Vector3 m_prePos;
 
-        public float m_ActionEnergy { get; private set; } = 0f;
-        List<ActionBase> m_ActionEquiping = new List<ActionBase>();
-        public List<ActionBase> m_BattleAction { get; private set; } = new List<ActionBase>();
-        public List<ActionBase> m_BattleActionPooling { get; private set; } = new List<ActionBase>();
-        public List<ActionBase> m_BattleActionPicking { get; private set; } = new List<ActionBase>();
+        public List<ActionBase> m_ActionEquiping { get; private set; } = new List<ActionBase>();
         ActionDeviceNormal m_CurrentDevice;
-        Action OnActionChange,OnExpireListChange;
-        protected bool b_actionChangeIndicated = true;
-        protected void IndicateBattleActionUI() => b_actionChangeIndicated = false;
-        protected float f_shuffleCheck = -1;
-        protected bool b_shuffling => f_shuffleCheck > 0;
-        public float f_shuffleScale => f_shuffleCheck / GameConst.F_ActionShuffleCooldown;
+        Action OnPlayerActionChange;
         public int m_Coins { get; private set; } = 0;
 
-        public PlayerInfoManager(EntityCharacterPlayer _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange,Action _OnExpireListChange, Action _OnBattleActionsChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
+        public PlayerInfoManager(EntityCharacterPlayer _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange, Action _OnPlayerActionChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
         {
             m_Player = _attacher;
-            OnActionChange = _OnBattleActionsChange;
-            OnExpireListChange = _OnExpireListChange;
+            OnPlayerActionChange = _OnPlayerActionChange;
         }
 
         public override void OnActivate()
         {
             base.OnActivate();
             m_prePos = m_Entity.transform.position;
-            TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
-            TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
-        }
-
-        public override void OnDeactivate()
-        {
-            base.OnDeactivate();
-            TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
-            TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
         }
 
         public override void Tick(float deltaTime)
         {
             base.Tick(deltaTime);
-            if (!b_actionChangeIndicated)
-            {
-                b_actionChangeIndicated = true;
-                OnActionChange?.Invoke();
-            }
 
             UpdateEntityInfo();
             OnPlayerMove(TCommon.GetXZDistance(m_prePos, m_Entity.transform.position));
             m_prePos = m_Entity.transform.position;
-
-            if (b_shuffling)
-            {
-                f_shuffleCheck -= deltaTime;
-                if (f_shuffleCheck <= 0)
-                    OnShuffle();
-            }
         }
 
-        public void InitActionInfo(List<ActionBase> _actions)
+        public void SetInfoData(int coins, List<ActionBase> _actionEquiping)
         {
-            for (int i = 0; i < _actions.Count; i++)
-                AddStoredAction(_actions[i]);
-            m_ActionEnergy = GameConst.F_RestoreActionEnergy;
+            m_Coins = coins;
+            _actionEquiping.Traversal((ActionBase action) => { OnAddAction(action); });
         }
-        
-        public void OnBattleStart()
+
+        public void UpgradeAction(int index)
         {
-            OnShuffle();
+            m_ActionEquiping[index].Upgrade();
         }
-        
-        public void OnBattleFinish()
+        public void RemoveAction(int index)
         {
-            Reset();
-            m_ActionEnergy = GameConst.F_RestoreActionEnergy;
-            m_ActionEquiping.Traversal((ActionBase action) => { if (action.m_ActionType != enum_ActionType.WeaponPerk) action.ForceExpire(); });
-            m_BattleActionPooling.Clear();
+            m_ActionEquiping.RemoveAt(index);
+        }
+        #region Action
+        #region Interact
+        public void DoCopyAction(ActionBase action)
+        {
+            OnAddAction(ActionDataManager.CopyAction(action));
+        }
+
+        public bool m_HaveDevice => m_CurrentDevice != null;
+        public bool TryUseDevice()
+        {
+            if (m_CurrentDevice == null)
+                return false;
+            m_CurrentDevice.OnUseDevice();
             m_CurrentDevice = null;
-            ClearHoldingActions();
+            return true;
         }
 
-        protected override void Reset()
+        public bool CheckRevive(ref RangeFloat reviveAmount)
         {
-            base.Reset();
-            f_shuffleCheck = -1;
+            for (int i = 0; i < m_ActionEquiping.Count; i++)
+            {
+                if (m_ActionEquiping[i].OnCheckRevive(ref reviveAmount))
+                    return true;
+            }
+            return false;
         }
-
-
-        #region Info Update
-        protected void OnUseAcion(ActionBase targetAction)
+        #endregion
+        #region List Update
+        public void OnUseAction(ActionBase targetAction)
         {
-            m_ActionEquiping.Traversal((ActionBase action) => {action.OnUseActionElse(targetAction); });
+            m_ActionEquiping.Traversal((ActionBase action) => { action.OnUseActionElse(targetAction); });
             GameObjectManager.PlayMuzzle(m_Player.m_EntityID, m_Player.transform.position, Vector3.up, GameExpression.GetActionMuzzleIndex(targetAction.m_ActionType));
             OnAddAction(targetAction);
         }
@@ -1676,24 +1609,42 @@ namespace GameSetting
             m_ActionEquiping.Add(targetAction);
             targetAction.OnActivate();
             AddExpire(targetAction);
-            CheckDevice();
         }
 
         protected override void AddExpire(ExpireBase expire)
         {
             base.AddExpire(expire);
-            OnExpireListChange();
+            OnActionChange();
         }
 
         protected override void OnExpireElapsed(ExpireBase expire)
         {
-            ActionBase action = expire as ActionBase;
-            if (action != null)
-                m_ActionEquiping.Remove(action);
             base.OnExpireElapsed(expire);
-            CheckDevice();
-            OnExpireListChange();
+            if (expire.m_ExpireType == enum_ExpireType.Action)
+                m_ActionEquiping.Remove(expire as ActionBase);
+            OnActionChange();
         }
+        void OnActionChange()
+        {
+            CheckDevice();
+            OnPlayerActionChange();
+        }
+        #endregion
+        #region Data Update
+
+        void CheckDevice()
+        {
+            m_CurrentDevice = null;
+            m_ActionEquiping.TraversalBreak((ActionBase action) => {
+                if (action.m_ActionType == enum_ActionType.Device)
+                {
+                    m_CurrentDevice = action as ActionDeviceNormal;
+                    return true;
+                }
+                return false;
+            });
+        }
+
         protected override void OnResetInfo()
         {
             base.OnResetInfo();
@@ -1731,6 +1682,8 @@ namespace GameSetting
             if (F_AimMovementStrictMultiply < 0) F_AimMovementStrictMultiply = 0;
             if (F_RecoilMultiply < 0) F_RecoilMultiply = 0;
         }
+        #endregion
+        #region Action Helpers
         public override DamageDeliverInfo GetDamageBuffInfo()
         {
             ResetEffect(enum_CharacterEffect.Cloak);
@@ -1740,18 +1693,12 @@ namespace GameSetting
             return info;
         }
 
-        public void OnAttachWeapon(WeaponBase weapon)
-        {
-            if(weapon.m_WeaponAction!=null)
-                OnAddAction(weapon.m_WeaponAction);
-        } 
-        public void OnDetachWeapon() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnWeaponDetach(); });
         public void OnPlayerMove(float distance) => m_ActionEquiping.Traversal((ActionBase action) => { action.OnMove(distance); });
         public void OnReloadFinish() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnReloadFinish(); });
 
-        protected void OnEntityActivate(EntityBase targetEntity)
+        public void OnEntityActivate(EntityBase targetEntity)
         {
-            if (targetEntity.m_Controller != enum_EntityController.AI||targetEntity.m_Flag != m_Entity.m_Flag || targetEntity.m_EntityID == m_Entity.m_EntityID)
+            if (targetEntity.m_Controller != enum_EntityController.AI || targetEntity.m_Flag != m_Entity.m_Flag || targetEntity.m_EntityID == m_Entity.m_EntityID)
                 return;
 
             EntityCharacterBase ally = (targetEntity as EntityCharacterBase);
@@ -1759,29 +1706,16 @@ namespace GameSetting
                 ally.m_Health.SetHealthMultiplier(F_AllyHealthMultiplierAdditive);
             m_ActionEquiping.Traversal((ActionBase action) => { action.OnAllyActivate(targetEntity as EntityCharacterBase); });
         }
-        protected void OnCharacterHealthWillChange(DamageInfo damageInfo, EntityCharacterBase damageEntity)
-        {
-            if (damageInfo.m_AmountApply <= 0)
-                return;
 
-            if (damageInfo.m_detail.I_SourceID == m_Entity.m_EntityID)
-            {
-                m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDamageSetEffect(damageEntity, damageInfo); });
-                m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDamageSetDamage(damageEntity, damageInfo); });
-            }
-            else if (damageEntity.m_EntityID == m_Player.m_EntityID)
-            {
-                m_ActionEquiping.Traversal((ActionBase action) => { action.OnBeforeReceiveDamage(damageInfo); });
-            }
-        }
+        public void OnWillDealtDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) { m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDamageSetEffect(damageEntity, damageInfo); action.OnDealtDamageSetDamage(damageEntity, damageInfo); }); }
 
-        protected override void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
+        public void OnWillReceiveDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) { m_ActionEquiping.Traversal((ActionBase action) => { action.OnBeforeReceiveDamage(damageInfo); }); }
+
+        public override void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
         {
             base.OnCharacterHealthChange(damageInfo, damageEntity, amountApply);
             if (damageInfo.m_detail.I_SourceID <= 0)
                 return;
-            OnCharacterHealthChangeAddPlayerEnergy(damageInfo.m_detail.I_SourceID, damageEntity, amountApply);
-
 
             if (damageInfo.m_detail.I_SourceID == m_Player.m_EntityID)
             {
@@ -1797,157 +1731,7 @@ namespace GameSetting
                     m_ActionEquiping.Traversal((ActionBase action) => { action.OnReceiveHealing(damageInfo, amountApply); });
             }
         }
-
-        void OnCharacterHealthChangeAddPlayerEnergy(int sourceID,EntityCharacterBase entity,float amountApply)
-        {
-            if (amountApply<=0||entity.b_isSubEntity||!GameManager.Instance.EntityExists(sourceID))
-                return;
-
-            if (sourceID == m_Player.m_EntityID || GameManager.Instance.GetEntity(sourceID).m_SpawnerEntityID == m_Player.m_EntityID)
-                    AddActionEnergy(GameExpression.GetActionEnergyRevive(amountApply));
-        }
         #endregion
-        #region Action Interact
-        public bool CanCostEnergy(float cost) => m_ActionEnergy >= cost;
-        public bool TryCostEnergy(float cost)
-        {
-            if (!CanCostEnergy(cost))
-            {
-                //To Be Continued
-                return false;
-            }
-
-            m_ActionEnergy -= cost;
-            return true;
-        }
-
-        public void DoCopyAction(ActionBase action)
-        {
-            OnAddAction(ActionDataManager.CopyAction(action));
-            IndicateBattleActionUI();
-        } 
-        public bool TryUsePickingAction(int index)
-        {
-            ActionBase action = m_BattleActionPicking[index];
-            if (b_shuffling || !TryCostEnergy(action.I_Cost))
-                return false;
-
-            OnUseAcion(action);
-            m_BattleActionPicking.RemoveAt(index);
-            RefillHoldingActions();
-            IndicateBattleActionUI();
-            return true;
-        }
-
-        public bool TryShuffle()
-        {
-            if (b_shuffling || !TryCostEnergy(GameConst.F_ActionShuffleCost))
-                return false;
-            f_shuffleCheck = GameConst.F_ActionShuffleCooldown;
-            ClearHoldingActions();
-            return true;
-        }
-
-        void OnShuffle()
-        {
-            m_BattleActionPooling.Clear();
-            for (int i = 0; i < m_BattleAction.Count; i++)
-            {
-                if (m_BattleAction[i].m_ActionType != enum_ActionType.Equipment || m_ActionEquiping.Find(p => p.m_Identity == m_BattleAction[i].m_Identity) == null)
-                    m_BattleActionPooling.Add(m_BattleAction[i]);
-            }
-            ClearHoldingActions();
-            RefillHoldingActions();
-        }
-
-        void RefillHoldingActions()
-        {
-            if (m_BattleActionPooling.Count <= 0 || m_BattleActionPicking.Count >= GameConst.I_ActionHoldCount)
-                return;
-
-            int index = m_BattleActionPooling.RandomIndex();
-            m_BattleActionPicking.Add(ActionDataManager.CopyAction(m_BattleActionPooling[index]));
-            m_BattleActionPooling.RemoveAt(index);
-            RefillHoldingActions();
-        }
-
-        void ClearHoldingActions()
-        {
-            m_BattleActionPicking.Clear();
-            IndicateBattleActionUI();
-        }
-
-        public void UpgradeAllHoldingAction()
-        {
-            if (m_BattleActionPicking.Count == 0)
-                return;
-
-            m_BattleActionPicking.Traversal((ActionBase action) => { action.Upgrade(); });
-            IndicateBattleActionUI();
-        }
-
-        public void OverrideHoldingActionCost(int cost)
-        {
-            m_BattleActionPicking.Traversal((ActionBase action) => { action.OverrideCost(cost); });
-            IndicateBattleActionUI();
-        }
-
-        public void AddStoredAction(ActionBase action)
-        {
-            m_BattleAction.Add(action);
-            IndicateBattleActionUI();
-        }
-
-        public void RemoveStoredAction(int index)
-        {
-            m_BattleAction.RemoveAt(index);
-            IndicateBattleActionUI();
-        }
-
-        public void UpgradeStoredAction(int index)
-        {
-            m_BattleAction[index].Upgrade();
-            IndicateBattleActionUI();
-        }
-
-        public void AddActionEnergy(float amount)
-        {
-            m_ActionEnergy += amount;
-            if (m_ActionEnergy > GameConst.F_MaxActionEnergy)
-                m_ActionEnergy = GameConst.F_MaxActionEnergy;
-        }
-        public bool m_HaveDevice => m_CurrentDevice != null;
-        public bool TryUseDevice()
-        {
-            if (m_CurrentDevice == null)
-                return false;
-            m_CurrentDevice.OnUseDevice();
-            m_CurrentDevice = null;
-            return true;
-        }
-
-        void CheckDevice()
-        {
-            m_CurrentDevice = null;
-            m_ActionEquiping.TraversalBreak((ActionBase action) => {
-                if (action.m_ActionType == enum_ActionType.Device)
-                {
-                    m_CurrentDevice = action as ActionDeviceNormal;
-                    return true;
-                }
-                return false;
-            });
-        }
-
-        public bool CheckRevive(ref RangeFloat reviveAmount)
-        {
-            for(int i=0;i<m_ActionEquiping.Count;i++)
-            {
-                if (m_ActionEquiping[i].OnCheckRevive(ref reviveAmount))
-                    return true;
-            }
-            return false;
-        }
         #endregion
 
         #region CoinInfo
@@ -2090,9 +1874,9 @@ namespace GameSetting
     {
         public override enum_ExpireType m_ExpireType => enum_ExpireType.Action;
         public EntityCharacterPlayer m_ActionEntity { get; private set; }
-        public enum_RarityLevel m_rarity { get; private set; } = enum_RarityLevel.Invalid;
+        public enum_ActionRarity m_rarity { get; private set; } = enum_ActionRarity.Invalid;
         public int m_Identity { get; private set; } = -1;
-        public virtual int I_BaseCost => -1;
+        public virtual int I_Cost => -1;
         public virtual bool B_ActionAble => true;
         public virtual enum_ActionType m_ActionType => enum_ActionType.Invalid;
         public virtual float Value1 => 0;
@@ -2108,23 +1892,19 @@ namespace GameSetting
         public virtual bool B_ProjectilePenetrade => false;
         public virtual float F_AllyHealthMultiplierAdditive => 0;
         public virtual float F_Duration => 0;
-        protected ActionBase(int _identity,enum_RarityLevel _level)
+        protected ActionBase(int _identity,enum_ActionRarity _level)
         {
             m_Identity = _identity;
             m_rarity = _level;
-            m_CostOverride = -1;
         }
         public void Activate(EntityCharacterPlayer _actionEntity, Action<ExpireBase> OnExpired) { m_ActionEntity = _actionEntity; OnActivate(F_Duration, OnExpired); }
-        public bool B_Upgradable => m_rarity < enum_RarityLevel.Epic;
+        public bool B_Upgradable => m_rarity < enum_ActionRarity.Epic;
         public void Upgrade()
         {
-            if (m_rarity < enum_RarityLevel.Epic)
+            if (m_rarity < enum_ActionRarity.Epic)
                 m_rarity++;
         }
-
-        public int m_CostOverride { get; private set; } = -1;
-        public int I_Cost => m_CostOverride == -1 ? I_BaseCost : m_CostOverride;
-        public void OverrideCost(int overrideCost)=> m_CostOverride = overrideCost;
+        
         #region Interact
         public virtual void OnActivate() { }
         public virtual void OnUseDevice() { }
@@ -2137,7 +1917,6 @@ namespace GameSetting
         public virtual void OnReceiveHealing(DamageInfo info, float applyAmount)  {}
         public virtual void OnReloadFinish() { }
         public virtual void OnFire(int identity) { }
-        public virtual void OnWeaponDetach() { }
         public virtual void OnMove(float distsance) { }
         public virtual void OnAllyActivate(EntityCharacterBase ally) { }
         public virtual bool OnCheckRevive(ref RangeFloat amount) { return false; }
@@ -2711,9 +2490,9 @@ namespace GameSetting
             transform = _transform;
             m_Grid = new ObjectPoolSimple<int, Transform>(transform.Find("GridItem").gameObject,transform,(Transform trans,int identity)=>trans,(Transform trans)=>trans);
             m_Grid.ClearPool();
-            TCommon.TraversalEnum((enum_RarityLevel rarity) => { m_Levels.Add((int)rarity,new RarityLevel( m_Grid.AddItem((int)rarity))); });
+            TCommon.TraversalEnum((enum_ActionRarity rarity) => { m_Levels.Add((int)rarity,new RarityLevel( m_Grid.AddItem((int)rarity))); });
         }
-        public void SetRarity(enum_RarityLevel level)
+        public void SetRarity(enum_ActionRarity level)
         {
             m_Levels.Traversal((int index, RarityLevel rarity) => rarity.SetHighlight(index <= (int)level));
         }

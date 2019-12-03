@@ -18,7 +18,10 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public Transform tf_WeaponAim { get; private set; }
     protected Transform tf_WeaponHoldRight, tf_WeaponHoldLeft;
     protected SFXAimAssist m_Assist = null;
-    public WeaponBase m_WeaponCurrent { get; private set; } = null;
+    protected bool m_currentWeaponFirst { get; private set; } = false;
+    public WeaponBase m_WeaponCurrent => m_currentWeaponFirst ? m_Weapon1 : m_Weapon2;
+    public WeaponBase m_Weapon1 { get; private set; }
+    public WeaponBase m_Weapon2 { get; private set; }
     public InteractBase m_Interact { get; private set; }
     public float m_EquipmentDistance { get; private set; }
     public Transform tf_UIStatus { get; private set; }
@@ -39,7 +42,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     protected override CharacterInfoManager GetEntityInfo()
     {
-        m_PlayerInfo = new PlayerInfoManager(this, m_HitCheck.TryHit, OnExpireChange,OnExpireListChange, OnBattleActionsChange);
+        m_PlayerInfo = new PlayerInfoManager(this, m_HitCheck.TryHit, OnExpireChange,OnPlayerActionChange);
         return m_PlayerInfo;
     }
 
@@ -61,11 +64,15 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         base.OnPoolItemEnable();
         SetBinding(true);
+        TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
+        TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
     }
     protected override void OnPoolItemDisable()
     {
         base.OnPoolItemDisable();
         SetBinding(false);
+        TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
+        TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
     }
     public void SetSpawnPosRot(Vector3 position,Quaternion rotation)
     {
@@ -74,11 +81,13 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         CameraController.Instance.SetCameraRotation(-1,transform.rotation.eulerAngles.y);
     }
 
-    public void SetPlayerInfo(int coins,float health, List<ActionBase> storedActions)
+    public void SetPlayerInfo(CBattleSave m_saveData)
     {
-        m_PlayerInfo.OnCoinsReceive(coins);
-        m_PlayerInfo.InitActionInfo(storedActions);
-        m_Health.OnRevive(health>0?health:I_MaxHealth,I_DefaultArmor);
+        m_PlayerInfo.SetInfoData(m_saveData.m_coins, ActionDataManager.CreateActions(m_saveData.m_battleAction));
+        m_Health.OnRevive(m_saveData.m_health>0?m_saveData.m_health:I_MaxHealth,I_DefaultArmor);
+        ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_weapon1,ActionDataManager.CreateAction( m_saveData.m_weaponAction1)));
+        if (m_saveData.m_weapon2 != enum_PlayerWeapon.Invalid)
+            ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_weapon2, ActionDataManager.CreateAction(m_saveData.m_weaponAction2)));
     }
 
     protected override void OnDead()
@@ -92,7 +101,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected override void OnRevive()
     {
         base.OnRevive();
-        m_Ability.SetEnable(true);
         m_Assist.SetEnable(true);
         m_Animator.OnRevive();
 
@@ -104,21 +112,11 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (m_Assist)
             m_Assist.Recycle();
     }
-
-
-    protected override void OnBattleStart()
-    {
-        base.OnBattleStart();
-        m_PlayerInfo.OnBattleStart();
-        m_Ability.SetEnable(true);
-    }
-
+    
     protected override void OnBattleFinish()
     {
         base.OnBattleFinish();
         m_Health.OnRestoreArmor();
-        m_PlayerInfo.OnBattleFinish();
-        m_Ability.SetEnable(false);
     }
 
     void OnMainDown(bool down)
@@ -137,10 +135,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             }
         }
 
-        if (m_WeaponCurrent != null)
-            m_WeaponCurrent.Trigger(down);
+        OnWeaponTrigger(down);
     }
-    
     protected override void OnAliveTick(float deltaTime)
     {
         base.OnAliveTick(deltaTime);
@@ -158,6 +154,20 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     #region WeaponControll
     public bool m_weaponCanFire { get; private set; } = false;
+
+    void OnWeaponTrigger(bool down)
+    {
+        if (m_Weapon1) m_Weapon1.Trigger(down);
+        if (m_Weapon2) m_Weapon2.Trigger(down);
+    }
+
+    void OnWeaponEnergy(float damage)
+    {
+        float energy = damage * GameConst.F_DamageEnergyTransfer;
+        if (m_Weapon1) m_Weapon1.OnReceiveEnergy(energy);
+        if (m_Weapon2) m_Weapon2.OnReceiveEnergy(energy);
+    }
+
     void OnReloadClick()
     {
         if (m_WeaponCurrent == null)
@@ -186,26 +196,50 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     public WeaponBase ObtainWeapon(WeaponBase _weapon)
     {
-        WeaponBase previousWeapon = m_WeaponCurrent;
-
-        if (m_WeaponCurrent)
+        WeaponBase previousWeapon=null;
+        if (m_Weapon1 == null)
+        {
+            m_Weapon1 = _weapon;
+            SwapWeapon(true);
+        }
+        else if (m_Weapon2 == null)
+        {
+            m_Weapon2 = _weapon;
+            SwapWeapon(false);
+        }
+        else
         {
             m_WeaponCurrent.OnDetach();
-            m_PlayerInfo.OnDetachWeapon();
+            previousWeapon = m_WeaponCurrent;
+            if (m_currentWeaponFirst)
+                m_Weapon1 = _weapon;
+            else
+                m_Weapon2 = _weapon;
         }
-        m_WeaponCurrent = _weapon;
-        m_WeaponCurrent.OnAttach(this, _weapon.B_AttachLeft ? tf_WeaponHoldLeft : tf_WeaponHoldRight, OnFireAddRecoil, OnReload);
-        m_PlayerInfo.OnAttachWeapon(m_WeaponCurrent);
-        m_Animator.OnActivate(m_WeaponCurrent.E_Anim);
-
-        if (m_Assist) m_Assist.Recycle();
-        m_Assist = GameObjectManager.SpawnSFX<SFXAimAssist>(101,tf_WeaponAim.position,tf_Weapon.forward);
-        m_Assist.Play(m_EntityID, tf_WeaponAim, tf_WeaponAim, GameConst.F_AimAssistDistance, GameLayer.Mask.I_All, (Collider collider) => { return GameManager.B_CanSFXHitTarget(collider.Detect(), m_EntityID); });
-
+        _weapon.OnAttach(this, m_WeaponCurrent.B_AttachLeft ? tf_WeaponHoldLeft : tf_WeaponHoldRight, OnFireAddRecoil, OnReload);
         OnWeaponStatus();
         return previousWeapon;
     }
 
+    public void OnSwapClick()
+    {
+        if (!m_Weapon2)
+            return;
+        SwapWeapon(!m_currentWeaponFirst);
+    }
+
+    void SwapWeapon(bool isFirst)
+    {
+        if(m_WeaponCurrent)
+            m_WeaponCurrent.OnShow(false);
+        m_currentWeaponFirst = isFirst;
+        m_WeaponCurrent.OnShow(true);
+        m_Animator.OnActivate(m_WeaponCurrent.E_Anim);
+        if (m_Assist) m_Assist.Recycle();
+        m_Assist = GameObjectManager.SpawnSFX<SFXAimAssist>(101, tf_WeaponAim.position, tf_Weapon.forward);
+        m_Assist.Play(m_EntityID, tf_WeaponAim, tf_WeaponAim, GameConst.F_AimAssistDistance, GameLayer.Mask.I_All, (Collider collider) => { return GameManager.B_CanSFXHitTarget(collider.Detect(), m_EntityID); });
+        OnWeaponStatus();
+    }
     #endregion
     #region CharacterControll
     protected Vector2 m_MoveAxisInput { get; private set; }
@@ -259,38 +293,23 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     public class CharacterAbility
     {
-        public int m_Times { get; private set; } = -1;
         public float m_CooldownScale => m_abilityCooldownLeft / m_baseAbilityCooldown;
         public bool m_Cooldowning => m_abilityCooldownLeft > 0f;
-        public bool m_Useable => m_Times != 0&&enable;
-        public bool m_RunsOutable => m_baseAbilityTimes > 0;
-        public bool enable { get; private set; } = false;
         protected float m_abilityCooldownLeft = 0f;
 
         protected float m_baseAbilityCooldown;
-        protected int m_baseAbilityTimes;
         Action OnAbilityTrigger;
         public CharacterAbility(int abilityTime, float abilityCoolDown, Action _OnAbilityTrigger)
         {
             OnAbilityTrigger = _OnAbilityTrigger;
             m_baseAbilityCooldown = abilityCoolDown;
-            m_baseAbilityTimes = abilityTime;
-            SetEnable(false);
         }
-
-        public void SetEnable(bool enable)
-        {
-            this.enable = enable;
-            m_abilityCooldownLeft = 0;
-            m_Times = m_RunsOutable ? m_baseAbilityTimes : -1;
-        }
-
+        
         public void OnAbilityClick()
         {
-            if (!m_Useable||m_Cooldowning)
+            if (m_Cooldowning)
                 return;
             m_abilityCooldownLeft = m_baseAbilityCooldown;
-            m_Times--;
             OnAbilityTrigger();
         }
 
@@ -342,22 +361,49 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     }
     #endregion
     #region Action
-    public void TestUseAction(int actionIndex,enum_RarityLevel level)
+    public void OnPickupAction(ActionBase action)
     {
-        m_PlayerInfo.TestUseAction(ActionDataManager.CreateAction(actionIndex,level));
+        switch (action.m_ActionType)
+        {
+            case enum_ActionType.Basic:
+            case enum_ActionType.Device:
+                m_WeaponCurrent.SetWeaponAction(action);
+                OnWeaponStatus();
+                break;
+            case enum_ActionType.Equipment:
+                m_PlayerInfo.OnUseAction( action);
+                break;
+        }
     }
-    public void UpgradeWeaponPerk(ActionBase invalidPerk)
+    public void OnWeaponActionClick(bool isFirstWeapon)
     {
-        if (m_WeaponCurrent.m_WeaponAction == null)
+        ActionBase targetAction = isFirstWeapon ? m_Weapon1.TryUseAction() : m_Weapon2.TryUseAction();
+        if(targetAction!=null) m_PlayerInfo.OnUseAction(ActionDataManager.CopyAction(targetAction));
+        Debug.Log(m_Weapon1.m_ActionScale + " " + m_Weapon2.m_ActionScale);
+    }
+    public void UpgradeActionPerk()
+    {
+
+    }
+
+    protected void OnCharacterHealthWillChange(DamageInfo damageInfo, EntityCharacterBase damageEntity)
+    {
+        if (damageInfo.m_AmountApply <= 0)
+            return;
+
+        if (damageInfo.m_detail.I_SourceID == m_EntityID)
         {
-            m_WeaponCurrent.OnSpawn(invalidPerk);
-            m_PlayerInfo.OnAttachWeapon(m_WeaponCurrent);
+            m_PlayerInfo.OnWillDealtDamage(damageInfo,damageEntity);
+            
         }
-        else
+        else if (damageEntity.m_EntityID == m_EntityID)
         {
-            m_WeaponCurrent.m_WeaponAction.Upgrade();
+            m_PlayerInfo.OnWillReceiveDamage(damageInfo, damageEntity);
         }
-        OnWeaponStatus();
+    }
+    protected void OnEntityActivate(EntityBase targetEntity)
+    {
+        m_PlayerInfo.OnEntityActivate(targetEntity);
     }
     #endregion
     #region UI Indicator
@@ -384,13 +430,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerWeaponStatus, m_WeaponCurrent);
     }
-    protected void OnExpireListChange()
+    protected void OnPlayerActionChange()
     {
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerExpireListStatus, m_PlayerInfo);
-    }
-    protected void OnBattleActionsChange()
-    {
-        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerBattleActionStatus, m_PlayerInfo);
     }
     protected override void OnHealthStatus(enum_HealthChangeMessage type)
     {
@@ -435,7 +477,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void SetBinding(bool on)
     {
         if (on)
-            UIManager.Instance.m_CharacterControl.DoBinding(this, OnMovementDelta, OnRotateDelta, OnReloadClick, OnMainDown,OnAbilityClick);
+            UIManager.Instance.m_CharacterControl.DoBinding(this, OnMovementDelta, OnRotateDelta,  OnMainDown, OnSwapClick, OnReloadClick, OnWeaponActionClick, OnAbilityClick);
         else
             UIManager.Instance.m_CharacterControl.RemoveBinding();
     }

@@ -14,14 +14,7 @@ public class UIC_CharacterStatus : UIControlBase
 
     Transform tf_ExpireData;
     UIT_GridControllerGridItem<UIGI_ExpireInfoItem> m_ExpireGrid;
-
-    Transform tf_ExtraControl;
-    Transform tf_ActionControl;
-    TSpecialClasses.AnimationControlBase m_ActionControlAnim;
-    Button  btn_ActionShuffle;
-    Image img_ShuffleFill;
-    UIT_GridControllerGridItem<UIGI_ActionItemHold> m_ActionGrid;
-
+    
     RectTransform rtf_StatusData;
     GridLayoutGroup m_AmmoLayout;
     Transform tf_AmmoData;
@@ -49,15 +42,7 @@ public class UIC_CharacterStatus : UIControlBase
         tf_Container = transform.Find("Container");
 
         img_Dying = tf_Container.Find("Dying").GetComponent<RawImage>();
-
-        tf_ExtraControl = tf_Container.Find("ExtraControl");
-        tf_ActionControl = tf_ExtraControl.Find("Action");
-        m_ActionControlAnim = new AnimationControlBase(tf_ActionControl.GetComponent<Animation>());
-        m_ActionGrid = new UIT_GridControllerGridItem<UIGI_ActionItemHold>(tf_ActionControl.Find("ActionGrid"));
-        btn_ActionShuffle = tf_ActionControl.Find("ActionShuffle").GetComponent<Button>();
-        btn_ActionShuffle.onClick.AddListener(OnActionShuffleClick);
-        img_ShuffleFill = btn_ActionShuffle.transform.Find("ShuffleFill").GetComponent<Image>();
-
+        
         rtf_StatusData = tf_Container.Find("StatusData").GetComponent<RectTransform>();
         tf_AmmoData = rtf_StatusData.Find("Container/AmmoData");
         m_AmmoGridWidth = tf_AmmoData.GetComponent<RectTransform>().sizeDelta.x;
@@ -91,12 +76,8 @@ public class UIC_CharacterStatus : UIControlBase
         TBroadCaster<enum_BC_UIStatus>.Add<EntityHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<WeaponBase>(enum_BC_UIStatus.UI_PlayerAmmoStatus, OnAmmoStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerExpireListStatus, OnExpireListStatus);
-        TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerBattleActionStatus, OnBattleActionStatus);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
-
-        SetActionShow(false,false);
+        
         img_Dying.SetActivate(false);
         m_dying = false;
     }
@@ -108,16 +89,12 @@ public class UIC_CharacterStatus : UIControlBase
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<WeaponBase>(enum_BC_UIStatus.UI_PlayerAmmoStatus, OnAmmoStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerExpireListStatus, OnExpireListStatus);
-        TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerBattleActionStatus, OnBattleActionStatus);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
     }
 
     public UIC_CharacterStatus SetInGame(bool inGame)
     {
         tf_MapData.SetActivate(inGame);
-        tf_ExtraControl.SetActivate(inGame);
         return this;
     }
 
@@ -135,23 +112,7 @@ public class UIC_CharacterStatus : UIControlBase
         m_MapNext.SetActivate(!finalLevel);
         m_MapTitle.formatText("UI_Map_Title",string.Format("<color=#FFDA6B>{0}</color>", (int)(GameManager.Instance.m_GameLevel.m_GameStage-1)*10+LevelManager.Instance.m_currentLevelIndex+1));
     }
-
-    void OnBattleStart()
-    {
-        SetActionShow(true, true);
-    }
-    void OnBattleFinish()
-    {
-        SetActionShow(false, true);
-    }
-
-    void SetActionShow(bool show,bool animate)
-    {
-        m_ActionGrid.ClearGrid();
-        if (animate) m_ActionControlAnim.Play(show);
-        else m_ActionControlAnim.SetPlayPosition(show);
-        btn_ActionShuffle.interactable = show;
-    }
+    
     
     private void Update()
     {
@@ -179,8 +140,6 @@ public class UIC_CharacterStatus : UIControlBase
             m_dying = dying;
             img_Dying.SetActivate(m_dying);
         }
-
-        img_ShuffleFill.fillAmount = m_Player.m_PlayerInfo.f_shuffleScale;
     }
 
     void OnHealthStatus(EntityHealth _healthManager)
@@ -233,18 +192,7 @@ public class UIC_CharacterStatus : UIControlBase
             img_ReloadFill.color = Color.Lerp(Color.red, Color.white, weaponInfo.F_ReloadStatus);
         }
     }
-
-    void OnBattleActionStatus(PlayerInfoManager playerInfo)
-    {
-        m_ActionGrid.ClearGrid();
-        for (int i = 0; i < playerInfo.m_BattleActionPicking.Count; i++)
-            m_ActionGrid.AddItem(i).SetInfo(playerInfo,playerInfo.m_BattleActionPicking[i],OnActionClick, OnActionPressDuration);
-    }
-
-    void OnActionClick(int index)=> m_Player.m_PlayerInfo.TryUsePickingAction(index);
-    void OnActionPressDuration()=> GameUIManager.Instance.ShowCharacterEnergyPage<UI_ActionBattle>(true,0f).Show(m_Player.m_PlayerInfo) ;
-    void OnActionShuffleClick()=>m_Player.m_PlayerInfo.TryShuffle();
-
+    
     void OnExpireListStatus(PlayerInfoManager expireInfo)
     {
         m_ExpireGrid.ClearGrid();
@@ -253,10 +201,6 @@ public class UIC_CharacterStatus : UIControlBase
             if (expireInfo.m_Expires[i].m_ExpireType != enum_ExpireType.Action)
                 continue;
             ActionBase action = (expireInfo.m_Expires[i] as ActionBase);
-
-            if (action .m_ActionType == enum_ActionType.WeaponPerk)
-                    continue;
-
             m_ExpireGrid.AddItem(i).SetInfo(action);
         }
     }

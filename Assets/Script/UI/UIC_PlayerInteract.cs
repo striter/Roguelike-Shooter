@@ -91,9 +91,9 @@ public class UIC_PlayerInteract : UIControlBase {
                     weaponOn = true;
                     weaponActionOn = true;
                     WeaponBase weapon = (interactInfo as InteractWeapon).m_Weapon;
-                    m_WeaponBackground.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_UIRarity.GetUIInteractBackground()];
+                    m_WeaponBackground.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Rarity.GetUIInteractBackground()];
                     m_WeaponImage.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Weapon.GetSpriteName()];
-                    m_WeaponName.color = TCommon.GetHexColor(weapon.m_WeaponInfo.m_UIRarity.GetUITextColor());
+                    m_WeaponName.color = TCommon.GetHexColor(weapon.m_WeaponInfo.m_Rarity.GetUITextColor());
                     m_WeaponName.localizeKey = weapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
 
                     m_WeaponActionHUD.SetInfo(weapon.m_WeaponAction);
@@ -103,10 +103,10 @@ public class UIC_PlayerInteract : UIControlBase {
                         m_Intro.localizeKey = "UI_Weapon_ActionInvalidIntro";
                 }
                 break;
-            case enum_Interaction.PickupAction:
+            case enum_Interaction.Action:
                 {
                     actionOn = true;
-                    InteractPickupAction action = interactInfo as InteractPickupAction;
+                    InteractAction action = interactInfo as InteractAction;
                     m_Action.SetBaseInfo(action.m_Action);
                     action.m_Action.SetActionIntro(m_Intro);
                 }
