@@ -1397,7 +1397,7 @@ namespace GameSetting
             b_expireUpdated = true;
         }
 
-        protected virtual void AddExpire(ExpireBase expire)
+        protected virtual void OnAddExpire(ExpireBase expire)
         {
             m_Expires.Add(expire);
             UpdateEntityInfo();
@@ -1417,7 +1417,7 @@ namespace GameSetting
             switch (buff.m_RefreshType)
             {
                 case enum_ExpireRefreshType.AddUp:
-                    AddExpire(buff);
+                    OnAddExpire(buff);
                     break;
                 case enum_ExpireRefreshType.Refresh:
                     {
@@ -1425,7 +1425,7 @@ namespace GameSetting
                         if (buffRefresh != null)
                             RefreshExpire(buffRefresh);
                         else
-                            AddExpire(buff);
+                            OnAddExpire(buff);
                     }
                     break;
                 case enum_ExpireRefreshType.RefreshIdentity:
@@ -1434,7 +1434,7 @@ namespace GameSetting
                         if (buffRefresh != null)
                             RefreshExpire(buffRefresh);
                         else
-                            AddExpire(buff);
+                            OnAddExpire(buff);
                     }
                     break;
             }
@@ -1565,7 +1565,6 @@ namespace GameSetting
         {
             m_Coins = coins;
             _actionEquiping.Traversal((ActionBase action) => {OnAddAction(action); });
-            OnPlayerActionChange();
         }
 
         public void UpgradeAction(int index)
@@ -1615,14 +1614,13 @@ namespace GameSetting
             targetAction.Activate(m_Player, OnExpireElapsed);
             m_ActionEquiping.Add(targetAction);
             targetAction.OnActivate();
-            AddExpire(targetAction);
-            CheckDevice();
+            OnAddExpire(targetAction);
         }
 
-        protected override void AddExpire(ExpireBase expire)
+        protected override void OnAddExpire(ExpireBase expire)
         {
-            base.AddExpire(expire);
-            OnPlayerActionChange();
+            base.OnAddExpire(expire);
+            OnActionChange();
         }
 
         protected override void OnExpireElapsed(ExpireBase expire)
@@ -1630,6 +1628,10 @@ namespace GameSetting
             base.OnExpireElapsed(expire);
             if (expire.m_ExpireType == enum_ExpireType.Action)
                 m_ActionEquiping.Remove(expire as ActionBase);
+            OnActionChange();
+        }
+        void OnActionChange()
+        {
             CheckDevice();
             OnPlayerActionChange();
         }
