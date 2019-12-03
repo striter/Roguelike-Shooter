@@ -360,6 +360,24 @@ public static class TCommon
         });
         return targetLevel;
     }
+    public static T RandomPercentage<T>(Dictionary<T, float> percentageRate, T invalid = default(T), System.Random seed = null)
+    {
+        float value = RandomPercentage(seed);
+        T targetLevel = invalid;
+        float totalAmount = 0;
+        bool marked = false; ;
+        percentageRate.Traversal((T temp, float amount) => {
+            if (marked)
+                return;
+            totalAmount += amount;
+            if (totalAmount >= value)
+            {
+                targetLevel = temp;
+                marked = true;
+            }
+        });
+        return targetLevel;
+    }
     public static Vector3 RandomXZSphere(float radius) => Vector3.forward.RotateDirection(Vector3.up, UnityEngine.Random.Range(0, 360)) * UnityEngine.Random.Range(0, radius);
     public static Vector2 RandomVector2(float offset) => new Vector2(UnityEngine.Random.Range(-offset, offset), UnityEngine.Random.Range(-offset, offset));
     public static Vector3 RandomVector3(float offset) => new Vector3(UnityEngine.Random.Range(-offset, offset), UnityEngine.Random.Range(-offset, offset), UnityEngine.Random.Range(-offset, offset));
