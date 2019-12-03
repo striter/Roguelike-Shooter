@@ -21,13 +21,9 @@ namespace GameSetting
         public const float F_EntityDeadFadeTime = 3f;
         public const float F_PlayerReviveCheckAfterDead = 1.5f;
         public const float F_PlayerReviveBuffDuration = 6f; //复活无敌时间
-
-        public const int I_ActionHoldCount = 3;
-        public const float F_MaxActionEnergy = 5f;
+        
         public const float I_MaxArmor = 99999;
-        public const float F_RestoreActionEnergy = 0.001f; //战斗结束时给的能量 //战斗外的默认能量值
-        public const float F_ActionShuffleCost = 2f;
-        public const float F_ActionShuffleCooldown = 6f;
+        public const float F_DamageEnergyTransfer = .005f;
 
         public const float F_AimMovementReduction = .6f;
         public const float F_MovementReductionDuration = .1f;
@@ -1374,13 +1370,8 @@ namespace GameSetting
         {
             Reset();
             m_DamageBuffOverride = null;
-            TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
         }
-        public virtual void OnDeactivate()
-        {
-            TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
-        }
-        protected virtual void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
+        public virtual void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
         {
             if (amountApply <= 0)
                 return;
@@ -1537,31 +1528,22 @@ namespace GameSetting
         protected float F_DamageAdditive = 0f;
 
         protected Vector3 m_prePos;
-        
+
         public List<ActionBase> m_ActionEquiping { get; private set; } = new List<ActionBase>();
         ActionDeviceNormal m_CurrentDevice;
         Action OnPlayerActionChange;
         public int m_Coins { get; private set; } = 0;
 
-        public PlayerInfoManager(EntityCharacterPlayer _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange,Action _OnPlayerActionChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
+        public PlayerInfoManager(EntityCharacterPlayer _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange, Action _OnPlayerActionChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
         {
             m_Player = _attacher;
             OnPlayerActionChange = _OnPlayerActionChange;
         }
-        
+
         public override void OnActivate()
         {
             base.OnActivate();
             m_prePos = m_Entity.transform.position;
-            TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
-            TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
-        }
-
-        public override void OnDeactivate()
-        {
-            base.OnDeactivate();
-            TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
-            TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
         }
 
         public override void Tick(float deltaTime)
@@ -1573,10 +1555,10 @@ namespace GameSetting
             m_prePos = m_Entity.transform.position;
         }
 
-        public void SetInfoData(int coins,List<ActionBase> _actionEquiping)
+        public void SetInfoData(int coins, List<ActionBase> _actionEquiping)
         {
             m_Coins = coins;
-            _actionEquiping.Traversal((ActionBase action) => {OnAddAction(action); });
+            _actionEquiping.Traversal((ActionBase action) => { OnAddAction(action); });
         }
 
         public void UpgradeAction(int index)
@@ -1619,7 +1601,7 @@ namespace GameSetting
         {
             m_ActionEquiping.Traversal((ActionBase action) => { action.OnUseActionElse(targetAction); });
             GameObjectManager.PlayMuzzle(m_Player.m_EntityID, m_Player.transform.position, Vector3.up, GameExpression.GetActionMuzzleIndex(targetAction.m_ActionType));
-            OnAddAction( targetAction);
+            OnAddAction(targetAction);
         }
         protected void OnAddAction(ActionBase targetAction)
         {
@@ -1710,13 +1692,13 @@ namespace GameSetting
             m_ActionEquiping.Traversal((ActionBase action) => { action.OnFire(info.I_IdentiyID); });
             return info;
         }
-        
+
         public void OnPlayerMove(float distance) => m_ActionEquiping.Traversal((ActionBase action) => { action.OnMove(distance); });
         public void OnReloadFinish() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnReloadFinish(); });
 
-        protected void OnEntityActivate(EntityBase targetEntity)
+        public void OnEntityActivate(EntityBase targetEntity)
         {
-            if (targetEntity.m_Controller != enum_EntityController.AI||targetEntity.m_Flag != m_Entity.m_Flag || targetEntity.m_EntityID == m_Entity.m_EntityID)
+            if (targetEntity.m_Controller != enum_EntityController.AI || targetEntity.m_Flag != m_Entity.m_Flag || targetEntity.m_EntityID == m_Entity.m_EntityID)
                 return;
 
             EntityCharacterBase ally = (targetEntity as EntityCharacterBase);
@@ -1724,23 +1706,12 @@ namespace GameSetting
                 ally.m_Health.SetHealthMultiplier(F_AllyHealthMultiplierAdditive);
             m_ActionEquiping.Traversal((ActionBase action) => { action.OnAllyActivate(targetEntity as EntityCharacterBase); });
         }
-        protected void OnCharacterHealthWillChange(DamageInfo damageInfo, EntityCharacterBase damageEntity)
-        {
-            if (damageInfo.m_AmountApply <= 0)
-                return;
 
-            if (damageInfo.m_detail.I_SourceID == m_Entity.m_EntityID)
-            {
-                m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDamageSetEffect(damageEntity, damageInfo); });
-                m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDamageSetDamage(damageEntity, damageInfo); });
-            }
-            else if (damageEntity.m_EntityID == m_Player.m_EntityID)
-            {
-                m_ActionEquiping.Traversal((ActionBase action) => { action.OnBeforeReceiveDamage(damageInfo); });
-            }
-        }
+        public void OnWillDealtDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) { m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDamageSetEffect(damageEntity, damageInfo); action.OnDealtDamageSetDamage(damageEntity, damageInfo); }); }
 
-        protected override void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
+        public void OnWillReceiveDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) { m_ActionEquiping.Traversal((ActionBase action) => { action.OnBeforeReceiveDamage(damageInfo); }); }
+
+        public override void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
         {
             base.OnCharacterHealthChange(damageInfo, damageEntity, amountApply);
             if (damageInfo.m_detail.I_SourceID <= 0)
@@ -1905,7 +1876,7 @@ namespace GameSetting
         public EntityCharacterPlayer m_ActionEntity { get; private set; }
         public enum_ActionRarity m_rarity { get; private set; } = enum_ActionRarity.Invalid;
         public int m_Identity { get; private set; } = -1;
-        public virtual int I_BaseCost => -1;
+        public virtual int I_Cost => -1;
         public virtual bool B_ActionAble => true;
         public virtual enum_ActionType m_ActionType => enum_ActionType.Invalid;
         public virtual float Value1 => 0;
@@ -1925,7 +1896,6 @@ namespace GameSetting
         {
             m_Identity = _identity;
             m_rarity = _level;
-            m_CostOverride = -1;
         }
         public void Activate(EntityCharacterPlayer _actionEntity, Action<ExpireBase> OnExpired) { m_ActionEntity = _actionEntity; OnActivate(F_Duration, OnExpired); }
         public bool B_Upgradable => m_rarity < enum_ActionRarity.Epic;
@@ -1934,10 +1904,7 @@ namespace GameSetting
             if (m_rarity < enum_ActionRarity.Epic)
                 m_rarity++;
         }
-
-        public int m_CostOverride { get; private set; } = -1;
-        public int I_Cost => m_CostOverride == -1 ? I_BaseCost : m_CostOverride;
-        public void OverrideCost(int overrideCost)=> m_CostOverride = overrideCost;
+        
         #region Interact
         public virtual void OnActivate() { }
         public virtual void OnUseDevice() { }
