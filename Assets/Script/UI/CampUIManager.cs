@@ -23,13 +23,13 @@ public class CampUIManager : UIManager {
     
     public UIC_FarmStatus BeginFarm(Action<bool,Vector2> _OnDragDown, Action<Vector2> _OnDrag,Action _OnExit)
     {
-        m_CharacterControl.AddDragBinding(_OnDragDown, _OnDrag);
-        OverrideSetting(_OnExit);
+        m_UIControl.AddDragBinding(_OnDragDown, _OnDrag);
+        m_UIControl.OverrideSetting(_OnExit);
         return ShowControls<UIC_FarmStatus>();
     }
     public void ExitFarm()
     {
-        m_CharacterControl.RemoveDragBinding();
-        OverrideSetting(null);
+        m_UIControl.RemoveDragBinding();
+        m_UIControl.OverrideSetting(null);
     }
 }

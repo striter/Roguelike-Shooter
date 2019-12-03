@@ -36,6 +36,7 @@ public class UIC_CharacterStatus : UIControlBase
     Transform tf_MapData;
     UIT_TextExtend m_MapTitle;
     Image m_MapPrevious, m_MapCurrent, m_MapNext;
+    TSpecialClasses.AnimationControlBase m_MapAnimation;
     protected override void Init()
     {
         base.Init();
@@ -71,6 +72,7 @@ public class UIC_CharacterStatus : UIControlBase
         m_MapPrevious = tf_MapData.Find("Previous").GetComponent<Image>();
         m_MapCurrent = tf_MapData.Find("Current").GetComponent<Image>();
         m_MapNext = tf_MapData.Find("Next").GetComponent<Image>();
+        m_MapAnimation =new AnimationControlBase( tf_MapData.GetComponent<Animation>(),false);
 
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
@@ -111,6 +113,7 @@ public class UIC_CharacterStatus : UIControlBase
         m_MapCurrent.sprite = GameUIManager.Instance.m_InGameSprites[GameManager.Instance.m_GameLevel.m_LevelType.GetUISprite()];
         m_MapNext.SetActivate(!finalLevel);
         m_MapTitle.formatText("UI_Map_Title",string.Format("<color=#FFDA6B>{0}</color>", (int)(GameManager.Instance.m_GameLevel.m_GameStage-1)*10+LevelManager.Instance.m_currentLevelIndex+1));
+        m_MapAnimation.Play(true);
     }
     
     
