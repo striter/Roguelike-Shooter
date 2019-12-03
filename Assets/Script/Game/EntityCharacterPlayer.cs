@@ -131,8 +131,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             }
         }
 
-        if (m_WeaponCurrent != null)
-            m_WeaponCurrent.Trigger(down);
+        OnWeaponTrigger(down);
     }
     
     protected override void OnAliveTick(float deltaTime)
@@ -151,6 +150,11 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected virtual bool CalculateWeaponFire() => !Physics.SphereCast(new Ray(tf_WeaponAim.position, tf_WeaponAim.forward), .3f, 1.5f, GameLayer.Mask.I_Static);
 
     #region WeaponControll
+    void OnWeaponTrigger(bool down)
+    {
+        if (m_Weapon1) m_Weapon1.Trigger(down);
+        if (m_Weapon2) m_Weapon2.Trigger(down);
+    }
     public bool m_weaponCanFire { get; private set; } = false;
     void OnReloadClick()
     {
@@ -361,7 +365,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     }
     public void OnWeaponAbilityClick(bool isFirstWeapon)
     {
-        ActionBase targetAction = isFirstWeapon ? m_Weapon1.m_WeaponAction : m_Weapon2.m_WeaponAction;
+        ActionBase targetAction = isFirstWeapon ? m_Weapon1.TryUseAction() : m_Weapon2.TryUseAction();
         m_PlayerInfo.OnUseAction(targetAction);
     }
     public void UpgradeActionPerk(ActionBase _weaponAction)

@@ -29,12 +29,14 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 7ed6ad8e6e34f3348adc0f4fab37bedc, type: 3}
-    totalSpriteSurfaceArea: 8418163
+    totalSpriteSurfaceArea: 8851255
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: 871af7211c4f1774ca265157e2db651a, type: 3}
+  - {fileID: 21300000, guid: 5adbea83ccf88a6408f49e7e8393753d, type: 3}
   - {fileID: 21300000, guid: 3921f815ededf9242a59e1ff34a6f63a, type: 3}
+  - {fileID: 21300000, guid: 780417e08884304438df4fba4cfd3ac8, type: 3}
   - {fileID: 21300000, guid: dd9d06302fa506d498c51347940bf664, type: 3}
   - {fileID: 21300000, guid: 7a3eab30b8726e44a8729df7c70fbbf3, type: 3}
   - {fileID: 21300000, guid: d3885a90b43543f4c9fac79b6524ee4a, type: 3}
@@ -114,7 +116,9 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 676c759453b2cd241b9d51014a9fbb49, type: 3}
   m_PackedSpriteNamesToIndex:
   - action_frame_selected
+  - action_frame_ready
   - action_frame_common
+  - action_frame_blank
   - 10029
   - 20002
   - 30007

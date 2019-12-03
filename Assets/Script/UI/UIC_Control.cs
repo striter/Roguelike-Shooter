@@ -117,7 +117,7 @@ public class UIC_Control : UIControlBase {
     }
 
 
-    void OnWeaponDetailClick() => UIManager.Instance.ShowPage<UI_WeaponStatus>(true, 0f).SetInfo(m_Player.m_WeaponCurrent.m_WeaponInfo, m_Player.m_WeaponCurrent.m_WeaponAction);
+    void OnWeaponDetailClick() => UIManager.Instance.ShowPage<UI_WeaponStatus>(true, 0f).Play(m_Player.m_WeaponCurrent.m_WeaponInfo, m_Player.m_WeaponCurrent.m_WeaponAction);
     void OnCommonStatus(EntityCharacterPlayer _player) => m_Player = _player;
     void OnWeaponStatus(EntityCharacterPlayer _player)
     {
@@ -162,6 +162,7 @@ public class UIC_Control : UIControlBase {
         Image m_Background;
         Image m_Image;
         Transform m_Equiping, m_unEquiping;
+        Text m_Clip, m_Total;
         public WeaponData(Transform _transform)
         {
             transform = _transform;
@@ -196,11 +197,13 @@ public class UIC_Control : UIControlBase {
         {
             if (m_weapon == null)
                 return;
+            m_Clip.text = m_weapon.I_AmmoLeft.ToString();
+            m_Total.text = m_weapon.I_ClipAmount.ToString();
         }
 
         void OnWeaponDetailClick()
         {
-
+            UIManager.Instance.ShowPage<UI_WeaponStatus>(true, 0f).Play(m_weapon.m_WeaponInfo,m_weapon.m_WeaponAction);
         }
     }
 #if UNITY_EDITOR
