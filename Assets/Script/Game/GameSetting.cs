@@ -126,8 +126,11 @@ namespace GameSetting
                     {
                         default:Debug.LogError("Invalid Weapon Rarity");return new RangeInt(0, -1);
                         case enum_WeaponRarity.Ordinary:
+                            return new RangeInt(1, 5);
                         case enum_WeaponRarity.Advanced:
+                            return new RangeInt(1, 5);
                         case enum_WeaponRarity.Rare:
+                            return new RangeInt(1, 5);
                         case enum_WeaponRarity.Legend:
                             return new RangeInt(1,5);
                     }
