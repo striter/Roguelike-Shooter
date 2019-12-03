@@ -158,7 +158,7 @@ namespace GameSetting
                     return StageInteractGenerateData.Create(
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 00 }, { enum_WeaponRarity.Advanced, 100 }, { enum_WeaponRarity.Rare, 0 }, { enum_WeaponRarity.Legend, 0 } },
                         new Dictionary<enum_ActionRarity, int>() { { enum_ActionRarity.Normal, 60 }, { enum_ActionRarity.OutStanding, 40 }, { enum_ActionRarity.Epic, 0 } },
-                        PickupGenerateData.Create(25, 20, 30, new RangeInt(5, 5),
+                        PickupGenerateData.Create(10, 20, 30, new RangeInt(5, 5),
                         new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 13.6f }, { enum_ActionRarity.OutStanding, 4.5f }, { enum_ActionRarity.Epic, 0 } },
                         new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Ordinary, 9f },{ enum_WeaponRarity.Advanced,4.5f} }),
                         PickupGenerateData.Create(10, 100, 50, new RangeInt(10, 5),
