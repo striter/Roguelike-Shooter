@@ -954,7 +954,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   I_MaxHealth: 600
   I_DefaultArmor: 0
-  F_MovementSpeed: 3.5
+  F_MovementSpeed: 3
   F_AttackSpread: 0
   ? ExtraRendererOnlyAvailableFor107WhatAwkwardRequirementWhyNotPutThemIntoOneModelCauseOutModelArtistCantDoItHaveToCreateThisIntoMyCodeLikeABunchOfShitForFuckingRealSucks
   : {fileID: 0}
@@ -974,7 +974,7 @@ MonoBehaviour:
   I_AttackPreAimPercentage: 50
   B_AttackMove: 1
   F_AttackFrontCheck: 0
-  F_AttackMoveMultiply: 2.5
+  F_AttackMoveMultiply: 3
 --- !u!136 &136500707643455048
 CapsuleCollider:
   m_ObjectHideFlags: 1
