@@ -13,7 +13,6 @@ public class GameUIManager : UIManager {
         Instance = this;
         base.Init();
         m_InGameSprites = TResources.GetUIAtlas_InGame();
-        cvs_Overlay.transform.Find("Test/SeedTest").GetComponent<Text>().text = GameManager.Instance.m_GameLevel.m_Seed;   //Test
     }
     protected override void InitGameControls(bool inGame)
     {

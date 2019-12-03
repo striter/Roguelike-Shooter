@@ -112,6 +112,8 @@ public class GameManager : GameManagerBase
                     entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.EquipmentInfo(-1, 0, enum_CharacterEffect.Scan, 10f)));
             });
         }
+        if (Input.GetKeyDown(KeyCode.F10))
+            Debug.LogError(m_GameLevel.m_Seed);
     }
     #endregion
 #endif

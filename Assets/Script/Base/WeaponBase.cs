@@ -9,7 +9,6 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     public AudioClip m_ReloadClip1, m_ReloadClip2, m_ReloadClip3;
     protected EntityCharacterPlayer m_Attacher { get; private set; }
     public SWeapon m_WeaponInfo { get; private set; }
-    public ActionBase m_WeaponAction { get; private set; } = null;
     public float F_BaseDamage { get; protected set; } = 0;
     public float F_BaseRecoil => m_WeaponInfo.m_RecoilPerShot;
     public float F_BaseFirerate => m_WeaponInfo.m_FireRate;
@@ -29,7 +28,10 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     bool B_HaveAmmoLeft => m_WeaponInfo.m_ClipAmount == -1 || I_AmmoLeft > 0;
     bool B_AmmoFull => m_WeaponInfo.m_ClipAmount == -1||I_ClipAmount == I_AmmoLeft;
     protected void OnFireCheck(float pauseDuration) => f_fireCheck = pauseDuration;
-    
+
+    public ActionBase m_WeaponAction { get; private set; } = null;
+    protected float m_ActionEnergy { get; private set; } = 0;
+
     public override void OnPoolItemInit(enum_PlayerWeapon _identity, Action<enum_PlayerWeapon, MonoBehaviour> _OnRecycle)
     {
         m_Muzzle = transform.FindInAllChild("Muzzle");
