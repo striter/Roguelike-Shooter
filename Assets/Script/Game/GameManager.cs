@@ -85,6 +85,8 @@ public class GameManager : GameManagerBase
 
         if (Input.GetKeyDown(KeyCode.Equals))
             OnStageFinished();
+        if (Input.GetKeyDown(KeyCode.Minus))
+            OnLevelFinished();
 
         if (Input.GetKeyDown(KeyCode.F5) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
             GameObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action, hit.point).Play(ActionDataManager.CreateAction(F5_TestActionNormal, enum_ActionRarity.Normal));
@@ -143,7 +145,6 @@ public class GameManager : GameManagerBase
     protected override void OnDisable()
     {
         base.OnDisable();
-        this.StopAllSingleCoroutines();
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntiyActivate);
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityDeactivate, OnEntityRecycle);
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
@@ -192,8 +193,14 @@ public class GameManager : GameManagerBase
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageStart);
         LevelManager.Instance.GameStart(OnLevelChanged);
     }
-
-    public void OnLevelFinished()=>LevelManager.Instance.LoadNextLevel(OnLevelChanged);
+    public void OnLevelFinished()
+    {
+        this.StopAllSingleCoroutines();
+        if (m_GameLevel.m_LevelType == enum_LevelType.End)
+            OnStageFinished();
+        else
+            LevelManager.Instance.LoadNextLevel(OnLevelChanged);
+    } 
     void OnLevelChanged(SBigmapLevelInfo levelInfo)
     {
         GameObjectManager.RecycleAllWeapon(null);
@@ -256,7 +263,7 @@ public class GameManager : GameManagerBase
                 {
                     GameObjectManager.SpawnNPC( enum_InteractCharacter.Trader, Vector3.back *2f, interactTrans);
 
-                    int priceHealth = GameExpression.GetTradePrice(enum_Interaction.PickupHealth, enum_ActionRarity.Invalid).Random(m_GameLevel.m_GameSeed);
+                    int priceHealth = GameExpression.GetTradePrice(enum_Interaction.PickupHealth).Random(m_GameLevel.m_GameSeed);
                     GameObjectManager.SpawnInteract<InteractContainerTrade>(enum_Interaction.ContainerTrade, Vector3.left * 1.5f + Vector3.forward * 1f, interactTrans).Play(priceHealth, GameObjectManager.SpawnInteract<InteractPickupHealth>(enum_Interaction.PickupHealthPack, Vector3.zero, interactTrans).Play(GameConst.I_HealthTradeAmount, null));
 
                     ActionBase action1 = ActionDataManager.CreateRandomDropPlayerAction(m_GameLevel.m_actionGenerate.GetTradeActionRarity(m_GameLevel.m_GameSeed), m_GameLevel.m_GameSeed);
@@ -264,7 +271,7 @@ public class GameManager : GameManagerBase
                     GameObjectManager.SpawnInteract<InteractContainerTrade>(enum_Interaction.ContainerTrade,Vector3.forward*1f, interactTrans).Play(priceAction, GameObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action, Vector3.zero, interactTrans).Play(action1));
                     
                     WeaponBase weapon = GameObjectManager.SpawnWeapon(GameDataManager.m_WeaponRarities[m_GameLevel.m_actionGenerate.GetTradeWeaponRarity(m_GameLevel.m_GameSeed)].RandomItem(m_GameLevel.m_GameSeed),null);
-                    int priceWeapon = GameExpression.GetTradePrice(enum_Interaction.Weapon, weapon.m_WeaponAction.m_rarity).Random(m_GameLevel.m_GameSeed);
+                    int priceWeapon = GameExpression.GetTradePrice(enum_Interaction.Weapon, enum_ActionRarity.Invalid,weapon.m_WeaponInfo.m_Rarity).Random(m_GameLevel.m_GameSeed);
                     GameObjectManager.SpawnInteract<InteractContainerTrade>(enum_Interaction.ContainerTrade,Vector3.right * 1.5f + Vector3.forward * 1f, interactTrans).Play(priceWeapon, GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, Vector3.right, interactTrans).Play(weapon));
                 }
                 break;
@@ -292,14 +299,10 @@ public class GameManager : GameManagerBase
     {
         switch(m_GameLevel.m_LevelType)
         {
+            case enum_LevelType.End:
             case enum_LevelType.Battle:
                 {
                     GameObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Portal, LevelManager.NavMeshPosition(rewardPos, false), LevelManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(OnLevelFinished, true);
-                }
-                break;
-            case enum_LevelType.End:
-                {
-                    GameObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Portal, LevelManager.NavMeshPosition(rewardPos, false), LevelManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(OnStageFinished, true);
                 }
                 break;
         }

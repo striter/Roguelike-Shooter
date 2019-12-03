@@ -106,7 +106,7 @@ namespace GameSetting
         public static float GetResultDifficultyBonus(int _difficulty) =>1f+ _difficulty * .05f;
         public static float GetResultRewardCredits(float _totalScore) => _totalScore;
 
-        public static RangeInt GetTradePrice(enum_Interaction interactType, enum_ActionRarity level)
+        public static RangeInt GetTradePrice(enum_Interaction interactType, enum_ActionRarity actionRarity= enum_ActionRarity.Invalid,enum_WeaponRarity weaponRarity= enum_WeaponRarity.Invalid)
         {
             switch (interactType)
             {
@@ -114,13 +114,22 @@ namespace GameSetting
                 case enum_Interaction.PickupHealth:
                     return new RangeInt(10, 0);
                 case enum_Interaction.Action:
-                case enum_Interaction.Weapon:
-                    switch (level)
+                    switch (actionRarity)
                     {
                         default: Debug.LogError("Invalid Level!"); return new RangeInt(0, -1);
                         case enum_ActionRarity.Normal: return new RangeInt(8, 4);
                         case enum_ActionRarity.OutStanding: return new RangeInt(16, 8);
                         case enum_ActionRarity.Epic: return new RangeInt(24, 12);
+                    }
+                case enum_Interaction.Weapon:
+                    switch (weaponRarity)
+                    {
+                        default:Debug.LogError("Invalid Weapon Rarity");return new RangeInt(0, -1);
+                        case enum_WeaponRarity.Ordinary:
+                        case enum_WeaponRarity.Advanced:
+                        case enum_WeaponRarity.Rare:
+                        case enum_WeaponRarity.Legend:
+                            return new RangeInt(1,5);
                     }
             }
         }
@@ -1397,7 +1406,7 @@ namespace GameSetting
             b_expireUpdated = true;
         }
 
-        protected virtual void OnAddExpire(ExpireBase expire)
+        protected virtual void AddExpire(ExpireBase expire)
         {
             m_Expires.Add(expire);
             UpdateEntityInfo();
@@ -1417,7 +1426,7 @@ namespace GameSetting
             switch (buff.m_RefreshType)
             {
                 case enum_ExpireRefreshType.AddUp:
-                    OnAddExpire(buff);
+                    AddExpire(buff);
                     break;
                 case enum_ExpireRefreshType.Refresh:
                     {
@@ -1425,7 +1434,7 @@ namespace GameSetting
                         if (buffRefresh != null)
                             RefreshExpire(buffRefresh);
                         else
-                            OnAddExpire(buff);
+                            AddExpire(buff);
                     }
                     break;
                 case enum_ExpireRefreshType.RefreshIdentity:
@@ -1434,7 +1443,7 @@ namespace GameSetting
                         if (buffRefresh != null)
                             RefreshExpire(buffRefresh);
                         else
-                            OnAddExpire(buff);
+                            AddExpire(buff);
                     }
                     break;
             }
@@ -1614,12 +1623,12 @@ namespace GameSetting
             targetAction.Activate(m_Player, OnExpireElapsed);
             m_ActionEquiping.Add(targetAction);
             targetAction.OnActivate();
-            OnAddExpire(targetAction);
+            AddExpire(targetAction);
         }
 
-        protected override void OnAddExpire(ExpireBase expire)
+        protected override void AddExpire(ExpireBase expire)
         {
-            base.OnAddExpire(expire);
+            base.AddExpire(expire);
             OnActionChange();
         }
 
