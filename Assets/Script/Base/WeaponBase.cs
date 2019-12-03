@@ -79,8 +79,6 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     public virtual void OnShow(bool show)
     {
         transform.SetActivate(show);
-        if (!show)
-            Trigger(false);
     } 
     #region PlayerInteract
     public void Trigger(bool down)=>m_Trigger.OnSetTrigger(down);

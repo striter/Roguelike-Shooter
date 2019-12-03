@@ -1561,10 +1561,10 @@ namespace GameSetting
             m_prePos = m_Entity.transform.position;
         }
 
-        public void SetInfoData(int coins,List<ActionBase> m_actionEquiping)
+        public void SetInfoData(int coins,List<ActionBase> _actionEquiping)
         {
             m_Coins = coins;
-            m_ActionEquiping = m_actionEquiping;
+            _actionEquiping.Traversal((ActionBase action) => {OnAddAction(action); });
             OnPlayerActionChange();
         }
 

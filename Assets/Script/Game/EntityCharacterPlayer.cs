@@ -131,10 +131,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             }
         }
 
-        if (m_WeaponCurrent != null)
-            m_WeaponCurrent.Trigger(down);
+        OnWeaponTrigger(down);
     }
-    
     protected override void OnAliveTick(float deltaTime)
     {
         base.OnAliveTick(deltaTime);
@@ -152,6 +150,13 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     #region WeaponControll
     public bool m_weaponCanFire { get; private set; } = false;
+
+    void OnWeaponTrigger(bool down)
+    {
+        if (m_Weapon1) m_Weapon1.Trigger(down);
+        if (m_Weapon2) m_Weapon2.Trigger(down);
+    }
+
     void OnReloadClick()
     {
         if (m_WeaponCurrent == null)
