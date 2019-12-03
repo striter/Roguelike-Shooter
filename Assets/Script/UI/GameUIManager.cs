@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class GameUIManager : UIManager {
     public static new GameUIManager Instance;
     public AtlasLoader m_InGameSprites { get; private set; }
-    UIControlBase m_Coins,m_OverlayControl,m_ActionEnergy;
+    UIControlBase m_Coins,m_OverlayControl;
     protected override void Init()
     {
         Instance = this;
@@ -18,7 +18,6 @@ public class GameUIManager : UIManager {
     protected override void InitGameControls(bool inGame)
     {
         base.InitGameControls(inGame);
-        m_ActionEnergy = ShowControls<UIC_CharacterEnergy>();
         ShowControls<UIC_EntityHealth>();
         m_Coins = ShowControls<UIC_CoinsStatus>();
     }
@@ -32,18 +31,6 @@ public class GameUIManager : UIManager {
     public T ShowCoinsPage<T>(bool animate, float bulletTime = 1f) where T:UIPageBase
     {
         m_OverlayControl = m_Coins;
-        SetControlViewMode(m_OverlayControl, true);
-        return ShowPage<T>(animate, bulletTime);
-    }
-    public T ShowGameControlPage<T>(bool animate, float bulletTime = 1f) where T : UIPageBase
-    {
-        m_OverlayControl = m_GameControl;
-            SetControlViewMode(m_OverlayControl, true);
-        return ShowPage<T>(animate, bulletTime);
-    }
-    public T ShowCharacterEnergyPage<T>(bool animate,float bulletTime=1f) where T:UIPageBase
-    {
-        m_OverlayControl = m_ActionEnergy;
         SetControlViewMode(m_OverlayControl, true);
         return ShowPage<T>(animate, bulletTime);
     }

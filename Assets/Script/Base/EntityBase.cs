@@ -58,7 +58,7 @@ public class EntityBase : ObjectPoolMonoItem<int>
     protected virtual void OnRecycle()
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityDeactivate, this);
-        DoPoolItemRecycle();
+        DoItemRecycle();
     }
     protected virtual void EnableHitbox(bool setHitable)
     {

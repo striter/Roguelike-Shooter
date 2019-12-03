@@ -29,7 +29,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
         base.OnDestroy();
         RemoveNavmeshData();
     }
-    public IEnumerator GenerateLevel(enum_Style _LevelStyle,Action<SBigmapLevelInfo> OnEachLevelGenerate, System.Random seed)
+    public IEnumerator GenerateLevel(enum_Style _LevelStyle, System.Random seed)
     {
         m_mainSeed = seed;
         m_StyleCurrent = _LevelStyle;
@@ -61,7 +61,6 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
                 StaticBatchingUtility.Combine(m_level.tf_LevelItem.gameObject);
                 levelInfo.SetLevelShow(false);
                 levelInfo.SetMap(m_level);
-                OnEachLevelGenerate(levelInfo);
             }
             yield return null;
         }

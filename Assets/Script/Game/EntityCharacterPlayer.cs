@@ -18,6 +18,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public Transform tf_WeaponAim { get; private set; }
     protected Transform tf_WeaponHoldRight, tf_WeaponHoldLeft;
     protected SFXAimAssist m_Assist = null;
+    public WeaponBase m_Weapon1 { get; private set; }
+    public WeaponBase m_Weapon2 { get; private set; }
     public WeaponBase m_WeaponCurrent { get; private set; } = null;
     public InteractBase m_Interact { get; private set; }
     public float m_EquipmentDistance { get; private set; }
@@ -39,7 +41,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     protected override CharacterInfoManager GetEntityInfo()
     {
-        m_PlayerInfo = new PlayerInfoManager(this, m_HitCheck.TryHit, OnExpireChange,OnExpireListChange, OnBattleActionsChange);
+        m_PlayerInfo = new PlayerInfoManager(this, m_HitCheck.TryHit, OnExpireChange,OnPlayerActionChange);
         return m_PlayerInfo;
     }
 
@@ -74,11 +76,13 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         CameraController.Instance.SetCameraRotation(-1,transform.rotation.eulerAngles.y);
     }
 
-    public void SetPlayerInfo(int coins,float health, List<ActionBase> storedActions)
+    public void SetPlayerInfo(CBattleSave m_saveData)
     {
-        m_PlayerInfo.OnCoinsReceive(coins);
-        m_PlayerInfo.InitActionInfo(storedActions);
-        m_Health.OnRevive(health>0?health:I_MaxHealth,I_DefaultArmor);
+        m_PlayerInfo.SetInfoData(m_saveData.m_coins, ActionDataManager.CreateActions(m_saveData.m_battleAction));
+        m_Health.OnRevive(m_saveData.m_health>0?m_saveData.m_health:I_MaxHealth,I_DefaultArmor);
+        ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_weapon1,ActionDataManager.CreateAction( m_saveData.m_weaponAction1)));
+        if (m_saveData.m_weapon2 != enum_PlayerWeapon.Invalid)
+            ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_weapon2, ActionDataManager.CreateAction(m_saveData.m_weaponAction2)));
     }
 
     protected override void OnDead()
@@ -92,7 +96,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected override void OnRevive()
     {
         base.OnRevive();
-        m_Ability.SetEnable(true);
         m_Assist.SetEnable(true);
         m_Animator.OnRevive();
 
@@ -104,21 +107,11 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (m_Assist)
             m_Assist.Recycle();
     }
-
-
-    protected override void OnBattleStart()
-    {
-        base.OnBattleStart();
-        m_PlayerInfo.OnBattleStart();
-        m_Ability.SetEnable(true);
-    }
-
+    
     protected override void OnBattleFinish()
     {
         base.OnBattleFinish();
         m_Health.OnRestoreArmor();
-        m_PlayerInfo.OnBattleFinish();
-        m_Ability.SetEnable(false);
     }
 
     void OnMainDown(bool down)
@@ -259,38 +252,23 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     public class CharacterAbility
     {
-        public int m_Times { get; private set; } = -1;
         public float m_CooldownScale => m_abilityCooldownLeft / m_baseAbilityCooldown;
         public bool m_Cooldowning => m_abilityCooldownLeft > 0f;
-        public bool m_Useable => m_Times != 0&&enable;
-        public bool m_RunsOutable => m_baseAbilityTimes > 0;
-        public bool enable { get; private set; } = false;
         protected float m_abilityCooldownLeft = 0f;
 
         protected float m_baseAbilityCooldown;
-        protected int m_baseAbilityTimes;
         Action OnAbilityTrigger;
         public CharacterAbility(int abilityTime, float abilityCoolDown, Action _OnAbilityTrigger)
         {
             OnAbilityTrigger = _OnAbilityTrigger;
             m_baseAbilityCooldown = abilityCoolDown;
-            m_baseAbilityTimes = abilityTime;
-            SetEnable(false);
         }
-
-        public void SetEnable(bool enable)
-        {
-            this.enable = enable;
-            m_abilityCooldownLeft = 0;
-            m_Times = m_RunsOutable ? m_baseAbilityTimes : -1;
-        }
-
+        
         public void OnAbilityClick()
         {
-            if (!m_Useable||m_Cooldowning)
+            if (m_Cooldowning)
                 return;
             m_abilityCooldownLeft = m_baseAbilityCooldown;
-            m_Times--;
             OnAbilityTrigger();
         }
 
@@ -342,9 +320,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     }
     #endregion
     #region Action
-    public void TestUseAction(int actionIndex,enum_RarityLevel level)
+    public void OnPickupAction(ActionBase action)
     {
-        m_PlayerInfo.TestUseAction(ActionDataManager.CreateAction(actionIndex,level));
+
     }
     public void UpgradeWeaponPerk(ActionBase invalidPerk)
     {
@@ -384,13 +362,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerWeaponStatus, m_WeaponCurrent);
     }
-    protected void OnExpireListChange()
+    protected void OnPlayerActionChange()
     {
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerExpireListStatus, m_PlayerInfo);
-    }
-    protected void OnBattleActionsChange()
-    {
-        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerBattleActionStatus, m_PlayerInfo);
     }
     protected override void OnHealthStatus(enum_HealthChangeMessage type)
     {

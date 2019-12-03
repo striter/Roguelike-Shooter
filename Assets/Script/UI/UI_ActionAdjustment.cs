@@ -30,8 +30,8 @@ public class UI_ActionAdjustment : UIPageBase {
     void OnActionStatus()
     {
         m_Grid.ClearGrid();
-        for (int i = 0; i < m_Interact.m_Interactor.m_BattleAction.Count; i++)
-            m_Grid.AddItem(i).SetInfo(m_Interact.m_Interactor.m_BattleAction[i],OnItemSelected,true);
+        for (int i = 0; i < m_Interact.m_Interactor.m_ActionEquiping.Count; i++)
+            m_Grid.AddItem(i).SetInfo(m_Interact.m_Interactor.m_ActionEquiping[i],OnItemSelected,true);
         m_selectIndex = -1;
         OnAdjustmentBtnStatus();
     }
@@ -52,14 +52,15 @@ public class UI_ActionAdjustment : UIPageBase {
         btn_upgrade.interactable = m_selectIndex >= 0 && m_Interact.E_UpgradeType(m_selectIndex) == enum_UI_ActionUpgradeType.Upgradeable;
         btn_remove.interactable = m_selectIndex >= 0 && m_Interact.B_Removeable(m_selectIndex);
     }
-    void OnRemoveClick()=>UIManager.Instance.ShowMessageBox<UIM_ActionRemove>().Play(m_Interact.RemovePrice,m_Interact.m_Interactor.m_BattleAction[m_selectIndex],OnRemoveConfirmed);
+
+    void OnRemoveClick()=>UIManager.Instance.ShowMessageBox<UIM_ActionRemove>().Play(m_Interact.RemovePrice,m_Interact.m_Interactor.m_ActionEquiping[m_selectIndex],OnRemoveConfirmed);
     void OnRemoveConfirmed()
     {
         m_Interact.OnRemovalAction(m_selectIndex);
         OnActionStatus();
     }
 
-    void OnUpgradeClick() => UIManager.Instance.ShowMessageBox<UIM_ActionUpgrade>().Play(m_Interact.UpgradePrice, m_Interact.m_Interactor.m_BattleAction[m_selectIndex], OnUpgradeConfirmed);
+    void OnUpgradeClick() => UIManager.Instance.ShowMessageBox<UIM_ActionUpgrade>().Play(m_Interact.UpgradePrice, m_Interact.m_Interactor.m_ActionEquiping[m_selectIndex], OnUpgradeConfirmed);
     void OnUpgradeConfirmed()
     {
         m_Interact.OnUpgradeAction(m_selectIndex);

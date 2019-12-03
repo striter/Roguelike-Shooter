@@ -59,7 +59,7 @@ public class SFXBase :ObjectPoolMonoItem<int> {
     protected virtual void OnRecycle()
     {
         m_AttachTo = null;
-        DoPoolItemRecycle();
+        DoItemRecycle();
     }
 
     public void AttachTo(Transform _attachTo)

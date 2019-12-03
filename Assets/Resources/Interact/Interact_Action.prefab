@@ -56,7 +56,7 @@ GameObject:
   - component: {fileID: 111035122497549636}
   - component: {fileID: 114004340570081130}
   m_Layer: 0
-  m_Name: Interact_PickupAction
+  m_Name: Interact_Action
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -212,6 +212,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AC_OnPlay: {fileID: 0}
   AC_OnInteract: {fileID: 8300000, guid: d9cf80125efde784f9384af30355b05b, type: 3}
+  I_MuzzleOnInteract: 0
 --- !u!135 &135992128333601876
 SphereCollider:
   m_ObjectHideFlags: 1
