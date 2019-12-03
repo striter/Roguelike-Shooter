@@ -16,6 +16,7 @@ public class InteractAction : InteractGameBase {
     }
     public InteractAction Play(ActionBase _action)
     {
+        base.Play();
         m_Action = _action;
         m_Renderer.material.color = _action.m_ActionType.ActionTypeColor();
         return this;

@@ -31,7 +31,6 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
 
     public ActionBase m_WeaponAction { get; private set; } = null;
     protected float m_ActionEnergy { get; private set; } = 0;
-    public float m_ActionScale => m_WeaponAction == null ? -1 : m_ActionEnergy / m_WeaponAction.I_Cost;
 
     public override void OnPoolItemInit(enum_PlayerWeapon _identity, Action<enum_PlayerWeapon, MonoBehaviour> _OnRecycle)
     {
@@ -85,18 +84,17 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     #region PlayerInteract
     public void Trigger(bool down)=>m_Trigger.OnSetTrigger(down);
     
-    public void OnReceiveEnergy(float energy)
+    public void OnEnergyDamage(float damage)
     {
         if (m_WeaponAction==null)
             return;
-        m_ActionEnergy += energy;
+        m_ActionEnergy += damage;
         if (m_ActionEnergy >= m_WeaponAction.I_Cost)
             m_ActionEnergy = m_WeaponAction.I_Cost;
     }
 
     public ActionBase TryUseAction()
     {
-        Debug.Log(m_ActionEnergy);
         if(m_WeaponAction!=null&&m_ActionEnergy>=m_WeaponAction.I_Cost)
         {
             m_ActionEnergy = 0;

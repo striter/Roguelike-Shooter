@@ -341,23 +341,39 @@ public static class GameDataManager
 
 public static class ActionDataManager
 {
-    public static Dictionary<int, ActionBase> m_AllActions { get; private set; } = new Dictionary<int, ActionBase>();
-    public static List<int> m_UseableAction { get; private set; } = new List<int>();
+    static Dictionary<int, Type> m_AllActionType = new Dictionary<int, Type>();
+    public static List<int> m_AllAction { get; private set; } = new List<int>();
+    public static List<int> m_WeaponAbilityAction { get; private set; } = new List<int>();
+    public static List<int> m_PlayerEquipmentAction { get; private set; } = new List<int>();
     static int m_ActionIdentity = 0;
     public static void Init()
     {
-        m_AllActions.Clear();
-        m_UseableAction.Clear();
+        m_AllActionType.Clear();
+        m_AllAction.Clear();
+        m_WeaponAbilityAction.Clear();
+        m_PlayerEquipmentAction.Clear();
         
         TReflection.TraversalAllInheritedClasses((Type type, ActionBase action) => {
             if (action.m_Index <= 0)
                 return;
 
-            m_AllActions.Add(action.m_Index, action);
-            m_UseableAction.Add(action.m_Index);
+            m_AllActionType.Add(action.m_Index, action.GetType());
+            m_AllAction.Add(action.m_Index);
+            switch (action.m_ActionType)
+            {
+                case enum_ActionType.Basic:
+                case enum_ActionType.Device:
+                    m_WeaponAbilityAction.Add(action.m_Index);
+                    break;
+                case enum_ActionType.Equipment:
+                    m_PlayerEquipmentAction.Add(action.m_Index);
+                    break;
+            }
         }, -1, enum_ActionRarity.Invalid);
     }
-    public static ActionBase CreateRandomDropPlayerAction(enum_ActionRarity rarity, System.Random seed)=> CreateAction( m_UseableAction.RandomItem(seed),rarity);
+    public static ActionBase CreateRandomAction(enum_ActionRarity rarity, System.Random seed)=> CreateAction(m_AllAction.RandomItem(seed),rarity);
+    public static ActionBase CreateRandomWeaponAbilityAction(enum_ActionRarity rarity, System.Random seed) => CreateAction(m_WeaponAbilityAction.RandomItem(seed),rarity);
+    public static ActionBase CreateRandomPlayerAction(enum_ActionRarity rarity, System.Random seed) => CreateAction(m_PlayerEquipmentAction.RandomItem(seed),rarity);
     public static List<ActionBase> CreateActions(List<ActionGameData> infos)
     {
         List<ActionBase> actions = new List<ActionBase>();
@@ -367,9 +383,9 @@ public static class ActionDataManager
     public static ActionBase CreateAction(ActionGameData info) => info.m_IsNull ? null : CreateAction(info.m_Index, info.m_Level);
     public static ActionBase CreateAction(int actionIndex, enum_ActionRarity level)
     {
-        if (!m_AllActions.ContainsKey(actionIndex))
+        if (!m_AllActionType.ContainsKey(actionIndex))
             Debug.LogError("Error Action:" + actionIndex + " ,Does not exist");
-        return TReflection.CreateInstance<ActionBase>(m_AllActions[actionIndex].GetType(), m_ActionIdentity++, level);
+        return TReflection.CreateInstance<ActionBase>(m_AllActionType[actionIndex], m_ActionIdentity++, level);
     }
-    public static ActionBase CopyAction(ActionBase targetAction) => TReflection.CreateInstance<ActionBase>(m_AllActions[targetAction.m_Index].GetType(), targetAction.m_Identity, targetAction.m_rarity);
+    public static ActionBase CopyAction(ActionBase targetAction) => TReflection.CreateInstance<ActionBase>(m_AllActionType[targetAction.m_Index], targetAction.m_Identity, targetAction.m_rarity);
 }
