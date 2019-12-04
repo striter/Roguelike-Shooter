@@ -60,7 +60,7 @@ public class UI_ActionAdjustment : UIPageBase {
         OnActionStatus();
     }
 
-    void OnUpgradeClick() => UIManager.Instance.ShowMessageBox<UIM_ActionUpgrade>().Play(m_Interact.UpgradePrice, m_Interact.m_Interactor.m_ActionPlaying[m_selectIndex], OnUpgradeConfirmed);
+    void OnUpgradeClick() => UIManager.Instance.ShowMessageBox<UIM_ActionUpgrade>().Play(m_Interact.UpgradePrice, m_Interact.m_Interactor.m_ActionEquipment[m_selectIndex], OnUpgradeConfirmed);
     void OnUpgradeConfirmed()
     {
         m_Interact.OnUpgradeEquipment(m_selectIndex);
