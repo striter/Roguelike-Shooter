@@ -53,7 +53,7 @@ public class UI_ActionAdjustment : UIPageBase {
         btn_remove.interactable = m_selectIndex >= 0 && m_Interact.B_Removeable(m_selectIndex);
     }
 
-    void OnRemoveClick()=>UIManager.Instance.ShowMessageBox<UIM_ActionRemove>().Play(m_Interact.RemovePrice,m_Interact.m_Interactor.m_ActionPlaying[m_selectIndex],OnRemoveConfirmed);
+    void OnRemoveClick()=>UIManager.Instance.ShowMessageBox<UIM_ActionRemove>().Play(m_Interact.RemovePrice,m_Interact.m_Interactor.m_ActionEquipment[m_selectIndex],OnRemoveConfirmed);
     void OnRemoveConfirmed()
     {
         m_Interact.OnRemovalEquipment(m_selectIndex);
