@@ -181,13 +181,13 @@ public class GameManager : GameManagerBase
         Resources.UnloadUnusedAssets();
         yield return null;
         GameObjectManager.PresetRegistCommonObject();
-        yield return null;
-        m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_BattleData);
-        CameraController.Instance.Attach(m_LocalPlayer.transform, true);
-        m_Enermies = GameObjectManager.RegistStyledIngameEnermies(m_GameLevel.m_GameStyle, m_GameLevel.m_GameStage);
+        m_Enermies = GameObjectManager.RegistStyledInGamePrefabs(m_GameLevel.m_GameStyle, m_GameLevel.m_GameStage); 
         yield return null;
         InitPostEffects(m_GameLevel.m_GameStyle);
         yield return LevelManager.Instance.GenerateLevel(m_GameLevel.m_GameStyle, m_GameLevel.m_GameSeed);
+        m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_BattleData);
+        CameraController.Instance.Attach(m_LocalPlayer.transform, true);
+        yield return null;
         OnPortalExit(1f, m_LocalPlayer.tf_Head);
         LoadingManager.Instance.EndLoading();
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageStart);
@@ -688,7 +688,7 @@ public static class GameObjectManager
         items.Traversal((enum_LevelItemType type,List< LevelItemBase> levelItems) => { levelItems.Traversal((LevelItemBase item) => { ObjectPoolManager<LevelItemBase, LevelItemBase>.Register(item, GameObject.Instantiate(item), 1); }); });
         return items;
     }
-    public static Dictionary<enum_EnermyType, List<int>> RegistStyledIngameEnermies(enum_Style currentStyle, enum_StageLevel stageLevel)
+    public static Dictionary<enum_EnermyType, List<int>> RegistStyledInGamePrefabs(enum_Style currentStyle, enum_StageLevel stageLevel)
     {
         RegisterInGameInteractions(currentStyle, stageLevel);
         ObjectPoolManager<int, LevelBase>.Register(0, TResources.GetLevelBase(currentStyle), 1);

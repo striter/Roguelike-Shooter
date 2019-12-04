@@ -23,7 +23,6 @@ namespace GameSetting
         public const float F_PlayerReviveBuffDuration = 6f; //复活无敌时间
         
         public const float I_MaxArmor = 99999;
-        public const float F_DamageEnergyTransfer = .005f;
 
         public const float F_AimMovementReduction = .6f;
         public const float F_MovementReductionDuration = .1f;
@@ -1509,15 +1508,6 @@ namespace GameSetting
 
     public class PlayerInfoManager : CharacterInfoManager
     {
-        #region Test Will Be Remove Soon
-        public void TestUseAction(ActionBase targetAction)
-        {
-            m_ActionEquiping.Traversal((ActionBase action) => { action.OnUseActionElse(targetAction); });
-            GameObjectManager.PlayMuzzle(m_Player.m_EntityID, m_Player.transform.position, Vector3.up, GameExpression.GetActionMuzzleIndex(targetAction.m_ActionType));
-            OnAddAction(targetAction);
-        }
-        #endregion
-
         EntityCharacterPlayer m_Player;
         public int I_ClipAmount(int baseClipAmount) => baseClipAmount == 0 ? 0 : (int)(((B_OneOverride ? 1 : baseClipAmount) + I_ClipAdditive) * F_ClipMultiply);
         public float F_RecoilMultiply { get; private set; } = 1f;

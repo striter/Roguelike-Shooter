@@ -182,8 +182,8 @@ public class UIC_Control : UIControlBase {
                 return;
             }
 
-            m_unEquiping.SetActivate(equiping);
-            m_Equiping.SetActivate(!equiping);
+            m_Equiping.SetActivate(equiping);
+            m_unEquiping.SetActivate(!equiping);
 
             m_Background.sprite = UIManager.Instance.m_WeaponSprites[m_weapon.m_WeaponInfo.m_Rarity.GetUIGameControlBackground()];
             m_Image.sprite = UIManager.Instance.m_WeaponSprites[m_weapon.m_WeaponInfo.m_Weapon.GetSpriteName()];

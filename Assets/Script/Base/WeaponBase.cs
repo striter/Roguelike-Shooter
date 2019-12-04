@@ -52,7 +52,6 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     {
         base.OnPoolItemDisable();
         StopReload();
-        m_Trigger.OnDisable();
     }
     public void SetWeaponAction(ActionBase _weaponAction)
     {
@@ -182,7 +181,7 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
         OnReload(false, 0);
     }
     #endregion
-    public class WeaponTrigger:ISingleCoroutine
+    public class WeaponTrigger
     {
         public bool B_TriggerDown { get; protected set; }
         protected float f_fireRate { get; private set; }
@@ -211,21 +210,13 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
                 OnActionPause(f_fireRate, true);
         }
 
-        public virtual void OnDisable()
-        {
-            B_TriggerDown = false;
-            this.StopSingleCoroutines(0);
-        }
-        protected void OnActionPause(float pauseDuration,bool autoReload,Action ActionAfterPause=null)
+        protected void OnActionPause(float pauseDuration,bool autoReload)
         {
             if(pauseDuration!=0)
                  OnSetActionPause(pauseDuration);
 
             if (autoReload)
                 OnCheckAutoReload();
-
-            if (ActionAfterPause != null)
-                this.StartSingleCoroutine(0, TIEnumerators.PauseDel(pauseDuration, ActionAfterPause));
         }
     }
     

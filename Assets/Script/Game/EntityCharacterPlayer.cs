@@ -64,11 +64,15 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         base.OnPoolItemEnable();
         SetBinding(true);
+        TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
+        TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
     }
     protected override void OnPoolItemDisable()
     {
         base.OnPoolItemDisable();
         SetBinding(false);
+        TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
+        TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
     }
     public void SetSpawnPosRot(Vector3 position,Quaternion rotation)
     {
@@ -155,6 +159,11 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (m_Weapon1) m_Weapon1.Trigger(down);
         if (m_Weapon2) m_Weapon2.Trigger(down);
     }
+    void OnWeaponEnergy(float energy)
+    {
+        if (m_Weapon1) m_Weapon1.OnEnergyReceive(energy);
+        if (m_Weapon2) m_Weapon2.OnEnergyReceive(energy);
+    }
     public bool m_weaponCanFire { get; private set; } = false;
     void OnReloadClick()
     {
@@ -184,29 +193,29 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     public WeaponBase ObtainWeapon(WeaponBase _weapon)
     {
-        WeaponBase previousWeapon=null;
-        if (m_Weapon1 == null)
-        {
-            m_Weapon1 = _weapon;
-            SwapWeapon(true);
-        }
-        else if (m_Weapon2 == null)
-        {
-            m_Weapon2 = _weapon;
-            SwapWeapon(false);
-        }
-        else
+        WeaponBase exchangeWeapon = null;
+        if (m_Weapon1 != null&&m_Weapon2!=null)
         {
             m_WeaponCurrent.OnDetach();
-            previousWeapon = m_WeaponCurrent;
+            exchangeWeapon = m_WeaponCurrent;
             if (m_weaponEquipingFirst)
                 m_Weapon1 = _weapon;
             else
                 m_Weapon2 = _weapon;
         }
+        else if (m_Weapon1 == null)
+        {
+            m_Weapon1 = _weapon;
+            SwapWeapon(true);
+        }
+        else if(m_Weapon2=null)
+        {
+            m_Weapon2 = _weapon;
+            SwapWeapon(false);
+        }
         _weapon.OnAttach(this, m_WeaponCurrent.B_AttachLeft ? tf_WeaponHoldLeft : tf_WeaponHoldRight, OnFireAddRecoil, OnReload);
         OnWeaponStatus();
-        return previousWeapon;
+        return exchangeWeapon;
     }
 
     public void OnSwapClick()
@@ -218,7 +227,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     void SwapWeapon(bool isFirst)
     {
-        if(m_WeaponCurrent)
+        if (m_WeaponCurrent)
             m_WeaponCurrent.OnShow(false);
         m_weaponEquipingFirst = isFirst;
         m_WeaponCurrent.OnShow(true);
@@ -376,6 +385,35 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             m_WeaponCurrent.m_WeaponAction.Upgrade();
         OnWeaponStatus();
     }
+    protected void OnCharacterHealthWillChange(DamageInfo damageInfo, EntityCharacterBase damageEntity)
+    {
+        if (damageInfo.m_AmountApply <= 0)
+            return;
+
+        if (damageInfo.m_detail.I_SourceID == m_EntityID)
+        {
+            m_PlayerInfo.OnWillDealtDamage(damageInfo, damageEntity);
+
+        }
+        else if (damageEntity.m_EntityID == m_EntityID)
+        {
+            m_PlayerInfo.OnWillReceiveDamage(damageInfo, damageEntity);
+        }
+    }
+    protected void OnEntityActivate(EntityBase targetEntity)
+    {
+        m_PlayerInfo.OnEntityActivate(targetEntity);
+    }
+    protected override void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
+    {
+        base.OnCharacterHealthChange(damageInfo, damageEntity, amountApply);
+        
+        if (amountApply <= 0 || damageEntity.b_isSubEntity || !GameManager.Instance.EntityExists(damageInfo.m_detail.I_SourceID))
+            return;
+
+        if (damageInfo.m_detail.I_SourceID == m_EntityID || GameManager.Instance.GetEntity(damageInfo.m_detail.I_SourceID).m_SpawnerEntityID == m_EntityID)
+            OnWeaponEnergy(GameExpression.GetActionEnergyRevive(amountApply));
+    }
     #endregion
     #region UI Indicator
     protected override bool OnReceiveDamage(DamageInfo damageInfo, Vector3 damageDirection)
@@ -451,7 +489,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         else
             UIManager.Instance.m_UIControl.RemoveBinding();
     }
-
+    
     protected class PlayerAnimator : CharacterAnimator
     {
         static readonly int HS_T_Fire = Animator.StringToHash("t_attack");

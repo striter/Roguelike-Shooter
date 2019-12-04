@@ -37,7 +37,7 @@ public class TestGameManager : GameManagerBase
     {
         base.Start();
         if(m_EnermiesType!= enum_Style.Invalid)
-            GameObjectManager.RegistStyledIngameEnermies(m_EnermiesType, enum_StageLevel.Veteran);
+            GameObjectManager.RegistStyledInGamePrefabs(m_EnermiesType, enum_StageLevel.Veteran);
 
         CBattleSave testData = new CBattleSave();
         testData.m_character = m_Character;
