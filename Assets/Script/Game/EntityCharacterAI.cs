@@ -197,11 +197,12 @@ public class EntityCharacterAI : EntityCharacterBase {
             f_checkTargetSimulate = 0f;
             f_calculateSimulate = 0f;
             f_targetDistance = 0f;
+            SetPlay(true);
         }
         public void OnDeactivate()
         {
             B_AgentEnabled = false;
-            m_Weapon.OnDeactivate();
+            SetPlay(false);
         }
         
         public void SetPlay(bool play)
