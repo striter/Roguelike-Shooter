@@ -214,7 +214,7 @@ GameObject:
   - component: {fileID: 114629209707637530}
   - component: {fileID: 114938876463958140}
   m_Layer: 5
-  m_Name: UIC_CharacterControl
+  m_Name: UIC_Control
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
