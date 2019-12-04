@@ -159,7 +159,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (m_Weapon1) m_Weapon1.Trigger(down);
         if (m_Weapon2) m_Weapon2.Trigger(down);
     }
-    void OnWeaponEnergy(float energy)
+    public void OnWeaponEnergy(float energy)
     {
         if (m_Weapon1) m_Weapon1.OnEnergyReceive(energy);
         if (m_Weapon2) m_Weapon2.OnEnergyReceive(energy);
