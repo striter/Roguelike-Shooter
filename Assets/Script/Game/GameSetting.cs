@@ -736,7 +736,7 @@ namespace GameSetting
         public string m_GameSeed;
         public enum_StageLevel m_Stage;
         public int m_coins;
-        public List<ActionGameData> m_battleAction;
+        public List<ActionGameData> m_actionEquipment;
         public float m_health;
         public enum_PlayerWeapon m_weapon1,m_weapon2;
         public ActionGameData m_weaponAction1,m_weaponAction2;
@@ -746,7 +746,7 @@ namespace GameSetting
             m_coins = 0;
             m_health = -1;
             m_weaponAction1 = new ActionGameData();
-            m_battleAction = new List<ActionGameData>();
+            m_actionEquipment = new List<ActionGameData>();
             m_Stage = enum_StageLevel.Rookie;
             m_GameSeed = DateTime.Now.ToLongTimeString().ToString();
             m_character = GameDataManager.m_GameData.m_CharacterSelected;
@@ -762,7 +762,7 @@ namespace GameSetting
             m_weapon2 = _player.m_Weapon2==null? enum_PlayerWeapon.Invalid: _player.m_Weapon2.m_WeaponInfo.m_Weapon;
             m_weaponAction1 = ActionGameData.Create(_player.m_Weapon1.m_WeaponAction);
             m_weaponAction2 = ActionGameData.Create(_player.m_Weapon2==null?null:_player.m_Weapon2.m_WeaponAction);
-            m_battleAction = ActionGameData.Create(_player.m_PlayerInfo.m_ActionPlaying);
+            m_actionEquipment = ActionGameData.Create(_player.m_PlayerInfo.m_ActionEquipment);
 
             m_GameSeed = _level.m_Seed;
             m_Stage = _level.m_GameStage;
@@ -1557,11 +1557,11 @@ namespace GameSetting
 
         public void UpgradeAction(int index)
         {
-            m_ActionPlaying[index].Upgrade();
+            m_ActionEquipment[index].Upgrade();
         }
         public void RemoveAction(int index)
         {
-            m_ActionPlaying.RemoveAt(index);
+            m_ActionEquipment[index].ForceExpire();
         }
         #region Action
         #region Interact
@@ -1604,12 +1604,13 @@ namespace GameSetting
             if (expire.m_ExpireType != enum_ExpireType.Action)
                 return;
             ActionBase targetAction = expire as ActionBase;
-            targetAction.Activate(m_Player, OnExpireElapsed);
-            targetAction.OnActivate();
-
             m_ActionPlaying.Add(targetAction);
             if (targetAction.m_ActionType == enum_ActionType.Equipment)
                 m_ActionEquipment.Add(targetAction);
+
+            targetAction.Activate(m_Player, OnExpireElapsed);
+            targetAction.OnActivate();
+
             OnActionChange();
         }
 
