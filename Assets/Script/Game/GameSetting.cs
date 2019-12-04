@@ -731,6 +731,7 @@ namespace GameSetting
         public int m_coins;
         public List<ActionGameData> m_actionEquipment;
         public float m_health;
+        public float m_armor;
         public enum_PlayerWeapon m_weapon1,m_weapon2;
         public ActionGameData m_weaponAction1,m_weaponAction2;
         public enum_PlayerCharacter m_character;
@@ -738,6 +739,7 @@ namespace GameSetting
         {
             m_coins = 0;
             m_health = -1;
+            m_armor = -1;
             m_weaponAction1 = new ActionGameData();
             m_actionEquipment = new List<ActionGameData>();
             m_Stage = enum_StageLevel.Rookie;
@@ -750,6 +752,7 @@ namespace GameSetting
         {
             m_coins = _player.m_PlayerInfo.m_Coins;
             m_health = _player.m_Health.m_CurrentHealth;
+            m_armor = _player.m_Health.m_CurrentArmor;
 
             m_weapon1 = _player.m_Weapon1.m_WeaponInfo.m_Weapon;
             m_weapon2 = _player.m_Weapon2==null? enum_PlayerWeapon.Invalid: _player.m_Weapon2.m_WeaponInfo.m_Weapon;

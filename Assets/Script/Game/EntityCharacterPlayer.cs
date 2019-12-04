@@ -84,7 +84,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public void SetPlayerInfo(CBattleSave m_saveData)
     {
         m_PlayerInfo.SetInfoData(m_saveData.m_coins, ActionDataManager.CreateActions(m_saveData.m_actionEquipment));
-        m_Health.OnRevive(m_saveData.m_health>0?m_saveData.m_health:I_MaxHealth,I_DefaultArmor);
+        m_Health.OnRevive(m_saveData.m_health>0?m_saveData.m_health:I_MaxHealth,m_saveData.m_armor>0?m_saveData.m_armor:I_DefaultArmor);
         ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_weapon1,ActionDataManager.CreateAction( m_saveData.m_weaponAction1)));
         if (m_saveData.m_weapon2 != enum_PlayerWeapon.Invalid)
             ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_weapon2, ActionDataManager.CreateAction(m_saveData.m_weaponAction2)));
