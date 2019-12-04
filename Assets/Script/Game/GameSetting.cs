@@ -135,7 +135,7 @@ namespace GameSetting
 
         public static List<enum_LevelType> GetRandomLevels(System.Random seed)
         {
-            switch (seed.Next(1, 5))        //1-4
+            switch (seed.Next(1, 9))        //1-4
             {
                 default:
                     return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.End };
@@ -143,6 +143,10 @@ namespace GameSetting
                 case 2: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.BattlePerkUpgrade, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.BattleActionAcquire, enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.Battle, enum_LevelType.End };
                 case 3: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.BattlePerkUpgrade, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.BattleActionAcquire, enum_LevelType.Battle, enum_LevelType.ActionAdjustment, enum_LevelType.End };
                 case 4: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.BattlePerkUpgrade, enum_LevelType.Battle, enum_LevelType.ActionAdjustment, enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.Battle, enum_LevelType.End };
+                case 5: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.BattleActionAcquire, enum_LevelType.Battle, enum_LevelType.BattlePerkUpgrade, enum_LevelType.Battle, enum_LevelType.ActionAdjustment, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.End };
+                case 6: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.BattleActionAcquire, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.Battle, enum_LevelType.BattlePerkUpgrade, enum_LevelType.End };
+                case 7: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.BattleActionAcquire, enum_LevelType.Battle, enum_LevelType.ActionAdjustment, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.End };
+                case 8: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.BattlePerkUpgrade, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.Battle, enum_LevelType.ActionAdjustment, enum_LevelType.End };
             }
         }
 
@@ -158,10 +162,10 @@ namespace GameSetting
                     return StageInteractGenerateData.Create(
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 00 }, { enum_WeaponRarity.Advanced, 100 }, { enum_WeaponRarity.Rare, 0 }, { enum_WeaponRarity.Legend, 0 } },
                         new Dictionary<enum_ActionRarity, int>() { { enum_ActionRarity.Normal, 60 }, { enum_ActionRarity.OutStanding, 40 }, { enum_ActionRarity.Epic, 0 } },
-                        PickupGenerateData.Create(10, 20, 30, new RangeInt(5, 5),
-                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 9 }, { enum_ActionRarity.OutStanding, 2.27f }, { enum_ActionRarity.Epic, 0 } },
+                        PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),
+                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 13.6f }, { enum_ActionRarity.OutStanding, 4.5f }, { enum_ActionRarity.Epic, 0 } },
                         new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Ordinary, 4.5f },{ enum_WeaponRarity.Advanced,2.27f} }),
-                        PickupGenerateData.Create(10, 100, 50, new RangeInt(15, 5),
+                        PickupGenerateData.Create(10, 100, 50, new RangeInt(10, 5),
                         new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 40 }, { enum_ActionRarity.OutStanding, 55 }, { enum_ActionRarity.Epic, 5 } },
                         new Dictionary<enum_WeaponRarity, float> { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 100 } })
                         );
@@ -169,10 +173,10 @@ namespace GameSetting
                     return StageInteractGenerateData.Create(
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 0 }, { enum_WeaponRarity.Rare, 100 }, { enum_WeaponRarity.Legend, 0 } },
                         new Dictionary<enum_ActionRarity, int>() { { enum_ActionRarity.Normal, 00 }, { enum_ActionRarity.OutStanding, 70 }, { enum_ActionRarity.Epic, 30 } },
-                        PickupGenerateData.Create(10, 20, 30, new RangeInt(5, 5),
-                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 5.55f }, { enum_ActionRarity.Epic, 1.39f } },
-                        new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Advanced, 2.78f },{ enum_WeaponRarity.Rare,1.39f} }),
-                        PickupGenerateData.Create(10, 100, 100, new RangeInt(15, 5),
+                        PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),
+                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 13.6f }, { enum_ActionRarity.Epic, 4.5f } },
+                        new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Advanced, 4.5f },{ enum_WeaponRarity.Rare,2.27f} }),
+                        PickupGenerateData.Create(10, 100, 100, new RangeInt(10, 5),
                         new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 80 }, { enum_ActionRarity.Epic, 20 } },
                         new Dictionary<enum_WeaponRarity, float> { { enum_WeaponRarity.Rare, 100 } })
                         );
@@ -180,10 +184,10 @@ namespace GameSetting
                     return StageInteractGenerateData.Create(
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 0 }, { enum_WeaponRarity.Rare, 0 }, { enum_WeaponRarity.Legend, 100 } },
                         new Dictionary<enum_ActionRarity, int>() { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 100 } },
-                        PickupGenerateData.Create(10, 20, 30, new RangeInt(5, 5),
-                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 6.41f } },
-                        new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Rare, 2.56f },{ enum_WeaponRarity.Legend,1.28f} }),
-                        PickupGenerateData.Create(0, 0, 0, new RangeInt(15, 5),
+                        PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),
+                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 13.6f } },
+                        new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Rare, 4.5f },{ enum_WeaponRarity.Legend,2.27f} }),
+                        PickupGenerateData.Create(0, 0, 0, new RangeInt(10, 5),
                         new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 0 } },
                         new Dictionary<enum_WeaponRarity, float> { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 0 } })
                         );
@@ -470,7 +474,6 @@ namespace GameSetting
         UI_PlayerCommonStatus,
         UI_PlayerInteractStatus,
         UI_PlayerHealthStatus,
-        UI_PlayerAmmoStatus,
         UI_PlayerExpireListStatus,
         UI_PlayerWeaponStatus,
 
