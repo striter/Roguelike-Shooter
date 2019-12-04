@@ -352,8 +352,8 @@ public static class ActionDataManager
         m_AllAction.Clear();
         m_WeaponAbilityAction.Clear();
         m_PlayerEquipmentAction.Clear();
-        
-        TReflection.TraversalAllInheritedClasses((Type type, ActionBase action) => {
+
+        TReflection.TraversalAllInheritedClasses((Action<Type, ActionBase>)((Type type, ActionBase action) => {
             if (action.m_Index <= 0)
                 return;
 
@@ -362,14 +362,13 @@ public static class ActionDataManager
             switch (action.m_ActionType)
             {
                 case enum_ActionType.Basic:
-                case enum_ActionType.Device:
                     m_WeaponAbilityAction.Add(action.m_Index);
                     break;
                 case enum_ActionType.Equipment:
                     m_PlayerEquipmentAction.Add(action.m_Index);
                     break;
             }
-        }, -1, enum_ActionRarity.Invalid);
+        }), -1, enum_ActionRarity.Invalid);
     }
     public static ActionBase CreateRandomAction(enum_ActionRarity rarity, System.Random seed)=> CreateAction(m_AllAction.RandomItem(seed),rarity);
     public static ActionBase CreateRandomWeaponAbilityAction(enum_ActionRarity rarity, System.Random seed) => CreateAction(m_WeaponAbilityAction.RandomItem(seed),rarity);

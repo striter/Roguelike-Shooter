@@ -321,7 +321,7 @@ MonoBehaviour:
   F1_WeaponSpawnType: 802
   WeaponPerkOnSpawn: -1
   F5_TestActionNormal: 30001
-  F6_TestActionOutstanding: 20006
+  F6_TestActionOutstanding: 20013
   F7_TestActionEpic: 30001
 --- !u!4 &1133817278
 Transform:

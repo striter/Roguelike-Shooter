@@ -232,8 +232,6 @@ namespace GameSetting
             {
                 case enum_ActionType.Basic:
                     return Color.yellow;
-                case enum_ActionType.Device:
-                    return Color.blue;
                 case enum_ActionType.Equipment:
                     return Color.green;
                 default:
@@ -318,7 +316,6 @@ namespace GameSetting
             {
                 default: Debug.LogError("Invalid Pharse Here!"+type.ToString());  return "";
                 case enum_ActionType.Basic: return "action_icon_basic";
-                case enum_ActionType.Device: return "action_icon_device";
                 case enum_ActionType.Equipment: return "action_icon_equipment";
             }
         }
@@ -328,7 +325,6 @@ namespace GameSetting
             {
                 default: Debug.LogError("Invalid Pharse Here!" + type.ToString()); return "";
                 case enum_ActionType.Basic: return "action_bottom_basic";
-                case enum_ActionType.Device: return "action_bottom_device";
                 case enum_ActionType.Equipment: return "action_bottom_equipment";
             }
         }
@@ -338,7 +334,6 @@ namespace GameSetting
             {
                 default: Debug.LogError("Invalid Pharse Here!" + type.ToString()); return "";
                 case enum_ActionType.Basic: return "action_cost_basic";
-                case enum_ActionType.Device: return "action_cost_device";
                 case enum_ActionType.Equipment: return "action_cost_equipment";
             }
         }
@@ -367,8 +362,6 @@ namespace GameSetting
                 default: return "000000FF";
                 case enum_ActionType.Basic:
                     return "FAC108FF";
-                case enum_ActionType.Device:
-                    return "00B4FFFF";
                 case enum_ActionType.Equipment:
                     return "B0FE00FF";
             }
@@ -532,7 +525,7 @@ namespace GameSetting
 
     public enum enum_ActionRarity { Invalid = -1, Normal = 1, OutStanding = 2, Epic = 3, }
 
-    public enum enum_ActionType { Invalid = -1, Basic = 1,Device=2,Equipment=3,}
+    public enum enum_ActionType { Invalid = -1, Basic = 1,Equipment=2,}
 
     public enum enum_EffectAttach { Invalid = -1,  Head = 1, Feet = 2, WeaponModel = 3,}
 
@@ -1523,7 +1516,6 @@ namespace GameSetting
 
         public List<ActionBase> m_ActionPlaying { get; private set; } = new List<ActionBase>();
         public List<ActionBase> m_ActionEquipment { get; private set; } = new List<ActionBase>();
-        ActionDeviceNormal m_CurrentDevice;
         Action OnPlayerActionChange;
         public int m_Coins { get; private set; } = 0;
 
@@ -1564,21 +1556,6 @@ namespace GameSetting
         }
         #region Action
         #region Interact
-        public void DoCopyAction(ActionBase action)
-        {
-            AddExpire(ActionDataManager.CopyAction(action));
-        }
-
-        public bool m_HaveDevice => m_CurrentDevice != null;
-        public bool TryUseDevice()
-        {
-            if (m_CurrentDevice == null)
-                return false;
-            m_CurrentDevice.OnUseDevice();
-            m_CurrentDevice = null;
-            return true;
-        }
-
         public bool CheckRevive(ref RangeFloat reviveAmount)
         {
             for (int i = 0; i < m_ActionPlaying.Count; i++)
@@ -1610,7 +1587,7 @@ namespace GameSetting
             targetAction.Activate(m_Player, OnExpireElapsed);
             targetAction.OnActivate();
 
-            OnActionChange();
+            OnPlayerActionChange();
         }
 
         protected override void OnExpireElapsed(ExpireBase expire)
@@ -1622,30 +1599,10 @@ namespace GameSetting
             m_ActionPlaying.Remove(targetAction);
             if (targetAction.m_ActionType == enum_ActionType.Equipment)
                 m_ActionPlaying.Remove(targetAction);
-            OnActionChange();
-        }
-
-        void OnActionChange()
-        {
-            CheckDevice();
             OnPlayerActionChange();
         }
         #endregion
         #region Data Update
-
-        void CheckDevice()
-        {
-            m_CurrentDevice = null;
-            m_ActionPlaying.TraversalBreak((ActionBase action) => {
-                if (action.m_ActionType == enum_ActionType.Device)
-                {
-                    m_CurrentDevice = action as ActionDeviceNormal;
-                    return true;
-                }
-                return false;
-            });
-        }
-
         protected override void OnResetInfo()
         {
             base.OnResetInfo();
@@ -1909,7 +1866,6 @@ namespace GameSetting
         
         #region Interact
         public virtual void OnActivate() { }
-        public virtual void OnUseDevice() { }
         public virtual void OnUseActionElse(ActionBase targetAction) { }
         public virtual void OnBeforeReceiveDamage(DamageInfo info) { }
         public virtual void OnAfterReceiveDamage(DamageInfo info, float amount) { }

@@ -125,9 +125,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
         if (down)
         {
-            if (m_PlayerInfo.TryUseDevice())
-                return;
-
             if (m_Interact != null)
             {
                 OnInteract();
@@ -363,7 +360,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         switch (action.m_ActionType)
         {
             case enum_ActionType.Basic:
-            case enum_ActionType.Device:
                 m_WeaponCurrent.SetWeaponAction(action);
                 OnWeaponStatus();
                 break;
