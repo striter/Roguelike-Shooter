@@ -1546,11 +1546,11 @@ namespace GameSetting
             _actionEquiping.Traversal((ActionBase action) => { AddExpire(action); });
         }
 
-        public void UpgradeAction(int index)
+        public void UpgradeEquipment(int index)
         {
             m_ActionEquipment[index].Upgrade();
         }
-        public void RemoveAction(int index)
+        public void RemoveEquipment(int index)
         {
             m_ActionEquipment[index].ForceExpire();
         }

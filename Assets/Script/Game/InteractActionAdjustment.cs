@@ -27,16 +27,16 @@ public class InteractActionAdjustment : InteractGameBase {
         adjustment.Play( this);
     }
 
-    public void OnRemovalAction(int index)
+    public void OnRemovalEquipment(int index)
     {
-        m_Interactor.RemoveAction(index);
+        m_Interactor.RemoveEquipment(index);
         m_Interactor.OnCoinsRemoval(RemovePrice);
         m_removeCount+=1;
     }
 
-    public void OnUpgradeAction(int index)
+    public void OnUpgradeEquipment(int index)
     {
-        m_Interactor.UpgradeAction(index);
+        m_Interactor.UpgradeEquipment(index);
         m_Interactor.OnCoinsRemoval(UpgradePrice);
         m_upgradeCount += 1;
     }
