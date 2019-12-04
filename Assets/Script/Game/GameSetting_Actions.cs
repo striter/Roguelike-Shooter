@@ -235,7 +235,7 @@ namespace GameSetting_Action
         public static float P_30016_ProjectileSpeedMultiply(enum_ActionRarity rarity) => 50 * (int)rarity;
 
         public const int I_30017_Cost = 2;
-        public static float F_30017_ArmorAdditive(enum_ActionRarity rarity) => 6 * (int)rarity;
+        public static float F_30017_ArmorAdditive(enum_ActionRarity rarity) => 10 * (int)rarity;
         
         public static int I_30018_Cost(enum_ActionRarity rarity)=>4-(int) rarity;
         #endregion
