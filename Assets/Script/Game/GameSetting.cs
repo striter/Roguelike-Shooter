@@ -762,7 +762,7 @@ namespace GameSetting
             m_weapon2 = _player.m_Weapon2==null? enum_PlayerWeapon.Invalid: _player.m_Weapon2.m_WeaponInfo.m_Weapon;
             m_weaponAction1 = ActionGameData.Create(_player.m_Weapon1.m_WeaponAction);
             m_weaponAction2 = ActionGameData.Create(_player.m_Weapon2==null?null:_player.m_Weapon2.m_WeaponAction);
-            m_battleAction = ActionGameData.Create(_player.m_PlayerInfo.m_ActionEquiping);
+            m_battleAction = ActionGameData.Create(_player.m_PlayerInfo.m_ActionPlaying);
 
             m_GameSeed = _level.m_Seed;
             m_Stage = _level.m_GameStage;
@@ -1522,7 +1522,8 @@ namespace GameSetting
 
         protected Vector3 m_prePos;
 
-        public List<ActionBase> m_ActionEquiping { get; private set; } = new List<ActionBase>();
+        public List<ActionBase> m_ActionPlaying { get; private set; } = new List<ActionBase>();
+        public List<ActionBase> m_ActionEquipment { get; private set; } = new List<ActionBase>();
         ActionDeviceNormal m_CurrentDevice;
         Action OnPlayerActionChange;
         public int m_Coins { get; private set; } = 0;
@@ -1551,22 +1552,22 @@ namespace GameSetting
         public void SetInfoData(int coins, List<ActionBase> _actionEquiping)
         {
             m_Coins = coins;
-            _actionEquiping.Traversal((ActionBase action) => { OnAddAction(action); });
+            _actionEquiping.Traversal((ActionBase action) => { AddExpire(action); });
         }
 
         public void UpgradeAction(int index)
         {
-            m_ActionEquiping[index].Upgrade();
+            m_ActionPlaying[index].Upgrade();
         }
         public void RemoveAction(int index)
         {
-            m_ActionEquiping.RemoveAt(index);
+            m_ActionPlaying.RemoveAt(index);
         }
         #region Action
         #region Interact
         public void DoCopyAction(ActionBase action)
         {
-            OnAddAction(ActionDataManager.CopyAction(action));
+            AddExpire(ActionDataManager.CopyAction(action));
         }
 
         public bool m_HaveDevice => m_CurrentDevice != null;
@@ -1581,9 +1582,9 @@ namespace GameSetting
 
         public bool CheckRevive(ref RangeFloat reviveAmount)
         {
-            for (int i = 0; i < m_ActionEquiping.Count; i++)
+            for (int i = 0; i < m_ActionPlaying.Count; i++)
             {
-                if (m_ActionEquiping[i].OnCheckRevive(ref reviveAmount))
+                if (m_ActionPlaying[i].OnCheckRevive(ref reviveAmount))
                     return true;
             }
             return false;
@@ -1592,31 +1593,38 @@ namespace GameSetting
         #region List Update
         public void OnUseAction(ActionBase targetAction)
         {
-            m_ActionEquiping.Traversal((ActionBase action) => { action.OnUseActionElse(targetAction); });
+            m_ActionPlaying.Traversal((ActionBase action) => { action.OnUseActionElse(targetAction); });
             GameObjectManager.PlayMuzzle(m_Player.m_EntityID, m_Player.transform.position, Vector3.up, GameExpression.GetActionMuzzleIndex(targetAction.m_ActionType));
-            OnAddAction(targetAction);
-        }
-        protected void OnAddAction(ActionBase targetAction)
-        {
-            targetAction.Activate(m_Player, OnExpireElapsed);
-            m_ActionEquiping.Add(targetAction);
-            targetAction.OnActivate();
             AddExpire(targetAction);
         }
 
         protected override void AddExpire(ExpireBase expire)
         {
             base.AddExpire(expire);
+            if (expire.m_ExpireType != enum_ExpireType.Action)
+                return;
+            ActionBase targetAction = expire as ActionBase;
+            targetAction.Activate(m_Player, OnExpireElapsed);
+            targetAction.OnActivate();
+
+            m_ActionPlaying.Add(targetAction);
+            if (targetAction.m_ActionType == enum_ActionType.Equipment)
+                m_ActionEquipment.Add(targetAction);
             OnActionChange();
         }
 
         protected override void OnExpireElapsed(ExpireBase expire)
         {
             base.OnExpireElapsed(expire);
-            if (expire.m_ExpireType == enum_ExpireType.Action)
-                m_ActionEquiping.Remove(expire as ActionBase);
+            if (expire.m_ExpireType != enum_ExpireType.Action)
+                return;
+            ActionBase targetAction = expire as ActionBase;
+            m_ActionPlaying.Remove(targetAction);
+            if (targetAction.m_ActionType == enum_ActionType.Equipment)
+                m_ActionPlaying.Remove(targetAction);
             OnActionChange();
         }
+
         void OnActionChange()
         {
             CheckDevice();
@@ -1628,7 +1636,7 @@ namespace GameSetting
         void CheckDevice()
         {
             m_CurrentDevice = null;
-            m_ActionEquiping.TraversalBreak((ActionBase action) => {
+            m_ActionPlaying.TraversalBreak((ActionBase action) => {
                 if (action.m_ActionType == enum_ActionType.Device)
                 {
                     m_CurrentDevice = action as ActionDeviceNormal;
@@ -1682,12 +1690,12 @@ namespace GameSetting
             ResetEffect(enum_CharacterEffect.Cloak);
             float randomDamageMultiply = UnityEngine.Random.Range(-GameConst.F_PlayerDamageAdjustmentRange, GameConst.F_PlayerDamageAdjustmentRange);
             DamageDeliverInfo info = DamageDeliverInfo.DamageInfo(m_Entity.m_EntityID, F_DamageMultiply + randomDamageMultiply, F_DamageAdditive);
-            m_ActionEquiping.Traversal((ActionBase action) => { action.OnFire(info.I_IdentiyID); });
+            m_ActionPlaying.Traversal((ActionBase action) => { action.OnFire(info.I_IdentiyID); });
             return info;
         }
 
-        public void OnPlayerMove(float distance) => m_ActionEquiping.Traversal((ActionBase action) => { action.OnMove(distance); });
-        public void OnReloadFinish() => m_ActionEquiping.Traversal((ActionBase action) => { action.OnReloadFinish(); });
+        public void OnPlayerMove(float distance) => m_ActionPlaying.Traversal((ActionBase action) => { action.OnMove(distance); });
+        public void OnReloadFinish() => m_ActionPlaying.Traversal((ActionBase action) => { action.OnReloadFinish(); });
 
         public void OnEntityActivate(EntityBase targetEntity)
         {
@@ -1697,12 +1705,12 @@ namespace GameSetting
             EntityCharacterBase ally = (targetEntity as EntityCharacterBase);
             if (F_AllyHealthMultiplierAdditive > 0)
                 ally.m_Health.SetHealthMultiplier(F_AllyHealthMultiplierAdditive);
-            m_ActionEquiping.Traversal((ActionBase action) => { action.OnAllyActivate(targetEntity as EntityCharacterBase); });
+            m_ActionPlaying.Traversal((ActionBase action) => { action.OnAllyActivate(targetEntity as EntityCharacterBase); });
         }
 
-        public void OnWillDealtDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) { m_ActionEquiping.Traversal((ActionBase action) => { action.OnDealtDamageSetEffect(damageEntity, damageInfo); action.OnDealtDamageSetDamage(damageEntity, damageInfo); }); }
+        public void OnWillDealtDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) { m_ActionPlaying.Traversal((ActionBase action) => { action.OnDealtDamageSetEffect(damageEntity, damageInfo); action.OnDealtDamageSetDamage(damageEntity, damageInfo); }); }
 
-        public void OnWillReceiveDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) { m_ActionEquiping.Traversal((ActionBase action) => { action.OnBeforeReceiveDamage(damageInfo); }); }
+        public void OnWillReceiveDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) { m_ActionPlaying.Traversal((ActionBase action) => { action.OnBeforeReceiveDamage(damageInfo); }); }
 
         public override void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
         {
@@ -1713,15 +1721,15 @@ namespace GameSetting
             if (damageInfo.m_detail.I_SourceID == m_Player.m_EntityID)
             {
                 if(amountApply>0)
-                    m_ActionEquiping.Traversal((ActionBase action) => { action.OnAfterDealtDemage(damageEntity, damageInfo, amountApply); });
+                    m_ActionPlaying.Traversal((ActionBase action) => { action.OnAfterDealtDemage(damageEntity, damageInfo, amountApply); });
             }
 
             if (damageEntity.m_EntityID == m_Player.m_EntityID)
             {
                 if (amountApply > 0)
-                    m_ActionEquiping.Traversal((ActionBase action) => { action.OnAfterReceiveDamage(damageInfo, amountApply); });
+                    m_ActionPlaying.Traversal((ActionBase action) => { action.OnAfterReceiveDamage(damageInfo, amountApply); });
                 else
-                    m_ActionEquiping.Traversal((ActionBase action) => { action.OnReceiveHealing(damageInfo, amountApply); });
+                    m_ActionPlaying.Traversal((ActionBase action) => { action.OnReceiveHealing(damageInfo, amountApply); });
             }
         }
         #endregion

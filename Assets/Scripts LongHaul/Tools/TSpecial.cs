@@ -755,11 +755,13 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
             check2 = temp2;
         }
 
-        public bool Check(T target1, Y target2)
+        public bool Check(T target1, Y target2) => Check(target1) || Check(target2);
+        public bool Check(Y target2)
         {
-            if (!target2.Equals(check2))
+            if (check2.Equals(target2))
                 return false;
-            return Check(target1);
+            check2 = target2;
+            return true;
         }
     }
     #endregion

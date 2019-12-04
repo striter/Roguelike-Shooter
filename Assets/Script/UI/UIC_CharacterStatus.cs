@@ -169,7 +169,6 @@ public class UIC_CharacterStatus : UIControlBase
             }
         }
 
-
         Color ammoStatusColor = weaponInfo.F_AmmoStatus < .5f ? Color.Lerp(Color.red, Color.white, (weaponInfo.F_AmmoStatus / .5f)) : Color.white;
         if (weaponInfo.I_ClipAmount <= UIConst.I_AmmoCountToSlider)
         {
