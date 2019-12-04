@@ -76,7 +76,6 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     private void Update()
     {
         m_CharacterInfo.Tick(Time.deltaTime);
-        m_Health.OnMaxHealthAdditive(m_CharacterInfo.F_MaxHealthAdditive);
         m_Effect.SetCloak(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Cloak));
         m_Effect.SetFreezed(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Freeze));
         m_Effect.SetScaned(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Scan));
@@ -96,7 +95,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         m_Effect.OnReset();
         m_CharacterInfo.OnRevive();
         EntityHealth health = (m_Health as EntityHealth);
-        health.OnRevive(reviveHealth == -1 ? health.m_MaxHealth : reviveHealth, reviveArmor == -1 ? health.m_DefaultArmor : reviveArmor);
+        health.OnSetHealth(reviveHealth == -1 ? health.m_MaxHealth : reviveHealth, reviveArmor == -1 ? health.m_DefaultArmor : reviveArmor);
         this.StopSingleCoroutine(0);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterRevive, this);
     }

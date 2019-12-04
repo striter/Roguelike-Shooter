@@ -33,6 +33,13 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected bool m_aiming = false;
     protected override enum_GameAudioSFX m_DamageClip => enum_GameAudioSFX.PlayerDamage;
 
+    public new EntityPlayerHealth m_Health { get; private set; }
+    protected override HealthBase GetHealthManager()
+    {
+        m_Health=new EntityPlayerHealth(this, OnHealthStatus, OnDead);
+        return m_Health;
+    } 
+
     protected float f_aimMovementReduction = 0f;
     protected bool m_aimingMovementReduction => f_aimMovementReduction > 0f;
     protected float m_BaseMovementSpeed;
@@ -84,7 +91,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public void SetPlayerInfo(CBattleSave m_saveData)
     {
         m_PlayerInfo.SetInfoData(m_saveData.m_coins, ActionDataManager.CreateActions(m_saveData.m_actionEquipment));
-        m_Health.OnRevive(m_saveData.m_health>0?m_saveData.m_health:I_MaxHealth,m_saveData.m_armor>0?m_saveData.m_armor:I_DefaultArmor);
+        m_Health.SetInfoData(m_saveData.m_curHealth>=0?m_saveData.m_curHealth:I_MaxHealth,m_saveData.m_curArmor>=0?m_saveData.m_curArmor:I_DefaultArmor,m_saveData.m_maxHealthAdditive>=0?m_saveData.m_maxHealthAdditive:0);
         ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_weapon1,ActionDataManager.CreateAction( m_saveData.m_weaponAction1)));
         if (m_saveData.m_weapon2 != enum_PlayerWeapon.Invalid)
             ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_weapon2, ActionDataManager.CreateAction(m_saveData.m_weaponAction2)));

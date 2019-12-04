@@ -1193,33 +1193,31 @@ namespace GameSetting_Action
         public Action_30009_AllyActivateHealthAdditive(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
     }
 
-    public class Action_30010_UseActionAddMaxHealth :ActionStackUp
+    public class Action_30010_UseActionAddMaxHealth : ActionBase
     {
         public override int m_Index => 30010;
         public override int I_Cost => ActionData.I_30010_Cost;
         public override enum_ActionType m_ActionType => enum_ActionType.Equipment;
         public override float Value1 => ActionData.F_30010_MaxHealthAddup(m_rarity);
-        public override float m_MaxHealthAdditive => Value1 * m_stackUp;
         public override void OnUseActionElse(ActionBase targetAction)
         {
             base.OnUseActionElse(targetAction);
-            OnStackUp(1);
+            m_ActionEntity.m_Health.AddMaxHealth(Value1);
         }
         public Action_30010_UseActionAddMaxHealth(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
     }
 
-    public class Action_30011_ReceiveHealingAddMaxHealth : ActionStackUp
+    public class Action_30011_ReceiveHealingAddMaxHealth : ActionBase
     {
         public override int m_Index => 30011;
         public override int I_Cost => ActionData.I_30011_Cost;
         public override enum_ActionType m_ActionType => enum_ActionType.Equipment;
         public override float Value1 => ActionData.P_30011_MaxHealthRegen(m_rarity);
-        public override float m_MaxHealthAdditive => m_stackUp;
         public override void OnReceiveHealing(DamageInfo info, float amount)
         {
             base.OnReceiveHealing(info, amount);
             if(info.m_Type== enum_DamageType.HealthOnly)
-                OnStackUp(-info.m_AmountApply*Value1/100f);
+                 m_ActionEntity.m_Health.AddMaxHealth (-info.m_AmountApply*Value1/100f);
         }
         public Action_30011_ReceiveHealingAddMaxHealth(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
     }
