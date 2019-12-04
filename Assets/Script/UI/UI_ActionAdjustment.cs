@@ -31,7 +31,7 @@ public class UI_ActionAdjustment : UIPageBase {
     {
         m_Grid.ClearGrid();
         for (int i = 0; i < m_Interact.m_Interactor.m_ActionEquipment.Count; i++)
-            m_Grid.AddItem(i).SetInfo(m_Interact.m_Interactor.m_ActionEquipment[i],OnItemSelected,true);
+            m_Grid.AddItem(i).SetDetailInfo(m_Interact.m_Interactor.m_ActionEquipment[i],OnItemSelected);
         m_selectIndex = -1;
         OnAdjustmentBtnStatus();
     }

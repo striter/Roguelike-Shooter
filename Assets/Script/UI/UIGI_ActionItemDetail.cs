@@ -11,21 +11,15 @@ public class UIGI_ActionItemDetail : UIGI_ActionItemBase {
         m_Intro = transform.Find("Intro").GetComponent<UIT_TextExtend>();
         tf_Container.Find("Button").GetComponent<Button>().onClick.AddListener(OnButtonClick);
     }
-    public virtual void SetInfo(ActionBase actionInfo,Action<int> _OnClick,bool costable)
+    public virtual void SetDetailInfo(ActionBase actionInfo,Action<int> _OnClick)
     {
         SetInfo(actionInfo);
+        actionInfo.SetActionIntro(m_Intro);
         SetOnClick(_OnClick);
-        SetCostable(costable);
     }
 
     protected void SetOnClick(Action<int> _OnClick) => OnClick = _OnClick;
-
-    protected override void SetInfo(ActionBase actionInfo)
-    {
-        base.SetInfo(actionInfo);
-        actionInfo.SetActionIntro( m_Intro);
-    }
-
+    
     void OnButtonClick()
     {
         OnClick?.Invoke(I_Index);
