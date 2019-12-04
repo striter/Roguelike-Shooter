@@ -64,7 +64,7 @@ namespace GameSetting_Action
         public const float F_10014_Duration = 15f;
         public static float F_10014_HitFrozenDamageAdditive(enum_ActionRarity rarity) => 20 * (int)rarity;
 
-        public const int I_10015_Cost = 0;
+        public const int I_10015_Cost = 1;
         public static float F_10015_FrozeDuration(enum_ActionRarity rarity) => 3f * (int)rarity;
 
         public const int I_10016_Cost = 1;
@@ -97,7 +97,7 @@ namespace GameSetting_Action
         public const int I_10024_Cost = 1;
         public static float F_10024_ArmorAdditive(enum_ActionRarity rarity) => 30 * (int)rarity;
 
-        public const int I_10025_Cost = 2;
+        public const int I_10025_Cost = 4;
         public static float P_10025_ArmorAdditiveMultiply(enum_ActionRarity rarity) => 60* (int)rarity;
 
         public const int I_10026_Cost = 2;
@@ -152,7 +152,7 @@ namespace GameSetting_Action
         public static float F_20005_Damage(enum_ActionRarity rarity) => 40;
         public const float F_20005_FireRate=1f;
 
-        public const int I_20006_Cost = 0;
+        public const int I_20006_Cost = 1;
         public static float F_20006_FreezeDuration(enum_ActionRarity rarity) => 3 * (int)rarity;
 
         public static int I_20007_Cost(enum_ActionRarity rarity) => 1;
@@ -189,7 +189,7 @@ namespace GameSetting_Action
         public const int I_30001_MaxStack = 20;
 
         public const int I_30002_Cost = 3;
-        public static float P_30002_SingleShotDamageMultiplyAfterKill(enum_ActionRarity rarity) => 100 * (int)rarity;
+        public static float P_30002_SingleShotDamageMultiplyAfterKill(enum_ActionRarity rarity) => 60 * (int)rarity;
 
         public const int I_30003_Cost = 2;
         public static float F_30003_GrenadeDamage(enum_ActionRarity rarity) => 100 * (int)rarity;
@@ -217,13 +217,13 @@ namespace GameSetting_Action
         public static float F_30010_MaxHealthAddup(enum_ActionRarity rarity) => 12 * (int)rarity;
 
         public const int I_30011_Cost = 2;
-        public static float P_30011_MaxHealthRegen(enum_ActionRarity rarity) => 24 * (int)rarity;
+        public static float P_30011_MaxHealthRegen(enum_ActionRarity rarity) => 12 * (int)rarity;
 
         public const int I_30012_Cost = 2;
         public static float P_30012_HealthRegenEachKill(enum_ActionRarity rarity) => 10 * (int)rarity;
 
         public const int I_30013_Cost = 1;
-        public static float P_30013_HealthRegenAdditive(enum_ActionRarity rarity) => 40* (int)rarity;
+        public static float P_30013_HealthRegenAdditive(enum_ActionRarity rarity) => 80* (int)rarity;
 
         public const int I_30014_Cost = 3;
         public static float F_30014_DamageReductionDuration(enum_ActionRarity rarity) => 1f*(int)rarity;
