@@ -2084,10 +2084,6 @@ namespace GameSetting
         {
 
         }
-        public virtual void OnDeactivate()
-        {
-        }
-
         public static EquipmentBase AcquireEquipment(int weaponIndex, EntityCharacterBase _entity, Func<DamageDeliverInfo> GetDamageBuffInfo)
         {
             SFXEquipmentBase weaponInfo = GameObjectManager.GetEquipmentData<SFXEquipmentBase>(weaponIndex);
@@ -2242,12 +2238,6 @@ namespace GameSetting
                 m_Cast.StopControlled();
                 m_Cast = null;
             }
-        }
-
-        public override void OnDeactivate()
-        {
-            base.OnDeactivate();
-            OnSetAttack(false);
         }
     }
     public class EquipmentBarrageRange : EquipmentBase

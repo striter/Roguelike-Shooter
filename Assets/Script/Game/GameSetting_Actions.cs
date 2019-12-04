@@ -381,7 +381,6 @@ namespace GameSetting_Action
             base.OnActivate();
             EquipmentBase device = GetDevice();
             device.Play(m_ActionEntity, m_ActionEntity.transform.position + m_ActionEntity.transform.forward * m_DeviceDistance);
-            device.OnDeactivate();
         }
 
         public virtual EquipmentBase GetDevice()
