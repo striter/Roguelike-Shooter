@@ -201,7 +201,6 @@ public class EntityCharacterAI : EntityCharacterBase {
         }
         public void OnDeactivate()
         {
-            B_AgentEnabled = false;
             SetPlay(false);
         }
         
