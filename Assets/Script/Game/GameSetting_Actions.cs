@@ -372,7 +372,7 @@ namespace GameSetting_Action
         public ActionRevive(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
     }
 
-    public class ActionDevice : ActionBase
+    public class ActionDevice : ActionAfterUse
     {
         protected virtual float m_DeviceDistance=>10;
         public override enum_ActionType m_ActionType => enum_ActionType.Basic;

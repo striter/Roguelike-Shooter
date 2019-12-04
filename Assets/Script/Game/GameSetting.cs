@@ -1163,11 +1163,6 @@ namespace GameSetting
                 OnSetHealth(m_BaseMaxHealth, true);
             OnHealthChanged(enum_HealthChangeMessage.Default);
         }
-        public void OnRestoreArmor()
-        {
-            m_CurrentArmor = m_DefaultArmor;
-            OnHealthChanged(enum_HealthChangeMessage.Default);
-        }
         public override bool OnReceiveDamage(DamageInfo damageInfo, float damageReduction = 1, float healEnhance = 1)
         {
             if (b_IsDead)

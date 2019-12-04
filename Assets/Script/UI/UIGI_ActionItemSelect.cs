@@ -12,9 +12,9 @@ public class UIGI_ActionItemSelect : UIGI_ActionItemDetail {
         base.Init();
         m_Highlight = tf_Container.Find("Highlight").GetComponent<Image>();
     }
-    public override void SetInfo(ActionBase actionInfo, Action<int> _OnClick, bool costable)
+    public override void SetDetailInfo(ActionBase actionInfo, Action<int> _OnClick)
     {
-        base.SetInfo(actionInfo, _OnClick, costable);
+        base.SetDetailInfo(actionInfo, _OnClick);
         SetHighlight(false);
     }
     public void SetHighlight(bool highLight)

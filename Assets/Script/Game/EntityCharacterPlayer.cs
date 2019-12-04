@@ -112,12 +112,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (m_Assist)
             m_Assist.Recycle();
     }
-    
-    protected override void OnBattleFinish()
-    {
-        base.OnBattleFinish();
-        m_Health.OnRestoreArmor();
-    }
 
     void OnMainDown(bool down)
     {
