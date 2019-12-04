@@ -123,7 +123,7 @@ public class UIC_CharacterStatus : UIControlBase
         m_HealthLerp.TickDelta(Time.unscaledDeltaTime);
         m_ArmorLerp.TickDelta(Time.unscaledDeltaTime);
 
-        if (m_DyingCheck.check)
+        if (m_DyingCheck.check1)
         {
             float dyingValue = 1-Mathf.InverseLerp(UIConst.I_PlayerDyingMinValue, UIConst.I_PlayerDyingMaxValue, m_Player.m_Health.m_CurrentHealth) ;
             img_Dying.color = TCommon.ColorAlpha(img_Dying.color,dyingValue+m_DyingCurve.Evaluate(Time.time)*.3f);

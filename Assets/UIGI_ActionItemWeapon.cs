@@ -9,7 +9,7 @@ public class UIGI_ActionItemWeapon : UIGI_ActionItemBase {
     Transform m_Ready,m_Blank;
     Image m_Cooldown;
     Action OnClick;
-
+    TSpecialClasses.ValueChecker<float, bool> m_AvailableCheck;
     public override void Init()
     {
         base.Init();
@@ -17,6 +17,7 @@ public class UIGI_ActionItemWeapon : UIGI_ActionItemBase {
         m_Blank = transform.Find("Blank");
         m_Cooldown = transform.Find("Cooldown").GetComponent<Image>();
         transform.Find("Button").GetComponent<Button>().onClick.AddListener(()=> { OnClick(); });
+        m_AvailableCheck = new TSpecialClasses.ValueChecker<float, bool>(-1, false);
     }
     public void Play(ActionBase action,Action _OnClick)
     {
@@ -34,8 +35,10 @@ public class UIGI_ActionItemWeapon : UIGI_ActionItemBase {
     {
         if (weapon.m_WeaponAction == null)
             return;
-        m_Cooldown.fillAmount = weapon.m_ActionEnergyRequirementLeft;
-        Debug.Log(weapon.m_ActionEnergyRequirementLeft);
-        m_Ready.SetActivate(weapon.m_ActionAvailable);
+        if (m_AvailableCheck.Check(weapon.m_ActionEnergyRequirementLeft, weapon.m_ActionAvailable))
+        {
+            m_Cooldown.fillAmount = m_AvailableCheck.check1;
+            m_Ready.SetActivate(m_AvailableCheck.check2);
+        }
     }
 }
