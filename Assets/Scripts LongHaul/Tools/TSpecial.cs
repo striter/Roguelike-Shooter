@@ -670,7 +670,7 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
         }
         #endregion
     }
-
+    #region UI
     public class ValueLerpBase
     {
         float m_check;
@@ -728,6 +728,44 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
         
         protected override float GetValue(float checkLeftParam) => Mathf.Lerp(m_previousValue, m_targetValue, 1 - checkLeftParam);
     }
+
+
+    public class ValueChecker<T>
+    {
+        Action OnValueChange;
+        public T check { get; private set; }
+        public ValueChecker(T _check, Action _OnValueChange=null)
+        {
+            check = _check;
+            OnValueChange = _OnValueChange;
+        }
+
+        public bool Check(T target)
+        {
+            if (check.Equals(target))
+                return false;
+            check = target;
+            OnValueChange?.Invoke();
+            return true;
+        }
+    }
+
+    public class ValueChecker<T, Y> : ValueChecker<T>
+    {
+        Y check;
+        public ValueChecker(T temp1, Y temp2, Action _OnValueChange=null) : base(temp1, _OnValueChange)
+        {
+            check = temp2;
+        }
+
+        public bool Check(T target1, Y target2)
+        {
+            if (target2.Equals(check))
+                return false;
+            return Check(target1);
+        }
+    }
+    #endregion
 }
 #region Extra Structs/Classes
 [Serializable]

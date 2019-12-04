@@ -31,8 +31,8 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
 
     public ActionBase m_WeaponAction { get; private set; } = null;
     protected float m_ActionEnergy { get; private set; } = 0;
-    public float m_EnergyRequireLeftScale => m_WeaponAction == null ? -1:  (1-m_ActionEnergy / m_WeaponAction.I_Cost);
-
+    public float m_ActionEnergyRequirementLeft => m_WeaponAction == null ? -1:  (1-m_ActionEnergy / m_WeaponAction.I_Cost);
+    public bool m_ActionAvailable => m_WeaponAction != null && m_ActionEnergy >= m_WeaponAction.I_Cost;
     public override void OnPoolItemInit(enum_PlayerWeapon _identity, Action<enum_PlayerWeapon, MonoBehaviour> _OnRecycle)
     {
         base.OnPoolItemInit(_identity,_OnRecycle);
@@ -77,6 +77,8 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     public virtual void OnShow(bool show)
     {
         transform.SetActivate(show);
+        if (show)
+            CheckCanAutoReload();
     } 
 
 
@@ -94,7 +96,7 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
 
     public ActionBase GetAbilityACtion()
     {
-        if(m_WeaponAction!=null&&m_ActionEnergy>=m_WeaponAction.I_Cost)
+        if(m_ActionAvailable)
         {
             m_ActionEnergy = 0;
             return ActionDataManager.CopyAction( m_WeaponAction);

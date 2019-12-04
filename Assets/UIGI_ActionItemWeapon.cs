@@ -32,7 +32,10 @@ public class UIGI_ActionItemWeapon : UIGI_ActionItemBase {
 
     public void Tick(WeaponBase weapon)
     {
-        m_Cooldown.fillAmount = weapon.m_EnergyRequireLeftScale;
-        m_Ready.SetActivate(weapon.m_EnergyRequireLeftScale >= 1);
+        if (weapon.m_WeaponAction == null)
+            return;
+        m_Cooldown.fillAmount = weapon.m_ActionEnergyRequirementLeft;
+        Debug.Log(weapon.m_ActionEnergyRequirementLeft);
+        m_Ready.SetActivate(weapon.m_ActionAvailable);
     }
 }

@@ -17,6 +17,7 @@ public class UIC_Control : UIControlBase {
     Action OnReload,OnSwap, OnCharacterAbility;
     Action<bool> OnWeaponAction;
     Action<bool> OnMainDown;
+    TSpecialClasses.ValueChecker<bool> m_AbilityCooldownChecker;
     protected override void Init()
     {
         base.Init();
@@ -41,6 +42,7 @@ public class UIC_Control : UIControlBase {
         m_TouchDelta = transform.GetComponent<TouchDeltaManager>();
         OnOptionsChanged();
         OptionsManager.event_OptionChanged += OnOptionsChanged;
+        m_AbilityCooldownChecker = new TSpecialClasses.ValueChecker<bool>(false);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OncommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerWeaponStatus, OnWeaponStatus);
     }
@@ -61,18 +63,16 @@ public class UIC_Control : UIControlBase {
     bool CheckControlable() => !UIPageBase.m_PageOpening;
 
     InteractBase m_Interact;
-    bool m_cooldowning=true;
     void OncommonStatus(EntityCharacterPlayer player)
     {
         m_Player = player;
         if(player.m_Ability.m_Cooldowning)
             m_AbilityCooldown.fillAmount = player.m_Ability.m_CooldownScale;
 
-        if(player.m_Ability.m_Cooldowning!=m_cooldowning)
+        if(m_AbilityCooldownChecker.Check(player.m_Ability.m_Cooldowning))
         {
-            m_cooldowning = player.m_Ability.m_Cooldowning;
-            m_AbilityBG.sprite = UIManager.Instance.m_CommonSprites[UIConvertions.GetAbilityBackground(m_cooldowning)];
-            m_AbilityCooldown.SetActivate(m_cooldowning);
+            m_AbilityBG.sprite = UIManager.Instance.m_CommonSprites[UIConvertions.GetAbilityBackground(player.m_Ability.m_Cooldowning)];
+            m_AbilityCooldown.SetActivate(player.m_Ability.m_Cooldowning);
         }
 
         if (player.m_Interact != m_Interact)
@@ -84,6 +84,7 @@ public class UIC_Control : UIControlBase {
         m_weapon1Data.UpdateAmmoStatus();
         m_weapon2Data.UpdateAmmoStatus();
     }
+
     #region Controls
     public void DoBinding(EntityCharacterPlayer player,Action<Vector2> _OnLeftDelta, Action<Vector2> _OnRightDelta, Action<bool> _OnMainDown,Action _OnSwap, Action _OnReload, Action<bool> _OnWeaponAction, Action _OnCharacterAbility)
     {
@@ -157,6 +158,7 @@ public class UIC_Control : UIControlBase {
         Transform m_Equiping, m_unEquiping;
         Text m_Clip, m_Total;
         UIGI_ActionItemWeapon m_Action;
+        TSpecialClasses.ValueChecker<int, int> m_AmmoStatusChecker;
         public WeaponData(Transform _transform)
         {
             transform = _transform;
@@ -172,8 +174,7 @@ public class UIC_Control : UIControlBase {
             tf_Detail.GetComponent<Button>().onClick.AddListener(OnWeaponDetailClick);
             m_Action = transform.Find("ActionStatus").GetComponent<UIGI_ActionItemWeapon>();
             m_Action.Init();
-            UpdateAmmoStatus();
-            LayoutRebuilder.ForceRebuildLayoutImmediate(tf_AmmoStatus as RectTransform);
+            m_AmmoStatusChecker = new TSpecialClasses.ValueChecker<int, int>(-1,-1,OnAmmoStatusChanged);
         }
         public void UpdateInfo(WeaponBase weapon, bool equiping, Action OnWeaponActionClick)
         {
@@ -194,24 +195,30 @@ public class UIC_Control : UIControlBase {
             m_Image.sprite = UIManager.Instance.m_WeaponSprites[m_weapon.m_WeaponInfo.m_Weapon.GetSpriteName()];
             m_Name.autoLocalizeText = m_weapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
             UpdateAmmoStatus();
-            LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
         }
-
+        
         public void UpdateAmmoStatus()
         {
             if (m_weapon == null)
                 return;
+            m_AmmoStatusChecker.Check(m_weapon.I_AmmoLeft, m_weapon.I_ClipAmount);
+            if(m_weapon.m_WeaponAction!=null)
+                m_Action.Tick(m_weapon);
+        }
+
+        void OnAmmoStatusChanged()
+        {
             m_Clip.text = m_weapon.I_AmmoLeft.ToString();
             m_Total.text = m_weapon.I_ClipAmount.ToString();
-            m_Action.Tick(m_weapon);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(tf_AmmoStatus as RectTransform);
         }
 
         void OnWeaponDetailClick()
         {
             UIManager.Instance.ShowPage<UI_WeaponStatus>(true, 0f).Play(m_weapon.m_WeaponInfo,m_weapon.m_WeaponAction);
         }
-        
     }
+
 #if UNITY_EDITOR
     private void Update()
     {

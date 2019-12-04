@@ -5,12 +5,10 @@ using TSpecialClasses;
 public class UIC_CharacterStatus : UIControlBase
 {
     public AnimationCurve m_DyingCurve;
+    RawImage img_Dying;
 
     Transform tf_Container;
     EntityCharacterPlayer m_Player;
-
-    bool m_dying;
-    RawImage img_Dying;
 
     Transform tf_ExpireData;
     UIT_GridControllerGridItem<UIGI_ExpireInfoItem> m_ExpireGrid;
@@ -37,6 +35,7 @@ public class UIC_CharacterStatus : UIControlBase
     UIT_TextExtend m_MapTitle;
     Image m_MapPrevious, m_MapCurrent, m_MapNext;
     TSpecialClasses.AnimationControlBase m_MapAnimation;
+    TSpecialClasses.ValueChecker<bool> m_DyingCheck;
     protected override void Init()
     {
         base.Init();
@@ -78,9 +77,8 @@ public class UIC_CharacterStatus : UIControlBase
         TBroadCaster<enum_BC_UIStatus>.Add<EntityHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerExpireListStatus, OnExpireListStatus);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
-        
-        img_Dying.SetActivate(false);
-        m_dying = false;
+
+        m_DyingCheck = new ValueChecker<bool>(true);
     }
     
     protected override void OnDestroy()
@@ -125,7 +123,7 @@ public class UIC_CharacterStatus : UIControlBase
         m_HealthLerp.TickDelta(Time.unscaledDeltaTime);
         m_ArmorLerp.TickDelta(Time.unscaledDeltaTime);
 
-        if (m_dying)
+        if (m_DyingCheck.check)
         {
             float dyingValue = 1-Mathf.InverseLerp(UIConst.I_PlayerDyingMinValue, UIConst.I_PlayerDyingMaxValue, m_Player.m_Health.m_CurrentHealth) ;
             img_Dying.color = TCommon.ColorAlpha(img_Dying.color,dyingValue+m_DyingCurve.Evaluate(Time.time)*.3f);
@@ -136,11 +134,8 @@ public class UIC_CharacterStatus : UIControlBase
     {
         m_Player = _player;
         bool dying = !m_Player.m_Health.b_IsDead&& m_Player.m_Health.m_CurrentHealth < UIConst.I_PlayerDyingMaxValue;
-        if(m_dying!= dying)
-        {
-            m_dying = dying;
-            img_Dying.SetActivate(m_dying);
-        }
+        if(m_DyingCheck.Check(dying))
+            img_Dying.SetActivate(dying);
         OnAmmoStatus(_player.m_WeaponCurrent);
     }
 
@@ -159,7 +154,7 @@ public class UIC_CharacterStatus : UIControlBase
         if (weaponInfo == null)
             return;
 
-        m_AmmoAmount.SetAmount(weaponInfo.B_Reloading?0:weaponInfo.I_AmmoLeft);
+        m_AmmoAmount.SetAmount(weaponInfo.I_AmmoLeft);
         m_AmmoClipAmount.SetAmount(weaponInfo.I_ClipAmount);
         if (m_AmmoGrid.I_Count != weaponInfo.I_ClipAmount)
         {
