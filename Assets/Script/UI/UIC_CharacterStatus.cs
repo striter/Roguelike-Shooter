@@ -108,7 +108,7 @@ public class UIC_CharacterStatus : UIControlBase
         }
         m_MapCurrent.sprite = GameUIManager.Instance.m_InGameSprites[GameManager.Instance.m_GameLevel.m_LevelType.GetUISprite()];
         m_MapNext.SetActivate(!finalLevel);
-        m_MapTitle.formatText("UI_Map_Title",string.Format("<color=#FFDA6B>{0}</color>", (int)(GameManager.Instance.m_GameLevel.m_GameStage-1)*10+LevelManager.Instance.m_currentLevelIndex+1));
+        m_MapTitle.formatText("UI_Map_Title",string.Format("<color=#FFCD00FF>{0}</color>", (int)(GameManager.Instance.m_GameLevel.m_GameStage-1)*10+LevelManager.Instance.m_currentLevelIndex+1));
         m_MapAnimation.Play(true);
     }
     
