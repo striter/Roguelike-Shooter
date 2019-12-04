@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4649794025751942}
   - component: {fileID: 114933317991722610}
   m_Layer: 0
-  m_Name: LargeLess_xueshan_zhangpeng
+  m_Name: largeLess_xueshan_zhangpeng
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
