@@ -2043,6 +2043,7 @@ namespace GameSetting
     {
         public virtual bool B_TargetAlly => false;
         public int I_Index { get; private set; } = -1;
+        public virtual bool B_LoopAnim => false;
         protected EntityCharacterBase m_Entity;
         protected Transform attacherFeet => m_Entity.transform;
         protected Transform attacherHead => m_Entity.tf_Head;
@@ -2209,6 +2210,7 @@ namespace GameSetting
     }
     public class EquipmentCasterControlled : EquipmentCaster
     {
+        public override bool B_LoopAnim => true;
         SFXCast m_Cast;
         public EquipmentCasterControlled(int equipmentIndex,SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex,_castInfo, _controller, _GetBuffInfo)
         {

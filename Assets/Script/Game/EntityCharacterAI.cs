@@ -317,9 +317,13 @@ public class EntityCharacterAI : EntityCharacterBase {
             b_preAim = preAim;
             b_attacking = true;
             m_Weapon.OnSetAttack(true);
+
+            if (m_Weapon.B_LoopAnim)
+                OnAttackAnim(true);
         }
         void CheckAttack(float deltaTime)
         {
+
             if (!b_CanKeepAttack)
             {
                 OnAttackFinished();
@@ -337,17 +341,21 @@ public class EntityCharacterAI : EntityCharacterBase {
             f_fireCheckSimulate = m_Entity.F_AttackRate;
 
             i_playCount--;
-            OnAttackAnim(true);
+            if (m_Weapon.B_LoopAnim)
+                OnAttackAnimTrigger();
+            else
+                OnAttackAnim(true);
         }
 
-        public void OnAttackAnimTrigger() => OnAttackTrigged();
-        void OnAttackTrigged()
+        public void OnAttackAnimTrigger()
         {
-            if(b_targetAvailable)
+            if (b_targetAvailable)
                 m_Weapon.Play(b_preAim, m_Target);
+
             if (i_playCount <= 0)
                 OnAttackFinished();
-        }
+        } 
+
         void OnAttackFinished()
         {
             b_attacking = false;
