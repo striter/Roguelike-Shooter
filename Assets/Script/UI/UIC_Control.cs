@@ -174,7 +174,7 @@ public class UIC_Control : UIControlBase {
             tf_Detail.GetComponent<Button>().onClick.AddListener(OnWeaponDetailClick);
             m_Action = transform.Find("ActionStatus").GetComponent<UIGI_ActionItemWeapon>();
             m_Action.Init();
-            m_AmmoStatusChecker = new TSpecialClasses.ValueChecker<int, int>(-1,-1,OnAmmoStatusChanged);
+            m_AmmoStatusChecker = new TSpecialClasses.ValueChecker<int, int>(-1,-1);
         }
         public void UpdateInfo(WeaponBase weapon, bool equiping, Action OnWeaponActionClick)
         {
@@ -201,16 +201,13 @@ public class UIC_Control : UIControlBase {
         {
             if (m_weapon == null)
                 return;
-            m_AmmoStatusChecker.Check(m_weapon.I_AmmoLeft, m_weapon.I_ClipAmount);
-            if(m_weapon.m_WeaponAction!=null)
-                m_Action.Tick(m_weapon);
-        }
-
-        void OnAmmoStatusChanged()
-        {
-            m_Clip.text = m_weapon.I_AmmoLeft.ToString();
-            m_Total.text = m_weapon.I_ClipAmount.ToString();
-            LayoutRebuilder.ForceRebuildLayoutImmediate(tf_AmmoStatus as RectTransform);
+            if (m_AmmoStatusChecker.Check(m_weapon.I_AmmoLeft, m_weapon.I_ClipAmount))
+            {
+                m_Clip.text = m_weapon.I_AmmoLeft.ToString();
+                m_Total.text = m_weapon.I_ClipAmount.ToString();
+                LayoutRebuilder.ForceRebuildLayoutImmediate(tf_AmmoStatus as RectTransform);
+            }
+            m_Action.Tick(m_weapon);
         }
 
         void OnWeaponDetailClick()

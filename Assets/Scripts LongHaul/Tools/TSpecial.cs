@@ -732,12 +732,10 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
 
     public class ValueChecker<T>
     {
-        Action OnValueChange;
         public T check1 { get; private set; }
-        public ValueChecker(T _check, Action _OnValueChange=null)
+        public ValueChecker(T _check)
         {
             check1 = _check;
-            OnValueChange = _OnValueChange;
         }
 
         public bool Check(T target)
@@ -745,7 +743,6 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
             if (check1.Equals(target))
                 return false;
             check1 = target;
-            OnValueChange?.Invoke();
             return true;
         }
     }
@@ -753,14 +750,14 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
     public class ValueChecker<T, Y> : ValueChecker<T>
     {
         public Y check2 { get; private set; }
-        public ValueChecker(T temp1, Y temp2, Action _OnValueChange=null) : base(temp1, _OnValueChange)
+        public ValueChecker(T temp1, Y temp2) : base(temp1)
         {
             check2 = temp2;
         }
 
         public bool Check(T target1, Y target2)
         {
-            if (target2.Equals(check2))
+            if (!target2.Equals(check2))
                 return false;
             return Check(target1);
         }

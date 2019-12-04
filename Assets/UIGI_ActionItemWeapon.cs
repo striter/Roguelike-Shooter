@@ -35,6 +35,7 @@ public class UIGI_ActionItemWeapon : UIGI_ActionItemBase {
     {
         if (weapon.m_WeaponAction == null)
             return;
+
         if (m_AvailableCheck.Check(weapon.m_ActionEnergyRequirementLeft, weapon.m_ActionAvailable))
         {
             m_Cooldown.fillAmount = m_AvailableCheck.check1;
