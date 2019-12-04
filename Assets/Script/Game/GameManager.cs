@@ -82,6 +82,8 @@ public class GameManager : GameManagerBase
                     entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.EquipmentInfo(-1,0, enum_CharacterEffect.Freeze,2f)));
             });
         }
+        if (Input.GetKeyDown(KeyCode.KeypadPlus))
+            m_LocalPlayer.OnWeaponEnergy(1f);
 
         if (Input.GetKeyDown(KeyCode.Equals))
             OnStageFinished();

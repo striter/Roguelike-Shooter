@@ -1328,7 +1328,7 @@ namespace GameSetting
     {
         protected EntityCharacterBase m_Entity { get; private set; }
         public List<ExpireBase> m_Expires { get; private set; } = new List<ExpireBase>();
-        Dictionary<int, SFXEffect> m_BuffEffects = new Dictionary<int, SFXEffect>();
+        protected Dictionary<int, SFXEffect> m_BuffEffects { get; private set; } = new Dictionary<int, SFXEffect>();
         public float F_MaxHealthAdditive { get; private set; } = 0f;
         public float F_DamageReceiveMultiply { get; private set; } = 1f;
         public float F_HealReceiveMultiply { get; private set; } = 1f;
@@ -1481,7 +1481,7 @@ namespace GameSetting
             if (F_HealReceiveMultiply < 0) F_HealReceiveMultiply = 0;
         }
         #endregion
-        #region ExpireEffect
+
         void UpdateExpireEffect()
         {
             m_Expires.Traversal((ExpireBase expire) =>
@@ -1503,7 +1503,6 @@ namespace GameSetting
                 m_BuffEffects.Remove(effectIndex);
             },true);
         }
-        #endregion
     }
 
     public class PlayerInfoManager : CharacterInfoManager
@@ -1736,6 +1735,7 @@ namespace GameSetting
         #endregion
         #endregion
 
+        public void RefreshEffects() => m_BuffEffects.Traversal((int expire, SFXEffect effect) => { effect.Play(m_Entity); });
         #region CoinInfo
         public void OnCoinsReceive(int coinAmount)
         {

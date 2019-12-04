@@ -159,7 +159,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (m_Weapon1) m_Weapon1.Trigger(down);
         if (m_Weapon2) m_Weapon2.Trigger(down);
     }
-    void OnWeaponEnergy(float energy)
+    public void OnWeaponEnergy(float energy)
     {
         if (m_Weapon1) m_Weapon1.OnEnergyReceive(energy);
         if (m_Weapon2) m_Weapon2.OnEnergyReceive(energy);
@@ -223,6 +223,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (!m_Weapon2)
             return;
         SwapWeapon(!m_weaponEquipingFirst);
+        OnWeaponStatus();
     }
 
     void SwapWeapon(bool isFirst)
@@ -235,7 +236,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (m_Assist) m_Assist.Recycle();
         m_Assist = GameObjectManager.SpawnSFX<SFXAimAssist>(101, tf_WeaponAim.position, tf_Weapon.forward);
         m_Assist.Play(m_EntityID, tf_WeaponAim, tf_WeaponAim, GameConst.F_AimAssistDistance, GameLayer.Mask.I_All, (Collider collider) => { return GameManager.B_CanSFXHitTarget(collider.Detect(), m_EntityID); });
-        OnWeaponStatus();
     }
     #endregion
     #region CharacterControll
@@ -437,6 +437,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     }
     protected void OnWeaponStatus()
     {
+        m_PlayerInfo.RefreshEffects();
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerWeaponStatus, this);
     }
     protected void OnPlayerActionChange()
