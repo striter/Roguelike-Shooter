@@ -12,6 +12,7 @@ public class UIGI_ActionItemBase : UIT_GridItem {
     protected UIT_TextExtend m_Cost { get; private set; }
     UIT_TextExtend m_Name;
     Image m_Costable;
+    Transform tf_Cost;
     public override void Init()
     {
         base.Init();
@@ -19,11 +20,12 @@ public class UIGI_ActionItemBase : UIT_GridItem {
         m_TypeIcon = tf_Container.Find("Type/Icon").GetComponent<Image>();
         m_TypeBottom = tf_Container.Find("Type/Bottom").GetComponent<Image>();
         m_Rarity = new UIC_RarityLevel(tf_Container.Find("ActionRarity"));
-        m_Costable = tf_Container.Find("Cost/Cost").GetComponent<Image>();
-        m_Cost = tf_Container.Find("Cost/Amount").GetComponent<UIT_TextExtend>();
+        tf_Cost = tf_Container.Find("Cost");
+        m_Costable = tf_Cost.Find("Cost").GetComponent<Image>();
+        m_Cost = tf_Cost.Find("Amount").GetComponent<UIT_TextExtend>();
         m_Name = tf_Container.Find("Name").GetComponent<UIT_TextExtend>();
     }
-    protected virtual void SetInfo(ActionBase actionInfo)
+    public virtual void SetInfo(ActionBase actionInfo)
     {
         m_Name.localizeKey = actionInfo.GetNameLocalizeKey();
         m_TypeIcon.sprite = UIManager.Instance.m_ActionSprites[actionInfo.m_ActionType.GetIconSprite()];
@@ -32,15 +34,6 @@ public class UIGI_ActionItemBase : UIT_GridItem {
         m_Cost.text = actionInfo.I_Cost.ToString();
         m_ActionImage.sprite = UIManager.Instance.m_ActionSprites.Contains(actionInfo.m_Index.ToString())? UIManager.Instance.m_ActionSprites[actionInfo.m_Index.ToString()]:null;
         m_Costable.sprite = UIManager.Instance.m_ActionSprites[actionInfo.m_ActionType.GetCostBGSprite()];
-    }
-    protected void SetCostable(bool _costable)
-    {
-        m_Costable.SetActivate(_costable);
-    }
-
-    public void SetBaseInfo(ActionBase actionInfo)
-    {
-        SetInfo(actionInfo);
-        SetCostable(true);
+        tf_Cost.SetActivate(actionInfo.m_ActionType == enum_ActionType.Basic);
     }
 }

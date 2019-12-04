@@ -107,7 +107,7 @@ public class UIC_PlayerInteract : UIControlBase {
                 {
                     actionOn = true;
                     InteractAction action = interactInfo as InteractAction;
-                    m_Action.SetBaseInfo(action.m_Action);
+                    m_Action.SetInfo(action.m_Action);
                     action.m_Action.SetActionIntro(m_Intro);
                 }
                 break;
