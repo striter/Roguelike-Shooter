@@ -208,7 +208,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             m_Weapon1 = _weapon;
             SwapWeapon(true);
         }
-        else if(m_Weapon2=null)
+        else if(m_Weapon2==null)
         {
             m_Weapon2 = _weapon;
             SwapWeapon(false);
