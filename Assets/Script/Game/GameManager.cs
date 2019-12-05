@@ -304,7 +304,7 @@ public class GameManager : GameManagerBase
             case enum_LevelType.End:
             case enum_LevelType.Battle:
                 {
-                    GameObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Portal, LevelManager.NavMeshPosition(rewardPos, false), LevelManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(OnLevelFinished, true);
+                    GameObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Portal, LevelManager.NavMeshPosition(rewardPos, false), LevelManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(OnLevelFinished,m_GameLevel.B_IsFinalLevel);
                 }
                 break;
         }
