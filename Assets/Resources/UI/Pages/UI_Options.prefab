@@ -1816,8 +1816,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab58f1757d5b8cc4cae067fed91a989c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Audio_PageOpen: -1
-  Audio_PageExit: -1
+  Audio_PageOpen: {fileID: 8300000, guid: 2b2d86f9e75b1504e810a94e2077c0a3, type: 3}
+  Audio_PageExit: {fileID: 8300000, guid: adb8977a89e60d94d86053442cc0637a, type: 3}
 --- !u!114 &114041902231034112
 MonoBehaviour:
   m_ObjectHideFlags: 1
