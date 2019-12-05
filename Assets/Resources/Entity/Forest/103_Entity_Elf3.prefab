@@ -950,8 +950,8 @@ MonoBehaviour:
   : {fileID: 0}
   E_EnermyType: 4
   E_AnimatorIndex: 113
-  F_AIChaseRange: 20
-  F_AIAttackRange: 25
+  F_AIChaseRange: 18
+  F_AIAttackRange: 23
   F_AttackDuration:
     start: 5
     length: 1
