@@ -745,7 +745,7 @@ namespace GameSetting
             m_Stage = enum_StageLevel.Rookie;
             m_GameSeed = DateTime.Now.ToLongTimeString().ToString();
             m_character = GameDataManager.m_GameData.m_CharacterSelected;
-            m_weapon1 = WeaponSaveData.CreateNew(enum_PlayerWeapon.UMP45);
+            m_weapon1 = WeaponSaveData.CreateNew(enum_PlayerWeapon.UZI);
             m_weapon2 = WeaponSaveData.CreateNew(enum_PlayerWeapon.Invalid);
         }
         public void Adjust(EntityCharacterPlayer _player, GameLevelManager _level)
