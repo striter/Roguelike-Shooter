@@ -48,7 +48,7 @@ namespace GameSetting_Action
         public const float F_10010_DamageReduction = 4f;
         public static int P_10010_FireRateAdditive(enum_ActionRarity rarity) => 160 * (int)rarity;
 
-        public const int I_10011_Cost = 2;
+        public const int I_10011_Cost = 4;
         public const float F_10011_Duration = 10f;
         public static float P_10011_FireRateAdditivePerHitStack(enum_ActionRarity rarity) => 3f * (int)rarity;
 
@@ -64,7 +64,7 @@ namespace GameSetting_Action
         public const float F_10014_Duration = 15f;
         public static float F_10014_HitFrozenDamageAdditive(enum_ActionRarity rarity) => 20 * (int)rarity;
 
-        public const int I_10015_Cost = 2;
+        public const int I_10015_Cost = 1;
         public static float F_10015_FrozeDuration(enum_ActionRarity rarity) => 3f * (int)rarity;
 
         public const int I_10016_Cost = 2;
@@ -152,10 +152,10 @@ namespace GameSetting_Action
         public static float F_20005_Damage(enum_ActionRarity rarity) => 40;
         public const float F_20005_FireRate=1f;
 
-        public const int I_20006_Cost = 2;
+        public const int I_20006_Cost = 1;
         public static float F_20006_FreezeDuration(enum_ActionRarity rarity) => 3 * (int)rarity;
 
-        public static int I_20007_Cost(enum_ActionRarity rarity) => 2;
+        public static int I_20007_Cost(enum_ActionRarity rarity) => 1;
         public static float F_20007_Distance(enum_ActionRarity rarity) => 8f * (int)rarity;
 
         public const int I_20008_Cost = 4;
