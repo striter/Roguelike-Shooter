@@ -505,10 +505,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         }
         public void OnActivate(enum_PlayerAnim animIndex)
         {
-            m_Animator.CrossFade("Idle",.1f);
-            m_Animator.speed = 0f;
             OnActivate((int)animIndex);
-            m_Animator.speed = 1f;
         }
         public void SetRun(Vector2 movement,float movementParam)
         {
