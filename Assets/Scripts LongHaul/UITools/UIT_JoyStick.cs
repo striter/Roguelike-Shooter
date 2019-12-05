@@ -72,7 +72,7 @@ public class UIT_JoyStick : SimpleSingletonMono<UIT_JoyStick>
     private void LateUpdate()
     {
         transform.localScale =Vector3.Lerp(transform.localScale, m_JoystickControl.m_JoyStickShow ? Vector3.one : Vector3.zero,.2f);
-        rtf_Center.anchoredPosition = Vector2.Lerp(rtf_Center.anchoredPosition, m_JoystickControl.m_JoyStickOffset,.2f);
+        rtf_Center.anchoredPosition = m_JoystickControl.m_JoyStickOffset;
     }
     void ResetStatus()
     {
