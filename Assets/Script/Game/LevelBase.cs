@@ -28,8 +28,7 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
     List<int> m_IndexItemMain=new List<int>();
     List<int> t_IndexTemp = new List<int>();
     Dictionary<enum_LevelItemType, List<LevelItemBase>> m_AllItemPrefabs = new Dictionary<enum_LevelItemType, List<LevelItemBase>>();
-    public int I_InnerHalfLength { get; private set; }
-    public int I_OuterHalfLength { get; private set; }
+    public float m_WorldBorder { get; private set; }
 
     public IEnumerator GenerateTileItems(SLevelGenerate _innerData,SLevelGenerate _outerData, Dictionary<enum_LevelItemType, List<LevelItemBase>> allItemPrefabs, enum_LevelType _levelType, System.Random _seed)
     {
@@ -37,15 +36,16 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
         m_seed = _seed;
         m_levelType = _levelType;
 
-        I_InnerHalfLength = _innerData.m_Length.Random(m_seed);
-        I_OuterHalfLength = _outerData.m_Length.Random(m_seed);
-        I_OuterHalfLength = (I_InnerHalfLength + I_OuterHalfLength) % 2 == 0 ? I_OuterHalfLength + 1 : I_OuterHalfLength;
-        int totalRadius = I_InnerHalfLength + I_OuterHalfLength;
+        int _innerHalfRadius = _innerData.m_Length.Random(m_seed);
+        int _outerHalfRadius = _outerData.m_Length.Random(m_seed);
+        _outerHalfRadius = (_innerHalfRadius + _outerHalfRadius) % 2 == 0 ? _outerHalfRadius + 1 : _outerHalfRadius;
+        int totalRadius = _innerHalfRadius + _outerHalfRadius;
         tf_Model.localScale = Vector3.one * totalRadius*2;
         //Create Data
         int index = 0;
         TileAxis origin = new TileAxis(-totalRadius/2 , -totalRadius/2 );
-        int borderLength = I_InnerHalfLength / 2;
+        int borderRadius = _innerHalfRadius / 2;
+        m_WorldBorder = borderRadius * 4 - 1.3f;
         for (int i = 0; i < totalRadius; i++)
         {
             for (int j = 0; j < totalRadius; j++)
@@ -54,9 +54,9 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
                 int curX = Mathf.Abs(curTile.X);
                 int curY = Mathf.Abs(curTile.Y);
                 enum_LevelItemTileOccupy occupation = enum_LevelItemTileOccupy.Invalid;
-                if (curX<borderLength&&curY<borderLength)
+                if (curX<borderRadius&&curY<borderRadius)
                     occupation = enum_LevelItemTileOccupy.Inner;
-                else if (curX > borderLength || curY > borderLength)
+                else if (curX > borderRadius || curY > borderRadius)
                     occupation = enum_LevelItemTileOccupy.Outer;
                 else
                     occupation = enum_LevelItemTileOccupy.Border;
