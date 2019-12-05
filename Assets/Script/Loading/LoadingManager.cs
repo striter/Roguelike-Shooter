@@ -21,7 +21,7 @@ public class LoadingManager : SimpleSingletonMono<LoadingManager>
     public static void BeginLoad(enum_Scene scene, Func<bool> onLoadFinish=null)
     {
         if (m_CurrentScene != enum_Scene.Invalid)
-            SceneManager.UnloadSceneAsync(SceneManager.GetSceneByBuildIndex((int)m_CurrentScene));
+            SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene());
         m_CurrentScene = enum_Scene.Invalid;
         Instance.StartCoroutine(LoadScene(SceneManager.LoadSceneAsync((int)scene, LoadSceneMode.Additive), onLoadFinish));
     }
@@ -48,6 +48,7 @@ public class LoadingManager : SimpleSingletonMono<LoadingManager>
 
     GameLogo m_Logo;
     GameLoading m_Loading;
+
     protected override void Awake()
     {
         base.Awake();
@@ -55,6 +56,7 @@ public class LoadingManager : SimpleSingletonMono<LoadingManager>
         m_Loading = new GameLoading(transform.Find("Loading"),m_LoadingSprites);
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
+
     protected override void OnDestroy()
     {
         base.OnDestroy();

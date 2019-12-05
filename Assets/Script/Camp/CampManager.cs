@@ -6,7 +6,6 @@ public class CampManager : GameManagerBase
 {
     public static CampManager nInstance;
     public static new CampManager Instance => nInstance;
-
     Transform tf_PlayerStart;
     public Transform tf_Player { get; private set; }
     protected override void Awake()
@@ -83,6 +82,8 @@ public class CampManager : GameManagerBase
             OnTechPointStatus(20);
         if (Input.GetKeyDown(KeyCode.Minus))
             OnTechPointStatus(-15);
+        if (Input.GetKeyDown(KeyCode.Equals))
+            OnSceneItemInteract();
     }
 #endif
 }
