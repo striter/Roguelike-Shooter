@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 public class SFXAudioBase : SFXBase
 {
+    protected override bool m_ScaledDeltaTime => false;
     AudioSource m_Audio;
     public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {

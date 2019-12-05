@@ -13,6 +13,7 @@ public class SFXBase :ObjectPoolMonoItem<int> {
     protected virtual bool m_Loop => true;
     protected virtual bool m_AutoStop => true;
     protected virtual bool m_AutoRecycle => true;
+    protected virtual bool m_ScaledDeltaTime => true;
     public float f_playTimeLeft => f_lifeTimeCheck - I_SFXStopExternalDuration;
     public float f_delayTimeLeft { get; private set; }
     public float f_delayLeftScale => f_delayTimeLeft>0? (f_delayTimeLeft / f_delayDuration):0;
@@ -73,6 +74,7 @@ public class SFXBase :ObjectPoolMonoItem<int> {
 
     protected virtual void Update()
     {
+        float deltaTime = m_ScaledDeltaTime ? Time.deltaTime : Time.unscaledDeltaTime;
         if (m_AttachTo)
         {
             transform.position = m_AttachTo.TransformPoint(m_localPos);
@@ -81,7 +83,7 @@ public class SFXBase :ObjectPoolMonoItem<int> {
 
         if (B_Delay && f_delayTimeLeft >= 0)
         {
-            f_delayTimeLeft -= Time.deltaTime;
+            f_delayTimeLeft -= deltaTime;
             if (f_delayTimeLeft < 0)
                 OnPlay();
         }
@@ -90,7 +92,7 @@ public class SFXBase :ObjectPoolMonoItem<int> {
             return;
 
         if(!b_looping)
-            f_lifeTimeCheck -= Time.deltaTime;
+            f_lifeTimeCheck -= deltaTime;
 
         if (m_AutoStop&&B_Playing && f_playTimeLeft < 0)
             OnStop();
