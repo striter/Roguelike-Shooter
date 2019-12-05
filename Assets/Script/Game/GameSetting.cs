@@ -734,6 +734,7 @@ namespace GameSetting
         public float m_maxHealthAdditive;
         public float m_curArmor;
         public WeaponSaveData m_weapon1, m_weapon2;
+        public bool m_weaponEquipingFirst;
         public enum_PlayerCharacter m_character;
         public CBattleSave()
         {
@@ -747,6 +748,7 @@ namespace GameSetting
             m_character = GameDataManager.m_GameData.m_CharacterSelected;
             m_weapon1 = WeaponSaveData.CreateNew(enum_PlayerWeapon.UZI);
             m_weapon2 = WeaponSaveData.CreateNew(enum_PlayerWeapon.Invalid);
+            m_weaponEquipingFirst = true;
         }
         public void Adjust(EntityCharacterPlayer _player, GameLevelManager _level)
         {
@@ -757,6 +759,7 @@ namespace GameSetting
 
             m_weapon1 = WeaponSaveData.Create(_player.m_Weapon1);
             m_weapon2 = WeaponSaveData.Create(_player.m_Weapon2);
+            m_weaponEquipingFirst = _player.m_weaponEquipingFirst;
             m_actionEquipment = ActionSaveData.Create(_player.m_PlayerInfo.m_ActionEquipment);
 
             m_GameSeed = _level.m_Seed;

@@ -96,6 +96,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_weapon1));
         if (m_saveData.m_weapon2.m_Weapon != enum_PlayerWeapon.Invalid)
             ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_weapon2));
+        SwapWeapon(m_saveData.m_weaponEquipingFirst);
     }
 
     protected override void OnDead()
