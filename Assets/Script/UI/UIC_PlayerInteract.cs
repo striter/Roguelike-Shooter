@@ -14,6 +14,7 @@ public class UIC_PlayerInteract : UIControlBase {
     Image m_WeaponBackground,m_WeaponImage;
     UIT_TextExtend m_WeaponName;
     Transform tf_Action;
+    UIT_TextExtend m_ActionTitle;
     UIGI_ActionItemBase m_Action;
     Transform tf_Item;
     UIT_TextExtend m_ItemName;
@@ -33,6 +34,7 @@ public class UIC_PlayerInteract : UIControlBase {
         m_WeaponImage = tf_Weapon.Find("WeaponImage").GetComponent<Image>();
         m_WeaponName = tf_Weapon.Find("WeaponName").GetComponent<UIT_TextExtend>();
         tf_Action = tf_Container.Find("Action");
+        m_ActionTitle = tf_Action.Find("Title").GetComponent<UIT_TextExtend>();
         m_Action = tf_Action.Find("ActionItem").GetComponent<UIGI_ActionItemBase>();
         m_Action.Init();
         tf_Item = tf_Container.Find("Item");
@@ -106,9 +108,10 @@ public class UIC_PlayerInteract : UIControlBase {
             case enum_Interaction.Action:
                 {
                     actionOn = true;
-                    InteractAction action = interactInfo as InteractAction;
-                    m_Action.SetInfo(action.m_Action);
-                    action.m_Action.SetActionIntro(m_Intro);
+                    ActionBase action = (interactInfo as InteractAction).m_Action;
+                    m_Action.SetInfo(action);
+                    m_ActionTitle.localizeKey = action.m_ActionType.GetInteractTitleKey();
+                    action.SetActionIntro(m_Intro);
                 }
                 break;
             default:

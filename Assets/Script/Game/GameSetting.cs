@@ -402,7 +402,7 @@ namespace GameSetting
         public static string GetLocalizeKey(this enum_Option_JoyStickMode joystick) => "UI_Option_" + joystick;
         public static string GetLocalizeKey(this enum_Option_LanguageRegion region) => "UI_Option_" + region;
         public static string GetLocalizeKey(this enum_CampFarmItemStatus status) => "UI_Farm_" + status;
-
+        public static string GetInteractTitleKey(this enum_ActionType type) => "UI_Interact_Action_" + type;
         public static string SetActionIntro(this ActionBase actionInfo, UIT_TextExtend text) => text.formatText(actionInfo.GetIntroLocalizeKey() ,actionInfo.F_Duration, actionInfo.Value1, actionInfo.Value2, actionInfo.Value3);
     }
 

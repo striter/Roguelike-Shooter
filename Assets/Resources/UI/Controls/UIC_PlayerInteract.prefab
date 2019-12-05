@@ -704,7 +704,7 @@ GameObject:
   - component: {fileID: 222800073708475266}
   - component: {fileID: 114584801772301170}
   m_Layer: 14
-  m_Name: Decorate
+  m_Name: Title
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1092,7 +1092,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 990e81e15b09c744e840b5aa180aafb1, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 62b00c3d6f853ae4db9aa416cf450485, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1170,9 +1170,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: WEAPON
-  B_AutoLocalize: 0
-  S_AutoLocalizeKey: 
+  m_Text: 
+  B_AutoLocalize: 1
+  S_AutoLocalizeKey: UI_Interact_Weapon
   m_characterSpacing: 0
 --- !u!114 &114369451361524506
 MonoBehaviour:
@@ -1511,7 +1511,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: CARD
+  m_Text: 
   B_AutoLocalize: 0
   S_AutoLocalizeKey: 
   m_characterSpacing: 0
