@@ -193,7 +193,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     public WeaponBase ObtainWeapon(WeaponBase _weapon)
     {
-        _weapon.OnAttach(this, m_WeaponCurrent.B_AttachLeft ? tf_WeaponHoldLeft : tf_WeaponHoldRight, OnFireAddRecoil, OnReload);
+        _weapon.OnAttach(this, _weapon.B_AttachLeft ? tf_WeaponHoldLeft : tf_WeaponHoldRight, OnFireAddRecoil, OnReload);
         WeaponBase exchangeWeapon = null;
         if (m_Weapon1 != null&&m_Weapon2!=null)
         {
