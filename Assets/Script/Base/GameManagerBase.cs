@@ -364,7 +364,7 @@ public static class ActionDataManager
                 case enum_ActionType.WeaponAbility:
                     m_WeaponAbilityAction.Add(action.m_Index);
                     break;
-                case enum_ActionType.Equipment:
+                case enum_ActionType.PlayerEquipment:
                     m_PlayerEquipmentAction.Add(action.m_Index);
                     break;
             }

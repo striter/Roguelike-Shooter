@@ -226,18 +226,6 @@ namespace GameSetting
 
     public static class UIExpression
     {
-        public static Color ActionTypeColor(this enum_ActionType type)
-        {
-            switch (type)
-            {
-                case enum_ActionType.WeaponAbility:
-                    return Color.yellow;
-                case enum_ActionType.Equipment:
-                    return Color.green;
-                default:
-                    return Color.magenta;
-            }
-        }
         public static Color TipsColor(this enum_UITipsType type)
         {
             switch(type)
@@ -316,7 +304,7 @@ namespace GameSetting
             {
                 default: Debug.LogError("Invalid Pharse Here!"+type.ToString());  return "";
                 case enum_ActionType.WeaponAbility: return "action_icon_basic";
-                case enum_ActionType.Equipment: return "action_icon_equipment";
+                case enum_ActionType.PlayerEquipment: return "action_icon_equipment";
             }
         }
         public static string GetNameBGSprite(this enum_ActionType type)
@@ -325,7 +313,7 @@ namespace GameSetting
             {
                 default: Debug.LogError("Invalid Pharse Here!" + type.ToString()); return "";
                 case enum_ActionType.WeaponAbility: return "action_bottom_basic";
-                case enum_ActionType.Equipment: return "action_bottom_equipment";
+                case enum_ActionType.PlayerEquipment: return "action_bottom_equipment";
             }
         }
         public static string GetCostBGSprite(this enum_ActionType type)
@@ -334,7 +322,7 @@ namespace GameSetting
             {
                 default: Debug.LogError("Invalid Pharse Here!" + type.ToString()); return "";
                 case enum_ActionType.WeaponAbility: return "action_cost_basic";
-                case enum_ActionType.Equipment: return "action_cost_equipment";
+                case enum_ActionType.PlayerEquipment: return "action_cost_equipment";
             }
         }
 
@@ -362,7 +350,7 @@ namespace GameSetting
                 default: return "000000FF";
                 case enum_ActionType.WeaponAbility:
                     return "FAC108FF";
-                case enum_ActionType.Equipment:
+                case enum_ActionType.PlayerEquipment:
                     return "B0FE00FF";
             }
         }
@@ -525,7 +513,7 @@ namespace GameSetting
 
     public enum enum_ActionRarity { Invalid = -1, Normal = 1, OutStanding = 2, Epic = 3, }
 
-    public enum enum_ActionType { Invalid = -1, WeaponAbility = 1,Equipment=2,}
+    public enum enum_ActionType { Invalid = -1, WeaponAbility = 1,PlayerEquipment=2,}
 
     public enum enum_EffectAttach { Invalid = -1,  Head = 1, Feet = 2, WeaponModel = 3,}
 
@@ -1604,7 +1592,7 @@ namespace GameSetting
                 return;
             ActionBase targetAction = expire as ActionBase;
             m_ActionPlaying.Add(targetAction);
-            if (targetAction.m_ActionType == enum_ActionType.Equipment)
+            if (targetAction.m_ActionType == enum_ActionType.PlayerEquipment)
                 m_ActionEquipment.Add(targetAction);
 
             targetAction.Activate(m_Player, OnExpireElapsed);
@@ -1620,7 +1608,7 @@ namespace GameSetting
                 return;
             ActionBase targetAction = expire as ActionBase;
             m_ActionPlaying.Remove(targetAction);
-            if (targetAction.m_ActionType == enum_ActionType.Equipment)
+            if (targetAction.m_ActionType == enum_ActionType.PlayerEquipment)
                 m_ActionPlaying.Remove(targetAction);
             OnPlayerActionChange();
         }

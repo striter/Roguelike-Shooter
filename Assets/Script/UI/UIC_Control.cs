@@ -42,7 +42,7 @@ public class UIC_Control : UIControlBase {
         m_TouchDelta = transform.GetComponent<TouchDeltaManager>();
         OnOptionsChanged();
         OptionsManager.event_OptionChanged += OnOptionsChanged;
-        m_AbilityCooldownChecker = new TSpecialClasses.ValueChecker<bool>(false);
+        m_AbilityCooldownChecker = new TSpecialClasses.ValueChecker<bool>(true);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OncommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerWeaponStatus, OnWeaponStatus);
     }
@@ -71,8 +71,8 @@ public class UIC_Control : UIControlBase {
 
         if(m_AbilityCooldownChecker.Check(player.m_Ability.m_Cooldowning))
         {
-            m_AbilityBG.sprite = UIManager.Instance.m_CommonSprites[UIConvertions.GetAbilityBackground(player.m_Ability.m_Cooldowning)];
-            m_AbilityCooldown.SetActivate(player.m_Ability.m_Cooldowning);
+            m_AbilityBG.sprite = UIManager.Instance.m_CommonSprites[UIConvertions.GetAbilityBackground(m_AbilityCooldownChecker.check1)];
+            m_AbilityCooldown.SetActivate(m_AbilityCooldownChecker.check1);
         }
 
         if (player.m_Interact != m_Interact)

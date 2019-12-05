@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Material_Dynamic_TradeBattle
+  m_Name: Material_Interact_ArmorPickup
   m_Shader: {fileID: 4800000, guid: b687ec3c46774764ba097482cb08eb5d, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -72,5 +72,5 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0, g: 1, b: 1, a: 0.316}
+    - _Color: {r: 0, g: 0.17241383, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
