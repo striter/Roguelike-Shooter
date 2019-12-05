@@ -69,7 +69,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4827950962235480}
   m_Layer: 0
-  m_Name: PlayerEquipment
+  m_Name: WeaponAbility
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -103,7 +103,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4069808026333990}
   m_Layer: 0
-  m_Name: WeaponAbility
+  m_Name: PlayerEquipment
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

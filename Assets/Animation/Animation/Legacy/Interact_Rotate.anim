@@ -743,7 +743,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Container/Model
+    path: Container
   m_CompressedRotationCurves: []
   m_EulerCurves: []
   m_PositionCurves:
@@ -771,7 +771,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Container/Model
+    path: Container
   m_ScaleCurves: []
   m_FloatCurves: []
   m_PPtrCurves: []
@@ -823,7 +823,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: Container/Model
+    path: Container
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -851,7 +851,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: Container/Model
+    path: Container
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -873,7 +873,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: Container/Model
+    path: Container
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1609,7 +1609,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalRotation.x
-    path: Container/Model
+    path: Container
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -2345,7 +2345,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalRotation.y
-    path: Container/Model
+    path: Container
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -3081,7 +3081,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalRotation.z
-    path: Container/Model
+    path: Container
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -3817,7 +3817,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalRotation.w
-    path: Container/Model
+    path: Container
     classID: 4
     script: {fileID: 0}
   m_EulerEditorCurves:
@@ -3840,7 +3840,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesBaked.x
-    path: Container/Model
+    path: Container
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -3868,7 +3868,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesBaked.y
-    path: Container/Model
+    path: Container
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -3890,7 +3890,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesBaked.z
-    path: Container/Model
+    path: Container
     classID: 4
     script: {fileID: 0}
   m_HasGenericRootTransform: 0
