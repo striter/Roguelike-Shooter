@@ -230,7 +230,7 @@ namespace GameSetting
         {
             switch (type)
             {
-                case enum_ActionType.Basic:
+                case enum_ActionType.WeaponAbility:
                     return Color.yellow;
                 case enum_ActionType.Equipment:
                     return Color.green;
@@ -315,7 +315,7 @@ namespace GameSetting
             switch (type)
             {
                 default: Debug.LogError("Invalid Pharse Here!"+type.ToString());  return "";
-                case enum_ActionType.Basic: return "action_icon_basic";
+                case enum_ActionType.WeaponAbility: return "action_icon_basic";
                 case enum_ActionType.Equipment: return "action_icon_equipment";
             }
         }
@@ -324,7 +324,7 @@ namespace GameSetting
             switch (type)
             {
                 default: Debug.LogError("Invalid Pharse Here!" + type.ToString()); return "";
-                case enum_ActionType.Basic: return "action_bottom_basic";
+                case enum_ActionType.WeaponAbility: return "action_bottom_basic";
                 case enum_ActionType.Equipment: return "action_bottom_equipment";
             }
         }
@@ -333,7 +333,7 @@ namespace GameSetting
             switch (type)
             {
                 default: Debug.LogError("Invalid Pharse Here!" + type.ToString()); return "";
-                case enum_ActionType.Basic: return "action_cost_basic";
+                case enum_ActionType.WeaponAbility: return "action_cost_basic";
                 case enum_ActionType.Equipment: return "action_cost_equipment";
             }
         }
@@ -360,7 +360,7 @@ namespace GameSetting
             switch(type)
             {
                 default: return "000000FF";
-                case enum_ActionType.Basic:
+                case enum_ActionType.WeaponAbility:
                     return "FAC108FF";
                 case enum_ActionType.Equipment:
                     return "B0FE00FF";
@@ -525,7 +525,7 @@ namespace GameSetting
 
     public enum enum_ActionRarity { Invalid = -1, Normal = 1, OutStanding = 2, Epic = 3, }
 
-    public enum enum_ActionType { Invalid = -1, Basic = 1,Equipment=2,}
+    public enum enum_ActionType { Invalid = -1, WeaponAbility = 1,Equipment=2,}
 
     public enum enum_EffectAttach { Invalid = -1,  Head = 1, Feet = 2, WeaponModel = 3,}
 
@@ -1575,10 +1575,12 @@ namespace GameSetting
         #region List Update
         public void OnUseAction(ActionBase targetAction)
         {
-            m_ActionPlaying.Traversal((ActionBase action) => { action.OnUseActionElse(targetAction); });
+            if(targetAction.m_ActionType== enum_ActionType.WeaponAbility)
+                m_ActionPlaying.Traversal((ActionBase action) => { action.OnUseWeaponAbility(targetAction); });
             GameObjectManager.PlayMuzzle(m_Player.m_EntityID, m_Player.transform.position, Vector3.up, GameExpression.GetActionMuzzleIndex(targetAction.m_ActionType));
             AddExpire(targetAction);
         }
+
 
         protected override void AddExpire(ExpireBase expire)
         {
@@ -1870,7 +1872,7 @@ namespace GameSetting
         
         #region Interact
         public virtual void OnActivate() { }
-        public virtual void OnUseActionElse(ActionBase targetAction) { }
+        public virtual void OnUseWeaponAbility(ActionBase targetAction) { }
         public virtual void OnBeforeReceiveDamage(DamageInfo info) { }
         public virtual void OnAfterReceiveDamage(DamageInfo info, float amount) { }
         public virtual void OnDealtDamageSetEffect(EntityCharacterBase receiver,DamageInfo info) { }

@@ -34,6 +34,6 @@ public class UIGI_ActionItemBase : UIT_GridItem {
         m_Cost.text = actionInfo.I_Cost.ToString();
         m_ActionImage.sprite = UIManager.Instance.m_ActionSprites.Contains(actionInfo.m_Index.ToString())? UIManager.Instance.m_ActionSprites[actionInfo.m_Index.ToString()]:null;
         m_Costable.sprite = UIManager.Instance.m_ActionSprites[actionInfo.m_ActionType.GetCostBGSprite()];
-        tf_Cost.SetActivate(actionInfo.m_ActionType == enum_ActionType.Basic);
+        tf_Cost.SetActivate(actionInfo.m_ActionType == enum_ActionType.WeaponAbility);
     }
 }
