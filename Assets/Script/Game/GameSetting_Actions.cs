@@ -73,7 +73,7 @@ namespace GameSetting_Action
         public static int I_10017_Cost(enum_ActionRarity rarity) => 3-(int)rarity;
         public const int I_10017_EquipmentCopyTimes = 1;
 
-        public const int I_10018_Cost = 8;
+        public const int I_10018_Cost = 6;
         public const float F_10018_Duration = 10f;
         public const float F_10018_PerStackHealthLoss = 5f;
         public static float P_10018_HealthStealPerStack(enum_ActionRarity rarity) => 1f * (int)rarity;
@@ -83,11 +83,11 @@ namespace GameSetting_Action
         public const float F_10020_PerStackHealthLoss = 1f;
         public static float P_10020_MovementAdditivePerStack(enum_ActionRarity rarity) => 2f * (int)rarity;
 
-        public const int I_10021_Cost = 4;
+        public const int I_10021_Cost = 2;
         public const float F_20021_Duration = 10f;
         public static float F_10021_HealthRegenPerMin(enum_ActionRarity rarity) => 3f * (int)rarity;
 
-        public const int I_10022_Cost = 8;
+        public const int I_10022_Cost = 6;
         public static float F_10022_Duration(enum_ActionRarity rarity) => 4f + 2f * (int)rarity;
         public const float P_10022_HealthRegenTranslateFromDamage = 100;
 
@@ -168,14 +168,14 @@ namespace GameSetting_Action
         public static float F_20009_Damage(enum_ActionRarity rarity) => 40;
         public const float F_20009_FireRate = 1f;
 
-        public const int I_20010_Cost = 8;
+        public const int I_20010_Cost = 4;
         public static float F_20010_Health(enum_ActionRarity rarity) => 400;
         public static float P_20010_PlayerHealthDrain(enum_ActionRarity rarity) =>3*(int)rarity;
         public static float P_20010_AIHealthDrain(enum_ActionRarity rarity) => 100 * (int)rarity;
 
         //20011 To Be Continued
         
-        public const int I_20012_Cost = 8;
+        public const int I_20012_Cost = 4;
         public static float F_20012_Health(enum_ActionRarity rarity) => 400;
         public static float F_20012_PlayerHealthRegen(enum_ActionRarity rarity) => 1.5f * (int)rarity;
         public static float F_20012_AIHealthRegen(enum_ActionRarity rarity) => 20 * (int)rarity;
