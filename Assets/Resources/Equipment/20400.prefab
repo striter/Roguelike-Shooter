@@ -364,4 +364,4 @@ MonoBehaviour:
   B_RandomRotation: 1
   B_Bounce: 1
   F_BounceSpeedMultiply: 0.5
-  F_CastTimeAfterHit: 1
+  F_CastTimeAfterHit: 0.6

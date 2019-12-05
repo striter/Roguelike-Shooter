@@ -944,7 +944,7 @@ MonoBehaviour:
   I_MaxHealth: 400
   I_DefaultArmor: 0
   F_MovementSpeed: 3
-  F_AttackSpread: 6
+  F_AttackSpread: 10
   ? ExtraRendererOnlyAvailableFor107WhatAwkwardRequirementWhyNotPutThemIntoOneModelCauseOutModelArtistCantDoItHaveToCreateThisIntoMyCodeLikeABunchOfShitForFuckingRealSucks
   : {fileID: 0}
   E_EnermyType: 4
@@ -960,7 +960,7 @@ MonoBehaviour:
   F_AttackRate: 1
   B_BattleCheckObstacle: 0
   F_AttackRotateParam: 1
-  I_AttackPreAimPercentage: 50
+  I_AttackPreAimPercentage: 0
   B_AttackMove: 1
   F_AttackFrontCheck: 0
 --- !u!114 &114747310210114314
