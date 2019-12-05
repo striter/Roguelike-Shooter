@@ -8,38 +8,38 @@ namespace GameSetting_Action
     public static class ActionData
     {
         #region 10000-19999
-        public const int I_10001_Cost=1;
+        public const int I_10001_Cost=4;
         public const float F_10001_Duration = 30f;
         public static int P_10001_ClipMultiply(enum_ActionRarity rarity) => 50 * (int)rarity;
 
-        public const int I_10002_Cost = 1;
+        public const int I_10002_Cost = 2;
         public const float F_10002_Duration = 5f;
         public static float F_10002_ArmorReceive(enum_ActionRarity rarity) => 1.5f * (int)rarity;
 
-        public const int I_10003_Cost = 2;
+        public const int I_10003_Cost = 4;
         public const float F_10003_Duration = 15f;
         public static float P_10003_FirerateMultiplyPerMile(enum_ActionRarity rarity) => 6f * ((int)rarity);
         public const int I_10003_MaxStackAmount = 30;
         
-        public const int I_10005_Cost = 2;
+        public const int I_10005_Cost = 4;
         public static int P_10005_OnFire_DamageMultiply(enum_ActionRarity rarity) => 210 * (int)rarity;
         public static int P_10005_OnKill_Buff_MovementSpeed(enum_ActionRarity rarity) => 30 + 30 * (int)rarity;
         public static float F_10005_OnKill_Buff_Duration = 5f;
 
-        public const int I_10006_Cost = 2;
+        public const int I_10006_Cost = 6;
         public static int P_10006_DamageMultiply(enum_ActionRarity rarity) => 210 * (int)rarity;
         public static int I_10006_OnKill_ArmorReceive(enum_ActionRarity rarity) => 10 + 30 * (int)rarity;
 
-        public const int I_10007_Cost = 2;
+        public const int I_10007_Cost = 6;
         public static int P_10007_OnFire_DamageMultiply(enum_ActionRarity rarity) => 210 * (int)rarity;
         public static int I_10007_OnKill_HealReceive(enum_ActionRarity rarity) => 10 + 30 * (int)rarity;
 
-        public const int I_10008_Cost = 2;
+        public const int I_10008_Cost = 4;
         public const float F_10008_Duration = 10f;
         public const int P_10008_MovementReduction = 20;
         public static int P_10008_FireRateAdditive(enum_ActionRarity rarity) => 160 * (int)rarity;
 
-        public const int I_10009_Cost = 1;
+        public const int I_10009_Cost = 2;
         public const float F_10009_Duration = 10f;
         public static int P_10009_FireRateAdditive(enum_ActionRarity rarity) => 55 * (int)rarity;
 
@@ -52,150 +52,150 @@ namespace GameSetting_Action
         public const float F_10011_Duration = 10f;
         public static float P_10011_FireRateAdditivePerHitStack(enum_ActionRarity rarity) => 3f * (int)rarity;
 
-        public const int I_10012_Cost = 2;
+        public const int I_10012_Cost = 4;
         public const float F_10012_Duration = 10f;
         public static float F_10012_DamageAdditive(enum_ActionRarity rarity) => 15 * (int)rarity;
 
-        public const int I_10013_Cost = 2;
+        public const int I_10013_Cost = 4;
         public static int P_10013_DamageMultiply(enum_ActionRarity rarity) => 210 * (int)rarity;
         public static float F_10013_CloakDuration(enum_ActionRarity rarity) => 5*(int)rarity;
 
-        public const int I_10014_Cost = 2;
+        public const int I_10014_Cost = 4;
         public const float F_10014_Duration = 15f;
         public static float F_10014_HitFrozenDamageAdditive(enum_ActionRarity rarity) => 20 * (int)rarity;
 
-        public const int I_10015_Cost = 1;
+        public const int I_10015_Cost = 2;
         public static float F_10015_FrozeDuration(enum_ActionRarity rarity) => 3f * (int)rarity;
 
-        public const int I_10016_Cost = 1;
+        public const int I_10016_Cost = 2;
         public static int P_10016_FrozenDirectDamageMultiply(enum_ActionRarity rarity) => 210 * (int)rarity;
 
         public static int I_10017_Cost(enum_ActionRarity rarity) => 3-(int)rarity;
         public const int I_10017_EquipmentCopyTimes = 1;
 
-        public const int I_10018_Cost = 3;
+        public const int I_10018_Cost = 8;
         public const float F_10018_Duration = 10f;
         public const float F_10018_PerStackHealthLoss = 5f;
         public static float P_10018_HealthStealPerStack(enum_ActionRarity rarity) => 1f * (int)rarity;
         
-        public const int I_10020_Cost = 2;
+        public const int I_10020_Cost = 4;
         public const float F_10020_Duration = 20f;
         public const float F_10020_PerStackHealthLoss = 1f;
         public static float P_10020_MovementAdditivePerStack(enum_ActionRarity rarity) => 2f * (int)rarity;
 
-        public const int I_10021_Cost = 1;
+        public const int I_10021_Cost = 4;
         public const float F_20021_Duration = 10f;
         public static float F_10021_HealthRegenPerMin(enum_ActionRarity rarity) => 3f * (int)rarity;
 
-        public const int I_10022_Cost = 3;
+        public const int I_10022_Cost = 8;
         public static float F_10022_Duration(enum_ActionRarity rarity) => 4f + 2f * (int)rarity;
         public const float P_10022_HealthRegenTranslateFromDamage = 100;
 
-        public const int I_10023_Cost = 10;
+        public const int I_10023_Cost = 8;
         public static float F_10023_ReviveHealthRegen(enum_ActionRarity rarity) => 30 * (int)rarity;
 
-        public const int I_10024_Cost = 1;
+        public const int I_10024_Cost = 4;
         public static float F_10024_ArmorAdditive(enum_ActionRarity rarity) => 30 * (int)rarity;
 
-        public const int I_10025_Cost = 4;
+        public const int I_10025_Cost = 8;
         public static float P_10025_ArmorAdditiveMultiply(enum_ActionRarity rarity) => 60* (int)rarity;
 
-        public const int I_10026_Cost = 2;
+        public const int I_10026_Cost = 4;
         public const float F_10026_Duration = 10f;
         public static float F_10026_DamageAdditiveMultiplyWithArmor(enum_ActionRarity rarity) => 0.2f * (int)rarity;
 
-        public const int I_10027_Cost = 1;
+        public const int I_10027_Cost = 4;
         public static float F_10027_HealthDamage(enum_ActionRarity rarity) => 15 * (int)rarity;
         public static float F_10027_ArmorAdditive(enum_ActionRarity rarity) => 45 * (int)rarity;
 
-        public const int I_10028_Cost = 1;
+        public const int I_10028_Cost = 2;
         public static float P_10028_NextShotDamageMultiplyPerArmor(enum_ActionRarity rarity) => 5.6f * (int)rarity;
 
-        public const int I_10029_Cost = 2;
+        public const int I_10029_Cost = 4;
         public const float F_10029_Duration = 30f;
         public static int I_10029_ClipAdditive(enum_ActionRarity rarity) => 4 * (int)rarity;
 
-        public const int I_10030_Cost = 1;
+        public const int I_10030_Cost = 2;
         public const float F_10030_Duration = 10f;
         public static float P_10030_MovementSpeedAdditive(enum_ActionRarity rarity) => 30 * (int)rarity;
         
-        public const int I_10032_Cost = 1;
+        public const int I_10032_Cost = 2;
         public static float F_10032_Duration(enum_ActionRarity rarity) => 10 * (int)rarity;
 
-        public const int I_10033_Cost = 2;
+        public const int I_10033_Cost = 4;
         public static float F_10033_Duration(enum_ActionRarity rarity) => 10 + 5 * (int)rarity;
 
-        public const int I_10034_Cost = 2;
+        public const int I_10034_Cost = 4;
         public static float P_10034_DamageAdditiveFirstShot(enum_ActionRarity rarity) => 210f * (int)rarity;
         public static float P_10034_DamageAdditiveShotAfterKill(enum_ActionRarity rarity) => 320f * (int)rarity;
 
-        public const int I_10035_Cost = 2;
+        public const int I_10035_Cost = 4;
         public static float P_10035_DamageAdditiveNextShot(enum_ActionRarity rarity) => 420f * (int)rarity;
         #endregion
         #region 20000-29999
-        public const int I_20001_Cost = 2;
+        public const int I_20001_Cost = 4;
         public static float F_20001_RustDamageDuration(enum_ActionRarity rarity) => 10f;
         public static float F_20001_RustDamagePerSecond(enum_ActionRarity rarity) => 40 * (int)rarity;
 
-        public const int I_20002_Cost = 2;
+        public const int I_20002_Cost = 4;
         public static float F_20002_ArmorAdditiveTargetDead(enum_ActionRarity rarity) => 70 * (int)rarity;
 
-        public const int I_20003_Cost = 1;
+        public const int I_20003_Cost = 2;
         public static float F_20003_FreezeDuration(enum_ActionRarity rarity) => 3 * (int)rarity;
 
-        public const int I_20004_Cost = 1;
+        public const int I_20004_Cost = 2;
         public static float F_20004_FreezeDuration(enum_ActionRarity rarity) => 3 * (int)rarity;
 
-        public const int I_20005_Cost = 3;
+        public const int I_20005_Cost = 6;
         public static float F_20005_FreezeDuration(enum_ActionRarity rarity) => 0.8f;
         public static float F_20005_Health(enum_ActionRarity rarity) => 400 * (int)rarity;
         public static float F_20005_Damage(enum_ActionRarity rarity) => 40;
         public const float F_20005_FireRate=1f;
 
-        public const int I_20006_Cost = 1;
+        public const int I_20006_Cost = 2;
         public static float F_20006_FreezeDuration(enum_ActionRarity rarity) => 3 * (int)rarity;
 
-        public static int I_20007_Cost(enum_ActionRarity rarity) => 1;
+        public static int I_20007_Cost(enum_ActionRarity rarity) => 2;
         public static float F_20007_Distance(enum_ActionRarity rarity) => 8f * (int)rarity;
 
-        public const int I_20008_Cost = 2;
+        public const int I_20008_Cost = 4;
         public static float F_20008_Health(enum_ActionRarity rarity) => 400 * (int)rarity;
         public static float F_20008_Damage(enum_ActionRarity rarity) => 40;
         public const float F_20008_FireRate = 1f;
 
-        public const int I_20009_Cost = 3;
+        public const int I_20009_Cost = 6;
         public static float F_20009_Health(enum_ActionRarity rarity) => 400 * (int)rarity;
         public static float F_20009_Damage(enum_ActionRarity rarity) => 40;
         public const float F_20009_FireRate = 1f;
 
-        public const int I_20010_Cost = 2;
+        public const int I_20010_Cost = 8;
         public static float F_20010_Health(enum_ActionRarity rarity) => 400;
         public static float P_20010_PlayerHealthDrain(enum_ActionRarity rarity) =>3*(int)rarity;
         public static float P_20010_AIHealthDrain(enum_ActionRarity rarity) => 100 * (int)rarity;
 
         //20011 To Be Continued
         
-        public const int I_20012_Cost = 2;
+        public const int I_20012_Cost = 8;
         public static float F_20012_Health(enum_ActionRarity rarity) => 400;
         public static float F_20012_PlayerHealthRegen(enum_ActionRarity rarity) => 1.5f * (int)rarity;
         public static float F_20012_AIHealthRegen(enum_ActionRarity rarity) => 20 * (int)rarity;
 
-        public const int I_20013_Cost = 2;
+        public const int I_20013_Cost = 4;
         public static float P_20013_DamageMultiplyBase(enum_ActionRarity rarity) => 300 * (int)rarity;
         #endregion
         #region 30000-39999
         public const int I_30001_Cost = 2;
-        public static float F_30001_DamagePerStack(enum_ActionRarity rarity) => 5f * (int)rarity;
+        public static float F_30001_DamagePerStack(enum_ActionRarity rarity) => 2.5f * (int)rarity;
         public const int I_30001_MaxStack = 20;
 
         public const int I_30002_Cost = 3;
-        public static float P_30002_SingleShotDamageMultiplyAfterKill(enum_ActionRarity rarity) => 60 * (int)rarity;
+        public static float P_30002_SingleShotDamageMultiplyAfterKill(enum_ActionRarity rarity) => 30 * (int)rarity;
 
         public const int I_30003_Cost = 2;
         public static float F_30003_GrenadeDamage(enum_ActionRarity rarity) => 100 * (int)rarity;
 
         public const int I_30004_Cost = 2;
-        public static float P_30004_ReloadSpeedMultiply(enum_ActionRarity rarity) => 50 * (int)rarity;
+        public static float P_30004_ReloadSpeedMultiply(enum_ActionRarity rarity) => 25 * (int)rarity;
 
         public const int I_30005_Cost = 2;
         public static float F_30005_FreezeDuration(enum_ActionRarity rarity) => .05f * (int)rarity;
@@ -214,28 +214,28 @@ namespace GameSetting_Action
         public static float P_30009_EquipmentHealthAddup(enum_ActionRarity rarity) => 25 * (int)rarity;
 
         public const int I_30010_Cost = 2;
-        public static float F_30010_MaxHealthAddup(enum_ActionRarity rarity) => 12 * (int)rarity;
+        public static float F_30010_MaxHealthAddup(enum_ActionRarity rarity) => 3 * (int)rarity;
 
         public const int I_30011_Cost = 2;
-        public static float P_30011_MaxHealthRegen(enum_ActionRarity rarity) => 12 * (int)rarity;
+        public static float P_30011_MaxHealthRegen(enum_ActionRarity rarity) => 6 * (int)rarity;
 
         public const int I_30012_Cost = 2;
-        public static float P_30012_HealthRegenEachKill(enum_ActionRarity rarity) => 10 * (int)rarity;
+        public static float P_30012_HealthRegenEachKill(enum_ActionRarity rarity) => 2.5f * (int)rarity;
 
         public const int I_30013_Cost = 1;
-        public static float P_30013_HealthRegenAdditive(enum_ActionRarity rarity) => 80* (int)rarity;
+        public static float P_30013_HealthRegenAdditive(enum_ActionRarity rarity) => 20* (int)rarity;
 
         public const int I_30014_Cost = 3;
-        public static float F_30014_DamageReductionDuration(enum_ActionRarity rarity) => 1f*(int)rarity;
+        public static float F_30014_DamageReductionDuration(enum_ActionRarity rarity) => 0.5f*(int)rarity;
 
         public const int I_30015_Cost = 2;
-        public static float F_30015_DamageReflectPerArmor(enum_ActionRarity rarity) => 2 * (int)rarity;
+        public static float F_30015_DamageReflectPerArmor(enum_ActionRarity rarity) => 1 * (int)rarity;
 
         public const int I_30016_Cost = 1;
         public static float P_30016_ProjectileSpeedMultiply(enum_ActionRarity rarity) => 50 * (int)rarity;
 
         public const int I_30017_Cost = 2;
-        public static float F_30017_ArmorAdditive(enum_ActionRarity rarity) => 10 * (int)rarity;
+        public static float F_30017_ArmorAdditive(enum_ActionRarity rarity) => 2.5f * (int)rarity;
         
         public static int I_30018_Cost(enum_ActionRarity rarity)=>4-(int) rarity;
         #endregion
