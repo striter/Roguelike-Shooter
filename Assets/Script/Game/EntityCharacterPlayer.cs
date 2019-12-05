@@ -361,7 +361,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         switch (action.m_ActionType)
         {
-            case enum_ActionType.Basic:
+            case enum_ActionType.WeaponAbility:
                 m_WeaponCurrent.SetWeaponAction(action);
                 OnWeaponStatus();
                 break;
