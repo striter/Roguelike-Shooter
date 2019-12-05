@@ -445,16 +445,13 @@ public class GameManager : GameManagerBase
     }
     #endregion
     #region Revive Management
-    Action OnRevivePlay;
+    bool m_revived = false;
     public void CheckRevive(Action _OnRevivePlayer)
     {
-        OnRevivePlay = _OnRevivePlayer;
-        UIManager.Instance.ShowPage<UI_Revive>(true, 0f).Play(_OnRevivePlayer, OnCreditRevivePlayer, 50,GameDataManager.CanUseCredit);
-    }
-    void OnCreditRevivePlayer()
-    {
-        GameDataManager.OnCreditStatus(-50);
-        OnRevivePlay();
+        if (m_revived)
+            return;
+        m_revived = true;
+        UIManager.Instance.ShowPage<UI_Revive>(true, 0f).Play(_OnRevivePlayer);
     }
     #endregion
     #region Battle Management
