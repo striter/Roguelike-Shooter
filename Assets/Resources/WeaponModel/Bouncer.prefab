@@ -184,6 +184,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   E_Anim: 1002
   B_AttachLeft: 1
-  m_ReloadClip1: {fileID: 0}
-  m_ReloadClip2: {fileID: 8300000, guid: fc82457182a1c7c41b257959ea893343, type: 3}
-  m_ReloadClip3: {fileID: 8300000, guid: b73bee47ecf0bea4a800b5ab6f2974ee, type: 3}
+  m_ReloadClip1: {fileID: 8300000, guid: 4196da2a1a350ca4dbc615aad9e21b7f, type: 3}
+  m_ReloadClip2: {fileID: 0}
+  m_ReloadClip3: {fileID: 8300000, guid: 4196da2a1a350ca4dbc615aad9e21b7f, type: 3}
