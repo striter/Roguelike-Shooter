@@ -43,7 +43,7 @@ namespace GameSetting_Action
         public const float F_10009_Duration = 10f;
         public static int P_10009_FireRateAdditive(enum_ActionRarity rarity) => 55 * (int)rarity;
 
-        public const int I_10010_Cost = 2;
+        public const int I_10010_Cost = 4;
         public const float F_10010_Duration = 10f;
         public const float F_10010_DamageReduction = 4f;
         public static int P_10010_FireRateAdditive(enum_ActionRarity rarity) => 160 * (int)rarity;
@@ -108,7 +108,7 @@ namespace GameSetting_Action
         public static float F_10027_HealthDamage(enum_ActionRarity rarity) => 15 * (int)rarity;
         public static float F_10027_ArmorAdditive(enum_ActionRarity rarity) => 45 * (int)rarity;
 
-        public const int I_10028_Cost = 2;
+        public const int I_10028_Cost = 4;
         public static float P_10028_NextShotDamageMultiplyPerArmor(enum_ActionRarity rarity) => 5.6f * (int)rarity;
 
         public const int I_10029_Cost = 4;
@@ -119,7 +119,7 @@ namespace GameSetting_Action
         public const float F_10030_Duration = 10f;
         public static float P_10030_MovementSpeedAdditive(enum_ActionRarity rarity) => 30 * (int)rarity;
         
-        public const int I_10032_Cost = 2;
+        public const int I_10032_Cost = 1;
         public static float F_10032_Duration(enum_ActionRarity rarity) => 10 * (int)rarity;
 
         public const int I_10033_Cost = 4;
