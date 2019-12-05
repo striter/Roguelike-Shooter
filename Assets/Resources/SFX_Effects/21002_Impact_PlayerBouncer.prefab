@@ -134,7 +134,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4388529308042440}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4287434665798004
 Transform:
@@ -160,7 +160,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4388529308042440}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4388529308042440
 Transform:
@@ -172,8 +172,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 4204841621810440}
   - {fileID: 4353138730398094}
+  - {fileID: 4204841621810440}
   - {fileID: 4060863138982694}
   - {fileID: 4287434665798004}
   m_Father: {fileID: 4772469048006388}
@@ -264,7 +264,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -1378968551
+  randomSeed: -1492744200
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3670,7 +3670,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -808365099
+  randomSeed: 1823817689
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -7076,7 +7076,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -1497768322
+  randomSeed: -901521292
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -10482,7 +10482,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -284359533
+  randomSeed: -599779791
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -13917,7 +13917,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 3
   m_RenderMode: 1
   m_SortMode: 0
   m_MinParticleSize: 0
@@ -13971,7 +13971,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_RenderMode: 1
   m_SortMode: 0
   m_MinParticleSize: 0
@@ -14025,7 +14025,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_RenderMode: 0
   m_SortMode: 0
   m_MinParticleSize: 0
