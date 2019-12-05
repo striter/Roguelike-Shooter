@@ -675,7 +675,7 @@ namespace GameSetting
             m_DifficultyUnlocked = 1;
             m_StorageRequestStamp = -1;
             m_CharacterSelected = enum_PlayerCharacter.Beth;
-            m_WeaponSelected = enum_PlayerWeapon.UZI;
+            m_WeaponSelected = enum_PlayerWeapon.P92;
         }
 
         public void DataRecorrect()

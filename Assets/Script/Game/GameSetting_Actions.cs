@@ -12,7 +12,7 @@ namespace GameSetting_Action
         public const float F_10001_Duration = 30f;
         public static int P_10001_ClipMultiply(enum_ActionRarity rarity) => 50 * (int)rarity;
 
-        public const int I_10002_Cost = 2;
+        public const int I_10002_Cost = 4;
         public const float F_10002_Duration = 5f;
         public static float F_10002_ArmorReceive(enum_ActionRarity rarity) => 1.5f * (int)rarity;
 
