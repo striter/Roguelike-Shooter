@@ -665,7 +665,6 @@ namespace GameSetting
         public int m_GameDifficulty;
         public int m_DifficultyUnlocked;
         public enum_PlayerCharacter m_CharacterSelected;
-        public enum_PlayerWeapon m_WeaponSelected;
         public int m_StorageRequestStamp;
         public CGameSave()
         {
@@ -675,7 +674,6 @@ namespace GameSetting
             m_DifficultyUnlocked = 1;
             m_StorageRequestStamp = -1;
             m_CharacterSelected = enum_PlayerCharacter.Beth;
-            m_WeaponSelected = enum_PlayerWeapon.P92;
         }
 
         public void DataRecorrect()
@@ -746,7 +744,7 @@ namespace GameSetting
             m_Stage = enum_StageLevel.Rookie;
             m_GameSeed = DateTime.Now.ToLongTimeString().ToString();
             m_character = GameDataManager.m_GameData.m_CharacterSelected;
-            m_weapon1 = WeaponSaveData.CreateNew(enum_PlayerWeapon.UZI);
+            m_weapon1 = WeaponSaveData.CreateNew(enum_PlayerWeapon.P92);
             m_weapon2 = WeaponSaveData.CreateNew(enum_PlayerWeapon.Invalid);
             m_weaponEquipingFirst = true;
         }
