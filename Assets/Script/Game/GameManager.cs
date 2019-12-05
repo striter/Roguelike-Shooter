@@ -250,7 +250,7 @@ public class GameManager : GameManagerBase
             case enum_LevelType.Trade:
             case enum_LevelType.ActionAdjustment:
             case enum_LevelType.Start:
-                GameObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Portal, level.m_Level.RandomEmptyTilePosition(m_GameLevel.m_GameSeed), level.m_Level.tf_Interact).Play(OnLevelFinished, false);
+                GameObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Portal, level.m_Level.RandomEmptyTilePosition(m_GameLevel.m_GameSeed), level.m_Level.tf_Interact).Play(OnLevelFinished, m_GameLevel.m_PortalKey);
                 break;
         }
 
@@ -304,7 +304,7 @@ public class GameManager : GameManagerBase
             case enum_LevelType.End:
             case enum_LevelType.Battle:
                 {
-                    GameObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Portal, LevelManager.NavMeshPosition(rewardPos, false), LevelManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(OnLevelFinished, true);
+                    GameObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Portal, LevelManager.NavMeshPosition(rewardPos, false), LevelManager.Instance.m_currentLevel.m_Level.tf_Interact).Play(OnLevelFinished,m_GameLevel.m_PortalKey);
                 }
                 break;
         }
@@ -563,6 +563,7 @@ public class GameLevelManager
     public bool B_IsFinalLevel => B_IsFinalStage&&m_LevelType == enum_LevelType.End;
     public bool B_IsFinalStage => m_GameStage == enum_StageLevel.Ranger;
     public bool B_IsFirstLevel => m_GameStage == enum_StageLevel.Rookie && m_LevelType == enum_LevelType.Start;
+    public string m_PortalKey => B_IsFinalLevel ? "Final" : (m_LevelType== enum_LevelType.End?"NextStage":"NextLevel");
     public enum_LevelType m_LevelType { get; private set; }
     public enum_StageLevel m_GameStage { get; private set; }
     Dictionary<enum_StageLevel, enum_Style> m_StageStyle = new Dictionary<enum_StageLevel, enum_Style>();
