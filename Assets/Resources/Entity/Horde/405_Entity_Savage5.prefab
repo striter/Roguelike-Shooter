@@ -937,7 +937,7 @@ MonoBehaviour:
   F_AttackSpread: 0
   ? ExtraRendererOnlyAvailableFor107WhatAwkwardRequirementWhyNotPutThemIntoOneModelCauseOutModelArtistCantDoItHaveToCreateThisIntoMyCodeLikeABunchOfShitForFuckingRealSucks
   : {fileID: 0}
-  E_EnermyType: 3
+  E_EnermyType: 4
   E_AnimatorIndex: 110
   F_AIChaseRange: 15
   F_AIAttackRange: 20

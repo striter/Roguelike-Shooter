@@ -160,8 +160,8 @@ namespace GameSetting_Action
 
         public const int I_20008_Cost = 4;
         public static float F_20008_Health(enum_ActionRarity rarity) => 400 * (int)rarity;
-        public static float F_20008_Damage(enum_ActionRarity rarity) => 40;
-        public const float F_20008_FireRate = 1f;
+        public static float F_20008_Damage(enum_ActionRarity rarity) => 10;
+        public const float F_20008_FireRate = 0.25f;
 
         public const int I_20009_Cost = 6;
         public static float F_20009_Health(enum_ActionRarity rarity) => 400 * (int)rarity;
