@@ -69,7 +69,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     }
     protected override void OnPoolItemEnable()
     {
-        base.OnPoolItemEnable();
+            base.OnPoolItemEnable();
         SetBinding(true);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
         TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
@@ -193,6 +193,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     public WeaponBase ObtainWeapon(WeaponBase _weapon)
     {
+        _weapon.OnAttach(this, m_WeaponCurrent.B_AttachLeft ? tf_WeaponHoldLeft : tf_WeaponHoldRight, OnFireAddRecoil, OnReload);
         WeaponBase exchangeWeapon = null;
         if (m_Weapon1 != null&&m_Weapon2!=null)
         {
@@ -214,7 +215,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             m_Weapon2 = _weapon;
             SwapWeapon(false);
         }
-        _weapon.OnAttach(this, m_WeaponCurrent.B_AttachLeft ? tf_WeaponHoldLeft : tf_WeaponHoldRight, OnFireAddRecoil, OnReload);
         OnWeaponStatus();
         return exchangeWeapon;
     }
@@ -503,7 +503,13 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         {
             v2_movement = Vector2.zero;
         }
-        public void OnActivate(enum_PlayerAnim animIndex) => OnActivate((int)animIndex);
+        public void OnActivate(enum_PlayerAnim animIndex)
+        {
+            m_Animator.CrossFade("Idle",.1f);
+            m_Animator.speed = 0f;
+            OnActivate((int)animIndex);
+            m_Animator.speed = 1f;
+        }
         public void SetRun(Vector2 movement,float movementParam)
         {
             v2_movement = Vector2.Lerp(v2_movement,movement,Time.deltaTime*5f);
