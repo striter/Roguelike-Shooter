@@ -179,7 +179,6 @@ public class UIC_Control : UIControlBase {
         public void UpdateInfo(WeaponBase weapon, bool equiping, Action OnWeaponActionClick)
         {
             m_weapon = weapon;
-            UpdateAmmoStatus();
             bool invalid = m_weapon == null;
             tf_Detail.SetActivate(!invalid);
             m_Action.Play(invalid ? null : m_weapon.m_WeaponAction, OnWeaponActionClick);
@@ -195,6 +194,7 @@ public class UIC_Control : UIControlBase {
             m_Background.sprite = UIManager.Instance.m_WeaponSprites[m_weapon.m_WeaponInfo.m_Rarity.GetUIGameControlBackground()];
             m_Image.sprite = UIManager.Instance.m_WeaponSprites[m_weapon.m_WeaponInfo.m_Weapon.GetSpriteName()];
             m_Name.autoLocalizeText = m_weapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
+            UpdateAmmoStatus();
         }
         
         public void UpdateAmmoStatus()
