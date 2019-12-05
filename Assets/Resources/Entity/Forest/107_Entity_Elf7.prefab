@@ -1171,7 +1171,7 @@ MonoBehaviour:
   E_EnermyType: 5
   E_AnimatorIndex: 163
   F_AIChaseRange: 17
-  F_AIAttackRange: 25
+  F_AIAttackRange: 22
   F_AttackDuration:
     start: 2
     length: 1

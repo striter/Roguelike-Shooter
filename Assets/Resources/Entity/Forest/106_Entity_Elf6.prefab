@@ -961,8 +961,8 @@ MonoBehaviour:
   : {fileID: 0}
   E_EnermyType: 3
   E_AnimatorIndex: 113
-  F_AIChaseRange: 25
-  F_AIAttackRange: 30
+  F_AIChaseRange: 15
+  F_AIAttackRange: 20
   F_AttackDuration:
     start: 2
     length: 1

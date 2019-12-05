@@ -1023,7 +1023,7 @@ MonoBehaviour:
   : {fileID: 0}
   E_EnermyType: 5
   E_AnimatorIndex: 112
-  F_AIChaseRange: 12
+  F_AIChaseRange: 10
   F_AIAttackRange: 15
   F_AttackDuration:
     start: 5
