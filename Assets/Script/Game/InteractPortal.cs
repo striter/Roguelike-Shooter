@@ -5,15 +5,15 @@ using System;
 
 public class InteractPortal : InteractGameBase {
     public override enum_Interaction m_InteractType => enum_Interaction.Portal;
-    public bool m_finalPortal = false;
-    public override string m_ExternalLocalizeKeyJoint => "_" + (m_finalPortal?"Final":"Next");
+     string m_localizeKey = "";
+    public override string m_ExternalLocalizeKeyJoint => "_" + m_localizeKey;
     TSpecialClasses.ParticleControlBase m_Particles;
     Action OnPortalInteract;
-    public void Play( Action _OnPortalInteract, bool finalPortal)
+    public void Play( Action _OnPortalInteract, string _localizeKey)
     {
         base.Play();
         OnPortalInteract = _OnPortalInteract;
-        m_finalPortal= finalPortal;
+        m_localizeKey= _localizeKey;
         m_Particles = new TSpecialClasses.ParticleControlBase(transform);
         m_Particles.Play();
     }
