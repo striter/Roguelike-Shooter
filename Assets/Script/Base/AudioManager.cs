@@ -14,7 +14,6 @@ public class AudioManager : AudioManagerBase
     static float m_volumeMultiply = 1f;
     public override float m_BGVolume => base.m_BGVolume * m_volumeMultiply;
     Dictionary<enum_GameVFX, AudioClip> m_GameClips = new Dictionary<enum_GameVFX, AudioClip>();
-    Dictionary<enum_UIVFX, AudioClip> m_UIClips = new Dictionary<enum_UIVFX, AudioClip>();
     public AudioClip GetGameSFXClip(enum_GameVFX sfx) => m_GameClips[sfx];
     public override void Init()
     {
@@ -36,8 +35,7 @@ public class AudioManager : AudioManagerBase
 
     public SFXAudioBase Play3DClip(int sourceID, AudioClip _clip, bool _loop, Transform _target) => base.PlayClip(sourceID, _clip, OptionsManager.F_SFXVolume, _loop, _target);
     public SFXAudioBase Play3DClip(int sourceID, AudioClip _clip, bool _loop, Vector3 _pos) => base.PlayClip(sourceID, _clip, OptionsManager.F_SFXVolume, _loop, _pos);
-    public SFXAudioBase Play2DClip(int sourceID, enum_GameVFX _clip) => base.PlayClip(sourceID,GetGameSFXClip( _clip), OptionsManager.F_SFXVolume, false);
-    public SFXAudioBase Play2DClip(int sourceID, enum_UIVFX _clip) => base.PlayClip(sourceID, m_UIClips[_clip], OptionsManager.F_SFXVolume,false);
+    public SFXAudioBase Play2DClip(int sourceID, AudioClip _clip) => base.PlayClip(sourceID,_clip, OptionsManager.F_SFXVolume, false);
     void OnPageOpen(float bulletTime)
     {
         //SetBGPitch(Mathf.Lerp(.6f, 1f, bulletTime));

@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
 public class UIPage : UIPageBase {
-    public enum_UIVFX Audio_PageOpen= enum_UIVFX.Invalid;
-    public enum_UIVFX Audio_PageExit= enum_UIVFX.Invalid;
+    public AudioClip Audio_PageOpen = null;
+    public AudioClip Audio_PageExit = null;
     protected override void Init()
     {
         base.Init();
-        if(Audio_PageOpen!= enum_UIVFX.Invalid)
+        if(Audio_PageOpen)
             AudioManager.Instance.Play2DClip(-1, Audio_PageOpen);
     }
     protected override void OnCancelBtnClick()
     {
         base.OnCancelBtnClick();
-        if (Audio_PageExit != enum_UIVFX.Invalid)
+        if (Audio_PageExit)
             AudioManager.Instance.Play2DClip(-1, Audio_PageExit);
     }
 }

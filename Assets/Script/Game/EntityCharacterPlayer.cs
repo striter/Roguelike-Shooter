@@ -112,7 +112,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_Assist.SetEnable(true);
         m_Animator.OnRevive();
 
-        AudioManager.Instance.Play2DClip(m_EntityID, m_ReviveClip);
+        AudioManager.Instance.Play2DClip(m_EntityID, AudioManager.Instance.GetGameSFXClip(m_ReviveClip));
     }
     protected override void OnRecycle()
     {

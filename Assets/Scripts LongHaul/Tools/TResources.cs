@@ -141,7 +141,6 @@ public class TResources
     public static AudioClip GetGameBGM_Styled(enum_GameMusic music,enum_Style style) => Load<AudioClip>(ConstPath.S_Audio_GameBGM +style+"_" +music);
     public static AudioClip GetCampBGM(enum_CampMusic music) => Load<AudioClip>(ConstPath.S_Audio_CampBGM + music);
     public static AudioClip GetGameClip(enum_GameVFX vfx) => Load<AudioClip>(ConstPath.S_GameAudio_VFX + vfx.ToString());
-    public static AudioClip GetUIClip(enum_UIVFX vfx) => Load<AudioClip>(ConstPath.S_UIAudio_VFX + vfx.ToString());
     #endregion
     #endregion
     #region Will Be Replaced By AssetBundle If Needed
