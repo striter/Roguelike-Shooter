@@ -92,9 +92,10 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         m_PlayerInfo.SetInfoData(m_saveData.m_coins, ActionDataManager.CreateActions(m_saveData.m_actionEquipment));
         m_Health.SetInfoData(m_saveData.m_curHealth>=0?m_saveData.m_curHealth:I_MaxHealth,m_saveData.m_curArmor>=0?m_saveData.m_curArmor:I_DefaultArmor,m_saveData.m_maxHealthAdditive>=0?m_saveData.m_maxHealthAdditive:0);
-        ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_weapon1,ActionDataManager.CreateAction( m_saveData.m_weaponAction1)));
-        if (m_saveData.m_weapon2 != enum_PlayerWeapon.Invalid)
-            ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_weapon2, ActionDataManager.CreateAction(m_saveData.m_weaponAction2)));
+
+        ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_weapon1));
+        if (m_saveData.m_weapon2.m_Weapon != enum_PlayerWeapon.Invalid)
+            ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_weapon2));
     }
 
     protected override void OnDead()
@@ -362,7 +363,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         switch (action.m_ActionType)
         {
             case enum_ActionType.WeaponAbility:
-                m_WeaponCurrent.SetWeaponAction(action);
+                m_WeaponCurrent.SetWeaponAction(action,0f);
                 OnWeaponStatus();
                 break;
             case enum_ActionType.Equipment:
@@ -379,7 +380,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public void UpgradeActionPerk(ActionBase _weaponAction)
     {
         if (m_WeaponCurrent.m_WeaponAction == null)
-            m_WeaponCurrent.SetWeaponAction(_weaponAction);
+            m_WeaponCurrent.SetWeaponAction(_weaponAction,0f);
         else
             m_WeaponCurrent.m_WeaponAction.Upgrade();
         OnWeaponStatus();

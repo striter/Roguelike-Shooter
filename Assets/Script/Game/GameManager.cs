@@ -32,7 +32,6 @@ public class GameManager : GameManagerBase
     public int B_TestBuffIndex = 1;
     public int Comma_TestParticleIndex = 20001;
     public enum_PlayerWeapon F1_WeaponSpawnType = enum_PlayerWeapon.Invalid;
-    public int WeaponPerkOnSpawn = -1;
     public int F5_TestActionNormal = 10001;
     public int F6_TestActionOutstanding = 10001;
     public int F7_TestActionEpic = 10001;
@@ -65,7 +64,7 @@ public class GameManager : GameManagerBase
             m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(-50, enum_DamageType.Basic, DamageDeliverInfo.Default(-1)));
         if (Input.GetKeyDown(KeyCode.F1) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
         {
-            GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, hit.point, LevelManager.Instance.m_InteractParent).Play(GameObjectManager.SpawnWeapon(F1_WeaponSpawnType, WeaponPerkOnSpawn>0?ActionDataManager.CreateAction(WeaponPerkOnSpawn, enum_ActionRarity.Normal):null));
+            GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, hit.point, LevelManager.Instance.m_InteractParent).Play(GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew(F1_WeaponSpawnType)));
         }
         if (Input.GetKeyDown(KeyCode.Alpha0))
         {
@@ -272,7 +271,7 @@ public class GameManager : GameManagerBase
                     int priceAction = GameExpression.GetTradePrice(enum_Interaction.Action, action1.m_rarity).Random(m_GameLevel.m_GameSeed);
                     GameObjectManager.SpawnInteract<InteractContainerTrade>(enum_Interaction.ContainerTrade,Vector3.forward*1f, interactTrans).Play(priceAction, GameObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action, Vector3.zero, interactTrans).Play(action1));
                     
-                    WeaponBase weapon = GameObjectManager.SpawnWeapon(GameDataManager.m_WeaponRarities[m_GameLevel.m_actionGenerate.GetTradeWeaponRarity(m_GameLevel.m_GameSeed)].RandomItem(m_GameLevel.m_GameSeed),null);
+                    WeaponBase weapon = GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew( GameDataManager.m_WeaponRarities[m_GameLevel.m_actionGenerate.GetTradeWeaponRarity(m_GameLevel.m_GameSeed)].RandomItem(m_GameLevel.m_GameSeed)),null);
                     int priceWeapon = GameExpression.GetTradePrice(enum_Interaction.Weapon, enum_ActionRarity.Invalid,weapon.m_WeaponInfo.m_Rarity).Random(m_GameLevel.m_GameSeed);
                     GameObjectManager.SpawnInteract<InteractContainerTrade>(enum_Interaction.ContainerTrade,Vector3.right * 1.5f + Vector3.forward * 1f, interactTrans).Play(priceWeapon, GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, Vector3.right, interactTrans).Play(weapon));
                 }
@@ -333,7 +332,7 @@ public class GameManager : GameManagerBase
 
         enum_WeaponRarity weaponRarity = TCommon.RandomPercentage(pickupGenerateData.m_WeaponRate, enum_WeaponRarity.Invalid);
         if (weaponRarity != enum_WeaponRarity.Invalid)
-            GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, GetPickupPosition(entity)).Play(GameObjectManager.SpawnWeapon(GameDataManager.m_WeaponRarities[weaponRarity].RandomItem(),null));
+            GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, GetPickupPosition(entity)).Play(GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew(GameDataManager.m_WeaponRarities[weaponRarity].RandomItem()),null));
 
         enum_ActionRarity actionRarity = TCommon.RandomPercentage(pickupGenerateData.m_ActionRate, enum_ActionRarity.Invalid);
         if (actionRarity != enum_ActionRarity.Invalid)
@@ -741,15 +740,15 @@ public static class GameObjectManager
     public static void RecycleEntity(int index, EntityBase target) => ObjectPoolManager<int, EntityBase>.Recycle(index, target);
     #endregion
     #region Weapon
-    public static WeaponBase SpawnWeapon(enum_PlayerWeapon weapon,ActionBase action,Transform toTrans=null)
+    public static WeaponBase SpawnWeapon(WeaponSaveData weaponData,Transform toTrans=null)
     {
-        if (!ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Registed(weapon))
+        if (!ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Registed(weaponData.m_Weapon))
         {
-            WeaponBase preset = TResources.GetPlayerWeapon(weapon);
-            ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Register(weapon, preset, 1);
+            WeaponBase preset = TResources.GetPlayerWeapon(weaponData.m_Weapon);
+            ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Register(weaponData.m_Weapon, preset, 1);
         }
-        WeaponBase targetWeapon = ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Spawn(weapon, toTrans ? toTrans : TF_Entity);
-        targetWeapon.SetWeaponAction(action);
+        WeaponBase targetWeapon = ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Spawn(weaponData.m_Weapon, toTrans ? toTrans : TF_Entity);
+        targetWeapon.SetWeaponAction(ActionDataManager.CreateAction(weaponData.m_WeaponAction), weaponData.m_WeaponEnergy);
         return targetWeapon;
     }
     public static void RecycleWeapon(WeaponBase weapon)=> ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Recycle(weapon.m_WeaponInfo.m_Weapon,weapon);

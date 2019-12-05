@@ -729,12 +729,11 @@ namespace GameSetting
         public string m_GameSeed;
         public enum_StageLevel m_Stage;
         public int m_coins;
-        public List<ActionGameData> m_actionEquipment;
+        public List<ActionSaveData> m_actionEquipment;
         public float m_curHealth;
         public float m_maxHealthAdditive;
         public float m_curArmor;
-        public enum_PlayerWeapon m_weapon1,m_weapon2;
-        public ActionGameData m_weaponAction1,m_weaponAction2;
+        public WeaponSaveData m_weapon1, m_weapon2;
         public enum_PlayerCharacter m_character;
         public CBattleSave()
         {
@@ -742,13 +741,12 @@ namespace GameSetting
             m_curHealth = -1;
             m_curArmor = -1;
             m_maxHealthAdditive = -1;
-            m_weaponAction1 = new ActionGameData();
-            m_actionEquipment = new List<ActionGameData>();
+            m_actionEquipment = new List<ActionSaveData>();
             m_Stage = enum_StageLevel.Rookie;
             m_GameSeed = DateTime.Now.ToLongTimeString().ToString();
             m_character = GameDataManager.m_GameData.m_CharacterSelected;
-            m_weapon1 = enum_PlayerWeapon.UMP45;
-            m_weapon2 = enum_PlayerWeapon.Invalid;
+            m_weapon1 = WeaponSaveData.CreateNew(enum_PlayerWeapon.UMP45);
+            m_weapon2 = WeaponSaveData.CreateNew(enum_PlayerWeapon.Invalid);
         }
         public void Adjust(EntityCharacterPlayer _player, GameLevelManager _level)
         {
@@ -757,11 +755,9 @@ namespace GameSetting
             m_maxHealthAdditive = _player.m_Health.m_MaxHealthAdditive;
             m_curArmor = _player.m_Health.m_CurrentArmor;
 
-            m_weapon1 = _player.m_Weapon1.m_WeaponInfo.m_Weapon;
-            m_weapon2 = _player.m_Weapon2==null? enum_PlayerWeapon.Invalid: _player.m_Weapon2.m_WeaponInfo.m_Weapon;
-            m_weaponAction1 = ActionGameData.Create(_player.m_Weapon1.m_WeaponAction);
-            m_weaponAction2 = ActionGameData.Create(_player.m_Weapon2==null?null:_player.m_Weapon2.m_WeaponAction);
-            m_actionEquipment = ActionGameData.Create(_player.m_PlayerInfo.m_ActionEquipment);
+            m_weapon1 = WeaponSaveData.Create(_player.m_Weapon1);
+            m_weapon2 = WeaponSaveData.Create(_player.m_Weapon2);
+            m_actionEquipment = ActionSaveData.Create(_player.m_PlayerInfo.m_ActionEquipment);
 
             m_GameSeed = _level.m_Seed;
             m_Stage = _level.m_GameStage;
@@ -799,30 +795,48 @@ namespace GameSetting
         }
     }
 
-    public struct ActionGameData : IXmlPhrase
+    public struct ActionSaveData : IXmlPhrase
     {
         public bool m_IsNull => m_Index <= 0;
         public int m_Index { get; private set; }
         public enum_ActionRarity m_Level { get; private set; }
 
         public string ToXMLData() => m_Index.ToString() + "," + m_Level.ToString();
-        public ActionGameData(string xmlData)
+        public ActionSaveData(string xmlData)
         {
             string[] split = xmlData.Split(',');
             m_Index = int.Parse(split[0]);
             m_Level = (enum_ActionRarity)Enum.Parse(typeof(enum_ActionRarity), split[1]);
         }
 
-        public static ActionGameData Create(int index, enum_ActionRarity level) => new ActionGameData { m_Index = index, m_Level = level };
-        public static ActionGameData Create(ActionBase action) => action == null ? new ActionGameData() { m_Index = -1, m_Level = 0 } : new ActionGameData { m_Index = action.m_Index, m_Level = action.m_rarity };
-        public static List<ActionGameData> Create(List<ActionBase> actions)
+        public static ActionSaveData Create(int index, enum_ActionRarity level) => new ActionSaveData { m_Index = index, m_Level = level };
+        public static ActionSaveData Create(ActionBase action) => action == null ? new ActionSaveData() { m_Index = -1, m_Level = 0 } : new ActionSaveData { m_Index = action.m_Index, m_Level = action.m_rarity };
+        public static List<ActionSaveData> Create(List<ActionBase> actions)
         {
-            List<ActionGameData> infos = new List<ActionGameData>();
+            List<ActionSaveData> infos = new List<ActionSaveData>();
             actions.Traversal((ActionBase action) => { infos.Add(Create(action)); });
             return infos;
         }
     }
-    
+
+    public struct WeaponSaveData : IXmlPhrase
+    {
+        public enum_PlayerWeapon m_Weapon { get; private set; }
+        public float m_WeaponEnergy { get; private set; }
+        public ActionSaveData m_WeaponAction { get; private set; }
+        public string ToXMLData() => m_Weapon + ";" + m_WeaponEnergy + ";" + m_WeaponAction.ToXMLData();
+        public WeaponSaveData(string xmlData)
+        {
+            string[] split = xmlData.Split(';');
+            m_Weapon = (enum_PlayerWeapon)Enum.Parse(typeof(enum_PlayerWeapon), split[0]);
+            m_WeaponEnergy = float.Parse(split[1]);
+            m_WeaponAction = new ActionSaveData(split[2]);
+        }
+        public static WeaponSaveData Create(WeaponBase weapon) => new WeaponSaveData() { m_Weapon =weapon!=null? weapon.m_WeaponInfo.m_Weapon: enum_PlayerWeapon.Invalid, m_WeaponEnergy = weapon!=null?weapon.m_ActionEnergy:0, m_WeaponAction =  ActionSaveData.Create(weapon != null ? weapon.m_WeaponAction:null)};
+        public static WeaponSaveData CreateNew(enum_PlayerWeapon weapon) => new WeaponSaveData() { m_Weapon = weapon };
+    }
+
+
     public struct CampFarmPlotData : IXmlPhrase
     {
         public int m_StartStamp { get; private set; }

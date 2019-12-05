@@ -373,13 +373,13 @@ public static class ActionDataManager
     public static ActionBase CreateRandomAction(enum_ActionRarity rarity, System.Random seed)=> CreateAction(m_AllAction.RandomItem(seed),rarity);
     public static ActionBase CreateRandomWeaponAbilityAction(enum_ActionRarity rarity, System.Random seed) => CreateAction(m_WeaponAbilityAction.RandomItem(seed),rarity);
     public static ActionBase CreateRandomPlayerAction(enum_ActionRarity rarity, System.Random seed) => CreateAction(m_PlayerEquipmentAction.RandomItem(seed),rarity);
-    public static List<ActionBase> CreateActions(List<ActionGameData> infos)
+    public static List<ActionBase> CreateActions(List<ActionSaveData> infos)
     {
         List<ActionBase> actions = new List<ActionBase>();
-        infos.Traversal((ActionGameData info) => { actions.Add(CreateAction(info)); });
+        infos.Traversal((ActionSaveData info) => { actions.Add(CreateAction(info)); });
         return actions;
     }
-    public static ActionBase CreateAction(ActionGameData info) => info.m_IsNull ? null : CreateAction(info.m_Index, info.m_Level);
+    public static ActionBase CreateAction(ActionSaveData info) => info.m_IsNull ? null : CreateAction(info.m_Index, info.m_Level);
     public static ActionBase CreateAction(int actionIndex, enum_ActionRarity level)
     {
         if (!m_AllActionType.ContainsKey(actionIndex))
