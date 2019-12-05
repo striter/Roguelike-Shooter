@@ -15,6 +15,7 @@ public class InteractAction : InteractGameBase {
         tf_PlayerEquipment = transform.Find("Container/Model/PlayerEquipment");
         tf_WeaponAbility = transform.Find("Container/Model/WeaponAbility");
     }
+
     public InteractAction Play(ActionBase _action)
     {
         base.Play();
@@ -23,6 +24,7 @@ public class InteractAction : InteractGameBase {
         tf_PlayerEquipment.SetActivate(_action.m_ActionType == enum_ActionType.PlayerEquipment);
         return this;
     }
+
     protected override void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)
     {
         base.OnInteractSuccessful(_interactTarget);
