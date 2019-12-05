@@ -111,7 +111,7 @@ public class UIC_Control : UIControlBase {
     protected void OnWeaponFirstActionClick() => OnWeaponAction?.Invoke(true);
     protected void OnWeaponSecondActionClick() => OnWeaponAction?.Invoke(false);
     protected void OnAbilityButtonDown() => OnCharacterAbility?.Invoke();
-    protected void OnActionStorageClick() => UIManager.Instance.ShowPage<UI_ActionPack>(true).Show(m_Player.m_PlayerInfo);
+    protected void OnActionStorageClick() => UIManager.Instance.ShowPage<UI_ActionPack>(true,0f).Show(m_Player.m_PlayerInfo);
     public void AddDragBinding(Action<bool, Vector2> _OnDragDown, Action<Vector2> _OnDrag)
     {
         transform.localScale = Vector3.zero;

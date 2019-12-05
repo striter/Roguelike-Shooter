@@ -115,6 +115,8 @@ public class UI_Options : UIPage {
 
         btn_ReturnToCamp = tf_Container.Find("BtnReturn").GetComponent<Button>();
         btn_ReturnToCamp.onClick.AddListener(OnMainmenuBtnClick);
+
+        m_Page[enum_OptionSelection.Display].Find("Region").SetActivate(false);     //Test
     }
 
     public void SetInGame(bool inGame)
