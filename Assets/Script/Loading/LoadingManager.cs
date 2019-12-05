@@ -68,8 +68,8 @@ public class LoadingManager : SimpleSingletonMono<LoadingManager>
     {
         if (m_GameBegin)
             return;
-        m_Logo.Begin(() => { SceneManager.LoadScene((int)enum_Scene.Camp); });
         m_GameBegin = true;
+        SceneManager.LoadScene((int)enum_Scene.Camp);
     }
 
     void OnSceneLoaded(Scene scene,LoadSceneMode mode)
