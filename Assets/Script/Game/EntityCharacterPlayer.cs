@@ -31,7 +31,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public PlayerInfoManager m_PlayerInfo { get; private set; }
     protected override void ActivateHealthManager(float maxHealth) => m_Health.OnActivate(maxHealth, I_DefaultArmor, true);
     protected bool m_aiming = false;
-    protected override enum_GameAudioSFX m_DamageClip => enum_GameAudioSFX.PlayerDamage;
+    protected override enum_GameVFX m_DamageClip => enum_GameVFX.PlayerDamage;
 
     public new EntityPlayerHealth m_Health { get; private set; }
     protected override HealthBase GetHealthManager()
@@ -112,7 +112,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_Assist.SetEnable(true);
         m_Animator.OnRevive();
 
-        AudioManager.Instance.PlayClip(m_EntityID, AudioManager.Instance.GetSFXClip(m_ReviveClip), false);
+        AudioManager.Instance.Play2DClip(m_EntityID, m_ReviveClip);
     }
     protected override void OnRecycle()
     {

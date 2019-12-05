@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using GameSetting;
-public class UI_Options : UIPageBase {
+public class UI_Options : UIPage {
     class ValueToggle<T>
     {
         Func<T> OnToggle;

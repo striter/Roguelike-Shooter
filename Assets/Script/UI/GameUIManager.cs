@@ -27,7 +27,7 @@ public class GameUIManager : UIManager {
         ShowPage<UI_GameResult>(true).Play(level, _OnButtonClick);
     }
 
-    public T ShowCoinsPage<T>(bool animate, float bulletTime = 1f) where T:UIPageBase
+    public T ShowCoinsPage<T>(bool animate, float bulletTime = 1f) where T:UIPage
     {
         m_OverlayControl = m_Coins;
         SetControlViewMode(m_OverlayControl, true);

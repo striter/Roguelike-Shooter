@@ -63,7 +63,7 @@ public class UIManager :UIManagerBase,ISingleCoroutine
 
 
     public new T ShowMessageBox<T>() where T : UIMessageBoxBase => base.ShowMessageBox<T>();
-    public T ShowPage<T>(bool animate,float bulletTime=1f) where T : UIPageBase
+    public T ShowPage<T>(bool animate,float bulletTime=1f) where T : UIPage
     {
         T page = base.ShowPage<T>(animate);
         if (page == null)

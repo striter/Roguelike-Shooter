@@ -18,7 +18,7 @@ public class InteractGameBase : InteractBase,ObjectPoolItem<enum_Interaction> {
     {
         base.Play();
         if (AC_OnPlay)
-            AudioManager.Instance.PlayClip(-1, AC_OnPlay, false, transform.position);
+            AudioManager.Instance.Play3DClip(-1, AC_OnPlay, false, transform.position);
     }
     protected override void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)
     {

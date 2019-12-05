@@ -604,7 +604,7 @@ namespace GameSetting
         Heavy_Remote_164 = 164,
     }
 
-    public enum enum_GameAudioSFX
+    public enum enum_GameVFX
     {
         Invalid=-1,
 
@@ -612,6 +612,11 @@ namespace GameSetting
         PlayerDamage,
 
         PlayerRevive,
+    }
+    public enum enum_UIVFX
+    {
+        Invalid=-1,
+
     }
 
     public enum enum_GameMusic { Invalid=-1,StyledStart=1,  Relax,StyledEnd=10, Fight}

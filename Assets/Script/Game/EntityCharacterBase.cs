@@ -25,8 +25,8 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     public new EntityHealth m_Health=>base.m_Health as EntityHealth;
     protected override HealthBase GetHealthManager()=> new EntityHealth(this, OnHealthStatus, OnDead);
 
-    protected virtual enum_GameAudioSFX m_DamageClip => enum_GameAudioSFX.EntityDamage;
-    protected virtual enum_GameAudioSFX m_ReviveClip => enum_GameAudioSFX.PlayerRevive;
+    protected virtual enum_GameVFX m_DamageClip => enum_GameVFX.EntityDamage;
+    protected virtual enum_GameVFX m_ReviveClip => enum_GameVFX.PlayerRevive;
 
     public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
@@ -132,7 +132,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         {
             case enum_HealthChangeMessage.DamageArmor:
             case enum_HealthChangeMessage.DamageHealth:
-                AudioManager.Instance.PlayClip(m_EntityID, AudioManager.Instance.GetSFXClip(m_DamageClip), false, transform);
+                AudioManager.Instance.Play3DClip(m_EntityID, AudioManager.Instance.GetGameSFXClip(m_DamageClip), false, transform);
                 break;
         }
     }

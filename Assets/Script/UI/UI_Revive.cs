@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine.UI;
-public class UI_Revive : UIPageBase
+public class UI_Revive : UIPage
 {
     Action OnVideoFinished, OnCreditClick;
     Func<float,bool> CheckCanCreditClick;

@@ -12,7 +12,6 @@ public class GameAudioManager : AudioManager
         Instance = this;
     }
     Dictionary<enum_GameMusic, AudioClip> m_GameMusic = new Dictionary<enum_GameMusic, AudioClip>();
-
     public override void Init()
     {
         base.Init();

@@ -4,7 +4,7 @@ using UnityEngine;
 using GameSetting;
 using UnityEngine.UI;
 
-public class UI_ActionAdjustment : UIPageBase {
+public class UI_ActionAdjustment : UIPage {
 
     UIT_GridControllerGridItem<UIGI_ActionItemSelect> m_Grid;
     Button btn_remove, btn_upgrade;

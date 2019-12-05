@@ -37,7 +37,8 @@ public class TResources
 
         public const string S_Audio_GameBGM = "Audio/Background/Game_";
         public const string S_Audio_CampBGM = "Audio/Background/Camp_";
-        public const string S_Audio_SFX = "Audio/SFX/";
+        public const string S_GameAudio_VFX = "Audio/GameVFX/";
+        public const string S_UIAudio_VFX = "Audio/UIVFX/";
     }
 
     static Texture m_NoiseTex=null;
@@ -139,7 +140,8 @@ public class TResources
     public static AudioClip GetGameBGM(enum_GameMusic music) => Load<AudioClip>(ConstPath.S_Audio_GameBGM+music);
     public static AudioClip GetGameBGM_Styled(enum_GameMusic music,enum_Style style) => Load<AudioClip>(ConstPath.S_Audio_GameBGM +style+"_" +music);
     public static AudioClip GetCampBGM(enum_CampMusic music) => Load<AudioClip>(ConstPath.S_Audio_CampBGM + music);
-    public static AudioClip GetAudioClip_SFX(enum_GameAudioSFX sfx) => Load<AudioClip>(ConstPath.S_Audio_SFX + sfx.ToString());
+    public static AudioClip GetGameClip(enum_GameVFX vfx) => Load<AudioClip>(ConstPath.S_GameAudio_VFX + vfx.ToString());
+    public static AudioClip GetUIClip(enum_UIVFX vfx) => Load<AudioClip>(ConstPath.S_UIAudio_VFX + vfx.ToString());
     #endregion
     #endregion
     #region Will Be Replaced By AssetBundle If Needed

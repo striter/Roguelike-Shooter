@@ -4,7 +4,7 @@ using UnityEngine;
 using GameSetting;
 using UnityEngine.UI;
 
-public class UI_WeaponStatus : UIPageBase {
+public class UI_WeaponStatus : UIPage {
 
     Transform tf_WeaponInfo;
     UIT_TextExtend m_WeaponName;

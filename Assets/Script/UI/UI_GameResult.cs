@@ -3,7 +3,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UI_GameResult : UIPageBase {
+public class UI_GameResult : UIPage {
     Action OnButtonClick;
     Image m_ResultTitle;
     UIC_Button btn_video;

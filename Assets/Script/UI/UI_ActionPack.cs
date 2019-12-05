@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UI_ActionPack : UIPageBase {
+public class UI_ActionPack : UIPage {
     UIT_GridControllerGridItem<UIGI_ActionItemDetail> m_Grid;
     protected override void Init()
     {

@@ -13,12 +13,13 @@ public class AudioManager : AudioManagerBase
     }
     static float m_volumeMultiply = 1f;
     public override float m_BGVolume => base.m_BGVolume * m_volumeMultiply;
-    Dictionary<enum_GameAudioSFX, AudioClip> m_AudioClips = new Dictionary<enum_GameAudioSFX, AudioClip>();
-    public AudioClip GetSFXClip(enum_GameAudioSFX sfx) => m_AudioClips[sfx];
+    Dictionary<enum_GameVFX, AudioClip> m_GameClips = new Dictionary<enum_GameVFX, AudioClip>();
+    Dictionary<enum_UIVFX, AudioClip> m_UIClips = new Dictionary<enum_UIVFX, AudioClip>();
+    public AudioClip GetGameSFXClip(enum_GameVFX sfx) => m_GameClips[sfx];
     public override void Init()
     {
         base.Init();
-        TCommon.TraversalEnum((enum_GameAudioSFX audio) => { m_AudioClips.Add(audio, TResources.GetAudioClip_SFX(audio)); });
+        TCommon.TraversalEnum((enum_GameVFX audio) => { m_GameClips.Add(audio, TResources.GetGameClip(audio)); });
         TBroadCaster<enum_BC_UIStatus>.Add<float>(enum_BC_UIStatus.UI_PageOpen, OnPageOpen);
         TBroadCaster<enum_BC_UIStatus>.Add(enum_BC_UIStatus.UI_PageClose, OnPageClose);
         OptionsManager.event_OptionChanged += OnOptionChanged;
@@ -33,10 +34,10 @@ public class AudioManager : AudioManagerBase
         OptionsManager.event_OptionChanged -= OnOptionChanged;
     }
 
-    public SFXAudioBase PlayClip(int sourceID, AudioClip _clip, bool _loop, Transform _target) => base.PlayClip(sourceID, _clip, OptionsManager.F_SFXVolume, _loop, _target);
-    public SFXAudioBase PlayClip(int sourceID, AudioClip _clip, bool _loop, Vector3 _pos) => base.PlayClip(sourceID, _clip, OptionsManager.F_SFXVolume, _loop, _pos);
-    public SFXAudioBase PlayClip(int sourceID, AudioClip _clip, bool _loop) => base.PlayClip(sourceID, _clip, OptionsManager.F_SFXVolume, _loop);
-
+    public SFXAudioBase Play3DClip(int sourceID, AudioClip _clip, bool _loop, Transform _target) => base.PlayClip(sourceID, _clip, OptionsManager.F_SFXVolume, _loop, _target);
+    public SFXAudioBase Play3DClip(int sourceID, AudioClip _clip, bool _loop, Vector3 _pos) => base.PlayClip(sourceID, _clip, OptionsManager.F_SFXVolume, _loop, _pos);
+    public SFXAudioBase Play2DClip(int sourceID, enum_GameVFX _clip) => base.PlayClip(sourceID,GetGameSFXClip( _clip), OptionsManager.F_SFXVolume, false);
+    public SFXAudioBase Play2DClip(int sourceID, enum_UIVFX _clip) => base.PlayClip(sourceID, m_UIClips[_clip], OptionsManager.F_SFXVolume,false);
     void OnPageOpen(float bulletTime)
     {
         //SetBGPitch(Mathf.Lerp(.6f, 1f, bulletTime));
