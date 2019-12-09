@@ -85,6 +85,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         transform.position = position;
         transform.rotation = rotation;
+        m_CharacterRotation = rotation;
         CameraController.Instance.SetCameraRotation(-1,transform.rotation.eulerAngles.y);
     }
 
@@ -149,7 +150,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     protected virtual float CalculateMovementSpeedBase() => (F_MovementSpeed - m_WeaponCurrent.m_WeaponInfo.m_Weight);
     protected virtual float CalculateMovementSpeedMultiple()=> m_aimingMovementReduction ? (1 - GameConst.F_AimMovementReduction * m_PlayerInfo.F_AimMovementStrictMultiply) : 1f;
-    protected virtual Quaternion CalculateTargetRotation() => m_Target?Quaternion.LookRotation( TCommon.GetXZLookDirection(tf_Head.position,m_Target.tf_Head.position),Vector3.up): CameraController.CameraXZRotation;
+    protected virtual Quaternion GetCharacterRotation() => m_CharacterRotation;
     protected virtual Vector3 CalculateMoveDirection(Vector2 axisInput) => Vector3.Normalize(CameraController.CameraXZRightward * axisInput.x + CameraController.CameraXZForward * axisInput.y);
     protected virtual bool CalculateWeaponFire() => !Physics.SphereCast(new Ray(tf_WeaponAim.position, tf_WeaponAim.forward), .3f, 1.5f, GameLayer.Mask.I_Static);
 
@@ -184,7 +185,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_weaponCanFire = CalculateWeaponFire();
         if (m_WeaponCurrent == null)
             return;
-        tf_WeaponAim.rotation = CalculateTargetRotation();
+        tf_WeaponAim.rotation = GetCharacterRotation();
         m_Assist.SetEnable(m_weaponCanFire && !m_WeaponCurrent.B_Reloading);
         m_WeaponCurrent.AmmoTick(m_PlayerInfo.F_ReloadRateTick(deltaTime));
         if (m_weaponCanFire)
@@ -240,9 +241,10 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     }
     #endregion
     #region CharacterControll
-    protected Vector2 m_MoveAxisInput { get; private set; }
-    protected Vector2 m_RotateAxisInput{get;private set; }
-    protected EntityCharacterBase m_Target { get; private set; }
+    protected Vector2 m_MoveAxisInput { get; private set; } = Vector2.zero;
+    protected Vector2 m_RotateAxisInput { get; private set; } = Vector2.zero;
+    protected Quaternion m_CharacterRotation { get; private set; } = Quaternion.identity;
+    protected EntityCharacterBase m_Target { get; private set; } = null;
     protected bool m_TargetAvailable => m_Target != null && GameManager.Instance.CheckEntityTargetable(m_Target);
     float targetCheck = .3f;
     void OnMovementDelta(Vector2 moveDelta)
@@ -267,6 +269,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         if (m_aimingMovementReduction) f_aimMovementReduction -= deltaTime;
         if (m_aiming) f_aimMovementReduction = GameConst.F_MovementReductionDuration;
+        TPSCameraController.Instance.RotateCamera(m_RotateAxisInput * OptionsManager.m_Sensitive);
 
         if (!m_TargetAvailable || targetCheck<0f)
         {
@@ -275,8 +278,12 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         }
         targetCheck -= Time.deltaTime;
 
-        TPSCameraController.Instance.RotateCamera(m_RotateAxisInput * OptionsManager.m_Sensitive);
-        transform.rotation = Quaternion.Lerp(transform.rotation, CalculateTargetRotation(),deltaTime*GameConst.I_PlayerRotationSmoothParam);
+        if (m_Target)
+            m_CharacterRotation = Quaternion.LookRotation(TCommon.GetXZLookDirection(tf_Head.position, m_Target.tf_Head.position), Vector3.up);
+        else if(m_MoveAxisInput!=Vector2.zero)
+            m_CharacterRotation= Quaternion.LookRotation(m_MoveAxisInput.x * CameraController.CameraXZRightward + m_MoveAxisInput.y * CameraController.CameraXZForward, Vector3.up); 
+
+        transform.rotation = Quaternion.Lerp(transform.rotation, GetCharacterRotation(),deltaTime*GameConst.I_PlayerRotationSmoothParam);
 
         m_BaseMovementSpeed = CalculateMovementSpeedBase() * CalculateMovementSpeedMultiple();
 

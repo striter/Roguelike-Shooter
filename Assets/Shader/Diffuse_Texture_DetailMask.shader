@@ -4,7 +4,6 @@
 	{
 		_MainTex(" Mask Tex",2D) = "white"{}
 		_TexScale("Mask Scale",float) = 8
-		_SubMultiply("Detail Multiply",Range(0,1))=.5
 		_Lambert("Lambert Param",Range(0,1))=.5
 	}
 	SubShader
