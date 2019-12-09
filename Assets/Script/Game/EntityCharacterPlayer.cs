@@ -184,7 +184,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_weaponCanFire = CalculateWeaponFire();
         if (m_WeaponCurrent == null)
             return;
-        tf_WeaponAim.rotation = CalculateTargetRotation(m_MoveAxisInput);
+        tf_WeaponAim.rotation = CalculateTargetRotation(m_CharacterDirection);
         m_Assist.SetEnable(m_weaponCanFire && !m_WeaponCurrent.B_Reloading);
         m_WeaponCurrent.AmmoTick(m_PlayerInfo.F_ReloadRateTick(deltaTime));
         if (m_weaponCanFire)
@@ -242,7 +242,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     #region CharacterControll
     protected Vector2 m_MoveAxisInput { get; private set; }
     protected Vector2 m_RotateAxisInput{get;private set; }
-
+    protected Vector2 m_CharacterDirection { get; private set; }
     void OnMovementDelta(Vector2 moveDelta)
     {
         m_MoveAxisInput = moveDelta;
@@ -266,8 +266,11 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (m_aimingMovementReduction) f_aimMovementReduction -= deltaTime;
         if (m_aiming) f_aimMovementReduction = GameConst.F_MovementReductionDuration;
 
+        if(m_MoveAxisInput!=Vector2.zero)
+            m_CharacterDirection=m_MoveAxisInput;
+
         TPSCameraController.Instance.RotateCamera(m_RotateAxisInput * OptionsManager.m_Sensitive);
-        transform.rotation = Quaternion.Lerp(transform.rotation, CalculateTargetRotation(m_MoveAxisInput),deltaTime*GameConst.I_PlayerRotationSmoothParam);
+        transform.rotation = Quaternion.Lerp(transform.rotation, CalculateTargetRotation(m_CharacterDirection),deltaTime*GameConst.I_PlayerRotationSmoothParam);
 
         m_BaseMovementSpeed = CalculateMovementSpeedBase() * CalculateMovementSpeedMultiple();
 
