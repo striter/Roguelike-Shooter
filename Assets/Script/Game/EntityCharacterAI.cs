@@ -124,12 +124,12 @@ public class EntityCharacterAI : EntityCharacterBase {
     protected class  EnermyAIControllerBase
     {
         public NavMeshAgent m_Agent { get; private set; }
+        protected NavMeshObstacle m_Obstacle;
         protected EntityCharacterAI m_Entity;
         protected EntityCharacterBase m_Target;
         protected Transform transform => m_Agent.transform;
         protected Transform headTransform => m_Entity.tf_Head;
         protected Transform targetHeadTransform => m_Target.tf_Head;
-        protected NavMeshObstacle m_Obstacle;
         protected Action<bool> OnAttackAnim;
         protected Func<EntityCharacterBase, bool> OnCheckTarget;
         protected EquipmentBase m_Weapon;
@@ -180,17 +180,22 @@ public class EntityCharacterAI : EntityCharacterBase {
         {
             m_Entity = _entityControlling;
             m_Weapon = _weapon;
-            m_Obstacle = m_Entity.GetComponent<NavMeshObstacle>();
             m_Agent = m_Entity.GetComponent<NavMeshAgent>();
+            m_Obstacle = m_Entity.GetComponent<NavMeshObstacle>();
+            m_Obstacle.carving = true;
+            m_Obstacle.carveOnlyStationary = false;
+            m_Obstacle.height = m_Agent.height;
+            m_Obstacle.radius=m_Agent.radius-.2f;
             m_Agent.stoppingDistance = 0f;
             OnAttackAnim = _onAttack;
             OnCheckTarget = _onCheck;
-            B_AgentEnabled = false;
         }
 
         public void OnActivate()
         {
             B_AgentEnabled = false;
+            m_Agent.enabled = false;
+            m_Obstacle.enabled = true;
             b_attacking = false;
             f_battleSimulate = 0f;
             f_movementSimulate = 0f;
