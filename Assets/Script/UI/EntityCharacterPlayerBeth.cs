@@ -50,7 +50,7 @@ public class EntityCharacterPlayerBeth : EntityCharacterPlayer {
     protected override float CalculateMovementSpeedBase() => (m_rolling? F_RollSpeedMultiple :1)* base.CalculateMovementSpeedBase();
     protected override float CalculateMovementSpeedMultiple() => m_rolling ? 1f : base.CalculateMovementSpeedMultiple();
     protected override Vector3 CalculateMoveDirection(Vector2 moveAxisInput) => m_rolling ? m_rollDirection : base.CalculateMoveDirection(moveAxisInput);
-    protected override Quaternion CalculateTargetRotation(Vector2 moveAxisInput) => m_rolling ? Quaternion.LookRotation(m_rollingLookRotation, Vector3.up) : base.CalculateTargetRotation(moveAxisInput);
+    protected override Quaternion CalculateTargetRotation() => m_rolling ? Quaternion.LookRotation(m_rollingLookRotation, Vector3.up) : base.CalculateTargetRotation();
 
     class PlayerAnimatorBeth:PlayerAnimator
     {

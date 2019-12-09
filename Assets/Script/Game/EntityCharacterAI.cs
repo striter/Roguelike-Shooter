@@ -145,7 +145,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         bool b_CanKeepAttack;
         bool b_targetVisible;
         bool b_targetRotationWithin;
-        bool b_targetAvailable => m_Target != null &&!m_Target.m_CharacterInfo.B_Effecting(enum_CharacterEffect.Cloak) && !m_Target.m_Health.b_IsDead;
+        bool b_targetAvailable => m_Target != null && GameManager.Instance.CheckEntityTargetable(m_Target); 
         bool b_playing;
         public bool B_AgentEnabled
         {
@@ -239,39 +239,16 @@ public class EntityCharacterAI : EntityCharacterBase {
         #region TargetIdentity
         void CheckTarget(float deltaTime)
         {
-            if (!b_targetAvailable)
-                RecheckTarget();
-
-            if (f_checkTargetSimulate > 0)
+            if (b_targetAvailable&&f_checkTargetSimulate > 0)
             {
                 f_checkTargetSimulate -= deltaTime;
                 return;
             }
             f_checkTargetSimulate = GameConst.F_AITargetCheckParam;
 
-            RecheckTarget();
+            m_Target = GameManager.Instance.GetAvailableEntity(m_Entity,m_Weapon.B_TargetAlly,m_Entity.B_BattleCheckObstacle);
         }
-        void RecheckTarget()
-        {
-            m_Target = null;
-            f_targetDistance = float.MaxValue;
-            List<EntityCharacterBase> entites = GameManager.Instance.GetEntities(m_Entity.m_Flag, m_Weapon.B_TargetAlly);
-            for (int i = 0; i < entites.Count; i++)
-            {
-                if (entites[i].m_EntityID == m_Entity.m_EntityID)
-                    continue;
-
-                float distance = TCommon.GetXZDistance(headTransform.position, entites[i].tf_Head.position);
-                bool obstacleBlocked = !m_Entity.B_BattleCheckObstacle || ObstacleBlocked(entites[i]);
-                bool isAvailableClosetTarget = distance < f_targetDistance && obstacleBlocked;
-                if (!b_targetAvailable || isAvailableClosetTarget)
-                {
-                    m_Target = entites[i];
-                    f_targetDistance = distance;
-                }
-            }
-        }
-
+        
         void CheckTargetParams(float deltaTime)
         {
             if (f_calculateSimulate > 0)
@@ -284,7 +261,7 @@ public class EntityCharacterAI : EntityCharacterBase {
             if (!b_targetAvailable)
                 return;
 
-            b_targetVisible = ObstacleBlocked(m_Target);
+            b_targetVisible = GameManager.Instance.CheckEntityObstacleBetween(m_Entity,m_Target);
             
             f_targetDistance = TCommon.GetXZDistance(targetHeadTransform.position, headTransform.position);
             b_targetOutChaseRange = f_targetDistance > m_Entity.F_AIChaseRange;
@@ -400,22 +377,6 @@ public class EntityCharacterAI : EntityCharacterBase {
         Vector3 GetSamplePosition()=> LevelManager.NavMeshPosition(m_Entity.transform.position + (b_targetOutChaseRange ? 5 : -5) * (m_forwardDirection.normalized) + TCommon.RandomXZSphere(3f));
         bool FrontBlocked()=> m_Entity.F_AttackFrontCheck>0f && Physics.SphereCast(new Ray(headTransform.position, headTransform.forward), .5f, m_Entity.F_AttackFrontCheck, GameLayer.Mask.I_Static);
 
-        bool ObstacleBlocked(EntityCharacterBase target)
-        {
-            m_Raycasts = Physics.RaycastAll(m_Entity.tf_Head.position, m_forwardDirection, Vector3.Distance(m_Entity.tf_Head.position, target.tf_Head.position), GameLayer.Mask.I_StaticEntity);
-            for (int i = 0; i < m_Raycasts.Length; i++)
-            {
-                if (m_Raycasts[i].collider.gameObject.layer == GameLayer.I_Static)
-                    return false;
-                else if (m_Raycasts[i].collider.gameObject.layer == GameLayer.I_Entity)
-                {
-                    HitCheckEntity entity = m_Raycasts[i].collider.GetComponent<HitCheckEntity>();
-                    if (entity.m_Attacher.m_EntityID != target.m_EntityID && entity.m_Attacher.m_EntityID != m_Entity.m_EntityID)
-                        return false;
-                }
-            }
-            return true;
-        }
         
         void CheckRotation(float deltaTime)
         {
