@@ -149,7 +149,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     protected virtual float CalculateMovementSpeedBase() => (F_MovementSpeed - m_WeaponCurrent.m_WeaponInfo.m_Weight);
     protected virtual float CalculateMovementSpeedMultiple()=> m_aimingMovementReduction ? (1 - GameConst.F_AimMovementReduction * m_PlayerInfo.F_AimMovementStrictMultiply) : 1f;
-    protected virtual Quaternion CalculateTargetRotation() => CameraController.CameraXZRotation;
+    protected virtual Quaternion CalculateTargetRotation(Vector2 axisInput) => Quaternion.LookRotation(CameraController.CameraXZForward * axisInput.y + CameraController.CameraXZRightward * axisInput.x, Vector3.up);
     protected virtual Vector3 CalculateMoveDirection(Vector2 axisInput) => Vector3.Normalize(CameraController.CameraXZRightward * axisInput.x + CameraController.CameraXZForward * axisInput.y);
     protected virtual bool CalculateWeaponFire() => !Physics.SphereCast(new Ray(tf_WeaponAim.position, tf_WeaponAim.forward), .3f, 1.5f, GameLayer.Mask.I_Static);
 
@@ -184,7 +184,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_weaponCanFire = CalculateWeaponFire();
         if (m_WeaponCurrent == null)
             return;
-        tf_WeaponAim.rotation = CalculateTargetRotation();
+        tf_WeaponAim.rotation = CalculateTargetRotation(m_MoveAxisInput);
         m_Assist.SetEnable(m_weaponCanFire && !m_WeaponCurrent.B_Reloading);
         m_WeaponCurrent.AmmoTick(m_PlayerInfo.F_ReloadRateTick(deltaTime));
         if (m_weaponCanFire)
@@ -267,7 +267,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (m_aiming) f_aimMovementReduction = GameConst.F_MovementReductionDuration;
 
         TPSCameraController.Instance.RotateCamera(m_RotateAxisInput * OptionsManager.m_Sensitive);
-        transform.rotation = Quaternion.Lerp(transform.rotation, CalculateTargetRotation(),deltaTime*GameConst.I_PlayerRotationSmoothParam);
+        transform.rotation = Quaternion.Lerp(transform.rotation, CalculateTargetRotation(m_MoveAxisInput),deltaTime*GameConst.I_PlayerRotationSmoothParam);
 
         m_BaseMovementSpeed = CalculateMovementSpeedBase() * CalculateMovementSpeedMultiple();
 
