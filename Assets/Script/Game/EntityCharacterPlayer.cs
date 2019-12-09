@@ -246,6 +246,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void OnMovementDelta(Vector2 moveDelta)
     {
         m_MoveAxisInput = moveDelta;
+        if (m_MoveAxisInput != Vector2.zero)
+            m_CharacterDirection = m_MoveAxisInput;
+
     }
 
     void OnRotateDelta(Vector2 rotateDelta)
@@ -265,9 +268,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         if (m_aimingMovementReduction) f_aimMovementReduction -= deltaTime;
         if (m_aiming) f_aimMovementReduction = GameConst.F_MovementReductionDuration;
-
-        if(m_MoveAxisInput!=Vector2.zero)
-            m_CharacterDirection=m_MoveAxisInput;
 
         TPSCameraController.Instance.RotateCamera(m_RotateAxisInput * OptionsManager.m_Sensitive);
         transform.rotation = Quaternion.Lerp(transform.rotation, CalculateTargetRotation(m_CharacterDirection),deltaTime*GameConst.I_PlayerRotationSmoothParam);
