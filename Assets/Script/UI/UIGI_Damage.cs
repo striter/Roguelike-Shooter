@@ -19,6 +19,7 @@ public class UIGI_Damage : UIT_GridItem {
 
     public void Play(EntityCharacterBase damageEntity,float amount,Action<int> _OnAnimFinished)
     {
+        transform.localScale = Vector3.one * UIExpression.GetUIDamageScale(amount);
         m_Entity = damageEntity;
         rtf_RectTransform.SetWorldViewPortAnchor(damageEntity.tf_Head.position, CameraController.MainCamera);
         rtf_SubContainer.anchoredPosition = new Vector2(0,80f)+TCommon.RandomVector2(UIConst.F_UIDamageStartOffset);
