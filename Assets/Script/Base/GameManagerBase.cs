@@ -116,7 +116,7 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
     public void SetEffect_Shake(float amount)
     {
         TPSCameraController.Instance.AddShake(amount*GameConst.F_DamageImpactMultiply);
-        Handheld.Vibrate();
+        //Handheld.Vibrate();
     }
     public void SetEffect_Impact(Vector3 direction)
     {

@@ -181,7 +181,7 @@ public class UIC_Control : UIControlBase {
             m_weapon = weapon;
             bool invalid = m_weapon == null;
             tf_Detail.SetActivate(!invalid);
-            m_Action.Play(invalid ? null : m_weapon.m_WeaponAction, OnWeaponActionClick);
+            m_Action.SetInfo(invalid ? null : m_weapon.m_WeaponAction, OnWeaponActionClick);
             if (invalid)
             {
                 m_Background.sprite = UIManager.Instance.m_WeaponSprites[enum_WeaponRarity.Invalid.GetUIGameControlBackground()];

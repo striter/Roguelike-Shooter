@@ -19,7 +19,7 @@ public class UIGI_ActionItemWeapon : UIGI_ActionItemBase {
         transform.Find("Button").GetComponent<Button>().onClick.AddListener(()=> { OnClick(); });
         m_AvailableCheck = new TSpecialClasses.ValueChecker<float, bool>(-1, false);
     }
-    public void Play(ActionBase action,Action _OnClick)
+    public void SetInfo(ActionBase action,Action _OnClick)
     {
         OnClick = _OnClick;
         bool showAction = action != null;
@@ -29,6 +29,7 @@ public class UIGI_ActionItemWeapon : UIGI_ActionItemBase {
         m_Ready.SetActivate(false);
         if(showAction)
             base.SetInfo(action);
+        m_AvailableCheck.Check(-1, false);
     }
 
     public void Tick(WeaponBase weapon)
