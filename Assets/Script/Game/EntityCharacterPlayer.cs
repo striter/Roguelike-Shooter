@@ -274,7 +274,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (!m_TargetAvailable || targetCheck<0f)
         {
             targetCheck = .3f;
-            m_Target = GameManager.Instance.GetAvailableEntity(this, false, true);
+            m_Target = GameManager.Instance.GetAvailableEntity(this, false, true, GameConst.F_PlayerAutoAimRange);
         }
         targetCheck -= Time.deltaTime;
 
