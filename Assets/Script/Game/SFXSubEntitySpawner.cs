@@ -10,7 +10,7 @@ public class SFXSubEntitySpawner : SFXEquipmentBase {
     public void Play(int _sourceID, enum_EntityFlag _flag, Func<DamageDeliverInfo> _damageInfoOverride, float startHealth,Action<EntityCharacterBase> OnSpawn)
     {
         base.Play(_sourceID);
-        EntityCharacterBase entity= GameObjectManager.SpawnEntityCharacter(I_EntitySpawnID,transform.position, _flag, _sourceID, startHealth);
+        EntityCharacterBase entity= GameObjectManager.SpawnEntityCharacter(I_EntitySpawnID,LevelManager.NavMeshPosition( transform.position), _flag, _sourceID, startHealth);
         OnSpawn?.Invoke(entity);
         entity.m_CharacterInfo.AddDamageOverride(_damageInfoOverride);
         if (B_ApplyDOTOnSpawn)

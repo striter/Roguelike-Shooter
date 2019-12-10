@@ -43,7 +43,7 @@ public class GameManager : GameManagerBase
         RaycastHit hit = new RaycastHit();
         if (Input.GetKeyDown(KeyCode.Z) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
         {
-            EntityCharacterBase enermy = GameObjectManager.SpawnEntityCharacter(Z_TestEntitySpawn, hit.point, TestEntityFlag);
+            EntityCharacterBase enermy = GameObjectManager.SpawnEntityCharacter(Z_TestEntitySpawn,LevelManager.NavMeshPosition( hit.point), TestEntityFlag);
             enermy.SetExtraDifficulty(GameExpression.GetAIBaseHealthMultiplier(m_GameLevel.m_GameDifficulty), GameExpression.GetAIMaxHealthMultiplier(m_GameLevel.m_GameStage), GameExpression.GetEnermyGameDifficultyBuffIndex(m_GameLevel.m_GameDifficulty));
             if (TestEntityBuffOnSpawn > 0)
                 enermy.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic,DamageDeliverInfo.BuffInfo(-1, TestEntityBuffOnSpawn)));
@@ -418,7 +418,42 @@ public class GameManager : GameManagerBase
             return;
         }
     }
+    RaycastHit[] m_Raycasts;
+    public bool CheckEntityTargetable(EntityCharacterBase entity)=>!entity.m_CharacterInfo.B_Effecting(enum_CharacterEffect.Cloak) && !entity.m_Health.b_IsDead;
 
+    public EntityCharacterBase GetAvailableEntity(EntityCharacterBase sourceEntity,bool targetAlly,bool checkObstacle=true, float checkDistance=float.MaxValue)
+    {
+        EntityCharacterBase m_target = null;
+        float f_targetDistance = float.MaxValue;
+        List<EntityCharacterBase> entities =GetEntities(sourceEntity.m_Flag, targetAlly);
+        for (int i = 0; i < entities.Count; i++)
+        {
+            if (entities[i].m_EntityID == sourceEntity.m_EntityID||!CheckEntityTargetable( entities[i]))
+                continue;
+
+            float distance = TCommon.GetXZDistance(sourceEntity.tf_Head.position, entities[i].tf_Head.position);
+            if ((distance > checkDistance)|| (checkObstacle && CheckEntityObstacleBetween(sourceEntity, entities[i])))
+                continue;
+
+            if (distance < f_targetDistance)
+            {
+                m_target = entities[i];
+                f_targetDistance = distance;
+            }
+        }
+        return m_target;
+    }
+
+    public bool CheckEntityObstacleBetween(EntityCharacterBase source, EntityCharacterBase destination)
+    {
+        m_Raycasts = Physics.RaycastAll(source.tf_Head.position, TCommon.GetXZLookDirection(source.tf_Head.position, destination.tf_Head.position), Vector3.Distance(source.tf_Head.position, destination.tf_Head.position), GameLayer.Mask.I_StaticEntity);
+        for (int i = 0; i < m_Raycasts.Length; i++)
+        {
+            if (m_Raycasts[i].collider.gameObject.layer == GameLayer.I_Static)
+                return true;
+        }
+        return false;
+    }
     #endregion
     #region SFXHitCheck
     public static bool B_CanSFXHitTarget(HitCheckBase hitCheck, int sourceID)    //If Match Will Hit Target
@@ -541,7 +576,7 @@ public class GameManager : GameManagerBase
     {
         GameObjectManager.SpawnIndicator(30001, position, Vector3.up).Play(entityIndex, GameConst.I_EnermySpawnDelay);
         this.StartSingleCoroutine(100 + spawnIndex, TIEnumerators.PauseDel(GameConst.I_EnermySpawnDelay, () => {
-            GameObjectManager.SpawnEntityCharacter(entityIndex,position , enum_EntityFlag.Enermy).SetExtraDifficulty(baseHealthMultiplier, maxHealthMultiplier,difficultyBuff);
+            GameObjectManager.SpawnEntityCharacter(entityIndex,LevelManager.NavMeshPosition( position) , enum_EntityFlag.Enermy).SetExtraDifficulty(baseHealthMultiplier, maxHealthMultiplier,difficultyBuff);
         }));
     }
     #endregion

@@ -506,8 +506,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de5ad01c3df51c540aae148c4af809a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  B_SmoothCamera: 1
-  F_CameraSmoothParam: 0.05
+  F_CameraRotateSmooth: 0.3
+  F_CameraMoveSmooth: 0.3
   B_InvertCamera: 0
   F_RotateSensitive: 1
   B_CameraOffsetWallClip: 1
@@ -836,7 +836,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &207432747
 Transform:
   m_ObjectHideFlags: 0
@@ -886,7 +886,7 @@ Transform:
   - {fileID: 814739320}
   - {fileID: 246425721}
   - {fileID: 673246755}
-  - {fileID: 1396602541}
+  - {fileID: 1598192620}
   - {fileID: 925167357}
   - {fileID: 1438698600}
   - {fileID: 502597214}
@@ -3165,11 +3165,6 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 932ef6601d079ac4b9874e89280f1c03, type: 2}
   m_IsPrefabParent: 0
---- !u!4 &1396602541 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 4774772795832778, guid: faf8056b14860a146884fa341b0e0958,
-    type: 2}
-  m_PrefabInternal: {fileID: 1598192619}
 --- !u!1001 &1397063790
 Prefab:
   m_ObjectHideFlags: 0
@@ -4062,6 +4057,10 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: faf8056b14860a146884fa341b0e0958, type: 2}
   m_IsPrefabParent: 0
+--- !u!4 &1598192620 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 1598192619}
 --- !u!1001 &1651063929
 Prefab:
   m_ObjectHideFlags: 0

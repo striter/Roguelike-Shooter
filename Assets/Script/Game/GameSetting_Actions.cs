@@ -23,7 +23,7 @@ namespace GameSetting_Action
         
         public const int I_10005_Cost = 4;
         public static int P_10005_OnFire_DamageMultiply(enum_ActionRarity rarity) => 210 * (int)rarity;
-        public static int P_10005_OnKill_Buff_MovementSpeed(enum_ActionRarity rarity) => 30 + 30 * (int)rarity;
+        public static int P_10005_OnKill_Buff_MovementSpeed(enum_ActionRarity rarity) => 60 * (int)rarity;
         public static float F_10005_OnKill_Buff_Duration = 5f;
 
         public const int I_10006_Cost = 6;
@@ -137,7 +137,7 @@ namespace GameSetting_Action
         public static float F_20001_RustDamageDuration(enum_ActionRarity rarity) => 10f;
         public static float F_20001_RustDamagePerSecond(enum_ActionRarity rarity) => 40 * (int)rarity;
 
-        public const int I_20002_Cost = 4;
+        public const int I_20002_Cost = 8;
         public static float F_20002_ArmorAdditiveTargetDead(enum_ActionRarity rarity) => 70 * (int)rarity;
 
         public const int I_20003_Cost = 2;
