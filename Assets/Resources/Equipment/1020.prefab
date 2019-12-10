@@ -214,7 +214,7 @@ MonoBehaviour:
   I_IndicatorIndex: 0
   I_HitMarkIndex: 0
   I_BuffApplyOnHit: 0
-  F_Radius: 0.4
+  F_Radius: 0.3
   F_Height: 0
   RI_CountExtension:
     start: 1
