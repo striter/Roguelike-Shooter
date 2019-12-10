@@ -244,7 +244,7 @@ namespace GameSetting
         public static float GetUIWeaponRPMValue(float uiRPM) =>  Mathf.InverseLerp(0,400,uiRPM);
         public static float GetUIWeaponStabilityValue(float uiStability) => Mathf.InverseLerp(0, 100, uiStability);
         public static float GetUIWeaponSpeedValue(float uiSpeed) =>  Mathf.InverseLerp(0, 100, uiSpeed);
-        public static float GetUIDamageScale(float damage) => (damage / 50 / 20) + .95f;  //伤害显示比例缩放
+        public static float GetUIDamageScale(float damage) => ((damage / 50 / 10 ) + .9f )/ 2;  //伤害显示比例缩放，默认是两倍大小
     }
 
     public static class GameEnumConvertions
