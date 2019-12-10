@@ -22,8 +22,6 @@ namespace GameSetting
         public const float F_PlayerReviveCheckAfterDead = 1.5f;
         public const float F_PlayerReviveBuffDuration = 6f; //复活无敌时间
         
-        public const float I_MaxArmor = 99999;
-
         public const float F_AimMovementReduction = .6f;
         public const float F_MovementReductionDuration = .1f;
         public const int I_ProjectileMaxDistance = 100;
@@ -740,7 +738,7 @@ namespace GameSetting
         {
             m_coins = _player.m_PlayerInfo.m_Coins;
             m_curHealth = _player.m_Health.m_CurrentHealth;
-            m_maxHealthAdditive = _player.m_Health.m_MaxHealthAdditive;
+            m_maxHealthAdditive = _player.m_Health.m_MaxArmorAdditive;
             m_curArmor = _player.m_Health.m_CurrentArmor;
 
             m_weapon1 = WeaponSaveData.Create(_player.m_Weapon1);
@@ -1065,19 +1063,15 @@ namespace GameSetting
     {
         public float m_CurrentHealth { get; private set; }
         public float m_BaseHealth { get; private set; }
-        public virtual float m_MaxHealth => m_BaseHealth;
+        public virtual float m_StartHealth => m_BaseHealth;
         public virtual float F_TotalEHP => m_CurrentHealth;
-        public bool B_HealthFull => m_CurrentHealth >= m_MaxHealth;
         public float F_HealthBaseScale => m_CurrentHealth / m_BaseHealth;
-        public float F_HealthMaxScale => m_CurrentHealth / m_MaxHealth;
         public bool b_IsDead => m_CurrentHealth <= 0;
         protected void DamageHealth(float health)
         {
             m_CurrentHealth -= health;
             if (m_CurrentHealth < 0)
                 m_CurrentHealth = 0;
-            else if (m_CurrentHealth > m_MaxHealth)
-                m_CurrentHealth = m_MaxHealth;
         }
 
         protected Action<enum_HealthChangeMessage> OnHealthChanged;
@@ -1091,7 +1085,7 @@ namespace GameSetting
         {
             m_BaseHealth = startHealth;
             if (restoreHealth)
-                m_CurrentHealth = m_MaxHealth;
+                m_CurrentHealth = m_StartHealth;
         }
         public void OnSetHealth(float reviveHealth)
         {
@@ -1122,18 +1116,20 @@ namespace GameSetting
     public class EntityHealth : HealthBase
     {
         public float m_CurrentArmor { get; private set; }
-        public float m_DefaultArmor { get; private set; }
+        public float m_StartArmor { get; private set; }
         public override float F_TotalEHP => m_CurrentArmor + base.F_TotalEHP;
         float m_HealthMultiplier = 1f;
-        public override float m_MaxHealth => base.m_MaxHealth * m_HealthMultiplier;
+        public override float m_StartHealth => base.m_StartHealth * m_HealthMultiplier;
+        public virtual float m_MaxArmor => m_StartArmor;
+        protected bool m_ArmorFull => m_CurrentArmor >= m_MaxArmor;
         protected EntityCharacterBase m_Entity;
         protected void DamageArmor(float amount)
         {
             m_CurrentArmor -= amount;
             if (m_CurrentArmor < 0)
                 m_CurrentArmor = 0;
-            if (m_CurrentArmor > GameConst.I_MaxArmor)
-                m_CurrentArmor = GameConst.I_MaxArmor;
+            if (m_ArmorFull)
+                m_CurrentArmor = m_MaxArmor;
         }
 
         public EntityHealth(EntityCharacterBase entity, Action<enum_HealthChangeMessage> _OnHealthChanged, Action _OnDead) : base(_OnHealthChanged, _OnDead)
@@ -1144,8 +1140,8 @@ namespace GameSetting
         public void OnActivate(float startHealth, float startArmor, bool restoreHealth)
         {
             base.OnSetHealth(startHealth, restoreHealth);
-            m_DefaultArmor = startArmor;
-            m_CurrentArmor = m_DefaultArmor;
+            m_StartArmor = startArmor;
+            m_CurrentArmor = m_StartArmor;
             OnHealthChanged(enum_HealthChangeMessage.Default);
         }
         public void OnSetHealth(float setHealth, float setArmor)
@@ -1213,27 +1209,12 @@ namespace GameSetting
                             OnHealthChanged(enum_HealthChangeMessage.ReceiveArmor);
                         }
                         break;
+                    case enum_DamageType.Basic:
                     case enum_DamageType.HealthOnly:
                         {
                             finalAmount *= healEnhance;
-                            if (B_HealthFull||finalAmount>0)
-                                break;
                             DamageHealth(finalAmount);
                             OnHealthChanged(enum_HealthChangeMessage.ReceiveHealth);
-                        }
-                        break;
-                    case enum_DamageType.Basic:
-                        {
-                            float armorReceive = finalAmount - m_CurrentHealth + m_MaxHealth;
-                            DamageHealth(finalAmount);
-                            if (armorReceive > 0)
-                            {
-                                OnHealthChanged(enum_HealthChangeMessage.ReceiveHealth);
-                                return true;
-                            }
-
-                            DamageArmor(armorReceive);
-                            OnHealthChanged(enum_HealthChangeMessage.ReceiveArmor);
                         }
                         break;
                     default:
@@ -1251,20 +1232,20 @@ namespace GameSetting
 
     public class EntityPlayerHealth:EntityHealth
     {
-        public float m_MaxHealthAdditive { get; private set; }
-        public override float m_MaxHealth => base.m_MaxHealth + m_MaxHealthAdditive;
+        public float m_MaxArmorAdditive { get; private set; }
+        public override float m_MaxArmor => base.m_MaxArmor + m_MaxArmorAdditive;
         public EntityPlayerHealth(EntityCharacterBase entity, Action<enum_HealthChangeMessage> _OnHealthChanged, Action _OnDead) : base(entity,_OnHealthChanged, _OnDead)
         {
         }
         public void AddMaxHealth(float maxHealthAdd)
         {
-            m_MaxHealthAdditive += maxHealthAdd;
+            m_MaxArmorAdditive += maxHealthAdd;
             OnHealthChanged(enum_HealthChangeMessage.Default);
         }
 
         public void SetInfoData(float startHealth,float startArmor,float maxHealthAdditive)
         {
-            m_MaxHealthAdditive = maxHealthAdditive;
+            m_MaxArmorAdditive = maxHealthAdditive;
             OnSetHealth(startHealth,startArmor);
         }
     }

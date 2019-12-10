@@ -82,8 +82,8 @@
 			ENDCG
 		}
 
-			UsePass "Hidden/PostEffect/PE_GaussianBlur/GAUSSIAN_BLUR_VERTICAL"
-			UsePass "Hidden/PostEffect/PE_GaussianBlur/GAUSSIAN_BLUR_HORIZONTAL"
+			UsePass "Hidden/PostEffect/PE_Blurs/GAUSSIAN_BLUR_VERTICAL"
+			UsePass "Hidden/PostEffect/PE_Blurs/GAUSSIAN_BLUR_HORIZONTAL"
 
 
 			Pass

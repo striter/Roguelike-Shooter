@@ -142,10 +142,10 @@ public class UIC_CharacterStatus : UIControlBase
     void OnHealthStatus(EntityHealth _healthManager)
     {
         m_ArmorLerp.ChangeValue(_healthManager.m_CurrentArmor / UIConst.F_UIMaxArmor);
-        m_HealthLerp.ChangeValue(_healthManager.F_HealthMaxScale);
+        m_HealthLerp.ChangeValue(_healthManager.F_HealthBaseScale);
         m_ArmorAmount.SetAmount((int)_healthManager.m_CurrentArmor);
         m_HealthAmount.SetAmount((int)_healthManager.m_CurrentHealth);
-        m_MaxHealth.SetAmount((int)_healthManager.m_MaxHealth);
+        m_MaxHealth.SetAmount((int)_healthManager.m_BaseHealth);
     }
 
     void OnAmmoStatus(WeaponBase weaponInfo)

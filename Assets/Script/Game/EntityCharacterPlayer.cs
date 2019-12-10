@@ -480,7 +480,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     RangeFloat m_PlayerReviveAmount;
     void OnCheckRevive()
     {
-        m_PlayerReviveAmount = new RangeFloat(m_Health.m_MaxHealth, m_Health.m_DefaultArmor);
+        m_PlayerReviveAmount = new RangeFloat(m_Health.m_BaseHealth, m_Health.m_StartArmor);
         if (m_PlayerInfo.CheckRevive(ref m_PlayerReviveAmount))
         {
             RevivePlayer();

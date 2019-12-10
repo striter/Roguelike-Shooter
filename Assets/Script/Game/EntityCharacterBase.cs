@@ -95,7 +95,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         m_Effect.OnReset();
         m_CharacterInfo.OnRevive();
         EntityHealth health = (m_Health as EntityHealth);
-        health.OnSetHealth(reviveHealth == -1 ? health.m_MaxHealth : reviveHealth, reviveArmor == -1 ? health.m_DefaultArmor : reviveArmor);
+        health.OnSetHealth(reviveHealth == -1 ? health.m_BaseHealth : reviveHealth, reviveArmor == -1 ? health.m_StartArmor : reviveArmor);
         this.StopSingleCoroutine(0);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterRevive, this);
     }

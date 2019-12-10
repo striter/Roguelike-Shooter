@@ -71,7 +71,7 @@ public class GameManager : GameManagerBase
             List<EntityBase> entities = m_Entities.Values.ToList();
             entities.Traversal((EntityBase entity) => {
                 if (entity.m_Flag== enum_EntityFlag.Enermy)
-                    entity.m_HitCheck.TryHit( new DamageInfo(entity.m_Health.m_MaxHealth, enum_DamageType.Basic, DamageDeliverInfo.Default(-1)));
+                    entity.m_HitCheck.TryHit( new DamageInfo(entity.m_Health.m_CurrentHealth, enum_DamageType.Basic, DamageDeliverInfo.Default(-1)));
             });
         }
         if (Input.GetKeyDown(KeyCode.Alpha9))

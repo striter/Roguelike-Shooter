@@ -668,7 +668,7 @@ namespace GameSetting_Action
         public override float F_Duration => ActionData.F_10018_Duration;
         public override float Value1 => ActionData.F_10018_PerStackHealthLoss;
         public override float Value2 => ActionData.P_10018_HealthStealPerStack(m_rarity);
-        public override float m_HealthDrainMultiply => Value2 / 100f * (m_ActionEntity.m_Health.m_MaxHealth - m_ActionEntity.m_Health.m_CurrentHealth) / Value1;
+        public override float m_HealthDrainMultiply => Value2 / 100f * (m_ActionEntity.m_Health.m_BaseHealth - m_ActionEntity.m_Health.m_CurrentHealth) / Value1;
         public Action_10018_HealthSteal(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
     }
     
@@ -686,7 +686,7 @@ namespace GameSetting_Action
         public override void OnTick(float deltaTime)
         {
             base.OnTick(deltaTime);
-            healthLossStack = (m_ActionEntity.m_Health.m_MaxHealth - m_ActionEntity.m_Health.m_CurrentHealth) / Value1;
+            healthLossStack = (m_ActionEntity.m_Health.m_BaseHealth - m_ActionEntity.m_Health.m_CurrentHealth) / Value1;
         }
         public Action_10020_HealthLossSpeedUp(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
     }
@@ -1231,7 +1231,7 @@ namespace GameSetting_Action
         {
             base.OnAfterDealtDemage(receiver, info, applyAmount);
             if(receiver.m_Health.b_IsDead)
-                ActionHelper.ReceiveHealing(m_ActionEntity,m_ActionEntity.m_Health.m_MaxHealth*Value1/100f, enum_DamageType.HealthOnly);
+                ActionHelper.ReceiveHealing(m_ActionEntity,m_ActionEntity.m_Health.m_BaseHealth * Value1/100f, enum_DamageType.HealthOnly);
         }
         public Action_30012_KillHealthRegen(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
     }
