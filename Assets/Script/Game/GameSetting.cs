@@ -715,7 +715,7 @@ namespace GameSetting
         public int m_coins;
         public List<ActionSaveData> m_actionEquipment;
         public float m_curHealth;
-        public float m_maxHealthAdditive;
+        public float m_maxArmorAdditive;
         public float m_curArmor;
         public WeaponSaveData m_weapon1, m_weapon2;
         public bool m_weaponEquipingFirst;
@@ -725,7 +725,7 @@ namespace GameSetting
             m_coins = 0;
             m_curHealth = -1;
             m_curArmor = -1;
-            m_maxHealthAdditive = -1;
+            m_maxArmorAdditive = -1;
             m_actionEquipment = new List<ActionSaveData>();
             m_Stage = enum_StageLevel.Rookie;
             m_GameSeed = DateTime.Now.ToLongTimeString().ToString();
@@ -738,7 +738,7 @@ namespace GameSetting
         {
             m_coins = _player.m_PlayerInfo.m_Coins;
             m_curHealth = _player.m_Health.m_CurrentHealth;
-            m_maxHealthAdditive = _player.m_Health.m_MaxArmorAdditive;
+            m_maxArmorAdditive = _player.m_Health.m_MaxArmorAdditive;
             m_curArmor = _player.m_Health.m_CurrentArmor;
 
             m_weapon1 = WeaponSaveData.Create(_player.m_Weapon1);
@@ -1121,7 +1121,7 @@ namespace GameSetting
         float m_HealthMultiplier = 1f;
         public override float m_StartHealth => base.m_StartHealth * m_HealthMultiplier;
         public virtual float m_MaxArmor => m_StartArmor;
-        protected bool m_ArmorFull => m_CurrentArmor >= m_MaxArmor;
+        public bool m_ArmorFull => m_CurrentArmor >= m_MaxArmor;
         protected EntityCharacterBase m_Entity;
         protected void DamageArmor(float amount)
         {
@@ -1237,15 +1237,15 @@ namespace GameSetting
         public EntityPlayerHealth(EntityCharacterBase entity, Action<enum_HealthChangeMessage> _OnHealthChanged, Action _OnDead) : base(entity,_OnHealthChanged, _OnDead)
         {
         }
-        public void AddMaxHealth(float maxHealthAdd)
+        public void AddMaxArmor(float maxArmorAdd)
         {
-            m_MaxArmorAdditive += maxHealthAdd;
+            m_MaxArmorAdditive += maxArmorAdd;
             OnHealthChanged(enum_HealthChangeMessage.Default);
         }
 
-        public void SetInfoData(float startHealth,float startArmor,float maxHealthAdditive)
+        public void SetInfoData(float startHealth,float startArmor,float maxArmorAdditive)
         {
-            m_MaxArmorAdditive = maxHealthAdditive;
+            m_MaxArmorAdditive = maxArmorAdditive;
             OnSetHealth(startHealth,startArmor);
         }
     }
