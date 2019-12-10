@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -44,15 +45,29 @@ public class PostEffectBase: CameraEffectBase
     public override bool m_IsPostEffect => true;
     protected override bool OnCreate()
     {
-        Shader shader = Shader.Find(S_ParentPath + this.GetType().ToString());
-        if (shader == null)
-            Debug.LogError("Shader:" + S_ParentPath + this.GetType().ToString() + " Not Found");
-        if (!shader.isSupported)
-            Debug.LogError("Shader:" + S_ParentPath + this.GetType().ToString() + " Is Not Supported");
-
-        m_Material = new Material(shader) { hideFlags = HideFlags.DontSave };
-        return shader != null && shader.isSupported;
+        m_Material = CreateMaterial(this.GetType());
+        return m_Material!=null;
     }
+
+    public static Material CreateMaterial(Type type)
+    {
+        try
+        {
+            Shader shader = Shader.Find(S_ParentPath + type.ToString());
+            if (shader == null)
+                throw new Exception("Shader:" + S_ParentPath + type.ToString() + " Not Found");
+            if (!shader.isSupported)
+                throw new Exception("Shader:" + S_ParentPath + type.ToString() + " Is Not Supported");
+
+            return new Material(shader) { hideFlags = HideFlags.DontSave };
+        }
+        catch(Exception e)
+        {
+            Debug.LogError("Post Effect Error:" + e.Message);
+            return null;
+        }
+    }
+
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
         Graphics.Blit(source, destination, m_Material);
@@ -92,19 +107,29 @@ public class PE_DistortVortex : PostEffectBase
         m_Material.SetVector(ID_DistortParam, new Vector4(playerViewPort.x, playerViewPort.y, distortFactor));
     }
 }
-public class PE_GaussianBlur : PostEffectBase       //Gassuain Blur
+public class PE_Blurs : PostEffectBase       //Blur Base Collection
 {
+    public enum enum_BlurType
+    {
+        Invalid=-1,
+        AverageBlur,
+        GaussianBlur,
+    }
+    enum enum_BlurPass
+    {
+        Invalid=-1,
+        Average=0,
+        GaussianHorizontal=1,
+        GaussianVertical=2,
+    }
+    public enum_BlurType m_BlurType { get; private set; } = enum_BlurType.Invalid;
     float F_BlurSpread;
     int I_Iterations;
     RenderTexture buffer0, buffer1;
     int rtW, rtH;
-    public override void OnSetEffect(CameraEffectManager _manager)
+    public void SetEffect(enum_BlurType blurType, float _blurSpread=2f, int _iterations=5, int _downSample = 4)
     {
-        base.OnSetEffect(_manager);
-        SetEffect();
-    }
-    public void SetEffect(float _blurSpread=2f, int _iterations=5, int _downSample = 4)
-    {
+        m_BlurType = blurType;
         F_BlurSpread = _blurSpread;
         I_Iterations = _iterations;
         _downSample = _downSample > 0 ? _downSample : 1;
@@ -125,14 +150,32 @@ public class PE_GaussianBlur : PostEffectBase       //Gassuain Blur
     }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
+        if (m_BlurType == enum_BlurType.Invalid)
+        {
+            Debug.LogError("Invalid Blur Detected!");
+            Graphics.Blit(source, destination);
+            return;
+        }
+
+        RenderTexture target = null;
         Graphics.Blit(source, buffer0);
         for (int i = 0; i < I_Iterations; i++)
         {
             m_Material.SetFloat("_BlurSpread", 1 + i * F_BlurSpread);
-            Graphics.Blit(buffer0, buffer1, m_Material, 0);
-            Graphics.Blit(buffer1, buffer0, m_Material, 1);
+            switch (m_BlurType)
+            {
+                case enum_BlurType.AverageBlur:
+                    Graphics.Blit(buffer0, buffer1, m_Material, (int)enum_BlurPass.Average);
+                    target = buffer1;
+                    break;
+                case enum_BlurType.GaussianBlur:
+                    Graphics.Blit(buffer0, buffer1, m_Material,(int)enum_BlurPass.GaussianHorizontal);
+                    Graphics.Blit(buffer1, buffer0, m_Material, (int)enum_BlurPass.GaussianVertical);
+                    target = buffer0;
+                    break;
+            }
         }
-        Graphics.Blit(buffer0, destination);
+        Graphics.Blit(target, destination);
     }
 }
 public class PE_Bloom : PostEffectBase
@@ -254,17 +297,17 @@ public class PE_FogDepthNoise : PE_FogDepth
 public class PE_FocalDepth : PostEffectBase
 {
     public override DepthTextureMode m_DepthTextureMode => DepthTextureMode.Depth;
-    public PE_GaussianBlur m_GaussianBlur { get; private set; }
+    public PE_Blurs m_Blur { get; private set; }
     RenderTexture m_TempTexture;
     public override void OnSetEffect(CameraEffectManager _manager)
     {
         base.OnSetEffect(_manager);
-        m_GaussianBlur = new PE_GaussianBlur();
-        m_GaussianBlur.OnSetEffect(_manager);
+        m_Blur = new PE_Blurs();
+        m_Blur.OnSetEffect(_manager);
     }
     public void SetEffect(int downSample=2)
     {
-        m_GaussianBlur.SetEffect(2, 3, downSample);
+        m_Blur.SetEffect( PE_Blurs.enum_BlurType.GaussianBlur,2, 3, downSample);
         m_TempTexture = RenderTexture.GetTemporary(m_Manager.m_Camera.scaledPixelHeight >> downSample, m_Manager.m_Camera.scaledPixelWidth >> downSample);
         m_Material.SetTexture("_BlurTex",m_TempTexture);
     }
@@ -277,7 +320,7 @@ public class PE_FocalDepth : PostEffectBase
     }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        m_GaussianBlur.OnRenderImage(source, m_TempTexture);
+        m_Blur.OnRenderImage(source, m_TempTexture);
         base.OnRenderImage(source, destination);
     }
 
@@ -285,7 +328,7 @@ public class PE_FocalDepth : PostEffectBase
     {
         base.OnDestroy();
         RenderTexture.ReleaseTemporary(m_TempTexture);
-        m_GaussianBlur.OnDestroy();
+        m_Blur.OnDestroy();
     }
 }
 public class PE_DepthOutline:PostEffectBase
@@ -304,11 +347,11 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
     Camera m_RenderCamera;
     RenderTexture m_RenderTexture;
     Shader m_RenderShader;
-    public PE_GaussianBlur m_GaussianBlur { get; private set; }
+    public PE_Blurs m_GaussianBlur { get; private set; }
     public override void OnSetEffect(CameraEffectManager _manager)
     {
         base.OnSetEffect(_manager);
-        m_GaussianBlur = new PE_GaussianBlur();
+        m_GaussianBlur = new PE_Blurs();
         m_GaussianBlur.OnSetEffect(_manager);
         m_RenderShader = Shader.Find("Hidden/PostEffect/PE_BloomSpecific_Render");
         if (m_RenderShader == null)
@@ -418,7 +461,7 @@ public class CB_GenerateOpaqueTexture:CommandBufferBase
 
 public class CB_GenerateOverlayUIGrabBlurTexture : CommandBufferBase
 {
-    public PE_GaussianBlur m_GaussianBlur { get; private set; }
+    public PE_Blurs m_GaussianBlur { get; private set; }
     protected override CameraEvent m_BufferEvent => CameraEvent.BeforeImageEffects;
     readonly int ID_GlobalBlurTexure = Shader.PropertyToID("_CameraUIOverlayBlurTexture");
     readonly int ID_TempTexture1 = Shader.PropertyToID("_UIBlurTempRT1");
@@ -426,19 +469,19 @@ public class CB_GenerateOverlayUIGrabBlurTexture : CommandBufferBase
     public override void OnSetEffect(CameraEffectManager _manager)
     {
         base.OnSetEffect(_manager);
-        m_GaussianBlur = new PE_GaussianBlur();
+        m_GaussianBlur = new PE_Blurs();
         m_GaussianBlur.OnSetEffect(_manager);
     }
     public void SetEffect(int iterations=3, float blurSpread=1.5f,int _downSample=2)
     {
-        m_GaussianBlur.SetEffect(blurSpread);
+        m_GaussianBlur.SetEffect( PE_Blurs.enum_BlurType.GaussianBlur, blurSpread);
         m_Buffer.GetTemporaryRT(ID_TempTexture1, -_downSample, -_downSample, 0, FilterMode.Bilinear);
         m_Buffer.GetTemporaryRT(ID_TempTexture2, -_downSample, -_downSample, 0, FilterMode.Bilinear);
         m_Buffer.Blit(BuiltinRenderTextureType.CurrentActive, ID_TempTexture1);
         for (int i = 0; i < iterations; i++)
         {
-            m_Buffer.Blit(ID_TempTexture1, ID_TempTexture2, m_GaussianBlur.m_Material, 0);
-            m_Buffer.Blit(ID_TempTexture2, ID_TempTexture1, m_GaussianBlur.m_Material, 1);
+            m_Buffer.Blit(ID_TempTexture1, ID_TempTexture2, m_GaussianBlur.m_Material, 1);
+            m_Buffer.Blit(ID_TempTexture2, ID_TempTexture1, m_GaussianBlur.m_Material, 2);
         }
         m_Buffer.SetGlobalTexture(ID_GlobalBlurTexure, ID_TempTexture1);
     }
@@ -453,13 +496,13 @@ public class CB_GenerateOverlayUIGrabBlurTexture : CommandBufferBase
 
 public class CB_DepthOfFieldSpecificStatic : CommandBufferBase
 {
-    public PE_GaussianBlur m_GaussianBlur { get; private set; }
+    public PE_Blurs m_GaussianBlur { get; private set; }
     List<Renderer> m_targets = new List<Renderer>();
     protected override CameraEvent m_BufferEvent => CameraEvent.AfterImageEffects;
     public override void OnSetEffect(CameraEffectManager _manager)
     {
         base.OnSetEffect(_manager);
-        m_GaussianBlur = new PE_GaussianBlur();
+        m_GaussianBlur = new PE_Blurs();
         m_GaussianBlur.OnSetEffect(_manager);
     }
     public void SetStaticTarget(params Renderer[] targets)
