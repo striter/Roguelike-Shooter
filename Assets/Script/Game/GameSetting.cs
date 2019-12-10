@@ -31,7 +31,7 @@ namespace GameSetting
         
         public const int I_BurstFirePelletsOnceTrigger = 3;       //Times While Burst Fire //似乎已经没用？
 
-        public const float F_PlayerAutoAimRange = 20f;
+        public const float F_PlayerAutoAimRange = 15f; //自动锁定敌人范围
         public const float F_PlayerDamageAdjustmentRange = .1f;
         public const int I_PlayerRotationSmoothParam = 10;     //Camera Smooth Param For Player 10 is suggested
 
@@ -244,7 +244,7 @@ namespace GameSetting
         public static float GetUIWeaponRPMValue(float uiRPM) =>  Mathf.InverseLerp(0,400,uiRPM);
         public static float GetUIWeaponStabilityValue(float uiStability) => Mathf.InverseLerp(0, 100, uiStability);
         public static float GetUIWeaponSpeedValue(float uiSpeed) =>  Mathf.InverseLerp(0, 100, uiSpeed);
-        public static float GetUIDamageScale(float damage) => (damage / 100) + .5f;
+        public static float GetUIDamageScale(float damage) => (damage / 50 / 20) + .95f;  //伤害显示比例缩放
     }
 
     public static class GameEnumConvertions
