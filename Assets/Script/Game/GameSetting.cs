@@ -1121,7 +1121,7 @@ namespace GameSetting
         float m_HealthMultiplier = 1f;
         public override float m_StartHealth => base.m_StartHealth * m_HealthMultiplier;
         public virtual float m_MaxArmor => m_StartArmor;
-        protected bool m_ArmorFull => m_CurrentArmor >= m_MaxArmor;
+        public bool m_ArmorFull => m_CurrentArmor >= m_MaxArmor;
         protected EntityCharacterBase m_Entity;
         protected void DamageArmor(float amount)
         {
