@@ -1237,9 +1237,9 @@ namespace GameSetting
         public EntityPlayerHealth(EntityCharacterBase entity, Action<enum_HealthChangeMessage> _OnHealthChanged, Action _OnDead) : base(entity,_OnHealthChanged, _OnDead)
         {
         }
-        public void AddMaxHealth(float maxHealthAdd)
+        public void AddMaxArmor(float maxArmorAdd)
         {
-            m_MaxArmorAdditive += maxHealthAdd;
+            m_MaxArmorAdditive += maxArmorAdd;
             OnHealthChanged(enum_HealthChangeMessage.Default);
         }
 

@@ -1201,7 +1201,7 @@ namespace GameSetting_Action
         public override void OnUseWeaponAbility(ActionBase targetAction)
         {
             base.OnUseWeaponAbility(targetAction);
-            m_ActionEntity.m_Health.AddMaxHealth(Value1);
+            m_ActionEntity.m_Health.AddMaxArmor(Value1);
         }
         public Action_30010_UseActionAddMaxHealth(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
     }
@@ -1216,7 +1216,7 @@ namespace GameSetting_Action
         {
             base.OnReceiveHealing(info, amount);
             if(info.m_Type== enum_DamageType.HealthOnly)
-                 m_ActionEntity.m_Health.AddMaxHealth (-info.m_AmountApply*Value1/100f);
+                 m_ActionEntity.m_Health.AddMaxArmor (-info.m_AmountApply*Value1/100f);
         }
         public Action_30011_ReceiveHealingAddMaxHealth(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
     }
