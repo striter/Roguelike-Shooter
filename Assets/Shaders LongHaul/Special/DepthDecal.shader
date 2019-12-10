@@ -42,8 +42,7 @@
 		float3 vpos = i.ray*depth;
 		float3 wpos = mul(unity_CameraToWorld, float4(vpos,1));
 		float3 opos = mul(unity_WorldToObject, float4(wpos,1));
-		float2 texUV = opos.xz + .5;
-		return tex2D(_MainTex,texUV);
+		return tex2D(_MainTex, opos.xy + .5);
 
 		}
 
