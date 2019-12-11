@@ -187,9 +187,9 @@ public class GameManager : GameManagerBase
         InitPostEffects(m_GameLevel.m_GameStyle);
         yield return LevelManager.Instance.GenerateLevel(m_GameLevel.m_GameStyle, m_GameLevel.m_GameSeed);
         m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_BattleData);
-        CameraController.Instance.Attach(m_LocalPlayer.transform, true);
+        AttachPlayerCamera(m_LocalPlayer.tf_CameraAttach);
         yield return null;
-        OnPortalExit(1f, m_LocalPlayer.tf_Head);
+        OnPortalExit(1f, m_LocalPlayer.tf_CameraAttach);
         LoadingManager.Instance.EndLoading();
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageStart);
         LevelManager.Instance.GameStart(OnLevelChanged);

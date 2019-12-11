@@ -26,7 +26,7 @@ public class CampManager : GameManagerBase
         InitPostEffects(enum_Style.Invalid);
         EntityCharacterPlayer player = GameObjectManager.SpawnEntityPlayer(new CBattleSave());
         player.SetSpawnPosRot(tf_PlayerStart.position, tf_PlayerStart.rotation);
-        tf_Player = player.transform;
+        tf_Player = player.tf_CameraAttach;
         AttachPlayerCamera(tf_Player);
         CampFarmManager.Instance.OnCampEnter();
         CampAudioManager.Instance.PlayBGM(enum_CampMusic.Relax);

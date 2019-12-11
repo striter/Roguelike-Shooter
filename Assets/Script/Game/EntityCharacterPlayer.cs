@@ -16,6 +16,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected PlayerAnimator m_Animator;
     protected virtual PlayerAnimator GetAnimatorController(Animator animator, Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) => new PlayerAnimator(animator, _OnAnimEvent);
     public Transform tf_WeaponAim { get; private set; }
+    public Transform tf_CameraAttach { get; private set; }
     protected Transform tf_WeaponHoldRight, tf_WeaponHoldLeft;
     protected SFXAimAssist m_Assist = null;
     public bool m_weaponEquipingFirst { get; private set; } = false;
@@ -60,6 +61,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_CharacterController = GetComponent<CharacterController>();
         m_CharacterController.detectCollisions = false;
         tf_WeaponAim = transform.Find("WeaponAim");
+        tf_CameraAttach = transform.Find("CameraAttach");
         tf_WeaponHoldRight = transform.FindInAllChild("WeaponHold_R");
         tf_WeaponHoldLeft = transform.FindInAllChild("WeaponHold_L");
         tf_UIStatus = transform.FindInAllChild("Status");
@@ -264,7 +266,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         TPSCameraController.Instance.AddRecoil(new Vector3(0, (TCommon.RandomBool() ? 1 : -1)* recoil,0));
         m_Animator.Fire();
     }
-
+    Vector3 m_targetDirection;
     void OnMoveTick(float deltaTime)
     {
         if (m_aimingMovementReduction) f_aimMovementReduction -= deltaTime;
@@ -279,9 +281,19 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         targetCheck -= Time.deltaTime;
 
         if (m_Target)
-            m_CharacterRotation = Quaternion.LookRotation(TCommon.GetXZLookDirection(tf_Head.position, m_Target.tf_Head.position), Vector3.up);
-        else if(m_MoveAxisInput!=Vector2.zero)
-            m_CharacterRotation= Quaternion.LookRotation(m_MoveAxisInput.x * CameraController.CameraXZRightward + m_MoveAxisInput.y * CameraController.CameraXZForward, Vector3.up); 
+        {
+            m_targetDirection = m_Target.tf_Head.position - tf_Head.position;
+            m_CharacterRotation = Quaternion.LookRotation(m_targetDirection.normalized, Vector3.up);
+
+            tf_CameraAttach.position = tf_Head.position+ m_targetDirection/3;
+        }
+        else
+        {
+            tf_CameraAttach.position = tf_Head.position;
+            if (m_MoveAxisInput != Vector2.zero)
+                m_CharacterRotation = Quaternion.LookRotation(m_MoveAxisInput.x * CameraController.CameraXZRightward + m_MoveAxisInput.y * CameraController.CameraXZForward, Vector3.up);
+        }
+
 
         transform.rotation = Quaternion.Lerp(transform.rotation, GetCharacterRotation(),deltaTime*GameConst.I_PlayerRotationSmoothParam);
 

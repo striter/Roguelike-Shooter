@@ -42,7 +42,7 @@ public class TestGameManager : GameManagerBase
         CBattleSave testData = new CBattleSave();
         testData.m_character = m_Character;
         m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(testData);
-        AttachPlayerCamera( m_LocalPlayer.tf_Head);
+        AttachPlayerCamera( m_LocalPlayer.tf_CameraAttach);
         InitPostEffects( enum_Style.Iceland);
     }
 }

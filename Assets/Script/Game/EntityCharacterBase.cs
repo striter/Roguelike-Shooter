@@ -18,7 +18,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     public virtual Transform tf_WeaponModel => null;
     public CharacterInfoManager m_CharacterInfo { get; private set; }
     EntityCharacterEffectManager m_Effect;
-    public virtual Vector3 m_PrecalculatedTargetPos(float time) { Debug.LogError("Override This Please");return Vector2.zero; }
+    public virtual Vector3 m_PrecalculatedTargetPos(float time)=> tf_Head.position;
     protected virtual CharacterInfoManager GetEntityInfo() => new CharacterInfoManager(this, m_HitCheck.TryHit, OnExpireChange);
     public virtual float m_baseMovementSpeed => F_MovementSpeed;
     public override bool B_IsCharacter => true;

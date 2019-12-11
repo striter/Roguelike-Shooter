@@ -25,7 +25,6 @@ public class EntityCharacterAI : EntityCharacterBase {
     public bool B_AttackMove = true;
     public float F_AttackFrontCheck = 2f;
     bool OnCheckTarget(EntityCharacterBase target) => target.m_Flag!=m_Flag && !target.m_IsDead;
-    public override Vector3 m_PrecalculatedTargetPos(float time)=> tf_Head.position;
     Transform tf_Barrel;
     public override Transform tf_Weapon => tf_Barrel;
     public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)

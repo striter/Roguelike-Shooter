@@ -9,7 +9,6 @@ public class EntityDeviceBase : EntityCharacterBase {
     EntityDetector m_Detect;
     ParticleSystem[] m_Particles;
     public ObjectPoolSimple<EntityCharacterBase, LineRenderer> m_Connections { get; private set; }
-    public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position;
     public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
         base.OnPoolItemInit(_identity, _OnRecycle);
