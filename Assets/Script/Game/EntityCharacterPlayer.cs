@@ -36,7 +36,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public new EntityPlayerHealth m_Health { get; private set; }
     protected override HealthBase GetHealthManager()
     {
-        m_Health=new EntityPlayerHealth(this, OnHealthStatus, OnDead);
+        m_Health=new EntityPlayerHealth(this, OnHealthChanged);
         return m_Health;
     } 
 
@@ -296,7 +296,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     #region CharacterAbility
     public void OnAbilityClick()
     {
-        if (m_Health.b_IsDead)
+        if (m_IsDead)
             return;
         m_Ability.OnAbilityClick();
     }
@@ -460,9 +460,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerExpireListStatus, m_PlayerInfo);
     }
-    protected override void OnHealthStatus(enum_HealthChangeMessage type)
+    protected override void OnHealthChanged(enum_HealthChangeMessage type)
     {
-        base.OnHealthStatus(type);
+        base.OnHealthChanged(type);
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerHealthStatus, m_Health);
     }
     #endregion

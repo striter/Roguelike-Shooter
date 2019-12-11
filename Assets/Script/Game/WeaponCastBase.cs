@@ -19,7 +19,7 @@ public class WeaponCastBase : WeaponBase {
     }
     void Update()
     {
-        SetCastAvailable(m_Trigger.B_TriggerDown && !B_Reloading&&!m_Attacher.m_Health.b_IsDead && m_Attacher.m_weaponCanFire);
+        SetCastAvailable(m_Trigger.B_TriggerDown && !B_Reloading&&!m_Attacher.m_IsDead && m_Attacher.m_weaponCanFire);
     }
     void SetCastAvailable(bool showCast)
     {

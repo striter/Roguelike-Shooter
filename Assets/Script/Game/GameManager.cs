@@ -332,7 +332,7 @@ public class GameManager : GameManagerBase
 
         enum_ActionRarity abilityRarity = TCommon.RandomPercentage(pickupGenerateData.m_AbilityGenerate, enum_ActionRarity.Invalid);
         if (abilityRarity != enum_ActionRarity.Invalid)
-            GameObjectManager.SpawnInteract<InteractAction>( enum_Interaction.Action, GetPickupPosition(entity)).Play(ActionDataManager.CreateRandomAction(abilityRarity,null));
+            GameObjectManager.SpawnInteract<InteractAction>( enum_Interaction.Action, GetPickupPosition(entity)).Play(ActionDataManager.CreateRandomAbilityAction(abilityRarity,null));
 
         enum_ActionRarity equipmentRarity = TCommon.RandomPercentage(pickupGenerateData.m_EquipmentGenerate, enum_ActionRarity.Invalid);
         if (equipmentRarity != enum_ActionRarity.Invalid)
@@ -419,7 +419,7 @@ public class GameManager : GameManagerBase
         }
     }
     RaycastHit[] m_Raycasts;
-    public bool CheckEntityTargetable(EntityCharacterBase entity)=>!entity.m_CharacterInfo.B_Effecting(enum_CharacterEffect.Cloak) && !entity.m_Health.b_IsDead;
+    public bool CheckEntityTargetable(EntityCharacterBase entity)=>!entity.m_CharacterInfo.B_Effecting(enum_CharacterEffect.Cloak) && !entity.m_IsDead;
 
     public EntityCharacterBase GetAvailableEntity(EntityCharacterBase sourceEntity,bool targetAlly,bool checkObstacle=true, float checkDistance=float.MaxValue)
     {

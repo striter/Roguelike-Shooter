@@ -1074,7 +1074,6 @@ namespace GameSetting
         public virtual float m_StartHealth => m_BaseHealth;
         public virtual float F_TotalEHP => m_CurrentHealth;
         public float F_HealthBaseScale => m_CurrentHealth / m_BaseHealth;
-        public bool b_IsDead => m_CurrentHealth <= 0;
         protected void DamageHealth(float health)
         {
             m_CurrentHealth -= health;
@@ -1084,10 +1083,9 @@ namespace GameSetting
 
         protected Action<enum_HealthChangeMessage> OnHealthChanged;
         protected Action OnDead;
-        public HealthBase(Action<enum_HealthChangeMessage> _OnHealthChanged, Action _OnDead)
+        public HealthBase(Action<enum_HealthChangeMessage> _OnHealthChanged)
         {
             OnHealthChanged = _OnHealthChanged;
-            OnDead = _OnDead;
         }
         public void OnSetHealth(float startHealth, bool restoreHealth)
         {
@@ -1101,7 +1099,7 @@ namespace GameSetting
         }
         public virtual bool OnReceiveDamage(DamageInfo damageInfo, float damageReduction = 1, float healEnhance = 1)
         {
-            if (b_IsDead || damageInfo.m_Type == enum_DamageType.ArmorOnly)
+            if (damageInfo.m_Type == enum_DamageType.ArmorOnly)
                 return false;
 
             if (damageInfo.m_AmountApply < 0)
@@ -1114,10 +1112,7 @@ namespace GameSetting
                 DamageHealth(damageInfo.m_AmountApply * damageReduction);
                 OnHealthChanged?.Invoke(enum_HealthChangeMessage.DamageHealth);
             }
-
-            if (b_IsDead)
-                OnDead();
-
+            
             return true;
         }
     }
@@ -1140,7 +1135,7 @@ namespace GameSetting
                 m_CurrentArmor = m_MaxArmor;
         }
 
-        public EntityHealth(EntityCharacterBase entity, Action<enum_HealthChangeMessage> _OnHealthChanged, Action _OnDead) : base(_OnHealthChanged, _OnDead)
+        public EntityHealth(EntityCharacterBase entity, Action<enum_HealthChangeMessage> _OnHealthChanged) : base(_OnHealthChanged)
         {
             m_Entity = entity;
             m_HealthMultiplier = 1f;
@@ -1166,9 +1161,6 @@ namespace GameSetting
         }
         public override bool OnReceiveDamage(DamageInfo damageInfo, float damageReduction = 1, float healEnhance = 1)
         {
-            if (b_IsDead)
-                return false;
-
             TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterHealthWillChange, damageInfo, m_Entity);
 
             float finalAmount = damageInfo.m_AmountApply;
@@ -1234,8 +1226,6 @@ namespace GameSetting
             }
             if (finalAmount != 0)
                 TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterHealthChange, damageInfo, m_Entity, finalAmount);
-            if (b_IsDead)
-                OnDead();
             return true;
         }
     }
@@ -1244,7 +1234,7 @@ namespace GameSetting
     {
         public float m_MaxArmorAdditive { get; private set; }
         public override float m_MaxArmor => base.m_MaxArmor + m_MaxArmorAdditive;
-        public EntityPlayerHealth(EntityCharacterBase entity, Action<enum_HealthChangeMessage> _OnHealthChanged, Action _OnDead) : base(entity,_OnHealthChanged, _OnDead)
+        public EntityPlayerHealth(EntityCharacterBase entity, Action<enum_HealthChangeMessage> _OnHealthChanged) : base(entity,_OnHealthChanged)
         {
         }
         public void AddMaxArmor(float maxArmorAdd)
@@ -2178,7 +2168,7 @@ namespace GameSetting
         public override void Tick(float deltaTime)
         {
             base.Tick(deltaTime);
-            if (!b_activating||m_Entity.m_Health.b_IsDead)
+            if (!b_activating||m_Entity.m_IsDead)
                 return;
             timeElapsed += deltaTime;
             float timeMultiply = 2f * (timeElapsed / 2f);

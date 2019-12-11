@@ -38,7 +38,7 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
     private void OnGUI()
     {
         GUILayout.BeginVertical();
-        if (EditorSceneManager.GetActiveScene().name != "Game")
+        if (EditorSceneManager.GetActiveScene().name != "2_Game")
         {
             GUILayout.TextArea("This Work Flow Can Only Activated At Scene: Game");
             GUILayout.EndVertical();

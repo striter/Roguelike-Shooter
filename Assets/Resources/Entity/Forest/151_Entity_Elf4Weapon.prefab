@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 198460333857802304}
   - component: {fileID: 199197496131509080}
   m_Layer: 0
-  m_Name: AuraSphere
+  m_Name: Skin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -68,8 +68,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4240044501216734}
-  - component: {fileID: 135947818700488704}
-  - component: {fileID: 114120613370366780}
   - component: {fileID: 114994817867876152}
   m_Layer: 9
   m_Name: 151_Entity_Elf4Weapon
@@ -86,8 +84,10 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4190982707449534}
+  - component: {fileID: 135715704578147596}
+  - component: {fileID: 114668031511013068}
   m_Layer: 9
-  m_Name: Particles
+  m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -120,8 +120,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 4, y: 4, z: 4}
   m_Children:
-  - {fileID: 4266528113166288}
   - {fileID: 4325576757627296}
+  - {fileID: 4266528113166288}
   - {fileID: 4535827880247892}
   m_Father: {fileID: 4240044501216734}
   m_RootOrder: 1
@@ -152,7 +152,7 @@ Transform:
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_Children: []
   m_Father: {fileID: 4190982707449534}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!4 &4325576757627296
 Transform:
@@ -165,7 +165,7 @@ Transform:
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_Children: []
   m_Father: {fileID: 4190982707449534}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!4 &4516506096938118
 Transform:
@@ -193,12 +193,12 @@ Transform:
   m_Father: {fileID: 4190982707449534}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
---- !u!114 &114120613370366780
+--- !u!114 &114668031511013068
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1292771822457818}
+  m_GameObject: {fileID: 1682463173090532}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2091396369435d24bad4838db15bbe09, type: 3}
@@ -216,26 +216,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   I_MaxHealth: 100
+  m_IsDead: 0
+  ExtraRendererForForest107Only: {fileID: 0}
   E_SpawnType: -1
   I_DefaultArmor: 0
   F_MovementSpeed: 1
   F_AttackSpread: 0
-  ? ExtraRendererOnlyAvailableFor107WhatAwkwardRequirementWhyNotPutThemIntoOneModelCauseOutModelArtistCantDoItHaveToCreateThisIntoMyCodeLikeABunchOfShitForFuckingRealSucks
-  : {fileID: 0}
   I_SpreadAngleEach: 20
   F_SpreadDuration: 0.3
   I_SpreadCount: 36
---- !u!135 &135947818700488704
+--- !u!135 &135715704578147596
 SphereCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1292771822457818}
+  m_GameObject: {fileID: 1682463173090532}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.3
+  m_Radius: 0.3
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!198 &198460333857802304
 ParticleSystem:
@@ -297,7 +297,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 1630119699
+  randomSeed: -996966343
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -6923,7 +6923,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -117307476
+  randomSeed: -653420249
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -10275,7 +10275,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 2100000, guid: 477185c24aaadbf49804b8bcc55f5a50, type: 2}
+  - {fileID: 2100000, guid: 5fffb80392e0ded4a86fdf585dd4b1a6, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
