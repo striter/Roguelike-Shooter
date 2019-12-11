@@ -311,12 +311,6 @@ namespace GameSetting_Action
             equipment.SetOnSpawn(health,(EntityCharacterBase entity)=>{(entity as EntityDeviceBuffApllier).SetBuffApply(buffApplyPlayer,buffApplyAlly,refreshDuration);});
             return equipment;
         }
-        public static void PlayerAttachShield(EntityCharacterPlayer player, int equipmentIndex, int health)
-        {
-            EquipmentShieldAttach equipment = EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(equipmentIndex), player,null) as EquipmentShieldAttach;
-            equipment.SetOnSpawn((SFXShield shield) => {  shield.m_Health.I_MaxHealth = health; });
-            equipment.Play(false,player);
-        }
         public static void PlayerDealtDamageToEntity(EntityCharacterPlayer player, int targetID, float damageAmount, enum_DamageType damageType = enum_DamageType.Basic)
         {
             if (damageAmount < 0)

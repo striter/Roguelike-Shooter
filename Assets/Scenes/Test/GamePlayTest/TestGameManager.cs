@@ -18,7 +18,7 @@ public class TestGameManager : GameManagerBase
         RaycastHit hit = new RaycastHit();
         if (Input.GetKeyDown(KeyCode.Z) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
         {
-            EntityCharacterBase enermy = GameObjectManager.SpawnEntityCharacter(Z_TestEntitySpawn, hit.point, TestEntityFlag);
+            EntityCharacterBase enermy = GameObjectManager.SpawnEntityCharacter(Z_TestEntitySpawn, hit.point,m_LocalPlayer.transform.position, TestEntityFlag);
             enermy.SetExtraDifficulty(GameExpression.GetAIBaseHealthMultiplier(1), GameExpression.GetAIMaxHealthMultiplier( enum_StageLevel.Veteran), GameExpression.GetEnermyGameDifficultyBuffIndex(1));
             if (TestEntityBuffOnSpawn > 0)
                 enermy.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.BuffInfo(-1, TestEntityBuffOnSpawn)));

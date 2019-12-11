@@ -33,10 +33,8 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         base.OnPoolItemInit(_identity, _OnRecycle);
         tf_Model = transform.Find("Model");
         tf_Head = transform.Find("Head");
-        List<Renderer> renderers = tf_Model.Find("Skin").GetComponentsInChildren<Renderer>().ToList();
-        if(ExtraRendererOnlyAvailableFor107WhatAwkwardRequirementWhyNotPutThemIntoOneModelCauseOutModelArtistCantDoItHaveToCreateThisIntoMyCodeLikeABunchOfShitForFuckingRealSucks)
-        renderers.Add(ExtraRendererOnlyAvailableFor107WhatAwkwardRequirementWhyNotPutThemIntoOneModelCauseOutModelArtistCantDoItHaveToCreateThisIntoMyCodeLikeABunchOfShitForFuckingRealSucks);
-        m_Effect = new EntityCharacterEffectManager(renderers);
+        List<Renderer> renderers = GetComponentsInChildren<Renderer>().ToList();
+        m_Effect = new EntityCharacterEffectManager(transform,renderers);
         m_CharacterInfo = GetEntityInfo();
     }
 
@@ -121,8 +119,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         m_CharacterInfo.OnDead();
         m_Effect.SetDeath();
         this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo(m_Effect.OnDeathEffect, 0, 1, GameConst.F_EntityDeadFadeTime, OnRecycle));
-        if (m_Health.b_IsDead)
-            TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterDead, this);
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterDead, this);
     }
     
     protected override void OnHealthStatus(enum_HealthChangeMessage type)
@@ -170,8 +167,10 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         bool m_mainFreeze;
         bool m_extraScan;
         bool m_extraDeath;
-        public EntityCharacterEffectManager(List<Renderer> _skin)
+        TSpecialClasses.ParticleControlBase m_Particles;
+        public EntityCharacterEffectManager(Transform transform, List<Renderer> _skin)
         {
+            m_Particles = new ParticleControlBase(transform);
             m_MatBase = _skin[0].material;
             SD_Base = m_MatBase.shader;
             m_MatExtra = new Material(m_MatBase);
@@ -182,6 +181,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
 
         public void OnReset()
         {
+            m_Particles.Play();
             m_extraScan = false;
             m_mainCloack = false;
             m_extraDeath = false;
@@ -217,6 +217,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
 
         public void SetDeath()
         {
+            m_Particles.Stop();
             m_extraDeath = true;
             CheckMaterials();
         }

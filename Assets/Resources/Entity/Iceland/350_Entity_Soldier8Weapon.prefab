@@ -74,7 +74,7 @@ GameObject:
   - component: {fileID: 114369432402836246}
   - component: {fileID: 114294689034349854}
   m_Layer: 0
-  m_Name: 358_Entity_Soldier8Weapon
+  m_Name: 350_Entity_Soldier8Weapon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

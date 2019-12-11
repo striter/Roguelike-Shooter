@@ -62,7 +62,7 @@ public class TPSCameraController : CameraController
         base.Attach(target,selfRotation);
     }
     public void AddRecoil(Vector3 _recoil)=> v3_Recoil += _recoil;
-    public void AddShake(float shakeAmount)=> v3_Shake += TCommon.RandomVector3(shakeAmount);
+    public void AddShake(float shakeAmount) => v3_Shake += Random.insideUnitSphere * shakeAmount;
     public void SetImpact(Vector3 impactDirection)
     {
         v3_Shake = impactDirection;

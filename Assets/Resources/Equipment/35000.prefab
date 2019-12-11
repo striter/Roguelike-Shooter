@@ -88,7 +88,7 @@ GameObject:
   - component: {fileID: 114973347317709960}
   - component: {fileID: 114377938590304728}
   m_Layer: 9
-  m_Name: 35800
+  m_Name: 35000
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -476,8 +476,6 @@ MonoBehaviour:
   I_BuffApplyOnCast: 0
   E_AreaType: 1
   V4_CastInfo: {x: 5, y: 0, z: 0, w: 0}
-  I_MuzzleIndex: 0
-  I_ImpactIndex: 0
   F_DelayDuration: 0
   I_DelayIndicatorIndex: 0
   B_CameraShake: 1

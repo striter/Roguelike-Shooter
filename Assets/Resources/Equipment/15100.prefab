@@ -19,9 +19,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4550938155433920}
-  - component: {fileID: 114579307329279138}
+  - component: {fileID: 114001859888436210}
   m_Layer: 9
-  m_Name: 10301
+  m_Name: 15100
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -131,7 +131,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114579307329279138
+--- !u!114 &114001859888436210
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -152,7 +152,7 @@ MonoBehaviour:
   I_IndicatorIndex: 0
   I_HitMarkIndex: 0
   I_BuffApplyOnHit: 0
-  F_Radius: 0.25
+  F_Radius: 0.15
   F_Height: 0
   RI_CountExtension:
     start: 0
@@ -218,7 +218,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 2
-  randomSeed: 1789636041
+  randomSeed: 1279302904
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3579,7 +3579,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 2
-  randomSeed: 800881402
+  randomSeed: 880170855
   InitialModule:
     serializedVersion: 3
     enabled: 1

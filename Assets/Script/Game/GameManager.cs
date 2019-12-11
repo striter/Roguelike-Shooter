@@ -43,7 +43,7 @@ public class GameManager : GameManagerBase
         RaycastHit hit = new RaycastHit();
         if (Input.GetKeyDown(KeyCode.Z) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
         {
-            EntityCharacterBase enermy = GameObjectManager.SpawnEntityCharacter(Z_TestEntitySpawn,LevelManager.NavMeshPosition( hit.point), TestEntityFlag);
+            EntityCharacterBase enermy = GameObjectManager.SpawnEntityCharacter(Z_TestEntitySpawn,LevelManager.NavMeshPosition( hit.point),m_LocalPlayer.transform.position, TestEntityFlag);
             enermy.SetExtraDifficulty(GameExpression.GetAIBaseHealthMultiplier(m_GameLevel.m_GameDifficulty), GameExpression.GetAIMaxHealthMultiplier(m_GameLevel.m_GameStage), GameExpression.GetEnermyGameDifficultyBuffIndex(m_GameLevel.m_GameDifficulty));
             if (TestEntityBuffOnSpawn > 0)
                 enermy.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic,DamageDeliverInfo.BuffInfo(-1, TestEntityBuffOnSpawn)));
@@ -311,11 +311,10 @@ public class GameManager : GameManagerBase
 
     void SpawnEntityDeadPickups(EntityCharacterBase entity)
     {
-        if (entity.m_Flag != enum_EntityFlag.Enermy)
+        if (entity.m_Flag != enum_EntityFlag.Enermy||entity.m_Controller!= enum_EntityController.AI)
             return;
         EntityCharacterAI target = entity as EntityCharacterAI;
-
-        if (target.E_EnermyType == enum_EnermyType.SubHidden)
+        if (target.E_EnermyType == enum_EnermyType.Hidden)
             return;
 
         PickupGenerateData pickupGenerateData = target.E_EnermyType == enum_EnermyType.Elite ? m_GameLevel.m_actionGenerate.m_ElitePickupData : m_GameLevel.m_actionGenerate.m_NormalPickupData;
@@ -576,7 +575,7 @@ public class GameManager : GameManagerBase
     {
         GameObjectManager.SpawnIndicator(30001, position, Vector3.up).Play(entityIndex, GameConst.I_EnermySpawnDelay);
         this.StartSingleCoroutine(100 + spawnIndex, TIEnumerators.PauseDel(GameConst.I_EnermySpawnDelay, () => {
-            GameObjectManager.SpawnEntityCharacter(entityIndex,LevelManager.NavMeshPosition( position) , enum_EntityFlag.Enermy).SetExtraDifficulty(baseHealthMultiplier, maxHealthMultiplier,difficultyBuff);
+            GameObjectManager.SpawnEntityCharacter(entityIndex,LevelManager.NavMeshPosition( position),m_LocalPlayer.transform.position , enum_EntityFlag.Enermy).SetExtraDifficulty(baseHealthMultiplier, maxHealthMultiplier,difficultyBuff);
         }));
     }
     #endregion
@@ -730,8 +729,9 @@ public static class GameObjectManager
         Dictionary<enum_EnermyType, List<int>> enermyDic = new Dictionary<enum_EnermyType, List<int>>();
         TResources.GetEnermyEntities(currentStyle).Traversal((int index, EntityBase entity) => {
             ObjectPoolManager<int, EntityBase>.Register(index, entity, 1 );
-
             EntityCharacterAI enermy = entity as EntityCharacterAI;
+            if (!enermy || enermy.E_EnermyType == enum_EnermyType.Hidden)
+                return;
             if (!enermyDic.ContainsKey(enermy.E_EnermyType))
                 enermyDic.Add(enermy.E_EnermyType, new List<int>());
             enermyDic[enermy.E_EnermyType].Add(index);
@@ -750,7 +750,7 @@ public static class GameObjectManager
     #region Spawn/Recycle
     #region Entity
     //Start Health 0:Use Preset I_MaxHealth
-    static T SpawnEntity<T>(int _poolIndex, Vector3 toPos,enum_EntityFlag _flag,int spawnerID, float _startHealth, Transform parentTrans = null) where T:EntityBase
+    static T SpawnEntity<T>(int _poolIndex, Vector3 toPos,Vector3 lookPos,enum_EntityFlag _flag,int spawnerID, float _startHealth, Transform parentTrans = null) where T:EntityBase
     {
         T entity = ObjectPoolManager<int, EntityBase>.Spawn(_poolIndex, TF_Entity) as T;
         if (entity == null)
@@ -758,17 +758,18 @@ public static class GameObjectManager
         entity.OnActivate(_flag,spawnerID,_startHealth);
         entity.gameObject.name = entity.m_EntityID.ToString() + "_" + _poolIndex.ToString();
         entity.transform.position = LevelManager.NavMeshPosition(toPos, true);
+        entity.transform.rotation = Quaternion.LookRotation( TCommon.GetXZLookDirection(toPos, lookPos),Vector3.up);
         if (parentTrans) entity.transform.SetParent(parentTrans);
         return entity;
     }
-    public static EntityCharacterBase SpawnEntityCharacter(int poolIndex, Vector3 toPosition, enum_EntityFlag _flag,int spawnerID=-1, float _startHealth = 0, Transform parentTrans = null) => SpawnEntity<EntityCharacterBase>(poolIndex,toPosition,_flag,spawnerID,_startHealth,parentTrans);
+    public static EntityCharacterBase SpawnEntityCharacter(int poolIndex, Vector3 toPosition,Vector3 lookPos, enum_EntityFlag _flag,int spawnerID=-1, float _startHealth = 0, Transform parentTrans = null) => SpawnEntity<EntityCharacterBase>(poolIndex,toPosition,lookPos,_flag,spawnerID,_startHealth,parentTrans);
     public static EntityCharacterPlayer SpawnEntityPlayer(CBattleSave playerSave)
     {
-        EntityCharacterPlayer player = SpawnEntity<EntityCharacterPlayer>((int)playerSave.m_character,Vector3.up*10f, enum_EntityFlag.Player,-1,0);
+        EntityCharacterPlayer player = SpawnEntity<EntityCharacterPlayer>((int)playerSave.m_character,Vector3.zero,Vector3.up*10f, enum_EntityFlag.Player,-1,0);
         player.SetPlayerInfo(playerSave);
         return player;
     }
-    public static EntityNPC SpawnNPC(enum_InteractCharacter npc, Vector3 toPosition, Transform attachTo) => SpawnEntity<EntityNPC>((int)npc, toPosition, enum_EntityFlag.Neutal,-1,0, attachTo);
+    public static EntityNPC SpawnNPC(enum_InteractCharacter npc, Vector3 toPosition, Transform attachTo) => SpawnEntity<EntityNPC>((int)npc, toPosition,toPosition+Vector3.forward, enum_EntityFlag.Neutal,-1,0, attachTo);
     public static void RecycleEntity(int index, EntityBase target) => ObjectPoolManager<int, EntityBase>.Recycle(index, target);
     #endregion
     #region Weapon

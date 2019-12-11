@@ -22,7 +22,7 @@ public class UIGI_Damage : UIT_GridItem {
         rtf_SubContainer.localScale = Vector3.one * UIExpression.GetUIDamageScale(amount);
         m_Entity = damageEntity;
         rtf_RectTransform.SetWorldViewPortAnchor(damageEntity.tf_Head.position, CameraController.MainCamera);
-        rtf_SubContainer.anchoredPosition = new Vector2(0,80f)+TCommon.RandomVector2(UIConst.F_UIDamageStartOffset);
+        rtf_SubContainer.anchoredPosition = new Vector2(0,80f)+ UnityEngine.Random.insideUnitCircle*UIConst.F_UIDamageStartOffset;
         string integer = Mathf.CeilToInt(amount).ToString();
         m_Amount.text = integer;
         m_Projection.text = integer;

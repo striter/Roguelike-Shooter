@@ -486,7 +486,7 @@ namespace GameSetting
 
     public enum enum_LevelItemTileOccupy { Invalid = -1, Inner, Outer, Border, }
 
-    public enum enum_EnermyType { Invalid = -1, Fighter = 1, Shooter_Rookie = 2, Shooter_Veteran = 3, AOECaster = 4, Elite = 5, SubHidden = 99 }
+    public enum enum_EnermyType { Invalid = -1, Fighter = 1, Shooter_Rookie = 2, Shooter_Veteran = 3, AOECaster = 4, Elite = 5, Hidden = 99 }
 
     public enum enum_Interaction { Invalid = -1,
         GameBegin,Bonfire, ContainerTrade, ContainerBattle, PickupCoin, PickupHealth,PickupHealthPack, PickupArmor, Action, Weapon,PerkUpgrade, ActionAdjustment, Portal, GameEnd,
@@ -2107,10 +2107,6 @@ namespace GameSetting
             if (entitySpawner)
                 return new EquipmentEntitySpawner(weaponIndex,entitySpawner, _entity, GetDamageBuffInfo);
 
-            SFXShield shield = weaponInfo as SFXShield;
-            if (shield)
-                return new EquipmentShieldAttach(weaponIndex,shield, _entity, GetDamageBuffInfo);
-
             return null;
         }
     }
@@ -2329,9 +2325,11 @@ namespace GameSetting
     }
     public class EquipmentEntitySpawner : EquipmentBase
     {
+        bool m_SpawnAtTarget;
         public EquipmentEntitySpawner(int equipmentIndex,SFXSubEntitySpawner spawner, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex, _controller, _GetBuffInfo)
         {
             startHealth = 0;
+            m_SpawnAtTarget = spawner.B_SpawnAtTarget;
         }
         Action<EntityCharacterBase> OnSpawn;
         float startHealth;
@@ -2342,25 +2340,8 @@ namespace GameSetting
         }
         public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
-            GameObjectManager.SpawnEquipment<SFXSubEntitySpawner>(I_Index, m_Entity.tf_Weapon.position, Vector3.up).Play(m_Entity.m_EntityID, m_Entity.m_Flag,GetDamageDeliverInfo, startHealth, OnSpawn);
-        }
-    }
-    public class EquipmentShieldAttach : EquipmentBase
-    {
-        public override bool B_TargetAlly => true;
-        public EquipmentShieldAttach(int equipmentIndex,SFXShield shield, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex, _controller, _GetBuffInfo)
-        {
-        }
-        Action<SFXShield> OnSpawn;
-        public void SetOnSpawn(Action<SFXShield> _OnSpawn)
-        {
-            OnSpawn = _OnSpawn;
-        }
-        public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
-        {
-            SFXShield shield = GameObjectManager.SpawnEquipment<SFXShield>(I_Index, m_Entity.tf_Model.position, Vector3.up);
-            OnSpawn?.Invoke(shield);
-            shield.Attach(_target);
+            Vector3 spawnPosition = (m_SpawnAtTarget ? _target.transform.position : m_Entity.transform.position) + TCommon.RandomXZSphere(m_Entity.F_AttackSpread);
+            GameObjectManager.SpawnEquipment<SFXSubEntitySpawner>(I_Index, spawnPosition, Vector3.up).Play(m_Entity,_target.transform.position, startHealth, GetDamageDeliverInfo, OnSpawn);
         }
     }
     #endregion
