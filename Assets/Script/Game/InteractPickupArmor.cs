@@ -4,7 +4,7 @@ using UnityEngine;
 using GameSetting;
 public class InteractPickupArmor : InteractPickupAmount {
     public override enum_Interaction m_InteractType => enum_Interaction.PickupArmor;
-    protected override bool B_CanInteract(EntityCharacterPlayer _interactor) => m_OutOfBattle?true:_interactor.m_Health.m_ArmorFull;
+    protected override bool B_CanInteract(EntityCharacterPlayer _interactor) => m_OutOfBattle?true:!_interactor.m_Health.m_ArmorFull;
     protected override void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)
     {
         base.OnInteractSuccessful(_interactTarget);

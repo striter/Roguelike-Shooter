@@ -290,7 +290,7 @@ public class GameManager : GameManagerBase
                 break;
             case enum_LevelType.BattlePerkUpgrade:
                 {
-                    GameObjectManager.SpawnInteract<InteractPerkUpgrade>(enum_Interaction.PerkUpgrade, Vector3.zero, interactTrans).Play(OnBattleStart,ActionDataManager.CreateRandomWeaponAbilityAction( enum_ActionRarity.Normal,m_GameLevel.m_GameSeed));
+                    GameObjectManager.SpawnInteract<InteractPerkUpgrade>(enum_Interaction.PerkUpgrade, Vector3.zero, interactTrans).Play(OnBattleStart,ActionDataManager.CreateRandomAbilityAction( enum_ActionRarity.Normal,m_GameLevel.m_GameSeed));
                 }
                 break;
         }
@@ -330,9 +330,13 @@ public class GameManager : GameManagerBase
         if (weaponRarity != enum_WeaponRarity.Invalid)
             GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, GetPickupPosition(entity)).Play(GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew(GameDataManager.m_WeaponRarities[weaponRarity].RandomItem()),null));
 
-        enum_ActionRarity actionRarity = TCommon.RandomPercentage(pickupGenerateData.m_ActionRate, enum_ActionRarity.Invalid);
-        if (actionRarity != enum_ActionRarity.Invalid)
-            GameObjectManager.SpawnInteract<InteractAction>( enum_Interaction.Action, GetPickupPosition(entity)).Play(ActionDataManager.CreateRandomAction(actionRarity,null));
+        enum_ActionRarity abilityRarity = TCommon.RandomPercentage(pickupGenerateData.m_AbilityGenerate, enum_ActionRarity.Invalid);
+        if (abilityRarity != enum_ActionRarity.Invalid)
+            GameObjectManager.SpawnInteract<InteractAction>( enum_Interaction.Action, GetPickupPosition(entity)).Play(ActionDataManager.CreateRandomAction(abilityRarity,null));
+
+        enum_ActionRarity equipmentRarity = TCommon.RandomPercentage(pickupGenerateData.m_EquipmentGenerate, enum_ActionRarity.Invalid);
+        if (equipmentRarity != enum_ActionRarity.Invalid)
+            GameObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action,GetPickupPosition(entity)).Play(ActionDataManager.CreateRandomEquipmentAction(equipmentRarity,null));
     }
     Vector3 GetPickupPosition(EntityCharacterBase dropper) => LevelManager.NavMeshPosition(dropper.transform.position + TCommon.RandomXZSphere(1.5f), false);
     #endregion
