@@ -332,7 +332,7 @@ public class GameManager : GameManagerBase
 
         enum_ActionRarity abilityRarity = TCommon.RandomPercentage(pickupGenerateData.m_AbilityGenerate, enum_ActionRarity.Invalid);
         if (abilityRarity != enum_ActionRarity.Invalid)
-            GameObjectManager.SpawnInteract<InteractAction>( enum_Interaction.Action, GetPickupPosition(entity)).Play(ActionDataManager.CreateRandomAction(abilityRarity,null));
+            GameObjectManager.SpawnInteract<InteractAction>( enum_Interaction.Action, GetPickupPosition(entity)).Play(ActionDataManager.CreateRandomAbilityAction(abilityRarity,null));
 
         enum_ActionRarity equipmentRarity = TCommon.RandomPercentage(pickupGenerateData.m_EquipmentGenerate, enum_ActionRarity.Invalid);
         if (equipmentRarity != enum_ActionRarity.Invalid)
