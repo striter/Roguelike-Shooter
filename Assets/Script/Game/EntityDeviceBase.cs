@@ -57,7 +57,7 @@ public class EntityDeviceBase : EntityCharacterBase {
     }
     void OnEntityDetect(HitCheckEntity entity, bool enter)
     {
-        if (m_Health.b_IsDead)
+        if (m_IsDead)
             return;
 
         switch (entity.m_Attacher.m_Controller)

@@ -133,7 +133,7 @@ public class UIC_CharacterStatus : UIControlBase
     void OnCommonStatus(EntityCharacterPlayer _player)
     {
         m_Player = _player;
-        bool dying = !m_Player.m_Health.b_IsDead&& m_Player.m_Health.m_CurrentHealth < UIConst.I_PlayerDyingMaxValue;
+        bool dying = !m_Player.m_IsDead && m_Player.m_Health.m_CurrentHealth < UIConst.I_PlayerDyingMaxValue;
         if(m_DyingCheck.Check(dying))
             img_Dying.SetActivate(dying);
         OnAmmoStatus(_player.m_WeaponCurrent);

@@ -20,7 +20,7 @@ public class SFXMarkup : SFXParticles {
             return;
 
         transform.position = target.transform.position;
-        if(target.m_Health.b_IsDead)
+        if(target.m_IsDead)
         {
             OnStop();
             OnMarkupDead();

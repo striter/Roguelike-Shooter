@@ -10,7 +10,7 @@ public class EntityBase : ObjectPoolMonoItem<int>
     public int I_MaxHealth;
     public enum_EntityFlag m_Flag { get; private set; }
     public HealthBase m_Health { get; private set; }
-    protected virtual HealthBase GetHealthManager() => new HealthBase(OnHealthStatus,OnDead);
+    protected virtual HealthBase GetHealthManager() => new HealthBase(OnHealthChanged);
     protected virtual void ActivateHealthManager(float maxHealth) => m_Health.OnSetHealth(maxHealth, true);
     public HitCheckEntity m_HitCheck => m_HitChecks[0];
     protected bool m_HitCheckEnabled { get; private set; } = false;
@@ -18,6 +18,7 @@ public class EntityBase : ObjectPoolMonoItem<int>
     protected virtual float HealReceiveMultiply => 1f;
     public int m_SpawnerEntityID { get; private set; }
     public bool b_isSubEntity => m_SpawnerEntityID != -1;
+    public bool m_IsDead;
     HitCheckEntity[] m_HitChecks;
     public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
@@ -34,25 +35,30 @@ public class EntityBase : ObjectPoolMonoItem<int>
         m_HitChecks.Traversal((HitCheckEntity check) => { check.Attach(this, OnReceiveDamage); });
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityActivate, this);
         EnableHitbox(true);
+        m_IsDead = false;
     }
     protected virtual bool OnReceiveDamage(DamageInfo damageInfo,Vector3 damageDirection)
     {
-        if (m_Health.b_IsDead)
+        if (m_IsDead)
             return false;
 
         damageInfo.m_detail.m_OnHitAction?.Invoke(this);
         return m_Health.OnReceiveDamage(damageInfo, DamageReceiveMultiply,HealReceiveMultiply);
     }
 
-    protected virtual void OnHealthStatus(enum_HealthChangeMessage message)
+    protected virtual void OnHealthChanged(enum_HealthChangeMessage message)
     {
+        if (m_Health.m_CurrentHealth <= 0)
+            OnDead();
     }
     protected virtual void OnDead()
     {
+        m_IsDead = true;
         EnableHitbox(false);
     }
     protected virtual void OnRevive()
     {
+        m_IsDead = false;
         EnableHitbox(true);
     }
     protected virtual void OnRecycle()

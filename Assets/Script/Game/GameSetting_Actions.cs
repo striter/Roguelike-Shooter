@@ -434,7 +434,7 @@ namespace GameSetting_Action
             if (info.m_detail.I_IdentiyID == m_fireIdentity)
                 OnShotsHit(receiver);
         }
-        protected virtual void OnShotsHit(EntityCharacterBase _hitEntity) { if (_hitEntity.m_Health.b_IsDead) OnShotsKill(); }
+        protected virtual void OnShotsHit(EntityCharacterBase _hitEntity) { if (_hitEntity.m_IsDead) OnShotsKill(); }
         protected virtual void OnShotsKill() { }
         public ActionSingleBurstShotKill(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
     }
@@ -1053,7 +1053,7 @@ namespace GameSetting_Action
         public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
             base.OnAfterDealtDemage(receiver, info, applyAmount);
-            m_burstShot = receiver.m_Health.b_IsDead;
+            m_burstShot = receiver.m_IsDead;
         }
         public Action_30002_KillDamageMultiply(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
     }
@@ -1126,7 +1126,7 @@ namespace GameSetting_Action
         public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
             base.OnAfterDealtDemage(receiver, info, applyAmount);
-            if (!receiver.m_Health.b_IsDead)
+            if (!receiver.m_IsDead)
                 return;
 
             m_Equipment.Play(false, receiver);
@@ -1224,7 +1224,7 @@ namespace GameSetting_Action
         public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
             base.OnAfterDealtDemage(receiver, info, applyAmount);
-            if(receiver.m_Health.b_IsDead)
+            if(receiver.m_IsDead)
                 ActionHelper.ReceiveHealing(m_ActionEntity,m_ActionEntity.m_Health.m_BaseHealth * Value1/100f, enum_DamageType.HealthOnly);
         }
         public Action_30012_KillHealthRegen(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }

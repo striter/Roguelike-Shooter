@@ -7,6 +7,7 @@ using System.Linq;
 
 public class EntityCharacterBase : EntityBase, ISingleCoroutine
 {
+    public Renderer ExtraRendererForForest107Only;
     public enum_EnermyType E_SpawnType = enum_EnermyType.Invalid;
     public int I_DefaultArmor;
     public float F_MovementSpeed;
@@ -24,7 +25,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     protected override float DamageReceiveMultiply => m_CharacterInfo.F_DamageReceiveMultiply;
     protected override float HealReceiveMultiply => m_CharacterInfo.F_HealReceiveMultiply;
     public new EntityHealth m_Health=>base.m_Health as EntityHealth;
-    protected override HealthBase GetHealthManager()=> new EntityHealth(this, OnHealthStatus, OnDead);
+    protected override HealthBase GetHealthManager()=> new EntityHealth(this, OnHealthChanged);
 
     protected virtual enum_GameVFX m_DamageClip => enum_GameVFX.EntityDamage;
     protected virtual enum_GameVFX m_ReviveClip => enum_GameVFX.PlayerRevive;
@@ -34,8 +35,11 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         base.OnPoolItemInit(_identity, _OnRecycle);
         tf_Model = transform.Find("Model");
         tf_Head = transform.Find("Head");
-        List<Renderer> renderers = GetComponentsInChildren<Renderer>().ToList();
-        m_Effect = new EntityCharacterEffectManager(transform,renderers);
+        Transform tf_Skin = tf_Model.Find("Skin");
+        List<Renderer> renderers = new List<Renderer>();
+        if(tf_Skin) renderers.AddRange(tf_Skin.GetComponentsInChildren<Renderer>().ToList());
+        if (ExtraRendererForForest107Only) renderers.Add(ExtraRendererForForest107Only);
+        m_Effect = new EntityCharacterEffectManager(tf_Model,renderers);
         m_CharacterInfo = GetEntityInfo();
     }
 
@@ -78,7 +82,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         m_Effect.SetCloak(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Cloak));
         m_Effect.SetFreezed(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Freeze));
         m_Effect.SetScaned(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Scan));
-        if (!m_Health.b_IsDead)
+        if (!m_IsDead)
             OnAliveTick(Time.deltaTime);
         else
             OnDeadTick(Time.deltaTime);
@@ -88,7 +92,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
 
     public virtual void ReviveCharacter(float reviveHealth = -1, float reviveArmor = -1)
     {
-        if (!m_Health.b_IsDead)
+        if (!m_IsDead)
             return;
         OnRevive();
         m_Effect.OnReset();
@@ -123,8 +127,9 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterDead, this);
     }
     
-    protected override void OnHealthStatus(enum_HealthChangeMessage type)
+    protected override void OnHealthChanged(enum_HealthChangeMessage type)
     {
+        base.OnHealthChanged(type);
         m_Effect.OnHit(type);
         switch (type)
         {
