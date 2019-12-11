@@ -280,19 +280,11 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         }
         targetCheck -= Time.deltaTime;
 
-        if (m_Target)
-        {
-            Vector3 m_targetOffset = m_Target.tf_Head.position - tf_Head.position;
-            m_CharacterRotation = Quaternion.LookRotation(m_targetOffset.normalized, Vector3.up);
-
-            tf_CameraAttach.position = transform.position+ m_targetOffset/3;
-        }
-        else
-        {
-            tf_CameraAttach.position = transform.position;
-            if (m_MoveAxisInput != Vector2.zero)
-                m_CharacterRotation = Quaternion.LookRotation(m_MoveAxisInput.x * CameraController.CameraXZRightward + m_MoveAxisInput.y * CameraController.CameraXZForward, Vector3.up);
-        }
+        tf_CameraAttach.position = transform.position;
+        if (m_Target) 
+            m_CharacterRotation = Quaternion.LookRotation(TCommon.GetXZLookDirection(tf_Head.position, m_Target.tf_Head.position), Vector3.up); 
+        else  if (m_MoveAxisInput != Vector2.zero)
+            m_CharacterRotation = Quaternion.LookRotation(m_MoveAxisInput.x * CameraController.CameraXZRightward + m_MoveAxisInput.y * CameraController.CameraXZForward, Vector3.up);
 
 
         transform.rotation = Quaternion.Lerp(transform.rotation, GetCharacterRotation(),deltaTime*GameConst.I_PlayerRotationSmoothParam);
