@@ -7,7 +7,7 @@ public class CampManager : GameManagerBase
     public static CampManager nInstance;
     public static new CampManager Instance => nInstance;
     Transform tf_PlayerStart;
-    public Transform tf_Player { get; private set; }
+    public Transform tf_PlayerCameraAttach { get; private set; }
     protected override void Awake()
     {
         nInstance = this;
@@ -26,8 +26,8 @@ public class CampManager : GameManagerBase
         InitPostEffects(enum_Style.Invalid);
         EntityCharacterPlayer player = GameObjectManager.SpawnEntityPlayer(new CBattleSave());
         player.SetSpawnPosRot(tf_PlayerStart.position, tf_PlayerStart.rotation);
-        tf_Player = player.tf_CameraAttach;
-        AttachPlayerCamera(tf_Player);
+        tf_PlayerCameraAttach = player.tf_CameraAttach;
+        AttachPlayerCamera(tf_PlayerCameraAttach);
         CampFarmManager.Instance.OnCampEnter();
         CampAudioManager.Instance.PlayBGM(enum_CampMusic.Relax);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCampStart);
@@ -35,7 +35,7 @@ public class CampManager : GameManagerBase
     
     public void OnSceneItemInteract()
     {
-        OnPortalEnter(1f,tf_Player, () => {
+        OnPortalEnter(1f,tf_PlayerCameraAttach, () => {
             LoadingManager.Instance.ShowLoading(enum_StageLevel.Rookie);
             SwitchScene( enum_Scene.Game);
         });
@@ -53,7 +53,7 @@ public class CampManager : GameManagerBase
     void OnFarmExit()
     {
         B_Farming = false;
-        AttachPlayerCamera(tf_Player);
+        AttachPlayerCamera(tf_PlayerCameraAttach);
     }
 
     public void OnActionNPCChatted()

@@ -11,9 +11,6 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
     public float F_CameraMoveSmooth = .3f;
     public bool B_InvertCamera = false;
     public float F_RotateSensitive = 1;
-    public bool B_CameraOffsetWallClip = true;
-
-    public bool B_DrawDebugLine = false;
 
     protected bool m_SelfRotation ;
     protected Vector3 v3_localOffset;
@@ -89,12 +86,7 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
             return false;
 
-        Ray r = m_Camera.ScreenPointToRay(inputPos);
-
-        if (B_DrawDebugLine)
-            Debug.DrawRay(r.origin, r.direction * 1000, Color.red);
-
-        return Physics.Raycast(r, out rayHit, 1000, layerMask);
+        return Physics.Raycast(m_Camera.ScreenPointToRay(inputPos), out rayHit, 1000, layerMask);
     }
     #endregion
     #region Calculate
@@ -112,19 +104,8 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
 
         tf_CameraYawBase.position = Vector3.Lerp(tf_CameraYawBase.position, tf_AttachTo.position,F_CameraMoveSmooth);
         tf_CameraYawBase.rotation = Quaternion.Euler(0, qt_CameraRot.eulerAngles.y, 0);
-
+        
         tf_CameraOffset.localPosition = V3_LocalPositionOffset;
-
-        if (B_CameraOffsetWallClip && v3_localOffset != Vector3.zero)
-        {
-            v3_temp = Vector3.Normalize(tf_CameraOffset.position - tf_AttachTo.position);
-            ray_temp = new Ray(tf_AttachTo.position, v3_temp);
-            if (Physics.Raycast(ray_temp, out rh_temp, f_CameraDistance))
-                tf_CameraOffset.position = rh_temp.point + v3_temp * .2f;
-
-            if (B_DrawDebugLine)
-                Debug.DrawRay(ray_temp.origin, ray_temp.direction);
-        }
 
         tf_MainCamera.position = Vector3.Lerp(tf_MainCamera.position, tf_CameraOffset.position,F_CameraRotateSmooth);
         tf_MainCamera.rotation = Quaternion.Lerp(tf_MainCamera.rotation,qt_CameraRot,F_CameraRotateSmooth);

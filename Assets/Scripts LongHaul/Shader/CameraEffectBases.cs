@@ -380,6 +380,7 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
     public override void OnDestroy()
     {
         base.OnDestroy();
+        GameObject.Destroy(m_RenderCamera.gameObject);
         m_GaussianBlur.OnDestroy();
         RenderTexture.ReleaseTemporary(m_RenderTexture);
     }
