@@ -486,7 +486,7 @@ namespace GameSetting
 
     public enum enum_LevelItemTileOccupy { Invalid = -1, Inner, Outer, Border, }
 
-    public enum enum_EnermyType { Invalid = -1, Fighter = 1, Shooter_Rookie = 2, Shooter_Veteran = 3, AOECaster = 4, Elite = 5, Hidden = 99 }
+    public enum enum_EnermyType { Invalid = -1, Fighter = 1, Shooter_Rookie = 2, Shooter_Veteran = 3, AOECaster = 4, Elite = 5, }
 
     public enum enum_Interaction { Invalid = -1,
         GameBegin,Bonfire, ContainerTrade, ContainerBattle, PickupCoin, PickupHealth,PickupHealthPack, PickupArmor, Action, Weapon,PerkUpgrade, ActionAdjustment, Portal, GameEnd,

@@ -7,6 +7,7 @@ using System.Linq;
 
 public class EntityCharacterBase : EntityBase, ISingleCoroutine
 {
+    public enum_EnermyType E_SpawnType = enum_EnermyType.Invalid;
     public int I_DefaultArmor;
     public float F_MovementSpeed;
     public float F_AttackSpread;
@@ -332,9 +333,4 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
             m_Animator.SetTrigger(HS_T_Dead);
         }
     }
-
-
-    #region ?
-    public Renderer ExtraRendererOnlyAvailableFor107WhatAwkwardRequirementWhyNotPutThemIntoOneModelCauseOutModelArtistCantDoItHaveToCreateThisIntoMyCodeLikeABunchOfShitForFuckingRealSucks;
-    #endregion
 }

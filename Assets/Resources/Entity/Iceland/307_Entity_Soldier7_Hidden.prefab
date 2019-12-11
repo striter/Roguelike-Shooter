@@ -364,7 +364,7 @@ GameObject:
   - component: {fileID: 208591563061834986}
   - component: {fileID: 136181200999761128}
   m_Layer: 10
-  m_Name: 307_Entity_Soldier7
+  m_Name: 307_Entity_Soldier7_Hidden
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1076,12 +1076,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   I_MaxHealth: 700
+  E_SpawnType: -1
   I_DefaultArmor: 0
   F_MovementSpeed: 3
   F_AttackSpread: 0
-  ? ExtraRendererOnlyAvailableFor107WhatAwkwardRequirementWhyNotPutThemIntoOneModelCauseOutModelArtistCantDoItHaveToCreateThisIntoMyCodeLikeABunchOfShitForFuckingRealSucks
-  : {fileID: 0}
-  E_EnermyType: 0
   E_AnimatorIndex: 164
   F_AIChaseRange: 32
   F_AIAttackRange: 37
@@ -1096,7 +1094,7 @@ MonoBehaviour:
   F_AttackRotateParam: 1
   I_AttackPreAimPercentage: 50
   B_AttackMove: 1
-  B_AttackFrontCheck: 1
+  F_AttackFrontCheck: 2
 --- !u!114 &114559299296259918
 MonoBehaviour:
   m_ObjectHideFlags: 1

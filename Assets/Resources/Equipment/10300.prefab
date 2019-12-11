@@ -51,6 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74e3f015a8b4c54418dcd0ebb9d47856, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  B_SpawnAtTarget: 1
   I_EntitySpawnID: 150
   B_ApplyDOTOnSpawn: 0
   I_DelayIndicator: 30007

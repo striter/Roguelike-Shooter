@@ -311,21 +311,18 @@ public class GameManager : GameManagerBase
 
     void SpawnEntityDeadPickups(EntityCharacterBase entity)
     {
-        if (entity.m_Flag != enum_EntityFlag.Enermy||entity.m_Controller!= enum_EntityController.AI)
-            return;
-        EntityCharacterAI target = entity as EntityCharacterAI;
-        if (target.E_EnermyType == enum_EnermyType.Hidden)
+        if (entity.m_Flag != enum_EntityFlag.Enermy||entity.E_SpawnType== enum_EnermyType.Invalid)
             return;
 
-        PickupGenerateData pickupGenerateData = target.E_EnermyType == enum_EnermyType.Elite ? m_GameLevel.m_actionGenerate.m_ElitePickupData : m_GameLevel.m_actionGenerate.m_NormalPickupData;
+        PickupGenerateData pickupGenerateData = entity.E_SpawnType == enum_EnermyType.Elite ? m_GameLevel.m_actionGenerate.m_ElitePickupData : m_GameLevel.m_actionGenerate.m_NormalPickupData;
 
-        if (pickupGenerateData.CanGenerateHealth(target.E_EnermyType))
+        if (pickupGenerateData.CanGenerateHealth(entity.E_SpawnType))
             GameObjectManager.SpawnInteract<InteractPickupHealth>(enum_Interaction.PickupHealth, GetPickupPosition(entity)).Play(GameConst.I_HealthPickupAmount, m_LocalPlayer.transform);
 
-        if (pickupGenerateData.CanGenerateArmor(target.E_EnermyType))
+        if (pickupGenerateData.CanGenerateArmor(entity.E_SpawnType))
             GameObjectManager.SpawnInteract<InteractPickupArmor>(enum_Interaction.PickupArmor, GetPickupPosition(entity)).Play(GameConst.I_ArmorPickupAmount,m_LocalPlayer.transform);
         
-        int coinAmount = pickupGenerateData.GetCoinGenerate(target.E_EnermyType);
+        int coinAmount = pickupGenerateData.GetCoinGenerate(entity.E_SpawnType);
         if (coinAmount != -1)
             GameObjectManager.SpawnInteract<InteractPickupCoin>(enum_Interaction.PickupCoin, GetPickupPosition(entity)).Play(coinAmount,m_LocalPlayer.transform);
 
@@ -712,7 +709,8 @@ public static class GameObjectManager
     #region Register
     public static void PresetRegistCommonObject()
     {
-        TResources.GetAllEffectSFX().Traversal((int index, SFXBase target) => {ObjectPoolManager<int, SFXBase>.Register(index, target, 1); });
+        TResources.GetAllEffectSFX().Traversal((int index, SFXBase 
+            target) => {ObjectPoolManager<int, SFXBase>.Register(index, target, 1); });
         TResources.GetCommonEntities().Traversal((int index, EntityBase entity) => { ObjectPoolManager<int, EntityBase>.Register(index, entity, 1); });
     }
     public static Dictionary<enum_LevelItemType,List<LevelItemBase>> RegisterLevelItem(enum_Style _style)
@@ -729,12 +727,12 @@ public static class GameObjectManager
         Dictionary<enum_EnermyType, List<int>> enermyDic = new Dictionary<enum_EnermyType, List<int>>();
         TResources.GetEnermyEntities(currentStyle).Traversal((int index, EntityBase entity) => {
             ObjectPoolManager<int, EntityBase>.Register(index, entity, 1 );
-            EntityCharacterAI enermy = entity as EntityCharacterAI;
-            if (!enermy || enermy.E_EnermyType == enum_EnermyType.Hidden)
+            EntityCharacterBase enermy = entity as EntityCharacterBase;
+            if (enermy.E_SpawnType == enum_EnermyType.Invalid)
                 return;
-            if (!enermyDic.ContainsKey(enermy.E_EnermyType))
-                enermyDic.Add(enermy.E_EnermyType, new List<int>());
-            enermyDic[enermy.E_EnermyType].Add(index);
+            if (!enermyDic.ContainsKey(enermy.E_SpawnType))
+                enermyDic.Add(enermy.E_SpawnType, new List<int>());
+            enermyDic[enermy.E_SpawnType].Add(index);
         });
         return enermyDic;
     }

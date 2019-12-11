@@ -953,12 +953,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   I_MaxHealth: 312
+  E_SpawnType: 3
   I_DefaultArmor: 0
   F_MovementSpeed: 3
   F_AttackSpread: 3
   ? ExtraRendererOnlyAvailableFor107WhatAwkwardRequirementWhyNotPutThemIntoOneModelCauseOutModelArtistCantDoItHaveToCreateThisIntoMyCodeLikeABunchOfShitForFuckingRealSucks
   : {fileID: 0}
-  E_EnermyType: 3
   E_AnimatorIndex: 140
   F_AIChaseRange: 15
   F_AIAttackRange: 20
@@ -973,7 +973,7 @@ MonoBehaviour:
   F_AttackRotateParam: 1
   I_AttackPreAimPercentage: 50
   B_AttackMove: 1
-  B_AttackFrontCheck: 1
+  F_AttackFrontCheck: 2
 --- !u!136 &136642580533483612
 CapsuleCollider:
   m_ObjectHideFlags: 1

@@ -1163,12 +1163,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   I_MaxHealth: 2400
+  E_SpawnType: 5
   I_DefaultArmor: 0
   F_MovementSpeed: 3
   F_AttackSpread: 0
   ? ExtraRendererOnlyAvailableFor107WhatAwkwardRequirementWhyNotPutThemIntoOneModelCauseOutModelArtistCantDoItHaveToCreateThisIntoMyCodeLikeABunchOfShitForFuckingRealSucks
   : {fileID: 23295916408510408}
-  E_EnermyType: 5
   E_AnimatorIndex: 163
   F_AIChaseRange: 17
   F_AIAttackRange: 22
