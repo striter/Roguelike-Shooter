@@ -15,6 +15,5 @@ public class InteractContainerBattle : InteractContainer {
     {
         base.OnInteractSuccessful(_interactTarget);
         OnInteract();
-        Detach();
     }
 }

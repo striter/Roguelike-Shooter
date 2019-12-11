@@ -334,7 +334,7 @@ namespace GameSetting
         public static string GetMainSprite(InteractBase interact)
         {
             string spriteName = "control_main_fire";
-            if (interact != null&&interact.B_InteractEnable)
+            if (interact != null)
                 switch (interact.m_InteractType)
                 {
                     case enum_Interaction.Invalid: Debug.LogError("Invalid Pharse Here!"); break;

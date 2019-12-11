@@ -31,7 +31,6 @@ public class InteractWeapon : InteractGameBase {
             m_Weapon.transform.SetParentResetTransform(tf_ModelContainer);
             return;
         }
-
         SetInteractable(false);
     }
 
