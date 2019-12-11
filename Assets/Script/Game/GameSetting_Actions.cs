@@ -186,7 +186,7 @@ namespace GameSetting_Action
         #region 30000-39999
         public const int I_30001_Cost = 2;
         public static float F_30001_DamagePerStack(enum_ActionRarity rarity) => 2.5f * (int)rarity;
-        public const int I_30001_MaxStack = 20;
+        public const int I_30001_MaxStack = 40;
 
         public const int I_30002_Cost = 3;
         public static float P_30002_SingleShotDamageMultiplyAfterKill(enum_ActionRarity rarity) => 30 * (int)rarity;
