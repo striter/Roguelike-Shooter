@@ -9,6 +9,7 @@ public class InteractWeapon : InteractGameBase {
     public WeaponBase m_Weapon { get; private set; }
     public override enum_Interaction m_InteractType => enum_Interaction.Weapon;
     public override bool B_InteractOnce => false;
+    protected override bool B_CanInteract(EntityCharacterPlayer _interactor) => m_Weapon != null;
     public override void OnPoolItemInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
     {
         base.OnPoolItemInit(identity, OnRecycle);
@@ -32,7 +33,6 @@ public class InteractWeapon : InteractGameBase {
         }
 
         SetInteractable(false);
-        OnDisable();
     }
 
     private void OnDisable()
