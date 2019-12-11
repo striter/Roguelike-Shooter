@@ -18,6 +18,5 @@ public class InteractContainerTrade : InteractContainer {
     {
         base.OnInteractSuccessful(_interactTarget);
         _interactTarget.m_PlayerInfo.OnCoinsRemoval(m_TradePrice);
-        Detach();
     }
 }

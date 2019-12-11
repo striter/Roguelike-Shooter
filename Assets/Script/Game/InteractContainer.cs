@@ -26,8 +26,4 @@ public class InteractContainer : InteractGameBase {
         m_TradeInteract.transform.position = tf_Model.position;
         m_TradeInteract.transform.rotation = tf_Model.rotation;
     }
-    protected void Detach()
-    {
-        m_TradeInteract.SetInteractable(true);
-    }
 }
