@@ -161,8 +161,8 @@ namespace GameSetting
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 00 }, { enum_WeaponRarity.Advanced, 100 }, { enum_WeaponRarity.Rare, 0 }, { enum_WeaponRarity.Legend, 0 } },
                         new Dictionary<enum_ActionRarity, int>() { { enum_ActionRarity.Normal, 60 }, { enum_ActionRarity.OutStanding, 40 }, { enum_ActionRarity.Epic, 0 } }, 
                         PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),       //Normal
-                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 13.6f }, { enum_ActionRarity.OutStanding, 4.5f }, { enum_ActionRarity.Epic, 0 } },       //Ability
-                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 13.6f }, { enum_ActionRarity.OutStanding, 4.5f }, { enum_ActionRarity.Epic, 0 } },       //Equipment
+                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 15f }, { enum_ActionRarity.OutStanding, 3f }, { enum_ActionRarity.Epic, 0 } },       //Ability
+                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 9f }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 0 } },       //Equipment
                         new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Ordinary, 4.5f },{ enum_WeaponRarity.Advanced,2.27f} }),          //Weapon
                         PickupGenerateData.Create(10, 100, 50, new RangeInt(10, 5),     //Elite
                         new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 40 }, { enum_ActionRarity.OutStanding, 55 }, { enum_ActionRarity.Epic, 5 } },
@@ -175,7 +175,7 @@ namespace GameSetting
                         new Dictionary<enum_ActionRarity, int>() { { enum_ActionRarity.Normal, 00 }, { enum_ActionRarity.OutStanding, 70 }, { enum_ActionRarity.Epic, 30 } },
                         PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),
                         new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 13.6f }, { enum_ActionRarity.Epic, 4.5f } },
-                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 13.6f }, { enum_ActionRarity.Epic, 4.5f } },
+                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 5 }, { enum_ActionRarity.Epic, 0 } },
                         new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Advanced, 4.5f },{ enum_WeaponRarity.Rare,2.27f} }),
                         PickupGenerateData.Create(10, 100, 100, new RangeInt(10, 5),
                         new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 80 }, { enum_ActionRarity.Epic, 20 } },
@@ -188,7 +188,7 @@ namespace GameSetting
                         new Dictionary<enum_ActionRarity, int>() { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 100 } },
                         PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),
                         new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 13.6f } },
-                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 13.6f } },
+                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 5 } },
                         new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Rare, 4.5f },{ enum_WeaponRarity.Legend,2.27f} }),
                         PickupGenerateData.Create(0, 0, 0, new RangeInt(10, 5),
                         new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 0 } },
