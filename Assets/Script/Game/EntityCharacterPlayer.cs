@@ -266,7 +266,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         TPSCameraController.Instance.AddRecoil(new Vector3(0, (TCommon.RandomBool() ? 1 : -1)* recoil,0));
         m_Animator.Fire();
     }
-    Vector3 m_targetDirection;
+
     void OnMoveTick(float deltaTime)
     {
         if (m_aimingMovementReduction) f_aimMovementReduction -= deltaTime;
@@ -282,10 +282,10 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
         if (m_Target)
         {
-            m_targetDirection = m_Target.tf_Head.position - tf_Head.position;
-            m_CharacterRotation = Quaternion.LookRotation(m_targetDirection.normalized, Vector3.up);
+            Vector3 m_targetOffset = m_Target.tf_Head.position - tf_Head.position;
+            m_CharacterRotation = Quaternion.LookRotation(m_targetOffset.normalized, Vector3.up);
 
-            tf_CameraAttach.position = tf_Head.position+ m_targetDirection/3;
+            tf_CameraAttach.position = tf_Head.position+ m_targetOffset/3;
         }
         else
         {
