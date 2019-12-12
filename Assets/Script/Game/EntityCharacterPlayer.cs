@@ -50,7 +50,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     protected override CharacterInfoManager GetEntityInfo()
     {
-        m_PlayerInfo = new PlayerInfoManager(this, m_HitCheck.TryHit, OnExpireChange,OnPlayerActionChange);
+        m_PlayerInfo = new PlayerInfoManager(this, m_HitCheck.TryHit, OnExpireChange);
         return m_PlayerInfo;
     }
 
@@ -64,7 +64,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         tf_CameraAttach = transform.Find("CameraAttach");
         tf_WeaponHoldRight = transform.FindInAllChild("WeaponHold_R");
         tf_WeaponHoldLeft = transform.FindInAllChild("WeaponHold_L");
-        tf_UIStatus = transform.FindInAllChild("Status");
+        tf_UIStatus = transform.FindInAllChild("UIStatus");
         m_Animator = GetAnimatorController(tf_Model.GetComponent<Animator>(),OnAnimationEvent);
         m_Ability = new CharacterAbility(I_AbilityTimes, F_AbilityCoolDown, OnAbilityTrigger);
         transform.Find("InteractDetector").GetComponent<InteractDetector>().Init(OnInteractCheck);
@@ -379,19 +379,23 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     }
     #endregion
     #region Action
-    public void OnPickupAction(ActionBase action)
+    public bool OnActionInteract(ActionBase action)
     {
         switch (action.m_ActionType)
         {
+            default:
+                Debug.LogError("Invalid Detected!");
+                return false;
             case enum_ActionType.WeaponAbility:
                 m_WeaponCurrent.SetWeaponAction(action,0f);
                 OnWeaponStatus();
-                break;
+                return true;
             case enum_ActionType.PlayerEquipment:
                 m_PlayerInfo.OnUseAction(action);
-                break;
+                return true;
         }
     }
+
     public void OnWeaponAbilityClick(bool isFirstWeapon)
     {
         ActionBase targetAction = isFirstWeapon ? m_Weapon1.GetAbilityACtion() : m_Weapon2.GetAbilityACtion();
@@ -459,10 +463,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         m_PlayerInfo.RefreshEffects();
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerWeaponStatus, this);
-    }
-    protected void OnPlayerActionChange()
-    {
-        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerExpireListStatus, m_PlayerInfo);
     }
     protected override void OnHealthChanged(enum_HealthChangeMessage type)
     {

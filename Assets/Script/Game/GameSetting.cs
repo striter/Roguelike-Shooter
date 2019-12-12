@@ -348,22 +348,10 @@ namespace GameSetting
         public static string GetAbilityBackground(bool cooldowning)=>cooldowning?"control_ability_bottom_cooldown":"control_ability_bottom_activate";
         public static string GetAbilitySprite(enum_PlayerCharacter character) => "control_ability_" + character;
         public static string GetSpriteName(this enum_PlayerWeapon weapon) => ((int)weapon).ToString();
-        public static string GetUIBGColor(this enum_ActionType type)
-        {
-            switch(type)
-            {
-                default: return "000000FF";
-                case enum_ActionType.WeaponAbility:
-                    return "FAC108FF";
-                case enum_ActionType.PlayerEquipment:
-                    return "B0FE00FF";
-            }
-        }
-
 
         public static string GetUIInteractBackground(this enum_WeaponRarity rarity) => "interact_" + rarity;
         public static string GetUIStatusShadowBackground(this enum_WeaponRarity rarity) => "weapon_shadow_" + rarity;
-        public static string GetUIGameControlBackground(this enum_WeaponRarity rarity) => "gamecontrol_" + rarity;
+        public static string GetUIGameControlBackground(this enum_WeaponRarity rarity) => "control_" + rarity;
         public static string GetUITextColor(this enum_WeaponRarity rarity)
         {
             switch (rarity)
@@ -459,7 +447,8 @@ namespace GameSetting
         UI_PlayerCommonStatus,
         UI_PlayerInteractStatus,
         UI_PlayerHealthStatus,
-        UI_PlayerExpireListStatus,
+        UI_PlayerActionExpireStatus,
+        UI_PlayerEquipmentStatus,
         UI_PlayerWeaponStatus,
 
         UI_CampDataStatus,
@@ -1371,7 +1360,7 @@ namespace GameSetting
         protected virtual void Reset()
         {
             m_Effects.Traversal((enum_CharacterEffect type) => { m_Effects[type].Reset(); });
-            m_Expires.Traversal((ExpireBase expire) => { if (expire.m_ExpireType == enum_ExpireType.Buff) OnExpireElapsed(expire); }, true);
+            m_Expires.Traversal((ExpireBase expire) => { if (expire.m_ExpireType == enum_ExpireType.Buff) RemoveExpire(expire); }, true);
             UpdateEntityInfo();
         }
 
@@ -1396,14 +1385,14 @@ namespace GameSetting
         {
             expire.ExpireRefresh();
         }
-        protected virtual void OnExpireElapsed(ExpireBase expire)
+        protected virtual void RemoveExpire(ExpireBase expire)
         {
             m_Expires.Remove(expire);
             UpdateEntityInfo();
         }
         public void AddBuff(int sourceID, SBuff buffInfo)
         {
-            BuffBase buff = new BuffBase(sourceID, buffInfo, OnReceiveDamage, OnExpireElapsed);
+            BuffBase buff = new BuffBase(sourceID, buffInfo, OnReceiveDamage, RemoveExpire);
             switch (buff.m_RefreshType)
             {
                 case enum_ExpireRefreshType.AddUp:
@@ -1506,13 +1495,11 @@ namespace GameSetting
 
         public List<ActionBase> m_ActionPlaying { get; private set; } = new List<ActionBase>();
         public List<ActionBase> m_ActionEquipment { get; private set; } = new List<ActionBase>();
-        Action OnPlayerActionChange;
         public int m_Coins { get; private set; } = 0;
 
-        public PlayerInfoManager(EntityCharacterPlayer _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange, Action _OnPlayerActionChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
+        public PlayerInfoManager(EntityCharacterPlayer _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
         {
             m_Player = _attacher;
-            OnPlayerActionChange = _OnPlayerActionChange;
         }
 
         public override void OnActivate()
@@ -1536,14 +1523,6 @@ namespace GameSetting
             _actionEquiping.Traversal((ActionBase action) => { AddExpire(action); });
         }
 
-        public void UpgradeEquipment(int index)
-        {
-            m_ActionEquipment[index].Upgrade();
-        }
-        public void RemoveEquipment(int index)
-        {
-            m_ActionEquipment[index].ForceExpire();
-        }
         #region Action
         #region Interact
         public bool CheckRevive(ref RangeFloat reviveAmount)
@@ -1555,17 +1534,33 @@ namespace GameSetting
             }
             return false;
         }
-        #endregion
-        #region List Update
+
+        public void UpgradeEquipment(int index)
+        {
+            m_ActionEquipment[index].Upgrade();
+        }
+        public void RemoveEquipment(int index)
+        {
+            m_ActionEquipment[index].ForceExpire();
+        }
+
+        public bool b_haveEmptyEquipmentSlot => m_ActionEquipment.Count < 5;
+        public void SwapEquipment(int index,ActionBase targetAction)
+        {
+            RemoveExpire(m_ActionEquipment[index]);
+            AddExpire(targetAction);
+        }
         public void OnUseAction(ActionBase targetAction)
         {
-            if(targetAction.m_ActionType== enum_ActionType.WeaponAbility)
+            if (targetAction.m_ActionType == enum_ActionType.PlayerEquipment && !b_haveEmptyEquipmentSlot)
+                return;
+            if (targetAction.m_ActionType == enum_ActionType.WeaponAbility)
                 m_ActionPlaying.Traversal((ActionBase action) => { action.OnUseWeaponAbility(targetAction); });
             GameObjectManager.PlayMuzzle(m_Player.m_EntityID, m_Player.transform.position, Vector3.up, GameExpression.GetActionMuzzleIndex(targetAction.m_ActionType));
             AddExpire(targetAction);
         }
-
-
+        #endregion
+        #region List Update
         protected override void AddExpire(ExpireBase expire)
         {
             base.AddExpire(expire);
@@ -1573,25 +1568,38 @@ namespace GameSetting
                 return;
             ActionBase targetAction = expire as ActionBase;
             m_ActionPlaying.Add(targetAction);
-            if (targetAction.m_ActionType == enum_ActionType.PlayerEquipment)
-                m_ActionEquipment.Add(targetAction);
+            switch (targetAction.m_ActionType)
+            {
+                case enum_ActionType.PlayerEquipment:
+                    m_ActionEquipment.Add(targetAction);
+                    TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
+                    break;
+                case enum_ActionType.WeaponAbility:
+                    TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerActionExpireStatus, this);
+                    break;
+            }
 
-            targetAction.Activate(m_Player, OnExpireElapsed);
+            targetAction.Activate(m_Player, RemoveExpire);
             targetAction.OnActivate();
-
-            OnPlayerActionChange();
         }
 
-        protected override void OnExpireElapsed(ExpireBase expire)
+        protected override void RemoveExpire(ExpireBase expire)
         {
-            base.OnExpireElapsed(expire);
+            base.RemoveExpire(expire);
             if (expire.m_ExpireType != enum_ExpireType.Action)
                 return;
             ActionBase targetAction = expire as ActionBase;
             m_ActionPlaying.Remove(targetAction);
-            if (targetAction.m_ActionType == enum_ActionType.PlayerEquipment)
-                m_ActionPlaying.Remove(targetAction);
-            OnPlayerActionChange();
+            switch (targetAction.m_ActionType)
+            {
+                case enum_ActionType.PlayerEquipment:
+                    m_ActionEquipment.Remove(targetAction);
+                    TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
+                    break;
+                case enum_ActionType.WeaponAbility:
+                    TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerActionExpireStatus, this);
+                    break;
+            }
         }
         #endregion
         #region Data Update

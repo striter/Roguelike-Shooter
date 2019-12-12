@@ -10,24 +10,25 @@ public class UIC_CharacterStatus : UIControlBase
     Transform tf_Container;
     EntityCharacterPlayer m_Player;
 
-    Transform tf_ExpireData;
-    UIT_GridControllerGridItem<UIGI_ExpireInfoItem> m_ExpireGrid;
-    
-    RectTransform rtf_StatusData;
+    UIT_GridControllerGridItem<UIGI_ActionExpireInfo> m_ActionExpireGrid;
+    UIT_GridControllerGridItem<UIGI_ActionBase> m_EquipmentGrid;
+
+
+    Transform tf_StatusData;
+    RectTransform rtf_AmmoData;
     GridLayoutGroup m_AmmoLayout;
-    Transform tf_AmmoData;
     Image img_ReloadFill;
     float m_AmmoGridWidth;
     UIT_GridControllerGridItem<UIGI_AmmoItem> m_AmmoGrid;
-    UIC_Numeric m_AmmoAmount, m_AmmoClipAmount;
+    UIT_TextExtend m_AmmoAmount,m_AmmoAmountProjection;
 
     Transform tf_ArmorData;
     Slider m_ArmorFill;
-    UIC_Numeric m_ArmorAmount;
+    UIT_TextExtend m_ArmorAmount;
 
     Transform tf_HealthData;
     Slider m_HealthFill;
-    UIC_Numeric m_HealthAmount, m_MaxHealth;
+    UIT_TextExtend m_HealthAmount;
 
     ValueLerpSeconds m_HealthLerp, m_ArmorLerp;
 
@@ -42,26 +43,27 @@ public class UIC_CharacterStatus : UIControlBase
         tf_Container = transform.Find("Container");
 
         img_Dying = tf_Container.Find("Dying").GetComponent<RawImage>();
-        
-        rtf_StatusData = tf_Container.Find("StatusData").GetComponent<RectTransform>();
-        tf_AmmoData = rtf_StatusData.Find("Container/AmmoData");
-        m_AmmoGridWidth = tf_AmmoData.GetComponent<RectTransform>().sizeDelta.x;
-        m_AmmoAmount = new UIC_Numeric(tf_AmmoData.Find("AmmoAmount"));
-        m_AmmoClipAmount = new UIC_Numeric(m_AmmoAmount.transform.Find("ClipAmount"));
-        m_AmmoGrid = new UIT_GridControllerGridItem<UIGI_AmmoItem>(tf_AmmoData.Find("AmmoGrid"));
+
+        tf_StatusData = tf_Container.Find("StatusData");
+        rtf_AmmoData = tf_StatusData.Find("AmmoData") as RectTransform;
+        m_AmmoAmount =  rtf_AmmoData.Find("Container/Amount").GetComponent<UIT_TextExtend>();
+        m_AmmoAmountProjection = rtf_AmmoData.Find("Container/AmountProjection").GetComponent<UIT_TextExtend>();
+        m_AmmoGrid = new UIT_GridControllerGridItem<UIGI_AmmoItem>(rtf_AmmoData.Find("Container/AmmoGrid"));
+        m_AmmoGridWidth = m_AmmoGrid.transform.GetComponent<RectTransform>().sizeDelta.x;
         m_AmmoLayout = m_AmmoGrid.transform.GetComponent<GridLayoutGroup>();
         img_ReloadFill = m_AmmoGrid.transform.Find("Reload").GetComponent<Image>();
 
-        tf_ArmorData = rtf_StatusData.Find("Container/ArmorData");
+        tf_ArmorData = tf_StatusData.Find("ArmorData");
         m_ArmorFill = tf_ArmorData.Find("Slider").GetComponent<Slider>();
-        m_ArmorAmount = new UIC_Numeric(tf_ArmorData.Find("ArmorAmount"));
-        tf_HealthData = rtf_StatusData.Find("Container/HealthData");
+        m_ArmorAmount = tf_ArmorData.Find("ArmorAmount").GetComponent<UIT_TextExtend>();
+
+        tf_HealthData = tf_StatusData.Find("HealthData");
         m_HealthFill = tf_HealthData.Find("Slider").GetComponent<Slider>();
-        m_HealthAmount = new UIC_Numeric(tf_HealthData.Find("HealthAmount"));
-        m_MaxHealth = new UIC_Numeric(m_HealthAmount.transform.Find("MaxHealth"));
+        m_HealthAmount = tf_HealthData.Find("HealthAmount").GetComponent<UIT_TextExtend>();
         
-        tf_ExpireData = tf_Container.Find("ExpireData");
-        m_ExpireGrid = new UIT_GridControllerGridItem<UIGI_ExpireInfoItem>(tf_ExpireData.Find("ExpireGrid"));
+        
+        m_ActionExpireGrid = new UIT_GridControllerGridItem<UIGI_ActionExpireInfo>(tf_Container.Find("ActionExpireGrid"));
+        m_EquipmentGrid = new UIT_GridControllerGridItem<UIGI_ActionBase>(tf_Container.Find("EquipmentGrid"));
 
         m_HealthLerp = new ValueLerpSeconds(0f, 4f, 2f, (float value) => { m_HealthFill.value = value; });
         m_ArmorLerp = new ValueLerpSeconds(0f, 4f, 2f, (float value) => { m_ArmorFill.value = value; });
@@ -73,20 +75,23 @@ public class UIC_CharacterStatus : UIControlBase
         m_MapNext = tf_MapData.Find("Next").GetComponent<Image>();
         m_MapAnimation =new AnimationControlBase( tf_MapData.GetComponent<Animation>(),false);
 
-        TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
-        TBroadCaster<enum_BC_UIStatus>.Add<EntityPlayerHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
-        TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerExpireListStatus, OnExpireListStatus);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
-
         m_DyingCheck = new ValueChecker<bool>(true);
     }
-    
-    protected override void OnDestroy()
+
+    private void OnEnable()
     {
-        base.OnDestroy();
+        TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
+        TBroadCaster<enum_BC_UIStatus>.Add<EntityPlayerHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
+        TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerActionExpireStatus, OnExpireListStatus);
+        TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerEquipmentStatus, OnEquipmentStatus);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
+    }
+    private void OnDisable()
+    {
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityPlayerHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
-        TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerExpireListStatus, OnExpireListStatus);
+        TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerActionExpireStatus, OnExpireListStatus);
+        TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerEquipmentStatus, OnEquipmentStatus);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
     }
 
@@ -118,7 +123,7 @@ public class UIC_CharacterStatus : UIControlBase
         if (!m_Player)
             return;
 
-        rtf_StatusData.SetWorldViewPortAnchor(m_Player.tf_UIStatus.position, CameraController.Instance.m_Camera, Time.deltaTime * 10f);
+        rtf_AmmoData.SetWorldViewPortAnchor(m_Player.tf_UIStatus.position, CameraController.Instance.m_Camera, Time.deltaTime * 10f);
 
         m_HealthLerp.TickDelta(Time.unscaledDeltaTime);
         m_ArmorLerp.TickDelta(Time.unscaledDeltaTime);
@@ -143,19 +148,19 @@ public class UIC_CharacterStatus : UIControlBase
     {
         m_ArmorLerp.ChangeValue(_healthManager.m_CurrentArmor / UIConst.F_UIMaxArmor);
         m_HealthLerp.ChangeValue(_healthManager.F_HealthBaseScale);
-        m_ArmorAmount.SetAmount((int)_healthManager.m_CurrentArmor);
-        m_HealthAmount.SetAmount((int)_healthManager.m_CurrentHealth);
-        m_MaxHealth.SetAmount((int)_healthManager.m_BaseHealth);
+        m_ArmorAmount.text=string.Format("{0}",(int)_healthManager.m_CurrentArmor);
+        m_HealthAmount.text = string.Format("{0}", (int)_healthManager.m_CurrentHealth);
     }
 
     void OnAmmoStatus(WeaponBase weaponInfo)
     {
-        tf_AmmoData.transform.SetActivate(weaponInfo != null);
+        rtf_AmmoData.transform.SetActivate(weaponInfo != null);
         if (weaponInfo == null)
             return;
 
-        m_AmmoAmount.SetAmount(weaponInfo.I_AmmoLeft);
-        m_AmmoClipAmount.SetAmount(weaponInfo.I_ClipAmount);
+        string ammoText = string.Format("{0} / {1}", (int)weaponInfo.I_AmmoLeft, weaponInfo.I_ClipAmount);
+        m_AmmoAmount.text = ammoText;
+        m_AmmoAmountProjection.text = ammoText;
         if (m_AmmoGrid.I_Count != weaponInfo.I_ClipAmount)
         {
             m_AmmoGrid.ClearGrid();
@@ -189,15 +194,17 @@ public class UIC_CharacterStatus : UIControlBase
         }
     }
     
-    void OnExpireListStatus(PlayerInfoManager expireInfo)
+    void OnExpireListStatus(PlayerInfoManager infoManager)
     {
-        m_ExpireGrid.ClearGrid();
-        for (int i = 0; i < expireInfo.m_Expires.Count; i++)
-        {
-            if (expireInfo.m_Expires[i].m_ExpireType != enum_ExpireType.Action)
-                continue;
-            ActionBase action = (expireInfo.m_Expires[i] as ActionBase);
-            m_ExpireGrid.AddItem(i).SetInfo(action);
-        }
+        m_ActionExpireGrid.ClearGrid();
+        for (int i = 0; i < infoManager.m_ActionPlaying.Count; i++)
+            m_ActionExpireGrid.AddItem(i).SetInfo(infoManager.m_ActionPlaying[i]);
+    }
+
+    void OnEquipmentStatus(PlayerInfoManager infoManager)
+    {
+        m_EquipmentGrid.ClearGrid();
+        for (int i = 0; i < infoManager.m_ActionEquipment.Count; i++)
+            m_EquipmentGrid.AddItem(i).SetInfo(infoManager.m_ActionEquipment[i]);
     }
 }

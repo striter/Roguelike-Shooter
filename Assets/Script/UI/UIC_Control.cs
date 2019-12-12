@@ -150,46 +150,44 @@ public class UIC_Control : UIControlBase {
     {
         WeaponBase m_weapon;
         Transform transform;
-        Transform tf_Detail;
+        Transform tf_Empty;
+        Transform tf_WeaponData;
         UIT_TextExtend m_Name;
         Image m_Background;
         Image m_Image;
         Transform tf_AmmoStatus;
-        Transform m_Equiping, m_unEquiping;
         Text m_Clip, m_Total;
-        UIGI_ActionItemWeapon m_Action;
+        UIGI_ActionControlInfo m_Action;
         TSpecialClasses.ValueChecker<int, int> m_AmmoStatusChecker;
         public WeaponData(Transform _transform)
         {
             transform = _transform;
-            m_Background = transform.Find("Background").GetComponent<Image>();
-            tf_Detail = transform.Find("Detail");
-            m_Name = tf_Detail.Find("Name").GetComponent<UIT_TextExtend>();
-            m_Image = tf_Detail.Find("Image").GetComponent<Image>();
-            m_Equiping = tf_Detail.Find("Equiping");
-            m_unEquiping = tf_Detail.Find("UnEquiping");
-            tf_AmmoStatus = tf_Detail.Find("AmmoStatus");
+            tf_Empty = transform.Find("Empty");
+            tf_WeaponData = transform.Find("WeaponData");
+            m_Background = tf_WeaponData.Find("Background").GetComponent<Image>();
+            m_Image = tf_WeaponData.Find("Image").GetComponent<Image>();
+            m_Name = tf_WeaponData.Find("NameStatus/Name").GetComponent<UIT_TextExtend>();
+            tf_AmmoStatus = tf_WeaponData.Find("NameStatus/AmmoStatus");
             m_Clip = tf_AmmoStatus.Find("Clip").GetComponent<Text>();
             m_Total = tf_AmmoStatus.Find("Total").GetComponent<Text>();
-            tf_Detail.GetComponent<Button>().onClick.AddListener(OnWeaponDetailClick);
-            m_Action = transform.Find("ActionStatus").GetComponent<UIGI_ActionItemWeapon>();
+            tf_WeaponData.GetComponent<Button>().onClick.AddListener(OnWeaponDetailClick);
+            m_Action = transform.Find("ActionStatus").GetComponent<UIGI_ActionControlInfo>();
             m_Action.Init();
             m_AmmoStatusChecker = new TSpecialClasses.ValueChecker<int, int>(-1,-1);
         }
         public void UpdateInfo(WeaponBase weapon, bool equiping, Action OnWeaponActionClick)
         {
             m_weapon = weapon;
-            bool invalid = m_weapon == null;
-            tf_Detail.SetActivate(!invalid);
-            m_Action.SetInfo(invalid ? null : m_weapon.m_WeaponAction, OnWeaponActionClick);
-            if (invalid)
-            {
-                m_Background.sprite = UIManager.Instance.m_WeaponSprites[enum_WeaponRarity.Invalid.GetUIGameControlBackground()];
+            bool weaponInvalid = m_weapon == null;
+            bool actionInvalid = weaponInvalid || m_weapon.m_WeaponAction == null;
+            tf_Empty.SetActivate(weaponInvalid || actionInvalid);
+            tf_WeaponData.SetActivate(!weaponInvalid);
+            m_Action.SetActivate(!actionInvalid);
+            if (weaponInvalid)
                 return;
-            }
 
-            m_Equiping.SetActivate(equiping);
-            m_unEquiping.SetActivate(!equiping);
+            if (!actionInvalid)
+                m_Action.SetInfo(m_weapon.m_WeaponAction);
 
             m_Background.sprite = UIManager.Instance.m_WeaponSprites[m_weapon.m_WeaponInfo.m_Rarity.GetUIGameControlBackground()];
             m_Image.sprite = UIManager.Instance.m_WeaponSprites[m_weapon.m_WeaponInfo.m_Weapon.GetSpriteName()];
@@ -201,13 +199,13 @@ public class UIC_Control : UIControlBase {
         {
             if (m_weapon == null)
                 return;
+
             if (m_AmmoStatusChecker.Check(m_weapon.I_AmmoLeft, m_weapon.I_ClipAmount))
             {
                 m_Clip.text = m_weapon.I_AmmoLeft.ToString();
                 m_Total.text = m_weapon.I_ClipAmount.ToString();
                 LayoutRebuilder.ForceRebuildLayoutImmediate(tf_AmmoStatus as RectTransform);
             }
-            m_Action.Tick(m_weapon);
         }
 
         void OnWeaponDetailClick()
