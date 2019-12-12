@@ -198,7 +198,11 @@ public class UIC_CharacterStatus : UIControlBase
     {
         m_ActionExpireGrid.ClearGrid();
         for (int i = 0; i < infoManager.m_ActionPlaying.Count; i++)
+        {
+            if (infoManager.m_ActionPlaying[i].m_ActionType == enum_ActionType.PlayerEquipment)
+                continue;
             m_ActionExpireGrid.AddItem(i).SetInfo(infoManager.m_ActionPlaying[i]);
+        }
     }
 
     void OnEquipmentStatus(PlayerInfoManager infoManager)
