@@ -29,11 +29,12 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 081334a023db2704db167d2dfc323270, type: 3}
-    totalSpriteSurfaceArea: 1568798
+    totalSpriteSurfaceArea: 1699048
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: 6671b623e72080f41a9b698dff195d20, type: 3}
+  - {fileID: 21300000, guid: dc0d78f1f1d0485418c26a576a921bd0, type: 3}
   - {fileID: 21300000, guid: f707edb8147ad104b8e3b9a3fc7ed413, type: 3}
   - {fileID: 21300000, guid: d783a5f7194904445969c59766ac8443, type: 3}
   - {fileID: 21300000, guid: 103d90c5da42cc84aa6f39191e7c6866, type: 3}
@@ -48,6 +49,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: a9ee0bc7c49b98d41884f7111e26d74e, type: 3}
   - {fileID: 21300000, guid: e2aff809fde7b7d469149d996d359e8c, type: 3}
   - {fileID: 21300000, guid: c6b65ee3d246fd345b9ccd328a569d2e, type: 3}
+  - {fileID: 21300000, guid: 46e8bab1c7a8c3a46b551a27a5c4a95b, type: 3}
   - {fileID: 21300000, guid: fc8bda41e4b7e344481fcdef48b648bc, type: 3}
   - {fileID: 21300000, guid: 471f2c6bff785a049b3b37e24002cdae, type: 3}
   - {fileID: 21300000, guid: 702a32a3dc3147a47800c42865d41714, type: 3}
@@ -57,6 +59,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: e31910eada068664eaf61fcda1721a85, type: 3}
   m_PackedSpriteNamesToIndex:
   - background_card_select
+  - equipmentswap_bg2
   - result_title_win_EN
   - result_title_fail_EN
   - background_usecard_angle
@@ -71,6 +74,7 @@ SpriteAtlas:
   - level_Trade
   - level_ActionAdjustment
   - level_Reward
+  - equipmentswap_select
   - level_Unknown
   - backpack_shadow
   - health_2

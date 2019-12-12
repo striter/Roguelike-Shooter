@@ -14,14 +14,4 @@ public class SFXRelativeTrail : SFXRelativeBase {
         base.Play(_source);
         m_Trail.Clear();
     }
-    public override void OnPlay()
-    {
-        base.OnPlay();
-        m_Trail.enabled = true;
-    }
-    public override void OnStop()
-    {
-        base.OnStop();
-        m_Trail.enabled = false;
-    }
 }
