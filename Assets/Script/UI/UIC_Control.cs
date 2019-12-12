@@ -155,6 +155,7 @@ public class UIC_Control : UIControlBase {
         UIT_TextExtend m_Name;
         Image m_Background;
         Image m_Image;
+        Transform tf_Unequiping;
         Transform tf_AmmoStatus;
         Text m_Clip, m_Total;
         UIGI_ActionControlInfo m_Action;
@@ -166,6 +167,7 @@ public class UIC_Control : UIControlBase {
             tf_WeaponData = transform.Find("WeaponData");
             m_Background = tf_WeaponData.Find("Background").GetComponent<Image>();
             m_Image = tf_WeaponData.Find("Image").GetComponent<Image>();
+            tf_Unequiping = tf_WeaponData.Find("Unequiping");
             m_Name = tf_WeaponData.Find("NameStatus/Name").GetComponent<UIT_TextExtend>();
             tf_AmmoStatus = tf_WeaponData.Find("NameStatus/AmmoStatus");
             m_Clip = tf_AmmoStatus.Find("Clip").GetComponent<Text>();
@@ -180,14 +182,13 @@ public class UIC_Control : UIControlBase {
             m_weapon = weapon;
             bool weaponInvalid = m_weapon == null;
             bool actionInvalid = weaponInvalid || m_weapon.m_WeaponAction == null;
+            tf_Unequiping.SetActivate(!equiping);
             tf_Empty.SetActivate(weaponInvalid || actionInvalid);
             tf_WeaponData.SetActivate(!weaponInvalid);
             m_Action.SetActivate(!actionInvalid);
+            m_Action.SetInfo(m_weapon, OnWeaponActionClick);
             if (weaponInvalid)
                 return;
-
-            if (!actionInvalid)
-                m_Action.SetInfo(m_weapon.m_WeaponAction);
 
             m_Background.sprite = UIManager.Instance.m_WeaponSprites[m_weapon.m_WeaponInfo.m_Rarity.GetUIGameControlBackground()];
             m_Image.sprite = UIManager.Instance.m_WeaponSprites[m_weapon.m_WeaponInfo.m_Weapon.GetSpriteName()];
@@ -206,6 +207,7 @@ public class UIC_Control : UIControlBase {
                 m_Total.text = m_weapon.I_ClipAmount.ToString();
                 LayoutRebuilder.ForceRebuildLayoutImmediate(tf_AmmoStatus as RectTransform);
             }
+            m_Action.Tick(m_weapon.m_ActionEnergyRequirementLeft);
         }
 
         void OnWeaponDetailClick()
