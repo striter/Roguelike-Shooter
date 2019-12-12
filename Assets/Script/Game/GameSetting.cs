@@ -348,22 +348,10 @@ namespace GameSetting
         public static string GetAbilityBackground(bool cooldowning)=>cooldowning?"control_ability_bottom_cooldown":"control_ability_bottom_activate";
         public static string GetAbilitySprite(enum_PlayerCharacter character) => "control_ability_" + character;
         public static string GetSpriteName(this enum_PlayerWeapon weapon) => ((int)weapon).ToString();
-        public static string GetUIBGColor(this enum_ActionType type)
-        {
-            switch(type)
-            {
-                default: return "000000FF";
-                case enum_ActionType.WeaponAbility:
-                    return "FAC108FF";
-                case enum_ActionType.PlayerEquipment:
-                    return "B0FE00FF";
-            }
-        }
-
 
         public static string GetUIInteractBackground(this enum_WeaponRarity rarity) => "interact_" + rarity;
         public static string GetUIStatusShadowBackground(this enum_WeaponRarity rarity) => "weapon_shadow_" + rarity;
-        public static string GetUIGameControlBackground(this enum_WeaponRarity rarity) => "gamecontrol_" + rarity;
+        public static string GetUIGameControlBackground(this enum_WeaponRarity rarity) => "control_" + rarity;
         public static string GetUITextColor(this enum_WeaponRarity rarity)
         {
             switch (rarity)
@@ -459,7 +447,8 @@ namespace GameSetting
         UI_PlayerCommonStatus,
         UI_PlayerInteractStatus,
         UI_PlayerHealthStatus,
-        UI_PlayerExpireListStatus,
+        UI_PlayerActionExpireStatus,
+        UI_PlayerEquipmentStatus,
         UI_PlayerWeaponStatus,
 
         UI_CampDataStatus,
@@ -723,7 +712,7 @@ namespace GameSetting
         public int m_coins;
         public List<ActionSaveData> m_actionEquipment;
         public float m_curHealth;
-        public float m_maxArmorAdditive;
+        public float m_maxHealthAdditive;
         public float m_curArmor;
         public WeaponSaveData m_weapon1, m_weapon2;
         public bool m_weaponEquipingFirst;
@@ -733,7 +722,7 @@ namespace GameSetting
             m_coins = 0;
             m_curHealth = -1;
             m_curArmor = -1;
-            m_maxArmorAdditive = -1;
+            m_maxHealthAdditive = -1;
             m_actionEquipment = new List<ActionSaveData>();
             m_Stage = enum_StageLevel.Rookie;
             m_GameSeed = DateTime.Now.ToLongTimeString().ToString();
@@ -746,7 +735,7 @@ namespace GameSetting
         {
             m_coins = _player.m_PlayerInfo.m_Coins;
             m_curHealth = _player.m_Health.m_CurrentHealth;
-            m_maxArmorAdditive = _player.m_Health.m_MaxArmorAdditive;
+            m_maxHealthAdditive = _player.m_Health.m_MaxHealthAdditive;
             m_curArmor = _player.m_Health.m_CurrentArmor;
 
             m_weapon1 = WeaponSaveData.Create(_player.m_Weapon1);
@@ -1074,11 +1063,16 @@ namespace GameSetting
         public virtual float m_StartHealth => m_BaseHealth;
         public virtual float F_TotalEHP => m_CurrentHealth;
         public float F_HealthBaseScale => m_CurrentHealth / m_BaseHealth;
+        public float F_HealthMaxScale => m_CurrentHealth / m_MaxHealth;
+        public bool m_HealthFull => m_CurrentHealth >= m_MaxHealth;
+        public virtual float m_MaxHealth => m_BaseHealth;
         protected void DamageHealth(float health)
         {
             m_CurrentHealth -= health;
             if (m_CurrentHealth < 0)
                 m_CurrentHealth = 0;
+            else if (m_HealthFull)
+                m_CurrentHealth = m_MaxHealth;
         }
 
         protected Action<enum_HealthChangeMessage> OnHealthChanged;
@@ -1123,16 +1117,14 @@ namespace GameSetting
         public override float F_TotalEHP => m_CurrentArmor + base.F_TotalEHP;
         float m_HealthMultiplier = 1f;
         public override float m_StartHealth => base.m_StartHealth * m_HealthMultiplier;
-        public virtual float m_MaxArmor => m_StartArmor;
-        public bool m_ArmorFull => m_CurrentArmor >= m_MaxArmor;
         protected EntityCharacterBase m_Entity;
         protected void DamageArmor(float amount)
         {
             m_CurrentArmor -= amount;
             if (m_CurrentArmor < 0)
                 m_CurrentArmor = 0;
-            if (m_ArmorFull)
-                m_CurrentArmor = m_MaxArmor;
+            if (m_CurrentArmor > 99999)
+                m_CurrentArmor = 99999;
         }
 
         public EntityHealth(EntityCharacterBase entity, Action<enum_HealthChangeMessage> _OnHealthChanged) : base(_OnHealthChanged)
@@ -1205,18 +1197,31 @@ namespace GameSetting
                 {
                     case enum_DamageType.ArmorOnly:
                         {
-                            if (m_ArmorFull)
-                                return false;
                             DamageArmor(finalAmount);
                             OnHealthChanged(enum_HealthChangeMessage.ReceiveArmor);
                         }
                         break;
-                    case enum_DamageType.Basic:
                     case enum_DamageType.HealthOnly:
                         {
                             finalAmount *= healEnhance;
+                            if (m_HealthFull || finalAmount > 0)
+                                break;
                             DamageHealth(finalAmount);
                             OnHealthChanged(enum_HealthChangeMessage.ReceiveHealth);
+                        }
+                        break;
+                    case enum_DamageType.Basic:
+                        {
+                            float armorReceive = finalAmount - m_CurrentHealth + m_MaxHealth;
+                            DamageHealth(finalAmount);
+                            if (armorReceive > 0)
+                            {
+                                OnHealthChanged(enum_HealthChangeMessage.ReceiveHealth);
+                                return true;
+                            }
+
+                            DamageArmor(armorReceive);
+                            OnHealthChanged(enum_HealthChangeMessage.ReceiveArmor);
                         }
                         break;
                     default:
@@ -1232,20 +1237,20 @@ namespace GameSetting
 
     public class EntityPlayerHealth:EntityHealth
     {
-        public float m_MaxArmorAdditive { get; private set; }
-        public override float m_MaxArmor => base.m_MaxArmor + m_MaxArmorAdditive;
+        public float m_MaxHealthAdditive { get; private set; }
+        public override float m_MaxHealth => base.m_MaxHealth + m_MaxHealthAdditive;
         public EntityPlayerHealth(EntityCharacterBase entity, Action<enum_HealthChangeMessage> _OnHealthChanged) : base(entity,_OnHealthChanged)
         {
         }
-        public void AddMaxArmor(float maxArmorAdd)
+        public void AddMaxHealth(float maxHealthAdd)
         {
-            m_MaxArmorAdditive += maxArmorAdd;
+            m_MaxHealthAdditive += maxHealthAdd;
             OnHealthChanged(enum_HealthChangeMessage.Default);
         }
 
-        public void SetInfoData(float startHealth,float startArmor,float maxArmorAdditive)
+        public void SetInfoData(float startHealth,float startArmor,float maxHealthAdditive)
         {
-            m_MaxArmorAdditive = maxArmorAdditive;
+            m_MaxHealthAdditive = maxHealthAdditive;
             OnSetHealth(startHealth,startArmor);
         }
     }
@@ -1371,7 +1376,7 @@ namespace GameSetting
         protected virtual void Reset()
         {
             m_Effects.Traversal((enum_CharacterEffect type) => { m_Effects[type].Reset(); });
-            m_Expires.Traversal((ExpireBase expire) => { if (expire.m_ExpireType == enum_ExpireType.Buff) OnExpireElapsed(expire); }, true);
+            m_Expires.Traversal((ExpireBase expire) => { if (expire.m_ExpireType == enum_ExpireType.Buff) RemoveExpire(expire); }, true);
             UpdateEntityInfo();
         }
 
@@ -1396,14 +1401,14 @@ namespace GameSetting
         {
             expire.ExpireRefresh();
         }
-        protected virtual void OnExpireElapsed(ExpireBase expire)
+        protected virtual void RemoveExpire(ExpireBase expire)
         {
             m_Expires.Remove(expire);
             UpdateEntityInfo();
         }
         public void AddBuff(int sourceID, SBuff buffInfo)
         {
-            BuffBase buff = new BuffBase(sourceID, buffInfo, OnReceiveDamage, OnExpireElapsed);
+            BuffBase buff = new BuffBase(sourceID, buffInfo, OnReceiveDamage, RemoveExpire);
             switch (buff.m_RefreshType)
             {
                 case enum_ExpireRefreshType.AddUp:
@@ -1506,13 +1511,11 @@ namespace GameSetting
 
         public List<ActionBase> m_ActionPlaying { get; private set; } = new List<ActionBase>();
         public List<ActionBase> m_ActionEquipment { get; private set; } = new List<ActionBase>();
-        Action OnPlayerActionChange;
         public int m_Coins { get; private set; } = 0;
 
-        public PlayerInfoManager(EntityCharacterPlayer _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange, Action _OnPlayerActionChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
+        public PlayerInfoManager(EntityCharacterPlayer _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
         {
             m_Player = _attacher;
-            OnPlayerActionChange = _OnPlayerActionChange;
         }
 
         public override void OnActivate()
@@ -1536,14 +1539,6 @@ namespace GameSetting
             _actionEquiping.Traversal((ActionBase action) => { AddExpire(action); });
         }
 
-        public void UpgradeEquipment(int index)
-        {
-            m_ActionEquipment[index].Upgrade();
-        }
-        public void RemoveEquipment(int index)
-        {
-            m_ActionEquipment[index].ForceExpire();
-        }
         #region Action
         #region Interact
         public bool CheckRevive(ref RangeFloat reviveAmount)
@@ -1555,17 +1550,33 @@ namespace GameSetting
             }
             return false;
         }
-        #endregion
-        #region List Update
+
+        public void UpgradeEquipment(int index)
+        {
+            m_ActionEquipment[index].Upgrade();
+        }
+        public void RemoveEquipment(int index)
+        {
+            m_ActionEquipment[index].ForceExpire();
+        }
+
+        public bool b_haveEmptyEquipmentSlot => m_ActionEquipment.Count < 5;
+        public void SwapEquipment(int index,ActionBase targetAction)
+        {
+            RemoveExpire(m_ActionEquipment[index]);
+            AddExpire(targetAction);
+        }
         public void OnUseAction(ActionBase targetAction)
         {
-            if(targetAction.m_ActionType== enum_ActionType.WeaponAbility)
+            if (targetAction.m_ActionType == enum_ActionType.PlayerEquipment && !b_haveEmptyEquipmentSlot)
+                return;
+            if (targetAction.m_ActionType == enum_ActionType.WeaponAbility)
                 m_ActionPlaying.Traversal((ActionBase action) => { action.OnUseWeaponAbility(targetAction); });
             GameObjectManager.PlayMuzzle(m_Player.m_EntityID, m_Player.transform.position, Vector3.up, GameExpression.GetActionMuzzleIndex(targetAction.m_ActionType));
             AddExpire(targetAction);
         }
-
-
+        #endregion
+        #region List Update
         protected override void AddExpire(ExpireBase expire)
         {
             base.AddExpire(expire);
@@ -1573,25 +1584,38 @@ namespace GameSetting
                 return;
             ActionBase targetAction = expire as ActionBase;
             m_ActionPlaying.Add(targetAction);
-            if (targetAction.m_ActionType == enum_ActionType.PlayerEquipment)
-                m_ActionEquipment.Add(targetAction);
+            switch (targetAction.m_ActionType)
+            {
+                case enum_ActionType.PlayerEquipment:
+                    m_ActionEquipment.Add(targetAction);
+                    TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
+                    break;
+                case enum_ActionType.WeaponAbility:
+                    TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerActionExpireStatus, this);
+                    break;
+            }
 
-            targetAction.Activate(m_Player, OnExpireElapsed);
+            targetAction.Activate(m_Player, RemoveExpire);
             targetAction.OnActivate();
-
-            OnPlayerActionChange();
         }
 
-        protected override void OnExpireElapsed(ExpireBase expire)
+        protected override void RemoveExpire(ExpireBase expire)
         {
-            base.OnExpireElapsed(expire);
+            base.RemoveExpire(expire);
             if (expire.m_ExpireType != enum_ExpireType.Action)
                 return;
             ActionBase targetAction = expire as ActionBase;
             m_ActionPlaying.Remove(targetAction);
-            if (targetAction.m_ActionType == enum_ActionType.PlayerEquipment)
-                m_ActionPlaying.Remove(targetAction);
-            OnPlayerActionChange();
+            switch (targetAction.m_ActionType)
+            {
+                case enum_ActionType.PlayerEquipment:
+                    m_ActionEquipment.Remove(targetAction);
+                    TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
+                    break;
+                case enum_ActionType.WeaponAbility:
+                    TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerActionExpireStatus, this);
+                    break;
+            }
         }
         #endregion
         #region Data Update

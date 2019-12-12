@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class InteractContainerTrade : InteractContainer {
     public override enum_Interaction m_InteractType => enum_Interaction.ContainerTrade;
-    protected override bool B_RecycleOnInteract => true;
+    protected override bool B_SelfRecycleOnInteract => true;
     public int m_TradePrice { get; private set; }
     protected override bool B_CanInteract(EntityCharacterPlayer _interactor) => _interactor.m_PlayerInfo.m_Coins >= m_TradePrice;
     public void Play(int _tradePrice,InteractBase _interactItem)

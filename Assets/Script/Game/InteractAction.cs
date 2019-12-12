@@ -7,7 +7,8 @@ using UnityEngine;
 public class InteractAction : InteractGameBase {
     public override enum_Interaction m_InteractType => enum_Interaction.Action;
     public ActionBase m_Action { get; private set; }
-    protected override bool B_RecycleOnInteract => true;
+    protected override bool B_SelfRecycleOnInteract => false;
+    public override bool B_InteractOnce => false;
     Transform tf_PlayerEquipment, tf_WeaponAbility;
     public override void OnPoolItemInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
     {
@@ -25,9 +26,29 @@ public class InteractAction : InteractGameBase {
         return this;
     }
 
+    
     protected override void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)
     {
         base.OnInteractSuccessful(_interactTarget);
-        _interactTarget.OnPickupAction(m_Action);
+        SetInteractable(false);
+        if (m_Action.m_ActionType == enum_ActionType.PlayerEquipment && !_interactTarget.m_PlayerInfo.b_haveEmptyEquipmentSlot)
+        {
+            if (UIPageBase.m_PageOpening)
+                return;
+            GameUIManager.Instance.ShowPage<UI_EquipmentSwap>(true, 0f).Play(_interactTarget.m_PlayerInfo, m_Action, OnEquipmentSwapPage);
+        }
+        else
+        {
+            OnRecycle();
+            _interactTarget.OnActionInteract(m_Action);
+        }
+    }
+
+    void OnEquipmentSwapPage(bool confirm)
+    {
+        if (confirm)
+            OnRecycle();
+        else
+            SetInteractable(true);
     }
 }

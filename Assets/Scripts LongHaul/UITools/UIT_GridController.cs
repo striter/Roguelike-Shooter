@@ -94,112 +94,34 @@ public class UIT_GridControllerGridItemScrollView<T> : UIT_GridControllerGridIte
         }
     }
 }
-public class UIT_GridDefaultMulti<T> : UIT_GridControllerGridItem<T> where T : UIT_GridDefaultItem
+
+public interface IGridHighlight
 {
-    public int m_selectAmount { get; private set; }=-1;
-    public bool m_AllSelected => m_Selecting.Count == m_selectAmount;
-    public List<int> m_Selecting { get; private set; } = new List<int>();
+    void AttachSelectButton(Action<int> OnButtonClick);
+    void OnHighlight(bool highlight);
+}
+public class UIT_GridControlledSingleSelect<T> : UIT_GridControllerGridItem<T> where T : UIT_GridItem, IGridHighlight
+{
+    public int m_curSelecting { get; private set; } = -1;
     Action<int> OnItemSelect;
-    public UIT_GridDefaultMulti(Transform _transform,int _selectAmount=-1,Action<int> _OnItemSelect=null):base(_transform)
+    public UIT_GridControlledSingleSelect(Transform _transform,Action<int> _OnItemSelect) : base(_transform)
     {
-        m_selectAmount = _selectAmount;
         OnItemSelect = _OnItemSelect;
     }
-    public override void ClearGrid()
+    protected override T InitItem(Transform trans, int identity)
     {
-        base.ClearGrid();
-        m_Selecting.Clear();
-    }
-
-    public override T AddItem(int identity)
-    {
-        T item = base.AddItem(identity);
-        item.SetDefaultOnClick(OnItemClick);
-        return  item;
-    }
-    public void OnItemClick(int index)
-    {
-        if (!m_Selecting.Contains(index))
-        {
-            if ( m_Selecting.Count>= m_selectAmount)
-                return;
-            else
-                m_Selecting.Add(index);
-        }
-        else
-            m_Selecting.Remove(index);
-
-
-        foreach (int identity in m_Pool.m_ActiveItemDic.Keys)
-        {
-            GetItem(identity).SetHighLight(m_Selecting.Contains(identity));
-        }
-        OnItemSelect?.Invoke(index);
-    }
-}
-public class UIT_GridDefaultSingle<T> : UIT_GridControllerGridItem<T> where T : UIT_GridDefaultItem
-{
-    bool b_btnEnable;
-    bool b_doubleClickConfirm;
-    bool b_activeHighLight;
-    Action<int> OnItemSelected;
-    public int I_CurrentSelecting { get; private set; }
-    public UIT_GridDefaultSingle(Transform _transform, Action<int> _OnItemSelected = null, bool activeHighLight = true, bool doubleClickConfirm = false) : base(_transform)
-    {
-        b_btnEnable = true;
-        b_activeHighLight = activeHighLight;
-        b_doubleClickConfirm = doubleClickConfirm;
-        OnItemSelected = _OnItemSelected;
-        I_CurrentSelecting = -1;
-    }
-    public override void ClearGrid()
-    {
-        base.ClearGrid();
-        I_CurrentSelecting = -1;
-    }
-    public override T AddItem(int identity)
-    {
-        T item = base.AddItem(identity);
-        item.SetDefaultOnClick(OnItemClick);
+        T item = base.InitItem(trans, identity);
+        item.AttachSelectButton(OnItemClick);
+        item.OnHighlight(false);
         return item;
     }
-    public new void RemoveItem(int identity)
+    
+    public void OnItemClick(int index)
     {
-        base.RemoveItem(identity);
-        if (identity == I_CurrentSelecting)
-            I_CurrentSelecting = -1;
-    }
-    public void OnItemClick(int identity)
-    {
-        if (!b_btnEnable)
-            return;
-        if (b_doubleClickConfirm)
-        {
-            if (identity == I_CurrentSelecting)
-            {
-                OnItemSelected?.Invoke(identity);
-                return;
-            }
-        }
-        else
-        {
-            if (b_activeHighLight && identity == I_CurrentSelecting)
-            {
-                return;
-            }
-            OnItemSelected?.Invoke(identity);
-        }
-
-        if (b_activeHighLight && I_CurrentSelecting != -1)
-            GetItem(I_CurrentSelecting).SetHighLight(false);
-
-        I_CurrentSelecting = identity;
-
-        if (b_activeHighLight)
-            GetItem(I_CurrentSelecting).SetHighLight(true);
-    }
-    public void SetBtnsEnable(bool active)
-    {
-        b_btnEnable = active;
+        if (m_curSelecting != -1)
+            GetItem(m_curSelecting).OnHighlight(false);
+        m_curSelecting = index;
+        GetItem(m_curSelecting).OnHighlight(true);
+        OnItemSelect(index);
     }
 }

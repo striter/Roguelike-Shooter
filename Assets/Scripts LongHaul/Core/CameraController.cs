@@ -19,7 +19,6 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
     Ray ray_temp;
     Vector3 v3_temp;
     RaycastHit rh_temp;
-    float f_CameraDistance;
     public Camera m_Camera { get; private set; }
     public Transform tf_AttachTo { get; private set; }
     protected Transform tf_MainCamera;
@@ -50,7 +49,6 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
     protected void SetCameraOffset(Vector3 offset)
     {
         v3_localOffset = offset;
-        f_CameraDistance = tf_CameraOffset.localPosition.magnitude;
     }
     protected void SetCameraYawClamp(int minRotationClamp = -1, int maxRotationClamp = -1)
     {

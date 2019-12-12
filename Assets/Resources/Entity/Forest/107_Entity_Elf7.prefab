@@ -1162,12 +1162,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 275d93242000a1d47972944c1cd255ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  I_MaxHealth: 2400
+  I_MaxHealth: 1600
+  m_IsDead: 0
+  ExtraRendererForForest107Only: {fileID: 23295916408510408}
   E_SpawnType: 5
   I_DefaultArmor: 0
   F_MovementSpeed: 3
   F_AttackSpread: 0
-  ExtraRendererForForest107Only: {fileID: 23295916408510408}
   E_AnimatorIndex: 163
   F_AIChaseRange: 17
   F_AIAttackRange: 22

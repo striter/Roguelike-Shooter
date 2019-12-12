@@ -38,7 +38,7 @@ public class WeaponProjectileBase : WeaponBase
 
         if (m_WeaponInfo.m_PelletsPerShot == 1)
         {
-            FireOneBullet(damageInfo, spreadDirection);
+            FireOneBullet(damageInfo, spreadDirection.RotateDirection(Vector3.up,Random.Range(-m_WeaponInfo.m_Spread, m_WeaponInfo.m_Spread)));
         }
         else
         {

@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class InteractGameBase : InteractBase,ObjectPoolItem<enum_Interaction> {
 
-    protected virtual bool B_RecycleOnInteract => false;
+    protected virtual bool B_SelfRecycleOnInteract => false;
     public AudioClip AC_OnPlay, AC_OnInteract;
     public int I_MuzzleOnInteract;
 
@@ -24,8 +24,14 @@ public class InteractGameBase : InteractBase,ObjectPoolItem<enum_Interaction> {
     {
         base.OnInteractSuccessful(_interactTarget);
         GameObjectManager.PlayMuzzle(_interactTarget.m_EntityID, transform.position, transform.up, I_MuzzleOnInteract, AC_OnInteract);
-        if (B_RecycleOnInteract)
-            GameObjectManager.RecycleInteract(this);
+        if (B_SelfRecycleOnInteract)
+            OnRecycle();
+    }
+
+    protected void OnRecycle()
+    {
+        SetInteractable(false);
+        GameObjectManager.RecycleInteract(this);
     }
 
 }
