@@ -115,7 +115,6 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     }
     protected virtual void OnTriggerSuccessful()
     {
-
     }
 
     void CheckCanAutoReload()

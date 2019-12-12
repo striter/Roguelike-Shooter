@@ -263,7 +263,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     public void OnFireAddRecoil(float recoil)
     {
-        TPSCameraController.Instance.AddRecoil(new Vector3(0, (TCommon.RandomBool() ? 1 : -1)* recoil,0));
+        TPSCameraController.Instance.AddRecoil(recoil);
         m_Animator.Fire();
     }
 

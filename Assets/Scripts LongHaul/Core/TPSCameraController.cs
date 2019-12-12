@@ -10,8 +10,6 @@ public class TPSCameraController : CameraController
     public int I_YawMin = -90, I_YawMax = 90;
     public int I_ShakeParam;
     public float F_ReverseCheck;
-    public bool m_RecoilCompensate;
-    Vector3 v3_Recoil;
     Vector3 v3_Shake;
     float inverseCheck = 0;
     bool b_shakeReverse;
@@ -30,22 +28,6 @@ public class TPSCameraController : CameraController
             return v3_localOffset +(b_shakeReverse?-1:1)* v3_Shake;
         }
     }
-    protected override Quaternion CalculateSelfRotation()
-    {
-        if (m_RecoilCompensate)
-        {
-            v3_Recoil = Vector3.Lerp(v3_Recoil, Vector3.zero, Time.deltaTime*5f);
-            return Quaternion.Euler(f_Pitch + v3_Recoil.x, f_Yaw + v3_Recoil.y, f_Roll + v3_Recoil.z);
-        }
-        else
-        {
-            f_Pitch += v3_Recoil.x;
-            f_Yaw += v3_Recoil.y;
-            f_Roll += v3_Recoil.z;
-            v3_Recoil = Vector2.zero;
-            return Quaternion.Euler(f_Pitch, f_Yaw, f_Roll);
-        }
-    }
     protected override void Awake()
     {
         ninstance = this;
@@ -60,7 +42,7 @@ public class TPSCameraController : CameraController
         base.SetCameraOffset(useOffset ? TPSOffset : Vector3.zero);
         base.Attach(target,selfRotation);
     }
-    public void AddRecoil(Vector3 _recoil)=> v3_Recoil += _recoil;
+    public void AddRecoil(float recoilAmount)=> v3_Shake += Random.insideUnitSphere * recoilAmount;
     public void AddShake(float shakeAmount) => v3_Shake += Random.insideUnitSphere * shakeAmount;
     public void SetImpact(Vector3 impactDirection)
     {
