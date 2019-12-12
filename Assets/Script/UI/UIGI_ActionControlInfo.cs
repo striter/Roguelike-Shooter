@@ -22,6 +22,7 @@ public class UIGI_ActionControlInfo : UIGI_ActionBase {
         OnClick = _OnClick;
         if (weapon==null||weapon.m_WeaponAction == null)
             return;
+        base.SetInfo(weapon.m_WeaponAction);
         m_Name.localizeKey = weapon.m_WeaponAction.GetNameLocalizeKey();
     }
 
