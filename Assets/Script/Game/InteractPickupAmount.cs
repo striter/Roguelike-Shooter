@@ -4,11 +4,11 @@ using UnityEngine;
 using GameSetting;
 
 public class InteractPickupAmount : InteractPickup {
-    public float m_Amount { get; private set; }
+    public int m_Amount { get; private set; }
     protected bool m_OutOfBattle { get; private set; }
     float m_speed;
     Transform m_moveTowards;
-    public virtual InteractPickupAmount Play(float amount, Transform moveTowards)
+    public virtual InteractPickupAmount Play(int amount, Transform moveTowards)
     {
         base.Play();
         m_speed = 0;
@@ -25,6 +25,11 @@ public class InteractPickupAmount : InteractPickup {
     {
         m_moveTowards = null;
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
+    }
+    protected override void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)
+    {
+        base.OnInteractSuccessful(_interactTarget);
+        _interactTarget.OnInteractPickup(this,m_Amount);
     }
 
     void OnBattleFinish()

@@ -377,6 +377,26 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
         OnInteractStatus();
     }
+    public void OnInteractPickup(InteractPickup pickup,int amount)
+    {
+        switch (pickup.m_InteractType)
+        {
+            default:
+                Debug.LogError("Invalid Convertions Here!");
+                return;
+            case enum_Interaction.PickupArmor:
+                m_HitCheck.TryHit(new DamageInfo(-amount, enum_DamageType.ArmorOnly, DamageDeliverInfo.Default(m_EntityID)));
+                break;
+            case enum_Interaction.PickupCoin:
+                m_PlayerInfo.OnCoinsReceive(amount);
+                break;
+            case enum_Interaction.PickupHealth:
+            case enum_Interaction.PickupHealthPack:
+                m_HitCheck.TryHit(new DamageInfo(-amount, enum_DamageType.HealthOnly, DamageDeliverInfo.Default(m_EntityID)));
+                break;
+        }
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerInteractPickup, pickup.transform.position, pickup.m_InteractType, amount);
+    }
     #endregion
     #region Action
     public bool OnActionInteract(ActionBase action)
