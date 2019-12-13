@@ -35,6 +35,7 @@ public class GameManager : GameManagerBase
     public int F5_TestActionNormal = 10001;
     public int F6_TestActionOutstanding = 10001;
     public int F7_TestActionEpic = 10001;
+    public int F8_TestUseAction = 10001;
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.BackQuote))
@@ -95,6 +96,8 @@ public class GameManager : GameManagerBase
             GameObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action, hit.point).Play(ActionDataManager.CreateAction(F6_TestActionOutstanding, enum_ActionRarity.OutStanding));
         if (Input.GetKeyDown(KeyCode.F7) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
             GameObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action, hit.point).Play(ActionDataManager.CreateAction(F7_TestActionEpic, enum_ActionRarity.Epic));
+        if (Input.GetKeyDown(KeyCode.F8))
+            m_LocalPlayer.m_PlayerInfo.OnUseAction(ActionDataManager.CreateAction(F8_TestUseAction, enum_ActionRarity.Epic));
 
         if (Input.GetKeyDown(KeyCode.Keypad1) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
             GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupCoin, LevelManager.NavMeshPosition(hit.point, false), LevelManager.Instance.m_InteractParent).Play(1, m_LocalPlayer.transform);
@@ -783,7 +786,8 @@ public static class GameObjectManager
             ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Register(weaponData.m_Weapon, preset, 1);
         }
         WeaponBase targetWeapon = ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Spawn(weaponData.m_Weapon, toTrans ? toTrans : TF_Entity);
-        targetWeapon.SetWeaponAction(ActionDataManager.CreateAction(weaponData.m_WeaponAction), weaponData.m_WeaponEnergy);
+        ActionBase action = ActionDataManager.CreateAction(weaponData.m_WeaponAction);
+        targetWeapon.SetWeaponAction(action==null?null:(action as ActionAbility), weaponData.m_WeaponEnergy);
         return targetWeapon;
     }
     public static void RecycleWeapon(WeaponBase weapon)=> ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Recycle(weapon.m_WeaponInfo.m_Weapon,weapon);

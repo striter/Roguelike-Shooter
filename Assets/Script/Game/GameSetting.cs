@@ -308,8 +308,8 @@ namespace GameSetting
             switch (type)
             {
                 default: Debug.LogError("Invalid Pharse Here!"+type.ToString());  return "";
-                case enum_ActionType.WeaponAbility: return "action_icon_basic";
-                case enum_ActionType.PlayerEquipment: return "action_icon_equipment";
+                case enum_ActionType.Ability: return "action_icon_basic";
+                case enum_ActionType.Equipment: return "action_icon_equipment";
             }
         }
         public static string GetNameBGSprite(this enum_ActionType type)
@@ -317,8 +317,8 @@ namespace GameSetting
             switch (type)
             {
                 default: Debug.LogError("Invalid Pharse Here!" + type.ToString()); return "";
-                case enum_ActionType.WeaponAbility: return "action_bottom_basic";
-                case enum_ActionType.PlayerEquipment: return "action_bottom_equipment";
+                case enum_ActionType.Ability: return "action_bottom_basic";
+                case enum_ActionType.Equipment: return "action_bottom_equipment";
             }
         }
         public static string GetCostBGSprite(this enum_ActionType type)
@@ -326,8 +326,8 @@ namespace GameSetting
             switch (type)
             {
                 default: Debug.LogError("Invalid Pharse Here!" + type.ToString()); return "";
-                case enum_ActionType.WeaponAbility: return "action_cost_basic";
-                case enum_ActionType.PlayerEquipment: return "action_cost_equipment";
+                case enum_ActionType.Ability: return "action_cost_basic";
+                case enum_ActionType.Equipment: return "action_cost_equipment";
             }
         }
 
@@ -507,7 +507,7 @@ namespace GameSetting
 
     public enum enum_ActionRarity { Invalid = -1, Normal = 1, OutStanding = 2, Epic = 3, }
 
-    public enum enum_ActionType { Invalid = -1, WeaponAbility = 1,PlayerEquipment=2,}
+    public enum enum_ActionType { Invalid = -1, Ability = 1,Equipment=2,}
 
     public enum enum_EffectAttach { Invalid = -1,  Head = 1, Feet = 2, WeaponModel = 3,}
 
@@ -1567,9 +1567,9 @@ namespace GameSetting
         }
         public void OnUseAction(ActionBase targetAction)
         {
-            if (targetAction.m_ActionType == enum_ActionType.PlayerEquipment && !b_haveEmptyEquipmentSlot)
+            if (targetAction.m_ActionType == enum_ActionType.Equipment && !b_haveEmptyEquipmentSlot)
                 return;
-            if (targetAction.m_ActionType == enum_ActionType.WeaponAbility)
+            if (targetAction.m_ActionType == enum_ActionType.Ability)
                 m_ActionPlaying.Traversal((ActionBase action) => { action.OnUseWeaponAbility(targetAction); });
             GameObjectManager.PlayMuzzle(m_Player.m_EntityID, m_Player.transform.position, Vector3.up, GameExpression.GetActionMuzzleIndex(targetAction.m_ActionType));
             AddExpire(targetAction);
@@ -1585,11 +1585,11 @@ namespace GameSetting
             m_ActionPlaying.Add(targetAction);
             switch (targetAction.m_ActionType)
             {
-                case enum_ActionType.PlayerEquipment:
+                case enum_ActionType.Equipment:
                     m_ActionEquipment.Add(targetAction);
                     TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
                     break;
-                case enum_ActionType.WeaponAbility:
+                case enum_ActionType.Ability:
                     TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerActionExpireStatus, this);
                     break;
             }
@@ -1607,11 +1607,11 @@ namespace GameSetting
             m_ActionPlaying.Remove(targetAction);
             switch (targetAction.m_ActionType)
             {
-                case enum_ActionType.PlayerEquipment:
+                case enum_ActionType.Equipment:
                     m_ActionEquipment.Remove(targetAction);
                     TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
                     break;
-                case enum_ActionType.WeaponAbility:
+                case enum_ActionType.Ability:
                     TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerActionExpireStatus, this);
                     break;
             }
@@ -1848,7 +1848,6 @@ namespace GameSetting
         public EntityCharacterPlayer m_ActionEntity { get; private set; }
         public enum_ActionRarity m_rarity { get; private set; } = enum_ActionRarity.Invalid;
         public int m_Identity { get; private set; } = -1;
-        public virtual int I_Cost => -1;
         public virtual bool B_ActionAble => true;
         public virtual enum_ActionType m_ActionType => enum_ActionType.Invalid;
         public virtual float Value1 => 0;
@@ -1891,6 +1890,23 @@ namespace GameSetting
         public virtual void OnMove(float distsance) { }
         public virtual bool OnCheckRevive(ref RangeFloat amount) { return false; }
         #endregion
+    }
+
+    public class ActionAbility : ActionBase
+    {
+        public override enum_ActionType m_ActionType => enum_ActionType.Ability;
+        public virtual int I_Cost => -1;
+        public ActionAbility(int _identity, enum_ActionRarity _level):base(_identity,_level)
+        {
+        }
+    }
+
+    public class ActionEquipment : ActionBase
+    {
+        public override enum_ActionType m_ActionType => enum_ActionType.Equipment;
+        public ActionEquipment(int _identity, enum_ActionRarity _level) : base(_identity, _level)
+        {
+        }
     }
     #endregion
 
@@ -2432,7 +2448,93 @@ namespace GameSetting
             m_Button.interactable = interactable;
         }
     }
+    public class UIC_ActionData
+    {
+        public Transform transform { get; private set; }
 
+        Image m_Image;
+        UIC_RarityLevel m_Rarity;
+        public UIC_ActionData(Transform _transform)
+        {
+            transform = _transform;
+            m_Image = transform.Find("Mask/Image").GetComponent<Image>();
+            m_Rarity = new UIC_RarityLevel(transform.Find("Rarity"));
+        }
+        public virtual void SetInfo(ActionBase actionInfo)
+        {
+            m_Image.sprite = GameUIManager.Instance.m_ActionSprites[actionInfo.m_Index.ToString()];
+            m_Rarity.SetRarity(actionInfo.m_rarity);
+        }
+    }
+
+    public class UIC_ActionNameData:UIC_ActionData
+    {
+        UIT_TextExtend m_Name;
+        public UIC_ActionNameData(Transform _transform):base(_transform)
+        {
+            m_Name = transform.Find("Name").GetComponent<UIT_TextExtend>();
+        }
+        public override void SetInfo(ActionBase actionInfo)
+        {
+            base.SetInfo(actionInfo);
+            m_Name.localizeKey = actionInfo.GetNameLocalizeKey();
+        }
+    }
+
+    public class UIC_ActionNameFormatIntro : UIC_ActionNameData
+    {
+        UIT_TextExtend  m_Intro;
+
+        public UIC_ActionNameFormatIntro(Transform _transform) : base(_transform)
+        {
+
+            m_Intro = transform.Find("Intro").GetComponent<UIT_TextExtend>();
+        }
+        public override void SetInfo(ActionBase actionInfo)
+        {
+            base.SetInfo(actionInfo);
+            m_Intro.formatText(actionInfo.GetIntroLocalizeKey(), string.Format("<color=#FFDA6BFF>{0}</color>", actionInfo.F_Duration), string.Format("<color=#FFDA6BFF>{0}</color>", actionInfo.Value1), string.Format("<color=#FFDA6BFF>{0}</color>", actionInfo.Value2), string.Format("<color=#FFDA6BFF>{0}</color>", actionInfo.Value3));
+        }
+    }
+
+    public class UIC_WeaponActionData : UIC_ActionNameData {
+        Image m_Fill;
+        Transform tf_Ready;
+        public UIC_WeaponActionData(Transform _transform) : base(_transform)
+        {
+            m_Fill = transform.Find("Fill").GetComponent<Image>();
+            tf_Ready = transform.Find("Ready");
+        }
+        public void Tick(float fill)
+        {
+            m_Fill.fillAmount = fill;
+            tf_Ready.SetActivate(fill <=0);
+        }
+
+    }
+
+    public class UIC_ActionInteractData : UIC_ActionNameFormatIntro
+    {
+        UIT_TextExtend m_Cost;
+        public UIC_ActionInteractData(Transform _transform) : base(_transform)
+        {
+            m_Cost = transform.Find("Name/Cost").GetComponent<UIT_TextExtend>();
+        }
+        public override void SetInfo(ActionBase actionInfo)
+        {
+            base.SetInfo(actionInfo);
+            switch (actionInfo.m_ActionType)
+            {
+                case enum_ActionType.Equipment:
+                    m_Cost.SetActivate(false);
+                    break;
+                case enum_ActionType.Ability:
+                    m_Cost.SetActivate(true);
+                    m_Cost.text = (actionInfo as ActionAbility).I_Cost.ToString();
+                    break;
+            }
+        }
+    }
 
     public class UIC_WeaponData
     {
@@ -2458,6 +2560,7 @@ namespace GameSetting
             m_Background.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Rarity.GetUIGameControlBackground()];
             m_Image.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Weapon.GetSpriteName()];
             m_Name.autoLocalizeText = weapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
+            m_Name.color = TCommon.GetHexColor( weapon.m_WeaponInfo.m_Rarity.GetUITextColor());
         }
         public void UpdateAmmoInfo(int ammoLeft,int clipAmount)
         {

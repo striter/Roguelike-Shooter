@@ -50,7 +50,7 @@ public class UIManager :UIManagerBase,ISingleCoroutine
     {
         m_PlayerStatus = ShowControls<UIC_CharacterStatus>().SetInGame(inGame);
         m_UIControl = ShowControls<UIC_Control>().SetInGame(inGame);
-        ShowControls<UIC_PlayerInteract>();
+        ShowControls<UIC_PlayerInteract>().Play(()=> { m_UIControl.OnMainButtonDown(true,Vector2.zero); });     //?
         m_Indicates = ShowControls<UIC_Indicates>();
     }
 

@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class UIC_Control : UIControlBase {
@@ -13,7 +14,7 @@ public class UIC_Control : UIControlBase {
     EntityCharacterPlayer m_Player;
     Button btn_ActionStorage;
     Image m_setting;
-    WeaponData m_weapon1Data, m_weapon2Data;
+    ControlWeaponData m_weapon1Data, m_weapon2Data;
     Action OnReload,OnSwap, OnCharacterAbility;
     Action<bool> OnWeaponAction;
     Action<bool> OnMainDown;
@@ -36,8 +37,8 @@ public class UIC_Control : UIControlBase {
 
         btn_ActionStorage = tf_InGame.Find("ActionStorage").GetComponent<Button>();
         btn_ActionStorage.onClick.AddListener(OnActionStorageClick);
-        m_weapon1Data = new WeaponData(tf_InGame.Find("Weapon1Data"));
-        m_weapon2Data = new WeaponData(tf_InGame.Find("Weapon2Data"));
+        m_weapon1Data = new ControlWeaponData(tf_InGame.Find("Weapon1Data"),OnWeaponFirstActionClick);
+        m_weapon2Data = new ControlWeaponData(tf_InGame.Find("Weapon2Data"),OnWeaponSecondActionClick);
 
         m_TouchDelta = transform.GetComponent<TouchDeltaManager>();
         OnOptionsChanged();
@@ -106,7 +107,7 @@ public class UIC_Control : UIControlBase {
     }
 
     protected void OnReloadButtonDown() => OnReload?.Invoke();
-    protected void OnMainButtonDown(bool down, Vector2 pos) => OnMainDown?.Invoke(down);
+    public void OnMainButtonDown(bool down, Vector2 pos) => OnMainDown?.Invoke(down);
     protected void OnSwapButtonDown() => OnSwap?.Invoke();
     protected void OnWeaponFirstActionClick() => OnWeaponAction?.Invoke(true);
     protected void OnWeaponSecondActionClick() => OnWeaponAction?.Invoke(false);
@@ -142,57 +143,43 @@ public class UIC_Control : UIControlBase {
 
     void OnWeaponStatus(EntityCharacterPlayer _player)
     {
-        m_weapon1Data.UpdateInfo(_player.m_Weapon1, _player.m_weaponEquipingFirst,OnWeaponFirstActionClick);
-        m_weapon2Data.UpdateInfo(_player.m_Weapon2, !_player.m_weaponEquipingFirst,OnWeaponSecondActionClick);
+        m_weapon1Data.UpdateInfo(_player.m_Weapon1, _player.m_weaponEquipingFirst);
+        m_weapon2Data.UpdateInfo(_player.m_Weapon2, !_player.m_weaponEquipingFirst);
     }
 
-    class WeaponData
+    class ControlWeaponData
     {
         WeaponBase m_weapon;
         Transform transform;
-        Transform tf_Empty;
-        Transform tf_WeaponData;
-        UIT_TextExtend m_Name;
-        Image m_Background;
-        Image m_Image;
-        Transform tf_Unequiping;
-        Transform tf_AmmoStatus;
-        Text m_Clip, m_Total;
-        UIGI_ActionControlInfo m_Action;
+        Transform tf_Equiping, tf_Unequiping;
+        UIC_WeaponData m_weaponData;
+        UIC_WeaponActionData m_ActionData;
         TSpecialClasses.ValueChecker<int, int> m_AmmoStatusChecker;
-        public WeaponData(Transform _transform)
+        public ControlWeaponData(Transform _transform,UnityAction OnWeaponActionClick)
         {
             transform = _transform;
-            tf_Empty = transform.Find("Empty");
-            tf_WeaponData = transform.Find("WeaponData");
-            m_Background = tf_WeaponData.Find("Background").GetComponent<Image>();
-            m_Image = tf_WeaponData.Find("Image").GetComponent<Image>();
-            tf_Unequiping = tf_WeaponData.Find("Unequiping");
-            m_Name = tf_WeaponData.Find("NameStatus/Name").GetComponent<UIT_TextExtend>();
-            tf_AmmoStatus = tf_WeaponData.Find("NameStatus/AmmoStatus");
-            m_Clip = tf_AmmoStatus.Find("Clip").GetComponent<Text>();
-            m_Total = tf_AmmoStatus.Find("Total").GetComponent<Text>();
-            tf_WeaponData.GetComponent<Button>().onClick.AddListener(OnWeaponDetailClick);
-            m_Action = transform.Find("ActionStatus").GetComponent<UIGI_ActionControlInfo>();
-            m_Action.Init();
-            m_AmmoStatusChecker = new TSpecialClasses.ValueChecker<int, int>(-1,-1);
+            m_ActionData = new UIC_WeaponActionData(transform.Find("ActionStatus"));
+            m_weaponData = new UIC_WeaponData(transform.Find("WeaponData"));
+            tf_Equiping = m_weaponData.transform.Find("Equiping");
+            tf_Unequiping = m_weaponData.transform.Find("Unequiping");
+            m_weaponData.transform.GetComponent<Button>().onClick.AddListener(OnWeaponDetailClick);
+            m_AmmoStatusChecker = new TSpecialClasses.ValueChecker<int, int>(-1, -1);
+            m_ActionData.transform.GetComponent<Button>().onClick.AddListener(OnWeaponActionClick);
         }
-        public void UpdateInfo(WeaponBase weapon, bool equiping, Action OnWeaponActionClick)
+        public void UpdateInfo(WeaponBase weapon, bool equiping)
         {
             m_weapon = weapon;
+            m_AmmoStatusChecker.Check(-1, -1);
             bool weaponInvalid = m_weapon == null;
             bool actionInvalid = weaponInvalid || m_weapon.m_WeaponAction == null;
             tf_Unequiping.SetActivate(!equiping);
-            tf_Empty.SetActivate(weaponInvalid || actionInvalid);
-            tf_WeaponData.SetActivate(!weaponInvalid);
-            m_Action.SetActivate(!actionInvalid);
-            m_Action.SetInfo(m_weapon, OnWeaponActionClick);
+            tf_Equiping.SetActivate(equiping);
+            m_weaponData.transform.SetActivate(!weaponInvalid);
+            m_ActionData.transform.SetActivate(!actionInvalid);
+            if (!actionInvalid) m_ActionData.SetInfo(m_weapon.m_WeaponAction);
             if (weaponInvalid)
                 return;
-
-            m_Background.sprite = UIManager.Instance.m_WeaponSprites[m_weapon.m_WeaponInfo.m_Rarity.GetUIGameControlBackground()];
-            m_Image.sprite = UIManager.Instance.m_WeaponSprites[m_weapon.m_WeaponInfo.m_Weapon.GetSpriteName()];
-            m_Name.autoLocalizeText = m_weapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
+            m_weaponData.UpdateInfo(weapon);
             UpdateAmmoStatus();
         }
         
@@ -201,13 +188,9 @@ public class UIC_Control : UIControlBase {
             if (m_weapon == null)
                 return;
 
-            if (m_AmmoStatusChecker.Check(m_weapon.I_AmmoLeft, m_weapon.I_ClipAmount))
-            {
-                m_Clip.text = m_weapon.I_AmmoLeft.ToString();
-                m_Total.text = m_weapon.I_ClipAmount.ToString();
-                LayoutRebuilder.ForceRebuildLayoutImmediate(tf_AmmoStatus as RectTransform);
-            }
-            m_Action.Tick(m_weapon.m_ActionEnergyRequirementLeft);
+            if (m_AmmoStatusChecker.Check(m_weapon.I_AmmoLeft, m_weapon.I_ClipAmount)) 
+                m_weaponData.UpdateAmmoInfo(m_weapon.I_AmmoLeft,m_weapon.I_ClipAmount); 
+            m_ActionData.Tick(m_weapon.m_ActionEnergyRequirementLeft);
         }
 
         void OnWeaponDetailClick()

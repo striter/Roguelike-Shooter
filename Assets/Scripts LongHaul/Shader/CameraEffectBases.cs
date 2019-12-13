@@ -347,12 +347,12 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
     Camera m_RenderCamera;
     RenderTexture m_RenderTexture;
     Shader m_RenderShader;
-    public PE_Blurs m_GaussianBlur { get; private set; }
+    public PE_Blurs m_Blur { get; private set; }
     public override void OnSetEffect(CameraEffectManager _manager)
     {
         base.OnSetEffect(_manager);
-        m_GaussianBlur = new PE_Blurs();
-        m_GaussianBlur.OnSetEffect(_manager);
+        m_Blur = new PE_Blurs();
+        m_Blur.OnSetEffect(_manager);
         m_RenderShader = Shader.Find("Hidden/PostEffect/PE_BloomSpecific_Render");
         if (m_RenderShader == null)
             Debug.LogError("Null Shader Found!");
@@ -373,7 +373,7 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
         m_RenderCamera.RenderWithShader(m_RenderShader, "RenderType");
-        m_GaussianBlur.OnRenderImage(m_RenderTexture, m_RenderTexture);     //Blur
+        m_Blur.OnRenderImage(m_RenderTexture, m_RenderTexture);     //Blur
         m_Material.SetTexture("_RenderTex", m_RenderTexture);
         Graphics.Blit(source, destination, m_Material, 1);        //Mix
     }
@@ -381,7 +381,7 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
     {
         base.OnDestroy();
         GameObject.Destroy(m_RenderCamera.gameObject);
-        m_GaussianBlur.OnDestroy();
+        m_Blur.OnDestroy();
         RenderTexture.ReleaseTemporary(m_RenderTexture);
     }
 }

@@ -21,8 +21,8 @@ public class InteractAction : InteractGameBase {
     {
         base.Play();
         m_Action = _action;
-        tf_WeaponAbility.SetActivate(_action.m_ActionType == enum_ActionType.WeaponAbility);
-        tf_PlayerEquipment.SetActivate(_action.m_ActionType == enum_ActionType.PlayerEquipment);
+        tf_WeaponAbility.SetActivate(_action.m_ActionType == enum_ActionType.Ability);
+        tf_PlayerEquipment.SetActivate(_action.m_ActionType == enum_ActionType.Equipment);
         return this;
     }
 
@@ -31,7 +31,7 @@ public class InteractAction : InteractGameBase {
     {
         base.OnInteractSuccessful(_interactTarget);
         SetInteractable(false);
-        if (m_Action.m_ActionType == enum_ActionType.PlayerEquipment && !_interactTarget.m_PlayerInfo.b_haveEmptyEquipmentSlot)
+        if (m_Action.m_ActionType == enum_ActionType.Equipment && !_interactTarget.m_PlayerInfo.b_haveEmptyEquipmentSlot)
         {
             if (UIPageBase.m_PageOpening)
                 return;

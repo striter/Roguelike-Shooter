@@ -5,43 +5,44 @@ using UnityEngine;
 using TSpecialClasses;
 using UnityEngine.UI;
 
-public class UIC_PlayerInteract : UIControlBase {
+public class UIC_PlayerInteract : UIControlBase
+{
+    InteractBase m_interact;
     RectTransform rtf_InteractData;
     Transform tf_Container;
-    Transform tf_TradePrice;
+    Transform tf_Top;
+    Transform tf_Weapon, tf_Action;
+    Transform tf_Equipment, tf_Ability;
+
+    Transform tf_Bottom;
+    Transform tf_Trade, tf_Pickup;
     UIT_TextExtend m_TradePrice;
-    Transform tf_Weapon;
-    Image m_WeaponBackground,m_WeaponImage;
-    UIT_TextExtend m_WeaponName;
-    Transform tf_Action;
-    UIT_TextExtend m_ActionTitle;
-    UIGI_ActionItemBase m_Action;
-    Transform tf_Item;
-    UIT_TextExtend m_ItemName;
-    Transform tf_Intro;
-    UI_WeaponActionHUD m_WeaponActionHUD;
-    UIT_TextExtend m_Intro;
-    InteractBase m_interact;
+    UIC_ActionInteractData m_ActionData;
+    Transform tf_WeaponData;
+    UIC_WeaponActionData m_weaponActionData;
+    UIC_WeaponData m_weaponData;
+
     protected override void Init()
     {
         base.Init();
         rtf_InteractData = transform.Find("InteractData").GetComponent<RectTransform>();
         tf_Container = rtf_InteractData.Find("Container");
-        tf_TradePrice = tf_Container.Find("TradePrice");
-        m_TradePrice = tf_TradePrice.Find("Amount").GetComponent<UIT_TextExtend>();
-        tf_Weapon = tf_Container.Find("Weapon");
-        m_WeaponBackground = tf_Weapon.Find("Background").GetComponent<Image>();
-        m_WeaponImage = tf_Weapon.Find("WeaponImage").GetComponent<Image>();
-        m_WeaponName = tf_Weapon.Find("WeaponName").GetComponent<UIT_TextExtend>();
-        tf_Action = tf_Container.Find("Action");
-        m_ActionTitle = tf_Action.Find("Title").GetComponent<UIT_TextExtend>();
-        m_Action = tf_Action.Find("ActionItem").GetComponent<UIGI_ActionItemBase>();
-        m_Action.Init();
-        tf_Item = tf_Container.Find("Item");
-        m_ItemName = tf_Item.Find("Name").GetComponent<UIT_TextExtend>();
-        tf_Intro = tf_Container.Find("Intro");
-        m_WeaponActionHUD = new UI_WeaponActionHUD(tf_Intro.Find("WeaponAction"));
-        m_Intro = tf_Intro.Find("Intro").GetComponent<UIT_TextExtend>();
+        tf_Top = tf_Container.Find("InteractTop");
+        tf_Weapon = tf_Top.Find("Weapon");
+        tf_Action = tf_Top.Find("Action");
+        tf_Ability = tf_Action.Find("Ability");
+        tf_Equipment = tf_Action.Find("Equipment");
+
+        tf_Bottom = tf_Container.Find("InteractBottom");
+        tf_Trade = tf_Bottom.Find("Trade");
+        m_TradePrice = tf_Trade.Find("Amount").GetComponent<UIT_TextExtend>();
+        tf_Pickup = tf_Bottom.Find("Pickup");
+        tf_WeaponData = tf_Container.Find("WeaponData");
+        m_weaponData = new UIC_WeaponData(tf_WeaponData.Find("Weapon"));
+        m_weaponActionData = new UIC_WeaponActionData(tf_WeaponData.Find("Action"));
+
+        m_ActionData = new UIC_ActionInteractData(tf_Container.Find("ActionData"));
+
         rtf_InteractData.SetActivate(false);
         TBroadCaster<enum_BC_UIStatus>.Add<InteractBase>(enum_BC_UIStatus.UI_PlayerInteractStatus,OnInteractStatus);
     }
@@ -51,83 +52,87 @@ public class UIC_PlayerInteract : UIControlBase {
         TBroadCaster<enum_BC_UIStatus>.Remove<InteractBase>(enum_BC_UIStatus.UI_PlayerInteractStatus, OnInteractStatus);
     }
 
+    public void Play(UnityEngine.Events.UnityAction OnInteractClick)
+    {
+        tf_Bottom.Find("Button").GetComponent<Button>().onClick.AddListener(OnInteractClick);
+    }
+
     void OnInteractStatus(InteractBase _interact)
     {
         m_interact = _interact;
-        rtf_InteractData.SetActivate(m_interact != null);
-        if (!m_interact)
-            return;
-        rtf_InteractData.SetWorldViewPortAnchor(m_interact.transform.position, CameraController.Instance.m_Camera);
 
-        bool tradeOn = false;
-        InteractBase interactInfo = m_interact;
-        switch (m_interact.m_InteractType)
+        int tradePrice = -1;
+        InteractBase targetItem = null;
+        if (m_interact != null)
         {
-            case enum_Interaction.ContainerBattle:
-                interactInfo = (m_interact as InteractContainerBattle).m_TradeInteract;
-                break;
-            case enum_Interaction.ContainerTrade:
-                {
-                    tradeOn = true;
+            switch (m_interact.m_InteractType)
+            {
+                case enum_Interaction.Action:
+                case enum_Interaction.Weapon:
+                    targetItem = m_interact;
+                    break;
+                case enum_Interaction.ContainerTrade:
                     InteractContainerTrade trade = m_interact as InteractContainerTrade;
-                    m_TradePrice.text = trade.m_TradePrice.ToString();
-                    interactInfo = trade.m_TradeInteract;
-                }
-                break;
+                    tradePrice = trade.m_TradePrice;
+                    targetItem = trade.m_TradeInteract;
+                    break;
+                case enum_Interaction.ContainerBattle:
+                    InteractContainerBattle battle = m_interact as InteractContainerBattle;
+                    targetItem = battle.m_TradeInteract;
+                    break;
+            }
         }
-        tf_TradePrice.SetActivate(tradeOn);
-        UpdateInfo(interactInfo);
-
-        LayoutRebuilder.ForceRebuildLayoutImmediate(tf_Container as RectTransform);
+        if(UpdateInfo(targetItem,tradePrice))
+        rtf_InteractData.SetWorldViewPortAnchor(m_interact.transform.position, CameraController.Instance.m_Camera);
+        
     }
-    void UpdateInfo(InteractBase interactInfo)
+    bool UpdateInfo(InteractBase interactInfo,int price)
     {
-        bool weaponOn=false;
-        bool weaponActionOn = false;
-        bool actionOn = false;
-        bool itemOn = false;
-        switch (interactInfo.m_InteractType)
+        bool targetvalid = false;
+        bool weaponShow = false;
+        bool actionShow = false;
+        if (interactInfo != null)
         {
-            case enum_Interaction.Weapon:
-                {
-                    weaponOn = true;
-                    weaponActionOn = true;
-                    WeaponBase weapon = (interactInfo as InteractWeapon).m_Weapon;
-                    m_WeaponBackground.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Rarity.GetUIInteractBackground()];
-                    m_WeaponImage.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Weapon.GetSpriteName()];
-                    m_WeaponName.color = TCommon.GetHexColor(weapon.m_WeaponInfo.m_Rarity.GetUITextColor());
-                    m_WeaponName.localizeKey = weapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
-
-                    m_WeaponActionHUD.SetInfo(weapon.m_WeaponAction);
-                    if(weapon.m_WeaponAction!=null)
-                        weapon.m_WeaponAction.SetActionIntro(m_Intro);
-                    else
-                        m_Intro.localizeKey = "UI_Weapon_ActionInvalidIntro";
-                }
-                break;
-            case enum_Interaction.Action:
-                {
-                    actionOn = true;
-                    ActionBase action = (interactInfo as InteractAction).m_Action;
-                    m_Action.SetInfo(action);
-                    m_ActionTitle.localizeKey = action.m_ActionType.GetInteractTitleKey();
-                    action.SetActionIntro(m_Intro);
-                }
-                break;
-            default:
-                {
-                    itemOn = true;
-                    m_ItemName.localizeKey = interactInfo.GetNameLocalizeKey();
-                    m_Intro.localizeKey = interactInfo.GetIntroLocalizeKey();
-                }
-                break;
+            switch (interactInfo.m_InteractType)
+            {
+                case enum_Interaction.Action:
+                    actionShow = true;
+                    targetvalid = true;
+                    InteractAction actionInteract = interactInfo as InteractAction;
+                    m_ActionData.SetInfo(actionInteract.m_Action);
+                    tf_Ability.SetActivate(actionInteract.m_Action.m_ActionType == enum_ActionType.Ability);
+                    tf_Equipment.SetActivate(actionInteract.m_Action.m_ActionType == enum_ActionType.Equipment);
+                    break;
+                case enum_Interaction.Weapon:
+                    weaponShow = true;
+                    targetvalid = true;
+                    InteractWeapon weaponInteract = interactInfo as InteractWeapon;
+                    m_weaponData.UpdateInfo(weaponInteract.m_Weapon);
+                    m_weaponData.UpdateAmmoInfo(weaponInteract.m_Weapon.I_AmmoLeft, weaponInteract.m_Weapon.I_ClipAmount);
+                    bool actionValid = weaponInteract.m_Weapon.m_WeaponAction != null;
+                    m_weaponActionData.transform.SetActivate(actionValid);
+                    if (actionValid)
+                    {
+                        m_weaponActionData.SetInfo(weaponInteract.m_Weapon.m_WeaponAction);
+                        m_weaponActionData.Tick(weaponInteract.m_Weapon.m_ActionEnergyRequirementLeft);
+                    }
+                    break;
+                default:
+                    targetvalid = false;
+                    break;
+            }
         }
-        tf_Weapon.SetActivate(weaponOn);
-        m_WeaponActionHUD.transform.SetActivate(weaponActionOn);
-        tf_Action.SetActivate(actionOn);
-        tf_Item.SetActivate(itemOn);
-
-        LayoutRebuilder.ForceRebuildLayoutImmediate(tf_Intro as RectTransform);
+        tf_Weapon.SetActivate(weaponShow);
+        tf_Action.SetActivate(actionShow);
+        tf_WeaponData.SetActivate(weaponShow);
+        m_ActionData.transform.SetActivate(actionShow);
+        tf_Trade.SetActivate(price >= 0);
+        tf_Pickup.SetActivate(price < 0);
+        m_TradePrice.text = price.ToString();
+        rtf_InteractData.SetActivate(targetvalid);
+        if(targetvalid)
+            LayoutRebuilder.ForceRebuildLayoutImmediate(tf_Container as RectTransform);
+        return targetvalid;
     }
 
     private void Update()

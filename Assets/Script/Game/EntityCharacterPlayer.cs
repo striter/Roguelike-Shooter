@@ -386,11 +386,11 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             default:
                 Debug.LogError("Invalid Detected!");
                 return false;
-            case enum_ActionType.WeaponAbility:
-                m_WeaponCurrent.SetWeaponAction(action,0f);
+            case enum_ActionType.Ability:
+                m_WeaponCurrent.SetWeaponAction(action as ActionAbility ,0f);
                 OnWeaponStatus();
                 return true;
-            case enum_ActionType.PlayerEquipment:
+            case enum_ActionType.Equipment:
                 m_PlayerInfo.OnUseAction(action);
                 return true;
         }
@@ -402,10 +402,10 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if(targetAction!=null)
         m_PlayerInfo.OnUseAction(targetAction);
     }
-    public void UpgradeActionPerk(ActionBase _weaponAction)
+    public void UpgradeActionPerk(ActionAbility _ability)
     {
         if (m_WeaponCurrent.m_WeaponAction == null)
-            m_WeaponCurrent.SetWeaponAction(_weaponAction,0f);
+            m_WeaponCurrent.SetWeaponAction(_ability,0f);
         else
             m_WeaponCurrent.m_WeaponAction.Upgrade();
         OnWeaponStatus();

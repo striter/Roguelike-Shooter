@@ -7,7 +7,7 @@ using UnityEngine;
 public class InteractPerkUpgrade : InteractGameBase {
     public override enum_Interaction m_InteractType => enum_Interaction.PerkUpgrade;
     public override bool B_InteractOnce => true;
-    ActionBase m_invalidPerk;
+    ActionAbility m_invalidPerk;
     Animation m_Anim;
     Action OnInteract;
     public override void OnPoolItemInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
@@ -15,7 +15,7 @@ public class InteractPerkUpgrade : InteractGameBase {
         base.OnPoolItemInit(identity, OnRecycle);
         m_Anim = GetComponent<Animation>();
     }
-    public void Play(Action _OnInteract,ActionBase _invalidPerk)
+    public void Play(Action _OnInteract, ActionAbility _invalidPerk)
     {
         base.Play();
         OnInteract = _OnInteract;

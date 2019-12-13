@@ -15,7 +15,6 @@ public class UIGI_ActionSelectItem : UIT_GridDefaultItem
     {
         base.SetItemInfo("", false);
         txt_Name.localizeKey = action.GetNameLocalizeKey();
-        txt_Cost.text = action.I_Cost.ToString();
         action.SetActionIntro(txt_Intro);
         txt_Level.localizeKey = action.m_rarity.GetLocalizeKey();
     }

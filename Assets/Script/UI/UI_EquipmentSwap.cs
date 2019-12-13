@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class UI_EquipmentSwap : UIPage {
-    UIGI_ActionEquipmentIntro m_SelectItem, m_SwapItem;
+    UIC_ActionNameFormatIntro m_SelectItem, m_SwapItem;
     UIT_GridControlledSingleSelect<UIGI_ActionEquipmentSelect> m_EquipmentGrid;
     Button m_ConfirmBtn;
     PlayerInfoManager m_Info;
@@ -17,10 +17,8 @@ public class UI_EquipmentSwap : UIPage {
         base.Init();
         m_ConfirmBtn = tf_Container.Find("ConfirmBtn").GetComponent<Button>();
         m_ConfirmBtn.onClick.AddListener(OnConfirmBtnClick);
-        m_SelectItem = tf_Container.Find("SelectItem").GetComponent<UIGI_ActionEquipmentIntro>();
-        m_SwapItem = tf_Container.Find("SwapItem").GetComponent<UIGI_ActionEquipmentIntro>();
-        m_SelectItem.Init();
-        m_SwapItem.Init();
+        m_SelectItem = new UIC_ActionNameFormatIntro( tf_Container.Find("SelectItem"));
+        m_SwapItem = new UIC_ActionNameFormatIntro( tf_Container.Find("SwapItem"));
         m_EquipmentGrid = new UIT_GridControlledSingleSelect<UIGI_ActionEquipmentSelect>(tf_Container.Find("EquipmentGrid"),OnItemSelect);
     }
 

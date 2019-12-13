@@ -5,17 +5,15 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class UIGI_ActionBase : UIT_GridItem {
-    Image m_Image;
-    UIC_RarityLevel m_Rarity;
+    private UIC_ActionData m_Action=null;
+    protected virtual UIC_ActionData GetActionDataBase(Transform container)=>new UIC_ActionData(container);
     public override void Init()
     {
         base.Init();
-        m_Image = tf_Container.Find("Mask/Image").GetComponent<Image>();
-        m_Rarity = new UIC_RarityLevel(tf_Container.Find("Rarity"));
+        m_Action = GetActionDataBase(tf_Container);
     }
     public virtual void SetInfo(ActionBase action)
     {
-        m_Image.sprite = GameUIManager.Instance.m_ActionSprites[action.m_Index.ToString()];
-        m_Rarity.SetRarity(action.m_rarity);
+        m_Action.SetInfo(action);
     }
 }

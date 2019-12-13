@@ -77,7 +77,7 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
         m_BSC = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_BSC>();
         m_BSC.SetEffect(1f, 1f, 1f);
 //        CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_DepthSSAO>().SetEffect();
-        CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_BloomSpecific>().m_GaussianBlur.SetEffect( PE_Blurs.enum_BlurType.GaussianBlur,3, 10,2);
+        CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_BloomSpecific>().m_Blur.SetEffect( PE_Blurs.enum_BlurType.GaussianBlur,3, 10,2);
         CameraController.Instance.m_Effect.GetOrAddCameraEffect<CB_GenerateOpaqueTexture>();
         switch (_levelStyle)
         {
@@ -361,18 +361,18 @@ public static class ActionDataManager
             m_AllAction.Add(action.m_Index);
             switch (action.m_ActionType)
             {
-                case enum_ActionType.WeaponAbility:
+                case enum_ActionType.Ability:
                     m_AbilityAction.Add(action.m_Index);
                     break;
-                case enum_ActionType.PlayerEquipment:
+                case enum_ActionType.Equipment:
                     m_EquipmentAction.Add(action.m_Index);
                     break;
             }
         }), -1, enum_ActionRarity.Invalid);
     }
     public static ActionBase CreateRandomAction(enum_ActionRarity rarity, System.Random seed)=> CreateAction(m_AllAction.RandomItem(seed),rarity);
-    public static ActionBase CreateRandomAbilityAction(enum_ActionRarity rarity, System.Random seed) => CreateAction(m_AbilityAction.RandomItem(seed),rarity);
-    public static ActionBase CreateRandomEquipmentAction(enum_ActionRarity rarity, System.Random seed) => CreateAction(m_EquipmentAction.RandomItem(seed),rarity);
+    public static ActionAbility CreateRandomAbilityAction(enum_ActionRarity rarity, System.Random seed) => CreateAction(m_AbilityAction.RandomItem(seed),rarity) as ActionAbility;
+    public static ActionEquipment CreateRandomEquipmentAction(enum_ActionRarity rarity, System.Random seed) => CreateAction(m_EquipmentAction.RandomItem(seed),rarity) as ActionEquipment;
     public static List<ActionBase> CreateActions(List<ActionSaveData> infos)
     {
         List<ActionBase> actions = new List<ActionBase>();

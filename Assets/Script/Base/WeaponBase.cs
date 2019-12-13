@@ -29,7 +29,7 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     bool B_AmmoFull => m_WeaponInfo.m_ClipAmount == -1||I_ClipAmount == I_AmmoLeft;
     protected void OnFireCheck(float pauseDuration) => f_fireCheck = pauseDuration;
 
-    public ActionBase m_WeaponAction { get; private set; } = null;
+    public ActionAbility m_WeaponAction { get; private set; } = null;
     public float m_ActionEnergy { get; private set; } = 0;
     public float m_ActionEnergyRequirementLeft => m_WeaponAction == null ? -1:  (1-m_ActionEnergy / m_WeaponAction.I_Cost);
     public bool m_ActionAvailable => m_WeaponAction != null && m_ActionEnergy >= m_WeaponAction.I_Cost;
@@ -53,7 +53,7 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
         base.OnPoolItemDisable();
         StopReload();
     }
-    public void SetWeaponAction(ActionBase _weaponAction,float _actionEnergy)
+    public void SetWeaponAction(ActionAbility _weaponAction,float _actionEnergy)
     {
         m_WeaponAction = _weaponAction;
         m_ActionEnergy = _actionEnergy;

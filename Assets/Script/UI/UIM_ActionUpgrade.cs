@@ -23,13 +23,12 @@ public class UIM_ActionUpgrade : UIMessageBoxBase {
         newacton.Upgrade();
         string changed = "B9FE00FF";
         string unChanged = "FFDA6BFF";
-        bool costChanged = action.I_Cost != newacton.I_Cost;
         bool durationChanged = action.F_Duration != newacton.F_Duration;
         bool value1Changed = action.Value1 != newacton.Value1;
         bool value2Changed = action.Value2 != newacton.Value2;
         bool value3Changed = action.Value3 != newacton.Value3;
         m_Amount.text = amount.ToString();
         m_ItemBefore.SetRichIntro(action,unChanged,unChanged, unChanged, unChanged, unChanged);
-        m_ItemAfter.SetRichIntro(newacton,costChanged?changed:unChanged,durationChanged? changed : unChanged,value1Changed? changed : unChanged,value2Changed? changed : unChanged,value3Changed? changed : unChanged);
+        m_ItemAfter.SetRichIntro(newacton,unChanged,durationChanged? changed : unChanged,value1Changed? changed : unChanged,value2Changed? changed : unChanged,value3Changed? changed : unChanged);
     }
 }
