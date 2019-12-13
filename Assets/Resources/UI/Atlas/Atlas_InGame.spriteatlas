@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 081334a023db2704db167d2dfc323270, type: 3}
-    totalSpriteSurfaceArea: 1748274
+    totalSpriteSurfaceArea: 1747114
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -48,9 +48,9 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 48ca20a7917b66e4785597c22ec56a6a, type: 3}
   - {fileID: 21300000, guid: a9ee0bc7c49b98d41884f7111e26d74e, type: 3}
   - {fileID: 21300000, guid: e2aff809fde7b7d469149d996d359e8c, type: 3}
-  - {fileID: 21300000, guid: 8eba824182872ad47bd7b61a5f1c93fe, type: 3}
+  - {fileID: 21300000, guid: 69ed84df5ae7a724fa3d801f322b1aee, type: 3}
   - {fileID: 21300000, guid: c6b65ee3d246fd345b9ccd328a569d2e, type: 3}
-  - {fileID: 21300000, guid: 01d71e84e6a6dcc4e8dd49d67f909b6e, type: 3}
+  - {fileID: 21300000, guid: 8d9d6752fb320bd438f49a5bec44867c, type: 3}
   - {fileID: 21300000, guid: 46e8bab1c7a8c3a46b551a27a5c4a95b, type: 3}
   - {fileID: 21300000, guid: 5299f3520a85ed74fac7a3636bdc9238, type: 3}
   - {fileID: 21300000, guid: fc8bda41e4b7e344481fcdef48b648bc, type: 3}

@@ -134,10 +134,10 @@ SpriteAtlas:
   - UI_title_orange
   - icon_diamond
   - icon_credit
-  - btn_commcon_orange
+  - btn_bottom_orange
   - status_equipment_bg
   - UI_title_orange_ML
-  - btn_commcon_unavailable
+  - btn_bottom_unavailable
   - UI_title_orange_medium
   - icon_coins
   - UI_title_orange_small
@@ -154,10 +154,10 @@ SpriteAtlas:
   - icon_stage
   - control_weaponswitch
   - control_reload
-  - btn_commcon_yellow
-  - btn_commcon_black90
-  - btn_commcon_gray
-  - btn_commcon_blue
+  - bottom_yellow
+  - bottom_black90
+  - bottom_gray
+  - bottom_blue
   - control_main_chat
   - control_main_pickup
   - status_bottom
@@ -165,7 +165,7 @@ SpriteAtlas:
   - coins_bottom
   - control_ability_Beth
   - control_setting_bottom
-  - status_buff_bg
+  - bottom_black
   - status_armor
   - status_life
   - status_ActionEnergy_bottom
@@ -176,7 +176,7 @@ SpriteAtlas:
   - UI_common_darkgray50_line
   - UI_common_darkgray60
   - UI_common_darkgray70
-  - btn_commcon_darkgray
+  - bottom_darkgray
   - icon_caution
   - icon_ActionStorage
   - status_bullet_shadow
