@@ -312,7 +312,7 @@ MonoBehaviour:
   Z_TestEntitySpawn: 107
   TestEntityFlag: 2
   TestEntityBuffOnSpawn: 7
-  X_TestCastIndex: 3
+  X_TestCastIndex: 20401
   CastForward: 0
   C_TestProjectileIndex: 20400
   V_TestIndicatorIndex: 0
@@ -431,8 +431,6 @@ MonoBehaviour:
   F_CameraMoveSmooth: 0.06
   B_InvertCamera: 0
   F_RotateSensitive: 2
-  B_CameraOffsetWallClip: 0
-  B_DrawDebugLine: 0
   m_Effect: {fileID: 0}
   TPSOffset: {x: 0, y: 25, z: -6}
   I_YawMin: 75
