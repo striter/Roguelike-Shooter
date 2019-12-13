@@ -1060,7 +1060,6 @@ namespace GameSetting
     {
         public float m_CurrentHealth { get; private set; }
         public float m_BaseHealth { get; private set; }
-        public virtual float m_StartHealth => m_BaseHealth;
         public virtual float F_TotalEHP => m_CurrentHealth;
         public float F_HealthBaseScale => m_CurrentHealth / m_BaseHealth;
         public float F_HealthMaxScale => m_CurrentHealth / m_MaxHealth;
@@ -1083,9 +1082,9 @@ namespace GameSetting
         }
         public void OnSetHealth(float startHealth, bool restoreHealth)
         {
-            m_BaseHealth = startHealth;
+            this.m_BaseHealth = startHealth;
             if (restoreHealth)
-                m_CurrentHealth = m_StartHealth;
+                m_CurrentHealth = m_MaxHealth;
         }
         public void OnSetHealth(float reviveHealth)
         {
@@ -1116,7 +1115,7 @@ namespace GameSetting
         public float m_StartArmor { get; private set; }
         public override float F_TotalEHP => m_CurrentArmor + base.F_TotalEHP;
         float m_HealthMultiplier = 1f;
-        public override float m_StartHealth => base.m_StartHealth * m_HealthMultiplier;
+        public override float m_MaxHealth => base.m_MaxHealth * m_HealthMultiplier;
         protected EntityCharacterBase m_Entity;
         protected void DamageArmor(float amount)
         {
@@ -1148,7 +1147,7 @@ namespace GameSetting
         public void SetHealthMultiplier(float healthMultiplier)
         {
             m_HealthMultiplier = healthMultiplier;
-            OnSetHealth(m_BaseHealth, true);
+            OnSetHealth(base.m_BaseHealth, true);
             OnHealthChanged(enum_HealthChangeMessage.Default);
         }
         public override bool OnReceiveDamage(DamageInfo damageInfo, float damageReduction = 1, float healEnhance = 1)
@@ -2379,36 +2378,7 @@ namespace GameSetting
         LackOfCoins = 2,
         MaxLevel = 3,
     }
-
-
-    public class UIC_Numeric
-    {
-        static readonly AtlasLoader m_InGameSprites = TResources.GetUIAtlas_Numeric();
-        public static Sprite GetNumeric(char numeric) => m_InGameSprites["numeric_" + numeric];
-        public Transform transform { get; private set; }
-        UIT_GridControllerMono<Image> m_Grid;
-        int currentAmount=-1;
-        public UIC_Numeric(Transform _transform)
-        {
-            transform = _transform;
-            m_Grid = new UIT_GridControllerMono<Image>(transform);
-        }
-
-        public void SetAmount(int _amount)
-        {
-            if (currentAmount == _amount)
-                return;
-            currentAmount = _amount;
-
-            m_Grid.ClearGrid();
-            SetNumeric( _amount.ToString());
-        }
-        public void SetNumeric(string _numeric)
-        {
-            for (int i = 0; i < _numeric.Length; i++)
-                m_Grid.GetOrAddItem(i).sprite = GetNumeric(_numeric[i]);
-        }
-    }
+    
     public class UIC_RarityLevel
     {
         class RarityLevel
@@ -2441,26 +2411,6 @@ namespace GameSetting
             m_Levels.Traversal((int index, RarityLevel rarity) => rarity.SetHighlight(index <= (int)level));
         }
     }
-    public class UI_WeaponActionHUD
-    {
-        public Transform transform { get; private set; }
-        UIT_TextExtend m_WeaponActionName;
-        UIC_RarityLevel m_WeaponActionRarity;
-        public UI_WeaponActionHUD(Transform _transform)
-        {
-            transform = _transform;
-            m_WeaponActionName = _transform.Find("ActionName").GetComponent<UIT_TextExtend>();
-            m_WeaponActionRarity = new UIC_RarityLevel(_transform.Find("ActionRarity"));
-        }
-
-        public void SetInfo(ActionBase action)
-        {
-            bool showWeaponAction = action != null;
-            m_WeaponActionRarity.transform.SetActivate(showWeaponAction);
-            m_WeaponActionName.autoLocalizeText = showWeaponAction ? action.GetNameLocalizeKey() : "UI_Weapon_ActionInvalidName";
-            if (showWeaponAction) m_WeaponActionRarity.SetRarity(action.m_rarity);
-        }
-    }
 
     public class UIC_Button
     {
@@ -2480,6 +2430,40 @@ namespace GameSetting
             m_Hide.SetActivate(!interactable);
             m_Show.SetActivate(interactable);
             m_Button.interactable = interactable;
+        }
+    }
+
+
+    public class UIC_WeaponData
+    {
+        public Transform transform { get; private set; }
+        UIT_TextExtend m_Name;
+        Image m_Background;
+        Image m_Image;
+        Transform tf_AmmoStatus;
+        Text m_Clip, m_Total;
+        public UIC_WeaponData(Transform _transform)
+        {
+            transform = _transform;
+            m_Background = transform.Find("Background").GetComponent<Image>();
+            m_Image = transform.Find("Image").GetComponent<Image>();
+            m_Name = transform.Find("NameStatus/Name").GetComponent<UIT_TextExtend>();
+            tf_AmmoStatus = transform.Find("NameStatus/AmmoStatus");
+            m_Clip = tf_AmmoStatus.Find("Clip").GetComponent<Text>();
+            m_Total = tf_AmmoStatus.Find("Total").GetComponent<Text>();
+        }
+
+        public void UpdateInfo(WeaponBase weapon)
+        {
+            m_Background.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Rarity.GetUIGameControlBackground()];
+            m_Image.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Weapon.GetSpriteName()];
+            m_Name.autoLocalizeText = weapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
+        }
+        public void UpdateAmmoInfo(int ammoLeft,int clipAmount)
+        {
+                m_Clip.text = ammoLeft.ToString();
+                m_Total.text = clipAmount.ToString();
+                LayoutRebuilder.ForceRebuildLayoutImmediate(tf_AmmoStatus as RectTransform);
         }
     }
     #endregion
