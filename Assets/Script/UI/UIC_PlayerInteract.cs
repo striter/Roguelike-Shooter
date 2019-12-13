@@ -15,7 +15,7 @@ public class UIC_PlayerInteract : UIControlBase
     Transform tf_Weapon, tf_Equipment, tf_Ability;
 
     Transform tf_Bottom;
-    UIT_TextExtend m_CommonBottom;
+    UIT_TextExtend m_BottomTips;
     Transform tf_Trade, tf_Pickup;
 
 
@@ -37,7 +37,7 @@ public class UIC_PlayerInteract : UIControlBase
         m_CommonTop = tf_Top.Find("Common").GetComponent<UIT_TextExtend>();
 
         tf_Bottom = tf_Container.Find("InteractBottom");
-        m_CommonBottom = tf_Bottom.Find("Common").GetComponent<UIT_TextExtend>();
+        m_BottomTips = tf_Bottom.Find("Common").GetComponent<UIT_TextExtend>();
         tf_Trade = tf_Bottom.Find("Trade");
         m_TradePrice = tf_Trade.Find("Amount").GetComponent<UIT_TextExtend>();
 
@@ -103,6 +103,7 @@ public class UIC_PlayerInteract : UIControlBase
             rtf_InteractData.SetActivate(false);
             return false;
         }
+        rtf_InteractData.SetActivate(true);
         bool isCommon = false;
         bool isWeapon = false;
         bool isAction = false;
@@ -135,20 +136,22 @@ public class UIC_PlayerInteract : UIControlBase
                 default:
                     isCommon = true;
                     m_CommonTop.localizeKey = interactInfo.GetTitleLocalizeKey();
-                    m_CommonBottom.localizeKey = interactInfo.GetBottomLocalizeKey();
                     m_CommonIntro.localizeKey = interactInfo.GetIntroLocalizeKey();
                     break;
             }
         }
         m_CommonTop.SetActivate(isCommon);
-        m_CommonBottom.SetActivate(isCommon);
         tf_Common.SetActivate(isCommon);
         tf_Weapon.SetActivate(isWeapon);
         tf_WeaponData.SetActivate(isWeapon);
         tf_Ability.SetActivate(isEquipment);
         tf_Equipment.SetActivate(isAbility);
         m_ActionData.transform.SetActivate(isAction);
-        tf_Trade.SetActivate(price >= 0);
+        bool tradeItem = price >= 0;
+        tf_Trade.SetActivate(tradeItem);
+        m_BottomTips.SetActivate(!tradeItem);
+        if (!tradeItem)
+            m_BottomTips.localizeKey = interactInfo.GetBottomLocalizeKey();
         m_TradePrice.text = price.ToString();
         LayoutRebuilder.ForceRebuildLayoutImmediate(tf_Container as RectTransform);
         return true;
