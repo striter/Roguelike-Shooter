@@ -307,7 +307,7 @@ namespace GameSetting
         {
             switch (type)
             {
-                default: Debug.LogError("Invalid Pharse Here!"+type.ToString());  return "";
+                default: Debug.LogError("Invalid Pharse Here!" + type.ToString()); return "";
                 case enum_ActionType.Ability: return "action_icon_basic";
                 case enum_ActionType.Equipment: return "action_icon_equipment";
             }
@@ -345,6 +345,41 @@ namespace GameSetting
                 }
             return spriteName;
         }
+
+
+        public static string GetPickupSpriteName(this enum_Interaction type)
+        {
+            switch (type)
+            {
+                default:
+                    Debug.LogError("Invalid Convertions Here!");
+                    return "";
+                case enum_Interaction.PickupCoin:
+                    return "Pickup_Coin";
+                case enum_Interaction.PickupArmor:
+                    return "Pickup_Armor";
+                case enum_Interaction.PickupHealth:
+                case enum_Interaction.PickupHealthPack:
+                    return "Pickup_Health";
+            }
+        } 
+        public static Color GetVisualizeAmountColor(this enum_Interaction type)
+        {
+            switch (type)
+            {
+                default:
+                    Debug.LogError("Invalid Convertions Here!");
+                    return Color.magenta;
+                case enum_Interaction.PickupCoin:
+                    return TCommon.GetHexColor("FFCC1FFF");
+                case enum_Interaction.PickupArmor:
+                    return TCommon.GetHexColor("1FF2FFFF");
+                case enum_Interaction.PickupHealth:
+                case enum_Interaction.PickupHealthPack:
+                    return TCommon.GetHexColor("FFA54EFF");
+            }
+        }
+
         public static string GetAbilityBackground(bool cooldowning)=>cooldowning?"control_ability_bottom_cooldown":"control_ability_bottom_activate";
         public static string GetAbilitySprite(enum_PlayerCharacter character) => "control_ability_" + character;
         public static string GetSpriteName(this enum_PlayerWeapon weapon) => ((int)weapon).ToString();
@@ -446,6 +481,7 @@ namespace GameSetting
         Invalid = -1,
         UI_PlayerCommonStatus,
         UI_PlayerInteractStatus,
+        UI_PlayerInteractPickup, 
         UI_PlayerHealthStatus,
         UI_PlayerActionExpireStatus,
         UI_PlayerEquipmentStatus,

@@ -17,7 +17,7 @@ public class GameUIManager : UIManager {
     protected override void InitGameControls(bool inGame)
     {
         base.InitGameControls(inGame);
-        ShowControls<UIC_EntityHealth>();
+        ShowControls<UIC_GameNumericVisualize>();
         m_Coins = ShowControls<UIC_CoinsStatus>();
     }
 

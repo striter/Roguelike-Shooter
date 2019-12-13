@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using GameSetting;
-public class UIGI_HealthBar : UIT_GridItem {
+public class UIGI_VisualizeHealthBar : UIT_GridItem {
     EntityBase m_AttachEntity;
     Image m_HealthBar1,m_HealthBar2,m_HealthBar3;
     bool b_showItem = false;

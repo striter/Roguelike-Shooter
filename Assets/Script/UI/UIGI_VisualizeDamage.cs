@@ -2,7 +2,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
-public class UIGI_Damage : UIT_GridItem {
+public class UIGI_VisualizeDamage : UIT_GridItem {
     Text m_Amount,m_Projection;
     float f_expireCheck;
     Action<int> OnAnimFinished;
