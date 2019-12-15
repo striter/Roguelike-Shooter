@@ -20,15 +20,8 @@
 				#pragma fragment frag
 
 				#include "UnityCG.cginc"
+#include "PostEffectInclude.cginc"
 
-			sampler2D _CameraDepthTexture;
-			float4 _FrustumCornersRayBL;
-			float4 _FrustumCornersRayBR;
-			float4 _FrustumCornersRayTL;
-			float4 _FrustumCornersRayTR;
-
-			sampler2D _MainTex;
-			half4 _MainTex_TexelSize;
 			half _FogDensity;
 			fixed4 _FogColor;
 			float _FogStart;
@@ -47,14 +40,8 @@
 				v2f o;
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.uv = v.texcoord;
-				o.uv_depth = v.texcoord;
-#if UNITY_UV_STARTS_AT_TOP
-				if (_MainTex_TexelSize.y < 0)
-					o.uv_depth.y = 1 - o.uv_depth.y;
-#endif
-				bool right = o.uv.x > .5;
-				bool top = o.uv.y > .5;
-				o.interpolatedRay = right ? (top? _FrustumCornersRayTR: _FrustumCornersRayBR) : (top? _FrustumCornersRayTL: _FrustumCornersRayBL);
+				o.uv_depth = GetDepthUV(v.texcoord);
+				o.interpolatedRay = GetInterpolatedRay(o.uv);
 				return o;
 			}
 

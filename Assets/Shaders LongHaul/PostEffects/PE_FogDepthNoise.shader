@@ -9,7 +9,7 @@
 		_FogEnd("Fog End",Float) = 1
 		_NoiseTex("Noise Tex",2D) = "white"{}
 		_NoisePow("Noise Pow",Float) = 1
-		_NoiseLambert("Noise Lambert",Range(0,1))= 0
+		_NoiseLambert("Noise Lambert",Range(0,1)) = 0
 		_FogSpeedX("Fog Speed Horizontal",Range(-.5,.5)) = .5
 		_FogSpeedY("Fog Speed Vertical",Range(-.5,.5)) = .5
 	}
@@ -24,14 +24,7 @@
 				#pragma fragment frag
 
 				#include "UnityCG.cginc"
-
-			float4 _FrustumCornersRayBL;
-			float4 _FrustumCornersRayBR;
-			float4 _FrustumCornersRayTL;
-			float4 _FrustumCornersRayTR;
-				sampler2D _MainTex;
-				half4 _MainTex_TexelSize;
-				sampler2D _CameraDepthTexture;
+				#include "PostEffectInclude.cginc"
 				half _FogDensity;
 				float _FogPow;
 				fixed4 _FogColor;
@@ -56,14 +49,8 @@
 				v2f o;
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.uv = v.texcoord;
-				o.uv_depth = v.texcoord;
-#if UNITY_UV_STARTS_AT_TOP
-				if (_MainTex_TexelSize.y < 0)
-					o.uv_depth.y = 1 - o.uv_depth.y;
-#endif
-				bool right = o.uv.x > .5;
-				bool top = o.uv.y > .5;
-				o.interpolatedRay = right ? (top ? _FrustumCornersRayTR : _FrustumCornersRayBR) : (top ? _FrustumCornersRayTL : _FrustumCornersRayBL);
+				o.uv_depth = GetDepthUV(v.texcoord); 
+				o.interpolatedRay = GetInterpolatedRay(o.uv);
 				return o;
 			}
 
