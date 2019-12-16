@@ -91,8 +91,8 @@ SpriteAtlas:
   - health_3
   - health_bg
   - background_angle
-  - Pickup_coin
+  - Pickup_Coin
   - Pickup_Armor
-  - Pickup_health
+  - Pickup_Health
   m_Tag: Atlas_InGame
   m_IsVariant: 0
