@@ -22,6 +22,8 @@ public class UI_EquipmentPack : UIPage {
         for (int i = 0; i < GameConst.I_PlayerEquipmentCount; i++)
             m_Grid.AddItem(i).SetInfo( i< targetList.Count ? targetList[i]:null);
         m_Selecting.transform.SetActivate(false);
+        if (targetList.Count > 0)
+            OnItemSelect(0);
     }
 
     void OnItemSelect(int index)
