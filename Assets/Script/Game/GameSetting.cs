@@ -32,6 +32,7 @@ namespace GameSetting
         public const int I_BurstFirePelletsOnceTrigger = 3;       //Times While Burst Fire //似乎已经没用？
 
         public const float F_PlayerAutoAimRange = 14f; //自动锁定敌人范围
+        public const int I_PlayerEquipmentCount = 5;
         public const float F_PlayerDamageAdjustmentRange = .1f;
         public const int I_PlayerRotationSmoothParam = 10;     //Camera Smooth Param For Player 10 is suggested
 
@@ -330,22 +331,6 @@ namespace GameSetting
                 case enum_ActionType.Equipment: return "action_cost_equipment";
             }
         }
-
-        public static string GetMainSprite(InteractBase interact)
-        {
-            string spriteName = "control_main_fire";
-            if (interact != null)
-                switch (interact.m_InteractType)
-                {
-                    case enum_Interaction.Invalid: Debug.LogError("Invalid Pharse Here!"); break;
-                    default: spriteName = "control_main_pickup"; break;
-                    case enum_Interaction.CampFarm:
-                    case enum_Interaction.ActionAdjustment:
-                        spriteName = "control_main_chat"; break;
-                }
-            return spriteName;
-        }
-
 
         public static string GetPickupSpriteName(this enum_Interaction type)
         {
@@ -1596,7 +1581,7 @@ namespace GameSetting
             m_ActionEquipment[index].ForceExpire();
         }
 
-        public bool b_haveEmptyEquipmentSlot => m_ActionEquipment.Count < 5;
+        public bool b_haveEmptyEquipmentSlot => m_ActionEquipment.Count < GameConst.I_PlayerEquipmentCount;
         public void SwapEquipment(int index,ActionBase targetAction)
         {
             RemoveExpire(m_ActionEquipment[index]);
@@ -2601,9 +2586,9 @@ namespace GameSetting
         }
         public void UpdateAmmoInfo(int ammoLeft,int clipAmount)
         {
-                m_Clip.text = ammoLeft.ToString();
-                m_Total.text = clipAmount.ToString();
-                LayoutRebuilder.ForceRebuildLayoutImmediate(tf_AmmoStatus as RectTransform);
+            m_Clip.text = ammoLeft.ToString();
+            m_Total.text = clipAmount.ToString();
+            LayoutRebuilder.ForceRebuildLayoutImmediate(tf_AmmoStatus as RectTransform);
         }
     }
     #endregion

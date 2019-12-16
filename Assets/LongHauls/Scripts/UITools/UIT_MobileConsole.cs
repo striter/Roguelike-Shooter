@@ -53,7 +53,7 @@ public class UIT_MobileConsole : SimpleSingletonMono<UIT_MobileConsole> {
             OnCommand = binding.command;
         }
 
-        public void Tick()
+        public void EditorTick()
         {
             if (Input.GetKeyDown(m_keyCode))
                 OnButtonClick();
@@ -74,7 +74,9 @@ public class UIT_MobileConsole : SimpleSingletonMono<UIT_MobileConsole> {
             m_ConsoleCommands.transform.SetActivate(true);
 
         m_FrameText.text = ((int)(1 / Time.unscaledDeltaTime)).ToString();
-        m_ConsoleCommands.m_ActiveItemDic.Traversal((ConsoleCommand command) => { command.Tick(); });
+#if UNITY_EDITOR
+        m_ConsoleCommands.m_ActiveItemDic.Traversal((ConsoleCommand command) => { command.EditorTick(); });
+#endif
     }
 
 

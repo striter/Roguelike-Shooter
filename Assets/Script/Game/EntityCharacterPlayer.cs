@@ -405,9 +405,12 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     public void OnWeaponAbilityClick(bool isFirstWeapon)
     {
-        ActionBase targetAction = isFirstWeapon ? m_Weapon1.GetAbilityACtion() : m_Weapon2.GetAbilityACtion();
+        ActionBase targetAction=null;
+        if (isFirstWeapon && m_Weapon1) targetAction = m_Weapon1.GetAbilityACtion();
+        else if (!isFirstWeapon && m_Weapon2) targetAction = m_Weapon2.GetAbilityACtion();
+
         if(targetAction!=null)
-        m_PlayerInfo.OnUseAction(targetAction);
+            m_PlayerInfo.OnUseAction(targetAction);
     }
     public void UpgradeActionPerk(ActionAbility _ability)
     {
