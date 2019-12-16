@@ -23,7 +23,7 @@ public class UI_EquipmentPack : UIPage {
             m_Grid.AddItem(i).SetInfo( i< targetList.Count ? targetList[i]:null);
         m_Selecting.transform.SetActivate(false);
         if (targetList.Count > 0)
-            OnItemSelect(0);
+            m_Grid.OnItemClick(0);
     }
 
     void OnItemSelect(int index)

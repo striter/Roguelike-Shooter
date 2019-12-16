@@ -25,8 +25,6 @@ public class GameManager : GameManagerBase
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Spawn Enermy", "101", KeyCode.Z, (string id) => {
             EntityCharacterBase enermy = GameObjectManager.SpawnEntityCharacter(int.Parse(id), LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f)), m_LocalPlayer.transform.position, enum_EntityFlag.Enermy);
             enermy.SetExtraDifficulty(GameExpression.GetAIBaseHealthMultiplier(m_GameLevel.m_GameDifficulty), GameExpression.GetAIMaxHealthMultiplier(m_GameLevel.m_GameStage), GameExpression.GetEnermyGameDifficultyBuffIndex(m_GameLevel.m_GameDifficulty));
-            if (TestEntityBuffOnSpawn > 0)
-                enermy.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.BuffInfo(-1, TestEntityBuffOnSpawn)));
         }));
 
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Damage Self", "20", KeyCode.N, (string damage) => { m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(int.Parse(damage), enum_DamageType.Basic, DamageDeliverInfo.Default(-1)));}));
@@ -55,7 +53,6 @@ public class GameManager : GameManagerBase
     public bool B_PhysicsDebugGizmos = true;
     public bool B_GameLevelDebugGizmos = true;
     public enumDebug_LevelDrawMode E_LevelDebug = enumDebug_LevelDrawMode.DrawTypes;
-    public int TestEntityBuffOnSpawn = 1;
     public int X_TestCastIndex = 30003;
     public bool CastForward = true;
     public int C_TestProjectileIndex = 29001;
