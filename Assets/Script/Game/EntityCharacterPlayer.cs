@@ -128,15 +128,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void OnMainDown(bool down)
     {
         m_aiming = down;
-
-        if (down)
-        {
-            if (m_Interact != null)
-            {
-                OnInteract();
-                return;
-            }
-        }
+        
+         OnInteract();
 
         OnWeaponTrigger(down);
     }
@@ -364,10 +357,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public void OnInteract()
     {
         if (m_Interact == null)
-        {
-            Debug.LogError("Can't Interact With Null Target!");
             return;
-        }
 
         if (!m_Interact.TryInteract(this))
             return;
@@ -527,9 +517,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void SetBinding(bool on)
     {
         if (on)
-            UIManager.Instance.m_UIControl.DoBinding(this, OnMovementDelta, OnRotateDelta,  OnMainDown, OnSwapClick, OnReloadClick, OnWeaponAbilityClick, OnAbilityClick);
+            UIManager.Instance.DoBindings(this, OnMovementDelta, OnRotateDelta,  OnMainDown, OnInteract, OnSwapClick, OnReloadClick, OnWeaponAbilityClick, OnAbilityClick);
         else
-            UIManager.Instance.m_UIControl.RemoveBinding();
+            UIManager.Instance.RemoveBindings();
     }
     
     protected class PlayerAnimator : CharacterAnimator

@@ -8,8 +8,9 @@ public class UIManager :UIManagerBase,ISingleCoroutine
     public static new UIManager Instance { get; private set; }
     Image m_OverlayBG;
     public Camera m_Camera { get; private set; }
-    public UIC_Control m_UIControl { get; private set; }
-    public UIC_CharacterStatus m_PlayerStatus { get; private set; }
+    protected UIC_Control m_UIControl { get; private set; }
+    protected UIC_PlayerInteract m_Interact { get; private set; }
+    protected UIC_CharacterStatus m_PlayerStatus { get; private set; }
     public UIC_Indicates m_Indicates { get; private set; }
 
     public CameraEffectManager m_Effect { get; private set; }
@@ -50,7 +51,7 @@ public class UIManager :UIManagerBase,ISingleCoroutine
     {
         m_PlayerStatus = ShowControls<UIC_CharacterStatus>().SetInGame(inGame);
         m_UIControl = ShowControls<UIC_Control>().SetInGame(inGame);
-        ShowControls<UIC_PlayerInteract>().Play(()=> { m_UIControl.OnMainButtonDown(true,Vector2.zero); });     //?
+        m_Interact = ShowControls<UIC_PlayerInteract>();
         m_Indicates = ShowControls<UIC_Indicates>();
     }
 
@@ -84,5 +85,17 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         m_OverlayBG.SetActivate(false);
         GameManagerBase.SetBulletTime(false);
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PageClose);
+    }
+
+    public void DoBindings(EntityCharacterPlayer player, Action<Vector2> _OnLeftDelta, Action<Vector2> _OnRightDelta, Action<bool> _OnMainDown,Action _OnInteractClick, Action _OnSwap, Action _OnReload, Action<bool> _OnWeaponAction, Action _OnCharacterAbility)
+    {
+        m_UIControl.DoBinding(player, _OnLeftDelta, _OnRightDelta, _OnMainDown, _OnSwap, _OnReload, _OnWeaponAction, _OnCharacterAbility);
+        m_Interact.DoBindings(_OnInteractClick);
+    }
+
+    public void RemoveBindings()
+    {
+        m_UIControl.RemoveBinding();
+        m_Interact.DoBindings(null);
     }
 }
