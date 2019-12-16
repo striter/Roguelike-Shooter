@@ -23,7 +23,7 @@ public class UIC_PlayerInteract : UIControlBase
     UIT_TextExtend m_TradePrice;
     UIC_ActionInteractData m_ActionData;
     Transform tf_WeaponData;
-    UIC_WeaponActionData m_weaponActionData;
+    UIC_ActionNameData m_weaponActionData;
     UIC_WeaponData m_weaponData;
 
     Transform tf_Common;
@@ -49,7 +49,7 @@ public class UIC_PlayerInteract : UIControlBase
 
         tf_WeaponData = tf_Container.Find("WeaponData");
         m_weaponData = new UIC_WeaponData(tf_WeaponData.Find("Weapon"));
-        m_weaponActionData = new UIC_WeaponActionData(tf_WeaponData.Find("Action"));
+        m_weaponActionData = new UIC_ActionNameData(tf_WeaponData.Find("Action"));
 
         m_ActionData = new UIC_ActionInteractData(tf_Container.Find("ActionData"));
 
@@ -125,14 +125,11 @@ public class UIC_PlayerInteract : UIControlBase
                     isWeapon = true;
                     InteractWeapon weaponInteract = interactInfo as InteractWeapon;
                     m_weaponData.UpdateInfo(weaponInteract.m_Weapon);
-                    m_weaponData.UpdateAmmoInfo(weaponInteract.m_Weapon.I_AmmoLeft, weaponInteract.m_Weapon.I_ClipAmount);
+                    m_weaponData.UpdateAmmoInfo(weaponInteract.m_Weapon.m_WeaponInfo.m_ClipAmount, weaponInteract.m_Weapon.m_WeaponInfo.m_ClipAmount);
                     bool actionValid = weaponInteract.m_Weapon.m_WeaponAction != null;
                     m_weaponActionData.transform.SetActivate(actionValid);
                     if (actionValid)
-                    {
                         m_weaponActionData.SetInfo(weaponInteract.m_Weapon.m_WeaponAction);
-                        m_weaponActionData.Tick(weaponInteract.m_Weapon.m_ActionEnergyRequirementLeft);
-                    }
                     break;
                 default:
                     isCommon = true;
