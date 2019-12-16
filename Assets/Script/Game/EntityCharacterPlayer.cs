@@ -128,9 +128,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void OnMainDown(bool down)
     {
         m_aiming = down;
-        
-         OnInteract();
-
         OnWeaponTrigger(down);
     }
     
