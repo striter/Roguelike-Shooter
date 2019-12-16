@@ -49,7 +49,7 @@ public class UIC_PlayerInteract : UIControlBase
 
         tf_WeaponData = tf_Container.Find("WeaponData");
         m_weaponData = new UIC_WeaponData(tf_WeaponData.Find("Weapon"));
-        m_weaponActionData = new UIC_WeaponActionData(tf_WeaponData.Find("Action"));
+        m_weaponActionData = new UIC_ActionNameData(tf_WeaponData.Find("Action"));
 
         m_ActionData = new UIC_ActionInteractData(tf_Container.Find("ActionData"));
 
