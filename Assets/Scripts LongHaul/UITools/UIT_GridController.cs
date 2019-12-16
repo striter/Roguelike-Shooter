@@ -7,12 +7,12 @@ using UnityEngine.UI;
 public class UIT_GridControllerMono<T>  where T : Component
 {
     public Transform transform { get; private set; }
-    protected ObjectPoolSimple<int,T> m_Pool { get; private set; }
+    protected ObjectPoolSimpleComponent<int,T> m_Pool { get; private set; }
     public int I_Count => m_Pool.m_ActiveItemDic.Count;
     public UIT_GridControllerMono(Transform _transform) 
     {
         transform = _transform;
-        m_Pool = new ObjectPoolSimple<int,T>(transform.Find("GridItem").gameObject, _transform, InitItem,(T item)=>item.transform);
+        m_Pool = new ObjectPoolSimpleComponent<int,T>(_transform,"GridItem", InitItem);
     }
     public virtual T AddItem(int identity)
     {
@@ -22,7 +22,7 @@ public class UIT_GridControllerMono<T>  where T : Component
     }
     public void RemoveItem(int identity) => m_Pool.RemoveItem(identity);
     public virtual void ClearGrid() => m_Pool.ClearPool();
-    protected virtual T InitItem(Transform item,int identity) => item.GetComponent<T>();
+    protected virtual void InitItem(T item) { }
     public bool Contains(int identity) => m_Pool.ContainsItem(identity);
     public T GetItem(int identity)=> Contains(identity) ? m_Pool.GetItem(identity) : null;
     public T AddItem(int xIdentity, int yIdentity) => AddItem(GetIdentity(xIdentity, yIdentity));
@@ -46,11 +46,10 @@ public class UIT_GridControllerGridItem<T>: UIT_GridControllerMono<T> where T:UI
     {
         m_GridLayout = _transform.GetComponent<GridLayoutGroup>();
     }
-    protected override T InitItem(Transform trans, int identity)
+    protected override void InitItem(T item)
     {
-        T item = base.InitItem(trans, identity);
+        base.InitItem(item);
         item.Init();
-        return item;
     }
 
     public override T AddItem(int identity)
@@ -108,14 +107,13 @@ public class UIT_GridControlledSingleSelect<T> : UIT_GridControllerGridItem<T> w
     {
         OnItemSelect = _OnItemSelect;
     }
-    protected override T InitItem(Transform trans, int identity)
+    protected override void InitItem(T item)
     {
-        T item = base.InitItem(trans, identity);
+        base.InitItem(item);
         item.AttachSelectButton(OnItemClick);
         item.OnHighlight(false);
-        return item;
     }
-    
+
     public void OnItemClick(int index)
     {
         if (m_curSelecting != -1)

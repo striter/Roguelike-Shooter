@@ -152,22 +152,59 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,Obj
         }, true);
     }
 }
-
-public class ObjectPoolSimple<T,Y> 
+public class CSimplePool<T>
 {
-    Transform transform;
-    protected GameObject GridItem;
+    public Transform transform { get; private set; }
+    public T m_identity { get; private set; }
+    public CSimplePool()
+    {
+    }
+    public virtual void OnPoolInit(Transform _transform, T _identity)
+    {
+        transform = _transform;
+        m_identity = _identity;
+    }
+}
+public class ObjectPoolSimpleClass<T,Y>: ObjectPoolSimpleBase<T,Y> where Y:CSimplePool<T>,new()
+{
+    public ObjectPoolSimpleClass(Transform poolTrans, string itemName) : base(poolTrans, itemName)
+    {
+    }
+    protected override Y CreateNewItem(Transform instantiateTrans, T identity)
+    {
+        Y item = new Y();
+        item.OnPoolInit(instantiateTrans, identity);
+        return item;
+    }
+    protected override Transform GetItemTransform(Y targetItem) => targetItem.transform;
+}
+public class ObjectPoolSimpleComponent<T,Y>:ObjectPoolSimpleBase<T,Y> where Y:Component
+{
+    Action<Y> OnCreateNewInit;
+    public ObjectPoolSimpleComponent(Transform poolTrans, string itemName,Action<Y> _OnCreateNewInit=null):base(poolTrans,itemName)
+    {
+        OnCreateNewInit = _OnCreateNewInit;
+    }
+    protected override Y CreateNewItem(Transform instantiateTrans, T identity)
+    {
+        Y item= instantiateTrans.GetComponent<Y>(); ;
+        OnCreateNewInit?.Invoke(item);
+        return item;
+    } 
+    protected override Transform GetItemTransform(Y targetItem)=>targetItem.transform;
+}
+public class ObjectPoolSimpleBase<T, Y>
+{
+    public Transform transform { get; private set; }
+    protected GameObject m_PoolItem;
     public Dictionary<T, Y> m_ActiveItemDic { get; private set; } = new Dictionary<T, Y>();
     public List<Y> m_InactiveItemList { get; private set; } = new List<Y>();
-    protected Func<Transform,T, Y> OnInitItem;
-    protected Func<Y, Transform> GetItemTransform;
-    public ObjectPoolSimple(GameObject obj, Transform poolTrans,Func<Transform,T,Y> _OnInitItem,Func<Y,Transform> _GetItemTransform)
+
+    public ObjectPoolSimpleBase(Transform poolTrans, string itemName)
     {
-        GridItem = obj;
-        GridItem.gameObject.SetActive(false);
         transform = poolTrans;
-        OnInitItem = _OnInitItem;
-        GetItemTransform = _GetItemTransform;
+        m_PoolItem = poolTrans.Find(itemName).gameObject;
+        m_PoolItem.gameObject.SetActive(false);
     }
     public bool ContainsItem(T identity) => m_ActiveItemDic.ContainsKey(identity);
     public Y GetItem(T identity) => m_ActiveItemDic[identity];
@@ -181,7 +218,7 @@ public class ObjectPoolSimple<T,Y>
         }
         else
         {
-            targetItem = OnInitItem(GameObject.Instantiate(GridItem.gameObject, transform).transform, identity); 
+            targetItem = CreateNewItem(UnityEngine.Object.Instantiate(m_PoolItem, transform).transform, identity);
         }
         if (m_ActiveItemDic.ContainsKey(identity)) Debug.LogWarning(identity + "Already Exists In Grid Dic");
         else m_ActiveItemDic.Add(identity, targetItem);
@@ -189,6 +226,7 @@ public class ObjectPoolSimple<T,Y>
         GetItemTransform(targetItem).SetActivate(true);
         return targetItem;
     }
+
     public virtual void RemoveItem(T identity)
     {
         m_InactiveItemList.Add(m_ActiveItemDic[identity]);
@@ -204,4 +242,15 @@ public class ObjectPoolSimple<T,Y>
         }
         m_ActiveItemDic.Clear();
     }
+    protected virtual Y CreateNewItem(Transform instantiateTrans, T identity)
+    {
+        Debug.LogError("Override This Please");
+        return default(Y);
+    }
+    protected virtual Transform GetItemTransform(Y targetItem)
+    {
+        Debug.LogError("Override This Please");
+        return null;
+    }
 }
+

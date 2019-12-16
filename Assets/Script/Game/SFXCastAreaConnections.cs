@@ -5,22 +5,21 @@ using GameSetting;
 using UnityEngine;
 
 public class SFXCastAreaConnections : SFXCast {
-    ObjectPoolSimple<EntityBase, ConnectionsItem> m_Connections;
-    class ConnectionsItem
+    ObjectPoolSimpleClass<EntityBase, ConnectionsItem> m_Connections;
+    class ConnectionsItem:CSimplePool<EntityBase>
     {
-        public Transform transform { get; private set; }
         Transform targetTrans;
         LineRenderer m_Renderer;
         TSpecialClasses.ParticleControlBase m_Particles;
         bool m_Play=>targetTrans!=null;
-        public ConnectionsItem(Transform _transform)
+        public override void OnPoolInit(Transform _transform, EntityBase _identity)
         {
-            transform = _transform;
+            base.OnPoolInit(_transform, _identity);
             m_Particles = new TSpecialClasses.ParticleControlBase(transform.Find("Particles"));
             m_Renderer = transform.GetComponent<LineRenderer>();
             SetTarget(null);
         }
-        
+
         public void SetTarget(Transform target)
         {
             targetTrans = target;
@@ -50,7 +49,7 @@ public class SFXCastAreaConnections : SFXCast {
     {
         base.OnPoolItemInit(_identity, _OnRecycle);
         Transform connections = transform.Find("Connections");
-        m_Connections = new ObjectPoolSimple<EntityBase, ConnectionsItem>(connections.Find("Item").gameObject,connections,(Transform trans, EntityBase entity)=>new ConnectionsItem(trans),(ConnectionsItem item)=>item.transform);
+        m_Connections = new ObjectPoolSimpleClass<EntityBase, ConnectionsItem>(connections,"Item");
         m_GroundParticles = new TSpecialClasses.ParticleControlBase(transform.Find("ParticlesGround"));
     }
     public override void PlayControlled(int sourceID, EntityCharacterBase entity, Transform directionTrans,DamageDeliverInfo idInfo)

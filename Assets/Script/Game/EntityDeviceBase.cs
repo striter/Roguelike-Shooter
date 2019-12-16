@@ -8,7 +8,7 @@ public class EntityDeviceBase : EntityCharacterBase {
     public override enum_EntityController m_Controller => enum_EntityController.Device; 
     EntityDetector m_Detect;
     ParticleSystem[] m_Particles;
-    public ObjectPoolSimple<EntityCharacterBase, LineRenderer> m_Connections { get; private set; }
+    public ObjectPoolSimpleComponent<EntityCharacterBase, LineRenderer> m_Connections { get; private set; }
     public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
         base.OnPoolItemInit(_identity, _OnRecycle);
@@ -16,7 +16,7 @@ public class EntityDeviceBase : EntityCharacterBase {
         m_Detect.Init(OnEntityDetect);
         m_Particles = GetComponentsInChildren<ParticleSystem>();
         Transform connectionsParent = transform.Find("Connections");
-        m_Connections = new ObjectPoolSimple<EntityCharacterBase, LineRenderer>(connectionsParent.Find("Item").gameObject, connectionsParent,(Transform transform,EntityCharacterBase identity)=>transform.GetComponent<LineRenderer>(),(LineRenderer target)=>target.transform);
+        m_Connections = new ObjectPoolSimpleComponent<EntityCharacterBase, LineRenderer>(connectionsParent,"Item");
     }
     protected override void OnPoolItemEnable()
     {

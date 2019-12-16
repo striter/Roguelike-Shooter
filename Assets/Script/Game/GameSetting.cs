@@ -2450,12 +2450,12 @@ namespace GameSetting
             }
         }
         public Transform transform { get; private set; }
-        ObjectPoolSimple<int,Transform> m_Grid;
+        ObjectPoolSimpleComponent<int,Transform> m_Grid;
         Dictionary<int, RarityLevel> m_Levels = new Dictionary<int, RarityLevel>();
         public UIC_RarityLevel(Transform _transform)
         {
             transform = _transform;
-            m_Grid = new ObjectPoolSimple<int, Transform>(transform.Find("GridItem").gameObject,transform,(Transform trans,int identity)=>trans,(Transform trans)=>trans);
+            m_Grid = new ObjectPoolSimpleComponent<int, Transform>(transform,"GridItem");
             m_Grid.ClearPool();
             TCommon.TraversalEnum((enum_ActionRarity rarity) => { m_Levels.Add((int)rarity,new RarityLevel( m_Grid.AddItem((int)rarity))); });
         }
