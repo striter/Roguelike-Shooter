@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 3441393
+    totalSpriteSurfaceArea: 3500107
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -44,6 +44,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: f02ad3b8858f6ff44aafb2fbf4ef83e2, type: 3}
   - {fileID: 21300000, guid: 4ec60bacd1dafa74b8d93d4b1cae4984, type: 3}
   - {fileID: 21300000, guid: b6db95752d4b8db4cb74238362db9486, type: 3}
+  - {fileID: 21300000, guid: afd69607da6c4424689e6d5f52c0d64c, type: 3}
   - {fileID: 21300000, guid: 4c88e0a34c89f3049ba7e6da1e7f242d, type: 3}
   - {fileID: 21300000, guid: f5c09138b0341a64a90b45bc6cf89f5e, type: 3}
   - {fileID: 21300000, guid: 1e5956a73e79d9147b8b50c2823ab6f5, type: 3}
@@ -61,7 +62,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 6847768e5e8958849bc2f250edc4fd9a, type: 3}
   - {fileID: 21300000, guid: 9ff4ddd5857d6e84e9be010dd6f29daa, type: 3}
   - {fileID: 21300000, guid: 149e2cecb8f07c544a062ec19ac1c490, type: 3}
-  - {fileID: 21300000, guid: a062f1903e456cc41a6a0b0693587325, type: 3}
   - {fileID: 21300000, guid: 73b688457bf186b46a6918c9ad8daf1a, type: 3}
   - {fileID: 21300000, guid: dfc35cd87afdb89468db5389efbfb5ba, type: 3}
   - {fileID: 21300000, guid: f8ed2f2aa40fed549b97c3b6a03dc61c, type: 3}
@@ -69,6 +69,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 838e3e3f0673e564aafbb7fb60b21e46, type: 3}
   - {fileID: 21300000, guid: d1c9373b7f951074b8f15984531ad033, type: 3}
   - {fileID: 21300000, guid: 09e0c28f660a8be47b94d89b49411705, type: 3}
+  - {fileID: 21300000, guid: 6cd370de5f59c7c4a952190201ce7ea8, type: 3}
   - {fileID: 21300000, guid: 108feaf22a114814c812a167431a8540, type: 3}
   - {fileID: 21300000, guid: df1b52d98d2a82b4dad501bc4177411a, type: 3}
   - {fileID: 21300000, guid: baaa511bd621d3c43a9c098b42de7ad6, type: 3}
@@ -135,6 +136,7 @@ SpriteAtlas:
   - icon_diamond
   - icon_credit
   - btn_bottom_orange
+  - control_weapon_empty
   - status_equipment_bg
   - UI_title_orange_ML
   - btn_bottom_unavailable
@@ -152,7 +154,6 @@ SpriteAtlas:
   - status_ActionEnergy_progress_notfull
   - control_main_fire
   - icon_stage
-  - control_weaponswitch
   - control_reload
   - bottom_yellow
   - bottom_black90
@@ -160,6 +161,7 @@ SpriteAtlas:
   - bottom_blue
   - control_main_chat
   - control_main_pickup
+  - control_ability_ready
   - status_bottom
   - control_rocker_move
   - coins_bottom
@@ -206,7 +208,7 @@ SpriteAtlas:
   - icon_Armor
   - icon_equip
   - icon_ability
-  - status_weapon_bottom_bg
+  - control_bottom_bg
   - UI_common_angle_gray
   - icon_buff_rank
   - buff_level_blank
