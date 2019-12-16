@@ -28,17 +28,16 @@ public class UIC_Control : UIControlBase {
         m_AbilityImg = transform.Find("Ability/Image").GetComponent<Image>();
         m_AbilityCooldown = transform.Find("Ability/Cooldown").GetComponent<Image>();
         transform.Find("Reload").GetComponent<Button>().onClick.AddListener(OnReloadButtonDown);
-        transform.Find("Swap").GetComponent<Button>().onClick.AddListener(OnSwapButtonDown);
         transform.Find("Ability").GetComponent<Button>().onClick.AddListener(OnAbilityButtonDown);
-        transform.Find("Main").GetComponent<UIT_EventTriggerListener>().D_OnPress += OnMainButtonDown;
+        transform.Find("Main").GetComponent<UIT_EventTriggerListener>().OnPressStatus += OnMainButtonDown;
 
         transform.Find("Settings").GetComponent<Button>().onClick.AddListener(OnSettingBtnClick);
         m_setting = transform.Find("Settings/Image").GetComponent<Image>();
 
         btn_ActionStorage = tf_InGame.Find("ActionStorage").GetComponent<Button>();
         btn_ActionStorage.onClick.AddListener(OnActionStorageClick);
-        m_weapon1Data = new ControlWeaponData(tf_InGame.Find("Weapon1Data"),OnWeaponFirstActionClick);
-        m_weapon2Data = new ControlWeaponData(tf_InGame.Find("Weapon2Data"),OnWeaponSecondActionClick);
+        m_weapon1Data = new ControlWeaponData(tf_InGame.Find("Weapon1Data"),OnWeaponFirstActionClick, OnWeaponSwap);
+        m_weapon2Data = new ControlWeaponData(tf_InGame.Find("Weapon2Data"),OnWeaponSecondActionClick, OnWeaponSwap);
 
         m_TouchDelta = transform.GetComponent<TouchDeltaManager>();
         OnOptionsChanged();
@@ -82,8 +81,8 @@ public class UIC_Control : UIControlBase {
             m_MainImg.sprite = UIManager.Instance.m_CommonSprites[UIConvertions.GetMainSprite(m_Interact)];
         }
 
-        m_weapon1Data.UpdateAmmoStatus();
-        m_weapon2Data.UpdateAmmoStatus();
+        m_weapon1Data.Tick(Time.deltaTime);
+        m_weapon2Data.Tick(Time.deltaTime);
     }
 
     #region Controls
@@ -108,7 +107,7 @@ public class UIC_Control : UIControlBase {
 
     protected void OnReloadButtonDown() => OnReload?.Invoke();
     public void OnMainButtonDown(bool down, Vector2 pos) => OnMainDown?.Invoke(down);
-    protected void OnSwapButtonDown() => OnSwap?.Invoke();
+    protected void OnWeaponSwap() => OnSwap?.Invoke();
     protected void OnWeaponFirstActionClick() => OnWeaponAction?.Invoke(true);
     protected void OnWeaponSecondActionClick() => OnWeaponAction?.Invoke(false);
     protected void OnAbilityButtonDown() => OnCharacterAbility?.Invoke();
@@ -155,16 +154,18 @@ public class UIC_Control : UIControlBase {
         UIC_WeaponData m_weaponData;
         UIC_WeaponActionData m_ActionData;
         TSpecialClasses.ValueChecker<int, int> m_AmmoStatusChecker;
-        public ControlWeaponData(Transform _transform,UnityAction OnWeaponActionClick)
+        Action OnWeaponClick;
+        public ControlWeaponData(Transform _transform,UnityAction OnActionClick,Action _OnWeaponClick)
         {
             transform = _transform;
             m_ActionData = new UIC_WeaponActionData(transform.Find("ActionStatus"));
             m_weaponData = new UIC_WeaponData(transform.Find("WeaponData"));
             tf_Equiping = m_weaponData.transform.Find("Equiping");
             tf_Unequiping = m_weaponData.transform.Find("Unequiping");
-            m_weaponData.transform.GetComponent<Button>().onClick.AddListener(OnWeaponDetailClick);
             m_AmmoStatusChecker = new TSpecialClasses.ValueChecker<int, int>(-1, -1);
-            m_ActionData.transform.GetComponent<Button>().onClick.AddListener(OnWeaponActionClick);
+            OnWeaponClick = _OnWeaponClick;
+            m_ActionData.transform.GetComponent<Button>().onClick.AddListener(OnActionClick);
+            m_weaponData.transform.GetComponent<UIT_EventTriggerListener>().OnPressDuration = OnWeaponDetailDown;
         }
         public void UpdateInfo(WeaponBase weapon, bool equiping)
         {
@@ -183,19 +184,26 @@ public class UIC_Control : UIControlBase {
             UpdateAmmoStatus();
         }
         
-        public void UpdateAmmoStatus()
+        public void Tick(float deltaTime)
         {
             if (m_weapon == null)
                 return;
-
-            if (m_AmmoStatusChecker.Check(m_weapon.I_AmmoLeft, m_weapon.I_ClipAmount)) 
-                m_weaponData.UpdateAmmoInfo(m_weapon.I_AmmoLeft,m_weapon.I_ClipAmount); 
-            m_ActionData.Tick(m_weapon.m_ActionEnergyRequirementLeft);
+            UpdateAmmoStatus();
         }
 
-        void OnWeaponDetailClick()
+        void UpdateAmmoStatus()
         {
-            UIManager.Instance.ShowPage<UI_WeaponStatus>(true, 0f).Play(m_weapon.m_WeaponInfo,m_weapon.m_WeaponAction);
+            if (m_AmmoStatusChecker.Check(m_weapon.I_AmmoLeft, m_weapon.I_ClipAmount))
+                m_weaponData.UpdateAmmoInfo(m_weapon.I_AmmoLeft, m_weapon.I_ClipAmount);
+            m_ActionData.Tick(m_weapon.m_ActionEnergyRequirementLeft);
+        }
+        
+        void OnWeaponDetailDown(float pressDuration)
+        {
+            if (pressDuration > .25f)
+                UIManager.Instance.ShowPage<UI_WeaponStatus>(true, 0f).Play(m_weapon.m_WeaponInfo, m_weapon.m_WeaponAction);
+            else
+                OnWeaponClick();
         }
     }
 
@@ -212,7 +220,7 @@ public class UIC_Control : UIControlBase {
         if (Input.GetKeyDown(KeyCode.LeftShift))
             OnAbilityButtonDown();
         if (Input.GetKeyDown(KeyCode.Tab))
-            OnSwapButtonDown();
+            OnWeaponSwap();
         if (Input.GetKeyDown(KeyCode.Alpha1))
             OnWeaponFirstActionClick();
         if (Input.GetKeyDown(KeyCode.Alpha2))
