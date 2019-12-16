@@ -164,7 +164,7 @@ namespace GameSetting
                         PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),       //Normal
                         new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 15f }, { enum_ActionRarity.OutStanding, 3f }, { enum_ActionRarity.Epic, 0 } },       //Ability
                         new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 9f }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 0 } },       //Equipment
-                        new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Ordinary, 4.5f },{ enum_WeaponRarity.Advanced,2.27f} }),          //Weapon
+                        new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Ordinary, 6f },{ enum_WeaponRarity.Advanced,3f} }),          //Weapon
                         PickupGenerateData.Create(10, 100, 50, new RangeInt(10, 5),     //Elite
                         new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 40 }, { enum_ActionRarity.OutStanding, 55 }, { enum_ActionRarity.Epic, 5 } },
                         new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 100f }, { enum_ActionRarity.Epic, 0 } },
@@ -175,9 +175,9 @@ namespace GameSetting
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 0 }, { enum_WeaponRarity.Rare, 100 }, { enum_WeaponRarity.Legend, 0 } },
                         new Dictionary<enum_ActionRarity, int>() { { enum_ActionRarity.Normal, 00 }, { enum_ActionRarity.OutStanding, 70 }, { enum_ActionRarity.Epic, 30 } },
                         PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),
-                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 8.4f }, { enum_ActionRarity.Epic, 1.38f } },
-                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 4.2f }, { enum_ActionRarity.Epic, 0 } },
-                        new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Advanced, 4.5f },{ enum_WeaponRarity.Rare,2.27f} }),
+                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 2.8f }, { enum_ActionRarity.OutStanding, 4.2f }, { enum_ActionRarity.Epic, 0 } },
+                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 2.8f }, { enum_ActionRarity.OutStanding, 2.8f }, { enum_ActionRarity.Epic, 0 } },
+                        new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Advanced, 4.2f },{ enum_WeaponRarity.Rare,1.4f} }),
                         PickupGenerateData.Create(10, 100, 100, new RangeInt(10, 5),
                         new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 80 }, { enum_ActionRarity.Epic, 20 } },
                         new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 100 } },
@@ -188,9 +188,9 @@ namespace GameSetting
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 0 }, { enum_WeaponRarity.Rare, 0 }, { enum_WeaponRarity.Legend, 100 } },
                         new Dictionary<enum_ActionRarity, int>() { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 100 } },
                         PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),
-                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 8.4f } },
-                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Epic, 4.2f } },
-                        new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Rare, 4.5f },{ enum_WeaponRarity.Legend,2.27f} }),
+                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 4f }, { enum_ActionRarity.Epic, 2f } },
+                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.OutStanding, 3f }, { enum_ActionRarity.Epic, 2 } },
+                        new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Rare, 3 },{ enum_WeaponRarity.Legend, 3} }),
                         PickupGenerateData.Create(0, 0, 0, new RangeInt(10, 5),
                         new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 0 } },
                         new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 0 } },
