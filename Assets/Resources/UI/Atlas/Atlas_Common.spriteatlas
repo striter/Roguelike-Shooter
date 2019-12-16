@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 3500107
+    totalSpriteSurfaceArea: 3434891
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -67,8 +67,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: f8ed2f2aa40fed549b97c3b6a03dc61c, type: 3}
   - {fileID: 21300000, guid: cbc16cdaafe934645b541aec0fa828cd, type: 3}
   - {fileID: 21300000, guid: 838e3e3f0673e564aafbb7fb60b21e46, type: 3}
-  - {fileID: 21300000, guid: d1c9373b7f951074b8f15984531ad033, type: 3}
-  - {fileID: 21300000, guid: 09e0c28f660a8be47b94d89b49411705, type: 3}
   - {fileID: 21300000, guid: 6cd370de5f59c7c4a952190201ce7ea8, type: 3}
   - {fileID: 21300000, guid: 108feaf22a114814c812a167431a8540, type: 3}
   - {fileID: 21300000, guid: df1b52d98d2a82b4dad501bc4177411a, type: 3}
@@ -88,7 +86,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: f7fca1aa90fea5644a5bd4a630faf528, type: 3}
   - {fileID: 21300000, guid: bc835d0ed1221564a8210bf74fb869d6, type: 3}
   - {fileID: 21300000, guid: baba3317718e4fc45befa1421e27a1b2, type: 3}
-  - {fileID: 21300000, guid: 56d5f7c868d1516499d85b915feca4b8, type: 3}
   - {fileID: 21300000, guid: ef772437ad538cd40ad8b646c2e5ae10, type: 3}
   - {fileID: 21300000, guid: d40acf7a523f9124e830b23c072f7d9e, type: 3}
   - {fileID: 21300000, guid: b5e384253d5416948a663bfe54d31ac4, type: 3}
@@ -131,7 +128,7 @@ SpriteAtlas:
   - control_rocker_bottom
   - level_background
   - UI_title_orange_long
-  - main_bottom
+  - control_main_bottom
   - UI_title_orange
   - icon_diamond
   - icon_credit
@@ -159,8 +156,6 @@ SpriteAtlas:
   - bottom_black90
   - bottom_gray
   - bottom_blue
-  - control_main_chat
-  - control_main_pickup
   - control_ability_ready
   - status_bottom
   - control_rocker_move
@@ -180,7 +175,6 @@ SpriteAtlas:
   - UI_common_darkgray70
   - bottom_darkgray
   - icon_caution
-  - icon_ActionStorage
   - status_bullet_shadow
   - btn_close
   - UI_common_NextPage

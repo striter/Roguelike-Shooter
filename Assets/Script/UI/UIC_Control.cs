@@ -9,10 +9,7 @@ using UnityEngine.UI;
 public class UIC_Control : UIControlBase {
     protected TouchDeltaManager m_TouchDelta { get; private set; }
     Transform tf_InGame;
-    Image m_MainImg;
     Image m_AbilityBG,m_AbilityImg,m_AbilityCooldown;
-    EntityCharacterPlayer m_Player;
-    Button btn_ActionStorage;
     Image m_setting;
     ControlWeaponData m_weapon1Data, m_weapon2Data;
     Action OnReload,OnSwap, OnCharacterAbility;
@@ -23,7 +20,6 @@ public class UIC_Control : UIControlBase {
     {
         base.Init();
         tf_InGame = transform.Find("InGame");
-        m_MainImg = transform.Find("Main/Image").GetComponent<Image>();
         m_AbilityBG = transform.Find("Ability").GetComponent<Image>();
         m_AbilityImg = transform.Find("Ability/Image").GetComponent<Image>();
         m_AbilityCooldown = transform.Find("Ability/Cooldown").GetComponent<Image>();
@@ -33,9 +29,7 @@ public class UIC_Control : UIControlBase {
 
         transform.Find("Settings").GetComponent<Button>().onClick.AddListener(OnSettingBtnClick);
         m_setting = transform.Find("Settings/Image").GetComponent<Image>();
-
-        btn_ActionStorage = tf_InGame.Find("ActionStorage").GetComponent<Button>();
-        btn_ActionStorage.onClick.AddListener(OnActionStorageClick);
+        
         m_weapon1Data = new ControlWeaponData(tf_InGame.Find("Weapon1Data"),OnWeaponFirstActionClick, OnWeaponSwap);
         m_weapon2Data = new ControlWeaponData(tf_InGame.Find("Weapon2Data"),OnWeaponSecondActionClick, OnWeaponSwap);
 
@@ -55,17 +49,15 @@ public class UIC_Control : UIControlBase {
     }
     public UIC_Control SetInGame(bool inGame)
     {
-        btn_ActionStorage.SetActivate(inGame);
+        tf_InGame.SetActivate(inGame);
         return this;
     }
 
     void OnOptionsChanged() => UIT_JoyStick.Instance.SetMode(OptionsManager.m_OptionsData.m_JoyStickMode);
     bool CheckControlable() => !UIPageBase.m_PageOpening;
-
-    InteractBase m_Interact;
+    
     void OncommonStatus(EntityCharacterPlayer player)
     {
-        m_Player = player;
         if(player.m_Ability.m_Cooldowning)
             m_AbilityCooldown.fillAmount = player.m_Ability.m_CooldownScale;
 
@@ -74,13 +66,7 @@ public class UIC_Control : UIControlBase {
             m_AbilityBG.sprite = UIManager.Instance.m_CommonSprites[UIConvertions.GetAbilityBackground(m_AbilityCooldownChecker.check1)];
             m_AbilityCooldown.SetActivate(m_AbilityCooldownChecker.check1);
         }
-
-        if (player.m_Interact != m_Interact)
-        {
-            m_Interact = player.m_Interact;
-            m_MainImg.sprite = UIManager.Instance.m_CommonSprites[UIConvertions.GetMainSprite(m_Interact)];
-        }
-
+        
         m_weapon1Data.Tick(Time.deltaTime);
         m_weapon2Data.Tick(Time.deltaTime);
     }
@@ -111,7 +97,6 @@ public class UIC_Control : UIControlBase {
     protected void OnWeaponFirstActionClick() => OnWeaponAction?.Invoke(true);
     protected void OnWeaponSecondActionClick() => OnWeaponAction?.Invoke(false);
     protected void OnAbilityButtonDown() => OnCharacterAbility?.Invoke();
-    protected void OnActionStorageClick() => UIManager.Instance.ShowPage<UI_ActionPack>(true,0f).Show(m_Player.m_PlayerInfo);
     public void AddDragBinding(Action<bool, Vector2> _OnDragDown, Action<Vector2> _OnDrag)
     {
         transform.localScale = Vector3.zero;

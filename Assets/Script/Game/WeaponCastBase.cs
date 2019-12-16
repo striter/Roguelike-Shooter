@@ -11,15 +11,14 @@ public class WeaponCastBase : WeaponBase {
         SFXCast cast = equipment as SFXCast;
         F_BaseDamage = cast.F_Damage;
     }
-    public override void OnShow(bool show)
+
+    private void OnDisable()
     {
-        base.OnShow(show);
-        if(!show)
-            SetCastAvailable(false);
+        SetCastAvailable(false);
     }
     void Update()
     {
-        SetCastAvailable(m_Trigger.B_TriggerDown && !B_Reloading&&!m_Attacher.m_IsDead && m_Attacher.m_weaponCanFire);
+        SetCastAvailable(m_Attacher!=null&&m_Trigger.B_TriggerDown && !B_Reloading && !m_Attacher.m_IsDead && m_Attacher.m_weaponCanFire);
     }
     void SetCastAvailable(bool showCast)
     {

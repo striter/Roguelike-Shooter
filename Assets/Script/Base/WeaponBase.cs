@@ -68,7 +68,7 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
         OnShow(true);
     }
 
-    public void OnDetach()
+    public virtual void OnDetach()
     {
         m_Attacher = null;
         OnShow(true);
