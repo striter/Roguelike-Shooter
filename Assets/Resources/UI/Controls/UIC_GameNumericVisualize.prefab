@@ -69,6 +69,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224899116958389066}
   - component: {fileID: 114415276644342698}
+  - component: {fileID: 111568549228557356}
   m_Layer: 5
   m_Name: GridItem
   m_TagString: Untagged
@@ -102,6 +103,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224894998173783126}
   - component: {fileID: 114330784971515864}
+  - component: {fileID: 111452514622546738}
   m_Layer: 5
   m_Name: GridItem
   m_TagString: Untagged
@@ -333,6 +335,36 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!111 &111452514622546738
+Animation:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1351032693151472}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 7400000, guid: 039907834fe79a94eac74a77ea0b8c49, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: 039907834fe79a94eac74a77ea0b8c49, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 0
+  m_AnimatePhysics: 0
+  m_CullingType: 0
+--- !u!111 &111568549228557356
+Animation:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1270137399418478}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 7400000, guid: 1d5e3e9b2e6cea543983fd1971ec2d92, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: 1d5e3e9b2e6cea543983fd1971ec2d92, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_CullingType: 0
 --- !u!114 &114074771159155980
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -963,7 +995,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 130}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224549599269729988
