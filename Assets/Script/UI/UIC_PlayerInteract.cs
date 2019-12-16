@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TSpecialClasses;
 using UnityEngine.UI;
+using System;
 
 public class UIC_PlayerInteract : UIControlBase
 {
@@ -28,6 +29,7 @@ public class UIC_PlayerInteract : UIControlBase
     Transform tf_Common;
     UIT_TextExtend m_CommonIntro;
 
+    Action OnInteractClick;
     protected override void Init()
     {
         base.Init();
@@ -53,6 +55,7 @@ public class UIC_PlayerInteract : UIControlBase
 
         tf_Common = tf_Container.Find("CommonData");
         m_CommonIntro = tf_Common.Find("Intro").GetComponent<UIT_TextExtend>();
+        tf_Bottom.Find("Button").GetComponent<Button>().onClick.AddListener(OnInteractBtnClick);
 
         rtf_InteractData.SetActivate(false);
         TBroadCaster<enum_BC_UIStatus>.Add<InteractBase>(enum_BC_UIStatus.UI_PlayerInteractStatus,OnInteractStatus);
@@ -63,10 +66,8 @@ public class UIC_PlayerInteract : UIControlBase
         TBroadCaster<enum_BC_UIStatus>.Remove<InteractBase>(enum_BC_UIStatus.UI_PlayerInteractStatus, OnInteractStatus);
     }
 
-    public void Play(UnityEngine.Events.UnityAction OnInteractClick)
-    {
-        tf_Bottom.Find("Button").GetComponent<Button>().onClick.AddListener(OnInteractClick);
-    }
+    public void DoBindings(Action _OnInteractClick) => OnInteractClick = _OnInteractClick;
+    void OnInteractBtnClick()=>OnInteractClick?.Invoke();
 
     void OnInteractStatus(InteractBase _interact)
     {
@@ -144,8 +145,8 @@ public class UIC_PlayerInteract : UIControlBase
         tf_Common.SetActivate(isCommon);
         tf_Weapon.SetActivate(isWeapon);
         tf_WeaponData.SetActivate(isWeapon);
-        tf_Ability.SetActivate(isEquipment);
-        tf_Equipment.SetActivate(isAbility);
+        tf_Ability.SetActivate(isAbility);
+        tf_Equipment.SetActivate(isEquipment);
         m_ActionData.transform.SetActivate(isAction);
         bool tradeItem = price >= 0;
         tf_Trade.SetActivate(tradeItem);
