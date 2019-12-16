@@ -149,7 +149,7 @@ public class UIC_CharacterStatus : UIControlBase
         m_ArmorLerp.ChangeValue(_healthManager.m_CurrentArmor / UIConst.F_UIMaxArmor);
         m_HealthLerp.ChangeValue(_healthManager.F_HealthBaseScale);
         m_ArmorAmount.text=string.Format("{0}",(int)_healthManager.m_CurrentArmor);
-        m_HealthAmount.text = string.Format("{0}", (int)_healthManager.m_CurrentHealth);
+        m_HealthAmount.text = string.Format("{0} / {1}", (int)_healthManager.m_CurrentHealth,(int)_healthManager.m_MaxHealth);
     }
 
     void OnAmmoStatus(WeaponBase weaponInfo)
