@@ -10,8 +10,41 @@ public class GameManager : GameManagerBase
     protected static GameManager nInstance;
     public static new GameManager Instance => nInstance;
     public string M_TESTSEED = "";
-#if UNITY_EDITOR
     #region Test
+    void AddConsoleBinddings()
+    {
+        List<UIT_MobileConsole.CommandBinding> m_bindings = new List<UIT_MobileConsole.CommandBinding>();
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Show Seed", "", KeyCode.None, (string value) => { Debug.LogError(m_GameLevel.m_Seed); }));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Skip Stage", "", KeyCode.Equals, (string value) => {OnStageFinished();}));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Skip Level", "", KeyCode.Minus, (string value) => {OnLevelFinished();}));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Kill All Energmy", "", KeyCode.Alpha0, (string value) => {
+            m_Entities.Values.ToList().Traversal((EntityBase entity) => {
+                if (entity.m_Flag == enum_EntityFlag.Enermy)
+                    entity.m_HitCheck.TryHit(new DamageInfo(entity.m_Health.m_CurrentHealth, enum_DamageType.Basic, DamageDeliverInfo.Default(-1))); });
+        }));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Spawn Enermy", "101", KeyCode.Z, (string id) => {
+            EntityCharacterBase enermy = GameObjectManager.SpawnEntityCharacter(int.Parse(id), LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f)), m_LocalPlayer.transform.position, enum_EntityFlag.Enermy);
+            enermy.SetExtraDifficulty(GameExpression.GetAIBaseHealthMultiplier(m_GameLevel.m_GameDifficulty), GameExpression.GetAIMaxHealthMultiplier(m_GameLevel.m_GameStage), GameExpression.GetEnermyGameDifficultyBuffIndex(m_GameLevel.m_GameDifficulty));
+            if (TestEntityBuffOnSpawn > 0)
+                enermy.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.BuffInfo(-1, TestEntityBuffOnSpawn)));
+        }));
+
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Damage Self", "20", KeyCode.N, (string damage) => { m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(int.Parse(damage), enum_DamageType.Basic, DamageDeliverInfo.Default(-1)));}));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Heal Self", "20", KeyCode.M, (string damage) => { m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(-int.Parse(damage), enum_DamageType.Basic, DamageDeliverInfo.Default(-1))); }));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Spawn Coins", "20", KeyCode.Keypad1, (string coins) => { GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupCoin, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f), false), LevelManager.Instance.m_InteractParent).Play(int.Parse(coins), m_LocalPlayer.transform);}));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Spawn Health", "20", KeyCode.Keypad2, (string health) => {GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupHealth, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f), false), LevelManager.Instance.m_InteractParent).Play(int.Parse(health), m_LocalPlayer.transform);}));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Spawn Armor", "20", KeyCode.Keypad3, (string armor) => {GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupArmor, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f), false), LevelManager.Instance.m_InteractParent).Play(int.Parse(armor), m_LocalPlayer.transform);}));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Spawn Weapon", "AKM", KeyCode.F1, (string weapon) => { GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, TCommon.RandomXZSphere(5f), LevelManager.Instance.m_InteractParent).Play(GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew((enum_PlayerWeapon)Enum.Parse(typeof(enum_PlayerWeapon),weapon)))); }));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Spawn Action", "10001", KeyCode.F2, (string actionIndex) => { GameObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action, TCommon.RandomXZSphere(5f)).Play(ActionDataManager.CreateAction(int.Parse(actionIndex), enum_ActionRarity.Normal));
+        }));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Add Ability Energy", "1", KeyCode.KeypadPlus, (string energy) => {
+            m_LocalPlayer.OnWeaponEnergy(float.Parse(energy));
+        }));
+        
+        UIT_MobileConsole.Instance.AddConsoleBindings(m_bindings);
+    }
+
+#if UNITY_EDITOR
     public enum enumDebug_LevelDrawMode
     {
         DrawTypes,
@@ -22,8 +55,6 @@ public class GameManager : GameManagerBase
     public bool B_PhysicsDebugGizmos = true;
     public bool B_GameLevelDebugGizmos = true;
     public enumDebug_LevelDrawMode E_LevelDebug = enumDebug_LevelDrawMode.DrawTypes;
-    public int Z_TestEntitySpawn = 221;
-    public enum_EntityFlag TestEntityFlag = enum_EntityFlag.Enermy;
     public int TestEntityBuffOnSpawn = 1;
     public int X_TestCastIndex = 30003;
     public bool CastForward = true;
@@ -31,10 +62,6 @@ public class GameManager : GameManagerBase
     public int V_TestIndicatorIndex = 50002;
     public int B_TestBuffIndex = 1;
     public int Comma_TestParticleIndex = 20001;
-    public enum_PlayerWeapon F1_WeaponSpawnType = enum_PlayerWeapon.Invalid;
-    public int F5_TestActionNormal = 10001;
-    public int F6_TestActionOutstanding = 10001;
-    public int F7_TestActionEpic = 10001;
     public int F8_TestUseAction = 10001;
     void Update()
     {
@@ -42,13 +69,6 @@ public class GameManager : GameManagerBase
             SetBulletTime(!m_BulletTiming,.1f);
 
         RaycastHit hit = new RaycastHit();
-        if (Input.GetKeyDown(KeyCode.Z) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
-        {
-            EntityCharacterBase enermy = GameObjectManager.SpawnEntityCharacter(Z_TestEntitySpawn,LevelManager.NavMeshPosition( hit.point),m_LocalPlayer.transform.position, TestEntityFlag);
-            enermy.SetExtraDifficulty(GameExpression.GetAIBaseHealthMultiplier(m_GameLevel.m_GameDifficulty), GameExpression.GetAIMaxHealthMultiplier(m_GameLevel.m_GameStage), GameExpression.GetEnermyGameDifficultyBuffIndex(m_GameLevel.m_GameDifficulty));
-            if (TestEntityBuffOnSpawn > 0)
-                enermy.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic,DamageDeliverInfo.BuffInfo(-1, TestEntityBuffOnSpawn)));
-        }
         if (Input.GetKeyDown(KeyCode.X) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
             GameObjectManager.SpawnEquipment<SFXCast>(X_TestCastIndex, hit.point, CastForward?m_LocalPlayer.transform.forward: Vector3.up).Play(DamageDeliverInfo.Default(m_LocalPlayer.m_EntityID));
         if (Input.GetKeyDown(KeyCode.C) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
@@ -59,57 +79,6 @@ public class GameManager : GameManagerBase
             GameObjectManager.SpawnSFX<SFXParticles>(Comma_TestParticleIndex, hit.point + Vector3.up, Vector3.up).Play(-1);
         if (Input.GetKeyDown(KeyCode.B))
             m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.BuffInfo(-1, B_TestBuffIndex )));
-        if (Input.GetKeyDown(KeyCode.N))
-            m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(20, enum_DamageType.Basic,DamageDeliverInfo.Default(-1)));
-        if (Input.GetKeyDown(KeyCode.M))
-            m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(-50, enum_DamageType.Basic, DamageDeliverInfo.Default(-1)));
-        if (Input.GetKeyDown(KeyCode.F1) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
-        {
-            GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, hit.point, LevelManager.Instance.m_InteractParent).Play(GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew(F1_WeaponSpawnType)));
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha0))
-        {
-            List<EntityBase> entities = m_Entities.Values.ToList();
-            entities.Traversal((EntityBase entity) => {
-                if (entity.m_Flag== enum_EntityFlag.Enermy)
-                    entity.m_HitCheck.TryHit( new DamageInfo(entity.m_Health.m_CurrentHealth, enum_DamageType.Basic, DamageDeliverInfo.Default(-1)));
-            });
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha9))
-        {
-            m_Entities.Traversal((EntityBase entity) => {
-                if (entity.m_Flag == enum_EntityFlag.Enermy)
-                    entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.EquipmentInfo(-1,0, enum_CharacterEffect.Freeze,2f)));
-            });
-        }
-        if (Input.GetKeyDown(KeyCode.KeypadPlus))
-            m_LocalPlayer.OnWeaponEnergy(1f);
-
-        if (Input.GetKeyDown(KeyCode.Equals))
-            OnStageFinished();
-        if (Input.GetKeyDown(KeyCode.Minus))
-            OnLevelFinished();
-
-        if (Input.GetKeyDown(KeyCode.F5) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
-            GameObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action, hit.point).Play(ActionDataManager.CreateAction(F5_TestActionNormal, enum_ActionRarity.Normal));
-        if (Input.GetKeyDown(KeyCode.F6) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
-            GameObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action, hit.point).Play(ActionDataManager.CreateAction(F6_TestActionOutstanding, enum_ActionRarity.OutStanding));
-        if (Input.GetKeyDown(KeyCode.F7) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
-            GameObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action, hit.point).Play(ActionDataManager.CreateAction(F7_TestActionEpic, enum_ActionRarity.Epic));
-        if (Input.GetKeyDown(KeyCode.F8))
-            m_LocalPlayer.m_PlayerInfo.OnUseAction(ActionDataManager.CreateAction(F8_TestUseAction, enum_ActionRarity.Epic));
-
-        if (Input.GetKeyDown(KeyCode.Keypad1) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
-            GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupCoin, LevelManager.NavMeshPosition(hit.point, false), LevelManager.Instance.m_InteractParent).Play(1, m_LocalPlayer.transform);
-        if (Input.GetKeyDown(KeyCode.Keypad2) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
-            GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupCoin, LevelManager.NavMeshPosition(hit.point, false), LevelManager.Instance.m_InteractParent).Play(10, m_LocalPlayer.transform);
-        if (Input.GetKeyDown(KeyCode.Keypad3) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
-            GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupCoin, LevelManager.NavMeshPosition(hit.point, false), LevelManager.Instance.m_InteractParent).Play(100, m_LocalPlayer.transform);
-        if (Input.GetKeyDown(KeyCode.Keypad4) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
-            GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupArmor, LevelManager.NavMeshPosition(hit.point, false), LevelManager.Instance.m_InteractParent).Play(10, m_LocalPlayer.transform);
-        if (Input.GetKeyDown(KeyCode.Keypad5) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
-            GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupHealth, LevelManager.NavMeshPosition(hit.point, false), LevelManager.Instance.m_InteractParent).Play(10, m_LocalPlayer.transform);
-
         if (Input.GetKeyDown(KeyCode.F9))
         {
             CameraController.Instance.m_Effect.StartAreaScan(m_LocalPlayer.tf_Head.position, Color.white, TResources.Load<Texture>(TResources.ConstPath.S_PETex_Holograph), 15f, 1f, 5f, 50, 1f);
@@ -118,11 +87,12 @@ public class GameManager : GameManagerBase
                     entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.EquipmentInfo(-1, 0, enum_CharacterEffect.Scan, 10f)));
             });
         }
-        if (Input.GetKeyDown(KeyCode.F10))
-            Debug.LogError(m_GameLevel.m_Seed);
+        if (Input.GetKeyDown(KeyCode.F8))
+            m_LocalPlayer.m_PlayerInfo.OnUseAction(ActionDataManager.CreateAction(F8_TestUseAction, enum_ActionRarity.Epic));
+
     }
-    #endregion
 #endif
+    #endregion
     public GameLevelManager m_GameLevel { get; private set; }
     public EntityCharacterPlayer m_LocalPlayer { get; private set; } = null;
     public override bool B_InGame => true;
@@ -138,6 +108,7 @@ public class GameManager : GameManagerBase
         if (M_TESTSEED!="")
             GameDataManager.m_BattleData.m_GameSeed = M_TESTSEED;
         m_GameLevel =  new GameLevelManager(GameDataManager.m_GameData,GameDataManager.m_BattleData);
+
     }
 
     protected override void OnDestroy()
@@ -157,6 +128,8 @@ public class GameManager : GameManagerBase
     protected override void Start()
     {
         base.Start();
+        AddConsoleBinddings();
+
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameStart);
         LoadStage();
     }
