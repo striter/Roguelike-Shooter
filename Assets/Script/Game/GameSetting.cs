@@ -340,12 +340,12 @@ namespace GameSetting
                     Debug.LogError("Invalid Convertions Here!");
                     return "";
                 case enum_Interaction.PickupCoin:
-                    return "Pickup_Coin";
+                    return "NumericIcon_Coin";
                 case enum_Interaction.PickupArmor:
-                    return "Pickup_Armor";
+                    return "NumericIcon_Armor";
                 case enum_Interaction.PickupHealth:
                 case enum_Interaction.PickupHealthPack:
-                    return "Pickup_Health";
+                    return "NumericIcon_Health";
             }
         } 
         public static Color GetVisualizeAmountColor(this enum_Interaction type)

@@ -10,7 +10,6 @@ public class UIC_Control : UIControlBase {
     protected TouchDeltaManager m_TouchDelta { get; private set; }
     Transform tf_InGame;
     Image m_AbilityBG,m_AbilityImg,m_AbilityCooldown;
-    EntityCharacterPlayer m_Player;
     Image m_setting;
     ControlWeaponData m_weapon1Data, m_weapon2Data;
     Action OnReload,OnSwap, OnCharacterAbility;
@@ -59,7 +58,6 @@ public class UIC_Control : UIControlBase {
     
     void OncommonStatus(EntityCharacterPlayer player)
     {
-        m_Player = player;
         if(player.m_Ability.m_Cooldowning)
             m_AbilityCooldown.fillAmount = player.m_Ability.m_CooldownScale;
 
