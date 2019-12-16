@@ -71,7 +71,8 @@ namespace TPhysics
                 T temp = castHits[i].collider.GetComponent<T>();
                 if (CanHitTarget(temp) && OnTargetHit(deltaTime, castHits[i], temp))
                 {
-                    breakPoint = castHits[i].point;
+                    if(castHits[i].point!=Vector3.zero)
+                        breakPoint = castHits[i].point;
                     break;
                 }
             }

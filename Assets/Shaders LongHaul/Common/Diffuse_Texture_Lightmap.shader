@@ -81,8 +81,8 @@
 			}
 			ENDCG
 		}
-		USEPASS "Game/Common/Diffuse_Texture/FORWARDADD"
-		USEPASS "Game/Common/Diffuse_Texture_Normalmap/SHADOWCASTER"
+		USEPASS "Game/Common/Diffuse_Base/FORWARDADD"
+		USEPASS "Game/Common/Diffuse_Base/SHADOWCASTER"
 	}
 
 }
