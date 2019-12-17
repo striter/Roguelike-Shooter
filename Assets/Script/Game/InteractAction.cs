@@ -33,10 +33,12 @@ public class InteractAction : InteractGameBase {
         {
             if (!UIPageBase.m_PageOpening)
                 GameUIManager.Instance.ShowPage<UI_EquipmentSwap>(true, 0f).Play(_interactTarget.m_PlayerInfo, m_Action, OnEquipmentSwapPage);
-            return true;
         }
-        OnRecycle();
-        _interactTarget.OnActionInteract(m_Action);
+        else
+        {
+            OnRecycle();
+            _interactTarget.OnActionInteract(m_Action);
+        }
         return false;
     }
 
