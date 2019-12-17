@@ -1587,10 +1587,12 @@ namespace GameSetting
         public void UpgradeEquipment(int index)
         {
             m_ActionEquipment[index].Upgrade();
+            TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
         }
         public void RemoveEquipment(int index)
         {
             m_ActionEquipment[index].ForceExpire();
+            TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
         }
 
         public bool b_haveEmptyEquipmentSlot => m_ActionEquipment.Count < GameConst.I_PlayerEquipmentCount;
