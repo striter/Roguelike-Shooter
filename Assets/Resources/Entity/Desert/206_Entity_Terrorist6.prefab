@@ -942,14 +942,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   I_MaxHealth: 400
+  m_IsDead: 0
+  ExtraRendererForForest107Only: {fileID: 0}
   E_SpawnType: 4
   I_DefaultArmor: 0
   F_MovementSpeed: 3
   F_AttackSpread: 10
-  ? ExtraRendererOnlyAvailableFor107WhatAwkwardRequirementWhyNotPutThemIntoOneModelCauseOutModelArtistCantDoItHaveToCreateThisIntoMyCodeLikeABunchOfShitForFuckingRealSucks
-  : {fileID: 0}
   E_AnimatorIndex: 162
-  F_AIChaseRange: 20
+  F_AIChaseRange: 16
   F_AIAttackRange: 25
   F_AttackDuration:
     start: 5

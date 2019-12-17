@@ -1170,7 +1170,7 @@ MonoBehaviour:
   F_MovementSpeed: 3
   F_AttackSpread: 0
   E_AnimatorIndex: 163
-  F_AIChaseRange: 17
+  F_AIChaseRange: 14
   F_AIAttackRange: 22
   F_AttackDuration:
     start: 1
