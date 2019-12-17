@@ -19,7 +19,6 @@ public class UIC_PlayerInteract : UIControlBase
     UIT_TextExtend m_BottomTips;
     Transform tf_Trade, tf_Pickup;
 
-
     UIT_TextExtend m_TradePrice;
     UIC_ActionInteractData m_ActionData;
     Transform tf_WeaponData;
@@ -28,6 +27,7 @@ public class UIC_PlayerInteract : UIControlBase
 
     Transform tf_Common;
     UIT_TextExtend m_CommonIntro;
+    Image m_CommonImage;
 
     Action OnInteractClick;
     protected override void Init()
@@ -54,7 +54,8 @@ public class UIC_PlayerInteract : UIControlBase
         m_ActionData = new UIC_ActionInteractData(tf_Container.Find("ActionData"));
 
         tf_Common = tf_Container.Find("CommonData");
-        m_CommonIntro = tf_Common.Find("Intro").GetComponent<UIT_TextExtend>();
+        m_CommonIntro = tf_Common.Find("Intro/Text").GetComponent<UIT_TextExtend>();
+        m_CommonImage = tf_Common.Find("Icon/Image").GetComponent<Image>();
         tf_Bottom.Find("Button").GetComponent<Button>().onClick.AddListener(OnInteractBtnClick);
 
         rtf_InteractData.SetActivate(false);
@@ -135,6 +136,7 @@ public class UIC_PlayerInteract : UIControlBase
                     isCommon = true;
                     m_CommonTop.localizeKey = interactInfo.GetTitleLocalizeKey();
                     m_CommonIntro.localizeKey = interactInfo.GetIntroLocalizeKey();
+                    m_CommonImage.sprite = UIManager.Instance.m_CommonSprites[interactInfo.m_InteractType.GetInteractIcon()];
                     break;
             }
         }

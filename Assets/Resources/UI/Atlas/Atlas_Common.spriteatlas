@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 3434891
+    totalSpriteSurfaceArea: 3515579
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -60,6 +60,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: e9ba0534027621045989b060410b060e, type: 3}
   - {fileID: 21300000, guid: dfee1c79ec53af4438b2fae542531758, type: 3}
   - {fileID: 21300000, guid: 6847768e5e8958849bc2f250edc4fd9a, type: 3}
+  - {fileID: 21300000, guid: 71917017662df5d4cb55e4dba0929204, type: 3}
   - {fileID: 21300000, guid: 9ff4ddd5857d6e84e9be010dd6f29daa, type: 3}
   - {fileID: 21300000, guid: 149e2cecb8f07c544a062ec19ac1c490, type: 3}
   - {fileID: 21300000, guid: 73b688457bf186b46a6918c9ad8daf1a, type: 3}
@@ -67,6 +68,8 @@ SpriteAtlas:
   - {fileID: 21300000, guid: f8ed2f2aa40fed549b97c3b6a03dc61c, type: 3}
   - {fileID: 21300000, guid: cbc16cdaafe934645b541aec0fa828cd, type: 3}
   - {fileID: 21300000, guid: 838e3e3f0673e564aafbb7fb60b21e46, type: 3}
+  - {fileID: 21300000, guid: 433e20f7cd81ea04095e0c5a7c11fb9e, type: 3}
+  - {fileID: 21300000, guid: 730d082326fd1b040bfd9c95629d4144, type: 3}
   - {fileID: 21300000, guid: 6cd370de5f59c7c4a952190201ce7ea8, type: 3}
   - {fileID: 21300000, guid: 108feaf22a114814c812a167431a8540, type: 3}
   - {fileID: 21300000, guid: df1b52d98d2a82b4dad501bc4177411a, type: 3}
@@ -126,7 +129,7 @@ SpriteAtlas:
   - UI_common_lowpoly_background_medium
   - UI_common_lowpoly_background_small
   - control_rocker_bottom
-  - level_background
+  - status_level_background
   - UI_title_orange_long
   - control_main_bottom
   - UI_title_orange
@@ -149,6 +152,7 @@ SpriteAtlas:
   - status_ActionEnergy_progress_bottom
   - status_ActionEnergy_progress_full
   - status_ActionEnergy_progress_notfull
+  - InteractIcon_Portal
   - control_main_fire
   - icon_stage
   - control_reload
@@ -156,6 +160,8 @@ SpriteAtlas:
   - bottom_black90
   - bottom_gray
   - bottom_blue
+  - InteractIcon_ActionAdjustment
+  - InteractIcon_PerkUpgrade
   - control_ability_ready
   - status_bottom
   - control_rocker_move

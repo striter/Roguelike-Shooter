@@ -25,7 +25,7 @@ public class UIGI_VisualizePickup : UIT_GridItem {
         m_Animation.Play(true);
         m_pickupPos = position;
         rtf_RectTransform.SetWorldViewPortAnchor(m_pickupPos, CameraController.MainCamera);
-        m_Image.sprite = GameUIManager.Instance.m_InGameSprites[interaction.GetPickupSpriteName()];
+        m_Image.sprite = GameUIManager.Instance.m_InGameSprites[interaction.GetNumericVisualizeIcon()];
         m_Amount.color = interaction.GetVisualizeAmountColor();
 
         string integer = amount.ToString();

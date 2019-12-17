@@ -331,8 +331,20 @@ namespace GameSetting
                 case enum_ActionType.Equipment: return "action_cost_equipment";
             }
         }
-
-        public static string GetPickupSpriteName(this enum_Interaction type)
+        public static string GetInteractIcon(this enum_Interaction type)
+        {
+            switch(type)
+            {
+                default:
+                    Debug.LogError("Invalid Convertions Here!");
+                    return "";
+                case enum_Interaction.PerkUpgrade:
+                case enum_Interaction.ActionAdjustment:
+                case enum_Interaction.Portal:
+                    return "InteractIcon_" + type;
+            }
+        }
+        public static string GetNumericVisualizeIcon(this enum_Interaction type)
         {
             switch (type)
             {
