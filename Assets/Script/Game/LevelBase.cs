@@ -24,6 +24,7 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
     List<LevelTile> m_AllTiles=new List<LevelTile>();
     List<int> m_IndexEmptyInner = new List<int>();
     List<int> m_IndexEmptyOuter = new List<int>();
+    List<int> m_IndexEmtpyInteract = new List<int>();
     List<int> m_IndexBorder = new List<int>();
     List<int> m_IndexItemMain=new List<int>();
     List<int> t_IndexTemp = new List<int>();
@@ -92,11 +93,8 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
             itemMain.SetDirection(this, main.m_ItemDirection);
         }
     }
-    void ClearTileForInteracts()
+    void ClearTileForInteracts()        //Clear 3x3 For Interacts
     {
-        if (m_levelType== enum_LevelType.Battle||m_levelType== enum_LevelType.End)     //Dun need to clear when battle only
-            return;
-
         TileAxis startAxis = TileAxis.Zero + new TileAxis(-3 / 2, -3 / 2);
         int centerIndex = m_IndexEmptyInner.Find(p => m_AllTiles[p].m_TileAxis == startAxis);
         List<int> subIndexes = new List<int>();
@@ -105,10 +103,12 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
 
         m_AllTiles[centerIndex] = new LevelTileInteract(m_AllTiles[centerIndex]);
         m_IndexEmptyInner.Remove(centerIndex);
+        m_IndexEmtpyInteract.Add(centerIndex);
         for (int i = 0; i < subIndexes.Count; i++)
         {
             m_AllTiles[subIndexes[i]] = new LevelTileInteract(m_AllTiles[subIndexes[i]]);
             m_IndexEmptyInner.Remove(subIndexes[i]);
+            m_IndexEmtpyInteract.Add(subIndexes[i]);
         }
     }
     void GenerateBorderTile(List<int> borderTiles)
@@ -229,9 +229,40 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
     #endregion
 
     public Vector3 OffsetToWorldPosition(Vector3 offset) => transform.TransformPoint(offset);
-    public Vector3 RandomEmptyTilePosition(System.Random seed, bool isInner = true) => OffsetToWorldPosition(m_AllTiles[isInner ? m_IndexEmptyInner.RandomItem(seed) : m_IndexEmptyOuter.RandomItem(seed)].m_Offset);
+    public Vector3 RandomInnerEmptyTilePosition(System.Random seed, bool occupy = true)
+    {
+        int emptyIndex = m_IndexEmptyInner.RandomItem(seed);
+        LevelTile tile = m_AllTiles[emptyIndex];
+        if(occupy)
+        {
+            m_IndexEmptyInner.Remove(emptyIndex);
+            m_AllTiles[emptyIndex] = new LevelTileInteract(tile);
+        }
+        return OffsetToWorldPosition(tile.m_Offset);
+    }
+    public Vector3 NearestInteractTilePosition(TileAxis axis,System.Random seed,bool occupy=true)
+    {
+        int targetTile = -1;
+        int closestOffset=int.MaxValue;
+        m_IndexEmtpyInteract.TraversalRandomBreak((int interactIndex) =>
+        {
+
+            TileAxis _axis= m_AllTiles[interactIndex].m_TileAxis;
+            int offset = axis.AxisOffset(_axis);
+            if (closestOffset>offset)
+                targetTile = interactIndex;
+            return offset == 0;
+        },seed);
+        if (targetTile > 0)
+        {
+            if(occupy)
+                m_IndexEmtpyInteract.Remove(targetTile);
+            return OffsetToWorldPosition(m_AllTiles[targetTile].m_Offset);
+        }
+        return Vector3.zero;
+    }
 #if UNITY_EDITOR
-#region Gizmos For Test
+    #region Gizmos For Test
     private void OnDrawGizmos()
     {
         if (UnityEditor.EditorApplication.isPlaying && !GameManager.Instance.B_GameLevelDebugGizmos)

@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 081334a023db2704db167d2dfc323270, type: 3}
-    totalSpriteSurfaceArea: 1729714
+    totalSpriteSurfaceArea: 1739710
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -53,6 +53,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 46e8bab1c7a8c3a46b551a27a5c4a95b, type: 3}
   - {fileID: 21300000, guid: 5299f3520a85ed74fac7a3636bdc9238, type: 3}
   - {fileID: 21300000, guid: fc8bda41e4b7e344481fcdef48b648bc, type: 3}
+  - {fileID: 21300000, guid: 1dfff60a4d340614f8574902c4683851, type: 3}
   - {fileID: 21300000, guid: 471f2c6bff785a049b3b37e24002cdae, type: 3}
   - {fileID: 21300000, guid: 702a32a3dc3147a47800c42865d41714, type: 3}
   - {fileID: 21300000, guid: e051a7e66b79bb94baf2dce5172d2880, type: 3}
@@ -83,6 +84,7 @@ SpriteAtlas:
   - equipmentswap_select
   - interact_bottom
   - level_Unknown
+  - equipmentPack_empty
   - backpack_shadow
   - health_2
   - health_1

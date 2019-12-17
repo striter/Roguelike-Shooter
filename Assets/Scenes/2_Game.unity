@@ -309,19 +309,12 @@ MonoBehaviour:
   B_PhysicsDebugGizmos: 1
   B_GameLevelDebugGizmos: 0
   E_LevelDebug: 0
-  Z_TestEntitySpawn: 107
-  TestEntityFlag: 2
-  TestEntityBuffOnSpawn: 7
   X_TestCastIndex: 20401
   CastForward: 0
   C_TestProjectileIndex: 20400
   V_TestIndicatorIndex: 0
   B_TestBuffIndex: 4
   Comma_TestParticleIndex: 20001
-  F1_WeaponSpawnType: 102
-  F5_TestActionNormal: 30001
-  F6_TestActionOutstanding: 20013
-  F7_TestActionEpic: 30001
   F8_TestUseAction: 10001
 --- !u!4 &1133817278
 Transform:
@@ -438,7 +431,6 @@ MonoBehaviour:
   I_YawMax: 75
   I_ShakeParam: 6
   F_ReverseCheck: 0.1
-  m_RecoilCompensate: 0
 --- !u!4 &1434031919
 Transform:
   m_ObjectHideFlags: 0
