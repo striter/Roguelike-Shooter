@@ -1,9 +1,10 @@
-﻿Shader "Game/Effect/BloomSpecific/Dissolve_Diffuse"
+﻿Shader "Game/Effect/BloomSpecific/Bloom_Dissolve"
 {
 	Properties
 	{
 		_MainTex("Main Tex",2D) = "white"{}
 		_Color("Color",Color) = (1,1,1,1)
+		_Color1("_Dissolve Color",Color) = (1,1,1,1)
 
 
 		_SubTex1("Dissolve Map",2D) = "white"{}
@@ -12,7 +13,7 @@
 	}
 	SubShader
 	{
-		Tags{"RenderType" = "Opaque"}
+		Tags{"RenderType" = "BloomDissolveEdge" "Queue" = "Transparent"}
 		CGINCLUDE
 		#include "UnityCG.cginc"
 		#include "AutoLight.cginc"
@@ -23,13 +24,14 @@
 		float _Amount1;
 		float _Amount2;
 		float4 _Color;
+		float4 _Color1;
 		sampler2D _MainTex;
 		float4 _MainTex_ST;
 		ENDCG
 
-		Pass		//Base Pass
+		Pass
 		{
-			Tags{ "LightMode" = "ForwardBase" "Queue" = "Transparent"}
+			Tags{ "LightMode" = "ForwardBase" }
 			Blend SrcAlpha OneMinusSrcAlpha
 			ZWrite On
 			CGPROGRAM
@@ -82,8 +84,8 @@
 			ENDCG
 		}
 
-			Pass
-			{
+		Pass
+		{
 				Name "ForwardAdd"
 				Tags{"LightMode" = "ForwardAdd"}
 				Blend One One
@@ -137,7 +139,6 @@
 
 		Pass
 		{
-			Cull Off
 			Tags{"LightMode" = "ShadowCaster"}
 			CGPROGRAM
 			#pragma vertex vertshadow
@@ -165,6 +166,47 @@
 			ENDCG
 		}
 
+
+		Pass		//Base Pass
+		{
+		NAME "EDGE"
+			CGPROGRAM
+			#pragma vertex vert
+			#pragma fragment frag
+			#pragma multi_compile_fwdbase
+
+			struct appdata
+			{
+				float4 vertex : POSITION;
+				float3 normal:NORMAL;
+				float2 uv:TEXCOORD0;
+			};
+
+			struct v2f
+			{
+				float4 pos : SV_POSITION;
+				float2 uv:TEXCOORD0;
+			};
+
+			v2f vert(appdata v)
+			{
+				v2f o;
+				o.uv = TRANSFORM_TEX(v.uv, _SubTex1);
+				o.pos = UnityObjectToClipPos(v.vertex);
+				return o;
+			}
+
+			fixed4 frag(v2f i) : SV_Target
+			{
+				fixed dissolve = tex2D(_SubTex1,i.uv).r - _Amount1;
+				clip(dissolve);
+				if (dissolve < _Amount2)
+					return _Color1;
+				clip(-1);
+				return _Color1;
+			}
+			ENDCG
+		}
 
 	}
 }
