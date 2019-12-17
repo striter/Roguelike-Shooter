@@ -54,8 +54,8 @@ public class UIC_PlayerInteract : UIControlBase
         m_ActionData = new UIC_ActionInteractData(tf_Container.Find("ActionData"));
 
         tf_Common = tf_Container.Find("CommonData");
-        m_CommonIntro = tf_Common.Find("Intro/Text").GetComponent<UIT_TextExtend>();
-        m_CommonImage = tf_Common.Find("Icon/Image").GetComponent<Image>();
+        m_CommonIntro = tf_Common.Find("Intro").GetComponent<UIT_TextExtend>();
+        m_CommonImage = tf_Common.Find("Image").GetComponent<Image>();
         tf_Bottom.Find("Button").GetComponent<Button>().onClick.AddListener(OnInteractBtnClick);
 
         rtf_InteractData.SetActivate(false);
