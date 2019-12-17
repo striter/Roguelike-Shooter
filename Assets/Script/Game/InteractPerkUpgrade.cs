@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class InteractPerkUpgrade : InteractGameBase {
     public override enum_Interaction m_InteractType => enum_Interaction.PerkUpgrade;
-    public override bool B_InteractOnce => true;
     ActionAbility m_invalidPerk;
     Animation m_Anim;
     Action OnInteract;
@@ -23,12 +22,13 @@ public class InteractPerkUpgrade : InteractGameBase {
         m_Anim.Play();
     }
     protected override bool B_CanInteract(EntityCharacterPlayer _interactor) => _interactor.m_WeaponCurrent.m_WeaponAction == null || _interactor.m_WeaponCurrent.m_WeaponAction.B_Upgradable;
-    protected override void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)
+    protected override bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactTarget)
     {
-        base.OnInteractSuccessful(_interactTarget);
+        base.OnInteractOnceCanKeepInteract(_interactTarget);
         OnInteract();
         _interactTarget.UpgradeActionPerk(m_invalidPerk);
         m_invalidPerk = null;
         m_Anim.Stop();
+        return false;
     }
 }

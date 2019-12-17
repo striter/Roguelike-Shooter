@@ -1206,7 +1206,7 @@ namespace GameSetting_Action
         public Action_30016_ProjectileSpeed(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
     }
 
-    public class Action_30017_ArmorAdditiveActionUse : ActionBase
+    public class Action_30017_ArmorAdditiveActionUse : ActionEquipment
     {
         public override int m_Index => 30017;
         public override float Value1 => ActionData.F_30017_ArmorAdditive(m_rarity);

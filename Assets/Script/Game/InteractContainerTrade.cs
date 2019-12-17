@@ -14,9 +14,10 @@ public class InteractContainerTrade : InteractContainer {
         Attach(_interactItem);
         m_TradePrice = _tradePrice;
     }
-    protected override void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)
+    protected override bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactTarget)
     {
-        base.OnInteractSuccessful(_interactTarget);
+        base.OnInteractOnceCanKeepInteract(_interactTarget);
         _interactTarget.m_PlayerInfo.OnCoinsRemoval(m_TradePrice);
+        return false;
     }
 }

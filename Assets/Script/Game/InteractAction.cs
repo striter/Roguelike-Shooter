@@ -8,7 +8,6 @@ public class InteractAction : InteractGameBase {
     public override enum_Interaction m_InteractType => enum_Interaction.Action;
     public ActionBase m_Action { get; private set; }
     protected override bool B_SelfRecycleOnInteract => false;
-    public override bool B_InteractOnce => false;
     Transform tf_PlayerEquipment, tf_WeaponAbility;
     public override void OnPoolItemInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
     {
@@ -27,21 +26,18 @@ public class InteractAction : InteractGameBase {
     }
 
     
-    protected override void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)
+    protected override bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactTarget)
     {
-        base.OnInteractSuccessful(_interactTarget);
-        SetInteractable(false);
+        base.OnInteractOnceCanKeepInteract(_interactTarget);
         if (m_Action.m_ActionType == enum_ActionType.Equipment && !_interactTarget.m_PlayerInfo.b_haveEmptyEquipmentSlot)
         {
-            if (UIPageBase.m_PageOpening)
-                return;
-            GameUIManager.Instance.ShowPage<UI_EquipmentSwap>(true, 0f).Play(_interactTarget.m_PlayerInfo, m_Action, OnEquipmentSwapPage);
+            if (!UIPageBase.m_PageOpening)
+                GameUIManager.Instance.ShowPage<UI_EquipmentSwap>(true, 0f).Play(_interactTarget.m_PlayerInfo, m_Action, OnEquipmentSwapPage);
+            return true;
         }
-        else
-        {
-            OnRecycle();
-            _interactTarget.OnActionInteract(m_Action);
-        }
+        OnRecycle();
+        _interactTarget.OnActionInteract(m_Action);
+        return false;
     }
 
     void OnEquipmentSwapPage(bool confirm)

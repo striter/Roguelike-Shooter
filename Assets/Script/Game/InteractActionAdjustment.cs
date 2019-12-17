@@ -9,7 +9,6 @@ public class InteractActionAdjustment : InteractGameBase {
     public int m_upgradeCount { get; private set; }
     public int m_removeCount{get;private set;}
     public PlayerInfoManager m_Interactor { get; private set; }
-    public override bool B_InteractOnce => false;
     public void Play(enum_StageLevel _stage)
     {
         m_stage = _stage;
@@ -17,14 +16,14 @@ public class InteractActionAdjustment : InteractGameBase {
         m_removeCount = 0;
     }
 
-    protected override void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)
+    protected override bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactTarget)
     {
-        base.OnInteractSuccessful(_interactTarget);
-        UI_ActionAdjustment adjustment = GameUIManager.Instance.ShowCoinsPage<UI_ActionAdjustment>(true,1f);
-        if (adjustment == null)
-            return;
+        base.OnInteractOnceCanKeepInteract(_interactTarget);
+        if (UIPageBase.m_PageOpening)
+            return true;
         m_Interactor = _interactTarget.m_PlayerInfo;
-        adjustment.Play( this);
+        GameUIManager.Instance.ShowCoinsPage<UI_ActionAdjustment>(true, 1f).Play( this);
+        return true;
     }
 
     public void OnRemovalEquipment(int index)
