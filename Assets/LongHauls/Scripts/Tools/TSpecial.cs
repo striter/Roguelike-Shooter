@@ -36,24 +36,17 @@ namespace TTiles
         }
 
         public TileAxis[] nearbyFourTiles => new TileAxis[4] { new TileAxis(X - 1, Y), new TileAxis(X + 1, Y), new TileAxis(X, Y + 1), new TileAxis(X, Y - 1) };
+        public static TileAxis operator -(TileAxis a) => new TileAxis(-a.X, -a.Y);
         public static bool operator ==(TileAxis a, TileAxis b) => a.X == b.X && a.Y == b.Y;
         public static bool operator !=(TileAxis a, TileAxis b) => a.X != b.X || a.Y != b.Y;
         public static TileAxis operator -(TileAxis a, TileAxis b) => new TileAxis(a.X - b.X, a.Y - b.Y);
         public static TileAxis operator +(TileAxis a, TileAxis b) => new TileAxis(a.X + b.X, a.Y + b.Y);
-        public override bool Equals(object obj)
-        {
-            return base.Equals(obj);
-        }
-        public override string ToString()
-        {
-            return X + "," + Y;
-        }
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+        public override bool Equals(object obj) => base.Equals(obj);
+        public override string ToString()=> X + "," + Y;
         public static readonly TileAxis Zero = new TileAxis(0, 0);
-            
+        public static readonly TileAxis Back = new TileAxis(0, -1);
+        public static readonly TileAxis Right = new TileAxis(1, 0);
+        public static readonly TileAxis Forward = new TileAxis(0, 1);
     }
 
     public static class TTiles
@@ -133,7 +126,7 @@ namespace TTiles
 
         public static readonly List<enum_TileDirection> m_EightDirecitons = new List<enum_TileDirection>() { enum_TileDirection.Top, enum_TileDirection.Right, enum_TileDirection.Bottom, enum_TileDirection.Left, enum_TileDirection.TopLeft, enum_TileDirection.TopRight, enum_TileDirection.BottomLeft, enum_TileDirection.BottomRight };
 
-        public static void PathFindForClosestApproch<T>(this T[,] tileArray, T t1, T t2, List<T> tilePathsAdd,Action<T> OnEachTilePath=null, Predicate<T> stopPredicate=null, Predicate<T> invalidPredicate=null) where T:class,ITileAxis
+        public static void PathFindForClosestApproch<T>(this T[,] tileArray, T t1, T t2, List<T> tilePathsAdd,Action<T> OnEachTilePath=null, Predicate<T> stopPredicate=null, Predicate<T> invalidPredicate=null) where T:class,ITileAxis       //Temporary Solution, Not Required Yet
         {
             if (!t1.m_TileAxis.InRange(tileArray) || !t2.m_TileAxis.InRange(tileArray))
                 Debug.LogError("Error Tile Not Included In Array");

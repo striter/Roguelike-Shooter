@@ -195,9 +195,9 @@ public class UIC_Control : UIControlBase {
 #if UNITY_EDITOR
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(1))
             OnMainButtonDown(true, Vector2.zero);
-        else if (Input.GetMouseButtonUp(0))
+        else if (Input.GetMouseButtonUp(1))
             OnMainButtonDown(false, Vector2.zero);
 
         if (Input.GetKeyDown(KeyCode.R))
