@@ -28,9 +28,9 @@ public class UIGI_VisualizePickup : UIT_GridItem {
         m_Image.sprite = GameUIManager.Instance.m_InGameSprites[interaction.GetNumericVisualizeIcon()];
         m_Amount.color = interaction.GetVisualizeAmountColor();
 
-        string integer = amount.ToString();
-        m_Amount.text = integer;
-        m_Projection.text = integer;
+        string text =string.Format("+{0}", amount);
+        m_Amount.text = text;
+        m_Projection.text = text;
         OnAnimFinished = _OnAnimFinished;
     }
 
