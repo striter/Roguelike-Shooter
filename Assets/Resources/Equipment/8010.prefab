@@ -208,7 +208,7 @@ MonoBehaviour:
   E_CastType: 2
   E_CastTarget: -1
   B_CastForward: 0
-  F_Damage: 24.2
+  F_Damage: 29
   I_TickCount: 1
   F_Tick: 0
   I_BuffApplyOnCast: 0
