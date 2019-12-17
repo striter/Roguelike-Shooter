@@ -95,10 +95,10 @@ namespace GameSetting_Action
         public static float F_10023_ReviveHealthRegen(enum_ActionRarity rarity) => 30 * (int)rarity;
 
         public const int I_10024_Cost = 4;
-        public static float F_10024_ArmorAdditive(enum_ActionRarity rarity) => 30 * (int)rarity;
+        public static float F_10024_ArmorAdditive(enum_ActionRarity rarity) => 15 * (int)rarity;
 
         public const int I_10025_Cost = 8;
-        public static float P_10025_ArmorAdditiveMultiply(enum_ActionRarity rarity) => 60* (int)rarity;
+        public static float P_10025_ArmorAdditiveMultiply(enum_ActionRarity rarity) => 30* (int)rarity;
 
         public const int I_10026_Cost = 4;
         public const float F_10026_Duration = 10f;
@@ -205,9 +205,9 @@ namespace GameSetting_Action
         
         public static float P_30009_EquipmentHealthAddup(enum_ActionRarity rarity) => 25 * (int)rarity;
         
-        public static float F_30010_MaxHealthAddup(enum_ActionRarity rarity) => 3.5f * (int)rarity;
+        public static float F_30010_MaxHealthAddup(enum_ActionRarity rarity) => 1.5f * (int)rarity;
         
-        public static float P_30011_MaxHealthRegen(enum_ActionRarity rarity) => 6 * (int)rarity;
+        public static float P_30011_MaxHealthRegen(enum_ActionRarity rarity) => 5 * (int)rarity;
         
         public static float P_30012_HealthRegenEachKill(enum_ActionRarity rarity) => 6 * (int)rarity;
         
@@ -219,7 +219,7 @@ namespace GameSetting_Action
         
         public static float P_30016_ProjectileSpeedMultiply(enum_ActionRarity rarity) => 50 * (int)rarity;
         
-        public static float F_30017_ArmorAdditive(enum_ActionRarity rarity) => 3.5f * (int)rarity;
+        public static float F_30017_ArmorAdditive(enum_ActionRarity rarity) => 1.5f * (int)rarity;
         #endregion
         #region 40000-49999
         public static float F_40001_ArmorAdditive(enum_ActionRarity rarity) => 6 * (int)rarity;
