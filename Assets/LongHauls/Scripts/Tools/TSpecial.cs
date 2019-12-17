@@ -42,6 +42,7 @@ namespace TTiles
         public static TileAxis operator -(TileAxis a, TileAxis b) => new TileAxis(a.X - b.X, a.Y - b.Y);
         public static TileAxis operator +(TileAxis a, TileAxis b) => new TileAxis(a.X + b.X, a.Y + b.Y);
         public override bool Equals(object obj) => base.Equals(obj);
+        public override int GetHashCode()=> base.GetHashCode();
         public override string ToString()=> X + "," + Y;
         public static readonly TileAxis Zero = new TileAxis(0, 0);
         public static readonly TileAxis Back = new TileAxis(0, -1);

@@ -13,25 +13,28 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
     public Transform tf_LevelItem { get; private set; }
     public Transform tf_Interact { get; private set; }
     public System.Random m_seed { get; private set; }
+    List<LevelTile> m_AllTiles = new List<LevelTile>();
+    List<int> m_IndexEmtpyInteract = new List<int>();
+    List<int> m_IndexBorder = new List<int>();
+    Dictionary<bool, List<int>> m_IndexEmpty = new Dictionary<bool, List<int>>();
+    Dictionary<bool, List<int>> m_IndexItemMain = new Dictionary<bool, List<int>>();
+    List<int> t_IndexTemp = new List<int>();
+    Dictionary<enum_LevelItemType, List<LevelItemBase>> m_AllItemPrefabs = new Dictionary<enum_LevelItemType, List<LevelItemBase>>();
+    public float m_WorldBorder { get; private set; }
+
     public void OnPoolItemInit(int identity,Action<int,MonoBehaviour> _OnRecycle)
     {
         tf_LevelItem = transform.Find("Item");
         tf_Model = transform.Find("Model");
         tf_Interact = transform.Find("Interact");
+        m_IndexEmpty.Add(true, new List<int>());
+        m_IndexEmpty.Add(false, new List<int>());
+        m_IndexItemMain.Add(true, new List<int>());
+        m_IndexItemMain.Add(false, new List<int>());
     }
 
     #region TileMapInfos
-    List<LevelTile> m_AllTiles=new List<LevelTile>();
-    List<int> m_IndexEmptyInner = new List<int>();
-    List<int> m_IndexEmptyOuter = new List<int>();
-    List<int> m_IndexEmtpyInteract = new List<int>();
-    List<int> m_IndexBorder = new List<int>();
-    List<int> m_IndexItemMain=new List<int>();
-    List<int> t_IndexTemp = new List<int>();
-    Dictionary<enum_LevelItemType, List<LevelItemBase>> m_AllItemPrefabs = new Dictionary<enum_LevelItemType, List<LevelItemBase>>();
-    public float m_WorldBorder { get; private set; }
-
-    public IEnumerator GenerateTileItems(SLevelGenerate _innerData,SLevelGenerate _outerData, Dictionary<enum_LevelItemType, List<LevelItemBase>> allItemPrefabs, enum_LevelType _levelType, System.Random _seed)
+    public IEnumerator GenerateTileItems(SLevelGenerate _innerData,SLevelGenerate _outerData, Dictionary<enum_LevelItemType, List<LevelItemBase>> allItemPrefabs, enum_LevelType _levelType,Action OnInnerItemDestroyed, System.Random _seed)
     {
         m_AllItemPrefabs = allItemPrefabs;
         m_seed = _seed;
@@ -66,10 +69,10 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
                 switch (occupation)
                 {
                     case enum_LevelItemTileOccupy.Inner:
-                        m_IndexEmptyInner.Add(index);
+                        m_IndexEmpty[true].Add(index);
                         break;
                     case enum_LevelItemTileOccupy.Outer:
-                        m_IndexEmptyOuter.Add(index);
+                        m_IndexEmpty[false].Add(index);
                         break;
                     case enum_LevelItemTileOccupy.Border:
                         m_IndexBorder.Add(index);
@@ -81,33 +84,34 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
         yield return null;
         ClearTileForInteracts();
         GenerateBorderTile(m_IndexBorder);
-        GenerateRandomMainTile(_innerData,m_IndexEmptyInner);
-        GenerateRandomMainTile(_outerData, m_IndexEmptyOuter);
+        GenerateRandomMainTile(_innerData,m_IndexEmpty[true],true);
+        GenerateRandomMainTile(_outerData, m_IndexEmpty[false],false);
 
-        m_IndexItemMain.AddRange(m_IndexBorder);
+        m_IndexItemMain[false].AddRange(m_IndexBorder);
 
-        for (int i = 0; i < m_IndexItemMain.Count; i++)
-        {
-            LevelTileItem main = m_AllTiles[m_IndexItemMain[i]] as LevelTileItem;
-            LevelItemBase itemMain = GameObjectManager.SpawnLevelItem(m_AllItemPrefabs[main.m_LevelItemType][main.m_LevelItemListIndex], tf_LevelItem, main.m_Offset);
-            itemMain.SetDirection(this, main.m_ItemDirection);
-        }
+        m_IndexItemMain.Traversal((bool isInner,List<int> indexes) => {
+            indexes.Traversal((int mainIndex) => {
+                LevelTileItem main = m_AllTiles[mainIndex] as LevelTileItem;
+                LevelItemBase itemMain = GameObjectManager.SpawnLevelItem(m_AllItemPrefabs[main.m_LevelItemType][main.m_LevelItemListIndex], tf_LevelItem, main.m_Offset);
+                itemMain.InitItem(this, main.m_ItemDirection, isInner? OnInnerItemDestroyed:null);
+            });
+        });
     }
     void ClearTileForInteracts()        //Clear 3x3 For Interacts
     {
         TileAxis startAxis = TileAxis.Zero + new TileAxis(-3 / 2, -3 / 2);
-        int centerIndex = m_IndexEmptyInner.Find(p => m_AllTiles[p].m_TileAxis == startAxis);
+        int centerIndex = m_IndexEmpty[true].Find(p => m_AllTiles[p].m_TileAxis == startAxis);
         List<int> subIndexes = new List<int>();
         if (!CheckIndexTileAreaAvailable(centerIndex, 3, 3, ref subIndexes))
             Debug.LogError("WTF?");
 
         m_AllTiles[centerIndex] = new LevelTileInteract(m_AllTiles[centerIndex]);
-        m_IndexEmptyInner.Remove(centerIndex);
+        m_IndexEmpty[true].Remove(centerIndex);
         m_IndexEmtpyInteract.Add(centerIndex);
         for (int i = 0; i < subIndexes.Count; i++)
         {
             m_AllTiles[subIndexes[i]] = new LevelTileInteract(m_AllTiles[subIndexes[i]]);
-            m_IndexEmptyInner.Remove(subIndexes[i]);
+            m_IndexEmpty[true].Remove(subIndexes[i]);
             m_IndexEmtpyInteract.Add(subIndexes[i]);
         }
     }
@@ -147,7 +151,7 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
         }
     }
 
-    void GenerateRandomMainTile(SLevelGenerate generate,List<int> emptyTile)
+    void GenerateRandomMainTile(SLevelGenerate generate, List<int> emptyTile,bool isInner)
     {
         TCommon.Traversal(generate.m_ItemGenerate, (enum_LevelItemType type, RangeInt range) =>
         {
@@ -173,7 +177,7 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
                 if (currentTileIndex != -1)
                 {
                     m_AllTiles[currentTileIndex] = new LevelTileItem(m_AllTiles[currentTileIndex], currentItemIndex, currentItem.m_ItemType, itemAngleDirection, t_IndexTemp);
-                    m_IndexItemMain.Add(currentTileIndex);
+                    m_IndexItemMain[isInner].Add(currentTileIndex);
                     emptyTile.Remove(currentTileIndex);
                     foreach (int subTileIndex in t_IndexTemp)
                     {
@@ -231,11 +235,11 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
     public Vector3 OffsetToWorldPosition(Vector3 offset) => transform.TransformPoint(offset);
     public Vector3 RandomInnerEmptyTilePosition(System.Random seed, bool occupy = true)
     {
-        int emptyIndex = m_IndexEmptyInner.RandomItem(seed);
+        int emptyIndex = m_IndexEmpty[true].RandomItem(seed);
         LevelTile tile = m_AllTiles[emptyIndex];
         if(occupy)
         {
-            m_IndexEmptyInner.Remove(emptyIndex);
+            m_IndexEmpty[true].Remove(emptyIndex);
             m_AllTiles[emptyIndex] = new LevelTileInteract(tile);
         }
         return OffsetToWorldPosition(tile.m_Offset);

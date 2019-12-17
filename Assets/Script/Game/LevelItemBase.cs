@@ -11,18 +11,51 @@ public class LevelItemBase : ObjectPoolMonoItem<LevelItemBase> {
     public int m_sizeYAxis = 1;
     public enum_LevelItemType m_ItemType = enum_LevelItemType.Invalid;
     Transform tf_Model;
+    float m_Health;
+    Action OnLevelItemDestroyed;
     public override void OnPoolItemInit(LevelItemBase _identity, Action<LevelItemBase, MonoBehaviour> _OnSelfRecycle)
     {
         base.OnPoolItemInit(_identity, _OnSelfRecycle);
         tf_Model = transform.Find("Model");
+        GetComponentsInChildren<HitCheckStatic>().Traversal((HitCheckStatic hitCheck) => { hitCheck.Attach(OnHit); });
     }
-    public void SetDirection(LevelBase levelParent,enum_TileDirection direction)
+    public void InitItem(LevelBase levelParent, enum_TileDirection direction,Action _OnLevelItemDestroyed)
     {
         m_LevelParent = levelParent;
         ItemRecenter(direction == enum_TileDirection.Right || direction == enum_TileDirection.Left);
         tf_Model.localRotation = Quaternion.Euler(0, (int)direction * 45, 0);
         transform.SetActivate(true);
+
+        OnLevelItemDestroyed = _OnLevelItemDestroyed;
+        if (OnLevelItemDestroyed == null)
+            return;
+        switch(m_ItemType)
+        {
+            case enum_LevelItemType.BorderLinear:
+            case enum_LevelItemType.BorderOblique:
+                m_Health = 0;
+                break;
+            default:
+                m_Health = m_sizeXAxis * m_sizeYAxis * 20f;
+                break;
+        }
     }
+
+    bool OnHit(DamageInfo damageInfo,Vector3 direction)
+    {
+        if (m_Health <= 0)
+            return false;
+        m_Health -= damageInfo.m_AmountApply;
+        if (m_Health <= 0) OnItemDestroy();
+        return true;
+    }
+
+    void OnItemDestroy()
+    {
+        transform.SetActivate(false);
+        OnLevelItemDestroyed?.Invoke();
+    }
+
 
     public void ItemRecenter(bool inverse=false)
     {
