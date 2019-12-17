@@ -242,7 +242,7 @@ public class GameManager : GameManagerBase
             case enum_LevelType.ActionAdjustment:
                 {
                     GameObjectManager.SpawnNPC( enum_InteractCharacter.Trainer, Vector3.zero , interactTrans);
-                    GameObjectManager.SpawnInteract<InteractActionAdjustment>(enum_Interaction.ActionAdjustment,Vector3.zero, interactTrans).Play(m_GameLevel.m_GameStage);
+                    GameObjectManager.SpawnInteract<InteractActionAdjustment>(enum_Interaction.ActionAdjustment, level.m_Level.NearestInteractTilePosition(TileAxis.Zero,m_GameLevel.m_GameSeed), interactTrans).Play(m_GameLevel.m_GameStage);
                 }
                 break;
             case enum_LevelType.BattleActionAcquire:
