@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: BloomSpecific_Dissolve_Diffuse
+  m_Name: BloomSpecific_Dissolve
   m_Shader: {fileID: 4800000, guid: 46f30f903f3e0864b9ccd16f1e0521e0, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -79,4 +79,5 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color1: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
