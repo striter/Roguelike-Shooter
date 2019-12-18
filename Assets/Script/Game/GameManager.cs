@@ -361,10 +361,7 @@ public class GameManager : GameManagerBase
     void OnCharacterDead(EntityCharacterBase character)
     {
         if (character.m_Controller == enum_EntityController.Player)
-        {
             SetPostEffect_Dead();
-            return;
-        }
 
         OnBattleCharacterDead(character);
         SpawnEntityDeadPickups(character);
@@ -508,15 +505,15 @@ public class GameManager : GameManagerBase
         if (!B_Battling || B_WaveEntityGenerating || entity.m_Flag != enum_EntityFlag.Enermy)
             return;
 
-        bool enermyAlive = false;
+        bool haveEnermyAlive = false;
 
         GetEntities(enum_EntityFlag.Enermy, true).TraversalBreak((EntityCharacterBase character) =>
         {
-            enermyAlive = character.m_IsDead;
-            return true;
+            haveEnermyAlive = !character.m_IsDead;
+            return haveEnermyAlive;
         });
 
-        if(!enermyAlive)
+        if(!haveEnermyAlive)
             WaveFinished(entity.transform.position);
     }
 
