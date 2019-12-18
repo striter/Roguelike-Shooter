@@ -394,7 +394,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
                 Debug.LogError("Invalid Detected!");
                 return false;
             case enum_ActionType.Ability:
-                m_WeaponCurrent.SetWeaponAction(action as ActionAbility ,1f);
+                ActionAbility m_ability = action as ActionAbility;
+                m_WeaponCurrent.SetWeaponAction( m_Ability,m_ability.I_Cost);
                 OnWeaponStatus();
                 return true;
             case enum_ActionType.Equipment:
@@ -415,7 +416,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public void UpgradeActionPerk(ActionAbility _ability)
     {
         if (m_WeaponCurrent.m_WeaponAction == null)
-            m_WeaponCurrent.SetWeaponAction(_ability,1f);
+            m_WeaponCurrent.SetWeaponAction(_ability,_ability.I_Cost);
         else
             m_WeaponCurrent.m_WeaponAction.Upgrade();
         OnWeaponStatus();
