@@ -1077,7 +1077,7 @@ MonoBehaviour:
   ExtraRendererForForest107Only: {fileID: 0}
   E_SpawnType: -1
   I_DefaultArmor: 60
-  F_MovementSpeed: 10
+  F_MovementSpeed: 8
   F_AttackSpread: 0
   I_AbilityTimes: -1
   F_AbilityCoolDown: 5
