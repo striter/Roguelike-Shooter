@@ -228,6 +228,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
                 return;
             m_skins.Traversal((Renderer renderer) =>
             {
+                renderer.material.SetTexture(TEffects.ID_NoiseTex, TEffects.TX_Noise);
                 renderer.material.SetColor("_IceColor", TCommon.GetHexColor("3DAEC5FF"));
                 renderer.material.SetFloat("_Opacity", .5f);
             });
