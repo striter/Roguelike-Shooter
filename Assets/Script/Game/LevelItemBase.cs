@@ -67,7 +67,7 @@ public class LevelItemBase : ObjectPoolMonoItem<LevelItemBase>,ISingleCoroutine 
             this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value)=>
             {
                 m_Renderers.Traversal((Renderer render) => { render.material.SetFloat(TEffects.ID_Dissolve,value); });
-            },0f,1f,2f,()=> { transform.SetActivate(false); }));
+            },0f,1f,1f,()=> { transform.SetActivate(false); }));
             OnLevelItemDestroyed?.Invoke();
         } 
         return true;
