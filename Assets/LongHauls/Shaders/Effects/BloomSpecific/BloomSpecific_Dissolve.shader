@@ -14,26 +14,28 @@
 	SubShader
 	{
 		Tags{"RenderType" = "BloomDissolveEdge" "Queue" = "Transparent"}
+			Cull Off
+			Blend SrcAlpha OneMinusSrcAlpha
 		CGINCLUDE
 		#include "UnityCG.cginc"
 		#include "AutoLight.cginc"
 		#include "Lighting.cginc"
-
 		sampler2D _SubTex1;
-		float4 _SubTex1_ST;
 		float _Amount1;
 		float _Amount2;
 		float4 _Color;
 		float4 _Color1;
 		sampler2D _MainTex;
 		float4 _MainTex_ST;
+		float2 GetDissolveUV(float3 vertex)
+		{
+			return float2(vertex.x, vertex.z)+vertex.y*.7;
+		}
 		ENDCG
 
 		Pass
 		{
 			Tags{ "LightMode" = "ForwardBase" }
-			Blend SrcAlpha OneMinusSrcAlpha
-			ZWrite On
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
@@ -59,8 +61,8 @@
 			v2f vert (appdata v)
 			{
 				v2f o;
-				o.uv.xy = TRANSFORM_TEX( v.uv, _MainTex);
-				o.uv.zw = TRANSFORM_TEX(v.uv, _SubTex1);
+				o.uv.xy =  TRANSFORM_TEX( v.uv, _MainTex);
+				o.uv.zw = GetDissolveUV(v.vertex);
 				o.pos = UnityObjectToClipPos(v.vertex);
 				o.worldPos =mul(unity_ObjectToWorld,v.vertex);
 				fixed3 worldNormal = normalize(mul(v.normal, (float3x3)unity_WorldToObject)); //法线方向n
@@ -86,59 +88,6 @@
 
 		Pass
 		{
-				Name "ForwardAdd"
-				Tags{"LightMode" = "ForwardAdd"}
-				Blend One One
-				CGPROGRAM
-				#pragma multi_compile_fwdadd
-				#pragma vertex vertAdd
-				#pragma fragment fragAdd
-
-				struct appdata
-				{
-					float4 vertex : POSITION;
-					float3 normal:NORMAL;
-					float2 uv:TEXCOORD0;
-				};
-
-				struct v2f
-				{
-					float4 pos : SV_POSITION;
-					float2 uv:TEXCOORD0;
-					float3 worldPos:TEXCOORD1;
-					float diffuse : TEXCOORD2;
-				};
-
-				v2f vertAdd(appdata v)
-				{
-					v2f o;
-					o.pos = UnityObjectToClipPos(v.vertex);
-
-					o.uv = TRANSFORM_TEX(v.uv,_MainTex);
-
-					o.worldPos = mul(unity_ObjectToWorld, v.vertex);
-					fixed3 worldNormal = normalize(mul(v.normal, (float3x3)unity_WorldToObject)); //法线方向n
-					fixed3 worldLightDir = normalize(UnityWorldSpaceLightDir(o.worldPos));
-					o.diffuse = saturate(dot(worldLightDir, worldNormal));
-
-					return o;
-				}
-
-				fixed4 fragAdd(v2f i) :SV_TARGET
-				{
-					fixed3 albedo = tex2D(_MainTex, i.uv);
-
-					fixed3 diffuse = i.diffuse*_LightColor0.rgb;
-
-					UNITY_LIGHT_ATTENUATION(atten,i,i.worldPos);
-
-					return fixed4(diffuse * atten,1);
-				}
-					ENDCG
-			}
-
-		Pass
-		{
 			Tags{"LightMode" = "ShadowCaster"}
 			CGPROGRAM
 			#pragma vertex vertshadow
@@ -153,7 +102,7 @@
 			{
 				v2fs o;
 				TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
-				o.uv = TRANSFORM_TEX(v.texcoord, _SubTex1);
+				o.uv = GetDissolveUV(v.vertex);
 				return o;
 			}
 
@@ -167,7 +116,7 @@
 		}
 
 
-		Pass		//Base Pass
+		Pass
 		{
 		NAME "EDGE"
 			CGPROGRAM
@@ -191,7 +140,7 @@
 			v2f vert(appdata v)
 			{
 				v2f o;
-				o.uv = TRANSFORM_TEX(v.uv, _SubTex1);
+				o.uv = GetDissolveUV(v.vertex);
 				o.pos = UnityObjectToClipPos(v.vertex);
 				return o;
 			}
@@ -200,9 +149,7 @@
 			{
 				fixed dissolve = tex2D(_SubTex1,i.uv).r - _Amount1;
 				clip(dissolve);
-				if (dissolve < _Amount2)
-					return _Color1;
-				clip(-1);
+				clip( _Amount2 -dissolve);
 				return _Color1;
 			}
 			ENDCG
