@@ -237,7 +237,6 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: 4d74b3a990123ff40a0e56c8a827f172, type: 2}
-  - {fileID: 2100000, guid: a8d1906e68fa00a43b3e0033ee355b5c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -328,12 +327,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   I_MaxHealth: 0
+  m_IsDead: 0
+  ExtraRendererForForest107Only: {fileID: 0}
+  E_SpawnType: -1
   I_DefaultArmor: 0
   F_MovementSpeed: 0
   F_AttackSpread: 0
-  ? ExtraRendererOnlyAvailableFor107WhatAwkwardRequirementWhyNotPutThemIntoOneModelCauseOutModelArtistCantDoItHaveToCreateThisIntoMyCodeLikeABunchOfShitForFuckingRealSucks
-  : {fileID: 0}
-  E_EnermyType: 99
   E_AnimatorIndex: -1
   F_AIChaseRange: 30
   F_AIAttackRange: 30

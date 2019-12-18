@@ -42,8 +42,7 @@ namespace GameSetting
         public const float F_AITargetCalculationParam = .5f;       //AI Target Param Calculation Duration, 1 is suggested;
         public const float F_AIMaxRepositionDuration = .5f;
         public const int I_AIIdlePercentage = 50;
-
-        public const int I_EnermyCountWaveFinish = 0;       //When Total Enermy Count Reaches This Amount,Wave Finish
+        
         public const int I_EnermySpawnDelay = 2;        //Enermy Spawn Delay Time 
         public const float F_EnermySpawnOffsetEach = .5f;       //Enermy Spawn Offset Each
 
@@ -1587,10 +1586,12 @@ namespace GameSetting
         public void UpgradeEquipment(int index)
         {
             m_ActionEquipment[index].Upgrade();
+            TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
         }
         public void RemoveEquipment(int index)
         {
             m_ActionEquipment[index].ForceExpire();
+            TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
         }
 
         public bool b_haveEmptyEquipmentSlot => m_ActionEquipment.Count < GameConst.I_PlayerEquipmentCount;
@@ -1968,6 +1969,7 @@ namespace GameSetting
     #endregion
 
     #region GameEffects
+
     public class ModelBlink:ISingleCoroutine
     {
         Transform transform;

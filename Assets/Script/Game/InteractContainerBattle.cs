@@ -11,9 +11,10 @@ public class InteractContainerBattle : InteractContainer {
         Attach(_interactItem);
         OnInteract = _OnInteract;
     }
-    protected override void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)
+    protected override bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactTarget)
     {
-        base.OnInteractSuccessful(_interactTarget);
+        base.OnInteractOnceCanKeepInteract(_interactTarget);
         OnInteract();
+        return false;
     }
 }

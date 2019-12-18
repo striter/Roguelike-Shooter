@@ -253,16 +253,27 @@ public class EWorkFlow_ModelAutoPrefabPackaging : EditorWindow
                 matList[j] = (CreateMaterial(levelStyle, renderers[i].sharedMaterials[j]));
             renderers[i].sharedMaterials = matList;
 
+            Collider collider = null;
+            if(levelItem.m_ItemType== enum_LevelItemType.BorderLinear||levelItem.m_ItemType== enum_LevelItemType.BorderOblique)
+            {
+                collider = renderers[i].gameObject.AddComponent<BoxCollider>();
+            }
+            else
+            {
+                MeshCollider meshCollider = renderers[i].gameObject.AddComponent<MeshCollider>();
+                meshCollider.convex = true;
+                collider = meshCollider;
+            }
+            renderers[i].gameObject.AddComponent<HitCheckStatic>();
+
             if (levelItem.m_ItemType == enum_LevelItemType.NoCollisionMore||levelItem.m_ItemType== enum_LevelItemType.NoCollisionLess)
             {
                 levelItem.m_sizeXAxis = 1;
                 levelItem.m_sizeYAxis = 1;
+                collider.isTrigger = true;
             }
             else
             {
-                MeshCollider collider = renderers[i].gameObject.AddComponent<MeshCollider>();
-                renderers[i].gameObject.AddComponent<HitCheckStatic>();
-
                 levelItem.m_sizeXAxis = (int)(collider.bounds.extents.x * 2 / GameConst.F_LevelTileSize) + 1;
                 levelItem.m_sizeYAxis = (int)(collider.bounds.extents.z * 2 / GameConst.F_LevelTileSize) + 1;
             }

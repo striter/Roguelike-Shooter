@@ -20,12 +20,13 @@ public class InteractGameBase : InteractBase,ObjectPoolItem<enum_Interaction> {
         if (AC_OnPlay)
             AudioManager.Instance.Play3DClip(-1, AC_OnPlay, false, transform.position);
     }
-    protected override void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)
+    
+    protected override bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactTarget)
     {
-        base.OnInteractSuccessful(_interactTarget);
         GameObjectManager.PlayMuzzle(_interactTarget.m_EntityID, transform.position, transform.up, I_MuzzleOnInteract, AC_OnInteract);
         if (B_SelfRecycleOnInteract)
             OnRecycle();
+        return base.OnInteractOnceCanKeepInteract(_interactTarget);
     }
 
     protected void OnRecycle()

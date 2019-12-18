@@ -57,7 +57,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
                 m_level.transform.localRotation = Quaternion.Euler(0, seed.Next(360), 0);
                 m_level.transform.localPosition = Vector3.zero;
                 m_level.transform.localScale = Vector3.one;
-                yield return m_level.GenerateTileItems(innerData, outerData, levelItemPrefabs, levelInfo.m_LevelType, m_mainSeed);
+                yield return m_level.GenerateTileItems(innerData, outerData, levelItemPrefabs, levelInfo.m_LevelType, OnLevelItemDestroyed, m_mainSeed);
                 StaticBatchingUtility.Combine(m_level.tf_LevelItem.gameObject);
                 levelInfo.SetLevelShow(false);
                 levelInfo.SetMap(m_level);
@@ -105,6 +105,10 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
         m_NavMeshDataInteract = NavMesh.AddNavMeshData(NavMeshBuilder.BuildNavMeshData(NavMesh.GetSettingsByIndex(1), sources, bound, Vector3.zero, level.transform.rotation));
     }
 
+    void OnLevelItemDestroyed()
+    {
+        BuildNavMeshData(m_currentLevel.m_Level);
+    }
     void RemoveNavmeshData()
     {
         NavMesh.RemoveNavMeshData(m_NavMeshDataEntity);

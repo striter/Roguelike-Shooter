@@ -157,117 +157,107 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
 
     class EntityCharacterEffectManager:ISingleCoroutine
     {
-        Shader SD_Base;
-        static readonly Shader SD_DeathOutline=Shader.Find("Game/Effect/BloomSpecific/Bloom_DissolveEdge");
+        static readonly Shader SD_DeathOutline=Shader.Find("Game/Effect/BloomSpecific/Bloom_Dissolve");
         static readonly Shader SD_Scan = Shader.Find("Game/Extra/ScanEffect");
         static readonly Shader SD_Ice = Shader.Find("Game/Effect/Ice");
         static readonly Shader SD_Cloak = Shader.Find("Game/Effect/Cloak");
         static readonly int ID_Color = Shader.PropertyToID("_Color");
-        static readonly int ID_Amount1=Shader.PropertyToID("_Amount1");
+        static readonly int ID_Dissolve=Shader.PropertyToID("_DissolveAmount");
         static readonly int ID_Opacity = Shader.PropertyToID("_Opacity");
         static readonly Texture TX_Distort = TResources.GetNoiseTex();
         List<Renderer> m_skins;
-        Material m_MatBase,m_MatExtra;
-        Material[] m_Materials;
-        bool m_mainCloack;
-        bool m_mainFreeze;
-        bool m_extraScan;
-        bool m_extraDeath;
+        Shader SD_Base;
+        bool m_cloaked;
+        bool m_freezed;
+        bool m_scanned;
+        bool m_death;
         TSpecialClasses.ParticleControlBase m_Particles;
         public EntityCharacterEffectManager(Transform transform, List<Renderer> _skin)
         {
             m_Particles = new ParticleControlBase(transform);
-            m_MatBase = _skin[0].material;
-            SD_Base = m_MatBase.shader;
-            m_MatExtra = new Material(m_MatBase);
-            m_Materials = new Material[1] { m_MatBase };
             m_skins = _skin;
+            SD_Base = m_skins[0].material.shader;
             OnReset();
         }
 
         public void OnReset()
         {
             m_Particles.Play();
-            m_extraScan = false;
-            m_mainCloack = false;
-            m_extraDeath = false;
-            m_mainFreeze = false;
+            m_scanned = false;
+            m_cloaked = false;
+            m_death = false;
+            m_freezed = false;
             CheckMaterials();
-            m_Materials.Traversal((Material mat) => { mat.SetFloat(ID_Amount1, 0); });
+            m_skins.Traversal((Renderer renderer) => {
+                renderer.material.SetTexture("_DistortTex", TX_Distort);
+                renderer.material.SetFloat(ID_Dissolve, 0);
+            });
         }
         void CheckMaterials()
         {
             Shader mainShader = SD_Base;
-            Shader extraShader = null;
-            if (m_mainCloack)
+            if (m_cloaked)
                 mainShader = SD_Cloak;
-            if (m_mainFreeze)
+            if (m_freezed)
                 mainShader = SD_Ice;
-            if (m_extraDeath)
-                extraShader = SD_DeathOutline;
-            if (m_extraScan)
-                extraShader = SD_Scan;
-
-            m_MatBase.shader = mainShader;
-            if (extraShader == null)
-            {
-                m_Materials = new Material[1] { m_MatBase };
-            }
-            else
-            {
-                m_MatExtra.shader = extraShader;
-                m_Materials = new Material[2] { m_MatBase, m_MatExtra };
-            }
-            m_skins.Traversal((Renderer renderer) => { renderer.materials = m_Materials; });
+            if (m_death)
+                mainShader = SD_DeathOutline;
+            if (m_scanned)
+                mainShader = SD_Scan;
+            
+            m_skins.Traversal((Renderer renderer) => { renderer.material.shader = mainShader; });
         }
 
         public void SetDeath()
         {
             m_Particles.Stop();
-            m_extraDeath = true;
+            m_death = true;
             CheckMaterials();
         }
-        public void OnDeathEffect(float value) => m_Materials.Traversal((Material mat) => { mat.SetFloat(ID_Amount1, value); });
+        public void OnDeathEffect(float value) => m_skins.Traversal((Renderer renderer) => { renderer.material.SetFloat(ID_Dissolve, value); });
 
         public void SetScaned(bool _scaned)
         {
-            if (m_extraScan == _scaned)
+            if (m_scanned == _scaned)
                 return;
 
-            m_extraScan = _scaned;
+            m_scanned = _scaned;
             CheckMaterials();
         }
         public void SetFreezed(bool _freezed)
         {
-            if (m_mainFreeze == _freezed)
+            if (m_freezed == _freezed)
                 return;
-            m_mainFreeze = _freezed;
+            m_freezed = _freezed;
             CheckMaterials();
 
-            if (!m_mainFreeze)
+            if (!m_freezed)
                 return;
-            m_MatBase.SetColor("_IceColor", TCommon.GetHexColor("3DAEC5FF"));
-            m_MatBase.SetTexture("_DistortTex", TX_Distort);
-            m_MatBase.SetFloat("_Opacity", .5f);
+            m_skins.Traversal((Renderer renderer) =>
+            {
+                renderer.material.SetColor("_IceColor", TCommon.GetHexColor("3DAEC5FF"));
+                renderer.material.SetTexture("_DistortTex", TX_Distort);
+                renderer.material.SetFloat("_Opacity", .5f);
+            });
         }
         public void SetCloak(bool _cloacked)
         {
-            if (m_mainCloack == _cloacked)
+            if (m_cloaked == _cloacked)
                 return;
 
-            m_mainCloack = _cloacked;
+            m_cloaked = _cloacked;
             CheckMaterials();
             if (_cloacked)
             {
-                m_MatBase.SetTexture("_DistortTex", TX_Distort);
+                
                 this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) =>
                 {
-                    m_Materials[0].SetFloat(ID_Opacity, value);
+                    m_skins.Traversal((Renderer renderer) =>  { renderer.material.SetFloat(ID_Opacity, value); });
                 }, 1, .3f, .5f));
             }
             else
             {
-                this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) =>{ m_MatBase.SetFloat(ID_Opacity, value); }, .3f, 1f, .3f, () => { m_MatBase.shader = SD_Base; }));
+                this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => { m_skins.Traversal((Renderer renderer) => { renderer.material.SetFloat(ID_Opacity, value); }); }, .3f, 1f, .3f, CheckMaterials));
             }
         }
 
@@ -290,7 +280,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
                     break;
             }
             this.StartSingleCoroutine(1, TIEnumerators.ChangeValueTo((float value) => {
-                m_MatBase.SetColor(ID_Color, Color.Lerp(targetColor, Color.white, value));
+                m_skins.Traversal((Renderer renderer) => { renderer.material.SetColor(ID_Color, Color.Lerp(targetColor, Color.white, value)) ; });
             }, 0, 1, 1f));
         }
 

@@ -151,7 +151,7 @@ public class GameManager : GameManagerBase
         GameObjectManager.RecycleAllObject();
         yield return null;
         m_GameLevel.GetStageData();
-        EntityReset();
+        EntityDicReset();
         GC.Collect();
         Resources.UnloadUnusedAssets();
         yield return null;
@@ -336,7 +336,7 @@ public class GameManager : GameManagerBase
         });
     }
 
-    void EntityReset()
+    void EntityDicReset()
     {
         m_Entities.Clear();
         TCommon.TraversalEnum((enum_EntityFlag flag) => {
@@ -344,7 +344,7 @@ public class GameManager : GameManagerBase
             m_OppositeEntities[flag].Clear();
         });
     }
-
+    
     void OnEntiyActivate(EntityBase entity)
     {
         m_Entities.Add(entity.m_EntityID, entity);
@@ -357,6 +357,16 @@ public class GameManager : GameManagerBase
                 m_OppositeEntities[flag].Add(character);
         });
     }
+
+    void OnCharacterDead(EntityCharacterBase character)
+    {
+        if (character.m_Controller == enum_EntityController.Player)
+            SetPostEffect_Dead();
+
+        OnBattleCharacterDead(character);
+        SpawnEntityDeadPickups(character);
+    }
+
     void OnEntityRecycle(EntityBase entity)
     {
         m_Entities.Remove(entity.m_EntityID);
@@ -368,22 +378,9 @@ public class GameManager : GameManagerBase
             if (entity.m_Flag != enum_EntityFlag.Neutal && flag != entity.m_Flag)
                 m_OppositeEntities[flag].Remove(character);
         });
-
         OnBattleCharacterRecycle(character);
-        if (entity.m_Controller == enum_EntityController.Player)
-            OnGameFinished(false);
     }
 
-    void OnCharacterDead(EntityCharacterBase character)
-    {
-        if (character.m_Controller == enum_EntityController.Player)
-        {
-            SetPostEffect_Dead();
-            return;
-        }
-
-        SpawnEntityDeadPickups(character);
-    }
 
     void OnCharacterRevive(EntityCharacterBase character)
     {
@@ -503,13 +500,27 @@ public class GameManager : GameManagerBase
         this.StartSingleCoroutine(99, IE_GenerateEnermy(m_EntityGenerating, GameConst.F_EnermySpawnOffsetEach));
     }
 
-    void OnBattleCharacterRecycle(EntityCharacterBase entity)
+    void OnBattleCharacterDead(EntityCharacterBase entity)
     {
         if (!B_Battling || B_WaveEntityGenerating || entity.m_Flag != enum_EntityFlag.Enermy)
             return;
-        
-        if (m_FlagEntityCount( enum_EntityFlag.Enermy) <= 0 || (m_CurrentWave < m_EntityGenerate.Count && m_FlagEntityCount(enum_EntityFlag.Enermy) <= GameConst.I_EnermyCountWaveFinish))
+
+        bool haveEnermyAlive = false;
+
+        GetEntities(enum_EntityFlag.Enermy, true).TraversalBreak((EntityCharacterBase character) =>
+        {
+            haveEnermyAlive = !character.m_IsDead;
+            return haveEnermyAlive;
+        });
+
+        if(!haveEnermyAlive)
             WaveFinished(entity.transform.position);
+    }
+
+    void OnBattleCharacterRecycle(EntityCharacterBase entity)
+    {
+        if (entity.m_Controller == enum_EntityController.Player)
+            OnGameFinished(false);
     }
 
     void WaveFinished(Vector3 lastEntityPos)

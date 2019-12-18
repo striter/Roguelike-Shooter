@@ -32,7 +32,7 @@
 	{
 		Tags { "RenderType" = "BloomDissolveEdge" "IgnoreProjector" = "True" "Queue" = "Transparent" }
 		Cull Off Lighting Off ZWrite Off Fog { Color(0,0,0,0) }
-		UsePass "Game/Effect/BloomSpecific/Bloom_DissolveEdge/MAIN"
+		UsePass "Game/Effect/BloomSpecific/Bloom_Dissolve/EDGE"
 	}
 
 	SubShader

@@ -16,9 +16,10 @@ public class InteractCampSwitchDifficulty : InteractCamp {
     {
         m_Text.text = (GameDataManager.m_GameData.m_GameDifficulty).ToString();
     }
-    protected override void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)
+    protected override bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactTarget)
     {
-        base.OnInteractSuccessful(_interactTarget);
+        base.OnInteractOnceCanKeepInteract(_interactTarget);
         m_Text.text = (GameDataManager.OnCampDifficultySwitch()).ToString();
+        return true;
     }
 }
