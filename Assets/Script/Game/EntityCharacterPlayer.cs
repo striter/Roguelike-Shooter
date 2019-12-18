@@ -394,8 +394,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
                 Debug.LogError("Invalid Detected!");
                 return false;
             case enum_ActionType.Ability:
-                ActionAbility m_ability = action as ActionAbility;
-                m_WeaponCurrent.SetWeaponAction( m_Ability,m_ability.I_Cost);
+                ActionAbility weaponAbility = action as ActionAbility;
+                m_WeaponCurrent.SetWeaponAction(weaponAbility, weaponAbility.I_Cost);
                 OnWeaponStatus();
                 return true;
             case enum_ActionType.Equipment:
