@@ -4,12 +4,14 @@
 	{
 		_MainTex("Main Tex",2D) = "white"{}
 		_Color("Color",Color) = (1,1,1,1)
-		_Color1("_Dissolve Color",Color) = (1,1,1,1)
+		_DissolveColor("_Dissolve Color",Color) = (1,1,1,1)
 
 
 		_SubTex1("Dissolve Map",2D) = "white"{}
-		_Amount1("_Dissolve Progress",Range(0,1)) = 1
-		_Amount2("_Dissolve Width",float) = .1
+		_DissolveAmount("_Dissolve Amount",Range(0,1)) = 1
+		_DissolveWidth("_Dissolve Width",float) = .1
+
+
 	}
 	SubShader
 	{
@@ -21,15 +23,16 @@
 		#include "AutoLight.cginc"
 		#include "Lighting.cginc"
 		sampler2D _SubTex1;
-		float _Amount1;
-		float _Amount2;
+		float _DissolveAmount;
+		float _DissolveWidth;
 		float4 _Color;
-		float4 _Color1;
+		float4 _DissolveColor;
 		sampler2D _MainTex;
 		float4 _MainTex_ST;
 		float2 GetDissolveUV(float3 vertex)
 		{
-			return float2(vertex.x, vertex.z)+vertex.y*.7;
+			float2 uv = float2(vertex.x, vertex.z) + vertex.y*.7;
+			return uv/2;
 		}
 		ENDCG
 
@@ -74,7 +77,7 @@
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-				fixed dissolve = tex2D(_SubTex1,i.uv.zw).r - _Amount1-_Amount2;
+				fixed dissolve = tex2D(_SubTex1,i.uv.zw).r - _DissolveAmount-_DissolveWidth;
 				clip(dissolve);
 
 				float3 albedo = tex2D(_MainTex,i.uv.xy)* _Color;
@@ -108,7 +111,7 @@
 
 			fixed4 fragshadow(v2fs i) :SV_TARGET
 			{
-				fixed dissolve = tex2D(_SubTex1,i.uv).r - _Amount1-_Amount2;
+				fixed dissolve = tex2D(_SubTex1,i.uv).r - _DissolveAmount-_DissolveWidth;
 				clip(dissolve);
 				SHADOW_CASTER_FRAGMENT(i);
 			}
@@ -147,10 +150,10 @@
 
 			fixed4 frag(v2f i) : SV_Target
 			{
-				fixed dissolve = tex2D(_SubTex1,i.uv).r - _Amount1;
+				fixed dissolve = tex2D(_SubTex1,i.uv).r - _DissolveAmount;
 				clip(dissolve);
-				clip( _Amount2 -dissolve);
-				return _Color1;
+				clip( _DissolveWidth -dissolve);
+				return _DissolveColor;
 			}
 			ENDCG
 		}

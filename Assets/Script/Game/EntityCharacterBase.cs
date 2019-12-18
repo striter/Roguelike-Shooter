@@ -162,7 +162,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         static readonly Shader SD_Ice = Shader.Find("Game/Effect/Ice");
         static readonly Shader SD_Cloak = Shader.Find("Game/Effect/Cloak");
         static readonly int ID_Color = Shader.PropertyToID("_Color");
-        static readonly int ID_Amount1=Shader.PropertyToID("_Amount1");
+        static readonly int ID_Dissolve=Shader.PropertyToID("_DissolveAmount");
         static readonly int ID_Opacity = Shader.PropertyToID("_Opacity");
         static readonly Texture TX_Distort = TResources.GetNoiseTex();
         List<Renderer> m_skins;
@@ -190,7 +190,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
             CheckMaterials();
             m_skins.Traversal((Renderer renderer) => {
                 renderer.material.SetTexture("_DistortTex", TX_Distort);
-                renderer.material.SetFloat(ID_Amount1, 0);
+                renderer.material.SetFloat(ID_Dissolve, 0);
             });
         }
         void CheckMaterials()
@@ -214,7 +214,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
             m_death = true;
             CheckMaterials();
         }
-        public void OnDeathEffect(float value) => m_skins.Traversal((Renderer renderer) => { renderer.material.SetFloat(ID_Amount1, value); });
+        public void OnDeathEffect(float value) => m_skins.Traversal((Renderer renderer) => { renderer.material.SetFloat(ID_Dissolve, value); });
 
         public void SetScaned(bool _scaned)
         {
