@@ -46,7 +46,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected float m_BaseMovementSpeed;
     public override float m_baseMovementSpeed => m_BaseMovementSpeed;
     protected float f_reviveCheck = 0f;
-    public CharacterAbility m_Ability { get; private set; }
+    public CharacterAbility m_CharacterAbility { get; private set; }
 
     protected override CharacterInfoManager GetEntityInfo()
     {
@@ -66,7 +66,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         tf_WeaponHoldLeft = transform.FindInAllChild("WeaponHold_L");
         tf_UIStatus = transform.FindInAllChild("UIStatus");
         m_Animator = GetAnimatorController(tf_Model.GetComponent<Animator>(),OnAnimationEvent);
-        m_Ability = new CharacterAbility(I_AbilityTimes, F_AbilityCoolDown, OnAbilityTrigger);
+        m_CharacterAbility = new CharacterAbility(I_AbilityTimes, F_AbilityCoolDown, OnAbilityTrigger);
         transform.Find("InteractDetector").GetComponent<InteractDetector>().Init(OnInteractCheck);
     }
     protected override void OnPoolItemEnable()
@@ -136,7 +136,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         base.OnAliveTick(deltaTime);
         OnWeaponTick(deltaTime);
         OnMoveTick(deltaTime);
-        m_Ability.Tick(deltaTime);
+        m_CharacterAbility.Tick(deltaTime);
         OnCommonStatus();
     }
 
@@ -292,7 +292,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         if (m_IsDead)
             return;
-        m_Ability.OnAbilityClick();
+        m_CharacterAbility.OnAbilityClick();
     }
     
     protected virtual void OnAbilityTrigger()
@@ -394,8 +394,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
                 Debug.LogError("Invalid Detected!");
                 return false;
             case enum_ActionType.Ability:
-                ActionAbility weaponAbility = action as ActionAbility;
-                m_WeaponCurrent.SetWeaponAction(weaponAbility, weaponAbility.I_Cost);
+                ActionAbility ability = action as ActionAbility;
+                m_WeaponCurrent.SetWeaponAction(ability, ability.I_Cost);
                 OnWeaponStatus();
                 return true;
             case enum_ActionType.Equipment:

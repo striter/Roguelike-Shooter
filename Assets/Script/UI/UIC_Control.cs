@@ -58,10 +58,10 @@ public class UIC_Control : UIControlBase {
     
     void OncommonStatus(EntityCharacterPlayer player)
     {
-        if(player.m_Ability.m_Cooldowning)
-            m_AbilityCooldown.fillAmount = player.m_Ability.m_CooldownScale;
+        if(player.m_CharacterAbility.m_Cooldowning)
+            m_AbilityCooldown.fillAmount = player.m_CharacterAbility.m_CooldownScale;
 
-        if(m_AbilityCooldownChecker.Check(player.m_Ability.m_Cooldowning))
+        if(m_AbilityCooldownChecker.Check(player.m_CharacterAbility.m_Cooldowning))
         {
             m_AbilityBG.sprite = UIManager.Instance.m_CommonSprites[UIConvertions.GetAbilityBackground(m_AbilityCooldownChecker.check1)];
             m_AbilityCooldown.SetActivate(m_AbilityCooldownChecker.check1);
