@@ -32,7 +32,7 @@
 		float2 GetDissolveUV(float3 vertex)
 		{
 			float2 uv = float2(vertex.x, vertex.z) + vertex.y*.7;
-			return uv/2;
+			return uv/10;
 		}
 		ENDCG
 
