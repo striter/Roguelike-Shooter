@@ -218,6 +218,20 @@ public class TResources
     }
 }
 
+public static class TEffects
+{
+    public static readonly Shader SD_Dissolve = Shader.Find("Game/Effect/BloomSpecific/Bloom_Dissolve");
+    public static readonly Shader SD_Scan = Shader.Find("Game/Extra/ScanEffect");
+    public static readonly Shader SD_Ice = Shader.Find("Game/Effect/Ice");
+    public static readonly Shader SD_Cloak = Shader.Find("Game/Effect/Cloak");
+    public static readonly Texture TX_Noise = TResources.GetNoiseTex();
+    public static readonly int ID_Color = Shader.PropertyToID("_Color");
+    public static readonly int ID_Dissolve = Shader.PropertyToID("_DissolveAmount");
+    public static readonly int ID_DissolveScale = Shader.PropertyToID("_DissolveScale");
+    public static readonly int ID_Opacity = Shader.PropertyToID("_Opacity");
+    public static readonly int ID_NoiseTex = Shader.PropertyToID("_NoiseTex");
+}
+
 namespace ResourceLoader
 {
     public class ResourcesLoader
