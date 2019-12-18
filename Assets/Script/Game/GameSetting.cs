@@ -1970,7 +1970,6 @@ namespace GameSetting
     #endregion
 
     #region GameEffects
-
     public class ModelBlink:ISingleCoroutine
     {
         Transform transform;
