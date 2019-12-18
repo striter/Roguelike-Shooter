@@ -182,7 +182,7 @@ public class GameManager : GameManagerBase
         GameObjectManager.RecycleAllInteract();
         SpawnLevelInteracts(levelInfo);
 
-        Vector3 randomPositon = levelInfo.m_Level.RandomInnerEmptyTilePosition(m_GameLevel.m_GameSeed);
+        Vector3 randomPositon = levelInfo.m_Level.RandomInnerEmptyTilePosition(m_GameLevel.m_GameSeed,false);
         m_LocalPlayer.SetSpawnPosRot(randomPositon, Quaternion.LookRotation(-randomPositon, Vector3.up));
 
         m_GameLevel.OnLevelChange(levelInfo.m_LevelType);
@@ -548,7 +548,7 @@ public class GameManager : GameManagerBase
         for (; ; )
         {
             yield return new WaitForSeconds(_offset);
-            SpawnEnermy(waveGenerate[curSpawnCount], curSpawnCount, LevelManager.Instance.m_currentLevel.m_Level.RandomInnerEmptyTilePosition(m_GameLevel.m_GameSeed),baseHealthMultiplier,maxHealthMultiplier,enermyDifficultyBuff);
+            SpawnEnermy(waveGenerate[curSpawnCount], curSpawnCount, LevelManager.Instance.m_currentLevel.m_Level.RandomInnerEmptyTilePosition(m_GameLevel.m_GameSeed,false),baseHealthMultiplier,maxHealthMultiplier,enermyDifficultyBuff);
             curSpawnCount++;
             if (curSpawnCount >= waveGenerate.Count)
             {

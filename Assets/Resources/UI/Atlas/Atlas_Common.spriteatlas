@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 3515579
+    totalSpriteSurfaceArea: 3390518
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -37,7 +37,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: e08d3bde1087c074d8749e4b06ae77a5, type: 3}
   - {fileID: 21300000, guid: e3fbf3f12a144a549887391ddaa8a267, type: 3}
   - {fileID: 21300000, guid: 38f42b51776c9154ba33af7287510e68, type: 3}
-  - {fileID: 21300000, guid: 6604e40b5df9a224f9c0239130172715, type: 3}
   - {fileID: 21300000, guid: 6a4e7777b01b76b44b374c25625a8c8a, type: 3}
   - {fileID: 21300000, guid: 737da97c521ba6b46a7f9ec37123c419, type: 3}
   - {fileID: 21300000, guid: c27d2c2472714b74d979909501bab0f4, type: 3}
@@ -73,7 +72,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 6cd370de5f59c7c4a952190201ce7ea8, type: 3}
   - {fileID: 21300000, guid: 108feaf22a114814c812a167431a8540, type: 3}
   - {fileID: 21300000, guid: df1b52d98d2a82b4dad501bc4177411a, type: 3}
-  - {fileID: 21300000, guid: baaa511bd621d3c43a9c098b42de7ad6, type: 3}
   - {fileID: 21300000, guid: fb63df05d2d74bb49bf0e78b9147bd7b, type: 3}
   - {fileID: 21300000, guid: a386833f607b4ba478930b8dfe4656ee, type: 3}
   - {fileID: 21300000, guid: 9047f140630863245ae8f4d97a50502d, type: 3}
@@ -129,7 +127,6 @@ SpriteAtlas:
   - UI_common_lowpoly_background_medium
   - UI_common_lowpoly_background_small
   - control_rocker_bottom
-  - status_level_background
   - UI_title_orange_long
   - control_main_bottom
   - UI_title_orange
@@ -165,7 +162,6 @@ SpriteAtlas:
   - control_ability_ready
   - status_bottom
   - control_rocker_move
-  - coins_bottom
   - control_ability_Beth
   - control_setting_bottom
   - bottom_black

@@ -220,8 +220,7 @@ namespace GameSetting
         public const int I_AmmoCountToSlider = 200;      //Ammo UI,While Clip Above This Will Turn To Be Slider大于此值变成白条
         public const int I_PlayerDyingMinValue = 10;
         public const int I_PlayerDyingMaxValue = 50;
-
-        public const float F_UIMaxArmor = 100f;
+        
         public const float F_MapAnimateTime = 1.6f;
 
         public const float F_UIDamageStartOffset = 20f; //血显示区域范围
@@ -1095,7 +1094,6 @@ namespace GameSetting
         public float m_BaseHealth { get; private set; }
         public virtual float F_TotalEHP => m_CurrentHealth;
         public float F_HealthBaseScale => m_CurrentHealth / m_BaseHealth;
-        public float F_HealthMaxScale => m_CurrentHealth / m_MaxHealth;
         public bool m_HealthFull => m_CurrentHealth >= m_MaxHealth;
         public virtual float m_MaxHealth => m_BaseHealth;
         protected void DamageHealth(float health)
@@ -1269,6 +1267,9 @@ namespace GameSetting
 
     public class EntityPlayerHealth:EntityHealth
     {
+        public float m_UIArmorFill => Mathf.Clamp(m_CurrentArmor / 100f,0,1f);
+        public float m_UIBaseHealthFill => Mathf.Clamp(m_CurrentHealth / 100f,0,1f);
+        public float m_UIMaxHealthFill => Mathf.Clamp( m_MaxHealth / 100f,0,1f);
         public float m_MaxHealthAdditive { get; private set; }
         public override float m_MaxHealth => base.m_MaxHealth + m_MaxHealthAdditive;
         public EntityPlayerHealth(EntityCharacterBase entity, Action<enum_HealthChangeMessage> _OnHealthChanged) : base(entity,_OnHealthChanged)

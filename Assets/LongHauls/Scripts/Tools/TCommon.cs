@@ -13,6 +13,19 @@ public static class TCommonUI
         rect.anchorMin = anchor;
         rect.anchorMax = anchor;
     }
+    public static void ReAnchorFillX(this RectTransform rect,Vector2 anchorX)
+    {
+        rect.anchorMin =new Vector2(anchorX.x, rect.anchorMin.y);
+        rect.anchorMax = new Vector2(anchorX.y, rect.anchorMax.y);
+        rect.offsetMax = Vector2.zero;
+        rect.offsetMin = Vector2.zero;
+    }
+    public static void ReAnchorReposX(this RectTransform rect,float x)
+    {
+        rect.anchorMin = new Vector2(x, rect.anchorMin.y);
+        rect.anchorMax = new Vector2(x, rect.anchorMax.y);
+        rect.anchoredPosition = Vector2.zero;
+    }
 
     public static void SetWorldViewPortAnchor(this RectTransform rect, Vector3 worldPos, Camera camera, float lerpParam=1f)
     {
