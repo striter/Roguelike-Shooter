@@ -1,14 +1,10 @@
-﻿Shader "Game/Extra/Dissolve_Diffuse_Iceland_Mask_Bloom"
+﻿Shader "Game/Extra/Diffuse_Iceland_Mask_Bloom"
 {
 	Properties
 	{
 		_MainTex("Main Tex",2D) = "white"{}
 		_Color("Color",Color) = (1,1,1,1)
 		_Amount3("Color Blink Speed",Range(0,10))=2
-
-		_SubTex1("Dissolve Map",2D) = "white"{}
-		_Amount1("_Dissolve Progress",Range(0,1)) = 1
-		_Amount2("_Dissolve Width",float) = .1
 	}
 	SubShader
 	{
@@ -19,17 +15,13 @@
 		#include "AutoLight.cginc"
 		#include "Lighting.cginc"
 
-		sampler2D _SubTex1;
-		float4 _SubTex1_ST;
-		float _Amount1;
-		float _Amount2;
 		float _Amount3;
 		ENDCG
 
 		Pass		//Base Pass
 		{
 			Name "MAIN"
-			Tags{"RenderType"="Opaque" "LightMode" = "ForwardBase" "Queue" = "Transparent"}
+			Tags{"RenderType"="Opaque" "LightMode" = "ForwardBase" "Queue" = "Geometry"}
 			Blend SrcAlpha OneMinusSrcAlpha
 			ZWrite On
 			CGPROGRAM
@@ -47,7 +39,7 @@
 			struct v2f
 			{
 				float4 pos : SV_POSITION;
-				float4 uv:TEXCOORD0;
+				float2 uv:TEXCOORD0;
 				float3 worldPos:TEXCOORD2;
 				float diffuse:TEXCOORD3;
 				SHADOW_COORDS(4)
@@ -59,8 +51,7 @@
 			v2f vert (appdata v)
 			{
 				v2f o;
-				o.uv.xy = TRANSFORM_TEX( v.uv, _MainTex);
-				o.uv.zw = TRANSFORM_TEX(v.uv, _SubTex1);
+				o.uv = TRANSFORM_TEX( v.uv, _MainTex);
 				o.pos = UnityObjectToClipPos(v.vertex);
 				o.worldPos =mul(unity_ObjectToWorld,v.vertex);
 				fixed3 worldNormal = normalize(mul(v.normal, (float3x3)unity_WorldToObject)); //法线方向n
@@ -72,9 +63,6 @@
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-				fixed dissolve = tex2D(_SubTex1,i.uv.zw).r - _Amount1-_Amount2;
-				clip(dissolve);
-
 				float4 mainCol = tex2D(_MainTex, i.uv.xy);
 				float3 albedo = mainCol.rgb* _Color;
 				float colorMask = mainCol.a;
@@ -90,37 +78,7 @@
 			}
 			ENDCG
 		}
-
-		Pass
-		{
-			Cull Off
-			Tags{"LightMode" = "ShadowCaster"}
-			CGPROGRAM
-			#pragma vertex vertshadow
-			#pragma fragment fragshadow
-
-			struct v2fs
-			{
-				V2F_SHADOW_CASTER;
-				float2 uv:TEXCOORD0;
-			};
-			v2fs vertshadow(appdata_base v)
-			{
-				v2fs o;
-				TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
-				o.uv = TRANSFORM_TEX(v.texcoord, _SubTex1);
-				return o;
-			}
-
-			fixed4 fragshadow(v2fs i) :SV_TARGET
-			{
-				fixed dissolve = tex2D(_SubTex1,i.uv).r - _Amount1-_Amount2;
-				clip(dissolve);
-				SHADOW_CASTER_FRAGMENT(i);
-			}
-			ENDCG
-		}
-
-
+			USEPASS "Game/Common/Diffuse_Base/FORWARDADD"
+		USEPASS "Game/Common/Diffuse_Base/SHADOWCASTER"
 	}
 }

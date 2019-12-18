@@ -100,6 +100,7 @@ Shader "Game/Effect/PlantsWaving_Vertex"
 			v2fs vertshadow(appdata_base v)
 			{
 				v2fs o;
+				TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
 				float3 worldPos = mul(unity_ObjectToWorld, v.vertex);
 				worldPos += waveAdd(v.vertex.y,worldPos);
 			 o.pos = UnityWorldToClipPos(worldPos);
