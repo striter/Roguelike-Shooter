@@ -5,7 +5,7 @@ using GameSetting;
 using TTiles;
 using System;
 
-public class LevelItemBase : ObjectPoolMonoItem<LevelItemBase> {
+public class LevelItemBase : ObjectPoolMonoItem<LevelItemBase>,ISingleCoroutine {
     public LevelBase m_LevelParent { get; private set; }
     public int m_sizeXAxis = 1;
     public int m_sizeYAxis = 1;
@@ -13,12 +13,21 @@ public class LevelItemBase : ObjectPoolMonoItem<LevelItemBase> {
     Transform tf_Model;
     float m_Health;
     Action OnLevelItemDestroyed;
+    HitCheckStatic[] m_hitChecks;
+    Renderer[] m_Renderers;
     public override void OnPoolItemInit(LevelItemBase _identity, Action<LevelItemBase, MonoBehaviour> _OnSelfRecycle)
     {
         base.OnPoolItemInit(_identity, _OnSelfRecycle);
         tf_Model = transform.Find("Model");
-        GetComponentsInChildren<HitCheckStatic>().Traversal((HitCheckStatic hitCheck) => { hitCheck.Attach(OnHit); });
+        m_Renderers = GetComponentsInChildren<Renderer>();
+        m_hitChecks =GetComponentsInChildren<HitCheckStatic>();
+        m_hitChecks.Traversal((HitCheckStatic hitCheck) => { hitCheck.Attach(OnHit); });
     }
+    private void OnDisable()
+    {
+        this.StopSingleCoroutine(0);
+    }
+
     public void InitItem(LevelBase levelParent, enum_TileDirection direction,Action _OnLevelItemDestroyed)
     {
         m_LevelParent = levelParent;
@@ -27,6 +36,7 @@ public class LevelItemBase : ObjectPoolMonoItem<LevelItemBase> {
         transform.SetActivate(true);
 
         OnLevelItemDestroyed = _OnLevelItemDestroyed;
+        m_hitChecks.Traversal((HitCheckStatic hitCheck) => {hitCheck.SetEnable(true); });
         if (OnLevelItemDestroyed == null)
             return;
         switch(m_ItemType)
@@ -46,16 +56,22 @@ public class LevelItemBase : ObjectPoolMonoItem<LevelItemBase> {
         if (m_Health <= 0)
             return false;
         m_Health -= damageInfo.m_AmountApply;
-        if (m_Health <= 0) OnItemDestroy();
+        if (m_Health <= 0)
+        {
+            m_hitChecks.Traversal((HitCheckStatic hitCheck) => { hitCheck.SetEnable(false); });
+            m_Renderers.Traversal((Renderer render) => {
+                render.material.shader = TEffects.SD_Dissolve;
+                render.material.SetTexture(TEffects.ID_NoiseTex,TEffects.TX_Noise);
+                render.material.SetFloat(TEffects.ID_DissolveScale, .1f);
+            });
+            this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value)=>
+            {
+                m_Renderers.Traversal((Renderer render) => { render.material.SetFloat(TEffects.ID_Dissolve,value); });
+            },0f,1f,1f,()=> { transform.SetActivate(false); }));
+            OnLevelItemDestroyed?.Invoke();
+        } 
         return true;
     }
-
-    void OnItemDestroy()
-    {
-        transform.SetActivate(false);
-        OnLevelItemDestroyed?.Invoke();
-    }
-
 
     public void ItemRecenter(bool inverse=false)
     {

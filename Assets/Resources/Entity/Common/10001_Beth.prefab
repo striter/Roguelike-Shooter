@@ -1081,7 +1081,7 @@ MonoBehaviour:
   F_AttackSpread: 0
   I_AbilityTimes: -1
   F_AbilityCoolDown: 5
-  F_RollSpeedMultiple: 2.5
+  F_RollSpeedMultiple: 2
   F_RollDuration: 0.5
 --- !u!114 &114861050626382524
 MonoBehaviour:

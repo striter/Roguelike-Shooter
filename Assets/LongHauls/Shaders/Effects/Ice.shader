@@ -3,7 +3,7 @@
 	Properties
 	{
 		_MainTex("MainTex",2D) = "white"{}
-		_DistortTex("DistortTex",2D)="white"{}
+		_NoiseTex("DistortTex",2D)="white"{}
 		_Color("Color Tint",Color) = (1,1,1,1)
 		_IceColor("Ice Color",Color) = (1,1,1,1)
 		_OpacityMultiple("Opacity Multiple",float) = .7
@@ -21,7 +21,7 @@
 				#include "Lighting.cginc"
 				sampler2D _CameraOpaqueTexture;
 				sampler2D _MainTex;
-				sampler2D _DistortTex;
+				sampler2D _NoiseTex;
 				float4 _MainTex_ST;
 				float4 _Color;
 				float _OpacityMultiple;
@@ -58,7 +58,7 @@
 			{
 				fixed4 albedo = tex2D(_MainTex, i.uv)*_Color;
 				float3 foreCol =  albedo+ _IceColor*i.rim;
-				fixed3 backCol = tex2D(_CameraOpaqueTexture, i.screenPos.xy / i.screenPos.w+tex2D(_DistortTex,i.uv+float2(_Time.y/10,_Time.y/10)).rg).rgb;
+				fixed3 backCol = tex2D(_CameraOpaqueTexture, i.screenPos.xy / i.screenPos.w+tex2D(_NoiseTex,i.uv+float2(_Time.y/10,_Time.y/10)).rg).rgb;
 				float3 finalCol = lerp(backCol, foreCol, _OpacityMultiple);
 				return float4(finalCol, 1);
 			}

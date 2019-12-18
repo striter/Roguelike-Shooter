@@ -7,10 +7,10 @@
 		_DissolveColor("_Dissolve Color",Color) = (1,1,1,1)
 
 
-		_SubTex1("Dissolve Map",2D) = "white"{}
+		_NoiseTex("Dissolve Map",2D) = "white"{}
 		_DissolveAmount("_Dissolve Amount",Range(0,1)) = 1
 		_DissolveWidth("_Dissolve Width",float) = .1
-
+		_DissolveScale("_Dissolve Scale",Range(0,1))=1
 
 	}
 	SubShader
@@ -22,17 +22,18 @@
 		#include "UnityCG.cginc"
 		#include "AutoLight.cginc"
 		#include "Lighting.cginc"
-		sampler2D _SubTex1;
+		sampler2D _NoiseTex;
 		float _DissolveAmount;
 		float _DissolveWidth;
 		float4 _Color;
 		float4 _DissolveColor;
 		sampler2D _MainTex;
 		float4 _MainTex_ST;
+		float _DissolveScale;
 		float2 GetDissolveUV(float3 vertex)
 		{
 			float2 uv = float2(vertex.x, vertex.z) + vertex.y*.7;
-			return uv/2;
+			return uv* _DissolveScale;
 		}
 		ENDCG
 
@@ -77,7 +78,7 @@
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-				fixed dissolve = tex2D(_SubTex1,i.uv.zw).r - _DissolveAmount-_DissolveWidth;
+				fixed dissolve = tex2D(_NoiseTex,i.uv.zw).r - _DissolveAmount-_DissolveWidth;
 				clip(dissolve);
 
 				float3 albedo = tex2D(_MainTex,i.uv.xy)* _Color;
@@ -111,7 +112,7 @@
 
 			fixed4 fragshadow(v2fs i) :SV_TARGET
 			{
-				fixed dissolve = tex2D(_SubTex1,i.uv).r - _DissolveAmount-_DissolveWidth;
+				fixed dissolve = tex2D(_NoiseTex,i.uv).r - _DissolveAmount-_DissolveWidth;
 				clip(dissolve);
 				SHADOW_CASTER_FRAGMENT(i);
 			}
@@ -150,7 +151,7 @@
 
 			fixed4 frag(v2f i) : SV_Target
 			{
-				fixed dissolve = tex2D(_SubTex1,i.uv).r - _DissolveAmount;
+				fixed dissolve = tex2D(_NoiseTex,i.uv).r - _DissolveAmount;
 				clip(dissolve);
 				clip( _DissolveWidth -dissolve);
 				return _DissolveColor;

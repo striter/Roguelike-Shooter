@@ -23,19 +23,21 @@ public class UIC_CharacterStatus : UIControlBase
     UIT_TextExtend m_AmmoAmount,m_AmmoAmountProjection;
 
     Transform tf_ArmorData;
-    Slider m_ArmorFill;
+    RectTransform rtf_ArmorMaxFill, rtf_ArmorFillHandle;
+    Image img_ArmorFill;
     UIT_TextExtend m_ArmorAmount;
 
     Transform tf_HealthData;
-    Slider m_HealthFill;
+    RectTransform rtf_HealthMaxFill,rtf_HealthFillHandle;
+    Image img_HealthFill;
     UIT_TextExtend m_HealthAmount;
 
-    ValueLerpSeconds m_HealthLerp, m_ArmorLerp;
+    ValueLerpSeconds m_HealthLerp,m_MaxHealthLerp,  m_ArmorLerp;
 
-    Transform tf_MapData;
-    UIT_TextExtend m_MapTitle;
-    Image m_MapPrevious, m_MapCurrent, m_MapNext;
-    TSpecialClasses.AnimationControlBase m_MapAnimation;
+    Transform tf_LocationData;
+    UIT_TextExtend m_LocationIndex,m_LocationTitle;
+    Image  m_LocationImage;
+
     TSpecialClasses.ValueChecker<bool> m_DyingCheck;
     protected override void Init()
     {
@@ -54,27 +56,36 @@ public class UIC_CharacterStatus : UIControlBase
         img_ReloadFill = m_AmmoGrid.transform.Find("Reload").GetComponent<Image>();
 
         tf_ArmorData = tf_StatusData.Find("ArmorData");
-        m_ArmorFill = tf_ArmorData.Find("Slider").GetComponent<Slider>();
-        m_ArmorAmount = tf_ArmorData.Find("ArmorAmount").GetComponent<UIT_TextExtend>();
+        img_ArmorFill = tf_ArmorData.Find("Fill").GetComponent<Image>();
+        rtf_ArmorFillHandle = img_ArmorFill.transform.Find("Handle").GetComponent<RectTransform>();
+        rtf_ArmorMaxFill = tf_ArmorData.Find("MaxFill").GetComponent<RectTransform>();
+        m_ArmorAmount = tf_ArmorData.Find("Amount").GetComponent<UIT_TextExtend>();
 
         tf_HealthData = tf_StatusData.Find("HealthData");
-        m_HealthFill = tf_HealthData.Find("Slider").GetComponent<Slider>();
-        m_HealthAmount = tf_HealthData.Find("HealthAmount").GetComponent<UIT_TextExtend>();
-        
+        img_HealthFill = tf_HealthData.Find("Fill").GetComponent<Image>();
+        rtf_HealthFillHandle = img_HealthFill.transform.Find("Handle").GetComponent<RectTransform>();
+        rtf_HealthMaxFill = tf_HealthData.Find("MaxFill").GetComponent<RectTransform>();
+        m_HealthAmount = tf_HealthData.Find("Amount").GetComponent<UIT_TextExtend>();
+        m_HealthAmount = tf_HealthData.Find("Amount").GetComponent<UIT_TextExtend>();
         
         m_ActionExpireGrid = new UIT_GridControllerGridItem<UIGI_ActionExpireInfo>(tf_Container.Find("ActionExpireGrid"));
         m_EquipmentGrid = new UIT_GridControllerGridItem<UIGI_ActionBase>(tf_Container.Find("EquipmentGrid"));
         m_EquipmentGrid.transform.GetComponent<Button>().onClick.AddListener(() => UIManager.Instance.ShowPage<UI_EquipmentPack>(true, 0f).Show(m_Player.m_PlayerInfo));
 
-        m_HealthLerp = new ValueLerpSeconds(0f, 4f, 2f, (float value) => { m_HealthFill.value = value; });
-        m_ArmorLerp = new ValueLerpSeconds(0f, 4f, 2f, (float value) => { m_ArmorFill.value = value; });
+        m_HealthLerp = new ValueLerpSeconds(0f, 4f, 2f, (float value) => {
+            img_HealthFill.fillAmount = value;
+            rtf_HealthFillHandle.ReAnchorReposX(value);
+        });
+        m_ArmorLerp = new ValueLerpSeconds(0f, 4f, 2f, (float value) => {
+            img_ArmorFill.fillAmount = value;
+            rtf_ArmorFillHandle.ReAnchorReposX(value);
+            rtf_ArmorMaxFill.ReAnchorFillX(new Vector2(0,value));
+        });
 
-        tf_MapData = tf_Container.Find("MapData");
-        m_MapTitle = tf_MapData.Find("Title").GetComponent<UIT_TextExtend>();
-        m_MapPrevious = tf_MapData.Find("Previous").GetComponent<Image>();
-        m_MapCurrent = tf_MapData.Find("Current").GetComponent<Image>();
-        m_MapNext = tf_MapData.Find("Next").GetComponent<Image>();
-        m_MapAnimation =new AnimationControlBase( tf_MapData.GetComponent<Animation>(),false);
+        tf_LocationData = tf_Container.Find("LocationData");
+        m_LocationIndex = tf_LocationData.Find("Index").GetComponent<UIT_TextExtend>();
+        m_LocationImage = tf_LocationData.Find("Image").GetComponent<Image>();
+        m_LocationTitle = tf_LocationData.Find("Title").GetComponent<UIT_TextExtend>();
 
         m_DyingCheck = new ValueChecker<bool>(true);
     }
@@ -98,24 +109,15 @@ public class UIC_CharacterStatus : UIControlBase
 
     public UIC_CharacterStatus SetInGame(bool inGame)
     {
-        tf_MapData.SetActivate(inGame);
+        tf_LocationData.SetActivate(inGame);
         return this;
     }
 
     void OnChangeLevel()
     {
-        bool finalLevel = GameManager.Instance.m_GameLevel.B_IsFinalLevel;
-        bool firstLevel = GameManager.Instance.m_GameLevel.B_IsFirstLevel;
-        m_MapPrevious.SetActivate(!firstLevel);
-        if (!firstLevel)
-        {
-            SBigmapLevelInfo previousInfo = LevelManager.Instance.m_previousLevel;
-            m_MapPrevious.sprite = GameUIManager.Instance.m_InGameSprites[(previousInfo == null ? enum_LevelType.End : previousInfo.m_LevelType).GetUISprite()];
-        }
-        m_MapCurrent.sprite = GameUIManager.Instance.m_InGameSprites[GameManager.Instance.m_GameLevel.m_LevelType.GetUISprite()];
-        m_MapNext.SetActivate(!finalLevel);
-        m_MapTitle.formatText("UI_Map_Title",string.Format("<color=#FFCD00FF>{0}</color>", (int)(GameManager.Instance.m_GameLevel.m_GameStage-1)*10+LevelManager.Instance.m_currentLevelIndex+1));
-        m_MapAnimation.Play(true);
+        m_LocationImage.sprite = GameUIManager.Instance.m_InGameSprites[GameManager.Instance.m_GameLevel.m_LevelType.GetUISprite()];
+        m_LocationIndex.formatText("UI_Map_Title",string.Format("<color=#FFCD00FF>{0}</color>", (int)(GameManager.Instance.m_GameLevel.m_GameStage-1)*10+LevelManager.Instance.m_currentLevelIndex+1));
+        m_LocationTitle.localizeKey = GameManager.Instance.m_GameLevel.m_LevelType.GetLocalizeKey();
     }
     
     
@@ -145,12 +147,13 @@ public class UIC_CharacterStatus : UIControlBase
         OnAmmoStatus(_player.m_WeaponCurrent);
     }
 
-    void OnHealthStatus(EntityHealth _healthManager)
+    void OnHealthStatus(EntityPlayerHealth _healthManager)
     {
-        m_ArmorLerp.ChangeValue(_healthManager.m_CurrentArmor / UIConst.F_UIMaxArmor);
-        m_HealthLerp.ChangeValue(_healthManager.F_HealthBaseScale);
+        m_ArmorLerp.ChangeValue(_healthManager.m_UIArmorFill);
+        m_HealthLerp.ChangeValue(_healthManager.m_UIBaseHealthFill);
         m_ArmorAmount.text=string.Format("{0}",(int)_healthManager.m_CurrentArmor);
-        m_HealthAmount.text = string.Format("{0} / {1}", (int)_healthManager.m_CurrentHealth,(int)_healthManager.m_MaxHealth);
+        m_HealthAmount.text = string.Format("{0} <color=#FFCB4e>/ {1}</color>", (int)_healthManager.m_CurrentHealth,(int)_healthManager.m_MaxHealth);
+        rtf_HealthMaxFill.ReAnchorFillX(new Vector2(0, _healthManager.m_UIMaxHealthFill));
     }
 
     void OnAmmoStatus(WeaponBase weaponInfo)
