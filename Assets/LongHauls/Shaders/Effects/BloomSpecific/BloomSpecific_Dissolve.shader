@@ -81,11 +81,11 @@
 				fixed dissolve = tex2D(_NoiseTex,i.uv.zw).r - _DissolveAmount-_DissolveWidth;
 				clip(dissolve);
 
-				float3 albedo = tex2D(_MainTex,i.uv.xy)* _Color;
+				float4 albedo = tex2D(_MainTex,i.uv.xy)* _Color;
 				UNITY_LIGHT_ATTENUATION(atten, i,i.worldPos)
 				fixed3 ambient = albedo*UNITY_LIGHTMODEL_AMBIENT.xyz;
 				float3 diffuse = albedo* _LightColor0.rgb*i.diffuse*atten;
-				return fixed4(ambient+diffuse,1);
+				return fixed4(ambient+diffuse,albedo.a);
 			}
 			ENDCG
 		}
