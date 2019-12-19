@@ -52,7 +52,7 @@ namespace GameSetting
         public const int I_HealthTradeAmount = 50;
 
         public const float F_LevelTileSize = 2f;        //Cube Size For Level Tiles
-        public const float F_LevelItemHealthPerTile = 20f;
+        public const float F_LevelItemHealthPerTile = 100f; //环境物件的生命值系数
 
         public const int I_CampFarmPlot4UnlockDifficulty = 3;
         public const int I_CampFarmPlot5UnlockDifficulty = 10;
