@@ -39,13 +39,13 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,Obj
     {
         public Y m_spawnItem;
         public int i_poolSaveAmount;
-        public List<Y> l_Deactive=new List<Y>();
-        public List<Y> l_Active=new List<Y>();
+        public Queue<Y> m_DeactiveQueue=new Queue<Y>();
+        public List<Y> m_ActiveList=new List<Y>();
 
         public Y NewItem(T identity,Action<T,MonoBehaviour> OnRecycle)
         {
             Y item = GameObject.Instantiate(m_spawnItem, tf_PoolSpawn); ;
-            item.name = m_spawnItem.name + "_"+(l_Deactive.Count + l_Active.Count).ToString();
+            item.name = m_spawnItem.name + "_"+(m_DeactiveQueue.Count + m_ActiveList.Count).ToString();
             item.OnPoolItemInit(identity, OnRecycle);
             return item;
         }
@@ -78,7 +78,7 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,Obj
         for (int i = 0; i < info.i_poolSaveAmount; i++)
         {
             Y spawnItem = info.NewItem(identity,SelfRecycle);
-            info.l_Deactive.Add(spawnItem);
+            info.m_DeactiveQueue.Enqueue(spawnItem);
         }
     }
     public static Y Spawn(T identity,Transform toTrans)
@@ -90,16 +90,15 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,Obj
         }
         ItemPoolInfo info = d_ItemInfos[identity];
         Y item;
-        if (info.l_Deactive.Count > 0)
+        if (info.m_DeactiveQueue.Count > 0)
         {
-            item = info.l_Deactive[0];
-            info.l_Deactive.RemoveAt(0);
+            item = info.m_DeactiveQueue.Dequeue();
         }
         else
         {
             item = info.NewItem(identity,SelfRecycle);
         }
-        info.l_Active.Add(item);
+        info.m_ActiveList.Add(item);
         item.transform.SetParentResetTransform(toTrans == null ? tf_PoolSpawn : toTrans);
         item.SetActivate(true);
         return item;
@@ -113,24 +112,24 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,Obj
             return;
         }
         ItemPoolInfo info = d_ItemInfos[identity];
-        info.l_Active.Remove(obj);
+        info.m_ActiveList.Remove(obj);
         info.i_poolSaveAmount++;
         obj.SetActivate(false);
         obj.transform.SetParent(tf_PoolSpawn);
-        info.l_Deactive.Add(obj);
+        info.m_DeactiveQueue.Enqueue(obj);
     }
 
     public static void RecycleAll(T identity)
     {
         ItemPoolInfo info = d_ItemInfos[identity];
-        info.l_Active.Traversal((Y temp) => {
+        info.m_ActiveList.Traversal((Y temp) => {
             Recycle(identity,temp);
         }, true);
     }
     public static void RecycleAll(Predicate<Y>  predicate=null) 
     {
         d_ItemInfos.Traversal((T identity, ItemPoolInfo info)=> {
-            info.l_Active.Traversal((Y target) =>
+            info.m_ActiveList.Traversal((Y target) =>
             {
                 if (predicate == null || predicate(target))
                     Recycle(identity, target);
@@ -143,10 +142,10 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,Obj
         d_ItemInfos.Traversal((T temp, ItemPoolInfo info) => {
             GameObject.Destroy(info.m_spawnItem.gameObject);
 
-            for (int i = 0; i < info.l_Deactive.Count; i++)
-                GameObject.Destroy(info.l_Deactive[i].gameObject);
-            for (int i = 0; i < info.l_Active.Count; i++)
-                GameObject.Destroy(info.l_Active[i].gameObject);
+            for (int i = 0; i < info.m_DeactiveQueue.Count; i++)
+                GameObject.Destroy(info.m_DeactiveQueue.Dequeue().gameObject);
+            for (int i = 0; i < info.m_ActiveList.Count; i++)
+                GameObject.Destroy(info.m_ActiveList[i].gameObject);
 
             d_ItemInfos.Remove(temp);
         }, true);

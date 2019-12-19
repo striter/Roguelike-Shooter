@@ -37,8 +37,6 @@ public class LevelItemBase : ObjectPoolMonoItem<LevelItemBase>,ISingleCoroutine 
 
         OnLevelItemDestroyed = _OnLevelItemDestroyed;
         m_hitChecks.Traversal((HitCheckStatic hitCheck) => {hitCheck.SetEnable(true); });
-        if (OnLevelItemDestroyed == null)
-            return;
         switch(m_ItemType)
         {
             case enum_LevelItemType.BorderLinear:
@@ -46,7 +44,7 @@ public class LevelItemBase : ObjectPoolMonoItem<LevelItemBase>,ISingleCoroutine 
                 m_Health = 0;
                 break;
             default:
-                m_Health = m_sizeXAxis * m_sizeYAxis * 20f;
+                m_Health = m_sizeXAxis * m_sizeYAxis * GameConst.F_LevelItemHealthPerTile;
                 break;
         }
     }
@@ -67,7 +65,9 @@ public class LevelItemBase : ObjectPoolMonoItem<LevelItemBase>,ISingleCoroutine 
             this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value)=>
             {
                 m_Renderers.Traversal((Renderer render) => { render.material.SetFloat(TEffects.ID_Dissolve,value); });
-            },0f,1f,1f,()=> { transform.SetActivate(false); }));
+            },0f,1f,1f,()=> {
+                transform.SetActivate(false);
+            }));
             OnLevelItemDestroyed?.Invoke();
         } 
         return true;

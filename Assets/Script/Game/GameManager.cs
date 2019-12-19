@@ -10,8 +10,18 @@ public class GameManager : GameManagerBase
 {
     protected static GameManager nInstance;
     public static new GameManager Instance => nInstance;
-    public string M_TESTSEED = "";
     #region Test
+    public enum enumDebug_LevelDrawMode
+    {
+        DrawTypes,
+        DrawOccupation,
+        DrawItemDirection,
+    }
+
+    public string M_TESTSEED = "";
+    public bool B_PhysicsDebugGizmos = true;
+    public bool B_GameLevelDebugGizmos = true;
+    public enumDebug_LevelDrawMode E_LevelDebug = enumDebug_LevelDrawMode.DrawItemDirection;
     void AddConsoleBinddings()
     {
         List<UIT_MobileConsole.CommandBinding> m_bindings = new List<UIT_MobileConsole.CommandBinding>();
@@ -42,22 +52,9 @@ public class GameManager : GameManagerBase
         
         UIT_MobileConsole.Instance.AddConsoleBindings(m_bindings);
     }
-
-#if UNITY_EDITOR
-    public enum enumDebug_LevelDrawMode
-    {
-        DrawTypes,
-        DrawOccupation,
-        DrawItemDirection,
-    }
-
-    public bool B_PhysicsDebugGizmos = true;
-    public bool B_GameLevelDebugGizmos = true;
-    public enumDebug_LevelDrawMode E_LevelDebug= enumDebug_LevelDrawMode.DrawItemDirection;
-#endif
     #endregion
     public GameLevelManager m_GameLevel { get; private set; }
-    public GameEnermyGenerate m_EnermyGenerate { get; private set; } 
+    public GameEnermyGenerateManager m_EnermyGenerate { get; private set; } 
     public EntityCharacterPlayer m_LocalPlayer { get; private set; } = null;
     public override bool B_InGame => true;
     protected override void Awake()
@@ -72,7 +69,7 @@ public class GameManager : GameManagerBase
         if (M_TESTSEED!="")
             GameDataManager.m_BattleData.m_GameSeed = M_TESTSEED;
         m_GameLevel =  new GameLevelManager(GameDataManager.m_GameData,GameDataManager.m_BattleData);
-        m_EnermyGenerate = new GameEnermyGenerate(); 
+        m_EnermyGenerate = new GameEnermyGenerateManager(); 
     }
 
     void Update()
@@ -508,82 +505,6 @@ public class GameManager : GameManagerBase
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleFinish);
     }
     
-    public class GameEnermyGenerate
-    {
-        struct SEntityGenerateInfo
-        {
-            public int generateIndex { get; private set; }
-            public Vector3 generatepos { get; private set; }
-            public static SEntityGenerateInfo Create(int _index, Vector3 _pos) => new SEntityGenerateInfo() { generateIndex = _index, generatepos = _pos };
-        }
-        public bool m_Playing { get; private set; } = false;
-        SBuff enermyDifficultyBuff;
-        float baseHealthMultiplier;
-        float maxHealthMultiplier;
-        List<SEntityGenerateInfo> m_Generating = new List<SEntityGenerateInfo>();
-        int _spawnCount = 0, _indicateCount = 0;
-        float _indicateCheck;
-        float _spawnCheck;
-        float m_offset;
-        public void Begin(List<int> waveGenerate, float _offset, float _delay,GameLevelManager gameLevel)
-        {
-            m_Playing = true;
-            m_Generating.Clear();
-            waveGenerate.Traversal((int index) => { m_Generating.Add(SEntityGenerateInfo.Create( index, LevelManager.Instance.m_currentLevel.m_Level.RandomInnerEmptyTilePosition(gameLevel.m_GameSeed, false))); });
-            enermyDifficultyBuff = GameExpression.GetEnermyGameDifficultyBuffIndex(gameLevel.m_GameDifficulty);
-            baseHealthMultiplier = GameExpression.GetAIBaseHealthMultiplier(gameLevel.m_GameDifficulty);
-            maxHealthMultiplier = GameExpression.GetAIMaxHealthMultiplier(gameLevel.m_GameStage);
-            _spawnCount = 0;
-            _indicateCount = 0;
-            m_offset = _offset;
-            _indicateCheck = _offset;
-            _spawnCheck = _offset + _delay;
-        }
-        public void Stop()
-        {
-            m_Playing = false;
-        }
-
-        public void Tick(float deltaTime)
-        {
-            if (!m_Playing)
-                return;
-            CheckIndicate(deltaTime);
-            CheckSpawn(deltaTime);
-
-            if (_spawnCount >= m_Generating.Count)
-                Stop();
-        }
-        void CheckIndicate(float deltaTime)
-        {
-            if (_indicateCount >= m_Generating.Count)
-                return;
-
-            if (_indicateCheck > 0)
-            {
-                _indicateCheck -= Time.deltaTime;
-                return;
-            }
-
-            _indicateCheck += m_offset;
-            GameObjectManager.SpawnIndicator(30001, m_Generating[_indicateCount].generatepos, Vector3.up).Play(-1, GameConst.I_EnermySpawnDelay);
-            _indicateCount++;
-        }
-        void CheckSpawn(float deltaTime)
-        {
-            if (_spawnCount >= m_Generating.Count)
-                return;
-
-            if(_spawnCheck>0)
-            {
-                _spawnCheck -= Time.deltaTime;
-                return;
-            }
-            _spawnCheck += m_offset;
-            GameObjectManager.SpawnEntityCharacter(m_Generating[_spawnCount].generateIndex, LevelManager.NavMeshPosition(m_Generating[_spawnCount].generatepos), Vector3.zero, enum_EntityFlag.Enermy).SetExtraDifficulty(baseHealthMultiplier, maxHealthMultiplier, enermyDifficultyBuff);
-            _spawnCount++;
-        }
-    }
     #endregion
 }
 
@@ -859,5 +780,81 @@ public static class GameObjectManager
     }
     #endregion
     #endregion
+}
+public class GameEnermyGenerateManager
+{
+    struct SEntityGenerateInfo
+    {
+        public int generateIndex { get; private set; }
+        public Vector3 generatepos { get; private set; }
+        public static SEntityGenerateInfo Create(int _index, Vector3 _pos) => new SEntityGenerateInfo() { generateIndex = _index, generatepos = _pos };
+    }
+    public bool m_Playing { get; private set; } = false;
+    SBuff enermyDifficultyBuff;
+    float baseHealthMultiplier;
+    float maxHealthMultiplier;
+    List<SEntityGenerateInfo> m_Generating = new List<SEntityGenerateInfo>();
+    int _spawnCount = 0, _indicateCount = 0;
+    float _indicateCheck;
+    float _spawnCheck;
+    float m_offset;
+    public void Begin(List<int> waveGenerate, float _offset, float _delay, GameLevelManager gameLevel)
+    {
+        m_Playing = true;
+        m_Generating.Clear();
+        waveGenerate.Traversal((int index) => { m_Generating.Add(SEntityGenerateInfo.Create(index, LevelManager.Instance.m_currentLevel.m_Level.RandomInnerEmptyTilePosition(gameLevel.m_GameSeed, false))); });
+        enermyDifficultyBuff = GameExpression.GetEnermyGameDifficultyBuffIndex(gameLevel.m_GameDifficulty);
+        baseHealthMultiplier = GameExpression.GetAIBaseHealthMultiplier(gameLevel.m_GameDifficulty);
+        maxHealthMultiplier = GameExpression.GetAIMaxHealthMultiplier(gameLevel.m_GameStage);
+        _spawnCount = 0;
+        _indicateCount = 0;
+        m_offset = _offset;
+        _indicateCheck = _offset;
+        _spawnCheck = _offset + _delay;
+    }
+    public void Stop()
+    {
+        m_Playing = false;
+    }
+
+    public void Tick(float deltaTime)
+    {
+        if (!m_Playing)
+            return;
+        CheckIndicate(deltaTime);
+        CheckSpawn(deltaTime);
+
+        if (_spawnCount >= m_Generating.Count)
+            Stop();
+    }
+    void CheckIndicate(float deltaTime)
+    {
+        if (_indicateCount >= m_Generating.Count)
+            return;
+
+        if (_indicateCheck > 0)
+        {
+            _indicateCheck -= Time.deltaTime;
+            return;
+        }
+
+        _indicateCheck += m_offset;
+        GameObjectManager.SpawnIndicator(30001, m_Generating[_indicateCount].generatepos, Vector3.up).Play(-1, GameConst.I_EnermySpawnDelay);
+        _indicateCount++;
+    }
+    void CheckSpawn(float deltaTime)
+    {
+        if (_spawnCount >= m_Generating.Count)
+            return;
+
+        if (_spawnCheck > 0)
+        {
+            _spawnCheck -= Time.deltaTime;
+            return;
+        }
+        _spawnCheck += m_offset;
+        GameObjectManager.SpawnEntityCharacter(m_Generating[_spawnCount].generateIndex, LevelManager.NavMeshPosition(m_Generating[_spawnCount].generatepos), Vector3.zero, enum_EntityFlag.Enermy).SetExtraDifficulty(baseHealthMultiplier, maxHealthMultiplier, enermyDifficultyBuff);
+        _spawnCount++;
+    }
 }
 #endregion

@@ -164,6 +164,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         bool m_scanned;
         bool m_death;
         TSpecialClasses.ParticleControlBase m_Particles;
+        MaterialPropertyBlock m_NormalProperty = new MaterialPropertyBlock();
         public EntityCharacterEffectManager(Transform transform, List<Renderer> _skin)
         {
             m_Particles = new ParticleControlBase(transform);
@@ -274,7 +275,8 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
                     break;
             }
             this.StartSingleCoroutine(1, TIEnumerators.ChangeValueTo((float value) => {
-                m_EffectMaterial.SetColor(TEffects.ID_Color, Color.Lerp(targetColor, Color.white, value)) ;
+                m_NormalProperty.SetColor(TEffects.ID_Color, Color.Lerp(targetColor, Color.white, value));
+                m_skins.Traversal((Renderer renderer) => { renderer.SetPropertyBlock(m_NormalProperty); });
             }, 0, 1, 1f));
         }
 
