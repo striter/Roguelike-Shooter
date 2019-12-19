@@ -305,17 +305,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c088e7b318d292458e08155aef1723d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  M_TESTSEED: 10:40:36
+  M_TESTSEED: 
   B_PhysicsDebugGizmos: 1
   B_GameLevelDebugGizmos: 0
   E_LevelDebug: 0
-  X_TestCastIndex: 20401
-  CastForward: 0
-  C_TestProjectileIndex: 20400
-  V_TestIndicatorIndex: 0
-  B_TestBuffIndex: 4
-  Comma_TestParticleIndex: 20001
-  F8_TestUseAction: 10001
 --- !u!4 &1133817278
 Transform:
   m_ObjectHideFlags: 0

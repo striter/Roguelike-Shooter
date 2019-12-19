@@ -20,7 +20,6 @@ public class UIT_MobileConsole : SimpleSingletonMono<UIT_MobileConsole> {
 
         Transform tf_ConsoleCommand = transform.Find("ConsoleCommand");
         m_ConsoleCommands = new ObjectPoolSimpleClass<int, ConsoleCommand>(tf_ConsoleCommand, "GridItem");
-        transform.Find("ConsoleCommand/Cancel").GetComponent<Button>().onClick.AddListener(() => { m_ConsoleCommands.transform.SetActivate(false); });
         m_ConsoleCommands.transform.SetActivate(false);
     }
 
@@ -68,15 +67,25 @@ public class UIT_MobileConsole : SimpleSingletonMono<UIT_MobileConsole> {
         Bindings.Traversal((CommandBinding binding) => { m_ConsoleCommands.AddItem(commandCount++).Play(binding); });
     }
 
+    float m_fastKeyCooldown = 0f;
+
     private void Update()
     {
-        if (Input.touchCount >= 4||Input.GetKeyDown(KeyCode.BackQuote))
-            m_ConsoleCommands.transform.SetActivate(true);
-
-        m_FrameText.text = ((int)(1 / Time.unscaledDeltaTime)).ToString();
 #if UNITY_EDITOR
         m_ConsoleCommands.m_ActiveItemDic.Traversal((ConsoleCommand command) => { command.EditorTick(); });
 #endif
+
+        m_FrameText.text = ((int)(1 / Time.unscaledDeltaTime)).ToString();
+        if (m_fastKeyCooldown>0f)
+        {
+            m_fastKeyCooldown -= Time.deltaTime;
+            return;
+        }
+        if (Input.touchCount >= 4 || Input.GetKeyDown(KeyCode.BackQuote))
+        {
+            m_fastKeyCooldown = 1f;
+            m_ConsoleCommands.transform.SetActivate(!m_ConsoleCommands.transform.gameObject.activeSelf);
+        }
     }
 
 
