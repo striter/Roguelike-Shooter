@@ -745,7 +745,6 @@ namespace GameSetting
         public List<ActionSaveData> m_actionEquipment;
         public float m_curHealth;
         public float m_maxHealthAdditive;
-        public float m_curArmor;
         public WeaponSaveData m_weapon1, m_weapon2;
         public bool m_weaponEquipingFirst;
         public enum_PlayerCharacter m_character;
@@ -753,7 +752,6 @@ namespace GameSetting
         {
             m_coins = 0;
             m_curHealth = -1;
-            m_curArmor = -1;
             m_maxHealthAdditive = -1;
             m_actionEquipment = new List<ActionSaveData>();
             m_Stage = enum_StageLevel.Rookie;
@@ -768,8 +766,6 @@ namespace GameSetting
             m_coins = _player.m_PlayerInfo.m_Coins;
             m_curHealth = _player.m_Health.m_CurrentHealth;
             m_maxHealthAdditive = _player.m_Health.m_MaxHealthAdditive;
-            m_curArmor = _player.m_Health.m_CurrentArmor;
-
             m_weapon1 = WeaponSaveData.Create(_player.m_Weapon1);
             m_weapon2 = WeaponSaveData.Create(_player.m_Weapon2);
             m_weaponEquipingFirst = _player.m_weaponEquipingFirst;
@@ -1169,7 +1165,7 @@ namespace GameSetting
             m_CurrentArmor = m_StartArmor;
             OnHealthChanged(enum_HealthChangeMessage.Default);
         }
-        public void OnSetHealth(float setHealth, float setArmor)
+        public void OnSetStatus(float setHealth, float setArmor)
         {
             base.OnSetHealth(setHealth);
             m_CurrentArmor = setArmor;
@@ -1284,8 +1280,10 @@ namespace GameSetting
         public void SetInfoData(float startHealth,float startArmor,float maxHealthAdditive)
         {
             m_MaxHealthAdditive = maxHealthAdditive;
-            OnSetHealth(startHealth,startArmor);
+            OnSetStatus(startHealth,startArmor);
         }
+
+        public void OnBattleFinishResetArmor()=>base.OnSetStatus(m_CurrentHealth, m_StartArmor);
     }
 
     public class DamageInfo

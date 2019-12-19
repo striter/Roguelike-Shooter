@@ -53,45 +53,11 @@ public class GameManager : GameManagerBase
 
     public bool B_PhysicsDebugGizmos = true;
     public bool B_GameLevelDebugGizmos = true;
-    public enumDebug_LevelDrawMode E_LevelDebug = enumDebug_LevelDrawMode.DrawTypes;
-    public int X_TestCastIndex = 30003;
-    public bool CastForward = true;
-    public int C_TestProjectileIndex = 29001;
-    public int V_TestIndicatorIndex = 50002;
-    public int B_TestBuffIndex = 1;
-    public int Comma_TestParticleIndex = 20001;
-    public int F8_TestUseAction = 10001;
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.BackQuote))
-            SetBulletTime(!m_BulletTiming,.1f);
-
-        RaycastHit hit = new RaycastHit();
-        if (Input.GetKeyDown(KeyCode.X) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
-            GameObjectManager.SpawnEquipment<SFXCast>(X_TestCastIndex, hit.point, CastForward?m_LocalPlayer.transform.forward: Vector3.up).Play(DamageDeliverInfo.Default(m_LocalPlayer.m_EntityID));
-        if (Input.GetKeyDown(KeyCode.C) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
-            GameObjectManager.SpawnEquipment<SFXProjectile>(C_TestProjectileIndex, hit.point + Vector3.up, m_LocalPlayer.transform.forward).Play(DamageDeliverInfo.Default(m_LocalPlayer.m_EntityID), m_LocalPlayer.transform.forward, hit.point + m_LocalPlayer.transform.forward * 10);
-        if (Input.GetKeyDown(KeyCode.V) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
-            GameObjectManager.SpawnIndicator(V_TestIndicatorIndex, hit.point + Vector3.up, Vector3.up).Play(-1,3f);
-        if (Input.GetKeyDown(KeyCode.Comma) && CameraController.Instance.InputRayCheck(Input.mousePosition, GameLayer.Mask.I_Static, ref hit))
-            GameObjectManager.SpawnSFX<SFXParticles>(Comma_TestParticleIndex, hit.point + Vector3.up, Vector3.up).Play(-1);
-        if (Input.GetKeyDown(KeyCode.B))
-            m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.BuffInfo(-1, B_TestBuffIndex )));
-        if (Input.GetKeyDown(KeyCode.F9))
-        {
-            CameraController.Instance.m_Effect.StartAreaScan(m_LocalPlayer.tf_Head.position, Color.white, TResources.Load<Texture>(TResources.ConstPath.S_PETex_Holograph), 15f, 1f, 5f, 50, 1f);
-            m_Entities.Traversal((EntityBase entity) => {
-                if (entity.m_Flag == enum_EntityFlag.Enermy)
-                    entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.EquipmentInfo(-1, 0, enum_CharacterEffect.Scan, 10f)));
-            });
-        }
-        if (Input.GetKeyDown(KeyCode.F8))
-            m_LocalPlayer.m_PlayerInfo.OnUseAction(ActionDataManager.CreateAction(F8_TestUseAction, enum_ActionRarity.Epic));
-
-    }
+    public enumDebug_LevelDrawMode E_LevelDebug= enumDebug_LevelDrawMode.DrawItemDirection;
 #endif
     #endregion
     public GameLevelManager m_GameLevel { get; private set; }
+    public GameEnermyGenerate m_EnermyGenerate { get; private set; } 
     public EntityCharacterPlayer m_LocalPlayer { get; private set; } = null;
     public override bool B_InGame => true;
     protected override void Awake()
@@ -106,7 +72,12 @@ public class GameManager : GameManagerBase
         if (M_TESTSEED!="")
             GameDataManager.m_BattleData.m_GameSeed = M_TESTSEED;
         m_GameLevel =  new GameLevelManager(GameDataManager.m_GameData,GameDataManager.m_BattleData);
+        m_EnermyGenerate = new GameEnermyGenerate(); 
+    }
 
+    void Update()
+    {
+        m_EnermyGenerate.Tick(Time.deltaTime);
     }
 
     protected override void OnDestroy()
@@ -170,7 +141,7 @@ public class GameManager : GameManagerBase
     }
     public void OnLevelFinished()
     {
-        this.StopAllSingleCoroutines();
+        m_EnermyGenerate.Stop();
         if (m_GameLevel.m_LevelType == enum_LevelType.End)
             OnStageFinished();
         else
@@ -363,8 +334,8 @@ public class GameManager : GameManagerBase
         if (character.m_Controller == enum_EntityController.Player)
             SetPostEffect_Dead();
 
-        OnBattleCharacterDead(character);
         SpawnEntityDeadPickups(character);
+        OnBattleCharacterDead(character);
     }
 
     void OnEntityRecycle(EntityBase entity)
@@ -463,7 +434,6 @@ public class GameManager : GameManagerBase
     #endregion
     #region Battle Management
     public bool B_Battling { get; private set; } = false;
-    public bool B_WaveEntityGenerating { get; private set; } = false;
     public int m_CurrentWave { get; private set; } = -1;
     public List<SGenerateEntity> m_EntityGenerate { get; private set; } = new List<SGenerateEntity>();
     public List<int> m_EntityGenerating { get; private set; } = new List<int>();
@@ -497,14 +467,14 @@ public class GameManager : GameManagerBase
                 m_EntityGenerating.Add(m_Enermies[level].RandomItem());
             }
         });
-        this.StartSingleCoroutine(99, IE_GenerateEnermy(m_EntityGenerating, GameConst.F_EnermySpawnOffsetEach));
+
+        m_EnermyGenerate.Begin(m_EntityGenerating, GameConst.F_EnermySpawnOffsetEach, GameConst.I_EnermySpawnDelay,m_GameLevel);
     }
 
     void OnBattleCharacterDead(EntityCharacterBase entity)
     {
-        if (!B_Battling || B_WaveEntityGenerating || entity.m_Flag != enum_EntityFlag.Enermy)
+        if (!B_Battling || m_EnermyGenerate.m_Playing || entity.m_Flag != enum_EntityFlag.Enermy)
             return;
-
         bool haveEnermyAlive = false;
 
         GetEntities(enum_EntityFlag.Enermy, true).TraversalBreak((EntityCharacterBase character) =>
@@ -537,33 +507,82 @@ public class GameManager : GameManagerBase
         SpawnBattleEndPortals(lastEntityPos);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleFinish);
     }
-
-    IEnumerator IE_GenerateEnermy(List<int> waveGenerate, float _offset)
+    
+    public class GameEnermyGenerate
     {
-        B_WaveEntityGenerating = true;
-        int curSpawnCount = 0;
-        SBuff enermyDifficultyBuff = GameExpression.GetEnermyGameDifficultyBuffIndex(m_GameLevel.m_GameDifficulty);
-        float baseHealthMultiplier = GameExpression.GetAIBaseHealthMultiplier(m_GameLevel.m_GameDifficulty);
-        float maxHealthMultiplier = GameExpression.GetAIMaxHealthMultiplier(m_GameLevel.m_GameStage);
-        for (; ; )
+        struct SEntityGenerateInfo
         {
-            yield return new WaitForSeconds(_offset);
-            SpawnEnermy(waveGenerate[curSpawnCount], curSpawnCount, LevelManager.Instance.m_currentLevel.m_Level.RandomInnerEmptyTilePosition(m_GameLevel.m_GameSeed,false),baseHealthMultiplier,maxHealthMultiplier,enermyDifficultyBuff);
-            curSpawnCount++;
-            if (curSpawnCount >= waveGenerate.Count)
-            {
-                B_WaveEntityGenerating = false;
-                yield break;
-            }
+            public int generateIndex { get; private set; }
+            public Vector3 generatepos { get; private set; }
+            public static SEntityGenerateInfo Create(int _index, Vector3 _pos) => new SEntityGenerateInfo() { generateIndex = _index, generatepos = _pos };
         }
-    }
+        public bool m_Playing { get; private set; } = false;
+        SBuff enermyDifficultyBuff;
+        float baseHealthMultiplier;
+        float maxHealthMultiplier;
+        List<SEntityGenerateInfo> m_Generating = new List<SEntityGenerateInfo>();
+        int _spawnCount = 0, _indicateCount = 0;
+        float _indicateCheck;
+        float _spawnCheck;
+        float m_offset;
+        public void Begin(List<int> waveGenerate, float _offset, float _delay,GameLevelManager gameLevel)
+        {
+            m_Playing = true;
+            m_Generating.Clear();
+            waveGenerate.Traversal((int index) => { m_Generating.Add(SEntityGenerateInfo.Create( index, LevelManager.Instance.m_currentLevel.m_Level.RandomInnerEmptyTilePosition(gameLevel.m_GameSeed, false))); });
+            enermyDifficultyBuff = GameExpression.GetEnermyGameDifficultyBuffIndex(gameLevel.m_GameDifficulty);
+            baseHealthMultiplier = GameExpression.GetAIBaseHealthMultiplier(gameLevel.m_GameDifficulty);
+            maxHealthMultiplier = GameExpression.GetAIMaxHealthMultiplier(gameLevel.m_GameStage);
+            _spawnCount = 0;
+            _indicateCount = 0;
+            m_offset = _offset;
+            _indicateCheck = _offset;
+            _spawnCheck = _offset + _delay;
+        }
+        public void Stop()
+        {
+            m_Playing = false;
+        }
 
-    void SpawnEnermy(int entityIndex, int spawnIndex,Vector3 position, float baseHealthMultiplier, float maxHealthMultiplier, SBuff difficultyBuff)
-    {
-        GameObjectManager.SpawnIndicator(30001, position, Vector3.up).Play(entityIndex, GameConst.I_EnermySpawnDelay);
-        this.StartSingleCoroutine(100 + spawnIndex, TIEnumerators.PauseDel(GameConst.I_EnermySpawnDelay, () => {
-            GameObjectManager.SpawnEntityCharacter(entityIndex,LevelManager.NavMeshPosition( position),m_LocalPlayer.transform.position , enum_EntityFlag.Enermy).SetExtraDifficulty(baseHealthMultiplier, maxHealthMultiplier,difficultyBuff);
-        }));
+        public void Tick(float deltaTime)
+        {
+            if (!m_Playing)
+                return;
+            CheckIndicate(deltaTime);
+            CheckSpawn(deltaTime);
+
+            if (_spawnCount >= m_Generating.Count)
+                Stop();
+        }
+        void CheckIndicate(float deltaTime)
+        {
+            if (_indicateCount >= m_Generating.Count)
+                return;
+
+            if (_indicateCheck > 0)
+            {
+                _indicateCheck -= Time.deltaTime;
+                return;
+            }
+
+            _indicateCheck += m_offset;
+            GameObjectManager.SpawnIndicator(30001, m_Generating[_indicateCount].generatepos, Vector3.up).Play(-1, GameConst.I_EnermySpawnDelay);
+            _indicateCount++;
+        }
+        void CheckSpawn(float deltaTime)
+        {
+            if (_spawnCount >= m_Generating.Count)
+                return;
+
+            if(_spawnCheck>0)
+            {
+                _spawnCheck -= Time.deltaTime;
+                return;
+            }
+            _spawnCheck += m_offset;
+            GameObjectManager.SpawnEntityCharacter(m_Generating[_spawnCount].generateIndex, LevelManager.NavMeshPosition(m_Generating[_spawnCount].generatepos), Vector3.zero, enum_EntityFlag.Enermy).SetExtraDifficulty(baseHealthMultiplier, maxHealthMultiplier, enermyDifficultyBuff);
+            _spawnCount++;
+        }
     }
     #endregion
 }

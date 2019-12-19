@@ -1,9 +1,9 @@
-﻿using UnityEngine;
-using GameSetting;
-using TSpecialClasses;
+﻿using GameSetting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TSpecialClasses;
+using UnityEngine;
 
 public class EntityCharacterBase : EntityBase, ISingleCoroutine
 {
@@ -98,7 +98,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         m_Effect.OnReset();
         m_CharacterInfo.OnRevive();
         EntityHealth health = (m_Health as EntityHealth);
-        health.OnSetHealth(reviveHealth == -1 ? health.m_BaseHealth : reviveHealth, reviveArmor == -1 ? health.m_StartArmor : reviveArmor);
+        health.OnSetStatus(reviveHealth == -1 ? health.m_BaseHealth : reviveHealth, reviveArmor == -1 ? health.m_StartArmor : reviveArmor);
         this.StopSingleCoroutine(0);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterRevive, this);
     }
@@ -157,8 +157,8 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
 
     class EntityCharacterEffectManager:ISingleCoroutine
     {
+        Material m_NormalMaterial,m_EffectMaterial;
         List<Renderer> m_skins;
-        Shader SD_Base;
         bool m_cloaked;
         bool m_freezed;
         bool m_scanned;
@@ -168,7 +168,8 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         {
             m_Particles = new ParticleControlBase(transform);
             m_skins = _skin;
-            SD_Base = m_skins[0].material.shader;
+            m_NormalMaterial = m_skins[0].sharedMaterial;
+            m_EffectMaterial = m_skins[0].material;
             OnReset();
         }
 
@@ -183,7 +184,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         }
         void CheckMaterials()
         {
-            Shader mainShader = SD_Base;
+            Shader mainShader = null;
             if (m_cloaked)
                 mainShader = TEffects.SD_Cloak;
             if (m_freezed)
@@ -193,7 +194,12 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
             if (m_scanned)
                 mainShader = TEffects.SD_Scan;
             
-            m_skins.Traversal((Renderer renderer) => { renderer.material.shader = mainShader; });
+            if (mainShader)
+                m_EffectMaterial.shader = mainShader;
+
+            m_skins.Traversal((Renderer renderer) => {
+                renderer.material =  mainShader?m_EffectMaterial:m_NormalMaterial;
+            });
         }
 
         public void SetDeath()
@@ -201,13 +207,11 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
             m_Particles.Stop();
             m_death = true;
             CheckMaterials();
-            m_skins.Traversal((Renderer renderer) => {
-                renderer.material.SetTexture(TEffects.ID_NoiseTex, TEffects.TX_Noise);
-                renderer.material.SetFloat(TEffects.ID_Dissolve, 0);
-                renderer.material.SetFloat(TEffects.ID_DissolveScale, .2f);
-            });
+            m_EffectMaterial.SetTexture(TEffects.ID_NoiseTex, TEffects.TX_Noise);
+            m_EffectMaterial.SetFloat(TEffects.ID_Dissolve, 0);
+            m_EffectMaterial.SetFloat(TEffects.ID_DissolveScale, .2f);
         }
-        public void OnDeathEffect(float value) => m_skins.Traversal((Renderer renderer) => { renderer.material.SetFloat(TEffects.ID_Dissolve, value); });
+        public void OnDeathEffect(float value) => m_EffectMaterial.SetFloat(TEffects.ID_Dissolve, value);
 
         public void SetScaned(bool _scaned)
         {
@@ -226,12 +230,9 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
 
             if (!m_freezed)
                 return;
-            m_skins.Traversal((Renderer renderer) =>
-            {
-                renderer.material.SetTexture(TEffects.ID_NoiseTex, TEffects.TX_Noise);
-                renderer.material.SetColor("_IceColor", TCommon.GetHexColor("3DAEC5FF"));
-                renderer.material.SetFloat("_Opacity", .5f);
-            });
+            m_EffectMaterial.SetTexture(TEffects.ID_NoiseTex, TEffects.TX_Noise);
+            m_EffectMaterial.SetColor("_IceColor", TCommon.GetHexColor("3DAEC5FF"));
+            m_EffectMaterial.SetFloat("_Opacity", .5f);
         }
         public void SetCloak(bool _cloacked)
         {
@@ -245,12 +246,12 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
                 
                 this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) =>
                 {
-                    m_skins.Traversal((Renderer renderer) =>  { renderer.material.SetFloat(TEffects.ID_Opacity, value); });
+                    m_EffectMaterial.SetFloat(TEffects.ID_Opacity, value);
                 }, 1, .3f, .5f));
             }
             else
             {
-                this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => { m_skins.Traversal((Renderer renderer) => { renderer.material.SetFloat(TEffects.ID_Opacity, value); }); }, .3f, 1f, .3f, CheckMaterials));
+                this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => { m_EffectMaterial.SetFloat(TEffects.ID_Opacity, value);}, .3f, 1f, .3f, CheckMaterials));
             }
         }
 
@@ -273,7 +274,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
                     break;
             }
             this.StartSingleCoroutine(1, TIEnumerators.ChangeValueTo((float value) => {
-                m_skins.Traversal((Renderer renderer) => { renderer.material.SetColor(TEffects.ID_Color, Color.Lerp(targetColor, Color.white, value)) ; });
+                m_EffectMaterial.SetColor(TEffects.ID_Color, Color.Lerp(targetColor, Color.white, value)) ;
             }, 0, 1, 1f));
         }
 

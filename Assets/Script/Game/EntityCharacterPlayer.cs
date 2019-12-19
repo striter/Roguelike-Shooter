@@ -94,14 +94,18 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public void SetPlayerInfo(CBattleSave m_saveData)
     {
         m_PlayerInfo.SetInfoData(m_saveData.m_coins, ActionDataManager.CreateActions(m_saveData.m_actionEquipment));
-        m_Health.SetInfoData(m_saveData.m_curHealth>=0?m_saveData.m_curHealth:I_MaxHealth,m_saveData.m_curArmor>=0?m_saveData.m_curArmor:I_DefaultArmor,m_saveData.m_maxHealthAdditive>=0?m_saveData.m_maxHealthAdditive:0);
+        m_Health.SetInfoData(m_saveData.m_curHealth>=0?m_saveData.m_curHealth:I_MaxHealth,I_DefaultArmor,m_saveData.m_maxHealthAdditive>=0?m_saveData.m_maxHealthAdditive:0);
 
         ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_weapon1));
         if (m_saveData.m_weapon2.m_Weapon != enum_PlayerWeapon.Invalid)
             ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_weapon2));
         SwapWeapon(m_saveData.m_weaponEquipingFirst);
     }
-
+    protected override void OnBattleFinish()
+    {
+        base.OnBattleFinish();
+        m_Health.OnBattleFinishResetArmor();
+    }
     protected override void OnDead()
     {
         f_reviveCheck = GameConst.F_PlayerReviveCheckAfterDead;
