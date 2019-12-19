@@ -165,9 +165,9 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         bool m_death;
         TSpecialClasses.ParticleControlBase m_Particles;
         MaterialPropertyBlock m_NormalProperty = new MaterialPropertyBlock();
-        public EntityCharacterEffectManager(Transform transform, List<Renderer> _skin)
+        public EntityCharacterEffectManager(Transform particleTrans, List<Renderer> _skin)
         {
-            m_Particles = new ParticleControlBase(transform);
+            m_Particles = new ParticleControlBase(particleTrans);
             m_skins = _skin;
             m_NormalMaterial = m_skins[0].sharedMaterial;
             m_EffectMaterial = m_skins[0].material;
