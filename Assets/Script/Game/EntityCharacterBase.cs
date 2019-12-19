@@ -180,10 +180,6 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
             m_death = false;
             m_freezed = false;
             CheckMaterials();
-            m_skins.Traversal((Renderer renderer) => {
-                renderer.material.SetTexture(TEffects.ID_NoiseTex, TEffects.TX_Noise);
-                renderer.material.SetFloat(TEffects.ID_Dissolve, 0);
-            });
         }
         void CheckMaterials()
         {
@@ -205,6 +201,11 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
             m_Particles.Stop();
             m_death = true;
             CheckMaterials();
+            m_skins.Traversal((Renderer renderer) => {
+                renderer.material.SetTexture(TEffects.ID_NoiseTex, TEffects.TX_Noise);
+                renderer.material.SetFloat(TEffects.ID_Dissolve, 0);
+                renderer.material.SetFloat(TEffects.ID_DissolveScale, .2f);
+            });
         }
         public void OnDeathEffect(float value) => m_skins.Traversal((Renderer renderer) => { renderer.material.SetFloat(TEffects.ID_Dissolve, value); });
 
@@ -227,6 +228,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
                 return;
             m_skins.Traversal((Renderer renderer) =>
             {
+                renderer.material.SetTexture(TEffects.ID_NoiseTex, TEffects.TX_Noise);
                 renderer.material.SetColor("_IceColor", TCommon.GetHexColor("3DAEC5FF"));
                 renderer.material.SetFloat("_Opacity", .5f);
             });
