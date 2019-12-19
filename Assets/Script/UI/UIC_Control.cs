@@ -150,7 +150,7 @@ public class UIC_Control : UIControlBase {
             m_AmmoStatusChecker = new TSpecialClasses.ValueChecker<int, int>(-1, -1);
             OnWeaponClick = _OnWeaponClick;
             m_ActionData.transform.GetComponent<Button>().onClick.AddListener(OnActionClick);
-            m_weaponData.transform.GetComponent<UIT_EventTriggerListener>().OnPressDuration = OnWeaponDetailDown;
+            m_weaponData.transform.GetComponent<UIT_EventTriggerListener>().SetOnPressDuration(.25f, OnWeaponDetailPressed);
         }
         public void UpdateInfo(WeaponBase weapon, bool equiping)
         {
@@ -183,9 +183,9 @@ public class UIC_Control : UIControlBase {
             m_ActionData.Tick(m_weapon.m_ActionEnergyRequirementLeft);
         }
         
-        void OnWeaponDetailDown(float pressDuration)
+        void OnWeaponDetailPressed(bool pressed)
         {
-            if (pressDuration > .25f)
+            if (pressed)
                 UIManager.Instance.ShowPage<UI_WeaponStatus>(true, 0f).Play(m_weapon.m_WeaponInfo, m_weapon.m_WeaponAction);
             else
                 OnWeaponClick();
