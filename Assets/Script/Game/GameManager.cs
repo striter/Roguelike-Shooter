@@ -28,27 +28,27 @@ public class GameManager : GameManagerBase
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Show Seed", "", KeyCode.None, (string value) => { Debug.LogError(m_GameLevel.m_Seed); }));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Skip Stage", "", KeyCode.Equals, (string value) => {OnStageFinished();}));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Skip Level", "", KeyCode.Minus, (string value) => {OnLevelFinished();}));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Kill All Energmy", "", KeyCode.Alpha0, (string value) => {
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Kill All", "", KeyCode.Alpha0, (string value) => {
             m_Entities.Values.ToList().Traversal((EntityBase entity) => {
                 if (entity.m_Flag == enum_EntityFlag.Enermy)
                     entity.m_HitCheck.TryHit(new DamageInfo(entity.m_Health.m_CurrentHealth, enum_DamageType.Basic, DamageDeliverInfo.Default(-1))); });
         }));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Spawn Enermy", "101", KeyCode.Z, (string id) => {
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Enermy", "101", KeyCode.Z, (string id) => {
             EntityCharacterBase enermy = GameObjectManager.SpawnEntityCharacter(int.Parse(id), LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f)), m_LocalPlayer.transform.position, enum_EntityFlag.Enermy);
             enermy.SetExtraDifficulty(GameExpression.GetAIBaseHealthMultiplier(m_GameLevel.m_GameDifficulty), GameExpression.GetAIMaxHealthMultiplier(m_GameLevel.m_GameStage), GameExpression.GetEnermyGameDifficultyBuffIndex(m_GameLevel.m_GameDifficulty));
         }));
 
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Damage Self", "20", KeyCode.N, (string damage) => { m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(int.Parse(damage), enum_DamageType.Basic, DamageDeliverInfo.Default(-1)));}));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Heal Self", "20", KeyCode.M, (string damage) => { m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(-int.Parse(damage), enum_DamageType.Basic, DamageDeliverInfo.Default(-1))); }));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Spawn Coins", "20", KeyCode.Keypad1, (string coins) => { GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupCoin, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f), false), LevelManager.Instance.m_InteractParent).Play(int.Parse(coins), m_LocalPlayer.transform);}));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Spawn Health", "20", KeyCode.Keypad2, (string health) => {GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupHealth, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f), false), LevelManager.Instance.m_InteractParent).Play(int.Parse(health), m_LocalPlayer.transform);}));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Spawn Armor", "20", KeyCode.Keypad3, (string armor) => {GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupArmor, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f), false), LevelManager.Instance.m_InteractParent).Play(int.Parse(armor), m_LocalPlayer.transform);}));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Spawn Weapon", "102", KeyCode.F1, (string weapon) => { GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f)), LevelManager.Instance.m_InteractParent).Play(GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew((enum_PlayerWeapon)int.Parse(weapon)))); }));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Spawn Action", "10001", KeyCode.F2, (string actionIndex) => { GameObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f))).Play(ActionDataManager.CreateAction(int.Parse(actionIndex), enum_ActionRarity.Normal));
-        }));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Add Ability Energy", "1", KeyCode.KeypadPlus, (string energy) => {
-            m_LocalPlayer.OnWeaponEnergy(float.Parse(energy));
-        }));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Damage", "20", KeyCode.N, (string damage) => { m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(int.Parse(damage), enum_DamageType.Basic, DamageDeliverInfo.Default(-1)));}));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Heal", "20", KeyCode.M, (string damage) => { m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(-int.Parse(damage), enum_DamageType.Basic, DamageDeliverInfo.Default(-1))); }));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Coins", "20", KeyCode.F5, (string coins) => { GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupCoin, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f), false), LevelManager.Instance.m_InteractParent).Play(int.Parse(coins), m_LocalPlayer.transform);}));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Health", "20", KeyCode.F6, (string health) => {GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupHealth, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f), false), LevelManager.Instance.m_InteractParent).Play(int.Parse(health), m_LocalPlayer.transform);}));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Armor", "20", KeyCode.F7, (string armor) => {GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupArmor, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f), false), LevelManager.Instance.m_InteractParent).Play(int.Parse(armor), m_LocalPlayer.transform);}));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Weapon", "102", KeyCode.F8, (string weapon) => { GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f)), LevelManager.Instance.m_InteractParent).Play(GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew((enum_PlayerWeapon)int.Parse(weapon)))); }));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Use Action", "10001", KeyCode.F2, (string actionIndex) => {m_LocalPlayer.m_PlayerInfo.OnUseAction(ActionDataManager.CreateAction(int.Parse(actionIndex), enum_ActionRarity.Epic)); }));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Action Normal", "10001", KeyCode.F2, (string actionIndex) => { GameObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f))).Play(ActionDataManager.CreateAction(int.Parse(actionIndex), enum_ActionRarity.Normal)); }));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Action OutStanding", "10001", KeyCode.F3, (string actionIndex) => { GameObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f))).Play(ActionDataManager.CreateAction(int.Parse(actionIndex), enum_ActionRarity.OutStanding)); }));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Action Epic", "10001", KeyCode.F4, (string actionIndex) => { GameObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f))).Play(ActionDataManager.CreateAction(int.Parse(actionIndex), enum_ActionRarity.Epic)); }));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Ability Energy", "1", KeyCode.Alpha9, (string energy) => {  m_LocalPlayer.OnWeaponEnergy(float.Parse(energy));}));
         
         UIT_MobileConsole.Instance.AddConsoleBindings(m_bindings);
     }

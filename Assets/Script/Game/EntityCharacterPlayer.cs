@@ -178,12 +178,16 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     }
     void OnWeaponTick(float deltaTime)
     {
-        m_weaponCanFire = CalculateWeaponFire();
         if (m_WeaponCurrent == null)
             return;
+
+        if (m_Weapon1) m_Weapon1.AmmoTick(deltaTime);
+        if (m_Weapon2) m_Weapon2.AmmoTick(deltaTime);
+
+        m_weaponCanFire = CalculateWeaponFire();
         tf_WeaponAim.rotation = GetCharacterRotation();
         m_Assist.SetEnable(m_weaponCanFire && !m_WeaponCurrent.B_Reloading && m_Target != null);
-        m_WeaponCurrent.AmmoTick(m_PlayerInfo.F_ReloadRateTick(deltaTime));
+        m_WeaponCurrent.ReloadTick(m_PlayerInfo.F_ReloadRateTick(deltaTime));
         if (m_weaponCanFire)
             m_WeaponCurrent.FireTick(m_PlayerInfo.F_FireRateTick( deltaTime));
     }

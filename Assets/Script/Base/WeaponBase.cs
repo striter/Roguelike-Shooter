@@ -153,7 +153,10 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
             if (I_AmmoLeft > I_ClipAmount)
                 I_AmmoLeft = I_ClipAmount;
         }
+    }
 
+    public void ReloadTick(float deltaTime)
+    {
         if (B_Reloading)
         {
             f_reloadCheck += deltaTime;

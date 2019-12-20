@@ -48,7 +48,7 @@ public class UIT_MobileConsole : SimpleSingletonMono<UIT_MobileConsole> {
             m_keyCode = binding.keyCode;
             inputField.SetActivate(binding.defaultValue != "");
             inputField.text = binding.defaultValue;
-            transform.Find("Button/Title").GetComponent<Text>().text = binding.title + "," + m_keyCode.ToString();
+            transform.Find("Button/Title").GetComponent<Text>().text = string.Format("|{0}|{1}",  m_keyCode, binding.title);
             OnCommand = binding.command;
         }
 
