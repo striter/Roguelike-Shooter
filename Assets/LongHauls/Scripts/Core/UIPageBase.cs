@@ -13,7 +13,7 @@ public class UIPageBase : UIComponentBase,ISingleCoroutine
     protected Image img_Background;
     protected Action<bool> OnInteractFinished;
     bool m_Animating;
-    const float F_AnimDuration = .15f;
+    public const float F_AnimDuration = .15f;
     public static T Show<T>(Transform parentTransform,bool useAnim) where T:UIPageBase
     {
         if (Opening<T>())
