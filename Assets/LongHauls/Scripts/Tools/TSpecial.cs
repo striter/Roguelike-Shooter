@@ -940,7 +940,7 @@ public static class Physics_Extend
 {
     public static RaycastHit[] BoxCastAll(Vector3 position,Vector3 forward,Vector3 up,Vector3 boxBounds,int layerMask=-1)
     {
-        float castBoxLength = boxBounds.z / 2f;
+        float castBoxLength = .1f;
         return Physics.BoxCastAll(position + forward* castBoxLength / 2f, new Vector3(boxBounds.x / 2, boxBounds.y / 2, castBoxLength/2), forward, Quaternion.LookRotation(forward, up), boxBounds.z - castBoxLength, layerMask);
     }
 
