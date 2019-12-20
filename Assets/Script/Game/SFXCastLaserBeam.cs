@@ -47,7 +47,7 @@ public class SFXCastLaserBeam : SFXCast {
             if (targetLength >= f_castLength)
                 continue;
 
-            f_castLength = targetLength;
+            f_castLength = targetLength+.2f;        //Make Sure Cast Hit Its Target
             hitPoint = hits[i].point == Vector3.zero ? transform.position : hits[i].point;
         }
         bool hitted = hitPoint!=Vector3.zero;
