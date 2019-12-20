@@ -1,4 +1,5 @@
-﻿
+﻿#ifndef POSTEFFECT_INCLUD
+#define POSTEFFECT_INCLUD
 sampler2D _MainTex;
 half4 _MainTex_TexelSize;
 sampler2D _CameraDepthTexture;
@@ -23,3 +24,5 @@ float2 GetDepthUV(float2 uv)
 #endif
 	return uv;
 }
+
+#endif
