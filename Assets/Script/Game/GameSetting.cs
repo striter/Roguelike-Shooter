@@ -1569,6 +1569,8 @@ namespace GameSetting
         {
             m_Coins = coins;
             _actionEquiping.Traversal((ActionBase action) => { AddExpire(action); });
+            TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
+            TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerActionExpireStatus, this);
         }
 
         #region Action
