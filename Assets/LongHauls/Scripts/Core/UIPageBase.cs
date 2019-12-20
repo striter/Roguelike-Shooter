@@ -12,7 +12,6 @@ public class UIPageBase : UIComponentBase,ISingleCoroutine
     public static Action OnPageExit;
     protected Image img_Background;
     protected Action<bool> OnInteractFinished;
-    protected float f_bgAlphaStart;
     bool m_Animating;
     const float F_AnimDuration = .15f;
     public static T Show<T>(Transform parentTransform,bool useAnim) where T:UIPageBase
@@ -20,25 +19,25 @@ public class UIPageBase : UIComponentBase,ISingleCoroutine
         if (Opening<T>())
             return null;
         T page = TResources.Instantiate<T>("UI/Pages/" + typeof(T).ToString(), parentTransform);
-        page.Init(useAnim);
+       
+        page.Init();
+        page.Play(useAnim);
         m_Pages.Add(page);
         return page;
     }
     protected Button btn_ContainerCancel,btn_WholeCancel;
-    protected Transform tf_Container;
-    protected void Init(bool useAnim)
+    protected RectTransform rtf_Container;
+    Vector2 m_AnimateStartPos, m_AnimateEndPos;
+    protected void Play(bool useAnim)
     {
-        Init();
         m_Animating = useAnim;
         if (!useAnim)
-        {
-            tf_Container.localScale = Vector2.one * UIManagerBase.Instance.m_fittedScale;
             return;
-        }
 
+        m_AnimateStartPos = rtf_Container.anchoredPosition + Vector2.up * Screen.height;
+        m_AnimateEndPos = rtf_Container.anchoredPosition;
         this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => {
-            tf_Container.localScale = Vector2.one*UIManagerBase.Instance.m_fittedScale * value;
-            img_Background.color = new Color(img_Background.color.r, img_Background.color.g, img_Background.color.b, value * f_bgAlphaStart);
+            rtf_Container.anchoredPosition = Vector2.Lerp(m_AnimateStartPos, m_AnimateEndPos, value); 
         }
         , 0f, 1f, F_AnimDuration, null, false));
     }
@@ -46,11 +45,11 @@ public class UIPageBase : UIComponentBase,ISingleCoroutine
     protected override void Init()
     {
         base.Init();
-        tf_Container = transform.Find("Container");
+        rtf_Container = transform.Find("Container") as RectTransform;
+        rtf_Container.localScale = Vector2.one * UIManagerBase.Instance.m_fittedScale;
         img_Background = transform.Find("Background").GetComponent<Image>();
-        f_bgAlphaStart = img_Background.color.a;
         btn_WholeCancel = img_Background.GetComponent<Button>();
-        Transform containerCancel = tf_Container.Find("BtnCancel");
+        Transform containerCancel = rtf_Container.Find("BtnCancel");
         if (containerCancel) btn_ContainerCancel = containerCancel.GetComponent<Button>();
 
         if (btn_WholeCancel)
@@ -76,8 +75,7 @@ public class UIPageBase : UIComponentBase,ISingleCoroutine
             return;
         }
         this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => {
-            tf_Container.localScale = Vector2.one  * UIManagerBase.Instance.m_fittedScale * value;
-            img_Background.color = new Color(img_Background.color.r, img_Background.color.g, img_Background.color.b, value * f_bgAlphaStart);
+            rtf_Container.anchoredPosition = Vector2.Lerp(m_AnimateStartPos, m_AnimateEndPos, value);
         }, 1f, 0f, F_AnimDuration, OnHideFinished, false));
     }
 

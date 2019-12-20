@@ -7,7 +7,7 @@ public class UI_Revive : UIPage
     protected override void Init()
     {
         base.Init();
-        btn_Revive = tf_Container.Find("BtnRevive").GetComponent<Button>();
+        btn_Revive = rtf_Container.Find("BtnRevive").GetComponent<Button>();
         btn_Revive.onClick.AddListener(OnVideoBtnClick);
     }
 

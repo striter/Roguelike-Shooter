@@ -15,11 +15,11 @@ public class UI_EquipmentSwap : UIPage {
     protected override void Init()
     {
         base.Init();
-        m_ConfirmBtn = tf_Container.Find("ConfirmBtn").GetComponent<Button>();
+        m_ConfirmBtn = rtf_Container.Find("ConfirmBtn").GetComponent<Button>();
         m_ConfirmBtn.onClick.AddListener(OnConfirmBtnClick);
-        m_SelectItem = new UIC_ActionNameFormatIntro( tf_Container.Find("SelectItem"));
-        m_SwapItem = new UIC_ActionNameFormatIntro( tf_Container.Find("SwapItem"));
-        m_EquipmentGrid = new UIT_GridControlledSingleSelect<UIGI_ActionEquipmentSelect>(tf_Container.Find("EquipmentGrid"),OnItemSelect);
+        m_SelectItem = new UIC_ActionNameFormatIntro( rtf_Container.Find("SelectItem"));
+        m_SwapItem = new UIC_ActionNameFormatIntro( rtf_Container.Find("SwapItem"));
+        m_EquipmentGrid = new UIT_GridControlledSingleSelect<UIGI_ActionEquipmentSelect>(rtf_Container.Find("EquipmentGrid"),OnItemSelect);
     }
 
     public void Play(PlayerInfoManager _info,ActionBase _swapEquipment,Action<bool> _OnPageHide)

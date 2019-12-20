@@ -96,8 +96,8 @@ public class UI_Options : UIPage {
     protected override void Init()
     {
         base.Init();
-        Transform tf_selection = tf_Container.Find("Selections");
-        Transform tf_page = tf_Container.Find("Pages");
+        Transform tf_selection = rtf_Container.Find("Selections");
+        Transform tf_page = rtf_Container.Find("Pages");
         TCommon.TraversalEnum((enum_OptionSelection selection) =>
         {
             m_Selections.Add(selection,new SelectionItem(tf_selection.Find(selection.ToString()),selection,OnSelectionClick));
@@ -113,7 +113,7 @@ public class UI_Options : UIPage {
         new BoolToggle(m_Page[enum_OptionSelection.Control].Find("JoystickMode/BtnToggle"), OnJoystickClicked, GetJoystickOption());
         new SliderStatus(m_Page[enum_OptionSelection.Control].Find("Sensitive/Slider"), OnSensitiveChanged, OptionsManager.m_OptionsData.m_SensitiveTap);
 
-        btn_ReturnToCamp = tf_Container.Find("BtnReturn").GetComponent<Button>();
+        btn_ReturnToCamp = rtf_Container.Find("BtnReturn").GetComponent<Button>();
         btn_ReturnToCamp.onClick.AddListener(OnMainmenuBtnClick);
 
         m_Page[enum_OptionSelection.Display].Find("Region").SetActivate(false);     //Test

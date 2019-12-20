@@ -13,11 +13,11 @@ public class UI_ActionAdjustment : UIPage {
     protected override void Init()
     {
         base.Init();
-        m_Grid = new UIT_GridControllerGridItem<UIGI_ActionItemSelect>(tf_Container.Find("ScrollView/Viewport/ActionGrid"));
-        btn_remove = tf_Container.Find("BtnRemove").GetComponent<Button>();
+        m_Grid = new UIT_GridControllerGridItem<UIGI_ActionItemSelect>(rtf_Container.Find("ScrollView/Viewport/ActionGrid"));
+        btn_remove = rtf_Container.Find("BtnRemove").GetComponent<Button>();
         btn_remove.onClick.AddListener(OnRemoveClick);
         txt_removeAmount = btn_remove.transform.Find("Cost/Amount").GetComponent<UIT_TextExtend>();
-        btn_upgrade = tf_Container.Find("BtnUpgrade").GetComponent<Button>();
+        btn_upgrade = rtf_Container.Find("BtnUpgrade").GetComponent<Button>();
         btn_upgrade.onClick.AddListener(OnUpgradeClick);
         txt_upgradeAmount = btn_upgrade.transform.Find("Cost/Amount").GetComponent<UIT_TextExtend>();
     }

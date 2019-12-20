@@ -10,8 +10,8 @@ public class UI_EquipmentPack : UIPage {
     protected override void Init()
     {
         base.Init();
-        m_Grid = new UIT_GridControlledSingleSelect<UIGI_ActionEquipmentPackItem>(tf_Container.Find("EquipmentGrid"), OnItemSelect);
-        m_Selecting = new UIC_ActionNameFormatIntro(tf_Container.Find("Selecting"));
+        m_Grid = new UIT_GridControlledSingleSelect<UIGI_ActionEquipmentPackItem>(rtf_Container.Find("EquipmentGrid"), OnItemSelect);
+        m_Selecting = new UIC_ActionNameFormatIntro(rtf_Container.Find("Selecting"));
     }
     PlayerInfoManager m_Info;
     public void Show(PlayerInfoManager _info)
