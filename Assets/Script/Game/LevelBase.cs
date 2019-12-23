@@ -20,8 +20,8 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
     Dictionary<bool, List<int>> m_IndexItemMain = new Dictionary<bool, List<int>>();
     List<int> t_IndexTemp = new List<int>();
     Dictionary<enum_LevelItemType, List<LevelItemBase>> m_AllItemPrefabs = new Dictionary<enum_LevelItemType, List<LevelItemBase>>();
-    public float m_WorldBorder { get; private set; }
-
+    public float m_InnerBorder { get; private set; }
+    public float m_TotalBorder { get; private set; }
     public void OnPoolItemInit(int identity,Action<int,MonoBehaviour> _OnRecycle)
     {
         tf_LevelItem = transform.Find("Item");
@@ -34,7 +34,7 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
     }
 
     #region TileMapInfos
-    public IEnumerator GenerateTileItems(SLevelGenerate _innerData,SLevelGenerate _outerData, Dictionary<enum_LevelItemType, List<LevelItemBase>> allItemPrefabs, enum_LevelType _levelType,Action OnInnerItemDestroyed, System.Random _seed)
+    public void PrepareGenerateData(SLevelGenerate _innerData,SLevelGenerate _outerData, Dictionary<enum_LevelItemType, List<LevelItemBase>> allItemPrefabs, enum_LevelType _levelType, System.Random _seed)
     {
         m_AllItemPrefabs = allItemPrefabs;
         m_seed = _seed;
@@ -44,12 +44,12 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
         int _outerHalfRadius = _outerData.m_Length.Random(m_seed);
         _outerHalfRadius = (_innerHalfRadius + _outerHalfRadius) % 2 == 0 ? _outerHalfRadius + 1 : _outerHalfRadius;
         int totalRadius = _innerHalfRadius + _outerHalfRadius;
-        tf_Model.localScale = Vector3.one * totalRadius*2;
         //Create Data
         int index = 0;
         TileAxis origin = new TileAxis(-totalRadius/2 , -totalRadius/2 );
         int borderRadius = _innerHalfRadius / 2;
-        m_WorldBorder = borderRadius * 4 - 1.3f;
+        m_InnerBorder = borderRadius * 4 - 1.3f;
+        m_TotalBorder = totalRadius * 2;
         for (int i = 0; i < totalRadius; i++)
         {
             for (int j = 0; j < totalRadius; j++)
@@ -81,7 +81,6 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
                 index++;
             }
         }
-        yield return null;
         ClearTileForInteracts();
         GenerateBorderTile(m_IndexBorder);
         GenerateRandomMainTile(_innerData,m_IndexEmpty[true],true);
@@ -89,14 +88,19 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
 
         m_IndexItemMain[false].AddRange(m_IndexBorder);
 
-        m_IndexItemMain.Traversal((bool isInner,List<int> indexes) => {
+    }
+    public void Generate( Action OnInnerItemDestroyed)
+    {
+        tf_Model.localScale = Vector3.one * m_TotalBorder;
+        m_IndexItemMain.Traversal((bool isInner, List<int> indexes) => {
             indexes.Traversal((int mainIndex) => {
                 LevelTileItem main = m_AllTiles[mainIndex] as LevelTileItem;
                 LevelItemBase itemMain = GameObjectManager.SpawnLevelItem(m_AllItemPrefabs[main.m_LevelItemType][main.m_LevelItemListIndex], tf_LevelItem, main.m_Offset);
-                itemMain.InitItem(this, main.m_ItemDirection, isInner? OnInnerItemDestroyed:null);
+                itemMain.InitItem(this, main.m_ItemDirection, isInner ? OnInnerItemDestroyed : null);
             });
         });
     }
+
     void ClearTileForInteracts()        //Clear 3x3 For Interacts
     {
         TileAxis startAxis = TileAxis.Zero + new TileAxis(-3 / 2, -3 / 2);

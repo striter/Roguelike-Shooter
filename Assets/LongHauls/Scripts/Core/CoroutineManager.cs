@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 //List Of INumerators Will Be Used
@@ -187,7 +188,19 @@ public static class TIEnumerators
             yield return null;
         }
     }
+    public static IEnumerator TaskCoroutine(this Task task)
+    {
+        for(; ; )
+        {
+            if (task.IsCompleted)
+                yield break;
 
+            if (task.IsFaulted)
+                throw task.Exception;
+
+            yield return null;
+        }
+    }
 }
 
 //Interface For CoroutineManager

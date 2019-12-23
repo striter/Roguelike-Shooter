@@ -296,7 +296,7 @@ public static class GameDataManager
 
     #endregion
     #region ExcelData
-    public static SLevelGenerate GetItemGenerateProperties(enum_Style style, enum_LevelGenerateType prefabType, bool isInner)
+    public static SLevelGenerate GetLevelGenerateData(enum_Style style, enum_LevelGenerateType prefabType, bool isInner)
     {
         SLevelGenerate generate = Properties<SLevelGenerate>.PropertiesList.Find(p => p.m_LevelStyle == style && p.m_LevelPrefabType == prefabType && p.m_IsInner == isInner);
         if (generate.m_LevelStyle == 0 || generate.m_LevelPrefabType == 0 || generate.m_ItemGenerate == null)

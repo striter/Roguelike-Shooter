@@ -6,6 +6,7 @@ using TTiles;
 using UnityEngine.AI;
 using System;
 using LPWAsset;
+using System.Threading.Tasks;
 
 public class LevelManager : SimpleSingletonMono<LevelManager> {
     public Transform tf_LevelParent { get; private set; }
@@ -34,7 +35,6 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
         m_mainSeed = seed;
         m_StyleCurrent = _LevelStyle;
         m_Loading = true;
-        yield return null;
         StyleColorData[] customizations = TResources.GetAllStyleCustomization(_LevelStyle);
         StyleColorData randomData = customizations.Length == 0 ? StyleColorData.Default() : customizations.RandomItem(m_mainSeed);
         randomData.DataInit(m_DirectionalLight);
@@ -43,27 +43,29 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
         m_MapLevelInfo.Clear();
         List<enum_LevelType> randomLevels = GameExpression.GetRandomLevels(m_mainSeed);
         int count = randomLevels.Count;
-        for (int i=0;i< count; i++ )
+        for (int i = 0; i < count; i++)
         {
             SBigmapLevelInfo levelInfo = new SBigmapLevelInfo(randomLevels[i]);
             m_MapLevelInfo.Add(levelInfo);
             if (levelInfo.m_LevelType != enum_LevelType.Invalid)
             {
-                enum_LevelGenerateType generateType = levelInfo.m_LevelType.ToPrefabType();
-                SLevelGenerate innerData = GameDataManager.GetItemGenerateProperties(m_StyleCurrent, generateType, true);
-                SLevelGenerate outerData = GameDataManager.GetItemGenerateProperties(m_StyleCurrent, generateType, false);
-
                 LevelBase m_level = GameObjectManager.SpawnLevelPrefab(tf_LevelParent);
                 m_level.transform.localRotation = Quaternion.Euler(0, seed.Next(360), 0);
                 m_level.transform.localPosition = Vector3.zero;
                 m_level.transform.localScale = Vector3.one;
-                yield return m_level.GenerateTileItems(innerData, outerData, levelItemPrefabs, levelInfo.m_LevelType, OnLevelItemDestroyed, m_mainSeed);
-                StaticBatchingUtility.Combine(m_level.tf_LevelItem.gameObject);
                 levelInfo.SetLevelShow(false);
                 levelInfo.SetMap(m_level);
             }
-            yield return null;
         }
+
+        yield return Task.Run(()=> {
+            m_MapLevelInfo.Traversal((SBigmapLevelInfo levelInfo) =>
+            {
+                levelInfo.m_Level.PrepareGenerateData(GameDataManager.GetLevelGenerateData(m_StyleCurrent, levelInfo.m_LevelType.ToPrefabType(), true), GameDataManager.GetLevelGenerateData(m_StyleCurrent, levelInfo.m_LevelType.ToPrefabType(), false), levelItemPrefabs, levelInfo.m_LevelType, m_mainSeed);
+            });
+        }).TaskCoroutine();
+         
+        m_MapLevelInfo.Traversal((SBigmapLevelInfo levelInfo) => { levelInfo.m_Level.Generate(OnLevelItemDestroyed); });
         m_Loading = false;
     }
     #region Level
@@ -76,6 +78,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
         m_currentLevelIndex = index;
         m_currentLevel.SetLevelShow(true);
         BuildNavMeshData(m_currentLevel.m_Level);
+        StaticBatchingUtility.Combine(m_currentLevel.m_Level.tf_LevelItem.gameObject);
         OnChangeLevelLoaded(m_currentLevel);
     }
     #endregion
@@ -95,7 +98,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
         RemoveNavmeshData();
 
         List<NavMeshBuildSource> sources = new List<NavMeshBuildSource>();
-        float border = level.m_WorldBorder;
+        float border = level.m_InnerBorder;
         Bounds bound = new Bounds(Vector3.zero, new Vector3(border, .2f, border));
 
         NavMeshBuilder.CollectSources(level.transform, -1, NavMeshCollectGeometry.PhysicsColliders, 0, new List<NavMeshBuildMarkup>() { }, sources);
