@@ -1160,6 +1160,7 @@ namespace GameSetting_Action
                 ActionHelper.ReceiveHealing(m_ActionEntity,m_ActionEntity.m_Health.m_BaseHealth * Value1/100f, enum_DamageType.HealthOnly);
         }
         public Action_30012_KillHealthRegen(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+        public Action_30012_KillHealthRegen(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
     }
 
     public class Action_30013_HealRegenAdditive : ActionEquipment
