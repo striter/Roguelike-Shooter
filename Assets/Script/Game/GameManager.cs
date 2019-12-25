@@ -45,9 +45,8 @@ public class GameManager : GameManagerBase
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Armor", "20", KeyCode.F7, (string armor) => {GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupArmor, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f), false), LevelManager.Instance.m_InteractParent).Play(int.Parse(armor), m_LocalPlayer.transform);}));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Weapon", "102", KeyCode.F8, (string weapon) => { GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f)), LevelManager.Instance.m_InteractParent).Play(GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew((enum_PlayerWeapon)int.Parse(weapon)))); }));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Use Action", "10001", KeyCode.F1, (string actionIndex) => {m_LocalPlayer.m_PlayerInfo.OnUseAction(ActionDataManager.CreateAction(int.Parse(actionIndex), enum_ActionRarity.Epic)); }));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Action Normal", "10001", KeyCode.F2, (string actionIndex) => { GameObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f))).Play(ActionDataManager.CreateAction(int.Parse(actionIndex), enum_ActionRarity.Normal)); }));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Action OutStanding", "10001", KeyCode.F3, (string actionIndex) => { GameObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f))).Play(ActionDataManager.CreateAction(int.Parse(actionIndex), enum_ActionRarity.OutStanding)); }));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Action Epic", "10001", KeyCode.F4, (string actionIndex) => { GameObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f))).Play(ActionDataManager.CreateAction(int.Parse(actionIndex), enum_ActionRarity.Epic)); }));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("WeaponAbility", "10001", KeyCode.F2, (string actionIndex) => { GameObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f))).Play(ActionDataManager.CreateAction(int.Parse(actionIndex), enum_ActionRarity.Epic)); }));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Player Equipment", "10001", KeyCode.F3, (string actionIndex) => { GameObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f))).Play(ActionDataManager.CreateAction(int.Parse(actionIndex), TCommon.RandomEnumValues<enum_EquipmentType>(null))); }));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Ability Energy", "1", KeyCode.Alpha9, (string energy) => {  m_LocalPlayer.OnWeaponEnergy(float.Parse(energy));}));
         
         UIT_MobileConsole.Instance.AddConsoleBindings(m_bindings);
@@ -279,7 +278,7 @@ public class GameManager : GameManagerBase
 
         enum_ActionRarity equipmentRarity = TCommon.RandomPercentage(pickupGenerateData.m_EquipmentGenerate, enum_ActionRarity.Invalid);
         if (equipmentRarity != enum_ActionRarity.Invalid)
-            GameObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action,GetPickupPosition(entity)).Play(ActionDataManager.CreateRandomEquipmentAction(equipmentRarity,null));
+            GameObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action,GetPickupPosition(entity)).Play(ActionDataManager.CreateRandomEquipmentAction(TCommon.RandomEnumValues<enum_EquipmentType>(null),null));
     }
     Vector3 GetPickupPosition(EntityCharacterBase dropper) => LevelManager.NavMeshPosition(dropper.transform.position + TCommon.RandomXZSphere(1.5f), false);
     #endregion

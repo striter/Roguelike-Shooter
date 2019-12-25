@@ -542,6 +542,8 @@ namespace GameSetting
 
     public enum enum_ActionType { Invalid = -1, Ability = 1,Equipment=2,}
 
+    public enum enum_EquipmentType { Invalid=-1,TypeA=1,TypeB=2,TypeC=3}
+
     public enum enum_EffectAttach { Invalid = -1,  Head = 1, Feet = 2, WeaponModel = 3,}
 
     public enum enum_PlayerCharacter {Invalid=-1,Beth=10001,Jason=10002,Charles=10003 }
@@ -743,7 +745,7 @@ namespace GameSetting
         public string m_GameSeed;
         public enum_StageLevel m_Stage;
         public int m_coins;
-        public List<ActionSaveData> m_actionEquipment;
+        public List<ActionEquipmentSaveData> m_actionEquipment;
         public float m_curHealth;
         public float m_maxHealthAdditive;
         public WeaponSaveData m_weapon1, m_weapon2;
@@ -754,7 +756,7 @@ namespace GameSetting
             m_coins = 0;
             m_curHealth = -1;
             m_maxHealthAdditive = -1;
-            m_actionEquipment = new List<ActionSaveData>();
+            m_actionEquipment = new List<ActionEquipmentSaveData>();
             m_Stage = enum_StageLevel.Rookie;
             m_GameSeed = DateTime.Now.ToLongTimeString().ToString();
             m_character = GameDataManager.m_GameData.m_CharacterSelected;
@@ -770,7 +772,7 @@ namespace GameSetting
             m_weapon1 = WeaponSaveData.Create(_player.m_Weapon1);
             m_weapon2 = WeaponSaveData.Create(_player.m_Weapon2);
             m_weaponEquipingFirst = _player.m_weaponEquipingFirst;
-            m_actionEquipment = ActionSaveData.Create(_player.m_PlayerInfo.m_ActionEquipment);
+            m_actionEquipment = ActionEquipmentSaveData.Create(_player.m_PlayerInfo.m_ActionEquipment);
 
             m_GameSeed = _level.m_Seed;
             m_Stage = _level.m_GameStage;
@@ -831,6 +833,28 @@ namespace GameSetting
             return infos;
         }
     }
+    public struct ActionEquipmentSaveData : IXmlPhrase
+    {
+        public int m_Index { get; private set; }
+        public enum_EquipmentType m_Type { get; private set; }
+
+        public string ToXMLData() => m_Index + "," + m_Type;
+        public ActionEquipmentSaveData(string xmlData)
+        {
+            string[] split = xmlData.Split(',');
+            m_Index = int.Parse(split[0]);
+            m_Type = (enum_EquipmentType)Enum.Parse(typeof(enum_EquipmentType), split[1]);
+        }
+
+        public static ActionEquipmentSaveData Create(ActionEquipment action) =>  new ActionEquipmentSaveData { m_Index = action.m_Index,m_Type=action.m_EquipmentType};
+        public static List<ActionEquipmentSaveData> Create(List<ActionEquipment> equipments)
+        {
+            List<ActionEquipmentSaveData> data = new List<ActionEquipmentSaveData>();
+            equipments.Traversal((ActionEquipment equipment) => { data.Add(Create(equipment)); });
+            return data;
+        }
+    }
+
 
     public struct WeaponSaveData : IXmlPhrase
     {
@@ -1542,7 +1566,7 @@ namespace GameSetting
         protected Vector3 m_prePos;
 
         public List<ActionBase> m_ActionPlaying { get; private set; } = new List<ActionBase>();
-        public List<ActionBase> m_ActionEquipment { get; private set; } = new List<ActionBase>();
+        public List<ActionEquipment> m_ActionEquipment { get; private set; } = new List<ActionEquipment>();
         public int m_Coins { get; private set; } = 0;
 
         public PlayerInfoManager(EntityCharacterPlayer _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
@@ -1565,10 +1589,10 @@ namespace GameSetting
             m_prePos = m_Entity.transform.position;
         }
 
-        public void SetInfoData(int coins, List<ActionBase> _actionEquiping)
+        public void SetInfoData(int coins, List<ActionEquipment> _actionEquiping)
         {
             m_Coins = coins;
-            _actionEquiping.Traversal((ActionBase action) => { AddExpire(action); });
+            _actionEquiping.Traversal((ActionEquipment action) => { AddExpire(action); });
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerActionExpireStatus, this);
         }
@@ -1623,7 +1647,8 @@ namespace GameSetting
             switch (targetAction.m_ActionType)
             {
                 case enum_ActionType.Equipment:
-                    m_ActionEquipment.Add(targetAction);
+                    m_ActionEquipment.Add(targetAction as ActionEquipment);
+                    CheckEquipmentRarity();
                     TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
                     break;
                 case enum_ActionType.Ability:
@@ -1645,14 +1670,30 @@ namespace GameSetting
             switch (targetAction.m_ActionType)
             {
                 case enum_ActionType.Equipment:
-                    m_ActionEquipment.Remove(targetAction);
-                    TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
+                    {
+                        m_ActionEquipment.Remove(targetAction as ActionEquipment);
+                        CheckEquipmentRarity();
+                        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
+                    }
                     break;
                 case enum_ActionType.Ability:
                     TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerActionExpireStatus, this);
                     break;
             }
         }
+        void CheckEquipmentRarity()
+        {
+            Dictionary<enum_EquipmentType, int> m_Types = new Dictionary<enum_EquipmentType, int>();
+            m_ActionEquipment.Traversal((ActionEquipment equipment) =>
+            {
+                if (!m_Types.ContainsKey(equipment.m_EquipmentType))
+                    m_Types.Add(equipment.m_EquipmentType, 0);
+
+                m_Types[equipment.m_EquipmentType]++;
+            });
+            m_ActionEquipment.Traversal((ActionEquipment equipment) => equipment.CheckUpgrade(m_Types[equipment.m_EquipmentType]));
+        }
+
         #endregion
         #region Data Update
         protected override void OnResetInfo()
@@ -1883,7 +1924,7 @@ namespace GameSetting
     {
         public override enum_ExpireType m_ExpireType => enum_ExpireType.Action;
         public EntityCharacterPlayer m_ActionEntity { get; private set; }
-        public enum_ActionRarity m_rarity { get; private set; } = enum_ActionRarity.Invalid;
+        public enum_ActionRarity m_rarity { get; protected set; } = enum_ActionRarity.Invalid;
         public int m_Identity { get; private set; } = -1;
         public virtual bool B_ActionAble => true;
         public virtual enum_ActionType m_ActionType => enum_ActionType.Invalid;
@@ -1900,6 +1941,7 @@ namespace GameSetting
         public virtual bool B_ProjectilePenetrade => false;
         public virtual float F_AllyHealthMultiplierAdditive => 0;
         public virtual float F_Duration => 0;
+        public ActionBase() { }
         protected ActionBase(int _identity,enum_ActionRarity _level)
         {
             m_Identity = _identity;
@@ -1941,8 +1983,23 @@ namespace GameSetting
     public class ActionEquipment : ActionBase
     {
         public override enum_ActionType m_ActionType => enum_ActionType.Equipment;
+        public enum_EquipmentType m_EquipmentType;
         public ActionEquipment(int _identity, enum_ActionRarity _level) : base(_identity, _level)
         {
+        }
+        public ActionEquipment(int _identity,enum_EquipmentType type):base(_identity, enum_ActionRarity.Normal)
+        {
+            m_EquipmentType = type;
+        }
+
+        public void CheckUpgrade(int sameCount)
+        {
+            if (sameCount >= 4)
+                m_rarity = enum_ActionRarity.Epic;
+            else if (sameCount >= 2)
+                m_rarity = enum_ActionRarity.OutStanding;
+            else
+                m_rarity = enum_ActionRarity.Normal;
         }
     }
     #endregion
@@ -2491,16 +2548,45 @@ namespace GameSetting
 
         Image m_Image;
         UIC_RarityLevel m_Rarity;
+        Image m_EquipmentType;
         public UIC_ActionData(Transform _transform)
         {
             transform = _transform;
             m_Image = transform.Find("Mask/Image").GetComponent<Image>();
             m_Rarity = new UIC_RarityLevel(transform.Find("Rarity"));
+            m_EquipmentType = transform.Find("EquipmentType").GetComponent<Image>();
         }
         public virtual void SetInfo(ActionBase actionInfo)
         {
             m_Image.sprite = GameUIManager.Instance.m_ActionSprites[actionInfo.m_Index.ToString()];
             m_Rarity.SetRarity(actionInfo.m_rarity);
+
+            switch(actionInfo.m_ActionType)
+            {
+                case enum_ActionType.Equipment:
+                    m_EquipmentType.SetActivate(true);
+                    switch ((actionInfo as ActionEquipment).m_EquipmentType)
+                    {
+                        default:
+                            Debug.LogError("Invalid Parse Here!");
+                            m_EquipmentType.color = Color.magenta;
+                            break;
+                        case enum_EquipmentType.TypeA:
+                            m_EquipmentType.color = Color.red;
+                            break;
+                        case enum_EquipmentType.TypeB:
+                            m_EquipmentType.color = Color.yellow;
+                            break;
+                        case enum_EquipmentType.TypeC:
+                            m_EquipmentType.color = Color.green;
+                            break;
+                    }
+                    break;
+                case enum_ActionType.Ability:
+
+                    m_EquipmentType.SetActivate(false);
+                    break;
+            }
         }
     }
 

@@ -977,7 +977,8 @@ namespace GameSetting_Action
             m_stackUp.ResetStack();
         }
         public override void OnMove(float distance) => m_stackUp.OnStackUp(distance);
-        public Action_30001_DamageMovementStackup(int _identity, enum_ActionRarity _level) : base(_identity, _level) { m_stackUp = new ActionStackUp(ActionData.I_30001_MaxStack); }
+        public Action_30001_DamageMovementStackup(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+        public Action_30001_DamageMovementStackup(int _identity, enum_EquipmentType _type) : base(_identity, _type) { m_stackUp = new ActionStackUp(ActionData.I_30001_MaxStack); }
     }
     public class Action_30002_KillDamageMultiply : ActionEquipment
     {
@@ -997,6 +998,7 @@ namespace GameSetting_Action
             m_burstShot = receiver.m_IsDead;
         }
         public Action_30002_KillDamageMultiply(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+        public Action_30002_KillDamageMultiply(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
     }
     public class Action_30003_GrenadeLauncher : ActionEquipment
     {
@@ -1024,6 +1026,7 @@ namespace GameSetting_Action
             m_shotGrenade = false;
         }
         public Action_30003_GrenadeLauncher(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+        public Action_30003_GrenadeLauncher(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
     }
     public class Action_30004_ReloadSpeedAdditive : ActionEquipment
     {
@@ -1031,6 +1034,7 @@ namespace GameSetting_Action
         public override float Value1 => ActionData.P_30004_ReloadSpeedMultiply(m_rarity);
         public override float m_ReloadRateMultiply =>Value1/100f;
         public Action_30004_ReloadSpeedAdditive(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+        public Action_30004_ReloadSpeedAdditive(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
     }
     public class Action_30005_DamageFreeze : ActionEquipment
     {
@@ -1043,6 +1047,7 @@ namespace GameSetting_Action
             info.m_detail.EffectAdditiveOverride(enum_CharacterEffect.Freeze, Value1);
         }
         public Action_30005_DamageFreeze(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+        public Action_30005_DamageFreeze(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
     }
 
     public class Action_30006_DamageKillFreezeBlast : ActionEquipment
@@ -1066,6 +1071,7 @@ namespace GameSetting_Action
         }
 
         public Action_30006_DamageKillFreezeBlast(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+        public Action_30006_DamageKillFreezeBlast(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
     }
 
     public class Action_30007_DamageLimitFreeze : ActionEquipment
@@ -1084,6 +1090,7 @@ namespace GameSetting_Action
             info.m_detail.EffectAdditiveOverride(enum_CharacterEffect.Freeze, Value2 * Mathf.Ceil(amount / Value1));
         }
         public Action_30007_DamageLimitFreeze(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+        public Action_30007_DamageLimitFreeze(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
     }
 
     public class Action_30008_FreezeTrapSpawnByActionUse : ActionEquipment
@@ -1103,6 +1110,7 @@ namespace GameSetting_Action
             m_Equipment.Play(false,m_ActionEntity);
         }
         public Action_30008_FreezeTrapSpawnByActionUse(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+        public Action_30008_FreezeTrapSpawnByActionUse(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
     }
 
     public class Action_30009_AllyActivateHealthAdditive : ActionEquipment
@@ -1111,6 +1119,7 @@ namespace GameSetting_Action
         public override float Value1 => ActionData.P_30009_EquipmentHealthAddup(m_rarity);
         public override float F_AllyHealthMultiplierAdditive => Value1/100f;
         public Action_30009_AllyActivateHealthAdditive(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+        public Action_30009_AllyActivateHealthAdditive(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
     }
 
     public class Action_30010_UseActionAddMaxHealth : ActionEquipment
@@ -1123,6 +1132,7 @@ namespace GameSetting_Action
             m_ActionEntity.m_Health.AddMaxHealth(Value1);
         }
         public Action_30010_UseActionAddMaxHealth(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+        public Action_30010_UseActionAddMaxHealth(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
     }
 
     public class Action_30011_ReceiveHealingAddMaxHealth : ActionEquipment
@@ -1136,6 +1146,7 @@ namespace GameSetting_Action
                  m_ActionEntity.m_Health.AddMaxHealth (-info.m_AmountApply*Value1/100f);
         }
         public Action_30011_ReceiveHealingAddMaxHealth(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+        public Action_30011_ReceiveHealingAddMaxHealth(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
     }
 
     public class Action_30012_KillHealthRegen : ActionEquipment
@@ -1157,6 +1168,7 @@ namespace GameSetting_Action
         public override float Value1 => ActionData.P_30013_HealthRegenAdditive(m_rarity);
         public override float m_HealAdditive => Value1 / 100f;
         public Action_30013_HealRegenAdditive(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+        public Action_30013_HealRegenAdditive(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
     }
 
     public class Action_30014_ArmorDamageDamageReductionDuration : ActionEquipment
@@ -1182,6 +1194,7 @@ namespace GameSetting_Action
                 m_counter = Value1;
         }
         public Action_30014_ArmorDamageDamageReductionDuration(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+        public Action_30014_ArmorDamageDamageReductionDuration(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
     }
 
     public class Action_30015_ArmorDamageReflection : ActionEquipment
@@ -1196,6 +1209,7 @@ namespace GameSetting_Action
                 ActionHelper.PlayerDealtDamageToEntity(m_ActionEntity, info.m_detail.I_SourceID, Value1 * m_ActionEntity.m_Health.m_CurrentArmor, enum_DamageType.Basic);
         }
         public Action_30015_ArmorDamageReflection(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+        public Action_30015_ArmorDamageReflection(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
     }
 
     public class Action_30016_ProjectileSpeed : ActionEquipment
@@ -1204,6 +1218,7 @@ namespace GameSetting_Action
         public override float Value1 => ActionData.P_30016_ProjectileSpeedMultiply(m_rarity);
         public override float F_ProjectileSpeedMultiply => Value1/100f;
         public Action_30016_ProjectileSpeed(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+        public Action_30016_ProjectileSpeed(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
     }
 
     public class Action_30017_ArmorAdditiveActionUse : ActionEquipment
@@ -1216,6 +1231,7 @@ namespace GameSetting_Action
             ActionHelper.ReceiveHealing(m_ActionEntity, Value1, enum_DamageType.ArmorOnly);
         }
         public Action_30017_ArmorAdditiveActionUse(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+        public Action_30017_ArmorAdditiveActionUse(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
     }
 
     public class Action_30018_ProjectilePenetrate : ActionEquipment
@@ -1223,6 +1239,7 @@ namespace GameSetting_Action
         public override int m_Index => 30018;
         public override bool B_ProjectilePenetrade => true;
         public Action_30018_ProjectilePenetrate(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
+        public Action_30018_ProjectilePenetrate(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
     }
     #endregion
     //#region 40000-49999 Unused

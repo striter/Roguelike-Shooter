@@ -353,7 +353,7 @@ public static class ActionDataManager
         m_AbilityAction.Clear();
         m_EquipmentAction.Clear();
 
-        TReflection.TraversalAllInheritedClasses((Action<Type, ActionBase>)((Type type, ActionBase action) => {
+        TReflection.TraversalAllInheritedClasses(((Type type, ActionBase action) => {
             if (action.m_Index <= 0)
                 return;
 
@@ -372,7 +372,7 @@ public static class ActionDataManager
     }
     public static ActionBase CreateRandomAction(enum_ActionRarity rarity, System.Random seed)=> CreateAction(m_AllAction.RandomItem(seed),rarity);
     public static ActionAbility CreateRandomAbilityAction(enum_ActionRarity rarity, System.Random seed) => CreateAction(m_AbilityAction.RandomItem(seed),rarity) as ActionAbility;
-    public static ActionEquipment CreateRandomEquipmentAction(enum_ActionRarity rarity, System.Random seed) => CreateAction(m_EquipmentAction.RandomItem(seed),rarity) as ActionEquipment;
+    public static ActionEquipment CreateRandomEquipmentAction(enum_EquipmentType equipment, System.Random seed) => CreateAction(m_EquipmentAction.RandomItem(seed), equipment);
     public static List<ActionBase> CreateActions(List<ActionSaveData> infos)
     {
         List<ActionBase> actions = new List<ActionBase>();
@@ -386,5 +386,20 @@ public static class ActionDataManager
             Debug.LogError("Error Action:" + actionIndex + " ,Does not exist");
         return TReflection.CreateInstance<ActionBase>(m_AllActionType[actionIndex], m_ActionIdentity++, level);
     }
+
+    public static ActionEquipment CreateAction(int actionIndex, enum_EquipmentType type)
+    {
+        if (!m_AllActionType.ContainsKey(actionIndex))
+            Debug.LogError("Error Action:" + actionIndex + " ,Does not exist");
+        return TReflection.CreateInstance<ActionEquipment>(m_AllActionType[actionIndex], m_ActionIdentity++, type );
+    }
+    public static ActionEquipment CreateAction(ActionEquipmentSaveData data) => CreateAction(data.m_Index, data.m_Type);
+    public static List<ActionEquipment> CreateActions(List<ActionEquipmentSaveData> datas)
+    {
+        List<ActionEquipment> actions = new List<ActionEquipment>();
+        datas.Traversal((ActionEquipmentSaveData data) => { actions.Add(CreateAction(data)); });
+        return actions;
+    }
+
     public static ActionBase CopyAction(ActionBase targetAction) => TReflection.CreateInstance<ActionBase>(m_AllActionType[targetAction.m_Index], targetAction.m_Identity, targetAction.m_rarity);
 }
