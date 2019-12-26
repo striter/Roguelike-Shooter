@@ -1599,7 +1599,7 @@ namespace GameSetting
 
             F_DamageAdditive += action.m_DamageAdditive;
             F_SpreadMultiply -= action.F_SpreadReduction;
-            F_AimMovementStrictMultiply -= action.F_AimStrictReduction;
+            F_AimMovementStrictMultiply -= action.F_AimPressureReduction;
             
             I_ClipAdditive += action.I_ClipAdditive;
             F_ClipMultiply += action.F_ClipMultiply;
@@ -1821,7 +1821,7 @@ namespace GameSetting
         public virtual float Value3 => 0;
         public virtual float m_DamageAdditive => 0;
         public virtual float F_SpreadReduction => 0;
-        public virtual float F_AimStrictReduction => 0;
+        public virtual float F_AimPressureReduction => 0;
         public virtual float F_ProjectileSpeedMultiply => 0;
         public virtual bool B_ClipOverride => false;
         public virtual int I_ClipAdditive => 0;

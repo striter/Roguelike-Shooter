@@ -20,6 +20,7 @@ namespace GameSetting_Action
         public static int P_0010_PenetrateAdditive(enum_EquipmentRarity rarity) => 30 * (int)rarity;
         public static int P_0011_FireRateAdditive(enum_EquipmentRarity rarity) => 50 * (int)rarity;
         public static int I_0012_BounceTimes(enum_EquipmentRarity rarity) => 1*(int)rarity;
+
         public static float F_0013_EffectRange(enum_EquipmentRarity rarity) => 8f;
         public static int P_0013_DamageMultiply(enum_EquipmentRarity rarity) => 12 * (int)rarity;
         public static float F_0014_EffectRange(enum_EquipmentRarity rarity) => 8f;
@@ -29,6 +30,15 @@ namespace GameSetting_Action
         public static float F_0016_EffectRange(enum_EquipmentRarity rarity) => 8f*(int)rarity;
         public static float P_0016_ClipRefillRate(enum_EquipmentRarity rarity) => 50f;
         public static float F_0017_Duration(enum_EquipmentRarity rarity) => 1 * (int)rarity;
+
+        public static float P_0018_MovementSpeedMultiply(enum_EquipmentRarity rarity) => 45f * (int)rarity;
+        public static float F_0018_Duration(enum_EquipmentRarity rarity) => 5f;
+        public static float P_0019_MovementSpeedMultiply(enum_EquipmentRarity rarity) => 30f * (int)rarity;
+        public static float F_0019_Duration(enum_EquipmentRarity rarity) => 5f;
+        public static float P_0020_MovementSpeedAdditive(enum_EquipmentRarity rarity) => 13 * (int)rarity;
+        public static float P_0021_AimPressureReductionDecrease(enum_EquipmentRarity rarity) => 20 * (int)rarity;
+        public static float P_0022_DamageMultiply(enum_EquipmentRarity rarity,float stack) => stack*1* (int)rarity;
+        public const int P_0022_MaxStack = 20;
     }
     #endregion
 
@@ -316,7 +326,7 @@ namespace GameSetting_Action
     public class E0017_TakeDamageReductionDuration : PlayerEquipmentExpire
     {
         public override int m_Index => 0017;
-        public override float Value1 =>  EquipmentData.F_0017_Duration(m_rarity);
+        public override float Value1 => EquipmentData.F_0017_Duration(m_rarity);
         public override float m_DamageReduction => m_Timer.m_Timing ? 1 : base.m_DamageReduction;
         EquipmentTimer m_Timer = new EquipmentTimer();
         public override void OnTick(float deltaTime)
@@ -332,6 +342,79 @@ namespace GameSetting_Action
             m_Timer.SetTimer(Value1);
         }
         public E0017_TakeDamageReductionDuration(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
+    }
+
+    public class E0018_ReceiveDamageMovementMultiplyDuration : PlayerEquipmentExpire
+    {
+        public override int m_Index => 0018;
+        public override int m_EffectIndex => m_Timer.m_Timing ? 40005 : 0;
+        public override float Value1 => EquipmentData.P_0018_MovementSpeedMultiply(m_rarity);
+        public override float Value2 => EquipmentData.F_0018_Duration(m_rarity);
+        public override float m_MovementSpeedMultiply => m_Timer.m_Timing? Value1 / 100f : 0;
+        EquipmentTimer m_Timer = new EquipmentTimer();
+        public override void OnAfterReceiveDamage(DamageInfo info, float amount)
+        {
+            base.OnAfterReceiveDamage(info, amount);
+            m_Timer.SetTimer(Value2);
+        }
+        public override void OnTick(float deltaTime)
+        {
+            base.OnTick(deltaTime);
+            m_Timer.Tick(deltaTime);
+        }
+        public E0018_ReceiveDamageMovementMultiplyDuration(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
+    }
+
+    public class E0019_KillMovementMultiplyDuration : PlayerEquipmentExpire
+    {
+        public override int m_Index => 0019;
+        public override int m_EffectIndex => m_Timer.m_Timing ? 40005 : 0;
+        public override float Value1 => EquipmentData.P_0019_MovementSpeedMultiply(m_rarity);
+        public override float Value2 => EquipmentData.F_0019_Duration(m_rarity);
+        public override float m_MovementSpeedMultiply => m_Timer.m_Timing ? Value1 / 100f : 0;
+        EquipmentTimer m_Timer = new EquipmentTimer();
+        public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        {
+            base.OnAfterDealtDemage(receiver, info, applyAmount);
+            if (receiver.m_IsDead)
+                m_Timer.SetTimer(Value2);
+        }
+        public override void OnTick(float deltaTime)
+        {
+            base.OnTick(deltaTime);
+            m_Timer.Tick(deltaTime);
+        }
+        public E0019_KillMovementMultiplyDuration(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
+    }
+    public class E0020_MovementSpeedMultiply : PlayerEquipmentExpire
+    {
+        public override int m_Index => 0020;
+        public override float Value1 => EquipmentData.P_0020_MovementSpeedAdditive(m_rarity);
+        public override float m_MovementSpeedMultiply => Value1 / 100f;
+        public E0020_MovementSpeedMultiply(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
+    }
+
+    public class E0021_AimPressureReduction:PlayerEquipmentExpire
+    {
+        public override int m_Index => 0021;
+        public override float Value1 => EquipmentData.P_0021_AimPressureReductionDecrease(m_rarity);
+        public override float F_AimPressureReduction => Value1 / 100f;
+        public E0021_AimPressureReduction(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
+    }
+    public class E0022_DamageMovementStackup : PlayerEquipmentExpire
+    {
+        public override int m_Index => 0022;
+        public override float Value1 => EquipmentData.P_0022_DamageMultiply(m_rarity,m_stackUp.m_stack);
+        public override float Value2 => EquipmentData.P_0022_DamageMultiply(m_rarity, EquipmentData.P_0022_MaxStack);
+        public override float m_DamageMultiply => Value1/100f;
+        EquipmentStackupCounter m_stackUp;
+        public override void OnFire(int identity)
+        {
+            base.OnFire(identity);
+            m_stackUp.ResetStack();
+        }
+        public override void OnMove(float distance) => m_stackUp.OnStackUp(distance);
+        public E0022_DamageMovementStackup(int _identity, enum_EquipmentType _type) : base(_identity, _type) { m_stackUp = new EquipmentStackupCounter(EquipmentData.P_0022_MaxStack); }
     }
     #endregion
     #endregion
