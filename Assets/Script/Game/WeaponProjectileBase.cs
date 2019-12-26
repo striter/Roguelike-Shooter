@@ -9,8 +9,9 @@ public class WeaponProjectileBase : WeaponBase
     public bool B_BasePenetrate { get; private set; } = false;
     public int I_MuzzleIndex { get; private set; } = -1;
     AudioClip m_MuzzleClip;
-    public float F_Speed => m_Attacher.m_PlayerInfo.F_ProjectileSpeedMuiltiply * F_BaseSpeed;
-    public bool B_Penetrate => m_Attacher.m_PlayerInfo.B_ProjectilePenetrate || B_BasePenetrate;
+    public float GetSpeed() => m_Attacher.m_PlayerInfo.F_ProjectileSpeedMuiltiply * F_BaseSpeed;
+    public bool GetPenetrate() => B_BasePenetrate||m_Attacher.m_PlayerInfo.F_PenetrateAdditive>Random.Range(0,1);
+    public float GetSpread() => m_Attacher.m_PlayerInfo.F_SpreadMultiply * m_WeaponInfo.m_Spread;
 
     protected override void OnGetEquipmentData(SFXWeaponBase equipment)
     {
@@ -36,14 +37,15 @@ public class WeaponProjectileBase : WeaponBase
         spreadDirection = (endPosition - m_Muzzle.position).normalized;
         spreadDirection.y = 0;
 
+        float spread = GetSpread();
         if (m_WeaponInfo.m_PelletsPerShot == 1)
         {
-            FireOneBullet(damageInfo, spreadDirection.RotateDirection(Vector3.up,Random.Range(-m_WeaponInfo.m_Spread, m_WeaponInfo.m_Spread)));
+            FireOneBullet(damageInfo, spreadDirection.RotateDirection(Vector3.up,Random.Range(-spread,spread)));
         }
         else
         {
             int waveCount = m_WeaponInfo.m_PelletsPerShot;
-            float beginAnle = -m_WeaponInfo.m_Spread * (waveCount - 1) / 2f;
+            float beginAnle = -spread * (waveCount - 1) / 2f;
             for (int i = 0; i < waveCount; i++)
                 FireOneBullet(damageInfo, spreadDirection.RotateDirection(Vector3.up, beginAnle + i * m_WeaponInfo.m_Spread));
         }
@@ -53,8 +55,8 @@ public class WeaponProjectileBase : WeaponBase
     void FireOneBullet(DamageDeliverInfo damage, Vector3 direction)
     {
         SFXProjectile projectile = GameObjectManager.SpawnEquipment<SFXProjectile>(GameExpression.GetPlayerWeaponIndex(m_WeaponInfo.m_Index), m_Muzzle.position, direction);
-        projectile.F_Speed = F_Speed;
-        projectile.B_Penetrate = B_Penetrate;
+        projectile.F_Speed = GetSpeed();
+        projectile.B_Penetrate = GetPenetrate();
         projectile.Play(damage, direction, m_Attacher.tf_Weapon.position + direction * GameConst.I_ProjectileMaxDistance);
     }
 }

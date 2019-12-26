@@ -17,7 +17,7 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     public Transform m_Muzzle { get; private set; } = null;
     public Transform m_Case { get; private set; } = null;
     public int I_ClipAmount { get; private set; } = 0;
-    public float F_Recoil => m_Attacher.m_PlayerInfo.F_RecoilMultiply * F_BaseRecoil;
+    public float F_Recoil => m_Attacher.m_PlayerInfo.F_SpreadMultiply * F_BaseRecoil;
     protected WeaponTrigger m_Trigger { get; private set; }
     Action<bool,float> OnReload;
     Action<float> OnFireRecoil;

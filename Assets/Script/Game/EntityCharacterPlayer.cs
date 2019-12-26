@@ -265,15 +265,10 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void OnMoveTick(float deltaTime)
     {
         if (m_aimingMovementReduction) f_aimMovementReduction -= deltaTime;
-        if (m_aiming) f_aimMovementReduction = GameConst.F_MovementReductionDuration;
+        if (m_aiming) f_aimMovementReduction =  GameConst.F_MovementReductionDuration;
         TPSCameraController.Instance.RotateCamera(m_RotateAxisInput * OptionsManager.m_Sensitive);
 
-        if (!m_TargetAvailable || targetCheck<0f)
-        {
-            targetCheck = .3f;
-            m_Target = GameManager.Instance.GetAvailableEntity(this, false, true, GameConst.F_PlayerAutoAimRange);
-        }
-        targetCheck -= Time.deltaTime;
+        TargetTick(deltaTime);
 
         tf_CameraAttach.position = transform.position;
         if (m_Target) 
@@ -289,6 +284,16 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         float finalMovementSpeed = m_CharacterInfo.F_MovementSpeed;
         m_CharacterController.Move((CalculateMoveDirection(m_MoveAxisInput) * finalMovementSpeed + Vector3.down * GameConst.F_Gravity) * deltaTime);
         m_Animator.SetRun(m_MoveAxisInput, finalMovementSpeed / F_MovementSpeed);
+    }
+
+    void TargetTick(float deltaTime)
+    {
+        if (!m_TargetAvailable || targetCheck < 0f)
+        {
+            targetCheck = .3f;
+            m_Target = GameManager.Instance.GetAvailableEntity(this, false, true,  GameConst.F_PlayerAutoAimRangeBase+ m_PlayerInfo.F_AimRangeAdditive);
+        }
+        targetCheck -= Time.deltaTime;
     }
 
     #endregion
