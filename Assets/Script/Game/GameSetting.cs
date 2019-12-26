@@ -2031,18 +2031,8 @@ namespace GameSetting
         public int I_Index { get; private set; } = -1;
         public virtual bool B_LoopAnim => false;
         protected EntityCharacterBase m_Entity;
-        protected Transform attacherFeet => m_Entity.transform;
         protected Transform attacherHead => m_Entity.tf_Head;
         protected Func<DamageDeliverInfo> GetDamageDeliverInfo;
-        protected CharacterInfoManager m_Info
-        {
-            get
-            {
-                if (m_Entity == null)
-                    Debug.LogError("Null Entity Controlling?");
-                return m_Entity.m_CharacterInfo;
-            }
-        }
         public WeaponHelperBase(int equipmentIndex, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo)
         {
             I_Index = equipmentIndex;
@@ -2075,7 +2065,7 @@ namespace GameSetting
                     default: Debug.LogError("Invalid Type:" + projectile.E_ProjectileType); break;
                     case enum_ProjectileFireType.Single: return new WeaponHelperBarrageRange(weaponIndex,projectile, _entity, GetDamageBuffInfo); 
                     case enum_ProjectileFireType.MultipleFan: return new WeaponHelperBarrageMultipleFan(weaponIndex,projectile, _entity, GetDamageBuffInfo); 
-                    case enum_ProjectileFireType.MultipleLine: return new EquipmentBarrageMultipleLine(weaponIndex,projectile, _entity, GetDamageBuffInfo); 
+                    case enum_ProjectileFireType.MultipleLine: return new WeaponHelperBarrageMultipleLine(weaponIndex,projectile, _entity, GetDamageBuffInfo); 
                 }
             }
 
@@ -2268,9 +2258,9 @@ namespace GameSetting
         }
         protected void SpawnMuzzle(Vector3 startPosition, Vector3 direction) => GameObjectManager.PlayMuzzle(m_Entity.m_EntityID,startPosition,direction,i_muzzleIndex,m_MuzzleClip);
     }
-    public class EquipmentBarrageMultipleLine : WeaponHelperBarrageRange
+    public class WeaponHelperBarrageMultipleLine : WeaponHelperBarrageRange
     {
-        public EquipmentBarrageMultipleLine(int equipmentIndex,SFXProjectile projectileInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex,projectileInfo, _controller, _GetBuffInfo)
+        public WeaponHelperBarrageMultipleLine(int equipmentIndex,SFXProjectile projectileInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex,projectileInfo, _controller, _GetBuffInfo)
         {
         }
         public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)

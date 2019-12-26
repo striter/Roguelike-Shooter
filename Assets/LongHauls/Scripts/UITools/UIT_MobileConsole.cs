@@ -11,6 +11,7 @@ public class UIT_MobileConsole : SimpleSingletonMono<UIT_MobileConsole> {
     public int LogSaveCount = 30;
     Text m_LogText, m_FrameText;
     ObjectPoolSimpleClass<int, ConsoleCommand> m_ConsoleCommands;
+    Action<bool> OnConsoleShow;
     protected override void Awake()
     {
         base.Awake();
@@ -60,8 +61,9 @@ public class UIT_MobileConsole : SimpleSingletonMono<UIT_MobileConsole> {
 
         void OnButtonClick() => OnCommand(inputField.text);
     }
-    public void AddConsoleBindings(List<CommandBinding> Bindings)
+    public void AddConsoleBindings(List<CommandBinding> Bindings, Action<bool> _OnConsoleShow)
     {
+        OnConsoleShow = _OnConsoleShow;
         m_ConsoleCommands.ClearPool();
         int commandCount=0;
         Bindings.Traversal((CommandBinding binding) => { m_ConsoleCommands.AddItem(commandCount++).Play(binding); });
@@ -78,13 +80,14 @@ public class UIT_MobileConsole : SimpleSingletonMono<UIT_MobileConsole> {
         m_FrameText.text = ((int)(1 / Time.unscaledDeltaTime)).ToString();
         if (m_fastKeyCooldown>0f)
         {
-            m_fastKeyCooldown -= Time.deltaTime;
+            m_fastKeyCooldown -= Time.unscaledDeltaTime;
             return;
         }
-        if (Input.touchCount >= 4 || Input.GetKeyDown(KeyCode.BackQuote))
+        if (Input.touchCount >= 4 || Input.GetKey(KeyCode.BackQuote))
         {
-            m_fastKeyCooldown = 1f;
+            m_fastKeyCooldown = .5f;
             m_ConsoleCommands.transform.SetActivate(!m_ConsoleCommands.transform.gameObject.activeSelf);
+            OnConsoleShow?.Invoke(m_ConsoleCommands.transform.gameObject.activeInHierarchy);
         }
     }
 
