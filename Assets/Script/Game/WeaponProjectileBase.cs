@@ -57,6 +57,6 @@ public class WeaponProjectileBase : WeaponBase
         SFXProjectile projectile = GameObjectManager.SpawnEquipment<SFXProjectile>(GameExpression.GetPlayerWeaponIndex(m_WeaponInfo.m_Index), m_Muzzle.position, direction);
         projectile.F_Speed = GetSpeed();
         projectile.B_Penetrate = GetPenetrate();
-        projectile.Play(damage, direction, m_Attacher.tf_Weapon.position + direction * GameConst.I_ProjectileMaxDistance);
+        projectile.PlayerCopyCount(damage, direction, m_Attacher.tf_Weapon.position + direction * GameConst.I_ProjectileMaxDistance,m_Attacher.m_PlayerInfo.I_ProjectileCopyCount,10);
     }
 }

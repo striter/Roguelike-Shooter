@@ -53,7 +53,7 @@ public class GameManager : GameManagerBase
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Weapon", "102", KeyCode.F8, (string weapon) => { GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f)), LevelManager.Instance.m_InteractParent).Play(GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew((enum_PlayerWeapon)int.Parse(weapon)))); }));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Player Equipment", "1", KeyCode.F3, (string actionIndex) => { GameObjectManager.SpawnInteract<InteractEquipment>(enum_Interaction.Equipment, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f))).Play(ActionDataManager.CreateAction(int.Parse(actionIndex), TCommon.RandomEnumValues<enum_EquipmentType>(null))); }));
 
-        UIT_MobileConsole.Instance.AddConsoleBindings(m_bindings);
+        UIT_MobileConsole.Instance.AddConsoleBindings(m_bindings,(bool show)=> { Time.timeScale = show ? .1f : 1f; });
     }
     #endregion
     public GameLevelManager m_GameLevel { get; private set; }
@@ -270,6 +270,7 @@ public class GameManager : GameManagerBase
     #endregion
     #region Entity Management
     Dictionary<int, EntityBase> m_Entities = new Dictionary<int, EntityBase>();
+    Dictionary<int, EntityCharacterBase> m_Characters = new Dictionary<int, EntityCharacterBase>();
     Dictionary<enum_EntityFlag, List<EntityCharacterBase>> m_AllyEntities = new Dictionary<enum_EntityFlag, List<EntityCharacterBase>>();
     Dictionary<enum_EntityFlag, List<EntityCharacterBase>> m_OppositeEntities = new Dictionary<enum_EntityFlag, List<EntityCharacterBase>>();
     public int m_FlagEntityCount(enum_EntityFlag flag) => m_AllyEntities[flag].Count;
@@ -278,8 +279,15 @@ public class GameManager : GameManagerBase
     public EntityBase GetEntity(int entityID)
     {
         if (!EntityExists(entityID))
-            Debug.LogError("Entity Not Contains ID:" + entityID.ToString());
+            Debug.LogError("Entity Not Exist in ID:" + entityID.ToString());
         return m_Entities[entityID]; ;
+    }
+    public bool CharacterExists(int entityID) => m_Characters.ContainsKey(entityID);
+    public EntityCharacterBase GetCharacter(int entityID)
+    {
+        if(!CharacterExists(entityID))
+            Debug.LogError("Character Not Exist in ID:" + entityID.ToString());
+        return m_Characters[entityID];
     }
     void InitEntityDic()
     {
@@ -292,6 +300,7 @@ public class GameManager : GameManagerBase
     void EntityDicReset()
     {
         m_Entities.Clear();
+        m_Characters.Clear();
         TCommon.TraversalEnum((enum_EntityFlag flag) => {
             m_AllyEntities[flag].Clear();
             m_OppositeEntities[flag].Clear();
@@ -304,6 +313,7 @@ public class GameManager : GameManagerBase
         if (entity.m_Controller== enum_EntityController.None)
             return;
         EntityCharacterBase character = entity as EntityCharacterBase;
+        m_Characters.Add(character.m_EntityID, character);
         m_AllyEntities[entity.m_Flag].Add(character);
         m_OppositeEntities.Traversal((enum_EntityFlag flag)=> {
             if (entity.m_Flag != enum_EntityFlag.Neutal && flag != entity.m_Flag)
@@ -326,6 +336,7 @@ public class GameManager : GameManagerBase
         if (entity.m_Controller == enum_EntityController.None)
             return;
         EntityCharacterBase character = entity as EntityCharacterBase;
+        m_Characters.Remove(character.m_EntityID);
         m_AllyEntities[entity.m_Flag].Remove(character);
         m_OppositeEntities.Traversal((enum_EntityFlag flag) => {
             if (entity.m_Flag != enum_EntityFlag.Neutal && flag != entity.m_Flag)
@@ -346,7 +357,7 @@ public class GameManager : GameManagerBase
     RaycastHit[] m_Raycasts;
     public bool CheckEntityTargetable(EntityCharacterBase entity)=>!entity.m_CharacterInfo.B_Effecting(enum_CharacterEffect.Cloak) && !entity.m_IsDead;
 
-    public EntityCharacterBase GetAvailableEntity(EntityCharacterBase sourceEntity,bool targetAlly,bool checkObstacle=true, float checkDistance=float.MaxValue)
+    public EntityCharacterBase GetAvailableEntity(EntityCharacterBase sourceEntity,bool targetAlly,bool checkObstacle=true, float checkDistance=float.MaxValue,List<int> idCheckList=null)
     {
         EntityCharacterBase m_target = null;
         float f_targetDistance = float.MaxValue;
