@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 3368198
+    totalSpriteSurfaceArea: 3314406
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -66,8 +66,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: f8ed2f2aa40fed549b97c3b6a03dc61c, type: 3}
   - {fileID: 21300000, guid: cbc16cdaafe934645b541aec0fa828cd, type: 3}
   - {fileID: 21300000, guid: 838e3e3f0673e564aafbb7fb60b21e46, type: 3}
-  - {fileID: 21300000, guid: 433e20f7cd81ea04095e0c5a7c11fb9e, type: 3}
-  - {fileID: 21300000, guid: 730d082326fd1b040bfd9c95629d4144, type: 3}
   - {fileID: 21300000, guid: 688303c2643cc5c4f8b8e5589e62c0bf, type: 3}
   - {fileID: 21300000, guid: 493c8f27165db8a48a66957e0e7ce49d, type: 3}
   - {fileID: 21300000, guid: 6cd370de5f59c7c4a952190201ce7ea8, type: 3}
@@ -153,8 +151,6 @@ SpriteAtlas:
   - bottom_black90
   - bottom_gray
   - bottom_blue
-  - InteractIcon_ActionAdjustment
-  - InteractIcon_PerkUpgrade
   - status_life
   - status_armor
   - control_ability_ready

@@ -28,11 +28,7 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     bool B_HaveAmmoLeft => m_WeaponInfo.m_ClipAmount == -1 || I_AmmoLeft > 0;
     bool B_AmmoFull => m_WeaponInfo.m_ClipAmount == -1||I_ClipAmount == I_AmmoLeft;
     protected void OnFireCheck(float pauseDuration) => f_fireCheck = pauseDuration;
-
-    public ActionAbility m_WeaponAction { get; private set; } = null;
-    public float m_ActionEnergy { get; private set; } = 0;
-    public float m_ActionEnergyRequirementLeft => m_WeaponAction == null ? -1:  (1-m_ActionEnergy / m_WeaponAction.I_Cost);
-    public bool m_ActionAvailable => m_WeaponAction != null && m_ActionEnergy >= m_WeaponAction.I_Cost;
+    
     public override void OnPoolItemInit(enum_PlayerWeapon _identity, Action<enum_PlayerWeapon, MonoBehaviour> _OnRecycle)
     {
         base.OnPoolItemInit(_identity,_OnRecycle);
@@ -52,11 +48,6 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     {
         base.OnPoolItemDisable();
         StopReload();
-    }
-    public void SetWeaponAction(ActionAbility _weaponAction,float _actionEnergy)
-    {
-        m_WeaponAction = _weaponAction;
-        m_ActionEnergy = _actionEnergy;
     }
 
     public void OnAttach(EntityCharacterPlayer _attacher,Transform _attachTo,Action<float> _OnFireRecoil,Action<bool,float> _OnReload)
@@ -91,25 +82,6 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     #region PlayerInteract
     public void Trigger(bool down)=>m_Trigger.OnSetTrigger(down);
     
-    public void OnEnergyReceive(float energy)
-    {
-        if (m_WeaponAction==null)
-            return;
-        m_ActionEnergy += energy;
-        if (m_ActionEnergy >= m_WeaponAction.I_Cost)
-            m_ActionEnergy = m_WeaponAction.I_Cost;
-    }
-
-    public ActionBase GetAbilityACtion()
-    {
-        if(m_ActionAvailable)
-        {
-            m_ActionEnergy = 0;
-            return ActionDataManager.CopyAction( m_WeaponAction);
-        }
-        return null;
-    }
-
     protected bool OnTriggerOnce()
     {
         if (!B_HaveAmmoLeft)

@@ -158,11 +158,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (m_Weapon1) m_Weapon1.Trigger(down);
         if (m_Weapon2) m_Weapon2.Trigger(down);
     }
-    public void OnWeaponEnergy(float energy)
-    {
-        if (m_Weapon1) m_Weapon1.OnEnergyReceive(energy);
-        if (m_Weapon2) m_Weapon2.OnEnergyReceive(energy);
-    }
     public bool m_weaponCanFire { get; private set; } = false;
     void OnReloadClick()
     {
@@ -396,41 +391,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     }
     #endregion
     #region Action
-    public bool OnActionInteract(ActionBase action)
-    {
-        switch (action.m_ActionType)
-        {
-            default:
-                Debug.LogError("Invalid Detected!");
-                return false;
-            case enum_ActionType.Ability:
-                ActionAbility ability = action as ActionAbility;
-                m_WeaponCurrent.SetWeaponAction(ability, ability.I_Cost);
-                OnWeaponStatus();
-                return true;
-            case enum_ActionType.Equipment:
-                m_PlayerInfo.OnUseAction(action);
-                return true;
-        }
-    }
-
-    public void OnWeaponAbilityClick(bool isFirstWeapon)
-    {
-        ActionBase targetAction=null;
-        if (isFirstWeapon && m_Weapon1) targetAction = m_Weapon1.GetAbilityACtion();
-        else if (!isFirstWeapon && m_Weapon2) targetAction = m_Weapon2.GetAbilityACtion();
-
-        if(targetAction!=null)
-            m_PlayerInfo.OnUseAction(targetAction);
-    }
-    public void UpgradeActionPerk(ActionAbility _ability)
-    {
-        if (m_WeaponCurrent.m_WeaponAction == null)
-            m_WeaponCurrent.SetWeaponAction(_ability,_ability.I_Cost);
-        else
-            m_WeaponCurrent.m_WeaponAction.Upgrade();
-        OnWeaponStatus();
-    }
+    
     protected void OnCharacterHealthWillChange(DamageInfo damageInfo, EntityCharacterBase damageEntity)
     {
         if (damageInfo.m_AmountApply <= 0)
@@ -458,7 +419,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             return;
 
         if (damageInfo.m_detail.I_SourceID == m_EntityID || GameManager.Instance.GetEntity(damageInfo.m_detail.I_SourceID).m_SpawnerEntityID == m_EntityID)
-            OnWeaponEnergy(GameExpression.GetActionEnergyRevive(amountApply));
+        {
+            //Dealt Damage
+        }
     }
     #endregion
     #region UI Indicator
@@ -528,7 +491,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void SetBinding(bool on)
     {
         if (on)
-            UIManager.Instance.DoBindings(this, OnMovementDelta, OnRotateDelta,  OnMainDown, OnInteract, OnSwapClick, OnReloadClick, OnWeaponAbilityClick, OnAbilityClick);
+            UIManager.Instance.DoBindings(this, OnMovementDelta, OnRotateDelta,  OnMainDown, OnInteract, OnSwapClick, OnReloadClick, OnAbilityClick);
         else
             UIManager.Instance.RemoveBindings();
     }

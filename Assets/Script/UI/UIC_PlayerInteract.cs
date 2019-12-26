@@ -13,16 +13,14 @@ public class UIC_PlayerInteract : UIControlBase
     Transform tf_Container;
     Transform tf_Top;
     UIT_TextExtend m_CommonTop;
-    Transform tf_Weapon, tf_Equipment, tf_Ability;
+    Transform tf_Weapon;
 
     Transform tf_Bottom;
     UIT_TextExtend m_BottomTips;
     Transform tf_Trade, tf_Pickup;
 
     UIT_TextExtend m_TradePrice;
-    UIC_ActionInteractData m_ActionData;
-    Transform tf_WeaponData;
-    UIC_ActionNameData m_weaponActionData;
+    UIC_EquipmentNameFormatIntro m_EquipmentData;
     UIC_WeaponData m_weaponData;
 
     Transform tf_Common;
@@ -44,14 +42,9 @@ public class UIC_PlayerInteract : UIControlBase
         m_TradePrice = tf_Trade.Find("Amount").GetComponent<UIT_TextExtend>();
 
         tf_Weapon = tf_Top.Find("Weapon");
-        tf_Ability = tf_Top.Find("Ability");
-        tf_Equipment = tf_Top.Find("Equipment");
 
-        tf_WeaponData = tf_Container.Find("WeaponData");
-        m_weaponData = new UIC_WeaponData(tf_WeaponData.Find("Weapon"));
-        m_weaponActionData = new UIC_ActionNameData(tf_WeaponData.Find("Action"));
-
-        m_ActionData = new UIC_ActionInteractData(tf_Container.Find("ActionData"));
+        m_weaponData = new UIC_WeaponData(tf_Container.Find("WeaponData"));
+        m_EquipmentData = new UIC_EquipmentNameFormatIntro(tf_Container.Find("EquipmentData"));
 
         tf_Common = tf_Container.Find("CommonData");
         m_CommonIntro = tf_Common.Find("Intro").GetComponent<UIT_TextExtend>();
@@ -109,28 +102,20 @@ public class UIC_PlayerInteract : UIControlBase
         bool isCommon = false;
         bool isWeapon = false;
         bool isAction = false;
-        bool isAbility = false;
-        bool isEquipment = false;
         if (interactInfo != null)
         {
             switch (interactInfo.m_InteractType)
             {
-                case enum_Interaction.Action:
+                case enum_Interaction.Equipment:
                     isAction = true;
-                    InteractAction actionInteract = interactInfo as InteractAction;
-                    m_ActionData.SetInfo(actionInteract.m_Action);
-                    isAbility = actionInteract.m_Action.m_ActionType == enum_ActionType.Ability;
-                    isEquipment = actionInteract.m_Action.m_ActionType == enum_ActionType.Equipment;
+                    InteractEquipment actionInteract = interactInfo as InteractEquipment;
+                    m_EquipmentData.SetInfo(actionInteract.m_Equipment);
                     break;
                 case enum_Interaction.Weapon:
                     isWeapon = true;
                     InteractWeapon weaponInteract = interactInfo as InteractWeapon;
                     m_weaponData.UpdateInfo(weaponInteract.m_Weapon);
                     m_weaponData.UpdateAmmoInfo(weaponInteract.m_Weapon.m_WeaponInfo.m_ClipAmount, weaponInteract.m_Weapon.m_WeaponInfo.m_ClipAmount);
-                    bool actionValid = weaponInteract.m_Weapon.m_WeaponAction != null;
-                    m_weaponActionData.transform.SetActivate(actionValid);
-                    if (actionValid)
-                        m_weaponActionData.SetInfo(weaponInteract.m_Weapon.m_WeaponAction);
                     break;
                 default:
                     isCommon = true;
@@ -143,10 +128,8 @@ public class UIC_PlayerInteract : UIControlBase
         m_CommonTop.SetActivate(isCommon);
         tf_Common.SetActivate(isCommon);
         tf_Weapon.SetActivate(isWeapon);
-        tf_WeaponData.SetActivate(isWeapon);
-        tf_Ability.SetActivate(isAbility);
-        tf_Equipment.SetActivate(isEquipment);
-        m_ActionData.transform.SetActivate(isAction);
+        m_weaponData.transform.SetActivate(isWeapon);
+        m_EquipmentData.transform.SetActivate(isAction);
         bool tradeItem = price >= 0;
         tf_Trade.SetActivate(tradeItem);
         m_BottomTips.SetActivate(!tradeItem);

@@ -74,7 +74,6 @@ namespace GameSetting
         public static int GetPlayerEquipmentIndex(int equipmentIndex) => equipmentIndex * 10;
         public static int GetPlayerSubEquipmentIndex(int equipmentIndex) => equipmentIndex * 10 + 1;
         public static int GetAIEquipmentIndex(int entityIndex, int weaponIndex = 0, int subWeaponIndex = 0) => entityIndex * 100 + weaponIndex * 10 + subWeaponIndex;
-        public static int GetActionMuzzleIndex(enum_ActionType type) => 10010 + (int)type;
         public const int I_PlayerReviveBuffIndex = 40004;
 
         public static float F_PlayerSensitive(int sensitiveTap) => sensitiveTap / 5f;
@@ -108,7 +107,7 @@ namespace GameSetting
                 default: Debug.LogError("No Coins Can Phrase Here!"); return new RangeInt(0, -1);
                 case enum_Interaction.PickupHealth:
                     return new RangeInt(10, 0);
-                case enum_Interaction.Action:
+                case enum_Interaction.Equipment:
                     switch (actionRarity)
                     {
                         default: Debug.LogError("Invalid Level!"); return new RangeInt(0, -1);
@@ -134,24 +133,23 @@ namespace GameSetting
 
         public static List<enum_LevelType> GetRandomLevels(System.Random seed)
         {
-            switch (seed.Next(1, 9))        //1-4
+            switch (seed.Next(1, 9))
             {
                 default:
                     return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.End };
-                case 1: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.BattleActionAcquire, enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.ActionAdjustment, enum_LevelType.End };
-                case 2: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.BattlePerkUpgrade, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.BattleActionAcquire, enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.Battle, enum_LevelType.End };
-                case 3: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.BattlePerkUpgrade, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.BattleActionAcquire, enum_LevelType.Battle, enum_LevelType.ActionAdjustment, enum_LevelType.End };
-                case 4: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.BattlePerkUpgrade, enum_LevelType.Battle, enum_LevelType.ActionAdjustment, enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.Battle, enum_LevelType.End };
-                case 5: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.BattleActionAcquire, enum_LevelType.Battle, enum_LevelType.BattlePerkUpgrade, enum_LevelType.Battle, enum_LevelType.ActionAdjustment, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.End };
-                case 6: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.BattleActionAcquire, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.Battle, enum_LevelType.BattlePerkUpgrade, enum_LevelType.End };
-                case 7: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.BattleActionAcquire, enum_LevelType.Battle, enum_LevelType.ActionAdjustment, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.End };
-                case 8: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.BattlePerkUpgrade, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.Battle, enum_LevelType.ActionAdjustment, enum_LevelType.End };
+                case 1: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.EquipmentAcquireBattle, enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.Battle, enum_LevelType.Battle,enum_LevelType.End };
+                case 2: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.EquipmentAcquireBattle, enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.Battle, enum_LevelType.End };
+                case 3: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.EquipmentAcquireBattle, enum_LevelType.Battle, enum_LevelType.End };
+                case 4: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.Battle,  enum_LevelType.Battle,  enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.Battle, enum_LevelType.End };
+                case 5: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.EquipmentAcquireBattle, enum_LevelType.Battle,enum_LevelType.Battle,  enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.End };
+                case 6: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.EquipmentAcquireBattle, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.Battle, enum_LevelType.End };
+                case 7: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.EquipmentAcquireBattle, enum_LevelType.Battle,  enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.End };
+                case 8: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle,  enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.Battle,  enum_LevelType.End };
             }
         }
 
         public static int GetActionRemovePrice(enum_StageLevel stage, int removeTimes) => 10 * (removeTimes + 1) ;
         public static int GetActionUpgradePrice(enum_StageLevel stage, int upgradeTimes) => 10 * (upgradeTimes + 1) ;
-        public static enum_ActionRarity GetBattleTradeActionRarity(this enum_StageLevel stageLevel) => stageLevel.ToRarity() == enum_ActionRarity.Epic ? enum_ActionRarity.Epic : (stageLevel + 1).ToRarity();
         public static StageInteractGenerateData GetInteractGenerate(enum_StageLevel level)
         {
             switch (level)
@@ -162,12 +160,8 @@ namespace GameSetting
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 100 }, { enum_WeaponRarity.Rare, 0 }, { enum_WeaponRarity.Legend, 0 } },
                         new Dictionary<enum_ActionRarity, int>() { { enum_ActionRarity.Normal, 100 }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 0 } }, 
                         PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),       //Normal
-                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 0 } },       //Ability
-                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 9 }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 0 } },       //Equipment
                         new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Ordinary, 6 },{ enum_WeaponRarity.Advanced,3} }),          //Weapon
                         PickupGenerateData.Create(10, 100, 50, new RangeInt(10, 5),     //Elite
-                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 0 } },
-                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 100 }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 0 } },
                         new Dictionary<enum_WeaponRarity, float> { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 100 } })
                         );
                 case enum_StageLevel.Veteran:
@@ -175,12 +169,8 @@ namespace GameSetting
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 0 }, { enum_WeaponRarity.Rare, 100 }, { enum_WeaponRarity.Legend, 0 } },
                         new Dictionary<enum_ActionRarity, int>() { { enum_ActionRarity.Normal, 100 }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 0 } },
                         PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),
-                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 0 } },
-                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 7.6f }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 0 } },
                         new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Advanced, 3.8f },{ enum_WeaponRarity.Rare,1.9f} }),
                         PickupGenerateData.Create(10, 100, 100, new RangeInt(10, 5),
-                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 0 } },
-                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 100 }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 0 } },
                         new Dictionary<enum_WeaponRarity, float> { { enum_WeaponRarity.Rare, 100 } })
                         );
                 case enum_StageLevel.Ranger:
@@ -188,12 +178,8 @@ namespace GameSetting
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 0 }, { enum_WeaponRarity.Rare, 0 }, { enum_WeaponRarity.Legend, 100 } },
                         new Dictionary<enum_ActionRarity, int>() { { enum_ActionRarity.Normal, 100 }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 0 } },
                         PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),
-                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 0 } },
-                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 7 }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 0 } },
                         new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Rare, 2.8f },{ enum_WeaponRarity.Legend, 2.8f} }),
                         PickupGenerateData.Create(0, 0, 0, new RangeInt(10, 5),
-                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 0 } },
-                        new Dictionary<enum_ActionRarity, float> { { enum_ActionRarity.Normal, 0 }, { enum_ActionRarity.OutStanding, 0 }, { enum_ActionRarity.Epic, 0 } },
                         new Dictionary<enum_WeaponRarity, float> { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 0 } })
                         );
             }
@@ -264,9 +250,7 @@ namespace GameSetting
                 case enum_LevelType.Battle:
                 case enum_LevelType.End:
                     return enum_LevelGenerateType.Big;
-                case enum_LevelType.BattleActionAcquire:
-                case enum_LevelType.BattlePerkUpgrade:
-                case enum_LevelType.ActionAdjustment:
+                case enum_LevelType.EquipmentAcquireBattle:
                 case enum_LevelType.Trade:
                 case enum_LevelType.Start:
                     return enum_LevelGenerateType.Small;
@@ -295,39 +279,10 @@ namespace GameSetting
                 case enum_LevelType.Start:
                 case enum_LevelType.Battle:
                 case enum_LevelType.Trade:
-                case enum_LevelType.ActionAdjustment:
                 case enum_LevelType.End:
                     return "level_" + type;
-                case enum_LevelType.BattleActionAcquire:
-                case enum_LevelType.BattlePerkUpgrade:
+                case enum_LevelType.EquipmentAcquireBattle:
                     return "level_Reward";
-            }
-        }
-        public static string GetIconSprite(this enum_ActionType type)
-        {
-            switch (type)
-            {
-                default: Debug.LogError("Invalid Pharse Here!" + type.ToString()); return "";
-                case enum_ActionType.Ability: return "action_icon_basic";
-                case enum_ActionType.Equipment: return "action_icon_equipment";
-            }
-        }
-        public static string GetNameBGSprite(this enum_ActionType type)
-        {
-            switch (type)
-            {
-                default: Debug.LogError("Invalid Pharse Here!" + type.ToString()); return "";
-                case enum_ActionType.Ability: return "action_bottom_basic";
-                case enum_ActionType.Equipment: return "action_bottom_equipment";
-            }
-        }
-        public static string GetCostBGSprite(this enum_ActionType type)
-        {
-            switch (type)
-            {
-                default: Debug.LogError("Invalid Pharse Here!" + type.ToString()); return "";
-                case enum_ActionType.Ability: return "action_cost_basic";
-                case enum_ActionType.Equipment: return "action_cost_equipment";
             }
         }
         public static string GetInteractIcon(this enum_Interaction type)
@@ -337,8 +292,6 @@ namespace GameSetting
                 default:
                     Debug.LogError("Invalid Convertions Here!");
                     return "";
-                case enum_Interaction.PerkUpgrade:
-                case enum_Interaction.ActionAdjustment:
                 case enum_Interaction.Portal:
                     return "InteractIcon_" + type;
             }
@@ -401,8 +354,8 @@ namespace GameSetting
     public static class LocalizationKeyJoint
     {
         public static string GetNameLocalizeKey(this BuffBase buff) => "Buff_Name_" + buff.m_Index;
-        public static string GetNameLocalizeKey(this ActionBase action) => "Action_Name_" + action.m_Index;
-        public static string GetIntroLocalizeKey(this ActionBase action) => "Action_Intro_" + action.m_Index;
+        public static string GetNameLocalizeKey(this EquipmentExpire action) => "Action_Name_" + action.m_Index;
+        public static string GetIntroLocalizeKey(this EquipmentExpire action) => "Action_Intro_" + action.m_Index;
         public static string GetLocalizeKey(this enum_StageLevel stage) => "Game_Stage_" + stage;
         public static string GetLocalizeKey(this enum_Style style) => "Game_Style_" + style;
         public static string GetLocalizeNameKey(this enum_PlayerWeapon weapon) => "Weapon_Name_" + weapon;
@@ -415,8 +368,7 @@ namespace GameSetting
         public static string GetLocalizeKey(this enum_Option_JoyStickMode joystick) => "UI_Option_" + joystick;
         public static string GetLocalizeKey(this enum_Option_LanguageRegion region) => "UI_Option_" + region;
         public static string GetLocalizeKey(this enum_CampFarmItemStatus status) => "UI_Farm_" + status;
-        public static string GetInteractTitleKey(this enum_ActionType type) => "UI_Interact_Action_" + type;
-        public static string SetActionIntro(this ActionBase actionInfo, UIT_TextExtend text) => text.formatText(actionInfo.GetIntroLocalizeKey() ,actionInfo.F_Duration, actionInfo.Value1, actionInfo.Value2, actionInfo.Value3);
+        public static string SetActionIntro(this EquipmentExpire actionInfo, UIT_TextExtend text) => text.formatText(actionInfo.GetIntroLocalizeKey() ,actionInfo.F_Duration, actionInfo.Value1, actionInfo.Value2, actionInfo.Value3);
     }
 
     public static class GameLayer
@@ -480,7 +432,6 @@ namespace GameSetting
         UI_PlayerInteractStatus,
         UI_PlayerInteractPickup, 
         UI_PlayerHealthStatus,
-        UI_PlayerActionExpireStatus,
         UI_PlayerEquipmentStatus,
         UI_PlayerWeaponStatus,
 
@@ -504,7 +455,7 @@ namespace GameSetting
     
     public enum enum_Style { Invalid = -1, Forest = 1, Desert = 2, Iceland = 3, Horde = 4, Undead = 5, }
 
-    public enum enum_LevelType { Invalid = -1, Start = 0, Battle = 1, End = 2, Trade = 11, ActionAdjustment = 12, BattleActionAcquire = 13,BattlePerkUpgrade=14, }
+    public enum enum_LevelType { Invalid = -1, Start = 0, Battle = 1, End = 2, Trade = 11, EquipmentAcquireBattle = 13,}
 
     public enum enum_LevelItemType { Invalid = -1, LargeMore, LargeLess, MediumMore, MediumLess, SmallMore, SmallLess, ManmadeMore, ManmadeLess, NoCollisionMore, NoCollisionLess, BorderLinear, BorderOblique, }
 
@@ -517,7 +468,7 @@ namespace GameSetting
     public enum enum_EnermyType { Invalid = -1, Fighter = 1, Shooter_Rookie = 2, Shooter_Veteran = 3, AOECaster = 4, Elite = 5, }
 
     public enum enum_Interaction { Invalid = -1,
-        GameBegin,Bonfire, ContainerTrade, ContainerBattle, PickupCoin, PickupHealth,PickupHealthPack, PickupArmor, Action, Weapon,PerkUpgrade, ActionAdjustment, Portal, GameEnd,
+        GameBegin,Bonfire, ContainerTrade, ContainerBattle, PickupCoin, PickupHealth,PickupHealthPack, PickupArmor, Equipment, Weapon, Portal, GameEnd,
         CampBegin,CampStage, CampDifficult,CampFarm,CampAction,CampEnd, }
     
     public enum enum_ProjectileFireType { Invalid = -1, Single = 1, MultipleFan = 2, MultipleLine = 3, };
@@ -534,13 +485,11 @@ namespace GameSetting
 
     public enum enum_CharacterEffect { Invalid = -1, Freeze = 1, Cloak = 2, Scan = 3, }
 
-    public enum enum_ExpireType { Invalid = -1, Buff = 1, Action = 2, }
+    public enum enum_ExpireType { Invalid = -1, Buff = 1, Equipment = 2, }
 
     public enum enum_ExpireRefreshType { Invalid = -1, AddUp = 1, Refresh = 2,RefreshIdentity=3, }
 
     public enum enum_ActionRarity { Invalid = -1, Normal = 1, OutStanding = 2, Epic = 3, }
-
-    public enum enum_ActionType { Invalid = -1, Ability = 1,Equipment=2,}
 
     public enum enum_EquipmentType { Invalid=-1,TypeA=1,TypeB=2,TypeC=3}
 
@@ -653,14 +602,12 @@ namespace GameSetting
         public int m_ArmorRate { get; private set; }
         public int m_CoinRate { get; private set; }
         public RangeInt m_CoinRange { get; private set; }
-        public Dictionary<enum_ActionRarity, float> m_AbilityGenerate { get; private set; }
-        public Dictionary<enum_ActionRarity, float> m_EquipmentGenerate { get; private set; }
         public Dictionary<enum_WeaponRarity, float> m_WeaponRate { get; private set; }
 
         public bool CanGenerateHealth(enum_EnermyType entityType) => TCommon.RandomPercentage() <= m_HealthRate;
         public bool CanGenerateArmor(enum_EnermyType entityType) => TCommon.RandomPercentage() <= m_ArmorRate;
         public int GetCoinGenerate(enum_EnermyType entityType) => TCommon.RandomPercentage() <= m_CoinRate ? m_CoinRange.Random() : -1;
-        public static PickupGenerateData Create(int healthRate, int armorRate, int coinRate, RangeInt coinAmount, Dictionary<enum_ActionRarity, float> _abilityRate, Dictionary<enum_ActionRarity, float> _equipmentGenerate, Dictionary<enum_WeaponRarity, float> _weaponRate) => new PickupGenerateData() { m_HealthRate = healthRate, m_ArmorRate = armorRate, m_CoinRate = coinRate, m_CoinRange = coinAmount,m_AbilityGenerate=_abilityRate,m_EquipmentGenerate=_equipmentGenerate,m_WeaponRate=_weaponRate };
+        public static PickupGenerateData Create(int healthRate, int armorRate, int coinRate, RangeInt coinAmount, Dictionary<enum_WeaponRarity, float> _weaponRate) => new PickupGenerateData() { m_HealthRate = healthRate, m_ArmorRate = armorRate, m_CoinRate = coinRate, m_CoinRange = coinAmount,m_WeaponRate=_weaponRate };
     }
 
     public struct StageInteractGenerateData
@@ -745,7 +692,7 @@ namespace GameSetting
         public string m_GameSeed;
         public enum_StageLevel m_Stage;
         public int m_coins;
-        public List<ActionEquipmentSaveData> m_actionEquipment;
+        public List<EquipmentSaveData> m_actionEquipment;
         public float m_curHealth;
         public float m_maxHealthAdditive;
         public WeaponSaveData m_weapon1, m_weapon2;
@@ -756,7 +703,7 @@ namespace GameSetting
             m_coins = 0;
             m_curHealth = -1;
             m_maxHealthAdditive = -1;
-            m_actionEquipment = new List<ActionEquipmentSaveData>();
+            m_actionEquipment = new List<EquipmentSaveData>();
             m_Stage = enum_StageLevel.Rookie;
             m_GameSeed = DateTime.Now.ToLongTimeString().ToString();
             m_character = GameDataManager.m_GameData.m_CharacterSelected;
@@ -772,7 +719,7 @@ namespace GameSetting
             m_weapon1 = WeaponSaveData.Create(_player.m_Weapon1);
             m_weapon2 = WeaponSaveData.Create(_player.m_Weapon2);
             m_weaponEquipingFirst = _player.m_weaponEquipingFirst;
-            m_actionEquipment = ActionEquipmentSaveData.Create(_player.m_PlayerInfo.m_ActionEquipment);
+            m_actionEquipment = EquipmentSaveData.Create(_player.m_PlayerInfo.m_ActionEquipment);
 
             m_GameSeed = _level.m_Seed;
             m_Stage = _level.m_GameStage;
@@ -809,48 +756,25 @@ namespace GameSetting
         {
         }
     }
-
-    public struct ActionSaveData : IXmlPhrase
-    {
-        public bool m_IsNull => m_Index <= 0;
-        public int m_Index { get; private set; }
-        public enum_ActionRarity m_Level { get; private set; }
-
-        public string ToXMLData() => m_Index.ToString() + "," + m_Level.ToString();
-        public ActionSaveData(string xmlData)
-        {
-            string[] split = xmlData.Split(',');
-            m_Index = int.Parse(split[0]);
-            m_Level = (enum_ActionRarity)Enum.Parse(typeof(enum_ActionRarity), split[1]);
-        }
-
-        public static ActionSaveData Create(int index, enum_ActionRarity level) => new ActionSaveData { m_Index = index, m_Level = level };
-        public static ActionSaveData Create(ActionBase action) => action == null ? new ActionSaveData() { m_Index = -1, m_Level = 0 } : new ActionSaveData { m_Index = action.m_Index, m_Level = action.m_rarity };
-        public static List<ActionSaveData> Create(List<ActionBase> actions)
-        {
-            List<ActionSaveData> infos = new List<ActionSaveData>();
-            actions.Traversal((ActionBase action) => { infos.Add(Create(action)); });
-            return infos;
-        }
-    }
-    public struct ActionEquipmentSaveData : IXmlPhrase
+    
+    public struct EquipmentSaveData : IXmlPhrase
     {
         public int m_Index { get; private set; }
         public enum_EquipmentType m_Type { get; private set; }
 
         public string ToXMLData() => m_Index + "," + m_Type;
-        public ActionEquipmentSaveData(string xmlData)
+        public EquipmentSaveData(string xmlData)
         {
             string[] split = xmlData.Split(',');
             m_Index = int.Parse(split[0]);
             m_Type = (enum_EquipmentType)Enum.Parse(typeof(enum_EquipmentType), split[1]);
         }
 
-        public static ActionEquipmentSaveData Create(ActionEquipment action) =>  new ActionEquipmentSaveData { m_Index = action.m_Index,m_Type=action.m_EquipmentType};
-        public static List<ActionEquipmentSaveData> Create(List<ActionEquipment> equipments)
+        public static EquipmentSaveData Create(EquipmentExpire action) =>  new EquipmentSaveData { m_Index = action.m_Index,m_Type=action.m_EquipmentType};
+        public static List<EquipmentSaveData> Create(List<EquipmentExpire> equipments)
         {
-            List<ActionEquipmentSaveData> data = new List<ActionEquipmentSaveData>();
-            equipments.Traversal((ActionEquipment equipment) => { data.Add(Create(equipment)); });
+            List<EquipmentSaveData> data = new List<EquipmentSaveData>();
+            equipments.Traversal((EquipmentExpire equipment) => { data.Add(Create(equipment)); });
             return data;
         }
     }
@@ -859,17 +783,12 @@ namespace GameSetting
     public struct WeaponSaveData : IXmlPhrase
     {
         public enum_PlayerWeapon m_Weapon { get; private set; }
-        public float m_WeaponEnergy { get; private set; }
-        public ActionSaveData m_WeaponAction { get; private set; }
-        public string ToXMLData() => m_Weapon + ";" + m_WeaponEnergy + ";" + m_WeaponAction.ToXMLData();
+        public string ToXMLData() => m_Weapon.ToString();
         public WeaponSaveData(string xmlData)
         {
-            string[] split = xmlData.Split(';');
-            m_Weapon = (enum_PlayerWeapon)Enum.Parse(typeof(enum_PlayerWeapon), split[0]);
-            m_WeaponEnergy = float.Parse(split[1]);
-            m_WeaponAction = new ActionSaveData(split[2]);
+            m_Weapon = (enum_PlayerWeapon)Enum.Parse(typeof(enum_PlayerWeapon), xmlData);
         }
-        public static WeaponSaveData Create(WeaponBase weapon) => new WeaponSaveData() { m_Weapon =weapon!=null? weapon.m_WeaponInfo.m_Weapon: enum_PlayerWeapon.Invalid, m_WeaponEnergy = weapon!=null?weapon.m_ActionEnergy:0, m_WeaponAction =  ActionSaveData.Create(weapon != null ? weapon.m_WeaponAction:null)};
+        public static WeaponSaveData Create(WeaponBase weapon) => new WeaponSaveData() { m_Weapon =weapon!=null? weapon.m_WeaponInfo.m_Weapon: enum_PlayerWeapon.Invalid};
         public static WeaponSaveData CreateNew(enum_PlayerWeapon weapon) => new WeaponSaveData() { m_Weapon = weapon };
     }
 
@@ -1565,8 +1484,8 @@ namespace GameSetting
 
         protected Vector3 m_prePos;
 
-        public List<ActionBase> m_ActionPlaying { get; private set; } = new List<ActionBase>();
-        public List<ActionEquipment> m_ActionEquipment { get; private set; } = new List<ActionEquipment>();
+        public List<EquipmentExpire> m_ActionPlaying { get; private set; } = new List<EquipmentExpire>();
+        public List<EquipmentExpire> m_ActionEquipment { get; private set; } = new List<EquipmentExpire>();
         public int m_Coins { get; private set; } = 0;
 
         public PlayerInfoManager(EntityCharacterPlayer _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
@@ -1589,12 +1508,11 @@ namespace GameSetting
             m_prePos = m_Entity.transform.position;
         }
 
-        public void SetInfoData(int coins, List<ActionEquipment> _actionEquiping)
+        public void SetInfoData(int coins, List<EquipmentExpire> _actionEquiping)
         {
             m_Coins = coins;
-            _actionEquiping.Traversal((ActionEquipment action) => { AddExpire(action); });
+            _actionEquiping.Traversal((EquipmentExpire action) => { AddExpire(action); });
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
-            TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerActionExpireStatus, this);
         }
 
         #region Action
@@ -1608,31 +1526,17 @@ namespace GameSetting
             }
             return false;
         }
-
-        public void UpgradeEquipment(int index)
-        {
-            m_ActionEquipment[index].Upgrade();
-            TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
-        }
-        public void RemoveEquipment(int index)
-        {
-            m_ActionEquipment[index].ForceExpire();
-            TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
-        }
-
+        
         public bool b_haveEmptyEquipmentSlot => m_ActionEquipment.Count < GameConst.I_PlayerEquipmentCount;
-        public void SwapEquipment(int index,ActionBase targetAction)
+        public void SwapEquipment(int index,EquipmentExpire targetAction)
         {
             RemoveExpire(m_ActionEquipment[index]);
             AddExpire(targetAction);
         }
-        public void OnUseAction(ActionBase targetAction)
+        public void OnEquipmentAcquire(EquipmentExpire targetAction)
         {
-            if (targetAction.m_ActionType == enum_ActionType.Equipment && !b_haveEmptyEquipmentSlot)
+            if (!b_haveEmptyEquipmentSlot)
                 return;
-            if (targetAction.m_ActionType == enum_ActionType.Ability)
-                m_ActionPlaying.Traversal((ActionBase action) => { action.OnUseWeaponAbility(targetAction); });
-            GameObjectManager.PlayMuzzle(m_Player.m_EntityID, m_Player.transform.position, Vector3.up, GameExpression.GetActionMuzzleIndex(targetAction.m_ActionType));
             AddExpire(targetAction);
         }
         #endregion
@@ -1640,58 +1544,39 @@ namespace GameSetting
         protected override void AddExpire(ExpireBase expire)
         {
             base.AddExpire(expire);
-            if (expire.m_ExpireType != enum_ExpireType.Action)
+            if (expire.m_ExpireType != enum_ExpireType.Equipment)
                 return;
-            ActionBase targetAction = expire as ActionBase;
+            EquipmentExpire targetAction = expire as EquipmentExpire;
             m_ActionPlaying.Add(targetAction);
-            switch (targetAction.m_ActionType)
-            {
-                case enum_ActionType.Equipment:
-                    m_ActionEquipment.Add(targetAction as ActionEquipment);
-                    CheckEquipmentRarity();
-                    TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
-                    break;
-                case enum_ActionType.Ability:
-                    TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerActionExpireStatus, this);
-                    break;
-            }
+            m_ActionEquipment.Add(targetAction);
+            CheckEquipmentRarity();
 
-            targetAction.Activate(m_Player, RemoveExpire);
+            targetAction.OnActivate(m_Player, RemoveExpire);
             targetAction.OnActivate();
         }
 
         protected override void RemoveExpire(ExpireBase expire)
         {
             base.RemoveExpire(expire);
-            if (expire.m_ExpireType != enum_ExpireType.Action)
+            if (expire.m_ExpireType != enum_ExpireType.Equipment)
                 return;
-            ActionBase targetAction = expire as ActionBase;
-            m_ActionPlaying.Remove(targetAction);
-            switch (targetAction.m_ActionType)
-            {
-                case enum_ActionType.Equipment:
-                    {
-                        m_ActionEquipment.Remove(targetAction as ActionEquipment);
-                        CheckEquipmentRarity();
-                        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
-                    }
-                    break;
-                case enum_ActionType.Ability:
-                    TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerActionExpireStatus, this);
-                    break;
-            }
+            EquipmentExpire targetExpire = expire as EquipmentExpire;
+            m_ActionPlaying.Remove(targetExpire);
+            m_ActionEquipment.Remove(targetExpire as EquipmentExpire);
+            CheckEquipmentRarity();
+            TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
         }
         void CheckEquipmentRarity()
         {
             Dictionary<enum_EquipmentType, int> m_Types = new Dictionary<enum_EquipmentType, int>();
-            m_ActionEquipment.Traversal((ActionEquipment equipment) =>
+            m_ActionEquipment.Traversal((EquipmentExpire equipment) =>
             {
                 if (!m_Types.ContainsKey(equipment.m_EquipmentType))
                     m_Types.Add(equipment.m_EquipmentType, 0);
 
                 m_Types[equipment.m_EquipmentType]++;
             });
-            m_ActionEquipment.Traversal((ActionEquipment equipment) => equipment.CheckUpgrade(m_Types[equipment.m_EquipmentType]));
+            m_ActionEquipment.Traversal((EquipmentExpire equipment) => equipment.CheckRarity(m_Types[equipment.m_EquipmentType]));
         }
 
         #endregion
@@ -1712,7 +1597,7 @@ namespace GameSetting
         protected override void OnSetExpireInfo(ExpireBase expire)
         {
             base.OnSetExpireInfo(expire);
-            ActionBase action = expire as ActionBase;
+            EquipmentExpire action = expire as EquipmentExpire;
             if (action == null)
                 return;
 
@@ -1740,12 +1625,12 @@ namespace GameSetting
             ResetEffect(enum_CharacterEffect.Cloak);
             float randomDamageMultiply = UnityEngine.Random.Range(-GameConst.F_PlayerDamageAdjustmentRange, GameConst.F_PlayerDamageAdjustmentRange);
             DamageDeliverInfo info = DamageDeliverInfo.DamageInfo(m_Entity.m_EntityID, F_DamageMultiply + randomDamageMultiply, F_DamageAdditive);
-            m_ActionPlaying.Traversal((ActionBase action) => { action.OnFire(info.I_IdentiyID); });
+            m_ActionPlaying.Traversal((EquipmentExpire action) => { action.OnFire(info.I_IdentiyID); });
             return info;
         }
 
-        public void OnPlayerMove(float distance) => m_ActionPlaying.Traversal((ActionBase action) => { action.OnMove(distance); });
-        public void OnReloadFinish() => m_ActionPlaying.Traversal((ActionBase action) => { action.OnReloadFinish(); });
+        public void OnPlayerMove(float distance) => m_ActionPlaying.Traversal((EquipmentExpire action) => { action.OnMove(distance); });
+        public void OnReloadFinish() => m_ActionPlaying.Traversal((EquipmentExpire action) => { action.OnReloadFinish(); });
 
         public void OnEntityActivate(EntityBase targetEntity)
         {
@@ -1757,9 +1642,9 @@ namespace GameSetting
                 ally.m_Health.SetHealthMultiplier(F_AllyHealthMultiplierAdditive);
         }
 
-        public void OnWillDealtDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) { m_ActionPlaying.Traversal((ActionBase action) => { action.OnDealtDamageSetEffect(damageEntity, damageInfo); action.OnDealtDamageSetDamage(damageEntity, damageInfo); }); }
+        public void OnWillDealtDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) { m_ActionPlaying.Traversal((EquipmentExpire action) => { action.OnDealtDamageSetEffect(damageEntity, damageInfo); action.OnDealtDamageSetDamage(damageEntity, damageInfo); }); }
 
-        public void OnWillReceiveDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) { m_ActionPlaying.Traversal((ActionBase action) => { action.OnBeforeReceiveDamage(damageInfo); }); }
+        public void OnWillReceiveDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) { m_ActionPlaying.Traversal((EquipmentExpire action) => { action.OnBeforeReceiveDamage(damageInfo); }); }
 
         public override void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
         {
@@ -1770,15 +1655,15 @@ namespace GameSetting
             if (damageInfo.m_detail.I_SourceID == m_Player.m_EntityID)
             {
                 if(amountApply>0)
-                    m_ActionPlaying.Traversal((ActionBase action) => { action.OnAfterDealtDemage(damageEntity, damageInfo, amountApply); });
+                    m_ActionPlaying.Traversal((EquipmentExpire action) => { action.OnAfterDealtDemage(damageEntity, damageInfo, amountApply); });
             }
 
             if (damageEntity.m_EntityID == m_Player.m_EntityID)
             {
                 if (amountApply > 0)
-                    m_ActionPlaying.Traversal((ActionBase action) => { action.OnAfterReceiveDamage(damageInfo, amountApply); });
+                    m_ActionPlaying.Traversal((EquipmentExpire action) => { action.OnAfterReceiveDamage(damageInfo, amountApply); });
                 else
-                    m_ActionPlaying.Traversal((ActionBase action) => { action.OnReceiveHealing(damageInfo, amountApply); });
+                    m_ActionPlaying.Traversal((EquipmentExpire action) => { action.OnReceiveHealing(damageInfo, amountApply); });
             }
         }
         #endregion
@@ -1920,14 +1805,14 @@ namespace GameSetting
         }
     }
 
-    public class ActionBase : ExpireBase
+    public class EquipmentExpire : ExpireBase
     {
-        public override enum_ExpireType m_ExpireType => enum_ExpireType.Action;
+        public override enum_ExpireType m_ExpireType => enum_ExpireType.Equipment;
         public EntityCharacterPlayer m_ActionEntity { get; private set; }
         public enum_ActionRarity m_rarity { get; protected set; } = enum_ActionRarity.Invalid;
+        public enum_EquipmentType m_EquipmentType;
         public int m_Identity { get; private set; } = -1;
         public virtual bool B_ActionAble => true;
-        public virtual enum_ActionType m_ActionType => enum_ActionType.Invalid;
         public virtual float Value1 => 0;
         public virtual float Value2 => 0;
         public virtual float Value3 => 0;
@@ -1941,23 +1826,26 @@ namespace GameSetting
         public virtual bool B_ProjectilePenetrade => false;
         public virtual float F_AllyHealthMultiplierAdditive => 0;
         public virtual float F_Duration => 0;
-        public ActionBase() { }
-        protected ActionBase(int _identity,enum_ActionRarity _level)
+        public EquipmentExpire() { }
+        protected EquipmentExpire(int _identity,enum_EquipmentType _type)
         {
             m_Identity = _identity;
-            m_rarity = _level;
+            m_EquipmentType = _type;
         }
-        public void Activate(EntityCharacterPlayer _actionEntity, Action<ExpireBase> OnExpired) { m_ActionEntity = _actionEntity; OnActivate(F_Duration, OnExpired); }
-        public bool B_Upgradable => m_rarity < enum_ActionRarity.Epic;
-        public void Upgrade()
+        public virtual void OnActivate(EntityCharacterPlayer _actionEntity, Action<ExpireBase> OnExpired) { m_ActionEntity = _actionEntity; OnActivate(F_Duration, OnExpired); }
+      
+        public void CheckRarity(int sameCount)
         {
-            if (m_rarity < enum_ActionRarity.Epic)
-                m_rarity++;
+            if (sameCount >= 4)
+                m_rarity = enum_ActionRarity.Epic;
+            else if (sameCount >= 2)
+                m_rarity = enum_ActionRarity.OutStanding;
+            else
+                m_rarity = enum_ActionRarity.Normal;
         }
-        
+
         #region Interact
         public virtual void OnActivate() { }
-        public virtual void OnUseWeaponAbility(ActionBase targetAction) { }
         public virtual void OnBeforeReceiveDamage(DamageInfo info) { }
         public virtual void OnAfterReceiveDamage(DamageInfo info, float amount) { }
         public virtual void OnDealtDamageSetEffect(EntityCharacterBase receiver,DamageInfo info) { }
@@ -1970,38 +1858,7 @@ namespace GameSetting
         public virtual bool OnCheckRevive(ref RangeFloat amount) { return false; }
         #endregion
     }
-
-    public class ActionAbility : ActionBase
-    {
-        public override enum_ActionType m_ActionType => enum_ActionType.Ability;
-        public virtual int I_Cost => -1;
-        public ActionAbility(int _identity, enum_ActionRarity _level):base(_identity,_level)
-        {
-        }
-    }
-
-    public class ActionEquipment : ActionBase
-    {
-        public override enum_ActionType m_ActionType => enum_ActionType.Equipment;
-        public enum_EquipmentType m_EquipmentType;
-        public ActionEquipment(int _identity, enum_ActionRarity _level) : base(_identity, _level)
-        {
-        }
-        public ActionEquipment(int _identity,enum_EquipmentType type):base(_identity, enum_ActionRarity.Normal)
-        {
-            m_EquipmentType = type;
-        }
-
-        public void CheckUpgrade(int sameCount)
-        {
-            if (sameCount >= 4)
-                m_rarity = enum_ActionRarity.Epic;
-            else if (sameCount >= 2)
-                m_rarity = enum_ActionRarity.OutStanding;
-            else
-                m_rarity = enum_ActionRarity.Normal;
-        }
-    }
+    
     #endregion
 
     #region Physics
@@ -2546,123 +2403,75 @@ namespace GameSetting
             m_Button.interactable = interactable;
         }
     }
-    public class UIC_ActionData
+    public class UIC_EquipmentData
     {
         public Transform transform { get; private set; }
 
         Image m_Image;
         UIC_RarityLevel m_Rarity;
         Image m_EquipmentType;
-        public UIC_ActionData(Transform _transform)
+        public UIC_EquipmentData(Transform _transform)
         {
             transform = _transform;
             m_Image = transform.Find("Mask/Image").GetComponent<Image>();
             m_Rarity = new UIC_RarityLevel(transform.Find("Rarity"));
             m_EquipmentType = transform.Find("EquipmentType").GetComponent<Image>();
         }
-        public virtual void SetInfo(ActionBase actionInfo)
+        public virtual void SetInfo(EquipmentExpire equipmentInfo)
         {
-            m_Image.sprite = GameUIManager.Instance.m_ActionSprites[actionInfo.m_Index.ToString()];
-            m_Rarity.SetRarity(actionInfo.m_rarity);
+            m_Image.sprite = GameUIManager.Instance.m_ActionSprites[equipmentInfo.m_Index.ToString()];
+            m_Rarity.SetRarity(equipmentInfo.m_rarity);
 
-            switch(actionInfo.m_ActionType)
+            m_EquipmentType.SetActivate(true);
+            switch (equipmentInfo.m_EquipmentType)
             {
-                case enum_ActionType.Equipment:
-                    m_EquipmentType.SetActivate(true);
-                    switch ((actionInfo as ActionEquipment).m_EquipmentType)
-                    {
-                        default:
-                            Debug.LogError("Invalid Parse Here!");
-                            m_EquipmentType.color = Color.magenta;
-                            break;
-                        case enum_EquipmentType.TypeA:
-                            m_EquipmentType.color = Color.red;
-                            break;
-                        case enum_EquipmentType.TypeB:
-                            m_EquipmentType.color = Color.yellow;
-                            break;
-                        case enum_EquipmentType.TypeC:
-                            m_EquipmentType.color = Color.green;
-                            break;
-                    }
+                default:
+                    Debug.LogError("Invalid Parse Here!");
+                    m_EquipmentType.color = Color.magenta;
                     break;
-                case enum_ActionType.Ability:
-
-                    m_EquipmentType.SetActivate(false);
+                case enum_EquipmentType.TypeA:
+                    m_EquipmentType.color = Color.red;
+                    break;
+                case enum_EquipmentType.TypeB:
+                    m_EquipmentType.color = Color.yellow;
+                    break;
+                case enum_EquipmentType.TypeC:
+                    m_EquipmentType.color = Color.green;
                     break;
             }
         }
     }
 
-    public class UIC_ActionNameData:UIC_ActionData
-    {
+    public class UIC_EquipmentNameData: UIC_EquipmentData
+{
         UIT_TextExtend m_Name;
-        public UIC_ActionNameData(Transform _transform):base(_transform)
+        public UIC_EquipmentNameData(Transform _transform):base(_transform)
         {
             m_Name = transform.Find("Name").GetComponent<UIT_TextExtend>();
         }
-        public override void SetInfo(ActionBase actionInfo)
+        public override void SetInfo(EquipmentExpire equipmentInfo)
         {
-            base.SetInfo(actionInfo);
-            m_Name.localizeKey = actionInfo.GetNameLocalizeKey();
+            base.SetInfo(equipmentInfo);
+            m_Name.localizeKey = equipmentInfo.GetNameLocalizeKey();
         }
     }
 
-    public class UIC_ActionNameFormatIntro : UIC_ActionNameData
+    public class UIC_EquipmentNameFormatIntro : UIC_EquipmentNameData
     {
         UIT_TextExtend  m_Intro;
 
-        public UIC_ActionNameFormatIntro(Transform _transform) : base(_transform)
+        public UIC_EquipmentNameFormatIntro(Transform _transform) : base(_transform)
         {
 
             m_Intro = transform.Find("Intro").GetComponent<UIT_TextExtend>();
         }
-        public override void SetInfo(ActionBase actionInfo)
+        public override void SetInfo(EquipmentExpire equipmentInfo)
         {
-            base.SetInfo(actionInfo);
-            m_Intro.formatText(actionInfo.GetIntroLocalizeKey(), string.Format("<color=#FFDA6BFF>{0}</color>", actionInfo.F_Duration), string.Format("<color=#FFDA6BFF>{0}</color>", actionInfo.Value1), string.Format("<color=#FFDA6BFF>{0}</color>", actionInfo.Value2), string.Format("<color=#FFDA6BFF>{0}</color>", actionInfo.Value3));
+            base.SetInfo(equipmentInfo);
+            m_Intro.formatText(equipmentInfo.GetIntroLocalizeKey(), string.Format("<color=#FFDA6BFF>{0}</color>", equipmentInfo.F_Duration), string.Format("<color=#FFDA6BFF>{0}</color>", equipmentInfo.Value1), string.Format("<color=#FFDA6BFF>{0}</color>", equipmentInfo.Value2), string.Format("<color=#FFDA6BFF>{0}</color>", equipmentInfo.Value3));
         }
     }
-
-    public class UIC_WeaponActionData : UIC_ActionNameData {
-        Image m_Fill;
-        Transform tf_Ready;
-        public UIC_WeaponActionData(Transform _transform) : base(_transform)
-        {
-            m_Fill = transform.Find("Fill").GetComponent<Image>();
-            tf_Ready = transform.Find("Ready");
-        }
-        public void Tick(float fill)
-        {
-            m_Fill.fillAmount = fill;
-            tf_Ready.SetActivate(fill <=0);
-        }
-
-    }
-
-    public class UIC_ActionInteractData : UIC_ActionNameFormatIntro
-    {
-        UIT_TextExtend m_Cost;
-        public UIC_ActionInteractData(Transform _transform) : base(_transform)
-        {
-            m_Cost = transform.Find("Name/Cost").GetComponent<UIT_TextExtend>();
-        }
-        public override void SetInfo(ActionBase actionInfo)
-        {
-            base.SetInfo(actionInfo);
-            switch (actionInfo.m_ActionType)
-            {
-                case enum_ActionType.Equipment:
-                    m_Cost.SetActivate(false);
-                    break;
-                case enum_ActionType.Ability:
-                    m_Cost.SetActivate(true);
-                    m_Cost.text = (actionInfo as ActionAbility).I_Cost.ToString();
-                    break;
-            }
-        }
-    }
-
+    
     public class UIC_WeaponData
     {
         public Transform transform { get; private set; }
