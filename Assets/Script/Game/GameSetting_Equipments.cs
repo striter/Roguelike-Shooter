@@ -5,279 +5,31 @@ using System.Collections.Generic;
 namespace GameSetting_Action
 {
     #region Desingers Data
-    public static class ActionData
+    public static class EquipmentData
     {
-        #region 10000-19999
-        public const int I_10001_Cost=4;
-        public const float F_10001_Duration = 30f;
-        public static int P_10001_ClipMultiply(enum_ActionRarity rarity) => 50 * (int)rarity;
-
-        public const int I_10002_Cost = 4;
-        public const float F_10002_Duration = 5f;
-        public static float F_10002_ArmorReceive(enum_ActionRarity rarity) => 1.5f * (int)rarity;
-
-        public const int I_10003_Cost = 4;
-        public const float F_10003_Duration = 15f;
-        public static float P_10003_FirerateMultiplyPerMile(enum_ActionRarity rarity) => 1.5f * ((int)rarity);
-        public const int I_10003_MaxStackAmount = 40;
-        
-        public const int I_10005_Cost = 4;
-        public static int P_10005_OnFire_DamageMultiply(enum_ActionRarity rarity) => 110 * (int)rarity;
-        public static int P_10005_OnKill_Buff_MovementSpeed(enum_ActionRarity rarity) => 60 * (int)rarity;
-        public static float F_10005_OnKill_Buff_Duration = 5f;
-
-        public const int I_10006_Cost = 6;
-        public static int P_10006_DamageMultiply(enum_ActionRarity rarity) => 110 * (int)rarity;
-        public static int I_10006_OnKill_ArmorReceive(enum_ActionRarity rarity) => 10 + 30 * (int)rarity;
-
-        public const int I_10007_Cost = 6;
-        public static int P_10007_OnFire_DamageMultiply(enum_ActionRarity rarity) => 110 * (int)rarity;
-        public static int I_10007_OnKill_HealReceive(enum_ActionRarity rarity) => 10 + 30 * (int)rarity;
-
-        public const int I_10008_Cost = 4;
-        public const float F_10008_Duration = 10f;
-        public const int P_10008_MovementReduction = 20;
-        public static int P_10008_FireRateAdditive(enum_ActionRarity rarity) => 60 * (int)rarity;
-
-        public const int I_10009_Cost = 2;
-        public const float F_10009_Duration = 10f;
-        public static int P_10009_FireRateAdditive(enum_ActionRarity rarity) => 20 * (int)rarity;
-
-        public const int I_10010_Cost = 4;
-        public const float F_10010_Duration = 10f;
-        public const float F_10010_DamageReduction = 4f;
-        public static int P_10010_FireRateAdditive(enum_ActionRarity rarity) => 60 * (int)rarity;
-
-        public const int I_10011_Cost = 4;
-        public const float F_10011_Duration = 10f;
-        public static float P_10011_FireRateAdditivePerHitStack(enum_ActionRarity rarity) => 1f * (int)rarity;
-
-        public const int I_10012_Cost = 4;
-        public const float F_10012_Duration = 10f;
-        public static float F_10012_DamageAdditive(enum_ActionRarity rarity) => 7 * (int)rarity;
-
-        public const int I_10013_Cost = 4;
-        public static int P_10013_DamageMultiply(enum_ActionRarity rarity) => 110 * (int)rarity;
-        public static float F_10013_CloakDuration(enum_ActionRarity rarity) => 5*(int)rarity;
-
-        public const int I_10014_Cost = 4;
-        public const float F_10014_Duration = 15f;
-        public static float F_10014_HitFrozenDamageAdditive(enum_ActionRarity rarity) => 10 * (int)rarity;
-
-        public const int I_10015_Cost = 1;
-        public static float F_10015_FrozeDuration(enum_ActionRarity rarity) => 3f * (int)rarity;
-
-        public const int I_10016_Cost = 2;
-        public static int P_10016_FrozenDirectDamageMultiply(enum_ActionRarity rarity) => 110 * (int)rarity;
-
-        public static int I_10017_Cost(enum_ActionRarity rarity) => 3-(int)rarity;
-        public const int I_10017_EquipmentCopyTimes = 1;
-
-        public const int I_10018_Cost = 6;
-        public const float F_10018_Duration = 10f;
-        public const float F_10018_PerStackHealthLoss = 5f;
-        public static float P_10018_HealthStealPerStack(enum_ActionRarity rarity) => 1f * (int)rarity;
-        
-        public const int I_10020_Cost = 4;
-        public const float F_10020_Duration = 20f;
-        public const float F_10020_PerStackHealthLoss = 1f;
-        public static float P_10020_MovementAdditivePerStack(enum_ActionRarity rarity) => 1f * (int)rarity;
-
-        public const int I_10021_Cost = 2;
-        public const float F_20021_Duration = 10f;
-        public static float F_10021_HealthRegenPerMin(enum_ActionRarity rarity) => 3f * (int)rarity;
-
-        public const int I_10022_Cost = 6;
-        public static float F_10022_Duration(enum_ActionRarity rarity) => 4f + 2f * (int)rarity;
-        public const float P_10022_HealthRegenTranslateFromDamage = 100;
-
-        public const int I_10023_Cost = 8;
-        public static float F_10023_ReviveHealthRegen(enum_ActionRarity rarity) => 30 * (int)rarity;
-
-        public const int I_10024_Cost = 4;
-        public static float F_10024_ArmorAdditive(enum_ActionRarity rarity) => 15 * (int)rarity;
-
-        public const int I_10025_Cost = 8;
-        public static float P_10025_ArmorAdditiveMultiply(enum_ActionRarity rarity) => 30* (int)rarity;
-
-        public const int I_10026_Cost = 4;
-        public const float F_10026_Duration = 10f;
-        public static float F_10026_DamageAdditiveMultiplyWithArmor(enum_ActionRarity rarity) => 0.035f * (int)rarity;
-
-        public const int I_10027_Cost = 4;
-        public static float F_10027_HealthDamage(enum_ActionRarity rarity) => 15 * (int)rarity;
-        public static float F_10027_ArmorAdditive(enum_ActionRarity rarity) => 45 * (int)rarity;
-
-        public const int I_10028_Cost = 4;
-        public static float P_10028_NextShotDamageMultiplyPerArmor(enum_ActionRarity rarity) => 1.1f * (int)rarity;
-
-        public const int I_10029_Cost = 4;
-        public const float F_10029_Duration = 30f;
-        public static int I_10029_ClipAdditive(enum_ActionRarity rarity) => 4 * (int)rarity;
-
-        public const int I_10030_Cost = 2;
-        public const float F_10030_Duration = 10f;
-        public static float P_10030_MovementSpeedAdditive(enum_ActionRarity rarity) => 30 * (int)rarity;
-        
-        public const int I_10032_Cost = 1;
-        public static float F_10032_Duration(enum_ActionRarity rarity) => 10 * (int)rarity;
-
-        public const int I_10033_Cost = 4;
-        public static float F_10033_Duration(enum_ActionRarity rarity) => 10 + 5 * (int)rarity;
-
-        public const int I_10034_Cost = 4;
-        public static float P_10034_DamageAdditiveFirstShot(enum_ActionRarity rarity) => 110f * (int)rarity;
-        public static float P_10034_DamageAdditiveShotAfterKill(enum_ActionRarity rarity) => 170f * (int)rarity;
-
-        public const int I_10035_Cost = 4;
-        public static float P_10035_DamageAdditiveNextShot(enum_ActionRarity rarity) => 220f * (int)rarity;
-        #endregion
-        #region 20000-29999
-        public const int I_20001_Cost = 4;
-        public static float F_20001_RustDamageDuration(enum_ActionRarity rarity) => 10f;
-        public static float F_20001_RustDamagePerSecond(enum_ActionRarity rarity) => 40 * (int)rarity;
-
-        public const int I_20002_Cost = 8;
-        public static float F_20002_ArmorAdditiveTargetDead(enum_ActionRarity rarity) => 70 * (int)rarity;
-
-        public const int I_20003_Cost = 2;
-        public static float F_20003_FreezeDuration(enum_ActionRarity rarity) => 3 * (int)rarity;
-
-        public const int I_20004_Cost = 2;
-        public static float F_20004_FreezeDuration(enum_ActionRarity rarity) => 3 * (int)rarity;
-
-        public const int I_20005_Cost = 6;
-        public static float F_20005_FreezeDuration(enum_ActionRarity rarity) => 0.8f;
-        public static float F_20005_Health(enum_ActionRarity rarity) => 400;
-        public static float F_20005_Damage(enum_ActionRarity rarity) => 40 * (int)rarity;
-        public const float F_20005_FireRate=1f;
-
-        public const int I_20006_Cost = 1;
-        public static float F_20006_FreezeDuration(enum_ActionRarity rarity) => 3 * (int)rarity;
-
-        public static int I_20007_Cost(enum_ActionRarity rarity) => 1;
-        public static float F_20007_Distance(enum_ActionRarity rarity) => 8f * (int)rarity;
-
-        public const int I_20008_Cost = 4;
-        public static float F_20008_Health(enum_ActionRarity rarity) => 400;
-        public static float F_20008_Damage(enum_ActionRarity rarity) => 10 * (int)rarity;
-        public const float F_20008_FireRate = 0.25f;
-
-        public const int I_20009_Cost = 6;
-        public static float F_20009_Health(enum_ActionRarity rarity) => 400;
-        public static float F_20009_Damage(enum_ActionRarity rarity) => 40 * (int)rarity;
-        public const float F_20009_FireRate = 1f;
-
-        public const int I_20010_Cost = 4;
-        public static float F_20010_Health(enum_ActionRarity rarity) => 400;
-        public static float P_20010_PlayerHealthDrain(enum_ActionRarity rarity) =>2*(int)rarity;
-        public static float P_20010_AIHealthDrain(enum_ActionRarity rarity) => 100 * (int)rarity;
-
-        //20011 To Be Continued
-        
-        public const int I_20012_Cost = 4;
-        public static float F_20012_Health(enum_ActionRarity rarity) => 400;
-        public static float F_20012_PlayerHealthRegen(enum_ActionRarity rarity) => 1.5f * (int)rarity;
-        public static float F_20012_AIHealthRegen(enum_ActionRarity rarity) => 20 * (int)rarity;
-
-        public const int I_20013_Cost = 4;
-        public static float P_20013_DamageMultiplyBase(enum_ActionRarity rarity) => 300 * (int)rarity;
-        #endregion
-        #region 30000-39999
-        public const int I_30001_Cost = 2;
-        public static float F_30001_DamagePerStack(enum_ActionRarity rarity) => 5f * (int)rarity;
-        public const int I_30001_MaxStack = 20;
-        
-        public static float P_30002_SingleShotDamageMultiplyAfterKill(enum_ActionRarity rarity) => 70 * (int)rarity;
-        
-        public static float F_30003_GrenadeDamage(enum_ActionRarity rarity) => 200 * (int)rarity;
-        
-        public static float P_30004_ReloadSpeedMultiply(enum_ActionRarity rarity) => 50 * (int)rarity;
-        
-        public static float F_30005_FreezeDuration(enum_ActionRarity rarity) => .05f * (int)rarity;
-        
-        public static float F_30006_FreezeDuration(enum_ActionRarity rarity) => 3 * (int)rarity;
-        
-        public static float F_30007_DamageStackLimit(enum_ActionRarity rarity) => 35;
-        public static float F_30007_FreezeDurationPerStack(enum_ActionRarity rarity) => .1f * (int)rarity;
-        
-        public static float F_30008_FreezeDuration(enum_ActionRarity rarity) => F_20006_FreezeDuration(rarity);
-        
-        public static float P_30009_EquipmentHealthAddup(enum_ActionRarity rarity) => 50 * (int)rarity;
-        
-        public static float F_30010_MaxHealthAddup(enum_ActionRarity rarity) => 3f * (int)rarity;
-        
-        public static float P_30011_MaxHealthRegen(enum_ActionRarity rarity) => 10 * (int)rarity;
-        
-        public static float P_30012_HealthRegenEachKill(enum_ActionRarity rarity) => 6 * (int)rarity;
-        
-        public static float P_30013_HealthRegenAdditive(enum_ActionRarity rarity) => 40* (int)rarity;
-        
-        public static float F_30014_DamageReductionDuration(enum_ActionRarity rarity) => 1*(int)rarity;
-        
-        public static float F_30015_DamageReflectPerArmor(enum_ActionRarity rarity) => 1 * (int)rarity;
-        
-        public static float P_30016_ProjectileSpeedMultiply(enum_ActionRarity rarity) => 100 * (int)rarity;
-        
-        public static float F_30017_ArmorAdditive(enum_ActionRarity rarity) => 3f * (int)rarity;
-        #endregion
-        #region 40000-49999
-        public static float F_40001_ArmorAdditive(enum_ActionRarity rarity) => 6 * (int)rarity;
-
-        public static float F_40002_MaxHealthAdd(enum_ActionRarity rarity) => 60 * (int)rarity;
-
-        public static float F_40003_Range(enum_ActionRarity rarity) => 10;
-        public static float P_40003_PlayerDamageMultiply(enum_ActionRarity rarity) => 4.2f * (int)(rarity);
-        public static float P_40003_AllyDamageMultiply(enum_ActionRarity rarity) => 42 * (int)rarity;
-
-        public static float P_40004_MovementSpeedAdditive(enum_ActionRarity rarity) => 13 * (int)rarity;
-
-        public static float P_40005_FastReloadRate(enum_ActionRarity rarity) => 4 * (int)rarity;
-
-        public static int I_40006_ClipAdditive(enum_ActionRarity rarity) => 2 * (int)rarity;
-
-        public static float F_40007_DamageAdditive(enum_ActionRarity rarity) => 4f * (int)rarity;
-
-        public static float P_40008_MaxHealthAdditive(enum_ActionRarity rarity) => 50 * (int)rarity;
-
-        public static float F_40009_DamageMultiplyAfterRloead(enum_ActionRarity rarity) => 40f * (int)rarity;
-
-        public static float F_40010_Range(enum_ActionRarity rarity) => 8f;
-        public static float P_40010_DamageMultiply(enum_ActionRarity rarity) => 12f * (int)rarity;
-
-        public static float P_40011_ReloadMultiply(enum_ActionRarity rarity) => 50f * (int)rarity;
-
-        public static float P_40012_MovementSpeedMultiply(enum_ActionRarity rarity) => 45f * (int)rarity;
-        public static float F_40012_Duration(enum_ActionRarity rarity) => 5f;
-
-        public static float P_40013_MovementSpeedMultiply(enum_ActionRarity rarity) => 30f * (int)rarity;
-        public static float F_40013_Duration(enum_ActionRarity rarity) => 5f;
-
-        public static float P_40014_RecoilReduction(enum_ActionRarity rarity) => 25f + 25f * (int)rarity;
-
-        public static float F_40015_Range(enum_ActionRarity rarity) => 8f;
-        public static float P_40015_HealthDrain(enum_ActionRarity rarity) => 2f * (int)rarity;
-        
-        public static float P_40017_DamageReduction(enum_ActionRarity rarity) => 20f + 15f * (int)rarity;
-
-        public static float P_40018_DamageMultiply(enum_ActionRarity rarity) => 100f * (int)rarity;
-        
-        public static float F_40020_FreezeDuration(enum_ActionRarity rarity) => F_20004_FreezeDuration(rarity);
-
-        public static float F_40021_FreezeDuration(enum_ActionRarity rarity) => 2f* (int)rarity;
-
-        public static float P_40022_HealAdditive(enum_ActionRarity rarity) => 80f * (int)rarity;
-        #endregion
+        public static int P_0001_ReloadSpeedAdditive(enum_EquipmentRarity rarity) => 50 * (int)rarity;
+        public static int P_0002_ClipRefillRate(enum_EquipmentRarity rarity) => 4 * (int)rarity;
+        public static int I_0003_ClipAdditive(enum_EquipmentRarity rarity) => 1 + 1 * (int)rarity;
+        public static int P_0004_ClipMultiply(enum_EquipmentRarity rarity) => 1 * (int)rarity;
+        public static float F_0005_DamageAdditive(enum_EquipmentRarity rarity) => 4f * (int)rarity;
+        public static float F_0006_DamageAdditive(enum_EquipmentRarity rarity) => 1f * (int)rarity;
+        public static float F_0006_Duration(enum_EquipmentRarity rarity) => 5*(int)rarity;
+        public static int P_0007_SpreadReduction(enum_EquipmentRarity rarity) => 20 * (int)rarity;
+        public static float F_0008_AimRangeIncrease(enum_EquipmentRarity rarity) => 5f * (int)rarity;
+        public static int P_0009_DamageMultiply(enum_EquipmentRarity rarity) => 70 * (int)rarity;
+        public static int P_0010_PenetrateAdditive(enum_EquipmentRarity rarity) => 30 * (int)rarity;
+        public static int P_0011_FireRateAdditive(enum_EquipmentRarity rarity) => 50 * (int)rarity;
+        public static int I_0012_BounceTimes(enum_EquipmentRarity rarity) => 1*(int)rarity;
     }
     #endregion
 
     #region Developers Use
-    public static class ActionHelper
+    public static class EquipmentHelper
     {
-        public static EquipmentBase GetCommonDevice(int actionIndex,EntityCharacterPlayer player, Func<DamageDeliverInfo> damageInfo) => EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(actionIndex), player, damageInfo);
-        public static EquipmentEntitySpawner GetEntityDevice(int actionIndex, EntityCharacterPlayer player,  Func<DamageDeliverInfo> damage, int health, float fireRate)
+        public static WeaponHelperBase GetCommonDevice(int actionIndex,EntityCharacterPlayer player, Func<DamageDeliverInfo> damageInfo) => WeaponHelperBase.AcquireWeaponHelper(GameExpression.GetPlayerWeaponIndex(actionIndex), player, damageInfo);
+        public static WeaponHelperEntitySpawner GetEntityDevice(int actionIndex, EntityCharacterPlayer player,  Func<DamageDeliverInfo> damage, int health, float fireRate)
         {
-            EquipmentEntitySpawner equipment = GetCommonDevice(actionIndex,player, damage) as EquipmentEntitySpawner;
+            WeaponHelperEntitySpawner equipment = GetCommonDevice(actionIndex,player, damage) as WeaponHelperEntitySpawner;
             equipment.SetOnSpawn(health, (EntityCharacterBase entity) =>
             {
                 EntityCharacterAI target = entity as EntityCharacterAI;
@@ -287,9 +39,9 @@ namespace GameSetting_Action
             });
             return equipment;
         }
-        public static EquipmentEntitySpawner GetBuffDevice(int actionIndex, EntityCharacterPlayer player,float health,SBuff buffApplyPlayer,  SBuff buffApplyAlly,float refreshDuration)
+        public static WeaponHelperEntitySpawner GetBuffDevice(int actionIndex, EntityCharacterPlayer player,float health,SBuff buffApplyPlayer,  SBuff buffApplyAlly,float refreshDuration)
         {
-            EquipmentEntitySpawner equipment = GetCommonDevice(actionIndex, player, null) as EquipmentEntitySpawner;
+            WeaponHelperEntitySpawner equipment = GetCommonDevice(actionIndex, player, null) as WeaponHelperEntitySpawner;
             equipment.SetOnSpawn(health,(EntityCharacterBase entity)=>{(entity as EntityDeviceBuffApllier).SetBuffApply(buffApplyPlayer,buffApplyAlly,refreshDuration);});
             return equipment;
         }
@@ -323,10 +75,10 @@ namespace GameSetting_Action
         }
 
     }
-    public class ActionStackUp
+    public class EquipmentStackupCounter
     {
-        public ActionStackUp() { m_maxStackup = -1; }
-        public ActionStackUp(float _maxStackup = -1) { m_maxStackup = _maxStackup; m_stack = 0; }
+        public EquipmentStackupCounter() { m_maxStackup = -1; }
+        public EquipmentStackupCounter(float _maxStackup = -1) { m_maxStackup = _maxStackup; m_stack = 0; }
         public float m_stack { get; private set; }
         public float m_maxStackup { get; private set; }
         public void ResetStack() => m_stack = 0;
@@ -338,30 +90,107 @@ namespace GameSetting_Action
                 m_stack = m_maxStackup;
         }
     }
-    #region Inherted Claseses
 
-    #region 30000-39999
-    public class Action_30001_DamageMovementStackup : EquipmentExpire
+    public class EquipmentTimer
     {
-        public override int m_Index => 30001;
-        public override float Value1 => ActionData.F_30001_DamagePerStack(m_rarity);
-        public override float Value2 => Value1*ActionData.I_30001_MaxStack;
-        public override float m_DamageAdditive => Value1 * m_stackUp.m_stack;
-        ActionStackUp m_stackUp;
+        float m_timeCheck = -1;
+        public bool m_Timing => m_timeCheck > 0;
+        public void SetTimer(float duration)=>m_timeCheck = duration;
+        public void Tick(float deltaTime)
+        {
+            if (m_timeCheck <= 0)
+                return;
+            m_timeCheck -= deltaTime;
+        }
+    }
+    #region Inherted Claseses
+    
+    public class E0001_ReloadSpeedAdditive: PlayerEquipmentExpire
+    {
+        public override int m_Index => 0001;
+        public override float Value1 => EquipmentData.P_0001_ReloadSpeedAdditive(m_rarity);
+        public override float m_ReloadRateMultiply => Value1 / 100f;
+        public E0001_ReloadSpeedAdditive(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
+    }
+
+    public class E0002_ClipRefillOnAttack:PlayerEquipmentExpire
+    {
+        public override int m_Index => 0002;
+        public override float Value1 => EquipmentData.P_0002_ClipRefillRate(m_rarity);
         public override void OnFire(int identity)
         {
             base.OnFire(identity);
-            m_stackUp.ResetStack();
+            if (TCommon.RandomPercentage() < Value1)
+                m_ActionEntity.m_WeaponCurrent.ForceReload();
         }
-        public override void OnMove(float distance) => m_stackUp.OnStackUp(distance);
-        public Action_30001_DamageMovementStackup(int _identity, enum_EquipmentType _type) : base(_identity, _type) { m_stackUp = new ActionStackUp(ActionData.I_30001_MaxStack); }
+        public E0002_ClipRefillOnAttack(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
     }
-    public class Action_30002_KillDamageMultiply : EquipmentExpire
+
+    public class E0003_ClipAdditive : PlayerEquipmentExpire
     {
-        public override int m_Index => 30002;
-        public override int m_EffectIndex => 41002;
-        public override float Value1 => ActionData.P_30002_SingleShotDamageMultiplyAfterKill(m_rarity);
-        public override float m_DamageMultiply => m_burstShot ? Value1/100f : 0f;
+        public override int m_Index => 0003;
+        public override float Value1 => EquipmentData.I_0003_ClipAdditive(m_rarity);
+        public override int I_ClipAdditive => (int)Value1;
+        public E0003_ClipAdditive(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
+    }
+
+    public class E0004_ClipMultiply : PlayerEquipmentExpire
+    {
+        public override int m_Index => 0004;
+        public override float Value1 => EquipmentData.P_0004_ClipMultiply(m_rarity);
+        public override float F_ClipMultiply => Value1/100f;
+        public E0004_ClipMultiply(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
+    }
+
+    public class E0005_ClipMultiply : PlayerEquipmentExpire
+    {
+        public override int m_Index => 0005;
+        public override float Value1 => EquipmentData.F_0005_DamageAdditive(m_rarity);
+        public override float m_DamageAdditive => Value1;
+        public E0005_ClipMultiply(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
+    }
+
+    public class E0006_DamageAdditiveAfterReload:PlayerEquipmentExpire
+    {
+        public override int m_Index => 0006;
+        public override float Value1 => EquipmentData.F_0006_DamageAdditive(m_rarity);
+        public override float Value2 => EquipmentData.F_0006_Duration(m_rarity);
+        public override float m_DamageAdditive => m_Timer.m_Timing?Value1:base.m_DamageAdditive;
+        EquipmentTimer m_Timer=new EquipmentTimer();
+        public override void OnReloadFinish()
+        {
+            base.OnReloadFinish();
+            m_Timer.SetTimer(Value2);
+        }
+        public override void OnTick(float deltaTime)
+        {
+            base.OnTick(deltaTime);
+            m_Timer.Tick(deltaTime);
+        }
+        public E0006_DamageAdditiveAfterReload(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
+    }
+
+    public class E0007_SpreadReduction:PlayerEquipmentExpire
+    {
+        public override int m_Index => 0007;
+        public override float Value1 => EquipmentData.P_0007_SpreadReduction(m_rarity)/100f;
+        public override float F_SpreadReduction => Value1;
+        public E0007_SpreadReduction(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
+    }
+
+    public class E0008_AimRangeIncrease : PlayerEquipmentExpire
+    {
+        public override int m_Index => 0008;
+        public override float Value1 => EquipmentData.F_0008_AimRangeIncrease(m_rarity);
+        public override float F_AimRangeAdditive => Value1;
+        public E0008_AimRangeIncrease(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
+    }
+
+    public class E0009_DamageBurstAfterKill : PlayerEquipmentExpire
+    {
+        public override int m_Index => 0009;
+        public override float Value1 => EquipmentData.P_0009_DamageMultiply(m_rarity);
+        public override float m_DamageMultiply => m_burstShot ? Value1 / 100f : 0f;
         bool m_burstShot = false;
         public override void OnFire(int identity)
         {
@@ -373,192 +202,32 @@ namespace GameSetting_Action
             base.OnAfterDealtDemage(receiver, info, applyAmount);
             m_burstShot = receiver.m_IsDead;
         }
-        public Action_30002_KillDamageMultiply(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
-    }
-    public class Action_30003_GrenadeLauncher : EquipmentExpire
-    {
-        public override int m_Index => 30003;
-        public override float Value1 => ActionData.F_30003_GrenadeDamage(m_rarity);
-        EquipmentBase m_ActionEquipment;
-        DamageDeliverInfo GetDamageInfo()=> DamageDeliverInfo.EquipmentInfo(m_ActionEntity.m_EntityID, Value1, enum_CharacterEffect.Invalid, 0); 
-        public override void OnActivate()
-        {
-            base.OnActivate();
-            m_ActionEquipment = EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(m_Index), m_ActionEntity, GetDamageInfo);
-        }
-        bool m_shotGrenade = false;
-        public override void OnReloadFinish()
-        {
-            base.OnReloadFinish();
-            m_shotGrenade = true;
-        }
-        public override void OnFire(int identity)
-        {
-            base.OnFire(identity);
-            if (m_shotGrenade)
-                m_ActionEquipment.OnPlay( m_ActionEntity,m_ActionEntity.tf_Head.position+m_ActionEntity.tf_Head.forward*5);
-
-            m_shotGrenade = false;
-        }
-        public Action_30003_GrenadeLauncher(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
-    }
-    public class Action_30004_ReloadSpeedAdditive : EquipmentExpire
-    {
-        public override int m_Index => 30004;
-        public override float Value1 => ActionData.P_30004_ReloadSpeedMultiply(m_rarity);
-        public override float m_ReloadRateMultiply =>Value1/100f;
-        public Action_30004_ReloadSpeedAdditive(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
-    }
-    public class Action_30005_DamageFreeze : EquipmentExpire
-    {
-        public override int m_Index => 30005;
-        public override int m_EffectIndex => 41001;
-        public override float Value1 => ActionData.F_30005_FreezeDuration(m_rarity);
-        public override void OnDealtDamageSetEffect(EntityCharacterBase receiver, DamageInfo info)
-        {
-            base.OnDealtDamageSetEffect(receiver, info);
-            info.m_detail.EffectAdditiveOverride(enum_CharacterEffect.Freeze, Value1);
-        }
-        public Action_30005_DamageFreeze(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
+        public E0009_DamageBurstAfterKill(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
     }
 
-    public class Action_30006_DamageKillFreezeBlast : EquipmentExpire
+    public class E0010_PenetrateAdditive:PlayerEquipmentExpire
     {
-        public override int m_Index => 30006;
-        public override float Value1 => ActionData.F_30006_FreezeDuration(m_rarity);
-        EquipmentBase m_Equipment;
-        DamageDeliverInfo GetDamageInfo() => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.m_EntityID, 0, enum_CharacterEffect.Freeze, Value1);
-        public override void OnActivate()
-        {
-            base.OnActivate();
-            m_Equipment = EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(m_Index), m_ActionEntity, GetDamageInfo);
-        }
-        public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
-        {
-            base.OnAfterDealtDemage(receiver, info, applyAmount);
-            if (!receiver.m_IsDead)
-                return;
-
-            m_Equipment.OnPlay(false, receiver);
-        }
-        
-        public Action_30006_DamageKillFreezeBlast(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
+        public override int m_Index => 0010;
+        public override float Value1 => EquipmentData.P_0010_PenetrateAdditive(m_rarity);
+        public override float F_PenetradeAdditive => Value1/100f;
+        public E0010_PenetrateAdditive(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
     }
 
-    public class Action_30007_DamageLimitFreeze : EquipmentExpire
+    public class E0011_FireRateAdditive:PlayerEquipmentExpire
     {
-        public override int m_Index => 30007;
-        public override int m_EffectIndex => 41001;
-        public override float Value1 => ActionData.F_30007_DamageStackLimit(m_rarity);
-        public override float Value2 => ActionData.F_30007_FreezeDurationPerStack(m_rarity);
-        public override void OnDealtDamageSetEffect(EntityCharacterBase receiver, DamageInfo info)
-        {
-            base.OnDealtDamageSetEffect(receiver, info);
-            float amount = info.m_AmountApply;
-            if (amount < Value1)
-                return;
-
-            info.m_detail.EffectAdditiveOverride(enum_CharacterEffect.Freeze, Value2 * Mathf.Ceil(amount / Value1));
-        }
-        public Action_30007_DamageLimitFreeze(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
+        public override int m_Index => 0011;
+        public override float Value1 => EquipmentData.P_0011_FireRateAdditive(m_rarity);
+        public override float m_FireRateMultiply => Value1 / 100f;
+        public E0011_FireRateAdditive(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
     }
 
-    public class Action_30009_AllyActivateHealthAdditive : EquipmentExpire
+    public class E0012_ProjectileCopy:PlayerEquipmentExpire
     {
-        public override int m_Index => 30009;
-        public override float Value1 => ActionData.P_30009_EquipmentHealthAddup(m_rarity);
-        public override float F_AllyHealthMultiplierAdditive => Value1/100f;
-        public Action_30009_AllyActivateHealthAdditive(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
+        public override int m_Index => 0012;
+        public override float Value1 => EquipmentData.I_0012_BounceTimes(m_rarity);
+        public override int I_ProjectileCopyAdditive => (int)Value1;
+        public E0012_ProjectileCopy(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
     }
-    
-    public class Action_30011_ReceiveHealingAddMaxHealth : EquipmentExpire
-    {
-        public override int m_Index => 30011;
-        public override float Value1 => ActionData.P_30011_MaxHealthRegen(m_rarity);
-        public override void OnReceiveHealing(DamageInfo info, float amount)
-        {
-            base.OnReceiveHealing(info, amount);
-            if(info.m_Type== enum_DamageType.HealthOnly)
-                 m_ActionEntity.m_Health.AddMaxHealth (-info.m_AmountApply*Value1/100f);
-        }
-        public Action_30011_ReceiveHealingAddMaxHealth(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
-    }
-
-    public class Action_30012_KillHealthRegen : EquipmentExpire
-    {
-        public override int m_Index => 30012;
-        public override float Value1 => ActionData.P_30012_HealthRegenEachKill(m_rarity);
-        public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
-        {
-            base.OnAfterDealtDemage(receiver, info, applyAmount);
-            if(receiver.m_IsDead)
-                ActionHelper.ReceiveHealing(m_ActionEntity,m_ActionEntity.m_Health.m_BaseHealth * Value1/100f, enum_DamageType.HealthOnly);
-        }
-        public Action_30012_KillHealthRegen(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
-    }
-
-    public class Action_30013_HealRegenAdditive : EquipmentExpire
-    {
-        public override int m_Index => 30013;
-        public override float Value1 => ActionData.P_30013_HealthRegenAdditive(m_rarity);
-        public override float m_HealAdditive => Value1 / 100f;
-        public Action_30013_HealRegenAdditive(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
-    }
-
-    public class Action_30014_ArmorDamageDamageReductionDuration : EquipmentExpire
-    {
-        public override int m_Index => 30014;
-        public override int m_EffectIndex => m_Effecting? 40004:0;
-        public override float Value1 => ActionData.F_30014_DamageReductionDuration(m_rarity);
-        public override float m_DamageReduction => m_Effecting ? 1 : 0;
-        float m_counter = 0;
-        bool m_Effecting => m_counter > 0;
-        public override void OnTick(float deltaTime)
-        {
-            base.OnTick(deltaTime);
-            if (m_Effecting) m_counter -= deltaTime;
-        }
-        public override void OnBeforeReceiveDamage(DamageInfo info)
-        {
-            base.OnBeforeReceiveDamage(info);
-            if (m_Effecting)
-                return;
-
-            if (m_ActionEntity.m_Health.m_CurrentArmor > 0)
-                m_counter = Value1;
-        }
-        public Action_30014_ArmorDamageDamageReductionDuration(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
-    }
-
-    public class Action_30015_ArmorDamageReflection : EquipmentExpire
-    {
-        public override int m_Index => 30015;
-        public override int m_EffectIndex => 40007;
-        public override float Value1 => ActionData.F_30015_DamageReflectPerArmor(m_rarity);
-        public override void OnBeforeReceiveDamage(DamageInfo info)
-        {
-            base.OnBeforeReceiveDamage(info);
-            if (m_ActionEntity.m_Health.m_CurrentArmor > 0)
-                ActionHelper.PlayerDealtDamageToEntity(m_ActionEntity, info.m_detail.I_SourceID, Value1 * m_ActionEntity.m_Health.m_CurrentArmor, enum_DamageType.Basic);
-        }
-        public Action_30015_ArmorDamageReflection(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
-    }
-
-    public class Action_30016_ProjectileSpeed : EquipmentExpire
-    {
-        public override int m_Index => 30016;
-        public override float Value1 => ActionData.P_30016_ProjectileSpeedMultiply(m_rarity);
-        public override float F_ProjectileSpeedMultiply => Value1/100f;
-        public Action_30016_ProjectileSpeed(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
-    }
-    
-    public class Action_30018_ProjectilePenetrate : EquipmentExpire
-    {
-        public override int m_Index => 30018;
-        public override bool B_ProjectilePenetrade => true;
-        public Action_30018_ProjectilePenetrate(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
-    }
-    #endregion
     #endregion
     #endregion
 }

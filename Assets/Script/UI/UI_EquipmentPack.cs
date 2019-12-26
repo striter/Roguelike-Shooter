@@ -18,7 +18,7 @@ public class UI_EquipmentPack : UIPage {
     {
         m_Info = _info;
         m_Grid.ClearGrid();
-        List<EquipmentExpire> targetList = _info.m_ActionEquipment;
+        List<PlayerEquipmentExpire> targetList = _info.m_ActionEquipment;
         for (int i = 0; i < GameConst.I_PlayerEquipmentCount; i++)
             m_Grid.AddItem(i).SetInfo( i< targetList.Count ? targetList[i]:null);
         m_Selecting.transform.SetActivate(false);

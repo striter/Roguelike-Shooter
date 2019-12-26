@@ -349,7 +349,7 @@ public static class ActionDataManager
         m_AllActionType.Clear();
         m_AllEquipment.Clear();
 
-        TReflection.TraversalAllInheritedClasses(((Type type, EquipmentExpire action) => {
+        TReflection.TraversalAllInheritedClasses(((Type type, PlayerEquipmentExpire action) => {
             if (action.m_Index <= 0)
                 return;
 
@@ -357,21 +357,21 @@ public static class ActionDataManager
             m_AllEquipment.Add(action.m_Index);
         }), -1, enum_EquipmentType.Invalid);
     }
-    public static EquipmentExpire CreateRandomEquipment(enum_EquipmentType type, System.Random seed)=> CreateAction(m_AllEquipment.RandomItem(seed),type);
+    public static PlayerEquipmentExpire CreateRandomEquipment(enum_EquipmentType type, System.Random seed)=> CreateAction(m_AllEquipment.RandomItem(seed),type);
 
-    public static EquipmentExpire CreateAction(int actionIndex, enum_EquipmentType type)
+    public static PlayerEquipmentExpire CreateAction(int actionIndex, enum_EquipmentType type)
     {
         if (!m_AllActionType.ContainsKey(actionIndex))
             Debug.LogError("Error Action:" + actionIndex + " ,Does not exist");
-        return TReflection.CreateInstance<EquipmentExpire>(m_AllActionType[actionIndex], m_ActionIdentity++, type );
+        return TReflection.CreateInstance<PlayerEquipmentExpire>(m_AllActionType[actionIndex], m_ActionIdentity++, type );
     }
-    public static EquipmentExpire CreateAction(EquipmentSaveData data) => CreateAction(data.m_Index, data.m_Type);
-    public static List<EquipmentExpire> CreateActions(List<EquipmentSaveData> datas)
+    public static PlayerEquipmentExpire CreateAction(EquipmentSaveData data) => CreateAction(data.m_Index, data.m_Type);
+    public static List<PlayerEquipmentExpire> CreateActions(List<EquipmentSaveData> datas)
     {
-        List<EquipmentExpire> actions = new List<EquipmentExpire>();
+        List<PlayerEquipmentExpire> actions = new List<PlayerEquipmentExpire>();
         datas.Traversal((EquipmentSaveData data) => { actions.Add(CreateAction(data)); });
         return actions;
     }
 
-    public static EquipmentExpire CopyAction(EquipmentExpire targetAction) => TReflection.CreateInstance<EquipmentExpire>(m_AllActionType[targetAction.m_Index], targetAction.m_Identity, targetAction.m_rarity);
+    public static PlayerEquipmentExpire CopyAction(PlayerEquipmentExpire targetAction) => TReflection.CreateInstance<PlayerEquipmentExpire>(m_AllActionType[targetAction.m_Index], targetAction.m_Identity, targetAction.m_rarity);
 }

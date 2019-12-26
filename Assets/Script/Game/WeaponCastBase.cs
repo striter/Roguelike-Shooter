@@ -6,7 +6,7 @@ using UnityEngine;
 public class WeaponCastBase : WeaponBase {
     SFXCast m_Cast;
     public bool m_Casting => m_Cast;
-    protected override void OnGetEquipmentData(SFXEquipmentBase equipment)
+    protected override void OnGetEquipmentData(SFXWeaponBase equipment)
     {
         base.OnGetEquipmentData(equipment);
         SFXCast cast = equipment as SFXCast;
@@ -41,7 +41,7 @@ public class WeaponCastBase : WeaponBase {
 
         if (showCast)
         {
-            m_Cast = GameObjectManager.SpawnEquipment<SFXCast>(GameExpression.GetPlayerEquipmentIndex(m_WeaponInfo.m_Index), m_Muzzle.position, m_Muzzle.forward);
+            m_Cast = GameObjectManager.SpawnEquipment<SFXCast>(GameExpression.GetPlayerWeaponIndex(m_WeaponInfo.m_Index), m_Muzzle.position, m_Muzzle.forward);
             m_Cast.PlayControlled(m_Attacher.m_EntityID, m_Attacher, m_Attacher.tf_WeaponAim);
         }
         else

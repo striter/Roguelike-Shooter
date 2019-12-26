@@ -6,10 +6,10 @@ using UnityEngine;
 
 public class InteractEquipment : InteractGameBase {
     public override enum_Interaction m_InteractType => enum_Interaction.Equipment;
-    public EquipmentExpire m_Equipment { get; private set; }
+    public PlayerEquipmentExpire m_Equipment { get; private set; }
     protected override bool B_SelfRecycleOnInteract => false;
 
-    public InteractEquipment Play(EquipmentExpire _action)
+    public InteractEquipment Play(PlayerEquipmentExpire _action)
     {
         base.Play();
         m_Equipment = _action;
