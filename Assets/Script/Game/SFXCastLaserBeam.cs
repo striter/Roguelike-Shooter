@@ -20,43 +20,48 @@ public class SFXCastLaserBeam : SFXCast {
     protected override void OnPlay()
     {
         base.OnPlay();
-        f_castLength = 0f;
+        BeamCheck();
+        m_Beam.enabled = true;
         m_Impact.Play();
     }
     protected override void OnStop()
     {
         base.OnStop();
+        m_Beam.enabled = false;
         m_Impact.Stop();
     }
     protected override void Update()
     {
         base.Update();
-        m_Beam.enabled = B_Playing;
         if (!B_Playing)
             return;
+        BeamCheck();
+    }
 
+    void BeamCheck()
+    {
         f_castLength = V4_CastInfo.z;
         Vector3 hitPoint = Vector3.zero;
         RaycastHit[] hits = OnCastCheck(GameLayer.Mask.I_StaticEntity);
         for (int i = 0; i < hits.Length; i++)
         {
-            if (!GameManager.B_CanSFXHitTarget(hits[i].collider.Detect(), m_sourceID))
+            if (!GameManager.B_CanSFXHitTarget(hits[i].collider.Detect(), I_SourceID))
                 continue;
 
             Vector3 offsetPoint = hits[i].point;
             if (offsetPoint == Vector3.zero) offsetPoint = CastTransform.position;      //Cast Item At The Start Of The Sweep;
 
-            float lengthOffset = TCommon.GetXZDistance(CastTransform.position, offsetPoint) +(E_AreaType==  enum_CastAreaType.ForwardCapsule?V4_CastInfo.x:0);
+            float lengthOffset = TCommon.GetXZDistance(CastTransform.position, offsetPoint) + (E_AreaType == enum_CastAreaType.ForwardCapsule ? V4_CastInfo.x : 0);
             if (lengthOffset >= f_castLength)
                 continue;
 
             f_castLength = lengthOffset;
-            hitPoint = CastTransform.position+CastTransform.forward*f_castLength;
+            hitPoint = CastTransform.position + CastTransform.forward * f_castLength;
         }
-        bool hitted = hitPoint!=Vector3.zero;
+        bool hitted = hitPoint != Vector3.zero;
         m_Impact.SetActive(hitted);
         m_Impact.transform.position = hitPoint;
         m_Beam.SetPosition(0, transform.position);
-        m_Beam.SetPosition(1, hitted?hitPoint:CastTransform.position+CastTransform.forward* f_castLength);
+        m_Beam.SetPosition(1, hitted ? hitPoint : CastTransform.position + CastTransform.forward * f_castLength);
     }
 }

@@ -52,9 +52,9 @@ public class SFXCastAreaConnections : SFXCast {
         m_Connections = new ObjectPoolSimpleClass<EntityBase, ConnectionsItem>(connections,"Item");
         m_GroundParticles = new TSpecialClasses.ParticleControlBase(transform.Find("ParticlesGround"));
     }
-    public override void PlayControlled(int sourceID, EntityCharacterBase entity, Transform directionTrans,DamageDeliverInfo idInfo)
+    public override void PlayControlled(int sourceID, EntityCharacterBase entity, Transform directionTrans)
     {
-        base.PlayControlled(sourceID, entity, directionTrans,idInfo);
+        base.PlayControlled(sourceID, entity, directionTrans);
         tf_GroundAttach = entity.transform;
         m_Particle.Clear();
     }

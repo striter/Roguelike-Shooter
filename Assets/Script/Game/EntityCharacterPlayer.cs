@@ -110,6 +110,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         f_reviveCheck = GameConst.F_PlayerReviveCheckAfterDead;
         m_Animator.OnDead();
+        if (m_WeaponCurrent) m_WeaponCurrent.OnPlay(false);
         m_MoveAxisInput = Vector2.zero;
         m_Assist.SetEnable(false);
         base.OnDead();
@@ -117,6 +118,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected override void OnRevive()
     {
         base.OnRevive();
+        if (m_WeaponCurrent) m_WeaponCurrent.OnPlay(true);
         m_Assist.SetEnable(true);
         m_Animator.OnRevive();
 
@@ -155,11 +157,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         if (m_Weapon1) m_Weapon1.Trigger(down);
         if (m_Weapon2) m_Weapon2.Trigger(down);
-    }
-    public void OnWeaponEnergy(float energy)
-    {
-        if (m_Weapon1) m_Weapon1.OnEnergyReceive(energy);
-        if (m_Weapon2) m_Weapon2.OnEnergyReceive(energy);
     }
     public bool m_weaponCanFire { get; private set; } = false;
     void OnReloadClick()
@@ -231,9 +228,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void SwapWeapon(bool isFirst)
     {
         if (m_WeaponCurrent)
-            m_WeaponCurrent.OnShow(false);
+            m_WeaponCurrent.OnPlay(false);
         m_weaponEquipingFirst = isFirst;
-        m_WeaponCurrent.OnShow(true);
+        m_WeaponCurrent.OnPlay(true);
         m_Animator.OnActivate(m_WeaponCurrent.E_Anim);
         if (m_Assist) m_Assist.Recycle();
         m_Assist = GameObjectManager.SpawnSFX<SFXAimAssist>(101, tf_WeaponAim.position, tf_Weapon.forward);
@@ -268,15 +265,10 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void OnMoveTick(float deltaTime)
     {
         if (m_aimingMovementReduction) f_aimMovementReduction -= deltaTime;
-        if (m_aiming) f_aimMovementReduction = GameConst.F_MovementReductionDuration;
+        if (m_aiming) f_aimMovementReduction =  GameConst.F_MovementReductionDuration;
         TPSCameraController.Instance.RotateCamera(m_RotateAxisInput * OptionsManager.m_Sensitive);
 
-        if (!m_TargetAvailable || targetCheck<0f)
-        {
-            targetCheck = .3f;
-            m_Target = GameManager.Instance.GetAvailableEntity(this, false, true, GameConst.F_PlayerAutoAimRange);
-        }
-        targetCheck -= Time.deltaTime;
+        TargetTick(deltaTime);
 
         tf_CameraAttach.position = transform.position;
         if (m_Target) 
@@ -292,6 +284,16 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         float finalMovementSpeed = m_CharacterInfo.F_MovementSpeed;
         m_CharacterController.Move((CalculateMoveDirection(m_MoveAxisInput) * finalMovementSpeed + Vector3.down * GameConst.F_Gravity) * deltaTime);
         m_Animator.SetRun(m_MoveAxisInput, finalMovementSpeed / F_MovementSpeed);
+    }
+
+    void TargetTick(float deltaTime)
+    {
+        if (!m_TargetAvailable || targetCheck < 0f)
+        {
+            targetCheck = .3f;
+            m_Target = GameManager.Instance.GetAvailableEntity(this, false, true,  GameConst.F_PlayerAutoAimRangeBase+ m_PlayerInfo.F_AimRangeAdditive);
+        }
+        targetCheck -= Time.deltaTime;
     }
 
     #endregion
@@ -394,41 +396,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     }
     #endregion
     #region Action
-    public bool OnActionInteract(ActionBase action)
-    {
-        switch (action.m_ActionType)
-        {
-            default:
-                Debug.LogError("Invalid Detected!");
-                return false;
-            case enum_ActionType.Ability:
-                ActionAbility ability = action as ActionAbility;
-                m_WeaponCurrent.SetWeaponAction(ability, ability.I_Cost);
-                OnWeaponStatus();
-                return true;
-            case enum_ActionType.Equipment:
-                m_PlayerInfo.OnUseAction(action);
-                return true;
-        }
-    }
-
-    public void OnWeaponAbilityClick(bool isFirstWeapon)
-    {
-        ActionBase targetAction=null;
-        if (isFirstWeapon && m_Weapon1) targetAction = m_Weapon1.GetAbilityACtion();
-        else if (!isFirstWeapon && m_Weapon2) targetAction = m_Weapon2.GetAbilityACtion();
-
-        if(targetAction!=null)
-            m_PlayerInfo.OnUseAction(targetAction);
-    }
-    public void UpgradeActionPerk(ActionAbility _ability)
-    {
-        if (m_WeaponCurrent.m_WeaponAction == null)
-            m_WeaponCurrent.SetWeaponAction(_ability,_ability.I_Cost);
-        else
-            m_WeaponCurrent.m_WeaponAction.Upgrade();
-        OnWeaponStatus();
-    }
+    
     protected void OnCharacterHealthWillChange(DamageInfo damageInfo, EntityCharacterBase damageEntity)
     {
         if (damageInfo.m_AmountApply <= 0)
@@ -456,7 +424,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             return;
 
         if (damageInfo.m_detail.I_SourceID == m_EntityID || GameManager.Instance.GetEntity(damageInfo.m_detail.I_SourceID).m_SpawnerEntityID == m_EntityID)
-            OnWeaponEnergy(GameExpression.GetActionEnergyRevive(amountApply));
+        {
+            //Dealt Damage
+        }
     }
     #endregion
     #region UI Indicator
@@ -526,7 +496,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void SetBinding(bool on)
     {
         if (on)
-            UIManager.Instance.DoBindings(this, OnMovementDelta, OnRotateDelta,  OnMainDown, OnInteract, OnSwapClick, OnReloadClick, OnWeaponAbilityClick, OnAbilityClick);
+            UIManager.Instance.DoBindings(this, OnMovementDelta, OnRotateDelta,  OnMainDown, OnInteract, OnSwapClick, OnReloadClick, OnAbilityClick);
         else
             UIManager.Instance.RemoveBindings();
     }

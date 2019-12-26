@@ -793,7 +793,7 @@ public struct RangeInt
 }
 public interface IXmlPhrase
 {
-    string ToXMLData();
+     string ToXMLData();
 }
 public class TXmlPhrase : SingleTon<TXmlPhrase>
 {

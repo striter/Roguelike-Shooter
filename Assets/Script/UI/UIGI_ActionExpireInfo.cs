@@ -6,14 +6,14 @@ using UnityEngine.UI;
 public class UIGI_ActionExpireInfo : UIGI_ActionBase {
     UIT_TextExtend m_Duration;
     Image m_DurationFill,m_ActionType;
-    ActionBase m_target;
+    PlayerEquipmentExpire m_target;
     public override void Init()
     {
         base.Init();
         m_Duration = tf_Container.Find("Duration").GetComponent<UIT_TextExtend>();
         m_DurationFill = tf_Container.Find("DurationFill").GetComponent<Image>();
     }
-    public override void SetInfo(ActionBase action)
+    public override void SetInfo(PlayerEquipmentExpire action)
     {
         base.SetInfo(action);
         m_target = action;
@@ -23,11 +23,11 @@ public class UIGI_ActionExpireInfo : UIGI_ActionBase {
     }
     void CheckFillAmount()
     {
-        if (m_target.m_ExpireDuration == 0)
-            return;
+        //if (m_target.m_ExpireDuration == 0)
+        //    return;
 
-        m_DurationFill.fillAmount = 1 - m_target.f_expireLeftScale;
-        m_Duration.text = string.Format("{0:N1}s", m_target.f_expireCheck);
+        //m_DurationFill.fillAmount = 1 - m_target.f_expireLeftScale;
+        //m_Duration.text = string.Format("{0:N1}s", m_target.f_expireCheck);
     }
 
     private void Update()

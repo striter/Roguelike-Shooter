@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class WeaponProjectileRocketLauncher : WeaponProjectileBase {
 
-    protected override void OnGetEquipmentData(SFXEquipmentBase equipment)
+    protected override void OnGetEquipmentData(SFXWeaponBase equipment)
     {
         base.OnGetEquipmentData(equipment);
         SFXCast cast = GameObjectManager.GetEquipmentData<SFXCast>(GameExpression.GetPlayerSubEquipmentIndex((int)m_WeaponInfo.m_Weapon));
