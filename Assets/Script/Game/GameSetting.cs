@@ -1811,7 +1811,7 @@ namespace GameSetting
     public class PlayerEquipmentExpire : EntityExpireBase
     {
         public override enum_ExpireType m_ExpireType => enum_ExpireType.Equipment;
-        public EntityCharacterPlayer m_ActionEntity { get; private set; }
+        public EntityCharacterPlayer m_Attacher { get; private set; }
         public enum_EquipmentRarity m_rarity { get; private set; }
         public enum_EquipmentType m_EquipmentType;
         public int m_Identity { get; private set; } = -1;
@@ -1836,7 +1836,7 @@ namespace GameSetting
             m_Identity = _identity;
             m_EquipmentType = _type;
         }
-        public virtual void OnActivate(EntityCharacterPlayer _actionEntity, Action<EntityExpireBase> OnExpired) { m_ActionEntity = _actionEntity; OnActivate(OnExpired); }
+        public virtual void OnActivate(EntityCharacterPlayer _actionEntity, Action<EntityExpireBase> OnExpired) { m_Attacher = _actionEntity; OnActivate(OnExpired); }
       
         public void CheckRarity(int sameCount)
         {

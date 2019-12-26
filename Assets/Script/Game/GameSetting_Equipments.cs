@@ -20,6 +20,15 @@ namespace GameSetting_Action
         public static int P_0010_PenetrateAdditive(enum_EquipmentRarity rarity) => 30 * (int)rarity;
         public static int P_0011_FireRateAdditive(enum_EquipmentRarity rarity) => 50 * (int)rarity;
         public static int I_0012_BounceTimes(enum_EquipmentRarity rarity) => 1*(int)rarity;
+        public static float F_0013_EffectRange(enum_EquipmentRarity rarity) => 8f;
+        public static int P_0013_DamageMultiply(enum_EquipmentRarity rarity) => 12 * (int)rarity;
+        public static float F_0014_EffectRange(enum_EquipmentRarity rarity) => 8f;
+        public static int F_0014_ReductionDuration(enum_EquipmentRarity rarity) => 2 * (int)rarity;
+        public static float F_0015_EffectRange(enum_EquipmentRarity rarity) => 8f;
+        public static int P_0015_MovementSpeedEachEnermy(enum_EquipmentRarity rarity,int nearbyCount) => nearbyCount* 10 * (int)rarity;
+        public static float F_0016_EffectRange(enum_EquipmentRarity rarity) => 8f*(int)rarity;
+        public static float P_0016_ClipRefillRate(enum_EquipmentRarity rarity) => 50f;
+        public static float F_0017_Duration(enum_EquipmentRarity rarity) => 1 * (int)rarity;
     }
     #endregion
 
@@ -121,7 +130,7 @@ namespace GameSetting_Action
         {
             base.OnFire(identity);
             if (TCommon.RandomPercentage() < Value1)
-                m_ActionEntity.m_WeaponCurrent.ForceReload();
+                m_Attacher.m_WeaponCurrent.ForceReload();
         }
         public E0002_ClipRefillOnAttack(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
     }
@@ -227,6 +236,102 @@ namespace GameSetting_Action
         public override float Value1 => EquipmentData.I_0012_BounceTimes(m_rarity);
         public override int I_ProjectileCopyAdditive => (int)Value1;
         public E0012_ProjectileCopy(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
+    }
+
+    public class E0013_NearbyDamageMultiply:PlayerEquipmentExpire
+    {
+        public override int m_Index => 0013;
+        public override float Value1 => EquipmentData.F_0013_EffectRange(m_rarity); 
+        public override float Value2 => EquipmentData.P_0013_DamageMultiply(m_rarity);
+        public override void OnDealtDamageSetDamage(EntityCharacterBase receiver, DamageInfo info)
+        {
+            base.OnDealtDamageSetDamage(receiver, info);
+            if (Vector3.Distance(receiver.transform.position, m_Attacher.transform.position) > Value1)
+                return;
+            info.m_detail.DamageAdditive(Value1 / 100f, 0);
+        }
+        public E0013_NearbyDamageMultiply(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
+    }
+
+    public class E0014_NearbyKillDamageReduction:PlayerEquipmentExpire
+    {
+        public override int m_Index => 0014;
+        public override float Value1 => EquipmentData.F_0014_EffectRange(m_rarity);
+        public override float Value2 => EquipmentData.F_0014_ReductionDuration(m_rarity);
+        public override float m_DamageReduction => m_Timer.m_Timing ? 1f : base.m_DamageReduction;
+        EquipmentTimer m_Timer = new EquipmentTimer();
+        public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        {
+            base.OnAfterDealtDemage(receiver, info, applyAmount);
+            if (receiver.m_IsDead&&Vector3.Distance(m_Attacher.transform.position,receiver.transform.position)<Value1)
+                m_Timer.SetTimer(Value2);
+        }
+        public override void OnTick(float deltaTime)
+        {
+            base.OnTick(deltaTime);
+            m_Timer.Tick(deltaTime);
+        }
+        public E0014_NearbyKillDamageReduction(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
+    }
+    public class E0015_NearbyCountMovementAdditive : PlayerEquipmentExpire
+    {
+        public override int m_Index => 0015;
+        public override float Value1 => EquipmentData.F_0015_EffectRange(m_rarity);
+        public override float Value2 => EquipmentData.P_0015_MovementSpeedEachEnermy(m_rarity,m_NearbyCount);
+        public override float m_MovementSpeedMultiply =>Value2/100f;
+        int m_NearbyCount = 0;
+        EquipmentTimer m_Timer = new EquipmentTimer();
+        public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        {
+            base.OnAfterDealtDemage(receiver, info, applyAmount);
+            if (receiver.m_IsDead && Vector3.Distance(m_Attacher.transform.position, receiver.transform.position) < Value1)
+                m_Timer.SetTimer(Value2);
+        }
+        public override void OnTick(float deltaTime)
+        {
+            base.OnTick(deltaTime);
+            m_Timer.Tick(deltaTime);
+            if (m_Timer.m_Timing)
+                return;
+            m_Timer.SetTimer(.5f);
+            m_NearbyCount = GameManager.Instance.GetNearbyEnermyCount(m_Attacher,Value1);
+        }
+        public E0015_NearbyCountMovementAdditive(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
+    }
+
+    public class E0016_NearbyKillClipAdditive : PlayerEquipmentExpire
+    {
+        public override int m_Index => 0016;
+        public override float Value1 => EquipmentData.F_0016_EffectRange(m_rarity);
+        public override float Value2 => EquipmentData.P_0016_ClipRefillRate(m_rarity);
+        public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        {
+            base.OnAfterDealtDemage(receiver, info, applyAmount);
+            if (receiver.m_IsDead && Vector3.Distance(m_Attacher.transform.position, receiver.transform.position) < Value1)
+                m_Attacher.m_WeaponCurrent.ForceReload();
+        }
+        public E0016_NearbyKillClipAdditive(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
+    }
+
+    public class E0017_TakeDamageReductionDuration : PlayerEquipmentExpire
+    {
+        public override int m_Index => 0017;
+        public override float Value1 =>  EquipmentData.F_0017_Duration(m_rarity);
+        public override float m_DamageReduction => m_Timer.m_Timing ? 1 : base.m_DamageReduction;
+        EquipmentTimer m_Timer = new EquipmentTimer();
+        public override void OnTick(float deltaTime)
+        {
+            base.OnTick(deltaTime);
+            m_Timer.Tick(deltaTime);
+        }
+        public override void OnBeforeReceiveDamage(DamageInfo info)
+        {
+            base.OnBeforeReceiveDamage(info);
+            if (m_Timer.m_Timing)
+                return;
+            m_Timer.SetTimer(Value1);
+        }
+        public E0017_TakeDamageReductionDuration(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
     }
     #endregion
     #endregion

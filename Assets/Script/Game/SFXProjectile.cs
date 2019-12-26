@@ -169,7 +169,6 @@ public class SFXProjectile : SFXWeaponBase
         if (m_copiesLeft <= 0)
             return;
         EntityCharacterBase target= GameManager.Instance.GetAvailableEntity(GameManager.Instance.GetCharacter(hitTargetID),true,false,5f);
-        Debug.Log(target == null);
         if (!target)
             return;
         m_copiesLeft--;

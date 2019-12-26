@@ -380,6 +380,20 @@ public class GameManager : GameManagerBase
         return m_target;
     }
 
+    public int GetNearbyEnermyCount(EntityCharacterBase sourceEntity, float checkDistance = float.MaxValue)
+    {
+        int nearbyCount = 0;
+        List<EntityCharacterBase> entities = GetEntities(sourceEntity.m_Flag, false);
+        for (int i = 0; i < entities.Count; i++)
+        {
+            if (entities[i].m_EntityID == sourceEntity.m_EntityID)
+                continue;
+            if (Vector3.Distance(entities[i].transform.position, sourceEntity.transform.position) < checkDistance)
+                nearbyCount++;
+        }
+        return nearbyCount;
+    }
+
     public bool CheckEntityObstacleBetween(EntityCharacterBase source, EntityCharacterBase destination)
     {
         m_Raycasts = Physics.RaycastAll(source.tf_Head.position, TCommon.GetXZLookDirection(source.tf_Head.position, destination.tf_Head.position), Vector3.Distance(source.tf_Head.position, destination.tf_Head.position), GameLayer.Mask.I_StaticEntity);
