@@ -3,6 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SFXEquipmentBase : SFXParticles {
+public class SFXWeaponBase : SFXParticles {
 
 }

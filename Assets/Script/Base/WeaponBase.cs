@@ -38,10 +38,10 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
         I_ClipAmount = m_WeaponInfo.m_ClipAmount;
         I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
         m_Trigger = new WeaponTrigger(m_WeaponInfo.m_FireRate, OnTriggerOnce, OnFireCheck, CheckCanAutoReload);
-        OnGetEquipmentData(GameObjectManager.GetEquipmentData<SFXEquipmentBase>(GameExpression.GetPlayerWeaponIndex(m_WeaponInfo.m_Index)));
+        OnGetEquipmentData(GameObjectManager.GetEquipmentData<SFXWeaponBase>(GameExpression.GetPlayerWeaponIndex(m_WeaponInfo.m_Index)));
     }
 
-    protected virtual void OnGetEquipmentData(SFXEquipmentBase equipment)
+    protected virtual void OnGetEquipmentData(SFXWeaponBase equipment)
     {
     }
     protected override void OnPoolItemDisable()

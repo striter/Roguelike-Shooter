@@ -272,7 +272,7 @@ namespace GameSetting_Action
     #endregion
 
     #region Developers Use
-    public static class ActionHelper
+    public static class EquipmentHelper
     {
         public static WeaponHelperBase GetCommonDevice(int actionIndex,EntityCharacterPlayer player, Func<DamageDeliverInfo> damageInfo) => WeaponHelperBase.AcquireWeaponHelper(GameExpression.GetPlayerWeaponIndex(actionIndex), player, damageInfo);
         public static WeaponHelperEntitySpawner GetEntityDevice(int actionIndex, EntityCharacterPlayer player,  Func<DamageDeliverInfo> damage, int health, float fireRate)
@@ -492,7 +492,7 @@ namespace GameSetting_Action
         {
             base.OnAfterDealtDemage(receiver, info, applyAmount);
             if(receiver.m_IsDead)
-                ActionHelper.ReceiveHealing(m_ActionEntity,m_ActionEntity.m_Health.m_BaseHealth * Value1/100f, enum_DamageType.HealthOnly);
+                EquipmentHelper.ReceiveHealing(m_ActionEntity,m_ActionEntity.m_Health.m_BaseHealth * Value1/100f, enum_DamageType.HealthOnly);
         }
         public Action_30012_KillHealthRegen(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
     }
@@ -539,7 +539,7 @@ namespace GameSetting_Action
         {
             base.OnBeforeReceiveDamage(info);
             if (m_ActionEntity.m_Health.m_CurrentArmor > 0)
-                ActionHelper.PlayerDealtDamageToEntity(m_ActionEntity, info.m_detail.I_SourceID, Value1 * m_ActionEntity.m_Health.m_CurrentArmor, enum_DamageType.Basic);
+                EquipmentHelper.PlayerDealtDamageToEntity(m_ActionEntity, info.m_detail.I_SourceID, Value1 * m_ActionEntity.m_Health.m_CurrentArmor, enum_DamageType.Basic);
         }
         public Action_30015_ArmorDamageReflection(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }
     }

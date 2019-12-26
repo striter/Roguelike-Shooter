@@ -6,7 +6,7 @@ using UnityEngine;
 public class WeaponCastBase : WeaponBase {
     SFXCast m_Cast;
     public bool m_Casting => m_Cast;
-    protected override void OnGetEquipmentData(SFXEquipmentBase equipment)
+    protected override void OnGetEquipmentData(SFXWeaponBase equipment)
     {
         base.OnGetEquipmentData(equipment);
         SFXCast cast = equipment as SFXCast;

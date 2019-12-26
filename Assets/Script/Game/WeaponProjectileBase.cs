@@ -12,7 +12,7 @@ public class WeaponProjectileBase : WeaponBase
     public float F_Speed => m_Attacher.m_PlayerInfo.F_ProjectileSpeedMuiltiply * F_BaseSpeed;
     public bool B_Penetrate => m_Attacher.m_PlayerInfo.B_ProjectilePenetrate || B_BasePenetrate;
 
-    protected override void OnGetEquipmentData(SFXEquipmentBase equipment)
+    protected override void OnGetEquipmentData(SFXWeaponBase equipment)
     {
         base.OnGetEquipmentData(equipment);
         SFXProjectile projectileInfo = equipment as SFXProjectile;
