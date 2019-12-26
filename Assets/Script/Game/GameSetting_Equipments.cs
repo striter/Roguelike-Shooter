@@ -274,10 +274,10 @@ namespace GameSetting_Action
     #region Developers Use
     public static class ActionHelper
     {
-        public static EquipmentBase GetCommonDevice(int actionIndex,EntityCharacterPlayer player, Func<DamageDeliverInfo> damageInfo) => EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(actionIndex), player, damageInfo);
-        public static EquipmentEntitySpawner GetEntityDevice(int actionIndex, EntityCharacterPlayer player,  Func<DamageDeliverInfo> damage, int health, float fireRate)
+        public static WeaponHelperBase GetCommonDevice(int actionIndex,EntityCharacterPlayer player, Func<DamageDeliverInfo> damageInfo) => WeaponHelperBase.AcquireWeaponHelper(GameExpression.GetPlayerWeaponIndex(actionIndex), player, damageInfo);
+        public static WeaponHelperEntitySpawner GetEntityDevice(int actionIndex, EntityCharacterPlayer player,  Func<DamageDeliverInfo> damage, int health, float fireRate)
         {
-            EquipmentEntitySpawner equipment = GetCommonDevice(actionIndex,player, damage) as EquipmentEntitySpawner;
+            WeaponHelperEntitySpawner equipment = GetCommonDevice(actionIndex,player, damage) as WeaponHelperEntitySpawner;
             equipment.SetOnSpawn(health, (EntityCharacterBase entity) =>
             {
                 EntityCharacterAI target = entity as EntityCharacterAI;
@@ -287,9 +287,9 @@ namespace GameSetting_Action
             });
             return equipment;
         }
-        public static EquipmentEntitySpawner GetBuffDevice(int actionIndex, EntityCharacterPlayer player,float health,SBuff buffApplyPlayer,  SBuff buffApplyAlly,float refreshDuration)
+        public static WeaponHelperEntitySpawner GetBuffDevice(int actionIndex, EntityCharacterPlayer player,float health,SBuff buffApplyPlayer,  SBuff buffApplyAlly,float refreshDuration)
         {
-            EquipmentEntitySpawner equipment = GetCommonDevice(actionIndex, player, null) as EquipmentEntitySpawner;
+            WeaponHelperEntitySpawner equipment = GetCommonDevice(actionIndex, player, null) as WeaponHelperEntitySpawner;
             equipment.SetOnSpawn(health,(EntityCharacterBase entity)=>{(entity as EntityDeviceBuffApllier).SetBuffApply(buffApplyPlayer,buffApplyAlly,refreshDuration);});
             return equipment;
         }
@@ -379,12 +379,12 @@ namespace GameSetting_Action
     {
         public override int m_Index => 30003;
         public override float Value1 => ActionData.F_30003_GrenadeDamage(m_rarity);
-        EquipmentBase m_ActionEquipment;
+        WeaponHelperBase m_WeaponHelper;
         DamageDeliverInfo GetDamageInfo()=> DamageDeliverInfo.EquipmentInfo(m_ActionEntity.m_EntityID, Value1, enum_CharacterEffect.Invalid, 0); 
         public override void OnActivate()
         {
             base.OnActivate();
-            m_ActionEquipment = EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(m_Index), m_ActionEntity, GetDamageInfo);
+            m_WeaponHelper = WeaponHelperBase.AcquireWeaponHelper(GameExpression.GetPlayerWeaponIndex(m_Index), m_ActionEntity, GetDamageInfo);
         }
         bool m_shotGrenade = false;
         public override void OnReloadFinish()
@@ -396,7 +396,7 @@ namespace GameSetting_Action
         {
             base.OnFire(identity);
             if (m_shotGrenade)
-                m_ActionEquipment.OnPlay( m_ActionEntity,m_ActionEntity.tf_Head.position+m_ActionEntity.tf_Head.forward*5);
+                m_WeaponHelper.OnPlay( m_ActionEntity,m_ActionEntity.tf_Head.position+m_ActionEntity.tf_Head.forward*5);
 
             m_shotGrenade = false;
         }
@@ -426,12 +426,12 @@ namespace GameSetting_Action
     {
         public override int m_Index => 30006;
         public override float Value1 => ActionData.F_30006_FreezeDuration(m_rarity);
-        EquipmentBase m_Equipment;
+        WeaponHelperBase m_WeaponHelper;
         DamageDeliverInfo GetDamageInfo() => DamageDeliverInfo.EquipmentInfo(m_ActionEntity.m_EntityID, 0, enum_CharacterEffect.Freeze, Value1);
         public override void OnActivate()
         {
             base.OnActivate();
-            m_Equipment = EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex(m_Index), m_ActionEntity, GetDamageInfo);
+            m_WeaponHelper = WeaponHelperBase.AcquireWeaponHelper(GameExpression.GetPlayerWeaponIndex(m_Index), m_ActionEntity, GetDamageInfo);
         }
         public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
@@ -439,7 +439,7 @@ namespace GameSetting_Action
             if (!receiver.m_IsDead)
                 return;
 
-            m_Equipment.OnPlay(false, receiver);
+            m_WeaponHelper.OnPlay(false, receiver);
         }
         
         public Action_30006_DamageKillFreezeBlast(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }

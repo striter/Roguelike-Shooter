@@ -71,9 +71,9 @@ namespace GameSetting
 
     public static class GameExpression
     {
-        public static int GetPlayerEquipmentIndex(int equipmentIndex) => equipmentIndex * 10;
+        public static int GetPlayerWeaponIndex(int equipmentIndex) => equipmentIndex * 10;
         public static int GetPlayerSubEquipmentIndex(int equipmentIndex) => equipmentIndex * 10 + 1;
-        public static int GetAIEquipmentIndex(int entityIndex, int weaponIndex = 0, int subWeaponIndex = 0) => entityIndex * 100 + weaponIndex * 10 + subWeaponIndex;
+        public static int GetAIWeaponIndex(int entityIndex, int weaponIndex = 0, int subWeaponIndex = 0) => entityIndex * 100 + weaponIndex * 10 + subWeaponIndex;
         public const int I_PlayerReviveBuffIndex = 40004;
 
         public static float F_PlayerSensitive(int sensitiveTap) => sensitiveTap / 5f;
@@ -1483,8 +1483,7 @@ namespace GameSetting
         protected float F_DamageAdditive = 0f;
 
         protected Vector3 m_prePos;
-
-        public List<EquipmentExpire> m_ActionPlaying { get; private set; } = new List<EquipmentExpire>();
+        
         public List<EquipmentExpire> m_ActionEquipment { get; private set; } = new List<EquipmentExpire>();
         public int m_Coins { get; private set; } = 0;
 
@@ -1519,9 +1518,9 @@ namespace GameSetting
         #region Interact
         public bool CheckRevive(ref RangeFloat reviveAmount)
         {
-            for (int i = 0; i < m_ActionPlaying.Count; i++)
+            for (int i = 0; i < m_ActionEquipment.Count; i++)
             {
-                if (m_ActionPlaying[i].OnCheckRevive(ref reviveAmount))
+                if (m_ActionEquipment[i].OnCheckRevive(ref reviveAmount))
                     return true;
             }
             return false;
@@ -1547,12 +1546,12 @@ namespace GameSetting
             if (expire.m_ExpireType != enum_ExpireType.Equipment)
                 return;
             EquipmentExpire targetAction = expire as EquipmentExpire;
-            m_ActionPlaying.Add(targetAction);
             m_ActionEquipment.Add(targetAction);
             CheckEquipmentRarity();
 
             targetAction.OnActivate(m_Player, RemoveExpire);
             targetAction.OnActivate();
+            TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
         }
 
         protected override void RemoveExpire(ExpireBase expire)
@@ -1561,8 +1560,7 @@ namespace GameSetting
             if (expire.m_ExpireType != enum_ExpireType.Equipment)
                 return;
             EquipmentExpire targetExpire = expire as EquipmentExpire;
-            m_ActionPlaying.Remove(targetExpire);
-            m_ActionEquipment.Remove(targetExpire as EquipmentExpire);
+            m_ActionEquipment.Remove(targetExpire);
             CheckEquipmentRarity();
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
         }
@@ -1625,12 +1623,12 @@ namespace GameSetting
             ResetEffect(enum_CharacterEffect.Cloak);
             float randomDamageMultiply = UnityEngine.Random.Range(-GameConst.F_PlayerDamageAdjustmentRange, GameConst.F_PlayerDamageAdjustmentRange);
             DamageDeliverInfo info = DamageDeliverInfo.DamageInfo(m_Entity.m_EntityID, F_DamageMultiply + randomDamageMultiply, F_DamageAdditive);
-            m_ActionPlaying.Traversal((EquipmentExpire action) => { action.OnFire(info.I_IdentiyID); });
+            m_ActionEquipment.Traversal((EquipmentExpire action) => { action.OnFire(info.I_IdentiyID); });
             return info;
         }
 
-        public void OnPlayerMove(float distance) => m_ActionPlaying.Traversal((EquipmentExpire action) => { action.OnMove(distance); });
-        public void OnReloadFinish() => m_ActionPlaying.Traversal((EquipmentExpire action) => { action.OnReloadFinish(); });
+        public void OnPlayerMove(float distance) => m_ActionEquipment.Traversal((EquipmentExpire action) => { action.OnMove(distance); });
+        public void OnReloadFinish() => m_ActionEquipment.Traversal((EquipmentExpire action) => { action.OnReloadFinish(); });
 
         public void OnEntityActivate(EntityBase targetEntity)
         {
@@ -1642,9 +1640,9 @@ namespace GameSetting
                 ally.m_Health.SetHealthMultiplier(F_AllyHealthMultiplierAdditive);
         }
 
-        public void OnWillDealtDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) { m_ActionPlaying.Traversal((EquipmentExpire action) => { action.OnDealtDamageSetEffect(damageEntity, damageInfo); action.OnDealtDamageSetDamage(damageEntity, damageInfo); }); }
+        public void OnWillDealtDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) { m_ActionEquipment.Traversal((EquipmentExpire action) => { action.OnDealtDamageSetEffect(damageEntity, damageInfo); action.OnDealtDamageSetDamage(damageEntity, damageInfo); }); }
 
-        public void OnWillReceiveDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) { m_ActionPlaying.Traversal((EquipmentExpire action) => { action.OnBeforeReceiveDamage(damageInfo); }); }
+        public void OnWillReceiveDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) { m_ActionEquipment.Traversal((EquipmentExpire action) => { action.OnBeforeReceiveDamage(damageInfo); }); }
 
         public override void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
         {
@@ -1655,15 +1653,15 @@ namespace GameSetting
             if (damageInfo.m_detail.I_SourceID == m_Player.m_EntityID)
             {
                 if(amountApply>0)
-                    m_ActionPlaying.Traversal((EquipmentExpire action) => { action.OnAfterDealtDemage(damageEntity, damageInfo, amountApply); });
+                    m_ActionEquipment.Traversal((EquipmentExpire action) => { action.OnAfterDealtDemage(damageEntity, damageInfo, amountApply); });
             }
 
             if (damageEntity.m_EntityID == m_Player.m_EntityID)
             {
                 if (amountApply > 0)
-                    m_ActionPlaying.Traversal((EquipmentExpire action) => { action.OnAfterReceiveDamage(damageInfo, amountApply); });
+                    m_ActionEquipment.Traversal((EquipmentExpire action) => { action.OnAfterReceiveDamage(damageInfo, amountApply); });
                 else
-                    m_ActionPlaying.Traversal((EquipmentExpire action) => { action.OnReceiveHealing(damageInfo, amountApply); });
+                    m_ActionEquipment.Traversal((EquipmentExpire action) => { action.OnReceiveHealing(damageInfo, amountApply); });
             }
         }
         #endregion
@@ -1858,9 +1856,7 @@ namespace GameSetting
         public virtual bool OnCheckRevive(ref RangeFloat amount) { return false; }
         #endregion
     }
-    
     #endregion
-
     #region Physics
     public static class HitCheckDetect_Extend
     {
@@ -1883,7 +1879,7 @@ namespace GameSetting
         }
     }
     #endregion
-
+    
     #region GameEffects
     public class ModelBlink:ISingleCoroutine
     {
@@ -1931,7 +1927,7 @@ namespace GameSetting
     }
     
     #endregion
-
+    
     #region BigmapTile
     public class SBigmapLevelInfo
     {
@@ -1958,7 +1954,7 @@ namespace GameSetting
         }
     }
     #endregion
-
+    
     #region LevelTile
     public class LevelTile 
     {
@@ -2023,7 +2019,7 @@ namespace GameSetting
     #endregion
     
     #region Equipment
-    public class EquipmentBase
+    public class WeaponHelperBase
     {
         public virtual bool B_TargetAlly => false;
         public int I_Index { get; private set; } = -1;
@@ -2041,7 +2037,7 @@ namespace GameSetting
                 return m_Entity.m_CharacterInfo;
             }
         }
-        public EquipmentBase(int equipmentIndex, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo)
+        public WeaponHelperBase(int equipmentIndex, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo)
         {
             I_Index = equipmentIndex;
             m_Entity = _controller;
@@ -2062,7 +2058,7 @@ namespace GameSetting
         {
 
         }
-        public static EquipmentBase AcquireEquipment(int weaponIndex, EntityCharacterBase _entity, Func<DamageDeliverInfo> GetDamageBuffInfo)
+        public static WeaponHelperBase AcquireWeaponHelper(int weaponIndex, EntityCharacterBase _entity, Func<DamageDeliverInfo> GetDamageBuffInfo)
         {
             SFXEquipmentBase weaponInfo = GameObjectManager.GetEquipmentData<SFXEquipmentBase>(weaponIndex);
             SFXProjectile projectile = weaponInfo as SFXProjectile;
@@ -2071,8 +2067,8 @@ namespace GameSetting
                 switch (projectile.E_ProjectileType)
                 {
                     default: Debug.LogError("Invalid Type:" + projectile.E_ProjectileType); break;
-                    case enum_ProjectileFireType.Single: return new EquipmentBarrageRange(weaponIndex,projectile, _entity, GetDamageBuffInfo); 
-                    case enum_ProjectileFireType.MultipleFan: return new EquipmentBarrageMultipleFan(weaponIndex,projectile, _entity, GetDamageBuffInfo); 
+                    case enum_ProjectileFireType.Single: return new WeaponHelperBarrageRange(weaponIndex,projectile, _entity, GetDamageBuffInfo); 
+                    case enum_ProjectileFireType.MultipleFan: return new WeaponHelperBarrageMultipleFan(weaponIndex,projectile, _entity, GetDamageBuffInfo); 
                     case enum_ProjectileFireType.MultipleLine: return new EquipmentBarrageMultipleLine(weaponIndex,projectile, _entity, GetDamageBuffInfo); 
                 }
             }
@@ -2083,29 +2079,30 @@ namespace GameSetting
                 switch (cast.E_CastType)
                 {
                     default: Debug.LogError("Invalid Type:" + cast.E_CastType); break;
-                    case enum_CastControllType.CastFromOrigin: return new EquipmentCaster(weaponIndex,cast, _entity, GetDamageBuffInfo);
-                    case enum_CastControllType.CastSelfDetonate: return new EquipmentCasterSelfDetonateAnimLess(weaponIndex,cast, _entity, GetDamageBuffInfo, _entity.tf_Model.Find("BlinkModel")); 
-                    case enum_CastControllType.CastControlledForward: return new EquipmentCasterControlled(weaponIndex,cast, _entity, GetDamageBuffInfo);
-                    case enum_CastControllType.CastAtTarget: return new EquipmentCasterTarget(weaponIndex,cast, _entity, GetDamageBuffInfo);
+                    case enum_CastControllType.CastFromOrigin: return new WeaponHelperCaster(weaponIndex,cast, _entity, GetDamageBuffInfo);
+                    case enum_CastControllType.CastSelfDetonate: return new WeaponHelperCasterSelfDetonateAnimLess(weaponIndex,cast, _entity, GetDamageBuffInfo, _entity.tf_Model.Find("BlinkModel")); 
+                    case enum_CastControllType.CastControlledForward: return new WeaponHelperCasterControlled(weaponIndex,cast, _entity, GetDamageBuffInfo);
+                    case enum_CastControllType.CastAtTarget: return new WeaponHelperCasterTarget(weaponIndex,cast, _entity, GetDamageBuffInfo);
                 }
             }
 
             SFXBuffApply buffApply = weaponInfo as SFXBuffApply;
             if (buffApply)
-                return new BuffApply(weaponIndex,buffApply, _entity, GetDamageBuffInfo);
+                return new WeaponHelperBuffApply(weaponIndex,buffApply, _entity, GetDamageBuffInfo);
 
             SFXSubEntitySpawner entitySpawner = weaponInfo as SFXSubEntitySpawner;
             if (entitySpawner)
-                return new EquipmentEntitySpawner(weaponIndex,entitySpawner, _entity, GetDamageBuffInfo);
+                return new WeaponHelperEntitySpawner(weaponIndex,entitySpawner, _entity, GetDamageBuffInfo);
 
             return null;
         }
     }
-    public class EquipmentCaster : EquipmentBase
+
+    public class WeaponHelperCaster : WeaponHelperBase
     {
         protected enum_CastTarget m_CastAt { get; private set; }
         protected bool m_castForward { get; private set; }
-        public EquipmentCaster(int equipmentIndex,SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex, _controller, _GetBuffInfo)
+        public WeaponHelperCaster(int equipmentIndex,SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex, _controller, _GetBuffInfo)
         {
             m_CastAt = _castInfo.E_CastTarget;
             m_castForward = _castInfo.B_CastForward;
@@ -2131,9 +2128,10 @@ namespace GameSetting
             }
         }
     }
-    public class EquipmentCasterTarget : EquipmentCaster
+
+    public class WeaponHelperCasterTarget : WeaponHelperCaster
     {
-        public EquipmentCasterTarget(int equipmentIndex,SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex,_castInfo, _controller, _GetBuffInfo)
+        public WeaponHelperCasterTarget(int equipmentIndex,SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex,_castInfo, _controller, _GetBuffInfo)
         {
         }
         protected override Vector3 GetTargetPosition(bool preAim, EntityCharacterBase _target)
@@ -2146,12 +2144,13 @@ namespace GameSetting
             GameObjectManager.SpawnEquipment<SFXCast>(I_Index, _calculatedPosition,m_castForward?m_Entity.tf_Weapon.forward:Vector3.up).Play(GetDamageDeliverInfo());
         }
     }
-    public class EquipmentCasterSelfDetonateAnimLess : EquipmentCaster
+
+    public class WeaponHelperCasterSelfDetonateAnimLess : WeaponHelperCaster
     {
         ModelBlink m_Blink;
         float timeElapsed;
         bool b_activating;
-        public EquipmentCasterSelfDetonateAnimLess(int equipmentIndex,SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo, Transform _blinkModels) : base(equipmentIndex,_castInfo, _controller, _GetBuffInfo)
+        public WeaponHelperCasterSelfDetonateAnimLess(int equipmentIndex,SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo, Transform _blinkModels) : base(equipmentIndex,_castInfo, _controller, _GetBuffInfo)
         {
             m_Blink = new ModelBlink(_blinkModels, .25f, .25f,Color.red);
             timeElapsed = 0;
@@ -2187,11 +2186,12 @@ namespace GameSetting
             return;
         }
     }
-    public class EquipmentCasterControlled : EquipmentCaster
+
+    public class WeaponHelperCasterControlled : WeaponHelperCaster
     {
         public override bool B_LoopAnim => true;
         SFXCast m_Cast;
-        public EquipmentCasterControlled(int equipmentIndex,SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex,_castInfo, _controller, _GetBuffInfo)
+        public WeaponHelperCasterControlled(int equipmentIndex,SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex,_castInfo, _controller, _GetBuffInfo)
         {
         }
         public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
@@ -2216,7 +2216,7 @@ namespace GameSetting
             }
         }
     }
-    public class EquipmentBarrageRange : EquipmentBase
+    public class WeaponHelperBarrageRange : WeaponHelperBase
     {
         protected float f_projectileSpeed { get; private set; }
         protected RangeInt m_CountExtension { get; private set; }
@@ -2224,7 +2224,7 @@ namespace GameSetting
         int i_muzzleIndex;
         AudioClip m_MuzzleClip;
 
-        public EquipmentBarrageRange(int equipmentIndex,SFXProjectile projectileInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex, _controller, _GetBuffInfo)
+        public WeaponHelperBarrageRange(int equipmentIndex,SFXProjectile projectileInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex, _controller, _GetBuffInfo)
         {
             i_muzzleIndex = projectileInfo.I_MuzzleIndex;
             m_MuzzleClip = projectileInfo.AC_MuzzleClip;
@@ -2262,7 +2262,7 @@ namespace GameSetting
         }
         protected void SpawnMuzzle(Vector3 startPosition, Vector3 direction) => GameObjectManager.PlayMuzzle(m_Entity.m_EntityID,startPosition,direction,i_muzzleIndex,m_MuzzleClip);
     }
-    public class EquipmentBarrageMultipleLine : EquipmentBarrageRange
+    public class EquipmentBarrageMultipleLine : WeaponHelperBarrageRange
     {
         public EquipmentBarrageMultipleLine(int equipmentIndex,SFXProjectile projectileInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex,projectileInfo, _controller, _GetBuffInfo)
         {
@@ -2279,9 +2279,10 @@ namespace GameSetting
                 FireBullet(lineBeginPosition + attacherHead.right * m_OffsetExtension * i, direction, m_Entity.tf_Weapon.position + direction * distance);
         }
     }
-    public class EquipmentBarrageMultipleFan : EquipmentBarrageRange
+
+    public class WeaponHelperBarrageMultipleFan : WeaponHelperBarrageRange
     {
-        public EquipmentBarrageMultipleFan(int equipmentIndex,SFXProjectile projectileInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex,projectileInfo, _controller, _GetBuffInfo)
+        public WeaponHelperBarrageMultipleFan(int equipmentIndex,SFXProjectile projectileInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex,projectileInfo, _controller, _GetBuffInfo)
         {
         }
         public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
@@ -2299,12 +2300,13 @@ namespace GameSetting
             }
         }
     }
-    public class BuffApply : EquipmentBase
+
+    public class WeaponHelperBuffApply : WeaponHelperBase
     {
         public override bool B_TargetAlly => true;
         SBuff m_buffInfo;
         SFXBuffApply m_Effect;
-        public BuffApply(int equipmentIndex,SFXBuffApply buffApplyinfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex, _controller, _GetBuffInfo)
+        public WeaponHelperBuffApply(int equipmentIndex,SFXBuffApply buffApplyinfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex, _controller, _GetBuffInfo)
         {
             m_buffInfo = GameDataManager.GetPresetBuff(buffApplyinfo.I_BuffIndex);
         }
@@ -2316,10 +2318,10 @@ namespace GameSetting
             m_Effect.Play(m_Entity.m_EntityID, m_buffInfo, m_Entity.tf_Weapon, _target);
         }
     }
-    public class EquipmentEntitySpawner : EquipmentBase
+    public class WeaponHelperEntitySpawner : WeaponHelperBase
     {
         bool m_SpawnAtTarget;
-        public EquipmentEntitySpawner(int equipmentIndex,SFXSubEntitySpawner spawner, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex, _controller, _GetBuffInfo)
+        public WeaponHelperEntitySpawner(int equipmentIndex,SFXSubEntitySpawner spawner, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex, _controller, _GetBuffInfo)
         {
             startHealth = 0;
             m_SpawnAtTarget = spawner.B_SpawnAtTarget;
@@ -2338,9 +2340,7 @@ namespace GameSetting
         }
     }
     #endregion
-
     #endregion
-
     #region For UI Usage
     public enum enum_UI_ActionUpgradeType
     {

@@ -41,7 +41,7 @@ public class WeaponCastBase : WeaponBase {
 
         if (showCast)
         {
-            m_Cast = GameObjectManager.SpawnEquipment<SFXCast>(GameExpression.GetPlayerEquipmentIndex(m_WeaponInfo.m_Index), m_Muzzle.position, m_Muzzle.forward);
+            m_Cast = GameObjectManager.SpawnEquipment<SFXCast>(GameExpression.GetPlayerWeaponIndex(m_WeaponInfo.m_Index), m_Muzzle.position, m_Muzzle.forward);
             m_Cast.PlayControlled(m_Attacher.m_EntityID, m_Attacher, m_Attacher.tf_WeaponAim);
         }
         else

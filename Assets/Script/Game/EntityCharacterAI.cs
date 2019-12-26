@@ -30,7 +30,7 @@ public class EntityCharacterAI : EntityCharacterBase {
     {
         base.OnPoolItemInit(_identity, _OnRecycle);
         tf_Barrel = transform.FindInAllChild("Barrel");
-        InitAI(EquipmentBase.AcquireEquipment(GameExpression.GetAIEquipmentIndex(m_Identity, 0),this,m_CharacterInfo.GetDamageBuffInfo));
+        InitAI(WeaponHelperBase.AcquireWeaponHelper(GameExpression.GetAIWeaponIndex(m_Identity, 0),this,m_CharacterInfo.GetDamageBuffInfo));
         if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
             m_Animator = new EnermyAnimator(tf_Model.GetComponent<Animator>(), OnAnimKeyEvent);
     }
@@ -106,7 +106,7 @@ public class EntityCharacterAI : EntityCharacterBase {
     protected NavMeshObstacle m_Obstacle;
     protected EntityCharacterBase m_Target;
     protected Transform targetHeadTransform => m_Target.tf_Head;
-    protected EquipmentBase m_Weapon;
+    protected WeaponHelperBase m_Weapon;
     RaycastHit[] m_Raycasts;
     float f_movementSimulate, f_movementOrderSimulate, f_battleSimulate, f_calculateSimulate, f_checkTargetSimulate, f_fireCheckSimulate;
     Vector3 m_forwardDirection;
@@ -149,7 +149,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         }
     }
 
-    void InitAI(EquipmentBase _weapon)
+    void InitAI(WeaponHelperBase _weapon)
     {
         m_Weapon = _weapon;
         m_Agent = GetComponent<NavMeshAgent>();

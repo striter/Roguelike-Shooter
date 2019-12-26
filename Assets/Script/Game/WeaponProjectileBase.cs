@@ -52,7 +52,7 @@ public class WeaponProjectileBase : WeaponBase
 
     void FireOneBullet(DamageDeliverInfo damage, Vector3 direction)
     {
-        SFXProjectile projectile = GameObjectManager.SpawnEquipment<SFXProjectile>(GameExpression.GetPlayerEquipmentIndex(m_WeaponInfo.m_Index), m_Muzzle.position, direction);
+        SFXProjectile projectile = GameObjectManager.SpawnEquipment<SFXProjectile>(GameExpression.GetPlayerWeaponIndex(m_WeaponInfo.m_Index), m_Muzzle.position, direction);
         projectile.F_Speed = F_Speed;
         projectile.B_Penetrate = B_Penetrate;
         projectile.Play(damage, direction, m_Attacher.tf_Weapon.position + direction * GameConst.I_ProjectileMaxDistance);
