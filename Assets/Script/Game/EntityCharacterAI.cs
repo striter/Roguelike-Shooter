@@ -204,7 +204,8 @@ public class EntityCharacterAI : EntityCharacterBase {
         }
         public void OnDeactivate()
         {
-            SetPlay(false);
+            StopMoving();
+            OnAttackFinished();
         }
         
         public void SetPlay(bool play)
@@ -213,11 +214,10 @@ public class EntityCharacterAI : EntityCharacterBase {
                 return;
 
             b_playing = play;
-            if (!play)
+            if (!b_playing)
             {
                 StopMoving();
-                if (b_attacking)
-                    OnAttackFinished();
+                PauseAttack();
             }
         }
 
@@ -296,14 +296,20 @@ public class EntityCharacterAI : EntityCharacterBase {
             i_playCount = (attackTimes <= 0 ? 1 : attackTimes);       //Make Sure Play Once At Least
             b_preAim = preAim;
             b_attacking = true;
-            m_Weapon.OnSetAttack(true);
 
             if (m_Weapon.B_LoopAnim)
+            {
                 OnAttackAnim(true);
+                f_fireCheckSimulate = m_Entity.F_AttackRate;
+            }
+        }
+        void PauseAttack()
+        {
+            if(b_attacking)
+                m_Weapon.OnStopPlay();
         }
         void CheckAttack(float deltaTime)
         {
-
             if (!b_CanKeepAttack)
             {
                 OnAttackFinished();
@@ -330,7 +336,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         public void OnAttackAnimTrigger()
         {
             if (b_targetAvailable)
-                m_Weapon.Play(b_preAim, m_Target);
+                m_Weapon.OnPlay(b_preAim, m_Target);
 
             if (i_playCount <= 0)
                 OnAttackFinished();
@@ -339,7 +345,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         void OnAttackFinished()
         {
             b_attacking = false;
-            m_Weapon.OnSetAttack(false);
+            m_Weapon.OnStopPlay();
             OnAttackAnim(false);
             f_battleSimulate = m_Entity.F_AttackDuration.RandomRangeFloat();
         }
@@ -366,7 +372,6 @@ public class EntityCharacterAI : EntityCharacterBase {
                 SetDestination(GetSamplePosition());
             f_movementOrderSimulate = inrangeIdle ? GameExpression.GetAIIdleDuration() : GameConst.F_AIMaxRepositionDuration;
         }
-
         bool CheckHoldPosition() => m_Entity.m_CharacterInfo.F_MovementSpeed == 0 || (b_attacking && !m_Entity.B_AttackMove);
         bool CheckDestinationReached() => B_AgentEnabled && m_Agent.remainingDistance <= .3f;
 

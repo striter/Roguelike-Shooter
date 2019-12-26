@@ -74,14 +74,20 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
         OnShow(true);
     }
 
-    public virtual void OnShow(bool show)
+    public virtual void OnPlay(bool play)
     {
-        transform.SetActivate(show);
-        if (show)
+        OnShow(play);
+        if (play)
+        {
             CheckCanAutoReload();
-    } 
+            return;
+        }
 
+        B_Reloading = false;
+        Trigger(false);
+    }
 
+    void OnShow(bool show)=>transform.SetActivate(show);
     #region PlayerInteract
     public void Trigger(bool down)=>m_Trigger.OnSetTrigger(down);
     

@@ -353,7 +353,7 @@ namespace GameSetting_Action
         {
             base.OnActivate();
             EquipmentBase device = GetDevice();
-            device.Play(m_ActionEntity, m_ActionEntity.transform.position + m_ActionEntity.transform.forward * m_DeviceDistance);
+            device.OnPlay(m_ActionEntity, m_ActionEntity.transform.position + m_ActionEntity.transform.forward * m_DeviceDistance);
         }
 
         public virtual EquipmentBase GetDevice()
@@ -589,7 +589,7 @@ namespace GameSetting_Action
         public override void OnActivate()
         {
             base.OnActivate();
-            EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex( m_Index), m_ActionEntity, () => { return DamageDeliverInfo.EquipmentInfo(m_ActionEntity.m_EntityID, 0, enum_CharacterEffect.Freeze, Value1); }).Play(false,m_ActionEntity);
+            EquipmentBase.AcquireEquipment(GameExpression.GetPlayerEquipmentIndex( m_Index), m_ActionEntity, () => { return DamageDeliverInfo.EquipmentInfo(m_ActionEntity.m_EntityID, 0, enum_CharacterEffect.Freeze, Value1); }).OnPlay(false,m_ActionEntity);
         }
         public Action_10015_FreezeNearby(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
     }
@@ -1021,7 +1021,7 @@ namespace GameSetting_Action
         {
             base.OnFire(identity);
             if (m_shotGrenade)
-                m_ActionEquipment.Play( m_ActionEntity,m_ActionEntity.tf_Head.position+m_ActionEntity.tf_Head.forward*5);
+                m_ActionEquipment.OnPlay( m_ActionEntity,m_ActionEntity.tf_Head.position+m_ActionEntity.tf_Head.forward*5);
 
             m_shotGrenade = false;
         }
@@ -1067,7 +1067,7 @@ namespace GameSetting_Action
             if (!receiver.m_IsDead)
                 return;
 
-            m_Equipment.Play(false, receiver);
+            m_Equipment.OnPlay(false, receiver);
         }
 
         public Action_30006_DamageKillFreezeBlast(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
@@ -1107,7 +1107,7 @@ namespace GameSetting_Action
         public override void OnUseWeaponAbility(ActionBase targetAction)
         {
             base.OnUseWeaponAbility(targetAction);
-            m_Equipment.Play(false,m_ActionEntity);
+            m_Equipment.OnPlay(false,m_ActionEntity);
         }
         public Action_30008_FreezeTrapSpawnByActionUse(int _identity, enum_ActionRarity _level) : base(_identity, _level) { }
         public Action_30008_FreezeTrapSpawnByActionUse(int _identity, enum_EquipmentType _type) : base(_identity, _type) { }

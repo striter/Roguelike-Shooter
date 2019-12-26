@@ -2191,13 +2191,15 @@ namespace GameSetting
             GetDamageDeliverInfo = _GetBuffInfo;
         }
         protected virtual Vector3 GetTargetPosition(bool preAim, EntityCharacterBase _target) => _target.tf_Head.position;
-        public void Play(bool _preAim, EntityCharacterBase _target) => Play(_target,GetTargetPosition(_preAim, _target));
-        public virtual void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
+        public void OnPlay(bool _preAim, EntityCharacterBase _target) => OnPlay(_target,GetTargetPosition(_preAim, _target));
+        public virtual void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
 
         }
-        public virtual void OnSetAttack(bool play)
+
+        public virtual void OnStopPlay()
         {
+
         }
         public virtual void Tick(float deltaTime)
         {
@@ -2251,7 +2253,7 @@ namespace GameSetting
             m_CastAt = _castInfo.E_CastTarget;
             m_castForward = _castInfo.B_CastForward;
         }
-        public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
+        public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
             Transform castAt = GetCastAt(m_Entity);
             GameObjectManager.SpawnEquipment<SFXCast>(I_Index, castAt.position, m_castForward?castAt.forward:Vector3.up).Play(GetDamageDeliverInfo());
@@ -2282,7 +2284,7 @@ namespace GameSetting
             Transform castAt = GetCastAt(_target);
             return LevelManager.NavMeshPosition(castAt.position + TCommon.RandomXZSphere(m_Entity.F_AttackSpread)) + new Vector3(0, castAt.position.y, 0);
         }
-        public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
+        public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
             GameObjectManager.SpawnEquipment<SFXCast>(I_Index, _calculatedPosition,m_castForward?m_Entity.tf_Weapon.forward:Vector3.up).Play(GetDamageDeliverInfo());
         }
@@ -2313,16 +2315,17 @@ namespace GameSetting
                 b_activating = false;
             }
         }
-        public override void OnSetAttack(bool play)
+
+        public override void OnStopPlay()
         {
-            base.OnSetAttack(play);
-            if (!play || b_activating)
+            base.OnStopPlay();
+            if (b_activating)
                 return;
 
             timeElapsed = 0;
             b_activating = true;
         }
-        public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
+        public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
             return;
         }
@@ -2334,20 +2337,21 @@ namespace GameSetting
         public EquipmentCasterControlled(int equipmentIndex,SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex,_castInfo, _controller, _GetBuffInfo)
         {
         }
-        public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
+        public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
             if (!m_Cast)
             {
                 m_Cast = GameObjectManager.SpawnEquipment<SFXCast>(I_Index, m_Entity.tf_Weapon.position, m_Entity.tf_Weapon.forward);
-                m_Cast.PlayControlled(m_Entity.m_EntityID, m_Entity, attacherHead, DamageDeliverInfo.Default(m_Entity.m_EntityID));
+                m_Cast.PlayControlled(m_Entity.m_EntityID, m_Entity, attacherHead);
             }
 
             if (m_Cast)
-                m_Cast.OnControlledCheck(GetDamageDeliverInfo());
+                m_Cast.ControlledCheck(GetDamageDeliverInfo());
         }
 
-        public override void OnSetAttack(bool play)
+        public override void OnStopPlay()
         {
+            base.OnStopPlay();
             if (m_Cast)
             {
                 m_Cast.StopControlled();
@@ -2372,7 +2376,7 @@ namespace GameSetting
             m_OffsetExtension = projectileInfo.F_OffsetExtension;
         }
 
-        public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
+        public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
             Vector3 startPosition = m_Entity.tf_Weapon.position;
             Vector3 direction = TCommon.GetXZLookDirection(startPosition, _calculatedPosition);
@@ -2406,7 +2410,7 @@ namespace GameSetting
         public EquipmentBarrageMultipleLine(int equipmentIndex,SFXProjectile projectileInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex,projectileInfo, _controller, _GetBuffInfo)
         {
         }
-        public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
+        public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
             Vector3 startPosition = m_Entity.tf_Weapon.position;
             Vector3 direction = TCommon.GetXZLookDirection(startPosition, _calculatedPosition);
@@ -2423,7 +2427,7 @@ namespace GameSetting
         public EquipmentBarrageMultipleFan(int equipmentIndex,SFXProjectile projectileInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo) : base(equipmentIndex,projectileInfo, _controller, _GetBuffInfo)
         {
         }
-        public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
+        public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
             Vector3 startPosition = m_Entity.tf_Weapon.position;
             Vector3 direction = TCommon.GetXZLookDirection(startPosition, _calculatedPosition);
@@ -2447,7 +2451,7 @@ namespace GameSetting
         {
             m_buffInfo = GameDataManager.GetPresetBuff(buffApplyinfo.I_BuffIndex);
         }
-        public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
+        public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
             if (!m_Effect || !m_Effect.B_Playing)
                 m_Effect = GameObjectManager.SpawnEquipment<SFXBuffApply>(I_Index, m_Entity.tf_Weapon.position, Vector3.up);
@@ -2470,7 +2474,7 @@ namespace GameSetting
             OnSpawn = _OnSpawn;
             startHealth = _startHealth;
         }
-        public override void Play(EntityCharacterBase _target, Vector3 _calculatedPosition)
+        public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
             Vector3 spawnPosition = (m_SpawnAtTarget ? _target.transform.position : m_Entity.transform.position) + TCommon.RandomXZSphere(m_Entity.F_AttackSpread);
             GameObjectManager.SpawnEquipment<SFXSubEntitySpawner>(I_Index, spawnPosition, Vector3.up).Play(m_Entity,_target.transform.position, startHealth, GetDamageDeliverInfo, OnSpawn);

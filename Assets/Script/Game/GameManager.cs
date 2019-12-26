@@ -33,6 +33,13 @@ public class GameManager : GameManagerBase
                 if (entity.m_Flag == enum_EntityFlag.Enermy)
                     entity.m_HitCheck.TryHit(new DamageInfo(entity.m_Health.m_CurrentHealth, enum_DamageType.Basic, DamageDeliverInfo.Default(-1))); });
         }));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Freeze All", "0.5", KeyCode.Alpha8, (string value) =>
+        {
+            m_Entities.Values.ToList().Traversal((EntityBase entity) => {
+                if (entity.m_Flag == enum_EntityFlag.Enermy)
+                    entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.EquipmentInfo(-1,0, enum_CharacterEffect.Freeze,float.Parse( value))));
+            });
+        }));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Enermy", "101", KeyCode.Z, (string id) => {
             EntityCharacterBase enermy = GameObjectManager.SpawnEntityCharacter(int.Parse(id), LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f)), m_LocalPlayer.transform.position, enum_EntityFlag.Enermy);
             enermy.SetExtraDifficulty(GameExpression.GetAIBaseHealthMultiplier(m_GameLevel.m_GameDifficulty), GameExpression.GetAIMaxHealthMultiplier(m_GameLevel.m_GameStage), GameExpression.GetEnermyGameDifficultyBuffIndex(m_GameLevel.m_GameDifficulty));
@@ -48,7 +55,7 @@ public class GameManager : GameManagerBase
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("WeaponAbility", "10001", KeyCode.F2, (string actionIndex) => { GameObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f))).Play(ActionDataManager.CreateAction(int.Parse(actionIndex), enum_ActionRarity.Epic)); }));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Player Equipment", "10001", KeyCode.F3, (string actionIndex) => { GameObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f))).Play(ActionDataManager.CreateAction(int.Parse(actionIndex), TCommon.RandomEnumValues<enum_EquipmentType>(null))); }));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Ability Energy", "1", KeyCode.Alpha9, (string energy) => {  m_LocalPlayer.OnWeaponEnergy(float.Parse(energy));}));
-        
+
         UIT_MobileConsole.Instance.AddConsoleBindings(m_bindings);
     }
     #endregion

@@ -36,7 +36,7 @@ public class UIT_EventTriggerListener : EventTrigger {
 
         if (!m_pressDurationChecking)
             return;
-        OnPressDuration(m_pressDurationCheck < 0);
+        OnPressDuration?.Invoke(m_pressDurationCheck < 0);
         m_pressDurationChecking = false;
     }
     private void Update()

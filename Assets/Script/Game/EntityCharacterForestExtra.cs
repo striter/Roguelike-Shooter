@@ -36,7 +36,7 @@ public class EntityCharacterForestExtra : EntityCharacterBase {
         f_spreadCheck = F_SpreadDuration;
 
         Vector3 splitDirection = transform.forward.RotateDirection(Vector3.up, i_spreadCountCheck * I_SpreadAngleEach);
-        equipment.Play(null, transform.position + splitDirection * 20);
+        equipment.OnPlay(null, transform.position + splitDirection * 20);
         i_spreadCountCheck++;
         if (i_spreadCountCheck > I_SpreadCount)
             OnDead();

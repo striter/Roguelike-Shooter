@@ -110,6 +110,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         f_reviveCheck = GameConst.F_PlayerReviveCheckAfterDead;
         m_Animator.OnDead();
+        if (m_WeaponCurrent) m_WeaponCurrent.OnPlay(false);
         m_MoveAxisInput = Vector2.zero;
         m_Assist.SetEnable(false);
         base.OnDead();
@@ -117,6 +118,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected override void OnRevive()
     {
         base.OnRevive();
+        if (m_WeaponCurrent) m_WeaponCurrent.OnPlay(true);
         m_Assist.SetEnable(true);
         m_Animator.OnRevive();
 
@@ -231,9 +233,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void SwapWeapon(bool isFirst)
     {
         if (m_WeaponCurrent)
-            m_WeaponCurrent.OnShow(false);
+            m_WeaponCurrent.OnPlay(false);
         m_weaponEquipingFirst = isFirst;
-        m_WeaponCurrent.OnShow(true);
+        m_WeaponCurrent.OnPlay(true);
         m_Animator.OnActivate(m_WeaponCurrent.E_Anim);
         if (m_Assist) m_Assist.Recycle();
         m_Assist = GameObjectManager.SpawnSFX<SFXAimAssist>(101, tf_WeaponAim.position, tf_Weapon.forward);

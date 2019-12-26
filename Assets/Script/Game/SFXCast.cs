@@ -19,7 +19,6 @@ public class SFXCast : SFXEquipmentBase {
     public bool B_CameraShake = false;
     #endregion
     protected DamageInfo m_DamageInfo;
-    public int m_sourceID => m_DamageInfo.m_detail.I_SourceID;
     protected virtual float F_CastLength => V4_CastInfo.z;
     protected Transform CastTransform => tf_ControlledCast ? tf_ControlledCast : transform;
     protected float F_PlayDuration => I_TickCount * F_Tick;
@@ -30,20 +29,19 @@ public class SFXCast : SFXEquipmentBase {
     {
         SetDamageInfo(buffInfo);
         if (I_DelayIndicatorIndex > 0)
-            GameObjectManager.SpawnIndicator(I_DelayIndicatorIndex, transform.position, Vector3.up).Play(m_sourceID, F_DelayDuration);
+            GameObjectManager.SpawnIndicator(I_DelayIndicatorIndex, transform.position, Vector3.up).Play(I_SourceID, F_DelayDuration);
 
         base.Play(m_DamageInfo.m_detail.I_SourceID, F_PlayDuration, F_DelayDuration);
     }
 
-    public virtual void PlayControlled(int sourceID,EntityCharacterBase entity, Transform directionTrans,DamageDeliverInfo idInfo)
+    public virtual void PlayControlled(int sourceID,EntityCharacterBase entity, Transform directionTrans)
     {
-        SetDamageInfo(idInfo);
         tf_ControlledCast = directionTrans;
         AttachTo(entity.tf_Weapon);
         base.Play(sourceID, 0f, F_DelayDuration);
     }
 
-    public void OnControlledCheck(DamageDeliverInfo info)
+    public void ControlledCheck(DamageDeliverInfo info)
     {
         SetDamageInfo(info);
         DoCastDealtDamage();
@@ -106,7 +104,7 @@ public class SFXCast : SFXEquipmentBase {
                     break;
                 case enum_HitCheck.Entity:
                     HitCheckEntity entity = hitCheck as HitCheckEntity;
-                    if (entityHitted.Contains(entity.m_Attacher) || !GameManager.B_CanSFXDamageEntity(entity, m_sourceID))
+                    if (entityHitted.Contains(entity.m_Attacher) || !GameManager.B_CanSFXDamageEntity(entity, I_SourceID))
                         continue;
                     entityHitted.Add(entity.m_Attacher);
                     break;
