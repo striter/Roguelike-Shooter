@@ -51,10 +51,7 @@ public class GameManager : GameManagerBase
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Health", "20", KeyCode.F6, (string health) => {GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupHealth, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f), false), LevelManager.Instance.m_InteractParent).Play(int.Parse(health), m_LocalPlayer.transform);}));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Armor", "20", KeyCode.F7, (string armor) => {GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupArmor, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f), false), LevelManager.Instance.m_InteractParent).Play(int.Parse(armor), m_LocalPlayer.transform);}));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Weapon", "102", KeyCode.F8, (string weapon) => { GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f)), LevelManager.Instance.m_InteractParent).Play(GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew((enum_PlayerWeapon)int.Parse(weapon)))); }));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Use Action", "10001", KeyCode.F1, (string actionIndex) => {m_LocalPlayer.m_PlayerInfo.OnUseAction(ActionDataManager.CreateAction(int.Parse(actionIndex), enum_ActionRarity.Epic)); }));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("WeaponAbility", "10001", KeyCode.F2, (string actionIndex) => { GameObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f))).Play(ActionDataManager.CreateAction(int.Parse(actionIndex), enum_ActionRarity.Epic)); }));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Player Equipment", "10001", KeyCode.F3, (string actionIndex) => { GameObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f))).Play(ActionDataManager.CreateAction(int.Parse(actionIndex), TCommon.RandomEnumValues<enum_EquipmentType>(null))); }));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Ability Energy", "1", KeyCode.Alpha9, (string energy) => {  m_LocalPlayer.OnWeaponEnergy(float.Parse(energy));}));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Player Equipment", "30001", KeyCode.F3, (string actionIndex) => { GameObjectManager.SpawnInteract<InteractEquipment>(enum_Interaction.Equipment, LevelManager.NavMeshPosition(TCommon.RandomXZSphere(5f))).Play(ActionDataManager.CreateAction(int.Parse(actionIndex), TCommon.RandomEnumValues<enum_EquipmentType>(null))); }));
 
         UIT_MobileConsole.Instance.AddConsoleBindings(m_bindings);
     }
@@ -204,40 +201,27 @@ public class GameManager : GameManagerBase
                     int priceHealth = GameExpression.GetTradePrice(enum_Interaction.PickupHealth).Random(m_GameLevel.m_GameSeed);
                     GameObjectManager.SpawnInteract<InteractContainerTrade>(enum_Interaction.ContainerTrade, level.m_Level.NearestInteractTilePosition(-TileAxis.Right, m_GameLevel.m_GameSeed), interactTrans).Play(priceHealth, GameObjectManager.SpawnInteract<InteractPickupHealth>(enum_Interaction.PickupHealthPack, Vector3.zero, interactTrans).Play(GameConst.I_HealthTradeAmount, null));
 
-                    ActionBase action1 = ActionDataManager.CreateRandomAction(m_GameLevel.m_actionGenerate.GetTradeActionRarity(m_GameLevel.m_GameSeed), m_GameLevel.m_GameSeed);
-                    int priceAction = GameExpression.GetTradePrice(enum_Interaction.Action, action1.m_rarity).Random(m_GameLevel.m_GameSeed);
-                    GameObjectManager.SpawnInteract<InteractContainerTrade>(enum_Interaction.ContainerTrade, level.m_Level.NearestInteractTilePosition(TileAxis.Zero, m_GameLevel.m_GameSeed), interactTrans).Play(priceAction, GameObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action, Vector3.zero, interactTrans).Play(action1));
+                    EquipmentExpire action1 = ActionDataManager.CreateRandomEquipment(TCommon.RandomEnumValues<enum_EquipmentType>(m_GameLevel.m_GameSeed), m_GameLevel.m_GameSeed);
+                    int priceAction = GameExpression.GetTradePrice(enum_Interaction.Equipment, action1.m_rarity).Random(m_GameLevel.m_GameSeed);
+                    GameObjectManager.SpawnInteract<InteractContainerTrade>(enum_Interaction.ContainerTrade, level.m_Level.NearestInteractTilePosition(TileAxis.Zero, m_GameLevel.m_GameSeed), interactTrans).Play(priceAction, GameObjectManager.SpawnInteract<InteractEquipment>(enum_Interaction.Equipment, Vector3.zero, interactTrans).Play(action1));
                     
                     WeaponBase weapon = GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew( GameDataManager.m_WeaponRarities[m_GameLevel.m_actionGenerate.GetTradeWeaponRarity(m_GameLevel.m_GameSeed)].RandomItem(m_GameLevel.m_GameSeed)),null);
                     int priceWeapon = GameExpression.GetTradePrice(enum_Interaction.Weapon, enum_ActionRarity.Invalid,weapon.m_WeaponInfo.m_Rarity).Random(m_GameLevel.m_GameSeed);
                     GameObjectManager.SpawnInteract<InteractContainerTrade>(enum_Interaction.ContainerTrade, level.m_Level.NearestInteractTilePosition(TileAxis.Right, m_GameLevel.m_GameSeed), interactTrans).Play(priceWeapon, GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, Vector3.right, interactTrans).Play(weapon));
                 }
                 break;
-            case enum_LevelType.ActionAdjustment:
+            case enum_LevelType.EquipmentAcquireBattle:
                 {
-                    GameObjectManager.SpawnNPC( enum_InteractCharacter.Trainer, Vector3.zero , interactTrans);
-                    GameObjectManager.SpawnInteract<InteractActionAdjustment>(enum_Interaction.ActionAdjustment, level.m_Level.NearestInteractTilePosition(TileAxis.Zero,m_GameLevel.m_GameSeed), interactTrans).Play(m_GameLevel.m_GameStage);
-                }
-                break;
-            case enum_LevelType.BattleActionAcquire:
-                {
-                    ActionBase action = ActionDataManager.CreateRandomAction(m_GameLevel.m_GameStage.GetBattleTradeActionRarity(), m_GameLevel.m_GameSeed);
-                    GameObjectManager.SpawnInteract<InteractContainerBattle>(enum_Interaction.ContainerBattle, level.m_Level.NearestInteractTilePosition(TileAxis.Zero, m_GameLevel.m_GameSeed), interactTrans).Play(OnBattleStart, GameObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action, Vector3.zero, interactTrans).Play(action));
-                }
-                break;
-            case enum_LevelType.BattlePerkUpgrade:
-                {
-                    GameObjectManager.SpawnInteract<InteractPerkUpgrade>(enum_Interaction.PerkUpgrade, level.m_Level.NearestInteractTilePosition(TileAxis.Zero, m_GameLevel.m_GameSeed), interactTrans).Play(OnBattleStart,ActionDataManager.CreateRandomAbilityAction( enum_ActionRarity.Normal,m_GameLevel.m_GameSeed));
+                    EquipmentExpire action = ActionDataManager.CreateRandomEquipment(TCommon.RandomEnumValues<enum_EquipmentType>(m_GameLevel.m_GameSeed), m_GameLevel.m_GameSeed);
+                    GameObjectManager.SpawnInteract<InteractContainerBattle>(enum_Interaction.ContainerBattle, level.m_Level.NearestInteractTilePosition(TileAxis.Zero, m_GameLevel.m_GameSeed), interactTrans).Play(OnBattleStart, GameObjectManager.SpawnInteract<InteractEquipment>(enum_Interaction.Equipment, Vector3.zero, interactTrans).Play(action));
                 }
                 break;
         }
 
         switch (level.m_LevelType)
         {
-            case enum_LevelType.BattleActionAcquire:
-            case enum_LevelType.BattlePerkUpgrade:
+            case enum_LevelType.EquipmentAcquireBattle:
             case enum_LevelType.Trade:
-            case enum_LevelType.ActionAdjustment:
             case enum_LevelType.Start:
                 GameObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Portal, level.m_Level.NearestInteractTilePosition(TileAxis.Zero, m_GameLevel.m_GameSeed), level.m_Level.tf_Interact).Play(OnLevelFinished, m_GameLevel.m_PortalKey);
                 break;
@@ -278,14 +262,9 @@ public class GameManager : GameManagerBase
         enum_WeaponRarity weaponRarity = TCommon.RandomPercentage(pickupGenerateData.m_WeaponRate, enum_WeaponRarity.Invalid);
         if (weaponRarity != enum_WeaponRarity.Invalid)
             GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, GetPickupPosition(entity)).Play(GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew(GameDataManager.m_WeaponRarities[weaponRarity].RandomItem()),null));
-
-        enum_ActionRarity abilityRarity = TCommon.RandomPercentage(pickupGenerateData.m_AbilityGenerate, enum_ActionRarity.Invalid);
-        if (abilityRarity != enum_ActionRarity.Invalid)
-            GameObjectManager.SpawnInteract<InteractAction>( enum_Interaction.Action, GetPickupPosition(entity)).Play(ActionDataManager.CreateRandomAbilityAction(abilityRarity,null));
-
-        enum_ActionRarity equipmentRarity = TCommon.RandomPercentage(pickupGenerateData.m_EquipmentGenerate, enum_ActionRarity.Invalid);
-        if (equipmentRarity != enum_ActionRarity.Invalid)
-            GameObjectManager.SpawnInteract<InteractAction>(enum_Interaction.Action,GetPickupPosition(entity)).Play(ActionDataManager.CreateRandomEquipmentAction(TCommon.RandomEnumValues<enum_EquipmentType>(null),null));
+        
+        if (TCommon.RandomPercentage()>5)
+            GameObjectManager.SpawnInteract<InteractEquipment>(enum_Interaction.Equipment,GetPickupPosition(entity)).Play(ActionDataManager.CreateRandomEquipment(TCommon.RandomEnumValues<enum_EquipmentType>(null),null));
     }
     Vector3 GetPickupPosition(EntityCharacterBase dropper) => LevelManager.NavMeshPosition(dropper.transform.position + TCommon.RandomXZSphere(1.5f), false);
     #endregion
@@ -540,8 +519,7 @@ public class GameLevelManager
             {
                 default:
                     return enum_BattleDifficulty.Peaceful;
-                case enum_LevelType.BattlePerkUpgrade:
-                case enum_LevelType.BattleActionAcquire:
+                case enum_LevelType.EquipmentAcquireBattle:
                     return enum_BattleDifficulty.BattleReward;
                 case enum_LevelType.End:
                     return enum_BattleDifficulty.End;
@@ -715,8 +693,6 @@ public static class GameObjectManager
             ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Register(weaponData.m_Weapon, preset, 1);
         }
         WeaponBase targetWeapon = ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Spawn(weaponData.m_Weapon, toTrans ? toTrans : TF_Entity);
-        ActionBase action = ActionDataManager.CreateAction(weaponData.m_WeaponAction);
-        targetWeapon.SetWeaponAction(action==null?null:(action as ActionAbility), weaponData.m_WeaponEnergy);
         return targetWeapon;
     }
     public static void RecycleWeapon(WeaponBase weapon)=> ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Recycle(weapon.m_WeaponInfo.m_Weapon,weapon);

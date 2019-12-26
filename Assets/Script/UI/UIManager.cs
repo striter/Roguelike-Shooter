@@ -91,9 +91,9 @@ public class UIManager :UIManagerBase,ISingleCoroutine
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PageClose);
     }
 
-    public void DoBindings(EntityCharacterPlayer player, Action<Vector2> _OnLeftDelta, Action<Vector2> _OnRightDelta, Action<bool> _OnMainDown,Action _OnInteractClick, Action _OnSwap, Action _OnReload, Action<bool> _OnWeaponAction, Action _OnCharacterAbility)
+    public void DoBindings(EntityCharacterPlayer player, Action<Vector2> _OnLeftDelta, Action<Vector2> _OnRightDelta, Action<bool> _OnMainDown,Action _OnInteractClick, Action _OnSwap, Action _OnReload, Action _OnCharacterAbility)
     {
-        m_UIControl.DoBinding(player, _OnLeftDelta, _OnRightDelta, _OnMainDown, _OnSwap, _OnReload, _OnWeaponAction, _OnCharacterAbility);
+        m_UIControl.DoBinding(player, _OnLeftDelta, _OnRightDelta, _OnMainDown, _OnSwap, _OnReload, _OnCharacterAbility);
         m_Interact.DoBindings(_OnInteractClick);
     }
 

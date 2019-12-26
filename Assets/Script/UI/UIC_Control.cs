@@ -72,13 +72,12 @@ public class UIC_Control : UIControlBase {
     }
 
     #region Controls
-    public void DoBinding(EntityCharacterPlayer player,Action<Vector2> _OnLeftDelta, Action<Vector2> _OnRightDelta, Action<bool> _OnMainDown,Action _OnSwap, Action _OnReload, Action<bool> _OnWeaponAction, Action _OnCharacterAbility)
+    public void DoBinding(EntityCharacterPlayer player,Action<Vector2> _OnLeftDelta, Action<Vector2> _OnRightDelta, Action<bool> _OnMainDown,Action _OnSwap, Action _OnReload, Action _OnCharacterAbility)
     {
         m_TouchDelta.AddLRBinding(_OnLeftDelta, _OnRightDelta, CheckControlable);
         OnMainDown = _OnMainDown;
         OnReload = _OnReload;
         OnSwap = _OnSwap;
-        OnWeaponAction = _OnWeaponAction;
         OnCharacterAbility = _OnCharacterAbility;
         m_AbilityImg.sprite = UIManager.Instance.m_CommonSprites[UIConvertions.GetAbilitySprite(player.m_Character)];
     }
@@ -137,19 +136,16 @@ public class UIC_Control : UIControlBase {
         Transform transform;
         Transform tf_Equiping, tf_Unequiping;
         UIC_WeaponData m_weaponData;
-        UIC_WeaponActionData m_ActionData;
         TSpecialClasses.ValueChecker<int, int> m_AmmoStatusChecker;
         Action OnWeaponClick;
         public ControlWeaponData(Transform _transform,UnityAction OnActionClick,Action _OnWeaponClick)
         {
             transform = _transform;
-            m_ActionData = new UIC_WeaponActionData(transform.Find("ActionStatus"));
             m_weaponData = new UIC_WeaponData(transform.Find("WeaponData"));
             tf_Equiping = m_weaponData.transform.Find("Equiping");
             tf_Unequiping = m_weaponData.transform.Find("Unequiping");
             m_AmmoStatusChecker = new TSpecialClasses.ValueChecker<int, int>(-1, -1);
             OnWeaponClick = _OnWeaponClick;
-            m_ActionData.transform.GetComponent<Button>().onClick.AddListener(OnActionClick);
             m_weaponData.transform.GetComponent<UIT_EventTriggerListener>().SetOnPressDuration(.25f, OnWeaponDetailPressed);
         }
         public void UpdateInfo(WeaponBase weapon, bool equiping)
@@ -157,12 +153,9 @@ public class UIC_Control : UIControlBase {
             m_weapon = weapon;
             m_AmmoStatusChecker.Check(-1, -1);
             bool weaponInvalid = m_weapon == null;
-            bool actionInvalid = weaponInvalid || m_weapon.m_WeaponAction == null;
             tf_Unequiping.SetActivate(!equiping);
             tf_Equiping.SetActivate(equiping);
             m_weaponData.transform.SetActivate(!weaponInvalid);
-            m_ActionData.transform.SetActivate(!actionInvalid);
-            if (!actionInvalid) m_ActionData.SetInfo(m_weapon.m_WeaponAction);
             if (weaponInvalid)
                 return;
             m_weaponData.UpdateInfo(weapon);
@@ -180,13 +173,12 @@ public class UIC_Control : UIControlBase {
         {
             if (m_AmmoStatusChecker.Check(m_weapon.I_AmmoLeft, m_weapon.I_ClipAmount))
                 m_weaponData.UpdateAmmoInfo(m_weapon.I_AmmoLeft, m_weapon.I_ClipAmount);
-            m_ActionData.Tick(m_weapon.m_ActionEnergyRequirementLeft);
         }
         
         void OnWeaponDetailPressed(bool pressed)
         {
             if (pressed)
-                UIManager.Instance.ShowPage<UI_WeaponStatus>(true, 0f).Play(m_weapon.m_WeaponInfo, m_weapon.m_WeaponAction);
+                UIManager.Instance.ShowPage<UI_WeaponStatus>(true, 0f).Play(m_weapon.m_WeaponInfo,null);
             else
                 OnWeaponClick();
         }
