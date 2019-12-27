@@ -42,7 +42,7 @@ public class SFXProjectile : SFXWeaponBase
     {
         if (I_BuffApplyOnHit > 0)
             deliverInfo.AddExtraBuff(I_BuffApplyOnHit);
-        m_DamageInfo=new DamageInfo(F_Damage, enum_DamageType.Basic,deliverInfo);
+        m_DamageInfo=new DamageInfo(F_Damage-damageMinus, enum_DamageType.Basic,deliverInfo);
         m_PhysicsSimulator = GetSimulator(direction, targetPosition);
         SpawnIndicator(targetPosition,Vector3.up, F_PlayDelay);
         m_EntityHitted.Clear();
@@ -176,7 +176,6 @@ public class SFXProjectile : SFXWeaponBase
         SFXProjectile projectile = GameObjectManager.SpawnEquipment<SFXProjectile>(m_Identity, transform.position, direction);
         projectile.F_Speed = F_Speed;
         projectile.B_Penetrate = B_Penetrate;
-        projectile.F_Damage = F_Damage - damageMinus;
         projectile.PlayerCopyCount(m_DamageInfo.m_detail, direction, transform.position + direction * GameConst.I_ProjectileMaxDistance,m_copiesLeft,0);
         projectile.m_EntityHitted.AddRange(m_EntityHitted);
     }
