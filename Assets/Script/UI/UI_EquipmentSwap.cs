@@ -10,7 +10,7 @@ public class UI_EquipmentSwap : UIPage {
     UIT_GridControlledSingleSelect<UIGI_ActionEquipmentSelect> m_EquipmentGrid;
     Button m_ConfirmBtn;
     PlayerInfoManager m_Info;
-    EquipmenBase m_SwapEquipment;
+    EquipmentBase m_SwapEquipment;
     Action<bool> OnPageHide;
     protected override void Init()
     {
@@ -22,7 +22,7 @@ public class UI_EquipmentSwap : UIPage {
         m_EquipmentGrid = new UIT_GridControlledSingleSelect<UIGI_ActionEquipmentSelect>(rtf_Container.Find("EquipmentGrid"),OnItemSelect);
     }
 
-    public void Play(PlayerInfoManager _info,EquipmenBase _swapEquipment,Action<bool> _OnPageHide)
+    public void Play(PlayerInfoManager _info,EquipmentBase _swapEquipment,Action<bool> _OnPageHide)
     {
         m_Info = _info;
         m_SwapEquipment = _swapEquipment;

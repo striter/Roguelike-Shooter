@@ -26,7 +26,7 @@ public class EntityCharacterBase : EntityBase
     protected override float HealReceiveMultiply => m_CharacterInfo.F_HealReceiveMultiply;
     public new EntityHealth m_Health=>base.m_Health as EntityHealth;
     protected override HealthBase GetHealthManager()=> new EntityHealth(this, OnHealthChanged);
-
+    TimeCounter m_DeadCounter = new TimeCounter();
     protected virtual enum_GameVFX m_DamageClip => enum_GameVFX.EntityDamage;
     protected virtual enum_GameVFX m_ReviveClip => enum_GameVFX.PlayerRevive;
 
@@ -58,7 +58,7 @@ public class EntityCharacterBase : EntityBase
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
-        m_Effect.OnRecycle();
+        m_Effect.OnDisable();
     }
 
     public override void OnActivate(enum_EntityFlag _flag,int _spawnerID=-1,float startHealth =0)
@@ -78,6 +78,9 @@ public class EntityCharacterBase : EntityBase
 
     private void Update()
     {
+        if (!m_Activating)
+            return;
+
         m_CharacterInfo.Tick(Time.deltaTime);
         m_Effect.SetCloak(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Cloak));
         m_Effect.SetFreezed(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Freeze));
@@ -88,7 +91,17 @@ public class EntityCharacterBase : EntityBase
             OnDeadTick(Time.deltaTime);
     }
     protected virtual void OnAliveTick(float deltaTime) { }
-    protected virtual void OnDeadTick(float deltaTime) { }
+    protected virtual void OnDeadTick(float deltaTime)
+    {
+        if (m_DeadCounter.m_Timing)
+        {
+            m_DeadCounter.Tick(deltaTime);
+            m_Effect.SetDeathEffect(1f-m_DeadCounter.m_TimeLeftScale);
+            return;
+        }
+        if (!m_DeadCounter.m_Timing)
+            OnRecycle();
+    }
 
     public virtual void ReviveCharacter(float reviveHealth = -1, float reviveArmor = -1)
     {
@@ -122,6 +135,7 @@ public class EntityCharacterBase : EntityBase
         base.OnDead();
         m_CharacterInfo.OnDead();
         m_Effect.SetDeath();
+        m_DeadCounter.SetTimer(GameConst.F_EntityDeadFadeTime);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterDead, this);
     }
     
@@ -205,7 +219,10 @@ public class EntityCharacterBase : EntityBase
             m_EffectMaterial.SetTexture(TEffects.ID_NoiseTex, TEffects.TX_Noise);
             m_EffectMaterial.SetFloat(TEffects.ID_Dissolve, 0);
             m_EffectMaterial.SetFloat(TEffects.ID_DissolveScale, .2f);
-            this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value)=> { m_EffectMaterial.SetFloat(TEffects.ID_Dissolve, value); }, 0, 1, GameConst.F_EntityDeadFadeTime, OnRecycle));
+        }
+        public void SetDeathEffect(float value)
+        {
+            m_EffectMaterial.SetFloat(TEffects.ID_Dissolve, value);
         }
 
         public void SetScaned(bool _scaned)
@@ -274,7 +291,7 @@ public class EntityCharacterBase : EntityBase
             }, 0, 1, 1f));
         }
 
-        public void OnRecycle()
+        public void OnDisable()
         {
             this.StopAllSingleCoroutines();
         }

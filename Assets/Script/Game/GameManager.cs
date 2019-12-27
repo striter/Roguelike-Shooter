@@ -201,7 +201,7 @@ public class GameManager : GameManagerBase
                     int priceHealth = GameExpression.GetTradePrice(enum_Interaction.PickupHealth).Random(m_GameLevel.m_GameSeed);
                     GameObjectManager.SpawnInteract<InteractContainerTrade>(enum_Interaction.ContainerTrade, level.m_Level.NearestInteractTilePosition(-TileAxis.Right, m_GameLevel.m_GameSeed), interactTrans).Play(priceHealth, GameObjectManager.SpawnInteract<InteractPickupHealth>(enum_Interaction.PickupHealthPack, Vector3.zero, interactTrans).Play(GameConst.I_HealthTradeAmount, null));
 
-                    EquipmenBase action1 = ActionDataManager.CreateRandomEquipment(TCommon.RandomEnumValues<enum_EquipmentType>(m_GameLevel.m_GameSeed), m_GameLevel.m_GameSeed);
+                    EquipmentBase action1 = ActionDataManager.CreateRandomEquipment(TCommon.RandomEnumValues<enum_EquipmentType>(m_GameLevel.m_GameSeed), m_GameLevel.m_GameSeed);
                     int priceAction = GameExpression.GetTradePrice(enum_Interaction.Equipment, action1.m_rarity).Random(m_GameLevel.m_GameSeed);
                     GameObjectManager.SpawnInteract<InteractContainerTrade>(enum_Interaction.ContainerTrade, level.m_Level.NearestInteractTilePosition(TileAxis.Zero, m_GameLevel.m_GameSeed), interactTrans).Play(priceAction, GameObjectManager.SpawnInteract<InteractEquipment>(enum_Interaction.Equipment, Vector3.zero, interactTrans).Play(action1));
                     
@@ -212,7 +212,7 @@ public class GameManager : GameManagerBase
                 break;
             case enum_LevelType.EquipmentAcquireBattle:
                 {
-                    EquipmenBase action = ActionDataManager.CreateRandomEquipment(TCommon.RandomEnumValues<enum_EquipmentType>(m_GameLevel.m_GameSeed), m_GameLevel.m_GameSeed);
+                    EquipmentBase action = ActionDataManager.CreateRandomEquipment(TCommon.RandomEnumValues<enum_EquipmentType>(m_GameLevel.m_GameSeed), m_GameLevel.m_GameSeed);
                     GameObjectManager.SpawnInteract<InteractContainerBattle>(enum_Interaction.ContainerBattle, level.m_Level.NearestInteractTilePosition(TileAxis.Zero, m_GameLevel.m_GameSeed), interactTrans).Play(OnBattleStart, GameObjectManager.SpawnInteract<InteractEquipment>(enum_Interaction.Equipment, Vector3.zero, interactTrans).Play(action));
                 }
                 break;
@@ -255,7 +255,7 @@ public class GameManager : GameManagerBase
         if (pickupGenerateData.CanGenerateArmor(entity.E_SpawnType))
             GameObjectManager.SpawnInteract<InteractPickupArmor>(enum_Interaction.PickupArmor, GetPickupPosition(entity)).Play(GameConst.I_ArmorPickupAmount,m_LocalPlayer.transform);
         
-        int coinAmount = pickupGenerateData.GetCoinGenerate(entity.E_SpawnType);
+        int coinAmount = pickupGenerateData.GetCoinGenerate(entity.E_SpawnType,m_LocalPlayer.m_CharacterInfo.P_CoinsDropBase);
         if (coinAmount != -1)
             GameObjectManager.SpawnInteract<InteractPickupCoin>(enum_Interaction.PickupCoin, GetPickupPosition(entity)).Play(coinAmount,m_LocalPlayer.transform);
 

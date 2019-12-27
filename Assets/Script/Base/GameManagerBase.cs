@@ -349,7 +349,7 @@ public static class ActionDataManager
         m_EquipmentTypes.Clear();
         m_AllEquipment.Clear();
 
-        TReflection.TraversalAllInheritedClasses(((Type type, EquipmenBase action) => {
+        TReflection.TraversalAllInheritedClasses(((Type type, EquipmentBase action) => {
             if (action.m_Index <= 0)
                 return;
 
@@ -357,19 +357,19 @@ public static class ActionDataManager
             m_AllEquipment.Add(action.m_Index);
         }), -1,EquipmentSaveData.Default(-1, enum_EquipmentType.Invalid));
     }
-    public static EquipmenBase CreateRandomEquipment(enum_EquipmentType type, System.Random seed)=> CreateAction(m_AllEquipment.RandomItem(seed),type);
+    public static EquipmentBase CreateRandomEquipment(enum_EquipmentType type, System.Random seed)=> CreateAction(m_AllEquipment.RandomItem(seed),type);
 
-    public static EquipmenBase CreateAction(int actionIndex, enum_EquipmentType type)
+    public static EquipmentBase CreateAction(int actionIndex, enum_EquipmentType type)
     {
         if (!m_EquipmentTypes.ContainsKey(actionIndex))
             Debug.LogError("Error Action:" + actionIndex + " ,Does not exist");
         EquipmentSaveData data = EquipmentSaveData.Default(actionIndex, type);
-        return TReflection.CreateInstance<EquipmenBase>(m_EquipmentTypes[actionIndex],  m_ActionIdentity++, data);
+        return TReflection.CreateInstance<EquipmentBase>(m_EquipmentTypes[actionIndex],  m_ActionIdentity++, data);
     }
-    public static EquipmenBase CreateAction(EquipmentSaveData data) => CreateAction(data.m_Index, data.m_Type);
-    public static List<EquipmenBase> CreateActions(List<EquipmentSaveData> datas)
+    public static EquipmentBase CreateAction(EquipmentSaveData data) => CreateAction(data.m_Index, data.m_Type);
+    public static List<EquipmentBase> CreateActions(List<EquipmentSaveData> datas)
     {
-        List<EquipmenBase> actions = new List<EquipmenBase>();
+        List<EquipmentBase> actions = new List<EquipmentBase>();
         datas.Traversal((EquipmentSaveData data) => { actions.Add(CreateAction(data)); });
         return actions;
     }

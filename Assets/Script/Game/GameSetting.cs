@@ -355,8 +355,8 @@ namespace GameSetting
     public static class LocalizationKeyJoint
     {
         public static string GetNameLocalizeKey(this EntityExpireCommon buff) => "Buff_Name_" + buff.m_Index;
-        public static string GetNameLocalizeKey(this EquipmenBase action) => "Action_Name_" + action.m_Index;
-        public static string GetIntroLocalizeKey(this EquipmenBase action) => "Action_Intro_" + action.m_Index;
+        public static string GetNameLocalizeKey(this EquipmentBase action) => "Action_Name_" + action.m_Index;
+        public static string GetIntroLocalizeKey(this EquipmentBase action) => "Action_Intro_" + action.m_Index;
         public static string GetLocalizeKey(this enum_StageLevel stage) => "Game_Stage_" + stage;
         public static string GetLocalizeKey(this enum_Style style) => "Game_Style_" + style;
         public static string GetLocalizeNameKey(this enum_PlayerWeapon weapon) => "Weapon_Name_" + weapon;
@@ -369,7 +369,7 @@ namespace GameSetting
         public static string GetLocalizeKey(this enum_Option_JoyStickMode joystick) => "UI_Option_" + joystick;
         public static string GetLocalizeKey(this enum_Option_LanguageRegion region) => "UI_Option_" + region;
         public static string GetLocalizeKey(this enum_CampFarmItemStatus status) => "UI_Farm_" + status;
-        public static string SetActionIntro(this EquipmenBase actionInfo, UIT_TextExtend text) => text.formatText(actionInfo.GetIntroLocalizeKey() , actionInfo.Value1, actionInfo.Value2, actionInfo.Value3);
+        public static string SetActionIntro(this EquipmentBase actionInfo, UIT_TextExtend text) => text.formatText(actionInfo.GetIntroLocalizeKey() , actionInfo.Value1, actionInfo.Value2, actionInfo.Value3);
     }
 
     public static class GameLayer
@@ -607,7 +607,7 @@ namespace GameSetting
 
         public bool CanGenerateHealth(enum_EnermyType entityType) => TCommon.RandomPercentage() <= m_HealthRate;
         public bool CanGenerateArmor(enum_EnermyType entityType) => TCommon.RandomPercentage() <= m_ArmorRate;
-        public int GetCoinGenerate(enum_EnermyType entityType) => TCommon.RandomPercentage() <= m_CoinRate ? m_CoinRange.Random() : -1;
+        public int GetCoinGenerate(enum_EnermyType entityType,float baseCreditRate) => TCommon.RandomPercentage() <= (baseCreditRate+ m_CoinRate) ? m_CoinRange.Random() : -1;
         public static PickupGenerateData Create(int healthRate, int armorRate, int coinRate, RangeInt coinAmount, Dictionary<enum_WeaponRarity, float> _weaponRate) => new PickupGenerateData() { m_HealthRate = healthRate, m_ArmorRate = armorRate, m_CoinRate = coinRate, m_CoinRange = coinAmount,m_WeaponRate=_weaponRate };
     }
 
@@ -692,7 +692,7 @@ namespace GameSetting
     {
         public string m_GameSeed;
         public enum_StageLevel m_Stage;
-        public int m_coins;
+        public float m_coins;
         public List<EquipmentSaveData> m_actionEquipment;
         public float m_curHealth;
         public WeaponSaveData m_weapon1, m_weapon2;
@@ -771,11 +771,11 @@ namespace GameSetting
         }
 
         public static EquipmentSaveData Default(int index,enum_EquipmentType type) => new EquipmentSaveData {m_Index=index,m_Type=type,m_RecordData=-1 };
-        public static EquipmentSaveData Create(EquipmenBase action) =>  new EquipmentSaveData { m_Index = action.m_Index,m_Type=action.m_EquipmentType,m_RecordData=action.m_RecordData};
-        public static List<EquipmentSaveData> Create(List<EquipmenBase> equipments)
+        public static EquipmentSaveData Create(EquipmentBase action) =>  new EquipmentSaveData { m_Index = action.m_Index,m_Type=action.m_EquipmentType,m_RecordData=action.m_RecordData};
+        public static List<EquipmentSaveData> Create(List<EquipmentBase> equipments)
         {
             List<EquipmentSaveData> data = new List<EquipmentSaveData>();
-            equipments.Traversal((EquipmenBase equipment) => { data.Add(Create(equipment)); });
+            equipments.Traversal((EquipmentBase equipment) => { data.Add(Create(equipment)); });
             return data;
         }
     }
@@ -1283,6 +1283,11 @@ namespace GameSetting
             m_DamageEffect = info.m_DamageEffect;
             m_EffectDuration = info.m_EffectDuration;
         }
+        public void DamageReset()
+        {
+            m_DamageMultiply = 0f;
+            m_DamageAdditive = 0f;
+        }
     }
     #endregion
 
@@ -1473,14 +1478,17 @@ namespace GameSetting
         public int I_ProjectileCopyCount { get; private set; } = 0;
         public float F_MaxHealthAdditive { get; private set; } = 0;
         public float F_AllyHealthMultiplierAdditive { get; private set; } = 0f;
+        public float P_CoinsDropBase { get; private set; } = 0f;
+        public float F_CoinsCostMultiply { get; private set; } = 0f;
         protected int I_ClipAdditive { get; private set; } = 0;
         protected float F_ClipMultiply { get; private set; } = 1f;
         protected float F_DamageAdditive = 0f;
+        
 
         protected Vector3 m_prePos;
         
-        public List<EquipmenBase> m_ActionEquipment { get; private set; } = new List<EquipmenBase>();
-        public int m_Coins { get; private set; } = 0;
+        public List<EquipmentBase> m_ActionEquipment { get; private set; } = new List<EquipmentBase>();
+        public float m_Coins { get; private set; } = 0;
 
         public PlayerInfoManager(EntityCharacterPlayer _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
         {
@@ -1502,10 +1510,10 @@ namespace GameSetting
             m_prePos = m_Entity.transform.position;
         }
 
-        public void SetInfoData(int coins, List<EquipmenBase> _actionEquiping)
+        public void SetInfoData(float coins, List<EquipmentBase> _actionEquiping)
         {
             m_Coins = coins;
-            _actionEquiping.Traversal((EquipmenBase action) => { AddExpire(action); });
+            _actionEquiping.Traversal((EquipmentBase action) => { AddExpire(action); });
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
         }
 
@@ -1522,12 +1530,12 @@ namespace GameSetting
         }
         
         public bool b_haveEmptyEquipmentSlot => m_ActionEquipment.Count < GameConst.I_PlayerEquipmentCount;
-        public void SwapEquipment(int index,EquipmenBase targetAction)
+        public void SwapEquipment(int index,EquipmentBase targetAction)
         {
             RemoveExpire(m_ActionEquipment[index]);
             AddExpire(targetAction);
         }
-        public void OnEquipmentAcquire(EquipmenBase targetAction)
+        public void OnEquipmentAcquire(EquipmentBase targetAction)
         {
             if (!b_haveEmptyEquipmentSlot)
                 return;
@@ -1540,7 +1548,7 @@ namespace GameSetting
             base.AddExpire(expire);
             if (expire.m_ExpireType != enum_ExpireType.Equipment)
                 return;
-            EquipmenBase targetAction = expire as EquipmenBase;
+            EquipmentBase targetAction = expire as EquipmentBase;
             m_ActionEquipment.Add(targetAction);
             CheckEquipmentRarity();
 
@@ -1553,7 +1561,7 @@ namespace GameSetting
             base.RemoveExpire(expire);
             if (expire.m_ExpireType != enum_ExpireType.Equipment)
                 return;
-            EquipmenBase targetExpire = expire as EquipmenBase;
+            EquipmentBase targetExpire = expire as EquipmentBase;
             m_ActionEquipment.Remove(targetExpire);
             CheckEquipmentRarity();
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
@@ -1561,14 +1569,14 @@ namespace GameSetting
         void CheckEquipmentRarity()
         {
             Dictionary<enum_EquipmentType, int> m_Types = new Dictionary<enum_EquipmentType, int>();
-            m_ActionEquipment.Traversal((EquipmenBase equipment) =>
+            m_ActionEquipment.Traversal((EquipmentBase equipment) =>
             {
                 if (!m_Types.ContainsKey(equipment.m_EquipmentType))
                     m_Types.Add(equipment.m_EquipmentType, 0);
 
                 m_Types[equipment.m_EquipmentType]++;
             });
-            m_ActionEquipment.Traversal((EquipmenBase equipment) => equipment.CheckRarity(m_Types[equipment.m_EquipmentType]));
+            m_ActionEquipment.Traversal((EquipmentBase equipment) => equipment.CheckRarity(m_Types[equipment.m_EquipmentType]));
         }
 
         #endregion
@@ -1587,11 +1595,13 @@ namespace GameSetting
             F_AimMovementStrictMultiply = 1f;
             F_AllyHealthMultiplierAdditive = 1f;
             F_MaxHealthAdditive = 0f;
+            P_CoinsDropBase = 0f;
+            F_CoinsCostMultiply = 1f;
         }
         protected override void OnSetExpireInfo(EntityExpireBase expire)
         {
             base.OnSetExpireInfo(expire);
-            EquipmenBase action = expire as EquipmenBase;
+            EquipmentBase action = expire as EquipmentBase;
             if (action == null)
                 return;
 
@@ -1608,6 +1618,8 @@ namespace GameSetting
             F_AimRangeAdditive += action.F_AimRangeAdditive;
             F_MaxHealthAdditive += action.m_MaxHealthAdditive;
             F_AllyHealthMultiplierAdditive += action.F_AllyHealthMultiplierAdditive;
+            P_CoinsDropBase += action.P_CoinsDropAdditive;
+            F_CoinsCostMultiply -= action.F_CoinsCostDecrease;
         }
         protected override void AfterInfoSet()
         {
@@ -1615,6 +1627,7 @@ namespace GameSetting
             if (F_AllyHealthMultiplierAdditive < .1f) F_AllyHealthMultiplierAdditive = .1f;
             if (F_AimMovementStrictMultiply < 0) F_AimMovementStrictMultiply = 0;
             if (F_SpreadMultiply < 0) F_SpreadMultiply = 0;
+            if (F_CoinsCostMultiply < 0) F_CoinsCostMultiply = 0;
         }
         #endregion
         #region Action Helpers
@@ -1623,12 +1636,12 @@ namespace GameSetting
             ResetEffect(enum_CharacterEffect.Cloak);
             float randomDamageMultiply = UnityEngine.Random.Range(-GameConst.F_PlayerDamageAdjustmentRange, GameConst.F_PlayerDamageAdjustmentRange);
             DamageDeliverInfo info = DamageDeliverInfo.DamageInfo(m_Entity.m_EntityID, F_DamageMultiply + randomDamageMultiply, F_DamageAdditive);
-            m_ActionEquipment.Traversal((EquipmenBase action) => { action.OnAttackDamageSet(info); });
+            m_ActionEquipment.Traversal((EquipmentBase action) => { action.OnAttackDamageSet(info); });
             return info;
         }
 
-        public void OnPlayerMove(float distance) => m_ActionEquipment.Traversal((EquipmenBase action) => { action.OnMove(distance); });
-        public void OnReloadFinish() => m_ActionEquipment.Traversal((EquipmenBase action) => { action.OnReloadFinish(); });
+        public void OnPlayerMove(float distance) => m_ActionEquipment.Traversal((EquipmentBase action) => { action.OnMove(distance); });
+        public void OnReloadFinish() => m_ActionEquipment.Traversal((EquipmentBase action) => { action.OnReloadFinish(); });
 
         public void OnEntityActivate(EntityBase targetEntity)
         {
@@ -1640,9 +1653,9 @@ namespace GameSetting
                 ally.m_Health.SetHealthMultiplier(F_AllyHealthMultiplierAdditive);
         }
 
-        public void OnWillDealtDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) { m_ActionEquipment.Traversal((EquipmenBase action) => { action.OnDealtDamageSetBegin(damageEntity, damageInfo); action.OnDealtDamageSetMiddle(damageEntity, damageInfo); action.OnDealtDamageSetFinal(damageEntity, damageInfo); }); }
+        public void OnWillDealtDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) { m_ActionEquipment.Traversal((EquipmentBase action) => { action.OnDealtDamageSetBegin(damageEntity, damageInfo); action.OnDealtDamageSetMiddle(damageEntity, damageInfo); action.OnDealtDamageSetFinal(damageEntity, damageInfo); }); }
 
-        public void OnWillReceiveDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) { m_ActionEquipment.Traversal((EquipmenBase action) => { action.OnBeforeReceiveDamage(damageInfo); }); }
+        public void OnWillReceiveDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) { m_ActionEquipment.Traversal((EquipmentBase action) => { action.OnBeforeReceiveDamage(damageInfo); }); }
 
         public override void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
         {
@@ -1653,15 +1666,15 @@ namespace GameSetting
             if (damageInfo.m_detail.I_SourceID == m_Player.m_EntityID)
             {
                 if(amountApply>0)
-                    m_ActionEquipment.Traversal((EquipmenBase action) => { action.OnAfterDealtDemage(damageEntity, damageInfo, amountApply); });
+                    m_ActionEquipment.Traversal((EquipmentBase action) => { action.OnAfterDealtDemage(damageEntity, damageInfo, amountApply); });
             }
 
             if (damageEntity.m_EntityID == m_Player.m_EntityID)
             {
                 if (amountApply > 0)
-                    m_ActionEquipment.Traversal((EquipmenBase action) => { action.OnAfterReceiveDamage(damageInfo, amountApply); });
+                    m_ActionEquipment.Traversal((EquipmentBase action) => { action.OnAfterReceiveDamage(damageInfo, amountApply); });
                 else
-                    m_ActionEquipment.Traversal((EquipmenBase action) => { action.OnReceiveHealing(damageInfo, amountApply); });
+                    m_ActionEquipment.Traversal((EquipmentBase action) => { action.OnReceiveHealing(damageInfo, amountApply); });
             }
         }
         #endregion
@@ -1669,13 +1682,19 @@ namespace GameSetting
 
         public void RefreshEffects() => m_BuffEffects.Traversal((int expire, SFXEffect effect) => { effect.Play(m_Entity); });
         #region CoinInfo
-        public void OnCoinsReceive(int coinAmount)
+        public bool CanCostCoins(float price)
         {
-            m_Coins += coinAmount;
+            return m_Coins >= price* F_CoinsCostMultiply;
         }
-        public void OnCoinsRemoval(int coinAmount)
+        public void OnCoinsCost(float price)
         {
-            m_Coins -= coinAmount;
+            m_Coins -= price * F_CoinsCostMultiply;
+        }
+        public void OnCoinsGain(float coinAmount,bool isPickup)
+        {
+            if(isPickup)
+                m_ActionEquipment.Traversal((EquipmentBase action) => { action.OnGainCoins(coinAmount); });
+            m_Coins += coinAmount;
         }
         #endregion
     }
@@ -1806,7 +1825,7 @@ namespace GameSetting
         }
     }
 
-    public class EquipmenBase : EntityExpireBase
+    public class EquipmentBase : EntityExpireBase
     {
         public override enum_ExpireType m_ExpireType => enum_ExpireType.Equipment;
         public EntityCharacterPlayer m_Attacher { get; private set; }
@@ -1832,8 +1851,10 @@ namespace GameSetting
         public virtual int I_ProjectileCopyAdditive => 0;
         public virtual float m_MaxHealthAdditive => 0;
         public virtual float F_AllyHealthMultiplierAdditive => 0;
-        public EquipmenBase() { }
-        protected EquipmenBase(int _identity,EquipmentSaveData _data)
+        public virtual float P_CoinsDropAdditive => 0f;
+        public virtual float F_CoinsCostDecrease => 0f;
+        public EquipmentBase() { }
+        protected EquipmentBase(int _identity,EquipmentSaveData _data)
         {
             m_EquipmentType = _data.m_Type;
             m_RecordData = _data.m_RecordData;
@@ -1859,6 +1880,7 @@ namespace GameSetting
         public virtual void OnDealtDamageSetFinal(EntityCharacterBase receiver, DamageInfo info) { }
         public virtual void OnAfterDealtDemage(EntityCharacterBase receiver,DamageInfo info, float applyAmount) { }
         public virtual void OnReceiveHealing(DamageInfo info, float applyAmount)  {}
+        public virtual void OnGainCoins(float coinAmount) { }
         public virtual void OnReloadFinish() { }
         public virtual void OnMove(float distsance) { }
         public virtual bool OnCheckRevive(ref RangeFloat amount) { return false; }
@@ -2417,7 +2439,7 @@ namespace GameSetting
             m_Rarity = new UIC_RarityLevel(transform.Find("Rarity"));
             m_EquipmentType = transform.Find("EquipmentType").GetComponent<Image>();
         }
-        public virtual void SetInfo(EquipmenBase equipmentInfo)
+        public virtual void SetInfo(EquipmentBase equipmentInfo)
         {
             m_Image.sprite = GameUIManager.Instance.m_ActionSprites[equipmentInfo.m_Index.ToString()];
             m_Rarity.SetRarity(equipmentInfo.m_rarity);
@@ -2449,7 +2471,7 @@ namespace GameSetting
         {
             m_Name = transform.Find("Name").GetComponent<UIT_TextExtend>();
         }
-        public override void SetInfo(EquipmenBase equipmentInfo)
+        public override void SetInfo(EquipmentBase equipmentInfo)
         {
             base.SetInfo(equipmentInfo);
             m_Name.localizeKey = equipmentInfo.GetNameLocalizeKey();
@@ -2465,7 +2487,7 @@ namespace GameSetting
 
             m_Intro = transform.Find("Intro").GetComponent<UIT_TextExtend>();
         }
-        public override void SetInfo(EquipmenBase equipmentInfo)
+        public override void SetInfo(EquipmentBase equipmentInfo)
         {
             base.SetInfo(equipmentInfo);
             m_Intro.formatText(equipmentInfo.GetIntroLocalizeKey(), string.Format("<color=#FFDA6BFF>{0}</color>", equipmentInfo.Value1), string.Format("<color=#FFDA6BFF>{0}</color>", equipmentInfo.Value2), string.Format("<color=#FFDA6BFF>{0}</color>", equipmentInfo.Value3));

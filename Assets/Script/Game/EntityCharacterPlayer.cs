@@ -384,7 +384,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
                 m_HitCheck.TryHit(new DamageInfo(-amount, enum_DamageType.ArmorOnly, DamageDeliverInfo.Default(m_EntityID)));
                 break;
             case enum_Interaction.PickupCoin:
-                m_CharacterInfo.OnCoinsReceive(amount);
+                m_CharacterInfo.OnCoinsGain(amount,true);
                 break;
             case enum_Interaction.PickupHealth:
             case enum_Interaction.PickupHealthPack:
