@@ -340,7 +340,7 @@ namespace GameSetting_Action
         public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
             base.OnAfterDealtDemage(receiver, info, applyAmount);
-            if (receiver.m_IsDead && Vector3.Distance(m_Attacher.transform.position, receiver.transform.position) < Value1)
+            if (receiver.m_IsDead && Vector3.Distance(m_Attacher.transform.position, receiver.transform.position) < Value1&&TCommon.RandomPercentage()<=Value2)
                 m_Attacher.m_WeaponCurrent.ForceReload();
         }
         public E0016_NearbyKillClipAdditive(int _identity, EquipmentSaveData _data) : base(_identity, _data) { }
