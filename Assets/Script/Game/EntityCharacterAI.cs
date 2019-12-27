@@ -160,10 +160,9 @@ public class EntityCharacterAI : EntityCharacterBase {
         m_Weapon = _weapon;
         m_Agent = GetComponent<NavMeshAgent>();
         m_Obstacle = GetComponent<NavMeshObstacle>();
-        m_Obstacle.carving = true;
-        m_Obstacle.carveOnlyStationary = false;
+        m_Obstacle.carving = false;
         m_Obstacle.height = m_Agent.height;
-        m_Obstacle.radius = m_Agent.radius - .2f;
+        m_Obstacle.radius = m_Agent.radius;
         m_Agent.stoppingDistance = 0f;
     }
 

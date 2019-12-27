@@ -83,7 +83,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
     }
     #endregion
     #region Navigation
-    // Nav Mesh Obstacle(Uncurved) Runtime Unavailable Currently! Consider Use NavmeshComponents Instead/Download From Git
+    // Nav Mesh Obstacle(Uncurved) Runtime Unavailable Currently! Consider Use NavmeshComponents Instead(Download From Git)
     protected NavMeshDataInstance m_NavMeshDataEntity, m_NavMeshDataInteract;
     static NavMeshHit sampleHit;
     public static Vector3 NavMeshPosition(Vector3 samplePosition, bool maskEntity = true)
@@ -104,6 +104,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
         NavMeshBuilder.CollectSources(level.transform, -1, NavMeshCollectGeometry.PhysicsColliders, 0, new List<NavMeshBuildMarkup>() { }, sources);
         m_NavMeshDataEntity = NavMesh.AddNavMeshData(NavMeshBuilder.BuildNavMeshData(NavMesh.GetSettingsByIndex(0), sources, bound, Vector3.zero, level.transform.rotation));
 
+        sources.Clear();
         NavMeshBuilder.CollectSources(level.transform, -1, NavMeshCollectGeometry.PhysicsColliders, 3, new List<NavMeshBuildMarkup>() { }, sources);
         m_NavMeshDataInteract = NavMesh.AddNavMeshData(NavMeshBuilder.BuildNavMeshData(NavMesh.GetSettingsByIndex(1), sources, bound, Vector3.zero, level.transform.rotation));
     }
