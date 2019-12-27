@@ -17,7 +17,7 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     public Transform m_Muzzle { get; private set; } = null;
     public Transform m_Case { get; private set; } = null;
     public int I_ClipAmount { get; private set; } = 0;
-    public float F_Recoil => m_Attacher.m_PlayerInfo.F_SpreadMultiply * F_BaseRecoil;
+    public float F_Recoil => m_Attacher.m_CharacterInfo.F_SpreadMultiply * F_BaseRecoil;
     protected WeaponTrigger m_Trigger { get; private set; }
     Action<bool,float> OnReload;
     Action<float> OnFireRecoil;
@@ -113,7 +113,7 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     {
         B_Reloading = true;
         f_reloadCheck = 0;
-        OnReload?.Invoke(true, m_WeaponInfo.m_ReloadTime  / m_Attacher.m_PlayerInfo.F_ReloadRateTick(1f) );
+        OnReload?.Invoke(true, m_WeaponInfo.m_ReloadTime  / m_Attacher.m_CharacterInfo.F_ReloadRateTick(1f) );
     }
     void StopReload()
     {
@@ -124,7 +124,7 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
 
     public void AmmoTick(float deltaTime)
     {
-        int clipAmount = m_Attacher.m_PlayerInfo.I_ClipAmount(m_WeaponInfo.m_ClipAmount);
+        int clipAmount = m_Attacher.m_CharacterInfo.I_ClipAmount(m_WeaponInfo.m_ClipAmount);
         if (I_ClipAmount != clipAmount)
         {
             I_ClipAmount = clipAmount;

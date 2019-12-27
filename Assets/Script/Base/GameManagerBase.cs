@@ -341,37 +341,36 @@ public static class GameDataManager
 
 public static class ActionDataManager
 {
-    static Dictionary<int, Type> m_AllActionType = new Dictionary<int, Type>();
+    static Dictionary<int, Type> m_EquipmentTypes = new Dictionary<int, Type>();
     public static List<int> m_AllEquipment { get; private set; } = new List<int>();
     static int m_ActionIdentity = 0;
     public static void Init()
     {
-        m_AllActionType.Clear();
+        m_EquipmentTypes.Clear();
         m_AllEquipment.Clear();
 
-        TReflection.TraversalAllInheritedClasses(((Type type, PlayerEquipmentExpire action) => {
+        TReflection.TraversalAllInheritedClasses(((Type type, EquipmenBase action) => {
             if (action.m_Index <= 0)
                 return;
 
-            m_AllActionType.Add(action.m_Index, action.GetType());
+            m_EquipmentTypes.Add(action.m_Index, action.GetType());
             m_AllEquipment.Add(action.m_Index);
-        }), -1, enum_EquipmentType.Invalid);
+        }), -1,EquipmentSaveData.Default(-1, enum_EquipmentType.Invalid));
     }
-    public static PlayerEquipmentExpire CreateRandomEquipment(enum_EquipmentType type, System.Random seed)=> CreateAction(m_AllEquipment.RandomItem(seed),type);
+    public static EquipmenBase CreateRandomEquipment(enum_EquipmentType type, System.Random seed)=> CreateAction(m_AllEquipment.RandomItem(seed),type);
 
-    public static PlayerEquipmentExpire CreateAction(int actionIndex, enum_EquipmentType type)
+    public static EquipmenBase CreateAction(int actionIndex, enum_EquipmentType type)
     {
-        if (!m_AllActionType.ContainsKey(actionIndex))
+        if (!m_EquipmentTypes.ContainsKey(actionIndex))
             Debug.LogError("Error Action:" + actionIndex + " ,Does not exist");
-        return TReflection.CreateInstance<PlayerEquipmentExpire>(m_AllActionType[actionIndex], m_ActionIdentity++, type );
+        EquipmentSaveData data = EquipmentSaveData.Default(actionIndex, type);
+        return TReflection.CreateInstance<EquipmenBase>(m_EquipmentTypes[actionIndex],  m_ActionIdentity++, data);
     }
-    public static PlayerEquipmentExpire CreateAction(EquipmentSaveData data) => CreateAction(data.m_Index, data.m_Type);
-    public static List<PlayerEquipmentExpire> CreateActions(List<EquipmentSaveData> datas)
+    public static EquipmenBase CreateAction(EquipmentSaveData data) => CreateAction(data.m_Index, data.m_Type);
+    public static List<EquipmenBase> CreateActions(List<EquipmentSaveData> datas)
     {
-        List<PlayerEquipmentExpire> actions = new List<PlayerEquipmentExpire>();
+        List<EquipmenBase> actions = new List<EquipmenBase>();
         datas.Traversal((EquipmentSaveData data) => { actions.Add(CreateAction(data)); });
         return actions;
     }
-
-    public static PlayerEquipmentExpire CopyAction(PlayerEquipmentExpire targetAction) => TReflection.CreateInstance<PlayerEquipmentExpire>(m_AllActionType[targetAction.m_Index], targetAction.m_Identity, targetAction.m_rarity);
 }

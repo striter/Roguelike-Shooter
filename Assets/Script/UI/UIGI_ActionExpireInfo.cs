@@ -6,14 +6,14 @@ using UnityEngine.UI;
 public class UIGI_ActionExpireInfo : UIGI_ActionBase {
     UIT_TextExtend m_Duration;
     Image m_DurationFill,m_ActionType;
-    PlayerEquipmentExpire m_target;
+    EquipmenBase m_target;
     public override void Init()
     {
         base.Init();
         m_Duration = tf_Container.Find("Duration").GetComponent<UIT_TextExtend>();
         m_DurationFill = tf_Container.Find("DurationFill").GetComponent<Image>();
     }
-    public override void SetInfo(PlayerEquipmentExpire action)
+    public override void SetInfo(EquipmenBase action)
     {
         base.SetInfo(action);
         m_target = action;

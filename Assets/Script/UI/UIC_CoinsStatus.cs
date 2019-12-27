@@ -32,6 +32,6 @@ public class UIC_CoinsStatus : UIControlBase {
 
     void OnCommonStatus(EntityCharacterPlayer _player)
     {
-        m_CoinLerp.ChangeValue(_player.m_PlayerInfo.m_Coins);
+        m_CoinLerp.ChangeValue(_player.m_CharacterInfo.m_Coins);
     }
 }

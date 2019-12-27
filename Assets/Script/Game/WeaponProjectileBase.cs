@@ -9,9 +9,9 @@ public class WeaponProjectileBase : WeaponBase
     public bool B_BasePenetrate { get; private set; } = false;
     public int I_MuzzleIndex { get; private set; } = -1;
     AudioClip m_MuzzleClip;
-    public float GetSpeed() => m_Attacher.m_PlayerInfo.F_ProjectileSpeedMuiltiply * F_BaseSpeed;
-    public bool GetPenetrate() => B_BasePenetrate||m_Attacher.m_PlayerInfo.F_PenetrateAdditive>Random.Range(0,1);
-    public float GetSpread() => m_Attacher.m_PlayerInfo.F_SpreadMultiply * m_WeaponInfo.m_Spread;
+    public float GetSpeed() => m_Attacher.m_CharacterInfo.F_ProjectileSpeedMuiltiply * F_BaseSpeed;
+    public bool GetPenetrate() => B_BasePenetrate||m_Attacher.m_CharacterInfo.F_PenetrateAdditive>Random.Range(0,1);
+    public float GetSpread() => m_Attacher.m_CharacterInfo.F_SpreadMultiply * m_WeaponInfo.m_Spread;
 
     protected override void OnGetEquipmentData(SFXWeaponBase equipment)
     {
@@ -28,7 +28,7 @@ public class WeaponProjectileBase : WeaponBase
     protected override void OnTriggerSuccessful()
     {
         base.OnTriggerSuccessful();
-        DamageDeliverInfo damageInfo = m_Attacher.m_PlayerInfo.GetDamageBuffInfo();
+        DamageDeliverInfo damageInfo = m_Attacher.m_CharacterInfo.GetDamageBuffInfo();
 
         Vector3 spreadDirection = m_Attacher.tf_WeaponAim.forward;
         Vector3 endPosition = m_Attacher.tf_WeaponAim.position + spreadDirection * GameConst.I_ProjectileMaxDistance;
@@ -57,6 +57,6 @@ public class WeaponProjectileBase : WeaponBase
         SFXProjectile projectile = GameObjectManager.SpawnEquipment<SFXProjectile>(GameExpression.GetPlayerWeaponIndex(m_WeaponInfo.m_Index), m_Muzzle.position, direction);
         projectile.F_Speed = GetSpeed();
         projectile.B_Penetrate = GetPenetrate();
-        projectile.PlayerCopyCount(damage, direction, m_Attacher.tf_Weapon.position + direction * GameConst.I_ProjectileMaxDistance,m_Attacher.m_PlayerInfo.I_ProjectileCopyCount,10);
+        projectile.PlayerCopyCount(damage, direction, m_Attacher.tf_Weapon.position + direction * GameConst.I_ProjectileMaxDistance,m_Attacher.m_CharacterInfo.I_ProjectileCopyCount,10);
     }
 }

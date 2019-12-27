@@ -5,7 +5,7 @@ using System.Linq;
 using TSpecialClasses;
 using UnityEngine;
 
-public class EntityCharacterBase : EntityBase, ISingleCoroutine
+public class EntityCharacterBase : EntityBase
 {
     public Renderer ExtraRendererForForest107Only;
     public enum_EnermyType E_SpawnType = enum_EnermyType.Invalid;
@@ -58,7 +58,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
-        this.StopSingleCoroutines(0);
+        m_Effect.OnRecycle();
     }
 
     public override void OnActivate(enum_EntityFlag _flag,int _spawnerID=-1,float startHealth =0)
@@ -99,7 +99,6 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         m_CharacterInfo.OnRevive();
         EntityHealth health = (m_Health as EntityHealth);
         health.OnSetStatus(reviveHealth == -1 ? health.m_BaseHealth : reviveHealth, reviveArmor == -1 ? health.m_StartArmor : reviveArmor);
-        this.StopSingleCoroutine(0);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterRevive, this);
     }
 
@@ -123,7 +122,6 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         base.OnDead();
         m_CharacterInfo.OnDead();
         m_Effect.SetDeath();
-        this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo(m_Effect.OnDeathEffect, 0, 1, GameConst.F_EntityDeadFadeTime, OnRecycle));
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterDead, this);
     }
     
@@ -139,12 +137,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
                 break;
         }
     }
-
-    protected override void OnRecycle()
-    {
-        base.OnRecycle();
-        m_Effect.OnRecycle();
-    }
+    
     protected virtual void OnBattleStart()
     {
 
@@ -176,6 +169,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
 
         public void OnReset()
         {
+            this.StopAllSingleCoroutines();
             m_Particles.Play();
             m_scanned = false;
             m_cloaked = false;
@@ -211,8 +205,8 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
             m_EffectMaterial.SetTexture(TEffects.ID_NoiseTex, TEffects.TX_Noise);
             m_EffectMaterial.SetFloat(TEffects.ID_Dissolve, 0);
             m_EffectMaterial.SetFloat(TEffects.ID_DissolveScale, .2f);
+            this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value)=> { m_EffectMaterial.SetFloat(TEffects.ID_Dissolve, value); }, 0, 1, GameConst.F_EntityDeadFadeTime, OnRecycle));
         }
-        public void OnDeathEffect(float value) => m_EffectMaterial.SetFloat(TEffects.ID_Dissolve, value);
 
         public void SetScaned(bool _scaned)
         {

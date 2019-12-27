@@ -43,7 +43,7 @@ public class UI_WeaponStatus : UIPage {
         m_ActionRarity = new UIC_RarityLevel(tf_ActionInfo.Find("ActionRarity"));
     }
     
-    public void Play(SWeapon weapon,PlayerEquipmentExpire weaponAction)
+    public void Play(SWeapon weapon,EquipmenBase weaponAction)
     {
         m_WeaponImage.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_Weapon.GetSpriteName()];
         m_WeaponName.localizeKey = weapon.m_Weapon.GetLocalizeNameKey();
@@ -64,7 +64,7 @@ public class UI_WeaponStatus : UIPage {
         m_ActionRarity.transform.SetActivate(showAction);
         if (showAction)
         {
-            PlayerEquipmentExpire action = weaponAction;
+            EquipmenBase action = weaponAction;
             m_ActionName.localizeKey = action.GetNameLocalizeKey();
             action.SetActionIntro(m_ActionIntro);
             m_ActionRarity.SetRarity(action.m_rarity);   

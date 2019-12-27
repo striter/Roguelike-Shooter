@@ -78,6 +78,12 @@ public class EntityCharacterAI : EntityCharacterBase {
         AITick(Time.deltaTime);
     }
 
+    protected override void OnDeadTick(float deltaTime)
+    {
+        base.OnDeadTick(deltaTime);
+        m_Animator.SetPause(false);
+    }
+
     protected override bool OnReceiveDamage(DamageInfo damageInfo, Vector3 damageDirection)
     {
         if(damageDirection!=Vector3.zero)

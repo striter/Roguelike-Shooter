@@ -19,7 +19,7 @@ public class WeaponCastBase : WeaponBase {
         base.OnTriggerSuccessful();
         SetCastAvailable(true);
         if (m_Cast)
-            m_Cast.ControlledCheck(m_Attacher.m_PlayerInfo.GetDamageBuffInfo());
+            m_Cast.ControlledCheck(m_Attacher.m_CharacterInfo.GetDamageBuffInfo());
     }
 
     public override void OnPlay(bool play)
