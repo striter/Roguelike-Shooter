@@ -56,6 +56,7 @@ namespace GameSetting_Action
         public static float P_0033_CoinsDropAdditive(enum_EquipmentRarity rarity) => 20 * (int)rarity;
         public static float P_0034_CoinsCostDecrease(enum_EquipmentRarity rarity) => 20 * (int)rarity;
         public static float P_0035_CoinsDoubleRate(enum_EquipmentRarity rarity) => 20 * (int)rarity;
+        public static float P_0036_CoinsExchangePercent(enum_EquipmentRarity rarity) => 100 - 20 * ((int)rarity - 1);
         public static float F_0037_DamageMultiplyPer10Coins(enum_EquipmentRarity rarity) => 5 * (int)rarity;
     }
     #endregion
@@ -619,11 +620,13 @@ namespace GameSetting_Action
     public class E0036_CoinsLifeExchange:EquipmentBase
     {
         public override int m_Index => 0036;
+        public override float Value1 => EquipmentConsts.P_0036_CoinsExchangePercent(m_rarity);
         public override void OnBeforeReceiveDamage(DamageInfo info)
         {
             base.OnBeforeReceiveDamage(info);
             bool willDead = false;
             float amountApply = info.m_AmountApply;
+            float exchangePrice = amountApply*Value1/100f;
             switch(info.m_Type)
             {
                 case enum_DamageType.HealthOnly:
@@ -633,9 +636,9 @@ namespace GameSetting_Action
                     willDead = m_Attacher.m_Health.F_TotalEHP <= amountApply;
                     break;
             }
-            if (willDead && m_Attacher.m_CharacterInfo.CanCostCoins(amountApply))
+            if (willDead && m_Attacher.m_CharacterInfo.CanCostCoins(exchangePrice))
             {
-                m_Attacher.m_CharacterInfo.OnCoinsCost(amountApply);
+                m_Attacher.m_CharacterInfo.OnCoinsCost(exchangePrice);
                 info.ResetBaseDamage(0f);
                 info.m_detail.DamageReset();
             }
