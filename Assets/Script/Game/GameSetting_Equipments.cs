@@ -281,7 +281,7 @@ namespace GameSetting_Action
             base.OnDealtDamageSetBegin(receiver, info);
             if (Vector3.Distance(receiver.transform.position, m_Attacher.transform.position) > Value1)
                 return;
-            info.m_detail.DamageAdditive(Value1 / 100f, 0);
+            info.m_detail.DamageAdditive(Value2 / 100f, 0);
         }
         public E0013_NearbyDamageMultiply(int _identity, EquipmentSaveData _data) : base(_identity, _data) { }
     }
