@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
 using TPhysics;
-public class SFXProjectile : SFXEquipmentBase
+public class SFXProjectile : SFXWeaponBase
 {
     #region PresetInfos 
     public enum_ProjectileFireType E_ProjectileType= enum_ProjectileFireType.Invalid;
@@ -42,12 +42,13 @@ public class SFXProjectile : SFXEquipmentBase
     {
         if (I_BuffApplyOnHit > 0)
             deliverInfo.AddExtraBuff(I_BuffApplyOnHit);
-        m_DamageInfo=new DamageInfo(F_Damage, enum_DamageType.Basic,deliverInfo);
+        m_DamageInfo=new DamageInfo(F_Damage-damageMinus, enum_DamageType.Basic,deliverInfo);
         m_PhysicsSimulator = GetSimulator(direction, targetPosition);
         SpawnIndicator(targetPosition,Vector3.up, F_PlayDelay);
         m_EntityHitted.Clear();
         base.Play(deliverInfo.I_SourceID, F_PlayDuration(transform.position, targetPosition), F_PlayDelay);
     }
+
     protected override void OnPlay()
     {
         base.OnPlay();
@@ -105,6 +106,7 @@ public class SFXProjectile : SFXEquipmentBase
                 if (CanDamageEntity(_entity))
                     _entity.TryHit(m_DamageInfo, transform.forward);
                 m_EntityHitted.Add(_entity.I_AttacherID);
+                OnHitCheckCopies(_entity.I_AttacherID);
                 break;
         }
     }
@@ -151,6 +153,33 @@ public class SFXProjectile : SFXEquipmentBase
         }
     }
 
+    #region ??????????????????????????????????????
+    int m_copiesLeft;
+    int damageMinus;    //?
+    WeaponHelperBase weapon;
+    public void PlayerCopyCount(DamageDeliverInfo deliverInfo, Vector3 direction, Vector3 targetPosition, int copyCount,int _damageMinus)//?????
+    {
+        m_copiesLeft = copyCount;
+        damageMinus = _damageMinus;
+        Play(deliverInfo, direction, targetPosition);
+    }
+    
+    void OnHitCheckCopies(int hitTargetID)
+    {
+        if (m_copiesLeft <= 0)
+            return;
+        EntityCharacterBase target= GameManager.Instance.GetAvailableEntity(GameManager.Instance.GetCharacter(hitTargetID),true,false,5f);
+        if (!target)
+            return;
+        m_copiesLeft--;
+        Vector3 direction=TCommon.GetXZLookDirection(transform.position,target.tf_Head.position );
+        SFXProjectile projectile = GameObjectManager.SpawnEquipment<SFXProjectile>(m_Identity, transform.position, direction);
+        projectile.F_Speed = F_Speed;
+        projectile.B_Penetrate = B_Penetrate;
+        projectile.PlayerCopyCount(m_DamageInfo.m_detail, direction, transform.position + direction * GameConst.I_ProjectileMaxDistance,m_copiesLeft,0);
+        projectile.m_EntityHitted.AddRange(m_EntityHitted);
+    }
+    #endregion
 #if UNITY_EDITOR
     protected override void EDITOR_DEBUG()
     {

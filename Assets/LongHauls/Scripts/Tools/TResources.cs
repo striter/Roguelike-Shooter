@@ -20,7 +20,7 @@ public class TResources
         public const string S_PlayerWeapon = "WeaponModel/";
         public const string S_Entity = "Entity/";
         public const string S_SFXEffects = "SFX_Effects/";
-        public const string S_SFXEquipment = "Equipment/";
+        public const string S_SFXWeapon = "Weapon/";
         public const string S_InteractPortal = "Interact/Portal_";
         public const string S_InteractActionChest = "Interact/ActionChest_";
         public const string S_InteractCommon = "Interact/Interact_";
@@ -93,7 +93,7 @@ public class TResources
         return level;
     }
     
-    public static SFXEquipmentBase GetDamageSource(int index) => Instantiate<SFXEquipmentBase>(ConstPath.S_SFXEquipment+index.ToString());
+    public static SFXWeaponBase GetDamageSource(int index) => Instantiate<SFXWeaponBase>(ConstPath.S_SFXWeapon+index.ToString());
 
     public static Dictionary<int, SFXBase> GetAllEffectSFX()
     {

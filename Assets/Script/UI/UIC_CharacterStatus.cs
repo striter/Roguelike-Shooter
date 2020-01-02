@@ -12,8 +12,7 @@ public class UIC_CharacterStatus : UIControlBase
 
     UIT_GridControllerGridItem<UIGI_ActionExpireInfo> m_ActionExpireGrid;
     UIT_GridControllerGridItem<UIGI_ActionBase> m_EquipmentGrid;
-
-
+    
     Transform tf_StatusData;
     RectTransform rtf_AmmoData;
     GridLayoutGroup m_AmmoLayout;
@@ -70,7 +69,7 @@ public class UIC_CharacterStatus : UIControlBase
         
         m_ActionExpireGrid = new UIT_GridControllerGridItem<UIGI_ActionExpireInfo>(tf_Container.Find("ActionExpireGrid"));
         m_EquipmentGrid = new UIT_GridControllerGridItem<UIGI_ActionBase>(tf_Container.Find("EquipmentGrid"));
-        m_EquipmentGrid.transform.GetComponent<Button>().onClick.AddListener(() => UIManager.Instance.ShowPage<UI_EquipmentPack>(true, 0f).Show(m_Player.m_PlayerInfo));
+        m_EquipmentGrid.transform.GetComponent<Button>().onClick.AddListener(() => UIManager.Instance.ShowPage<UI_EquipmentPack>(true, 0f).Show(m_Player.m_CharacterInfo));
 
         m_HealthLerp = new ValueLerpSeconds(0f, 4f, 2f, (float value) => {
             img_HealthFill.fillAmount = value;
@@ -94,7 +93,6 @@ public class UIC_CharacterStatus : UIControlBase
     {
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityPlayerHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
-        TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerActionExpireStatus, OnExpireListStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerEquipmentStatus, OnEquipmentStatus);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
     }
@@ -102,7 +100,6 @@ public class UIC_CharacterStatus : UIControlBase
     {
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityPlayerHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
-        TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerActionExpireStatus, OnExpireListStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerEquipmentStatus, OnEquipmentStatus);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnChangeLevel, OnChangeLevel);
     }
@@ -198,17 +195,6 @@ public class UIC_CharacterStatus : UIControlBase
         }
     }
     
-    void OnExpireListStatus(PlayerInfoManager infoManager)
-    {
-        m_ActionExpireGrid.ClearGrid();
-        for (int i = 0; i < infoManager.m_ActionPlaying.Count; i++)
-        {
-            if (infoManager.m_ActionPlaying[i].m_ActionType == enum_ActionType.Equipment)
-                continue;
-            m_ActionExpireGrid.AddItem(i).SetInfo(infoManager.m_ActionPlaying[i]);
-        }
-    }
-
     void OnEquipmentStatus(PlayerInfoManager infoManager)
     {
         m_EquipmentGrid.ClearGrid();

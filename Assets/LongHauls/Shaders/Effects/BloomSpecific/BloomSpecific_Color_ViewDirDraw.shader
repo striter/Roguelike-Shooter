@@ -35,15 +35,19 @@
 				float4 vertex : SV_POSITION;
 				float4 color    : TEXCOORD0;
 				float2 uv:TEXCOORD1;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
-			float4 _Color;
+			UNITY_INSTANCING_BUFFER_START(Props)
+				UNITY_DEFINE_INSTANCED_PROP(float4, _Color)
+				UNITY_INSTANCING_BUFFER_END(Props)
 			float _Amount1;
 			v2f vert(appdata v)
 			{
-				UNITY_SETUP_INSTANCE_ID(v);
 				v2f o;
+				UNITY_SETUP_INSTANCE_ID(v);
+				UNITY_TRANSFER_INSTANCE_ID(v, o);
 				float3 viewDir = normalize(ObjSpaceViewDir(v.vertex));
 				o.vertex = UnityObjectToClipPos(v.vertex+viewDir*_Amount1);
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
@@ -53,7 +57,8 @@
 
 			fixed4 frag(v2f i) : SV_Target
 			{
-				fixed4 col = tex2D(_MainTex,i.uv)*_Color*i.color;
+				UNITY_SETUP_INSTANCE_ID(i);
+				fixed4 col = tex2D(_MainTex,i.uv)*UNITY_ACCESS_INSTANCED_PROP(Props, _Color)*i.color;
 				return col;
 			}
 			ENDCG

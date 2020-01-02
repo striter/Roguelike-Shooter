@@ -341,50 +341,36 @@ public static class GameDataManager
 
 public static class ActionDataManager
 {
-    static Dictionary<int, Type> m_AllActionType = new Dictionary<int, Type>();
-    public static List<int> m_AllAction { get; private set; } = new List<int>();
-    public static List<int> m_AbilityAction { get; private set; } = new List<int>();
-    public static List<int> m_EquipmentAction { get; private set; } = new List<int>();
+    static Dictionary<int, Type> m_EquipmentTypes = new Dictionary<int, Type>();
+    public static List<int> m_AllEquipment { get; private set; } = new List<int>();
     static int m_ActionIdentity = 0;
     public static void Init()
     {
-        m_AllActionType.Clear();
-        m_AllAction.Clear();
-        m_AbilityAction.Clear();
-        m_EquipmentAction.Clear();
+        m_EquipmentTypes.Clear();
+        m_AllEquipment.Clear();
 
-        TReflection.TraversalAllInheritedClasses((Action<Type, ActionBase>)((Type type, ActionBase action) => {
+        TReflection.TraversalAllInheritedClasses(((Type type, EquipmentBase action) => {
             if (action.m_Index <= 0)
                 return;
 
-            m_AllActionType.Add(action.m_Index, action.GetType());
-            m_AllAction.Add(action.m_Index);
-            switch (action.m_ActionType)
-            {
-                case enum_ActionType.Ability:
-                    m_AbilityAction.Add(action.m_Index);
-                    break;
-                case enum_ActionType.Equipment:
-                    m_EquipmentAction.Add(action.m_Index);
-                    break;
-            }
-        }), -1, enum_ActionRarity.Invalid);
+            m_EquipmentTypes.Add(action.m_Index, action.GetType());
+            m_AllEquipment.Add(action.m_Index);
+        }), -1,EquipmentSaveData.Default(-1, enum_EquipmentType.Invalid));
     }
-    public static ActionBase CreateRandomAction(enum_ActionRarity rarity, System.Random seed)=> CreateAction(m_AllAction.RandomItem(seed),rarity);
-    public static ActionAbility CreateRandomAbilityAction(enum_ActionRarity rarity, System.Random seed) => CreateAction(m_AbilityAction.RandomItem(seed),rarity) as ActionAbility;
-    public static ActionEquipment CreateRandomEquipmentAction(enum_ActionRarity rarity, System.Random seed) => CreateAction(m_EquipmentAction.RandomItem(seed),rarity) as ActionEquipment;
-    public static List<ActionBase> CreateActions(List<ActionSaveData> infos)
+    public static EquipmentBase CreateRandomEquipment(enum_EquipmentType type, System.Random seed)=> CreateAction(m_AllEquipment.RandomItem(seed),type);
+
+    public static EquipmentBase CreateAction(int actionIndex, enum_EquipmentType type)
     {
-        List<ActionBase> actions = new List<ActionBase>();
-        infos.Traversal((ActionSaveData info) => { actions.Add(CreateAction(info)); });
+        if (!m_EquipmentTypes.ContainsKey(actionIndex))
+            Debug.LogError("Error Action:" + actionIndex + " ,Does not exist");
+        EquipmentSaveData data = EquipmentSaveData.Default(actionIndex, type);
+        return TReflection.CreateInstance<EquipmentBase>(m_EquipmentTypes[actionIndex],  m_ActionIdentity++, data);
+    }
+    public static EquipmentBase CreateAction(EquipmentSaveData data) => CreateAction(data.m_Index, data.m_Type);
+    public static List<EquipmentBase> CreateActions(List<EquipmentSaveData> datas)
+    {
+        List<EquipmentBase> actions = new List<EquipmentBase>();
+        datas.Traversal((EquipmentSaveData data) => { actions.Add(CreateAction(data)); });
         return actions;
     }
-    public static ActionBase CreateAction(ActionSaveData info) => info.m_IsNull ? null : CreateAction(info.m_Index, info.m_Level);
-    public static ActionBase CreateAction(int actionIndex, enum_ActionRarity level)
-    {
-        if (!m_AllActionType.ContainsKey(actionIndex))
-            Debug.LogError("Error Action:" + actionIndex + " ,Does not exist");
-        return TReflection.CreateInstance<ActionBase>(m_AllActionType[actionIndex], m_ActionIdentity++, level);
-    }
-    public static ActionBase CopyAction(ActionBase targetAction) => TReflection.CreateInstance<ActionBase>(m_AllActionType[targetAction.m_Index], targetAction.m_Identity, targetAction.m_rarity);
 }

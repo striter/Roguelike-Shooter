@@ -18,7 +18,7 @@ public class EntityBase : ObjectPoolMonoItem<int>
     protected virtual float HealReceiveMultiply => 1f;
     public int m_SpawnerEntityID { get; private set; }
     public bool b_isSubEntity => m_SpawnerEntityID != -1;
-    public bool m_IsDead;
+    public bool m_IsDead,m_Activating;
     HitCheckEntity[] m_HitChecks;
     public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
@@ -36,6 +36,7 @@ public class EntityBase : ObjectPoolMonoItem<int>
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityActivate, this);
         EnableHitbox(true);
         m_IsDead = false;
+        m_Activating = true;
     }
     protected virtual bool OnReceiveDamage(DamageInfo damageInfo,Vector3 damageDirection)
     {
@@ -63,6 +64,7 @@ public class EntityBase : ObjectPoolMonoItem<int>
     }
     protected virtual void OnRecycle()
     {
+        m_Activating = false;
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityDeactivate, this);
         DoItemRecycle();
     }

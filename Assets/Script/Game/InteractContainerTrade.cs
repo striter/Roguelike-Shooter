@@ -7,7 +7,7 @@ public class InteractContainerTrade : InteractContainer {
     public override enum_Interaction m_InteractType => enum_Interaction.ContainerTrade;
     protected override bool B_SelfRecycleOnInteract => true;
     public int m_TradePrice { get; private set; }
-    protected override bool B_CanInteract(EntityCharacterPlayer _interactor) => _interactor.m_PlayerInfo.m_Coins >= m_TradePrice;
+    protected override bool B_CanInteract(EntityCharacterPlayer _interactor) => _interactor.m_CharacterInfo.CanCostCoins( m_TradePrice);
     public void Play(int _tradePrice,InteractBase _interactItem)
     {
         base.Play();
@@ -17,7 +17,7 @@ public class InteractContainerTrade : InteractContainer {
     protected override bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactTarget)
     {
         base.OnInteractOnceCanKeepInteract(_interactTarget);
-        _interactTarget.m_PlayerInfo.OnCoinsRemoval(m_TradePrice);
+        _interactTarget.m_CharacterInfo.OnCoinsCost(m_TradePrice);
         return false;
     }
 }

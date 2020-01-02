@@ -766,6 +766,27 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
     #endregion
 }
 #region Extra Structs/Classes
+
+public class TimeCounter
+{
+    float m_timeCheck = -1;
+    float m_duration;
+    public bool m_Timing => m_timeCheck > 0;
+    public float m_TimeLeftScale =>m_duration==0?0:m_timeCheck / m_duration;
+    public TimeCounter(float duration = 0) { SetTimer(duration); }
+    public void SetTimer(float duration)
+    {
+        m_duration = duration;
+        m_timeCheck = m_duration;
+    }
+    public void Tick(float deltaTime)
+    {
+        if (m_timeCheck <= 0)
+            return;
+        m_timeCheck -= deltaTime;
+    }
+}
+
 [Serializable]
 public struct RangeFloat
 {
@@ -793,7 +814,7 @@ public struct RangeInt
 }
 public interface IXmlPhrase
 {
-    string ToXMLData();
+     string ToXMLData();
 }
 public class TXmlPhrase : SingleTon<TXmlPhrase>
 {

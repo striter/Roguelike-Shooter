@@ -17,7 +17,7 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     public Transform m_Muzzle { get; private set; } = null;
     public Transform m_Case { get; private set; } = null;
     public int I_ClipAmount { get; private set; } = 0;
-    public float F_Recoil => m_Attacher.m_PlayerInfo.F_RecoilMultiply * F_BaseRecoil;
+    public float F_Recoil => m_Attacher.m_CharacterInfo.F_SpreadMultiply * F_BaseRecoil;
     protected WeaponTrigger m_Trigger { get; private set; }
     Action<bool,float> OnReload;
     Action<float> OnFireRecoil;
@@ -28,11 +28,7 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     bool B_HaveAmmoLeft => m_WeaponInfo.m_ClipAmount == -1 || I_AmmoLeft > 0;
     bool B_AmmoFull => m_WeaponInfo.m_ClipAmount == -1||I_ClipAmount == I_AmmoLeft;
     protected void OnFireCheck(float pauseDuration) => f_fireCheck = pauseDuration;
-
-    public ActionAbility m_WeaponAction { get; private set; } = null;
-    public float m_ActionEnergy { get; private set; } = 0;
-    public float m_ActionEnergyRequirementLeft => m_WeaponAction == null ? -1:  (1-m_ActionEnergy / m_WeaponAction.I_Cost);
-    public bool m_ActionAvailable => m_WeaponAction != null && m_ActionEnergy >= m_WeaponAction.I_Cost;
+    
     public override void OnPoolItemInit(enum_PlayerWeapon _identity, Action<enum_PlayerWeapon, MonoBehaviour> _OnRecycle)
     {
         base.OnPoolItemInit(_identity,_OnRecycle);
@@ -42,21 +38,16 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
         I_ClipAmount = m_WeaponInfo.m_ClipAmount;
         I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
         m_Trigger = new WeaponTrigger(m_WeaponInfo.m_FireRate, OnTriggerOnce, OnFireCheck, CheckCanAutoReload);
-        OnGetEquipmentData(GameObjectManager.GetEquipmentData<SFXEquipmentBase>(GameExpression.GetPlayerEquipmentIndex(m_WeaponInfo.m_Index)));
+        OnGetEquipmentData(GameObjectManager.GetEquipmentData<SFXWeaponBase>(GameExpression.GetPlayerWeaponIndex(m_WeaponInfo.m_Index)));
     }
 
-    protected virtual void OnGetEquipmentData(SFXEquipmentBase equipment)
+    protected virtual void OnGetEquipmentData(SFXWeaponBase equipment)
     {
     }
     protected override void OnPoolItemDisable()
     {
         base.OnPoolItemDisable();
         StopReload();
-    }
-    public void SetWeaponAction(ActionAbility _weaponAction,float _actionEnergy)
-    {
-        m_WeaponAction = _weaponAction;
-        m_ActionEnergy = _actionEnergy;
     }
 
     public void OnAttach(EntityCharacterPlayer _attacher,Transform _attachTo,Action<float> _OnFireRecoil,Action<bool,float> _OnReload)
@@ -74,36 +65,23 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
         OnShow(true);
     }
 
-    public virtual void OnShow(bool show)
+    public virtual void OnPlay(bool play)
     {
-        transform.SetActivate(show);
-        if (show)
+        OnShow(play);
+        if (play)
+        {
             CheckCanAutoReload();
-    } 
+            return;
+        }
 
+        B_Reloading = false;
+        Trigger(false);
+    }
 
+    void OnShow(bool show)=>transform.SetActivate(show);
     #region PlayerInteract
     public void Trigger(bool down)=>m_Trigger.OnSetTrigger(down);
     
-    public void OnEnergyReceive(float energy)
-    {
-        if (m_WeaponAction==null)
-            return;
-        m_ActionEnergy += energy;
-        if (m_ActionEnergy >= m_WeaponAction.I_Cost)
-            m_ActionEnergy = m_WeaponAction.I_Cost;
-    }
-
-    public ActionBase GetAbilityACtion()
-    {
-        if(m_ActionAvailable)
-        {
-            m_ActionEnergy = 0;
-            return ActionDataManager.CopyAction( m_WeaponAction);
-        }
-        return null;
-    }
-
     protected bool OnTriggerOnce()
     {
         if (!B_HaveAmmoLeft)
@@ -135,7 +113,7 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
     {
         B_Reloading = true;
         f_reloadCheck = 0;
-        OnReload?.Invoke(true, m_WeaponInfo.m_ReloadTime  / m_Attacher.m_PlayerInfo.F_ReloadRateTick(1f) );
+        OnReload?.Invoke(true, m_WeaponInfo.m_ReloadTime  / m_Attacher.m_CharacterInfo.F_ReloadRateTick(1f) );
     }
     void StopReload()
     {
@@ -146,7 +124,7 @@ public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
 
     public void AmmoTick(float deltaTime)
     {
-        int clipAmount = m_Attacher.m_PlayerInfo.I_ClipAmount(m_WeaponInfo.m_ClipAmount);
+        int clipAmount = m_Attacher.m_CharacterInfo.I_ClipAmount(m_WeaponInfo.m_ClipAmount);
         if (I_ClipAmount != clipAmount)
         {
             I_ClipAmount = clipAmount;
