@@ -1,4 +1,5 @@
 ﻿using GameSetting;
+using LevelSetting;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,9 +12,12 @@ public class TResources
     public class ConstPath
     {
         public const string S_PlayerEntity = "Entity/0_Player";
+        public const string S_StyleCustomization = "Level/Customization";
+
         public const string S_LevelPrefab = "Level/LevelPrefab";
         public const string S_LeveLItem = "Level/Item";
-        public const string S_StyleCustomization = "Level/Customization";
+
+        public const string S_LevelItemNew = "LevelNew/Item";
 
         public const string S_Texture_LevelBase = "Texture/Level/Texture_Base_";
 
@@ -58,9 +62,9 @@ public class TResources
     public static AtlasLoader GetUIAtlas_Weapon() => new AtlasLoader(Load<SpriteAtlas>(ConstPath.S_UI_Atlas_Weapon));
     #endregion
     #region GamePrefab
-    public static StyleColorData[] GetAllStyleCustomization(enum_Style levelStype) => LoadAll<StyleColorData>(ConstPath.S_StyleCustomization + "/" + levelStype);
-
-    public static Dictionary<enum_LevelItemType,List<LevelItemBase>>  GetAllLevelItems(enum_Style _levelStyle, Transform parent)
+    public static StyleColorData[] GetAllStyleCustomization(enum_LevelStyle levelStype) => LoadAll<StyleColorData>(ConstPath.S_StyleCustomization + "/" + levelStype);
+    #region ElderLEvel
+    public static Dictionary<enum_LevelItemType,List<LevelItemBase>>  GetAllLevelItems(enum_LevelStyle _levelStyle)
     {
         LevelItemBase[] styledLevelItemPrefabs = LoadAll<LevelItemBase>(ConstPath.S_LeveLItem + "/" + _levelStyle);
         foreach (LevelItemBase levelItem in styledLevelItemPrefabs)
@@ -85,14 +89,27 @@ public class TResources
         return itemPrefabDic;
     }
 
-    public static LevelBase GetLevelBase(enum_Style levelStyle)
+    public static LevelBase GetLevelBase(enum_LevelStyle levelStyle)
     {
         LevelBase level = Instantiate<LevelBase>(ConstPath.S_LevelPrefab);
         Renderer matRenderer = level.GetComponentInChildren<Renderer>();
         matRenderer.material.SetTexture("_MainTex", Load<Texture>(ConstPath.S_Texture_LevelBase + levelStyle));
         return level;
     }
-    
+    #endregion
+    #region NewLevel
+    public static Dictionary<enum_TileSubType, List<LevelTileItemBase>> GetLevelItemsNew(enum_LevelStyle _levelStyle)
+    {
+        Dictionary<enum_TileSubType,List< LevelTileItemBase>> itemDic = new Dictionary<enum_TileSubType, List<LevelTileItemBase>>();
+        LoadAll<LevelTileItemBase>(ConstPath.S_LevelItemNew).Traversal((LevelTileItemBase item) => {
+            if (!itemDic.ContainsKey(item.m_Type))
+                itemDic.Add(item.m_Type,new List<LevelTileItemBase>());
+            itemDic[item.m_Type].Add(GameObject.Instantiate(item));
+        });
+        return itemDic;
+    }
+    #endregion
+
     public static SFXWeaponBase GetDamageSource(int index) => Instantiate<SFXWeaponBase>(ConstPath.S_SFXWeapon+index.ToString());
 
     public static Dictionary<int, SFXBase> GetAllEffectSFX()
@@ -117,7 +134,7 @@ public class TResources
         });
         return entitisDic;
     }
-    public static Dictionary<int, EntityBase> GetEnermyEntities(enum_Style entityStyle)
+    public static Dictionary<int, EntityBase> GetEnermyEntities(enum_LevelStyle entityStyle)
     {
         Dictionary<int, EntityBase> entitisDic = new Dictionary<int, EntityBase>();
         EntityBase[] entities = LoadAll<EntityBase>(ConstPath.S_Entity +  entityStyle.ToString());
@@ -133,12 +150,12 @@ public class TResources
         targetObject.GetComponentsInChildren<Renderer>().Traversal((Renderer render) => { render.sharedMaterials.Traversal((Material material) => {if(material) material.hideFlags = material.hideFlags; }); });
     }
     public static WeaponBase GetPlayerWeapon(enum_PlayerWeapon weapon)=>Instantiate<WeaponBase>(ConstPath.S_PlayerWeapon + weapon.ToString());
-    public static InteractGameBase GetInteractPortal(enum_Style portalStyle) => Instantiate<InteractGameBase>( ConstPath.S_InteractPortal + portalStyle.ToString());
+    public static InteractGameBase GetInteractPortal(enum_LevelStyle portalStyle) => Instantiate<InteractGameBase>( ConstPath.S_InteractPortal + portalStyle.ToString());
     public static InteractGameBase GetInteract(enum_Interaction type) => Instantiate<InteractGameBase>(ConstPath.S_InteractCommon + type);
     #endregion
     #region Audio
     public static AudioClip GetGameBGM(enum_GameMusic music) => Load<AudioClip>(ConstPath.S_Audio_GameBGM+music);
-    public static AudioClip GetGameBGM_Styled(enum_GameMusic music,enum_Style style) => Load<AudioClip>(ConstPath.S_Audio_GameBGM +style+"_" +music);
+    public static AudioClip GetGameBGM_Styled(enum_GameMusic music,enum_LevelStyle style) => Load<AudioClip>(ConstPath.S_Audio_GameBGM +style+"_" +music);
     public static AudioClip GetCampBGM(enum_CampMusic music) => Load<AudioClip>(ConstPath.S_Audio_CampBGM + music);
     public static AudioClip GetGameClip(enum_GameVFX vfx) => Load<AudioClip>(ConstPath.S_GameAudio_VFX + vfx.ToString());
     #endregion
