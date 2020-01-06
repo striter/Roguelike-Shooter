@@ -14,7 +14,7 @@ public class LevelChunkEditor : LevelChunk
     LevelTileEditorSelection m_SelectingTile;
     enum_TileDirection m_SelectingDirection = enum_TileDirection.Top;
     int m_currentEditSelection;
-    List<LevelTileEditor> temp_RelativeTiles = new List<LevelTileEditor>();
+    List<LevelTileEditorData> temp_RelativeTiles = new List<LevelTileEditorData>();
     private void Awake()
     {
         Instance = this;
@@ -30,8 +30,8 @@ public class LevelChunkEditor : LevelChunk
         TPSCameraController.Instance.Attach(tf_CameraPos,true,true);
         tf_CameraPos.transform.localPosition = new Vector3(m_Width / 2f * LevelConst.I_TileSize, 0, 0);
         TPSCameraController.Instance.SetCameraRotation(60,0);
-        CheckCombination();
-        EnterViewMode();
+        m_EditMode = enum_TileSubType.Ground;
+        OnEditModeChange();
     }
     protected override bool WillGenerateTile(LevelTileData data) => true;
     protected override void OnTileInit(LevelTileNew tile, TileAxis axis, LevelTileData data)
@@ -39,13 +39,7 @@ public class LevelChunkEditor : LevelChunk
         base.OnTileInit(tile, axis, data);
         m_TilesData[axis.X,axis.Y]=(tile as LevelTileEditorData);
     }
-
-    void CheckCombination()
-    {
-        m_TilesData.Traversal((LevelTileEditorData data) =>
-        {
-        });
-    }
+    
 
     public void Resize(int sizeX,int sizeY)
     {
@@ -100,7 +94,7 @@ public class LevelChunkEditor : LevelChunk
 
         MouseRayChunkEdit();
     }
-
+    #region EditMode
     void EnterViewMode()
     {
         m_EditMode = enum_TileSubType.Invalid;
@@ -147,7 +141,8 @@ public class LevelChunkEditor : LevelChunk
         m_SelectionTiles.m_ActiveItemDic.Traversal((LevelTileEditorSelection tile) => { tile.OnEditSelectionChange(); });
         m_TilesData.Traversal((LevelTileEditorData tile) => { tile.OnEditSelectionChange(); });
     }
-
+    #endregion
+    #region Edit
     void MouseRayChunkEdit()
     {
         if (Input.GetMouseButton(0))
@@ -175,13 +170,13 @@ public class LevelChunkEditor : LevelChunk
         }
         else if(Input.GetKeyDown(KeyCode.Mouse2))
         {
-            m_SelectingDirection = m_SelectingDirection.Next();
-            m_SelectingTile.RotateDirection(m_SelectingDirection);
             if (CameraController.Instance.InputRayCheck(Input.mousePosition, GameSetting.GameLayer.Mask.I_Interact, ref raycastHit))
             {
                 RotateDataTile(raycastHit.transform.GetComponent<LevelTileEditor>());
                 return;
             }
+            m_SelectingDirection = m_SelectingDirection.Next();
+            m_SelectingTile.RotateDirection(m_SelectingDirection);
         }
     }
     bool CanAddTile(LevelTileEditor targetTile)
@@ -198,7 +193,7 @@ public class LevelChunkEditor : LevelChunk
                     if (!m_TilesData.Get(targetTile.m_Axis,(( enum_TileObjectType)m_currentEditSelection).GetSizeAxis(m_SelectingDirection), ref temp_RelativeTiles))
                         return false;
                     enum_TileObjectType objectType = (enum_TileObjectType)m_currentEditSelection;
-                    temp_RelativeTiles.TraversalBreak((LevelTileEditor tile) =>
+                    temp_RelativeTiles.TraversalBreak((LevelTileEditorData tile) =>
                     {
                         editable = EditorTileEditable(tile,objectType);
                         return !editable;
@@ -235,22 +230,18 @@ public class LevelChunkEditor : LevelChunk
         switch (m_EditMode)
         {
             case enum_TileSubType.Ground:
-
                 data.SetData((enum_TileGroundType)m_currentEditSelection,m_SelectingDirection);
                 break;
             case enum_TileSubType.Object:
                 {
                     data.SetData((enum_TileObjectType)m_currentEditSelection, m_SelectingDirection);
-                    data.SetCombiner(data.m_Axis);
                     m_TilesData.Get(targetTile.m_Axis, ((enum_TileObjectType)m_currentEditSelection).GetSizeAxis(m_SelectingDirection), ref temp_RelativeTiles);
-                    enum_TileObjectType objectType = (enum_TileObjectType)m_currentEditSelection;
-                    temp_RelativeTiles.Traversal((LevelTileEditor relativeTile) =>
+                    temp_RelativeTiles.Traversal((LevelTileEditorData relativeTile) =>
                     {
                         if (relativeTile.m_Data.m_GroundType == enum_TileGroundType.Invalid)
                         {
                             LevelTileEditorData relativeData = relativeTile as LevelTileEditorData;
                             relativeData.SetData(enum_TileGroundType.Main, enum_TileDirection.Top);
-                            relativeData.SetCombiner(data.m_Axis);
                         }
                     });
                 }
@@ -287,7 +278,7 @@ public class LevelChunkEditor : LevelChunk
         if (!editorTile.isDataTile)
             return;
 
-        editorTile .RotateDirection(editorTile.m_Data.m_Direction.Next());
+        editorTile.RotateDirection(editorTile.m_Data.m_Direction.Next());
     }
 
     void ChangeEditSelection(LevelTileEditor editorTile )
@@ -303,6 +294,7 @@ public class LevelChunkEditor : LevelChunk
                 case enum_TileSubType.Pillar: editSelection = (int)editorTile.m_Data.m_PillarType; break;
             }
         }
+
         if (m_currentEditSelection == editSelection)
             return;
 
@@ -313,5 +305,5 @@ public class LevelChunkEditor : LevelChunk
             selection.SetSelecting(m_currentEditSelection == index);
         });
     }
-
+    #endregion
 }

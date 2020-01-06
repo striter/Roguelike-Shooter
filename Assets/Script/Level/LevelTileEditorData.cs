@@ -6,11 +6,7 @@ using LevelSetting;
 public class LevelTileEditorData : LevelTileEditor {
 
     public override bool isDataTile => true;
-    public TileAxis m_CombinerTile;
     public bool m_ContainsInfo => m_Data.m_GroundType != enum_TileGroundType.Invalid || m_Data.m_ObjectType != enum_TileObjectType.Invalid || m_Data.m_PillarType != enum_TilePillarType.Invalid;
-    public bool m_Combined => m_CombinerTile !=TileAxis.NegativeOne;
-    public void SetCombiner(TileAxis combiner)=> m_CombinerTile = combiner;
-    public void RemoveCombiner()=>m_CombinerTile = TileAxis.NegativeOne;
 
 
     public void SetData(enum_TilePillarType type, enum_TileDirection direction)

@@ -39,6 +39,7 @@ public static class TReflection
 
     static Dictionary<Type, Func<Transform, object>> m_BasePropertyHelper = new Dictionary<Type, Func<Transform, object>>()
     {
+        { typeof(Transform),(Transform transform)=>transform as Transform},
         { typeof(RectTransform),(Transform transform)=>transform as RectTransform},
         { typeof(Button),(Transform transform)=>transform.GetComponent<Button>() },
         { typeof(Text),(Transform transform)=>transform.GetComponent<Text>() },
@@ -49,8 +50,8 @@ public static class TReflection
         {
             try
             {
-                var properties = target.GetType().GetProperties(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public).Where(p => m_BasePropertyHelper.ContainsKey(p.PropertyType));
-                var fieldInfos = target.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public).Where(p => m_BasePropertyHelper.ContainsKey(p.FieldType));
+                var properties = target.GetType().GetProperties(BindingFlags.DeclaredOnly| BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public).Where(p => m_BasePropertyHelper.ContainsKey(p.PropertyType));
+                var fieldInfos = target.GetType().GetFields(BindingFlags.DeclaredOnly | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public).Where(p => m_BasePropertyHelper.ContainsKey(p.FieldType));
                 object objValue = null;
                 foreach (var property in properties)
                 {

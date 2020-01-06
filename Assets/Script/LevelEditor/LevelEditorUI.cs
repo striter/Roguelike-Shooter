@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class LevelEditorUI : SimpleSingletonMono<LevelEditorUI>,TReflection.UI.IUIPropertyFill {
 
     Transform TReflection.UI.IUIPropertyFill.GetFillParent() => transform;
+    Transform m_File, m_Edit;
     Button m_File_New, m_File_Read, m_File_Save;
     InputField m_File_New_X, m_File_New_Y,  m_File_Read_Name, m_File_Save_Name;
     Button m_Edit_Resize, m_Edit_Desize;
@@ -46,4 +47,11 @@ public class LevelEditorUI : SimpleSingletonMono<LevelEditorUI>,TReflection.UI.I
         LevelChunkEditor.Instance.Resize(int.Parse(m_Edit_Resize_X.text),int.Parse(m_Edit_Resize_Y.text));
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.F1))
+            m_File.SetActivate(!m_File.gameObject.activeSelf);
+        if (Input.GetKeyDown(KeyCode.F2))
+            m_Edit.SetActivate(!m_Edit.gameObject.activeSelf);
+    }
 }

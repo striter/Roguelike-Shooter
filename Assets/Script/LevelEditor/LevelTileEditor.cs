@@ -21,8 +21,8 @@ public class LevelTileEditor : LevelTileNew {
     {
         m_Collider.center = TileTools.GetLocalPosBySizeAxis(size);
         Vector3 tileSize = TileTools.GetUnitScaleBySizeAxis(size, LevelConst.I_TileSize);
-        if (LevelChunkEditor.Instance.m_EditMode == enum_TileSubType.Object)
-            tileSize.y = LevelConst.I_TileSize*2;
+        if (LevelChunkEditor.Instance.m_EditMode == enum_TileSubType.Object&&m_Object!=null)
+            tileSize.y = LevelConst.I_TileSize*3;
         m_Collider.size = tileSize;
     }
     public virtual void OnEditSelectionChange()
@@ -67,4 +67,5 @@ public class LevelTileEditor : LevelTileNew {
         m_Data = m_Data.ChangeDirection(direction);
         Init(m_Axis, m_Data);
     }
+
 }
