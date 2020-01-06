@@ -14,8 +14,8 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
 
     protected bool m_SelfRotation ;
     protected Vector3 v3_localOffset;
-    protected int I_YawAngleMin = 0;
-    protected int I_YawAngleMax = 30;
+    protected int I_PitAngleMin = 0;
+    protected int I_PitchAngleMax = 30;
     Ray ray_temp;
     Vector3 v3_temp;
     RaycastHit rh_temp;
@@ -32,7 +32,7 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
     protected float f_Pitch = 0;
     protected float f_Roll = 0;
 
-    public CameraEffectManager m_Effect;
+    public CameraEffectManager m_Effect { get; private set; }
     #region Preset
     protected override void Awake()
     {
@@ -52,9 +52,9 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
     }
     protected void SetCameraYawClamp(int minRotationClamp = -1, int maxRotationClamp = -1)
     {
-        I_YawAngleMin = minRotationClamp;
-        I_YawAngleMax = maxRotationClamp;
-        f_Pitch = Mathf.Clamp(f_Pitch, I_YawAngleMin, I_YawAngleMax);
+        I_PitAngleMin = minRotationClamp;
+        I_PitchAngleMax = maxRotationClamp;
+        f_Pitch = Mathf.Clamp(f_Pitch, I_PitAngleMin, I_PitchAngleMax);
     }
     #endregion
     #region Interact Apis
@@ -68,7 +68,7 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
     public void SetCameraRotation(float pitch = -1, float yaw = -1)
     {
         if (pitch != -1)
-            f_Pitch = m_SelfRotation? Mathf.Clamp(f_Pitch, I_YawAngleMin, I_YawAngleMax):pitch;
+            f_Pitch = pitch;
         if (yaw != -1)
             f_Yaw = yaw;
     }
@@ -76,7 +76,7 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
     {
         f_Yaw += _input.x * F_RotateSensitive;
         f_Pitch += (B_InvertCamera ? _input.y : -_input.y) * F_RotateSensitive;
-        f_Pitch = Mathf.Clamp(f_Pitch, I_YawAngleMin, I_YawAngleMax);
+        f_Pitch = Mathf.Clamp(f_Pitch, I_PitAngleMin, I_PitchAngleMax);
     }
 
     public bool InputRayCheck(Vector2 inputPos, int layerMask, ref RaycastHit rayHit)

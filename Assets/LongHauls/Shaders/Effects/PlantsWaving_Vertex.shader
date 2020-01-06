@@ -24,11 +24,11 @@ Shader "Game/Effect/PlantsWaving_Vertex"
 				float _WaveSpeed;
 				float _YMultiple;
 				float _YStart;
-		float3 waveAdd(float vertexY,float3 worldPos)
-		{
-			float wave =_YStart>worldPos.y?0:vertexY* _YMultiple *sin(_Time.y*_WaveSpeed + worldPos*_WaveDirection.w / normalize(_WaveDirection.xyz) );
-			return  _WaveDirection.xyz*wave/ 100;
-		}
+			float3 waveAdd(float3 vertexPos)
+			{
+				float wave = vertexPos.y* _YMultiple *sin(_Time.y*_WaveSpeed)/100;
+				return  _WaveDirection.xyz*wave;
+			}
 				ENDCG
 
 			Pass		//Base Pass
@@ -66,8 +66,7 @@ Shader "Game/Effect/PlantsWaving_Vertex"
 					fixed3 worldNormal = normalize(mul(v.normal, (float3x3)unity_WorldToObject)); //法线方向n
 					fixed3 worldLightDir = normalize(UnityWorldSpaceLightDir(o.worldPos));
 					o.diffuse = saturate(dot(worldLightDir,worldNormal));
-					o.worldPos += waveAdd(v.vertex.y,o.worldPos); 
-					o.pos = UnityWorldToClipPos(o.worldPos);
+					o.pos = UnityObjectToClipPos(v.vertex+ waveAdd(v.vertex));
 					TRANSFER_SHADOW(o);
 					return o;
 				}
@@ -101,9 +100,7 @@ Shader "Game/Effect/PlantsWaving_Vertex"
 			{
 				v2fs o;
 				TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
-				float3 worldPos = mul(unity_ObjectToWorld, v.vertex);
-				worldPos += waveAdd(v.vertex.y,worldPos);
-			 o.pos = UnityWorldToClipPos(worldPos);
+			 o.pos = UnityObjectToClipPos(v.vertex+waveAdd(v.vertex) );
 				return o;
 			}
 

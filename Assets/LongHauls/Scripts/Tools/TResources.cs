@@ -17,7 +17,8 @@ public class TResources
         public const string S_LevelPrefab = "Level/LevelPrefab";
         public const string S_LeveLItem = "Level/Item";
 
-        public const string S_LevelItemNew = "LevelNew/Item";
+        public const string S_LevelItemNew = "LeveLNew/Item";
+        public const string S_LevelChunkData = "LeveLNew/ChunkData";
 
         public const string S_Texture_LevelBase = "Texture/Level/Texture_Base_";
 
@@ -98,6 +99,8 @@ public class TResources
     }
     #endregion
     #region NewLevel
+    public static LevelChunkData GetLevelData(string name) => Load<LevelChunkData>(ConstPath.S_LevelChunkData + "/" + name);
+    public static LevelChunkData[] GetLevelData() => LoadAll<LevelChunkData>(ConstPath.S_LevelChunkData);
     public static Dictionary<enum_TileSubType, List<LevelTileItemBase>> GetLevelItemsNew(enum_LevelStyle _levelStyle)
     {
         Dictionary<enum_TileSubType,List< LevelTileItemBase>> itemDic = new Dictionary<enum_TileSubType, List<LevelTileItemBase>>();
@@ -174,9 +177,10 @@ public class TResources
     {
         T prefab = Resources.Load<T>(path);
         if (prefab == null)
-            Debug.LogError("Invalid Item Found Of |"+typeof(T)+  "|At:" + path);
+            Debug.LogWarning("Invalid Item Found Of |"+typeof(T)+  "|At:" + path);
         return prefab;
     }
+
     public static T[] LoadAll<T>(string path) where T : UnityEngine.Object
     {
         T[] array = Resources.LoadAll<T>(path);
@@ -195,7 +199,6 @@ public class TResources
         else
             Debug.LogError("Null Path Of: Resources/" + resourcePath);
     }
-
 
     #endregion
     public static TextAsset GetExcelData(string dataSource, bool extraSheets = false)

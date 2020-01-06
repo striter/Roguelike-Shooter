@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 
 public static class TReflection
 {
@@ -24,26 +26,31 @@ public static class TReflection
             if (method != null)
                 method.Invoke(null,new object[] {template });
             else
-                UnityEngine.Debug.LogError("Null Method Found From:"+t.ToString()+"."+methodName);
+                Debug.LogError("Null Method Found From:"+t.ToString()+"."+methodName);
         }
     }
 
     public static class UI
     {
-        static Type m_UIBaseAttribute = typeof(UnityEngine.EventSystems.UIBehaviour);
-        static Dictionary<Type, Func<Transform, object>> m_BasePropertyHelper = new Dictionary<Type, Func<Transform, object>>()
+        public interface IUIPropertyFill
+        {
+            Transform GetFillParent();
+        }
+
+    static Dictionary<Type, Func<Transform, object>> m_BasePropertyHelper = new Dictionary<Type, Func<Transform, object>>()
     {
+        { typeof(RectTransform),(Transform transform)=>transform as RectTransform},
         { typeof(Button),(Transform transform)=>transform.GetComponent<Button>() },
         { typeof(Text),(Transform transform)=>transform.GetComponent<Text>() },
         { typeof(InputField),(Transform transform)=>transform.GetComponent<InputField>() },
         { typeof(Image),(Transform transform)=>transform.GetComponent<Image>() },
     };
-        public static void UIPropertyFill<T>(T target) where T : Component
+        public static void UIPropertyFill<T>(T target) where T : IUIPropertyFill
         {
             try
             {
-                var properties = target.GetType().GetProperties(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public).Where(p => p.PropertyType.IsSubclassOf(m_UIBaseAttribute));
-                var fieldInfos = target.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public).Where(p => p.FieldType.IsSubclassOf(m_UIBaseAttribute));
+                var properties = target.GetType().GetProperties(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public).Where(p => m_BasePropertyHelper.ContainsKey(p.PropertyType));
+                var fieldInfos = target.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public).Where(p => m_BasePropertyHelper.ContainsKey(p.FieldType));
                 object objValue = null;
                 foreach (var property in properties)
                 {
@@ -61,8 +68,9 @@ public static class TReflection
             {
                 Debug.LogError("Error!Property Should Be Named Like: x_Xxxx_xxx! Transfered To Xxxx/xxx \n" + e.Message + "\n" + e.StackTrace);
             }
-        }
-        static bool GetProperty<T>(T target, string name, Type type, out object obj) where T : Component
+        } 
+
+        static bool GetProperty<T>(T target, string name, Type type, out object obj) where T : IUIPropertyFill
         {
             obj = null;
             string[] propertySplitPath = name.Split('_');
@@ -75,7 +83,7 @@ public static class TReflection
             }
             if (!m_BasePropertyHelper.ContainsKey(type))
                 throw new Exception("Type Helper Not Contains:" + type);
-            Transform targetTrans = target.transform.Find(path);
+            Transform targetTrans = target.GetFillParent().Find(path);
             if (targetTrans == null)
                 throw new Exception("Folder:" + path);
             obj = m_BasePropertyHelper[type](targetTrans);

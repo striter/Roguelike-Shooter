@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public interface ObjectPoolItem<T>{
@@ -56,6 +57,7 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,Obj
     {
         return d_ItemInfos.ContainsKey(identity);
     }
+    public static List<T> GetRegistedList() => d_ItemInfos.Keys.ToList();
     public static Y GetRegistedSpawnItem(T identity)
     {
         if (!Registed(identity))

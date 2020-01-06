@@ -6,7 +6,7 @@ using TTiles;
 using System;
 using System.Collections;
 
-public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
+public class LevelBase : MonoBehaviour{
     public List<LevelTile> m_MapData;
     public enum_LevelType m_levelType { get; private set; }
     protected Transform tf_Model;
@@ -22,7 +22,7 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
     Dictionary<enum_LevelItemType, List<LevelItemBase>> m_AllItemPrefabs = new Dictionary<enum_LevelItemType, List<LevelItemBase>>();
     public float m_InnerBorder { get; private set; }
     public float m_TotalBorder { get; private set; }
-    public void OnPoolItemInit(int identity,Action<int,MonoBehaviour> _OnRecycle)
+    public void Init()
     {
         tf_LevelItem = transform.Find("Item");
         tf_Model = transform.Find("Model");
@@ -151,7 +151,7 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
             LevelTile tile1 = m_AllTiles[ sortedBorder[(sortedBorder.Count+ i-1)%sortedBorder.Count]];
             LevelTile tile2 = m_AllTiles[sortedBorder[(i + 1) % sortedBorder.Count]];
             enum_TileDirection direction = tile1.m_TileAxis.OffsetDirection(tile2.m_TileAxis);
-            m_AllTiles[sortedBorder[i]] = new LevelTileBorder(m_AllTiles[sortedBorder[i]], 0, TTiles.TTiles.m_FourDirections.Contains(direction) ? enum_LevelItemType.BorderLinear : enum_LevelItemType.BorderOblique ,direction);
+            m_AllTiles[sortedBorder[i]] = new LevelTileBorder(m_AllTiles[sortedBorder[i]], 0, TTiles.TileTools.m_FourDirections.Contains(direction) ? enum_LevelItemType.BorderLinear : enum_LevelItemType.BorderOblique ,direction);
         }
     }
 
@@ -176,7 +176,7 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
                 LevelItemBase currentItem = targetItems[currentItemIndex];
                 if (emptyTile.Count < currentItem.m_sizeXAxis * currentItem.m_sizeYAxis)
                     continue;
-                enum_TileDirection itemAngleDirection = TTiles.TTiles.m_FourDirections.RandomItem(m_seed);
+                enum_TileDirection itemAngleDirection = TTiles.TileTools.m_FourDirections.RandomItem(m_seed);
                 int currentTileIndex = RandomAvailableTileIndex(currentItem.m_sizeXAxis, currentItem.m_sizeYAxis,  itemAngleDirection == enum_TileDirection.Left || itemAngleDirection == enum_TileDirection.Right, emptyTile, ref t_IndexTemp);
                 if (currentTileIndex != -1)
                 {
@@ -302,18 +302,6 @@ public class LevelBase : MonoBehaviour,ObjectPoolItem<int> {
                                     break;
                                 case enum_TileDirection.Right:
                                     targetColor = TCommon.ColorAlpha(Color.yellow, .5f);
-                                    break;
-                                case enum_TileDirection.TopLeft:
-                                    targetColor = TCommon.ColorAlpha(Color.blue, 1f);
-                                    break;
-                                case enum_TileDirection.TopRight:
-                                    targetColor = TCommon.ColorAlpha(Color.green, 1f);
-                                    break;
-                                case enum_TileDirection.BottomLeft:
-                                    targetColor = TCommon.ColorAlpha(Color.red, 1f);
-                                    break;
-                                case enum_TileDirection.BottomRight:
-                                    targetColor = TCommon.ColorAlpha(Color.yellow, 1f);
                                     break;
                             }
                         }
