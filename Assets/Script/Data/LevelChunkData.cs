@@ -21,12 +21,12 @@ public class LevelChunkData : ScriptableObject {
         }
     } 
 
-    public static LevelChunkData NewData(int width,int height,LevelTileEditor[,] transferData=null)
+    public static LevelChunkData NewData(int width,int height, enum_ChunkType type, LevelTileEditor[,] transferData=null)
     {
         LevelChunkData data = CreateInstance<LevelChunkData>();
+        data.m_Type = type;
         data.m_Width = width;
         data.m_Height = height;
-        data.m_Type = enum_ChunkType.Invalid;
         data.m_TileData = new LevelTileData[data.m_Width * data.m_Height];
         for (int i = 0; i < data.Width; i++)
             for (int j = 0; j < data.Height; j++)
@@ -44,7 +44,7 @@ public class LevelChunkData : ScriptableObject {
     {
         m_Width = chunk.m_Width;
         m_Height = chunk.m_Height;
-        m_Type = chunk.m_Type;
+        m_Type = chunk.m_ChunkType;
         m_TileData = new LevelTileData[m_Width*m_Height];
         for (int i=0;i<m_Width;i++)
             for(int j=0;j<m_Height;j++)

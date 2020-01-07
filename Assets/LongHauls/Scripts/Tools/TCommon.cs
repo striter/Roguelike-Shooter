@@ -283,21 +283,6 @@ public static class TCommon
             for (int j = 0; j < length1; j++)
                 OnEachItem(array[i, j]);
     }
-    public static void TraversalEnum<T>(Action<T> enumAction)    //Can't Constraint T to System.Enum?
-    {
-        if (!typeof(T).IsSubclassOf(typeof(Enum)))
-        {
-            Debug.LogError("Can't Traversal EnEnum Class!");
-            return;
-        }
-
-        foreach (object temp in Enum.GetValues(typeof(T)))
-        {
-            if (temp.ToString() == "Invalid")
-                continue;
-            enumAction((T)temp);
-        }
-    }
     public static void TraversalRandomBreak<T>(this List<T> list, Func<T, bool> OnRandomItemStop = null, System.Random seed = null)
     {
         if (list.Count == 0)
@@ -324,7 +309,7 @@ public static class TCommon
         for (int i = 0; i < dictionary.Count; i++)
         {
             KeyValuePair<T, Y> element = dictionary.ElementAt(index);
-            if (OnRandomItemStop != null && OnRandomItemStop(element.Key,element.Value))
+            if (OnRandomItemStop != null && OnRandomItemStop(element.Key, element.Value))
                 break;
 
             index++;
@@ -333,8 +318,30 @@ public static class TCommon
         }
     }
 
+    #region Enum
+    public static void TraversalEnum<T>(Action<T> enumAction)    //Can't Constraint T to System.Enum?
+    {
+        if (!typeof(T).IsSubclassOf(typeof(Enum)))
+        {
+            Debug.LogError("Can't Traversal EnEnum Class!");
+            return;
+        }
+
+        foreach (object temp in Enum.GetValues(typeof(T)))
+        {
+            if (temp.ToString() == "Invalid")
+                continue;
+            enumAction((T)temp);
+        }
+    }
     public static List<T> GetEnumList<T>()
     {
+        if (!typeof(T).IsSubclassOf(typeof(Enum)))
+        {
+            Debug.LogError("Can't Traversal EnEnum Class!");
+            return null;
+        }
+
         List<T> list = new List<T>();
         Array allEnums = Enum.GetValues(typeof(T));
         for (int i = 0; i < allEnums.Length; i++)
@@ -345,6 +352,7 @@ public static class TCommon
         }
         return list;
     }
+    #endregion
     #endregion
     #region Random
     public static T RandomItem<T>(this List<T> randomList, System.Random randomSeed = null) => randomList[randomSeed != null ? randomSeed.Next(randomList.Count) : UnityEngine.Random.Range(0, randomList.Count)];

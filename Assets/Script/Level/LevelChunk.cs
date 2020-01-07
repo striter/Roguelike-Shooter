@@ -6,7 +6,7 @@ using TTiles;
 
 public class LevelChunk : MonoBehaviour
 {
-    public enum_ChunkType m_Type { get; private set; }
+    public enum_ChunkType m_ChunkType { get; private set; }
     public int m_Width { get; private set; }
     public int m_Height { get; private set; }
     
@@ -22,7 +22,7 @@ public class LevelChunk : MonoBehaviour
     public virtual void Init(LevelChunkData _data)
     {
         Init();
-        m_Type = _data.Type;
+        m_ChunkType = _data.Type;
         m_Width = _data.Width;
         m_Height = _data.Height;
         m_TilePool.ClearPool();
