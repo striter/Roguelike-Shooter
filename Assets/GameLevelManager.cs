@@ -3,7 +3,7 @@ using LevelSetting;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using TTiles;
 public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
     ObjectPoolSimpleComponent<int, LevelChunk> m_ChunkPool;
     protected override void Awake()
@@ -16,11 +16,40 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
 
     public void Generate()
     {
-        m_ChunkPool.ClearPool();
         LevelChunkData[] datas = TResources.GetLevelData();
-        m_ChunkPool.AddItem(0).Init(datas[0]);
+        Dictionary<TileAxis, enum_TileDirection> connectionOffsets = new Dictionary<TileAxis, enum_TileDirection>();
+        TileAxis chunkOffset = TileAxis.Zero;
+        List<ChunkGenerateData> generateData = new List<ChunkGenerateData>();
+
+        generateData.Add(new ChunkGenerateData(TileAxis.Zero,datas[0]));
+
+        m_ChunkPool.ClearPool();
+        int index=0;
+        generateData.Traversal((ChunkGenerateData data) => {
+            LevelChunk chunk = m_ChunkPool.AddItem(index++);
+            chunk.Init(data.m_Data);
+            chunk.transform.localPosition = new Vector3(data.m_Axis.X,0, data.m_Axis.Y)*LevelConst.I_TileSize;
+        });
+    }
+
+    class ChunkGenerateData
+    {
+        public TileAxis m_Axis { get; private set; }
+        public LevelChunkData m_Data { get; private set; }
+        public Dictionary<int, bool> m_Connection { get; private set; } = new Dictionary<int, bool>();
+
+        public ChunkGenerateData(TileAxis _offset,LevelChunkData _data)
+        {
+            m_Axis = _offset;
+            m_Data = _data;
+            for (int i = 0; i < _data.Connections.Length; i++)
+                m_Connection.Add(_data.Connections[i],false);
+        }
+
+        public void OnConnectionSet(int connectionIndex) => m_Connection[connectionIndex] = true;
     }
 }
+
 
 public static class LevelObjectManager
 {

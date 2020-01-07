@@ -15,6 +15,7 @@ public class LevelChunkData : ScriptableObject {
     public enum_ChunkType Type => m_Type;
     public int Width => m_Width;
     public int Height => m_Height;
+    public int[] Connections => m_ConnectionIndex;
     public LevelTileData[] Data
     {
         get
