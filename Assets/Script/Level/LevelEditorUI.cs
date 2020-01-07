@@ -40,12 +40,13 @@ public class LevelEditorUI : SimpleSingletonMono<LevelEditorUI>,TReflection.UI.I
     }
 
     Transform TReflection.UI.IUIPropertyFill.GetFillParent() => transform;
-    Transform m_File, m_Edit;
+    Transform m_File, m_Edit,m_Test;
     Button m_File_New, m_File_Read, m_File_Save;
     InputField m_File_New_X, m_File_New_Y,  m_File_Read_Name, m_File_Save_Name;
-    Button m_Edit_Resize, m_Edit_Desize;
+    Button m_Edit_Resize;
     InputField m_Edit_Resize_X, m_Edit_Resize_Y;
     ChunkTypeSelection m_File_Type;
+    Button m_Test_Generate;
 
     enum_ChunkType m_ChunkType= enum_ChunkType.Battle;
     protected override void Awake()
@@ -56,8 +57,8 @@ public class LevelEditorUI : SimpleSingletonMono<LevelEditorUI>,TReflection.UI.I
         m_File_Read.onClick.AddListener(OnReadClick);
         m_File_Save.onClick.AddListener(OnSaveClick);
         m_Edit_Resize.onClick.AddListener(OnResizeButtonClick);
-        m_Edit_Desize.onClick.AddListener(OnDesizeButtonClick);
         m_File_Type.Init(m_ChunkType,OnTypeSelect);
+        m_Test_Generate.onClick.AddListener(OnTestGenerateClick);
     }
 
     void OnTypeSelect(int typeID)
@@ -68,12 +69,20 @@ public class LevelEditorUI : SimpleSingletonMono<LevelEditorUI>,TReflection.UI.I
 
     void OnNewClick()
     {
+        m_Edit_Resize_X.text = m_File_New_X.text;
+        m_Edit_Resize_Y.text = m_File_New_Y.text;
         LevelEditorManager.Instance.New(int.Parse( m_File_New_X.text),int.Parse(m_File_New_Y.text), m_ChunkType);
     }
 
     void OnReadClick()
     {
-        LevelEditorManager.Instance.Read(m_File_Read_Name.text);
+        LevelChunkData data= LevelEditorManager.Instance.Read(m_File_Read_Name.text);
+        if(data)
+        {
+            m_Edit_Resize_X.text = data.Width.ToString();
+            m_Edit_Resize_Y.text = data.Height.ToString();
+            m_File_Save_Name.text = data.name;
+        }
     }
 
     void OnSaveClick()
@@ -81,15 +90,12 @@ public class LevelEditorUI : SimpleSingletonMono<LevelEditorUI>,TReflection.UI.I
         LevelEditorManager.Instance.Save(m_File_Save_Name.text);
     }
 
-    void OnDesizeButtonClick()
-    {
-        LevelChunkEditor.Instance.Desize();
-    }
-
     void OnResizeButtonClick()
     {
         LevelChunkEditor.Instance.Resize(int.Parse(m_Edit_Resize_X.text),int.Parse(m_Edit_Resize_Y.text));
     }
+
+    void OnTestGenerateClick() => GameLevelManager.Instance.Generate();
 
     private void Update()
     {
@@ -97,5 +103,7 @@ public class LevelEditorUI : SimpleSingletonMono<LevelEditorUI>,TReflection.UI.I
             m_File.SetActivate(!m_File.gameObject.activeSelf);
         if (Input.GetKeyDown(KeyCode.F2))
             m_Edit.SetActivate(!m_Edit.gameObject.activeSelf);
+        if (Input.GetKeyDown(KeyCode.F3))
+            m_Test.SetActivate(!m_Test.gameObject.activeSelf);
     }
 }

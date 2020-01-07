@@ -37,7 +37,7 @@ public class LevelChunk : MonoBehaviour
     protected virtual bool WillGenerateTile(LevelTileData data)
     {
         if (data.m_GroundType != enum_TileGroundType.Invalid)
-            return false;
+            return true;
         if (data.m_ObjectType != enum_TileObjectType.Invalid)
             return true;
         if (data.m_PillarType != enum_TilePillarType.Invalid)

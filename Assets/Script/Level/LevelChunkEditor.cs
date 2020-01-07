@@ -46,22 +46,6 @@ public class LevelChunkEditor : LevelChunk
     {
         Init(LevelChunkData.NewData(sizeX, sizeY, m_ChunkType, m_TilesData));
     }
-    public void Desize()
-    {
-        int newSizeX = 1;
-        int newSizeY = 1;
-        m_TilesData.Traversal((LevelTileEditorData tile) =>
-        {
-            if(tile.m_ContainsInfo)
-            {
-                if (newSizeX < tile.m_Axis.X+1)
-                    newSizeX = tile.m_Axis.X+1;
-                if (newSizeY < tile.m_Axis.Y+1)
-                    newSizeY = tile.m_Axis.Y+1;
-            }
-        });
-        Init(LevelChunkData.NewData(newSizeX, newSizeY, m_ChunkType, m_TilesData));
-    }
 
     private void Update()
     {
@@ -216,24 +200,32 @@ public class LevelChunkEditor : LevelChunk
                     enum_TileObjectType objectType = (enum_TileObjectType)m_currentEditSelection;
                     temp_RelativeTiles.TraversalBreak((LevelTileEditorData tile) =>
                     {
-                        editable = EditorTileEditable(tile,objectType);
+                        editable =tile.m_Axis==targetTile.m_Axis||ObjectEditable(tile,objectType);
                         return !editable;
                     });
                 }
+                break;
+            case enum_TileSubType.Ground:
+            case enum_TileSubType.Pillar:
+                editable = !m_TilesData.CheckIsEdge(targetTile.m_Axis);
                 break;
         }
         return editable;
     }
 
-    bool EditorTileEditable(LevelTileEditor tile,enum_TileObjectType objectType)
+    bool ObjectEditable(LevelTileEditor tile,enum_TileObjectType objectType)
     {
         if (objectType == enum_TileObjectType.Connection1x5)
             return m_TilesData.CheckIsEdge(tile.m_Axis);
 
+        if (tile.m_Data.m_ObjectType != enum_TileObjectType.Invalid)
+            return false;
+
         switch (tile.m_Data.m_GroundType)
         {
             default:
-                return true;
+                return !m_TilesData.CheckIsEdge(tile.m_Axis);
+            case enum_TileGroundType.Invalid:
             case enum_TileGroundType.Road1:
             case enum_TileGroundType.Road2:
             case enum_TileGroundType.Road3:
@@ -259,15 +251,6 @@ public class LevelChunkEditor : LevelChunk
                     if (ObjectRestrictRunsOut(type))
                         return;
                     data.SetData(type, m_SelectingDirection);
-                    m_TilesData.Get(targetTile.m_Axis, (type).GetSizeAxis(m_SelectingDirection), ref temp_RelativeTiles);
-                    temp_RelativeTiles.Traversal((LevelTileEditorData relativeTile) =>
-                    {
-                        if (relativeTile.m_Data.m_GroundType == enum_TileGroundType.Invalid)
-                        {
-                            LevelTileEditorData relativeData = relativeTile as LevelTileEditorData;
-                            relativeData.SetData(enum_TileGroundType.Main, enum_TileDirection.Top);
-                        }
-                    });
                 }
                 break;
             case enum_TileSubType.Pillar:
@@ -313,7 +296,7 @@ public class LevelChunkEditor : LevelChunk
         int editSelection = -1;
         if(editorTile)
         {
-            m_SelectingTile.Init(new TileAxis(-6, -1), editorTile.m_Data);
+            m_SelectingTile.Init(new TileAxis(-6, -1), editorTile.m_Data.ChangeDirection(m_SelectingDirection));
             switch (m_EditMode)
             {
                 case enum_TileSubType.Ground: editSelection = (int)editorTile.m_Data.m_GroundType;break;

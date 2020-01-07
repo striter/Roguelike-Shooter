@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using TTiles;
 using LevelSetting;
+using System.Collections.Generic;
+
 public class LevelChunkData : ScriptableObject {
     [SerializeField]
     protected enum_ChunkType m_Type;
@@ -8,6 +10,8 @@ public class LevelChunkData : ScriptableObject {
     protected int m_Width, m_Height;
     [SerializeField]
     protected LevelTileData[] m_TileData;
+    [SerializeField]
+    protected int[] m_ConnectionIndex;
     public enum_ChunkType Type => m_Type;
     public int Width => m_Width;
     public int Height => m_Height;
@@ -45,10 +49,17 @@ public class LevelChunkData : ScriptableObject {
         m_Width = chunk.m_Width;
         m_Height = chunk.m_Height;
         m_Type = chunk.m_ChunkType;
-        m_TileData = new LevelTileData[m_Width*m_Height];
-        for (int i=0;i<m_Width;i++)
-            for(int j=0;j<m_Height;j++)
-                m_TileData[TileTools.GetAxisIndex(i, j, m_Width)] = chunk.m_TilesData[i,j].m_Data;
+        List<int> m_Connections = new List<int>();
+         m_TileData = new LevelTileData[m_Width*m_Height];
+        for (int i = 0; i < m_Width; i++)
+            for (int j = 0; j < m_Height; j++)
+            {
+                int index = TileTools.GetAxisIndex(i, j, m_Width);
+                if (chunk.m_TilesData[i, j].m_Data.m_ObjectType == enum_TileObjectType.Connection1x5)
+                    m_Connections.Add(index);
+                m_TileData[index] = chunk.m_TilesData[i, j].m_Data;
+            }
+        m_ConnectionIndex = m_Connections.ToArray();
     }
 }
 
