@@ -16,6 +16,7 @@ public class LevelChunkData : ScriptableObject {
     public int Width => m_Width;
     public int Height => m_Height;
     public ChunkConnectionData[] Connections => m_ConnectionIndex;
+    public TileAxis m_Size => new TileAxis(Width, Height);
     public ChunkTileData[] Data
     {
         get
@@ -57,7 +58,7 @@ public class LevelChunkData : ScriptableObject {
             {
                 int index = TileTools.GetAxisIndex(i, j, m_Width);
                 if (chunk.m_TilesData[i, j].m_Data.m_ObjectType == enum_TileObjectType.Connection1x5)
-                    m_Connections.Add(new ChunkConnectionData(new TileAxis(i,j),m_Width,m_Height));
+                    m_Connections.Add(new ChunkConnectionData(new TileAxis(i,j), chunk.m_TilesData[i, j].m_Data.m_Direction, m_Width,m_Height));
                 m_TileData[index] = chunk.m_TilesData[i, j].m_Data;
             }
         m_ConnectionIndex = m_Connections.ToArray();
@@ -108,17 +109,26 @@ public struct ChunkConnectionData
 {
     public TileAxis m_Axis;
     public enum_TileDirection m_Direction;
-    public ChunkConnectionData(TileAxis axis, int width, int height)
+    public ChunkConnectionData(TileAxis axis,enum_TileDirection directionData, int width, int height)
     {
         m_Axis = axis;
         m_Direction = enum_TileDirection.Invalid;
-        if (m_Axis.Y == 0)
-            m_Direction = enum_TileDirection.Bottom;
-        else if (m_Axis.Y == height - 1)
-            m_Direction = enum_TileDirection.Top;
-        else if (m_Axis.X == 0)
-            m_Direction = enum_TileDirection.Left;
-        else if (m_Axis.X == width - 1)
-            m_Direction = enum_TileDirection.Right;
+        if ((int)directionData % 2 == 1)
+        {
+            if (m_Axis.X == 0)
+                m_Direction = enum_TileDirection.Left;
+            else if (m_Axis.X == width - 1)
+                m_Direction = enum_TileDirection.Right;
+        }
+        else
+        {
+            if (m_Axis.Y == 0)
+                m_Direction = enum_TileDirection.Bottom;
+            else if (m_Axis.Y == height-1)
+                m_Direction = enum_TileDirection.Top;
+        }
+
+        if (m_Direction == enum_TileDirection.Invalid)
+            Debug.LogError("Invalid Direction Found");
     }
 }

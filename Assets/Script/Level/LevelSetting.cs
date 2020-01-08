@@ -76,6 +76,8 @@ namespace LevelSetting
 
     public static class LevelExpressions
     {
+        public static Vector3 ToWorldPosition(this TileAxis axis) => new Vector3(axis.X,0,axis.Y)*LevelConst.I_TileSize;
+
         public static bool TileObjectEditable(this enum_TileGroundType type)
         {
             switch(type)

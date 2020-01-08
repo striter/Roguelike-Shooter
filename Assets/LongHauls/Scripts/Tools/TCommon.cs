@@ -345,7 +345,7 @@ public static class TCommon
     #endregion
     #endregion
     #region Random
-    public static int RandomLength(int length, System.Random seed = null) => seed == null ? seed.Next(length) : UnityEngine.Random.Range(0, length);
+    public static int RandomLength(int length, System.Random seed = null) => seed != null ? seed.Next(length) : UnityEngine.Random.Range(0, length);
     public static int RandomIndex<T>(this List<T> randomList, System.Random seed = null) => RandomLength(randomList.Count,seed);
     public static int RandomIndex<T>(this T[] randomArray, System.Random randomSeed = null) => RandomLength(randomArray.Length,randomSeed);
 

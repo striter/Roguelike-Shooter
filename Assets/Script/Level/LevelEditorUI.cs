@@ -47,6 +47,7 @@ public class LevelEditorUI : SimpleSingletonMono<LevelEditorUI>,TReflection.UI.I
     InputField m_Edit_Resize_X, m_Edit_Resize_Y;
     ChunkTypeSelection m_File_Type;
     Button m_Test_Generate;
+    InputField m_Test_Generate_Seed;
 
     enum_ChunkType m_ChunkType= enum_ChunkType.Battle;
     protected override void Awake()
@@ -95,7 +96,11 @@ public class LevelEditorUI : SimpleSingletonMono<LevelEditorUI>,TReflection.UI.I
         LevelChunkEditor.Instance.Resize(int.Parse(m_Edit_Resize_X.text),int.Parse(m_Edit_Resize_Y.text));
     }
 
-    void OnTestGenerateClick() => GameLevelManager.Instance.Generate();
+    void OnTestGenerateClick()
+    {
+        GameLevelManager.Instance.Generate(m_Test_Generate_Seed.text);
+        m_Test_Generate_Seed.text = GameLevelManager.Instance.m_Seed;
+    } 
 
     private void Update()
     {

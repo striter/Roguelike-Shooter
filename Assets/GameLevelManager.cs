@@ -7,6 +7,7 @@ using System;
 using TTiles;
 public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
     ObjectPoolSimpleComponent<int, LevelChunk> m_ChunkPool;
+    public string m_Seed { get; private set; }
     protected override void Awake()
     {
         base.Awake();
@@ -15,18 +16,18 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         LevelObjectManager.Register(enum_LevelStyle.Forest);
     }
 
-    public void Generate()
+    public void Generate(string seed)
     {
-        System.Random random = new System.Random(System.DateTime.Now.ToLongTimeString().GetHashCode());
+        m_Seed = seed == "" ? DateTime.Now.ToLongTimeString() : seed;
+        System.Random random = new System.Random(m_Seed.GetHashCode());
 
         LevelChunkData[] datas = TResources.GetLevelData();
-        List<ChunkGenerateData> generateData = new List<ChunkGenerateData>();
+        List<ChunkGenerateData> chunkGenerateData = new List<ChunkGenerateData>();
 
-        generateData.Add(new ChunkGenerateData(TileAxis.Zero, datas[0]));
-        for(int i=0;i<11;i++)
+        chunkGenerateData.Add(new ChunkGenerateData(TileAxis.Zero, datas.RandomItem(random)));
+        ChunkGenerateData previousChunkGenerate = chunkGenerateData[0];
+        for (int i=0;i<11;i++)
         {
-            ChunkGenerateData previousChunkGenerate = generateData[i];
-            Dictionary<TileAxis, enum_TileDirection> connectionDirection = new Dictionary<TileAxis, enum_TileDirection>();
             ChunkGenerateData nextChunkGenerate = null;
             previousChunkGenerate.m_Data.Connections.TraversalRandomBreak((int previousConnectionIndex) =>
             {
@@ -35,22 +36,29 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
 
                 ChunkConnectionData m_previousConnectionData = previousChunkGenerate.m_Data.Connections[previousConnectionIndex];
                 enum_TileDirection connectDirection = m_previousConnectionData.m_Direction.Inverse();
-                datas.TraversalRandomBreak((int index) => 
+                datas.TraversalRandomBreak((LevelChunkData nextChunkData) => 
                 {
-                    LevelChunkData _data = datas[index];
                     ChunkConnectionData? nextConnectionData = null;
-                    _data.Connections.TraversalRandomBreak((int nextConnectionIndex) => {
-                        ChunkConnectionData _connectionData = _data.Connections[nextConnectionIndex];
+                    nextChunkData.Connections.TraversalRandomBreak((int nextConnectionIndex) => {
+                        ChunkConnectionData _connectionData = nextChunkData.Connections[nextConnectionIndex];
                         if (_connectionData.m_Direction == connectDirection)
                             nextConnectionData = _connectionData;
 
                         if (nextConnectionData.HasValue)
                         {
-                            TileAxis axisOffset = m_previousConnectionData.m_Axis - nextConnectionData.GetValueOrDefault().m_Axis;
-                            nextChunkGenerate = new ChunkGenerateData(previousChunkGenerate.m_Axis + axisOffset, _data);
-
-                            previousChunkGenerate.OnConnectionSet(previousConnectionIndex);
-                            nextChunkGenerate.OnConnectionSet(nextConnectionIndex);
+                            TileAxis nextChunkAxis = previousChunkGenerate.m_Axis+m_previousConnectionData.m_Axis - nextConnectionData.GetValueOrDefault().m_Axis;
+                            bool _anyGeneratedChunkIntersects = false;
+                            chunkGenerateData.TraversalBreak((ChunkGenerateData data) =>
+                            {
+                                _anyGeneratedChunkIntersects = CheckChunkIntersects(nextChunkAxis, nextChunkData.m_Size, data.m_Axis, data.m_Data.m_Size);
+                                return _anyGeneratedChunkIntersects;
+                            });
+                            if (!_anyGeneratedChunkIntersects)
+                            {
+                                nextChunkGenerate = new ChunkGenerateData(nextChunkAxis, nextChunkData);
+                                previousChunkGenerate.OnConnectionSet(previousConnectionIndex);
+                                nextChunkGenerate.OnConnectionSet(nextConnectionIndex);
+                            }
                         }
                         return nextConnectionData != null;
                     },random);
@@ -59,18 +67,45 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
                 return nextChunkGenerate!=null;
             },random);
 
-            if (nextChunkGenerate!=null)
-                generateData.Add(nextChunkGenerate);
+            if (nextChunkGenerate != null)
+            {
+                chunkGenerateData.Add(nextChunkGenerate);
+                previousChunkGenerate = nextChunkGenerate;
+            }
         }
-
 
         m_ChunkPool.ClearPool();
         int chunkIndex=0;
-        generateData.Traversal((ChunkGenerateData data) => {
+        chunkGenerateData.Traversal((ChunkGenerateData data) => {
             LevelChunk chunk = m_ChunkPool.AddItem(chunkIndex++);
             chunk.Init(data.m_Data);
-            chunk.transform.localPosition = new Vector3(data.m_Axis.X,chunkIndex*2, data.m_Axis.Y)*LevelConst.I_TileSize;
+            chunk.transform.localPosition =data.m_Axis.ToWorldPosition();
         });
+    }
+
+    public bool CheckChunkIntersects(TileAxis s1origin,TileAxis s1size,TileAxis s2origin,TileAxis s2size)
+    {
+        //Edge Clip(All Edge Used For Connection)
+        s1origin += TileAxis.One;
+        s1size -= TileAxis.One*2;
+        s2origin += TileAxis.One;
+        s2size -= TileAxis.One*2;
+
+        TileAxis[] square1Axises = new TileAxis[] { s1origin, s1origin + new TileAxis(s1size.X, 0), s1origin + new TileAxis(s1size.Y, 0),s1origin+s1size,s1origin+s1size/2 };
+        TileAxis[] square2Axises = new TileAxis[] { s2origin, s2origin + new TileAxis(s2size.X, 0), s2origin + new TileAxis(s2size.Y, 0), s2origin + s2size,s2origin+s2size/2 };
+        bool matched = false;
+        square1Axises.TraversalRandomBreak((TileAxis s1Axis)=> {
+            matched = TileTools.AxisInSquare(s1Axis, s2origin,s2size);
+            return matched;
+        });
+        if (!matched)
+        {
+            square2Axises.TraversalRandomBreak((TileAxis s2Axis) => {
+                matched = TileTools.AxisInSquare(s2Axis, s1origin, s1size);
+                return matched;
+            });
+        }
+        return matched;
     }
 
     class ChunkGenerateData
@@ -78,7 +113,6 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         public LevelChunkData m_Data { get; private set; }
         public TileAxis m_Axis { get; private set; }
         public Dictionary<int, bool> m_Connection { get; private set; } = new Dictionary<int, bool>();
-
         public ChunkGenerateData(TileAxis _offset,LevelChunkData _data)
         {
             m_Axis = _offset;

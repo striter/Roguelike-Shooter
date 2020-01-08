@@ -39,6 +39,7 @@ namespace TTiles
         public static TileAxis operator -(TileAxis a, TileAxis b) => new TileAxis(a.X - b.X, a.Y - b.Y);
         public static TileAxis operator +(TileAxis a, TileAxis b) => new TileAxis(a.X + b.X, a.Y + b.Y);
         public static TileAxis operator *(TileAxis a, int b) => new TileAxis(a.X*b,a.Y*b);
+        public static TileAxis operator /(TileAxis a, int b) => new TileAxis(a.X/b,a.Y/b);
         public TileAxis Inverse() => new TileAxis(Y, X);
         public override bool Equals(object obj) => base.Equals(obj);
         public override int GetHashCode()=> base.GetHashCode();
@@ -53,9 +54,8 @@ namespace TTiles
 
     public static class TileTools
     {
-
-        public static bool InRange<T>(this TileAxis tileAxis, T[,] range)  => tileAxis.X >= 0 && tileAxis.X < range.GetLength(0) && tileAxis.Y >= 0 && tileAxis.Y < range.GetLength(1);
-        public static bool InRange<T>(this TileAxis tileAxis, TileAxis sizeAxis, T[,] range) where T : class, ITileAxis => InRange<T>(tileAxis + sizeAxis, range);
+        public static bool InRange<T>(this TileAxis axis, T[,] range)  => axis.X >= 0 && axis.X < range.GetLength(0) && axis.Y >= 0 && axis.Y < range.GetLength(1);
+        public static bool InRange<T>(this TileAxis originSize, TileAxis sizeAxis, T[,] range) where T : class, ITileAxis => InRange<T>(originSize + sizeAxis, range);
         public static int GetAxisIndex(int x, int y, int width) => x + y * width;
         public static int GetAxisIndex(TileAxis axis, int width) => axis.X + axis.Y * width;
         public static TileAxis GetAxisByIndex(int index, int width) => new TileAxis(index%width,index/width);
@@ -78,7 +78,8 @@ namespace TTiles
 
         public static int AxisOffset(this TileAxis sourceAxis, TileAxis targetAxis)=>Mathf.Abs(sourceAxis.X - targetAxis.X) + Mathf.Abs(sourceAxis.Y - targetAxis.Y);
 
-        public static int AddUp(this TileAxis sourceAxis) => sourceAxis.X + sourceAxis.Y;
+
+        public static bool AxisInSquare(TileAxis axis, TileAxis squareAxis, TileAxis squareSize)=>axis.X >= squareAxis.X && axis.X <= squareAxis.X + squareSize.X && axis.Y >= squareAxis.Y && axis.Y <= squareAxis.Y + squareSize.Y;
 
         public static TileAxis GetDirectionedSize(TileAxis size, enum_TileDirection direction) => (int)direction % 2 == 0 ? size : size.Inverse();
         public static Vector3 GetUnitScaleBySizeAxis(TileAxis directionedSize,int tileSize) => new Vector3(directionedSize.X, 1, directionedSize.Y) * tileSize;
