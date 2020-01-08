@@ -40,7 +40,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
         randomData.DataInit(m_DirectionalLight);
 
         Dictionary<enum_LevelItemType, List<LevelItemBase>> levelItemPrefabs = GameObjectManager.RegisterLevelItem(m_StyleCurrent);
-        LevelBase m_Level = TResources.GetLevelBase(_LevelStyle);
+        LevelBase levelPrefab = TResources.GetLevelBase(_LevelStyle);
         m_MapLevelInfo.Clear();
         List<enum_LevelType> randomLevels = GameExpression.GetRandomLevels(m_mainSeed);
         int count = randomLevels.Count;
@@ -50,8 +50,8 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
             m_MapLevelInfo.Add(levelInfo);
             if (levelInfo.m_LevelType != enum_LevelType.Invalid)
             {
-                LevelBase _level = Instantiate(m_Level, tf_LevelParent);
-                m_Level.Init();
+                LevelBase _level = Instantiate(levelPrefab, tf_LevelParent);
+                _level.Init();
                 _level.transform.localRotation = Quaternion.Euler(0, seed.Next(360), 0);
                 _level.transform.localPosition = Vector3.zero;
                 _level.transform.localScale = Vector3.one;

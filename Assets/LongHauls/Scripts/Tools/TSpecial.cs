@@ -57,6 +57,7 @@ namespace TTiles
         public static bool InRange<T>(this TileAxis tileAxis, TileAxis sizeAxis, T[,] range) where T : class, ITileAxis => InRange<T>(tileAxis + sizeAxis, range);
         public static int GetAxisIndex(int x, int y, int width) => x + y * width;
         public static int GetAxisIndex(TileAxis axis, int width) => axis.X + axis.Y * width;
+        public static TileAxis GetAxisByIndex(int index, int width) => new TileAxis(index%width,index/width);
         public static T Get<T>(this T[,] tileArray, TileAxis axis) where T : class, ITileAxis=> axis.InRange(tileArray) ? tileArray[axis.X, axis.Y] : null;
         public static bool Get<T>(this T[,] tileArray,TileAxis axis,  TileAxis size, ref List<T> tileList) where T:class,ITileAxis
         {

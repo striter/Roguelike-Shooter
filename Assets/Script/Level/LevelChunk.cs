@@ -31,7 +31,7 @@ public class LevelChunk : MonoBehaviour
             {
                 LevelTileData data = _data.Data[TileTools.GetAxisIndex(i, j, m_Width)];
                 if (WillGenerateTile(data))
-                    OnTileInit(m_TilePool.AddItem(j + i * m_Height), new TileAxis(i, j), data);
+                    OnTileInit(m_TilePool.AddItem(i+j*m_Width), new TileAxis(i, j), data);
             }
     }
     protected virtual bool WillGenerateTile(LevelTileData data)
