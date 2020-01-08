@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class LevelTileEditorSelection : LevelTileEditor
 {
-    public override void Init(TileAxis axis, LevelTileData data)
+    public override void Init(TileAxis axis, ChunkTileData data)
     {
         base.Init(axis, data);
         SetSelecting(false);

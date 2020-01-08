@@ -283,37 +283,27 @@ public static class TCommon
             for (int j = 0; j < length1; j++)
                 OnEachItem(array[i, j]);
     }
-    public static void TraversalRandomBreak<T>(this List<T> list, Func<T, bool> OnRandomItemStop = null, System.Random seed = null)
-    {
-        if (list.Count == 0)
-            return;
 
-        int index = list.RandomIndex(seed);
-        int count = list.Count;
+    public static void TraversalRandomBreak<T>(this List<T> list, Func<int, bool> OnRandomItemStop = null, System.Random seed = null) => TraversalEnumerableIndex(list.RandomIndex(seed), list.Count,  OnRandomItemStop);
+    public static void TraversalRandomBreak<T>(this T[] array, Func<int, bool> OnRandomItemStop = null, System.Random seed = null) => TraversalEnumerableIndex(array.RandomIndex(seed), array.Length,  OnRandomItemStop);
+    public static void TraversalRandomBreak<T>(this List<T> list, Func<T, bool> OnRandomItemStop = null, System.Random seed = null) => TraversalEnumerableIndex(list.RandomIndex(seed), list.Count, (int index) => OnRandomItemStop != null && OnRandomItemStop(list[index]));
+    public static void TraversalRandomBreak<T>(this T[] array, Func<T, bool> OnRandomItemStop = null, System.Random seed = null) => TraversalEnumerableIndex(array.RandomIndex(seed), array.Length, (int index) => OnRandomItemStop != null && OnRandomItemStop(array[index]));
+    public static void TraversalRandomBreak<T, Y>(this Dictionary<T, Y> dictionary, Func<T, Y, bool> OnRandomItemStop = null, System.Random seed = null) => TraversalEnumerableIndex(RandomLength(dictionary.Count),dictionary.Count,(int index)=> {
+        KeyValuePair<T, Y> element = dictionary.ElementAt(index);
+        return OnRandomItemStop != null && OnRandomItemStop(element.Key, element.Value);
+    });
+
+    static void TraversalEnumerableIndex(int index, int count,Func<int,bool> OnItemBreak )
+    {
+        if (count == 0)
+            return;
         for (int i = 0; i < count; i++)
         {
-            if (OnRandomItemStop != null && OnRandomItemStop(list[index]))
+            if (OnItemBreak != null && OnItemBreak(index))
                 break;
 
             index++;
-            if (index == list.Count)
-                index = 0;
-        }
-    }
-    public static void TraversalRandomBreak<T, Y>(this Dictionary<T, Y> dictionary, Func<T, Y, bool> OnRandomItemStop = null, System.Random seed = null)
-    {
-        if (dictionary.Count == 0)
-            return;
-
-        int index = UnityEngine.Random.Range(0, dictionary.Count);
-        for (int i = 0; i < dictionary.Count; i++)
-        {
-            KeyValuePair<T, Y> element = dictionary.ElementAt(index);
-            if (OnRandomItemStop != null && OnRandomItemStop(element.Key, element.Value))
-                break;
-
-            index++;
-            if (index == dictionary.Count)
+            if (index == count)
                 index = 0;
         }
     }
@@ -355,11 +345,15 @@ public static class TCommon
     #endregion
     #endregion
     #region Random
+    public static int RandomLength(int length, System.Random seed = null) => seed == null ? seed.Next(length) : UnityEngine.Random.Range(0, length);
+    public static int RandomIndex<T>(this List<T> randomList, System.Random seed = null) => RandomLength(randomList.Count,seed);
+    public static int RandomIndex<T>(this T[] randomArray, System.Random randomSeed = null) => RandomLength(randomArray.Length,randomSeed);
+
     public static T RandomItem<T>(this List<T> randomList, System.Random randomSeed = null) => randomList[randomSeed != null ? randomSeed.Next(randomList.Count) : UnityEngine.Random.Range(0, randomList.Count)];
-    public static int RandomIndex<T>(this List<T> randomList, System.Random randomSeed = null) => randomSeed != null ? randomSeed.Next(randomList.Count) : UnityEngine.Random.Range(0, randomList.Count);
     public static T RandomItem<T>(this T[] array, System.Random randomSeed = null) => randomSeed != null ? array[randomSeed.Next(array.Length)] : array[UnityEngine.Random.Range(0, array.Length)];
+
     public static T RandomItem<T>(this T[,] array, System.Random randomSeed = null) => randomSeed != null ? array[randomSeed.Next(array.GetLength(0)), randomSeed.Next(array.GetLength(1))] : array[UnityEngine.Random.Range(0, array.GetLength(0)), UnityEngine.Random.Range(0, array.GetLength(1))];
-    public static int Random(this RangeInt ir,System.Random seed = null)=> seed != null ? seed.Next(ir.start, ir.end + 1) : UnityEngine.Random.Range(ir.start, ir.end + 1);
+    public static int RandomRange(this RangeInt ir, System.Random seed = null) => ir.start + RandomLength(ir.length+1,seed);
     public static float RandomRangeFloat(this RangeFloat ir, System.Random seed = null)=> seed != null ? seed.Next((int)(ir.start * 1000), (int)(ir.end * 1000)) / 100 : UnityEngine.Random.Range(ir.start, ir.end);
     public static bool RandomBool(System.Random seed = null) => seed != null ? seed.Next(0, 2) > 0 : UnityEngine.Random.Range(0, 2) > 0;
     public static int RandomPercentage(System.Random seed=null)=> seed != null ? seed.Next(1, 101)  : UnityEngine.Random.Range(1, 101);

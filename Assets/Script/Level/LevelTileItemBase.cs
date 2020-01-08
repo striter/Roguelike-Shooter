@@ -9,7 +9,7 @@ public class LevelTileItemBase : MonoBehaviour {
     protected Transform m_Model { get; private set; }
     public virtual TileAxis GetDirectionedSize(enum_TileDirection direction) => TileAxis.One;
 
-    public virtual void Init(LevelTileData _data)
+    public virtual void Init(ChunkTileData _data)
     {
         m_Model = transform.Find("Model");
         m_Model.localPosition = TileTools.GetLocalPosBySizeAxis(GetDirectionedSize(_data.m_Direction));

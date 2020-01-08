@@ -6,12 +6,12 @@ using LevelSetting;
 public class LevelTileNew : MonoBehaviour, ITileAxis
 {
     public TileAxis m_Axis { get; private set; }
-    public LevelTileData m_Data { get; protected set; }
+    public ChunkTileData m_Data { get; protected set; }
     protected Transform tf_Models { get; private set; }
     protected TileGroundBase m_Ground { get; private set; }
     protected TilePillarBase m_Pillar { get; private set; }
     protected TileObjectBase m_Object { get; private set; }
-    public virtual void Init(TileAxis axis,LevelTileData data)
+    public virtual void Init(TileAxis axis,ChunkTileData data)
     {
         m_Axis = axis;
         m_Data = data;

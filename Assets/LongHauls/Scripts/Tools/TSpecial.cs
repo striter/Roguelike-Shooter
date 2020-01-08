@@ -21,10 +21,11 @@ namespace TTiles
     {
         TileAxis m_Axis { get; }
     }
+    [System.Serializable]
     public struct TileAxis
     {
-        public int X { get; private set; }
-        public int Y { get; private set; }
+        public int X;
+        public int Y;
         public TileAxis(int _axisX, int _axisY)
         {
             X = _axisX;
@@ -91,7 +92,7 @@ namespace TTiles
                 direction = 0;
             return direction;
         }
-        public static enum_TileDirection DirectionInverse(this enum_TileDirection direction)
+        public static enum_TileDirection Inverse(this enum_TileDirection direction)
         {
             switch (direction)
             {

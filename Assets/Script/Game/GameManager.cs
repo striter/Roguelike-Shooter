@@ -198,15 +198,15 @@ public class GameManager : GameManagerBase
                 {
                      GameObjectManager.SpawnNPC( enum_InteractCharacter.Trader, level.m_Level.NearestInteractTilePosition(TileAxis.Back,m_GameLevel.m_GameSeed), interactTrans).transform.localRotation=Quaternion.identity;
 
-                    int priceHealth = GameExpression.GetTradePrice(enum_Interaction.PickupHealth).Random(m_GameLevel.m_GameSeed);
+                    int priceHealth = GameExpression.GetTradePrice(enum_Interaction.PickupHealth).RandomRange(m_GameLevel.m_GameSeed);
                     GameObjectManager.SpawnInteract<InteractContainerTrade>(enum_Interaction.ContainerTrade, level.m_Level.NearestInteractTilePosition(-TileAxis.Right, m_GameLevel.m_GameSeed), interactTrans).Play(priceHealth, GameObjectManager.SpawnInteract<InteractPickupHealth>(enum_Interaction.PickupHealthPack, Vector3.zero, interactTrans).Play(GameConst.I_HealthTradeAmount, null));
 
                     EquipmentBase action1 = ActionDataManager.CreateRandomEquipment(TCommon.RandomEnumValues<enum_EquipmentType>(m_GameLevel.m_GameSeed), m_GameLevel.m_GameSeed);
-                    int priceAction = GameExpression.GetTradePrice(enum_Interaction.Equipment, action1.m_rarity).Random(m_GameLevel.m_GameSeed);
+                    int priceAction = GameExpression.GetTradePrice(enum_Interaction.Equipment, action1.m_rarity).RandomRange(m_GameLevel.m_GameSeed);
                     GameObjectManager.SpawnInteract<InteractContainerTrade>(enum_Interaction.ContainerTrade, level.m_Level.NearestInteractTilePosition(TileAxis.Zero, m_GameLevel.m_GameSeed), interactTrans).Play(priceAction, GameObjectManager.SpawnInteract<InteractEquipment>(enum_Interaction.Equipment, Vector3.zero, interactTrans).Play(action1));
                     
                     WeaponBase weapon = GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew( GameDataManager.m_WeaponRarities[m_GameLevel.m_actionGenerate.GetTradeWeaponRarity(m_GameLevel.m_GameSeed)].RandomItem(m_GameLevel.m_GameSeed)),null);
-                    int priceWeapon = GameExpression.GetTradePrice(enum_Interaction.Weapon, enum_EquipmentRarity.Invalid,weapon.m_WeaponInfo.m_Rarity).Random(m_GameLevel.m_GameSeed);
+                    int priceWeapon = GameExpression.GetTradePrice(enum_Interaction.Weapon, enum_EquipmentRarity.Invalid,weapon.m_WeaponInfo.m_Rarity).RandomRange(m_GameLevel.m_GameSeed);
                     GameObjectManager.SpawnInteract<InteractContainerTrade>(enum_Interaction.ContainerTrade, level.m_Level.NearestInteractTilePosition(TileAxis.Right, m_GameLevel.m_GameSeed), interactTrans).Play(priceWeapon, GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, Vector3.right, interactTrans).Play(weapon));
                 }
                 break;
@@ -463,7 +463,7 @@ public class GameManager : GameManagerBase
         m_EntityGenerating.Clear();
         m_EntityGenerate[m_CurrentWave].m_EntityGenerate.Traversal((enum_EnermyType level, RangeInt range) =>
         {
-            int spawnCount = range.Random();
+            int spawnCount = range.RandomRange();
             for (int i = 0; i < spawnCount; i++)
             {
                 if (!m_Enermies.ContainsKey(level))

@@ -3,6 +3,7 @@ using LevelSetting;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 using TTiles;
 public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
     ObjectPoolSimpleComponent<int, LevelChunk> m_ChunkPool;
@@ -16,25 +17,50 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
 
     public void Generate()
     {
+        System.Random random = new System.Random(System.DateTime.Now.ToLongTimeString().GetHashCode());
+
         LevelChunkData[] datas = TResources.GetLevelData();
         List<ChunkGenerateData> generateData = new List<ChunkGenerateData>();
 
         generateData.Add(new ChunkGenerateData(TileAxis.Zero, datas[0]));
-        for(int i=0;i<2;i++)
+        for(int i=0;i<11;i++)
         {
-            ChunkGenerateData previousChunk = generateData[i];
+            ChunkGenerateData previousChunkGenerate = generateData[i];
             Dictionary<TileAxis, enum_TileDirection> connectionDirection = new Dictionary<TileAxis, enum_TileDirection>();
-            previousChunk.m_Connection.Traversal((int index) =>
+            ChunkGenerateData nextChunkGenerate = null;
+            previousChunkGenerate.m_Data.Connections.TraversalRandomBreak((int previousConnectionIndex) =>
             {
-            });
+                if (previousChunkGenerate.m_Connection[previousConnectionIndex])
+                    return false;
 
+                ChunkConnectionData m_previousConnectionData = previousChunkGenerate.m_Data.Connections[previousConnectionIndex];
+                enum_TileDirection connectDirection = m_previousConnectionData.m_Direction.Inverse();
+                datas.TraversalRandomBreak((int index) => 
+                {
+                    LevelChunkData _data = datas[index];
+                    ChunkConnectionData? nextConnectionData = null;
+                    _data.Connections.TraversalRandomBreak((int nextConnectionIndex) => {
+                        ChunkConnectionData _connectionData = _data.Connections[nextConnectionIndex];
+                        if (_connectionData.m_Direction == connectDirection)
+                            nextConnectionData = _connectionData;
 
+                        if (nextConnectionData.HasValue)
+                        {
+                            TileAxis axisOffset = m_previousConnectionData.m_Axis - nextConnectionData.GetValueOrDefault().m_Axis;
+                            nextChunkGenerate = new ChunkGenerateData(previousChunkGenerate.m_Axis + axisOffset, _data);
 
-            LevelChunkData currentData = datas.RandomItem();
+                            previousChunkGenerate.OnConnectionSet(previousConnectionIndex);
+                            nextChunkGenerate.OnConnectionSet(nextConnectionIndex);
+                        }
+                        return nextConnectionData != null;
+                    },random);
+                    return nextChunkGenerate != null;
+                }, random);
+                return nextChunkGenerate!=null;
+            },random);
 
-            TileAxis offsetAxis = new TileAxis(previousChunk.m_Data.Width, 0);
-
-            generateData.Add(new ChunkGenerateData(previousChunk.m_Axis+offsetAxis, currentData));
+            if (nextChunkGenerate!=null)
+                generateData.Add(nextChunkGenerate);
         }
 
 
@@ -43,47 +69,26 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         generateData.Traversal((ChunkGenerateData data) => {
             LevelChunk chunk = m_ChunkPool.AddItem(chunkIndex++);
             chunk.Init(data.m_Data);
-            chunk.transform.localPosition = new Vector3(data.m_Axis.X,0, data.m_Axis.Y)*LevelConst.I_TileSize;
+            chunk.transform.localPosition = new Vector3(data.m_Axis.X,chunkIndex*2, data.m_Axis.Y)*LevelConst.I_TileSize;
         });
     }
 
     class ChunkGenerateData
     {
-        public TileAxis m_Axis { get; private set; }
         public LevelChunkData m_Data { get; private set; }
-        public Dictionary<int, ChunkGenerateConnectionData> m_Connection { get; private set; } = new Dictionary<int, ChunkGenerateConnectionData>();
+        public TileAxis m_Axis { get; private set; }
+        public Dictionary<int, bool> m_Connection { get; private set; } = new Dictionary<int, bool>();
 
         public ChunkGenerateData(TileAxis _offset,LevelChunkData _data)
         {
             m_Axis = _offset;
             m_Data = _data;
             for (int i = 0; i < _data.Connections.Length; i++)
-                m_Connection.Add(_data.Connections[i],new ChunkGenerateConnectionData(_data.Connections[i],_data.Width,_data.Height));
+                m_Connection.Add(i,false);
         }
 
-        public void OnConnectionSet(int connectionIndex) => m_Connection[connectionIndex].SetConnecting();
+        public void OnConnectionSet(int connectionIndex) => m_Connection[connectionIndex]=true;
 
-        public class ChunkGenerateConnectionData
-        {
-            public TileAxis axis { get; private set; }
-            public  enum_TileDirection direction { get; private set; }
-            public bool connecting { get; private set; }
-            public ChunkGenerateConnectionData(int connectionIndex,int width,int height)
-            {
-                axis = TileTools.GetAxisByIndex(connectionIndex, width);
-                direction = enum_TileDirection.Invalid;
-                if (axis.Y == 0)
-                    direction = enum_TileDirection.Bottom;
-                else if (axis.Y == height - 1)
-                    direction = enum_TileDirection.Top;
-                else if (axis.X == 0)
-                    direction = enum_TileDirection.Left;
-                else if (axis.X == width - 1)
-                    direction = enum_TileDirection.Right;
-                connecting = false;
-            }
-            public void SetConnecting() => connecting = true;
-        }
     }
 }
 

@@ -13,7 +13,6 @@ public class LevelChunkEditor : LevelChunk
     ObjectPoolSimpleComponent<int, LevelTileEditorSelection> m_SelectionTiles;
     LevelTileEditorSelection m_SelectingTile;
     enum_TileDirection m_SelectingDirection = enum_TileDirection.Top;
-    int m_currentEditSelection;
     List<LevelTileEditorData> temp_RelativeTiles = new List<LevelTileEditorData>();
     Dictionary<enum_TileObjectType, int> m_ItemRestriction;
     private void Awake()
@@ -23,20 +22,25 @@ public class LevelChunkEditor : LevelChunk
         m_SelectionTiles = new ObjectPoolSimpleComponent<int, LevelTileEditorSelection>(transform.Find("SelectionPool"), "SelectionItem");
         m_SelectingTile = transform.Find("SelectingTile").GetComponent<LevelTileEditorSelection>();
     }
+    private void Start()
+    {
+        TPSCameraController.Instance.Attach(tf_CameraPos, true, true);
+    }
 
     public override void Init(LevelChunkData _data)
     {
         m_TilesData = new LevelTileEditorData[_data.Width, _data.Height];
         base.Init(_data);
-        m_ItemRestriction = LevelExpressions.GetChunkRestriction(m_ChunkType); 
-        TPSCameraController.Instance.Attach(tf_CameraPos,true,true);
+
         tf_CameraPos.transform.localPosition = new Vector3(m_Width / 2f * LevelConst.I_TileSize, 0, 0);
-        TPSCameraController.Instance.SetCameraRotation(60,0);
+        TPSCameraController.Instance.SetCameraRotation(60, 0);
+
+        m_ItemRestriction = LevelExpressions.GetChunkRestriction(m_ChunkType); 
         m_EditMode = enum_TileSubType.Ground;
         CheckEditMode();
     }
-    protected override bool WillGenerateTile(LevelTileData data) => true;
-    protected override void OnTileInit(LevelTileNew tile, TileAxis axis, LevelTileData data)
+    protected override bool WillGenerateTile(ChunkTileData data) => true;
+    protected override void OnTileInit(LevelTileNew tile, TileAxis axis, ChunkTileData data)
     {
         base.OnTileInit(tile, axis, data);
         m_TilesData[axis.X,axis.Y]=(tile as LevelTileEditorData);
@@ -91,7 +95,7 @@ public class LevelChunkEditor : LevelChunk
     {
         ChangeEditSelection(null);
         m_SelectionTiles.ClearPool();
-        m_SelectingTile.Init(new TileAxis(-6,-1),LevelTileData.Default());
+        m_SelectingTile.Init(new TileAxis(-6,-1),ChunkTileData.Default());
         int index = 0;
         switch(m_EditMode)
         {
@@ -99,7 +103,7 @@ public class LevelChunkEditor : LevelChunk
             case enum_TileSubType.Ground:
                 TCommon.TraversalEnum((enum_TileGroundType type)=> {
                     LevelTileEditor editorTile = m_SelectionTiles.AddItem((int)type);
-                    editorTile.Init(new TileAxis(index, 0), LevelTileData.Create(enum_TilePillarType.Invalid, type, enum_TileObjectType.Invalid, enum_TileDirection.Top));
+                    editorTile.Init(new TileAxis(index, 0), ChunkTileData.Create(enum_TilePillarType.Invalid, type, enum_TileObjectType.Invalid, enum_TileDirection.Top));
                     index += 1;
                     if (index > 20)
                         index = 0;
@@ -110,7 +114,7 @@ public class LevelChunkEditor : LevelChunk
                 TCommon.TraversalEnum((enum_TileObjectType type) => {
                     if (!ObjectRegisted(type))
                         return;
-                    m_SelectionTiles.AddItem((int)type).Init(new TileAxis(index, yOffset), LevelTileData.Create(enum_TilePillarType.Invalid, enum_TileGroundType.Invalid, type, enum_TileDirection.Top));
+                    m_SelectionTiles.AddItem((int)type).Init(new TileAxis(index, yOffset), ChunkTileData.Create(enum_TilePillarType.Invalid, enum_TileGroundType.Invalid, type, enum_TileDirection.Top));
                     index += type.GetSizeAxis(enum_TileDirection.Top).X;
                     if (index > 20)
                     {
@@ -121,7 +125,7 @@ public class LevelChunkEditor : LevelChunk
                 break;
             case enum_TileSubType.Pillar:
                 TCommon.TraversalEnum((enum_TilePillarType type) => {
-                    m_SelectionTiles.AddItem((int)type).Init(new TileAxis(index ++, 0), LevelTileData.Create(type, enum_TileGroundType.Invalid,   enum_TileObjectType.Invalid, enum_TileDirection.Top));
+                    m_SelectionTiles.AddItem((int)type).Init(new TileAxis(index ++, 0), ChunkTileData.Create(type, enum_TileGroundType.Invalid,   enum_TileObjectType.Invalid, enum_TileDirection.Top));
                 });
                 break;
         }
@@ -165,8 +169,6 @@ public class LevelChunkEditor : LevelChunk
                 return;
             }
 
-            if (m_currentEditSelection <= 0)
-                return;
             if(CanEditTile(editorTile))
                 EditDataTile(editorTile);
         }
@@ -195,18 +197,27 @@ public class LevelChunkEditor : LevelChunk
         {
             case enum_TileSubType.Object:
                 {
-                    if (!m_TilesData.Get(targetTile.m_Axis,(( enum_TileObjectType)m_currentEditSelection).GetSizeAxis(m_SelectingDirection), ref temp_RelativeTiles))
+                    if (m_SelectingTile.m_Data.m_ObjectType == enum_TileObjectType.Invalid)
                         return false;
-                    enum_TileObjectType objectType = (enum_TileObjectType)m_currentEditSelection;
+
+                    if (!m_TilesData.Get(targetTile.m_Axis,(m_SelectingTile.m_Data.m_ObjectType).GetSizeAxis(m_SelectingDirection), ref temp_RelativeTiles))
+                        return false;
+
                     temp_RelativeTiles.TraversalBreak((LevelTileEditorData tile) =>
                     {
-                        editable =tile.m_Axis==targetTile.m_Axis||ObjectEditable(tile,objectType);
+                        editable =tile.m_Axis==targetTile.m_Axis||ObjectEditable(tile, m_SelectingTile.m_Data.m_ObjectType);
                         return !editable;
                     });
                 }
                 break;
             case enum_TileSubType.Ground:
+                if (m_SelectingTile.m_Data.m_GroundType== enum_TileGroundType.Invalid)
+                    return false;
+                editable = !m_TilesData.CheckIsEdge(targetTile.m_Axis);
+                break;
             case enum_TileSubType.Pillar:
+                if (m_SelectingTile.m_Data.m_PillarType== enum_TilePillarType.Invalid)
+                    return false;
                 editable = !m_TilesData.CheckIsEdge(targetTile.m_Axis);
                 break;
         }
@@ -243,18 +254,17 @@ public class LevelChunkEditor : LevelChunk
         switch (m_EditMode)
         {
             case enum_TileSubType.Ground:
-                data.SetData((enum_TileGroundType)m_currentEditSelection,m_SelectingDirection);
+                data.SetData(m_SelectingTile.m_Data.m_GroundType, m_SelectingDirection);
                 break;
             case enum_TileSubType.Object:
                 {
-                    enum_TileObjectType type = (enum_TileObjectType)m_currentEditSelection;
-                    if (ObjectRestrictRunsOut(type))
+                    if (ObjectRestrictRunsOut(m_SelectingTile.m_Data.m_ObjectType))
                         return;
-                    data.SetData(type, m_SelectingDirection);
+                    data.SetData(m_SelectingTile.m_Data.m_ObjectType, m_SelectingDirection);
                 }
                 break;
             case enum_TileSubType.Pillar:
-                data.SetData((enum_TilePillarType)m_currentEditSelection, m_SelectingDirection);
+                data.SetData(m_SelectingTile.m_Data.m_PillarType, m_SelectingDirection);
                 if (data.m_Data.m_GroundType == enum_TileGroundType.Invalid)
                     data.SetData(enum_TileGroundType.Main, enum_TileDirection.Top);
                 break;
@@ -293,26 +303,36 @@ public class LevelChunkEditor : LevelChunk
 
     void ChangeEditSelection(LevelTileEditor editorTile )
     {
-        int editSelection = -1;
-        if(editorTile)
+        ChunkTileData editData = ChunkTileData.Default();
+        if (editorTile != null)
         {
-            m_SelectingTile.Init(new TileAxis(-6, -1), editorTile.m_Data.ChangeDirection(m_SelectingDirection));
             switch (m_EditMode)
             {
-                case enum_TileSubType.Ground: editSelection = (int)editorTile.m_Data.m_GroundType;break;
-                case enum_TileSubType.Object: editSelection = (int)editorTile.m_Data.m_ObjectType; break;
-                case enum_TileSubType.Pillar: editSelection = (int)editorTile.m_Data.m_PillarType; break;
+                case enum_TileSubType.Ground:
+                    {
+                        if (editorTile.m_Data.m_GroundType == enum_TileGroundType.Invalid)
+                            return;
+                        editData.ChangeGroundType(editorTile.m_Data.m_GroundType, m_SelectingDirection);
+                    }
+                    break;
+                case enum_TileSubType.Object:
+                    {
+                        if (editorTile.m_Data.m_ObjectType == enum_TileObjectType.Invalid)
+                            return;
+                        editData.ChangeObjectType(editorTile.m_Data.m_ObjectType, m_SelectingDirection);
+                    }
+                    break;
+                case enum_TileSubType.Pillar:
+                    {
+                        if (editorTile.m_Data.m_PillarType == enum_TilePillarType.Invalid)
+                            return;
+                        editData.ChangePillarType(editorTile.m_Data.m_PillarType, m_SelectingDirection);
+                    }
+                    break;
             }
         }
-
-        if (m_currentEditSelection == editSelection)
-            return;
-
-        m_currentEditSelection = editSelection;
-        m_SelectionTiles.m_ActiveItemDic.Traversal((int index, LevelTileEditorSelection selection) =>
-        {
-            selection.SetSelecting(m_currentEditSelection == index);
-        });
+        m_SelectingTile.Init(new TileAxis(-6, -1), editData);
+        m_SelectionTiles.m_ActiveItemDic.Traversal((int index, LevelTileEditorSelection selection) =>{ selection.SetSelecting(selection.m_Data==editData);});
     }
     #endregion
 }

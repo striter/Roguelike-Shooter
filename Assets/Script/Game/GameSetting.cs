@@ -607,7 +607,7 @@ namespace GameSetting
 
         public bool CanGenerateHealth(enum_EnermyType entityType) => TCommon.RandomPercentage() <= m_HealthRate;
         public bool CanGenerateArmor(enum_EnermyType entityType) => TCommon.RandomPercentage() <= m_ArmorRate;
-        public int GetCoinGenerate(enum_EnermyType entityType,float baseCreditRate) => TCommon.RandomPercentage() <= (baseCreditRate+ m_CoinRate) ? m_CoinRange.Random() : -1;
+        public int GetCoinGenerate(enum_EnermyType entityType,float baseCreditRate) => TCommon.RandomPercentage() <= (baseCreditRate+ m_CoinRate) ? m_CoinRange.RandomRange() : -1;
         public static PickupGenerateData Create(int healthRate, int armorRate, int coinRate, RangeInt coinAmount, Dictionary<enum_WeaponRarity, float> _weaponRate) => new PickupGenerateData() { m_HealthRate = healthRate, m_ArmorRate = armorRate, m_CoinRate = coinRate, m_CoinRange = coinAmount,m_WeaponRate=_weaponRate };
     }
 
@@ -2293,7 +2293,7 @@ namespace GameSetting
         {
             Vector3 startPosition = m_Entity.tf_Weapon.position;
             Vector3 direction = TCommon.GetXZLookDirection(startPosition, _calculatedPosition);
-            int waveCount = m_CountExtension.Random();
+            int waveCount = m_CountExtension.RandomRange();
             float distance = TCommon.GetXZDistance(startPosition, _calculatedPosition);
             Vector3 lineBeginPosition = startPosition - attacherHead.right * m_OffsetExtension * ((waveCount - 1) / 2f);
             SpawnMuzzle(startPosition, direction);
@@ -2311,7 +2311,7 @@ namespace GameSetting
         {
             Vector3 startPosition = m_Entity.tf_Weapon.position;
             Vector3 direction = TCommon.GetXZLookDirection(startPosition, _calculatedPosition);
-            int waveCount = m_CountExtension.Random();
+            int waveCount = m_CountExtension.RandomRange();
             float beginAnle = -m_OffsetExtension * (waveCount - 1) / 2f;
             float distance = TCommon.GetXZDistance(m_Entity.tf_Weapon.position, _calculatedPosition);
             SpawnMuzzle(startPosition, direction);

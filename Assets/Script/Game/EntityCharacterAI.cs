@@ -262,7 +262,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         if (f_battleSimulate > 0 || !b_CanStartAttack)
             return;
 
-        StartAttack(F_AttackTimes.Random(), TCommon.RandomPercentage() >= I_AttackPreAimPercentage);
+        StartAttack(F_AttackTimes.RandomRange(), TCommon.RandomPercentage() >= I_AttackPreAimPercentage);
     }
 
     bool b_attacking = false;

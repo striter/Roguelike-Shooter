@@ -9,7 +9,7 @@ public class LevelTileEditor : LevelTileNew {
     public virtual bool isDataTile => false;
     BoxCollider m_Collider;
     protected Transform m_EditorModel { get; private set; }
-    public override void Init(TileAxis axis, LevelTileData data)
+    public override void Init(TileAxis axis, ChunkTileData data)
     {
         base.Init(axis, data);
         m_EditorModel = transform.Find("EditorModel");
