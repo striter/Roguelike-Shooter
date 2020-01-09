@@ -30,19 +30,19 @@ public class TestGameManager : GameManagerBase
     }
     #endregion
 #endif
-    public enum_Style m_EnermiesType;
+    public enum_LevelStyle m_EnermiesType;
     public enum_PlayerCharacter m_Character;
     EntityCharacterPlayer m_LocalPlayer;
     protected override void Start()
     {
         base.Start();
-        if(m_EnermiesType!= enum_Style.Invalid)
+        if(m_EnermiesType!= enum_LevelStyle.Invalid)
             GameObjectManager.RegistStyledInGamePrefabs(m_EnermiesType, enum_StageLevel.Veteran);
 
         CBattleSave testData = new CBattleSave();
         testData.m_character = m_Character;
         m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(testData);
         AttachPlayerCamera( m_LocalPlayer.tf_CameraAttach);
-        InitPostEffects( enum_Style.Iceland);
+        InitPostEffects( enum_LevelStyle.Iceland);
     }
 }

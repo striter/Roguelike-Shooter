@@ -24,8 +24,8 @@ public class UI_GameResult : UIPage {
         m_FinalScore = tf_result.Find("FinalScore").GetComponent<UIT_TextExtend>();
         m_CoinsAmount = tf_result.Find("RewardsGrid/Coins/Container/Amount").GetComponent<UIT_TextExtend>();
     }
-    GameLevelManager m_level;
-    public void Play(GameLevelManager level,Action _OnButtonClick)
+    GameProgressManager m_level;
+    public void Play(GameProgressManager level,Action _OnButtonClick)
     {
         m_level = level;
         m_ResultTitle.sprite = GameUIManager.Instance.m_InGameSprites[UIConvertions.GetUIGameResultTitleBG(level.m_gameWin,OptionsManager.m_OptionsData.m_Region)];

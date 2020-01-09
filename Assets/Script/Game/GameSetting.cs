@@ -358,7 +358,7 @@ namespace GameSetting
         public static string GetNameLocalizeKey(this EquipmentBase action) => "Action_Name_" + action.m_Index;
         public static string GetIntroLocalizeKey(this EquipmentBase action) => "Action_Intro_" + action.m_Index;
         public static string GetLocalizeKey(this enum_StageLevel stage) => "Game_Stage_" + stage;
-        public static string GetLocalizeKey(this enum_Style style) => "Game_Style_" + style;
+        public static string GetLocalizeKey(this enum_LevelStyle style) => "Game_Style_" + style;
         public static string GetLocalizeNameKey(this enum_PlayerWeapon weapon) => "Weapon_Name_" + weapon;
         public static string GetTitleLocalizeKey(this InteractBase interact) => "UI_Interact_" + interact.m_InteractType+interact.m_ExternalLocalizeKeyJoint;
         public static string GetBottomLocalizeKey(this InteractBase interact) => "UI_Interact_" + interact.m_InteractType + interact.m_ExternalLocalizeKeyJoint + "_Bottom";
@@ -454,7 +454,7 @@ namespace GameSetting
 
     public enum enum_HitCheck { Invalid = -1, Static = 1, Entity = 2, Dynamic = 3, Interact = 4, }
     
-    public enum enum_Style { Invalid = -1, Forest = 1, Desert = 2, Iceland = 3, Horde = 4, Undead = 5, }
+    public enum enum_LevelStyle { Invalid = -1, Forest = 1, Desert = 2, Iceland = 3, Horde = 4, Undead = 5, }
 
     public enum enum_LevelType { Invalid = -1, Start = 0, Battle = 1, End = 2, Trade = 11, EquipmentAcquireBattle = 13,}
 
@@ -607,7 +607,7 @@ namespace GameSetting
 
         public bool CanGenerateHealth(enum_EnermyType entityType) => TCommon.RandomPercentage() <= m_HealthRate;
         public bool CanGenerateArmor(enum_EnermyType entityType) => TCommon.RandomPercentage() <= m_ArmorRate;
-        public int GetCoinGenerate(enum_EnermyType entityType,float baseCreditRate) => TCommon.RandomPercentage() <= (baseCreditRate+ m_CoinRate) ? m_CoinRange.Random() : -1;
+        public int GetCoinGenerate(enum_EnermyType entityType,float baseCreditRate) => TCommon.RandomPercentage() <= (baseCreditRate+ m_CoinRate) ? m_CoinRange.RandomRange() : -1;
         public static PickupGenerateData Create(int healthRate, int armorRate, int coinRate, RangeInt coinAmount, Dictionary<enum_WeaponRarity, float> _weaponRate) => new PickupGenerateData() { m_HealthRate = healthRate, m_ArmorRate = armorRate, m_CoinRate = coinRate, m_CoinRange = coinAmount,m_WeaponRate=_weaponRate };
     }
 
@@ -710,7 +710,7 @@ namespace GameSetting
             m_weapon2 = WeaponSaveData.CreateNew(enum_PlayerWeapon.Invalid);
             m_weaponEquipingFirst = true;
         }
-        public void Adjust(EntityCharacterPlayer _player, GameLevelManager _level)
+        public void Adjust(EntityCharacterPlayer _player, GameProgressManager _level)
         {
             m_coins = _player.m_CharacterInfo.m_Coins;
             m_curHealth = _player.m_Health.m_CurrentHealth;
@@ -865,7 +865,7 @@ namespace GameSetting
         RangeInt ir_noCollisionLess;
         RangeInt ir_noCollisionMore;
         public bool m_IsInner;
-        public enum_Style m_LevelStyle;
+        public enum_LevelStyle m_LevelStyle;
         public enum_LevelGenerateType m_LevelPrefabType;
         public Dictionary<enum_LevelItemType, RangeInt> m_ItemGenerate;
         public RangeInt m_Length => ir_length;
@@ -874,7 +874,7 @@ namespace GameSetting
             string[] defineSplit = em_defines.Split('_');
             if (defineSplit.Length != 3)
                 Debug.LogError("Please Corret Format Of DefineSplit:" + em_defines);
-            m_LevelStyle = (enum_Style)(int.Parse(defineSplit[0]));
+            m_LevelStyle = (enum_LevelStyle)(int.Parse(defineSplit[0]));
             m_LevelPrefabType = (enum_LevelGenerateType)(int.Parse(defineSplit[1]));
             m_IsInner = int.Parse(defineSplit[2]) == 1;
             m_ItemGenerate = new Dictionary<enum_LevelItemType, RangeInt>();
@@ -2293,7 +2293,7 @@ namespace GameSetting
         {
             Vector3 startPosition = m_Entity.tf_Weapon.position;
             Vector3 direction = TCommon.GetXZLookDirection(startPosition, _calculatedPosition);
-            int waveCount = m_CountExtension.Random();
+            int waveCount = m_CountExtension.RandomRange();
             float distance = TCommon.GetXZDistance(startPosition, _calculatedPosition);
             Vector3 lineBeginPosition = startPosition - attacherHead.right * m_OffsetExtension * ((waveCount - 1) / 2f);
             SpawnMuzzle(startPosition, direction);
@@ -2311,7 +2311,7 @@ namespace GameSetting
         {
             Vector3 startPosition = m_Entity.tf_Weapon.position;
             Vector3 direction = TCommon.GetXZLookDirection(startPosition, _calculatedPosition);
-            int waveCount = m_CountExtension.Random();
+            int waveCount = m_CountExtension.RandomRange();
             float beginAnle = -m_OffsetExtension * (waveCount - 1) / 2f;
             float distance = TCommon.GetXZDistance(m_Entity.tf_Weapon.position, _calculatedPosition);
             SpawnMuzzle(startPosition, direction);

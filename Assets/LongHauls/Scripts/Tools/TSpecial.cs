@@ -13,22 +13,19 @@ namespace TTiles
     {
         Invalid = -1,
         Top=0,
-        TopRight = 1,
-        Right =2,
-        BottomRight = 3,
-        Bottom =4,
-        BottomLeft = 5,
-        Left =6,
-        TopLeft = 7,
+        Right =1,
+        Bottom =2,
+        Left =3,
     }
     public interface ITileAxis
     {
-        TileAxis m_TileAxis { get; }
+        TileAxis m_Axis { get; }
     }
+    [System.Serializable]
     public struct TileAxis
     {
-        public int X { get; private set; }
-        public int Y { get; private set; }
+        public int X;
+        public int Y;
         public TileAxis(int _axisX, int _axisY)
         {
             X = _axisX;
@@ -41,34 +38,62 @@ namespace TTiles
         public static bool operator !=(TileAxis a, TileAxis b) => a.X != b.X || a.Y != b.Y;
         public static TileAxis operator -(TileAxis a, TileAxis b) => new TileAxis(a.X - b.X, a.Y - b.Y);
         public static TileAxis operator +(TileAxis a, TileAxis b) => new TileAxis(a.X + b.X, a.Y + b.Y);
+        public static TileAxis operator *(TileAxis a, int b) => new TileAxis(a.X*b,a.Y*b);
+        public static TileAxis operator /(TileAxis a, int b) => new TileAxis(a.X/b,a.Y/b);
+        public TileAxis Inverse() => new TileAxis(Y, X);
         public override bool Equals(object obj) => base.Equals(obj);
         public override int GetHashCode()=> base.GetHashCode();
         public override string ToString()=> X + "," + Y;
         public static readonly TileAxis Zero = new TileAxis(0, 0);
+        public static readonly TileAxis One = new TileAxis(1, 1);
+        public static readonly TileAxis NegativeOne = new TileAxis(-1,-1);
         public static readonly TileAxis Back = new TileAxis(0, -1);
         public static readonly TileAxis Right = new TileAxis(1, 0);
         public static readonly TileAxis Forward = new TileAxis(0, 1);
     }
 
-    public static class TTiles
+    public static class TileTools
     {
-        public static T Get<T>(this T[,] tileArray, TileAxis axis) where T : class, ITileAxis
+        public static bool InRange<T>(this TileAxis axis, T[,] range)  => axis.X >= 0 && axis.X < range.GetLength(0) && axis.Y >= 0 && axis.Y < range.GetLength(1);
+        public static bool InRange<T>(this TileAxis originSize, TileAxis sizeAxis, T[,] range) where T : class, ITileAxis => InRange<T>(originSize + sizeAxis, range);
+        public static int GetAxisIndex(int x, int y, int width) => x + y * width;
+        public static int GetAxisIndex(TileAxis axis, int width) => axis.X + axis.Y * width;
+        public static TileAxis GetAxisByIndex(int index, int width) => new TileAxis(index%width,index/width);
+        public static T Get<T>(this T[,] tileArray, TileAxis axis) where T : class, ITileAxis=> axis.InRange(tileArray) ? tileArray[axis.X, axis.Y] : null;
+        public static bool Get<T>(this T[,] tileArray,TileAxis axis,  TileAxis size, ref List<T> tileList) where T:class,ITileAxis
         {
-            return axis.InRange(tileArray) ? tileArray[axis.X, axis.Y] : null;
+            tileList.Clear();
+            for (int i = 0; i < size.X; i++)
+                for (int j = 0; j < size.Y; j++)
+                {
+                    if (!InRange( axis + new TileAxis(i, j), tileArray))
+                        return false;
+                    tileList.Add(tileArray.Get(axis + new TileAxis(i, j)));
+                }
+            return true;
         }
-
-        public static bool InRange<T>(this TileAxis tileAxis, T[,] range) where T : class, ITileAxis
-        {
-            return tileAxis.X >= 0 && tileAxis.X < range.GetLength(0) && tileAxis.Y >= 0 && tileAxis.Y < range.GetLength(1);
-        }
+        public static bool CheckIsEdge<T>(this T[,] tileArray, TileAxis axis) where T : class, ITileAxis => axis.X == 0 || axis.X == tileArray.GetLength(0) - 1 || axis.Y == 0 || axis.Y == tileArray.GetLength(1) - 1; 
 
         public static float SqrMagnitude(this TileAxis sourceAxis, TileAxis targetAxis)=> Vector2.SqrMagnitude(new Vector2(sourceAxis.X, sourceAxis.Y) - new Vector2(targetAxis.X, targetAxis.Y));
 
         public static int AxisOffset(this TileAxis sourceAxis, TileAxis targetAxis)=>Mathf.Abs(sourceAxis.X - targetAxis.X) + Mathf.Abs(sourceAxis.Y - targetAxis.Y);
 
-        public static int AddUp(this TileAxis sourceAxis) => sourceAxis.X + sourceAxis.Y;
 
-        public static enum_TileDirection DirectionInverse(this enum_TileDirection direction)
+        public static bool AxisInSquare(TileAxis axis, TileAxis squareAxis, TileAxis squareSize)=>axis.X >= squareAxis.X && axis.X <= squareAxis.X + squareSize.X && axis.Y >= squareAxis.Y && axis.Y <= squareAxis.Y + squareSize.Y;
+
+        public static TileAxis GetDirectionedSize(TileAxis size, enum_TileDirection direction) => (int)direction % 2 == 0 ? size : size.Inverse();
+        public static Vector3 GetUnitScaleBySizeAxis(TileAxis directionedSize,int tileSize) => new Vector3(directionedSize.X, 1, directionedSize.Y) * tileSize;
+        public static Vector3 GetLocalPosBySizeAxis(TileAxis directionedSize) => new Vector3(directionedSize.X, 0, directionedSize.Y);
+        public static Quaternion GetDirectionRotation(enum_TileDirection direction) => Quaternion.Euler(0, (int)direction * 90, 0);
+
+        public static enum_TileDirection Next(this enum_TileDirection direction)
+        {
+            direction++;
+            if ((int)direction > 3)
+                direction = 0;
+            return direction;
+        }
+        public static enum_TileDirection Inverse(this enum_TileDirection direction)
         {
             switch (direction)
             {
@@ -80,29 +105,17 @@ namespace TTiles
                     return enum_TileDirection.Left;
                 case enum_TileDirection.Left:
                     return enum_TileDirection.Right;
-                case enum_TileDirection.TopLeft:
-                    return enum_TileDirection.BottomRight;
-                case enum_TileDirection.TopRight:
-                    return enum_TileDirection.BottomLeft;
-                case enum_TileDirection.BottomLeft:
-                    return enum_TileDirection.TopRight;
-                case enum_TileDirection.BottomRight:
-                    return enum_TileDirection.TopLeft;
                 default:
                     Debug.LogError("Error Direction Here");
                     return enum_TileDirection.Invalid;
             }
         }
-
+        
         public static enum_TileDirection OffsetDirection(this TileAxis sourceAxis, TileAxis targetAxis)
         {
             TileAxis offset = targetAxis - sourceAxis;
-            if (offset.X < 0)
-                return offset.Y == 0 ? enum_TileDirection.Left : offset.Y > 0 ? enum_TileDirection.TopLeft : enum_TileDirection.BottomLeft;
-            if (offset.X > 0)
-                return offset.Y == 0 ? enum_TileDirection.Right : offset.Y > 0 ? enum_TileDirection.TopRight : enum_TileDirection.BottomRight;
-            if (offset.X == 0)
-                return offset.Y == 0 ? enum_TileDirection.Invalid : offset.Y > 0 ? enum_TileDirection.Top : enum_TileDirection.Bottom;
+            if (offset.Y == 0) return offset.X < 0 ? enum_TileDirection.Left : enum_TileDirection.Right;
+            if (offset.X == 0) return offset.Y > 0 ? enum_TileDirection.Top : enum_TileDirection.Bottom;
             return enum_TileDirection.Invalid;
         }
 
@@ -124,28 +137,26 @@ namespace TTiles
         }
 
         public static readonly List<enum_TileDirection> m_FourDirections = new List<enum_TileDirection>() { enum_TileDirection.Top, enum_TileDirection.Right,enum_TileDirection.Bottom, enum_TileDirection.Left};
-
-        public static readonly List<enum_TileDirection> m_EightDirecitons = new List<enum_TileDirection>() { enum_TileDirection.Top, enum_TileDirection.Right, enum_TileDirection.Bottom, enum_TileDirection.Left, enum_TileDirection.TopLeft, enum_TileDirection.TopRight, enum_TileDirection.BottomLeft, enum_TileDirection.BottomRight };
-
+        
         public static void PathFindForClosestApproch<T>(this T[,] tileArray, T t1, T t2, List<T> tilePathsAdd,Action<T> OnEachTilePath=null, Predicate<T> stopPredicate=null, Predicate<T> invalidPredicate=null) where T:class,ITileAxis       //Temporary Solution, Not Required Yet
         {
-            if (!t1.m_TileAxis.InRange(tileArray) || !t2.m_TileAxis.InRange(tileArray))
+            if (!t1.m_Axis.InRange(tileArray) || !t2.m_Axis.InRange(tileArray))
                 Debug.LogError("Error Tile Not Included In Array");
 
 
             tilePathsAdd.Add(t1);
-            TileAxis startTile=t1.m_TileAxis;
+            TileAxis startTile=t1.m_Axis;
             for (; ; )
             {
                 TileAxis nextTile=startTile;
-                float minDistance = startTile.SqrMagnitude(t2.m_TileAxis);
+                float minDistance = startTile.SqrMagnitude(t2.m_Axis);
                 float offsetDistance;
                 TileAxis offsetTile;
                 TileAxis[] nearbyFourTiles = startTile.nearbyFourTiles;
                 for (int i = 0; i < nearbyFourTiles.Length; i++)
                 {
                     offsetTile = nearbyFourTiles[i];
-                    offsetDistance = offsetTile.SqrMagnitude(t2.m_TileAxis);
+                    offsetDistance = offsetTile.SqrMagnitude(t2.m_Axis);
                     if (offsetTile.InRange(tileArray) && offsetDistance < minDistance)
                     {
                         nextTile = offsetTile;
@@ -153,7 +164,7 @@ namespace TTiles
                     }
                 }
 
-                if (nextTile == t2.m_TileAxis||(stopPredicate!=null&&stopPredicate(tileArray.Get(nextTile))))
+                if (nextTile == t2.m_Axis||(stopPredicate!=null&&stopPredicate(tileArray.Get(nextTile))))
                 {
                     tilePathsAdd.Add(tileArray.Get(nextTile));
                     break;
@@ -242,7 +253,7 @@ namespace TTiles
             {
                 T temp = targetList[i];
                 m_FourDirections.TraversalRandomBreak((enum_TileDirection randomDirection) => {
-                    TileAxis axis = temp.m_TileAxis.DirectionAxis(randomDirection);
+                    TileAxis axis = temp.m_Axis.DirectionAxis(randomDirection);
                     if (axis.InRange(tileArray))
                     {
                         targetAdd= tileArray.Get(axis);

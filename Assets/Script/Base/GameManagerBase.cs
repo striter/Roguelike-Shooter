@@ -70,7 +70,7 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
     }
 
     PE_BSC m_BSC;
-    public void InitPostEffects(enum_Style _levelStyle)
+    public void InitPostEffects(enum_LevelStyle _levelStyle)
     {
         CameraController.Instance.m_Effect.RemoveAllPostEffect();
         //CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_DepthOutline>().SetEffect(Color.black,1.2f,0.0001f);
@@ -81,10 +81,10 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
         CameraController.Instance.m_Effect.GetOrAddCameraEffect<CB_GenerateOpaqueTexture>();
         switch (_levelStyle)
         {
-            case enum_Style.Undead:
+            case enum_LevelStyle.Undead:
                 CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_FogDepthNoise>().SetEffect<PE_FogDepthNoise>(TCommon.ColorAlpha(Color.white, .3f), .5f, -1f, 5f).SetEffect(TResources.GetNoiseTex(), .4f, 2f);
                 break;
-            case enum_Style.Iceland:
+            case enum_LevelStyle.Iceland:
                 CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_FogDepth>().SetEffect<PE_FogDepth>(Color.white, .6f, -1, 5);
                 break;
         }
@@ -232,7 +232,7 @@ public static class GameDataManager
     public static CGameSave m_GameData => TGameData<CGameSave>.Data;
     public static CFarmSave m_CampFarmData => TGameData<CFarmSave>.Data;
     public static CBattleSave m_BattleData => TGameData<CBattleSave>.Data;
-    public static void AdjustInGameData(EntityCharacterPlayer data, GameLevelManager level)
+    public static void AdjustInGameData(EntityCharacterPlayer data, GameProgressManager level)
     {
         m_BattleData.Adjust(data, level);
         TGameData<CBattleSave>.Save();
@@ -296,7 +296,7 @@ public static class GameDataManager
 
     #endregion
     #region ExcelData
-    public static SLevelGenerate GetLevelGenerateData(enum_Style style, enum_LevelGenerateType prefabType, bool isInner)
+    public static SLevelGenerate GetLevelGenerateData(enum_LevelStyle style, enum_LevelGenerateType prefabType, bool isInner)
     {
         SLevelGenerate generate = Properties<SLevelGenerate>.PropertiesList.Find(p => p.m_LevelStyle == style && p.m_LevelPrefabType == prefabType && p.m_IsInner == isInner);
         if (generate.m_LevelStyle == 0 || generate.m_LevelPrefabType == 0 || generate.m_ItemGenerate == null)

@@ -14,7 +14,7 @@ public class FPSCameraController : CameraController
     public static new FPSCameraController Instance => ninstance;
 
     public enum_RecoilSpreadMode E_RecoilMode = enum_RecoilSpreadMode.Triangle_Like;
-    public int I_YawMin=-90, I_YawMax=90;
+    public int I_PitchMin=-90, I_PitchMax=90;
     public bool B_SelfSetoffRecoil=true;
     public float f_angleSmoothParam = .1f;
     public float f_recoilPitchEdge=20f,f_recoilYawEdge=5f;
@@ -28,7 +28,7 @@ public class FPSCameraController : CameraController
         base.Awake();
         ninstance = Instance as FPSCameraController;
         SetCameraOffset(Vector3.one);
-        SetCameraYawClamp(I_YawMin,I_YawMax);
+        SetCameraYawClamp(I_PitchMin,I_PitchMax);
         m_SelfRotation = true;
 
         f_fovStart = m_Camera.fieldOfView;

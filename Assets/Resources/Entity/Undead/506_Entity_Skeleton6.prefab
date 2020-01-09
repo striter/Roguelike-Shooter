@@ -955,10 +955,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   I_MaxHealth: 360
   m_IsDead: 0
+  m_Activating: 0
   ExtraRendererForForest107Only: {fileID: 0}
   E_SpawnType: 4
   I_DefaultArmor: 0
-  F_MovementSpeed: 3.5
+  F_MovementSpeed: 5
   F_AttackSpread: 6
   E_AnimatorIndex: 113
   F_AIChaseRange: 16
@@ -975,6 +976,7 @@ MonoBehaviour:
   I_AttackPreAimPercentage: 50
   B_AttackMove: 1
   F_AttackFrontCheck: 1
+  m_AISimluating: 0
 --- !u!136 &136026193721199286
 CapsuleCollider:
   m_ObjectHideFlags: 1

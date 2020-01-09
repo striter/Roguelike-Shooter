@@ -7,7 +7,7 @@ public class TPSCameraController : CameraController
     protected static TPSCameraController ninstance;
     public static new TPSCameraController Instance => ninstance;
     public Vector3 TPSOffset=new Vector3(6,3,1);
-    public int I_YawMin = -90, I_YawMax = 90;
+    public int I_PitchMin = -90, I_PitchMax = 90;
     public int I_ShakeParam;
     public float F_ReverseCheck;
     Vector3 v3_Recoil;
@@ -40,7 +40,7 @@ public class TPSCameraController : CameraController
         base.Awake();
         SetCameraOffset(TPSOffset);
         m_SelfRotation = true;
-        SetCameraYawClamp(I_YawMin, I_YawMax);
+        SetCameraYawClamp(I_PitchMin, I_PitchMax);
     }
     
     public void Attach(Transform target,bool selfRotation,bool useOffset)

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 public class LevelManager : SimpleSingletonMono<LevelManager> {
     public Transform tf_LevelParent { get; private set; }
-    public enum_Style m_StyleCurrent { get; private set; } = enum_Style.Invalid;
+    public enum_LevelStyle m_StyleCurrent { get; private set; } = enum_LevelStyle.Invalid;
     public SBigmapLevelInfo m_currentLevel => m_MapLevelInfo[m_currentLevelIndex];
     public SBigmapLevelInfo m_previousLevel => m_currentLevelIndex > 0? m_MapLevelInfo[m_currentLevelIndex - 1]:null;
     public int m_currentLevelIndex = -1;
@@ -30,7 +30,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
         base.OnDestroy();
         RemoveNavmeshData();
     }
-    public IEnumerator GenerateLevel(enum_Style _LevelStyle, System.Random seed)
+    public IEnumerator GenerateLevel(enum_LevelStyle _LevelStyle, System.Random seed)
     {
         m_mainSeed = seed;
         m_StyleCurrent = _LevelStyle;
@@ -40,6 +40,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
         randomData.DataInit(m_DirectionalLight);
 
         Dictionary<enum_LevelItemType, List<LevelItemBase>> levelItemPrefabs = GameObjectManager.RegisterLevelItem(m_StyleCurrent);
+        LevelBase levelPrefab = TResources.GetLevelBase(_LevelStyle);
         m_MapLevelInfo.Clear();
         List<enum_LevelType> randomLevels = GameExpression.GetRandomLevels(m_mainSeed);
         int count = randomLevels.Count;
@@ -49,12 +50,13 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
             m_MapLevelInfo.Add(levelInfo);
             if (levelInfo.m_LevelType != enum_LevelType.Invalid)
             {
-                LevelBase m_level = GameObjectManager.SpawnLevelPrefab(tf_LevelParent);
-                m_level.transform.localRotation = Quaternion.Euler(0, seed.Next(360), 0);
-                m_level.transform.localPosition = Vector3.zero;
-                m_level.transform.localScale = Vector3.one;
+                LevelBase _level = Instantiate(levelPrefab, tf_LevelParent);
+                _level.Init();
+                _level.transform.localRotation = Quaternion.Euler(0, seed.Next(360), 0);
+                _level.transform.localPosition = Vector3.zero;
+                _level.transform.localScale = Vector3.one;
                 levelInfo.SetLevelShow(false);
-                levelInfo.SetMap(m_level);
+                levelInfo.SetMap(_level);
             }
         }
 

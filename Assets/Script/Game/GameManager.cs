@@ -56,7 +56,7 @@ public class GameManager : GameManagerBase
         UIT_MobileConsole.Instance.AddConsoleBindings(m_bindings,(bool show)=> { Time.timeScale = show ? .1f : 1f; });
     }
     #endregion
-    public GameLevelManager m_GameLevel { get; private set; }
+    public GameProgressManager m_GameLevel { get; private set; }
     public GameEnermyGenerateManager m_EnermyGenerate { get; private set; } 
     public EntityCharacterPlayer m_LocalPlayer { get; private set; } = null;
     public override bool B_InGame => true;
@@ -71,7 +71,7 @@ public class GameManager : GameManagerBase
         TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterRevive, OnCharacterRevive);
         if (M_TESTSEED!="")
             GameDataManager.m_BattleData.m_GameSeed = M_TESTSEED;
-        m_GameLevel =  new GameLevelManager(GameDataManager.m_GameData,GameDataManager.m_BattleData);
+        m_GameLevel =  new GameProgressManager(GameDataManager.m_GameData,GameDataManager.m_BattleData);
         m_EnermyGenerate = new GameEnermyGenerateManager(); 
     }
 
@@ -198,15 +198,15 @@ public class GameManager : GameManagerBase
                 {
                      GameObjectManager.SpawnNPC( enum_InteractCharacter.Trader, level.m_Level.NearestInteractTilePosition(TileAxis.Back,m_GameLevel.m_GameSeed), interactTrans).transform.localRotation=Quaternion.identity;
 
-                    int priceHealth = GameExpression.GetTradePrice(enum_Interaction.PickupHealth).Random(m_GameLevel.m_GameSeed);
+                    int priceHealth = GameExpression.GetTradePrice(enum_Interaction.PickupHealth).RandomRange(m_GameLevel.m_GameSeed);
                     GameObjectManager.SpawnInteract<InteractContainerTrade>(enum_Interaction.ContainerTrade, level.m_Level.NearestInteractTilePosition(-TileAxis.Right, m_GameLevel.m_GameSeed), interactTrans).Play(priceHealth, GameObjectManager.SpawnInteract<InteractPickupHealth>(enum_Interaction.PickupHealthPack, Vector3.zero, interactTrans).Play(GameConst.I_HealthTradeAmount, null));
 
                     EquipmentBase action1 = ActionDataManager.CreateRandomEquipment(TCommon.RandomEnumValues<enum_EquipmentType>(m_GameLevel.m_GameSeed), m_GameLevel.m_GameSeed);
-                    int priceAction = GameExpression.GetTradePrice(enum_Interaction.Equipment, action1.m_rarity).Random(m_GameLevel.m_GameSeed);
+                    int priceAction = GameExpression.GetTradePrice(enum_Interaction.Equipment, action1.m_rarity).RandomRange(m_GameLevel.m_GameSeed);
                     GameObjectManager.SpawnInteract<InteractContainerTrade>(enum_Interaction.ContainerTrade, level.m_Level.NearestInteractTilePosition(TileAxis.Zero, m_GameLevel.m_GameSeed), interactTrans).Play(priceAction, GameObjectManager.SpawnInteract<InteractEquipment>(enum_Interaction.Equipment, Vector3.zero, interactTrans).Play(action1));
                     
                     WeaponBase weapon = GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew( GameDataManager.m_WeaponRarities[m_GameLevel.m_actionGenerate.GetTradeWeaponRarity(m_GameLevel.m_GameSeed)].RandomItem(m_GameLevel.m_GameSeed)),null);
-                    int priceWeapon = GameExpression.GetTradePrice(enum_Interaction.Weapon, enum_EquipmentRarity.Invalid,weapon.m_WeaponInfo.m_Rarity).Random(m_GameLevel.m_GameSeed);
+                    int priceWeapon = GameExpression.GetTradePrice(enum_Interaction.Weapon, enum_EquipmentRarity.Invalid,weapon.m_WeaponInfo.m_Rarity).RandomRange(m_GameLevel.m_GameSeed);
                     GameObjectManager.SpawnInteract<InteractContainerTrade>(enum_Interaction.ContainerTrade, level.m_Level.NearestInteractTilePosition(TileAxis.Right, m_GameLevel.m_GameSeed), interactTrans).Play(priceWeapon, GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, Vector3.right, interactTrans).Play(weapon));
                 }
                 break;
@@ -463,7 +463,7 @@ public class GameManager : GameManagerBase
         m_EntityGenerating.Clear();
         m_EntityGenerate[m_CurrentWave].m_EntityGenerate.Traversal((enum_EnermyType level, RangeInt range) =>
         {
-            int spawnCount = range.Random();
+            int spawnCount = range.RandomRange();
             for (int i = 0; i < spawnCount; i++)
             {
                 if (!m_Enermies.ContainsKey(level))
@@ -519,7 +519,7 @@ public class GameManager : GameManagerBase
 }
 
 #region External Tools Packaging Class
-public class GameLevelManager
+public class GameProgressManager
 {
     #region LevelData
     public string m_Seed { get; private set; }
@@ -533,8 +533,8 @@ public class GameLevelManager
     public string m_PortalKey => B_IsFinalLevel ? "Final" : (m_LevelType== enum_LevelType.End?"NextStage":"NextLevel");
     public enum_LevelType m_LevelType { get; private set; }
     public enum_StageLevel m_GameStage { get; private set; }
-    Dictionary<enum_StageLevel, enum_Style> m_StageStyle = new Dictionary<enum_StageLevel, enum_Style>();
-    public enum_Style m_GameStyle => m_StageStyle[m_GameStage];
+    Dictionary<enum_StageLevel, enum_LevelStyle> m_StageStyle = new Dictionary<enum_StageLevel, enum_LevelStyle>();
+    public enum_LevelStyle m_GameStyle => m_StageStyle[m_GameStage];
     static enum_BattleDifficulty m_BattleDifficulty;
     public enum_BattleDifficulty m_Difficulty
     {
@@ -559,15 +559,15 @@ public class GameLevelManager
     int m_levelEntered;
     int m_battleLevelEntered;
     #endregion
-    public GameLevelManager(CGameSave _gameSave,CBattleSave _battleSave)
+    public GameProgressManager(CGameSave _gameSave,CBattleSave _battleSave)
     {
         m_Seed =_battleSave.m_GameSeed;
         m_GameSeed = new System.Random(m_Seed.GetHashCode());
         m_GameStage = _battleSave.m_Stage;
         m_GameDifficulty = _gameSave.m_GameDifficulty;
-        List<enum_Style> styleList = TCommon.GetEnumList<enum_Style>();
+        List<enum_LevelStyle> styleList = TCommon.GetEnumList<enum_LevelStyle>();
         TCommon.TraversalEnum((enum_StageLevel level) => {
-            enum_Style style = styleList.RandomItem(m_GameSeed);
+            enum_LevelStyle style = styleList.RandomItem(m_GameSeed);
             styleList.Remove(style);
             m_StageStyle.Add(level, style);
         });
@@ -643,7 +643,6 @@ public static class GameObjectManager
         ObjectPoolManager<enum_Interaction, InteractGameBase>.DestroyAll();
         ObjectPoolManager<LevelItemBase, LevelItemBase>.DestroyAll();
         ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.DestroyAll();
-        ObjectPoolManager<int, LevelBase>.DestroyAll();
     }
     #region Register
     public static void PresetRegistCommonObject()
@@ -652,16 +651,15 @@ public static class GameObjectManager
             target) => {ObjectPoolManager<int, SFXBase>.Register(index, target, 1); });
         TResources.GetCommonEntities().Traversal((int index, EntityBase entity) => { ObjectPoolManager<int, EntityBase>.Register(index, entity, 1); });
     }
-    public static Dictionary<enum_LevelItemType,List<LevelItemBase>> RegisterLevelItem(enum_Style _style)
+    public static Dictionary<enum_LevelItemType,List<LevelItemBase>> RegisterLevelItem(enum_LevelStyle _style)
     {
-        Dictionary<enum_LevelItemType, List<LevelItemBase>> items = TResources.GetAllLevelItems(_style, null);
+        Dictionary<enum_LevelItemType, List<LevelItemBase>> items = TResources.GetAllLevelItems(_style);
         items.Traversal((enum_LevelItemType type,List< LevelItemBase> levelItems) => { levelItems.Traversal((LevelItemBase item) => { ObjectPoolManager<LevelItemBase, LevelItemBase>.Register(item, GameObject.Instantiate(item), 1); }); });
         return items;
     }
-    public static Dictionary<enum_EnermyType, List<int>> RegistStyledInGamePrefabs(enum_Style currentStyle, enum_StageLevel stageLevel)
+    public static Dictionary<enum_EnermyType, List<int>> RegistStyledInGamePrefabs(enum_LevelStyle currentStyle, enum_StageLevel stageLevel)
     {
         RegisterInGameInteractions(currentStyle, stageLevel);
-        ObjectPoolManager<int, LevelBase>.Register(0, TResources.GetLevelBase(currentStyle), 1);
 
         Dictionary<enum_EnermyType, List<int>> enermyDic = new Dictionary<enum_EnermyType, List<int>>();
         TResources.GetEnermyEntities(currentStyle).Traversal((int index, EntityBase entity) => {
@@ -675,7 +673,7 @@ public static class GameObjectManager
         });
         return enermyDic;
     }
-    static void RegisterInGameInteractions(enum_Style portalStyle, enum_StageLevel stageIndex)
+    static void RegisterInGameInteractions(enum_LevelStyle portalStyle, enum_StageLevel stageIndex)
     {
         TCommon.TraversalEnum((enum_Interaction enumValue) =>
         {
@@ -778,7 +776,6 @@ public static class GameObjectManager
     public static void RecycleAllInteract() => ObjectPoolManager<enum_Interaction, InteractGameBase>.RecycleAll();
     #endregion
     #region Level/LevelItem
-    public static LevelBase SpawnLevelPrefab(Transform toTrans)=>ObjectPoolManager<int, LevelBase>.Spawn(0, toTrans);
     public static LevelItemBase SpawnLevelItem(LevelItemBase itemObject, Transform itemParent, Vector3 localPosition)
     {
         LevelItemBase spawnedItem = ObjectPoolManager<LevelItemBase, LevelItemBase>.Spawn(itemObject, itemParent);
@@ -805,7 +802,7 @@ public class GameEnermyGenerateManager
     float _indicateCheck;
     float _spawnCheck;
     float m_offset;
-    public void Begin(List<int> waveGenerate, float _offset, float _delay, GameLevelManager gameLevel)
+    public void Begin(List<int> waveGenerate, float _offset, float _delay, GameProgressManager gameLevel)
     {
         m_Playing = true;
         m_Generating.Clear();

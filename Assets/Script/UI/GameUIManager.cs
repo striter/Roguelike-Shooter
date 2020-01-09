@@ -21,7 +21,7 @@ public class GameUIManager : UIManager {
         m_Coins = ShowControls<UIC_CoinsStatus>();
     }
 
-    public void OnGameFinished(GameLevelManager level, Action _OnButtonClick)
+    public void OnGameFinished(GameProgressManager level, Action _OnButtonClick)
     {
         cvs_Camera.gameObject.SetActivate(false);
         ShowPage<UI_GameResult>(true).Play(level, _OnButtonClick);
