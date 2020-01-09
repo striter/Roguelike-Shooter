@@ -53,6 +53,7 @@ public static class TReflection
         { typeof(Text),(Transform transform)=>transform.GetComponent<Text>() },
         { typeof(InputField),(Transform transform)=>transform.GetComponent<InputField>() },
         { typeof(Image),(Transform transform)=>transform.GetComponent<Image>() },
+        { typeof(RawImage),(Transform transform)=>transform.GetComponent<RawImage>() },
     };
         static bool FillTypeMatch(Type type) => m_BaseTypeHelper.ContainsKey(type) || type.IsSubclassOf(typeof(CPropertyFillElement));
 

@@ -48,6 +48,7 @@ public class LevelEditorUI : SimpleSingletonMono<LevelEditorUI>,TReflection.UI.I
     ChunkTypeSelection m_File_Type;
     Button m_Test_Generate;
     InputField m_Test_Generate_Seed;
+    RawImage m_View_Image;
 
     enum_ChunkType m_ChunkType= enum_ChunkType.Battle;
     protected override void Awake()
@@ -78,17 +79,23 @@ public class LevelEditorUI : SimpleSingletonMono<LevelEditorUI>,TReflection.UI.I
     void OnReadClick()
     {
         LevelChunkData data= LevelEditorManager.Instance.Read(m_File_Read_Name.text);
-        if(data)
-        {
-            m_Edit_Resize_X.text = data.Width.ToString();
-            m_Edit_Resize_Y.text = data.Height.ToString();
-            m_File_Save_Name.text = data.name;
-        }
+        if (!data)
+            return;
+
+        m_Edit_Resize_X.text = data.Width.ToString();
+        m_Edit_Resize_Y.text = data.Height.ToString();
+        m_File_Save_Name.text = data.name;
+        m_View_Image.texture = data.CalculateMapTexture();
+        m_View_Image.SetNativeSize();
     }
 
     void OnSaveClick()
     {
-        LevelEditorManager.Instance.Save(m_File_Save_Name.text);
+        LevelChunkData data= LevelEditorManager.Instance.Save(m_File_Save_Name.text);
+        if (!data)
+            return;
+        m_View_Image.texture = data.CalculateMapTexture();
+        m_View_Image.SetNativeSize();
     }
 
     void OnResizeButtonClick()

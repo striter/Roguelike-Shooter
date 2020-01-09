@@ -31,12 +31,12 @@ public class LevelEditorManager : SimpleSingletonMono<LevelEditorManager>
         return m_Data;
     }
 
-    public void Save(string dataName)
+    public LevelChunkData Save(string dataName)
     {
         if (dataName == "")
         {
             Debug.LogError("Edit Data Name Before Save!");
-            return;
+            return null;
         }
 
         string dataPath = TResources.ConstPath.S_LevelChunkData + "/"+dataName + ".asset";
@@ -51,6 +51,7 @@ public class LevelEditorManager : SimpleSingletonMono<LevelEditorManager>
         EditorUtility.SetDirty(data);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
+        return data;
     }
     #endregion
 }
