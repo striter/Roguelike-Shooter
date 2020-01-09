@@ -15,7 +15,7 @@ namespace GameSetting_Action
         public static float F_0006_Duration(enum_EquipmentRarity rarity) => 3*(int)rarity;
         public static int P_0007_SpreadReduction(enum_EquipmentRarity rarity) => 30 * (int)rarity;
         public static float F_0008_AimRangeIncrease(enum_EquipmentRarity rarity) => 1f * (int)rarity;
-        public static int P_0009_DamageMultiply(enum_EquipmentRarity rarity) => 120 * (int)rarity;
+        public static int P_0009_DamageMultiply(enum_EquipmentRarity rarity) => 100 * (int)rarity;
         public static int P_0010_PenetrateAdditive(enum_EquipmentRarity rarity) => 20 * (int)rarity;
         public static int P_0011_FireRateAdditive(enum_EquipmentRarity rarity) => 40 * (int)rarity;
         public static int I_0012_BounceTimes(enum_EquipmentRarity rarity) => 1*(int)rarity;
@@ -55,7 +55,7 @@ namespace GameSetting_Action
 
         public static float P_0033_CoinsDropAdditive(enum_EquipmentRarity rarity) => 10 * (int)rarity;
         public static float P_0034_CoinsCostDecrease(enum_EquipmentRarity rarity) => 10 * (int)rarity;
-        public static float P_0035_CoinsDoubleRate(enum_EquipmentRarity rarity) => 25 * (int)rarity;
+        public static float P_0035_CoinsDoubleRate(enum_EquipmentRarity rarity) => 10 * (int)rarity;
         public static float P_0036_CoinsExchangePercent(enum_EquipmentRarity rarity) => 100 - 25 * ((int)rarity );
         public static float F_0037_DamageMultiplyPer10Coins(enum_EquipmentRarity rarity) => 4 * (int)rarity;
     }
