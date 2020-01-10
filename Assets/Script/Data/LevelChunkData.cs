@@ -37,7 +37,7 @@ public class LevelChunkData : ScriptableObject {
         for (int i = 0; i < data.Width; i++)
             for (int j = 0; j < data.Height; j++)
             {
-                int index = TileTools.GetAxisIndex(i, j, data.Width);
+                int index = TileTools.Get1DAxisIndex(new TileAxis( i, j), data.Width);
                 ChunkTileData tileData = ChunkTileData.Default();
                 if(transferData!=null&&index<data.m_TileData.Length&&new TileAxis(i,j).InRange(transferData))
                     tileData = transferData.Get(new TileAxis(i,j)).m_Data;
@@ -55,7 +55,7 @@ public class LevelChunkData : ScriptableObject {
         for (int i = 0; i < m_Width; i++)
             for (int j = 0; j < m_Height; j++)
             {
-                int index = TileTools.GetAxisIndex(i, j, m_Width);
+                int index = TileTools.Get1DAxisIndex(new TileAxis( i, j), m_Width);
                 if (chunk.m_TilesData[i, j].m_Data.m_ObjectType == enum_TileObjectType.Connection1x5)
                     m_Connections.Add(new ChunkConnectionData(new TileAxis(i,j), chunk.m_TilesData[i, j].m_Data.m_Direction, m_Width,m_Height));
                 m_TileData[index] = chunk.m_TilesData[i, j].m_Data;
@@ -68,7 +68,42 @@ public class LevelChunkData : ScriptableObject {
         m_Texture.filterMode = FilterMode.Point;
         for (int i = 0; i < m_Width; i++)
             for (int j = 0; j < m_Height; j++)
-                m_Texture.SetPixel(i,j,m_TileData[TileTools.GetAxisIndex(i,j,m_Width)].m_GroundType== enum_TileGroundType.Invalid?Color.black:Color.white);
+                m_Texture.SetPixel(i, j, m_TileData[TileTools.Get1DAxisIndex(new TileAxis( i, j), m_Width)].m_GroundType == enum_TileGroundType.Invalid ? Color.black : Color.white);
+        for (int i = 0; i < m_Width; i++)
+            for (int j = 0; j < m_Height; j++)
+            {
+                TileAxis axis = new TileAxis(i, j);
+                ChunkTileData tileData = m_TileData[TileTools.Get1DAxisIndex(axis, m_Width)];
+                if (tileData.m_ObjectType <= enum_TileObjectType.RestrictStart || tileData.m_ObjectType >= enum_TileObjectType.RestrictEnd)
+                    continue;
+                TileAxis size = tileData.m_ObjectType.GetSizeAxis(tileData.m_Direction);
+                List<TileAxis> axies = TileTools.GetAxisRange(m_Height, m_Width, axis, size);
+                Color tileColor = Color.clear;
+                switch (tileData.m_ObjectType)
+                {
+                    case enum_TileObjectType.Connection1x5:
+                        tileColor = Color.green;
+                        break;
+                    case enum_TileObjectType.ChunkPortal2x2:
+                    case enum_TileObjectType.StagePortal2x2:
+                        tileColor = Color.blue;
+                        break;
+                    case enum_TileObjectType.PlayerSpawn1x1:
+                        tileColor = Color.grey;
+                        break;
+                    case enum_TileObjectType.EventArea3x3:
+                        tileColor = Color.yellow;
+                        break;
+                    case enum_TileObjectType.EliteTrigger1x1:
+                        tileColor = Color.magenta;
+                        break;
+                    case enum_TileObjectType.EliteEnermySpawn1x1:
+                    case enum_TileObjectType.EnermySpawn1x1:
+                        tileColor = Color.red;
+                        break;
+                }
+                axies.Traversal((TileAxis objectAxis) => { m_Texture.SetPixel(objectAxis.X, objectAxis.Y, tileColor); });
+            }
         m_Texture.Apply();
         return m_Texture;
     }

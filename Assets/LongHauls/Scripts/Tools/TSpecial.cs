@@ -54,13 +54,13 @@ namespace TTiles
 
     public static class TileTools
     {
+        static int AxisDimensionTransformation(int x, int y, int width) => x + y * width;
         public static bool InRange<T>(this TileAxis axis, T[,] range)  => axis.X >= 0 && axis.X < range.GetLength(0) && axis.Y >= 0 && axis.Y < range.GetLength(1);
-        public static bool InRange<T>(this TileAxis originSize, TileAxis sizeAxis, T[,] range) where T : class, ITileAxis => InRange<T>(originSize + sizeAxis, range);
-        public static int GetAxisIndex(int x, int y, int width) => x + y * width;
-        public static int GetAxisIndex(TileAxis axis, int width) => axis.X + axis.Y * width;
+        public static bool InRange<T>(this TileAxis originSize, TileAxis sizeAxis, T[,] range) => InRange<T>(originSize + sizeAxis, range);
+        public static int Get1DAxisIndex(TileAxis axis, int width) => AxisDimensionTransformation(axis.X, axis.Y, width);
         public static TileAxis GetAxisByIndex(int index, int width) => new TileAxis(index%width,index/width);
-        public static T Get<T>(this T[,] tileArray, TileAxis axis) where T : class, ITileAxis=> axis.InRange(tileArray) ? tileArray[axis.X, axis.Y] : null;
-        public static bool Get<T>(this T[,] tileArray,TileAxis axis,  TileAxis size, ref List<T> tileList) where T:class,ITileAxis
+        public static T Get<T>(this T[,] tileArray, TileAxis axis) where T:class => axis.InRange(tileArray) ? tileArray[axis.X, axis.Y] :null;
+        public static bool Get<T>(this T[,] tileArray,TileAxis axis,  TileAxis size, ref List<T> tileList)  where T:class
         {
             tileList.Clear();
             for (int i = 0; i < size.X; i++)
@@ -71,6 +71,19 @@ namespace TTiles
                     tileList.Add(tileArray.Get(axis + new TileAxis(i, j)));
                 }
             return true;
+        }
+        public static List<TileAxis> GetAxisRange(int height,int width, TileAxis axis, TileAxis size)
+        {
+            List<TileAxis> axisList = new List<TileAxis>();
+            for (int i = 0; i < size.X; i++)
+                for (int j = 0; j < size.Y; j++)
+                {
+                    TileAxis axisCheck = axis + new TileAxis(i, j);
+                    if (axisCheck.X >= width || axisCheck.Y >= height)
+                        continue;
+                    axisList.Add(axisCheck);
+                }
+            return axisList;
         }
         public static bool CheckIsEdge<T>(this T[,] tileArray, TileAxis axis) where T : class, ITileAxis => axis.X == 0 || axis.X == tileArray.GetLength(0) - 1 || axis.Y == 0 || axis.Y == tileArray.GetLength(1) - 1; 
 

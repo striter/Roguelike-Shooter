@@ -30,9 +30,10 @@ public class LevelChunk : MonoBehaviour
         for (int i = 0; i < m_Width; i++)
             for (int j = 0; j < m_Height; j++)
             {
-                ChunkTileData data = tileData[TileTools.GetAxisIndex(i, j, m_Width)];
+                TileAxis axis = new TileAxis(i, j);
+                ChunkTileData data = tileData[TileTools.Get1DAxisIndex(axis, m_Width)];
                 if (WillGenerateTile(data))
-                    OnTileInit(m_TilePool.AddItem(i+j*m_Width), new TileAxis(i, j), data);
+                    OnTileInit(m_TilePool.AddItem(i+j*m_Width), axis, data);
             }
     }
     protected virtual bool WillGenerateTile(ChunkTileData data)
