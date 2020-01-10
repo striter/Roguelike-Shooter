@@ -100,7 +100,18 @@ public class TResources
     #endregion
     #region NewLevel
     public static LevelChunkData GetLevelData(string name) => Load<LevelChunkData>(ConstPath.S_LevelChunkData + "/" + name);
-    public static LevelChunkData[] GetChunkDatas() => LoadAll<LevelChunkData>(ConstPath.S_LevelChunkData);
+    public static Dictionary<enum_ChunkType, List<LevelChunkData>> GetChunkDatas()
+    {
+        LevelChunkData[] datas= LoadAll<LevelChunkData>(ConstPath.S_LevelChunkData);
+        Dictionary<enum_ChunkType,List< LevelChunkData>> sortedDatas = new Dictionary<enum_ChunkType, List<LevelChunkData>>();
+        datas.Traversal((LevelChunkData data) =>
+        {
+            if (!sortedDatas.ContainsKey(data.Type))
+                sortedDatas.Add(data.Type,new List<LevelChunkData>());
+            sortedDatas[data.Type].Add(data);
+        });
+        return sortedDatas;
+    } 
     public static Dictionary<enum_TileSubType, List<LevelTileItemBase>> GetLevelItemsNew(enum_LevelStyle _levelStyle)
     {
         Dictionary<enum_TileSubType,List< LevelTileItemBase>> itemDic = new Dictionary<enum_TileSubType, List<LevelTileItemBase>>();

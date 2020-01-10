@@ -169,7 +169,7 @@ public class LevelChunkEditor : LevelChunk
                 return;
             }
 
-            if(CanEditTile(editorTile))
+            if(CanEditTile(editorTile,true))
                 EditDataTile(editorTile);
         }
         else if (Input.GetMouseButton(1))
@@ -186,7 +186,7 @@ public class LevelChunkEditor : LevelChunk
                 RotateDataTile(raycastHit.transform.GetComponent<LevelTileEditor>());
         }
     }
-    bool CanEditTile(LevelTileEditor targetTile)
+    bool CanEditTile(LevelTileEditor targetTile,bool objectSelfIncluded)
     {
         if (!targetTile.isDataTile)
             return false;
@@ -205,7 +205,7 @@ public class LevelChunkEditor : LevelChunk
 
                     temp_RelativeTiles.TraversalBreak((LevelTileEditorData tile) =>
                     {
-                        editable =tile.m_Axis==targetTile.m_Axis||ObjectEditable(tile, m_SelectingTile.m_Data.m_ObjectType);
+                        editable =(!objectSelfIncluded&&tile.m_Axis==targetTile.m_Axis)||ObjectEditable(tile, m_SelectingTile.m_Data.m_ObjectType);
                         return !editable;
                     });
                 }
@@ -232,18 +232,7 @@ public class LevelChunkEditor : LevelChunk
         if (tile.m_Data.m_ObjectType != enum_TileObjectType.Invalid)
             return false;
 
-        switch (tile.m_Data.m_GroundType)
-        {
-            default:
-                return !m_TilesData.CheckIsEdge(tile.m_Axis);
-            case enum_TileGroundType.Invalid:
-            case enum_TileGroundType.Road1:
-            case enum_TileGroundType.Road2:
-            case enum_TileGroundType.Road3:
-            case enum_TileGroundType.Road4:
-            case enum_TileGroundType.Bridge:
-                return false;
-        }
+        return LevelExpressions.TileObjectEditable(tile.m_Data.m_GroundType);
     }
 
     void EditDataTile(LevelTileEditor targetTile)
@@ -297,7 +286,7 @@ public class LevelChunkEditor : LevelChunk
 
         LevelTileEditorData data = targetTile as LevelTileEditorData;
         ChangeEditSelection(data);
-        if (CanEditTile(data))
+        if (CanEditTile(data, false))
             EditDataTile(data);
     }
 

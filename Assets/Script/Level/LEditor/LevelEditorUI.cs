@@ -82,17 +82,20 @@ public class LevelEditorUI : SimpleSingletonMono<LevelEditorUI>,TReflection.UI.I
         m_DataViewing.Clear();
         m_EditorView.ClearGrid();
         int index = 0;
-        TResources.GetChunkDatas().Traversal((LevelChunkData data)=> {
-            if (data.Type != targetChunkType)
+        TResources.GetChunkDatas().Traversal((enum_ChunkType type,List< LevelChunkData> datas)=> {
+            if (type != targetChunkType)
                 return;
-            m_EditorView.AddItem(index++).SetData(OnDataEditClick, data);
-            m_DataViewing.Add(data.name);
+            datas.Traversal((LevelChunkData data) =>
+            {
+                m_EditorView.AddItem(index++).SetData(OnDataEditClick, data);
+                m_DataViewing.Add(data.name);
+            });
         } );
     }
 
     void OnDataEditClick(int index)
     {
-        ReadData(m_DataViewing[index]);
+        ReadData(LevelEditorManager.Instance.Read(m_DataViewing[index]));
     }
 
     void OnNewClick()
@@ -102,11 +105,10 @@ public class LevelEditorUI : SimpleSingletonMono<LevelEditorUI>,TReflection.UI.I
         LevelEditorManager.Instance.New(int.Parse( m_File_New_X.text),int.Parse(m_File_New_Y.text), m_FileChunkType);
     }
 
-    void OnReadClick() => ReadData(m_File_Read_Name.text);
+    void OnReadClick() => ReadData(LevelEditorManager.Instance.Read(m_File_Read_Name.text));
 
-    void ReadData(string dataName)
+    void ReadData(LevelChunkData data)
     {
-        LevelChunkData data = LevelEditorManager.Instance.Read(dataName);
         if (!data)
             return;
 

@@ -41,7 +41,6 @@ public class LevelChunkData : ScriptableObject {
                 ChunkTileData tileData = ChunkTileData.Default();
                 if(transferData!=null&&index<data.m_TileData.Length&&new TileAxis(i,j).InRange(transferData))
                     tileData = transferData.Get(new TileAxis(i,j)).m_Data;
-
                 data.m_TileData[index] =tileData;
             }
         return data;

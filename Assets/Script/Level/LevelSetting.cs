@@ -6,7 +6,7 @@ namespace LevelSetting
 {
     public enum enum_ChunkType {
         Invalid = -1,
-        Begin,
+        Start,
         Event,
         Battle,
         Final,
@@ -31,6 +31,7 @@ namespace LevelSetting
         Road3 = 6,
         Road4 = 7,
         Bridge =8,
+        Dangerzone = 9,
     }
 
     public enum enum_TileObjectType
@@ -56,12 +57,15 @@ namespace LevelSetting
         Object3x3B=22,
         
         RestrictStart=50,
-        Dangerzone=51,
-        Connection1x5=52,
+        PlayerSpawn1x1=51,
+        Connection1x5 =52,
         StagePortal2x2=53,
-        LevelPortal1x1=54,
+        ChunkPortal2x2=54,
         EventArea3x3 = 55,
-        RestrictEnd =59,
+        EnermySpawn1x1=56,
+        EliteEnermySpawn1x1=57,
+        EliteTrigger1x1=58,
+        RestrictEnd,
     }
 
     public enum enum_TilePillarType
@@ -102,6 +106,7 @@ namespace LevelSetting
                 case enum_TileObjectType.Object2x2A:
                 case enum_TileObjectType.Object2x2B:
                 case enum_TileObjectType.StagePortal2x2:
+                case enum_TileObjectType.ChunkPortal2x2:
                     size = TileAxis.One * 2;
                     break;
                 case enum_TileObjectType.Object2x1B:
@@ -127,18 +132,25 @@ namespace LevelSetting
             Dictionary<enum_TileObjectType, int> restrictionDic = new Dictionary<enum_TileObjectType, int>();
             switch(type)
             {
+                case enum_ChunkType.Start:
+                    restrictionDic.Add(enum_TileObjectType.Connection1x5, 1);
+                    restrictionDic.Add(enum_TileObjectType.PlayerSpawn1x1, 1);
+                    break;
                 case enum_ChunkType.Event:
+                    restrictionDic.Add(enum_TileObjectType.ChunkPortal2x2, 1);
                     restrictionDic.Add(enum_TileObjectType.EventArea3x3, 1);
                     restrictionDic.Add(enum_TileObjectType.Connection1x5, 3);
                     break;
                 case enum_ChunkType.Battle:
-                    restrictionDic.Add(enum_TileObjectType.Dangerzone, -1);
                     restrictionDic.Add(enum_TileObjectType.Connection1x5, 3);
+                    restrictionDic.Add( enum_TileObjectType.EnermySpawn1x1,-1);
                     break;
                 case enum_ChunkType.Final:
-                    restrictionDic.Add(enum_TileObjectType.Dangerzone, -1);
                     restrictionDic.Add(enum_TileObjectType.Connection1x5, 1);
                     restrictionDic.Add(enum_TileObjectType.StagePortal2x2, 1);
+                    restrictionDic.Add(enum_TileObjectType.EliteEnermySpawn1x1,1);
+                    restrictionDic.Add(enum_TileObjectType.EliteTrigger1x1, -1);
+                    restrictionDic.Add(enum_TileObjectType.EnermySpawn1x1, -1);
                     break;
             }
             return restrictionDic;
