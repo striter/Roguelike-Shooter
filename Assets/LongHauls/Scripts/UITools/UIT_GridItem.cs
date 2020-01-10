@@ -6,7 +6,7 @@ public class UIT_GridItem : MonoBehaviour
     protected Transform tf_Container;
     protected RectTransform rtf_RectTransform;
     public RectTransform rectTransform => rtf_RectTransform;
-    public int I_Index { get; protected set; }
+    public int m_Index { get; protected set; }
     public virtual void Init()
     {
         rtf_RectTransform = transform.GetComponent<RectTransform>();
@@ -14,7 +14,7 @@ public class UIT_GridItem : MonoBehaviour
     }
     public virtual void OnActivate(int _index)
     {
-        I_Index = _index;
+        m_Index = _index;
     }
     public virtual void Reset()
     {

@@ -99,6 +99,7 @@ public interface IGridHighlight
     void AttachSelectButton(Action<int> OnButtonClick);
     void OnHighlight(bool highlight);
 }
+
 public class UIT_GridControlledSingleSelect<T> : UIT_GridControllerGridItem<T> where T : UIT_GridItem, IGridHighlight
 {
     public int m_curSelecting { get; private set; } = -1;

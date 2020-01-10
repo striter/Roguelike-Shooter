@@ -36,7 +36,7 @@ public class UIGI_VisualizePickup : UIT_GridItem {
 
     void OnAnimFinish()
     {
-        OnAnimFinished(I_Index);
+        OnAnimFinished(m_Index);
     }
 
     private void Update()

@@ -21,7 +21,7 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         m_Seed = seed == "" ? DateTime.Now.ToLongTimeString() : seed;
         System.Random random = new System.Random(m_Seed.GetHashCode());
 
-        LevelChunkData[] datas = TResources.GetLevelData();
+        LevelChunkData[] datas = TResources.GetChunkDatas();
         List<ChunkGenerateData> gameChunkGenerate = new List<ChunkGenerateData>();
 
         gameChunkGenerate.Add(new ChunkGenerateData(TileAxis.Zero, datas.RandomItem(random)));
@@ -32,7 +32,7 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         {
             List<ChunkGenerateData> subGenerateData = null;
             if (mainChunkData.CheckEmptyConnections(random))
-                subGenerateData = TryGenerateChunkDatas(mainChunkData, gameChunkGenerate, datas, 2, random);
+                subGenerateData = TryGenerateChunkDatas(mainChunkData, gameChunkGenerate, datas, 3, random);
             if(subGenerateData!=null)
                 gameChunkGenerate.AddRange(subGenerateData);
             return subGenerateData != null;
@@ -42,7 +42,7 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         {
             List<ChunkGenerateData> subGenerateData = null;
             if (mainChunkData.CheckEmptyConnections(random))
-                subGenerateData = TryGenerateChunkDatas(mainChunkData, gameChunkGenerate, datas, 2, random);
+                subGenerateData = TryGenerateChunkDatas(mainChunkData, gameChunkGenerate, datas, 5, random);
             if (subGenerateData != null)
                 gameChunkGenerate.AddRange(subGenerateData);
             return subGenerateData != null;
@@ -167,7 +167,6 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         }
 
         public void OnConnectionSet(int connectionIndex) => m_Connection[connectionIndex]=true;
-
     }
 }
 

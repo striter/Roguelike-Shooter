@@ -17,7 +17,7 @@ public class UIGI_ActionEquipmentSelect : UIGI_ActionBase,IGridHighlight {
         m_Selected = tf_Container.Find("Selected");
         m_Button = GetComponent<Button>();
     }
-    public void AttachSelectButton(Action<int> OnButtonClick)=> m_Button.onClick.AddListener(()=> { OnButtonClick(I_Index); });
+    public void AttachSelectButton(Action<int> OnButtonClick)=> m_Button.onClick.AddListener(()=> { OnButtonClick(m_Index); });
 
     public void OnHighlight(bool highlight)
     {

@@ -6,9 +6,9 @@ namespace LevelSetting
 {
     public enum enum_ChunkType {
         Invalid = -1,
+        Begin,
         Event,
         Battle,
-        Trap,
         Final,
     }
     
@@ -59,8 +59,9 @@ namespace LevelSetting
         Dangerzone=51,
         Connection1x5=52,
         StagePortal2x2=53,
-        EventArea3x3=54,
-        RestrictEnd=59,
+        LevelPortal1x1=54,
+        EventArea3x3 = 55,
+        RestrictEnd =59,
     }
 
     public enum enum_TilePillarType
@@ -128,7 +129,7 @@ namespace LevelSetting
             {
                 case enum_ChunkType.Event:
                     restrictionDic.Add(enum_TileObjectType.EventArea3x3, 1);
-                    restrictionDic.Add(enum_TileObjectType.Connection1x5, 2);
+                    restrictionDic.Add(enum_TileObjectType.Connection1x5, 3);
                     break;
                 case enum_ChunkType.Battle:
                     restrictionDic.Add(enum_TileObjectType.Dangerzone, -1);
@@ -138,10 +139,6 @@ namespace LevelSetting
                     restrictionDic.Add(enum_TileObjectType.Dangerzone, -1);
                     restrictionDic.Add(enum_TileObjectType.Connection1x5, 1);
                     restrictionDic.Add(enum_TileObjectType.StagePortal2x2, 1);
-                    break;
-                case enum_ChunkType.Trap:
-                    restrictionDic.Add(enum_TileObjectType.Dangerzone, -1);
-                    restrictionDic.Add(enum_TileObjectType.Connection1x5, 3);
                     break;
             }
             return restrictionDic;

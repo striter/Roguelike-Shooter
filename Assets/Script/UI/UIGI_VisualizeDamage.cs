@@ -31,7 +31,7 @@ public class UIGI_VisualizeDamage : UIT_GridItem {
     }
     void OnAnimFinish()
     {
-        OnAnimFinished(I_Index);
+        OnAnimFinished(m_Index);
     }
 
     private void Update()

@@ -100,7 +100,7 @@ public class TResources
     #endregion
     #region NewLevel
     public static LevelChunkData GetLevelData(string name) => Load<LevelChunkData>(ConstPath.S_LevelChunkData + "/" + name);
-    public static LevelChunkData[] GetLevelData() => LoadAll<LevelChunkData>(ConstPath.S_LevelChunkData);
+    public static LevelChunkData[] GetChunkDatas() => LoadAll<LevelChunkData>(ConstPath.S_LevelChunkData);
     public static Dictionary<enum_TileSubType, List<LevelTileItemBase>> GetLevelItemsNew(enum_LevelStyle _levelStyle)
     {
         Dictionary<enum_TileSubType,List< LevelTileItemBase>> itemDic = new Dictionary<enum_TileSubType, List<LevelTileItemBase>>();

@@ -33,6 +33,6 @@ public class UIGI_TipItem : UIT_GridItem {
         m_TipText.color = TCommon.ColorAlpha(m_TipText.color, value);
 
         if (f_timeCheck <= 0)
-            OnPlayFinished(I_Index);
+            OnPlayFinished(m_Index);
     }
 }

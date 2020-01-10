@@ -49,6 +49,6 @@ public class UIT_GridDefaultItem : UIT_GridItem {
     }
     protected void OnItemTrigger()
     {
-        OnItemClick?.Invoke(I_Index);
+        OnItemClick?.Invoke(m_Index);
     }
 }
