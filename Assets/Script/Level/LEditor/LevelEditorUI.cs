@@ -48,6 +48,8 @@ public class LevelEditorUI : SimpleSingletonMono<LevelEditorUI>,TReflection.UI.I
     TypeSelection m_File_Type;
     Button m_Test_Generate;
     Text m_Test_Generate_Text;
+    RawImage m_Test_Map;
+    RectTransform m_Test_Map_Player;
     InputField m_Test_Generate_Seed;
     RawImage m_View_Image;
     Text m_View_Name,m_View_Type;
@@ -127,8 +129,8 @@ public class LevelEditorUI : SimpleSingletonMono<LevelEditorUI>,TReflection.UI.I
         LevelChunkData data= LevelEditorManager.Instance.Save(m_File_Save_Name.text);
         if (!data)
             return;
-        m_View_Image.texture = data.CalculateMapTexture();
-        m_View_Image.SetNativeSize();
+        m_Test_Map.texture = data.CalculateMapTexture();
+        m_Test_Map.SetNativeSize();
     }
 
     void OnResizeButtonClick()
@@ -140,8 +142,8 @@ public class LevelEditorUI : SimpleSingletonMono<LevelEditorUI>,TReflection.UI.I
     {
         GameLevelManager.Instance.Generate(m_Test_Generate_Seed.text);
         m_Test_Generate_Text.text = GameLevelManager.Instance.m_Seed;
-        m_View_Image.texture = GameLevelManager.Instance.m_MapTexture;
-        m_View_Image.SetNativeSize();
+        m_Test_Map.texture = GameLevelManager.Instance.m_MapTexture;
+        m_Test_Map.SetNativeSize();
     } 
 
     private void Update()
@@ -154,5 +156,8 @@ public class LevelEditorUI : SimpleSingletonMono<LevelEditorUI>,TReflection.UI.I
             m_Test.SetActivate(!m_Test.gameObject.activeSelf);
         if (Input.GetKeyDown(KeyCode.F4))
             m_Data.SetActivate(!m_Data.gameObject.activeSelf);
+
+        if(m_Test.gameObject.activeSelf)
+            m_Test_Map_Player.anchoredPosition = GameLevelManager.Instance.GetMapPosition(LevelChunkEditor.Instance.tf_CameraPos.position);
     }
 }

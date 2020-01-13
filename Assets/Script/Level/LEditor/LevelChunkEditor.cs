@@ -6,7 +6,7 @@ using LevelSetting;
 public class LevelChunkEditor : LevelChunk
 {
     public static LevelChunkEditor Instance { get; private set; }
-    Transform tf_CameraPos;
+    public Transform tf_CameraPos { get; private set; }
     public enum_TileSubType m_EditMode { get; private set; } = enum_TileSubType.Ground;
     public bool m_ShowAllModel { get; private set; }
     public LevelTileEditorData[,] m_TilesData { get; private set; }

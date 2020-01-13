@@ -10,6 +10,13 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
     public string m_Seed { get; private set; }
     public Texture2D m_MapTexture { get; private set; }
     TileAxis m_MapOrigin, m_MapSize;
+    Vector3 m_MapOriginPos;
+    public Vector2 GetMapPosition(Vector3 worldPosition)
+    {
+        Vector3 offset =   worldPosition- m_MapOriginPos;
+        return new Vector2(offset.x,offset.z)/LevelConst.I_TileSize;
+    }
+
     protected override void Awake()
     {
         base.Awake();
@@ -77,7 +84,7 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         });
         m_MapOrigin = new TileAxis(originX, originY);
         m_MapSize = new TileAxis(oppositeX-originX,oppositeY-originY);
-
+        m_MapOriginPos = transform.TransformPoint( m_MapOrigin.ToWorldPosition());
 
         m_ChunkPool.ClearPool();
         int chunkIndex=0;

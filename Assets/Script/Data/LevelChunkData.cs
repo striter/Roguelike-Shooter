@@ -65,8 +65,16 @@ public class LevelChunkData : ScriptableObject {
 
     public Texture2D CalculateMapTexture()
     {
-        Texture2D m_Texture = new Texture2D(m_Width,m_Height, TextureFormat.RGB24,false);
-        m_Texture.filterMode = FilterMode.Point;
+        Texture2D texture = new Texture2D(Width,Height, TextureFormat.RGBA32,false);
+        texture.filterMode = FilterMode.Point;
+        texture.SetPixels(CalculateMapTextureColors());
+        texture.Apply();
+        return texture;
+    }
+
+    public Color[] CalculateMapTextureColors()
+    {
+        Color[] colors = new Color[m_Width*m_Height];
         for (int i = 0; i < m_Width; i++)
             for (int j = 0; j < m_Height; j++)
                 colors[TileTools.Get1DAxisIndex(new TileAxis(i, j),m_Width)]= m_TileData[TileTools.Get1DAxisIndex(new TileAxis( i, j), m_Width)].m_GroundType == enum_TileGroundType.Invalid ? Color.black : Color.white;
