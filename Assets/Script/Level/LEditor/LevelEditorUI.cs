@@ -140,6 +140,8 @@ public class LevelEditorUI : SimpleSingletonMono<LevelEditorUI>,TReflection.UI.I
     {
         GameLevelManager.Instance.Generate(m_Test_Generate_Seed.text);
         m_Test_Generate_Text.text = GameLevelManager.Instance.m_Seed;
+        m_View_Image.texture = GameLevelManager.Instance.m_MapTexture;
+        m_View_Image.SetNativeSize();
     } 
 
     private void Update()

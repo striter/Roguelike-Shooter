@@ -8,6 +8,8 @@ using TTiles;
 public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
     ObjectPoolSimpleComponent<int, LevelChunk> m_ChunkPool;
     public string m_Seed { get; private set; }
+    public Texture2D m_MapTexture { get; private set; }
+    TileAxis m_MapOrigin, m_MapSize;
     protected override void Awake()
     {
         base.Awake();
@@ -58,6 +60,25 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
             return subGenerateData != null;
         }, random);
 
+        //Set Map Data(Origin,Size,Texture)
+        int originX = 0, originY = 0, oppositeX = 0, oppositeY = 0;
+        gameChunkGenerate.Traversal((ChunkGenerateData chunkData) =>        //Check MapOrigin/MapSize
+        {
+            TileAxis chunkOrigin = chunkData.m_Axis;
+            TileAxis chunkOpposite = chunkOrigin + chunkData.m_Data.m_Size;
+            if (oppositeX < chunkOpposite.X)
+                oppositeX = chunkOpposite.X;
+            if (oppositeY < chunkOpposite.Y)
+                oppositeY = chunkOpposite.Y;
+            if (originX > chunkOrigin.X)
+                originX = chunkOrigin.X;
+            if (originY > chunkOrigin.Y)
+                originY = chunkOrigin.Y;
+        });
+        m_MapOrigin = new TileAxis(originX, originY);
+        m_MapSize = new TileAxis(oppositeX-originX,oppositeY-originY);
+
+
         m_ChunkPool.ClearPool();
         int chunkIndex=0;
         gameChunkGenerate.Traversal((ChunkGenerateData data) => {
@@ -65,6 +86,20 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
             chunk.Init(data.m_Data);
             chunk.transform.localPosition =data.m_Axis.ToWorldPosition();
         });
+
+        m_MapTexture = new Texture2D(m_MapSize.X, m_MapSize.Y, TextureFormat.RGBA32, false);
+        m_MapTexture.filterMode = FilterMode.Point;
+        gameChunkGenerate.Traversal((ChunkGenerateData chunkdata) =>
+        {
+            Color[] chunkColors = chunkdata.m_Data.CalculateMapTextureColors();
+            int length = chunkColors.Length;
+            for(int index=0;index<length;index++)
+            {
+                TileAxis tileAxis = ( chunkdata.m_Axis- m_MapOrigin) +TileTools.GetAxisByIndex(index,chunkdata.m_Data.Width);
+                m_MapTexture.SetPixel(tileAxis.X,tileAxis.Y,chunkColors[index]);
+            }
+        });
+        m_MapTexture.Apply();
     }
 
     List<ChunkGenerateData> TryGenerateChunkDatas(ChunkGenerateData generateStartChunk,List<ChunkGenerateData> intersectsCheckChunks, Dictionary<enum_ChunkType, List<LevelChunkData>> datas,List<enum_ChunkType> generateTypes,System.Random random)

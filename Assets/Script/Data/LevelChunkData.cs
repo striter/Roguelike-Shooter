@@ -62,13 +62,14 @@ public class LevelChunkData : ScriptableObject {
             }
         m_ConnectionIndex = m_Connections.ToArray();
     }
+
     public Texture2D CalculateMapTexture()
     {
         Texture2D m_Texture = new Texture2D(m_Width,m_Height, TextureFormat.RGB24,false);
         m_Texture.filterMode = FilterMode.Point;
         for (int i = 0; i < m_Width; i++)
             for (int j = 0; j < m_Height; j++)
-                m_Texture.SetPixel(i, j, m_TileData[TileTools.Get1DAxisIndex(new TileAxis( i, j), m_Width)].m_GroundType == enum_TileGroundType.Invalid ? Color.black : Color.white);
+                colors[TileTools.Get1DAxisIndex(new TileAxis(i, j),m_Width)]= m_TileData[TileTools.Get1DAxisIndex(new TileAxis( i, j), m_Width)].m_GroundType == enum_TileGroundType.Invalid ? Color.black : Color.white;
         for (int i = 0; i < m_Width; i++)
             for (int j = 0; j < m_Height; j++)
             {
@@ -102,10 +103,9 @@ public class LevelChunkData : ScriptableObject {
                         tileColor = Color.red;
                         break;
                 }
-                axies.Traversal((TileAxis objectAxis) => { m_Texture.SetPixel(objectAxis.X, objectAxis.Y, tileColor); });
+                axies.Traversal((TileAxis objectAxis) => { colors[TileTools.Get1DAxisIndex(objectAxis, m_Width)] = tileColor; });
             }
-        m_Texture.Apply();
-        return m_Texture;
+        return colors;
     }
 
 }

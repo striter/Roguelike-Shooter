@@ -9,7 +9,6 @@ public class LevelChunk : MonoBehaviour
     public enum_ChunkType m_ChunkType { get; private set; }
     public int m_Width { get; private set; }
     public int m_Height { get; private set; }
-    
     ObjectPoolSimpleComponent<int, LevelTileNew> m_TilePool;
     void Init()
     {
