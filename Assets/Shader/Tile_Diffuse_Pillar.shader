@@ -115,34 +115,5 @@
 				}
 				ENDCG
 			}
-
-			Pass
-			{
-				NAME "SHADOWCASTER"
-				Tags{"LightMode" = "ShadowCaster"}
-				CGPROGRAM
-				#pragma vertex vertshadow
-				#pragma fragment fragshadow
-				#pragma multi_compile_instancing
-				struct v2fs
-				{
-					V2F_SHADOW_CASTER;
-					UNITY_VERTEX_INPUT_INSTANCE_ID
-				};
-
-				v2fs vertshadow(appdata_base v)
-				{
-					UNITY_SETUP_INSTANCE_ID(v);
-					v2fs o;
-					TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
-					return o;
-				}
-
-				fixed4 fragshadow(v2fs i) :SV_TARGET
-				{
-					SHADOW_CASTER_FRAGMENT(i);
-				}
-				ENDCG
-			}
 	}
 }
