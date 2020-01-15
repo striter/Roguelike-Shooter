@@ -41,7 +41,7 @@ public class LevelTileNew : MonoBehaviour, ITileAxis
         {
             m_Pillar = LevelObjectManager.GetPillar(enum_TilePillarType.Default, tf_Models);
             m_Pillar.Init(m_Data, random);
-            m_Pillar.transform.localPosition = Vector3.down * LevelConst.I_TileSize;
+            m_Pillar.transform.localPosition = Vector3.zero;
         }
 
         if (m_Data.m_ObjectType != enum_TileObjectType.Invalid)

@@ -128,6 +128,42 @@ namespace LevelSetting
             return TileTools.GetDirectionedSize(size, direction);
         }
 
+        public static int GetTexSelection(this enum_TileObjectType type,System.Random random)
+        {
+            int texSelection = -1;
+            if (type == enum_TileObjectType.Main)
+                texSelection = random.Next(0, 4);
+            else if (type == enum_TileObjectType.Sub1)
+                texSelection = random.Next(0, 2);
+            return texSelection;
+        }
+        public static int GetTexSelection(this enum_TileGroundType type,System.Random random)
+        {
+            int texSelection = -1;
+            switch (type)
+            {
+                case enum_TileGroundType.Main:
+                    texSelection = random.Next(0, 4);
+                    break;
+                case enum_TileGroundType.Sub1:
+                    texSelection = random.Next(0, 2);
+                    break;
+                case enum_TileGroundType.Road1:
+                    texSelection = 0;
+                    break;
+                case enum_TileGroundType.Road2:
+                    texSelection = 1;
+                    break;
+                case enum_TileGroundType.Road3:
+                    texSelection = 2;
+                    break;
+                case enum_TileGroundType.Road4:
+                    texSelection = 3;
+                    break;
+            }
+            return texSelection;
+        }
+
         public static Dictionary<enum_TileObjectType,int> GetChunkRestriction(enum_ChunkType type)
         {
             Dictionary<enum_TileObjectType, int> restrictionDic = new Dictionary<enum_TileObjectType, int>();

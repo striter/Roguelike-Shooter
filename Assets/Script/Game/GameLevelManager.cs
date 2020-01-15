@@ -30,6 +30,7 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         m_Seed = seed == "" ? DateTime.Now.ToLongTimeString() : seed;
         m_Random = new System.Random(m_Seed.GetHashCode());
         m_ChunkPool.ClearPool();
+
         LevelObjectManager.Clear();
         LevelObjectManager.Register(TResources.GetChunkTiles(enum_LevelStyle.Frost));
 
