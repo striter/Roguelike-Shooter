@@ -148,9 +148,8 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,Obj
                 GameObject.Destroy(info.m_DeactiveQueue.Dequeue().gameObject);
             for (int i = 0; i < info.m_ActiveList.Count; i++)
                 GameObject.Destroy(info.m_ActiveList[i].gameObject);
-
-            d_ItemInfos.Remove(temp);
-        }, true);
+        });
+        d_ItemInfos.Clear();
     }
 }
 public class CSimplePool<T>

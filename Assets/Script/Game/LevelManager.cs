@@ -85,7 +85,7 @@ public class LevelManager : SimpleSingletonMono<LevelManager> {
     }
     #endregion
     #region Navigation
-    // Nav Mesh Obstacle(Uncurved) Runtime Unavailable Currently! Consider Use NavmeshComponents Instead(Download From Git)
+    //Consider Use NavmeshComponents Instead(Download From Git)
     protected NavMeshDataInstance m_NavMeshDataEntity, m_NavMeshDataInteract;
     static NavMeshHit sampleHit;
     public static Vector3 NavMeshPosition(Vector3 samplePosition, bool maskEntity = true)

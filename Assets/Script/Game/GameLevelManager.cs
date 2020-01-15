@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using TTiles;
+using UnityEngine.AI;
+
 public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
     ObjectPoolSimpleComponent<int, LevelChunk> m_ChunkPool;
     public string m_Seed { get; private set; }
@@ -89,7 +91,21 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         m_MapOrigin = new TileAxis(originX, originY);
         m_MapSize = new TileAxis(oppositeX-originX,oppositeY-originY);
         m_MapOriginPos = transform.TransformPoint( m_MapOrigin.ToWorldPosition());
-        
+        //Generate Map Texture
+        m_MapTexture = new Texture2D(m_MapSize.X, m_MapSize.Y, TextureFormat.RGBA32, false);
+        m_MapTexture.filterMode = FilterMode.Point;
+        gameChunkGenerate.Traversal((ChunkGenerateData chunkdata) =>
+        {
+            Color[] chunkColors = chunkdata.m_Data.CalculateMapTextureColors();
+            int length = chunkColors.Length;
+            for (int index = 0; index < length; index++)
+            {
+                TileAxis tileAxis = (chunkdata.m_Axis - m_MapOrigin) + TileTools.GetAxisByIndex(index, chunkdata.m_Data.Width);
+                m_MapTexture.SetPixel(tileAxis.X, tileAxis.Y, chunkColors[index]);
+            }
+        });
+        m_MapTexture.Apply();
+
         int chunkIndex=0;
         gameChunkGenerate.Traversal((ChunkGenerateData data) => {
             LevelChunk chunk = m_ChunkPool.AddItem(chunkIndex++);
@@ -97,19 +113,12 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
             chunk.transform.localPosition =data.m_Axis.ToWorldPosition();
         });
 
-        m_MapTexture = new Texture2D(m_MapSize.X, m_MapSize.Y, TextureFormat.RGBA32, false);
-        m_MapTexture.filterMode = FilterMode.Point;
-        gameChunkGenerate.Traversal((ChunkGenerateData chunkdata) =>
-        {
-            Color[] chunkColors = chunkdata.m_Data.CalculateMapTextureColors();
-            int length = chunkColors.Length;
-            for(int index=0;index<length;index++)
-            {
-                TileAxis tileAxis = ( chunkdata.m_Axis- m_MapOrigin) +TileTools.GetAxisByIndex(index,chunkdata.m_Data.Width);
-                m_MapTexture.SetPixel(tileAxis.X,tileAxis.Y,chunkColors[index]);
-            }
-        });
-        m_MapTexture.Apply();
+
+        //GenerateNavigationData
+        Bounds mapBounds = new Bounds();
+        mapBounds.center = m_MapOriginPos + m_MapSize.ToWorldPosition() / 2f+Vector3.up*LevelConst.I_TileSize;
+        mapBounds.size = new Vector3(m_MapSize.X,2f,m_MapSize.Y)*LevelConst.I_TileSize;
+        NavigationManager.BuildNavMeshData(m_ChunkPool.transform, mapBounds);
     }
 
     List<ChunkGenerateData> TryGenerateChunkDatas(ChunkGenerateData generateStartChunk,List<ChunkGenerateData> intersectsCheckChunks, Dictionary<enum_ChunkType, List<LevelChunkData>> datas,List<enum_ChunkType> generateTypes,System.Random random)
@@ -225,7 +234,6 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
     }
 }
 
-
 public static class LevelObjectManager
 {
     public static bool m_Registed = false;
@@ -279,4 +287,38 @@ public static class LevelObjectManager
     public static TilePillarBase GetPillar(enum_TilePillarType type, Transform trans) => ObjectPoolManager<enum_TilePillarType, TilePillarBase>.Spawn(type, trans);
     public static TileObjectBase GetObject(enum_TileObjectType type, Transform trans) => ObjectPoolManager<enum_TileObjectType, TileObjectBase>.Spawn(type, trans);
     public static TileGroundBase GetGround(enum_TileGroundType type, Transform trans) => ObjectPoolManager<enum_TileGroundType, TileGroundBase>.Spawn(type, trans);
+}
+
+public static class NavigationManager
+{
+    //Consider Use NavmeshComponents Instead(Download From Git)
+    static NavMeshDataInstance m_NavMeshDataEntity, m_NavMeshDataInteract;
+    static NavMeshHit sampleHit;
+    public static Vector3 NavMeshPosition(Vector3 samplePosition, bool maskEntity = true)
+    {
+        if (NavMesh.SamplePosition(samplePosition, out sampleHit, 20, 1 << (maskEntity ? 0 : 3)))
+            return sampleHit.position;
+        return samplePosition;
+    }
+
+    public static void BuildNavMeshData(Transform transform, Bounds bound)
+    {
+        RemoveNavmeshData();
+
+        List<NavMeshBuildSource> sources = new List<NavMeshBuildSource>();
+
+        NavMeshBuilder.CollectSources(transform, -1, NavMeshCollectGeometry.PhysicsColliders, 0, new List<NavMeshBuildMarkup>() { }, sources);
+        m_NavMeshDataEntity = NavMesh.AddNavMeshData(NavMeshBuilder.BuildNavMeshData(NavMesh.GetSettingsByIndex(0), sources, bound, transform.position, transform.rotation));
+
+       // sources.Clear();
+       // NavMeshBuilder.CollectSources(transform, -1, NavMeshCollectGeometry.PhysicsColliders, 3, new List<NavMeshBuildMarkup>() { }, sources);
+      //  m_NavMeshDataInteract = NavMesh.AddNavMeshData(NavMeshBuilder.BuildNavMeshData(NavMesh.GetSettingsByIndex(1), sources, bound, Vector3.zero, transform.rotation));
+    }
+    
+    static void RemoveNavmeshData()
+    {
+        NavMesh.RemoveNavMeshData(m_NavMeshDataEntity);
+     //   NavMesh.RemoveNavMeshData(m_NavMeshDataInteract);
+    }
+
 }
