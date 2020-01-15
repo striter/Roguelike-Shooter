@@ -184,10 +184,10 @@ namespace LevelSetting
                 case enum_ChunkType.Event:
                     restrictionDic.Add(enum_TileObjectType.ChunkPortal2x2, 1);
                     restrictionDic.Add(enum_TileObjectType.EventArea3x3, 1);
-                    restrictionDic.Add(enum_TileObjectType.Connection1x5, 3);
+                    restrictionDic.Add(enum_TileObjectType.Connection1x5, -1);
                     break;
                 case enum_ChunkType.Battle:
-                    restrictionDic.Add(enum_TileObjectType.Connection1x5, 3);
+                    restrictionDic.Add(enum_TileObjectType.Connection1x5, -1);
                     restrictionDic.Add( enum_TileObjectType.EnermySpawn1x1,-1);
                     break;
                 case enum_ChunkType.Final:
@@ -204,11 +204,32 @@ namespace LevelSetting
 
     }
 
+    public struct ChunkObjectData
+    {
+        public TileAxis m_Axis { get; private set; }
+        public TileAxis m_Size { get; private set; }
+        public Vector3 m_WorldPosition => m_Axis.ToWorldPosition() + m_Size.ToWorldPosition() / 2f;
+        public ChunkObjectData(TileAxis axis,ChunkTileData data)
+        {
+            m_Axis = axis;
+            m_Size = data.m_ObjectType.GetSizeAxis(data.m_Direction);
+        }
+    }
+
     public class ChunkGenerateData
     {
-        public LevelChunkData m_Data { get; private set; }
         public TileAxis m_Axis { get; private set; }
-        public Dictionary<int, enum_ChunkConnectionType> m_Connection { get; private set; } = new Dictionary<int, enum_ChunkConnectionType>();
+        public LevelChunkData m_Data { get; private set; }
+        public Dictionary<int, enum_ChunkConnectionType> m_Connection { get; private set; }
+        public ChunkGenerateData(TileAxis _offset, LevelChunkData _data)
+        {
+            m_Axis = _offset;
+            m_Data = _data;
+            m_Connection = new Dictionary<int, enum_ChunkConnectionType>();
+            for (int i = 0; i < _data.Connections.Length; i++)
+                m_Connection.Add(i, enum_ChunkConnectionType.Empty);
+        }
+
         public bool CheckEmptyConnections(System.Random random)
         {
             bool haveEmptyConnections = false;
@@ -218,13 +239,6 @@ namespace LevelSetting
                 return haveEmptyConnections;
             }, random);
             return haveEmptyConnections;
-        }
-        public ChunkGenerateData(TileAxis _offset, LevelChunkData _data)
-        {
-            m_Axis = _offset;
-            m_Data = _data;
-            for (int i = 0; i < _data.Connections.Length; i++)
-                m_Connection.Add(i, enum_ChunkConnectionType.Empty);
         }
 
         public void OnConnectionSet(int connectionIndex, enum_ChunkConnectionType type) => m_Connection[connectionIndex] = type;

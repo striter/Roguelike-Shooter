@@ -27,10 +27,11 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         ObjectPoolManager.Init();       //Test
     }
 
-    public void Generate(string seed)
+    public Dictionary<enum_TileObjectType, ChunkObjectData> Generate(string seed)
     {
         m_Seed = seed == "" ? DateTime.Now.ToLongTimeString() : seed;
         m_Random = new System.Random(m_Seed.GetHashCode());
+        Dictionary<enum_TileObjectType, ChunkObjectData> objectPositions = new Dictionary<enum_TileObjectType, ChunkObjectData>();
         m_ChunkPool.ClearPool();
 
         LevelObjectManager.Clear();
@@ -121,6 +122,8 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         mapBounds.center = m_MapOriginPos + m_MapSize.ToWorldPosition() / 2f+Vector3.up*LevelConst.I_TileSize;
         mapBounds.size = new Vector3(m_MapSize.X,2f,m_MapSize.Y)*LevelConst.I_TileSize;
         NavigationManager.BuildNavMeshData(m_ChunkPool.transform, mapBounds);
+
+        return objectPositions;
     }
 
     List<ChunkGenerateData> TryGenerateChunkDatas(ChunkGenerateData generateStartChunk,List<ChunkGenerateData> intersectsCheckChunks, Dictionary<enum_ChunkType, List<LevelChunkData>> datas,List<enum_ChunkType> generateTypes,System.Random random)

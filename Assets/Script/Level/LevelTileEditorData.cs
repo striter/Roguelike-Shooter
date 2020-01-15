@@ -54,7 +54,7 @@ public class LevelTileEditorData : LevelTileEditor {
                         showEditorModel = m_Ground == null;
                     break;
                 case enum_TileSubType.Pillar:
-                    showEditorModel = m_Ground;
+                    showEditorModel = m_Ground&&!m_Pillar;
                     break;
             }
         }
