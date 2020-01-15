@@ -26,7 +26,7 @@ public class LevelChunk : MonoBehaviour
         m_Height = _data.Height;
         m_TilePool.ClearPool();
 
-        ChunkTileData[] tileData= _data.Data;
+        ChunkTileData[] tileData= _data.GetData();
         for (int i = 0; i < m_Width; i++)
             for (int j = 0; j < m_Height; j++)
             {

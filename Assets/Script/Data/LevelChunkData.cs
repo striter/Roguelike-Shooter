@@ -17,14 +17,11 @@ public class LevelChunkData : ScriptableObject {
     public int Height => m_Height;
     public ChunkConnectionData[] Connections => m_ConnectionIndex;
     public TileAxis m_Size => new TileAxis(Width, Height);
-    public ChunkTileData[] Data
+    public ChunkTileData[] GetData()
     {
-        get
-        {
-            ChunkTileData[] data = new ChunkTileData[m_TileData.Length];
-            m_TileData.CopyTo(data,0);
-            return data;
-        }
+        ChunkTileData[] data = new ChunkTileData[m_TileData.Length];
+        m_TileData.CopyTo(data, 0);
+        return data;
     } 
 
     public static LevelChunkData NewData(int width,int height, enum_ChunkType type, LevelTileEditor[,] transferData=null)

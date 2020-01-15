@@ -72,25 +72,26 @@
 					UNITY_DEFINE_INSTANCED_PROP(float4, _Color)
 					UNITY_DEFINE_INSTANCED_PROP(int,_TexSelection)
 				UNITY_INSTANCING_BUFFER_END(Props)
-				float4 GetAlbedo(float2 uv,bool subMap,int selection)
-				{
-					if (subMap)
-						return tex2D(_SideTex, uv);
-
-					if (selection == 1)
-						return tex2D(_MainTex2, uv);
-					else if (selection == 2)
-						return tex2D(_MainTex3, uv);
-					else if (selection == 3)
-						return tex2D(_MainTex4, uv);
-					else
-						return tex2D(_MainTex, uv);
-				}
-
 				fixed4 frag(v2f i) : SV_Target
 				{ 
 					UNITY_SETUP_INSTANCE_ID(i);
-					float3 albedo = GetAlbedo(i.uv,i.subMap, UNITY_ACCESS_INSTANCED_PROP(Props, _TexSelection))*UNITY_ACCESS_INSTANCED_PROP(Props, _Color);
+					float3 albedo =UNITY_ACCESS_INSTANCED_PROP(Props, _Color);
+					float texSelection = UNITY_ACCESS_INSTANCED_PROP(Props, _TexSelection);
+					if (i.subMap)
+					{
+						albedo *= tex2D(_SideTex, i.uv);
+					}
+					else
+					{
+						if (texSelection == 1)
+							albedo *= tex2D(_MainTex2, i.uv);
+						else if (texSelection == 2)
+							albedo *= tex2D(_MainTex3, i.uv);
+						else if (texSelection == 3)
+							albedo *= tex2D(_MainTex4, i.uv);
+						else
+							albedo *= tex2D(_MainTex, i.uv);
+					}
 					UNITY_LIGHT_ATTENUATION(atten, i,i.worldPos)
 					fixed3 ambient = albedo * UNITY_LIGHTMODEL_AMBIENT.xyz;
 					atten *= saturate(dot(normalize( i.worldNormal), normalize(i.worldLightDir)));

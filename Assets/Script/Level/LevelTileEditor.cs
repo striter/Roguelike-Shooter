@@ -11,6 +11,23 @@ public class LevelTileEditor : LevelTileNew {
     protected Transform m_EditorModel { get; private set; }
     public override void Init(TileAxis axis, ChunkTileData data,System.Random random)
     {
+        if (m_Pillar)
+        {
+            m_Pillar.DoRecycle();
+            m_Pillar = null;
+        }
+        if (m_Object)
+        {
+            m_Object.DoRecycle();
+            m_Object = null;
+        }
+
+        if (m_Ground)
+        {
+            m_Ground.DoRecycle();
+            m_Ground = null;
+        }
+
         base.Init(axis, data,random);
         m_EditorModel = transform.Find("EditorModel");
         m_Collider = GetComponent<BoxCollider>();

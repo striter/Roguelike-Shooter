@@ -212,10 +212,8 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
 
 public static class LevelObjectManager
 {
-    public static bool m_Registed = false;
     public static void Register(TileItemBase[] chunkTileItems)
     {
-        m_Registed = true;
         Dictionary<enum_TileSubType, List<TileItemBase>> itemDic = new Dictionary<enum_TileSubType, List<TileItemBase>>();
         chunkTileItems.Traversal((TileItemBase item) => {
             if (!itemDic.ContainsKey(item.m_Type))
@@ -254,7 +252,6 @@ public static class LevelObjectManager
 
     public static void Clear()
     {
-        m_Registed = false;
         ObjectPoolManager<enum_TileGroundType, TileGroundBase>.DestroyAll();
         ObjectPoolManager<enum_TileObjectType, TileObjectBase>.DestroyAll();
         ObjectPoolManager<enum_TilePillarType, TilePillarBase>.DestroyAll();

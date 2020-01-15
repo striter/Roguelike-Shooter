@@ -38,8 +38,8 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,Obj
 {
     class ItemPoolInfo
     {
-        public Y m_spawnItem;
         public int i_poolSaveAmount;
+        public Y m_spawnItem;
         public Queue<Y> m_DeactiveQueue=new Queue<Y>();
         public List<Y> m_ActiveList=new List<Y>();
 
@@ -49,6 +49,19 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,Obj
             item.name = m_spawnItem.name + "_"+(m_DeactiveQueue.Count + m_ActiveList.Count).ToString();
             item.OnPoolItemInit(identity, OnRecycle);
             return item;
+        }
+
+        public void DestroyAll()
+        {
+            GameObject.Destroy(m_spawnItem.gameObject);
+
+            for (int i = 0; i < m_DeactiveQueue.Count; i++)
+                GameObject.Destroy(m_DeactiveQueue.Dequeue().gameObject);
+            for (int i = 0; i < m_ActiveList.Count; i++)
+                GameObject.Destroy(m_ActiveList[i].gameObject);
+            
+            m_DeactiveQueue.Clear();
+            m_ActiveList.Clear();
         }
     }
 
@@ -141,14 +154,7 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,Obj
     public static void OnSceneChange() => d_ItemInfos.Clear();
     public static void DestroyAll()
     {
-        d_ItemInfos.Traversal((T temp, ItemPoolInfo info) => {
-            GameObject.Destroy(info.m_spawnItem.gameObject);
-
-            for (int i = 0; i < info.m_DeactiveQueue.Count; i++)
-                GameObject.Destroy(info.m_DeactiveQueue.Dequeue().gameObject);
-            for (int i = 0; i < info.m_ActiveList.Count; i++)
-                GameObject.Destroy(info.m_ActiveList[i].gameObject);
-        });
+        d_ItemInfos.Traversal(( ItemPoolInfo info) => {info.DestroyAll(); });
         d_ItemInfos.Clear();
     }
 }
