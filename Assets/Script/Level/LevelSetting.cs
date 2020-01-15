@@ -73,6 +73,14 @@ namespace LevelSetting
         Invalid=-1,
         Default=1,
     }
+
+    public enum enum_ChunkConnectionType
+    {
+        Invalid=-1,
+        Empty=0,
+        Export=1,
+        Entrance=2,
+    }
     
     public static class LevelConst
     {
@@ -192,5 +200,33 @@ namespace LevelSetting
             }
             return restrictionDic;
         }
+
+
+    }
+
+    public class ChunkGenerateData
+    {
+        public LevelChunkData m_Data { get; private set; }
+        public TileAxis m_Axis { get; private set; }
+        public Dictionary<int, enum_ChunkConnectionType> m_Connection { get; private set; } = new Dictionary<int, enum_ChunkConnectionType>();
+        public bool CheckEmptyConnections(System.Random random)
+        {
+            bool haveEmptyConnections = false;
+            m_Connection.TraversalRandomBreak((int index, enum_ChunkConnectionType connectType) =>
+            {
+                haveEmptyConnections = connectType == enum_ChunkConnectionType.Empty;
+                return haveEmptyConnections;
+            }, random);
+            return haveEmptyConnections;
+        }
+        public ChunkGenerateData(TileAxis _offset, LevelChunkData _data)
+        {
+            m_Axis = _offset;
+            m_Data = _data;
+            for (int i = 0; i < _data.Connections.Length; i++)
+                m_Connection.Add(i, enum_ChunkConnectionType.Empty);
+        }
+
+        public void OnConnectionSet(int connectionIndex, enum_ChunkConnectionType type) => m_Connection[connectionIndex] = type;
     }
 }

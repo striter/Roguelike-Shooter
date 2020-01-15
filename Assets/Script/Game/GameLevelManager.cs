@@ -63,6 +63,7 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
             return subGenerateData != null;
         },m_Random);
 
+
         mainChunkGenerate.TraversalRandomBreak((ChunkGenerateData mainChunkData) =>
         {
             List<ChunkGenerateData> subGenerateData = null;
@@ -109,7 +110,8 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         int chunkIndex=0;
         gameChunkGenerate.Traversal((ChunkGenerateData data) => {
             LevelChunk chunk = m_ChunkPool.AddItem(chunkIndex++);
-            chunk.Init(data.m_Data,m_Random);
+            chunk.InitChunk(data.m_Data,m_Random);
+            chunk.InitGameData(data,m_Random);
             chunk.transform.localPosition =data.m_Axis.ToWorldPosition();
         });
 
@@ -131,7 +133,7 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
             ChunkGenerateData nextChunkGenerate = null;
             previousChunkGenerate.m_Data.Connections.TraversalRandomBreak((int previousConnectionIndex) =>
             {
-                if (previousChunkGenerate.m_Connection[previousConnectionIndex])
+                if (previousChunkGenerate.m_Connection[previousConnectionIndex]!= enum_ChunkConnectionType.Empty)
                     return false;
 
                 ChunkConnectionData m_previousConnectionData = previousChunkGenerate.m_Data.Connections[previousConnectionIndex];
@@ -156,8 +158,8 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
                             if (!_anyGeneratedChunkIntersects)
                             {
                                 nextChunkGenerate = new ChunkGenerateData(nextChunkAxis, nextChunkData);
-                                previousChunkGenerate.OnConnectionSet(previousConnectionIndex);
-                                nextChunkGenerate.OnConnectionSet(nextConnectionIndex);
+                                previousChunkGenerate.OnConnectionSet(previousConnectionIndex, enum_ChunkConnectionType.Export);
+                                nextChunkGenerate.OnConnectionSet(nextConnectionIndex, enum_ChunkConnectionType.Entrance);
                             }
                         }
                         return nextConnectionData != null;
@@ -205,32 +207,6 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
             });
         }
         return matched;
-    }
-
-    class ChunkGenerateData
-    {
-        public LevelChunkData m_Data { get; private set; }
-        public TileAxis m_Axis { get; private set; }
-        public Dictionary<int, bool> m_Connection { get; private set; } = new Dictionary<int, bool>();
-        public bool CheckEmptyConnections(System.Random random)
-        {
-            bool haveEmptyConnections = false;
-            m_Connection.TraversalRandomBreak((int index, bool connected) =>
-            {
-                haveEmptyConnections = !connected;
-                return haveEmptyConnections;
-            }, random);
-            return haveEmptyConnections;
-        }
-        public ChunkGenerateData(TileAxis _offset,LevelChunkData _data)
-        {
-            m_Axis = _offset;
-            m_Data = _data;
-            for (int i = 0; i < _data.Connections.Length; i++)
-                m_Connection.Add(i,false);
-        }
-
-        public void OnConnectionSet(int connectionIndex) => m_Connection[connectionIndex]=true;
     }
 }
 

@@ -31,7 +31,7 @@ public class LevelChunkEditor : LevelChunk
     public void Init(LevelChunkData _data)
     {
         m_TilesData = new LevelTileEditorData[_data.Width, _data.Height];
-        base.Init(_data,m_Random);
+        base.InitChunk(_data,m_Random);
 
         tf_CameraPos.transform.localPosition = new Vector3(m_Width / 2f * LevelConst.I_TileSize, 0, 0);
         TPSCameraController.Instance.SetCameraRotation(60, 0);
@@ -49,7 +49,7 @@ public class LevelChunkEditor : LevelChunk
 
     public void Resize(int sizeX,int sizeY)
     {
-        Init(LevelChunkData.NewData(sizeX, sizeY, m_ChunkType, m_TilesData),new System.Random());
+        InitChunk(LevelChunkData.NewData(sizeX, sizeY, m_ChunkType, m_TilesData),new System.Random());
     }
 
     private void Update()

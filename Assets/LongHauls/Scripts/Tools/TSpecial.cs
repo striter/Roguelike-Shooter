@@ -72,6 +72,14 @@ namespace TTiles
                 }
             return true;
         }
+        public static List<TileAxis> GetAxisRange(TileAxis axis, TileAxis size)
+        {
+            List<TileAxis> axisList = new List<TileAxis>();
+            for (int i = 0; i < size.X; i++)
+                for (int j = 0; j < size.Y; j++)
+                    axisList.Add(axis + new TileAxis(i, j));
+            return axisList;
+        }
         public static List<TileAxis> GetAxisRange(int height,int width, TileAxis axis, TileAxis size)
         {
             List<TileAxis> axisList = new List<TileAxis>();
