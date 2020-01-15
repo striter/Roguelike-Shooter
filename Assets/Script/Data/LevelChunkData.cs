@@ -83,7 +83,7 @@ public class LevelChunkData : ScriptableObject {
             {
                 TileAxis axis = new TileAxis(i, j);
                 ChunkTileData tileData = m_TileData[TileTools.Get1DAxisIndex(axis, m_Width)];
-                if (tileData.m_ObjectType <= enum_TileObjectType.RestrictStart || tileData.m_ObjectType >= enum_TileObjectType.RestrictEnd)
+                if (!tileData.m_ObjectType.IsEditorTileObject())
                     continue;
                 TileAxis size = tileData.m_ObjectType.GetSizeAxis(tileData.m_Direction);
                 List<TileAxis> axies = TileTools.GetAxisRange(m_Height, m_Width, axis, size);
@@ -126,22 +126,19 @@ public struct ChunkTileData
     public enum_TileObjectType m_ObjectType;
     public enum_TileDirection m_Direction;
 
-    public ChunkTileData ChangeGroundType(enum_TileGroundType groundType, enum_TileDirection direction)
+    public ChunkTileData ChangeGroundType(enum_TileGroundType groundType)
     {
         m_GroundType = groundType;
-        m_Direction = direction;
         return this;
     }
-    public ChunkTileData ChangePillarType(enum_TilePillarType pillarType, enum_TileDirection direction)
+    public ChunkTileData ChangePillarType(enum_TilePillarType pillarType)
     {
         m_PillarType = pillarType;
-        m_Direction = direction;
         return this;
     }
-    public ChunkTileData ChangeObjectType(enum_TileObjectType objectType, enum_TileDirection direction)
+    public ChunkTileData ChangeObjectType(enum_TileObjectType objectType)
     {
         m_ObjectType = objectType;
-        m_Direction = direction;
         return this;
     }
     public ChunkTileData ChangeDirection(enum_TileDirection direction)

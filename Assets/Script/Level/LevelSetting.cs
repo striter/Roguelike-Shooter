@@ -94,6 +94,7 @@ namespace LevelSetting
             }
             return false;
         }
+        public static bool IsEditorTileObject(this enum_TileObjectType type) => type >= enum_TileObjectType.RestrictStart && type <= enum_TileObjectType.RestrictEnd;
 
         public static TileAxis GetSizeAxis(this enum_TileObjectType type,enum_TileDirection direction)
         {

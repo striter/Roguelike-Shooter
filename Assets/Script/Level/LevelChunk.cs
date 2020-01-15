@@ -18,7 +18,7 @@ public class LevelChunk : MonoBehaviour
     }
 
 
-    public virtual void Init(LevelChunkData _data)
+    public virtual void Init(LevelChunkData _data,System.Random random)
     {
         Init();
         m_ChunkType = _data.Type;
@@ -31,12 +31,15 @@ public class LevelChunk : MonoBehaviour
             {
                 TileAxis axis = new TileAxis(i, j);
                 ChunkTileData data = tileData[TileTools.Get1DAxisIndex(axis, m_Width)];
-                if (WillGenerateTile(data))
-                    OnTileInit(m_TilePool.AddItem(i+j*m_Width), axis, data);
+                if (WillGenerateTile(ref data))
+                    OnTileInit(m_TilePool.AddItem(i+j*m_Width), axis, data,random);
             }
     }
-    protected virtual bool WillGenerateTile(ChunkTileData data)
+    protected virtual bool WillGenerateTile(ref ChunkTileData data)
     {
+        if (data.m_ObjectType.IsEditorTileObject())
+            data = data.ChangeObjectType(enum_TileObjectType.Invalid);
+
         if (data.m_GroundType != enum_TileGroundType.Invalid)
             return true;
         if (data.m_ObjectType != enum_TileObjectType.Invalid)
@@ -45,8 +48,9 @@ public class LevelChunk : MonoBehaviour
             return true;
         return false;
     }
-    protected virtual void OnTileInit(LevelTileNew tile,TileAxis axis,ChunkTileData data)
+    protected virtual void OnTileInit(LevelTileNew tile,TileAxis axis,ChunkTileData data,System.Random random)
     {
-        tile.Init(axis, data);
+
+        tile.Init(axis, data,random);
     }
 }

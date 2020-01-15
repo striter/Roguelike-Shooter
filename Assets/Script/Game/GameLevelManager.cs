@@ -8,6 +8,7 @@ using TTiles;
 public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
     ObjectPoolSimpleComponent<int, LevelChunk> m_ChunkPool;
     public string m_Seed { get; private set; }
+    public System.Random m_Random { get; private set; }
     public Texture2D m_MapTexture { get; private set; }
     TileAxis m_MapOrigin, m_MapSize;
     Vector3 m_MapOriginPos;
@@ -22,27 +23,29 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         base.Awake();
         m_ChunkPool = new ObjectPoolSimpleComponent<int, LevelChunk>(transform.Find("Level"),"ChunkItem");
         ObjectPoolManager.Init();       //Test
-        LevelObjectManager.Register(enum_LevelStyle.Forest);
     }
 
     public void Generate(string seed)
     {
         m_Seed = seed == "" ? DateTime.Now.ToLongTimeString() : seed;
-        System.Random random = new System.Random(m_Seed.GetHashCode());
+        m_Random = new System.Random(m_Seed.GetHashCode());
+        m_ChunkPool.ClearPool();
+        LevelObjectManager.Clear();
+        LevelObjectManager.Register(TResources.GetChunkTiles(enum_LevelStyle.Frost));
 
         Dictionary<enum_ChunkType,List<LevelChunkData>> datas=TResources.GetChunkDatas();
         List<ChunkGenerateData> gameChunkGenerate = new List<ChunkGenerateData>();
 
         //Generate First Chunk
-        gameChunkGenerate.Add(new ChunkGenerateData(TileAxis.Zero, datas[ enum_ChunkType.Start].RandomItem(random)));
+        gameChunkGenerate.Add(new ChunkGenerateData(TileAxis.Zero, datas[ enum_ChunkType.Start].RandomItem(m_Random)));
         List<enum_ChunkType> mainChunkType = new List<enum_ChunkType>() { enum_ChunkType.Battle, enum_ChunkType.Event, enum_ChunkType.Battle, enum_ChunkType.Event, enum_ChunkType.Battle, enum_ChunkType.Battle, enum_ChunkType.Event };
 
         //Gemerate Main Chunks
-        List<ChunkGenerateData> mainChunkGenerate = TryGenerateChunkDatas(gameChunkGenerate[0], gameChunkGenerate, datas, mainChunkType, random);
+        List<ChunkGenerateData> mainChunkGenerate = TryGenerateChunkDatas(gameChunkGenerate[0], gameChunkGenerate, datas, mainChunkType, m_Random);
         gameChunkGenerate.AddRange(mainChunkGenerate);
 
         //Generate Final Chunk
-        List<ChunkGenerateData> finalChunkGenerate = TryGenerateChunkDatas(gameChunkGenerate[gameChunkGenerate.Count - 1], gameChunkGenerate,datas,new List<enum_ChunkType>() { enum_ChunkType.Final },random);
+        List<ChunkGenerateData> finalChunkGenerate = TryGenerateChunkDatas(gameChunkGenerate[gameChunkGenerate.Count - 1], gameChunkGenerate,datas,new List<enum_ChunkType>() { enum_ChunkType.Final },m_Random);
         gameChunkGenerate.AddRange(finalChunkGenerate);
         
         //Generate Sub Chunks
@@ -50,22 +53,22 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         mainChunkGenerate.TraversalRandomBreak((ChunkGenerateData mainChunkData) =>
         {
             List<ChunkGenerateData> subGenerateData = null;
-            if (mainChunkData.CheckEmptyConnections(random))
-                subGenerateData = TryGenerateChunkDatas(mainChunkData, gameChunkGenerate, datas, subChunkType, random);
+            if (mainChunkData.CheckEmptyConnections(m_Random))
+                subGenerateData = TryGenerateChunkDatas(mainChunkData, gameChunkGenerate, datas, subChunkType, m_Random);
             if(subGenerateData!=null)
                 gameChunkGenerate.AddRange(subGenerateData);
             return subGenerateData != null;
-        },random);
+        },m_Random);
 
         mainChunkGenerate.TraversalRandomBreak((ChunkGenerateData mainChunkData) =>
         {
             List<ChunkGenerateData> subGenerateData = null;
-            if (mainChunkData.CheckEmptyConnections(random))
-                subGenerateData = TryGenerateChunkDatas(mainChunkData, gameChunkGenerate, datas, subChunkType, random);
+            if (mainChunkData.CheckEmptyConnections(m_Random))
+                subGenerateData = TryGenerateChunkDatas(mainChunkData, gameChunkGenerate, datas, subChunkType, m_Random);
             if (subGenerateData != null)
                 gameChunkGenerate.AddRange(subGenerateData);
             return subGenerateData != null;
-        }, random);
+        }, m_Random);
 
         //Set Map Data(Origin,Size,Texture)
         int originX = 0, originY = 0, oppositeX = 0, oppositeY = 0;
@@ -85,12 +88,11 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         m_MapOrigin = new TileAxis(originX, originY);
         m_MapSize = new TileAxis(oppositeX-originX,oppositeY-originY);
         m_MapOriginPos = transform.TransformPoint( m_MapOrigin.ToWorldPosition());
-
-        m_ChunkPool.ClearPool();
+        
         int chunkIndex=0;
         gameChunkGenerate.Traversal((ChunkGenerateData data) => {
             LevelChunk chunk = m_ChunkPool.AddItem(chunkIndex++);
-            chunk.Init(data.m_Data);
+            chunk.Init(data.m_Data,m_Random);
             chunk.transform.localPosition =data.m_Axis.ToWorldPosition();
         });
 
@@ -226,29 +228,36 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
 public static class LevelObjectManager
 {
     public static bool m_Registed = false;
-    public static void Register(enum_LevelStyle style)
+    public static void Register(TileItemBase[] chunkTileItems)
     {
         m_Registed = true;
-        TResources.GetLevelItemsNew(style).Traversal((enum_TileSubType type, List<LevelTileItemBase> items) => {
+        Dictionary<enum_TileSubType, List<TileItemBase>> itemDic = new Dictionary<enum_TileSubType, List<TileItemBase>>();
+        chunkTileItems.Traversal((TileItemBase item) => {
+            if (!itemDic.ContainsKey(item.m_Type))
+                itemDic.Add(item.m_Type, new List<TileItemBase>());
+            itemDic[item.m_Type].Add(GameObject.Instantiate(item));
+        });
+
+        itemDic.Traversal((enum_TileSubType type, List<TileItemBase> items) => {
             switch (type)
             {
                 default: Debug.LogError("Invalid Pharse Here!"); break;
                 case enum_TileSubType.Ground:
-                    items.Traversal((LevelTileItemBase item) =>
+                    items.Traversal((TileItemBase item) =>
                     {
                         TileGroundBase groundItem = item as TileGroundBase;
                         ObjectPoolManager<enum_TileGroundType, TileGroundBase>.Register(groundItem.m_GroundType, groundItem, 1);
                     });
                     break;
                 case enum_TileSubType.Object:
-                    items.Traversal((LevelTileItemBase item) =>
+                    items.Traversal((TileItemBase item) =>
                     {
                         TileObjectBase objectItem = item as TileObjectBase;
                         ObjectPoolManager<enum_TileObjectType, TileObjectBase>.Register(objectItem.m_ObjectType, objectItem, 1);
                     });
                     break;
                 case enum_TileSubType.Pillar:
-                    items.Traversal((LevelTileItemBase item) =>
+                    items.Traversal((TileItemBase item) =>
                     {
                         TilePillarBase pillarItem = item as TilePillarBase;
                         ObjectPoolManager<enum_TilePillarType, TilePillarBase>.Register(pillarItem.m_PillarType, pillarItem, 1);

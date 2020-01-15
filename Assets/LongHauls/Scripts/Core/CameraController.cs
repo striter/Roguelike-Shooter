@@ -16,9 +16,6 @@ public class CameraController : SimpleSingletonMono<CameraController>  {
     protected Vector3 v3_localOffset;
     protected int I_PitAngleMin = 0;
     protected int I_PitchAngleMax = 30;
-    Ray ray_temp;
-    Vector3 v3_temp;
-    RaycastHit rh_temp;
     public Camera m_Camera { get; private set; }
     public Transform tf_AttachTo { get; private set; }
     protected Transform tf_MainCamera;

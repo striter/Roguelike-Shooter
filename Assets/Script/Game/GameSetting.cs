@@ -454,7 +454,7 @@ namespace GameSetting
 
     public enum enum_HitCheck { Invalid = -1, Static = 1, Entity = 2, Dynamic = 3, Interact = 4, }
     
-    public enum enum_LevelStyle { Invalid = -1, Forest = 1, Desert = 2, Iceland = 3, Horde = 4, Undead = 5, }
+    public enum enum_LevelStyle { Invalid = -1, Forest = 1, Desert = 2, Frost = 3, Horde = 4, Undead = 5, }
 
     public enum enum_LevelType { Invalid = -1, Start = 0, Battle = 1, End = 2, Trade = 11, EquipmentAcquireBattle = 13,}
 

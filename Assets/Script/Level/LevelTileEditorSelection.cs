@@ -6,17 +6,12 @@ using UnityEngine;
 
 public class LevelTileEditorSelection : LevelTileEditor
 {
-    public override void Init(TileAxis axis, ChunkTileData data)
+    public override void Init(TileAxis axis, ChunkTileData data,System.Random random)
     {
-        base.Init(axis, data);
+        base.Init(axis, data,random);
         SetSelecting(false);
     }
-    protected override void OnEditorModelChange(TileAxis size)
-    {
-        base.OnEditorModelChange(size);
-        m_EditorModel.localPosition = TileTools.GetLocalPosBySizeAxis(size);
-        m_EditorModel.localScale = TileTools.GetUnitScaleBySizeAxis(size, LevelConst.I_TileSize);
-    }
+
     public void SetSelecting(bool selecting)
     {
         m_EditorModel.SetActivate(selecting);

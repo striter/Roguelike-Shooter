@@ -8,10 +8,10 @@ using UnityEditor;
 public class LevelEditorManager : SimpleSingletonMono<LevelEditorManager>
 {
     public bool B_DrawTileGizmos;
-
-    protected override void Awake()
+    
+    private void Start()
     {
-        base.Awake();
+        LevelObjectManager.Register(TResources.GetChunkEditorTiles());
     }
 
     #region FileEdit
@@ -39,7 +39,7 @@ public class LevelEditorManager : SimpleSingletonMono<LevelEditorManager>
             return null;
         }
 
-        string dataPath = TResources.ConstPath.S_LevelChunkData + "/"+dataName + ".asset";
+        string dataPath = TResources.ConstPath.S_ChunkData + "/"+dataName + ".asset";
         LevelChunkData data = TResources.GetLevelData(dataName);
         if (data == null)
         {

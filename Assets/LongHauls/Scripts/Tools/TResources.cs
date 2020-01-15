@@ -17,8 +17,9 @@ public class TResources
         public const string S_LevelPrefab = "Level/LevelPrefab";
         public const string S_LeveLItem = "Level/Item";
 
-        public const string S_LevelItemNew = "LeveLNew/Item";
-        public const string S_LevelChunkData = "LeveLNew/ChunkData";
+        public const string S_ChunkTile = "Chunk/Tile/";
+        public const string S_ChunkTileEditor = "Chunk/Tile/Editor";
+        public const string S_ChunkData = "Chunk/Data";
 
         public const string S_Texture_LevelBase = "Texture/Level/Texture_Base_";
 
@@ -99,10 +100,10 @@ public class TResources
     }
     #endregion
     #region NewLevel
-    public static LevelChunkData GetLevelData(string name) => Load<LevelChunkData>(ConstPath.S_LevelChunkData + "/" + name);
+    public static LevelChunkData GetLevelData(string name) => Load<LevelChunkData>(ConstPath.S_ChunkData + "/" + name);
     public static Dictionary<enum_ChunkType, List<LevelChunkData>> GetChunkDatas()
     {
-        LevelChunkData[] datas= LoadAll<LevelChunkData>(ConstPath.S_LevelChunkData);
+        LevelChunkData[] datas= LoadAll<LevelChunkData>(ConstPath.S_ChunkData);
         Dictionary<enum_ChunkType,List< LevelChunkData>> sortedDatas = new Dictionary<enum_ChunkType, List<LevelChunkData>>();
         datas.Traversal((LevelChunkData data) =>
         {
@@ -111,17 +112,10 @@ public class TResources
             sortedDatas[data.Type].Add(data);
         });
         return sortedDatas;
-    } 
-    public static Dictionary<enum_TileSubType, List<LevelTileItemBase>> GetLevelItemsNew(enum_LevelStyle _levelStyle)
-    {
-        Dictionary<enum_TileSubType,List< LevelTileItemBase>> itemDic = new Dictionary<enum_TileSubType, List<LevelTileItemBase>>();
-        LoadAll<LevelTileItemBase>(ConstPath.S_LevelItemNew).Traversal((LevelTileItemBase item) => {
-            if (!itemDic.ContainsKey(item.m_Type))
-                itemDic.Add(item.m_Type,new List<LevelTileItemBase>());
-            itemDic[item.m_Type].Add(GameObject.Instantiate(item));
-        });
-        return itemDic;
     }
+    public static TileItemBase[] GetChunkTiles(enum_LevelStyle _levelStyle) => LoadAll<TileItemBase>(ConstPath.S_ChunkTile+_levelStyle);
+    public static TileItemBase[] GetChunkEditorTiles() => LoadAll<TileItemBase>(ConstPath.S_ChunkTileEditor);
+
     #endregion
 
     public static SFXWeaponBase GetDamageSource(int index) => Instantiate<SFXWeaponBase>(ConstPath.S_SFXWeapon+index.ToString());
