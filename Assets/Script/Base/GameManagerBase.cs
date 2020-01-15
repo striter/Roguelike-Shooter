@@ -84,9 +84,9 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
             case enum_LevelStyle.Undead:
                 CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_FogDepthNoise>().SetEffect<PE_FogDepthNoise>(TCommon.ColorAlpha(Color.white, .3f), .5f, -1f, 5f).SetEffect(TResources.GetNoiseTex(), .4f, 2f);
                 break;
-            case enum_LevelStyle.Frost:
-                CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_FogDepth>().SetEffect<PE_FogDepth>(Color.white, .6f, -1, 5);
-                break;
+            //case enum_LevelStyle.Frost:
+            //    CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_FogDepth>().SetEffect<PE_FogDepth>(Color.white, .6f, -12, 20);
+            //    break;
         }
     }
 
@@ -212,10 +212,8 @@ public static class GameDataManager
     {
         if (m_Inited) return;
         m_Inited = true;
-        Properties<SLevelGenerate>.Init();
         Properties<SWeapon>.Init();
         Properties<SBuff>.Init();
-        SheetProperties<SGenerateEntity>.Init();
 
         TGameData<CGameSave>.Init();
         TGameData<CFarmSave>.Init();
@@ -296,32 +294,6 @@ public static class GameDataManager
 
     #endregion
     #region ExcelData
-    public static SLevelGenerate GetLevelGenerateData(enum_LevelStyle style, enum_LevelGenerateType prefabType, bool isInner)
-    {
-        SLevelGenerate generate = Properties<SLevelGenerate>.PropertiesList.Find(p => p.m_LevelStyle == style && p.m_LevelPrefabType == prefabType && p.m_IsInner == isInner);
-        if (generate.m_LevelStyle == 0 || generate.m_LevelPrefabType == 0 || generate.m_ItemGenerate == null)
-            Debug.LogError("Error Properties Found Of Index:" + ((int)style * 100 + (int)prefabType * 10 + (isInner ? 0 : 1)).ToString());
-
-        return generate;
-    }
-
-    public static List<SGenerateEntity> GetEntityGenerateProperties(enum_StageLevel stage,enum_BattleDifficulty battleDifficulty)
-    {
-        List<SGenerateEntity> entityList = new List<SGenerateEntity>();
-        int waveCount = 1;
-        for (int i = 0; i < 10; i++)
-        {
-            List<SGenerateEntity> randomItems = SheetProperties<SGenerateEntity>.GetPropertiesList((int)stage-1).FindAll(p=>p.m_Difficulty == battleDifficulty && p.m_waveCount == waveCount);
-            if (randomItems == null || randomItems.Count == 0)
-                break;
-            entityList.Add(randomItems.RandomItem());
-            waveCount++;
-        }
-        if (entityList.Count == 0)
-            Debug.LogError("Null Entity Generate Found By:"+(int)stage+"_" + (int)battleDifficulty);
-        return entityList;
-    }
-
     public static SWeapon GetWeaponProperties(enum_PlayerWeapon type)
     {
         SWeapon weapon = Properties<SWeapon>.PropertiesList.Find(p => p.m_Weapon == type);

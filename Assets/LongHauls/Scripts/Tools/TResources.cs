@@ -65,40 +65,6 @@ public class TResources
     #endregion
     #region GamePrefab
     public static StyleColorData[] GetAllStyleCustomization(enum_LevelStyle levelStype) => LoadAll<StyleColorData>(ConstPath.S_StyleCustomization + "/" + levelStype);
-    #region ElderLEvel
-    public static Dictionary<enum_LevelItemType,List<LevelItemBase>>  GetAllLevelItems(enum_LevelStyle _levelStyle)
-    {
-        LevelItemBase[] styledLevelItemPrefabs = LoadAll<LevelItemBase>(ConstPath.S_LeveLItem + "/" + _levelStyle);
-        foreach (LevelItemBase levelItem in styledLevelItemPrefabs)
-        {
-            if (levelItem.m_ItemType == enum_LevelItemType.Invalid)
-                Debug.LogError("Please Edit Level Item(Something invalid): Resources/" + ConstPath.S_LeveLItem + _levelStyle + "/" + levelItem.name);
-        }
-
-        Dictionary<enum_LevelItemType, List<LevelItemBase>> itemPrefabDic = new Dictionary<enum_LevelItemType, List<LevelItemBase>>();
-        foreach (LevelItemBase levelItem in styledLevelItemPrefabs)
-        {
-            if (!itemPrefabDic.ContainsKey(levelItem.m_ItemType))
-                itemPrefabDic.Add(levelItem.m_ItemType, new List<LevelItemBase>());
-            itemPrefabDic[levelItem.m_ItemType].Add(levelItem);
-        }
-
-        if (!itemPrefabDic.ContainsKey(enum_LevelItemType.BorderLinear))
-            Debug.LogError("Level Style Item Not Contains LinaerBorder Type!");
-        else if(!itemPrefabDic.ContainsKey( enum_LevelItemType.BorderOblique))
-            Debug.LogError("Level Style Item Not Contains ObliqueBorder Type!");
-
-        return itemPrefabDic;
-    }
-
-    public static LevelBase GetLevelBase(enum_LevelStyle levelStyle)
-    {
-        LevelBase level = Instantiate<LevelBase>(ConstPath.S_LevelPrefab);
-        Renderer matRenderer = level.GetComponentInChildren<Renderer>();
-        matRenderer.material.SetTexture("_MainTex", Load<Texture>(ConstPath.S_Texture_LevelBase + levelStyle));
-        return level;
-    }
-    #endregion
     #region NewLevel
     public static LevelChunkData GetLevelData(string name) => Load<LevelChunkData>(ConstPath.S_ChunkData + "/" + name);
     public static Dictionary<enum_ChunkType, List<LevelChunkData>> GetChunkDatas()

@@ -200,19 +200,16 @@ namespace LevelSetting
             }
             return restrictionDic;
         }
-
-
     }
 
-    public struct ChunkObjectData
+    public class ChunkGameData
     {
-        public TileAxis m_Axis { get; private set; }
-        public TileAxis m_Size { get; private set; }
-        public Vector3 m_WorldPosition => m_Axis.ToWorldPosition() + m_Size.ToWorldPosition() / 2f;
-        public ChunkObjectData(TileAxis axis,ChunkTileData data)
+        public enum_ChunkType m_ChunkType { get; private set; }
+        public Dictionary<enum_TileObjectType, List<Vector3>> m_ChunkObjects { get; private set; }
+        public ChunkGameData(enum_ChunkType _chunkType, Dictionary<enum_TileObjectType, List<Vector3>> _chunkObjects)
         {
-            m_Axis = axis;
-            m_Size = data.m_ObjectType.GetSizeAxis(data.m_Direction);
+            m_ChunkType = m_ChunkType;
+            m_ChunkObjects = _chunkObjects;
         }
     }
 

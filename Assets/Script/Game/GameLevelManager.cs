@@ -9,9 +9,9 @@ using UnityEngine.AI;
 
 public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
     ObjectPoolSimpleComponent<int, LevelChunk> m_ChunkPool;
-    public string m_Seed { get; private set; }
-    public System.Random m_Random { get; private set; }
+    public Light m_DirectionalLight { get; private set; }
     public Texture2D m_MapTexture { get; private set; }
+    public List<ChunkGameData> m_GameChunks { get; private set; } = new List<ChunkGameData>();
     TileAxis m_MapOrigin, m_MapSize;
     Vector3 m_MapOriginPos;
     public Vector2 GetMapPosition(Vector3 worldPosition)
@@ -24,32 +24,33 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
     {
         base.Awake();
         m_ChunkPool = new ObjectPoolSimpleComponent<int, LevelChunk>(transform.Find("Level"),"ChunkItem");
-        ObjectPoolManager.Init();       //Test
+        m_DirectionalLight = transform.Find("Directional Light").GetComponent<Light>();
     }
 
-    public Dictionary<enum_TileObjectType, ChunkObjectData> Generate(string seed)
+    public IEnumerator Generate(enum_LevelStyle style,System.Random random)
     {
-        m_Seed = seed == "" ? DateTime.Now.ToLongTimeString() : seed;
-        m_Random = new System.Random(m_Seed.GetHashCode());
-        Dictionary<enum_TileObjectType, ChunkObjectData> objectPositions = new Dictionary<enum_TileObjectType, ChunkObjectData>();
-        m_ChunkPool.ClearPool();
 
         LevelObjectManager.Clear();
-        LevelObjectManager.Register(TResources.GetChunkTiles(enum_LevelStyle.Frost));
+        LevelObjectManager.Register(TResources.GetChunkTiles(style));
+
+        
+        StyleColorData[] customizations = TResources.GetAllStyleCustomization(style);
+        StyleColorData randomData = customizations.Length == 0 ? StyleColorData.Default() : customizations.RandomItem(random);
+        randomData.DataInit(m_DirectionalLight);
 
         Dictionary<enum_ChunkType,List<LevelChunkData>> datas=TResources.GetChunkDatas();
         List<ChunkGenerateData> gameChunkGenerate = new List<ChunkGenerateData>();
 
         //Generate First Chunk
-        gameChunkGenerate.Add(new ChunkGenerateData(TileAxis.Zero, datas[ enum_ChunkType.Start].RandomItem(m_Random)));
+        gameChunkGenerate.Add(new ChunkGenerateData(TileAxis.Zero, datas[ enum_ChunkType.Start].RandomItem(random)));
         List<enum_ChunkType> mainChunkType = new List<enum_ChunkType>() { enum_ChunkType.Battle, enum_ChunkType.Event, enum_ChunkType.Battle, enum_ChunkType.Event, enum_ChunkType.Battle, enum_ChunkType.Battle, enum_ChunkType.Event };
 
         //Gemerate Main Chunks
-        List<ChunkGenerateData> mainChunkGenerate = TryGenerateChunkDatas(gameChunkGenerate[0], gameChunkGenerate, datas, mainChunkType, m_Random);
+        List<ChunkGenerateData> mainChunkGenerate = TryGenerateChunkDatas(gameChunkGenerate[0], gameChunkGenerate, datas, mainChunkType, random);
         gameChunkGenerate.AddRange(mainChunkGenerate);
 
         //Generate Final Chunk
-        List<ChunkGenerateData> finalChunkGenerate = TryGenerateChunkDatas(gameChunkGenerate[gameChunkGenerate.Count - 1], gameChunkGenerate,datas,new List<enum_ChunkType>() { enum_ChunkType.Final },m_Random);
+        List<ChunkGenerateData> finalChunkGenerate = TryGenerateChunkDatas(gameChunkGenerate[gameChunkGenerate.Count - 1], gameChunkGenerate,datas,new List<enum_ChunkType>() { enum_ChunkType.Final },random);
         gameChunkGenerate.AddRange(finalChunkGenerate);
         
         //Generate Sub Chunks
@@ -57,23 +58,23 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         mainChunkGenerate.TraversalRandomBreak((ChunkGenerateData mainChunkData) =>
         {
             List<ChunkGenerateData> subGenerateData = null;
-            if (mainChunkData.CheckEmptyConnections(m_Random))
-                subGenerateData = TryGenerateChunkDatas(mainChunkData, gameChunkGenerate, datas, subChunkType, m_Random);
+            if (mainChunkData.CheckEmptyConnections(random))
+                subGenerateData = TryGenerateChunkDatas(mainChunkData, gameChunkGenerate, datas, subChunkType, random);
             if(subGenerateData!=null)
                 gameChunkGenerate.AddRange(subGenerateData);
             return subGenerateData != null;
-        },m_Random);
+        },random);
 
 
         mainChunkGenerate.TraversalRandomBreak((ChunkGenerateData mainChunkData) =>
         {
             List<ChunkGenerateData> subGenerateData = null;
-            if (mainChunkData.CheckEmptyConnections(m_Random))
-                subGenerateData = TryGenerateChunkDatas(mainChunkData, gameChunkGenerate, datas, subChunkType, m_Random);
+            if (mainChunkData.CheckEmptyConnections(random))
+                subGenerateData = TryGenerateChunkDatas(mainChunkData, gameChunkGenerate, datas, subChunkType, random);
             if (subGenerateData != null)
                 gameChunkGenerate.AddRange(subGenerateData);
             return subGenerateData != null;
-        }, m_Random);
+        }, random);
 
         //Set Map Data(Origin,Size,Texture)
         int originX = 0, originY = 0, oppositeX = 0, oppositeY = 0;
@@ -109,21 +110,20 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         m_MapTexture.Apply();
 
         int chunkIndex=0;
+        m_GameChunks.Clear();
+        m_ChunkPool.ClearPool();
         gameChunkGenerate.Traversal((ChunkGenerateData data) => {
             LevelChunk chunk = m_ChunkPool.AddItem(chunkIndex++);
-            chunk.InitChunk(data.m_Data,m_Random);
-            chunk.InitGameData(data,m_Random);
+            m_GameChunks.Add(chunk.InitGameChunk(data,random));
             chunk.transform.localPosition =data.m_Axis.ToWorldPosition();
         });
-
 
         //GenerateNavigationData
         Bounds mapBounds = new Bounds();
         mapBounds.center = m_MapOriginPos + m_MapSize.ToWorldPosition() / 2f+Vector3.up*LevelConst.I_TileSize;
         mapBounds.size = new Vector3(m_MapSize.X,2f,m_MapSize.Y)*LevelConst.I_TileSize;
         NavigationManager.BuildNavMeshData(m_ChunkPool.transform, mapBounds);
-
-        return objectPositions;
+        yield return null;
     }
 
     List<ChunkGenerateData> TryGenerateChunkDatas(ChunkGenerateData generateStartChunk,List<ChunkGenerateData> intersectsCheckChunks, Dictionary<enum_ChunkType, List<LevelChunkData>> datas,List<enum_ChunkType> generateTypes,System.Random random)

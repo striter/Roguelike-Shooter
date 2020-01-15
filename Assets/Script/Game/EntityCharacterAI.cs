@@ -354,7 +354,7 @@ public class EntityCharacterAI : EntityCharacterBase {
 
     void StopMoving() { B_AgentEnabled = false; }
     void SetDestination(Vector3 destination) { B_AgentEnabled = true; m_Agent.SetDestination(destination); }
-    Vector3 GetSamplePosition() => LevelManager.NavMeshPosition(transform.position + (b_targetOutChaseRange ? 5 : -5) * (m_forwardDirection.normalized) + TCommon.RandomXZSphere(3f));
+    Vector3 GetSamplePosition() => NavigationManager.NavMeshPosition(transform.position + (b_targetOutChaseRange ? 5 : -5) * (m_forwardDirection.normalized) + TCommon.RandomXZSphere(3f));
     bool FrontBlocked() => F_AttackFrontCheck > 0f && Physics.SphereCast(new Ray(tf_Head.position, tf_Head.forward), .5f, F_AttackFrontCheck, GameLayer.Mask.I_Static);
 
 

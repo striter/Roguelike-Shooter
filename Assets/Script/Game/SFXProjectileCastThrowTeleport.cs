@@ -7,6 +7,6 @@ public class SFXProjectileCastThrowTeleport : SFXProjectileCastThrowable {
     protected override void OnCastTrigger(Vector3 point)
     {
         SpawnImpact(point, Vector3.up);
-        GameManager.Instance.GetEntity(I_SourceID).transform.position=LevelManager.NavMeshPosition(point, true);
+        GameManager.Instance.GetEntity(I_SourceID).transform.position=NavigationManager.NavMeshPosition(point, true);
     }
 }

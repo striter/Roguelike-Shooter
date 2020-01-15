@@ -20,19 +20,19 @@ public class GameAudioManager : AudioManager
             AudioClip clip = (music < enum_GameMusic.StyledStart || music > enum_GameMusic.StyledEnd) ? TResources.GetGameBGM(music) : null;
             if (clip) m_GameMusic.Add(music, clip);
         });
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageBeginLoad, OnStageBeginLoad);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageStart, OnStageStart);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish); ;
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnGameLoad, OnStageBeginLoad);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnGameStart, OnStageStart);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnFinalBattleStart, OnFinalBattleStart);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnFinalBattleFinish, Stop); ;
         TBroadCaster<enum_BC_GameStatus>.Add<bool>(enum_BC_GameStatus.OnGameFinish, OnGameFinish);
     }
     public override void Recycle()
     {
         base.Recycle();
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnStageBeginLoad, OnStageBeginLoad);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnStageStart, OnStageStart);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish); ;
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnGameLoad, OnStageBeginLoad);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnGameStart, OnStageStart);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnFinalBattleStart, OnFinalBattleStart);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnFinalBattleFinish, Stop); ;
         TBroadCaster<enum_BC_GameStatus>.Remove<bool>(enum_BC_GameStatus.OnGameFinish, OnGameFinish);
     }
 
@@ -55,18 +55,11 @@ public class GameAudioManager : AudioManager
     {
         PlayBGM(enum_GameMusic.Relax, true);
     }
-    void OnBattleStart()
+    void OnFinalBattleStart()
     {
-        if(GameManager.Instance.m_GameLevel.m_LevelType == enum_LevelType.End)
         PlayBGM( enum_GameMusic.Fight, true);
     }
-    void OnBattleFinish()
-    {
-        if (GameManager.Instance.m_GameLevel.B_IsFinalLevel)
-            Stop();
-        else
-            PlayBGM(enum_GameMusic.Relax,true);
-    }
+
     void OnGameFinish(bool win) => SetBGPitch(.8f);
 
     void PlayBGM(enum_GameMusic music, bool loop)

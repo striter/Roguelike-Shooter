@@ -31,7 +31,7 @@ public class LevelChunkEditor : LevelChunk
     public void Init(LevelChunkData _data)
     {
         m_TilesData = new LevelTileEditorData[_data.Width, _data.Height];
-        base.InitChunk(_data,m_Random);
+        base.InitData(_data,m_Random);
 
         tf_CameraPos.transform.localPosition = new Vector3(m_Width / 2f * LevelConst.I_TileSize, 0, 0);
         TPSCameraController.Instance.SetCameraRotation(60, 0);
@@ -40,7 +40,8 @@ public class LevelChunkEditor : LevelChunk
         m_EditMode = enum_TileSubType.Ground;
         CheckEditMode();
     }
-    protected override bool WillGenerateTile(ref ChunkTileData data) => true;
+
+    protected override bool WillGenerateTile(ChunkTileData data) => true;
     protected override void OnTileInit(LevelTileNew tile, TileAxis axis, ChunkTileData data,System.Random random)
     {
         base.OnTileInit(tile, axis, data,random);
@@ -49,8 +50,9 @@ public class LevelChunkEditor : LevelChunk
 
     public void Resize(int sizeX,int sizeY)
     {
-        InitChunk(LevelChunkData.NewData(sizeX, sizeY, m_ChunkType, m_TilesData),new System.Random());
+        InitData(LevelChunkData.NewData(sizeX, sizeY, m_ChunkType, m_TilesData),new System.Random());
     }
+    
 
     private void Update()
     {

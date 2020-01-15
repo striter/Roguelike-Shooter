@@ -12,7 +12,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     #endregion
     public override enum_EntityController m_Controller => enum_EntityController.Player;
     public virtual enum_PlayerCharacter m_Character => enum_PlayerCharacter.Invalid;
-    protected CharacterController m_CharacterController;
     protected PlayerAnimator m_Animator;
     protected virtual PlayerAnimator GetAnimatorController(Animator animator, Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) => new PlayerAnimator(animator, _OnAnimEvent);
     public Transform tf_WeaponAim { get; private set; }
@@ -56,9 +55,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
         base.OnPoolItemInit(_identity, _OnRecycle);
-        gameObject.layer = GameLayer.I_MovementDetect;
-        m_CharacterController = GetComponent<CharacterController>();
-        m_CharacterController.detectCollisions = false;
         tf_WeaponAim = transform.Find("WeaponAim");
         tf_CameraAttach = transform.Find("CameraAttach");
         tf_WeaponHoldRight = transform.FindInAllChild("WeaponHold_R");
@@ -280,8 +276,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
         m_BaseMovementSpeed = CalculateMovementSpeedBase() * CalculateMovementSpeedMultiple();
 
+        bool moving = m_MoveAxisInput.magnitude > 0;
         float finalMovementSpeed = m_CharacterInfo.F_MovementSpeed;
-        m_CharacterController.Move((CalculateMoveDirection(m_MoveAxisInput) * finalMovementSpeed + Vector3.down * GameConst.F_Gravity) * deltaTime);
+        transform.position = NavigationManager.NavMeshPosition(transform.position+ CalculateMoveDirection(m_MoveAxisInput) * finalMovementSpeed * deltaTime);
         m_Animator.SetRun(m_MoveAxisInput, finalMovementSpeed / F_MovementSpeed);
     }
 

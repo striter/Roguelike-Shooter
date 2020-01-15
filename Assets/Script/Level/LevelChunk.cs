@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using LevelSetting;
 using TTiles;
+using System;
 
 public class LevelChunk : MonoBehaviour
 {
@@ -10,21 +11,15 @@ public class LevelChunk : MonoBehaviour
     public int m_Width { get; private set; }
     public int m_Height { get; private set; }
     ObjectPoolSimpleComponent<int, LevelTileNew> m_TilePool;
-    void Init()
+    protected void InitData(LevelChunkData _data,System.Random _random,Func<TileAxis,ChunkTileData,ChunkTileData> DoTileDataCheck=null)
     {
-        if (m_TilePool != null)
-            return;
-        m_TilePool = new ObjectPoolSimpleComponent<int, LevelTileNew>(transform.Find("TilePool"), "TileItem");
-    }
+        if (m_TilePool == null)
+            m_TilePool = new ObjectPoolSimpleComponent<int, LevelTileNew>(transform.Find("TilePool"), "TileItem");
+        m_TilePool.ClearPool();
 
-
-    public void InitChunk(LevelChunkData _data,System.Random _random)
-    {
-        Init();
         m_ChunkType = _data.Type;
         m_Width = _data.Width;
         m_Height = _data.Height;
-        m_TilePool.ClearPool();
 
         ChunkTileData[] tileData= _data.GetData();
         for (int i = 0; i < m_Width; i++)
@@ -33,13 +28,29 @@ public class LevelChunk : MonoBehaviour
                 TileAxis axis = new TileAxis(i, j);
                 int index = TileTools.Get1DAxisIndex(axis, m_Width);
                 ChunkTileData data = tileData[index];
-                if (WillGenerateTile(ref data))
-                    OnTileInit(m_TilePool.AddItem(index), axis, data,_random);
+                if (DoTileDataCheck!=null)
+                    data = DoTileDataCheck(axis, data);
+                if (!WillGenerateTile(data))
+                    continue;
+                OnTileInit(m_TilePool.AddItem(index), axis, data,_random);
             }
     }
 
-    public void InitGameData(ChunkGenerateData data,System.Random random)
+    public ChunkGameData InitGameChunk(ChunkGenerateData data,System.Random random)
     {
+        Dictionary<enum_TileObjectType, List<Vector3>> m_ChunkObjectPos=new Dictionary<enum_TileObjectType, List<Vector3>>();
+        InitData(data.m_Data,random,(TileAxis axis, ChunkTileData tileData)=> {
+            if (tileData.m_ObjectType.IsEditorTileObject())
+            {
+                if (!m_ChunkObjectPos.ContainsKey(tileData.m_ObjectType))
+                    m_ChunkObjectPos.Add(tileData.m_ObjectType, new List<Vector3>());
+                m_ChunkObjectPos[tileData.m_ObjectType].Add(axis.ToWorldPosition() + tileData.m_ObjectType.GetSizeAxis(tileData.m_Direction).ToWorldPosition() / 2f);
+                return tileData.ChangeObjectType(enum_TileObjectType.Invalid);
+            }
+            return tileData;
+        });
+        
+        //Generate Connections
         List<ChunkConnectionData> entranceGenerate = new List<ChunkConnectionData>();
         data.m_Connection.Traversal((int index, enum_ChunkConnectionType type) => {
             if (type == enum_ChunkConnectionType.Entrance)
@@ -53,18 +64,17 @@ public class LevelChunk : MonoBehaviour
                 OnTileInit(m_TilePool.AddItem(TileTools.Get1DAxisIndex(axis, data.m_Data.Width)),axis,connectionTile,random);
             });
         });
+
+        return new ChunkGameData(data.m_Data.Type,m_ChunkObjectPos);
     }
 
-    protected virtual bool WillGenerateTile(ref ChunkTileData data)
+    protected virtual bool WillGenerateTile( ChunkTileData tileData)
     {
-        if (data.m_ObjectType.IsEditorTileObject())
-            data = data.ChangeObjectType(enum_TileObjectType.Invalid);
-
-        if (data.m_GroundType != enum_TileGroundType.Invalid)
+        if (tileData.m_GroundType != enum_TileGroundType.Invalid)
             return true;
-        if (data.m_ObjectType != enum_TileObjectType.Invalid)
+        if (tileData.m_ObjectType != enum_TileObjectType.Invalid)
             return true;
-        if (data.m_PillarType != enum_TilePillarType.Invalid)
+        if (tileData.m_PillarType != enum_TilePillarType.Invalid)
             return true;
         return false;
     }

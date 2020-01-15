@@ -14,7 +14,6 @@ namespace GameSetting
     #region For Designers Use
     public static class GameConst
     {
-        public const float F_Gravity = 9.8f;
         public const float F_BlastShakeMultiply = .5f;
         public const float F_DamageImpactMultiply = 1f;
 
@@ -131,23 +130,7 @@ namespace GameSetting
                     }
             }
         }
-
-        public static List<enum_LevelType> GetRandomLevels(System.Random seed)
-        {
-            switch (seed.Next(1, 9))
-            {
-                default:
-                    return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.End };
-                case 1: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.EquipmentAcquireBattle, enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.Battle, enum_LevelType.Battle,enum_LevelType.End };
-                case 2: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.EquipmentAcquireBattle, enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.Battle, enum_LevelType.End };
-                case 3: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.EquipmentAcquireBattle, enum_LevelType.Battle, enum_LevelType.End };
-                case 4: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.Battle,  enum_LevelType.Battle,  enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.Battle, enum_LevelType.End };
-                case 5: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.EquipmentAcquireBattle, enum_LevelType.Battle,enum_LevelType.Battle,  enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.End };
-                case 6: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.EquipmentAcquireBattle, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.Battle, enum_LevelType.End };
-                case 7: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.EquipmentAcquireBattle, enum_LevelType.Battle,  enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.End };
-                case 8: return new List<enum_LevelType>() { enum_LevelType.Start, enum_LevelType.Battle,  enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Battle, enum_LevelType.Trade, enum_LevelType.Battle,  enum_LevelType.End };
-            }
-        }
+        
 
         public static int GetActionRemovePrice(enum_StageLevel stage, int removeTimes) => 10 * (removeTimes + 1) ;
         public static int GetActionUpgradePrice(enum_StageLevel stage, int upgradeTimes) => 10 * (upgradeTimes + 1) ;
@@ -243,20 +226,6 @@ namespace GameSetting
     public static class GameEnumConvertions
     {
         public static enum_EquipmentRarity ToRarity(this enum_StageLevel stageLevel) => (enum_EquipmentRarity)stageLevel;
-        public static enum_LevelGenerateType ToPrefabType(this enum_LevelType type)
-        {
-            switch (type)
-            {
-                default: Debug.LogError("Please Edit This Please:" + type.ToString()); return enum_LevelGenerateType.Invalid;
-                case enum_LevelType.Battle:
-                case enum_LevelType.End:
-                    return enum_LevelGenerateType.Big;
-                case enum_LevelType.EquipmentAcquireBattle:
-                case enum_LevelType.Trade:
-                case enum_LevelType.Start:
-                    return enum_LevelGenerateType.Small;
-            }
-        }
         public static int ToLayer(this enum_HitCheck layerType)
         {
             switch (layerType)
@@ -272,20 +241,6 @@ namespace GameSetting
 
     public static class UIConvertions
     {
-        public static string GetUISprite(this enum_LevelType type)
-        {
-            switch (type)
-            {
-                default: return "level_Invalid";
-                case enum_LevelType.Start:
-                case enum_LevelType.Battle:
-                case enum_LevelType.Trade:
-                case enum_LevelType.End:
-                    return "level_" + type;
-                case enum_LevelType.EquipmentAcquireBattle:
-                    return "level_Reward";
-            }
-        }
         public static string GetInteractIcon(this enum_Interaction type)
         {
             switch(type)
@@ -363,7 +318,6 @@ namespace GameSetting
         public static string GetTitleLocalizeKey(this InteractBase interact) => "UI_Interact_" + interact.m_InteractType+interact.m_ExternalLocalizeKeyJoint;
         public static string GetBottomLocalizeKey(this InteractBase interact) => "UI_Interact_" + interact.m_InteractType + interact.m_ExternalLocalizeKeyJoint + "_Bottom";
         public static string GetIntroLocalizeKey(this InteractBase interact) => "UI_Interact_" + interact.m_InteractType +interact.m_ExternalLocalizeKeyJoint+ "_Intro";
-        public static string GetLocalizeKey(this enum_LevelType type) => "UI_TileType_" + type;
         public static string GetLocalizeKey(this enum_EquipmentRarity rarity) => "UI_Rarity_" + rarity;
         public static string GetLocalizeKey(this enum_Option_FrameRate frameRate) => "UI_Option_" + frameRate;
         public static string GetLocalizeKey(this enum_Option_JoyStickMode joystick) => "UI_Option_" + joystick;
@@ -389,7 +343,6 @@ namespace GameSetting
 
         public static readonly int I_EntityDetect = LayerMask.NameToLayer("entityDetect");
         public static readonly int I_InteractDetect = LayerMask.NameToLayer("interactDetect");
-        public static readonly int I_MovementDetect = LayerMask.NameToLayer("movementDetect");
     }
     #endregion
 
@@ -407,18 +360,11 @@ namespace GameSetting
         OnCharacterHealthChange,
         OnCharacterDead,
         OnCharacterRevive,
-
-        OnStageBeginLoad,
-        OnStageStart,       //Total Stage Start
-        OnStageFinish,
-
-        OnChangeLevel,       //Change Between Each Level
         
-        OnBattleStart,      //Battle Against Entity
-        OnBattleFinish,
-        OnWaveStart,     //Battle Wave
-        OnWaveFinish,
+        OnFinalBattleStart,
+        OnFinalBattleFinish,
 
+        OnGameLoad,
         OnGameStart,
         OnGameFinish,
         OnGameExit,
@@ -445,9 +391,7 @@ namespace GameSetting
 
     #region GameEnum
     public enum enum_StageLevel { Invalid = -1, Rookie = 1, Veteran = 2, Ranger = 3 }
-
-    public enum enum_BattleDifficulty { Invalid = -1, Peaceful = 0, Eazy = 1, Normal = 2, Hard = 3, End = 4, BattleReward = 10, }
-
+    
     public enum enum_EntityController { Invalid = -1, None = 1, Player = 2, AI = 3, Device = 4, }
 
     public enum enum_EntityFlag { Invalid = -1, None = 0, Player = 1, Enermy = 2, Neutal = 3, }
@@ -455,16 +399,6 @@ namespace GameSetting
     public enum enum_HitCheck { Invalid = -1, Static = 1, Entity = 2, Dynamic = 3, Interact = 4, }
     
     public enum enum_LevelStyle { Invalid = -1, Forest = 1, Desert = 2, Frost = 3, Horde = 4, Undead = 5, }
-
-    public enum enum_LevelType { Invalid = -1, Start = 0, Battle = 1, End = 2, Trade = 11, EquipmentAcquireBattle = 13,}
-
-    public enum enum_LevelItemType { Invalid = -1, LargeMore, LargeLess, MediumMore, MediumLess, SmallMore, SmallLess, ManmadeMore, ManmadeLess, NoCollisionMore, NoCollisionLess, BorderLinear, BorderOblique, }
-
-    public enum enum_LevelGenerateType { Invalid = -1, Big = 1, Small = 2 }
-
-    public enum enum_LevelItemTileType { Invaid = -1, Empty, Main, Border, Item, Interact, }
-
-    public enum enum_LevelItemTileOccupy { Invalid = -1, Inner, Outer, Border, }
 
     public enum enum_EnermyType { Invalid = -1, Fighter = 1, Shooter_Rookie = 2, Shooter_Veteran = 3, AOECaster = 4, Elite = 5, }
 
@@ -496,7 +430,7 @@ namespace GameSetting
 
     public enum enum_EffectAttach { Invalid = -1,  Head = 1, Feet = 2, WeaponModel = 3,}
 
-    public enum enum_PlayerCharacter {Invalid=-1,Beth=10001,Jason=10002,Charles=10003 }
+    public enum enum_PlayerCharacter {Invalid=-1,Beth=10001, }
 
     public enum enum_InteractCharacter { Invalid=-1,Trader=20001,Trainer=20002, }
 
@@ -847,74 +781,6 @@ namespace GameSetting
 
         public void InitOnValueSet()
         {
-        }
-    }
-
-    public struct SLevelGenerate : ISExcel
-    {
-        string em_defines;
-        RangeInt ir_length;
-        RangeInt ir_smallLess;
-        RangeInt ir_smallMore;
-        RangeInt ir_mediumLess;
-        RangeInt ir_mediumMore;
-        RangeInt ir_largeLess;
-        RangeInt ir_largeMore;
-        RangeInt ir_manmadeLess;
-        RangeInt ir_manmadeMore;
-        RangeInt ir_noCollisionLess;
-        RangeInt ir_noCollisionMore;
-        public bool m_IsInner;
-        public enum_LevelStyle m_LevelStyle;
-        public enum_LevelGenerateType m_LevelPrefabType;
-        public Dictionary<enum_LevelItemType, RangeInt> m_ItemGenerate;
-        public RangeInt m_Length => ir_length;
-        public void InitOnValueSet()
-        {
-            string[] defineSplit = em_defines.Split('_');
-            if (defineSplit.Length != 3)
-                Debug.LogError("Please Corret Format Of DefineSplit:" + em_defines);
-            m_LevelStyle = (enum_LevelStyle)(int.Parse(defineSplit[0]));
-            m_LevelPrefabType = (enum_LevelGenerateType)(int.Parse(defineSplit[1]));
-            m_IsInner = int.Parse(defineSplit[2]) == 1;
-            m_ItemGenerate = new Dictionary<enum_LevelItemType, RangeInt>();
-            m_ItemGenerate.Add(enum_LevelItemType.LargeLess, ir_largeLess);
-            m_ItemGenerate.Add(enum_LevelItemType.LargeMore, ir_largeMore);
-            m_ItemGenerate.Add(enum_LevelItemType.MediumLess, ir_mediumLess);
-            m_ItemGenerate.Add(enum_LevelItemType.MediumMore, ir_mediumMore);
-            m_ItemGenerate.Add(enum_LevelItemType.SmallLess, ir_smallLess);
-            m_ItemGenerate.Add(enum_LevelItemType.SmallMore, ir_smallMore);
-            m_ItemGenerate.Add(enum_LevelItemType.ManmadeLess, ir_manmadeLess);
-            m_ItemGenerate.Add(enum_LevelItemType.ManmadeMore, ir_manmadeMore);
-            m_ItemGenerate.Add(enum_LevelItemType.NoCollisionLess, ir_noCollisionLess);
-            m_ItemGenerate.Add(enum_LevelItemType.NoCollisionMore, ir_noCollisionMore);
-        }
-    }
-
-    public struct SGenerateEntity : ISExcel
-    {
-        string em_defines;
-        float f_eliteChance;
-        RangeInt ir_fighter;
-        RangeInt ir_shooterRookie;
-        RangeInt ir_shooterVeteran;
-        RangeInt ir_aoeCaster;
-        RangeInt ir_elite;
-        public enum_BattleDifficulty m_Difficulty;
-        public int m_waveCount;
-        public float m_EliteChance => f_eliteChance;
-        public Dictionary<enum_EnermyType, RangeInt> m_EntityGenerate;
-        public void InitOnValueSet()
-        {
-            string[] defineSplit = em_defines.Split('_');
-            m_Difficulty = (enum_BattleDifficulty)(int.Parse(defineSplit[0]));
-            m_waveCount = (int.Parse(defineSplit[1]));
-            m_EntityGenerate = new Dictionary<enum_EnermyType, RangeInt>();
-            m_EntityGenerate.Add(enum_EnermyType.Fighter, ir_fighter);
-            m_EntityGenerate.Add(enum_EnermyType.Shooter_Rookie, ir_shooterRookie);
-            m_EntityGenerate.Add(enum_EnermyType.Shooter_Veteran, ir_shooterVeteran);
-            m_EntityGenerate.Add(enum_EnermyType.AOECaster, ir_aoeCaster);
-            m_EntityGenerate.Add(enum_EnermyType.Elite, ir_elite);
         }
     }
 
@@ -1960,96 +1826,6 @@ namespace GameSetting
     
     #endregion
     
-    #region BigmapTile
-    public class SBigmapLevelInfo
-    {
-        public LevelBase m_Level { get; private set; } = null;
-        public enum_LevelType m_LevelType { get; private set; } = enum_LevelType.Invalid;
-
-        public SBigmapLevelInfo(enum_LevelType _tileType) 
-        {
-            m_LevelType = _tileType;
-        }
-        public void SetMap(LevelBase levelSpawned)
-        {
-            m_Level = levelSpawned;
-            SetLevelShow(false);
-        }
-        public void SetLevelShow(bool show)
-        {
-            if(m_Level)
-            m_Level.SetActivate(show);
-        }
-        public void ResetTileType(enum_LevelType _tileType)
-        {
-            m_LevelType = _tileType;
-        }
-    }
-    #endregion
-    
-    #region LevelTile
-    public class LevelTile 
-    {
-        public TileAxis m_TileAxis;
-        public Vector3 m_Offset => GameExpression.V3_TileAxisOffset(m_TileAxis);
-        public virtual enum_LevelItemTileType E_TileType => enum_LevelItemTileType.Empty;
-        public enum_LevelItemTileOccupy E_Occupation { get; private set; } = enum_LevelItemTileOccupy.Invalid;
-
-        public LevelTile(TileAxis _axis ,enum_LevelItemTileOccupy _occupy) 
-        {
-            m_TileAxis = _axis;
-            E_Occupation = _occupy;
-        }
-
-        public LevelTile(LevelTile tile)
-        {
-            m_TileAxis = tile.m_TileAxis;
-            E_Occupation = tile.E_Occupation;
-        }
-    }
-
-    public class LevelTileSub : LevelTile
-    {
-        public override enum_LevelItemTileType E_TileType => enum_LevelItemTileType.Item;
-        public int m_ParentTileIndex { get; private set; }
-        public LevelTileSub(LevelTile current, int _parentIndex) : base(current)
-        {
-            m_ParentTileIndex = _parentIndex;
-        }
-    }
-    public class LevelTileItem : LevelTile
-    {
-        public override enum_LevelItemTileType E_TileType => enum_LevelItemTileType.Main;
-        public int m_LevelItemListIndex { get; private set; }
-        public enum_LevelItemType m_LevelItemType { get; private set; }
-        public enum_TileDirection m_ItemDirection { get; private set; }
-        public List<int> m_subTiles { get; private set; }
-        
-        public LevelTileItem(LevelTile current, int levelItemListIndex, enum_LevelItemType levelItemType,enum_TileDirection _ItemDirection, List<int> _subTiles) : base(current)
-        {
-            m_LevelItemListIndex = levelItemListIndex;
-            m_LevelItemType = levelItemType;
-            m_subTiles = _subTiles;
-            m_ItemDirection = _ItemDirection;
-        }
-    }
-    class LevelTileBorder : LevelTileItem
-    {
-        public override enum_LevelItemTileType E_TileType => enum_LevelItemTileType.Border;
-        public LevelTileBorder(LevelTile current, int levelItemListIndex, enum_LevelItemType levelItemType, enum_TileDirection _ItemDirection) : base(current,levelItemListIndex,levelItemType,_ItemDirection,null)
-        {
-        }
-    }
-    class LevelTileInteract : LevelTile
-    {
-        public override enum_LevelItemTileType E_TileType => enum_LevelItemTileType.Interact;
-
-        public LevelTileInteract(LevelTile current) : base(current.m_TileAxis,current.E_Occupation)
-        {
-        }
-    }
-    #endregion
-    
     #region Equipment
     public class WeaponHelperBase
     {
@@ -2159,7 +1935,7 @@ namespace GameSetting
         protected override Vector3 GetTargetPosition(bool preAim, EntityCharacterBase _target)
         {
             Transform castAt = GetCastAt(_target);
-            return LevelManager.NavMeshPosition(castAt.position + TCommon.RandomXZSphere(m_Entity.F_AttackSpread)) + new Vector3(0, castAt.position.y, 0);
+            return NavigationManager.NavMeshPosition(castAt.position + TCommon.RandomXZSphere(m_Entity.F_AttackSpread)) + new Vector3(0, castAt.position.y, 0);
         }
         public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
