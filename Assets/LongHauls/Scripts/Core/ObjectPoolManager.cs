@@ -154,7 +154,8 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,Obj
     public static void OnSceneChange() => d_ItemInfos.Clear();
     public static void DestroyAll()
     {
-        d_ItemInfos.Traversal(( ItemPoolInfo info) => {info.DestroyAll(); });
+        RecycleAll();
+        d_ItemInfos.Traversal(( ItemPoolInfo info) => { info.DestroyAll(); });
         d_ItemInfos.Clear();
     }
 }

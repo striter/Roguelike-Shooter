@@ -1,4 +1,4 @@
-﻿Shader "Game/Special/Cube_Diffuse_SideMap"
+﻿Shader "Game/Special/Tile_Diffuse_SideMap"
 {
 	Properties
 	{
