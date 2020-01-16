@@ -17,10 +17,15 @@ public class SFXCastLaserBeam : SFXCast {
         m_Beam.SetPosition(0, Vector3.zero);
         m_Beam.SetPosition(1, Vector3.zero);
     }
+    public override void PlayControlled(int sourceID, EntityCharacterBase entity, Transform directionTrans)
+    {
+        base.PlayControlled(sourceID, entity, directionTrans);
+        BeamCheck();
+    }
+
     protected override void OnPlay()
     {
         base.OnPlay();
-        BeamCheck();
         m_Beam.enabled = true;
         m_Impact.Play();
     }

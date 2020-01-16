@@ -27,6 +27,7 @@ public class LevelChunkEditor : LevelChunkBase
     private void Start()
     {
         TPSCameraController.Instance.Attach(tf_CameraPos, true, true);
+        LevelObjectManager.Register(TResources.GetChunkEditorTiles());
     }
 
     public void Init(LevelChunkData _data)
