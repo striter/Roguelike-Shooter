@@ -17,7 +17,7 @@ public class GameManager : GameManagerBase
     void AddConsoleBinddings()
     {
         List<UIT_MobileConsole.CommandBinding> m_bindings = new List<UIT_MobileConsole.CommandBinding>();
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Show Seed", "", KeyCode.None, (string value) => { Debug.LogError(m_GameLevel.m_Seed); }));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Show Seed", "", KeyCode.None, (string value) => { Debug.LogError(m_GameLevel.m_GameRandom); }));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Skip Stage", "", KeyCode.Equals, (string value) => {OnStagePortalEnter();}));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Kill All", "", KeyCode.Alpha0, (string value) => {
             m_Entities.Values.ToList().Traversal((EntityBase entity) => {
@@ -136,11 +136,13 @@ public class GameManager : GameManagerBase
 
         EntityDicReset();
 
-        GenerateChunkEnteringDetect();
+        GenerateChunkObjects();
 
         ChunkGameData startChunk = GameLevelManager.Instance.m_GameChunks[0];
 
-        m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_BattleData,startChunk.GetWorldPosition( startChunk.m_LocalChunkObjects[enum_TileObjectType.RPlayerSpawn1x1][0].m_LocalPosition), GameLevelManager.Instance.m_GameChunks[0].m_LocalChunkObjects[enum_TileObjectType.RPlayerSpawn1x1][0].Rotation);
+
+
+        m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_BattleData,startChunk.GetObjectWorldPosition( startChunk.m_LocalChunkObjects[enum_TileObjectType.RPlayerSpawn1x1][0].m_LocalPosition), GameLevelManager.Instance.m_GameChunks[0].m_LocalChunkObjects[enum_TileObjectType.RPlayerSpawn1x1][0].Rotation);
         AttachPlayerCamera(m_LocalPlayer.tf_CameraAttach);
     }
 
@@ -373,23 +375,25 @@ public class GameManager : GameManagerBase
     #region Chunk Relative Management
     public Dictionary<enum_EnermyType, List<int>> m_Enermies;
     
-    void GenerateChunkEnteringDetect()
+    void GenerateChunkObjects()
     {
         List<ChunkGameData> gameChunks = GameLevelManager.Instance.m_GameChunks;
         m_EntranceDetect.ClearPool();
         int entranceIndex = 0;
         for (int index = 0; index < gameChunks.Count; index++)
         {
-            ChunkGameData data = GameLevelManager.Instance.m_GameChunks[index];
-            data.m_LocalChunkConnections.Traversal((ChunkTileGameData connectionTile, enum_ChunkConnectionType type) =>
+            ChunkGameData chunkData = GameLevelManager.Instance.m_GameChunks[index];
+            chunkData.m_LocalChunkObjects.Traversal((enum_TileObjectType type, List<ChunkGameObjectData> objects) => { objects.Traversal((ChunkGameObjectData objectData) => { SpawnInteractObjects(type, chunkData.m_ChunkType,chunkData.GetObjectWorldPosition( objectData.m_LocalPosition),objectData.Rotation); });  });
+
+            chunkData.m_LocalChunkConnections.Traversal((ChunkGameObjectData connectionTile, enum_ChunkConnectionType type) =>
             {
                 if (type != enum_ChunkConnectionType.Entrance)
                     return;
-                
+
                 GameChunkDetector detector = m_EntranceDetect.AddItem(entranceIndex++);
 
-                detector.Play(index,OnChunkEntering);
-                detector.transform.position =data.GetWorldPosition(  connectionTile.m_LocalPosition);
+                detector.Play(index, OnChunkEntering);
+                detector.transform.position = chunkData.GetObjectWorldPosition(connectionTile.m_LocalPosition);
                 detector.transform.rotation = connectionTile.Rotation;
             });
         }
@@ -401,15 +405,15 @@ public class GameManager : GameManagerBase
         if (chunkData.m_ChunkType != enum_ChunkType.Battle)
             return;
 
-        chunkData.m_LocalChunkObjects.Traversal((enum_TileObjectType type, List<ChunkTileGameData> datas) =>
+        chunkData.m_LocalChunkObjects.Traversal((enum_TileObjectType type, List<ChunkGameObjectData> datas) =>
         {
             if (type != enum_TileObjectType.REnermySpawn1x1)
                 return;
 
-            datas.Traversal((ChunkTileGameData data) =>
+            datas.Traversal((ChunkGameObjectData data) =>
             {
                 int randomEnermyID = m_Enermies.RandomValue().RandomItem();
-                EntityCharacterBase enermy = GameObjectManager.SpawnEntityCharacter(randomEnermyID, NavigationManager.NavMeshPosition(chunkData.GetWorldPosition(data.m_LocalPosition)), m_LocalPlayer.transform.position, enum_EntityFlag.Enermy);
+                EntityCharacterBase enermy = GameObjectManager.SpawnEntityCharacter(randomEnermyID, NavigationManager.NavMeshPosition(chunkData.GetObjectWorldPosition(data.m_LocalPosition)), m_LocalPlayer.transform.position, enum_EntityFlag.Enermy);
                 enermy.SetExtraDifficulty(GameExpression.GetAIBaseHealthMultiplier(m_GameLevel.m_GameDifficulty), GameExpression.GetAIMaxHealthMultiplier(m_GameLevel.m_GameStage), GameExpression.GetEnermyGameDifficultyBuffIndex(m_GameLevel.m_GameDifficulty));
             });
         });
@@ -423,7 +427,7 @@ public class GameManager : GameManagerBase
 public class GameProgressManager
 {
     #region LevelData
-    public string m_Seed { get; private set; }
+    public string m_GameRandom { get; private set; }
     public int m_GameDifficulty { get; private set; }
 
     public System.Random m_GameSeed { get; private set; }
@@ -439,11 +443,11 @@ public class GameProgressManager
     #endregion
     public GameProgressManager(CGameSave _gameSave,CBattleSave _battleSave)
     {
-        m_Seed =_battleSave.m_GameSeed;
-        m_GameSeed = new System.Random(m_Seed.GetHashCode());
+        m_GameRandom =_battleSave.m_GameSeed;
+        m_GameSeed = new System.Random(m_GameRandom.GetHashCode());
         m_GameStage = _battleSave.m_Stage;
-        m_GameStyle = enum_LevelStyle.Frost;
-        m_GameDifficulty = _gameSave.m_GameDifficulty;
+        m_GameStyle = enum_LevelStyle.Frost;//TCommon.RandomEnumValues<enum_LevelStyle>(m_GameSeed) ;
+        m_GameDifficulty = 3; //_gameSave.m_GameDifficulty;
     }
     public void LoadStageData()
     {

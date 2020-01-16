@@ -205,11 +205,11 @@ namespace LevelSetting
     public class ChunkGameData
     {
         public Vector3 m_Origin { get; private set; }
-        public Vector3 GetWorldPosition(Vector3 localPosition) => m_Origin + localPosition;
+        public Vector3 GetObjectWorldPosition(Vector3 localPosition) => m_Origin + localPosition+Vector3.up*LevelConst.I_TileSize;
         public enum_ChunkType m_ChunkType { get; private set; }
-        public Dictionary<enum_TileObjectType,  List<ChunkTileGameData>> m_LocalChunkObjects { get; private set; }
-        public Dictionary<ChunkTileGameData,enum_ChunkConnectionType> m_LocalChunkConnections { get; private set; }
-        public ChunkGameData(enum_ChunkType _chunkType,Vector3 _origin, Dictionary<enum_TileObjectType, List<ChunkTileGameData>> _chunkObjects, Dictionary<ChunkTileGameData, enum_ChunkConnectionType> _connections)
+        public Dictionary<enum_TileObjectType,  List<ChunkGameObjectData>> m_LocalChunkObjects { get; private set; }
+        public Dictionary<ChunkGameObjectData,enum_ChunkConnectionType> m_LocalChunkConnections { get; private set; }
+        public ChunkGameData(enum_ChunkType _chunkType,Vector3 _origin, Dictionary<enum_TileObjectType, List<ChunkGameObjectData>> _chunkObjects, Dictionary<ChunkGameObjectData, enum_ChunkConnectionType> _connections)
         {
             m_Origin = _origin;
             m_ChunkType = _chunkType;
@@ -218,11 +218,11 @@ namespace LevelSetting
         }
     }
 
-    public class ChunkTileGameData
+    public class ChunkGameObjectData
     {
         public Vector3 m_LocalPosition { get; private set; }
         public Quaternion Rotation { get; private set; }
-        public ChunkTileGameData(Vector3 positon,Quaternion rotation)
+        public ChunkGameObjectData(Vector3 positon,Quaternion rotation)
         {
             m_LocalPosition = positon;
             Rotation = rotation;
