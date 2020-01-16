@@ -39,7 +39,8 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
     protected void SwitchScene(enum_Scene scene,Func<bool> onfinishLoading=null)
     {
         AudioManagerBase.Instance.Recycle();
-        GameObjectManager.RecycleAllObject();
+        GameObjectManager.Clear();
+        LevelObjectManager.Clear();
         UIManager.Instance.SetActivate(false);
         LoadingManager.BeginLoad(scene,onfinishLoading);
     }

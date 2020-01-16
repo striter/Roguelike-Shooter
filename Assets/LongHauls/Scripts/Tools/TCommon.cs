@@ -205,18 +205,9 @@ public static class TCommon
     public static void Traversal<T>(this List<T> list, Action<T> OnEachItem,bool listChanged=false)
     {
         int count = list.Count;
-        if (listChanged)
-        {
-            List<T> tempList = new List<T>();
-            tempList.AddRange(list);
-            for (int i = 0; i < count; i++)
-                OnEachItem(tempList[i]);
-        }
-        else
-        {
-            for (int i = 0; i < count; i++)
-                OnEachItem(list[i]);
-        }
+        List<T> tempList = listChanged ? new List<T>(list) : list;
+        for (int i = 0; i < count; i++)
+            OnEachItem(tempList[i]);
     }
     public static void TraversalBreak<T>(this List<T> list, Func<T,bool> OnEachItem)
     {
@@ -353,6 +344,9 @@ public static class TCommon
     public static T RandomItem<T>(this T[] array, System.Random randomSeed = null) => randomSeed != null ? array[randomSeed.Next(array.Length)] : array[UnityEngine.Random.Range(0, array.Length)];
 
     public static T RandomItem<T>(this T[,] array, System.Random randomSeed = null) => randomSeed != null ? array[randomSeed.Next(array.GetLength(0)), randomSeed.Next(array.GetLength(1))] : array[UnityEngine.Random.Range(0, array.GetLength(0)), UnityEngine.Random.Range(0, array.GetLength(1))];
+
+    public static Y RandomValue<T, Y>(this Dictionary<T, Y> dic, System.Random randomSeed = null) => dic.ElementAt(RandomLength(dic.Count,randomSeed)).Value
+        ;
     public static int RandomRange(this RangeInt ir, System.Random seed = null) => ir.start + RandomLength(ir.length+1,seed);
     public static float RandomRangeFloat(this RangeFloat ir, System.Random seed = null)=> seed != null ? seed.Next((int)(ir.start * 1000), (int)(ir.end * 1000)) / 100 : UnityEngine.Random.Range(ir.start, ir.end);
     public static bool RandomBool(System.Random seed = null) => seed != null ? seed.Next(0, 2) > 0 : UnityEngine.Random.Range(0, 2) > 0;

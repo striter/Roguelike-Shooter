@@ -105,7 +105,7 @@ namespace TTiles
         public static TileAxis GetDirectionedSize(TileAxis size, enum_TileDirection direction) => (int)direction % 2 == 0 ? size : size.Inverse();
         public static Vector3 GetUnitScaleBySizeAxis(TileAxis directionedSize,int tileSize) => new Vector3(directionedSize.X, 1, directionedSize.Y) * tileSize;
         public static Vector3 GetLocalPosBySizeAxis(TileAxis directionedSize) => new Vector3(directionedSize.X, 0, directionedSize.Y);
-        public static Quaternion GetWorldRotation(this enum_TileDirection direction) => Quaternion.Euler(0, (int)direction * 90, 0);
+        public static Quaternion ToRotation(this enum_TileDirection direction) => Quaternion.Euler(0, (int)direction * 90, 0);
 
         public static enum_TileDirection Next(this enum_TileDirection direction)
         {

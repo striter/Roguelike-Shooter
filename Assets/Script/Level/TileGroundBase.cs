@@ -5,7 +5,7 @@ using LevelSetting;
 using TTiles;
 using UnityEngine;
 
-public class TileGroundBase : TileItemBase,ObjectPoolItem<enum_TileGroundType> {
+public class TileGroundBase : TileItemBase,IPoolObject<enum_TileGroundType> {
     public enum_TileGroundType m_GroundType = enum_TileGroundType.Invalid;
     public override enum_TileSubType m_Type => enum_TileSubType.Ground;
     Action<enum_TileGroundType, MonoBehaviour> OnRecycle;

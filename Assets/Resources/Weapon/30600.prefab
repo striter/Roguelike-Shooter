@@ -334,7 +334,7 @@ MonoBehaviour:
   F_Tick: 0
   I_BuffApplyOnCast: 0
   E_AreaType: 3
-  V4_CastInfo: {x: 0.4, y: 0, z: 25, w: 0}
+  V4_CastInfo: {x: 0.4, y: 0, z: 200, w: 0}
   F_DelayDuration: 0
   I_DelayIndicatorIndex: 0
   B_CameraShake: 0

@@ -14,7 +14,6 @@ public class GameManager : GameManagerBase
     #region Test
     public string M_TESTSEED = "";
     public bool B_PhysicsDebugGizmos = true;
-    public bool B_GameLevelDebugGizmos = true;
     void AddConsoleBinddings()
     {
         List<UIT_MobileConsole.CommandBinding> m_bindings = new List<UIT_MobileConsole.CommandBinding>();
@@ -33,17 +32,17 @@ public class GameManager : GameManagerBase
             });
         }));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Enermy", "101", KeyCode.Z, (string id) => {
-            EntityCharacterBase enermy = GameObjectManager.SpawnEntityCharacter(int.Parse(id), NavigationManager.NavMeshPosition(TCommon.RandomXZSphere(5f)), m_LocalPlayer.transform.position, enum_EntityFlag.Enermy);
+            EntityCharacterBase enermy = GameObjectManager.SpawnEntityCharacter(int.Parse(id), NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position+ TCommon.RandomXZSphere(5f)), m_LocalPlayer.transform.position, enum_EntityFlag.Enermy);
             enermy.SetExtraDifficulty(GameExpression.GetAIBaseHealthMultiplier(m_GameLevel.m_GameDifficulty), GameExpression.GetAIMaxHealthMultiplier(m_GameLevel.m_GameStage), GameExpression.GetEnermyGameDifficultyBuffIndex(m_GameLevel.m_GameDifficulty));
         }));
 
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Damage", "20", KeyCode.N, (string damage) => { m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(int.Parse(damage), enum_DamageType.Basic, DamageDeliverInfo.Default(-1)));}));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Heal", "20", KeyCode.M, (string damage) => { m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(-int.Parse(damage), enum_DamageType.Basic, DamageDeliverInfo.Default(-1))); }));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Coins", "20", KeyCode.F5, (string coins) => { GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupCoin, NavigationManager.NavMeshPosition(TCommon.RandomXZSphere(5f), false), tf_Interacts).Play(int.Parse(coins), m_LocalPlayer.transform);}));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Health", "20", KeyCode.F6, (string health) => {GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupHealth, NavigationManager.NavMeshPosition(TCommon.RandomXZSphere(5f), false), tf_Interacts).Play(int.Parse(health), m_LocalPlayer.transform);}));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Armor", "20", KeyCode.F7, (string armor) => {GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupArmor, NavigationManager.NavMeshPosition(TCommon.RandomXZSphere(5f), false), tf_Interacts).Play(int.Parse(armor), m_LocalPlayer.transform);}));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Weapon", "102", KeyCode.F8, (string weapon) => { GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, NavigationManager.NavMeshPosition(TCommon.RandomXZSphere(5f)), tf_Interacts).Play(GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew((enum_PlayerWeapon)int.Parse(weapon)))); }));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Player Equipment", "1", KeyCode.F1, (string actionIndex) => { GameObjectManager.SpawnInteract<InteractEquipment>(enum_Interaction.Equipment, NavigationManager.NavMeshPosition(TCommon.RandomXZSphere(5f))).Play(ActionDataManager.CreateAction(int.Parse(actionIndex), TCommon.RandomEnumValues<enum_EquipmentType>(null))); }));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Coins", "20", KeyCode.F5, (string coins) => { GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupCoin, NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere(5f), false), tf_Interacts).Play(int.Parse(coins), m_LocalPlayer.transform);}));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Health", "20", KeyCode.F6, (string health) => {GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupHealth, NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere(5f), false), tf_Interacts).Play(int.Parse(health), m_LocalPlayer.transform);}));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Armor", "20", KeyCode.F7, (string armor) => {GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupArmor,  NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere(5f), false), tf_Interacts).Play(int.Parse(armor), m_LocalPlayer.transform);}));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Weapon", "102", KeyCode.F8, (string weapon) => { GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon,  NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere(5f)), tf_Interacts).Play(GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew((enum_PlayerWeapon)int.Parse(weapon)))); }));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Player Equipment", "1", KeyCode.F1, (string actionIndex) => { GameObjectManager.SpawnInteract<InteractEquipment>(enum_Interaction.Equipment, NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere(5f))).Play(ActionDataManager.CreateAction(int.Parse(actionIndex), TCommon.RandomEnumValues<enum_EquipmentType>(null))); }));
 
         UIT_MobileConsole.Instance.AddConsoleBindings(m_bindings,(bool show)=> { Time.timeScale = show ? .1f : 1f; });
     }
@@ -51,6 +50,9 @@ public class GameManager : GameManagerBase
     public GameProgressManager m_GameLevel { get; private set; }
     public EntityCharacterPlayer m_LocalPlayer { get; private set; } = null;
     public Transform tf_Interacts { get; private set; } = null;
+
+    ObjectPoolSimpleComponent<int, GameChunkDetector> m_EntranceDetect;
+
     public override bool B_InGame => true;
     protected override void Awake()
     {
@@ -65,6 +67,8 @@ public class GameManager : GameManagerBase
             GameDataManager.m_BattleData.m_GameSeed = M_TESTSEED;
         m_GameLevel =  new GameProgressManager(GameDataManager.m_GameData,GameDataManager.m_BattleData);
         tf_Interacts = transform.Find("Interacts");
+
+        m_EntranceDetect = new ObjectPoolSimpleComponent<int, GameChunkDetector>(transform.Find("TriggerPool"), "TriggerItem",(GameChunkDetector detector)=> { detector.Init(); });
     }
     
 
@@ -106,29 +110,38 @@ public class GameManager : GameManagerBase
     } 
     IEnumerator DoLoadStage()     //PreInit Bigmap , Levels LocalPlayer Before  Start The game
     {
-        GameObjectManager.RecycleAllObject();
+        m_GameLevel.LoadStageData();
         yield return null;
-        m_GameLevel.GetStageData();
-        EntityDicReset();
-        GC.Collect();
-        Resources.UnloadUnusedAssets();
-        yield return null;
+        GameObjectManager.Clear();
         GameObjectManager.PresetRegistCommonObject();
         m_Enermies = GameObjectManager.RegistStyledInGamePrefabs(m_GameLevel.m_GameStyle, m_GameLevel.m_GameStage);
         yield return null;
-        InitPostEffects(m_GameLevel.m_GameStyle);
+
         yield return GameLevelManager.Instance.Generate(enum_LevelStyle.Frost, m_GameLevel.m_GameSeed);
-        m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_BattleData, GameLevelManager.Instance.m_GameChunks[0].m_ChunkObjects[enum_TileObjectType.PlayerSpawn1x1][0].m_Position, GameLevelManager.Instance.m_GameChunks[0].m_ChunkObjects[enum_TileObjectType.PlayerSpawn1x1][0].m_Rotation);
-        AttachPlayerCamera(m_LocalPlayer.tf_CameraAttach);
+
+        GenerateGameRelatives();
         yield return null;
-        OnPortalExit(1f, m_LocalPlayer.tf_CameraAttach);
+
+        Resources.UnloadUnusedAssets();
+        GC.Collect();
+
+        yield return null;
         LoadingManager.Instance.EndLoading();
-        OnStageLoaded();
+        OnPortalExit(1f, m_LocalPlayer.tf_CameraAttach);
     }
 
-    void OnStageLoaded()
+    void GenerateGameRelatives()
     {
+        InitPostEffects(m_GameLevel.m_GameStyle);
 
+        EntityDicReset();
+
+        GenerateChunkEnteringDetect();
+
+        ChunkGameData startChunk = GameLevelManager.Instance.m_GameChunks[0];
+
+        m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_BattleData,startChunk.GetWorldPosition( startChunk.m_LocalChunkObjects[enum_TileObjectType.PlayerSpawn1x1][0].m_LocalPosition), GameLevelManager.Instance.m_GameChunks[0].m_LocalChunkObjects[enum_TileObjectType.PlayerSpawn1x1][0].Rotation);
+        AttachPlayerCamera(m_LocalPlayer.tf_CameraAttach);
     }
 
     void OnPortalEnter() => OnGameFinished(true);
@@ -243,7 +256,9 @@ public class GameManager : GameManagerBase
             if (entity.m_Flag != enum_EntityFlag.Neutal && flag != entity.m_Flag)
                 m_OppositeEntities[flag].Remove(character);
         });
-        OnBattleCharacterRecycle(character);
+
+        if (entity.m_ControllType == enum_EntityController.Player)
+            OnGameFinished(false);
     }
 
 
@@ -324,7 +339,7 @@ public class GameManager : GameManagerBase
    
     public static bool B_CanSFXDamageEntity(HitCheckEntity hb, int sourceID)    //After Hit,If Match Target Hit Succeed
     {
-        if (!Instance.B_Battling||hb.I_AttacherID == sourceID || !Instance.m_Entities.ContainsKey(sourceID))
+        if (hb.I_AttacherID == sourceID || !Instance.m_Entities.ContainsKey(sourceID))
             return false;
 
         return hb.m_Attacher.m_Flag != Instance.GetEntity(sourceID).m_Flag;
@@ -340,16 +355,51 @@ public class GameManager : GameManagerBase
         UIManager.Instance.ShowPage<UI_Revive>(true, 0f).Play(_OnRevivePlayer);
     }
     #endregion
-    #region Battle Management
-    public bool B_Battling { get; private set; } = false;
+    #region Chunk Relative Management
     public Dictionary<enum_EnermyType, List<int>> m_Enermies;
-
-    void OnBattleCharacterRecycle(EntityCharacterBase entity)
-    {
-        if (entity.m_ControllType == enum_EntityController.Player)
-            OnGameFinished(false);
-    }
     
+    void GenerateChunkEnteringDetect()
+    {
+        List<ChunkGameData> gameChunks = GameLevelManager.Instance.m_GameChunks;
+        m_EntranceDetect.ClearPool();
+        int entranceIndex = 0;
+        for (int index = 0; index < gameChunks.Count; index++)
+        {
+            ChunkGameData data = GameLevelManager.Instance.m_GameChunks[index];
+            data.m_LocalChunkConnections.Traversal((ChunkTileGameData connectionTile, enum_ChunkConnectionType type) =>
+            {
+                if (type != enum_ChunkConnectionType.Entrance)
+                    return;
+                
+                GameChunkDetector detector = m_EntranceDetect.AddItem(entranceIndex++);
+
+                detector.Play(index,OnChunkEntering);
+                detector.transform.position =data.GetWorldPosition(  connectionTile.m_LocalPosition);
+                detector.transform.rotation = connectionTile.Rotation;
+            });
+        }
+    }
+
+    void OnChunkEntering(int chunkIndex)
+    {
+        ChunkGameData chunkData = GameLevelManager.Instance.m_GameChunks[chunkIndex];
+        if (chunkData.m_ChunkType != enum_ChunkType.Battle)
+            return;
+
+        chunkData.m_LocalChunkObjects.Traversal((enum_TileObjectType type, List<ChunkTileGameData> datas) =>
+        {
+            if (type != enum_TileObjectType.EnermySpawn1x1)
+                return;
+
+            datas.Traversal((ChunkTileGameData data) =>
+            {
+                int randomEnermyID = m_Enermies.RandomValue().RandomItem();
+                EntityCharacterBase enermy = GameObjectManager.SpawnEntityCharacter(randomEnermyID, NavigationManager.NavMeshPosition(chunkData.GetWorldPosition(data.m_LocalPosition)), m_LocalPlayer.transform.position, enum_EntityFlag.Enermy);
+                enermy.SetExtraDifficulty(GameExpression.GetAIBaseHealthMultiplier(m_GameLevel.m_GameDifficulty), GameExpression.GetAIMaxHealthMultiplier(m_GameLevel.m_GameStage), GameExpression.GetEnermyGameDifficultyBuffIndex(m_GameLevel.m_GameDifficulty));
+            });
+        });
+    }
+
     
     #endregion
 }
@@ -380,7 +430,7 @@ public class GameProgressManager
         m_GameStyle = enum_LevelStyle.Frost;
         m_GameDifficulty = _gameSave.m_GameDifficulty;
     }
-    public void GetStageData()
+    public void LoadStageData()
     {
         m_actionGenerate = GameExpression.GetInteractGenerate(m_GameStage);
 
@@ -418,7 +468,7 @@ public static class GameObjectManager
         TF_SFXWeapon = new GameObject("SFX_Weapon").transform;
         ObjectPoolManager.Init();
     }
-    public static void RecycleAllObject()
+    public static void Clear()
     {
         ObjectPoolManager<int, SFXBase>.DestroyAll();
         ObjectPoolManager<int, SFXWeaponBase>.DestroyAll();

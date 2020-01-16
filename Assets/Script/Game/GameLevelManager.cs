@@ -8,7 +8,7 @@ using TTiles;
 using UnityEngine.AI;
 
 public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
-    ObjectPoolSimpleComponent<int, LevelChunk> m_ChunkPool;
+    ObjectPoolSimpleComponent<int, LevelChunkBase> m_ChunkPool;
     public Light m_DirectionalLight { get; private set; }
     public Texture2D m_MapTexture { get; private set; }
     public List<ChunkGameData> m_GameChunks { get; private set; } = new List<ChunkGameData>();
@@ -23,13 +23,12 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
     protected override void Awake()
     {
         base.Awake();
-        m_ChunkPool = new ObjectPoolSimpleComponent<int, LevelChunk>(transform.Find("Level"),"ChunkItem");
+        m_ChunkPool = new ObjectPoolSimpleComponent<int, LevelChunkBase>(transform.Find("Level"),"ChunkItem",(LevelChunkBase chunk)=> { chunk.Init(); });
         m_DirectionalLight = transform.Find("Directional Light").GetComponent<Light>();
     }
 
     public IEnumerator Generate(enum_LevelStyle style,System.Random random)
     {
-
         LevelObjectManager.Clear();
         LevelObjectManager.Register(TResources.GetChunkTiles(style));
 
@@ -93,7 +92,7 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         });
         m_MapOrigin = new TileAxis(originX, originY);
         m_MapSize = new TileAxis(oppositeX-originX,oppositeY-originY);
-        m_MapOriginPos = transform.TransformPoint( m_MapOrigin.ToWorldPosition());
+        m_MapOriginPos = transform.TransformPoint( m_MapOrigin.ToPosition());
         //Generate Map Texture
         m_MapTexture = new Texture2D(m_MapSize.X, m_MapSize.Y, TextureFormat.RGBA32, false);
         m_MapTexture.filterMode = FilterMode.Point;
@@ -113,14 +112,13 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         m_GameChunks.Clear();
         m_ChunkPool.ClearPool();
         gameChunkGenerate.Traversal((ChunkGenerateData data) => {
-            LevelChunk chunk = m_ChunkPool.AddItem(chunkIndex++);
+            LevelChunkBase chunk = m_ChunkPool.AddItem(chunkIndex++);
             m_GameChunks.Add(chunk.InitGameChunk(data,random));
-            chunk.transform.localPosition =data.m_Axis.ToWorldPosition();
         });
 
         //GenerateNavigationData
         Bounds mapBounds = new Bounds();
-        mapBounds.center = m_MapOriginPos + m_MapSize.ToWorldPosition() / 2f+Vector3.up*LevelConst.I_TileSize;
+        mapBounds.center = m_MapOriginPos + m_MapSize.ToPosition() / 2f+Vector3.up*LevelConst.I_TileSize;
         mapBounds.size = new Vector3(m_MapSize.X,1f,m_MapSize.Y)*LevelConst.I_TileSize;
         NavigationManager.BuildNavMeshData(m_ChunkPool.transform, mapBounds);
         yield return null;

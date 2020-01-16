@@ -4,7 +4,7 @@ using TTiles;
 using UnityEngine;
 using LevelSetting;
 [RequireComponent(typeof(HitCheckInteract))]
-public class LevelTileEditor : LevelTileNew {
+public class LevelTileEditor : LevelTileBase {
 
     public virtual bool isDataTile => false;
     BoxCollider m_Collider;

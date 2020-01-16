@@ -89,7 +89,7 @@ namespace LevelSetting
 
     public static class LevelExpressions
     {
-        public static Vector3 ToWorldPosition(this TileAxis axis) => new Vector3(axis.X,0,axis.Y)*LevelConst.I_TileSize;
+        public static Vector3 ToPosition(this TileAxis axis) => new Vector3(axis.X,0,axis.Y)*LevelConst.I_TileSize;
 
         public static bool TileObjectEditable(this enum_TileGroundType type)
         {
@@ -204,23 +204,28 @@ namespace LevelSetting
 
     public class ChunkGameData
     {
+        public Vector3 m_Origin { get; private set; }
+        public Vector3 GetWorldPosition(Vector3 localPosition) => m_Origin + localPosition;
         public enum_ChunkType m_ChunkType { get; private set; }
-        public Dictionary<enum_TileObjectType,  List<ChunkTileGameData>> m_ChunkObjects { get; private set; }
-        public ChunkGameData(enum_ChunkType _chunkType, Dictionary<enum_TileObjectType, List<ChunkTileGameData>> _chunkObjects)
+        public Dictionary<enum_TileObjectType,  List<ChunkTileGameData>> m_LocalChunkObjects { get; private set; }
+        public Dictionary<ChunkTileGameData,enum_ChunkConnectionType> m_LocalChunkConnections { get; private set; }
+        public ChunkGameData(enum_ChunkType _chunkType,Vector3 _origin, Dictionary<enum_TileObjectType, List<ChunkTileGameData>> _chunkObjects, Dictionary<ChunkTileGameData, enum_ChunkConnectionType> _connections)
         {
-            m_ChunkType = m_ChunkType;
-            m_ChunkObjects = _chunkObjects;
+            m_Origin = _origin;
+            m_ChunkType = _chunkType;
+            m_LocalChunkObjects = _chunkObjects;
+            m_LocalChunkConnections = _connections;
         }
     }
 
     public class ChunkTileGameData
     {
-        public Vector3 m_Position { get; private set; }
-        public Quaternion m_Rotation { get; private set; }
+        public Vector3 m_LocalPosition { get; private set; }
+        public Quaternion Rotation { get; private set; }
         public ChunkTileGameData(Vector3 positon,Quaternion rotation)
         {
-            m_Position = positon;
-            m_Rotation = rotation;
+            m_LocalPosition = positon;
+            Rotation = rotation;
         }
     }
 

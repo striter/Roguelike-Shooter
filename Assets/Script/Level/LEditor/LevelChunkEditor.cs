@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TTiles;
 using LevelSetting;
-public class LevelChunkEditor : LevelChunk
+public class LevelChunkEditor : LevelChunkBase
 {
     public static LevelChunkEditor Instance { get; private set; }
     public Transform tf_CameraPos { get; private set; }
@@ -22,6 +22,7 @@ public class LevelChunkEditor : LevelChunk
         tf_CameraPos = transform.Find("CameraPos");
         m_SelectionTiles = new ObjectPoolSimpleComponent<int, LevelTileEditorSelection>(transform.Find("SelectionPool"), "SelectionItem");
         m_SelectingTile = transform.Find("SelectingTile").GetComponent<LevelTileEditorSelection>();
+        Init();
     }
     private void Start()
     {
@@ -42,7 +43,7 @@ public class LevelChunkEditor : LevelChunk
     }
 
     protected override bool WillGenerateTile(ChunkTileData data) => true;
-    protected override void OnTileInit(LevelTileNew tile, TileAxis axis, ChunkTileData data,System.Random random)
+    protected override void OnTileInit(LevelTileBase tile, TileAxis axis, ChunkTileData data,System.Random random)
     {
         base.OnTileInit(tile, axis, data,random);
         m_TilesData[axis.X,axis.Y]=(tile as LevelTileEditorData);

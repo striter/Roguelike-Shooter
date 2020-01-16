@@ -2,7 +2,7 @@
 using GameSetting;
 using System;
 
-public class EntityBase : ObjectPoolMonoItem<int>
+public class EntityBase : PoolObjectMono<int>
 {
     public int m_EntityID { get; private set; } = -1;
     public virtual bool B_IsCharacter => false;

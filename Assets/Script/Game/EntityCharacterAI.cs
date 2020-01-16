@@ -81,7 +81,7 @@ public class EntityCharacterAI : EntityCharacterBase {
     protected override void OnDeadTick(float deltaTime)
     {
         base.OnDeadTick(deltaTime);
-        m_Animator.SetPause(false);
+        if(m_Animator!=null)  m_Animator.SetPause(false);
     }
 
     protected override bool OnReceiveDamage(DamageInfo damageInfo, Vector3 damageDirection)

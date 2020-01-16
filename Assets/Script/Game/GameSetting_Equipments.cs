@@ -560,8 +560,6 @@ namespace GameSetting_Action
         public override void OnTick(float deltaTime)
         {
             base.OnTick(deltaTime);
-            if (!GameManager.Instance.B_Battling)
-                return;
 
             m_Timer.Tick(deltaTime);
             if (!m_Timer.m_Timing)

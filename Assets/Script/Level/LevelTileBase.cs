@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using TTiles;
 using LevelSetting;
-public class LevelTileNew : MonoBehaviour, ITileAxis
+using System;
+
+public class LevelTileBase : MonoBehaviour, ITileAxis
 {
     public TileAxis m_Axis { get; private set; }
     public ChunkTileData m_Data { get; protected set; }
@@ -40,4 +42,5 @@ public class LevelTileNew : MonoBehaviour, ITileAxis
             m_Ground.transform.localPosition = Vector3.zero;
         }
     }
+
 }

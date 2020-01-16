@@ -2,7 +2,7 @@
 using GameSetting;
 using System;
 
-public class WeaponBase : ObjectPoolMonoItem<enum_PlayerWeapon>
+public class WeaponBase : PoolObjectMono<enum_PlayerWeapon>
 { 
     public enum_PlayerAnim E_Anim= enum_PlayerAnim.Invalid;
     public bool B_AttachLeft=false;

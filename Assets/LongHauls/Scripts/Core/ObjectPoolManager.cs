@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public interface ObjectPoolItem<T>{
+public interface IPoolObject<T>{
     void OnPoolItemInit(T identity,Action<T,MonoBehaviour> OnRecycle);
 }
-public class ObjectPoolMonoItem<T> :MonoBehaviour,ObjectPoolItem<T>
+public class PoolObjectMono<T> :MonoBehaviour,IPoolObject<T>
 {
     public bool m_PoolItemInited { get; private set; }
     public T m_Identity { get; private set; }
@@ -34,7 +34,7 @@ public class ObjectPoolManager
         tf_PoolRegist = new GameObject("PoolRegist").transform;
     }
 }
-public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,ObjectPoolItem<T>
+public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,IPoolObject<T>
 {
     class ItemPoolInfo
     {
@@ -159,6 +159,7 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,Obj
         d_ItemInfos.Clear();
     }
 }
+
 public class CSimplePool<T>
 {
     public Transform transform { get; private set; }
@@ -185,6 +186,7 @@ public class ObjectPoolSimpleClass<T,Y>: ObjectPoolSimpleBase<T,Y> where Y:CSimp
     }
     protected override Transform GetItemTransform(Y targetItem) => targetItem.transform;
 }
+
 public class ObjectPoolSimpleComponent<T,Y>:ObjectPoolSimpleBase<T,Y> where Y:Component
 {
     Action<Y> OnCreateNewInit;
