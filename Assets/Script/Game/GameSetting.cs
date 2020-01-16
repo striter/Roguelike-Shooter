@@ -343,6 +343,7 @@ namespace GameSetting
 
         public static readonly int I_EntityDetect = LayerMask.NameToLayer("entityDetect");
         public static readonly int I_InteractDetect = LayerMask.NameToLayer("interactDetect");
+        public static readonly int I_MovementDetect = LayerMask.NameToLayer("movementDetect");
     }
     #endregion
 
@@ -1511,7 +1512,7 @@ namespace GameSetting
 
         public void OnEntityActivate(EntityBase targetEntity)
         {
-            if (targetEntity.m_Controller != enum_EntityController.AI || targetEntity.m_Flag != m_Entity.m_Flag || targetEntity.m_EntityID == m_Entity.m_EntityID)
+            if (targetEntity.m_ControllType != enum_EntityController.AI || targetEntity.m_Flag != m_Entity.m_Flag || targetEntity.m_EntityID == m_Entity.m_EntityID)
                 return;
 
             EntityCharacterBase ally = (targetEntity as EntityCharacterBase);

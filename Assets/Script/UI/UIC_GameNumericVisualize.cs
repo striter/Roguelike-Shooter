@@ -36,7 +36,7 @@ public class UIC_GameNumericVisualize : UIControlBase
 
     bool b_showEntityHealthInfo(EntityBase entity)
     {
-        switch(entity.m_Controller)
+        switch(entity.m_ControllType)
         {
             case enum_EntityController.AI:
             case enum_EntityController.Device:

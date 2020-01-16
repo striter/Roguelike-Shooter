@@ -5,7 +5,7 @@ using GameSetting;
 using UnityEngine;
 
 public class EntityDeviceBase : EntityCharacterBase {
-    public override enum_EntityController m_Controller => enum_EntityController.Device; 
+    public override enum_EntityController m_ControllType => enum_EntityController.Device; 
     EntityDetector m_Detect;
     ParticleSystem[] m_Particles;
     public ObjectPoolSimpleComponent<EntityCharacterBase, LineRenderer> m_Connections { get; private set; }
@@ -59,7 +59,7 @@ public class EntityDeviceBase : EntityCharacterBase {
         if (m_IsDead)
             return;
 
-        switch (entity.m_Attacher.m_Controller)
+        switch (entity.m_Attacher.m_ControllType)
         {
             default:break;
             case enum_EntityController.Player:

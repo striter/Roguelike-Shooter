@@ -14,7 +14,7 @@ public class TileItemBase : MonoBehaviour {
     {
         m_Model = transform.Find("Model");
         m_Model.localPosition = TileTools.GetLocalPosBySizeAxis(GetDirectionedSize(_data.m_Direction));
-        m_Model.localRotation = TileTools.GetDirectionRotation(_data.m_Direction);
+        m_Model.localRotation = TileTools.GetWorldRotation(_data.m_Direction);
 
         int texSelection = GetTexSelection(random);
         if (texSelection != -1)

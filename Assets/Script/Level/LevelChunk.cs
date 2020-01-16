@@ -38,13 +38,13 @@ public class LevelChunk : MonoBehaviour
 
     public ChunkGameData InitGameChunk(ChunkGenerateData data,System.Random random)
     {
-        Dictionary<enum_TileObjectType, List<Vector3>> m_ChunkObjectPos=new Dictionary<enum_TileObjectType, List<Vector3>>();
+        Dictionary<enum_TileObjectType, List<ChunkTileGameData>> m_ChunkObjectPos=new Dictionary<enum_TileObjectType, List<ChunkTileGameData>>();
         InitData(data.m_Data,random,(TileAxis axis, ChunkTileData tileData)=> {
             if (tileData.m_ObjectType.IsEditorTileObject())
             {
                 if (!m_ChunkObjectPos.ContainsKey(tileData.m_ObjectType))
-                    m_ChunkObjectPos.Add(tileData.m_ObjectType, new List<Vector3>());
-                m_ChunkObjectPos[tileData.m_ObjectType].Add(axis.ToWorldPosition() + tileData.m_ObjectType.GetSizeAxis(tileData.m_Direction).ToWorldPosition() / 2f);
+                    m_ChunkObjectPos.Add(tileData.m_ObjectType, new List<ChunkTileGameData>());
+                m_ChunkObjectPos[tileData.m_ObjectType].Add(new ChunkTileGameData( axis.ToWorldPosition() + tileData.m_ObjectType.GetSizeAxis(tileData.m_Direction).ToWorldPosition() / 2f,tileData.m_Direction.GetWorldRotation()));
                 return tileData.ChangeObjectType(enum_TileObjectType.Invalid);
             }
             return tileData;

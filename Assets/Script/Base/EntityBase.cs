@@ -6,7 +6,7 @@ public class EntityBase : ObjectPoolMonoItem<int>
 {
     public int m_EntityID { get; private set; } = -1;
     public virtual bool B_IsCharacter => false;
-    public virtual enum_EntityController m_Controller => enum_EntityController.Invalid;
+    public virtual enum_EntityController m_ControllType => enum_EntityController.Invalid;
     public int I_MaxHealth;
     public enum_EntityFlag m_Flag { get; private set; }
     public HealthBase m_Health { get; private set; }
@@ -18,7 +18,8 @@ public class EntityBase : ObjectPoolMonoItem<int>
     protected virtual float HealReceiveMultiply => 1f;
     public int m_SpawnerEntityID { get; private set; }
     public bool b_isSubEntity => m_SpawnerEntityID != -1;
-    public bool m_IsDead,m_Activating;
+    public bool m_IsDead { get; private set; }
+    public bool m_Activating { get; private set; }
     HitCheckEntity[] m_HitChecks;
     public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {

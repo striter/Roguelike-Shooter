@@ -205,11 +205,22 @@ namespace LevelSetting
     public class ChunkGameData
     {
         public enum_ChunkType m_ChunkType { get; private set; }
-        public Dictionary<enum_TileObjectType, List<Vector3>> m_ChunkObjects { get; private set; }
-        public ChunkGameData(enum_ChunkType _chunkType, Dictionary<enum_TileObjectType, List<Vector3>> _chunkObjects)
+        public Dictionary<enum_TileObjectType,  List<ChunkTileGameData>> m_ChunkObjects { get; private set; }
+        public ChunkGameData(enum_ChunkType _chunkType, Dictionary<enum_TileObjectType, List<ChunkTileGameData>> _chunkObjects)
         {
             m_ChunkType = m_ChunkType;
             m_ChunkObjects = _chunkObjects;
+        }
+    }
+
+    public class ChunkTileGameData
+    {
+        public Vector3 m_Position { get; private set; }
+        public Quaternion m_Rotation { get; private set; }
+        public ChunkTileGameData(Vector3 positon,Quaternion rotation)
+        {
+            m_Position = positon;
+            m_Rotation = rotation;
         }
     }
 

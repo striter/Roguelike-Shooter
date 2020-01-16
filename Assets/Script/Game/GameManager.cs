@@ -118,7 +118,7 @@ public class GameManager : GameManagerBase
         yield return null;
         InitPostEffects(m_GameLevel.m_GameStyle);
         yield return GameLevelManager.Instance.Generate(enum_LevelStyle.Frost, m_GameLevel.m_GameSeed);
-        m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_BattleData);
+        m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_BattleData, GameLevelManager.Instance.m_GameChunks[0].m_ChunkObjects[enum_TileObjectType.PlayerSpawn1x1][0].m_Position, GameLevelManager.Instance.m_GameChunks[0].m_ChunkObjects[enum_TileObjectType.PlayerSpawn1x1][0].m_Rotation);
         AttachPlayerCamera(m_LocalPlayer.tf_CameraAttach);
         yield return null;
         OnPortalExit(1f, m_LocalPlayer.tf_CameraAttach);
@@ -128,7 +128,7 @@ public class GameManager : GameManagerBase
 
     void OnStageLoaded()
     {
-        m_LocalPlayer.transform.position = GameLevelManager.Instance.m_GameChunks[0].m_ChunkObjects[enum_TileObjectType.PlayerSpawn1x1][0];
+
     }
 
     void OnPortalEnter() => OnGameFinished(true);
@@ -212,7 +212,7 @@ public class GameManager : GameManagerBase
     void OnEntiyActivate(EntityBase entity)
     {
         m_Entities.Add(entity.m_EntityID, entity);
-        if (entity.m_Controller== enum_EntityController.None)
+        if (entity.m_ControllType== enum_EntityController.None)
             return;
         EntityCharacterBase character = entity as EntityCharacterBase;
         m_Characters.Add(character.m_EntityID, character);
@@ -225,7 +225,7 @@ public class GameManager : GameManagerBase
 
     void OnCharacterDead(EntityCharacterBase character)
     {
-        if (character.m_Controller == enum_EntityController.Player)
+        if (character.m_ControllType == enum_EntityController.Player)
             SetPostEffect_Dead();
 
         SpawnEntityDeadPickups(character);
@@ -234,7 +234,7 @@ public class GameManager : GameManagerBase
     void OnEntityRecycle(EntityBase entity)
     {
         m_Entities.Remove(entity.m_EntityID);
-        if (entity.m_Controller == enum_EntityController.None)
+        if (entity.m_ControllType == enum_EntityController.None)
             return;
         EntityCharacterBase character = entity as EntityCharacterBase;
         m_Characters.Remove(character.m_EntityID);
@@ -249,7 +249,7 @@ public class GameManager : GameManagerBase
 
     void OnCharacterRevive(EntityCharacterBase character)
     {
-        if (character.m_Controller == enum_EntityController.Player)
+        if (character.m_ControllType == enum_EntityController.Player)
         {
             SetPostEffect_Revive();
             return;
@@ -346,7 +346,7 @@ public class GameManager : GameManagerBase
 
     void OnBattleCharacterRecycle(EntityCharacterBase entity)
     {
-        if (entity.m_Controller == enum_EntityController.Player)
+        if (entity.m_ControllType == enum_EntityController.Player)
             OnGameFinished(false);
     }
     
@@ -474,10 +474,10 @@ public static class GameObjectManager
         return entity;
     }
     public static EntityCharacterBase SpawnEntityCharacter(int poolIndex, Vector3 toPosition,Vector3 lookPos, enum_EntityFlag _flag,int spawnerID=-1, float _startHealth = 0, Transform parentTrans = null) => SpawnEntity<EntityCharacterBase>(poolIndex,toPosition,lookPos,_flag,spawnerID,_startHealth,parentTrans);
-    public static EntityCharacterPlayer SpawnEntityPlayer(CBattleSave playerSave)
+    public static EntityCharacterPlayer SpawnEntityPlayer(CBattleSave playerSave,Vector3 position,Quaternion rotation)
     {
-        EntityCharacterPlayer player = SpawnEntity<EntityCharacterPlayer>((int)playerSave.m_character,Vector3.zero,Vector3.up*10f, enum_EntityFlag.Player,-1,0);
-        player.SetPlayerInfo(playerSave);
+        EntityCharacterPlayer player = SpawnEntity<EntityCharacterPlayer>((int)playerSave.m_character,position,Vector3.up, enum_EntityFlag.Player,-1,0);
+        player.SetPlayer(playerSave, position, rotation);
         return player;
     }
     public static EntityNPC SpawnNPC(enum_InteractCharacter npc, Vector3 toPosition, Transform attachTo) => SpawnEntity<EntityNPC>((int)npc, toPosition,toPosition+Vector3.forward, enum_EntityFlag.Neutal,-1,0, attachTo);

@@ -20,7 +20,7 @@ TagManager:
   - interact
   - 
   - 
-  - 
+  - movementDetect
   - interactDetect
   - entityDetect
   - 

@@ -4,13 +4,14 @@ using UnityEngine;
 using GameSetting;
 using TSpecialClasses;
 using System;
+using UnityEngine.AI;
 
 public class EntityCharacterPlayer : EntityCharacterBase {
     #region PresetData
     public int I_AbilityTimes = -1;
     public float F_AbilityCoolDown = 0f;
     #endregion
-    public override enum_EntityController m_Controller => enum_EntityController.Player;
+    public override enum_EntityController m_ControllType => enum_EntityController.Player;
     public virtual enum_PlayerCharacter m_Character => enum_PlayerCharacter.Invalid;
     protected PlayerAnimator m_Animator;
     protected virtual PlayerAnimator GetAnimatorController(Animator animator, Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) => new PlayerAnimator(animator, _OnAnimEvent);
@@ -37,7 +38,10 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         m_Health=new EntityPlayerHealth(this, OnHealthChanged);
         return m_Health;
-    } 
+    }
+
+    CharacterController m_Controller;
+    NavMeshAgent m_Agent;
 
     protected float f_aimMovementReduction = 0f;
     protected bool m_aimingMovementReduction => f_aimMovementReduction > 0f;
@@ -63,10 +67,15 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_Animator = GetAnimatorController(tf_Model.GetComponent<Animator>(),OnAnimationEvent);
         m_CharacterAbility = new CharacterAbility(I_AbilityTimes, F_AbilityCoolDown, OnAbilityTrigger);
         transform.Find("InteractDetector").GetComponent<InteractDetector>().Init(OnInteractCheck);
+        m_Controller = GetComponent<CharacterController>();
+        gameObject.layer = GameLayer.I_MovementDetect;
+        m_Agent = GetComponent<NavMeshAgent>();
+        m_Agent.enabled = false;
+        m_Agent.updateRotation = false;
     }
     protected override void OnPoolItemEnable()
     {
-            base.OnPoolItemEnable();
+        base.OnPoolItemEnable();
         SetBinding(true);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
         TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
@@ -78,16 +87,14 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
     }
-    public void SetSpawnPosRot(Vector3 position,Quaternion rotation)
+    public void SetPlayer(CBattleSave m_saveData, Vector3 position, Quaternion rotation)
     {
         transform.position = position;
         transform.rotation = rotation;
         m_CharacterRotation = rotation;
-        CameraController.Instance.SetCameraRotation(-1,transform.rotation.eulerAngles.y);
-    }
+        CameraController.Instance.SetCameraRotation(-1, transform.rotation.eulerAngles.y);
+        m_Agent.enabled = true;
 
-    public void SetPlayerInfo(CBattleSave m_saveData)
-    {
         m_CharacterInfo.SetInfoData(m_saveData.m_coins, ActionDataManager.CreateActions(m_saveData.m_actionEquipment));
         m_Health.OnActivate(m_saveData.m_curHealth>=0?m_saveData.m_curHealth:I_MaxHealth,I_DefaultArmor,true);
         ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_weapon1));
@@ -278,7 +285,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
         bool moving = m_MoveAxisInput.magnitude > 0;
         float finalMovementSpeed = m_CharacterInfo.F_MovementSpeed;
-        transform.position = NavigationManager.NavMeshPosition(transform.position+ CalculateMoveDirection(m_MoveAxisInput) * finalMovementSpeed * deltaTime);
+
+        m_Controller.Move(CalculateMoveDirection(m_MoveAxisInput) * finalMovementSpeed * deltaTime);
         m_Animator.SetRun(m_MoveAxisInput, finalMovementSpeed / F_MovementSpeed);
     }
 

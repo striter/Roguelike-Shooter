@@ -9,7 +9,7 @@ using System;
 [RequireComponent(typeof(NavMeshAgent),typeof(NavMeshObstacle))]
 public class EntityCharacterAI : EntityCharacterBase {
     public enum_EnermyAnim E_AnimatorIndex= enum_EnermyAnim.Invalid;
-    public override enum_EntityController m_Controller => enum_EntityController.AI;
+    public override enum_EntityController m_ControllType => enum_EntityController.AI;
     public float F_AIChaseRange;
     public float F_AIAttackRange;
     public RangeFloat F_AttackDuration;
