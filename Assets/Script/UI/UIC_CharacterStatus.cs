@@ -31,7 +31,7 @@ public class UIC_CharacterStatus : UIControlBase
     Image img_HealthFill;
     UIT_TextExtend m_HealthAmount;
 
-    ValueLerpSeconds m_HealthLerp,m_MaxHealthLerp,  m_ArmorLerp;
+    ValueLerpSeconds m_HealthLerp,  m_ArmorLerp;
 
     Transform tf_LocationData;
     UIT_TextExtend m_LocationIndex,m_LocationTitle;

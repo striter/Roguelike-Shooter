@@ -230,7 +230,7 @@ public class LevelChunkEditor : LevelChunkBase
 
     bool ObjectEditable(LevelTileEditor tile,enum_TileObjectType objectType)
     {
-        if (objectType == enum_TileObjectType.Connection1x5)
+        if (objectType == enum_TileObjectType.RConnection1x5)
             return m_TilesData.CheckIsEdge(tile.m_Axis);
 
         if (tile.m_Data.m_ObjectType != enum_TileObjectType.Invalid)

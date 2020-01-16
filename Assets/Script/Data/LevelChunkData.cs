@@ -53,7 +53,7 @@ public class LevelChunkData : ScriptableObject {
             for (int j = 0; j < m_Height; j++)
             {
                 int index = TileTools.Get1DAxisIndex(new TileAxis( i, j), m_Width);
-                if (chunk.m_TilesData[i, j].m_Data.m_ObjectType == enum_TileObjectType.Connection1x5)
+                if (chunk.m_TilesData[i, j].m_Data.m_ObjectType == enum_TileObjectType.RConnection1x5)
                     m_Connections.Add(new ChunkConnectionData(new TileAxis(i,j), chunk.m_TilesData[i, j].m_Data.m_Direction, m_Width,m_Height));
                 m_TileData[index] = chunk.m_TilesData[i, j].m_Data;
             }
@@ -87,24 +87,24 @@ public class LevelChunkData : ScriptableObject {
                 Color tileColor = Color.clear;
                 switch (tileData.m_ObjectType)
                 {
-                    case enum_TileObjectType.Connection1x5:
+                    case enum_TileObjectType.RConnection1x5:
                         tileColor = Color.green;
                         break;
-                    case enum_TileObjectType.ChunkPortal2x2:
-                    case enum_TileObjectType.StagePortal2x2:
+                    case enum_TileObjectType.RChunkPortal2x2:
+                    case enum_TileObjectType.RStagePortal2x2:
                         tileColor = Color.blue;
                         break;
-                    case enum_TileObjectType.PlayerSpawn1x1:
+                    case enum_TileObjectType.RPlayerSpawn1x1:
                         tileColor = Color.grey;
                         break;
-                    case enum_TileObjectType.EventArea3x3:
+                    case enum_TileObjectType.REventArea3x3:
                         tileColor = Color.yellow;
                         break;
-                    case enum_TileObjectType.EliteTrigger1x1:
+                    case enum_TileObjectType.REliteTrigger1x1:
                         tileColor = Color.magenta;
                         break;
-                    case enum_TileObjectType.EliteEnermySpawn1x1:
-                    case enum_TileObjectType.EnermySpawn1x1:
+                    case enum_TileObjectType.REliteEnermySpawn1x1:
+                    case enum_TileObjectType.REnermySpawn1x1:
                         tileColor = Color.red;
                         break;
                 }

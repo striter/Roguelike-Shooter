@@ -59,14 +59,14 @@ public class LevelChunkBase : MonoBehaviour
     public virtual ChunkGameData InitGameChunk(ChunkGenerateData data, System.Random random)
     {
         transform.localPosition = data.m_Axis.ToPosition();
-        Dictionary<enum_TileObjectType, List<ChunkTileGameData>> m_ChunkObjectPos = new Dictionary<enum_TileObjectType, List<ChunkTileGameData>>();
-        Dictionary<ChunkTileGameData, enum_ChunkConnectionType> m_ChunkConnections = new Dictionary<ChunkTileGameData, enum_ChunkConnectionType>();
+        Dictionary<enum_TileObjectType, List<ChunkGameObjectData>> m_ChunkObjectPos = new Dictionary<enum_TileObjectType, List<ChunkGameObjectData>>();
+        Dictionary<ChunkGameObjectData, enum_ChunkConnectionType> m_ChunkConnections = new Dictionary<ChunkGameObjectData, enum_ChunkConnectionType>();
         InitData(data.m_Data, random, (TileAxis axis, ChunkTileData tileData) => {
             if (tileData.m_ObjectType.IsEditorTileObject())
             {
                 if (!m_ChunkObjectPos.ContainsKey(tileData.m_ObjectType))
-                    m_ChunkObjectPos.Add(tileData.m_ObjectType, new List<ChunkTileGameData>());
-                m_ChunkObjectPos[tileData.m_ObjectType].Add(new ChunkTileGameData(axis.ToPosition() + tileData.m_ObjectType.GetSizeAxis(tileData.m_Direction).ToPosition() / 2f, tileData.m_Direction.ToRotation()));
+                    m_ChunkObjectPos.Add(tileData.m_ObjectType, new List<ChunkGameObjectData>());
+                m_ChunkObjectPos[tileData.m_ObjectType].Add(new ChunkGameObjectData(axis.ToPosition() + tileData.m_ObjectType.GetSizeAxis(tileData.m_Direction).ToPosition() / 2f, tileData.m_Direction.ToRotation()));
                 return tileData.ChangeObjectType(enum_TileObjectType.Invalid);
             }
             return tileData;
@@ -76,7 +76,7 @@ public class LevelChunkBase : MonoBehaviour
         List<ChunkConnectionData> entranceGenerate = new List<ChunkConnectionData>();
         data.m_Connection.Traversal((int index, enum_ChunkConnectionType type) => {
             ChunkConnectionData connection = data.m_Data.Connections[index];
-            m_ChunkConnections.Add(new ChunkTileGameData(connection.m_Axis.ToPosition() + enum_TileObjectType.Connection1x5.GetSizeAxis(connection.m_Direction).ToPosition()/2f, connection.m_Direction.ToRotation()), type);
+            m_ChunkConnections.Add(new ChunkGameObjectData(connection.m_Axis.ToPosition() + enum_TileObjectType.RConnection1x5.GetSizeAxis(connection.m_Direction).ToPosition()/2f, connection.m_Direction.ToRotation()), type);
             if (type == enum_ChunkConnectionType.Entrance)
                 entranceGenerate.Add(connection);
         });
@@ -89,7 +89,7 @@ public class LevelChunkBase : MonoBehaviour
 
     protected virtual void OnEntranceConnectionGenerate(ChunkConnectionData connection,int width,System.Random random)
     {
-        List<TileAxis> axies = TileTools.GetAxisRange(connection.m_Axis, enum_TileObjectType.Connection1x5.GetSizeAxis(connection.m_Direction));
+        List<TileAxis> axies = TileTools.GetAxisRange(connection.m_Axis, enum_TileObjectType.RConnection1x5.GetSizeAxis(connection.m_Direction));
         axies.Traversal((TileAxis axis) => {
             ChunkTileData connectionTile = ChunkTileData.Create(enum_TilePillarType.Invalid, enum_TileGroundType.Main, enum_TileObjectType.Invalid, enum_TileDirection.Top);
             OnTileInit(m_TilePool.AddItem(TileTools.Get1DAxisIndex(axis, width)), axis, connectionTile, random);

@@ -283,7 +283,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
         m_BaseMovementSpeed = CalculateMovementSpeedBase() * CalculateMovementSpeedMultiple();
 
-        bool moving = m_MoveAxisInput.magnitude > 0;
         float finalMovementSpeed = m_CharacterInfo.F_MovementSpeed;
 
         m_Controller.Move(CalculateMoveDirection(m_MoveAxisInput) * finalMovementSpeed * deltaTime);
