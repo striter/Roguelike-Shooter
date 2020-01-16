@@ -76,7 +76,7 @@ public class LevelChunkBase : MonoBehaviour
         List<ChunkConnectionData> entranceGenerate = new List<ChunkConnectionData>();
         data.m_Connection.Traversal((int index, enum_ChunkConnectionType type) => {
             ChunkConnectionData connection = data.m_Data.Connections[index];
-            m_ChunkConnections.Add(new ChunkTileGameData(connection.m_Axis.ToPosition() + enum_TileObjectType.Connection1x5.GetSizeAxis(connection.m_Direction).ToPosition()/2f, connection.m_Direction.ToRotation()), type);
+            m_ChunkConnections.Add(new ChunkTileGameData(connection.m_Axis.ToPosition() + enum_TileObjectType.RConnection1x5.GetSizeAxis(connection.m_Direction).ToPosition()/2f, connection.m_Direction.ToRotation()), type);
             if (type == enum_ChunkConnectionType.Entrance)
                 entranceGenerate.Add(connection);
         });
@@ -89,7 +89,7 @@ public class LevelChunkBase : MonoBehaviour
 
     protected virtual void OnEntranceConnectionGenerate(ChunkConnectionData connection,int width,System.Random random)
     {
-        List<TileAxis> axies = TileTools.GetAxisRange(connection.m_Axis, enum_TileObjectType.Connection1x5.GetSizeAxis(connection.m_Direction));
+        List<TileAxis> axies = TileTools.GetAxisRange(connection.m_Axis, enum_TileObjectType.RConnection1x5.GetSizeAxis(connection.m_Direction));
         axies.Traversal((TileAxis axis) => {
             ChunkTileData connectionTile = ChunkTileData.Create(enum_TilePillarType.Invalid, enum_TileGroundType.Main, enum_TileObjectType.Invalid, enum_TileDirection.Top);
             OnTileInit(m_TilePool.AddItem(TileTools.Get1DAxisIndex(axis, width)), axis, connectionTile, random);

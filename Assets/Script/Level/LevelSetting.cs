@@ -57,14 +57,14 @@ namespace LevelSetting
         Object3x3B=22,
         
         RestrictStart=50,
-        PlayerSpawn1x1=51,
-        Connection1x5 =52,
-        StagePortal2x2=53,
-        ChunkPortal2x2=54,
-        EventArea3x3 = 55,
-        EnermySpawn1x1=56,
-        EliteEnermySpawn1x1=57,
-        EliteTrigger1x1=58,
+        RPlayerSpawn1x1=51,
+        RConnection1x5 =52,
+        RStagePortal2x2=53,
+        RChunkPortal2x2=54,
+        REventArea3x3 = 55,
+        REnermySpawn1x1=56,
+        REliteEnermySpawn1x1=57,
+        REliteTrigger1x1=58,
         RestrictEnd,
     }
 
@@ -109,13 +109,13 @@ namespace LevelSetting
             TileAxis size = TileAxis.One;
             switch (type)
             {
-                case enum_TileObjectType.Connection1x5:
+                case enum_TileObjectType.RConnection1x5:
                     size = new TileAxis(5, 1);
                     break;
                 case enum_TileObjectType.Object2x2A:
                 case enum_TileObjectType.Object2x2B:
-                case enum_TileObjectType.StagePortal2x2:
-                case enum_TileObjectType.ChunkPortal2x2:
+                case enum_TileObjectType.RStagePortal2x2:
+                case enum_TileObjectType.RChunkPortal2x2:
                     size = TileAxis.One * 2;
                     break;
                 case enum_TileObjectType.Object2x1B:
@@ -126,7 +126,7 @@ namespace LevelSetting
                 case enum_TileObjectType.Object3x2B:
                     size = new TileAxis(3, 2);
                     break;
-                case enum_TileObjectType.EventArea3x3:
+                case enum_TileObjectType.REventArea3x3:
                 case enum_TileObjectType.Object3x3A:
                 case enum_TileObjectType.Object3x3B:
                     size = TileAxis.One * 3;
@@ -178,24 +178,24 @@ namespace LevelSetting
             switch(type)
             {
                 case enum_ChunkType.Start:
-                    restrictionDic.Add(enum_TileObjectType.Connection1x5, 1);
-                    restrictionDic.Add(enum_TileObjectType.PlayerSpawn1x1, 1);
+                    restrictionDic.Add(enum_TileObjectType.RConnection1x5, 1);
+                    restrictionDic.Add(enum_TileObjectType.RPlayerSpawn1x1, 1);
                     break;
                 case enum_ChunkType.Event:
-                    restrictionDic.Add(enum_TileObjectType.ChunkPortal2x2, 1);
-                    restrictionDic.Add(enum_TileObjectType.EventArea3x3, 1);
-                    restrictionDic.Add(enum_TileObjectType.Connection1x5, -1);
+                    restrictionDic.Add(enum_TileObjectType.RChunkPortal2x2, 1);
+                    restrictionDic.Add(enum_TileObjectType.REventArea3x3, 1);
+                    restrictionDic.Add(enum_TileObjectType.RConnection1x5, -1);
                     break;
                 case enum_ChunkType.Battle:
-                    restrictionDic.Add(enum_TileObjectType.Connection1x5, -1);
-                    restrictionDic.Add( enum_TileObjectType.EnermySpawn1x1,-1);
+                    restrictionDic.Add(enum_TileObjectType.RConnection1x5, -1);
+                    restrictionDic.Add( enum_TileObjectType.REnermySpawn1x1,-1);
                     break;
                 case enum_ChunkType.Final:
-                    restrictionDic.Add(enum_TileObjectType.Connection1x5, 1);
-                    restrictionDic.Add(enum_TileObjectType.StagePortal2x2, 1);
-                    restrictionDic.Add(enum_TileObjectType.EliteEnermySpawn1x1,1);
-                    restrictionDic.Add(enum_TileObjectType.EliteTrigger1x1, -1);
-                    restrictionDic.Add(enum_TileObjectType.EnermySpawn1x1, -1);
+                    restrictionDic.Add(enum_TileObjectType.RConnection1x5, 1);
+                    restrictionDic.Add(enum_TileObjectType.RStagePortal2x2, 1);
+                    restrictionDic.Add(enum_TileObjectType.REliteEnermySpawn1x1,1);
+                    restrictionDic.Add(enum_TileObjectType.REliteTrigger1x1, -1);
+                    restrictionDic.Add(enum_TileObjectType.REnermySpawn1x1, -1);
                     break;
             }
             return restrictionDic;

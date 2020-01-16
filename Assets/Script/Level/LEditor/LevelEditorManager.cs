@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using LevelSetting;
 using GameSetting;
-using UnityEditor;
 
 public class LevelEditorManager : SimpleSingletonMono<LevelEditorManager>
 {
@@ -38,21 +37,22 @@ public class LevelEditorManager : SimpleSingletonMono<LevelEditorManager>
             Debug.LogError("Edit Data Name Before Save!");
             return null;
         }
-
-        string dataPath = TResources.ConstPath.S_ChunkData + "/"+dataName + ".asset";
         LevelChunkData data = TResources.GetLevelData(dataName);
+#if UNITY_EDITOR
+        string dataPath = TResources.ConstPath.S_ChunkData + "/"+dataName + ".asset";
         if (data == null)
         {
             data = ScriptableObject.CreateInstance<LevelChunkData>();
-            AssetDatabase.CreateAsset(data, "Assets/Resources/" + dataPath);
+            UnityEditor.AssetDatabase.CreateAsset(data, "Assets/Resources/" + dataPath);
         }
         data.SaveData(LevelChunkEditor.Instance);
 
-        EditorUtility.SetDirty(data);
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
+        UnityEditor.EditorUtility.SetDirty(data);
+        UnityEditor.AssetDatabase.SaveAssets();
+        UnityEditor.AssetDatabase.Refresh();
+#endif
         return data;
     }
-    #endregion
+#endregion
 }
 

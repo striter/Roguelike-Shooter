@@ -1936,7 +1936,9 @@ namespace GameSetting
         protected override Vector3 GetTargetPosition(bool preAim, EntityCharacterBase _target)
         {
             Transform castAt = GetCastAt(_target);
-            return NavigationManager.NavMeshPosition(castAt.position + TCommon.RandomXZSphere(m_Entity.F_AttackSpread)) + new Vector3(0, castAt.position.y, 0);
+            Vector3 castPos = NavigationManager.NavMeshPosition(castAt.position + TCommon.RandomXZSphere(m_Entity.F_AttackSpread));
+            castPos.y = castAt.transform.position.y;
+            return castPos;
         }
         public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
