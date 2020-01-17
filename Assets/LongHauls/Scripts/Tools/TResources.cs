@@ -12,16 +12,11 @@ public class TResources
     public class ConstPath
     {
         public const string S_PlayerEntity = "Entity/0_Player";
-        public const string S_StyleCustomization = "Level/Customization";
 
-        public const string S_LevelPrefab = "Level/LevelPrefab";
-        public const string S_LeveLItem = "Level/Item";
-
+        public const string S_StyleCustomization = "Chunk/Customization";
         public const string S_ChunkTile = "Chunk/Tile/";
         public const string S_ChunkTileEditor = "Chunk/Tile/Editor";
         public const string S_ChunkData = "Chunk/Data";
-
-        public const string S_Texture_LevelBase = "Texture/Level/Texture_Base_";
 
         public const string S_PlayerWeapon = "WeaponModel/";
         public const string S_Entity = "Entity/";
