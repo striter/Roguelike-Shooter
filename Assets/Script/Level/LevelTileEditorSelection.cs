@@ -8,6 +8,7 @@ public class LevelTileEditorSelection : LevelTileEditor
 {
     public override void Init(TileAxis axis, ChunkTileData data,System.Random random)
     {
+        Clear();
         base.Init(axis, data,random);
         SetSelecting(false);
     }

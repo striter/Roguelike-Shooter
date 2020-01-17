@@ -36,7 +36,8 @@ public class LevelTileEditor : LevelTileBase {
         m_EditorModel = transform.Find("EditorModel");
         m_Collider = GetComponent<BoxCollider>();
 
-            base.Init(axis, data,random);
+        Clear();
+        base.Init(axis, data,random);
 
         bool showGround = false;
         bool showPillar = false;
