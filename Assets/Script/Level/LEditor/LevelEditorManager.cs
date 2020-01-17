@@ -7,7 +7,6 @@ using GameSetting;
 public class LevelEditorManager : SimpleSingletonMono<LevelEditorManager>
 {
     public bool B_DrawTileGizmos;
-    
 
     #region FileEdit
     public void New(int sizeX,int sizeY,enum_ChunkType type)=>LevelChunkEditor.Instance.Init(LevelChunkData.NewData(sizeX, sizeY,type));
