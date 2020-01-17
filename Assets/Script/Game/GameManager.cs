@@ -117,7 +117,7 @@ public class GameManager : GameManagerBase
         m_Enermies = GameObjectManager.RegistStyledInGamePrefabs(m_GameLevel.m_GameStyle, m_GameLevel.m_GameStage);
         yield return null;
 
-        yield return GameLevelManager.Instance.Generate(enum_LevelStyle.Frost, m_GameLevel.m_GameSeed);
+        yield return GameLevelManager.Instance.Generate(m_GameLevel.m_GameStyle, m_GameLevel.m_GameSeed);
 
         GenerateGameRelatives();
         yield return null;
@@ -139,8 +139,6 @@ public class GameManager : GameManagerBase
         GenerateChunkObjects();
 
         ChunkGameData startChunk = GameLevelManager.Instance.m_GameChunks[0];
-
-
 
         m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_BattleData,startChunk.GetObjectWorldPosition( startChunk.m_LocalChunkObjects[enum_TileObjectType.RPlayerSpawn1x1][0].m_LocalPosition), GameLevelManager.Instance.m_GameChunks[0].m_LocalChunkObjects[enum_TileObjectType.RPlayerSpawn1x1][0].Rotation);
         AttachPlayerCamera(m_LocalPlayer.tf_CameraAttach);
@@ -446,7 +444,7 @@ public class GameProgressManager
         m_GameRandom =_battleSave.m_GameSeed;
         m_GameSeed = new System.Random(m_GameRandom.GetHashCode());
         m_GameStage = _battleSave.m_Stage;
-        m_GameStyle = enum_LevelStyle.Frost;//TCommon.RandomEnumValues<enum_LevelStyle>(m_GameSeed) ;
+        m_GameStyle = enum_LevelStyle.Desert;//TCommon.RandomEnumValues<enum_LevelStyle>(m_GameSeed) ;
         m_GameDifficulty = 3; //_gameSave.m_GameDifficulty;
     }
     public void LoadStageData()

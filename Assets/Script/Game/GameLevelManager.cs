@@ -30,7 +30,6 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
     public IEnumerator Generate(enum_LevelStyle style,System.Random random)
     {
         LevelObjectManager.Register(TResources.GetChunkTiles(style));
-
         
         GameRenderData[] customizations = TResources.GetRenderData(style);
         GameRenderData randomData = customizations.Length == 0 ? GameRenderData.Default() : customizations.RandomItem(random);
