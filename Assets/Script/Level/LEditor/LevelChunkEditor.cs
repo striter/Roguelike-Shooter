@@ -45,6 +45,7 @@ public class LevelChunkEditor : LevelChunkBase
 
         m_ItemRestriction = LevelExpressions.GetChunkRestriction(m_ChunkType); 
         m_EditMode = enum_TileSubType.Ground;
+        m_GameViewMode = false;
         CheckEditMode();
     }
 
