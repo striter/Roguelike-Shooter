@@ -19,12 +19,14 @@ public class LevelChunkEditor : LevelChunkBase
     List<LevelTileEditorData> temp_RelativeTiles = new List<LevelTileEditorData>();
     Dictionary<enum_TileObjectType, int> m_ItemRestriction;
     System.Random m_Random = new System.Random();
+    Light m_directionalLight;
     private void Awake()
     {
         Instance = this;
         tf_CameraPos = transform.Find("CameraPos");
         m_SelectionTiles = new ObjectPoolSimpleComponent<int, LevelTileEditorSelection>(transform.Find("SelectionPool"), "SelectionItem");
         m_SelectingTile = transform.Find("SelectingTile").GetComponent<LevelTileEditorSelection>();
+        m_directionalLight = transform.Find("Directional Light").GetComponent<Light>();
         Init();
     }
     private void Start()
@@ -105,6 +107,9 @@ public class LevelChunkEditor : LevelChunkBase
             m_TilesData.Traversal((LevelTileEditorData tile) => { tile.Clear(); });
             m_EditStyle = targetStyle;
             LevelObjectManager.Register(m_EditStyle == enum_LevelStyle.Invalid ? TResources.GetChunkEditorTiles() : TResources.GetChunkTiles(m_EditStyle));
+            GameRenderData renderData = GameRenderData.Default();
+            if (targetStyle != enum_LevelStyle.Invalid) renderData = TResources.GetGameRenderSettings(targetStyle).RandomItem();
+            renderData.DataInit(m_directionalLight,CameraController.Instance.m_Camera);
         }
 
         ChangeEditSelection(null);

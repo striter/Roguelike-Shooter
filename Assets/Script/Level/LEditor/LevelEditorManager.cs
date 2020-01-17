@@ -18,7 +18,7 @@ public class LevelEditorManager : SimpleSingletonMono<LevelEditorManager>
             Debug.LogError("Edit Data Name Before Read!");
             return null;
         }
-        LevelChunkData m_Data = TResources.GetLevelData(dataName);
+        LevelChunkData m_Data = TResources.GetChunkData(dataName);
         if (!m_Data)
             return null;
         LevelChunkEditor.Instance.Init(m_Data);
@@ -32,7 +32,7 @@ public class LevelEditorManager : SimpleSingletonMono<LevelEditorManager>
             Debug.LogError("Edit Data Name Before Save!");
             return null;
         }
-        LevelChunkData data = TResources.GetLevelData(dataName);
+        LevelChunkData data = TResources.GetChunkData(dataName);
 #if UNITY_EDITOR
         string dataPath = TResources.ConstPath.S_ChunkData + "/"+dataName + ".asset";
         if (data == null)

@@ -32,8 +32,8 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         LevelObjectManager.Register(TResources.GetChunkTiles(style));
 
         
-        StyleColorData[] customizations = TResources.GetAllStyleCustomization(style);
-        StyleColorData randomData = customizations.Length == 0 ? StyleColorData.Default() : customizations.RandomItem(random);
+        GameRenderData[] customizations = TResources.GetGameRenderSettings(style);
+        GameRenderData randomData = customizations.Length == 0 ? GameRenderData.Default() : customizations.RandomItem(random);
         randomData.DataInit(m_DirectionalLight,CameraController.Instance.m_Camera);
 
         Dictionary<enum_ChunkType,List<LevelChunkData>> datas=TResources.GetChunkDatas();

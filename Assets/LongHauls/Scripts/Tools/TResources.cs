@@ -59,9 +59,9 @@ public class TResources
     public static AtlasLoader GetUIAtlas_Weapon() => new AtlasLoader(Load<SpriteAtlas>(ConstPath.S_UI_Atlas_Weapon));
     #endregion
     #region GamePrefab
-    public static StyleColorData[] GetAllStyleCustomization(enum_LevelStyle levelStype) => LoadAll<StyleColorData>(ConstPath.S_StyleCustomization + "/" + levelStype);
+    public static GameRenderData[] GetGameRenderSettings(enum_LevelStyle levelStype) => LoadAll<GameRenderData>(ConstPath.S_StyleCustomization + "/" + levelStype);
     #region NewLevel
-    public static LevelChunkData GetLevelData(string name) => Load<LevelChunkData>(ConstPath.S_ChunkData + "/" + name);
+    public static LevelChunkData GetChunkData(string name) => Load<LevelChunkData>(ConstPath.S_ChunkData + "/" + name);
     public static Dictionary<enum_ChunkType, List<LevelChunkData>> GetChunkDatas()
     {
         LevelChunkData[] datas= LoadAll<LevelChunkData>(ConstPath.S_ChunkData);

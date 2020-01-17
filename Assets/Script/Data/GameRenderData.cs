@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StyleColorData : ScriptableObject
+public class GameRenderData : ScriptableObject
 {
     public float f_pitch;
     public float f_yaw;
@@ -13,9 +13,9 @@ public class StyleColorData : ScriptableObject
     public Color c_ambient;
     public Color c_skyColor;
 
-    public static StyleColorData Default()
+    public static GameRenderData Default()
     {
-        StyleColorData defaultData = CreateInstance<StyleColorData>();
+        GameRenderData defaultData = CreateInstance<GameRenderData>();
         defaultData.c_lightColor = Color.white;
         defaultData.f_pitch = 45;
         defaultData.f_yaw = 60;

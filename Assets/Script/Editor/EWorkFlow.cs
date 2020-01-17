@@ -15,7 +15,7 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
 {
     [MenuItem("Work Flow/Style_ColorSerialization(Direction,Ocean,Ambient)",false,0)]
     public static void StyleColorSerialization()=> (GetWindow(typeof(EWorkFlow_StyleColorCustomization)) as EWorkFlow_StyleColorCustomization).Show(); 
-    static StyleColorData m_EditingData;
+    static GameRenderData m_EditingData;
     string extraName="Please Edit This";
 
     private void OnGUI()
@@ -29,14 +29,14 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
         }
 
         enum_LevelStyle style = GameManager.Instance.m_GameLevel.m_GameStyle;
-        StyleColorData[] customizations = TResources.GetAllStyleCustomization(style);
+        GameRenderData[] customizations = TResources.GetGameRenderSettings(style);
         Light directionalLight = GameLevelManager.Instance.m_DirectionalLight;
         Camera camera = CameraController.Instance.m_Camera;
 
         GUILayout.TextArea(customizations.Length == 0 ? "Current Style Does Not Contains Any Customization,Please Save One" : "Current Style Customizations");
         if (m_EditingData==null)
         {
-            customizations.Traversal((StyleColorData data) =>
+            customizations.Traversal((GameRenderData data) =>
             {
                 GUILayout.BeginHorizontal();
                 GUILayout.TextArea(data.name);
@@ -54,7 +54,7 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
 
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("New"))
-                m_EditingData = StyleColorData.Default();
+                m_EditingData = GameRenderData.Default();
             GUILayout.EndHorizontal();
         }
         else
@@ -103,7 +103,7 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
         GUILayout.EndVertical();
     }
 
-    static void SaveCustomization(StyleColorData data,enum_LevelStyle selectingStyleType,string dataName)
+    static void SaveCustomization(GameRenderData data,enum_LevelStyle selectingStyleType,string dataName)
     {
         string dataFolder = TResources.ConstPath.S_StyleCustomization + "/" + selectingStyleType;
         string targetPath = dataFolder + "/"+dataName + ".asset";
