@@ -55,7 +55,7 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,IPo
         {
             GameObject.Destroy(m_spawnItem.gameObject);
 
-            for (int i = 0; i < m_DeactiveQueue.Count; i++)
+            for (; m_DeactiveQueue.Count>0;)
                 GameObject.Destroy(m_DeactiveQueue.Dequeue().gameObject);
             for (int i = 0; i < m_ActiveList.Count; i++)
                 GameObject.Destroy(m_ActiveList[i].gameObject);

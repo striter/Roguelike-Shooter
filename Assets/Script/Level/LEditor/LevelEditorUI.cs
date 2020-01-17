@@ -10,16 +10,16 @@ public class LevelEditorUI : SimpleSingletonMono<LevelEditorUI>,TReflection.UI.I
     {
         Text m_Text;
         ObjectPoolSimpleComponent<int, Button> m_ChunkButton;
-        public override void OnElementFIll(Transform transform)
+        public TypeSelection(Transform transform):base(transform)
         {
-            base.OnElementFIll(transform);
-            m_Text = transform.Find("Text").GetComponent<Text>();
+            TReflection.UI.UIPropertyFill(this, transform);
             m_ChunkButton = new ObjectPoolSimpleComponent<int, Button>(transform.Find("Grid"), "GridItem");
             transform.GetComponent<Button>().onClick.AddListener(() => {
-                m_ChunkButton.transform.SetActivate(!m_ChunkButton .transform.gameObject.activeSelf);
+                m_ChunkButton.transform.SetActivate(!m_ChunkButton.transform.gameObject.activeSelf);
             });
             m_ChunkButton.transform.SetActivate(false);
         }
+
         public void Init<T>(T defaultValue, Action<int> OnClick)
         {
             m_Text.text = defaultValue.ToString();
@@ -39,7 +39,6 @@ public class LevelEditorUI : SimpleSingletonMono<LevelEditorUI>,TReflection.UI.I
         }
     }
 
-    Transform TReflection.UI.IUIPropertyFill.GetFillParent() => transform;
     Transform m_File, m_Edit;
     Button m_File_New, m_File_Read, m_File_Save;
     InputField m_File_New_X, m_File_New_Y,  m_File_Read_Name, m_File_Save_Name;
@@ -57,7 +56,7 @@ public class LevelEditorUI : SimpleSingletonMono<LevelEditorUI>,TReflection.UI.I
     protected override void Awake()
     {
         base.Awake();
-        TReflection.UI.UIPropertyFill(this);
+        TReflection.UI.UIPropertyFill(this,transform);
         m_File_New.onClick.AddListener(OnNewClick);
         m_File_Read.onClick.AddListener(OnReadClick);
         m_File_Save.onClick.AddListener(OnSaveClick);

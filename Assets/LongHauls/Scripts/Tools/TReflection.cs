@@ -34,13 +34,13 @@ public static class TReflection
     {
         public interface IUIPropertyFill
         {
-            Transform GetFillParent();
         }
-        public class CPropertyFillElement
+        public class CPropertyFillElement:IUIPropertyFill
         {
-            public virtual void OnElementFIll(Transform transform)
+            public Transform transform { get; private set; }
+            public CPropertyFillElement(Transform transform)
             {
-
+                this.transform = transform;
             }
         }
 
@@ -57,7 +57,7 @@ public static class TReflection
     };
         static bool FillTypeMatch(Type type) => m_BaseTypeHelper.ContainsKey(type) || type.IsSubclassOf(typeof(CPropertyFillElement));
 
-        public static void UIPropertyFill<T>(T target) where T : IUIPropertyFill
+        public static void UIPropertyFill<T>(T target,Transform parent) where T : IUIPropertyFill
         {
             try
             {
@@ -67,13 +67,13 @@ public static class TReflection
                 object objValue = null;
                 foreach (var property in properties)
                 {
-                    if (GetProperty(target, property.Name, property.PropertyType, out objValue))
+                    if (GetProperty(target,parent, property.Name, property.PropertyType, out objValue))
                         property.SetValue(target, objValue, null);
                 }
 
                 foreach (var filedInfo in fieldInfos)
                 {
-                    if (GetProperty(target, filedInfo.Name, filedInfo.FieldType, out objValue))
+                    if (GetProperty(target,parent, filedInfo.Name, filedInfo.FieldType, out objValue))
                         filedInfo.SetValue(target, objValue);
                 }
             }
@@ -83,7 +83,7 @@ public static class TReflection
             }
         } 
 
-        static bool GetProperty<T>(T target, string name, Type type, out object obj) where T : IUIPropertyFill
+        static bool GetProperty<T>(T target,Transform parent, string name, Type type, out object obj) where T : IUIPropertyFill
         {
             obj = null;
             string[] propertySplitPath = name.Split('_');
@@ -94,14 +94,11 @@ public static class TReflection
                 if (i < propertySplitPath.Length - 1)
                     path += "/";
             }
-            Transform targetTrans = target.GetFillParent().Find(path);
+            Transform targetTrans = parent.Find(path);
             if (targetTrans == null)
                 throw new Exception("Folder:" + path);
             if (type.IsSubclassOf(m_FillElement))
-            {
-                obj = Activator.CreateInstance(type,true);
-                ((CPropertyFillElement)obj).OnElementFIll(targetTrans);
-            }
+                obj =  Activator.CreateInstance(type, (object)targetTrans);
             else
                 obj = m_BaseTypeHelper[type](targetTrans);
             return true;

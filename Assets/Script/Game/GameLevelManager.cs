@@ -29,7 +29,6 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
 
     public IEnumerator Generate(enum_LevelStyle style,System.Random random)
     {
-        LevelObjectManager.Clear();
         LevelObjectManager.Register(TResources.GetChunkTiles(style));
 
         
@@ -215,6 +214,7 @@ public static class LevelObjectManager
 {
     public static void Register(TileItemBase[] chunkTileItems)
     {
+        Clear();
         Dictionary<enum_TileSubType, List<TileItemBase>> itemDic = new Dictionary<enum_TileSubType, List<TileItemBase>>();
         chunkTileItems.Traversal((TileItemBase item) => {
             if (!itemDic.ContainsKey(item.m_Type))
@@ -266,7 +266,7 @@ public static class LevelObjectManager
 public static class NavigationManager
 {
     //Consider Use NavmeshComponents Instead(Download From Git)
-    static NavMeshDataInstance m_NavMeshDataEntity, m_NavMeshDataInteract;
+    static NavMeshDataInstance m_NavMeshDataEntity;//, m_NavMeshDataInteract;
     static NavMeshHit sampleHit;
     public static Vector3 NavMeshPosition(Vector3 samplePosition, bool maskEntity = true)
     {

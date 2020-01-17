@@ -1720,7 +1720,6 @@ namespace GameSetting
         public virtual float F_AllyHealthMultiplierAdditive => 0;
         public virtual float P_CoinsDropAdditive => 0f;
         public virtual float F_CoinsCostDecrease => 0f;
-        public EquipmentBase() { }
         protected EquipmentBase(int _identity,EquipmentSaveData _data)
         {
             m_EquipmentType = _data.m_Type;

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using TTiles;
 using UnityEngine;
 using LevelSetting;
+using System;
+
 public class LevelTileEditorData : LevelTileEditor {
 
     public override bool isDataTile => true;
@@ -37,24 +39,26 @@ public class LevelTileEditorData : LevelTileEditor {
         m_Data = m_Data.ChangeGroundType(type);
         Init(m_Axis, m_Data,random);
     }
-    public override void OnEditSelectionChange()
+
+
+    public override void Init(TileAxis axis, ChunkTileData data, System.Random random)
     {
-        base.OnEditSelectionChange();
+        base.Init(axis, data, random);
         bool showEditorModel = false;
-        if (LevelChunkEditor.Instance.m_ShowAllModel)
+        if (LevelChunkEditor.Instance.m_GameViewMode)
             showEditorModel = false;
         else
         {
             switch (LevelChunkEditor.Instance.m_EditMode)
             {
                 case enum_TileSubType.Ground:
-                        showEditorModel = m_Ground == null;
+                    showEditorModel = m_Ground == null;
                     break;
                 case enum_TileSubType.Object:
-                        showEditorModel = m_Ground == null;
+                    showEditorModel = false;
                     break;
                 case enum_TileSubType.Pillar:
-                    showEditorModel = m_Ground&&!m_Pillar;
+                    showEditorModel = m_Ground && !m_Pillar;
                     break;
             }
         }

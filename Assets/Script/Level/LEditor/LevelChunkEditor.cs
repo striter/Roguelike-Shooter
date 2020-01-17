@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using TTiles;
 using LevelSetting;
+using GameSetting;
+
 public class LevelChunkEditor : LevelChunkBase
 {
     public static LevelChunkEditor Instance { get; private set; }
     public Transform tf_CameraPos { get; private set; }
     public enum_TileSubType m_EditMode { get; private set; } = enum_TileSubType.Ground;
-    public bool m_ShowAllModel { get; private set; }
+    public enum_LevelStyle m_EditStyle { get; private set; } =  enum_LevelStyle.Invalid;
+    public bool m_GameViewMode { get; private set; }
     public LevelTileEditorData[,] m_TilesData { get; private set; }
     ObjectPoolSimpleComponent<int, LevelTileEditorSelection> m_SelectionTiles;
     LevelTileEditorSelection m_SelectingTile;
@@ -27,13 +30,13 @@ public class LevelChunkEditor : LevelChunkBase
     private void Start()
     {
         TPSCameraController.Instance.Attach(tf_CameraPos, true, true);
-        LevelObjectManager.Register(TResources.GetChunkEditorTiles());
+        LevelObjectManager.Register( TResources.GetChunkEditorTiles());
     }
 
     public void Init(LevelChunkData _data)
     {
         m_TilesData = new LevelTileEditorData[_data.Width, _data.Height];
-        base.InitData(_data,m_Random);
+        base.InitData(_data, m_Random);
 
         tf_CameraPos.transform.localPosition = new Vector3(m_Width / 2f * LevelConst.I_TileSize, 0, 0);
         TPSCameraController.Instance.SetCameraRotation(60, 0);
@@ -76,7 +79,7 @@ public class LevelChunkEditor : LevelChunkBase
     {
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            m_ShowAllModel = false;
+            m_GameViewMode = false;
             m_EditMode = m_EditMode == enum_TileSubType.Invalid ? enum_TileSubType.Ground : m_EditMode + 1;
             if (m_EditMode > enum_TileSubType.Pillar)
                 m_EditMode = enum_TileSubType.Object;
@@ -84,20 +87,26 @@ public class LevelChunkEditor : LevelChunkBase
         }
 
         if (Input.GetKeyDown(KeyCode.CapsLock))
-            EnterViewMode();
+        {
+            m_EditMode = enum_TileSubType.Invalid;
+            m_GameViewMode = true;
+            CheckEditMode();
+        }
 
         MouseRayChunkEdit();
     }
     #region EditMode
-    void EnterViewMode()
-    {
-        m_EditMode = enum_TileSubType.Invalid;
-        m_ShowAllModel = true;
-        CheckEditMode();
-    }
-
+    
     void CheckEditMode()
     {
+        enum_LevelStyle targetStyle = m_GameViewMode ? enum_LevelStyle.Frost : enum_LevelStyle.Invalid;
+        if (targetStyle != m_EditStyle)
+        {
+            m_TilesData.Traversal((LevelTileEditorData tile) => { tile.Clear(); });
+            m_EditStyle = targetStyle;
+            LevelObjectManager.Register(m_EditStyle == enum_LevelStyle.Invalid ? TResources.GetChunkEditorTiles() : TResources.GetChunkTiles(m_EditStyle));
+        }
+
         ChangeEditSelection(null);
         m_SelectionTiles.ClearPool();
         m_SelectingTile.Init(new TileAxis(-6,-1),ChunkTileData.Default(), m_Random);
@@ -134,8 +143,14 @@ public class LevelChunkEditor : LevelChunkBase
                 });
                 break;
         }
-        m_SelectionTiles.m_ActiveItemDic.Traversal((LevelTileEditorSelection tile) => { tile.OnEditSelectionChange(); });
-        m_TilesData.Traversal((LevelTileEditorData tile) => { tile.OnEditSelectionChange(); });
+        System.Random random = new System.Random(Time.time.GetHashCode());
+        m_SelectionTiles.m_ActiveItemDic.Traversal((LevelTileEditorSelection tile) => {
+            tile.Init(tile.m_Axis, tile.m_Data, random);
+        });
+        m_TilesData.Traversal((LevelTileEditorData tile) => {
+            if (!m_GameViewMode ||!tile.m_Data.m_ObjectType.IsEditorTileObject() )
+                tile.Init(tile.m_Axis, tile.m_Data, random);
+        });
     }
 
     bool ObjectRegisted(enum_TileObjectType type) => !type.IsEditorTileObject() || m_ItemRestriction.ContainsKey(type);
@@ -159,7 +174,7 @@ public class LevelChunkEditor : LevelChunkBase
     #region Edit
     void MouseRayChunkEdit()
     {
-        if (m_ShowAllModel)
+        if (m_GameViewMode)
             return;
 
         if (Input.GetMouseButton(0))
