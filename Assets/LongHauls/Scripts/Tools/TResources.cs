@@ -13,7 +13,7 @@ public class TResources
     {
         public const string S_PlayerEntity = "Entity/0_Player";
 
-        public const string S_StyleCustomization = "Chunk/Customization";
+        public const string S_ChunkRender = "Chunk/Render/";
         public const string S_ChunkTile = "Chunk/Tile/";
         public const string S_ChunkTileEditor = "Chunk/Tile/Editor";
         public const string S_ChunkData = "Chunk/Data";
@@ -59,8 +59,7 @@ public class TResources
     public static AtlasLoader GetUIAtlas_Weapon() => new AtlasLoader(Load<SpriteAtlas>(ConstPath.S_UI_Atlas_Weapon));
     #endregion
     #region GamePrefab
-    public static GameRenderData[] GetGameRenderSettings(enum_LevelStyle levelStype) => LoadAll<GameRenderData>(ConstPath.S_StyleCustomization + "/" + levelStype);
-    #region NewLevel
+    public static GameRenderData[] GetRenderData(enum_LevelStyle levelStype) => LoadAll<GameRenderData>(ConstPath.S_ChunkRender + levelStype);
     public static LevelChunkData GetChunkData(string name) => Load<LevelChunkData>(ConstPath.S_ChunkData + "/" + name);
     public static Dictionary<enum_ChunkType, List<LevelChunkData>> GetChunkDatas()
     {
@@ -76,8 +75,6 @@ public class TResources
     }
     public static TileItemBase[] GetChunkTiles(enum_LevelStyle _levelStyle) => LoadAll<TileItemBase>(ConstPath.S_ChunkTile+_levelStyle);
     public static TileItemBase[] GetChunkEditorTiles() => LoadAll<TileItemBase>(ConstPath.S_ChunkTileEditor);
-
-    #endregion
 
     public static SFXWeaponBase GetDamageSource(int index) => Instantiate<SFXWeaponBase>(ConstPath.S_SFXWeapon+index.ToString());
 

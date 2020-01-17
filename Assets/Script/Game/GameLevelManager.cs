@@ -32,7 +32,7 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         LevelObjectManager.Register(TResources.GetChunkTiles(style));
 
         
-        GameRenderData[] customizations = TResources.GetGameRenderSettings(style);
+        GameRenderData[] customizations = TResources.GetRenderData(style);
         GameRenderData randomData = customizations.Length == 0 ? GameRenderData.Default() : customizations.RandomItem(random);
         randomData.DataInit(m_DirectionalLight,CameraController.Instance.m_Camera);
 

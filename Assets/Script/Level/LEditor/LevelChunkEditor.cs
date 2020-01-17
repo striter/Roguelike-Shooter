@@ -108,7 +108,7 @@ public class LevelChunkEditor : LevelChunkBase
             m_EditStyle = targetStyle;
             LevelObjectManager.Register(m_EditStyle == enum_LevelStyle.Invalid ? TResources.GetChunkEditorTiles() : TResources.GetChunkTiles(m_EditStyle));
             GameRenderData renderData = GameRenderData.Default();
-            if (targetStyle != enum_LevelStyle.Invalid) renderData = TResources.GetGameRenderSettings(targetStyle).RandomItem();
+            if (targetStyle != enum_LevelStyle.Invalid) renderData = TResources.GetRenderData(targetStyle).RandomItem();
             renderData.DataInit(m_directionalLight,CameraController.Instance.m_Camera);
         }
 
