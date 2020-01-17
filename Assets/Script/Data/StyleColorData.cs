@@ -5,44 +5,35 @@ using UnityEngine;
 
 public class StyleColorData : ScriptableObject
 {
-    public Color c_directionnal;
-    public Vector3 v3_eulerAngle;
-    public float f_directionalIntensity;
-    public Color c_ambientSky;
-    public Color c_ambientEquator;
-    public Color c_ambientGround;
+    public float f_pitch;
+    public float f_yaw;
+    public float f_lightItensity;
+    public float f_lambert;
+    public Color c_lightColor;
+    public Color c_ambient;
+    public Color c_skyColor;
 
     public static StyleColorData Default()
     {
         StyleColorData defaultData = CreateInstance<StyleColorData>();
-        defaultData.c_directionnal = Color.white;
-        defaultData.v3_eulerAngle = new Vector3(45, 60, 0);
-        defaultData.f_directionalIntensity = .8f;
-        defaultData.c_ambientSky = Color.grey;
-        defaultData.c_ambientEquator = Color.black;
-        defaultData.c_ambientGround = Color.black;
+        defaultData.c_lightColor = Color.white;
+        defaultData.f_pitch = 45;
+        defaultData.f_yaw = 60;
+        defaultData.f_lightItensity = .8f;
+        defaultData.f_lambert = .8f;
+        defaultData.c_ambient = Color.grey;
+        defaultData.c_skyColor = Color.white;
         return defaultData;
     }
 
-    public void DataInit(Light directionalLight)
+    public void DataInit(Light directionalLight,Camera camera)
     {
-        directionalLight.color = c_directionnal;
-        directionalLight.intensity = f_directionalIntensity;
-        directionalLight.transform.rotation = Quaternion.Euler(v3_eulerAngle);
-        RenderSettings.ambientSkyColor = c_ambientSky;
-        RenderSettings.ambientEquatorColor = c_ambientEquator;
-        RenderSettings.ambientGroundColor = c_ambientGround;
+        directionalLight.color = c_lightColor;
+        directionalLight.intensity = f_lightItensity;
+        directionalLight.transform.rotation = Quaternion.Euler(f_pitch,f_yaw,0);
+        RenderSettings.ambientSkyColor = c_ambient;
+        Shader.SetGlobalFloat("_Lambert", f_lambert);
+        Shader.SetGlobalColor("_SkyColor", c_skyColor);
+        camera.backgroundColor = c_skyColor;
     }
-
-#if UNITY_EDITOR
-    public void SaveData(Light directional)
-    {
-        c_directionnal = directional.color;
-        f_directionalIntensity = directional.intensity;
-        v3_eulerAngle = directional.transform.eulerAngles;
-        c_ambientSky = RenderSettings.ambientSkyColor;
-        c_ambientEquator = RenderSettings.ambientEquatorColor;
-        c_ambientGround = RenderSettings.ambientGroundColor;
-    }
-#endif
 }

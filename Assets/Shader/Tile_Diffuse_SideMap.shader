@@ -9,7 +9,6 @@
 		[NoScaleOffset]_SideTex("Side Tex",2D)="white"{}
 		[KeywordEnum(Tex1,Tex2,Tex3,Tex4)]_TexSelection("Tex Selection",int)=0
 		_Color("Color Tint",Color) = (1,1,1,1)
-		_Lambert("Lambert Param",Range(0,1)) = .5
 	}
 		SubShader
 		{
@@ -134,7 +133,6 @@
 				struct v2fs
 				{
 					V2F_SHADOW_CASTER;
-					UNITY_VERTEX_INPUT_INSTANCE_ID
 				};
 
 				v2fs vertshadow(appdata_base v)

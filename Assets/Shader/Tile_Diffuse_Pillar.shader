@@ -5,10 +5,8 @@
 		[NoScaleOffset]_MainTex("Top Tex 1",2D) = "white"{}
 		[NoScaleOffset]_SideTex("Side Tex",2D)="white"{}
 		_Color("Color Tint",Color) = (1,1,1,1)
-		_Lambert("Lambert Param",Range(0,1)) = .5
 		_FogStart("YFog Start",float) = -5
 		_FogRange("YFog Range",float)=3
-		_FogColor("YFog Color",Color)=(1,1,1,1)
 	}
 		SubShader
 		{
@@ -69,7 +67,7 @@
 				float _Lambert;
 				float _FogRange;
 				float _FogStart;
-				float4 _FogColor;
+				float4 _SkyColor;
 				UNITY_INSTANCING_BUFFER_START(Props)
 					UNITY_DEFINE_INSTANCED_PROP(float4, _Color)
 				UNITY_INSTANCING_BUFFER_END(Props)
@@ -90,7 +88,7 @@
 					float3 diffuse = albedo * _LightColor0.rgb*atten;
 					float fogParam = smoothstep(_FogStart, _FogStart + _FogRange, i.worldPos.y);
 					fogParam = pow(fogParam, 2);
-					return fixed4(lerp(_FogColor, ambient + diffuse,fogParam)	,1);
+					return fixed4(lerp(_SkyColor, ambient + diffuse,fogParam)	,1);
 				}
 				ENDCG
 			}

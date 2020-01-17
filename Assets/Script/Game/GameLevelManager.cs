@@ -34,7 +34,7 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         
         StyleColorData[] customizations = TResources.GetAllStyleCustomization(style);
         StyleColorData randomData = customizations.Length == 0 ? StyleColorData.Default() : customizations.RandomItem(random);
-        randomData.DataInit(m_DirectionalLight);
+        randomData.DataInit(m_DirectionalLight,CameraController.Instance.m_Camera);
 
         Dictionary<enum_ChunkType,List<LevelChunkData>> datas=TResources.GetChunkDatas();
         List<ChunkGenerateData> gameChunkGenerate = new List<ChunkGenerateData>();
@@ -270,7 +270,7 @@ public static class NavigationManager
     static NavMeshHit sampleHit;
     public static Vector3 NavMeshPosition(Vector3 samplePosition, bool maskEntity = true)
     {
-        if (NavMesh.SamplePosition(samplePosition, out sampleHit, 20, 1 << (maskEntity ? 0 : 3)))
+        if (NavMesh.SamplePosition(samplePosition, out sampleHit, 20, 0))// << (maskEntity ? 0 : 3)))
             return sampleHit.position;
         return samplePosition;
     }

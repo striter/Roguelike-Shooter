@@ -48,6 +48,7 @@
 			float4 _Color;
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
+			float _Lambert;
 			v2f vert (appdata v)
 			{
 				v2f o;
@@ -72,6 +73,7 @@
 					return fixed4(albedo, 1);
 
 				UNITY_LIGHT_ATTENUATION(atten, i,i.worldPos)
+				atten = atten * _Lambert + (1 - _Lambert);
 				fixed3 ambient = albedo*UNITY_LIGHTMODEL_AMBIENT.xyz;
 				float3 diffuse = albedo* _LightColor0.rgb*i.diffuse*atten;
 				return fixed4(ambient+diffuse,1);
