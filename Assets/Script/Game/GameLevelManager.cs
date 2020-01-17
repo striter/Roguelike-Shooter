@@ -41,7 +41,7 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
 
         //Generate First Chunk
         gameChunkGenerate.Add(new ChunkGenerateData(TileAxis.Zero, datas[ enum_ChunkType.Start].RandomItem(random)));
-        List<enum_ChunkType> mainChunkType = new List<enum_ChunkType>() { enum_ChunkType.Battle, enum_ChunkType.Event, enum_ChunkType.Battle, enum_ChunkType.Event, enum_ChunkType.Battle, enum_ChunkType.Battle, enum_ChunkType.Event };
+        List<enum_ChunkType> mainChunkType = new List<enum_ChunkType>() { enum_ChunkType.Battle, enum_ChunkType.Event, enum_ChunkType.Battle, enum_ChunkType.Event, enum_ChunkType.Battle, enum_ChunkType.Event, enum_ChunkType.Battle, enum_ChunkType.Event, enum_ChunkType.Battle, enum_ChunkType.Event, enum_ChunkType.Battle};
 
         //Gemerate Main Chunks
         List<ChunkGenerateData> mainChunkGenerate = TryGenerateChunkDatas(gameChunkGenerate[0], gameChunkGenerate, datas, mainChunkType, random);
@@ -53,6 +53,7 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         
         //Generate Sub Chunks
         List<enum_ChunkType> subChunkType = new List<enum_ChunkType>() { enum_ChunkType.Battle, enum_ChunkType.Event };
+        for(int i=0;i<3;i++)
         mainChunkGenerate.TraversalRandomBreak((ChunkGenerateData mainChunkData) =>
         {
             List<ChunkGenerateData> subGenerateData = null;
@@ -62,17 +63,7 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
                 gameChunkGenerate.AddRange(subGenerateData);
             return subGenerateData != null;
         },random);
-
-
-        mainChunkGenerate.TraversalRandomBreak((ChunkGenerateData mainChunkData) =>
-        {
-            List<ChunkGenerateData> subGenerateData = null;
-            if (mainChunkData.CheckEmptyConnections(random))
-                subGenerateData = TryGenerateChunkDatas(mainChunkData, gameChunkGenerate, datas, subChunkType, random);
-            if (subGenerateData != null)
-                gameChunkGenerate.AddRange(subGenerateData);
-            return subGenerateData != null;
-        }, random);
+        
 
         //Set Map Data(Origin,Size,Texture)
         int originX = 0, originY = 0, oppositeX = 0, oppositeY = 0;
