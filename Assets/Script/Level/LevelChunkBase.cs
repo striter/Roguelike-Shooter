@@ -17,7 +17,7 @@ public class LevelChunkBase : MonoBehaviour
         m_TilePool = new ObjectPoolSimpleComponent<int, LevelTileBase>(transform.Find("TilePool"), "TileItem");
     }
 
-    protected void InitData(LevelChunkData _data,System.Random _random,Func<TileAxis,ChunkTileData,ChunkTileData> DoTileDataCheck=null)
+    protected void InitData(LevelChunkData _data,System.Random _random)
     {
         m_TilePool.ClearPool();
 
@@ -32,8 +32,6 @@ public class LevelChunkBase : MonoBehaviour
                 TileAxis axis = new TileAxis(i, j);
                 int index = TileTools.Get1DAxisIndex(axis, m_Width);
                 ChunkTileData data = tileData[index];
-                if (DoTileDataCheck!=null)
-                    data = DoTileDataCheck(axis, data);
                 if (!WillGenerateTile(data))
                     continue;
                 OnTileInit(m_TilePool.AddItem(index), axis, data,_random);
@@ -61,16 +59,7 @@ public class LevelChunkBase : MonoBehaviour
         transform.localPosition = data.m_Axis.ToPosition();
         Dictionary<enum_TileObjectType, List<ChunkGameObjectData>> m_ChunkObjectPos = new Dictionary<enum_TileObjectType, List<ChunkGameObjectData>>();
         Dictionary<ChunkGameObjectData, enum_ChunkConnectionType> m_ChunkConnections = new Dictionary<ChunkGameObjectData, enum_ChunkConnectionType>();
-        InitData(data.m_Data, random, (TileAxis axis, ChunkTileData tileData) => {
-            if (tileData.m_ObjectType.IsEditorTileObject())
-            {
-                if (!m_ChunkObjectPos.ContainsKey(tileData.m_ObjectType))
-                    m_ChunkObjectPos.Add(tileData.m_ObjectType, new List<ChunkGameObjectData>());
-                m_ChunkObjectPos[tileData.m_ObjectType].Add(new ChunkGameObjectData(axis.ToPosition() + tileData.m_ObjectType.GetSizeAxis(tileData.m_Direction).ToPosition() / 2f, tileData.m_Direction.ToRotation()));
-                return tileData.ChangeObjectType(enum_TileObjectType.Invalid);
-            }
-            return tileData;
-        });
+        InitData(data.m_Data, random);
 
         //Generate Connections
         List<ChunkConnectionData> entranceGenerate = new List<ChunkConnectionData>();

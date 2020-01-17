@@ -35,10 +35,6 @@ public class LevelTileEditor : LevelTileBase {
     {
         m_EditorModel = transform.Find("EditorModel");
         m_Collider = GetComponent<BoxCollider>();
-
-        Clear();
-        base.Init(axis, data,random);
-
         bool showGround = false;
         bool showPillar = false;
         bool showObject = false;
@@ -68,6 +64,9 @@ public class LevelTileEditor : LevelTileBase {
                     break;
             }
         }
+        Clear();
+
+        base.Init(axis, data, random);
         if (m_Ground) m_Ground.SetActivate(showGround);
         if (m_Object) m_Object.SetActivate(showObject);
         if (m_Pillar) m_Pillar.SetActivate(showPillar);
@@ -78,7 +77,9 @@ public class LevelTileEditor : LevelTileBase {
             colliderSize.y = LevelConst.I_TileSize * 3;
         m_Collider.size = colliderSize;
     }
-    
+
+    protected override bool WillGenerateObject(enum_TileObjectType type) => LevelChunkEditor.Instance.m_GameViewMode ?   base.WillGenerateObject(type): type != enum_TileObjectType.Invalid;
+
     public void RotateDirection(enum_TileDirection direction,System.Random random)
     {
         m_Data = m_Data.ChangeDirection(direction);

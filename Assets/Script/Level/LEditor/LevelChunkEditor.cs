@@ -153,8 +153,7 @@ public class LevelChunkEditor : LevelChunkBase
             tile.Init(tile.m_Axis, tile.m_Data, random);
         });
         m_TilesData.Traversal((LevelTileEditorData tile) => {
-            if (!m_GameViewMode ||!tile.m_Data.m_ObjectType.IsEditorTileObject() )
-                tile.Init(tile.m_Axis, tile.m_Data, random);
+            tile.Init(tile.m_Axis, tile.m_Data, random);
         });
     }
 
