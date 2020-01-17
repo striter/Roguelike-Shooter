@@ -235,6 +235,12 @@ public class ObjectPoolSimpleBase<T, Y>
         GetItemTransform(targetItem).SetActivate(true);
         return targetItem;
     }
+    public Y GetOrAddItem(T identity)
+    {
+        if (m_ActiveItemDic.ContainsKey(identity))
+            return m_ActiveItemDic[identity];
+        return AddItem(identity);
+    }
 
     public virtual void RemoveItem(T identity)
     {

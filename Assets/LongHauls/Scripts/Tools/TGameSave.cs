@@ -4,8 +4,7 @@ using System.IO;
 using UnityEngine;
 using System.Reflection;
 using System;
-using System.Collections;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace TGameSave
 {
@@ -34,7 +33,7 @@ namespace TGameSave
         {
             if (m_Data == null)
                 Debug.LogError("Please Check File First!" + typeof(T).ToString());
-            SaveFile(m_Data);
+            Task.Run(()=> { SaveFile(m_Data); });
         }
 
         public static void Reset() => m_Data = new T();
