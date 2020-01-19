@@ -218,8 +218,8 @@ MonoBehaviour:
   F_Height: 0
   RI_CountExtension:
     start: 4
-    length: 1
-  F_OffsetExtension: 2.5
+    length: 0
+  F_OffsetExtension: 2.8
 --- !u!198 &198047237326451014
 ParticleSystem:
   m_ObjectHideFlags: 1

@@ -1015,11 +1015,11 @@ MonoBehaviour:
   F_AIChaseRange: 14
   F_AIAttackRange: 25
   F_AttackDuration:
-    start: 4
+    start: 3
     length: 1
   F_AttackTimes:
-    start: 3
-    length: 0
+    start: 4
+    length: 1
   F_AttackRate: 0.25
   B_BattleCheckObstacle: 0
   F_AttackRotateParam: 1
