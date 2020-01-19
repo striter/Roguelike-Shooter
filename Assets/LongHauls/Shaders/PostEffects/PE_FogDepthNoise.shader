@@ -62,7 +62,7 @@
 				float2 noiseUV1 = worldUV / 15 + _Time.y*float2(_FogSpeedX, 0);
 				float2 noiseUV2 = worldUV / 15 + _Time.y*float2(0, _FogSpeedY);
 				float noise = (tex2D(_NoiseTex, noiseUV1).r)*(tex2D(_NoiseTex, noiseUV2).r);
-				float fogDensity = linearDepth == 1 ? _FogColor.a:(_FogEnd - worldPos.y) /(_FogEnd - _FogStart)*_FogDensity*noise;
+				float fogDensity = linearDepth == 1 ? 0:(_FogEnd - worldPos.y) /(_FogEnd - _FogStart)*_FogDensity*noise;
 				return fixed4(tex2D(_MainTex, i.uv).rgb + _FogColor.rgb*fogDensity,1);
 			}
 			ENDCG

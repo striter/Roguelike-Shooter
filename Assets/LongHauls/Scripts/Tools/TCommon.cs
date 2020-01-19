@@ -392,7 +392,7 @@ public static class TCommon
         Vector2 randomCirlce = UnityEngine.Random.insideUnitCircle;
         return new Vector3(randomCirlce.x, 0, randomCirlce.y) * radius;
     }
-    public static T RandomEnumValues<T>(System.Random _seed)        //Can't Constraint T to System.Enum
+    public static T RandomEnumValues<T>(System.Random _seed=null)        //Can't Constraint T to System.Enum
     {
         if (!typeof(T).IsSubclassOf(typeof(Enum)))
         {

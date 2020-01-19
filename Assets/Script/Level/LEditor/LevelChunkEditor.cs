@@ -12,6 +12,7 @@ public class LevelChunkEditor : LevelChunkBase
     public enum_TileSubType m_EditMode { get; private set; } = enum_TileSubType.Ground;
     public enum_LevelStyle m_EditStyle { get; private set; } =  enum_LevelStyle.Invalid;
     public bool m_GameViewMode { get; private set; }
+    enum_LevelStyle m_ViewStyle;
     public LevelTileEditorData[,] m_TilesData { get; private set; }
     ObjectPoolSimpleComponent<int, LevelTileEditorSelection> m_SelectionTiles;
     LevelTileEditorSelection m_SelectingTile;
@@ -92,6 +93,14 @@ public class LevelChunkEditor : LevelChunkBase
         if (Input.GetKeyDown(KeyCode.CapsLock))
         {
             m_EditMode = enum_TileSubType.Invalid;
+            if (!m_GameViewMode)
+                m_ViewStyle = TCommon.RandomEnumValues<enum_LevelStyle>();
+            else
+            {
+                m_ViewStyle++;
+                if (m_ViewStyle > enum_LevelStyle.Undead)
+                    m_ViewStyle = enum_LevelStyle.Forest;
+            }
             m_GameViewMode = true;
             CheckEditMode();
         }
@@ -99,18 +108,15 @@ public class LevelChunkEditor : LevelChunkBase
         MouseRayChunkEdit();
     }
     #region EditMode
-    
     void CheckEditMode()
     {
-        enum_LevelStyle targetStyle = m_GameViewMode ? enum_LevelStyle.Frost : enum_LevelStyle.Invalid;
+        enum_LevelStyle targetStyle = m_GameViewMode ? m_ViewStyle : enum_LevelStyle.Invalid;
         if (targetStyle != m_EditStyle)
         {
             m_TilesData.Traversal((LevelTileEditorData tile) => { tile.Clear(); });
             m_EditStyle = targetStyle;
             LevelObjectManager.Register(m_EditStyle == enum_LevelStyle.Invalid ? TResources.GetChunkEditorTiles() : TResources.GetChunkTiles(m_EditStyle));
-            GameRenderData renderData = GameRenderData.Default();
-            if (targetStyle != enum_LevelStyle.Invalid) renderData = TResources.GetRenderData(targetStyle).RandomItem();
-            renderData.DataInit(m_directionalLight,CameraController.Instance.m_Camera);
+            GameRenderData.Default().DataInit(m_directionalLight,CameraController.Instance.m_Camera);
         }
 
         ChangeEditSelection(null);

@@ -444,7 +444,7 @@ public class GameProgressManager
         m_GameRandom =_battleSave.m_GameSeed;
         m_GameSeed = new System.Random(m_GameRandom.GetHashCode());
         m_GameStage = _battleSave.m_Stage;
-        m_GameStyle = enum_LevelStyle.Desert;//TCommon.RandomEnumValues<enum_LevelStyle>(m_GameSeed) ;
+        m_GameStyle = TCommon.RandomEnumValues<enum_LevelStyle>(m_GameSeed) ;
         m_GameDifficulty = 3; //_gameSave.m_GameDifficulty;
     }
     public void LoadStageData()
