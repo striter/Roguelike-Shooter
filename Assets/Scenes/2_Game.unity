@@ -639,9 +639,9 @@ MonoBehaviour:
   F_CameraMoveSmooth: 0.04
   B_InvertCamera: 0
   F_RotateSensitive: 2
-  TPSOffset: {x: 0, y: 25, z: -15}
-  I_PitchMin: 60
-  I_PitchMax: 60
+  TPSOffset: {x: 0, y: 30, z: -20}
+  I_PitchMin: 55
+  I_PitchMax: 55
   I_ShakeParam: 6
   F_ReverseCheck: 0.1
 --- !u!4 &1388337373
@@ -896,7 +896,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 35
+  field of view: 30
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
