@@ -114,6 +114,8 @@ public class LevelChunkEditor : LevelChunkBase
         if (targetStyle != m_EditStyle)
         {
             m_TilesData.Traversal((LevelTileEditorData tile) => { tile.Clear(); });
+            m_SelectingTile.Clear();
+            m_SelectionTiles.m_ActiveItemDic.Traversal((LevelTileEditorSelection tile) => { tile.Clear();  });
             m_EditStyle = targetStyle;
             LevelObjectManager.Register(m_EditStyle == enum_LevelStyle.Invalid ? TResources.GetChunkEditorTiles() : TResources.GetChunkTiles(m_EditStyle));
             GameRenderData.Default().DataInit(m_directionalLight,CameraController.Instance.m_Camera);
