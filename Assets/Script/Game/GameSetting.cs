@@ -654,7 +654,7 @@ namespace GameSetting
             m_weaponEquipingFirst = _player.m_weaponEquipingFirst;
             m_actionEquipment = EquipmentSaveData.Create(_player.m_CharacterInfo.m_ActionEquipment);
 
-            m_GameSeed = _level.m_GameRandom;
+            m_GameSeed = _level.m_GameSeed;
             m_Stage = _level.m_GameStage;
         }
 

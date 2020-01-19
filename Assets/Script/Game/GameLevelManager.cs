@@ -6,12 +6,13 @@ using UnityEngine;
 using System;
 using TTiles;
 using UnityEngine.AI;
-
+using System.Threading.Tasks;
 public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
     ObjectPoolSimpleComponent<int, LevelChunkBase> m_ChunkPool;
     public Light m_DirectionalLight { get; private set; }
     public Texture2D m_MapTexture { get; private set; }
     public List<ChunkGameData> m_GameChunks { get; private set; } = new List<ChunkGameData>();
+    public System.Random random { get; private set; }
     TileAxis m_MapOrigin, m_MapSize;
     Vector3 m_MapOriginPos;
     public Vector2 GetMapPosition(Vector3 worldPosition)
@@ -27,90 +28,106 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         m_DirectionalLight = transform.Find("Directional Light").GetComponent<Light>();
     }
 
-    public IEnumerator Generate(enum_LevelStyle style,System.Random random)
+    public IEnumerator Generate(enum_LevelStyle style,string seed,System.Random random)
     {
         LevelObjectManager.Register(TResources.GetChunkTiles(style));
-        
         GameRenderData[] customizations = TResources.GetRenderData(style);
         GameRenderData randomData = customizations.Length == 0 ? GameRenderData.Default() : customizations.RandomItem(random);
-        randomData.DataInit(m_DirectionalLight,CameraController.Instance.m_Camera);
-
-        Dictionary<enum_ChunkType,List<LevelChunkData>> datas=TResources.GetChunkDatas();
+        randomData.DataInit(m_DirectionalLight, CameraController.Instance.m_Camera);
+        Dictionary<enum_ChunkType, List<LevelChunkData>> datas = TResources.GetChunkDatas();
         List<ChunkGenerateData> gameChunkGenerate = new List<ChunkGenerateData>();
 
-        //Generate First Chunk
-        gameChunkGenerate.Add(new ChunkGenerateData(TileAxis.Zero, datas[ enum_ChunkType.Start].RandomItem(random)));
-        List<enum_ChunkType> mainChunkType = new List<enum_ChunkType>() { enum_ChunkType.Battle, enum_ChunkType.Event, enum_ChunkType.Battle, enum_ChunkType.Event, enum_ChunkType.Battle, enum_ChunkType.Event, enum_ChunkType.Battle, enum_ChunkType.Event, enum_ChunkType.Battle, enum_ChunkType.Event, enum_ChunkType.Battle};
-
-        //Gemerate Main Chunks
-        List<ChunkGenerateData> mainChunkGenerate = TryGenerateChunkDatas(gameChunkGenerate[0], gameChunkGenerate, datas, mainChunkType, random);
-        gameChunkGenerate.AddRange(mainChunkGenerate);
-
-        //Generate Final Chunk
-        List<ChunkGenerateData> finalChunkGenerate = TryGenerateChunkDatas(gameChunkGenerate[gameChunkGenerate.Count - 1], gameChunkGenerate,datas,new List<enum_ChunkType>() { enum_ChunkType.Final },random);
-        gameChunkGenerate.AddRange(finalChunkGenerate);
-        
-        //Generate Sub Chunks
-        List<enum_ChunkType> subChunkType = new List<enum_ChunkType>() { enum_ChunkType.Battle, enum_ChunkType.Event };
-        for(int i=0;i<3;i++)
-        mainChunkGenerate.TraversalRandomBreak((ChunkGenerateData mainChunkData) =>
+        for (; ; )
         {
-            List<ChunkGenerateData> subGenerateData = null;
-            if (mainChunkData.CheckEmptyConnections(random))
-                subGenerateData = TryGenerateChunkDatas(mainChunkData, gameChunkGenerate, datas, subChunkType, random);
-            if(subGenerateData!=null)
-                gameChunkGenerate.AddRange(subGenerateData);
-            return subGenerateData != null;
-        },random);
-        
-
-        //Set Map Data(Origin,Size,Texture)
-        int originX = 0, originY = 0, oppositeX = 0, oppositeY = 0;
-        gameChunkGenerate.Traversal((ChunkGenerateData chunkData) =>        //Check MapOrigin/MapSize
-        {
-            TileAxis chunkOrigin = chunkData.m_Axis;
-            TileAxis chunkOpposite = chunkOrigin + chunkData.m_Data.m_Size;
-            if (oppositeX < chunkOpposite.X)
-                oppositeX = chunkOpposite.X;
-            if (oppositeY < chunkOpposite.Y)
-                oppositeY = chunkOpposite.Y;
-            if (originX > chunkOrigin.X)
-                originX = chunkOrigin.X;
-            if (originY > chunkOrigin.Y)
-                originY = chunkOrigin.Y;
-        });
-        m_MapOrigin = new TileAxis(originX, originY);
-        m_MapSize = new TileAxis(oppositeX-originX,oppositeY-originY);
-        m_MapOriginPos = transform.TransformPoint( m_MapOrigin.ToPosition());
-        //Generate Map Texture
-        m_MapTexture = new Texture2D(m_MapSize.X, m_MapSize.Y, TextureFormat.RGBA32, false);
-        m_MapTexture.filterMode = FilterMode.Point;
-        gameChunkGenerate.Traversal((ChunkGenerateData chunkdata) =>
-        {
-            Color[] chunkColors = chunkdata.m_Data.CalculateMapTextureColors();
-            int length = chunkColors.Length;
-            for (int index = 0; index < length; index++)
+            yield return Task.Run(() =>
             {
-                TileAxis tileAxis = (chunkdata.m_Axis - m_MapOrigin) + TileTools.GetAxisByIndex(index, chunkdata.m_Data.Width);
-                m_MapTexture.SetPixel(tileAxis.X, tileAxis.Y, chunkColors[index]);
+                try
+                {
+                    gameChunkGenerate.Clear();
+                    //Generate First Chunk
+                    gameChunkGenerate.Add(new ChunkGenerateData(TileAxis.Zero, datas[enum_ChunkType.Start].RandomItem(random)));
+                    List<enum_ChunkType> mainChunkType = new List<enum_ChunkType>() { enum_ChunkType.Battle, enum_ChunkType.Event, enum_ChunkType.Battle, enum_ChunkType.Event, enum_ChunkType.Battle, enum_ChunkType.Event, enum_ChunkType.Battle, enum_ChunkType.Event, enum_ChunkType.Battle, enum_ChunkType.Event, enum_ChunkType.Battle };
+
+                    //Gemerate Main Chunks
+                    List<ChunkGenerateData> mainChunkGenerate = TryGenerateChunkDatas(gameChunkGenerate[0], gameChunkGenerate, datas, mainChunkType, random);
+                    gameChunkGenerate.AddRange(mainChunkGenerate);
+
+                    //Generate Final Chunk
+                    List<ChunkGenerateData> finalChunkGenerate = TryGenerateChunkDatas(gameChunkGenerate[gameChunkGenerate.Count - 1], gameChunkGenerate, datas, new List<enum_ChunkType>() { enum_ChunkType.Final }, random);
+                    gameChunkGenerate.AddRange(finalChunkGenerate);
+
+                    //Generate Sub Chunks
+                    List<enum_ChunkType> subChunkType = new List<enum_ChunkType>() { enum_ChunkType.Battle, enum_ChunkType.Event };
+                    for (int i = 0; i < 3; i++)
+                        mainChunkGenerate.TraversalRandomBreak((ChunkGenerateData mainChunkData) =>
+                        {
+                            List<ChunkGenerateData> subGenerateData = null;
+                            if (mainChunkData.CheckEmptyConnections(random))
+                                subGenerateData = TryGenerateChunkDatas(mainChunkData, gameChunkGenerate, datas, subChunkType, random);
+                            if (subGenerateData != null)
+                                gameChunkGenerate.AddRange(subGenerateData);
+                            return subGenerateData != null;
+                        }, random);
+
+                }
+                catch
+                {
+                    gameChunkGenerate.Clear();
+                }
+            }).TaskCoroutine();
+           
+            if(gameChunkGenerate.Count>0)
+            {
+                //Set Map Data(Origin,Size,Texture)
+                int originX = 0, originY = 0, oppositeX = 0, oppositeY = 0;
+                gameChunkGenerate.Traversal((ChunkGenerateData chunkData) =>        //Check MapOrigin/MapSize
+                {
+                    TileAxis chunkOrigin = chunkData.m_Axis;
+                    TileAxis chunkOpposite = chunkOrigin + chunkData.m_Data.m_Size;
+                    if (oppositeX < chunkOpposite.X)
+                        oppositeX = chunkOpposite.X;
+                    if (oppositeY < chunkOpposite.Y)
+                        oppositeY = chunkOpposite.Y;
+                    if (originX > chunkOrigin.X)
+                        originX = chunkOrigin.X;
+                    if (originY > chunkOrigin.Y)
+                        originY = chunkOrigin.Y;
+                });
+                m_MapOrigin = new TileAxis(originX, originY);
+                m_MapSize = new TileAxis(oppositeX - originX, oppositeY - originY);
+                m_MapOriginPos = transform.TransformPoint(m_MapOrigin.ToPosition());
+                //Generate Map Texture
+                m_MapTexture = new Texture2D(m_MapSize.X, m_MapSize.Y, TextureFormat.RGBA32, false);
+                m_MapTexture.filterMode = FilterMode.Point;
+                gameChunkGenerate.Traversal((ChunkGenerateData chunkdata) =>
+                {
+                    Color[] chunkColors = chunkdata.m_Data.CalculateMapTextureColors();
+                    int length = chunkColors.Length;
+                    for (int index = 0; index < length; index++)
+                    {
+                        TileAxis tileAxis = (chunkdata.m_Axis - m_MapOrigin) + TileTools.GetAxisByIndex(index, chunkdata.m_Data.Width);
+                        m_MapTexture.SetPixel(tileAxis.X, tileAxis.Y, chunkColors[index]);
+                    }
+                });
+                m_MapTexture.Apply();
+
+                int chunkIndex = 0;
+                m_GameChunks.Clear();
+                m_ChunkPool.ClearPool();
+                gameChunkGenerate.Traversal((ChunkGenerateData data) => {
+                    LevelChunkBase chunk = m_ChunkPool.AddItem(chunkIndex++);
+                    m_GameChunks.Add(chunk.InitGameChunk(data, random));
+                });
+
+                //GenerateNavigationData
+                Bounds mapBounds = new Bounds();
+                mapBounds.center = m_MapOriginPos + m_MapSize.ToPosition() / 2f + Vector3.up * LevelConst.I_TileSize;
+                mapBounds.size = new Vector3(m_MapSize.X, 1f, m_MapSize.Y) * LevelConst.I_TileSize;
+                NavigationManager.BuildNavMeshData(m_ChunkPool.transform, mapBounds);
+                yield break;
             }
-        });
-        m_MapTexture.Apply();
-
-        int chunkIndex=0;
-        m_GameChunks.Clear();
-        m_ChunkPool.ClearPool();
-        gameChunkGenerate.Traversal((ChunkGenerateData data) => {
-            LevelChunkBase chunk = m_ChunkPool.AddItem(chunkIndex++);
-            m_GameChunks.Add(chunk.InitGameChunk(data,random));
-        });
-
-        //GenerateNavigationData
-        Bounds mapBounds = new Bounds();
-        mapBounds.center = m_MapOriginPos + m_MapSize.ToPosition() / 2f+Vector3.up*LevelConst.I_TileSize;
-        mapBounds.size = new Vector3(m_MapSize.X,1f,m_MapSize.Y)*LevelConst.I_TileSize;
-        NavigationManager.BuildNavMeshData(m_ChunkPool.transform, mapBounds);
-        yield return null;
+            yield return null;
+        }
     }
 
     List<ChunkGenerateData> TryGenerateChunkDatas(ChunkGenerateData generateStartChunk,List<ChunkGenerateData> intersectsCheckChunks, Dictionary<enum_ChunkType, List<LevelChunkData>> datas,List<enum_ChunkType> generateTypes,System.Random random)
@@ -142,7 +159,7 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
                             bool _anyGeneratedChunkIntersects = false;
                             chunkIntersectsCheckData.TraversalBreak((ChunkGenerateData data) =>
                             {
-                                _anyGeneratedChunkIntersects = CheckChunkIntersects(nextChunkAxis, nextChunkData.m_Size, data.m_Axis, data.m_Data.m_Size);
+                                _anyGeneratedChunkIntersects = CheckChunkIntersects(nextChunkAxis, nextChunkData.m_Size, data.m_Axis, data.m_Data.m_Size,random);
                                 return _anyGeneratedChunkIntersects;
                             });
                             if (!_anyGeneratedChunkIntersects)
@@ -174,7 +191,7 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         return chunkGenerateData;
     }
 
-    bool CheckChunkIntersects(TileAxis s1origin,TileAxis s1size,TileAxis s2origin,TileAxis s2size)
+    bool CheckChunkIntersects(TileAxis s1origin,TileAxis s1size,TileAxis s2origin,TileAxis s2size,System.Random random)
     {
         //Edge Clip(All Edge Used For Connection)
         s1origin += TileAxis.One;
@@ -188,13 +205,13 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         square1Axises.TraversalRandomBreak((TileAxis s1Axis)=> {
             matched = TileTools.AxisInSquare(s1Axis, s2origin,s2size);
             return matched;
-        });
+        },random);
         if (!matched)
         {
             square2Axises.TraversalRandomBreak((TileAxis s2Axis) => {
                 matched = TileTools.AxisInSquare(s2Axis, s1origin, s1size);
                 return matched;
-            });
+            },random);
         }
         return matched;
     }

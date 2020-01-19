@@ -17,7 +17,7 @@ public class GameManager : GameManagerBase
     void AddConsoleBinddings()
     {
         List<UIT_MobileConsole.CommandBinding> m_bindings = new List<UIT_MobileConsole.CommandBinding>();
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Show Seed", "", KeyCode.None, (string value) => { Debug.LogError(m_GameLevel.m_GameRandom); }));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Show Seed", "", KeyCode.None, (string value) => { Debug.LogError(m_GameLevel.m_GameSeed); }));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Skip Stage", "", KeyCode.Equals, (string value) => {OnStagePortalEnter();}));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Kill All", "", KeyCode.Alpha0, (string value) => {
             m_Entities.Values.ToList().Traversal((EntityBase entity) => {
@@ -117,7 +117,7 @@ public class GameManager : GameManagerBase
         m_Enermies = GameObjectManager.RegistStyledInGamePrefabs(m_GameLevel.m_GameStyle, m_GameLevel.m_GameStage);
         yield return null;
 
-        yield return GameLevelManager.Instance.Generate(m_GameLevel.m_GameStyle, m_GameLevel.m_GameSeed);
+        yield return GameLevelManager.Instance.Generate(m_GameLevel.m_GameStyle, m_GameLevel.m_GameSeed,m_GameLevel.m_GameRandom);
 
         GenerateGameRelatives();
         yield return null;
@@ -425,10 +425,10 @@ public class GameManager : GameManagerBase
 public class GameProgressManager
 {
     #region LevelData
-    public string m_GameRandom { get; private set; }
+    public string m_GameSeed { get; private set; }
     public int m_GameDifficulty { get; private set; }
 
-    public System.Random m_GameSeed { get; private set; }
+    public System.Random m_GameRandom { get; private set; }
     public StageInteractGenerateData m_actionGenerate { get; private set; }
     public bool B_IsFinalStage => m_GameStage == enum_StageLevel.Ranger;
     public enum_StageLevel m_GameStage { get; private set; }
@@ -441,10 +441,10 @@ public class GameProgressManager
     #endregion
     public GameProgressManager(CGameSave _gameSave,CBattleSave _battleSave)
     {
-        m_GameRandom =_battleSave.m_GameSeed;
-        m_GameSeed = new System.Random(m_GameRandom.GetHashCode());
+        m_GameSeed =_battleSave.m_GameSeed;
+        m_GameRandom = new System.Random(m_GameSeed.GetHashCode());
         m_GameStage = _battleSave.m_Stage;
-        m_GameStyle = TCommon.RandomEnumValues<enum_LevelStyle>(m_GameSeed) ;
+        m_GameStyle = TCommon.RandomEnumValues<enum_LevelStyle>(m_GameRandom) ;
         m_GameDifficulty = 3; //_gameSave.m_GameDifficulty;
     }
     public void LoadStageData()
