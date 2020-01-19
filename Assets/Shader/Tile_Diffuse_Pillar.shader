@@ -67,7 +67,7 @@
 				float _Lambert;
 				float _FogRange;
 				float _FogStart;
-				float4 _SkyColor;
+			    float4 _SkyColor;
 				UNITY_INSTANCING_BUFFER_START(Props)
 					UNITY_DEFINE_INSTANCED_PROP(float4, _Color)
 				UNITY_INSTANCING_BUFFER_END(Props)
@@ -88,7 +88,7 @@
 					float3 diffuse = albedo * _LightColor0.rgb*atten;
 					float fogParam = smoothstep(_FogStart, _FogStart + _FogRange, i.worldPos.y);
 					fogParam = pow(fogParam, 2);
-					return fixed4(lerp(_SkyColor, ambient + diffuse,fogParam)	,1);
+					return fixed4(lerp(_SkyColor.rgb, ambient + diffuse,fogParam)	,1);
 				}
 				ENDCG
 			}
