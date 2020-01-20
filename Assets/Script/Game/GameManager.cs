@@ -18,7 +18,7 @@ public class GameManager : GameManagerBase
     {
         List<UIT_MobileConsole.CommandBinding> m_bindings = new List<UIT_MobileConsole.CommandBinding>();
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Show Seed", "", KeyCode.None, (string value) => { Debug.LogError(m_GameLevel.m_GameSeed); }));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Skip Stage", "", KeyCode.Equals, (string value) => {OnStagePortalEnter();}));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Skip Stage", "", KeyCode.Equals, (string value) => {OnStageFnished();}));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Kill All", "", KeyCode.Alpha0, (string value) => {
             m_Entities.Values.ToList().Traversal((EntityBase entity) => {
                 if (entity.m_Flag == enum_EntityFlag.Enermy)
@@ -97,7 +97,7 @@ public class GameManager : GameManagerBase
     public void OnExitGame()
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameExit);
-        LoadingManager.Instance.ShowLoading( enum_StageLevel.Invalid);
+        LoadingManager.Instance.ShowLoading(m_GameLevel.m_GameStage);
         SwitchScene( enum_Scene.Camp,()=> { LoadingManager.Instance.EndLoading();return true; });
     }
 
@@ -144,7 +144,17 @@ public class GameManager : GameManagerBase
         AttachPlayerCamera(m_LocalPlayer.tf_CameraAttach);
     }
 
-    void OnStagePortalEnter() => OnGameFinished(true);
+    void OnStageFnished()
+    {
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageFinished);
+        if (m_GameLevel.StageFinished())
+        {
+            OnGameFinished(true);
+            return;
+        }
+        GameDataManager.AdjustInGameData(m_LocalPlayer, m_GameLevel);
+        OnPortalEnter(1f, m_LocalPlayer.tf_Head, LoadStage);
+    }
 
     void OnGameFinished(bool win)
     {
@@ -187,7 +197,7 @@ public class GameManager : GameManagerBase
         switch(type)
         {
             case enum_TileObjectType.RStagePortal2x2:
-                GameObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Portal,position,rotation,tf_Interacts).Play(OnStagePortalEnter,"Test");
+                GameObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Portal,position,rotation,tf_Interacts).Play(OnStageFnished,"Test");
                 break;
             case enum_TileObjectType.REventArea3x3:
 
@@ -397,9 +407,9 @@ public class GameManager : GameManagerBase
         }
     }
 
-    void OnChunkEntering(int chunkIndex)
+    void OnChunkEntering(int index)
     {
-        ChunkGameData chunkData = GameLevelManager.Instance.m_GameChunks[chunkIndex];
+        ChunkGameData chunkData = GameLevelManager.Instance.m_GameChunks[index];
         if (chunkData.m_ChunkType != enum_ChunkType.Battle)
             return;
 
@@ -431,8 +441,9 @@ public class GameProgressManager
     public System.Random m_GameRandom { get; private set; }
     public StageInteractGenerateData m_actionGenerate { get; private set; }
     public bool B_IsFinalStage => m_GameStage == enum_StageLevel.Ranger;
+    Dictionary<enum_StageLevel, enum_LevelStyle> m_StageStyle = new Dictionary<enum_StageLevel, enum_LevelStyle>();
+    public enum_LevelStyle m_GameStyle => m_StageStyle[m_GameStage];
     public enum_StageLevel m_GameStage { get; private set; }
-    public enum_LevelStyle m_GameStyle { get; private set; }
     #endregion
     #region RecordData
     public bool m_gameWin { get; private set; }
@@ -444,8 +455,13 @@ public class GameProgressManager
         m_GameSeed =_battleSave.m_GameSeed;
         m_GameRandom = new System.Random(m_GameSeed.GetHashCode());
         m_GameStage = _battleSave.m_Stage;
-        m_GameStyle = TCommon.RandomEnumValues<enum_LevelStyle>(m_GameRandom) ;
         m_GameDifficulty = 3; //_gameSave.m_GameDifficulty;
+        List<enum_LevelStyle> styleList = TCommon.GetEnumList<enum_LevelStyle>();
+        TCommon.TraversalEnum((enum_StageLevel level) => {
+            enum_LevelStyle style = styleList.RandomItem(m_GameRandom);
+            styleList.Remove(style);
+            m_StageStyle.Add(level, style);
+        });
     }
     public void LoadStageData()
     {

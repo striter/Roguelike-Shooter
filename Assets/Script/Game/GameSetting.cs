@@ -365,6 +365,8 @@ namespace GameSetting
         OnFinalBattleStart,
         OnFinalBattleFinish,
 
+        OnStageFinished,
+
         OnGameLoad,
         OnGameStart,
         OnGameFinish,

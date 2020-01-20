@@ -202,7 +202,7 @@ namespace LevelSetting
         }
     }
 
-    public class ChunkGameData
+    public struct ChunkGameData
     {
         public Vector3 m_Origin { get; private set; }
         public Vector3 GetObjectWorldPosition(Vector3 localPosition) => m_Origin + localPosition+Vector3.up*LevelConst.I_TileSize;
