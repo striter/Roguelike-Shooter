@@ -35,11 +35,14 @@ namespace GameSetting
         public const float F_PlayerDamageAdjustmentRange = .1f;
         public const int I_PlayerRotationSmoothParam = 10;     //Camera Smooth Param For Player 10 is suggested
 
-        public const float F_AIDamageTranslate = 0;   //.003f;
+        public const float F_AIShowDistance = 35f;
         public const float F_AIMovementCheckParam = .3f;
-        public const float F_AITargetCheckParam = 3f;       //AI Retarget Duration,3 is suggested
+        public const float F_AITargetDistance = 12;
+        public const float F_AITargetCheckParam = .5f;      //AI Target Duration .5f is Suggested
+        public const float F_AIReTargetCheckParam = 3f;       //AI Retarget Duration,3f is suggested
         public const float F_AITargetCalculationParam = .5f;       //AI Target Param Calculation Duration, 1 is suggested;
         public const float F_AIMaxRepositionDuration = .5f;
+        public const float F_AIDamageTranslate = 0;   //.003f;
         public const int I_AIIdlePercentage = 50;
         
         public const int I_EnermySpawnDelay = 2;        //Enermy Spawn Delay Time 
@@ -411,7 +414,7 @@ namespace GameSetting
     
     public enum enum_ProjectileFireType { Invalid = -1, Single = 1, MultipleFan = 2, MultipleLine = 3, };
 
-    public enum enum_CastControllType { Invalid = -1, CastFromOrigin = 1, CastControlledForward = 2, CastAtTarget = 3, CastSelfDetonate = 4, }
+    public enum enum_CastControllType { Invalid = -1, CastFromOrigin = 1, CastControlledForward = 2, CastAtTarget = 3, }
 
     public enum enum_CastTarget { Invalid=-1,Head=1,Weapon=2,Feet=3}
 
@@ -1854,10 +1857,6 @@ namespace GameSetting
         {
 
         }
-        public virtual void Tick(float deltaTime)
-        {
-
-        }
         public static WeaponHelperBase AcquireWeaponHelper(int weaponIndex, EntityCharacterBase _entity, Func<DamageDeliverInfo> GetDamageBuffInfo)
         {
             SFXWeaponBase weaponInfo = GameObjectManager.GetEquipmentData<SFXWeaponBase>(weaponIndex);
@@ -1880,7 +1879,6 @@ namespace GameSetting
                 {
                     default: Debug.LogError("Invalid Type:" + cast.E_CastType); break;
                     case enum_CastControllType.CastFromOrigin: return new WeaponHelperCaster(weaponIndex,cast, _entity, GetDamageBuffInfo);
-                    case enum_CastControllType.CastSelfDetonate: return new WeaponHelperCasterSelfDetonateAnimLess(weaponIndex,cast, _entity, GetDamageBuffInfo, _entity.tf_Model.Find("BlinkModel")); 
                     case enum_CastControllType.CastControlledForward: return new WeaponHelperCasterControlled(weaponIndex,cast, _entity, GetDamageBuffInfo);
                     case enum_CastControllType.CastAtTarget: return new WeaponHelperCasterTarget(weaponIndex,cast, _entity, GetDamageBuffInfo);
                 }
@@ -1944,48 +1942,6 @@ namespace GameSetting
         public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
             GameObjectManager.SpawnEquipment<SFXCast>(I_Index, _calculatedPosition,m_castForward?m_Entity.tf_Weapon.forward:Vector3.up).Play(GetDamageDeliverInfo());
-        }
-    }
-
-    public class WeaponHelperCasterSelfDetonateAnimLess : WeaponHelperCaster
-    {
-        ModelBlink m_Blink;
-        float timeElapsed;
-        bool b_activating;
-        public WeaponHelperCasterSelfDetonateAnimLess(int equipmentIndex,SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageDeliverInfo> _GetBuffInfo, Transform _blinkModels) : base(equipmentIndex,_castInfo, _controller, _GetBuffInfo)
-        {
-            m_Blink = new ModelBlink(_blinkModels, .25f, .25f,Color.red);
-            timeElapsed = 0;
-            b_activating = false;
-        }
-        public override void Tick(float deltaTime)
-        {
-            base.Tick(deltaTime);
-            if (!b_activating||m_Entity.m_IsDead)
-                return;
-            timeElapsed += deltaTime;
-            float timeMultiply = 2f * (timeElapsed / 2f);
-            m_Blink.Tick(Time.deltaTime * timeMultiply);
-            if (timeElapsed > 2f)
-            {
-                GameObjectManager.SpawnEquipment<SFXCast>(I_Index, attacherHead.position, attacherHead.forward).Play(GetDamageDeliverInfo());
-                m_Entity.m_HitCheck.TryHit(new DamageInfo(m_Entity.m_Health.F_TotalEHP, enum_DamageType.Basic,DamageDeliverInfo.Default(-1)));
-                b_activating = false;
-            }
-        }
-
-        public override void OnStopPlay()
-        {
-            base.OnStopPlay();
-            if (b_activating)
-                return;
-
-            timeElapsed = 0;
-            b_activating = true;
-        }
-        public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
-        {
-            return;
         }
     }
 

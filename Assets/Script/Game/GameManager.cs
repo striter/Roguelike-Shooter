@@ -52,6 +52,7 @@ public class GameManager : GameManagerBase
     public Transform tf_Interacts { get; private set; } = null;
 
     ObjectPoolSimpleComponent<int, GameChunkDetector> m_EntranceDetect;
+    ObjectPoolSimpleComponent<int, GameEnermyCommander> m_EnermyCommand;
 
     public override bool B_InGame => true;
     protected override void Awake()
@@ -69,6 +70,7 @@ public class GameManager : GameManagerBase
         tf_Interacts = transform.Find("Interacts");
 
         m_EntranceDetect = new ObjectPoolSimpleComponent<int, GameChunkDetector>(transform.Find("TriggerPool"), "TriggerItem",(GameChunkDetector detector)=> { detector.Init(); });
+        m_EnermyCommand = new ObjectPoolSimpleComponent<int, GameEnermyCommander>(transform.Find("EnermyPool"), "EnermyItem");
     }
     
 
@@ -136,12 +138,12 @@ public class GameManager : GameManagerBase
 
         EntityDicReset();
 
-        GenerateChunkObjects();
-
         ChunkGameData startChunk = GameLevelManager.Instance.m_GameChunks[0];
 
         m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_BattleData,startChunk.GetObjectWorldPosition( startChunk.m_LocalChunkObjects[enum_TileObjectType.RPlayerSpawn1x1][0].m_LocalPosition), GameLevelManager.Instance.m_GameChunks[0].m_LocalChunkObjects[enum_TileObjectType.RPlayerSpawn1x1][0].Rotation);
         AttachPlayerCamera(m_LocalPlayer.tf_CameraAttach);
+
+        GenerateChunkObjects();
     }
 
     void OnStageFnished()
@@ -203,7 +205,6 @@ public class GameManager : GameManagerBase
 
                 break;
         }
-
     }
 
     Vector3 GetPickupPosition(EntityCharacterBase dropper) => NavigationManager.NavMeshPosition(dropper.transform.position + TCommon.RandomXZSphere(1.5f), false);
@@ -387,11 +388,24 @@ public class GameManager : GameManagerBase
     {
         List<ChunkGameData> gameChunks = GameLevelManager.Instance.m_GameChunks;
         m_EntranceDetect.ClearPool();
+        m_EnermyCommand.ClearPool();
         int entranceIndex = 0;
         for (int index = 0; index < gameChunks.Count; index++)
         {
             ChunkGameData chunkData = GameLevelManager.Instance.m_GameChunks[index];
-            chunkData.m_LocalChunkObjects.Traversal((enum_TileObjectType type, List<ChunkGameObjectData> objects) => { objects.Traversal((ChunkGameObjectData objectData) => { SpawnInteractObjects(type, chunkData.m_ChunkType,chunkData.GetObjectWorldPosition( objectData.m_LocalPosition),objectData.Rotation); });  });
+            chunkData.m_LocalChunkObjects.Traversal((enum_TileObjectType type, List<ChunkGameObjectData> objects) => { objects.Traversal((ChunkGameObjectData objectData) => {
+                Vector3 objectWorldPos = chunkData.GetObjectWorldPosition(objectData.m_LocalPosition);
+                SpawnInteractObjects(type, chunkData.m_ChunkType, objectWorldPos, objectData.Rotation);
+
+                if (type == enum_TileObjectType.REnermySpawn1x1)
+                {
+                    GameEnermyCommander m_Command = m_EnermyCommand.AddItem(m_EnermyCommand.m_ActiveItemDic.Count);
+                    m_Command.transform.position = objectWorldPos;
+                    m_Command.transform.rotation = objectData.Rotation;
+                    m_Command.Play(m_Enermies.RandomValue().RandomItem(),m_LocalPlayer.transform);
+                }
+            });
+            });
 
             chunkData.m_LocalChunkConnections.Traversal((ChunkGameObjectData connectionTile, enum_ChunkConnectionType type) =>
             {
@@ -420,13 +434,9 @@ public class GameManager : GameManagerBase
 
             datas.Traversal((ChunkGameObjectData data) =>
             {
-                int randomEnermyID = m_Enermies.RandomValue().RandomItem();
-                EntityCharacterBase enermy = GameObjectManager.SpawnEntityCharacter(randomEnermyID, NavigationManager.NavMeshPosition(chunkData.GetObjectWorldPosition(data.m_LocalPosition)), m_LocalPlayer.transform.position, enum_EntityFlag.Enermy);
-                enermy.SetExtraDifficulty(GameExpression.GetAIBaseHealthMultiplier(m_GameLevel.m_GameDifficulty), GameExpression.GetAIMaxHealthMultiplier(m_GameLevel.m_GameStage), GameExpression.GetEnermyGameDifficultyBuffIndex(m_GameLevel.m_GameDifficulty));
             });
         });
     }
-
     
     #endregion
 }
@@ -549,10 +559,10 @@ public static class GameObjectManager
         T entity = ObjectPoolManager<int, EntityBase>.Spawn(_poolIndex, TF_Entity) as T;
         if (entity == null)
             Debug.LogError("Entity ID:" + _poolIndex + ",Type:" + typeof(T).ToString() + " Not Found");
-        entity.OnActivate(_flag,spawnerID,_startHealth);
         entity.gameObject.name = entity.m_EntityID.ToString() + "_" + _poolIndex.ToString();
         entity.transform.position = NavigationManager.NavMeshPosition(toPos, true);
         entity.transform.rotation = Quaternion.LookRotation( TCommon.GetXZLookDirection(toPos, lookPos),Vector3.up);
+        entity.OnActivate(_flag, spawnerID, _startHealth);
         if (parentTrans) entity.transform.SetParent(parentTrans);
         return entity;
     }

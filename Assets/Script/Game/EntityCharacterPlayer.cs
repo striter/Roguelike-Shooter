@@ -535,7 +535,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     CapsuleCollider hitBox;
     private void OnDrawGizmos()
     {
-        if (UnityEditor.EditorApplication.isPlaying && GameManager.Instance&&GameManager.Instance.B_PhysicsDebugGizmos)
+        if (UnityEditor.EditorApplication.isPlaying && GameManager.Instance&&!GameManager.Instance.B_PhysicsDebugGizmos)
             return;
 
         if (!hitBox)
