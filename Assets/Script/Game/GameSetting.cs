@@ -37,7 +37,7 @@ namespace GameSetting
 
         public const float F_AIShowDistance = 35f;
         public const float F_AIMovementCheckParam = .3f;
-        public const float F_AITargetDistance = 12;
+        public const float F_AITargetDistance = 25;
         public const float F_AITargetCheckParam = .5f;      //AI Target Duration .5f is Suggested
         public const float F_AIReTargetCheckParam = 3f;       //AI Retarget Duration,3f is suggested
         public const float F_AITargetCalculationParam = .5f;       //AI Target Param Calculation Duration, 1 is suggested;
