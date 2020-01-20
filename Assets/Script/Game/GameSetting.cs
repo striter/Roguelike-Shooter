@@ -30,7 +30,7 @@ namespace GameSetting
         
         public const int I_BurstFirePelletsOnceTrigger = 3;       //Times While Burst Fire //似乎已经没用？
 
-        public const float F_PlayerAutoAimRangeBase = 14f; //自动锁定敌人范围
+        public const float F_PlayerAutoAimRangeBase = 16f; //自动锁定敌人范围
         public const int I_PlayerEquipmentCount = 5;
         public const float F_PlayerDamageAdjustmentRange = .1f;
         public const int I_PlayerRotationSmoothParam = 10;     //Camera Smooth Param For Player 10 is suggested
