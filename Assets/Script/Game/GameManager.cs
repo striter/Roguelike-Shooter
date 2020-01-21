@@ -215,7 +215,7 @@ public class GameManager : GameManagerBase
     Dictionary<enum_EntityFlag, List<EntityCharacterBase>> m_AllyEntities = new Dictionary<enum_EntityFlag, List<EntityCharacterBase>>();
     Dictionary<enum_EntityFlag, List<EntityCharacterBase>> m_OppositeEntities = new Dictionary<enum_EntityFlag, List<EntityCharacterBase>>();
     public int m_FlagEntityCount(enum_EntityFlag flag) => m_AllyEntities[flag].Count;
-    public List<EntityCharacterBase> GetEntities(enum_EntityFlag sourceFlag, bool getAlly) => getAlly ? m_AllyEntities[sourceFlag] : m_OppositeEntities[sourceFlag];
+    public List<EntityCharacterBase> GetCharacters(enum_EntityFlag sourceFlag, bool getAlly) => getAlly ? m_AllyEntities[sourceFlag] : m_OppositeEntities[sourceFlag];
     public bool EntityExists(int entityID) => m_Entities.ContainsKey(entityID);
     public EntityBase GetEntity(int entityID)
     {
@@ -299,36 +299,47 @@ public class GameManager : GameManagerBase
     RaycastHit[] m_Raycasts;
     public bool EntityTargetable(EntityCharacterBase entity)=>!entity.m_CharacterInfo.B_Effecting(enum_CharacterEffect.Cloak) && !entity.m_IsDead;
     public bool EntityOpposite(EntityBase sourceEntity, EntityBase targetEntity) => sourceEntity.m_Flag != targetEntity.m_Flag;
-    public EntityCharacterBase GetAvailableEntity(EntityCharacterBase sourceEntity,bool targetAlly,bool checkObstacle=true, float checkDistance=float.MaxValue,Predicate<EntityCharacterBase> predictMatch=null)
+    public EntityCharacterBase GetNeariesCharacter(EntityCharacterBase sourceEntity,bool targetAlly,bool checkObstacle=true, float checkDistance=float.MaxValue,Predicate<EntityCharacterBase> predictMatch=null)
     {
-        EntityCharacterBase m_target = null;
-        float f_targetDistance = float.MaxValue;
-        List<EntityCharacterBase> entities =GetEntities(sourceEntity.m_Flag, targetAlly);
-        for (int i = 0; i < entities.Count; i++)
+        EntityCharacterBase target = null;
+        float f_nearestDistance = float.MaxValue;
+        List<EntityCharacterBase> entities = GetNearbyCharacters(sourceEntity, targetAlly,checkObstacle,checkDistance,predictMatch);
+        entities.Traversal((EntityCharacterBase character) =>
         {
-            if (entities[i].m_EntityID == sourceEntity.m_EntityID||!EntityTargetable( entities[i]))
-                continue;
-
-            float distance = TCommon.GetXZDistance(sourceEntity.tf_Head.position, entities[i].tf_Head.position);
-            if ((distance > checkDistance)|| (checkObstacle && CheckEntityObstacleBetween(sourceEntity, entities[i])))
-                continue;
-
-            if (distance < f_targetDistance)
+            float distance = TCommon.GetXZDistance(sourceEntity.tf_Head.position, character.tf_Head.position);
+            if (distance < f_nearestDistance)
             {
-                if ((predictMatch != null && !predictMatch(entities[i])))
-                    continue;
-
-                m_target = entities[i];
-                f_targetDistance = distance;
+                target = character;
+                f_nearestDistance = distance;
             }
-        }
-        return m_target;
+        });
+        return target;
+    }
+    public List<EntityCharacterBase> GetNearbyCharacters(EntityCharacterBase sourceEntity, bool targetAlly, bool checkObstacle = true, float checkDistance = float.MaxValue, Predicate<EntityCharacterBase> predictMatch = null)
+    {
+        List<EntityCharacterBase> targetCharacters = new List<EntityCharacterBase>();
+        List<EntityCharacterBase> characters = GetCharacters(sourceEntity.m_Flag, targetAlly);
+        characters.Traversal((EntityCharacterBase character) =>
+        {
+            if (character.m_EntityID == sourceEntity.m_EntityID || !EntityTargetable(character))
+                return;
+
+            float distance = TCommon.GetXZDistance(sourceEntity.tf_Head.position, character.tf_Head.position);
+            if ((distance > checkDistance) || (checkObstacle && CheckEntityObstacleBetween(sourceEntity, character)))
+                return;
+
+            if (predictMatch != null && !predictMatch(character))
+                return;
+
+            targetCharacters.Add(character);
+        });
+        return targetCharacters;
     }
 
     public int GetNearbyEnermyCount(EntityCharacterBase sourceEntity, float checkDistance = float.MaxValue)
     {
         int nearbyCount = 0;
-        List<EntityCharacterBase> entities = GetEntities(sourceEntity.m_Flag, false);
+        List<EntityCharacterBase> entities = GetCharacters(sourceEntity.m_Flag, false);
         for (int i = 0; i < entities.Count; i++)
         {
             if (entities[i].m_EntityID == sourceEntity.m_EntityID)

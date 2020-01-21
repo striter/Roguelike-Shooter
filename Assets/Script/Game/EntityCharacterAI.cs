@@ -64,6 +64,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         m_Agent.speed = m_CharacterInfo.F_MovementSpeed;
     }
 
+    Vector3 m_DamageImpact;
     protected override void OnAliveTick(float deltaTime)
     {
         base.OnAliveTick(deltaTime);
@@ -72,7 +73,8 @@ public class EntityCharacterAI : EntityCharacterBase {
             m_Animator.SetForward(m_Moving ? 1f:0f);
             m_Animator.SetPause(m_CharacterInfo.B_Effecting( enum_CharacterEffect.Freeze));
         }
-
+        m_DamageImpact = Vector3.Lerp(Vector3.zero, m_DamageImpact, Time.deltaTime * 20f);
+        if(m_DamageImpact.magnitude>.2f) transform.Translate(m_DamageImpact,Space.World);
         AISetSimulate(!m_CharacterInfo.B_Effecting( enum_CharacterEffect.Freeze));
         AITick(Time.deltaTime);
     }
@@ -85,14 +87,14 @@ public class EntityCharacterAI : EntityCharacterBase {
 
     protected override bool OnReceiveDamage(DamageInfo damageInfo, Vector3 damageDirection)
     {
-        if(damageDirection!=Vector3.zero)
-            transform.Translate(damageDirection *GameConst.F_AIDamageTranslate * -damageInfo.m_AmountApply);
+        if (damageDirection != Vector3.zero)
+            m_DamageImpact = -damageDirection * GameConst.AI.F_AIDamageImpact * -damageInfo.m_AmountApply; 
 
         if (GameManager.Instance.CharacterExists(damageInfo.m_detail.I_SourceID))
         {
             EntityCharacterBase entity = GameManager.Instance.GetCharacter(damageInfo.m_detail.I_SourceID);
             if(GameManager.Instance.EntityOpposite(this,entity))
-                OnReceiveTarget(entity);
+                OnReceiveTarget(entity,true);
         }
         return base.OnReceiveDamage(damageInfo, damageDirection);
     }
@@ -126,7 +128,7 @@ public class EntityCharacterAI : EntityCharacterBase {
     public bool m_AISimluating { get; private set; }
     public bool m_Battling { get; private set; }
     public bool m_Moving => m_AgentEnabled && m_Agent.remainingDistance>.2f;
-    public bool m_IdlePatrol =>!m_Battling&& TCommon.GetXZDistance(m_SourcePosition,transform.position)<=GameConst.F_AIPatrolRange;
+    public bool m_IdlePatrol =>!m_Battling&& TCommon.GetXZDistance(m_SourcePosition,transform.position)<=GameConst.AI.F_AIPatrolRange;
     public bool m_AgentEnabled
     {
         get
@@ -221,12 +223,18 @@ public class EntityCharacterAI : EntityCharacterBase {
             BattleTick(deltaTime);
     }
 
-    void OnReceiveTarget(EntityCharacterBase target)
+    void OnReceiveTarget(EntityCharacterBase target,bool indicateOthers)
     {
         if (m_Battling)
             return;
 
         m_Target = target;
+        if(indicateOthers)
+        GameManager.Instance.GetNearbyCharacters(this,true,false,GameConst.AI.F_AITargetIndicateRange).Traversal((EntityCharacterBase character)=> {
+            if (character.m_ControllType == enum_EntityController.AI)
+                (character as EntityCharacterAI).OnReceiveTarget(m_Target,false);
+        });
+
     }
 
     bool BattleTargetCheck(float deltaTime)
@@ -237,13 +245,13 @@ public class EntityCharacterAI : EntityCharacterBase {
 
         if (!m_Battling)
         {
-            m_Target = GameManager.Instance.GetAvailableEntity(this, m_Weapon.B_TargetAlly, false, GameConst.F_AIIdleTargetDistance, p => Mathf.Abs(TCommon.GetAngle(TCommon.GetXZLookDirection(transform.position, p.transform.position), transform.forward, Vector3.up)) < 60);
-            m_TargetingTimer.SetTimer(GameConst.F_AITargetCheckParam);
+            m_Target = GameManager.Instance.GetNeariesCharacter(this, m_Weapon.B_TargetAlly, false, GameConst.AI.F_AIIdleTargetDistance, p => Mathf.Abs(TCommon.GetAngle(TCommon.GetXZLookDirection(transform.position, p.transform.position), transform.forward, Vector3.up)) < 60);
+            m_TargetingTimer.SetTimer(GameConst.AI.F_AITargetCheckParam);
         }
         else
         {
-            m_Target = GameManager.Instance.GetAvailableEntity(this, m_Weapon.B_TargetAlly, false, GameConst.F_AIBattleTargetDistance);
-            m_TargetingTimer.SetTimer(m_Target ? GameConst.F_AIReTargetCheckParam : GameConst.F_AITargetCheckParam);
+            m_Target = GameManager.Instance.GetNeariesCharacter(this, m_Weapon.B_TargetAlly, false, GameConst.AI.F_AIBattleTargetDistance);
+            m_TargetingTimer.SetTimer(m_Target ? GameConst.AI.F_AIReTargetCheckParam : GameConst.AI.F_AITargetCheckParam);
         }
         return m_Target;
     }
@@ -261,7 +269,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         m_MoveTimer.Tick(deltaTime);
         if (m_MoveTimer.m_Timing)
             return;
-        m_MoveTimer.SetTimer(GameConst.F_AIMaxRepositionDuration);
+        m_MoveTimer.SetTimer(GameConst.AI.F_AIMaxRepositionDuration);
 
         if (m_Moving)
             return;
@@ -272,13 +280,13 @@ public class EntityCharacterAI : EntityCharacterBase {
             return;
         }
 
-        if (TCommon.RandomPercentage() > GameConst.I_AIIdlePercentage)
+        if (TCommon.RandomPercentage() > GameConst.AI.I_AIIdlePercentage)
         {
-            m_MoveOrderTimer.SetTimer(GameConst.RF_AIBattleIdleDuration.Random());
+            m_MoveOrderTimer.SetTimer(GameConst.AI.RF_AIBattleIdleDuration.Random());
             return;
         }
 
-        SetDestination(m_SourcePosition + TCommon.RandomXZSphere(GameConst.F_AIPatrolRange));
+        SetDestination(m_SourcePosition + TCommon.RandomXZSphere(GameConst.AI.F_AIPatrolRange));
     }
 
     void IdleRotation(float deltaTime)
@@ -392,21 +400,21 @@ public class EntityCharacterAI : EntityCharacterBase {
         if (m_MoveTimer.m_Timing)
             return;
 
-        m_MoveTimer.SetTimer(GameConst.F_AIMovementCheckParam);
+        m_MoveTimer.SetTimer(GameConst.AI.F_AIMovementCheckParam);
         if (ForceHoldPosition()) { StopMoving(); return; }
 
         if (m_MoveOrderTimer.m_Timing)
             return;
 
-        if (!m_m_targetOutChaseRange && m_Moving && TCommon.RandomPercentage() > GameConst.I_AIIdlePercentage)
+        if (!m_m_targetOutChaseRange && m_Moving && TCommon.RandomPercentage() > GameConst.AI.I_AIIdlePercentage)
         {
             StopMoving();
-            m_MoveOrderTimer.SetTimer(GameConst.RF_AIBattleIdleDuration.Random());
+            m_MoveOrderTimer.SetTimer(GameConst.AI.RF_AIBattleIdleDuration.Random());
             return;
         }
 
         SetDestination(GetSamplePosition(m_m_targetOutChaseRange));
-        m_MoveOrderTimer.SetTimer(GameConst.F_AIMaxRepositionDuration);
+        m_MoveOrderTimer.SetTimer(GameConst.AI.F_AIMaxRepositionDuration);
     }
     bool ForceHoldPosition() => m_CharacterInfo.F_MovementSpeed == 0 || (m_b_attacking && !B_AttackMove);
 

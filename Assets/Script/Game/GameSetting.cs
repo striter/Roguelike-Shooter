@@ -35,19 +35,23 @@ namespace GameSetting
         public const float F_PlayerDamageAdjustmentRange = .1f;
         public const int I_PlayerRotationSmoothParam = 10;     //Camera Smooth Param For Player 10 is suggested
 
-        public const float F_AIShowDistance = 35f;
-        public const float F_AIIdleTargetDistance = 12;
-        public static readonly float F_AIPatrolRange = 5f;
-        public static readonly RangeFloat RF_AIPatrolDuration = new RangeFloat(1f,3f);
-        public const float F_AIMovementCheckParam = .3f;
-        public const float F_AIBattleTargetDistance = 25;
-        public const float F_AITargetCheckParam = .5f;      //AI Target Duration .5f is Suggested
-        public const float F_AIReTargetCheckParam = 3f;       //AI Retarget Duration,3f is suggested
-        public const float F_AITargetCalculationParam = .5f;       //AI Target Param Calculation Duration, 1 is suggested;
-        public const float F_AIMaxRepositionDuration = .5f;
-        public const float F_AIDamageTranslate = 0;   //.003f;
-        public const int I_AIIdlePercentage = 50;
-        public static readonly RangeFloat RF_AIBattleIdleDuration = new RangeFloat(1f, 2f);
+        public static class AI
+        {
+            public const float F_AIShowDistance = 35f;
+            public const float F_AIIdleTargetDistance = 12;
+            public static readonly float F_AIPatrolRange = 5f;
+            public static readonly RangeFloat RF_AIPatrolDuration = new RangeFloat(1f, 3f);
+            public const float F_AITargetIndicateRange = 10f;
+            public const float F_AIMovementCheckParam = .3f;
+            public const float F_AIBattleTargetDistance = 25;
+            public const float F_AITargetCheckParam = .5f;      //AI Target Duration .5f is Suggested
+            public const float F_AIReTargetCheckParam = 3f;       //AI Retarget Duration,3f is suggested
+            public const float F_AITargetCalculationParam = .5f;       //AI Target Param Calculation Duration, 1 is suggested;
+            public const float F_AIMaxRepositionDuration = .5f;
+            public const float F_AIDamageImpact = 0.01f;   //.003f;
+            public const int I_AIIdlePercentage = 50;
+            public static readonly RangeFloat RF_AIBattleIdleDuration = new RangeFloat(1f, 2f);
+        }
 
         public const int I_EnermySpawnDelay = 2;        //Enermy Spawn Delay Time 
         public const float F_EnermySpawnOffsetEach = .5f;       //Enermy Spawn Offset Each
@@ -1910,7 +1914,7 @@ namespace GameSetting
         public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
             Transform castAt = GetCastAt(m_Entity);
-            GameObjectManager.SpawnEquipment<SFXCast>(I_Index, castAt.position, m_castForward?castAt.forward:Vector3.up).Play(GetDamageDeliverInfo());
+            GameObjectManager.SpawnEquipment<SFXCast>(I_Index, NavigationManager.NavMeshPosition(  castAt.position), m_castForward?castAt.forward:Vector3.up).Play(GetDamageDeliverInfo());
         }
         protected Transform GetCastAt(EntityCharacterBase character)
         {

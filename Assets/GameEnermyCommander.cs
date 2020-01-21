@@ -20,7 +20,7 @@ public class GameEnermyCommander : MonoBehaviour {
         m_LocalPlayer = localPlayer;
     }
 
-    TimeCounter m_Timer=new TimeCounter(GameConst.F_AIMovementCheckParam);
+    TimeCounter m_Timer=new TimeCounter(GameConst.AI.F_AIMovementCheckParam);
     private void Update()
     {
         if (m_Timer.m_Timing)
@@ -28,7 +28,7 @@ public class GameEnermyCommander : MonoBehaviour {
             m_Timer.Tick(Time.deltaTime);
             return;
         }
-        m_Timer.SetTimer(GameConst.F_AIMovementCheckParam);
+        m_Timer.SetTimer(GameConst.AI.F_AIMovementCheckParam);
 
         if (m_Entity && m_Entity.m_IsDead)
         {
@@ -36,7 +36,7 @@ public class GameEnermyCommander : MonoBehaviour {
             return;
         }
 
-        bool entityVisible = TCommon.GetXZDistance(transform.position, m_LocalPlayer.position) < GameConst.F_AIShowDistance;
+        bool entityVisible = TCommon.GetXZDistance(transform.position, m_LocalPlayer.position) < GameConst.AI.F_AIShowDistance;
 
         if (m_Entity)
         {
