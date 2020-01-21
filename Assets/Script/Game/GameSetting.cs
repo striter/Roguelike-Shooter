@@ -37,21 +37,21 @@ namespace GameSetting
 
         public static class AI
         {
-            public const float F_AIShowDistance = 35f;
+            public const float F_AIShowDistance = 30f;
             public const float F_AIIdleTargetDistance = 12;
             public const int F_AIIdleTargetAngle = 60;
-            public static readonly float F_AIPatrolRange = 5f;
-            public static readonly RangeFloat RF_AIPatrolDuration = new RangeFloat(1f, 3f);
-            public const float F_AITargetIndicateRange = 10f;
-            public const float F_AIMovementCheckParam = .3f;
-            public const float F_AIBattleTargetDistance = 25;
+            public static readonly float F_AIPatrolRange = 5f; //AI idle巡逻范围
+            public static readonly RangeFloat RF_AIPatrolDuration = new RangeFloat(1f, 3f); //AI idle巡逻时间
+            public const float F_AITargetIndicateRange = 5f;  
+            public const float F_AIMovementCheckParam = .3f; //AI检查玩家频率
+            public const float F_AIBattleTargetDistance = 30; //必须和F_AIShowDistance相同，否则出现打了一半消失的bug
             public const float F_AITargetCheckParam = .5f;      //AI Target Duration .5f is Suggested
             public const float F_AIReTargetCheckParam = 3f;       //AI Retarget Duration,3f is suggested
             public const float F_AITargetCalculationParam = .5f;       //AI Target Param Calculation Duration, 1 is suggested;
             public const float F_AIMaxRepositionDuration = .5f;
             public const float F_AIDamageImpact = 0.01f;   //.003f;
             public const int I_AIIdlePercentage = 50;
-            public static readonly RangeFloat RF_AIBattleIdleDuration = new RangeFloat(1f, 2f);
+            public static readonly RangeFloat RF_AIBattleIdleDuration = new RangeFloat(1f, 2f); 
         }
 
         public const int I_EnermySpawnDelay = 2;        //Enermy Spawn Delay Time 
