@@ -29,6 +29,13 @@ public class EntityBase : PoolObjectMono<int>
     }
     public virtual void OnActivate( enum_EntityFlag _flag,int _spawnerID=-1, float startHealth =0)
     {
+        if (m_Activating)
+        {
+            Debug.LogWarning("Activated entity can't be activate again");
+            return;
+        }
+        m_Activating = true;
+
         m_Flag = _flag;
         m_SpawnerEntityID = _spawnerID;
         ActivateHealthManager(startHealth>0? startHealth:I_MaxHealth);
@@ -37,7 +44,6 @@ public class EntityBase : PoolObjectMono<int>
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityActivate, this);
         EnableHitbox(true);
         m_IsDead = false;
-        m_Activating = true;
     }
     protected virtual bool OnReceiveDamage(DamageInfo damageInfo,Vector3 damageDirection)
     {
@@ -63,10 +69,17 @@ public class EntityBase : PoolObjectMono<int>
         m_IsDead = false;
         EnableHitbox(true);
     }
+
     public virtual void DoRecycle()
     {
+        if (!m_Activating)
+        {
+            Debug.LogWarning("Recycled entity can't be recycle again!");
+            return;
+        }
         m_Activating = false;
-        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityDeactivate, this);
+
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityRecycle, this);
         DoItemRecycle();
     }
     protected virtual void EnableHitbox(bool setHitable)

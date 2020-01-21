@@ -244,7 +244,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected Vector2 m_RotateAxisInput { get; private set; } = Vector2.zero;
     protected Quaternion m_CharacterRotation { get; private set; } = Quaternion.identity;
     protected EntityCharacterBase m_Target { get; private set; } = null;
-    protected bool m_TargetAvailable => m_Target != null && GameManager.Instance.CheckEntityTargetable(m_Target);
+    protected bool m_TargetAvailable => m_Target != null && GameManager.Instance.EntityTargetable(m_Target);
     float targetCheck = .3f;
     void OnMovementDelta(Vector2 moveDelta)
     {

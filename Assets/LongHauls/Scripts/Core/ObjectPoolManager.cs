@@ -196,7 +196,7 @@ public class ObjectPoolSimpleComponent<T,Y>:ObjectPoolSimpleBase<T,Y> where Y:Co
     }
     protected override Y CreateNewItem(Transform instantiateTrans, T identity)
     {
-        Y item= instantiateTrans.GetComponent<Y>(); ;
+        Y item= instantiateTrans.GetComponent<Y>(); 
         OnCreateNewInit?.Invoke(item);
         return item;
     } 

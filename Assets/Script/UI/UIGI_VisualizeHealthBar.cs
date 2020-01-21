@@ -18,7 +18,7 @@ public class UIGI_VisualizeHealthBar : UIT_GridItem {
         m_Graphics = GetComponentsInChildren<Graphic>();
     }
 
-    public void AttachItem(EntityBase _attachTo)
+    public void Play(EntityBase _attachTo)
     {
         m_AttachEntity = _attachTo;
         OnHide();

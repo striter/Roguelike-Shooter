@@ -61,7 +61,7 @@ public class GameManager : GameManagerBase
         base.Awake();
         InitEntityDic();
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntiyActivate);
-        TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityDeactivate, OnEntityRecycle);
+        TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterRevive, OnCharacterRevive);
         if (M_TESTSEED!="")
@@ -84,7 +84,7 @@ public class GameManager : GameManagerBase
     {
         base.OnDisable();
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntiyActivate);
-        TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityDeactivate, OnEntityRecycle);
+        TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterRevive, OnCharacterRevive);
     }
@@ -297,8 +297,8 @@ public class GameManager : GameManagerBase
         }
     }
     RaycastHit[] m_Raycasts;
-    public bool CheckEntityTargetable(EntityCharacterBase entity)=>!entity.m_CharacterInfo.B_Effecting(enum_CharacterEffect.Cloak) && !entity.m_IsDead;
-
+    public bool EntityTargetable(EntityCharacterBase entity)=>!entity.m_CharacterInfo.B_Effecting(enum_CharacterEffect.Cloak) && !entity.m_IsDead;
+    public bool EntityOpposite(EntityBase sourceEntity, EntityBase targetEntity) => sourceEntity.m_Flag != targetEntity.m_Flag;
     public EntityCharacterBase GetAvailableEntity(EntityCharacterBase sourceEntity,bool targetAlly,bool checkObstacle=true, float checkDistance=float.MaxValue,Predicate<EntityCharacterBase> predictMatch=null)
     {
         EntityCharacterBase m_target = null;
@@ -306,15 +306,18 @@ public class GameManager : GameManagerBase
         List<EntityCharacterBase> entities =GetEntities(sourceEntity.m_Flag, targetAlly);
         for (int i = 0; i < entities.Count; i++)
         {
-            if (entities[i].m_EntityID == sourceEntity.m_EntityID||!CheckEntityTargetable( entities[i]))
+            if (entities[i].m_EntityID == sourceEntity.m_EntityID||!EntityTargetable( entities[i]))
                 continue;
 
             float distance = TCommon.GetXZDistance(sourceEntity.tf_Head.position, entities[i].tf_Head.position);
-            if ((distance > checkDistance)|| (checkObstacle && CheckEntityObstacleBetween(sourceEntity, entities[i])&& (predictMatch==null||predictMatch(entities[i]))))
+            if ((distance > checkDistance)|| (checkObstacle && CheckEntityObstacleBetween(sourceEntity, entities[i])))
                 continue;
 
             if (distance < f_targetDistance)
             {
+                if ((predictMatch != null && !predictMatch(entities[i])))
+                    continue;
+
                 m_target = entities[i];
                 f_targetDistance = distance;
             }
@@ -399,10 +402,11 @@ public class GameManager : GameManagerBase
 
                 if (type == enum_TileObjectType.REnermySpawn1x1)
                 {
-                    GameEnermyCommander m_Command = m_EnermyCommand.AddItem(m_EnermyCommand.m_ActiveItemDic.Count);
+                    int commandIndex = m_EnermyCommand.m_ActiveItemDic.Count;
+                    GameEnermyCommander m_Command = m_EnermyCommand.AddItem(commandIndex);
                     m_Command.transform.position = objectWorldPos;
                     m_Command.transform.rotation = objectData.Rotation;
-                    m_Command.Play(m_Enermies.RandomValue().RandomItem(),m_LocalPlayer.transform);
+                    m_Command.Play(commandIndex, m_Enermies.RandomValue().RandomItem(),m_LocalPlayer.transform,m_EnermyCommand.RemoveItem);
                 }
             });
             });
@@ -559,10 +563,10 @@ public static class GameObjectManager
         T entity = ObjectPoolManager<int, EntityBase>.Spawn(_poolIndex, TF_Entity) as T;
         if (entity == null)
             Debug.LogError("Entity ID:" + _poolIndex + ",Type:" + typeof(T).ToString() + " Not Found");
-        entity.gameObject.name = entity.m_EntityID.ToString() + "_" + _poolIndex.ToString();
         entity.transform.position = NavigationManager.NavMeshPosition(toPos, true);
         entity.transform.rotation = Quaternion.LookRotation( TCommon.GetXZLookDirection(toPos, lookPos),Vector3.up);
         entity.OnActivate(_flag, spawnerID, _startHealth);
+        entity.gameObject.name = entity.m_EntityID.ToString() + "_" + _poolIndex.ToString();
         if (parentTrans) entity.transform.SetParent(parentTrans);
         return entity;
     }

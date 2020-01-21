@@ -87,6 +87,13 @@ public class EntityCharacterAI : EntityCharacterBase {
     {
         if(damageDirection!=Vector3.zero)
             transform.Translate(damageDirection *GameConst.F_AIDamageTranslate * -damageInfo.m_AmountApply);
+
+        if (GameManager.Instance.CharacterExists(damageInfo.m_detail.I_SourceID))
+        {
+            EntityCharacterBase entity = GameManager.Instance.GetCharacter(damageInfo.m_detail.I_SourceID);
+            if(GameManager.Instance.EntityOpposite(this,entity))
+                OnReceiveTarget(entity);
+        }
         return base.OnReceiveDamage(damageInfo, damageDirection);
     }
 
@@ -228,14 +235,15 @@ public class EntityCharacterAI : EntityCharacterBase {
         if (m_TargetingTimer.m_Timing)
             return m_Target;
 
-        if (m_Battling)
+        if (!m_Battling)
         {
-            m_Target = GameManager.Instance.GetAvailableEntity(this, m_Weapon.B_TargetAlly, false, GameConst.F_AITargetDistance);
-            m_TargetingTimer.SetTimer(m_Target ? GameConst.F_AIReTargetCheckParam : GameConst.F_AITargetCheckParam);
+            m_Target = GameManager.Instance.GetAvailableEntity(this, m_Weapon.B_TargetAlly, false, GameConst.F_AIIdleTargetDistance, p => Mathf.Abs(TCommon.GetAngle(TCommon.GetXZLookDirection(transform.position, p.transform.position), transform.forward, Vector3.up)) < 60);
+            m_TargetingTimer.SetTimer(GameConst.F_AITargetCheckParam);
         }
         else
         {
-            m_Target = GameManager.Instance.GetAvailableEntity(this, m_Weapon.B_TargetAlly, false, GameConst.F_AITargetDistance, p => Mathf.Abs(TCommon.GetAngle(TCommon.GetXZLookDirection(transform.position, p.transform.position), transform.forward, Vector3.up)) < 60);
+            m_Target = GameManager.Instance.GetAvailableEntity(this, m_Weapon.B_TargetAlly, false, GameConst.F_AIBattleTargetDistance);
+            m_TargetingTimer.SetTimer(m_Target ? GameConst.F_AIReTargetCheckParam : GameConst.F_AITargetCheckParam);
         }
         return m_Target;
     }
