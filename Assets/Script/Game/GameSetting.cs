@@ -36,10 +36,9 @@ namespace GameSetting
         public const int I_PlayerRotationSmoothParam = 10;     //Camera Smooth Param For Player 10 is suggested
 
         public const float F_AIShowDistance = 35f;
-        public const float F_AITargetDistance = 12;
+        public const float F_AITargetDistance = 25;
         public static readonly float F_AIPatrolRange = 5f;
         public static readonly RangeFloat RF_AIPatrolDuration = new RangeFloat(1f,3f);
-
         public const float F_AIMovementCheckParam = .3f;
         public const float F_AITargetCheckParam = .5f;      //AI Target Duration .5f is Suggested
         public const float F_AIReTargetCheckParam = 3f;       //AI Retarget Duration,3f is suggested
