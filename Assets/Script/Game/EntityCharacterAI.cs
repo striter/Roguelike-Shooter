@@ -88,7 +88,7 @@ public class EntityCharacterAI : EntityCharacterBase {
     protected override bool OnReceiveDamage(DamageInfo damageInfo, Vector3 damageDirection)
     {
         if (damageDirection != Vector3.zero)
-            m_DamageImpact = -damageDirection * GameConst.AI.F_AIDamageImpact * -damageInfo.m_AmountApply; 
+            m_DamageImpact += -damageDirection * GameConst.AI.F_AIDamageImpact * -damageInfo.m_AmountApply; 
 
         if (GameManager.Instance.CharacterExists(damageInfo.m_detail.I_SourceID))
         {
