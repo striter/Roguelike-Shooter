@@ -122,7 +122,7 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
                 //GenerateNavigationData
                 Bounds mapBounds = new Bounds();
                 mapBounds.center = m_MapOriginPos + m_MapSize.ToPosition() / 2f + Vector3.up * LevelConst.I_TileSize;
-                mapBounds.size = new Vector3(m_MapSize.X, 1f, m_MapSize.Y) * LevelConst.I_TileSize;
+                mapBounds.size = new Vector3(m_MapSize.X, .1f, m_MapSize.Y) * LevelConst.I_TileSize;
                 NavigationManager.BuildNavMeshData(m_ChunkPool.transform, mapBounds);
                 yield break;
             }

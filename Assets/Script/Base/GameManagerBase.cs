@@ -215,6 +215,7 @@ public static class GameDataManager
         m_Inited = true;
         Properties<SWeapon>.Init();
         Properties<SBuff>.Init();
+        SheetProperties<SEnermyGenerate>.Init();
 
         TGameData<CGameSave>.Init();
         TGameData<CFarmSave>.Init();
@@ -308,6 +309,16 @@ public static class GameDataManager
         if (buff.m_Index == 0)
             Debug.LogError("Error Properties Found Of Index:" + index);
         return buff;
+    }
+    public static Dictionary<bool,List<SEnermyGenerate>> GetEnermyGenerate(enum_StageLevel stage)
+    {
+        Dictionary<bool, List<SEnermyGenerate>> m_GenerateDic = new Dictionary<bool, List<SEnermyGenerate>>();
+        SheetProperties<SEnermyGenerate>.GetPropertiesList((int)stage).Traversal((SEnermyGenerate generate)=> {
+            if (!m_GenerateDic.ContainsKey(generate.m_IsFinal))
+                m_GenerateDic.Add(generate.m_IsFinal, new List<SEnermyGenerate>());
+            m_GenerateDic[generate.m_IsFinal].Add(generate);
+        });
+        return m_GenerateDic;
     }
     #endregion
 }
