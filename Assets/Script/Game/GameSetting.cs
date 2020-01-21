@@ -39,6 +39,7 @@ namespace GameSetting
         {
             public const float F_AIShowDistance = 35f;
             public const float F_AIIdleTargetDistance = 12;
+            public const int F_AIIdleTargetAngle = 60;
             public static readonly float F_AIPatrolRange = 5f;
             public static readonly RangeFloat RF_AIPatrolDuration = new RangeFloat(1f, 3f);
             public const float F_AITargetIndicateRange = 10f;
