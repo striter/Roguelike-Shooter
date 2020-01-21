@@ -125,9 +125,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
         AudioManager.Instance.Play2DClip(m_EntityID, AudioManager.Instance.GetGameSFXClip(m_ReviveClip));
     }
-    protected override void OnRecycle()
+    public override void DoRecycle()
     {
-        base.OnRecycle();
+        base.DoRecycle();
         if (m_Assist)
             m_Assist.Recycle();
     }

@@ -467,7 +467,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e3dbf17d97ab664cb72d9213471fed7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  E_CastType: 4
+  E_CastType: 1
   E_CastTarget: 1
   B_CastForward: 0
   F_Damage: 30

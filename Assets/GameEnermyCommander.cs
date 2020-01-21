@@ -28,13 +28,13 @@ public class GameEnermyCommander : MonoBehaviour {
 
         if (m_Entity)
         {
-            if (!m_Entity.m_Idling)
+            if (!m_Entity.m_IdlePatrol)
                 return;
 
             if (TCommon.GetXZDistance(transform.position, m_LocalPlayer.position) < GameConst.F_AIShowDistance)
                 return;
 
-            m_Entity.DoItemRecycle();
+            m_Entity.DoRecycle();
             m_Entity = null;
         }
         else
@@ -50,7 +50,4 @@ public class GameEnermyCommander : MonoBehaviour {
             }
         }
     }
-
-
-
 }

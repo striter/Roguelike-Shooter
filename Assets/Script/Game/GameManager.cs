@@ -299,7 +299,7 @@ public class GameManager : GameManagerBase
     RaycastHit[] m_Raycasts;
     public bool CheckEntityTargetable(EntityCharacterBase entity)=>!entity.m_CharacterInfo.B_Effecting(enum_CharacterEffect.Cloak) && !entity.m_IsDead;
 
-    public EntityCharacterBase GetAvailableEntity(EntityCharacterBase sourceEntity,bool targetAlly,bool checkObstacle=true, float checkDistance=float.MaxValue,List<int> idCheckList=null)
+    public EntityCharacterBase GetAvailableEntity(EntityCharacterBase sourceEntity,bool targetAlly,bool checkObstacle=true, float checkDistance=float.MaxValue,Predicate<EntityCharacterBase> predictMatch=null)
     {
         EntityCharacterBase m_target = null;
         float f_targetDistance = float.MaxValue;
@@ -310,7 +310,7 @@ public class GameManager : GameManagerBase
                 continue;
 
             float distance = TCommon.GetXZDistance(sourceEntity.tf_Head.position, entities[i].tf_Head.position);
-            if ((distance > checkDistance)|| (checkObstacle && CheckEntityObstacleBetween(sourceEntity, entities[i])))
+            if ((distance > checkDistance)|| (checkObstacle && CheckEntityObstacleBetween(sourceEntity, entities[i])&& (predictMatch==null||predictMatch(entities[i]))))
                 continue;
 
             if (distance < f_targetDistance)

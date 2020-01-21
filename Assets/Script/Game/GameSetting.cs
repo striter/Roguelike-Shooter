@@ -36,15 +36,19 @@ namespace GameSetting
         public const int I_PlayerRotationSmoothParam = 10;     //Camera Smooth Param For Player 10 is suggested
 
         public const float F_AIShowDistance = 35f;
-        public const float F_AIMovementCheckParam = .3f;
         public const float F_AITargetDistance = 12;
+        public static readonly float F_AIPatrolRange = 5f;
+        public static readonly RangeFloat RF_AIPatrolDuration = new RangeFloat(1f,3f);
+
+        public const float F_AIMovementCheckParam = .3f;
         public const float F_AITargetCheckParam = .5f;      //AI Target Duration .5f is Suggested
         public const float F_AIReTargetCheckParam = 3f;       //AI Retarget Duration,3f is suggested
         public const float F_AITargetCalculationParam = .5f;       //AI Target Param Calculation Duration, 1 is suggested;
         public const float F_AIMaxRepositionDuration = .5f;
         public const float F_AIDamageTranslate = 0;   //.003f;
         public const int I_AIIdlePercentage = 50;
-        
+        public static readonly RangeFloat RF_AIBattleIdleDuration = new RangeFloat(1f, 2f);
+
         public const int I_EnermySpawnDelay = 2;        //Enermy Spawn Delay Time 
         public const float F_EnermySpawnOffsetEach = .5f;       //Enermy Spawn Offset Each
 
@@ -95,8 +99,6 @@ namespace GameSetting
         public static float GetAIMaxHealthMultiplier(enum_StageLevel stageDifficulty) => (int)stageDifficulty ;
 
         public static float GetActionEnergyRevive(float damageApply) => damageApply * .0025f;    //伤害转换成能量的比率
-
-        public static float GetAIIdleDuration() => UnityEngine.Random.Range(1f, 2f);
 
         public static float GetResultCompletion(bool win, enum_StageLevel _stage, int _battleLevelEntered) => win ? 1f : (.33f * ((int)_stage - 1) +.066f*_battleLevelEntered);
         public static float GetResultLevelScore(enum_StageLevel _stage, int _levelPassed) => 200 * ((int)_stage - 1) + 20 * (_levelPassed - 1);
@@ -547,7 +549,7 @@ namespace GameSetting
 
         public bool CanGenerateHealth(enum_EnermyType entityType) => TCommon.RandomPercentage() <= m_HealthRate;
         public bool CanGenerateArmor(enum_EnermyType entityType) => TCommon.RandomPercentage() <= m_ArmorRate;
-        public int GetCoinGenerate(enum_EnermyType entityType,float baseCreditRate) => TCommon.RandomPercentage() <= (baseCreditRate+ m_CoinRate) ? m_CoinRange.RandomRange() : -1;
+        public int GetCoinGenerate(enum_EnermyType entityType,float baseCreditRate) => TCommon.RandomPercentage() <= (baseCreditRate+ m_CoinRate) ? m_CoinRange.Random() : -1;
         public static PickupGenerateData Create(int healthRate, int armorRate, int coinRate, RangeInt coinAmount, Dictionary<enum_WeaponRarity, float> _weaponRate) => new PickupGenerateData() { m_HealthRate = healthRate, m_ArmorRate = armorRate, m_CoinRate = coinRate, m_CoinRange = coinAmount,m_WeaponRate=_weaponRate };
     }
 
@@ -2029,7 +2031,7 @@ namespace GameSetting
         {
             Vector3 startPosition = m_Entity.tf_Weapon.position;
             Vector3 direction = TCommon.GetXZLookDirection(startPosition, _calculatedPosition);
-            int waveCount = m_CountExtension.RandomRange();
+            int waveCount = m_CountExtension.Random();
             float distance = TCommon.GetXZDistance(startPosition, _calculatedPosition);
             Vector3 lineBeginPosition = startPosition - attacherHead.right * m_OffsetExtension * ((waveCount - 1) / 2f);
             SpawnMuzzle(startPosition, direction);
@@ -2047,7 +2049,7 @@ namespace GameSetting
         {
             Vector3 startPosition = m_Entity.tf_Weapon.position;
             Vector3 direction = TCommon.GetXZLookDirection(startPosition, _calculatedPosition);
-            int waveCount = m_CountExtension.RandomRange();
+            int waveCount = m_CountExtension.Random();
             float beginAnle = -m_OffsetExtension * (waveCount - 1) / 2f;
             float distance = TCommon.GetXZDistance(m_Entity.tf_Weapon.position, _calculatedPosition);
             SpawnMuzzle(startPosition, direction);

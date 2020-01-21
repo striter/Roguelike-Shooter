@@ -72,7 +72,7 @@ GameObject:
   - component: {fileID: 195265925062954242}
   - component: {fileID: 208837212441087546}
   - component: {fileID: 114369432402836246}
-  - component: {fileID: 114294689034349854}
+  - component: {fileID: 114830085250591804}
   m_Layer: 0
   m_Name: 350_Entity_Soldier8Weapon
   m_TagString: Untagged
@@ -623,41 +623,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1839640149920182}
   m_Mesh: {fileID: 4300008, guid: 6491a6b792d34a4469551d86b6395905, type: 3}
---- !u!114 &114294689034349854
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1289635926676890}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 275d93242000a1d47972944c1cd255ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  I_MaxHealth: 320
-  m_IsDead: 0
-  m_Activating: 0
-  ExtraRendererForForest107Only: {fileID: 0}
-  E_SpawnType: -1
-  I_DefaultArmor: 0
-  F_MovementSpeed: 6
-  F_AttackSpread: 0
-  E_AnimatorIndex: -1
-  F_AIChaseRange: 1
-  F_AIAttackRange: 5
-  F_AttackDuration:
-    start: 1
-    length: 0
-  F_AttackTimes:
-    start: 1
-    length: 0
-  F_AttackRate: 1
-  B_BattleCheckObstacle: 0
-  F_AttackRotateParam: 1
-  I_AttackPreAimPercentage: 50
-  B_AttackMove: 1
-  F_AttackFrontCheck: 0
-  m_AISimluating: 0
 --- !u!114 &114369432402836246
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -695,6 +660,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   V3_RotateDireciton: {x: 0, y: 1, z: 0}
   F_RotateSpeed: 25
+--- !u!114 &114830085250591804
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1289635926676890}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99034fa2a043d564f803fbad989b715d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  I_MaxHealth: 320
+  ExtraRendererForForest107Only: {fileID: 0}
+  E_SpawnType: -1
+  I_DefaultArmor: 0
+  F_MovementSpeed: 6
+  F_AttackSpread: 0
+  E_AnimatorIndex: -1
+  F_AIChaseRange: 1
+  F_AIAttackRange: 5
+  F_AttackDuration:
+    start: 1
+    length: 0
+  F_AttackTimes:
+    start: 1
+    length: 0
+  F_AttackRate: 1
+  F_AttackRotateParam: 1
+  I_AttackPreAimPercentage: 50
+  B_AttackMove: 1
+  F_AttackFrontCheck: 0
 --- !u!136 &136969556414685698
 CapsuleCollider:
   m_ObjectHideFlags: 1

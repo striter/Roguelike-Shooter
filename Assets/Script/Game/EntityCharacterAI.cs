@@ -94,7 +94,7 @@ public class EntityCharacterAI : EntityCharacterBase {
     {
         if (m_Animator!=null) m_Animator.OnAttack(startAttack);
         else if(startAttack) OnAttackAnimTrigger();
-    } 
+    }
 
     protected void OnAnimKeyEvent(TAnimatorEvent.enum_AnimEvent animEvent)
     {
@@ -111,21 +111,15 @@ public class EntityCharacterAI : EntityCharacterBase {
     protected NavMeshAgent m_Agent;
     protected NavMeshObstacle m_Obstacle;
     protected WeaponHelperBase m_Weapon;
-    TimeCounter m_MoveTimer = new TimeCounter(), m_MoveOrderTimer = new TimeCounter(),m_BattleDurationTimer=new TimeCounter(),m_TargetingTimer=new TimeCounter(),m_BattleFireTimer=new TimeCounter();
-    Vector3 m_m_forwardDirection;
-    Vector3 m_idlePosition;
-    float m_m_targetDistance;
+    TimeCounter m_TargetingTimer = new TimeCounter(), m_MoveTimer = new TimeCounter(), m_MoveOrderTimer = new TimeCounter(),m_BattleDurationTimer=new TimeCounter(),m_BattleFireTimer=new TimeCounter();
+    Vector3 m_SourcePosition;
 
-    bool m_m_targetOutChaseRange;
-    bool m_m_targetOutAttackRange;
-    bool m_b_CanStartAttack;
-    bool m_b_CanKeepAttack;
-    bool m_m_targetRotationWithin;
 
     public EntityCharacterBase m_Target { get; private set; }
     public bool m_AISimluating { get; private set; }
+    public bool m_Battling { get; private set; }
     public bool m_Moving => m_AgentEnabled && m_Agent.remainingDistance>.2f;
-    public bool m_Idling =>!m_Target&& TCommon.GetXZDistance(m_idlePosition,transform.position)<.2f;
+    public bool m_IdlePatrol =>!m_Battling&& TCommon.GetXZDistance(m_SourcePosition,transform.position)<=GameConst.F_AIPatrolRange;
     public bool m_AgentEnabled
     {
         get
@@ -171,20 +165,20 @@ public class EntityCharacterAI : EntityCharacterBase {
         m_AgentEnabled = false;
         m_Agent.enabled = false;
         m_Obstacle.enabled = true;
-        b_attacking = false;
+        m_b_attacking = false;
+        m_Battling = false;
         m_MoveTimer.SetTimer(0);
         m_BattleDurationTimer.SetTimer(0);
         m_BattleFireTimer.SetTimer(0);
         m_MoveOrderTimer.SetTimer(0);
         m_TargetingTimer.SetTimer(0);
-        m_m_targetDistance = 0f;
-        m_idlePosition = transform.position;
+        m_SourcePosition = transform.position;
         AISetSimulate(true);
     }
     public void AIDeactivate()
     {
         StopMoving();
-        OnAttackFinished();
+        FinishAttack();
     }
 
     public void AISetSimulate(bool play)
@@ -200,37 +194,112 @@ public class EntityCharacterAI : EntityCharacterBase {
         }
     }
 
+    
     public void AITick(float deltaTime)
     {
         if (!m_AISimluating)
             return;
-
-        CheckTarget(deltaTime);
         
-        CheckBattle(deltaTime);
-        CheckMovement(deltaTime);
-        CheckRotation(deltaTime);
+        bool battling = BattleTargetCheck(deltaTime);
+        if (m_Battling != battling)
+        {
+            m_Battling = battling;
+            if(m_b_attacking)
+                FinishAttack();
+        }
+
+        if (!m_Battling)
+            IdleTick(deltaTime);
+        else
+            BattleTick(deltaTime);
     }
 
-    void CheckTarget(float deltaTime)
+    void OnReceiveTarget(EntityCharacterBase target)
+    {
+        if (m_Battling)
+            return;
+
+        m_Target = target;
+    }
+
+    bool BattleTargetCheck(float deltaTime)
     {
         m_TargetingTimer.Tick(deltaTime);
         if (m_TargetingTimer.m_Timing)
-            return;
-        m_Target = GameManager.Instance.GetAvailableEntity(this, m_Weapon.B_TargetAlly, false, GameConst.F_AITargetDistance);
+            return m_Target;
 
-        m_TargetingTimer.SetTimer(m_Target? GameConst.F_AIReTargetCheckParam:GameConst.F_AITargetCheckParam);
+        if (m_Battling)
+        {
+            m_Target = GameManager.Instance.GetAvailableEntity(this, m_Weapon.B_TargetAlly, false, GameConst.F_AITargetDistance);
+            m_TargetingTimer.SetTimer(m_Target ? GameConst.F_AIReTargetCheckParam : GameConst.F_AITargetCheckParam);
+        }
+        else
+        {
+            m_Target = GameManager.Instance.GetAvailableEntity(this, m_Weapon.B_TargetAlly, false, GameConst.F_AITargetDistance, p => Mathf.Abs(TCommon.GetAngle(TCommon.GetXZLookDirection(transform.position, p.transform.position), transform.forward, Vector3.up)) < 60);
+        }
+        return m_Target;
+    }
+    
+
+    #region Idle
+    void IdleTick(float deltaTime)
+    {
+        IdleMovementCheck(deltaTime);
+        IdleRotation(deltaTime);
     }
 
-    #region Battle
-    void CheckBattle(float deltaTime)
+    void IdleMovementCheck(float deltaTime)
     {
-        if (b_attacking)
+        m_MoveTimer.Tick(deltaTime);
+        if (m_MoveTimer.m_Timing)
+            return;
+        m_MoveTimer.SetTimer(GameConst.F_AIMaxRepositionDuration);
+
+        if (m_Moving)
+            return;
+
+        if (!m_IdlePatrol)
         {
-            CheckAttack(deltaTime);
+            SetDestination(m_SourcePosition);
             return;
         }
 
+        if (TCommon.RandomPercentage() > GameConst.I_AIIdlePercentage)
+        {
+            m_MoveOrderTimer.SetTimer(GameConst.RF_AIBattleIdleDuration.Random());
+            return;
+        }
+
+        SetDestination(m_SourcePosition + TCommon.RandomXZSphere(GameConst.F_AIPatrolRange));
+    }
+
+    void IdleRotation(float deltaTime)
+    {
+        m_Agent.updateRotation = true;
+    }
+    #endregion
+    #region Battle
+    Vector3 m_m_targetDirection;
+    float m_m_targetDistance;
+    bool m_m_targetOutChaseRange;
+    bool m_m_targetOutAttackRange;
+    bool m_b_CanStartAttack;
+    bool m_b_CanKeepAttack;
+    bool m_m_targetRotationWithin;
+    bool m_b_attacking = false;
+    void BattleTick(float deltaTime)
+    {
+        BattleMovement(deltaTime);
+        BattleRotation(deltaTime);
+
+        if (!m_b_attacking)
+            BattleCheck(deltaTime);
+        else
+            AttackCheck(deltaTime);
+    }
+
+    void BattleCheck(float deltaTime)
+    {
         bool attackBlocked = FrontBlocked();
         m_b_CanStartAttack = !m_m_targetOutAttackRange && m_m_targetRotationWithin && !attackBlocked;
         m_b_CanKeepAttack = !attackBlocked;
@@ -239,17 +308,16 @@ public class EntityCharacterAI : EntityCharacterBase {
         if (m_BattleDurationTimer.m_Timing || !m_b_CanStartAttack)
             return;
 
-        StartAttack(F_AttackTimes.RandomRange(), TCommon.RandomPercentage() >= I_AttackPreAimPercentage);
+        StartAttack(F_AttackTimes.Random(), TCommon.RandomPercentage() >= I_AttackPreAimPercentage);
     }
 
-    bool b_attacking = false;
     int i_playCount = -1;
     bool b_preAim = false;
     void StartAttack(int attackTimes, bool preAim)
     {
         i_playCount = (attackTimes <= 0 ? 1 : attackTimes);       //Make Sure Play Once At Least
         b_preAim = preAim;
-        b_attacking = true;
+        m_b_attacking = true;
 
         if (m_Weapon.B_LoopAnim)
         {
@@ -257,16 +325,18 @@ public class EntityCharacterAI : EntityCharacterBase {
             m_BattleFireTimer.SetTimer( F_AttackRate);
         }
     }
+
     void PauseAttack()
     {
-        if (b_attacking)
+        if (m_b_attacking)
             m_Weapon.OnStopPlay();
     }
-    void CheckAttack(float deltaTime)
+
+    void AttackCheck(float deltaTime)
     {
         if (!m_b_CanKeepAttack)
         {
-            OnAttackFinished();
+            FinishAttack();
             return;
         }
 
@@ -291,21 +361,20 @@ public class EntityCharacterAI : EntityCharacterBase {
             m_Weapon.OnPlay(b_preAim, m_Target);
 
         if (i_playCount <= 0)
-            OnAttackFinished();
+            FinishAttack();
     }
 
-    void OnAttackFinished()
+    void FinishAttack()
     {
-        b_attacking = false;
+        m_b_attacking = false;
         m_Weapon.OnStopPlay();
         OnAttackAnim(false);
-        m_BattleDurationTimer.SetTimer(F_AttackDuration.RandomRangeFloat());
+        m_BattleDurationTimer.SetTimer(F_AttackDuration.Random());
     }
-    #endregion
     #region Position
-    void CheckMovement(float deltaTime)
+    void BattleMovement(float deltaTime)
     {
-        m_m_targetDistance = m_Target ? TCommon.GetXZDistance(m_Target.transform.position, transform.position) : float.MaxValue;
+        m_m_targetDistance = TCommon.GetXZDistance(m_Target.transform.position, transform.position);
         m_m_targetOutChaseRange = m_m_targetDistance > F_AIChaseRange;
         m_m_targetOutAttackRange = m_m_targetDistance > F_AIAttackRange;
 
@@ -314,33 +383,24 @@ public class EntityCharacterAI : EntityCharacterBase {
         m_MoveOrderTimer.Tick(movementDelta);
         if (m_MoveTimer.m_Timing)
             return;
-        
+
         m_MoveTimer.SetTimer(GameConst.F_AIMovementCheckParam);
         if (ForceHoldPosition()) { StopMoving(); return; }
-        
+
         if (m_MoveOrderTimer.m_Timing)
             return;
 
-        if (m_Target)
+        if (!m_m_targetOutChaseRange && m_Moving && TCommon.RandomPercentage() > GameConst.I_AIIdlePercentage)
         {
-            if (m_AgentEnabled && !m_m_targetOutChaseRange && TCommon.RandomPercentage() > GameConst.I_AIIdlePercentage)
-            {
-                StopMoving();
-                m_MoveOrderTimer.SetTimer(GameExpression.GetAIIdleDuration());
-                return;
-            }
-
-            SetDestination(GetSamplePosition(m_m_targetOutChaseRange));
-            m_MoveOrderTimer.SetTimer(GameConst.F_AIMaxRepositionDuration);
+            StopMoving();
+            m_MoveOrderTimer.SetTimer(GameConst.RF_AIBattleIdleDuration.Random());
             return;
         }
 
-        if(!m_Idling)
-            SetDestination(m_idlePosition);
+        SetDestination(GetSamplePosition(m_m_targetOutChaseRange));
         m_MoveOrderTimer.SetTimer(GameConst.F_AIMaxRepositionDuration);
-        return;
     }
-    bool ForceHoldPosition() => m_CharacterInfo.F_MovementSpeed == 0 || (b_attacking && !B_AttackMove);
+    bool ForceHoldPosition() => m_CharacterInfo.F_MovementSpeed == 0 || (m_b_attacking && !B_AttackMove);
 
     void StopMoving() { m_AgentEnabled = false; }
     void SetDestination(Vector3 destination) { m_AgentEnabled = true; m_Agent.SetDestination(destination); }
@@ -349,20 +409,18 @@ public class EntityCharacterAI : EntityCharacterBase {
         if (forward)
             return m_Target.transform.position + TCommon.RandomXZSphere(3f);
         else
-            return transform.position  +5 * -m_m_forwardDirection;
+            return transform.position + 5 * -m_m_targetDirection;
     }
     bool FrontBlocked() => F_AttackFrontCheck > 0f && Physics.SphereCast(new Ray(transform.position, transform.forward), .5f, F_AttackFrontCheck, GameLayer.Mask.I_Static);
 
-    void CheckRotation(float deltaTime)
+    void BattleRotation(float deltaTime)
     {
-        m_Agent.updateRotation = !m_Target;
-        if (!m_Target)
-            return;
-
-        m_m_forwardDirection = TCommon.GetXZLookDirection(transform.position, m_Target.transform.position);
-        m_m_targetRotationWithin = Mathf.Abs(TCommon.GetAngle(m_m_forwardDirection, transform.forward, Vector3.up)) < 15;
-        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(m_m_forwardDirection, Vector3.up), Time.deltaTime * 5 * (b_attacking ? F_AttackRotateParam : 1));
+        m_Agent.updateRotation = false;
+        m_m_targetDirection = TCommon.GetXZLookDirection(transform.position, m_Target.transform.position);
+        m_m_targetRotationWithin = Mathf.Abs(TCommon.GetAngle(m_m_targetDirection, transform.forward, Vector3.up)) < 15;
+        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(m_m_targetDirection, Vector3.up), Time.deltaTime * 5 * (m_b_attacking ? F_AttackRotateParam : 1));
     }
+    #endregion
     #endregion
     #endregion
     protected class EnermyAnimator : CharacterAnimator

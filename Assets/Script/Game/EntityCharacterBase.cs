@@ -100,7 +100,7 @@ public class EntityCharacterBase : EntityBase
             return;
         }
         if (!m_DeadCounter.m_Timing)
-            OnRecycle();
+            DoRecycle();
     }
 
     public virtual void ReviveCharacter(float reviveHealth = -1, float reviveArmor = -1)

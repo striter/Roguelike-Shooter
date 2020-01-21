@@ -63,7 +63,7 @@ public class EntityBase : PoolObjectMono<int>
         m_IsDead = false;
         EnableHitbox(true);
     }
-    protected virtual void OnRecycle()
+    public virtual void DoRecycle()
     {
         m_Activating = false;
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityDeactivate, this);
