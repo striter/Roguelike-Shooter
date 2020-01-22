@@ -910,14 +910,12 @@ namespace GameSetting
         int i_shooterRCount;
         int i_shooterVCount;
         int i_casterCount;
-        int i_eliteCount;
 
         public bool m_IsFinal => b_isFinal;
         public int m_FighterCount => i_fighterCount;
         public int m_ShooterRCount => i_shooterRCount;
         public int m_ShooterVCount => i_shooterVCount;
         public int m_CasterCount => i_casterCount;
-        public int m_EliteCount => i_eliteCount;
 
         public void InitOnValueSet()
         {

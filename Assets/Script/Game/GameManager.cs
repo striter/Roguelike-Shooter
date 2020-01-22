@@ -396,6 +396,7 @@ public class GameManager : GameManagerBase
         m_FinalBattleTriggers.ClearPool();
         m_EnermyCommand.ClearPool();
 
+        int enermyCommandIndex = 0;
         GameLevelManager.Instance.m_GameChunks.Traversal((ChunkGameData chunkData) => {
             bool isBattleChunk = chunkData.m_ChunkType == enum_ChunkType.Battle || chunkData.m_ChunkType == enum_ChunkType.Final;
             bool isFinalChunk = chunkData.m_ChunkType == enum_ChunkType.Final;
@@ -403,28 +404,39 @@ public class GameManager : GameManagerBase
             if (!isBattleChunk)
                 return;
 
-            SEnermyGenerate enermyGenerate = m_GameLevel.m_EnermyGenerate[isFinalChunk].RandomItem(m_GameLevel.m_GameRandom);
-            List<int> idList = new List<int>();
-            for (int i = 0; i < enermyGenerate.m_FighterCount; i++)
-                idList.Add(m_EnermyIDs[enum_EnermyType.Fighter].RandomItem(m_GameLevel.m_GameRandom));
-            for (int i = 0; i < enermyGenerate.m_ShooterRCount; i++)
-                idList.Add(m_EnermyIDs[enum_EnermyType.Shooter_Rookie].RandomItem(m_GameLevel.m_GameRandom));
-            for (int i = 0; i < enermyGenerate.m_ShooterVCount; i++)
-                idList.Add(m_EnermyIDs[enum_EnermyType.Shooter_Veteran].RandomItem(m_GameLevel.m_GameRandom));
-            for (int i = 0; i < enermyGenerate.m_CasterCount; i++)
-                idList.Add(m_EnermyIDs[enum_EnermyType.AOECaster].RandomItem(m_GameLevel.m_GameRandom));
-            for (int i = 0; i < enermyGenerate.m_EliteCount; i++)
-                idList.Add(m_EnermyIDs[enum_EnermyType.Elite].RandomItem(m_GameLevel.m_GameRandom));
-
-            idList.Traversal((int enermyID) =>
+            if (isFinalChunk)
             {
-                ChunkGameObjectData objectData = chunkData.m_LocalChunkObjects[ enum_TileObjectType.REnermySpawn1x1].RandomItem(m_GameLevel.m_GameRandom);
-                int commandIndex = m_EnermyCommand.m_ActiveItemDic.Count;
-                GameEnermyCommander m_Command = m_EnermyCommand.AddItem(commandIndex);
+                ChunkGameObjectData objectData = chunkData.m_LocalChunkObjects[enum_TileObjectType .REliteEnermySpawn1x1].RandomItem(m_GameLevel.m_GameRandom);
+                GameEnermyCommander m_Command = m_EnermyCommand.AddItem(enermyCommandIndex);
                 m_Command.transform.position = NavigationManager.NavMeshPosition(chunkData.GetObjectWorldPosition(objectData.m_LocalPosition) + TCommon.RandomXZSphere(3f));
                 m_Command.transform.rotation = objectData.Rotation;
-                m_Command.Play(commandIndex, enermyID, m_LocalPlayer.transform, m_EnermyCommand.RemoveItem);
-            });
+                m_Command.Play(enermyCommandIndex, m_EnermyIDs[enum_EnermyType.Elite].RandomItem(m_GameLevel.m_GameRandom), m_LocalPlayer.transform, m_EnermyCommand.RemoveItem);
+                enermyCommandIndex++;
+            }
+            else
+            {
+                SEnermyGenerate enermyGenerate = m_GameLevel.m_EnermyGenerate[isFinalChunk].RandomItem(m_GameLevel.m_GameRandom);
+                List<int> gameEnermyID = new List<int>();
+                for (int i = 0; i < enermyGenerate.m_FighterCount; i++)
+                    gameEnermyID.Add(m_EnermyIDs[enum_EnermyType.Fighter].RandomItem(m_GameLevel.m_GameRandom));
+                for (int i = 0; i < enermyGenerate.m_ShooterRCount; i++)
+                    gameEnermyID.Add(m_EnermyIDs[enum_EnermyType.Shooter_Rookie].RandomItem(m_GameLevel.m_GameRandom));
+                for (int i = 0; i < enermyGenerate.m_ShooterVCount; i++)
+                    gameEnermyID.Add(m_EnermyIDs[enum_EnermyType.Shooter_Veteran].RandomItem(m_GameLevel.m_GameRandom));
+                for (int i = 0; i < enermyGenerate.m_CasterCount; i++)
+                    gameEnermyID.Add(m_EnermyIDs[enum_EnermyType.AOECaster].RandomItem(m_GameLevel.m_GameRandom));
+
+                gameEnermyID.Traversal((int enermyID) =>
+                {
+                    ChunkGameObjectData objectData = chunkData.m_LocalChunkObjects[enum_TileObjectType.REnermySpawn1x1].RandomItem(m_GameLevel.m_GameRandom);
+                    GameEnermyCommander m_Command = m_EnermyCommand.AddItem(enermyCommandIndex);
+                    m_Command.transform.position = NavigationManager.NavMeshPosition(chunkData.GetObjectWorldPosition(objectData.m_LocalPosition) + TCommon.RandomXZSphere(3f));
+                    m_Command.transform.rotation = objectData.Rotation;
+                    m_Command.Play(enermyCommandIndex, enermyID, m_LocalPlayer.transform, m_EnermyCommand.RemoveItem);
+                    enermyCommandIndex++;
+                });
+            }
+
 
             if (!isFinalChunk)
                 return;
