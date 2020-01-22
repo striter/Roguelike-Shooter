@@ -8,10 +8,12 @@ using TTiles;
 using UnityEngine.AI;
 using System.Threading.Tasks;
 public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
+    
+
     ObjectPoolSimpleComponent<int, LevelChunkBase> m_ChunkPool;
+    public Dictionary<int, ChunkGameData> m_GameChunks { get; private set; } = new Dictionary<int, ChunkGameData>();
     public Light m_DirectionalLight { get; private set; }
     public Texture2D m_MapTexture { get; private set; }
-    public List<ChunkGameData> m_GameChunks { get; private set; } = new List<ChunkGameData>();
     public System.Random random { get; private set; }
     TileAxis m_MapOrigin, m_MapSize;
     Vector3 m_MapOriginPos;
@@ -26,6 +28,11 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         base.Awake();
         m_ChunkPool = new ObjectPoolSimpleComponent<int, LevelChunkBase>(transform.Find("Level"),"ChunkItem",(LevelChunkBase chunk)=> { chunk.Init(); });
         m_DirectionalLight = transform.Find("Directional Light").GetComponent<Light>();
+    }
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        NavigationManager.ClearNavMeshDatas();
     }
 
     public IEnumerator Generate(enum_LevelStyle style,string seed,System.Random random)
@@ -111,19 +118,23 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
                 });
                 m_MapTexture.Apply();
 
-                int chunkIndex = 0;
                 m_GameChunks.Clear();
                 m_ChunkPool.ClearPool();
                 gameChunkGenerate.Traversal((ChunkGenerateData data) => {
-                    LevelChunkBase chunk = m_ChunkPool.AddItem(chunkIndex++);
-                    m_GameChunks.Add(chunk.InitGameChunk(data, random));
+                    int chunkIndex = m_GameChunks.Count;
+                    LevelChunkBase chunk = m_ChunkPool.AddItem(chunkIndex);
+                    m_GameChunks.Add(chunkIndex,chunk.InitGameChunk(data, random));
                 });
+
 
                 //GenerateNavigationData
                 Bounds mapBounds = new Bounds();
                 mapBounds.center = m_MapOriginPos + m_MapSize.ToPosition() / 2f + Vector3.up * LevelConst.I_TileSize;
                 mapBounds.size = new Vector3(m_MapSize.X, .1f, m_MapSize.Y) * LevelConst.I_TileSize;
-                NavigationManager.BuildNavMeshData(m_ChunkPool.transform, mapBounds);
+                Dictionary<int,ChunkNavigationData> _ChunkNavigationData = new Dictionary<int, ChunkNavigationData>();
+                m_GameChunks.Traversal((int chunkIndex, ChunkGameData data) =>{_ChunkNavigationData.Add(chunkIndex,new ChunkNavigationData(data.m_ChunkBase.transform, data.m_ChunkBounds)); });
+                NavigationManager.InitNavMeshData(transform, mapBounds, _ChunkNavigationData);
+
                 yield break;
             }
             yield return null;
@@ -272,34 +283,70 @@ public static class LevelObjectManager
 
 public static class NavigationManager
 {
-    //Consider Use NavmeshComponents Instead(Download From Git)
-    static NavMeshDataInstance m_NavMeshDataEntity;//, m_NavMeshDataInteract;
+    static NavMeshDataInstance m_DataInstance;
+    static NavMeshBuildSettings m_BuildSettings = NavMesh.GetSettingsByIndex(0);
     static NavMeshHit sampleHit;
-    public static Vector3 NavMeshPosition(Vector3 samplePosition, bool maskEntity = true)
+    static Dictionary<int, NavigationChunkDetail> m_ChunkDetails = new Dictionary<int, NavigationChunkDetail>();
+    static void CalculateSourceBounds() {
+        m_Sources.Clear();
+        float verticalMin = 0;
+        float verticalMax = 0;
+        m_ChunkDetails.Traversal((NavigationChunkDetail data) => {
+            m_Sources.AddRange(data.m_Sources);
+            if (verticalMin > data.m_Transform.position.y)
+                verticalMin = data.m_Transform.position.y;
+            if(verticalMax<data.m_Transform.position.y)
+                verticalMax = data.m_Transform.position.y;
+        });
+        m_Bounds.center = new Vector3(m_Bounds.center.x, LevelConst.I_TileSize + (verticalMax+verticalMin) / 2, m_Bounds.center.z);
+        m_Bounds.size = new Vector3(m_Bounds.size.x, verticalMax - verticalMin + .1f, m_Bounds.size.z);
+    }
+    static NavMeshData m_Data;
+    static Bounds m_Bounds;
+    static List<NavMeshBuildSource> m_Sources=new List<NavMeshBuildSource>();
+
+    class NavigationChunkDetail
     {
-        if (NavMesh.SamplePosition(samplePosition, out sampleHit, 20, 0))// << (maskEntity ? 0 : 3)))
+        public Transform m_Transform { get; private set; }
+        public Bounds m_Bounds { get; private set; }
+        public List<NavMeshBuildSource> m_Sources { get; private set; } = new List<NavMeshBuildSource>();
+        public NavigationChunkDetail(ChunkNavigationData data)
+        {
+            m_Transform = data.transform;
+            m_Bounds = data.bounds;
+        }
+    }
+
+    public static void InitNavMeshData(Transform transform, Bounds bound,Dictionary<int,ChunkNavigationData> chunkNavigationDatas)
+    {
+        ClearNavMeshDatas();
+        m_Bounds = bound;
+        chunkNavigationDatas.Traversal((int index,ChunkNavigationData data) => {
+            m_ChunkDetails.Add(index,new NavigationChunkDetail(data));
+            NavMeshBuilder.CollectSources(data.transform, -1, NavMeshCollectGeometry.PhysicsColliders, 0, new List<NavMeshBuildMarkup>() { }, m_ChunkDetails[index].m_Sources);
+        });
+        CalculateSourceBounds();
+        m_Data = NavMeshBuilder.BuildNavMeshData(m_BuildSettings, m_Sources, m_Bounds, transform.position, transform.rotation);
+        m_DataInstance=NavMesh.AddNavMeshData(m_Data);
+    }
+
+    public static void UpdateChunkData(int index)
+    {
+        m_ChunkDetails[index].m_Sources.Clear();
+        NavMeshBuilder.CollectSources(m_ChunkDetails[index].m_Transform, -1, NavMeshCollectGeometry.PhysicsColliders, 0, new List<NavMeshBuildMarkup>() { }, m_ChunkDetails[index].m_Sources);
+        CalculateSourceBounds();
+        NavMeshBuilder.UpdateNavMeshData(m_Data, m_BuildSettings, m_Sources, m_Bounds);
+    }
+
+    public static void ClearNavMeshDatas()
+    {
+        NavMesh.RemoveNavMeshData(m_DataInstance);
+    }
+
+    public static Vector3 NavMeshPosition(Vector3 samplePosition)
+    {
+        if (NavMesh.SamplePosition(samplePosition, out sampleHit, 20, 0))
             return sampleHit.position;
         return samplePosition;
     }
-
-    public static void BuildNavMeshData(Transform transform, Bounds bound)
-    {
-        RemoveNavmeshData();
-
-        List<NavMeshBuildSource> sources = new List<NavMeshBuildSource>();
-
-        NavMeshBuilder.CollectSources(transform, -1, NavMeshCollectGeometry.PhysicsColliders, 0, new List<NavMeshBuildMarkup>() { }, sources);
-        m_NavMeshDataEntity = NavMesh.AddNavMeshData(NavMeshBuilder.BuildNavMeshData(NavMesh.GetSettingsByIndex(0), sources, bound, transform.position, transform.rotation));
-
-       // sources.Clear();
-       // NavMeshBuilder.CollectSources(transform, -1, NavMeshCollectGeometry.PhysicsColliders, 3, new List<NavMeshBuildMarkup>() { }, sources);
-      //  m_NavMeshDataInteract = NavMesh.AddNavMeshData(NavMeshBuilder.BuildNavMeshData(NavMesh.GetSettingsByIndex(1), sources, bound, Vector3.zero, transform.rotation));
-    }
-    
-    static void RemoveNavmeshData()
-    {
-        NavMesh.RemoveNavMeshData(m_NavMeshDataEntity);
-     //   NavMesh.RemoveNavMeshData(m_NavMeshDataInteract);
-    }
-
 }

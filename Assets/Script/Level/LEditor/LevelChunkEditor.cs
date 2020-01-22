@@ -36,6 +36,7 @@ public class LevelChunkEditor : LevelChunkBase
         LevelObjectManager.Register( TResources.GetChunkEditorTiles());
     }
 
+
     public void Init(LevelChunkData _data)
     {
         m_TilesData = new LevelTileEditorData[_data.Width, _data.Height];

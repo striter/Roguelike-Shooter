@@ -202,63 +202,35 @@ public static class TCommon
     }
     #endregion
     #region Collections/Array Traversal
-    public static void Traversal<T>(this List<T> list, Action<T> OnEachItem,bool listChanged=false)
+
+    public static void Traversal<T>(this List<T> list,Action<int,T> OnEachItem)=>TraversalEnumerableIndex(0, list.Count,(int index)=> {  OnEachItem(index,list[index]); return false;});
+    public static void Traversal<T>(this List<T> list, Action<T> OnEachItem, bool listChanged = false)
     {
-        int count = list.Count;
         List<T> tempList = listChanged ? new List<T>(list) : list;
-        for (int i = 0; i < count; i++)
-            OnEachItem(tempList[i]);
+        TraversalEnumerableIndex(0, list.Count, (int index) => { OnEachItem(tempList[index]); return false; });
     }
-    public static void TraversalBreak<T>(this List<T> list, Func<T,bool> OnEachItem)
+    public static void TraversalBreak<T>(this List<T> list, Func<T,bool> OnEachItem,bool listChanged=false)
     {
-        int count = list.Count;
-        for (int i = 0; i < count; i++)
-        {
-            if (OnEachItem(list[i]))
-                break;
-        }
+        List<T> tempList = listChanged ? new List<T>(list) : list;
+        TraversalEnumerableIndex(0, list.Count, (int index) => {return OnEachItem(tempList[index]);});
     }
     public static void Traversal<T, Y>(this Dictionary<T, Y> dic, Action<T> OnEachKey,bool changeValue=false)
     {
-        if (changeValue)
-        {
-            Dictionary<T, Y> tempDic = new Dictionary<T, Y>(dic);
-            foreach (T temp in tempDic.Keys)
-                OnEachKey(temp);
-        }
-        else
-        {
-            foreach (T temp in dic.Keys)
-                OnEachKey(temp);
-        }
+        Dictionary<T, Y> tempDic = changeValue ? new Dictionary<T, Y>(dic) : dic;
+        foreach (T temp in tempDic.Keys)
+            OnEachKey(temp);
     }
     public static void Traversal<T, Y>(this Dictionary<T, Y> dic, Action<Y> OnEachValue,bool changeValue=false)
     {
-        if (changeValue)
-        {
-            Dictionary<T, Y> tempDic = new Dictionary<T, Y>(dic);
-            foreach (T temp in tempDic.Keys)
-                OnEachValue(dic[temp]);
-        }
-        else
-        {
-            foreach (T temp in dic.Keys)
-                OnEachValue(dic[temp]);
-        }
+        Dictionary<T, Y> tempDic = changeValue ? new Dictionary<T, Y>(dic) : dic;
+        foreach (T temp in tempDic.Keys)
+            OnEachValue(tempDic[temp]);
     }
     public static void Traversal<T, Y>(this Dictionary<T, Y> dic, Action<T, Y> OnEachPair,bool changeValue=false)
     {
-        if (changeValue)
-        {
-            Dictionary<T, Y> tempDic = new Dictionary<T, Y>(dic);
-            foreach (T temp in tempDic.Keys)
-                OnEachPair(temp, tempDic[temp]);
-        }
-        else
-        {
-            foreach (T temp in dic.Keys)
-                OnEachPair(temp, dic[temp]);
-        }
+        Dictionary<T, Y> tempDic = changeValue ? new Dictionary<T, Y>(dic) : dic;
+        foreach (T temp in tempDic.Keys)
+            OnEachPair(temp,tempDic[temp]);
     }
     public static void Traversal<T>(this T[] array, Action<T> OnEachItem)
     {

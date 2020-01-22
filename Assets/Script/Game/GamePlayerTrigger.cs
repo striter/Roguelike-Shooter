@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 [RequireComponent(typeof(EntityDetector))]
-public class GameChunkDetector : MonoBehaviour {
+public class GamePlayerTrigger : MonoBehaviour {
     public int m_DetectIndex { get; private set; } = -1;
     public bool m_Entered { get; private set; } = false;
     Action<int> OnChunkEnter;

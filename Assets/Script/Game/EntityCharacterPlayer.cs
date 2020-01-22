@@ -39,8 +39,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_Health=new EntityPlayerHealth(this, OnHealthChanged);
         return m_Health;
     }
-
-    CharacterController m_Controller;
+    
     NavMeshAgent m_Agent;
 
     protected float f_aimMovementReduction = 0f;
@@ -67,7 +66,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_Animator = GetAnimatorController(tf_Model.GetComponent<Animator>(),OnAnimationEvent);
         m_CharacterAbility = new CharacterAbility(I_AbilityTimes, F_AbilityCoolDown, OnAbilityTrigger);
         transform.Find("InteractDetector").GetComponent<InteractDetector>().Init(OnInteractCheck);
-        m_Controller = GetComponent<CharacterController>();
         gameObject.layer = GameLayer.I_MovementDetect;
         m_Agent = GetComponent<NavMeshAgent>();
         m_Agent.enabled = false;
@@ -285,7 +283,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
         float finalMovementSpeed = m_CharacterInfo.F_MovementSpeed;
 
-        m_Controller.Move(CalculateMoveDirection(m_MoveAxisInput) * finalMovementSpeed * deltaTime);
+        transform.position=NavigationManager.NavMeshPosition(transform.position+ CalculateMoveDirection(m_MoveAxisInput) * finalMovementSpeed * deltaTime);
         m_Animator.SetRun(m_MoveAxisInput, finalMovementSpeed / F_MovementSpeed);
     }
 

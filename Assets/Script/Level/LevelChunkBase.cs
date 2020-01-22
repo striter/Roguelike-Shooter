@@ -58,7 +58,6 @@ public class LevelChunkBase : MonoBehaviour
 
     public virtual ChunkGameData InitGameChunk(ChunkGenerateData data, System.Random random)
     {
-        transform.localPosition = data.m_Axis.ToPosition();
         Dictionary<enum_TileObjectType, List<ChunkGameObjectData>> m_ChunkObjectPos = new Dictionary<enum_TileObjectType, List<ChunkGameObjectData>>();
         Dictionary<ChunkGameObjectData, enum_ChunkConnectionType> m_ChunkConnections = new Dictionary<ChunkGameObjectData, enum_ChunkConnectionType>();
         InitData(data.m_Data, random, (TileAxis axis, ChunkTileData tileData) => {
@@ -83,7 +82,9 @@ public class LevelChunkBase : MonoBehaviour
 
         entranceGenerate.Traversal((ChunkConnectionData connection)=>OnEntranceConnectionGenerate(connection,data.m_Data.Width,random));
 
-        return new ChunkGameData(data.m_Data.Type, transform.localPosition, m_ChunkObjectPos, m_ChunkConnections);
+        Vector3 origin = data.m_Axis.ToPosition();
+        transform.localPosition = origin;
+        return new ChunkGameData(this,data.m_Data.Type, origin, data.m_Data.m_Size, m_ChunkObjectPos, m_ChunkConnections);
     }
 
 

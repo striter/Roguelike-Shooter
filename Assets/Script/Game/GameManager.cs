@@ -38,20 +38,26 @@ public class GameManager : GameManagerBase
 
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Damage", "20", KeyCode.N, (string damage) => { m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(int.Parse(damage), enum_DamageType.Basic, DamageDeliverInfo.Default(-1)));}));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Heal", "20", KeyCode.M, (string damage) => { m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(-int.Parse(damage), enum_DamageType.Basic, DamageDeliverInfo.Default(-1))); }));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Coins", "20", KeyCode.F5, (string coins) => { GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupCoin, NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere(5f), false), Quaternion.identity, tf_Interacts).Play(int.Parse(coins), m_LocalPlayer.transform);}));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Health", "20", KeyCode.F6, (string health) => {GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupHealth, NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere(5f), false), Quaternion.identity, tf_Interacts).Play(int.Parse(health), m_LocalPlayer.transform);}));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Armor", "20", KeyCode.F7, (string armor) => {GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupArmor,  NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere(5f), false), Quaternion.identity, tf_Interacts).Play(int.Parse(armor), m_LocalPlayer.transform);}));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Coins", "20", KeyCode.F5, (string coins) => { GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupCoin, NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere(5f)), Quaternion.identity, tf_Interacts).Play(int.Parse(coins), m_LocalPlayer.transform);}));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Health", "20", KeyCode.F6, (string health) => {GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupHealth, NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere(5f)), Quaternion.identity, tf_Interacts).Play(int.Parse(health), m_LocalPlayer.transform);}));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Armor", "20", KeyCode.F7, (string armor) => {GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupArmor,  NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere(5f)), Quaternion.identity, tf_Interacts).Play(int.Parse(armor), m_LocalPlayer.transform);}));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Weapon", "102", KeyCode.F8, (string weapon) => { GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon,  NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere(5f)), Quaternion.identity, tf_Interacts).Play(GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew((enum_PlayerWeapon)int.Parse(weapon)))); }));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Player Equipment", "1", KeyCode.F1, (string actionIndex) => { GameObjectManager.SpawnInteract<InteractEquipment>(enum_Interaction.Equipment, NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere(5f)), Quaternion.identity, tf_Interacts).Play(ActionDataManager.CreateAction(int.Parse(actionIndex), TCommon.RandomEnumValues<enum_EquipmentType>(null))); }));
 
         UIT_MobileConsole.Instance.AddConsoleBindings(m_bindings,(bool show)=> { Time.timeScale = show ? .1f : 1f; });
+    }
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+            NavigationManager.UpdateChunkData(0);
     }
     #endregion
     public GameProgressManager m_GameLevel { get; private set; }
     public EntityCharacterPlayer m_LocalPlayer { get; private set; } = null;
     public Transform tf_Interacts { get; private set; } = null;
 
-    ObjectPoolSimpleComponent<int, GameChunkDetector> m_EntranceDetect;
+    ObjectPoolSimpleComponent<int, GamePlayerTrigger> m_ChunkEnterTriggers;
+    ObjectPoolSimpleComponent<int, GamePlayerTrigger> m_FinalBattleTriggers;
     ObjectPoolSimpleComponent<int, GameEnermyCommander> m_EnermyCommand;
 
     public override bool B_InGame => true;
@@ -69,7 +75,8 @@ public class GameManager : GameManagerBase
         m_GameLevel =  new GameProgressManager(GameDataManager.m_GameData,GameDataManager.m_BattleData);
         tf_Interacts = transform.Find("Interacts");
 
-        m_EntranceDetect = new ObjectPoolSimpleComponent<int, GameChunkDetector>(transform.Find("TriggerPool"), "TriggerItem",(GameChunkDetector detector)=> { detector.Init(); });
+        m_ChunkEnterTriggers = new ObjectPoolSimpleComponent<int, GamePlayerTrigger>(transform.Find("Triggers/ChunkTrigger"), "TriggerItem",(GamePlayerTrigger trigger)=> { trigger.Init(); });
+        m_FinalBattleTriggers = new ObjectPoolSimpleComponent<int, GamePlayerTrigger>(transform.Find("Triggers/FinalTrigger"), "TriggerItem", (GamePlayerTrigger trigger) => { trigger.Init(); });
         m_EnermyCommand = new ObjectPoolSimpleComponent<int, GameEnermyCommander>(transform.Find("EnermyPool"), "EnermyItem");
     }
     
@@ -113,7 +120,7 @@ public class GameManager : GameManagerBase
         m_GameLevel.LoadStageData();
         GameObjectManager.Clear();
         GameObjectManager.PresetRegistCommonObject();
-        m_Enermies = GameObjectManager.RegistStyledInGamePrefabs(m_GameLevel.m_GameStyle, m_GameLevel.m_GameStage);
+        m_EnermyIDs = GameObjectManager.RegistStyledInGamePrefabs(m_GameLevel.m_GameStyle, m_GameLevel.m_GameStage);
         yield return null;
 
         yield return GameLevelManager.Instance.Generate(m_GameLevel.m_GameStyle, m_GameLevel.m_GameSeed,m_GameLevel.m_GameRandom);
@@ -140,7 +147,8 @@ public class GameManager : GameManagerBase
         m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_BattleData,startChunk.GetObjectWorldPosition( startChunk.m_LocalChunkObjects[enum_TileObjectType.RPlayerSpawn1x1][0].m_LocalPosition), GameLevelManager.Instance.m_GameChunks[0].m_LocalChunkObjects[enum_TileObjectType.RPlayerSpawn1x1][0].Rotation);
         AttachPlayerCamera(m_LocalPlayer.tf_CameraAttach);
 
-        GenerateChunkObjects();
+        GenerateChunkRelatives();
+        GenerateBattleRelatives();
     }
 
     void OnStageFnished()
@@ -190,21 +198,8 @@ public class GameManager : GameManagerBase
         if (TCommon.RandomPercentage()>5)
             GameObjectManager.SpawnInteract<InteractEquipment>(enum_Interaction.Equipment,GetPickupPosition(entity),Quaternion.identity,tf_Interacts).Play(ActionDataManager.CreateRandomEquipment(TCommon.RandomEnumValues<enum_EquipmentType>(null),null));
     }
-
-    void SpawnInteractObjects(enum_TileObjectType type,enum_ChunkType chunkType,Vector3 position,Quaternion rotation)
-    {
-        switch(type)
-        {
-            case enum_TileObjectType.RStagePortal2x2:
-                GameObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Portal,position,rotation,tf_Interacts).Play(OnStageFnished,"Test");
-                break;
-            case enum_TileObjectType.REventArea3x3:
-
-                break;
-        }
-    }
-
-    Vector3 GetPickupPosition(EntityCharacterBase dropper) => NavigationManager.NavMeshPosition(dropper.transform.position + TCommon.RandomXZSphere(1.5f), false);
+    
+    Vector3 GetPickupPosition(EntityCharacterBase dropper) => NavigationManager.NavMeshPosition(dropper.transform.position + TCommon.RandomXZSphere(1.5f));
     #endregion
     #region Entity Management
     Dictionary<int, EntityBase> m_Entities = new Dictionary<int, EntityBase>();
@@ -392,49 +387,92 @@ public class GameManager : GameManagerBase
         UIManager.Instance.ShowPage<UI_Revive>(true, 0f).Play(_OnRevivePlayer);
     }
     #endregion
-    #region Chunk Relative Management
-    public Dictionary<enum_EnermyType, List<int>> m_Enermies;
-    
-    void GenerateChunkObjects()
+    #region Battle Relatives 
+    public bool m_IsFinalBattle=false;
+
+    void GenerateBattleRelatives()
     {
-        List<ChunkGameData> gameChunks = GameLevelManager.Instance.m_GameChunks;
-        m_EntranceDetect.ClearPool();
+        m_IsFinalBattle = false;
+        m_FinalBattleTriggers.ClearPool();
         m_EnermyCommand.ClearPool();
+
+        GameLevelManager.Instance.m_GameChunks.Traversal((ChunkGameData chunkData) => {
+            bool isBattleChunk = chunkData.m_ChunkType == enum_ChunkType.Battle || chunkData.m_ChunkType == enum_ChunkType.Final;
+            bool isFinalChunk = chunkData.m_ChunkType == enum_ChunkType.Final;
+
+            if (!isBattleChunk)
+                return;
+
+            SEnermyGenerate enermyGenerate = m_GameLevel.m_EnermyGenerate[isFinalChunk].RandomItem(m_GameLevel.m_GameRandom);
+            List<int> idList = new List<int>();
+            for (int i = 0; i < enermyGenerate.m_FighterCount; i++)
+                idList.Add(m_EnermyIDs[enum_EnermyType.Fighter].RandomItem(m_GameLevel.m_GameRandom));
+            for (int i = 0; i < enermyGenerate.m_ShooterRCount; i++)
+                idList.Add(m_EnermyIDs[enum_EnermyType.Shooter_Rookie].RandomItem(m_GameLevel.m_GameRandom));
+            for (int i = 0; i < enermyGenerate.m_ShooterVCount; i++)
+                idList.Add(m_EnermyIDs[enum_EnermyType.Shooter_Veteran].RandomItem(m_GameLevel.m_GameRandom));
+            for (int i = 0; i < enermyGenerate.m_CasterCount; i++)
+                idList.Add(m_EnermyIDs[enum_EnermyType.AOECaster].RandomItem(m_GameLevel.m_GameRandom));
+            for (int i = 0; i < enermyGenerate.m_EliteCount; i++)
+                idList.Add(m_EnermyIDs[enum_EnermyType.Elite].RandomItem(m_GameLevel.m_GameRandom));
+
+            idList.Traversal((int enermyID) =>
+            {
+                ChunkGameObjectData objectData = chunkData.m_LocalChunkObjects[ enum_TileObjectType.REnermySpawn1x1].RandomItem(m_GameLevel.m_GameRandom);
+                int commandIndex = m_EnermyCommand.m_ActiveItemDic.Count;
+                GameEnermyCommander m_Command = m_EnermyCommand.AddItem(commandIndex);
+                m_Command.transform.position = NavigationManager.NavMeshPosition(chunkData.GetObjectWorldPosition(objectData.m_LocalPosition) + TCommon.RandomXZSphere(3f));
+                m_Command.transform.rotation = objectData.Rotation;
+                m_Command.Play(commandIndex, enermyID, m_LocalPlayer.transform, m_EnermyCommand.RemoveItem);
+            });
+
+            if (!isFinalChunk)
+                return;
+            chunkData.m_LocalChunkObjects[enum_TileObjectType.REliteTrigger1x1].Traversal((int index, ChunkGameObjectData data) => {
+                GamePlayerTrigger trigger = m_FinalBattleTriggers.AddItem(index);
+                trigger.transform.position = chunkData.GetObjectWorldPosition(data.m_LocalPosition);
+                trigger.transform.rotation = data.Rotation;
+                trigger.Play(index, OnFinalBattleTrigger); 
+            });
+        });
+    }
+
+    void OnFinalBattleTrigger(int triggerID)
+    {
+        if (m_IsFinalBattle)
+            return;
+        m_IsFinalBattle = true;
+        m_FinalBattleTriggers.ClearPool();
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnFinalBattleStart);
+    }
+    void OnFinalEliteKilled()
+    {
+        m_IsFinalBattle = false;
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnFinalBattleFinish);
+    }
+    #endregion
+    #region Chunk Relative Management
+    public Dictionary<enum_EnermyType, List<int>> m_EnermyIDs;
+    void GenerateChunkRelatives()
+    {
+        Dictionary<int,ChunkGameData> gameChunks = GameLevelManager.Instance.m_GameChunks;
         int entranceIndex = 0;
         for (int index = 0; index < gameChunks.Count; index++)
         {
             ChunkGameData chunkData = GameLevelManager.Instance.m_GameChunks[index];
             chunkData.m_LocalChunkObjects.Traversal((enum_TileObjectType tileType, List<ChunkGameObjectData> objects) => {
-
-                if (tileType == enum_TileObjectType.REnermySpawn1x1)
+                objects.Traversal((ChunkGameObjectData objectData) =>
                 {
-                    bool isFinalChunk = chunkData.m_ChunkType == enum_ChunkType.Final;
-                    SEnermyGenerate enermyGenerate = m_GameLevel.m_EnermyGenerate[isFinalChunk].RandomItem(m_GameLevel.m_GameRandom);
-                    List<int> idList = new List<int>();
-                    for (int i = 0; i < enermyGenerate.m_FighterCount; i++)
-                        idList.Add(m_Enermies[enum_EnermyType.Fighter].RandomItem(m_GameLevel.m_GameRandom));
-                    for (int i = 0; i < enermyGenerate.m_ShooterRCount; i++)
-                        idList.Add(m_Enermies[enum_EnermyType.Shooter_Rookie].RandomItem(m_GameLevel.m_GameRandom));
-                    for (int i = 0; i < enermyGenerate.m_ShooterVCount; i++)
-                        idList.Add(m_Enermies[enum_EnermyType.Shooter_Veteran].RandomItem(m_GameLevel.m_GameRandom));
-                    for (int i = 0; i < enermyGenerate.m_CasterCount; i++)
-                        idList.Add(m_Enermies[enum_EnermyType.AOECaster].RandomItem(m_GameLevel.m_GameRandom));
-                    for (int i = 0; i < enermyGenerate.m_EliteCount; i++)
-                        idList.Add(m_Enermies[enum_EnermyType.Elite].RandomItem(m_GameLevel.m_GameRandom));
-
-                    idList.Traversal((int enermyID) =>
+                    switch (tileType)
                     {
-                        ChunkGameObjectData objectData = objects.RandomItem(m_GameLevel.m_GameRandom);
-                        int commandIndex = m_EnermyCommand.m_ActiveItemDic.Count;
-                        GameEnermyCommander m_Command = m_EnermyCommand.AddItem(commandIndex);
-                        m_Command.transform.position = NavigationManager.NavMeshPosition( chunkData.GetObjectWorldPosition(objectData.m_LocalPosition)+TCommon.RandomXZSphere(3f));
-                        m_Command.transform.rotation = objectData.Rotation;
-                        m_Command.Play(commandIndex, enermyID, m_LocalPlayer.transform, m_EnermyCommand.RemoveItem);
-                    });
-                    return;
-                }
+                        case enum_TileObjectType.RStagePortal2x2:
+                            GameObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Portal, chunkData.GetObjectWorldPosition(objectData.m_LocalPosition), objectData.Rotation, tf_Interacts).Play(OnStageFnished, "Test");
+                            break;
+                        case enum_TileObjectType.REventArea3x3:
 
-                objects.Traversal((ChunkGameObjectData objectData) => { SpawnInteractObjects(tileType, chunkData.m_ChunkType, chunkData.GetObjectWorldPosition(objectData.m_LocalPosition), objectData.Rotation); });
+                            break;
+                    }
+                });
             });
 
             chunkData.m_LocalChunkConnections.Traversal((ChunkGameObjectData connectionTile, enum_ChunkConnectionType type) =>
@@ -442,7 +480,7 @@ public class GameManager : GameManagerBase
                 if (type != enum_ChunkConnectionType.Entrance)
                     return;
 
-                GameChunkDetector detector = m_EntranceDetect.AddItem(entranceIndex++);
+                GamePlayerTrigger detector = m_ChunkEnterTriggers.AddItem(entranceIndex++);
                 detector.Play(index, OnChunkEntering);
                 detector.transform.position = chunkData.GetObjectWorldPosition(connectionTile.m_LocalPosition);
                 detector.transform.rotation = connectionTile.Rotation;
@@ -591,7 +629,7 @@ public static class GameObjectManager
         T entity = ObjectPoolManager<int, EntityBase>.Spawn(_poolIndex, TF_Entity) as T;
         if (entity == null)
             Debug.LogError("Entity ID:" + _poolIndex + ",Type:" + typeof(T).ToString() + " Not Found");
-        entity.transform.position = NavigationManager.NavMeshPosition(toPos, true);
+        entity.transform.position = NavigationManager.NavMeshPosition(toPos);
         entity.transform.rotation = Quaternion.LookRotation( TCommon.GetXZLookDirection(toPos, lookPos),Vector3.up);
         entity.OnActivate(_flag, spawnerID, _startHealth);
         entity.gameObject.name = entity.m_EntityID.ToString() + "_" + _poolIndex.ToString();

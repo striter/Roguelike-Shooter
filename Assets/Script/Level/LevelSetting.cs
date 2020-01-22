@@ -204,17 +204,32 @@ namespace LevelSetting
 
     public struct ChunkGameData
     {
-        public Vector3 m_Origin { get; private set; }
-        public Vector3 GetObjectWorldPosition(Vector3 localPosition) => m_Origin + localPosition+Vector3.up*LevelConst.I_TileSize;
+        public LevelChunkBase m_ChunkBase { get; private set; }
+        public Vector3 m_ChunkOrigin { get; private set; }
+        public Vector3 GetObjectWorldPosition(Vector3 localPosition) => m_ChunkOrigin + localPosition+Vector3.up*LevelConst.I_TileSize;
+        public Bounds m_ChunkBounds { get; private set; }
         public enum_ChunkType m_ChunkType { get; private set; }
         public Dictionary<enum_TileObjectType,  List<ChunkGameObjectData>> m_LocalChunkObjects { get; private set; }
         public Dictionary<ChunkGameObjectData,enum_ChunkConnectionType> m_LocalChunkConnections { get; private set; }
-        public ChunkGameData(enum_ChunkType _chunkType,Vector3 _origin, Dictionary<enum_TileObjectType, List<ChunkGameObjectData>> _chunkObjects, Dictionary<ChunkGameObjectData, enum_ChunkConnectionType> _connections)
+        public ChunkGameData(LevelChunkBase chunkbase, enum_ChunkType _chunkType,Vector3 _origin,TileAxis _size, Dictionary<enum_TileObjectType, List<ChunkGameObjectData>> _chunkObjects, Dictionary<ChunkGameObjectData, enum_ChunkConnectionType> _connections)
         {
-            m_Origin = _origin;
+            m_ChunkBase = chunkbase;
+            m_ChunkOrigin = _origin;
             m_ChunkType = _chunkType;
             m_LocalChunkObjects = _chunkObjects;
             m_LocalChunkConnections = _connections;
+            m_ChunkBounds = new Bounds(_size.ToPosition()/2f + Vector3.up * LevelConst.I_TileSize, new Vector3(_size.X, 1, _size.Y) * LevelConst.I_TileSize);
+        }
+    }
+
+    public struct ChunkNavigationData
+    {
+        public Transform transform { get; private set; }
+        public Bounds bounds { get; private set; }
+        public ChunkNavigationData(Transform transform, Bounds bounds)
+        {
+            this.transform = transform;
+            this.bounds =new Bounds(bounds.center, new Vector3(bounds.size.x, .1f, bounds.size.z));
         }
     }
 

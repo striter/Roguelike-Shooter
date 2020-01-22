@@ -313,7 +313,7 @@ public static class GameDataManager
     public static Dictionary<bool,List<SEnermyGenerate>> GetEnermyGenerate(enum_StageLevel stage)
     {
         Dictionary<bool, List<SEnermyGenerate>> m_GenerateDic = new Dictionary<bool, List<SEnermyGenerate>>();
-        SheetProperties<SEnermyGenerate>.GetPropertiesList((int)stage).Traversal((SEnermyGenerate generate)=> {
+        SheetProperties<SEnermyGenerate>.GetPropertiesList((int)stage-1).Traversal((SEnermyGenerate generate)=> {
             if (!m_GenerateDic.ContainsKey(generate.m_IsFinal))
                 m_GenerateDic.Add(generate.m_IsFinal, new List<SEnermyGenerate>());
             m_GenerateDic[generate.m_IsFinal].Add(generate);
