@@ -412,6 +412,13 @@ public class GameManager : GameManagerBase
                 m_Command.transform.rotation = objectData.Rotation;
                 m_Command.Play(enermyCommandIndex, m_EnermyIDs[enum_EnermyType.Elite].RandomItem(m_GameLevel.m_GameRandom), m_LocalPlayer.transform, m_EnermyCommand.RemoveItem);
                 enermyCommandIndex++;
+
+                chunkData.m_LocalChunkObjects[enum_TileObjectType.REliteTrigger1x1].Traversal((int index, ChunkGameObjectData data) => {
+                    GamePlayerTrigger trigger = m_FinalBattleTriggers.AddItem(index);
+                    trigger.transform.position = chunkData.GetObjectWorldPosition(data.m_LocalPosition);
+                    trigger.transform.rotation = data.Rotation;
+                    trigger.Play(index, OnFinalBattleTrigger);
+                });
             }
             else
             {
@@ -436,16 +443,6 @@ public class GameManager : GameManagerBase
                     enermyCommandIndex++;
                 });
             }
-
-
-            if (!isFinalChunk)
-                return;
-            chunkData.m_LocalChunkObjects[enum_TileObjectType.REliteTrigger1x1].Traversal((int index, ChunkGameObjectData data) => {
-                GamePlayerTrigger trigger = m_FinalBattleTriggers.AddItem(index);
-                trigger.transform.position = chunkData.GetObjectWorldPosition(data.m_LocalPosition);
-                trigger.transform.rotation = data.Rotation;
-                trigger.Play(index, OnFinalBattleTrigger); 
-            });
         });
     }
 
