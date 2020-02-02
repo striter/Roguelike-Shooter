@@ -42,7 +42,7 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         GameRenderData randomData = customizations.Length == 0 ? GameRenderData.Default() : customizations.RandomItem(random);
         randomData.DataInit(m_DirectionalLight, CameraController.Instance.m_Camera);
         Dictionary<enum_ChunkType, List<LevelChunkData>> datas = TResources.GetChunkDatas();
-        List<ChunkGenerateData> gameChunkGenerate = new List<ChunkGenerateData>();
+        List<ChunkGenerateData> gameChunkGenerate=null;
 
         for (; ; )
         {
@@ -50,7 +50,7 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
             {
                 try
                 {
-                    gameChunkGenerate.Clear();
+                    gameChunkGenerate = new List<ChunkGenerateData>();
                     //Generate First Chunk
                     gameChunkGenerate.Add(new ChunkGenerateData(TileAxis.Zero, datas[enum_ChunkType.Start].RandomItem(random)));
                     List<enum_ChunkType> mainChunkType = new List<enum_ChunkType>() { enum_ChunkType.Battle, enum_ChunkType.Event, enum_ChunkType.Battle, enum_ChunkType.Event, enum_ChunkType.Battle, enum_ChunkType.Event, enum_ChunkType.Battle, enum_ChunkType.Event, enum_ChunkType.Battle, enum_ChunkType.Event, enum_ChunkType.Battle };
@@ -139,8 +139,11 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
                 mapBounds.center = m_MapOriginPos + m_MapSize.ToPosition() / 2f + Vector3.up * LevelConst.I_TileSize;
                 mapBounds.size = new Vector3(m_MapSize.X, .1f, m_MapSize.Y) * LevelConst.I_TileSize;
                 Dictionary<int,ChunkNavigationData> _ChunkNavigationData = new Dictionary<int, ChunkNavigationData>();
-                m_GameChunks.Traversal((int chunkIndex, ChunkGameData data) =>{_ChunkNavigationData.Add(chunkIndex,new ChunkNavigationData(data.m_ChunkBase.transform, data.m_ChunkBounds)); });
-                NavigationManager.InitNavMeshData(transform, mapBounds, _ChunkNavigationData);
+                int _ChunkFinalIndex = -1;
+                m_GameChunks.Traversal((int chunkIndex, ChunkGameData data) =>{
+                    _ChunkNavigationData.Add(chunkIndex, new ChunkNavigationData(data.m_ChunkBase.transform, data.m_ChunkBounds));
+                    if (data.m_ChunkType== enum_ChunkType.Final) _ChunkFinalIndex=chunkIndex; });
+                NavigationManager.InitNavMeshData(transform, mapBounds, _ChunkNavigationData, _ChunkFinalIndex);
 
                 yield break;
             }
@@ -290,28 +293,6 @@ public static class LevelObjectManager
 
 public static class NavigationManager
 {
-    static NavMeshDataInstance m_DataInstance;
-    static NavMeshBuildSettings m_BuildSettings = NavMesh.GetSettingsByIndex(0);
-    static NavMeshHit sampleHit;
-    static Dictionary<int, NavigationChunkDetail> m_ChunkDetails = new Dictionary<int, NavigationChunkDetail>();
-    static void CalculateSourceBounds() {
-        m_Sources.Clear();
-        float verticalMin = 0;
-        float verticalMax = 0;
-        m_ChunkDetails.Traversal((NavigationChunkDetail data) => {
-            m_Sources.AddRange(data.m_Sources);
-            if (verticalMin > data.m_Transform.position.y)
-                verticalMin = data.m_Transform.position.y;
-            if(verticalMax<data.m_Transform.position.y)
-                verticalMax = data.m_Transform.position.y;
-        });
-        m_Bounds.center = new Vector3(m_Bounds.center.x, LevelConst.I_TileSize + (verticalMax+verticalMin) / 2, m_Bounds.center.z);
-        m_Bounds.size = new Vector3(m_Bounds.size.x, verticalMax - verticalMin + .1f, m_Bounds.size.z);
-    }
-    static NavMeshData m_Data;
-    static Bounds m_Bounds;
-    static List<NavMeshBuildSource> m_Sources=new List<NavMeshBuildSource>();
-
     class NavigationChunkDetail
     {
         public Transform m_Transform { get; private set; }
@@ -323,8 +304,32 @@ public static class NavigationManager
             m_Bounds = data.bounds;
         }
     }
+    static NavMeshDataInstance m_ChunksSurfaceData,m_FinalSurfaceData;
+    static NavMeshBuildSettings m_BuildSettings = NavMesh.GetSettingsByIndex(0);
+    static NavMeshHit sampleHit;
+    static Dictionary<int, NavigationChunkDetail> m_ChunkDetails = new Dictionary<int, NavigationChunkDetail>();
+    static int m_FinalIndex = -1;
+    static NavMeshData m_Data;
+    static Bounds m_Bounds;
+    static List<NavMeshBuildSource> m_Sources=new List<NavMeshBuildSource>();
+    static void CalculateSourceBounds()
+    {
+        m_Sources.Clear();
+        float verticalMin = 0;
+        float verticalMax = 0;
+        m_ChunkDetails.Traversal((NavigationChunkDetail data) => {
+            m_Sources.AddRange(data.m_Sources);
+            if (verticalMin > data.m_Transform.position.y)
+                verticalMin = data.m_Transform.position.y;
+            if (verticalMax < data.m_Transform.position.y)
+                verticalMax = data.m_Transform.position.y;
+        });
+        m_Bounds.center = new Vector3(m_Bounds.center.x, LevelConst.I_TileSize + (verticalMax + verticalMin) / 2, m_Bounds.center.z);
+        m_Bounds.size = new Vector3(m_Bounds.size.x, verticalMax - verticalMin + .1f, m_Bounds.size.z);
+    }
 
-    public static void InitNavMeshData(Transform transform, Bounds bound,Dictionary<int,ChunkNavigationData> chunkNavigationDatas)
+
+    public static void InitNavMeshData(Transform transform, Bounds bound,Dictionary<int,ChunkNavigationData> chunkNavigationDatas,int finalIndex)
     {
         ClearNavMeshDatas();
         m_Bounds = bound;
@@ -334,7 +339,7 @@ public static class NavigationManager
         });
         CalculateSourceBounds();
         m_Data = NavMeshBuilder.BuildNavMeshData(m_BuildSettings, m_Sources, m_Bounds, transform.position, transform.rotation);
-        m_DataInstance=NavMesh.AddNavMeshData(m_Data);
+        m_ChunksSurfaceData=NavMesh.AddNavMeshData(m_Data);
     }
 
     public static void UpdateChunkData(int index)
@@ -347,7 +352,7 @@ public static class NavigationManager
 
     public static void ClearNavMeshDatas()
     {
-        NavMesh.RemoveNavMeshData(m_DataInstance);
+        NavMesh.RemoveNavMeshData(m_ChunksSurfaceData);
     }
 
     public static Vector3 NavMeshPosition(Vector3 samplePosition)
