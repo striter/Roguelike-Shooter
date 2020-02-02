@@ -171,6 +171,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4991228344696976}
   - component: {fileID: 114852616744700244}
+  - component: {fileID: 143119992385054218}
   - component: {fileID: 195356000126195976}
   m_Layer: 10
   m_Name: 10001_Beth
@@ -979,7 +980,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1333480194626894}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.9703832, y: 3.834662, z: 7.1338854}
+  m_LocalPosition: {x: -3.9703832, y: 0, z: 7.1338854}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4611176680006160}
@@ -1185,13 +1186,30 @@ SkinnedMeshRenderer:
     m_Center: {x: -28.63953, y: -0.121269226, z: -16.149208}
     m_Extent: {x: 149.5578, y: 168.57205, z: 57.82827}
   m_DirtyAABB: 0
+--- !u!143 &143119992385054218
+CharacterController:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1333480194626894}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Height: 2.4
+  m_Radius: 0.4
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 1.2, z: 0}
 --- !u!195 &195356000126195976
 NavMeshAgent:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1333480194626894}
-  m_Enabled: 0
+  m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.4
   m_Speed: 0
@@ -1202,7 +1220,7 @@ NavMeshAgent:
   m_AutoTraverseOffMeshLink: 0
   m_AutoBraking: 0
   m_AutoRepath: 0
-  m_Height: 2.5
+  m_Height: 2.4
   m_BaseOffset: 0
   m_WalkableMask: 1
   m_ObstacleAvoidanceType: 0

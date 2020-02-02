@@ -52,7 +52,6 @@ GameObject:
   - component: {fileID: 114524409849586294}
   - component: {fileID: 114009176506827972}
   - component: {fileID: 195961026822335674}
-  - component: {fileID: 208200225814896564}
   - component: {fileID: 136314299860940610}
   m_Layer: 10
   m_Name: 304_Entity_Soldier4
@@ -476,8 +475,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1051259510950534}
-  m_LocalRotation: {x: -0.40821788, y: 0.23456968, z: -0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 18.599567, y: -12.533948, z: -6.60101}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 18.599567, y: 0, z: -6.60101}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4767401458296866}
@@ -946,12 +945,10 @@ MonoBehaviour:
     start: 6
     length: 0
   F_AttackRate: 0.3
-  B_BattleCheckObstacle: 0
   F_AttackRotateParam: 1
   I_AttackPreAimPercentage: 100
   B_AttackMove: 1
   F_AttackFrontCheck: 2
-  m_AISimluating: 0
 --- !u!114 &114524409849586294
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1061,7 +1058,7 @@ NavMeshAgent:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1051259510950534}
-  m_Enabled: 0
+  m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.4
   m_Speed: 2.5
@@ -1076,18 +1073,3 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 1
   m_ObstacleAvoidanceType: 4
---- !u!208 &208200225814896564
-NavMeshObstacle:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1051259510950534}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Shape: 0
-  m_Extents: {x: 0.4, y: 1, z: 0.4}
-  m_MoveThreshold: 0.1
-  m_Carve: 0
-  m_CarveOnlyStationary: 1
-  m_Center: {x: 0, y: 1.5, z: 0}
-  m_TimeToStationary: 0.5

@@ -294,7 +294,6 @@ GameObject:
   - component: {fileID: 114703610496192164}
   - component: {fileID: 114992881013005500}
   - component: {fileID: 195210877595509656}
-  - component: {fileID: 208129739630574462}
   - component: {fileID: 136642580533483612}
   m_Layer: 10
   m_Name: 205_Entity_Terrorist5
@@ -462,8 +461,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1765528325324700}
-  m_LocalRotation: {x: -0.40821788, y: 0.23456968, z: -0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 17.011694, y: -3.1807513, z: 1.2472539}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 17.011694, y: 0, z: 1.2472539}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4927203051010868}
@@ -953,8 +952,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   I_MaxHealth: 312
-  m_IsDead: 0
-  m_Activating: 0
   ExtraRendererForForest107Only: {fileID: 0}
   E_SpawnType: 3
   I_DefaultArmor: 0
@@ -970,12 +967,10 @@ MonoBehaviour:
     start: 2
     length: 1
   F_AttackRate: 0.7
-  B_BattleCheckObstacle: 0
   F_AttackRotateParam: 1
   I_AttackPreAimPercentage: 50
   B_AttackMove: 1
   F_AttackFrontCheck: 2
-  m_AISimluating: 0
 --- !u!136 &136642580533483612
 CapsuleCollider:
   m_ObjectHideFlags: 1
@@ -1063,7 +1058,7 @@ NavMeshAgent:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1765528325324700}
-  m_Enabled: 0
+  m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.4
   m_Speed: 2.5
@@ -1078,18 +1073,3 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 1
   m_ObstacleAvoidanceType: 4
---- !u!208 &208129739630574462
-NavMeshObstacle:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1765528325324700}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Shape: 0
-  m_Extents: {x: 0.4, y: 1, z: 0.4}
-  m_MoveThreshold: 0.1
-  m_Carve: 0
-  m_CarveOnlyStationary: 1
-  m_Center: {x: 0, y: 1.5, z: 0}
-  m_TimeToStationary: 0.5

@@ -446,7 +446,6 @@ GameObject:
   - component: {fileID: 4774772795832778}
   - component: {fileID: 114834534513207440}
   - component: {fileID: 195275486914979146}
-  - component: {fileID: 208912014715892150}
   - component: {fileID: 114037911258291420}
   - component: {fileID: 136500707643455048}
   m_Layer: 10
@@ -810,8 +809,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1997024290601734}
-  m_LocalRotation: {x: -0.40821788, y: 0.23456968, z: -0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 36.917606, y: -12.037725, z: -7.084631}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 36.917606, y: 0, z: -7.0846314}
   m_LocalScale: {x: 1.5, y: 1, z: 1}
   m_Children:
   - {fileID: 4048223323908314}
@@ -953,8 +952,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   I_MaxHealth: 1200
-  m_IsDead: 0
-  m_Activating: 0
   ExtraRendererForForest107Only: {fileID: 0}
   E_SpawnType: 5
   I_DefaultArmor: 0
@@ -970,12 +967,10 @@ MonoBehaviour:
     start: 8
     length: 4
   F_AttackRate: 0.4
-  B_BattleCheckObstacle: 0
   F_AttackRotateParam: 1
   I_AttackPreAimPercentage: 50
   B_AttackMove: 1
   F_AttackFrontCheck: 0
-  m_AISimluating: 0
   F_AttackMoveMultiply: 2.5
 --- !u!136 &136500707643455048
 CapsuleCollider:
@@ -1064,7 +1059,7 @@ NavMeshAgent:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1997024290601734}
-  m_Enabled: 0
+  m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.4
   m_Speed: 2.5
@@ -1079,18 +1074,3 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 1
   m_ObstacleAvoidanceType: 4
---- !u!208 &208912014715892150
-NavMeshObstacle:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1997024290601734}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Shape: 0
-  m_Extents: {x: 0.4, y: 1, z: 0.4}
-  m_MoveThreshold: 0.1
-  m_Carve: 0
-  m_CarveOnlyStationary: 1
-  m_Center: {x: 0, y: 1.5, z: 0}
-  m_TimeToStationary: 0.5

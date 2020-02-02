@@ -66,7 +66,6 @@ GameObject:
   - component: {fileID: 4500068027947688}
   - component: {fileID: 136630500536308508}
   - component: {fileID: 195981414016733636}
-  - component: {fileID: 208706188226401826}
   - component: {fileID: 114099882450065170}
   - component: {fileID: 114402748123247416}
   m_Layer: 0
@@ -159,8 +158,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1291371841804026}
-  m_LocalRotation: {x: -0.40821788, y: 0.23456968, z: -0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: -14.399227, y: 4.7054334, z: 7.86455}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -14.399227, y: 0, z: 7.86455}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4918029970239450}
@@ -327,7 +326,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   I_MaxHealth: 0
-  m_IsDead: 0
   ExtraRendererForForest107Only: {fileID: 0}
   E_SpawnType: -1
   I_DefaultArmor: 0
@@ -343,7 +341,6 @@ MonoBehaviour:
     start: 1
     length: 0
   F_AttackRate: 1
-  B_BattleCheckObstacle: 0
   F_AttackRotateParam: 1
   I_AttackPreAimPercentage: 50
   B_AttackMove: 1
@@ -367,7 +364,7 @@ NavMeshAgent:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1291371841804026}
-  m_Enabled: 0
+  m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.00001
   m_Speed: 3.5
@@ -382,18 +379,3 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!208 &208706188226401826
-NavMeshObstacle:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1291371841804026}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Shape: 0
-  m_Extents: {x: 0.9, y: 1.5, z: 0.9}
-  m_MoveThreshold: 0.1
-  m_Carve: 1
-  m_CarveOnlyStationary: 1
-  m_Center: {x: 0, y: 1.5, z: 0}
-  m_TimeToStationary: 0.5

@@ -80,7 +80,7 @@ public class CampFarmPlot : MonoBehaviour {
             ObjectPoolManager<enum_CampFarmItemStatus, CampFarmItem>.Recycle(m_Status, m_PlotItem);
 
         m_Status = status;
-        m_PlotItem = ObjectPoolManager<enum_CampFarmItemStatus, CampFarmItem>.Spawn(m_Status, null);
+        m_PlotItem = ObjectPoolManager<enum_CampFarmItemStatus, CampFarmItem>.Spawn(m_Status, null,Vector3.zero,Quaternion.identity);
         m_CanGenerateProfit = GameExpression.CanGenerateprofit(m_Status);
 
         OnPlotStatusChanged(m_Index);

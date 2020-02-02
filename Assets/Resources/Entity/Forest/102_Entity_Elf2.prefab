@@ -52,7 +52,6 @@ GameObject:
   - component: {fileID: 114760521048827082}
   - component: {fileID: 114344984560345086}
   - component: {fileID: 195398371171335130}
-  - component: {fileID: 208099549513426244}
   - component: {fileID: 136499021870262704}
   m_Layer: 10
   m_Name: 102_Entity_Elf2
@@ -564,8 +563,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1091740247035642}
-  m_LocalRotation: {x: -0.40821788, y: 0.23456968, z: -0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 1.1970835, y: 0.65581846, z: 4.4665194}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.1970835, y: 0, z: 4.4665194}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4966507002765086}
@@ -1003,8 +1002,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   I_MaxHealth: 280
-  m_IsDead: 0
-  m_Activating: 0
   ExtraRendererForForest107Only: {fileID: 0}
   E_SpawnType: 2
   I_DefaultArmor: 0
@@ -1020,12 +1017,10 @@ MonoBehaviour:
     start: 1
     length: 1
   F_AttackRate: 1
-  B_BattleCheckObstacle: 0
   F_AttackRotateParam: 1
   I_AttackPreAimPercentage: 50
   B_AttackMove: 1
   F_AttackFrontCheck: 2
-  m_AISimluating: 0
 --- !u!114 &114540453321994758
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1135,7 +1130,7 @@ NavMeshAgent:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1091740247035642}
-  m_Enabled: 0
+  m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.4
   m_Speed: 2.5
@@ -1150,18 +1145,3 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 1
   m_ObstacleAvoidanceType: 4
---- !u!208 &208099549513426244
-NavMeshObstacle:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1091740247035642}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Shape: 0
-  m_Extents: {x: 0.4, y: 1, z: 0.4}
-  m_MoveThreshold: 0.1
-  m_Carve: 0
-  m_CarveOnlyStationary: 1
-  m_Center: {x: 0, y: 1.5, z: 0}
-  m_TimeToStationary: 0.5

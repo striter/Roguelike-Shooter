@@ -635,11 +635,9 @@ public static class GameObjectManager
     //Start Health 0:Use Preset I_MaxHealth
     static T SpawnEntity<T>(int _poolIndex, Vector3 toPos,Vector3 lookPos,enum_EntityFlag _flag,int spawnerID, float _startHealth, Transform parentTrans = null) where T:EntityBase
     {
-        T entity = ObjectPoolManager<int, EntityBase>.Spawn(_poolIndex, TF_Entity) as T;
+        T entity = ObjectPoolManager<int, EntityBase>.Spawn(_poolIndex, TF_Entity, NavigationManager.NavMeshPosition(toPos), Quaternion.LookRotation(TCommon.GetXZLookDirection(toPos, lookPos), Vector3.up)) as T;
         if (entity == null)
             Debug.LogError("Entity ID:" + _poolIndex + ",Type:" + typeof(T).ToString() + " Not Found");
-        entity.transform.position = NavigationManager.NavMeshPosition(toPos);
-        entity.transform.rotation = Quaternion.LookRotation( TCommon.GetXZLookDirection(toPos, lookPos),Vector3.up);
         entity.OnActivate(_flag, spawnerID, _startHealth);
         entity.gameObject.name = entity.m_EntityID.ToString() + "_" + _poolIndex.ToString();
         if (parentTrans) entity.transform.SetParent(parentTrans);
@@ -663,7 +661,7 @@ public static class GameObjectManager
             WeaponBase preset = TResources.GetPlayerWeapon(weaponData.m_Weapon);
             ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Register(weaponData.m_Weapon, preset, 1);
         }
-        WeaponBase targetWeapon = ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Spawn(weaponData.m_Weapon, toTrans ? toTrans : TF_Entity);
+        WeaponBase targetWeapon = ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Spawn(weaponData.m_Weapon, toTrans ? toTrans : TF_Entity,Vector3.zero,Quaternion.identity);
         return targetWeapon;
     }
     public static void RecycleWeapon(WeaponBase weapon)=> ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Recycle(weapon.m_WeaponInfo.m_Weapon,weapon);
@@ -671,11 +669,9 @@ public static class GameObjectManager
     #region SFX
     public static T SpawnSFX<T>(int index, Vector3 position, Vector3 normal) where T : SFXBase
     {
-        T sfx = ObjectPoolManager<int, SFXBase>.Spawn(index, TF_SFXPlaying) as T;
+        T sfx = ObjectPoolManager<int, SFXBase>.Spawn(index, TF_SFXPlaying,position, Quaternion.LookRotation(normal)) as T;
         if (sfx == null)
             Debug.LogError("SFX Spawn Error! Invalid SFX Type:" + typeof(T) + ",Index:" + index);
-        sfx.transform.position = position;
-        sfx.transform.rotation = Quaternion.LookRotation(normal);
         return sfx;
     }
     public static SFXIndicator SpawnIndicator(int _sourceID, Vector3 position, Vector3 normal) => SpawnSFX<SFXIndicator>(_sourceID, position, normal);
@@ -694,11 +690,9 @@ public static class GameObjectManager
         if (!ObjectPoolManager<int, SFXWeaponBase>.Registed(weaponIndex))
             ObjectPoolManager<int, SFXWeaponBase>.Register(weaponIndex, TResources.GetDamageSource(weaponIndex), 1);
 
-        T template = ObjectPoolManager<int, SFXWeaponBase>.Spawn(weaponIndex, TF_SFXWeapon) as T;
+        T template = ObjectPoolManager<int, SFXWeaponBase>.Spawn(weaponIndex, TF_SFXWeapon,position,Quaternion.LookRotation(normal)) as T;
         if (template == null)
             Debug.LogError("Enermy Weapon Error! Invalid Type:" + typeof(T).ToString() + "|Index:" + weaponIndex);
-        template.transform.position = position;
-        template.transform.rotation = Quaternion.LookRotation(normal);
         return template;
     }
     public static T GetEquipmentData<T>(int weaponIndex) where T : SFXWeaponBase
@@ -716,9 +710,7 @@ public static class GameObjectManager
     #region Interact
     public static T SpawnInteract<T>(enum_Interaction type, Vector3 pos,Quaternion rot, Transform toTrans=null) where T : InteractGameBase
     {
-        T target = ObjectPoolManager<enum_Interaction, InteractGameBase>.Spawn(type , toTrans==null? TF_SFXPlaying : toTrans) as T;
-        target.transform.position = pos;
-        target.transform.rotation = rot;
+        T target = ObjectPoolManager<enum_Interaction, InteractGameBase>.Spawn(type , toTrans==null? TF_SFXPlaying : toTrans,pos,rot) as T;
         return target;
     }
     public static void RecycleInteract(InteractGameBase target) => ObjectPoolManager<enum_Interaction, InteractGameBase>.Recycle(target.m_InteractType,target);

@@ -96,7 +96,7 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,IPo
             info.m_DeactiveQueue.Enqueue(spawnItem);
         }
     }
-    public static Y Spawn(T identity,Transform toTrans)
+    public static Y Spawn(T identity,Transform toTrans,Vector3 toPos,Quaternion rot)
     {
         if (!d_ItemInfos.ContainsKey(identity))
         {
@@ -115,6 +115,8 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,IPo
         }
         info.m_ActiveList.Add(item);
         item.transform.SetParentResetTransform(toTrans == null ? tf_PoolSpawn : toTrans);
+        item.transform.position = toPos;
+        item.transform.rotation = rot;
         item.SetActivate(true);
         return item;
     }

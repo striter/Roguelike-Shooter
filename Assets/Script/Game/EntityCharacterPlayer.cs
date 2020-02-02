@@ -41,6 +41,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     }
     
     NavMeshAgent m_Agent;
+    CharacterController m_Controller;
 
     protected float f_aimMovementReduction = 0f;
     protected bool m_aimingMovementReduction => f_aimMovementReduction > 0f;
@@ -70,6 +71,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_Agent = GetComponent<NavMeshAgent>();
         m_Agent.enabled = false;
         m_Agent.updateRotation = false;
+        m_Controller = GetComponent<CharacterController>();
     }
     protected override void OnPoolItemEnable()
     {
@@ -282,8 +284,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_BaseMovementSpeed = CalculateMovementSpeedBase() * CalculateMovementSpeedMultiple();
 
         float finalMovementSpeed = m_CharacterInfo.F_MovementSpeed;
-
-        transform.position=NavigationManager.NavMeshPosition(transform.position+ CalculateMoveDirection(m_MoveAxisInput) * finalMovementSpeed * deltaTime);
+        m_Controller.Move(CalculateMoveDirection(m_MoveAxisInput) * finalMovementSpeed * deltaTime);
         m_Animator.SetRun(m_MoveAxisInput, finalMovementSpeed / F_MovementSpeed);
     }
 

@@ -189,7 +189,6 @@ GameObject:
   - component: {fileID: 114729952516663078}
   - component: {fileID: 114177875034936328}
   - component: {fileID: 195492715037785158}
-  - component: {fileID: 208910738964548152}
   - component: {fileID: 136688143483107442}
   m_Layer: 10
   m_Name: 404_Entity_Savage4
@@ -596,8 +595,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1510959744188642}
-  m_LocalRotation: {x: -0.40821788, y: 0.23456968, z: -0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 31.41166, y: -12.0351, z: -6.1824265}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 31.41166, y: 0, z: -6.182427}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4774338579583510}
@@ -942,8 +941,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   I_MaxHealth: 360
-  m_IsDead: 0
-  m_Activating: 0
   ExtraRendererForForest107Only: {fileID: 0}
   E_SpawnType: 4
   I_DefaultArmor: 0
@@ -959,12 +956,10 @@ MonoBehaviour:
     start: 4
     length: 1
   F_AttackRate: 0.12
-  B_BattleCheckObstacle: 0
   F_AttackRotateParam: 1
   I_AttackPreAimPercentage: 100
   B_AttackMove: 1
   F_AttackFrontCheck: 0.5
-  m_AISimluating: 0
 --- !u!114 &114729952516663078
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1063,7 +1058,7 @@ NavMeshAgent:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1510959744188642}
-  m_Enabled: 0
+  m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.4
   m_Speed: 2.5
@@ -1078,18 +1073,3 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 1
   m_ObstacleAvoidanceType: 4
---- !u!208 &208910738964548152
-NavMeshObstacle:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1510959744188642}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Shape: 0
-  m_Extents: {x: 0.4, y: 1, z: 0.4}
-  m_MoveThreshold: 0.1
-  m_Carve: 0
-  m_CarveOnlyStationary: 1
-  m_Center: {x: 0, y: 1.5, z: 0}
-  m_TimeToStationary: 0.5

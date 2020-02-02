@@ -78,19 +78,17 @@ public class AudioManagerBase : SimpleSingletonMono <AudioManagerBase>
 
     protected SFXAudioBase PlayClip(int sourceID,AudioClip _clip,float _volume, bool _loop, Transform _target)
     {
-        SFXAudioBase audio= ObjectPoolManager< int ,SFXAudioBase >.Spawn(0,null);
-        audio.transform.position = _target.position;
+        SFXAudioBase audio= ObjectPoolManager< int ,SFXAudioBase >.Spawn(0,null,_target.position,Quaternion.identity);
         return audio.Play(sourceID, _clip, _volume, _loop, _target);
     }
     protected SFXAudioBase PlayClip(int sourceID, AudioClip _clip, float _volume, bool _loop, Vector3 _position)
     {
-        SFXAudioBase audio = ObjectPoolManager<int, SFXAudioBase>.Spawn(0, null);
-        audio.transform.position = _position;
+        SFXAudioBase audio = ObjectPoolManager<int, SFXAudioBase>.Spawn(0, null, _position, Quaternion.identity);
         return audio.Play(sourceID, _clip,_volume, _loop, null);
     }
     protected SFXAudioBase PlayClip(int sourceID, AudioClip _clip, float _volume, bool _loop)
     {
-        SFXAudioBase audio= ObjectPoolManager<int, SFXAudioBase>.Spawn(1, null);
+        SFXAudioBase audio= ObjectPoolManager<int, SFXAudioBase>.Spawn(1, null,Vector3.zero,Quaternion.identity);
         audio.transform.position = Vector3.zero;
         return audio.Play(sourceID,_clip,_volume,_loop,null);
     }

@@ -6,7 +6,7 @@ using TSpecialClasses;
 using GameSetting;
 using System;
 
-[RequireComponent(typeof(NavMeshAgent),typeof(NavMeshObstacle))]
+[RequireComponent(typeof(NavMeshAgent))]
 public class EntityCharacterAI : EntityCharacterBase {
     public enum_EnermyAnim E_AnimatorIndex= enum_EnermyAnim.Invalid;
     public override enum_EntityController m_ControllType => enum_EntityController.AI;
@@ -38,6 +38,7 @@ public class EntityCharacterAI : EntityCharacterBase {
     {
         if (m_Animator!=null)
             m_Animator.OnActivate(E_AnimatorIndex);
+        m_Agent.enabled = true;
         AIActivate();
         base.OnActivate(_flag,_spawnerID,startHealth);
     }
@@ -118,7 +119,6 @@ public class EntityCharacterAI : EntityCharacterBase {
     #region AI
 
     protected NavMeshAgent m_Agent;
-    protected NavMeshObstacle m_Obstacle;
     protected WeaponHelperBase m_Weapon;
     TimeCounter m_TargetingTimer = new TimeCounter(), m_MoveTimer = new TimeCounter(), m_MoveOrderTimer = new TimeCounter(),m_BattleDurationTimer=new TimeCounter(),m_BattleFireTimer=new TimeCounter();
     Vector3 m_SourcePosition;
@@ -133,28 +133,11 @@ public class EntityCharacterAI : EntityCharacterBase {
     {
         get
         {
-            return m_Agent.enabled;
+            return !m_Agent.isStopped;
         }
         set
         {
-            if (value == m_Agent.enabled)
-                return;
-
-            if (value)
-            {
-                m_Obstacle.enabled = false;
-                m_Agent.enabled = true;
-                m_Agent.isStopped = false;
-            }
-            else
-            {
-                if (m_Agent.enabled)
-                {
-                    m_Agent.isStopped = true;
-                    m_Agent.enabled = false;
-                }
-                m_Obstacle.enabled = true;
-            }
+            m_Agent.isStopped = !value;
         }
     }
 
@@ -162,18 +145,12 @@ public class EntityCharacterAI : EntityCharacterBase {
     {
         m_Weapon = _weapon;
         m_Agent = GetComponent<NavMeshAgent>();
-        m_Obstacle = GetComponent<NavMeshObstacle>();
-        m_Obstacle.carving = false;
-        m_Obstacle.height = m_Agent.height;
-        m_Obstacle.radius = m_Agent.radius;
         m_Agent.stoppingDistance = 0f;
     }
 
     public void AIActivate()
     {
         m_AgentEnabled = false;
-        m_Agent.enabled = false;
-        m_Obstacle.enabled = true;
         m_b_attacking = false;
         m_Battling = false;
         m_MoveTimer.SetTimer(0);
