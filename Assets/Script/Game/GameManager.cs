@@ -260,6 +260,8 @@ public class GameManager : GameManagerBase
             SetPostEffect_Dead();
 
         SpawnEntityDeadPickups(character);
+        if (character.E_SpawnType == enum_EnermyType.Elite)
+            OnFinalEliteKilled();
     }
 
     void OnEntityRecycle(EntityBase entity)

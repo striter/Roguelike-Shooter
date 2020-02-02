@@ -8,7 +8,7 @@ using TTiles;
 using UnityEngine.AI;
 using System.Threading.Tasks;
 public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
-    
+    public bool GamePlayTest = false;
 
     ObjectPoolSimpleComponent<int, LevelChunkBase> m_ChunkPool;
     public Dictionary<int, ChunkGameData> m_GameChunks { get; private set; } = new Dictionary<int, ChunkGameData>();
@@ -55,26 +55,33 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
                     gameChunkGenerate.Add(new ChunkGenerateData(TileAxis.Zero, datas[enum_ChunkType.Start].RandomItem(random)));
                     List<enum_ChunkType> mainChunkType = new List<enum_ChunkType>() { enum_ChunkType.Battle, enum_ChunkType.Event, enum_ChunkType.Battle, enum_ChunkType.Event, enum_ChunkType.Battle, enum_ChunkType.Event, enum_ChunkType.Battle, enum_ChunkType.Event, enum_ChunkType.Battle, enum_ChunkType.Event, enum_ChunkType.Battle };
 
-                    //Gemerate Main Chunks
-                    List<ChunkGenerateData> mainChunkGenerate = TryGenerateChunkDatas(gameChunkGenerate[0], gameChunkGenerate, datas, mainChunkType, random);
-                    gameChunkGenerate.AddRange(mainChunkGenerate);
+                    List<ChunkGenerateData> mainChunkGenerate=null;
+                    if (!GamePlayTest)
+                    {
+                        //Gemerate Main Chunks
+                        mainChunkGenerate = TryGenerateChunkDatas(gameChunkGenerate[0], gameChunkGenerate, datas, mainChunkType, random);
+                        gameChunkGenerate.AddRange(mainChunkGenerate);
+                    }
 
                     //Generate Final Chunk
                     List<ChunkGenerateData> finalChunkGenerate = TryGenerateChunkDatas(gameChunkGenerate[gameChunkGenerate.Count - 1], gameChunkGenerate, datas, new List<enum_ChunkType>() { enum_ChunkType.Final }, random);
                     gameChunkGenerate.AddRange(finalChunkGenerate);
 
-                    //Generate Sub Chunks
-                    List<enum_ChunkType> subChunkType = new List<enum_ChunkType>() { enum_ChunkType.Battle, enum_ChunkType.Event };
-                    for (int i = 0; i < 3; i++)
-                        mainChunkGenerate.TraversalRandomBreak((ChunkGenerateData mainChunkData) =>
-                        {
-                            List<ChunkGenerateData> subGenerateData = null;
-                            if (mainChunkData.CheckEmptyConnections(random))
-                                subGenerateData = TryGenerateChunkDatas(mainChunkData, gameChunkGenerate, datas, subChunkType, random);
-                            if (subGenerateData != null)
-                                gameChunkGenerate.AddRange(subGenerateData);
-                            return subGenerateData != null;
-                        }, random);
+                    if (!GamePlayTest)
+                    {
+                        //Generate Sub Chunks
+                        List<enum_ChunkType> subChunkType = new List<enum_ChunkType>() { enum_ChunkType.Battle, enum_ChunkType.Event };
+                        for (int i = 0; i < 3; i++)
+                            mainChunkGenerate.TraversalRandomBreak((ChunkGenerateData mainChunkData) =>
+                            {
+                                List<ChunkGenerateData> subGenerateData = null;
+                                if (mainChunkData.CheckEmptyConnections(random))
+                                    subGenerateData = TryGenerateChunkDatas(mainChunkData, gameChunkGenerate, datas, subChunkType, random);
+                                if (subGenerateData != null)
+                                    gameChunkGenerate.AddRange(subGenerateData);
+                                return subGenerateData != null;
+                            }, random);
+                    }   
 
                 }
                 catch
