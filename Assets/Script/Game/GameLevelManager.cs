@@ -352,6 +352,8 @@ public static class NavigationManager
 
     public static void ClearNavMeshDatas()
     {
+        m_ChunkDetails.Clear();
+        m_Sources.Clear();
         NavMesh.RemoveNavMeshData(m_ChunksSurfaceData);
     }
 
