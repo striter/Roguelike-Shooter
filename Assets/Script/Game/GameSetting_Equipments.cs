@@ -239,9 +239,9 @@ namespace GameSetting_Action
             m_burstShot = false;
         }
 
-        public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        public override void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
-            base.OnAfterDealtDemage(receiver, info, applyAmount);
+            base.OnDealtDamage(receiver, info, applyAmount);
             m_burstShot = receiver.m_IsDead;
         }
         public E0009_DamageBurstAfterKill(int _identity, EquipmentSaveData _data) : base(_identity, _data) { }
@@ -277,9 +277,9 @@ namespace GameSetting_Action
         public override int m_Index => 0013;
         public override float Value1 => EquipmentConsts.F_0013_EffectRange(m_rarity); 
         public override float Value2 => EquipmentConsts.P_0013_DamageMultiply(m_rarity);
-        public override void OnDealtDamageSetBegin(EntityCharacterBase receiver, DamageInfo info)
+        public override void OnBeforeDealtDamageBegin(EntityCharacterBase receiver, DamageInfo info)
         {
-            base.OnDealtDamageSetBegin(receiver, info);
+            base.OnBeforeDealtDamageBegin(receiver, info);
             if (Vector3.Distance(receiver.transform.position, m_Attacher.transform.position) > Value1)
                 return;
             info.m_detail.DamageAdditive(Value2 / 100f, 0);
@@ -294,9 +294,9 @@ namespace GameSetting_Action
         public override float Value2 => EquipmentConsts.F_0014_ReductionDuration(m_rarity);
         public override float m_DamageReduction => m_Timer.m_Timing ? 1f : base.m_DamageReduction;
         TimeCounter m_Timer = new TimeCounter();
-        public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        public override void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
-            base.OnAfterDealtDemage(receiver, info, applyAmount);
+            base.OnDealtDamage(receiver, info, applyAmount);
             if (receiver.m_IsDead&&Vector3.Distance(m_Attacher.transform.position,receiver.transform.position)<Value1)
                 m_Timer.SetTimer(Value2);
         }
@@ -315,9 +315,9 @@ namespace GameSetting_Action
         public override float m_MovementSpeedMultiply =>Value2/100f;
         int m_NearbyCount = 0;
         TimeCounter m_Timer = new TimeCounter();
-        public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        public override void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
-            base.OnAfterDealtDemage(receiver, info, applyAmount);
+            base.OnDealtDamage(receiver, info, applyAmount);
             if (receiver.m_IsDead && Vector3.Distance(m_Attacher.transform.position, receiver.transform.position) < Value1)
                 m_Timer.SetTimer(Value2);
         }
@@ -338,9 +338,9 @@ namespace GameSetting_Action
         public override int m_Index => 0016;
         public override float Value1 => EquipmentConsts.F_0016_EffectRange(m_rarity);
         public override float Value2 => EquipmentConsts.P_0016_ClipRefillRate(m_rarity);
-        public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        public override void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
-            base.OnAfterDealtDemage(receiver, info, applyAmount);
+            base.OnDealtDamage(receiver, info, applyAmount);
             if (receiver.m_IsDead && Vector3.Distance(m_Attacher.transform.position, receiver.transform.position) < Value1&&TCommon.RandomPercentage()<=Value2)
                 m_Attacher.m_WeaponCurrent.ForceReload();
         }
@@ -377,9 +377,9 @@ namespace GameSetting_Action
         public override float Value2 => EquipmentConsts.F_0018_Duration(m_rarity);
         public override float m_MovementSpeedMultiply => m_Timer.m_Timing? Value1 / 100f : 0;
         TimeCounter m_Timer = new TimeCounter();
-        public override void OnAfterReceiveDamage(DamageInfo info, float amount)
+        public override void OnReceiveDamage(DamageInfo info, float amount)
         {
-            base.OnAfterReceiveDamage(info, amount);
+            base.OnReceiveDamage(info, amount);
             m_Timer.SetTimer(Value2);
         }
         public override void OnTick(float deltaTime)
@@ -398,9 +398,9 @@ namespace GameSetting_Action
         public override float Value2 => EquipmentConsts.F_0019_Duration(m_rarity);
         public override float m_MovementSpeedMultiply => m_Timer.m_Timing ? Value1 / 100f : 0;
         TimeCounter m_Timer = new TimeCounter();
-        public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        public override void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
-            base.OnAfterDealtDemage(receiver, info, applyAmount);
+            base.OnDealtDamage(receiver, info, applyAmount);
             if (receiver.m_IsDead)
                 m_Timer.SetTimer(Value2);
         }
@@ -461,9 +461,9 @@ namespace GameSetting_Action
     {
         public override int m_Index => 0024;
         public override float Value1 => EquipmentConsts.P_0024_HealthRegenEachKill(m_rarity);
-        public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        public override void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
-            base.OnAfterDealtDemage(receiver, info, applyAmount);
+            base.OnDealtDamage(receiver, info, applyAmount);
             if (receiver.m_IsDead)
                 EquipmentHelper.ReceiveHealing(m_Attacher, m_Attacher.m_Health.m_MaxHealth * Value1 / 100f, enum_DamageType.HealthOnly);
         }
@@ -501,9 +501,9 @@ namespace GameSetting_Action
         public override float Value1 => EquipmentConsts.F_0028_FreezeDuration(m_rarity);
         protected override DamageDeliverInfo GetDamageInfo() => DamageDeliverInfo.EquipmentInfo(m_Attacher.m_EntityID, 0, enum_CharacterEffect.Freeze, Value1);
 
-        public override void OnAfterDealtDemage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        public override void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
-            base.OnAfterDealtDemage(receiver, info, applyAmount);
+            base.OnDealtDamage(receiver, info, applyAmount);
             if (!receiver.m_IsDead)
                 return;
 
@@ -518,9 +518,9 @@ namespace GameSetting_Action
         public override int m_Index => 0029;
         public override int m_EffectIndex => 41001;
         public override float Value1 => EquipmentConsts.F_0029_FreezeDurationPer10Damage(m_rarity);
-        public override void OnDealtDamageSetMiddle(EntityCharacterBase receiver, DamageInfo info)
+        public override void OnBeforeDealtDamageMiddle(EntityCharacterBase receiver, DamageInfo info)
         {
-            base.OnDealtDamageSetMiddle(receiver, info);
+            base.OnBeforeDealtDamageMiddle(receiver, info);
             info.m_detail.EffectAdditiveOverride(enum_CharacterEffect.Freeze, info.m_AmountApply / 10f*Value1);
         }
         public E0029_DamageFreeze(int _identity, EquipmentSaveData _data) : base(_identity, _data) { }
@@ -575,9 +575,9 @@ namespace GameSetting_Action
     {
         public override int m_Index => 0032;
         public override float Value1 => EquipmentConsts.P_0032_FreezeDurationEnhance(m_rarity);
-        public override void OnDealtDamageSetFinal(EntityCharacterBase receiver, DamageInfo info)
+        public override void OnBeforeDealtDamageFinal(EntityCharacterBase receiver, DamageInfo info)
         {
-            base.OnDealtDamageSetFinal(receiver, info);
+            base.OnBeforeDealtDamageFinal(receiver, info);
             if (info.m_detail.m_DamageEffect == enum_CharacterEffect.Freeze)
                 info.m_detail.EffectAdditiveOverride( enum_CharacterEffect.Freeze,info.m_detail.m_EffectDuration*Value1/100f);
         }

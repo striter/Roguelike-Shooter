@@ -125,8 +125,10 @@ namespace TExcel
                             if (phraseValue.Length == 0)
                                 value = TXmlPhrase.Phrase.GetDefault(phraseType);
                             else
+                            {
                                 value = TXmlPhrase.Phrase[phraseType, phraseValue];
-
+                                Debug.Log(value);
+                            }
                             fields[j].SetValue(obj, value);
                         }
                         catch (Exception e)

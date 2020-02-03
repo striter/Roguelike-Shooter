@@ -141,7 +141,6 @@ namespace GameSetting
             }
         }
         
-
         public static int GetActionRemovePrice(enum_StageLevel stage, int removeTimes) => 10 * (removeTimes + 1) ;
         public static int GetActionUpgradePrice(enum_StageLevel stage, int upgradeTimes) => 10 * (upgradeTimes + 1) ;
         public static StageInteractGenerateData GetInteractGenerate(enum_StageLevel level)
@@ -178,6 +177,10 @@ namespace GameSetting
                         );
             }
         }
+
+        public static readonly List<EliteBuffCombine> GetEliteBuff = new List<EliteBuffCombine>() { new EliteBuffCombine(2010,12010, 32010), new EliteBuffCombine(2020, 12020, 32020), new EliteBuffCombine(2030, 12030, 32030), new EliteBuffCombine(2040, 12040, 32040), new EliteBuffCombine(2050, 12050, 32050), new EliteBuffCombine(2060, 12060, 32060) };
+        static readonly RangeInt buffTimerAbove=new RangeInt(2,2),buffTimerBelow=new RangeInt(2,2);
+        public static int GetEliteBuffTimer(float ehpScale) => ehpScale > .3f ? buffTimerAbove.Random() : buffTimerBelow.Random();
 
         public static readonly Dictionary<enum_CampFarmItemStatus, int> GetFarmGeneratePercentage = new Dictionary< enum_CampFarmItemStatus,int>() { {  enum_CampFarmItemStatus.Progress1 ,60},{enum_CampFarmItemStatus.Progress2 ,30},{enum_CampFarmItemStatus.Progress3 ,6},{enum_CampFarmItemStatus.Progress4,3},{ enum_CampFarmItemStatus.Progress5,1} };   //Farm生成等级百分比
         public static readonly Dictionary<enum_CampFarmItemStatus, float> GetFarmCreditPerSecond = new Dictionary<enum_CampFarmItemStatus, float> { { enum_CampFarmItemStatus.Progress1, .1f / 60f}, { enum_CampFarmItemStatus.Progress2, .2f / 60f }, { enum_CampFarmItemStatus.Progress3, .3f / 60f }, { enum_CampFarmItemStatus.Progress4, .5f / 60f }, { enum_CampFarmItemStatus.Progress5,1f / 60f } };      //Farm 等级,每秒Credit
@@ -568,6 +571,19 @@ namespace GameSetting
         public enum_EquipmentRarity GetTradeActionRarity(System.Random seed) => TCommon.RandomPercentage(m_TradeAction, enum_EquipmentRarity.Invalid ,seed);
         public static StageInteractGenerateData Create(Dictionary<enum_WeaponRarity,int> _tradeWeaponRate,  Dictionary<enum_EquipmentRarity, int> _tradeAbilityRate, PickupGenerateData _normalGenerate,PickupGenerateData _eliteGenerate) => new StageInteractGenerateData() { m_TradeWeapon=_tradeWeaponRate,m_TradeAction=_tradeAbilityRate,m_NormalPickupData=_normalGenerate,m_ElitePickupData=_eliteGenerate};
     }
+
+    public struct EliteBuffCombine
+    {
+        public int m_BuffIndex;
+        public int m_MuzzleIndex;
+        public int m_IndicatorIndex;
+        public EliteBuffCombine(int _buffIndex, int _muzzleIndex, int _indicatorIndex)
+        {
+            m_BuffIndex = _buffIndex;
+            m_IndicatorIndex = _indicatorIndex;
+            m_MuzzleIndex = _muzzleIndex;
+        }
+     }
     #endregion
 
     #region SaveData
@@ -809,6 +825,7 @@ namespace GameSetting
         float f_healthDrainMultiply;
         float f_damageMultiply;
         float f_damageReduce;
+        int i_extraBuffApply;
         float f_damageTickTime;
         float f_damagePerTick;
         int i_damageType;
@@ -822,17 +839,12 @@ namespace GameSetting
         public float m_HealthDrainMultiply => f_healthDrainMultiply;
         public float m_DamageMultiply => f_damageMultiply;
         public float m_DamageReduction => f_damageReduce;
+        public int m_ExtraBuffApply => i_extraBuffApply;
         public float m_DamageTickTime => f_damageTickTime;
         public float m_DamagePerTick => f_damagePerTick;
         public enum_DamageType m_DamageType => (enum_DamageType)i_damageType;
         public void InitOnValueSet()
         {
-            f_movementSpeedMultiply = f_movementSpeedMultiply > 0 ? f_movementSpeedMultiply / 100f : 0;
-            f_fireRateMultiply = f_fireRateMultiply > 0 ? f_fireRateMultiply / 100f : 0;
-            f_reloadRateMultiply = f_reloadRateMultiply > 0 ? f_reloadRateMultiply / 100f : 0;
-            f_damageMultiply = f_damageMultiply > 0 ? f_damageMultiply / 100f : 0;
-            f_damageReduce = f_damageReduce > 0 ? f_damageReduce / 100f : 0;
-            f_healthDrainMultiply = f_healthDrainMultiply > 0 ? f_healthDrainMultiply / 100f : 0;
         }
         //Normally In Excel 0-99
         //100-999
@@ -932,6 +944,7 @@ namespace GameSetting
         public float m_BaseHealth { get; private set; }
         public virtual float F_TotalEHP => m_CurrentHealth;
         public float F_HealthBaseScale => m_CurrentHealth / m_BaseHealth;
+        public float F_HealthMaxScale => m_CurrentHealth / m_MaxHealth;
         public bool m_HealthFull => m_CurrentHealth >= m_MaxHealth;
         public virtual float m_MaxHealth => m_BaseHealth;
         protected void DamageHealth(float health)
@@ -1242,8 +1255,12 @@ namespace GameSetting
             if (amountApply <= 0)
                 return;
 
-            if (F_HealthDrainMultiply > 0 && damageInfo.m_detail.I_SourceID == m_Entity.m_EntityID)
-                m_Entity.m_HitCheck.TryHit(new DamageInfo(-amountApply * F_HealthDrainMultiply, enum_DamageType.HealthOnly, DamageDeliverInfo.Default(m_Entity.m_EntityID)));
+            if ( damageInfo.m_detail.I_SourceID == m_Entity.m_EntityID)
+            {
+                if (F_HealthDrainMultiply > 0)
+                    m_Entity.m_HitCheck.TryHit(new DamageInfo(-amountApply * F_HealthDrainMultiply, enum_DamageType.HealthOnly, DamageDeliverInfo.Default(m_Entity.m_EntityID)));
+                m_Expires.Traversal((EntityExpireBase expire) => { expire.OnDealtDamage(damageEntity,damageInfo,amountApply); });
+            }
         }
         public virtual void OnDead() => Reset();
         public virtual void OnRevive() => Reset(); 
@@ -1550,26 +1567,20 @@ namespace GameSetting
                 ally.m_Health.SetHealthMultiplier(F_AllyHealthMultiplierAdditive);
         }
 
-        public void OnWillDealtDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) { m_ActionEquipment.Traversal((EquipmentBase action) => { action.OnDealtDamageSetBegin(damageEntity, damageInfo); action.OnDealtDamageSetMiddle(damageEntity, damageInfo); action.OnDealtDamageSetFinal(damageEntity, damageInfo); }); }
+        public void OnWillDealtDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) { m_ActionEquipment.Traversal((EquipmentBase action) => { action.OnBeforeDealtDamageBegin(damageEntity, damageInfo); action.OnBeforeDealtDamageMiddle(damageEntity, damageInfo); action.OnBeforeDealtDamageFinal(damageEntity, damageInfo); }); }
 
         public void OnWillReceiveDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) { m_ActionEquipment.Traversal((EquipmentBase action) => { action.OnBeforeReceiveDamage(damageInfo); }); }
 
         public override void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
         {
-            base.OnCharacterHealthChange(damageInfo, damageEntity, amountApply);
             if (damageInfo.m_detail.I_SourceID <= 0)
                 return;
-
-            if (damageInfo.m_detail.I_SourceID == m_Player.m_EntityID)
-            {
-                if(amountApply>0)
-                    m_ActionEquipment.Traversal((EquipmentBase action) => { action.OnAfterDealtDemage(damageEntity, damageInfo, amountApply); });
-            }
-
+            base.OnCharacterHealthChange(damageInfo, damageEntity, amountApply);
+            
             if (damageEntity.m_EntityID == m_Player.m_EntityID)
             {
                 if (amountApply > 0)
-                    m_ActionEquipment.Traversal((EquipmentBase action) => { action.OnAfterReceiveDamage(damageInfo, amountApply); });
+                    m_ActionEquipment.Traversal((EquipmentBase action) => { action.OnReceiveDamage(damageInfo, amountApply); });
                 else
                     m_ActionEquipment.Traversal((EquipmentBase action) => { action.OnReceiveHealing(damageInfo, amountApply); });
             }
@@ -1666,6 +1677,7 @@ namespace GameSetting
         {
             if (forceExpire) OnExpired(this);
         }
+        public virtual void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount) { }
     }
     
     public class EntityExpireCommon : EntityExpireBase
@@ -1720,6 +1732,14 @@ namespace GameSetting
                 OnDOTDamage(new DamageInfo(m_buffInfo.m_DamagePerTick, m_buffInfo.m_DamageType, DamageDeliverInfo.Default(I_SourceID)));
             }
         }
+
+        public override void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        {
+            base.OnDealtDamage(receiver, info, applyAmount);
+            if (m_buffInfo.m_ExtraBuffApply <= 0)
+                return;
+            receiver.m_CharacterInfo.AddBuff(info.m_detail.I_SourceID, GameDataManager.GetPresetBuff(m_buffInfo.m_ExtraBuffApply));
+        }
     }
 
     public class EquipmentBase : EntityExpireBase
@@ -1769,12 +1789,11 @@ namespace GameSetting
         #region Interact
         public virtual void OnActivate(EntityCharacterPlayer _actionEntity, Action<EntityExpireBase> OnExpired) { m_Attacher = _actionEntity; OnActivate(OnExpired); }
         public virtual void OnBeforeReceiveDamage(DamageInfo info) { }
-        public virtual void OnAfterReceiveDamage(DamageInfo info, float amount) { }
+        public virtual void OnReceiveDamage(DamageInfo info, float amount) { }
         public virtual void OnAttackDamageSet(DamageDeliverInfo info) { }
-        public virtual void OnDealtDamageSetBegin(EntityCharacterBase receiver, DamageInfo info) { }
-        public virtual void OnDealtDamageSetMiddle(EntityCharacterBase receiver, DamageInfo info) { }
-        public virtual void OnDealtDamageSetFinal(EntityCharacterBase receiver, DamageInfo info) { }
-        public virtual void OnAfterDealtDemage(EntityCharacterBase receiver,DamageInfo info, float applyAmount) { }
+        public virtual void OnBeforeDealtDamageBegin(EntityCharacterBase receiver, DamageInfo info) { }
+        public virtual void OnBeforeDealtDamageMiddle(EntityCharacterBase receiver, DamageInfo info) { }
+        public virtual void OnBeforeDealtDamageFinal(EntityCharacterBase receiver, DamageInfo info) { }
         public virtual void OnReceiveHealing(DamageInfo info, float applyAmount)  {}
         public virtual void OnGainCoins(float coinAmount) { }
         public virtual void OnReloadFinish() { }

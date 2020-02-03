@@ -801,9 +801,9 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
 
 public class TimeCounter
 {
-    float m_timeCheck = -1;
     float m_duration;
     public bool m_Timing => m_timeCheck > 0;
+    public float m_timeCheck { get; private set; } = -1;
     public float m_TimeLeftScale =>m_duration==0?0:m_timeCheck / m_duration;
     public TimeCounter(float duration = 0) { SetTimer(duration); }
     public void SetTimer(float duration)
@@ -986,6 +986,7 @@ public class TXmlPhrase : SingleTon<TXmlPhrase>
 
         if (!dic_xmlDataToValue.ContainsKey(type))
             Debug.LogWarning("Xml Error Invlid Type:" + type.ToString() + " For Xml Data To Phrase");
+        
         return dic_xmlDataToValue[type](xmlData);
     }
 }

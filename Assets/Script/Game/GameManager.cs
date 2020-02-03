@@ -48,8 +48,11 @@ public class GameManager : GameManagerBase
     }
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-            NavigationManager.UpdateChunkData(0);
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log(int.Parse("-1"));
+            m_LocalPlayer.m_CharacterInfo.AddBuff(-1, GameDataManager.GetPresetBuff(2021));
+        }
     }
     #endregion
     public GameProgressManager m_GameLevel { get; private set; }
