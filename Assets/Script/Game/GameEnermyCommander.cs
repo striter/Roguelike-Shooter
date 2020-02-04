@@ -23,7 +23,7 @@ public class GameEnermyCommander : CSimplePoolObjectMono<int> {
 
     public void OnCharacterDead(EntityCharacterBase character)
     {
-        if (character.m_EntityID != m_Entity.m_EntityID)
+        if (!m_Entity||character.m_EntityID != m_Entity.m_EntityID)
             return;
 
         m_Playing = false;
