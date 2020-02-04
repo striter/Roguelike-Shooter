@@ -189,6 +189,7 @@ namespace LevelSetting
                 case enum_ChunkType.Battle:
                     restrictionDic.Add(enum_TileObjectType.RConnection1x5, -1);
                     restrictionDic.Add( enum_TileObjectType.REnermySpawn1x1,-1);
+                    restrictionDic.Add(enum_TileObjectType.RBattleTrigger1x1, -1);
                     break;
                 case enum_ChunkType.Final:
                     restrictionDic.Add(enum_TileObjectType.RConnection1x5, 1);
