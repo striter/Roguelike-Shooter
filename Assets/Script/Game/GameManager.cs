@@ -20,9 +20,12 @@ public class GameManager : GameManagerBase
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Show Seed", "", KeyCode.None, (string value) => { Debug.LogError(m_GameLevel.m_GameSeed); }));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Skip Stage", "", KeyCode.Equals, (string value) => {OnStageFnished();}));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Kill All", "", KeyCode.Alpha0, (string value) => {
-            m_Entities.Values.ToList().Traversal((EntityBase entity) => {
-                if (entity.m_Flag == enum_EntityFlag.Enermy)
-                    entity.m_HitCheck.TryHit(new DamageInfo(entity.m_Health.m_CurrentHealth, enum_DamageType.Basic, DamageDeliverInfo.Default(-1))); });
+            GetCharacters(enum_EntityFlag.Enermy, true).Traversal((EntityCharacterBase character) =>
+            {
+                EntityCharacterAI ai = character as EntityCharacterAI;
+                if (ai&& ai.m_AIBattleActivating)
+                    ai.m_HitCheck.TryHit(new DamageInfo(ai.m_Health.m_CurrentHealth, enum_DamageType.Basic, DamageDeliverInfo.Default(-1)));
+            });
         }));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Freeze All", "0.5", KeyCode.Alpha8, (string value) =>
         {
