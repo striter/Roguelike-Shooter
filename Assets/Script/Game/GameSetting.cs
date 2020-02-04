@@ -857,6 +857,12 @@ namespace GameSetting
         public enum_DamageType m_DamageType => (enum_DamageType)i_damageType;
         public void InitOnValueSet()
         {
+            f_movementSpeedMultiply /= 100f;
+            f_fireRateMultiply /= 100f;
+            f_reloadRateMultiply /= 100f;
+            f_damageMultiply /= 100f;
+            f_damageReduce /= 100f;
+            f_healthDrainMultiply /= 100f;
         }
         //Normally In Excel 0-99
         //100-999

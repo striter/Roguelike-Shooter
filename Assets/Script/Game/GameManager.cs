@@ -529,7 +529,7 @@ public class GameManager : GameManagerBase
         m_GameLevel.m_EnermyGenerate[true].RandomItem(m_GameLevel.m_GameRandom).GetEnermyIDList(m_EnermyIDs, m_GameLevel.m_GameRandom).Traversal((int enermyID) =>
         {
             Vector3 spawnPos = m_FinalBattleGeneratePoints.RandomItem();
-           GameObjectManager.SpawnEntityCharactterAI(enermyID, NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere(5f)), m_LocalPlayer.transform.position, enum_EntityFlag.Enermy,m_GameLevel.m_GameDifficulty,m_GameLevel.m_GameStage,true);
+            GameObjectManager.SpawnEntityCharactterAI(enermyID, NavigationManager.NavMeshPosition(spawnPos), m_LocalPlayer.transform.position, enum_EntityFlag.Enermy,m_GameLevel.m_GameDifficulty,m_GameLevel.m_GameStage,true);
         });
 
     }

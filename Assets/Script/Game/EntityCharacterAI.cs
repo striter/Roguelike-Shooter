@@ -127,9 +127,9 @@ public class EntityCharacterAI : EntityCharacterBase {
 
     public EntityCharacterBase m_Target { get; private set; }
     public bool m_AISimluating { get; private set; }
-    public bool m_AIBattling { get; private set; }
+    public bool m_AIBattleActivating { get; private set; }
     public bool m_Moving => m_AgentEnabled && m_Agent.remainingDistance>.2f;
-    public bool m_IdlePatrol =>!m_AIBattling&& TCommon.GetXZDistance(m_SourcePosition,transform.position)<=GameConst.AI.F_AIPatrolRange;
+    public bool m_IdlePatrol =>!m_AIBattleActivating&& TCommon.GetXZDistance(m_SourcePosition,transform.position)<=GameConst.AI.F_AIPatrolRange;
     public bool m_AgentEnabled
     {
         get
@@ -159,7 +159,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         m_MoveOrderTimer.SetTimer(0);
         m_TargetingTimer.SetTimer(0);
         m_SourcePosition = transform.position;
-        m_AIBattling = inBattle;
+        m_AIBattleActivating = inBattle;
         AISetSimulate(true);
     }
     public void AIDeactivate()
@@ -187,14 +187,14 @@ public class EntityCharacterAI : EntityCharacterBase {
         if (!m_AISimluating)
             return;
         
-        bool battling = BattleTargetCheck(deltaTime);
-        if (!battling)
+        bool battleTick = BattleTargetCheck(deltaTime);
+        if (!battleTick)
         {
             if(m_b_attacking)
                 FinishAttack();
         }
 
-        if (!m_AIBattling)
+        if (!battleTick)
             IdleTick(deltaTime);
         else
             BattleTick(deltaTime);
@@ -204,18 +204,19 @@ public class EntityCharacterAI : EntityCharacterBase {
     {
         m_TargetingTimer.Tick(deltaTime);
         if (m_TargetingTimer.m_Timing)
-            return true;
+            return m_Target;
 
-        if (!m_AIBattling)
+        if (!m_AIBattleActivating)
         {
             m_Target = null;
             m_TargetingTimer.SetTimer(GameConst.AI.F_AITargetCheckParam);
-            return false;
         }
-
-        m_Target = GameManager.Instance.GetNeariesCharacter(this, m_Weapon.B_TargetAlly, false);
-        m_TargetingTimer.SetTimer(m_Target ? GameConst.AI.F_AIReTargetCheckParam : GameConst.AI.F_AITargetCheckParam);
-        return true;
+        else
+        {
+            m_Target = GameManager.Instance.GetNeariesCharacter(this, m_Weapon.B_TargetAlly, false);
+            m_TargetingTimer.SetTimer(m_Target ? GameConst.AI.F_AIReTargetCheckParam : GameConst.AI.F_AITargetCheckParam);
+        }
+        return m_Target;
     }
     
 

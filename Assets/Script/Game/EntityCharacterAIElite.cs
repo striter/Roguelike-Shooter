@@ -16,7 +16,7 @@ public class EntityCharacterAIElite : EntityCharacterAI {
     protected override void OnAliveTick(float deltaTime)
     {
         base.OnAliveTick(deltaTime);
-        if (!m_AIBattling)
+        if (!m_AIBattleActivating)
             return;
 
         if (!m_BuffCounter.m_Timing)
