@@ -153,6 +153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2aa0812e1562b7499498e6b7894fd50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_PoolInited: 0
 --- !u!1 &146552075
 GameObject:
   m_ObjectHideFlags: 0
@@ -313,7 +314,7 @@ GameObject:
   m_Component:
   - component: {fileID: 501700960}
   m_Layer: 0
-  m_Name: FinalTrigger
+  m_Name: BattleTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -649,6 +650,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 922561e6b5909934983b8e4c7b4a4c60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_PoolInited: 0
 --- !u!1 &971526629
 GameObject:
   m_ObjectHideFlags: 0
@@ -695,7 +697,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   M_TESTSEED: 
   B_PhysicsDebugGizmos: 1
-  m_IsFinalBattle: 0
 --- !u!1 &1147982034
 GameObject:
   m_ObjectHideFlags: 0
@@ -976,6 +977,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 922561e6b5909934983b8e4c7b4a4c60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_PoolInited: 0
 --- !u!114 &1741630858
 MonoBehaviour:
   m_ObjectHideFlags: 0

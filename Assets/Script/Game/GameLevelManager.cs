@@ -11,7 +11,7 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
     public bool GamePlayTest = false;
 
     ObjectPoolSimpleComponent<int, LevelChunkBase> m_ChunkPool;
-    public Dictionary<int, ChunkGameData> m_GameChunks { get; private set; } = new Dictionary<int, ChunkGameData>();
+    public Dictionary<int, ChunkGameGenerateData> m_GameChunks { get; private set; } = new Dictionary<int, ChunkGameGenerateData>();
     public Light m_DirectionalLight { get; private set; }
     public Texture2D m_MapTexture { get; private set; }
     public System.Random random { get; private set; }
@@ -141,7 +141,7 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
                 mapBounds.size = new Vector3(m_MapSize.X, .1f, m_MapSize.Y) * LevelConst.I_TileSize;
                 Dictionary<int,ChunkNavigationData> _ChunkNavigationData = new Dictionary<int, ChunkNavigationData>();
                 int _ChunkFinalIndex = -1;
-                m_GameChunks.Traversal((int chunkIndex, ChunkGameData data) =>{
+                m_GameChunks.Traversal((int chunkIndex, ChunkGameGenerateData data) =>{
                     _ChunkNavigationData.Add(chunkIndex, new ChunkNavigationData(data.m_ChunkBase.transform, data.m_ChunkBounds));
                     if (data.m_ChunkType== enum_ChunkType.Final) _ChunkFinalIndex=chunkIndex; });
                 NavigationManager.InitNavMeshData(transform, mapBounds, _ChunkNavigationData, _ChunkFinalIndex);

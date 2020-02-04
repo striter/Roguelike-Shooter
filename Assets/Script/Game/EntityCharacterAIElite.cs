@@ -16,7 +16,7 @@ public class EntityCharacterAIElite : EntityCharacterAI {
     protected override void OnAliveTick(float deltaTime)
     {
         base.OnAliveTick(deltaTime);
-        if (!m_Battling)
+        if (!m_AIBattling)
             return;
 
         if (!m_BuffCounter.m_Timing)
@@ -34,8 +34,8 @@ public class EntityCharacterAIElite : EntityCharacterAI {
 
     void PrepareEliteBuff()
     {
-        m_Buff = GameExpression.GetEliteBuff.RandomItem();
-        m_BuffCounter.SetTimer(GameExpression.GetEliteBuffTimer(m_Health.F_HealthMaxScale));
+        m_Buff = GameConst.L_GameEliteBuff.RandomItem();
+        m_BuffCounter.SetTimer(m_Health.F_HealthMaxScale>GameConst.F_EliteBuffTimerDivideEHPScale?GameConst.RI_EliteBuffTimerAbove.Random():GameConst.RI_EliteBuffTimerBelow.Random());
         m_Indicated = false;
     }
     void DoBuffIndicate()

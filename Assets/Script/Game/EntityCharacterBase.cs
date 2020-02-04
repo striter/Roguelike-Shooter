@@ -46,8 +46,6 @@ public class EntityCharacterBase : EntityBase
     protected override void OnPoolItemEnable()
     {
         base.OnPoolItemEnable();
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnFinalBattleStart, OnBattleStart);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnFinalBattleFinish, OnBattleFinish);
         TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
         m_CharacterInfo.OnActivate();
     }
@@ -55,8 +53,6 @@ public class EntityCharacterBase : EntityBase
     protected override void OnPoolItemDisable()
     {
         base.OnPoolItemDisable();
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnFinalBattleStart, OnBattleStart);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnFinalBattleFinish, OnBattleFinish);
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
         m_Effect.OnDisable();
     }
@@ -65,13 +61,6 @@ public class EntityCharacterBase : EntityBase
     {
        base.OnActivate(_flag,_spawnerID,startHealth);
         m_Effect.OnReset();
-    }
-
-    public void SetExtraDifficulty(float baseHealthMultiplier, float maxHealthMultiplier, SBuff difficultyBuff)
-    {
-        m_CharacterInfo.AddBuff(-1, difficultyBuff);
-        m_Health.SetHealthMultiplier(maxHealthMultiplier);
-        m_Health.OnSetHealth(I_MaxHealth * baseHealthMultiplier, true);
     }
 
     protected virtual void OnExpireChange(){ }
@@ -152,10 +141,6 @@ public class EntityCharacterBase : EntityBase
         }
     }
     
-    protected virtual void OnBattleStart()
-    {
-
-    }
     protected virtual void OnBattleFinish()
     {
         if (b_isSubEntity)

@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-public class SFXBase :PoolObjectMono<int> {
+public class SFXBase :CObjectPoolMono<int> {
     public const int I_SFXStopExternalDuration= 4;
     public int I_SourceID { get; private set; } = -1;
     protected float f_delayDuration { get; private set; }

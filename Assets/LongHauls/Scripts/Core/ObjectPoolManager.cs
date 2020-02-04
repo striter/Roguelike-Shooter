@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public interface IPoolObject<T>{
+public interface IObjectpool<T>{
     void OnPoolItemInit(T identity,Action<T,MonoBehaviour> OnRecycle);
 }
-public class PoolObjectMono<T> :MonoBehaviour,IPoolObject<T>
+public class CObjectPoolMono<T> :MonoBehaviour,IObjectpool<T>
 {
     public bool m_PoolItemInited { get; private set; }
     public T m_Identity { get; private set; }
@@ -23,6 +23,13 @@ public class PoolObjectMono<T> :MonoBehaviour,IPoolObject<T>
     private void OnDisable() { if (m_PoolItemInited) OnPoolItemDisable(); }
     protected virtual void OnPoolItemEnable() { }
     protected virtual void OnPoolItemDisable(){}
+
+    protected virtual void OnPoolItemAdd()
+    {
+    }
+    protected virtual void OnPoolItemRemove()
+    {
+    }
 }
 public class ObjectPoolManager
 {
@@ -34,7 +41,7 @@ public class ObjectPoolManager
         tf_PoolRegist = new GameObject("PoolRegist").transform;
     }
 }
-public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,IPoolObject<T>
+public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,IObjectpool<T>
 {
     class ItemPoolInfo
     {
@@ -106,13 +113,9 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,IPo
         ItemPoolInfo info = d_ItemInfos[identity];
         Y item;
         if (info.m_DeactiveQueue.Count > 0)
-        {
             item = info.m_DeactiveQueue.Dequeue();
-        }
         else
-        {
             item = info.NewItem(identity,SelfRecycle);
-        }
         info.m_ActiveList.Add(item);
         item.transform.SetParentResetTransform(toTrans == null ? tf_PoolSpawn : toTrans);
         item.transform.position = toPos;
@@ -161,49 +164,98 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,IPo
         d_ItemInfos.Clear();
     }
 }
-
-public class CSimplePool<T>
+#region Pool Component
+public class ObjectPoolSimpleComponent<T, Y> : ObjectPoolSimpleBase<T, Y> where Y : Component
 {
-    public Transform transform { get; private set; }
-    public T m_identity { get; private set; }
-    public CSimplePool()
+    Action<Y> OnCreateNewInit;
+    public ObjectPoolSimpleComponent(Transform poolTrans, string itemName, Action<Y> _OnCreateNewInit = null) : base(poolTrans, itemName)
     {
+        OnCreateNewInit = _OnCreateNewInit;
     }
-    public virtual void OnPoolInit(Transform _transform, T _identity)
+    protected override Y CreateNewItem(Transform instantiateTrans)
     {
-        transform = _transform;
-        m_identity = _identity;
-    }
-}
-public class ObjectPoolSimpleClass<T,Y>: ObjectPoolSimpleBase<T,Y> where Y:CSimplePool<T>,new()
-{
-    public ObjectPoolSimpleClass(Transform poolTrans, string itemName) : base(poolTrans, itemName)
-    {
-    }
-    protected override Y CreateNewItem(Transform instantiateTrans, T identity)
-    {
-        Y item = new Y();
-        item.OnPoolInit(instantiateTrans, identity);
+        Y item = instantiateTrans.GetComponent<Y>();
+        OnCreateNewInit?.Invoke(item);
         return item;
     }
     protected override Transform GetItemTransform(Y targetItem) => targetItem.transform;
 }
-
-public class ObjectPoolSimpleComponent<T,Y>:ObjectPoolSimpleBase<T,Y> where Y:Component
+#endregion
+#region Pool Class
+public class CSimplePoolObject<T>
 {
-    Action<Y> OnCreateNewInit;
-    public ObjectPoolSimpleComponent(Transform poolTrans, string itemName,Action<Y> _OnCreateNewInit=null):base(poolTrans,itemName)
+    public Transform transform { get; private set; }
+    public T m_identity { get; private set; }
+    public CSimplePoolObject()
     {
-        OnCreateNewInit = _OnCreateNewInit;
     }
-    protected override Y CreateNewItem(Transform instantiateTrans, T identity)
+    public virtual void OnPoolInit(Transform _transform)
     {
-        Y item= instantiateTrans.GetComponent<Y>(); 
-        OnCreateNewInit?.Invoke(item);
-        return item;
-    } 
-    protected override Transform GetItemTransform(Y targetItem)=>targetItem.transform;
+        transform = _transform;
+    }
+    public virtual void OnPoolAdd(T _identity)
+    {
+        m_identity = _identity;
+    }
+    public virtual void OnPoolRemove()
+    {
+
+    }
 }
+public class ObjectPoolSimpleClass<T,Y>: ObjectPoolSimpleBase<T,Y> where Y:CSimplePoolObject<T>,new()
+{
+    public ObjectPoolSimpleClass(Transform poolTrans, string itemName) : base(poolTrans, itemName)
+    {
+    }
+    protected override Y CreateNewItem(Transform instantiateTrans)
+    {
+        Y item = new Y();
+        item.OnPoolInit(instantiateTrans);
+        return item;
+    }
+    protected override Transform GetItemTransform(Y targetItem) => targetItem.transform;
+}
+#endregion
+#region Pool Monobehaviour
+public class CSimplePoolObjectMono<T>:MonoBehaviour
+{
+    public bool m_PoolInited = false;
+    public virtual void OnPoolInit()
+    {
+        m_PoolInited = true;
+    }
+    public virtual void OnPoolAdd(T identity)
+    {
+    }
+    public virtual void OnPoolRemove()
+    {
+    }
+}
+public class ObjectPoolSimpleMono<T, Y> : ObjectPoolSimpleBase<T, Y> where Y : CSimplePoolObjectMono<T>
+{
+    public ObjectPoolSimpleMono(Transform poolTrans, string itemName) : base(poolTrans, itemName)
+    {
+    }
+    protected override Y CreateNewItem(Transform instantiateTrans)
+    {
+        Y item = instantiateTrans.GetComponent<Y>();
+        item.OnPoolInit();
+        return item;
+    }
+    public override Y AddItem(T identity)
+    {
+        Y item = base.AddItem(identity);
+        item.OnPoolAdd(identity);
+        return item;
+    }
+    public override void RemoveItem(T identity)
+    {
+        GetItem(identity).OnPoolRemove();
+        base.RemoveItem(identity);
+    }
+    protected override Transform GetItemTransform(Y targetItem) => targetItem.transform;
+}
+#endregion
 public class ObjectPoolSimpleBase<T, Y>
 {
     public Transform transform { get; private set; }
@@ -217,9 +269,16 @@ public class ObjectPoolSimpleBase<T, Y>
         m_PoolItem = poolTrans.Find(itemName).gameObject;
         m_PoolItem.gameObject.SetActive(false);
     }
+    public Y GetOrAddItem(T identity)
+    {
+        if (ContainsItem(identity))
+            return GetItem(identity);
+        return AddItem(identity);
+    }
     public bool ContainsItem(T identity) => m_ActiveItemDic.ContainsKey(identity);
     public Y GetItem(T identity) => m_ActiveItemDic[identity];
-    public Y AddItem(T identity)
+
+    public virtual Y AddItem(T identity)
     {
         Y targetItem;
         if (m_InactiveItemList.Count > 0)
@@ -229,19 +288,13 @@ public class ObjectPoolSimpleBase<T, Y>
         }
         else
         {
-            targetItem = CreateNewItem(UnityEngine.Object.Instantiate(m_PoolItem, transform).transform, identity);
+            targetItem = CreateNewItem(UnityEngine.Object.Instantiate(m_PoolItem, transform).transform);
         }
         if (m_ActiveItemDic.ContainsKey(identity)) Debug.LogWarning(identity + "Already Exists In Grid Dic");
         else m_ActiveItemDic.Add(identity, targetItem);
         GetItemTransform(targetItem).name = identity.ToString();
         GetItemTransform(targetItem).SetActivate(true);
         return targetItem;
-    }
-    public Y GetOrAddItem(T identity)
-    {
-        if (m_ActiveItemDic.ContainsKey(identity))
-            return m_ActiveItemDic[identity];
-        return AddItem(identity);
     }
 
     public virtual void RemoveItem(T identity)
@@ -250,16 +303,10 @@ public class ObjectPoolSimpleBase<T, Y>
         GetItemTransform(m_ActiveItemDic[identity]).SetActivate(false);
         m_ActiveItemDic.Remove(identity);
     }
-    public virtual void ClearPool()
-    {
-        foreach (Y target in m_ActiveItemDic.Values)
-        {
-            GetItemTransform(target).SetActivate(false);
-            m_InactiveItemList.Add(target);
-        }
-        m_ActiveItemDic.Clear();
-    }
-    protected virtual Y CreateNewItem(Transform instantiateTrans, T identity)
+
+    public void ClearPool()=>m_ActiveItemDic.Traversal(RemoveItem,true);
+
+    protected virtual Y CreateNewItem(Transform instantiateTrans)
     {
         Debug.LogError("Override This Please");
         return default(Y);

@@ -32,14 +32,14 @@ public class UIT_MobileConsole : SimpleSingletonMono<UIT_MobileConsole> {
         public KeyCode keyCode;
         public static CommandBinding Create(string _title,string _defaultValue, KeyCode _keyCode, Action<string> _command) => new CommandBinding() { title = _title, command = _command, defaultValue = _defaultValue, keyCode = _keyCode };
     }
-    class ConsoleCommand : CSimplePool<int>
+    class ConsoleCommand : CSimplePoolObject<int>
     {
         Action<string> OnCommand;
         InputField inputField;
         KeyCode m_keyCode;
-        public override void OnPoolInit(Transform _transform, int _identity)
+        public override void OnPoolInit(Transform _transform)
         {
-            base.OnPoolInit(_transform, _identity);
+            base.OnPoolInit(_transform);
             inputField = transform.Find("InputField").GetComponent<InputField>();
             transform.Find("Button").GetComponent<Button>().onClick.AddListener(OnButtonClick);
         }

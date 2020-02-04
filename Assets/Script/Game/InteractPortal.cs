@@ -19,22 +19,22 @@ public class InteractPortal : InteractGameBase {
     }
     private void OnEnable()
     {
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnFinalBattleStart, OnBattleStart);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnFinalBattleFinish, OnBattleFinish);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnFinalBattleStart, OnFinalBattleStart);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnFinalBattleFinish, OnFinalBattleFinish);
     }
     private void OnDisable()
     {
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnFinalBattleStart, OnBattleStart);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnFinalBattleFinish, OnBattleFinish);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnFinalBattleStart, OnFinalBattleStart);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnFinalBattleFinish, OnFinalBattleFinish);
     }
 
-    void OnBattleStart()
+    void OnFinalBattleStart()
     {
         SetInteractable(false);
         m_Particles.Stop();
     }
 
-    void OnBattleFinish()
+    void OnFinalBattleFinish()
     {
         SetInteractable(true);
         m_Particles.Play();

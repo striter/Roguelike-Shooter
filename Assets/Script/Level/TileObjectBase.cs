@@ -5,7 +5,7 @@ using LevelSetting;
 using TTiles;
 using UnityEngine;
 
-public class TileObjectBase : TileItemBase,IPoolObject<enum_TileObjectType> {
+public class TileObjectBase : TileItemBase,IObjectpool<enum_TileObjectType> {
     public enum_TileObjectType m_ObjectType= enum_TileObjectType.Invalid;
     public override enum_TileSubType m_Type => enum_TileSubType.Object;
     Action<enum_TileObjectType, MonoBehaviour> OnRecycle;

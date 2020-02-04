@@ -56,7 +56,7 @@ public class LevelChunkBase : MonoBehaviour
     }
 
 
-    public virtual ChunkGameData InitGameChunk(ChunkGenerateData data, System.Random random)
+    public virtual ChunkGameGenerateData InitGameChunk(ChunkGenerateData data, System.Random random)
     {
         Dictionary<enum_TileObjectType, List<ChunkGameObjectData>> m_ChunkObjectPos = new Dictionary<enum_TileObjectType, List<ChunkGameObjectData>>();
         Dictionary<ChunkGameObjectData, enum_ChunkConnectionType> m_ChunkConnections = new Dictionary<ChunkGameObjectData, enum_ChunkConnectionType>();
@@ -84,7 +84,7 @@ public class LevelChunkBase : MonoBehaviour
 
         Vector3 origin = data.m_Axis.ToPosition();
         transform.localPosition = origin;
-        return new ChunkGameData(this,data.m_Data.Type, origin, data.m_Data.m_Size, m_ChunkObjectPos, m_ChunkConnections);
+        return new ChunkGameGenerateData(this,data.m_Data.Type, origin, data.m_Data.m_Size, m_ChunkObjectPos, m_ChunkConnections);
     }
 
 

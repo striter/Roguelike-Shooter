@@ -38,9 +38,16 @@ public class EntityCharacterAI : EntityCharacterBase {
     {
         if (m_Animator!=null)
             m_Animator.OnActivate(E_AnimatorIndex);
-        m_Agent.enabled = true;
-        AIActivate();
         base.OnActivate(_flag,_spawnerID,startHealth);
+    }
+
+    public void OnAIActivate(float baseHealthMultiplier, float maxHealthMultiplier, SBuff difficultyBuff,bool inBattle)
+    {
+        m_CharacterInfo.AddBuff(-1, difficultyBuff);
+        m_Health.SetHealthMultiplier(maxHealthMultiplier);
+        m_Health.OnSetHealth(I_MaxHealth * baseHealthMultiplier, true);
+        m_Agent.enabled = true;
+        AIActivate(inBattle);
     }
 
     protected override void OnRevive()
@@ -65,7 +72,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         m_Agent.speed = m_CharacterInfo.F_MovementSpeed;
     }
 
-    Vector3 m_DamageImpact;
+    Vector3 m_Impact;
     protected override void OnAliveTick(float deltaTime)
     {
         base.OnAliveTick(deltaTime);
@@ -74,8 +81,8 @@ public class EntityCharacterAI : EntityCharacterBase {
             m_Animator.SetForward(m_Moving ? 1f:0f);
             m_Animator.SetPause(m_CharacterInfo.B_Effecting( enum_CharacterEffect.Freeze));
         }
-        m_DamageImpact = Vector3.Lerp(Vector3.zero, m_DamageImpact, Time.deltaTime * 20f);
-        if(m_DamageImpact.magnitude>.2f) transform.Translate(m_DamageImpact,Space.World);
+        m_Impact = Vector3.Lerp(Vector3.zero, m_Impact, Time.deltaTime * 20f);
+        if(m_Impact.magnitude>.2f) transform.Translate(m_Impact,Space.World);
         AISetSimulate(!m_CharacterInfo.B_Effecting( enum_CharacterEffect.Freeze));
         AITick(Time.deltaTime);
     }
@@ -89,14 +96,8 @@ public class EntityCharacterAI : EntityCharacterBase {
     protected override bool OnReceiveDamage(DamageInfo damageInfo, Vector3 damageDirection)
     {
         if (damageDirection != Vector3.zero)
-            m_DamageImpact += -damageDirection * GameConst.AI.F_AIDamageImpact * -damageInfo.m_AmountApply; 
+            m_Impact += -damageDirection * GameConst.AI.F_AIDamageImpact * -damageInfo.m_AmountApply; 
 
-        if (GameManager.Instance.CharacterExists(damageInfo.m_detail.I_SourceID))
-        {
-            EntityCharacterBase entity = GameManager.Instance.GetCharacter(damageInfo.m_detail.I_SourceID);
-            if(GameManager.Instance.EntityOpposite(this,entity))
-                OnReceiveTarget(entity,true);
-        }
         return base.OnReceiveDamage(damageInfo, damageDirection);
     }
 
@@ -126,9 +127,9 @@ public class EntityCharacterAI : EntityCharacterBase {
 
     public EntityCharacterBase m_Target { get; private set; }
     public bool m_AISimluating { get; private set; }
-    public bool m_Battling { get; private set; }
+    public bool m_AIBattling { get; private set; }
     public bool m_Moving => m_AgentEnabled && m_Agent.remainingDistance>.2f;
-    public bool m_IdlePatrol =>!m_Battling&& TCommon.GetXZDistance(m_SourcePosition,transform.position)<=GameConst.AI.F_AIPatrolRange;
+    public bool m_IdlePatrol =>!m_AIBattling&& TCommon.GetXZDistance(m_SourcePosition,transform.position)<=GameConst.AI.F_AIPatrolRange;
     public bool m_AgentEnabled
     {
         get
@@ -148,17 +149,17 @@ public class EntityCharacterAI : EntityCharacterBase {
         m_Agent.stoppingDistance = 0f;
     }
 
-    public void AIActivate()
+    public void AIActivate(bool inBattle)
     {
         m_AgentEnabled = false;
         m_b_attacking = false;
-        m_Battling = false;
         m_MoveTimer.SetTimer(0);
         m_BattleDurationTimer.SetTimer(0);
         m_BattleFireTimer.SetTimer(0);
         m_MoveOrderTimer.SetTimer(0);
         m_TargetingTimer.SetTimer(0);
         m_SourcePosition = transform.position;
+        m_AIBattling = inBattle;
         AISetSimulate(true);
     }
     public void AIDeactivate()
@@ -187,50 +188,34 @@ public class EntityCharacterAI : EntityCharacterBase {
             return;
         
         bool battling = BattleTargetCheck(deltaTime);
-        if (m_Battling != battling)
+        if (!battling)
         {
-            m_Battling = battling;
             if(m_b_attacking)
                 FinishAttack();
         }
 
-        if (!m_Battling)
+        if (!m_AIBattling)
             IdleTick(deltaTime);
         else
             BattleTick(deltaTime);
     }
-
-    void OnReceiveTarget(EntityCharacterBase target,bool indicateOthers)
-    {
-        if (m_Battling)
-            return;
-
-        m_Target = target;
-        if(indicateOthers)
-        GameManager.Instance.GetNearbyCharacters(this,true,false,GameConst.AI.F_AITargetIndicateRange).Traversal((EntityCharacterBase character)=> {
-            if (character.m_ControllType == enum_EntityController.AI)
-                (character as EntityCharacterAI).OnReceiveTarget(m_Target,false);
-        });
-
-    }
-
+    
     bool BattleTargetCheck(float deltaTime)
     {
         m_TargetingTimer.Tick(deltaTime);
         if (m_TargetingTimer.m_Timing)
-            return m_Target;
+            return true;
 
-        if (!m_Battling)
+        if (!m_AIBattling)
         {
-            m_Target = GameManager.Instance.GetNeariesCharacter(this, m_Weapon.B_TargetAlly, false, GameConst.AI.F_AIIdleTargetDistance, p => Mathf.Abs(TCommon.GetAngle(TCommon.GetXZLookDirection(transform.position, p.transform.position), transform.forward, Vector3.up)) < GameConst.AI.F_AIIdleTargetAngle);
+            m_Target = null;
             m_TargetingTimer.SetTimer(GameConst.AI.F_AITargetCheckParam);
+            return false;
         }
-        else
-        {
-            m_Target = GameManager.Instance.GetNeariesCharacter(this, m_Weapon.B_TargetAlly, false, GameConst.AI.F_AIBattleTargetDistance);
-            m_TargetingTimer.SetTimer(m_Target ? GameConst.AI.F_AIReTargetCheckParam : GameConst.AI.F_AITargetCheckParam);
-        }
-        return m_Target;
+
+        m_Target = GameManager.Instance.GetNeariesCharacter(this, m_Weapon.B_TargetAlly, false);
+        m_TargetingTimer.SetTimer(m_Target ? GameConst.AI.F_AIReTargetCheckParam : GameConst.AI.F_AITargetCheckParam);
+        return true;
     }
     
 

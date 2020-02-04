@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InteractGameBase : InteractBase,IPoolObject<enum_Interaction> {
+public class InteractGameBase : InteractBase,IObjectpool<enum_Interaction> {
 
     protected virtual bool B_SelfRecycleOnInteract => false;
     public AudioClip AC_OnPlay, AC_OnInteract;

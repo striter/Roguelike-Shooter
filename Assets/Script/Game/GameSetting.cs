@@ -28,23 +28,27 @@ namespace GameSetting
         public const float F_AimAssistDistance = 100f;
         public const short I_BoltLastTimeAfterHit = 5;
         
-        public const int I_BurstFirePelletsOnceTrigger = 3;       //Times While Burst Fire //似乎已经没用？
-
         public const float F_PlayerAutoAimRangeBase = 16f; //自动锁定敌人范围
         public const int I_PlayerEquipmentCount = 5;
         public const float F_PlayerDamageAdjustmentRange = .1f;
         public const int I_PlayerRotationSmoothParam = 10;     //Camera Smooth Param For Player 10 is suggested
 
+        public const int I_PlayerReviveBuffIndex = 40004;
+        public static readonly RangeInt RI_GameFinalBattleEnermySpawnCheck = new RangeInt(10, 5);
+
+        public static readonly List<EliteBuffCombine> L_GameEliteBuff = new List<EliteBuffCombine>() { new EliteBuffCombine(2010, 12010, 32010), new EliteBuffCombine(2020, 12020, 32020), new EliteBuffCombine(2030, 12030, 32030), new EliteBuffCombine(2040, 12040, 32040), new EliteBuffCombine(2050, 12050, 32050), new EliteBuffCombine(2060, 12060, 32060) };
+        public static readonly RangeInt RI_EliteBuffTimerAbove = new RangeInt(2, 2), RI_EliteBuffTimerBelow = new RangeInt(2, 2);
+        public const float F_EliteBuffTimerDivideEHPScale = .3f;
+
+        public static readonly Dictionary<enum_CampFarmItemStatus, int> DP_FarmGeneratePercentage = new Dictionary<enum_CampFarmItemStatus, int>() { { enum_CampFarmItemStatus.Progress1, 60 }, { enum_CampFarmItemStatus.Progress2, 30 }, { enum_CampFarmItemStatus.Progress3, 6 }, { enum_CampFarmItemStatus.Progress4, 3 }, { enum_CampFarmItemStatus.Progress5, 1 } };   //Farm生成等级百分比
+        public static readonly Dictionary<enum_CampFarmItemStatus, float> GetFarmCreditPerSecond = new Dictionary<enum_CampFarmItemStatus, float> { { enum_CampFarmItemStatus.Progress1, .1f / 60f }, { enum_CampFarmItemStatus.Progress2, .2f / 60f }, { enum_CampFarmItemStatus.Progress3, .3f / 60f }, { enum_CampFarmItemStatus.Progress4, .5f / 60f }, { enum_CampFarmItemStatus.Progress5, 1f / 60f } };      //Farm 等级,每秒Credit
+
         public static class AI
         {
             public const float F_AIShowDistance = 30f;
-            public const float F_AIIdleTargetDistance = 12;
-            public const int F_AIIdleTargetAngle = 60;
             public static readonly float F_AIPatrolRange = 5f; //AI idle巡逻范围
             public static readonly RangeFloat RF_AIPatrolDuration = new RangeFloat(1f, 3f); //AI idle巡逻时间
-            public const float F_AITargetIndicateRange = 5f;  
             public const float F_AIMovementCheckParam = .3f; //AI检查玩家频率
-            public const float F_AIBattleTargetDistance = 30; //必须和F_AIShowDistance相同，否则出现打了一半消失的bug
             public const float F_AITargetCheckParam = .5f;      //AI Target Duration .5f is Suggested
             public const float F_AIReTargetCheckParam = 3f;       //AI Retarget Duration,3f is suggested
             public const float F_AITargetCalculationParam = .5f;       //AI Target Param Calculation Duration, 1 is suggested;
@@ -87,14 +91,12 @@ namespace GameSetting
         public static int GetAIWeaponIndex(int entityIndex, int weaponIndex = 0, int subWeaponIndex = 0) => entityIndex * 100 + weaponIndex * 10 + subWeaponIndex;
         public static int GetWeaponSubIndex(int weaponIndex) => weaponIndex + 1;
 
-        public const int I_PlayerReviveBuffIndex = 40004;
 
         public static float F_PlayerSensitive(int sensitiveTap) => sensitiveTap / 5f;
         public static float F_GameVFXVolume(int vfxVolumeTap) => vfxVolumeTap / 10f;
         public static float F_GameMusicVolume(int musicVolumeTap) => musicVolumeTap / 10f;
 
         public static Vector3 V3_TileAxisOffset(TileAxis axis) => new Vector3(axis.X * GameConst.F_LevelTileSize, 0, axis.Y * GameConst.F_LevelTileSize);
-        public static float F_BigmapYaw(Vector3 direction) => TCommon.GetAngle(direction, Vector3.forward, Vector3.up);         //Used For Bigmap Direction
         public static bool B_ShowHitMark(enum_HitCheck check) => check != enum_HitCheck.Invalid;
 
         public static float F_SphereCastDamageReduction(float weaponDamage, float distance, float radius) => weaponDamage * (1 - (distance / radius));       //Rocket Blast Damage
@@ -178,12 +180,6 @@ namespace GameSetting
             }
         }
 
-        public static readonly List<EliteBuffCombine> GetEliteBuff = new List<EliteBuffCombine>() { new EliteBuffCombine(2010,12010, 32010), new EliteBuffCombine(2020, 12020, 32020), new EliteBuffCombine(2030, 12030, 32030), new EliteBuffCombine(2040, 12040, 32040), new EliteBuffCombine(2050, 12050, 32050), new EliteBuffCombine(2060, 12060, 32060) };
-        static readonly RangeInt buffTimerAbove=new RangeInt(2,2),buffTimerBelow=new RangeInt(2,2);
-        public static int GetEliteBuffTimer(float ehpScale) => ehpScale > .3f ? buffTimerAbove.Random() : buffTimerBelow.Random();
-
-        public static readonly Dictionary<enum_CampFarmItemStatus, int> GetFarmGeneratePercentage = new Dictionary< enum_CampFarmItemStatus,int>() { {  enum_CampFarmItemStatus.Progress1 ,60},{enum_CampFarmItemStatus.Progress2 ,30},{enum_CampFarmItemStatus.Progress3 ,6},{enum_CampFarmItemStatus.Progress4,3},{ enum_CampFarmItemStatus.Progress5,1} };   //Farm生成等级百分比
-        public static readonly Dictionary<enum_CampFarmItemStatus, float> GetFarmCreditPerSecond = new Dictionary<enum_CampFarmItemStatus, float> { { enum_CampFarmItemStatus.Progress1, .1f / 60f}, { enum_CampFarmItemStatus.Progress2, .2f / 60f }, { enum_CampFarmItemStatus.Progress3, .3f / 60f }, { enum_CampFarmItemStatus.Progress4, .5f / 60f }, { enum_CampFarmItemStatus.Progress5,1f / 60f } };      //Farm 等级,每秒Credit
         public static bool CanGenerateprofit(this enum_CampFarmItemStatus status)
         {
             switch(status)
@@ -196,6 +192,20 @@ namespace GameSetting
                 case enum_CampFarmItemStatus.Progress5:
                     return true;
             }
+        }
+
+        public static List<int> GetEnermyIDList(this SEnermyGenerate enermyGenerate,Dictionary<enum_EnermyType,List<int>> m_EnermyIDs,System.Random random)
+        {
+            List<int> enermyID = new List<int>();
+            for (int i = 0; i < enermyGenerate.m_FighterCount; i++)
+                enermyID.Add(m_EnermyIDs[enum_EnermyType.Fighter].RandomItem(random));
+            for (int i = 0; i < enermyGenerate.m_ShooterRCount; i++)
+                enermyID.Add(m_EnermyIDs[enum_EnermyType.Shooter_Rookie].RandomItem(random));
+            for (int i = 0; i < enermyGenerate.m_ShooterVCount; i++)
+                enermyID.Add(m_EnermyIDs[enum_EnermyType.Shooter_Veteran].RandomItem(random));
+            for (int i = 0; i < enermyGenerate.m_CasterCount; i++)
+                enermyID.Add(m_EnermyIDs[enum_EnermyType.AOECaster].RandomItem(random));
+            return enermyID;
         }
     }
 
@@ -375,6 +385,8 @@ namespace GameSetting
         OnCharacterDead,
         OnCharacterRevive,
         
+        OnBattleStart,
+        OnBattleFinish,
         OnFinalBattleStart,
         OnFinalBattleFinish,
 
@@ -938,6 +950,19 @@ namespace GameSetting
 
     #region Class
     #region GameBase
+    public class GameChunkBattle
+    {
+        public int m_Index { get; private set; }
+        public List<int> m_BattleTriggers { get; private set; } = new List<int>();
+        public List<int> m_BattleEnermyCommands { get; private set; } = new List<int>();
+        public bool m_IsFinal { get; private set; }
+        public GameChunkBattle(int chunkIndex,bool isFinal)
+        {
+            m_Index = chunkIndex;
+            m_IsFinal = isFinal;
+        }
+    }
+    
     public class HealthBase
     {
         public float m_CurrentHealth { get; private set; }

@@ -64,7 +64,7 @@ namespace LevelSetting
         REventArea3x3 = 55,
         REnermySpawn1x1=56,
         REliteEnermySpawn1x1=57,
-        REliteTrigger1x1=58,
+        RBattleTrigger1x1=58,
         RestrictEnd,
     }
 
@@ -194,7 +194,7 @@ namespace LevelSetting
                     restrictionDic.Add(enum_TileObjectType.RConnection1x5, 1);
                     restrictionDic.Add(enum_TileObjectType.RStagePortal2x2, 1);
                     restrictionDic.Add(enum_TileObjectType.REliteEnermySpawn1x1,1);
-                    restrictionDic.Add(enum_TileObjectType.REliteTrigger1x1, -1);
+                    restrictionDic.Add(enum_TileObjectType.RBattleTrigger1x1, -1);
                     restrictionDic.Add(enum_TileObjectType.REnermySpawn1x1, -1);
                     break;
             }
@@ -202,7 +202,7 @@ namespace LevelSetting
         }
     }
 
-    public struct ChunkGameData
+    public struct ChunkGameGenerateData
     {
         public LevelChunkBase m_ChunkBase { get; private set; }
         public Vector3 m_ChunkOrigin { get; private set; }
@@ -211,7 +211,7 @@ namespace LevelSetting
         public enum_ChunkType m_ChunkType { get; private set; }
         public Dictionary<enum_TileObjectType,  List<ChunkGameObjectData>> m_LocalChunkObjects { get; private set; }
         public Dictionary<ChunkGameObjectData,enum_ChunkConnectionType> m_LocalChunkConnections { get; private set; }
-        public ChunkGameData(LevelChunkBase chunkbase, enum_ChunkType _chunkType,Vector3 _origin,TileAxis _size, Dictionary<enum_TileObjectType, List<ChunkGameObjectData>> _chunkObjects, Dictionary<ChunkGameObjectData, enum_ChunkConnectionType> _connections)
+        public ChunkGameGenerateData(LevelChunkBase chunkbase, enum_ChunkType _chunkType,Vector3 _origin,TileAxis _size, Dictionary<enum_TileObjectType, List<ChunkGameObjectData>> _chunkObjects, Dictionary<ChunkGameObjectData, enum_ChunkConnectionType> _connections)
         {
             m_ChunkBase = chunkbase;
             m_ChunkOrigin = _origin;

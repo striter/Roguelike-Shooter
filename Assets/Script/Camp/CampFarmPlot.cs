@@ -33,7 +33,7 @@ public class CampFarmPlot : MonoBehaviour {
             return;
 
         m_profitStamp = stampNow;
-        m_StampCheck = stampNow +  Mathf.RoundToInt(GameConst.F_CampFarmItemTickAmount / GameExpression.GetFarmCreditPerSecond[m_Status]);
+        m_StampCheck = stampNow +  Mathf.RoundToInt(GameConst.F_CampFarmItemTickAmount / GameConst.GetFarmCreditPerSecond[m_Status]);
     }
 
     public float TickProfit(int stampNow)
@@ -97,7 +97,7 @@ public class CampFarmPlot : MonoBehaviour {
         int profitBegin = previousStamp < m_StartStamp ? m_StartStamp : previousStamp;
         int profitEnd = decayed ? m_StartStamp + GameConst.I_CampFarmDecayDuration : stampNow;
         int profitStampOffset = profitEnd - profitBegin;
-        float profit = profitStampOffset * GameExpression.GetFarmCreditPerSecond[m_Status];
+        float profit = profitStampOffset * GameConst.GetFarmCreditPerSecond[m_Status];
         if (decayed)
         {
             ResetPlotStatus(enum_CampFarmItemStatus.Decayed, showDecayAnim);
