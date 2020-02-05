@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
 [RequireComponent(typeof(EntityDetector))]
-public class GamePlayerTrigger : CSimplePoolObjectMono<int> {
+public class GamePlayerTrigger :CSimplePoolObjectMono<int> {
     public int m_DetectIndex { get; private set; } = -1;
     public bool m_Entered { get; private set; } = false;
     Action<int> OnChunkEnter;
     public override void OnPoolInit()
     {
+        base.OnPoolInit();
         GetComponent<EntityDetector>().Init(OnEntityDetect);
     }
 

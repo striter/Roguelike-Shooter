@@ -7,12 +7,12 @@ using UnityEngine.UI;
 public class UIT_GridControllerMono<T>  where T : Component
 {
     public Transform transform { get; private set; }
-    protected ObjectPoolSimpleComponent<int,T> m_Pool { get; private set; }
+    protected ObjectPoolListComponent<int,T> m_Pool { get; private set; }
     public int I_Count => m_Pool.m_ActiveItemDic.Count;
     public UIT_GridControllerMono(Transform _transform) 
     {
         transform = _transform;
-        m_Pool = new ObjectPoolSimpleComponent<int,T>(_transform,"GridItem", InitItem);
+        m_Pool = new ObjectPoolListComponent<int,T>(_transform,"GridItem", InitItem);
     }
     public virtual T AddItem(int identity)
     {

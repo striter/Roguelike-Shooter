@@ -7,14 +7,12 @@ using System;
 public class GameEnermyCommander : CSimplePoolObjectMono<int> {
     public bool m_Playing { get; private set; } = false;
     public bool m_Battling { get; private set; } = false;
-    EntityCharacterAI m_Entity;
-    Transform m_LocalPlayer;
     int m_EntityID;
+    EntityCharacterAI m_Entity;
     float m_EntityHealth=0;
-    int m_ChunkID;
-    public void Play(int chunkID, int entityID,Transform localPlayer)
+    Transform m_LocalPlayer;
+    public void Play(int entityID,Transform localPlayer)
     {
-        m_ChunkID = chunkID;
         m_EntityID = entityID;
         m_LocalPlayer = localPlayer;
         m_Playing = true;

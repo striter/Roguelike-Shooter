@@ -74,7 +74,21 @@ public class LevelChunkData : ScriptableObject {
         Color[] colors = new Color[m_Width*m_Height];
         for (int i = 0; i < m_Width; i++)
             for (int j = 0; j < m_Height; j++)
-                colors[TileTools.Get1DAxisIndex(new TileAxis(i, j),m_Width)]= m_TileData[TileTools.Get1DAxisIndex(new TileAxis( i, j), m_Width)].m_GroundType == enum_TileGroundType.Invalid ? Color.black : Color.white;
+            {
+                switch (m_TileData[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)].m_GroundType)
+                {
+                    default:
+                        colors[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)] =  Color.white;
+                        break;
+                    case enum_TileGroundType.Invalid:
+                        colors[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)] = Color.black;
+                        break;
+                    case enum_TileGroundType.Block:
+                        colors[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)] = Color.grey;
+                        break;
+                }
+                
+            }
         for (int i = 0; i < m_Width; i++)
             for (int j = 0; j < m_Height; j++)
             {
@@ -100,7 +114,7 @@ public class LevelChunkData : ScriptableObject {
                     case enum_TileObjectType.REventArea3x3:
                         tileColor = Color.yellow;
                         break;
-                    case enum_TileObjectType.RBattleTrigger1x1:
+                    case enum_TileObjectType.RFinalBattleTrigger1x1:
                         tileColor = Color.magenta;
                         break;
                     case enum_TileObjectType.REliteEnermySpawn1x1:

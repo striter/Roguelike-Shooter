@@ -10,7 +10,7 @@ public class UIT_MobileConsole : SimpleSingletonMono<UIT_MobileConsole> {
     public int LogExistCount = 10;
     public int LogSaveCount = 30;
     Text m_LogText, m_FrameText;
-    ObjectPoolSimpleClass<int, ConsoleCommand> m_ConsoleCommands;
+    ObjectPoolListClass<int, ConsoleCommand> m_ConsoleCommands;
     Action<bool> OnConsoleShow;
     protected override void Awake()
     {
@@ -20,7 +20,7 @@ public class UIT_MobileConsole : SimpleSingletonMono<UIT_MobileConsole> {
         m_FrameText = transform.Find("Frame").GetComponent<Text>();
 
         Transform tf_ConsoleCommand = transform.Find("ConsoleCommand");
-        m_ConsoleCommands = new ObjectPoolSimpleClass<int, ConsoleCommand>(tf_ConsoleCommand, "GridItem");
+        m_ConsoleCommands = new ObjectPoolListClass<int, ConsoleCommand>(tf_ConsoleCommand, "GridItem");
         m_ConsoleCommands.transform.SetActivate(false);
     }
 

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TTiles;
 using UnityEngine;
 namespace LevelSetting
@@ -10,6 +11,7 @@ namespace LevelSetting
         Event,
         Battle,
         Final,
+        Connection,
     }
     
     public enum enum_TileSubType
@@ -32,6 +34,7 @@ namespace LevelSetting
         Road4 = 7,
         Bridge =8,
         Dangerzone = 9,
+        Block,
     }
 
     public enum enum_TileObjectType
@@ -64,7 +67,7 @@ namespace LevelSetting
         REventArea3x3 = 55,
         REnermySpawn1x1=56,
         REliteEnermySpawn1x1=57,
-        RBattleTrigger1x1=58,
+        RFinalBattleTrigger1x1=58,
         RestrictEnd,
     }
 
@@ -73,14 +76,7 @@ namespace LevelSetting
         Invalid=-1,
         Default=1,
     }
-
-    public enum enum_ChunkConnectionType
-    {
-        Invalid=-1,
-        Empty=0,
-        Export=1,
-        Entrance=2,
-    }
+    
     
     public static class LevelConst
     {
@@ -189,39 +185,23 @@ namespace LevelSetting
                 case enum_ChunkType.Battle:
                     restrictionDic.Add(enum_TileObjectType.RConnection1x5, -1);
                     restrictionDic.Add( enum_TileObjectType.REnermySpawn1x1,-1);
-                    restrictionDic.Add(enum_TileObjectType.RBattleTrigger1x1, -1);
+                    restrictionDic.Add(enum_TileObjectType.RFinalBattleTrigger1x1, -1);
                     break;
                 case enum_ChunkType.Final:
                     restrictionDic.Add(enum_TileObjectType.RConnection1x5, 1);
                     restrictionDic.Add(enum_TileObjectType.RStagePortal2x2, 1);
                     restrictionDic.Add(enum_TileObjectType.REliteEnermySpawn1x1,1);
-                    restrictionDic.Add(enum_TileObjectType.RBattleTrigger1x1, -1);
+                    restrictionDic.Add(enum_TileObjectType.RFinalBattleTrigger1x1, -1);
                     restrictionDic.Add(enum_TileObjectType.REnermySpawn1x1, -1);
+                    break;
+                case enum_ChunkType.Connection:
+                    restrictionDic.Add(enum_TileObjectType.RConnection1x5, 2);
                     break;
             }
             return restrictionDic;
         }
     }
-
-    public struct ChunkGameGenerateData
-    {
-        public LevelChunkBase m_ChunkBase { get; private set; }
-        public Vector3 m_ChunkOrigin { get; private set; }
-        public Vector3 GetObjectWorldPosition(Vector3 localPosition) => m_ChunkOrigin + localPosition+Vector3.up*LevelConst.I_TileSize;
-        public Bounds m_ChunkBounds { get; private set; }
-        public enum_ChunkType m_ChunkType { get; private set; }
-        public Dictionary<enum_TileObjectType,  List<ChunkGameObjectData>> m_LocalChunkObjects { get; private set; }
-        public Dictionary<ChunkGameObjectData,enum_ChunkConnectionType> m_LocalChunkConnections { get; private set; }
-        public ChunkGameGenerateData(LevelChunkBase chunkbase, enum_ChunkType _chunkType,Vector3 _origin,TileAxis _size, Dictionary<enum_TileObjectType, List<ChunkGameObjectData>> _chunkObjects, Dictionary<ChunkGameObjectData, enum_ChunkConnectionType> _connections)
-        {
-            m_ChunkBase = chunkbase;
-            m_ChunkOrigin = _origin;
-            m_ChunkType = _chunkType;
-            m_LocalChunkObjects = _chunkObjects;
-            m_LocalChunkConnections = _connections;
-            m_ChunkBounds = new Bounds(_size.ToPosition()/2f + Vector3.up * LevelConst.I_TileSize, new Vector3(_size.X, 1, _size.Y) * LevelConst.I_TileSize);
-        }
-    }
+    
 
     public struct ChunkNavigationData
     {
@@ -234,42 +214,43 @@ namespace LevelSetting
         }
     }
 
-    public class ChunkGameObjectData
+    public struct ChunkGameObjectData
     {
-        public Vector3 m_LocalPosition { get; private set; }
-        public Quaternion Rotation { get; private set; }
-        public ChunkGameObjectData(Vector3 positon,Quaternion rotation)
+        public Vector3 pos { get; private set; }
+        public Quaternion rot { get; private set; }
+        public ChunkGameObjectData(Vector3 _pos,Quaternion _rot)
         {
-            m_LocalPosition = positon;
-            Rotation = rotation;
+            pos = _pos;
+            rot = _rot;
         }
     }
 
     public class ChunkGenerateData
     {
+        public int m_ChunkIndex { get; private set; }
         public TileAxis m_Axis { get; private set; }
         public LevelChunkData m_Data { get; private set; }
-        public Dictionary<int, enum_ChunkConnectionType> m_Connection { get; private set; }
-        public ChunkGenerateData(TileAxis _offset, LevelChunkData _data)
+        public int m_PreChunkIndex { get; private set; }
+        public int m_ChunkConnectPoint { get; private set; }
+        public int m_PreChunkConnectPoint { get; private set; }
+        public Dictionary<int, bool> m_ConnectPoint { get; private set; }
+        public ChunkGenerateData(int chunkIndex,TileAxis _offset, LevelChunkData _data)
         {
-            m_Axis = _offset;
+            m_ChunkIndex = chunkIndex;
+               m_Axis = _offset;
             m_Data = _data;
-            m_Connection = new Dictionary<int, enum_ChunkConnectionType>();
+            m_ConnectPoint = new Dictionary<int, bool>();
             for (int i = 0; i < _data.Connections.Length; i++)
-                m_Connection.Add(i, enum_ChunkConnectionType.Empty);
+                m_ConnectPoint.Add(i, false);
         }
 
-        public bool CheckEmptyConnections(System.Random random)
+        public bool HaveEmptyConnection() => m_ConnectPoint.Values.Any(p => !p);
+        public void SetPreConnectData(int connnectChunkIndex, int previousPointIndex,int currentPointIndex)
         {
-            bool haveEmptyConnections = false;
-            m_Connection.TraversalRandomBreak((int index, enum_ChunkConnectionType connectType) =>
-            {
-                haveEmptyConnections = connectType == enum_ChunkConnectionType.Empty;
-                return haveEmptyConnections;
-            }, random);
-            return haveEmptyConnections;
+            m_PreChunkIndex = connnectChunkIndex;
+            m_PreChunkConnectPoint = previousPointIndex;
+            m_ChunkConnectPoint = currentPointIndex;
         }
-
-        public void OnConnectionSet(int connectionIndex, enum_ChunkConnectionType type) => m_Connection[connectionIndex] = type;
+        public void OnConnectionSet(int connectionIndex) => m_ConnectPoint[connectionIndex] = true;
     }
 }

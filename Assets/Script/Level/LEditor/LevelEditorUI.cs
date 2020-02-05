@@ -9,11 +9,11 @@ public class LevelEditorUI : SimpleSingletonMono<LevelEditorUI>,TReflection.UI.I
     class TypeSelection:TReflection.UI.CPropertyFillElement
     {
         Text m_Text;
-        ObjectPoolSimpleComponent<int, Button> m_ChunkButton;
+        ObjectPoolListComponent<int, Button> m_ChunkButton;
         public TypeSelection(Transform transform):base(transform)
         {
             TReflection.UI.UIPropertyFill(this, transform);
-            m_ChunkButton = new ObjectPoolSimpleComponent<int, Button>(transform.Find("Grid"), "GridItem");
+            m_ChunkButton = new ObjectPoolListComponent<int, Button>(transform.Find("Grid"), "GridItem");
             transform.GetComponent<Button>().onClick.AddListener(() => {
                 m_ChunkButton.transform.SetActivate(!m_ChunkButton.transform.gameObject.activeSelf);
             });

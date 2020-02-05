@@ -61,7 +61,7 @@ namespace GameSetting
         public const int I_EnermySpawnDelay = 2;        //Enermy Spawn Delay Time 
         public const float F_EnermySpawnOffsetEach = .5f;       //Enermy Spawn Offset Each
 
-        public const float F_PickupAcceleration = 800f; //拾取物的飞行加速速度
+        public const float F_PickupAcceleration = 10f; //拾取物的飞行加速速度
         public const int I_HealthPickupAmount = 25;
         public const int I_ArmorPickupAmount = 25;
         public const int I_HealthTradeAmount = 50;
@@ -393,7 +393,7 @@ namespace GameSetting
         OnStageFinished,
 
         OnGameLoad,
-        OnGameStart,
+        OnGameBegin,
         OnGameFinish,
         OnGameExit,
 
@@ -2201,12 +2201,12 @@ namespace GameSetting
             }
         }
         public Transform transform { get; private set; }
-        ObjectPoolSimpleComponent<int,Transform> m_Grid;
+        ObjectPoolListComponent<int,Transform> m_Grid;
         Dictionary<int, RarityLevel> m_Levels = new Dictionary<int, RarityLevel>();
         public UIC_RarityLevel(Transform _transform)
         {
             transform = _transform;
-            m_Grid = new ObjectPoolSimpleComponent<int, Transform>(transform,"GridItem");
+            m_Grid = new ObjectPoolListComponent<int, Transform>(transform,"GridItem");
             m_Grid.ClearPool();
             TCommon.TraversalEnum((enum_EquipmentRarity rarity) => { m_Levels.Add((int)rarity,new RarityLevel( m_Grid.AddItem((int)rarity))); });
         }

@@ -52,10 +52,10 @@ public class GameManager : GameManagerBase
     public GameProgressManager m_GameLevel { get; private set; }
     public EntityCharacterPlayer m_LocalPlayer { get; private set; } = null;
     public Transform tf_Interacts { get; private set; } = null;
-
-    ObjectPoolSimpleMono<int, GamePlayerTrigger> m_ChunkEnterTriggers;
-    ObjectPoolSimpleMono<int, GamePlayerTrigger> m_BattleTriggers;
-    ObjectPoolSimpleMono<int, GameEnermyCommander> m_EnermyCommand;
+    Transform tf_PlayerStart;
+    ObjectPoolListMono<int, GamePlayerTrigger> m_ChunkEnterTriggers;
+    ObjectPoolListMono<int, GamePlayerTrigger> m_BattleTriggers;
+    ObjectPoolListMono<int, GameEnermyCommander> m_EnermyCommand;
 
     public override bool B_InGame => true;
     protected override void Awake()
@@ -71,10 +71,10 @@ public class GameManager : GameManagerBase
             GameDataManager.m_BattleData.m_GameSeed = M_TESTSEED;
         m_GameLevel =  new GameProgressManager(GameDataManager.m_GameData,GameDataManager.m_BattleData);
         tf_Interacts = transform.Find("Interacts");
-
-        m_ChunkEnterTriggers = new ObjectPoolSimpleMono<int, GamePlayerTrigger>(transform.Find("Triggers/ChunkTrigger"), "TriggerItem");
-        m_BattleTriggers = new ObjectPoolSimpleMono<int, GamePlayerTrigger>(transform.Find("Triggers/BattleTrigger"), "TriggerItem");
-        m_EnermyCommand = new ObjectPoolSimpleMono<int, GameEnermyCommander>(transform.Find("EnermyPool"), "EnermyItem");
+        tf_PlayerStart = transform.Find("PlayerStart");
+        m_ChunkEnterTriggers = new ObjectPoolListMono<int, GamePlayerTrigger>(transform.Find("Triggers/ChunkTrigger"), "TriggerItem");
+        m_BattleTriggers = new ObjectPoolListMono<int, GamePlayerTrigger>(transform.Find("Triggers/BattleTrigger"), "TriggerItem");
+        m_EnermyCommand = new ObjectPoolListMono<int, GameEnermyCommander>(transform.Find("EnermyPool"), "EnermyItem");
     }
     
 
@@ -96,8 +96,6 @@ public class GameManager : GameManagerBase
     {
         base.Start();
         AddConsoleBinddings();
-
-        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameStart);
         LoadStage();
     }
     public void OnExitGame()
@@ -118,15 +116,10 @@ public class GameManager : GameManagerBase
     IEnumerator DoLoadStage()     //PreInit Bigmap , Levels LocalPlayer Before  Start The game
     {
         LoadingManager.Instance.ShowLoading(m_GameLevel.m_GameStage);
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameLoad);
         yield return null;
         m_GameLevel.LoadStageData();
-        GameObjectManager.Clear();
-        GameObjectManager.PresetRegistCommonObject();
-        m_EnermyIDs = GameObjectManager.RegistStyledInGamePrefabs(m_GameLevel.m_GameStyle, m_GameLevel.m_GameStage);
-        yield return null;
-
         yield return GameLevelManager.Instance.Generate(m_GameLevel.m_GameStyle, m_GameLevel.m_GameSeed,m_GameLevel.m_GameRandom);
-
         GenerateGameRelatives();
         yield return null;
 
@@ -134,23 +127,24 @@ public class GameManager : GameManagerBase
         GC.Collect();
 
         yield return null;
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameBegin);
         LoadingManager.Instance.EndLoading();
         OnPortalExit(1f, m_LocalPlayer.tf_CameraAttach);
     }
 
     void GenerateGameRelatives()
     {
-        InitPostEffects(m_GameLevel.m_GameStyle);
-
         EntityDicReset();
-
-        ChunkGameGenerateData startChunk = GameLevelManager.Instance.m_GameChunks[0];
-
-        m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_BattleData,startChunk.GetObjectWorldPosition( startChunk.m_LocalChunkObjects[enum_TileObjectType.RPlayerSpawn1x1][0].m_LocalPosition), GameLevelManager.Instance.m_GameChunks[0].m_LocalChunkObjects[enum_TileObjectType.RPlayerSpawn1x1][0].Rotation);
-        AttachPlayerCamera(m_LocalPlayer.tf_CameraAttach);
+        GameObjectManager.Clear();
+        GameObjectManager.PresetRegistCommonObject();
+        m_EnermyIDs = GameObjectManager.RegistStyledInGamePrefabs(m_GameLevel.m_GameStyle, m_GameLevel.m_GameStage);
 
         GenerateChunkRelatives();
+        m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_BattleData, tf_PlayerStart.position, tf_PlayerStart.rotation);
+        AttachPlayerCamera(m_LocalPlayer.tf_CameraAttach);
         GenerateBattleRelatives();
+
+        InitPostEffects(m_GameLevel.m_GameStyle);
     }
 
     void OnStageFnished()
@@ -203,6 +197,40 @@ public class GameManager : GameManagerBase
     
     Vector3 GetPickupPosition(EntityCharacterBase dropper) => NavigationManager.NavMeshPosition(dropper.transform.position + TCommon.RandomXZSphere(1.5f));
     #endregion
+    #region SFXHitCheck
+    public static bool B_CanSFXHitTarget(HitCheckBase hitCheck, int sourceID)    //If Match Will Hit Target
+    {
+        bool canHit = hitCheck.I_AttacherID != sourceID;
+        if (hitCheck.m_HitCheckType == enum_HitCheck.Entity)    //Entity Special Check
+            return canHit && B_CanSFXHitEntity(hitCheck as HitCheckEntity, sourceID);
+        return canHit;
+    }
+
+    static bool B_CanSFXHitEntity(HitCheckEntity targetHitCheck, int sourceID)    //If Match Will Hit Entity
+    {
+        if (targetHitCheck.I_AttacherID == sourceID || targetHitCheck.m_Attacher.m_Flag == enum_EntityFlag.Neutal)
+            return false;
+        return !Instance.m_Entities.ContainsKey(sourceID) || targetHitCheck.m_Attacher.m_Flag != Instance.m_Entities[sourceID].m_Flag;
+    }
+   
+    public static bool B_CanSFXDamageEntity(HitCheckEntity hb, int sourceID)    //After Hit,If Match Target Hit Succeed
+    {
+        if (hb.I_AttacherID == sourceID || !Instance.m_Entities.ContainsKey(sourceID))
+            return false;
+
+        return hb.m_Attacher.m_Flag != Instance.GetEntity(sourceID).m_Flag;
+    }
+    #endregion
+    #region Revive Management
+    bool m_revived = false;
+    public void CheckRevive(Action _OnRevivePlayer)
+    {
+        if (m_revived)
+            return;
+        m_revived = true;
+        UIManager.Instance.ShowPage<UI_Revive>(true, 0f).Play(_OnRevivePlayer);
+    }
+    #endregion
     #region Entity Management
     Dictionary<int, EntityBase> m_Entities = new Dictionary<int, EntityBase>();
     Dictionary<int, EntityCharacterBase> m_Characters = new Dictionary<int, EntityCharacterBase>();
@@ -220,7 +248,7 @@ public class GameManager : GameManagerBase
     public bool CharacterExists(int entityID) => m_Characters.ContainsKey(entityID);
     public EntityCharacterBase GetCharacter(int entityID)
     {
-        if(!CharacterExists(entityID))
+        if (!CharacterExists(entityID))
             Debug.LogError("Character Not Exist in ID:" + entityID.ToString());
         return m_Characters[entityID];
     }
@@ -241,16 +269,16 @@ public class GameManager : GameManagerBase
             m_OppositeEntities[flag].Clear();
         });
     }
-    
+
     void OnEntiyActivate(EntityBase entity)
     {
         m_Entities.Add(entity.m_EntityID, entity);
-        if (entity.m_ControllType== enum_EntityController.None)
+        if (entity.m_ControllType == enum_EntityController.None)
             return;
         EntityCharacterBase character = entity as EntityCharacterBase;
         m_Characters.Add(character.m_EntityID, character);
         m_AllyEntities[entity.m_Flag].Add(character);
-        m_OppositeEntities.Traversal((enum_EntityFlag flag)=> {
+        m_OppositeEntities.Traversal((enum_EntityFlag flag) => {
             if (entity.m_Flag != enum_EntityFlag.Neutal && flag != entity.m_Flag)
                 m_OppositeEntities[flag].Add(character);
         });
@@ -292,13 +320,13 @@ public class GameManager : GameManagerBase
         }
     }
     RaycastHit[] m_Raycasts;
-    public bool EntityTargetable(EntityCharacterBase entity)=>!entity.m_CharacterInfo.B_Effecting(enum_CharacterEffect.Cloak) && !entity.m_IsDead;
+    public bool EntityTargetable(EntityCharacterBase entity) => !entity.m_CharacterInfo.B_Effecting(enum_CharacterEffect.Cloak) && !entity.m_IsDead;
     public bool EntityOpposite(EntityBase sourceEntity, EntityBase targetEntity) => sourceEntity.m_Flag != targetEntity.m_Flag;
-    public EntityCharacterBase GetNeariesCharacter(EntityCharacterBase sourceEntity,bool targetAlly,bool checkObstacle=true, float checkDistance=float.MaxValue,Predicate<EntityCharacterBase> predictMatch=null)
+    public EntityCharacterBase GetNeariesCharacter(EntityCharacterBase sourceEntity, bool targetAlly, bool checkObstacle = true, float checkDistance = float.MaxValue, Predicate<EntityCharacterBase> predictMatch = null)
     {
         EntityCharacterBase target = null;
         float f_nearestDistance = float.MaxValue;
-        List<EntityCharacterBase> entities = GetNearbyCharacters(sourceEntity, targetAlly,checkObstacle,checkDistance,predictMatch);
+        List<EntityCharacterBase> entities = GetNearbyCharacters(sourceEntity, targetAlly, checkObstacle, checkDistance, predictMatch);
         entities.Traversal((EntityCharacterBase character) =>
         {
             float distance = TCommon.GetXZDistance(sourceEntity.tf_Head.position, character.tf_Head.position);
@@ -356,41 +384,8 @@ public class GameManager : GameManagerBase
         return false;
     }
     #endregion
-    #region SFXHitCheck
-    public static bool B_CanSFXHitTarget(HitCheckBase hitCheck, int sourceID)    //If Match Will Hit Target
-    {
-        bool canHit = hitCheck.I_AttacherID != sourceID;
-        if (hitCheck.m_HitCheckType == enum_HitCheck.Entity)    //Entity Special Check
-            return canHit && B_CanSFXHitEntity(hitCheck as HitCheckEntity, sourceID);
-        return canHit;
-    }
-
-    static bool B_CanSFXHitEntity(HitCheckEntity targetHitCheck, int sourceID)    //If Match Will Hit Entity
-    {
-        if (targetHitCheck.I_AttacherID == sourceID || targetHitCheck.m_Attacher.m_Flag == enum_EntityFlag.Neutal)
-            return false;
-        return !Instance.m_Entities.ContainsKey(sourceID) || targetHitCheck.m_Attacher.m_Flag != Instance.m_Entities[sourceID].m_Flag;
-    }
-   
-    public static bool B_CanSFXDamageEntity(HitCheckEntity hb, int sourceID)    //After Hit,If Match Target Hit Succeed
-    {
-        if (hb.I_AttacherID == sourceID || !Instance.m_Entities.ContainsKey(sourceID))
-            return false;
-
-        return hb.m_Attacher.m_Flag != Instance.GetEntity(sourceID).m_Flag;
-    }
-    #endregion
-    #region Revive Management
-    bool m_revived = false;
-    public void CheckRevive(Action _OnRevivePlayer)
-    {
-        if (m_revived)
-            return;
-        m_revived = true;
-        UIManager.Instance.ShowPage<UI_Revive>(true, 0f).Play(_OnRevivePlayer);
-    }
-    #endregion
     #region Battle Relatives 
+    public Dictionary<enum_EnermyType, List<int>> m_EnermyIDs;
     public bool m_Battling=>m_BattleChunkIndex>0;
     int m_BattleChunkIndex;
     bool m_FinalBattling;
@@ -399,8 +394,7 @@ public class GameManager : GameManagerBase
     public Dictionary<int, GameChunkBattle> m_GameBattleData = new Dictionary<int, GameChunkBattle>();
 
     void GenerateBattleRelatives()
-    {
-        m_FinalBattling = false;
+    {        m_FinalBattling = false;
         m_BattleChunkIndex = -1;
         m_GameBattleData.Clear();
         m_BattleTriggers.ClearPool();
@@ -408,47 +402,47 @@ public class GameManager : GameManagerBase
 
         int enermyCommandIndex = 0;
         int battleTriggerIndex = 0;
-        GameLevelManager.Instance.m_GameChunks.Traversal((int chunkIndex,ChunkGameGenerateData chunkData) => {
+        GameLevelManager.Instance.m_GameChunks.Traversal((LevelChunkGame chunkData) => {
             bool isBattleChunk = chunkData.m_ChunkType == enum_ChunkType.Battle || chunkData.m_ChunkType == enum_ChunkType.Final;
             bool isFinalChunk = chunkData.m_ChunkType == enum_ChunkType.Final;
 
             if (!isBattleChunk)
                 return;
 
-            GameChunkBattle chunkBattleData =  new GameChunkBattle(chunkIndex, isFinalChunk);
-            m_GameBattleData.Add(chunkIndex,chunkBattleData);
-            chunkData.m_LocalChunkObjects[enum_TileObjectType.RBattleTrigger1x1].Traversal(( ChunkGameObjectData data) => {
+            GameChunkBattle chunkBattleData =  new GameChunkBattle(chunkData.m_chunkIndex, isFinalChunk);
+            m_GameBattleData.Add(chunkData.m_chunkIndex, chunkBattleData);
+            chunkData.m_ChunkObjects[enum_TileObjectType.RFinalBattleTrigger1x1].Traversal(( ChunkGameObjectData data) => {
                 GamePlayerTrigger trigger = m_BattleTriggers.AddItem(battleTriggerIndex);
-                trigger.transform.position = chunkData.GetObjectWorldPosition(data.m_LocalPosition);
-                trigger.transform.rotation = data.Rotation;
-                trigger.Play(chunkIndex, OnBattleTrigger);
+                trigger.transform.position = data.pos;
+                trigger.transform.rotation = data.rot;
+                trigger.Play(chunkData.m_chunkIndex, OnBattleTrigger);
                 chunkBattleData.m_BattleTriggers.Add(battleTriggerIndex);
                 battleTriggerIndex++;
             });
 
             if (isFinalChunk)
             {
-                ChunkGameObjectData objectData = chunkData.m_LocalChunkObjects[enum_TileObjectType .REliteEnermySpawn1x1].RandomItem(m_GameLevel.m_GameRandom);
+                ChunkGameObjectData objectData = chunkData.m_ChunkObjects[enum_TileObjectType .REliteEnermySpawn1x1].RandomItem(m_GameLevel.m_GameRandom);
                 GameEnermyCommander m_Command = m_EnermyCommand.AddItem(enermyCommandIndex);
-                m_Command.transform.position = NavigationManager.NavMeshPosition(chunkData.GetObjectWorldPosition(objectData.m_LocalPosition) + TCommon.RandomXZSphere(3f));
-                m_Command.transform.rotation = objectData.Rotation;
-                m_Command.Play(chunkIndex, m_EnermyIDs[enum_EnermyType.Elite].RandomItem(m_GameLevel.m_GameRandom), m_LocalPlayer.transform);
+                m_Command.transform.position = NavigationManager.NavMeshPosition(objectData.pos + TCommon.RandomXZSphere(3f));
+                m_Command.transform.rotation = objectData.rot;
+                m_Command.Play( m_EnermyIDs[enum_EnermyType.Elite].RandomItem(m_GameLevel.m_GameRandom), m_LocalPlayer.transform);
                 chunkBattleData.m_BattleEnermyCommands.Add(enermyCommandIndex);
                 enermyCommandIndex++;
 
-                chunkData.m_LocalChunkObjects[enum_TileObjectType.REnermySpawn1x1].Traversal((ChunkGameObjectData data) =>{
-                    m_FinalBattleGeneratePoints.Add(chunkData.GetObjectWorldPosition(data.m_LocalPosition));
+                chunkData.m_ChunkObjects[enum_TileObjectType.REnermySpawn1x1].Traversal((ChunkGameObjectData data) =>{
+                    m_FinalBattleGeneratePoints.Add(data.pos);
                 });
             }
             else
             {
                 m_GameLevel.m_EnermyGenerate[isFinalChunk].RandomItem(m_GameLevel.m_GameRandom).GetEnermyIDList(m_EnermyIDs,m_GameLevel.m_GameRandom).Traversal((int enermyID) =>
                 {
-                    ChunkGameObjectData objectData = chunkData.m_LocalChunkObjects[enum_TileObjectType.REnermySpawn1x1].RandomItem(m_GameLevel.m_GameRandom);
+                    ChunkGameObjectData objectData = chunkData.m_ChunkObjects[enum_TileObjectType.REnermySpawn1x1].RandomItem(m_GameLevel.m_GameRandom);
                     GameEnermyCommander m_Command = m_EnermyCommand.AddItem(enermyCommandIndex);
-                    m_Command.transform.position = NavigationManager.NavMeshPosition(chunkData.GetObjectWorldPosition(objectData.m_LocalPosition) + TCommon.RandomXZSphere(3f));
-                    m_Command.transform.rotation = objectData.Rotation;
-                    m_Command.Play( chunkIndex, enermyID, m_LocalPlayer.transform);
+                    m_Command.transform.position = NavigationManager.NavMeshPosition(objectData.pos + TCommon.RandomXZSphere(3f));
+                    m_Command.transform.rotation = objectData.rot;
+                    m_Command.Play(enermyID, m_LocalPlayer.transform);
                     chunkBattleData.m_BattleEnermyCommands.Add(enermyCommandIndex);
                     enermyCommandIndex++;
                 });
@@ -458,8 +452,7 @@ public class GameManager : GameManagerBase
 
     void GameBattleTick(float deltaTime)
     {
-            FinalBattleTick(deltaTime);
-
+        FinalBattleTick(deltaTime);
     }
 
     void OnBattleTrigger(int chunkID)
@@ -472,7 +465,7 @@ public class GameManager : GameManagerBase
             m_BattleTriggers.RemoveItem(triggerIndex);
         });
 
-        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleStart);
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleStart,chunkID);
         m_GameBattleData[m_BattleChunkIndex].m_BattleEnermyCommands.Traversal((int commandIndex) => {
             m_EnermyCommand.m_ActiveItemDic[commandIndex].DoBattle();
         });
@@ -510,6 +503,7 @@ public class GameManager : GameManagerBase
         m_TimerFinalBattle.SetTimer(GameConst.RI_GameFinalBattleEnermySpawnCheck.Random());
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnFinalBattleStart);
     }
+
     void OnFinalBattleFinish()
     {
         GetCharacters(enum_EntityFlag.Enermy, true).Traversal((EntityCharacterBase entity) => {
@@ -538,45 +532,40 @@ public class GameManager : GameManagerBase
     }
     #endregion
     #region Chunk Relative Management
-    public Dictionary<enum_EnermyType, List<int>> m_EnermyIDs;
     void GenerateChunkRelatives()
     {
-        Dictionary<int,ChunkGameGenerateData> gameChunks = GameLevelManager.Instance.m_GameChunks;
-        int entranceIndex = 0;
-        for (int index = 0; index < gameChunks.Count; index++)
+        GameLevelManager.Instance.m_GameChunks.Traversal((int chunkIndex, LevelChunkGame chunkData) =>
         {
-            ChunkGameGenerateData chunkData = GameLevelManager.Instance.m_GameChunks[index];
-            chunkData.m_LocalChunkObjects.Traversal((enum_TileObjectType tileType, List<ChunkGameObjectData> objects) => {
+            chunkData.m_ChunkObjects.Traversal((enum_TileObjectType tileType, List<ChunkGameObjectData> objects) => {
                 objects.Traversal((ChunkGameObjectData objectData) =>
                 {
                     switch (tileType)
                     {
+                        case enum_TileObjectType.RPlayerSpawn1x1:
+                            tf_PlayerStart.position = objectData.pos;
+                            tf_PlayerStart.rotation = objectData.rot;
+                            break;
                         case enum_TileObjectType.RStagePortal2x2:
-                            GameObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Portal, chunkData.GetObjectWorldPosition(objectData.m_LocalPosition), objectData.Rotation, tf_Interacts).Play(OnStageFnished, "Test");
+                            GameObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Portal, objectData.pos, objectData.rot, tf_Interacts).Play(OnStageFnished, "Test");
                             break;
                         case enum_TileObjectType.REventArea3x3:
 
                             break;
+                        case enum_TileObjectType.RConnection1x5:
+                            GamePlayerTrigger detector = m_ChunkEnterTriggers.AddItem(m_ChunkEnterTriggers.Count);
+                            detector.transform.position = objectData.pos;
+                            detector.transform.rotation = objectData.rot;
+                            detector.Play(chunkIndex, OnChunkEntering);
+                            break;
                     }
                 });
             });
-
-            chunkData.m_LocalChunkConnections.Traversal((ChunkGameObjectData connectionTile, enum_ChunkConnectionType type) =>
-            {
-                if (type != enum_ChunkConnectionType.Entrance)
-                    return;
-
-                GamePlayerTrigger detector = m_ChunkEnterTriggers.AddItem(entranceIndex++);
-                detector.Play(index, OnChunkEntering);
-                detector.transform.position = chunkData.GetObjectWorldPosition(connectionTile.m_LocalPosition);
-                detector.transform.rotation = connectionTile.Rotation;
-            });
-        }
+        });
     }
     
     void OnChunkEntering(int index)
     {
-        ChunkGameGenerateData chunkData = GameLevelManager.Instance.m_GameChunks[index];
+        LevelChunkGame chunkData = GameLevelManager.Instance.GetChunk(index);
         if (chunkData.m_ChunkType != enum_ChunkType.Battle)
             return;
         

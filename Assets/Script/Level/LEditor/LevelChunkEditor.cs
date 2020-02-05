@@ -14,7 +14,7 @@ public class LevelChunkEditor : LevelChunkBase
     public bool m_GameViewMode { get; private set; }
     enum_LevelStyle m_ViewStyle;
     public LevelTileEditorData[,] m_TilesData { get; private set; }
-    ObjectPoolSimpleComponent<int, LevelTileEditorSelection> m_SelectionTiles;
+    ObjectPoolListComponent<int, LevelTileEditorSelection> m_SelectionTiles;
     LevelTileEditorSelection m_SelectingTile;
     enum_TileDirection m_SelectingDirection = enum_TileDirection.Top;
     List<LevelTileEditorData> temp_RelativeTiles = new List<LevelTileEditorData>();
@@ -25,7 +25,7 @@ public class LevelChunkEditor : LevelChunkBase
     {
         Instance = this;
         tf_CameraPos = transform.Find("CameraPos");
-        m_SelectionTiles = new ObjectPoolSimpleComponent<int, LevelTileEditorSelection>(transform.Find("SelectionPool"), "SelectionItem");
+        m_SelectionTiles = new ObjectPoolListComponent<int, LevelTileEditorSelection>(transform.Find("SelectionPool"), "SelectionItem");
         m_SelectingTile = transform.Find("SelectingTile").GetComponent<LevelTileEditorSelection>();
         m_directionalLight = transform.Find("Directional Light").GetComponent<Light>();
         Init();

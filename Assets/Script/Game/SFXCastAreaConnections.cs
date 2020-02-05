@@ -5,7 +5,7 @@ using GameSetting;
 using UnityEngine;
 
 public class SFXCastAreaConnections : SFXCast {
-    ObjectPoolSimpleClass<EntityBase, ConnectionsItem> m_Connections;
+    ObjectPoolListClass<EntityBase, ConnectionsItem> m_Connections;
     class ConnectionsItem:CSimplePoolObject<EntityBase>
     {
         Transform targetTrans;
@@ -49,7 +49,7 @@ public class SFXCastAreaConnections : SFXCast {
     {
         base.OnPoolItemInit(_identity, _OnRecycle);
         Transform connections = transform.Find("Connections");
-        m_Connections = new ObjectPoolSimpleClass<EntityBase, ConnectionsItem>(connections,"Item");
+        m_Connections = new ObjectPoolListClass<EntityBase, ConnectionsItem>(connections,"Item");
         m_GroundParticles = new TSpecialClasses.ParticleControlBase(transform.Find("ParticlesGround"));
     }
     public override void PlayControlled(int sourceID, EntityCharacterBase entity, Transform directionTrans)
