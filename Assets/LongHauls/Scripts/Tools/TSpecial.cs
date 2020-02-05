@@ -811,6 +811,7 @@ public class TimeCounter
         m_duration = duration;
         m_timeCheck = m_duration;
     }
+    public void Reset() => m_timeCheck = m_duration;
     public void Tick(float deltaTime)
     {
         if (m_timeCheck <= 0)

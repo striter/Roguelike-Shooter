@@ -73,6 +73,7 @@ public class EntityCharacterAI : EntityCharacterBase {
     }
 
     Vector3 m_Impact;
+    TimeCounter m_OuttaBattleTimer = new TimeCounter(.4f);
     protected override void OnAliveTick(float deltaTime)
     {
         base.OnAliveTick(deltaTime);
@@ -83,6 +84,15 @@ public class EntityCharacterAI : EntityCharacterBase {
         }
         m_Impact = Vector3.Lerp(Vector3.zero, m_Impact, Time.deltaTime * 20f);
         if(m_Impact.magnitude>.2f) transform.Translate(m_Impact,Space.World);
+        if (!m_AIBattleActivating)
+        {
+            m_OuttaBattleTimer.Tick(deltaTime);
+            if (!m_OuttaBattleTimer.m_Timing)
+            {
+                m_OuttaBattleTimer.Reset();
+                m_CharacterInfo.AddBuff(-1,SBuff.m_EnermyOuttaBattleDamageReduction);
+            }
+        } 
         AISetSimulate(!m_CharacterInfo.B_Effecting( enum_CharacterEffect.Freeze));
         AITick(Time.deltaTime);
     }

@@ -481,7 +481,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void RevivePlayer()
     {
         ReviveCharacter(m_PlayerReviveAmount.start, m_PlayerReviveAmount.length);
-        m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.BuffInfo(-1, SBuff.SystemPlayerReviveInfo(GameConst.F_PlayerReviveBuffDuration, GameConst.I_PlayerReviveBuffIndex))));
+        m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.BuffInfo(-1, SBuff.m_PlayerReviveBuff)));
     }
     #endregion
     void OnAnimationEvent(TAnimatorEvent.enum_AnimEvent animEvent)

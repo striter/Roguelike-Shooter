@@ -17,7 +17,7 @@ public class InteractBonfire : InteractGameBase {
         base.OnPoolItemInit(identity, OnRecycle);
         m_FireParticles = new TSpecialClasses.ParticleControlBase(transform.Find("Fire"));
         tf_Light = transform.Find("Light");
-        m_HealInfo = new DamageInfo(0, enum_DamageType.HealthOnly, DamageDeliverInfo.BuffInfo(-1, SBuff.SystemPlayerBonfireHealInfo()));
+        m_HealInfo = new DamageInfo(0, enum_DamageType.HealthOnly, DamageDeliverInfo.BuffInfo(-1, SBuff.m_PlayerBoneFireHealBuff));
     }
     public void Play(EntityCharacterPlayer _Player)
     {
