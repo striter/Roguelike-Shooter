@@ -54,10 +54,13 @@ public class LevelChunkGame : LevelChunkBase
             m_RoadBlockTiles.Add(tile);
     }
 
-    public void BattleBlockLift(bool lift)
+    public List<int> BattleBlockLift(bool lift)
     {
-        m_NearbyChunks.Traversal((LevelChunkGame chunk) => { chunk.SetBlocksLift(lift);  });
+        List<int> chunkIndexes = new List<int>();
+        m_NearbyChunks.Traversal((LevelChunkGame chunk) => { chunkIndexes.Add(chunk.m_chunkIndex); chunk.SetBlocksLift(lift);  });
+        chunkIndexes.Add(m_chunkIndex);
         SetBlocksLift(lift);
+        return chunkIndexes;
     }
 
     void SetBlocksLift(bool lift)

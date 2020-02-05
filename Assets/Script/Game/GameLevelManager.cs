@@ -158,7 +158,7 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         mapBounds.center = m_MapOriginPos + m_MapSize.ToPosition() / 2f + Vector3.up * LevelConst.I_TileSize;
         mapBounds.size = new Vector3(m_MapSize.X, .1f, m_MapSize.Y) * LevelConst.I_TileSize;
         Dictionary<int, ChunkNavigationData> _ChunkNavigationData = new Dictionary<int, ChunkNavigationData>();
-        m_ChunkPool.m_ActiveItemDic.Traversal((int chunkIndex, LevelChunkGame data) => { _ChunkNavigationData.Add(chunkIndex, new ChunkNavigationData(data.transform, data.m_ChunkBounds)); });
+        m_ChunkPool.m_ActiveItemDic.Traversal(( LevelChunkGame data) => { _ChunkNavigationData.Add(data.m_chunkIndex, new ChunkNavigationData(data.transform, data.m_ChunkBounds)); });
         NavigationManager.InitNavMeshData(transform, mapBounds, _ChunkNavigationData);
     }
     
@@ -259,12 +259,13 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
     void OnBattleTrigger(int chunkID)
     {
         m_chunkLifting = chunkID;
-        GetChunk(m_chunkLifting).BattleBlockLift(true);
+        NavigationManager.UpdateNavMeshData(GetChunk(m_chunkLifting).BattleBlockLift(true));
     }
 
     void OnBattleFinish()
     {
-        GetChunk(m_chunkLifting).BattleBlockLift(false);
+        ;
+        NavigationManager.UpdateNavMeshData(GetChunk(m_chunkLifting).BattleBlockLift(false));
         m_chunkLifting = -1;
     }
 }
@@ -375,8 +376,16 @@ public static class NavigationManager
         NavMeshBuilder.CollectSources(m_ChunkDetails[index].m_Transform, -1, NavMeshCollectGeometry.PhysicsColliders, 0, new List<NavMeshBuildMarkup>() { }, m_ChunkDetails[index].m_Sources);
         UpdateNavMeshData();
     }
-
-    public static void UpdateNavMeshData()
+    public static void UpdateNavMeshData(List<int> chunkIndexes)
+    {
+        chunkIndexes.Traversal((int index) =>
+        {
+            m_ChunkDetails[index].m_Sources.Clear();
+            NavMeshBuilder.CollectSources(m_ChunkDetails[index].m_Transform, -1, NavMeshCollectGeometry.PhysicsColliders, 0, new List<NavMeshBuildMarkup>() { }, m_ChunkDetails[index].m_Sources);
+        });
+        UpdateNavMeshData();
+    }
+    static void UpdateNavMeshData()
     {
         CollectNavmeshSources();
         NavMeshBuilder.UpdateNavMeshData(m_CombinedData, m_BuildSettings, m_CombineSources, m_CombineBounds);
