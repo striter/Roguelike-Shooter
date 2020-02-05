@@ -869,7 +869,7 @@ namespace GameSetting
         public static SBuff SystemSubEntityDOTInfo(float damageTickTime, float damagePerTick) => new SBuff(){ index = 100,i_addType = (int)enum_ExpireRefreshType.Refresh,f_expireDuration = 0,f_damageTickTime = damageTickTime,f_damagePerTick = damagePerTick, i_damageType = (int)enum_DamageType.Basic};
         public static readonly SBuff m_PlayerReviveBuff = new SBuff() { index = 101,i_effect= GameConst.I_PlayerReviveBuffIndex, i_addType = (int)enum_ExpireRefreshType.Refresh, f_expireDuration = GameConst.F_PlayerReviveBuffDuration, f_damageReduce = 1f };
         public static readonly SBuff m_PlayerBoneFireHealBuff = new SBuff() { index = 102, i_addType = (int)enum_ExpireRefreshType.Refresh, f_expireDuration = 0.5f, f_damageTickTime = .1f, f_damagePerTick = -2f, i_damageType = (int)enum_DamageType.HealthOnly };
-        public static readonly SBuff m_EnermyOuttaBattleDamageReduction = new SBuff() { index = 103, i_effect = GameConst.I_PlayerReviveBuffIndex, i_addType = (int)enum_ExpireRefreshType.Refresh, f_damageReduce = 1f };
+        public static readonly SBuff m_EnermyOuttaBattleDamageReduction = new SBuff() { index = 103, i_effect = GameConst.I_PlayerReviveBuffIndex, i_addType = (int)enum_ExpireRefreshType.Refresh,f_expireDuration=.5f, f_damageReduce = 1f };
         //1000-9999
         public static SBuff CreateEnermyChallengeDifficultyBuff(int difficulty, float damageMultiply)
         {
