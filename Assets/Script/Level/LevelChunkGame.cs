@@ -44,18 +44,6 @@ public class LevelChunkGame : LevelChunkBase
             }
             return tileData;
         });
-
-        //Generate Connections
-        if (isConnectionChunk)
-            return;
-        m_ConnectionIndex.Traversal((TileAxis connectionAxis,enum_TileDirection connectionDirection) =>
-        {
-            List<TileAxis> axies = TileTools.GetAxisRange(connectionAxis, enum_TileObjectType.RConnection1x5.GetSizeAxis(connectionDirection));
-            axies.Traversal((TileAxis axis) => {
-                ChunkTileData connectionTile = ChunkTileData.Create(enum_TilePillarType.Invalid, enum_TileGroundType.Main, enum_TileObjectType.Invalid, enum_TileDirection.Top);
-                OnTileInit(m_TilePool.AddItem(TileTools.Get1DAxisIndex(axis, _data.m_Data.Width)), axis, connectionTile, _random);
-            });
-        });
     }
 
     public void AddChunkConnection(LevelChunkGame chunk) => m_NearbyChunks.Add(chunk);

@@ -247,7 +247,7 @@ public class LevelChunkEditor : LevelChunkBase
             case enum_TileSubType.Ground:
                 if (m_SelectingTile.m_Data.m_GroundType== enum_TileGroundType.Invalid)
                     return false;
-                editable = !m_TilesData.CheckIsEdge(targetTile.m_Axis);
+                editable = m_ChunkType== enum_ChunkType.Connection|| !m_TilesData.CheckIsEdge(targetTile.m_Axis);
                 break;
             case enum_TileSubType.Pillar:
                 if (m_SelectingTile.m_Data.m_PillarType== enum_TilePillarType.Invalid)
