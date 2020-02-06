@@ -60,16 +60,16 @@ public class LevelChunkData : ScriptableObject {
         m_ConnectionIndex = m_Connections.ToArray();
     }
 
-    public Texture2D CalculateMapTexture()
+    public Texture2D CalculateEditorChunkTexture()
     {
         Texture2D texture = new Texture2D(Width,Height, TextureFormat.RGBA32,false);
         texture.filterMode = FilterMode.Point;
-        texture.SetPixels(CalculateMapTextureColors());
+        texture.SetPixels(CalculateMapTextureColors(true));
         texture.Apply();
         return texture;
     }
 
-    public Color[] CalculateMapTextureColors()
+    public Color[] CalculateMapTextureColors(bool editorMode)
     {
         Color[] colors = new Color[m_Width*m_Height];
         for (int i = 0; i < m_Width; i++)
@@ -81,15 +81,16 @@ public class LevelChunkData : ScriptableObject {
                         colors[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)] =  Color.white;
                         break;
                     case enum_TileGroundType.Invalid:
-                        colors[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)] = Color.black;
+                        colors[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)] = Color.clear;
                         break;
                     case enum_TileGroundType.Block:
                         colors[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)] = Color.grey;
                         break;
                 }
-                
+
             }
-        for (int i = 0; i < m_Width; i++)
+        if (editorMode)
+            for (int i = 0; i < m_Width; i++)
             for (int j = 0; j < m_Height; j++)
             {
                 TileAxis axis = new TileAxis(i, j);

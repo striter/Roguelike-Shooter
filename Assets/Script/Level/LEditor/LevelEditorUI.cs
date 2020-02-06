@@ -113,7 +113,7 @@ public class LevelEditorUI : SimpleSingletonMono<LevelEditorUI>,TReflection.UI.I
         m_File_Save_Name.text = data.name;
         m_View_Name.text = data.name;
         m_View_Type.text = data.Type.ToString();
-        m_View_Image.texture = data.CalculateMapTexture();
+        m_View_Image.texture = data.CalculateEditorChunkTexture();
         m_View_Image.SetNativeSize();
     }
 
@@ -122,7 +122,7 @@ public class LevelEditorUI : SimpleSingletonMono<LevelEditorUI>,TReflection.UI.I
         LevelChunkData data= LevelEditorManager.Instance.Save(m_File_Save_Name.text);
         if (!data)
             return;
-        m_View_Image.texture = data.CalculateMapTexture();
+        m_View_Image.texture = data.CalculateEditorChunkTexture();
         m_View_Image.SetNativeSize();
     }
 

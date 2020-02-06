@@ -10,7 +10,7 @@ public class UIManager :UIManagerBase,ISingleCoroutine
     public Camera m_Camera { get; private set; }
     protected UIC_Control m_UIControl { get; private set; }
     protected UIC_PlayerInteract m_Interact { get; private set; }
-    protected UIC_CharacterStatus m_PlayerStatus { get; private set; }
+    protected UIC_GameStatus m_PlayerStatus { get; private set; }
     public UIC_Indicates m_Indicates { get; private set; }
 
     public CameraEffectManager m_Effect { get; private set; }
@@ -49,7 +49,7 @@ public class UIManager :UIManagerBase,ISingleCoroutine
 
     protected virtual void InitGameControls(bool inGame)
     {
-        m_PlayerStatus = ShowControls<UIC_CharacterStatus>().SetInGame(inGame);
+        m_PlayerStatus = ShowControls<UIC_GameStatus>().SetInGame(inGame);
         m_UIControl = ShowControls<UIC_Control>().SetInGame(inGame);
         m_Interact = ShowControls<UIC_PlayerInteract>();
         m_Indicates = ShowControls<UIC_Indicates>();

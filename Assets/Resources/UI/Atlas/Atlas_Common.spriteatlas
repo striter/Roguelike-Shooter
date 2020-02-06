@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 3293801
+    totalSpriteSurfaceArea: 3266991
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -56,7 +56,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 8280ce86eddc22949910b22674ac779c, type: 3}
   - {fileID: 21300000, guid: 01ef3718fbcf89c408d0987fff8ff2d5, type: 3}
   - {fileID: 21300000, guid: 3a56b431fa4e03340882f4e72bca4609, type: 3}
-  - {fileID: 21300000, guid: 7fe5af433b34b084a877cbb11ee36f25, type: 3}
   - {fileID: 21300000, guid: 8d752d68d59a02a42b68e58fc4ee5c90, type: 3}
   - {fileID: 21300000, guid: 71917017662df5d4cb55e4dba0929204, type: 3}
   - {fileID: 21300000, guid: 9ff4ddd5857d6e84e9be010dd6f29daa, type: 3}
@@ -140,7 +139,6 @@ SpriteAtlas:
   - control_ability_bottom_cooldown
   - control_ability_bottom_activate
   - setting_label_selected
-  - status_location_bg
   - status_bottom
   - InteractIcon_Portal
   - control_main_fire

@@ -17,11 +17,12 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
     Vector3 m_MapOriginPos;
 
     int m_chunkLifting = -1;
-    public Vector2 GetMapPosition(Vector3 worldPosition)
+    public Vector2 GetMapPosition(Vector3 worldPosition,float mapScale)
     {
         Vector3 offset =   worldPosition- m_MapOriginPos;
-        return new Vector2(offset.x,offset.z)/LevelConst.I_TileSize;
+        return new Vector2(offset.x,offset.z)/-LevelConst.I_TileSize*mapScale;
     }
+    public float GetMapAngle(float cameraYAngle) => cameraYAngle;
 
     protected override void Awake()
     {
@@ -40,14 +41,14 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         NavigationManager.ClearNavMeshDatas();
     }
     #region Generate
-    public IEnumerator Generate(enum_LevelStyle style,string seed,System.Random random)
+    public IEnumerator Generate(enum_LevelStyle style, string seed, System.Random random)
     {
         LevelObjectManager.Register(TResources.GetChunkTiles(style));
         GameRenderData[] customizations = TResources.GetRenderData(style);
         GameRenderData randomData = customizations.Length == 0 ? GameRenderData.Default() : customizations.RandomItem(random);
         randomData.DataInit(m_DirectionalLight, CameraController.Instance.m_Camera);
         Dictionary<enum_ChunkType, List<LevelChunkData>> datas = TResources.GetChunkDatas();
-        List<ChunkGenerateData> gameChunkGenerate=new List<ChunkGenerateData>();
+        List<ChunkGenerateData> gameChunkGenerate = new List<ChunkGenerateData>();
         m_chunkLifting = -1;
 
         Action<ChunkGenerateData, List<ChunkGenerateData>> ConnectGameData = (ChunkGenerateData startData, List<ChunkGenerateData> connectDatas) =>
@@ -64,7 +65,7 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
 
         yield return Task.Run(() =>
         {
-            while(true)
+            while (true)
             {
                 gameChunkGenerate.Clear();
                 //Generate Main Chunks
@@ -77,10 +78,10 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
                 mainConnectionChunks = TryGenerateChunkDatas(gameChunkGenerate.Count, gameChunkGenerate[0], gameChunkGenerate, datas, mainChunkType, random);
                 if (mainConnectionChunks == null)
                     continue;
-                ConnectGameData(gameChunkGenerate[0],mainConnectionChunks);
+                ConnectGameData(gameChunkGenerate[0], mainConnectionChunks);
                 //Generate Sub Chunks
                 List<enum_ChunkType> subChunkType = new List<enum_ChunkType>() { enum_ChunkType.Connection, enum_ChunkType.Battle, enum_ChunkType.Connection, enum_ChunkType.Event };
-                Func<int,bool> GenerateSubChunks = (int subCount) => {
+                Func<int, bool> GenerateSubChunks = (int subCount) => {
 
                     ChunkGenerateData subStartChunk = null;
                     List<ChunkGenerateData> subConnectionChunks = null;
@@ -89,7 +90,7 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
                         if (!mainChunk.HaveEmptyConnection())
                             return false;
                         subStartChunk = mainChunk;
-                        subConnectionChunks = TryGenerateChunkDatas(subCount*1000, subStartChunk, gameChunkGenerate, datas, subChunkType, random);
+                        subConnectionChunks = TryGenerateChunkDatas(subCount * 1000, subStartChunk, gameChunkGenerate, datas, subChunkType, random);
                         return subConnectionChunks != null;
                     }, random);
 
@@ -129,20 +130,6 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         m_MapOrigin = new TileAxis(originX, originY);
         m_MapSize = new TileAxis(oppositeX - originX, oppositeY - originY);
         m_MapOriginPos = transform.TransformPoint(m_MapOrigin.ToPosition());
-        //Generate Map Texture
-        m_MapTexture = new Texture2D(m_MapSize.X, m_MapSize.Y, TextureFormat.RGBA32, false);
-        m_MapTexture.filterMode = FilterMode.Point;
-        gameChunkGenerate.Traversal((ChunkGenerateData chunkdata) =>
-        {
-            Color[] chunkColors = chunkdata.m_Data.CalculateMapTextureColors();
-            int length = chunkColors.Length;
-            for (int index = 0; index < length; index++)
-            {
-                TileAxis tileAxis = (chunkdata.m_Axis - m_MapOrigin) + TileTools.GetAxisByIndex(index, chunkdata.m_Data.Width);
-                m_MapTexture.SetPixel(tileAxis.X, tileAxis.Y, chunkColors[index]);
-            }
-        });
-        m_MapTexture.Apply();
 
         m_ChunkPool.ClearPool();
         gameChunkGenerate.Traversal((ChunkGenerateData data) => {
@@ -160,8 +147,27 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         Dictionary<int, NavigationManager.NavigationChunkDetail> _ChunkNavigationData = new Dictionary<int, NavigationManager.NavigationChunkDetail>();
         m_ChunkPool.m_ActiveItemDic.Traversal(( LevelChunkGame data) => { _ChunkNavigationData.Add(data.m_chunkIndex, new NavigationManager.NavigationChunkDetail(data.transform)); });
         NavigationManager.InitNavMeshData(transform, mapBounds, _ChunkNavigationData);
+
+        #region Generate Map Texture
+        m_MapTexture = new Texture2D(m_MapSize.X, m_MapSize.Y, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point, hideFlags = HideFlags.HideAndDontSave };
+        for (int i = 0; i < m_MapSize.X; i++)
+            for (int j = 0; j < m_MapSize.Y; j++)
+                m_MapTexture.SetPixel(i, j, Color.clear);
+
+        gameChunkGenerate.Traversal((ChunkGenerateData chunkdata) =>
+        {
+            Color[] chunkColors = chunkdata.m_Data.CalculateMapTextureColors(false);
+            int length = chunkColors.Length;
+            for (int index = 0; index < length; index++)
+            {
+                TileAxis tileAxis = (chunkdata.m_Axis - m_MapOrigin) + TileTools.GetAxisByIndex(index, chunkdata.m_Data.Width);
+                m_MapTexture.SetPixel(tileAxis.X, tileAxis.Y, chunkColors[index]);
+            }
+        });
+        m_MapTexture.Apply();
+        #endregion
     }
-    
+
     List<ChunkGenerateData> TryGenerateChunkDatas(int generateIndex,ChunkGenerateData generateStartChunk,List<ChunkGenerateData> intersectsCheckChunks, Dictionary<enum_ChunkType, List<LevelChunkData>> datas,List<enum_ChunkType> generateTypes,System.Random random)
     {
         List<ChunkGenerateData> chunkIntersectsCheckData = new List<ChunkGenerateData>(intersectsCheckChunks);

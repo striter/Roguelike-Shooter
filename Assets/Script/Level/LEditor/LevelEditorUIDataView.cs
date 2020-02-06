@@ -23,7 +23,7 @@ public class LevelEditorUIDataView : UIT_GridItem {
     {
         OnDataEditClick = OnDataClick;
         m_Name.text = data.name;
-        m_Image.texture = data.CalculateMapTexture();
+        m_Image.texture = data.CalculateEditorChunkTexture();
         m_Image.SetNativeSize();
     }
 

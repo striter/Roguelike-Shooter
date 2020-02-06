@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TSpecialClasses;
-public class UIC_CharacterStatus : UIControlBase
+public class UIC_GameStatus : UIControlBase
 {
     public AnimationCurve m_DyingCurve;
     RawImage img_Dying;
@@ -33,9 +33,9 @@ public class UIC_CharacterStatus : UIControlBase
 
     ValueLerpSeconds m_HealthLerp,  m_ArmorLerp;
 
-    Transform tf_LocationData;
-    UIT_TextExtend m_LocationIndex,m_LocationTitle;
-    Image  m_LocationImage;
+    Transform m_Map;
+    RectTransform m_Map_Origin;
+    RawImage m_Map_Origin_Texture;
 
     TSpecialClasses.ValueChecker<bool> m_DyingCheck;
     protected override void Init()
@@ -81,16 +81,16 @@ public class UIC_CharacterStatus : UIControlBase
             rtf_ArmorMaxFill.ReAnchorFillX(new Vector2(0,value));
         });
 
-        tf_LocationData = tf_Container.Find("LocationData");
-        m_LocationIndex = tf_LocationData.Find("Index").GetComponent<UIT_TextExtend>();
-        m_LocationImage = tf_LocationData.Find("Image").GetComponent<Image>();
-        m_LocationTitle = tf_LocationData.Find("Title").GetComponent<UIT_TextExtend>();
+        m_Map = tf_Container.Find("Map");
+        m_Map_Origin = m_Map.Find("Origin") as RectTransform;
+        m_Map_Origin_Texture = m_Map_Origin.Find("Texture").GetComponent<RawImage>();
 
         m_DyingCheck = new ValueChecker<bool>(true);
 
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityPlayerHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerEquipmentStatus, OnEquipmentStatus);
+        TBroadCaster<enum_BC_GameStatus>.Add( enum_BC_GameStatus.OnGameBegin, OnGameLoad);
     }
 
     protected override void OnDestroy()
@@ -98,12 +98,19 @@ public class UIC_CharacterStatus : UIControlBase
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityPlayerHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerEquipmentStatus, OnEquipmentStatus);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnGameBegin, OnGameLoad);
     }
 
-    public UIC_CharacterStatus SetInGame(bool inGame)
+    public UIC_GameStatus SetInGame(bool inGame)
     {
-        tf_LocationData.SetActivate(inGame);
+        m_Map.SetActivate(inGame);
         return this;
+    }
+
+    void OnGameLoad()
+    {
+        m_Map_Origin_Texture.texture = GameLevelManager.Instance.m_MapTexture;
+        m_Map_Origin_Texture.SetNativeSize();
     }
     
     
@@ -131,6 +138,8 @@ public class UIC_CharacterStatus : UIControlBase
         if(m_DyingCheck.Check(dying))
             img_Dying.SetActivate(dying);
         OnAmmoStatus(_player.m_WeaponCurrent);
+        m_Map_Origin_Texture.rectTransform.anchoredPosition = GameLevelManager.Instance.GetMapPosition(_player.transform.position,5f);
+        m_Map_Origin.localRotation = Quaternion.Euler(0,0,GameLevelManager.Instance.GetMapAngle(CameraController.CameraRotation.eulerAngles.y));
     }
 
     void OnHealthStatus(EntityPlayerHealth _healthManager)
