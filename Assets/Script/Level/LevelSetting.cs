@@ -203,11 +203,9 @@ namespace LevelSetting
     public struct ChunkNavigationData
     {
         public Transform transform { get; private set; }
-        public Bounds bounds { get; private set; }
-        public ChunkNavigationData(Transform transform, Bounds bounds)
+        public ChunkNavigationData(Transform transform)
         {
             this.transform = transform;
-            this.bounds =new Bounds(bounds.center, new Vector3(bounds.size.x, .1f, bounds.size.z));
         }
     }
 

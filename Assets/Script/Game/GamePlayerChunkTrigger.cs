@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
 [RequireComponent(typeof(EntityDetector))]
-public class ChunkPlayerTrigger :CSimplePoolObjectMono<int> {
+public class GamePlayerChunkTrigger :CSimplePoolObjectMono<int> {
     public int m_DetectIndex { get; private set; } = -1;
     public bool m_Entered { get; private set; } = false;
-    Action<int> OnChunkEnter;
+    Action<int> OnChunkEntering;
     Bounds m_ChunkBounds;
     public override void OnPoolInit()
     {
@@ -15,9 +15,9 @@ public class ChunkPlayerTrigger :CSimplePoolObjectMono<int> {
         GetComponent<EntityDetector>().Init(OnEntityDetect);
     }
 
-    public void Play(int chunkIndex,Bounds chunkBounds,Action<int> OnChunkEnter)
+    public void Play(int chunkIndex,Bounds chunkBounds,Action<int> OnChunkEntering)
     {
-        this.OnChunkEnter = OnChunkEnter;
+        this.OnChunkEntering = OnChunkEntering;
         m_DetectIndex = chunkIndex;
         m_Entered = false;
         m_ChunkBounds = chunkBounds;
@@ -38,6 +38,6 @@ public class ChunkPlayerTrigger :CSimplePoolObjectMono<int> {
             return;
 
         m_Entered = true;
-        OnChunkEnter(m_DetectIndex);
+        OnChunkEntering(m_DetectIndex);
     }
 }

@@ -158,7 +158,7 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         mapBounds.center = m_MapOriginPos + m_MapSize.ToPosition() / 2f + Vector3.up * LevelConst.I_TileSize;
         mapBounds.size = new Vector3(m_MapSize.X, .1f, m_MapSize.Y) * LevelConst.I_TileSize;
         Dictionary<int, ChunkNavigationData> _ChunkNavigationData = new Dictionary<int, ChunkNavigationData>();
-        m_ChunkPool.m_ActiveItemDic.Traversal(( LevelChunkGame data) => { _ChunkNavigationData.Add(data.m_chunkIndex, new ChunkNavigationData(data.transform, data.m_LocalChunkBounds)); });
+        m_ChunkPool.m_ActiveItemDic.Traversal(( LevelChunkGame data) => { _ChunkNavigationData.Add(data.m_chunkIndex, new ChunkNavigationData(data.transform)); });
         NavigationManager.InitNavMeshData(transform, mapBounds, _ChunkNavigationData);
     }
     
@@ -328,12 +328,10 @@ public static class NavigationManager
     class NavigationChunkDetail
     {
         public Transform m_Transform { get; private set; }
-        public Bounds m_Bounds { get; private set; }
         public List<NavMeshBuildSource> m_Sources { get; private set; } = new List<NavMeshBuildSource>();
         public NavigationChunkDetail(ChunkNavigationData data)
         {
             m_Transform = data.transform;
-            m_Bounds = data.bounds;
         }
     }
     static Transform m_Transform;

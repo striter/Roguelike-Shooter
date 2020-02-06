@@ -53,7 +53,7 @@ public class GameManager : GameManagerBase
     public EntityCharacterPlayer m_LocalPlayer { get; private set; } = null;
     public Transform tf_Interacts { get; private set; } = null;
     Transform tf_PlayerStart;
-    ObjectPoolListMono<int, ChunkPlayerTrigger> m_ChunkEnterTriggers;
+    ObjectPoolListMono<int, GamePlayerChunkTrigger> m_ChunkEnterTriggers;
     ObjectPoolListMono<int, GameEnermyCommander> m_EnermyCommand;
 
     public override bool B_InGame => true;
@@ -71,7 +71,7 @@ public class GameManager : GameManagerBase
         m_GameLevel =  new GameProgressManager(GameDataManager.m_GameData,GameDataManager.m_BattleData);
         tf_Interacts = transform.Find("Interacts");
         tf_PlayerStart = transform.Find("PlayerStart");
-        m_ChunkEnterTriggers = new ObjectPoolListMono<int, ChunkPlayerTrigger>(transform.Find("Triggers/ChunkTrigger"), "TriggerItem");
+        m_ChunkEnterTriggers = new ObjectPoolListMono<int, GamePlayerChunkTrigger>(transform.Find("Triggers/ChunkTrigger"), "TriggerItem");
         m_EnermyCommand = new ObjectPoolListMono<int, GameEnermyCommander>(transform.Find("EnermyPool"), "EnermyItem");
     }
     
@@ -411,7 +411,7 @@ public class GameManager : GameManagerBase
                             break;
                         case enum_TileObjectType.RConnection1x5:
                             int triggerIndex = m_ChunkEnterTriggers.Count;
-                            ChunkPlayerTrigger trigger = m_ChunkEnterTriggers.AddItem(triggerIndex);
+                            GamePlayerChunkTrigger trigger = m_ChunkEnterTriggers.AddItem(triggerIndex);
                             trigger.transform.position = objectData.pos;
                             trigger.transform.rotation = objectData.rot;
                             trigger.Play(chunkIndex, chunkData.GetWorldChunkObunds(), OnChunkEnterDetect);
