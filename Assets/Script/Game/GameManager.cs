@@ -53,8 +53,7 @@ public class GameManager : GameManagerBase
     public EntityCharacterPlayer m_LocalPlayer { get; private set; } = null;
     public Transform tf_Interacts { get; private set; } = null;
     Transform tf_PlayerStart;
-    ObjectPoolListMono<int, GamePlayerTrigger> m_ChunkEnterTriggers;
-    ObjectPoolListMono<int, GamePlayerTrigger> m_BattleTriggers;
+    ObjectPoolListMono<int, ChunkPlayerTrigger> m_ChunkEnterTriggers;
     ObjectPoolListMono<int, GameEnermyCommander> m_EnermyCommand;
 
     public override bool B_InGame => true;
@@ -72,8 +71,7 @@ public class GameManager : GameManagerBase
         m_GameLevel =  new GameProgressManager(GameDataManager.m_GameData,GameDataManager.m_BattleData);
         tf_Interacts = transform.Find("Interacts");
         tf_PlayerStart = transform.Find("PlayerStart");
-        m_ChunkEnterTriggers = new ObjectPoolListMono<int, GamePlayerTrigger>(transform.Find("Triggers/ChunkTrigger"), "TriggerItem");
-        m_BattleTriggers = new ObjectPoolListMono<int, GamePlayerTrigger>(transform.Find("Triggers/BattleTrigger"), "TriggerItem");
+        m_ChunkEnterTriggers = new ObjectPoolListMono<int, ChunkPlayerTrigger>(transform.Find("Triggers/ChunkTrigger"), "TriggerItem");
         m_EnermyCommand = new ObjectPoolListMono<int, GameEnermyCommander>(transform.Find("EnermyPool"), "EnermyItem");
     }
     
@@ -384,41 +382,80 @@ public class GameManager : GameManagerBase
         return false;
     }
     #endregion
+    #region Chunk Relative Management
+    public Dictionary<int, GameChunk> m_GameChunkData = new Dictionary<int, GameChunk>();
+    void GenerateChunkRelatives()
+    {
+        m_GameChunkData.Clear();
+        m_ChunkEnterTriggers.ClearPool();
+        GameLevelManager.Instance.m_GameChunks.Traversal((int chunkIndex, LevelChunkGame chunkData) =>
+        {
+        bool isFinal = chunkData.m_ChunkType == enum_ChunkType.Final;
+        bool isBattle = isFinal || chunkData.m_ChunkType == enum_ChunkType.Battle;
+        m_GameChunkData.Add(chunkIndex, isBattle ? new GameChunkBattle(chunkIndex, isFinal) : new GameChunk(chunkIndex));
+
+        chunkData.m_ChunkObjects.Traversal((enum_TileObjectType tileType, List<ChunkGameObjectData> objects) => {
+                objects.Traversal((ChunkGameObjectData objectData) =>
+                {
+                    switch (tileType)
+                    {
+                        case enum_TileObjectType.RPlayerSpawn1x1:
+                            tf_PlayerStart.position = objectData.pos;
+                            tf_PlayerStart.rotation = objectData.rot;
+                            break;
+                        case enum_TileObjectType.RStagePortal2x2:
+                            GameObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Portal, objectData.pos, objectData.rot, tf_Interacts).Play(OnStageFnished, "Test");
+                            break;
+                        case enum_TileObjectType.REventArea3x3:
+
+                            break;
+                        case enum_TileObjectType.RConnection1x5:
+                            int triggerIndex = m_ChunkEnterTriggers.Count;
+                            ChunkPlayerTrigger trigger = m_ChunkEnterTriggers.AddItem(triggerIndex);
+                            trigger.transform.position = objectData.pos;
+                            trigger.transform.rotation = objectData.rot;
+                            trigger.Play(chunkIndex, chunkData.GetWorldChunkObunds(), OnChunkEnterDetect);
+                            m_GameChunkData[chunkIndex].m_ChunkTriggers.Add(triggerIndex);
+                            break;
+                    }
+                });
+            });
+        });
+    }
+
+    void OnChunkEnterDetect(int chunkIndex)
+    {
+        m_GameChunkData[chunkIndex].m_ChunkTriggers.Traversal((int triggerIndex) => {
+            m_ChunkEnterTriggers.RemoveItem(triggerIndex);
+        });
+
+        if (m_GameChunkData[chunkIndex].m_IsBattle)
+            OnBattleTrigger(chunkIndex);
+    }
+
+    #endregion
     #region Battle Relatives 
     public Dictionary<enum_EnermyType, List<int>> m_EnermyIDs;
-    public bool m_Battling=>m_BattleChunkIndex>0;
-    int m_BattleChunkIndex;
+    public bool m_Battling => m_BattleChunkData != null;
+    GameChunkBattle m_BattleChunkData = null;
     bool m_FinalBattling;
     public List<Vector3> m_FinalBattleGeneratePoints { get; private set; } = new List<Vector3>();
     TimeCounter m_TimerFinalBattle = new TimeCounter();
-    public Dictionary<int, GameChunkBattle> m_GameBattleData = new Dictionary<int, GameChunkBattle>();
 
     void GenerateBattleRelatives()
     {        m_FinalBattling = false;
-        m_BattleChunkIndex = -1;
-        m_GameBattleData.Clear();
-        m_BattleTriggers.ClearPool();
+        m_BattleChunkData = null;
         m_EnermyCommand.ClearPool();
 
         int enermyCommandIndex = 0;
-        int battleTriggerIndex = 0;
-        GameLevelManager.Instance.m_GameChunks.Traversal((LevelChunkGame chunkData) => {
+        GameLevelManager.Instance.m_GameChunks.Traversal((int chunkIndex,LevelChunkGame chunkData) => {
             bool isBattleChunk = chunkData.m_ChunkType == enum_ChunkType.Battle || chunkData.m_ChunkType == enum_ChunkType.Final;
             bool isFinalChunk = chunkData.m_ChunkType == enum_ChunkType.Final;
 
             if (!isBattleChunk)
                 return;
 
-            GameChunkBattle chunkBattleData =  new GameChunkBattle(chunkData.m_chunkIndex, isFinalChunk);
-            m_GameBattleData.Add(chunkData.m_chunkIndex, chunkBattleData);
-            chunkData.m_ChunkObjects[enum_TileObjectType.RFinalBattleTrigger1x1].Traversal(( ChunkGameObjectData data) => {
-                GamePlayerTrigger trigger = m_BattleTriggers.AddItem(battleTriggerIndex);
-                trigger.transform.position = data.pos;
-                trigger.transform.rotation = data.rot;
-                trigger.Play(chunkData.m_chunkIndex, OnBattleTrigger);
-                chunkBattleData.m_BattleTriggers.Add(battleTriggerIndex);
-                battleTriggerIndex++;
-            });
+            GameChunkBattle chunkBattleData = m_GameChunkData[chunkIndex] as GameChunkBattle;
 
             if (isFinalChunk)
             {
@@ -455,23 +492,20 @@ public class GameManager : GameManagerBase
         FinalBattleTick(deltaTime);
     }
 
-    void OnBattleTrigger(int chunkID)
+    void OnBattleTrigger(int chunkIndex)
     {
         if (m_Battling)
             return;
         
-        m_BattleChunkIndex = chunkID;
-        m_GameBattleData[m_BattleChunkIndex].m_BattleTriggers.Traversal((int triggerIndex) =>{
-            m_BattleTriggers.RemoveItem(triggerIndex);
-        });
-
-        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleStart,chunkID);
-        m_GameBattleData[m_BattleChunkIndex].m_BattleEnermyCommands.Traversal((int commandIndex) => {
+        m_BattleChunkData = m_GameChunkData[chunkIndex] as GameChunkBattle;
+        m_BattleChunkData.m_BattleEnermyCommands.Traversal((int commandIndex) => {
             m_EnermyCommand.m_ActiveItemDic[commandIndex].DoBattle();
         });
 
-        if (m_GameBattleData[m_BattleChunkIndex].m_IsFinal)
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleStart, chunkIndex);
+        if (m_BattleChunkData.m_IsFinal)
             OnFinalBattleStart();
+
     }
 
     void OnBattleCharatcerKilled(EntityCharacterBase character)
@@ -482,7 +516,7 @@ public class GameManager : GameManagerBase
         m_EnermyCommand.m_ActiveItemDic.Traversal((GameEnermyCommander command) => command.OnCharacterDead(character));
 
         bool commandAliveStill=false;
-        m_GameBattleData[m_BattleChunkIndex].m_BattleEnermyCommands.TraversalBreak((int commandIndex) => {
+        m_BattleChunkData.m_BattleEnermyCommands.TraversalBreak((int commandIndex) => {
             commandAliveStill = m_EnermyCommand.m_ActiveItemDic[commandIndex].m_Playing;
             return commandAliveStill;
         });
@@ -491,10 +525,10 @@ public class GameManager : GameManagerBase
             return;
 
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleFinish);
-        if (m_GameBattleData[m_BattleChunkIndex].m_IsFinal)
+        if (m_BattleChunkData.m_IsFinal)
             OnFinalBattleFinish();
 
-        m_BattleChunkIndex = -1;
+        m_BattleChunkData = null;
     }
 
     void OnFinalBattleStart()
@@ -530,47 +564,6 @@ public class GameManager : GameManagerBase
         });
 
     }
-    #endregion
-    #region Chunk Relative Management
-    void GenerateChunkRelatives()
-    {
-        GameLevelManager.Instance.m_GameChunks.Traversal((int chunkIndex, LevelChunkGame chunkData) =>
-        {
-            chunkData.m_ChunkObjects.Traversal((enum_TileObjectType tileType, List<ChunkGameObjectData> objects) => {
-                objects.Traversal((ChunkGameObjectData objectData) =>
-                {
-                    switch (tileType)
-                    {
-                        case enum_TileObjectType.RPlayerSpawn1x1:
-                            tf_PlayerStart.position = objectData.pos;
-                            tf_PlayerStart.rotation = objectData.rot;
-                            break;
-                        case enum_TileObjectType.RStagePortal2x2:
-                            GameObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Portal, objectData.pos, objectData.rot, tf_Interacts).Play(OnStageFnished, "Test");
-                            break;
-                        case enum_TileObjectType.REventArea3x3:
-
-                            break;
-                        case enum_TileObjectType.RConnection1x5:
-                            GamePlayerTrigger detector = m_ChunkEnterTriggers.AddItem(m_ChunkEnterTriggers.Count);
-                            detector.transform.position = objectData.pos;
-                            detector.transform.rotation = objectData.rot;
-                            detector.Play(chunkIndex, OnChunkEntering);
-                            break;
-                    }
-                });
-            });
-        });
-    }
-    
-    void OnChunkEntering(int index)
-    {
-        LevelChunkGame chunkData = GameLevelManager.Instance.GetChunk(index);
-        if (chunkData.m_ChunkType != enum_ChunkType.Battle)
-            return;
-        
-    }
-    
     #endregion
 }
 

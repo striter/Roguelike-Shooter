@@ -114,9 +114,6 @@ public class LevelChunkData : ScriptableObject {
                     case enum_TileObjectType.REventArea3x3:
                         tileColor = Color.yellow;
                         break;
-                    case enum_TileObjectType.RFinalBattleTrigger1x1:
-                        tileColor = Color.magenta;
-                        break;
                     case enum_TileObjectType.REliteEnermySpawn1x1:
                     case enum_TileObjectType.REnermySpawn1x1:
                         tileColor = Color.red;

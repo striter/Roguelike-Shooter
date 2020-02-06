@@ -67,7 +67,6 @@ namespace LevelSetting
         REventArea3x3 = 55,
         REnermySpawn1x1=56,
         REliteEnermySpawn1x1=57,
-        RFinalBattleTrigger1x1=58,
         RestrictEnd,
     }
 
@@ -185,13 +184,11 @@ namespace LevelSetting
                 case enum_ChunkType.Battle:
                     restrictionDic.Add(enum_TileObjectType.RConnection1x5, -1);
                     restrictionDic.Add( enum_TileObjectType.REnermySpawn1x1,-1);
-                    restrictionDic.Add(enum_TileObjectType.RFinalBattleTrigger1x1, -1);
                     break;
                 case enum_ChunkType.Final:
                     restrictionDic.Add(enum_TileObjectType.RConnection1x5, 1);
                     restrictionDic.Add(enum_TileObjectType.RStagePortal2x2, 1);
                     restrictionDic.Add(enum_TileObjectType.REliteEnermySpawn1x1,1);
-                    restrictionDic.Add(enum_TileObjectType.RFinalBattleTrigger1x1, -1);
                     restrictionDic.Add(enum_TileObjectType.REnermySpawn1x1, -1);
                     break;
                 case enum_ChunkType.Connection:

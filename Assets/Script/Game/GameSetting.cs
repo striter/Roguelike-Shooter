@@ -957,18 +957,28 @@ namespace GameSetting
 
     #region Class
     #region GameBase
-    public class GameChunkBattle
+    public class GameChunk
     {
         public int m_Index { get; private set; }
-        public List<int> m_BattleTriggers { get; private set; } = new List<int>();
-        public List<int> m_BattleEnermyCommands { get; private set; } = new List<int>();
-        public bool m_IsFinal { get; private set; }
-        public GameChunkBattle(int chunkIndex,bool isFinal)
+        public List<int> m_ChunkTriggers { get; private set; } = new List<int>();
+        public virtual bool m_IsBattle => false;
+        public GameChunk(int chunkIndex)
         {
             m_Index = chunkIndex;
-            m_IsFinal = isFinal;
         }
     }
+    public class GameChunkBattle:GameChunk
+    {
+        public override bool m_IsBattle => true;
+        public List<int> m_BattleEnermyCommands { get; private set; } = new List<int>();
+        public bool m_IsFinal { get; private set; }
+        public GameChunkBattle(int chunkIndex, bool isFinal) : base(chunkIndex)
+        {
+            m_IsFinal = isFinal;
+        }
+
+    }
+    
     
     public class HealthBase
     {
