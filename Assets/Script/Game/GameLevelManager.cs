@@ -70,7 +70,7 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
                 gameChunkGenerate.Clear();
                 //Generate Main Chunks
                 gameChunkGenerate.Add(new ChunkGenerateData(gameChunkGenerate.Count, TileAxis.Zero, datas[enum_ChunkType.Start].RandomItem(random)));
-                List<enum_ChunkType> mainChunkType = new List<enum_ChunkType>()
+                List<enum_ChunkType> mainChunkType =new List<enum_ChunkType>()
                     {  enum_ChunkType.Connection,enum_ChunkType.Battle, enum_ChunkType.Connection, enum_ChunkType.Battle, enum_ChunkType.Connection, enum_ChunkType.Event, enum_ChunkType.Connection, enum_ChunkType.Battle, enum_ChunkType.Connection, enum_ChunkType.Event, enum_ChunkType.Connection, enum_ChunkType.Battle, enum_ChunkType.Connection, enum_ChunkType.Event, enum_ChunkType.Connection, enum_ChunkType.Battle, enum_ChunkType.Connection, enum_ChunkType.Event, enum_ChunkType.Connection, enum_ChunkType.Battle, enum_ChunkType.Connection, enum_ChunkType.Event, enum_ChunkType.Connection, enum_ChunkType.Battle, enum_ChunkType.Connection, enum_ChunkType.Final };
 
                 List<ChunkGenerateData> mainConnectionChunks = null;

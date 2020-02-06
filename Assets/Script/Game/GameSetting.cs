@@ -35,6 +35,7 @@ namespace GameSetting
 
         public const int I_PlayerReviveBuffIndex = 40004;
         public static readonly RangeInt RI_GameFinalBattleEnermySpawnCheck = new RangeInt(10, 5);
+        public const float F_FinalBattleEnermySpawnEliteHealthScaleOffset = .2f;
 
         public static readonly List<EliteBuffCombine> L_GameEliteBuff = new List<EliteBuffCombine>() { new EliteBuffCombine(2010, 12010, 32010), new EliteBuffCombine(2020, 12020, 32020), new EliteBuffCombine(2030, 12030, 32030), new EliteBuffCombine(2040, 12040, 32040), new EliteBuffCombine(2050, 12050, 32050), new EliteBuffCombine(2060, 12060, 32060) };
         public static readonly RangeInt RI_EliteBuffTimerAbove = new RangeInt(2, 2), RI_EliteBuffTimerBelow = new RangeInt(2, 2);

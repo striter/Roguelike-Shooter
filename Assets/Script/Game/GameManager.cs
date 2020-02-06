@@ -286,8 +286,7 @@ public class GameManager : GameManagerBase
     {
         if (character.m_ControllType == enum_EntityController.Player)
             SetPostEffect_Dead();
-
-        SpawnEntityDeadPickups(character);
+        
         OnBattleCharatcerKilled(character);
     }
 
@@ -438,12 +437,17 @@ public class GameManager : GameManagerBase
     public Dictionary<enum_EnermyType, List<int>> m_EnermyIDs;
     public bool m_Battling => m_BattleChunkData != null;
     GameChunkBattle m_BattleChunkData = null;
-    bool m_FinalBattling;
-    public List<Vector3> m_FinalBattleGeneratePoints { get; private set; } = new List<Vector3>();
+
     TimeCounter m_TimerFinalBattle = new TimeCounter();
+    bool m_FinalBattling;
+    int m_FinalEliteCommandIndex;
+    float m_PreviousEliteHealthScale;
+    public List<Vector3> m_FinalBattleGeneratePoints { get; private set; } = new List<Vector3>();
 
     void GenerateBattleRelatives()
-    {        m_FinalBattling = false;
+    {
+        m_FinalBattling = false;
+
         m_BattleChunkData = null;
         m_EnermyCommand.ClearPool();
 
@@ -465,6 +469,7 @@ public class GameManager : GameManagerBase
                 m_Command.transform.rotation = objectData.rot;
                 m_Command.Play( m_EnermyIDs[enum_EnermyType.Elite].RandomItem(m_GameLevel.m_GameRandom), m_LocalPlayer.transform);
                 chunkBattleData.m_BattleEnermyCommands.Add(enermyCommandIndex);
+                m_FinalEliteCommandIndex = enermyCommandIndex;
                 enermyCommandIndex++;
 
                 chunkData.m_ChunkObjects[enum_TileObjectType.REnermySpawn1x1].Traversal((ChunkGameObjectData data) =>{
@@ -513,7 +518,11 @@ public class GameManager : GameManagerBase
         if (!m_Battling)
             return;
 
-        m_EnermyCommand.m_ActiveItemDic.Traversal((GameEnermyCommander command) => command.OnCharacterDead(character));
+        m_EnermyCommand.m_ActiveItemDic.Traversal((GameEnermyCommander command) =>
+        {
+            if(command.OnCharacterDead(character))
+                SpawnEntityDeadPickups(character);
+        });
 
         bool commandAliveStill=false;
         m_BattleChunkData.m_BattleEnermyCommands.TraversalBreak((int commandIndex) => {
@@ -524,16 +533,17 @@ public class GameManager : GameManagerBase
         if (commandAliveStill)
             return;
 
+        m_BattleChunkData = null;
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleFinish);
         if (m_BattleChunkData.m_IsFinal)
             OnFinalBattleFinish();
 
-        m_BattleChunkData = null;
     }
 
     void OnFinalBattleStart()
     {
         m_FinalBattling = true;
+        m_PreviousEliteHealthScale = 1f;
         m_TimerFinalBattle.SetTimer(GameConst.RI_GameFinalBattleEnermySpawnCheck.Random());
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnFinalBattleStart);
     }
@@ -556,6 +566,11 @@ public class GameManager : GameManagerBase
         if (m_TimerFinalBattle.m_Timing)
             return;
         m_TimerFinalBattle.SetTimer(GameConst.RI_GameFinalBattleEnermySpawnCheck.Random());
+
+        float eliteHealthScale = m_EnermyCommand.GetItem(m_FinalEliteCommandIndex).m_EntityHealthScale;
+        if (eliteHealthScale <= 0|| m_PreviousEliteHealthScale - eliteHealthScale < GameConst.F_FinalBattleEnermySpawnEliteHealthScaleOffset)
+            return;
+        m_PreviousEliteHealthScale = eliteHealthScale;
 
         m_GameLevel.m_EnermyGenerate[true].RandomItem(m_GameLevel.m_GameRandom).GetEnermyIDList(m_EnermyIDs, m_GameLevel.m_GameRandom).Traversal((int enermyID) =>
         {

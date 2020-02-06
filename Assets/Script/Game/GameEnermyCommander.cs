@@ -7,6 +7,8 @@ using System;
 public class GameEnermyCommander : CSimplePoolObjectMono<int> {
     public bool m_Playing { get; private set; } = false;
     public bool m_Battling { get; private set; } = false;
+    public bool m_EntityShowing => m_Entity;
+    public float m_EntityHealthScale => m_EntityShowing ? m_Entity.m_Health.F_HealthMaxScale : -1f;
     int m_EntityID;
     EntityCharacterAI m_Entity;
     float m_EntityHealth=0;
@@ -19,12 +21,13 @@ public class GameEnermyCommander : CSimplePoolObjectMono<int> {
         m_Battling = false;
     }
 
-    public void OnCharacterDead(EntityCharacterBase character)
+    public bool OnCharacterDead(EntityCharacterBase character)
     {
         if (!m_Entity||character.m_EntityID != m_Entity.m_EntityID)
-            return;
+            return false;
 
         m_Playing = false;
+        return true;
     }
 
     public void DoBattle()

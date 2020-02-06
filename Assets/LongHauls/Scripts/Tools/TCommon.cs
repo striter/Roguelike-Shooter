@@ -232,6 +232,13 @@ public static class TCommon
         foreach (T temp in tempDic.Keys)
             OnEachPair(temp,tempDic[temp]);
     }
+    public static void TraversalBreak<T, Y>(this Dictionary<T, Y> dic, Func<Y, bool> OnEachItem, bool changeValue = false)
+    {
+        Dictionary<T, Y> tempDic = changeValue ? new Dictionary<T, Y>(dic) : dic;
+        foreach (T temp in tempDic.Keys)
+            if (OnEachItem(tempDic[temp]))
+                break;
+    }
     public static void Traversal<T>(this T[] array, Action<T> OnEachItem)
     {
         int length = array.Length;
