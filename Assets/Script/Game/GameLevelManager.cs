@@ -8,6 +8,8 @@ using TTiles;
 using UnityEngine.AI;
 using System.Threading.Tasks;
 public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
+    public bool m_FinalBattleTest = true;
+
     ObjectPoolListComponent<int, LevelChunkGame> m_ChunkPool;
     public Dictionary<int, LevelChunkGame> m_GameChunks => m_ChunkPool.m_ActiveItemDic;
     public Light m_DirectionalLight { get; private set; }
@@ -17,6 +19,7 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
     Vector3 m_MapOriginPos;
 
     int m_chunkLifting = -1;
+
     public Vector2 GetMapPosition(Vector3 worldPosition,float mapScale)
     {
         Vector3 offset =   worldPosition- m_MapOriginPos;
@@ -70,7 +73,10 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
                 gameChunkGenerate.Clear();
                 //Generate Main Chunks
                 gameChunkGenerate.Add(new ChunkGenerateData(gameChunkGenerate.Count, TileAxis.Zero, datas[enum_ChunkType.Start].RandomItem(random)));
-                List<enum_ChunkType> mainChunkType =new List<enum_ChunkType>()
+                List<enum_ChunkType> mainChunkType = m_FinalBattleTest ?
+                new List<enum_ChunkType>()
+                { enum_ChunkType.Connection, enum_ChunkType.Final } :
+                new List<enum_ChunkType>()
                     {  enum_ChunkType.Connection,enum_ChunkType.Battle, enum_ChunkType.Connection, enum_ChunkType.Battle, enum_ChunkType.Connection, enum_ChunkType.Event, enum_ChunkType.Connection, enum_ChunkType.Battle, enum_ChunkType.Connection, enum_ChunkType.Event, enum_ChunkType.Connection, enum_ChunkType.Battle, enum_ChunkType.Connection, enum_ChunkType.Event, enum_ChunkType.Connection, enum_ChunkType.Battle, enum_ChunkType.Connection, enum_ChunkType.Event, enum_ChunkType.Connection, enum_ChunkType.Battle, enum_ChunkType.Connection, enum_ChunkType.Event, enum_ChunkType.Connection, enum_ChunkType.Battle, enum_ChunkType.Connection, enum_ChunkType.Final };
 
                 List<ChunkGenerateData> mainConnectionChunks = null;
@@ -101,6 +107,8 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
                     return true;
                 };
 
+                if (m_FinalBattleTest)
+                    break;
                 if (!GenerateSubChunks(1))
                     continue;
                 if (!GenerateSubChunks(2))

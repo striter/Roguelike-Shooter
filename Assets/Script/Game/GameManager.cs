@@ -518,12 +518,17 @@ public class GameManager : GameManagerBase
         if (!m_Battling)
             return;
 
-        m_EnermyCommand.m_ActiveItemDic.Traversal((GameEnermyCommander command) =>
+        bool chunkEntityKilled = false;
+        m_EnermyCommand.m_ActiveItemDic.TraversalBreak((GameEnermyCommander command) =>
         {
-            if(command.OnCharacterDead(character))
-                SpawnEntityDeadPickups(character);
+            chunkEntityKilled = command.OnCharacterDead(character);
+            return chunkEntityKilled;
         });
 
+        if (!chunkEntityKilled)
+            return;
+
+        SpawnEntityDeadPickups(character);
         bool commandAliveStill=false;
         m_BattleChunkData.m_BattleEnermyCommands.TraversalBreak((int commandIndex) => {
             commandAliveStill = m_EnermyCommand.m_ActiveItemDic[commandIndex].m_Playing;
@@ -532,11 +537,10 @@ public class GameManager : GameManagerBase
 
         if (commandAliveStill)
             return;
-
-        m_BattleChunkData = null;
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleFinish);
         if (m_BattleChunkData.m_IsFinal)
             OnFinalBattleFinish();
+        m_BattleChunkData = null;
 
     }
 
