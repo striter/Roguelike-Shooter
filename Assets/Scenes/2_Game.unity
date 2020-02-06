@@ -766,7 +766,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   F_CameraRotateSmooth: 0.4
-  F_CameraMoveSmooth: 0.04
+  F_CameraMoveSmooth: 0.08
   B_InvertCamera: 0
   F_RotateSensitive: 2
   TPSOffset: {x: 0, y: 30, z: -20}
@@ -1026,7 +1026,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 30
+  field of view: 35
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
