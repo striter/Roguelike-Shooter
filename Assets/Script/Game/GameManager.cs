@@ -414,7 +414,7 @@ public class GameManager : GameManagerBase
                             GamePlayerChunkTrigger trigger = m_ChunkEnterTriggers.AddItem(triggerIndex);
                             trigger.transform.position = objectData.pos;
                             trigger.transform.rotation = objectData.rot;
-                            trigger.Play(chunkIndex, chunkData.GetWorldChunkObunds(), OnChunkEnterDetect);
+                            trigger.Play(chunkIndex, chunkData.m_WorldChunkBounds, OnChunkEnterDetect);
                             m_GameChunkData[chunkIndex].m_ChunkTriggers.Add(triggerIndex);
                             break;
                     }

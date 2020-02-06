@@ -199,16 +199,6 @@ namespace LevelSetting
         }
     }
     
-
-    public struct ChunkNavigationData
-    {
-        public Transform transform { get; private set; }
-        public ChunkNavigationData(Transform transform)
-        {
-            this.transform = transform;
-        }
-    }
-
     public struct ChunkGameObjectData
     {
         public Vector3 pos { get; private set; }
