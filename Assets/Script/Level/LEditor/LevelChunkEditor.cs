@@ -91,7 +91,7 @@ public class LevelChunkEditor : LevelChunkBase
             CheckEditMode();
         }
 
-        if (Input.GetKeyDown(KeyCode.CapsLock))
+        if (Input.GetKeyDown(KeyCode.BackQuote))
         {
             m_EditMode = enum_TileSubType.Invalid;
             if (!m_GameViewMode)

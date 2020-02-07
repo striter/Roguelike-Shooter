@@ -707,7 +707,7 @@ namespace GameSetting
             m_Coins = _player.m_CharacterInfo.m_Coins;
             m_EquipmentSlot = _player.m_CharacterInfo.m_EquipmentSlot;
             m_Health = _player.m_Health.m_CurrentHealth;
-            m_Armor = _player.m_Health.m_MaxArmor;
+            m_Armor = _player.m_Health.m_CurrentArmor;
             m_weapon1 = WeaponSaveData.Create(_player.m_Weapon1);
             m_weapon2 = WeaponSaveData.Create(_player.m_Weapon2);
             m_weaponEquipingFirst = _player.m_weaponEquipingFirst;
@@ -1218,16 +1218,23 @@ namespace GameSetting
         }
         public void OnMaxChange(float maxHealthAdd,float maxArmorAdd)
         {
-            m_MaxHealthAdditive = maxHealthAdd;
-            m_MaxArmorAdditive = maxArmorAdd;
+            bool changed = false;
+            if (maxHealthAdd != m_MaxHealthAdditive)
+            {
+                m_MaxHealthAdditive = maxHealthAdd;
+                if(m_CurrentHealth>m_MaxHealth)
+                    OnSetHealth(m_CurrentHealth);
+                changed = true;
+            }
 
-            if (m_CurrentHealth > m_MaxHealth)
-                OnSetHealth(m_CurrentHealth);
-
-            if (m_CurrentArmor > m_MaxArmor)
+            if (maxArmorAdd != m_MaxArmorAdditive)
+            {
+                m_MaxArmorAdditive = maxArmorAdd;
                 OnSetArmor(m_CurrentArmor);
-
-            OnHealthChanged(enum_HealthChangeMessage.Default);
+                changed = true;
+            }
+            if(changed)
+                OnHealthChanged(enum_HealthChangeMessage.Default);
         }
         
         public void OnBattleFinishResetArmor()=>base.OnSetStatus(m_CurrentHealth, m_MaxArmor);
