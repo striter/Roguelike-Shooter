@@ -9,12 +9,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e349d199acb4d80499b840c85dd3f665, type: 3}
-  m_Name: Please Edit This
+  m_Name: 808080FF
   m_EditorClassIdentifier: 
   f_pitch: 45
-  f_yaw: 33
-  f_lightItensity: 0.56
-  f_lambert: 0.9
-  c_lightColor: {r: 1, g: 0.917712, b: 0.917712, a: 1}
-  c_ambient: {r: 0.6544118, g: 0.6222885, b: 0.60148144, a: 1}
-  c_skyColor: {r: 1, g: 0.95686275, b: 0.8156863, a: 1}
+  f_yaw: 60
+  f_lightItensity: 0.89
+  f_lambert: 0.85
+  c_lightColor: {r: 1, g: 0.9815416, b: 0.9044118, a: 1}
+  c_ambient: {r: 0.58823526, g: 0.54930794, b: 0.54930794, a: 1}
+  c_skyColor: {r: 0.21960784, g: 0.15294118, b: 0.101960786, a: 1}
