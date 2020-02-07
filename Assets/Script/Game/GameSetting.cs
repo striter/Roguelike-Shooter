@@ -1223,14 +1223,14 @@ namespace GameSetting
             {
                 m_MaxHealthAdditive = maxHealthAdd;
                 if(m_CurrentHealth>m_MaxHealth)
-                    OnSetHealth(m_CurrentHealth);
+                    OnSetHealth(m_MaxHealth);
                 changed = true;
             }
 
             if (maxArmorAdd != m_MaxArmorAdditive)
             {
                 m_MaxArmorAdditive = maxArmorAdd;
-                OnSetArmor(m_CurrentArmor);
+                OnSetArmor(m_MaxArmor);
                 changed = true;
             }
             if(changed)
