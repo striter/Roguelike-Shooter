@@ -22,10 +22,9 @@ public class EntityCharacterAIElite : EntityCharacterAI {
         if (!m_AIBattleActivating)
             return;
 
-        if(!m_Indicating)
+        if(m_Indicating)
         {
             m_IndicateCounter.Tick(deltaTime);
-
             if (m_IndicateCounter.m_Timing)
                 return;
 
