@@ -139,36 +139,36 @@ MonoBehaviour:
     m_GroundType: -1
     m_ObjectType: -1
     m_Direction: 0
-  - m_PillarType: 1
+  - m_PillarType: -1
     m_GroundType: 1
     m_ObjectType: 11
     m_Direction: 0
-  - m_PillarType: 1
+  - m_PillarType: -1
     m_GroundType: 1
     m_ObjectType: 11
     m_Direction: 0
-  - m_PillarType: 1
+  - m_PillarType: -1
     m_GroundType: 1
     m_ObjectType: -1
     m_Direction: 0
-  - m_PillarType: 1
-    m_GroundType: 1
+  - m_PillarType: -1
+    m_GroundType: 8
     m_ObjectType: -1
     m_Direction: 0
-  - m_PillarType: 1
-    m_GroundType: 1
+  - m_PillarType: -1
+    m_GroundType: 8
     m_ObjectType: -1
     m_Direction: 0
-  - m_PillarType: 1
-    m_GroundType: 1
+  - m_PillarType: -1
+    m_GroundType: 8
     m_ObjectType: -1
     m_Direction: 0
-  - m_PillarType: 1
-    m_GroundType: 1
+  - m_PillarType: -1
+    m_GroundType: 8
     m_ObjectType: -1
     m_Direction: 0
-  - m_PillarType: 1
-    m_GroundType: 1
+  - m_PillarType: -1
+    m_GroundType: 8
     m_ObjectType: -1
     m_Direction: 0
   - m_PillarType: -1
@@ -179,76 +179,76 @@ MonoBehaviour:
     m_GroundType: 10
     m_ObjectType: -1
     m_Direction: 0
-  - m_PillarType: 1
+  - m_PillarType: -1
+    m_GroundType: 8
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: 8
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: 8
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: 8
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: 8
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: 8
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: 8
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: 8
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: 8
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: 8
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
     m_GroundType: 1
     m_ObjectType: -1
     m_Direction: 0
-  - m_PillarType: 1
+  - m_PillarType: -1
     m_GroundType: 1
     m_ObjectType: -1
     m_Direction: 0
-  - m_PillarType: 1
+  - m_PillarType: -1
     m_GroundType: 1
     m_ObjectType: -1
     m_Direction: 0
-  - m_PillarType: 1
-    m_GroundType: 1
+  - m_PillarType: -1
+    m_GroundType: 8
     m_ObjectType: -1
     m_Direction: 0
-  - m_PillarType: 1
-    m_GroundType: 1
+  - m_PillarType: -1
+    m_GroundType: 8
     m_ObjectType: -1
     m_Direction: 0
-  - m_PillarType: 1
-    m_GroundType: 1
+  - m_PillarType: -1
+    m_GroundType: 8
     m_ObjectType: -1
     m_Direction: 0
-  - m_PillarType: 1
-    m_GroundType: 1
+  - m_PillarType: -1
+    m_GroundType: 8
     m_ObjectType: -1
     m_Direction: 0
-  - m_PillarType: 1
-    m_GroundType: 1
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_PillarType: 1
-    m_GroundType: 1
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_PillarType: 1
-    m_GroundType: 1
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_PillarType: 1
-    m_GroundType: 1
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_PillarType: 1
-    m_GroundType: 1
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_PillarType: 1
-    m_GroundType: 1
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_PillarType: 1
-    m_GroundType: 1
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_PillarType: 1
-    m_GroundType: 1
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_PillarType: 1
-    m_GroundType: 1
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_PillarType: 1
-    m_GroundType: 1
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_PillarType: 1
-    m_GroundType: 1
+  - m_PillarType: -1
+    m_GroundType: 8
     m_ObjectType: -1
     m_Direction: 0
   - m_PillarType: -1
@@ -259,55 +259,55 @@ MonoBehaviour:
     m_GroundType: 10
     m_ObjectType: -1
     m_Direction: 0
-  - m_PillarType: 1
+  - m_PillarType: -1
+    m_GroundType: 8
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: 8
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: 8
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: 8
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: 8
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: 8
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: 8
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: 8
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: 8
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: 8
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
     m_GroundType: 1
     m_ObjectType: -1
     m_Direction: 0
-  - m_PillarType: 1
-    m_GroundType: 1
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_PillarType: 1
-    m_GroundType: 1
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_PillarType: 1
-    m_GroundType: 1
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_PillarType: 1
-    m_GroundType: 1
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_PillarType: 1
-    m_GroundType: 1
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_PillarType: 1
-    m_GroundType: 1
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_PillarType: 1
-    m_GroundType: 1
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_PillarType: 1
-    m_GroundType: 1
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_PillarType: 1
-    m_GroundType: 1
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_PillarType: 1
-    m_GroundType: 1
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_PillarType: 1
+  - m_PillarType: -1
     m_GroundType: 1
     m_ObjectType: 11
     m_Direction: 0
-  - m_PillarType: 1
+  - m_PillarType: -1
     m_GroundType: 1
     m_ObjectType: 11
     m_Direction: 0
