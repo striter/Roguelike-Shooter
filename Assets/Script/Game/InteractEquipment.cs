@@ -16,19 +16,19 @@ public class InteractEquipment : InteractGameBase {
         return this;
     }
 
-    
-    protected override bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactTarget)
+
+    protected override bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactor)
     {
-        base.OnInteractOnceCanKeepInteract(_interactTarget);
-        if (!_interactTarget.m_CharacterInfo.b_haveEmptyEquipmentSlot)
+        base.OnInteractOnceCanKeepInteract(_interactor);
+        if (!_interactor.m_CharacterInfo.b_haveEmptyEquipmentSlot)
         {
             if (!UIPageBase.m_PageOpening)
-                GameUIManager.Instance.ShowPage<UI_EquipmentSwap>(true, 0f).Play(_interactTarget.m_CharacterInfo, m_Equipment, OnEquipmentSwapPage);
+                GameUIManager.Instance.ShowPage<UI_EquipmentSwap>(true, 0f).Play(_interactor.m_CharacterInfo, m_Equipment, OnEquipmentSwapPage);
         }
         else
         {
             OnRecycle();
-            _interactTarget.m_CharacterInfo.OnEquipmentAcquire(m_Equipment);
+            _interactor.m_CharacterInfo.OnEquipmentAcquire(m_Equipment);
         }
         return false;
     }

@@ -95,8 +95,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         CameraController.Instance.SetCameraRotation(-1, transform.rotation.eulerAngles.y);
         m_Agent.enabled = true;
 
-        m_CharacterInfo.SetInfoData(m_saveData.m_coins, ActionDataManager.CreateActions(m_saveData.m_actionEquipment));
-        m_Health.OnActivate(m_saveData.m_curHealth>=0?m_saveData.m_curHealth:I_MaxHealth,I_DefaultArmor,true);
+        m_CharacterInfo.SetInfoData(m_saveData);
+        m_Health.OnActivate(m_saveData.m_Health>=0?m_saveData.m_Health:I_MaxHealth,I_DefaultArmor,true);
         ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_weapon1));
         if (m_saveData.m_weapon2.m_Weapon != enum_PlayerWeapon.Invalid)
             ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_weapon2));
@@ -143,7 +143,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         base.OnAliveTick(deltaTime);
         OnWeaponTick(deltaTime);
         OnMoveTick(deltaTime);
-        m_Health.SetMaxHealth(m_CharacterInfo.F_MaxHealthAdditive);
+        m_Health.OnMaxChange(m_CharacterInfo.F_MaxHealthAdditive,m_CharacterInfo.F_MaxArmorAdditive);
         m_CharacterAbility.Tick(deltaTime);
         OnCommonStatus();
     }
@@ -284,8 +284,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_BaseMovementSpeed = CalculateMovementSpeedBase() * CalculateMovementSpeedMultiple();
 
         float finalMovementSpeed = m_CharacterInfo.F_MovementSpeed;
-        transform.position = NavigationManager.NavMeshPosition(transform.position+ CalculateMoveDirection(m_MoveAxisInput) * finalMovementSpeed * deltaTime);
- //       m_Controller.Move(CalculateMoveDirection(m_MoveAxisInput) * finalMovementSpeed * deltaTime);
+ //       transform.position = NavigationManager.NavMeshPosition(transform.position+ CalculateMoveDirection(m_MoveAxisInput) * finalMovementSpeed * deltaTime);
+        m_Controller.Move(CalculateMoveDirection(m_MoveAxisInput) * finalMovementSpeed * deltaTime);
         m_Animator.SetRun(m_MoveAxisInput, finalMovementSpeed / F_MovementSpeed);
     }
 
@@ -344,7 +344,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     #region PlayerInteract
     public void OnInteractCheck(InteractBase interactTarget, bool isEnter)
     {
-        if (!interactTarget.B_InteractEnable)
+        if (!interactTarget.OnCheckResponse(this))
             return;
 
         if (interactTarget.B_InteractOnTrigger)
@@ -372,7 +372,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (!m_Interact.TryInteract(this))
             return;
 
-        if (!m_Interact.B_InteractEnable)
+        if (!m_Interact.OnCheckResponse(this))
             m_Interact = null;
 
         OnInteractStatus();
@@ -471,7 +471,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     RangeFloat m_PlayerReviveAmount;
     void OnCheckRevive()
     {
-        m_PlayerReviveAmount = new RangeFloat(m_Health.m_BaseHealth, m_Health.m_StartArmor);
+        m_PlayerReviveAmount = new RangeFloat(m_Health.m_BaseHealth, m_Health.m_BaseArmor);
         if (m_CharacterInfo.CheckRevive(ref m_PlayerReviveAmount))
         {
             RevivePlayer();

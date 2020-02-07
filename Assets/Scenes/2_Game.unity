@@ -738,6 +738,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_NearbyChunks: []
   m_RoadBlockTiles: []
+  m_ChunkEventType: -1
 --- !u!1 &1388337371
 GameObject:
   m_ObjectHideFlags: 0

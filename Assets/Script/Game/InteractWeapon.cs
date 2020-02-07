@@ -8,7 +8,7 @@ public class InteractWeapon : InteractGameBase {
     Transform tf_ModelContainer;
     public WeaponBase m_Weapon { get; private set; }
     public override enum_Interaction m_InteractType => enum_Interaction.Weapon;
-    protected override bool B_CanInteract(EntityCharacterPlayer _interactor) => m_Weapon != null;
+    protected override bool B_CanInteract(EntityCharacterPlayer _interactor) => base.B_CanInteract(_interactor)&& m_Weapon != null;
     public override void OnPoolItemInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
     {
         base.OnPoolItemInit(identity, OnRecycle);

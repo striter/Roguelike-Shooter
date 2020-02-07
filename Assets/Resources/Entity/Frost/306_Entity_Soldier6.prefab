@@ -202,6 +202,7 @@ GameObject:
   - component: {fileID: 4519902248702522}
   - component: {fileID: 114947585475733890}
   - component: {fileID: 114186820215261170}
+  - component: {fileID: 114598724747985846}
   - component: {fileID: 195863691409227736}
   - component: {fileID: 136688872912160338}
   m_Layer: 10
@@ -1030,7 +1031,38 @@ MonoBehaviour:
     start: 8
     length: 4
   F_AttackRate: 0.5
-  F_AttackRotateParam: 0.5
+  F_AttackRotateParam: 1
+  I_AttackPreAimPercentage: 0
+  B_AttackMove: 0
+  F_AttackFrontCheck: 2
+--- !u!114 &114598724747985846
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1419280467194282}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c79b78d0b3b0b144a80e76641840b40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  I_MaxHealth: 1600
+  ExtraRendererForForest107Only: {fileID: 0}
+  E_SpawnType: 5
+  I_DefaultArmor: 0
+  F_MovementSpeed: 5
+  F_AttackSpread: 0
+  E_AnimatorIndex: 112
+  F_AIChaseRange: 10
+  F_AIAttackRange: 15
+  F_AttackDuration:
+    start: 5
+    length: 1
+  F_AttackTimes:
+    start: 8
+    length: 4
+  F_AttackRate: 0.5
+  F_AttackRotateParam: 1
   I_AttackPreAimPercentage: 0
   B_AttackMove: 0
   F_AttackFrontCheck: 2

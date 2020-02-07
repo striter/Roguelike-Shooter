@@ -28,15 +28,15 @@ public class UI_EquipmentSwap : UIPage {
         m_SwapEquipment = _swapEquipment;
         OnPageHide = _OnPageHide;
         m_EquipmentGrid.ClearGrid();
-        for(int i=0;i<m_Info.m_ActionEquipment.Count;i++)
-            m_EquipmentGrid.AddItem(i).SetInfo(m_Info.m_ActionEquipment[i]);
+        for(int i=0;i<m_Info.m_PlayerExpires.Count;i++)
+            m_EquipmentGrid.AddItem(i).SetInfo(m_Info.m_ExpireEquipments[i]);
         m_EquipmentGrid.OnItemClick(0);
         m_SwapItem.SetInfo(m_SwapEquipment);
     }
 
     void OnItemSelect(int itemIndex)
     {
-        m_SelectItem.SetInfo(m_Info.m_ActionEquipment[itemIndex]);
+        m_SelectItem.SetInfo(m_Info.m_ExpireEquipments[itemIndex]);
     }
 
     void OnConfirmBtnClick()

@@ -100,7 +100,7 @@ public class EntityCharacterBase : EntityBase
         m_Effect.OnReset();
         m_CharacterInfo.OnRevive();
         EntityHealth health = (m_Health as EntityHealth);
-        health.OnSetStatus(reviveHealth == -1 ? health.m_BaseHealth : reviveHealth, reviveArmor == -1 ? health.m_StartArmor : reviveArmor);
+        health.OnSetStatus(reviveHealth == -1 ? health.m_BaseHealth : reviveHealth, reviveArmor == -1 ? health.m_BaseArmor : reviveArmor);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterRevive, this);
     }
 

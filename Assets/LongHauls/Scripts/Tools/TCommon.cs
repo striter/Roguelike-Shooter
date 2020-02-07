@@ -324,16 +324,16 @@ public static class TCommon
 
     public static T RandomItem<T>(this T[,] array, System.Random randomSeed = null) => randomSeed != null ? array[randomSeed.Next(array.GetLength(0)), randomSeed.Next(array.GetLength(1))] : array[UnityEngine.Random.Range(0, array.GetLength(0)), UnityEngine.Random.Range(0, array.GetLength(1))];
 
-    public static Y RandomValue<T, Y>(this Dictionary<T, Y> dic, System.Random randomSeed = null) => dic.ElementAt(RandomLength(dic.Count,randomSeed)).Value
-        ;
+    public static T RandomKey<T, Y>(this Dictionary<T, Y> dic, System.Random randomSeed = null) => dic.ElementAt(RandomLength(dic.Count, randomSeed)).Key;
+    public static Y RandomValue<T, Y>(this Dictionary<T, Y> dic, System.Random randomSeed = null) => dic.ElementAt(RandomLength(dic.Count, randomSeed)).Value;
     public static int Random(this RangeInt ir, System.Random seed = null) => ir.start + RandomLength(ir.length+1,seed);
     public static float Random(this RangeFloat ir, System.Random seed = null)=> seed != null ? seed.Next((int)(ir.start * 1000), (int)(ir.end * 1000)) / 100 : UnityEngine.Random.Range(ir.start, ir.end);
     public static bool RandomBool(System.Random seed = null) => seed != null ? seed.Next(0, 2) > 0 : UnityEngine.Random.Range(0, 2) > 0;
     public static int RandomPercentage(System.Random seed=null)=> seed != null ? seed.Next(1, 101)  : UnityEngine.Random.Range(1, 101);
-    public static T RandomPercentage<T>( Dictionary<T, int> percentageRate,T invalid=default(T), System.Random seed = null)
+    public static T RandomPercentage<T>( Dictionary<T, int> percentageRate, System.Random seed = null)
     {
         float value = RandomPercentage(seed);
-        T targetLevel = invalid;
+        T targetLevel = default(T);
         int totalAmount = 0;
         bool marked = false;
         percentageRate.Traversal((T temp, int amount) => {

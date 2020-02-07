@@ -8,6 +8,7 @@ using System.Linq;
 using GameSetting_Action;
 using UnityEngine.UI;
 using TGameSave;
+using LevelSetting;
 #pragma warning disable 0649
 namespace GameSetting
 {
@@ -20,16 +21,16 @@ namespace GameSetting
         public const float F_EntityDeadFadeTime = 3f;
         public const float F_PlayerReviveCheckAfterDead = 1.5f;
         public const float F_PlayerReviveBuffDuration = 6f; //复活无敌时间
-        
+
         public const float F_AimMovementReduction = .6f;
         public const float F_MovementReductionDuration = .1f;
         public const int I_ProjectileMaxDistance = 100;
         public const int I_ProjectileBlinkWhenTimeLeftLessThan = 3;
         public const float F_AimAssistDistance = 100f;
         public const short I_BoltLastTimeAfterHit = 5;
-        
+
         public const float F_PlayerAutoAimRangeBase = 16f; //自动锁定敌人范围
-        public const int I_PlayerEquipmentCount = 5;
+        public const int I_PlayerDefaultEquipmentSlot = 2;
         public const float F_PlayerDamageAdjustmentRange = .1f;
         public const int I_PlayerRotationSmoothParam = 10;     //Camera Smooth Param For Player 10 is suggested
 
@@ -56,7 +57,7 @@ namespace GameSetting
             public const float F_AIMaxRepositionDuration = .5f;
             public const float F_AIDamageImpact = 0.01f;   //.003f;
             public const int I_AIIdlePercentage = 50;
-            public static readonly RangeFloat RF_AIBattleIdleDuration = new RangeFloat(1f, 2f); 
+            public static readonly RangeFloat RF_AIBattleIdleDuration = new RangeFloat(1f, 2f);
         }
 
         public const int I_EnermySpawnDelay = 2;        //Enermy Spawn Delay Time 
@@ -65,7 +66,15 @@ namespace GameSetting
         public const float F_PickupAcceleration = 10f; //拾取物的飞行加速速度
         public const int I_HealthPickupAmount = 25;
         public const int I_ArmorPickupAmount = 25;
-        public const int I_HealthTradeAmount = 50;
+        public const int I_HealthPackAmount = 50;
+
+        public static readonly RangeInt IR_EventTradeBuffPrice = new RangeInt(20, 5);
+        public static readonly Dictionary<enum_ChunkEventType, int> D_ChunkEventPercentage = new Dictionary<enum_ChunkEventType, int>() { { enum_ChunkEventType.Medic, 25 }, { enum_ChunkEventType.RewardChest, 25 }, { enum_ChunkEventType.Trader, 25 }, { enum_ChunkEventType.Witcher, 25 } };
+        public static readonly RangeInt IR_EventMedicPrice = new RangeInt(10, 5);
+        public const int P_EventRewardChestWeaponRate = 40;
+        public const int I_EventEquipmentTradePrice = 10;
+        public static readonly Dictionary<enum_WeaponRarity, RangeInt> D_EventWeaponTradePrice = new Dictionary<enum_WeaponRarity, RangeInt>() { { enum_WeaponRarity.Ordinary, new RangeInt(5, 5) }, { enum_WeaponRarity.Advanced, new RangeInt(10, 5) }, { enum_WeaponRarity.Rare, new RangeInt(20, 5) }, { enum_WeaponRarity.Legend, new RangeInt(30, 5) } };
+        public const int I_EquipmentSlotTradePricePerPlayerSlots = 20;
 
         public const float F_LevelTileSize = 2f;        //Cube Size For Level Tiles
         public const float F_LevelItemHealthPerTile = 100f; //环境物件的生命值系数
@@ -113,7 +122,7 @@ namespace GameSetting
         public static float GetResultDifficultyBonus(int _difficulty) =>1f+ _difficulty * .05f;
         public static float GetResultRewardCredits(float _totalScore) => _totalScore;
 
-        public static RangeInt GetTradePrice(enum_Interaction interactType, enum_EquipmentRarity actionRarity= enum_EquipmentRarity.Invalid,enum_WeaponRarity weaponRarity= enum_WeaponRarity.Invalid)
+        public static RangeInt GetTradePrice(enum_Interaction interactType, enum_EquipmentLevel actionRarity= enum_EquipmentLevel.Invalid,enum_WeaponRarity weaponRarity= enum_WeaponRarity.Invalid)
         {
             switch (interactType)
             {
@@ -124,9 +133,9 @@ namespace GameSetting
                     switch (actionRarity)
                     {
                         default: Debug.LogError("Invalid Level!"); return new RangeInt(0, -1);
-                        case enum_EquipmentRarity.Normal: return new RangeInt(8, 4);
-                        case enum_EquipmentRarity.OutStanding: return new RangeInt(16, 8);
-                        case enum_EquipmentRarity.Epic: return new RangeInt(24, 12);
+                        case enum_EquipmentLevel.Normal: return new RangeInt(8, 4);
+                        case enum_EquipmentLevel.OutStanding: return new RangeInt(16, 8);
+                        case enum_EquipmentLevel.Epic: return new RangeInt(24, 12);
                     }
                 case enum_Interaction.Weapon:
                     switch (weaponRarity)
@@ -143,7 +152,8 @@ namespace GameSetting
                     }
             }
         }
-        
+
+
         public static int GetActionRemovePrice(enum_StageLevel stage, int removeTimes) => 10 * (removeTimes + 1) ;
         public static int GetActionUpgradePrice(enum_StageLevel stage, int upgradeTimes) => 10 * (upgradeTimes + 1) ;
         public static StageInteractGenerateData GetInteractGenerate(enum_StageLevel level)
@@ -154,7 +164,7 @@ namespace GameSetting
                 case enum_StageLevel.Rookie:
                     return StageInteractGenerateData.Create(
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 100 }, { enum_WeaponRarity.Rare, 0 }, { enum_WeaponRarity.Legend, 0 } },
-                        new Dictionary<enum_EquipmentRarity, int>() { { enum_EquipmentRarity.Normal, 100 }, { enum_EquipmentRarity.OutStanding, 0 }, { enum_EquipmentRarity.Epic, 0 } }, 
+                        new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 50 }, { enum_WeaponRarity.Advanced, 50 }, { enum_WeaponRarity.Rare, 0 }, { enum_WeaponRarity.Legend, 0 } },
                         PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),       //Normal
                         new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Ordinary, 6 },{ enum_WeaponRarity.Advanced,3} }),          //Weapon
                         PickupGenerateData.Create(10, 100, 50, new RangeInt(10, 5),     //Elite
@@ -163,7 +173,7 @@ namespace GameSetting
                 case enum_StageLevel.Veteran:
                     return StageInteractGenerateData.Create(
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 0 }, { enum_WeaponRarity.Rare, 100 }, { enum_WeaponRarity.Legend, 0 } },
-                        new Dictionary<enum_EquipmentRarity, int>() { { enum_EquipmentRarity.Normal, 100 }, { enum_EquipmentRarity.OutStanding, 0 }, { enum_EquipmentRarity.Epic, 0 } },
+                        new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced,50 }, { enum_WeaponRarity.Rare, 50 }, { enum_WeaponRarity.Legend, 0 } },
                         PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),
                         new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Advanced, 3.8f },{ enum_WeaponRarity.Rare,1.9f} }),
                         PickupGenerateData.Create(10, 100, 100, new RangeInt(10, 5),
@@ -172,7 +182,7 @@ namespace GameSetting
                 case enum_StageLevel.Ranger:
                     return StageInteractGenerateData.Create(
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 0 }, { enum_WeaponRarity.Rare, 0 }, { enum_WeaponRarity.Legend, 100 } },
-                        new Dictionary<enum_EquipmentRarity, int>() { { enum_EquipmentRarity.Normal, 100 }, { enum_EquipmentRarity.OutStanding, 0 }, { enum_EquipmentRarity.Epic, 0 } },
+                        new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 0 }, { enum_WeaponRarity.Rare, 50 }, { enum_WeaponRarity.Legend, 50 } },
                         PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),
                         new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Rare, 2.8f },{ enum_WeaponRarity.Legend, 2.8f} }),
                         PickupGenerateData.Create(0, 0, 0, new RangeInt(10, 5),
@@ -180,6 +190,7 @@ namespace GameSetting
                         );
             }
         }
+
 
         public static bool CanGenerateprofit(this enum_CampFarmItemStatus status)
         {
@@ -249,7 +260,7 @@ namespace GameSetting
 
     public static class GameEnumConvertions
     {
-        public static enum_EquipmentRarity ToRarity(this enum_StageLevel stageLevel) => (enum_EquipmentRarity)stageLevel;
+        public static enum_EquipmentLevel ToRarity(this enum_StageLevel stageLevel) => (enum_EquipmentLevel)stageLevel;
         public static int ToLayer(this enum_HitCheck layerType)
         {
             switch (layerType)
@@ -342,7 +353,7 @@ namespace GameSetting
         public static string GetTitleLocalizeKey(this InteractBase interact) => "UI_Interact_" + interact.m_InteractType+interact.m_ExternalLocalizeKeyJoint;
         public static string GetBottomLocalizeKey(this InteractBase interact) => "UI_Interact_" + interact.m_InteractType + interact.m_ExternalLocalizeKeyJoint + "_Bottom";
         public static string GetIntroLocalizeKey(this InteractBase interact) => "UI_Interact_" + interact.m_InteractType +interact.m_ExternalLocalizeKeyJoint+ "_Intro";
-        public static string GetLocalizeKey(this enum_EquipmentRarity rarity) => "UI_Rarity_" + rarity;
+        public static string GetLocalizeKey(this enum_EquipmentLevel rarity) => "UI_Rarity_" + rarity;
         public static string GetLocalizeKey(this enum_Option_FrameRate frameRate) => "UI_Option_" + frameRate;
         public static string GetLocalizeKey(this enum_Option_JoyStickMode joystick) => "UI_Option_" + joystick;
         public static string GetLocalizeKey(this enum_Option_LanguageRegion region) => "UI_Option_" + region;
@@ -408,6 +419,7 @@ namespace GameSetting
         UI_PlayerInteractStatus,
         UI_PlayerInteractPickup, 
         UI_PlayerHealthStatus,
+        UI_PlayerBuffStatus,
         UI_PlayerEquipmentStatus,
         UI_PlayerWeaponStatus,
 
@@ -432,7 +444,7 @@ namespace GameSetting
     public enum enum_EnermyType { Invalid = -1, Fighter = 1, Shooter_Rookie = 2, Shooter_Veteran = 3, AOECaster = 4, Elite = 5, }
 
     public enum enum_Interaction { Invalid = -1,
-        GameBegin,Bonfire, ContainerTrade, ContainerBattle, PickupCoin, PickupHealth,PickupHealthPack, PickupArmor, Equipment, Weapon, Portal, GameEnd,
+        GameBegin,Bonfire, TradeContainer,TradeEquipmentSlot,TradeActionBuff, PickupCoin, PickupHealth,PickupHealthPack, PickupArmor,RewardChest, Equipment, Weapon, Portal, GameEnd,
         CampBegin,CampStage, CampDifficult,CampFarm,CampAction,CampEnd, }
     
     public enum enum_ProjectileFireType { Invalid = -1, Single = 1, MultipleFan = 2, MultipleLine = 3, };
@@ -449,11 +461,11 @@ namespace GameSetting
 
     public enum enum_CharacterEffect { Invalid = -1, Freeze = 1, Cloak = 2, Scan = 3, }
 
-    public enum enum_ExpireType { Invalid = -1, Buff = 1, Equipment = 2, }
+    public enum enum_ExpireType { Invalid = -1, PresetBuff = 1,ActionBuff=2, Equipment = 3, }
 
     public enum enum_ExpireRefreshType { Invalid = -1, AddUp = 1, Refresh = 2,RefreshIdentity=3, }
 
-    public enum enum_EquipmentRarity { Invalid = -1, Normal = 1, OutStanding = 2, Epic = 3, }
+    public enum enum_EquipmentLevel { Invalid = -1, Normal = 1, OutStanding = 2, Epic = 3, }
 
     public enum enum_EquipmentType { Invalid=-1,TypeA=1,TypeB=2,TypeC=3}
 
@@ -578,11 +590,9 @@ namespace GameSetting
     {
         public PickupGenerateData m_NormalPickupData { get; private set; }
         public PickupGenerateData m_ElitePickupData { get; private set; }
-        Dictionary<enum_WeaponRarity, int> m_TradeWeapon;
-        Dictionary<enum_EquipmentRarity, int> m_TradeAction;
-        public enum_WeaponRarity GetTradeWeaponRarity(System.Random seed) => TCommon.RandomPercentage(m_TradeWeapon, enum_WeaponRarity.Invalid, seed);
-        public enum_EquipmentRarity GetTradeActionRarity(System.Random seed) => TCommon.RandomPercentage(m_TradeAction, enum_EquipmentRarity.Invalid ,seed);
-        public static StageInteractGenerateData Create(Dictionary<enum_WeaponRarity,int> _tradeWeaponRate,  Dictionary<enum_EquipmentRarity, int> _tradeAbilityRate, PickupGenerateData _normalGenerate,PickupGenerateData _eliteGenerate) => new StageInteractGenerateData() { m_TradeWeapon=_tradeWeaponRate,m_TradeAction=_tradeAbilityRate,m_NormalPickupData=_normalGenerate,m_ElitePickupData=_eliteGenerate};
+        public Dictionary<enum_WeaponRarity, int> m_TradeWeapon { get; private set; }
+        public Dictionary<enum_WeaponRarity, int> m_RewardWeapon { get; private set; }
+        public static StageInteractGenerateData Create(Dictionary<enum_WeaponRarity,int> _tradeWeaponRate, Dictionary<enum_WeaponRarity, int> _rewardWeaponRate, PickupGenerateData _normalGenerate,PickupGenerateData _eliteGenerate) => new StageInteractGenerateData() { m_TradeWeapon=_tradeWeaponRate, m_RewardWeapon = _rewardWeaponRate, m_NormalPickupData=_normalGenerate,m_ElitePickupData=_eliteGenerate};
     }
 
     public struct EliteBuffCombine
@@ -668,17 +678,21 @@ namespace GameSetting
     {
         public string m_GameSeed;
         public enum_StageLevel m_Stage;
-        public float m_coins;
-        public List<EquipmentSaveData> m_actionEquipment;
-        public float m_curHealth;
+        public float m_Coins;
+        public int m_EquipmentSlot;
+        public List<EquipmentSaveData> m_Equipments;
+        public List<ActionSaveData> m_Buffs;
+        public float m_Health;
         public WeaponSaveData m_weapon1, m_weapon2;
         public bool m_weaponEquipingFirst;
         public enum_PlayerCharacter m_character;
         public CBattleSave()
         {
-            m_coins = 0;
-            m_curHealth = -1;
-            m_actionEquipment = new List<EquipmentSaveData>();
+            m_Coins = 0;
+            m_EquipmentSlot = GameConst.I_PlayerDefaultEquipmentSlot;
+            m_Health = -1;
+            m_Equipments = new List<EquipmentSaveData>();
+            m_Buffs = new List<ActionSaveData>();
             m_Stage = enum_StageLevel.Rookie;
             m_GameSeed = DateTime.Now.ToLongTimeString().ToString();
             m_character = GameDataManager.m_GameData.m_CharacterSelected;
@@ -688,13 +702,14 @@ namespace GameSetting
         }
         public void Adjust(EntityCharacterPlayer _player, GameProgressManager _level)
         {
-            m_coins = _player.m_CharacterInfo.m_Coins;
-            m_curHealth = _player.m_Health.m_CurrentHealth;
+            m_Coins = _player.m_CharacterInfo.m_Coins;
+            m_EquipmentSlot = _player.m_CharacterInfo.m_EquipmentSlot;
+            m_Health = _player.m_Health.m_CurrentHealth;
             m_weapon1 = WeaponSaveData.Create(_player.m_Weapon1);
             m_weapon2 = WeaponSaveData.Create(_player.m_Weapon2);
             m_weaponEquipingFirst = _player.m_weaponEquipingFirst;
-            m_actionEquipment = EquipmentSaveData.Create(_player.m_CharacterInfo.m_ActionEquipment);
-
+            m_Equipments = EquipmentSaveData.Create(_player.m_CharacterInfo.m_ExpireEquipments);
+            m_Buffs = ActionSaveData.Create(_player.m_CharacterInfo.m_ExpireBuffs);
             m_GameSeed = _level.m_GameSeed;
             m_Stage = _level.m_GameStage;
         }
@@ -731,23 +746,48 @@ namespace GameSetting
         }
     }
     
-    public struct EquipmentSaveData : IXmlPhrase
+    public struct ActionSaveData:IXmlPhrase
     {
         public int m_Index { get; private set; }
-        public enum_EquipmentType m_Type { get; private set; }
         public float m_RecordData { get; private set; }
-
-        public string ToXMLData() => m_Index + "," + m_Type+","+m_RecordData;
-        public EquipmentSaveData(string xmlData)
+        public string ToXMLData() => m_Index +"," + m_RecordData;
+        public ActionSaveData(string xmlData)
         {
             string[] split = xmlData.Split(',');
             m_Index = int.Parse(split[0]);
-            m_Type = (enum_EquipmentType)Enum.Parse(typeof(enum_EquipmentType), split[1]);
-            m_RecordData = float.Parse(split[2]);
+            m_RecordData = float.Parse(split[1]);
+        }
+        public static ActionSaveData Default(int index) => new ActionSaveData() { m_Index = index, m_RecordData = -1 };
+        public static ActionSaveData Create(ActionBase action) => new ActionSaveData() { m_Index = action.m_Index, m_RecordData = action.m_RecordData };
+        public static List<ActionSaveData> Create(List<ActionBase> actions)
+        {
+            List<ActionSaveData> data = new List<ActionSaveData>();
+            actions.Traversal((ActionBase equipment) => { data.Add(Create(equipment)); });
+            return data;
+        }
+        public static List<ActionSaveData> Create(List<ActionBuffBase> actions)
+        {
+            List<ActionSaveData> data = new List<ActionSaveData>();
+            actions.Traversal((ActionBuffBase equipment) => { data.Add(Create(equipment)); });
+            return data;
+        }
+    }
+
+    public struct EquipmentSaveData : IXmlPhrase
+    {
+        public ActionSaveData m_ActionData { get; private set; }
+        public enum_EquipmentType m_Type { get; private set; }
+
+        public string ToXMLData() =>m_ActionData.ToXMLData()+"," + m_Type;
+        public EquipmentSaveData(string xmlData)
+        {
+            string[] split = xmlData.Split(',');
+            m_ActionData = new ActionSaveData(xmlData);
+            m_Type = (enum_EquipmentType)Enum.Parse(typeof(enum_EquipmentType), split[2]);
         }
 
-        public static EquipmentSaveData Default(int index,enum_EquipmentType type) => new EquipmentSaveData {m_Index=index,m_Type=type,m_RecordData=-1 };
-        public static EquipmentSaveData Create(EquipmentBase action) =>  new EquipmentSaveData { m_Index = action.m_Index,m_Type=action.m_EquipmentType,m_RecordData=action.m_RecordData};
+        public static EquipmentSaveData Default(int index,enum_EquipmentType type) => new EquipmentSaveData {m_ActionData=ActionSaveData.Default(index),m_Type=type };
+        public static EquipmentSaveData Create(EquipmentBase equipment) =>  new EquipmentSaveData { m_ActionData=ActionSaveData.Create(equipment), m_Type=equipment.m_EquipmentType};
         public static List<EquipmentSaveData> Create(List<EquipmentBase> equipments)
         {
             List<EquipmentSaveData> data = new List<EquipmentSaveData>();
@@ -869,7 +909,7 @@ namespace GameSetting
         //100-999
         public static SBuff SystemSubEntityDOTInfo(float damageTickTime, float damagePerTick) => new SBuff(){ index = 100,i_addType = (int)enum_ExpireRefreshType.Refresh,f_expireDuration = 0,f_damageTickTime = damageTickTime,f_damagePerTick = damagePerTick, i_damageType = (int)enum_DamageType.Basic};
         public static readonly SBuff m_PlayerReviveBuff = new SBuff() { index = 101,i_effect= GameConst.I_PlayerReviveBuffIndex, i_addType = (int)enum_ExpireRefreshType.Refresh, f_expireDuration = GameConst.F_PlayerReviveBuffDuration, f_damageReduce = 1f };
-        public static readonly SBuff m_PlayerBoneFireHealBuff = new SBuff() { index = 102, i_addType = (int)enum_ExpireRefreshType.Refresh, f_expireDuration = 0.5f, f_damageTickTime = .1f, f_damagePerTick = -2f, i_damageType = (int)enum_DamageType.HealthOnly };
+        public static readonly SBuff m_PlayerBoneFireHealBuff = new SBuff() { index = 102, i_addType = (int)enum_ExpireRefreshType.Refresh, f_expireDuration = 5f, f_damageTickTime = .1f, f_damagePerTick = -1f, i_damageType = (int)enum_DamageType.HealthOnly };
         public static readonly SBuff m_EnermyOuttaBattleDamageReduction = new SBuff() { index = 103, i_effect = GameConst.I_PlayerReviveBuffIndex, i_addType = (int)enum_ExpireRefreshType.Refresh,f_expireDuration=.5f, f_damageReduce = 1f };
         //1000-9999
         public static SBuff CreateEnermyChallengeDifficultyBuff(int difficulty, float damageMultiply)
@@ -1011,10 +1051,7 @@ namespace GameSetting
             if (restoreHealth)
                 m_CurrentHealth = m_MaxHealth;
         }
-        public void OnSetHealth(float reviveHealth)
-        {
-            m_CurrentHealth = reviveHealth;
-        }
+        public void OnSetHealth(float reviveHealth)=> m_CurrentHealth = reviveHealth;
         public virtual bool OnReceiveDamage(DamageInfo damageInfo, float damageReduction = 1, float healEnhance = 1)
         {
             if (damageInfo.m_Type == enum_DamageType.ArmorOnly)
@@ -1037,19 +1074,22 @@ namespace GameSetting
     public class EntityHealth : HealthBase
     {
         public float m_CurrentArmor { get; private set; }
-        public float m_StartArmor { get; private set; }
+        public float m_BaseArmor { get; private set; }
         public override float F_TotalEHP => m_CurrentArmor + base.F_TotalEHP;
         float m_HealthMultiplier = 1f;
         public override float m_MaxHealth => base.m_MaxHealth * m_HealthMultiplier;
+        public virtual float m_MaxArmor => m_BaseArmor;
+        public bool m_ArmorFull => m_CurrentArmor >= m_MaxHealth;
         protected EntityCharacterBase m_Entity;
         protected void DamageArmor(float amount)
         {
             m_CurrentArmor -= amount;
             if (m_CurrentArmor < 0)
                 m_CurrentArmor = 0;
-            if (m_CurrentArmor > 99999)
-                m_CurrentArmor = 99999;
+            if (m_CurrentArmor > m_MaxArmor)
+                m_CurrentArmor = m_MaxArmor;
         }
+        protected void OnSetArmor(float amount) => m_CurrentArmor = amount;
 
         public EntityHealth(EntityCharacterBase entity, Action<enum_HealthChangeMessage> _OnHealthChanged) : base(_OnHealthChanged)
         {
@@ -1059,8 +1099,8 @@ namespace GameSetting
         public void OnActivate(float startHealth, float startArmor, bool restoreHealth)
         {
             base.OnSetHealth(startHealth, restoreHealth);
-            m_StartArmor = startArmor;
-            m_CurrentArmor = m_StartArmor;
+            m_BaseArmor = startArmor;
+            m_CurrentArmor = m_BaseArmor;
             OnHealthChanged(enum_HealthChangeMessage.Default);
         }
         public void OnSetStatus(float setHealth, float setArmor)
@@ -1121,6 +1161,8 @@ namespace GameSetting
                 {
                     case enum_DamageType.ArmorOnly:
                         {
+                            if (m_ArmorFull)
+                                break;
                             DamageArmor(finalAmount);
                             OnHealthChanged(enum_HealthChangeMessage.ReceiveArmor);
                         }
@@ -1165,19 +1207,27 @@ namespace GameSetting
         public float m_UIBaseHealthFill => Mathf.Clamp(m_CurrentHealth / 100f,0,1f);
         public float m_UIMaxHealthFill => Mathf.Clamp( m_MaxHealth / 100f,0,1f);
         public float m_MaxHealthAdditive { get; private set; }
+        public float m_MaxArmorAdditive { get; private set; }
         public override float m_MaxHealth => base.m_MaxHealth + m_MaxHealthAdditive;
+        public override float m_MaxArmor => base.m_MaxArmor + m_MaxArmorAdditive;
         public EntityPlayerHealth(EntityCharacterBase entity, Action<enum_HealthChangeMessage> _OnHealthChanged) : base(entity,_OnHealthChanged)
         {
         }
-        public void SetMaxHealth(float maxHealthAdd)
+        public void OnMaxChange(float maxHealthAdd,float maxArmorAdd)
         {
             m_MaxHealthAdditive = maxHealthAdd;
+            m_MaxArmorAdditive = maxArmorAdd;
+
             if (m_CurrentHealth > m_MaxHealth)
                 OnSetHealth(m_CurrentHealth);
+
+            if (m_CurrentArmor > m_MaxArmor)
+                OnSetArmor(m_CurrentArmor);
+
             OnHealthChanged(enum_HealthChangeMessage.Default);
         }
         
-        public void OnBattleFinishResetArmor()=>base.OnSetStatus(m_CurrentHealth, m_StartArmor);
+        public void OnBattleFinishResetArmor()=>base.OnSetStatus(m_CurrentHealth, m_BaseArmor);
     }
 
     public class DamageInfo
@@ -1310,7 +1360,7 @@ namespace GameSetting
         protected virtual void Reset()
         {
             m_Effects.Traversal((enum_CharacterEffect type) => { m_Effects[type].Reset(); });
-            m_Expires.Traversal((EntityExpireBase expire) => { if (expire.m_ExpireType == enum_ExpireType.Buff) RemoveExpire(expire); }, true);
+            m_Expires.Traversal((EntityExpireBase expire) => { if (expire.m_ExpireType == enum_ExpireType.PresetBuff) RemoveExpire(expire); }, true);
             UpdateEntityInfo();
         }
 
@@ -1355,7 +1405,7 @@ namespace GameSetting
                     break;
                 case enum_ExpireRefreshType.RefreshIdentity:
                     {
-                        EntityExpireCommon buffRefresh = m_Expires.Find(p => p.m_Index == buff.m_Index && (p.m_ExpireType == enum_ExpireType.Buff && (p as EntityExpireCommon).I_SourceID == buff.I_SourceID)) as EntityExpireCommon;
+                        EntityExpireCommon buffRefresh = m_Expires.Find(p => p.m_Index == buff.m_Index && (p.m_ExpireType == enum_ExpireType.PresetBuff && (p as EntityExpireCommon).I_SourceID == buff.I_SourceID)) as EntityExpireCommon;
                         if (buffRefresh != null)
                             buffRefresh.BuffRefresh();
                         else
@@ -1434,6 +1484,7 @@ namespace GameSetting
         public float F_AimRangeAdditive { get; private set; } = 0;
         public int I_ProjectileCopyCount { get; private set; } = 0;
         public float F_MaxHealthAdditive { get; private set; } = 0;
+        public float F_MaxArmorAdditive { get; private set; } = 0;
         public float F_AllyHealthMultiplierAdditive { get; private set; } = 0f;
         public float P_CoinsDropBase { get; private set; } = 0f;
         public float F_CoinsCostMultiply { get; private set; } = 0f;
@@ -1444,8 +1495,11 @@ namespace GameSetting
 
         protected Vector3 m_prePos;
         
-        public List<EquipmentBase> m_ActionEquipment { get; private set; } = new List<EquipmentBase>();
+        public List<ActionBase> m_PlayerExpires { get; private set; } = new List<ActionBase>();
+        public List<EquipmentBase> m_ExpireEquipments { get; private set; } = new List<EquipmentBase>();
+        public List<ActionBuffBase> m_ExpireBuffs { get; private set; } = new List<ActionBuffBase>();
         public float m_Coins { get; private set; } = 0;
+        public int m_EquipmentSlot { get; private set; }
 
         public PlayerInfoManager(EntityCharacterPlayer _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
         {
@@ -1467,73 +1521,95 @@ namespace GameSetting
             m_prePos = m_Entity.transform.position;
         }
 
-        public void SetInfoData(float coins, List<EquipmentBase> _actionEquiping)
+        public void SetInfoData(CBattleSave m_saveData)
         {
-            m_Coins = coins;
-            _actionEquiping.Traversal((EquipmentBase action) => { AddExpire(action); });
+            m_Coins = m_saveData.m_Coins;
+            m_EquipmentSlot = m_saveData.m_EquipmentSlot;
+            ActionDataManager.CreatePlayerEquipments(m_saveData.m_Equipments).Traversal((EquipmentBase action) => { AddExpire(action); });
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
         }
 
         #region Action
         #region Interact
-        public bool CheckRevive(ref RangeFloat reviveAmount)
-        {
-            for (int i = 0; i < m_ActionEquipment.Count; i++)
-            {
-                if (m_ActionEquipment[i].OnCheckRevive(ref reviveAmount))
-                    return true;
-            }
-            return false;
-        }
-        
-        public bool b_haveEmptyEquipmentSlot => m_ActionEquipment.Count < GameConst.I_PlayerEquipmentCount;
+        public bool b_haveEmptyEquipmentSlot => m_PlayerExpires.Count < m_EquipmentSlot;
+        public void AddEquipmentSlot() => m_EquipmentSlot++;
         public void SwapEquipment(int index,EquipmentBase targetAction)
         {
-            RemoveExpire(m_ActionEquipment[index]);
+            RemoveExpire(m_ExpireEquipments[index]);
             AddExpire(targetAction);
         }
-        public void OnEquipmentAcquire(EquipmentBase targetAction)
+        public void OnEquipmentAcquire(EquipmentBase equipment)
         {
             if (!b_haveEmptyEquipmentSlot)
                 return;
-            AddExpire(targetAction);
+            AddExpire(equipment);
+        }
+        public void OnActionBuffAcquire(ActionBuffBase actionBuff) => AddExpire(actionBuff);
+
+        public bool CheckRevive(ref RangeFloat reviveAmount)
+        {
+            for (int i = 0; i < m_PlayerExpires.Count; i++)
+            {
+                if (m_PlayerExpires[i].OnCheckRevive(ref reviveAmount))
+                    return true;
+            }
+            return false;
         }
         #endregion
         #region List Update
         protected override void AddExpire(EntityExpireBase expire)
         {
             base.AddExpire(expire);
-            if (expire.m_ExpireType != enum_ExpireType.Equipment)
+            ActionBase targetExpire = expire as ActionBase;
+            if (targetExpire == null)
                 return;
-            EquipmentBase targetAction = expire as EquipmentBase;
-            m_ActionEquipment.Add(targetAction);
-            CheckEquipmentRarity();
+            m_PlayerExpires.Add(targetExpire);
 
-            targetAction.OnActivate(m_Player, RemoveExpire);
-            TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
+            if (targetExpire.m_ExpireType== enum_ExpireType.Equipment)
+            {
+                m_ExpireEquipments.Add(targetExpire as EquipmentBase);
+                CheckEquipmentRarity();
+                TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
+            }
+            else if (targetExpire.m_ExpireType == enum_ExpireType.ActionBuff)
+            {
+                m_ExpireBuffs.Add(targetExpire as ActionBuffBase);
+                TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerBuffStatus, this);
+            }
+
+            targetExpire.OnActivate(m_Player, RemoveExpire);
         }
 
         protected override void RemoveExpire(EntityExpireBase expire)
         {
             base.RemoveExpire(expire);
-            if (expire.m_ExpireType != enum_ExpireType.Equipment)
+            ActionBase targetExpire = expire as ActionBase;
+            if (targetExpire == null)
                 return;
-            EquipmentBase targetExpire = expire as EquipmentBase;
-            m_ActionEquipment.Remove(targetExpire);
-            CheckEquipmentRarity();
-            TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
+            m_PlayerExpires.Remove(targetExpire);
+            if (targetExpire.m_ExpireType== enum_ExpireType.Equipment)
+            {
+                m_ExpireEquipments.Remove(targetExpire as EquipmentBase);
+                CheckEquipmentRarity();
+                TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
+            }
+            else if (targetExpire.m_ExpireType == enum_ExpireType.ActionBuff)
+            {
+                m_ExpireBuffs.Remove(targetExpire as ActionBuffBase);
+                TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerBuffStatus, this);
+            }
         }
         void CheckEquipmentRarity()
         {
             Dictionary<enum_EquipmentType, int> m_Types = new Dictionary<enum_EquipmentType, int>();
-            m_ActionEquipment.Traversal((EquipmentBase equipment) =>
+            m_ExpireEquipments.Traversal((EquipmentBase equipment) =>
             {
                 if (!m_Types.ContainsKey(equipment.m_EquipmentType))
                     m_Types.Add(equipment.m_EquipmentType, 0);
 
                 m_Types[equipment.m_EquipmentType]++;
             });
-            m_ActionEquipment.Traversal((EquipmentBase equipment) => equipment.CheckRarity(m_Types[equipment.m_EquipmentType]));
+            m_ExpireEquipments.Traversal((EquipmentBase equipment) => equipment.CheckEquipmentRarity(m_Types[equipment.m_EquipmentType]));
         }
 
         #endregion
@@ -1552,13 +1628,14 @@ namespace GameSetting
             F_AimMovementStrictMultiply = 1f;
             F_AllyHealthMultiplierAdditive = 1f;
             F_MaxHealthAdditive = 0f;
+            F_MaxArmorAdditive = 0;
             P_CoinsDropBase = 0f;
             F_CoinsCostMultiply = 1f;
         }
         protected override void OnSetExpireInfo(EntityExpireBase expire)
         {
             base.OnSetExpireInfo(expire);
-            EquipmentBase action = expire as EquipmentBase;
+            ActionBase action = expire as ActionBase;
             if (action == null)
                 return;
 
@@ -1574,6 +1651,7 @@ namespace GameSetting
             I_ProjectileCopyCount += action.I_ProjectileCopyAdditive;
             F_AimRangeAdditive += action.F_AimRangeAdditive;
             F_MaxHealthAdditive += action.m_MaxHealthAdditive;
+            F_MaxArmorAdditive += action.m_MaxArmorAdditive;
             F_AllyHealthMultiplierAdditive += action.F_AllyHealthMultiplierAdditive;
             P_CoinsDropBase += action.P_CoinsDropAdditive;
             F_CoinsCostMultiply -= action.F_CoinsCostDecrease;
@@ -1593,12 +1671,12 @@ namespace GameSetting
             ResetEffect(enum_CharacterEffect.Cloak);
             float randomDamageMultiply = UnityEngine.Random.Range(-GameConst.F_PlayerDamageAdjustmentRange, GameConst.F_PlayerDamageAdjustmentRange);
             DamageDeliverInfo info = DamageDeliverInfo.DamageInfo(m_Entity.m_EntityID, F_DamageMultiply + randomDamageMultiply, F_DamageAdditive);
-            m_ActionEquipment.Traversal((EquipmentBase action) => { action.OnAttackDamageSet(info); });
+            m_PlayerExpires.Traversal((ActionBase action) => { action.OnAttackDamageSet(info); });
             return info;
         }
 
-        public void OnPlayerMove(float distance) => m_ActionEquipment.Traversal((EquipmentBase action) => { action.OnMove(distance); });
-        public void OnReloadFinish() => m_ActionEquipment.Traversal((EquipmentBase action) => { action.OnReloadFinish(); });
+        public void OnPlayerMove(float distance) => m_PlayerExpires.Traversal((ActionBase action) => { action.OnMove(distance); });
+        public void OnReloadFinish() => m_PlayerExpires.Traversal((ActionBase action) => { action.OnReloadFinish(); });
 
         public void OnEntityActivate(EntityBase targetEntity)
         {
@@ -1610,9 +1688,9 @@ namespace GameSetting
                 ally.m_Health.SetHealthMultiplier(F_AllyHealthMultiplierAdditive);
         }
 
-        public void OnWillDealtDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) { m_ActionEquipment.Traversal((EquipmentBase action) => { action.OnBeforeDealtDamageBegin(damageEntity, damageInfo); action.OnBeforeDealtDamageMiddle(damageEntity, damageInfo); action.OnBeforeDealtDamageFinal(damageEntity, damageInfo); }); }
+        public void OnWillDealtDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) { m_PlayerExpires.Traversal((ActionBase action) => { action.OnBeforeDealtDamageBegin(damageEntity, damageInfo); action.OnBeforeDealtDamageMiddle(damageEntity, damageInfo); action.OnBeforeDealtDamageFinal(damageEntity, damageInfo); }); }
 
-        public void OnWillReceiveDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) { m_ActionEquipment.Traversal((EquipmentBase action) => { action.OnBeforeReceiveDamage(damageInfo); }); }
+        public void OnWillReceiveDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) { m_PlayerExpires.Traversal((ActionBase action) => { action.OnBeforeReceiveDamage(damageInfo); }); }
 
         public override void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
         {
@@ -1623,9 +1701,9 @@ namespace GameSetting
             if (damageEntity.m_EntityID == m_Player.m_EntityID)
             {
                 if (amountApply > 0)
-                    m_ActionEquipment.Traversal((EquipmentBase action) => { action.OnReceiveDamage(damageInfo, amountApply); });
+                    m_PlayerExpires.Traversal((ActionBase action) => { action.OnReceiveDamage(damageInfo, amountApply); });
                 else
-                    m_ActionEquipment.Traversal((EquipmentBase action) => { action.OnReceiveHealing(damageInfo, amountApply); });
+                    m_PlayerExpires.Traversal((ActionBase action) => { action.OnReceiveHealing(damageInfo, amountApply); });
             }
         }
         #endregion
@@ -1644,7 +1722,7 @@ namespace GameSetting
         public void OnCoinsGain(float coinAmount,bool isPickup)
         {
             if(isPickup)
-                m_ActionEquipment.Traversal((EquipmentBase action) => { action.OnGainCoins(coinAmount); });
+                m_PlayerExpires.Traversal((ActionBase action) => { action.OnGainCoins(coinAmount); });
             m_Coins += coinAmount;
         }
         #endregion
@@ -1725,7 +1803,7 @@ namespace GameSetting
     
     public class EntityExpireCommon : EntityExpireBase
     {
-        public override enum_ExpireType m_ExpireType => enum_ExpireType.Buff;
+        public override enum_ExpireType m_ExpireType => enum_ExpireType.PresetBuff;
         public override int m_EffectIndex => m_buffInfo.m_EffectIndex;
         public override enum_ExpireRefreshType m_RefreshType => m_buffInfo.m_AddType;
         public override float m_DamageMultiply => m_buffInfo.m_DamageMultiply;
@@ -1785,15 +1863,14 @@ namespace GameSetting
         }
     }
 
-    public class EquipmentBase : EntityExpireBase
+    public class ActionBase:EntityExpireBase
     {
-        public override enum_ExpireType m_ExpireType => enum_ExpireType.Equipment;
-        public EntityCharacterPlayer m_Attacher { get; private set; }
-        public enum_EquipmentRarity m_rarity { get; private set; }
-
         public int m_Identity { get; private set; } = -1;
-        public enum_EquipmentType m_EquipmentType { get; private set; }
+        public EntityCharacterPlayer m_Attacher { get; private set; }
         public virtual float m_RecordData { get; protected set; }
+        public ActionBase() { }
+        protected virtual void OnManagerSetData(int identity, ActionSaveData data) { m_RecordData = data.m_RecordData; }
+        public virtual void OnActivate(EntityCharacterPlayer _actionEntity, Action<EntityExpireBase> OnExpired) { m_Attacher = _actionEntity; OnActivate(OnExpired); }
 
         public virtual bool B_ActionAble => true;
         public virtual float Value1 => 0;
@@ -1810,34 +1887,20 @@ namespace GameSetting
         public virtual float F_AimRangeAdditive => 0;
         public virtual int I_ProjectileCopyAdditive => 0;
         public virtual float m_MaxHealthAdditive => 0;
+        public virtual float m_MaxArmorAdditive => 0;
         public virtual float F_AllyHealthMultiplierAdditive => 0;
         public virtual float P_CoinsDropAdditive => 0f;
         public virtual float F_CoinsCostDecrease => 0f;
-        protected EquipmentBase(int _identity,EquipmentSaveData _data)
-        {
-            m_EquipmentType = _data.m_Type;
-            m_RecordData = _data.m_RecordData;
-        }
-      
-        public void CheckRarity(int sameCount)
-        {
-            if (sameCount >= 4)
-                m_rarity = enum_EquipmentRarity.Epic;
-            else if (sameCount >= 2)
-                m_rarity = enum_EquipmentRarity.OutStanding;
-            else
-                m_rarity = enum_EquipmentRarity.Normal;
-        }
+
 
         #region Interact
-        public virtual void OnActivate(EntityCharacterPlayer _actionEntity, Action<EntityExpireBase> OnExpired) { m_Attacher = _actionEntity; OnActivate(OnExpired); }
         public virtual void OnBeforeReceiveDamage(DamageInfo info) { }
         public virtual void OnReceiveDamage(DamageInfo info, float amount) { }
         public virtual void OnAttackDamageSet(DamageDeliverInfo info) { }
         public virtual void OnBeforeDealtDamageBegin(EntityCharacterBase receiver, DamageInfo info) { }
         public virtual void OnBeforeDealtDamageMiddle(EntityCharacterBase receiver, DamageInfo info) { }
         public virtual void OnBeforeDealtDamageFinal(EntityCharacterBase receiver, DamageInfo info) { }
-        public virtual void OnReceiveHealing(DamageInfo info, float applyAmount)  {}
+        public virtual void OnReceiveHealing(DamageInfo info, float applyAmount) { }
         public virtual void OnGainCoins(float coinAmount) { }
         public virtual void OnReloadFinish() { }
         public virtual void OnMove(float distsance) { }
@@ -1845,6 +1908,44 @@ namespace GameSetting
         #endregion
     }
 
+    public class EquipmentBase : ActionBase
+    {
+        public override enum_ExpireType m_ExpireType => enum_ExpireType.Equipment;
+        public enum_EquipmentLevel m_rarity { get; private set; }
+        public enum_EquipmentType m_EquipmentType { get; private set; }
+
+        public EquipmentBase() { }
+        public void OnManagerSetData(int identity, EquipmentSaveData _data)
+        {
+            m_EquipmentType = _data.m_Type;
+            base.OnManagerSetData(identity, _data.m_ActionData);
+        }
+        public void CheckEquipmentRarity(int sameCount)
+        {
+            if (sameCount >= 4)
+                m_rarity = enum_EquipmentLevel.Epic;
+            else if (sameCount >= 2)
+                m_rarity = enum_EquipmentLevel.OutStanding;
+            else
+                m_rarity = enum_EquipmentLevel.Normal;
+        }
+    }
+
+    public class ActionBuffBase:ActionBase
+    {
+        public override enum_ExpireType m_ExpireType => enum_ExpireType.ActionBuff;
+        public ActionBuffBase() { }
+        public new void OnManagerSetData(int identity, ActionSaveData data)
+        {
+            base.OnManagerSetData(identity, data);
+            if (m_RecordData < 0)
+                SetDefaultData();
+        }
+
+        protected virtual void SetDefaultData()
+        {
+        }
+    }
     #endregion
     #region Physics
     public static class HitCheckDetect_Extend
@@ -2220,9 +2321,9 @@ namespace GameSetting
             transform = _transform;
             m_Grid = new ObjectPoolListComponent<int, Transform>(transform,"GridItem");
             m_Grid.ClearPool();
-            TCommon.TraversalEnum((enum_EquipmentRarity rarity) => { m_Levels.Add((int)rarity,new RarityLevel( m_Grid.AddItem((int)rarity))); });
+            TCommon.TraversalEnum((enum_EquipmentLevel rarity) => { m_Levels.Add((int)rarity,new RarityLevel( m_Grid.AddItem((int)rarity))); });
         }
-        public void SetRarity(enum_EquipmentRarity level)
+        public void SetRarity(enum_EquipmentLevel level)
         {
             m_Levels.Traversal((int index, RarityLevel rarity) => rarity.SetHighlight(index <= (int)level));
         }
