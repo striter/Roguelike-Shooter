@@ -1542,7 +1542,7 @@ namespace GameSetting
 
         #region Action
         #region Interact
-        public bool b_haveEmptyEquipmentSlot => m_PlayerExpires.Count < m_EquipmentSlot;
+        public bool b_haveEmptyEquipmentSlot => m_ExpireEquipments.Count < m_EquipmentSlot;
         public void AddEquipmentSlot() => m_EquipmentSlot++;
         public void SwapEquipment(int index,EquipmentBase targetAction)
         {
