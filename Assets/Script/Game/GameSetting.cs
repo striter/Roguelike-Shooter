@@ -681,8 +681,9 @@ namespace GameSetting
         public float m_Coins;
         public int m_EquipmentSlot;
         public List<EquipmentSaveData> m_Equipments;
-        public List<ActionSaveData> m_Buffs;
+        public List<ActionSaveData> m_ActionBuffs;
         public float m_Health;
+        public float m_Armor;
         public WeaponSaveData m_weapon1, m_weapon2;
         public bool m_weaponEquipingFirst;
         public enum_PlayerCharacter m_character;
@@ -691,8 +692,9 @@ namespace GameSetting
             m_Coins = 0;
             m_EquipmentSlot = GameConst.I_PlayerDefaultEquipmentSlot;
             m_Health = -1;
+            m_Armor = -1;
             m_Equipments = new List<EquipmentSaveData>();
-            m_Buffs = new List<ActionSaveData>();
+            m_ActionBuffs = new List<ActionSaveData>();
             m_Stage = enum_StageLevel.Rookie;
             m_GameSeed = DateTime.Now.ToLongTimeString().ToString();
             m_character = GameDataManager.m_GameData.m_CharacterSelected;
@@ -705,11 +707,12 @@ namespace GameSetting
             m_Coins = _player.m_CharacterInfo.m_Coins;
             m_EquipmentSlot = _player.m_CharacterInfo.m_EquipmentSlot;
             m_Health = _player.m_Health.m_CurrentHealth;
+            m_Armor = _player.m_Health.m_MaxArmor;
             m_weapon1 = WeaponSaveData.Create(_player.m_Weapon1);
             m_weapon2 = WeaponSaveData.Create(_player.m_Weapon2);
             m_weaponEquipingFirst = _player.m_weaponEquipingFirst;
             m_Equipments = EquipmentSaveData.Create(_player.m_CharacterInfo.m_ExpireEquipments);
-            m_Buffs = ActionSaveData.Create(_player.m_CharacterInfo.m_ExpireBuffs);
+            m_ActionBuffs = ActionSaveData.Create(_player.m_CharacterInfo.m_ExpireBuffs);
             m_GameSeed = _level.m_GameSeed;
             m_Stage = _level.m_GameStage;
         }
@@ -1227,7 +1230,7 @@ namespace GameSetting
             OnHealthChanged(enum_HealthChangeMessage.Default);
         }
         
-        public void OnBattleFinishResetArmor()=>base.OnSetStatus(m_CurrentHealth, m_BaseArmor);
+        public void OnBattleFinishResetArmor()=>base.OnSetStatus(m_CurrentHealth, m_MaxArmor);
     }
 
     public class DamageInfo
@@ -1526,6 +1529,7 @@ namespace GameSetting
             m_Coins = m_saveData.m_Coins;
             m_EquipmentSlot = m_saveData.m_EquipmentSlot;
             ActionDataManager.CreatePlayerEquipments(m_saveData.m_Equipments).Traversal((EquipmentBase action) => { AddExpire(action); });
+            ActionDataManager.CreateActionBuffs(m_saveData.m_ActionBuffs).Traversal((ActionBuffBase action) => { AddExpire(action); });
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
         }
 

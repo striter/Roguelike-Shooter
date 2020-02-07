@@ -62,9 +62,9 @@ namespace GameSetting_Action
 
     public class ActionBuffConsts
     {
-        public static RangeFloat RF_10001_StartArmor = new RangeFloat(20, 5);
+        public static RangeInt RI_10001_StartArmor = new RangeInt(20, 5);
         public const float P_10002_DamageMultiply = 5;
-        public static RangeFloat RF_10003_StartHealth = new RangeFloat(40, 5);
+        public static RangeInt RI_10003_StartHealth = new RangeInt(40, 5);
     }
     #endregion
 
@@ -669,7 +669,7 @@ namespace GameSetting_Action
         protected override void SetDefaultData()
         {
             base.SetDefaultData();
-            m_RecordData = ActionBuffConsts.RF_10001_StartArmor.Random();
+            m_RecordData = ActionBuffConsts.RI_10001_StartArmor.Random();
         }
     }
     public class B_10002_DamageMultiply:ActionBuffBase
@@ -688,7 +688,7 @@ namespace GameSetting_Action
         protected override void SetDefaultData()
         {
             base.SetDefaultData();
-            m_RecordData = ActionBuffConsts.RF_10003_StartHealth.Random();
+            m_RecordData = ActionBuffConsts.RI_10003_StartHealth.Random();
         }
     }
     #endregion
