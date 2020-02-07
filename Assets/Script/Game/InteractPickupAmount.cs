@@ -34,6 +34,8 @@ public class InteractPickupAmount : InteractPickup {
 
     void OnBattleFinish()
     {
+        if (!m_InteractEnable)
+            return;
         m_moveTowards = GameManager.Instance.m_LocalPlayer.transform;
         m_OutOfBattle = true;
     }

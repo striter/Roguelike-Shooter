@@ -4,14 +4,17 @@ using GameSetting;
 using UnityEngine;
 
 public class EntityCharacterAIElite : EntityCharacterAI {
-    TimeCounter m_BuffCounter = new TimeCounter();
+    TimeCounter m_BuffCounter = new TimeCounter(GameConst.F_EliteBuffTimerDurationWhenFullHealth), m_IndicateCounter=new TimeCounter(2f);
     EliteBuffCombine m_Buff;
-    bool m_Indicated;
+    bool m_Indicating;
     public override void OnActivate(enum_EntityFlag _flag, int _spawnerID, float startHealth)
     {
         base.OnActivate(_flag, _spawnerID, startHealth);
-        PrepareEliteBuff();
+        m_Buff = GameConst.L_GameEliteBuff.RandomItem();
+        m_BuffCounter.Reset();
+        m_Indicating = false;
     }
+
 
     protected override void OnAliveTick(float deltaTime)
     {
@@ -19,36 +22,31 @@ public class EntityCharacterAIElite : EntityCharacterAI {
         if (!m_AIBattleActivating)
             return;
 
-        if (!m_BuffCounter.m_Timing)
-            return;
+        if(!m_Indicating)
+        {
+            m_IndicateCounter.Tick(deltaTime);
 
-        m_BuffCounter.Tick(Time.deltaTime);
-        if (!m_Indicated && m_BuffCounter.m_timeCheck < 2f)
-            DoBuffIndicate();
+            if (m_IndicateCounter.m_Timing)
+                return;
 
-        if (m_BuffCounter.m_Timing)
-            return;
-        GenerateBuff();
-        PrepareEliteBuff();
+            m_CharacterInfo.AddBuff(-1, GameDataManager.GetPresetBuff(m_Buff.m_BuffIndex));
+            GameObjectManager.SpawnSFX<SFXMuzzle>(m_Buff.m_MuzzleIndex, transform.position, Vector3.up).Play(m_EntityID);
+            m_Buff = GameConst.L_GameEliteBuff.RandomItem();
+            m_BuffCounter.Reset();
+            m_Indicating = false;
+        }
+        else
+        {
+            m_BuffCounter.Tick(deltaTime*(1-m_Health.F_HealthMaxScale)*GameConst.F_EliteBuffTimerTickRateMultiplyHealthLoss);
+            if (m_BuffCounter.m_Timing)
+                return;
+
+            m_Indicating = true;
+            m_IndicateCounter.Reset();
+            SFXIndicator indicator = GameObjectManager.SpawnIndicator(m_Buff.m_IndicatorIndex, transform.position, Vector3.up);
+            indicator.AttachTo(transform);
+            indicator.Play(m_EntityID, 2f);
+        }
     }
 
-    void PrepareEliteBuff()
-    {
-        m_Buff = GameConst.L_GameEliteBuff.RandomItem();
-        m_BuffCounter.SetTimer(m_Health.F_HealthMaxScale>GameConst.F_EliteBuffTimerDivideEHPScale?GameConst.RI_EliteBuffTimerAbove.Random():GameConst.RI_EliteBuffTimerBelow.Random());
-        m_Indicated = false;
-    }
-    void DoBuffIndicate()
-    {
-        m_Indicated = true;
-        SFXIndicator indicator = GameObjectManager.SpawnIndicator(m_Buff.m_IndicatorIndex, transform.position, Vector3.up);
-        indicator.AttachTo(transform);
-        indicator.Play(m_EntityID, 2f);
-    }
-
-    void GenerateBuff()
-    {
-        m_CharacterInfo.AddBuff(-1,GameDataManager.GetPresetBuff(m_Buff.m_BuffIndex));
-        GameObjectManager.SpawnSFX<SFXMuzzle>(m_Buff.m_MuzzleIndex,transform.position,Vector3.up).Play(m_EntityID);
-    }
 }
