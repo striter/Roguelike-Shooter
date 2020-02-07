@@ -40,7 +40,7 @@ namespace GameSetting
 
         public static readonly List<EliteBuffCombine> L_GameEliteBuff = new List<EliteBuffCombine>() { new EliteBuffCombine(2010, 12010, 32010), new EliteBuffCombine(2020, 12020, 32020), new EliteBuffCombine(2030, 12030, 32030), new EliteBuffCombine(2040, 12040, 32040), new EliteBuffCombine(2050, 12050, 32050), new EliteBuffCombine(2060, 12060, 32060) };
         public const float F_EliteBuffTimerDurationWhenFullHealth=30f;
-        public const float F_EliteBuffTimerTickRateMultiplyHealthLoss = 2f;
+        public const float F_EliteBuffTimerTickRateMultiplyHealthLoss = 3f;
 
         public static readonly Dictionary<enum_CampFarmItemStatus, int> DP_FarmGeneratePercentage = new Dictionary<enum_CampFarmItemStatus, int>() { { enum_CampFarmItemStatus.Progress1, 60 }, { enum_CampFarmItemStatus.Progress2, 30 }, { enum_CampFarmItemStatus.Progress3, 6 }, { enum_CampFarmItemStatus.Progress4, 3 }, { enum_CampFarmItemStatus.Progress5, 1 } };   //Farm生成等级百分比
         public static readonly Dictionary<enum_CampFarmItemStatus, float> GetFarmCreditPerSecond = new Dictionary<enum_CampFarmItemStatus, float> { { enum_CampFarmItemStatus.Progress1, .1f / 60f }, { enum_CampFarmItemStatus.Progress2, .2f / 60f }, { enum_CampFarmItemStatus.Progress3, .3f / 60f }, { enum_CampFarmItemStatus.Progress4, .5f / 60f }, { enum_CampFarmItemStatus.Progress5, 1f / 60f } };      //Farm 等级,每秒Credit
@@ -75,10 +75,7 @@ namespace GameSetting
         public const int I_EventEquipmentTradePrice = 10;
         public static readonly Dictionary<enum_WeaponRarity, RangeInt> D_EventWeaponTradePrice = new Dictionary<enum_WeaponRarity, RangeInt>() { { enum_WeaponRarity.Ordinary, new RangeInt(5, 5) }, { enum_WeaponRarity.Advanced, new RangeInt(10, 5) }, { enum_WeaponRarity.Rare, new RangeInt(20, 5) }, { enum_WeaponRarity.Legend, new RangeInt(30, 5) } };
         public const int I_EquipmentSlotTradePricePerPlayerSlots = 20;
-
-        public const float F_LevelTileSize = 2f;        //Cube Size For Level Tiles
-        public const float F_LevelItemHealthPerTile = 100f; //环境物件的生命值系数
-
+        
         public const int I_CampFarmPlot4UnlockDifficulty = 3;
         public const int I_CampFarmPlot5UnlockDifficulty = 10;
         public const int I_CampFarmPlot6UnlockTechPoints = 3000;
