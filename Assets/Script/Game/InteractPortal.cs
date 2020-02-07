@@ -40,9 +40,9 @@ public class InteractPortal : InteractGameBase {
         m_Particles.Play();
     }
 
-    protected override bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactTarget)
+    protected override bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactor)
     {
-        base.OnInteractOnceCanKeepInteract(_interactTarget);
+        base.OnInteractOnceCanKeepInteract(_interactor);
         OnPortalInteract();
         return false;
     }

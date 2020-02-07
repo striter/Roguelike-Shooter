@@ -10,13 +10,16 @@ public class LevelChunkGame : LevelChunkBase
     public int m_chunkIndex { get; private set; }
     public Vector3 m_ChunkOrigin { get; private set; }
     public Bounds m_WorldChunkBounds { get; private set; }
-    public Dictionary<enum_TileObjectType, List<ChunkGameObjectData>> m_ChunkObjects = new Dictionary<enum_TileObjectType, List<ChunkGameObjectData>>();
-    public List<LevelChunkGame> m_NearbyChunks = new List<LevelChunkGame>();
-    public List<LevelTileBase> m_RoadBlockTiles = new List<LevelTileBase>();
+    public enum_ChunkEventType m_ChunkEventType { get; private set; } = enum_ChunkEventType.Invalid;
+    public List<LevelChunkGame> m_NearbyChunks { get; private set; } = new List<LevelChunkGame>();
+    public List<LevelTileBase> m_RoadBlockTiles { get; private set; } = new List<LevelTileBase>();
+    public Dictionary<enum_TileObjectType, List<ChunkGameObjectData>> m_ChunkObjects { get; private set; } = new Dictionary<enum_TileObjectType, List<ChunkGameObjectData>>();
+
     public void InitGameChunk(ChunkGenerateData _data, System.Random _random)
     {
         m_chunkIndex = _data.m_ChunkIndex;
         m_ChunkOrigin = _data.m_Axis.ToPosition();
+        m_ChunkEventType = _data.m_EventType;
         m_WorldChunkBounds =new Bounds(m_ChunkOrigin + _data.m_Data.m_Size.ToPosition() / 2f + Vector3.up * LevelConst.I_TileSize, new Vector3(_data.m_Data.m_Size.X, 1, _data.m_Data.m_Size.Y) * LevelConst.I_TileSize);
         transform.localPosition = m_ChunkOrigin;
         m_ChunkObjects.Clear();

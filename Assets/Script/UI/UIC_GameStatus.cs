@@ -196,7 +196,7 @@ public class UIC_GameStatus : UIControlBase
     void OnEquipmentStatus(PlayerInfoManager infoManager)
     {
         m_EquipmentGrid.ClearGrid();
-        for (int i = 0; i < infoManager.m_ActionEquipment.Count; i++)
-            m_EquipmentGrid.AddItem(i).SetInfo(infoManager.m_ActionEquipment[i]);
+        for (int i = 0; i < infoManager.m_PlayerExpires.Count; i++)
+            m_EquipmentGrid.AddItem(i).SetInfo(infoManager.m_ExpireEquipments[i]);
     }
 }

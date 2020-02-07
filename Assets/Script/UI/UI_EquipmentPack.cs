@@ -18,8 +18,8 @@ public class UI_EquipmentPack : UIPage {
     {
         m_Info = _info;
         m_Grid.ClearGrid();
-        List<EquipmentBase> targetList = _info.m_ActionEquipment;
-        for (int i = 0; i < GameConst.I_PlayerEquipmentCount; i++)
+        List<EquipmentBase> targetList = _info.m_ExpireEquipments;
+        for (int i = 0; i < _info.m_EquipmentSlot; i++)
             m_Grid.AddItem(i).SetInfo( i< targetList.Count ? targetList[i]:null);
         m_Selecting.transform.SetActivate(false);
         if (targetList.Count > 0)
@@ -29,6 +29,6 @@ public class UI_EquipmentPack : UIPage {
     void OnItemSelect(int index)
     {
         m_Selecting.transform.SetActivate(true);
-        m_Selecting.SetInfo(m_Info.m_ActionEquipment[index]);
+        m_Selecting.SetInfo(m_Info.m_ExpireEquipments[index]);
     }
 }

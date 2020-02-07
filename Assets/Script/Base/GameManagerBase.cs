@@ -326,35 +326,53 @@ public static class GameDataManager
 public static class ActionDataManager
 {
     static Dictionary<int, Type> m_EquipmentTypes = new Dictionary<int, Type>();
-    public static List<int> m_AllEquipment { get; private set; } = new List<int>();
+    static Dictionary<int, Type> m_ActionBuffTypes = new Dictionary<int, Type>();
     static int m_ActionIdentity = 0;
     public static void Init()
     {
         m_EquipmentTypes.Clear();
-        m_AllEquipment.Clear();
+        m_ActionBuffTypes.Clear();
 
-        TReflection.TraversalAllInheritedClasses(((Type type, EquipmentBase action) => {
+        TReflection.TraversalAllInheritedClasses(((Type type, ActionBase action) => {
             if (action.m_Index <= 0)
                 return;
 
-            m_EquipmentTypes.Add(action.m_Index, action.GetType());
-            m_AllEquipment.Add(action.m_Index);
-        }), -1,EquipmentSaveData.Default(-1, enum_EquipmentType.Invalid));
+            if (action.m_ExpireType== enum_ExpireType.Equipment)
+                m_EquipmentTypes.Add(action.m_Index, action.GetType());
+            else if (action.m_ExpireType == enum_ExpireType.ActionBuff)
+                m_ActionBuffTypes.Add(action.m_Index, action.GetType());
+        }));
     }
-    public static EquipmentBase CreateRandomEquipment(enum_EquipmentType type, System.Random seed)=> CreateAction(m_AllEquipment.RandomItem(seed),type);
+    public static EquipmentBase CreateRandomPlayerEquipment(enum_EquipmentType type, System.Random seed)=> CreatePlayerEquipment(EquipmentSaveData.Default( m_EquipmentTypes.RandomKey(seed),type));
 
-    public static EquipmentBase CreateAction(int actionIndex, enum_EquipmentType type)
+    public static EquipmentBase CreatePlayerEquipment(EquipmentSaveData data)
     {
-        if (!m_EquipmentTypes.ContainsKey(actionIndex))
-            Debug.LogError("Error Action:" + actionIndex + " ,Does not exist");
-        EquipmentSaveData data = EquipmentSaveData.Default(actionIndex, type);
-        return TReflection.CreateInstance<EquipmentBase>(m_EquipmentTypes[actionIndex],  m_ActionIdentity++, data);
+        if (!m_EquipmentTypes.ContainsKey(data.m_ActionData.m_Index))
+            Debug.LogError("Error Action Equipment:" + data.m_ActionData.m_Index + " ,Does not exist");
+        EquipmentBase equipment= TReflection.CreateInstance<EquipmentBase>(m_EquipmentTypes[data.m_ActionData.m_Index]);
+        equipment.OnManagerSetData(m_ActionIdentity,data);
+        return equipment;
     }
-    public static EquipmentBase CreateAction(EquipmentSaveData data) => CreateAction(data.m_Index, data.m_Type);
-    public static List<EquipmentBase> CreateActions(List<EquipmentSaveData> datas)
+    public static List<EquipmentBase> CreatePlayerEquipments(List<EquipmentSaveData> datas)
     {
-        List<EquipmentBase> actions = new List<EquipmentBase>();
-        datas.Traversal((EquipmentSaveData data) => { actions.Add(CreateAction(data)); });
+        List<EquipmentBase> equipments = new List<EquipmentBase>();
+        datas.Traversal((EquipmentSaveData data) => { equipments.Add(CreatePlayerEquipment(data)); });
+        return equipments;
+    }
+
+    public static ActionBuffBase CreateRandomActionBuff( System.Random seed=null)=> CreateActionBuff(ActionSaveData.Default(m_ActionBuffTypes.RandomKey(seed)));
+    public static ActionBuffBase CreateActionBuff(ActionSaveData data)
+    {
+        if (!m_ActionBuffTypes.ContainsKey(data.m_Index))
+            Debug.LogError("Error Action Buff:" + data.m_Index + " ,Does not exist");
+        ActionBuffBase actionBuff = TReflection.CreateInstance<ActionBuffBase>(m_ActionBuffTypes[data.m_Index]);
+        actionBuff.OnManagerSetData(m_ActionIdentity++, data);
+        return actionBuff;
+    }
+    public static List<ActionBuffBase> CreateActionBuffs(List<ActionSaveData> datas)
+    {
+        List<ActionBuffBase> actions = new List<ActionBuffBase>();
+        datas.Traversal((ActionSaveData data) => { actions.Add(CreateActionBuff(data)); });
         return actions;
     }
 }

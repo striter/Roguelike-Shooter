@@ -65,6 +65,10 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
                 gameChunkGenerate.Add(data);
             });
         };
+        Func<enum_ChunkEventType> RandomEventType = () => TCommon.RandomPercentage(GameConst.D_ChunkEventPercentage);
+        List<ChunkPreGenerateData> mainChunkType = m_FinalBattleTest ? new List<ChunkPreGenerateData>() {new ChunkPreGenerateData( enum_ChunkType.Event,  enum_ChunkEventType.Witcher)  , new ChunkPreGenerateData(enum_ChunkType.Final) } :
+            new List<ChunkPreGenerateData>() { new ChunkPreGenerateData(enum_ChunkType.Battle), new ChunkPreGenerateData(enum_ChunkType.Battle), new ChunkPreGenerateData(enum_ChunkType.Event,RandomEventType()), new ChunkPreGenerateData(enum_ChunkType.Battle), new ChunkPreGenerateData(enum_ChunkType.Event,RandomEventType()), new ChunkPreGenerateData(enum_ChunkType.Battle), new ChunkPreGenerateData(enum_ChunkType.Event, RandomEventType()), new ChunkPreGenerateData(enum_ChunkType.Battle), new ChunkPreGenerateData(enum_ChunkType.Event, enum_ChunkEventType.Bonefire),  new ChunkPreGenerateData( enum_ChunkType.Final) };
+        List<ChunkPreGenerateData> subChunkType = new List<ChunkPreGenerateData>() {new ChunkPreGenerateData(  enum_ChunkType.Battle),new ChunkPreGenerateData(  enum_ChunkType.Event) };
 
         yield return Task.Run(() =>
         {
@@ -72,12 +76,7 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
             {
                 gameChunkGenerate.Clear();
                 //Generate Main Chunks
-                gameChunkGenerate.Add(new ChunkGenerateData(gameChunkGenerate.Count, TileAxis.Zero, datas[enum_ChunkType.Start].RandomItem(random)));
-                List<enum_ChunkType> mainChunkType = m_FinalBattleTest ?
-                new List<enum_ChunkType>()
-                { enum_ChunkType.Connection, enum_ChunkType.Final } :
-                new List<enum_ChunkType>()
-                    {  enum_ChunkType.Connection,enum_ChunkType.Battle, enum_ChunkType.Connection, enum_ChunkType.Battle, enum_ChunkType.Connection, enum_ChunkType.Event, enum_ChunkType.Connection, enum_ChunkType.Battle, enum_ChunkType.Connection, enum_ChunkType.Event, enum_ChunkType.Connection, enum_ChunkType.Battle, enum_ChunkType.Connection, enum_ChunkType.Event, enum_ChunkType.Connection, enum_ChunkType.Battle, enum_ChunkType.Connection, enum_ChunkType.Event, enum_ChunkType.Connection, enum_ChunkType.Battle, enum_ChunkType.Connection, enum_ChunkType.Event, enum_ChunkType.Connection, enum_ChunkType.Battle, enum_ChunkType.Connection, enum_ChunkType.Final };
+                gameChunkGenerate.Add(new ChunkGenerateData(gameChunkGenerate.Count, TileAxis.Zero, datas[enum_ChunkType.Start].RandomItem(random), enum_ChunkEventType.Invalid));
 
                 List<ChunkGenerateData> mainConnectionChunks = null;
                 //Gemerate Main Chunks
@@ -86,7 +85,6 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
                     continue;
                 ConnectGameData(gameChunkGenerate[0], mainConnectionChunks);
                 //Generate Sub Chunks
-                List<enum_ChunkType> subChunkType = new List<enum_ChunkType>() { enum_ChunkType.Connection, enum_ChunkType.Battle, enum_ChunkType.Connection, enum_ChunkType.Event };
                 Func<int, bool> GenerateSubChunks = (int subCount) => {
 
                     ChunkGenerateData subStartChunk = null;
@@ -176,12 +174,18 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         #endregion
     }
 
-    List<ChunkGenerateData> TryGenerateChunkDatas(int generateIndex,ChunkGenerateData generateStartChunk,List<ChunkGenerateData> intersectsCheckChunks, Dictionary<enum_ChunkType, List<LevelChunkData>> datas,List<enum_ChunkType> generateTypes,System.Random random)
+    List<ChunkGenerateData> TryGenerateChunkDatas(int generateStartIndex,ChunkGenerateData generateStartChunk,List<ChunkGenerateData> intersectsCheckChunks, Dictionary<enum_ChunkType, List<LevelChunkData>> datas,List<ChunkPreGenerateData> generateMainTypes,System.Random random)
     {
+        List<ChunkPreGenerateData> totalGenerateTypes = new List<ChunkPreGenerateData>();
+        for(int i=0;i<generateMainTypes.Count;i++)
+        {
+            totalGenerateTypes.Add(new ChunkPreGenerateData(enum_ChunkType.Connection));
+            totalGenerateTypes.Add(generateMainTypes[i]);
+        }
         List<ChunkGenerateData> chunkIntersectsCheckData = new List<ChunkGenerateData>(intersectsCheckChunks);
         List<ChunkGenerateData> chunkGenerateData = new List<ChunkGenerateData>();
         ChunkGenerateData previousChunkGenerate = generateStartChunk;
-        for (int i = 0; i < generateTypes.Count; i++)
+        for (int i = 0; i < totalGenerateTypes.Count; i++)
         {
             ChunkGenerateData nextChunkGenerate = null;
             previousChunkGenerate.m_Data.Connections.TraversalRandomBreak((int previousConnectionIndex) =>
@@ -191,7 +195,7 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
 
                 ChunkConnectionData m_previousConnectionData = previousChunkGenerate.m_Data.Connections[previousConnectionIndex];
                 enum_TileDirection connectDirection = m_previousConnectionData.m_Direction.Inverse();
-                datas[generateTypes[i]].TraversalRandomBreak((LevelChunkData curChunkData) =>
+                datas[totalGenerateTypes[i].m_ChunkType].TraversalRandomBreak((LevelChunkData curChunkData) =>
                 {
                     ChunkConnectionData? nextConnectionData = null;
                     curChunkData.Connections.TraversalRandomBreak((int curConnectionIndex) => {
@@ -210,8 +214,9 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
                             });
                             if (!_anyGeneratedChunkIntersects)
                             {
-                                nextChunkGenerate = new ChunkGenerateData(generateIndex++, nextChunkAxis, curChunkData);
+                                nextChunkGenerate = new ChunkGenerateData(generateStartIndex, nextChunkAxis, curChunkData,totalGenerateTypes[i].m_EventType);
                                 nextChunkGenerate.SetPreConnectData(previousChunkGenerate.m_ChunkIndex,previousConnectionIndex,curConnectionIndex);
+                                generateStartIndex++;
                             }
                         }
                         return nextConnectionData != null;
@@ -400,7 +405,7 @@ public static class NavigationManager
 
     public static Vector3 NavMeshPosition(Vector3 samplePosition)
     {
-        if (NavMesh.SamplePosition(samplePosition, out sampleHit, 20, 0))
+        if (NavMesh.SamplePosition(samplePosition, out sampleHit, 20,1>> 0))
             return sampleHit.position;
         return samplePosition;
     }

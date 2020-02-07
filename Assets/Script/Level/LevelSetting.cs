@@ -76,6 +76,15 @@ namespace LevelSetting
         Default=1,
     }
     
+    public enum enum_ChunkEventType
+    {
+        Invalid=-1,
+        Trader=1,
+        Medic =2,
+        Witcher=3,
+        RewardChest=4,
+        Bonefire=5,
+    }
     
     public static class LevelConst
     {
@@ -199,6 +208,17 @@ namespace LevelSetting
         }
     }
     
+    public struct ChunkPreGenerateData
+    {
+        public enum_ChunkType m_ChunkType;
+        public enum_ChunkEventType m_EventType;
+        public ChunkPreGenerateData(enum_ChunkType _chunkType,enum_ChunkEventType _eventType= enum_ChunkEventType.Invalid)
+        {
+            m_ChunkType = _chunkType;
+            m_EventType = _eventType;
+        }
+    }
+
     public struct ChunkGameObjectData
     {
         public Vector3 pos { get; private set; }
@@ -215,27 +235,30 @@ namespace LevelSetting
         public int m_ChunkIndex { get; private set; }
         public TileAxis m_Axis { get; private set; }
         public LevelChunkData m_Data { get; private set; }
-        public int m_PreChunkIndex { get; private set; }
-        public int m_ChunkConnectPoint { get; private set; }
-        public int m_PreChunkConnectPoint { get; private set; }
+        public enum_ChunkEventType m_EventType { get; private set; }
         public Dictionary<int, bool> m_ConnectPoint { get; private set; }
-        public ChunkGenerateData(int chunkIndex,TileAxis _offset, LevelChunkData _data)
+        public ChunkGenerateData(int chunkIndex,TileAxis _offset, LevelChunkData _data, enum_ChunkEventType eventType)
         {
             m_ChunkIndex = chunkIndex;
-               m_Axis = _offset;
+             m_Axis = _offset;
             m_Data = _data;
+            m_EventType = eventType;
             m_ConnectPoint = new Dictionary<int, bool>();
             for (int i = 0; i < _data.Connections.Length; i++)
                 m_ConnectPoint.Add(i, false);
         }
 
-        public bool HaveEmptyConnection() => m_ConnectPoint.Values.Any(p => !p);
-        public void SetPreConnectData(int connnectChunkIndex, int previousPointIndex,int currentPointIndex)
+        public int m_PreChunkIndex { get; private set; }
+        public int m_ChunkConnectPoint { get; private set; }
+        public int m_PreChunkConnectPoint { get; private set; }
+        public void SetPreConnectData(int connnectChunkIndex, int previousPointIndex, int currentPointIndex)
         {
             m_PreChunkIndex = connnectChunkIndex;
             m_PreChunkConnectPoint = previousPointIndex;
             m_ChunkConnectPoint = currentPointIndex;
         }
+
+        public bool HaveEmptyConnection() => m_ConnectPoint.Values.Any(p => !p);
         public void OnConnectionSet(int connectionIndex) => m_ConnectPoint[connectionIndex] = true;
     }
 }

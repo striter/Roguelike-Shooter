@@ -738,6 +738,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_NearbyChunks: []
   m_RoadBlockTiles: []
+  m_ChunkEventType: -1
 --- !u!1 &1388337371
 GameObject:
   m_ObjectHideFlags: 0
@@ -815,6 +816,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae08493bc1f94d84f9ae4429219b0672, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_FinalBattleTest: 1
 --- !u!4 &1633132966
 Transform:
   m_ObjectHideFlags: 0

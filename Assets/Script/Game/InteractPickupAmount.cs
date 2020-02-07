@@ -8,32 +8,33 @@ public class InteractPickupAmount : InteractPickup {
     protected bool m_OutOfBattle { get; private set; }
     float m_speed;
     Transform m_moveTowards;
-    public virtual InteractPickupAmount Play(int amount, Transform moveTowards)
+    public virtual InteractPickupAmount Play(int amount)
     {
         base.Play();
         m_speed = 0;
         m_OutOfBattle = false;
-        m_moveTowards = moveTowards;
         m_Amount = amount;
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
         return this;
     }
+
     private void OnDisable()
     {
-        if (!m_moveTowards)
+        if (!m_InteractEnable)
             return;
         m_moveTowards = null;
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
     }
-    protected override bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactTarget)
+    protected override bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactor)
     {
-        base.OnInteractOnceCanKeepInteract(_interactTarget);
-        _interactTarget.OnInteractPickup(this,m_Amount);
+        base.OnInteractOnceCanKeepInteract(_interactor);
+        _interactor.OnInteractPickup(this,m_Amount);
         return false;
     }
 
     void OnBattleFinish()
     {
+        m_moveTowards = GameManager.Instance.m_LocalPlayer.transform;
         m_OutOfBattle = true;
     }
     private void Update()

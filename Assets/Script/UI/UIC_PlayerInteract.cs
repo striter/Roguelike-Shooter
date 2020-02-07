@@ -67,23 +67,19 @@ public class UIC_PlayerInteract : UIControlBase
     {
         m_interact = _interact;
 
-        int tradePrice = -1;
         InteractBase targetItem = null;
+        int tradePrice = -1;
         if (m_interact != null)
         {
+            tradePrice = _interact.m_TradePrice;
             switch (m_interact.m_InteractType)
             {
                 default:
                     targetItem = m_interact;
                     break;
-                case enum_Interaction.ContainerTrade:
-                    InteractContainerTrade trade = m_interact as InteractContainerTrade;
-                    tradePrice = trade.m_TradePrice;
+                case enum_Interaction.TradeContainer:
+                    InteractTradeContainer trade = m_interact as InteractTradeContainer;
                     targetItem = trade.m_TradeInteract;
-                    break;
-                case enum_Interaction.ContainerBattle:
-                    InteractContainerBattle battle = m_interact as InteractContainerBattle;
-                    targetItem = battle.m_TradeInteract;
                     break;
             }
         }

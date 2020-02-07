@@ -9,7 +9,6 @@ public class InteractGameBase : InteractBase,IObjectpool<enum_Interaction> {
     protected virtual bool B_SelfRecycleOnInteract => false;
     public AudioClip AC_OnPlay, AC_OnInteract;
     public int I_MuzzleOnInteract;
-
     public virtual void OnPoolItemInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
     {
     }
@@ -20,13 +19,14 @@ public class InteractGameBase : InteractBase,IObjectpool<enum_Interaction> {
         if (AC_OnPlay)
             AudioManager.Instance.Play3DClip(-1, AC_OnPlay, false, transform.position);
     }
-    
-    protected override bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactTarget)
+
+    protected override bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactor)
     {
-        GameObjectManager.PlayMuzzle(_interactTarget.m_EntityID, transform.position, transform.up, I_MuzzleOnInteract, AC_OnInteract);
+        base.OnInteractOnceCanKeepInteract(_interactor);
+        GameObjectManager.PlayMuzzle(_interactor.m_EntityID, transform.position, transform.up, I_MuzzleOnInteract, AC_OnInteract);
         if (B_SelfRecycleOnInteract)
             OnRecycle();
-        return base.OnInteractOnceCanKeepInteract(_interactTarget);
+        return false;
     }
 
     protected void OnRecycle()
