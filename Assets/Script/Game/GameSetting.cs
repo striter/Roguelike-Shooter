@@ -48,6 +48,9 @@ namespace GameSetting
         public static class AI
         {
             public const float F_AIShowDistance = 30f;
+            public const float F_AIIdleTargetDistance = 12;
+            public const int F_AIIdleTargetAngle = 60;
+            public const float F_AITargetIndicateRange = 5f;
             public static readonly float F_AIPatrolRange = 5f; //AI idle巡逻范围
             public static readonly RangeFloat RF_AIPatrolDuration = new RangeFloat(1f, 3f); //AI idle巡逻时间
             public const float F_AIMovementCheckParam = .3f; //AI检查玩家频率
@@ -69,7 +72,7 @@ namespace GameSetting
         public const int I_HealthPackAmount = 50;
 
         public static readonly RangeInt IR_EventTradeBuffPrice = new RangeInt(20, 5);
-        public static readonly Dictionary<enum_ChunkEventType, int> D_ChunkEventPercentage = new Dictionary<enum_ChunkEventType, int>() { { enum_ChunkEventType.Medic, 25 }, { enum_ChunkEventType.RewardChest, 25 }, { enum_ChunkEventType.Trader, 25 }, { enum_ChunkEventType.Witcher, 25 } };
+        public static readonly Dictionary<enum_ChunkEventType, int> D_ChunkEventPercentage = new Dictionary<enum_ChunkEventType, int>() { { enum_ChunkEventType.Medic, 10 }, { enum_ChunkEventType.RewardChest, 50 }, { enum_ChunkEventType.Trader, 28 }, { enum_ChunkEventType.Witcher, 12 } };
         public static readonly RangeInt IR_EventMedicPrice = new RangeInt(10, 5);
         public const int P_EventRewardChestWeaponRate = 40;
         public const int I_EventEquipmentTradePrice = 10;

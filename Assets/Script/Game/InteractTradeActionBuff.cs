@@ -16,7 +16,6 @@ public class InteractTradeActionBuff : InteractGameBase {
     {
         base.OnInteractOnceCanKeepInteract(_interactTarget);
         _interactTarget.m_CharacterInfo.OnActionBuffAcquire(ActionDataManager.CreateRandomActionBuff());
-        m_TradePrice = GameConst.IR_EventTradeBuffPrice.Random();
-        return true;
+        return false;
     }
 }
