@@ -56,7 +56,7 @@ namespace GameSetting_Action
         public static float P_0033_CoinsDropAdditive(enum_EquipmentLevel rarity) => 10 * (int)rarity;
         public static float P_0034_CoinsCostDecrease(enum_EquipmentLevel rarity) => 10 * (int)rarity;
         public static float P_0035_CoinsDoubleRate(enum_EquipmentLevel rarity) => 10 * (int)rarity;
-        public static float P_0036_CoinsReviveAmount(enum_EquipmentLevel rarity) => 50 - 10 * ((int)rarity );
+        public static float P_0036_CoinsReviveAmount(enum_EquipmentLevel rarity) => 180 - 20 * ((int)rarity );
         public static float F_0037_DamageMultiplyPer10Coins(enum_EquipmentLevel rarity) => 4 * (int)rarity;
     }
 
