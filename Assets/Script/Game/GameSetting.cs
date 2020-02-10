@@ -107,8 +107,8 @@ namespace GameSetting
 
         public static float F_SphereCastDamageReduction(float weaponDamage, float distance, float radius) => weaponDamage * (1 - (distance / radius));       //Rocket Blast Damage
 
-        public static SBuff GetEnermyGameBuff(enum_StageLevel stage,int difficulty) => SBuff.CreateGameEnermyBuff(difficulty, (int)stage*.2f+ (difficulty - 1)*.2f );
-        public static float GetEnermyMaxHealthMultiplier(enum_StageLevel stage, int difficulty) => 1f + ((int)stage - 1) * .2f + difficulty * .05f;
+        public static SBuff GetEnermyGameBuff(enum_StageLevel stage,int difficulty) => SBuff.CreateGameEnermyBuff(difficulty, ((int)stage - 1) * .2f+ (difficulty - 1)*.2f );
+        public static float GetEnermyMaxHealthMultiplier(enum_StageLevel stage, int difficulty) => 1f + ((int)stage - 1) * .2f + (difficulty - 1) * .05f;
 
         public static float GetActionEnergyRevive(float damageApply) => damageApply * .0025f;    //伤害转换成能量的比率
 
