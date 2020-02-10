@@ -69,7 +69,7 @@ namespace GameSetting
         public const int I_HealthPackAmount = 50;
 
         public static readonly RangeInt IR_EventTradeBuffPrice = new RangeInt(20, 5);
-        public static readonly Dictionary<enum_ChunkEventType, int> D_ChunkEventPercentage = new Dictionary<enum_ChunkEventType, int>() { { enum_ChunkEventType.Medic, 25 }, { enum_ChunkEventType.RewardChest, 25 }, { enum_ChunkEventType.Trader, 25 }, { enum_ChunkEventType.Witcher, 25 } };
+        public static readonly Dictionary<enum_ChunkEventType, int> D_ChunkEventPercentage = new Dictionary<enum_ChunkEventType, int>() { { enum_ChunkEventType.Medic, 10 }, { enum_ChunkEventType.RewardChest, 50 }, { enum_ChunkEventType.Trader, 28 }, { enum_ChunkEventType.Witcher, 12 } };
         public static readonly RangeInt IR_EventMedicPrice = new RangeInt(10, 5);
         public const int P_EventRewardChestWeaponRate = 40;
         public const int I_EventEquipmentTradePrice = 10;
