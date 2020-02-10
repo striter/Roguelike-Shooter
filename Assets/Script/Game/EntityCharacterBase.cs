@@ -94,7 +94,7 @@ public class EntityCharacterBase : EntityBase
             DoRecycle();
     }
 
-    public virtual void ReviveCharacter(float reviveHealth = -1, float reviveArmor = -1)
+    public virtual void ReviveCharacter()
     {
         if (!m_IsDead)
             return;
@@ -102,7 +102,7 @@ public class EntityCharacterBase : EntityBase
         m_Effect.OnReset();
         m_CharacterInfo.OnRevive();
         EntityHealth health = (m_Health as EntityHealth);
-        health.OnSetStatus(reviveHealth == -1 ? health.m_BaseHealth : reviveHealth, reviveArmor == -1 ? health.m_BaseArmor : reviveArmor);
+        health.OnSetStatus( health.m_MaxHealth,health.m_MaxArmor);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterRevive, this);
     }
 
