@@ -423,7 +423,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         else
             return transform.position + 5 * -m_m_targetDirection;
     }
-    bool FrontBlocked() => F_AttackFrontCheck > 0f && Physics.SphereCast(new Ray(transform.position, transform.forward), .5f, F_AttackFrontCheck, GameLayer.Mask.I_Static);
+    bool FrontBlocked() => F_AttackFrontCheck > 0f && Physics.SphereCast(new Ray(tf_Head.position, transform.forward), .5f, F_AttackFrontCheck, GameLayer.Mask.I_Static);
 
     void BattleRotation(float deltaTime)
     {
