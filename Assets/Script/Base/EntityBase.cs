@@ -11,7 +11,7 @@ public class EntityBase : CObjectPoolMono<int>
     public enum_EntityFlag m_Flag { get; private set; }
     public HealthBase m_Health { get; private set; }
     protected virtual HealthBase GetHealthManager() => new HealthBase(OnHealthChanged);
-    protected virtual void ActivateHealthManager(float maxHealth) => m_Health.OnSetHealth(maxHealth, true);
+    protected virtual void ActivateHealthManager(float maxHealth) => m_Health.OnActivate(maxHealth);
     public HitCheckEntity m_HitCheck => m_HitChecks[0];
     protected bool m_HitCheckEnabled { get; private set; } = false;
     protected virtual float DamageReceiveMultiply => 1;

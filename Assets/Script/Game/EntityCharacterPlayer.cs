@@ -96,7 +96,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_Agent.enabled = true;
 
         m_CharacterInfo.SetInfoData(m_saveData);
-        m_Health.OnActivate(m_saveData.m_Health>=0?m_saveData.m_Health:I_MaxHealth, m_saveData.m_Armor >= 0? m_saveData.m_Armor: I_DefaultArmor, true);
+        m_Health.OnActivate(m_saveData.m_Health>=0?m_saveData.m_Health:I_MaxHealth, m_saveData.m_Armor >= 0? m_saveData.m_Armor: I_DefaultArmor);
         ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_weapon1));
         if (m_saveData.m_weapon2.m_Weapon != enum_PlayerWeapon.Invalid)
             ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_weapon2));

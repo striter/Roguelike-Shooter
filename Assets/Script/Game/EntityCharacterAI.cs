@@ -41,11 +41,11 @@ public class EntityCharacterAI : EntityCharacterBase {
         base.OnActivate(_flag,_spawnerID,startHealth);
     }
 
-    public void OnAIActivate(float baseHealthMultiplier, float maxHealthMultiplier, SBuff difficultyBuff,bool inBattle)
+    public void OnAIActivate( float maxHealthMultiplier, SBuff difficultyBuff,bool inBattle)
     {
         m_CharacterInfo.AddBuff(-1, difficultyBuff);
         m_Health.SetHealthMultiplier(maxHealthMultiplier);
-        m_Health.OnSetHealth(I_MaxHealth * baseHealthMultiplier, true);
+        m_Health.OnActivate(I_MaxHealth);
         m_Agent.enabled = true;
         AIActivate(inBattle);
     }

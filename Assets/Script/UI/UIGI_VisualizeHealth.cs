@@ -1,14 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TSpecialClasses;
 using UnityEngine;
 using UnityEngine.UI;
-using GameSetting;
-public class UIGI_VisualizeHealthBar : UIT_GridItem {
+
+public class UIGI_VisualizeHealth : UIT_GridItem {
     EntityBase m_AttachEntity;
     Image m_HealthBar1,m_HealthBar2,m_HealthBar3;
     bool b_showItem = false;
     float f_hideCheck;
     Graphic[] m_Graphics;
+
+    ValueLerpSeconds m_HealthLerp;
+
     public override void Init()
     {
         base.Init();
@@ -22,6 +26,7 @@ public class UIGI_VisualizeHealthBar : UIT_GridItem {
     {
         m_AttachEntity = _attachTo;
         OnHide();
+        m_HealthLerp = new ValueLerpSeconds(m_AttachEntity.m_Health.F_HealthMaxScale, 1f, .5f, SetHealthValue);
     }
 
     public void OnHide()
@@ -29,8 +34,7 @@ public class UIGI_VisualizeHealthBar : UIT_GridItem {
         transform.SetActivate(false);
         b_showItem = false;
     }
-
-    float m_currnetHealthValue;
+    
     public void OnShow()
     {
         m_Graphics.Traversal((Graphic graphic) => { graphic.color = TCommon.ColorAlpha(graphic.color, 1f); });
@@ -38,7 +42,7 @@ public class UIGI_VisualizeHealthBar : UIT_GridItem {
         f_hideCheck = 2f;
         if (b_showItem)
             return;
-        SetHealthValue(m_AttachEntity.m_Health.F_HealthBaseScale);
+
         rtf_RectTransform.SetWorldViewPortAnchor(m_AttachEntity.transform.position,CameraController.MainCamera);
         rtf_RectTransform.localScale = Vector3.one * Mathf.Clamp(Vector3.Distance(m_AttachEntity.transform.position, CameraController.MainCamera.transform.position) / 30, 1, 3);
         transform.SetActivate(true);
@@ -50,8 +54,8 @@ public class UIGI_VisualizeHealthBar : UIT_GridItem {
         if (!b_showItem)
             return;
 
-        SetHealthValue(Mathf.Lerp(m_currnetHealthValue,  m_AttachEntity.m_Health.F_HealthBaseScale,Time.deltaTime*5));
-
+        m_HealthLerp.ChangeValue(m_AttachEntity.m_Health.F_HealthMaxScale);
+        m_HealthLerp.TickDelta(Time.deltaTime);
         rtf_RectTransform.localScale = Vector3.one * Mathf.Clamp(Vector3.Distance(m_AttachEntity.transform.position, CameraController.MainCamera.transform.position) / 20, 1, 3);
         rtf_RectTransform.SetWorldViewPortAnchor(m_AttachEntity.transform.position, CameraController.MainCamera, Time.deltaTime*20f);
 
@@ -65,9 +69,8 @@ public class UIGI_VisualizeHealthBar : UIT_GridItem {
 
     void SetHealthValue(float value)
     {
-        m_HealthBar1.fillAmount = value<1?value:1;
-        m_HealthBar2.fillAmount = value<2?value-1:1;
-        m_HealthBar3.fillAmount = value<3?value-2:1;
-        m_currnetHealthValue = value;
+        m_HealthBar1.fillAmount = value>1?1:value;
+        m_HealthBar2.fillAmount = value>2?1:value-1;
+        m_HealthBar3.fillAmount = value>3?1:value-2;
     }
 }

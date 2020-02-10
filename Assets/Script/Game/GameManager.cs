@@ -749,7 +749,7 @@ public static class GameObjectManager
     public static EntityCharacterAI SpawnEntityCharactterAI(int poolIndex, Vector3 toPosition, Vector3 lookPos, enum_EntityFlag _flag,int gameDifficulty,enum_StageLevel _stage,bool battling, int spawnerID = -1, float _startHealth = 0)
     {
         EntityCharacterAI ai= SpawnEntity<EntityCharacterBase>(poolIndex, toPosition, lookPos, _flag, spawnerID, _startHealth, null) as EntityCharacterAI;
-        ai.OnAIActivate(GameExpression.GetAIBaseHealthMultiplier(gameDifficulty), GameExpression.GetAIMaxHealthMultiplier(_stage), GameExpression.GetEnermyGameDifficultyBuffIndex(gameDifficulty), battling);
+        ai.OnAIActivate( GameExpression.GetEnermyMaxHealthMultiplier(_stage,gameDifficulty), GameExpression.GetEnermyGameBuff(_stage, gameDifficulty), battling);
         return ai;
     } 
 

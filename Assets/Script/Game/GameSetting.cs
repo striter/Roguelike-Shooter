@@ -107,9 +107,8 @@ namespace GameSetting
 
         public static float F_SphereCastDamageReduction(float weaponDamage, float distance, float radius) => weaponDamage * (1 - (distance / radius));       //Rocket Blast Damage
 
-        public static SBuff GetEnermyGameDifficultyBuffIndex(int difficulty) => SBuff.CreateEnermyChallengeDifficultyBuff(difficulty, .2f * (difficulty - 1));
-        public static float GetAIBaseHealthMultiplier(int gameDifficulty) => 0.95f + 0.05f * gameDifficulty;
-        public static float GetAIMaxHealthMultiplier(enum_StageLevel stageDifficulty) => (int)stageDifficulty ;
+        public static SBuff GetEnermyGameBuff(enum_StageLevel stage,int difficulty) => SBuff.CreateGameEnermyBuff(difficulty, (int)stage*.2f+ (difficulty - 1)*.2f );
+        public static float GetEnermyMaxHealthMultiplier(enum_StageLevel stage, int difficulty) => 1f + ((int)stage - 1) * .2f + difficulty * .05f;
 
         public static float GetActionEnergyRevive(float damageApply) => damageApply * .0025f;    //伤害转换成能量的比率
 
@@ -911,7 +910,7 @@ namespace GameSetting
         public static readonly SBuff m_PlayerBoneFireHealBuff = new SBuff() { index = 102, i_addType = (int)enum_ExpireRefreshType.Refresh, f_expireDuration = 5f, f_damageTickTime = .1f, f_damagePerTick = -1f, i_damageType = (int)enum_DamageType.HealthOnly };
         public static readonly SBuff m_EnermyOuttaBattleDamageReduction = new SBuff() { index = 103, i_effect = GameConst.I_PlayerReviveBuffIndex, i_addType = (int)enum_ExpireRefreshType.Refresh,f_expireDuration=.5f, f_damageReduce = 1f };
         //1000-9999
-        public static SBuff CreateEnermyChallengeDifficultyBuff(int difficulty, float damageMultiply)
+        public static SBuff CreateGameEnermyBuff(int difficulty, float damageMultiply)
         {
             SBuff buff = new SBuff();
             buff.index = 1000 + difficulty;
@@ -1044,11 +1043,10 @@ namespace GameSetting
         {
             OnHealthChanged = _OnHealthChanged;
         }
-        public void OnSetHealth(float startHealth, bool restoreHealth)
+        public void OnActivate(float startHealth)
         {
             this.m_BaseHealth = startHealth;
-            if (restoreHealth)
-                m_CurrentHealth = m_MaxHealth;
+            m_CurrentHealth = m_MaxHealth;
         }
         public void OnSetHealth(float reviveHealth)=> m_CurrentHealth = reviveHealth;
         public virtual bool OnReceiveDamage(DamageInfo damageInfo, float damageReduction = 1, float healEnhance = 1)
@@ -1095,9 +1093,9 @@ namespace GameSetting
             m_Entity = entity;
             m_HealthMultiplier = 1f;
         }
-        public void OnActivate(float startHealth, float startArmor, bool restoreHealth)
+        public void OnActivate(float startHealth, float startArmor)
         {
-            base.OnSetHealth(startHealth, restoreHealth);
+            base.OnActivate(startHealth);
             m_BaseArmor = startArmor;
             m_CurrentArmor = m_BaseArmor;
             OnHealthChanged(enum_HealthChangeMessage.Default);
@@ -1111,7 +1109,7 @@ namespace GameSetting
         public void SetHealthMultiplier(float healthMultiplier)
         {
             m_HealthMultiplier = healthMultiplier;
-            OnSetHealth(base.m_BaseHealth, true);
+            OnActivate(base.m_BaseHealth);
             OnHealthChanged(enum_HealthChangeMessage.Default);
         }
         public override bool OnReceiveDamage(DamageInfo damageInfo, float damageReduction = 1, float healEnhance = 1)
