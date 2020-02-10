@@ -468,11 +468,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (f_reviveCheck < 0)
             OnCheckRevive();
     }
-    RangeFloat m_PlayerReviveAmount;
     void OnCheckRevive()
     {
-        m_PlayerReviveAmount = new RangeFloat(m_Health.m_BaseHealth, m_Health.m_BaseArmor);
-        if (m_CharacterInfo.CheckRevive(ref m_PlayerReviveAmount))
+        if (m_CharacterInfo.CheckRevive())
         {
             RevivePlayer();
             return;
@@ -481,7 +479,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     }
     void RevivePlayer()
     {
-        ReviveCharacter(m_PlayerReviveAmount.start, m_PlayerReviveAmount.length);
+        ReviveCharacter();
         m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.BuffInfo(-1, SBuff.m_PlayerReviveBuff)));
     }
     #endregion

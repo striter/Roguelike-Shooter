@@ -1551,11 +1551,11 @@ namespace GameSetting
         }
         public void OnActionBuffAcquire(ActionBuffBase actionBuff) => AddExpire(actionBuff);
 
-        public bool CheckRevive(ref RangeFloat reviveAmount)
+        public bool CheckRevive()
         {
             for (int i = 0; i < m_PlayerExpires.Count; i++)
             {
-                if (m_PlayerExpires[i].OnCheckRevive(ref reviveAmount))
+                if (m_PlayerExpires[i].OnCheckRevive())
                     return true;
             }
             return false;
@@ -1909,7 +1909,7 @@ namespace GameSetting
         public virtual void OnGainCoins(float coinAmount) { }
         public virtual void OnReloadFinish() { }
         public virtual void OnMove(float distsance) { }
-        public virtual bool OnCheckRevive(ref RangeFloat amount) { return false; }
+        public virtual bool OnCheckRevive() { return false; }
         #endregion
     }
 

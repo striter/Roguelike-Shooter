@@ -56,7 +56,7 @@ namespace GameSetting_Action
         public static float P_0033_CoinsDropAdditive(enum_EquipmentLevel rarity) => 10 * (int)rarity;
         public static float P_0034_CoinsCostDecrease(enum_EquipmentLevel rarity) => 10 * (int)rarity;
         public static float P_0035_CoinsDoubleRate(enum_EquipmentLevel rarity) => 10 * (int)rarity;
-        public static float P_0036_CoinsExchangePercent(enum_EquipmentLevel rarity) => 100 - 25 * ((int)rarity );
+        public static float P_0036_CoinsReviveAmount(enum_EquipmentLevel rarity) => 50 - 10 * ((int)rarity );
         public static float F_0037_DamageMultiplyPer10Coins(enum_EquipmentLevel rarity) => 4 * (int)rarity;
     }
 
@@ -198,25 +198,25 @@ namespace GameSetting_Action
         public E0005_ClipMultiply() { }
     }
 
-    public class E0006_DamageAdditiveAfterReload:EquipmentBase
-    {
-        public override int m_Index => 0006;
-        public override float Value1 => EquipmentConsts.F_0006_DamageAdditive(m_rarity);
-        public override float Value2 => EquipmentConsts.F_0006_Duration(m_rarity);
-        public override float m_DamageAdditive => m_Timer.m_Timing?Value1:base.m_DamageAdditive;
-        TimeCounter m_Timer=new TimeCounter();
-        public override void OnReloadFinish()
-        {
-            base.OnReloadFinish();
-            m_Timer.SetTimer(Value2);
-        }
-        public override void OnTick(float deltaTime)
-        {
-            base.OnTick(deltaTime);
-            m_Timer.Tick(deltaTime);
-        }
-        public E0006_DamageAdditiveAfterReload() { }
-    }
+    //public class E0006_DamageAdditiveAfterReload:EquipmentBase
+    //{
+    //    public override int m_Index => 0006;
+    //    public override float Value1 => EquipmentConsts.F_0006_DamageAdditive(m_rarity);
+    //    public override float Value2 => EquipmentConsts.F_0006_Duration(m_rarity);
+    //    public override float m_DamageAdditive => m_Timer.m_Timing?Value1:base.m_DamageAdditive;
+    //    TimeCounter m_Timer=new TimeCounter();
+    //    public override void OnReloadFinish()
+    //    {
+    //        base.OnReloadFinish();
+    //        m_Timer.SetTimer(Value2);
+    //    }
+    //    public override void OnTick(float deltaTime)
+    //    {
+    //        base.OnTick(deltaTime);
+    //        m_Timer.Tick(deltaTime);
+    //    }
+    //    public E0006_DamageAdditiveAfterReload() { }
+    //}
 
     public class E0007_SpreadReduction:EquipmentBase
     {
@@ -226,13 +226,13 @@ namespace GameSetting_Action
         public E0007_SpreadReduction() { }
     }
 
-    public class E0008_AimRangeIncrease : EquipmentBase
-    {
-        public override int m_Index => 0008;
-        public override float Value1 => EquipmentConsts.F_0008_AimRangeIncrease(m_rarity);
-        public override float F_AimRangeAdditive => Value1;
-        public E0008_AimRangeIncrease() { }
-    }
+    //public class E0008_AimRangeIncrease : EquipmentBase
+    //{
+    //    public override int m_Index => 0008;
+    //    public override float Value1 => EquipmentConsts.F_0008_AimRangeIncrease(m_rarity);
+    //    public override float F_AimRangeAdditive => Value1;
+    //    public E0008_AimRangeIncrease() { }
+    //}
 
     public class E0009_DamageBurstAfterKill : EquipmentBase
     {
@@ -279,20 +279,20 @@ namespace GameSetting_Action
     }
     #endregion
     #region TypeB
-    public class E0013_NearbyDamageMultiply:EquipmentBase
-    {
-        public override int m_Index => 0013;
-        public override float Value1 => EquipmentConsts.F_0013_EffectRange(m_rarity); 
-        public override float Value2 => EquipmentConsts.P_0013_DamageMultiply(m_rarity);
-        public override void OnBeforeDealtDamageBegin(EntityCharacterBase receiver, DamageInfo info)
-        {
-            base.OnBeforeDealtDamageBegin(receiver, info);
-            if (Vector3.Distance(receiver.transform.position, m_Attacher.transform.position) > Value1)
-                return;
-            info.m_detail.DamageAdditive(Value2 / 100f, 0);
-        }
-        public E0013_NearbyDamageMultiply() { }
-    }
+    //public class E0013_NearbyDamageMultiply:EquipmentBase
+    //{
+    //    public override int m_Index => 0013;
+    //    public override float Value1 => EquipmentConsts.F_0013_EffectRange(m_rarity); 
+    //    public override float Value2 => EquipmentConsts.P_0013_DamageMultiply(m_rarity);
+    //    public override void OnBeforeDealtDamageBegin(EntityCharacterBase receiver, DamageInfo info)
+    //    {
+    //        base.OnBeforeDealtDamageBegin(receiver, info);
+    //        if (Vector3.Distance(receiver.transform.position, m_Attacher.transform.position) > Value1)
+    //            return;
+    //        info.m_detail.DamageAdditive(Value2 / 100f, 0);
+    //    }
+    //    public E0013_NearbyDamageMultiply() { }
+    //}
 
     public class E0014_NearbyKillDamageReduction:EquipmentBase
     {
@@ -376,92 +376,94 @@ namespace GameSetting_Action
     }
     #endregion
     #region TypeC
-    public class E0018_ReceiveDamageMovementMultiplyDuration : EquipmentBase
-    {
-        public override int m_Index => 0018;
-        public override int m_EffectIndex => m_Timer.m_Timing ? 40005 : 0;
-        public override float Value1 => EquipmentConsts.P_0018_MovementSpeedMultiply(m_rarity);
-        public override float Value2 => EquipmentConsts.F_0018_Duration(m_rarity);
-        public override float m_MovementSpeedMultiply => m_Timer.m_Timing? Value1 / 100f : 0;
-        TimeCounter m_Timer = new TimeCounter();
-        public override void OnReceiveDamage(DamageInfo info, float amount)
-        {
-            base.OnReceiveDamage(info, amount);
-            m_Timer.SetTimer(Value2);
-        }
-        public override void OnTick(float deltaTime)
-        {
-            base.OnTick(deltaTime);
-            m_Timer.Tick(deltaTime);
-        }
-        public E0018_ReceiveDamageMovementMultiplyDuration() { }
-    }
+    //public class E0018_ReceiveDamageMovementMultiplyDuration : EquipmentBase
+    //{
+    //    public override int m_Index => 0018;
+    //    public override int m_EffectIndex => m_Timer.m_Timing ? 40005 : 0;
+    //    public override float Value1 => EquipmentConsts.P_0018_MovementSpeedMultiply(m_rarity);
+    //    public override float Value2 => EquipmentConsts.F_0018_Duration(m_rarity);
+    //    public override float m_MovementSpeedMultiply => m_Timer.m_Timing? Value1 / 100f : 0;
+    //    TimeCounter m_Timer = new TimeCounter();
+    //    public override void OnReceiveDamage(DamageInfo info, float amount)
+    //    {
+    //        base.OnReceiveDamage(info, amount);
+    //        m_Timer.SetTimer(Value2);
+    //    }
+    //    public override void OnTick(float deltaTime)
+    //    {
+    //        base.OnTick(deltaTime);
+    //        m_Timer.Tick(deltaTime);
+    //    }
+    //    public E0018_ReceiveDamageMovementMultiplyDuration() { }
+    //}
 
-    public class E0019_KillMovementMultiplyDuration : EquipmentBase
-    {
-        public override int m_Index => 0019;
-        public override int m_EffectIndex => m_Timer.m_Timing ? 40005 : 0;
-        public override float Value1 => EquipmentConsts.P_0019_MovementSpeedMultiply(m_rarity);
-        public override float Value2 => EquipmentConsts.F_0019_Duration(m_rarity);
-        public override float m_MovementSpeedMultiply => m_Timer.m_Timing ? Value1 / 100f : 0;
-        TimeCounter m_Timer = new TimeCounter();
-        public override void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
-        {
-            base.OnDealtDamage(receiver, info, applyAmount);
-            if (receiver.m_IsDead)
-                m_Timer.SetTimer(Value2);
-        }
-        public override void OnTick(float deltaTime)
-        {
-            base.OnTick(deltaTime);
-            m_Timer.Tick(deltaTime);
-        }
-        public E0019_KillMovementMultiplyDuration() { }
-    }
-    public class E0020_MovementSpeedMultiply : EquipmentBase
-    {
-        public override int m_Index => 0020;
-        public override float Value1 => EquipmentConsts.P_0020_MovementSpeedAdditive(m_rarity);
-        public override float m_MovementSpeedMultiply => Value1 / 100f;
-        public E0020_MovementSpeedMultiply() { }
-    }
+    //public class E0019_KillMovementMultiplyDuration : EquipmentBase
+    //{
+    //    public override int m_Index => 0019;
+    //    public override int m_EffectIndex => m_Timer.m_Timing ? 40005 : 0;
+    //    public override float Value1 => EquipmentConsts.P_0019_MovementSpeedMultiply(m_rarity);
+    //    public override float Value2 => EquipmentConsts.F_0019_Duration(m_rarity);
+    //    public override float m_MovementSpeedMultiply => m_Timer.m_Timing ? Value1 / 100f : 0;
+    //    TimeCounter m_Timer = new TimeCounter();
+    //    public override void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+    //    {
+    //        base.OnDealtDamage(receiver, info, applyAmount);
+    //        if (receiver.m_IsDead)
+    //            m_Timer.SetTimer(Value2);
+    //    }
+    //    public override void OnTick(float deltaTime)
+    //    {
+    //        base.OnTick(deltaTime);
+    //        m_Timer.Tick(deltaTime);
+    //    }
+    //    public E0019_KillMovementMultiplyDuration() { }
+    //}
 
-    public class E0021_AimPressureReduction:EquipmentBase
-    {
-        public override int m_Index => 0021;
-        public override float Value1 => EquipmentConsts.P_0021_AimPressureReductionDecrease(m_rarity);
-        public override float F_AimPressureReduction => Value1 / 100f;
-        public E0021_AimPressureReduction() { }
-    }
-    public class E0022_DamageMovementStackup : EquipmentBase
-    {
-        public override int m_Index => 0022;
-        public override float Value1 => EquipmentConsts.P_0022_DamageMultiply(m_rarity,m_stackUp.m_stack);
-        public override float Value2 => EquipmentConsts.P_0022_DamageMultiply(m_rarity, EquipmentConsts.P_0022_MaxStack);
-        public override float m_DamageMultiply => Value1/100f;
-        EquipmentStackupCounter m_stackUp=new EquipmentStackupCounter(EquipmentConsts.P_0022_MaxStack);
-        public override void OnAttackDamageSet(DamageDeliverInfo info)
-        {
-            base.OnAttackDamageSet(info);
-            m_stackUp.ResetStack();
-        }
-        public override void OnMove(float distance) => m_stackUp.OnStackUp(distance);
-        public E0022_DamageMovementStackup() { }
-    }
+    //public class E0020_MovementSpeedMultiply : EquipmentBase
+    //{
+    //    public override int m_Index => 0020;
+    //    public override float Value1 => EquipmentConsts.P_0020_MovementSpeedAdditive(m_rarity);
+    //    public override float m_MovementSpeedMultiply => Value1 / 100f;
+    //    public E0020_MovementSpeedMultiply() { }
+    //}
+
+    //public class E0021_AimPressureReduction:EquipmentBase
+    //{
+    //    public override int m_Index => 0021;
+    //    public override float Value1 => EquipmentConsts.P_0021_AimPressureReductionDecrease(m_rarity);
+    //    public override float F_AimPressureReduction => Value1 / 100f;
+    //    public E0021_AimPressureReduction() { }
+    //}
+
+    //public class E0022_DamageMovementStackup : EquipmentBase
+    //{
+    //    public override int m_Index => 0022;
+    //    public override float Value1 => EquipmentConsts.P_0022_DamageMultiply(m_rarity,m_stackUp.m_stack);
+    //    public override float Value2 => EquipmentConsts.P_0022_DamageMultiply(m_rarity, EquipmentConsts.P_0022_MaxStack);
+    //    public override float m_DamageMultiply => Value1/100f;
+    //    EquipmentStackupCounter m_stackUp=new EquipmentStackupCounter(EquipmentConsts.P_0022_MaxStack);
+    //    public override void OnAttackDamageSet(DamageDeliverInfo info)
+    //    {
+    //        base.OnAttackDamageSet(info);
+    //        m_stackUp.ResetStack();
+    //    }
+    //    public override void OnMove(float distance) => m_stackUp.OnStackUp(distance);
+    //    public E0022_DamageMovementStackup() { }
+    //}
     #endregion
     #region TypeD
-    public class E0023_HealAddMaxHealth : EquipmentBase
-    {
-        public override int m_Index => 0023;
-        public override float Value1 => EquipmentConsts.P_0023_MaxHealthRegen(m_rarity);
-        public override float m_MaxHealthAdditive => m_RecordData;
-        public override void OnReceiveHealing(DamageInfo info, float amount)
-        {
-            base.OnReceiveHealing(info, amount);
-            m_RecordData += -info.m_AmountApply * Value1 / 100f;
-        }
-        public E0023_HealAddMaxHealth() { }
-    }
+    //public class E0023_HealAddMaxHealth : EquipmentBase
+    //{
+    //    public override int m_Index => 0023;
+    //    public override float Value1 => EquipmentConsts.P_0023_MaxHealthRegen(m_rarity);
+    //    public override float m_MaxHealthAdditive => m_RecordData;
+    //    public override void OnReceiveHealing(DamageInfo info, float amount)
+    //    {
+    //        base.OnReceiveHealing(info, amount);
+    //        m_RecordData += -info.m_AmountApply * Value1 / 100f;
+    //    }
+    //    public E0023_HealAddMaxHealth() { }
+    //}
 
     public class E0024_KillHealthRegen : EquipmentBase
     {
@@ -532,29 +534,29 @@ namespace GameSetting_Action
         public E0029_DamageFreeze() { }
     }
 
-    public class E0030_DamageFreezeOffsetDuration : EquipmentBase
-    {
-        public override int m_Index => 0030;
-        public override int m_EffectIndex => !m_Timer.m_Timing? 41001:base.m_EffectIndex;
-        public override float Value1 => EquipmentConsts.F_0030_OffsetDuration(m_rarity);
-        public override float Value2 => EquipmentConsts.F_0030_FreezeDuration(m_rarity);
-        TimeCounter m_Timer = new TimeCounter();
-        public override void OnTick(float deltaTime)
-        {
-            base.OnTick(deltaTime);
-            m_Timer.Tick(deltaTime);
-        }
-        public override void OnAttackDamageSet(DamageDeliverInfo info)
-        {
-            base.OnAttackDamageSet(info);
-            if (!m_Timer.m_Timing)
-            {
-                info.EffectAdditiveOverride(enum_CharacterEffect.Freeze, Value2);
-                m_Timer.SetTimer(Value1);
-            }
-        }
-        public E0030_DamageFreezeOffsetDuration() { }
-    }
+    //public class E0030_DamageFreezeOffsetDuration : EquipmentBase
+    //{
+    //    public override int m_Index => 0030;
+    //    public override int m_EffectIndex => !m_Timer.m_Timing? 41001:base.m_EffectIndex;
+    //    public override float Value1 => EquipmentConsts.F_0030_OffsetDuration(m_rarity);
+    //    public override float Value2 => EquipmentConsts.F_0030_FreezeDuration(m_rarity);
+    //    TimeCounter m_Timer = new TimeCounter();
+    //    public override void OnTick(float deltaTime)
+    //    {
+    //        base.OnTick(deltaTime);
+    //        m_Timer.Tick(deltaTime);
+    //    }
+    //    public override void OnAttackDamageSet(DamageDeliverInfo info)
+    //    {
+    //        base.OnAttackDamageSet(info);
+    //        if (!m_Timer.m_Timing)
+    //        {
+    //            info.EffectAdditiveOverride(enum_CharacterEffect.Freeze, Value2);
+    //            m_Timer.SetTimer(Value1);
+    //        }
+    //    }
+    //    public E0030_DamageFreezeOffsetDuration() { }
+    //}
 
     public class E0031_FreezeMineSpawner:EquipmentDevice
     {
@@ -621,42 +623,30 @@ namespace GameSetting_Action
         public E0035_CoinsGainDouble() { }
     }
 
-    public class E0036_CoinsLifeExchange:EquipmentBase
+    public class E0036_CoinsRevive:EquipmentBase
     {
         public override int m_Index => 0036;
-        public override float Value1 => EquipmentConsts.P_0036_CoinsExchangePercent(m_rarity);
-        public override void OnBeforeReceiveDamage(DamageInfo info)
+        public override float Value1 => EquipmentConsts.P_0036_CoinsReviveAmount(m_rarity);
+        public override bool OnCheckRevive()
         {
-            base.OnBeforeReceiveDamage(info);
-            bool willDead = false;
-            float amountApply = info.m_AmountApply;
-            float exchangePrice = amountApply*Value1/100f;
-            switch(info.m_Type)
+            float coinsValue = Value1;
+            if (m_Attacher.m_CharacterInfo.CanCostCoins(coinsValue))
             {
-                case enum_DamageType.HealthOnly:
-                    willDead = m_Attacher.m_Health.m_CurrentHealth <= amountApply;
-                    break;
-                case enum_DamageType.Basic:
-                    willDead = m_Attacher.m_Health.F_TotalEHP <= amountApply;
-                    break;
+                m_Attacher.m_CharacterInfo.OnCoinsCost(coinsValue);
+                return true;
             }
-            if (willDead && m_Attacher.m_CharacterInfo.CanCostCoins(exchangePrice))
-            {
-                m_Attacher.m_CharacterInfo.OnCoinsCost(exchangePrice);
-                info.ResetBaseDamage(0f);
-                info.m_detail.DamageReset();
-            }
+            return false;
         }
-        public E0036_CoinsLifeExchange() { }
+        public E0036_CoinsRevive() { }
     }
     
-    public class E0037_CoinsDamage:EquipmentBase
-    {
-        public override int m_Index => 0037;
-        public override float Value1 => EquipmentConsts.F_0037_DamageMultiplyPer10Coins(m_rarity);
-        public override float m_DamageMultiply => Value1/100f*m_Attacher.m_CharacterInfo.m_Coins/10f;
-        public E0037_CoinsDamage() { }
-    }
+    //public class E0037_CoinsDamage:EquipmentBase
+    //{
+    //    public override int m_Index => 0037;
+    //    public override float Value1 => EquipmentConsts.F_0037_DamageMultiplyPer10Coins(m_rarity);
+    //    public override float m_DamageMultiply => Value1/100f*m_Attacher.m_CharacterInfo.m_Coins/10f;
+    //    public E0037_CoinsDamage() { }
+    //}
     #endregion
     #endregion
     #region ActionBuff
