@@ -271,22 +271,21 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         TPSCameraController.Instance.RotateCamera(m_RotateAxisInput * OptionsManager.m_Sensitive);
 
         TargetTick(deltaTime);
-
-        tf_CameraAttach.position = transform.position;
-        if (m_Target) 
-            m_CharacterRotation = Quaternion.LookRotation(TCommon.GetXZLookDirection(tf_Head.position, m_Target.tf_Head.position), Vector3.up); 
-        else  if (m_MoveAxisInput != Vector2.zero)
-            m_CharacterRotation = Quaternion.LookRotation(m_MoveAxisInput.x * CameraController.CameraXZRightward + m_MoveAxisInput.y * CameraController.CameraXZForward, Vector3.up);
-
-
-        transform.rotation = Quaternion.Lerp(transform.rotation, GetCharacterRotation(),deltaTime*GameConst.I_PlayerRotationSmoothParam);
-
+        
         m_BaseMovementSpeed = CalculateMovementSpeedBase() * CalculateMovementSpeedMultiple();
+        if (m_Target)
+            m_CharacterRotation = Quaternion.LookRotation(TCommon.GetXZLookDirection(tf_Head.position, m_Target.tf_Head.position),Vector3.up); 
+        else  if (m_MoveAxisInput != Vector2.zero)
+            m_CharacterRotation = Quaternion.LookRotation(m_MoveAxisInput.x * CameraController.CameraXZRightward + m_MoveAxisInput.y * CameraController.CameraXZForward,Vector3.up);
 
+        Vector3 moveDirection = CalculateMoveDirection(m_MoveAxisInput);
         float finalMovementSpeed = m_CharacterInfo.F_MovementSpeed;
  //       transform.position = NavigationManager.NavMeshPosition(transform.position+ CalculateMoveDirection(m_MoveAxisInput) * finalMovementSpeed * deltaTime);
-        m_Controller.Move(CalculateMoveDirection(m_MoveAxisInput) * finalMovementSpeed * deltaTime);
-        m_Animator.SetRun(m_MoveAxisInput, finalMovementSpeed / F_MovementSpeed);
+        m_Controller.Move(moveDirection * finalMovementSpeed * deltaTime);
+        transform.rotation = Quaternion.Lerp(transform.rotation, GetCharacterRotation(), deltaTime * GameConst.I_PlayerRotationSmoothParam);
+        tf_CameraAttach.position = transform.position;
+
+        m_Animator.SetRun(new Vector2(Vector3.Dot(transform.right, moveDirection), Vector3.Dot(transform.forward, moveDirection)), finalMovementSpeed / F_MovementSpeed);
     }
 
     void TargetTick(float deltaTime)
@@ -294,7 +293,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (!m_TargetAvailable || targetCheck < 0f)
         {
             targetCheck = .3f;
-            m_Target = GameManager.Instance.GetNeariesCharacter(this, false, true,  GameConst.F_PlayerAutoAimRangeBase+ m_CharacterInfo.F_AimRangeAdditive);
+            m_Target =GameManager.Instance?GameManager.Instance.GetNeariesCharacter(this, false, true,  GameConst.F_PlayerAutoAimRangeBase+ m_CharacterInfo.F_AimRangeAdditive):null;
         }
         targetCheck -= Time.deltaTime;
     }

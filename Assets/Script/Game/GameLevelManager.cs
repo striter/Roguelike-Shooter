@@ -65,10 +65,10 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
                 gameChunkGenerate.Add(data);
             });
         };
-        Func<enum_ChunkEventType> RandomEventType = () => TCommon.RandomPercentage(GameConst.D_ChunkEventPercentage);
+        Func<enum_ChunkEventType> RandomEventType = () => TCommon.RandomPercentage(GameConst.D_ChunkEventPercentage,random);
         List<ChunkPreGenerateData> mainChunkType = m_FinalBattleTest ? new List<ChunkPreGenerateData>() {new ChunkPreGenerateData( enum_ChunkType.Event,  enum_ChunkEventType.Witcher)  , new ChunkPreGenerateData(enum_ChunkType.Final) } :
             new List<ChunkPreGenerateData>() { new ChunkPreGenerateData(enum_ChunkType.Battle), new ChunkPreGenerateData(enum_ChunkType.Battle), new ChunkPreGenerateData(enum_ChunkType.Event,RandomEventType()), new ChunkPreGenerateData(enum_ChunkType.Battle), new ChunkPreGenerateData(enum_ChunkType.Event,RandomEventType()), new ChunkPreGenerateData(enum_ChunkType.Battle), new ChunkPreGenerateData(enum_ChunkType.Event, RandomEventType()), new ChunkPreGenerateData(enum_ChunkType.Battle), new ChunkPreGenerateData(enum_ChunkType.Event, enum_ChunkEventType.Bonefire),  new ChunkPreGenerateData( enum_ChunkType.Final) };
-        List<ChunkPreGenerateData> subChunkType = new List<ChunkPreGenerateData>() {new ChunkPreGenerateData(  enum_ChunkType.Battle),new ChunkPreGenerateData(  enum_ChunkType.Event) };
+        List<ChunkPreGenerateData> subChunkType = new List<ChunkPreGenerateData>() {new ChunkPreGenerateData(  enum_ChunkType.Battle),new ChunkPreGenerateData(  enum_ChunkType.Event,RandomEventType()) };
 
         yield return Task.Run(() =>
         {
