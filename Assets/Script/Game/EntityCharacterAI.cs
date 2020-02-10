@@ -106,7 +106,14 @@ public class EntityCharacterAI : EntityCharacterBase {
     protected override bool OnReceiveDamage(DamageInfo damageInfo, Vector3 damageDirection)
     {
         if (damageDirection != Vector3.zero)
-            m_Impact += -damageDirection * GameConst.AI.F_AIDamageImpact * -damageInfo.m_AmountApply; 
+            m_Impact += -damageDirection * GameConst.AI.F_AIDamageImpact * -damageInfo.m_AmountApply;
+
+        if (GameManager.Instance.CharacterExists(damageInfo.m_detail.I_SourceID))
+        {
+            EntityCharacterBase entity = GameManager.Instance.GetCharacter(damageInfo.m_detail.I_SourceID);
+            if (GameManager.Instance.EntityOpposite(this, entity))
+                OnBattleReceiveTarget(entity, true);
+        }
 
         return base.OnReceiveDamage(damageInfo, damageDirection);
     }
@@ -163,6 +170,7 @@ public class EntityCharacterAI : EntityCharacterBase {
     {
         m_AgentEnabled = false;
         m_b_attacking = false;
+        m_Target = null;
         m_MoveTimer.SetTimer(0);
         m_BattleDurationTimer.SetTimer(0);
         m_BattleFireTimer.SetTimer(0);
@@ -220,16 +228,31 @@ public class EntityCharacterAI : EntityCharacterBase {
         {
             m_Target = null;
             m_TargetingTimer.SetTimer(GameConst.AI.F_AITargetCheckParam);
+            return false;
         }
+
+        if(!m_Target)
+            m_Target = GameManager.Instance.GetNeariesCharacter(this, m_Weapon.B_TargetAlly, false, GameConst.AI.F_AIIdleTargetDistance, p => Mathf.Abs(TCommon.GetAngle(TCommon.GetXZLookDirection(transform.position, p.transform.position), transform.forward, Vector3.up)) < GameConst.AI.F_AIIdleTargetAngle);
         else
-        {
-            m_Target = GameManager.Instance.GetNeariesCharacter(this, m_Weapon.B_TargetAlly, false);
-            m_TargetingTimer.SetTimer(m_Target ? GameConst.AI.F_AIReTargetCheckParam : GameConst.AI.F_AITargetCheckParam);
-        }
+            m_Target = m_Target = GameManager.Instance.GetNeariesCharacter(this, m_Weapon.B_TargetAlly, false);
+        m_TargetingTimer.SetTimer(m_Target ? GameConst.AI.F_AIReTargetCheckParam : GameConst.AI.F_AITargetCheckParam);
         return m_Target;
     }
     
+    void OnBattleReceiveTarget(EntityCharacterBase target, bool indicateOthers)
+    {
+        if (!m_AIBattleActivating)
+            return;
 
+        m_Target = target;
+        if (!indicateOthers)
+            return;
+        GameManager.Instance.GetNearbyCharacters(this, true, false, GameConst.AI.F_AITargetIndicateRange).Traversal((EntityCharacterBase character) => {
+            if (character.m_ControllType == enum_EntityController.AI)
+                (character as EntityCharacterAI).OnBattleReceiveTarget(m_Target, false);
+        });
+
+    }
     #region Idle
     void IdleTick(float deltaTime)
     {

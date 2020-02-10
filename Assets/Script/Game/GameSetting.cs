@@ -48,6 +48,9 @@ namespace GameSetting
         public static class AI
         {
             public const float F_AIShowDistance = 30f;
+            public const float F_AIIdleTargetDistance = 12;
+            public const int F_AIIdleTargetAngle = 60;
+            public const float F_AITargetIndicateRange = 5f;
             public static readonly float F_AIPatrolRange = 5f; //AI idle巡逻范围
             public static readonly RangeFloat RF_AIPatrolDuration = new RangeFloat(1f, 3f); //AI idle巡逻时间
             public const float F_AIMovementCheckParam = .3f; //AI检查玩家频率
