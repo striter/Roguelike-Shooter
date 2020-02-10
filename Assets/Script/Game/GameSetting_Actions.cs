@@ -623,7 +623,7 @@ namespace GameSetting_Action
         public E0035_CoinsGainDouble() { }
     }
 
-    public class E0036_CoinsLifeExchange:EquipmentBase
+    public class E0036_CoinsRevive:EquipmentBase
     {
         public override int m_Index => 0036;
         public override float Value1 => EquipmentConsts.P_0036_CoinsReviveAmount(m_rarity);
@@ -637,7 +637,7 @@ namespace GameSetting_Action
             }
             return false;
         }
-        public E0036_CoinsLifeExchange() { }
+        public E0036_CoinsRevive() { }
     }
     
     //public class E0037_CoinsDamage:EquipmentBase
