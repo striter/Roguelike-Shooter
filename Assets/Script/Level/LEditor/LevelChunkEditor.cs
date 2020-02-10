@@ -112,6 +112,7 @@ public class LevelChunkEditor : LevelChunkBase
     void CheckEditMode()
     {
         enum_LevelStyle targetStyle = m_GameViewMode ? m_ViewStyle : enum_LevelStyle.Invalid;
+        GameRenderData randomData = GameRenderData.Default();
         if (targetStyle != m_EditStyle)
         {
             m_TilesData.Traversal((LevelTileEditorData tile) => { tile.Clear(); });
@@ -120,7 +121,10 @@ public class LevelChunkEditor : LevelChunkBase
             m_EditStyle = targetStyle;
             LevelObjectManager.Register(m_EditStyle == enum_LevelStyle.Invalid ? TResources.GetChunkEditorTiles() : TResources.GetChunkTiles(m_EditStyle));
             GameRenderData.Default().DataInit(m_directionalLight,CameraController.Instance.m_Camera);
+            GameRenderData[] customizations = TResources.GetRenderData(targetStyle);
+            randomData = customizations.Length == 0 ? GameRenderData.Default() : customizations.RandomItem();
         }
+        randomData.DataInit(m_directionalLight, CameraController.Instance.m_Camera);
 
         ChangeEditSelection(null);
         m_SelectionTiles.ClearPool();
