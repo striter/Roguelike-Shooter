@@ -15,6 +15,6 @@ MonoBehaviour:
   f_yaw: 33
   f_lightItensity: 0.56
   f_lambert: 0.9
-  c_lightColor: {r: 1, g: 0.917712, b: 0.917712, a: 1}
-  c_ambient: {r: 0.6544118, g: 0.6222885, b: 0.60148144, a: 1}
-  c_skyColor: {r: 1, g: 0.95686275, b: 0.8156863, a: 1}
+  c_lightColor: {r: 1, g: 0.9704898, b: 0.917712, a: 1}
+  c_ambient: {r: 0.7983236, g: 0.79692906, b: 0.8088235, a: 1}
+  c_skyColor: {r: 0.25, g: 0.21209432, b: 0.13051471, a: 1}
