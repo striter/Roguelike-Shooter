@@ -39,8 +39,8 @@ namespace GameSetting
         public const float F_FinalBattleEnermySpawnEliteHealthScaleOffset = .1f; //BOSS血量减少百分比会判断刷新小怪
 
         public static readonly List<EliteBuffCombine> L_GameEliteBuff = new List<EliteBuffCombine>() { new EliteBuffCombine(2010, 12010, 32010), new EliteBuffCombine(2020, 12020, 32020), new EliteBuffCombine(2030, 12030, 32030), new EliteBuffCombine(2040, 12040, 32040), new EliteBuffCombine(2050, 12050, 32050), new EliteBuffCombine(2060, 12060, 32060) };
-        public const float F_EliteBuffTimerDurationWhenFullHealth=30f;
-        public const float F_EliteBuffTimerTickRateMultiplyHealthLoss = 3f;
+        public const float F_EliteBuffTimerDurationWhenFullHealth=15f; //触发tick值
+        public const float F_EliteBuffTimerTickRateMultiplyHealthLoss = 2f; //每秒加几tick=(1+血量损失比例* X)
 
         public static readonly Dictionary<enum_CampFarmItemStatus, int> DP_FarmGeneratePercentage = new Dictionary<enum_CampFarmItemStatus, int>() { { enum_CampFarmItemStatus.Progress1, 60 }, { enum_CampFarmItemStatus.Progress2, 30 }, { enum_CampFarmItemStatus.Progress3, 6 }, { enum_CampFarmItemStatus.Progress4, 3 }, { enum_CampFarmItemStatus.Progress5, 1 } };   //Farm生成等级百分比
         public static readonly Dictionary<enum_CampFarmItemStatus, float> GetFarmCreditPerSecond = new Dictionary<enum_CampFarmItemStatus, float> { { enum_CampFarmItemStatus.Progress1, .1f / 60f }, { enum_CampFarmItemStatus.Progress2, .2f / 60f }, { enum_CampFarmItemStatus.Progress3, .3f / 60f }, { enum_CampFarmItemStatus.Progress4, .5f / 60f }, { enum_CampFarmItemStatus.Progress5, 1f / 60f } };      //Farm 等级,每秒Credit

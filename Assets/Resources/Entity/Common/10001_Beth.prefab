@@ -1075,7 +1075,7 @@ MonoBehaviour:
   I_MaxHealth: 80
   ExtraRendererForForest107Only: {fileID: 0}
   E_SpawnType: -1
-  I_DefaultArmor: 0
+  I_DefaultArmor: 20
   F_MovementSpeed: 8
   F_AttackSpread: 0
   I_AbilityTimes: -1
