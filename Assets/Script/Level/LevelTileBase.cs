@@ -10,9 +10,9 @@ public class LevelTileBase : MonoBehaviour, ITileAxis
     public TileAxis m_Axis { get; private set; }
     public ChunkTileData m_Data { get; protected set; }
     protected Transform tf_Models { get; private set; }
-    protected TileGroundBase m_Ground;
-    protected TilePillarBase m_Pillar;
-    protected TileObjectBase m_Object;
+    public TileGroundBase m_Ground { get; protected set; }
+    public TilePillarBase m_Pillar { get; protected set; }
+    public TileObjectBase m_Object { get; protected set; }
     public virtual void Init(TileAxis axis,ChunkTileData data,System.Random random)
     {
         m_Axis = axis;

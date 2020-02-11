@@ -141,7 +141,7 @@ public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
         gameChunkGenerate.Traversal((ChunkGenerateData data) => {
             LevelChunkGame curChunk = m_ChunkPool.AddItem(data.m_ChunkIndex);
             LevelChunkGame preChunk = m_ChunkPool.GetItem(data.m_PreChunkIndex);
-            curChunk.InitGameChunk(data, random);
+            curChunk.InitGameChunk(data, random,NavigationManager.UpdateChunkData);
             preChunk.AddChunkConnection(curChunk);
             curChunk.AddChunkConnection(preChunk);
         });

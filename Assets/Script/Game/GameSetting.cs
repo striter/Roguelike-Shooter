@@ -151,6 +151,40 @@ namespace GameSetting
             }
         }
 
+        public static float GetLevelObjectHealth(enum_TileObjectType objectType)
+        {
+            switch(objectType)
+            {
+                default:
+                    Debug.LogError("Invalid Convertions Here!");
+                    return -1;
+                case enum_TileObjectType.Main:
+                case enum_TileObjectType.Sub1:
+                case enum_TileObjectType.Sub2:
+                    return 1000;
+                case enum_TileObjectType.SubUnbreakable:
+                    return 2000;
+                case enum_TileObjectType.SubBreakable:
+                    return 10;
+                case enum_TileObjectType.Object1x1A:
+                case enum_TileObjectType.Object1x1B:
+                case enum_TileObjectType.Object1x1C:
+                case enum_TileObjectType.Object1x1D:
+                    return 100;
+                case enum_TileObjectType.Object2x1A:
+                case enum_TileObjectType.Object2x1B:
+                    return 200;
+                case enum_TileObjectType.Object2x2A:
+                case enum_TileObjectType.Object2x2B:
+                    return 400;
+                case enum_TileObjectType.Object3x2A:
+                case enum_TileObjectType.Object3x2B:
+                    return 600;
+                case enum_TileObjectType.Object3x3A:
+                case enum_TileObjectType.Object3x3B:
+                    return 900;
+            }
+        }
 
         public static int GetActionRemovePrice(enum_StageLevel stage, int removeTimes) => 10 * (removeTimes + 1) ;
         public static int GetActionUpgradePrice(enum_StageLevel stage, int upgradeTimes) => 10 * (upgradeTimes + 1) ;
@@ -1052,7 +1086,6 @@ namespace GameSetting
         }
 
         protected Action<enum_HealthChangeMessage> OnHealthChanged;
-        protected Action OnDead;
         public HealthBase(Action<enum_HealthChangeMessage> _OnHealthChanged)
         {
             OnHealthChanged = _OnHealthChanged;

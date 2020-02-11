@@ -1,4 +1,5 @@
-﻿using LevelSetting;
+﻿using GameSetting;
+using LevelSetting;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,12 +15,14 @@ public class LevelChunkGame : LevelChunkBase
     public List<LevelChunkGame> m_NearbyChunks { get; private set; } = new List<LevelChunkGame>();
     public List<LevelTileBase> m_RoadBlockTiles { get; private set; } = new List<LevelTileBase>();
     public Dictionary<enum_TileObjectType, List<ChunkGameObjectData>> m_ChunkObjects { get; private set; } = new Dictionary<enum_TileObjectType, List<ChunkGameObjectData>>();
+    Action<int> OnChunkObjectDestroy;
 
-    public void InitGameChunk(ChunkGenerateData _data, System.Random _random)
+    public void InitGameChunk(ChunkGenerateData _data, System.Random _random,Action<int> OnChunkObjectDestroy)
     {
         m_chunkIndex = _data.m_ChunkIndex;
         m_ChunkOrigin = _data.m_Axis.ToPosition();
         m_ChunkEventType = _data.m_EventType;
+        this.OnChunkObjectDestroy = OnChunkObjectDestroy;
         m_WorldChunkBounds =new Bounds(m_ChunkOrigin + _data.m_Data.m_Size.ToPosition() / 2f + Vector3.up * LevelConst.I_TileSize, new Vector3(_data.m_Data.m_Size.X, 1, _data.m_Data.m_Size.Y) * LevelConst.I_TileSize);
         transform.localPosition = m_ChunkOrigin;
         m_ChunkObjects.Clear();
@@ -50,12 +53,17 @@ public class LevelChunkGame : LevelChunkBase
     }
 
     public void AddChunkConnection(LevelChunkGame chunk) => m_NearbyChunks.Add(chunk);
+
     protected override void OnTileInit(LevelTileBase tile, TileAxis axis, ChunkTileData data, System.Random random)
     {
         base.OnTileInit(tile, axis, data, random);
+        if (tile.m_Object)
+            tile.m_Object.GameInit(GameExpression.GetLevelObjectHealth( tile.m_Object.m_ObjectType),OnObjectDestroyed);
         if (data.m_GroundType == enum_TileGroundType.Block)
             m_RoadBlockTiles.Add(tile);
     }
+    void OnObjectDestroyed() => OnChunkObjectDestroy(m_chunkIndex);
+
 
     public List<int> BattleBlockLift(bool lift)
     {

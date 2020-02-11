@@ -499,7 +499,7 @@ public class GameManager : GameManagerBase
             {
                 ChunkGameObjectData objectData = chunkData.m_ChunkObjects[enum_TileObjectType .REliteEnermySpawn1x1].RandomItem(m_GameLevel.m_GameRandom);
                 GameEnermyCommander m_Command = m_EnermyCommand.AddItem(enermyCommandIndex);
-                m_Command.transform.position = NavigationManager.NavMeshPosition(objectData.pos + TCommon.RandomXZSphere(3f));
+                m_Command.transform.position = NavigationManager.NavMeshPosition(objectData.pos + TCommon.RandomXZSphere(1f));
                 m_Command.transform.rotation = objectData.rot;
                 m_Command.Play( m_EnermyIDs[enum_EnermyType.Elite].RandomItem(m_GameLevel.m_GameRandom), m_LocalPlayer.transform);
                 chunkBattleData.m_BattleEnermyCommands.Add(enermyCommandIndex);

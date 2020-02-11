@@ -54,6 +54,4 @@ public class LevelChunkBase : MonoBehaviour
     {
         tile.Init(axis, data,random);
     }
-
-
 }
