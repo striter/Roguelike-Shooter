@@ -163,27 +163,27 @@ namespace GameSetting
                     return StageInteractGenerateData.Create(
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 100 }, { enum_WeaponRarity.Rare, 0 }, { enum_WeaponRarity.Legend, 0 } },
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 50 }, { enum_WeaponRarity.Advanced, 50 }, { enum_WeaponRarity.Rare, 0 }, { enum_WeaponRarity.Legend, 0 } },
-                        PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),       //Normal
+                        PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),5,       //Normal
                         new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Ordinary, 6 },{ enum_WeaponRarity.Advanced,3} }),          //Weapon
-                        PickupGenerateData.Create(10, 100, 50, new RangeInt(10, 5),     //Elite
+                        PickupGenerateData.Create(10, 100, 50, new RangeInt(10, 5),5,     //Elite
                         new Dictionary<enum_WeaponRarity, float> { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 100 } })
                         );
                 case enum_StageLevel.Veteran:
                     return StageInteractGenerateData.Create(
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 0 }, { enum_WeaponRarity.Rare, 100 }, { enum_WeaponRarity.Legend, 0 } },
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced,50 }, { enum_WeaponRarity.Rare, 50 }, { enum_WeaponRarity.Legend, 0 } },
-                        PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),
+                        PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),5,
                         new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Advanced, 3.8f },{ enum_WeaponRarity.Rare,1.9f} }),
-                        PickupGenerateData.Create(10, 100, 100, new RangeInt(10, 5),
+                        PickupGenerateData.Create(10, 100, 100, new RangeInt(10, 5),5,
                         new Dictionary<enum_WeaponRarity, float> { { enum_WeaponRarity.Rare, 100 } })
                         );
                 case enum_StageLevel.Ranger:
                     return StageInteractGenerateData.Create(
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 0 }, { enum_WeaponRarity.Rare, 0 }, { enum_WeaponRarity.Legend, 100 } },
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 0 }, { enum_WeaponRarity.Rare, 50 }, { enum_WeaponRarity.Legend, 50 } },
-                        PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),
+                        PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),5,
                         new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Rare, 2.8f },{ enum_WeaponRarity.Legend, 2.8f} }),
-                        PickupGenerateData.Create(0, 0, 0, new RangeInt(10, 5),
+                        PickupGenerateData.Create(0, 0, 0, new RangeInt(10, 5),5,
                         new Dictionary<enum_WeaponRarity, float> { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 0 } })
                         );
             }
@@ -575,13 +575,24 @@ namespace GameSetting
         public int m_HealthRate { get; private set; }
         public int m_ArmorRate { get; private set; }
         public int m_CoinRate { get; private set; }
+        public int m_EquipmentRate { get; private set; }
         public RangeInt m_CoinRange { get; private set; }
         public Dictionary<enum_WeaponRarity, float> m_WeaponRate { get; private set; }
 
-        public bool CanGenerateHealth(enum_EnermyType entityType) => TCommon.RandomPercentage() <= m_HealthRate;
-        public bool CanGenerateArmor(enum_EnermyType entityType) => TCommon.RandomPercentage() <= m_ArmorRate;
-        public int GetCoinGenerate(enum_EnermyType entityType,float baseCreditRate) => TCommon.RandomPercentage() <= (baseCreditRate+ m_CoinRate) ? m_CoinRange.Random() : -1;
-        public static PickupGenerateData Create(int healthRate, int armorRate, int coinRate, RangeInt coinAmount, Dictionary<enum_WeaponRarity, float> _weaponRate) => new PickupGenerateData() { m_HealthRate = healthRate, m_ArmorRate = armorRate, m_CoinRate = coinRate, m_CoinRange = coinAmount,m_WeaponRate=_weaponRate };
+        public bool CanGenerateHealth() => TCommon.RandomPercentage() <= m_HealthRate;
+        public bool CanGenerateArmor() => TCommon.RandomPercentage() <= m_ArmorRate;
+        public bool CanGenerateEquipment() => TCommon.RandomPercentage() <= m_EquipmentRate;
+        public bool CanGenerateCoins(float baseCreditRate, out int amount)
+        {
+            amount = -1;
+            if (TCommon.RandomPercentage() <= (baseCreditRate + m_CoinRate))
+            {
+                amount = m_CoinRange.Random();
+                return true;
+            }
+            return false;
+        }
+        public static PickupGenerateData Create(int healthRate, int armorRate, int coinRate, RangeInt coinAmount,int equipmentRate, Dictionary<enum_WeaponRarity, float> _weaponRate) => new PickupGenerateData() { m_HealthRate = healthRate, m_ArmorRate = armorRate, m_CoinRate = coinRate, m_CoinRange = coinAmount,m_EquipmentRate= equipmentRate, m_WeaponRate=_weaponRate };
     }
 
     public struct StageInteractGenerateData
