@@ -18,3 +18,4 @@ MonoBehaviour:
   c_lightColor: {r: 1, g: 0.9704898, b: 0.917712, a: 1}
   c_ambient: {r: 0.7983236, g: 0.79692906, b: 0.8088235, a: 1}
   c_skyColor: {r: 0.25, g: 0.21209432, b: 0.13051471, a: 1}
+  c_shadowColor: {r: 0.03676468, g: 0, b: 0, a: 0}
