@@ -165,7 +165,7 @@ namespace GameSetting
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 50 }, { enum_WeaponRarity.Advanced, 50 }, { enum_WeaponRarity.Rare, 0 }, { enum_WeaponRarity.Legend, 0 } },
                         PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),5,       //Normal
                         new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Ordinary, 6 },{ enum_WeaponRarity.Advanced,3} }),          //Weapon
-                        PickupGenerateData.Create(10, 100, 50, new RangeInt(10, 5),5,     //Elite
+                        PickupGenerateData.Create(10, 100, 50, new RangeInt(10, 5),100,     //Elite
                         new Dictionary<enum_WeaponRarity, float> { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 100 } })
                         );
                 case enum_StageLevel.Veteran:
@@ -174,7 +174,7 @@ namespace GameSetting
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced,50 }, { enum_WeaponRarity.Rare, 50 }, { enum_WeaponRarity.Legend, 0 } },
                         PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),5,
                         new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Advanced, 3.8f },{ enum_WeaponRarity.Rare,1.9f} }),
-                        PickupGenerateData.Create(10, 100, 100, new RangeInt(10, 5),5,
+                        PickupGenerateData.Create(10, 100, 100, new RangeInt(10, 5),100,
                         new Dictionary<enum_WeaponRarity, float> { { enum_WeaponRarity.Rare, 100 } })
                         );
                 case enum_StageLevel.Ranger:
@@ -183,7 +183,7 @@ namespace GameSetting
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 0 }, { enum_WeaponRarity.Rare, 50 }, { enum_WeaponRarity.Legend, 50 } },
                         PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),5,
                         new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Rare, 2.8f },{ enum_WeaponRarity.Legend, 2.8f} }),
-                        PickupGenerateData.Create(0, 0, 0, new RangeInt(10, 5),5,
+                        PickupGenerateData.Create(0, 0, 0, new RangeInt(10, 5),100,
                         new Dictionary<enum_WeaponRarity, float> { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 0 } })
                         );
             }
