@@ -671,7 +671,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99034fa2a043d564f803fbad989b715d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  I_MaxHealth: 320
+  I_MaxHealth: 220
   ExtraRendererForForest107Only: {fileID: 0}
   E_SpawnType: -1
   I_DefaultArmor: 0
