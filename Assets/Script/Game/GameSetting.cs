@@ -29,6 +29,7 @@ namespace GameSetting
         public const float F_AimAssistDistance = 100f;
         public const short I_BoltLastTimeAfterHit = 5;
 
+        public const float F_PlayerWeaponFireReloadPause = 1f;
         public const float F_PlayerAutoAimRangeBase = 16f; //自动锁定敌人范围
         public const int I_PlayerDefaultEquipmentSlot = 2;
         public const float F_PlayerDamageAdjustmentRange = .1f;

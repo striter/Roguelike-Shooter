@@ -172,25 +172,6 @@ public class UIC_GameStatus : UIControlBase
                 m_AmmoLayout.cellSize = new Vector2(size, m_AmmoLayout.cellSize.y);
             }
         }
-
-        Color ammoStatusColor = weaponInfo.F_AmmoStatus < .5f ? Color.Lerp(Color.red, Color.white, (weaponInfo.F_AmmoStatus / .5f)) : Color.white;
-        if (weaponInfo.I_ClipAmount <= UIConst.I_AmmoCountToSlider)
-        {
-            for (int i = 0; i < weaponInfo.I_ClipAmount; i++)
-                m_AmmoGrid.GetItem(i).Set((weaponInfo.B_Reloading || i > weaponInfo.I_AmmoLeft - 1) ? new Color(0, 0, 0, 1) : ammoStatusColor);
-            img_ReloadFill.fillAmount = 0;
-        }
-        else
-        {
-            img_ReloadFill.fillAmount = weaponInfo.F_AmmoStatus;
-            img_ReloadFill.color = ammoStatusColor;
-        }
-
-        if (weaponInfo.B_Reloading)
-        {
-            img_ReloadFill.fillAmount = weaponInfo.F_ReloadStatus;
-            img_ReloadFill.color = Color.Lerp(Color.red, Color.white, weaponInfo.F_ReloadStatus);
-        }
     }
     
     void OnEquipmentStatus(PlayerInfoManager infoManager)

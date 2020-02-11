@@ -165,7 +165,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         if (m_WeaponCurrent == null)
             return;
-        m_WeaponCurrent.TryReload();
     }
 
     void OnReload(bool start, float reloadTime)
@@ -179,21 +178,21 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         if (m_WeaponCurrent == null)
             return;
-
-        if (m_Weapon1) m_Weapon1.AmmoTick(deltaTime);
-        if (m_Weapon2) m_Weapon2.AmmoTick(deltaTime);
-
+        
         m_weaponCanFire = CalculateWeaponFire();
         tf_WeaponAim.rotation = GetCharacterRotation();
-        m_Assist.SetEnable(m_weaponCanFire && !m_WeaponCurrent.B_Reloading && m_Target != null);
-        m_WeaponCurrent.ReloadTick(m_CharacterInfo.F_ReloadRateTick(deltaTime));
+        m_Assist.SetEnable(m_weaponCanFire && !m_WeaponCurrent.m_HaveAmmoLeft && m_Target != null);
         if (m_weaponCanFire)
-            m_WeaponCurrent.FireTick(m_CharacterInfo.F_FireRateTick( deltaTime));
+            m_WeaponCurrent.FireTick(m_CharacterInfo.F_FireRateTick(deltaTime));
+
+        float tickDelta = m_CharacterInfo.F_ReloadRateTick(deltaTime);
+        if (m_Weapon1) m_Weapon1.ReloadTick(tickDelta);
+        if (m_Weapon2) m_Weapon2.ReloadTick(tickDelta);
     }
 
     public WeaponBase ObtainWeapon(WeaponBase _weapon)
     {
-        _weapon.OnAttach(this, _weapon.B_AttachLeft ? tf_WeaponHoldLeft : tf_WeaponHoldRight, OnFireAddRecoil, OnReload);
+        _weapon.OnAttach(this, _weapon.B_AttachLeft ? tf_WeaponHoldLeft : tf_WeaponHoldRight, OnFireAddRecoil);
         WeaponBase exchangeWeapon = null;
         if (m_Weapon1 != null&&m_Weapon2!=null)
         {
