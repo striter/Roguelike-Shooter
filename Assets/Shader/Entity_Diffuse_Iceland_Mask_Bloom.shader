@@ -1,4 +1,4 @@
-﻿Shader "Game/Extra/Diffuse_Iceland_Mask_Bloom"
+﻿Shader "Game/Extra/Entity_Diffuse_Iceland_Mask_Bloom"
 {
 	Properties
 	{
@@ -11,6 +11,7 @@
 		name "MAIN"
 		Tags{"RenderType" = "BloomMask" }
 		CGINCLUDE
+		#include "../LongHauls/Shaders/CommonLightingInclude.cginc"
 		#include "UnityCG.cginc"
 		#include "AutoLight.cginc"
 		#include "Lighting.cginc"
@@ -28,44 +29,51 @@
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma multi_compile_fwdbase
+			#pragma multi_compile_instancing
 
-			struct appdata
+			struct a2fDV
 			{
 				float4 vertex : POSITION;
-				float3 normal:NORMAL;
 				float2 uv:TEXCOORD0;
+				float3 normal:NORMAL;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
 			struct v2f
 			{
 				float4 pos : SV_POSITION;
 				float2 uv:TEXCOORD0;
-				float3 worldPos:TEXCOORD2;
-				float diffuse:TEXCOORD3;
-				SHADOW_COORDS(4)
+				float3 worldPos:TEXCOORD1;
+				float diffuse : TEXCOORD2;
+				SHADOW_COORDS(3)
+				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
-			float4 _Color;
+			UNITY_INSTANCING_BUFFER_START(Props)
+				UNITY_DEFINE_INSTANCED_PROP(float4, _Color)
+			UNITY_INSTANCING_BUFFER_END(Props)
+
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
-			float _Lambert;
-			v2f vert (appdata v)
+
+			v2f vert (a2fDV v)
 			{
 				v2f o;
-				o.uv = TRANSFORM_TEX( v.uv, _MainTex);
+				UNITY_SETUP_INSTANCE_ID(v);
+				UNITY_TRANSFER_INSTANCE_ID(v, o);
+				o.uv = v.uv;
 				o.pos = UnityObjectToClipPos(v.vertex);
-				o.worldPos =mul(unity_ObjectToWorld,v.vertex);
-				fixed3 worldNormal = normalize(mul(v.normal, (float3x3)unity_WorldToObject)); //法线方向n
-				fixed3 worldLightDir = normalize(UnityWorldSpaceLightDir(o.worldPos));
-				o.diffuse = saturate(dot(worldLightDir,worldNormal));
+				o.worldPos = mul(unity_ObjectToWorld, v.vertex);
+				o.diffuse = GetDiffuse(mul(v.normal, (float3x3)unity_WorldToObject), UnityWorldSpaceLightDir(o.worldPos));
 				TRANSFER_SHADOW(o);
 				return o;
 			}
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-				float4 mainCol = tex2D(_MainTex, i.uv.xy);
-				float3 albedo = mainCol.rgb* _Color;
+				UNITY_SETUP_INSTANCE_ID(i);
+			float4 mainCol = tex2D(_MainTex, i.uv.xy);
+				float3 albedo =mainCol.rgb*UNITY_ACCESS_INSTANCED_PROP(Props, _Color);
 				float colorMask = mainCol.a;
 				if (colorMask ==0)
 					return fixed4(albedo* abs(sin(_Time.y*_Amount3)), 1);
@@ -73,10 +81,7 @@
 					return fixed4(albedo, 1);
 
 				UNITY_LIGHT_ATTENUATION(atten, i,i.worldPos)
-				atten = atten * _Lambert + (1 - _Lambert);
-				fixed3 ambient = albedo*UNITY_LIGHTMODEL_AMBIENT.xyz;
-				float3 diffuse = albedo* _LightColor0.rgb*i.diffuse*atten;
-				return fixed4(ambient+diffuse,1);
+				return fixed4(GetDiffuseBaseColor(albedo, UNITY_LIGHTMODEL_AMBIENT.xyz, _LightColor0.rgb, atten, i.diffuse),1);
 			}
 			ENDCG
 		}

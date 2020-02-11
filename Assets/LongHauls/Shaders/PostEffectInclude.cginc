@@ -1,5 +1,5 @@
-﻿#ifndef POSTEFFECT_INCLUD
-#define POSTEFFECT_INCLUD
+﻿#ifndef POSTEFFECT_INCLUDE
+#define POSTEFFECT_INCLUDE
 sampler2D _MainTex;
 half4 _MainTex_TexelSize;
 sampler2D _CameraDepthTexture;

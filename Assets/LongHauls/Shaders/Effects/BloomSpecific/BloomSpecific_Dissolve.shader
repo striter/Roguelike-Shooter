@@ -19,13 +19,13 @@
 			Cull Off
 			Blend SrcAlpha OneMinusSrcAlpha
 		CGINCLUDE
+		#include "../../CommonLightingInclude.cginc"
 		#include "UnityCG.cginc"
 		#include "AutoLight.cginc"
 		#include "Lighting.cginc"
 		sampler2D _NoiseTex;
 		float _DissolveAmount;
 		float _DissolveWidth;
-		float4 _Color;
 		float4 _DissolveColor;
 		sampler2D _MainTex;
 		float4 _MainTex_ST;
@@ -45,12 +45,13 @@
 			#pragma fragment frag
 			#pragma multi_compile_fwdbase
 
-			struct appdata
-			{
 
+			struct a2fDV
+			{
 				float4 vertex : POSITION;
-				float3 normal:NORMAL;
 				float2 uv:TEXCOORD0;
+				float3 normal:NORMAL;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
 			struct v2f
@@ -58,13 +59,19 @@
 				float4 pos : SV_POSITION;
 				float4 uv:TEXCOORD0;
 				float3 worldPos:TEXCOORD1;
-				float diffuse:TEXCOORD2;
+				float diffuse : TEXCOORD2;
 				SHADOW_COORDS(3)
+				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
-			v2f vert (appdata v)
+			UNITY_INSTANCING_BUFFER_START(Props)
+				UNITY_DEFINE_INSTANCED_PROP(float4, _Color)
+				UNITY_INSTANCING_BUFFER_END(Props)
+			v2f vert (a2fDV v)
 			{
 				v2f o;
+				UNITY_SETUP_INSTANCE_ID(v);
+				UNITY_TRANSFER_INSTANCE_ID(v, o);
 				o.uv.xy =  TRANSFORM_TEX( v.uv, _MainTex);
 				o.uv.zw = GetDissolveUV(v.vertex);
 				o.pos = UnityObjectToClipPos(v.vertex);
@@ -78,14 +85,13 @@
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
+				UNITY_SETUP_INSTANCE_ID(i);
 				fixed dissolve = tex2D(_NoiseTex,i.uv.zw).r - _DissolveAmount-_DissolveWidth;
 				clip(dissolve);
 
 				float4 albedo = tex2D(_MainTex,i.uv.xy)* _Color;
 				UNITY_LIGHT_ATTENUATION(atten, i,i.worldPos)
-				fixed3 ambient = albedo*UNITY_LIGHTMODEL_AMBIENT.xyz;
-				float3 diffuse = albedo* _LightColor0.rgb*i.diffuse*atten;
-				return fixed4(ambient+diffuse,albedo.a);
+				return float4(GetDiffuseBaseColor(albedo, UNITY_LIGHTMODEL_AMBIENT.xyz, _LightColor0.rgb, atten, i.diffuse),albedo.a);
 			}
 			ENDCG
 		}

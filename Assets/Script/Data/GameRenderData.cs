@@ -12,6 +12,7 @@ public class GameRenderData : ScriptableObject
     public Color c_lightColor;
     public Color c_ambient;
     public Color c_skyColor;
+    public Color c_shadowColor;
 
     public static GameRenderData Default()
     {
@@ -23,6 +24,7 @@ public class GameRenderData : ScriptableObject
         defaultData.f_lambert = .8f;
         defaultData.c_ambient = Color.grey;
         defaultData.c_skyColor = Color.white;
+        defaultData.c_shadowColor = Color.black;
         return defaultData;
     }
 
@@ -34,6 +36,7 @@ public class GameRenderData : ScriptableObject
         RenderSettings.ambientSkyColor = c_ambient;
         Shader.SetGlobalFloat("_Lambert", f_lambert);
         Shader.SetGlobalColor("_SkyColor", c_skyColor);
+        Shader.SetGlobalColor("_ShadowColor", c_shadowColor);
         camera.backgroundColor = c_skyColor;
     }
 }

@@ -15,10 +15,12 @@
 			Tags { "RenderType" = "Opaque" "Queue" = "Geometry" }
 
 			CGINCLUDE
+			#include "../LongHauls/Shaders/CommonLightingInclude.cginc"
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"
 			#include "AutoLight.cginc"
-			struct appdata
+
+			struct a2fDV
 			{
 				float4 vertex : POSITION;
 				float2 uv:TEXCOORD0;
@@ -31,14 +33,13 @@
 				float4 pos : SV_POSITION;
 				float2 uv:TEXCOORD0;
 				float3 worldPos:TEXCOORD1;
-				float3 worldNormal:TEXCOORD2;
-				float3 worldLightDir:TEXCOORD3;
-				bool subMap : TEXCOORD4;
-				SHADOW_COORDS(5)
-					UNITY_VERTEX_INPUT_INSTANCE_ID
+				float diffuse : TEXCOORD2;
+				bool subMap : TEXCOORD3;
+				SHADOW_COORDS(4)
+				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
-			v2f vert(appdata v)
+			v2f vert(a2fDV v)
 			{
 				v2f o;
 				UNITY_SETUP_INSTANCE_ID(v);
@@ -46,8 +47,7 @@
 				o.uv = v.uv;
 				o.pos = UnityObjectToClipPos(v.vertex);
 				o.worldPos = mul(unity_ObjectToWorld, v.vertex);
-				o.worldNormal = mul(v.normal, (float3x3)unity_WorldToObject);
-				o.worldLightDir = UnityWorldSpaceLightDir(o.worldPos);
+				o.diffuse = GetDiffuse(mul(v.normal, (float3x3)unity_WorldToObject), UnityWorldSpaceLightDir(o.worldPos));
 				o.subMap = abs(dot(v.normal,float3(0,1,0)))<.3;
 				TRANSFER_SHADOW(o);
 				return o;
@@ -64,13 +64,14 @@
 				#pragma fragment frag
 				#pragma multi_compile_fwdbase
 				#pragma multi_compile_instancing
-				sampler2D _MainTex,_MainTex2,_MainTex3,_MainTex4;
+				sampler2D _MainTex, _MainTex2,_MainTex3,_MainTex4;
 				sampler2D _SideTex;
-				float _Lambert;
+
 				UNITY_INSTANCING_BUFFER_START(Props)
 					UNITY_DEFINE_INSTANCED_PROP(float4, _Color)
 					UNITY_DEFINE_INSTANCED_PROP(int,_TexSelection)
 				UNITY_INSTANCING_BUFFER_END(Props)
+
 				fixed4 frag(v2f i) : SV_Target
 				{ 
 					UNITY_SETUP_INSTANCE_ID(i);
@@ -92,62 +93,12 @@
 							albedo *= tex2D(_MainTex, i.uv);
 					}
 					UNITY_LIGHT_ATTENUATION(atten, i,i.worldPos)
-					fixed3 ambient = albedo * UNITY_LIGHTMODEL_AMBIENT.xyz;
-					atten *= saturate(dot(normalize( i.worldNormal), normalize(i.worldLightDir)));
-					atten = atten * _Lambert + (1 - _Lambert);
-					float3 diffuse = albedo * _LightColor0.rgb*atten;
-					return fixed4(ambient + diffuse	,1);
+					return fixed4(GetDiffuseBaseColor(albedo, UNITY_LIGHTMODEL_AMBIENT.xyz, _LightColor0.rgb, atten, i.diffuse), 1);
 				}
 				ENDCG
 			}
 
-			Pass
-			{
-				Name "ForwardAdd"
-				Tags{"LightMode" = "ForwardAdd"}
-				Blend One One
-				CGPROGRAM
-				#pragma vertex vert
-				#pragma fragment fragAdd
-				#pragma multi_compile_fwdadd_fullshadows
-				#pragma multi_compile_instancing
-				
-
-				fixed4 fragAdd(v2f i) :SV_TARGET
-				{
-					fixed3 diffuse = saturate(dot(normalize( i.worldNormal),normalize( i.worldLightDir))) *_LightColor0.rgb;
-					UNITY_LIGHT_ATTENUATION(atten,i,i.worldPos);
-					return fixed4(diffuse * atten,1);
-				}
-				ENDCG
-			}
-
-			Pass
-			{
-				NAME "SHADOWCASTER"
-				Tags{"LightMode" = "ShadowCaster"}
-				CGPROGRAM
-				#pragma vertex vertshadow
-				#pragma fragment fragshadow
-				#pragma multi_compile_instancing
-				struct v2fs
-				{
-					V2F_SHADOW_CASTER;
-				};
-
-				v2fs vertshadow(appdata_base v)
-				{
-					UNITY_SETUP_INSTANCE_ID(v);
-					v2fs o;
-					TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
-					return o;
-				}
-
-				fixed4 fragshadow(v2fs i) :SV_TARGET
-				{
-					SHADOW_CASTER_FRAGMENT(i);
-				}
-				ENDCG
-			}
+			USEPASS "Game/Common/Diffuse_Base/FORWARDADD"
+			USEPASS "Game/Common/Diffuse_Base/SHADOWCASTER"
 	}
 }

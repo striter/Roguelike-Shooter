@@ -77,6 +77,11 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
             m_EditingData.c_ambient = EditorGUILayout.ColorField(RenderSettings.ambientSkyColor);
             EditorGUILayout.TextArea("Sky Color");
             m_EditingData.c_skyColor = EditorGUILayout.ColorField(m_EditingData.c_skyColor);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            EditorGUILayout.TextArea("Shadow Color");
+            m_EditingData.c_shadowColor = EditorGUILayout.ColorField(m_EditingData.c_shadowColor);
             EditorGUILayout.TextArea("Lambert:");
             m_EditingData.f_lambert = EditorGUILayout.Slider(m_EditingData.f_lambert, 0, 1);
             GUILayout.EndHorizontal();
