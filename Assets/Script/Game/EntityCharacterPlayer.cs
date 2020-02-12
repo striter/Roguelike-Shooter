@@ -132,12 +132,10 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             m_Assist.Recycle();
     }
 
-    void OnMainDown(bool down)
-    {
-        m_aiming = down;
-        OnWeaponTrigger(down);
-    }
+    void OnMainDown(bool down)=>OnWeaponTrigger(true,down);
     
+    void OnSubDown(bool down) => OnWeaponTrigger(false, down);
+
     protected override void OnAliveTick(float deltaTime)
     {
         base.OnAliveTick(deltaTime);
@@ -155,10 +153,24 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected virtual bool CalculateWeaponFire() =>!Physics.SphereCast(new Ray(tf_WeaponAim.position, tf_WeaponAim.forward), .3f, 1.5f, GameLayer.Mask.I_Static);
 
     #region WeaponControll
-    void OnWeaponTrigger(bool down)
+
+    void OnWeaponTrigger(bool mainWeapon, bool down)
     {
-        if (m_Weapon1) m_Weapon1.Trigger(down);
-        if (m_Weapon2) m_Weapon2.Trigger(down);
+        if (!mainWeapon && !m_Weapon2)
+            return;
+
+        if (m_aiming==down&& m_weaponEquipingFirst==mainWeapon)
+            return;
+        m_aiming = down;
+
+        if (down && m_weaponEquipingFirst != mainWeapon)
+        {
+            SwapWeapon(mainWeapon);
+            OnWeaponStatus();
+        }
+
+        if (m_WeaponCurrent)
+            m_WeaponCurrent.Trigger(down);
     }
     public bool m_weaponCanFire { get; private set; } = false;
     void OnReloadClick()
@@ -182,12 +194,11 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_weaponCanFire = CalculateWeaponFire();
         tf_WeaponAim.rotation = GetCharacterRotation();
         m_Assist.SetEnable(m_weaponCanFire && !m_WeaponCurrent.m_HaveAmmoLeft && m_Target != null);
-        if (m_weaponCanFire)
-            m_WeaponCurrent.FireTick(m_CharacterInfo.F_FireRateTick(deltaTime));
 
-        float tickDelta = m_CharacterInfo.F_ReloadRateTick(deltaTime);
-        if (m_Weapon1) m_Weapon1.ReloadTick(tickDelta);
-        if (m_Weapon2) m_Weapon2.ReloadTick(tickDelta);
+        float reloadDelta = m_CharacterInfo.F_ReloadRateTick(deltaTime);
+        float fireDelta = m_CharacterInfo.F_FireRateTick(deltaTime);
+        if (m_Weapon1) m_Weapon1.Tick( fireDelta, reloadDelta);
+        if (m_Weapon2) m_Weapon2.Tick(fireDelta, reloadDelta);
     }
 
     public WeaponBase ObtainWeapon(WeaponBase _weapon)
@@ -490,7 +501,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void SetBinding(bool on)
     {
         if (on)
-            UIManager.Instance.DoBindings(this, OnMovementDelta, OnRotateDelta,  OnMainDown, OnInteract, OnSwapClick, OnReloadClick, OnAbilityClick);
+            UIManager.Instance.DoBindings(this, OnMovementDelta, OnRotateDelta,  OnMainDown,OnSubDown, OnInteract, OnSwapClick, OnReloadClick, OnAbilityClick);
         else
             UIManager.Instance.RemoveBindings();
     }
