@@ -33,6 +33,7 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
         I_ClipAmount = m_WeaponInfo.m_ClipAmount;
         I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
         m_Trigger = new WeaponTrigger(m_WeaponInfo.m_FireRate, OnTriggerOnce);
+        m_ReloadTimer.SetTimer(m_WeaponInfo.m_ReloadTime);
         OnGetEquipmentData(GameObjectManager.GetEquipmentData<SFXWeaponBase>(GameExpression.GetPlayerWeaponIndex(m_WeaponInfo.m_Index)));
     }
 
@@ -82,9 +83,11 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
     {
     }
     
-
-    public void ReloadTick(float deltaTime)
+    public void Tick(float fireTick,float reloadTick)
     {
+        m_Trigger.Tick(fireTick);
+        ReloadTick(reloadTick);
+
         int clipAmount = m_Attacher.m_CharacterInfo.I_ClipAmount(m_WeaponInfo.m_ClipAmount);
         if (I_ClipAmount != clipAmount)
         {
@@ -93,6 +96,9 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
                 I_AmmoLeft = I_ClipAmount;
         }
 
+    }
+    void ReloadTick(float deltaTime)
+    {
         m_ReloadPauseTimer.Tick(deltaTime);
         if (m_ReloadPauseTimer.m_Timing)
             return;
@@ -106,10 +112,6 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
 
         I_AmmoLeft++;
         m_ReloadTimer.Reset();
-    }
-    public void FireTick(float deltaTime)
-    {
-        m_Trigger.Tick(deltaTime);
     }
     
     public void ForceReload()

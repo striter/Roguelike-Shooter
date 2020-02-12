@@ -14,7 +14,7 @@ public class UIC_Control : UIControlBase {
     ControlWeaponData m_weapon1Data, m_weapon2Data;
     Action OnReload,OnSwap, OnCharacterAbility;
     Action<bool> OnWeaponAction;
-    Action<bool> OnMainDown;
+    Action<bool> OnMainDown,OnSubDown;
     TSpecialClasses.ValueChecker<bool> m_AbilityCooldownChecker;
     protected override void Init()
     {
@@ -72,10 +72,11 @@ public class UIC_Control : UIControlBase {
     }
 
     #region Controls
-    public void DoBinding(EntityCharacterPlayer player,Action<Vector2> _OnLeftDelta, Action<Vector2> _OnRightDelta, Action<bool> _OnMainDown,Action _OnSwap, Action _OnReload, Action _OnCharacterAbility)
+    public void DoBinding(EntityCharacterPlayer player,Action<Vector2> _OnLeftDelta, Action<Vector2> _OnRightDelta, Action<bool> _OnMainDown, Action<bool> _OnSubDown, Action _OnSwap, Action _OnReload, Action _OnCharacterAbility)
     {
         m_TouchDelta.AddLRBinding(_OnLeftDelta, _OnRightDelta, CheckControlable);
         OnMainDown = _OnMainDown;
+        OnSubDown = _OnSubDown;
         OnReload = _OnReload;
         OnSwap = _OnSwap;
         OnCharacterAbility = _OnCharacterAbility;
@@ -91,7 +92,8 @@ public class UIC_Control : UIControlBase {
     }
 
     protected void OnReloadButtonDown() => OnReload?.Invoke();
-    public void OnMainButtonDown(bool down, Vector2 pos) => OnMainDown?.Invoke(down);
+    protected void OnMainButtonDown(bool down, Vector2 pos) => OnMainDown?.Invoke(down);
+    protected void OnSubButtonDown(bool down, Vector2 pos) => OnSubDown?.Invoke(down);
     protected void OnWeaponSwap() => OnSwap?.Invoke();
     protected void OnWeaponFirstActionClick() => OnWeaponAction?.Invoke(true);
     protected void OnWeaponSecondActionClick() => OnWeaponAction?.Invoke(false);
@@ -187,10 +189,15 @@ public class UIC_Control : UIControlBase {
 #if UNITY_EDITOR
     private void Update()
     {
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(0))
             OnMainButtonDown(true, Vector2.zero);
-        else if (Input.GetMouseButtonUp(1))
+        else if (Input.GetMouseButtonUp(0))
             OnMainButtonDown(false, Vector2.zero);
+
+        if (Input.GetMouseButtonDown(1))
+            OnSubButtonDown(true, Vector2.zero);
+        else if (Input.GetMouseButtonUp(1))
+            OnSubButtonDown(false, Vector2.zero);
 
         if (Input.GetKeyDown(KeyCode.R))
             OnReloadButtonDown();
