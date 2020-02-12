@@ -146,7 +146,7 @@ public class EntityCharacterAI : EntityCharacterBase {
     public bool m_AISimluating { get; private set; }
     public bool m_AIBattleActivating { get; private set; }
     public bool m_Moving => m_AgentEnabled && m_Agent.remainingDistance>.2f;
-    public bool m_IdlePatrol =>!m_AIBattleActivating&& TCommon.GetXZDistance(m_SourcePosition,transform.position)<=GameConst.AI.F_AIPatrolRange;
+    public bool m_IdlePatrol =>TCommon.GetXZDistance(m_SourcePosition,transform.position)<=GameConst.AI.F_AIPatrolRange;
     public bool m_AgentEnabled
     {
         get
