@@ -547,7 +547,7 @@ namespace GameSetting
     {
         Invalid = -1,
         Rifle_1001 = 1001,
-        Pistol_L_1002 = 1002,
+        Pistol_1002 = 1002,
         Crossbow_1003 = 1003,
         Heavy_1004 = 1004,
     }
