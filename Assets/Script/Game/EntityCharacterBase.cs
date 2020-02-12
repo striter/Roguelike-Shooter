@@ -304,6 +304,7 @@ public class EntityCharacterBase : EntityBase
         {
             m_Animator.SetInteger(HS_I_WeaponType, index);
             m_Animator.SetTrigger(HS_T_Activate);
+            m_Animator.Update(1f);
         }
         public void SetPause(bool stun)
         {
