@@ -291,7 +291,7 @@ public class LevelChunkEditor : LevelChunkBase
                 }
                 break;
             case enum_TileSubType.Pillar:
-                data.SetData(m_SelectingTile.m_Data.m_PillarType, m_SelectingDirection,m_Random);
+                data.SetData(m_SelectingTile.m_Data.m_PillarType, m_Random);
                 if (data.m_Data.m_GroundType == enum_TileGroundType.Invalid)
                     data.SetData(enum_TileGroundType.Main, enum_TileDirection.Top, m_Random);
                 break;
@@ -312,7 +312,7 @@ public class LevelChunkEditor : LevelChunkBase
                 data.SetData(enum_TileObjectType.Invalid, enum_TileDirection.Top, m_Random);
                 break;
             case enum_TileSubType.Pillar:
-                data.SetData(enum_TilePillarType.Invalid, enum_TileDirection.Top, m_Random);
+                data.SetData(enum_TilePillarType.Invalid, m_Random);
                 break;
         }
     }

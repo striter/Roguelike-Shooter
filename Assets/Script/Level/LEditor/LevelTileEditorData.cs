@@ -11,12 +11,11 @@ public class LevelTileEditorData : LevelTileEditor {
     public bool m_ContainsInfo => m_Data.m_GroundType != enum_TileGroundType.Invalid || m_Data.m_ObjectType != enum_TileObjectType.Invalid || m_Data.m_PillarType != enum_TilePillarType.Invalid;
 
 
-    public void SetData(enum_TilePillarType type, enum_TileDirection direction,System.Random random)
+    public void SetData(enum_TilePillarType type,System.Random random)
     {
-        if (m_Data.m_PillarType == type && m_Data.m_Direction == direction)
+        if (m_Data.m_PillarType == type )
             return;
-
-        m_Data = m_Data.ChangeDirection(direction);
+        
         m_Data = m_Data.ChangePillarType(type);
         Init(m_Axis, m_Data,random);
     }

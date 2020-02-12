@@ -193,7 +193,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         
         m_weaponCanFire = CalculateWeaponFire();
         tf_WeaponAim.rotation = GetCharacterRotation();
-        m_Assist.SetEnable(m_weaponCanFire && !m_WeaponCurrent.m_HaveAmmoLeft && m_Target != null);
+        m_Assist.SetEnable(m_weaponCanFire  && m_Target != null);
 
         float reloadDelta = m_CharacterInfo.F_ReloadRateTick(deltaTime);
         float fireDelta = m_CharacterInfo.F_FireRateTick(deltaTime);
@@ -205,7 +205,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         _weapon.OnAttach(this, _weapon.B_AttachLeft ? tf_WeaponHoldLeft : tf_WeaponHoldRight, OnFireAddRecoil);
         WeaponBase exchangeWeapon = null;
-        if (m_Weapon1 != null&&m_Weapon2!=null)
+        if (m_Weapon1 != null && m_Weapon2 != null)
         {
             m_WeaponCurrent.OnDetach();
             exchangeWeapon = m_WeaponCurrent;
@@ -213,18 +213,18 @@ public class EntityCharacterPlayer : EntityCharacterBase {
                 m_Weapon1 = _weapon;
             else
                 m_Weapon2 = _weapon;
-            SwapWeapon(m_weaponEquipingFirst);
         }
         else if (m_Weapon1 == null)
         {
             m_Weapon1 = _weapon;
             SwapWeapon(true);
         }
-        else if(m_Weapon2==null)
+        else if (m_Weapon2 == null)
         {
             m_Weapon2 = _weapon;
             SwapWeapon(false);
         }
+
         OnWeaponStatus();
         return exchangeWeapon;
     }
@@ -517,10 +517,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         {
             v2_movement = Vector2.zero;
         }
-        public void OnActivate(enum_PlayerAnim animIndex)
-        {
-            OnActivate((int)animIndex);
-        }
+        public void OnActivate(enum_PlayerAnim animIndex)=>OnActivate((int)animIndex);
         public void SetRun(Vector2 movement,float movementParam)
         {
             v2_movement = Vector2.Lerp(v2_movement,movement,Time.deltaTime*5f);
@@ -528,10 +525,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             base.SetForward(v2_movement.y);
             base.SetMovementSpeed(movementParam);
         }
-        public void Fire()
-        {
-            m_Animator.SetTrigger(HS_T_Fire);
-        }
+        public void Fire()=> m_Animator.SetTrigger(HS_T_Fire);
         public void Reload(float reloadTime)
         {
             m_Animator.SetTrigger(HS_T_Reload);
