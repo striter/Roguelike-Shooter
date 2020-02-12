@@ -6,14 +6,21 @@ ModelImporter:
     100000: //RootNode
     400000: //RootNode
     2100000: aiStandardSurface24
+    2100002: lambert1
     2300000: //RootNode
     3300000: //RootNode
     4300000: Model_Frost_1x1B
+    4300002: Model_Frost_1x1C
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: aiStandardSurface24
+    second: {fileID: 2100000, guid: 2496aea985adc0547bd0af78dbb40d51, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lambert1
     second: {fileID: 2100000, guid: 2496aea985adc0547bd0af78dbb40d51, type: 2}
   materials:
     importMaterials: 1
