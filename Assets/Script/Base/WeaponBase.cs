@@ -75,6 +75,7 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
             return false;
         OnFireRecoil?.Invoke(F_Recoil);
         m_ReloadPauseTimer.Reset();
+        m_ReloadTimer.Reset();
         I_AmmoLeft--;
         OnTriggerSuccessful();
         return true;
