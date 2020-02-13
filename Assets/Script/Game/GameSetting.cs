@@ -377,7 +377,7 @@ namespace GameSetting
 
     public static class LocalizationKeyJoint
     {
-        public static string GetNameLocalizeKey(this EntityExpireCommon buff) => "Buff_Name_" + buff.m_Index;
+        public static string GetNameLocalizeKey(this EntityExpirepRreset buff) => "Buff_Name_" + buff.m_Index;
         public static string GetNameLocalizeKey(this EquipmentBase action) => "Action_Name_" + action.m_Index;
         public static string GetIntroLocalizeKey(this EquipmentBase action) => "Action_Intro_" + action.m_Index;
         public static string GetLocalizeKey(this enum_StageLevel stage) => "Game_Stage_" + stage;
@@ -1408,12 +1408,14 @@ namespace GameSetting
             }
         }
         public virtual void OnDead() => Reset();
+        public virtual void OnRecycle() => Reset();
         public virtual void OnRevive() => Reset(); 
         protected virtual void Reset()
         {
             m_Effects.Traversal((enum_CharacterEffect type) => { m_Effects[type].Reset(); });
             m_Expires.Traversal((EntityExpireBase expire) => { if (expire.m_ExpireType == enum_ExpireType.PresetBuff) RemoveExpire(expire); }, true);
-            UpdateEntityInfo();
+            UpdateExpireInfo();
+            UpdateExpireEffect();
         }
 
         public virtual void Tick(float deltaTime) {
@@ -1440,7 +1442,7 @@ namespace GameSetting
         }
         public void AddBuff(int sourceID, SBuff buffInfo)
         {
-            EntityExpireCommon buff = new EntityExpireCommon(sourceID, buffInfo, OnReceiveDamage, RemoveExpire);
+            EntityExpirepRreset buff = new EntityExpirepRreset(sourceID, buffInfo, OnReceiveDamage, RemoveExpire);
             switch (buff.m_RefreshType)
             {
                 case enum_ExpireRefreshType.AddUp:
@@ -1448,7 +1450,7 @@ namespace GameSetting
                     break;
                 case enum_ExpireRefreshType.Refresh:
                     {
-                        EntityExpireCommon buffRefresh = m_Expires.Find(p => p.m_Index == buff.m_Index) as EntityExpireCommon;
+                        EntityExpirepRreset buffRefresh = m_Expires.Find(p => p.m_Index == buff.m_Index) as EntityExpirepRreset;
                         if (buffRefresh != null)
                             buffRefresh.BuffRefresh();
                         else
@@ -1457,7 +1459,7 @@ namespace GameSetting
                     break;
                 case enum_ExpireRefreshType.RefreshIdentity:
                     {
-                        EntityExpireCommon buffRefresh = m_Expires.Find(p => p.m_Index == buff.m_Index && (p.m_ExpireType == enum_ExpireType.PresetBuff && (p as EntityExpireCommon).I_SourceID == buff.I_SourceID)) as EntityExpireCommon;
+                        EntityExpirepRreset buffRefresh = m_Expires.Find(p => p.m_Index == buff.m_Index && (p.m_ExpireType == enum_ExpireType.PresetBuff && (p as EntityExpirepRreset).I_SourceID == buff.I_SourceID)) as EntityExpirepRreset;
                         if (buffRefresh != null)
                             buffRefresh.BuffRefresh();
                         else
@@ -1854,7 +1856,7 @@ namespace GameSetting
         public virtual void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount) { }
     }
     
-    public class EntityExpireCommon : EntityExpireBase
+    public class EntityExpirepRreset : EntityExpireBase
     {
         public override enum_ExpireType m_ExpireType => enum_ExpireType.PresetBuff;
         public override int m_EffectIndex => m_buffInfo.m_EffectIndex;
@@ -1873,7 +1875,7 @@ namespace GameSetting
         SBuff m_buffInfo;
         Func<DamageInfo, bool> OnDOTDamage;
         float f_dotCheck;
-        public EntityExpireCommon(int sourceID, SBuff _buffInfo, Func<DamageInfo, bool> _OnDOTDamage, Action<EntityExpireBase> _OnExpired)
+        public EntityExpirepRreset(int sourceID, SBuff _buffInfo, Func<DamageInfo, bool> _OnDOTDamage, Action<EntityExpireBase> _OnExpired)
         {
             base.OnActivate(_OnExpired);
             I_SourceID = sourceID;

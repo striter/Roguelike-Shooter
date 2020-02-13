@@ -129,7 +129,12 @@ public class EntityCharacterBase : EntityBase
         m_DeadCounter.SetTimer(GameConst.F_EntityDeadFadeTime);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterDead, this);
     }
-    
+    public override void DoRecycle()
+    {
+        base.DoRecycle();
+        m_CharacterInfo.OnRecycle();
+    }
+
     protected override void OnHealthChanged(enum_HealthChangeMessage type)
     {
         base.OnHealthChanged(type);
