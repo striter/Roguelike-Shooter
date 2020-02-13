@@ -1124,6 +1124,7 @@ namespace GameSetting
         float m_HealthMultiplier = 1f;
         public override float m_MaxHealth => base.m_MaxHealth * m_HealthMultiplier;
         public virtual float m_MaxArmor => m_BaseArmor;
+        public float F_ArmorMaxScale => m_CurrentArmor / m_MaxArmor;
         public bool m_ArmorFull => m_CurrentArmor >= m_MaxHealth;
         protected EntityCharacterBase m_Entity;
         protected void DamageArmor(float amount)
@@ -1248,10 +1249,6 @@ namespace GameSetting
 
     public class EntityPlayerHealth:EntityHealth
     {
-        public float m_UIArmorFill => Mathf.Clamp(m_CurrentArmor / 100f,0,1f);
-        public float m_UIMaxArmorFill => Mathf.Clamp(m_MaxArmor / 100f, 0, 1f);
-        public float m_UIBaseHealthFill => Mathf.Clamp(m_CurrentHealth / 100f,0,1f);
-        public float m_UIMaxHealthFill => Mathf.Clamp( m_MaxHealth / 100f,0,1f);
         public float m_MaxHealthAdditive { get; private set; }
         public float m_MaxArmorAdditive { get; private set; }
         public override float m_MaxHealth => base.m_MaxHealth + m_MaxHealthAdditive;
