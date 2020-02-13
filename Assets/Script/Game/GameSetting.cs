@@ -882,7 +882,7 @@ namespace GameSetting
         float f_fireRate;
         int i_clipAmount;
         float f_spread;
-        float f_reloadTime;
+        float f_bulletRefill;
         int i_PelletsPerShot;
         float f_weight;
         float f_recoil;
@@ -898,7 +898,7 @@ namespace GameSetting
         public float m_FireRate => f_fireRate;
         public int m_ClipAmount => i_clipAmount;
         public float m_Spread => f_spread;
-        public float m_ReloadTime => f_reloadTime;
+        public float m_BulletRefillTime => f_bulletRefill;
         public int m_PelletsPerShot => i_PelletsPerShot;
         public float m_Weight => f_weight;
         public float m_RecoilPerShot =>f_recoil;

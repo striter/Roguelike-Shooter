@@ -19,7 +19,7 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
     protected WeaponTrigger m_Trigger { get; private set; }
     Action<float> OnFireRecoil;
     
-    TimeCounter m_ReloadTimer=new TimeCounter(),m_ReloadPauseTimer=new TimeCounter(GameConst.F_PlayerWeaponFireReloadPause);
+    TimeCounter m_BulletRefillTimer=new TimeCounter(),m_RefillPauseTimer=new TimeCounter(GameConst.F_PlayerWeaponFireReloadPause);
     public float F_AmmoStatus => I_AmmoLeft / (float)I_ClipAmount;
     public bool m_HaveAmmoLeft => m_WeaponInfo.m_ClipAmount == -1 || I_AmmoLeft > 0;
     public bool B_AmmoFull => m_WeaponInfo.m_ClipAmount == -1||I_ClipAmount == I_AmmoLeft;
@@ -33,7 +33,7 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
         I_ClipAmount = m_WeaponInfo.m_ClipAmount;
         I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
         m_Trigger = new WeaponTrigger(m_WeaponInfo.m_FireRate, OnTriggerOnce);
-        m_ReloadTimer.SetTimer(m_WeaponInfo.m_ReloadTime);
+        m_BulletRefillTimer.SetTimer(m_WeaponInfo.m_BulletRefillTime);
         OnGetEquipmentData(GameObjectManager.GetEquipmentData<SFXWeaponBase>(GameExpression.GetPlayerWeaponIndex(m_WeaponInfo.m_Index)));
     }
 
@@ -74,8 +74,8 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
         if (!m_HaveAmmoLeft)
             return false;
         OnFireRecoil?.Invoke(F_Recoil);
-        m_ReloadPauseTimer.Reset();
-        m_ReloadTimer.Reset();
+        m_RefillPauseTimer.Reset();
+        m_BulletRefillTimer.Reset();
         I_AmmoLeft--;
         OnTriggerSuccessful();
         return true;
@@ -100,19 +100,19 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
     }
     void ReloadTick(float deltaTime)
     {
-        m_ReloadPauseTimer.Tick(deltaTime);
-        if (m_ReloadPauseTimer.m_Timing)
+        m_RefillPauseTimer.Tick(deltaTime);
+        if (m_RefillPauseTimer.m_Timing)
             return;
 
-        m_ReloadTimer.Tick(deltaTime);
-        if (m_ReloadTimer.m_Timing)
+        m_BulletRefillTimer.Tick(deltaTime);
+        if (m_BulletRefillTimer.m_Timing)
             return;
 
         if (B_AmmoFull)
             return;
 
         I_AmmoLeft++;
-        m_ReloadTimer.Reset();
+        m_BulletRefillTimer.Reset();
     }
     
     public void ForceReload()
