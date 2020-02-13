@@ -22,12 +22,12 @@ public class LevelChunkGame : LevelChunkBase
         m_chunkIndex = _data.m_ChunkIndex;
         m_ChunkOrigin = _data.m_Axis.ToPosition();
         m_ChunkEventType = _data.m_EventType;
+        gameObject.name = string.Format("{0}({1})", m_chunkIndex, _data.m_Data.name);
         this.OnChunkObjectDestroy = OnChunkObjectDestroy;
         m_WorldChunkBounds =new Bounds(m_ChunkOrigin + _data.m_Data.m_Size.ToPosition() / 2f + Vector3.up * LevelConst.I_TileSize, new Vector3(_data.m_Data.m_Size.X, 1, _data.m_Data.m_Size.Y) * LevelConst.I_TileSize);
         transform.localPosition = m_ChunkOrigin;
         m_ChunkObjects.Clear();
         m_NearbyChunks.Clear();
-
         bool isConnectionChunk = _data.m_Data.Type == enum_ChunkType.Connection;
         Dictionary<TileAxis, enum_TileDirection> m_ConnectionIndex = new Dictionary<TileAxis, enum_TileDirection>();
         InitData(_data.m_Data, _random, (TileAxis axis, ChunkTileData tileData) => {
