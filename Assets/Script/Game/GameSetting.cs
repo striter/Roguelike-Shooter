@@ -1249,6 +1249,7 @@ namespace GameSetting
     public class EntityPlayerHealth:EntityHealth
     {
         public float m_UIArmorFill => Mathf.Clamp(m_CurrentArmor / 100f,0,1f);
+        public float m_UIMaxArmorFill => Mathf.Clamp(m_MaxArmor / 100f, 0, 1f);
         public float m_UIBaseHealthFill => Mathf.Clamp(m_CurrentHealth / 100f,0,1f);
         public float m_UIMaxHealthFill => Mathf.Clamp( m_MaxHealth / 100f,0,1f);
         public float m_MaxHealthAdditive { get; private set; }

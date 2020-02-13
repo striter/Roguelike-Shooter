@@ -22,12 +22,12 @@ public class UIC_GameStatus : UIControlBase
     UIT_TextExtend m_AmmoAmount,m_AmmoAmountProjection;
 
     Transform tf_ArmorData;
-    RectTransform rtf_ArmorMaxFill, rtf_ArmorFillHandle;
+    RectTransform rtf_ArmorFillHandle;
     Image img_ArmorFill;
     UIT_TextExtend m_ArmorAmount;
 
     Transform tf_HealthData;
-    RectTransform rtf_HealthMaxFill,rtf_HealthFillHandle;
+    RectTransform rtf_HealthFillHandle;
     Image img_HealthFill;
     UIT_TextExtend m_HealthAmount;
 
@@ -57,13 +57,11 @@ public class UIC_GameStatus : UIControlBase
         tf_ArmorData = tf_StatusData.Find("ArmorData");
         img_ArmorFill = tf_ArmorData.Find("Fill").GetComponent<Image>();
         rtf_ArmorFillHandle = img_ArmorFill.transform.Find("Handle").GetComponent<RectTransform>();
-        rtf_ArmorMaxFill = tf_ArmorData.Find("MaxFill").GetComponent<RectTransform>();
         m_ArmorAmount = tf_ArmorData.Find("Amount").GetComponent<UIT_TextExtend>();
 
         tf_HealthData = tf_StatusData.Find("HealthData");
         img_HealthFill = tf_HealthData.Find("Fill").GetComponent<Image>();
         rtf_HealthFillHandle = img_HealthFill.transform.Find("Handle").GetComponent<RectTransform>();
-        rtf_HealthMaxFill = tf_HealthData.Find("MaxFill").GetComponent<RectTransform>();
         m_HealthAmount = tf_HealthData.Find("Amount").GetComponent<UIT_TextExtend>();
         m_HealthAmount = tf_HealthData.Find("Amount").GetComponent<UIT_TextExtend>();
         
@@ -78,7 +76,6 @@ public class UIC_GameStatus : UIControlBase
         m_ArmorLerp = new ValueLerpSeconds(0f, 4f, 2f, (float value) => {
             img_ArmorFill.fillAmount = value;
             rtf_ArmorFillHandle.ReAnchorReposX(value);
-            rtf_ArmorMaxFill.ReAnchorFillX(new Vector2(0,value));
         });
 
         m_Map = tf_Container.Find("Map");
@@ -148,7 +145,6 @@ public class UIC_GameStatus : UIControlBase
         m_HealthLerp.ChangeValue(_healthManager.m_UIBaseHealthFill);
         m_ArmorAmount.text=string.Format("{0}",(int)_healthManager.m_CurrentArmor);
         m_HealthAmount.text = string.Format("{0} <color=#FFCB4e>/ {1}</color>", (int)_healthManager.m_CurrentHealth,(int)_healthManager.m_MaxHealth);
-        rtf_HealthMaxFill.ReAnchorFillX(new Vector2(0, _healthManager.m_UIMaxHealthFill));
     }
 
     void OnAmmoStatus(WeaponBase weaponInfo)
