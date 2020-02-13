@@ -87,5 +87,8 @@
 				}
 				ENDCG
 			}
+
+				USEPASS "Game/Common/Diffuse_Base/FORWARDADD"
+					USEPASS "Game/Common/Diffuse_Base/SHADOWCASTER"
 	}
 }
