@@ -38,7 +38,6 @@ public class InteractBonfire : InteractGameBase {
         {
             m_DistinguishCheck.Reset();
             m_Interactor.m_HitCheck.TryHit(m_HealInfo);
-
             m_FireParticles.Play();
             tf_Light.SetActivate(true);
         }
