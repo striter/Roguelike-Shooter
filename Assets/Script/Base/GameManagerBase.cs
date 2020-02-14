@@ -343,7 +343,7 @@ public static class ActionDataManager
                 m_ActionBuffTypes.Add(action.m_Index, action.GetType());
         }));
     }
-    public static EquipmentBase CreateRandomPlayerEquipment(enum_EquipmentType type, System.Random seed)=> CreatePlayerEquipment(EquipmentSaveData.Default( m_EquipmentTypes.RandomKey(seed),type));
+    public static EquipmentBase CreateRandomPlayerEquipment(enum_EquipmentRarity rarity, System.Random seed)=> CreatePlayerEquipment(EquipmentSaveData.Default( m_EquipmentTypes.RandomKey(seed),rarity));
 
     public static EquipmentBase CreatePlayerEquipment(EquipmentSaveData data)
     {
