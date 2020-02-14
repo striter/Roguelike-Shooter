@@ -73,9 +73,8 @@ namespace GameSetting
         public const int I_HealthPackAmount = 50;
 
         public static readonly RangeInt IR_EventTradeBuffPrice = new RangeInt(20, 5);
-        public static readonly Dictionary<enum_ChunkEventType, int> D_ChunkEventPercentage = new Dictionary<enum_ChunkEventType, int>() { { enum_ChunkEventType.Medic, 10 }, { enum_ChunkEventType.RewardChest, 50 }, { enum_ChunkEventType.Trader, 28 }, { enum_ChunkEventType.Witcher, 12 } };
+        public static readonly Dictionary<enum_ChunkEventType, int> D_ChunkEventPercentage = new Dictionary<enum_ChunkEventType, int>() { { enum_ChunkEventType.RewardChest, 100 }};
         public static readonly RangeInt IR_EventMedicPrice = new RangeInt(10, 5);
-        public const int P_EventRewardChestWeaponRate = 40;
         public const int I_EventEquipmentTradePrice = 10;
         public static readonly Dictionary<enum_WeaponRarity, RangeInt> D_EventWeaponTradePrice = new Dictionary<enum_WeaponRarity, RangeInt>() { { enum_WeaponRarity.Ordinary, new RangeInt(5, 5) }, { enum_WeaponRarity.Advanced, new RangeInt(10, 5) }, { enum_WeaponRarity.Rare, new RangeInt(20, 5) }, { enum_WeaponRarity.Legend, new RangeInt(30, 5) } };
         public const int I_EquipmentSlotTradePricePerPlayerSlots = 20;
@@ -121,7 +120,7 @@ namespace GameSetting
         public static float GetResultDifficultyBonus(int _difficulty) =>1f+ _difficulty * .05f;
         public static float GetResultRewardCredits(float _totalScore) => _totalScore;
 
-        public static RangeInt GetTradePrice(enum_Interaction interactType, enum_EquipmentLevel actionRarity= enum_EquipmentLevel.Invalid,enum_WeaponRarity weaponRarity= enum_WeaponRarity.Invalid)
+        public static RangeInt GetTradePrice(enum_Interaction interactType, enum_EquipmentRarity actionRarity= enum_EquipmentRarity.Invalid,enum_WeaponRarity weaponRarity= enum_WeaponRarity.Invalid)
         {
             switch (interactType)
             {
@@ -132,9 +131,9 @@ namespace GameSetting
                     switch (actionRarity)
                     {
                         default: Debug.LogError("Invalid Level!"); return new RangeInt(0, -1);
-                        case enum_EquipmentLevel.Normal: return new RangeInt(8, 4);
-                        case enum_EquipmentLevel.OutStanding: return new RangeInt(16, 8);
-                        case enum_EquipmentLevel.Epic: return new RangeInt(24, 12);
+                        case enum_EquipmentRarity.Normal: return new RangeInt(8, 4);
+                        case enum_EquipmentRarity.OutStanding: return new RangeInt(16, 8);
+                        case enum_EquipmentRarity.Epic: return new RangeInt(24, 12);
                     }
                 case enum_Interaction.Weapon:
                     switch (weaponRarity)
@@ -196,29 +195,32 @@ namespace GameSetting
                 default: return new StageInteractGenerateData();
                 case enum_StageLevel.Rookie:
                     return StageInteractGenerateData.Create(
+                        new Dictionary<enum_EquipmentRarity, int>() { { enum_EquipmentRarity.Normal, 80 }, { enum_EquipmentRarity.OutStanding, 15 }, { enum_EquipmentRarity.Epic,5 } },
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 100 }, { enum_WeaponRarity.Rare, 0 }, { enum_WeaponRarity.Legend, 0 } },
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 50 }, { enum_WeaponRarity.Advanced, 50 }, { enum_WeaponRarity.Rare, 0 }, { enum_WeaponRarity.Legend, 0 } },
-                        PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),5,       //Normal
+                        PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),       //Normal
                         new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Ordinary, 6 },{ enum_WeaponRarity.Advanced,3} }),          //Weapon
-                        PickupGenerateData.Create(10, 100, 50, new RangeInt(10, 5),100,     //Elite
+                        PickupGenerateData.Create(10, 100, 50, new RangeInt(10, 5),     //Elite
                         new Dictionary<enum_WeaponRarity, float> { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 100 } })
                         );
                 case enum_StageLevel.Veteran:
                     return StageInteractGenerateData.Create(
+                        new Dictionary<enum_EquipmentRarity, int>() { { enum_EquipmentRarity.Normal, 50 }, { enum_EquipmentRarity.OutStanding, 45 }, { enum_EquipmentRarity.Epic, 5 } },
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 0 }, { enum_WeaponRarity.Rare, 100 }, { enum_WeaponRarity.Legend, 0 } },
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced,50 }, { enum_WeaponRarity.Rare, 50 }, { enum_WeaponRarity.Legend, 0 } },
-                        PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),5,
+                        PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),
                         new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Advanced, 3.8f },{ enum_WeaponRarity.Rare,1.9f} }),
-                        PickupGenerateData.Create(10, 100, 100, new RangeInt(10, 5),100,
+                        PickupGenerateData.Create(10, 100, 100, new RangeInt(10, 5),
                         new Dictionary<enum_WeaponRarity, float> { { enum_WeaponRarity.Rare, 100 } })
                         );
                 case enum_StageLevel.Ranger:
                     return StageInteractGenerateData.Create(
+                        new Dictionary<enum_EquipmentRarity, int>() { { enum_EquipmentRarity.Normal,5} , { enum_EquipmentRarity.OutStanding,65 } , { enum_EquipmentRarity.Epic, 30 } },
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 0 }, { enum_WeaponRarity.Rare, 0 }, { enum_WeaponRarity.Legend, 100 } },
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 0 }, { enum_WeaponRarity.Rare, 50 }, { enum_WeaponRarity.Legend, 50 } },
-                        PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),5,
+                        PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),
                         new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Rare, 2.8f },{ enum_WeaponRarity.Legend, 2.8f} }),
-                        PickupGenerateData.Create(0, 0, 0, new RangeInt(10, 5),100,
+                        PickupGenerateData.Create(0, 0, 0, new RangeInt(10, 5),
                         new Dictionary<enum_WeaponRarity, float> { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 0 } })
                         );
             }
@@ -293,7 +295,7 @@ namespace GameSetting
 
     public static class GameEnumConvertions
     {
-        public static enum_EquipmentLevel ToRarity(this enum_StageLevel stageLevel) => (enum_EquipmentLevel)stageLevel;
+        public static enum_EquipmentRarity ToRarity(this enum_StageLevel stageLevel) => (enum_EquipmentRarity)stageLevel;
         public static int ToLayer(this enum_HitCheck layerType)
         {
             switch (layerType)
@@ -386,7 +388,7 @@ namespace GameSetting
         public static string GetTitleLocalizeKey(this InteractBase interact) => "UI_Interact_" + interact.m_InteractType+interact.m_ExternalLocalizeKeyJoint;
         public static string GetBottomLocalizeKey(this InteractBase interact) => "UI_Interact_" + interact.m_InteractType + interact.m_ExternalLocalizeKeyJoint + "_Bottom";
         public static string GetIntroLocalizeKey(this InteractBase interact) => "UI_Interact_" + interact.m_InteractType +interact.m_ExternalLocalizeKeyJoint+ "_Intro";
-        public static string GetLocalizeKey(this enum_EquipmentLevel rarity) => "UI_Rarity_" + rarity;
+        public static string GetLocalizeKey(this enum_EquipmentRarity rarity) => "UI_Rarity_" + rarity;
         public static string GetLocalizeKey(this enum_Option_FrameRate frameRate) => "UI_Option_" + frameRate;
         public static string GetLocalizeKey(this enum_Option_JoyStickMode joystick) => "UI_Option_" + joystick;
         public static string GetLocalizeKey(this enum_Option_LanguageRegion region) => "UI_Option_" + region;
@@ -477,7 +479,7 @@ namespace GameSetting
     public enum enum_EnermyType { Invalid = -1, Fighter = 1, Shooter_Rookie = 2, Shooter_Veteran = 3, AOECaster = 4, Elite = 5, }
 
     public enum enum_Interaction { Invalid = -1,
-        GameBegin,Bonfire, TradeContainer,TradeEquipmentSlot,TradeActionBuff, PickupCoin, PickupHealth,PickupHealthPack, PickupArmor,RewardChest, Equipment, Weapon, Portal, GameEnd,
+        GameBegin,Bonfire, TradeContainer, PickupCoin, PickupHealth,PickupHealthPack, PickupArmor,RewardChest, Equipment, Weapon, Portal, GameEnd,
         CampBegin,CampStage, CampDifficult,CampFarm,CampAction,CampEnd, }
     
     public enum enum_ProjectileFireType { Invalid = -1, Single = 1, MultipleFan = 2, MultipleLine = 3, };
@@ -498,9 +500,7 @@ namespace GameSetting
 
     public enum enum_ExpireRefreshType { Invalid = -1, AddUp = 1, Refresh = 2,RefreshIdentity=3, }
 
-    public enum enum_EquipmentLevel { Invalid = -1, Normal = 1, OutStanding = 2, Epic = 3, }
-
-    public enum enum_EquipmentType { Invalid=-1,TypeA=1,TypeB=2,TypeC=3}
+    public enum enum_EquipmentRarity { Invalid = -1, Normal = 1, OutStanding = 2, Epic = 3, }
 
     public enum enum_EffectAttach { Invalid = -1,  Head = 1, Feet = 2, WeaponModel = 3,}
 
@@ -610,13 +610,11 @@ namespace GameSetting
         public int m_HealthRate { get; private set; }
         public int m_ArmorRate { get; private set; }
         public int m_CoinRate { get; private set; }
-        public int m_EquipmentRate { get; private set; }
         public RangeInt m_CoinRange { get; private set; }
         public Dictionary<enum_WeaponRarity, float> m_WeaponRate { get; private set; }
 
         public bool CanGenerateHealth() => TCommon.RandomPercentage() <= m_HealthRate;
         public bool CanGenerateArmor() => TCommon.RandomPercentage() <= m_ArmorRate;
-        public bool CanGenerateEquipment() => TCommon.RandomPercentage() <= m_EquipmentRate;
         public bool CanGenerateCoins(float baseCreditRate, out int amount)
         {
             amount = -1;
@@ -627,16 +625,17 @@ namespace GameSetting
             }
             return false;
         }
-        public static PickupGenerateData Create(int healthRate, int armorRate, int coinRate, RangeInt coinAmount,int equipmentRate, Dictionary<enum_WeaponRarity, float> _weaponRate) => new PickupGenerateData() { m_HealthRate = healthRate, m_ArmorRate = armorRate, m_CoinRate = coinRate, m_CoinRange = coinAmount,m_EquipmentRate= equipmentRate, m_WeaponRate=_weaponRate };
+        public static PickupGenerateData Create(int healthRate, int armorRate, int coinRate, RangeInt coinAmount, Dictionary<enum_WeaponRarity, float> _weaponRate) => new PickupGenerateData() { m_HealthRate = healthRate, m_ArmorRate = armorRate, m_CoinRate = coinRate, m_CoinRange = coinAmount, m_WeaponRate=_weaponRate };
     }
 
     public struct StageInteractGenerateData
     {
-        public PickupGenerateData m_NormalPickupData { get; private set; }
-        public PickupGenerateData m_ElitePickupData { get; private set; }
+        public Dictionary<enum_EquipmentRarity,int> m_TradeEquipment { get; private set; }
         public Dictionary<enum_WeaponRarity, int> m_TradeWeapon { get; private set; }
         public Dictionary<enum_WeaponRarity, int> m_RewardWeapon { get; private set; }
-        public static StageInteractGenerateData Create(Dictionary<enum_WeaponRarity,int> _tradeWeaponRate, Dictionary<enum_WeaponRarity, int> _rewardWeaponRate, PickupGenerateData _normalGenerate,PickupGenerateData _eliteGenerate) => new StageInteractGenerateData() { m_TradeWeapon=_tradeWeaponRate, m_RewardWeapon = _rewardWeaponRate, m_NormalPickupData=_normalGenerate,m_ElitePickupData=_eliteGenerate};
+        public PickupGenerateData m_NormalPickupData { get; private set; }
+        public PickupGenerateData m_ElitePickupData { get; private set; }
+        public static StageInteractGenerateData Create(Dictionary<enum_EquipmentRarity, int>  _tradeEquipmentRate,Dictionary<enum_WeaponRarity,int> _tradeWeaponRate, Dictionary<enum_WeaponRarity, int> _rewardWeaponRate, PickupGenerateData _normalGenerate,PickupGenerateData _eliteGenerate) => new StageInteractGenerateData() {m_TradeEquipment=_tradeEquipmentRate, m_TradeWeapon=_tradeWeaponRate, m_RewardWeapon = _rewardWeaponRate, m_NormalPickupData=_normalGenerate,m_ElitePickupData=_eliteGenerate};
     }
 
     public struct EliteBuffCombine
@@ -823,18 +822,18 @@ namespace GameSetting
     public struct EquipmentSaveData : IXmlPhrase
     {
         public ActionSaveData m_ActionData { get; private set; }
-        public enum_EquipmentType m_Type { get; private set; }
+        public enum_EquipmentRarity m_Rarity { get; private set; }
 
-        public string ToXMLData() =>m_ActionData.ToXMLData()+"," + m_Type;
+        public string ToXMLData() =>m_ActionData.ToXMLData()+"," + m_Rarity;
         public EquipmentSaveData(string xmlData)
         {
             string[] split = xmlData.Split(',');
             m_ActionData = new ActionSaveData(xmlData);
-            m_Type = (enum_EquipmentType)Enum.Parse(typeof(enum_EquipmentType), split[2]);
+            m_Rarity = (enum_EquipmentRarity)Enum.Parse(typeof(enum_EquipmentRarity), split[2]);
         }
 
-        public static EquipmentSaveData Default(int index,enum_EquipmentType type) => new EquipmentSaveData {m_ActionData=ActionSaveData.Default(index),m_Type=type };
-        public static EquipmentSaveData Create(EquipmentBase equipment) =>  new EquipmentSaveData { m_ActionData=ActionSaveData.Create(equipment), m_Type=equipment.m_EquipmentType};
+        public static EquipmentSaveData Default(int index, enum_EquipmentRarity rarity) => new EquipmentSaveData {m_ActionData=ActionSaveData.Default(index),m_Rarity=rarity };
+        public static EquipmentSaveData Create(EquipmentBase equipment) =>  new EquipmentSaveData { m_ActionData=ActionSaveData.Create(equipment), m_Rarity=equipment.m_rarity};
         public static List<EquipmentSaveData> Create(List<EquipmentBase> equipments)
         {
             List<EquipmentSaveData> data = new List<EquipmentSaveData>();
@@ -1584,19 +1583,12 @@ namespace GameSetting
 
         #region Action
         #region Interact
-        public bool b_haveEmptyEquipmentSlot => m_ExpireEquipments.Count < m_EquipmentSlot;
-        public void AddEquipmentSlot() => m_EquipmentSlot++;
         public void SwapEquipment(int index,EquipmentBase targetAction)
         {
             RemoveExpire(m_ExpireEquipments[index]);
             AddExpire(targetAction);
         }
-        public void OnEquipmentAcquire(EquipmentBase equipment)
-        {
-            if (!b_haveEmptyEquipmentSlot)
-                return;
-            AddExpire(equipment);
-        }
+        public void OnEquipmentAcquire(EquipmentBase equipment)=>AddExpire(equipment);
         public void OnActionBuffAcquire(ActionBuffBase actionBuff) => AddExpire(actionBuff);
 
         public bool CheckRevive()
@@ -1621,7 +1613,6 @@ namespace GameSetting
             if (targetExpire.m_ExpireType== enum_ExpireType.Equipment)
             {
                 m_ExpireEquipments.Add(targetExpire as EquipmentBase);
-                CheckEquipmentRarity();
                 TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
             }
             else if (targetExpire.m_ExpireType == enum_ExpireType.ActionBuff)
@@ -1643,7 +1634,6 @@ namespace GameSetting
             if (targetExpire.m_ExpireType== enum_ExpireType.Equipment)
             {
                 m_ExpireEquipments.Remove(targetExpire as EquipmentBase);
-                CheckEquipmentRarity();
                 TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
             }
             else if (targetExpire.m_ExpireType == enum_ExpireType.ActionBuff)
@@ -1651,18 +1641,6 @@ namespace GameSetting
                 m_ExpireBuffs.Remove(targetExpire as ActionBuffBase);
                 TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerBuffStatus, this);
             }
-        }
-        void CheckEquipmentRarity()
-        {
-            Dictionary<enum_EquipmentType, int> m_Types = new Dictionary<enum_EquipmentType, int>();
-            m_ExpireEquipments.Traversal((EquipmentBase equipment) =>
-            {
-                if (!m_Types.ContainsKey(equipment.m_EquipmentType))
-                    m_Types.Add(equipment.m_EquipmentType, 0);
-
-                m_Types[equipment.m_EquipmentType]++;
-            });
-            m_ExpireEquipments.Traversal((EquipmentBase equipment) => equipment.CheckEquipmentRarity(m_Types[equipment.m_EquipmentType]));
         }
 
         #endregion
@@ -1964,23 +1942,13 @@ namespace GameSetting
     public class EquipmentBase : ActionBase
     {
         public override enum_ExpireType m_ExpireType => enum_ExpireType.Equipment;
-        public enum_EquipmentLevel m_rarity { get; private set; }
-        public enum_EquipmentType m_EquipmentType { get; private set; }
+        public enum_EquipmentRarity m_rarity { get; private set; }
 
         public EquipmentBase() { }
         public void OnManagerSetData(int identity, EquipmentSaveData _data)
         {
-            m_EquipmentType = _data.m_Type;
+            m_rarity = _data.m_Rarity;
             base.OnManagerSetData(identity, _data.m_ActionData);
-        }
-        public void CheckEquipmentRarity(int sameCount)
-        {
-            if (sameCount >= 4)
-                m_rarity = enum_EquipmentLevel.Epic;
-            else if (sameCount >= 2)
-                m_rarity = enum_EquipmentLevel.OutStanding;
-            else
-                m_rarity = enum_EquipmentLevel.Normal;
         }
     }
 
@@ -2374,9 +2342,9 @@ namespace GameSetting
             transform = _transform;
             m_Grid = new ObjectPoolListComponent<int, Transform>(transform,"GridItem");
             m_Grid.ClearPool();
-            TCommon.TraversalEnum((enum_EquipmentLevel rarity) => { m_Levels.Add((int)rarity,new RarityLevel( m_Grid.AddItem((int)rarity))); });
+            TCommon.TraversalEnum((enum_EquipmentRarity rarity) => { m_Levels.Add((int)rarity,new RarityLevel( m_Grid.AddItem((int)rarity))); });
         }
-        public void SetRarity(enum_EquipmentLevel level)
+        public void SetRarity(enum_EquipmentRarity level)
         {
             m_Levels.Traversal((int index, RarityLevel rarity) => rarity.SetHighlight(index <= (int)level));
         }
@@ -2408,36 +2376,16 @@ namespace GameSetting
 
         Image m_Image;
         UIC_RarityLevel m_Rarity;
-        Image m_EquipmentType;
         public UIC_EquipmentData(Transform _transform)
         {
             transform = _transform;
             m_Image = transform.Find("Mask/Image").GetComponent<Image>();
             m_Rarity = new UIC_RarityLevel(transform.Find("Rarity"));
-            m_EquipmentType = transform.Find("EquipmentType").GetComponent<Image>();
         }
         public virtual void SetInfo(EquipmentBase equipmentInfo)
         {
             m_Image.sprite = GameUIManager.Instance.m_ActionSprites[equipmentInfo.m_Index.ToString()];
             m_Rarity.SetRarity(equipmentInfo.m_rarity);
-
-            m_EquipmentType.SetActivate(true);
-            switch (equipmentInfo.m_EquipmentType)
-            {
-                default:
-                    Debug.LogError("Invalid Parse Here!");
-                    m_EquipmentType.color = Color.magenta;
-                    break;
-                case enum_EquipmentType.TypeA:
-                    m_EquipmentType.color = Color.red;
-                    break;
-                case enum_EquipmentType.TypeB:
-                    m_EquipmentType.color = Color.yellow;
-                    break;
-                case enum_EquipmentType.TypeC:
-                    m_EquipmentType.color = Color.green;
-                    break;
-            }
         }
     }
 

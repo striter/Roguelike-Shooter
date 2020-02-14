@@ -6,58 +6,58 @@ namespace GameSetting_Action
     #region Desingers Data
     public static class EquipmentConsts
     {
-        public static int P_0001_ReloadSpeedAdditive(enum_EquipmentLevel rarity) => 35 * (int)rarity;
-        public static int P_0002_ClipRefillRate(enum_EquipmentLevel rarity) => 3 * (int)rarity;
-        public static int I_0003_ClipAdditive(enum_EquipmentLevel rarity) => 2 * (int)rarity;
-        public static int P_0004_ClipMultiply(enum_EquipmentLevel rarity) => 50 * (int)rarity;
-        public static float F_0005_DamageAdditive(enum_EquipmentLevel rarity) => 6.6f * (int)rarity;
-        public static float F_0006_DamageAdditive(enum_EquipmentLevel rarity) => 8.6f * (int)rarity;
-        public static float F_0006_Duration(enum_EquipmentLevel rarity) => 3*(int)rarity;
-        public static int P_0007_SpreadReduction(enum_EquipmentLevel rarity) => 30 * (int)rarity;
-        public static float F_0008_AimRangeIncrease(enum_EquipmentLevel rarity) => 1f * (int)rarity;
-        public static int P_0009_DamageMultiply(enum_EquipmentLevel rarity) => 100 * (int)rarity;
-        public static int P_0010_PenetrateAdditive(enum_EquipmentLevel rarity) => 20 * (int)rarity;
-        public static int P_0011_FireRateAdditive(enum_EquipmentLevel rarity) => 40 * (int)rarity;
-        public static int I_0012_BounceTimes(enum_EquipmentLevel rarity) => 1*(int)rarity;
+        public static int P_0001_ReloadSpeedAdditive(enum_EquipmentRarity rarity) => 35 * (int)rarity;
+        public static int P_0002_ClipRefillRate(enum_EquipmentRarity rarity) => 3 * (int)rarity;
+        public static int I_0003_ClipAdditive(enum_EquipmentRarity rarity) => 2 * (int)rarity;
+        public static int P_0004_ClipMultiply(enum_EquipmentRarity rarity) => 50 * (int)rarity;
+        public static float F_0005_DamageAdditive(enum_EquipmentRarity rarity) => 6.6f * (int)rarity;
+        public static float F_0006_DamageAdditive(enum_EquipmentRarity rarity) => 8.6f * (int)rarity;
+        public static float F_0006_Duration(enum_EquipmentRarity rarity) => 3*(int)rarity;
+        public static int P_0007_SpreadReduction(enum_EquipmentRarity rarity) => 30 * (int)rarity;
+        public static float F_0008_AimRangeIncrease(enum_EquipmentRarity rarity) => 1f * (int)rarity;
+        public static int P_0009_DamageMultiply(enum_EquipmentRarity rarity) => 100 * (int)rarity;
+        public static int P_0010_PenetrateAdditive(enum_EquipmentRarity rarity) => 20 * (int)rarity;
+        public static int P_0011_FireRateAdditive(enum_EquipmentRarity rarity) => 40 * (int)rarity;
+        public static int I_0012_BounceTimes(enum_EquipmentRarity rarity) => 1*(int)rarity;
 
-        public static float F_0013_EffectRange(enum_EquipmentLevel rarity) => 8f;
-        public static int P_0013_DamageMultiply(enum_EquipmentLevel rarity) => 20 * (int)rarity;
-        public static float F_0014_EffectRange(enum_EquipmentLevel rarity) => 8f;
-        public static int F_0014_ReductionDuration(enum_EquipmentLevel rarity) => 1 * (int)rarity;
-        public static float F_0015_EffectRange(enum_EquipmentLevel rarity) => 8f;
-        public static int P_0015_MovementSpeedEachEnermy(enum_EquipmentLevel rarity,int nearbyCount) => nearbyCount* 10 * (int)rarity;
-        public static float F_0016_EffectRange(enum_EquipmentLevel rarity) => 8f*(int)rarity;
-        public static float P_0016_ClipRefillRate(enum_EquipmentLevel rarity) => 30f;
-        public static float F_0017_Duration(enum_EquipmentLevel rarity) => 1 * (int)rarity;
+        public static float F_0013_EffectRange(enum_EquipmentRarity rarity) => 8f;
+        public static int P_0013_DamageMultiply(enum_EquipmentRarity rarity) => 20 * (int)rarity;
+        public static float F_0014_EffectRange(enum_EquipmentRarity rarity) => 8f;
+        public static int F_0014_ReductionDuration(enum_EquipmentRarity rarity) => 1 * (int)rarity;
+        public static float F_0015_EffectRange(enum_EquipmentRarity rarity) => 8f;
+        public static int P_0015_MovementSpeedEachEnermy(enum_EquipmentRarity rarity,int nearbyCount) => nearbyCount* 10 * (int)rarity;
+        public static float F_0016_EffectRange(enum_EquipmentRarity rarity) => 8f*(int)rarity;
+        public static float P_0016_ClipRefillRate(enum_EquipmentRarity rarity) => 30f;
+        public static float F_0017_Duration(enum_EquipmentRarity rarity) => 1 * (int)rarity;
 
-        public static float P_0018_MovementSpeedMultiply(enum_EquipmentLevel rarity) => 60f * (int)rarity;
-        public static float F_0018_Duration(enum_EquipmentLevel rarity) => 5f;
-        public static float P_0019_MovementSpeedMultiply(enum_EquipmentLevel rarity) => 40f * (int)rarity;
-        public static float F_0019_Duration(enum_EquipmentLevel rarity) => 5f;
-        public static float P_0020_MovementSpeedAdditive(enum_EquipmentLevel rarity) => 20 * (int)rarity;
-        public static float P_0021_AimPressureReductionDecrease(enum_EquipmentLevel rarity) => 30 * (int)rarity;
-        public static float P_0022_DamageMultiply(enum_EquipmentLevel rarity,float stack) => stack*3* (int)rarity;
+        public static float P_0018_MovementSpeedMultiply(enum_EquipmentRarity rarity) => 60f * (int)rarity;
+        public static float F_0018_Duration(enum_EquipmentRarity rarity) => 5f;
+        public static float P_0019_MovementSpeedMultiply(enum_EquipmentRarity rarity) => 40f * (int)rarity;
+        public static float F_0019_Duration(enum_EquipmentRarity rarity) => 5f;
+        public static float P_0020_MovementSpeedAdditive(enum_EquipmentRarity rarity) => 20 * (int)rarity;
+        public static float P_0021_AimPressureReductionDecrease(enum_EquipmentRarity rarity) => 30 * (int)rarity;
+        public static float P_0022_DamageMultiply(enum_EquipmentRarity rarity,float stack) => stack*3* (int)rarity;
         public const int P_0022_MaxStack = 40;
         
-        public static int P_0023_MaxHealthRegen(enum_EquipmentLevel rarity) => 15 * (int)rarity;
-        public static int P_0024_HealthRegenEachKill(enum_EquipmentLevel rarity) => 6 * (int)rarity;
-        public static float F_0025_MaxHealthAdd(enum_EquipmentLevel rarity) => 60 * (int)rarity;
-        public static int P_0026_HealthRegenAdditive(enum_EquipmentLevel rarity) => 100 * (int)rarity;
-        public static int P_0027_HealthDrainAdditive(enum_EquipmentLevel rarity) => 1 * (int)rarity;
+        public static int P_0023_MaxHealthRegen(enum_EquipmentRarity rarity) => 15 * (int)rarity;
+        public static int P_0024_HealthRegenEachKill(enum_EquipmentRarity rarity) => 6 * (int)rarity;
+        public static float F_0025_MaxHealthAdd(enum_EquipmentRarity rarity) => 60 * (int)rarity;
+        public static int P_0026_HealthRegenAdditive(enum_EquipmentRarity rarity) => 100 * (int)rarity;
+        public static int P_0027_HealthDrainAdditive(enum_EquipmentRarity rarity) => 1 * (int)rarity;
         
-        public static float F_0028_FreezeDuration(enum_EquipmentLevel rarity) => 3 * (int)rarity;
-        public static float F_0029_FreezeDurationPer10Damage(enum_EquipmentLevel rarity) => 0.02f * (int)rarity;
-        public static float F_0030_OffsetDuration(enum_EquipmentLevel rarity) => 5-(int)rarity;
-        public static float F_0030_FreezeDuration(enum_EquipmentLevel rarity) => 1f;
-        public static float F_0031_Duration(enum_EquipmentLevel rarity) =>5- (int)rarity;
-        public static float F_0031_FreezeDuration(enum_EquipmentLevel rarity) => 2 * (int)rarity;
-        public static float P_0032_FreezeDurationEnhance(enum_EquipmentLevel rarity) =>100*(int)rarity;
+        public static float F_0028_FreezeDuration(enum_EquipmentRarity rarity) => 3 * (int)rarity;
+        public static float F_0029_FreezeDurationPer10Damage(enum_EquipmentRarity rarity) => 0.02f * (int)rarity;
+        public static float F_0030_OffsetDuration(enum_EquipmentRarity rarity) => 5-(int)rarity;
+        public static float F_0030_FreezeDuration(enum_EquipmentRarity rarity) => 1f;
+        public static float F_0031_Duration(enum_EquipmentRarity rarity) =>5- (int)rarity;
+        public static float F_0031_FreezeDuration(enum_EquipmentRarity rarity) => 2 * (int)rarity;
+        public static float P_0032_FreezeDurationEnhance(enum_EquipmentRarity rarity) =>100*(int)rarity;
 
-        public static float P_0033_CoinsDropAdditive(enum_EquipmentLevel rarity) => 10 * (int)rarity;
-        public static float P_0034_CoinsCostDecrease(enum_EquipmentLevel rarity) => 10 * (int)rarity;
-        public static float P_0035_CoinsDoubleRate(enum_EquipmentLevel rarity) => 10 * (int)rarity;
-        public static float P_0036_CoinsReviveAmount(enum_EquipmentLevel rarity) => 180 - 20 * ((int)rarity );
-        public static float F_0037_DamageMultiplyPer10Coins(enum_EquipmentLevel rarity) => 4 * (int)rarity;
+        public static float P_0033_CoinsDropAdditive(enum_EquipmentRarity rarity) => 10 * (int)rarity;
+        public static float P_0034_CoinsCostDecrease(enum_EquipmentRarity rarity) => 10 * (int)rarity;
+        public static float P_0035_CoinsDoubleRate(enum_EquipmentRarity rarity) => 10 * (int)rarity;
+        public static float P_0036_CoinsReviveAmount(enum_EquipmentRarity rarity) => 180 - 20 * ((int)rarity );
+        public static float F_0037_DamageMultiplyPer10Coins(enum_EquipmentRarity rarity) => 4 * (int)rarity;
     }
 
     public class ActionBuffConsts

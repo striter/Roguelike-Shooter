@@ -343,7 +343,7 @@ public static class ActionDataManager
                 m_ActionBuffTypes.Add(action.m_Index, action.GetType());
         }));
     }
-    public static EquipmentBase CreateRandomPlayerEquipment(enum_EquipmentType type, System.Random seed)=> CreatePlayerEquipment(EquipmentSaveData.Default( m_EquipmentTypes.RandomKey(seed),type));
+    public static EquipmentBase CreateRandomPlayerEquipment(enum_EquipmentRarity rarity, System.Random seed)=> CreatePlayerEquipment(EquipmentSaveData.Default( m_EquipmentTypes.RandomKey(seed),rarity));
 
     public static EquipmentBase CreatePlayerEquipment(EquipmentSaveData data)
     {
@@ -361,6 +361,7 @@ public static class ActionDataManager
     }
 
     public static ActionBuffBase CreateRandomActionBuff( System.Random seed=null)=> CreateActionBuff(ActionSaveData.Default(m_ActionBuffTypes.RandomKey(seed)));
+    public static ActionBuffBase CreateActionBuff(int buffIndex) => CreateActionBuff(ActionSaveData.Default(buffIndex));
     public static ActionBuffBase CreateActionBuff(ActionSaveData data)
     {
         if (!m_ActionBuffTypes.ContainsKey(data.m_Index))

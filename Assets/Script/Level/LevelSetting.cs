@@ -80,10 +80,8 @@ namespace LevelSetting
     {
         Invalid=-1,
         Trader=1,
-        Medic =2,
-        Witcher=3,
-        RewardChest=4,
-        Bonefire=5,
+        Bonefire = 2,
+        RewardChest =3,
     }
     
     public static class LevelConst
