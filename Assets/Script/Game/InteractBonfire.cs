@@ -10,6 +10,7 @@ public class InteractBonfire : InteractGameBase {
     Transform tf_Light;
     DamageInfo m_HealInfo;
     TimeCounter m_DistinguishCheck=new TimeCounter(5f);
+    EntityCharacterPlayer m_Interactor;
     public override void OnPoolItemInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
     {
         base.OnPoolItemInit(identity, OnRecycle);
@@ -26,12 +27,26 @@ public class InteractBonfire : InteractGameBase {
     protected override bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactor)
     {
         base.OnInteractOnceCanKeepInteract(_interactor);
-        m_DistinguishCheck.Reset();
-        _interactor.m_HitCheck.TryHit(m_HealInfo);
-
-        m_FireParticles.Play();
-        tf_Light.SetActivate(true);
+        m_Interactor = _interactor;
+        GameUIManager.Instance.ShowPage<UI_BonfireSelection>(true, 0f).Play(OnBonfireSelect);
         return false;
+    }
+
+    void OnBonfireSelect(bool lit)
+    {
+        if(lit)
+        {
+            m_DistinguishCheck.Reset();
+            m_Interactor.m_HitCheck.TryHit(m_HealInfo);
+
+            m_FireParticles.Play();
+            tf_Light.SetActivate(true);
+        }
+        else
+        {
+            GameObjectManager.PlayMuzzle(-1,transform.position,Vector3.up, 10021);
+            m_Interactor.m_CharacterInfo.OnActionBuffAcquire(ActionDataManager.CreateActionBuff(10003));
+        }
     }
 
     void OnDistinguish()        //Light Low,Fire Off,Start Distinguish

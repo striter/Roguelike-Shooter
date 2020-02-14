@@ -73,7 +73,7 @@ namespace GameSetting
         public const int I_HealthPackAmount = 50;
 
         public static readonly RangeInt IR_EventTradeBuffPrice = new RangeInt(20, 5);
-        public static readonly Dictionary<enum_ChunkEventType, int> D_ChunkEventPercentage = new Dictionary<enum_ChunkEventType, int>() { { enum_ChunkEventType.Medic, 10 }, { enum_ChunkEventType.RewardChest, 50 }, { enum_ChunkEventType.Trader, 28 }, { enum_ChunkEventType.Witcher, 12 } };
+        public static readonly Dictionary<enum_ChunkEventType, int> D_ChunkEventPercentage = new Dictionary<enum_ChunkEventType, int>() { { enum_ChunkEventType.RewardChest, 100 }};
         public static readonly RangeInt IR_EventMedicPrice = new RangeInt(10, 5);
         public const int I_EventEquipmentTradePrice = 10;
         public static readonly Dictionary<enum_WeaponRarity, RangeInt> D_EventWeaponTradePrice = new Dictionary<enum_WeaponRarity, RangeInt>() { { enum_WeaponRarity.Ordinary, new RangeInt(5, 5) }, { enum_WeaponRarity.Advanced, new RangeInt(10, 5) }, { enum_WeaponRarity.Rare, new RangeInt(20, 5) }, { enum_WeaponRarity.Legend, new RangeInt(30, 5) } };
@@ -479,7 +479,7 @@ namespace GameSetting
     public enum enum_EnermyType { Invalid = -1, Fighter = 1, Shooter_Rookie = 2, Shooter_Veteran = 3, AOECaster = 4, Elite = 5, }
 
     public enum enum_Interaction { Invalid = -1,
-        GameBegin,Bonfire, TradeContainer,TradeActionBuff, PickupCoin, PickupHealth,PickupHealthPack, PickupArmor,RewardChest, Equipment, Weapon, Portal, GameEnd,
+        GameBegin,Bonfire, TradeContainer, PickupCoin, PickupHealth,PickupHealthPack, PickupArmor,RewardChest, Equipment, Weapon, Portal, GameEnd,
         CampBegin,CampStage, CampDifficult,CampFarm,CampAction,CampEnd, }
     
     public enum enum_ProjectileFireType { Invalid = -1, Single = 1, MultipleFan = 2, MultipleLine = 3, };

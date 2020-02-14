@@ -417,9 +417,6 @@ public class GameManager : GameManagerBase
                                 case enum_ChunkEventType.Bonefire:
                                     GameObjectManager.SpawnInteract<InteractBonfire>(enum_Interaction.Bonfire, objectData.pos, objectData.rot, tf_Interacts).Play();
                                     break;
-                                case enum_ChunkEventType.Medic:
-                                    GameObjectManager.SpawnInteract<InteractTradeContainer>(enum_Interaction.TradeContainer, objectData.pos, objectData.rot, tf_Interacts).Play(GameConst.IR_EventMedicPrice.Random(m_GameLevel.m_GameRandom),GameObjectManager.SpawnInteract<InteractPickupHealthPack>( enum_Interaction.PickupHealthPack,objectData.pos,objectData.rot).Play(GameConst.I_HealthPackAmount));
-                                    break;
                                 case enum_ChunkEventType.RewardChest:
                                     GameObjectManager.SpawnInteract<InteractRewardChest>(enum_Interaction.RewardChest, objectData.pos, objectData.rot, tf_Interacts).Play(null, GameDataManager.m_WeaponRarities[TCommon.RandomPercentage(m_GameLevel.m_InteractGenerate.m_RewardWeapon, m_GameLevel.m_GameRandom)].RandomItem(m_GameLevel.m_GameRandom));
                                     break;
@@ -435,9 +432,6 @@ public class GameManager : GameManagerBase
 
                                     rarity = TCommon.RandomPercentage(m_GameLevel.m_InteractGenerate.m_TradeWeapon, m_GameLevel.m_GameRandom);
                                     GameObjectManager.SpawnInteract<InteractTradeContainer>(enum_Interaction.TradeContainer, objectData.pos + LevelConst.I_TileSize * Vector3.back, objectData.rot, tf_Interacts).Play(GameConst.D_EventWeaponTradePrice[rarity].Random(m_GameLevel.m_GameRandom), GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, objectData.pos + LevelConst.I_TileSize * Vector3.forward, objectData.rot).Play(GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew(GameDataManager.m_WeaponRarities[rarity].RandomItem(m_GameLevel.m_GameRandom)))));
-                                    break;
-                                case enum_ChunkEventType.Witcher:
-                                    GameObjectManager.SpawnInteract<InteractTradeActionBuff>(enum_Interaction.TradeActionBuff, objectData.pos, objectData.rot).Play();
                                     break;
                             }
                             break;

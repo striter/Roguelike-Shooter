@@ -361,6 +361,7 @@ public static class ActionDataManager
     }
 
     public static ActionBuffBase CreateRandomActionBuff( System.Random seed=null)=> CreateActionBuff(ActionSaveData.Default(m_ActionBuffTypes.RandomKey(seed)));
+    public static ActionBuffBase CreateActionBuff(int buffIndex) => CreateActionBuff(ActionSaveData.Default(buffIndex));
     public static ActionBuffBase CreateActionBuff(ActionSaveData data)
     {
         if (!m_ActionBuffTypes.ContainsKey(data.m_Index))
