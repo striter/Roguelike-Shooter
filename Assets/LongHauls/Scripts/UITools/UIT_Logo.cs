@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-public class UIT_Logo : SimpleSingletonMono<UIT_Logo> {
+public class UIT_Logo : SingletonMono<UIT_Logo> {
     public Action OnShowLogoFinished;
     public bool passLogo;
     Text AllRightsReserved;

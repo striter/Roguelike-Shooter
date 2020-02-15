@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 #pragma warning disable 0649
-public class LevelEditorUI : SimpleSingletonMono<LevelEditorUI>,TReflection.UI.IUIPropertyFill {
+public class LevelEditorUI : SingletonMono<LevelEditorUI>,TReflection.UI.IUIPropertyFill {
     class TypeSelection:TReflection.UI.CPropertyFillElement
     {
         Text m_Text;

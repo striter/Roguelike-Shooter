@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum enum_Option_JoyStickMode { Invalid = -1, Retarget = 1, Stational = 2, }
-public class UIT_JoyStick : SimpleSingletonMono<UIT_JoyStick>
+public class UIT_JoyStick : SingletonMono<UIT_JoyStick>
 {
 #if UNITY_EDITOR
     public bool TESTMODE = false;

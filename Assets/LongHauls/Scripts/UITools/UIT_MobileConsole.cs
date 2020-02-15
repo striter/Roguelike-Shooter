@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIT_MobileConsole : SimpleSingletonMono<UIT_MobileConsole> {
+public class UIT_MobileConsole : SingletonMono<UIT_MobileConsole> {
 
     public bool m_ShowErrorOnly = true;
     public int LogExistCount = 10;

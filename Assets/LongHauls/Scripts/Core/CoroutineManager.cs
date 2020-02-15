@@ -204,72 +204,85 @@ public static class TIEnumerators
 }
 
 //Interface For CoroutineManager
-public interface ISingleCoroutine
+public interface ICoroutineHelper
 {
 }
-public static class ISingleCoroutine_Extend
+public static class ICoroutineHelper_Extend
 {
-    public static void StartSingleCoroutine(this ISingleCoroutine target, int index, IEnumerator numerator)
+    struct SCoroutineHelperData
     {
-        if (index < 0)
-            Debug.LogWarning(" Should Not Add Coroutine Index Which Below 0");
-
-        int targetIndex = CoroutineManager.QuestForIndex(target, index);
-        if (CoroutineManager.Dic_Coroutines.ContainsKey(targetIndex))
+        public int m_HelperIndex { get; private set; }
+        public List<int> m_CoroutineIndexes { get; private set; }
+        public SCoroutineHelperData(int helperIndex)
         {
-            if (CoroutineManager.Dic_Coroutines[targetIndex] != null)
-                CoroutineManager.Instance.StopCoroutine(CoroutineManager.Dic_Coroutines[targetIndex]);
-        }
-        else
-        {
-            CoroutineManager.Dic_Coroutines.Add(targetIndex, null);
-        }
-        CoroutineManager.Dic_Coroutines[targetIndex] = CoroutineManager.Instance.StartCoroutine(numerator);
-    }
-    public static void StopSingleCoroutine(this ISingleCoroutine target, int index = 0)
-    {
-        int targetIndex = CoroutineManager.QuestForIndex(target, index);
-        if (CoroutineManager.Dic_Coroutines.ContainsKey(targetIndex) && CoroutineManager.Dic_Coroutines[targetIndex] != null)
-            CoroutineManager.Instance.StopCoroutine(CoroutineManager.Dic_Coroutines[targetIndex]);
-    }
-
-    public static void StopAllSingleCoroutines(this ISingleCoroutine target)
-    {
-        int min=0, max = 0;
-        CoroutineManager.QuestForRange(target,ref min,ref max);
-        foreach (int index in CoroutineManager.Dic_Coroutines.Keys)
-        {
-            if (index >= min && index <= max)
-                if (CoroutineManager.Dic_Coroutines.ContainsKey(index) && CoroutineManager.Dic_Coroutines[index] != null)
-                    CoroutineManager.Instance.StopCoroutine(CoroutineManager.Dic_Coroutines[index]);
+            m_HelperIndex = helperIndex;
+            m_CoroutineIndexes = new List<int>();
         }
     }
-
-    public static void StopSingleCoroutines(this ISingleCoroutine target, params int[] indexes)
+    static int m_HelperCount = 0;
+    static Dictionary<ICoroutineHelper, SCoroutineHelperData> m_TargetCoroutines=new Dictionary<ICoroutineHelper, SCoroutineHelperData>();
+    internal static int GetCoroutineIndex(ICoroutineHelper target, int coroutineIndex) => m_TargetCoroutines[target].m_HelperIndex * 10000 + coroutineIndex;
+    public static void StartSingleCoroutine(this ICoroutineHelper target, int index, IEnumerator ienumerator)
     {
-        for (int i = 0; i < indexes.Length; i++)
-            StopSingleCoroutine(target, indexes[i]);
+        if (!m_TargetCoroutines.ContainsKey(target))
+            m_TargetCoroutines.Add(target, new SCoroutineHelperData(m_HelperCount++));
+
+        int targetIndex = GetCoroutineIndex(target, index);
+        CoroutineHelperManager.StartCoroutine(targetIndex,ienumerator);
+
+        if (!m_TargetCoroutines[target].m_CoroutineIndexes.Contains(targetIndex))
+            m_TargetCoroutines[target].m_CoroutineIndexes.Add(targetIndex);
     }
-}
-
-//Main Coroutine Manager
-class CoroutineManager : SingletonMono<CoroutineManager>
-{
-    internal static List<ISingleCoroutine> L_Target = new List<ISingleCoroutine>();
-    internal static Dictionary<int, Coroutine> Dic_Coroutines = new Dictionary<int, Coroutine>();
-    internal static void QuestForRange(ISingleCoroutine target, ref int min, ref int max)
+    public static void StopSingleCoroutine(this ICoroutineHelper target, int index = 0)
     {
-        min = L_Target.FindIndex(p => p == target) * 1000;
-        max = min + 999;
+        if (!m_TargetCoroutines.ContainsKey(target))
+            return;
+
+        int targetIndex = GetCoroutineIndex(target, index);
+        CoroutineHelperManager.StopCoroutine(targetIndex);
+
+        if (m_TargetCoroutines[target].m_CoroutineIndexes.Contains(index))
+            m_TargetCoroutines[target].m_CoroutineIndexes.Remove(targetIndex);
     }
-    internal static int QuestForIndex(ISingleCoroutine target, int index)
-    {
-        int targetIndex = 0;
-        if (!L_Target.Contains(target))
-            L_Target.Add(target);
 
-        targetIndex += L_Target.FindIndex(p => p == target) * 1000;
-        targetIndex += index;
-        return targetIndex;
+    public static void StopAllSingleCoroutines(this ICoroutineHelper target)
+    {
+        if (!m_TargetCoroutines.ContainsKey(target))
+            return;
+
+        m_TargetCoroutines[target].m_CoroutineIndexes.Traversal((int coroutineIndex) =>  {
+            CoroutineHelperManager.StopCoroutine(coroutineIndex);
+        });
+        m_TargetCoroutines.Remove(target);
+    }
+    
+
+    //Main Coroutine Manager
+    class CoroutineHelperManager : SingletonMono<CoroutineHelperManager>
+    {
+        static Dictionary<int, Coroutine> m_CoroutinesDic = new Dictionary<int, Coroutine>();
+
+        public static void StartCoroutine(int targetIndex, IEnumerator ienumerator)
+        {
+            StopCoroutine(targetIndex);
+
+            if (!m_CoroutinesDic.ContainsKey(targetIndex))
+                m_CoroutinesDic.Add(targetIndex, null);
+
+            m_CoroutinesDic[targetIndex] = Instance.StartCoroutine(ienumerator);
+        }
+
+        public static void StopCoroutine(int targetIndex)
+        {
+            if (!m_CoroutinesDic.ContainsKey(targetIndex))
+                return;
+
+            Instance.StopCoroutine(m_CoroutinesDic[targetIndex]);
+        }
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            m_TargetCoroutines.Clear();
+        }
     }
 }

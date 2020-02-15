@@ -4,7 +4,7 @@ using UnityEngine;
 using GameSetting;
 using System;
 using TTime;
-public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
+public class CampFarmManager : SingletonMono<CampFarmManager>
 {
     public float f_TimeScale=1f;
     public List<CampFarmPlot> m_Plots { get; private set; } = new List<CampFarmPlot>();

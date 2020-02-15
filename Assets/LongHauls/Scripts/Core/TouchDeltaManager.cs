@@ -8,7 +8,7 @@ public enum enum_TouchCheckType
     TouchLR=1,
     TouchDrag=2
 }
-public class TouchDeltaManager : SimpleSingletonMono<TouchDeltaManager>
+public class TouchDeltaManager : SingletonMono<TouchDeltaManager>
 {
     public enum_TouchCheckType m_CheckType => m_Check.Count==0 ? enum_TouchCheckType.Invalid : m_Check.Peek().m_Type;
     Stack<TouchCheckBase> m_Check=new Stack<TouchCheckBase>();

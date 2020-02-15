@@ -30,49 +30,32 @@ public class SimpleMonoLifetime
     public virtual void OnDisable() { }
 }
 
-public class SimpleSingletonMono<T> : MonoBehaviour where T : MonoBehaviour
+public class SingletonMono<T> : MonoBehaviour where T : MonoBehaviour
 {
-    public static T Instance { get; protected set; }
-    protected virtual void Awake()
-    {
-        Instance = this.GetComponent<T>();
-    }
-    protected  virtual void OnDestroy()
-    {
-        Instance = null;
-    }
-}
+    static T instance;
+    public static bool m_HaveInstance => instance;
 
-public class SingletonMono<T>  : MonoBehaviour where T : MonoBehaviour
-{     
-    protected virtual void Awake()
-    {
-        instance = this.GetComponent<T>();
-        this.name = typeof(T).Name;
-        DontDestroyOnLoad(this);
-    }
-    protected static T instance;
     public static T Instance
     {
         get
         {
-            if (instance == null)
-            {
-                GameObject obj=new GameObject();
-                obj.name = typeof(T).Name;
-                instance = obj.AddComponent<T>();
-            }
+            if (!instance)
+                instance = new GameObject().AddComponent<T>();
             return instance;
         }
     }
-    public static bool HaveInstance
+
+    protected virtual void Awake()
     {
-        get
-        {
-            return instance != null;
-        }
+        instance = this.GetComponent<T>();
+        this.name = typeof(T).Name;
+    }
+    protected  virtual void OnDestroy()
+    {
+        instance = null;
     }
 }
+
 
 public class SingleTon<T> where T : new()
 {

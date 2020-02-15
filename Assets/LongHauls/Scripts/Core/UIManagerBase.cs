@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIManagerBase : SimpleSingletonMono<UIManagerBase> {
+public class UIManagerBase : SingletonMono<UIManagerBase> {
     public float m_fittedScale { get; private set; }
     protected Canvas cvs_Overlay, cvs_Camera;
     private RectTransform tf_OverlayPage,tf_CameraPage,tf_OverlayControl,tf_CameraControl,tf_MessageBox;

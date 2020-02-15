@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-public class AudioManagerBase : SimpleSingletonMono <AudioManagerBase>
+public class AudioManagerBase : SingletonMono <AudioManagerBase>
 {
     public static event Action<float> OnVolumeChanged;
     AudioSource m_AudioBG;

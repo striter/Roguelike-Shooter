@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class CameraController : SimpleSingletonMono<CameraController>  {
+public class CameraController : SingletonMono<CameraController>  {
     [Range(0,1)]
     public float F_CameraRotateSmooth = .3f;
     [Range(0, 1)]

@@ -2022,7 +2022,7 @@ namespace GameSetting
     #endregion
     
     #region GameEffects
-    public class ModelBlink:ISingleCoroutine
+    public class ModelBlink:ICoroutineHelper
     {
         Transform transform;
         Renderer[] m_renderers;

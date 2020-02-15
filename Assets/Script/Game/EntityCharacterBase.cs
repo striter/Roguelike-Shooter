@@ -157,7 +157,7 @@ public class EntityCharacterBase : EntityBase
             OnDead();
     }
 
-    class EntityCharacterEffectManager:ISingleCoroutine
+    class EntityCharacterEffectManager:ICoroutineHelper
     {
         Material m_NormalMaterial,m_EffectMaterial;
         List<Renderer> m_skins;

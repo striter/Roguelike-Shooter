@@ -4,7 +4,7 @@ using UnityEngine;
 using LevelSetting;
 using GameSetting;
 
-public class LevelEditorManager : SimpleSingletonMono<LevelEditorManager>
+public class LevelEditorManager : SingletonMono<LevelEditorManager>
 {
     private void Start()
     {

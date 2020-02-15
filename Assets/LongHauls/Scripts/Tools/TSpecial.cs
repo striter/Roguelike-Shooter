@@ -333,7 +333,7 @@ namespace TTime
 namespace TSpecialClasses          //Put Some Common Shits Into Specifical Classes, Tightly Attached To CoroutineManager Cause Not Using Monobehaviour
 {
     //Translate Ragdoll To Animation Or Animatoion To Ragdoll
-    public class RagdollAnimationTransition : ISingleCoroutine
+    public class RagdollAnimationTransition : ICoroutineHelper
     {
         class BodyPart
         {
@@ -496,7 +496,7 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
     }
 
     //Navigation AI System Chase/Follow/Attack/Idle ETC...
-    public class NavigationAgentAI<T> : SimpleMonoLifetime, ISingleCoroutine where T : MonoBehaviour
+    public class NavigationAgentAI<T> : SimpleMonoLifetime, ICoroutineHelper where T : MonoBehaviour
     {
         public enum enum_AIState
         {
@@ -575,7 +575,7 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
         public override void OnDestroy()
         {
             base.OnDestroy();
-            this.StopSingleCoroutines(1, 2,3);
+            this.StopAllSingleCoroutines();
         }
         public void OnDead()
         {

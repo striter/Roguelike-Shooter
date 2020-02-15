@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-public class UIT_BGMTitle : SimpleSingletonMono<UIT_BGMTitle>,ISingleCoroutine {
+public class UIT_BGMTitle : SingletonMono<UIT_BGMTitle>,ICoroutineHelper {
     RectTransform RectTrans;
     Text Title;
     Vector3 startPos;

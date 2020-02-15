@@ -33,6 +33,7 @@ public class PCInputManager : SingletonMono<PCInputManager>
     protected override void Awake()
     {
         base.Awake();
+        DontDestroyOnLoad(this);
         KeyBindings.CreatePresetBinding(enum_BindingsName.Up, enum_PressStatus.Both, KeyCode.W);
         KeyBindings.CreatePresetBinding(enum_BindingsName.Down, enum_PressStatus.Both, KeyCode.S);
         KeyBindings.CreatePresetBinding(enum_BindingsName.Left, enum_PressStatus.Both, KeyCode.A);

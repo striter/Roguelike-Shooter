@@ -7,7 +7,7 @@ using System;
 using TTiles;
 using UnityEngine.AI;
 using System.Threading.Tasks;
-public class GameLevelManager : SimpleSingletonMono<GameLevelManager> {
+public class GameLevelManager : SingletonMono<GameLevelManager> {
     public bool m_FinalBattleTest = true;
 
     ObjectPoolListComponent<int, LevelChunkGame> m_ChunkPool;
