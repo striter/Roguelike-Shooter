@@ -29,13 +29,12 @@ public class GameManager : GameManagerBase
         }));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Freeze All", "0.5", KeyCode.Alpha8, (string value) =>
         {
-            m_Entities.Values.ToList().Traversal((EntityBase entity) => {
-                if (entity.m_Flag == enum_EntityFlag.Enermy)
+            GetCharacters( enum_EntityFlag.Enermy,true).Traversal((EntityCharacterBase entity) => {
                     entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.EquipmentInfo(-1,0, enum_CharacterEffect.Freeze,float.Parse( value))));
             });
         }));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Enermy", "101", KeyCode.Z, (string id) => {
-            GameObjectManager.SpawnEntityCharactterAI(int.Parse(id), NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position+ TCommon.RandomXZSphere(5f)), m_LocalPlayer.transform.position, enum_EntityFlag.Enermy,m_GameLevel.m_GameDifficulty,m_GameLevel.m_GameStage,true);
+            GameObjectManager.SpawnEntityCharacterAI(int.Parse(id), NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position+ TCommon.RandomXZSphere(5f)), m_LocalPlayer.transform.position, enum_EntityFlag.Enermy,m_GameLevel.m_GameDifficulty,m_GameLevel.m_GameStage,true);
         }));
 
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Damage", "20", KeyCode.N, (string damage) => { m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(int.Parse(damage), enum_DamageType.Basic, DamageDeliverInfo.Default(-1)));}));
@@ -421,7 +420,7 @@ public class GameManager : GameManagerBase
                                     GameObjectManager.SpawnInteract<InteractRewardChest>(enum_Interaction.RewardChest, objectData.pos, objectData.rot, tf_Interacts).Play(null, GameDataManager.m_WeaponRarities[TCommon.RandomPercentage(m_GameLevel.m_InteractGenerate.m_RewardWeapon, m_GameLevel.m_GameRandom)].RandomItem(m_GameLevel.m_GameRandom));
                                     break;
                                 case enum_ChunkEventType.Trader:
-                                    GameObjectManager.SpawnNPC(enum_InteractCharacter.Trader, objectData.pos,objectData.rot.eulerAngles);
+                                    GameObjectManager.SpawnNPC(enum_InteractCharacter.Trader, objectData.pos,objectData.rot);
 
                                     GameObjectManager.SpawnInteract<InteractTradeContainer>(enum_Interaction.TradeContainer, objectData.pos+LevelConst.I_TileSize*Vector3.left, objectData.rot, tf_Interacts).Play(GameConst.I_EventEquipmentTradePrice, GameObjectManager.SpawnInteract<InteractEquipment>(enum_Interaction.Equipment, objectData.pos, objectData.rot).Play(ActionDataManager.CreateRandomPlayerEquipment(TCommon.RandomPercentage(m_GameLevel.m_InteractGenerate.m_TradeEquipment,m_GameLevel.m_GameRandom),m_GameLevel.m_GameRandom)));
 
@@ -598,7 +597,7 @@ public class GameManager : GameManagerBase
         m_GameLevel.m_EnermyGenerate[true].RandomItem(m_GameLevel.m_GameRandom).GetEnermyIDList(m_EnermyIDs, m_GameLevel.m_GameRandom).Traversal((int enermyID) =>
         {
             Vector3 spawnPos = m_FinalBattleGeneratePoints.RandomItem();
-            GameObjectManager.SpawnEntityCharactterAI(enermyID, NavigationManager.NavMeshPosition(spawnPos), m_LocalPlayer.transform.position, enum_EntityFlag.Enermy,m_GameLevel.m_GameDifficulty,m_GameLevel.m_GameStage,true);
+            GameObjectManager.SpawnEntityCharacterAI(enermyID, NavigationManager.NavMeshPosition(spawnPos), m_LocalPlayer.transform.position, enum_EntityFlag.Enermy,m_GameLevel.m_GameDifficulty,m_GameLevel.m_GameStage,true);
         });
 
     }
@@ -721,31 +720,23 @@ public static class GameObjectManager
     #region Spawn/Recycle
     #region Entity
     //Start Health 0:Use Preset I_MaxHealth
-    static T SpawnEntity<T>(int _poolIndex, Vector3 toPos,Vector3 lookPos,enum_EntityFlag _flag,int spawnerID, float _startHealth, Transform parentTrans = null) where T:EntityBase
+    static T SpawnEntity<T>(int _poolIndex, Vector3 pos,Quaternion rot,Action<T> OnActivate, Transform parentTrans = null) where T:EntityBase
     {
-        T entity = ObjectPoolManager<int, EntityBase>.Spawn(_poolIndex, TF_Entity, NavigationManager.NavMeshPosition(toPos), Quaternion.LookRotation(TCommon.GetXZLookDirection(toPos, lookPos), Vector3.up)) as T;
+        T entity = ObjectPoolManager<int, EntityBase>.Spawn(_poolIndex, TF_Entity, NavigationManager.NavMeshPosition(pos),rot) as T;
         if (entity == null)
             Debug.LogError("Entity ID:" + _poolIndex + ",Type:" + typeof(T).ToString() + " Not Found");
-        entity.OnActivate(_flag, spawnerID, _startHealth);
+        OnActivate(entity);
         entity.gameObject.name = entity.m_EntityID.ToString() + "_" + _poolIndex.ToString();
         if (parentTrans) entity.transform.SetParent(parentTrans);
         return entity;
     }
-    public static EntityCharacterBase SpawnEntityCharacter(int poolIndex, Vector3 toPosition,Vector3 lookPos, enum_EntityFlag _flag,int spawnerID=-1, float _startHealth = 0, Transform parentTrans = null) => SpawnEntity<EntityCharacterBase>(poolIndex,toPosition,lookPos,_flag,spawnerID,_startHealth,parentTrans);
-    public static EntityCharacterAI SpawnEntityCharactterAI(int poolIndex, Vector3 toPosition, Vector3 lookPos, enum_EntityFlag _flag,int gameDifficulty,enum_StageLevel _stage,bool battling, int spawnerID = -1, float _startHealth = 0)
-    {
-        EntityCharacterAI ai= SpawnEntity<EntityCharacterBase>(poolIndex, toPosition, lookPos, _flag, spawnerID, _startHealth, null) as EntityCharacterAI;
-        ai.OnAIActivate( GameExpression.GetEnermyMaxHealthMultiplier(_stage,gameDifficulty), GameExpression.GetEnermyGameBuff(_stage, gameDifficulty), battling);
-        return ai;
-    } 
 
-    public static EntityCharacterPlayer SpawnEntityPlayer(CBattleSave playerSave,Vector3 position,Quaternion rotation)
-    {
-        EntityCharacterPlayer player = SpawnEntity<EntityCharacterPlayer>((int)playerSave.m_character,position,Vector3.up, enum_EntityFlag.Player,-1,0);
-        player.SetPlayer(playerSave, position, rotation);
-        return player;
-    }
-    public static EntityNPC SpawnNPC(enum_InteractCharacter npc, Vector3 toPosition,Vector3 lookPos) => SpawnEntity<EntityNPC>((int)npc, toPosition,lookPos, enum_EntityFlag.Neutal,-1,0, null);
+    public static EntityCharacterAI SpawnEntityCharacterAI(int poolIndex, Vector3 toPosition, Vector3 lookPos, enum_EntityFlag _flag,int gameDifficulty,enum_StageLevel _stage,bool battling, int spawnerID = -1, float _startHealth = 0)=> SpawnEntity(poolIndex, toPosition, Quaternion.LookRotation(TCommon.GetXZLookDirection(toPosition, lookPos),Vector3.up), (EntityCharacterAI ai)=> ai.OnActivate(_flag, spawnerID, _startHealth, GameExpression.GetEnermyMaxHealthMultiplier(_stage, gameDifficulty), GameExpression.GetEnermyGameBuff(_stage, gameDifficulty), battling), null);
+
+    public static EntityCharacterPlayer SpawnEntityPlayer(CBattleSave playerSave,Vector3 position,Quaternion rotation)=> SpawnEntity((int)playerSave.m_character, position,rotation, (EntityCharacterPlayer player)=>player.OnActivate(playerSave));
+
+    public static EntityNPC SpawnNPC(enum_InteractCharacter npc, Vector3 toPosition,Quaternion rot) => SpawnEntity((int)npc, toPosition,rot,(EntityNPC npcCharacter)=> npcCharacter.OnActivate());
+
     public static void RecycleEntity(int index, EntityBase target) => ObjectPoolManager<int, EntityBase>.Recycle(index, target);
     #endregion
     #region Weapon

@@ -14,13 +14,14 @@ public class EntityCharacterAIFrost8Weapon : EntityCharacterAI
         base.OnPoolItemInit(_identity, _OnRecycle);
         m_Blink = new ModelBlink(tf_Model.Find("BlinkModel"), .25f, .25f, Color.red);
     }
-    public override void OnActivate(enum_EntityFlag _flag, int _spawnerID, float startHealth)
+    protected override void OnActivate(enum_EntityFlag flag, float startHealth = 0)
     {
-        base.OnActivate(_flag, _spawnerID, startHealth);
+        base.OnActivate(flag, startHealth);
         m_Blink.OnReset();
         b_selfDetonating = false;
         timeElapsed = 0;
     }
+
     protected override void OnAttackAnimTrigger()
     {
         b_selfDetonating = true;

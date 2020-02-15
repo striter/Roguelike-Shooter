@@ -7,14 +7,13 @@ public class EntityCharacterAIElite : EntityCharacterAI {
     TimeCounter m_BuffCounter = new TimeCounter(GameConst.F_EliteBuffTimerDurationWhenFullHealth), m_IndicateCounter=new TimeCounter(2f);
     EliteBuffCombine m_Buff;
     bool m_Indicating;
-    public override void OnActivate(enum_EntityFlag _flag, int _spawnerID, float startHealth)
+    protected override void OnActivate(enum_EntityFlag flag, float startHealth = 0)
     {
-        base.OnActivate(_flag, _spawnerID, startHealth);
+        base.OnActivate(flag, startHealth);
         m_Buff = GameConst.L_GameEliteBuff.RandomItem();
         m_BuffCounter.Reset();
         m_Indicating = false;
     }
-
 
     protected override void OnAliveTick(float deltaTime)
     {

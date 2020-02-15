@@ -31,7 +31,6 @@ namespace GameSetting
 
         public const float F_PlayerWeaponFireReloadPause = 0f; //武器恢复间隔时间
         public const float F_PlayerAutoAimRangeBase = 16f; //自动锁定敌人范围
-        public const int I_PlayerDefaultEquipmentSlot = 2;
         public const float F_PlayerDamageAdjustmentRange = .1f;
         public const int I_PlayerRotationSmoothParam = 10;     //Camera Smooth Param For Player 10 is suggested
 
@@ -113,7 +112,19 @@ namespace GameSetting
         public static SBuff GetEnermyGameBuff(enum_StageLevel stage,int difficulty) => SBuff.CreateGameEnermyBuff(difficulty, ((int)stage - 1) * .2f+ (difficulty - 1)*.2f );
         public static float GetEnermyMaxHealthMultiplier(enum_StageLevel stage, int difficulty) => 1f + ((int)stage - 1) * .2f + (difficulty - 1) * .05f;
 
-        public static float GetActionEnergyRevive(float damageApply) => damageApply * .0025f;    //伤害转换成能量的比率
+        public static int GetRankupExp(int rank) => 100 + 10* rank;
+        public static int GetEnermyKillExp(bool isElite,enum_StageLevel stage)
+        {
+            if (!isElite)
+                return 25;
+            switch (stage)
+            {
+                default: Debug.LogError("Invalid Convertions Here!") ; return 0;
+                case enum_StageLevel.Rookie: return 200;
+                case enum_StageLevel.Veteran: return 300;
+                case enum_StageLevel.Ranger: return 400;
+            }
+        }
 
         public static float GetResultCompletion(bool win, enum_StageLevel _stage, int _battleLevelEntered) => win ? 1f : (.33f * ((int)_stage - 1) +.066f*_battleLevelEntered);
         public static float GetResultLevelScore(enum_StageLevel _stage, int _levelPassed) => 200 * ((int)_stage - 1) + 20 * (_levelPassed - 1);
@@ -650,6 +661,7 @@ namespace GameSetting
             m_MuzzleIndex = _muzzleIndex;
         }
      }
+    
     #endregion
 
     #region SaveData
@@ -722,7 +734,8 @@ namespace GameSetting
         public string m_GameSeed;
         public enum_StageLevel m_Stage;
         public float m_Coins;
-        public int m_EquipmentSlot;
+        public int m_Exp;
+        public int m_Rank;
         public List<EquipmentSaveData> m_Equipments;
         public List<ActionSaveData> m_ActionBuffs;
         public float m_Health;
@@ -733,7 +746,8 @@ namespace GameSetting
         public CBattleSave()
         {
             m_Coins = 0;
-            m_EquipmentSlot = GameConst.I_PlayerDefaultEquipmentSlot;
+            m_Exp = 0;
+            m_Rank = 0;
             m_Health = -1;
             m_Armor = -1;
             m_Equipments = new List<EquipmentSaveData>();
@@ -748,7 +762,8 @@ namespace GameSetting
         public void Adjust(EntityCharacterPlayer _player, GameProgressManager _level)
         {
             m_Coins = _player.m_CharacterInfo.m_Coins;
-            m_EquipmentSlot = _player.m_CharacterInfo.m_EquipmentSlot;
+            m_Exp = _player.m_CharacterInfo.m_Exp;
+            m_Rank = _player.m_CharacterInfo.m_Rank;
             m_Health = _player.m_Health.m_CurrentHealth;
             m_Armor = _player.m_Health.m_CurrentArmor;
             m_weapon1 = WeaponSaveData.Create(_player.m_Weapon1);
@@ -1543,14 +1558,14 @@ namespace GameSetting
         protected float F_ClipMultiply { get; private set; } = 1f;
         protected float F_DamageAdditive = 0f;
         
-
         protected Vector3 m_prePos;
         
         public List<ActionBase> m_PlayerExpires { get; private set; } = new List<ActionBase>();
         public List<EquipmentBase> m_ExpireEquipments { get; private set; } = new List<EquipmentBase>();
         public List<ActionBuffBase> m_ExpireBuffs { get; private set; } = new List<ActionBuffBase>();
         public float m_Coins { get; private set; } = 0;
-        public int m_EquipmentSlot { get; private set; }
+        public int m_Exp { get; private set; } = 0;
+        public int m_Rank { get; private set; } = 0;
 
         public PlayerInfoManager(EntityCharacterPlayer _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
         {
@@ -1575,7 +1590,8 @@ namespace GameSetting
         public void SetInfoData(CBattleSave m_saveData)
         {
             m_Coins = m_saveData.m_Coins;
-            m_EquipmentSlot = m_saveData.m_EquipmentSlot;
+            m_Rank = m_saveData.m_Rank;
+            m_Exp = m_saveData.m_Exp;
             ActionDataManager.CreatePlayerEquipments(m_saveData.m_Equipments).Traversal((EquipmentBase action) => { AddExpire(action); });
             ActionDataManager.CreateActionBuffs(m_saveData.m_ActionBuffs).Traversal((ActionBuffBase action) => { AddExpire(action); });
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
@@ -1736,6 +1752,9 @@ namespace GameSetting
                 else
                     m_PlayerExpires.Traversal((ActionBase action) => { action.OnReceiveHealing(damageInfo, amountApply); });
             }
+
+            if (damageEntity.m_IsDead && damageEntity.m_Flag == enum_EntityFlag.Enermy &&!damageEntity.b_isSubEntity)
+                OnEnermyKilled(damageEntity);
         }
         #endregion
         #endregion
@@ -1755,6 +1774,17 @@ namespace GameSetting
             if(isPickup)
                 m_PlayerExpires.Traversal((ActionBase action) => { action.OnGainCoins(coinAmount); });
             m_Coins += coinAmount;
+        }
+        #endregion
+        #region ExpInfo
+        void OnEnermyKilled(EntityCharacterBase entity)
+        {
+            m_Exp+= GameExpression.GetEnermyKillExp(entity.E_SpawnType== enum_EnermyType.Elite,GameManager.Instance.m_GameLevel.m_GameStage);
+            int expRankup = GameExpression.GetRankupExp(m_Rank);
+            if (m_Exp < expRankup)
+                return;
+            m_Exp -= expRankup;
+            m_Rank += 1;
         }
         #endregion
     }

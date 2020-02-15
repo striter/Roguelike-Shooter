@@ -34,22 +34,18 @@ public class EntityCharacterAI : EntityCharacterBase {
             m_Animator = new EnermyAnimator(tf_Model.GetComponent<Animator>(), OnAnimKeyEvent);
     }
 
-    public override void OnActivate(enum_EntityFlag _flag, int _spawnerID, float startHealth)
+    public void OnActivate(enum_EntityFlag _flag, int _spawnerID, float startHealth, float maxHealthMultiplier, SBuff difficultyBuff, bool inBattle)
     {
-        if (m_Animator!=null)
-            m_Animator.OnActivate(E_AnimatorIndex);
         base.OnActivate(_flag,_spawnerID,startHealth);
-    }
-
-    public void OnAIActivate( float maxHealthMultiplier, SBuff difficultyBuff,bool inBattle)
-    {
+        if (m_Animator != null)
+            m_Animator.OnActivate(E_AnimatorIndex);
         m_CharacterInfo.AddBuff(-1, difficultyBuff);
         m_Health.SetHealthMultiplier(maxHealthMultiplier);
         m_Health.OnActivate(I_MaxHealth);
         m_Agent.enabled = true;
         AIActivate(inBattle);
     }
-
+    
     protected override void OnRevive()
     {
         base.OnRevive();

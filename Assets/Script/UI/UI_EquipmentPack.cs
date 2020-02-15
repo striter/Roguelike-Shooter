@@ -18,11 +18,11 @@ public class UI_EquipmentPack : UIPage {
     {
         m_Info = _info;
         m_Grid.ClearGrid();
-        List<EquipmentBase> targetList = _info.m_ExpireEquipments;
-        for (int i = 0; i < _info.m_EquipmentSlot; i++)
-            m_Grid.AddItem(i).SetInfo( i< targetList.Count ? targetList[i]:null);
+        _info.m_ExpireEquipments.Traversal((int index,EquipmentBase equipment) => {
+            m_Grid.AddItem(index).SetInfo(equipment);
+        });
         m_Selecting.transform.SetActivate(false);
-        if (targetList.Count > 0)
+        if (_info.m_ExpireEquipments.Count > 0)
             m_Grid.OnItemClick(0);
     }
 

@@ -16,8 +16,6 @@ public class EntityBase : CObjectPoolMono<int>
     protected bool m_HitCheckEnabled { get; private set; } = false;
     protected virtual float DamageReceiveMultiply => 1;
     protected virtual float HealReceiveMultiply => 1f;
-    public int m_SpawnerEntityID { get; private set; }
-    public bool b_isSubEntity => m_SpawnerEntityID != -1;
     public bool m_IsDead { get; private set; }
     public bool m_Activating { get; private set; }
     HitCheckEntity[] m_HitChecks;
@@ -27,7 +25,7 @@ public class EntityBase : CObjectPoolMono<int>
         m_HitChecks = GetComponentsInChildren<HitCheckEntity>();
         m_Health = GetHealthManager();
     }
-    public virtual void OnActivate( enum_EntityFlag _flag,int _spawnerID=-1, float startHealth =0)
+    protected virtual void OnActivate(enum_EntityFlag flag,float startHealth =0)
     {
         if (m_Activating)
         {
@@ -35,11 +33,8 @@ public class EntityBase : CObjectPoolMono<int>
             return;
         }
         m_Activating = true;
-
-        m_Flag = _flag;
-        m_SpawnerEntityID = _spawnerID;
-        ActivateHealthManager(startHealth>0? startHealth:I_MaxHealth);
         m_EntityID = GameIdentificationManager.I_EntityID(m_Flag);
+        ActivateHealthManager(startHealth>0? startHealth:I_MaxHealth);
         m_HitChecks.Traversal((HitCheckEntity check) => { check.Attach(this, OnReceiveDamage); });
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityActivate, this);
         EnableHitbox(true);

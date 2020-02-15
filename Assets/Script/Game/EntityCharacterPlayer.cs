@@ -87,21 +87,22 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
     }
-    public void SetPlayer(CBattleSave m_saveData, Vector3 position, Quaternion rotation)
+
+    public void OnActivate(CBattleSave m_saveData)
     {
-        transform.position = position;
-        transform.rotation = rotation;
-        m_CharacterRotation = rotation;
+        base.OnActivate(enum_EntityFlag.Player);
+        m_CharacterRotation = transform.rotation;
         CameraController.Instance.SetCameraRotation(-1, transform.rotation.eulerAngles.y);
         m_Agent.enabled = true;
 
         m_CharacterInfo.SetInfoData(m_saveData);
-        m_Health.OnActivate(m_saveData.m_Health>=0?m_saveData.m_Health:I_MaxHealth, m_saveData.m_Armor >= 0? m_saveData.m_Armor: I_DefaultArmor);
+        m_Health.OnActivate(m_saveData.m_Health >= 0 ? m_saveData.m_Health : I_MaxHealth, m_saveData.m_Armor >= 0 ? m_saveData.m_Armor : I_DefaultArmor);
         ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_weapon1));
         if (m_saveData.m_weapon2.m_Weapon != enum_PlayerWeapon.Invalid)
             ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_weapon2));
         SwapWeapon(m_saveData.m_weaponEquipingFirst);
     }
+
     protected override void OnBattleFinish()
     {
         base.OnBattleFinish();
@@ -423,18 +424,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         m_CharacterInfo.OnEntityActivate(targetEntity);
     }
-    protected override void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
-    {
-        base.OnCharacterHealthChange(damageInfo, damageEntity, amountApply);
-        
-        if (amountApply <= 0 || damageEntity.b_isSubEntity || !GameManager.Instance.EntityExists(damageInfo.m_detail.I_SourceID))
-            return;
 
-        if (damageInfo.m_detail.I_SourceID == m_EntityID || GameManager.Instance.GetEntity(damageInfo.m_detail.I_SourceID).m_SpawnerEntityID == m_EntityID)
-        {
-            //Dealt Damage
-        }
-    }
     #endregion
     #region UI Indicator
     protected override bool OnReceiveDamage(DamageInfo damageInfo, Vector3 damageDirection)

@@ -19,6 +19,8 @@ public class EntityCharacterBase : EntityBase
     public CharacterInfoManager m_CharacterInfo { get; private set; }
     EntityCharacterEffectManager m_Effect;
     public virtual Vector3 m_PrecalculatedTargetPos(float time)=> tf_Head.position;
+    public int m_SpawnerEntityID { get; private set; }
+    public bool b_isSubEntity => m_SpawnerEntityID != -1;
     protected virtual CharacterInfoManager GetEntityInfo() => new CharacterInfoManager(this, m_HitCheck.TryHit, OnExpireChange);
     public virtual float m_baseMovementSpeed => F_MovementSpeed;
     public override bool B_IsCharacter => true;
@@ -59,9 +61,10 @@ public class EntityCharacterBase : EntityBase
         m_Effect.OnDisable();
     }
 
-    public override void OnActivate(enum_EntityFlag _flag,int _spawnerID=-1,float startHealth =0)
+    protected void OnActivate(enum_EntityFlag _flag,int _spawnerID=-1,float startHealth =0)
     {
-       base.OnActivate(_flag,_spawnerID,startHealth);
+        base.OnActivate(_flag, startHealth);
+        m_SpawnerEntityID = _spawnerID; 
         m_Effect.OnReset();
     }
 
