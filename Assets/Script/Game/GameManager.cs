@@ -185,16 +185,20 @@ public class GameManager : GameManagerBase
         int amount;
         if(pickupGenerateData.CanGenerateCoins(m_LocalPlayer.m_CharacterInfo.P_CoinsDropBase,out amount))
             GameObjectManager.SpawnInteract<InteractPickupCoin>(enum_Interaction.PickupCoin, GetPickupPosition(entity), Quaternion.identity, tf_Interacts).Play(amount);
-        
+
+        GameObjectManager.SpawnInteract<InteractPickupExp>(enum_Interaction.PickupExp, GetPickupPosition(entity), Quaternion.identity, tf_Interacts).Play(GameExpression.GetEnermyKillExp(entity.E_SpawnType == enum_EnermyType.Elite, m_GameLevel.m_GameStage));
+
         enum_WeaponRarity weaponRarity = TCommon.RandomPercentage(pickupGenerateData.m_WeaponRate, enum_WeaponRarity.Invalid);
         if (weaponRarity != enum_WeaponRarity.Invalid)
             GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, GetPickupPosition(entity), Quaternion.identity, tf_Interacts).Play(GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew(GameDataManager.m_WeaponRarities[weaponRarity].RandomItem()),null));
-        
     }
     
     Vector3 GetPickupPosition(EntityCharacterBase dropper) => NavigationManager.NavMeshPosition(dropper.transform.position + TCommon.RandomXZSphere(1.5f));
 
-    void OnPlayerRankUp()=> GameUIManager.Instance.ShowPage<UI_EquipmentSelect>(true,0f).Show(new List<EquipmentBase>() {ActionDataManager.CreateRandomPlayerEquipment( enum_EquipmentRarity.Normal,null), ActionDataManager.CreateRandomPlayerEquipment(enum_EquipmentRarity.OutStanding, null), ActionDataManager.CreateRandomPlayerEquipment(enum_EquipmentRarity.Epic, null), } ,m_LocalPlayer.m_CharacterInfo.OnEquipmentAcquire);
+    void OnPlayerRankUp()=> GameUIManager.Instance.ShowPage<UI_EquipmentSelect>(true,0f).Show(new List<EquipmentBase>()  {
+        ActionDataManager.CreateRandomPlayerEquipment(TCommon.RandomPercentage(m_GameLevel.m_InteractGenerate.m_RankupEquipment),null),
+        ActionDataManager.CreateRandomPlayerEquipment(TCommon.RandomPercentage(m_GameLevel.m_InteractGenerate.m_RankupEquipment), null),
+        ActionDataManager.CreateRandomPlayerEquipment(TCommon.RandomPercentage(m_GameLevel.m_InteractGenerate.m_RankupEquipment), null) } ,m_LocalPlayer.m_CharacterInfo.OnEquipmentAcquire);
     #endregion
     #region SFXHitCheck
     public static bool B_CanSFXHitTarget(HitCheckBase hitCheck, int sourceID)    //If Match Will Hit Target

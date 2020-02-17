@@ -387,7 +387,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
         OnInteractStatus();
     }
-    public void OnInteractPickup(InteractPickup pickup,int amount)
+    public void OnInteractPickup(InteractPickupAmount pickup,int amount)
     {
         switch (pickup.m_InteractType)
         {
@@ -400,6 +400,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             case enum_Interaction.PickupCoin:
                 m_CharacterInfo.OnCoinsGain(amount,true);
                 break;
+            case enum_Interaction.PickupExp:
+                m_CharacterInfo.OnExpGain(amount);
+                return;
             case enum_Interaction.PickupHealth:
             case enum_Interaction.PickupHealthPack:
                 m_HitCheck.TryHit(new DamageInfo(-amount, enum_DamageType.HealthOnly, DamageDeliverInfo.Default(m_EntityID)));

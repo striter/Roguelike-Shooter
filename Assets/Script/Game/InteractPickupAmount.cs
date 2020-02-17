@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
 
-public class InteractPickupAmount : InteractPickup {
+public class InteractPickupAmount : InteractGameBase {
     public int m_Amount { get; private set; }
-    protected bool m_OutOfBattle { get; private set; }
+    public override bool B_InteractOnTrigger => true;
+    protected override bool B_SelfRecycleOnInteract => true;
+    protected override bool E_InteractOnEnable => false;
     float m_speed;
     Transform m_moveTowards;
     public virtual InteractPickupAmount Play(int amount)
     {
         base.Play();
         m_speed = 0;
-        m_OutOfBattle = false;
         m_Amount = amount;
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
         return this;
@@ -34,14 +35,12 @@ public class InteractPickupAmount : InteractPickup {
 
     void OnBattleFinish()
     {
-        if (!m_InteractEnable)
-            return;
+        SetInteractable(true);
         m_moveTowards = GameManager.Instance.m_LocalPlayer.transform;
-        m_OutOfBattle = true;
     }
     private void Update()
     {
-        if (!m_OutOfBattle || m_moveTowards == null)
+        if (!m_InteractEnable || m_moveTowards == null)
             return;
 
         if (m_speed<12f)

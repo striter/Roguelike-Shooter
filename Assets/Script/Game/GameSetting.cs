@@ -206,17 +206,19 @@ namespace GameSetting
                 default: return new StageInteractGenerateData();
                 case enum_StageLevel.Rookie:
                     return StageInteractGenerateData.Create(
-                        new Dictionary<enum_EquipmentRarity, int>() { { enum_EquipmentRarity.Normal, 80 }, { enum_EquipmentRarity.OutStanding, 15 }, { enum_EquipmentRarity.Epic,5 } },
-                        new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 100 }, { enum_WeaponRarity.Rare, 0 }, { enum_WeaponRarity.Legend, 0 } },
-                        new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 50 }, { enum_WeaponRarity.Advanced, 50 }, { enum_WeaponRarity.Rare, 0 }, { enum_WeaponRarity.Legend, 0 } },
-                        PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),       //Normal
-                        new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Ordinary, 6 },{ enum_WeaponRarity.Advanced,3} }),          //Weapon
-                        PickupGenerateData.Create(10, 100, 50, new RangeInt(10, 5),     //Elite
-                        new Dictionary<enum_WeaponRarity, float> { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 100 } })
+                        new Dictionary<enum_EquipmentRarity, int>() { { enum_EquipmentRarity.Normal, 80 }, { enum_EquipmentRarity.OutStanding, 15 }, { enum_EquipmentRarity.Epic,5 } },     //Trade Equipment
+                        new Dictionary<enum_EquipmentRarity, int>() { { enum_EquipmentRarity.Normal, 100 }, { enum_EquipmentRarity.OutStanding, 0 }, { enum_EquipmentRarity.Epic, 0 } },    //Rankup Equipment
+                        new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 100 }, { enum_WeaponRarity.Rare, 0 }, { enum_WeaponRarity.Legend, 0 } },        //Trade Weapon
+                        new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 50 }, { enum_WeaponRarity.Advanced, 50 }, { enum_WeaponRarity.Rare, 0 }, { enum_WeaponRarity.Legend, 0 } },        //Reward Weapon
+                        PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),       //Normal Pickups
+                        new Dictionary<enum_WeaponRarity, float> {{ enum_WeaponRarity.Ordinary, 6 },{ enum_WeaponRarity.Advanced,3} }),          //Normal Weapon Pikcups
+                        PickupGenerateData.Create(10, 100, 50, new RangeInt(10, 5),     //Elite Pickups
+                        new Dictionary<enum_WeaponRarity, float> { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 100 } })        //Elite Weapon Pickups
                         );
                 case enum_StageLevel.Veteran:
                     return StageInteractGenerateData.Create(
                         new Dictionary<enum_EquipmentRarity, int>() { { enum_EquipmentRarity.Normal, 50 }, { enum_EquipmentRarity.OutStanding, 45 }, { enum_EquipmentRarity.Epic, 5 } },
+                        new Dictionary<enum_EquipmentRarity, int>() { { enum_EquipmentRarity.Normal, 0 }, { enum_EquipmentRarity.OutStanding, 100 }, { enum_EquipmentRarity.Epic, 0 } },
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 0 }, { enum_WeaponRarity.Rare, 100 }, { enum_WeaponRarity.Legend, 0 } },
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced,50 }, { enum_WeaponRarity.Rare, 50 }, { enum_WeaponRarity.Legend, 0 } },
                         PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),
@@ -227,6 +229,7 @@ namespace GameSetting
                 case enum_StageLevel.Ranger:
                     return StageInteractGenerateData.Create(
                         new Dictionary<enum_EquipmentRarity, int>() { { enum_EquipmentRarity.Normal,5} , { enum_EquipmentRarity.OutStanding,65 } , { enum_EquipmentRarity.Epic, 30 } },
+                        new Dictionary<enum_EquipmentRarity, int>() { { enum_EquipmentRarity.Normal, 0 }, { enum_EquipmentRarity.OutStanding, 0 }, { enum_EquipmentRarity.Epic, 100 } },
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 0 }, { enum_WeaponRarity.Rare, 0 }, { enum_WeaponRarity.Legend, 100 } },
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 0 }, { enum_WeaponRarity.Rare, 50 }, { enum_WeaponRarity.Legend, 50 } },
                         PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),
@@ -492,7 +495,7 @@ namespace GameSetting
     public enum enum_EnermyType { Invalid = -1, Fighter = 1, Shooter_Rookie = 2, Shooter_Veteran = 3, AOECaster = 4, Elite = 5, }
 
     public enum enum_Interaction { Invalid = -1,
-        GameBegin,Bonfire, TradeContainer, PickupCoin, PickupHealth,PickupHealthPack, PickupArmor,RewardChest, Equipment, Weapon, Portal, GameEnd,
+        GameBegin,Bonfire, TradeContainer, PickupCoin, PickupHealth,PickupHealthPack,PickupExp, PickupArmor,RewardChest, Equipment, Weapon, Portal, GameEnd,
         CampBegin,CampStage, CampDifficult,CampFarm,CampAction,CampEnd, }
     
     public enum enum_ProjectileFireType { Invalid = -1, Single = 1, MultipleFan = 2, MultipleLine = 3, };
@@ -644,11 +647,12 @@ namespace GameSetting
     public struct StageInteractGenerateData
     {
         public Dictionary<enum_EquipmentRarity,int> m_TradeEquipment { get; private set; }
+        public Dictionary<enum_EquipmentRarity, int> m_RankupEquipment { get; private set; }
         public Dictionary<enum_WeaponRarity, int> m_TradeWeapon { get; private set; }
         public Dictionary<enum_WeaponRarity, int> m_RewardWeapon { get; private set; }
         public PickupGenerateData m_NormalPickupData { get; private set; }
         public PickupGenerateData m_ElitePickupData { get; private set; }
-        public static StageInteractGenerateData Create(Dictionary<enum_EquipmentRarity, int>  _tradeEquipmentRate,Dictionary<enum_WeaponRarity,int> _tradeWeaponRate, Dictionary<enum_WeaponRarity, int> _rewardWeaponRate, PickupGenerateData _normalGenerate,PickupGenerateData _eliteGenerate) => new StageInteractGenerateData() {m_TradeEquipment=_tradeEquipmentRate, m_TradeWeapon=_tradeWeaponRate, m_RewardWeapon = _rewardWeaponRate, m_NormalPickupData=_normalGenerate,m_ElitePickupData=_eliteGenerate};
+        public static StageInteractGenerateData Create(Dictionary<enum_EquipmentRarity, int>  _tradeEquipmentRate, Dictionary<enum_EquipmentRarity, int> _rankupEquipment, Dictionary<enum_WeaponRarity,int> _tradeWeaponRate, Dictionary<enum_WeaponRarity, int> _rewardWeaponRate, PickupGenerateData _normalGenerate,PickupGenerateData _eliteGenerate) => new StageInteractGenerateData() {m_TradeEquipment=_tradeEquipmentRate,m_RankupEquipment= _rankupEquipment, m_TradeWeapon=_tradeWeaponRate, m_RewardWeapon = _rewardWeaponRate, m_NormalPickupData=_normalGenerate,m_ElitePickupData=_eliteGenerate};
     }
 
     public struct EliteBuffCombine
@@ -1754,9 +1758,6 @@ namespace GameSetting
                 else
                     m_PlayerExpires.Traversal((ActionBase action) => { action.OnReceiveHealing(damageInfo, amountApply); });
             }
-
-            if (damageEntity.m_IsDead && damageEntity.m_Flag == enum_EntityFlag.Enermy &&!damageEntity.b_isSubEntity)
-                OnExpGain(GameExpression.GetEnermyKillExp(damageEntity.E_SpawnType == enum_EnermyType.Elite, GameManager.Instance.m_GameLevel.m_GameStage));
         }
         #endregion
         #endregion

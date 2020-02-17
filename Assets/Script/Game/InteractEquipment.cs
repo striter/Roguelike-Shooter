@@ -23,12 +23,4 @@ public class InteractEquipment : InteractGameBase {
         _interactor.m_CharacterInfo.OnEquipmentAcquire(m_Equipment);
         return false;
     }
-
-    void OnEquipmentSwapPage(bool confirm)
-    {
-        if (confirm)
-            OnRecycle();
-        else
-            SetInteractable(true);
-    }
 }
