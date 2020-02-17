@@ -50,21 +50,10 @@ public class GameLevelManager : SingletonMono<GameLevelManager> {
         GameRenderData[] customizations = TResources.GetRenderData(style);
         GameRenderData randomData = customizations.Length == 0 ? GameRenderData.Default() : customizations.RandomItem(random);
         randomData.DataInit(m_DirectionalLight, CameraController.Instance.m_Camera);
-        Dictionary<enum_ChunkType, List<LevelChunkData>> datas = TResources.GetChunkDatas();
+        Dictionary<enum_ChunkType, List<LevelChunkData>> chunkDatas = TResources.GetChunkDatas();
         List<ChunkGenerateData> gameChunkGenerate = new List<ChunkGenerateData>();
         m_chunkLifting = -1;
 
-        Action<ChunkGenerateData, List<ChunkGenerateData>> ConnectGameData = (ChunkGenerateData startData, List<ChunkGenerateData> connectDatas) =>
-        {
-            ChunkGenerateData dataTemp = startData;
-            connectDatas.Traversal((ChunkGenerateData data) =>
-            {
-                dataTemp.OnConnectionSet(data.m_PreChunkConnectPoint);
-                data.OnConnectionSet(data.m_ChunkConnectPoint);
-                dataTemp = data;
-                gameChunkGenerate.Add(data);
-            });
-        };
         Func<enum_ChunkEventType> RandomEventType = () => TCommon.RandomPercentage(GameConst.D_ChunkEventPercentage,random);
         List<ChunkPreGenerateData> mainChunkType = m_FinalBattleTest ? new List<ChunkPreGenerateData>() {new ChunkPreGenerateData( enum_ChunkType.Event,  enum_ChunkEventType.Bonefire)  , new ChunkPreGenerateData(enum_ChunkType.Final) } :
             new List<ChunkPreGenerateData>()
@@ -81,18 +70,33 @@ public class GameLevelManager : SingletonMono<GameLevelManager> {
             while (true)
             {
                 gameChunkGenerate.Clear();
-                //Generate Main Chunks
-                gameChunkGenerate.Add(new ChunkGenerateData(gameChunkGenerate.Count, TileAxis.Zero, datas[enum_ChunkType.Start].RandomItem(random), enum_ChunkEventType.Invalid));
+                Dictionary<enum_ChunkType, List<LevelChunkData>> chunkDatasCopy = new Dictionary<enum_ChunkType, List<LevelChunkData>>(chunkDatas);
+                Action<ChunkGenerateData, List<ChunkGenerateData>> ConnectGameData = (ChunkGenerateData startData, List<ChunkGenerateData> connectDatas) =>
+                {
+                    ChunkGenerateData preData = startData;
+                    connectDatas.Traversal((ChunkGenerateData data) =>
+                    {
+                        chunkDatasCopy[data.m_Data.Type].Remove(data.m_Data);
+                        preData.OnConnectionSet(data.m_PreChunkConnectPoint);
+                        data.OnConnectionSet(data.m_ChunkConnectPoint);
+                        preData = data;
+                        gameChunkGenerate.Add(data);
+                    });
+                };
 
-                List<ChunkGenerateData> mainConnectionChunks = null;
+                //Generate Main Chunks
+                gameChunkGenerate.Add(new ChunkGenerateData(gameChunkGenerate.Count, TileAxis.Zero, chunkDatasCopy[enum_ChunkType.Start].RandomItem(random), enum_ChunkEventType.Invalid));
+
                 //Gemerate Main Chunks
-                mainConnectionChunks = TryGenerateChunkDatas(gameChunkGenerate.Count, gameChunkGenerate[0], gameChunkGenerate, datas, mainChunkType, random);
-                if (mainConnectionChunks == null)
+                List<ChunkGenerateData> mainConnectionChunks = null;
+                if (! TryGenerateChunkDatas(gameChunkGenerate.Count, gameChunkGenerate[0], gameChunkGenerate, chunkDatasCopy, mainChunkType, random,out mainConnectionChunks))
                     continue;
                 ConnectGameData(gameChunkGenerate[0], mainConnectionChunks);
-                //Generate Sub Chunks
-                Func<int, bool> GenerateSubChunks = (int subCount) => {
 
+                //Generate Sub Chunks
+                if (m_FinalBattleTest)
+                    break;
+                Func<int, bool> GenerateSubChunks = (int subCount) => {
                     ChunkGenerateData subStartChunk = null;
                     List<ChunkGenerateData> subConnectionChunks = null;
                     mainConnectionChunks.TraversalRandomBreak((ChunkGenerateData mainChunk) =>
@@ -100,19 +104,16 @@ public class GameLevelManager : SingletonMono<GameLevelManager> {
                         if (!mainChunk.HaveEmptyConnection())
                             return false;
                         subStartChunk = mainChunk;
-                        subConnectionChunks = TryGenerateChunkDatas(subCount * 1000, subStartChunk, gameChunkGenerate, datas, subChunkType, random);
-                        return subConnectionChunks != null;
+                        return TryGenerateChunkDatas(subCount * 1000, subStartChunk, gameChunkGenerate, chunkDatasCopy, subChunkType, random,out subConnectionChunks) ;
                     }, random);
 
-                    if (subConnectionChunks == null)
+                    if (subConnectionChunks.Count==0)
                         return false;
 
                     ConnectGameData(subStartChunk, subConnectionChunks);
                     return true;
                 };
 
-                if (m_FinalBattleTest)
-                    break;
                 if (!GenerateSubChunks(1))
                     continue;
                 if (!GenerateSubChunks(2))
@@ -180,8 +181,10 @@ public class GameLevelManager : SingletonMono<GameLevelManager> {
         #endregion
     }
 
-    List<ChunkGenerateData> TryGenerateChunkDatas(int generateStartIndex,ChunkGenerateData generateStartChunk,List<ChunkGenerateData> intersectsCheckChunks, Dictionary<enum_ChunkType, List<LevelChunkData>> datas,List<ChunkPreGenerateData> generateMainTypes,System.Random random)
+   bool TryGenerateChunkDatas(int generateStartIndex,ChunkGenerateData generateStartChunk,List<ChunkGenerateData> intersectsCheckChunks, Dictionary<enum_ChunkType, List<LevelChunkData>> chunkDatas,List<ChunkPreGenerateData> generateMainTypes,System.Random random, out List<ChunkGenerateData> chunkGenerateData)
     {
+        Dictionary<enum_ChunkType, List<LevelChunkData>> chunkDataCopies = new Dictionary<enum_ChunkType, List<LevelChunkData>>(chunkDatas);
+          chunkGenerateData = new List<ChunkGenerateData>();
         List<ChunkPreGenerateData> totalGenerateTypes = new List<ChunkPreGenerateData>();
         for(int i=0;i<generateMainTypes.Count;i++)
         {
@@ -189,7 +192,6 @@ public class GameLevelManager : SingletonMono<GameLevelManager> {
             totalGenerateTypes.Add(generateMainTypes[i]);
         }
         List<ChunkGenerateData> chunkIntersectsCheckData = new List<ChunkGenerateData>(intersectsCheckChunks);
-        List<ChunkGenerateData> chunkGenerateData = new List<ChunkGenerateData>();
         ChunkGenerateData previousChunkGenerate = generateStartChunk;
         for (int i = 0; i < totalGenerateTypes.Count; i++)
         {
@@ -201,7 +203,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager> {
 
                 ChunkConnectionData m_previousConnectionData = previousChunkGenerate.m_Data.Connections[previousConnectionIndex];
                 enum_TileDirection connectDirection = m_previousConnectionData.m_Direction.Inverse();
-                datas[totalGenerateTypes[i].m_ChunkType].TraversalRandomBreak((LevelChunkData curChunkData) =>
+                chunkDataCopies[totalGenerateTypes[i].m_ChunkType].TraversalRandomBreak((LevelChunkData curChunkData) =>
                 {
                     ChunkConnectionData? nextConnectionData = null;
                     curChunkData.Connections.TraversalRandomBreak((int curConnectionIndex) => {
@@ -234,17 +236,15 @@ public class GameLevelManager : SingletonMono<GameLevelManager> {
 
             if (nextChunkGenerate == null)
             {
-                chunkGenerateData = null;
-                break;
+                chunkGenerateData.Clear();
+                return false;
             }
-            else
-            {
-                chunkGenerateData.Add(nextChunkGenerate);
-                chunkIntersectsCheckData.Add(nextChunkGenerate);
-                previousChunkGenerate = nextChunkGenerate;
-            }
+            chunkDataCopies[nextChunkGenerate.m_Data.Type].Remove(nextChunkGenerate.m_Data);
+            chunkGenerateData.Add(nextChunkGenerate);
+            chunkIntersectsCheckData.Add(nextChunkGenerate);
+            previousChunkGenerate = nextChunkGenerate;
         }
-        return chunkGenerateData;
+        return true;
     }
 
     bool CheckChunkIntersects(TileAxis s1origin,TileAxis s1size,TileAxis s2origin,TileAxis s2size,System.Random random)
