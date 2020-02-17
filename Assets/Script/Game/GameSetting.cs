@@ -207,7 +207,7 @@ namespace GameSetting
                 case enum_StageLevel.Rookie:
                     return StageInteractGenerateData.Create(
                         new Dictionary<enum_EquipmentRarity, int>() { { enum_EquipmentRarity.Normal, 80 }, { enum_EquipmentRarity.OutStanding, 15 }, { enum_EquipmentRarity.Epic,5 } },     //Trade Equipment
-                        new Dictionary<enum_EquipmentRarity, int>() { { enum_EquipmentRarity.Normal, 100 }, { enum_EquipmentRarity.OutStanding, 0 }, { enum_EquipmentRarity.Epic, 0 } },    //Rankup Equipment
+                        new Dictionary<enum_EquipmentRarity, int>() { { enum_EquipmentRarity.Normal, 50 }, { enum_EquipmentRarity.OutStanding, 30 }, { enum_EquipmentRarity.Epic, 20 } },    //Rankup Equipment
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 100 }, { enum_WeaponRarity.Rare, 0 }, { enum_WeaponRarity.Legend, 0 } },        //Trade Weapon
                         new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 50 }, { enum_WeaponRarity.Advanced, 50 }, { enum_WeaponRarity.Rare, 0 }, { enum_WeaponRarity.Legend, 0 } },        //Reward Weapon
                         PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),       //Normal Pickups
