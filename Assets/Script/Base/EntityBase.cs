@@ -33,6 +33,7 @@ public class EntityBase : CObjectPoolMono<int>
             return;
         }
         m_Activating = true;
+        m_Flag = flag;
         m_EntityID = GameIdentificationManager.I_EntityID(m_Flag);
         ActivateHealthManager(startHealth>0? startHealth:I_MaxHealth);
         m_HitChecks.Traversal((HitCheckEntity check) => { check.Attach(this, OnReceiveDamage); });

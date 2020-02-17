@@ -277,6 +277,12 @@ public static class ICoroutineHelper_Extend
             if (!m_CoroutinesDic.ContainsKey(targetIndex))
                 return;
 
+            if(m_CoroutinesDic[targetIndex]==null)
+            {
+                m_CoroutinesDic.Remove(targetIndex);
+                return;
+            }
+
             Instance.StopCoroutine(m_CoroutinesDic[targetIndex]);
         }
         protected override void OnDestroy()

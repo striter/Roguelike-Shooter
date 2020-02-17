@@ -111,13 +111,14 @@ public class EntityCharacterBase : EntityBase
 
     protected override bool OnReceiveDamage(DamageInfo damageInfo, Vector3 damageDirection)
     {
-        if (base.OnReceiveDamage(damageInfo, damageDirection))
-        {
-            damageInfo.m_detail.m_BaseBuffApply.Traversal((SBuff buffInfo) => { m_CharacterInfo.AddBuff(damageInfo.m_detail.I_SourceID, buffInfo); });
-            if (damageInfo.m_detail.m_DamageEffect != enum_CharacterEffect.Invalid) m_CharacterInfo.OnSetEffect(damageInfo.m_detail.m_DamageEffect, damageInfo.m_detail.m_EffectDuration);
-            return true;
-        }
-        return false;
+        if (!base.OnReceiveDamage(damageInfo, damageDirection))
+            return false;
+
+        damageInfo.m_detail.m_BaseBuffApply.Traversal((SBuff buffInfo) => { m_CharacterInfo.AddBuff(damageInfo.m_detail.I_SourceID, buffInfo); });
+        if (damageInfo.m_detail.m_DamageEffect != enum_CharacterEffect.Invalid)
+            m_CharacterInfo.OnSetEffect(damageInfo.m_detail.m_DamageEffect, damageInfo.m_detail.m_EffectDuration);
+
+        return true;
     }
 
     protected virtual void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)

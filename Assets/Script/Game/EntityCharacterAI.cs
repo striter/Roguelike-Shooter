@@ -78,8 +78,6 @@ public class EntityCharacterAI : EntityCharacterBase {
             m_Animator.SetForward(m_Moving ? 1f:0f);
             m_Animator.SetPause(m_CharacterInfo.B_Effecting( enum_CharacterEffect.Freeze));
         }
-        m_Impact = Vector3.Lerp(Vector3.zero, m_Impact, Time.deltaTime * 20f);
-        if(m_Impact.magnitude>.2f) transform.Translate(m_Impact,Space.World);
         if (!m_AIBattleActivating)
         {
             m_OuttaBattleTimer.Tick(deltaTime);
@@ -96,13 +94,15 @@ public class EntityCharacterAI : EntityCharacterBase {
     protected override void OnDeadTick(float deltaTime)
     {
         base.OnDeadTick(deltaTime);
-        if(m_Animator!=null)  m_Animator.SetPause(false);
+        m_Impact = Vector3.Lerp(Vector3.zero, m_Impact, Time.deltaTime * 20f);
+        if (m_Impact.magnitude > .2f) transform.Translate(m_Impact, Space.World);
+        if (m_Animator!=null)  m_Animator.SetPause(false);
     }
 
     protected override bool OnReceiveDamage(DamageInfo damageInfo, Vector3 damageDirection)
     {
-        if (damageDirection != Vector3.zero)
-            m_Impact += -damageDirection * GameConst.AI.F_AIDamageImpact * -damageInfo.m_AmountApply;
+        if (!base.OnReceiveDamage(damageInfo, damageDirection))
+            return false;
 
         if (GameManager.Instance.CharacterExists(damageInfo.m_detail.I_SourceID))
         {
@@ -111,7 +111,10 @@ public class EntityCharacterAI : EntityCharacterBase {
                 OnBattleReceiveTarget(entity, true);
         }
 
-        return base.OnReceiveDamage(damageInfo, damageDirection);
+        if (m_IsDead && damageDirection != Vector3.zero)
+            m_Impact += -damageDirection * GameConst.AI.F_AIDeadImpact * -damageInfo.m_AmountApply;
+
+        return true;
     }
 
     protected virtual void OnAttackAnim(bool startAttack)

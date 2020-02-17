@@ -44,7 +44,7 @@ public class GameManager : GameManagerBase
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Armor", "20", KeyCode.F7, (string armor) => {GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupArmor,  NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere(5f)), Quaternion.identity, tf_Interacts).Play(int.Parse(armor));}));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Weapon", "102", KeyCode.F8, (string weapon) => { GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon,  NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere(5f)), Quaternion.identity, tf_Interacts).Play(GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew((enum_PlayerWeapon)int.Parse(weapon)))); }));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Player Equipment", "1", KeyCode.F1, (string actionIndex) => { GameObjectManager.SpawnInteract<InteractEquipment>(enum_Interaction.Equipment, NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere(5f)), Quaternion.identity, tf_Interacts).Play(ActionDataManager.CreatePlayerEquipment(EquipmentSaveData.Default(int.Parse(actionIndex), TCommon.RandomEnumValues<enum_EquipmentRarity>(null)))); }));
-
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Player Exp", "100", KeyCode.F2, (string actionIndex) => {m_LocalPlayer.m_CharacterInfo.OnExpGain(int.Parse(actionIndex));}));
         UIT_MobileConsole.Instance.AddConsoleBindings(m_bindings,(bool show)=> { Time.timeScale = show ? .1f : 1f; });
     }
     #endregion
@@ -65,6 +65,7 @@ public class GameManager : GameManagerBase
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterRevive, OnCharacterRevive);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnPlayerRankUp, OnPlayerRankUp);
         if (M_TESTSEED!="")
             GameDataManager.m_BattleData.m_GameSeed = M_TESTSEED;
         m_GameLevel =  new GameProgressManager(GameDataManager.m_GameData,GameDataManager.m_BattleData);
@@ -88,6 +89,7 @@ public class GameManager : GameManagerBase
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterRevive, OnCharacterRevive);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnPlayerRankUp, OnPlayerRankUp);
     }
     protected override void Start()
     {
@@ -191,6 +193,8 @@ public class GameManager : GameManagerBase
     }
     
     Vector3 GetPickupPosition(EntityCharacterBase dropper) => NavigationManager.NavMeshPosition(dropper.transform.position + TCommon.RandomXZSphere(1.5f));
+
+    void OnPlayerRankUp()=> GameUIManager.Instance.ShowPage<UI_EquipmentSelect>(true,0f).Show(new List<EquipmentBase>() {ActionDataManager.CreateRandomPlayerEquipment( enum_EquipmentRarity.Normal,null), ActionDataManager.CreateRandomPlayerEquipment(enum_EquipmentRarity.OutStanding, null), ActionDataManager.CreateRandomPlayerEquipment(enum_EquipmentRarity.Epic, null), } ,m_LocalPlayer.m_CharacterInfo.OnEquipmentAcquire);
     #endregion
     #region SFXHitCheck
     public static bool B_CanSFXHitTarget(HitCheckBase hitCheck, int sourceID)    //If Match Will Hit Target
@@ -223,7 +227,7 @@ public class GameManager : GameManagerBase
         if (m_revived)
             return;
         m_revived = true;
-        UIManager.Instance.ShowPage<UI_Revive>(true, 0f).Play(_OnRevivePlayer);
+        GameUIManager.Instance.ShowPage<UI_Revive>(true, 0f).Play(_OnRevivePlayer);
     }
     #endregion
     #region Entity Management
@@ -332,6 +336,7 @@ public class GameManager : GameManagerBase
         });
         return target;
     }
+
     public List<EntityCharacterBase> GetNearbyCharacters(EntityCharacterBase sourceEntity, bool targetAlly, bool checkObstacle = true, float checkDistance = float.MaxValue, Predicate<EntityCharacterBase> predictMatch = null)
     {
         List<EntityCharacterBase> targetCharacters = new List<EntityCharacterBase>();

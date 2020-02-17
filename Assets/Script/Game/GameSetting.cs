@@ -58,7 +58,7 @@ namespace GameSetting
             public const float F_AIReTargetCheckParam = 3f;       //AI Retarget Duration,3f is suggested
             public const float F_AITargetCalculationParam = .5f;       //AI Target Param Calculation Duration, 1 is suggested;
             public const float F_AIMaxRepositionDuration = .5f;
-            public const float F_AIDamageImpact = 0.01f;   //.003f;
+            public const float F_AIDeadImpact = 0.03f;   //.003f;
             public const int I_AIIdlePercentage = 50;
             public static readonly RangeFloat RF_AIBattleIdleDuration = new RangeFloat(1f, 2f);
         }
@@ -442,6 +442,8 @@ namespace GameSetting
         OnCharacterHealthChange,
         OnCharacterDead,
         OnCharacterRevive,
+
+        OnPlayerRankUp,
         
         OnBattleStart,
         OnBattleFinish,
@@ -1754,7 +1756,7 @@ namespace GameSetting
             }
 
             if (damageEntity.m_IsDead && damageEntity.m_Flag == enum_EntityFlag.Enermy &&!damageEntity.b_isSubEntity)
-                OnEnermyKilled(damageEntity);
+                OnExpGain(GameExpression.GetEnermyKillExp(damageEntity.E_SpawnType == enum_EnermyType.Elite, GameManager.Instance.m_GameLevel.m_GameStage));
         }
         #endregion
         #endregion
@@ -1777,14 +1779,15 @@ namespace GameSetting
         }
         #endregion
         #region ExpInfo
-        void OnEnermyKilled(EntityCharacterBase entity)
+        public void OnExpGain(int amount)
         {
-            m_Exp+= GameExpression.GetEnermyKillExp(entity.E_SpawnType== enum_EnermyType.Elite,GameManager.Instance.m_GameLevel.m_GameStage);
+            m_Exp += amount;
             int expRankup = GameExpression.GetRankupExp(m_Rank);
             if (m_Exp < expRankup)
                 return;
             m_Exp -= expRankup;
             m_Rank += 1;
+            TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnPlayerRankUp);
         }
         #endregion
     }
