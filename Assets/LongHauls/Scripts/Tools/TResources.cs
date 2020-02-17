@@ -63,9 +63,8 @@ public class TResources
     public static LevelChunkData GetChunkData(string name) => Load<LevelChunkData>(ConstPath.S_ChunkData + "/" + name);
     public static Dictionary<enum_ChunkType, List<LevelChunkData>> GetChunkDatas()
     {
-        LevelChunkData[] datas= LoadAll<LevelChunkData>(ConstPath.S_ChunkData);
         Dictionary<enum_ChunkType,List< LevelChunkData>> sortedDatas = new Dictionary<enum_ChunkType, List<LevelChunkData>>();
-        datas.Traversal((LevelChunkData data) =>
+        LoadAll<LevelChunkData>(ConstPath.S_ChunkData).Traversal((LevelChunkData data) =>
         {
             if (!sortedDatas.ContainsKey(data.Type))
                 sortedDatas.Add(data.Type,new List<LevelChunkData>());

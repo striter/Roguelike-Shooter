@@ -192,11 +192,11 @@ public static class TIEnumerators
     {
         for(; ; )
         {
-            if (task.IsCompleted)
-                yield break;
-
             if (task.IsFaulted)
-                throw task.Exception;
+                throw(task.Exception);
+
+            if (task.IsCompleted || task.IsCanceled)
+                yield break;
 
             yield return null;
         }
