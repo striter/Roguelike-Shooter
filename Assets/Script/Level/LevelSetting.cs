@@ -9,7 +9,7 @@ namespace LevelSetting
     {
         public const int I_TileSize = 2;
         #region UI
-        public const int I_UIMapSize = 7;
+        public const int I_UIMinimapSize = 7;
         public const int I_UIPlayerViewClearRangeSecondPow = 100;       //10
         public const int I_UIPlayerViewFadeRangeSecondPow = 169;        //13
 

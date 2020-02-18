@@ -22,11 +22,12 @@ public class GameLevelManager : SingletonMono<GameLevelManager> {
 
     int m_chunkLifting = -1;
 
-    public Vector2 GetMapPosition(Vector3 worldPosition,float mapScale)
-    {
-        Vector3 offset =   worldPosition- m_MapOriginPos;
-        return new Vector2(offset.x,offset.z)/-LevelConst.I_TileSize*mapScale;
-    }
+    public Vector2 GetMapOffset(Vector3 worldPosition,float mapScale)=> - GetOffsetPosition(worldPosition) * mapScale;
+    public Vector2 GetOffsetPosition(Vector3 worldPosition){
+        Vector3 offset= (worldPosition - m_MapOriginPos) / LevelConst.I_TileSize;
+        return new Vector2(offset.x, offset.z);
+    } 
+
     public float GetMapAngle(float cameraYAngle) => cameraYAngle;
 
     public LevelChunkGame GetChunk(int chunkIndex)

@@ -49,7 +49,7 @@ public class UIManager :UIManagerBase,ICoroutineHelper
 
     protected virtual void InitGameControls(bool inGame)
     {
-        m_PlayerStatus = ShowControls<UIC_GameStatus>().SetInGame(inGame);
+        m_PlayerStatus = ShowControls<UIC_GameStatus>();
         m_UIControl = ShowControls<UIC_Control>().SetInGame(inGame);
         m_Interact = ShowControls<UIC_PlayerInteract>();
         m_Indicates = ShowControls<UIC_Indicates>();

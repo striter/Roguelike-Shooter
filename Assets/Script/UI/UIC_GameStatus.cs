@@ -34,9 +34,68 @@ public class UIC_GameStatus : UIControlBase
 
     ValueLerpSeconds m_HealthLerp,  m_ArmorLerp;
 
-    Transform m_Map;
-    RectTransform m_Map_Origin;
-    RawImage m_Map_Origin_Base, m_Map_Origin_Base_Fog;
+    GameMap m_GameMinimap;
+    UIT_TextExtend m_MinimapInfo;
+    class GameMap
+    {
+        public Transform transform { get; private set; }
+        RectTransform m_Map_Origin;
+        public RawImage m_Map_Origin_Base { get; private set; }
+        RawImage m_Map_Origin_Base_Fog;
+        UIGI_MapEntityLocation m_Player;
+        UIT_GridControllerMono<UIGI_MapEntityLocation> m_Enermys;
+        int m_MapSize;
+        public GameMap(Transform transform, int mapSize)
+        {
+            m_Map_Origin = transform.Find("Origin") as RectTransform;
+            m_Map_Origin_Base = m_Map_Origin.Find("Base").GetComponent<RawImage>();
+            m_Map_Origin_Base_Fog = m_Map_Origin_Base.transform.Find("Fog").GetComponent<RawImage>();
+            m_Player = m_Map_Origin_Base.transform.Find("Player").GetComponent<UIGI_MapEntityLocation>();
+            m_Player.Init();
+            m_Enermys = new UIT_GridControllerGridItem<UIGI_MapEntityLocation>(m_Map_Origin_Base.transform.Find("EnermyGrid"));
+            m_MapSize = mapSize;
+            m_Map_Origin_Base.rectTransform.localScale = Vector3.one * m_MapSize;
+            TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate,OnEntityActivate);
+            TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
+        }
+
+        public void OnDestroy()
+        {
+            TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityRecycle);
+            TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
+        }
+
+        public void MapInit()
+        {
+            m_Player.Play(GameManager.Instance.m_LocalPlayer);
+            m_Map_Origin_Base.texture = GameLevelManager.Instance.m_MapTexture;
+            m_Map_Origin_Base.SetNativeSize();
+            m_Map_Origin_Base_Fog.texture = GameLevelManager.Instance.m_FogTexture;
+        }
+        void OnEntityActivate(EntityBase entity)
+        {
+            if (entity.m_Flag != enum_EntityFlag.Enermy || entity.m_ControllType != enum_EntityController.AI)
+                return;
+
+            m_Enermys.AddItem(entity.m_EntityID).Play(entity);
+        }
+
+        void OnEntityRecycle(EntityBase entity)
+        {
+            if (entity.m_Flag != enum_EntityFlag.Enermy || entity.m_ControllType != enum_EntityController.AI)
+                return;
+
+            m_Enermys.RemoveItem(entity.m_EntityID);
+        }
+
+        public void Tick(float deltaTime,EntityCharacterBase _player)
+        {
+            m_Map_Origin.localRotation = Quaternion.Euler(0, 0, GameLevelManager.Instance.GetMapAngle(CameraController.CameraRotation.eulerAngles.y));
+            m_Player.UpdatePos();
+            m_Enermys.TraversalItem((int identity, UIGI_MapEntityLocation item) => { item.UpdatePos(); });
+        }
+
+    }
 
     TSpecialClasses.ValueChecker<bool> m_DyingCheck;
     protected override void Init()
@@ -79,17 +138,15 @@ public class UIC_GameStatus : UIControlBase
             rtf_ArmorFillHandle.ReAnchorReposX(value);
         });
 
-        m_Map = tf_Container.Find("Map");
-        m_Map_Origin = m_Map.Find("Origin") as RectTransform;
-        m_Map_Origin_Base = m_Map_Origin.Find("Map").GetComponent<RawImage>();
-        m_Map_Origin_Base_Fog = m_Map_Origin_Base.transform.Find("Fog").GetComponent<RawImage>();
+        m_GameMinimap = new GameMap(tf_Container.Find("Minimap/Map"),LevelConst.I_UIMinimapSize);
+        m_MinimapInfo = tf_Container.Find("Minimap/MapInfo").GetComponent<UIT_TextExtend>();
 
         m_DyingCheck = new ValueChecker<bool>(true);
 
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityPlayerHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerPerkStatus, OnEquipmentStatus);
-        TBroadCaster<enum_BC_GameStatus>.Add( enum_BC_GameStatus.OnGameBegin, OnGameLoad);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnGameBegin, MapInit);
     }
 
     protected override void OnDestroy()
@@ -97,27 +154,23 @@ public class UIC_GameStatus : UIControlBase
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityPlayerHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerPerkStatus, OnEquipmentStatus);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnGameBegin, OnGameLoad);
-    }
-
-    public UIC_GameStatus SetInGame(bool inGame)
-    {
-        m_Map.SetActivate(inGame);
-        return this;
-    }
-
-    void OnGameLoad()
-    {
-        m_Map_Origin_Base.texture = GameLevelManager.Instance.m_MapTexture;
-        m_Map_Origin_Base.SetNativeSize();
-        m_Map_Origin_Base_Fog.texture = GameLevelManager.Instance.m_FogTexture;
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnGameBegin, MapInit);
+        m_GameMinimap.OnDestroy();
     }
     
-    
+    void MapInit()
+    {
+        m_MinimapInfo.text = TLocalization.GetKeyLocalized(GameManager.Instance.m_GameLevel.m_GameStage.GetLocalizeKey()) + "\n" + TLocalization.GetKeyLocalized(GameManager.Instance.m_GameLevel.m_GameStyle.GetLocalizeKey());
+        m_GameMinimap.MapInit();
+    }
+
     private void Update()
     {
         if (!m_Player)
             return;
+
+        m_GameMinimap.Tick(Time.deltaTime, m_Player);
+        m_GameMinimap.m_Map_Origin_Base.rectTransform.anchoredPosition = GameLevelManager.Instance.GetMapOffset(m_Player.transform.position, LevelConst.I_UIMinimapSize);
 
         rtf_AmmoData.SetWorldViewPortAnchor(m_Player.tf_UIStatus.position, CameraController.Instance.m_Camera, Time.deltaTime * 10f);
 
@@ -138,9 +191,6 @@ public class UIC_GameStatus : UIControlBase
         if(m_DyingCheck.Check(dying))
             img_Dying.SetActivate(dying);
         OnAmmoStatus(_player.m_WeaponCurrent);
-        m_Map_Origin_Base.rectTransform.anchoredPosition = GameLevelManager.Instance.GetMapPosition(_player.transform.position, LevelConst.I_UIMapSize);
-        m_Map_Origin_Base.rectTransform.localScale = Vector3.one * LevelConst.I_UIMapSize;
-        m_Map_Origin.localRotation = Quaternion.Euler(0,0,GameLevelManager.Instance.GetMapAngle(CameraController.CameraRotation.eulerAngles.y));
     }
 
     void OnHealthStatus(EntityPlayerHealth _healthManager)

@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 081334a023db2704db167d2dfc323270, type: 3}
-    totalSpriteSurfaceArea: 1486627
+    totalSpriteSurfaceArea: 1592577
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -37,6 +37,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: f707edb8147ad104b8e3b9a3fc7ed413, type: 3}
   - {fileID: 21300000, guid: d783a5f7194904445969c59766ac8443, type: 3}
   - {fileID: 21300000, guid: 103d90c5da42cc84aa6f39191e7c6866, type: 3}
+  - {fileID: 21300000, guid: f597cce6716aa6040a48ef96d4d43715, type: 3}
   - {fileID: 21300000, guid: 18a7c2d7df8a6854e9bc2e3248a93804, type: 3}
   - {fileID: 21300000, guid: 006ea73e2bf56dc4e959b2bc4171da77, type: 3}
   - {fileID: 21300000, guid: ce23f48acd6ddf541b7a5d298771ae09, type: 3}
@@ -65,6 +66,7 @@ SpriteAtlas:
   - result_title_win_EN
   - result_title_fail_EN
   - background_usecard_angle
+  - map_minimap_BG
   - result_title_fail_CN
   - result_title_win_CN
   - backpack_bottom

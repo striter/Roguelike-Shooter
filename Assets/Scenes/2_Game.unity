@@ -813,7 +813,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae08493bc1f94d84f9ae4429219b0672, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_FinalBattleTest: 0
+  m_LevelTest: 0
+  m_TestEventType: 4
 --- !u!4 &1633132966
 Transform:
   m_ObjectHideFlags: 0
