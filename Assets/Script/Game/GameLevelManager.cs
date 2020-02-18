@@ -44,6 +44,9 @@ public class GameLevelManager : SingletonMono<GameLevelManager> {
         for (int i = 0; i < m_MapSize.X; i++)
             for (int j = 0; j < m_MapSize.Y; j++)
             {
+                if (m_FogTexture.GetPixel(i, j).a == 0)
+                    continue;
+
                 float sqrMagnitude = playerPos.SqrMagnitude(new TileAxis(i, j));
                 if (sqrMagnitude<= LevelConst.I_UIPlayerViewClearRangeSecondPow)
                     m_FogTexture.SetPixel(i, j, Color.clear);

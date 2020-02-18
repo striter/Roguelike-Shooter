@@ -8,10 +8,10 @@ namespace LevelSetting
     public static class LevelConst
     {
         public const int I_TileSize = 2;
-        public const int I_UIMapSize = 7;
         #region UI
-        public const int I_UIPlayerViewClearRangeSecondPow = 25;
-        public const int I_UIPlayerViewFadeRangeSecondPow = 49;
+        public const int I_UIMapSize = 7;
+        public const int I_UIPlayerViewClearRangeSecondPow = 100;
+        public const int I_UIPlayerViewFadeRangeSecondPow = 144;
 
         public static readonly Color C_MapTextureHiddenColor = TCommon.GetHexColor("191919FF");
         public static readonly Color C_MapTextureHiddenFadeColor = TCommon.GetHexColor("19191980");
