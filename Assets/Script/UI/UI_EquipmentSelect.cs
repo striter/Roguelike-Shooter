@@ -10,9 +10,9 @@ public class UI_EquipmentSelect : UIPage
     UIT_GridControlledSingleSelect<UIGI_ActionEquipmentPackItem> m_Grid;
     UIC_EquipmentNameFormatIntro m_Selecting;
 
-    List<EquipmentBase> m_Equipments;
+    List<ActionPerkBase> m_Equipments;
     int m_selectIndex;
-    Action<EquipmentBase> OnEquipmentSelect;
+    Action<ActionPerkBase> OnEquipmentSelect;
 
     protected override void Init()
     {
@@ -22,14 +22,14 @@ public class UI_EquipmentSelect : UIPage
         rtf_Container.Find("Confirm").GetComponent<Button>().onClick.AddListener(OnConfirm);
     }
 
-    public void Show(List<EquipmentBase> _equipments,Action<EquipmentBase> OnEquipmentSelect)
+    public void Show(List<ActionPerkBase> _equipments,Action<ActionPerkBase> OnEquipmentSelect)
     {
         m_selectIndex = -1;
         this.OnEquipmentSelect = OnEquipmentSelect;
         m_Equipments = _equipments;
 
         m_Grid.ClearGrid();
-        m_Equipments.Traversal((int index, EquipmentBase equipment) => {
+        m_Equipments.Traversal((int index, ActionPerkBase equipment) => {
             m_Grid.AddItem(index).SetInfo(equipment);
         });
         m_Grid.OnItemClick(0);

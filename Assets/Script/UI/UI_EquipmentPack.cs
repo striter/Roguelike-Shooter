@@ -18,17 +18,17 @@ public class UI_EquipmentPack : UIPage {
     {
         m_Info = _info;
         m_Grid.ClearGrid();
-        _info.m_ExpireEquipments.Traversal((int index,EquipmentBase equipment) => {
+        _info.m_ExpirePerks.Traversal((int index,ActionPerkBase equipment) => {
             m_Grid.AddItem(index).SetInfo(equipment);
         });
         m_Selecting.transform.SetActivate(false);
-        if (_info.m_ExpireEquipments.Count > 0)
+        if (_info.m_ExpirePerks.Count > 0)
             m_Grid.OnItemClick(0);
     }
 
     void OnItemSelect(int index)
     {
         m_Selecting.transform.SetActivate(true);
-        m_Selecting.SetInfo(m_Info.m_ExpireEquipments[index]);
+        m_Selecting.SetInfo(m_Info.m_ExpirePerks[index]);
     }
 }

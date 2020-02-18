@@ -72,10 +72,14 @@ namespace GameSetting
         public const int I_HealthPackAmount = 50;
 
         public static readonly RangeInt IR_EventTradeBuffPrice = new RangeInt(20, 5);
-        public static readonly Dictionary<enum_ChunkEventType, int> D_ChunkEventPercentage = new Dictionary<enum_ChunkEventType, int>() { { enum_ChunkEventType.RewardChest, 100 }};
+        public static readonly Dictionary<enum_ChunkEventType, int> D_ChunkEventPercentage = new Dictionary<enum_ChunkEventType, int>() { { enum_ChunkEventType.RewardChest, 25 },{ enum_ChunkEventType.WeaponReforge, 25 }, { enum_ChunkEventType.PerkAcquire, 25 }, { enum_ChunkEventType.PerkUpgrade, 25 } };
         public static readonly RangeInt IR_EventMedicPrice = new RangeInt(10, 5);
         public const int I_EventEquipmentTradePrice = 10;
+        public const int I_EventPerkAcquireTryCount = 3;
         public static readonly Dictionary<enum_WeaponRarity, RangeInt> D_EventWeaponTradePrice = new Dictionary<enum_WeaponRarity, RangeInt>() { { enum_WeaponRarity.Ordinary, new RangeInt(5, 5) }, { enum_WeaponRarity.Advanced, new RangeInt(10, 5) }, { enum_WeaponRarity.Rare, new RangeInt(20, 5) }, { enum_WeaponRarity.Legend, new RangeInt(30, 5) } };
+        public static readonly Dictionary<enum_WeaponRarity, int> D_EventWeaponReforgeRate = new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 25 }, { enum_WeaponRarity.Advanced, 25 }, { enum_WeaponRarity.Rare, 25 }, { enum_WeaponRarity.Legend, 25 } };
+
+
         public const int I_EquipmentSlotTradePricePerPlayerSlots = 20;
         
         public const int I_CampFarmPlot4UnlockDifficulty = 3;
@@ -99,7 +103,6 @@ namespace GameSetting
         public static int GetPlayerEquipmentWeaponIndex(int equipmentIndex) => 100000 + equipmentIndex * 10;
         public static int GetAIWeaponIndex(int entityIndex, int weaponIndex = 0, int subWeaponIndex = 0) => entityIndex * 100 + weaponIndex * 10 + subWeaponIndex;
         public static int GetWeaponSubIndex(int weaponIndex) => weaponIndex + 1;
-
 
         public static float F_PlayerSensitive(int sensitiveTap) => sensitiveTap / 5f;
         public static float F_GameVFXVolume(int vfxVolumeTap) => vfxVolumeTap / 10f;
@@ -131,7 +134,7 @@ namespace GameSetting
         public static float GetResultDifficultyBonus(int _difficulty) =>1f+ _difficulty * .05f;
         public static float GetResultRewardCredits(float _totalScore) => _totalScore;
 
-        public static RangeInt GetTradePrice(enum_Interaction interactType, enum_EquipmentRarity actionRarity= enum_EquipmentRarity.Invalid,enum_WeaponRarity weaponRarity= enum_WeaponRarity.Invalid)
+        public static RangeInt GetEventTradePrice(enum_Interaction interactType, enum_EquipmentRarity actionRarity= enum_EquipmentRarity.Invalid,enum_WeaponRarity weaponRarity= enum_WeaponRarity.Invalid)
         {
             switch (interactType)
             {
@@ -161,6 +164,9 @@ namespace GameSetting
                     }
             }
         }
+        public static int GetEventPerkAcquireSuccessRate(int tryCount) => 20 * (tryCount + 1);
+        public static int GetEventPerkAcquireCoinsAmount(int tryCount) => 5 * (tryCount + 1);
+
 
         public static float GetLevelObjectHealth(enum_TileObjectType objectType)
         {
@@ -394,8 +400,8 @@ namespace GameSetting
     public static class LocalizationKeyJoint
     {
         public static string GetNameLocalizeKey(this EntityExpirepRreset buff) => "Buff_Name_" + buff.m_Index;
-        public static string GetNameLocalizeKey(this EquipmentBase action) => "Action_Name_" + action.m_Index;
-        public static string GetIntroLocalizeKey(this EquipmentBase action) => "Action_Intro_" + action.m_Index;
+        public static string GetNameLocalizeKey(this ActionPerkBase action) => "Action_Name_" + action.m_Index;
+        public static string GetIntroLocalizeKey(this ActionPerkBase action) => "Action_Intro_" + action.m_Index;
         public static string GetLocalizeKey(this enum_StageLevel stage) => "Game_Stage_" + stage;
         public static string GetLocalizeKey(this enum_LevelStyle style) => "Game_Style_" + style;
         public static string GetLocalizeNameKey(this enum_PlayerWeapon weapon) => "Weapon_Name_" + weapon;
@@ -407,7 +413,7 @@ namespace GameSetting
         public static string GetLocalizeKey(this enum_Option_JoyStickMode joystick) => "UI_Option_" + joystick;
         public static string GetLocalizeKey(this enum_Option_LanguageRegion region) => "UI_Option_" + region;
         public static string GetLocalizeKey(this enum_CampFarmItemStatus status) => "UI_Farm_" + status;
-        public static string SetActionIntro(this EquipmentBase actionInfo, UIT_TextExtend text) => text.formatText(actionInfo.GetIntroLocalizeKey() , actionInfo.Value1, actionInfo.Value2, actionInfo.Value3);
+        public static string SetActionIntro(this ActionPerkBase actionInfo, UIT_TextExtend text) => text.formatText(actionInfo.GetIntroLocalizeKey() , actionInfo.Value1, actionInfo.Value2, actionInfo.Value3);
     }
 
     public static class GameLayer
@@ -471,7 +477,7 @@ namespace GameSetting
         UI_PlayerInteractPickup, 
         UI_PlayerHealthStatus,
         UI_PlayerBuffStatus,
-        UI_PlayerEquipmentStatus,
+        UI_PlayerPerkStatus,
         UI_PlayerWeaponStatus,
 
         UI_CampDataStatus,
@@ -495,7 +501,7 @@ namespace GameSetting
     public enum enum_EnermyType { Invalid = -1, Fighter = 1, Shooter_Rookie = 2, Shooter_Veteran = 3, AOECaster = 4, Elite = 5, }
 
     public enum enum_Interaction { Invalid = -1,
-        GameBegin,Bonfire, TradeContainer, PickupCoin, PickupHealth,PickupHealthPack,PickupExp, PickupArmor,RewardChest, Equipment, Weapon, Portal, GameEnd,
+        GameBegin,Bonfire, TradeContainer, PickupCoin, PickupHealth,PickupHealthPack,PickupExp, PickupArmor,RewardChest,PerkUpgrade,PerkAcquire,WeaponReforge, Equipment, Weapon, Portal, GameEnd,
         CampBegin,CampStage, CampDifficult,CampFarm,CampAction,CampEnd, }
     
     public enum enum_ProjectileFireType { Invalid = -1, Single = 1, MultipleFan = 2, MultipleLine = 3, };
@@ -512,7 +518,7 @@ namespace GameSetting
 
     public enum enum_CharacterEffect { Invalid = -1, Freeze = 1, Cloak = 2, Scan = 3, }
 
-    public enum enum_ExpireType { Invalid = -1, PresetBuff = 1,ActionBuff=2, Equipment = 3, }
+    public enum enum_ExpireType { Invalid = -1, PresetBuff = 1,ActionBuff=2, ActionPerk = 3, }
 
     public enum enum_ExpireRefreshType { Invalid = -1, AddUp = 1, Refresh = 2,RefreshIdentity=3, }
 
@@ -646,13 +652,13 @@ namespace GameSetting
 
     public struct StageInteractGenerateData
     {
-        public Dictionary<enum_EquipmentRarity,int> m_TradeEquipment { get; private set; }
+        public Dictionary<enum_EquipmentRarity,int> m_EventEquipment { get; private set; }
         public Dictionary<enum_EquipmentRarity, int> m_RankupEquipment { get; private set; }
         public Dictionary<enum_WeaponRarity, int> m_TradeWeapon { get; private set; }
         public Dictionary<enum_WeaponRarity, int> m_RewardWeapon { get; private set; }
         public PickupGenerateData m_NormalPickupData { get; private set; }
         public PickupGenerateData m_ElitePickupData { get; private set; }
-        public static StageInteractGenerateData Create(Dictionary<enum_EquipmentRarity, int>  _tradeEquipmentRate, Dictionary<enum_EquipmentRarity, int> _rankupEquipment, Dictionary<enum_WeaponRarity,int> _tradeWeaponRate, Dictionary<enum_WeaponRarity, int> _rewardWeaponRate, PickupGenerateData _normalGenerate,PickupGenerateData _eliteGenerate) => new StageInteractGenerateData() {m_TradeEquipment=_tradeEquipmentRate,m_RankupEquipment= _rankupEquipment, m_TradeWeapon=_tradeWeaponRate, m_RewardWeapon = _rewardWeaponRate, m_NormalPickupData=_normalGenerate,m_ElitePickupData=_eliteGenerate};
+        public static StageInteractGenerateData Create(Dictionary<enum_EquipmentRarity, int>  _tradeEquipmentRate, Dictionary<enum_EquipmentRarity, int> _rankupEquipment, Dictionary<enum_WeaponRarity,int> _tradeWeaponRate, Dictionary<enum_WeaponRarity, int> _rewardWeaponRate, PickupGenerateData _normalGenerate,PickupGenerateData _eliteGenerate) => new StageInteractGenerateData() {m_EventEquipment=_tradeEquipmentRate,m_RankupEquipment= _rankupEquipment, m_TradeWeapon=_tradeWeaponRate, m_RewardWeapon = _rewardWeaponRate, m_NormalPickupData=_normalGenerate,m_ElitePickupData=_eliteGenerate};
     }
 
     public struct EliteBuffCombine
@@ -775,7 +781,7 @@ namespace GameSetting
             m_weapon1 = WeaponSaveData.Create(_player.m_Weapon1);
             m_weapon2 = WeaponSaveData.Create(_player.m_Weapon2);
             m_weaponEquipingFirst = _player.m_weaponEquipingFirst;
-            m_Equipments = EquipmentSaveData.Create(_player.m_CharacterInfo.m_ExpireEquipments);
+            m_Equipments = EquipmentSaveData.Create(_player.m_CharacterInfo.m_ExpirePerks);
             m_ActionBuffs = ActionSaveData.Create(_player.m_CharacterInfo.m_ExpireBuffs);
             m_GameSeed = _level.m_GameSeed;
             m_Stage = _level.m_GameStage;
@@ -854,11 +860,11 @@ namespace GameSetting
         }
 
         public static EquipmentSaveData Default(int index, enum_EquipmentRarity rarity) => new EquipmentSaveData {m_ActionData=ActionSaveData.Default(index),m_Rarity=rarity };
-        public static EquipmentSaveData Create(EquipmentBase equipment) =>  new EquipmentSaveData { m_ActionData=ActionSaveData.Create(equipment), m_Rarity=equipment.m_rarity};
-        public static List<EquipmentSaveData> Create(List<EquipmentBase> equipments)
+        public static EquipmentSaveData Create(ActionPerkBase equipment) =>  new EquipmentSaveData { m_ActionData=ActionSaveData.Create(equipment), m_Rarity=equipment.m_Rarity};
+        public static List<EquipmentSaveData> Create(List<ActionPerkBase> equipments)
         {
             List<EquipmentSaveData> data = new List<EquipmentSaveData>();
-            equipments.Traversal((EquipmentBase equipment) => { data.Add(Create(equipment)); });
+            equipments.Traversal((ActionPerkBase equipment) => { data.Add(Create(equipment)); });
             return data;
         }
     }
@@ -1567,7 +1573,7 @@ namespace GameSetting
         protected Vector3 m_prePos;
         
         public List<ActionBase> m_PlayerExpires { get; private set; } = new List<ActionBase>();
-        public List<EquipmentBase> m_ExpireEquipments { get; private set; } = new List<EquipmentBase>();
+        public List<ActionPerkBase> m_ExpirePerks { get; private set; } = new List<ActionPerkBase>();
         public List<ActionBuffBase> m_ExpireBuffs { get; private set; } = new List<ActionBuffBase>();
         public float m_Coins { get; private set; } = 0;
         public int m_Exp { get; private set; } = 0;
@@ -1598,20 +1604,27 @@ namespace GameSetting
             m_Coins = m_saveData.m_Coins;
             m_Rank = m_saveData.m_Rank;
             m_Exp = m_saveData.m_Exp;
-            ActionDataManager.CreatePlayerEquipments(m_saveData.m_Equipments).Traversal((EquipmentBase action) => { AddExpire(action); });
+            ActionDataManager.CreatePlayerEquipments(m_saveData.m_Equipments).Traversal((ActionPerkBase action) => { AddExpire(action); });
             ActionDataManager.CreateActionBuffs(m_saveData.m_ActionBuffs).Traversal((ActionBuffBase action) => { AddExpire(action); });
-            TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
+            TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerPerkStatus, this);
         }
 
         #region Action
         #region Interact
-        public void SwapEquipment(int index,EquipmentBase targetAction)
-        {
-            RemoveExpire(m_ExpireEquipments[index]);
-            AddExpire(targetAction);
-        }
-        public void OnEquipmentAcquire(EquipmentBase equipment)=>AddExpire(equipment);
+        public void OnActionPerkAcquire(ActionPerkBase equipment)=>AddExpire(equipment);
         public void OnActionBuffAcquire(ActionBuffBase actionBuff) => AddExpire(actionBuff);
+
+        public bool CanPerkUpgrade() => m_ExpirePerks.Any(p=>p.m_UpgradeAble);
+        public void OnPerkUpgrade()
+        {
+            m_ExpirePerks.TraversalRandomBreak((ActionPerkBase perk)=> {
+                if (!perk.m_UpgradeAble)
+                    return false;
+                perk.Upgrade();
+                return true;
+            });
+            TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerPerkStatus, this);
+        }
 
         public bool CheckRevive()
         {
@@ -1632,10 +1645,10 @@ namespace GameSetting
                 return;
             m_PlayerExpires.Add(targetExpire);
 
-            if (targetExpire.m_ExpireType== enum_ExpireType.Equipment)
+            if (targetExpire.m_ExpireType== enum_ExpireType.ActionPerk)
             {
-                m_ExpireEquipments.Add(targetExpire as EquipmentBase);
-                TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
+                m_ExpirePerks.Add(targetExpire as ActionPerkBase);
+                TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerPerkStatus, this);
             }
             else if (targetExpire.m_ExpireType == enum_ExpireType.ActionBuff)
             {
@@ -1653,10 +1666,10 @@ namespace GameSetting
             if (targetExpire == null)
                 return;
             m_PlayerExpires.Remove(targetExpire);
-            if (targetExpire.m_ExpireType== enum_ExpireType.Equipment)
+            if (targetExpire.m_ExpireType== enum_ExpireType.ActionPerk)
             {
-                m_ExpireEquipments.Remove(targetExpire as EquipmentBase);
-                TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerEquipmentStatus, this);
+                m_ExpirePerks.Remove(targetExpire as ActionPerkBase);
+                TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerPerkStatus, this);
             }
             else if (targetExpire.m_ExpireType == enum_ExpireType.ActionBuff)
             {
@@ -1973,16 +1986,24 @@ namespace GameSetting
         #endregion
     }
 
-    public class EquipmentBase : ActionBase
+    public class ActionPerkBase : ActionBase
     {
-        public override enum_ExpireType m_ExpireType => enum_ExpireType.Equipment;
-        public enum_EquipmentRarity m_rarity { get; private set; }
+        public override enum_ExpireType m_ExpireType => enum_ExpireType.ActionPerk;
+        public enum_EquipmentRarity m_Rarity { get; private set; }
 
-        public EquipmentBase() { }
+        public ActionPerkBase() { }
         public void OnManagerSetData(int identity, EquipmentSaveData _data)
         {
-            m_rarity = _data.m_Rarity;
+            m_Rarity = _data.m_Rarity;
             base.OnManagerSetData(identity, _data.m_ActionData);
+        }
+        public bool m_UpgradeAble => m_Rarity < enum_EquipmentRarity.Epic;
+        public void Upgrade()
+        {
+            if (!m_UpgradeAble)
+                return;
+
+            m_Rarity++;
         }
     }
 
@@ -2416,10 +2437,10 @@ namespace GameSetting
             m_Image = transform.Find("Mask/Image").GetComponent<Image>();
             m_Rarity = new UIC_RarityLevel(transform.Find("Rarity"));
         }
-        public virtual void SetInfo(EquipmentBase equipmentInfo)
+        public virtual void SetInfo(ActionPerkBase equipmentInfo)
         {
             m_Image.sprite = GameUIManager.Instance.m_ActionSprites[equipmentInfo.m_Index.ToString()];
-            m_Rarity.SetRarity(equipmentInfo.m_rarity);
+            m_Rarity.SetRarity(equipmentInfo.m_Rarity);
         }
     }
 
@@ -2430,7 +2451,7 @@ namespace GameSetting
         {
             m_Name = transform.Find("Name").GetComponent<UIT_TextExtend>();
         }
-        public override void SetInfo(EquipmentBase equipmentInfo)
+        public override void SetInfo(ActionPerkBase equipmentInfo)
         {
             base.SetInfo(equipmentInfo);
             m_Name.localizeKey = equipmentInfo.GetNameLocalizeKey();
@@ -2446,7 +2467,7 @@ namespace GameSetting
 
             m_Intro = transform.Find("Intro").GetComponent<UIT_TextExtend>();
         }
-        public override void SetInfo(EquipmentBase equipmentInfo)
+        public override void SetInfo(ActionPerkBase equipmentInfo)
         {
             base.SetInfo(equipmentInfo);
             m_Intro.formatText(equipmentInfo.GetIntroLocalizeKey(), string.Format("<color=#FFDA6BFF>{0}</color>", equipmentInfo.Value1), string.Format("<color=#FFDA6BFF>{0}</color>", equipmentInfo.Value2), string.Format("<color=#FFDA6BFF>{0}</color>", equipmentInfo.Value3));

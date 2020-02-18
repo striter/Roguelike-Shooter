@@ -10,11 +10,13 @@ public class InteractPickupAmount : InteractGameBase {
     protected override bool E_InteractOnEnable => false;
     float m_speed;
     Transform m_moveTowards;
-    public virtual InteractPickupAmount Play(int amount)
+    public virtual InteractPickupAmount Play(int amount,bool moveTowardsPlayer)
     {
         base.Play();
         m_speed = 0;
         m_Amount = amount;
+        if (moveTowardsPlayer)
+            OnBattleFinish();
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
         return this;
     }

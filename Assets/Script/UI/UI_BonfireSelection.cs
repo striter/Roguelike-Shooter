@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+#pragma warning disable 0649
 
 public class UI_BonfireSelection : UIPage ,TReflection.UI.IUIPropertyFill{
     Action<bool> OnSelect;
@@ -16,7 +16,6 @@ public class UI_BonfireSelection : UIPage ,TReflection.UI.IUIPropertyFill{
         m_BtnTop.onClick.AddListener(OnTopClick);
         m_BtnDown.onClick.AddListener(OnDownClick);
     }
-
 
     public void Play(Action<bool> OnSelect)
     {

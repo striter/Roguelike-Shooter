@@ -12,7 +12,7 @@ public class UIGI_ActionBase : UIT_GridItem {
         base.Init();
         m_Action = GetActionDataBase(tf_Container);
     }
-    public virtual void SetInfo(EquipmentBase action)
+    public virtual void SetInfo(ActionPerkBase action)
     {
         m_Action.SetInfo(action);
     }

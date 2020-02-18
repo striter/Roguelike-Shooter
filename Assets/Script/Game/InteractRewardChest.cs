@@ -5,10 +5,10 @@ using GameSetting;
 using LevelSetting;
 public class InteractRewardChest : InteractGameBase {
     public override enum_Interaction m_InteractType => enum_Interaction.RewardChest;
-    EquipmentBase m_Equipment;
+    ActionPerkBase m_Equipment;
     enum_PlayerWeapon m_Weapon;
 
-    public void Play(EquipmentBase _equipment, enum_PlayerWeapon weapon)
+    public void Play(ActionPerkBase _equipment, enum_PlayerWeapon weapon)
     {
         base.Play();
         m_Equipment = _equipment;

@@ -229,6 +229,24 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         OnWeaponStatus();
         return exchangeWeapon;
     }
+    public WeaponBase Reforge(WeaponBase _weapon)
+    {
+        _weapon.OnAttach(this, _weapon.B_AttachLeft ? tf_WeaponHoldLeft : tf_WeaponHoldRight, OnFireAddRecoil);
+        WeaponBase exchangeWeapon = m_WeaponCurrent;
+        m_WeaponCurrent.OnDetach();
+        if (m_weaponEquipingFirst)
+        {
+            m_Weapon1 = _weapon;
+            SwapWeapon(true);
+        }
+        else
+        {
+            m_Weapon2 = _weapon;
+            SwapWeapon(false);
+        }
+        OnWeaponStatus();
+        return exchangeWeapon;
+    }
 
     public void OnSwapClick()
     {
@@ -354,7 +372,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     #region PlayerInteract
     public void OnInteractCheck(InteractBase interactTarget, bool isEnter)
     {
-        if (!interactTarget.OnCheckResponse(this))
+        if (!interactTarget.DnCheckInteractResponse(this))
             return;
 
         if (interactTarget.B_InteractOnTrigger)
@@ -382,7 +400,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (!m_Interact.TryInteract(this))
             return;
 
-        if (!m_Interact.OnCheckResponse(this))
+        if (!m_Interact.DnCheckInteractResponse(this))
             m_Interact = null;
 
         OnInteractStatus();

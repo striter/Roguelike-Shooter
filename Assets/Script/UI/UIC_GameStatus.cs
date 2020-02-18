@@ -86,7 +86,7 @@ public class UIC_GameStatus : UIControlBase
 
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityPlayerHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
-        TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerEquipmentStatus, OnEquipmentStatus);
+        TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerPerkStatus, OnEquipmentStatus);
         TBroadCaster<enum_BC_GameStatus>.Add( enum_BC_GameStatus.OnGameBegin, OnGameLoad);
     }
 
@@ -94,7 +94,7 @@ public class UIC_GameStatus : UIControlBase
     {
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityPlayerHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
-        TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerEquipmentStatus, OnEquipmentStatus);
+        TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerPerkStatus, OnEquipmentStatus);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnGameBegin, OnGameLoad);
     }
 
@@ -173,7 +173,7 @@ public class UIC_GameStatus : UIControlBase
     void OnEquipmentStatus(PlayerInfoManager infoManager)
     {
         m_EquipmentGrid.ClearGrid();
-        for (int i = 0; i < infoManager.m_ExpireEquipments.Count; i++)
-            m_EquipmentGrid.AddItem(i).SetInfo(infoManager.m_ExpireEquipments[i]);
+        for (int i = 0; i < infoManager.m_ExpirePerks.Count; i++)
+            m_EquipmentGrid.AddItem(i).SetInfo(infoManager.m_ExpirePerks[i]);
     }
 }

@@ -79,9 +79,12 @@ namespace LevelSetting
     public enum enum_ChunkEventType
     {
         Invalid=-1,
-        Trader=1,
-        Bonefire = 2,
-        RewardChest =3,
+        Trader,
+        Bonefire ,
+        RewardChest,
+        PerkUpgrade,
+        PerkAcquire,
+        WeaponReforge,
     }
     
     public static class LevelConst

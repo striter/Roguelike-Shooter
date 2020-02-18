@@ -29,7 +29,7 @@ public class InteractTradeContainer : InteractGameBase {
 
     public override bool TryInteract(EntityCharacterPlayer _interactor)
     {
-        if (!B_CanInteract(_interactor) || !m_TradeInteract.TryInteract(_interactor))
+        if (!DoCheckInteractSuccessful(_interactor) || !m_TradeInteract.TryInteract(_interactor))
             return false;
         return base.TryInteract(_interactor);
     }

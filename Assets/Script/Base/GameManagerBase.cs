@@ -337,25 +337,25 @@ public static class ActionDataManager
             if (action.m_Index <= 0)
                 return;
 
-            if (action.m_ExpireType== enum_ExpireType.Equipment)
+            if (action.m_ExpireType== enum_ExpireType.ActionPerk)
                 m_EquipmentTypes.Add(action.m_Index, action.GetType());
             else if (action.m_ExpireType == enum_ExpireType.ActionBuff)
                 m_ActionBuffTypes.Add(action.m_Index, action.GetType());
         }));
     }
-    public static EquipmentBase CreateRandomPlayerEquipment(enum_EquipmentRarity rarity, System.Random seed)=> CreatePlayerEquipment(EquipmentSaveData.Default( m_EquipmentTypes.RandomKey(seed),rarity));
+    public static ActionPerkBase CreateRandomPlayerEquipment(enum_EquipmentRarity rarity, System.Random seed)=> CreatePlayerEquipment(EquipmentSaveData.Default( m_EquipmentTypes.RandomKey(seed),rarity));
 
-    public static EquipmentBase CreatePlayerEquipment(EquipmentSaveData data)
+    public static ActionPerkBase CreatePlayerEquipment(EquipmentSaveData data)
     {
         if (!m_EquipmentTypes.ContainsKey(data.m_ActionData.m_Index))
             Debug.LogError("Error Action Equipment:" + data.m_ActionData.m_Index + " ,Does not exist");
-        EquipmentBase equipment= TReflection.CreateInstance<EquipmentBase>(m_EquipmentTypes[data.m_ActionData.m_Index]);
+        ActionPerkBase equipment= TReflection.CreateInstance<ActionPerkBase>(m_EquipmentTypes[data.m_ActionData.m_Index]);
         equipment.OnManagerSetData(m_ActionIdentity,data);
         return equipment;
     }
-    public static List<EquipmentBase> CreatePlayerEquipments(List<EquipmentSaveData> datas)
+    public static List<ActionPerkBase> CreatePlayerEquipments(List<EquipmentSaveData> datas)
     {
-        List<EquipmentBase> equipments = new List<EquipmentBase>();
+        List<ActionPerkBase> equipments = new List<ActionPerkBase>();
         datas.Traversal((EquipmentSaveData data) => { equipments.Add(CreatePlayerEquipment(data)); });
         return equipments;
     }

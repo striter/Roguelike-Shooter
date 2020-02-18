@@ -10,7 +10,7 @@ public class UIGI_ActionEquipmentPackItem : UIGI_ActionEquipmentSelect {
         base.Init();
         m_Empty = transform.Find("Empty");
     }
-    public override void SetInfo(EquipmentBase action)
+    public override void SetInfo(ActionPerkBase action)
     {
         bool validAction = action != null;
         m_Button.interactable = validAction;

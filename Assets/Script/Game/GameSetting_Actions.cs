@@ -121,7 +121,7 @@ namespace GameSetting_Action
 
     }
 
-    public class EquipmentDevice :EquipmentBase
+    public class EquipmentDevice :ActionPerkBase
     {
         WeaponHelperBase m_Equipment;
         protected virtual DamageDeliverInfo GetDamageInfo() => null;
@@ -153,18 +153,18 @@ namespace GameSetting_Action
     }
     #region Equipment
     #region TypeA
-    public class E0001_ReloadSpeedAdditive: EquipmentBase
+    public class E0001_ReloadSpeedAdditive: ActionPerkBase
     {
         public override int m_Index => 0001;
-        public override float Value1 => EquipmentConsts.P_0001_ReloadSpeedAdditive(m_rarity);
+        public override float Value1 => EquipmentConsts.P_0001_ReloadSpeedAdditive(m_Rarity);
         public override float m_ReloadRateMultiply => Value1 / 100f;
         public E0001_ReloadSpeedAdditive() { }
     }
 
-    public class E0002_ClipRefillOnAttack:EquipmentBase
+    public class E0002_ClipRefillOnAttack:ActionPerkBase
     {
         public override int m_Index => 0002;
-        public override float Value1 => EquipmentConsts.P_0002_ClipRefillRate(m_rarity);
+        public override float Value1 => EquipmentConsts.P_0002_ClipRefillRate(m_Rarity);
         public override void OnAttackDamageSet(DamageDeliverInfo info)
         {
             base.OnAttackDamageSet(info);
@@ -174,26 +174,26 @@ namespace GameSetting_Action
         public E0002_ClipRefillOnAttack() { }
     }
 
-    public class E0003_ClipAdditive : EquipmentBase
+    public class E0003_ClipAdditive : ActionPerkBase
     {
         public override int m_Index => 0003;
-        public override float Value1 => EquipmentConsts.I_0003_ClipAdditive(m_rarity);
+        public override float Value1 => EquipmentConsts.I_0003_ClipAdditive(m_Rarity);
         public override int I_ClipAdditive => (int)Value1;
         public E0003_ClipAdditive() { }
     }
 
-    public class E0004_ClipMultiply : EquipmentBase
+    public class E0004_ClipMultiply : ActionPerkBase
     {
         public override int m_Index => 0004;
-        public override float Value1 => EquipmentConsts.P_0004_ClipMultiply(m_rarity);
+        public override float Value1 => EquipmentConsts.P_0004_ClipMultiply(m_Rarity);
         public override float F_ClipMultiply => Value1/100f;
         public E0004_ClipMultiply() { }
     }
 
-    public class E0005_ClipMultiply : EquipmentBase
+    public class E0005_ClipMultiply : ActionPerkBase
     {
         public override int m_Index => 0005;
-        public override float Value1 => EquipmentConsts.F_0005_DamageAdditive(m_rarity);
+        public override float Value1 => EquipmentConsts.F_0005_DamageAdditive(m_Rarity);
         public override float m_DamageAdditive => Value1;
         public E0005_ClipMultiply() { }
     }
@@ -218,10 +218,10 @@ namespace GameSetting_Action
     //    public E0006_DamageAdditiveAfterReload() { }
     //}
 
-    public class E0007_SpreadReduction:EquipmentBase
+    public class E0007_SpreadReduction:ActionPerkBase
     {
         public override int m_Index => 0007;
-        public override float Value1 => EquipmentConsts.P_0007_SpreadReduction(m_rarity)/100f;
+        public override float Value1 => EquipmentConsts.P_0007_SpreadReduction(m_Rarity)/100f;
         public override float F_SpreadReduction => Value1;
         public E0007_SpreadReduction() { }
     }
@@ -234,10 +234,10 @@ namespace GameSetting_Action
     //    public E0008_AimRangeIncrease() { }
     //}
 
-    public class E0009_DamageBurstAfterKill : EquipmentBase
+    public class E0009_DamageBurstAfterKill : ActionPerkBase
     {
         public override int m_Index => 0009;
-        public override float Value1 => EquipmentConsts.P_0009_DamageMultiply(m_rarity);
+        public override float Value1 => EquipmentConsts.P_0009_DamageMultiply(m_Rarity);
         public override float m_DamageMultiply => m_burstShot ? Value1 / 100f : 0f;
         bool m_burstShot = false;
         public override void OnAttackDamageSet(DamageDeliverInfo info)
@@ -254,26 +254,26 @@ namespace GameSetting_Action
         public E0009_DamageBurstAfterKill() { }
     }
 
-    public class E0010_PenetrateAdditive:EquipmentBase
+    public class E0010_PenetrateAdditive:ActionPerkBase
     {
         public override int m_Index => 0010;
-        public override float Value1 => EquipmentConsts.P_0010_PenetrateAdditive(m_rarity);
+        public override float Value1 => EquipmentConsts.P_0010_PenetrateAdditive(m_Rarity);
         public override float F_PenetradeAdditive => Value1/100f;
         public E0010_PenetrateAdditive() { }
     }
 
-    public class E0011_FireRateAdditive:EquipmentBase
+    public class E0011_FireRateAdditive:ActionPerkBase
     {
         public override int m_Index => 0011;
-        public override float Value1 => EquipmentConsts.P_0011_FireRateAdditive(m_rarity);
+        public override float Value1 => EquipmentConsts.P_0011_FireRateAdditive(m_Rarity);
         public override float m_FireRateMultiply => Value1 / 100f;
         public E0011_FireRateAdditive() { }
     }
 
-    public class E0012_ProjectileCopy:EquipmentBase
+    public class E0012_ProjectileCopy:ActionPerkBase
     {
         public override int m_Index => 0012;
-        public override float Value1 => EquipmentConsts.I_0012_BounceTimes(m_rarity);
+        public override float Value1 => EquipmentConsts.I_0012_BounceTimes(m_Rarity);
         public override int I_ProjectileCopyAdditive => (int)Value1;
         public E0012_ProjectileCopy() { }
     }
@@ -294,11 +294,11 @@ namespace GameSetting_Action
     //    public E0013_NearbyDamageMultiply() { }
     //}
 
-    public class E0014_NearbyKillDamageReduction:EquipmentBase
+    public class E0014_NearbyKillDamageReduction:ActionPerkBase
     {
         public override int m_Index => 0014;
-        public override float Value1 => EquipmentConsts.F_0014_EffectRange(m_rarity);
-        public override float Value2 => EquipmentConsts.F_0014_ReductionDuration(m_rarity);
+        public override float Value1 => EquipmentConsts.F_0014_EffectRange(m_Rarity);
+        public override float Value2 => EquipmentConsts.F_0014_ReductionDuration(m_Rarity);
         public override float m_DamageReduction => m_Timer.m_Timing ? 1f : base.m_DamageReduction;
         TimeCounter m_Timer = new TimeCounter();
         public override void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
@@ -314,11 +314,11 @@ namespace GameSetting_Action
         }
         public E0014_NearbyKillDamageReduction() { }
     }
-    public class E0015_NearbyCountMovementAdditive : EquipmentBase
+    public class E0015_NearbyCountMovementAdditive : ActionPerkBase
     {
         public override int m_Index => 0015;
-        public override float Value1 => EquipmentConsts.F_0015_EffectRange(m_rarity);
-        public override float Value2 => EquipmentConsts.P_0015_MovementSpeedEachEnermy(m_rarity,m_NearbyCount);
+        public override float Value1 => EquipmentConsts.F_0015_EffectRange(m_Rarity);
+        public override float Value2 => EquipmentConsts.P_0015_MovementSpeedEachEnermy(m_Rarity,m_NearbyCount);
         public override float m_MovementSpeedMultiply =>Value2/100f;
         int m_NearbyCount = 0;
         TimeCounter m_Timer = new TimeCounter();
@@ -340,11 +340,11 @@ namespace GameSetting_Action
         public E0015_NearbyCountMovementAdditive() { }
     }
 
-    public class E0016_NearbyKillClipAdditive : EquipmentBase
+    public class E0016_NearbyKillClipAdditive : ActionPerkBase
     {
         public override int m_Index => 0016;
-        public override float Value1 => EquipmentConsts.F_0016_EffectRange(m_rarity);
-        public override float Value2 => EquipmentConsts.P_0016_ClipRefillRate(m_rarity);
+        public override float Value1 => EquipmentConsts.F_0016_EffectRange(m_Rarity);
+        public override float Value2 => EquipmentConsts.P_0016_ClipRefillRate(m_Rarity);
         public override void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
             base.OnDealtDamage(receiver, info, applyAmount);
@@ -354,10 +354,10 @@ namespace GameSetting_Action
         public E0016_NearbyKillClipAdditive() { }
     }
 
-    public class E0017_TakeDamageReductionDuration : EquipmentBase
+    public class E0017_TakeDamageReductionDuration : ActionPerkBase
     {
         public override int m_Index => 0017;
-        public override float Value1 => EquipmentConsts.F_0017_Duration(m_rarity);
+        public override float Value1 => EquipmentConsts.F_0017_Duration(m_Rarity);
         public override float m_DamageReduction => m_Timer.m_Timing ? 1 : base.m_DamageReduction;
         TimeCounter m_Timer = new TimeCounter();
         public override void OnTick(float deltaTime)
@@ -465,10 +465,10 @@ namespace GameSetting_Action
     //    public E0023_HealAddMaxHealth() { }
     //}
 
-    public class E0024_KillHealthRegen : EquipmentBase
+    public class E0024_KillHealthRegen : ActionPerkBase
     {
         public override int m_Index => 0024;
-        public override float Value1 => EquipmentConsts.P_0024_HealthRegenEachKill(m_rarity);
+        public override float Value1 => EquipmentConsts.P_0024_HealthRegenEachKill(m_Rarity);
         public override void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
             base.OnDealtDamage(receiver, info, applyAmount);
@@ -478,26 +478,26 @@ namespace GameSetting_Action
         public E0024_KillHealthRegen() { }
     }
 
-    public class E0025_MaxHealthAdditive : EquipmentBase
+    public class E0025_MaxHealthAdditive : ActionPerkBase
     {
         public override int m_Index => 0025;
-        public override float Value1 => EquipmentConsts.F_0025_MaxHealthAdd(m_rarity);
+        public override float Value1 => EquipmentConsts.F_0025_MaxHealthAdd(m_Rarity);
         public override float m_MaxHealthAdditive => Value1;
         public E0025_MaxHealthAdditive() { }
     }
 
-    public class E0026_HealRegenAdditive : EquipmentBase
+    public class E0026_HealRegenAdditive : ActionPerkBase
     {
         public override int m_Index => 0026;
-        public override float Value1 => EquipmentConsts.P_0026_HealthRegenAdditive(m_rarity);
+        public override float Value1 => EquipmentConsts.P_0026_HealthRegenAdditive(m_Rarity);
         public override float m_HealAdditive => Value1 / 100f;
         public E0026_HealRegenAdditive() { }
     }
 
-    public class E0027_MaxHealthAdditive : EquipmentBase
+    public class E0027_MaxHealthAdditive : ActionPerkBase
     {
         public override int m_Index => 0027;
-        public override float Value1 => EquipmentConsts.P_0027_HealthDrainAdditive(m_rarity);
+        public override float Value1 => EquipmentConsts.P_0027_HealthDrainAdditive(m_Rarity);
         public override float m_HealthDrainMultiply => Value1/100f;
         public E0027_MaxHealthAdditive() { }
     }
@@ -506,7 +506,7 @@ namespace GameSetting_Action
     public class E0028_DamageKillFreezeBlast : EquipmentDevice
     {
         public override int m_Index => 0028;
-        public override float Value1 => EquipmentConsts.F_0028_FreezeDuration(m_rarity);
+        public override float Value1 => EquipmentConsts.F_0028_FreezeDuration(m_Rarity);
         protected override DamageDeliverInfo GetDamageInfo() => DamageDeliverInfo.EquipmentInfo(m_Attacher.m_EntityID, 0, enum_CharacterEffect.Freeze, Value1);
 
         public override void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
@@ -521,11 +521,11 @@ namespace GameSetting_Action
         public E0028_DamageKillFreezeBlast() { }
     }
 
-    public class E0029_DamageFreeze : EquipmentBase
+    public class E0029_DamageFreeze : ActionPerkBase
     {
         public override int m_Index => 0029;
         public override int m_EffectIndex => 41001;
-        public override float Value1 => EquipmentConsts.F_0029_FreezeDurationPer10Damage(m_rarity);
+        public override float Value1 => EquipmentConsts.F_0029_FreezeDurationPer10Damage(m_Rarity);
         public override void OnBeforeDealtDamageMiddle(EntityCharacterBase receiver, DamageInfo info)
         {
             base.OnBeforeDealtDamageMiddle(receiver, info);
@@ -561,8 +561,8 @@ namespace GameSetting_Action
     public class E0031_FreezeMineSpawner:EquipmentDevice
     {
         public override int m_Index => 0031;
-        public override float Value1 => EquipmentConsts.F_0031_Duration(m_rarity);
-        public override float Value2 => EquipmentConsts.F_0031_FreezeDuration(m_rarity);
+        public override float Value1 => EquipmentConsts.F_0031_Duration(m_Rarity);
+        public override float Value2 => EquipmentConsts.F_0031_FreezeDuration(m_Rarity);
         protected override DamageDeliverInfo GetDamageInfo() => DamageDeliverInfo.EquipmentInfo(m_Attacher.m_EntityID, 0, enum_CharacterEffect.Freeze, Value1);
         TimeCounter m_Timer = new TimeCounter();
         public override void OnTick(float deltaTime)
@@ -579,10 +579,10 @@ namespace GameSetting_Action
         public E0031_FreezeMineSpawner() { }
     }
 
-    public class E0032_FreezeDuration: EquipmentBase
+    public class E0032_FreezeDuration: ActionPerkBase
     {
         public override int m_Index => 0032;
-        public override float Value1 => EquipmentConsts.P_0032_FreezeDurationEnhance(m_rarity);
+        public override float Value1 => EquipmentConsts.P_0032_FreezeDurationEnhance(m_Rarity);
         public override void OnBeforeDealtDamageFinal(EntityCharacterBase receiver, DamageInfo info)
         {
             base.OnBeforeDealtDamageFinal(receiver, info);
@@ -593,27 +593,27 @@ namespace GameSetting_Action
     }
     #endregion
     #region TypeF
-    public class E0033_CoinsDropAdditive : EquipmentBase
+    public class E0033_CoinsDropAdditive : ActionPerkBase
     {
         public override int m_Index => 0033;
-        public override float Value1 => EquipmentConsts.P_0033_CoinsDropAdditive(m_rarity);
+        public override float Value1 => EquipmentConsts.P_0033_CoinsDropAdditive(m_Rarity);
         public override float P_CoinsDropAdditive => Value1;
         public E0033_CoinsDropAdditive() { }
     }
 
 
-    public class E0034_CoinsDropAdditive : EquipmentBase
+    public class E0034_CoinsDropAdditive : ActionPerkBase
     {
         public override int m_Index => 0034;
-        public override float Value1 => EquipmentConsts.P_0034_CoinsCostDecrease(m_rarity)/100f;
+        public override float Value1 => EquipmentConsts.P_0034_CoinsCostDecrease(m_Rarity)/100f;
         public override float F_CoinsCostDecrease => Value1;
         public E0034_CoinsDropAdditive() { }
     }
 
-    public class E0035_CoinsGainDouble : EquipmentBase
+    public class E0035_CoinsGainDouble : ActionPerkBase
     {
         public override int m_Index => 0035;
-        public override float Value1 => EquipmentConsts.P_0035_CoinsDoubleRate(m_rarity);
+        public override float Value1 => EquipmentConsts.P_0035_CoinsDoubleRate(m_Rarity);
         public override void OnGainCoins(float coinAmount)
         {
             base.OnGainCoins(coinAmount);
@@ -623,10 +623,10 @@ namespace GameSetting_Action
         public E0035_CoinsGainDouble() { }
     }
 
-    public class E0036_CoinsRevive:EquipmentBase
+    public class E0036_CoinsRevive:ActionPerkBase
     {
         public override int m_Index => 0036;
-        public override float Value1 => EquipmentConsts.P_0036_CoinsReviveAmount(m_rarity);
+        public override float Value1 => EquipmentConsts.P_0036_CoinsReviveAmount(m_Rarity);
         public override bool OnCheckRevive()
         {
             float coinsValue = Value1;

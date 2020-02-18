@@ -8,7 +8,8 @@ using TTiles;
 using UnityEngine.AI;
 using System.Threading.Tasks;
 public class GameLevelManager : SingletonMono<GameLevelManager> {
-    public bool m_FinalBattleTest = true;
+    public bool m_LevelTest = true;
+    public enum_ChunkEventType m_TestEventType = enum_ChunkEventType.PerkAcquire;
 
     ObjectPoolListComponent<int, LevelChunkGame> m_ChunkPool;
     public Dictionary<int, LevelChunkGame> m_GameChunks => m_ChunkPool.m_ActiveItemDic;
@@ -56,7 +57,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager> {
         List<ChunkGenerateData> gameChunkGenerate = new List<ChunkGenerateData>();
 
         Func<enum_ChunkEventType> RandomEventType = () => TCommon.RandomPercentage(GameConst.D_ChunkEventPercentage,random);
-        List<ChunkPreGenerateData> mainChunkType = m_FinalBattleTest ? new List<ChunkPreGenerateData>() {new ChunkPreGenerateData( enum_ChunkType.Event,  enum_ChunkEventType.Bonefire)  , new ChunkPreGenerateData(enum_ChunkType.Final) } :
+        List<ChunkPreGenerateData> mainChunkType = m_LevelTest ? new List<ChunkPreGenerateData>() {new ChunkPreGenerateData( enum_ChunkType.Event, m_TestEventType)  , new ChunkPreGenerateData(enum_ChunkType.Final) } :
             new List<ChunkPreGenerateData>()
             { new ChunkPreGenerateData(enum_ChunkType.Battle),  new ChunkPreGenerateData(enum_ChunkType.Event, enum_ChunkEventType.RewardChest),
                 new ChunkPreGenerateData(enum_ChunkType.Battle), new ChunkPreGenerateData(enum_ChunkType.Event, enum_ChunkEventType.Trader),
@@ -100,7 +101,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager> {
                 ConnectGameData(gameChunkGenerate[0], mainConnectionChunks);
 
                 //Generate Sub Chunks
-                if (m_FinalBattleTest)
+                if (m_LevelTest)
                     break;
                 Func<int, bool> GenerateSubChunks = (int subCount) => {
                     ChunkGenerateData subStartChunk = null;
