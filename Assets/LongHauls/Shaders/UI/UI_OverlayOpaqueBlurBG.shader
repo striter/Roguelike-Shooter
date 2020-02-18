@@ -1,8 +1,6 @@
-﻿Shader "Game/UI/BlurBackground" {
+﻿Shader "Game/UI/UI_OverlayOpaqueBlurBG" {
 	Properties {
 		[PerRendererData] _MainTex("Sprite Texture", 2D) = "white" {}
-		_Color("Tint", Color) = (1,1,1,1)
-
 			_StencilComp("Stencil Comparison", Float) = 8
 			_Stencil("Stencil ID", Float) = 0
 			_StencilOp("Stencil Operation", Float) = 0
@@ -48,7 +46,6 @@
 #pragma multi_compile __ UNITY_UI_ALPHACLIP
 #include "UnityCG.cginc"
 		sampler2D _MainTex;
-	float4 _Color;
 	sampler2D _CameraUIOverlayBlurTexture;
 
 	struct a2f
@@ -71,7 +68,7 @@
 		float4 screenPos = ComputeScreenPos(o.vertex);
 		o.screenPos = screenPos.xy / screenPos.w;
 		o.uv = i.texcoord;
-		o.color = i.color*_Color;
+		o.color = i.color;
 		return o;
 	}
 	fixed4 frag(v2f v) :COLOR

@@ -47,11 +47,12 @@ public class GameLevelManager : SingletonMono<GameLevelManager> {
                 if (m_FogTexture.GetPixel(i, j).a == 0)
                     continue;
 
-                float sqrMagnitude = playerPos.SqrMagnitude(new TileAxis(i, j));
-                if (sqrMagnitude<= LevelConst.I_UIPlayerViewClearRangeSecondPow)
-                    m_FogTexture.SetPixel(i, j, Color.clear);
-                else if (sqrMagnitude <= LevelConst.I_UIPlayerViewFadeRangeSecondPow)
-                    m_FogTexture.SetPixel(i, j, LevelConst.C_MapTextureHiddenFadeColor);
+                float magnitude = playerPos.SqrMagnitude(new TileAxis(i, j)) ;
+
+                if (magnitude <= LevelConst.I_UIPlayerViewClearRangeSecondPow)
+                    m_FogTexture.SetPixel(i, j, LevelConst.C_MapTextureFogReveal);
+                else if (magnitude <= LevelConst.I_UIPlayerViewFadeRangeSecondPow)
+                    m_FogTexture.SetPixel(i,j,LevelConst.C_MapTextureFogFade);
             }
         m_FogTexture.Apply();
     }
@@ -203,7 +204,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager> {
             for (int j = 0; j < m_MapSize.Y; j++)
             {
                 m_MapTexture.SetPixel(i, j, Color.clear);
-                m_FogTexture.SetPixel(i, j, LevelConst.C_MapTextureHiddenColor);
+                m_FogTexture.SetPixel(i, j, LevelConst.C_MapTextureFogColor);
             }
 
         gameChunkGenerate.Traversal((ChunkGenerateData chunkdata) =>
