@@ -78,13 +78,13 @@ public class LevelChunkData : ScriptableObject {
                 switch (m_TileData[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)].m_GroundType)
                 {
                     default:
-                        colors[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)] =  Color.white;
+                        colors[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)] =  LevelConst.C_MapTextureGroundColor;
                         break;
                     case enum_TileGroundType.Invalid:
                         colors[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)] = Color.clear;
                         break;
                     case enum_TileGroundType.Block:
-                        colors[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)] = Color.grey;
+                        colors[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)] = LevelConst.C_MapTextureGroundBlockColor;
                         break;
                 }
 

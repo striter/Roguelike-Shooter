@@ -1,6 +1,7 @@
 ﻿using GameSetting;
 using UnityEngine;
 using UnityEngine.UI;
+using LevelSetting;
 using TSpecialClasses;
 public class UIC_GameStatus : UIControlBase
 {
@@ -35,7 +36,7 @@ public class UIC_GameStatus : UIControlBase
 
     Transform m_Map;
     RectTransform m_Map_Origin;
-    RawImage m_Map_Origin_Texture;
+    RawImage m_Map_Origin_Base, m_Map_Origin_Base_Fog;
 
     TSpecialClasses.ValueChecker<bool> m_DyingCheck;
     protected override void Init()
@@ -80,7 +81,8 @@ public class UIC_GameStatus : UIControlBase
 
         m_Map = tf_Container.Find("Map");
         m_Map_Origin = m_Map.Find("Origin") as RectTransform;
-        m_Map_Origin_Texture = m_Map_Origin.Find("Texture").GetComponent<RawImage>();
+        m_Map_Origin_Base = m_Map_Origin.Find("Map").GetComponent<RawImage>();
+        m_Map_Origin_Base_Fog = m_Map_Origin_Base.transform.Find("Fog").GetComponent<RawImage>();
 
         m_DyingCheck = new ValueChecker<bool>(true);
 
@@ -106,8 +108,9 @@ public class UIC_GameStatus : UIControlBase
 
     void OnGameLoad()
     {
-        m_Map_Origin_Texture.texture = GameLevelManager.Instance.m_MapTexture;
-        m_Map_Origin_Texture.SetNativeSize();
+        m_Map_Origin_Base.texture = GameLevelManager.Instance.m_MapTexture;
+        m_Map_Origin_Base.SetNativeSize();
+        m_Map_Origin_Base_Fog.texture = GameLevelManager.Instance.m_FogTexture;
     }
     
     
@@ -135,7 +138,8 @@ public class UIC_GameStatus : UIControlBase
         if(m_DyingCheck.Check(dying))
             img_Dying.SetActivate(dying);
         OnAmmoStatus(_player.m_WeaponCurrent);
-        m_Map_Origin_Texture.rectTransform.anchoredPosition = GameLevelManager.Instance.GetMapPosition(_player.transform.position,5f);
+        m_Map_Origin_Base.rectTransform.anchoredPosition = GameLevelManager.Instance.GetMapPosition(_player.transform.position, LevelConst.I_UIMapSize);
+        m_Map_Origin_Base.rectTransform.localScale = Vector3.one * LevelConst.I_UIMapSize;
         m_Map_Origin.localRotation = Quaternion.Euler(0,0,GameLevelManager.Instance.GetMapAngle(CameraController.CameraRotation.eulerAngles.y));
     }
 

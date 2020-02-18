@@ -5,6 +5,21 @@ using TTiles;
 using UnityEngine;
 namespace LevelSetting
 {
+    public static class LevelConst
+    {
+        public const int I_TileSize = 2;
+        public const int I_UIMapSize = 7;
+        #region UI
+        public const int I_UIPlayerViewClearRangeSecondPow = 25;
+        public const int I_UIPlayerViewFadeRangeSecondPow = 49;
+
+        public static readonly Color C_MapTextureHiddenColor = TCommon.GetHexColor("191919FF");
+        public static readonly Color C_MapTextureHiddenFadeColor = TCommon.GetHexColor("19191980");
+        public static readonly Color C_MapTextureGroundColor = TCommon.GetHexColor("808080FF");
+        public static readonly Color C_MapTextureGroundBlockColor = TCommon.GetHexColor("2FC02FFF");
+        #endregion
+    }
+
     public enum enum_ChunkType {
         Invalid = -1,
         Start,
@@ -87,11 +102,6 @@ namespace LevelSetting
         WeaponReforge,
     }
     
-    public static class LevelConst
-    {
-        public const int I_TileSize = 2;
-    }
-
     public static class LevelExpressions
     {
         public static Vector3 ToPosition(this TileAxis axis) => new Vector3(axis.X,0,axis.Y)*LevelConst.I_TileSize;

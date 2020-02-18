@@ -546,7 +546,6 @@ public class GameManager : GameManagerBase
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleStart, chunkIndex);
         if (m_BattleChunkData.m_IsFinal)
             OnFinalBattleStart();
-
     }
 
     void OnBattleCharatcerKilled(EntityCharacterBase character)

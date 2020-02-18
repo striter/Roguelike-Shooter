@@ -144,6 +144,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         OnMoveTick(deltaTime);
         m_Health.OnMaxChange(m_CharacterInfo.F_MaxHealthAdditive,m_CharacterInfo.F_MaxArmorAdditive);
         m_CharacterAbility.Tick(deltaTime);
+        GameLevelManager.Instance.ClearMinimapFog(transform.position); 
         OnCommonStatus();
     }
 

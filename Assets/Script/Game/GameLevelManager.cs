@@ -15,6 +15,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager> {
     public Dictionary<int, LevelChunkGame> m_GameChunks => m_ChunkPool.m_ActiveItemDic;
     public Light m_DirectionalLight { get; private set; }
     public Texture2D m_MapTexture { get; private set; }
+    public Texture2D m_FogTexture { get; private set; }
     public System.Random random { get; private set; }
     TileAxis m_MapOrigin, m_MapSize;
     Vector3 m_MapOriginPos;
@@ -27,6 +28,30 @@ public class GameLevelManager : SingletonMono<GameLevelManager> {
         return new Vector2(offset.x,offset.z)/-LevelConst.I_TileSize*mapScale;
     }
     public float GetMapAngle(float cameraYAngle) => cameraYAngle;
+
+    public LevelChunkGame GetChunk(int chunkIndex)
+    {
+        if (m_ChunkPool.ContainsItem(chunkIndex))
+            return m_ChunkPool.GetItem(chunkIndex);
+        Debug.LogError("Chun Index Not Found" + chunkIndex);
+        return null;
+    }
+
+    public void ClearMinimapFog(Vector3 worldPosition)
+    {
+        Vector3 offset = worldPosition - m_MapOriginPos;
+        TileAxis playerPos = new TileAxis((int)offset.x/LevelConst.I_TileSize,(int)offset.z/LevelConst.I_TileSize);
+        for (int i = 0; i < m_MapSize.X; i++)
+            for (int j = 0; j < m_MapSize.Y; j++)
+            {
+                float sqrMagnitude = playerPos.SqrMagnitude(new TileAxis(i, j));
+                if (sqrMagnitude<= LevelConst.I_UIPlayerViewClearRangeSecondPow)
+                    m_FogTexture.SetPixel(i, j, Color.clear);
+                else if (sqrMagnitude <= LevelConst.I_UIPlayerViewFadeRangeSecondPow)
+                    m_FogTexture.SetPixel(i, j, LevelConst.C_MapTextureHiddenFadeColor);
+            }
+        m_FogTexture.Apply();
+    }
 
     protected override void Awake()
     {
@@ -169,10 +194,14 @@ public class GameLevelManager : SingletonMono<GameLevelManager> {
         NavigationManager.InitNavMeshData(transform, mapBounds, _ChunkNavigationData);
 
         #region Generate Map Texture
-        m_MapTexture = new Texture2D(m_MapSize.X, m_MapSize.Y, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point, hideFlags = HideFlags.HideAndDontSave };
+        m_MapTexture = new Texture2D(m_MapSize.X, m_MapSize.Y, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point, wrapMode= TextureWrapMode.Clamp, hideFlags = HideFlags.HideAndDontSave };
+        m_FogTexture=new Texture2D(m_MapSize.X, m_MapSize.Y, TextureFormat.RGBA32, false) { filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp, hideFlags = HideFlags.HideAndDontSave };
         for (int i = 0; i < m_MapSize.X; i++)
             for (int j = 0; j < m_MapSize.Y; j++)
+            {
                 m_MapTexture.SetPixel(i, j, Color.clear);
+                m_FogTexture.SetPixel(i, j, LevelConst.C_MapTextureHiddenColor);
+            }
 
         gameChunkGenerate.Traversal((ChunkGenerateData chunkdata) =>
         {
@@ -185,6 +214,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager> {
             }
         });
         m_MapTexture.Apply();
+        m_FogTexture.Apply();
         #endregion
     }
 
@@ -285,13 +315,6 @@ public class GameLevelManager : SingletonMono<GameLevelManager> {
     }
     #endregion
 
-    public LevelChunkGame GetChunk(int chunkIndex)
-    {
-        if (m_ChunkPool.ContainsItem(chunkIndex))
-            return m_ChunkPool.GetItem(chunkIndex);
-        Debug.LogError("Chun Index Not Found" + chunkIndex);
-        return null;
-    }
 
     void OnBattleTrigger(int chunkID)
     {

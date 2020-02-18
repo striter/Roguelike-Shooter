@@ -96,7 +96,6 @@ namespace TTiles
         public static bool CheckIsEdge<T>(this T[,] tileArray, TileAxis axis) where T : class, ITileAxis => axis.X == 0 || axis.X == tileArray.GetLength(0) - 1 || axis.Y == 0 || axis.Y == tileArray.GetLength(1) - 1; 
 
         public static float SqrMagnitude(this TileAxis sourceAxis, TileAxis targetAxis)=> Vector2.SqrMagnitude(new Vector2(sourceAxis.X, sourceAxis.Y) - new Vector2(targetAxis.X, targetAxis.Y));
-
         public static int AxisOffset(this TileAxis sourceAxis, TileAxis targetAxis)=>Mathf.Abs(sourceAxis.X - targetAxis.X) + Mathf.Abs(sourceAxis.Y - targetAxis.Y);
 
 
