@@ -414,7 +414,7 @@ MonoBehaviour:
   - m_PillarType: -1
     m_GroundType: -1
     m_ObjectType: 52
-    m_Direction: 0
+    m_Direction: 1
   - m_PillarType: -1
     m_GroundType: -1
     m_ObjectType: -1
@@ -1294,7 +1294,7 @@ MonoBehaviour:
   - m_PillarType: -1
     m_GroundType: -1
     m_ObjectType: 52
-    m_Direction: 0
+    m_Direction: 1
   - m_PillarType: -1
     m_GroundType: -1
     m_ObjectType: -1

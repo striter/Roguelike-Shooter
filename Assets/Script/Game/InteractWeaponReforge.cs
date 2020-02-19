@@ -6,10 +6,11 @@ using UnityEngine;
 public class InteractWeaponReforge : InteractGameBase {
     public override enum_Interaction m_InteractType => enum_Interaction.WeaponReforge;
     enum_PlayerWeapon m_Weapon;
-    public void Play(enum_PlayerWeapon _weapon)
+    public InteractWeaponReforge Play(enum_PlayerWeapon _weapon)
     {
         base.Play();
         m_Weapon = _weapon;
+        return this;
     }
     protected override bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactor)
     {

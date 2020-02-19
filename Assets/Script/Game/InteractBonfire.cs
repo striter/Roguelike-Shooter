@@ -18,10 +18,11 @@ public class InteractBonfire : InteractGameBase {
         tf_Light = transform.Find("Light");
         m_HealInfo = new DamageInfo(0, enum_DamageType.HealthOnly, DamageDeliverInfo.BuffInfo(-1, SBuff.m_PlayerBoneFireHealBuff));
     }
-    public new void Play()
+    public new InteractBonfire Play()
     {
         base.Play();
         OnDistinguish();
+        return this;
     }
 
     protected override bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactor)

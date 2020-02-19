@@ -29,7 +29,6 @@ public class LevelChunkGame : LevelChunkBase
         m_ChunkObjects.Clear();
         m_NearbyChunks.Clear();
         bool isConnectionChunk = _data.m_Data.Type.IsConnectChunk();
-        Dictionary<TileAxis, enum_TileDirection> m_ConnectionIndex = new Dictionary<TileAxis, enum_TileDirection>();
         InitData(_data.m_Data, _random, (TileAxis axis, ChunkTileData tileData) => {
 
             if (tileData.m_ObjectType.IsEditorTileObject())
@@ -37,13 +36,6 @@ public class LevelChunkGame : LevelChunkBase
                 if (!m_ChunkObjects.ContainsKey(tileData.m_ObjectType))
                     m_ChunkObjects.Add(tileData.m_ObjectType, new List<ChunkGameObjectData>());
 
-
-                if (tileData.m_ObjectType == enum_TileObjectType.RConnection1x1)
-                {
-                    m_ConnectionIndex.Add(axis,tileData.m_Direction);
-                    if (isConnectionChunk)
-                        return tileData;
-                }
                 Vector3 worldPosition = m_ChunkOrigin + Vector3.up * LevelConst.I_TileSize + axis.ToPosition() + tileData.m_ObjectType.GetSizeAxis(tileData.m_Direction).ToPosition() / 2f;
                 m_ChunkObjects[tileData.m_ObjectType].Add(new ChunkGameObjectData(worldPosition, tileData.m_Direction.ToRotation()));
                 return tileData.ChangeObjectType(enum_TileObjectType.Invalid);

@@ -8,11 +8,12 @@ public class InteractRewardChest : InteractGameBase {
     ActionPerkBase m_Equipment;
     enum_PlayerWeapon m_Weapon;
 
-    public void Play(ActionPerkBase _equipment, enum_PlayerWeapon weapon)
+    public InteractRewardChest Play(ActionPerkBase _equipment, enum_PlayerWeapon weapon)
     {
         base.Play();
         m_Equipment = _equipment;
         m_Weapon = weapon;
+        return this;
     }
     protected override bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactor)
     {

@@ -501,7 +501,7 @@ namespace GameSetting
     public enum enum_EnermyType { Invalid = -1, Fighter = 1, Shooter_Rookie = 2, Shooter_Veteran = 3, AOECaster = 4, Elite = 5, }
 
     public enum enum_Interaction { Invalid = -1,
-        GameBegin,Bonfire, TradeContainer, PickupCoin, PickupHealth,PickupHealthPack,PickupExp, PickupArmor,RewardChest,PerkUpgrade,PerkAcquire,WeaponReforge, Equipment, Weapon, Portal, GameEnd,
+        GameBegin,Bonfire, TradeContainer, PickupCoin, PickupHealth,PickupHealthPack,PickupExp, PickupArmor,RewardChest,PerkUpgrade,PerkAcquire,WeaponReforge, Equipment, Weapon,Teleport, Portal, GameEnd,
         CampBegin,CampStage, CampDifficult,CampFarm,CampAction,CampEnd, }
     
     public enum enum_ProjectileFireType { Invalid = -1, Single = 1, MultipleFan = 2, MultipleLine = 3, };
@@ -1073,30 +1073,45 @@ namespace GameSetting
     #region GameBase
     public class GameChunk
     {
-        public int m_Index { get; private set; }
-        public List<int> m_ChunkTriggers { get; private set; } = new List<int>();
         public enum_ChunkType m_ChunkType { get; private set; }
-        public bool m_IsBattle => m_ChunkType== enum_ChunkType.Battle||m_ChunkType== enum_ChunkType.Final;
-        public GameChunk(int chunkIndex,enum_ChunkType _chunkType)
+        public List<int> m_Triggers { get; private set; } = new List<int>();
+        public GameChunk(enum_ChunkType _chunkType)
         {
-            m_Index = chunkIndex;
             m_ChunkType = _chunkType;
         }
     }
     public class GameChunkBattle:GameChunk
     {
+        public bool m_Triggered { get; private set; }
         public List<int> m_BattleEnermyCommands { get; private set; } = new List<int>();
         public bool m_IsFinal => m_ChunkType == enum_ChunkType.Final;
-        public GameChunkBattle(int chunkIndex, enum_ChunkType chunkType) : base(chunkIndex, chunkType)
+        public GameChunkBattle(enum_ChunkType chunkType) : base(chunkType)
         {
+            m_Triggered = false;
         }
+        public void Trigger()
+        {
+            m_Triggered = true;
+        } 
     }
     public class GameChunkTeleport : GameChunk
     {
         public InteractTeleport m_ChunkTeleport { get; private set; }
-        public GameChunkTeleport(int chunkIndex, enum_ChunkType chunkType, InteractTeleport _ChunkTeleport) : base(chunkIndex,  enum_ChunkType.Teleport)
+        public bool m_Enable { get; private set; }
+        public GameChunkTeleport() : base( enum_ChunkType.Teleport)
+        {
+        }
+        public void OnSpawnTeleport(InteractTeleport _ChunkTeleport)
         {
             m_ChunkTeleport = _ChunkTeleport;
+            m_Enable = false;
+            m_ChunkTeleport.SetPlay(m_Enable);
+        }
+
+        public void OnChunkTrigger()
+        {
+            m_Enable = true;
+            m_ChunkTeleport.SetPlay(m_Enable);
         }
     }
 
@@ -1105,7 +1120,11 @@ namespace GameSetting
         public enum_ChunkEventType m_EventType;
         public Vector3 m_EventPos;
         public InteractGameBase m_EventInteract { get; private set; }
-        public GameChunkEvent(int chunkIndex, enum_ChunkType chunkType, enum_ChunkEventType _eventType, Vector3 _eventPos, InteractGameBase _eventInteract) : base(chunkIndex,  enum_ChunkType.Event)
+        public GameChunkEvent() : base( enum_ChunkType.Event)
+        {
+        }
+
+        public void OnSpawnEvent(enum_ChunkEventType _eventType, Vector3 _eventPos, InteractGameBase _eventInteract)
         {
             m_EventType = _eventType;
             m_EventPos = _eventPos;

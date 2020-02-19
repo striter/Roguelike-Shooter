@@ -7,12 +7,13 @@ public class InteractPerkAcquire : InteractGameBase {
     public override enum_Interaction m_InteractType => enum_Interaction.PerkAcquire;
     ActionPerkBase m_Equipment;
     public int m_TryCount { get; private set; } = 0;
-    public void Play( ActionPerkBase _equipment)
+    public InteractPerkAcquire Play( ActionPerkBase _equipment)
     {
         base.Play();
         m_Equipment = _equipment;
         m_TryCount = 0;
         m_TradePrice = GameExpression.GetEventPerkAcquireCoinsAmount(m_TryCount);
+        return this;
     }
 
 

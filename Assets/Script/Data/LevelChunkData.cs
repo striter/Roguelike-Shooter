@@ -54,7 +54,12 @@ public class LevelChunkData : ScriptableObject {
             {
                 int index = TileTools.Get1DAxisIndex(new TileAxis( i, j), m_Width);
                 if (chunk.m_TilesData[i, j].m_Data.m_ObjectType == enum_TileObjectType.RConnection1x1)
-                    m_Connections.Add(new ChunkConnectionData(new TileAxis(i,j), chunk.m_TilesData[i, j].m_Data.m_Direction, m_Width,m_Height));
+                {
+                    ChunkConnectionData connectionData = new ChunkConnectionData(new TileAxis(i, j), chunk.m_TilesData[i, j].m_Data.m_Direction, m_Width, m_Height);
+                    m_Connections.Add(connectionData);
+                    m_TileData[index] = chunk.m_TilesData[i, j].m_Data.ChangeDirection(connectionData.m_Direction);
+                    continue;
+                }
                 m_TileData[index] = chunk.m_TilesData[i, j].m_Data;
             }
         m_ConnectionIndex = m_Connections.ToArray();
