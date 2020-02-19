@@ -499,6 +499,7 @@ public class GameManager : GameManagerBase
         if (teleportChunk.m_Enable)
             return;
         teleportChunk.OnChunkTrigger();
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_ChunkTeleportUnlock);
     }
     #endregion
     #region Battle Relatives 

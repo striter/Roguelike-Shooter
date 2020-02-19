@@ -120,7 +120,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>,ICoroutineHelper
         List<ChunkGenerateData> gameChunkGenerate = new List<ChunkGenerateData>();
 
         Func<enum_ChunkEventType> RandomEventType = () => TCommon.RandomPercentage(GameConst.D_ChunkEventPercentage,random);
-        List<ChunkPreGenerateData> mainChunkType = m_LevelTest ? new List<ChunkPreGenerateData>() {new ChunkPreGenerateData( enum_ChunkType.Event, m_TestEventType)  , new ChunkPreGenerateData(enum_ChunkType.Final) } :
+        List<ChunkPreGenerateData> mainChunkType = m_LevelTest ? new List<ChunkPreGenerateData>() { new ChunkPreGenerateData(enum_ChunkType.Connect),new ChunkPreGenerateData( enum_ChunkType.Event, m_TestEventType), new ChunkPreGenerateData(enum_ChunkType.Teleport), new ChunkPreGenerateData(enum_ChunkType.Final) } :
             new List<ChunkPreGenerateData>()
             {
                 new ChunkPreGenerateData( enum_ChunkType.Connect),new ChunkPreGenerateData(enum_ChunkType.Battle),new ChunkPreGenerateData( enum_ChunkType.Connect),  new ChunkPreGenerateData(enum_ChunkType.Event, enum_ChunkEventType.RewardChest),

@@ -482,6 +482,8 @@ namespace GameSetting
         UI_PlayerPerkStatus,
         UI_PlayerWeaponStatus,
 
+        UI_ChunkTeleportUnlock,
+
         UI_CampDataStatus,
 
         UI_PageOpen,

@@ -115,7 +115,6 @@ public class UIC_GameStatus : UIControlBase
             m_Enermys.TraversalItem((int identity, UIGI_MapEntityLocation item) => { item.Tick(); });
             m_Locations.TraversalItem((int identity,Image image) => { image.transform.rotation = Quaternion.identity; });
         }
-
     }
 
     TSpecialClasses.ValueChecker<bool> m_DyingCheck;
@@ -167,6 +166,7 @@ public class UIC_GameStatus : UIControlBase
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityPlayerHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerPerkStatus, OnEquipmentStatus);
+        TBroadCaster<enum_BC_UIStatus>.Add(enum_BC_UIStatus.UI_ChunkTeleportUnlock, m_GameMinimap.UpdateIconStatus);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnGameBegin, BeginInit);
     }
 
@@ -175,6 +175,7 @@ public class UIC_GameStatus : UIControlBase
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityPlayerHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerPerkStatus, OnEquipmentStatus);
+        TBroadCaster<enum_BC_UIStatus>.Remove(enum_BC_UIStatus.UI_ChunkTeleportUnlock, m_GameMinimap.UpdateIconStatus);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnGameBegin, BeginInit);
         m_GameMinimap.OnDestroy();
     }
