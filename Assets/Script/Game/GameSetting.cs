@@ -765,7 +765,7 @@ namespace GameSetting
             m_Equipments = new List<EquipmentSaveData>();
             m_ActionBuffs = new List<ActionSaveData>();
             m_Stage = enum_StageLevel.Rookie;
-            m_GameSeed = DateTime.Now.ToLongTimeString().ToString();
+            m_GameSeed = DateTime.Now.ToLongTimeString();
             m_character = GameDataManager.m_GameData.m_CharacterSelected;
             m_weapon1 = WeaponSaveData.CreateNew(enum_PlayerWeapon.P92);
             m_weapon2 = WeaponSaveData.CreateNew(enum_PlayerWeapon.Invalid);
@@ -1075,23 +1075,43 @@ namespace GameSetting
     {
         public int m_Index { get; private set; }
         public List<int> m_ChunkTriggers { get; private set; } = new List<int>();
-        public virtual bool m_IsBattle => false;
-        public GameChunk(int chunkIndex)
+        public enum_ChunkType m_ChunkType { get; private set; }
+        public bool m_IsBattle => m_ChunkType== enum_ChunkType.Battle||m_ChunkType== enum_ChunkType.Final;
+        public GameChunk(int chunkIndex,enum_ChunkType _chunkType)
         {
             m_Index = chunkIndex;
+            m_ChunkType = _chunkType;
         }
     }
     public class GameChunkBattle:GameChunk
     {
-        public override bool m_IsBattle => true;
         public List<int> m_BattleEnermyCommands { get; private set; } = new List<int>();
-        public bool m_IsFinal { get; private set; }
-        public GameChunkBattle(int chunkIndex, bool isFinal) : base(chunkIndex)
+        public bool m_IsFinal => m_ChunkType == enum_ChunkType.Final;
+        public GameChunkBattle(int chunkIndex, enum_ChunkType chunkType) : base(chunkIndex, chunkType)
         {
-            m_IsFinal = isFinal;
         }
     }
-    
+    public class GameChunkTeleport : GameChunk
+    {
+        public InteractTeleport m_ChunkTeleport { get; private set; }
+        public GameChunkTeleport(int chunkIndex, enum_ChunkType chunkType, InteractTeleport _ChunkTeleport) : base(chunkIndex,  enum_ChunkType.Teleport)
+        {
+            m_ChunkTeleport = _ChunkTeleport;
+        }
+    }
+
+    public class GameChunkEvent:GameChunk
+    {
+        public enum_ChunkEventType m_EventType;
+        public Vector3 m_EventPos;
+        public InteractGameBase m_EventInteract { get; private set; }
+        public GameChunkEvent(int chunkIndex, enum_ChunkType chunkType, enum_ChunkEventType _eventType, Vector3 _eventPos, InteractGameBase _eventInteract) : base(chunkIndex,  enum_ChunkType.Event)
+        {
+            m_EventType = _eventType;
+            m_EventPos = _eventPos;
+            m_EventInteract = _eventInteract;
+        }
+    }
     
     public class HealthBase
     {

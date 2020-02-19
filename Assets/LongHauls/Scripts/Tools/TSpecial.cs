@@ -44,6 +44,8 @@ namespace TTiles
         public override bool Equals(object obj) => base.Equals(obj);
         public override int GetHashCode()=> base.GetHashCode();
         public override string ToString()=> X + "," + Y;
+        public int SqrMagnitude => X * X + Y * Y;
+        public int SqrLength => Mathf.Abs(X) + Mathf.Abs(Y);
         public static readonly TileAxis Zero = new TileAxis(0, 0);
         public static readonly TileAxis One = new TileAxis(1, 1);
         public static readonly TileAxis NegativeOne = new TileAxis(-1,-1);
@@ -94,11 +96,7 @@ namespace TTiles
             return axisList;
         }
         public static bool CheckIsEdge<T>(this T[,] tileArray, TileAxis axis) where T : class, ITileAxis => axis.X == 0 || axis.X == tileArray.GetLength(0) - 1 || axis.Y == 0 || axis.Y == tileArray.GetLength(1) - 1;
-
-        public static int SqrMagnitude(this TileAxis sourceAxis)=> sourceAxis.X * sourceAxis.X + sourceAxis.Y * sourceAxis.Y;
-        public static int AxisOffset(this TileAxis sourceAxis, TileAxis targetAxis)=>Mathf.Abs(sourceAxis.X - targetAxis.X) + Mathf.Abs(sourceAxis.Y - targetAxis.Y);
-
-
+        
         public static bool AxisInSquare(TileAxis axis, TileAxis squareAxis, TileAxis squareSize)=>axis.X >= squareAxis.X && axis.X <= squareAxis.X + squareSize.X && axis.Y >= squareAxis.Y && axis.Y <= squareAxis.Y + squareSize.Y;
 
         public static TileAxis GetDirectionedSize(TileAxis size, enum_TileDirection direction) => (int)direction % 2 == 0 ? size : size.Inverse();
@@ -169,14 +167,14 @@ namespace TTiles
             for (; ; )
             {
                 TileAxis nextTile=startTile;
-                float minDistance = (startTile-t2.m_Axis).SqrMagnitude();
+                float minDistance = (startTile-t2.m_Axis).SqrMagnitude;
                 float offsetDistance;
                 TileAxis offsetTile;
                 TileAxis[] nearbyFourTiles = startTile.nearbyFourTiles;
                 for (int i = 0; i < nearbyFourTiles.Length; i++)
                 {
                     offsetTile = nearbyFourTiles[i];
-                    offsetDistance = (offsetTile-t2.m_Axis).SqrMagnitude();
+                    offsetDistance = (offsetTile-t2.m_Axis).SqrMagnitude;
                     if (offsetTile.InRange(tileArray) && offsetDistance < minDistance)
                     {
                         nextTile = offsetTile;

@@ -11,14 +11,13 @@ namespace LevelSetting
         #region UI
         public const int I_UIMinimapSize = 7;
 
-        public const int I_UIPlayerViewRevealRangeSecondPow = 100;       //10
-        public const int I_UIPlayerViewFadeRangeSecondPow = 144;        //12
+        public const int I_UISqrPlayerViewRevealRange = 100;       //10
+        public const int I_UISqrPlayerViewFadeRange = 144;        //12
 
         public static readonly Color C_MapFogRevealFogColor = TCommon.GetHexColor("191919FF");
         public static readonly Color C_MapFogRevealFadeColor= TCommon.GetHexColor("191919D0");
         public static readonly Color C_MapFogRevealClearColor = TCommon.GetHexColor("19191900");
         public static readonly Color C_MapTextureGroundColor = TCommon.GetHexColor("808080FF");
-        public static readonly Color C_MapTextureGroundBlockColor = TCommon.GetHexColor("2FC02FFF");
         #endregion
     }
 

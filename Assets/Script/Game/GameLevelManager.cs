@@ -62,17 +62,18 @@ public class GameLevelManager : SingletonMono<GameLevelManager>,ICoroutineHelper
                     m_FogRevalationModified[i, j] = false;
                     if (m_FogRevealation[i, j] == enum_ChunkRevealType.Revealed)
                         continue;
-                    TileAxis targetAxis = new TileAxis(i, j);
-                    if (updatePos.AxisOffset(targetAxis) > LevelConst.I_UIPlayerViewFadeRangeSecondPow)
-                        return;
 
-                    float magnitude = (updatePos-targetAxis).SqrMagnitude();
-                    if (magnitude <= LevelConst.I_UIPlayerViewRevealRangeSecondPow)
+                    TileAxis offsetAxis = updatePos - new TileAxis(i, j);
+                    if (offsetAxis.SqrLength > LevelConst.I_UISqrPlayerViewFadeRange)
+                        continue;
+
+                    float sqrMagnitude = offsetAxis.SqrMagnitude;
+                    if (sqrMagnitude <= LevelConst.I_UISqrPlayerViewRevealRange)
                     {
                         m_FogRevealation[i, j] = enum_ChunkRevealType.Revealed;
                         m_FogRevalationModified[i, j] = true;
                     }
-                    else if (magnitude <= LevelConst.I_UIPlayerViewFadeRangeSecondPow)
+                    else if (sqrMagnitude <= LevelConst.I_UISqrPlayerViewFadeRange)
                     {
                         m_FogRevealation[i, j] =  enum_ChunkRevealType.Faded;
                         m_FogRevalationModified[i, j] = true;

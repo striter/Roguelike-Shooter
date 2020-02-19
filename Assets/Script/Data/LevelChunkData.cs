@@ -83,9 +83,6 @@ public class LevelChunkData : ScriptableObject {
                     case enum_TileGroundType.Invalid:
                         colors[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)] = Color.clear;
                         break;
-                    case enum_TileGroundType.Block:
-                        colors[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)] = LevelConst.C_MapTextureGroundBlockColor;
-                        break;
                 }
 
             }

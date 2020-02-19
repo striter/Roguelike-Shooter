@@ -395,15 +395,16 @@ public class GameManager : GameManagerBase
         m_ChunkEnterTriggers.ClearPool();
         GameLevelManager.Instance.m_GameChunks.Traversal((int chunkIndex, LevelChunkGame chunkData) =>
         {
-        bool isFinal = chunkData.m_ChunkType == enum_ChunkType.Final;
-        bool isBattle = isFinal || chunkData.m_ChunkType == enum_ChunkType.Battle;
-        m_GameChunkData.Add(chunkIndex, isBattle ? new GameChunkBattle(chunkIndex, isFinal) : new GameChunk(chunkIndex));
+        bool isBattle = chunkData.m_ChunkType == enum_ChunkType.Final || chunkData.m_ChunkType == enum_ChunkType.Battle;
+        m_GameChunkData.Add(chunkIndex, isBattle ? new GameChunkBattle(chunkIndex,chunkData.m_ChunkType) : new GameChunk(chunkIndex, chunkData.m_ChunkType));
 
         chunkData.m_ChunkObjects.Traversal((enum_TileObjectType tileType, List<ChunkGameObjectData> objects) => {
                 objects.Traversal((ChunkGameObjectData objectData) =>
                 {
                     switch (tileType)
                     {
+                        case enum_TileObjectType.RChunkPortal2x2:
+                            break;
                         case enum_TileObjectType.RPlayerSpawn1x1:
                             tf_PlayerStart.position = objectData.pos;
                             tf_PlayerStart.rotation = objectData.rot;
@@ -626,9 +627,10 @@ public class GameProgressManager
 {
     #region LevelData
     public string m_GameSeed { get; private set; }
+    public System.Random m_GameRandom { get; private set; }
+
     public int m_GameDifficulty { get; private set; }
 
-    public System.Random m_GameRandom { get; private set; }
     public StageInteractGenerateData m_InteractGenerate { get; private set; }
     public Dictionary<bool, List<SEnermyGenerate>> m_EnermyGenerate { get; private set; }
     public bool B_IsFinalStage => m_GameStage == enum_StageLevel.Ranger;
@@ -644,16 +646,18 @@ public class GameProgressManager
     #endregion
     public GameProgressManager(CGameSave _gameSave,CBattleSave _battleSave)
     {
-        m_GameSeed =_battleSave.m_GameSeed;
-        m_GameRandom = new System.Random(m_GameSeed.GetHashCode());
         m_GameStage = _battleSave.m_Stage;
         m_GameDifficulty = 3; //_gameSave.m_GameDifficulty;
+        m_GameSeed =_battleSave.m_GameSeed;
+        m_GameRandom = new System.Random(m_GameSeed.GetHashCode());
         List<enum_LevelStyle> styleList = TCommon.GetEnumList<enum_LevelStyle>();
         TCommon.TraversalEnum((enum_StageLevel level) => {
             enum_LevelStyle style = styleList.RandomItem(m_GameRandom);
             styleList.Remove(style);
             m_StageStyle.Add(level, style);
         });
+
+        m_GameRandom = new System.Random((m_GameSeed+m_GameStage.ToString()).GetHashCode());
     }
     public void LoadStageData()
     {
@@ -668,6 +672,7 @@ public class GameProgressManager
         if (B_IsFinalStage)
             return true;
         m_GameStage++;
+        m_GameRandom = new System.Random((m_GameSeed + m_GameStage.ToString()).GetHashCode());
         return false;
     }
     
