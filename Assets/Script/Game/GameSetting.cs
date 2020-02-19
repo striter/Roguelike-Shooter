@@ -375,6 +375,8 @@ namespace GameSetting
             }
         }
 
+        public static string GetMapEventSprite(this enum_ChunkEventType type) => "map_icon_event_" + type;
+
         public static string GetAbilityBackground(bool cooldowning)=>cooldowning?"control_ability_bottom_cooldown":"control_ability_bottom_activate";
         public static string GetAbilitySprite(enum_PlayerCharacter character) => "control_ability_" + character;
         public static string GetSpriteName(this enum_PlayerWeapon weapon) => ((int)weapon).ToString();
@@ -1079,6 +1081,7 @@ namespace GameSetting
         {
             m_ChunkType = _chunkType;
         }
+        public virtual bool CalculateMapIconLocation(ref Vector3 locationPosition,ref string locationIcon) => false;
     }
     public class GameChunkBattle:GameChunk
     {
@@ -1098,6 +1101,16 @@ namespace GameSetting
     {
         public InteractTeleport m_ChunkTeleport { get; private set; }
         public bool m_Enable { get; private set; }
+        public override bool CalculateMapIconLocation(ref Vector3 locationPositon, ref string locationIcon)
+        {
+            if (!m_Enable)
+                return false;
+
+            locationPositon = m_ChunkTeleport.transform.position;
+            locationIcon = "map_icon_teleport";
+            return true;
+        }
+
         public GameChunkTeleport() : base( enum_ChunkType.Teleport)
         {
         }
@@ -1123,7 +1136,12 @@ namespace GameSetting
         public GameChunkEvent() : base( enum_ChunkType.Event)
         {
         }
-
+        public override bool CalculateMapIconLocation(ref Vector3 locationPosition, ref string locationSprite)
+        {
+            locationPosition = m_EventPos;
+            locationSprite = m_EventType.GetMapEventSprite();
+            return true;
+        }
         public void OnSpawnEvent(enum_ChunkEventType _eventType, Vector3 _eventPos, InteractGameBase _eventInteract)
         {
             m_EventType = _eventType;

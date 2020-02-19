@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 081334a023db2704db167d2dfc323270, type: 3}
-    totalSpriteSurfaceArea: 1592577
+    totalSpriteSurfaceArea: 1473177
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -42,14 +42,11 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 006ea73e2bf56dc4e959b2bc4171da77, type: 3}
   - {fileID: 21300000, guid: ce23f48acd6ddf541b7a5d298771ae09, type: 3}
   - {fileID: 21300000, guid: d3693ba12401d8c4cac8765412e6c015, type: 3}
-  - {fileID: 21300000, guid: a0edf0727dbc54049ad1b24763bf40b5, type: 3}
-  - {fileID: 21300000, guid: 3ed3568eaf02c50459c3a004bcf900aa, type: 3}
-  - {fileID: 21300000, guid: 48ca20a7917b66e4785597c22ec56a6a, type: 3}
-  - {fileID: 21300000, guid: a9ee0bc7c49b98d41884f7111e26d74e, type: 3}
-  - {fileID: 21300000, guid: c6b65ee3d246fd345b9ccd328a569d2e, type: 3}
+  - {fileID: 21300000, guid: 794567052adf2194ea84330ab26be09f, type: 3}
+  - {fileID: 21300000, guid: ea52e7fe013a95341b32b99bd1f28ec6, type: 3}
+  - {fileID: 21300000, guid: e2dc748ae38dba94c926226a6ccd905f, type: 3}
   - {fileID: 21300000, guid: 8d9d6752fb320bd438f49a5bec44867c, type: 3}
   - {fileID: 21300000, guid: 5299f3520a85ed74fac7a3636bdc9238, type: 3}
-  - {fileID: 21300000, guid: fc8bda41e4b7e344481fcdef48b648bc, type: 3}
   - {fileID: 21300000, guid: 1dfff60a4d340614f8574902c4683851, type: 3}
   - {fileID: 21300000, guid: 471f2c6bff785a049b3b37e24002cdae, type: 3}
   - {fileID: 21300000, guid: 702a32a3dc3147a47800c42865d41714, type: 3}
@@ -71,14 +68,11 @@ SpriteAtlas:
   - result_title_win_CN
   - backpack_bottom
   - settlement_bottom
-  - level_End
-  - level_Battle
-  - level_Start
-  - level_Trade
-  - level_Reward
+  - map_icon_teleport
+  - map_icon_event_Trader
+  - map_icon_event_RewardChest
   - interact_text_bottom
   - interact_bottom
-  - level_Unknown
   - equipmentPack_empty
   - backpack_shadow
   - health_2

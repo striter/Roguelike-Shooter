@@ -8,10 +8,10 @@ public class UIGI_MapEntityLocation : UIT_GridItem {
     public void Play(EntityBase entity)
     {
         m_Target = entity;
-        UpdatePos();
+        Tick();
     }
 
-    public void UpdatePos()
+    public void Tick()
     {
         if(m_Target)
         rtf_RectTransform.anchoredPosition = GameLevelManager.Instance.GetOffsetPosition(m_Target.transform.position);
