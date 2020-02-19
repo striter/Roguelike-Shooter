@@ -1090,7 +1090,6 @@ namespace GameSetting
         {
             m_IsFinal = isFinal;
         }
-
     }
     
     
@@ -2047,7 +2046,7 @@ namespace GameSetting
     #endregion
     
     #region GameEffects
-    public class ModelBlink:ICoroutineHelper
+    public class ModelBlink:ICoroutineHelperClass
     {
         Transform transform;
         Renderer[] m_renderers;

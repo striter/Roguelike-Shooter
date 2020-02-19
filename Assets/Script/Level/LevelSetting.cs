@@ -10,12 +10,13 @@ namespace LevelSetting
         public const int I_TileSize = 2;
         #region UI
         public const int I_UIMinimapSize = 7;
-        public const int I_UIPlayerViewClearRangeSecondPow = 100;       //10
-        public const int I_UIPlayerViewFadeRangeSecondPow = 169;        //13
 
-        public static readonly Color C_MapTextureFogColor = TCommon.GetHexColor("191919FF");
-        public static readonly Color C_MapTextureFogFade = TCommon.GetHexColor("19191980");
-        public static readonly Color C_MapTextureFogReveal = TCommon.GetHexColor("19191900");
+        public const int I_UIPlayerViewRevealRangeSecondPow = 100;       //10
+        public const int I_UIPlayerViewFadeRangeSecondPow = 144;        //12
+
+        public static readonly Color C_MapFogRevealFogColor = TCommon.GetHexColor("191919FF");
+        public static readonly Color C_MapFogRevealFadeColor= TCommon.GetHexColor("191919D0");
+        public static readonly Color C_MapFogRevealClearColor = TCommon.GetHexColor("19191900");
         public static readonly Color C_MapTextureGroundColor = TCommon.GetHexColor("808080FF");
         public static readonly Color C_MapTextureGroundBlockColor = TCommon.GetHexColor("2FC02FFF");
         #endregion
@@ -27,7 +28,8 @@ namespace LevelSetting
         Event,
         Battle,
         Final,
-        Connection,
+        Connect,
+        Teleport,
     }
     
     public enum enum_TileSubType
@@ -77,7 +79,7 @@ namespace LevelSetting
         
         RestrictStart=50,
         RPlayerSpawn1x1=51,
-        RConnection1x5 =52,
+        RConnection1x1 =52,
         RStagePortal2x2=53,
         RChunkPortal2x2=54,
         REventArea3x3 = 55,
@@ -102,6 +104,14 @@ namespace LevelSetting
         PerkAcquire,
         WeaponReforge,
     }
+
+    public enum enum_ChunkRevealType
+    {
+        Invalid=-1,
+        Fog=1,
+        Faded=2,
+        Revealed = 3,
+    }
     
     public static class LevelExpressions
     {
@@ -118,6 +128,18 @@ namespace LevelSetting
             }
             return false;
         }
+        public static bool IsConnectChunk(this enum_ChunkType type)
+        {
+            switch(type)
+            {
+                default:
+                    return false;
+                case enum_ChunkType.Connect:
+                case enum_ChunkType.Teleport:
+                    return true;
+            }
+        }
+
         public static bool IsEditorTileObject(this enum_TileObjectType type) => type >= enum_TileObjectType.RestrictStart && type <= enum_TileObjectType.RestrictEnd;
 
         public static TileAxis GetSizeAxis(this enum_TileObjectType type,enum_TileDirection direction)
@@ -125,9 +147,6 @@ namespace LevelSetting
             TileAxis size = TileAxis.One;
             switch (type)
             {
-                case enum_TileObjectType.RConnection1x5:
-                    size = new TileAxis(5, 1);
-                    break;
                 case enum_TileObjectType.Object2x2A:
                 case enum_TileObjectType.Object2x2B:
                 case enum_TileObjectType.RStagePortal2x2:
@@ -194,26 +213,29 @@ namespace LevelSetting
             switch(type)
             {
                 case enum_ChunkType.Start:
-                    restrictionDic.Add(enum_TileObjectType.RConnection1x5, 1);
+                    restrictionDic.Add(enum_TileObjectType.RConnection1x1, 1);
                     restrictionDic.Add(enum_TileObjectType.RPlayerSpawn1x1, 1);
                     break;
                 case enum_ChunkType.Event:
-                    restrictionDic.Add(enum_TileObjectType.RChunkPortal2x2, 1);
                     restrictionDic.Add(enum_TileObjectType.REventArea3x3, 1);
-                    restrictionDic.Add(enum_TileObjectType.RConnection1x5, -1);
+                    restrictionDic.Add(enum_TileObjectType.RConnection1x1, -1);
                     break;
                 case enum_ChunkType.Battle:
-                    restrictionDic.Add(enum_TileObjectType.RConnection1x5, -1);
+                    restrictionDic.Add(enum_TileObjectType.RConnection1x1, -1);
                     restrictionDic.Add( enum_TileObjectType.REnermySpawn1x1,-1);
                     break;
                 case enum_ChunkType.Final:
-                    restrictionDic.Add(enum_TileObjectType.RConnection1x5, 1);
+                    restrictionDic.Add(enum_TileObjectType.RConnection1x1, 1);
                     restrictionDic.Add(enum_TileObjectType.RStagePortal2x2, 1);
                     restrictionDic.Add(enum_TileObjectType.REliteEnermySpawn1x1,1);
                     restrictionDic.Add(enum_TileObjectType.REnermySpawn1x1, -1);
                     break;
-                case enum_ChunkType.Connection:
-                    restrictionDic.Add(enum_TileObjectType.RConnection1x5, 2);
+                case enum_ChunkType.Connect:
+                    restrictionDic.Add(enum_TileObjectType.RConnection1x1, 2);
+                    break;
+                case enum_ChunkType.Teleport:
+                    restrictionDic.Add(enum_TileObjectType.RConnection1x1, 2);
+                    restrictionDic.Add(enum_TileObjectType.RChunkPortal2x2, 1);
                     break;
             }
             return restrictionDic;

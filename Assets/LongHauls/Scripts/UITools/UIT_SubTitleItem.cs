@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-public class UIT_SubTitleItem:UIT_SystemInfoItem,ICoroutineHelper {
+public class UIT_SubTitleItem:UIT_SystemInfoItem,ICoroutineHelperClass {
     private void OnDisable()
     {
         this.StopSingleCoroutine(0);

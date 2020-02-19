@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class UIWorldBase : MonoBehaviour, ICoroutineHelper
+public class UIWorldBase : MonoBehaviour, ICoroutineHelperClass
 {
     public static T Attach<T>(Transform toTrans,bool useAnim=true) where T : UIWorldBase
     {

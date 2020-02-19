@@ -45,15 +45,15 @@ MonoBehaviour:
     m_Direction: 0
   - m_PillarType: -1
     m_GroundType: -1
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: -1
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: -1
     m_ObjectType: 52
-    m_Direction: 0
-  - m_PillarType: -1
-    m_GroundType: -1
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_PillarType: -1
-    m_GroundType: -1
-    m_ObjectType: -1
     m_Direction: 0
   - m_PillarType: -1
     m_GroundType: -1
@@ -653,12 +653,12 @@ MonoBehaviour:
     m_Direction: 0
   - m_PillarType: -1
     m_GroundType: -1
-    m_ObjectType: 52
-    m_Direction: 1
+    m_ObjectType: -1
+    m_Direction: 0
   - m_PillarType: -1
     m_GroundType: -1
-    m_ObjectType: 52
-    m_Direction: 1
+    m_ObjectType: -1
+    m_Direction: 0
   - m_PillarType: -1
     m_GroundType: 1
     m_ObjectType: -1
@@ -813,11 +813,11 @@ MonoBehaviour:
     m_Direction: 0
   - m_PillarType: -1
     m_GroundType: -1
-    m_ObjectType: -1
+    m_ObjectType: 52
     m_Direction: 0
   - m_PillarType: -1
     m_GroundType: -1
-    m_ObjectType: -1
+    m_ObjectType: 52
     m_Direction: 0
   - m_PillarType: -1
     m_GroundType: 1
@@ -1510,6 +1510,14 @@ MonoBehaviour:
   - m_PillarType: -1
     m_GroundType: 1
     m_ObjectType: 1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: -1
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: -1
+    m_ObjectType: -1
     m_Direction: 0
   - m_PillarType: -1
     m_GroundType: -1
@@ -1607,28 +1615,20 @@ MonoBehaviour:
     m_GroundType: -1
     m_ObjectType: -1
     m_Direction: 0
-  - m_PillarType: -1
-    m_GroundType: -1
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_PillarType: -1
-    m_GroundType: -1
-    m_ObjectType: -1
-    m_Direction: 0
   m_ConnectionIndex:
   - m_Axis:
       X: 0
-      Y: 8
+      Y: 10
     m_Direction: 3
   - m_Axis:
-      X: 7
+      X: 9
       Y: 0
     m_Direction: 2
   - m_Axis:
-      X: 8
+      X: 10
       Y: 19
     m_Direction: 0
   - m_Axis:
       X: 19
-      Y: 7
+      Y: 9
     m_Direction: 1

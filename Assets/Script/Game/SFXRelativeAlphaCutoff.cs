@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SFXRelativeAlphaCutoff : SFXRelativeBase,ICoroutineHelper {
+public class SFXRelativeAlphaCutoff : SFXRelativeBase,ICoroutineHelperClass {
     Material m_Material;
     public float F_StartCutoff;
     public float F_EndCutoff;

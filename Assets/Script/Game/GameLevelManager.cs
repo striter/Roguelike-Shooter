@@ -7,7 +7,7 @@ using System;
 using TTiles;
 using UnityEngine.AI;
 using System.Threading.Tasks;
-public class GameLevelManager : SingletonMono<GameLevelManager> {
+public class GameLevelManager : SingletonMono<GameLevelManager>,ICoroutineHelperClass {
     public bool m_LevelTest = true;
     public enum_ChunkEventType m_TestEventType = enum_ChunkEventType.PerkAcquire;
 
@@ -17,6 +17,8 @@ public class GameLevelManager : SingletonMono<GameLevelManager> {
     public Texture2D m_MapTexture { get; private set; }
     public Texture2D m_FogTexture { get; private set; }
     public System.Random random { get; private set; }
+    enum_ChunkRevealType[,] m_FogRevealation;
+    bool[,] m_FogRevalationModified;
     TileAxis m_MapOrigin, m_MapSize;
     Vector3 m_MapOriginPos;
 
@@ -38,25 +40,55 @@ public class GameLevelManager : SingletonMono<GameLevelManager> {
         return null;
     }
 
+    TileAxis previousPos = TileAxis.Zero;
+    bool m_MinimapUpdating = false;
     public void ClearMinimapFog(Vector3 worldPosition)
     {
         Vector3 offset = worldPosition - m_MapOriginPos;
-        TileAxis playerPos = new TileAxis((int)offset.x/LevelConst.I_TileSize,(int)offset.z/LevelConst.I_TileSize);
+        TileAxis fogRevealPos = new TileAxis((int)offset.x/LevelConst.I_TileSize, (int)offset.z/LevelConst.I_TileSize );
+        if (m_MinimapUpdating||previousPos == fogRevealPos)
+            return;
+        previousPos = fogRevealPos;
+
+        StartCoroutine(UpdateMinimap(previousPos));
+    }
+    IEnumerator UpdateMinimap(TileAxis updatePos)
+    {
+        m_MinimapUpdating = true;
+        yield return Task.Run(() => {
+            for (int i = 0; i < m_MapSize.X; i++)
+                for (int j = 0; j < m_MapSize.Y; j++)
+                { 
+                    m_FogRevalationModified[i, j] = false;
+                    if (m_FogRevealation[i, j] == enum_ChunkRevealType.Revealed)
+                        continue;
+                    TileAxis targetAxis = new TileAxis(i, j);
+                    if (updatePos.AxisOffset(targetAxis) > LevelConst.I_UIPlayerViewFadeRangeSecondPow)
+                        return;
+
+                    float magnitude = (updatePos-targetAxis).SqrMagnitude();
+                    if (magnitude <= LevelConst.I_UIPlayerViewRevealRangeSecondPow)
+                    {
+                        m_FogRevealation[i, j] = enum_ChunkRevealType.Revealed;
+                        m_FogRevalationModified[i, j] = true;
+                    }
+                    else if (magnitude <= LevelConst.I_UIPlayerViewFadeRangeSecondPow)
+                    {
+                        m_FogRevealation[i, j] =  enum_ChunkRevealType.Faded;
+                        m_FogRevalationModified[i, j] = true;
+                    }
+                }
+        }).TaskCoroutine();
+
         for (int i = 0; i < m_MapSize.X; i++)
             for (int j = 0; j < m_MapSize.Y; j++)
-            {
-                if (m_FogTexture.GetPixel(i, j).a == 0)
-                    continue;
-
-                float magnitude = playerPos.SqrMagnitude(new TileAxis(i, j)) ;
-
-                if (magnitude <= LevelConst.I_UIPlayerViewClearRangeSecondPow)
-                    m_FogTexture.SetPixel(i, j, LevelConst.C_MapTextureFogReveal);
-                else if (magnitude <= LevelConst.I_UIPlayerViewFadeRangeSecondPow)
-                    m_FogTexture.SetPixel(i,j,LevelConst.C_MapTextureFogFade);
-            }
+                if(m_FogRevalationModified[i,j])
+                    m_FogTexture.SetPixel(i,j,  m_FogRevealation[i,j]== enum_ChunkRevealType.Faded?LevelConst.C_MapFogRevealFadeColor:LevelConst.C_MapFogRevealClearColor);
         m_FogTexture.Apply();
+        m_MinimapUpdating = false;
+        yield break;
     }
+    
 
     protected override void Awake()
     {
@@ -89,13 +121,16 @@ public class GameLevelManager : SingletonMono<GameLevelManager> {
         Func<enum_ChunkEventType> RandomEventType = () => TCommon.RandomPercentage(GameConst.D_ChunkEventPercentage,random);
         List<ChunkPreGenerateData> mainChunkType = m_LevelTest ? new List<ChunkPreGenerateData>() {new ChunkPreGenerateData( enum_ChunkType.Event, m_TestEventType)  , new ChunkPreGenerateData(enum_ChunkType.Final) } :
             new List<ChunkPreGenerateData>()
-            { new ChunkPreGenerateData(enum_ChunkType.Battle),  new ChunkPreGenerateData(enum_ChunkType.Event, enum_ChunkEventType.RewardChest),
-                new ChunkPreGenerateData(enum_ChunkType.Battle), new ChunkPreGenerateData(enum_ChunkType.Event, enum_ChunkEventType.Trader),
-                new ChunkPreGenerateData(enum_ChunkType.Battle), new ChunkPreGenerateData(enum_ChunkType.Event, enum_ChunkEventType.Bonefire),
-                new ChunkPreGenerateData(enum_ChunkType.Battle), new ChunkPreGenerateData(enum_ChunkType.Event, RandomEventType()),
-                new ChunkPreGenerateData(enum_ChunkType.Battle), new ChunkPreGenerateData(enum_ChunkType.Event, enum_ChunkEventType.Bonefire),
-                new ChunkPreGenerateData( enum_ChunkType.Final) };
-        List<ChunkPreGenerateData> subChunkType = new List<ChunkPreGenerateData>() {new ChunkPreGenerateData(  enum_ChunkType.Battle),new ChunkPreGenerateData(  enum_ChunkType.Event,RandomEventType()) };
+            {
+                new ChunkPreGenerateData( enum_ChunkType.Connect),new ChunkPreGenerateData(enum_ChunkType.Battle),new ChunkPreGenerateData( enum_ChunkType.Connect),  new ChunkPreGenerateData(enum_ChunkType.Event, enum_ChunkEventType.RewardChest),
+                new ChunkPreGenerateData( enum_ChunkType.Connect),new ChunkPreGenerateData(enum_ChunkType.Battle),new ChunkPreGenerateData( enum_ChunkType.Teleport), new ChunkPreGenerateData(enum_ChunkType.Event, enum_ChunkEventType.Trader),
+                new ChunkPreGenerateData( enum_ChunkType.Connect),new ChunkPreGenerateData(enum_ChunkType.Battle),new ChunkPreGenerateData( enum_ChunkType.Connect), new ChunkPreGenerateData(enum_ChunkType.Event, enum_ChunkEventType.Bonefire),
+                new ChunkPreGenerateData( enum_ChunkType.Connect),new ChunkPreGenerateData(enum_ChunkType.Battle),new ChunkPreGenerateData( enum_ChunkType.Teleport), new ChunkPreGenerateData(enum_ChunkType.Event, RandomEventType()),
+                new ChunkPreGenerateData( enum_ChunkType.Connect),new ChunkPreGenerateData(enum_ChunkType.Battle),new ChunkPreGenerateData( enum_ChunkType.Connect), new ChunkPreGenerateData(enum_ChunkType.Event, enum_ChunkEventType.Bonefire),
+                new ChunkPreGenerateData( enum_ChunkType.Teleport),new ChunkPreGenerateData( enum_ChunkType.Final) };
+        List<ChunkPreGenerateData> subChunkType = new List<ChunkPreGenerateData>() {
+            new ChunkPreGenerateData(enum_ChunkType.Connect), new ChunkPreGenerateData(  enum_ChunkType.Battle),
+            new ChunkPreGenerateData(enum_ChunkType.Teleport), new ChunkPreGenerateData(  enum_ChunkType.Event,RandomEventType()) };
 
         yield return Task.Run(() =>
         {
@@ -103,7 +138,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager> {
             while (true)
             {
                 generateCount++;
-                if (generateCount > 1024)
+                if (generateCount > 2048)
                    throw new Exception("Generate Overtime!");
 
                 gameChunkGenerate.Clear();
@@ -129,7 +164,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager> {
                 if (! TryGenerateChunkDatas(gameChunkGenerate.Count, gameChunkGenerate[0], gameChunkGenerate, chunkDatas, dataGenerated, mainChunkType, random,out mainConnectionChunks))
                     continue;
                 ConnectGameData(gameChunkGenerate[0], mainConnectionChunks);
-
+                
                 //Generate Sub Chunks
                 if (m_LevelTest)
                     break;
@@ -144,7 +179,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager> {
                         return TryGenerateChunkDatas(subCount * 1000, subStartChunk, gameChunkGenerate, chunkDatas,dataGenerated, subChunkType, random,out subConnectionChunks) ;
                     }, random);
 
-                    if (subConnectionChunks.Count==0)
+                    if (subConnectionChunks==null||subConnectionChunks.Count==0)
                         return false;
 
                     ConnectGameData(subStartChunk, subConnectionChunks);
@@ -200,12 +235,16 @@ public class GameLevelManager : SingletonMono<GameLevelManager> {
 
         #region Generate Map Texture
         m_MapTexture = new Texture2D(m_MapSize.X, m_MapSize.Y, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point, wrapMode= TextureWrapMode.Clamp, hideFlags = HideFlags.HideAndDontSave };
-        m_FogTexture=new Texture2D(m_MapSize.X, m_MapSize.Y, TextureFormat.RGBA32, false) { filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp, hideFlags = HideFlags.HideAndDontSave };
+        m_FogTexture = new Texture2D(m_MapSize.X, m_MapSize.Y, TextureFormat.RGBA32, false) { filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp, hideFlags = HideFlags.HideAndDontSave };
+        m_FogRevealation = new enum_ChunkRevealType[m_MapSize.X, m_MapSize.Y];
+        m_FogRevalationModified = new bool[m_MapSize.X, m_MapSize.Y];
         for (int i = 0; i < m_MapSize.X; i++)
             for (int j = 0; j < m_MapSize.Y; j++)
             {
                 m_MapTexture.SetPixel(i, j, Color.clear);
-                m_FogTexture.SetPixel(i, j, LevelConst.C_MapTextureFogColor);
+                m_FogTexture.SetPixel(i, j, LevelConst.C_MapFogRevealFogColor);
+                m_FogRevealation[i, j] = enum_ChunkRevealType.Revealed;
+                m_FogRevalationModified[i, j] = false;
             }
 
         gameChunkGenerate.Traversal((ChunkGenerateData chunkdata) =>
@@ -214,8 +253,11 @@ public class GameLevelManager : SingletonMono<GameLevelManager> {
             int length = chunkColors.Length;
             for (int index = 0; index < length; index++)
             {
+                if (chunkColors[index].a <= 0)
+                    continue;
                 TileAxis tileAxis = (chunkdata.m_Axis - m_MapOrigin) + TileTools.GetAxisByIndex(index, chunkdata.m_Data.Width);
                 m_MapTexture.SetPixel(tileAxis.X, tileAxis.Y, chunkColors[index]);
+                m_FogRevealation[tileAxis.X, tileAxis.Y] = enum_ChunkRevealType.Fog;
             }
         });
         m_MapTexture.Apply();
@@ -226,18 +268,12 @@ public class GameLevelManager : SingletonMono<GameLevelManager> {
    bool TryGenerateChunkDatas(int generateStartIndex,ChunkGenerateData generateStartChunk,List<ChunkGenerateData> intersectsCheckChunks, Dictionary<enum_ChunkType, List<LevelChunkData>> chunkDatas,List<LevelChunkData> chunkDataAvoids,List<ChunkPreGenerateData> generateMainTypes,System.Random random, out List<ChunkGenerateData> chunkGenerateData)
     {
         chunkGenerateData = new List<ChunkGenerateData>();
-        List<ChunkPreGenerateData> totalGenerateTypes = new List<ChunkPreGenerateData>();
-        for(int i=0;i<generateMainTypes.Count;i++)
-        {
-            totalGenerateTypes.Add(new ChunkPreGenerateData(enum_ChunkType.Connection));
-            totalGenerateTypes.Add(generateMainTypes[i]);
-        }
         List<LevelChunkData> chunkAvoidCheck = new List<LevelChunkData>(chunkDataAvoids);
         List<ChunkGenerateData> chunkIntersectsCheckData = new List<ChunkGenerateData>(intersectsCheckChunks);
         ChunkGenerateData previousChunkGenerate = generateStartChunk;
-        for (int i = 0; i < totalGenerateTypes.Count; i++)
+        for (int i = 0; i < generateMainTypes.Count; i++)
         {
-            bool isConnectingFinalChunk = i==totalGenerateTypes.Count - 1;
+            bool isConnectingFinalChunk = i== generateMainTypes.Count - 1;
             ChunkGenerateData nextChunkGenerate = null;
             previousChunkGenerate.m_Data.Connections.TraversalRandomBreak((int previousConnectionIndex) =>
             {
@@ -246,7 +282,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager> {
 
                 ChunkConnectionData m_previousConnectionData = previousChunkGenerate.m_Data.Connections[previousConnectionIndex];
                 enum_TileDirection connectDirection = m_previousConnectionData.m_Direction.Inverse();
-                chunkDatas[totalGenerateTypes[i].m_ChunkType].TraversalRandomBreak((LevelChunkData curChunkData) =>
+                chunkDatas[generateMainTypes[i].m_ChunkType].TraversalRandomBreak((LevelChunkData curChunkData) =>
                 {
                     if (chunkAvoidCheck.Contains(curChunkData)|| !isConnectingFinalChunk && curChunkData.Connections.Length <= 1)
                         return false;
@@ -269,7 +305,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager> {
                             if (_anyGeneratedChunkIntersects)
                                 return false;
 
-                            nextChunkGenerate = new ChunkGenerateData(generateStartIndex, nextChunkAxis, curChunkData, totalGenerateTypes[i].m_EventType);
+                            nextChunkGenerate = new ChunkGenerateData(generateStartIndex, nextChunkAxis, curChunkData, generateMainTypes[i].m_EventType);
                             nextChunkGenerate.SetPreConnectData(previousChunkGenerate.m_ChunkIndex, previousConnectionIndex, curConnectionIndex);
                             generateStartIndex++;
                             return true;

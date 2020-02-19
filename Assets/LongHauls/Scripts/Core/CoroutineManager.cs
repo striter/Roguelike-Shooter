@@ -204,7 +204,7 @@ public static class TIEnumerators
 }
 
 //Interface For CoroutineManager
-public interface ICoroutineHelper
+public interface ICoroutineHelperClass
 {
 }
 public static class ICoroutineHelper_Extend
@@ -220,9 +220,9 @@ public static class ICoroutineHelper_Extend
         }
     }
     static int m_HelperCount = 0;
-    static Dictionary<ICoroutineHelper, SCoroutineHelperData> m_TargetCoroutines=new Dictionary<ICoroutineHelper, SCoroutineHelperData>();
-    internal static int GetCoroutineIndex(ICoroutineHelper target, int coroutineIndex) => m_TargetCoroutines[target].m_HelperIndex * 10000 + coroutineIndex;
-    public static void StartSingleCoroutine(this ICoroutineHelper target, int index, IEnumerator ienumerator)
+    static Dictionary<ICoroutineHelperClass, SCoroutineHelperData> m_TargetCoroutines=new Dictionary<ICoroutineHelperClass, SCoroutineHelperData>();
+    internal static int GetCoroutineIndex(ICoroutineHelperClass target, int coroutineIndex) => m_TargetCoroutines[target].m_HelperIndex * 10000 + coroutineIndex;
+    public static void StartSingleCoroutine(this ICoroutineHelperClass target, int index, IEnumerator ienumerator)
     {
         if (!m_TargetCoroutines.ContainsKey(target))
             m_TargetCoroutines.Add(target, new SCoroutineHelperData(m_HelperCount++));
@@ -233,7 +233,7 @@ public static class ICoroutineHelper_Extend
         if (!m_TargetCoroutines[target].m_CoroutineIndexes.Contains(targetIndex))
             m_TargetCoroutines[target].m_CoroutineIndexes.Add(targetIndex);
     }
-    public static void StopSingleCoroutine(this ICoroutineHelper target, int index = 0)
+    public static void StopSingleCoroutine(this ICoroutineHelperClass target, int index = 0)
     {
         if (!m_TargetCoroutines.ContainsKey(target))
             return;
@@ -245,7 +245,7 @@ public static class ICoroutineHelper_Extend
             m_TargetCoroutines[target].m_CoroutineIndexes.Remove(targetIndex);
     }
 
-    public static void StopAllSingleCoroutines(this ICoroutineHelper target)
+    public static void StopAllSingleCoroutines(this ICoroutineHelperClass target)
     {
         if (!m_TargetCoroutines.ContainsKey(target))
             return;

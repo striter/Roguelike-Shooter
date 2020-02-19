@@ -21,15 +21,15 @@ MonoBehaviour:
     m_Direction: 0
   - m_PillarType: -1
     m_GroundType: 10
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: 10
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: 10
     m_ObjectType: 52
-    m_Direction: 0
-  - m_PillarType: -1
-    m_GroundType: 10
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_PillarType: -1
-    m_GroundType: 10
-    m_ObjectType: -1
     m_Direction: 0
   - m_PillarType: -1
     m_GroundType: 10
@@ -189,15 +189,15 @@ MonoBehaviour:
     m_Direction: 0
   - m_PillarType: -1
     m_GroundType: 10
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: 10
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: 10
     m_ObjectType: 52
-    m_Direction: 0
-  - m_PillarType: -1
-    m_GroundType: 10
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_PillarType: -1
-    m_GroundType: 10
-    m_ObjectType: -1
     m_Direction: 0
   - m_PillarType: -1
     m_GroundType: 10
@@ -213,10 +213,10 @@ MonoBehaviour:
     m_Direction: 0
   m_ConnectionIndex:
   - m_Axis:
-      X: 1
+      X: 3
       Y: 0
     m_Direction: 2
   - m_Axis:
-      X: 1
+      X: 3
       Y: 6
     m_Direction: 0

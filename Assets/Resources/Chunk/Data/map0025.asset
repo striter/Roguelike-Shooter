@@ -77,32 +77,32 @@ MonoBehaviour:
     m_Direction: 0
   - m_PillarType: -1
     m_GroundType: -1
-    m_ObjectType: 52
-    m_Direction: 0
-  - m_PillarType: -1
-    m_GroundType: -1
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_PillarType: -1
-    m_GroundType: -1
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_PillarType: -1
-    m_GroundType: -1
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_PillarType: -1
-    m_GroundType: -1
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_PillarType: -1
-    m_GroundType: -1
     m_ObjectType: -1
     m_Direction: 0
   - m_PillarType: -1
     m_GroundType: -1
     m_ObjectType: 52
-    m_Direction: 3
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: -1
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: -1
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: -1
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: -1
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: -1
+    m_ObjectType: -1
+    m_Direction: 0
   - m_PillarType: -1
     m_GroundType: 1
     m_ObjectType: 1
@@ -269,7 +269,7 @@ MonoBehaviour:
     m_Direction: 0
   - m_PillarType: -1
     m_GroundType: -1
-    m_ObjectType: -1
+    m_ObjectType: 52
     m_Direction: 0
   - m_PillarType: -1
     m_GroundType: 1
@@ -1357,8 +1357,8 @@ MonoBehaviour:
     m_Direction: 0
   - m_PillarType: -1
     m_GroundType: -1
-    m_ObjectType: 52
-    m_Direction: 3
+    m_ObjectType: -1
+    m_Direction: 0
   - m_PillarType: -1
     m_GroundType: -1
     m_ObjectType: -1
@@ -1525,7 +1525,7 @@ MonoBehaviour:
     m_Direction: 0
   - m_PillarType: -1
     m_GroundType: -1
-    m_ObjectType: -1
+    m_ObjectType: 52
     m_Direction: 0
   - m_PillarType: -1
     m_GroundType: -1
@@ -1690,6 +1690,14 @@ MonoBehaviour:
   - m_PillarType: -1
     m_GroundType: 1
     m_ObjectType: 1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: -1
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_PillarType: -1
+    m_GroundType: -1
+    m_ObjectType: -1
     m_Direction: 0
   - m_PillarType: -1
     m_GroundType: -1
@@ -1702,14 +1710,6 @@ MonoBehaviour:
   - m_PillarType: -1
     m_GroundType: -1
     m_ObjectType: 52
-    m_Direction: 0
-  - m_PillarType: -1
-    m_GroundType: -1
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_PillarType: -1
-    m_GroundType: -1
-    m_ObjectType: -1
     m_Direction: 0
   - m_PillarType: -1
     m_GroundType: -1
@@ -1782,17 +1782,17 @@ MonoBehaviour:
   m_ConnectionIndex:
   - m_Axis:
       X: 0
-      Y: 1
+      Y: 3
     m_Direction: 3
   - m_Axis:
-      X: 1
+      X: 3
       Y: 20
     m_Direction: 0
   - m_Axis:
-      X: 15
+      X: 16
       Y: 0
     m_Direction: 2
   - m_Axis:
       X: 20
-      Y: 15
+      Y: 17
     m_Direction: 1

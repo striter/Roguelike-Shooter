@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Camera))]
-public class CameraEffectManager :MonoBehaviour, ICoroutineHelper
+public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
 {
     #region Interact
     public T GetOrAddCameraEffect<T>() where T: CameraEffectBase, new()

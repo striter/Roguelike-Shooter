@@ -411,7 +411,7 @@ public class GameManager : GameManagerBase
                         case enum_TileObjectType.RStagePortal2x2:
                             GameObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Portal, objectData.pos, objectData.rot, tf_Interacts).Play(OnStageFnished, "Test");
                             break;
-                        case enum_TileObjectType.RConnection1x5:
+                        case enum_TileObjectType.RConnection1x1:
                             int triggerIndex = m_ChunkEnterTriggers.Count;
                             GamePlayerChunkTrigger trigger = m_ChunkEnterTriggers.AddItem(triggerIndex);
                             trigger.transform.position = objectData.pos;

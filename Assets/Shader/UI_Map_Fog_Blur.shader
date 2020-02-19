@@ -59,7 +59,7 @@
 		};
 		struct v2f
 		{
-			half2 uv[5]  : TEXCOORD0;
+			half2 uv[9]  : TEXCOORD0;
 			float4 vertex   : SV_POSITION;
 			fixed4 color : COLOR;
 		};
@@ -73,6 +73,10 @@
 			o.uv[2] = uv + float2(1, -1)*_MainTex_TexelSize.x *_BlurRadius;
 			o.uv[3] = uv + float2(-1, -1)*_MainTex_TexelSize.x *_BlurRadius;
 			o.uv[4] = uv + float2(-1, 1)*_MainTex_TexelSize.x *_BlurRadius;
+			o.uv[5] = uv + float2(0, 1)*_MainTex_TexelSize.x *_BlurRadius;
+			o.uv[6] = uv + float2(1, 0)*_MainTex_TexelSize.x *_BlurRadius;
+			o.uv[7] = uv + float2(0, -1)*_MainTex_TexelSize.x *_BlurRadius;
+			o.uv[8] = uv + float2(-1, 0)*_MainTex_TexelSize.x *_BlurRadius;
 			o.color = i.color;
 			return o;
 		}
@@ -85,7 +89,11 @@
 			sum += tex2D(_MainTex, i.uv[2]).a;
 			sum += tex2D(_MainTex, i.uv[3]).a;
 			sum += tex2D(_MainTex, i.uv[4]).a;
-			return float4(albedo.rgb, sum/=5);
+			sum += tex2D(_MainTex, i.uv[5]).a;
+			sum += tex2D(_MainTex, i.uv[6]).a;
+			sum += tex2D(_MainTex, i.uv[7]).a;
+			sum += tex2D(_MainTex, i.uv[8]).a;
+			return float4(albedo.rgb, sum/=9);
 		}
 		ENDCG
 		}

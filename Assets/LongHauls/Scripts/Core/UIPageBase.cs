@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIPageBase : UIComponentBase,ICoroutineHelper
+public class UIPageBase : UIComponentBase,ICoroutineHelperClass
 {
     public static List<UIPageBase> m_Pages = new List<UIPageBase>();
     public static int I_PageCount => m_Pages.Count;

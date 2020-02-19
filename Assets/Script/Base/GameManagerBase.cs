@@ -5,7 +5,7 @@ using UnityEngine;
 using System;
 using TExcel;
 using TGameSave;
-public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelper{
+public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperClass{
     public virtual bool B_InGame => false;
     protected override void Awake()
     {

@@ -93,9 +93,9 @@ namespace TTiles
                 }
             return axisList;
         }
-        public static bool CheckIsEdge<T>(this T[,] tileArray, TileAxis axis) where T : class, ITileAxis => axis.X == 0 || axis.X == tileArray.GetLength(0) - 1 || axis.Y == 0 || axis.Y == tileArray.GetLength(1) - 1; 
+        public static bool CheckIsEdge<T>(this T[,] tileArray, TileAxis axis) where T : class, ITileAxis => axis.X == 0 || axis.X == tileArray.GetLength(0) - 1 || axis.Y == 0 || axis.Y == tileArray.GetLength(1) - 1;
 
-        public static float SqrMagnitude(this TileAxis sourceAxis, TileAxis targetAxis)=> Vector2.SqrMagnitude(new Vector2(sourceAxis.X, sourceAxis.Y) - new Vector2(targetAxis.X, targetAxis.Y));
+        public static int SqrMagnitude(this TileAxis sourceAxis)=> sourceAxis.X * sourceAxis.X + sourceAxis.Y * sourceAxis.Y;
         public static int AxisOffset(this TileAxis sourceAxis, TileAxis targetAxis)=>Mathf.Abs(sourceAxis.X - targetAxis.X) + Mathf.Abs(sourceAxis.Y - targetAxis.Y);
 
 
@@ -169,14 +169,14 @@ namespace TTiles
             for (; ; )
             {
                 TileAxis nextTile=startTile;
-                float minDistance = startTile.SqrMagnitude(t2.m_Axis);
+                float minDistance = (startTile-t2.m_Axis).SqrMagnitude();
                 float offsetDistance;
                 TileAxis offsetTile;
                 TileAxis[] nearbyFourTiles = startTile.nearbyFourTiles;
                 for (int i = 0; i < nearbyFourTiles.Length; i++)
                 {
                     offsetTile = nearbyFourTiles[i];
-                    offsetDistance = offsetTile.SqrMagnitude(t2.m_Axis);
+                    offsetDistance = (offsetTile-t2.m_Axis).SqrMagnitude();
                     if (offsetTile.InRange(tileArray) && offsetDistance < minDistance)
                     {
                         nextTile = offsetTile;
@@ -332,7 +332,7 @@ namespace TTime
 namespace TSpecialClasses          //Put Some Common Shits Into Specifical Classes, Tightly Attached To CoroutineManager Cause Not Using Monobehaviour
 {
     //Translate Ragdoll To Animation Or Animatoion To Ragdoll
-    public class RagdollAnimationTransition : ICoroutineHelper
+    public class RagdollAnimationTransition : ICoroutineHelperClass
     {
         class BodyPart
         {
@@ -495,7 +495,7 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
     }
 
     //Navigation AI System Chase/Follow/Attack/Idle ETC...
-    public class NavigationAgentAI<T> : SimpleMonoLifetime, ICoroutineHelper where T : MonoBehaviour
+    public class NavigationAgentAI<T> : SimpleMonoLifetime, ICoroutineHelperClass where T : MonoBehaviour
     {
         public enum enum_AIState
         {

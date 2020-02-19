@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using GameSetting;
 using System;
 
-public class UIManager :UIManagerBase,ICoroutineHelper
+public class UIManager :UIManagerBase,ICoroutineHelperClass
 {
     public static new UIManager Instance { get; private set; }
     Image m_OverlayBG;

@@ -28,7 +28,7 @@ public class LevelChunkGame : LevelChunkBase
         transform.localPosition = m_ChunkOrigin;
         m_ChunkObjects.Clear();
         m_NearbyChunks.Clear();
-        bool isConnectionChunk = _data.m_Data.Type == enum_ChunkType.Connection;
+        bool isConnectionChunk = _data.m_Data.Type.IsConnectChunk();
         Dictionary<TileAxis, enum_TileDirection> m_ConnectionIndex = new Dictionary<TileAxis, enum_TileDirection>();
         InitData(_data.m_Data, _random, (TileAxis axis, ChunkTileData tileData) => {
 
@@ -38,7 +38,7 @@ public class LevelChunkGame : LevelChunkBase
                     m_ChunkObjects.Add(tileData.m_ObjectType, new List<ChunkGameObjectData>());
 
 
-                if (tileData.m_ObjectType == enum_TileObjectType.RConnection1x5)
+                if (tileData.m_ObjectType == enum_TileObjectType.RConnection1x1)
                 {
                     m_ConnectionIndex.Add(axis,tileData.m_Direction);
                     if (isConnectionChunk)
