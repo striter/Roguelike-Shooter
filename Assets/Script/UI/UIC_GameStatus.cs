@@ -36,7 +36,6 @@ public class UIC_GameStatus : UIControlBase
 
     Transform tf_Minimap;
     UIC_Minimap m_GameMinimap;
-    UIT_TextExtend m_MinimapInfo;
 
     class UIC_Minimap : UIC_MapBase
     {
@@ -146,14 +145,13 @@ public class UIC_GameStatus : UIControlBase
         tf_Minimap = tf_Container.Find("Minimap");
         tf_Minimap.GetComponent<Button>().onClick.AddListener(()=> { if (!GameManager.Instance.m_Battling) GameUIManager.Instance.ShowPage<UI_Map>(true);  });
         m_GameMinimap = new UIC_Minimap(tf_Minimap.Find("Map"));
-        m_MinimapInfo = tf_Minimap.Find("MapInfo").GetComponent<UIT_TextExtend>();
 
         m_DyingCheck = new ValueChecker<bool>(true);
 
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityPlayerHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerPerkStatus, OnEquipmentStatus);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnGameBegin, BeginInit);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnGameBegin, m_GameMinimap.DoMapInit);
     }
 
     protected override void OnDestroy()
@@ -161,16 +159,10 @@ public class UIC_GameStatus : UIControlBase
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityPlayerHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerPerkStatus, OnEquipmentStatus);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnGameBegin, BeginInit);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnGameBegin, m_GameMinimap.DoMapInit);
         m_GameMinimap.OnDestroy();
     }
     
-    void BeginInit()
-    {
-        m_MinimapInfo.text = TLocalization.GetKeyLocalized(GameManager.Instance.m_GameLevel.m_GameStage.GetLocalizeKey()) + "\n" + TLocalization.GetKeyLocalized(GameManager.Instance.m_GameLevel.m_GameStyle.GetLocalizeKey());
-        m_GameMinimap.DoMapInit();
-    }
-
     private void Update()
     {
         if (!m_Player)

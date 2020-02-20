@@ -105,8 +105,12 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public void Teleport(Vector3 position,Quaternion rotation)
     {
         CameraController.Instance.SetCameraPosition(position);
+        m_Controller.enabled = false;           //Magic Spell 1
+        m_Agent.enabled = false;
         transform.position = position;
         transform.rotation = rotation;
+        m_Controller.enabled = true;        //Magic Spell 2
+        m_Agent.enabled = true;
     }
 
     protected override void OnBattleFinish()
