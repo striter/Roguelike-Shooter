@@ -104,7 +104,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     public void Teleport(Vector3 position,Quaternion rotation)
     {
-        CameraController.Instance.SetCamera(position, -1, rotation.eulerAngles.y);
+        CameraController.Instance.SetCameraPosition(position);
         transform.position = position;
         transform.rotation = rotation;
     }

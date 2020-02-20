@@ -149,6 +149,7 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
     {
         TPSCameraController.Instance.Attach(playerTo, true,true);
         CameraController.Instance.LookAt(null);
+        CameraController.Instance.SetCameraRotation(-1, playerTo.rotation.eulerAngles.y);
     }
 }
 

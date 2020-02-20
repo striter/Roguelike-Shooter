@@ -146,7 +146,6 @@ public class GameManager : GameManagerBase
 
         GenerateChunkRelatives();
         m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_BattleData, tf_PlayerStart.position, tf_PlayerStart.rotation);
-        m_LocalPlayer.Teleport(tf_PlayerStart.position,tf_PlayerStart.rotation);
         AttachPlayerCamera(m_LocalPlayer.tf_CameraAttach);
         GenerateBattleRelatives();
 

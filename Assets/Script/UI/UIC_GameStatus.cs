@@ -81,8 +81,8 @@ public class UIC_GameStatus : UIControlBase
         {
             UpdateMap(GameLevelManager.Instance.GetMapAngle(CameraController.CameraRotation.eulerAngles.y));
             m_Map_Origin_Base.rectTransform.anchoredPosition = GameLevelManager.Instance.GetOffsetPosition(player.transform.position) * -m_MapScale;
-            m_Enermys.TraversalItem((int identity, UIGI_MapEntityLocation item) => { item.Tick(); });
-            m_Locations.TraversalItem((int identity, Image image) => { image.transform.rotation = Quaternion.identity; });
+            m_Enermys.m_Pool.m_ActiveItemDic.Traversal((int identity, UIGI_MapEntityLocation item) => { item.Tick(); });
+            m_Locations.m_Pool.m_ActiveItemDic.Traversal((int identity, Image image) => { image.transform.rotation = Quaternion.identity; });
         }
         public void UpdateIconStatus()
         {

@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class UIT_GridControllerMono<T>  where T : Component
 {
     public Transform transform { get; private set; }
-    protected ObjectPoolListComponent<int,T> m_Pool { get; private set; }
+    public ObjectPoolListComponent<int,T> m_Pool { get; private set; }
     public int I_Count => m_Pool.m_ActiveItemDic.Count;
     public UIT_GridControllerMono(Transform _transform) 
     {
@@ -30,13 +30,6 @@ public class UIT_GridControllerMono<T>  where T : Component
     int GetIdentity(int xIdentity, int yIdentity) => xIdentity + yIdentity * 1000;
 
     public T GetOrAddItem(int identity)=>  Contains(identity) ? GetItem(identity) : AddItem(identity);
-    public void TraversalItem(Action<int, T> onEach)
-    {
-        foreach (int i in m_Pool.m_ActiveItemDic.Keys)
-        {
-            onEach(i, m_Pool.GetItem(i));
-        }
-    }
 }
 
 public class UIT_GridControllerGridItem<T>: UIT_GridControllerMono<T> where T:UIT_GridItem

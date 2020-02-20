@@ -37,7 +37,7 @@ public class UI_Map : UIPage {
                     return;
 
                 UIGI_MapLocations locations = m_LocationsGrid.AddItem(m_LocationsGrid.I_Count);
-                locations.Play(chunkIndex, iconSprite, OnLocationClick);
+                locations.Play(chunkIndex, iconSprite);
                 locations.rectTransform.anchoredPosition = GameLevelManager.Instance.GetOffsetPosition(iconPosition);
                 locations.transform.rotation = Quaternion.identity;
             });
@@ -52,11 +52,15 @@ public class UI_Map : UIPage {
         {
             if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(m_Map_Origin_Base_Fog.rectTransform, position, null, out position))
                 return;
+            int chunkCast = -1;
             float alpha = (m_Map_Origin_Base_Fog.texture as Texture2D).GetPixel((int)position.x,(int)position.y).a;
-            if (alpha != 0)
-                return;
-            Debug.Log("Cast");
-            m_LocationsGrid.TraversalItem((int identity, UIGI_MapLocations item) => { item.MapCastCheck(position); });
+            if (alpha == 0)
+            {
+                m_LocationsGrid.m_Pool.m_ActiveItemDic.TraversalBreak(( UIGI_MapLocations item) => {
+                    chunkCast =item.MapCastCheck(position);
+                    return chunkCast != -1; });
+            }
+            OnLocationClick(chunkCast);
         }
     }
     Transform m_StageInfo, m_LocationInfo;
@@ -83,17 +87,22 @@ public class UI_Map : UIPage {
 
     void OnChunkSelect(int chunkIndex)
     {
+        m_LocationInfo.SetActivate(chunkIndex!=-1);
+        if (chunkIndex == -1)
+        {
+            m_currentSelecting = chunkIndex;
+            return;
+        }
+
         GameChunk chunk = GameManager.Instance.m_GameChunkData[chunkIndex];
         m_LocationName.localizeKey = chunk.GetChunkMapNameKey;
         m_LocationIntro.localizeKey = chunk.GetChunkMapIntroKey;
         m_LocationInfo.SetActivate(true);
-
         if(m_currentSelecting==chunkIndex&& chunk.OnMapDoubleClick())
         {
             OnCancelBtnClick();
             return;
         }
-
         m_currentSelecting = chunkIndex;
     }
 }

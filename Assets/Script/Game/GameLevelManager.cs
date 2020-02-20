@@ -281,7 +281,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>,ICoroutineHelper
                 TileAxis tileAxis = (chunkdata.m_Axis - m_MapOrigin) + TileTools.GetAxisByIndex(index, chunkdata.m_Data.Width);
                 m_MapTexture.SetPixel(tileAxis.X, tileAxis.Y, chunkColors[index]);
 
-                List<TileAxis> axisRange = TileTools.GetAxisRange(m_MapSize.X,m_MapSize.Y,tileAxis-TileAxis.One*2,tileAxis+TileAxis.One*2);
+                List<TileAxis> axisRange = TileTools.GetAxisRange(m_MapSize.X,m_MapSize.Y,tileAxis-TileAxis.One*3,tileAxis+TileAxis.One*3);
                 axisRange.Traversal((TileAxis axis) => {  m_FogRevealation[axis.X, axis.Y] = enum_ChunkRevealType.Fog; });
             }
         });
