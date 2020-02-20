@@ -2565,6 +2565,151 @@ namespace GameSetting
             LayoutRebuilder.ForceRebuildLayoutImmediate(tf_AmmoStatus as RectTransform);
         }
     }
+
+    class UIC_MapBase
+    {
+        protected RectTransform m_Map_Origin { get; private set; }
+        public RawImage m_Map_Origin_Base { get; private set; }
+        RawImage m_Map_Origin_Base_Fog;
+        protected UIGI_MapEntityLocation m_Player { get; private set; }
+        protected int m_MapScale { get; private set; }
+        public UIC_MapBase(Transform transform, int mapScale)
+        {
+            m_Map_Origin = transform.Find("Origin") as RectTransform;
+            m_Map_Origin_Base = m_Map_Origin.Find("Base").GetComponent<RawImage>();
+            m_Map_Origin_Base_Fog = m_Map_Origin_Base.transform.Find("Fog").GetComponent<RawImage>();
+            m_Player = m_Map_Origin_Base.transform.Find("Player").GetComponent<UIGI_MapEntityLocation>();
+            m_Player.Init();
+            m_MapScale = mapScale;
+            m_Map_Origin_Base.rectTransform.localScale = Vector3.one * m_MapScale;
+        }
+
+        public virtual void DoMapInit()
+        {
+            m_Player.Play(GameManager.Instance.m_LocalPlayer);
+            m_Map_Origin_Base.texture = GameLevelManager.Instance.m_MapTexture;
+            m_Map_Origin_Base.SetNativeSize();
+            m_Map_Origin_Base_Fog.texture = GameLevelManager.Instance.m_FogTexture;
+        }
+        protected void UpdateMap(float mapAngle)
+        {
+            m_Map_Origin.localRotation = Quaternion.Euler(0, 0, mapAngle);
+            m_Player.Tick();
+        }
+
+    }
+
+    class UIC_Minimap:UIC_MapBase
+    {
+        UIT_GridControllerMono<UIGI_MapEntityLocation> m_Enermys;
+        UIT_GridControllerMono<Image> m_Locations;
+        public UIC_Minimap(Transform transform):base(transform,LevelConst.I_UIMinimapSize)
+        {
+            m_Enermys = new UIT_GridControllerGridItem<UIGI_MapEntityLocation>(m_Map_Origin_Base.transform.Find("EnermyGrid"));
+            m_Locations = new UIT_GridControllerMono<Image>(m_Map_Origin_Base.transform.Find("LocationGrid"));
+            TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
+            TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
+            TBroadCaster<enum_BC_UIStatus>.Add(enum_BC_UIStatus.UI_ChunkTeleportUnlock, UpdateIconStatus);
+        }
+        public void OnDestroy()
+        {
+            TBroadCaster<enum_BC_UIStatus>.Remove(enum_BC_UIStatus.UI_ChunkTeleportUnlock, UpdateIconStatus);
+            TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityRecycle);
+            TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
+        }
+        public override void DoMapInit()
+        {
+            base.DoMapInit();
+            UpdateIconStatus();
+        }
+        void OnEntityActivate(EntityBase entity)
+        {
+            if (entity.m_Flag != enum_EntityFlag.Enermy || entity.m_ControllType != enum_EntityController.AI)
+                return;
+
+            m_Enermys.AddItem(entity.m_EntityID).Play(entity);
+        }
+
+        void OnEntityRecycle(EntityBase entity)
+        {
+            if (entity.m_Flag != enum_EntityFlag.Enermy || entity.m_ControllType != enum_EntityController.AI)
+                return;
+
+            m_Enermys.RemoveItem(entity.m_EntityID);
+        }
+
+        public void MinimapUpdate(EntityCharacterPlayer player)
+        {
+            UpdateMap(GameLevelManager.Instance.GetMapAngle(CameraController.CameraRotation.eulerAngles.y));
+            m_Map_Origin_Base.rectTransform.anchoredPosition = GameLevelManager.Instance.GetOffsetPosition(player.transform.position)*-m_MapScale;
+            m_Enermys.TraversalItem((int identity, UIGI_MapEntityLocation item) => { item.Tick(); });
+            m_Locations.TraversalItem((int identity, Image image) => { image.transform.rotation = Quaternion.identity; });
+        }
+        public void UpdateIconStatus()
+        {
+            m_Locations.ClearGrid();
+            GameManager.Instance.m_GameChunkData.Traversal((GameChunk chunkData) =>
+            {
+                Vector3 iconPosition = Vector3.zero;
+                string iconSprite = "";
+                if (!chunkData.CalculateMapIconLocation(ref iconPosition, ref iconSprite))
+                    return;
+
+                Image image = m_Locations.AddItem(m_Locations.I_Count);
+                image.sprite = GameUIManager.Instance.m_InGameSprites[iconSprite];
+                image.rectTransform.anchoredPosition = GameLevelManager.Instance.GetOffsetPosition(iconPosition);
+            });
+        }
+
+    }
+
+    class UIC_Map : UIC_MapBase
+    {
+        UIT_GridControllerGridItem<UIGI_MapLocations> m_LocationsGrid;
+        UIT_EventTriggerListener m_MapTrigger;
+        public UIC_Map(Transform transform) : base(transform, LevelConst.I_UIMapSize)
+        {
+            m_LocationsGrid = new UIT_GridControllerGridItem<UIGI_MapLocations>(m_Map_Origin_Base.transform.Find("LocationsGrid"));
+            m_MapTrigger = transform.GetComponent<UIT_EventTriggerListener>();
+            m_MapTrigger.OnDragDelta = OnDragDelta;
+            m_MapTrigger.OnClickLocal = OnMapClick;
+            DoMapInit();
+            UpdateMap(GameLevelManager.Instance.GetMapAngle(CameraController.CameraRotation.eulerAngles.y));
+            UpdateIconStatus();
+            m_Map_Origin_Base.rectTransform.anchoredPosition = m_Player.rectTransform.anchoredPosition*-m_MapScale;
+        }
+
+        void UpdateIconStatus()
+        {
+            m_LocationsGrid.ClearGrid();
+            GameManager.Instance.m_GameChunkData.Traversal((int chunkIndex,GameChunk chunkData) =>
+            {
+                Vector3 iconPosition = Vector3.zero;
+                string iconSprite = "";
+                if (!chunkData.CalculateMapIconLocation(ref iconPosition, ref iconSprite))
+                    return;
+
+                UIGI_MapLocations locations = m_LocationsGrid.AddItem(m_LocationsGrid.I_Count);
+                locations.Play(chunkIndex, iconSprite, OnChunkClick);
+                locations.rectTransform.anchoredPosition = GameLevelManager.Instance.GetOffsetPosition(iconPosition);
+                locations.transform.rotation = Quaternion.identity;
+            });
+        }
+        void OnChunkClick(int chunkIndex)
+        {
+            Debug.Log(chunkIndex);
+        }
+
+        void OnDragDelta(Vector2 delta)
+        {
+            m_Map_Origin.anchoredPosition += delta;
+        }
+
+        void OnMapClick(Vector2 position)
+        {
+            Debug.Log(position);
+        }
+    }
     #endregion
     #endregion
 }

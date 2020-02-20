@@ -15,7 +15,7 @@
 	}
 	SubShader
 	{
-		Tags{"RenderType" = "BloomDissolveEdge" "Queue" = "Transparent"}
+		Tags{"RenderType" = "BloomDissolveEdge"  "Queue" = "Geometry"}
 			Cull Off
 			Blend SrcAlpha OneMinusSrcAlpha
 		CGINCLUDE
@@ -76,9 +76,7 @@
 				o.uv.zw = GetDissolveUV(v.vertex);
 				o.pos = UnityObjectToClipPos(v.vertex);
 				o.worldPos =mul(unity_ObjectToWorld,v.vertex);
-				fixed3 worldNormal = normalize(mul(v.normal, (float3x3)unity_WorldToObject)); //法线方向n
-				fixed3 worldLightDir = normalize(UnityWorldSpaceLightDir(o.worldPos));
-				o.diffuse = saturate(dot(worldLightDir,worldNormal));
+				o.diffuse = GetDiffuse(mul(v.normal, (float3x3)unity_WorldToObject), UnityWorldSpaceLightDir(o.worldPos));
 				TRANSFER_SHADOW(o);
 				return o;
 			}
@@ -91,7 +89,7 @@
 
 				float4 albedo = tex2D(_MainTex,i.uv.xy)* _Color;
 				UNITY_LIGHT_ATTENUATION(atten, i,i.worldPos)
-				return float4(GetDiffuseBaseColor(albedo, UNITY_LIGHTMODEL_AMBIENT.xyz, _LightColor0.rgb, atten, i.diffuse),albedo.a);
+				return float4(GetDiffuseBaseColor(albedo, UNITY_LIGHTMODEL_AMBIENT.xyz, _LightColor0.rgb, atten, i.diffuse),1);
 			}
 			ENDCG
 		}

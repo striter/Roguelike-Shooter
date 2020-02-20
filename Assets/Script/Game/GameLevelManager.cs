@@ -23,8 +23,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>,ICoroutineHelper
     Vector3 m_MapOriginPos;
 
     int m_chunkLifting = -1;
-
-    public Vector2 GetMapOffset(Vector3 worldPosition,float mapScale)=> - GetOffsetPosition(worldPosition) * mapScale;
+    
     public Vector2 GetOffsetPosition(Vector3 worldPosition){
         Vector3 offset= (worldPosition - m_MapOriginPos) / LevelConst.I_TileSize;
         return new Vector2(offset.x, offset.z);
@@ -52,6 +51,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>,ICoroutineHelper
 
         StartCoroutine(UpdateMinimap(previousPos));
     }
+
     IEnumerator UpdateMinimap(TileAxis updatePos)
     {
         m_MinimapUpdating = true;
@@ -88,6 +88,26 @@ public class GameLevelManager : SingletonMono<GameLevelManager>,ICoroutineHelper
         m_FogTexture.Apply();
         m_MinimapUpdating = false;
         yield break;
+    }
+    
+    public void ClearAllFog()
+    {
+        for (int i = 0; i < m_MapSize.X; i++)
+            for (int j = 0; j < m_MapSize.Y; j++)
+            {
+                m_FogRevalationModified[i, j] = false;
+                if (m_FogRevealation[i, j] == enum_ChunkRevealType.Revealed)
+                    continue;
+
+                m_FogRevealation[i, j] = enum_ChunkRevealType.Revealed;
+                m_FogRevalationModified[i, j] = true;
+            }
+
+        for (int i = 0; i < m_MapSize.X; i++)
+            for (int j = 0; j < m_MapSize.Y; j++)
+                if (m_FogRevalationModified[i, j])
+                    m_FogTexture.SetPixel(i, j, m_FogRevealation[i, j] == enum_ChunkRevealType.Faded ? LevelConst.C_MapFogRevealFadeColor : LevelConst.C_MapFogRevealClearColor);
+        m_FogTexture.Apply();
     }
     
 
@@ -256,9 +276,12 @@ public class GameLevelManager : SingletonMono<GameLevelManager>,ICoroutineHelper
             {
                 if (chunkColors[index].a <= 0)
                     continue;
+
                 TileAxis tileAxis = (chunkdata.m_Axis - m_MapOrigin) + TileTools.GetAxisByIndex(index, chunkdata.m_Data.Width);
                 m_MapTexture.SetPixel(tileAxis.X, tileAxis.Y, chunkColors[index]);
-                m_FogRevealation[tileAxis.X, tileAxis.Y] = enum_ChunkRevealType.Fog;
+
+                List<TileAxis> axisRange = TileTools.GetAxisRange(m_MapSize.X,m_MapSize.Y,tileAxis-TileAxis.One*2,tileAxis+TileAxis.One*2);
+                axisRange.Traversal((TileAxis axis) => {  m_FogRevealation[axis.X, axis.Y] = enum_ChunkRevealType.Fog; });
             }
         });
         m_MapTexture.Apply();

@@ -74,27 +74,20 @@ namespace TTiles
                 }
             return true;
         }
-        public static List<TileAxis> GetAxisRange(TileAxis axis, TileAxis size)
+
+        public static List<TileAxis> GetAxisRange(int height,int width, TileAxis start, TileAxis end)
         {
             List<TileAxis> axisList = new List<TileAxis>();
-            for (int i = 0; i < size.X; i++)
-                for (int j = 0; j < size.Y; j++)
-                    axisList.Add(axis + new TileAxis(i, j));
-            return axisList;
-        }
-        public static List<TileAxis> GetAxisRange(int height,int width, TileAxis axis, TileAxis size)
-        {
-            List<TileAxis> axisList = new List<TileAxis>();
-            for (int i = 0; i < size.X; i++)
-                for (int j = 0; j < size.Y; j++)
+            for (int i = start.X; i < end.X; i++)
+                for (int j = start.Y; j < end.Y; j++)
                 {
-                    TileAxis axisCheck = axis + new TileAxis(i, j);
-                    if (axisCheck.X >= width || axisCheck.Y >= height)
+                    if (i < 0 ||j < 0 || i >= width || j >= height)
                         continue;
-                    axisList.Add(axisCheck);
+                    axisList.Add(new TileAxis(i, j));
                 }
             return axisList;
         }
+        
         public static bool CheckIsEdge<T>(this T[,] tileArray, TileAxis axis) where T : class, ITileAxis => axis.X == 0 || axis.X == tileArray.GetLength(0) - 1 || axis.Y == 0 || axis.Y == tileArray.GetLength(1) - 1;
         
         public static bool AxisInSquare(TileAxis axis, TileAxis squareAxis, TileAxis squareSize)=>axis.X >= squareAxis.X && axis.X <= squareAxis.X + squareSize.X && axis.Y >= squareAxis.Y && axis.Y <= squareAxis.Y + squareSize.Y;

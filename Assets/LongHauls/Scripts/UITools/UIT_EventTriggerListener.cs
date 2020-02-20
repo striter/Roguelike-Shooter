@@ -4,6 +4,11 @@ using UnityEngine.EventSystems;
 
 public class UIT_EventTriggerListener : EventTrigger
 {
+    public override void OnPointerClick(PointerEventData eventData)
+    {
+        base.OnPointerClick(eventData);
+        OnLocalClick(eventData);
+    }
     public override void OnPointerUp(PointerEventData eventData)
     {
         base.OnPointerDown(eventData);
@@ -30,6 +35,7 @@ public class UIT_EventTriggerListener : EventTrigger
 
     #region LocalDown
     public Action<bool, Vector2> OnLocalDown;
+    public Action<Vector2> OnClickLocal;
     void OnLocalCheck(bool down,PointerEventData eventData)
     {
         if (OnLocalDown == null)
@@ -38,6 +44,16 @@ public class UIT_EventTriggerListener : EventTrigger
         Vector2 pos = Vector2.zero;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(transform as RectTransform,eventData.position,eventData.enterEventCamera,out pos);
         OnLocalDown(down, pos);
+    }
+
+    void OnLocalClick(PointerEventData eventData)
+    {
+        if (OnClickLocal == null)
+            return;
+
+        Vector2 pos = Vector2.zero;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(transform as RectTransform, eventData.position, eventData.enterEventCamera, out pos);
+        OnClickLocal(pos);
     }
     #endregion
 
@@ -105,12 +121,12 @@ public class UIT_EventTriggerListener : EventTrigger
 
     #region Drag
     public Action<bool, Vector2> D_OnDragStatus;
-    public Action<Vector2> D_OnDrag, D_OnDragDelta;
+    public Action<Vector2> D_OnDrag, OnDragDelta;
     public override void OnDrag(PointerEventData eventData)
     {
         base.OnDrag(eventData);
         D_OnDrag?.Invoke(eventData.position);
-        D_OnDragDelta?.Invoke(eventData.delta);
+        OnDragDelta?.Invoke(eventData.delta);
     }
     public override void OnBeginDrag(PointerEventData eventData)
     {
