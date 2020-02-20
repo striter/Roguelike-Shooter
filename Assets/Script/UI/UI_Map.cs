@@ -48,6 +48,7 @@ public class UI_Map : UIPage {
                 locations.rectTransform.anchoredPosition = GameLevelManager.Instance.GetOffsetPosition(iconPosition);
                 locations.transform.rotation = Quaternion.identity;
             });
+            m_LocationSelect.transform.rotation = Quaternion.identity;
         }
         void OnMapClick(Vector2 position)
         {
