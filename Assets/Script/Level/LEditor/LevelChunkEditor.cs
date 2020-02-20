@@ -43,7 +43,7 @@ public class LevelChunkEditor : LevelChunkBase
         InitData(_data, m_Random);
 
         tf_CameraPos.transform.localPosition = new Vector3(m_Width / 2f * LevelConst.I_TileSize, 0, 0);
-        TPSCameraController.Instance.SetCameraRotation(60, 0);
+        TPSCameraController.Instance.SetCamera(tf_CameraPos.transform.localPosition, 60, 0);
 
         m_ItemRestriction = LevelExpressions.GetChunkRestriction(m_ChunkType); 
         m_EditMode = enum_TileSubType.Ground;

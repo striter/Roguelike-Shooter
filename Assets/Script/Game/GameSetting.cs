@@ -406,6 +406,8 @@ namespace GameSetting
         public static string GetIntroLocalizeKey(this ActionPerkBase action) => "Action_Intro_" + action.m_Index;
         public static string GetLocalizeKey(this enum_StageLevel stage) => "Game_Stage_" + stage;
         public static string GetLocalizeKey(this enum_LevelStyle style) => "Game_Style_" + style;
+        public static string GetMapLocalizeNameKey(this enum_ChunkEventType type) => "UI_Map_" + type + "_Name";
+        public static string GetMapLocalizeIntroKey(this enum_ChunkEventType type) => "UI_Map_" + type + "_Intro";
         public static string GetLocalizeNameKey(this enum_PlayerWeapon weapon) => "Weapon_Name_" + weapon;
         public static string GetTitleLocalizeKey(this InteractBase interact) => "UI_Interact_" + interact.m_InteractType+interact.m_ExternalLocalizeKeyJoint;
         public static string GetBottomLocalizeKey(this InteractBase interact) => "UI_Interact_" + interact.m_InteractType + interact.m_ExternalLocalizeKeyJoint + "_Bottom";
@@ -1083,7 +1085,10 @@ namespace GameSetting
         {
             m_ChunkType = _chunkType;
         }
-        public virtual bool CalculateMapIconLocation(ref Vector3 locationPosition,ref string locationIcon) => false;
+        public virtual bool CalculateMapIconLocation(ref Vector3 locationPosition, ref string locationIcon) => false;
+        public virtual string GetChunkMapNameKey => "";
+        public virtual string GetChunkMapIntroKey => "";
+        public virtual bool OnMapDoubleClick() { return false; }
     }
     public class GameChunkBattle:GameChunk
     {
@@ -1103,6 +1108,8 @@ namespace GameSetting
     {
         public InteractTeleport m_ChunkTeleport { get; private set; }
         public bool m_Enable { get; private set; }
+        public override string GetChunkMapNameKey => "UI_Map_Teleport_Name";
+        public override string GetChunkMapIntroKey => "UI_Map_Teleport_Intro";
         public override bool CalculateMapIconLocation(ref Vector3 locationPositon, ref string locationIcon)
         {
             if (!m_Enable)
@@ -1128,6 +1135,12 @@ namespace GameSetting
             m_Enable = true;
             m_ChunkTeleport.SetPlay(m_Enable);
         }
+
+        public override bool OnMapDoubleClick()
+        {
+            GameManager.Instance.m_LocalPlayer.Teleport(NavigationManager.NavMeshPosition( m_ChunkTeleport.transform.position),m_ChunkTeleport.transform.rotation);
+            return true;
+        }
     }
 
     public class GameChunkEvent:GameChunk
@@ -1135,6 +1148,8 @@ namespace GameSetting
         public enum_ChunkEventType m_EventType;
         public Vector3 m_EventPos;
         public InteractGameBase m_EventInteract { get; private set; }
+        public override string GetChunkMapNameKey => m_EventType.GetMapLocalizeNameKey();
+        public override string GetChunkMapIntroKey => m_EventType.GetMapLocalizeIntroKey();
         public GameChunkEvent() : base( enum_ChunkType.Event)
         {
         }
@@ -2569,8 +2584,8 @@ namespace GameSetting
     class UIC_MapBase
     {
         protected RectTransform m_Map_Origin { get; private set; }
-        public RawImage m_Map_Origin_Base { get; private set; }
-        RawImage m_Map_Origin_Base_Fog;
+        protected RawImage m_Map_Origin_Base { get; private set; }
+        protected RawImage m_Map_Origin_Base_Fog { get; private set; }
         protected UIGI_MapEntityLocation m_Player { get; private set; }
         protected int m_MapScale { get; private set; }
         public UIC_MapBase(Transform transform, int mapScale)
@@ -2599,117 +2614,6 @@ namespace GameSetting
 
     }
 
-    class UIC_Minimap:UIC_MapBase
-    {
-        UIT_GridControllerMono<UIGI_MapEntityLocation> m_Enermys;
-        UIT_GridControllerMono<Image> m_Locations;
-        public UIC_Minimap(Transform transform):base(transform,LevelConst.I_UIMinimapSize)
-        {
-            m_Enermys = new UIT_GridControllerGridItem<UIGI_MapEntityLocation>(m_Map_Origin_Base.transform.Find("EnermyGrid"));
-            m_Locations = new UIT_GridControllerMono<Image>(m_Map_Origin_Base.transform.Find("LocationGrid"));
-            TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
-            TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
-            TBroadCaster<enum_BC_UIStatus>.Add(enum_BC_UIStatus.UI_ChunkTeleportUnlock, UpdateIconStatus);
-        }
-        public void OnDestroy()
-        {
-            TBroadCaster<enum_BC_UIStatus>.Remove(enum_BC_UIStatus.UI_ChunkTeleportUnlock, UpdateIconStatus);
-            TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityRecycle);
-            TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
-        }
-        public override void DoMapInit()
-        {
-            base.DoMapInit();
-            UpdateIconStatus();
-        }
-        void OnEntityActivate(EntityBase entity)
-        {
-            if (entity.m_Flag != enum_EntityFlag.Enermy || entity.m_ControllType != enum_EntityController.AI)
-                return;
-
-            m_Enermys.AddItem(entity.m_EntityID).Play(entity);
-        }
-
-        void OnEntityRecycle(EntityBase entity)
-        {
-            if (entity.m_Flag != enum_EntityFlag.Enermy || entity.m_ControllType != enum_EntityController.AI)
-                return;
-
-            m_Enermys.RemoveItem(entity.m_EntityID);
-        }
-
-        public void MinimapUpdate(EntityCharacterPlayer player)
-        {
-            UpdateMap(GameLevelManager.Instance.GetMapAngle(CameraController.CameraRotation.eulerAngles.y));
-            m_Map_Origin_Base.rectTransform.anchoredPosition = GameLevelManager.Instance.GetOffsetPosition(player.transform.position)*-m_MapScale;
-            m_Enermys.TraversalItem((int identity, UIGI_MapEntityLocation item) => { item.Tick(); });
-            m_Locations.TraversalItem((int identity, Image image) => { image.transform.rotation = Quaternion.identity; });
-        }
-        public void UpdateIconStatus()
-        {
-            m_Locations.ClearGrid();
-            GameManager.Instance.m_GameChunkData.Traversal((GameChunk chunkData) =>
-            {
-                Vector3 iconPosition = Vector3.zero;
-                string iconSprite = "";
-                if (!chunkData.CalculateMapIconLocation(ref iconPosition, ref iconSprite))
-                    return;
-
-                Image image = m_Locations.AddItem(m_Locations.I_Count);
-                image.sprite = GameUIManager.Instance.m_InGameSprites[iconSprite];
-                image.rectTransform.anchoredPosition = GameLevelManager.Instance.GetOffsetPosition(iconPosition);
-            });
-        }
-
-    }
-
-    class UIC_Map : UIC_MapBase
-    {
-        UIT_GridControllerGridItem<UIGI_MapLocations> m_LocationsGrid;
-        UIT_EventTriggerListener m_MapTrigger;
-        public UIC_Map(Transform transform) : base(transform, LevelConst.I_UIMapSize)
-        {
-            m_LocationsGrid = new UIT_GridControllerGridItem<UIGI_MapLocations>(m_Map_Origin_Base.transform.Find("LocationsGrid"));
-            m_MapTrigger = transform.GetComponent<UIT_EventTriggerListener>();
-            m_MapTrigger.OnDragDelta = OnDragDelta;
-            m_MapTrigger.OnClickLocal = OnMapClick;
-            DoMapInit();
-            UpdateMap(GameLevelManager.Instance.GetMapAngle(CameraController.CameraRotation.eulerAngles.y));
-            UpdateIconStatus();
-            m_Map_Origin_Base.rectTransform.anchoredPosition = m_Player.rectTransform.anchoredPosition*-m_MapScale;
-        }
-
-        void UpdateIconStatus()
-        {
-            m_LocationsGrid.ClearGrid();
-            GameManager.Instance.m_GameChunkData.Traversal((int chunkIndex,GameChunk chunkData) =>
-            {
-                Vector3 iconPosition = Vector3.zero;
-                string iconSprite = "";
-                if (!chunkData.CalculateMapIconLocation(ref iconPosition, ref iconSprite))
-                    return;
-
-                UIGI_MapLocations locations = m_LocationsGrid.AddItem(m_LocationsGrid.I_Count);
-                locations.Play(chunkIndex, iconSprite, OnChunkClick);
-                locations.rectTransform.anchoredPosition = GameLevelManager.Instance.GetOffsetPosition(iconPosition);
-                locations.transform.rotation = Quaternion.identity;
-            });
-        }
-        void OnChunkClick(int chunkIndex)
-        {
-            Debug.Log(chunkIndex);
-        }
-
-        void OnDragDelta(Vector2 delta)
-        {
-            m_Map_Origin.anchoredPosition += delta;
-        }
-
-        void OnMapClick(Vector2 position)
-        {
-            Debug.Log(position);
-        }
-    }
     #endregion
     #endregion
 }

@@ -58,12 +58,14 @@ public class CameraController : SingletonMono<CameraController>  {
     public void Attach(Transform toTransform,bool selfRotation)
     {
         m_SelfRotation = selfRotation;
-       tf_AttachTo = toTransform;
+        tf_AttachTo = toTransform;
         qt_CameraRot = toTransform.rotation;
     }
     public void LookAt(Transform lookAtTrans) => tf_CameraLookAt = lookAtTrans;
-    public void SetCameraRotation(float pitch = -1, float yaw = -1)
+    public void SetCamera(Vector3 position,float pitch = -1, float yaw = -1)
     {
+        if (position != Vector3.zero)
+            tf_CameraYawBase.position = position;
         if (pitch != -1)
             f_Pitch = pitch;
         if (yaw != -1)

@@ -11,7 +11,6 @@ public class UIGI_MapLocations : UIT_GridItem {
     {
         base.Init();
         m_Icon = tf_Container.Find("Icon").GetComponent<Image>();
-        m_Icon.GetComponent<Button>().onClick.AddListener(()=> { OnItemClick(m_ChunkIndex); });
     }
 
     public void Play(int chunkIndex, string icon,Action<int> OnItemClick)
@@ -19,5 +18,12 @@ public class UIGI_MapLocations : UIT_GridItem {
         m_ChunkIndex = chunkIndex;
         m_Icon.sprite = GameUIManager.Instance.m_InGameSprites[icon];
         this.OnItemClick = OnItemClick;
+    }
+
+    public void MapCastCheck(Vector2 localPos)
+    {
+        if (Vector2.Distance(localPos, rectTransform.anchoredPosition) > 5f)
+            return;
+        OnItemClick(m_ChunkIndex);
     }
 }

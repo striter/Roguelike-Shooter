@@ -38,6 +38,70 @@ public class UIC_GameStatus : UIControlBase
     UIC_Minimap m_GameMinimap;
     UIT_TextExtend m_MinimapInfo;
 
+    class UIC_Minimap : UIC_MapBase
+    {
+        UIT_GridControllerMono<UIGI_MapEntityLocation> m_Enermys;
+        UIT_GridControllerMono<Image> m_Locations;
+        public UIC_Minimap(Transform transform) : base(transform, LevelConst.I_UIMinimapSize)
+        {
+            m_Enermys = new UIT_GridControllerGridItem<UIGI_MapEntityLocation>(m_Map_Origin_Base.transform.Find("EnermyGrid"));
+            m_Locations = new UIT_GridControllerMono<Image>(m_Map_Origin_Base.transform.Find("LocationGrid"));
+            TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
+            TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
+            TBroadCaster<enum_BC_UIStatus>.Add(enum_BC_UIStatus.UI_ChunkTeleportUnlock, UpdateIconStatus);
+        }
+        public void OnDestroy()
+        {
+            TBroadCaster<enum_BC_UIStatus>.Remove(enum_BC_UIStatus.UI_ChunkTeleportUnlock, UpdateIconStatus);
+            TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityRecycle);
+            TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
+        }
+        public override void DoMapInit()
+        {
+            base.DoMapInit();
+            UpdateIconStatus();
+        }
+        void OnEntityActivate(EntityBase entity)
+        {
+            if (entity.m_Flag != enum_EntityFlag.Enermy || entity.m_ControllType != enum_EntityController.AI)
+                return;
+
+            m_Enermys.AddItem(entity.m_EntityID).Play(entity);
+        }
+
+        void OnEntityRecycle(EntityBase entity)
+        {
+            if (entity.m_Flag != enum_EntityFlag.Enermy || entity.m_ControllType != enum_EntityController.AI)
+                return;
+
+            m_Enermys.RemoveItem(entity.m_EntityID);
+        }
+
+        public void MinimapUpdate(EntityCharacterPlayer player)
+        {
+            UpdateMap(GameLevelManager.Instance.GetMapAngle(CameraController.CameraRotation.eulerAngles.y));
+            m_Map_Origin_Base.rectTransform.anchoredPosition = GameLevelManager.Instance.GetOffsetPosition(player.transform.position) * -m_MapScale;
+            m_Enermys.TraversalItem((int identity, UIGI_MapEntityLocation item) => { item.Tick(); });
+            m_Locations.TraversalItem((int identity, Image image) => { image.transform.rotation = Quaternion.identity; });
+        }
+        public void UpdateIconStatus()
+        {
+            m_Locations.ClearGrid();
+            GameManager.Instance.m_GameChunkData.Traversal((GameChunk chunkData) =>
+            {
+                Vector3 iconPosition = Vector3.zero;
+                string iconSprite = "";
+                if (!chunkData.CalculateMapIconLocation(ref iconPosition, ref iconSprite))
+                    return;
+
+                Image image = m_Locations.AddItem(m_Locations.I_Count);
+                image.sprite = GameUIManager.Instance.m_InGameSprites[iconSprite];
+                image.rectTransform.anchoredPosition = GameLevelManager.Instance.GetOffsetPosition(iconPosition);
+            });
+        }
+
+    }
+
     TSpecialClasses.ValueChecker<bool> m_DyingCheck;
     protected override void Init()
     {

@@ -92,7 +92,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         base.OnActivate(enum_EntityFlag.Player);
         m_CharacterRotation = transform.rotation;
-        CameraController.Instance.SetCameraRotation(-1, transform.rotation.eulerAngles.y);
         m_Agent.enabled = true;
 
         m_CharacterInfo.SetInfoData(m_saveData);
@@ -101,6 +100,13 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (m_saveData.m_weapon2.m_Weapon != enum_PlayerWeapon.Invalid)
             ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_weapon2));
         SwapWeapon(m_saveData.m_weaponEquipingFirst);
+    }
+
+    public void Teleport(Vector3 position,Quaternion rotation)
+    {
+        CameraController.Instance.SetCamera(position, -1, rotation.eulerAngles.y);
+        transform.position = position;
+        transform.rotation = rotation;
     }
 
     protected override void OnBattleFinish()

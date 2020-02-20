@@ -4,9 +4,11 @@ using UnityEngine.EventSystems;
 
 public class UIT_EventTriggerListener : EventTrigger
 {
+    public Action<Vector2> OnWorldClick;
     public override void OnPointerClick(PointerEventData eventData)
     {
         base.OnPointerClick(eventData);
+        OnWorldClick?.Invoke(eventData.position);
         OnLocalClick(eventData);
     }
     public override void OnPointerUp(PointerEventData eventData)
