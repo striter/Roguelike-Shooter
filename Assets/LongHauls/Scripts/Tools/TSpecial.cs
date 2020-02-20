@@ -75,7 +75,7 @@ namespace TTiles
             return true;
         }
 
-        public static List<TileAxis> GetAxisRange(int height,int width, TileAxis start, TileAxis end)
+        public static List<TileAxis> GetAxisRange(int width,int height, TileAxis start, TileAxis end)
         {
             List<TileAxis> axisList = new List<TileAxis>();
             for (int i = start.X; i < end.X; i++)

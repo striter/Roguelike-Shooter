@@ -114,7 +114,7 @@ public class UIT_EventTriggerListener : EventTrigger
 
     void OnPressDisable()
     {
-        if (m_pressing) OnPressStatus(false, Vector2.zero);
+        if (m_pressing) OnPressStatus?.Invoke(false, Vector2.zero);
     }
 
     #endregion

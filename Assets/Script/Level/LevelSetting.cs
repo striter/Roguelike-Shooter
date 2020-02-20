@@ -108,6 +108,7 @@ namespace LevelSetting
     public enum enum_ChunkRevealType
     {
         Invalid=-1,
+        Cleared=0,
         Fog=1,
         Faded=2,
         Revealed = 3,

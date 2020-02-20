@@ -18,7 +18,6 @@ public class GameLevelManager : SingletonMono<GameLevelManager>,ICoroutineHelper
     public Texture2D m_FogTexture { get; private set; }
     public System.Random random { get; private set; }
     enum_ChunkRevealType[,] m_FogRevealation;
-    bool[,] m_FogRevalationModified;
     TileAxis m_MapOrigin, m_MapSize;
     Vector3 m_MapOriginPos;
 
@@ -59,8 +58,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>,ICoroutineHelper
             for (int i = 0; i < m_MapSize.X; i++)
                 for (int j = 0; j < m_MapSize.Y; j++)
                 { 
-                    m_FogRevalationModified[i, j] = false;
-                    if (m_FogRevealation[i, j] == enum_ChunkRevealType.Revealed)
+                    if (m_FogRevealation[i, j] == enum_ChunkRevealType.Cleared)
                         continue;
 
                     TileAxis offsetAxis = updatePos - new TileAxis(i, j);
@@ -69,22 +67,23 @@ public class GameLevelManager : SingletonMono<GameLevelManager>,ICoroutineHelper
 
                     float sqrMagnitude = offsetAxis.SqrMagnitude;
                     if (sqrMagnitude <= LevelConst.I_UISqrPlayerViewRevealRange)
-                    {
                         m_FogRevealation[i, j] = enum_ChunkRevealType.Revealed;
-                        m_FogRevalationModified[i, j] = true;
-                    }
                     else if (sqrMagnitude <= LevelConst.I_UISqrPlayerViewFadeRange)
-                    {
                         m_FogRevealation[i, j] =  enum_ChunkRevealType.Faded;
-                        m_FogRevalationModified[i, j] = true;
-                    }
                 }
         }).TaskCoroutine();
+        
 
         for (int i = 0; i < m_MapSize.X; i++)
             for (int j = 0; j < m_MapSize.Y; j++)
-                if(m_FogRevalationModified[i,j])
-                    m_FogTexture.SetPixel(i,j,  m_FogRevealation[i,j]== enum_ChunkRevealType.Faded?LevelConst.C_MapFogRevealFadeColor:LevelConst.C_MapFogRevealClearColor);
+            {
+                if (m_FogRevealation[i, j] == enum_ChunkRevealType.Cleared || m_FogRevealation[i, j] == enum_ChunkRevealType.Fog)
+                    continue;
+
+                m_FogTexture.SetPixel(i, j, m_FogRevealation[i, j] == enum_ChunkRevealType.Faded ? LevelConst.C_MapFogRevealFadeColor : LevelConst.C_MapFogRevealClearColor);
+                if (m_FogRevealation[i, j] == enum_ChunkRevealType.Revealed)
+                    m_FogRevealation[i, j] = enum_ChunkRevealType.Cleared;
+            }
         m_FogTexture.Apply();
         m_MinimapUpdating = false;
         yield break;
@@ -95,18 +94,22 @@ public class GameLevelManager : SingletonMono<GameLevelManager>,ICoroutineHelper
         for (int i = 0; i < m_MapSize.X; i++)
             for (int j = 0; j < m_MapSize.Y; j++)
             {
-                m_FogRevalationModified[i, j] = false;
-                if (m_FogRevealation[i, j] == enum_ChunkRevealType.Revealed)
+                if (m_FogRevealation[i, j] == enum_ChunkRevealType.Cleared)
                     continue;
 
                 m_FogRevealation[i, j] = enum_ChunkRevealType.Revealed;
-                m_FogRevalationModified[i, j] = true;
             }
 
         for (int i = 0; i < m_MapSize.X; i++)
             for (int j = 0; j < m_MapSize.Y; j++)
-                if (m_FogRevalationModified[i, j])
-                    m_FogTexture.SetPixel(i, j, m_FogRevealation[i, j] == enum_ChunkRevealType.Faded ? LevelConst.C_MapFogRevealFadeColor : LevelConst.C_MapFogRevealClearColor);
+            {
+                if (m_FogRevealation[i, j] == enum_ChunkRevealType.Cleared || m_FogRevealation[i, j] == enum_ChunkRevealType.Fog)
+                    continue;
+
+                m_FogTexture.SetPixel(i, j, m_FogRevealation[i, j] == enum_ChunkRevealType.Faded ? LevelConst.C_MapFogRevealFadeColor : LevelConst.C_MapFogRevealClearColor);
+                if (m_FogRevealation[i, j] == enum_ChunkRevealType.Revealed)
+                    m_FogRevealation[i, j] = enum_ChunkRevealType.Cleared;
+            }
         m_FogTexture.Apply();
     }
     
@@ -258,14 +261,12 @@ public class GameLevelManager : SingletonMono<GameLevelManager>,ICoroutineHelper
         m_MapTexture = new Texture2D(m_MapSize.X, m_MapSize.Y, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point, wrapMode= TextureWrapMode.Clamp, hideFlags = HideFlags.HideAndDontSave };
         m_FogTexture = new Texture2D(m_MapSize.X, m_MapSize.Y, TextureFormat.RGBA32, false) { filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp, hideFlags = HideFlags.HideAndDontSave };
         m_FogRevealation = new enum_ChunkRevealType[m_MapSize.X, m_MapSize.Y];
-        m_FogRevalationModified = new bool[m_MapSize.X, m_MapSize.Y];
         for (int i = 0; i < m_MapSize.X; i++)
             for (int j = 0; j < m_MapSize.Y; j++)
             {
                 m_MapTexture.SetPixel(i, j, Color.clear);
                 m_FogTexture.SetPixel(i, j, LevelConst.C_MapFogRevealFogColor);
-                m_FogRevealation[i, j] = enum_ChunkRevealType.Revealed;
-                m_FogRevalationModified[i, j] = false;
+                m_FogRevealation[i, j] = enum_ChunkRevealType.Cleared;
             }
 
         gameChunkGenerate.Traversal((ChunkGenerateData chunkdata) =>

@@ -100,7 +100,7 @@ public class LevelChunkData : ScriptableObject {
                 if (!tileData.m_ObjectType.IsEditorTileObject())
                     continue;
                 TileAxis size = tileData.m_ObjectType.GetSizeAxis(tileData.m_Direction);
-                List<TileAxis> axies = TileTools.GetAxisRange(m_Height, m_Width, axis, axis+ size);
+                List<TileAxis> axies = TileTools.GetAxisRange( m_Width, m_Height, axis, axis+ size);
                 Color tileColor = Color.clear;
                 switch (tileData.m_ObjectType)
                 {
