@@ -14,6 +14,7 @@ public class UI_Map : UIPage {
         UIT_EventTriggerListener m_EventTrigger;
         Action<int,bool> OnLocationClick;
         Vector2 m_MapOffsetBase,m_PreValidOffset;
+        float m_MapScaleBase;
         RectTransform m_LocationSelect;
         public int m_LocationSelecting { get; private set; }
 
@@ -28,7 +29,8 @@ public class UI_Map : UIPage {
             m_EventTrigger.OnWorldClick = OnMapClick;
             DoMapInit();
             this.OnLocationClick = OnLocationClick;
-            UpdateMap(GameLevelManager.Instance.GetMapAngle(CameraController.CameraRotation.eulerAngles.y));
+            m_MapScaleBase = GameLevelManager.Instance.GetMapAngle(CameraController.CameraRotation.eulerAngles.y);
+            UpdateMap(m_MapScaleBase);
             UpdateIconStatus();
             m_MapOffsetBase = m_Player.rectTransform.anchoredPosition;
             m_PreValidOffset = m_MapOffsetBase;
@@ -36,13 +38,14 @@ public class UI_Map : UIPage {
         }
 
 
-        Vector3 GetIconScale() => Vector3.one * LevelConst.F_UIMapIconSize * m_MapScale;
+        Vector3 GetIconScale() => Vector3.one * LevelConst.F_UIMapIconSize / m_MapScale;
         void OnMapScaleChange(float scale)
         {
             base.ChangeMapScale(scale);
             Vector3 iconScale = GetIconScale();
             m_LocationsGrid.m_Pool.m_ActiveItemDic.Traversal((UIGI_MapLocations locations) => { locations.transform.localScale = iconScale; });
             m_LocationSelect.transform.localScale = iconScale;
+            m_Map_Origin_Base.rectTransform.anchoredPosition = m_MapOffsetBase * -m_MapScale;
         }
 
         void UpdateIconStatus()
@@ -94,8 +97,8 @@ public class UI_Map : UIPage {
 
         void OnMapDrag(Vector2 delta)
         {
-            delta= -m_Map_Origin_Base.rectTransform.InverseTransformDirection(delta);
-            m_MapOffsetBase += delta / m_MapScale;
+            delta= m_Map_Origin_Base.rectTransform.InverseTransformDirection(delta);
+            m_MapOffsetBase -= delta / m_MapScale;
         }
 
         public void Tick(float deltaTime)
@@ -103,14 +106,9 @@ public class UI_Map : UIPage {
             if (isMapPosValid((int)m_MapOffsetBase.x, (int)m_MapOffsetBase.y))
                 m_PreValidOffset = m_MapOffsetBase;
             else if(!m_EventTrigger.m_Dragging)
-                m_MapOffsetBase = Vector2.Lerp(m_MapOffsetBase, m_PreValidOffset, deltaTime);
+                m_MapOffsetBase = Vector2.Lerp(m_MapOffsetBase, m_PreValidOffset, deltaTime* LevelConst.I_MapPullbackSpeedMultiply);
 
             m_Map_Origin_Base.rectTransform.anchoredPosition = Vector2.Lerp(m_Map_Origin_Base.rectTransform.anchoredPosition, m_MapOffsetBase * -m_MapScale, deltaTime * 20);
-
-            if (Input.GetKeyDown(KeyCode.P))
-                OnMapScaleChange(m_MapScale+1);
-            if (Input.GetKeyDown(KeyCode.O))
-                OnMapScaleChange(m_MapScale - 1);
         }
 
     }

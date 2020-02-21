@@ -11,7 +11,8 @@ namespace LevelSetting
         public const int I_UIMinimapSize = 7;
         public const int I_UIMapMinScale = 9;
         public const int I_UIMapMaxScale = 15;
-        public const float F_UIMapIconSize = .2f;
+        public const float F_UIMapIconSize = 10;
+        public const int I_MapPullbackSpeedMultiply = 2;
 
         public const int I_UISqrPlayerViewRevealRange = 100;       //10
         public const int I_UISqrPlayerViewFadeRange = 144;        //12
