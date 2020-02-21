@@ -60,7 +60,7 @@ public class UI_Map : UIPage {
 
                 UIGI_MapLocations locations = m_LocationsGrid.AddItem(chunkIndex);
                 locations.Play( chunkData);
-                locations.rectTransform.anchoredPosition = GameLevelManager.Instance.GetOffsetPosition(chunkData.GetChunkMapIconLocation );
+                locations.rectTransform.anchoredPosition = GameLevelManager.Instance.GetOffsetPosition(chunkData.GetChunkMapLocationPosition );
                 locations.transform.rotation = Quaternion.identity;
                 locations.transform.localScale = iconScale;
             });

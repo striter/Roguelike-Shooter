@@ -92,8 +92,8 @@ public class UIC_GameStatus : UIControlBase
                     return;
 
                 Image image = m_Locations.AddItem(m_Locations.I_Count);
-                image.sprite = GameUIManager.Instance.m_InGameSprites[chunkData.GetChunkMapSprite];
-                image.rectTransform.anchoredPosition = GameLevelManager.Instance.GetOffsetPosition(chunkData.GetChunkMapIconLocation);
+                image.sprite = GameUIManager.Instance.m_InGameSprites[chunkData.GetChunkMapLocationSprite];
+                image.rectTransform.anchoredPosition = GameLevelManager.Instance.GetOffsetPosition(chunkData.GetChunkMapLocationPosition);
             });
         }
 

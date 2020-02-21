@@ -29,7 +29,7 @@ public class UIGI_MapLocations : UIT_GridItem {
                 m_Animation.Play(true);
                 break;
             case enum_ChunkType.Event:
-                m_EventIcon.sprite = GameUIManager.Instance.m_InGameSprites[gameChunk.GetChunkMapSprite];
+                m_EventIcon.sprite = GameUIManager.Instance.m_InGameSprites[gameChunk.GetChunkMapLocationSprite];
                 break;
         }
     }
