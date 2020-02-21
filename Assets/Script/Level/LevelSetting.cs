@@ -9,13 +9,13 @@ namespace LevelSetting
     {
         #region UI
         public const int I_UIMinimapSize = 7;
-        public const int I_UIMapMinScale = 9;
-        public const int I_UIMapMaxScale = 15;
-        public const float F_UIMapIconSize = 10;
-        public const int I_MapPullbackSpeedMultiply = 2;
+        public const int I_UIMapScale = 9;
+        public const float F_UIMapIconBaseScale = 10;       //final scale= BaseScale/MapScale
+        public const int I_UIMapPullbackCheckRange = 30;
+        public const int I_UIMapPullbackSpeedMultiply = 2;
 
-        public const int I_UISqrPlayerViewRevealRange = 100;       //10
-        public const int I_UISqrPlayerViewFadeRange = 144;        //12
+        public const int I_UIPlayerViewRevealSqrRange = 100;       //10
+        public const int I_UIPlayerViewFadeSqrRange = 144;        //12
 
         public static readonly Color C_MapFogRevealFogColor = TCommon.GetHexColor("191919FF");
         public static readonly Color C_MapFogRevealFadeColor= TCommon.GetHexColor("191919D0");

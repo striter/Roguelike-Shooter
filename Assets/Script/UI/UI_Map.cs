@@ -19,7 +19,7 @@ public class UI_Map : UIPage {
         RectTransform m_LocationSelect;
         public int m_LocationSelecting { get; private set; }
 
-        public UIC_Map(Transform transform,Action<int,bool> OnLocationClick) : base(transform, LevelConst.I_UIMapMinScale)
+        public UIC_Map(Transform transform,Action<int,bool> OnLocationClick) : base(transform, LevelConst.I_UIMapScale)
         {
             m_LocationsGrid = new UIT_GridControllerGridItem<UIGI_MapLocations>(m_Map_Origin_Base.transform.Find("LocationsGrid"));
             m_LocationSelect = m_Map_Origin_Base.transform.Find("LocationSelect") as RectTransform;
@@ -39,7 +39,7 @@ public class UI_Map : UIPage {
         }
 
 
-        Vector3 GetIconScale() => Vector3.one * LevelConst.F_UIMapIconSize / m_MapScale;
+        Vector3 GetIconScale() => Vector3.one * LevelConst.F_UIMapIconBaseScale / m_MapScale;
         void OnMapScaleChange(float scale)
         {
             base.ChangeMapScale(scale);
@@ -105,10 +105,10 @@ public class UI_Map : UIPage {
 
         public void Tick(float deltaTime)
         {
-            if (isMapAreaValidPos((int)m_MapOffsetBase.x, (int)m_MapOffsetBase.y,50))
+            if (isMapAreaValidPos((int)m_MapOffsetBase.x, (int)m_MapOffsetBase.y,LevelConst.I_UIMapPullbackCheckRange))
                 m_PreValidOffset = m_MapOffsetBase;
             else if(!m_EventTrigger.m_Dragging)
-                m_MapOffsetBase = Vector2.Lerp(m_MapOffsetBase, m_PreValidOffset, deltaTime* LevelConst.I_MapPullbackSpeedMultiply);
+                m_MapOffsetBase = Vector2.Lerp(m_MapOffsetBase, m_PreValidOffset, deltaTime* LevelConst.I_UIMapPullbackSpeedMultiply);
 
             m_Map_Origin_Base.rectTransform.anchoredPosition = Vector2.Lerp(m_Map_Origin_Base.rectTransform.anchoredPosition, m_MapOffsetBase * -m_MapScale, deltaTime * 20);
         }

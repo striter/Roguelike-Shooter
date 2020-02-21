@@ -62,13 +62,13 @@ public class GameLevelManager : SingletonMono<GameLevelManager>,ICoroutineHelper
                         continue;
 
                     TileAxis offsetAxis = updatePos - new TileAxis(i, j);
-                    if (offsetAxis.SqrLength > LevelConst.I_UISqrPlayerViewFadeRange)
+                    if (offsetAxis.SqrLength > LevelConst.I_UIPlayerViewFadeSqrRange)
                         continue;
 
                     float sqrMagnitude = offsetAxis.SqrMagnitude;
-                    if (sqrMagnitude <= LevelConst.I_UISqrPlayerViewRevealRange)
+                    if (sqrMagnitude <= LevelConst.I_UIPlayerViewRevealSqrRange)
                         m_FogRevealation[i, j] = enum_ChunkRevealType.Revealed;
-                    else if (sqrMagnitude <= LevelConst.I_UISqrPlayerViewFadeRange)
+                    else if (sqrMagnitude <= LevelConst.I_UIPlayerViewFadeSqrRange)
                         m_FogRevealation[i, j] =  enum_ChunkRevealType.Faded;
                 }
         }).TaskCoroutine();
