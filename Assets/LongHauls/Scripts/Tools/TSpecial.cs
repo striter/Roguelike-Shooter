@@ -87,7 +87,21 @@ namespace TTiles
                 }
             return axisList;
         }
-        
+
+        public static List<TileAxis> GetAxisRange(int width, int height, TileAxis centerAxis,int radius)
+        {
+            List<TileAxis> axisList = new List<TileAxis>();
+            int sqrRadius = radius * radius;
+            for (int i =0; i < width; i++)
+                for (int j = 0; j < height; j++)
+                {
+                    if ((centerAxis - new TileAxis(i, j)).SqrMagnitude >sqrRadius)
+                        continue;
+                    axisList.Add(new TileAxis(i, j));
+                }
+            return axisList;
+        }
+
         public static bool CheckIsEdge<T>(this T[,] tileArray, TileAxis axis) where T : class, ITileAxis => axis.X == 0 || axis.X == tileArray.GetLength(0) - 1 || axis.Y == 0 || axis.Y == tileArray.GetLength(1) - 1;
         
         public static bool AxisInSquare(TileAxis axis, TileAxis squareAxis, TileAxis squareSize)=>axis.X >= squareAxis.X && axis.X <= squareAxis.X + squareSize.X && axis.Y >= squareAxis.Y && axis.Y <= squareAxis.Y + squareSize.Y;
