@@ -1085,9 +1085,11 @@ namespace GameSetting
         {
             m_ChunkType = _chunkType;
         }
-        public virtual bool CalculateMapIconLocation(ref Vector3 locationPosition, ref string locationIcon) => false;
+        public virtual bool GetChunkMapIconShow => false;
         public virtual string GetChunkMapNameKey => "";
         public virtual string GetChunkMapIntroKey => "";
+        public virtual string GetChunkMapLocationSprite => "";
+        public virtual Vector3 GetChunkMapLocationPosition => Vector3.zero;
         public virtual bool OnMapDoubleClick() { return false; }
     }
     public class GameChunkBattle:GameChunk
@@ -1108,17 +1110,11 @@ namespace GameSetting
     {
         public InteractTeleport m_ChunkTeleport { get; private set; }
         public bool m_Enable { get; private set; }
+        public override bool GetChunkMapIconShow => m_Enable;
         public override string GetChunkMapNameKey => "UI_Map_Teleport_Name";
         public override string GetChunkMapIntroKey => "UI_Map_Teleport_Intro";
-        public override bool CalculateMapIconLocation(ref Vector3 locationPositon, ref string locationIcon)
-        {
-            if (!m_Enable)
-                return false;
-
-            locationPositon = m_ChunkTeleport.transform.position;
-            locationIcon = "map_icon_teleport";
-            return true;
-        }
+        public override Vector3 GetChunkMapLocationPosition =>m_ChunkTeleport.transform.position;
+        public override string GetChunkMapLocationSprite => "map_icon_teleport";
 
         public GameChunkTeleport() : base( enum_ChunkType.Teleport)
         {
@@ -1148,16 +1144,13 @@ namespace GameSetting
         public enum_ChunkEventType m_EventType;
         public Vector3 m_EventPos;
         public InteractGameBase m_EventInteract { get; private set; }
+        public override bool GetChunkMapIconShow => true;
+        public override string GetChunkMapLocationSprite => m_EventType.GetMapEventSprite();
+        public override Vector3 GetChunkMapLocationPosition => m_EventPos;
         public override string GetChunkMapNameKey => m_EventType.GetMapLocalizeNameKey();
         public override string GetChunkMapIntroKey => m_EventType.GetMapLocalizeIntroKey();
         public GameChunkEvent() : base( enum_ChunkType.Event)
         {
-        }
-        public override bool CalculateMapIconLocation(ref Vector3 locationPosition, ref string locationSprite)
-        {
-            locationPosition = m_EventPos;
-            locationSprite = m_EventType.GetMapEventSprite();
-            return true;
         }
         public void OnSpawnEvent(enum_ChunkEventType _eventType, Vector3 _eventPos, InteractGameBase _eventInteract)
         {

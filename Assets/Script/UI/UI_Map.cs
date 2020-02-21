@@ -55,14 +55,12 @@ public class UI_Map : UIPage {
             m_LocationsGrid.ClearGrid();
             GameManager.Instance.m_GameChunkData.Traversal((int chunkIndex, GameChunk chunkData) =>
             {
-                Vector3 iconPosition = Vector3.zero;
-                string iconSprite = "";
-                if (!chunkData.CalculateMapIconLocation(ref iconPosition, ref iconSprite))
+                if (!chunkData.GetChunkMapIconShow)
                     return;
 
                 UIGI_MapLocations locations = m_LocationsGrid.AddItem(chunkIndex);
-                locations.Play( iconSprite);
-                locations.rectTransform.anchoredPosition = GameLevelManager.Instance.GetOffsetPosition(iconPosition);
+                locations.Play( chunkData);
+                locations.rectTransform.anchoredPosition = GameLevelManager.Instance.GetOffsetPosition(chunkData.GetChunkMapLocationPosition );
                 locations.transform.rotation = Quaternion.identity;
                 locations.transform.localScale = iconScale;
             });
@@ -99,7 +97,7 @@ public class UI_Map : UIPage {
 
         void OnMapDrag(Vector2 delta)
         {
-            delta= LevelConst.F_UIMapDragSpeedMultiply*m_Map_Origin_Base.rectTransform.InverseTransformDirection(delta);
+            delta=m_Map_Origin_Base.rectTransform.InverseTransformDirection(delta);
             m_MapOffsetBase -= delta / m_MapScale;
         }
 
@@ -137,7 +135,7 @@ public class UI_Map : UIPage {
         m_LocationIntro = m_LocationInfo.Find("Intro").GetComponent<UIT_TextExtend>();
 
         m_Stage.localizeKey = GameManager.Instance.m_GameLevel.m_GameStage.GetLocalizeKey();
-        m_Stage.localizeKey = GameManager.Instance.m_GameLevel.m_GameStyle.GetLocalizeKey();
+        m_Style.localizeKey = GameManager.Instance.m_GameLevel.m_GameStyle.GetLocalizeKey();
         m_LocationInfo.SetActivate(false);
     }
     private void Update()

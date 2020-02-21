@@ -28,9 +28,7 @@ public class LevelChunkGame : LevelChunkBase
         transform.localPosition = m_ChunkOrigin;
         m_ChunkObjects.Clear();
         m_NearbyChunks.Clear();
-        bool isConnectionChunk = _data.m_Data.Type.IsConnectChunk();
         InitData(_data.m_Data, _random, (TileAxis axis, ChunkTileData tileData) => {
-
             if (tileData.m_ObjectType.IsEditorTileObject())
             {
                 if (!m_ChunkObjects.ContainsKey(tileData.m_ObjectType))

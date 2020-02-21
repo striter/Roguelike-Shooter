@@ -88,14 +88,12 @@ public class UIC_GameStatus : UIControlBase
             m_Locations.ClearGrid();
             GameManager.Instance.m_GameChunkData.Traversal((GameChunk chunkData) =>
             {
-                Vector3 iconPosition = Vector3.zero;
-                string iconSprite = "";
-                if (!chunkData.CalculateMapIconLocation(ref iconPosition, ref iconSprite))
+                if (!chunkData.GetChunkMapIconShow)
                     return;
 
                 Image image = m_Locations.AddItem(m_Locations.I_Count);
-                image.sprite = GameUIManager.Instance.m_InGameSprites[iconSprite];
-                image.rectTransform.anchoredPosition = GameLevelManager.Instance.GetOffsetPosition(iconPosition);
+                image.sprite = GameUIManager.Instance.m_InGameSprites[chunkData.GetChunkMapLocationSprite];
+                image.rectTransform.anchoredPosition = GameLevelManager.Instance.GetOffsetPosition(chunkData.GetChunkMapLocationPosition);
             });
         }
 
