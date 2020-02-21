@@ -1146,7 +1146,7 @@ namespace GameSetting
         public InteractGameBase m_EventInteract { get; private set; }
         public override bool GetChunkMapIconShow => true;
         public override string GetChunkMapLocationSprite => m_EventType.GetMapEventSprite();
-        public override Vector2 GetChunkMapLocationPosition => m_EventPos;
+        public override Vector3 GetChunkMapLocationPosition => m_EventPos;
         public override string GetChunkMapNameKey => m_EventType.GetMapLocalizeNameKey();
         public override string GetChunkMapIntroKey => m_EventType.GetMapLocalizeIntroKey();
         public GameChunkEvent() : base( enum_ChunkType.Event)
