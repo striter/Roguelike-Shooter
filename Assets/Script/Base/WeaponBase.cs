@@ -68,7 +68,11 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
     void OnShow(bool show)=>transform.SetActivate(show);
     #region PlayerInteract
     public void Trigger(bool down)=>m_Trigger.OnSetTrigger(down);
-    
+
+
+    public virtual void OnAnimEvent(TAnimatorEvent.enum_AnimEvent eventType)
+    {
+    }
     protected bool OnTriggerOnce()
     {
         if (!m_HaveAmmoLeft)
@@ -83,7 +87,7 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
     protected virtual void OnTriggerSuccessful()
     {
     }
-    
+
     public void Tick(float fireTick,float reloadTick)
     {
         m_Trigger.Tick(fireTick);
@@ -152,7 +156,4 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
         
     }
     
-    public void OnAnimEvent(TAnimatorEvent.enum_AnimEvent eventType)
-    {
-    }
 }

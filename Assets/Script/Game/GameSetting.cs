@@ -569,6 +569,8 @@ namespace GameSetting
         Driller = 802,
         Bouncer = 803,
         Tesla=804,
+        //Melee
+        HeavySword=901,
     }
 
     public enum enum_PlayerAnim
@@ -578,6 +580,7 @@ namespace GameSetting
         Pistol_1002 = 1002,
         Crossbow_1003 = 1003,
         Heavy_1004 = 1004,
+        HeavySword_2001=2001,
     }
 
     public enum enum_EnermyAnim

@@ -301,7 +301,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public void OnFireAddRecoil(float recoil)
     {
         TPSCameraController.Instance.AddRecoil(recoil);
-        m_Animator.Fire();
+        m_Animator.Attack(m_CharacterInfo.F_FireRateTick(m_WeaponCurrent.m_WeaponInfo.m_FireRate));
     }
 
     void OnMoveTick(float deltaTime)
@@ -530,7 +530,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     
     protected class PlayerAnimator : CharacterAnimator
     {
-        static readonly int HS_T_Fire = Animator.StringToHash("t_attack");
+        static readonly int HS_T_Attack = Animator.StringToHash("t_attack");
+        static readonly int HS_FM_Attack = Animator.StringToHash("fm_attack");
         static readonly int HS_T_Reload = Animator.StringToHash("t_reload");
         static readonly int HS_FM_Reload = Animator.StringToHash("fm_reload");
         static readonly int HS_F_Strafe = Animator.StringToHash("f_strafe");
@@ -547,7 +548,11 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             base.SetForward(v2_movement.y);
             base.SetMovementSpeed(movementParam);
         }
-        public void Fire()=> m_Animator.SetTrigger(HS_T_Fire);
+        public void Attack(float fireRate)
+        {
+            m_Animator.SetFloat(HS_FM_Attack,1/fireRate);
+            m_Animator.SetTrigger(HS_T_Attack);
+        } 
         public void Reload(float reloadTime)
         {
             m_Animator.SetTrigger(HS_T_Reload);
