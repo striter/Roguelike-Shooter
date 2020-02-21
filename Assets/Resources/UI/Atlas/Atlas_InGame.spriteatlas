@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 081334a023db2704db167d2dfc323270, type: 3}
-    totalSpriteSurfaceArea: 1633686
+    totalSpriteSurfaceArea: 1681025
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -43,16 +43,17 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 006ea73e2bf56dc4e959b2bc4171da77, type: 3}
   - {fileID: 21300000, guid: ce23f48acd6ddf541b7a5d298771ae09, type: 3}
   - {fileID: 21300000, guid: d3693ba12401d8c4cac8765412e6c015, type: 3}
+  - {fileID: 21300000, guid: 7b7cd898f223b464e90a8c4751924dcc, type: 3}
   - {fileID: 21300000, guid: 6549a993f1cc7b741acc5420b69c73eb, type: 3}
-  - {fileID: 21300000, guid: 794567052adf2194ea84330ab26be09f, type: 3}
+  - {fileID: 21300000, guid: c6b9070ce5347dc4385af076d3cf53c2, type: 3}
   - {fileID: 21300000, guid: ea52e7fe013a95341b32b99bd1f28ec6, type: 3}
   - {fileID: 21300000, guid: e2dc748ae38dba94c926226a6ccd905f, type: 3}
   - {fileID: 21300000, guid: 8d9d6752fb320bd438f49a5bec44867c, type: 3}
   - {fileID: 21300000, guid: 5299f3520a85ed74fac7a3636bdc9238, type: 3}
   - {fileID: 21300000, guid: 25848d173979ddf4ea55b14dec071a67, type: 3}
   - {fileID: 21300000, guid: 1dfff60a4d340614f8574902c4683851, type: 3}
-  - {fileID: 21300000, guid: 66fa5acf6e2b7444e8063e335f50c92a, type: 3}
   - {fileID: 21300000, guid: 471f2c6bff785a049b3b37e24002cdae, type: 3}
+  - {fileID: 21300000, guid: 83a77997b248f884281a6a289f802449, type: 3}
   - {fileID: 21300000, guid: 702a32a3dc3147a47800c42865d41714, type: 3}
   - {fileID: 21300000, guid: e051a7e66b79bb94baf2dce5172d2880, type: 3}
   - {fileID: 21300000, guid: da00ad59e5ac2ca4489ac1856c3f870f, type: 3}
@@ -73,6 +74,7 @@ SpriteAtlas:
   - result_title_win_CN
   - backpack_bottom
   - settlement_bottom
+  - map_icon_teleport_anim
   - map_info_bg
   - map_icon_teleport
   - map_icon_event_Trader
@@ -81,8 +83,8 @@ SpriteAtlas:
   - interact_bottom
   - map_big_bg
   - equipmentPack_empty
-  - map_select
   - backpack_shadow
+  - map_select
   - health_2
   - health_1
   - health_3
