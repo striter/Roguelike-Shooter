@@ -99,7 +99,7 @@ public class UI_Map : UIPage {
 
         void OnMapDrag(Vector2 delta)
         {
-            delta= m_Map_Origin_Base.rectTransform.InverseTransformDirection(delta);
+            delta= LevelConst.F_UIMapDragSpeedMultiply*m_Map_Origin_Base.rectTransform.InverseTransformDirection(delta);
             m_MapOffsetBase -= delta / m_MapScale;
         }
 
