@@ -82,7 +82,7 @@ public class UI_Map : UIPage {
             OnLocationSelect(castIndex);
         }
 
-        bool isMapPosValid(int x, int y) => (x>=0&&y>=0&& x < m_Map_Origin_Base_Fog.texture.width&&y < m_Map_Origin_Base_Fog.texture.height)&& (m_Map_Origin_Base_Fog.texture as Texture2D).GetPixel(x, y).a == 0;
+        bool isMapPosValid(int x, int y) => (x>=0&&y>=0&& x < m_Map_Origin_Base_Fog.texture.width&&y < m_Map_Origin_Base_Fog.texture.height)&& GameLevelManager.Instance.CheckTileRevealed(x,y);
 
 
         void OnLocationSelect(int locationIndex)

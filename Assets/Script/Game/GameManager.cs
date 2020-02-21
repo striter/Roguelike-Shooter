@@ -45,6 +45,7 @@ public class GameManager : GameManagerBase
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Player Equipment", "1", KeyCode.F1, (string actionIndex) => { GameObjectManager.SpawnInteract<InteractEquipment>(enum_Interaction.Equipment, NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere(5f)), Quaternion.identity, tf_Interacts).Play(ActionDataManager.CreatePlayerEquipment(EquipmentSaveData.Default(int.Parse(actionIndex), TCommon.RandomEnumValues<enum_EquipmentRarity>(null)))); }));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Player Exp", "100", KeyCode.F2, (string actionIndex) => { m_LocalPlayer.m_CharacterInfo.OnExpGain(int.Parse(actionIndex)); }));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Clear Fog", "", KeyCode.F3, (string value) => { GameLevelManager.Instance.ClearAllFog(); }));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Unlock Teleport", "", KeyCode.F4, (string value) => { m_GameChunkData.Traversal((GameChunk chunk) => { if (chunk.m_ChunkType == enum_ChunkType.Teleport) (chunk as GameChunkTeleport).OnChunkTrigger(); }); }));
 
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Coins", "20", KeyCode.F5, (string coins) => { GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupCoin, NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere(5f)), Quaternion.identity, tf_Interacts).Play(int.Parse(coins),!m_Battling);}));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Health", "20", KeyCode.F6, (string health) => {GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupHealth, NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere(5f)), Quaternion.identity, tf_Interacts).Play(int.Parse(health), !m_Battling);}));
@@ -505,7 +506,6 @@ public class GameManager : GameManagerBase
         if (teleportChunk.m_Enable)
             return;
         teleportChunk.OnChunkTrigger();
-        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_ChunkTeleportUnlock);
     }
     #endregion
     #region Battle Relatives 

@@ -1130,6 +1130,7 @@ namespace GameSetting
         {
             m_Enable = true;
             m_ChunkTeleport.SetPlay(m_Enable);
+            TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_ChunkTeleportUnlock);
         }
 
         public override bool OnMapDoubleClick()

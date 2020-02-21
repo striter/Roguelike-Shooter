@@ -114,10 +114,13 @@ namespace LevelSetting
     public enum enum_ChunkRevealType
     {
         Invalid=-1,
-        Cleared=0,
-        Fog=1,
-        Faded=2,
-        Revealed = 3,
+        PreFog=1,
+        PreFaded=2,
+        PreRevealed = 3,
+        PrepareEnd=10,
+
+        Empty = 11,
+        Revealed = 12,
     }
     
     public static class LevelExpressions
