@@ -2583,20 +2583,21 @@ namespace GameSetting
 
     class UIC_MapBase
     {
+        protected RectTransform rectTransform { get; private set; }
         protected RectTransform m_Map_Origin { get; private set; }
         protected RawImage m_Map_Origin_Base { get; private set; }
         protected RawImage m_Map_Origin_Base_Fog { get; private set; }
         protected UIGI_MapEntityLocation m_Player { get; private set; }
-        protected int m_MapScale { get; private set; }
-        public UIC_MapBase(Transform transform, int mapScale)
+        protected float m_MapScale { get; private set; }
+        public UIC_MapBase(Transform transform, float mapScale)
         {
+            rectTransform = transform as RectTransform;
             m_Map_Origin = transform.Find("Origin") as RectTransform;
             m_Map_Origin_Base = m_Map_Origin.Find("Base").GetComponent<RawImage>();
             m_Map_Origin_Base_Fog = m_Map_Origin_Base.transform.Find("Fog").GetComponent<RawImage>();
             m_Player = m_Map_Origin_Base.transform.Find("Player").GetComponent<UIGI_MapEntityLocation>();
             m_Player.Init();
-            m_MapScale = mapScale;
-            m_Map_Origin_Base.rectTransform.localScale = Vector3.one * m_MapScale;
+            ChangeMapScale(mapScale);
         }
 
         public virtual void DoMapInit()
@@ -2611,7 +2612,12 @@ namespace GameSetting
             m_Map_Origin.localRotation = Quaternion.Euler(0, 0, mapAngle);
             m_Player.Tick();
         }
-
+        
+        protected void ChangeMapScale(float mapScale)
+        {
+            m_MapScale = mapScale;
+            m_Map_Origin_Base.rectTransform.localScale = Vector3.one * m_MapScale;
+        }
     }
 
     #endregion

@@ -13,28 +13,42 @@ public class UI_Map : UIPage {
         UIT_GridControllerGridItem<UIGI_MapLocations> m_LocationsGrid;
         UIT_EventTriggerListener m_EventTrigger;
         Action<int,bool> OnLocationClick;
-        Vector2 m_MapOffset;
+        Vector2 m_MapOffsetBase,m_PreValidOffset;
         RectTransform m_LocationSelect;
         public int m_LocationSelecting { get; private set; }
-        public UIC_Map(Transform transform,Action<int,bool> OnLocationClick) : base(transform, LevelConst.I_UIMapSize)
+
+
+        public UIC_Map(Transform transform,Action<int,bool> OnLocationClick) : base(transform, LevelConst.I_UIMapMinScale)
         {
             m_LocationsGrid = new UIT_GridControllerGridItem<UIGI_MapLocations>(m_Map_Origin_Base.transform.Find("LocationsGrid"));
             m_LocationSelect = m_Map_Origin_Base.transform.Find("LocationSelect") as RectTransform;
             m_LocationSelecting = -1;
             m_LocationSelect.SetActivate(false);
             m_EventTrigger = transform.GetComponent<UIT_EventTriggerListener>();
-            m_EventTrigger.OnDragDelta = (Vector2 delta)=> { m_MapOffset += delta; };
+            m_EventTrigger.OnDragDelta = OnMapDrag;
             m_EventTrigger.OnWorldClick = OnMapClick;
             DoMapInit();
             this.OnLocationClick = OnLocationClick;
             UpdateMap(GameLevelManager.Instance.GetMapAngle(CameraController.CameraRotation.eulerAngles.y));
             UpdateIconStatus();
-            m_MapOffset = Vector2.zero;
-            m_Map_Origin_Base.rectTransform.anchoredPosition = m_Player.rectTransform.anchoredPosition * -m_MapScale;
+            m_MapOffsetBase = m_Player.rectTransform.anchoredPosition;
+            m_PreValidOffset = m_MapOffsetBase;
+            m_Map_Origin_Base.rectTransform.anchoredPosition = Vector2.zero;
+        }
+
+
+        Vector3 GetIconScale() => Vector3.one * LevelConst.F_UIMapIconSize * m_MapScale;
+        void OnMapScaleChange(float scale)
+        {
+            base.ChangeMapScale(scale);
+            Vector3 iconScale = GetIconScale();
+            m_LocationsGrid.m_Pool.m_ActiveItemDic.Traversal((UIGI_MapLocations locations) => { locations.transform.localScale = iconScale; });
+            m_LocationSelect.transform.localScale = iconScale;
         }
 
         void UpdateIconStatus()
         {
+            Vector3 iconScale = GetIconScale();
             m_LocationsGrid.ClearGrid();
             GameManager.Instance.m_GameChunkData.Traversal((int chunkIndex, GameChunk chunkData) =>
             {
@@ -47,16 +61,17 @@ public class UI_Map : UIPage {
                 locations.Play( iconSprite);
                 locations.rectTransform.anchoredPosition = GameLevelManager.Instance.GetOffsetPosition(iconPosition);
                 locations.transform.rotation = Quaternion.identity;
+                locations.transform.localScale = iconScale;
             });
             m_LocationSelect.transform.rotation = Quaternion.identity;
+            m_LocationSelect.transform.localScale = iconScale;
         }
         void OnMapClick(Vector2 position)
         {
             if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(m_Map_Origin_Base_Fog.rectTransform, position, null, out position))
                 return;
             int castIndex = -1;
-            float alpha = (m_Map_Origin_Base_Fog.texture as Texture2D).GetPixel((int)position.x, (int)position.y).a;
-            if (alpha == 0)
+            if (isMapPosValid((int)position.x, (int)position.y))
             {
                 m_LocationsGrid.m_Pool.m_ActiveItemDic.TraversalBreak((UIGI_MapLocations item) => {
                     castIndex = item.MapCastCheck(position);
@@ -65,6 +80,8 @@ public class UI_Map : UIPage {
             }
             OnLocationSelect(castIndex);
         }
+
+        bool isMapPosValid(int x, int y) => (x>=0&&y>=0&& x < m_Map_Origin_Base_Fog.texture.width&&y < m_Map_Origin_Base_Fog.texture.height)&& (m_Map_Origin_Base_Fog.texture as Texture2D).GetPixel(x, y).a == 0;
 
         void OnLocationSelect(int locationIndex)
         {
@@ -76,11 +93,24 @@ public class UI_Map : UIPage {
                 m_LocationSelect.anchoredPosition = m_LocationsGrid.GetItem(m_LocationSelecting).rectTransform.anchoredPosition;
         }
 
+        void OnMapDrag(Vector2 delta)
+        {
+            m_MapOffsetBase -= delta/-m_MapScale;
+        }
+
         public void Tick(float deltaTime)
         {
-            m_Map_Origin.anchoredPosition = Vector2.Lerp(m_Map_Origin.anchoredPosition,m_MapOffset,deltaTime*20);
-            if (m_LocationSelecting!=-1)
-                m_LocationSelect.anchoredPosition = Vector2.Lerp(m_LocationSelect.anchoredPosition,m_LocationsGrid.GetItem(m_LocationSelecting).rectTransform.anchoredPosition, deltaTime * 20);
+            if (isMapPosValid((int)m_MapOffsetBase.x, (int)m_MapOffsetBase.y))
+                m_PreValidOffset = m_MapOffsetBase;
+            else if(!m_EventTrigger.m_Dragging)
+                m_MapOffsetBase = Vector2.Lerp(m_MapOffsetBase, m_PreValidOffset, deltaTime);
+
+            m_Map_Origin_Base.rectTransform.anchoredPosition = Vector2.Lerp(m_Map_Origin_Base.rectTransform.anchoredPosition, m_MapOffsetBase * -m_MapScale, deltaTime * 20);
+
+            if (Input.GetKeyDown(KeyCode.P))
+                OnMapScaleChange(m_MapScale+1);
+            if (Input.GetKeyDown(KeyCode.O))
+                OnMapScaleChange(m_MapScale - 1);
         }
 
     }

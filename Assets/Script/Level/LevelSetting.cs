@@ -7,10 +7,11 @@ namespace LevelSetting
 {
     public static class LevelConst
     {
-        public const int I_TileSize = 2;
         #region UI
         public const int I_UIMinimapSize = 7;
-        public const int I_UIMapSize = 9;
+        public const int I_UIMapMinScale = 9;
+        public const int I_UIMapMaxScale = 15;
+        public const float F_UIMapIconSize = .2f;
 
         public const int I_UISqrPlayerViewRevealRange = 100;       //10
         public const int I_UISqrPlayerViewFadeRange = 144;        //12
@@ -20,6 +21,7 @@ namespace LevelSetting
         public static readonly Color C_MapFogRevealClearColor = TCommon.GetHexColor("19191900");
         public static readonly Color C_MapTextureGroundColor = TCommon.GetHexColor("808080FF");
         #endregion
+        public const int I_TileSize = 2;
     }
 
     public enum enum_ChunkType {

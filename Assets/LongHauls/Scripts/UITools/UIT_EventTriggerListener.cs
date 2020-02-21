@@ -124,21 +124,24 @@ public class UIT_EventTriggerListener : EventTrigger
     #region Drag
     public Action<bool, Vector2> D_OnDragStatus;
     public Action<Vector2> D_OnDrag, OnDragDelta;
+    public bool m_Dragging { get; private set; }
+    public override void OnBeginDrag(PointerEventData eventData)
+    {
+        base.OnBeginDrag(eventData);
+        D_OnDragStatus?.Invoke(true, eventData.position);
+        m_Dragging = true;
+    }
     public override void OnDrag(PointerEventData eventData)
     {
         base.OnDrag(eventData);
         D_OnDrag?.Invoke(eventData.position);
         OnDragDelta?.Invoke(eventData.delta);
     }
-    public override void OnBeginDrag(PointerEventData eventData)
-    {
-        base.OnBeginDrag(eventData);
-        D_OnDragStatus?.Invoke(true, eventData.position);
-    }
     public override void OnEndDrag(PointerEventData eventData)
     {
         base.OnEndDrag(eventData);
         D_OnDragStatus?.Invoke(false, eventData.position);
+        m_Dragging = false;
     }
     #endregion
     public Action D_OnRaycast;
