@@ -165,7 +165,7 @@ public static class TCommon
         lookDirection.Normalize();
         return lookDirection;
     }
-    public static Vector3 RotateDirection(this Vector3 Direction, Vector3 axis, float angle) => (Quaternion.AngleAxis(angle, axis) * Direction).normalized;
+    public static Vector3 RotateDirectionClockwise(this Vector3 Direction, Vector3 axis, float angle) => (Quaternion.AngleAxis(angle, axis) * Direction).normalized;
 
     public static float GetAngle(Vector3 first, Vector3 second, Vector3 up)
     {

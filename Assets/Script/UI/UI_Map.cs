@@ -17,7 +17,6 @@ public class UI_Map : UIPage {
         RectTransform m_LocationSelect;
         public int m_LocationSelecting { get; private set; }
 
-
         public UIC_Map(Transform transform,Action<int,bool> OnLocationClick) : base(transform, LevelConst.I_UIMapMinScale)
         {
             m_LocationsGrid = new UIT_GridControllerGridItem<UIGI_MapLocations>(m_Map_Origin_Base.transform.Find("LocationsGrid"));
@@ -95,7 +94,8 @@ public class UI_Map : UIPage {
 
         void OnMapDrag(Vector2 delta)
         {
-            m_MapOffsetBase -= delta/-m_MapScale;
+            delta= -m_Map_Origin_Base.rectTransform.InverseTransformDirection(delta);
+            m_MapOffsetBase += delta / m_MapScale;
         }
 
         public void Tick(float deltaTime)

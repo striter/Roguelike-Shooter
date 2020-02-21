@@ -2390,7 +2390,7 @@ namespace GameSetting
             SpawnMuzzle(startPosition, direction);
             for (int i = 0; i < waveCount; i++)
             {
-                Vector3 fanDirection = direction.RotateDirection(Vector3.up, beginAnle + i * m_OffsetExtension);
+                Vector3 fanDirection = direction.RotateDirectionClockwise(Vector3.up, beginAnle + i * m_OffsetExtension);
                 FireBullet(m_Entity.tf_Weapon.position, fanDirection, m_Entity.tf_Weapon.position + fanDirection * distance);
             }
         }
@@ -2589,6 +2589,7 @@ namespace GameSetting
         protected RawImage m_Map_Origin_Base_Fog { get; private set; }
         protected UIGI_MapEntityLocation m_Player { get; private set; }
         protected float m_MapScale { get; private set; }
+        protected float m_MapAngle { get; private set; }
         public UIC_MapBase(Transform transform, float mapScale)
         {
             rectTransform = transform as RectTransform;
@@ -2609,6 +2610,7 @@ namespace GameSetting
         }
         protected void UpdateMap(float mapAngle)
         {
+            m_MapAngle = mapAngle;
             m_Map_Origin.localRotation = Quaternion.Euler(0, 0, mapAngle);
             m_Player.Tick();
         }

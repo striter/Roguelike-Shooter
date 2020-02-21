@@ -40,14 +40,14 @@ public class WeaponProjectileBase : WeaponBase
         float spread = GetSpread();
         if (m_WeaponInfo.m_PelletsPerShot == 1)
         {
-            FireOneBullet(damageInfo, spreadDirection.RotateDirection(Vector3.up,Random.Range(-spread,spread)));
+            FireOneBullet(damageInfo, spreadDirection.RotateDirectionClockwise(Vector3.up,Random.Range(-spread,spread)));
         }
         else
         {
             int waveCount = m_WeaponInfo.m_PelletsPerShot;
             float beginAnle = -spread * (waveCount - 1) / 2f;
             for (int i = 0; i < waveCount; i++)
-                FireOneBullet(damageInfo, spreadDirection.RotateDirection(Vector3.up, beginAnle + i * m_WeaponInfo.m_Spread));
+                FireOneBullet(damageInfo, spreadDirection.RotateDirectionClockwise(Vector3.up, beginAnle + i * m_WeaponInfo.m_Spread));
         }
         GameObjectManager.PlayMuzzle(m_Attacher.m_EntityID, m_Muzzle.position, spreadDirection, I_MuzzleIndex, m_MuzzleClip);
     }

@@ -156,8 +156,8 @@ namespace TPhysics
         public ParacurveBouncePSimulator(Transform _transform, Vector3 _startPos, Vector3 _endPos, float _angle, float _horiSpeed, float _height, float _radius, bool randomRotation, int _hitLayer, bool bounce, float _bounceSpeedMultiply, Func<RaycastHit, T, bool> _onBounceHit, Predicate<T> _OnBounceCheck) : base(_transform, _startPos, Vector3.zero, _height, _radius, _hitLayer, _onBounceHit, _OnBounceCheck)
         {
             Vector3 horiDirection = TCommon.GetXZLookDirection(_startPos, _endPos);
-            Vector3 horiRight = horiDirection.RotateDirection(Vector3.up, 90);
-            m_Direction = horiDirection.RotateDirection(horiRight, -_angle);
+            Vector3 horiRight = horiDirection.RotateDirectionClockwise(Vector3.up, 90);
+            m_Direction = horiDirection.RotateDirectionClockwise(horiRight, -_angle);
             f_speed = _horiSpeed / Mathf.Cos(_angle * Mathf.Deg2Rad);
             float horiDistance = Vector3.Distance(_startPos, _endPos);
             float duration = horiDistance / _horiSpeed;

@@ -74,7 +74,7 @@ public class EEntity : Editor {
         }
 
         m_PreviewObject.transform.rotation = Quaternion.Euler(0, dragDelta.x, 0);
-        m_Preview.camera.transform.position = v3_center + TCommon.RotateDirection(Vector3.up, Vector3.right, dragDelta.y) *scroll;
+        m_Preview.camera.transform.position = v3_center + TCommon.RotateDirectionClockwise(Vector3.up, Vector3.right, dragDelta.y) *scroll;
         m_Preview.camera.transform.LookAt(m_PreviewObject.transform);
         m_Preview.BeginStaticPreview(r);
         m_Preview.camera.Render();
