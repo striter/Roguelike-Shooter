@@ -8,12 +8,12 @@ namespace LevelSetting
     public static class LevelConst
     {
         #region UI
-        public const int I_UIMinimapSize = 7;
-        public const int I_UIMapScale = 9;
-        public const float F_UIMapIconBaseScale = 10;       //final scale= BaseScale/MapScale
+        public const int I_UIMinimapSize = 8;
+        public const int I_UIMapScale = 8;
+        public const float F_UIMapIconBaseScale = 25;       //final scale= BaseScale/MapScale
         public const float F_UIMapDragSpeedMultiply = 2f;
         public const int I_UIMapPullbackCheckRange = 30;
-        public const int I_UIMapPullbackSpeedMultiply = 2;
+        public const int I_UIMapPullbackSpeedMultiply = 8;
 
         public const int I_UIPlayerViewRevealSqrRange = 100;       //10
         public const int I_UIPlayerViewFadeSqrRange = 144;        //12
