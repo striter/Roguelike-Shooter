@@ -45,7 +45,7 @@ public class InteractPickupAmount : InteractGameBase {
         if (!m_InteractEnable || m_moveTowards == null)
             return;
 
-        if (m_speed<12f)
+        if (m_speed<GameConst.F_PickupMaxSpeed)
             m_speed += GameConst.F_PickupAcceleration * Time.deltaTime;
         Vector3 direction =  (m_moveTowards.position - transform.position).normalized;
         transform.position +=  direction * m_speed * Time.deltaTime;
