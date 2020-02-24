@@ -795,9 +795,11 @@ public static class GameObjectManager
         return entity;
     }
 
-    public static EntityCharacterAI SpawnEntityCharacterAI(int poolIndex, Vector3 toPosition, Vector3 lookPos, enum_EntityFlag _flag,int gameDifficulty,enum_StageLevel _stage,bool battling, int spawnerID = -1, float _startHealth = 0)=> SpawnEntity(poolIndex, toPosition, Quaternion.LookRotation(TCommon.GetXZLookDirection(toPosition, lookPos),Vector3.up), (EntityCharacterAI ai)=> ai.OnActivate(_flag, spawnerID, _startHealth, GameExpression.GetEnermyMaxHealthMultiplier(_stage, gameDifficulty), GameExpression.GetEnermyGameBuff(_stage, gameDifficulty), battling), null);
+    public static EntityCharacterAI SpawnEntityCharacterAI(int poolIndex, Vector3 toPosition, Vector3 lookPos, enum_EntityFlag _flag,int gameDifficulty,enum_StageLevel _stage,bool battling,float healthRecord=0)=> SpawnEntity(poolIndex, toPosition, Quaternion.LookRotation(TCommon.GetXZLookDirection(toPosition, lookPos),Vector3.up), (EntityCharacterAI ai)=> ai.OnAIActivate(_flag, GameExpression.GetEnermyMaxHealthMultiplier(_stage, gameDifficulty), GameExpression.GetEnermyGameBuff(_stage, gameDifficulty), battling,healthRecord), null);
 
-    public static EntityCharacterPlayer SpawnEntityPlayer(CBattleSave playerSave,Vector3 position,Quaternion rotation)=> SpawnEntity((int)playerSave.m_character, position,rotation, (EntityCharacterPlayer player)=>player.OnActivate(playerSave));
+    public static EntityCharacterBase SpawnEntitySubCharacter(int poolIndex,Vector3 toPosition,Vector3 lookPos,enum_EntityFlag _flag,int spawnerID,float startHealth)=> SpawnEntity(poolIndex, toPosition, Quaternion.LookRotation(TCommon.GetXZLookDirection(toPosition, lookPos), Vector3.up), (EntityCharacterBase character) =>  character.OnSubCharacterActivate(_flag, spawnerID,startHealth), null);
+
+    public static EntityCharacterPlayer SpawnEntityPlayer(CBattleSave playerSave,Vector3 position,Quaternion rotation)=> SpawnEntity((int)playerSave.m_character, position,rotation, (EntityCharacterPlayer player)=>player.OnPlayerActivate(playerSave));
 
     public static EntityNPC SpawnNPC(enum_InteractCharacter npc, Vector3 toPosition,Quaternion rot) => SpawnEntity((int)npc, toPosition,rot,(EntityNPC npcCharacter)=> npcCharacter.OnActivate());
 

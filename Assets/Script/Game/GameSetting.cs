@@ -66,7 +66,7 @@ namespace GameSetting
         public const int I_EnermySpawnDelay = 2;        //Enermy Spawn Delay Time 
         public const float F_EnermySpawnOffsetEach = .5f;       //Enermy Spawn Offset Each
 
-        public const float F_PickupMaxSpeed = 30f;
+        public const float F_PickupMaxSpeed = 100f;
         public const float F_PickupAcceleration = 50f; //拾取物的飞行加速速度
         public const int I_HealthPickupAmount = 25;
         public const int I_ArmorPickupAmount = 25;
@@ -484,6 +484,8 @@ namespace GameSetting
         UI_PlayerBuffStatus,
         UI_PlayerPerkStatus,
         UI_PlayerWeaponStatus,
+
+        UI_OnWillAIAttack,
 
         UI_ChunkTeleportUnlock,
 

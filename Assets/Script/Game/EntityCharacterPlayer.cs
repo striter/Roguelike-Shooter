@@ -88,9 +88,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
     }
 
-    public void OnActivate(CBattleSave m_saveData)
+    public void OnPlayerActivate(CBattleSave m_saveData)
     {
-        base.OnActivate(enum_EntityFlag.Player);
+        OnMainCharacterActivate(enum_EntityFlag.Player);
         m_CharacterRotation = transform.rotation;
         m_Agent.enabled = true;
 

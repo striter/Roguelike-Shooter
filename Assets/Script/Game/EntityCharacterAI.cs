@@ -33,19 +33,25 @@ public class EntityCharacterAI : EntityCharacterBase {
         if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
             m_Animator = new EnermyAnimator(tf_Model.GetComponent<Animator>(), OnAnimKeyEvent);
     }
-
-    public void OnActivate(enum_EntityFlag _flag, int _spawnerID, float startHealth, float maxHealthMultiplier, SBuff difficultyBuff, bool inBattle)
+    public void OnAIActivate(enum_EntityFlag _flag, float maxHealthMultiplier, SBuff difficultyBuff, bool inBattle, float healthRecord)
     {
-        base.OnActivate(_flag,_spawnerID,startHealth);
+        base.OnMainCharacterActivate(_flag);
         if (m_Animator != null)
             m_Animator.OnActivate(E_AnimatorIndex);
-        m_CharacterInfo.AddBuff(-1, difficultyBuff);
-        m_Health.SetHealthMultiplier(maxHealthMultiplier);
         m_Health.OnActivate(I_MaxHealth);
         m_Agent.enabled = true;
+        m_CharacterInfo.AddBuff(-1, difficultyBuff);
+        m_Health.SetHealthMultiplier(maxHealthMultiplier);
         AIActivate(inBattle);
+        if (healthRecord > 0)
+            m_Health.OnSetHealth(healthRecord);
     }
-    
+    public override void OnSubCharacterActivate(enum_EntityFlag _flag, int _spawnerID = -1, float startHealth = 0)
+    {
+        base.OnSubCharacterActivate(_flag, _spawnerID, startHealth);
+        AIActivate(true);
+    }
+
     protected override void OnRevive()
     {
         base.OnRevive();
@@ -167,6 +173,9 @@ public class EntityCharacterAI : EntityCharacterBase {
 
     public void AIActivate(bool inBattle)
     {
+        if (m_AIBattleActivating == inBattle)
+            return;
+
         m_AgentEnabled = false;
         m_b_attacking = false;
         m_Target = null;
@@ -329,7 +338,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         i_playCount = (attackTimes <= 0 ? 1 : attackTimes);       //Make Sure Play Once At Least
         b_preAim = preAim;
         m_b_attacking = true;
-
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_OnWillAIAttack, this);
         if (m_Weapon.B_LoopAnim)
         {
             OnAttackAnim(true);

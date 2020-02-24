@@ -7,7 +7,6 @@ public class EntityBase : CObjectPoolMono<int>
     public int m_EntityID { get; private set; } = -1;
     public virtual bool B_IsCharacter => false;
     public virtual enum_EntityController m_ControllType => enum_EntityController.Invalid;
-    public int I_MaxHealth;
     public enum_EntityFlag m_Flag { get; private set; }
     public HealthBase m_Health { get; private set; }
     protected virtual HealthBase GetHealthManager() => new HealthBase(OnHealthChanged);
@@ -25,7 +24,7 @@ public class EntityBase : CObjectPoolMono<int>
         m_HitChecks = GetComponentsInChildren<HitCheckEntity>();
         m_Health = GetHealthManager();
     }
-    protected virtual void OnActivate(enum_EntityFlag flag,float startHealth =0)
+    protected virtual void EntityActivate(enum_EntityFlag flag,float startHealth =0)
     {
         if (m_Activating)
         {
@@ -35,7 +34,7 @@ public class EntityBase : CObjectPoolMono<int>
         m_Activating = true;
         m_Flag = flag;
         m_EntityID = GameIdentificationManager.I_EntityID(m_Flag);
-        ActivateHealthManager(startHealth>0? startHealth:I_MaxHealth);
+        ActivateHealthManager(startHealth);
         m_HitChecks.Traversal((HitCheckEntity check) => { check.Attach(this, OnReceiveDamage); });
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityActivate, this);
         EnableHitbox(true);

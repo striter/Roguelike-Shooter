@@ -30,7 +30,7 @@ public class SFXSubEntitySpawner : SFXWeaponBase {
     protected override void OnPlay()
     {
         base.OnPlay();
-        EntityCharacterAI entity = GameObjectManager.SpawnEntityCharacterAI(I_EntitySpawnID, NavigationManager.NavMeshPosition(transform.position), m_targetPos, m_Spawner.m_Flag,GameManager.Instance.m_GameLevel.m_GameDifficulty,GameManager.Instance.m_GameLevel.m_GameStage,true, m_Spawner.m_EntityID, m_StartHealth);
+        EntityCharacterBase entity = GameObjectManager.SpawnEntitySubCharacter(I_EntitySpawnID, NavigationManager.NavMeshPosition(transform.position), m_targetPos, m_Spawner.m_Flag, m_Spawner.m_EntityID, m_StartHealth);
         OnSpawn?.Invoke(entity);
         entity.m_CharacterInfo.AddDamageOverride(DamageInfoOverride);
         if (B_ApplyDOTOnSpawn)

@@ -66,7 +66,7 @@ public class GameEnermyCommander : CSimplePoolObjectMono<int> {
             if (!entityVisible)
                 return;
 
-            m_Entity = GameObjectManager.SpawnEntityCharacterAI(m_EntityID, NavigationManager.NavMeshPosition(transform.position), transform.forward, enum_EntityFlag.Enermy, GameManager.Instance.m_GameLevel.m_GameDifficulty, GameManager.Instance.m_GameLevel.m_GameStage,m_Battling, -1, m_EntityHealth) as EntityCharacterAI;
+            m_Entity = GameObjectManager.SpawnEntityCharacterAI(m_EntityID, NavigationManager.NavMeshPosition(transform.position), transform.forward, enum_EntityFlag.Enermy, GameManager.Instance.m_GameLevel.m_GameDifficulty, GameManager.Instance.m_GameLevel.m_GameStage,m_Battling, m_EntityHealth) as EntityCharacterAI;
         }
     }
 }

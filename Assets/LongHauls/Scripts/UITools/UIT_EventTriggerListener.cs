@@ -11,14 +11,14 @@ public class UIT_EventTriggerListener : EventTrigger
         OnWorldClick?.Invoke(eventData.position);
         OnLocalClick(eventData);
     }
-    public override void OnPointerUp(PointerEventData eventData)
+    public override void OnPointerDown(PointerEventData eventData)
     {
         base.OnPointerDown(eventData);
         OnLocalCheck(true, eventData);
         OnPressCheck(true, eventData);
     }
 
-    public override void OnPointerDown(PointerEventData eventData)
+    public override void OnPointerUp(PointerEventData eventData)
     {
         base.OnPointerDown(eventData);
         OnLocalCheck(false, eventData);

@@ -7,6 +7,7 @@ using UnityEngine;
 
 public class EntityCharacterBase : EntityBase
 {
+    public int I_MaxHealth;
     public Renderer ExtraRendererForForest107Only;
     public enum_EnermyType E_SpawnType = enum_EnermyType.Invalid;
     public int I_DefaultArmor;
@@ -60,12 +61,21 @@ public class EntityCharacterBase : EntityBase
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
         m_Effect.OnDisable();
     }
-
-    protected void OnActivate(enum_EntityFlag _flag,int _spawnerID=-1,float startHealth =0)
+    protected override void EntityActivate(enum_EntityFlag flag, float startHealth = 0)
     {
-        base.OnActivate(_flag, startHealth);
-        m_SpawnerEntityID = _spawnerID; 
+        base.EntityActivate(flag, startHealth);
         m_Effect.OnReset();
+    }
+
+    protected void OnMainCharacterActivate(enum_EntityFlag _flag)
+    {
+        base.EntityActivate(_flag,I_MaxHealth);
+        m_SpawnerEntityID = -1;
+    }
+    public virtual void OnSubCharacterActivate(enum_EntityFlag _flag, int _spawnerID , float startHealth )
+    {
+        base.EntityActivate(_flag, startHealth);
+        m_SpawnerEntityID = _spawnerID;
     }
 
     protected virtual void OnExpireChange(){ }

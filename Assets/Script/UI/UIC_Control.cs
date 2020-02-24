@@ -26,6 +26,7 @@ public class UIC_Control : UIControlBase {
         transform.Find("Reload").GetComponent<Button>().onClick.AddListener(OnReloadButtonDown);
         transform.Find("Ability").GetComponent<Button>().onClick.AddListener(OnAbilityButtonDown);
         transform.Find("Main").GetComponent<UIT_EventTriggerListener>().OnPressStatus = OnMainButtonDown;
+        transform.Find("Sub").GetComponent<UIT_EventTriggerListener>().OnPressStatus = OnSubButtonDown;
 
         transform.Find("Settings").GetComponent<Button>().onClick.AddListener(OnSettingBtnClick);
         m_setting = transform.Find("Settings/Image").GetComponent<Image>();
