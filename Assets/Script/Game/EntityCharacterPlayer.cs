@@ -99,7 +99,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_weapon1));
         if (m_saveData.m_weapon2.m_Weapon != enum_PlayerWeapon.Invalid)
             ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_weapon2));
-        SwapWeapon(m_saveData.m_weaponEquipingFirst);
+        OnSwapWeapon(m_saveData.m_weaponEquipingFirst);
     }
 
     public void Teleport(Vector3 position,Quaternion rotation)
@@ -177,7 +177,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
         if (down && m_weaponEquipingFirst != mainWeapon)
         {
-            SwapWeapon(mainWeapon);
+            OnSwapWeapon(mainWeapon);
             OnWeaponStatus();
         }
 
@@ -225,16 +225,17 @@ public class EntityCharacterPlayer : EntityCharacterBase {
                 m_Weapon1 = _weapon;
             else
                 m_Weapon2 = _weapon;
+            OnSwapWeapon(m_weaponEquipingFirst);
         }
         else if (m_Weapon1 == null)
         {
             m_Weapon1 = _weapon;
-            SwapWeapon(true);
+            OnSwapWeapon(true);
         }
         else if (m_Weapon2 == null)
         {
             m_Weapon2 = _weapon;
-            SwapWeapon(false);
+            OnSwapWeapon(false);
         }
 
         OnWeaponStatus();
@@ -248,12 +249,12 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (m_weaponEquipingFirst)
         {
             m_Weapon1 = _weapon;
-            SwapWeapon(true);
+            OnSwapWeapon(true);
         }
         else
         {
             m_Weapon2 = _weapon;
-            SwapWeapon(false);
+            OnSwapWeapon(false);
         }
         OnWeaponStatus();
         return exchangeWeapon;
@@ -263,11 +264,11 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         if (!m_Weapon2)
             return;
-        SwapWeapon(!m_weaponEquipingFirst);
+        OnSwapWeapon(!m_weaponEquipingFirst);
         OnWeaponStatus();
     }
 
-    void SwapWeapon(bool isFirst)
+    void OnSwapWeapon(bool isFirst)
     {
         if (m_WeaponCurrent)
             m_WeaponCurrent.OnPlay(false);
