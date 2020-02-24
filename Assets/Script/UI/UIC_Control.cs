@@ -12,7 +12,7 @@ public class UIC_Control : UIControlBase {
     Image m_AbilityBG,m_AbilityImg,m_AbilityCooldown;
     Image m_setting;
     ControlWeaponData m_weapon1Data, m_weapon2Data;
-    Action OnReload,OnSwap, OnCharacterAbility;
+    Action OnSwap, OnCharacterAbility;
     Action<bool> OnWeaponAction;
     Action<bool> OnMainDown,OnSubDown;
     TSpecialClasses.ValueChecker<bool> m_AbilityCooldownChecker;
@@ -23,7 +23,6 @@ public class UIC_Control : UIControlBase {
         m_AbilityBG = transform.Find("Ability").GetComponent<Image>();
         m_AbilityImg = transform.Find("Ability/Image").GetComponent<Image>();
         m_AbilityCooldown = transform.Find("Ability/Cooldown").GetComponent<Image>();
-        transform.Find("Reload").GetComponent<Button>().onClick.AddListener(OnReloadButtonDown);
         transform.Find("Ability").GetComponent<Button>().onClick.AddListener(OnAbilityButtonDown);
         transform.Find("Main").GetComponent<UIT_EventTriggerListener>().OnPressStatus = OnMainButtonDown;
         transform.Find("Sub").GetComponent<UIT_EventTriggerListener>().OnPressStatus = OnSubButtonDown;
@@ -78,7 +77,6 @@ public class UIC_Control : UIControlBase {
         m_TouchDelta.AddLRBinding(_OnLeftDelta, _OnRightDelta, CheckControlable);
         OnMainDown = _OnMainDown;
         OnSubDown = _OnSubDown;
-        OnReload = _OnReload;
         OnSwap = _OnSwap;
         OnCharacterAbility = _OnCharacterAbility;
         m_AbilityImg.sprite = UIManager.Instance.m_CommonSprites[UIConvertions.GetAbilitySprite(player.m_Character)];
@@ -86,13 +84,12 @@ public class UIC_Control : UIControlBase {
     public void RemoveBinding()
     {
         m_TouchDelta.RemoveAllBinding();
-        OnReload = null;
         OnMainDown = null;
         OnCharacterAbility = null;
         OnSwap = null;
+        OnSubDown = null;
     }
 
-    protected void OnReloadButtonDown() => OnReload?.Invoke();
     protected void OnMainButtonDown(bool down, Vector2 pos) => OnMainDown?.Invoke(down);
     protected void OnSubButtonDown(bool down, Vector2 pos) => OnSubDown?.Invoke(down);
     protected void OnWeaponSwap() => OnSwap?.Invoke();
@@ -200,8 +197,6 @@ public class UIC_Control : UIControlBase {
         else if (Input.GetMouseButtonUp(1))
             OnSubButtonDown(false, Vector2.zero);
 
-        if (Input.GetKeyDown(KeyCode.R))
-            OnReloadButtonDown();
         if (Input.GetKeyDown(KeyCode.LeftShift))
             OnAbilityButtonDown();
         if (Input.GetKeyDown(KeyCode.Tab))
