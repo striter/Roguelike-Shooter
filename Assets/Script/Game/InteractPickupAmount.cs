@@ -9,7 +9,7 @@ public class InteractPickupAmount : InteractGameBase {
     protected override bool B_SelfRecycleOnInteract => true;
     protected override bool E_InteractOnEnable => false;
     float m_speed;
-    Transform m_moveTowards;
+    EntityCharacterPlayer m_moveTowards;
     public virtual InteractPickupAmount Play(int amount,bool moveTowardsPlayer)
     {
         base.Play();
@@ -38,16 +38,24 @@ public class InteractPickupAmount : InteractGameBase {
     void OnBattleFinish()
     {
         SetInteractable(true);
-        m_moveTowards = GameManager.Instance.m_LocalPlayer.transform;
+        m_moveTowards = GameManager.Instance.m_LocalPlayer;
     }
     private void Update()
     {
-        if (!m_InteractEnable || m_moveTowards == null)
+        if (!m_InteractEnable|| m_moveTowards == null)
             return;
 
         if (m_speed<GameConst.F_PickupMaxSpeed)
             m_speed += GameConst.F_PickupAcceleration * Time.deltaTime;
-        Vector3 direction =  (m_moveTowards.position - transform.position).normalized;
-        transform.position +=  direction * m_speed * Time.deltaTime;
+
+        Vector3 offset = m_moveTowards.transform.position - transform.position;
+        float travelDistance = m_speed * Time.deltaTime;
+        if (offset.magnitude > travelDistance)
+        {
+            transform.position += offset.normalized * travelDistance;
+            return;
+        }
+        transform.position = m_moveTowards.transform.position;
+        TryInteract(m_moveTowards);
     }
 }
