@@ -173,9 +173,6 @@ public class EntityCharacterAI : EntityCharacterBase {
 
     public void AIActivate(bool inBattle)
     {
-        if (m_AIBattleActivating == inBattle)
-            return;
-
         m_AgentEnabled = false;
         m_b_attacking = false;
         m_Target = null;

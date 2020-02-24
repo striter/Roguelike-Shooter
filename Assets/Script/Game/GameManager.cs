@@ -784,20 +784,19 @@ public static class GameObjectManager
     #region Spawn/Recycle
     #region Entity
     //Start Health 0:Use Preset I_MaxHealth
-    static T SpawnEntity<T>(int _poolIndex, Vector3 pos,Quaternion rot,Action<T> OnActivate, Transform parentTrans = null) where T:EntityBase
+    static T SpawnEntity<T>(int _poolIndex, Vector3 pos,Quaternion rot,Action<T> OnActivate) where T:EntityBase
     {
         T entity = ObjectPoolManager<int, EntityBase>.Spawn(_poolIndex, TF_Entity, NavigationManager.NavMeshPosition(pos),rot) as T;
         if (entity == null)
             Debug.LogError("Entity ID:" + _poolIndex + ",Type:" + typeof(T).ToString() + " Not Found");
-        OnActivate(entity);
         entity.gameObject.name = entity.m_EntityID.ToString() + "_" + _poolIndex.ToString();
-        if (parentTrans) entity.transform.SetParent(parentTrans);
+        OnActivate(entity);
         return entity;
     }
 
-    public static EntityCharacterAI SpawnEntityCharacterAI(int poolIndex, Vector3 toPosition, Vector3 lookPos, enum_EntityFlag _flag,int gameDifficulty,enum_StageLevel _stage,bool battling,float healthRecord=0)=> SpawnEntity(poolIndex, toPosition, Quaternion.LookRotation(TCommon.GetXZLookDirection(toPosition, lookPos),Vector3.up), (EntityCharacterAI ai)=> ai.OnAIActivate(_flag, GameExpression.GetEnermyMaxHealthMultiplier(_stage, gameDifficulty), GameExpression.GetEnermyGameBuff(_stage, gameDifficulty), battling,healthRecord), null);
+    public static EntityCharacterAI SpawnEntityCharacterAI(int poolIndex, Vector3 toPosition, Vector3 lookPos, enum_EntityFlag _flag,int gameDifficulty,enum_StageLevel _stage,bool battling,float healthRecord=0)=> SpawnEntity(poolIndex, toPosition, Quaternion.LookRotation(TCommon.GetXZLookDirection(toPosition, lookPos),Vector3.up), (EntityCharacterAI ai)=> ai.OnAIActivate(_flag, GameExpression.GetEnermyMaxHealthMultiplier(_stage, gameDifficulty), GameExpression.GetEnermyGameBuff(_stage, gameDifficulty), battling,healthRecord));
 
-    public static EntityCharacterBase SpawnEntitySubCharacter(int poolIndex,Vector3 toPosition,Vector3 lookPos,enum_EntityFlag _flag,int spawnerID,float startHealth)=> SpawnEntity(poolIndex, toPosition, Quaternion.LookRotation(TCommon.GetXZLookDirection(toPosition, lookPos), Vector3.up), (EntityCharacterBase character) =>  character.OnSubCharacterActivate(_flag, spawnerID,startHealth), null);
+    public static EntityCharacterBase SpawnEntitySubCharacter(int poolIndex,Vector3 toPosition,Vector3 lookPos,enum_EntityFlag _flag,int spawnerID,float startHealth)=> SpawnEntity(poolIndex, toPosition, Quaternion.LookRotation(TCommon.GetXZLookDirection(toPosition, lookPos), Vector3.up), (EntityCharacterBase character) =>  character.OnSubCharacterActivate(_flag, spawnerID,startHealth));
 
     public static EntityCharacterPlayer SpawnEntityPlayer(CBattleSave playerSave,Vector3 position,Quaternion rotation)=> SpawnEntity((int)playerSave.m_character, position,rotation, (EntityCharacterPlayer player)=>player.OnPlayerActivate(playerSave));
 
