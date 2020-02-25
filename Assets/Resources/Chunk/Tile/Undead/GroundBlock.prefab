@@ -37,6 +37,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4644702591250058}
   - component: {fileID: 65689801205821916}
+  - component: {fileID: 114567017842125068}
   m_Layer: 0
   m_Name: BlockCollider
   m_TagString: Untagged
@@ -302,6 +303,17 @@ Animation:
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
   m_CullingType: 0
+--- !u!114 &114567017842125068
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1108093329923908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f62cdd659d216734e828ce07e4431bf6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114885229624993430
 MonoBehaviour:
   m_ObjectHideFlags: 1

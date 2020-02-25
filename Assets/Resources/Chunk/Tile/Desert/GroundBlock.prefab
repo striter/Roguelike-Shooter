@@ -71,6 +71,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4757255175477604}
   - component: {fileID: 65848308153425378}
+  - component: {fileID: 114456208163561340}
   m_Layer: 0
   m_Name: BlockCollider
   m_TagString: Untagged
@@ -284,6 +285,17 @@ Animation:
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
   m_CullingType: 0
+--- !u!114 &114456208163561340
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1524635391546618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f62cdd659d216734e828ce07e4431bf6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114957919492695096
 MonoBehaviour:
   m_ObjectHideFlags: 1
