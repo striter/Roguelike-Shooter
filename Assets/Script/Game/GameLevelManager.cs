@@ -27,7 +27,6 @@ public class GameLevelManager : SingletonMono<GameLevelManager>,ICoroutineHelper
     int m_chunkLifting = -1;
     TileAxis m_MinimapPrepos = TileAxis.Zero;
     bool m_MinimapUpdating = false;
-    CancellationTokenSource m_TokenSource = new CancellationTokenSource();
 
     public Vector2 GetOffsetPosition(Vector3 worldPosition){
         Vector3 offset= (worldPosition - m_MapOriginPos) / LevelConst.I_TileSize;
@@ -75,7 +74,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>,ICoroutineHelper
                     else if (sqrMagnitude <= LevelConst.I_UIPlayerViewFadeSqrRange)
                         m_FogRevealation[i, j] =  enum_ChunkRevealType.PreFaded;
                 }
-        }, m_TokenSource.Token).TaskCoroutine();
+        }).TaskCoroutine();
         m_MinimapUpdating = false;
 
         OnFogmapPreparationFinish();
@@ -136,12 +135,6 @@ public class GameLevelManager : SingletonMono<GameLevelManager>,ICoroutineHelper
     public IEnumerator Generate(enum_LevelStyle style, string seed, System.Random random)
     {
         m_MinimapPrepos = -TileAxis.One;
-        if (m_MinimapUpdating)
-        {
-            m_TokenSource.Cancel();
-            m_MinimapUpdating = false;
-        }
-
         m_chunkLifting = -1;
         LevelObjectManager.Register(TResources.GetChunkTiles(style));
         GameRenderData[] customizations = TResources.GetRenderData(style);
