@@ -441,8 +441,8 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
         public AnimationControlBase(Animation _animation,bool startFromOn=true)
         {
             m_Animation = _animation;
-            SetPlayPosition(startFromOn);
             m_Animation.playAutomatically = false;
+            SetPlayPosition(startFromOn);
         }
 
         public void Play(bool forward)

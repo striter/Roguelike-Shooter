@@ -24,21 +24,21 @@ public class LevelTileBase : MonoBehaviour, ITileAxis
         if (m_Data.m_PillarType != enum_TilePillarType.Invalid)
         {
             m_Pillar = LevelObjectManager.GetPillarItem(enum_TilePillarType.Default, tf_Models);
-            m_Pillar.Init(m_Data, random);
+            m_Pillar.OnGenerateItem(m_Data, random);
             m_Pillar.transform.localPosition = Vector3.zero;
         }
 
         if (WillGenerateObject(m_Data.m_ObjectType))
         {
             m_Object = LevelObjectManager.GetObjectItem(m_Data.m_ObjectType, tf_Models);
-            m_Object.Init(m_Data, random);
+            m_Object.OnGenerateItem(m_Data, random);
             m_Object.transform.localPosition = Vector3.up * LevelConst.I_TileSize;
         }
 
         if (m_Data.m_GroundType != enum_TileGroundType.Invalid)
         {
             m_Ground = LevelObjectManager.GetGroundItem(m_Data.m_GroundType, tf_Models);
-            m_Ground.Init(m_Data, random);
+            m_Ground.OnGenerateItem(m_Data, random);
             m_Ground.transform.localPosition = Vector3.zero;
         }
     }

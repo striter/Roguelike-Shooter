@@ -10,9 +10,11 @@ public class TilePillarBase : TileItemBase,IObjectpool<enum_TilePillarType> {
     Action<enum_TilePillarType, MonoBehaviour> OnRecycle;
     public void OnPoolItemInit(enum_TilePillarType identity, Action<enum_TilePillarType, MonoBehaviour> _OnRecycle)
     {
+        Init();
         m_PillarType = identity;
         this.OnRecycle = _OnRecycle;
     }
+
     public override void DoRecycle()
     {
         OnRecycle(m_PillarType, this);

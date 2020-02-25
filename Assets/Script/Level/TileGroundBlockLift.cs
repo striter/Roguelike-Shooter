@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using LevelSetting;
 using UnityEngine;
 
 public class TileGroundBlockLift : TileGroundBase
@@ -8,12 +9,17 @@ public class TileGroundBlockLift : TileGroundBase
     public bool m_Lift { get; private set; }
     TSpecialClasses.AnimationControlBase m_Animation;
     Collider m_BlockCollider;
-    public override void Init(ChunkTileData _data, System.Random random)
+    protected override void Init()
     {
-        base.Init(_data, random);
+        base.Init();
         m_Animation = new TSpecialClasses.AnimationControlBase(GetComponent<Animation>(), true);
         m_BlockCollider = m_Model.Find("BlockCollider").GetComponent<Collider>();
+    }
+    public override void OnGenerateItem(ChunkTileData _data, System.Random random)
+    {
+        base.OnGenerateItem(_data, random);
         m_BlockCollider.enabled = false;
+        m_Animation.SetPlayPosition(true);
     }
     public void SetLift(bool lift)
     {

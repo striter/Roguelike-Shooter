@@ -12,6 +12,7 @@ public class TileGroundBase : TileItemBase,IObjectpool<enum_TileGroundType> {
     protected override int GetTexSelection(System.Random random) => m_GroundType.GetTexSelection(random);
     public void OnPoolItemInit(enum_TileGroundType identity, Action<enum_TileGroundType, MonoBehaviour> OnRecycle)
     {
+        Init();
         m_GroundType = identity;
         this.OnRecycle = OnRecycle;
     }

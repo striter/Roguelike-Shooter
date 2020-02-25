@@ -19,6 +19,7 @@ public class TileObjectBase : TileItemBase,IObjectpool<enum_TileObjectType>,ICor
 
     public void OnPoolItemInit(enum_TileObjectType identity, Action<enum_TileObjectType, MonoBehaviour> OnRecycle)
     {
+        Init();
         m_ObjectType = identity;
         m_Renderers = GetComponentsInChildren<Renderer>();
         m_hitChecks = GetComponentsInChildren<HitCheckStatic>();
@@ -28,9 +29,9 @@ public class TileObjectBase : TileItemBase,IObjectpool<enum_TileObjectType>,ICor
 
     public override void DoRecycle()=> OnRecycle(m_ObjectType, this);
 
-    public override void Init(ChunkTileData _data, System.Random random)
+    public override void OnGenerateItem(ChunkTileData _data, System.Random random)
     {
-        base.Init(_data, random);
+        base.OnGenerateItem(_data, random);
         m_hitChecks.Traversal((HitCheckStatic hitCheck) => { hitCheck.SetEnable(true); });
         m_Health = -1;
     }

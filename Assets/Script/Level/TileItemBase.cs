@@ -9,10 +9,13 @@ public class TileItemBase : MonoBehaviour {
     protected Transform m_Model { get; private set; }
     public virtual TileAxis GetDirectionedSize(enum_TileDirection direction) => TileAxis.One;
     protected virtual int GetTexSelection(System.Random random) => -1;
-
-    public virtual void Init(ChunkTileData _data,System.Random random)
+    protected virtual void Init()
     {
         m_Model = transform.Find("Model");
+    }
+
+    public virtual void OnGenerateItem(ChunkTileData _data,System.Random random)
+    {
         m_Model.localPosition = TileTools.GetLocalPosBySizeAxis(GetDirectionedSize(_data.m_Direction));
         m_Model.localRotation = TileTools.ToRotation(_data.m_Direction);
 
