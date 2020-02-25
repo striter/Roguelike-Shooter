@@ -114,6 +114,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>,ICoroutineHelper
         m_DirectionalLight = transform.Find("Directional Light").GetComponent<Light>();
         TBroadCaster<enum_BC_GameStatus>.Add<int>(enum_BC_GameStatus.OnBattleStart, OnBattleTrigger);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
+        OptionsManager.event_OptionChanged += OnOptionChanged;
     }
 
     protected override void OnDestroy()
@@ -122,6 +123,11 @@ public class GameLevelManager : SingletonMono<GameLevelManager>,ICoroutineHelper
         TBroadCaster<enum_BC_GameStatus>.Remove<int>(enum_BC_GameStatus.OnBattleStart, OnBattleTrigger);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
         NavigationManager.ClearNavMeshDatas();
+        OptionsManager.event_OptionChanged -= OnOptionChanged;
+    }
+    void OnOptionChanged()
+    {
+        m_DirectionalLight.shadows = OptionsManager.m_OptionsData.m_ShadowOff? LightShadows.None: LightShadows.Hard;
     }
     #region Generate
     public IEnumerator Generate(enum_LevelStyle style, string seed, System.Random random)

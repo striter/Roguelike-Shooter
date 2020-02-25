@@ -13,7 +13,7 @@ public class LevelChunkGame : LevelChunkBase
     public Bounds m_WorldChunkBounds { get; private set; }
     public enum_ChunkEventType m_ChunkEventType { get; private set; } = enum_ChunkEventType.Invalid;
     public List<LevelChunkGame> m_NearbyChunks { get; private set; } = new List<LevelChunkGame>();
-    public List<LevelTileBase> m_RoadBlockTiles { get; private set; } = new List<LevelTileBase>();
+    public List<TileGroundBlockLift> m_RoadBlockTiles { get; private set; } = new List<TileGroundBlockLift>();
     public Dictionary<enum_TileObjectType, List<ChunkGameObjectData>> m_ChunkObjects { get; private set; } = new Dictionary<enum_TileObjectType, List<ChunkGameObjectData>>();
     Action<int> OnChunkObjectDestroy;
 
@@ -50,7 +50,7 @@ public class LevelChunkGame : LevelChunkBase
         if (tile.m_Object)
             tile.m_Object.GameInit(GameExpression.GetLevelObjectHealth( tile.m_Object.m_ObjectType),OnObjectDestroyed);
         if (data.m_GroundType == enum_TileGroundType.Block)
-            m_RoadBlockTiles.Add(tile);
+            m_RoadBlockTiles.Add(tile.m_Ground as TileGroundBlockLift);
     }
     void OnObjectDestroyed() => OnChunkObjectDestroy(m_chunkIndex);
 
@@ -66,9 +66,8 @@ public class LevelChunkGame : LevelChunkBase
 
     void SetBlocksLift(bool lift)
     {
-        m_RoadBlockTiles.Traversal((LevelTileBase tile) =>
-        {
-            tile.transform.position = new Vector3(tile.transform.position.x, lift ? LevelConst.I_TileSize : 0, tile.transform.position.z);
+        m_RoadBlockTiles.Traversal((TileGroundBlockLift tile) => {
+            tile.SetLift(lift);
         });
     }
 }

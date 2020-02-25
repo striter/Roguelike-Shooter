@@ -810,6 +810,7 @@ namespace GameSetting
         public enum_Option_FrameRate m_FrameRate;
         public enum_Option_ScreenEffect m_ScreenEffect;
         public enum_Option_LanguageRegion m_Region;
+        public bool m_ShadowOff;
         public int m_MusicVolumeTap;
         public int m_VFXVolumeTap;
         public int m_SensitiveTap;
@@ -820,6 +821,7 @@ namespace GameSetting
             m_FrameRate = enum_Option_FrameRate.High;
             m_ScreenEffect =  enum_Option_ScreenEffect.High;
             m_Region = enum_Option_LanguageRegion.CN;
+            m_ShadowOff = false;
             m_SensitiveTap = 5;
             m_MusicVolumeTap = 10;
             m_VFXVolumeTap = 10;
