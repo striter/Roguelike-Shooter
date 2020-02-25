@@ -63,6 +63,7 @@ public class GameManager : GameManagerBase
     ObjectPoolListMono<int, GameEnermyCommander> m_EnermyCommand;
 
     public override bool B_InGame => true;
+    public bool m_GameLoading { get; private set; } = false;
     protected override void Awake()
     {
         nInstance=this;
@@ -113,6 +114,9 @@ public class GameManager : GameManagerBase
 
     private void Update()
     {
+        if (m_GameLoading)
+            return;
+
         float deltaTime = Time.deltaTime;
         GameBattleTick(deltaTime);
     }
@@ -121,6 +125,7 @@ public class GameManager : GameManagerBase
     void LoadStage()=>this.StartSingleCoroutine(999, DoLoadStage());
     IEnumerator DoLoadStage()     //PreInit Bigmap , Levels LocalPlayer Before  Start The game
     {
+        m_GameLoading = true;
         LoadingManager.Instance.ShowLoading(m_GameLevel.m_GameStage);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameLoad);
         yield return null;
@@ -128,14 +133,13 @@ public class GameManager : GameManagerBase
         yield return GameLevelManager.Instance.Generate(m_GameLevel.m_GameStyle, m_GameLevel.m_GameSeed,m_GameLevel.m_GameRandom);
         GenerateGameRelatives();
         yield return null;
-
         Resources.UnloadUnusedAssets();
         GC.Collect();
-
         yield return null;
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameBegin);
         LoadingManager.Instance.EndLoading();
         OnPortalExit(1f, m_LocalPlayer.tf_CameraAttach);
+        m_GameLoading = false;
     }
 
     void GenerateGameRelatives()
@@ -569,6 +573,7 @@ public class GameManager : GameManagerBase
 
     void GameBattleTick(float deltaTime)
     {
+        GameLevelManager.Instance.UpdateMinimap(m_LocalPlayer.transform.position);
         FinalBattleTick(deltaTime);
     }
 

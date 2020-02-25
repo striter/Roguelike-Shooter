@@ -19,6 +19,9 @@ public class LevelChunkGame : LevelChunkBase
 
     public void InitGameChunk(ChunkGenerateData _data, System.Random _random,Action<int> OnChunkObjectDestroy)
     {
+        m_ChunkObjects.Clear();
+        m_NearbyChunks.Clear();
+        m_RoadBlockTiles.Clear();
         m_chunkIndex = _data.m_ChunkIndex;
         m_ChunkOrigin = _data.m_Axis.ToPosition();
         m_ChunkEventType = _data.m_EventType;
@@ -26,8 +29,6 @@ public class LevelChunkGame : LevelChunkBase
         this.OnChunkObjectDestroy = OnChunkObjectDestroy;
         m_WorldChunkBounds =new Bounds(m_ChunkOrigin + _data.m_Data.m_Size.ToPosition() / 2f + Vector3.up * LevelConst.I_TileSize, new Vector3(_data.m_Data.m_Size.X, 1, _data.m_Data.m_Size.Y) * LevelConst.I_TileSize);
         transform.localPosition = m_ChunkOrigin;
-        m_ChunkObjects.Clear();
-        m_NearbyChunks.Clear();
         InitData(_data.m_Data, _random, (TileAxis axis, ChunkTileData tileData) => {
             if (tileData.m_ObjectType.IsEditorTileObject())
             {

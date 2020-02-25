@@ -7,6 +7,8 @@ using System;
 using TTiles;
 using UnityEngine.AI;
 using System.Threading.Tasks;
+using System.Threading;
+
 public class GameLevelManager : SingletonMono<GameLevelManager>,ICoroutineHelperClass {
     public bool m_LevelTest = true;
     public enum_ChunkEventType m_TestEventType = enum_ChunkEventType.PerkAcquire;
@@ -23,7 +25,10 @@ public class GameLevelManager : SingletonMono<GameLevelManager>,ICoroutineHelper
     Vector3 m_MapOriginPos;
 
     int m_chunkLifting = -1;
-    
+    TileAxis m_MinimapPrepos = TileAxis.Zero;
+    bool m_MinimapUpdating = false;
+    CancellationTokenSource m_TokenSource = new CancellationTokenSource();
+
     public Vector2 GetOffsetPosition(Vector3 worldPosition){
         Vector3 offset= (worldPosition - m_MapOriginPos) / LevelConst.I_TileSize;
         return new Vector2(offset.x, offset.z);
@@ -39,17 +44,15 @@ public class GameLevelManager : SingletonMono<GameLevelManager>,ICoroutineHelper
         return null;
     }
 
-    TileAxis previousPos = TileAxis.Zero;
-    bool m_MinimapUpdating = false;
-    public void ClearMinimapFog(Vector3 worldPosition)
+    public void UpdateMinimap(Vector3 playerPosition)
     {
-        Vector3 offset = worldPosition - m_MapOriginPos;
+        Vector3 offset = playerPosition - m_MapOriginPos;
         TileAxis fogRevealPos = new TileAxis((int)offset.x/LevelConst.I_TileSize, (int)offset.z/LevelConst.I_TileSize );
-        if (m_MinimapUpdating||previousPos == fogRevealPos)
-            return;
-        previousPos = fogRevealPos;
 
-        StartCoroutine(UpdateMinimap(previousPos));
+        if (m_MinimapUpdating||m_MinimapPrepos == fogRevealPos)
+            return;
+        m_MinimapPrepos = fogRevealPos;
+        StartCoroutine(UpdateMinimap(m_MinimapPrepos));
     }
 
     IEnumerator UpdateMinimap(TileAxis updatePos)
@@ -72,7 +75,8 @@ public class GameLevelManager : SingletonMono<GameLevelManager>,ICoroutineHelper
                     else if (sqrMagnitude <= LevelConst.I_UIPlayerViewFadeSqrRange)
                         m_FogRevealation[i, j] =  enum_ChunkRevealType.PreFaded;
                 }
-        }).TaskCoroutine();
+        }, m_TokenSource.Token).TaskCoroutine();
+        m_MinimapUpdating = false;
 
         OnFogmapPreparationFinish();
         yield break;
@@ -103,7 +107,6 @@ public class GameLevelManager : SingletonMono<GameLevelManager>,ICoroutineHelper
                     m_FogRevealation[i, j] = enum_ChunkRevealType.Revealed;
             }
         m_FogTexture.Apply();
-        m_MinimapUpdating = false;
     }
 
 
@@ -132,6 +135,13 @@ public class GameLevelManager : SingletonMono<GameLevelManager>,ICoroutineHelper
     #region Generate
     public IEnumerator Generate(enum_LevelStyle style, string seed, System.Random random)
     {
+        m_MinimapPrepos = -TileAxis.One;
+        if (m_MinimapUpdating)
+        {
+            m_TokenSource.Cancel();
+            m_MinimapUpdating = false;
+        }
+
         m_chunkLifting = -1;
         LevelObjectManager.Register(TResources.GetChunkTiles(style));
         GameRenderData[] customizations = TResources.GetRenderData(style);
@@ -235,6 +245,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>,ICoroutineHelper
             if (originY > chunkOrigin.Y)
                 originY = chunkOrigin.Y;
         });
+
         m_MapOrigin = new TileAxis(originX, originY);
         m_MapSize = new TileAxis(oppositeX - originX, oppositeY - originY);
         m_MapOriginPos = transform.TransformPoint(m_MapOrigin.ToPosition());
