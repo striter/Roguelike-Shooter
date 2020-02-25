@@ -6,6 +6,6 @@ public class EntityNPC : EntityBase {
     public override enum_EntityController m_ControllType => enum_EntityController.None;
     public void OnActivate()
     {
-        base.EntityActivate( enum_EntityFlag.Neutal);
+        EntityActivate( enum_EntityFlag.Neutal);
     }
 }
