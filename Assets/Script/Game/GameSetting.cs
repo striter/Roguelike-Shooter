@@ -247,6 +247,18 @@ namespace GameSetting
             }
         }
 
+        public static string GetTeleportHex(this enum_LevelStyle style)
+        {
+            switch(style)
+            {
+                default: Debug.LogError("Invalid Convertions Here!"); return "";
+                case enum_LevelStyle.Desert: return "00FF00FF";
+                case enum_LevelStyle.Forest: return "FF00FFFF";
+                case enum_LevelStyle.Frost: return "FFFF00FF";
+                case enum_LevelStyle.Horde: return "FF0000FF";
+                case enum_LevelStyle.Undead: return "00FFFFFF";
+            }
+        }
 
         public static bool CanGenerateprofit(this enum_CampFarmItemStatus status)
         {
@@ -458,6 +470,8 @@ namespace GameSetting
         OnCharacterRevive,
 
         OnPlayerRankUp,
+        OnPlayerChunkEnter,
+        OnChunkQuadrantCheck,
         
         OnBattleStart,
         OnBattleFinish,
@@ -1087,11 +1101,17 @@ namespace GameSetting
     #region GameBase
     public class GameChunk
     {
+        public bool m_GameTriggered { get; private set; }
         public enum_ChunkType m_ChunkType { get; private set; }
         public List<int> m_Triggers { get; private set; } = new List<int>();
         public GameChunk(enum_ChunkType _chunkType)
         {
             m_ChunkType = _chunkType;
+            m_GameTriggered = false;
+        }
+        public virtual void OnPlayerTrigger()
+        {
+            m_GameTriggered = true;
         }
         public virtual bool GetChunkMapIconShow => false;
         public virtual string GetChunkMapNameKey => "";
@@ -1102,17 +1122,11 @@ namespace GameSetting
     }
     public class GameChunkBattle:GameChunk
     {
-        public bool m_Triggered { get; private set; }
         public List<int> m_BattleEnermyCommands { get; private set; } = new List<int>();
         public bool m_IsFinal => m_ChunkType == enum_ChunkType.Final;
         public GameChunkBattle(enum_ChunkType chunkType) : base(chunkType)
         {
-            m_Triggered = false;
         }
-        public void Trigger()
-        {
-            m_Triggered = true;
-        } 
     }
     public class GameChunkTeleport : GameChunk
     {
@@ -1134,8 +1148,9 @@ namespace GameSetting
             m_ChunkTeleport.SetPlay(m_Enable);
         }
 
-        public void OnChunkTrigger()
+        public override void OnPlayerTrigger()
         {
+            base.OnPlayerTrigger();
             m_Enable = true;
             m_ChunkTeleport.SetPlay(m_Enable);
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_ChunkTeleportUnlock);

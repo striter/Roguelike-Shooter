@@ -26,6 +26,7 @@ namespace LevelSetting
         public static readonly Color C_MapTextureGroundColor = TCommon.GetHexColor("808080FF");
         #endregion
         public const int I_TileSize = 2;
+        public const int I_QuadranteTileSize = 15;
     }
 
     public enum enum_ChunkType {
@@ -125,6 +126,12 @@ namespace LevelSetting
     
     public static class LevelExpressions
     {
+        public static Bounds GetWorldBounds(TileAxis origin, TileAxis size)
+        {
+            Vector3 boundsCenter = origin.ToPosition();
+            Vector3 boundsSize = size.ToPosition();
+            return new Bounds(boundsCenter + boundsSize / 2f + Vector3.up * LevelConst.I_TileSize, boundsSize+Vector3.up* LevelConst.I_TileSize);
+        } 
         public static Vector3 ToPosition(this TileAxis axis) => new Vector3(axis.X,0,axis.Y)*LevelConst.I_TileSize;
 
         public static bool TileObjectEditable(this enum_TileGroundType type)
@@ -277,16 +284,18 @@ namespace LevelSetting
     public class ChunkGenerateData
     {
         public int m_ChunkIndex { get; private set; }
-        public TileAxis m_Axis { get; private set; }
+        public TileAxis m_Origin { get; private set; }
+        public TileBounds m_GenerateCheckBounds { get; private set; } 
         public LevelChunkData m_Data { get; private set; }
         public enum_ChunkEventType m_EventType { get; private set; }
         public Dictionary<int, bool> m_ConnectPoint { get; private set; }
         public ChunkGenerateData(int chunkIndex,TileAxis _offset, LevelChunkData _data, enum_ChunkEventType eventType)
         {
             m_ChunkIndex = chunkIndex;
-             m_Axis = _offset;
+             m_Origin = _offset;
             m_Data = _data;
             m_EventType = eventType;
+            m_GenerateCheckBounds = new TileBounds(m_Origin+TileAxis.One, m_Data.m_Size-TileAxis.One*2);
             m_ConnectPoint = new Dictionary<int, bool>();
             for (int i = 0; i < _data.Connections.Length; i++)
                 m_ConnectPoint.Add(i, false);
@@ -301,8 +310,18 @@ namespace LevelSetting
             m_PreChunkConnectPoint = previousPointIndex;
             m_ChunkConnectPoint = currentPointIndex;
         }
-
         public bool HaveEmptyConnection() => m_ConnectPoint.Values.Any(p => !p);
         public void OnConnectionSet(int connectionIndex) => m_ConnectPoint[connectionIndex] = true;
+    }
+
+    public class LevelQuadrant
+    {
+        public TileBounds m_QuadrantMapBounds { get; private set; }
+        public List<int> m_QuadrantRelativeChunkIndex { get; private set; } = new List<int>();
+        public LevelQuadrant(TileBounds quadrantBound)
+        {
+            m_QuadrantMapBounds = quadrantBound;
+        }
+        public void AddRelativeChunkIndex(int index) => m_QuadrantRelativeChunkIndex.Add(index);
     }
 }

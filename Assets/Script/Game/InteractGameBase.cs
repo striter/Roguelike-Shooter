@@ -13,6 +13,7 @@ public class InteractGameBase : InteractBase,IObjectpool<enum_Interaction> {
     {
     }
 
+
     protected override void Play()
     {
         base.Play();
@@ -29,7 +30,7 @@ public class InteractGameBase : InteractBase,IObjectpool<enum_Interaction> {
         return false;
     }
 
-    protected void OnRecycle()
+    protected virtual void OnRecycle()
     {
         SetInteractable(false);
         GameObjectManager.RecycleInteract(this);

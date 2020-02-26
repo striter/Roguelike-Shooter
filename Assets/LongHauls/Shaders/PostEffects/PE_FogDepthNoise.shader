@@ -24,7 +24,7 @@
 				#pragma fragment frag
 
 				#include "UnityCG.cginc"
-				#include "../PostEffectInclude.cginc"
+				#include "PostEffectInclude.cginc"
 				half _FogDensity;
 				float _FogPow;
 				fixed4 _FogColor;

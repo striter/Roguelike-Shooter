@@ -7,11 +7,10 @@ using UnityEngine.Rendering;
 public class CameraEffectBase
 {
     public virtual DepthTextureMode m_DepthTextureMode => DepthTextureMode.None;
-    public virtual bool m_MobileCost => m_DepthTextureMode != DepthTextureMode.None;
-    public virtual bool m_HighCost => false;
     public virtual bool m_DepthToWorldMatrix => false;
     protected CameraEffectManager m_Manager { get; private set; }
     public bool m_Supported { get; private set; }
+    public bool m_Enabled { get; protected set; }
     public virtual bool m_IsPostEffect => false;
     public CameraEffectBase()
     {
@@ -24,6 +23,7 @@ public class CameraEffectBase
     public virtual void OnSetEffect(CameraEffectManager _manager)
     {
         m_Manager = _manager;
+        m_Enabled = true;
     }
     public virtual void OnRenderObject()
     {
@@ -33,6 +33,7 @@ public class CameraEffectBase
     {
         Graphics.Blit(source, destination);
     }
+    public virtual void OnCheckMobileCostEnable(bool enable) { }
     public virtual void OnDestroy()
     {
     }
@@ -343,7 +344,6 @@ public class PE_DepthOutline:PostEffectBase
 }
 public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific Items
 {
-    public override bool m_MobileCost => true;
     Camera m_RenderCamera;
     RenderTexture m_RenderTexture;
     Shader m_RenderShader;
@@ -355,7 +355,7 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
         m_Blur.OnSetEffect(_manager);
         m_RenderShader = Shader.Find("Hidden/PostEffect/PE_BloomSpecific_Render");
         if (m_RenderShader == null)
-            Debug.LogError("Null Shader Found!");
+            Debug.LogError("Null Occlude Shader Found!");
         GameObject temp = new GameObject("Render Camera");
         temp.transform.SetParentResetTransform(m_Manager.m_Camera.transform);
         m_RenderCamera = temp.AddComponent<Camera>();
@@ -369,6 +369,11 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
         m_RenderCamera.enabled = false;
         m_RenderTexture = RenderTexture.GetTemporary(m_Manager.m_Camera.scaledPixelWidth, m_Manager.m_Camera.scaledPixelHeight, 1);
         m_RenderCamera.targetTexture = m_RenderTexture;
+    }
+    public override void OnCheckMobileCostEnable(bool enable)
+    {
+        base.OnCheckMobileCostEnable(enable);
+        m_Enabled = enable;
     }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
@@ -406,7 +411,6 @@ public class PE_AreaScanDepth : PostEffectBase
 }
 public class PE_DepthSSAO : PostEffectBase
 {
-    public override bool m_HighCost => true;
     public override DepthTextureMode m_DepthTextureMode => DepthTextureMode.Depth;
     public void SetEffect(float strength=1f, float sphereRadius= 0.035f,float _fallOff=0.00001f,float _fallOffLimit= 0.003f, int _sampleCount=16)
     {

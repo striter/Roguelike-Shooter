@@ -38,6 +38,9 @@ namespace TTiles
         public static bool operator !=(TileAxis a, TileAxis b) => a.X != b.X || a.Y != b.Y;
         public static TileAxis operator -(TileAxis a, TileAxis b) => new TileAxis(a.X - b.X, a.Y - b.Y);
         public static TileAxis operator +(TileAxis a, TileAxis b) => new TileAxis(a.X + b.X, a.Y + b.Y);
+        public static TileAxis operator *(TileAxis a, TileAxis b) => new TileAxis(a.X * b.X, a.Y * b.Y);
+        public static TileAxis operator /(TileAxis a, TileAxis b) => new TileAxis(a.X / b.X, a.Y / b.Y);
+
         public static TileAxis operator *(TileAxis a, int b) => new TileAxis(a.X*b,a.Y*b);
         public static TileAxis operator /(TileAxis a, int b) => new TileAxis(a.X/b,a.Y/b);
         public TileAxis Inverse() => new TileAxis(Y, X);
@@ -53,7 +56,33 @@ namespace TTiles
         public static readonly TileAxis Right = new TileAxis(1, 0);
         public static readonly TileAxis Forward = new TileAxis(0, 1);
     }
+    public struct TileBounds
+    {
+        public TileAxis m_Origin { get; private set; }
+        public TileAxis m_Size { get; private set; }
+        public TileAxis m_End { get; private set; }
+        public bool Contains(TileAxis axis) => axis.X >= m_Origin.X && axis.X <= m_End.X && axis.Y>=m_Origin.Y &&axis.Y<=m_End.Y;
+        public override string ToString() => m_Origin.ToString() + "|" + m_Size.ToString();
+        public bool Intersects(TileBounds targetBounds)
+        {
+            TileAxis[] sourceAxies = new TileAxis[] { m_Origin,  m_End };
+            for (int i = 0; i < sourceAxies.Length; i++)
+                if (targetBounds.Contains(sourceAxies[i]))
+                    return true;
+            TileAxis[] targetAxies = new TileAxis[] {  targetBounds.m_Origin + new TileAxis(targetBounds.m_Size.X, 0), targetBounds.m_Origin + new TileAxis( 0, targetBounds.m_Size.Y) };
+            for (int i = 0; i < targetAxies.Length; i++)
+                if (Contains(targetAxies[i]))
+                    return true;
+            return false;
+        }
 
+        public TileBounds(TileAxis origin,TileAxis size)
+        {
+            m_Origin = origin;
+            m_Size = size;
+            m_End = m_Origin + m_Size;
+        }
+    }
     public static class TileTools
     {
         static int AxisDimensionTransformation(int x, int y, int width) => x + y * width;
@@ -78,8 +107,8 @@ namespace TTiles
         public static List<TileAxis> GetAxisRange(int width,int height, TileAxis start, TileAxis end)
         {
             List<TileAxis> axisList = new List<TileAxis>();
-            for (int i = start.X; i < end.X; i++)
-                for (int j = start.Y; j < end.Y; j++)
+            for (int i = start.X; i <= end.X; i++)
+                for (int j = start.Y; j <= end.Y; j++)
                 {
                     if (i < 0 ||j < 0 || i >= width || j >= height)
                         continue;
@@ -104,8 +133,6 @@ namespace TTiles
 
         public static bool CheckIsEdge<T>(this T[,] tileArray, TileAxis axis) where T : class, ITileAxis => axis.X == 0 || axis.X == tileArray.GetLength(0) - 1 || axis.Y == 0 || axis.Y == tileArray.GetLength(1) - 1;
         
-        public static bool AxisInSquare(TileAxis axis, TileAxis squareAxis, TileAxis squareSize)=>axis.X >= squareAxis.X && axis.X <= squareAxis.X + squareSize.X && axis.Y >= squareAxis.Y && axis.Y <= squareAxis.Y + squareSize.Y;
-
         public static TileAxis GetDirectionedSize(TileAxis size, enum_TileDirection direction) => (int)direction % 2 == 0 ? size : size.Inverse();
         public static Vector3 GetUnitScaleBySizeAxis(TileAxis directionedSize,int tileSize) => new Vector3(directionedSize.X, 1, directionedSize.Y) * tileSize;
         public static Vector3 GetLocalPosBySizeAxis(TileAxis directionedSize) => new Vector3(directionedSize.X, 0, directionedSize.Y);

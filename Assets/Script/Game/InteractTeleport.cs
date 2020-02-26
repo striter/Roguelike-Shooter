@@ -4,19 +4,24 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class InteractTeleport : InteractGameBase {
+public class InteractTeleport : InteractGameQuadrant  {
     protected override bool E_InteractOnEnable => false;
-    Transform tf_Top;
+    public bool m_Enable { get; private set; }
+    Animator m_Animator;
+    int hs_Unlock = Animator.StringToHash("b_unlock");
     public override void OnPoolItemInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
     {
         base.OnPoolItemInit(identity, OnRecycle);
-        tf_Top = transform.Find("Top");
+        m_Animator = GetComponent<Animator>();
     }
-    public void SetPlay(bool play) => tf_Top.SetActivate(play);
-    public new InteractTeleport Play()
+    public void SetPlay(bool play)
     {
-        base.Play();
+        m_Animator.SetBool(hs_Unlock, play);
+    } 
+    public InteractTeleport Play(int chunkIndex,enum_LevelStyle style)
+    {
+        base.PlayQuadrant(chunkIndex);
+        transform.Find("Model/Glow").GetComponent<Renderer>().sharedMaterial.color = TCommon.GetHexColor(style.GetTeleportHex());
         return this;
     }
-
 }

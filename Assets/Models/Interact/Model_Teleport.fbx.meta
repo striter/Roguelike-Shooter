@@ -1,20 +1,36 @@
 fileFormatVersion: 2
-guid: 0a0a92c489c2bee4e8d468b7b2e864a4
+guid: 726b4313605cfa14398609a5c07b29c4
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
     100000: //RootNode
+    100002: zhuchangjing_guangdian
+    100004: zhuchangjing_guangquan
     400000: //RootNode
-    2100000: lambert1
+    400002: zhuchangjing_guangdian
+    400004: zhuchangjing_guangquan
+    2100000: pasted__aiStandardSurface36
+    2100002: aiStandardSurface1
     2300000: //RootNode
+    2300002: zhuchangjing_guangdian
+    2300004: zhuchangjing_guangquan
     3300000: //RootNode
-    4300000: changjing_zhuangbei
+    3300002: zhuchangjing_guangdian
+    3300004: zhuchangjing_guangquan
+    4300000: zhuchangjing_chuansongmen
+    4300002: zhuchangjing_guangdian
+    4300004: zhuchangjing_guangquan
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: lambert1
-    second: {fileID: 2100000, guid: 81eaa27591d7c054c90dbbad3d7e3b32, type: 2}
+      name: aiStandardSurface1
+    second: {fileID: 2100000, guid: 19e550aaa4d62dc4db2ac0cf4bca4342, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: pasted__aiStandardSurface36
+    second: {fileID: 2100000, guid: f5f9ed5a27cd053469c0460cd40d6bee, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
