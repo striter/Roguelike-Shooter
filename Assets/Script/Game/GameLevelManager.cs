@@ -7,6 +7,7 @@ using System;
 using TTiles;
 using UnityEngine.AI;
 using System.Threading.Tasks;
+using System.Linq;
 
 public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelperClass
 {
@@ -215,7 +216,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
             while (true)
             {
                 generateCount++;
-                if (generateCount > 2048)
+                if (generateCount > 10240)
                     throw new Exception("Generate Overtime!");
 
                 gameChunkGenerate.Clear();
@@ -399,13 +400,8 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
                         if (nextConnectionData.HasValue)
                         {
                             TileAxis nextChunkAxis = previousChunkGenerate.m_Origin + m_previousConnectionData.m_Axis - nextConnectionData.GetValueOrDefault().m_Axis;
-                            bool _anyGeneratedChunkIntersects = false;
-                            chunkIntersectsCheckData.TraversalBreak((ChunkGenerateData intersectCheck) =>
-                            {
-                                _anyGeneratedChunkIntersects = intersectCheck.m_GenerateCheckBounds.Intersects(new TileBounds(nextChunkAxis + TileAxis.One, curChunkData.m_Size - TileAxis.One * 2));
-                                return _anyGeneratedChunkIntersects;
-                            });
-                            if (_anyGeneratedChunkIntersects)
+                            TileBounds nextChunkSizeCheck = new TileBounds(nextChunkAxis + TileAxis.One, curChunkData.m_Size - TileAxis.One * 2);
+                            if (chunkIntersectsCheckData.Any(p => p.m_GenerateCheckBounds.Intersects(nextChunkSizeCheck)))
                                 return false;
 
                             nextChunkGenerate = new ChunkGenerateData(generateStartIndex, nextChunkAxis, curChunkData, generateMainTypes[i].m_EventType);

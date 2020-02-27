@@ -65,11 +65,11 @@ namespace TTiles
         public override string ToString() => m_Origin.ToString() + "|" + m_Size.ToString();
         public bool Intersects(TileBounds targetBounds)
         {
-            TileAxis[] sourceAxies = new TileAxis[] { m_Origin,  m_End };
+            TileAxis[] sourceAxies = new TileAxis[] { m_Origin,  m_End,m_Origin+new TileAxis(m_Size.X,0),m_Origin+new TileAxis(0,m_Size.Y) };
             for (int i = 0; i < sourceAxies.Length; i++)
                 if (targetBounds.Contains(sourceAxies[i]))
                     return true;
-            TileAxis[] targetAxies = new TileAxis[] {  targetBounds.m_Origin, targetBounds.m_End };
+            TileAxis[] targetAxies = new TileAxis[] {  targetBounds.m_Origin, targetBounds.m_End, targetBounds.m_Origin + new TileAxis(targetBounds.m_Size.X, 0), targetBounds.m_Origin + new TileAxis(0, targetBounds.m_Size.Y) };
             for (int i = 0; i < targetAxies.Length; i++)
                 if (Contains(targetAxies[i]))
                     return true;
