@@ -13,6 +13,7 @@ public class TAnimationRendererProperty : MonoBehaviour
         m_Renderer = GetComponent<Renderer>();
         m_alpha = m_Renderer.sharedMaterial.color.a;
     }
+
     private void Update()
     {
         Color materialColor = m_Renderer.sharedMaterial.color;

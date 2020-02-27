@@ -1099,20 +1099,33 @@ namespace GameSetting
 
     #region Class
     #region GameBase
-    public class GameChunk
+    public class GameChunkManager
     {
-        public bool m_GameTriggered { get; private set; }
+        public int m_ChunkIndex { get; private set; }
+        public bool m_ChunkTriggered { get; private set; }
         public enum_ChunkType m_ChunkType { get; private set; }
         public List<int> m_Triggers { get; private set; } = new List<int>();
-        public GameChunk(enum_ChunkType _chunkType)
+        public bool m_ChunkEnabled { get; private set; }
+        public GameChunkManager(int _chunkIndex,enum_ChunkType _chunkType)
         {
+            m_ChunkIndex = _chunkIndex;
             m_ChunkType = _chunkType;
-            m_GameTriggered = false;
+            m_ChunkTriggered = false;
+            m_ChunkEnabled = true;
         }
+
+        public virtual void OnQuadrantCheck(List<int> enableChunks)=> m_ChunkEnabled = enableChunks.Contains(m_ChunkIndex);
+
+        public virtual void Tick(float deltaTime)
+        {
+
+        }
+
         public virtual void OnPlayerTrigger()
         {
-            m_GameTriggered = true;
+            m_ChunkTriggered = true;
         }
+
         public virtual bool GetChunkMapIconShow => false;
         public virtual string GetChunkMapNameKey => "";
         public virtual string GetChunkMapIntroKey => "";
@@ -1120,25 +1133,116 @@ namespace GameSetting
         public virtual Vector3 GetChunkMapLocationPosition => Vector3.zero;
         public virtual bool OnMapDoubleClick() { return false; }
     }
-    public class GameChunkBattle:GameChunk
+    public class GameChunkBattle:GameChunkManager
     {
-        public List<int> m_BattleEnermyCommands { get; private set; } = new List<int>();
+        public List<GameChunkBattleEnermyHelper> m_BattleEnermies { get; private set; } = new List<GameChunkBattleEnermyHelper>();
         public bool m_IsFinal => m_ChunkType == enum_ChunkType.Final;
-        public GameChunkBattle(enum_ChunkType chunkType) : base(chunkType)
+        Action<GameChunkBattle> OnBattleStart,OnBattleFinish;
+        Action<EntityCharacterBase> OnChunkEnermyKill;
+        public bool m_Battling { get; private set; }
+        public GameChunkBattle(int chunkIndex, enum_ChunkType chunkType,Action<GameChunkBattle> OnBattleStart,Action<EntityCharacterBase> OnChunkEnermyKill, Action<GameChunkBattle> OnBattleFinish) : base(chunkIndex,chunkType)
         {
+            this.OnBattleStart = OnBattleStart;
+            this.OnBattleFinish = OnBattleFinish;
+            this.OnChunkEnermyKill = OnChunkEnermyKill;
+            m_Battling = false;
+        }
+
+        public void AddChunkEnermy(GameChunkBattleEnermyHelper helper)=>m_BattleEnermies.Add(helper);
+
+        public override void OnPlayerTrigger()
+        {
+            base.OnPlayerTrigger();
+            OnBattleStart(this);
+            m_BattleEnermies.Traversal((GameChunkBattleEnermyHelper command) => {
+               command.DoBattle();
+            });
+            m_Battling = true;
+        }
+
+        public void OnChunkCharacterKill(EntityCharacterBase character)
+        {
+            GameChunkBattleEnermyHelper controlDisable = m_BattleEnermies.Find(p => p.OnCharacterDead(character));
+            if (controlDisable==null)
+                return;
+            m_BattleEnermies.Remove(controlDisable);
+            OnChunkEnermyKill(character);
+            if (m_BattleEnermies.Count>0)
+                return;
+            OnBattleFinish(this);
+            m_Battling = false;
+        }
+
+        public override void Tick(float deltaTime)
+        {
+            base.Tick(deltaTime);
+            m_BattleEnermies.Traversal((GameChunkBattleEnermyHelper entity) => {
+                    entity.TickEntityPatrol(deltaTime);
+            });
         }
     }
-    public class GameChunkTeleport : GameChunk
+
+    public class GameChunkFinal : GameChunkBattle
+    {
+        TimeCounter m_TimerFinalBattle = new TimeCounter();
+        GameChunkBattleEnermyHelper m_EliteControl;
+        float m_PreviousEliteHealthScale;
+        public List<Vector3> m_FinalBattleGeneratePoints { get; private set; } = new List<Vector3>();
+
+
+        public GameChunkFinal(int chunkIndex, enum_ChunkType chunkType, Action<GameChunkBattle> OnBattleStart, Action<EntityCharacterBase> OnChunkEnermyKill, Action<GameChunkBattle> OnBattleFinish) : base(chunkIndex, chunkType, OnBattleStart,OnChunkEnermyKill, OnBattleFinish)
+        {
+        }
+        public void AddEnermyGeneratePos(Vector3 position) => m_FinalBattleGeneratePoints.Add(position);
+
+        public void SetChunkElite(GameChunkBattleEnermyHelper elite)
+        {
+            m_EliteControl = elite;
+            AddChunkEnermy(m_EliteControl);
+        }
+
+        public override void OnPlayerTrigger()
+        {
+            base.OnPlayerTrigger();
+            m_PreviousEliteHealthScale = 1f;
+            m_TimerFinalBattle.SetTimer(GameConst.RI_GameFinalBattleEnermySpawnCheck.Random());
+        }
+        
+        public override void Tick(float deltaTime)
+        {
+            base.Tick(deltaTime);
+            if (!m_Battling)
+                return;
+
+            m_TimerFinalBattle.Tick(deltaTime);
+            if (m_TimerFinalBattle.m_Timing)
+                return;
+            m_TimerFinalBattle.SetTimer(GameConst.RI_GameFinalBattleEnermySpawnCheck.Random());
+
+            float eliteHealthScale = m_EliteControl.m_EntityHealthScale;
+            if (eliteHealthScale <= 0 || m_PreviousEliteHealthScale - eliteHealthScale < GameConst.F_FinalBattleEnermySpawnEliteHealthScaleOffset)
+                return;
+            m_PreviousEliteHealthScale = eliteHealthScale;
+
+            GameManager.Instance. m_GameLevel.m_EnermyGenerate[true].RandomItem(GameManager.Instance.m_GameLevel.m_GameRandom).GetEnermyIDList(GameManager.Instance.m_EnermyIDs, GameManager.Instance.m_GameLevel.m_GameRandom).Traversal((int enermyID) =>
+            {
+                Vector3 spawnPos = m_FinalBattleGeneratePoints.RandomItem();
+                GameObjectManager.SpawnEntityCharacterAI(enermyID, NavigationManager.NavMeshPosition(spawnPos), GameManager.Instance.m_LocalPlayer.transform.position, enum_EntityFlag.Enermy, GameManager.Instance.m_GameLevel.m_GameDifficulty, GameManager.Instance.m_GameLevel.m_GameStage, true);
+            });
+        }
+    }
+
+    public class GameChunkTeleport : GameChunkManager
     {
         public InteractTeleport m_ChunkTeleport { get; private set; }
         public bool m_Enable { get; private set; }
         public override bool GetChunkMapIconShow => m_Enable;
         public override string GetChunkMapNameKey => "UI_Map_Teleport_Name";
         public override string GetChunkMapIntroKey => "UI_Map_Teleport_Intro";
-        public override Vector3 GetChunkMapLocationPosition =>m_ChunkTeleport.transform.position;
+        public override Vector3 GetChunkMapLocationPosition => m_ChunkTeleport.transform.position;
         public override string GetChunkMapLocationSprite => "map_icon_teleport";
 
-        public GameChunkTeleport() : base( enum_ChunkType.Teleport)
+        public GameChunkTeleport(int _chunkIndex) : base(_chunkIndex,enum_ChunkType.Teleport)
         {
         }
         public void OnSpawnTeleport(InteractTeleport _ChunkTeleport)
@@ -1158,12 +1262,83 @@ namespace GameSetting
 
         public override bool OnMapDoubleClick()
         {
-            GameManager.Instance.m_LocalPlayer.Teleport(NavigationManager.NavMeshPosition( m_ChunkTeleport.transform.position),m_ChunkTeleport.transform.rotation);
+            GameManager.Instance.m_LocalPlayer.Teleport(NavigationManager.NavMeshPosition(m_ChunkTeleport.transform.position), m_ChunkTeleport.transform.rotation);
             return true;
         }
     }
 
-    public class GameChunkEvent:GameChunk
+    public class GameChunkBattleEnermyHelper
+    {
+        public Vector3 m_EntityPos { get; private set; }
+        public bool m_Battling { get; private set; } = false;
+        public bool m_EntityActivating => m_Entity;
+        public float m_EntityHealthScale => m_EntityActivating ? m_Entity.m_Health.F_HealthMaxScale : -1f;
+        int m_EntityID;
+        EntityCharacterAI m_Entity;
+        float m_EntityHealth = 0;
+        public GameChunkBattleEnermyHelper(int entityID,Vector3 entityPos)
+        {
+            m_EntityID = entityID;
+            m_EntityPos = entityPos;
+            m_Battling = false;
+        }
+
+        public bool OnCharacterDead(EntityCharacterBase character)
+        {
+            if (!m_EntityActivating || character.m_EntityID != m_Entity.m_EntityID)
+                return false;
+            
+            return true;
+        }
+
+        public void DoBattle()
+        {
+            m_Battling = true;
+            if (m_Entity)
+                m_Entity.AIActivate(m_Battling);
+        }
+
+        TimeCounter m_Timer = new TimeCounter(GameConst.AI.F_AIMovementCheckParam);
+        public void TickEntityPatrol(float deltaTime)
+        {
+            if (m_Timer.m_Timing)
+            {
+                m_Timer.Tick(deltaTime);
+                return;
+            }
+            m_Timer.SetTimer(GameConst.AI.F_AIMovementCheckParam);
+
+            if (TCommon.GetXZDistance(m_EntityPos, GameManager.Instance.m_LocalPlayer.transform.position) > GameConst.AI.F_AIShowDistance)
+            {
+                TryHideEntity();
+                return;
+            }
+
+            TryShowEntity();
+        }
+
+        public void TickEntityIdle(float deltaTime)=>TryHideEntity();
+
+        void TryShowEntity()
+        {
+            if (m_EntityActivating)
+                return;
+            m_Entity = GameObjectManager.SpawnEntityCharacterAI(m_EntityID, NavigationManager.NavMeshPosition(m_EntityPos), Vector3.forward, enum_EntityFlag.Enermy, GameManager.Instance.m_GameLevel.m_GameDifficulty, GameManager.Instance.m_GameLevel.m_GameStage, m_Battling, m_EntityHealth) as EntityCharacterAI;
+        }
+
+        void TryHideEntity()
+        {
+            if (!m_EntityActivating || !m_Entity.m_IdlePatrol)
+                return;
+
+            m_EntityHealth = m_Entity.m_Health.F_TotalEHP;
+            m_Entity.DoRecycle();
+            m_Entity = null;
+        }
+    }
+
+
+    public class GameChunkEvent:GameChunkManager
     {
         public enum_ChunkEventType m_EventType;
         public Vector3 m_EventPos;
@@ -1173,7 +1348,7 @@ namespace GameSetting
         public override Vector3 GetChunkMapLocationPosition => m_EventPos;
         public override string GetChunkMapNameKey => m_EventType.GetMapLocalizeNameKey();
         public override string GetChunkMapIntroKey => m_EventType.GetMapLocalizeIntroKey();
-        public GameChunkEvent() : base( enum_ChunkType.Event)
+        public GameChunkEvent(int _chunkIndex) : base(_chunkIndex, enum_ChunkType.Event)
         {
         }
         public void OnSpawnEvent(enum_ChunkEventType _eventType, Vector3 _eventPos, InteractGameBase _eventInteract)

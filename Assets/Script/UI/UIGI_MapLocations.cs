@@ -18,7 +18,7 @@ public class UIGI_MapLocations : UIT_GridItem {
         m_Animation = new TSpecialClasses.AnimationControlBase(tf_Container.Find("Teleport").GetComponent<Animation>());
     }
 
-    public void Play(GameChunk gameChunk)
+    public void Play(GameChunkManager gameChunk)
     {
         m_Teleport.SetActivate(gameChunk.m_ChunkType == enum_ChunkType.Teleport);
         m_Event.SetActivate(gameChunk.m_ChunkType == enum_ChunkType.Event);

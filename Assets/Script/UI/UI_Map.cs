@@ -53,7 +53,7 @@ public class UI_Map : UIPage {
         {
             Vector3 iconScale = GetIconScale();
             m_LocationsGrid.ClearGrid();
-            GameManager.Instance.m_GameChunkData.Traversal((int chunkIndex, GameChunk chunkData) =>
+            GameManager.Instance.m_GameChunkData.Traversal((int chunkIndex, GameChunkManager chunkData) =>
             {
                 if (!chunkData.GetChunkMapIconShow)
                     return;
@@ -149,7 +149,7 @@ public class UI_Map : UIPage {
         if (chunkIndex == -1)
             return;
 
-        GameChunk chunk = GameManager.Instance.m_GameChunkData[chunkIndex];
+        GameChunkManager chunk = GameManager.Instance.m_GameChunkData[chunkIndex];
         m_LocationName.localizeKey = chunk.GetChunkMapNameKey;
         m_LocationIntro.localizeKey = chunk.GetChunkMapIntroKey;
         m_LocationInfo.SetActivate(true);

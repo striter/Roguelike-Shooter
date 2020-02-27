@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class InteractWeaponReforge : InteractGameBase {
+public class InteractWeaponReforge : InteractGameQuadrant {
     public override enum_Interaction m_InteractType => enum_Interaction.WeaponReforge;
     enum_PlayerWeapon m_Weapon;
-    public InteractWeaponReforge Play(enum_PlayerWeapon _weapon)
+    public InteractWeaponReforge Play(int chunkIndex,enum_PlayerWeapon _weapon)
     {
-        base.Play();
+        base.PlayQuadrant(chunkIndex);
         m_Weapon = _weapon;
         return this;
     }

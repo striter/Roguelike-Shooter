@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class InteractTradeContainer : InteractGameBase {
+public class InteractTradeContainer : InteractGameQuadrant {
     public override enum_Interaction m_InteractType => enum_Interaction.TradeContainer;
     protected override bool B_SelfRecycleOnInteract => true;
     public override void OnPoolItemInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
@@ -12,14 +12,20 @@ public class InteractTradeContainer : InteractGameBase {
         base.OnPoolItemInit(identity, OnRecycle);
         tf_Model = transform.Find("Container/Model");
     }
-    public void Play(int _tradePrice,InteractBase _interactItem)
+    public void Play(int chunkIndex, int _tradePrice,InteractBase _interactItem)
     {
-        base.Play();
+        base.PlayQuadrant(chunkIndex);
         Attach(_interactItem);
         m_TradePrice = _tradePrice;
     }
     public InteractBase m_TradeInteract { get; private set; }
     Transform tf_Model;
+
+    protected override void OnQuadrantShow(bool show)
+    {
+        base.OnQuadrantShow(show);
+        m_TradeInteract.SetActivate(show);
+    }
 
     protected override bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactor)
     {

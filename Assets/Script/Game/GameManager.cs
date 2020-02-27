@@ -45,7 +45,7 @@ public class GameManager : GameManagerBase
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Player Equipment", "1", KeyCode.F1, (string actionIndex) => { GameObjectManager.SpawnInteract<InteractEquipment>(enum_Interaction.Equipment, NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere(5f)), Quaternion.identity).Play(ActionDataManager.CreatePlayerEquipment(EquipmentSaveData.Default(int.Parse(actionIndex), TCommon.RandomEnumValues<enum_EquipmentRarity>(null)))); }));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Player Exp", "100", KeyCode.F2, (string actionIndex) => { m_LocalPlayer.m_CharacterInfo.OnExpGain(int.Parse(actionIndex)); }));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Clear Fog", "", KeyCode.F3, (string value) => { GameLevelManager.Instance.ClearAllFog(); }));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Unlock Teleport", "", KeyCode.F4, (string value) => { m_GameChunkData.Traversal((GameChunk chunk) => { if (chunk.m_ChunkType == enum_ChunkType.Teleport) (chunk as GameChunkTeleport).OnPlayerTrigger(); }); }));
+        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Unlock Teleport", "", KeyCode.F4, (string value) => { m_GameChunkData.Traversal((GameChunkManager chunk) => { if (chunk.m_ChunkType == enum_ChunkType.Teleport) (chunk as GameChunkTeleport).OnPlayerTrigger(); }); }));
 
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Coins", "20", KeyCode.F5, (string coins) => { GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupCoin, NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere(5f)), Quaternion.identity).Play(int.Parse(coins),!m_Battling);}));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Health", "20", KeyCode.F6, (string health) => {GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupHealth, NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere(5f)), Quaternion.identity).Play(int.Parse(health), !m_Battling);}));
@@ -59,7 +59,6 @@ public class GameManager : GameManagerBase
     public EntityCharacterPlayer m_LocalPlayer { get; private set; } = null;
     Transform tf_PlayerStart;
     ObjectPoolListMono<int, GamePlayerChunkTrigger> m_ChunkEnterTriggers;
-    ObjectPoolListMono<int, GameEnermyCommander> m_EnermyCommand;
 
     public override bool B_InGame => true;
     public bool m_GameLoading { get; private set; } = false;
@@ -73,12 +72,12 @@ public class GameManager : GameManagerBase
         TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterRevive, OnCharacterRevive);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnPlayerRankUp, OnPlayerRankUp);
+        TBroadCaster<enum_BC_GameStatus>.Add <List<int>>(enum_BC_GameStatus.OnChunkQuadrantCheck, OnChunkQuadrantCheck);
         if (M_TESTSEED!="")
             GameDataManager.m_BattleData.m_GameSeed = M_TESTSEED;
         m_GameLevel =  new GameProgressManager(GameDataManager.m_GameData,GameDataManager.m_BattleData);
         tf_PlayerStart = transform.Find("PlayerStart");
         m_ChunkEnterTriggers = new ObjectPoolListMono<int, GamePlayerChunkTrigger>(transform.Find("Triggers/ChunkTrigger"), "TriggerItem");
-        m_EnermyCommand = new ObjectPoolListMono<int, GameEnermyCommander>(transform.Find("EnermyPool"), "EnermyItem");
     }
     
 
@@ -96,6 +95,7 @@ public class GameManager : GameManagerBase
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterRevive, OnCharacterRevive);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnPlayerRankUp, OnPlayerRankUp);
+        TBroadCaster<enum_BC_GameStatus>.Remove<List<int>>(enum_BC_GameStatus.OnChunkQuadrantCheck, OnChunkQuadrantCheck);
     }
     protected override void Start()
     {
@@ -117,7 +117,7 @@ public class GameManager : GameManagerBase
 
         float deltaTime = Time.deltaTime;
         GameLevelManager.Instance.TickGameLevel(m_LocalPlayer.transform.position);
-        GameBattleTick(deltaTime);
+        m_GameChunkData.Traversal((GameChunkManager chunk)=>  chunk.Tick(deltaTime));
     }
     #region Stage Management
     //Call When Level Changed
@@ -268,8 +268,8 @@ public class GameManager : GameManagerBase
     {
         if (character.m_ControllType == enum_EntityController.Player)
             SetPostEffect_Dead();
-        
-        OnBattleCharatcerKilled(character);
+
+        OnBattleEntityKilled(character);
     }
 
     void OnEntityRecycle(EntityBase entity)
@@ -365,28 +365,30 @@ public class GameManager : GameManagerBase
     }
     #endregion
     #region Chunk Relative Management
-    public Dictionary<int, GameChunk> m_GameChunkData = new Dictionary<int, GameChunk>();
+    public Dictionary<int,GameChunkManager> m_GameChunkData = new Dictionary<int, GameChunkManager>();
     void GenerateChunkRelatives()
     {
         m_GameChunkData.Clear();
         m_ChunkEnterTriggers.ClearPool();
         GameLevelManager.Instance.m_GameChunks.Traversal((int chunkIndex, LevelChunkGame chunkData) =>
         {
-            GameChunk chunkGameData = null;
+            GameChunkManager chunkGameData = null;
             switch(chunkData.m_ChunkType)
             {
                 default:
-                    chunkGameData = new GameChunk( chunkData.m_ChunkType);
+                    chunkGameData = new GameChunkManager(chunkIndex, chunkData.m_ChunkType);
                     break;
                 case enum_ChunkType.Battle:
+                    chunkGameData = new GameChunkBattle(chunkIndex, enum_ChunkType.Battle,OnBattleStart, OnBattleEnermyKilled, OnBattleFinish );
+                    break;
                 case enum_ChunkType.Final:
-                    chunkGameData = new GameChunkBattle( chunkData.m_ChunkType);
+                    chunkGameData = new GameChunkFinal(chunkIndex, enum_ChunkType.Final, OnFinalBattleStart,OnBattleEnermyKilled, OnFinalBattleFinish );
                     break;
                 case enum_ChunkType.Teleport:
-                    chunkGameData = new GameChunkTeleport();
+                    chunkGameData = new GameChunkTeleport(chunkIndex);
                     break;
                 case enum_ChunkType.Event:
-                    chunkGameData = new GameChunkEvent();
+                    chunkGameData = new GameChunkEvent(chunkIndex);
                     break;
             }
             m_GameChunkData.Add(chunkIndex, chunkGameData);
@@ -419,30 +421,30 @@ public class GameManager : GameManagerBase
                             switch (chunkData.m_ChunkEventType)
                             {
                                 case enum_ChunkEventType.PerkAcquire:
-                                    eventInteract= GameObjectManager.SpawnInteract<InteractPerkAcquire>(enum_Interaction.PerkAcquire, objectData.pos, objectData.rot).Play(ActionDataManager.CreateRandomPlayerEquipment(TCommon.RandomPercentage(m_GameLevel.m_InteractGenerate.m_EventEquipment, m_GameLevel.m_GameRandom), m_GameLevel.m_GameRandom));
+                                    eventInteract= GameObjectManager.SpawnInteract<InteractPerkAcquire>(enum_Interaction.PerkAcquire, objectData.pos, objectData.rot).Play(chunkIndex,ActionDataManager.CreateRandomPlayerEquipment(TCommon.RandomPercentage(m_GameLevel.m_InteractGenerate.m_EventEquipment, m_GameLevel.m_GameRandom), m_GameLevel.m_GameRandom));
                                     break;
                                 case enum_ChunkEventType.PerkUpgrade:
-                                    eventInteract=GameObjectManager.SpawnInteract<InteractPerkUpgrade>(enum_Interaction.PerkUpgrade, objectData.pos, objectData.rot).Play();
+                                    eventInteract=GameObjectManager.SpawnInteract<InteractPerkUpgrade>(enum_Interaction.PerkUpgrade, objectData.pos, objectData.rot).Play(chunkIndex);
                                     break;
                                 case enum_ChunkEventType.WeaponReforge:
-                                    eventInteract=GameObjectManager.SpawnInteract<InteractWeaponReforge>(enum_Interaction.WeaponReforge, objectData.pos, objectData.rot).Play( GameDataManager.m_WeaponRarities[TCommon.RandomPercentage(GameConst.D_EventWeaponReforgeRate, m_GameLevel.m_GameRandom)].RandomItem(m_GameLevel.m_GameRandom));
+                                    eventInteract=GameObjectManager.SpawnInteract<InteractWeaponReforge>(enum_Interaction.WeaponReforge, objectData.pos, objectData.rot).Play(chunkIndex, GameDataManager.m_WeaponRarities[TCommon.RandomPercentage(GameConst.D_EventWeaponReforgeRate, m_GameLevel.m_GameRandom)].RandomItem(m_GameLevel.m_GameRandom));
                                     break;
                                 case enum_ChunkEventType.Bonefire:
-                                    eventInteract=GameObjectManager.SpawnInteract<InteractBonfire>(enum_Interaction.Bonfire, objectData.pos, objectData.rot).Play();
+                                    eventInteract=GameObjectManager.SpawnInteract<InteractBonfire>(enum_Interaction.Bonfire, objectData.pos, objectData.rot).Play(chunkIndex);
                                     break;
                                 case enum_ChunkEventType.RewardChest:
-                                    eventInteract=GameObjectManager.SpawnInteract<InteractRewardChest>(enum_Interaction.RewardChest, objectData.pos, objectData.rot).Play(null, GameDataManager.m_WeaponRarities[TCommon.RandomPercentage(m_GameLevel.m_InteractGenerate.m_RewardWeapon, m_GameLevel.m_GameRandom)].RandomItem(m_GameLevel.m_GameRandom));
+                                    eventInteract=GameObjectManager.SpawnInteract<InteractRewardChest>(enum_Interaction.RewardChest, objectData.pos, objectData.rot).Play(chunkIndex, null, GameDataManager.m_WeaponRarities[TCommon.RandomPercentage(m_GameLevel.m_InteractGenerate.m_RewardWeapon, m_GameLevel.m_GameRandom)].RandomItem(m_GameLevel.m_GameRandom));
                                     break;
                                 case enum_ChunkEventType.Trader:
-                                    GameObjectManager.SpawnInteract<InteractTradeContainer>(enum_Interaction.TradeContainer, objectData.pos+LevelConst.I_TileSize*Vector3.left, objectData.rot).Play(GameConst.I_EventEquipmentTradePrice, GameObjectManager.SpawnInteract<InteractEquipment>(enum_Interaction.Equipment, objectData.pos, objectData.rot).Play(ActionDataManager.CreateRandomPlayerEquipment(TCommon.RandomPercentage(m_GameLevel.m_InteractGenerate.m_EventEquipment,m_GameLevel.m_GameRandom),m_GameLevel.m_GameRandom)));
+                                    GameObjectManager.SpawnInteract<InteractTradeContainer>(enum_Interaction.TradeContainer, objectData.pos+LevelConst.I_TileSize*Vector3.left, objectData.rot).Play(chunkIndex, GameConst.I_EventEquipmentTradePrice, GameObjectManager.SpawnInteract<InteractEquipment>(enum_Interaction.Equipment, objectData.pos, objectData.rot).Play(ActionDataManager.CreateRandomPlayerEquipment(TCommon.RandomPercentage(m_GameLevel.m_InteractGenerate.m_EventEquipment,m_GameLevel.m_GameRandom),m_GameLevel.m_GameRandom)));
 
-                                    GameObjectManager.SpawnInteract<InteractTradeContainer>(enum_Interaction.TradeContainer, objectData.pos + LevelConst.I_TileSize * Vector3.right, objectData.rot).Play(GameConst.I_EventEquipmentTradePrice, GameObjectManager.SpawnInteract<InteractEquipment>(enum_Interaction.Equipment, objectData.pos, objectData.rot).Play(ActionDataManager.CreateRandomPlayerEquipment(TCommon.RandomPercentage(m_GameLevel.m_InteractGenerate.m_EventEquipment, m_GameLevel.m_GameRandom), m_GameLevel.m_GameRandom)));
+                                    GameObjectManager.SpawnInteract<InteractTradeContainer>(enum_Interaction.TradeContainer, objectData.pos + LevelConst.I_TileSize * Vector3.right, objectData.rot).Play(chunkIndex, GameConst.I_EventEquipmentTradePrice, GameObjectManager.SpawnInteract<InteractEquipment>(enum_Interaction.Equipment, objectData.pos, objectData.rot).Play(ActionDataManager.CreateRandomPlayerEquipment(TCommon.RandomPercentage(m_GameLevel.m_InteractGenerate.m_EventEquipment, m_GameLevel.m_GameRandom), m_GameLevel.m_GameRandom)));
 
                                     enum_WeaponRarity rarity = TCommon.RandomPercentage(m_GameLevel.m_InteractGenerate.m_TradeWeapon,m_GameLevel.m_GameRandom);
-                                    GameObjectManager.SpawnInteract<InteractTradeContainer>(enum_Interaction.TradeContainer, objectData.pos + LevelConst.I_TileSize * Vector3.forward, objectData.rot).Play(GameConst.D_EventWeaponTradePrice[rarity].Random(m_GameLevel.m_GameRandom),GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, objectData.pos + LevelConst.I_TileSize * Vector3.forward, objectData.rot).Play(GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew(GameDataManager.m_WeaponRarities[rarity].RandomItem(m_GameLevel.m_GameRandom)))));
+                                    GameObjectManager.SpawnInteract<InteractTradeContainer>(enum_Interaction.TradeContainer, objectData.pos + LevelConst.I_TileSize * Vector3.forward, objectData.rot).Play(chunkIndex, GameConst.D_EventWeaponTradePrice[rarity].Random(m_GameLevel.m_GameRandom),GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, objectData.pos + LevelConst.I_TileSize * Vector3.forward, objectData.rot).Play(GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew(GameDataManager.m_WeaponRarities[rarity].RandomItem(m_GameLevel.m_GameRandom)))));
 
                                     rarity = TCommon.RandomPercentage(m_GameLevel.m_InteractGenerate.m_TradeWeapon, m_GameLevel.m_GameRandom);
-                                    GameObjectManager.SpawnInteract<InteractTradeContainer>(enum_Interaction.TradeContainer, objectData.pos + LevelConst.I_TileSize * Vector3.back, objectData.rot).Play(GameConst.D_EventWeaponTradePrice[rarity].Random(m_GameLevel.m_GameRandom), GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, objectData.pos + LevelConst.I_TileSize * Vector3.forward, objectData.rot).Play(GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew(GameDataManager.m_WeaponRarities[rarity].RandomItem(m_GameLevel.m_GameRandom)))));
+                                    GameObjectManager.SpawnInteract<InteractTradeContainer>(enum_Interaction.TradeContainer, objectData.pos + LevelConst.I_TileSize * Vector3.back, objectData.rot).Play(chunkIndex, GameConst.D_EventWeaponTradePrice[rarity].Random(m_GameLevel.m_GameRandom), GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, objectData.pos + LevelConst.I_TileSize * Vector3.forward, objectData.rot).Play(GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew(GameDataManager.m_WeaponRarities[rarity].RandomItem(m_GameLevel.m_GameRandom)))));
                                     break;
                             }
 
@@ -454,23 +456,20 @@ public class GameManager : GameManagerBase
         });
     }
 
+    void OnChunkQuadrantCheck(List<int> activeChunks) => m_GameChunkData.Traversal((GameChunkManager chunk) => chunk.OnQuadrantCheck(activeChunks));
+
     void OnChunkEnterDetect(int chunkIndex)
     {
         m_GameChunkData[chunkIndex].m_Triggers.Traversal((int index) => { m_ChunkEnterTriggers.RemoveItem(index); });
-        if (m_GameChunkData[chunkIndex].m_GameTriggered)
+        if (m_GameChunkData[chunkIndex].m_ChunkTriggered)
             return;
+
         m_GameChunkData[chunkIndex].OnPlayerTrigger();
-        switch (m_GameChunkData[chunkIndex].m_ChunkType)
-        {
-            case enum_ChunkType.Battle:
-            case enum_ChunkType.Final:
-                OnBattleChunkTrigger(chunkIndex);
-                break;
-        }
     }
+
     #endregion
     #region Game Item Management
-    void SpawnEntityDeadPickups(EntityCharacterBase entity)
+    void OnBattleEnermyKilled(EntityCharacterBase entity)
     {
         if (entity.m_Flag != enum_EntityFlag.Enermy || entity.E_SpawnType == enum_EnermyType.Invalid)
             return;
@@ -504,23 +503,15 @@ public class GameManager : GameManagerBase
     #endregion
     #region Battle Relatives 
     public Dictionary<enum_EnermyType, List<int>> m_EnermyIDs;
-    public bool m_Battling => m_BattleChunkData != null;
     GameChunkBattle m_BattleChunkData = null;
+    public bool m_Battling => m_BattleChunkData != null;
+    bool m_FinalBattling=>m_BattleChunkData.m_ChunkType== enum_ChunkType.Final;
 
-    TimeCounter m_TimerFinalBattle = new TimeCounter();
-    bool m_FinalBattling;
-    int m_FinalEliteCommandIndex;
-    float m_PreviousEliteHealthScale;
-    public List<Vector3> m_FinalBattleGeneratePoints { get; private set; } = new List<Vector3>();
 
     void GenerateBattleRelatives()
     {
-        m_FinalBattling = false;
-
         m_BattleChunkData = null;
-        m_EnermyCommand.ClearPool();
 
-        int enermyCommandIndex = 0;
         GameLevelManager.Instance.m_GameChunks.Traversal((int chunkIndex,LevelChunkGame chunkData) => {
             bool isBattleChunk = chunkData.m_ChunkType == enum_ChunkType.Battle || chunkData.m_ChunkType == enum_ChunkType.Final;
             bool isFinalChunk = chunkData.m_ChunkType == enum_ChunkType.Final;
@@ -528,128 +519,62 @@ public class GameManager : GameManagerBase
             if (!isBattleChunk)
                 return;
 
-            GameChunkBattle chunkBattleData = m_GameChunkData[chunkIndex] as GameChunkBattle;
-
             if (isFinalChunk)
             {
+                GameChunkFinal chunkFinalData = m_GameChunkData[chunkIndex] as GameChunkFinal;
                 ChunkGameObjectData objectData = chunkData.m_ChunkObjects[enum_TileObjectType .REliteEnermySpawn1x1].RandomItem(m_GameLevel.m_GameRandom);
-                GameEnermyCommander m_Command = m_EnermyCommand.AddItem(enermyCommandIndex);
-                m_Command.transform.position = NavigationManager.NavMeshPosition(objectData.pos + TCommon.RandomXZSphere(1f));
-                m_Command.transform.rotation = objectData.rot;
-                m_Command.Play( m_EnermyIDs[enum_EnermyType.Elite].RandomItem(m_GameLevel.m_GameRandom), m_LocalPlayer.transform);
-                chunkBattleData.m_BattleEnermyCommands.Add(enermyCommandIndex);
-                m_FinalEliteCommandIndex = enermyCommandIndex;
-                enermyCommandIndex++;
-
-                chunkData.m_ChunkObjects[enum_TileObjectType.REnermySpawn1x1].Traversal((ChunkGameObjectData data) =>{
-                    m_FinalBattleGeneratePoints.Add(data.pos);
-                });
+                chunkFinalData.SetChunkElite(new GameChunkBattleEnermyHelper( m_EnermyIDs[enum_EnermyType.Elite].RandomItem(m_GameLevel.m_GameRandom), NavigationManager.NavMeshPosition(objectData.pos)));
+                chunkData.m_ChunkObjects[enum_TileObjectType.REnermySpawn1x1].Traversal((ChunkGameObjectData data) =>{ chunkFinalData.AddEnermyGeneratePos(data.pos); });
             }
             else
             {
-                m_GameLevel.m_EnermyGenerate[isFinalChunk].RandomItem(m_GameLevel.m_GameRandom).GetEnermyIDList(m_EnermyIDs,m_GameLevel.m_GameRandom).Traversal((int enermyID) =>
+                GameChunkBattle chunkBattleData = m_GameChunkData[chunkIndex] as GameChunkBattle;
+                m_GameLevel.m_EnermyGenerate[false].RandomItem(m_GameLevel.m_GameRandom).GetEnermyIDList(m_EnermyIDs,m_GameLevel.m_GameRandom).Traversal((int enermyID) =>
                 {
                     ChunkGameObjectData objectData = chunkData.m_ChunkObjects[enum_TileObjectType.REnermySpawn1x1].RandomItem(m_GameLevel.m_GameRandom);
-                    GameEnermyCommander m_Command = m_EnermyCommand.AddItem(enermyCommandIndex);
-                    m_Command.transform.position = NavigationManager.NavMeshPosition(objectData.pos + TCommon.RandomXZSphere(3f));
-                    m_Command.transform.rotation = objectData.rot;
-                    m_Command.Play(enermyID, m_LocalPlayer.transform);
-                    chunkBattleData.m_BattleEnermyCommands.Add(enermyCommandIndex);
-                    enermyCommandIndex++;
+                    chunkBattleData.AddChunkEnermy(new GameChunkBattleEnermyHelper( enermyID , NavigationManager.NavMeshPosition(objectData.pos + TCommon.RandomXZSphere(3f))));
                 });
             }
         });
     }
-
-    void GameBattleTick(float deltaTime)
-    {
-        FinalBattleTick(deltaTime);
-    }
-
-    void OnBattleChunkTrigger(int chunkIndex)
-    {
-        if (m_Battling)
-            return;
-        
-        m_BattleChunkData = m_GameChunkData[chunkIndex] as GameChunkBattle;
-        m_BattleChunkData.m_BattleEnermyCommands.Traversal((int commandIndex) => {
-            m_EnermyCommand.m_ActiveItemDic[commandIndex].DoBattle();
-        });
-
-        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleStart, chunkIndex);
-        if (m_BattleChunkData.m_IsFinal)
-            OnFinalBattleStart();
-    }
-
-    void OnBattleCharatcerKilled(EntityCharacterBase character)
+    
+    void OnBattleEntityKilled(EntityCharacterBase character)
     {
         if (!m_Battling)
             return;
 
-        bool chunkEntityKilled = false;
-        m_EnermyCommand.m_ActiveItemDic.TraversalBreak((GameEnermyCommander command) =>
-        {
-            chunkEntityKilled = command.OnCharacterDead(character);
-            return chunkEntityKilled;
-        });
-
-        if (!chunkEntityKilled)
-            return;
-
-        SpawnEntityDeadPickups(character);
-        bool commandAliveStill=false;
-        m_BattleChunkData.m_BattleEnermyCommands.TraversalBreak((int commandIndex) => {
-            commandAliveStill = m_EnermyCommand.m_ActiveItemDic[commandIndex].m_Playing;
-            return commandAliveStill;
-        });
-
-        if (commandAliveStill)
-            return;
-        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleFinish);
-        if (m_BattleChunkData.m_IsFinal)
-            OnFinalBattleFinish();
-        m_BattleChunkData = null;
-
+        m_BattleChunkData.OnChunkCharacterKill(character);
     }
 
-    void OnFinalBattleStart()
+    void OnBattleStart(GameChunkBattle chunk)
     {
-        m_FinalBattling = true;
-        m_PreviousEliteHealthScale = 1f;
-        m_TimerFinalBattle.SetTimer(GameConst.RI_GameFinalBattleEnermySpawnCheck.Random());
+        if (m_Battling)
+        {
+            Debug.LogError("Can't Trigger Another Battle!");
+            return;
+        }
+        m_BattleChunkData = chunk;
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleStart, m_BattleChunkData.m_ChunkIndex);
+    }
+
+    void OnBattleFinish(GameChunkBattle chunk)
+    {
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleFinish);
+        m_BattleChunkData = null;
+    }
+
+    void OnFinalBattleStart(GameChunkBattle battleChunk)
+    {
+        OnBattleStart(battleChunk);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnFinalBattleStart);
     }
-
-    void OnFinalBattleFinish()
+    void OnFinalBattleFinish(GameChunkBattle battleChunk)
     {
         GetCharacters(enum_EntityFlag.Enermy, true).Traversal((EntityCharacterBase entity) => {
             entity.m_HitCheck.TryHit(new DamageInfo(entity.m_Health.m_CurrentHealth, enum_DamageType.Basic, DamageDeliverInfo.Default(-1)));
         });
-        m_FinalBattling = false;
+        OnBattleFinish(battleChunk);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnFinalBattleFinish);
-    }
-
-    void FinalBattleTick(float deltaTime)
-    {
-        if (!m_FinalBattling)
-            return;
-
-        m_TimerFinalBattle.Tick(deltaTime);
-        if (m_TimerFinalBattle.m_Timing)
-            return;
-        m_TimerFinalBattle.SetTimer(GameConst.RI_GameFinalBattleEnermySpawnCheck.Random());
-
-        float eliteHealthScale = m_EnermyCommand.GetItem(m_FinalEliteCommandIndex).m_EntityHealthScale;
-        if (eliteHealthScale <= 0|| m_PreviousEliteHealthScale - eliteHealthScale < GameConst.F_FinalBattleEnermySpawnEliteHealthScaleOffset)
-            return;
-        m_PreviousEliteHealthScale = eliteHealthScale;
-
-        m_GameLevel.m_EnermyGenerate[true].RandomItem(m_GameLevel.m_GameRandom).GetEnermyIDList(m_EnermyIDs, m_GameLevel.m_GameRandom).Traversal((int enermyID) =>
-        {
-            Vector3 spawnPos = m_FinalBattleGeneratePoints.RandomItem();
-            GameObjectManager.SpawnEntityCharacterAI(enermyID, NavigationManager.NavMeshPosition(spawnPos), m_LocalPlayer.transform.position, enum_EntityFlag.Enermy,m_GameLevel.m_GameDifficulty,m_GameLevel.m_GameStage,true);
-        });
-
     }
     #endregion
 }

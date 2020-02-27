@@ -86,7 +86,7 @@ public class UIC_GameStatus : UIControlBase
         public void UpdateIconStatus()
         {
             m_Locations.ClearGrid();
-            GameManager.Instance.m_GameChunkData.Traversal((GameChunk chunkData) =>
+            GameManager.Instance.m_GameChunkData.Traversal((GameChunkManager chunkData) =>
             {
                 if (!chunkData.GetChunkMapIconShow)
                     return;

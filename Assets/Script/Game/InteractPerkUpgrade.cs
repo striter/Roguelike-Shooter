@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class InteractPerkUpgrade : InteractGameBase {
+public class InteractPerkUpgrade : InteractGameQuadrant
+{
     public override enum_Interaction m_InteractType => enum_Interaction.PerkUpgrade;
     public override bool DnCheckInteractResponse(EntityCharacterPlayer _interactor)=> base.DnCheckInteractResponse(_interactor)&&_interactor.m_CharacterInfo.CanPerkUpgrade();
-    public new InteractPerkUpgrade Play()
+    public InteractPerkUpgrade Play(int chunkIndex)
     {
-        base.Play();
+        base.PlayQuadrant(chunkIndex);
         return this;
     }
     protected override bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactor)
