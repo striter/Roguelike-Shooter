@@ -57,7 +57,7 @@ GameObject:
   - component: {fileID: 23565093218917834}
   - component: {fileID: 95593798492572748}
   m_Layer: 0
-  m_Name: Part
+  m_Name: Obstacle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -103,7 +103,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1247527573030458}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 1, z: 0}
+  m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4452238680446758}
@@ -133,7 +133,7 @@ Transform:
   m_GameObject: {fileID: 1108093329923908}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4452238680446758}
   m_RootOrder: 2
@@ -145,7 +145,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1375698465180766}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 1, z: 0}
+  m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4452238680446758}
@@ -158,7 +158,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1087143860163316}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 12.28}
+  m_LocalPosition: {x: 3.85, y: 0, z: 12.28}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4452238680446758}
@@ -239,14 +239,14 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1375698465180766}
-  m_Mesh: {fileID: 4300000, guid: 155ad819e3ee75849bc87a67ac14dfe3, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 06af7d4ad678c4642a9661556a3986cd, type: 3}
 --- !u!33 &33688034818339454
 MeshFilter:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1247527573030458}
-  m_Mesh: {fileID: 4300000, guid: de95c913690a5c944902dc47d56fb2ad, type: 3}
+  m_Mesh: {fileID: 4300000, guid: f757973038fab2649be8b43c6fbe8651, type: 3}
 --- !u!65 &65239067959347588
 BoxCollider:
   m_ObjectHideFlags: 1

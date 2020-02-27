@@ -28,7 +28,7 @@ public class LevelChunkGame : LevelChunkBase
         this.OnChunkObjectDestroy = OnChunkObjectDestroy;
         m_ChunkMapBounds = new TileBounds(_data.m_GenerateCheckBounds.m_Origin-mapOrigin, _data.m_GenerateCheckBounds.m_Size);
         transform.localPosition = _data.m_Origin.ToPosition();
-        m_TilePool.transform.SetActivate(true);
+        ShowTiles(true);
         InitData(_data.m_Data, _random, (TileAxis axis, ChunkTileData tileData) => {
             if (tileData.m_ObjectType.IsEditorTileObject())
             {
@@ -50,7 +50,7 @@ public class LevelChunkGame : LevelChunkBase
     {
         TBroadCaster<enum_BC_GameStatus>.Remove<List<int>>(enum_BC_GameStatus.OnChunkQuadrantCheck, OnQuadrantChunkCheck);
     }
-    public void OnQuadrantChunkCheck(List<int> showChunkIndex) => m_TilePool.transform.SetActivate(showChunkIndex.Contains(m_chunkIndex));
+    public void OnQuadrantChunkCheck(List<int> showChunkIndex) => ShowTiles(showChunkIndex.Contains(m_chunkIndex));
 
     public void AddChunkConnection(LevelChunkGame chunk) => m_NearbyChunks.Add(chunk);
 
@@ -64,18 +64,22 @@ public class LevelChunkGame : LevelChunkBase
     }
     void OnObjectDestroyed() => OnChunkObjectDestroy(m_chunkIndex);
 
+    void ShowTiles(bool show) => m_TilePool.transform.SetActivate(show);
 
     public List<int> BattleBlockLift(bool lift)
     {
         List<int> chunkIndexes = new List<int>();
-        m_NearbyChunks.Traversal((LevelChunkGame chunk) => { chunkIndexes.Add(chunk.m_chunkIndex); chunk.SetBlocksLift(lift);  });
         chunkIndexes.Add(m_chunkIndex);
         SetBlocksLift(lift);
+        m_NearbyChunks.Traversal((LevelChunkGame chunk) => {
+            chunkIndexes.Add(chunk.m_chunkIndex);
+            chunk.SetBlocksLift(lift);  });
         return chunkIndexes;
     }
 
     void SetBlocksLift(bool lift)
     {
+        ShowTiles(true);
         m_RoadBlockTiles.Traversal((TileGroundBlockLift tile) => {
             tile.SetLift(lift);
         });

@@ -1,21 +1,20 @@
 fileFormatVersion: 2
-guid: 0e826c50ec161dc459a5a4dd95c0c285
+guid: c601b83b05934604f8936705785625c5
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
     100000: //RootNode
     400000: //RootNode
-    2100000: pasted__shamo_zhiwu
+    2100000: pasted__pasted__pasted__lambert16
     2300000: //RootNode
     3300000: //RootNode
     4300000: Model_Frost_Obstacle
-    9500000: //RootNode
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: pasted__shamo_zhiwu
-    second: {fileID: 2100000, guid: 7e7740e98747ec4479132d502496fb38, type: 2}
+      name: pasted__pasted__pasted__lambert16
+    second: {fileID: 2100000, guid: 8e1747f934488d5478a4df32b3c328c1, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
@@ -70,7 +69,7 @@ ModelImporter:
     normalImportMode: 0
     tangentImportMode: 3
     normalCalculationMode: 4
-  importAnimation: 0
+  importAnimation: 1
   copyAvatar: 0
   humanDescription:
     serializedVersion: 2
@@ -89,7 +88,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 0
   humanoidOversampling: 1
   additionalBone: 0
   userData: 

@@ -25,7 +25,6 @@ public class UIGI_MapLocations : UIT_GridItem {
         switch (gameChunk.m_ChunkType)
         {
             case enum_ChunkType.Teleport:
-                m_Animation.SetPlayPosition(true);
                 m_Animation.Play(true);
                 break;
             case enum_ChunkType.Event:

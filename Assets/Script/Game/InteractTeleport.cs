@@ -8,7 +8,8 @@ public class InteractTeleport : InteractGameQuadrant  {
     protected override bool E_InteractOnEnable => false;
     public bool m_Enable { get; private set; }
     Animator m_Animator;
-    int hs_Unlock = Animator.StringToHash("b_unlock");
+    int hs_T_Activate = Animator.StringToHash("t_activate");
+    int hs_T_Unlock = Animator.StringToHash("t_unlock");
     public override void OnPoolItemInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
     {
         base.OnPoolItemInit(identity, OnRecycle);
@@ -16,8 +17,15 @@ public class InteractTeleport : InteractGameQuadrant  {
     }
     public void SetPlay(bool play)
     {
-        m_Animator.SetBool(hs_Unlock, play);
-    } 
+        m_Enable = play;
+        if (m_Enable)
+            m_Animator.SetTrigger(hs_T_Unlock);
+    }
+    private void OnEnable()
+    {
+        if (m_Enable)
+            m_Animator.SetTrigger(hs_T_Activate);
+    }
     public InteractTeleport Play(int chunkIndex,enum_LevelStyle style)
     {
         base.PlayQuadrant(chunkIndex);

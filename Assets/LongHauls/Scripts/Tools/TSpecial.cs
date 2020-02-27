@@ -471,10 +471,12 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
             m_Animation.playAutomatically = false;
             SetPlayPosition(startFromOn);
         }
+        public void SetPlayPosition(bool forward) => m_Animation.clip.SampleAnimation(m_Animation.gameObject, forward ? 0 : m_Animation.clip.length);
 
         public void Play(bool forward)
         {
-            SetPlayPosition(forward);
+            m_Animation[m_Animation.clip.name].speed = forward ? 1 : -1;
+            m_Animation[m_Animation.clip.name].normalizedTime = forward ? 0 : 1;
             m_Animation.Play(m_Animation.clip.name);
         }
 
@@ -483,11 +485,6 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
             m_Animation.Stop();
         }
 
-        public void SetPlayPosition(bool forward)
-        {
-            m_Animation[m_Animation.clip.name].speed = forward ? 1 : -1;
-            m_Animation[m_Animation.clip.name].normalizedTime = forward ? 0 : 1;
-        }
     }
 
     public class ParticleControlBase

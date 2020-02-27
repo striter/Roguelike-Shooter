@@ -19,7 +19,6 @@ public class TileGroundBlockLift : TileGroundBase
     {
         base.OnGenerateItem(_data, random);
         m_BlockCollider.enabled = false;
-        m_Animation.SetPlayPosition(true);
     }
     public void SetLift(bool lift)
     {

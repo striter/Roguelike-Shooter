@@ -1,20 +1,24 @@
 fileFormatVersion: 2
-guid: a14918474a9fb2548874e2a27c0d8afb
+guid: 3b296a23f00d30842ab68116312ff03c
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
     100000: //RootNode
+    100002: Model_Frost_Trap1
     400000: //RootNode
-    2100000: pasted__pasted__pasted__lambert16
+    400002: Model_Frost_Trap1
+    2100000: pasted__pasted__pasted__pasted__pasted__lambert17
     2300000: //RootNode
+    2300002: Model_Frost_Trap1
     3300000: //RootNode
-    4300000: Model_Frost_Obstacle
-    9500000: //RootNode
+    3300002: Model_Frost_Trap1
+    4300000: Model_Frost_Trap
+    4300002: Model_Frost_Trap1
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: pasted__pasted__pasted__lambert16
+      name: pasted__pasted__pasted__pasted__pasted__lambert17
     second: {fileID: 2100000, guid: 8e1747f934488d5478a4df32b3c328c1, type: 2}
   materials:
     importMaterials: 1
@@ -70,7 +74,7 @@ ModelImporter:
     normalImportMode: 0
     tangentImportMode: 3
     normalCalculationMode: 4
-  importAnimation: 0
+  importAnimation: 1
   copyAvatar: 0
   humanDescription:
     serializedVersion: 2
@@ -89,7 +93,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 0
   humanoidOversampling: 1
   additionalBone: 0
   userData: 
