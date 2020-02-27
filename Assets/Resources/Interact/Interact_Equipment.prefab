@@ -259,7 +259,7 @@ Animation:
   m_WrapMode: 0
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
-  m_CullingType: 1
+  m_CullingType: 0
 --- !u!114 &114004340570081130
 MonoBehaviour:
   m_ObjectHideFlags: 1
