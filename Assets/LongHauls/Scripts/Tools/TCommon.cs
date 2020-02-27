@@ -253,6 +253,14 @@ public static class TCommon
             for (int j = 0; j < length1; j++)
                 OnEachItem(array[i, j]);
     }
+    public static void Traversal<T>(this T[,] array, Action<int,int, T> OnEachItem)
+    {
+        int length0 = array.GetLength(0);
+        int length1 = array.GetLength(1);
+        for (int i = 0; i < length0; i++)
+            for (int j = 0; j < length1; j++)
+                OnEachItem(i,j,array[i, j]);
+    }
 
     public static void TraversalRandomBreak<T>(this List<T> list, Func<int, bool> OnRandomItemStop = null, System.Random seed = null) => TraversalEnumerableIndex(list.RandomIndex(seed), list.Count,  OnRandomItemStop);
     public static void TraversalRandomBreak<T>(this T[] array, Func<int, bool> OnRandomItemStop = null, System.Random seed = null) => TraversalEnumerableIndex(array.RandomIndex(seed), array.Length,  OnRandomItemStop);

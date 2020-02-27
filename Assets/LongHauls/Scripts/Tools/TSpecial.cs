@@ -69,7 +69,7 @@ namespace TTiles
             for (int i = 0; i < sourceAxies.Length; i++)
                 if (targetBounds.Contains(sourceAxies[i]))
                     return true;
-            TileAxis[] targetAxies = new TileAxis[] {  targetBounds.m_Origin + new TileAxis(targetBounds.m_Size.X, 0), targetBounds.m_Origin + new TileAxis( 0, targetBounds.m_Size.Y) };
+            TileAxis[] targetAxies = new TileAxis[] {  targetBounds.m_Origin, targetBounds.m_End };
             for (int i = 0; i < targetAxies.Length; i++)
                 if (Contains(targetAxies[i]))
                     return true;

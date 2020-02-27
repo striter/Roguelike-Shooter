@@ -285,6 +285,7 @@ namespace LevelSetting
     {
         public int m_ChunkIndex { get; private set; }
         public TileAxis m_Origin { get; private set; }
+        public TileBounds m_MapBounds { get; private set; }
         public TileBounds m_GenerateCheckBounds { get; private set; } 
         public LevelChunkData m_Data { get; private set; }
         public enum_ChunkEventType m_EventType { get; private set; }
@@ -295,6 +296,7 @@ namespace LevelSetting
              m_Origin = _offset;
             m_Data = _data;
             m_EventType = eventType;
+            m_MapBounds = new TileBounds(m_Origin,m_Data.m_Size);
             m_GenerateCheckBounds = new TileBounds(m_Origin+TileAxis.One, m_Data.m_Size-TileAxis.One*2);
             m_ConnectPoint = new Dictionary<int, bool>();
             for (int i = 0; i < _data.Connections.Length; i++)

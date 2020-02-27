@@ -665,7 +665,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   M_TESTSEED: 17:08:38
-  B_PhysicsDebugGizmos: 1
+  B_PhysicsDebugGizmos: 0
 --- !u!1 &1147982034
 GameObject:
   m_ObjectHideFlags: 0
@@ -786,6 +786,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_LevelTest: 0
   m_TestEventType: 4
+  m_DrawQuadrant: 1
 --- !u!4 &1633132966
 Transform:
   m_ObjectHideFlags: 0
