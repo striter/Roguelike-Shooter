@@ -27,6 +27,8 @@ namespace LevelSetting
         #endregion
         public const int I_TileSize = 2;
         public const int I_QuadranteTileSize = 15;
+
+        public static readonly Vector3 V3_TileUnitCenterOffset = new TileAxis(1, 1).ToPosition() / 2;
     }
 
     public enum enum_ChunkType {

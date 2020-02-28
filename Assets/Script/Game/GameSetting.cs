@@ -42,8 +42,23 @@ namespace GameSetting
         public const float F_EliteBuffTimerDurationWhenFullHealth=15f; //触发tick值
         public const float F_EliteBuffTimerTickRateMultiplyHealthLoss = 2f; //每秒加几tick=(1+血量损失比例* X)
 
-        public static readonly Dictionary<enum_CampFarmItemStatus, int> DP_FarmGeneratePercentage = new Dictionary<enum_CampFarmItemStatus, int>() { { enum_CampFarmItemStatus.Progress1, 60 }, { enum_CampFarmItemStatus.Progress2, 30 }, { enum_CampFarmItemStatus.Progress3, 6 }, { enum_CampFarmItemStatus.Progress4, 3 }, { enum_CampFarmItemStatus.Progress5, 1 } };   //Farm生成等级百分比
-        public static readonly Dictionary<enum_CampFarmItemStatus, float> GetFarmCreditPerSecond = new Dictionary<enum_CampFarmItemStatus, float> { { enum_CampFarmItemStatus.Progress1, .1f / 60f }, { enum_CampFarmItemStatus.Progress2, .2f / 60f }, { enum_CampFarmItemStatus.Progress3, .3f / 60f }, { enum_CampFarmItemStatus.Progress4, .5f / 60f }, { enum_CampFarmItemStatus.Progress5, 1f / 60f } };      //Farm 等级,每秒Credit
+        public const int I_DangerzoneDamage = 20;
+        public const float F_DangerzoneResetDuration = 3f;
+
+        public const float F_PickupMaxSpeed = 100f;
+        public const float F_PickupAcceleration = 50f; //拾取物的飞行加速速度
+        public const int I_HealthPickupAmount = 25;
+        public const int I_ArmorPickupAmount = 25;
+        public const int I_HealthPackAmount = 50;
+
+        public static readonly RangeInt IR_EventTradeBuffPrice = new RangeInt(20, 5);
+        public static readonly Dictionary<enum_ChunkEventType, int> D_ChunkEventPercentage = new Dictionary<enum_ChunkEventType, int>() { { enum_ChunkEventType.RewardChest, 25 },{ enum_ChunkEventType.WeaponReforge, 25 }, { enum_ChunkEventType.PerkAcquire, 25 }, { enum_ChunkEventType.PerkUpgrade, 25 } };
+        public static readonly RangeInt IR_EventMedicPrice = new RangeInt(10, 5);
+        public const int I_EventEquipmentTradePrice = 10;
+        public const int I_EventPerkAcquireTryCount = 3;
+        public static readonly Dictionary<enum_WeaponRarity, RangeInt> D_EventWeaponTradePrice = new Dictionary<enum_WeaponRarity, RangeInt>() { { enum_WeaponRarity.Ordinary, new RangeInt(5, 5) }, { enum_WeaponRarity.Advanced, new RangeInt(10, 5) }, { enum_WeaponRarity.Rare, new RangeInt(20, 5) }, { enum_WeaponRarity.Legend, new RangeInt(30, 5) } };
+        public static readonly Dictionary<enum_WeaponRarity, int> D_EventWeaponReforgeRate = new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 25 }, { enum_WeaponRarity.Advanced, 25 }, { enum_WeaponRarity.Rare, 25 }, { enum_WeaponRarity.Legend, 25 } };
+
 
         public static class AI
         {
@@ -63,26 +78,9 @@ namespace GameSetting
             public static readonly RangeFloat RF_AIBattleIdleDuration = new RangeFloat(1f, 2f);
         }
 
-        public const int I_EnermySpawnDelay = 2;        //Enermy Spawn Delay Time 
-        public const float F_EnermySpawnOffsetEach = .5f;       //Enermy Spawn Offset Each
+        public static readonly Dictionary<enum_CampFarmItemStatus, int> DP_FarmGeneratePercentage = new Dictionary<enum_CampFarmItemStatus, int>() { { enum_CampFarmItemStatus.Progress1, 60 }, { enum_CampFarmItemStatus.Progress2, 30 }, { enum_CampFarmItemStatus.Progress3, 6 }, { enum_CampFarmItemStatus.Progress4, 3 }, { enum_CampFarmItemStatus.Progress5, 1 } };   //Farm生成等级百分比
+        public static readonly Dictionary<enum_CampFarmItemStatus, float> GetFarmCreditPerSecond = new Dictionary<enum_CampFarmItemStatus, float> { { enum_CampFarmItemStatus.Progress1, .1f / 60f }, { enum_CampFarmItemStatus.Progress2, .2f / 60f }, { enum_CampFarmItemStatus.Progress3, .3f / 60f }, { enum_CampFarmItemStatus.Progress4, .5f / 60f }, { enum_CampFarmItemStatus.Progress5, 1f / 60f } };      //Farm 等级,每秒Credit
 
-        public const float F_PickupMaxSpeed = 100f;
-        public const float F_PickupAcceleration = 50f; //拾取物的飞行加速速度
-        public const int I_HealthPickupAmount = 25;
-        public const int I_ArmorPickupAmount = 25;
-        public const int I_HealthPackAmount = 50;
-
-        public static readonly RangeInt IR_EventTradeBuffPrice = new RangeInt(20, 5);
-        public static readonly Dictionary<enum_ChunkEventType, int> D_ChunkEventPercentage = new Dictionary<enum_ChunkEventType, int>() { { enum_ChunkEventType.RewardChest, 25 },{ enum_ChunkEventType.WeaponReforge, 25 }, { enum_ChunkEventType.PerkAcquire, 25 }, { enum_ChunkEventType.PerkUpgrade, 25 } };
-        public static readonly RangeInt IR_EventMedicPrice = new RangeInt(10, 5);
-        public const int I_EventEquipmentTradePrice = 10;
-        public const int I_EventPerkAcquireTryCount = 3;
-        public static readonly Dictionary<enum_WeaponRarity, RangeInt> D_EventWeaponTradePrice = new Dictionary<enum_WeaponRarity, RangeInt>() { { enum_WeaponRarity.Ordinary, new RangeInt(5, 5) }, { enum_WeaponRarity.Advanced, new RangeInt(10, 5) }, { enum_WeaponRarity.Rare, new RangeInt(20, 5) }, { enum_WeaponRarity.Legend, new RangeInt(30, 5) } };
-        public static readonly Dictionary<enum_WeaponRarity, int> D_EventWeaponReforgeRate = new Dictionary<enum_WeaponRarity, int>() { { enum_WeaponRarity.Ordinary, 25 }, { enum_WeaponRarity.Advanced, 25 }, { enum_WeaponRarity.Rare, 25 }, { enum_WeaponRarity.Legend, 25 } };
-
-
-        public const int I_EquipmentSlotTradePricePerPlayerSlots = 20;
-        
         public const int I_CampFarmPlot4UnlockDifficulty = 3;
         public const int I_CampFarmPlot5UnlockDifficulty = 10;
         public const int I_CampFarmPlot6UnlockTechPoints = 3000;
@@ -1600,7 +1598,7 @@ namespace GameSetting
         public Action<EntityBase> m_OnHitAction = null;
 
         public void AddExtraBuff(int commonBuffIndex) => m_BaseBuffApply.Add(GameDataManager.GetPresetBuff(commonBuffIndex));
-        public static DamageDeliverInfo Default(int sourceID) => new DamageDeliverInfo() { I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), I_SourceID = sourceID, m_DamageMultiply = 0f, m_DamageAdditive = 0f };
+        public static DamageDeliverInfo Default(int sourceID=-1) => new DamageDeliverInfo() { I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), I_SourceID = sourceID, m_DamageMultiply = 0f, m_DamageAdditive = 0f };
         public static DamageDeliverInfo BuffInfo(int sourceID, SBuff buffApply) => new DamageDeliverInfo() { I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), I_SourceID = sourceID, m_DamageMultiply = 0f, m_DamageAdditive = 0f, m_BaseBuffApply = new List<SBuff>() { buffApply } };
         public static DamageDeliverInfo BuffInfo(int sourceID, int commonBuffIndex) => new DamageDeliverInfo() { I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), I_SourceID = sourceID, m_DamageMultiply = 0f, m_DamageAdditive = 0f, m_BaseBuffApply = new List<SBuff>() { GameDataManager.GetPresetBuff(commonBuffIndex) } };
         public static DamageDeliverInfo EquipmentInfo(int sourceID, float _damageAdditive, enum_CharacterEffect _effect, float _duration) => new DamageDeliverInfo() { I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), I_SourceID = sourceID, m_DamageAdditive = _damageAdditive, m_DamageEffect = _effect, m_EffectDuration = _duration };
