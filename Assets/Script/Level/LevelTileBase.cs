@@ -11,7 +11,6 @@ public class LevelTileBase : MonoBehaviour, ITileAxis
     public ChunkTileData m_Data { get; protected set; }
     protected Transform tf_Models { get; private set; }
     public TileGroundBase m_Ground { get; protected set; }
-    public TilePillarBase m_Pillar { get; protected set; }
     public TileObjectBase m_Object { get; protected set; }
     public virtual void Init(TileAxis axis,ChunkTileData data,System.Random random)
     {
@@ -21,18 +20,11 @@ public class LevelTileBase : MonoBehaviour, ITileAxis
         transform.localRotation = Quaternion.identity;
         tf_Models = transform.Find("Models");
 
-        if (m_Data.m_PillarType != enum_TilePillarType.Invalid)
-        {
-            m_Pillar = LevelObjectManager.GetPillarItem(enum_TilePillarType.Default, tf_Models);
-            m_Pillar.OnGenerateItem(m_Data, random);
-            m_Pillar.transform.localPosition = Vector3.zero;
-        }
-
         if (WillGenerateObject(m_Data.m_ObjectType))
         {
             m_Object = LevelObjectManager.GetObjectItem(m_Data.m_ObjectType, tf_Models);
             m_Object.OnGenerateItem(m_Data, random);
-            m_Object.transform.localPosition = Vector3.up * LevelConst.I_TileSize;
+            m_Object.transform.localPosition = Vector3.zero;
         }
 
         if (m_Data.m_GroundType != enum_TileGroundType.Invalid)

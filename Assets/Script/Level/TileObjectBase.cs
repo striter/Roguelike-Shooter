@@ -10,7 +10,6 @@ public class TileObjectBase : TileItemBase,IObjectpool<enum_TileObjectType>,ICor
     public override enum_TileSubType m_Type => enum_TileSubType.Object;
     Action<enum_TileObjectType, MonoBehaviour> OnRecycle;
     public override TileAxis GetDirectionedSize(enum_TileDirection direction) => m_ObjectType.GetSizeAxis(direction);
-    protected override int GetTexSelection(System.Random random) => m_ObjectType.GetTexSelection(random);
 
     HitCheckStatic[] m_hitChecks;
     Renderer[] m_Renderers;

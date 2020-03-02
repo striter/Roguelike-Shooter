@@ -13,11 +13,6 @@ public class LevelTileEditor : LevelTileBase {
 
     public void Clear()
     {
-        if (m_Pillar)
-        {
-            m_Pillar.DoRecycle();
-            m_Pillar = null;
-        }
         if (m_Object)
         {
             m_Object.DoRecycle();
@@ -35,6 +30,9 @@ public class LevelTileEditor : LevelTileBase {
     {
         m_EditorModel = transform.Find("EditorModel");
         m_Collider = GetComponent<BoxCollider>();
+        Clear();
+        base.Init(axis, data, random);
+
         bool showGround = false;
         bool showPillar = false;
         bool showObject = false;
@@ -59,18 +57,10 @@ public class LevelTileEditor : LevelTileBase {
                     showObject = true;
                     if (m_Object) tileSize = m_Object.GetDirectionedSize(m_Data.m_Direction);
                     break;
-                case enum_TileSubType.Pillar:
-                    showPillar = true;
-                    if (m_Pillar) tileSize = m_Pillar.GetDirectionedSize(m_Data.m_Direction);
-                    break;
             }
         }
-        Clear();
-
-        base.Init(axis, data, random);
         if (m_Ground) m_Ground.SetActivate(showGround);
         if (m_Object) m_Object.SetActivate(showObject);
-        if (m_Pillar) m_Pillar.SetActivate(showPillar);
 
         m_Collider.center = TileTools.GetLocalPosBySizeAxis(tileSize);
         Vector3 colliderSize = TileTools.GetUnitScaleBySizeAxis(tileSize, LevelConst.I_TileSize);

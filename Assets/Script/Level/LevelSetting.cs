@@ -37,43 +37,28 @@ namespace LevelSetting
         Event,
         Battle,
         Final,
-        Connect,
-        Teleport,
     }
     
     public enum enum_TileSubType
     {
         Invalid = -1,
-        Object,
-        Ground,
-        Pillar
+        Object=1,
+        Ground=2,
     }
 
     public enum enum_TileGroundType
     {
         Invalid=-1,
-        Main=1,
-        Sub1=2,
-        Sub2=3,
-        Road1 = 4,
-        Road2 = 5,
-        Road3 = 6,
-        Road4 = 7,
-        Bridge =8,
-        Dangerzone = 9,
-        Block,
+        Main,
     }
 
     public enum enum_TileObjectType
     {
         Invalid=-1,
-        Main=1,
-        Sub1=2,
-        Sub2=3,
-        SubUnbreakable = 4,
-        SubBreakable = 5,
-        
-        Object1x1A=11,
+        Dangerzone = 1,
+        Block=2,
+
+        Object1x1A =11,
         Object1x1B=12,
         Object1x1C=13,
         Object1x1D=14,
@@ -87,22 +72,12 @@ namespace LevelSetting
         Object3x3B=22,
         
         RestrictStart=50,
-        RPlayerSpawn1x1=51,
-        RConnection1x1 =52,
-        RStagePortal2x2=53,
-        RChunkPortal2x2=54,
+        REntrance2x2=51,
+        RExport4x1=53,
         REventArea3x3 = 55,
         REnermySpawn1x1=56,
-        REliteEnermySpawn1x1=57,
         RestrictEnd,
     }
-
-    public enum enum_TilePillarType
-    {
-        Invalid=-1,
-        Default=1,
-    }
-    
     public enum enum_ChunkEventType
     {
         Invalid=-1,
@@ -141,22 +116,9 @@ namespace LevelSetting
             switch(type)
             {
                 case enum_TileGroundType.Main:
-                case enum_TileGroundType.Sub1:
-                case enum_TileGroundType.Sub2:
                     return true;
             }
             return false;
-        }
-        public static bool IsConnectChunk(this enum_ChunkType type)
-        {
-            switch(type)
-            {
-                default:
-                    return false;
-                case enum_ChunkType.Connect:
-                case enum_ChunkType.Teleport:
-                    return true;
-            }
         }
 
         public static bool IsEditorTileObject(this enum_TileObjectType type) => type >= enum_TileObjectType.RestrictStart && type <= enum_TileObjectType.RestrictEnd;
@@ -168,8 +130,7 @@ namespace LevelSetting
             {
                 case enum_TileObjectType.Object2x2A:
                 case enum_TileObjectType.Object2x2B:
-                case enum_TileObjectType.RStagePortal2x2:
-                case enum_TileObjectType.RChunkPortal2x2:
+                case enum_TileObjectType.RExport4x1:
                     size = TileAxis.One * 2;
                     break;
                 case enum_TileObjectType.Object2x1B:
@@ -189,72 +150,31 @@ namespace LevelSetting
             }
             return TileTools.GetDirectionedSize(size, direction);
         }
-
-        public static int GetTexSelection(this enum_TileObjectType type,System.Random random)
-        {
-            int texSelection = -1;
-            if (type == enum_TileObjectType.Main)
-                texSelection = random.Next(0, 4);
-            else if (type == enum_TileObjectType.Sub1)
-                texSelection = random.Next(0, 2);
-            return texSelection;
-        }
-        public static int GetTexSelection(this enum_TileGroundType type,System.Random random)
-        {
-            int texSelection = -1;
-            switch (type)
-            {
-                case enum_TileGroundType.Main:
-                    texSelection = random.Next(0, 4);
-                    break;
-                case enum_TileGroundType.Sub1:
-                    texSelection = random.Next(0, 2);
-                    break;
-                case enum_TileGroundType.Road1:
-                    texSelection = 0;
-                    break;
-                case enum_TileGroundType.Road2:
-                    texSelection = 1;
-                    break;
-                case enum_TileGroundType.Road3:
-                    texSelection = 2;
-                    break;
-                case enum_TileGroundType.Road4:
-                    texSelection = 3;
-                    break;
-            }
-            return texSelection;
-        }
-
+        
         public static Dictionary<enum_TileObjectType,int> GetChunkRestriction(enum_ChunkType type)
         {
             Dictionary<enum_TileObjectType, int> restrictionDic = new Dictionary<enum_TileObjectType, int>();
             switch(type)
             {
                 case enum_ChunkType.Start:
-                    restrictionDic.Add(enum_TileObjectType.RConnection1x1, 1);
-                    restrictionDic.Add(enum_TileObjectType.RPlayerSpawn1x1, 1);
+                    restrictionDic.Add(enum_TileObjectType.REntrance2x2, 1);
+                    restrictionDic.Add(enum_TileObjectType.RExport4x1, 1);
                     break;
                 case enum_ChunkType.Event:
+                    restrictionDic.Add(enum_TileObjectType.REntrance2x2, 1);
+                    restrictionDic.Add(enum_TileObjectType.RExport4x1, 1);
                     restrictionDic.Add(enum_TileObjectType.REventArea3x3, 1);
-                    restrictionDic.Add(enum_TileObjectType.RConnection1x1, -1);
                     break;
                 case enum_ChunkType.Battle:
-                    restrictionDic.Add(enum_TileObjectType.RConnection1x1, -1);
+                    restrictionDic.Add(enum_TileObjectType.REntrance2x2, 1);
+                    restrictionDic.Add(enum_TileObjectType.RExport4x1, 1);
                     restrictionDic.Add( enum_TileObjectType.REnermySpawn1x1,-1);
                     break;
                 case enum_ChunkType.Final:
-                    restrictionDic.Add(enum_TileObjectType.RConnection1x1, 1);
-                    restrictionDic.Add(enum_TileObjectType.RStagePortal2x2, 1);
-                    restrictionDic.Add(enum_TileObjectType.REliteEnermySpawn1x1,1);
+                    restrictionDic.Add(enum_TileObjectType.REntrance2x2, 1);
+                    restrictionDic.Add(enum_TileObjectType.RExport4x1, 1);
+                    restrictionDic.Add(enum_TileObjectType.RExport4x1, 1);
                     restrictionDic.Add(enum_TileObjectType.REnermySpawn1x1, -1);
-                    break;
-                case enum_ChunkType.Connect:
-                    restrictionDic.Add(enum_TileObjectType.RConnection1x1, 2);
-                    break;
-                case enum_ChunkType.Teleport:
-                    restrictionDic.Add(enum_TileObjectType.RConnection1x1, 2);
-                    restrictionDic.Add(enum_TileObjectType.RChunkPortal2x2, 1);
                     break;
             }
             return restrictionDic;
@@ -285,47 +205,18 @@ namespace LevelSetting
 
     public class ChunkGenerateData
     {
-        public int m_ChunkIndex { get; private set; }
         public TileAxis m_Origin { get; private set; }
         public TileBounds m_MapBounds { get; private set; }
         public TileBounds m_GenerateCheckBounds { get; private set; } 
         public LevelChunkData m_Data { get; private set; }
         public enum_ChunkEventType m_EventType { get; private set; }
-        public Dictionary<int, bool> m_ConnectPoint { get; private set; }
-        public ChunkGenerateData(int chunkIndex,TileAxis _offset, LevelChunkData _data, enum_ChunkEventType eventType)
+        public ChunkGenerateData( LevelChunkData _data, enum_ChunkEventType eventType)
         {
-            m_ChunkIndex = chunkIndex;
-             m_Origin = _offset;
             m_Data = _data;
             m_EventType = eventType;
             m_MapBounds = new TileBounds(m_Origin,m_Data.m_Size);
             m_GenerateCheckBounds = new TileBounds(m_Origin+TileAxis.One, m_Data.m_Size-TileAxis.One*2);
-            m_ConnectPoint = new Dictionary<int, bool>();
-            for (int i = 0; i < _data.Connections.Length; i++)
-                m_ConnectPoint.Add(i, false);
         }
-
-        public int m_PreChunkIndex { get; private set; }
-        public int m_ChunkConnectPoint { get; private set; }
-        public int m_PreChunkConnectPoint { get; private set; }
-        public void SetPreConnectData(int connnectChunkIndex, int previousPointIndex, int currentPointIndex)
-        {
-            m_PreChunkIndex = connnectChunkIndex;
-            m_PreChunkConnectPoint = previousPointIndex;
-            m_ChunkConnectPoint = currentPointIndex;
-        }
-        public bool HaveEmptyConnection() => m_ConnectPoint.Values.Any(p => !p);
-        public void OnConnectionSet(int connectionIndex) => m_ConnectPoint[connectionIndex] = true;
     }
-
-    public class LevelQuadrant
-    {
-        public TileBounds m_QuadrantMapBounds { get; private set; }
-        public List<int> m_QuadrantRelativeChunkIndex { get; private set; } = new List<int>();
-        public LevelQuadrant(TileBounds quadrantBound)
-        {
-            m_QuadrantMapBounds = quadrantBound;
-        }
-        public void AddRelativeChunkIndex(int index) => m_QuadrantRelativeChunkIndex.Add(index);
-    }
+    
 }

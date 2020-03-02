@@ -8,18 +8,8 @@ using System;
 public class LevelTileEditorData : LevelTileEditor {
 
     public override bool isDataTile => true;
-    public bool m_ContainsInfo => m_Data.m_GroundType != enum_TileGroundType.Invalid || m_Data.m_ObjectType != enum_TileObjectType.Invalid || m_Data.m_PillarType != enum_TilePillarType.Invalid;
-
-
-    public void SetData(enum_TilePillarType type,System.Random random)
-    {
-        if (m_Data.m_PillarType == type )
-            return;
-        
-        m_Data = m_Data.ChangePillarType(type);
-        Init(m_Axis, m_Data,random);
-    }
-
+    public bool m_ContainsInfo => m_Data.m_GroundType != enum_TileGroundType.Invalid || m_Data.m_ObjectType != enum_TileObjectType.Invalid ;
+    
     public void SetData(enum_TileObjectType type,enum_TileDirection direction, System.Random random)
     {
         if (m_Data.m_ObjectType == type && m_Data.m_Direction == direction)
@@ -55,9 +45,6 @@ public class LevelTileEditorData : LevelTileEditor {
                     break;
                 case enum_TileSubType.Object:
                     showEditorModel = false;
-                    break;
-                case enum_TileSubType.Pillar:
-                    showEditorModel = m_Ground && !m_Pillar;
                     break;
             }
         }

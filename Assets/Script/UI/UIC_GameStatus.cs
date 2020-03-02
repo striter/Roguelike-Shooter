@@ -33,71 +33,7 @@ public class UIC_GameStatus : UIControlBase
     UIT_TextExtend m_HealthAmount;
 
     ValueLerpSeconds m_HealthLerp,  m_ArmorLerp;
-
-    Transform tf_Minimap;
-    UIC_Minimap m_GameMinimap;
-
-    class UIC_Minimap : UIC_MapBase
-    {
-        UIT_GridControllerMono<UIGI_MapEntityLocation> m_Enermys;
-        UIT_GridControllerMono<Image> m_Locations;
-        public UIC_Minimap(Transform transform) : base(transform, LevelConst.I_UIMinimapSize)
-        {
-            m_Enermys = new UIT_GridControllerGridItem<UIGI_MapEntityLocation>(m_Map_Origin_Base.transform.Find("EnermyGrid"));
-            m_Locations = new UIT_GridControllerMono<Image>(m_Map_Origin_Base.transform.Find("LocationGrid"));
-            TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
-            TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
-            TBroadCaster<enum_BC_UIStatus>.Add(enum_BC_UIStatus.UI_ChunkTeleportUnlock, UpdateIconStatus);
-        }
-        public void OnDestroy()
-        {
-            TBroadCaster<enum_BC_UIStatus>.Remove(enum_BC_UIStatus.UI_ChunkTeleportUnlock, UpdateIconStatus);
-            TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityRecycle);
-            TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
-        }
-        public override void DoMapInit()
-        {
-            base.DoMapInit();
-            UpdateIconStatus();
-        }
-        void OnEntityActivate(EntityBase entity)
-        {
-            if (entity.m_Flag != enum_EntityFlag.Enermy || entity.m_ControllType != enum_EntityController.AI)
-                return;
-
-            m_Enermys.AddItem(entity.m_EntityID).Play(entity);
-        }
-
-        void OnEntityRecycle(EntityBase entity)
-        {
-            if (entity.m_Flag != enum_EntityFlag.Enermy || entity.m_ControllType != enum_EntityController.AI)
-                return;
-
-            m_Enermys.RemoveItem(entity.m_EntityID);
-        }
-
-        public void MinimapUpdate(EntityCharacterPlayer player)
-        {
-            UpdateMap(GameLevelManager.Instance.GetMapAngle(CameraController.CameraRotation.eulerAngles.y));
-            m_Map_Origin_Base.rectTransform.anchoredPosition = GameLevelManager.Instance.GetOffsetPosition(player.transform.position) * -m_MapScale;
-            m_Enermys.m_Pool.m_ActiveItemDic.Traversal((int identity, UIGI_MapEntityLocation item) => { item.Tick(); });
-            m_Locations.m_Pool.m_ActiveItemDic.Traversal((int identity, Image image) => { image.transform.rotation = Quaternion.identity; });
-        }
-        public void UpdateIconStatus()
-        {
-            m_Locations.ClearGrid();
-            GameManager.Instance.m_GameChunkData.Traversal((GameChunkManager chunkData) =>
-            {
-                if (!chunkData.GetChunkMapIconShow)
-                    return;
-
-                Image image = m_Locations.AddItem(m_Locations.I_Count);
-                image.sprite = GameUIManager.Instance.m_InGameSprites[chunkData.GetChunkMapLocationSprite];
-                image.rectTransform.anchoredPosition = GameLevelManager.Instance.GetOffsetPosition(chunkData.GetChunkMapLocationPosition);
-            });
-        }
-
-    }
+    
 
     TSpecialClasses.ValueChecker<bool> m_DyingCheck;
     protected override void Init()
@@ -140,16 +76,11 @@ public class UIC_GameStatus : UIControlBase
             rtf_ArmorFillHandle.ReAnchorReposX(value);
         });
 
-        tf_Minimap = tf_Container.Find("Minimap");
-        tf_Minimap.GetComponent<Button>().onClick.AddListener(()=> { if (!GameManager.Instance.m_Battling) GameUIManager.Instance.ShowPage<UI_Map>(true);  });
-        m_GameMinimap = new UIC_Minimap(tf_Minimap.Find("Map"));
-
         m_DyingCheck = new ValueChecker<bool>(true);
 
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityPlayerHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerPerkStatus, OnEquipmentStatus);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnGameBegin, m_GameMinimap.DoMapInit);
     }
 
     protected override void OnDestroy()
@@ -157,17 +88,13 @@ public class UIC_GameStatus : UIControlBase
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityPlayerHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerPerkStatus, OnEquipmentStatus);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnGameBegin, m_GameMinimap.DoMapInit);
-        m_GameMinimap.OnDestroy();
     }
     
     private void Update()
     {
         if (!m_Player)
             return;
-
-        m_GameMinimap.MinimapUpdate(m_Player);
-
+        
         rtf_AmmoData.SetWorldViewPortAnchor(m_Player.tf_UIStatus.position, CameraController.Instance.m_Camera, Time.deltaTime * 10f);
 
         m_HealthLerp.TickDelta(Time.unscaledDeltaTime);

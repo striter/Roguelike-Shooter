@@ -15,7 +15,6 @@ public class LevelChunkData : ScriptableObject {
     public enum_ChunkType Type => m_Type;
     public int Width => m_Width;
     public int Height => m_Height;
-    public ChunkConnectionData[] Connections => m_ConnectionIndex;
     public TileAxis m_Size => new TileAxis(Width, Height);
     public ChunkTileData[] GetData()
     {
@@ -47,22 +46,13 @@ public class LevelChunkData : ScriptableObject {
         m_Width = chunk.m_Width;
         m_Height = chunk.m_Height;
         m_Type = chunk.m_ChunkType;
-        List<ChunkConnectionData> m_Connections = new List<ChunkConnectionData>();
          m_TileData = new ChunkTileData[m_Width*m_Height];
         for (int i = 0; i < m_Width; i++)
             for (int j = 0; j < m_Height; j++)
             {
                 int index = TileTools.Get1DAxisIndex(new TileAxis( i, j), m_Width);
-                if (chunk.m_TilesData[i, j].m_Data.m_ObjectType == enum_TileObjectType.RConnection1x1)
-                {
-                    ChunkConnectionData connectionData = new ChunkConnectionData(new TileAxis(i, j), chunk.m_TilesData[i, j].m_Data.m_Direction, m_Width, m_Height);
-                    m_Connections.Add(connectionData);
-                    m_TileData[index] = chunk.m_TilesData[i, j].m_Data.ChangeDirection(connectionData.m_Direction);
-                    continue;
-                }
                 m_TileData[index] = chunk.m_TilesData[i, j].m_Data;
             }
-        m_ConnectionIndex = m_Connections.ToArray();
     }
 
     public Texture2D CalculateEditorChunkTexture()
@@ -104,24 +94,23 @@ public class LevelChunkData : ScriptableObject {
                 Color tileColor = Color.clear;
                 switch (tileData.m_ObjectType)
                 {
-                    case enum_TileObjectType.RConnection1x1:
+                    case enum_TileObjectType.REntrance2x2:
                         tileColor = Color.green;
                         break;
-                    case enum_TileObjectType.RChunkPortal2x2:
-                    case enum_TileObjectType.RStagePortal2x2:
+                    case enum_TileObjectType.RExport4x1:
                         tileColor = Color.blue;
-                        break;
-                    case enum_TileObjectType.RPlayerSpawn1x1:
-                        tileColor = Color.grey;
                         break;
                     case enum_TileObjectType.REventArea3x3:
                         tileColor = Color.yellow;
                         break;
-                    case enum_TileObjectType.REliteEnermySpawn1x1:
                     case enum_TileObjectType.REnermySpawn1x1:
                         tileColor = Color.red;
                         break;
-                }
+                        case enum_TileObjectType.Block:
+                    case enum_TileObjectType.Dangerzone:
+                            tileColor = Color.grey;
+                            break;
+                    }
                 axies.Traversal((TileAxis objectAxis) => { colors[TileTools.Get1DAxisIndex(objectAxis, m_Width)] = tileColor; });
             }
         return colors;
@@ -132,7 +121,6 @@ public class LevelChunkData : ScriptableObject {
 [System.Serializable]
 public struct ChunkTileData
 {
-    public enum_TilePillarType m_PillarType;
     public enum_TileGroundType m_GroundType;
     public enum_TileObjectType m_ObjectType;
     public enum_TileDirection m_Direction;
@@ -140,11 +128,6 @@ public struct ChunkTileData
     public ChunkTileData ChangeGroundType(enum_TileGroundType groundType)
     {
         m_GroundType = groundType;
-        return this;
-    }
-    public ChunkTileData ChangePillarType(enum_TilePillarType pillarType)
-    {
-        m_PillarType = pillarType;
         return this;
     }
     public ChunkTileData ChangeObjectType(enum_TileObjectType objectType)
@@ -157,10 +140,10 @@ public struct ChunkTileData
         m_Direction = direction;
         return this;
     }
-    public static ChunkTileData Default() => new ChunkTileData() { m_PillarType =  enum_TilePillarType.Invalid, m_GroundType =  enum_TileGroundType.Invalid, m_ObjectType =  enum_TileObjectType.Invalid,m_Direction= enum_TileDirection.Top };
-    public static ChunkTileData Create(enum_TilePillarType pillarType,enum_TileGroundType groundType , enum_TileObjectType objectType, enum_TileDirection direction) => new ChunkTileData() { m_PillarType = pillarType, m_GroundType = groundType, m_ObjectType = objectType, m_Direction = direction };
+    public static ChunkTileData Default() => new ChunkTileData() { m_GroundType =  enum_TileGroundType.Main, m_ObjectType =  enum_TileObjectType.Invalid,m_Direction= enum_TileDirection.Top };
+    public static ChunkTileData Create(enum_TileGroundType groundType , enum_TileObjectType objectType, enum_TileDirection direction) => new ChunkTileData() { m_GroundType = groundType, m_ObjectType = objectType, m_Direction = direction };
 
-    public static bool operator ==(ChunkTileData a, ChunkTileData b) => a.m_Direction==b.m_Direction&&a.m_GroundType==b.m_GroundType&&a.m_ObjectType==b.m_ObjectType&&a.m_PillarType==b.m_PillarType;
+    public static bool operator ==(ChunkTileData a, ChunkTileData b) => a.m_Direction==b.m_Direction&&a.m_GroundType==b.m_GroundType&&a.m_ObjectType==b.m_ObjectType;
     public static bool operator !=(ChunkTileData a, ChunkTileData b) => !(a==b);
     public override bool Equals(object obj)=> base.Equals(obj);
     public override int GetHashCode()=> base.GetHashCode();

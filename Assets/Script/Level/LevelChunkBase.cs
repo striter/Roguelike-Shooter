@@ -46,8 +46,6 @@ public class LevelChunkBase : MonoBehaviour
             return true;
         if (tileData.m_ObjectType != enum_TileObjectType.Invalid)
             return true;
-        if (tileData.m_PillarType != enum_TilePillarType.Invalid)
-            return true;
         return false;
     }
     protected virtual void OnTileInit(LevelTileBase tile,TileAxis axis,ChunkTileData data,System.Random random)
