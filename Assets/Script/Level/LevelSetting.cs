@@ -130,7 +130,6 @@ namespace LevelSetting
                 case enum_TileObjectType.Object3x3B:
                     size = TileAxis.One * 3;
                     break;
-
             }
             return TileTools.GetDirectionedSize(size, direction);
         }
@@ -165,11 +164,11 @@ namespace LevelSetting
         }
     }
     
-    public struct ChunkPreGenerateData
+    public struct GameLevelData
     {
         public enum_ChunkType m_ChunkType;
         public enum_ChunkEventType m_EventType;
-        public ChunkPreGenerateData(enum_ChunkType _chunkType,enum_ChunkEventType _eventType= enum_ChunkEventType.Invalid)
+        public GameLevelData(enum_ChunkType _chunkType,enum_ChunkEventType _eventType= enum_ChunkEventType.Invalid)
         {
             m_ChunkType = _chunkType;
             m_EventType = _eventType;
@@ -191,7 +190,6 @@ namespace LevelSetting
     {
         public TileAxis m_Origin { get; private set; }
         public TileBounds m_MapBounds { get; private set; }
-        public TileBounds m_GenerateCheckBounds { get; private set; } 
         public LevelChunkData m_Data { get; private set; }
         public enum_ChunkEventType m_EventType { get; private set; }
         public ChunkGenerateData( LevelChunkData _data, enum_ChunkEventType eventType)
@@ -199,7 +197,6 @@ namespace LevelSetting
             m_Data = _data;
             m_EventType = eventType;
             m_MapBounds = new TileBounds(m_Origin,m_Data.m_Size);
-            m_GenerateCheckBounds = new TileBounds(m_Origin+TileAxis.One, m_Data.m_Size-TileAxis.One*2);
         }
     }
     

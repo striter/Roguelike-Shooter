@@ -25,6 +25,10 @@ public class TileObjectBase : TileItemBase,IObjectpool<enum_TileObjectType>,ICor
         m_hitChecks.Traversal((HitCheckStatic hitCheck) => { hitCheck.Attach(OnObjectHit); });
         this.OnRecycle = OnRecycle;
     }
+    private void OnDisable()
+    {
+        this.StopSingleCoroutine(0);
+    }
 
     public override void DoRecycle()=> OnRecycle(m_ObjectType, this);
 

@@ -82,8 +82,8 @@ public class TouchDeltaManager : SingletonMono<TouchDeltaManager>
             m_TrackRight = null;
             m_leftDelta = Vector2.zero;
             m_rightDelta = Vector2.zero;
-            OnLeftDelta(m_leftDelta);
-            OnRightDelta(m_rightDelta);
+            OnLeftDelta?.Invoke(m_leftDelta);
+            OnRightDelta?.Invoke(m_rightDelta);
             UIT_JoyStick.Instance.OnDeactivate();
         }
         public override void Tick(float deltaTime)
@@ -149,8 +149,8 @@ public class TouchDeltaManager : SingletonMono<TouchDeltaManager>
                 m_rightDelta = Vector2.zero;
             }
 
-            OnLeftDelta(m_leftDelta);
-            OnRightDelta(m_rightDelta);
+            OnLeftDelta?.Invoke(m_leftDelta);
+            OnRightDelta?.Invoke(m_rightDelta);
         }
     }
     class TouchCheckExtraDrag : TouchCheckBase

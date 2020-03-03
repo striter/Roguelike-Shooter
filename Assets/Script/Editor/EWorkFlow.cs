@@ -28,7 +28,7 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
             return;
         }
 
-        enum_LevelStyle style = GameManager.Instance.m_GameLevel.m_GameStyle;
+        enum_GameStyle style = GameManager.Instance.m_GameLevel.m_GameStyle;
         GameRenderData[] customizations = TResources.GetRenderData(style);
         Light directionalLight = GameLevelManager.Instance.m_DirectionalLight;
         Camera camera = CameraController.Instance.m_Camera;
@@ -108,7 +108,7 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
         GUILayout.EndVertical();
     }
 
-    static void SaveCustomization(GameRenderData data,enum_LevelStyle selectingStyleType,string dataName)
+    static void SaveCustomization(GameRenderData data,enum_GameStyle selectingStyleType,string dataName)
     {
         string dataFolder = TResources.ConstPath.S_ChunkRender + "/" + selectingStyleType;
         string targetPath = dataFolder + "/"+dataName + ".asset";

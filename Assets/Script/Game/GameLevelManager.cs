@@ -11,15 +11,14 @@ using System.Linq;
 
 public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelperClass
 {
-    ObjectPoolListComponent<int, LevelChunkGame> m_ChunkPool;
-    public Dictionary<int, LevelChunkGame> m_GameChunks => m_ChunkPool.m_ActiveItemDic;
+    LevelChunkGame m_GameChunk;
     public Light m_DirectionalLight { get; private set; }
-    public System.Random random { get; private set; }
-    
+    protected List<ChunkGenerateData> m_ChunkDatas=new List<ChunkGenerateData>();
     protected override void Awake()
     {
         base.Awake();
-        m_ChunkPool = new ObjectPoolListComponent<int, LevelChunkGame>(transform.Find("Level"), "ChunkItem", (LevelChunkGame chunk) => { chunk.Init(); });
+        m_GameChunk = transform.Find("GameChunk").GetComponent<LevelChunkGame>();
+        m_GameChunk.Init();
         m_DirectionalLight = transform.Find("Directional Light").GetComponent<Light>();
         OptionsManager.event_OptionChanged += OnOptionChanged;
     }
@@ -35,17 +34,31 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         m_DirectionalLight.shadows = OptionsManager.m_OptionsData.m_ShadowOff ? LightShadows.None : LightShadows.Hard;
     }
     
-    public IEnumerator Generate(enum_LevelStyle style, string seed, System.Random random)
+    public void GenerateStage(enum_GameStyle style, List<GameLevelData> levelGenerateData, System.Random random)
     {
+        m_ChunkDatas.Clear();
         LevelObjectManager.Register(TResources.GetChunkTiles(style));
         GameRenderData[] customizations = TResources.GetRenderData(style);
         GameRenderData randomData = customizations.Length == 0 ? GameRenderData.Default() : customizations.RandomItem(random);
         randomData.DataInit(m_DirectionalLight, CameraController.Instance.m_Camera);
 
         Dictionary<enum_ChunkType, List<LevelChunkData>> chunkDatas = TResources.GetChunkDatas();
-        yield return null;
+        levelGenerateData.Traversal((GameLevelData data) => {
+            m_ChunkDatas.Add(new ChunkGenerateData(chunkDatas[data.m_ChunkType].RandomItem(random),data.m_EventType));
+        });
     }
     
+    public void OnStartLevel(int chunkIndex,System.Random _random , Action<enum_ChunkEventType, enum_TileObjectType, ChunkGameObjectData> OnLevelObjectGenerate)
+    {
+        ChunkGenerateData _data = m_ChunkDatas[chunkIndex];
+        Vector3 size = _data.m_Data.m_Size.ToPosition();
+        m_GameChunk.InitGameChunk(_data, _random, NavigationManager.UpdateChunkData);
+        NavigationManager.InitNavMeshData(m_GameChunk.transform, new Bounds(size / 2, new Vector3(size.x, LevelConst.I_TileSize, size.z)));
+
+        m_GameChunk.m_ChunkObjects.Traversal((enum_TileObjectType obejctType,List<ChunkGameObjectData> objectDatas)=> {
+            objectDatas.Traversal((ChunkGameObjectData data) => { OnLevelObjectGenerate(_data.m_EventType,obejctType,data); });
+        });
+    }
 }
 
 public static class LevelObjectManager
@@ -100,63 +113,34 @@ public static class LevelObjectManager
 
 public static class NavigationManager
 {
-    public class NavigationChunkDetail
-    {
-        public Transform m_Transform { get; private set; }
-        public List<NavMeshBuildSource> m_Sources { get; private set; } = new List<NavMeshBuildSource>();
-        public NavigationChunkDetail(Transform transform)
-        {
-            m_Transform = transform;
-        }
-    }
     static Transform m_Transform;
     static NavMeshBuildSettings m_BuildSettings = NavMesh.GetSettingsByIndex(0);
     static NavMeshHit sampleHit;
-    static NavMeshDataInstance m_CombinedSurfaceData;
-    static NavMeshData m_CombinedData;
-    static Dictionary<int, NavigationChunkDetail> m_ChunkDetails = new Dictionary<int, NavigationChunkDetail>();
-    static Bounds m_CombineBounds;
-    static List<NavMeshBuildSource> m_CombineSources=new List<NavMeshBuildSource>();
+    static NavMeshDataInstance m_DataInstance;
+    static NavMeshData m_Data;
+    static Bounds m_Bounds;
+    static List<NavMeshBuildSource> m_Sources=new List<NavMeshBuildSource>();
 
-    public static void InitNavMeshData(Transform transform, Bounds bound,Dictionary<int, NavigationChunkDetail> chunkNavigationDatas)
+    public static void InitNavMeshData(Transform transform, Bounds bound)
     {
         ClearNavMeshDatas();
         m_Transform = transform;
-        m_CombineBounds = bound;
-        m_ChunkDetails = chunkNavigationDatas;
-        ReCollectSources(null);
-        m_CombinedData = NavMeshBuilder.BuildNavMeshData(m_BuildSettings, m_CombineSources, m_CombineBounds, m_Transform.position, m_Transform.rotation);
-        m_CombinedSurfaceData = NavMesh.AddNavMeshData(m_CombinedData);
+        m_Bounds = bound;
+        NavMeshBuilder.CollectSources(m_Transform, -1, NavMeshCollectGeometry.PhysicsColliders, 0, new List<NavMeshBuildMarkup>() { }, m_Sources);
+        m_Data = NavMeshBuilder.BuildNavMeshData(m_BuildSettings, m_Sources, m_Bounds, m_Transform.position, m_Transform.rotation);
+        m_DataInstance = NavMesh.AddNavMeshData(m_Data);
     }
 
-    public static void UpdateChunkData(int index)
+    public static void UpdateChunkData()
     {
-        ReCollectSources(p => p == index);
-        NavMeshBuilder.UpdateNavMeshData(m_CombinedData, m_BuildSettings, m_CombineSources, m_CombineBounds);
-    }
-    public static void UpdateChunkData(List<int> chunkIndexes)
-    {
-        ReCollectSources(p => chunkIndexes.Contains(p));
-        NavMeshBuilder.UpdateNavMeshData(m_CombinedData, m_BuildSettings, m_CombineSources, m_CombineBounds);
-    } 
-    static void ReCollectSources(Predicate<int> OnWillUpdate=null)
-    {
-        m_ChunkDetails.Traversal((int index) => {
-            if (OnWillUpdate!=null&&!OnWillUpdate(index))
-                return;
-
-            m_ChunkDetails[index].m_Sources.Clear();
-            NavMeshBuilder.CollectSources(m_ChunkDetails[index].m_Transform, -1, NavMeshCollectGeometry.PhysicsColliders, 0, new List<NavMeshBuildMarkup>() { }, m_ChunkDetails[index].m_Sources);
-        });
-        m_CombineSources.Clear();
-        m_ChunkDetails.Traversal((int index, NavigationChunkDetail detail) => { m_CombineSources.AddRange(detail.m_Sources); });
+        NavMeshBuilder.CollectSources(m_Transform, -1, NavMeshCollectGeometry.PhysicsColliders, 0, new List<NavMeshBuildMarkup>() { }, m_Sources);
+        NavMeshBuilder.UpdateNavMeshData(m_Data, m_BuildSettings, m_Sources, m_Bounds);
     }
 
     public static void ClearNavMeshDatas()
     {
-        m_ChunkDetails.Clear();
-        m_CombineSources.Clear();
-        NavMesh.RemoveNavMeshData(m_CombinedSurfaceData);
+        m_Sources.Clear();
+        NavMesh.RemoveNavMeshData(m_DataInstance);
     }
 
     public static Vector3 NavMeshPosition(Vector3 samplePosition)

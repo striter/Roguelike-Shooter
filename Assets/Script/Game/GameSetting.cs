@@ -128,6 +128,16 @@ namespace GameSetting
             }
         }
 
+        public static List<GameLevelData> GetGameLevelDatas(System.Random random)
+        {
+            switch(random.Next(1))
+            {
+                default: Debug.LogError("Invalid Convertions Here!");return null;
+                case 0: return new List<GameLevelData>() {new GameLevelData( enum_ChunkType.Start),new GameLevelData( enum_ChunkType.Battle),new GameLevelData( enum_ChunkType.Event, enum_ChunkEventType.Trader),new GameLevelData( enum_ChunkType.Final) };
+            }
+
+        }
+
         public static float GetResultCompletion(bool win, enum_StageLevel _stage, int _battleLevelEntered) => win ? 1f : (.33f * ((int)_stage - 1) +.066f*_battleLevelEntered);
         public static float GetResultLevelScore(enum_StageLevel _stage, int _levelPassed) => 200 * ((int)_stage - 1) + 20 * (_levelPassed - 1);
         public static float GetResultDifficultyBonus(int _difficulty) =>1f+ _difficulty * .05f;
@@ -173,6 +183,9 @@ namespace GameSetting
             {
                 default:
                     Debug.LogError("Invalid Convertions Here!");
+                    return -1;
+                case enum_TileObjectType.Block:
+                case enum_TileObjectType.Dangerzone:
                     return -1;
                 case enum_TileObjectType.Object1x1A:
                 case enum_TileObjectType.Object1x1B:
@@ -237,16 +250,16 @@ namespace GameSetting
             }
         }
 
-        public static string GetTeleportHex(this enum_LevelStyle style)
+        public static string GetTeleportHex(this enum_GameStyle style)
         {
             switch(style)
             {
                 default: Debug.LogError("Invalid Convertions Here!"); return "";
-                case enum_LevelStyle.Desert: return "00FF00FF";
-                case enum_LevelStyle.Forest: return "FF00FFFF";
-                case enum_LevelStyle.Frost: return "FFFF00FF";
-                case enum_LevelStyle.Horde: return "FF0000FF";
-                case enum_LevelStyle.Undead: return "00FFFFFF";
+                case enum_GameStyle.Desert: return "00FF00FF";
+                case enum_GameStyle.Forest: return "FF00FFFF";
+                case enum_GameStyle.Frost: return "FFFF00FF";
+                case enum_GameStyle.Horde: return "FF0000FF";
+                case enum_GameStyle.Undead: return "00FFFFFF";
             }
         }
 
@@ -408,7 +421,7 @@ namespace GameSetting
         public static string GetNameLocalizeKey(this ActionPerkBase action) => "Action_Name_" + action.m_Index;
         public static string GetIntroLocalizeKey(this ActionPerkBase action) => "Action_Intro_" + action.m_Index;
         public static string GetLocalizeKey(this enum_StageLevel stage) => "Game_Stage_" + stage;
-        public static string GetLocalizeKey(this enum_LevelStyle style) => "Game_Style_" + style;
+        public static string GetLocalizeKey(this enum_GameStyle style) => "Game_Style_" + style;
         public static string GetMapLocalizeNameKey(this enum_ChunkEventType type) => "UI_Map_" + type + "_Name";
         public static string GetMapLocalizeIntroKey(this enum_ChunkEventType type) => "UI_Map_" + type + "_Intro";
         public static string GetLocalizeNameKey(this enum_PlayerWeapon weapon) => "Weapon_Name_" + weapon;
@@ -460,14 +473,13 @@ namespace GameSetting
         OnCharacterRevive,
 
         OnPlayerRankUp,
-        OnPlayerChunkEnter,
-        OnChunkQuadrantCheck,
         
         OnBattleStart,
         OnBattleFinish,
         OnFinalBattleStart,
         OnFinalBattleFinish,
 
+        OnLevelFinished,
         OnStageFinished,
 
         OnGameLoad,
@@ -509,7 +521,7 @@ namespace GameSetting
 
     public enum enum_HitCheck { Invalid = -1, Static = 1, Entity = 2, Dynamic = 3, Interact = 4, }
     
-    public enum enum_LevelStyle { Invalid = -1, Forest = 1, Desert = 2, Frost = 3, Horde = 4, Undead = 5, }
+    public enum enum_GameStyle { Invalid = -1, Forest = 1, Desert = 2, Frost = 3, Horde = 4, Undead = 5, }
 
     public enum enum_EnermyType { Invalid = -1, Fighter = 1, Shooter_Rookie = 2, Shooter_Veteran = 3, AOECaster = 4, Elite = 5, }
 
@@ -800,7 +812,7 @@ namespace GameSetting
             m_Equipments = EquipmentSaveData.Create(_player.m_CharacterInfo.m_ExpirePerks);
             m_ActionBuffs = ActionSaveData.Create(_player.m_CharacterInfo.m_ExpireBuffs);
             m_GameSeed = _level.m_GameSeed;
-            m_Stage = _level.m_GameStage;
+            m_Stage = _level.m_StageIndex;
         }
 
         void ISave.DataRecorrect()

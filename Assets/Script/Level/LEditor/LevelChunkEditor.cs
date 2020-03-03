@@ -10,9 +10,9 @@ public class LevelChunkEditor : LevelChunkBase
     public static LevelChunkEditor Instance { get; private set; }
     public Transform tf_CameraPos { get; private set; }
     public enum_TileSubType m_EditMode { get; private set; } = enum_TileSubType.Ground;
-    public enum_LevelStyle m_EditStyle { get; private set; } =  enum_LevelStyle.Invalid;
+    public enum_GameStyle m_EditStyle { get; private set; } =  enum_GameStyle.Invalid;
     public bool m_GameViewMode { get; private set; }
-    enum_LevelStyle m_ViewStyle;
+    enum_GameStyle m_ViewStyle;
     public LevelTileEditorData[,] m_TilesData { get; private set; }
     ObjectPoolListComponent<int, LevelTileEditorSelection> m_SelectionTiles;
     LevelTileEditorSelection m_SelectingTile;
@@ -95,12 +95,12 @@ public class LevelChunkEditor : LevelChunkBase
         {
             m_EditMode = enum_TileSubType.Invalid;
             if (!m_GameViewMode)
-                m_ViewStyle = TCommon.RandomEnumValues<enum_LevelStyle>();
+                m_ViewStyle = TCommon.RandomEnumValues<enum_GameStyle>();
             else
             {
                 m_ViewStyle++;
-                if (m_ViewStyle > enum_LevelStyle.Undead)
-                    m_ViewStyle = enum_LevelStyle.Forest;
+                if (m_ViewStyle > enum_GameStyle.Undead)
+                    m_ViewStyle = enum_GameStyle.Forest;
             }
             m_GameViewMode = true;
             CheckEditMode();
@@ -111,7 +111,7 @@ public class LevelChunkEditor : LevelChunkBase
     #region EditMode
     void CheckEditMode()
     {
-        enum_LevelStyle targetStyle = m_GameViewMode ? m_ViewStyle : enum_LevelStyle.Invalid;
+        enum_GameStyle targetStyle = m_GameViewMode ? m_ViewStyle : enum_GameStyle.Invalid;
         GameRenderData randomData = GameRenderData.Default();
         if (targetStyle != m_EditStyle)
         {
@@ -119,7 +119,7 @@ public class LevelChunkEditor : LevelChunkBase
             m_SelectingTile.Clear();
             m_SelectionTiles.m_ActiveItemDic.Traversal((LevelTileEditorSelection tile) => { tile.Clear();  });
             m_EditStyle = targetStyle;
-            LevelObjectManager.Register(m_EditStyle == enum_LevelStyle.Invalid ? TResources.GetChunkEditorTiles() : TResources.GetChunkTiles(m_EditStyle));
+            LevelObjectManager.Register(m_EditStyle == enum_GameStyle.Invalid ? TResources.GetChunkEditorTiles() : TResources.GetChunkTiles(m_EditStyle));
             GameRenderData.Default().DataInit(m_directionalLight,CameraController.Instance.m_Camera);
             GameRenderData[] customizations = TResources.GetRenderData(targetStyle);
             randomData = customizations.Length == 0 ? GameRenderData.Default() : customizations.RandomItem();

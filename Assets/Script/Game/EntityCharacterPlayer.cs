@@ -16,7 +16,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected PlayerAnimator m_Animator;
     protected virtual PlayerAnimator GetAnimatorController(Animator animator, Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) => new PlayerAnimator(animator, _OnAnimEvent);
     public Transform tf_WeaponAim { get; private set; }
-    public Transform tf_CameraAttach { get; private set; }
     protected Transform tf_WeaponHoldRight, tf_WeaponHoldLeft;
     protected SFXAimAssist m_Assist = null;
     public bool m_weaponEquipingFirst { get; private set; } = false;
@@ -60,7 +59,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         base.OnPoolItemInit(_identity, _OnRecycle);
         tf_WeaponAim = transform.Find("WeaponAim");
-        tf_CameraAttach = transform.Find("CameraAttach");
         tf_WeaponHoldRight = transform.FindInAllChild("WeaponHold_R");
         tf_WeaponHoldLeft = transform.FindInAllChild("WeaponHold_L");
         tf_UIStatus = transform.FindInAllChild("UIStatus");
@@ -281,7 +279,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     #endregion
     #region CharacterControll
     protected Vector2 m_MoveAxisInput { get; private set; } = Vector2.zero;
-    protected Vector2 m_RotateAxisInput { get; private set; } = Vector2.zero;
     protected Quaternion m_CharacterRotation { get; private set; } = Quaternion.identity;
     protected EntityCharacterBase m_Target { get; private set; } = null;
     protected bool m_TargetAvailable => m_Target != null && GameManager.Instance.EntityTargetable(m_Target);
@@ -290,14 +287,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         m_MoveAxisInput = moveDelta;
     }
-
-    void OnRotateDelta(Vector2 rotateDelta)
-    {
-        rotateDelta.y = 0;
-        rotateDelta.x = (rotateDelta.x / Screen.width) * 180f;
-        m_RotateAxisInput = rotateDelta;
-    }
-
+    
     public void OnFireAddRecoil(float recoil)
     {
         TPSCameraController.Instance.AddRecoil(recoil);
@@ -308,7 +298,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         if (m_aimingMovementReduction) f_aimMovementReduction -= deltaTime;
         if (m_aiming) f_aimMovementReduction =  GameConst.F_MovementReductionDuration;
-        TPSCameraController.Instance.RotateCamera(m_RotateAxisInput * OptionsManager.m_Sensitive);
 
         TargetTick(deltaTime);
         
@@ -323,7 +312,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
  //       transform.position = NavigationManager.NavMeshPosition(transform.position+ CalculateMoveDirection(m_MoveAxisInput) * finalMovementSpeed * deltaTime);
         m_Controller.Move(moveDirection * finalMovementSpeed * deltaTime);
         transform.rotation = Quaternion.Lerp(transform.rotation, GetCharacterRotation(), deltaTime * GameConst.I_PlayerRotationSmoothParam);
-        tf_CameraAttach.position = transform.position;
 
         m_Animator.SetRun(new Vector2(Vector3.Dot(transform.right, moveDirection), Vector3.Dot(transform.forward, moveDirection)), finalMovementSpeed / F_MovementSpeed);
     }
@@ -523,7 +511,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void SetBinding(bool on)
     {
         if (on)
-            UIManager.Instance.DoBindings(this, OnMovementDelta, OnRotateDelta,  OnMainDown,OnSubDown, OnInteract, OnSwapClick, OnReloadClick, OnAbilityClick);
+            UIManager.Instance.DoBindings(this, OnMovementDelta, null,  OnMainDown,OnSubDown, OnInteract, OnSwapClick, OnReloadClick, OnAbilityClick);
         else
             UIManager.Instance.RemoveBindings();
     }

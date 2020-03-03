@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class InteractBonfire : InteractGameQuadrant {
+public class InteractBonfire : InteractGameBase {
     public override enum_Interaction m_InteractType => enum_Interaction.Bonfire;
     TSpecialClasses.ParticleControlBase m_FireParticles;
     Transform tf_Light;
@@ -18,9 +18,9 @@ public class InteractBonfire : InteractGameQuadrant {
         tf_Light = transform.Find("Light");
         m_HealInfo = new DamageInfo(0, enum_DamageType.HealthOnly, DamageDeliverInfo.BuffInfo(-1, SBuff.m_PlayerBoneFireHealBuff));
     }
-    public InteractBonfire Play(int chunkIndex)
+    public new InteractBonfire Play()
     {
-        base.PlayQuadrant(chunkIndex);
+        base.Play();
         OnDistinguish();
         return this;
     }

@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
 using LevelSetting;
-public class InteractRewardChest : InteractGameQuadrant {
+public class InteractRewardChest : InteractGameBase
+{
     public override enum_Interaction m_InteractType => enum_Interaction.RewardChest;
     ActionPerkBase m_Equipment;
     enum_PlayerWeapon m_Weapon;
 
-    public InteractRewardChest Play(int chunkIndex, ActionPerkBase _equipment, enum_PlayerWeapon weapon)
+    public InteractRewardChest Play( ActionPerkBase _equipment, enum_PlayerWeapon weapon)
     {
-        base.PlayQuadrant(chunkIndex);
+        base.Play();
         m_Equipment = _equipment;
         m_Weapon = weapon;
         return this;

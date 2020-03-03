@@ -10,22 +10,6 @@ public class LevelTileEditor : LevelTileBase {
     BoxCollider m_Collider;
     protected Transform m_EditorModel { get; private set; }
 
-
-    public void Clear()
-    {
-        if (m_Object)
-        {
-            m_Object.DoRecycle();
-            m_Object = null;
-        }
-
-        if (m_Ground)
-        {
-            m_Ground.DoRecycle();
-            m_Ground = null;
-        }
-    }
-
     public override void Init(TileAxis axis, ChunkTileData data,System.Random random)
     {
         m_EditorModel = transform.Find("EditorModel");
@@ -34,13 +18,11 @@ public class LevelTileEditor : LevelTileBase {
         base.Init(axis, data, random);
 
         bool showGround = false;
-        bool showPillar = false;
         bool showObject = false;
         TileAxis tileSize = TileAxis.One;
         if (LevelChunkEditor.Instance.m_GameViewMode)
         {
             showGround = true;
-            showPillar = true;
             showObject = true;
         }
         else

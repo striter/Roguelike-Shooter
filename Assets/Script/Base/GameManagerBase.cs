@@ -54,11 +54,13 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
 
     protected void OnPortalEnter(float duration,Transform vortexTarget, Action OnEnter)
     {
+        SetBulletTime(true, 0f);
         SetPostEffect_Vortex(true, vortexTarget, 1f,OnEnter);
     }
 
     protected void OnPortalExit(float duration,Transform vortexTarget)
     {
+        SetBulletTime(false);
         SetPostEffect_Vortex(false, vortexTarget, 1f);
     }
     #region Effect
@@ -71,7 +73,7 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
     }
 
     PE_BSC m_BSC;
-    public void InitPostEffects(enum_LevelStyle _levelStyle)
+    public void InitPostEffects(enum_GameStyle _levelStyle)
     {
         CameraController.Instance.m_Effect.RemoveAllPostEffect();
         //CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_DepthOutline>().SetEffect(Color.black,1.2f,0.0001f);
@@ -112,7 +114,7 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
          },on?0:1,on?1:0, duration,()=> {
              CameraController.Instance.m_Effect.RemoveCameraEffect<PE_DistortVortex>();
              OnEnter?.Invoke();
-         } ));
+         } ,false));
     }
     public void SetEffect_Shake(float amount)
     {

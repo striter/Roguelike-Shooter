@@ -59,7 +59,7 @@ public class TResources
     public static AtlasLoader GetUIAtlas_Weapon() => new AtlasLoader(Load<SpriteAtlas>(ConstPath.S_UI_Atlas_Weapon));
     #endregion
     #region GamePrefab
-    public static GameRenderData[] GetRenderData(enum_LevelStyle levelStype) => LoadAll<GameRenderData>(ConstPath.S_ChunkRender + levelStype);
+    public static GameRenderData[] GetRenderData(enum_GameStyle levelStype) => LoadAll<GameRenderData>(ConstPath.S_ChunkRender + levelStype);
     public static LevelChunkData GetChunkData(string name) => Load<LevelChunkData>(ConstPath.S_ChunkData + "/" + name);
     public static Dictionary<enum_ChunkType, List<LevelChunkData>> GetChunkDatas()
     {
@@ -72,7 +72,7 @@ public class TResources
         });
         return sortedDatas;
     }
-    public static TileItemBase[] GetChunkTiles(enum_LevelStyle _levelStyle) => LoadAll<TileItemBase>(ConstPath.S_ChunkTile+_levelStyle);
+    public static TileItemBase[] GetChunkTiles(enum_GameStyle _levelStyle) => LoadAll<TileItemBase>(ConstPath.S_ChunkTile+_levelStyle);
     public static TileItemBase[] GetChunkEditorTiles() => LoadAll<TileItemBase>(ConstPath.S_ChunkTileEditor);
 
     public static SFXWeaponBase GetDamageSource(int index) => Instantiate<SFXWeaponBase>(ConstPath.S_SFXWeapon+index.ToString());
@@ -99,7 +99,7 @@ public class TResources
         });
         return entitisDic;
     }
-    public static Dictionary<int, EntityBase> GetEnermyEntities(enum_LevelStyle entityStyle)
+    public static Dictionary<int, EntityBase> GetEnermyEntities(enum_GameStyle entityStyle)
     {
         Dictionary<int, EntityBase> entitisDic = new Dictionary<int, EntityBase>();
         EntityBase[] entities = LoadAll<EntityBase>(ConstPath.S_Entity +  entityStyle.ToString());
@@ -115,12 +115,12 @@ public class TResources
         targetObject.GetComponentsInChildren<Renderer>().Traversal((Renderer render) => { render.sharedMaterials.Traversal((Material material) => {if(material) material.hideFlags = material.hideFlags; }); });
     }
     public static WeaponBase GetPlayerWeapon(enum_PlayerWeapon weapon)=>Instantiate<WeaponBase>(ConstPath.S_PlayerWeapon + weapon.ToString());
-    public static InteractGameBase GetInteractPortal(enum_LevelStyle portalStyle) => Instantiate<InteractGameBase>( ConstPath.S_InteractPortal + portalStyle.ToString());
+    public static InteractGameBase GetInteractPortal(enum_GameStyle portalStyle) => Instantiate<InteractGameBase>( ConstPath.S_InteractPortal + portalStyle.ToString());
     public static InteractGameBase GetInteract(enum_Interaction type) => Instantiate<InteractGameBase>(ConstPath.S_InteractCommon + type);
     #endregion
     #region Audio
     public static AudioClip GetGameBGM(enum_GameMusic music) => Load<AudioClip>(ConstPath.S_Audio_GameBGM+music);
-    public static AudioClip GetGameBGM_Styled(enum_GameMusic music,enum_LevelStyle style) => Load<AudioClip>(ConstPath.S_Audio_GameBGM +style+"_" +music);
+    public static AudioClip GetGameBGM_Styled(enum_GameMusic music,enum_GameStyle style) => Load<AudioClip>(ConstPath.S_Audio_GameBGM +style+"_" +music);
     public static AudioClip GetCampBGM(enum_CampMusic music) => Load<AudioClip>(ConstPath.S_Audio_CampBGM + music);
     public static AudioClip GetGameClip(enum_GameVFX vfx) => Load<AudioClip>(ConstPath.S_GameAudio_VFX + vfx.ToString());
     #endregion

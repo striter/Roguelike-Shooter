@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class InteractPerkAcquire : InteractGameQuadrant
+public class InteractPerkAcquire : InteractGameBase
 {
     public override enum_Interaction m_InteractType => enum_Interaction.PerkAcquire;
     ActionPerkBase m_Equipment;
     public int m_TryCount { get; private set; } = 0;
-    public InteractPerkAcquire Play(int chunkIndex, ActionPerkBase _equipment)
+    public InteractPerkAcquire Play(ActionPerkBase _equipment)
     {
-        base.PlayQuadrant(chunkIndex);
+        base.Play();
         m_Equipment = _equipment;
         m_TryCount = 0;
         m_TradePrice = GameExpression.GetEventPerkAcquireCoinsAmount(m_TryCount);

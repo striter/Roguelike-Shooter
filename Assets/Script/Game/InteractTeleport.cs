@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class InteractTeleport : InteractGameQuadrant  {
+public class InteractTeleport : InteractGameBase  {
     protected override bool E_InteractOnEnable => false;
     public bool m_Enable { get; private set; }
     Animator m_Animator;
@@ -14,6 +14,12 @@ public class InteractTeleport : InteractGameQuadrant  {
     {
         base.OnPoolItemInit(identity, OnRecycle);
         m_Animator = GetComponent<Animator>();
+    }
+    public InteractTeleport Play(enum_GameStyle style)
+    {
+        base.Play();
+        transform.Find("Model/Glow").GetComponent<Renderer>().sharedMaterial.color = TCommon.GetHexColor(style.GetTeleportHex());
+        return this;
     }
     public void SetPlay(bool play)
     {
@@ -25,11 +31,5 @@ public class InteractTeleport : InteractGameQuadrant  {
     {
         if (m_Enable)
             m_Animator.SetTrigger(hs_T_Activate);
-    }
-    public InteractTeleport Play(int chunkIndex,enum_LevelStyle style)
-    {
-        base.PlayQuadrant(chunkIndex);
-        transform.Find("Model/Glow").GetComponent<Renderer>().sharedMaterial.color = TCommon.GetHexColor(style.GetTeleportHex());
-        return this;
     }
 }
