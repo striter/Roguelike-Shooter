@@ -73,7 +73,7 @@ public class LevelChunkData : ScriptableObject {
                 switch (m_TileData[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)].m_GroundType)
                 {
                     default:
-                        colors[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)] =  LevelConst.C_MapTextureGroundColor;
+                        colors[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)] =  Color.black;
                         break;
                     case enum_TileGroundType.Invalid:
                         colors[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)] = Color.clear;
@@ -87,32 +87,36 @@ public class LevelChunkData : ScriptableObject {
             {
                 TileAxis axis = new TileAxis(i, j);
                 ChunkTileData tileData = m_TileData[TileTools.Get1DAxisIndex(axis, m_Width)];
-                if (!tileData.m_ObjectType.IsEditorTileObject())
-                    continue;
                 TileAxis size = tileData.m_ObjectType.GetSizeAxis(tileData.m_Direction);
-                List<TileAxis> axies = TileTools.GetAxisRange( m_Width, m_Height, axis, axis+ size);
+                List<TileAxis> axies = TileTools.GetAxisRange( m_Width, m_Height, axis, axis+ size-TileAxis.One);
                 Color tileColor = Color.clear;
                 switch (tileData.m_ObjectType)
-                {
-                    case enum_TileObjectType.REntrance2x2:
-                        tileColor = Color.green;
-                        break;
-                    case enum_TileObjectType.RExport4x1:
-                        tileColor = Color.blue;
-                        break;
-                    case enum_TileObjectType.REventArea3x3:
-                        tileColor = Color.yellow;
-                        break;
-                    case enum_TileObjectType.REnermySpawn1x1:
-                        tileColor = Color.red;
-                        break;
-                        case enum_TileObjectType.Block:
-                    case enum_TileObjectType.Dangerzone:
+                    {
+                        case enum_TileObjectType.Invalid:
+                            break;
+                        default:
                             tileColor = Color.grey;
                             break;
+                        case enum_TileObjectType.REntrance2x2:
+                            tileColor = Color.green;
+                            break;
+                        case enum_TileObjectType.RExport4x1:
+                            tileColor = Color.blue;
+                            break;
+                        case enum_TileObjectType.REventArea3x3:
+                            tileColor = Color.white;
+                            break;
+                        case enum_TileObjectType.REnermySpawn1x1:
+                            tileColor = Color.red;
+                            break;
+                        case enum_TileObjectType.Block:
+                        case enum_TileObjectType.Dangerzone:
+                            tileColor = Color.yellow;
+                            break;
                     }
-                axies.Traversal((TileAxis objectAxis) => { colors[TileTools.Get1DAxisIndex(objectAxis, m_Width)] = tileColor; });
-            }
+                    if (tileColor != Color.clear)
+                        axies.Traversal((TileAxis objectAxis) => { colors[TileTools.Get1DAxisIndex(objectAxis, m_Width)] = tileColor; });
+                }
         return colors;
     }
 

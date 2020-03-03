@@ -7,26 +7,7 @@ namespace LevelSetting
 {
     public static class LevelConst
     {
-        #region UI
-        public const int I_UIMinimapSize = 8;
-        public const int I_UIMapScale = 8;
-        public const float F_UIMapIconBaseScale = 25;       //final scale= BaseScale/MapScale
-        public const float F_UIMapDragSpeedMultiply = 2f;
-        public const int I_UIMapPullbackCheckRange = 30;
-        public const int I_UIMapPullbackSpeedMultiply = 8;
-
-        public const int I_UIPlayerViewRevealRange = 10;
-        public const int I_UIPlayerViewFadeRange = 12;
-        public static readonly int I_UIPlayerViewRevealSqrRange = I_UIPlayerViewRevealRange * I_UIPlayerViewRevealRange;
-        public static readonly int I_UIPlayerViewFadeSqrRange = I_UIPlayerViewFadeRange* I_UIPlayerViewFadeRange; 
-
-        public static readonly Color C_MapFogRevealFogColor = TCommon.GetHexColor("191919FF");
-        public static readonly Color C_MapFogRevealFadeColor= TCommon.GetHexColor("191919D0");
-        public static readonly Color C_MapFogRevealClearColor = TCommon.GetHexColor("19191900");
-        public static readonly Color C_MapTextureGroundColor = TCommon.GetHexColor("808080FF");
-        #endregion
         public const int I_TileSize = 2;
-        public const int I_QuadranteTileSize = 15;
 
         public static readonly Vector3 V3_TileUnitCenterOffset = new TileAxis(1, 1).ToPosition() / 2;
     }
@@ -130,8 +111,11 @@ namespace LevelSetting
             {
                 case enum_TileObjectType.Object2x2A:
                 case enum_TileObjectType.Object2x2B:
-                case enum_TileObjectType.RExport4x1:
+                case enum_TileObjectType.REntrance2x2:
                     size = TileAxis.One * 2;
+                    break;
+                case enum_TileObjectType.RExport4x1:
+                    size = new TileAxis(4, 1);
                     break;
                 case enum_TileObjectType.Object2x1B:
                 case enum_TileObjectType.Object2x1A:
@@ -159,6 +143,7 @@ namespace LevelSetting
                 case enum_ChunkType.Start:
                     restrictionDic.Add(enum_TileObjectType.REntrance2x2, 1);
                     restrictionDic.Add(enum_TileObjectType.RExport4x1, 1);
+                    restrictionDic.Add(enum_TileObjectType.REventArea3x3, 1);
                     break;
                 case enum_ChunkType.Event:
                     restrictionDic.Add(enum_TileObjectType.REntrance2x2, 1);
@@ -172,7 +157,6 @@ namespace LevelSetting
                     break;
                 case enum_ChunkType.Final:
                     restrictionDic.Add(enum_TileObjectType.REntrance2x2, 1);
-                    restrictionDic.Add(enum_TileObjectType.RExport4x1, 1);
                     restrictionDic.Add(enum_TileObjectType.RExport4x1, 1);
                     restrictionDic.Add(enum_TileObjectType.REnermySpawn1x1, -1);
                     break;
