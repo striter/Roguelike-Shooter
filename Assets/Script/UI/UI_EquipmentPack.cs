@@ -14,15 +14,15 @@ public class UI_EquipmentPack : UIPage {
         m_Selecting = new UIC_EquipmentNameFormatIntro(rtf_Container.Find("Selecting"));
     }
     PlayerInfoManager m_Info;
-    public void Show(PlayerInfoManager _info)
+    public void Show()
     {
-        m_Info = _info;
+        m_Info = GameManager.Instance.m_LocalPlayer.m_CharacterInfo;
         m_Grid.ClearGrid();
-        _info.m_ExpirePerks.Traversal((int index,ActionPerkBase equipment) => {
+        m_Info.m_ExpirePerks.Traversal((int index,ActionPerkBase equipment) => {
             m_Grid.AddItem(index).SetInfo(equipment);
         });
         m_Selecting.transform.SetActivate(false);
-        if (_info.m_ExpirePerks.Count > 0)
+        if (m_Info.m_ExpirePerks.Count > 0)
             m_Grid.OnItemClick(0);
     }
 

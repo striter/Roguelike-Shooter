@@ -5,14 +5,14 @@ using System.Collections.Generic;
 
 public class LevelChunkData : ScriptableObject {
     [SerializeField]
-    protected enum_ChunkType m_Type;
+    protected enum_LevelType m_Type;
     [SerializeField]
     protected int m_Width, m_Height;
     [SerializeField]
     protected ChunkTileData[] m_TileData;
     [SerializeField]
     protected ChunkConnectionData[] m_ConnectionIndex;
-    public enum_ChunkType Type => m_Type;
+    public enum_LevelType Type => m_Type;
     public int Width => m_Width;
     public int Height => m_Height;
     public TileAxis m_Size => new TileAxis(Width, Height);
@@ -23,7 +23,7 @@ public class LevelChunkData : ScriptableObject {
         return data;
     } 
 
-    public static LevelChunkData NewData(int width,int height, enum_ChunkType type, LevelTileEditor[,] transferData=null)
+    public static LevelChunkData NewData(int width,int height, enum_LevelType type, LevelTileEditor[,] transferData=null)
     {
         LevelChunkData data = CreateInstance<LevelChunkData>();
         data.m_Type = type;

@@ -61,9 +61,9 @@ public class TResources
     #region GamePrefab
     public static GameRenderData[] GetRenderData(enum_GameStyle levelStype) => LoadAll<GameRenderData>(ConstPath.S_ChunkRender + levelStype);
     public static LevelChunkData GetChunkData(string name) => Load<LevelChunkData>(ConstPath.S_ChunkData + "/" + name);
-    public static Dictionary<enum_ChunkType, List<LevelChunkData>> GetChunkDatas()
+    public static Dictionary<enum_LevelType, List<LevelChunkData>> GetChunkDatas()
     {
-        Dictionary<enum_ChunkType,List< LevelChunkData>> sortedDatas = new Dictionary<enum_ChunkType, List<LevelChunkData>>();
+        Dictionary<enum_LevelType,List< LevelChunkData>> sortedDatas = new Dictionary<enum_LevelType, List<LevelChunkData>>();
         LoadAll<LevelChunkData>(ConstPath.S_ChunkData).Traversal((LevelChunkData data) =>
         {
             if (!sortedDatas.ContainsKey(data.Type))

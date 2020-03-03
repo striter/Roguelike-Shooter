@@ -33,7 +33,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
             m_Animator = new EnermyAnimator(tf_Model.GetComponent<Animator>(), OnAnimKeyEvent);
     }
-    public void OnAIActivate(enum_EntityFlag _flag, float maxHealthMultiplier, SBuff difficultyBuff, bool inBattle, float healthRecord)
+    public void OnAIActivate(enum_EntityFlag _flag, float maxHealthMultiplier, SBuff difficultyBuff)
     {
         base.OnMainCharacterActivate(_flag);
         if (m_Animator != null)
@@ -42,14 +42,12 @@ public class EntityCharacterAI : EntityCharacterBase {
         m_Agent.enabled = true;
         m_CharacterInfo.AddBuff(-1, difficultyBuff);
         m_Health.SetHealthMultiplier(maxHealthMultiplier);
-        AIActivate(inBattle);
-        if (healthRecord > 0)
-            m_Health.OnSetHealth(healthRecord);
+        AIActivate();
     }
     public override void OnSubCharacterActivate(enum_EntityFlag _flag, int _spawnerID = -1, float startHealth = 0)
     {
         base.OnSubCharacterActivate(_flag, _spawnerID, startHealth);
-        AIActivate(true);
+        AIActivate();
     }
 
     protected override void OnRevive()
@@ -75,7 +73,6 @@ public class EntityCharacterAI : EntityCharacterBase {
     }
 
     Vector3 m_Impact;
-    TimeCounter m_OuttaBattleTimer = new TimeCounter(.4f);
     protected override void OnAliveTick(float deltaTime)
     {
         base.OnAliveTick(deltaTime);
@@ -84,15 +81,6 @@ public class EntityCharacterAI : EntityCharacterBase {
             m_Animator.SetForward(m_Moving ? 1f:0f);
             m_Animator.SetPause(m_CharacterInfo.B_Effecting( enum_CharacterEffect.Freeze));
         }
-        if (!m_AIBattleActivating)
-        {
-            m_OuttaBattleTimer.Tick(deltaTime);
-            if (!m_OuttaBattleTimer.m_Timing)
-            {
-                m_OuttaBattleTimer.Reset();
-                m_CharacterInfo.AddBuff(-1,SBuff.m_EnermyOuttaBattleDamageReduction);
-            }
-        } 
         AISetSimulate(!m_CharacterInfo.B_Effecting( enum_CharacterEffect.Freeze));
         AITick(Time.deltaTime);
     }
@@ -149,7 +137,6 @@ public class EntityCharacterAI : EntityCharacterBase {
 
     public EntityCharacterBase m_Target { get; private set; }
     public bool m_AISimluating { get; private set; }
-    public bool m_AIBattleActivating { get; private set; }
     public bool m_Moving => m_AgentEnabled && m_Agent.remainingDistance>.2f;
     public bool m_IdlePatrol =>TCommon.GetXZDistance(m_SourcePosition,transform.position)<=GameConst.AI.F_AIPatrolRange;
     public bool m_AgentEnabled
@@ -171,7 +158,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         m_Agent.stoppingDistance = 0f;
     }
 
-    public void AIActivate(bool inBattle)
+    public void AIActivate()
     {
         m_AgentEnabled = false;
         m_b_attacking = false;
@@ -182,7 +169,6 @@ public class EntityCharacterAI : EntityCharacterBase {
         m_MoveOrderTimer.SetTimer(0);
         m_TargetingTimer.SetTimer(0);
         m_SourcePosition = transform.position;
-        m_AIBattleActivating = inBattle;
         AISetSimulate(true);
     }
     public void AIDeactivate()
@@ -228,14 +214,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         m_TargetingTimer.Tick(deltaTime);
         if (m_TargetingTimer.m_Timing)
             return m_Target;
-
-        if (!m_AIBattleActivating)
-        {
-            m_Target = null;
-            m_TargetingTimer.SetTimer(GameConst.AI.F_AITargetCheckParam);
-            return false;
-        }
-
+        
         if(!m_Target)
             m_Target = GameManager.Instance.GetNeariesCharacter(this, m_Weapon.B_TargetAlly, false, GameConst.AI.F_AIIdleTargetDistance, p => Mathf.Abs(TCommon.GetAngle(TCommon.GetXZLookDirection(transform.position, p.transform.position), transform.forward, Vector3.up)) < GameConst.AI.F_AIIdleTargetAngle);
         else
@@ -246,9 +225,6 @@ public class EntityCharacterAI : EntityCharacterBase {
     
     void OnBattleReceiveTarget(EntityCharacterBase target, bool indicateOthers)
     {
-        if (!m_AIBattleActivating)
-            return;
-
         m_Target = target;
         if (!indicateOthers)
             return;

@@ -7,7 +7,7 @@ using System;
 
 public class LevelChunkBase : MonoBehaviour
 {
-    public enum_ChunkType m_ChunkType { get; private set; }
+    public enum_LevelType m_ChunkType { get; private set; }
     public int m_Width { get; private set; }
     public int m_Height { get; private set; }
     protected ObjectPoolListComponent<int, LevelTileBase> m_TilePool { get; private set; }

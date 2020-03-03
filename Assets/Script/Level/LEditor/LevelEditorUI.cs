@@ -51,7 +51,7 @@ public class LevelEditorUI : SingletonMono<LevelEditorUI>,TReflection.UI.IUIProp
     TypeSelection m_Data_Type;
     UIT_GridControllerGridItem<LevelEditorUIDataView> m_EditorView;
 
-    enum_ChunkType m_FileChunkType= enum_ChunkType.Battle;
+    enum_LevelType m_FileChunkType= enum_LevelType.Battle;
     List<string> m_DataViewing = new List<string>();
     protected override void Awake()
     {
@@ -62,22 +62,22 @@ public class LevelEditorUI : SingletonMono<LevelEditorUI>,TReflection.UI.IUIProp
         m_File_Save.onClick.AddListener(OnSaveClick);
         m_Edit_Resize.onClick.AddListener(OnResizeButtonClick);
         m_File_Type.Init(m_FileChunkType,OnFileTypeSelect);
-        m_Data_Type.Init( enum_ChunkType.Battle, OnDataViewTypeSelect);
+        m_Data_Type.Init( enum_LevelType.Battle, OnDataViewTypeSelect);
         m_EditorView = new UIT_GridControllerGridItem<LevelEditorUIDataView>(m_Data.Find("DataView/DataGrid"));
     }
 
     void OnFileTypeSelect(int typeID)
     {
-        m_FileChunkType = (enum_ChunkType)typeID;
+        m_FileChunkType = (enum_LevelType)typeID;
     }
 
     void OnDataViewTypeSelect(int typeID)
     {
-        enum_ChunkType targetChunkType = (enum_ChunkType)typeID;
+        enum_LevelType targetChunkType = (enum_LevelType)typeID;
         m_DataViewing.Clear();
         m_EditorView.ClearGrid();
         int index = 0;
-        TResources.GetChunkDatas().Traversal((enum_ChunkType type,List< LevelChunkData> datas)=> {
+        TResources.GetChunkDatas().Traversal((enum_LevelType type,List< LevelChunkData> datas)=> {
             if (type != targetChunkType)
                 return;
             datas.Traversal((LevelChunkData data) =>

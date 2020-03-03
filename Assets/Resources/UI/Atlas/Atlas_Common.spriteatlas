@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 3266991
+    totalSpriteSurfaceArea: 3242072
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -43,7 +43,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: f02ad3b8858f6ff44aafb2fbf4ef83e2, type: 3}
   - {fileID: 21300000, guid: 4ec60bacd1dafa74b8d93d4b1cae4984, type: 3}
   - {fileID: 21300000, guid: b6db95752d4b8db4cb74238362db9486, type: 3}
-  - {fileID: 21300000, guid: 10d80dc3fbfe2794791bd5ef9ce44593, type: 3}
   - {fileID: 21300000, guid: f5c09138b0341a64a90b45bc6cf89f5e, type: 3}
   - {fileID: 21300000, guid: 1e5956a73e79d9147b8b50c2823ab6f5, type: 3}
   - {fileID: 21300000, guid: 15d05e6f933533347985283c2f86695c, type: 3}
@@ -56,6 +55,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 8280ce86eddc22949910b22674ac779c, type: 3}
   - {fileID: 21300000, guid: 01ef3718fbcf89c408d0987fff8ff2d5, type: 3}
   - {fileID: 21300000, guid: 3a56b431fa4e03340882f4e72bca4609, type: 3}
+  - {fileID: 21300000, guid: 234f89eb50c2edc4e8048a6047a34cb5, type: 3}
   - {fileID: 21300000, guid: 8d752d68d59a02a42b68e58fc4ee5c90, type: 3}
   - {fileID: 21300000, guid: 71917017662df5d4cb55e4dba0929204, type: 3}
   - {fileID: 21300000, guid: 9ff4ddd5857d6e84e9be010dd6f29daa, type: 3}
@@ -93,6 +93,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: ac9c2c22d9a4cf241a53932685201d4c, type: 3}
   - {fileID: 21300000, guid: 466c35deecc6c1447b3c5b78330c1a1b, type: 3}
   - {fileID: 21300000, guid: a0e4044850dc94f4ea77c05d26531154, type: 3}
+  - {fileID: 21300000, guid: 9411f4dd0a826d842a762380b57f405b, type: 3}
   - {fileID: 21300000, guid: ffa5d357c7dd26b459d6fcb7886cd0f3, type: 3}
   - {fileID: 21300000, guid: 363bf8e3fa0ee3a459a372dbed9f6a32, type: 3}
   - {fileID: 21300000, guid: 68cf86bf99060f94f9d26f8b91fba42a, type: 3}
@@ -126,7 +127,6 @@ SpriteAtlas:
   - icon_diamond
   - icon_credit
   - btn_bottom_orange
-  - status_equipment_bg
   - UI_title_orange_ML
   - btn_bottom_unavailable
   - UI_title_orange_medium
@@ -139,6 +139,7 @@ SpriteAtlas:
   - control_ability_bottom_cooldown
   - control_ability_bottom_activate
   - setting_label_selected
+  - status_level_bg
   - status_bottom
   - InteractIcon_Portal
   - control_main_fire
@@ -176,6 +177,7 @@ SpriteAtlas:
   - icon_setting
   - equipment_blank
   - icon_failure
+  - icon_power
   - UI_common_black80
   - status_life_light
   - status_armor_light

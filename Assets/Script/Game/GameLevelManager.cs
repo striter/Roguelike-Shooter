@@ -21,6 +21,8 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         m_GameChunk.Init();
         m_DirectionalLight = transform.Find("Directional Light").GetComponent<Light>();
         OptionsManager.event_OptionChanged += OnOptionChanged;
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
     }
 
     protected override void OnDestroy()
@@ -28,6 +30,8 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         base.OnDestroy();
         NavigationManager.ClearNavMeshDatas();
         OptionsManager.event_OptionChanged -= OnOptionChanged;
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
     }
     void OnOptionChanged()
     {
@@ -42,7 +46,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         GameRenderData randomData = customizations.Length == 0 ? GameRenderData.Default() : customizations.RandomItem(random);
         randomData.DataInit(m_DirectionalLight, CameraController.Instance.m_Camera);
 
-        Dictionary<enum_ChunkType, List<LevelChunkData>> chunkDatas = TResources.GetChunkDatas();
+        Dictionary<enum_LevelType, List<LevelChunkData>> chunkDatas = TResources.GetChunkDatas();
         levelGenerateData.Traversal((GameLevelData data) => {
             m_ChunkDatas.Add(new ChunkGenerateData(chunkDatas[data.m_ChunkType].RandomItem(random),data.m_EventType));
         });
@@ -58,6 +62,17 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         m_GameChunk.m_ChunkObjects.Traversal((enum_TileObjectType obejctType,List<ChunkGameObjectData> objectDatas)=> {
             objectDatas.Traversal((ChunkGameObjectData data) => { OnLevelObjectGenerate(_data.m_EventType,obejctType,data); });
         });
+    }
+    void OnBattleStart()
+    {
+        m_GameChunk.SetBlocksLift(true);
+        NavigationManager.UpdateChunkData();
+    }
+
+    void OnBattleFinish()
+    {
+        m_GameChunk.SetBlocksLift(false);
+        NavigationManager.UpdateChunkData();
     }
 }
 

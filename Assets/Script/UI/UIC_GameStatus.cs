@@ -12,7 +12,6 @@ public class UIC_GameStatus : UIControlBase
     EntityCharacterPlayer m_Player;
 
     UIT_GridControllerGridItem<UIGI_ActionExpireInfo> m_ActionExpireGrid;
-    UIT_GridControllerGridItem<UIGI_ActionBase> m_EquipmentGrid;
     
     Transform tf_StatusData;
     RectTransform rtf_AmmoData;
@@ -31,6 +30,10 @@ public class UIC_GameStatus : UIControlBase
     RectTransform rtf_HealthFillHandle;
     Image img_HealthFill;
     UIT_TextExtend m_HealthAmount;
+
+    Transform tf_Level;
+    UIT_TextExtend m_Level_Info, m_Level_Index;
+    Image m_Level_Icon;
 
     ValueLerpSeconds m_HealthLerp,  m_ArmorLerp;
     
@@ -62,11 +65,13 @@ public class UIC_GameStatus : UIControlBase
         rtf_HealthFillHandle = img_HealthFill.transform.Find("Handle").GetComponent<RectTransform>();
         m_HealthAmount = tf_HealthData.Find("Amount").GetComponent<UIT_TextExtend>();
         m_HealthAmount = tf_HealthData.Find("Amount").GetComponent<UIT_TextExtend>();
-        
-        m_ActionExpireGrid = new UIT_GridControllerGridItem<UIGI_ActionExpireInfo>(tf_Container.Find("ActionExpireGrid"));
-        m_EquipmentGrid = new UIT_GridControllerGridItem<UIGI_ActionBase>(tf_Container.Find("EquipmentGrid"));
-        m_EquipmentGrid.transform.GetComponent<Button>().onClick.AddListener(() => UIManager.Instance.ShowPage<UI_EquipmentPack>(true, 0f).Show(m_Player.m_CharacterInfo));
 
+        tf_Level = tf_Container.Find("Level");
+        m_Level_Icon = tf_Level.Find("Icon").GetComponent<Image>();
+        m_Level_Index = tf_Level.Find("Index").GetComponent<UIT_TextExtend>();
+        m_Level_Info = tf_Level.Find("Info").GetComponent<UIT_TextExtend>();
+
+        m_ActionExpireGrid = new UIT_GridControllerGridItem<UIGI_ActionExpireInfo>(tf_Container.Find("ActionExpireGrid"));
         m_HealthLerp = new ValueLerpSeconds(0f, 4f, 2f, (float value) => {
             img_HealthFill.fillAmount = value;
             rtf_HealthFillHandle.ReAnchorReposX(value);
@@ -80,14 +85,14 @@ public class UIC_GameStatus : UIControlBase
 
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityPlayerHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
-        TBroadCaster<enum_BC_UIStatus>.Add<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerPerkStatus, OnEquipmentStatus);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnLevelStart, OnLevelStart);
     }
 
     protected override void OnDestroy()
     {
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityPlayerHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
-        TBroadCaster<enum_BC_UIStatus>.Remove<PlayerInfoManager>(enum_BC_UIStatus.UI_PlayerPerkStatus, OnEquipmentStatus);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnLevelStart, OnLevelStart);
     }
     
     private void Update()
@@ -105,6 +110,13 @@ public class UIC_GameStatus : UIControlBase
             float dyingValue = 1-Mathf.InverseLerp(UIConst.I_PlayerDyingMinValue, UIConst.I_PlayerDyingMaxValue, m_Player.m_Health.m_CurrentHealth) ;
             img_Dying.color = TCommon.ColorAlpha(img_Dying.color,dyingValue+m_DyingCurve.Evaluate(Time.time)*.3f);
         }
+    }
+
+    void OnLevelStart()
+    {
+        m_Level_Icon.sprite = GameUIManager.Instance.m_CommonSprites[GameManager.Instance.m_GameLevel.GetLevelIconSprite()];
+        m_Level_Index.formatText("UI_Level_Index", "<Color=#F8C64BFF>" + (GameManager.Instance.m_GameLevel.m_LevelPassed+1) +"</Color>");
+        m_Level_Info.localizeKey = GameManager.Instance.m_GameLevel.GetLevelInfoKey();
     }
 
     void OnCommonStatus(EntityCharacterPlayer _player)
@@ -147,10 +159,4 @@ public class UIC_GameStatus : UIControlBase
         }
     }
     
-    void OnEquipmentStatus(PlayerInfoManager infoManager)
-    {
-        m_EquipmentGrid.ClearGrid();
-        for (int i = 0; i < infoManager.m_ExpirePerks.Count; i++)
-            m_EquipmentGrid.AddItem(i).SetInfo(infoManager.m_ExpirePerks[i]);
-    }
 }

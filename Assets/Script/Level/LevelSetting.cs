@@ -12,7 +12,7 @@ namespace LevelSetting
         public static readonly Vector3 V3_TileUnitCenterOffset = new TileAxis(1, 1).ToPosition() / 2;
     }
 
-    public enum enum_ChunkType {
+    public enum enum_LevelType {
         Invalid = -1,
         Start,
         Event,
@@ -84,6 +84,17 @@ namespace LevelSetting
     
     public static class LevelExpressions
     {
+        public static bool IsBattleLevel(this enum_LevelType type)
+        {
+            switch(type)
+            {
+                default:
+                    return false;
+                case enum_LevelType.Battle:
+                case enum_LevelType.Final:
+                    return true;
+            }
+        }
         public static Bounds GetWorldBounds(TileAxis origin, TileAxis size)
         {
             Vector3 boundsCenter = origin.ToPosition();
@@ -134,27 +145,27 @@ namespace LevelSetting
             return TileTools.GetDirectionedSize(size, direction);
         }
         
-        public static Dictionary<enum_TileObjectType,int> GetChunkRestriction(enum_ChunkType type)
+        public static Dictionary<enum_TileObjectType,int> GetChunkRestriction(enum_LevelType type)
         {
             Dictionary<enum_TileObjectType, int> restrictionDic = new Dictionary<enum_TileObjectType, int>();
             switch(type)
             {
-                case enum_ChunkType.Start:
+                case enum_LevelType.Start:
                     restrictionDic.Add(enum_TileObjectType.REntrance2x2, 1);
                     restrictionDic.Add(enum_TileObjectType.RExport4x1, 1);
                     restrictionDic.Add(enum_TileObjectType.REventArea3x3, 1);
                     break;
-                case enum_ChunkType.Event:
+                case enum_LevelType.Event:
                     restrictionDic.Add(enum_TileObjectType.REntrance2x2, 1);
                     restrictionDic.Add(enum_TileObjectType.RExport4x1, 1);
                     restrictionDic.Add(enum_TileObjectType.REventArea3x3, 1);
                     break;
-                case enum_ChunkType.Battle:
+                case enum_LevelType.Battle:
                     restrictionDic.Add(enum_TileObjectType.REntrance2x2, 1);
                     restrictionDic.Add(enum_TileObjectType.RExport4x1, 1);
                     restrictionDic.Add( enum_TileObjectType.REnermySpawn1x1,-1);
                     break;
-                case enum_ChunkType.Final:
+                case enum_LevelType.Final:
                     restrictionDic.Add(enum_TileObjectType.REntrance2x2, 1);
                     restrictionDic.Add(enum_TileObjectType.RExport4x1, 1);
                     restrictionDic.Add(enum_TileObjectType.REnermySpawn1x1, -1);
@@ -166,9 +177,9 @@ namespace LevelSetting
     
     public struct GameLevelData
     {
-        public enum_ChunkType m_ChunkType;
+        public enum_LevelType m_ChunkType;
         public enum_ChunkEventType m_EventType;
-        public GameLevelData(enum_ChunkType _chunkType,enum_ChunkEventType _eventType= enum_ChunkEventType.Invalid)
+        public GameLevelData(enum_LevelType _chunkType,enum_ChunkEventType _eventType= enum_ChunkEventType.Invalid)
         {
             m_ChunkType = _chunkType;
             m_EventType = _eventType;

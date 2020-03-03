@@ -44,7 +44,7 @@ public class LevelChunkGame : LevelChunkBase
             m_RoadBlockTiles.Add(tile.m_Object as TileObjectBlockLift);
     }
 
-    void SetBlocksLift(bool lift)
+    public void SetBlocksLift(bool lift)
     {
         m_RoadBlockTiles.Traversal((TileObjectBlockLift tile) => {
             tile.SetLift(lift);

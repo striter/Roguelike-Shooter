@@ -10,7 +10,7 @@ public class UIC_Control : UIControlBase {
     protected TouchDeltaManager m_TouchDelta { get; private set; }
     Transform tf_InGame;
     Image m_AbilityBG,m_AbilityImg,m_AbilityCooldown;
-    Image m_setting;
+    Image m_Settings,m_Equipments;
     ControlWeaponData m_weapon1Data, m_weapon2Data;
     Action OnSwap, OnCharacterAbility;
     Action<bool> OnWeaponAction;
@@ -28,7 +28,8 @@ public class UIC_Control : UIControlBase {
         transform.Find("Sub").GetComponent<UIT_EventTriggerListener>().OnPressStatus = OnSubButtonDown;
 
         transform.Find("Settings").GetComponent<Button>().onClick.AddListener(OnSettingBtnClick);
-        m_setting = transform.Find("Settings/Image").GetComponent<Image>();
+        m_Settings = transform.Find("Settings/Image").GetComponent<Image>();
+        transform.Find("Equipments").GetComponent<Button>().onClick.AddListener(OnEquipmentBtnClick);
         
         m_weapon1Data = new ControlWeaponData(tf_InGame.Find("Weapon1Data"),OnWeaponFirstActionClick, OnWeaponSwap);
         m_weapon2Data = new ControlWeaponData(tf_InGame.Find("Weapon2Data"),OnWeaponSecondActionClick, OnWeaponSwap);
@@ -115,12 +116,18 @@ public class UIC_Control : UIControlBase {
         }
         UIManager.Instance.ShowPage<UI_Options>(true, 0f).SetInGame(GameManagerBase.Instance.B_InGame);
     }
+
+    void OnEquipmentBtnClick()
+    {
+        UIManager.Instance.ShowPage<UI_EquipmentPack>(true, 0f).Show();
+    }
+
     Action OnSettingClick;
     public void OverrideSetting(Action Override = null)
     {
         OnSettingClick = Override;
-        m_setting.sprite = UIManager.Instance.m_CommonSprites[Override == null ? "icon_setting" : "icon_close"];
-        m_setting.SetNativeSize();
+        m_Settings.sprite = UIManager.Instance.m_CommonSprites[Override == null ? "icon_setting" : "icon_close"];
+        m_Settings.SetNativeSize();
     }
     #endregion
 

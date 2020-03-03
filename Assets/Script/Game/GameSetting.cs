@@ -133,7 +133,7 @@ namespace GameSetting
             switch(random.Next(1))
             {
                 default: Debug.LogError("Invalid Convertions Here!");return null;
-                case 0: return new List<GameLevelData>() {new GameLevelData( enum_ChunkType.Start),new GameLevelData( enum_ChunkType.Battle),new GameLevelData( enum_ChunkType.Event, enum_ChunkEventType.Trader),new GameLevelData( enum_ChunkType.Final) };
+                case 0: return new List<GameLevelData>() {new GameLevelData( enum_LevelType.Start),new GameLevelData( enum_LevelType.Battle),new GameLevelData( enum_LevelType.Event, enum_ChunkEventType.Trader),new GameLevelData( enum_LevelType.Final) };
             }
 
         }
@@ -391,7 +391,7 @@ namespace GameSetting
             }
         }
 
-        public static string GetMapEventSprite(this enum_ChunkEventType type) => "map_icon_event_" + type;
+        public static string GetLevelIconSprite(this enum_LevelType type) => "map_icon_" + type;
 
         public static string GetAbilityBackground(bool cooldowning)=>cooldowning?"control_ability_bottom_cooldown":"control_ability_bottom_activate";
         public static string GetAbilitySprite(enum_PlayerCharacter character) => "control_ability_" + character;
@@ -417,6 +417,7 @@ namespace GameSetting
 
     public static class LocalizationKeyJoint
     {
+        public static string GetLevelNameLocalizeKey(this enum_LevelType type) => "UI_Level_" + type;
         public static string GetNameLocalizeKey(this EntityExpirepRreset buff) => "Buff_Name_" + buff.m_Index;
         public static string GetNameLocalizeKey(this ActionPerkBase action) => "Action_Name_" + action.m_Index;
         public static string GetIntroLocalizeKey(this ActionPerkBase action) => "Action_Intro_" + action.m_Index;
@@ -476,9 +477,8 @@ namespace GameSetting
         
         OnBattleStart,
         OnBattleFinish,
-        OnFinalBattleStart,
-        OnFinalBattleFinish,
 
+        OnLevelStart,
         OnLevelFinished,
         OnStageFinished,
 
@@ -773,6 +773,7 @@ namespace GameSetting
     {
         public string m_GameSeed;
         public enum_StageLevel m_Stage;
+        public int m_LevelPassed;
         public float m_Coins;
         public int m_Exp;
         public int m_Rank;
@@ -813,6 +814,7 @@ namespace GameSetting
             m_ActionBuffs = ActionSaveData.Create(_player.m_CharacterInfo.m_ExpireBuffs);
             m_GameSeed = _level.m_GameSeed;
             m_Stage = _level.m_StageIndex;
+            m_LevelPassed = _level.m_LevelPassed;
         }
 
         void ISave.DataRecorrect()
@@ -1013,8 +1015,7 @@ namespace GameSetting
         public static SBuff SystemSubEntityDOTInfo(float damageTickTime, float damagePerTick) => new SBuff(){ index = 100,i_addType = (int)enum_ExpireRefreshType.Refresh,f_expireDuration = 0,f_damageTickTime = damageTickTime,f_damagePerTick = damagePerTick, i_damageType = (int)enum_DamageType.Basic};
         public static readonly SBuff m_PlayerReviveBuff = new SBuff() { index = 101,i_effect= GameConst.I_PlayerReviveBuffIndex, i_addType = (int)enum_ExpireRefreshType.Refresh, f_expireDuration = GameConst.F_PlayerReviveBuffDuration, f_damageReduce = 1f };
         public static readonly SBuff m_PlayerBoneFireHealBuff = new SBuff() { index = 102, i_addType = (int)enum_ExpireRefreshType.Refresh, f_expireDuration = 5f, f_damageTickTime = .1f, f_damagePerTick = -1f, i_damageType = (int)enum_DamageType.HealthOnly };
-        public static readonly SBuff m_EnermyOuttaBattleDamageReduction = new SBuff() { index = 103, i_effect = GameConst.I_PlayerReviveBuffIndex, i_addType = (int)enum_ExpireRefreshType.Refresh,f_expireDuration=.5f, f_damageReduce = 1f };
-        //1000-9999
+       //1000-9999
         public static SBuff CreateGameEnermyBuff(int difficulty, float damageMultiply)
         {
             SBuff buff = new SBuff();
