@@ -9,8 +9,7 @@ using UnityEngine;
 using System.Threading.Tasks;
 public class GameManager : GameManagerBase
 {
-    protected static GameManager nInstance;
-    public static new GameManager Instance => nInstance;
+    public bool Test_CameraYLock = false;
     #region Test
     public string M_TESTSEED = "";
     public bool B_PhysicsDebugGizmos = true;
@@ -51,6 +50,8 @@ public class GameManager : GameManagerBase
         UIT_MobileConsole.Instance.AddConsoleBindings(m_bindings, (bool show) => { Time.timeScale = show ? .1f : 1f; });
     }
     #endregion
+    protected static GameManager nInstance;
+    public static new GameManager Instance => nInstance;
     public GameProgressManager m_GameLevel { get; private set; }
     public EntityCharacterPlayer m_LocalPlayer { get; private set; } = null;
     Transform tf_CameraAttach;
@@ -104,7 +105,7 @@ public class GameManager : GameManagerBase
             return;
 
         float deltaTime = Time.deltaTime;
-        tf_CameraAttach.position = new Vector3(m_LocalPlayer.transform.position.x,0, m_CameraAttachZ);
+        tf_CameraAttach.position = Test_CameraYLock? new Vector3(m_LocalPlayer.transform.position.x,0, m_CameraAttachZ):m_LocalPlayer.transform.position;
     }
     //Call When Level Changed
     void LoadStage() => this.StartSingleCoroutine(999, DoLoadStage());
