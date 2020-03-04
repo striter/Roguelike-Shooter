@@ -176,7 +176,6 @@ GameObject:
   - component: {fileID: 114962543772526786}
   - component: {fileID: 114960661836937264}
   - component: {fileID: 195397487950837894}
-  - component: {fileID: 208909417794864342}
   - component: {fileID: 136231061755397842}
   m_Layer: 10
   m_Name: 401_Entity_Savage1
@@ -714,8 +713,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1438937942561318}
-  m_LocalRotation: {x: -0.40821788, y: 0.23456968, z: -0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 31.878395, y: -16.027409, z: -9.5323715}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 31.878395, y: 0, z: -9.5323715}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4936304460457626}
@@ -941,12 +940,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 275d93242000a1d47972944c1cd255ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  I_MaxHealth: 320
-  m_IsDead: 0
+  I_MaxHealth: 220
   ExtraRendererForForest107Only: {fileID: 0}
   E_SpawnType: 1
   I_DefaultArmor: 0
-  F_MovementSpeed: 3.5
+  F_MovementSpeed: 6
   F_AttackSpread: 0
   E_AnimatorIndex: 20
   F_AIChaseRange: 1
@@ -958,7 +956,6 @@ MonoBehaviour:
     start: 0
     length: 0
   F_AttackRate: 0
-  B_BattleCheckObstacle: 0
   F_AttackRotateParam: 0.2
   I_AttackPreAimPercentage: 50
   B_AttackMove: 1
@@ -1061,7 +1058,7 @@ NavMeshAgent:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1438937942561318}
-  m_Enabled: 0
+  m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.4
   m_Speed: 2.5
@@ -1076,18 +1073,3 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 1
   m_ObstacleAvoidanceType: 4
---- !u!208 &208909417794864342
-NavMeshObstacle:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1438937942561318}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Shape: 0
-  m_Extents: {x: 0.4, y: 1, z: 0.4}
-  m_MoveThreshold: 0.1
-  m_Carve: 0
-  m_CarveOnlyStationary: 1
-  m_Center: {x: 0, y: 1.5, z: 0}
-  m_TimeToStationary: 0.5

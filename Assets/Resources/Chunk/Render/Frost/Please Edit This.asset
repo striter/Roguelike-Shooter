@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e349d199acb4d80499b840c85dd3f665, type: 3}
+  m_Name: Please Edit This
+  m_EditorClassIdentifier: 
+  f_pitch: 45
+  f_yaw: 60
+  f_lightItensity: 0.8
+  f_lambert: 0.9
+  c_lightColor: {r: 1, g: 0.9558824, b: 0.8897059, a: 1}
+  c_ambient: {r: 0.42647058, g: 0.48478705, b: 0.5, a: 1}
+  c_skyColor: {r: 0.12856834, g: 0.2715452, b: 0.30147058, a: 1}
+  c_shadowColor: {r: 0, g: 0.10268762, b: 0.1102941, a: 0}

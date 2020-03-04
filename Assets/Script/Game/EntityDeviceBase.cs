@@ -5,10 +5,10 @@ using GameSetting;
 using UnityEngine;
 
 public class EntityDeviceBase : EntityCharacterBase {
-    public override enum_EntityController m_Controller => enum_EntityController.Device; 
+    public override enum_EntityController m_ControllType => enum_EntityController.Device; 
     EntityDetector m_Detect;
     ParticleSystem[] m_Particles;
-    public ObjectPoolSimple<EntityCharacterBase, LineRenderer> m_Connections { get; private set; }
+    public ObjectPoolListComponent<EntityCharacterBase, LineRenderer> m_Connections { get; private set; }
     public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
         base.OnPoolItemInit(_identity, _OnRecycle);
@@ -16,7 +16,7 @@ public class EntityDeviceBase : EntityCharacterBase {
         m_Detect.Init(OnEntityDetect);
         m_Particles = GetComponentsInChildren<ParticleSystem>();
         Transform connectionsParent = transform.Find("Connections");
-        m_Connections = new ObjectPoolSimple<EntityCharacterBase, LineRenderer>(connectionsParent.Find("Item").gameObject, connectionsParent,(Transform transform,EntityCharacterBase identity)=>transform.GetComponent<LineRenderer>(),(LineRenderer target)=>target.transform);
+        m_Connections = new ObjectPoolListComponent<EntityCharacterBase, LineRenderer>(connectionsParent,"Item");
     }
     protected override void OnPoolItemEnable()
     {
@@ -28,9 +28,9 @@ public class EntityDeviceBase : EntityCharacterBase {
         base.OnPoolItemDisable();
         TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
     }
-    public override void OnActivate(enum_EntityFlag _flag, int _spawnerID = -1, float startHealth = 0)
+    protected override void EntityActivate(enum_EntityFlag flag, float startHealth = 0)
     {
-        base.OnActivate(_flag,_spawnerID, startHealth);
+        base.EntityActivate(flag, startHealth);
         m_Particles.Traversal((ParticleSystem particle) => { particle.Play(); });
     }
     void OnCharacterDead(EntityCharacterBase character)
@@ -59,7 +59,7 @@ public class EntityDeviceBase : EntityCharacterBase {
         if (m_IsDead)
             return;
 
-        switch (entity.m_Attacher.m_Controller)
+        switch (entity.m_Attacher.m_ControllType)
         {
             default:break;
             case enum_EntityController.Player:

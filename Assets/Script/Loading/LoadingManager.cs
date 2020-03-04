@@ -13,7 +13,7 @@ public enum enum_Scene
     Camp = 1,
     Game = 2,
 }
-public class LoadingManager : SimpleSingletonMono<LoadingManager>
+public class LoadingManager : SingletonMono<LoadingManager>
 {
     public SpriteAtlas m_LoadingSprites;
     public static bool m_GameBegin { get; private set; } = false;
@@ -43,7 +43,7 @@ public class LoadingManager : SimpleSingletonMono<LoadingManager>
     {
         m_CurrentScene = scene;
         m_GameBegin = true;
-        if (!Instance) SceneManager.LoadScene(0, LoadSceneMode.Additive);
+        if (!m_HaveInstance) SceneManager.LoadScene(0, LoadSceneMode.Additive);
     }
 
     GameLogo m_Logo;

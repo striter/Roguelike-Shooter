@@ -23,10 +23,9 @@ public class CampManager : GameManagerBase
     protected override void Start()
     {
         base.Start();
-        InitPostEffects(enum_Style.Invalid);
-        EntityCharacterPlayer player = GameObjectManager.SpawnEntityPlayer(new CBattleSave());
-        player.SetSpawnPosRot(tf_PlayerStart.position, tf_PlayerStart.rotation);
-        tf_PlayerCameraAttach = player.tf_CameraAttach;
+        InitPostEffects(enum_GameStyle.Invalid);
+        EntityCharacterPlayer player = GameObjectManager.SpawnEntityPlayer(new CBattleSave(),tf_PlayerStart.position, tf_PlayerStart.rotation);
+        tf_PlayerCameraAttach = player.transform;
         AttachPlayerCamera(tf_PlayerCameraAttach);
         CampFarmManager.Instance.OnCampEnter();
         CampAudioManager.Instance.PlayBGM(enum_CampMusic.Relax);

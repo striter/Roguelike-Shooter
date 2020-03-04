@@ -96,8 +96,8 @@ public class UI_Options : UIPage {
     protected override void Init()
     {
         base.Init();
-        Transform tf_selection = tf_Container.Find("Selections");
-        Transform tf_page = tf_Container.Find("Pages");
+        Transform tf_selection = rtf_Container.Find("Selections");
+        Transform tf_page = rtf_Container.Find("Pages");
         TCommon.TraversalEnum((enum_OptionSelection selection) =>
         {
             m_Selections.Add(selection,new SelectionItem(tf_selection.Find(selection.ToString()),selection,OnSelectionClick));
@@ -108,15 +108,14 @@ public class UI_Options : UIPage {
         new BoolToggle(m_Page[enum_OptionSelection.Display].Find("FrameRate/BtnToggle"), OnFrequencyClicked, GetFrameRateOption());
         new ValueToggle<enum_Option_ScreenEffect>(m_Page[enum_OptionSelection.Display].Find("ScreenEffect/BtnToggle"), OnScreenEffectClicked, GetScreenEffectOption(),new List<enum_Option_ScreenEffect> {  enum_Option_ScreenEffect.Normal, enum_Option_ScreenEffect.High});
         new BoolToggle(m_Page[enum_OptionSelection.Display].Find("Region/BtnToggle"), OnRegionClicked, GetRegionOption());
+        new BoolToggle(m_Page[enum_OptionSelection.Display].Find("Shadow/BtnToggle"), OnShadowClicked, GetShadowOption());
         new SliderStatus(m_Page[enum_OptionSelection.Sound].Find("MusicVolume/Slider"), OnMusicVolumeChanged, OptionsManager.m_OptionsData.m_MusicVolumeTap);
         new SliderStatus(m_Page[enum_OptionSelection.Sound].Find("VFXVolume/Slider"), OnVFXVolumeChanged, OptionsManager.m_OptionsData.m_VFXVolumeTap);
         new BoolToggle(m_Page[enum_OptionSelection.Control].Find("JoystickMode/BtnToggle"), OnJoystickClicked, GetJoystickOption());
         new SliderStatus(m_Page[enum_OptionSelection.Control].Find("Sensitive/Slider"), OnSensitiveChanged, OptionsManager.m_OptionsData.m_SensitiveTap);
 
-        btn_ReturnToCamp = tf_Container.Find("BtnReturn").GetComponent<Button>();
+        btn_ReturnToCamp = rtf_Container.Find("BtnReturn").GetComponent<Button>();
         btn_ReturnToCamp.onClick.AddListener(OnMainmenuBtnClick);
-
-        m_Page[enum_OptionSelection.Display].Find("Region").SetActivate(false);     //Test
     }
 
     public void SetInGame(bool inGame)
@@ -162,6 +161,15 @@ public class UI_Options : UIPage {
         OptionsManager.OnOptionChanged();
         return GetRegionOption();
     }
+
+    bool GetShadowOption() => OptionsManager.m_OptionsData.m_ShadowOff;
+    bool OnShadowClicked()
+    {
+        OptionsManager.m_OptionsData.m_ShadowOff = !OptionsManager.m_OptionsData.m_ShadowOff;
+        OptionsManager.OnOptionChanged();
+        return GetShadowOption();
+    }
+
     bool GetJoystickOption() => OptionsManager.m_OptionsData.m_JoyStickMode == enum_Option_JoyStickMode.Retarget;
     bool OnJoystickClicked()
     {
@@ -185,6 +193,6 @@ public class UI_Options : UIPage {
         OptionsManager.m_OptionsData.m_SensitiveTap = (int)value;
         OptionsManager.OnOptionChanged();
     } 
-    void OnMainmenuBtnClick()=> UIManager.Instance.ShowMessageBox<UIM_Intro>().Play("UI_Title_ExitGame","UI_Intro_ExitGame",GameManager.Instance.OnExitGame);
+    void OnMainmenuBtnClick()=> UIManager.Instance.ShowMessageBox<UIM_Intro>().Play("UI_Title_ExitGame","UI_Intro_ExitGame",GameManager.Instance.OnGameExit);
 
 }

@@ -33,8 +33,8 @@ public class UIGI_FarmPlotDetail : UIT_GridItem {
     }
 
     private void OnDisable()=> m_Plot = null;
-    void OnAcquireClick() => OnPlotAcquireClick?.Invoke(I_Index);
-    void OnClearClick() => OnPlotClearClick?.Invoke(I_Index);
+    void OnAcquireClick() => OnPlotAcquireClick?.Invoke(m_Index);
+    void OnClearClick() => OnPlotClearClick?.Invoke(m_Index);
 
     public void SetPlotInfo(CampFarmPlot _plot,Action<int> _OnPlotAcquireClick,Action<int> _OnPlotClearClick)
     {
@@ -62,9 +62,9 @@ public class UIGI_FarmPlotDetail : UIT_GridItem {
             case enum_CampFarmItemStatus.Locked:
                 locked= true;
                 string key="", value="" ;
-                if (I_Index == 3) { key = "UI_FarmStatus_Unlock4";value = GameConst.I_CampFarmPlot4UnlockDifficulty.ToString(); }
-                else if (I_Index == 4){ key = "UI_FarmStatus_Unlock5"; value = GameConst.I_CampFarmPlot5UnlockDifficulty.ToString(); }
-                else if (I_Index == 5) { key = "UI_FarmStatus_Unlock6"; value = GameConst.I_CampFarmPlot6UnlockTechPoints.ToString(); }
+                if (m_Index == 3) { key = "UI_FarmStatus_Unlock4";value = GameConst.I_CampFarmPlot4UnlockDifficulty.ToString(); }
+                else if (m_Index == 4){ key = "UI_FarmStatus_Unlock5"; value = GameConst.I_CampFarmPlot5UnlockDifficulty.ToString(); }
+                else if (m_Index == 5) { key = "UI_FarmStatus_Unlock6"; value = GameConst.I_CampFarmPlot6UnlockTechPoints.ToString(); }
                 m_LockText.formatText(key,value);
                 m_LockText.formatText(key,value);
                 break;

@@ -7,26 +7,39 @@ public class InteractBase : MonoBehaviour
 {
     public virtual enum_Interaction m_InteractType => enum_Interaction.Invalid;
     public virtual string m_ExternalLocalizeKeyJoint=>"";
+    public int m_TradePrice { get; protected set; } = -1;
     public virtual bool B_InteractOnTrigger => false;
-    protected virtual bool B_CanInteract(EntityCharacterPlayer _interactor) => true;
-    public virtual bool B_InteractOnce { get; private set; } = true;
-    public bool B_InteractEnable { get; private set; } = true;
-    public void SetInteractable(bool interactable) => B_InteractEnable = interactable;
+    protected HitCheckInteract m_InteractCheck { get; private set; }
+    protected virtual bool E_InteractOnEnable => true;
+    public virtual bool DnCheckInteractResponse(EntityCharacterPlayer _interactTarget) => m_InteractEnable;
+    protected virtual bool DoCheckInteractSuccessful(EntityCharacterPlayer _interactor) => m_TradePrice<=0|| _interactor.m_CharacterInfo.CanCostCoins(m_TradePrice);
+    public bool m_InteractEnable { get; private set; } = true;
+
     protected virtual void Play()
     {
-        B_InteractEnable = true;
+        m_TradePrice = -1;
+        m_InteractCheck = GetComponent<HitCheckInteract>();
+        m_InteractCheck.Init();
+        SetInteractable(E_InteractOnEnable);
+    }
+    protected virtual bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactor)
+    {
+        if (m_TradePrice > 0)
+            _interactor.m_CharacterInfo.OnCoinsCost(m_TradePrice);
+
+        return true;
     }
     public virtual bool TryInteract(EntityCharacterPlayer _interactor)
     {
-        if (!B_CanInteract(_interactor))
+        if (!DoCheckInteractSuccessful(_interactor))
             return false;
 
-        OnInteractSuccessful(_interactor);
+        SetInteractable(OnInteractOnceCanKeepInteract(_interactor));
         return true;
     }
-    protected virtual void OnInteractSuccessful(EntityCharacterPlayer _interactTarget)
+    public void SetInteractable(bool interactable)
     {
-        if (B_InteractOnce)
-            B_InteractEnable = false;
+        m_InteractEnable = interactable;
+        m_InteractCheck.SetEnable(interactable);
     }
 }

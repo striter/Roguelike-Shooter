@@ -21,13 +21,13 @@ public class UI_WeaponStatus : UIPage {
     protected override void Init()
     {
         base.Init();
-        tf_WeaponInfo = tf_Container.Find("WeaponInfo");
+        tf_WeaponInfo = rtf_Container.Find("WeaponInfo");
         m_WeaponBackgroundShadow = tf_WeaponInfo.Find("Shadow").GetComponent<Image>();
         m_WeaponName = tf_WeaponInfo.Find("WeaponName").GetComponent<UIT_TextExtend>();
         m_WeaponImage = tf_WeaponInfo.Find("WeaponImage").GetComponent<Image>();
         m_ClipSize = tf_WeaponInfo.Find("ClipSize").GetComponent<UIT_TextExtend>();
 
-        tf_StatusInfo = tf_Container.Find("StatusInfo");
+        tf_StatusInfo = rtf_Container.Find("StatusInfo");
         m_Damage = tf_StatusInfo.Find("Damage/Fill").GetComponent<Image>();
         m_DamageAmount = tf_StatusInfo.Find("Damage/Amount").GetComponent<UIT_TextExtend>();
         m_FireRate = tf_StatusInfo.Find("FireRate/Fill").GetComponent<Image>();
@@ -37,13 +37,13 @@ public class UI_WeaponStatus : UIPage {
         m_ProjectileSpeed = tf_StatusInfo.Find("ProjectileSpeed/Fill").GetComponent<Image>();
         m_ProjectileSpeedAmount = tf_StatusInfo.Find("ProjectileSpeed/Amount").GetComponent<UIT_TextExtend>();
 
-        tf_ActionInfo = tf_Container.Find("ActionInfo");
+        tf_ActionInfo = rtf_Container.Find("ActionInfo");
         m_ActionName = tf_ActionInfo.Find("ActionName").GetComponent<UIT_TextExtend>(); 
         m_ActionIntro = tf_ActionInfo.Find("ActionIntro").GetComponent<UIT_TextExtend>();
         m_ActionRarity = new UIC_RarityLevel(tf_ActionInfo.Find("ActionRarity"));
     }
     
-    public void Play(SWeapon weapon,ActionBase weaponAction)
+    public void Play(SWeapon weapon,ActionPerkBase weaponAction)
     {
         m_WeaponImage.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_Weapon.GetSpriteName()];
         m_WeaponName.localizeKey = weapon.m_Weapon.GetLocalizeNameKey();
@@ -64,10 +64,10 @@ public class UI_WeaponStatus : UIPage {
         m_ActionRarity.transform.SetActivate(showAction);
         if (showAction)
         {
-            ActionBase action = weaponAction;
+            ActionPerkBase action = weaponAction;
             m_ActionName.localizeKey = action.GetNameLocalizeKey();
             action.SetActionIntro(m_ActionIntro);
-            m_ActionRarity.SetRarity(action.m_rarity);   
+            m_ActionRarity.SetRarity(action.m_Rarity);   
             return;
         }
 

@@ -250,7 +250,6 @@ GameObject:
   - component: {fileID: 114815080850953392}
   - component: {fileID: 114936132275890386}
   - component: {fileID: 195882258826623858}
-  - component: {fileID: 208486174179687324}
   - component: {fileID: 136817645965296846}
   m_Layer: 10
   m_Name: 502_Entity_Skeleton2
@@ -493,8 +492,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1587510289150768}
-  m_LocalRotation: {x: -0.40821788, y: 0.23456968, z: -0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 44.2262, y: -19.22409, z: -12.214708}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 44.2262, y: 0, z: -12.214708}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4374832970908778}
@@ -1024,13 +1023,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 275d93242000a1d47972944c1cd255ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  I_MaxHealth: 280
+  I_MaxHealth: 180
+  ExtraRendererForForest107Only: {fileID: 0}
   E_SpawnType: 2
   I_DefaultArmor: 0
-  F_MovementSpeed: 3.5
+  F_MovementSpeed: 5
   F_AttackSpread: 2
   E_AnimatorIndex: 130
-  F_AIChaseRange: 17
+  F_AIChaseRange: 13
   F_AIAttackRange: 22
   F_AttackDuration:
     start: 2
@@ -1039,7 +1039,6 @@ MonoBehaviour:
     start: 1
     length: 1
   F_AttackRate: 0.33
-  B_BattleCheckObstacle: 0
   F_AttackRotateParam: 1
   I_AttackPreAimPercentage: 50
   B_AttackMove: 1
@@ -1131,7 +1130,7 @@ NavMeshAgent:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1587510289150768}
-  m_Enabled: 0
+  m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.4
   m_Speed: 2.5
@@ -1146,18 +1145,3 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 1
   m_ObstacleAvoidanceType: 4
---- !u!208 &208486174179687324
-NavMeshObstacle:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1587510289150768}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Shape: 0
-  m_Extents: {x: 0.4, y: 1, z: 0.4}
-  m_MoveThreshold: 0.1
-  m_Carve: 0
-  m_CarveOnlyStationary: 1
-  m_Center: {x: 0, y: 1.5, z: 0}
-  m_TimeToStationary: 0.5

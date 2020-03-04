@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4892897361463616}
-  - component: {fileID: 114910718250330774}
+  - component: {fileID: 114390336273244222}
   m_Layer: 0
   m_Name: Driller
   m_TagString: Untagged
@@ -172,7 +172,7 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1364153748070334}
   m_Mesh: {fileID: 4300000, guid: 105980fe4f7848a47b289edd37383771, type: 3}
---- !u!114 &114910718250330774
+--- !u!114 &114390336273244222
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -180,11 +180,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 1305394874654766}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f36aaef2dd894814d9e6946db53640ef, type: 3}
+  m_Script: {fileID: 11500000, guid: 036e795c0f749fe4bbfaa34be0e2a721, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   E_Anim: 1001
   B_AttachLeft: 0
-  m_ReloadClip1: {fileID: 8300000, guid: 5f0f04150e4e08d4696be44e849c1054, type: 3}
-  m_ReloadClip2: {fileID: 8300000, guid: 237960a0cffb9cf4ca9e7cb988f29816, type: 3}
-  m_ReloadClip3: {fileID: 8300000, guid: 5f0f04150e4e08d4696be44e849c1054, type: 3}

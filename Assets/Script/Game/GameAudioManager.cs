@@ -15,13 +15,8 @@ public class GameAudioManager : AudioManager
     public override void Init()
     {
         base.Init();
-        TCommon.TraversalEnum((enum_GameMusic music) =>
-        {
-            AudioClip clip = (music < enum_GameMusic.StyledStart || music > enum_GameMusic.StyledEnd) ? TResources.GetGameBGM(music) : null;
-            if (clip) m_GameMusic.Add(music, clip);
-        });
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageBeginLoad, OnStageBeginLoad);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageStart, OnStageStart);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnGameLoad, OnStageBeginLoad);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnGameBegin, OnStageStart);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish); ;
         TBroadCaster<enum_BC_GameStatus>.Add<bool>(enum_BC_GameStatus.OnGameFinish, OnGameFinish);
@@ -29,10 +24,10 @@ public class GameAudioManager : AudioManager
     public override void Recycle()
     {
         base.Recycle();
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnStageBeginLoad, OnStageBeginLoad);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnStageStart, OnStageStart);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnGameLoad, OnStageBeginLoad);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnGameBegin, OnStageStart);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish); ;
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish); 
         TBroadCaster<enum_BC_GameStatus>.Remove<bool>(enum_BC_GameStatus.OnGameFinish, OnGameFinish);
     }
 
@@ -57,15 +52,11 @@ public class GameAudioManager : AudioManager
     }
     void OnBattleStart()
     {
-        if(GameManager.Instance.m_GameLevel.m_LevelType == enum_LevelType.End)
         PlayBGM( enum_GameMusic.Fight, true);
     }
     void OnBattleFinish()
     {
-        if (GameManager.Instance.m_GameLevel.B_IsFinalLevel)
-            Stop();
-        else
-            PlayBGM(enum_GameMusic.Relax,true);
+        Stop();
     }
     void OnGameFinish(bool win) => SetBGPitch(.8f);
 

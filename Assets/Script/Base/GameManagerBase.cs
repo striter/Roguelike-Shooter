@@ -5,7 +5,7 @@ using UnityEngine;
 using System;
 using TExcel;
 using TGameSave;
-public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCoroutine{
+public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperClass{
     public virtual bool B_InGame => false;
     protected override void Awake()
     {
@@ -39,7 +39,8 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
     protected void SwitchScene(enum_Scene scene,Func<bool> onfinishLoading=null)
     {
         AudioManagerBase.Instance.Recycle();
-        GameObjectManager.RecycleAllObject();
+        GameObjectManager.Clear();
+        LevelObjectManager.Clear();
         UIManager.Instance.SetActivate(false);
         LoadingManager.BeginLoad(scene,onfinishLoading);
     }
@@ -48,16 +49,18 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
     {
         TLocalization.SetRegion(OptionsManager.m_OptionsData.m_Region);
         Application.targetFrameRate = (int)OptionsManager.m_OptionsData.m_FrameRate;
-        CameraController.Instance.m_Effect.SetCostyEffectEnable(OptionsManager.m_OptionsData.m_ScreenEffect>= enum_Option_ScreenEffect.High,false);
+        CameraController.Instance.m_Effect.SetCostyEffectEnable(OptionsManager.m_OptionsData.m_ScreenEffect>= enum_Option_ScreenEffect.High);
     }
 
     protected void OnPortalEnter(float duration,Transform vortexTarget, Action OnEnter)
     {
+        SetBulletTime(true, 0f);
         SetPostEffect_Vortex(true, vortexTarget, 1f,OnEnter);
     }
 
     protected void OnPortalExit(float duration,Transform vortexTarget)
     {
+        SetBulletTime(false);
         SetPostEffect_Vortex(false, vortexTarget, 1f);
     }
     #region Effect
@@ -70,7 +73,7 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
     }
 
     PE_BSC m_BSC;
-    public void InitPostEffects(enum_Style _levelStyle)
+    public void InitPostEffects(enum_GameStyle _levelStyle)
     {
         CameraController.Instance.m_Effect.RemoveAllPostEffect();
         //CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_DepthOutline>().SetEffect(Color.black,1.2f,0.0001f);
@@ -79,15 +82,15 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
 //        CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_DepthSSAO>().SetEffect();
         CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_BloomSpecific>().m_Blur.SetEffect( PE_Blurs.enum_BlurType.GaussianBlur,3, 10,2);
         CameraController.Instance.m_Effect.GetOrAddCameraEffect<CB_GenerateOpaqueTexture>();
-        switch (_levelStyle)
-        {
-            case enum_Style.Undead:
-                CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_FogDepthNoise>().SetEffect<PE_FogDepthNoise>(TCommon.ColorAlpha(Color.white, .3f), .5f, -1f, 5f).SetEffect(TResources.GetNoiseTex(), .4f, 2f);
-                break;
-            case enum_Style.Iceland:
-                CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_FogDepth>().SetEffect<PE_FogDepth>(Color.white, .6f, -1, 5);
-                break;
-        }
+        //switch (_levelStyle)
+        //{
+            //case enum_LevelStyle.Undead:
+            //    CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_FogDepthNoise>().SetEffect<PE_FogDepthNoise>(TCommon.ColorAlpha(Color.white, .3f), .5f, -1f, 5f).SetEffect(TResources.GetNoiseTex(), .4f, 2f);
+            //    break;
+            //case enum_LevelStyle.Frost:
+            //    CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_FogDepth>().SetEffect<PE_FogDepth>(Color.white, .6f, -12, 20);
+            //    break;
+        //}
     }
 
     protected void SetPostEffect_Dead()
@@ -111,7 +114,7 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
          },on?0:1,on?1:0, duration,()=> {
              CameraController.Instance.m_Effect.RemoveCameraEffect<PE_DistortVortex>();
              OnEnter?.Invoke();
-         } ));
+         } ,false));
     }
     public void SetEffect_Shake(float amount)
     {
@@ -148,6 +151,7 @@ public class GameManagerBase : SimpleSingletonMono<GameManagerBase>,ISingleCorou
     {
         TPSCameraController.Instance.Attach(playerTo, true,true);
         CameraController.Instance.LookAt(null);
+        CameraController.Instance.SetCameraRotation(-1, playerTo.rotation.eulerAngles.y);
     }
 }
 
@@ -212,10 +216,9 @@ public static class GameDataManager
     {
         if (m_Inited) return;
         m_Inited = true;
-        Properties<SLevelGenerate>.Init();
         Properties<SWeapon>.Init();
         Properties<SBuff>.Init();
-        SheetProperties<SGenerateEntity>.Init();
+        SheetProperties<SEnermyGenerate>.Init();
 
         TGameData<CGameSave>.Init();
         TGameData<CFarmSave>.Init();
@@ -232,7 +235,7 @@ public static class GameDataManager
     public static CGameSave m_GameData => TGameData<CGameSave>.Data;
     public static CFarmSave m_CampFarmData => TGameData<CFarmSave>.Data;
     public static CBattleSave m_BattleData => TGameData<CBattleSave>.Data;
-    public static void AdjustInGameData(EntityCharacterPlayer data, GameLevelManager level)
+    public static void AdjustInGameData(EntityCharacterPlayer data, GameProgressManager level)
     {
         m_BattleData.Adjust(data, level);
         TGameData<CBattleSave>.Save();
@@ -296,32 +299,6 @@ public static class GameDataManager
 
     #endregion
     #region ExcelData
-    public static SLevelGenerate GetItemGenerateProperties(enum_Style style, enum_LevelGenerateType prefabType, bool isInner)
-    {
-        SLevelGenerate generate = Properties<SLevelGenerate>.PropertiesList.Find(p => p.m_LevelStyle == style && p.m_LevelPrefabType == prefabType && p.m_IsInner == isInner);
-        if (generate.m_LevelStyle == 0 || generate.m_LevelPrefabType == 0 || generate.m_ItemGenerate == null)
-            Debug.LogError("Error Properties Found Of Index:" + ((int)style * 100 + (int)prefabType * 10 + (isInner ? 0 : 1)).ToString());
-
-        return generate;
-    }
-
-    public static List<SGenerateEntity> GetEntityGenerateProperties(enum_StageLevel stage,enum_BattleDifficulty battleDifficulty)
-    {
-        List<SGenerateEntity> entityList = new List<SGenerateEntity>();
-        int waveCount = 1;
-        for (int i = 0; i < 10; i++)
-        {
-            List<SGenerateEntity> randomItems = SheetProperties<SGenerateEntity>.GetPropertiesList((int)stage-1).FindAll(p=>p.m_Difficulty == battleDifficulty && p.m_waveCount == waveCount);
-            if (randomItems == null || randomItems.Count == 0)
-                break;
-            entityList.Add(randomItems.RandomItem());
-            waveCount++;
-        }
-        if (entityList.Count == 0)
-            Debug.LogError("Null Entity Generate Found By:"+(int)stage+"_" + (int)battleDifficulty);
-        return entityList;
-    }
-
     public static SWeapon GetWeaponProperties(enum_PlayerWeapon type)
     {
         SWeapon weapon = Properties<SWeapon>.PropertiesList.Find(p => p.m_Weapon == type);
@@ -336,55 +313,70 @@ public static class GameDataManager
             Debug.LogError("Error Properties Found Of Index:" + index);
         return buff;
     }
+    public static Dictionary<bool,List<SEnermyGenerate>> GetEnermyGenerate(enum_StageLevel stage)
+    {
+        Dictionary<bool, List<SEnermyGenerate>> m_GenerateDic = new Dictionary<bool, List<SEnermyGenerate>>();
+        SheetProperties<SEnermyGenerate>.GetPropertiesList((int)stage-1).Traversal((SEnermyGenerate generate)=> {
+            if (!m_GenerateDic.ContainsKey(generate.m_IsFinal))
+                m_GenerateDic.Add(generate.m_IsFinal, new List<SEnermyGenerate>());
+            m_GenerateDic[generate.m_IsFinal].Add(generate);
+        });
+        return m_GenerateDic;
+    }
     #endregion
 }
 
 public static class ActionDataManager
 {
-    static Dictionary<int, Type> m_AllActionType = new Dictionary<int, Type>();
-    public static List<int> m_AllAction { get; private set; } = new List<int>();
-    public static List<int> m_AbilityAction { get; private set; } = new List<int>();
-    public static List<int> m_EquipmentAction { get; private set; } = new List<int>();
+    static Dictionary<int, Type> m_EquipmentTypes = new Dictionary<int, Type>();
+    static Dictionary<int, Type> m_ActionBuffTypes = new Dictionary<int, Type>();
     static int m_ActionIdentity = 0;
     public static void Init()
     {
-        m_AllActionType.Clear();
-        m_AllAction.Clear();
-        m_AbilityAction.Clear();
-        m_EquipmentAction.Clear();
+        m_EquipmentTypes.Clear();
+        m_ActionBuffTypes.Clear();
 
-        TReflection.TraversalAllInheritedClasses((Action<Type, ActionBase>)((Type type, ActionBase action) => {
+        TReflection.TraversalAllInheritedClasses(((Type type, ActionBase action) => {
             if (action.m_Index <= 0)
                 return;
 
-            m_AllActionType.Add(action.m_Index, action.GetType());
-            m_AllAction.Add(action.m_Index);
-            switch (action.m_ActionType)
-            {
-                case enum_ActionType.Ability:
-                    m_AbilityAction.Add(action.m_Index);
-                    break;
-                case enum_ActionType.Equipment:
-                    m_EquipmentAction.Add(action.m_Index);
-                    break;
-            }
-        }), -1, enum_ActionRarity.Invalid);
+            if (action.m_ExpireType== enum_ExpireType.ActionPerk)
+                m_EquipmentTypes.Add(action.m_Index, action.GetType());
+            else if (action.m_ExpireType == enum_ExpireType.ActionBuff)
+                m_ActionBuffTypes.Add(action.m_Index, action.GetType());
+        }));
     }
-    public static ActionBase CreateRandomAction(enum_ActionRarity rarity, System.Random seed)=> CreateAction(m_AllAction.RandomItem(seed),rarity);
-    public static ActionAbility CreateRandomAbilityAction(enum_ActionRarity rarity, System.Random seed) => CreateAction(m_AbilityAction.RandomItem(seed),rarity) as ActionAbility;
-    public static ActionEquipment CreateRandomEquipmentAction(enum_ActionRarity rarity, System.Random seed) => CreateAction(m_EquipmentAction.RandomItem(seed),rarity) as ActionEquipment;
-    public static List<ActionBase> CreateActions(List<ActionSaveData> infos)
+    public static ActionPerkBase CreateRandomPlayerEquipment(enum_EquipmentRarity rarity, System.Random seed)=> CreatePlayerEquipment(EquipmentSaveData.Default( m_EquipmentTypes.RandomKey(seed),rarity));
+
+    public static ActionPerkBase CreatePlayerEquipment(EquipmentSaveData data)
     {
-        List<ActionBase> actions = new List<ActionBase>();
-        infos.Traversal((ActionSaveData info) => { actions.Add(CreateAction(info)); });
+        if (!m_EquipmentTypes.ContainsKey(data.m_ActionData.m_Index))
+            Debug.LogError("Error Action Equipment:" + data.m_ActionData.m_Index + " ,Does not exist");
+        ActionPerkBase equipment= TReflection.CreateInstance<ActionPerkBase>(m_EquipmentTypes[data.m_ActionData.m_Index]);
+        equipment.OnManagerSetData(m_ActionIdentity,data);
+        return equipment;
+    }
+    public static List<ActionPerkBase> CreatePlayerEquipments(List<EquipmentSaveData> datas)
+    {
+        List<ActionPerkBase> equipments = new List<ActionPerkBase>();
+        datas.Traversal((EquipmentSaveData data) => { equipments.Add(CreatePlayerEquipment(data)); });
+        return equipments;
+    }
+
+    public static ActionBuffBase CreateRandomActionBuff( System.Random seed=null)=> CreateActionBuff(ActionSaveData.Default(m_ActionBuffTypes.RandomKey(seed)));
+    public static ActionBuffBase CreateActionBuff(int buffIndex) => CreateActionBuff(ActionSaveData.Default(buffIndex));
+    public static ActionBuffBase CreateActionBuff(ActionSaveData data)
+    {
+        if (!m_ActionBuffTypes.ContainsKey(data.m_Index))
+            Debug.LogError("Error Action Buff:" + data.m_Index + " ,Does not exist");
+        ActionBuffBase actionBuff = TReflection.CreateInstance<ActionBuffBase>(m_ActionBuffTypes[data.m_Index]);
+        actionBuff.OnManagerSetData(m_ActionIdentity++, data);
+        return actionBuff;
+    }
+    public static List<ActionBuffBase> CreateActionBuffs(List<ActionSaveData> datas)
+    {
+        List<ActionBuffBase> actions = new List<ActionBuffBase>();
+        datas.Traversal((ActionSaveData data) => { actions.Add(CreateActionBuff(data)); });
         return actions;
     }
-    public static ActionBase CreateAction(ActionSaveData info) => info.m_IsNull ? null : CreateAction(info.m_Index, info.m_Level);
-    public static ActionBase CreateAction(int actionIndex, enum_ActionRarity level)
-    {
-        if (!m_AllActionType.ContainsKey(actionIndex))
-            Debug.LogError("Error Action:" + actionIndex + " ,Does not exist");
-        return TReflection.CreateInstance<ActionBase>(m_AllActionType[actionIndex], m_ActionIdentity++, level);
-    }
-    public static ActionBase CopyAction(ActionBase targetAction) => TReflection.CreateInstance<ActionBase>(m_AllActionType[targetAction.m_Index], targetAction.m_Identity, targetAction.m_rarity);
 }

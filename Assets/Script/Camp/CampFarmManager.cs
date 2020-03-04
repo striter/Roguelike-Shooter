@@ -4,7 +4,7 @@ using UnityEngine;
 using GameSetting;
 using System;
 using TTime;
-public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
+public class CampFarmManager : SingletonMono<CampFarmManager>
 {
     public float f_TimeScale=1f;
     public List<CampFarmPlot> m_Plots { get; private set; } = new List<CampFarmPlot>();
@@ -115,7 +115,7 @@ public class CampFarmManager : SimpleSingletonMono<CampFarmManager>
             UIManager.Instance.m_Indicates.ShowTip("UI_Tips_LackOfCredit", enum_UITipsType.Error);
             return;
         }
-        m_Plots[plotIndex].Hybrid(TCommon.RandomPercentage(GameExpression.GetFarmGeneratePercentage));
+        m_Plots[plotIndex].Hybrid(TCommon.RandomPercentage(GameConst.DP_FarmGeneratePercentage));
         CampManager.Instance.OnCreditStatus(-GameConst.I_CampFarmItemAcquire);
     }
 

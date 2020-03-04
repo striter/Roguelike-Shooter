@@ -240,9 +240,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4844743836598628}
   - component: {fileID: 114679542760397622}
-  - component: {fileID: 114764467629387072}
+  - component: {fileID: 114541562506333458}
   - component: {fileID: 195599446312921816}
-  - component: {fileID: 208651010292234202}
   - component: {fileID: 136776985104891248}
   m_Layer: 10
   m_Name: 107_Entity_Elf7
@@ -940,8 +939,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1531987402677502}
-  m_LocalRotation: {x: -0.40821788, y: 0.23456968, z: -0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 3.813454, y: -3.7476444, z: 0.77157485}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3.813454, y: 0, z: 0.771575}
   m_LocalScale: {x: 1.5, y: 1, z: 1}
   m_Children:
   - {fileID: 4419430410427302}
@@ -1129,6 +1128,37 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114541562506333458
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1531987402677502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c79b78d0b3b0b144a80e76641840b40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  I_MaxHealth: 1600
+  ExtraRendererForForest107Only: {fileID: 23295916408510408}
+  E_SpawnType: 5
+  I_DefaultArmor: 0
+  F_MovementSpeed: 5
+  F_AttackSpread: 0
+  E_AnimatorIndex: 163
+  F_AIChaseRange: 14
+  F_AIAttackRange: 22
+  F_AttackDuration:
+    start: 1
+    length: 1
+  F_AttackTimes:
+    start: 1
+    length: 0
+  F_AttackRate: 0.5
+  F_AttackRotateParam: 1
+  I_AttackPreAimPercentage: 50
+  B_AttackMove: 1
+  F_AttackFrontCheck: 2
 --- !u!114 &114679542760397622
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1151,39 +1181,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2091396369435d24bad4838db15bbe09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114764467629387072
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1531987402677502}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 275d93242000a1d47972944c1cd255ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  I_MaxHealth: 1600
-  m_IsDead: 0
-  ExtraRendererForForest107Only: {fileID: 23295916408510408}
-  E_SpawnType: 5
-  I_DefaultArmor: 0
-  F_MovementSpeed: 3
-  F_AttackSpread: 0
-  E_AnimatorIndex: 163
-  F_AIChaseRange: 17
-  F_AIAttackRange: 22
-  F_AttackDuration:
-    start: 1
-    length: 1
-  F_AttackTimes:
-    start: 1
-    length: 0
-  F_AttackRate: 0.5
-  B_BattleCheckObstacle: 0
-  F_AttackRotateParam: 1
-  I_AttackPreAimPercentage: 50
-  B_AttackMove: 1
-  F_AttackFrontCheck: 2
 --- !u!114 &114850124102981534
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1282,7 +1279,7 @@ NavMeshAgent:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1531987402677502}
-  m_Enabled: 0
+  m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.4
   m_Speed: 2.5
@@ -14645,18 +14642,3 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
---- !u!208 &208651010292234202
-NavMeshObstacle:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1531987402677502}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Shape: 0
-  m_Extents: {x: 0.4, y: 1, z: 0.4}
-  m_MoveThreshold: 0.1
-  m_Carve: 0
-  m_CarveOnlyStationary: 1
-  m_Center: {x: 0, y: 1.5, z: 0}
-  m_TimeToStationary: 0.5

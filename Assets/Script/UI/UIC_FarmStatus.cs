@@ -29,6 +29,6 @@ public class UIC_FarmStatus : UIControlBase {
     void OnProfitAnimFinished(int index) => m_ProfitAnim.RemoveItem(index);
     public void StampTick()
     {
-        m_PlotGrid.TraversalItem((int index, UIGI_FarmPlotDetail item)=>item.StampTick());
+        m_PlotGrid.m_Pool.m_ActiveItemDic.Traversal((int index, UIGI_FarmPlotDetail item)=>item.StampTick());
     }
 }

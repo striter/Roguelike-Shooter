@@ -13,10 +13,10 @@ public class UI_GameResult : UIPage {
     protected override void Init()
     {
         base.Init();
-        m_ResultTitle = tf_Container.Find("ResultTitle").GetComponent<Image>();
-        tf_Container.Find("BtnShare").GetComponent<Button>().onClick.AddListener(OnShareBtnClick);
-        btn_video = new UIC_Button(tf_Container.Find("BtnVideo"),OnVideoBtnClick);
-        Transform tf_result = tf_Container.Find("Result");
+        m_ResultTitle = rtf_Container.Find("ResultTitle").GetComponent<Image>();
+        rtf_Container.Find("BtnShare").GetComponent<Button>().onClick.AddListener(OnShareBtnClick);
+        btn_video = new UIC_Button(rtf_Container.Find("BtnVideo"),OnVideoBtnClick);
+        Transform tf_result = rtf_Container.Find("Result");
         m_Completion = tf_result.Find("Completion").GetComponent<UIT_TextExtend>();
         m_CompletionScore = tf_result.Find("CompletionScore").GetComponent<UIT_TextExtend>();
         m_Difficulty = tf_result.Find("Difficulty").GetComponent<UIT_TextExtend>();
@@ -24,8 +24,8 @@ public class UI_GameResult : UIPage {
         m_FinalScore = tf_result.Find("FinalScore").GetComponent<UIT_TextExtend>();
         m_CoinsAmount = tf_result.Find("RewardsGrid/Coins/Container/Amount").GetComponent<UIT_TextExtend>();
     }
-    GameLevelManager m_level;
-    public void Play(GameLevelManager level,Action _OnButtonClick)
+    GameProgressManager m_level;
+    public void Play(GameProgressManager level,Action _OnButtonClick)
     {
         m_level = level;
         m_ResultTitle.sprite = GameUIManager.Instance.m_InGameSprites[UIConvertions.GetUIGameResultTitleBG(level.m_gameWin,OptionsManager.m_OptionsData.m_Region)];

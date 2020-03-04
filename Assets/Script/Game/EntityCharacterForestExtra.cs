@@ -13,18 +13,19 @@ public class EntityCharacterForestExtra : EntityCharacterBase {
     int i_spreadCountCheck = 0;
     float f_spreadCheck = 0;
     public override Transform tf_Weapon => tf_Head;
-    EquipmentBase equipment;
+    WeaponHelperBase equipment;
     public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
         base.OnPoolItemInit(_identity, _OnRecycle);
-        equipment = EquipmentBase.AcquireEquipment(GameExpression.GetAIEquipmentIndex(_identity),this,m_CharacterInfo.GetDamageBuffInfo);
+        equipment = WeaponHelperBase.AcquireWeaponHelper(GameExpression.GetAIWeaponIndex(_identity),this,m_CharacterInfo.GetDamageBuffInfo);
     }
-    public override void OnActivate(enum_EntityFlag _flag, int _spawnerID = -1, float startHealth = 0)
+    protected override void EntityActivate(enum_EntityFlag flag, float startHealth = 0)
     {
-        base.OnActivate(_flag, _spawnerID, startHealth);
+        base.EntityActivate(flag, startHealth);
         f_spreadCheck = F_SpreadDuration;
         i_spreadCountCheck = 0;
     }
+
     protected override void OnAliveTick(float deltaTime)
     {
         base.OnAliveTick(deltaTime);
@@ -35,8 +36,8 @@ public class EntityCharacterForestExtra : EntityCharacterBase {
             return;
         f_spreadCheck = F_SpreadDuration;
 
-        Vector3 splitDirection = transform.forward.RotateDirection(Vector3.up, i_spreadCountCheck * I_SpreadAngleEach);
-        equipment.Play(null, transform.position + splitDirection * 20);
+        Vector3 splitDirection = transform.forward.RotateDirectionClockwise(Vector3.up, i_spreadCountCheck * I_SpreadAngleEach);
+        equipment.OnPlay(null, transform.position + splitDirection * 20);
         i_spreadCountCheck++;
         if (i_spreadCountCheck > I_SpreadCount)
             OnDead();

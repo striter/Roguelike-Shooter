@@ -1,12 +1,13 @@
-﻿using UnityEngine;
-using GameSetting;
-using TSpecialClasses;
+﻿using GameSetting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TSpecialClasses;
+using UnityEngine;
 
-public class EntityCharacterBase : EntityBase, ISingleCoroutine
+public class EntityCharacterBase : EntityBase
 {
+    public int I_MaxHealth;
     public Renderer ExtraRendererForForest107Only;
     public enum_EnermyType E_SpawnType = enum_EnermyType.Invalid;
     public int I_DefaultArmor;
@@ -19,6 +20,8 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     public CharacterInfoManager m_CharacterInfo { get; private set; }
     EntityCharacterEffectManager m_Effect;
     public virtual Vector3 m_PrecalculatedTargetPos(float time)=> tf_Head.position;
+    public int m_SpawnerEntityID { get; private set; }
+    public bool b_isSubEntity => m_SpawnerEntityID != -1;
     protected virtual CharacterInfoManager GetEntityInfo() => new CharacterInfoManager(this, m_HitCheck.TryHit, OnExpireChange);
     public virtual float m_baseMovementSpeed => F_MovementSpeed;
     public override bool B_IsCharacter => true;
@@ -26,7 +29,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     protected override float HealReceiveMultiply => m_CharacterInfo.F_HealReceiveMultiply;
     public new EntityHealth m_Health=>base.m_Health as EntityHealth;
     protected override HealthBase GetHealthManager()=> new EntityHealth(this, OnHealthChanged);
-
+    TimeCounter m_DeadCounter = new TimeCounter();
     protected virtual enum_GameVFX m_DamageClip => enum_GameVFX.EntityDamage;
     protected virtual enum_GameVFX m_ReviveClip => enum_GameVFX.PlayerRevive;
 
@@ -46,7 +49,6 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     protected override void OnPoolItemEnable()
     {
         base.OnPoolItemEnable();
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
         TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
         m_CharacterInfo.OnActivate();
@@ -55,29 +57,34 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
     protected override void OnPoolItemDisable()
     {
         base.OnPoolItemDisable();
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
-        this.StopSingleCoroutines(0);
+        m_Effect.OnDisable();
     }
-
-    public override void OnActivate(enum_EntityFlag _flag,int _spawnerID=-1,float startHealth =0)
+    protected override void EntityActivate(enum_EntityFlag flag, float startHealth = 0)
     {
-       base.OnActivate(_flag,_spawnerID,startHealth);
+        base.EntityActivate(flag, startHealth);
         m_Effect.OnReset();
     }
 
-    public void SetExtraDifficulty(float baseHealthMultiplier, float maxHealthMultiplier, SBuff difficultyBuff)
+    protected void OnMainCharacterActivate(enum_EntityFlag _flag)
     {
-        m_CharacterInfo.AddBuff(-1, difficultyBuff);
-        m_Health.SetHealthMultiplier(maxHealthMultiplier);
-        m_Health.OnSetHealth(I_MaxHealth * baseHealthMultiplier, true);
+        EntityActivate(_flag,I_MaxHealth);
+        m_SpawnerEntityID = -1;
+    }
+    public virtual void OnSubCharacterActivate(enum_EntityFlag _flag, int _spawnerID , float startHealth )
+    {
+        EntityActivate(_flag, startHealth);
+        m_SpawnerEntityID = _spawnerID;
     }
 
     protected virtual void OnExpireChange(){ }
 
     private void Update()
     {
+        if (!m_Activating)
+            return;
+
         m_CharacterInfo.Tick(Time.deltaTime);
         m_Effect.SetCloak(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Cloak));
         m_Effect.SetFreezed(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Freeze));
@@ -88,9 +95,19 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
             OnDeadTick(Time.deltaTime);
     }
     protected virtual void OnAliveTick(float deltaTime) { }
-    protected virtual void OnDeadTick(float deltaTime) { }
+    protected virtual void OnDeadTick(float deltaTime)
+    {
+        if (m_DeadCounter.m_Timing)
+        {
+            m_DeadCounter.Tick(deltaTime);
+            m_Effect.SetDeathEffect(1f-m_DeadCounter.m_TimeLeftScale);
+            return;
+        }
+        if (!m_DeadCounter.m_Timing)
+            DoRecycle();
+    }
 
-    public virtual void ReviveCharacter(float reviveHealth = -1, float reviveArmor = -1)
+    public virtual void ReviveCharacter()
     {
         if (!m_IsDead)
             return;
@@ -98,20 +115,20 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         m_Effect.OnReset();
         m_CharacterInfo.OnRevive();
         EntityHealth health = (m_Health as EntityHealth);
-        health.OnSetHealth(reviveHealth == -1 ? health.m_BaseHealth : reviveHealth, reviveArmor == -1 ? health.m_StartArmor : reviveArmor);
-        this.StopSingleCoroutine(0);
+        health.OnSetStatus( health.m_MaxHealth,health.m_MaxArmor);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterRevive, this);
     }
 
     protected override bool OnReceiveDamage(DamageInfo damageInfo, Vector3 damageDirection)
     {
-        if (base.OnReceiveDamage(damageInfo, damageDirection))
-        {
-            damageInfo.m_detail.m_BaseBuffApply.Traversal((SBuff buffInfo) => { m_CharacterInfo.AddBuff(damageInfo.m_detail.I_SourceID, buffInfo); });
-            if (damageInfo.m_detail.m_DamageEffect != enum_CharacterEffect.Invalid) m_CharacterInfo.OnSetEffect(damageInfo.m_detail.m_DamageEffect, damageInfo.m_detail.m_EffectDuration);
-            return true;
-        }
-        return false;
+        if (!base.OnReceiveDamage(damageInfo, damageDirection))
+            return false;
+
+        damageInfo.m_detail.m_BaseBuffApply.Traversal((SBuff buffInfo) => { m_CharacterInfo.AddBuff(damageInfo.m_detail.I_SourceID, buffInfo); });
+        if (damageInfo.m_detail.m_DamageEffect != enum_CharacterEffect.Invalid)
+            m_CharacterInfo.OnSetEffect(damageInfo.m_detail.m_DamageEffect, damageInfo.m_detail.m_EffectDuration);
+
+        return true;
     }
 
     protected virtual void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
@@ -123,10 +140,15 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         base.OnDead();
         m_CharacterInfo.OnDead();
         m_Effect.SetDeath();
-        this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo(m_Effect.OnDeathEffect, 0, 1, GameConst.F_EntityDeadFadeTime, OnRecycle));
+        m_DeadCounter.SetTimer(GameConst.F_EntityDeadFadeTime);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterDead, this);
     }
-    
+    public override void DoRecycle()
+    {
+        base.DoRecycle();
+        m_CharacterInfo.OnRecycle();
+    }
+
     protected override void OnHealthChanged(enum_HealthChangeMessage type)
     {
         base.OnHealthChanged(type);
@@ -139,135 +161,115 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
                 break;
         }
     }
-
-    protected override void OnRecycle()
-    {
-        base.OnRecycle();
-        m_Effect.OnRecycle();
-    }
-    protected virtual void OnBattleStart()
-    {
-
-    }
+    
     protected virtual void OnBattleFinish()
     {
         if (b_isSubEntity)
             OnDead();
     }
 
-    class EntityCharacterEffectManager:ISingleCoroutine
+    class EntityCharacterEffectManager:ICoroutineHelperClass
     {
-        Shader SD_Base;
-        static readonly Shader SD_DeathOutline=Shader.Find("Game/Effect/BloomSpecific/Bloom_DissolveEdge");
-        static readonly Shader SD_Scan = Shader.Find("Game/Extra/ScanEffect");
-        static readonly Shader SD_Ice = Shader.Find("Game/Effect/Ice");
-        static readonly Shader SD_Cloak = Shader.Find("Game/Effect/Cloak");
-        static readonly int ID_Color = Shader.PropertyToID("_Color");
-        static readonly int ID_Amount1=Shader.PropertyToID("_Amount1");
-        static readonly int ID_Opacity = Shader.PropertyToID("_Opacity");
-        static readonly Texture TX_Distort = TResources.GetNoiseTex();
+        Material m_NormalMaterial,m_EffectMaterial;
         List<Renderer> m_skins;
-        Material m_MatBase,m_MatExtra;
-        Material[] m_Materials;
-        bool m_mainCloack;
-        bool m_mainFreeze;
-        bool m_extraScan;
-        bool m_extraDeath;
+        bool m_cloaked;
+        bool m_freezed;
+        bool m_scanned;
+        bool m_death;
         TSpecialClasses.ParticleControlBase m_Particles;
-        public EntityCharacterEffectManager(Transform transform, List<Renderer> _skin)
+        MaterialPropertyBlock m_NormalProperty = new MaterialPropertyBlock();
+        public EntityCharacterEffectManager(Transform particleTrans, List<Renderer> _skin)
         {
-            m_Particles = new ParticleControlBase(transform);
-            m_MatBase = _skin[0].material;
-            SD_Base = m_MatBase.shader;
-            m_MatExtra = new Material(m_MatBase);
-            m_Materials = new Material[1] { m_MatBase };
+            m_Particles = new ParticleControlBase(particleTrans);
             m_skins = _skin;
+            m_NormalMaterial = m_skins[0].sharedMaterial;
+            m_EffectMaterial = m_skins[0].material;
             OnReset();
         }
 
         public void OnReset()
         {
+            this.StopAllSingleCoroutines();
             m_Particles.Play();
-            m_extraScan = false;
-            m_mainCloack = false;
-            m_extraDeath = false;
-            m_mainFreeze = false;
+            m_scanned = false;
+            m_cloaked = false;
+            m_death = false;
+            m_freezed = false;
             CheckMaterials();
-            m_Materials.Traversal((Material mat) => { mat.SetFloat(ID_Amount1, 0); });
         }
         void CheckMaterials()
         {
-            Shader mainShader = SD_Base;
-            Shader extraShader = null;
-            if (m_mainCloack)
-                mainShader = SD_Cloak;
-            if (m_mainFreeze)
-                mainShader = SD_Ice;
-            if (m_extraDeath)
-                extraShader = SD_DeathOutline;
-            if (m_extraScan)
-                extraShader = SD_Scan;
+            Shader mainShader = null;
+            if (m_cloaked)
+                mainShader = TEffects.SD_Cloak;
+            if (m_freezed)
+                mainShader = TEffects.SD_Ice;
+            if (m_death)
+                mainShader = TEffects.SD_Dissolve;
+            if (m_scanned)
+                mainShader = TEffects.SD_Scan;
+            
+            if (mainShader)
+                m_EffectMaterial.shader = mainShader;
 
-            m_MatBase.shader = mainShader;
-            if (extraShader == null)
-            {
-                m_Materials = new Material[1] { m_MatBase };
-            }
-            else
-            {
-                m_MatExtra.shader = extraShader;
-                m_Materials = new Material[2] { m_MatBase, m_MatExtra };
-            }
-            m_skins.Traversal((Renderer renderer) => { renderer.materials = m_Materials; });
+            m_skins.Traversal((Renderer renderer) => {
+                renderer.material =  mainShader?m_EffectMaterial:m_NormalMaterial;
+            });
         }
 
         public void SetDeath()
         {
             m_Particles.Stop();
-            m_extraDeath = true;
+            m_death = true;
             CheckMaterials();
+            m_EffectMaterial.SetTexture(TEffects.ID_NoiseTex, TEffects.TX_Noise);
+            m_EffectMaterial.SetFloat(TEffects.ID_Dissolve, 0);
+            m_EffectMaterial.SetFloat(TEffects.ID_DissolveScale, .2f);
         }
-        public void OnDeathEffect(float value) => m_Materials.Traversal((Material mat) => { mat.SetFloat(ID_Amount1, value); });
+        public void SetDeathEffect(float value)
+        {
+            m_EffectMaterial.SetFloat(TEffects.ID_Dissolve, value);
+        }
 
         public void SetScaned(bool _scaned)
         {
-            if (m_extraScan == _scaned)
+            if (m_scanned == _scaned)
                 return;
 
-            m_extraScan = _scaned;
+            m_scanned = _scaned;
             CheckMaterials();
         }
         public void SetFreezed(bool _freezed)
         {
-            if (m_mainFreeze == _freezed)
+            if (m_freezed == _freezed)
                 return;
-            m_mainFreeze = _freezed;
+            m_freezed = _freezed;
             CheckMaterials();
 
-            if (!m_mainFreeze)
+            if (!m_freezed)
                 return;
-            m_MatBase.SetColor("_IceColor", TCommon.GetHexColor("3DAEC5FF"));
-            m_MatBase.SetTexture("_DistortTex", TX_Distort);
-            m_MatBase.SetFloat("_Opacity", .5f);
+            m_EffectMaterial.SetTexture(TEffects.ID_NoiseTex, TEffects.TX_Noise);
+            m_EffectMaterial.SetColor("_IceColor", TCommon.GetHexColor("3DAEC5FF"));
+            m_EffectMaterial.SetFloat("_Opacity", .5f);
         }
         public void SetCloak(bool _cloacked)
         {
-            if (m_mainCloack == _cloacked)
+            if (m_cloaked == _cloacked)
                 return;
 
-            m_mainCloack = _cloacked;
+            m_cloaked = _cloacked;
             CheckMaterials();
             if (_cloacked)
             {
-                m_MatBase.SetTexture("_DistortTex", TX_Distort);
+                
                 this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) =>
                 {
-                    m_Materials[0].SetFloat(ID_Opacity, value);
+                    m_EffectMaterial.SetFloat(TEffects.ID_Opacity, value);
                 }, 1, .3f, .5f));
             }
             else
             {
-                this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) =>{ m_MatBase.SetFloat(ID_Opacity, value); }, .3f, 1f, .3f, () => { m_MatBase.shader = SD_Base; }));
+                this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => { m_EffectMaterial.SetFloat(TEffects.ID_Opacity, value);}, .3f, 1f, .3f, CheckMaterials));
             }
         }
 
@@ -290,11 +292,12 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
                     break;
             }
             this.StartSingleCoroutine(1, TIEnumerators.ChangeValueTo((float value) => {
-                m_MatBase.SetColor(ID_Color, Color.Lerp(targetColor, Color.white, value));
+                m_NormalProperty.SetColor(TEffects.ID_Color, Color.Lerp(targetColor, Color.white, value));
+                m_skins.Traversal((Renderer renderer) => { renderer.SetPropertyBlock(m_NormalProperty); });
             }, 0, 1, 1f));
         }
 
-        public void OnRecycle()
+        public void OnDisable()
         {
             this.StopAllSingleCoroutines();
         }
@@ -320,6 +323,7 @@ public class EntityCharacterBase : EntityBase, ISingleCoroutine
         {
             m_Animator.SetInteger(HS_I_WeaponType, index);
             m_Animator.SetTrigger(HS_T_Activate);
+            m_Animator.Update(1f);
         }
         public void SetPause(bool stun)
         {

@@ -28,7 +28,7 @@ public class EntityDeviceBuffApllier : EntityDeviceBase {
 
         m_Connections.m_ActiveItemDic.Traversal((EntityCharacterBase entity) =>
         {
-            switch (entity.m_Controller)
+            switch (entity.m_ControllType)
             {
                 case enum_EntityController.AI:
                     

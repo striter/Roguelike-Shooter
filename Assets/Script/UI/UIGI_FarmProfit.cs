@@ -23,5 +23,5 @@ public class UIGI_FarmProfit : UIT_GridItem {
         OnAnimFinished = _OnAnimFinished;
     }
 
-    void OnAnimationFinish() => OnAnimFinished?.Invoke(I_Index);
+    void OnAnimationFinish() => OnAnimFinished?.Invoke(m_Index);
 }

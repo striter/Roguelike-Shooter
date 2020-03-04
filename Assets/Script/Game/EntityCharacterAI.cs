@@ -6,18 +6,16 @@ using TSpecialClasses;
 using GameSetting;
 using System;
 
-[RequireComponent(typeof(NavMeshAgent),typeof(NavMeshObstacle))]
+[RequireComponent(typeof(NavMeshAgent))]
 public class EntityCharacterAI : EntityCharacterBase {
     public enum_EnermyAnim E_AnimatorIndex= enum_EnermyAnim.Invalid;
-    public override enum_EntityController m_Controller => enum_EntityController.AI;
+    public override enum_EntityController m_ControllType => enum_EntityController.AI;
     public float F_AIChaseRange;
     public float F_AIAttackRange;
     public RangeFloat F_AttackDuration;
     public RangeInt F_AttackTimes;
     public float F_AttackRate;
-    protected EnermyAIControllerBase m_AI { get; private set; }
     EnermyAnimator m_Animator;
-    public bool B_BattleCheckObstacle = false;
     [Range(0,3)]
     public float F_AttackRotateParam=1f;
     [Range(0, 100)]
@@ -31,17 +29,25 @@ public class EntityCharacterAI : EntityCharacterBase {
     {
         base.OnPoolItemInit(_identity, _OnRecycle);
         tf_Barrel = transform.FindInAllChild("Barrel");
-        m_AI = new EnermyAIControllerBase(this, EquipmentBase.AcquireEquipment(GameExpression.GetAIEquipmentIndex(m_Identity, 0),this,m_CharacterInfo.GetDamageBuffInfo), OnAttackAnim, OnCheckTarget);
+        InitAI(WeaponHelperBase.AcquireWeaponHelper(GameExpression.GetAIWeaponIndex(m_Identity, 0),this,m_CharacterInfo.GetDamageBuffInfo));
         if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
             m_Animator = new EnermyAnimator(tf_Model.GetComponent<Animator>(), OnAnimKeyEvent);
     }
-
-    public override void OnActivate(enum_EntityFlag _flag, int _spawnerID, float startHealth)
+    public void OnAIActivate(enum_EntityFlag _flag, float maxHealthMultiplier, SBuff difficultyBuff)
     {
-        if (m_Animator!=null)
+        base.OnMainCharacterActivate(_flag);
+        if (m_Animator != null)
             m_Animator.OnActivate(E_AnimatorIndex);
-        m_AI.OnActivate();
-        base.OnActivate(_flag,_spawnerID,startHealth);
+        m_Health.OnActivate(I_MaxHealth);
+        m_Agent.enabled = true;
+        m_CharacterInfo.AddBuff(-1, difficultyBuff);
+        m_Health.SetHealthMultiplier(maxHealthMultiplier);
+        AIActivate();
+    }
+    public override void OnSubCharacterActivate(enum_EntityFlag _flag, int _spawnerID = -1, float startHealth = 0)
+    {
+        base.OnSubCharacterActivate(_flag, _spawnerID, startHealth);
+        AIActivate();
     }
 
     protected override void OnRevive()
@@ -53,7 +59,7 @@ public class EntityCharacterAI : EntityCharacterBase {
     protected override void OnDead()
     {
         base.OnDead();
-        m_AI.OnDeactivate();
+        AIDeactivate();
         if (m_Animator != null)
             m_Animator.OnDead();
     }
@@ -63,45 +69,353 @@ public class EntityCharacterAI : EntityCharacterBase {
         base.OnExpireChange();
         if (m_Animator != null)
             m_Animator.SetMovementSpeed(m_CharacterInfo.F_MovementSpeed/4f);
-        m_AI.m_Agent.speed = m_CharacterInfo.F_MovementSpeed;
+        m_Agent.speed = m_CharacterInfo.F_MovementSpeed;
     }
 
+    Vector3 m_Impact;
     protected override void OnAliveTick(float deltaTime)
     {
         base.OnAliveTick(deltaTime);
         if (m_Animator != null)
         {
-            m_Animator.SetForward(m_AI.B_AgentEnabled ? 1f:0f);
+            m_Animator.SetForward(m_Moving ? 1f:0f);
             m_Animator.SetPause(m_CharacterInfo.B_Effecting( enum_CharacterEffect.Freeze));
         }
+        AISetSimulate(!m_CharacterInfo.B_Effecting( enum_CharacterEffect.Freeze));
+        AITick(Time.deltaTime);
+    }
 
-        m_AI.SetPlay(!m_CharacterInfo.B_Effecting( enum_CharacterEffect.Freeze));
-        m_AI.OnTick(Time.deltaTime);
+    protected override void OnDeadTick(float deltaTime)
+    {
+        base.OnDeadTick(deltaTime);
+        m_Impact = Vector3.Lerp(Vector3.zero, m_Impact, Time.deltaTime * 20f);
+        if (m_Impact.magnitude > .2f) transform.Translate(m_Impact, Space.World);
+        if (m_Animator!=null)  m_Animator.SetPause(false);
     }
 
     protected override bool OnReceiveDamage(DamageInfo damageInfo, Vector3 damageDirection)
     {
-        if(damageDirection!=Vector3.zero)
-            transform.Translate(damageDirection *GameConst.F_AIDamageTranslate * -damageInfo.m_AmountApply);
-        return base.OnReceiveDamage(damageInfo, damageDirection);
+        if (!base.OnReceiveDamage(damageInfo, damageDirection))
+            return false;
+
+        if (GameManager.Instance.CharacterExists(damageInfo.m_detail.I_SourceID))
+        {
+            EntityCharacterBase entity = GameManager.Instance.GetCharacter(damageInfo.m_detail.I_SourceID);
+            if (GameManager.Instance.EntityOpposite(this, entity))
+                OnBattleReceiveTarget(entity, true);
+        }
+
+        if (m_IsDead && damageDirection != Vector3.zero)
+            m_Impact += -damageDirection * GameConst.AI.F_AIDeadImpact * -damageInfo.m_AmountApply;
+
+        return true;
     }
 
     protected virtual void OnAttackAnim(bool startAttack)
     {
         if (m_Animator!=null) m_Animator.OnAttack(startAttack);
-        else if(startAttack) m_AI.OnAttackAnimTrigger();
-    } 
+        else if(startAttack) OnAttackAnimTrigger();
+    }
 
     protected void OnAnimKeyEvent(TAnimatorEvent.enum_AnimEvent animEvent)
     {
         switch (animEvent)
         {
             case TAnimatorEvent.enum_AnimEvent.Fire:
-                m_AI.OnAttackAnimTrigger();
+                OnAttackAnimTrigger();
                 break;
         }
     }
+
+    #region AI
+
+    protected NavMeshAgent m_Agent;
+    protected WeaponHelperBase m_Weapon;
+    TimeCounter m_TargetingTimer = new TimeCounter(), m_MoveTimer = new TimeCounter(), m_MoveOrderTimer = new TimeCounter(),m_BattleDurationTimer=new TimeCounter(),m_BattleFireTimer=new TimeCounter();
+    Vector3 m_SourcePosition;
+
+
+    public EntityCharacterBase m_Target { get; private set; }
+    public bool m_AISimluating { get; private set; }
+    public bool m_Moving => m_AgentEnabled && m_Agent.remainingDistance>.2f;
+    public bool m_IdlePatrol =>TCommon.GetXZDistance(m_SourcePosition,transform.position)<=GameConst.AI.F_AIPatrolRange;
+    public bool m_AgentEnabled
+    {
+        get
+        {
+            return !m_Agent.isStopped;
+        }
+        set
+        {
+            m_Agent.isStopped = !value;
+        }
+    }
+
+    void InitAI(WeaponHelperBase _weapon)
+    {
+        m_Weapon = _weapon;
+        m_Agent = GetComponent<NavMeshAgent>();
+        m_Agent.stoppingDistance = 0f;
+    }
+
+    public void AIActivate()
+    {
+        m_AgentEnabled = false;
+        m_b_attacking = false;
+        m_Target = null;
+        m_MoveTimer.SetTimer(0);
+        m_BattleDurationTimer.SetTimer(0);
+        m_BattleFireTimer.SetTimer(0);
+        m_MoveOrderTimer.SetTimer(0);
+        m_TargetingTimer.SetTimer(0);
+        m_SourcePosition = transform.position;
+        AISetSimulate(true);
+    }
+    public void AIDeactivate()
+    {
+        StopMoving();
+        FinishAttack();
+    }
+
+    public void AISetSimulate(bool play)
+    {
+        if (m_AISimluating == play)
+            return;
+
+        m_AISimluating = play;
+        if (!m_AISimluating)
+        {
+            StopMoving();
+            PauseAttack();
+        }
+    }
+
     
+    public void AITick(float deltaTime)
+    {
+        if (!m_AISimluating)
+            return;
+        
+        bool battleTick = BattleTargetCheck(deltaTime);
+        if (!battleTick)
+        {
+            if(m_b_attacking)
+                FinishAttack();
+        }
+
+        if (!battleTick)
+            IdleTick(deltaTime);
+        else
+            BattleTick(deltaTime);
+    }
+    
+    bool BattleTargetCheck(float deltaTime)
+    {
+        m_TargetingTimer.Tick(deltaTime);
+        if (m_TargetingTimer.m_Timing)
+            return m_Target;
+        
+        if(!m_Target)
+            m_Target = GameManager.Instance.GetNeariesCharacter(this, m_Weapon.B_TargetAlly, false, GameConst.AI.F_AIIdleTargetDistance, p => Mathf.Abs(TCommon.GetAngle(TCommon.GetXZLookDirection(transform.position, p.transform.position), transform.forward, Vector3.up)) < GameConst.AI.F_AIIdleTargetAngle);
+        else
+            m_Target = m_Target = GameManager.Instance.GetNeariesCharacter(this, m_Weapon.B_TargetAlly, false);
+        m_TargetingTimer.SetTimer(m_Target ? GameConst.AI.F_AIReTargetCheckParam : GameConst.AI.F_AITargetCheckParam);
+        return m_Target;
+    }
+    
+    void OnBattleReceiveTarget(EntityCharacterBase target, bool indicateOthers)
+    {
+        m_Target = target;
+        if (!indicateOthers)
+            return;
+        GameManager.Instance.GetNearbyCharacters(this, true, false, GameConst.AI.F_AITargetIndicateRange).Traversal((EntityCharacterBase character) => {
+            if (character.m_ControllType == enum_EntityController.AI)
+                (character as EntityCharacterAI).OnBattleReceiveTarget(m_Target, false);
+        });
+
+    }
+    #region Idle
+    void IdleTick(float deltaTime)
+    {
+        IdleMovementCheck(deltaTime);
+        IdleRotation(deltaTime);
+    }
+
+    void IdleMovementCheck(float deltaTime)
+    {
+        m_MoveTimer.Tick(deltaTime);
+        if (m_MoveTimer.m_Timing)
+            return;
+        m_MoveTimer.SetTimer(GameConst.AI.F_AIMaxRepositionDuration);
+
+        if (m_Moving)
+            return;
+
+        if (!m_IdlePatrol)
+        {
+            SetDestination(m_SourcePosition);
+            return;
+        }
+
+        if (TCommon.RandomPercentage() > GameConst.AI.I_AIIdlePercentage)
+        {
+            m_MoveOrderTimer.SetTimer(GameConst.AI.RF_AIBattleIdleDuration.Random());
+            return;
+        }
+
+        SetDestination(m_SourcePosition + TCommon.RandomXZSphere(GameConst.AI.F_AIPatrolRange));
+    }
+
+    void IdleRotation(float deltaTime)
+    {
+        m_Agent.updateRotation = true;
+    }
+    #endregion
+    #region Battle
+    Vector3 m_m_targetDirection;
+    float m_m_targetDistance;
+    bool m_m_targetOutChaseRange;
+    bool m_m_targetOutAttackRange;
+    bool m_b_CanStartAttack;
+    bool m_b_CanKeepAttack;
+    bool m_m_targetRotationWithin;
+    bool m_b_attacking = false;
+    void BattleTick(float deltaTime)
+    {
+        BattleMovement(deltaTime);
+        BattleRotation(deltaTime);
+
+        if (!m_b_attacking)
+            BattleCheck(deltaTime);
+        else
+            AttackCheck(deltaTime);
+    }
+
+    void BattleCheck(float deltaTime)
+    {
+        bool attackBlocked = FrontBlocked();
+        m_b_CanStartAttack = !m_m_targetOutAttackRange && m_m_targetRotationWithin && !attackBlocked;
+        m_b_CanKeepAttack = !attackBlocked;
+
+        m_BattleDurationTimer.Tick(m_CharacterInfo.F_ReloadRateTick(deltaTime));
+        if (m_BattleDurationTimer.m_Timing || !m_b_CanStartAttack)
+            return;
+
+        StartAttack(F_AttackTimes.Random(), TCommon.RandomPercentage() >= I_AttackPreAimPercentage);
+    }
+
+    int i_playCount = -1;
+    bool b_preAim = false;
+    void StartAttack(int attackTimes, bool preAim)
+    {
+        i_playCount = (attackTimes <= 0 ? 1 : attackTimes);       //Make Sure Play Once At Least
+        b_preAim = preAim;
+        m_b_attacking = true;
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_OnWillAIAttack, this);
+        if (m_Weapon.B_LoopAnim)
+        {
+            OnAttackAnim(true);
+            m_BattleFireTimer.SetTimer( F_AttackRate);
+        }
+    }
+
+    void PauseAttack()
+    {
+        if (m_b_attacking)
+            m_Weapon.OnStopPlay();
+    }
+
+    void AttackCheck(float deltaTime)
+    {
+        if (!m_b_CanKeepAttack)
+        {
+            FinishAttack();
+            return;
+        }
+
+        if (i_playCount <= 0)
+            return;
+
+        m_BattleFireTimer.Tick(m_CharacterInfo.F_FireRateTick(deltaTime));
+        if (m_BattleFireTimer.m_Timing)
+            return;
+        m_BattleFireTimer.SetTimer(F_AttackRate);
+
+        i_playCount--;
+        if (m_Weapon.B_LoopAnim)
+            OnAttackAnimTrigger();
+        else
+            OnAttackAnim(true);
+    }
+
+    protected virtual void OnAttackAnimTrigger()
+    {
+        if (m_Target)
+            m_Weapon.OnPlay(b_preAim, m_Target);
+
+        if (i_playCount <= 0)
+            FinishAttack();
+    }
+
+    void FinishAttack()
+    {
+        m_b_attacking = false;
+        m_Weapon.OnStopPlay();
+        OnAttackAnim(false);
+        m_BattleDurationTimer.SetTimer(F_AttackDuration.Random());
+    }
+    #region Position
+    void BattleMovement(float deltaTime)
+    {
+        m_m_targetDistance = TCommon.GetXZDistance(m_Target.transform.position, transform.position);
+        m_m_targetOutChaseRange = m_m_targetDistance > F_AIChaseRange;
+        m_m_targetOutAttackRange = m_m_targetDistance > F_AIAttackRange;
+
+        float movementDelta = deltaTime * m_CharacterInfo.F_MovementSpeedMultiply;
+        m_MoveTimer.Tick(movementDelta);
+        m_MoveOrderTimer.Tick(movementDelta);
+        if (m_MoveTimer.m_Timing)
+            return;
+
+        m_MoveTimer.SetTimer(GameConst.AI.F_AIMovementCheckParam);
+        if (ForceHoldPosition()) { StopMoving(); return; }
+
+        if (m_MoveOrderTimer.m_Timing)
+            return;
+
+        if (!m_m_targetOutChaseRange && m_Moving && TCommon.RandomPercentage() > GameConst.AI.I_AIIdlePercentage)
+        {
+            StopMoving();
+            m_MoveOrderTimer.SetTimer(GameConst.AI.RF_AIBattleIdleDuration.Random());
+            return;
+        }
+
+        SetDestination(GetSamplePosition(m_m_targetOutChaseRange));
+        m_MoveOrderTimer.SetTimer(GameConst.AI.F_AIMaxRepositionDuration);
+    }
+    bool ForceHoldPosition() => m_CharacterInfo.F_MovementSpeed == 0 || (m_b_attacking && !B_AttackMove);
+
+    void StopMoving() { m_AgentEnabled = false; }
+    void SetDestination(Vector3 destination) { m_AgentEnabled = true; m_Agent.SetDestination(destination); }
+    Vector3 GetSamplePosition(bool forward)
+    {
+        if (forward)
+            return m_Target.transform.position + TCommon.RandomXZSphere(3f);
+        else
+            return transform.position + 5 * -m_m_targetDirection;
+    }
+    bool FrontBlocked() => F_AttackFrontCheck > 0f && Physics.SphereCast(new Ray(tf_Head.position, transform.forward), .5f, F_AttackFrontCheck, GameLayer.Mask.I_Static);
+
+    void BattleRotation(float deltaTime)
+    {
+        m_Agent.updateRotation = false;
+        m_m_targetDirection = TCommon.GetXZLookDirection(transform.position, m_Target.transform.position);
+        m_m_targetRotationWithin = Mathf.Abs(TCommon.GetAngle(m_m_targetDirection, transform.forward, Vector3.up)) < 15;
+        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(m_m_targetDirection, Vector3.up), Time.deltaTime * 5 * (m_b_attacking ? F_AttackRotateParam : 1));
+    }
+    #endregion
+    #endregion
+    #endregion
     protected class EnermyAnimator : CharacterAnimator
     {
         static readonly int HS_T_Attack = Animator.StringToHash("t_attack");
@@ -118,286 +432,11 @@ public class EntityCharacterAI : EntityCharacterBase {
             m_Animator.SetBool(HS_B_Attack,attack);
         }
     }
-    #region AI
-    protected class  EnermyAIControllerBase
-    {
-        public NavMeshAgent m_Agent { get; private set; }
-        protected NavMeshObstacle m_Obstacle;
-        protected EntityCharacterAI m_Entity;
-        protected EntityCharacterBase m_Target;
-        protected Transform transform => m_Agent.transform;
-        protected Transform headTransform => m_Entity.tf_Head;
-        protected Transform targetHeadTransform => m_Target.tf_Head;
-        protected Action<bool> OnAttackAnim;
-        protected Func<EntityCharacterBase, bool> OnCheckTarget;
-        protected EquipmentBase m_Weapon;
-        protected CharacterInfoManager m_Info => m_Entity.m_CharacterInfo;
-        RaycastHit[] m_Raycasts;
-        float f_movementSimulate,f_movementOrderSimulate, f_battleSimulate, f_calculateSimulate, f_checkTargetSimulate,f_fireCheckSimulate;
-        Vector3 m_forwardDirection;
-        float f_targetDistance;
-
-        bool b_targetOutChaseRange;
-        bool b_targetOutAttackRange;
-        bool b_CanStartAttack;
-        bool b_CanKeepAttack;
-        bool b_targetVisible;
-        bool b_targetRotationWithin;
-        bool b_targetAvailable => m_Target != null && GameManager.Instance.CheckEntityTargetable(m_Target); 
-        bool b_playing;
-        public bool B_AgentEnabled
-        {
-            get
-            {
-                return m_Agent.enabled;
-            }
-            set
-            {
-                if (value == m_Agent.enabled)
-                    return;
-
-                if (value)
-                {
-                    m_Obstacle.enabled = false;
-                    m_Agent.enabled = true;
-                    m_Agent.isStopped = false;
-                }
-                else
-                {
-                    if (m_Agent.enabled)
-                    {
-                        m_Agent.isStopped = true;
-                        m_Agent.enabled = false;
-                    }
-                    m_Obstacle.enabled = true;
-                }
-            }
-        }
-
-        public EnermyAIControllerBase(EntityCharacterAI _entityControlling, EquipmentBase _weapon, Action<bool> _onAttack, Func<EntityCharacterBase, bool> _onCheck)
-        {
-            m_Entity = _entityControlling;
-            m_Weapon = _weapon;
-            m_Agent = m_Entity.GetComponent<NavMeshAgent>();
-            m_Obstacle = m_Entity.GetComponent<NavMeshObstacle>();
-            m_Obstacle.carving = true;
-            m_Obstacle.carveOnlyStationary = false;
-            m_Obstacle.height = m_Agent.height;
-            m_Obstacle.radius=m_Agent.radius-.2f;
-            m_Agent.stoppingDistance = 0f;
-            OnAttackAnim = _onAttack;
-            OnCheckTarget = _onCheck;
-        }
-
-        public void OnActivate()
-        {
-            B_AgentEnabled = false;
-            m_Agent.enabled = false;
-            m_Obstacle.enabled = true;
-            b_attacking = false;
-            f_battleSimulate = 0f;
-            f_movementSimulate = 0f;
-            f_checkTargetSimulate = 0f;
-            f_calculateSimulate = 0f;
-            f_targetDistance = 0f;
-            SetPlay(true);
-        }
-        public void OnDeactivate()
-        {
-            SetPlay(false);
-        }
-        
-        public void SetPlay(bool play)
-        {
-            if (b_playing == play)
-                return;
-
-            b_playing = play;
-            if (!play)
-            {
-                StopMoving();
-                if (b_attacking)
-                    OnAttackFinished();
-            }
-        }
-
-        public void OnTick(float deltaTime)
-        {
-            if (!b_playing)
-                return;
-
-            CheckTarget(deltaTime);
-            CheckTargetParams(deltaTime);
-            CheckBattle(deltaTime);
-            ChecktAIDestination(deltaTime);
-            CheckRotation(deltaTime);
-            if (m_Weapon!=null)  m_Weapon.Tick(deltaTime);
-        }
-
-        #region TargetIdentity
-        void CheckTarget(float deltaTime)
-        {
-            if (b_targetAvailable&&f_checkTargetSimulate > 0)
-            {
-                f_checkTargetSimulate -= deltaTime;
-                return;
-            }
-            f_checkTargetSimulate = GameConst.F_AITargetCheckParam;
-
-            m_Target = GameManager.Instance.GetAvailableEntity(m_Entity,m_Weapon.B_TargetAlly,m_Entity.B_BattleCheckObstacle);
-        }
-        
-        void CheckTargetParams(float deltaTime)
-        {
-            if (f_calculateSimulate > 0)
-            {
-                f_calculateSimulate -= deltaTime;
-                return;
-            }
-            f_calculateSimulate = GameConst.F_AITargetCalculationParam;
-
-            if (!b_targetAvailable)
-                return;
-
-            b_targetVisible = GameManager.Instance.CheckEntityObstacleBetween(m_Entity,m_Target);
-            
-            f_targetDistance = TCommon.GetXZDistance(targetHeadTransform.position, headTransform.position);
-            b_targetOutChaseRange = f_targetDistance > m_Entity.F_AIChaseRange;
-            b_targetOutAttackRange = f_targetDistance > m_Entity.F_AIAttackRange;
-            bool attackBlocked = (m_Entity.B_BattleCheckObstacle && !b_targetVisible) || FrontBlocked();
-            b_CanStartAttack = b_targetAvailable&& !b_targetOutAttackRange  && b_targetRotationWithin && !attackBlocked;
-            b_CanKeepAttack = b_targetAvailable && !attackBlocked;
-        }
-        #endregion
-
-        #region Battle
-        void CheckBattle(float deltaTime)
-        {
-            if(b_attacking)
-            {
-                CheckAttack(deltaTime);
-                return;
-            }
-
-            if (f_battleSimulate > 0)
-                f_battleSimulate -= m_Info.F_ReloadRateTick(deltaTime);
-
-            if (f_battleSimulate > 0 || !b_CanStartAttack)
-                return;
-            
-            StartAttack(m_Entity.F_AttackTimes.Random(), TCommon.RandomPercentage() >= m_Entity.I_AttackPreAimPercentage);
-        }
-
-        bool b_attacking=false;
-        int i_playCount=-1;
-        bool b_preAim=false;
-        void StartAttack(int attackTimes,bool preAim)
-        {
-            i_playCount = (attackTimes <= 0 ? 1 : attackTimes);       //Make Sure Play Once At Least
-            b_preAim = preAim;
-            b_attacking = true;
-            m_Weapon.OnSetAttack(true);
-
-            if (m_Weapon.B_LoopAnim)
-                OnAttackAnim(true);
-        }
-        void CheckAttack(float deltaTime)
-        {
-
-            if (!b_CanKeepAttack)
-            {
-                OnAttackFinished();
-                return;
-            }
-
-            if (i_playCount <= 0)
-                return;
-
-            if (f_fireCheckSimulate > 0)
-            {
-                f_fireCheckSimulate -= m_Entity.m_CharacterInfo.F_FireRateTick(deltaTime);
-                return;
-            }
-            f_fireCheckSimulate = m_Entity.F_AttackRate;
-
-            i_playCount--;
-            if (m_Weapon.B_LoopAnim)
-                OnAttackAnimTrigger();
-            else
-                OnAttackAnim(true);
-        }
-
-        public void OnAttackAnimTrigger()
-        {
-            if (b_targetAvailable)
-                m_Weapon.Play(b_preAim, m_Target);
-
-            if (i_playCount <= 0)
-                OnAttackFinished();
-        } 
-
-        void OnAttackFinished()
-        {
-            b_attacking = false;
-            m_Weapon.OnSetAttack(false);
-            OnAttackAnim(false);
-            f_battleSimulate = m_Entity.F_AttackDuration.RandomRangeFloat();
-        }
-        #endregion
-        #region Position
-        void ChecktAIDestination(float deltaTime)
-        {
-            //Time Param Calculate
-            float movementDelta = deltaTime * m_Info.F_MovementSpeedMultiply;
-            if (f_movementOrderSimulate > 0)  f_movementOrderSimulate -= movementDelta;
-            if (f_movementSimulate > 0) { f_movementSimulate -= movementDelta; return; }
-            f_movementSimulate = GameConst.F_AIMovementCheckParam;
-            
-            //Force Hold Position
-            if (CheckHoldPosition()) { StopMoving();  return; }
-
-            //Normal Positioning
-            if (!CheckDestinationReached() && f_movementOrderSimulate > 0) return;
-
-            bool inrangeIdle = B_AgentEnabled&&!b_targetOutChaseRange && TCommon.RandomPercentage()>GameConst.I_AIIdlePercentage;
-            if (inrangeIdle)
-                StopMoving();
-            else
-                SetDestination(GetSamplePosition());
-            f_movementOrderSimulate = inrangeIdle ? GameExpression.GetAIIdleDuration() : GameConst.F_AIMaxRepositionDuration;
-        }
-
-        bool CheckHoldPosition() => m_Entity.m_CharacterInfo.F_MovementSpeed == 0 || (b_attacking && !m_Entity.B_AttackMove);
-        bool CheckDestinationReached() => B_AgentEnabled && m_Agent.remainingDistance <= .3f;
-
-        void StopMoving() { B_AgentEnabled = false; }
-        void SetDestination(Vector3 destination) { B_AgentEnabled = true; m_Agent.SetDestination(destination); }
-        Vector3 GetSamplePosition()=> LevelManager.NavMeshPosition(m_Entity.transform.position + (b_targetOutChaseRange ? 5 : -5) * (m_forwardDirection.normalized) + TCommon.RandomXZSphere(3f));
-        bool FrontBlocked()=> m_Entity.F_AttackFrontCheck>0f && Physics.SphereCast(new Ray(headTransform.position, headTransform.forward), .5f, m_Entity.F_AttackFrontCheck, GameLayer.Mask.I_Static);
-
-        
-        void CheckRotation(float deltaTime)
-        {
-            if (!b_targetAvailable)
-                return;
-
-            m_forwardDirection = TCommon.GetXZLookDirection(headTransform.position, targetHeadTransform.position);
-            if (m_forwardDirection == Vector3.zero)
-                return;
-
-            b_targetRotationWithin = Mathf.Abs(TCommon.GetAngle(m_forwardDirection, transform.forward, Vector3.up)) < 15;
-            m_Agent.updateRotation = b_targetOutAttackRange;
-            if (!m_Agent.updateRotation)
-                transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(m_forwardDirection, Vector3.up), Time.deltaTime * 5 * (b_attacking ? m_Entity.F_AttackRotateParam : 1));
-        }
-        #endregion
-    }
-    #endregion
 #if UNITY_EDITOR
     CapsuleCollider hitbox;
     private void OnDrawGizmos()
     {
-        if (UnityEditor.EditorApplication.isPlaying &&GameManager.Instance&&GameManager.Instance.B_PhysicsDebugGizmos)
+        if (UnityEditor.EditorApplication.isPlaying &&GameManager.Instance&&!GameManager.Instance.B_PhysicsDebugGizmos)
             return;
 
         if(!hitbox)

@@ -331,8 +331,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1203121123348338}
-  m_LocalRotation: {x: -0.40821788, y: 0.23456968, z: -0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: -21.367964, y: 4.850826, z: 7.9865484}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -21.367964, y: 0, z: 7.9865484}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4433802112588506}
@@ -410,11 +410,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   I_MaxHealth: 0
+  ExtraRendererForForest107Only: {fileID: 0}
+  E_SpawnType: -1
   I_DefaultArmor: 0
   F_MovementSpeed: 0
   F_AttackSpread: 0
-  ? ExtraRendererOnlyAvailableFor107WhatAwkwardRequirementWhyNotPutThemIntoOneModelCauseOutModelArtistCantDoItHaveToCreateThisIntoMyCodeLikeABunchOfShitForFuckingRealSucks
-  : {fileID: 0}
 --- !u!114 &114137995137103650
 MonoBehaviour:
   m_ObjectHideFlags: 1

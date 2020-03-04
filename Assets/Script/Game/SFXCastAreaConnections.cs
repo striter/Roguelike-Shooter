@@ -5,22 +5,21 @@ using GameSetting;
 using UnityEngine;
 
 public class SFXCastAreaConnections : SFXCast {
-    ObjectPoolSimple<EntityBase, ConnectionsItem> m_Connections;
-    class ConnectionsItem
+    ObjectPoolListClass<EntityBase, ConnectionsItem> m_Connections;
+    class ConnectionsItem:CSimplePoolObject<EntityBase>
     {
-        public Transform transform { get; private set; }
         Transform targetTrans;
         LineRenderer m_Renderer;
         TSpecialClasses.ParticleControlBase m_Particles;
         bool m_Play=>targetTrans!=null;
-        public ConnectionsItem(Transform _transform)
+        public override void OnPoolInit(Transform _transform)
         {
-            transform = _transform;
+            base.OnPoolInit(_transform);
             m_Particles = new TSpecialClasses.ParticleControlBase(transform.Find("Particles"));
             m_Renderer = transform.GetComponent<LineRenderer>();
             SetTarget(null);
         }
-        
+
         public void SetTarget(Transform target)
         {
             targetTrans = target;
@@ -50,12 +49,12 @@ public class SFXCastAreaConnections : SFXCast {
     {
         base.OnPoolItemInit(_identity, _OnRecycle);
         Transform connections = transform.Find("Connections");
-        m_Connections = new ObjectPoolSimple<EntityBase, ConnectionsItem>(connections.Find("Item").gameObject,connections,(Transform trans, EntityBase entity)=>new ConnectionsItem(trans),(ConnectionsItem item)=>item.transform);
+        m_Connections = new ObjectPoolListClass<EntityBase, ConnectionsItem>(connections,"Item");
         m_GroundParticles = new TSpecialClasses.ParticleControlBase(transform.Find("ParticlesGround"));
     }
-    public override void PlayControlled(int sourceID, EntityCharacterBase entity, Transform directionTrans,DamageDeliverInfo idInfo)
+    public override void PlayControlled(int sourceID, EntityCharacterBase entity, Transform directionTrans)
     {
-        base.PlayControlled(sourceID, entity, directionTrans,idInfo);
+        base.PlayControlled(sourceID, entity, directionTrans);
         tf_GroundAttach = entity.transform;
         m_Particle.Clear();
     }

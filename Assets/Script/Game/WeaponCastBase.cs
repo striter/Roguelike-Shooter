@@ -4,45 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class WeaponCastBase : WeaponBase {
-    SFXCast m_Cast;
-    protected override void OnGetEquipmentData(SFXEquipmentBase equipment)
+    protected override void OnGetEquipmentData(SFXWeaponBase equipment)
     {
         base.OnGetEquipmentData(equipment);
         SFXCast cast = equipment as SFXCast;
         F_BaseDamage = cast.F_Damage;
     }
-    public override void OnShow(bool show)
-    {
-        base.OnShow(show);
-        if(!show)
-            SetCastAvailable(false);
-    }
-    void Update()
-    {
-        SetCastAvailable(m_Trigger.B_TriggerDown && !B_Reloading&&!m_Attacher.m_IsDead && m_Attacher.m_weaponCanFire);
-    }
-    void SetCastAvailable(bool showCast)
-    {
-        if (showCast)
-        {
-            if (m_Cast)
-                return;
-            m_Cast = GameObjectManager.SpawnEquipment<SFXCast>(GameExpression.GetPlayerEquipmentIndex(m_WeaponInfo.m_Index), m_Muzzle.position, m_Muzzle.forward);
-            m_Cast.PlayControlled(m_Attacher.m_EntityID, m_Attacher, m_Attacher.tf_WeaponAim,DamageDeliverInfo.Default(m_Attacher.m_EntityID));
-        }
-        else
-        {
-            if (!m_Cast)
-                return;
-            m_Cast.StopControlled();
-            m_Cast = null;
-        }
-    }
+    
+    protected SFXCast ShowCast()=> GameObjectManager.SpawnEquipment<SFXCast>(GameExpression.GetPlayerWeaponIndex(m_WeaponInfo.m_Index), m_Muzzle.position, m_Attacher.transform.forward);
 
-    protected override void OnTriggerSuccessful()
-    {
-        base.OnTriggerSuccessful();
-        if(m_Cast)
-            m_Cast.OnControlledCheck(m_Attacher.m_PlayerInfo.GetDamageBuffInfo());
-    }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TSpecialClasses;
 using UnityEngine.UI;
+using System;
 
 public class UIC_PlayerInteract : UIControlBase
 {
@@ -12,22 +13,21 @@ public class UIC_PlayerInteract : UIControlBase
     Transform tf_Container;
     Transform tf_Top;
     UIT_TextExtend m_CommonTop;
-    Transform tf_Weapon, tf_Equipment, tf_Ability;
+    Transform tf_Weapon;
 
     Transform tf_Bottom;
     UIT_TextExtend m_BottomTips;
     Transform tf_Trade, tf_Pickup;
 
-
     UIT_TextExtend m_TradePrice;
-    UIC_ActionInteractData m_ActionData;
-    Transform tf_WeaponData;
-    UIC_WeaponActionData m_weaponActionData;
+    UIC_EquipmentNameFormatIntro m_EquipmentData;
     UIC_WeaponData m_weaponData;
 
     Transform tf_Common;
     UIT_TextExtend m_CommonIntro;
+    Image m_CommonImage;
 
+    Action OnInteractClick;
     protected override void Init()
     {
         base.Init();
@@ -42,17 +42,14 @@ public class UIC_PlayerInteract : UIControlBase
         m_TradePrice = tf_Trade.Find("Amount").GetComponent<UIT_TextExtend>();
 
         tf_Weapon = tf_Top.Find("Weapon");
-        tf_Ability = tf_Top.Find("Ability");
-        tf_Equipment = tf_Top.Find("Equipment");
 
-        tf_WeaponData = tf_Container.Find("WeaponData");
-        m_weaponData = new UIC_WeaponData(tf_WeaponData.Find("Weapon"));
-        m_weaponActionData = new UIC_WeaponActionData(tf_WeaponData.Find("Action"));
-
-        m_ActionData = new UIC_ActionInteractData(tf_Container.Find("ActionData"));
+        m_weaponData = new UIC_WeaponData(tf_Container.Find("WeaponData"));
+        m_EquipmentData = new UIC_EquipmentNameFormatIntro(tf_Container.Find("EquipmentData"));
 
         tf_Common = tf_Container.Find("CommonData");
         m_CommonIntro = tf_Common.Find("Intro").GetComponent<UIT_TextExtend>();
+        m_CommonImage = tf_Common.Find("Image").GetComponent<Image>();
+        tf_Bottom.Find("Button").GetComponent<Button>().onClick.AddListener(OnInteractBtnClick);
 
         rtf_InteractData.SetActivate(false);
         TBroadCaster<enum_BC_UIStatus>.Add<InteractBase>(enum_BC_UIStatus.UI_PlayerInteractStatus,OnInteractStatus);
@@ -63,32 +60,26 @@ public class UIC_PlayerInteract : UIControlBase
         TBroadCaster<enum_BC_UIStatus>.Remove<InteractBase>(enum_BC_UIStatus.UI_PlayerInteractStatus, OnInteractStatus);
     }
 
-    public void Play(UnityEngine.Events.UnityAction OnInteractClick)
-    {
-        tf_Bottom.Find("Button").GetComponent<Button>().onClick.AddListener(OnInteractClick);
-    }
+    public void DoBindings(Action _OnInteractClick) => OnInteractClick = _OnInteractClick;
+    void OnInteractBtnClick()=>OnInteractClick?.Invoke();
 
     void OnInteractStatus(InteractBase _interact)
     {
         m_interact = _interact;
 
-        int tradePrice = -1;
         InteractBase targetItem = null;
+        int tradePrice = -1;
         if (m_interact != null)
         {
+            tradePrice = _interact.m_TradePrice;
             switch (m_interact.m_InteractType)
             {
                 default:
                     targetItem = m_interact;
                     break;
-                case enum_Interaction.ContainerTrade:
-                    InteractContainerTrade trade = m_interact as InteractContainerTrade;
-                    tradePrice = trade.m_TradePrice;
+                case enum_Interaction.TradeContainer:
+                    InteractTradeContainer trade = m_interact as InteractTradeContainer;
                     targetItem = trade.m_TradeInteract;
-                    break;
-                case enum_Interaction.ContainerBattle:
-                    InteractContainerBattle battle = m_interact as InteractContainerBattle;
-                    targetItem = battle.m_TradeInteract;
                     break;
             }
         }
@@ -107,46 +98,34 @@ public class UIC_PlayerInteract : UIControlBase
         bool isCommon = false;
         bool isWeapon = false;
         bool isAction = false;
-        bool isAbility = false;
-        bool isEquipment = false;
         if (interactInfo != null)
         {
             switch (interactInfo.m_InteractType)
             {
-                case enum_Interaction.Action:
+                case enum_Interaction.Equipment:
                     isAction = true;
-                    InteractAction actionInteract = interactInfo as InteractAction;
-                    m_ActionData.SetInfo(actionInteract.m_Action);
-                    isAbility = actionInteract.m_Action.m_ActionType == enum_ActionType.Ability;
-                    isEquipment = actionInteract.m_Action.m_ActionType == enum_ActionType.Equipment;
+                    InteractEquipment actionInteract = interactInfo as InteractEquipment;
+                    m_EquipmentData.SetInfo(actionInteract.m_Equipment);
                     break;
                 case enum_Interaction.Weapon:
                     isWeapon = true;
                     InteractWeapon weaponInteract = interactInfo as InteractWeapon;
                     m_weaponData.UpdateInfo(weaponInteract.m_Weapon);
-                    m_weaponData.UpdateAmmoInfo(weaponInteract.m_Weapon.I_AmmoLeft, weaponInteract.m_Weapon.I_ClipAmount);
-                    bool actionValid = weaponInteract.m_Weapon.m_WeaponAction != null;
-                    m_weaponActionData.transform.SetActivate(actionValid);
-                    if (actionValid)
-                    {
-                        m_weaponActionData.SetInfo(weaponInteract.m_Weapon.m_WeaponAction);
-                        m_weaponActionData.Tick(weaponInteract.m_Weapon.m_ActionEnergyRequirementLeft);
-                    }
+                    m_weaponData.UpdateAmmoInfo(weaponInteract.m_Weapon.m_WeaponInfo.m_ClipAmount, weaponInteract.m_Weapon.m_WeaponInfo.m_ClipAmount);
                     break;
                 default:
                     isCommon = true;
                     m_CommonTop.localizeKey = interactInfo.GetTitleLocalizeKey();
                     m_CommonIntro.localizeKey = interactInfo.GetIntroLocalizeKey();
+                    m_CommonImage.sprite = UIManager.Instance.m_CommonSprites[interactInfo.m_InteractType.GetInteractIcon()];
                     break;
             }
         }
         m_CommonTop.SetActivate(isCommon);
         tf_Common.SetActivate(isCommon);
         tf_Weapon.SetActivate(isWeapon);
-        tf_WeaponData.SetActivate(isWeapon);
-        tf_Ability.SetActivate(isEquipment);
-        tf_Equipment.SetActivate(isAbility);
-        m_ActionData.transform.SetActivate(isAction);
+        m_weaponData.transform.SetActivate(isWeapon);
+        m_EquipmentData.transform.SetActivate(isAction);
         bool tradeItem = price >= 0;
         tf_Trade.SetActivate(tradeItem);
         m_BottomTips.SetActivate(!tradeItem);

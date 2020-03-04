@@ -2,23 +2,21 @@
 using GameSetting;
 using System;
 
-public class EntityBase : ObjectPoolMonoItem<int>
+public class EntityBase : CObjectPoolMono<int>
 {
     public int m_EntityID { get; private set; } = -1;
     public virtual bool B_IsCharacter => false;
-    public virtual enum_EntityController m_Controller => enum_EntityController.Invalid;
-    public int I_MaxHealth;
+    public virtual enum_EntityController m_ControllType => enum_EntityController.Invalid;
     public enum_EntityFlag m_Flag { get; private set; }
     public HealthBase m_Health { get; private set; }
     protected virtual HealthBase GetHealthManager() => new HealthBase(OnHealthChanged);
-    protected virtual void ActivateHealthManager(float maxHealth) => m_Health.OnSetHealth(maxHealth, true);
+    protected virtual void ActivateHealthManager(float maxHealth) => m_Health.OnActivate(maxHealth);
     public HitCheckEntity m_HitCheck => m_HitChecks[0];
     protected bool m_HitCheckEnabled { get; private set; } = false;
     protected virtual float DamageReceiveMultiply => 1;
     protected virtual float HealReceiveMultiply => 1f;
-    public int m_SpawnerEntityID { get; private set; }
-    public bool b_isSubEntity => m_SpawnerEntityID != -1;
-    public bool m_IsDead;
+    public bool m_IsDead { get; private set; }
+    public bool m_Activating { get; private set; }
     HitCheckEntity[] m_HitChecks;
     public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
@@ -26,12 +24,17 @@ public class EntityBase : ObjectPoolMonoItem<int>
         m_HitChecks = GetComponentsInChildren<HitCheckEntity>();
         m_Health = GetHealthManager();
     }
-    public virtual void OnActivate( enum_EntityFlag _flag,int _spawnerID=-1, float startHealth =0)
+    protected virtual void EntityActivate(enum_EntityFlag flag,float startHealth =0)
     {
-        m_Flag = _flag;
-        m_SpawnerEntityID = _spawnerID;
-        ActivateHealthManager(startHealth>0? startHealth:I_MaxHealth);
+        if (m_Activating)
+        {
+            Debug.LogWarning("Activated entity can't be activate again");
+            return;
+        }
+        m_Activating = true;
+        m_Flag = flag;
         m_EntityID = GameIdentificationManager.I_EntityID(m_Flag);
+        ActivateHealthManager(startHealth);
         m_HitChecks.Traversal((HitCheckEntity check) => { check.Attach(this, OnReceiveDamage); });
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityActivate, this);
         EnableHitbox(true);
@@ -61,9 +64,17 @@ public class EntityBase : ObjectPoolMonoItem<int>
         m_IsDead = false;
         EnableHitbox(true);
     }
-    protected virtual void OnRecycle()
+
+    public virtual void DoRecycle()
     {
-        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityDeactivate, this);
+        if (!m_Activating)
+        {
+            Debug.LogWarning("Recycled entity can't be recycle again!");
+            return;
+        }
+        m_Activating = false;
+
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityRecycle, this);
         DoItemRecycle();
     }
     protected virtual void EnableHitbox(bool setHitable)

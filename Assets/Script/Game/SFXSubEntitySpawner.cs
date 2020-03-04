@@ -4,7 +4,7 @@ using UnityEngine;
 using GameSetting;
 using System;
 
-public class SFXSubEntitySpawner : SFXEquipmentBase {
+public class SFXSubEntitySpawner : SFXWeaponBase {
     public bool B_SpawnAtTarget = false;
     public int I_EntitySpawnID;
     public bool B_ApplyDOTOnSpawn = false;
@@ -30,7 +30,7 @@ public class SFXSubEntitySpawner : SFXEquipmentBase {
     protected override void OnPlay()
     {
         base.OnPlay();
-        EntityCharacterBase entity = GameObjectManager.SpawnEntityCharacter(I_EntitySpawnID, LevelManager.NavMeshPosition(transform.position), m_targetPos, m_Spawner.m_Flag, m_Spawner.m_EntityID, m_StartHealth);
+        EntityCharacterBase entity = GameObjectManager.SpawnEntitySubCharacter(I_EntitySpawnID, NavigationManager.NavMeshPosition(transform.position), m_targetPos, m_Spawner.m_Flag, m_Spawner.m_EntityID, m_StartHealth);
         OnSpawn?.Invoke(entity);
         entity.m_CharacterInfo.AddDamageOverride(DamageInfoOverride);
         if (B_ApplyDOTOnSpawn)

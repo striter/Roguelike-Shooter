@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class SFXCast : SFXEquipmentBase {
+public class SFXCast : SFXWeaponBase {
     #region PresetInfo
     public enum_CastControllType E_CastType = enum_CastControllType.Invalid;
     public enum_CastTarget E_CastTarget = enum_CastTarget.Invalid;
@@ -19,7 +19,6 @@ public class SFXCast : SFXEquipmentBase {
     public bool B_CameraShake = false;
     #endregion
     protected DamageInfo m_DamageInfo;
-    public int m_sourceID => m_DamageInfo.m_detail.I_SourceID;
     protected virtual float F_CastLength => V4_CastInfo.z;
     protected Transform CastTransform => tf_ControlledCast ? tf_ControlledCast : transform;
     protected float F_PlayDuration => I_TickCount * F_Tick;
@@ -30,20 +29,19 @@ public class SFXCast : SFXEquipmentBase {
     {
         SetDamageInfo(buffInfo);
         if (I_DelayIndicatorIndex > 0)
-            GameObjectManager.SpawnIndicator(I_DelayIndicatorIndex, transform.position, Vector3.up).Play(m_sourceID, F_DelayDuration);
+            GameObjectManager.SpawnIndicator(I_DelayIndicatorIndex, transform.position, Vector3.up).Play(I_SourceID, F_DelayDuration);
 
         base.Play(m_DamageInfo.m_detail.I_SourceID, F_PlayDuration, F_DelayDuration);
     }
 
-    public virtual void PlayControlled(int sourceID,EntityCharacterBase entity, Transform directionTrans,DamageDeliverInfo idInfo)
+    public virtual void PlayControlled(int sourceID,EntityCharacterBase entity, Transform directionTrans)
     {
-        SetDamageInfo(idInfo);
         tf_ControlledCast = directionTrans;
         AttachTo(entity.tf_Weapon);
         base.Play(sourceID, 0f, F_DelayDuration);
     }
 
-    public void OnControlledCheck(DamageDeliverInfo info)
+    public void ControlledCheck(DamageDeliverInfo info)
     {
         SetDamageInfo(info);
         DoCastDealtDamage();
@@ -95,15 +93,23 @@ public class SFXCast : SFXEquipmentBase {
     protected virtual List<EntityBase> DoCastDealtDamage()
     {
         List<EntityBase> entityHitted = new List<EntityBase>();
-        RaycastHit[] hits = OnCastCheck(GameLayer.Mask.I_Entity);
+        RaycastHit[] hits = OnCastCheck(GameLayer.Mask.I_All);
         for (int i = 0; i < hits.Length; i++)
         {
-            HitCheckEntity entity = hits[i].collider.DetectEntity();
-            if (entity!=null&&!entityHitted.Contains(entity.m_Attacher)&&GameManager.B_CanSFXDamageEntity(entity, m_sourceID))
+            HitCheckBase hitCheck = hits[i].collider.Detect();
+            switch(hitCheck.m_HitCheckType)
             {
-                entityHitted.Add(entity.m_Attacher);
-                OnDamageEntity(entity);
+                case enum_HitCheck.Dynamic:
+                case enum_HitCheck.Static:
+                    break;
+                case enum_HitCheck.Entity:
+                    HitCheckEntity entity = hitCheck as HitCheckEntity;
+                    if (entityHitted.Contains(entity.m_Attacher) || !GameManager.B_CanSFXDamageEntity(entity, I_SourceID))
+                        continue;
+                    entityHitted.Add(entity.m_Attacher);
+                    break;
             }
+            OnDealtDamage(hitCheck);
         }
         return entityHitted;
     }
@@ -139,7 +145,7 @@ public class SFXCast : SFXEquipmentBase {
         }
         return hits;
     }   
-    protected virtual void OnDamageEntity(HitCheckEntity hitEntity)=>  hitEntity.TryHit(m_DamageInfo, Vector3.Normalize(hitEntity.transform.position - transform.position));
+    protected virtual void OnDealtDamage(HitCheckBase hitCheck)=> hitCheck.TryHit(m_DamageInfo, Vector3.Normalize(hitCheck.transform.position - transform.position));
 
     protected override void EDITOR_DEBUG()
     {
