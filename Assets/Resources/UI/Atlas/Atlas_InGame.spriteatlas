@@ -82,15 +82,9 @@ SpriteAtlas:
   - health_bg
   - equipment_levelup_arrow
   - background_angle
-<<<<<<< HEAD
-  - pickup_coin
-  - pickup_armor
-  - pickup_health
-=======
   - NumericIcon_StartAttack
   - NumericIcon_Coin
   - NumericIcon_Armor
   - NumericIcon_Health
->>>>>>> e2bb99828e95a0f95bdf690d131a3646aca4cc6d
   m_Tag: Atlas_InGame
   m_IsVariant: 0

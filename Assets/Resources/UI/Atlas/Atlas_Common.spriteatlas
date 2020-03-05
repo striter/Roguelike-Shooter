@@ -198,11 +198,7 @@ SpriteAtlas:
   - buff_level_blank
   - UI_common_RectangleLine
   - setting_common_bottom
-<<<<<<< HEAD
   - UI_Common_Square
-=======
-  - UI_Common_White
->>>>>>> e2bb99828e95a0f95bdf690d131a3646aca4cc6d
   - btn_close_strip
   m_Tag: Atlas_Common
   m_IsVariant: 0
