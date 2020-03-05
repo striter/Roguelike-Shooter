@@ -38,7 +38,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4280303031911806}
-  - component: {fileID: 114278987508957548}
+  - component: {fileID: 114475157835287246}
   m_Layer: 0
   m_Name: Tile_Editor_Ground_Main
   m_TagString: Untagged
@@ -157,18 +157,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &114278987508957548
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1359080381577182}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e2c805deac41e41468c0967797dd0291, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_GroundType: 0
 --- !u!114 &114353297659681792
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -180,6 +168,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f62cdd659d216734e828ce07e4431bf6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114475157835287246
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1359080381577182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba53906a68fbd864c931f014e49771c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EditorGroundType: 0
 --- !u!114 &114650949157827306
 MonoBehaviour:
   m_ObjectHideFlags: 1

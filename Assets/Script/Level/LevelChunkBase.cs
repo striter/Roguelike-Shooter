@@ -42,7 +42,7 @@ public class LevelChunkBase : MonoBehaviour
 
     protected virtual bool WillGenerateTile( ChunkTileData tileData)
     {
-        if (tileData.m_GroundType != enum_TileGroundType.Invalid)
+        if (tileData.m_TerrainType != enum_TileTerrainType.Invalid)
             return true;
         if (tileData.m_ObjectType != enum_TileObjectType.Invalid)
             return true;
@@ -50,6 +50,6 @@ public class LevelChunkBase : MonoBehaviour
     }
     protected virtual void OnTileInit(LevelTileBase tile,TileAxis axis,ChunkTileData data,System.Random random)
     {
-        tile.Init(axis, data,random);
+        tile.InitTile(axis, data,random);
     }
 }

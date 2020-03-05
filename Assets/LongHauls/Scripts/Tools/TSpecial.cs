@@ -16,6 +16,11 @@ namespace TTiles
         Right =1,
         Bottom =2,
         Left =3,
+
+        TopRight=10,
+        BottomRight=11,
+        BottomLeft=12,
+        TopLeft=13,
     }
     public interface ITileAxis
     {
@@ -131,24 +136,111 @@ namespace TTiles
             return axisList;
         }
 
+        public static List<TileAxis> GetDirectionAxies(int width, int height, TileAxis centerAxis,List<enum_TileDirection> directions)
+        {
+            List<TileAxis> axisList = new List<TileAxis>();
+            directions.Traversal((enum_TileDirection direction) => {
+                TileAxis targetAxis = centerAxis.DirectionAxis(direction);
+                if (targetAxis.X < 0 || targetAxis.Y < 0 || targetAxis.X >= width || targetAxis.Y >= height)
+                    return;
+                axisList.Add(targetAxis);
+            });
+            return axisList;
+        }
+
+        public static Dictionary<enum_TileDirection,T> GetDirectionAxies<T>(int width, int height, TileAxis centerAxis, List<enum_TileDirection> directions,Func<TileAxis,T> OnItemGet)
+        {
+            Dictionary<enum_TileDirection, T> axisList = new Dictionary<enum_TileDirection, T>();
+            directions.Traversal((enum_TileDirection direction) => {
+                TileAxis targetAxis = centerAxis.DirectionAxis(direction);
+                if (targetAxis.X < 0 || targetAxis.Y < 0 || targetAxis.X >= width || targetAxis.Y >= height)
+                    return;
+                axisList.Add(direction,OnItemGet(targetAxis));
+            });
+            return axisList;
+        }
+
+
         public static bool CheckIsEdge<T>(this T[,] tileArray, TileAxis axis) where T : class, ITileAxis => axis.X == 0 || axis.X == tileArray.GetLength(0) - 1 || axis.Y == 0 || axis.Y == tileArray.GetLength(1) - 1;
         
         public static TileAxis GetDirectionedSize(TileAxis size, enum_TileDirection direction) => (int)direction % 2 == 0 ? size : size.Inverse();
         public static Vector3 GetUnitScaleBySizeAxis(TileAxis directionedSize,int tileSize) => new Vector3(directionedSize.X, 1, directionedSize.Y) * tileSize;
         public static Vector3 GetLocalPosBySizeAxis(TileAxis directionedSize) => new Vector3(directionedSize.X, 0, directionedSize.Y);
         public static Quaternion ToRotation(this enum_TileDirection direction) => Quaternion.Euler(0, (int)direction * 90, 0);
-
+        
         public static enum_TileDirection Next(this enum_TileDirection direction)
         {
             direction++;
-            if ((int)direction > 3)
-                direction = 0;
+            if (direction > enum_TileDirection.Left)
+                direction = enum_TileDirection.Top;
+            else if (direction > enum_TileDirection.TopLeft)
+                direction = enum_TileDirection.TopRight;
             return direction;
         }
+
+        public static enum_TileDirection EdgeNextCornor(this enum_TileDirection direction,bool clockWise)
+        {
+            if (!direction.IsEdge())
+            {
+                Debug.LogError("Invalid Directions Here!");
+                return enum_TileDirection.Invalid;
+            }
+            switch(direction)
+            {
+                default:
+                    Debug.LogError("Invalid Convertions Here!");
+                    return enum_TileDirection.Invalid;
+                case enum_TileDirection.Top:
+                    return clockWise? enum_TileDirection.TopRight: enum_TileDirection.TopLeft;
+                case enum_TileDirection.Right:
+                    return clockWise?enum_TileDirection.BottomRight: enum_TileDirection.TopRight;
+                case enum_TileDirection.Bottom:
+                    return clockWise?enum_TileDirection.BottomLeft: enum_TileDirection.BottomRight;
+                case enum_TileDirection.Left:
+                    return clockWise? enum_TileDirection.TopLeft:  enum_TileDirection.BottomLeft;
+            }
+        }
+
+        public static enum_TileDirection AngleNextEdge(this enum_TileDirection direction,bool clockWise)
+        {
+            if(!direction.IsAngle())
+            {
+                Debug.LogError("Invalid Directions Here!");
+                return enum_TileDirection.Invalid;
+            }
+            switch (direction)
+            {
+                default:
+                    Debug.LogError("Invalid Convertions Here!");
+                    return enum_TileDirection.Invalid;
+                case enum_TileDirection.TopRight:
+                    return clockWise ? enum_TileDirection.Right : enum_TileDirection.Top;
+                case enum_TileDirection.BottomRight:
+                    return clockWise ? enum_TileDirection.Bottom : enum_TileDirection.Right;
+                case enum_TileDirection.BottomLeft:
+                    return clockWise ? enum_TileDirection.Left : enum_TileDirection.Bottom;
+                case enum_TileDirection.TopLeft:
+                    return clockWise ? enum_TileDirection.Top : enum_TileDirection.Left;
+            }
+        }
+
+        public static bool IsEdge(this enum_TileDirection direction) => m_EdgeDirections.Contains(direction);
+        public static bool IsAngle(this enum_TileDirection direction) => m_AngleDirections.Contains(direction);
+        public static readonly List<enum_TileDirection> m_EdgeDirections = new List<enum_TileDirection>() { enum_TileDirection.Top, enum_TileDirection.Right, enum_TileDirection.Bottom, enum_TileDirection.Left };
+        public static readonly List<enum_TileDirection> m_AngleDirections = new List<enum_TileDirection>() { enum_TileDirection.TopRight, enum_TileDirection.BottomRight, enum_TileDirection.BottomLeft, enum_TileDirection.TopLeft };
+        public static readonly List<enum_TileDirection> m_AllDirections = new List<enum_TileDirection>() { enum_TileDirection.Top, enum_TileDirection.Right, enum_TileDirection.Bottom, enum_TileDirection.Left,
+            enum_TileDirection.TopRight, enum_TileDirection.BottomRight, enum_TileDirection.BottomLeft, enum_TileDirection.TopLeft };
+        public static readonly Dictionary<enum_TileDirection, TileAxis> m_DirectionAxies = new Dictionary<enum_TileDirection, TileAxis>() {
+            { enum_TileDirection.Top,new TileAxis(0,1) }, { enum_TileDirection.Right, new TileAxis(1, 0) }, { enum_TileDirection.Bottom, new TileAxis(0, -1) }, { enum_TileDirection.Left, new TileAxis(-1, 0) },
+            { enum_TileDirection.TopRight, new TileAxis(1, 1) }, { enum_TileDirection.BottomRight, new TileAxis(1, -1) }, { enum_TileDirection.BottomLeft, new TileAxis(-1, -1) }, { enum_TileDirection.TopLeft, new TileAxis(-1, 1) } };
+
         public static enum_TileDirection Inverse(this enum_TileDirection direction)
         {
             switch (direction)
             {
+                default:
+                    Debug.LogError("Error Direction Here");
+                    return enum_TileDirection.Invalid;
                 case enum_TileDirection.Top:
                     return enum_TileDirection.Bottom;
                 case enum_TileDirection.Bottom:
@@ -157,9 +249,14 @@ namespace TTiles
                     return enum_TileDirection.Left;
                 case enum_TileDirection.Left:
                     return enum_TileDirection.Right;
-                default:
-                    Debug.LogError("Error Direction Here");
-                    return enum_TileDirection.Invalid;
+                case enum_TileDirection.TopRight:
+                    return enum_TileDirection.BottomLeft;
+                case enum_TileDirection.BottomLeft:
+                    return enum_TileDirection.TopRight;
+                case enum_TileDirection.TopLeft:
+                    return enum_TileDirection.BottomRight;
+                case enum_TileDirection.BottomRight:
+                    return enum_TileDirection.TopLeft;
             }
         }
         
@@ -171,25 +268,8 @@ namespace TTiles
             return enum_TileDirection.Invalid;
         }
 
-        public static TileAxis DirectionAxis(this TileAxis sourceAxis,enum_TileDirection direction)
-        {
-            switch (direction)
-            {
-                case enum_TileDirection.Bottom:
-                    return sourceAxis + new TileAxis(0,-1);
-                case enum_TileDirection.Top:
-                    return sourceAxis + new TileAxis(0, 1);
-                case enum_TileDirection.Left:
-                    return sourceAxis + new TileAxis(-1, 0);
-                case enum_TileDirection.Right:
-                    return sourceAxis + new TileAxis(1, 0);
-            }
-            Debug.LogError("Invlaid Direction Detected:"+direction);
-            return new TileAxis(0,0);
-        }
+        public static TileAxis DirectionAxis(this TileAxis sourceAxis, enum_TileDirection direction) => sourceAxis + m_DirectionAxies[direction];
 
-        public static readonly List<enum_TileDirection> m_FourDirections = new List<enum_TileDirection>() { enum_TileDirection.Top, enum_TileDirection.Right,enum_TileDirection.Bottom, enum_TileDirection.Left};
-        
         public static void PathFindForClosestApproch<T>(this T[,] tileArray, T t1, T t2, List<T> tilePathsAdd,Action<T> OnEachTilePath=null, Predicate<T> stopPredicate=null, Predicate<T> invalidPredicate=null) where T:class,ITileAxis       //Temporary Solution, Not Required Yet
         {
             if (!t1.m_Axis.InRange(tileArray) || !t2.m_Axis.InRange(tileArray))
@@ -246,7 +326,7 @@ namespace TTiles
 
             if (predicateTryCount == -1) predicateTryCount = int.MaxValue;
 
-            List<enum_TileDirection> edgesRandom = new List<enum_TileDirection>(m_FourDirections) { };
+            List<enum_TileDirection> edgesRandom = new List<enum_TileDirection>(m_EdgeDirections) { };
             if (edgeOutcluded!=null) edgesRandom.RemoveAll(p=>edgeOutcluded.Contains(p));
             
             int axisX=-1,axisY=-1;
@@ -304,7 +384,7 @@ namespace TTiles
             for (int i = 0; i < fillCount; i++)
             {
                 T temp = targetList[i];
-                m_FourDirections.TraversalRandomBreak((enum_TileDirection randomDirection) => {
+                m_EdgeDirections.TraversalRandomBreak((enum_TileDirection randomDirection) => {
                     TileAxis axis = temp.m_Axis.DirectionAxis(randomDirection);
                     if (axis.InRange(tileArray))
                     {

@@ -8,40 +8,38 @@ using System;
 public class LevelTileBase : MonoBehaviour, ITileAxis
 {
     public TileAxis m_Axis { get; private set; }
-    public ChunkTileData m_Data { get; protected set; }
     protected Transform tf_Models { get; private set; }
-    public TileGroundBase m_Ground { get; protected set; }
+    public TileTerrainBase m_Terrain { get; protected set; }
     public TileObjectBase m_Object { get; protected set; }
-    public virtual void Init(TileAxis axis,ChunkTileData data,System.Random random)
+    public virtual void InitTile(TileAxis axis,ChunkTileData data,System.Random random)
     {
+        Clear();
         m_Axis = axis;
-        m_Data = data;
         transform.localPosition = new Vector3(axis.X * LevelConst.I_TileSize, 0, axis.Y * LevelConst.I_TileSize);
         transform.localRotation = Quaternion.identity;
         tf_Models = transform.Find("Models");
-        Clear();
-        if (WillGenerateObject(m_Data.m_ObjectType))
+        if (WillGenerateObject(data.m_ObjectType))
         {
-            m_Object = LevelObjectManager.GetObjectItem(m_Data.m_ObjectType, tf_Models);
-            m_Object.OnGenerateItem(m_Data, random);
+            m_Object = LevelObjectManager.GetObjectItem(data.m_ObjectType, tf_Models);
+            m_Object.OnGenerateItem(data, random);
             m_Object.transform.localPosition = Vector3.zero;
         }
 
-        if (m_Data.m_GroundType != enum_TileGroundType.Invalid)
+        if (data.m_TerrainType != enum_TileTerrainType.Invalid)
         {
-            m_Ground = LevelObjectManager.GetGroundItem(m_Data.m_GroundType, tf_Models);
-            m_Ground.OnGenerateItem(m_Data, random);
-            m_Ground.transform.localPosition = Vector3.zero;
+            m_Terrain = LevelObjectManager.GetTerrainItem(data.m_TerrainType, tf_Models);
+            m_Terrain.OnGenerateItem(data, random);
+            m_Terrain.transform.localPosition = Vector3.zero;
         }
     }
-    public void Clear()
+    public virtual void Clear()
     {
         if (m_Object)
             m_Object.DoRecycle();
-        if (m_Ground)
-            m_Ground.DoRecycle();
+        if (m_Terrain)
+            m_Terrain.DoRecycle();
         m_Object = null;
-        m_Ground = null;
+        m_Terrain = null;
     }
     protected virtual bool WillGenerateObject(enum_TileObjectType type) => type != enum_TileObjectType.Invalid && !type.IsEditorTileObject();
 }

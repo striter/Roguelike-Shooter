@@ -24,13 +24,38 @@ namespace LevelSetting
     {
         Invalid = -1,
         Object=1,
-        Ground=2,
+        Terrain=2,
+
+        EditorGround=10,
     }
 
-    public enum enum_TileGroundType
+    public enum enum_EditorGroundType
+    {
+        Invalid = -1,
+        Main,
+        Water,
+    }
+    
+    public enum enum_TileTerrainType 
     {
         Invalid=-1,
-        Main,
+        Ground,
+
+        River_0W,
+        River_1WT,
+        River_2WTB,
+        River_2WTR_CG,
+        River_2WRT_CW,
+        River_3WLTR_LRW,
+        River_3WLTR_LRG,
+        River_3WLTR_LW_RG,
+        River_3WLTR_LG_RW,
+        River_4W_0G,
+        River_4W_1GTR,
+        River_4W_2GTRBL,
+        River_4W_2GTRTL,
+        River_4W_3G_1WTR,
+        River_4W_4G,
     }
 
     public enum enum_TileObjectType
@@ -52,12 +77,12 @@ namespace LevelSetting
         Object3x3A=21,
         Object3x3B=22,
         
-        RestrictStart=50,
+        EditorStart=50,       //Available During 
         REntrance2x2=51,
         RExport4x1=53,
         REventArea3x3 = 55,
         REnermySpawn1x1=56,
-        RestrictEnd,
+        EditorEnd,
     }
     public enum enum_ChunkEventType
     {
@@ -103,17 +128,61 @@ namespace LevelSetting
         } 
         public static Vector3 ToPosition(this TileAxis axis) => new Vector3(axis.X,0,axis.Y)*LevelConst.I_TileSize;
 
-        public static bool TileObjectEditable(this enum_TileGroundType type)
+        public static bool EditorObjectEditable(this enum_EditorGroundType type)
         {
             switch(type)
             {
-                case enum_TileGroundType.Main:
+                default:return false;
+                case enum_EditorGroundType.Main:
                     return true;
             }
-            return false;
+        }
+        public static enum_EditorGroundType GetEditorGroundType(this enum_TileTerrainType type)
+        {
+            switch(type)
+            {
+                default:
+                    Debug.LogError("Invalid Convertions Here!");
+                    return enum_EditorGroundType.Invalid;
+                case enum_TileTerrainType.Invalid:
+                    return enum_EditorGroundType.Invalid;
+                case enum_TileTerrainType.Ground:
+                    return enum_EditorGroundType.Main;
+                case enum_TileTerrainType.River_0W:
+                case enum_TileTerrainType.River_1WT:
+                case enum_TileTerrainType.River_2WTB:
+                case enum_TileTerrainType.River_2WTR_CG:
+                case enum_TileTerrainType.River_2WRT_CW:
+                case enum_TileTerrainType.River_3WLTR_LG_RW:
+                case enum_TileTerrainType.River_3WLTR_LRG:
+                case enum_TileTerrainType.River_3WLTR_LRW:
+                case enum_TileTerrainType.River_3WLTR_LW_RG:
+                case enum_TileTerrainType.River_4W_1GTR:
+                case enum_TileTerrainType.River_4W_2GTRBL:
+                case enum_TileTerrainType.River_4W_2GTRTL:
+                case enum_TileTerrainType.River_4W_3G_1WTR:
+                case enum_TileTerrainType.River_4W_4G:
+                case enum_TileTerrainType.River_4W_0G:
+                    return enum_EditorGroundType.Water;
+            }
         }
 
-        public static bool IsEditorTileObject(this enum_TileObjectType type) => type >= enum_TileObjectType.RestrictStart && type <= enum_TileObjectType.RestrictEnd;
+        public static enum_TileTerrainType GetEditorTerrainType(this enum_EditorGroundType type)
+        {
+            switch(type)
+            {
+                default:
+                    Debug.LogError("Invalid Convertions Here!");
+                    return enum_TileTerrainType.Invalid;
+                case enum_EditorGroundType.Main:
+                    return enum_TileTerrainType.Ground;
+                    case enum_EditorGroundType.Water:
+                    return enum_TileTerrainType.River_0W;
+            }
+        }
+
+
+        public static bool IsEditorTileObject(this enum_TileObjectType type) => type >= enum_TileObjectType.EditorStart && type <= enum_TileObjectType.EditorEnd;
 
         public static TileAxis GetSizeAxis(this enum_TileObjectType type,enum_TileDirection direction)
         {

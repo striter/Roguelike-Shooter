@@ -92,11 +92,11 @@ public static class LevelObjectManager
             switch (type)
             {
                 default: Debug.LogError("Invalid Pharse Here!"); break;
-                case enum_TileSubType.Ground:
+                case enum_TileSubType.Terrain:
                     items.Traversal((TileItemBase item) =>
                     {
-                        TileGroundBase groundItem = item as TileGroundBase;
-                        ObjectPoolManager<enum_TileGroundType, TileGroundBase>.Register(groundItem.m_GroundType, groundItem, 1);
+                        TileTerrainBase groundItem = item as TileTerrainBase;
+                        ObjectPoolManager<enum_TileTerrainType, TileTerrainBase>.Register(groundItem.m_GroundType, groundItem, 1);
                     });
                     break;
                 case enum_TileSubType.Object:
@@ -106,24 +106,34 @@ public static class LevelObjectManager
                         ObjectPoolManager<enum_TileObjectType, TileObjectBase>.Register(objectItem.m_ObjectType, objectItem, 1);
                     });
                     break;
+                case enum_TileSubType.EditorGround:
+                    items.Traversal((TileItemBase item) =>
+                    {
+                        LevelTileEditorGround editorGroundItem = item as LevelTileEditorGround;
+                        ObjectPoolManager<enum_EditorGroundType, LevelTileEditorGround>.Register(editorGroundItem.m_EditorGroundType, editorGroundItem, 1);
+                    });
+                    break;
             }
         });
     }
 
     public static void RecycleAll()
     {
-        ObjectPoolManager<enum_TileGroundType, TileGroundBase>.RecycleAll();
+        ObjectPoolManager<enum_TileTerrainType, TileTerrainBase>.RecycleAll();
         ObjectPoolManager<enum_TileObjectType, TileObjectBase>.RecycleAll();
+        ObjectPoolManager<enum_EditorGroundType, LevelTileEditorGround>.RecycleAll();
     }
 
     public static void Clear()
     {
-        ObjectPoolManager<enum_TileGroundType, TileGroundBase>.DestroyAll();
+        ObjectPoolManager<enum_TileTerrainType, TileTerrainBase>.DestroyAll();
         ObjectPoolManager<enum_TileObjectType, TileObjectBase>.DestroyAll();
+        ObjectPoolManager<enum_EditorGroundType, LevelTileEditorGround>.DestroyAll();
     }
     
     public static TileObjectBase GetObjectItem(enum_TileObjectType type, Transform trans) => ObjectPoolManager<enum_TileObjectType, TileObjectBase>.Spawn(type, trans, Vector3.zero, Quaternion.identity);
-    public static TileGroundBase GetGroundItem(enum_TileGroundType type, Transform trans) => ObjectPoolManager<enum_TileGroundType, TileGroundBase>.Spawn(type, trans,Vector3.zero,Quaternion.identity);
+    public static TileTerrainBase GetTerrainItem(enum_TileTerrainType type, Transform trans) => ObjectPoolManager<enum_TileTerrainType, TileTerrainBase>.Spawn(type, trans,Vector3.zero,Quaternion.identity);
+    public static LevelTileEditorGround GetEditorGroundItem(enum_EditorGroundType type,Transform trans)=> ObjectPoolManager<enum_EditorGroundType, LevelTileEditorGround>.Spawn(type, trans, Vector3.zero, Quaternion.identity);
 }
 
 public static class NavigationManager

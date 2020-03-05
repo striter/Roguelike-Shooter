@@ -70,12 +70,12 @@ public class LevelChunkData : ScriptableObject {
         for (int i = 0; i < m_Width; i++)
             for (int j = 0; j < m_Height; j++)
             {
-                switch (m_TileData[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)].m_GroundType)
+                switch (m_TileData[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)].m_TerrainType)
                 {
                     default:
                         colors[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)] =  Color.black;
                         break;
-                    case enum_TileGroundType.Invalid:
+                    case enum_TileTerrainType.Invalid:
                         colors[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)] = Color.clear;
                         break;
                 }
@@ -125,13 +125,13 @@ public class LevelChunkData : ScriptableObject {
 [System.Serializable]
 public struct ChunkTileData
 {
-    public enum_TileGroundType m_GroundType;
+    public enum_TileTerrainType m_TerrainType;
     public enum_TileObjectType m_ObjectType;
     public enum_TileDirection m_Direction;
 
-    public ChunkTileData ChangeGroundType(enum_TileGroundType groundType)
+    public ChunkTileData ChangeTerrainType(enum_TileTerrainType groundType)
     {
-        m_GroundType = groundType;
+        m_TerrainType = groundType;
         return this;
     }
     public ChunkTileData ChangeObjectType(enum_TileObjectType objectType)
@@ -144,10 +144,10 @@ public struct ChunkTileData
         m_Direction = direction;
         return this;
     }
-    public static ChunkTileData Default() => new ChunkTileData() { m_GroundType =  enum_TileGroundType.Main, m_ObjectType =  enum_TileObjectType.Invalid,m_Direction= enum_TileDirection.Top };
-    public static ChunkTileData Create(enum_TileGroundType groundType , enum_TileObjectType objectType, enum_TileDirection direction) => new ChunkTileData() { m_GroundType = groundType, m_ObjectType = objectType, m_Direction = direction };
+    public static ChunkTileData Default() => new ChunkTileData() { m_TerrainType =  enum_TileTerrainType.Ground, m_ObjectType =  enum_TileObjectType.Invalid,m_Direction= enum_TileDirection.Top };
+    public static ChunkTileData Create(enum_TileTerrainType groundType ,  enum_TileObjectType objectType, enum_TileDirection direction) => new ChunkTileData() { m_TerrainType = groundType, m_ObjectType = objectType, m_Direction = direction };
 
-    public static bool operator ==(ChunkTileData a, ChunkTileData b) => a.m_Direction==b.m_Direction&&a.m_GroundType==b.m_GroundType&&a.m_ObjectType==b.m_ObjectType;
+    public static bool operator ==(ChunkTileData a, ChunkTileData b) => a.m_Direction==b.m_Direction&&a.m_TerrainType==b.m_TerrainType&&a.m_ObjectType==b.m_ObjectType;
     public static bool operator !=(ChunkTileData a, ChunkTileData b) => !(a==b);
     public override bool Equals(object obj)=> base.Equals(obj);
     public override int GetHashCode()=> base.GetHashCode();
