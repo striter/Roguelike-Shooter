@@ -58,7 +58,7 @@ GameObject:
   - component: {fileID: 4000279579189422}
   - component: {fileID: 114630337037310280}
   m_Layer: 0
-  m_Name: Tile_Desert_Terrain_River_2WTR_CG
+  m_Name: Tile_Horde_Terrain_River_2WTR_CG
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -119,7 +119,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: e7cc71d3e6ae0d74a8657e08b8bb59e1, type: 2}
+  - {fileID: 2100000, guid: 8e1747f934488d5478a4df32b3c328c1, type: 2}
   - {fileID: 2100000, guid: 354fb4a5b61fbc844a8c28b4b5ee782f, type: 2}
   - {fileID: 2100000, guid: f8165636630f50b48820843962910086, type: 2}
   m_StaticBatchInfo:

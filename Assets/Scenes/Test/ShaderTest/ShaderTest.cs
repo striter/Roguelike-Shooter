@@ -19,7 +19,7 @@ public class ShaderTest : MonoBehaviour
         m_renderer2.SetPropertyBlock(m_block2);
         m_renderer3.SetPropertyBlock(m_block3);
 
-       // GetComponent<CameraEffectManager>().GetOrAddCameraEffect<PE_BloomSpecific>().m_Blur.SetEffect( PE_Blurs.enum_BlurType.AverageBlur);
+        GetComponent<CameraEffectManager>().GetOrAddCameraEffect<PE_BloomSpecific>().m_Blur.SetEffect( PE_Blurs.enum_BlurType.AverageBlur);
     }
 
     private void Update()

@@ -346,26 +346,29 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
 {
     Camera m_RenderCamera;
     RenderTexture m_RenderTexture;
-    Shader m_RenderShader;
+    Shader m_RenderBloomShader,m_RenderOcclusionShader;
     public PE_Blurs m_Blur { get; private set; }
+    public bool m_OccludeEnabled { get; private set; }
     public override void OnSetEffect(CameraEffectManager _manager)
     {
         base.OnSetEffect(_manager);
         m_Blur = new PE_Blurs();
         m_Blur.OnSetEffect(_manager);
-        m_RenderShader = Shader.Find("Hidden/PostEffect/PE_BloomSpecific_Render");
-        if (m_RenderShader == null)
-            Debug.LogError("Null Occlude Shader Found!");
+        m_RenderBloomShader = Shader.Find("Hidden/PostEffect/PE_BloomSpecific_Render_Bloom");
+        m_RenderOcclusionShader = Shader.Find("Hidden/PostEffect/PE_BloomSpecific_Render_Occlusion");
+        if (m_RenderBloomShader == null||m_RenderOcclusionShader==null)
+            Debug.LogError("Null Blom Specific Shader Found!");
+
         GameObject temp = new GameObject("Render Camera");
         temp.transform.SetParentResetTransform(m_Manager.m_Camera.transform);
         m_RenderCamera = temp.AddComponent<Camera>();
-        m_RenderCamera.clearFlags = CameraClearFlags.SolidColor;
         m_RenderCamera.backgroundColor = Color.black;
         m_RenderCamera.orthographic = m_Manager.m_Camera.orthographic;
         m_RenderCamera.orthographicSize = m_Manager.m_Camera.orthographicSize;
         m_RenderCamera.nearClipPlane = m_Manager.m_Camera.nearClipPlane;
         m_RenderCamera.farClipPlane = m_Manager.m_Camera.farClipPlane;
         m_RenderCamera.fieldOfView = m_Manager.m_Camera.fieldOfView;
+        m_RenderCamera.depthTextureMode = DepthTextureMode.None;
         m_RenderCamera.enabled = false;
         m_RenderTexture = RenderTexture.GetTemporary(m_Manager.m_Camera.scaledPixelWidth, m_Manager.m_Camera.scaledPixelHeight, 1);
         m_RenderCamera.targetTexture = m_RenderTexture;
@@ -373,11 +376,19 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
     public override void OnCheckMobileCostEnable(bool enable)
     {
         base.OnCheckMobileCostEnable(enable);
-        m_Enabled = enable;
+        m_OccludeEnabled = enable;
     }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        m_RenderCamera.RenderWithShader(m_RenderShader, "RenderType");
+        if(m_OccludeEnabled)
+        {
+            m_RenderCamera.clearFlags = CameraClearFlags.SolidColor;
+            m_RenderCamera.SetReplacementShader(m_RenderOcclusionShader, "RenderType");
+            m_RenderCamera.Render();
+        }
+        m_RenderCamera.clearFlags = CameraClearFlags.Nothing;
+        m_RenderCamera.SetReplacementShader(m_RenderBloomShader, "RenderType");
+        m_RenderCamera.Render();
         m_Blur.OnRenderImage(m_RenderTexture, m_RenderTexture);     //Blur
         m_Material.SetTexture("_RenderTex", m_RenderTexture);
         Graphics.Blit(source, destination, m_Material, 1);        //Mix
