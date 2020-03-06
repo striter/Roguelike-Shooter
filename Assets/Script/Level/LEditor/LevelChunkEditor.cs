@@ -92,7 +92,7 @@ public class LevelChunkEditor : LevelChunkBase
         {
             m_EditGround = false;
             if (!m_GameViewMode)
-                m_ViewStyle = enum_GameStyle.Horde;
+                m_ViewStyle = enum_GameStyle.Undead;
             else
             {
                 m_ViewStyle++;
