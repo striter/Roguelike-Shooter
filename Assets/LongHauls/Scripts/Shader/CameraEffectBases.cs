@@ -423,7 +423,7 @@ public class PE_AreaScanDepth : PostEffectBase
 public class PE_DepthSSAO : PostEffectBase
 {
     public override DepthTextureMode m_DepthTextureMode => DepthTextureMode.Depth;
-    public void SetEffect(float strength=1f, float sphereRadius= 0.035f,float _fallOff=0.00001f,float _fallOffLimit= 0.003f, int _sampleCount=16)
+    public void SetEffect(float strength=1f, float sphereRadius= 0.02f,float _fallOff=0.00001f,float _fallOffLimit= 0.003f, int _sampleCount=16)
     {
         Vector4[] array = new Vector4[16] {
             new Vector3( 0.5381f, 0.1856f,-0.4319f),  new Vector3( 0.1379f, 0.2486f, 0.4430f),new Vector3( 0.3371f, 0.5679f,-0.0057f),  new Vector3(-0.6999f,-0.0451f,-0.0019f),

@@ -19,14 +19,15 @@ public class ShaderTest : MonoBehaviour
         m_renderer2.SetPropertyBlock(m_block2);
         m_renderer3.SetPropertyBlock(m_block3);
 
-        GetComponent<CameraEffectManager>().GetOrAddCameraEffect<PE_BloomSpecific>().m_Blur.SetEffect( PE_Blurs.enum_BlurType.AverageBlur);
+        //GetComponent<CameraEffectManager>().GetOrAddCameraEffect<PE_BloomSpecific>().m_Blur.SetEffect( PE_Blurs.enum_BlurType.AverageBlur);
+        GetComponent<CameraEffectManager>().GetOrAddCameraEffect<PE_DepthSSAO>().SetEffect();
     }
 
     private void Update()
     {;
         m_Block.SetColor("_Color",m_Color);
         m_renderer1.SetPropertyBlock(m_Block);
-        if (Input.GetKeyDown(KeyCode.Space))
-            GetComponent<CameraEffectManager>().GetOrAddCameraEffect<PE_BloomSpecific>().OnCheckMobileCostEnable(!GetComponent<CameraEffectManager>().GetOrAddCameraEffect<PE_BloomSpecific>().m_OccludeEnabled);
+        //if (Input.GetKeyDown(KeyCode.Space))
+        //    GetComponent<CameraEffectManager>().GetOrAddCameraEffect<PE_BloomSpecific>().OnCheckMobileCostEnable(!GetComponent<CameraEffectManager>().GetOrAddCameraEffect<PE_BloomSpecific>().m_OccludeEnabled);
     }
 }

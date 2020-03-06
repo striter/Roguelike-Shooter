@@ -66,9 +66,13 @@
 
 					occlusion += step(difference,_FallOffLimit)* lerp(-1, 1, smoothstep(-_FallOff, _FallOff, difference));
 				}
-				occlusion =  saturate( occlusion/_SampleCount);
-				float ao = pow(occlusion,5)*_Strength;
-				return lerp(col,float4(0,0,0,1),ao);
+				
+				occlusion = saturate(occlusion / _SampleCount);
+				if (occlusion < .2)
+					occlusion = 0;
+				occlusion *= _Strength;
+				return float4(occlusion, occlusion, occlusion, 1);
+				return lerp(col,float4(0,0,0,1), occlusion);
 			}
 			ENDCG
 		}
