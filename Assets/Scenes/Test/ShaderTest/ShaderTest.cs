@@ -26,5 +26,7 @@ public class ShaderTest : MonoBehaviour
     {;
         m_Block.SetColor("_Color",m_Color);
         m_renderer1.SetPropertyBlock(m_Block);
+        if (Input.GetKeyDown(KeyCode.Space))
+            GetComponent<CameraEffectManager>().GetOrAddCameraEffect<PE_BloomSpecific>().OnCheckMobileCostEnable(!GetComponent<CameraEffectManager>().GetOrAddCameraEffect<PE_BloomSpecific>().m_OccludeEnabled);
     }
 }

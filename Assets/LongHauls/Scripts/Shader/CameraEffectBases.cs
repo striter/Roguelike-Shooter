@@ -380,13 +380,13 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
     }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        if(m_OccludeEnabled)
+        m_RenderCamera.clearFlags = CameraClearFlags.SolidColor;
+        if (m_OccludeEnabled)
         {
-            m_RenderCamera.clearFlags = CameraClearFlags.SolidColor;
             m_RenderCamera.SetReplacementShader(m_RenderOcclusionShader, "RenderType");
             m_RenderCamera.Render();
+            m_RenderCamera.clearFlags = CameraClearFlags.Nothing;
         }
-        m_RenderCamera.clearFlags = CameraClearFlags.Nothing;
         m_RenderCamera.SetReplacementShader(m_RenderBloomShader, "RenderType");
         m_RenderCamera.Render();
         m_Blur.OnRenderImage(m_RenderTexture, m_RenderTexture);     //Blur
