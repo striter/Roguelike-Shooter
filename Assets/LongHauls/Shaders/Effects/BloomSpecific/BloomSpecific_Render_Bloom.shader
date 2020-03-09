@@ -4,7 +4,7 @@
 	{
 		Tags { "RenderType" = "BloomColor"  "IgnoreProjector" = "True" "Queue" = "Transparent" }
 		Cull Off Lighting Off ZWrite Off Fog { Color(0,0,0,0) }
-		UsePass "Game/Effect/BloomSpecific/Color/MAIN"
+		UsePass "Game/Effect/BloomSpecific/Base/MAIN"
 	}
 
 	SubShader
