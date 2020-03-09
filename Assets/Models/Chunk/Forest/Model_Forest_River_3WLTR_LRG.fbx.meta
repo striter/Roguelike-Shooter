@@ -1,26 +1,32 @@
 fileFormatVersion: 2
-guid: b5a7555815990564ca77b1b9d4b5f200
+guid: a381275cb3449984ba3f4145a5ff865b
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
     100000: //RootNode
     400000: //RootNode
-    2100000: duobianxing
-    2100002: shui1
+    2100000: pasted__pasted__duobianxing
+    2100002: pasted__pasted__dimian
+    2100004: pasted__pasted__shui1
     2300000: //RootNode
     3300000: //RootNode
-    4300000: Model_Frost_Rivers
+    4300000: Model_Frost_Rivers9
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: duobianxing
-    second: {fileID: 2100000, guid: 7e7740e98747ec4479132d502496fb38, type: 2}
+      name: pasted__pasted__dimian
+    second: {fileID: 2100000, guid: 46b19cdb21ee2db42a8356c22d4b83a6, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: shui1
-    second: {fileID: 2100000, guid: 042693ce9d91dc74699fa9917770c84f, type: 2}
+      name: pasted__pasted__duobianxing
+    second: {fileID: 2100000, guid: 2496aea985adc0547bd0af78dbb40d51, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: pasted__pasted__shui1
+    second: {fileID: 2100000, guid: 7dddc7664431a6c4daccaaef7a0913b6, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
