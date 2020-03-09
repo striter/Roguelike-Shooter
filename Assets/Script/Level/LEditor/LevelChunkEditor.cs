@@ -92,7 +92,7 @@ public class LevelChunkEditor : LevelChunkBase
         {
             m_EditGround = false;
             if (!m_GameViewMode)
-                m_ViewStyle = enum_GameStyle.Desert;
+                m_ViewStyle = enum_GameStyle.Frost;
             else
             {
                 m_ViewStyle++;
