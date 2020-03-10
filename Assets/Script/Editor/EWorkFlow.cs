@@ -21,19 +21,26 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
     private void OnGUI()
     {
         GUILayout.BeginVertical();
-        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "2_Game"||!EditorApplication.isPlaying)
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "LevelEditor"||!EditorApplication.isPlaying)
         {
-            GUILayout.TextArea("This Work Flow Can Only Activated While 2_Game Playing");
+            GUILayout.TextArea("This Work Flow Can Only Activated While LevelEditor Playing");
             GUILayout.EndVertical();
             return;
         }
 
-        enum_GameStyle style = GameManager.Instance.m_GameLevel.m_GameStyle;
+        enum_GameStyle style = LevelChunkEditor.Instance.m_EditStyle;
         GameRenderData[] customizations = TResources.GetRenderData(style);
-        Light directionalLight = GameLevelManager.Instance.m_DirectionalLight;
+        Light directionalLight = LevelChunkEditor.Instance.m_DirectionalLight;
         Camera camera = CameraController.Instance.m_Camera;
+        if(style== enum_GameStyle.Invalid)
+        {
+            GUILayout.TextArea("Set Style In Edit Style View Mode");
+            GUILayout.EndVertical();
+            return;
+        }
 
-        GUILayout.TextArea(customizations.Length == 0 ? "Current Style Does Not Contains Any Customization,Please Save One" : "Current Style Customizations");
+
+        GUILayout.TextArea(customizations.Length == 0 ? "Current Style Does Not Contains Any Customization,Please Save One" : ("Current Style:"+style.ToString()));
         if (m_EditingData==null)
         {
             customizations.Traversal((GameRenderData data) =>

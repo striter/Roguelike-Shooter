@@ -20,14 +20,14 @@ public class LevelChunkEditor : LevelChunkBase
     List<LevelTileEditorData> temp_RelativeTiles = new List<LevelTileEditorData>();
     Dictionary<enum_TileObjectType, int> m_ItemRestriction;
     System.Random m_Random = new System.Random();
-    Light m_directionalLight;
+    public Light m_DirectionalLight { get; private set; }
     private void Awake()
     {
         Instance = this;
         tf_CameraPos = transform.Find("CameraPos");
         m_SelectionTiles = new ObjectPoolListComponent<int, LevelTileEditorSelection>(transform.Find("SelectionPool"), "SelectionItem");
         m_SelectingTile = transform.Find("SelectingTile").GetComponent<LevelTileEditorSelection>();
-        m_directionalLight = transform.Find("Directional Light").GetComponent<Light>();
+        m_DirectionalLight = transform.Find("Directional Light").GetComponent<Light>();
         Init();
     }
     private void Start()
@@ -117,11 +117,11 @@ public class LevelChunkEditor : LevelChunkBase
             m_SelectionTiles.m_ActiveItemDic.Traversal((LevelTileEditorSelection tile) => { tile.Clear(); });
             m_EditStyle = targetStyle;
             LevelObjectManager.Register(m_EditStyle == enum_GameStyle.Invalid ? TResources.GetChunkEditorTiles() : TResources.GetChunkTiles(m_EditStyle));
-            GameRenderData.Default().DataInit(m_directionalLight, CameraController.Instance.m_Camera);
+            GameRenderData.Default().DataInit(m_DirectionalLight, CameraController.Instance.m_Camera);
             GameRenderData[] customizations = TResources.GetRenderData(targetStyle);
             randomData = customizations.Length == 0 ? GameRenderData.Default() : customizations.RandomItem();
         }
-        randomData.DataInit(m_directionalLight, CameraController.Instance.m_Camera);
+        randomData.DataInit(m_DirectionalLight, CameraController.Instance.m_Camera);
 
         m_SelectionTiles.ClearPool();
         m_SelectingTile.InitEditorTile(new TileAxis(-6, -1), ChunkTileData.Default(), m_Random);
