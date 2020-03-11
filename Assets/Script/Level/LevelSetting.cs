@@ -77,7 +77,11 @@ namespace LevelSetting
         Object3x3A=21,
         Object3x3B=22,
         
-        EditorStart=50,       //Available During 
+        ObjectFenceL_BL=32,
+        ObjectFenceL_BLBR = 33,
+        ObjectFenceBL_BLTR = 34,
+
+        EditorStart =50,       //Available During 
         REntrance2x2=51,
         RExport4x1=53,
         REventArea3x3 = 55,

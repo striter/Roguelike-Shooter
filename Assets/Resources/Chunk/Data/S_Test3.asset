@@ -9,100 +9,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 44e7b30229fe3a04a9851d8c534fa490, type: 3}
-  m_Name: S_Test
+  m_Name: S_Test3
   m_EditorClassIdentifier: 
   m_Type: 0
   m_Width: 20
   m_Height: 10
   m_TileData:
   - m_TerrainType: 0
-    m_ObjectType: 15
-    m_Direction: 1
-  - m_TerrainType: 0
-    m_ObjectType: 11
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 5
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 8
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 3
-    m_ObjectType: -1
-    m_Direction: 1
-  - m_TerrainType: 3
-    m_ObjectType: -1
-    m_Direction: 1
-  - m_TerrainType: 3
-    m_ObjectType: -1
-    m_Direction: 1
-  - m_TerrainType: 3
-    m_ObjectType: -1
-    m_Direction: 1
-  - m_TerrainType: 3
-    m_ObjectType: -1
-    m_Direction: 1
-  - m_TerrainType: 3
-    m_ObjectType: -1
-    m_Direction: 1
-  - m_TerrainType: 3
-    m_ObjectType: -1
-    m_Direction: 1
-  - m_TerrainType: 3
-    m_ObjectType: -1
-    m_Direction: 1
-  - m_TerrainType: 3
-    m_ObjectType: -1
-    m_Direction: 1
-  - m_TerrainType: 3
-    m_ObjectType: -1
-    m_Direction: 1
-  - m_TerrainType: 3
-    m_ObjectType: -1
-    m_Direction: 1
-  - m_TerrainType: 4
-    m_ObjectType: -1
-    m_Direction: 3
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 5
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 8
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 3
-    m_ObjectType: -1
-    m_Direction: 1
-  - m_TerrainType: 8
-    m_ObjectType: -1
-    m_Direction: 2
-  - m_TerrainType: 5
-    m_ObjectType: -1
-    m_Direction: 2
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
     m_ObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
@@ -113,95 +26,50 @@ MonoBehaviour:
     m_Direction: 0
   - m_TerrainType: 0
     m_ObjectType: 32
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: 32
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: 32
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: 32
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: 32
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: 32
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: 34
-    m_Direction: 3
-  - m_TerrainType: 3
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: 33
     m_Direction: 2
   - m_TerrainType: 0
     m_ObjectType: 32
     m_Direction: 2
-  - m_TerrainType: 4
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 8
-    m_ObjectType: -1
-    m_Direction: 2
-  - m_TerrainType: 5
-    m_ObjectType: -1
-    m_Direction: 2
   - m_TerrainType: 0
-    m_ObjectType: 14
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: 14
+    m_ObjectType: 32
     m_Direction: 2
   - m_TerrainType: 0
     m_ObjectType: 32
-    m_Direction: 3
-  - m_TerrainType: 3
+    m_Direction: 2
+  - m_TerrainType: 0
+    m_ObjectType: 32
+    m_Direction: 2
+  - m_TerrainType: 0
+    m_ObjectType: 32
+    m_Direction: 2
+  - m_TerrainType: 0
+    m_ObjectType: 32
+    m_Direction: 2
+  - m_TerrainType: 0
+    m_ObjectType: 32
+    m_Direction: 2
+  - m_TerrainType: 0
+    m_ObjectType: 32
+    m_Direction: 2
+  - m_TerrainType: 0
+    m_ObjectType: 32
+    m_Direction: 2
+  - m_TerrainType: 0
+    m_ObjectType: 32
+    m_Direction: 2
+  - m_TerrainType: 0
+    m_ObjectType: 32
+    m_Direction: 2
+  - m_TerrainType: 0
+    m_ObjectType: 32
+    m_Direction: 2
+  - m_TerrainType: 0
+    m_ObjectType: 32
+    m_Direction: 2
+  - m_TerrainType: 0
     m_ObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_ObjectType: 53
-    m_Direction: 3
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 2
     m_ObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
@@ -211,180 +79,45 @@ MonoBehaviour:
     m_ObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: 14
-    m_Direction: 0
-  - m_TerrainType: 2
     m_ObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
     m_ObjectType: 34
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: 33
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 3
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: 32
-    m_Direction: 3
-  - m_TerrainType: 3
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: 2
-    m_Direction: 1
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: 55
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 3
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: 32
-    m_Direction: 1
-  - m_TerrainType: 0
-    m_ObjectType: 16
     m_Direction: 2
-  - m_TerrainType: 0
+  - m_TerrainType: 4
     m_ObjectType: -1
     m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: 32
-    m_Direction: 3
   - m_TerrainType: 3
     m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: 2
     m_Direction: 1
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
   - m_TerrainType: 3
     m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: 32
     m_Direction: 1
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: 32
-    m_Direction: 3
   - m_TerrainType: 3
     m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
+    m_Direction: 1
+  - m_TerrainType: 3
     m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
+    m_Direction: 1
+  - m_TerrainType: 3
     m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 2
+    m_Direction: 1
+  - m_TerrainType: 3
     m_ObjectType: -1
     m_Direction: 1
   - m_TerrainType: 9
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 8
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 3
+    m_ObjectType: -1
+    m_Direction: 1
+  - m_TerrainType: 9
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 6
     m_ObjectType: -1
     m_Direction: 0
   - m_TerrainType: 6
@@ -394,8 +127,8 @@ MonoBehaviour:
     m_ObjectType: -1
     m_Direction: 3
   - m_TerrainType: 0
-    m_ObjectType: 16
-    m_Direction: 0
+    m_ObjectType: 34
+    m_Direction: 1
   - m_TerrainType: 0
     m_ObjectType: -1
     m_Direction: 0
@@ -403,17 +136,215 @@ MonoBehaviour:
     m_ObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 3
     m_ObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
     m_ObjectType: 32
+    m_Direction: 3
+  - m_TerrainType: 4
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 4
+    m_ObjectType: -1
+    m_Direction: 2
+  - m_TerrainType: 0
+    m_ObjectType: 12
+    m_Direction: 2
+  - m_TerrainType: 0
+    m_ObjectType: 55
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 5
+    m_ObjectType: -1
     m_Direction: 1
+  - m_TerrainType: 5
+    m_ObjectType: -1
+    m_Direction: 2
+  - m_TerrainType: 0
+    m_ObjectType: 12
+    m_Direction: 2
+  - m_TerrainType: 5
+    m_ObjectType: -1
+    m_Direction: 1
+  - m_TerrainType: 6
+    m_ObjectType: -1
+    m_Direction: 2
+  - m_TerrainType: 6
+    m_ObjectType: -1
+    m_Direction: 2
+  - m_TerrainType: 12
+    m_ObjectType: -1
+    m_Direction: 1
+  - m_TerrainType: 5
+    m_ObjectType: -1
+    m_Direction: 3
+  - m_TerrainType: 0
+    m_ObjectType: 32
+    m_Direction: 1
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: 32
+    m_Direction: 3
+  - m_TerrainType: 3
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: 12
+    m_Direction: 2
+  - m_TerrainType: 6
+    m_ObjectType: -1
+    m_Direction: 1
+  - m_TerrainType: 6
+    m_ObjectType: -1
+    m_Direction: 3
+  - m_TerrainType: 0
+    m_ObjectType: 32
+    m_Direction: 1
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: 53
+    m_Direction: 3
+  - m_TerrainType: 2
+    m_ObjectType: -1
+    m_Direction: 2
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 5
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 11
+    m_ObjectType: -1
+    m_Direction: 2
+  - m_TerrainType: 6
+    m_ObjectType: -1
+    m_Direction: 3
+  - m_TerrainType: 0
+    m_ObjectType: 32
+    m_Direction: 1
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: 19
+    m_Direction: 0
   - m_TerrainType: 0
     m_ObjectType: -1
     m_Direction: 0
@@ -429,36 +360,117 @@ MonoBehaviour:
   - m_TerrainType: 0
     m_ObjectType: -1
     m_Direction: 0
+  - m_TerrainType: 6
+    m_ObjectType: -1
+    m_Direction: 1
+  - m_TerrainType: 10
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 6
+    m_ObjectType: -1
+    m_Direction: 3
   - m_TerrainType: 0
     m_ObjectType: 32
-    m_Direction: 3
-  - m_TerrainType: 3
+    m_Direction: 1
+  - m_TerrainType: 0
     m_ObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_ObjectType: 32
+    m_ObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_ObjectType: 32
+    m_ObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_ObjectType: 33
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 6
+    m_ObjectType: -1
+    m_Direction: 1
+  - m_TerrainType: 10
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 6
+    m_ObjectType: -1
+    m_Direction: 3
+  - m_TerrainType: 0
+    m_ObjectType: 32
+    m_Direction: 1
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
     m_Direction: 0
   - m_TerrainType: 5
     m_ObjectType: -1
-    m_Direction: 1
+    m_Direction: 0
   - m_TerrainType: 6
     m_ObjectType: -1
-    m_Direction: 2
-  - m_TerrainType: 9
+    m_Direction: 0
+  - m_TerrainType: 5
     m_ObjectType: -1
-    m_Direction: 2
+    m_Direction: 3
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 5
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 8
+    m_ObjectType: -1
+    m_Direction: 0
   - m_TerrainType: 3
     m_ObjectType: -1
     m_Direction: 1
   - m_TerrainType: 3
     m_ObjectType: -1
+    m_Direction: 1
+  - m_TerrainType: 7
+    m_ObjectType: -1
     m_Direction: 0
+  - m_TerrainType: 3
+    m_ObjectType: -1
+    m_Direction: 1
   - m_TerrainType: 3
     m_ObjectType: -1
     m_Direction: 1
@@ -468,21 +480,18 @@ MonoBehaviour:
   - m_TerrainType: 8
     m_ObjectType: -1
     m_Direction: 0
-  - m_TerrainType: 4
+  - m_TerrainType: 8
+    m_ObjectType: -1
+    m_Direction: 2
+  - m_TerrainType: 6
+    m_ObjectType: -1
+    m_Direction: 2
+  - m_TerrainType: 5
     m_ObjectType: -1
     m_Direction: 2
   - m_TerrainType: 0
     m_ObjectType: 32
     m_Direction: 1
-  - m_TerrainType: 0
-    m_ObjectType: 16
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
   - m_TerrainType: 0
     m_ObjectType: -1
     m_Direction: 0
@@ -492,127 +501,118 @@ MonoBehaviour:
   - m_TerrainType: 0
     m_ObjectType: 32
     m_Direction: 3
-  - m_TerrainType: 3
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: 17
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 6
-    m_ObjectType: -1
-    m_Direction: 1
-  - m_TerrainType: 6
-    m_ObjectType: -1
-    m_Direction: 3
-  - m_TerrainType: 0
-    m_ObjectType: 12
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: 34
-    m_Direction: 1
-  - m_TerrainType: 0
-    m_ObjectType: 32
-    m_Direction: 2
-  - m_TerrainType: 0
-    m_ObjectType: 32
-    m_Direction: 2
-  - m_TerrainType: 0
-    m_ObjectType: 32
-    m_Direction: 2
-  - m_TerrainType: 0
-    m_ObjectType: 32
-    m_Direction: 2
-  - m_TerrainType: 0
-    m_ObjectType: 32
-    m_Direction: 2
-  - m_TerrainType: 0
-    m_ObjectType: 34
-    m_Direction: 2
-  - m_TerrainType: 3
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: 12
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 0
-    m_ObjectType: -1
-    m_Direction: 0
   - m_TerrainType: 5
     m_ObjectType: -1
     m_Direction: 1
+  - m_TerrainType: 6
+    m_ObjectType: -1
+    m_Direction: 2
   - m_TerrainType: 9
     m_ObjectType: -1
     m_Direction: 2
   - m_TerrainType: 3
     m_ObjectType: -1
     m_Direction: 1
-  - m_TerrainType: 3
-    m_ObjectType: -1
-    m_Direction: 0
-  - m_TerrainType: 3
-    m_ObjectType: -1
-    m_Direction: 1
-  - m_TerrainType: 3
-    m_ObjectType: -1
-    m_Direction: 1
-  - m_TerrainType: 3
-    m_ObjectType: -1
-    m_Direction: 1
-  - m_TerrainType: 3
-    m_ObjectType: -1
-    m_Direction: 1
-  - m_TerrainType: 3
-    m_ObjectType: -1
-    m_Direction: 1
-  - m_TerrainType: 3
-    m_ObjectType: -1
-    m_Direction: 1
-  - m_TerrainType: 4
+  - m_TerrainType: 8
     m_ObjectType: -1
     m_Direction: 2
+  - m_TerrainType: 5
+    m_ObjectType: -1
+    m_Direction: 2
+  - m_TerrainType: 0
+    m_ObjectType: 34
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: 34
+    m_Direction: 3
+  - m_TerrainType: 2
+    m_ObjectType: -1
+    m_Direction: 2
+  - m_TerrainType: 0
+    m_ObjectType: 34
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: 34
+    m_Direction: 3
+  - m_TerrainType: 5
+    m_ObjectType: -1
+    m_Direction: 1
+  - m_TerrainType: 5
+    m_ObjectType: -1
+    m_Direction: 2
+  - m_TerrainType: 0
+    m_ObjectType: 34
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: 32
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: 32
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: 32
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: 32
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: 32
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: 32
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: 32
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: 32
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: 32
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: 32
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: 32
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
+  - m_TerrainType: 0
+    m_ObjectType: -1
+    m_Direction: 0
   m_ConnectionIndex: []
