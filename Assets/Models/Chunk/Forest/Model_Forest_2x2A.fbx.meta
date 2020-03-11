@@ -1,11 +1,11 @@
 fileFormatVersion: 2
-guid: b5a74c00e969bfc439b584febf2f98e9
+guid: 06a203e9b44db0c48bc747eed3551480
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
     100000: //RootNode
     400000: //RootNode
-    2100000: aiStandardSurface24
+    2100000: pasted__aiStandardSurface24
     2300000: //RootNode
     3300000: //RootNode
     4300000: Model_Frost_2x2A
@@ -13,7 +13,7 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: aiStandardSurface24
+      name: pasted__aiStandardSurface24
     second: {fileID: 2100000, guid: 2496aea985adc0547bd0af78dbb40d51, type: 2}
   materials:
     importMaterials: 1
@@ -69,7 +69,7 @@ ModelImporter:
     normalImportMode: 0
     tangentImportMode: 3
     normalCalculationMode: 4
-  importAnimation: 0
+  importAnimation: 1
   copyAvatar: 0
   humanDescription:
     serializedVersion: 2
