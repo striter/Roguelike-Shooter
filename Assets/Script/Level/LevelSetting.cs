@@ -25,6 +25,7 @@ namespace LevelSetting
         Invalid = -1,
         Object=1,
         Terrain=2,
+        EdgeObject=3,
 
         EditorGround=10,
     }
@@ -77,16 +78,20 @@ namespace LevelSetting
         Object3x3A=21,
         Object3x3B=22,
         
-        ObjectFenceL_BL=32,
-        ObjectFenceL_BLBR = 33,
-        ObjectFenceBL_BLTR = 34,
-
         EditorStart =50,       //Available During 
         REntrance2x2=51,
         RExport4x1=53,
         REventArea3x3 = 55,
         REnermySpawn1x1=56,
         EditorEnd,
+    }
+
+    public enum enum_TileEdgeObjectType
+    {
+        Invalid=-1,
+        EdgeObjectFenceL_BL = 1,
+        EdgeObjectFenceL_BLBR = 2,
+        EdgeObjectFenceBL_BLTR = 3,
     }
     public enum enum_ChunkEventType
     {
@@ -99,20 +104,24 @@ namespace LevelSetting
         WeaponReforge,
     }
 
-    public enum enum_ChunkRevealType
+    public enum enum_LevelEditorEditType
     {
         Invalid=-1,
-        PreFog=1,
-        PreFaded=2,
-        PreRevealed = 3,
-        PrepareEnd=10,
-
-        Empty = 11,
-        Revealed = 12,
+        Terrain=1,
+        Object=2,
+        EdgeObject=3,
     }
-    
+
     public static class LevelExpressions
     {
+        public static enum_LevelEditorEditType Next(this enum_LevelEditorEditType type)
+        {
+            type++;
+            if (type > enum_LevelEditorEditType.EdgeObject)
+                type = enum_LevelEditorEditType.Terrain;
+            return type;
+        }
+
         public static bool IsBattleLevel(this enum_LevelType type)
         {
             switch(type)

@@ -19,9 +19,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4342969010383368}
-  - component: {fileID: 114928279559609702}
+  - component: {fileID: 114416001147597288}
   m_Layer: 0
-  m_Name: Tile_Horde_Object_FenceL_BL
+  m_Name: Tile_Horde_EdgeObject_FenceL_BL
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -168,7 +168,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f62cdd659d216734e828ce07e4431bf6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114928279559609702
+--- !u!114 &114416001147597288
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -176,7 +176,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1172263870555512}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1525d1b835213d45b7e445de993b645, type: 3}
+  m_Script: {fileID: 11500000, guid: 0d0d0d8f497f29b4c9b0f8b6b486c9c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ObjectType: 32
+  m_EdgeObjectType: 1

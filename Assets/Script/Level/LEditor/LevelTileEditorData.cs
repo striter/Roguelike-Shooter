@@ -16,16 +16,21 @@ public class LevelTileEditorData : LevelTileEditor {
         if (m_Data.m_ObjectType == type && m_Data.m_Direction == direction)
             return;
 
-        m_Data = m_Data.ChangeDirection(direction);
-        m_Data = m_Data.ChangeObjectType(type);
-        InitEditorTile(m_Axis, m_Data,random);
+        m_Data = m_Data.ChangeDirection(direction).ChangeObjectType(type);
+        InitTile(m_Axis, m_Data,random);
     }
 
-    public void SetGround(enum_EditorGroundType groundType, System.Random random)
+    public void SetData(enum_TileEdgeObjectType objectType, enum_TileDirection direction, System.Random random)
+    {
+        m_Data = m_Data.ChangeDirection(direction).ChangeEdgeObjectType(objectType);
+        InitTile(m_Axis, m_Data, random);
+    }
+
+    public void SetEditorGround(enum_EditorGroundType groundType, System.Random random)
     {
         m_EditorGroundType = groundType;
         m_Data = m_Data.ChangeTerrainType(m_EditorGroundType == enum_EditorGroundType.Main ? enum_TileTerrainType.Ground : enum_TileTerrainType.River_4W_0G);
-        InitEditorTile(m_Axis, m_Data, random);
+        InitTile(m_Axis, m_Data, random);
     }
 
     public void UpdateWaterTerrain(Dictionary<enum_TileDirection,enum_EditorGroundType> _edgeTerrains, Dictionary<enum_TileDirection, enum_EditorGroundType> _angleTerrains, System.Random random)
@@ -34,7 +39,7 @@ public class LevelTileEditorData : LevelTileEditor {
         enum_TileDirection waterDirection = enum_TileDirection.Top;
         GetWaterTerrainType(_edgeTerrains,_angleTerrains,out terrainType,out waterDirection);
         m_Data = m_Data.ChangeTerrainType(terrainType).ChangeDirection(waterDirection);
-        InitEditorTile(m_Axis, m_Data, random);
+        InitTile(m_Axis, m_Data, random);
     }
 
     void GetWaterTerrainType(Dictionary<enum_TileDirection, enum_EditorGroundType> _edgeTerrains, Dictionary<enum_TileDirection, enum_EditorGroundType> _angleTerrains,out enum_TileTerrainType terrainType,out enum_TileDirection terrainDirection)

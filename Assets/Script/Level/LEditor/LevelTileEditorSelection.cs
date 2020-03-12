@@ -8,10 +8,10 @@ using UnityEngine;
 public class LevelTileEditorSelection : LevelTileEditor
 {
     protected Transform m_EditorModel { get; private set; }
-    public override void InitEditorTile(TileAxis axis, ChunkTileData data, System.Random random)
+    public override void InitTile(TileAxis axis, ChunkTileData data, System.Random random)
     {
+        base.InitTile(axis, data, random);
         m_EditorModel = transform.Find("EditorModel");
-        base.InitEditorTile(axis, data, random);
         SetSelecting(false);
     }
 

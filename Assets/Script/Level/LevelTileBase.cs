@@ -11,6 +11,7 @@ public class LevelTileBase : MonoBehaviour, ITileAxis
     protected Transform tf_Models { get; private set; }
     public TileTerrainBase m_Terrain { get; protected set; }
     public TileObjectBase m_Object { get; protected set; }
+    public TileEdgeObjectBase m_EdgeObject { get; private set; }
     public virtual void InitTile(TileAxis axis,ChunkTileData data,System.Random random)
     {
         Clear();
@@ -31,6 +32,13 @@ public class LevelTileBase : MonoBehaviour, ITileAxis
             m_Terrain.OnGenerateItem(data, random);
             m_Terrain.transform.localPosition = Vector3.zero;
         }
+
+        if(data.m_EdgeObjectType!= enum_TileEdgeObjectType.Invalid)
+        {
+            m_EdgeObject = LevelObjectManager.GetEdgeObjectItem(data.m_EdgeObjectType, tf_Models);
+            m_EdgeObject.OnGenerateItem(data, random);
+            m_EdgeObject.transform.localPosition = Vector3.zero;
+        }
     }
     public virtual void Clear()
     {
@@ -38,8 +46,11 @@ public class LevelTileBase : MonoBehaviour, ITileAxis
             m_Object.DoRecycle();
         if (m_Terrain)
             m_Terrain.DoRecycle();
+        if (m_EdgeObject)
+            m_EdgeObject.DoRecycle();
         m_Object = null;
         m_Terrain = null;
+        m_EdgeObject = null;
     }
     protected virtual bool WillGenerateObject(enum_TileObjectType type) => type != enum_TileObjectType.Invalid && !type.IsEditorTileObject();
 }

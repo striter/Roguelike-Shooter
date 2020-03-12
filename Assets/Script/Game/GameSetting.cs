@@ -184,9 +184,6 @@ namespace GameSetting
                 default:
                     Debug.LogError("Invalid Convertions Here!");
                     return -1;
-                case enum_TileObjectType.ObjectFenceBL_BLTR:
-                case enum_TileObjectType.ObjectFenceL_BL:
-                case enum_TileObjectType.ObjectFenceL_BLBR:
                 case enum_TileObjectType.Block:
                 case enum_TileObjectType.Dangerzone:
                     return -1;

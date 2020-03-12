@@ -127,6 +127,7 @@ public struct ChunkTileData
 {
     public enum_TileTerrainType m_TerrainType;
     public enum_TileObjectType m_ObjectType;
+    public enum_TileEdgeObjectType m_EdgeObjectType;
     public enum_TileDirection m_Direction;
 
     public ChunkTileData ChangeTerrainType(enum_TileTerrainType groundType)
@@ -139,13 +140,19 @@ public struct ChunkTileData
         m_ObjectType = objectType;
         return this;
     }
+    public ChunkTileData ChangeEdgeObjectType(enum_TileEdgeObjectType edgeObjectType)
+    {
+        m_EdgeObjectType = edgeObjectType;
+        return this;
+    }
     public ChunkTileData ChangeDirection(enum_TileDirection direction)
     {
         m_Direction = direction;
         return this;
     }
-    public static ChunkTileData Default() => new ChunkTileData() { m_TerrainType =  enum_TileTerrainType.Ground, m_ObjectType =  enum_TileObjectType.Invalid,m_Direction= enum_TileDirection.Top };
-    public static ChunkTileData Create(enum_TileTerrainType groundType ,  enum_TileObjectType objectType, enum_TileDirection direction) => new ChunkTileData() { m_TerrainType = groundType, m_ObjectType = objectType, m_Direction = direction };
+
+    public static ChunkTileData Default() => new ChunkTileData() { m_TerrainType =  enum_TileTerrainType.Ground, m_ObjectType =  enum_TileObjectType.Invalid,m_EdgeObjectType= enum_TileEdgeObjectType.Invalid,m_Direction= enum_TileDirection.Top };
+    public static ChunkTileData Create(enum_TileTerrainType groundType ,  enum_TileObjectType objectType,enum_TileEdgeObjectType edgeObjectType, enum_TileDirection direction) => new ChunkTileData() { m_TerrainType = groundType, m_ObjectType = objectType,m_EdgeObjectType=edgeObjectType, m_Direction = direction };
 
     public static bool operator ==(ChunkTileData a, ChunkTileData b) => a.m_Direction==b.m_Direction&&a.m_TerrainType==b.m_TerrainType&&a.m_ObjectType==b.m_ObjectType;
     public static bool operator !=(ChunkTileData a, ChunkTileData b) => !(a==b);
