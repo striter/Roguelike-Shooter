@@ -236,10 +236,6 @@ public class LevelChunkEditor : LevelChunkBase
             return true;
 
         bool editable = true;
-
-        if (m_SelectingTile.m_Data.m_ObjectType == enum_TileObjectType.Invalid)
-            return false;
-
         if (!m_TilesData.Get(targetTile.m_Axis, (m_SelectingTile.m_Data.m_ObjectType).GetSizeAxis(m_SelectingDirection), ref temp_RelativeTiles))
             return false;
 
