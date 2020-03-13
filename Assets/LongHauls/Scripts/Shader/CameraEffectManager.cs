@@ -39,8 +39,9 @@ public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
         ResetPostEffectParams();
     }
 
-    public void SetCostyEffectEnable(bool mobileCostEnable)
+    public void SetCostyEffectEnable(bool enablePostEffect,bool mobileCostEnable)
     {
+        m_PostEffectEnabled = enablePostEffect;
         m_MobileCostEnable = mobileCostEnable;
         ResetPostEffectParams();
     }
@@ -114,7 +115,6 @@ public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
 
     void ResetPostEffectParams()
     {
-        m_PostEffectEnabled = false;
         m_Camera.depthTextureMode = DepthTextureMode.None;
         m_calculateDepthToWorldMatrix = false;
         
@@ -123,8 +123,7 @@ public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
             effectBase.OnCheckMobileCostEnable(m_MobileCostEnable);
             if (!effectBase.m_Enabled)
                 return;
-
-            m_PostEffectEnabled |= effectBase.m_IsPostEffect;
+            
             m_Camera.depthTextureMode |= effectBase.m_DepthTextureMode;
             m_calculateDepthToWorldMatrix |= effectBase.m_DepthToWorldMatrix;
         });

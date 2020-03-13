@@ -51,7 +51,7 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
     {
         TLocalization.SetRegion(OptionsManager.m_OptionsData.m_Region);
         Application.targetFrameRate = (int)OptionsManager.m_OptionsData.m_FrameRate;
-        CameraController.Instance.m_Effect.SetCostyEffectEnable(OptionsManager.m_OptionsData.m_ScreenEffect>= enum_Option_ScreenEffect.High);
+        CameraController.Instance.m_Effect.SetCostyEffectEnable(OptionsManager.m_OptionsData.m_ScreenEffect > enum_Option_ScreenEffect.Off,OptionsManager.m_OptionsData.m_ScreenEffect>= enum_Option_ScreenEffect.High);
     }
 
     protected void OnPortalEnter(float duration,Transform vortexTarget, Action OnEnter)
@@ -228,6 +228,9 @@ public static class GameDataManager
 
         Properties<SWeapon>.PropertiesList.Traversal((SWeapon weapon) =>
         {
+            if (weapon.m_Hidden)
+                return;
+
             if (!m_WeaponRarities.ContainsKey(weapon.m_Rarity))
                 m_WeaponRarities.Add(weapon.m_Rarity, new List<enum_PlayerWeapon>());
             m_WeaponRarities[weapon.m_Rarity].Add( weapon.m_Weapon);
@@ -323,6 +326,8 @@ public static class GameDataManager
         SWeapon weapon = Properties<SWeapon>.PropertiesList.Find(p => p.m_Weapon == type);
         if (weapon.m_Weapon == 0)
             Debug.LogError("Error Properties Found Of Index:" + type.ToString() + "|" + ((int)type));
+        else if (weapon.m_Hidden)
+            Debug.LogWarning("You've Spawned A Hidden Weapon!");
         return weapon;
     }
     public static SBuff GetPresetBuff(int index)

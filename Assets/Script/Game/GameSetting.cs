@@ -560,35 +560,26 @@ namespace GameSetting
     public enum enum_PlayerWeapon
     {
         Invalid = -1,
-        //Laser
         RailPistol = 101,
         Railgun = 102,
-        //Snipe Rifle
         M82A1 = 201,
         Kar98 = 202,
-        //Submachine Gun
         UZI = 301,
         UMP45 = 302,
-        //Assult Rifle
         SCAR = 401,
         M16A4 = 402,
         AKM = 403,
-        //Pistol
         P92 = 501,
         DE = 502,
-        //Shotgun
         XM1014 = 601,
         S686 = 602,
-        //Heavy Weapon
         Crossbow = 701,
         RocketLauncher = 702,
         Minigun = 703,
-        //Special
         Flamer = 801,
         Driller = 802,
         Bouncer = 803,
         Tesla=804,
-        //Melee
         HeavySword=901,
     }
 
@@ -645,7 +636,7 @@ namespace GameSetting
 
     public enum enum_Option_FrameRate { Invalid = -1, Normal = 45, High = 60, }
 
-    public enum enum_Option_ScreenEffect { Invalid=-1,Normal,High}
+    public enum enum_Option_ScreenEffect { Invalid=-1,Off,Normal,High}
 
     public enum enum_CampFarmItemStatus { Invalid=-1, Empty = 0, Locked=1 , Decayed = 2, Progress1=10,Progress2,Progress3,Progress4,Progress5}
 
@@ -937,6 +928,7 @@ namespace GameSetting
     {
         int index;
         string s_shortName;
+        bool b_hidden;
         int i_rarity;
         float f_fireRate;
         int i_clipAmount;
@@ -952,6 +944,7 @@ namespace GameSetting
         float f_UISpeed;
 
         public int m_Index => index;
+        public bool m_Hidden => b_hidden;
         public string m_ShortName => s_shortName;
         public enum_PlayerWeapon m_Weapon => (enum_PlayerWeapon)index;
         public enum_WeaponRarity m_Rarity => (enum_WeaponRarity)i_rarity;

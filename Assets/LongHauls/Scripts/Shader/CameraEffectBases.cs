@@ -11,7 +11,6 @@ public class CameraEffectBase
     protected CameraEffectManager m_Manager { get; private set; }
     public bool m_Supported { get; private set; }
     public bool m_Enabled { get; protected set; }
-    public virtual bool m_IsPostEffect => false;
     public CameraEffectBase()
     {
         m_Supported=OnCreate();
@@ -43,7 +42,6 @@ public class PostEffectBase: CameraEffectBase
 {
     const string S_ParentPath = "Hidden/PostEffect/";
     public Material m_Material { get; private set; }
-    public override bool m_IsPostEffect => true;
     protected override bool OnCreate()
     {
         m_Material = CreateMaterial(this.GetType());

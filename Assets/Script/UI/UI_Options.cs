@@ -106,7 +106,7 @@ public class UI_Options : UIPage {
         OnSelectionClick(enum_OptionSelection.Display);
         
         new BoolToggle(m_Page[enum_OptionSelection.Display].Find("FrameRate/BtnToggle"), OnFrequencyClicked, GetFrameRateOption());
-        new ValueToggle<enum_Option_ScreenEffect>(m_Page[enum_OptionSelection.Display].Find("ScreenEffect/BtnToggle"), OnScreenEffectClicked, GetScreenEffectOption(),new List<enum_Option_ScreenEffect> {  enum_Option_ScreenEffect.Normal, enum_Option_ScreenEffect.High});
+        new ValueToggle<enum_Option_ScreenEffect>(m_Page[enum_OptionSelection.Display].Find("ScreenEffect/BtnToggle"), OnScreenEffectClicked, GetScreenEffectOption(),new List<enum_Option_ScreenEffect> { enum_Option_ScreenEffect.Off, enum_Option_ScreenEffect.Normal, enum_Option_ScreenEffect.High});
         new BoolToggle(m_Page[enum_OptionSelection.Display].Find("Region/BtnToggle"), OnRegionClicked, GetRegionOption());
         new BoolToggle(m_Page[enum_OptionSelection.Display].Find("Shadow/BtnToggle"), OnShadowClicked, GetShadowOption());
         new SliderStatus(m_Page[enum_OptionSelection.Sound].Find("MusicVolume/Slider"), OnMusicVolumeChanged, OptionsManager.m_OptionsData.m_MusicVolumeTap);
@@ -149,7 +149,7 @@ public class UI_Options : UIPage {
     {
         OptionsManager.m_OptionsData.m_ScreenEffect++;
         if (OptionsManager.m_OptionsData.m_ScreenEffect > enum_Option_ScreenEffect.High)
-            OptionsManager.m_OptionsData.m_ScreenEffect = enum_Option_ScreenEffect.Normal;
+            OptionsManager.m_OptionsData.m_ScreenEffect = enum_Option_ScreenEffect.Off;
         OptionsManager.OnOptionChanged();
         return GetScreenEffectOption();
     }
