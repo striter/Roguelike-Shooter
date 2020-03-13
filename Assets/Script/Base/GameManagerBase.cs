@@ -5,6 +5,8 @@ using UnityEngine;
 using System;
 using TExcel;
 using TGameSave;
+using System.Linq;
+
 public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperClass{
     public virtual bool B_InGame => false;
     protected override void Awake()
@@ -299,6 +301,23 @@ public static class GameDataManager
 
     #endregion
     #region ExcelData
+    public static enum_PlayerWeapon TryGetWeaponEnum(string weaponIdentity)
+    {
+        int idTry = -1;
+        if (int.TryParse(weaponIdentity, out idTry) && Enum.IsDefined(typeof(enum_PlayerWeapon), idTry))
+            return (enum_PlayerWeapon)idTry;
+
+        enum_PlayerWeapon targetWeapon = enum_PlayerWeapon.Invalid;
+        if (Enum.TryParse(weaponIdentity, out targetWeapon))
+            return targetWeapon;
+
+        if (Properties<SWeapon>.PropertiesList.Any(p => p.m_ShortName == weaponIdentity))
+            return Properties<SWeapon>.PropertiesList.Find(p => p.m_ShortName == weaponIdentity).m_Weapon;
+
+        Debug.LogError("Invalid Player Weapon Found!");
+        return  enum_PlayerWeapon.Invalid;
+    }
+
     public static SWeapon GetWeaponProperties(enum_PlayerWeapon type)
     {
         SWeapon weapon = Properties<SWeapon>.PropertiesList.Find(p => p.m_Weapon == type);
