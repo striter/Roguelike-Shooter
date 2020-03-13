@@ -29,7 +29,7 @@ namespace GameSetting
         public const float F_AimAssistDistance = 100f;
         public const short I_BoltLastTimeAfterHit = 5;
 
-        public const float F_PlayerWeaponFireReloadPause = 0f; //武器恢复间隔时间
+        public const float F_PlayerWeaponFireReloadPause = 1f; //武器恢复间隔时间
         public const float F_PlayerAutoAimRangeBase = 16f; //自动锁定敌人范围
         public const float F_PlayerDamageAdjustmentRange = .1f;
         public const int I_PlayerRotationSmoothParam = 10;     //Camera Smooth Param For Player 10 is suggested
