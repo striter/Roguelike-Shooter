@@ -17,6 +17,7 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
     public int I_ClipAmount { get; private set; } = 0;
     public float F_Recoil => m_Attacher.m_CharacterInfo.F_SpreadMultiply * F_BaseRecoil;
     protected WeaponTrigger m_Trigger { get; private set; }
+    protected virtual WeaponTrigger GetTrigger() => new WeaponTriggerAuto(m_WeaponInfo.m_FireRate, OnTriggerCheck,OnAutoTriggerSuccessful);
     Action<float> OnFireRecoil;
     
     TimeCounter m_BulletRefillTimer=new TimeCounter(),m_RefillPauseTimer=new TimeCounter(GameConst.F_PlayerWeaponFireReloadPause);
@@ -32,7 +33,7 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
         m_WeaponInfo = GameDataManager.GetWeaponProperties(_identity);
         I_ClipAmount = m_WeaponInfo.m_ClipAmount;
         I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
-        m_Trigger = new WeaponTrigger(m_WeaponInfo.m_FireRate, OnTriggerOnce);
+        m_Trigger = GetTrigger();
         m_BulletRefillTimer.SetTimer(m_WeaponInfo.m_BulletRefillTime);
         OnGetEquipmentData(GameObjectManager.GetEquipmentData<SFXWeaponBase>(GameExpression.GetPlayerWeaponIndex(m_WeaponInfo.m_Index)));
     }
@@ -67,25 +68,21 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
 
     void OnShow(bool show)=>transform.SetActivate(show);
     #region PlayerInteract
-    public void Trigger(bool down)=>m_Trigger.OnSetTrigger(down);
+    public virtual void Trigger(bool down)=>m_Trigger.OnSetTrigger(down);
 
 
     public virtual void OnAnimEvent(TAnimatorEvent.enum_AnimEvent eventType)
     {
     }
-    protected bool OnTriggerOnce()
+    protected bool OnTriggerCheck() => m_HaveAmmoLeft;
+    protected virtual void OnAutoTriggerSuccessful() => OnTriggerSuccessful();
+
+    protected void OnTriggerSuccessful()
     {
-        if (!m_HaveAmmoLeft)
-            return false;
+        I_AmmoLeft--;
         OnFireRecoil?.Invoke(F_Recoil);
         m_RefillPauseTimer.Reset();
         m_BulletRefillTimer.Reset();
-        I_AmmoLeft--;
-        OnTriggerSuccessful();
-        return true;
-    }
-    protected virtual void OnTriggerSuccessful()
-    {
     }
 
     public void Tick(float fireTick,float reloadTick)
@@ -124,36 +121,4 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
         I_AmmoLeft = I_ClipAmount;
     }
     #endregion
-    public class WeaponTrigger
-    {
-        public bool B_TriggerDown { get; protected set; }
-        protected Func<bool> OnTriggerSuccessful { get; private set; }
-        TimeCounter m_TriggerTimer = new TimeCounter();
-        public WeaponTrigger(float _fireRate, Func<bool> _OnTriggerSuccessful)
-        {
-            OnTriggerSuccessful = _OnTriggerSuccessful;
-            m_TriggerTimer.SetTimer(_fireRate);
-        }
-
-        public virtual void OnSetTrigger(bool down)
-        {
-            B_TriggerDown = down;
-        }
-
-        public virtual void Tick(float deltaTime)
-        {
-            m_TriggerTimer.Tick(deltaTime);
-            if (m_TriggerTimer.m_Timing)
-                return;
-
-
-            if (!B_TriggerDown)
-                return;
-
-            if (OnTriggerSuccessful())
-                m_TriggerTimer.Reset();
-        }
-        
-    }
-    
 }

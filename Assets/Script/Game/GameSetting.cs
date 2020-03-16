@@ -583,6 +583,13 @@ namespace GameSetting
         HeavySword=901,
     }
 
+    public enum enum_WeaponTrigger
+    {
+        Invalid=-1,
+        Auto=0,
+        Storing=1,
+    }
+
     public enum enum_PlayerAnim
     {
         Invalid = -1,
@@ -1371,6 +1378,87 @@ namespace GameSetting
     }
     #endregion
 
+    #region WeaponTriggers
+    public class WeaponTrigger
+    {
+        public virtual enum_WeaponTrigger m_TriggerType => enum_WeaponTrigger.Invalid;
+        public bool m_TriggerDown { get; protected set; }
+        public virtual void OnSetTrigger(bool down)
+        {
+            m_TriggerDown = down;
+        }
+
+        public virtual void Tick(float deltaTime)
+        {
+
+        }
+    }
+    public class WeaponTriggerAuto : WeaponTrigger
+    {
+        public override enum_WeaponTrigger m_TriggerType => enum_WeaponTrigger.Auto;
+        protected Func<bool> OnTriggerCheck;
+        Action OnTriggerSuccessful;
+        TimeCounter m_TriggerTimer = new TimeCounter();
+        public WeaponTriggerAuto(float _fireRate, Func<bool> _OnTriggerCheck,Action _OnTriggerSuccessful)
+        {
+            OnTriggerCheck = _OnTriggerCheck;
+            OnTriggerSuccessful = _OnTriggerSuccessful;
+            m_TriggerTimer.SetTimer(_fireRate);
+        }
+        public override void Tick(float deltaTime)
+        {
+            base.Tick(deltaTime);
+            m_TriggerTimer.Tick(deltaTime);
+            if (m_TriggerTimer.m_Timing)
+                return;
+
+            if (!m_TriggerDown)
+                return;
+
+            if (!OnTriggerCheck())
+                return;
+            OnTriggerSuccessful();
+                m_TriggerTimer.Reset();
+        }
+    }
+
+    public class WeaponTriggerStoring:WeaponTrigger
+    {
+        public override enum_WeaponTrigger m_TriggerType => enum_WeaponTrigger.Auto;
+         Func<bool> OnStoreBeginCheck;
+        Action<float> OnStoreFinish;
+        TimeCounter m_StoreTimer = new TimeCounter();
+
+        public WeaponTriggerStoring(float _storeDuration, Func<bool> _OnStoreBeginCheck, Action<float> _OnStoreFinish)
+        {
+            OnStoreBeginCheck = _OnStoreBeginCheck;
+            OnStoreFinish = _OnStoreFinish;
+            m_StoreTimer.SetTimer(_storeDuration);
+        }
+
+        public override void OnSetTrigger(bool down)
+        {
+            if (down && !OnStoreBeginCheck())
+                return;
+
+            if (m_TriggerDown && !down)
+                OnStoreFinish(1f-m_StoreTimer.m_TimeLeftScale);
+
+            m_StoreTimer.Reset();
+            base.OnSetTrigger(down);
+        }
+        public override void Tick(float deltaTime)
+        {
+            base.Tick(deltaTime);
+            if (!m_TriggerDown)
+                return;
+            m_StoreTimer.Tick(deltaTime);
+            if (!m_StoreTimer.m_Timing)
+                OnSetTrigger(false);
+        }
+    }
+    #endregion
+
     #region Entity Info Manager
     public class CharacterInfoManager
     {
@@ -1733,11 +1821,11 @@ namespace GameSetting
         }
         #endregion
         #region Action Helpers
-        public override DamageDeliverInfo GetDamageBuffInfo()
+        public DamageDeliverInfo GetDamageBuffInfo(float damageScale=1)
         {
             ResetEffect(enum_CharacterEffect.Cloak);
             float randomDamageMultiply = UnityEngine.Random.Range(-GameConst.F_PlayerDamageAdjustmentRange, GameConst.F_PlayerDamageAdjustmentRange);
-            DamageDeliverInfo info = DamageDeliverInfo.DamageInfo(m_Entity.m_EntityID, F_DamageMultiply + randomDamageMultiply, F_DamageAdditive);
+            DamageDeliverInfo info = DamageDeliverInfo.DamageInfo(m_Entity.m_EntityID, F_DamageMultiply* damageScale + randomDamageMultiply, F_DamageAdditive);
             m_PlayerExpires.Traversal((ActionBase action) => { action.OnAttackDamageSet(info); });
             return info;
         }
@@ -2024,6 +2112,7 @@ namespace GameSetting
         }
     }
     #endregion
+
     #region Physics
     public static class HitCheckDetect_Extend
     {
@@ -2093,9 +2182,9 @@ namespace GameSetting
             }
         }
     }
-    
+
     #endregion
-    
+
     #region Equipment
     public class WeaponHelperBase
     {

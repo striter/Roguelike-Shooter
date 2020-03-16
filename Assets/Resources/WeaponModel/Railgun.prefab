@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4868770037055374}
-  - component: {fileID: 114016848114179236}
+  - component: {fileID: 114583434124906460}
   m_Layer: 0
   m_Name: Railgun
   m_TagString: Untagged
@@ -171,7 +171,7 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1629794116161490}
   m_Mesh: {fileID: 4300000, guid: b9da3281b9d30304f8ee06738683a477, type: 3}
---- !u!114 &114016848114179236
+--- !u!114 &114583434124906460
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -179,11 +179,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 1154901823972654}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: babca4e37b9eb89488c8f789a0a06c3d, type: 3}
+  m_Script: {fileID: 11500000, guid: d64c451cc141d3a4fada853238f5d873, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  E_Anim: 1004
+  E_Anim: -1
   B_AttachLeft: 0
-  m_ReloadClip1: {fileID: 8300000, guid: 5f0f04150e4e08d4696be44e849c1054, type: 3}
-  m_ReloadClip2: {fileID: 8300000, guid: 237960a0cffb9cf4ca9e7cb988f29816, type: 3}
-  m_ReloadClip3: {fileID: 8300000, guid: 5f0f04150e4e08d4696be44e849c1054, type: 3}
