@@ -927,7 +927,6 @@ namespace GameSetting
     public struct SWeapon : ISExcel
     {
         int index;
-        string s_shortName;
         bool b_hidden;
         int i_rarity;
         float f_fireRate;
@@ -945,7 +944,6 @@ namespace GameSetting
 
         public int m_Index => index;
         public bool m_Hidden => b_hidden;
-        public string m_ShortName => s_shortName;
         public enum_PlayerWeapon m_Weapon => (enum_PlayerWeapon)index;
         public enum_WeaponRarity m_Rarity => (enum_WeaponRarity)i_rarity;
         public float m_FireRate => f_fireRate;
