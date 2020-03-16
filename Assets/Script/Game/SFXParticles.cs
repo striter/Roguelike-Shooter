@@ -23,23 +23,23 @@ public class SFXParticles : SFXBase
     protected override void OnPlay()
     {
         base.OnPlay();
-        m_relativeSFXs.Traversal((SFXRelativeBase relative) => {  relative.OnPlay(); });
         m_Particle.Play();
+        m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.OnPlay(); });
     }
 
     protected override void OnStop()
     {
         base.OnStop();
         transform.SetParent(GameObjectManager.TF_SFXWaitForRecycle);
-        m_relativeSFXs.Traversal((SFXRelativeBase sfxRelative) => { sfxRelative.OnStop(); });
         m_Particle.Stop();
+        m_relativeSFXs.Traversal((SFXRelativeBase sfxRelative) => { sfxRelative.OnStop(); });
     }
 
     protected override void OnRecycle()
     {
         base.OnRecycle();
-        m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.OnRecycle(); });
         m_Particle.Clear();
+        m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.OnRecycle(); });
     }
 
     protected void SetParticlesActive(bool active) => m_Particle.SetActive(active);
