@@ -12,8 +12,6 @@ public class SFXAimAssist : SFXBase {
     float m_assistDistance;
     int m_castMask;
     Func<Collider, bool> CanHitCollider;
-    protected override bool m_AutoRecycle => false;
-    protected override bool m_AutoStop => false;
     public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
         base.OnPoolItemInit(_identity, _OnRecycle);
@@ -29,7 +27,7 @@ public class SFXAimAssist : SFXBase {
         m_castMask = mask;
         CanHitCollider = _CanHitCollider;
         m_lineRenderer.enabled = true;
-        base.PlaySFX(sourceID,-1,-1);
+        base.PlaySFX(sourceID,-1,-1,false);
     }
 
     protected override void Update()

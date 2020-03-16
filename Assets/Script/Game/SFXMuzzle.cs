@@ -1,4 +1,4 @@
 ﻿
-public class SFXMuzzle : SFXParticlesPlayOnce
+public class SFXMuzzle : SFXParticles
 {
 }

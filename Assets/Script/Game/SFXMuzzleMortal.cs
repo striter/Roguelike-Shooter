@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class SFXMuzzleMortal : SFXMuzzle
+public class SFXMuzzleMortal : SFXParticles
 {
     public float F_Speed = 10;
     public float F_PlayTime = 5f;
@@ -16,9 +16,9 @@ public class SFXMuzzleMortal : SFXMuzzle
         tf_Model = transform.Find("Model");
         m_trail = tf_Model.GetComponentInChildren<TrailRenderer>();
     }
-    public override void Play(int sourceID, float duration = 0,float delayDuration=0)
+    protected override void Play()
     {
-        base.Play(sourceID, F_PlayTime,delayDuration);
+        base.Play();
         tf_Model.position = transform.position;
         tf_Model.rotation = Quaternion.LookRotation(Vector3.up);
         m_trail.Clear();

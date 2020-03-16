@@ -28,7 +28,7 @@ public class SFXAudioBase : SFXBase
         m_Audio.loop = _loop;
         SetVolume(_volume);
         AttachTo(_attachTo);
-        base.PlaySFX(_sourceID,_loop?0:_clip.length,0);
+        base.PlaySFX(_sourceID,_loop?0:_clip.length,0,true);
         return this;
     }
     void SetVolume(float volume) => m_Audio.volume = volume;

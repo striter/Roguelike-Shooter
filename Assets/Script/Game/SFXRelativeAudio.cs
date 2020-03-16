@@ -49,7 +49,7 @@ public class SFXRelativeAudio : SFXRelativeBase {
         if (m_Audio)
             m_Audio.Stop();
 
-        m_Audio = B_Attach ? AudioManager.Instance.Play3DClip(m_SFXSource.I_SourceID, m_Clips.RandomItem(), B_Loop, transform) : AudioManager.Instance.Play3DClip(m_SFXSource.I_SourceID, m_Clips.RandomItem(), B_Loop, transform.position);
+        m_Audio = B_Attach ? AudioManager.Instance.Play3DClip(m_SFXSource.m_SourceID, m_Clips.RandomItem(), B_Loop, transform) : AudioManager.Instance.Play3DClip(m_SFXSource.m_SourceID, m_Clips.RandomItem(), B_Loop, transform.position);
     }
     void StopAudio()
     {

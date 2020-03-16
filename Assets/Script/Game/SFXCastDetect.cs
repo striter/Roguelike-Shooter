@@ -30,18 +30,18 @@ public class SFXCastDetect : SFXCastDetonate {
     {
         base.Play(buffInfo);
         m_detector.SetPlay(true);
-        base.PlaySFX(I_SourceID, F_PlayDuration, F_DurationSelfDetonate);
+        base.PlaySFX(m_SourceID, F_PlayDuration, F_DurationSelfDetonate,true);
     }
 
     void OnDetect(HitCheckEntity entity, bool enter)
     {
-        if (enter&& GameManager.B_CanSFXDamageEntity(entity, I_SourceID))
+        if (enter&& GameManager.B_CanSFXDamageEntity(entity, m_SourceID))
             OnDetectEntity();
     }
 
     void OnDetectEntity()
     {
-        PlaySFX(I_SourceID, F_PlayDuration, F_DelayDuration);
+        PlaySFX(m_SourceID, F_PlayDuration, F_DelayDuration,true);
         m_detector.SetPlay(false);
     }
 

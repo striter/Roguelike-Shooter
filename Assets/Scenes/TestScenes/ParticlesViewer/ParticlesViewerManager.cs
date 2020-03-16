@@ -24,11 +24,11 @@ public class ParticlesViewerManager : MonoBehaviour {
         {
             SFXBase particle = ObjectPoolManager<int, SFXBase>.GetRegistedSpawnItem(identity);
             if ((particle as SFXMuzzle) != null)
-                (ObjectPoolManager<int, SFXBase>.Spawn(identity, null, new Vector3(-5, 0, muzzleIndex++*2), rotation) as SFXMuzzle).Play(-1);
+                (ObjectPoolManager<int, SFXBase>.Spawn(identity, null, new Vector3(-5, 0, muzzleIndex++*2), rotation) as SFXMuzzle).PlayOnce(-1);
             if ((particle as SFXIndicator) != null)
-                (ObjectPoolManager<int, SFXBase>.Spawn(identity, null, new Vector3(0, 0, indicatorIndex++*2), rotation) as SFXIndicator).Play(-1);
+                (ObjectPoolManager<int, SFXBase>.Spawn(identity, null, new Vector3(0, 0, indicatorIndex++*2), rotation) as SFXIndicator).PlayOnce(-1);
             if ((particle as SFXImpact) != null)
-                (ObjectPoolManager<int, SFXBase>.Spawn(identity, null, new Vector3(5, 0, impactIndex++*2), rotation) as SFXImpact).Play(-1);
+                (ObjectPoolManager<int, SFXBase>.Spawn(identity, null, new Vector3(5, 0, impactIndex++*2), rotation) as SFXImpact).PlayOnce(-1);
         });
     }
 }

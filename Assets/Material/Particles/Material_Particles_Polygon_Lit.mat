@@ -6,11 +6,11 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: PolyLitSurface
-  m_Shader: {fileID: 4800000, guid: 6c2fd55ba28f25241aa7d35d37d4acde, type: 3}
+  m_Name: Material_Particles_Polygon_Lit
+  m_Shader: {fileID: 4800000, guid: e2cb7f4d4c34c634dbcd076acc9f9862, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 0
-  m_EnableInstancingVariants: 0
+  m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}

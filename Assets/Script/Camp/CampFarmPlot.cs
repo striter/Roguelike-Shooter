@@ -74,7 +74,7 @@ public class CampFarmPlot : MonoBehaviour {
             return;
 
         if (showAnim)
-            GameObjectManager.SpawnSFX<SFXMuzzle>(10021, transform.position, Vector3.up).Play(-1);
+            GameObjectManager.SpawnSFX<SFXMuzzle>(10021, transform.position, Vector3.up).PlayOnce(-1);
 
         if (m_PlotItem)
             ObjectPoolManager<enum_CampFarmItemStatus, CampFarmItem>.Recycle(m_Status, m_PlotItem);

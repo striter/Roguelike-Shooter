@@ -11,6 +11,7 @@ public class SFXProjectile : SFXWeaponBase
     public float F_Speed;
     public bool B_Penetrate;
     public AudioClip AC_MuzzleClip;
+    public int I_TrailIndex;
     public int I_MuzzleIndex;
     public int I_ImpactIndex;
     public int I_IndicatorIndex;
@@ -25,6 +26,7 @@ public class SFXProjectile : SFXWeaponBase
     #endregion
     protected PhysicsSimulator<HitCheckBase> m_PhysicsSimulator { get; private set; }
     protected SFXIndicator m_Indicator;
+    protected SFXTrail m_Trail;
     public bool B_PhysicsSimulating { get; private set; }
     protected virtual float F_PlayDuration(Vector3 startPos, Vector3 endPos) => GameConst.I_ProjectileMaxDistance / F_Speed;
     protected virtual float F_PlayDelay => 0f;
@@ -32,21 +34,20 @@ public class SFXProjectile : SFXWeaponBase
     protected virtual bool B_StopPhysicsOnHit => true;
     protected virtual PhysicsSimulator<HitCheckBase> GetSimulator(Vector3 direction, Vector3 targetPosition) => new SpeedDirectionPSimulator<HitCheckBase>(transform,transform.position, direction, Vector3.down, F_Speed, F_Height,F_Radius, GameLayer.Mask.I_All, OnHitTargetBreak,CanHitTarget);
     protected DamageInfo m_DamageInfo { get; private set; }
-    protected int m_SourceID => m_DamageInfo.m_detail.I_SourceID;
-    protected virtual void PlayIndicator(float duration) => m_Indicator.Play(I_SourceID, duration);
+    protected virtual void PlayIndicator(float duration) => m_Indicator.PlayOnce(base.m_SourceID, duration);
     protected Vector3 m_CenterPos => F_Height > F_Radius * 2 ? transform.position + transform.forward * F_Height / 2 : transform.position + transform.forward * F_Radius;
     protected List<int> m_EntityHitted = new List<int>();
     protected bool CanHitTarget(HitCheckBase hitCheck) => !m_EntityHitted.Contains(hitCheck.I_AttacherID) && GameManager.B_CanSFXHitTarget(hitCheck, m_SourceID);
     protected bool CanDamageEntity(HitCheckEntity _entity) => !m_EntityHitted.Contains(_entity.I_AttacherID) && GameManager.B_CanSFXDamageEntity(_entity, m_SourceID);
     public virtual void Play(DamageDeliverInfo deliverInfo ,Vector3 direction, Vector3 targetPosition )
     {
+        base.PlayOnce(deliverInfo.I_SourceID, F_PlayDuration(transform.position, targetPosition), F_PlayDelay);
         if (I_BuffApplyOnHit > 0)
             deliverInfo.AddExtraBuff(I_BuffApplyOnHit);
         m_DamageInfo=new DamageInfo(F_Damage-damageMinus, enum_DamageType.Basic,deliverInfo);
         m_PhysicsSimulator = GetSimulator(direction, targetPosition);
-        SpawnIndicator(targetPosition,Vector3.up, F_PlayDelay);
+        SpawnProjectileEffects(targetPosition, F_PlayDelay);
         m_EntityHitted.Clear();
-        base.Play(deliverInfo.I_SourceID, F_PlayDuration(transform.position, targetPosition), F_PlayDelay);
     }
 
     protected override void OnPlay()
@@ -60,11 +61,7 @@ public class SFXProjectile : SFXWeaponBase
         base.OnStop();
         B_PhysicsSimulating = false;
         SetParticlesActive(false);
-        if (m_Indicator)
-        {
-            m_Indicator.Stop();
-            m_Indicator = null;
-        }
+        RemoveProjectileEffects();
     }
     protected override void Update()
     {
@@ -125,19 +122,42 @@ public class SFXProjectile : SFXWeaponBase
         }
     }
     #endregion
-    protected virtual void SpawnIndicator(Vector3 position,Vector3 direction,float duration)
+    protected void SpawnProjectileEffects(Vector3 position,float delayDuration)
     {
-        if (I_IndicatorIndex <= 0)
-            return;
-        m_Indicator = GameObjectManager.SpawnIndicator(I_IndicatorIndex, position, direction);
-        m_Indicator.Play(m_SourceID, duration);
+        if(I_TrailIndex>0)
+        {
+            m_Trail = GameObjectManager.SpawnTrail(I_TrailIndex,transform.position,transform.forward);
+            m_Trail.AttachTo(transform);
+            m_Trail.PlayLoop(m_SourceID);
+        }
+
+        if (I_IndicatorIndex > 0)
+        {
+            m_Indicator = GameObjectManager.SpawnIndicator(I_IndicatorIndex, position, Vector3.up);
+            m_Indicator.PlayOnce(m_SourceID ,delayDuration);
+        }
     }
+
+    protected void RemoveProjectileEffects()
+    {
+        if(m_Trail)
+        {
+            m_Trail.Stop();
+            m_Trail = null;
+        }
+        if(m_Indicator)
+        {
+            m_Indicator.Stop();
+            m_Indicator = null;
+        }
+    }
+
     protected void SpawnImpact(Vector3 hitPoint,Vector3 hitNormal)
     {
         if (I_ImpactIndex <= 0)
             return;
 
-        GameObjectManager.SpawnSFX<SFXImpact>(I_ImpactIndex,hitPoint,hitNormal).Play(m_SourceID);
+        GameObjectManager.SpawnSFX<SFXImpact>(I_ImpactIndex,hitPoint, hitNormal).PlayOnce(m_SourceID);
     }
     protected void SpawnHitMark(Vector3 hitPoint,Vector3 hitNormal,HitCheckBase hitParent)
     {
@@ -148,7 +168,7 @@ public class SFXProjectile : SFXWeaponBase
         if (showhitMark)
         {
             SFXHitMark hitMark = GameObjectManager.SpawnSFX<SFXHitMark>(I_HitMarkIndex, hitPoint, hitNormal);
-            hitMark.Play(m_SourceID);
+            hitMark.PlayOnce(m_SourceID);
             hitMark.AttachTo(hitParent.transform);
         }
     }

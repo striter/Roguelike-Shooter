@@ -28,17 +28,17 @@ public class SFXCast : SFXWeaponBase {
     public virtual void Play(DamageDeliverInfo buffInfo)
     {
         SetDamageInfo(buffInfo);
-        if (I_DelayIndicatorIndex > 0)
-            GameObjectManager.SpawnIndicator(I_DelayIndicatorIndex, transform.position, Vector3.up).Play(I_SourceID, F_DelayDuration);
+        base.PlayOnce(m_DamageInfo.m_detail.I_SourceID, F_PlayDuration, F_DelayDuration);
 
-        base.Play(m_DamageInfo.m_detail.I_SourceID, F_PlayDuration, F_DelayDuration);
+        if (I_DelayIndicatorIndex > 0)
+            GameObjectManager.SpawnIndicator(I_DelayIndicatorIndex, transform.position, Vector3.up).PlayOnce(m_SourceID,0 ,F_DelayDuration);
     }
 
     public virtual void PlayControlled(int sourceID,EntityCharacterBase entity, Transform directionTrans)
     {
         tf_ControlledCast = directionTrans;
         AttachTo(entity.tf_Weapon);
-        base.Play(sourceID, 0f, F_DelayDuration);
+        base.PlayLoop(sourceID, F_DelayDuration);
     }
 
     public void ControlledCheck(DamageDeliverInfo info)
@@ -104,7 +104,7 @@ public class SFXCast : SFXWeaponBase {
                     break;
                 case enum_HitCheck.Entity:
                     HitCheckEntity entity = hitCheck as HitCheckEntity;
-                    if (entityHitted.Contains(entity.m_Attacher) || !GameManager.B_CanSFXDamageEntity(entity, I_SourceID))
+                    if (entityHitted.Contains(entity.m_Attacher) || !GameManager.B_CanSFXDamageEntity(entity, m_SourceID))
                         continue;
                     entityHitted.Add(entity.m_Attacher);
                     break;

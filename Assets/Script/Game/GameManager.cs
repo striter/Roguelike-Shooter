@@ -680,13 +680,15 @@ public static class GameObjectManager
             Debug.LogError("SFX Spawn Error! Invalid SFX Type:" + typeof(T) + ",Index:" + index);
         return sfx;
     }
+    public static SFXParticles SpawnParticles(int particleID, Vector3 position, Vector3 direction) => SpawnSFX<SFXParticles>(particleID, position, direction);
+    public static SFXTrail SpawnTrail(int trailID, Vector3 position, Vector3 direction) => SpawnSFX<SFXTrail>(trailID, position, direction);
     public static SFXIndicator SpawnIndicator(int _sourceID, Vector3 position, Vector3 normal) => SpawnSFX<SFXIndicator>(_sourceID, position, normal);
     public static SFXEffect SpawnBuffEffect(int _sourceID) => SpawnSFX<SFXEffect>(_sourceID,Vector3.zero,Vector3.up);
 
     public static void PlayMuzzle(int _sourceID,Vector3 position, Vector3 direction, int muzzleIndex, AudioClip muzzleClip=null)
     {
         if (muzzleIndex > 0)
-            SpawnSFX<SFXMuzzle>(muzzleIndex, position, direction).Play(_sourceID);
+            SpawnSFX<SFXMuzzle>(muzzleIndex, position, direction).PlayOnce(_sourceID);
         if (muzzleClip)
             AudioManager.Instance.Play3DClip(_sourceID, muzzleClip, false, position);
     }

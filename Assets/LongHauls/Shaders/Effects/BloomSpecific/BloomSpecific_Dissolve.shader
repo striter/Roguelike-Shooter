@@ -73,9 +73,9 @@
 				UNITY_SETUP_INSTANCE_ID(v);
 				UNITY_TRANSFER_INSTANCE_ID(v, o);
 				o.uv.xy =  TRANSFORM_TEX( v.uv, _MainTex);
+				o.worldPos = mul(unity_ObjectToWorld, v.vertex);
 				o.uv.zw = GetDissolveUV(v.vertex);
 				o.pos = UnityObjectToClipPos(v.vertex);
-				o.worldPos =mul(unity_ObjectToWorld,v.vertex);
 				o.diffuse = GetDiffuse(mul(v.normal, (float3x3)unity_WorldToObject), UnityWorldSpaceLightDir(o.worldPos));
 				TRANSFER_SHADOW(o);
 				return o;

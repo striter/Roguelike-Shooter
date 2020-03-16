@@ -25,7 +25,7 @@ public class EntityCharacterAIElite : EntityCharacterAI {
                 return;
 
             m_CharacterInfo.AddBuff(-1, GameDataManager.GetPresetBuff(m_Buff.m_BuffIndex));
-            GameObjectManager.SpawnSFX<SFXMuzzle>(m_Buff.m_MuzzleIndex, transform.position, Vector3.up).Play(m_EntityID);
+            GameObjectManager.SpawnSFX<SFXMuzzle>(m_Buff.m_MuzzleIndex, transform.position, Vector3.up).PlayOnce(m_EntityID);
             m_Buff = GameConst.L_GameEliteBuff.RandomItem();
             m_BuffCounter.Reset();
             m_Indicating = false;
@@ -40,7 +40,7 @@ public class EntityCharacterAIElite : EntityCharacterAI {
             m_IndicateCounter.Reset();
             SFXIndicator indicator = GameObjectManager.SpawnIndicator(m_Buff.m_IndicatorIndex, transform.position, Vector3.up);
             indicator.AttachTo(transform);
-            indicator.Play(m_EntityID, 2f);
+            indicator.PlayOnce(m_EntityID, 2f);
         }
     }
 

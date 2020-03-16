@@ -1,4 +1,4 @@
 ﻿
-public class SFXHitMark : SFXParticlesPlayOnce
+public class SFXHitMark : SFXParticles
 {
 }

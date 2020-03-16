@@ -1,4 +1,4 @@
 ﻿
-public class SFXImpact : SFXParticlesPlayOnce
+public class SFXImpact : SFXParticles
 {
 }

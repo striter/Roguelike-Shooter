@@ -57,7 +57,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         ChunkGenerateData _data = m_ChunkDatas[chunkIndex];
         Vector3 size = _data.m_Data.m_Size.ToPosition();
         m_GameChunk.InitGameChunk(_data, _random, NavigationManager.UpdateChunkData);
-        NavigationManager.InitNavMeshData(m_GameChunk.transform, new Bounds(size / 2, new Vector3(size.x, LevelConst.I_TileSize, size.z)));
+        NavigationManager.InitNavMeshData(m_GameChunk.transform, new Bounds(size / 2, new Vector3(size.x, .1f, size.z)));
 
         m_GameChunk.m_ChunkObjects.Traversal((enum_TileObjectType obejctType,List<ChunkGameObjectData> objectDatas)=> {
             objectDatas.Traversal((ChunkGameObjectData data) => { OnLevelObjectGenerate(_data.m_EventType,obejctType,data); });

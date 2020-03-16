@@ -1145,7 +1145,7 @@ public class AtlasLoader
         {
             if (!m_SpriteDic.ContainsKey(name))
             {
-                Debug.LogWarning("Null Sprites Found |" + name + "|");
+                Debug.LogError("Null Sprites Found |" + name + "|");
                 return m_SpriteDic.Values.First();
             }
             return m_SpriteDic[name];

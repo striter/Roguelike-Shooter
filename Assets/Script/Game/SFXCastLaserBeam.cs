@@ -50,13 +50,16 @@ public class SFXCastLaserBeam : SFXCast {
         RaycastHit[] hits = OnCastCheck(GameLayer.Mask.I_StaticEntity);
         for (int i = 0; i < hits.Length; i++)
         {
-            if (!GameManager.B_CanSFXHitTarget(hits[i].collider.Detect(), I_SourceID))
+            if (!GameManager.B_CanSFXHitTarget(hits[i].collider.Detect(), m_SourceID))
                 continue;
 
             Vector3 offsetPoint = hits[i].point;
             if (offsetPoint == Vector3.zero) offsetPoint = CastTransform.position;      //Cast Item At The Start Of The Sweep;
 
-            float lengthOffset = TCommon.GetXZDistance(CastTransform.position, offsetPoint) + (E_AreaType == enum_CastAreaType.ForwardCapsule ? V4_CastInfo.x : 0);
+            float lengthOffset = TCommon.GetXZDistance(CastTransform.position, offsetPoint);
+            if (E_AreaType == enum_CastAreaType.ForwardCapsule)
+                lengthOffset += V4_CastInfo.x/2;
+
             if (lengthOffset >= f_castLength)
                 continue;
 

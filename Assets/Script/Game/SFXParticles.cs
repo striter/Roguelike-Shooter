@@ -7,6 +7,7 @@ public class SFXParticles : SFXBase
 {
     protected SFXRelativeBase[] m_relativeSFXs;
     public TSpecialClasses.ParticleControlBase m_Particle { get; private set; }
+    public bool m_LoopParticles { get; private set; }
     public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
         base.OnPoolItemInit(_identity, _OnRecycle);
@@ -15,11 +16,21 @@ public class SFXParticles : SFXBase
         m_Particle = new TSpecialClasses.ParticleControlBase(transform.Find("Particles"));
     }
 
-    public virtual void Play(int sourceID,float duration=0f,float delayDuration=0f)
+    public virtual void PlayOnce(int sourceID, float duration=0,float delayDuration=0)
     {
-        PlaySFX(sourceID,duration,delayDuration);
+        Play();
+        PlaySFX(sourceID,duration==0? 5f:duration,delayDuration,true);
+    }
+    public void PlayLoop(int sourceID, float delayDuration = 0)
+    {
+        Play();
+        PlaySFX(sourceID, 0, delayDuration, false);
+    }
+    protected virtual  void Play()
+    {
         m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.Play(this); });
     }
+
     protected override void OnPlay()
     {
         base.OnPlay();

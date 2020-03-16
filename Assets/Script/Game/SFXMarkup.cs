@@ -4,12 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class SFXMarkup : SFXParticles {
-    protected override bool m_AutoStop => false;
     EntityBase target;
     Action OnMarkupDead;
     public void Play(int sourceID,EntityBase _target,Action _OnMarkupDead)
     {
-        base.Play(sourceID);
+        base.PlayLoop(sourceID);
         OnMarkupDead = _OnMarkupDead;
         target = _target;
     }
