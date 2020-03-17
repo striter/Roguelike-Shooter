@@ -8,7 +8,7 @@ public class SFXCastLaserBeam : SFXCast {
     #region Preset
     public int I_ImpactIndex;
     #endregion
-    SFXImpact m_Impact;
+    SFXIndicator m_Impact;
     LineRenderer m_Beam;
     float f_castLength;
     protected override float F_CastLength => f_castLength;
@@ -34,6 +34,7 @@ public class SFXCastLaserBeam : SFXCast {
     {
         base.OnStop();
         m_Beam.enabled = false;
+        SetImpact(false, Vector3.zero, Vector3.zero);
     }
     protected override void Update()
     {
@@ -55,8 +56,8 @@ public class SFXCastLaserBeam : SFXCast {
                 continue;
 
             Vector3 offsetPoint = hits[i].point;
-            if (offsetPoint == Vector3.zero) offsetPoint = CastTransform.position;      //Cast Item At The Start Of The Sweep;
             hitNormal = hits[i].normal;
+            if (offsetPoint == Vector3.zero) offsetPoint = CastTransform.position;      //Cast Item At The Start Of The Sweep;
 
             float lengthOffset = TCommon.GetXZDistance(CastTransform.position, offsetPoint);
             if (E_AreaType == enum_CastAreaType.ForwardCapsule)
@@ -70,7 +71,6 @@ public class SFXCastLaserBeam : SFXCast {
         }
         bool hitted = hitPoint != Vector3.zero;
         SetImpact(hitted,hitPoint,hitNormal);
-        m_Impact.transform.position = hitPoint;
         m_Beam.SetPosition(0, transform.position);
         m_Beam.SetPosition(1, hitted ? hitPoint : CastTransform.position + CastTransform.forward * f_castLength);
     }
@@ -79,20 +79,13 @@ public class SFXCastLaserBeam : SFXCast {
     {
         if(play)
         {
-            if (m_Impact)
+            if (!m_Impact)
             {
-                m_Impact.transform.position = position;
-                m_Impact.transform.rotation = Quaternion.LookRotation(normal);
+                m_Impact = GameObjectManager.SpawnIndicator(I_ImpactIndex, transform.position, transform.forward);
+                m_Impact.PlayControlled(m_SourceID);
             }
-            else
-            {
-                if (I_ImpactIndex > 0)
-                {
-                    m_Impact = GameObjectManager.SpawnSFX<SFXImpact>(I_ImpactIndex, transform.position, transform.forward);
-                    m_Impact.PlayControlled(m_SourceID);
-                    m_Impact.AttachTo(transform);
-                }
-            }
+            m_Impact.transform.position = position;
+            m_Impact.transform.rotation = Quaternion.LookRotation(normal);
         }
         else
         {
