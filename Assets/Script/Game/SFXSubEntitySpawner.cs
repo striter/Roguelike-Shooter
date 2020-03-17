@@ -17,14 +17,14 @@ public class SFXSubEntitySpawner : SFXWeaponBase {
     Vector3 m_targetPos;
     public void Play(EntityCharacterBase character,Vector3 target, float startHealth, Func<DamageDeliverInfo> _DamageInfoOverride, Action<EntityCharacterBase> _OnSpawn)
     {
-        base.PlayOnce(character.m_EntityID,1f,F_DelayDuration);
+        base.PlayUncontrolled(character.m_EntityID,1f,F_DelayDuration);
         m_Spawner = character;
         m_targetPos = target;
         m_StartHealth = startHealth;
         OnSpawn = _OnSpawn;
         DamageInfoOverride = _DamageInfoOverride;
         if (I_DelayIndicator > 0)
-            GameObjectManager.SpawnIndicator(I_DelayIndicator, transform.position, Vector3.up).PlayOnce(character.m_EntityID,F_DelayDuration);
+            GameObjectManager.SpawnIndicator(I_DelayIndicator, transform.position, Vector3.up).PlayUncontrolled(character.m_EntityID,F_DelayDuration);
     }
 
     protected override void OnPlay()

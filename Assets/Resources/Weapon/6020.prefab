@@ -57,8 +57,8 @@ MonoBehaviour:
   B_Penetrate: 0
   AC_MuzzleClip: {fileID: 8300000, guid: 789d104f784b92243b7c4a084fd641e3, type: 3}
   I_TrailIndex: 70003
-  I_MuzzleIndex: 11001
-  I_ImpactIndex: 21001
+  I_MuzzleIndex: 19002
+  I_ImpactIndex: 29002
   I_IndicatorIndex: 0
   I_HitMarkIndex: 0
   I_BuffApplyOnHit: 0

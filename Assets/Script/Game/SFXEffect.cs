@@ -8,7 +8,7 @@ public class SFXEffect : SFXParticles
     public bool B_IsMeshGlow;
     public void Play(EntityCharacterBase entity)
     {
-        base.PlayLoop(entity.m_EntityID);
+        base.PlayControlled(entity.m_EntityID);
         Transform attachTo=null;
         switch (E_AttachTo)
         {

@@ -7,6 +7,7 @@ public class SFXCast : SFXWeaponBase {
     #region PresetInfo
     public enum_CastControllType E_CastType = enum_CastControllType.Invalid;
     public enum_CastTarget E_CastTarget = enum_CastTarget.Invalid;
+    public int I_CastParticleIndex=-1;
     public bool B_CastForward = false;
     public float F_Damage;
     public int I_TickCount = 1;
@@ -25,20 +26,27 @@ public class SFXCast : SFXWeaponBase {
     Transform tf_ControlledCast;
     float f_blastTickChest = 0;
     public bool m_ControlledCast => tf_ControlledCast != null;
+    SFXIndicator m_ControlledParticles;
     public virtual void Play(DamageDeliverInfo buffInfo)
     {
         SetDamageInfo(buffInfo);
-        base.PlayOnce(m_DamageInfo.m_detail.I_SourceID, F_PlayDuration, F_DelayDuration);
+        base.PlayUncontrolled(m_DamageInfo.m_detail.I_SourceID, F_PlayDuration, F_DelayDuration);
 
         if (I_DelayIndicatorIndex > 0)
-            GameObjectManager.SpawnIndicator(I_DelayIndicatorIndex, transform.position, Vector3.up).PlayOnce(m_SourceID,0 ,F_DelayDuration);
+            GameObjectManager.SpawnIndicator(I_DelayIndicatorIndex, transform.position, Vector3.up).PlayUncontrolled(m_SourceID,0 ,F_DelayDuration);
     }
 
     public virtual void PlayControlled(int sourceID,EntityCharacterBase entity, Transform directionTrans)
     {
+        base.PlayControlled(sourceID, F_DelayDuration);
         tf_ControlledCast = directionTrans;
         AttachTo(entity.tf_Weapon);
-        base.PlayLoop(sourceID, F_DelayDuration);
+        if (I_CastParticleIndex > 0)
+        {
+            m_ControlledParticles = GameObjectManager.SpawnIndicator(I_CastParticleIndex, transform.position, transform.forward);
+            m_ControlledParticles.PlayControlled(m_SourceID);
+            m_ControlledParticles.AttachTo(entity.tf_Weapon);
+        }
     }
 
     public void ControlledCheck(DamageDeliverInfo info)
@@ -51,6 +59,11 @@ public class SFXCast : SFXWeaponBase {
     {
         tf_ControlledCast = null;
         AttachTo(null);
+        if (m_ControlledParticles)
+        {
+            m_ControlledParticles.Stop();
+            m_ControlledParticles = null;
+        }
         Stop();
     }
 
@@ -59,6 +72,9 @@ public class SFXCast : SFXWeaponBase {
         base.OnPlay();
         if (m_ControlledCast)
             return;
+
+        if (I_CastParticleIndex > 0)
+            GameObjectManager.SpawnParticles(I_CastParticleIndex, transform.position, Vector3.up).PlayUncontrolled(m_SourceID);
 
         if (B_CameraShake)
             GameManagerBase.Instance.SetEffect_Shake(V4_CastInfo.magnitude);

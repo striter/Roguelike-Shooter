@@ -35,7 +35,7 @@ public class WeaponProjectileRailgun : WeaponProjectileBase {
         {
             m_Indicator = GameObjectManager.SpawnIndicator(I_ChargeIndicatorIndex, m_Muzzle.position, m_Muzzle.forward);
             m_Indicator.AttachTo(m_Muzzle);
-            m_Indicator.PlayLoop(m_Attacher.m_EntityID);
+            m_Indicator.PlayControlled(m_Attacher.m_EntityID);
         }
 
         if(!play&&m_Indicator)

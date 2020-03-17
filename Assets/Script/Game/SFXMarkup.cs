@@ -8,7 +8,7 @@ public class SFXMarkup : SFXParticles {
     Action OnMarkupDead;
     public void Play(int sourceID,EntityBase _target,Action _OnMarkupDead)
     {
-        base.PlayLoop(sourceID);
+        base.PlayControlled(sourceID);
         OnMarkupDead = _OnMarkupDead;
         target = _target;
     }

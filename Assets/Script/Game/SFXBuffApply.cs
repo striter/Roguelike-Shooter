@@ -6,7 +6,7 @@ public class SFXBuffApply : SFXWeaponBase {
     public int I_BuffIndex;
     public void Play(int I_SourceID,SBuff buffInfo,Transform attachTo,EntityCharacterBase applyTarget)
     {
-        base.PlayOnce(I_SourceID,buffInfo.m_ExpireDuration);
+        base.PlayUncontrolled(I_SourceID,buffInfo.m_ExpireDuration);
         transform.SetParent(attachTo);
         transform.position = attachTo.position;
         transform.localRotation = Quaternion.identity;

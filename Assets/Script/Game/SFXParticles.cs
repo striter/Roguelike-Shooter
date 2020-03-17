@@ -16,16 +16,18 @@ public class SFXParticles : SFXBase
         m_Particle = new TSpecialClasses.ParticleControlBase(transform.Find("Particles"));
     }
 
-    public virtual void PlayOnce(int sourceID, float duration=0,float delayDuration=0)
+    public virtual void PlayUncontrolled(int sourceID, float duration=0,float delayDuration=0)
     {
         Play();
         PlaySFX(sourceID,duration==0? 5f:duration,delayDuration,true);
     }
-    public void PlayLoop(int sourceID, float delayDuration = 0)
+
+    public void PlayControlled(int sourceID, float delayDuration = 0)
     {
         Play();
         PlaySFX(sourceID, 0, delayDuration, false);
     }
+
     protected virtual  void Play()
     {
         m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.Play(this); });

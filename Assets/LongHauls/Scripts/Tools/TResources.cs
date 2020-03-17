@@ -114,8 +114,8 @@ public class TResources
     {
         targetObject.GetComponentsInChildren<Renderer>().Traversal((Renderer render) => { render.sharedMaterials.Traversal((Material material) => {if(material) material.hideFlags = material.hideFlags; }); });
     }
-    public static WeaponBase GetPlayerWeapon(enum_PlayerWeapon weapon)=>Instantiate<WeaponBase>(ConstPath.S_PlayerWeapon + weapon.ToString());
-    public static InteractGameBase GetInteractPortal(enum_GameStyle portalStyle) => Instantiate<InteractGameBase>( ConstPath.S_InteractPortal + portalStyle.ToString());
+    public static WeaponBase GetPlayerWeapon(enum_PlayerWeapon weapon)=>Instantiate<WeaponBase>(ConstPath.S_PlayerWeapon + weapon);
+    public static InteractGameBase GetInteractPortal(enum_GameStyle portalStyle) => Instantiate<InteractGameBase>( ConstPath.S_InteractPortal + portalStyle);
     public static InteractGameBase GetInteract(enum_Interaction type) => Instantiate<InteractGameBase>(ConstPath.S_InteractCommon + type);
     #endregion
     #region Audio
