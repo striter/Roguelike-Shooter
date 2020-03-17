@@ -5,15 +5,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class SFXCastLaserBeam : SFXCast {
+    #region Preset
+    public int I_ImpactIndex;
+    #endregion
+    SFXImpact m_Impact;
     LineRenderer m_Beam;
-    TSpecialClasses.ParticleControlBase m_Impact;
     float f_castLength;
     protected override float F_CastLength => f_castLength;
     public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
         base.OnPoolItemInit(_identity, _OnRecycle);
         m_Beam = transform.Find("Connections").GetComponent<LineRenderer>();
-        m_Impact =new TSpecialClasses.ParticleControlBase( transform.Find("Impact"));
         m_Beam.SetPosition(0, Vector3.zero);
         m_Beam.SetPosition(1, Vector3.zero);
     }
@@ -27,13 +29,11 @@ public class SFXCastLaserBeam : SFXCast {
     {
         base.OnPlay();
         m_Beam.enabled = true;
-        m_Impact.Play();
     }
     protected override void OnStop()
     {
         base.OnStop();
         m_Beam.enabled = false;
-        m_Impact.Stop();
     }
     protected override void Update()
     {
@@ -47,6 +47,7 @@ public class SFXCastLaserBeam : SFXCast {
     {
         f_castLength = V4_CastInfo.z;
         Vector3 hitPoint = Vector3.zero;
+        Vector3 hitNormal = Vector3.zero;
         RaycastHit[] hits = OnCastCheck(GameLayer.Mask.I_StaticEntity);
         for (int i = 0; i < hits.Length; i++)
         {
@@ -55,6 +56,7 @@ public class SFXCastLaserBeam : SFXCast {
 
             Vector3 offsetPoint = hits[i].point;
             if (offsetPoint == Vector3.zero) offsetPoint = CastTransform.position;      //Cast Item At The Start Of The Sweep;
+            hitNormal = hits[i].normal;
 
             float lengthOffset = TCommon.GetXZDistance(CastTransform.position, offsetPoint);
             if (E_AreaType == enum_CastAreaType.ForwardCapsule)
@@ -67,9 +69,39 @@ public class SFXCastLaserBeam : SFXCast {
             hitPoint = CastTransform.position + CastTransform.forward * f_castLength;
         }
         bool hitted = hitPoint != Vector3.zero;
-        m_Impact.SetActive(hitted);
+        SetImpact(hitted,hitPoint,hitNormal);
         m_Impact.transform.position = hitPoint;
         m_Beam.SetPosition(0, transform.position);
         m_Beam.SetPosition(1, hitted ? hitPoint : CastTransform.position + CastTransform.forward * f_castLength);
+    }
+
+    void SetImpact(bool play,Vector3 position,Vector3 normal)
+    {
+        if(play)
+        {
+            if (m_Impact)
+            {
+                m_Impact.transform.position = position;
+                m_Impact.transform.rotation = Quaternion.LookRotation(normal);
+            }
+            else
+            {
+                if (I_ImpactIndex > 0)
+                {
+                    m_Impact = GameObjectManager.SpawnSFX<SFXImpact>(I_ImpactIndex, transform.position, transform.forward);
+                    m_Impact.PlayControlled(m_SourceID);
+                    m_Impact.AttachTo(transform);
+                }
+            }
+        }
+        else
+        {
+            if(m_Impact)
+            {
+                m_Impact.Stop();
+                m_Impact = null;
+            }
+        }
+
     }
 }
