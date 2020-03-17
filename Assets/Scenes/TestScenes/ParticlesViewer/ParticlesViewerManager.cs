@@ -7,6 +7,7 @@ public class ParticlesViewerManager : MonoBehaviour {
 
     Transform tf_Muzzle, tf_Indicator, tf_Impact,tf_Trail;
     ObjectPoolListComponent<int,Transform> m_TrailHelperPool;
+    TimeCounter m_Repeater=new TimeCounter(2f);
     private void Awake()
     {
         GameObjectManager.Init();
@@ -25,8 +26,11 @@ public class ParticlesViewerManager : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.BackQuote))
             Time.timeScale = Time.timeScale == 1 ? .1f : 1;
 
-        if (!Input.GetKeyDown(KeyCode.Space))
+        m_Repeater.Tick(Time.deltaTime);
+        if (m_Repeater.m_Timing)
             return;
+        m_Repeater.Reset();
+
         ObjectPoolManager<int, SFXBase>.RecycleAll();
         m_TrailHelperPool.ClearPool();
         int muzzleIndex = 0;
@@ -37,17 +41,17 @@ public class ParticlesViewerManager : MonoBehaviour {
         ObjectPoolManager<int, SFXBase>.GetRegistedList().Traversal((int identity) =>
         {
             SFXBase particle = ObjectPoolManager<int, SFXBase>.GetRegistedSpawnItem(identity);
-            if ((particle as SFXMuzzle) != null)
-                (ObjectPoolManager<int, SFXBase>.Spawn(identity, tf_Muzzle, new Vector3(-5, 0, muzzleIndex++*2), rotation) as SFXMuzzle).PlayUncontrolled(-1);
             if ((particle as SFXIndicator) != null)
-                (ObjectPoolManager<int, SFXBase>.Spawn(identity, tf_Indicator, new Vector3(0, 0, indicatorIndex++*2), rotation) as SFXIndicator).PlayUncontrolled(-1);
+                (ObjectPoolManager<int, SFXBase>.Spawn(identity, tf_Indicator, new Vector3(-10, 0, indicatorIndex++ * 3), rotation) as SFXIndicator).PlayUncontrolled(-1);
+            if ((particle as SFXMuzzle) != null)
+                (ObjectPoolManager<int, SFXBase>.Spawn(identity, tf_Muzzle, new Vector3(0, 0, muzzleIndex++*3), rotation) as SFXMuzzle).PlayUncontrolled(-1);
             if ((particle as SFXImpact) != null)
-                (ObjectPoolManager<int, SFXBase>.Spawn(identity, tf_Impact, new Vector3(5, 0, impactIndex++*2), rotation) as SFXImpact).PlayUncontrolled(-1);
+                (ObjectPoolManager<int, SFXBase>.Spawn(identity, tf_Impact, new Vector3(5, 0, impactIndex++*3), rotation) as SFXImpact).PlayUncontrolled(-1);
             if ((particle as SFXTrail) != null)
             {
                 Transform attachTrans = m_TrailHelperPool.AddItem(trailIndex);
                 rotation = Quaternion.LookRotation(Vector3.forward);
-                Vector3 position = new Vector3(10, 0, trailIndex++ * 2);
+                Vector3 position = new Vector3(10, trailIndex++ * 2, 0);
                 attachTrans.position = position;
                 SFXTrail trail = (ObjectPoolManager<int, SFXBase>.Spawn(identity, tf_Trail,position, rotation) as SFXTrail);
                 trail.PlayControlled(-1);
