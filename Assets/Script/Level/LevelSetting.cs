@@ -281,15 +281,12 @@ namespace LevelSetting
 
     public class ChunkGenerateData
     {
-        public TileAxis m_Origin { get; private set; }
-        public TileBounds m_MapBounds { get; private set; }
         public LevelChunkData m_Data { get; private set; }
         public enum_ChunkEventType m_EventType { get; private set; }
         public ChunkGenerateData( LevelChunkData _data, enum_ChunkEventType eventType)
         {
             m_Data = _data;
             m_EventType = eventType;
-            m_MapBounds = new TileBounds(m_Origin,m_Data.m_Size);
         }
     }
     

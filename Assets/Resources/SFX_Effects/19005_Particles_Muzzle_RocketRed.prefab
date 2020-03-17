@@ -3737,7 +3737,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 52607119
+  randomSeed: -2096728548
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -4684,18 +4684,18 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 0.61764705, g: 0.44964704, b: 0, a: 1}
-        key1: {r: 0.625, g: 0.189375, b: 0, a: 1}
-        key2: {r: 0.08088234, g: 0.09482758, b: 0.16176468, a: 0}
-        key3: {r: 0.141, g: 0.043137256, b: 0.043137256, a: 0}
+        key0: {r: 0.9705882, g: 0.7065882, b: 0, a: 1}
+        key1: {r: 1, g: 0.303, b: 0, a: 1}
+        key2: {r: 0.6397059, g: 0.6397059, b: 0.6397059, a: 0}
+        key3: {r: 0.08088231, g: 0.09482758, b: 0.16176468, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
         key5: {r: 0, g: 0, b: 0, a: 0}
         key6: {r: 0, g: 0, b: 0, a: 0}
         key7: {r: 0, g: 0, b: 0, a: 0}
         ctime0: 0
         ctime1: 10384
-        ctime2: 22629
-        ctime3: 21453
+        ctime2: 22937
+        ctime3: 24094
         ctime4: 0
         ctime5: 0
         ctime6: 0
@@ -7143,7 +7143,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 1232832246
+  randomSeed: -1864215246
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -8096,18 +8096,18 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 0.61764705, g: 0.44964704, b: 0, a: 1}
-        key1: {r: 0.625, g: 0.189375, b: 0, a: 1}
-        key2: {r: 0.08088234, g: 0.09482758, b: 0.16176468, a: 0}
-        key3: {r: 0, g: 0, b: 0, a: 0}
+        key0: {r: 0.9705882, g: 0.7065882, b: 0, a: 1}
+        key1: {r: 1, g: 0.303, b: 0, a: 1}
+        key2: {r: 0.6397059, g: 0.6397059, b: 0.6397059, a: 0}
+        key3: {r: 0.08088231, g: 0.09482758, b: 0.16176468, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
         key5: {r: 0, g: 0, b: 0, a: 0}
         key6: {r: 0, g: 0, b: 0, a: 0}
         key7: {r: 0, g: 0, b: 0, a: 0}
         ctime0: 0
         ctime1: 10384
-        ctime2: 22629
-        ctime3: 0
+        ctime2: 22937
+        ctime3: 24094
         ctime4: 0
         ctime5: 0
         ctime6: 0

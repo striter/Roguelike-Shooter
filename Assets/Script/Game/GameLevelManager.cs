@@ -11,14 +11,13 @@ using System.Linq;
 
 public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelperClass
 {
-    LevelChunkGame m_GameChunk;
+    int m_CurrentLevel = -1;
+    ObjectPoolListComponent<int, LevelChunkGame> m_GameChunks;
     public Light m_DirectionalLight { get; private set; }
-    protected List<ChunkGenerateData> m_ChunkDatas=new List<ChunkGenerateData>();
     protected override void Awake()
     {
         base.Awake();
-        m_GameChunk = transform.Find("GameChunk").GetComponent<LevelChunkGame>();
-        m_GameChunk.Init();
+        m_GameChunks = new ObjectPoolListComponent<int, LevelChunkGame>(transform.Find("GameChunks"), "ChunkItem", (LevelChunkGame chunk) => chunk.Init());
         m_DirectionalLight = transform.Find("Directional Light").GetComponent<Light>();
         OptionsManager.event_OptionChanged += OnOptionChanged;
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
@@ -40,38 +39,44 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
     
     public void GenerateStage(enum_GameStyle style, List<GameLevelData> levelGenerateData, System.Random random)
     {
-        m_ChunkDatas.Clear();
+        m_GameChunks.ClearPool();
         LevelObjectManager.Register(TResources.GetChunkTiles(style));
         GameRenderData[] customizations = TResources.GetRenderData(style);
         GameRenderData randomData = customizations.Length == 0 ? GameRenderData.Default() : customizations.RandomItem(random);
         randomData.DataInit(m_DirectionalLight, CameraController.Instance.m_Camera);
 
         Dictionary<enum_LevelType, List<LevelChunkData>> chunkDatas = TResources.GetChunkDatas();
-        levelGenerateData.Traversal((GameLevelData data) => {
-            m_ChunkDatas.Add(new ChunkGenerateData(chunkDatas[data.m_ChunkType].RandomItem(random),data.m_EventType));
+        levelGenerateData.Traversal((int index, GameLevelData data) => {
+            LevelChunkGame _chunk = m_GameChunks.AddItem(index);
+            _chunk.InitGameChunk(data.m_EventType, chunkDatas[data.m_ChunkType].RandomItem(random), random, NavigationManager.UpdateChunkData);
+            _chunk.SetActivate(false);
         });
+        m_CurrentLevel = -1;
     }
     
     public void OnStartLevel(int chunkIndex,System.Random _random , Action<enum_ChunkEventType, enum_TileObjectType, ChunkGameObjectData> OnLevelObjectGenerate)
     {
-        ChunkGenerateData _data = m_ChunkDatas[chunkIndex];
-        Vector3 size = _data.m_Data.m_Size.ToPosition();
-        m_GameChunk.InitGameChunk(_data, _random, NavigationManager.UpdateChunkData);
-        NavigationManager.InitNavMeshData(m_GameChunk.transform, new Bounds(size / 2, new Vector3(size.x, .1f, size.z)));
+        if(m_CurrentLevel!=-1)
+            m_GameChunks.GetItem(m_CurrentLevel).SetActivate(false);
 
-        m_GameChunk.m_ChunkObjects.Traversal((enum_TileObjectType obejctType,List<ChunkGameObjectData> objectDatas)=> {
-            objectDatas.Traversal((ChunkGameObjectData data) => { OnLevelObjectGenerate(_data.m_EventType,obejctType,data); });
+        m_CurrentLevel = chunkIndex;
+        LevelChunkGame currentChunk = m_GameChunks.GetItem(m_CurrentLevel);
+        currentChunk.SetActivate(true);
+        Vector3 size = currentChunk.m_Size.ToPosition();
+        NavigationManager.InitNavMeshData(currentChunk.transform, new Bounds(size / 2, new Vector3(size.x, .1f, size.z)));
+        currentChunk.m_ChunkObjects.Traversal((enum_TileObjectType obejctType,List<ChunkGameObjectData> objectDatas)=> {
+            objectDatas.Traversal((ChunkGameObjectData data) => { OnLevelObjectGenerate(currentChunk.m_EventType,obejctType,data); });
         });
     }
     void OnBattleStart()
     {
-        m_GameChunk.SetBlocksLift(true);
+        m_GameChunks.GetItem(m_CurrentLevel).SetBlocksLift(true);
         NavigationManager.UpdateChunkData();
     }
 
     void OnBattleFinish()
     {
-        m_GameChunk.SetBlocksLift(false);
+        m_GameChunks.GetItem(m_CurrentLevel).SetBlocksLift(false);
         NavigationManager.UpdateChunkData();
     }
 }

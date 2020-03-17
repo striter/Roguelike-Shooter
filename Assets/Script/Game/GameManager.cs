@@ -542,6 +542,7 @@ public class GameProgressManager
         });
 
         m_Random = new System.Random((m_GameSeed+m_StageIndex.ToString()).GetHashCode());
+        m_LevelIndex = 0;
         m_GameLevelDatas = GameExpression.GetGameLevelDatas(m_Random);
     }
     public void LoadStageData()

@@ -27,12 +27,12 @@ public class WeaponProjectileBase : WeaponBase
     protected override void OnAutoTriggerSuccessful()
     {
         base.OnAutoTriggerSuccessful();
-        FireProjectiles(1f);
+        FireProjectiles(0f);
     }
     RaycastHit hit;
-    protected void FireProjectiles(float damageScale)
+    protected void FireProjectiles(float damageScaleAdditive)
     {
-        DamageDeliverInfo damageInfo = m_Attacher.m_CharacterInfo.GetDamageBuffInfo(damageScale);
+        DamageDeliverInfo damageInfo = m_Attacher.m_CharacterInfo.GetDamageBuffInfo(damageScaleAdditive);
 
         Vector3 spreadDirection = m_Attacher.tf_WeaponAim.forward;
         Vector3 endPosition = m_Attacher.tf_WeaponAim.position + spreadDirection * GameConst.I_ProjectileMaxDistance;
@@ -44,19 +44,19 @@ public class WeaponProjectileBase : WeaponBase
         float spread = GetSpread();
         if (m_WeaponInfo.m_PelletsPerShot == 1)
         {
-            FireProjectile(damageInfo, spreadDirection.RotateDirectionClockwise(Vector3.up, Random.Range(-spread, spread)));
+            FireProjectile(damageInfo, spreadDirection.RotateDirectionClockwise(Vector3.up, Random.Range(-spread, spread)),damageScaleAdditive);
         }
         else
         {
             int waveCount = m_WeaponInfo.m_PelletsPerShot;
             float beginAnle = -spread * (waveCount - 1) / 2f;
             for (int i = 0; i < waveCount; i++)
-                FireProjectile(damageInfo, spreadDirection.RotateDirectionClockwise(Vector3.up, beginAnle + i * m_WeaponInfo.m_Spread));
+                FireProjectile(damageInfo, spreadDirection.RotateDirectionClockwise(Vector3.up, beginAnle + i * m_WeaponInfo.m_Spread), damageScaleAdditive);
         }
         GameObjectManager.PlayMuzzle(m_Attacher.m_EntityID, m_Muzzle.position, spreadDirection, I_MuzzleIndex, m_MuzzleClip);
     }
 
-    void FireProjectile(DamageDeliverInfo damage, Vector3 direction)
+    void FireProjectile(DamageDeliverInfo damage, Vector3 direction,float scale)
     {
         SFXProjectile projectile = GameObjectManager.SpawnEquipment<SFXProjectile>(GameExpression.GetPlayerWeaponIndex(m_WeaponInfo.m_Index), m_Muzzle.position, direction);
         projectile.F_Speed = GetSpeed();

@@ -12,6 +12,7 @@ public class TileObjectBase : TileItemBase,IObjectpool<enum_TileObjectType>,ICor
     public override TileAxis GetDirectionedSize(enum_TileDirection direction) => m_ObjectType.GetSizeAxis(direction);
 
     HitCheckStatic[] m_hitChecks;
+    Material[] m_Materials;
     Renderer[] m_Renderers;
     Action OnItemDestroy;
     float m_Health = -1;
@@ -21,6 +22,8 @@ public class TileObjectBase : TileItemBase,IObjectpool<enum_TileObjectType>,ICor
         Init();
         m_ObjectType = identity;
         m_Renderers = GetComponentsInChildren<Renderer>();
+        m_Materials = new Material[m_Renderers.Length];
+        m_Renderers.Traversal((int index, Renderer renderer) => { m_Materials[index] = renderer.sharedMaterial; });
         m_hitChecks = GetComponentsInChildren<HitCheckStatic>();
         m_hitChecks.Traversal((HitCheckStatic hitCheck) => { hitCheck.Attach(OnObjectHit); });
         this.OnRecycle = OnRecycle;
@@ -36,6 +39,7 @@ public class TileObjectBase : TileItemBase,IObjectpool<enum_TileObjectType>,ICor
     {
         base.OnGenerateItem(_data, random);
         m_hitChecks.Traversal((HitCheckStatic hitCheck) => { hitCheck.SetEnable(true); });
+        m_Renderers.Traversal((int index, Renderer renderer) => { renderer.material = m_Materials[index]; });
         m_Health = -1;
     }
 

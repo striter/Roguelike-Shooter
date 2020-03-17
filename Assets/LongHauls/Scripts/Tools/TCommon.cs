@@ -245,6 +245,12 @@ public static class TCommon
         for (int i = 0; i < length; i++)
             OnEachItem(array[i]);
     }
+    public static void Traversal<T>(this T[] array, Action<int,T> OnEachItem)
+    {
+        int length = array.Length;
+        for (int i = 0; i < length; i++)
+            OnEachItem(i,array[i]);
+    }
     public static void Traversal<T>(this T[,] array, Action<T> OnEachItem)
     {
         int length0 = array.GetLength(0);

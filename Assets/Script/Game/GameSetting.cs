@@ -1453,8 +1453,6 @@ namespace GameSetting
             if (!m_TriggerDown)
                 return;
             m_StoreTimer.Tick(deltaTime);
-            if (!m_StoreTimer.m_Timing)
-                OnSetTrigger(false);
         }
     }
     #endregion
@@ -1821,11 +1819,11 @@ namespace GameSetting
         }
         #endregion
         #region Action Helpers
-        public DamageDeliverInfo GetDamageBuffInfo(float damageScale=1)
+        public DamageDeliverInfo GetDamageBuffInfo(float damageScaleAdditive=0)
         {
             ResetEffect(enum_CharacterEffect.Cloak);
             float randomDamageMultiply = UnityEngine.Random.Range(-GameConst.F_PlayerDamageAdjustmentRange, GameConst.F_PlayerDamageAdjustmentRange);
-            DamageDeliverInfo info = DamageDeliverInfo.DamageInfo(m_Entity.m_EntityID, F_DamageMultiply* damageScale + randomDamageMultiply, F_DamageAdditive);
+            DamageDeliverInfo info = DamageDeliverInfo.DamageInfo(m_Entity.m_EntityID, F_DamageMultiply+ damageScaleAdditive + randomDamageMultiply, F_DamageAdditive);
             m_PlayerExpires.Traversal((ActionBase action) => { action.OnAttackDamageSet(info); });
             return info;
         }

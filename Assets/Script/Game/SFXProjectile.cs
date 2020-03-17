@@ -127,6 +127,7 @@ public class SFXProjectile : SFXWeaponBase
         if(I_TrailIndex>0)
         {
             m_Trail = GameObjectManager.SpawnTrail(I_TrailIndex,transform.position,transform.forward);
+            m_Trail.transform.localScale =(1f+ m_DamageInfo.m_detail.m_DamageMultiply) * Vector3.one;
             m_Trail.AttachTo(transform);
             m_Trail.PlayControlled(m_SourceID);
         }
@@ -176,7 +177,6 @@ public class SFXProjectile : SFXWeaponBase
     #region ??????????????????????????????????????
     int m_copiesLeft;
     int damageMinus;    //?
-    WeaponHelperBase weapon;
     public void PlayerCopyCount(DamageDeliverInfo deliverInfo, Vector3 direction, Vector3 targetPosition, int copyCount,int _damageMinus)//?????
     {
         m_copiesLeft = copyCount;

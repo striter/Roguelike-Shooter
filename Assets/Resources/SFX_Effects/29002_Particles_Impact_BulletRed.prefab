@@ -174,7 +174,7 @@ Transform:
   m_GameObject: {fileID: 1466021559873372}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 34.90796, y: 4.0760794, z: 23.347567}
-  m_LocalScale: {x: 10, y: 10, z: 10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4295766441143484}
   m_Father: {fileID: 0}
@@ -295,7 +295,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 724173746
+  randomSeed: 440026073
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3701,7 +3701,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -1368802770
+  randomSeed: 1623454246
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -7107,7 +7107,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -2051717823
+  randomSeed: -19914968
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -8060,33 +8060,33 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 0.61764705, g: 0.44964704, b: 0, a: 1}
-        key1: {r: 0.625, g: 0.189375, b: 0, a: 1}
-        key2: {r: 0.08088234, g: 0.09482758, b: 0.16176468, a: 0}
-        key3: {r: 0.141, g: 0.043137256, b: 0.043137256, a: 0}
+        key0: {r: 1, g: 0.746, b: 0.066176474, a: 1}
+        key1: {r: 0.6691177, g: 0.22674726, b: 0.034439873, a: 1}
+        key2: {r: 0.54044116, g: 0.5981237, b: 0.875, a: 1}
+        key3: {r: 0.54044116, g: 0.5981237, b: 0.875, a: 0.5019608}
         key4: {r: 0, g: 0, b: 0, a: 0}
         key5: {r: 0, g: 0, b: 0, a: 0}
         key6: {r: 0, g: 0, b: 0, a: 0}
         key7: {r: 0, g: 0, b: 0, a: 0}
-        ctime0: 0
-        ctime1: 10384
-        ctime2: 22629
-        ctime3: 21453
+        ctime0: 386
+        ctime1: 17155
+        ctime2: 40092
+        ctime3: 41634
         ctime4: 0
         ctime5: 0
         ctime6: 0
         ctime7: 0
         atime0: 0
-        atime1: 65535
-        atime2: 0
-        atime3: 0
+        atime1: 39707
+        atime2: 65535
+        atime3: 65535
         atime4: 0
         atime5: 0
         atime6: 0
         atime7: 0
         m_Mode: 0
         m_NumColorKeys: 3
-        m_NumAlphaKeys: 2
+        m_NumAlphaKeys: 3
       minGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -10519,7 +10519,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 138284627
+  randomSeed: -1951395575
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -13961,7 +13961,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 2009549277
+  randomSeed: 1684879081
   InitialModule:
     serializedVersion: 3
     enabled: 1

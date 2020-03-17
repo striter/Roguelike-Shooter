@@ -10,7 +10,7 @@ public class WeaponProjectileRailgun : WeaponProjectileBase {
 
     protected void OnStoreTriggerSuccessful(float storeScale)
     {
-        FireProjectiles(storeScale);
+        FireProjectiles(storeScale-1f);
         OnTriggerSuccessful();
         PlayIndicator(false);
     }
