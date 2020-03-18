@@ -1,16 +1,24 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
 public class WeaponProjectileRailgun : WeaponProjectileBase {
     public int I_ChargeIndicatorIndex;
+    protected int m_StoreProjectileDataIndex { get; private set; }
     SFXIndicator m_Indicator;
     protected override WeaponTrigger GetTrigger() => new WeaponTriggerStoring(m_WeaponInfo.m_FireRate, OnTriggerCheck, OnStoreTriggerSuccessful);
 
+    public override void OnPoolItemInit(enum_PlayerWeapon _identity, Action<enum_PlayerWeapon, MonoBehaviour> _OnRecycle)
+    {
+        base.OnPoolItemInit(_identity, _OnRecycle);
+        m_StoreProjectileDataIndex = GameExpression.GetPlayerStoreWeaponIndex(m_WeaponInfo.m_Index);
+    }
+
     protected void OnStoreTriggerSuccessful(float storeScale)
     {
-        FireProjectiles(storeScale-1f);
+        FireProjectiles(storeScale == 1? m_StoreProjectileDataIndex : m_BaseProjectileDataIndex);
         OnTriggerSuccessful();
         PlayIndicator(false);
     }

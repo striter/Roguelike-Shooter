@@ -7,10 +7,10 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Material_Particles_Polygon_Glow_Additive
-  m_Shader: {fileID: 4800000, guid: b687ec3c46774764ba097482cb08eb5d, type: 3}
+  m_Shader: {fileID: 4800000, guid: 61f8f7715e8336f43b054d801578b11e, type: 3}
   m_ShaderKeywords: _EMISSION
   m_LightmapFlags: 1
-  m_EnableInstancingVariants: 0
+  m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}

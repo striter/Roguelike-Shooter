@@ -925,6 +925,8 @@ public class TimeCounter
         if (m_timeCheck <= 0)
             return;
         m_timeCheck -= deltaTime;
+        if (m_timeCheck <= 0)
+            m_timeCheck = 0;
     }
 }
 

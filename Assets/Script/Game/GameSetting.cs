@@ -99,6 +99,7 @@ namespace GameSetting
     public static class GameExpression
     {
         public static int GetPlayerWeaponIndex(int weaponIndex) =>weaponIndex * 10;
+        public static int GetPlayerStoreWeaponIndex(int weaponIndex) => weaponIndex * 10+5;
         public static int GetPlayerEquipmentWeaponIndex(int equipmentIndex) => 100000 + equipmentIndex * 10;
         public static int GetAIWeaponIndex(int entityIndex, int weaponIndex = 0, int subWeaponIndex = 0) => entityIndex * 100 + weaponIndex * 10 + subWeaponIndex;
         public static int GetWeaponSubIndex(int weaponIndex) => weaponIndex + 1;
@@ -1819,11 +1820,11 @@ namespace GameSetting
         }
         #endregion
         #region Action Helpers
-        public DamageDeliverInfo GetDamageBuffInfo(float damageScaleAdditive=0)
+        public override DamageDeliverInfo GetDamageBuffInfo()
         {
             ResetEffect(enum_CharacterEffect.Cloak);
             float randomDamageMultiply = UnityEngine.Random.Range(-GameConst.F_PlayerDamageAdjustmentRange, GameConst.F_PlayerDamageAdjustmentRange);
-            DamageDeliverInfo info = DamageDeliverInfo.DamageInfo(m_Entity.m_EntityID, F_DamageMultiply+ damageScaleAdditive + randomDamageMultiply, F_DamageAdditive);
+            DamageDeliverInfo info = DamageDeliverInfo.DamageInfo(m_Entity.m_EntityID, F_DamageMultiply + randomDamageMultiply, F_DamageAdditive);
             m_PlayerExpires.Traversal((ActionBase action) => { action.OnAttackDamageSet(info); });
             return info;
         }

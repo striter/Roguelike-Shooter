@@ -295,7 +295,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -108451148
+  randomSeed: 1813903030
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3737,7 +3737,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -2096728548
+  randomSeed: -421455436
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -7143,7 +7143,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -1864215246
+  randomSeed: -435352228
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -10555,7 +10555,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 1954742014
+  randomSeed: 959883625
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -13967,7 +13967,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -1286672683
+  randomSeed: 1745391577
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -17414,7 +17414,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_RenderMode: 4
   m_SortMode: 0
   m_MinParticleSize: 0
@@ -17468,7 +17468,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_RenderMode: 1
   m_SortMode: 0
   m_MinParticleSize: 0
@@ -17522,7 +17522,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 3
   m_RenderMode: 4
   m_SortMode: 0
   m_MinParticleSize: 0
@@ -17576,7 +17576,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 4
   m_RenderMode: 4
   m_SortMode: 0
   m_MinParticleSize: 0

@@ -5,10 +5,4 @@ using UnityEngine;
 
 public class WeaponProjectileRocketLauncher : WeaponProjectileBase {
 
-    protected override void OnGetEquipmentData(SFXWeaponBase equipment)
-    {
-        base.OnGetEquipmentData(equipment);
-        SFXCast cast = GameObjectManager.GetEquipmentData<SFXCast>(GameExpression.GetWeaponSubIndex(GameExpression.GetPlayerWeaponIndex( (int)m_WeaponInfo.m_Weapon)));
-        F_BaseDamage = cast.F_Damage;
-    }
 }

@@ -1,38 +1,27 @@
 ﻿using GameSetting;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class WeaponProjectileBase : WeaponBase
 {
-    public float F_BaseSpeed { get; private set; } = -1;
-    public bool B_BasePenetrate { get; private set; } = false;
-    public int I_MuzzleIndex { get; private set; } = -1;
-    AudioClip m_MuzzleClip;
-    public float GetSpeed() => m_Attacher.m_CharacterInfo.F_ProjectileSpeedMuiltiply * F_BaseSpeed;
-    public bool GetPenetrate() => B_BasePenetrate||m_Attacher.m_CharacterInfo.F_PenetrateAdditive>Random.Range(0,1);
-    public float GetSpread() => m_Attacher.m_CharacterInfo.F_SpreadMultiply * m_WeaponInfo.m_Spread;
-
-    protected override void OnGetEquipmentData(SFXWeaponBase equipment)
+    protected int m_BaseProjectileDataIndex { get; private set; }
+    public override void OnPoolItemInit(enum_PlayerWeapon _identity, Action<enum_PlayerWeapon, MonoBehaviour> _OnRecycle)
     {
-        base.OnGetEquipmentData(equipment);
-        SFXProjectile projectileInfo = equipment as SFXProjectile;
-        F_BaseDamage = projectileInfo.F_Damage;
-        F_BaseSpeed = projectileInfo.F_Speed;
-        B_BasePenetrate = projectileInfo.B_Penetrate;
-        I_MuzzleIndex = projectileInfo.I_MuzzleIndex;
-        m_MuzzleClip = projectileInfo.AC_MuzzleClip;
+        base.OnPoolItemInit(_identity, _OnRecycle);
+        m_BaseProjectileDataIndex = GameExpression.GetPlayerWeaponIndex(m_WeaponInfo.m_Index);
     }
-
     protected override void OnAutoTriggerSuccessful()
     {
         base.OnAutoTriggerSuccessful();
-        FireProjectiles(0f);
+        FireProjectiles(m_BaseProjectileDataIndex);
     }
     RaycastHit hit;
-    protected void FireProjectiles(float damageScaleAdditive)
+    protected void FireProjectiles(int projectileIndex)
     {
-        DamageDeliverInfo damageInfo = m_Attacher.m_CharacterInfo.GetDamageBuffInfo(damageScaleAdditive);
+        SFXProjectile projectileData = GameObjectManager.GetEquipmentData<SFXProjectile>(projectileIndex);
+        DamageDeliverInfo damageInfo = m_Attacher.m_CharacterInfo.GetDamageBuffInfo();
 
         Vector3 spreadDirection = m_Attacher.tf_WeaponAim.forward;
         Vector3 endPosition = m_Attacher.tf_WeaponAim.position + spreadDirection * GameConst.I_ProjectileMaxDistance;
@@ -44,23 +33,24 @@ public class WeaponProjectileBase : WeaponBase
         float spread = GetSpread();
         if (m_WeaponInfo.m_PelletsPerShot == 1)
         {
-            FireProjectile(damageInfo, spreadDirection.RotateDirectionClockwise(Vector3.up, Random.Range(-spread, spread)),damageScaleAdditive);
+            FireProjectile(projectileIndex,projectileData, damageInfo, spreadDirection.RotateDirectionClockwise(Vector3.up, UnityEngine.Random.Range(-spread, spread)));
         }
         else
         {
             int waveCount = m_WeaponInfo.m_PelletsPerShot;
             float beginAnle = -spread * (waveCount - 1) / 2f;
             for (int i = 0; i < waveCount; i++)
-                FireProjectile(damageInfo, spreadDirection.RotateDirectionClockwise(Vector3.up, beginAnle + i * m_WeaponInfo.m_Spread), damageScaleAdditive);
+                FireProjectile(projectileIndex, projectileData,damageInfo, spreadDirection.RotateDirectionClockwise(Vector3.up, beginAnle + i * m_WeaponInfo.m_Spread));
         }
-        GameObjectManager.PlayMuzzle(m_Attacher.m_EntityID, m_Muzzle.position, spreadDirection, I_MuzzleIndex, m_MuzzleClip);
+        GameObjectManager.PlayMuzzle(m_Attacher.m_EntityID, m_Muzzle.position, spreadDirection, projectileData.I_MuzzleIndex, projectileData.AC_MuzzleClip);
     }
 
-    void FireProjectile(DamageDeliverInfo damage, Vector3 direction,float scale)
+    void FireProjectile(int projectilIndex, SFXProjectile projectileData,DamageDeliverInfo damage, Vector3 direction)
     {
-        SFXProjectile projectile = GameObjectManager.SpawnEquipment<SFXProjectile>(GameExpression.GetPlayerWeaponIndex(m_WeaponInfo.m_Index), m_Muzzle.position, direction);
-        projectile.F_Speed = GetSpeed();
-        projectile.B_Penetrate = GetPenetrate();
+        SFXProjectile projectile = GameObjectManager.SpawnEquipment<SFXProjectile>(projectilIndex, m_Muzzle.position, direction);
+        projectile.F_Speed = m_Attacher.m_CharacterInfo.F_ProjectileSpeedMuiltiply*projectileData.F_Speed;
+        projectile.B_Penetrate = projectileData.B_Penetrate || m_Attacher.m_CharacterInfo.F_PenetrateAdditive > UnityEngine.Random.Range(0, 1);
+
         projectile.PlayerCopyCount(damage, direction, m_Attacher.tf_Weapon.position + direction * GameConst.I_ProjectileMaxDistance,m_Attacher.m_CharacterInfo.I_ProjectileCopyCount,10);
     }
 }
