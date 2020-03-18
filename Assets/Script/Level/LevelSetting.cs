@@ -41,7 +41,7 @@ namespace LevelSetting
     public enum enum_TileTerrainType 
     {
         Invalid=-1,
-        Ground,
+        Plane,
 
         River_0P,
         River_1RT,
@@ -172,7 +172,7 @@ namespace LevelSetting
                     return enum_EditorTerrainType.Invalid;
                 case enum_TileTerrainType.Invalid:
                     return enum_EditorTerrainType.Invalid;
-                case enum_TileTerrainType.Ground:
+                case enum_TileTerrainType.Plane:
                     return enum_EditorTerrainType.Plane;
                 case enum_TileTerrainType.River_0P:
                 case enum_TileTerrainType.River_1RT:
@@ -206,7 +206,7 @@ namespace LevelSetting
                     Debug.LogError("Invalid Convertions Here!");
                     return enum_TileTerrainType.Invalid;
                 case enum_EditorTerrainType.Plane:
-                    return enum_TileTerrainType.Ground;
+                    return enum_TileTerrainType.Plane;
                 case enum_EditorTerrainType.River:
                     return enum_TileTerrainType.River_0P;
                 case enum_EditorTerrainType.Highland:

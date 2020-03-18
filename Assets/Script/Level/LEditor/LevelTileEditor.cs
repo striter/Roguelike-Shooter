@@ -39,12 +39,6 @@ public class LevelTileEditor : LevelTileBase {
         {
             m_EditorTerrainType = data.m_TerrainType.GetEditorGroundType();
             data = data.ChangeTerrainType(enum_TileTerrainType.Invalid);
-            switch (LevelChunkEditor.Instance.m_EditType)
-            {
-                case enum_LevelEditorEditType.Terrain:
-                    data = data.ChangeObjectType(enum_TileObjectType.Invalid).ChangeEdgeObjectType(enum_TileEdgeObjectType.Invalid);
-                    break;
-            }
         }
 
         base.InitTile(axis,data, random);

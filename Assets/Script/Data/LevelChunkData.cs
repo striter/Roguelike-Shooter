@@ -151,7 +151,7 @@ public struct ChunkTileData
         return this;
     }
 
-    public static ChunkTileData Default() => new ChunkTileData() { m_TerrainType =  enum_TileTerrainType.Ground, m_ObjectType =  enum_TileObjectType.Invalid,m_EdgeObjectType= enum_TileEdgeObjectType.Invalid,m_Direction= enum_TileDirection.Top };
+    public static ChunkTileData Default() => new ChunkTileData() { m_TerrainType =  enum_TileTerrainType.Highland, m_ObjectType =  enum_TileObjectType.Invalid,m_EdgeObjectType= enum_TileEdgeObjectType.Invalid,m_Direction= enum_TileDirection.Top };
     public static ChunkTileData Create(enum_TileTerrainType groundType ,  enum_TileObjectType objectType,enum_TileEdgeObjectType edgeObjectType, enum_TileDirection direction) => new ChunkTileData() { m_TerrainType = groundType, m_ObjectType = objectType,m_EdgeObjectType=edgeObjectType, m_Direction = direction };
 
     public static bool operator ==(ChunkTileData a, ChunkTileData b) => a.m_Direction==b.m_Direction&&a.m_TerrainType==b.m_TerrainType&&a.m_ObjectType==b.m_ObjectType;

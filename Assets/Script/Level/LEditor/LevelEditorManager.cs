@@ -43,7 +43,7 @@ public class LevelEditorManager : SingletonMono<LevelEditorManager>
             data = ScriptableObject.CreateInstance<LevelChunkData>();
             UnityEditor.AssetDatabase.CreateAsset(data, "Assets/Resources/" + dataPath);
         }
-        data.SaveData(LevelChunkEditor.Instance);
+        data.SaveData(LevelChunkEditor.Instance.CheckDatas());
 
         UnityEditor.EditorUtility.SetDirty(data);
         UnityEditor.AssetDatabase.SaveAssets();

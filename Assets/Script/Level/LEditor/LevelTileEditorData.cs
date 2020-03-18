@@ -26,33 +26,42 @@ public class LevelTileEditorData : LevelTileEditor {
         InitTile(m_Axis, m_Data, random);
     }
 
-    public void SetEditorGround(enum_EditorTerrainType groundType, System.Random random)
+    public void SetTerrain(enum_EditorTerrainType groundType, System.Random random)
     {
         m_EditorTerrainType = groundType;
         m_Data = m_Data.ChangeTerrainType(m_EditorTerrainType .GetDefaultTerrainType());
         InitTile(m_Axis, m_Data, random);
     }
-
-    public void UpdateWaterTerrain(Dictionary<enum_TileDirection,enum_EditorTerrainType> _edgeTerrains, Dictionary<enum_TileDirection, enum_EditorTerrainType> _angleTerrains, System.Random random)
+    public void ClearData()
     {
-        enum_TileTerrainType terrainType = enum_TileTerrainType.Ground;
-        enum_TileDirection waterDirection = enum_TileDirection.Top;
-        UpdateTerrainType(_edgeTerrains,_angleTerrains,out terrainType,out waterDirection);
-        m_Data = m_Data.ChangeTerrainType(terrainType).ChangeDirection(waterDirection);
+        m_Data = ChunkTileData.Default();
+        InitTile(m_Axis, m_Data, null);
+    }
+
+    public void UpdateTerrain(Dictionary<enum_TileDirection,enum_EditorTerrainType> _edgeTerrains, Dictionary<enum_TileDirection, enum_EditorTerrainType> _angleTerrains, System.Random random)
+    {
+        enum_TileTerrainType terrainType = enum_TileTerrainType.Plane;
+        enum_TileDirection terrainDirection = enum_TileDirection.Top;
+        CheckTerrain(_edgeTerrains,_angleTerrains,out terrainType,out terrainDirection);
+        m_Data = m_Data.ChangeTerrainType(terrainType);
+        if (terrainDirection != enum_TileDirection.Invalid)
+            m_Data = m_Data.ChangeDirection(terrainDirection);
         InitTile(m_Axis, m_Data, random);
     }
 
 
-    void UpdateTerrainType(Dictionary<enum_TileDirection, enum_EditorTerrainType> _edgeTerrains, Dictionary<enum_TileDirection, enum_EditorTerrainType> _angleTerrains,out enum_TileTerrainType terrainType,out enum_TileDirection terrainDirection)
+    void CheckTerrain(Dictionary<enum_TileDirection, enum_EditorTerrainType> _edgeTerrains, Dictionary<enum_TileDirection, enum_EditorTerrainType> _angleTerrains,out enum_TileTerrainType terrainType,out enum_TileDirection terrainDirection)
     {
         terrainType = enum_TileTerrainType.Invalid;
-        terrainDirection = enum_TileDirection.Top;
+        terrainDirection = enum_TileDirection.Invalid;
         switch(m_EditorTerrainType)
         {
             case enum_EditorTerrainType.Plane:
-                terrainType = enum_TileTerrainType.Ground;
+                terrainType = enum_TileTerrainType.Plane;
                 break;
             case enum_EditorTerrainType.Highland:    //Broken Logic Cause Only Provided 3 Available Model!
+                TileTools.m_EdgeDirections.Traversal((enum_TileDirection direction) => { if (!_edgeTerrains.ContainsKey(direction)) _edgeTerrains.Add(direction, enum_EditorTerrainType.Highland); });
+                TileTools.m_AngleDirections.Traversal((enum_TileDirection direction) => { if (!_angleTerrains.ContainsKey(direction)) _angleTerrains.Add(direction, enum_EditorTerrainType.Highland); });
                 terrainType = enum_TileTerrainType.Highland;
                 List<enum_TileDirection> edgeSlope = _edgeTerrains.Keys.ToList().FindAll(p => _edgeTerrains[p] == enum_EditorTerrainType.Highland);
 
@@ -88,6 +97,8 @@ public class LevelTileEditorData : LevelTileEditor {
                 }
                 break;
             case enum_EditorTerrainType.River:
+                TileTools.m_EdgeDirections.Traversal((enum_TileDirection direction) => { if (!_edgeTerrains.ContainsKey(direction)) _edgeTerrains.Add(direction, enum_EditorTerrainType.River); });
+                TileTools.m_AngleDirections.Traversal((enum_TileDirection direction) => { if (!_angleTerrains.ContainsKey(direction)) _angleTerrains.Add(direction, enum_EditorTerrainType.River); });
                 terrainType = enum_TileTerrainType.River_0P;
                 int waterEdgeCount = _edgeTerrains.Values.Count(p => p == enum_EditorTerrainType.River);
                 if (waterEdgeCount == 0)
