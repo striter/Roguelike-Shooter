@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 4280303031911806}
   - component: {fileID: 114488357948691478}
   m_Layer: 0
-  m_Name: Tile_Editor_Ground_Water
+  m_Name: Tile_Editor_Terrain_River
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -98,8 +98,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1515318566014680}
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: -0.5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: -0.75, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 0.5}
   m_Children: []
   m_Father: {fileID: 4337614637333800}
   m_RootOrder: 0
@@ -144,7 +144,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1515318566014680}
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!65 &65989009443718414
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -179,7 +179,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba53906a68fbd864c931f014e49771c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_EditorGroundType: 1
+  m_EditorTerrainType: 1
 --- !u!114 &114650949157827306
 MonoBehaviour:
   m_ObjectHideFlags: 1

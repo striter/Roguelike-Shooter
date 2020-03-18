@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: EditorGroundWater
-  m_Shader: {fileID: 4800000, guid: 0beb9eae2e43d2f478de2b4b690f7734, type: 3}
+  m_Name: EditorGroundRiver
+  m_Shader: {fileID: 4800000, guid: dc443f3595fb02d4d8bea4eb64cf2d4c, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
@@ -72,5 +72,5 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.52205884, g: 0.9208925, b: 1, a: 1}
+    - _Color: {r: 0.52205884, g: 0.9208925, b: 1, a: 0.528}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}

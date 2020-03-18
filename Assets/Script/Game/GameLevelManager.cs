@@ -122,8 +122,8 @@ public static class LevelObjectManager
                 case enum_TileSubType.EditorGround:
                     items.Traversal((TileItemBase item) =>
                     {
-                        LevelTileEditorGround editorGroundItem = item as LevelTileEditorGround;
-                        ObjectPoolManager<enum_EditorGroundType, LevelTileEditorGround>.Register(editorGroundItem.m_EditorGroundType, editorGroundItem, 1);
+                        LevelTileItemEditorTerrain editorGroundItem = item as LevelTileItemEditorTerrain;
+                        ObjectPoolManager<enum_EditorTerrainType, LevelTileItemEditorTerrain>.Register(editorGroundItem.m_EditorTerrainType, editorGroundItem, 1);
                     });
                     break;
             }
@@ -135,7 +135,7 @@ public static class LevelObjectManager
         ObjectPoolManager<enum_TileTerrainType, TileTerrainBase>.RecycleAll();
         ObjectPoolManager<enum_TileObjectType, TileObjectBase>.RecycleAll();
         ObjectPoolManager<enum_TileEdgeObjectType, TileEdgeObjectBase>.RecycleAll();
-        ObjectPoolManager<enum_EditorGroundType, LevelTileEditorGround>.RecycleAll();
+        ObjectPoolManager<enum_EditorTerrainType, LevelTileItemEditorTerrain>.RecycleAll();
     }
 
     public static void Clear()
@@ -143,7 +143,7 @@ public static class LevelObjectManager
         ObjectPoolManager<enum_TileTerrainType, TileTerrainBase>.DestroyAll();
         ObjectPoolManager<enum_TileObjectType, TileObjectBase>.DestroyAll();
         ObjectPoolManager<enum_TileEdgeObjectType, TileEdgeObjectBase>.DestroyAll();
-        ObjectPoolManager<enum_EditorGroundType, LevelTileEditorGround>.DestroyAll();
+        ObjectPoolManager<enum_EditorTerrainType, LevelTileItemEditorTerrain>.DestroyAll();
     }
     
     public static bool HaveObjectItem(enum_TileObjectType type)=> ObjectPoolManager<enum_TileObjectType, TileObjectBase>.Registed(type);
@@ -152,7 +152,7 @@ public static class LevelObjectManager
     public static TileObjectBase GetObjectItem(enum_TileObjectType type, Transform trans) => ObjectPoolManager<enum_TileObjectType, TileObjectBase>.Spawn(type, trans, Vector3.zero, Quaternion.identity);
     public static TileTerrainBase GetTerrainItem(enum_TileTerrainType type, Transform trans) => ObjectPoolManager<enum_TileTerrainType, TileTerrainBase>.Spawn(type, trans,Vector3.zero,Quaternion.identity);
     public static TileEdgeObjectBase GetEdgeObjectItem(enum_TileEdgeObjectType type, Transform trans) => ObjectPoolManager<enum_TileEdgeObjectType, TileEdgeObjectBase>.Spawn(type, trans, Vector3.zero, Quaternion.identity);
-    public static LevelTileEditorGround GetEditorGroundItem(enum_EditorGroundType type,Transform trans)=> ObjectPoolManager<enum_EditorGroundType, LevelTileEditorGround>.Spawn(type, trans, Vector3.zero, Quaternion.identity);
+    public static LevelTileItemEditorTerrain GetEditorGroundItem(enum_EditorTerrainType type,Transform trans)=> ObjectPoolManager<enum_EditorTerrainType, LevelTileItemEditorTerrain>.Spawn(type, trans, Vector3.zero, Quaternion.identity);
 }
 
 public static class NavigationManager

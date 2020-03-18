@@ -30,12 +30,12 @@ namespace LevelSetting
         EditorGround=10,
     }
 
-    public enum enum_EditorGroundType
+    public enum enum_EditorTerrainType
     {
         Invalid = -1,
         Plane,
         River,
-        Slope,
+        Highland,
     }
     
     public enum enum_TileTerrainType 
@@ -59,10 +59,10 @@ namespace LevelSetting
         River_4R_3P_1RTR,
         River_4R_4P,
 
-        Slope_4S_4S,
-        Slope_2STL_CS,
+        Highland,
+        Slope_2STR_CS,
         Slope_3SLTR_LRS,
-        Slope_4S_1GTL,
+        Slope_4S_1GTR,
     }
 
     public enum enum_TileObjectType
@@ -146,27 +146,34 @@ namespace LevelSetting
             return new Bounds(boundsCenter + boundsSize / 2f + Vector3.up * LevelConst.I_TileSize, boundsSize+Vector3.up* LevelConst.I_TileSize);
         } 
         public static Vector3 ToPosition(this TileAxis axis) => new Vector3(axis.X,0,axis.Y)*LevelConst.I_TileSize;
-
-        public static bool EditorObjectEditable(this enum_EditorGroundType type)
+        
+        public static float GetTerrainHeight(this enum_TileTerrainType type)
         {
-            switch(type)
+            switch(type.GetEditorGroundType())
             {
-                default:return false;
-                case enum_EditorGroundType.Plane:
-                    return true;
+                default:
+                    Debug.LogError("Invalid Convertions Here!");
+                    return 0;
+                case enum_EditorTerrainType.Highland:
+                    return 2f;
+                case enum_EditorTerrainType.Plane:
+                    return 0;
+                case enum_EditorTerrainType.River:
+                    return -.5f;
             }
         }
-        public static enum_EditorGroundType GetEditorGroundType(this enum_TileTerrainType type)
+
+        public static enum_EditorTerrainType GetEditorGroundType(this enum_TileTerrainType type)
         {
             switch(type)
             {
                 default:
                     Debug.LogError("Invalid Convertions Here!");
-                    return enum_EditorGroundType.Invalid;
+                    return enum_EditorTerrainType.Invalid;
                 case enum_TileTerrainType.Invalid:
-                    return enum_EditorGroundType.Invalid;
+                    return enum_EditorTerrainType.Invalid;
                 case enum_TileTerrainType.Ground:
-                    return enum_EditorGroundType.Plane;
+                    return enum_EditorTerrainType.Plane;
                 case enum_TileTerrainType.River_0P:
                 case enum_TileTerrainType.River_1RT:
                 case enum_TileTerrainType.River_2RTB:
@@ -182,26 +189,28 @@ namespace LevelSetting
                 case enum_TileTerrainType.River_4R_3P_1RTR:
                 case enum_TileTerrainType.River_4R_4P:
                 case enum_TileTerrainType.River_4R_0P:
-                    return enum_EditorGroundType.River;
-                case enum_TileTerrainType.Slope_2STL_CS:
+                    return enum_EditorTerrainType.River;
+                case enum_TileTerrainType.Highland:
+                case enum_TileTerrainType.Slope_2STR_CS:
                 case enum_TileTerrainType.Slope_3SLTR_LRS:
-                case enum_TileTerrainType.Slope_4S_1GTL:
-                case enum_TileTerrainType.Slope_4S_4S:
-                    return enum_EditorGroundType.Slope;
+                case enum_TileTerrainType.Slope_4S_1GTR:
+                    return enum_EditorTerrainType.Highland;
             }
         }
 
-        public static enum_TileTerrainType GetEditorTerrainType(this enum_EditorGroundType type)
+        public static enum_TileTerrainType GetDefaultTerrainType(this enum_EditorTerrainType type)
         {
             switch(type)
             {
                 default:
                     Debug.LogError("Invalid Convertions Here!");
                     return enum_TileTerrainType.Invalid;
-                case enum_EditorGroundType.Plane:
+                case enum_EditorTerrainType.Plane:
                     return enum_TileTerrainType.Ground;
-                    case enum_EditorGroundType.River:
+                case enum_EditorTerrainType.River:
                     return enum_TileTerrainType.River_0P;
+                case enum_EditorTerrainType.Highland:
+                    return enum_TileTerrainType.Highland;
             }
         }
 

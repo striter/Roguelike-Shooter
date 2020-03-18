@@ -9,20 +9,20 @@ using System;
 public class LevelTileEditor : LevelTileBase {
 
     public virtual bool isDataTile => false;
-    public enum_EditorGroundType m_EditorGroundType { get; protected set; }
+    public enum_EditorTerrainType m_EditorTerrainType { get; protected set; }
     public ChunkTileData m_Data { get; protected set; }
-    public LevelTileEditorGround m_EditorGround { get; private set; }
+    public LevelTileItemEditorTerrain m_EditorTerrain { get; private set; }
 
     public override void Clear()
     {
         base.Clear();
-        if (m_EditorGround)
+        if (m_EditorTerrain)
         {
-            m_EditorGround.DoRecycle();
-            m_EditorGround = null;
+            m_EditorTerrain.DoRecycle();
+            m_EditorTerrain = null;
         }
     }
-
+    protected override float GetTerrainHeight(enum_TileTerrainType terrain) => m_EditorTerrainType== enum_EditorTerrainType.Invalid ? base.GetTerrainHeight(terrain) : m_EditorTerrainType.GetDefaultTerrainType().GetTerrainHeight();
     public override void InitTile(TileAxis axis, ChunkTileData data, System.Random random)
     {
         if (!LevelChunkEditor.Instance.m_GameViewMode)
@@ -34,10 +34,10 @@ public class LevelTileEditor : LevelTileBase {
         }
 
         m_Data = data;
-        m_EditorGroundType = enum_EditorGroundType.Invalid;
+        m_EditorTerrainType = enum_EditorTerrainType.Invalid;
         if (!LevelChunkEditor.Instance.m_GameViewMode)
         {
-            m_EditorGroundType = data.m_TerrainType.GetEditorGroundType();
+            m_EditorTerrainType = data.m_TerrainType.GetEditorGroundType();
             data = data.ChangeTerrainType(enum_TileTerrainType.Invalid);
             switch (LevelChunkEditor.Instance.m_EditType)
             {
@@ -48,11 +48,11 @@ public class LevelTileEditor : LevelTileBase {
         }
 
         base.InitTile(axis,data, random);
-        if (m_EditorGroundType != enum_EditorGroundType.Invalid)
+        if (m_EditorTerrainType != enum_EditorTerrainType.Invalid)
         {
-            m_EditorGround = LevelObjectManager.GetEditorGroundItem(m_EditorGroundType, tf_Models);
-            m_EditorGround.OnGenerateItem(data, random);
-            m_EditorGround.transform.localPosition = Vector3.zero;
+            m_EditorTerrain = LevelObjectManager.GetEditorGroundItem(m_EditorTerrainType, tf_Models);
+            m_EditorTerrain.OnGenerateItem(data, random);
+            m_EditorTerrain.transform.localPosition = Vector3.zero;
         }
 
     }
