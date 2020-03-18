@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Material_Particles_Polygon
+  m_Name: Material_Particle_Polygon_AlphaBlend
   m_Shader: {fileID: 4800000, guid: 34bc86830d6f22a45a58103bc354f6c6, type: 3}
   m_ShaderKeywords: _EMISSION
   m_LightmapFlags: 1

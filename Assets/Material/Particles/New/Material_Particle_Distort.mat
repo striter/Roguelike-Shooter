@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Material_Particles_Distort
+  m_Name: Material_Particle_Distort
   m_Shader: {fileID: 4800000, guid: 79e13abb1c614314aa4ec191191085e7, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4

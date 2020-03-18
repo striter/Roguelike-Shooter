@@ -33,8 +33,9 @@ namespace LevelSetting
     public enum enum_EditorGroundType
     {
         Invalid = -1,
-        Main,
-        Water,
+        Plane,
+        River,
+        Slope,
     }
     
     public enum enum_TileTerrainType 
@@ -42,21 +43,26 @@ namespace LevelSetting
         Invalid=-1,
         Ground,
 
-        River_0W,
-        River_1WT,
-        River_2WTB,
-        River_2WTR_CG,
-        River_2WRT_CW,
-        River_3WLTR_LRW,
-        River_3WLTR_LRG,
-        River_3WLTR_LW_RG,
-        River_3WLTR_LG_RW,
-        River_4W_0G,
-        River_4W_1GTR,
-        River_4W_2GTRBL,
-        River_4W_2GTRTL,
-        River_4W_3G_1WTR,
-        River_4W_4G,
+        River_0P,
+        River_1RT,
+        River_2RTB,
+        River_2RTR_CP,
+        River_2RRT_CR,
+        River_3RLTR_LRR,
+        River_3RLTR_LRP,
+        River_3RLTR_LR_RP,
+        River_3RLTR_LP_RR,
+        River_4R_0P,
+        River_4R_1PTR,
+        River_4R_2PTRBL,
+        River_4R_2PTRTL,
+        River_4R_3P_1RTR,
+        River_4R_4P,
+
+        Slope_4S_4S,
+        Slope_2STL_CS,
+        Slope_3SLTR_LRS,
+        Slope_4S_1GTL,
     }
 
     public enum enum_TileObjectType
@@ -146,7 +152,7 @@ namespace LevelSetting
             switch(type)
             {
                 default:return false;
-                case enum_EditorGroundType.Main:
+                case enum_EditorGroundType.Plane:
                     return true;
             }
         }
@@ -160,23 +166,28 @@ namespace LevelSetting
                 case enum_TileTerrainType.Invalid:
                     return enum_EditorGroundType.Invalid;
                 case enum_TileTerrainType.Ground:
-                    return enum_EditorGroundType.Main;
-                case enum_TileTerrainType.River_0W:
-                case enum_TileTerrainType.River_1WT:
-                case enum_TileTerrainType.River_2WTB:
-                case enum_TileTerrainType.River_2WTR_CG:
-                case enum_TileTerrainType.River_2WRT_CW:
-                case enum_TileTerrainType.River_3WLTR_LG_RW:
-                case enum_TileTerrainType.River_3WLTR_LRG:
-                case enum_TileTerrainType.River_3WLTR_LRW:
-                case enum_TileTerrainType.River_3WLTR_LW_RG:
-                case enum_TileTerrainType.River_4W_1GTR:
-                case enum_TileTerrainType.River_4W_2GTRBL:
-                case enum_TileTerrainType.River_4W_2GTRTL:
-                case enum_TileTerrainType.River_4W_3G_1WTR:
-                case enum_TileTerrainType.River_4W_4G:
-                case enum_TileTerrainType.River_4W_0G:
-                    return enum_EditorGroundType.Water;
+                    return enum_EditorGroundType.Plane;
+                case enum_TileTerrainType.River_0P:
+                case enum_TileTerrainType.River_1RT:
+                case enum_TileTerrainType.River_2RTB:
+                case enum_TileTerrainType.River_2RTR_CP:
+                case enum_TileTerrainType.River_2RRT_CR:
+                case enum_TileTerrainType.River_3RLTR_LP_RR:
+                case enum_TileTerrainType.River_3RLTR_LRP:
+                case enum_TileTerrainType.River_3RLTR_LRR:
+                case enum_TileTerrainType.River_3RLTR_LR_RP:
+                case enum_TileTerrainType.River_4R_1PTR:
+                case enum_TileTerrainType.River_4R_2PTRBL:
+                case enum_TileTerrainType.River_4R_2PTRTL:
+                case enum_TileTerrainType.River_4R_3P_1RTR:
+                case enum_TileTerrainType.River_4R_4P:
+                case enum_TileTerrainType.River_4R_0P:
+                    return enum_EditorGroundType.River;
+                case enum_TileTerrainType.Slope_2STL_CS:
+                case enum_TileTerrainType.Slope_3SLTR_LRS:
+                case enum_TileTerrainType.Slope_4S_1GTL:
+                case enum_TileTerrainType.Slope_4S_4S:
+                    return enum_EditorGroundType.Slope;
             }
         }
 
@@ -187,10 +198,10 @@ namespace LevelSetting
                 default:
                     Debug.LogError("Invalid Convertions Here!");
                     return enum_TileTerrainType.Invalid;
-                case enum_EditorGroundType.Main:
+                case enum_EditorGroundType.Plane:
                     return enum_TileTerrainType.Ground;
-                    case enum_EditorGroundType.Water:
-                    return enum_TileTerrainType.River_0W;
+                    case enum_EditorGroundType.River:
+                    return enum_TileTerrainType.River_0P;
             }
         }
 

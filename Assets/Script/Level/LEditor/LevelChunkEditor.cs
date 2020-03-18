@@ -287,7 +287,7 @@ public class LevelChunkEditor : LevelChunkBase
         switch(m_EditType)
         {
             case enum_LevelEditorEditType.Terrain:
-                data.SetEditorGround(enum_EditorGroundType.Main, m_Random);
+                data.SetEditorGround(enum_EditorGroundType.Plane, m_Random);
                 UpdateAxisTerrains(data);
                 break;
             case enum_LevelEditorEditType.Object:
@@ -305,7 +305,7 @@ public class LevelChunkEditor : LevelChunkBase
         nearbyAxies.Add(data.m_Axis);
         nearbyAxies.Traversal((TileAxis axis) => {
             LevelTileEditorData axisData = m_TilesData[axis.X, axis.Y] as LevelTileEditorData;
-            if (axisData.m_EditorGroundType != enum_EditorGroundType.Water)
+            if (axisData.m_EditorGroundType != enum_EditorGroundType.River)
                 return;
             axisData.UpdateWaterTerrain(TileTools.GetDirectionAxies(m_Width, m_Height, axis, TileTools.m_EdgeDirections, GetEditorItemData), TileTools.GetDirectionAxies(m_Width, m_Height, axis, TileTools.m_AngleDirections, GetEditorItemData), m_Random);
         });
@@ -332,7 +332,7 @@ public class LevelChunkEditor : LevelChunkBase
         switch (m_EditType)
         {
             case enum_LevelEditorEditType.Terrain:
-                editData.ChangeTerrainType(editorTile.m_EditorGroundType == enum_EditorGroundType.Main ? enum_TileTerrainType.Ground : enum_TileTerrainType.River_0W);
+                editData.ChangeTerrainType(editorTile.m_EditorGroundType == enum_EditorGroundType.Plane ? enum_TileTerrainType.Ground : enum_TileTerrainType.River_0P);
                 break;
             case enum_LevelEditorEditType.Object:
                 editData.ChangeObjectType(editorTile.m_Data.m_ObjectType);
