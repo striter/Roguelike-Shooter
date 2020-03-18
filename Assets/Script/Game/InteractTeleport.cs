@@ -10,15 +10,17 @@ public class InteractTeleport : InteractGameBase  {
     Animator m_Animator;
     int hs_T_Activate = Animator.StringToHash("t_activate");
     int hs_T_Unlock = Animator.StringToHash("t_unlock");
+    Renderer m_GlowRenderer;
     public override void OnPoolItemInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
     {
         base.OnPoolItemInit(identity, OnRecycle);
         m_Animator = GetComponent<Animator>();
+        m_GlowRenderer = transform.Find("Model/Glow").GetComponent<Renderer>();
     }
     public InteractTeleport Play(enum_GameStyle style)
     {
         base.Play();
-        transform.Find("Model/Glow").GetComponent<Renderer>().sharedMaterial.color = TCommon.GetHexColor(style.GetTeleportHex());
+        m_GlowRenderer.material.color = TCommon.GetHexColor(style.GetTeleportHex());
         return this;
     }
     public void SetPlay(bool play)
