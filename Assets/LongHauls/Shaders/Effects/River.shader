@@ -3,7 +3,8 @@
 	Properties
 	{
 		[NoScaleOffset]_MainTex("Color UV TEX",2D) = "white"{}
-		 _TexUVScale("Main Tex UV Scale",float)=10
+		_TexUVScale("Main Tex UV Scale",float)=10
+		_SpecularPow("Specular Pow",float)=1
 		_Color("Color Tint",Color) = (1,1,1,1)
 		_WaveParam("Wave: X|Strength Y|Frequency ZW|Direction",Vector)=(1,1,1,1)
 		[NoScaleOffset]_DistortTex("Distort Texure",2D) = "white"{}
@@ -16,6 +17,7 @@
 		Cull Back
 		CGINCLUDE
 		#include "UnityCG.cginc"
+			#include "Lighting.cginc"
 		ENDCG
 		Pass		//Base Pass
 		{
@@ -23,6 +25,7 @@
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma multi_compile_instancing
+
 
 			struct appdata
 			{
@@ -37,12 +40,14 @@
 				float2 uv:TEXCOORD0;
 				float3 normal:TEXCOORD1;
 				float3 viewDir:TEXCOORD2;
-				float4 screenPos:TEXCOORD3;
+				float3 lightDir:TEXCOORD3;
+				float4 screenPos:TEXCOORD4;
 			};
 
 			
 			sampler2D _CameraOpaqueTexture;
 			sampler2D _MainTex;
+			float _SpecularPow;
 			float _TexUVScale;
 			sampler2D _DistortTex;
 			float4 _Color;
@@ -72,16 +77,22 @@
 				o.pos = UnityWorldToClipPos(worldPos);
 				o.screenPos= ComputeScreenPos(o.pos);
 				o.normal = v.normal;
-				o.viewDir = ObjSpaceViewDir(v.vertex);
+				o.viewDir = ObjSpaceViewDir( v.vertex);
+				o.lightDir = ObjSpaceLightDir(v.vertex);
 				o.uv = worldPos.xz/_TexUVScale;
 				return o;
 			}
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
+				float3 normal = normalize(i.normal);
+				//float3 halfDir = normalize(i.viewDir+ i.lightDir);
+				//float specular = dot(halfDir, normal)* _SpecularPow;
+				//float4 specularCol = float4(_LightColor0.rgb*specular,specular);
+
 				float2 screenUV = i.screenPos.xy / i.screenPos.w+ Distort(i.uv);
 				float4 albedo = float4((tex2D(_MainTex, i.uv)*_Color).rgb,1);
-				return lerp(tex2D(_CameraOpaqueTexture, screenUV), albedo, Fresnel(normalize(i.normal), normalize(i.viewDir)));
+				return lerp(tex2D(_CameraOpaqueTexture, screenUV), albedo, Fresnel(normalize(i.normal), normalize(i.viewDir)));// +specular;
 			}
 			ENDCG
 		}

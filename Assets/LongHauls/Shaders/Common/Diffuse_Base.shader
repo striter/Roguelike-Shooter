@@ -48,7 +48,7 @@
 				o.uv = v.uv;
 				o.pos = UnityObjectToClipPos(v.vertex);
 				o.worldPos = mul(unity_ObjectToWorld, v.vertex);
-				o.diffuse = GetDiffuse(mul(v.normal, (float3x3)unity_WorldToObject), UnityWorldSpaceLightDir(o.worldPos));
+				o.diffuse = GetDiffuse(v.normal,ObjSpaceLightDir(v.vertex));
 				TRANSFER_SHADOW(o);
 				return o;
 			}

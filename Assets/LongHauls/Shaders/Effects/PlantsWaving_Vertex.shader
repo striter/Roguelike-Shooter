@@ -62,11 +62,9 @@ Shader "Game/Effect/PlantsWaving_Vertex"
 				{
 					v2f o;
 					o.uv = v.uv;
-					o.worldPos = mul(unity_ObjectToWorld,v.vertex);
-					fixed3 worldNormal = normalize(mul(v.normal, (float3x3)unity_WorldToObject)); //法线方向n
-					fixed3 worldLightDir = normalize(UnityWorldSpaceLightDir(o.worldPos));
-					o.diffuse = saturate(dot(worldLightDir,worldNormal));
-					o.pos = UnityWorldToClipPos(mul(unity_ObjectToWorld, v.vertex)+ Wave(v.vertex));
+					o.worldPos = mul(unity_ObjectToWorld,v.vertex) + Wave(v.vertex);
+					o.pos = UnityWorldToClipPos(o.worldPos);
+					o.diffuse = saturate(dot(v.normal,ObjSpaceLightDir(v.vertex)));
 					TRANSFER_SHADOW(o);
 					return o;
 				}
@@ -100,7 +98,7 @@ Shader "Game/Effect/PlantsWaving_Vertex"
 			{
 				v2fs o;
 				TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
-					o.pos = UnityWorldToClipPos(mul(unity_ObjectToWorld, v.vertex) + Wave(v.vertex));
+				o.pos = UnityWorldToClipPos(mul(unity_ObjectToWorld, v.vertex) + Wave(v.vertex));
 				return o;
 			}
 

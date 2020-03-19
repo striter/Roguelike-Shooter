@@ -72,6 +72,7 @@ Material:
     - _Parallax: 0.02
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
+    - _SpecularPow: 1
     - _SrcBlend: 1
     - _TexUVScale: 5
     - _UVSec: 0
@@ -80,5 +81,5 @@ Material:
     - _Color: {r: 0.8897059, g: 0.8897059, b: 0.8897059, a: 0.684}
     - _DistortParam: {r: 0.012, g: 0.15, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FresnelParam: {r: 0.2, g: 0.7, b: 4, a: 0}
+    - _FresnelParam: {r: 0.3, g: 0.5, b: 12, a: 0}
     - _WaveParam: {r: 0.12, g: 2, b: 1, a: 1}

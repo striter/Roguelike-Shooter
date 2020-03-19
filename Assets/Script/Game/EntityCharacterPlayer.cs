@@ -309,11 +309,10 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
         Vector3 moveDirection = CalculateMoveDirection(m_MoveAxisInput);
         float finalMovementSpeed = m_CharacterInfo.F_MovementSpeed;
- //       transform.position = NavigationManager.NavMeshPosition(transform.position+ CalculateMoveDirection(m_MoveAxisInput) * finalMovementSpeed * deltaTime);
         m_Controller.Move(moveDirection * finalMovementSpeed * deltaTime);
         transform.rotation = Quaternion.Lerp(transform.rotation, GetCharacterRotation(), deltaTime * GameConst.I_PlayerRotationSmoothParam);
 
-        m_Animator.SetRun(new Vector2(Vector3.Dot(transform.right, moveDirection), Vector3.Dot(transform.forward, moveDirection)), finalMovementSpeed / F_MovementSpeed);
+        m_Animator.SetRun(new Vector2(Vector3.Dot(transform.right, moveDirection), Vector3.Dot(transform.forward, moveDirection)), m_CharacterInfo.F_MovementSpeedMultiply,m_aiming);
     }
 
     void TargetTick(float deltaTime)
@@ -523,16 +522,18 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         static readonly int HS_T_Reload = Animator.StringToHash("t_reload");
         static readonly int HS_FM_Reload = Animator.StringToHash("fm_reload");
         static readonly int HS_F_Strafe = Animator.StringToHash("f_strafe");
+        static readonly int HS_B_Aim = Animator.StringToHash("b_aim");
         Vector2 v2_movement;
         public PlayerAnimator(Animator _animator, Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) : base(_animator,_OnAnimEvent)
         {
             v2_movement = Vector2.zero;
         }
         public void OnActivate(enum_PlayerAnim animIndex)=>OnActivate((int)animIndex);
-        public void SetRun(Vector2 movement,float movementParam)
+        public void SetRun(Vector2 movement,float movementParam,bool aiming)
         {
             v2_movement = Vector2.Lerp(v2_movement,movement,Time.deltaTime*5f);
             m_Animator.SetFloat(HS_F_Strafe, v2_movement.x);
+            m_Animator.SetBool(HS_B_Aim, aiming);
             base.SetForward(v2_movement.y);
             base.SetMovementSpeed(movementParam);
         }

@@ -25,5 +25,9 @@ Material:
     m_Floats:
     - _HorizontalWaveParam: 0.05
     - _VerticalWaveParam: 0.05
+    - _WaveSpeed: 1
+    - _YMultiple: 1
+    - _YStart: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _WaveDirection: {r: 2, g: 0, b: 2, a: 0}
