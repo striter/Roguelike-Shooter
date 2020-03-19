@@ -34,7 +34,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1356543422575638}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.1538324, y: -0.21295357, z: -0.4458742}
+  m_LocalPosition: {x: 4.398225, y: -4.224219, z: -1.833734}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children: []
   m_Father: {fileID: 0}
@@ -54,7 +54,7 @@ MonoBehaviour:
   E_ProjectileType: 1
   F_Damage: 159.9
   F_Speed: 50
-  B_Penetrate: 1
+  B_Penetrate: 0
   AC_MuzzleClip: {fileID: 8300000, guid: f96059fda463a6643bfc4e2d2c76aac1, type: 3}
   I_TrailIndex: 70002
   I_MuzzleIndex: 19001

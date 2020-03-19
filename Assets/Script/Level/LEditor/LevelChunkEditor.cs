@@ -118,6 +118,7 @@ public class LevelChunkEditor : LevelChunkBase
     #region EditMode
     void CheckEditMode()
     {
+        LevelEditorUI.Instance.SetActivate(!m_GameViewMode);
         enum_GameStyle targetStyle = m_GameViewMode ? m_ViewStyle : enum_GameStyle.Invalid;
         GameRenderData randomData = GameRenderData.Default();
         if (targetStyle != m_EditStyle)
