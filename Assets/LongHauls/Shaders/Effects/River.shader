@@ -5,9 +5,10 @@
 		[NoScaleOffset]_MainTex("Color UV TEX",2D) = "white"{}
 		 _TexUVScale("Main Tex UV Scale",float)=10
 		_Color("Color Tint",Color) = (1,1,1,1)
-		_WaveParam("X|Strength Y|Frequency ZW|Direction",Vector)=(1,1,1,1)
+		_WaveParam("Wave: X|Strength Y|Frequency ZW|Direction",Vector)=(1,1,1,1)
 		[NoScaleOffset]_DistortTex("Distort Texure",2D) = "white"{}
-		_DistortParam("X|Strength Y|Frequency ZW|Direction",Vector) = (1,1,1,1)
+		_DistortParam("Distort: X|Strength Y|Frequency ZW|Direction",Vector) = (1,1,1,1)
+		_FresnelParam("Fresnel: X | Base Y| Max Z| Scale",Vector)=(1,1,1,1)
 	}
 	SubShader
 	{
@@ -34,7 +35,9 @@
 			{
 				float4 pos : SV_POSITION;
 				float2 uv:TEXCOORD0;
-				float4 screenPos:TEXCOORD1;
+				float3 normal:TEXCOORD1;
+				float3 viewDir:TEXCOORD2;
+				float4 screenPos:TEXCOORD3;
 			};
 
 			
@@ -55,6 +58,11 @@
 				return tex2D(_DistortTex, uv+_DistortParam.zw*_Time.y*_DistortParam.y).rg*_DistortParam.x;
 			}
 
+			float4 _FresnelParam;
+			float Fresnel(float3 normal, float3 viewDir) {
+				return lerp( _FresnelParam.x ,_FresnelParam.y, saturate(  _FresnelParam.z* (1 - dot(normal, viewDir))));
+			}
+
 			v2f vert (appdata v)
 			{
 				v2f o;
@@ -63,6 +71,8 @@
 				worldPos += float3(0, Wave(worldPos),0);
 				o.pos = UnityWorldToClipPos(worldPos);
 				o.screenPos= ComputeScreenPos(o.pos);
+				o.normal = v.normal;
+				o.viewDir = ObjSpaceViewDir(v.vertex);
 				o.uv = worldPos.xz/_TexUVScale;
 				return o;
 			}
@@ -70,8 +80,8 @@
 			fixed4 frag (v2f i) : SV_Target
 			{
 				float2 screenUV = i.screenPos.xy / i.screenPos.w+ Distort(i.uv);
-				float4 albedo = lerp(tex2D(_MainTex,i.uv)*_Color, tex2D(_CameraOpaqueTexture, screenUV),.5);
-				return albedo;
+				float4 albedo = float4((tex2D(_MainTex, i.uv)*_Color).rgb,1);
+				return lerp(tex2D(_CameraOpaqueTexture, screenUV), albedo, Fresnel(normalize(i.normal), normalize(i.viewDir)));
 			}
 			ENDCG
 		}
