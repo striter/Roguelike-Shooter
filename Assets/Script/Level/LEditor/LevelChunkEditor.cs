@@ -65,8 +65,7 @@ public class LevelChunkEditor : LevelChunkBase
     }
 
     public void Resize(int size, enum_TileDirection direction)=>  Init(LevelChunkData.NewData(m_ChunkType, size,direction, m_TilesData));
-
-
+    
     private void Update()
     {
         MoveCameraCheck();

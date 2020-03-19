@@ -59,6 +59,26 @@ public class LevelChunkData : ScriptableObject {
             case enum_TileDirection.Right:
                 xResize = count;
                 break;
+            case enum_TileDirection.TopRight:
+                yResize = count;
+                xResize = count;
+                break;
+            case enum_TileDirection.TopLeft:
+                xResize = count;
+                xOffset = count;
+                yResize = count;
+                break;
+            case enum_TileDirection.BottomLeft:
+                xResize = count;
+                xOffset = count;
+                yResize = count;
+                yOffset = count;
+                break;
+            case enum_TileDirection.BottomRight:
+                yResize = count;
+                yOffset = count;
+                xResize = count;
+                break;
         }
         data.m_Width += xResize;
         data.m_Height += yResize;
