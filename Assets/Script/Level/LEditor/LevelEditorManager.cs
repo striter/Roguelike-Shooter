@@ -8,8 +8,9 @@ public class LevelEditorManager : SingletonMono<LevelEditorManager>
 {
     private void Start()
     {
-
         CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_BloomSpecific>().m_Blur.SetEffect(PE_Blurs.enum_BlurType.GaussianBlur,3,10,2);
+        CameraController.Instance.m_Effect.GetOrAddCameraEffect<CB_GenerateOpaqueTexture>();
+        CameraController.Instance.m_Effect.SetEffectEnable(true,true);
     }
     #region FileEdit
     public void New(int sizeX,int sizeY,enum_LevelType type)=>LevelChunkEditor.Instance.Init(LevelChunkData.NewData(sizeX, sizeY,type));

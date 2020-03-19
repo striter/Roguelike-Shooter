@@ -39,7 +39,7 @@ public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
         ResetPostEffectParams();
     }
 
-    public void SetCostyEffectEnable(bool enablePostEffect,bool mobileCostEnable)
+    public void SetEffectEnable(bool enablePostEffect,bool mobileCostEnable)
     {
         m_PostEffectEnabled = enablePostEffect;
         m_MobileCostEnable = mobileCostEnable;
