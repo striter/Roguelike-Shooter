@@ -38,10 +38,9 @@
 			{
 				float4 pos : SV_POSITION;
 				float2 uv:TEXCOORD0;
-				float3 normal:TEXCOORD1;
-				float3 viewDir:TEXCOORD2;
-				float3 lightDir:TEXCOORD3;
-				float4 screenPos:TEXCOORD4;
+				float3 worldPos:TEXCOORD1;
+				float4 screenPos:TEXCOORD2;
+				float3 worldNormal:TEXCOORD3;
 			};
 
 			
@@ -72,14 +71,12 @@
 			{
 				v2f o;
 				UNITY_SETUP_INSTANCE_ID(v);
-				float3 worldPos = mul(unity_ObjectToWorld, v.vertex);
-				worldPos += float3(0, Wave(worldPos),0);
-				o.uv = worldPos.xz / _TexUVScale;
-				o.pos = UnityWorldToClipPos(worldPos);
+				o.worldPos = mul(unity_ObjectToWorld, v.vertex);
+				o.worldPos += float3(0, Wave(o.worldPos),0);
+				o.uv = o.worldPos.xz / _TexUVScale;
+				o.pos = UnityWorldToClipPos(o.worldPos);
 				o.screenPos= ComputeScreenPos(o.pos);
-				o.normal = v.normal ;
-				o.viewDir =  ObjSpaceViewDir(v.vertex);
-				o.lightDir = ObjSpaceLightDir(v.vertex);
+				o.worldNormal =UnityObjectToWorldNormal(v.normal) ;
 				return o;
 			}
 			
@@ -87,13 +84,13 @@
 			{
 				float2 distort = Distort(i.uv);
 
-				float3 normal = normalize(i.normal);
-				float3 viewDir = normalize(i.viewDir);
-				float3 lightDir = normalize(i.lightDir);
+				float3 normal = normalize(i.worldNormal);
+				float3 viewDir = normalize(UnityWorldSpaceViewDir(i.worldPos));
+				float3 lightDir = normalize(UnityWorldSpaceLightDir(i.worldPos));
 				
 				float fresnel = Fresnel(normal, viewDir);
 				
-				float specular =  dot(normalize(normal + distort), normalize(viewDir + lightDir));
+				float specular =  dot(normalize(normal +distort), normalize(viewDir + lightDir));
 				specular = smoothstep(_SpecularRange,1, specular);
 				float4 specularColor = float4(_LightColor0.rgb*specular, specular);
 
