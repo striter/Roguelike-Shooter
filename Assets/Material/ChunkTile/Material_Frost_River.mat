@@ -72,7 +72,8 @@ Material:
     - _Parallax: 0.02
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _SpecularPow: 1
+    - _SpecularPow: 200
+    - _SpecularRange: 0.98
     - _SrcBlend: 1
     - _TexUVScale: 5
     - _UVSec: 0

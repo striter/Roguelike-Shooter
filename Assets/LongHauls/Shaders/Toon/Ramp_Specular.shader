@@ -84,9 +84,9 @@
 				
 			fixed specular = dot(worldNormal, worldHalfDir);
 			fixed w = fwidth(specular) * 2;
-			fixed3 specularCol = _Specular.rgb*lerp(0, 1, smoothstep(-w, w, specular + _SpecularScale - 1))*step(0.0001, _SpecularScale);
+			specular = lerp(0, 1, smoothstep(-w, w, specular + _SpecularScale - 1))*step(0.0001, _SpecularScale);
 
-				return fixed4( ambientCol+ diffuseCol+ specularCol,1);
+				return fixed4( ambientCol+ diffuseCol+ _Specular.rgb*specular,1);
 			}
 			ENDCG
 		}
