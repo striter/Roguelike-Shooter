@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class SFXProjectileTargetSwap : SFXProjectile {
     public int I_BounceCount = 2;
-    public float I_SwapRange = 10;
     protected override bool B_StopPhysicsOnHit => false;
     protected override bool B_StopParticlesOnHit => false;
     protected override PhysicsSimulator<HitCheckBase> GetSimulator(Vector3 direction, Vector3 targetPosition) =>new ReflectBouncePSimulator<HitCheckBase>(transform, transform.position, direction, Vector3.down, F_Speed, F_Height, F_Radius,I_BounceCount, OnSwapTarget, GameLayer.Mask.I_All, OnHitTargetBreak, CanHitTarget);

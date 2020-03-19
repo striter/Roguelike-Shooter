@@ -24,6 +24,7 @@ public class SFXProjectile : SFXWeaponBase
     [Tooltip("Projectile Type:(Single|Unused) (Multiline|Offset Meter)  (MultiFan|Offset Angle)")]
     public float F_OffsetExtension;
     #endregion
+
     protected PhysicsSimulator<HitCheckBase> m_PhysicsSimulator { get; private set; }
     protected SFXParticles m_Indicator;
     protected SFXTrail m_Trail;

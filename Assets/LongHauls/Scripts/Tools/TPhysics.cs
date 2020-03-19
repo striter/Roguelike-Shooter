@@ -53,7 +53,7 @@ namespace TPhysics
             transform.position = m_curPos;
             transform.rotation = GetSimulateRotation(deltaTime, direction);
         }
-        protected void Redirection(Vector3 direction)
+        public void Redirection(Vector3 direction)
         {
             m_startPos = m_prePos;
             m_Direction = direction;

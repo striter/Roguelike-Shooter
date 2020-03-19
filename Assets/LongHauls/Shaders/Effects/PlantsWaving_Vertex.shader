@@ -24,7 +24,7 @@ Shader "Game/Effect/PlantsWaving_Vertex"
 				float _WaveSpeed;
 				float _YMultiple;
 				float _YStart;
-			float3 waveAdd(float3 vertexPos)
+			float3 Wave(float3 vertexPos)
 			{
 				float wave = vertexPos.y* _YMultiple *sin(_Time.y*_WaveSpeed)/100;
 				return  _WaveDirection.xyz*wave;
@@ -66,7 +66,7 @@ Shader "Game/Effect/PlantsWaving_Vertex"
 					fixed3 worldNormal = normalize(mul(v.normal, (float3x3)unity_WorldToObject)); //法线方向n
 					fixed3 worldLightDir = normalize(UnityWorldSpaceLightDir(o.worldPos));
 					o.diffuse = saturate(dot(worldLightDir,worldNormal));
-					o.pos = UnityObjectToClipPos(v.vertex+ waveAdd(v.vertex));
+					o.pos = UnityWorldToClipPos(mul(unity_ObjectToWorld, v.vertex)+ Wave(v.vertex));
 					TRANSFER_SHADOW(o);
 					return o;
 				}
@@ -100,7 +100,7 @@ Shader "Game/Effect/PlantsWaving_Vertex"
 			{
 				v2fs o;
 				TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
-			 o.pos = UnityObjectToClipPos(v.vertex+waveAdd(v.vertex) );
+					o.pos = UnityWorldToClipPos(mul(unity_ObjectToWorld, v.vertex) + Wave(v.vertex));
 				return o;
 			}
 
