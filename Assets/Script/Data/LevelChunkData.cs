@@ -23,7 +23,7 @@ public class LevelChunkData : ScriptableObject {
         return data;
     } 
 
-    public static LevelChunkData NewData(int width,int height, enum_LevelType type, LevelTileEditor[,] transferData=null)
+    public static LevelChunkData NewData(int width,int height, enum_LevelType type)
     {
         LevelChunkData data = CreateInstance<LevelChunkData>();
         data.m_Type = type;
@@ -32,15 +32,50 @@ public class LevelChunkData : ScriptableObject {
         data.m_TileData = new ChunkTileData[data.m_Width * data.m_Height];
         for (int i = 0; i < data.Width; i++)
             for (int j = 0; j < data.Height; j++)
+                data.m_TileData[TileTools.Get1DAxisIndex(new TileAxis(i, j), data.Width)] = ChunkTileData.Default();
+        return data;
+    }
+    public static LevelChunkData NewData( enum_LevelType type, int count,enum_TileDirection direction, LevelTileEditor[,] transferData)
+    {
+        LevelChunkData data = NewData(transferData.GetLength(0), transferData.GetLength(1) ,type);
+        int xResize=0;
+        int yResize=0;
+        int xOffset=0;
+        int yOffset=0;
+
+        switch(direction)
+        {
+            case enum_TileDirection.Top:
+                yResize = count;
+                break;
+            case enum_TileDirection.Bottom:
+                yResize = count;
+                yOffset = count;
+                break;
+            case enum_TileDirection.Left:
+                xResize = count;
+                xOffset = count;
+                break;
+            case enum_TileDirection.Right:
+                xResize = count;
+                break;
+        }
+        data.m_Width += xResize;
+        data.m_Height += yResize;
+        data.m_TileData = new ChunkTileData[data.m_Width * data.m_Height];
+        for (int i = 0; i < data.Width; i++)
+            for (int j = 0; j < data.Height; j++)
             {
-                int index = TileTools.Get1DAxisIndex(new TileAxis( i, j), data.Width);
                 ChunkTileData tileData = ChunkTileData.Default();
-                if(transferData!=null&&index<data.m_TileData.Length&&new TileAxis(i,j).InRange(transferData))
-                    tileData = transferData.Get(new TileAxis(i,j)).m_Data;
-                data.m_TileData[index] =tileData;
+                int index = TileTools.Get1DAxisIndex(new TileAxis(i, j), data.Width);
+                TileAxis preTileAxis = new TileAxis(i-xOffset,j-yOffset);
+                if ( index < data.m_TileData.Length && preTileAxis.InRange(transferData))
+                    tileData = transferData.Get(preTileAxis).m_Data;
+                data.m_TileData[index] = tileData;
             }
         return data;
     }
+
     public void SaveData(LevelChunkEditor chunk)
     {
         m_Width = chunk.m_Width;

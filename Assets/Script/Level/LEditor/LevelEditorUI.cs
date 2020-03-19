@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TTiles;
 #pragma warning disable 0649
 public class LevelEditorUI : SingletonMono<LevelEditorUI>,TReflection.UI.IUIPropertyFill {
     class TypeSelection:TReflection.UI.CPropertyFillElement
@@ -42,8 +43,10 @@ public class LevelEditorUI : SingletonMono<LevelEditorUI>,TReflection.UI.IUIProp
     Transform m_File, m_Edit;
     Button m_File_New, m_File_Read, m_File_Save;
     InputField m_File_New_X, m_File_New_Y,  m_File_Read_Name, m_File_Save_Name;
-    Button m_Edit_Resize;
-    InputField m_Edit_Resize_X, m_Edit_Resize_Y;
+    Button m_Edit_AddSize;
+    Text m_Edit_AddSize_Text;
+    InputField m_Edit_AddSize_Count;
+    TypeSelection m_Edit_AddSize_Direction;
     TypeSelection m_File_Type;
     RawImage m_View_Image;
     Text m_View_Name,m_View_Type;
@@ -52,6 +55,7 @@ public class LevelEditorUI : SingletonMono<LevelEditorUI>,TReflection.UI.IUIProp
     UIT_GridControllerGridItem<LevelEditorUIDataView> m_EditorView;
 
     enum_LevelType m_FileChunkType= enum_LevelType.Battle;
+    enum_TileDirection m_Direction = enum_TileDirection.Top;
     List<string> m_DataViewing = new List<string>();
     protected override void Awake()
     {
@@ -60,7 +64,8 @@ public class LevelEditorUI : SingletonMono<LevelEditorUI>,TReflection.UI.IUIProp
         m_File_New.onClick.AddListener(OnNewClick);
         m_File_Read.onClick.AddListener(OnReadClick);
         m_File_Save.onClick.AddListener(OnSaveClick);
-        m_Edit_Resize.onClick.AddListener(OnResizeButtonClick);
+        m_Edit_AddSize.onClick.AddListener(OnResizeButtonClick);
+        m_Edit_AddSize_Direction.Init(enum_TileDirection.Top,(int index)=> { m_Direction = (enum_TileDirection)index; });
         m_File_Type.Init(m_FileChunkType,OnFileTypeSelect);
         m_Data_Type.Init( enum_LevelType.Battle, OnDataViewTypeSelect);
         m_EditorView = new UIT_GridControllerGridItem<LevelEditorUIDataView>(m_Data.Find("DataView/DataGrid"));
@@ -95,8 +100,7 @@ public class LevelEditorUI : SingletonMono<LevelEditorUI>,TReflection.UI.IUIProp
 
     void OnNewClick()
     {
-        m_Edit_Resize_X.text = m_File_New_X.text;
-        m_Edit_Resize_Y.text = m_File_New_Y.text;
+        m_Edit_AddSize_Text.text = m_File_New_X.text+"|"+ m_File_New_Y.text;
         LevelEditorManager.Instance.New(int.Parse( m_File_New_X.text),int.Parse(m_File_New_Y.text), m_FileChunkType);
     }
 
@@ -107,8 +111,7 @@ public class LevelEditorUI : SingletonMono<LevelEditorUI>,TReflection.UI.IUIProp
         if (!data)
             return;
 
-        m_Edit_Resize_X.text = data.Width.ToString();
-        m_Edit_Resize_Y.text = data.Height.ToString();
+        m_Edit_AddSize_Text.text = data.Width + "|" + data.Height;
         m_File_Read_Name.text = data.name;
         m_File_Save_Name.text = data.name;
         m_View_Name.text = data.name;
@@ -128,7 +131,7 @@ public class LevelEditorUI : SingletonMono<LevelEditorUI>,TReflection.UI.IUIProp
 
     void OnResizeButtonClick()
     {
-        LevelChunkEditor.Instance.Resize(int.Parse(m_Edit_Resize_X.text),int.Parse(m_Edit_Resize_Y.text));
+        LevelChunkEditor.Instance.Resize(int.Parse(m_Edit_AddSize_Count.text),m_Direction);
     }
 
 

@@ -64,10 +64,7 @@ public class LevelChunkEditor : LevelChunkBase
         m_TilesData[axis.X, axis.Y].InitTile(axis, data, random);
     }
 
-    public void Resize(int sizeX, int sizeY)
-    {
-        Init(LevelChunkData.NewData(sizeX, sizeY, m_ChunkType, m_TilesData));
-    }
+    public void Resize(int size, enum_TileDirection direction)=>  Init(LevelChunkData.NewData(m_ChunkType, size,direction, m_TilesData));
 
 
     private void Update()
