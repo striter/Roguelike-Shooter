@@ -4,11 +4,11 @@
 	{
 		[NoScaleOffset]_MainTex("Color UV TEX",2D) = "white"{}
 		_TexUVScale("Main Tex UV Scale",float)=10
-		_SpecularRange("Specular Range",Range(.95,1))=1
 		_Color("Color Tint",Color) = (1,1,1,1)
-		_WaveParam("Wave: X|Strength Y|Frequency ZW|Direction",Vector)=(1,1,1,1)
 		[NoScaleOffset]_DistortTex("Distort Texure",2D) = "white"{}
-		_DistortParam("Distort: X|Strength Y|Frequency ZW|Direction",Vector) = (1,1,1,1)
+		_SpecularRange("Specular Range",Range(.95,1)) = 1
+		_WaveParam("Wave: X|Strength Y|Frequency ZW|Direction",Vector) = (1,1,1,1)
+		_DistortParam("Distort: X|Refraction Distort Y|Frequency Z|Specular Distort",Vector) = (1,1,1,1)
 		_FresnelParam("Fresnel: X | Base Y| Max Z| Scale ",Vector)=(1,1,1,1)
 	}
 	SubShader
@@ -51,15 +51,14 @@
 			sampler2D _DistortTex;
 			float4 _Color;
 			float4 _WaveParam;
+			float4 _DistortParam;
 			float Wave(float3 worldPos)
 			{
-				float2 direction = _WaveParam.zw;
-				return  sin(direction.x* worldPos.x + direction.y*worldPos.z + _Time.y*_WaveParam.y)*_WaveParam.x;
+				return  sin(worldPos.xz* _WaveParam.zw +_Time.y*_WaveParam.y)*_WaveParam.x;
 			}
-			float4 _DistortParam;
 			float2 Distort(float2 uv)
 			{
-				return tex2D(_DistortTex, uv+_DistortParam.zw*_Time.y*_DistortParam.y).rg*_DistortParam.x;
+				return tex2D(_DistortTex, uv+ _WaveParam.zw *_Time.y*_DistortParam.y).rg*_DistortParam.x;
 			}
 
 			float4 _FresnelParam;
@@ -90,8 +89,8 @@
 				
 				float fresnel = Fresnel(normal, viewDir);
 				
-				float specular =  dot(normalize(normal +distort), normalize(viewDir + lightDir));
-				specular = smoothstep(_SpecularRange,1, specular);
+				float specular =  dot(normalize(normal), normalize(viewDir + lightDir));
+				specular = smoothstep(_SpecularRange,1, specular-distort.x*_DistortParam.z);
 				float4 specularColor = float4(_LightColor0.rgb*specular, specular);
 
 				float4 albedo = float4((tex2D(_MainTex, i.uv+distort)*_Color).rgb,1);

@@ -35,7 +35,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DistortTex:
-        m_Texture: {fileID: 2800000, guid: b0fb697c685ce7e4ca5e2ff4e4eda8ec, type: 3}
+        m_Texture: {fileID: 2800000, guid: 9837737d0a9fbec4bb2dcfc7ad0d6e9a, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
@@ -73,14 +73,14 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SpecularPow: 200
-    - _SpecularRange: 0.99
+    - _SpecularRange: 0.9949
     - _SrcBlend: 1
     - _TexUVScale: 5
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 0.8897059, g: 0.8897059, b: 0.8897059, a: 0.684}
-    - _DistortParam: {r: 0.008, g: 0.1, b: 1, a: 1}
+    - _DistortParam: {r: 0.008, g: 0.1, b: 0.25, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FresnelParam: {r: 0.35, g: 0.5, b: 12, a: 0}
     - _WaveParam: {r: 0.12, g: 2, b: 1, a: 1}
