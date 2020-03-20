@@ -12,8 +12,8 @@ public class TileObjectBase : TileItemBase,IObjectpool<enum_TileObjectType>,ICor
     public override TileAxis GetDirectionedSize(enum_TileDirection direction) => m_ObjectType.GetSizeAxis(direction);
 
     HitCheckStatic[] m_hitChecks;
-    Material[] m_Materials;
     Renderer[] m_Renderers;
+    Material[] m_Materials;
     Action OnItemDestroy;
     float m_Health = -1;
 
@@ -43,7 +43,7 @@ public class TileObjectBase : TileItemBase,IObjectpool<enum_TileObjectType>,ICor
         m_Health = -1;
     }
 
-    public void GameInit(float health,Action OnDestroy)
+    public virtual void GameInit(float health,Action OnDestroy)
     {
         m_Health = health;
         OnItemDestroy = OnDestroy;

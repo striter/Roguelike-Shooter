@@ -188,22 +188,22 @@ namespace GameSetting
                 case enum_TileObjectType.Block:
                 case enum_TileObjectType.Dangerzone:
                     return -1;
-                case enum_TileObjectType.Object1x1A:
-                case enum_TileObjectType.Object1x1B:
-                case enum_TileObjectType.Object1x1C:
-                case enum_TileObjectType.Object1x1D:
+                case enum_TileObjectType.Static1x1A:
+                case enum_TileObjectType.Static1x1B:
+                case enum_TileObjectType.Static1x1C:
+                case enum_TileObjectType.Static1x1D:
                     return 100;
-                case enum_TileObjectType.Object2x1A:
-                case enum_TileObjectType.Object2x1B:
+                case enum_TileObjectType.Static2x1A:
+                case enum_TileObjectType.Static2x1B:
                     return 200;
-                case enum_TileObjectType.Object2x2A:
-                case enum_TileObjectType.Object2x2B:
+                case enum_TileObjectType.Static2x2A:
+                case enum_TileObjectType.Static2x2B:
                     return 400;
-                case enum_TileObjectType.Object3x2A:
-                case enum_TileObjectType.Object3x2B:
+                case enum_TileObjectType.Static3x2A:
+                case enum_TileObjectType.Static3x2B:
                     return 600;
-                case enum_TileObjectType.Object3x3A:
-                case enum_TileObjectType.Object3x3B:
+                case enum_TileObjectType.Static3x3A:
+                case enum_TileObjectType.Static3x3B:
                     return 900;
             }
         }
@@ -446,11 +446,11 @@ namespace GameSetting
         public static readonly int I_Interact = LayerMask.NameToLayer("interact");
         public static class Mask
         {
+            public static readonly int I_ProjectileMask = 1 << GameLayer.I_Static | 1 << GameLayer.I_Entity;
             public static readonly int I_All = 1 << GameLayer.I_Static | 1 << GameLayer.I_Entity | 1 << GameLayer.I_Dynamic;
-            public static readonly int I_StaticEntity = 1 << GameLayer.I_Static | 1 << GameLayer.I_Entity;
+            public static readonly int I_Static = (1 << GameLayer.I_Static);
             public static readonly int I_Entity = (1 << GameLayer.I_Entity);
             public static readonly int I_Interact = (1 << GameLayer.I_Interact);
-            public static readonly int I_Static = (1 << GameLayer.I_Static);
         }
 
         public static readonly int I_EntityDetect = LayerMask.NameToLayer("entityDetect");
@@ -2288,7 +2288,7 @@ namespace GameSetting
         protected override Vector3 GetTargetPosition(bool preAim, EntityCharacterBase _target)
         {
             Transform castAt = GetCastAt(_target);
-            Vector3 castPos = NavigationManager.NavMeshPosition(castAt.position + TCommon.RandomXZSphere(m_Entity.F_AttackSpread));
+            Vector3 castPos = NavigationManager.NavMeshPosition(castAt.position + TCommon.RandomXZSphere()* m_Entity.F_AttackSpread);
             castPos.y = castAt.transform.position.y;
             return castPos;
         }
@@ -2363,7 +2363,7 @@ namespace GameSetting
                 targetPosition = _target.tf_Head.position;
 
             if (TCommon.GetXZDistance(m_Entity.tf_Weapon.position, targetPosition) > m_Entity.F_AttackSpread)      //Target Outside Spread Sphere,Add Spread
-                targetPosition += TCommon.RandomXZSphere(m_Entity.F_AttackSpread);
+                targetPosition += TCommon.RandomXZSphere()* m_Entity.F_AttackSpread;
             return targetPosition;
         }
 
@@ -2446,7 +2446,7 @@ namespace GameSetting
         }
         public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
-            Vector3 spawnPosition = (m_SpawnAtTarget ? _target.transform.position : m_Entity.transform.position) + TCommon.RandomXZSphere(m_Entity.F_AttackSpread);
+            Vector3 spawnPosition = (m_SpawnAtTarget ? _target.transform.position : m_Entity.transform.position) + TCommon.RandomXZSphere()* m_Entity.F_AttackSpread;
             GameObjectManager.SpawnEquipment<SFXSubEntitySpawner>(I_Index, spawnPosition, Vector3.up).Play(m_Entity,_target.transform.position, startHealth, GetDamageDeliverInfo, OnSpawn);
         }
     }

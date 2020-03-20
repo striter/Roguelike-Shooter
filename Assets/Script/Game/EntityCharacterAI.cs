@@ -263,7 +263,7 @@ public class EntityCharacterAI : EntityCharacterBase {
             return;
         }
 
-        SetDestination(m_SourcePosition + TCommon.RandomXZSphere(GameConst.AI.F_AIPatrolRange));
+        SetDestination(m_SourcePosition + TCommon.RandomXZSphere()* GameConst.AI.F_AIPatrolRange);
     }
 
     void IdleRotation(float deltaTime)
@@ -400,7 +400,7 @@ public class EntityCharacterAI : EntityCharacterBase {
     Vector3 GetSamplePosition(bool forward)
     {
         if (forward)
-            return m_Target.transform.position + TCommon.RandomXZSphere(3f);
+            return m_Target.transform.position + TCommon.RandomXZSphere()* 3f;
         else
             return transform.position + 5 * -m_m_targetDirection;
     }

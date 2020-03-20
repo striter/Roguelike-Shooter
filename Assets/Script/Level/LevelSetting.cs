@@ -26,6 +26,7 @@ namespace LevelSetting
         Object=1,
         Terrain=2,
         EdgeObject=3,
+        Plants=4,
 
         EditorGround=10,
     }
@@ -71,25 +72,38 @@ namespace LevelSetting
         Dangerzone = 1,
         Block=2,
 
-        Object1x1A =11,
-        Object1x1B=12,
-        Object1x1C=13,
-        Object1x1D=14,
-        Object2x1A=15,
-        Object2x1B=16,
-        Object2x2A=17,
-        Object2x2B=18,
-        Object3x2A=19,
-        Object3x2B=20,
-        Object3x3A=21,
-        Object3x3B=22,
-        
-        EditorStart =50,       //Available During 
-        REntrance2x2=51,
-        RExport4x1=53,
-        REventArea3x3 = 55,
-        REnermySpawn1x1=56,
+        Static1x1A =11,
+        Static1x1B=12,
+        Static1x1C=13,
+        Static1x1D=14,
+        Static2x1A=15,
+        Static2x1B=16,
+        Static2x2A=17,
+        Static2x2B=18,
+        Static3x2A=19,
+        Static3x2B=20,
+        Static3x3A=21,
+        Static3x3B=22,
+
+        PlantsCombine,
+
+        EditorStart =50,       //Available During Editor
+        EEntrance2x2=51,
+        EExport4x1=53,
+        EEventArea3x3 = 55,
+        EEnermySpawn1x1=56,
         EditorEnd,
+    }
+
+    public enum enum_TilePlantsType
+    {
+        Invalid=-1,
+        Plants1=1,
+        Plants2,
+        Plants3,
+        Plants4,
+        Plants5,
+        Plants6,
     }
 
     public enum enum_TileEdgeObjectType
@@ -145,6 +159,7 @@ namespace LevelSetting
             Vector3 boundsSize = size.ToPosition();
             return new Bounds(boundsCenter + boundsSize / 2f + Vector3.up * LevelConst.I_TileSize, boundsSize+Vector3.up* LevelConst.I_TileSize);
         } 
+
         public static Vector3 ToPosition(this TileAxis axis) => new Vector3(axis.X,0,axis.Y)*LevelConst.I_TileSize;
         
         public static float GetTerrainHeight(this enum_TileTerrainType type)
@@ -222,25 +237,25 @@ namespace LevelSetting
             TileAxis size = TileAxis.One;
             switch (type)
             {
-                case enum_TileObjectType.Object2x2A:
-                case enum_TileObjectType.Object2x2B:
-                case enum_TileObjectType.REntrance2x2:
+                case enum_TileObjectType.Static2x2A:
+                case enum_TileObjectType.Static2x2B:
+                case enum_TileObjectType.EEntrance2x2:
                     size = TileAxis.One * 2;
                     break;
-                case enum_TileObjectType.RExport4x1:
+                case enum_TileObjectType.EExport4x1:
                     size = new TileAxis(4, 1);
                     break;
-                case enum_TileObjectType.Object2x1B:
-                case enum_TileObjectType.Object2x1A:
+                case enum_TileObjectType.Static2x1B:
+                case enum_TileObjectType.Static2x1A:
                     size = new TileAxis(2, 1);
                     break;
-                case enum_TileObjectType.Object3x2A: 
-                case enum_TileObjectType.Object3x2B:
+                case enum_TileObjectType.Static3x2A: 
+                case enum_TileObjectType.Static3x2B:
                     size = new TileAxis(3, 2);
                     break;
-                case enum_TileObjectType.REventArea3x3:
-                case enum_TileObjectType.Object3x3A:
-                case enum_TileObjectType.Object3x3B:
+                case enum_TileObjectType.EEventArea3x3:
+                case enum_TileObjectType.Static3x3A:
+                case enum_TileObjectType.Static3x3B:
                     size = TileAxis.One * 3;
                     break;
             }
@@ -253,24 +268,24 @@ namespace LevelSetting
             switch(type)
             {
                 case enum_LevelType.Start:
-                    restrictionDic.Add(enum_TileObjectType.REntrance2x2, 1);
-                    restrictionDic.Add(enum_TileObjectType.RExport4x1, 1);
-                    restrictionDic.Add(enum_TileObjectType.REventArea3x3, 1);
+                    restrictionDic.Add(enum_TileObjectType.EEntrance2x2, 1);
+                    restrictionDic.Add(enum_TileObjectType.EExport4x1, 1);
+                    restrictionDic.Add(enum_TileObjectType.EEventArea3x3, 1);
                     break;
                 case enum_LevelType.Event:
-                    restrictionDic.Add(enum_TileObjectType.REntrance2x2, 1);
-                    restrictionDic.Add(enum_TileObjectType.RExport4x1, 1);
-                    restrictionDic.Add(enum_TileObjectType.REventArea3x3, 1);
+                    restrictionDic.Add(enum_TileObjectType.EEntrance2x2, 1);
+                    restrictionDic.Add(enum_TileObjectType.EExport4x1, 1);
+                    restrictionDic.Add(enum_TileObjectType.EEventArea3x3, 1);
                     break;
                 case enum_LevelType.Battle:
-                    restrictionDic.Add(enum_TileObjectType.REntrance2x2, 1);
-                    restrictionDic.Add(enum_TileObjectType.RExport4x1, 1);
-                    restrictionDic.Add( enum_TileObjectType.REnermySpawn1x1,-1);
+                    restrictionDic.Add(enum_TileObjectType.EEntrance2x2, 1);
+                    restrictionDic.Add(enum_TileObjectType.EExport4x1, 1);
+                    restrictionDic.Add( enum_TileObjectType.EEnermySpawn1x1,-1);
                     break;
                 case enum_LevelType.Final:
-                    restrictionDic.Add(enum_TileObjectType.REntrance2x2, 1);
-                    restrictionDic.Add(enum_TileObjectType.RExport4x1, 1);
-                    restrictionDic.Add(enum_TileObjectType.REnermySpawn1x1, -1);
+                    restrictionDic.Add(enum_TileObjectType.EEntrance2x2, 1);
+                    restrictionDic.Add(enum_TileObjectType.EExport4x1, 1);
+                    restrictionDic.Add(enum_TileObjectType.EEnermySpawn1x1, -1);
                     break;
             }
             return restrictionDic;

@@ -6,28 +6,28 @@ Shader "Game/Effect/PlantsWaving_Vertex"
 	{
 		_MainTex("Color UV TEX",2D) = "white"{}
 		_Color("Color Tint",Color) = (1,1,1,1)
-		_WaveDirection("Wind Direction",Vector)=(.1,0,.1,0)
-		_WaveSpeed("Wind Speed",Range(0,5))=1
-		_YStart("Wind Y Start",Range(0,5))=1
-		_YMultiple("Model Y Multiple",Range(0,5))=1
+		_WaveSpeed("Wind Speed",Range(0,5)) = 1
+		_WaveDirection("Wave: XYZ|Direction W|Frequency",Vector)=(.1,0,.1,0)
+		_WaveParam("Y Param: X|Clip Y|Start Z|Multiply",Vector)=(0,0,1,0)
 	}
 		SubShader
 		{
-			Tags { "RenderType" = "Opaque" }
-				Cull Back
+			Tags { "RenderType" = "Opaque" "Queue"="Geometry" }
+			Cull Off
 
-				CGINCLUDE
-				#include "UnityCG.cginc"
-				#include "Lighting.cginc"
-				#include "AutoLight.cginc"
-				float4 _WaveDirection;
-				float _WaveSpeed;
-				float _YMultiple;
-				float _YStart;
-			float3 Wave(float3 vertexPos)
+			CGINCLUDE
+			#include "UnityCG.cginc"
+			#include "Lighting.cginc"
+			#include "AutoLight.cginc"
+			float4 _WaveDirection;
+			float _WaveSpeed;
+			float4 _WaveParam;
+
+			float3 Wave(float3 worldPos)
 			{
-				float wave = vertexPos.y* _YMultiple *sin(_Time.y*_WaveSpeed)/100;
-				return  _WaveDirection.xyz*wave;
+				float wave = sin(_Time.y*_WaveSpeed + (worldPos.x + worldPos.y)*_WaveDirection.w) / 100;
+				float yMultiple = max(0,worldPos.y%_WaveParam.x- _WaveParam.y)*_WaveParam.z;
+				return  _WaveDirection.xyz*wave*yMultiple;
 			}
 				ENDCG
 
@@ -62,7 +62,8 @@ Shader "Game/Effect/PlantsWaving_Vertex"
 				{
 					v2f o;
 					o.uv = v.uv;
-					o.worldPos = mul(unity_ObjectToWorld,v.vertex) + Wave(v.vertex);
+					o.worldPos = mul(unity_ObjectToWorld, v.vertex);
+					o.worldPos +=Wave(o.worldPos);
 					o.pos = UnityWorldToClipPos(o.worldPos);
 					o.diffuse = saturate(dot(v.normal,ObjSpaceLightDir(v.vertex)));
 					TRANSFER_SHADOW(o);
@@ -98,7 +99,9 @@ Shader "Game/Effect/PlantsWaving_Vertex"
 			{
 				v2fs o;
 				TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
-				o.pos = UnityWorldToClipPos(mul(unity_ObjectToWorld, v.vertex) + Wave(v.vertex));
+				float3 worldPos = mul(unity_ObjectToWorld, v.vertex);
+				worldPos += Wave(worldPos);
+				o.pos = UnityWorldToClipPos(worldPos);
 				return o;
 			}
 

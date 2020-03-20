@@ -25,7 +25,7 @@ public class WeaponProjectileBase : WeaponBase
 
         Vector3 spreadDirection = m_Attacher.tf_WeaponAim.forward;
         Vector3 endPosition = m_Attacher.tf_WeaponAim.position + spreadDirection * GameConst.I_ProjectileMaxDistance;
-        if (Physics.Raycast(m_Attacher.tf_WeaponAim.position, spreadDirection, out hit, GameConst.I_ProjectileMaxDistance, GameLayer.Mask.I_All) && GameManager.B_CanSFXHitTarget(hit.collider.Detect(), m_Attacher.m_EntityID))
+        if (Physics.Raycast(m_Attacher.tf_WeaponAim.position, spreadDirection, out hit, GameConst.I_ProjectileMaxDistance, GameLayer.Mask.I_ProjectileMask) && GameManager.B_CanSFXHitTarget(hit.collider.Detect(), m_Attacher.m_EntityID))
             endPosition = hit.point;
         spreadDirection = (endPosition - m_Muzzle.position).normalized;
         spreadDirection.y = 0;

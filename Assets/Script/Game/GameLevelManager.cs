@@ -114,9 +114,15 @@ public static class LevelObjectManager
                 case enum_TileSubType.EdgeObject:
                     items.Traversal((TileItemBase item) =>
                     {
-
                         TileEdgeObjectBase editorGroundItem = item as TileEdgeObjectBase;
                         ObjectPoolManager<enum_TileEdgeObjectType, TileEdgeObjectBase>.Register(editorGroundItem.m_EdgeObjectType, editorGroundItem, 1);
+                    });
+                    break;
+                case enum_TileSubType.Plants:
+                    items.Traversal((TileItemBase item) =>
+                    {
+                        TilePlantsBase plantsItem = item as TilePlantsBase;
+                        ObjectPoolManager<enum_TilePlantsType, TilePlantsBase>.Register(plantsItem.m_PlantsType, plantsItem, 1);
                     });
                     break;
                 case enum_TileSubType.EditorGround:
@@ -135,6 +141,7 @@ public static class LevelObjectManager
         ObjectPoolManager<enum_TileTerrainType, TileTerrainBase>.RecycleAll();
         ObjectPoolManager<enum_TileObjectType, TileObjectBase>.RecycleAll();
         ObjectPoolManager<enum_TileEdgeObjectType, TileEdgeObjectBase>.RecycleAll();
+        ObjectPoolManager<enum_TilePlantsType, TilePlantsBase>.RecycleAll();
         ObjectPoolManager<enum_EditorTerrainType, LevelTileItemEditorTerrain>.RecycleAll();
     }
 
@@ -143,6 +150,7 @@ public static class LevelObjectManager
         ObjectPoolManager<enum_TileTerrainType, TileTerrainBase>.DestroyAll();
         ObjectPoolManager<enum_TileObjectType, TileObjectBase>.DestroyAll();
         ObjectPoolManager<enum_TileEdgeObjectType, TileEdgeObjectBase>.DestroyAll();
+        ObjectPoolManager<enum_TilePlantsType, TilePlantsBase>.DestroyAll();
         ObjectPoolManager<enum_EditorTerrainType, LevelTileItemEditorTerrain>.DestroyAll();
     }
     
@@ -152,6 +160,7 @@ public static class LevelObjectManager
     public static TileObjectBase GetObjectItem(enum_TileObjectType type, Transform trans) => ObjectPoolManager<enum_TileObjectType, TileObjectBase>.Spawn(type, trans, Vector3.zero, Quaternion.identity);
     public static TileTerrainBase GetTerrainItem(enum_TileTerrainType type, Transform trans) => ObjectPoolManager<enum_TileTerrainType, TileTerrainBase>.Spawn(type, trans,Vector3.zero,Quaternion.identity);
     public static TileEdgeObjectBase GetEdgeObjectItem(enum_TileEdgeObjectType type, Transform trans) => ObjectPoolManager<enum_TileEdgeObjectType, TileEdgeObjectBase>.Spawn(type, trans, Vector3.zero, Quaternion.identity);
+    public static TilePlantsBase GetPlantsItem(enum_TilePlantsType type, Transform trans) => ObjectPoolManager<enum_TilePlantsType, TilePlantsBase>.Spawn(type, trans, Vector3.zero, Quaternion.identity);
     public static LevelTileItemEditorTerrain GetEditorGroundItem(enum_EditorTerrainType type,Transform trans)=> ObjectPoolManager<enum_EditorTerrainType, LevelTileItemEditorTerrain>.Spawn(type, trans, Vector3.zero, Quaternion.identity);
 }
 
@@ -170,16 +179,27 @@ public static class NavigationManager
         ClearNavMeshDatas();
         m_Transform = transform;
         m_Bounds = bound;
-        NavMeshBuilder.CollectSources(m_Transform, -1, NavMeshCollectGeometry.PhysicsColliders, 0, new List<NavMeshBuildMarkup>() { }, m_Sources);
+        ReCollectSources();
         m_Data = NavMeshBuilder.BuildNavMeshData(m_BuildSettings, m_Sources, m_Bounds, m_Transform.position, m_Transform.rotation);
         m_DataInstance = NavMesh.AddNavMeshData(m_Data);
     }
-
     public static void UpdateChunkData()
     {
-        NavMeshBuilder.CollectSources(m_Transform, -1, NavMeshCollectGeometry.PhysicsColliders, 0, new List<NavMeshBuildMarkup>() { }, m_Sources);
+        ReCollectSources();
         NavMeshBuilder.UpdateNavMeshData(m_Data, m_BuildSettings, m_Sources, m_Bounds);
     }
+
+    static void ReCollectSources()
+    {
+        m_Sources.Clear();
+        List<NavMeshBuildSource> _originSources = new List<NavMeshBuildSource>();
+        NavMeshBuilder.CollectSources(m_Transform, -1, NavMeshCollectGeometry.PhysicsColliders, 0, new List<NavMeshBuildMarkup>() { }, _originSources);
+        _originSources.Traversal((NavMeshBuildSource source) => {
+            if (source.component.gameObject.layer == GameLayer.I_Static)
+                m_Sources.Add(source);
+        });
+    }
+
 
     public static void ClearNavMeshDatas()
     {

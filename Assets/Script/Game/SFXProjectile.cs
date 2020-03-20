@@ -33,7 +33,7 @@ public class SFXProjectile : SFXWeaponBase
     protected virtual float F_PlayDelay => 0f;
     protected virtual bool B_StopParticlesOnHit => true;
     protected virtual bool B_StopPhysicsOnHit => true;
-    protected virtual PhysicsSimulator<HitCheckBase> GetSimulator(Vector3 direction, Vector3 targetPosition) => new SpeedDirectionPSimulator<HitCheckBase>(transform,transform.position, direction, Vector3.down, F_Speed, F_Height,F_Radius, GameLayer.Mask.I_All, OnHitTargetBreak,CanHitTarget);
+    protected virtual PhysicsSimulator<HitCheckBase> GetSimulator(Vector3 direction, Vector3 targetPosition) => new SpeedDirectionPSimulator<HitCheckBase>(transform,transform.position, direction, Vector3.down, F_Speed, F_Height,F_Radius, GameLayer.Mask.I_ProjectileMask, OnHitTargetBreak,CanHitTarget);
     protected DamageInfo m_DamageInfo { get; private set; }
     protected virtual void PlayIndicator(float duration) => m_Indicator.PlayUncontrolled(base.m_SourceID, duration);
     protected Vector3 m_CenterPos => F_Height > F_Radius * 2 ? transform.position + transform.forward * F_Height / 2 : transform.position + transform.forward * F_Radius;

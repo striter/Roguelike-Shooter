@@ -49,7 +49,7 @@ public class SFXCastLaserBeam : SFXCast {
         f_castLength = V4_CastInfo.z;
         Vector3 hitPoint = Vector3.zero;
         Vector3 hitNormal = Vector3.zero;
-        RaycastHit[] hits = OnCastCheck(GameLayer.Mask.I_StaticEntity);
+        RaycastHit[] hits = OnCastCheck(GameLayer.Mask.I_ProjectileMask);
         for (int i = 0; i < hits.Length; i++)
         {
             if (!GameManager.B_CanSFXHitTarget(hits[i].collider.Detect(), m_SourceID))

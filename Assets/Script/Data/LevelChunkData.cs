@@ -152,16 +152,16 @@ public class LevelChunkData : ScriptableObject {
                         default:
                             tileColor = Color.grey;
                             break;
-                        case enum_TileObjectType.REntrance2x2:
+                        case enum_TileObjectType.EEntrance2x2:
                             tileColor = Color.green;
                             break;
-                        case enum_TileObjectType.RExport4x1:
+                        case enum_TileObjectType.EExport4x1:
                             tileColor = Color.blue;
                             break;
-                        case enum_TileObjectType.REventArea3x3:
+                        case enum_TileObjectType.EEventArea3x3:
                             tileColor = Color.white;
                             break;
-                        case enum_TileObjectType.REnermySpawn1x1:
+                        case enum_TileObjectType.EEnermySpawn1x1:
                             tileColor = Color.red;
                             break;
                         case enum_TileObjectType.Block:

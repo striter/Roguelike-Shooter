@@ -52,12 +52,12 @@ public class LevelTileEditor : LevelTileBase {
     }
 
 
-    protected override bool WillGenerateObject(enum_TileObjectType type) => LevelChunkEditor.Instance.m_GameViewMode ?   base.WillGenerateObject(type): type != enum_TileObjectType.Invalid;
+    protected override bool WillGenerateObject(enum_TileObjectType type) => LevelChunkEditor.Instance.m_GameViewMode ? base.WillGenerateObject(type) : type != enum_TileObjectType.Invalid;
+    protected override bool WillGeneratePlants(enum_TileObjectType type) => LevelChunkEditor.Instance.m_GameViewMode ? base.WillGeneratePlants(type) : false;
 
     public void RotateDirection(enum_TileDirection direction,System.Random random)
     {
         m_Data = m_Data.ChangeDirection(direction);
         InitTile(m_Axis, m_Data,random);
     }
-
 }

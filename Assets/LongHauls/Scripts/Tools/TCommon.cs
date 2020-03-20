@@ -330,6 +330,25 @@ public static class TCommon
     #endregion
     #region Random
     public static int RandomLength(int length, System.Random seed = null) => seed != null ? seed.Next(length) : UnityEngine.Random.Range(0, length);
+    public static float RandomUnitValue(System.Random seed = null) => seed != null ? (float)seed.NextDouble()*2f-1f : UnityEngine.Random.Range(-1f,1f);
+    public static Vector3 RandomXZSphere(System.Random seed=null)
+    {
+        Vector2 randomCirlce = Vector2.zero;
+        if (seed!=null)
+        {
+            float radius = RandomUnitValue(seed);
+            float radin = RandomUnitValue(seed) * Mathf.PI;
+            randomCirlce = new Vector2( Mathf.Sin(radin),Mathf.Cos(radin))*radius;
+        }
+        else
+        {
+            randomCirlce = UnityEngine.Random.insideUnitCircle;
+        }
+        return new Vector3(randomCirlce.x, 0, randomCirlce.y) ;
+    }
+    public static int Random(this RangeInt ir, System.Random seed = null) => ir.start + RandomLength(ir.length + 1, seed);
+    public static float Random(this RangeFloat ir, System.Random seed = null) => seed != null ? seed.Next((int)(ir.start * 1000), (int)(ir.end * 1000)) / 1000f : UnityEngine.Random.Range(ir.start, ir.end);
+
     public static int RandomIndex<T>(this List<T> randomList, System.Random seed = null) => RandomLength(randomList.Count,seed);
     public static int RandomIndex<T>(this T[] randomArray, System.Random randomSeed = null) => RandomLength(randomArray.Length,randomSeed);
 
@@ -340,8 +359,6 @@ public static class TCommon
 
     public static T RandomKey<T, Y>(this Dictionary<T, Y> dic, System.Random randomSeed = null) => dic.ElementAt(RandomLength(dic.Count, randomSeed)).Key;
     public static Y RandomValue<T, Y>(this Dictionary<T, Y> dic, System.Random randomSeed = null) => dic.ElementAt(RandomLength(dic.Count, randomSeed)).Value;
-    public static int Random(this RangeInt ir, System.Random seed = null) => ir.start + RandomLength(ir.length+1,seed);
-    public static float Random(this RangeFloat ir, System.Random seed = null)=> seed != null ? seed.Next((int)(ir.start * 1000), (int)(ir.end * 1000)) / 100 : UnityEngine.Random.Range(ir.start, ir.end);
     public static bool RandomBool(System.Random seed = null) => seed != null ? seed.Next(0, 2) > 0 : UnityEngine.Random.Range(0, 2) > 0;
     public static int RandomPercentage(System.Random seed=null)=> seed != null ? seed.Next(1, 101)  : UnityEngine.Random.Range(1, 101);
     public static T RandomPercentage<T>( Dictionary<T, int> percentageRate, System.Random seed = null)
@@ -380,11 +397,7 @@ public static class TCommon
         });
         return targetLevel;
     }
-    public static Vector3 RandomXZSphere(float radius)
-    {
-        Vector2 randomCirlce = UnityEngine.Random.insideUnitCircle;
-        return new Vector3(randomCirlce.x, 0, randomCirlce.y) * radius;
-    }
+
     public static T RandomEnumValues<T>(System.Random _seed=null)        //Can't Constraint T to System.Enum
     {
         if (!typeof(T).IsSubclassOf(typeof(Enum)))
