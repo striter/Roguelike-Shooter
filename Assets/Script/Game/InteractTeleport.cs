@@ -20,7 +20,7 @@ public class InteractTeleport : InteractGameBase  {
     public InteractTeleport Play(enum_GameStyle style)
     {
         base.Play();
-        m_GlowRenderer.sharedMaterial.color = TCommon.GetHexColor(style.GetTeleportHex());
+        m_GlowRenderer.material.color = TCommon.GetHexColor(style.GetTeleportHex());
         return this;
     }
     public void SetPlay(bool play)

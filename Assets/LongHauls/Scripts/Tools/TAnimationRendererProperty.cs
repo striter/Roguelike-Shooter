@@ -11,12 +11,12 @@ public class TAnimationRendererProperty : MonoBehaviour
     private void Awake()
     {
         m_Renderer = GetComponent<Renderer>();
-        m_alpha = m_Renderer.sharedMaterial.color.a;
+        m_alpha = m_Renderer.material.color.a;
     }
 
     private void Update()
     {
-        Color materialColor = m_Renderer.sharedMaterial.color;
+        Color materialColor = m_Renderer.material.color;
         materialColor.a = m_alpha;
         m_PropertyBlock = new MaterialPropertyBlock();
         m_PropertyBlock.SetColor(id_Color, materialColor);
