@@ -16,7 +16,6 @@ public class LevelTileBase : MonoBehaviour, ITileAxis
     protected virtual float GetTerrainHeight(enum_TileTerrainType terrain) => terrain == enum_TileTerrainType.Invalid ?0 : terrain.GetTerrainHeight();
     public virtual void InitTile(TileAxis axis,ChunkTileData data,System.Random random)
     {
-        Clear();
         m_Axis = axis;
         transform.localPosition = new Vector3(axis.X * LevelConst.I_TileSize, 0, axis.Y * LevelConst.I_TileSize);
         transform.localRotation = Quaternion.identity;
@@ -55,6 +54,7 @@ public class LevelTileBase : MonoBehaviour, ITileAxis
             m_EdgeObject.transform.localPosition = objectHight;
         }
     }
+
     public virtual void Clear()
     {
         if (m_Object)

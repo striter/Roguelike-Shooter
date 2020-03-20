@@ -48,8 +48,6 @@ public class LevelEditorUI : SingletonMono<LevelEditorUI>,TReflection.UI.IUIProp
     InputField m_Edit_AddSize_Count;
     TypeSelection m_Edit_AddSize_Direction;
     TypeSelection m_File_Type;
-    RawImage m_View_Image;
-    Text m_View_Name,m_View_Type;
     Transform m_Data;
     TypeSelection m_Data_Type;
     UIT_GridControllerGridItem<LevelEditorUIDataView> m_EditorView;
@@ -114,20 +112,9 @@ public class LevelEditorUI : SingletonMono<LevelEditorUI>,TReflection.UI.IUIProp
         m_Edit_AddSize_Text.text = data.Width + "|" + data.Height;
         m_File_Read_Name.text = data.name;
         m_File_Save_Name.text = data.name;
-        m_View_Name.text = data.name;
-        m_View_Type.text = data.Type.ToString();
-        m_View_Image.texture = data.CalculateEditorChunkTexture();
-        m_View_Image.SetNativeSize();
     }
 
-    void OnSaveClick()
-    {
-        LevelChunkData data= LevelEditorManager.Instance.Save(m_File_Save_Name.text);
-        if (!data)
-            return;
-        m_View_Image.texture = data.CalculateEditorChunkTexture();
-        m_View_Image.SetNativeSize();
-    }
+    void OnSaveClick()=>LevelEditorManager.Instance.Save(m_File_Save_Name.text);
 
     void OnResizeButtonClick()
     {

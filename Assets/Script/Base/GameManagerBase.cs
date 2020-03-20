@@ -84,15 +84,15 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
 //        CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_DepthSSAO>().SetEffect();
         CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_BloomSpecific>().m_Blur.SetEffect( PE_Blurs.enum_BlurType.GaussianBlur,3, 5,2);
         CameraController.Instance.m_Effect.GetOrAddCameraEffect<CB_GenerateOpaqueTexture>();
-        //switch (_levelStyle)
-        //{
-            //case enum_LevelStyle.Undead:
-            //    CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_FogDepthNoise>().SetEffect<PE_FogDepthNoise>(TCommon.ColorAlpha(Color.white, .3f), .5f, -1f, 5f).SetEffect(TResources.GetNoiseTex(), .4f, 2f);
-            //    break;
-            //case enum_LevelStyle.Frost:
-            //    CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_FogDepth>().SetEffect<PE_FogDepth>(Color.white, .6f, -12, 20);
-            //    break;
-        //}
+        switch (_levelStyle)
+        {
+            case  enum_GameStyle.Undead:
+                //CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_FogDepthNoise>().SetEffect<PE_FogDepthNoise>(TCommon.ColorAlpha(Color.white, .3f), .5f, -2, -3).SetEffect(TResources.GetNoiseTex(), .4f, 2f);
+                break;
+            case enum_GameStyle.Frost:
+                CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_FogDepth>().SetEffect<PE_FogDepth>(Color.white, .5f, -2, 3);
+                break;
+        }
     }
 
     protected void SetPostEffect_Dead()

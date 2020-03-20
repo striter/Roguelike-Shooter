@@ -39,6 +39,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
     
     public void GenerateStage(enum_GameStyle style, List<GameLevelData> levelGenerateData, System.Random random)
     {
+        m_CurrentLevel = -1;
         m_GameChunks.ClearPool();
         LevelObjectManager.Register(TResources.GetChunkTiles(style));
         GameRenderData[] customizations = TResources.GetRenderData(style);
@@ -51,7 +52,6 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
             _chunk.InitGameChunk(data.m_EventType, chunkDatas[data.m_ChunkType].RandomItem(random), random, NavigationManager.UpdateChunkData);
             _chunk.SetActivate(false);
         });
-        m_CurrentLevel = -1;
     }
     
     public void OnStartLevel(int chunkIndex,System.Random _random , Action<enum_ChunkEventType, enum_TileObjectType, ChunkGameObjectData> OnLevelObjectGenerate)

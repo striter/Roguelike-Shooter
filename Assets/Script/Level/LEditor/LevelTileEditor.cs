@@ -41,6 +41,7 @@ public class LevelTileEditor : LevelTileBase {
             data = data.ChangeTerrainType(enum_TileTerrainType.Invalid);
         }
 
+        Clear();
         base.InitTile(axis,data, random);
         if (m_EditorTerrainType != enum_EditorTerrainType.Invalid)
         {
