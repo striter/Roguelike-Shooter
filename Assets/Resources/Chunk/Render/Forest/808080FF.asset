@@ -11,11 +11,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e349d199acb4d80499b840c85dd3f665, type: 3}
   m_Name: 808080FF
   m_EditorClassIdentifier: 
-  f_pitch: 45
-  f_yaw: 60
+  f_pitch: 43.5
+  f_yaw: 52
   f_lightItensity: 0.76
-  f_lambert: 0.91
+  f_lambert: 1
   c_lightColor: {r: 1, g: 0.9829615, b: 0.9117647, a: 1}
   c_ambient: {r: 0.6985294, g: 0.67224604, b: 0.6625757, a: 1}
   c_skyColor: {r: 0.63635385, g: 0.7743169, b: 0.78676474, a: 1}
-  c_shadowColor: {r: 0.07226165, g: 0.1102941, b: 0, a: 0}
+  c_shadowColor: {r: 0.0039046698, g: 0.051470578, b: 0, a: 0}
