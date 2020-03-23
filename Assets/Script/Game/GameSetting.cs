@@ -178,32 +178,32 @@ namespace GameSetting
         public static int GetEventPerkAcquireCoinsAmount(int tryCount) => 5 * (tryCount + 1);
 
 
-        public static float GetLevelObjectHealth(enum_TileObjectType objectType)
+        public static float GetLevelObjectHealth(enum_TileObject objectType)
         {
             switch(objectType)
             {
                 default:
                     Debug.LogError("Invalid Convertions Here!");
                     return -1;
-                case enum_TileObjectType.Block:
-                case enum_TileObjectType.Dangerzone:
+                case enum_TileObject.Block:
+                case enum_TileObject.Dangerzone:
                     return -1;
-                case enum_TileObjectType.Static1x1A:
-                case enum_TileObjectType.Static1x1B:
-                case enum_TileObjectType.Static1x1C:
-                case enum_TileObjectType.Static1x1D:
+                case enum_TileObject.Static1x1A:
+                case enum_TileObject.Static1x1B:
+                case enum_TileObject.Static1x1C:
+                case enum_TileObject.Static1x1D:
                     return 100;
-                case enum_TileObjectType.Static2x1A:
-                case enum_TileObjectType.Static2x1B:
+                case enum_TileObject.Static2x1A:
+                case enum_TileObject.Static2x1B:
                     return 200;
-                case enum_TileObjectType.Static2x2A:
-                case enum_TileObjectType.Static2x2B:
+                case enum_TileObject.Static2x2A:
+                case enum_TileObject.Static2x2B:
                     return 400;
-                case enum_TileObjectType.Static3x2A:
-                case enum_TileObjectType.Static3x2B:
+                case enum_TileObject.Static3x2A:
+                case enum_TileObject.Static3x2B:
                     return 600;
-                case enum_TileObjectType.Static3x3A:
-                case enum_TileObjectType.Static3x3B:
+                case enum_TileObject.Static3x3A:
+                case enum_TileObject.Static3x3B:
                     return 900;
             }
         }

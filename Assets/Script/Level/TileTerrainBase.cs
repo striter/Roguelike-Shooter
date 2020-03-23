@@ -5,11 +5,11 @@ using LevelSetting;
 using TTiles;
 using UnityEngine;
 
-public class TileTerrainBase : TileItemBase,IObjectpool<enum_TileTerrainType> {
-    public enum_TileTerrainType m_GroundType = enum_TileTerrainType.Invalid;
+public class TileTerrainBase : TileItemBase,IObjectpool<enum_TileTerrain> {
+    public enum_TileTerrain m_GroundType = enum_TileTerrain.Invalid;
     public override enum_TileSubType m_Type => enum_TileSubType.Terrain;
-    Action<enum_TileTerrainType, MonoBehaviour> OnRecycle;
-    public void OnPoolItemInit(enum_TileTerrainType identity, Action<enum_TileTerrainType, MonoBehaviour> OnRecycle)
+    Action<enum_TileTerrain, MonoBehaviour> OnRecycle;
+    public void OnPoolItemInit(enum_TileTerrain identity, Action<enum_TileTerrain, MonoBehaviour> OnRecycle)
     {
         Init();
         m_GroundType = identity;

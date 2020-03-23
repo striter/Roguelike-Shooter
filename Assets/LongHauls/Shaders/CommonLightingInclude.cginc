@@ -12,7 +12,7 @@ float GetDiffuse(float3 normal, float3 lightDir)
 
 float3 GetDiffuseBaseColor(float3 albedo, float3 ambient, float3 lightCol, float atten, float diffuse)
 {
-	atten = atten * _Lambert + (1 - _Lambert);
+	atten = atten * _Lambert + (1 - _Lambert)*atten;
 	float3 diffuseCol = albedo * diffuse*lightCol;
 	float3 ambientCol = albedo * ambient;
 	return ambientCol+diffuseCol*atten+(1-atten)*_ShadowColor;
