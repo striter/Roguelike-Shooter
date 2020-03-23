@@ -13,9 +13,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   f_pitch: 45
   f_yaw: 33
-  f_lightItensity: 0.56
+  f_lightItensity: 0.8
   f_lambert: 0.9
-  c_lightColor: {r: 1, g: 0.9704898, b: 0.917712, a: 1}
-  c_ambient: {r: 0.7983236, g: 0.79692906, b: 0.8088235, a: 1}
+  c_lightColor: {r: 0.7058823, g: 0.70101416, b: 0.68512106, a: 1}
+  c_ambient: {r: 0.63235295, g: 0.593873, b: 0.5765571, a: 1}
   c_skyColor: {r: 0.25, g: 0.21209432, b: 0.13051471, a: 1}
-  c_shadowColor: {r: 0.03676468, g: 0, b: 0, a: 0}
+  c_shadowColor: {r: 0.007352948, g: 0.0025862092, b: 0, a: 0}
